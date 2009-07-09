@@ -9,275 +9,41 @@
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="groovie_Debug"
-			IntermediateDirectory="groovie_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				AdditionalIncludeDirectories="../..;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="false"
-				SuppressStartupBanner="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/groovie.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="groovie_Release"
-			IntermediateDirectory="groovie_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/groovie.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\groovie\cell.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\cell.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\cursor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\cursor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\debug.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\debug.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\font.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\font.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\graphics.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\groovie.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\groovie.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\lzss.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\lzss.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\music.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\music.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\player.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\player.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\resource.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\roq.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\roq.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\saveload.h"
-			>
-		</File>		
-		<File
-			RelativePath="..\..\engines\groovie\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\vdx.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\groovie\vdx.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\groovie\cell.cpp" />
+		<File RelativePath="..\..\engines\groovie\cell.h" />
+		<File RelativePath="..\..\engines\groovie\cursor.cpp" />
+		<File RelativePath="..\..\engines\groovie\cursor.h" />
+		<File RelativePath="..\..\engines\groovie\debug.cpp" />
+		<File RelativePath="..\..\engines\groovie\debug.h" />
+		<File RelativePath="..\..\engines\groovie\detection.cpp" />
+		<File RelativePath="..\..\engines\groovie\font.cpp" />
+		<File RelativePath="..\..\engines\groovie\font.h" />
+		<File RelativePath="..\..\engines\groovie\graphics.cpp" />
+		<File RelativePath="..\..\engines\groovie\graphics.h" />
+		<File RelativePath="..\..\engines\groovie\groovie.cpp" />
+		<File RelativePath="..\..\engines\groovie\groovie.h" />
+		<File RelativePath="..\..\engines\groovie\lzss.cpp" />
+		<File RelativePath="..\..\engines\groovie\lzss.h" />
+		<File RelativePath="..\..\engines\groovie\music.cpp" />
+		<File RelativePath="..\..\engines\groovie\music.h" />
+		<File RelativePath="..\..\engines\groovie\player.cpp" />
+		<File RelativePath="..\..\engines\groovie\player.h" />
+		<File RelativePath="..\..\engines\groovie\resource.cpp" />
+		<File RelativePath="..\..\engines\groovie\resource.h" />
+		<File RelativePath="..\..\engines\groovie\roq.cpp" />
+		<File RelativePath="..\..\engines\groovie\roq.h" />
+		<File RelativePath="..\..\engines\groovie\saveload.cpp" />
+		<File RelativePath="..\..\engines\groovie\saveload.h" />		
+		<File RelativePath="..\..\engines\groovie\script.cpp" />
+		<File RelativePath="..\..\engines\groovie\script.h" />
+		<File RelativePath="..\..\engines\groovie\vdx.cpp" />
+		<File RelativePath="..\..\engines\groovie\vdx.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

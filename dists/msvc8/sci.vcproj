@@ -8,625 +8,132 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="sci_Debug"
-			IntermediateDirectory="sci_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="false"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sci.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="sci_Release"
-			IntermediateDirectory="sci_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sci.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<Filter
-			Name="engine"
-			>
-			<File
-				RelativePath="..\..\engines\sci\engine\game.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\gc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\gc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\grammar.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\intmap.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\intmap.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kernel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kernel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kernel_types.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kevent.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kfile.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kgraphics.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\klists.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kmath.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kmenu.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kmisc.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kmovement.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kpathing.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kscripts.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\ksound.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\kstring.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\memobj.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\memobj.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\message.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\message.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\said.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\savegame.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\savegame.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\script.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\scriptdebug.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\seg_manager.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\seg_manager.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\state.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\state.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\stringfrag.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\vm.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\vm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\engine\vm_types.h"
-				>
-			</File>
+		<Filter Name="engine">
+			<File RelativePath="..\..\engines\sci\engine\game.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\gc.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\gc.h" />
+			<File RelativePath="..\..\engines\sci\engine\grammar.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\intmap.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\intmap.h" />
+			<File RelativePath="..\..\engines\sci\engine\kernel.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kernel.h" />
+			<File RelativePath="..\..\engines\sci\engine\kernel_types.h" />
+			<File RelativePath="..\..\engines\sci\engine\kevent.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kfile.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kgraphics.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\klists.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmath.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmenu.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmisc.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kmovement.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kpathing.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kscripts.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\ksound.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\kstring.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\memobj.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\memobj.h" />
+			<File RelativePath="..\..\engines\sci\engine\message.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\message.h" />
+			<File RelativePath="..\..\engines\sci\engine\said.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\savegame.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\savegame.h" />
+			<File RelativePath="..\..\engines\sci\engine\script.h" />
+			<File RelativePath="..\..\engines\sci\engine\scriptdebug.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\seg_manager.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\seg_manager.h" />
+			<File RelativePath="..\..\engines\sci\engine\state.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\state.h" />
+			<File RelativePath="..\..\engines\sci\engine\stringfrag.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\vm.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\vm.h" />
+			<File RelativePath="..\..\engines\sci\engine\vm_types.h" />
 		</Filter>
-		<Filter
-			Name="gfx"
-			>
-			<File
-				RelativePath="..\..\engines\sci\gfx\font.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\font.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_driver.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_driver.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_gui.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_gui.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_pixmap_scale.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_res_options.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_res_options.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_resmgr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_resmgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_resource.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_resource.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_state_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_support.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_system.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_tools.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_tools.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_widgets.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\gfx_widgets.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\menubar.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\menubar.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\operations.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\operations.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\palette.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\palette.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_cursor.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_font.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_pal.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_pic.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\res_view.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\seq_decoder.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\gfx\seq_decoder.h"
-				>
-			</File>
+		<Filter	Name="gfx">
+			<File RelativePath="..\..\engines\sci\gfx\font.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\font.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_driver.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_driver.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_gui.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_gui.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_options.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_pixmap_scale.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_res_options.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_res_options.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_resmgr.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_resmgr.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_resource.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_resource.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_state_internal.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_support.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_system.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_tools.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_tools.h" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_widgets.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\gfx_widgets.h" />
+			<File RelativePath="..\..\engines\sci\gfx\menubar.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\menubar.h" />
+			<File RelativePath="..\..\engines\sci\gfx\operations.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\operations.h" />
+			<File RelativePath="..\..\engines\sci\gfx\palette.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\palette.h" />
+			<File RelativePath="..\..\engines\sci\gfx\res_cursor.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\res_font.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\res_pal.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\res_pic.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\res_view.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\seq_decoder.cpp" />
+			<File RelativePath="..\..\engines\sci\gfx\seq_decoder.h" />
 		</Filter>
-		<Filter
-			Name="sfx"
-			>
-			<File
-				RelativePath="..\..\engines\sci\sfx\core.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\core.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\device.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\iterator.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\iterator.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\iterator_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\misc.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\player.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\sci_midi.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\sequencer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\sfx_pcm.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\softseq.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\songlib.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\sci\sfx\songlib.h"
-				>
-			</File>
-			<Filter
-				Name="softseq"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\adlib.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\adlib.h"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h"
-					>
-				</File>
+		<Filter	Name="sfx">
+			<File RelativePath="..\..\engines\sci\sfx\core.cpp" />
+			<File RelativePath="..\..\engines\sci\sfx\core.h" />
+			<File RelativePath="..\..\engines\sci\sfx\device.h" />
+			<File RelativePath="..\..\engines\sci\sfx\iterator.cpp" />
+			<File RelativePath="..\..\engines\sci\sfx\iterator.h" />
+			<File RelativePath="..\..\engines\sci\sfx\iterator_internal.h" />
+			<File RelativePath="..\..\engines\sci\sfx\misc.h" />
+			<File RelativePath="..\..\engines\sci\sfx\player.h" />
+			<File RelativePath="..\..\engines\sci\sfx\sci_midi.h" />
+			<File RelativePath="..\..\engines\sci\sfx\sequencer.h" />
+			<File RelativePath="..\..\engines\sci\sfx\sfx_pcm.h" />
+			<File RelativePath="..\..\engines\sci\sfx\softseq.h" />
+			<File RelativePath="..\..\engines\sci\sfx\songlib.cpp" />
+			<File RelativePath="..\..\engines\sci\sfx\songlib.h" />
+			<Filter	Name="softseq">
+				<File RelativePath="..\..\engines\sci\sfx\softseq\adlib.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\adlib.h" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\amiga.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h" />
 			</Filter>
-			<Filter
-				Name="seq"
-				>
-				<File
-					RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp"
-					>
-				</File>
+			<Filter	Name="seq">
+				<File RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp" />
 			</Filter>
 		</Filter>
-		<File
-			RelativePath="..\..\engines\sci\console.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\console.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\debug.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\decompressor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\decompressor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\exereader.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\exereader.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\resource.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\sci.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\sci.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\engine\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\tools.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\tools.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\uinput.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\vocabulary.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sci\vocabulary.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\sci\console.cpp" />
+		<File RelativePath="..\..\engines\sci\console.h" />
+		<File RelativePath="..\..\engines\sci\debug.h" />
+		<File RelativePath="..\..\engines\sci\decompressor.cpp" />
+		<File RelativePath="..\..\engines\sci\decompressor.h" />
+		<File RelativePath="..\..\engines\sci\detection.cpp" />
+		<File RelativePath="..\..\engines\sci\exereader.cpp" />
+		<File RelativePath="..\..\engines\sci\exereader.h" />
+		<File RelativePath="..\..\engines\sci\resource.cpp" />
+		<File RelativePath="..\..\engines\sci\resource.h" />
+		<File RelativePath="..\..\engines\sci\sci.cpp" />
+		<File RelativePath="..\..\engines\sci\sci.h" />
+		<File RelativePath="..\..\engines\sci\engine\script.cpp" />
+		<File RelativePath="..\..\engines\sci\tools.cpp" />
+		<File RelativePath="..\..\engines\sci\tools.h" />
+		<File RelativePath="..\..\engines\sci\uinput.h" />
+		<File RelativePath="..\..\engines\sci\vocabulary.cpp" />
+		<File RelativePath="..\..\engines\sci\vocabulary.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

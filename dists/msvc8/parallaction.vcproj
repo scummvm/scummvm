@@ -8,345 +8,57 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="parallaction_Debug"
-			IntermediateDirectory="parallaction_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/parallaction.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="parallaction_Release"
-			IntermediateDirectory="parallaction_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/parallaction.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\parallaction\balloons.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\callables_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\callables_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\debug.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\debug.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\dialogue.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\disk.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\disk.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\disk_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\disk_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\exec.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\exec.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\exec_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\exec_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\font.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\gfxbase.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\graphics.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\gui.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\gui.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\gui_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\gui_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\input.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\input.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\inventory.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\inventory.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\objects.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\objects.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parallaction.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parallaction.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parallaction_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parallaction_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parser.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parser.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parser_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\parser_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\saveload.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\sound_br.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\sound_ns.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\staticres.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\walk.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\parallaction\walk.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\parallaction\balloons.cpp" />
+		<File RelativePath="..\..\engines\parallaction\callables_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\callables_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\debug.cpp" />
+		<File RelativePath="..\..\engines\parallaction\debug.h" />
+		<File RelativePath="..\..\engines\parallaction\detection.cpp" />
+		<File RelativePath="..\..\engines\parallaction\dialogue.cpp" />
+		<File RelativePath="..\..\engines\parallaction\disk.cpp" />
+		<File RelativePath="..\..\engines\parallaction\disk.h" />
+		<File RelativePath="..\..\engines\parallaction\disk_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\disk_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\exec.cpp" />
+		<File RelativePath="..\..\engines\parallaction\exec.h" />
+		<File RelativePath="..\..\engines\parallaction\exec_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\exec_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\font.cpp" />
+		<File RelativePath="..\..\engines\parallaction\gfxbase.cpp" />
+		<File RelativePath="..\..\engines\parallaction\graphics.cpp" />
+		<File RelativePath="..\..\engines\parallaction\graphics.h" />
+		<File RelativePath="..\..\engines\parallaction\gui.cpp" />
+		<File RelativePath="..\..\engines\parallaction\gui.h" />
+		<File RelativePath="..\..\engines\parallaction\gui_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\gui_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\input.cpp" />
+		<File RelativePath="..\..\engines\parallaction\input.h" />
+		<File RelativePath="..\..\engines\parallaction\inventory.cpp" />
+		<File RelativePath="..\..\engines\parallaction\inventory.h" />
+		<File RelativePath="..\..\engines\parallaction\objects.cpp" />
+		<File RelativePath="..\..\engines\parallaction\objects.h" />
+		<File RelativePath="..\..\engines\parallaction\parallaction.cpp" />
+		<File RelativePath="..\..\engines\parallaction\parallaction.h" />
+		<File RelativePath="..\..\engines\parallaction\parallaction_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\parallaction_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\parser.cpp" />
+		<File RelativePath="..\..\engines\parallaction\parser.h" />
+		<File RelativePath="..\..\engines\parallaction\parser_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\parser_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\saveload.cpp" />
+		<File RelativePath="..\..\engines\parallaction\saveload.h" />
+		<File RelativePath="..\..\engines\parallaction\sound.h" />
+		<File RelativePath="..\..\engines\parallaction\sound_br.cpp" />
+		<File RelativePath="..\..\engines\parallaction\sound_ns.cpp" />
+		<File RelativePath="..\..\engines\parallaction\staticres.cpp" />
+		<File RelativePath="..\..\engines\parallaction\walk.cpp" />
+		<File RelativePath="..\..\engines\parallaction\walk.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

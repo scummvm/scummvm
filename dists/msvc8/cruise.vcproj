@@ -8,397 +8,70 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="cruise_Debug"
-			IntermediateDirectory="cruise_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cruise.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="cruise_Release"
-			IntermediateDirectory="cruise_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cruise.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\cruise\actor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\actor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\background.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\background.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\backgroundIncrust.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\backgroundIncrust.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\cell.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\cell.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\cruise.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\cruise.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\cruise_main.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\cruise_main.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\ctp.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\ctp.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\dataLoader.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\dataLoader.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\debugger.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\debugger.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\delphine-unpack.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\font.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\font.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\function.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\function.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\gfxModule.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\gfxModule.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\linker.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\linker.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\mainDraw.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\mainDraw.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\menu.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\mouse.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\mouse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\object.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\object.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\overlay.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\overlay.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\perso.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\perso.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\polys.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\polys.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\saveload.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\stack.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\stack.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\staticres.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\staticres.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\various.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\various.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\vars.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\vars.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\volume.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cruise\volume.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\cruise\actor.cpp" />
+		<File RelativePath="..\..\engines\cruise\actor.h" />
+		<File RelativePath="..\..\engines\cruise\background.cpp" />
+		<File RelativePath="..\..\engines\cruise\background.h" />
+		<File RelativePath="..\..\engines\cruise\backgroundIncrust.cpp" />
+		<File RelativePath="..\..\engines\cruise\backgroundIncrust.h" />
+		<File RelativePath="..\..\engines\cruise\cell.cpp" />
+		<File RelativePath="..\..\engines\cruise\cell.h" />
+		<File RelativePath="..\..\engines\cruise\cruise.cpp" />
+		<File RelativePath="..\..\engines\cruise\cruise.h" />
+		<File RelativePath="..\..\engines\cruise\cruise_main.cpp" />
+		<File RelativePath="..\..\engines\cruise\cruise_main.h" />
+		<File RelativePath="..\..\engines\cruise\ctp.cpp" />
+		<File RelativePath="..\..\engines\cruise\ctp.h" />
+		<File RelativePath="..\..\engines\cruise\dataLoader.cpp" />
+		<File RelativePath="..\..\engines\cruise\dataLoader.h" />
+		<File RelativePath="..\..\engines\cruise\debugger.cpp" />
+		<File RelativePath="..\..\engines\cruise\debugger.h" />
+		<File RelativePath="..\..\engines\cruise\delphine-unpack.cpp" />
+		<File RelativePath="..\..\engines\cruise\detection.cpp" />
+		<File RelativePath="..\..\engines\cruise\font.cpp" />
+		<File RelativePath="..\..\engines\cruise\font.h" />
+		<File RelativePath="..\..\engines\cruise\function.cpp" />
+		<File RelativePath="..\..\engines\cruise\function.h" />
+		<File RelativePath="..\..\engines\cruise\gfxModule.cpp" />
+		<File RelativePath="..\..\engines\cruise\gfxModule.h" />
+		<File RelativePath="..\..\engines\cruise\linker.cpp" />
+		<File RelativePath="..\..\engines\cruise\linker.h" />
+		<File RelativePath="..\..\engines\cruise\mainDraw.cpp" />
+		<File RelativePath="..\..\engines\cruise\mainDraw.h" />
+		<File RelativePath="..\..\engines\cruise\menu.cpp" />
+		<File RelativePath="..\..\engines\cruise\menu.h" />
+		<File RelativePath="..\..\engines\cruise\mouse.cpp" />
+		<File RelativePath="..\..\engines\cruise\mouse.h" />
+		<File RelativePath="..\..\engines\cruise\object.cpp" />
+		<File RelativePath="..\..\engines\cruise\object.h" />
+		<File RelativePath="..\..\engines\cruise\overlay.cpp" />
+		<File RelativePath="..\..\engines\cruise\overlay.h" />
+		<File RelativePath="..\..\engines\cruise\perso.cpp" />
+		<File RelativePath="..\..\engines\cruise\perso.h" />
+		<File RelativePath="..\..\engines\cruise\polys.cpp" />
+		<File RelativePath="..\..\engines\cruise\polys.h" />
+		<File RelativePath="..\..\engines\cruise\saveload.cpp" />
+		<File RelativePath="..\..\engines\cruise\saveload.h" />
+		<File RelativePath="..\..\engines\cruise\script.cpp" />
+		<File RelativePath="..\..\engines\cruise\script.h" />
+		<File RelativePath="..\..\engines\cruise\sound.cpp" />
+		<File RelativePath="..\..\engines\cruise\sound.h" />
+		<File RelativePath="..\..\engines\cruise\stack.cpp" />
+		<File RelativePath="..\..\engines\cruise\stack.h" />
+		<File RelativePath="..\..\engines\cruise\staticres.cpp" />
+		<File RelativePath="..\..\engines\cruise\staticres.h" />
+		<File RelativePath="..\..\engines\cruise\various.cpp" />
+		<File RelativePath="..\..\engines\cruise\various.h" />
+		<File RelativePath="..\..\engines\cruise\vars.cpp" />
+		<File RelativePath="..\..\engines\cruise\vars.h" />
+		<File RelativePath="..\..\engines\cruise\volume.cpp" />
+		<File RelativePath="..\..\engines\cruise\volume.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

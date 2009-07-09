@@ -8,317 +8,50 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="cine_Debug"
-			IntermediateDirectory="cine_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cine.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="cine_Release"
-			IntermediateDirectory="cine_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/cine.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\cine\anim.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\anim.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\bg.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\bg.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\bg_list.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\bg_list.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\cine.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\cine.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\gfx.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\gfx.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\main_loop.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\main_loop.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\msg.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\msg.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\object.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\object.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\pal.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\pal.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\part.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\part.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\prc.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\prc.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\rel.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\rel.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\saveload.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\script_fw.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\script_os.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\texte.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\texte.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\unpack.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\unpack.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\various.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\cine\various.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\cine\anim.cpp" />
+		<File RelativePath="..\..\engines\cine\anim.h" />
+		<File RelativePath="..\..\engines\cine\bg.cpp" />
+		<File RelativePath="..\..\engines\cine\bg.h" />
+		<File RelativePath="..\..\engines\cine\bg_list.cpp" />
+		<File RelativePath="..\..\engines\cine\bg_list.h" />
+		<File RelativePath="..\..\engines\cine\cine.cpp" />
+		<File RelativePath="..\..\engines\cine\cine.h" />
+		<File RelativePath="..\..\engines\cine\detection.cpp" />
+		<File RelativePath="..\..\engines\cine\gfx.cpp" />
+		<File RelativePath="..\..\engines\cine\gfx.h" />
+		<File RelativePath="..\..\engines\cine\main_loop.cpp" />
+		<File RelativePath="..\..\engines\cine\main_loop.h" />
+		<File RelativePath="..\..\engines\cine\msg.cpp" />
+		<File RelativePath="..\..\engines\cine\msg.h" />
+		<File RelativePath="..\..\engines\cine\object.cpp" />
+		<File RelativePath="..\..\engines\cine\object.h" />
+		<File RelativePath="..\..\engines\cine\pal.cpp" />
+		<File RelativePath="..\..\engines\cine\pal.h" />
+		<File RelativePath="..\..\engines\cine\part.cpp" />
+		<File RelativePath="..\..\engines\cine\part.h" />
+		<File RelativePath="..\..\engines\cine\prc.cpp" />
+		<File RelativePath="..\..\engines\cine\prc.h" />
+		<File RelativePath="..\..\engines\cine\rel.cpp" />
+		<File RelativePath="..\..\engines\cine\rel.h" />
+		<File RelativePath="..\..\engines\cine\saveload.cpp" />
+		<File RelativePath="..\..\engines\cine\saveload.h" />
+		<File RelativePath="..\..\engines\cine\script.h" />
+		<File RelativePath="..\..\engines\cine\script_fw.cpp" />
+		<File RelativePath="..\..\engines\cine\script_os.cpp" />
+		<File RelativePath="..\..\engines\cine\sound.cpp" />
+		<File RelativePath="..\..\engines\cine\sound.h" />
+		<File RelativePath="..\..\engines\cine\texte.cpp" />
+		<File RelativePath="..\..\engines\cine\texte.h" />
+		<File RelativePath="..\..\engines\cine\unpack.cpp" />
+		<File RelativePath="..\..\engines\cine\unpack.h" />
+		<File RelativePath="..\..\engines\cine\various.cpp" />
+		<File RelativePath="..\..\engines\cine\various.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>
