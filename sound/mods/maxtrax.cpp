@@ -235,8 +235,8 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 		voice.periodOffset = 0;
 		const int maxOctave = patch.sampleOctaves - 1;
 		while (tone > PREF_PERIOD && octave < maxOctave) {
-			tone -= 1 << 4;
-			voice.periodOffset += 1 <<4;
+			tone -= 1 << 16;
+			voice.periodOffset += 1 << 16;
 			octave++;
 		}
 		tone -= voice.periodOffset;
