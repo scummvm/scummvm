@@ -54,7 +54,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		return true;
 	}
 	
-	_vm->_delayedVideoNumber = atoi(argv[1]);
+	ScriptMan.setDelayedVideoIndex(atoi(argv[1]));
 
 	return false;
 }
@@ -65,8 +65,10 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 		return true;
 	}
 	
+	/*
 	_vm->_interpreter->_currentScriptIndex = atoi(argv[1]);
 	_vm->_interpreter->_currentLine = 0;
+	*/
 
 	return false;
 }
@@ -77,7 +79,7 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 		return true;
 	}
 	
-	_vm->_delayedSceneNumber = atoi(argv[1]);
+	ScriptMan.setDelayedSceneIndex(atoi(argv[1]));
 
 	return false;
 }

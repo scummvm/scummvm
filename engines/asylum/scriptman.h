@@ -8,48 +8,66 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
- *
  */
 
-#ifndef ASYLUM_INTERPERTER_H_
-#define ASYLUM_INTERPERTER_H_
+#ifndef ASYLUM_SCRIPTMANAGER_H_
+#define ASYLUM_SCRIPTMANAGER_H_
+
+#include "common/singleton.h"
 
 #include "asylum/scene.h"
+#include "asylum/sceneres.h"
 
 namespace Asylum {
 
+struct ActionCommand;
 
-class Interpreter {
+class ScriptManager: public Common::Singleton<ScriptManager> {
 public:
-	Interpreter(AsylumEngine *vm);
-	~Interpreter();
-	
-	void doSceneChanged();
-	void processActionLists();
+
+	void processActionList();
+
+	void setScene(Scene *scene) { _scene = scene; }
+	void setScript(ActionDefinitions *action) { _currentScript = action; }
+
+	void setDelayedSceneIndex(int index) { _delayedSceneIndex = index; }
+	int  getDelayedSceneIndex() { return _delayedSceneIndex; }
+
+	void setDelayedVideoIndex(int index) { _delayedVideoIndex = index; }
+	int  getDelayedVideoIndex() { return _delayedVideoIndex; }
+
 	bool isProcessing() { return _processing; }
-	
+
 private:
-	AsylumEngine *_engine;
-	Scene *_scene;
-	int _currentLine;
-	int _currentScriptIndex;
-	int _currentLoops;
+	friend class Common::Singleton<SingletonBaseType>;
+	ScriptManager();
+	~ScriptManager();
+
+	int  _currentLine;
+	int  _currentLoops;
 	bool _processing;
-	
+	int  _delayedSceneIndex;
+	int  _delayedVideoIndex;
+
+	Scene 			  *_scene;
+	ActionDefinitions *_currentScript;
+
 	friend class Console;
-};
+
+
+}; // end of class ScriptManager
 
 enum opcodes {
 	kReturn0				= 0x00,
@@ -152,6 +170,8 @@ enum opcodes {
 	k_unk61,
 	k_unk62_SHOW_OPTIONS_SCREEN
 };
+
+#define ScriptMan	(::Asylum::ScriptManager::instance())
 
 } // end of namespace Asylum
 

@@ -15,7 +15,7 @@ MODULE_OBJS := \
 	video.o \
 	actor.o \
 	encounters.o \
-	interpreter.o
+	scriptman.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
