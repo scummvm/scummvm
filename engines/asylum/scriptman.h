@@ -49,6 +49,7 @@ public:
 	void setDelayedVideoIndex(int index) { _delayedVideoIndex = index; }
 	int  getDelayedVideoIndex() { return _delayedVideoIndex; }
 
+	bool isInputAllowed() { return _allowInput; }
 	bool isProcessing() { return _processing; }
 
 private:
@@ -61,6 +62,7 @@ private:
 	bool _processing;
 	int  _delayedSceneIndex;
 	int  _delayedVideoIndex;
+	bool _allowInput;
 
 	Scene 			  *_scene;
 	ActionDefinitions *_currentScript;

@@ -164,20 +164,31 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
 	switch (_ev->type) {
+
 	case Common::EVENT_MOUSEMOVE:
 		_mouseX = _ev->mouse.x;
 		_mouseY = _ev->mouse.y;
 		break;
+
 	case Common::EVENT_LBUTTONUP:
-		_leftClick = true;
+		if (ScriptMan.isInputAllowed())
+			_leftClick = true;
 		break;
+
 	case Common::EVENT_RBUTTONUP:
-		delete _cursorResource;
-		_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
-		_rightButton    = false;
+		if (ScriptMan.isInputAllowed()) {
+			delete _cursorResource;
+			// TODO This isn't always going to be the magnifying glass
+			// Should check the current pointer region to identify the type
+			// of cursor to use
+			_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
+			_rightButton    = false;
+		}
 		break;
+
 	case Common::EVENT_RBUTTONDOWN:
-		_rightButton = true;
+		if (ScriptMan.isInputAllowed())
+			_rightButton = true;
 		break;
 	}
 
@@ -319,9 +330,6 @@ void Scene::update() {
 			}
 		}
 	}
-
-		//	if
-			//ShowWalkRegion(15);
 
 	if (_leftClick) {
 		_leftClick = false;
