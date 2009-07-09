@@ -165,13 +165,6 @@ void MaxTrax::interrupt() {
 
 }
 
-int32 MaxTrax::omgItsAntiLog(uint32 val) {
-	// some really weird exponential function, and some also very nonstandard "standard format" floats
-	// format is 16? bit exponent, 16 bit mantissa. and we need to scale with log(2)
-	const float v = ldexp((float)((val & 0xFFFF) + 0x10000) * (float)(0.69314718055994530942 / 65536), val >> 16);
-	return (uint32)exp(v);
-}
-
 void MaxTrax::stopMusic() {
 }
 
@@ -249,7 +242,8 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 		tone -= voice.periodOffset;
 	}
 	if (tone < PERIOD_LIMIT)
-		voice.lastPeriod = (uint16)omgItsAntiLog((float)tone);
+		// we need to scale with log(2)
+		voice.lastPeriod = (uint16)exp((float)tone * (float)(0.69314718055994530942 / 65536));
 
 	return octave;
 }

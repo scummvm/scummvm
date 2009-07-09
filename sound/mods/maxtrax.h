@@ -205,7 +205,6 @@ public:
 	void freePatches();
 	void freeScores();
 
-	static int32 omgItsAntiLog(uint32 val);
 	int calcNote(VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(ChannelContext &channel, byte note);
