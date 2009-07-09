@@ -22,6 +22,14 @@
  * $Id$
  */
 
+// The code in this file is currently only used in KYRA and SCI.
+// So if neither of those is enabled, we will skip compiling it.
+// If you plan to use this code in another engine, you will have
+// to add the proper define check here.
+// Also please add the define check at the comment after the
+// matching #endif further down this file.
+#if defined(ENABLE_KYRA) || defined(ENABLE_SCI)
+
 #ifndef GRAPHICS_SJIS_H
 #define GRAPHICS_SJIS_H
 
@@ -122,4 +130,6 @@ private:
 } // end of namespace Graphics
 
 #endif
+
+#endif // defined(ENABLE_KYRA) || defined(ENABLE_SCI)
 
