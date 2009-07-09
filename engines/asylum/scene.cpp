@@ -279,7 +279,7 @@ void Scene::update() {
 
 	if (g_debugPolygons)
 		ShowPolygons();
-	//if (g_debugBarriers)
+	if (g_debugBarriers)
 		ShowBarriers();
 
 	// Update cursor if it's in a polygon hotspot
@@ -303,7 +303,6 @@ void Scene::update() {
 				curBarrier = (int32)p;
 				break;
 			}
-
 		}
 	}
 
@@ -313,7 +312,7 @@ void Scene::update() {
 		if (curHotspot >= 0) {
 			for (uint32 a = 0; a < worldStats->numActions; a++) {
 				if (worldStats->actions[a].polyIdx == curHotspot) {
-					debug(0, "Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
+					printf("Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
 							worldStats->actions[a].id, 
 							worldStats->actions[a].name,
 							worldStats->actions[a].polyIdx,
@@ -342,7 +341,14 @@ void Scene::update() {
 				}
 			}
 		} else if (curBarrier >= 0) {
-			ScriptMan.setScript(getActionList(worldStats->barriers[curBarrier].actionListIdx));
+			BarrierItem b = worldStats->barriers[curBarrier];
+			printf("%s: action(%d) sound(%d) flags(%d/%d)\n",
+				b.name,
+				b.actionListIdx,
+				b.soundResId,
+				b.flags,
+				b.flags2);
+			ScriptMan.setScript(getActionList(b.actionListIdx));
 		}
 	}
 }
@@ -443,7 +449,6 @@ bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
 	return inside_flag;
 }
 
-
 // POLYGONS DEBUG
 void Scene::ShowPolygons() {
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
@@ -484,6 +489,5 @@ void Scene::ShowBarriers() {
 		surface.free();
 	}
 }
-
 
 } // end of namespace Asylum

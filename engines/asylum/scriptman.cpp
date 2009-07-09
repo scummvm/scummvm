@@ -43,9 +43,30 @@ ScriptManager::ScriptManager() {
 	}
 }
 
+void ScriptManager::setScript(ActionDefinitions *action) {
+	_currentScript = action;
+
+	for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
+		printf("Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)\n",
+			i,
+			_currentScript->commands[0].numLines - 1,
+			_currentScript->commands[i].opcode,
+			_currentScript->commands[i].param1,
+			_currentScript->commands[i].param2,
+			_currentScript->commands[i].param3,
+			_currentScript->commands[i].param4,
+			_currentScript->commands[i].param5,
+			_currentScript->commands[i].param6,
+			_currentScript->commands[i].param7,
+			_currentScript->commands[i].param8,
+			_currentScript->commands[i].param9);
+	}
+}
+
 void ScriptManager::setScriptIndex(uint32 index) {
-	_currentScript = _scene->getActionList(index);
-	_currentLine = 0;
+	_currentScript 	= 0;
+	_currentLine 	= 0;
+	setScript(_scene->getActionList(index));
 }
 
 void ScriptManager::processActionList() {
@@ -69,6 +90,16 @@ void ScriptManager::processActionList() {
 			case kReturn0:
 				done 		  = true;
 				lineIncrement = 0;
+				break;
+
+			case kJumpIfGameFlag:
+				// TODO
+				// need to know the source object that owns the
+				// script we're parsing so that it's flags can
+				// be checked
+				// param1 = flag
+				// param2 = false command
+				// param3 = true command
 				break;
 
 			case kShowCursor:
