@@ -312,7 +312,7 @@ void Scene::update() {
 		if (curHotspot >= 0) {
 			for (uint32 a = 0; a < worldStats->numActions; a++) {
 				if (worldStats->actions[a].polyIdx == curHotspot) {
-					printf("Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
+					debugC(kDebugLevelScripts, "Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
 							worldStats->actions[a].id, 
 							worldStats->actions[a].name,
 							worldStats->actions[a].polyIdx,
@@ -342,7 +342,7 @@ void Scene::update() {
 			}
 		} else if (curBarrier >= 0) {
 			BarrierItem b = worldStats->barriers[curBarrier];
-			printf("%s: action(%d) sound(%d) flags(%d/%d)\n",
+			debugC(kDebugLevelScripts, "%s: action(%d) sound(%d) flags(%d/%d)\n",
 				b.name,
 				b.actionListIdx,
 				b.soundResId,
