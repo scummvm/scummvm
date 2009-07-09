@@ -1379,7 +1379,7 @@ void OSystem_SDL::warpMouse(int x, int y) {
 void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 #ifdef ENABLE_RGB_COLOR
 	if (!format)
-		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8;
+		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
 		_cursorFormat = *format;
 	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
