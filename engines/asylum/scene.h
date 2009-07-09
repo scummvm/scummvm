@@ -103,7 +103,7 @@ private:
 	void ShowBarriers();
 	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 	
-	friend class Interpreter;
+	friend class ScriptManager;
 }; // end of class Scene
 
 } // end of namespace Asylum

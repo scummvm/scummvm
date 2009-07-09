@@ -80,11 +80,8 @@ Common::Error AsylumEngine::init() {
 	_sound				= new Sound(_mixer);
 	_video				= new Video(_mixer);
 	_console			= new Console(this);
-	_interpreter		= 0;
 	_mainMenu			= 0;
 	_scene				= 0;
-	_delayedVideoNumber = -1;
-	_delayedSceneNumber = -1;
 
 	return Common::kNoError;
 }
@@ -105,9 +102,14 @@ Common::Error AsylumEngine::go() {
 
 	// Set up the game's main scene
 	_scene = new Scene(_screen, _sound, 5);
-	
-	// Set up the game's script interpreter
-	_interpreter = new Interpreter(this);
+
+	// TODO Since the ScriptMan is a singleton, setScene assignments could
+	// probably be rolled into the Scene constructor :D
+	ScriptMan.setScene(_scene);
+
+	// TODO This can probably also be rolled into the scene constructor.
+	// Investigate if this will fuck up the execution sequence though :P
+	ScriptMan.setScript(_scene->getActionList(_scene->getDefaultActionIndex()));
 
 	// Set up main menu
 	_mainMenu = new MainMenu(_screen, _sound, _scene);
@@ -131,7 +133,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 		checkForDelayedVideo();
 		checkForDelayedSceneChange();
 		_system->updateScreen();
-		_interpreter->processActionLists();
+		ScriptMan.processActionList();
 	}
 }
 
@@ -180,11 +182,12 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 }
 
 void AsylumEngine::checkForDelayedVideo() {
-	if (_delayedVideoNumber >= 0) {
+	int videoIdx = ScriptMan.getDelayedVideoIndex();
+	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopSfx();
-		_video->playVideo(_delayedVideoNumber, kSubtitlesOn);
-		_delayedVideoNumber = -1;
+		_video->playVideo(videoIdx, kSubtitlesOn);
+		ScriptMan.setDelayedVideoIndex(-1);
 
 		if (_mainMenu->isActive()) {
 			_mainMenu->openMenu();
@@ -196,18 +199,20 @@ void AsylumEngine::checkForDelayedVideo() {
 
 
 void AsylumEngine::checkForDelayedSceneChange() {
-	if (_delayedSceneNumber >= 0 && !_interpreter->isProcessing()) {
+	int sceneIdx = ScriptMan.getDelayedSceneIndex();
+	if (sceneIdx >=0 && !ScriptMan.isProcessing()) {
 		_sound->stopMusic();
 		_sound->stopSfx();
 		
 		if (_scene)
 			delete _scene;
-		_scene = new Scene(_screen, _sound, _delayedSceneNumber);
 
-		_interpreter->doSceneChanged();
+		_scene = new Scene(_screen, _sound, sceneIdx);
+
+		ScriptMan.setScene(_scene);
 
 		_scene->enterScene();
-		_delayedSceneNumber = -1;
+		ScriptMan.setDelayedSceneIndex(-1);
 	}
 }
 

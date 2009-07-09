@@ -34,7 +34,7 @@
 #include "asylum/screen.h"
 #include "asylum/sound.h"
 #include "asylum/video.h"
-#include "asylum/interpreter.h"
+#include "asylum/scriptman.h"
 
 namespace Asylum {
 
@@ -45,7 +45,6 @@ class Scene;
 class Screen;
 class Sound;
 class Video;
-class Interpreter;
 
 enum kDebugLevels {
 	kDebugLevelMain =	   1 << 0,
@@ -86,12 +85,8 @@ private:
 	Screen		*_screen;
 	Sound		*_sound;
 	Video		*_video;
-	Interpreter *_interpreter;
-	int		  _delayedVideoNumber;
-	int		  _delayedSceneNumber;
 
 	friend class Console;
-	friend class Interpreter;
 };
 
 } // namespace Asylum

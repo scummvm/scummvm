@@ -206,6 +206,7 @@ void Scene::update() {
 	WorldStats   *worldStats = _sceneResource->getWorldStats();
 
 	int32 curHotspot = -1;
+	int32 curBarrier = -1;
 
 	// Horizontal scrolling
 	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
@@ -233,19 +234,6 @@ void Scene::update() {
 		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)	//	TODO - enums for flags (0x20 is visible/playing?)
 			updateBarrier(_screen, _resPack, b);
 	}
-	/*
-	updateBarrier(_screen, _resPack, 0);	// the "statue with fireworks" animation
-	//updateBarrier(_screen, _resPack, 1);	// inside the middle room
-	//updateBarrier(_screen, _resPack, 2);	// the lit candles at the base of the statue
-	updateBarrier(_screen, _resPack, 3);	// the rat animation (in front of the statue)
-	updateBarrier(_screen, _resPack, 4);	// inside the bottom room
-	updateBarrier(_screen, _resPack, 6);	// inside the top room (should be shown before the rat animation)
-	updateBarrier(_screen, _resPack, 5);	// the rat animation (outside the second room)
-	updateBarrier(_screen, _resPack, 7);	// the "crazy prisoner banging head" animation
-	//updateBarrier(_screen, _resPack, 8);	// going up the ladder
-	//updateBarrier(_screen, _resPack, 9);	// going down the ladder
-	updateBarrier(_screen, _resPack, 59);	// Wobbly Guy
-	*/
 
 	// TESTING
 	// Main actor walking
@@ -295,10 +283,10 @@ void Scene::update() {
 
 	if (g_debugPolygons)
 		ShowPolygons();
-	if (g_debugBarriers)
+	//if (g_debugBarriers)
 		ShowBarriers();
 
-	// Update cursor if it's in a hotspot
+	// Update cursor if it's in a polygon hotspot
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
 		if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
@@ -307,6 +295,19 @@ void Scene::update() {
 				updateCursor();
 				break;
 			}
+		}
+	}
+
+	// Check if we're within a barrier
+	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
+		BarrierItem b = worldStats->barriers[p];
+		if (b.flags & 0x20) {
+			if ((b.boundingRect.left + b.x <= _mouseX + _startX) && (_mouseX + _startX < b.boundingRect.right + b.x) && (b.boundingRect.top + b.y <= _mouseY + _startY) && (_mouseY + _startY < b.boundingRect.bottom + b.y)) {
+				updateCursor();
+				curBarrier = (int32)p;
+				break;
+			}
+
 		}
 	}
 
@@ -324,10 +325,13 @@ void Scene::update() {
 							worldStats->actions[a].actionListIdx2,
 							worldStats->actions[a].actionType,
 							worldStats->actions[a].soundResId);
-					// Play the SFX associated with the hotspot
-					// TODO: The hotspot sound res id is 0, seems like we need to get it from the associated action list
-					//_sound->playSfx(_resPack, worldStats->_actors[a].soundResId);
 
+					// TODO
+					// This isn't always loading the right audio resources when it processes
+					// the action list ... investigate
+					ScriptMan.setScript(&_sceneResource->getActionList()->actions[worldStats->actions[a].actionListIdx1]);
+
+					/*
 					// TODO: This should all be moved to a script related class
 					ActionDefinitions actionDefs = _sceneResource->getActionList()->actions[worldStats->actions[a].actionListIdx1];
 					for (int command = 0; command < 161; command++) {
@@ -338,11 +342,13 @@ void Scene::update() {
 						}
 					}
 					break;
+					*/
 				}
 			}
+		} else if (curBarrier >= 0) {
+			ScriptMan.setScript(getActionList(worldStats->barriers[curBarrier].actionListIdx));
 		}
 	}
-
 }
 
 #if 0
