@@ -53,7 +53,8 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 }
 
 AsylumEngine::~AsylumEngine() {
-	//Common::clearAllDebugChannels();
+	Common::clearAllDebugChannels();
+
 	delete _console;
 	delete _scene;
 	delete _mainMenu;
@@ -72,16 +73,14 @@ Common::Error AsylumEngine::run() {
 
 // Will do the same as subroutine at address 0041A500
 Common::Error AsylumEngine::init() {
-	// initialize engine objects
-
 	initGraphics(640, 480, true);
 
-	_screen				= new Screen(_system);
-	_sound				= new Sound(_mixer);
-	_video				= new Video(_mixer);
-	_console			= new Console(this);
-	_mainMenu			= 0;
-	_scene				= 0;
+	_screen		= new Screen(_system);
+	_sound		= new Sound(_mixer);
+	_video		= new Video(_mixer);
+	_console	= new Console(this);
+	_mainMenu	= 0;
+	_scene		= 0;
 
 	return Common::kNoError;
 }
