@@ -988,7 +988,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
 			if (!res->source) {
-				warning("Could not get volume for resource %d, VolumeID %d\n", resId, offset >> bShift);
+				warning("Could not get volume for resource %d, VolumeID %d\n", id, offset >> bShift);
 			}
 			_resMap.setVal(resId, res);
 		}
