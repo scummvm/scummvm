@@ -199,7 +199,7 @@ void MaxTrax::killVoice(byte num) {
 	Paula::setChannelVolume(num, 0);
 }
 
-int MaxTrax::calcNote(VoiceContext &voice) {
+int MaxTrax::calcNote(VoiceContext &voice) { // 0x39e16 Winuae
 	ChannelContext &channel = *voice.channel;
 	voice.lastPeriod = 0;
 
@@ -239,12 +239,12 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 			voice.periodOffset += 1 << 16;
 			octave++;
 		}
+	} else
 		tone -= voice.periodOffset;
-	}
-	if (tone < PERIOD_LIMIT)
+	if (tone >= PERIOD_LIMIT)
 		// we need to scale with log(2)
 		voice.lastPeriod = (uint16)exp((float)tone * (float)(0.69314718055994530942 / 65536));
-
+	// 0x39EC8 jump -> 0x3a484 WinUAE
 	return octave;
 }
 
@@ -370,8 +370,8 @@ void MaxTrax::noteOff(ChannelContext &channel, const byte note) {
 void MaxTrax::freeScores() {
 	if (_scores) {
 		for (int i = 0; i < _numScores; ++i)
-			delete _scores[i].events;
-		delete _scores;
+			delete[] _scores[i].events;
+		delete[] _scores;
 		_scores = 0;
 	}
 	_numScores = 0;
