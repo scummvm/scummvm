@@ -767,7 +767,7 @@ int ResourceManager::detectMapVersion() {
 	// late SCI1.1 and SCI32 maps have last directory entry set to 0xFF
 	// offset set to filesize and 4 more bytes
 
-	// TODO/FIXME: This code was not updated in r43000, which changed the behavior of this
+	// TODO/FIXME: This code was not updated in r42300, which changed the behavior of this
 	// function a lot. To make it compile again "off" was changed to the newly introduced
 	// "lastDirectoryOffset". This is probably not the correct fix, since before r43000
 	// the loop above could not prematurely terminate and thus this would always check the
