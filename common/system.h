@@ -472,10 +472,8 @@ public:
 		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switchting aspect ratio correction mode */
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */
-#ifdef ENABLE_RGB_COLOR
-		kTransactionFormatNotSupported = (1 << 4), /**< Failed setting the color format (function not yet implemented) */
-#endif
-		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switchting the screen dimensions (initSize) */
+		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switchting the screen dimensions (initSize) */
+		kTransactionFormatNotSupported = (1 << 4)	/**< Failed setting the color format */
 	};
 
 	/**
