@@ -215,7 +215,7 @@ void ScriptManager::processActionList() {
 			case kPlaySpeech:
 				//	TODO - Add support for other param options
 				if (currentCommand.param1 >= 0) {
-					if (currentCommand.param3)	//	HACK - Find out why sometimes an offset is needed and other times not
+ 					if (currentCommand.param3 && currentCommand.param1 > 0)	//	HACK - Find out why sometimes an offset is needed and other times not
 						_scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1 - 9);
 					else
 						_scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1);

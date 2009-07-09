@@ -210,6 +210,7 @@ void AsylumEngine::processDelayedEvents() {
 
 		_scene->enterScene();
 		ScriptMan.setDelayedSceneIndex(-1);
+		ScriptMan.setScript(_scene->getActionList(_scene->getDefaultActionIndex()));
 	}
 }
 
