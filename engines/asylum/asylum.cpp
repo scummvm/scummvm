@@ -129,8 +129,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 	while (_system->getMillis() < start_time + msec_delay) {
 		checkForEvent(false);
-		checkForDelayedVideo();
-		checkForDelayedSceneChange();
+		processDelayedEvents();
 		_system->updateScreen();
 		ScriptMan.processActionList();
 	}
@@ -180,7 +179,8 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 	}
 }
 
-void AsylumEngine::checkForDelayedVideo() {
+void AsylumEngine::processDelayedEvents() {
+	// check for a delayed video
 	int videoIdx = ScriptMan.getDelayedVideoIndex();
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
@@ -194,10 +194,8 @@ void AsylumEngine::checkForDelayedVideo() {
 			_scene->enterScene();
 		}
 	}
-}
 
-
-void AsylumEngine::checkForDelayedSceneChange() {
+	// check for a delayed scene change
 	int sceneIdx = ScriptMan.getDelayedSceneIndex();
 	if (sceneIdx >=0 && !ScriptMan.isProcessing()) {
 		_sound->stopMusic();
