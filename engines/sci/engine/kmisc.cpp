@@ -96,8 +96,8 @@ reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	printf("Debug mode activated\n");
 
-	debugState.seeking = kDebugSeekNothing;
-	debugState.runningStep = 0;
+	scriptState.seeking = kDebugSeekNothing;
+	scriptState.runningStep = 0;
 	return s->r_acc;
 }
 

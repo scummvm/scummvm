@@ -536,10 +536,6 @@
 			>
 		</File>
 		<File
-			RelativePath="..\..\engines\gob\save\saveconverter.h"
-			>
-		</File>
-		<File
 			RelativePath="..\..\engines\gob\save\saveload.cpp"
 			>
 		</File>

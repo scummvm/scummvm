@@ -756,6 +756,13 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	retval = new EngineState(s->resmgr, s->_version, s->_flags);
 
+	// static VM/Kernel information:
+	assert(0 == retval->_kernel);
+	retval->_kernel = s->_kernel;	// needs to be initialized before _reset_graphics_input is called
+//	s->_kernel = 0;	// FIXME: We should set s->_kernel to 0 here,
+// else it could be freed when the old EngineState is freed. Luckily, this freeing currently
+// never happens, so we don't need to. 
+
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;
 	retval->sound_mute = s->sound_mute;
@@ -821,13 +828,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 // never happens, so we don't need to. 
 
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
-
-	// static VM/Kernel information:
-	assert(0 == retval->_kernel);
-	retval->_kernel = s->_kernel;
-//	s->_kernel = 0;	// FIXME: We should set s->_kernel to 0 here,
-// else it could be freed when the old EngineState is freed. Luckily, this freeing currently
-// never happens, so we don't need to. 
 
 	// Copy breakpoint information from current game instance
 	retval->have_bp = s->have_bp;

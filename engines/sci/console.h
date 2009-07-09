@@ -37,7 +37,7 @@ struct List;
 
 // Refer to the "addresses" command on how to pass address parameters
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
-int printObject(EngineState *s, reg_t pos);
+reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode);
 
 class Console : public GUI::Debugger {
 public:
@@ -45,6 +45,8 @@ public:
 	virtual ~Console();
 	void preEnter();
 	void postEnter();
+
+	int printObject(reg_t pos);
 
 private:
 	// General

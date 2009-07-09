@@ -149,6 +149,7 @@ void AGOSEngine::vc61() {
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
+		dst = dstPtr;
 
 		for (int i = 0; i < _screenHeight; i++) {
 			memcpy(dst, src, _screenWidth);
