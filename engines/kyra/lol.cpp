@@ -1901,7 +1901,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 	_activeSpell.spell = spellType;
 	_activeSpell.p = &_spellProperties[spellType];
 
-	_activeSpell.level = spellLevel < 0 ? -spellLevel : spellLevel;
+	_activeSpell.level = ABS(spellLevel);
 
 	if ((_spellProperties[spellType].flags & 0x100) && testWallFlag(calcNewBlockPosition(_currentBlock, _currentDirection), _currentDirection, 1)) {
 		_txt->printMessage(2, getLangString(0x4257));
