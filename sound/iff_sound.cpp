@@ -23,7 +23,7 @@
  *
  */
 
-#include "sound/iff.h"
+#include "sound/iff_sound.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "common/func.h"
