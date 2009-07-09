@@ -107,12 +107,12 @@ void ScriptManager::processActionList() {
 
 			case kShowCursor:
 				_scene->_screen->showCursor();
-				//	TODO - Enable click events
+				_allowInput = true;
 				break;
 
 			case kHideCursor:
 				_scene->_screen->hideCursor();
-				//	TODO - Disable click events
+				_allowInput = false;
 				break;
 
 			case kPlayAnimation: {
