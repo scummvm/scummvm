@@ -1324,7 +1324,9 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				_stream->skip(part.size);
 			}
 
-		} else if (part.type == kPartTypeVideo) {
+		} else if ((part.type == kPartTypeVideo) && !_hasVideo) {
+			warning("Header claims there's no video, but video frame part found");
+		} else if ((part.type == kPartTypeVideo) && _hasVideo) {
 			state.flags &= ~kStateNoVideoData;
 
 			uint32 size = part.size;
