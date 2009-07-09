@@ -46,20 +46,23 @@ ScriptManager::ScriptManager() {
 void ScriptManager::setScript(ActionDefinitions *action) {
 	_currentScript = action;
 
-	for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
-		printf("Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)\n",
-			i,
-			_currentScript->commands[0].numLines - 1,
-			_currentScript->commands[i].opcode,
-			_currentScript->commands[i].param1,
-			_currentScript->commands[i].param2,
-			_currentScript->commands[i].param3,
-			_currentScript->commands[i].param4,
-			_currentScript->commands[i].param5,
-			_currentScript->commands[i].param6,
-			_currentScript->commands[i].param7,
-			_currentScript->commands[i].param8,
-			_currentScript->commands[i].param9);
+	if (_currentScript) {
+		for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
+			debugC(kDebugLevelScripts,
+				"Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)\n",
+				i,
+				_currentScript->commands[0].numLines - 1,
+				_currentScript->commands[i].opcode,
+				_currentScript->commands[i].param1,
+				_currentScript->commands[i].param2,
+				_currentScript->commands[i].param3,
+				_currentScript->commands[i].param4,
+				_currentScript->commands[i].param5,
+				_currentScript->commands[i].param6,
+				_currentScript->commands[i].param7,
+				_currentScript->commands[i].param8,
+				_currentScript->commands[i].param9);
+		}
 	}
 }
 

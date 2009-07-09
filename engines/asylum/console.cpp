@@ -64,7 +64,7 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 		DebugPrintf("Usage %s <script number>\n", argv[0]);
 		return true;
 	}
-	
+
 	ScriptMan.setScriptIndex(atoi(argv[1]));
 
 	return false;
@@ -76,7 +76,13 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 		return true;
 	}
 	
+	if (atoi(argv[1]) - 4 < 1 || atoi(argv[1]) - 4 >= 15) {
+		DebugPrintf("Attempt to SetupStartingInfo(%d); Invalid world\n", atoi(argv[1]));
+		return true;
+	}
+
 	ScriptMan.setDelayedSceneIndex(atoi(argv[1]));
+	ScriptMan.setScript(0);
 
 	return false;
 }
