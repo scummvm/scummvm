@@ -80,7 +80,9 @@ void Scene::enterScene() {
 	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
 
 	_background = _bgResource->getFrame(0);
-	_screen->copyToBackBuffer(((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w, 0, 0, 640, 480);
+	_screen->copyToBackBuffer(
+			((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w,
+			0, 0, 640, 480);
 
 	_cursorStep		= 1;
 	_curMouseCursor	= 0;
@@ -295,18 +297,6 @@ void Scene::update() {
 	if (g_debugBarriers)
 		ShowBarriers();
 
-	// Update cursor if it's in a polygon hotspot
-	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
-		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
-		if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
-			if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
-				curHotspot = (int32)p;
-				updateCursor();
-				break;
-			}
-		}
-	}
-
 	// Check if we're within a barrier
 	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
 		BarrierItem b = worldStats->barriers[p];
@@ -315,6 +305,25 @@ void Scene::update() {
 				updateCursor();
 				curBarrier = (int32)p;
 				break;
+			}
+		}
+	}
+
+	// FIXME? I'm assigning a higher priority to barriers than polygons. I'm assuming
+	// that barriers that overlap polygons will have actions associated with them, and
+	// the polygon will be part of a walk/look region (so it's accessible elsewhere).
+	// This could be completely wrong, and if so, we just have to check to see which
+	// of the barrier/polygon action scripts should be processed first
+	if (curBarrier < 0) {
+		// Update cursor if it's in a polygon hotspot
+		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
+			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
+			if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
+				if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
+					curHotspot = (int32)p;
+					updateCursor();
+					break;
+				}
 			}
 		}
 	}
@@ -402,7 +411,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		// Translate anim rectangle
 		animRect.translate(-_startX, -_startY);
 
-		int startX = animRect.right == 640 ? 0 : surface->w - animRect.width();
+		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
 
 		if (surface->w > 640)
@@ -410,14 +419,15 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		if (surface->h > 480)
 			startY = _startY;
 		
-		_screen->copyToBackBufferWithTransparency(((byte*)surface->pixels) +
-												  startY * surface->pitch + 
-												  startX * surface->bytesPerPixel,
-												  surface->pitch,
-												  animRect.left,
-												  animRect.top,
-												  animRect.width(),
-												  animRect.height());
+		_screen->copyToBackBufferWithTransparency(
+				((byte*)surface->pixels) +
+				startY * surface->pitch +
+				startX * surface->bytesPerPixel,
+				surface->pitch,
+				animRect.left,
+				animRect.top,
+				animRect.width(),
+				animRect.height());
 	}
 }
 
@@ -450,8 +460,8 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 
 bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
 	// Copied from backends/vkeybd/polygon.cpp
-	int yflag0;
-	int yflag1;
+	int  yflag0;
+	int  yflag1;
 	bool inside_flag = false;
 	unsigned int pt;
 
@@ -468,12 +478,13 @@ bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
 			}
 		}
 		yflag0 = yflag1;
-		vtx0 = vtx1;
+		vtx0   = vtx1;
 	}
 
 	return inside_flag;
 }
 
+// WALK REGION DEBUG
 void Scene::ShowWalkRegion(PolyDefinitions *poly) {
 	Graphics::Surface surface;
 	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1, poly->boundingRect.bottom - poly->boundingRect.top + 1, 1);

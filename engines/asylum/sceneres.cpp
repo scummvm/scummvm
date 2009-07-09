@@ -122,7 +122,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 	_worldStats->commonRes.unused			  = stream->readUint32LE();
 	_worldStats->commonRes.smallCurUp		  = stream->readUint32LE();
 	_worldStats->commonRes.smallCurDown		  = stream->readUint32LE();
-	_worldStats->commonRes.field_7C			  = stream->readUint32LE();
+	_worldStats->commonRes.encounterFrameBg	  = stream->readUint32LE();
 
 	_worldStats->width				= stream->readUint32LE();
 	_worldStats->height				= stream->readUint32LE();
@@ -306,13 +306,13 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 			actor.reaction[i] = stream->readUint32LE();
 		}
 
-		actor.field_638 = stream->readUint32LE();
-		actor.field_63C = stream->readUint32LE();
-		actor.field_640 = stream->readUint32LE();
-		actor.field_644 = stream->readUint32LE();
-		actor.field_648 = stream->readUint32LE();
-		actor.field_64C = stream->readUint32LE();
-		actor.field_650 = stream->readUint32LE();
+		actor.field_638 	= stream->readUint32LE();
+		actor.walkingSound1 = stream->readUint32LE();
+		actor.walkingSound2 = stream->readUint32LE();
+		actor.walkingSound3 = stream->readUint32LE();
+		actor.walkingSound4 = stream->readUint32LE();
+		actor.field_64C 	= stream->readUint32LE();
+		actor.field_650 	= stream->readUint32LE();
 
 		for (i = 0; i < 55; i++) {
 			actor.grResTable[i] = stream->readUint32LE();

@@ -34,12 +34,16 @@ static bool g_initialized = false;
 
 ScriptManager::ScriptManager() {
 	if (!g_initialized) {
-		g_initialized		= true;
-		_currentLine 		= 0;
-		_currentLoops 		= 0;
-		_processing 		= false;
-		_delayedSceneIndex 	= -1;
-		_delayedVideoIndex 	= -1;
+		g_initialized		  = true;
+		_currentLine 		  = 0;
+		_currentLoops 		  = 0;
+		_processing 		  = false;
+		_delayedSceneIndex 	  = -1;
+		_delayedVideoIndex 	  = -1;
+		_allowInput			  = true;
+		_currentTarget		  = kTargetNothing;
+		_currentTargetBarrier = 0;
+		_currentTargetAction  = 0;
 	}
 }
 
@@ -63,13 +67,31 @@ void ScriptManager::setScript(ActionDefinitions *action) {
 				_currentScript->commands[i].param8,
 				_currentScript->commands[i].param9);
 		}
+	} else {
+		_currentTarget = kTargetNothing;
 	}
 }
+
+void ScriptManager::setScriptTarget(BarrierItem *barrier) {
+	_currentTarget = kTargetBarrier;
+	_currentTargetBarrier = barrier;
+	setScriptIndex(_currentTargetBarrier->actionListIdx);
+}
+void ScriptManager::setScriptTarget(ActionItem *action) {
+	_currentTarget = kTargetAction;
+	_currentTargetAction = action;
+	setScriptIndex(_currentTargetAction->actionListIdx1);
+}
+
 
 void ScriptManager::setScriptIndex(uint32 index) {
 	_currentScript 	= 0;
 	_currentLine 	= 0;
 	setScript(_scene->getActionList(index));
+}
+
+void ScriptManager::setGameFlag(int flag) {
+	_gameFlags[flag] &= ~(1 << flag);
 }
 
 void ScriptManager::processActionList() {
@@ -83,7 +105,7 @@ void ScriptManager::processActionList() {
 			lineIncrement = 1;	//	Reset line increment value
 
 			if (_currentLoops > 1000) {
-				//	TODO - processActionLists has run too many interations
+				//	TODO - processActionLists has run too many iterations
 			}
 
 			ActionCommand currentCommand = _currentScript->commands[_currentLine];
@@ -103,6 +125,16 @@ void ScriptManager::processActionList() {
 				// param1 = flag
 				// param2 = false command
 				// param3 = true command
+				break;
+
+			case kSetGameFlag:
+				setGameFlag(currentCommand.param1);
+				break;
+
+			case kClearGameFlag: {
+				int flagNum = currentCommand.param1;
+				_gameFlags[flagNum] &= ~(1 << flagNum);
+			}
 				break;
 
 			case kShowCursor:
