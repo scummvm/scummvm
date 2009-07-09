@@ -766,6 +766,12 @@ int ResourceManager::detectMapVersion() {
 #ifdef ENABLE_SCI32
 	// late SCI1.1 and SCI32 maps have last directory entry set to 0xFF
 	// offset set to filesize and 4 more bytes
+
+	// TODO/FIXME: This code was not updated in r43000, which changed the behavior of this
+	// function a lot. To make it compile again "off" was changed to the newly introduced
+	// "lastDirectoryOffset". This is probably not the correct fix, since before r43000
+	// the loop above could not prematurely terminate and thus this would always check the
+	// last directory entry instead of the last checked directory entry.
 	file.seek(lastDirectoryOffset - 7, SEEK_SET);
 	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
 		return SCI_VERSION_32; // TODO : check if there is a difference between these maps
