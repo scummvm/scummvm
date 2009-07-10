@@ -1022,35 +1022,6 @@ public:
 	 */
 	virtual Common::WriteStream *createConfigWriteStream() = 0;
 
-#ifdef ENABLE_RGB_COLOR
-private:
-	/**
-	 * Convert a rectangle from the screen format to the hardware format.
-	 * Expected usage is for this to be called in copyRectToScreen when 
-	 * conversion is necessary.
-	 *
-	 * @param dstbuf	the buffer which will recieve the converted graphics data
-	 * @param srcbuf	the buffer containing the original graphics data
-	 * @param dstpitch	width in bytes of one full line of the dest buffer
-	 * @param srcpitch	width in bytes of one full line of the source buffer
-	 * @param w			the width of the graphics data
-	 * @param h			the height of the graphics data
-	 * @param hwFmt		the pixel format currently set in hardware
-	 * @return			true if conversion completes successfully, 
-	 *					false if there is an error.
-	 *
-	 * @note This implementation is slow. Please override this if
-	 *		 your backend hardware has a better way to deal with this.
-	 * @note This implementation requires the screen pixel format and 
-	 *		 the hardware pixel format to have a matching bytedepth.
-	 * @note This is meant for RGB modes only, do not attempt
-	 *		 to use it when running in 256 color mode.
-	 */
-	virtual bool convertScreenRect(byte *dstbuf, const byte *srcbuf, int dstpitch, int srcpitch, 
-									int w, int h, Graphics::PixelFormat hwFmt) {
-		return Graphics::crossBlit(dstbuf,srcbuf,dstpitch,srcpitch,w,h,hwFmt,getScreenFormat());
-	};
-#endif // ENABLE_RGB_COLOR
 	//@}
 };
 
