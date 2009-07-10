@@ -61,6 +61,7 @@ MaxTrax::~MaxTrax() {
 void MaxTrax::interrupt() {
 	// a5 - maxtraxm a4 . globaldata
 
+	// TODO
 	// test for changes in shared struct and make changes
 	// specifically all used channels get marked altered
 
@@ -88,6 +89,7 @@ void MaxTrax::interrupt() {
 			ChannelContext &channel = _channelCtx[data & 0x0F];
 
 			outPutEvent(*curEvent);
+			debug("CurTime, EventTime, NextEvent: %d, %d, %d", millis, eventTime, eventTime + curEvent[1].startTime );
 
 			if (cmd < 0x80) {
 				_playerCtx.addedNote = false;
@@ -158,11 +160,140 @@ void MaxTrax::interrupt() {
 			}
 			setTempo(_playerCtx.tempoStart + newTempo);
 		}
-
-		// envelopes
-
 	}
 
+	// envelopes
+	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+		VoiceContext &voice = _voiceCtx[i]; // a2
+		if (!voice.channel)
+			continue;
+		ChannelContext &channel = *voice.channel; // a3
+		Patch &patch = *voice.patch; // a5, used with start and later
+		voice.lastTicks += _playerCtx.tickUnit;
+		bool envHandling = true;
+		byte newVolume = 0xFF; // if set to 0 this means skip recalc
+		switch (voice.status) {
+		case VoiceContext::kStatusSustain:
+			// and no modulation 
+			if ((channel.flags & ChannelContext::kFlagAltered) == 0 && (voice.flags & VoiceContext::kFlagPortamento) == 0)
+				continue;
+			// goto .l18
+			envHandling = false;
+			break;
+
+		case VoiceContext::kStatusHalt:
+			killVoice((byte)i);
+			continue;
+
+		case VoiceContext::kStatusStart:
+			voice.envelope = patch.attackPtr;
+			if (patch.attackLen) {
+				const uint16 duration = voice.envelope->duration;
+				voice.envelopeLeft = patch.attackLen;
+				voice.ticksLeft = duration << 8;
+				voice.status = VoiceContext::kStatusAttack;
+				voice.lastTicks = _playerCtx.tickUnit;
+				const int32 vol = voice.envelope->volume;
+				voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
+				// skip to I9
+			} else {
+				voice.status = VoiceContext::kStatusSustain;
+				voice.baseVolume = patch.volume;
+				voice.lastTicks = _playerCtx.tickUnit;
+				// goto .l18
+				envHandling = false;
+			}
+			break;
+
+		case VoiceContext::kStatusRelease:
+			voice.envelope = patch.attackPtr + patch.attackLen;
+			if (patch.releaseLen) {
+				const uint16 duration = voice.envelope->duration;
+				voice.envelopeLeft = patch.releaseLen;
+				voice.ticksLeft = duration << 8;
+				voice.status = VoiceContext::kStatusDecay;
+				voice.lastTicks = _playerCtx.tickUnit;
+				const int32 vol = voice.envelope->volume - voice.baseVolume;
+				voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
+				// skip to I9
+			} else {
+				voice.status = VoiceContext::kStatusHalt;
+				// set d4 = 0, goto I17
+				envHandling = false;
+				newVolume = 0;
+			}
+			break;
+		}
+		// .I9 - env managment
+		if (envHandling) {
+			assert(voice.status != VoiceContext::kStatusSustain);
+			if (voice.ticksLeft > _playerCtx.tickUnit) {
+				voice.baseVolume = (uint16)MIN(MAX(0, voice.baseVolume + voice.incrVolume), 0x8000);
+				voice.ticksLeft -= _playerCtx.tickUnit;
+				// goto .l18
+			} else {
+				// a0 = voice.envelope
+				voice.baseVolume = voice.envelope->volume;
+				if (--voice.envelopeLeft) {
+					++voice.envelope;
+					const uint16 duration = voice.envelope->duration;
+					voice.ticksLeft = duration << 8;
+					const int32 vol = voice.envelope->volume - voice.baseVolume;
+					voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
+					// goto .l18
+				} else if (voice.status == VoiceContext::kStatusDecay) {
+					voice.status = VoiceContext::kStatusHalt;
+					// set d4 = 0, goto I17
+					newVolume = 0;
+				} else {
+					assert(voice.status == VoiceContext::kStatusAttack);
+					voice.status = VoiceContext::kStatusSustain;
+					voice.lastTicks = _playerCtx.tickUnit;
+					// goto .l18
+				}
+			}
+		}
+
+		// .l18 - recalc 
+		if (newVolume) {
+			// calc volume
+			uint16 vol = (voice.noteVolume < (1 << 7)) ? (voice.noteVolume * _playerCtx.volume) >> 7 : _playerCtx.volume;
+			if (voice.baseVolume < (1 << 15))
+				vol = (vol * (voice.baseVolume >> 8)) >> 7;
+			if (voice.channel->volume < (1 << 7))
+				vol = (vol * voice.channel->volume) >> 7;
+
+			newVolume = (byte)MAX(vol, (uint16)0x64);
+			voice.lastVolume = newVolume;
+
+			if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
+				voice.portaTicks += _playerCtx.tickUnit;
+				if ((uint16)(voice.portaTicks >> 8) >= channel.portamento) {
+					voice.flags &= ~VoiceContext::kFlagPortamento;
+					voice.baseNote = voice.endNote;
+				}
+				voice.flags |= VoiceContext::kFlagRecalc;
+				calcNote(voice);
+			} else {
+				// modulation
+				if ((channel.flags & ChannelContext::kFlagAltered) != 0) {
+					voice.flags |= VoiceContext::kFlagRecalc;
+					calcNote(voice);
+				}
+			}
+		}
+
+		// .l17 - send audio package
+		Paula::setChannelPeriod(i, (voice.lastPeriod) ? voice.lastPeriod : 1000);
+		Paula::setChannelVolume(i, (voice.lastPeriod) ? newVolume : 0);
+	}
+	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i) {
+		ChannelContext &channel = _channelCtx[i];
+		channel.flags &= ~ChannelContext::kFlagAltered;
+	}
+
+
+	//modulation stuff,  sinevalue += tickunit
 }
 
 void MaxTrax::stopMusic() {
@@ -175,8 +306,9 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 	_playerCtx.musicPlaying = false;
 	_playerCtx.musicLoop = false;
 
-	setTempo(_playerCtx.tempoInitial);
+	setTempo(_playerCtx.tempoInitial << 4);
 	_playerCtx.nextEvent = _scores[songIndex].events;
+	_playerCtx.nextEventTime = _playerCtx.nextEvent->startTime;
 	_playerCtx.scoreIndex = songIndex;
 
 	_playerCtx.musicPlaying = true;
@@ -199,7 +331,7 @@ void MaxTrax::killVoice(byte num) {
 	Paula::setChannelVolume(num, 0);
 }
 
-int MaxTrax::calcNote(VoiceContext &voice) { // 0x39e16 Winuae
+int MaxTrax::calcNote(VoiceContext &voice) {
 	ChannelContext &channel = *voice.channel;
 	voice.lastPeriod = 0;
 
@@ -226,25 +358,23 @@ int MaxTrax::calcNote(VoiceContext &voice) { // 0x39e16 Winuae
 	tone -= 45 << 8; // MIDI note 45
 
 	tone = (((tone * 4) / 3) << 4);
+	// 0x9fd77 ~ log2(1017)
+	// 0x8fd77 ~ log2(508.5)
+	// 0x6f73d ~ log2(125)
+
 	enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
 
 	tone = K_VALUE - tone;
 	int octave = 0;
 
 	if ((voice.flags & VoiceContext::kFlagRecalc) == 0) {
-		voice.periodOffset = 0;
-		const int maxOctave = patch.sampleOctaves - 1;
-		while (tone > PREF_PERIOD && octave < maxOctave) {
-			tone -= 1 << 16;
-			voice.periodOffset += 1 << 16;
-			octave++;
-		}
-	} else
-		tone -= voice.periodOffset;
+		octave = (tone > PREF_PERIOD) ? MIN((int)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int)patch.sampleOctaves - 1) : 0;
+		voice.periodOffset = octave << 16;
+	}
+	tone -= voice.periodOffset;
 	if (tone >= PERIOD_LIMIT)
 		// we need to scale with log(2)
-		voice.lastPeriod = (uint16)exp((float)tone * (float)(0.69314718055994530942 / 65536));
-	// 0x39EC8 jump -> 0x3a484 WinUAE
+		voice.lastPeriod = (uint16)expf((float)tone * (float)(0.69314718055994530942 / (1 << 16)));
 	return octave;
 }
 
@@ -282,6 +412,8 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		// pickvoice based on channel.isRightChannel
 		// return if no channel found
 		voiceNum = (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 0 : 1;
+		static int c = 0;
+		voiceNum = (++c) % 4;
 	}
 	assert(voiceNum >= 0 && voiceNum < ARRAYSIZE(_voiceCtx));
 
@@ -316,21 +448,21 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
 	if (patch.sampleAttackLen) {
 		Paula::setChannelSampleStart(voiceNum, samplePtr);
-		Paula::setChannelSampleLen(voiceNum, patch.sampleAttackLen << useOctave);
+		Paula::setChannelSampleLen(voiceNum, (patch.sampleAttackLen << useOctave) / 2);
 		Paula::setChannelPeriod(voiceNum, period);
-		Paula::setChannelVolume(voiceNum, 0x64);
+		Paula::setChannelVolume(voiceNum, 0);
 
 		Paula::enableChannel(voiceNum);
 		// wait  for dma-clear
 	}
 
 	if (patch.sampleTotalLen > patch.sampleAttackLen) {
-		Paula::setChannelSampleStart(voiceNum, samplePtr + patch.sampleAttackLen);
-		Paula::setChannelSampleLen(voiceNum, (patch.sampleTotalLen - patch.sampleAttackLen) << useOctave);
+		Paula::setChannelSampleStart(voiceNum, samplePtr + (patch.sampleAttackLen << useOctave));
+		Paula::setChannelSampleLen(voiceNum, ((patch.sampleTotalLen - patch.sampleAttackLen) << useOctave) / 2);
 		if (!patch.sampleAttackLen) {
 			// need to enable channel
 			Paula::setChannelPeriod(voiceNum, period);
-			Paula::setChannelVolume(voiceNum, 0x64);
+			Paula::setChannelVolume(voiceNum, 0);
 
 			Paula::enableChannel(voiceNum);
 		}
@@ -400,16 +532,22 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		warning("Maxtrax: File is not a Maxtrax Module");
 		return false;
 	}
-	_playerCtx.tempoInitial = musicData.readUint16BE();
+	const uint16 songTempo = musicData.readUint16BE();
 	const uint16 flags = musicData.readUint16BE();
-	_playerCtx.filterOn = (flags & 1) != 0;
-	_playerCtx.handleVolume = (flags & 2) != 0;
-	debug("Header: MXTX %02X %02X", _playerCtx.tempo, flags);
+	if (loadScores) {
+		_playerCtx.tempoInitial = songTempo;
+		_playerCtx.filterOn = (flags & 1) != 0;
+		_playerCtx.handleVolume = (flags & 2) != 0;
+		debug("Header: MXTX %02X %02X", _playerCtx.tempo, flags);
+	}
 
-	if (loadScores && flags & (1 << 15)) {
+	if (flags & (1 << 15)) {
 		debug("Song has microtonal");
-		for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
-			_microtonal[i] = musicData.readUint16BE();
+		if (loadScores) {
+			for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
+				_microtonal[i] = musicData.readUint16BE();
+		} else
+			musicData.skip(128 * 2);
 	}
 
 	int scoresLoaded = 0;

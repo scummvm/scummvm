@@ -71,8 +71,6 @@ public:
 		Event	*nextEvent;
 		int32	nextEventTime;
 
-
-
 		bool	addedNote;
 		byte	lastVoice;
 		byte	voicesActive;
@@ -155,9 +153,9 @@ public:
 		Envelope *envelope;
 		uint32	uinqueId;
 		uint32	lastTicks;
-		uint32	tocksLeft;
+		uint32	ticksLeft;
 		int32	portaTicks;
-		uint32	incrVolume;
+		int32	incrVolume;
 		uint32	periodOffset;
 		/*ifne FASTSOUND
 			APTR	voice_CurFastIOB			; current fast iob playing
@@ -212,7 +210,6 @@ public:
 
 	void setTempo(const uint16 tempo) {
 		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
-		// (tempo >> 4) * ((12 * 16) << 8) / (12 * 5 * _playerCtx.vBlankFreq);
 	}
 
 	static void outPutEvent(const Event &ev, int num = -1) {
