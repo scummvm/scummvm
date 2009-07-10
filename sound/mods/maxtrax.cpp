@@ -48,6 +48,9 @@ MaxTrax::MaxTrax(int rate, bool stereo)
 
 	uint32 colorClock = kPalSystemClock / 2;
 
+	for (int i = 0; i < kNumChannels; ++i)
+		resetChannel(_channelCtx[i], (i & 1) != 0);
+
 	// init extraChannel
 	// extraChannel. chan_Number = 16, chan_Flags = chan_VoicesActive = 0
 }
@@ -263,7 +266,7 @@ void MaxTrax::interrupt() {
 			if (voice.channel->volume < (1 << 7))
 				vol = (vol * voice.channel->volume) >> 7;
 
-			newVolume = (byte)MAX(vol, (uint16)0x64);
+			newVolume = (byte)MIN(vol, (uint16)0x64);
 			voice.lastVolume = newVolume;
 
 			if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
@@ -497,6 +500,23 @@ void MaxTrax::noteOff(ChannelContext &channel, const byte note) {
 				voice.status = VoiceContext::kStatusRelease;
 		}
 	}
+}
+
+void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
+	chan.modulation = 0;
+	chan.modulationTime = 1000;
+	chan.microtonal = -1;
+	chan.portamento = 500;
+	chan.pitchBend = 64 << 7;
+	chan.pitchReal = 0;
+	chan.pitchBendRange = 24;
+	chan.volume = 128;
+	chan.flags &= ~ChannelContext::kFlagPortamento & ~ChannelContext::kFlagMicrotonal;
+	chan.flags |= ChannelContext::kFlagAltered;
+	if (rightChannel)
+		chan.flags |= ChannelContext::kFlagRightChannel;
+	else
+		chan.flags &= ~ChannelContext::kFlagRightChannel;
 }
 
 void MaxTrax::freeScores() {

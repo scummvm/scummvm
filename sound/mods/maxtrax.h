@@ -202,6 +202,7 @@ public:
 	void stopMusic();
 	void freePatches();
 	void freeScores();
+	void resetChannel(ChannelContext &chan, bool rightChannel);
 
 	int calcNote(VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
