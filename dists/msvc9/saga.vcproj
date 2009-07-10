@@ -9,405 +9,72 @@
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="saga_Debug"
-			IntermediateDirectory="saga_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;ENABLE_IHNM;ENABLE_SAGA2;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/saga.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="saga_Release"
-			IntermediateDirectory="saga_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;ENABLE_IHNM;ENABLE_SAGA2;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/saga.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\saga\actor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\actor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\actor_path.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\actor_walk.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\animation.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\animation.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\console.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\console.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\detection_tables.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\displayinfo.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\events.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\events.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\font.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\font.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\font_map.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\gfx.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\gfx.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\image.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\input.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\interface.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\interface.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\introproc_ihnm.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\introproc_ite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\introproc_saga2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\isomap.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\isomap.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\itedata.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\itedata.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\music.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\music.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\objectmap.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\objectmap.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\palanim.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\palanim.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\puzzle.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\puzzle.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\render.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\render.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\resource.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\resource_hrs.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\resource_res.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\resource_rsc.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\saga.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\saga.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\scene.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\scene.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sfuncs.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sfuncs_ihnm.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sndres.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sndres.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sprite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sprite.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\saga\sthread.cpp"
-			>
-		</File>
+		<File RelativePath="..\..\engines\saga\actor.cpp" />
+		<File RelativePath="..\..\engines\saga\actor.h" />
+		<File RelativePath="..\..\engines\saga\actor_path.cpp" />
+		<File RelativePath="..\..\engines\saga\actor_walk.cpp" />
+		<File RelativePath="..\..\engines\saga\animation.cpp" />
+		<File RelativePath="..\..\engines\saga\animation.h" />
+		<File RelativePath="..\..\engines\saga\console.cpp" />
+		<File RelativePath="..\..\engines\saga\console.h" />
+		<File RelativePath="..\..\engines\saga\detection.cpp" />
+		<File RelativePath="..\..\engines\saga\detection_tables.h" />
+		<File RelativePath="..\..\engines\saga\displayinfo.h" />
+		<File RelativePath="..\..\engines\saga\events.cpp" />
+		<File RelativePath="..\..\engines\saga\events.h" />
+		<File RelativePath="..\..\engines\saga\font.cpp" />
+		<File RelativePath="..\..\engines\saga\font.h" />
+		<File RelativePath="..\..\engines\saga\font_map.cpp" />
+		<File RelativePath="..\..\engines\saga\gfx.cpp" />
+		<File RelativePath="..\..\engines\saga\gfx.h" />
+		<File RelativePath="..\..\engines\saga\image.cpp" />
+		<File RelativePath="..\..\engines\saga\input.cpp" />
+		<File RelativePath="..\..\engines\saga\interface.cpp" />
+		<File RelativePath="..\..\engines\saga\interface.h" />
+		<File RelativePath="..\..\engines\saga\introproc_ihnm.cpp" />
+		<File RelativePath="..\..\engines\saga\introproc_ite.cpp" />
+		<File RelativePath="..\..\engines\saga\introproc_saga2.cpp" />
+		<File RelativePath="..\..\engines\saga\isomap.cpp" />
+		<File RelativePath="..\..\engines\saga\isomap.h" />
+		<File RelativePath="..\..\engines\saga\itedata.cpp" />
+		<File RelativePath="..\..\engines\saga\itedata.h" />
+		<File RelativePath="..\..\engines\saga\music.cpp" />
+		<File RelativePath="..\..\engines\saga\music.h" />
+		<File RelativePath="..\..\engines\saga\objectmap.cpp" />
+		<File RelativePath="..\..\engines\saga\objectmap.h" />
+		<File RelativePath="..\..\engines\saga\palanim.cpp" />
+		<File RelativePath="..\..\engines\saga\palanim.h" />
+		<File RelativePath="..\..\engines\saga\puzzle.cpp" />
+		<File RelativePath="..\..\engines\saga\puzzle.h" />
+		<File RelativePath="..\..\engines\saga\render.cpp" />
+		<File RelativePath="..\..\engines\saga\render.h" />
+		<File RelativePath="..\..\engines\saga\resource.cpp" />
+		<File RelativePath="..\..\engines\saga\resource.h" />
+		<File RelativePath="..\..\engines\saga\resource_hrs.cpp" />
+		<File RelativePath="..\..\engines\saga\resource_res.cpp" />
+		<File RelativePath="..\..\engines\saga\resource_rsc.cpp" />
+		<File RelativePath="..\..\engines\saga\saga.cpp" />
+		<File RelativePath="..\..\engines\saga\saga.h" />
+		<File RelativePath="..\..\engines\saga\saveload.cpp" />
+		<File RelativePath="..\..\engines\saga\scene.cpp" />
+		<File RelativePath="..\..\engines\saga\scene.h" />
+		<File RelativePath="..\..\engines\saga\script.cpp" />
+		<File RelativePath="..\..\engines\saga\script.h" />
+		<File RelativePath="..\..\engines\saga\sfuncs.cpp" />
+		<File RelativePath="..\..\engines\saga\sfuncs_ihnm.cpp" />
+		<File RelativePath="..\..\engines\saga\sndres.cpp" />
+		<File RelativePath="..\..\engines\saga\sndres.h" />
+		<File RelativePath="..\..\engines\saga\sound.cpp" />
+		<File RelativePath="..\..\engines\saga\sound.h" />
+		<File RelativePath="..\..\engines\saga\sprite.cpp" />
+		<File RelativePath="..\..\engines\saga\sprite.h" />
+		<File RelativePath="..\..\engines\saga\sthread.cpp" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

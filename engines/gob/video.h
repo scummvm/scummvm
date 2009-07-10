@@ -38,6 +38,36 @@ namespace Graphics {
 
 namespace Gob {
 
+class Font {
+public:
+	uint8  getCharWidth (uint8 c) const;
+	uint8  getCharWidth ()        const;
+	uint8  getCharHeight()        const;
+	uint16 getCharCount ()        const;
+	uint8  getFirstChar ()        const;
+	uint8  getLastChar  ()        const;
+	uint8  getCharSize  ()        const;
+
+	bool isMonospaced() const;
+
+	const byte *getCharData(uint8 c) const;
+
+	Font(const byte *data);
+	~Font();
+
+private:
+	const byte *_dataPtr;
+	const byte  *_data;
+	const uint8 *_charWidths;
+
+	int8   _itemWidth;
+	int8   _itemHeight;
+	uint8  _startItem;
+	uint8  _endItem;
+	int8   _itemSize;
+	int8   _bitWidth;
+};
+
 // Some Surfaces are simultaneous in Draw::spritesArray and discrete
 // variables, so if in doubt you should use a SurfaceDescPtr shared
 // pointer object to refer to any SurfaceDesc.
@@ -70,23 +100,6 @@ typedef Common::SharedPtr<SurfaceDesc> SurfaceDescPtr;
 
 class Video {
 public:
-	struct FontDesc {
-		byte *dataPtr;
-		int8 itemWidth;
-		int8 itemHeight;
-		uint8 startItem;
-		uint8 endItem;
-		int8 itemSize;
-		int8 bitWidth;
-		uint8 *charWidths;
-		FontDesc() : dataPtr(0), itemWidth(0), itemHeight(0), startItem(0),
-		             endItem(0), itemSize(0), bitWidth(0) {}
-		~FontDesc() {
-			if (dataPtr)
-				delete[] (dataPtr - 4);
-		}
-	};
-
 #define GDR_VERSION	4
 
 #define PRIMARY_SURFACE		0x80
@@ -154,7 +167,7 @@ public:
 			int16 x, int16 y, int16 transp);
 	void drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 	    int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp);
-	void drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
+	void drawLetter(int16 item, int16 x, int16 y, const Font &font,
 			int16 color1, int16 color2, int16 transp, SurfaceDesc &dest);
 	void drawPackedSprite(byte *sprBuf, int16 width, int16 height,
 			int16 x, int16 y, int16 transp, SurfaceDesc &dest);
@@ -266,7 +279,7 @@ public:
 	virtual void drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest, int16 left, int16 top, int16 right, int16 bottom, int16 x, int16 y, int16 transp) = 0;
 	virtual void fillRect(SurfaceDesc &dest, int16 left, int16 top, int16 right, int16 bottom, byte color) = 0;
 	virtual void putPixel(int16 x, int16 y, byte color, SurfaceDesc &dest) = 0;
-	virtual void drawLetter(unsigned char item, int16 x, int16 y, Video::FontDesc *fontDesc, byte color1, byte color2, byte transp, SurfaceDesc &dest) = 0;
+	virtual void drawLetter(unsigned char item, int16 x, int16 y, const Font &font, byte color1, byte color2, byte transp, SurfaceDesc &dest) = 0;
 	virtual void drawLine(SurfaceDesc &dest, int16 x0, int16 y0, int16 x1, int16 y1, byte color) = 0;
 	virtual void drawPackedSprite(byte *sprBuf, int16 width, int16 height, int16 x, int16 y, byte transp, SurfaceDesc &dest) = 0;
 };

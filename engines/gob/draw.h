@@ -45,6 +45,8 @@ namespace Gob {
 
 class Draw {
 public:
+	static const int kFontCount = 8;
+
 	struct FontToSprite {
 		int8 sprite;
 		int8 base;
@@ -76,7 +78,7 @@ public:
 	int16 _backDeltaY;
 
 	FontToSprite _fontToSprite[4];
-	Video::FontDesc *_fonts[8];
+	Font *_fonts[kFontCount];
 
 	Common::Array<SurfaceDescPtr> _spritesArray;
 
@@ -152,7 +154,7 @@ public:
 	}
 	int stringLength(const char *str, int16 fontIndex);
 	void drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-			int16 transp, SurfaceDesc &dest, Video::FontDesc *font);
+			int16 transp, SurfaceDesc &dest, const Font &font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
 	int32 getSpriteRectSize(int16 index);
@@ -160,6 +162,9 @@ public:
 
 	static const int16 _wobbleTable[360];
 	void wobble(SurfaceDesc &surfDesc);
+
+	Font *loadFont(const char *path) const;
+	bool loadFont(int fontIndex, const char *path);
 
 	virtual void initScreen() = 0;
 	virtual void closeScreen() = 0;

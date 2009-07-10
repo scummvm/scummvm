@@ -8,329 +8,53 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="queen_Debug"
-			IntermediateDirectory="queen_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/queen.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="queen_Release"
-			IntermediateDirectory="queen_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/queen.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\queen\bankman.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\bankman.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\command.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\command.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\credits.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\credits.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\cutaway.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\cutaway.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\debug.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\debug.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\defs.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\display.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\display.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\graphics.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\grid.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\grid.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\input.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\input.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\journal.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\journal.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\logic.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\logic.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\midiadlib.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\music.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\music.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\musicdata.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\queen.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\queen.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\resource.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\restables.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\state.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\state.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\structs.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\talk.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\talk.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\walk.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\queen\walk.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\queen\bankman.cpp" />
+		<File RelativePath="..\..\engines\queen\bankman.h" />
+		<File RelativePath="..\..\engines\queen\command.cpp" />
+		<File RelativePath="..\..\engines\queen\command.h" />
+		<File	RelativePath="..\..\engines\queen\credits.cpp" />
+		<File	RelativePath="..\..\engines\queen\credits.h" />
+		<File	RelativePath="..\..\engines\queen\cutaway.cpp" />
+		<File	RelativePath="..\..\engines\queen\cutaway.h" />
+		<File	RelativePath="..\..\engines\queen\debug.cpp" />
+		<File	RelativePath="..\..\engines\queen\debug.h" />
+		<File	RelativePath="..\..\engines\queen\defs.h" />
+		<File	RelativePath="..\..\engines\queen\display.cpp" />
+		<File	RelativePath="..\..\engines\queen\display.h" />
+		<File	RelativePath="..\..\engines\queen\graphics.cpp" />
+		<File	RelativePath="..\..\engines\queen\graphics.h" />
+		<File	RelativePath="..\..\engines\queen\grid.cpp" />
+		<File	RelativePath="..\..\engines\queen\grid.h" />
+		<File	RelativePath="..\..\engines\queen\input.cpp" />
+		<File	RelativePath="..\..\engines\queen\input.h" />
+		<File RelativePath="..\..\engines\queen\journal.cpp" />
+		<File RelativePath="..\..\engines\queen\journal.h" />
+		<File RelativePath="..\..\engines\queen\logic.cpp" />
+		<File RelativePath="..\..\engines\queen\logic.h" />
+		<File RelativePath="..\..\engines\queen\midiadlib.cpp" />
+		<File RelativePath="..\..\engines\queen\music.cpp" />
+		<File RelativePath="..\..\engines\queen\music.h" />
+		<File RelativePath="..\..\engines\queen\musicdata.cpp" />
+		<File RelativePath="..\..\engines\queen\queen.cpp" />
+		<File RelativePath="..\..\engines\queen\queen.h" />
+		<File RelativePath="..\..\engines\queen\resource.cpp" />
+		<File RelativePath="..\..\engines\queen\resource.h" />
+		<File RelativePath="..\..\engines\queen\restables.cpp" />
+		<File RelativePath="..\..\engines\queen\sound.cpp" />
+		<File RelativePath="..\..\engines\queen\sound.h" />
+		<File RelativePath="..\..\engines\queen\state.cpp" />
+		<File RelativePath="..\..\engines\queen\state.h" />
+		<File RelativePath="..\..\engines\queen\structs.h" />
+		<File RelativePath="..\..\engines\queen\talk.cpp" />
+		<File RelativePath="..\..\engines\queen\talk.h" />
+		<File RelativePath="..\..\engines\queen\walk.cpp" />
+		<File RelativePath="..\..\engines\queen\walk.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

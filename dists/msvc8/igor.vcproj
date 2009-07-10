@@ -8,321 +8,52 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="igor_Debug"
-			IntermediateDirectory="igor_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/igor.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="igor_Release"
-			IntermediateDirectory="igor_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/igor.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<Filter
-			Name="parts"
-			>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_04.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_05.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_06.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_12.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_13.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_14.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_15.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_16.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_17.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_18.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_19.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_21.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_22.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_23.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_24.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_25.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_26.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_27.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_28.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_30.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_31.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_33.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_36.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_37.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_75.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_85.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_90.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_95.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\igor\parts\part_main.cpp"
-				>
-			</File>
+		<Filter Name="parts">
+			<File RelativePath="..\..\engines\igor\parts\part_04.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_05.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_06.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_12.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_13.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_14.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_15.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_16.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_17.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_18.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_19.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_21.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_22.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_23.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_24.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_25.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_26.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_27.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_28.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_30.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_31.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_33.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_36.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_37.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_75.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_85.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_90.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_95.cpp" />
+			<File RelativePath="..\..\engines\igor\parts\part_main.cpp" />
 		</Filter>
-		<File
-			RelativePath="..\..\engines\igor\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\igor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\igor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\midi.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\midi.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\resource_ids.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\igor\staticres.cpp"
-			>
-		</File>
+		<File RelativePath="..\..\engines\igor\detection.cpp" />
+		<File RelativePath="..\..\engines\igor\igor.cpp" />
+		<File RelativePath="..\..\engines\igor\igor.h" />
+		<File RelativePath="..\..\engines\igor\menu.cpp" />
+		<File RelativePath="..\..\engines\igor\midi.cpp" />
+		<File RelativePath="..\..\engines\igor\midi.h" />
+		<File RelativePath="..\..\engines\igor\resource_ids.h" />
+		<File RelativePath="..\..\engines\igor\saveload.cpp" />
+		<File RelativePath="..\..\engines\igor\staticres.cpp" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

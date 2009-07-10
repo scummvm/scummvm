@@ -1712,12 +1712,9 @@ bool Inter_v1::o1_loadFont(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 	index = _vm->_game->_script->readInt16();
 
-	delete _vm->_draw->_fonts[index];
-
 	_vm->_draw->animateCursor(4);
 
-	_vm->_draw->_fonts[index] =
-		_vm->_util->loadFont(_vm->_game->_script->getResultStr());
+	_vm->_draw->loadFont(index, _vm->_game->_script->getResultStr());
 
 	return false;
 }

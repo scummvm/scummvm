@@ -8,377 +8,65 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="agi_Debug"
-			IntermediateDirectory="agi_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agi.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="agi_Release"
-			IntermediateDirectory="agi_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/agi.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\agi\agi.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\agi.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\checks.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\console.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\console.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\cycle.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\font.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\global.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\graphics.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\id.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\inv.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\keyboard.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\keyboard.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\loader_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\loader_v3.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\logic.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\logic.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\lzw.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\lzw.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\menu.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\motion.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\objects.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\op_cmd.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\op_dbg.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\op_test.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\opcodes.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\picture.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\picture.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_common.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_common.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_mickey.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_mickey.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_troll.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_troll.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_winnie.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\preagi_winnie.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\predictive.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sprite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\sprite.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\text.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\view.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\view.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\wagparser.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\wagparser.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\agi\words.cpp"
-			>
-		</File>
+		<File RelativePath="..\..\engines\agi\agi.cpp" />
+		<File RelativePath="..\..\engines\agi\agi.h" />
+		<File RelativePath="..\..\engines\agi\checks.cpp" />
+		<File RelativePath="..\..\engines\agi\console.cpp" />
+		<File RelativePath="..\..\engines\agi\console.h" />
+		<File RelativePath="..\..\engines\agi\cycle.cpp" />
+		<File RelativePath="..\..\engines\agi\detection.cpp" />
+		<File RelativePath="..\..\engines\agi\font.h" />
+		<File RelativePath="..\..\engines\agi\global.cpp" />
+		<File RelativePath="..\..\engines\agi\graphics.cpp" />
+		<File RelativePath="..\..\engines\agi\graphics.h" />
+		<File RelativePath="..\..\engines\agi\id.cpp" />
+		<File RelativePath="..\..\engines\agi\inv.cpp" />
+		<File RelativePath="..\..\engines\agi\keyboard.cpp" />
+		<File RelativePath="..\..\engines\agi\keyboard.h" />
+		<File RelativePath="..\..\engines\agi\loader_v2.cpp" />
+		<File RelativePath="..\..\engines\agi\loader_v3.cpp" />
+		<File RelativePath="..\..\engines\agi\logic.cpp" />
+		<File RelativePath="..\..\engines\agi\logic.h" />
+		<File RelativePath="..\..\engines\agi\lzw.cpp" />
+		<File RelativePath="..\..\engines\agi\lzw.h" />
+		<File RelativePath="..\..\engines\agi\menu.cpp" />
+		<File RelativePath="..\..\engines\agi\menu.h" />
+		<File RelativePath="..\..\engines\agi\motion.cpp" />
+		<File RelativePath="..\..\engines\agi\objects.cpp" />
+		<File RelativePath="..\..\engines\agi\op_cmd.cpp" />
+		<File RelativePath="..\..\engines\agi\op_dbg.cpp" />
+		<File RelativePath="..\..\engines\agi\op_test.cpp" />
+		<File RelativePath="..\..\engines\agi\opcodes.h" />
+		<File RelativePath="..\..\engines\agi\picture.cpp" />
+		<File RelativePath="..\..\engines\agi\picture.h" />
+		<File RelativePath="..\..\engines\agi\preagi.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi.h" />
+		<File RelativePath="..\..\engines\agi\preagi_common.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_common.h" />
+		<File RelativePath="..\..\engines\agi\preagi_mickey.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_mickey.h" />
+		<File RelativePath="..\..\engines\agi\preagi_troll.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_troll.h" />
+		<File RelativePath="..\..\engines\agi\preagi_winnie.cpp" />
+		<File RelativePath="..\..\engines\agi\preagi_winnie.h" />
+		<File RelativePath="..\..\engines\agi\predictive.cpp" />
+		<File RelativePath="..\..\engines\agi\saveload.cpp" />
+		<File RelativePath="..\..\engines\agi\sound.cpp" />
+		<File RelativePath="..\..\engines\agi\sound.h" />
+		<File RelativePath="..\..\engines\agi\sprite.cpp" />
+		<File RelativePath="..\..\engines\agi\sprite.h" />
+		<File RelativePath="..\..\engines\agi\text.cpp" />
+		<File RelativePath="..\..\engines\agi\view.cpp" />
+		<File RelativePath="..\..\engines\agi\view.h" />
+		<File RelativePath="..\..\engines\agi\wagparser.cpp" />
+		<File RelativePath="..\..\engines\agi\wagparser.h" />
+		<File RelativePath="..\..\engines\agi\words.cpp" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

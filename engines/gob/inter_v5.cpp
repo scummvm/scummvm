@@ -266,9 +266,9 @@ void Inter_v5::o5_spaceShooter(OpGobParams &params) {
 void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
 	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
-	Video::FontDesc *font;
-	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 89, 112, 144, 0, *_vm->_draw->_backSurface, font);
+	Font *font;
+	if ((font = _vm->_draw->loadFont("SPEED.LET"))) {
+		_vm->_draw->drawString("100 %", 402, 89, 112, 144, 0, *_vm->_draw->_backSurface, *font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -278,9 +278,9 @@ void Inter_v5::o5_getSystemCDSpeed(OpGobParams &params) {
 void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
 	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
-	Video::FontDesc *font;
-	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 168, 112, 144, 0, *_vm->_draw->_backSurface, font);
+	Font *font;
+	if ((font = _vm->_draw->loadFont("SPEED.LET"))) {
+		_vm->_draw->drawString("100 %", 402, 168, 112, 144, 0, *_vm->_draw->_backSurface, *font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -290,9 +290,9 @@ void Inter_v5::o5_getSystemRAM(OpGobParams &params) {
 void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
 	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
-	Video::FontDesc *font;
-	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 248, 112, 144, 0, *_vm->_draw->_backSurface, font);
+	Font *font;
+	if ((font = _vm->_draw->loadFont("SPEED.LET"))) {
+		_vm->_draw->drawString("100 %", 402, 248, 112, 144, 0, *_vm->_draw->_backSurface, *font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -302,9 +302,9 @@ void Inter_v5::o5_getSystemCPUSpeed(OpGobParams &params) {
 void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
 	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
-	Video::FontDesc *font;
-	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 326, 112, 144, 0, *_vm->_draw->_backSurface, font);
+	Font *font;
+	if ((font = _vm->_draw->loadFont("SPEED.LET"))) {
+		_vm->_draw->drawString("100 %", 402, 326, 112, 144, 0, *_vm->_draw->_backSurface, *font);
 		_vm->_draw->forceBlit();
 
 		delete font;
@@ -314,9 +314,9 @@ void Inter_v5::o5_getSystemDrawSpeed(OpGobParams &params) {
 void Inter_v5::o5_totalSystemSpecs(OpGobParams &params) {
 	WRITE_VAR_UINT32(_vm->_game->_script->readInt16(), 100); // Fudging 100%
 
-	Video::FontDesc *font;
-	if ((font = _vm->_util->loadFont("SPEED.LET"))) {
-		_vm->_draw->drawString("100 %", 402, 405, 112, 144, 0, *_vm->_draw->_backSurface, font);
+	Font *font;
+	if ((font = _vm->_draw->loadFont("SPEED.LET"))) {
+		_vm->_draw->drawString("100 %", 402, 405, 112, 144, 0, *_vm->_draw->_backSurface, *font);
 		_vm->_draw->forceBlit();
 
 		delete font;

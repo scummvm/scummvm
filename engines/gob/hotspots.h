@@ -32,6 +32,7 @@
 
 namespace Gob {
 
+class Font;
 class Script;
 
 class Hotspots {
@@ -253,7 +254,7 @@ private:
 	uint16 convertSpecialKey(uint16 key) const;
 
 	/** Calculate the graphical cursor position. */
-	void getTextCursorPos(const Video::FontDesc &font, const char *str,
+	void getTextCursorPos(const Font &font, const char *str,
 			uint32 pos, uint16 x, uint16 y, uint16 width, uint16 height,
 			uint16 &cursorX, uint16 &cursorY, uint16 &cursorWidth, uint16 &cursorHeight) const;
 

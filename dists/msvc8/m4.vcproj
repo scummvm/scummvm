@@ -8,397 +8,70 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="m4_Debug"
-			IntermediateDirectory="m4_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/m4.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="m4_Release"
-			IntermediateDirectory="m4_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/m4.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\m4\actor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\actor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\animation.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\animation.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\assets.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\assets.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\burger_data.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\compression.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\compression.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\console.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\console.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\converse.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\converse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\events.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\events.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\font.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\font.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\globals.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\globals.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\graphics.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\graphics.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\gui.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\gui.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\hotspot.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\hotspot.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\m4.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\m4.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\m4_menus.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\m4_menus.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\m4_views.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\m4_views.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\mads_anim.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\mads_anim.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\mads_menus.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\mads_menus.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\midi.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\midi.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\rails.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\rails.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\resource.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\saveload.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\scene.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\scene.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\sprite.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\sprite.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\viewmgr.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\viewmgr.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\woodscript.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\woodscript.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\ws_machine.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\m4\ws_sequence.cpp"
-			>
-		</File>
+		<File RelativePath="..\..\engines\m4\actor.cpp" />
+		<File RelativePath="..\..\engines\m4\actor.h" />
+		<File RelativePath="..\..\engines\m4\animation.cpp" />
+		<File RelativePath="..\..\engines\m4\animation.h" />
+		<File RelativePath="..\..\engines\m4\assets.cpp" />
+		<File RelativePath="..\..\engines\m4\assets.h" />
+		<File RelativePath="..\..\engines\m4\burger_data.h" />
+		<File RelativePath="..\..\engines\m4\compression.cpp" />
+		<File RelativePath="..\..\engines\m4\compression.h" />
+		<File RelativePath="..\..\engines\m4\console.cpp" />
+		<File RelativePath="..\..\engines\m4\console.h" />
+		<File RelativePath="..\..\engines\m4\converse.cpp" />
+		<File RelativePath="..\..\engines\m4\converse.h" />
+		<File RelativePath="..\..\engines\m4\detection.cpp" />
+		<File RelativePath="..\..\engines\m4\events.cpp" />
+		<File RelativePath="..\..\engines\m4\events.h" />
+		<File RelativePath="..\..\engines\m4\font.cpp" />
+		<File RelativePath="..\..\engines\m4\font.h" />
+		<File RelativePath="..\..\engines\m4\globals.cpp" />
+		<File RelativePath="..\..\engines\m4\globals.h" />
+		<File RelativePath="..\..\engines\m4\graphics.cpp" />
+		<File RelativePath="..\..\engines\m4\graphics.h" />
+		<File RelativePath="..\..\engines\m4\gui.cpp" />
+		<File RelativePath="..\..\engines\m4\gui.h" />
+		<File RelativePath="..\..\engines\m4\hotspot.cpp" />
+		<File RelativePath="..\..\engines\m4\hotspot.h" />
+		<File RelativePath="..\..\engines\m4\m4.cpp" />
+		<File RelativePath="..\..\engines\m4\m4.h" />
+		<File RelativePath="..\..\engines\m4\m4_menus.cpp" />
+		<File RelativePath="..\..\engines\m4\m4_menus.h" />
+		<File RelativePath="..\..\engines\m4\m4_views.cpp" />
+		<File RelativePath="..\..\engines\m4\m4_views.h" />
+		<File RelativePath="..\..\engines\m4\mads_anim.cpp" />
+		<File RelativePath="..\..\engines\m4\mads_anim.h" />
+		<File RelativePath="..\..\engines\m4\mads_menus.cpp" />
+		<File RelativePath="..\..\engines\m4\mads_menus.h" />
+		<File RelativePath="..\..\engines\m4\midi.cpp" />
+		<File RelativePath="..\..\engines\m4\midi.h" />
+		<File RelativePath="..\..\engines\m4\rails.cpp" />
+		<File RelativePath="..\..\engines\m4\rails.h" />
+		<File RelativePath="..\..\engines\m4\resource.cpp" />
+		<File RelativePath="..\..\engines\m4\resource.h" />
+		<File RelativePath="..\..\engines\m4\saveload.cpp" />
+		<File RelativePath="..\..\engines\m4\saveload.h" />
+		<File RelativePath="..\..\engines\m4\scene.cpp" />
+		<File RelativePath="..\..\engines\m4\scene.h" />
+		<File RelativePath="..\..\engines\m4\script.cpp" />
+		<File RelativePath="..\..\engines\m4\script.h" />
+		<File RelativePath="..\..\engines\m4\sound.cpp" />
+		<File RelativePath="..\..\engines\m4\sound.h" />
+		<File RelativePath="..\..\engines\m4\sprite.cpp" />
+		<File RelativePath="..\..\engines\m4\sprite.h" />
+		<File RelativePath="..\..\engines\m4\viewmgr.cpp" />
+		<File RelativePath="..\..\engines\m4\viewmgr.h" />
+		<File RelativePath="..\..\engines\m4\woodscript.cpp" />
+		<File RelativePath="..\..\engines\m4\woodscript.h" />
+		<File RelativePath="..\..\engines\m4\ws_machine.cpp" />
+		<File RelativePath="..\..\engines\m4\ws_sequence.cpp" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

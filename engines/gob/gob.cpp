@@ -456,7 +456,7 @@ bool GobEngine::initGameParts() {
 		_init = new Init_v2(this);
 		_video = new Video_v2(this);
 //		_inter = new Inter_Playtoons(this);
-		_inter = new Inter_v4(this);
+		_inter = new Inter_v6(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
 		_map = new Map_v2(this);

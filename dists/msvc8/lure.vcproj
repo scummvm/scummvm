@@ -8,341 +8,56 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="lure_Debug"
-			IntermediateDirectory="lure_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/lure.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="lure_Release"
-			IntermediateDirectory="lure_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/lure.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\lure\animseq.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\animseq.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\debugger.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\debugger.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\decode.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\decode.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\disk.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\disk.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\events.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\events.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\fights.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\fights.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\game.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\game.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\hotspots.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\hotspots.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\intro.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\intro.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\lure.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\lure.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\luredefs.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\memory.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\memory.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\menu.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\palette.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\palette.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\res.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\res.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\res_struct.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\res_struct.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\room.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\room.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\screen.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\screen.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\scripts.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\scripts.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\strings.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\strings.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\surface.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\lure\surface.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\lure\animseq.cpp" />
+		<File RelativePath="..\..\engines\lure\animseq.h" />
+		<File RelativePath="..\..\engines\lure\debugger.cpp" />
+		<File RelativePath="..\..\engines\lure\debugger.h" />
+		<File RelativePath="..\..\engines\lure\decode.cpp" />
+		<File RelativePath="..\..\engines\lure\decode.h" />
+		<File RelativePath="..\..\engines\lure\detection.cpp" />
+		<File RelativePath="..\..\engines\lure\disk.cpp" />
+		<File RelativePath="..\..\engines\lure\disk.h" />
+		<File RelativePath="..\..\engines\lure\events.cpp" />
+		<File RelativePath="..\..\engines\lure\events.h" />
+		<File RelativePath="..\..\engines\lure\fights.cpp" />
+		<File RelativePath="..\..\engines\lure\fights.h" />
+		<File RelativePath="..\..\engines\lure\game.cpp" />
+		<File RelativePath="..\..\engines\lure\game.h" />
+		<File RelativePath="..\..\engines\lure\hotspots.cpp" />
+		<File RelativePath="..\..\engines\lure\hotspots.h" />
+		<File RelativePath="..\..\engines\lure\intro.cpp" />
+		<File RelativePath="..\..\engines\lure\intro.h" />
+		<File RelativePath="..\..\engines\lure\lure.cpp" />
+		<File RelativePath="..\..\engines\lure\lure.h" />
+		<File RelativePath="..\..\engines\lure\luredefs.h" />
+		<File RelativePath="..\..\engines\lure\memory.cpp" />
+		<File RelativePath="..\..\engines\lure\memory.h" />
+		<File RelativePath="..\..\engines\lure\menu.cpp" />
+		<File RelativePath="..\..\engines\lure\menu.h" />
+		<File RelativePath="..\..\engines\lure\palette.cpp" />
+		<File RelativePath="..\..\engines\lure\palette.h" />
+		<File RelativePath="..\..\engines\lure\res.cpp" />
+		<File RelativePath="..\..\engines\lure\res.h" />
+		<File RelativePath="..\..\engines\lure\res_struct.cpp" />
+		<File RelativePath="..\..\engines\lure\res_struct.h" />
+		<File RelativePath="..\..\engines\lure\room.cpp" />
+		<File RelativePath="..\..\engines\lure\room.h" />
+		<File RelativePath="..\..\engines\lure\screen.cpp" />
+		<File RelativePath="..\..\engines\lure\screen.h" />
+		<File RelativePath="..\..\engines\lure\scripts.cpp" />
+		<File RelativePath="..\..\engines\lure\scripts.h" />
+		<File RelativePath="..\..\engines\lure\sound.cpp" />
+		<File RelativePath="..\..\engines\lure\sound.h" />
+		<File RelativePath="..\..\engines\lure\strings.cpp" />
+		<File RelativePath="..\..\engines\lure\strings.h" />
+		<File RelativePath="..\..\engines\lure\surface.cpp" />
+		<File RelativePath="..\..\engines\lure\surface.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>
