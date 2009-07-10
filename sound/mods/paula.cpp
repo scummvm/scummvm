@@ -56,7 +56,6 @@ void Paula::clearVoice(byte voice) {
 	_voice[voice].length = 0;
 	_voice[voice].lengthRepeat = 0;
 	_voice[voice].period = 0;
-	_voice[voice].periodRepeat = 0;
 	_voice[voice].volume = 0;
 	_voice[voice].offset = 0;
 	_voice[voice].dmaCount = 0;
@@ -147,12 +146,6 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 				_voice[voice].data = data = _voice[voice].dataRepeat;
 				_voice[voice].length = _voice[voice].lengthRepeat;
 				sLen = intToFrac(_voice[voice].length);
-				// TODO: the value in offset shouldnt be dropped but scaled to new rate
-
-				if (_voice[voice].period != _voice[voice].periodRepeat) {
-					_voice[voice].period = _voice[voice].periodRepeat;
-					rate = doubleToFrac(_periodScale / _voice[voice].period);
-				}
 
 				// If the "rate" exceeds the sample rate, we would have to perform constant
 				// wrap arounds. So, apply the first step of the euclidean algorithm to

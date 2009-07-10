@@ -80,7 +80,6 @@ protected:
 		uint32 length;
 		uint32 lengthRepeat;
 		int16 period;
-		int16 periodRepeat;
 		byte volume;
 		frac_t offset;
 		byte panning; // For stereo mixing: 0 = far left, 255 = far right
@@ -119,12 +118,12 @@ protected:
 		ch.length = ch.lengthRepeat;
 		// actually first 2 bytes are dropped?
 		ch.offset = intToFrac(0);
-		ch.period = ch.periodRepeat;
+		// ch.period = ch.periodRepeat;
 	}
 
 	void setChannelPeriod(byte channel, int16 period) {
 		assert(channel < NUM_VOICES);
-		_voice[channel].periodRepeat = period;
+		_voice[channel].period = period;
 	}
 
 	void setChannelVolume(byte channel, byte volume) {
