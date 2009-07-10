@@ -44,6 +44,8 @@ ScriptManager::ScriptManager() {
 		_currentTarget		  = kTargetNothing;
 		_currentTargetBarrier = 0;
 		_currentTargetAction  = 0;
+
+		memset(_gameFlags, 0, 1512);
 	}
 }
 
