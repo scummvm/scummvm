@@ -64,6 +64,9 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 
 	g_debugPolygons = 0;
 	g_debugBarriers = 0;
+
+	// TODO Not sure why this is done ... yet
+	ScriptMan.setGameFlag(183);
 }
 
 Scene::~Scene() {
