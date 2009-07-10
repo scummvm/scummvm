@@ -601,6 +601,8 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	}
 
 	if (!cel_data->data) {
+		if (!cel_data->palette)
+			cel_data->palette = view->palette->getref();
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		gfx_get_res_config(_options, cel_data);
 		gfx_xlate_pixmap(cel_data, _driver->getMode(), _options->view_xlate_filter);
