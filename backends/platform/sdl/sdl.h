@@ -86,39 +86,7 @@ public:
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
 	// Highest supported
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const {
-	//TODO determine hardware color component order
-		Common::List<Graphics::PixelFormat> list;
-		SDL_PixelFormat *HWFormat = SDL_GetVideoInfo()->vfmt;
-#ifdef ENABLE_32BIT
-		if (HWFormat->BitsPerPixel >= 32)
-		{
-			list.push_back(Graphics::PixelFormat::createFormatRGBA8888());
-			list.push_back(Graphics::PixelFormat(4, 0, 0, 0, 0, 16, 8, 0, 24));
-			list.push_back(Graphics::PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24));
-			list.push_back(Graphics::PixelFormat(4, 0, 0, 0, 0, 8, 16, 24, 0));
-		}
-		if (HWFormat->BitsPerPixel >= 24)
-		{
-			list.push_back(Graphics::PixelFormat(3, 0, 0, 0, 8, 16, 8, 0, 0));
-			list.push_back(Graphics::PixelFormat(3, 0, 0, 0, 8, 0, 8, 16, 0));
-		}
-#endif  //ENABLE_32BIT
-		if (HWFormat->BitsPerPixel >= 16) {
-			list.push_back(Graphics::PixelFormat(2, 3, 2, 3, 8, 11, 5, 0, 0));
-			list.push_back(Graphics::PixelFormat(2, 3, 3, 3, 7, 10, 5, 0, 15));
-			list.push_back(Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0));
-			list.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0));
-			list.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12));
-			list.push_back(Graphics::PixelFormat(2, 3, 2, 3, 8, 0, 5, 11, 0));
-			list.push_back(Graphics::PixelFormat(2, 3, 3, 3, 7, 0, 5, 10, 15));
-			list.push_back(Graphics::PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0));
-			list.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12));
-			list.push_back(Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0));
-		}
-		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
-		return list;
-	}
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
 #endif
 
 	// Set the size and format of the video bitmap.

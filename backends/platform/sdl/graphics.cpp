@@ -26,6 +26,9 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/mutex.h"
 #include "common/util.h"
+#ifdef ENABLE_RGB_COLOR
+#include "common/list.h"
+#endif
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
@@ -205,6 +208,73 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 	_transactionMode = kTransactionNone;
 	return (TransactionError)errors;
 }
+
+#ifdef ENABLE_RGB_COLOR
+const Graphics::PixelFormat RGBList[] = {
+#ifdef ENABLE_32BIT
+	// RGBA8888, ARGB8888, RGB888
+	Graphics::PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0),
+	Graphics::PixelFormat(4, 0, 0, 0, 0, 16, 8, 0, 24),
+	Graphics::PixelFormat(3, 0, 0, 0, 8, 16, 8, 0, 0),
+#endif
+	// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
+	Graphics::PixelFormat(2, 3, 2, 3, 8, 11, 5, 0, 0),
+	Graphics::PixelFormat(2, 3, 3, 3, 7, 10, 5, 0, 15),
+	Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
+};
+const Graphics::PixelFormat BGRList[] = {
+#ifdef ENABLE_32BIT
+	// ABGR8888, BGRA8888, BGR888
+	Graphics::PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24),
+	Graphics::PixelFormat(4, 0, 0, 0, 0, 8, 16, 24, 0),
+	Graphics::PixelFormat(3, 0, 0, 0, 8, 0, 8, 16, 0),
+#endif
+	// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
+	Graphics::PixelFormat(2, 3, 2, 3, 8, 0, 5, 11, 0),
+	Graphics::PixelFormat(2, 3, 3, 3, 7, 0, 5, 10, 15),
+	Graphics::PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
+	Graphics::PixelFormat(2, 3, 3, 3, 8, 4, 8, 12, 0)
+};
+
+// TODO: prioritize matching alpha masks
+Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
+	static Common::List<Graphics::PixelFormat> list;
+	if (!list.empty())
+		return list;
+	bool BGR = false;
+	int listLength = ARRAYSIZE(RGBList);
+
+	// Get our currently set format
+	Graphics::PixelFormat format(_hwscreen->format->BytesPerPixel, 
+				_hwscreen->format->Rloss, _hwscreen->format->Gloss, 
+				_hwscreen->format->Bloss, _hwscreen->format->Aloss, 
+				_hwscreen->format->Rshift, _hwscreen->format->Gshift, 
+				_hwscreen->format->Bshift, _hwscreen->format->Ashift);
+
+	// Push it first, as the prefered format.
+	list.push_back(format);
+	if (format.bShift > format.rShift)
+		BGR = true;
+	for (int i = 0; i < listLength; i++) {
+		if (RGBList[i].bytesPerPixel > format.bytesPerPixel)
+			continue;
+		if (BGR) {
+			if (BGRList[i] != format)
+				list.push_back(BGRList[i]);
+			list.push_back(RGBList[i]);
+		} else {
+			if (RGBList[i] != format)
+				list.push_back(RGBList[i]);
+			list.push_back(BGRList[i]);
+		}
+	}
+	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+	return list;
+}
+#endif
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);

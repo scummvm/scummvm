@@ -381,7 +381,7 @@ public:
 	 *
 	 * @see convertScreenRect
 	 */
-	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() const = 0;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
 #else
 	inline Graphics::PixelFormat getScreenFormat() const {
 		return Graphics::PixelFormat::createFormatCLUT8();
