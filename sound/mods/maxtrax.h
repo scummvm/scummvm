@@ -68,7 +68,7 @@ public:
 		bool	musicLoop;
 
 		int		scoreIndex;
-		Event	*nextEvent;
+		const Event	*nextEvent;
 		int32	nextEventTime;
 
 		bool	addedNote;
@@ -82,8 +82,8 @@ public:
 		uint16	volume;
 	};
 
-	struct Patch {
-		Envelope *attackPtr;
+	const struct Patch {
+		const Envelope *attackPtr;
 		//Envelope *releasePtr;
 		uint16	attackLen;
 		uint16	releaseLen;
@@ -92,7 +92,7 @@ public:
 		uint16	volume;
 
 		// this was the SampleData struct in the assembler source
-		int8	*samplePtr;
+		const int8	*samplePtr;
 		uint32	sampleTotalLen;
 		uint32	sampleAttackLen;
 		uint16	sampleOctaves;
@@ -106,14 +106,14 @@ public:
 	};
 
 	struct Score {
-		Event	*events;
+		const Event	*events;
 		uint32	numEvents;
 	} *_scores;
 
 	int _numScores;
 
 	struct ChannelContext {
-		Patch	*patch;
+		const Patch	*patch;
 		uint16	regParamNumber;
 
 		uint16	modulation;
@@ -149,8 +149,8 @@ public:
 
 	struct VoiceContext {
 		ChannelContext *channel;
-		Patch	*patch;
-		Envelope *envelope;
+		const Patch	*patch;
+		const Envelope *envelope;
 		uint32	uinqueId;
 		uint32	lastTicks;
 		uint32	ticksLeft;

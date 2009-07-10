@@ -83,7 +83,7 @@ void MaxTrax::interrupt() {
 	}
 
 	if (_playerCtx.musicPlaying) {
-		Event *curEvent = _playerCtx.nextEvent;
+		const Event *curEvent = _playerCtx.nextEvent;
 		int32 eventTime = _playerCtx.nextEventTime;
 		for (; eventTime <= millis; eventTime += (++curEvent)->startTime) {
 			const byte cmd = curEvent->command;
@@ -170,8 +170,8 @@ void MaxTrax::interrupt() {
 		VoiceContext &voice = _voiceCtx[i]; // a2
 		if (!voice.channel)
 			continue;
-		ChannelContext &channel = *voice.channel; // a3
-		Patch &patch = *voice.patch; // a5, used with start and later
+		const ChannelContext &channel = *voice.channel; // a3
+		const Patch &patch = *voice.patch; // a5, used with start and later
 		voice.lastTicks += _playerCtx.tickUnit;
 		bool envHandling = true;
 		byte newVolume = 0xFF; // if set to 0 this means skip recalc
@@ -230,6 +230,8 @@ void MaxTrax::interrupt() {
 		// .I9 - env managment
 		if (envHandling) {
 			assert(voice.status != VoiceContext::kStatusSustain);
+			assert(voice.envelope);
+			assert(voice.envelopeLeft >= 0);
 			if (voice.ticksLeft > _playerCtx.tickUnit) {
 				voice.baseVolume = (uint16)MIN(MAX(0, voice.baseVolume + voice.incrVolume), 0x8000);
 				voice.ticksLeft -= _playerCtx.tickUnit;
@@ -237,6 +239,7 @@ void MaxTrax::interrupt() {
 			} else {
 				// a0 = voice.envelope
 				voice.baseVolume = voice.envelope->volume;
+				assert(voice.envelopeLeft > 0);
 				if (--voice.envelopeLeft) {
 					++voice.envelope;
 					const uint16 duration = voice.envelope->duration;
@@ -245,6 +248,7 @@ void MaxTrax::interrupt() {
 					voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
 					// goto .l18
 				} else if (voice.status == VoiceContext::kStatusDecay) {
+					voice.envelope = 0;
 					voice.status = VoiceContext::kStatusHalt;
 					// set d4 = 0, goto I17
 					newVolume = 0;
@@ -252,17 +256,19 @@ void MaxTrax::interrupt() {
 					assert(voice.status == VoiceContext::kStatusAttack);
 					voice.status = VoiceContext::kStatusSustain;
 					voice.lastTicks = _playerCtx.tickUnit;
+					voice.envelope = 0;
 					// goto .l18
 				}
 			}
-		}
+		} else
+			assert(voice.envelope == 0);
 
 		// .l18 - recalc 
 		if (newVolume) {
 			// calc volume
 			uint16 vol = (voice.noteVolume < (1 << 7)) ? (voice.noteVolume * _playerCtx.volume) >> 7 : _playerCtx.volume;
 			if (voice.baseVolume < (1 << 15))
-				vol = (vol * (voice.baseVolume >> 8)) >> 7;
+				vol = (uint16)(((uint32)vol * voice.baseVolume) >> 15);
 			if (voice.channel->volume < (1 << 7))
 				vol = (vol * voice.channel->volume) >> 7;
 
@@ -329,13 +335,13 @@ void MaxTrax::killVoice(byte num) {
 	voice.uinqueId = 0;
 
 	// "stop" voice, set period to 1, vol to 0
-	Paula::disableChannel(0);
+	Paula::disableChannel(num);
 	Paula::setChannelPeriod(num, 1);
 	Paula::setChannelVolume(num, 0);
 }
 
 int MaxTrax::calcNote(VoiceContext &voice) {
-	ChannelContext &channel = *voice.channel;
+	const ChannelContext &channel = *voice.channel;
 	voice.lastPeriod = 0;
 
 	int16 bend = 0;
@@ -355,7 +361,7 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 	// more it-never-worked microtonal code
 	tone += voice.baseNote << 8;
 
-	Patch &patch = *voice.patch;
+	const Patch &patch = *voice.patch;
 	tone += ((int16)patch.tune << 8) / 24;
 
 	tone -= 45 << 8; // MIDI note 45
@@ -387,7 +393,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	if (!volume)
 		return -1;
 
-	Patch &patch = *channel.patch;
+	const Patch &patch = *channel.patch;
 	if (!patch.samplePtr)
 		return -1;
 	int8 voiceNum = -1;
@@ -416,7 +422,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		// return if no channel found
 		voiceNum = (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 0 : 1;
 		static int c = 0;
-		voiceNum = (++c) % 4;
+		voiceNum = (&channel - _channelCtx) % 4;
 	}
 	assert(voiceNum >= 0 && voiceNum < ARRAYSIZE(_voiceCtx));
 
@@ -535,7 +541,7 @@ void MaxTrax::freePatches() {
 		delete[] _patch[i].samplePtr;
 		delete[] _patch[i].attackPtr;
 	}
-	memset(_patch, 0, sizeof(_patch));
+	memset(const_cast<Patch *>(_patch), 0, sizeof(_patch));
 }
 
 bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool loadSamples) {
@@ -581,7 +587,8 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		
 		for (int i = tempScores; i > 0; --i, ++curScore) {
 			const uint32 numEvents = musicData.readUint32BE();
-			Event *curEvent = curScore->events = new Event[numEvents];
+			Event *curEvent = new Event[numEvents];
+			curScore->events = curEvent;
 			for (int j = numEvents; j > 0; --j, ++curEvent) {
 				curEvent->command = musicData.readByte();
 				curEvent->parameter = musicData.readByte();
@@ -612,7 +619,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			const uint16 number = musicData.readUint16BE();
 			assert(number < ARRAYSIZE(_patch));
 			// pointer to samples needed?
-			Patch &curPatch = _patch[number];
+			Patch &curPatch = const_cast<Patch &>(_patch[number]);
 
 			curPatch.tune = musicData.readUint16BE();
 			curPatch.volume = musicData.readUint16BE();
@@ -641,8 +648,9 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			}
 
 			// read Samples
-			curPatch.samplePtr = new int8[totalSamples];
-			musicData.read(curPatch.samplePtr, totalSamples);
+			int8 *allocSamples = new int8[totalSamples];
+			curPatch.samplePtr = allocSamples;
+			musicData.read(allocSamples, totalSamples);
 		}
 	} else if (wavesInFile > 0){
 		uint32 skipLen = 3 * 2;
