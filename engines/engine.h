@@ -62,7 +62,9 @@ void initCommonGFX(bool defaultTo1XScaler);
  *
  * Defaults to 256 color paletted mode if no graphics format is provided.
  */
-void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format = NULL);
+void initGraphics(int width, int height, bool defaultTo1xScaler);
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format);
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList);
 
 /**
  * Initializes graphics and shows error message.

@@ -131,7 +131,13 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 
 		initCommonGFX(defaultTo1xScaler);
 #ifdef ENABLE_RGB_COLOR
-		g_system->initSize(width, height, format);
+		if (format)
+			g_system->initSize(width, height, format);
+		else { 
+			Graphics::PixelFormat Format = g_system->getSupportedFormats().front();
+			debug("%d,%X,%X,%X",Format.bytesPerPixel << 3, Format.rBits(), Format.gBits(), Format.bBits());
+			g_system->initSize(width, height, &Format);
+		}
 #else
 		g_system->initSize(width, height);
 #endif
@@ -182,6 +188,14 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 		GUI::MessageDialog dialog("Could not apply fullscreen setting.");
 		dialog.runModal();
 	}
+}
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
+	Graphics::PixelFormat format = Graphics::findCompatibleFormat(g_system->getSupportedFormats(),formatList);
+	initGraphics(width,height,defaultTo1xScaler,&format);
+}
+void initGraphics(int width, int height, bool defaultTo1xScaler) {
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(width,height,defaultTo1xScaler,&format);
 }
 
 void GUIErrorMessage(const Common::String msg) {
