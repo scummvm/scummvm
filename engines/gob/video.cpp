@@ -62,7 +62,7 @@ Font::Font(const byte *data) : _dataPtr(data) {
 }
 
 Font::~Font() {
-	delete _dataPtr;
+	delete[] _dataPtr;
 }
 
 uint8 Font::getCharWidth(uint8 c) const {
