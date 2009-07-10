@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm
-Version		: 0.14.0svn
+Version		: 1.0.0svn
 Release		: 1
 Summary		: Graphic adventure game interpreter
 Group		: Interpreters
@@ -58,7 +58,6 @@ make
 install -m755 -D scummvm %{buildroot}%{_bindir}/scummvm
 install -m644 -D dists/scummvm.6 %{buildroot}%{_mandir}/man6/scummvm.6
 install -m644 -D icons/scummvm.xpm %{buildroot}%{_datadir}/pixmaps/scummvm.xpm
-install -m644 -D gui/themes/scummclassic.zip %{buildroot}%{_datadir}/scummvm/scummclassic.zip
 install -m644 -D gui/themes/scummmodern.zip %{buildroot}%{_datadir}/scummvm/scummmodern.zip
 install -m644 -D dists/pred.dic %{buildroot}%{_datadir}/scummvm/pred.dic
 install -m644 -D dists/engine-data/kyra.dat %{buildroot}%{_datadir}/scummvm/kyra.dat
