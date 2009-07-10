@@ -242,22 +242,37 @@ const Graphics::PixelFormat BGRList[] = {
 // TODO: prioritize matching alpha masks
 Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
 	static Common::List<Graphics::PixelFormat> list;
-	if (!list.empty())
+	static bool inited = false;
+
+	if (inited)
 		return list;
+
 	bool BGR = false;
 	int listLength = ARRAYSIZE(RGBList);
 
-	// Get our currently set format
-	Graphics::PixelFormat format(_hwscreen->format->BytesPerPixel, 
-				_hwscreen->format->Rloss, _hwscreen->format->Gloss, 
-				_hwscreen->format->Bloss, _hwscreen->format->Aloss, 
-				_hwscreen->format->Rshift, _hwscreen->format->Gshift, 
-				_hwscreen->format->Bshift, _hwscreen->format->Ashift);
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	if (_hwscreen) {
+		// Get our currently set hardware format
+		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel, 
+			_hwscreen->format->Rloss, _hwscreen->format->Gloss, 
+			_hwscreen->format->Bloss, _hwscreen->format->Aloss, 
+			_hwscreen->format->Rshift, _hwscreen->format->Gshift, 
+			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
 
-	// Push it first, as the prefered format.
-	list.push_back(format);
-	if (format.bShift > format.rShift)
-		BGR = true;
+		// Workaround to MacOSX SDL not providing an accurate Aloss value.
+		if (_hwscreen->format->Amask == 0)
+			format.aLoss = 8;
+
+		// Push it first, as the prefered format.
+		list.push_back(format);
+
+		if (format.bShift > format.rShift)
+			BGR = true;
+
+		// Mark that we don't need to do this any more.
+		inited = true;
+	}
+
 	for (int i = 0; i < listLength; i++) {
 		if (RGBList[i].bytesPerPixel > format.bytesPerPixel)
 			continue;
