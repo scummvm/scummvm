@@ -274,7 +274,7 @@ Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
 	}
 
 	for (int i = 0; i < listLength; i++) {
-		if (RGBList[i].bytesPerPixel > format.bytesPerPixel)
+		if (inited && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
 			continue;
 		if (BGR) {
 			if (BGRList[i] != format)
