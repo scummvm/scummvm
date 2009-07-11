@@ -388,7 +388,8 @@ void Kernel::detectSciFeatures() {
 	
 	if (!r) { // No such resource?
 		staticSelectorTable = checkStaticSelectorNames();
-		error("Kernel: Could not retrieve selector names");
+		if (staticSelectorTable.empty())
+			error("Kernel: Could not retrieve selector names");
 	}
 
 	int count = staticSelectorTable.empty() ? READ_LE_UINT16(r->data) + 1 : staticSelectorTable.size(); // Counter is slightly off

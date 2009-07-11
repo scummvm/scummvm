@@ -426,4 +426,4 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 	
 } // End of namespace Sci
 
-#endif SCI_STATIC_SELECTORS_H
+#endif // SCI_STATIC_SELECTORS_H
