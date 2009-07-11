@@ -87,7 +87,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->priority_first = 42; // Priority zone 0 ends here
 
-	if (s->_kernel->usesOldGfxFunctions())
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -257,7 +257,7 @@ static int create_class_table_sci0(EngineState *s) {
 		Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
 
 		if (script) {
-			if (s->_kernel->hasOldScriptHeader())
+			if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 				magic_offset = seeker = 2;
 			else
 				magic_offset = seeker = 0;
@@ -327,9 +327,6 @@ int script_init_engine(EngineState *s) {
 
 	s->kernel_opt_flags = 0;
 
-	s->_kernel = new Kernel(s->resmgr);
-	s->_vocabulary = new Vocabulary(s->resmgr);
-
 	if (s->_version >= SCI_VERSION_1_1)
 		result = create_class_table_sci11(s);
 	else
@@ -375,7 +372,7 @@ int script_init_engine(EngineState *s) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if (s->_kernel->hasLofsAbsolute())
+	if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
 		s->seg_manager->setExportWidth(1);
 	else
 		s->seg_manager->setExportWidth(0);
@@ -412,11 +409,6 @@ void script_free_engine(EngineState *s) {
 	script_free_vm_memory(s);
 
 	debug(2, "Freeing state-dependant data");
-
-	delete s->_vocabulary;
-	s->_vocabulary = 0;
-	delete s->_kernel;
-	s->_kernel = 0;
 }
 
 void script_free_breakpoints(EngineState *s) {

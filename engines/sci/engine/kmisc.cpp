@@ -240,7 +240,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char tmpbuf[200];
 	sprintf(tmpbuf, "Unimplemented syscall: %s[%x] (", 
-					s->_kernel->getKernelName(funct_nr).c_str(), funct_nr);
+					((SciEngine*)g_engine)->getKernel()->getKernelName(funct_nr).c_str(), funct_nr);
 
 	for (int i = 0; i < argc; i++) {
 		char tmpbuf2[20];
@@ -257,7 +257,7 @@ reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, s->_kernel->_kernelFuncs[funct_nr].orig_name.c_str());
+	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, ((SciEngine*)g_engine)->getKernel()->_kernelFuncs[funct_nr].orig_name.c_str());
 	return NULL_REG;
 }
 

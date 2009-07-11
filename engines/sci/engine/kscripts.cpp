@@ -43,7 +43,7 @@ reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const ch
 void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
 	ObjVarRef address;
 
-	if ((selector_id < 0) || (selector_id > (int)s->_kernel->getSelectorNamesSize())) {
+	if ((selector_id < 0) || (selector_id > (int)((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize())) {
 		warning("Attempt to write to invalid selector %d of"
 		         " object at %04x:%04x (%s L%d).", selector_id, PRINT_REG(object), fname, line);
 		return;
@@ -51,7 +51,7 @@ void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t va
 
 	if (lookup_selector(s, object, selector_id, &address, NULL) != kSelectorVariable)
 		warning("Selector '%s' of object at %04x:%04x could not be"
-		         " written to (%s L%d)", s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
+		         " written to (%s L%d)", ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
 	else
 		*address.getPointer(s) = value;
 }
@@ -72,7 +72,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 
 	if (slc_type == kSelectorNone) {
 		warning("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
-		         s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
+		         ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == kStopOnInvalidSelector)
 			error("[Kernel] Not recoverable: VM was halted\n");
 		return 1;

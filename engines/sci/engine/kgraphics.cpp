@@ -164,7 +164,7 @@ int _find_view_priority(EngineState *s, int y) {
 				return j;
 		return 14; // Maximum
 	} else {
-		if (!s->_kernel->usesOldGfxFunctions())
+		if (!((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 : SCI0_VIEW_PRIORITY(y);
@@ -172,7 +172,7 @@ int _find_view_priority(EngineState *s, int y) {
 }
 
 int _find_priority_band(EngineState *s, int nr) {
-	if (!s->_kernel->usesOldGfxFunctions() && (nr < 0 || nr > 14)) {
+	if (!((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions() && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
 		else {
@@ -181,7 +181,7 @@ int _find_priority_band(EngineState *s, int nr) {
 		return 0;
 	}
 
-	if (s->_kernel->usesOldGfxFunctions() && (nr < 0 || nr > 15)) {
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions() && (nr < 0 || nr > 15)) {
 		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
@@ -191,7 +191,7 @@ int _find_priority_band(EngineState *s, int nr) {
 	else {
 		int retval;
 
-		if (!s->_kernel->usesOldGfxFunctions())
+		if (!((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 			retval = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 		else
 			retval = SCI0_PRIORITY_BAND_FIRST(nr);
@@ -696,7 +696,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 
 	angle %= 360;
 
-	if (!s->_kernel->hasOldScriptHeader()) {
+	if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 		if (angle < 45)
 			loop = 3;
 		else if (angle < 136)
@@ -1002,7 +1002,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
-	if (s->_kernel->usesOldGfxFunctions())
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 		add_to_pic = (argc > 2) ? argv[2].toSint16() : false;
 
 	dp.nr = argv[0].toSint16();
@@ -1056,7 +1056,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->priority_first = 42;
 
-	if (s->_kernel->usesOldGfxFunctions())
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -1079,7 +1079,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 	x = GET_SEL32SV(object, x);
 	original_y = y = GET_SEL32SV(object, y);
 
-	if (s->_kernel->_selectorMap.z > -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > -1)
 		z = GET_SEL32SV(object, z);
 	else
 		z = 0;
@@ -1133,7 +1133,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 void _k_base_setter(EngineState *s, reg_t object) {
 	Common::Rect absrect = set_base(s, object);
 
-	if (lookup_selector(s, object, s->_kernel->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
+	if (lookup_selector(s, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	// Note: there was a check here for a very old version of SCI, which supposedly needed
@@ -1214,7 +1214,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 	x = GET_SEL32SV(object, x);
 	y = GET_SEL32SV(object, y);
 
-	if (s->_kernel->_selectorMap.z > -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > -1)
 		z = GET_SEL32SV(object, z);
 	else
 		z = 0;
@@ -1238,7 +1238,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 static void _k_set_now_seen(EngineState *s, reg_t object) {
 	Common::Rect absrect = get_nsrect(s, object, 0);
 
-	if (lookup_selector(s, object, s->_kernel->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
+	if (lookup_selector(s, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
@@ -1724,7 +1724,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
-			int has_nsrect = lookup_selector(s, obj, s->_kernel->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
+			int has_nsrect = lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
 				int temp;
@@ -1746,7 +1746,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 			}
 #ifdef DEBUG_LSRECT
 			else
-				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->_kernel->_selectorMap.nsBottom, NULL, NULL));
+				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -1900,7 +1900,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	loop = oldloop = sign_extend_byte(GET_SEL32V(obj, loop));
 	cel = oldcel = sign_extend_byte(GET_SEL32V(obj, cel));
 
-	if (s->_kernel->_selectorMap.palette)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.palette)
 		palette = GET_SEL32V(obj, palette);
 	else
 		palette = 0;
@@ -1923,7 +1923,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	}
 
 	ObjVarRef under_bitsp;
-	if (lookup_selector(s, obj, s->_kernel->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp.obj = NULL_REG;
 		under_bits = NULL_REG;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
@@ -1931,7 +1931,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 		under_bits = *under_bitsp.getPointer(s);
 
 	ObjVarRef signalp;
-	if (lookup_selector(s, obj, s->_kernel->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp.obj = NULL_REG;
 		signal = 0;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
@@ -2024,7 +2024,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 	while (view) {
 		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
-		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, s->_kernel->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
+		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);

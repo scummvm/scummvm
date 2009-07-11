@@ -148,7 +148,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (print_bw_tag)
 		printf("[%c] ", opsize ? 'B' : 'W');
-	printf("%s", s->_kernel->getOpcode(opcode).name.c_str());
+	printf("%s", ((SciEngine*)g_engine)->getKernel()->getOpcode(opcode).name.c_str());
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
@@ -183,8 +183,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			}
 
 			if (opcode == op_callk)
-				printf(" %s[%x]", (param_value < s->_kernel->_kernelFuncs.size()) ?
-							((param_value < s->_kernel->getKernelNamesSize()) ? s->_kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
+				printf(" %s[%x]", (param_value < ((SciEngine*)g_engine)->getKernel()->_kernelFuncs.size()) ?
+							((param_value < ((SciEngine*)g_engine)->getKernel()->getKernelNamesSize()) ? ((SciEngine*)g_engine)->getKernel()->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
 				printf(opsize ? " %02x" : " %04x", param_value);
@@ -238,7 +238,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			int stackframe = (scr[pos.offset + 2] >> 1) + (scriptState.restAdjust);
 			int argc = ((scriptState.xs->sp)[- stackframe - 1]).offset;
 
-			if (!s->_kernel->hasOldScriptHeader())
+			if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 				argc += (scriptState.restAdjust);
 
 			printf(" Kernel params: (");
@@ -273,7 +273,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				printf("  %s::%s[", name, (selector > s->_kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
+				printf("  %s::%s[", name, (selector > ((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:

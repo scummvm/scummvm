@@ -35,6 +35,8 @@ namespace Sci {
 
 class Console;
 struct EngineState;
+class Kernel;
+class Vocabulary;
 
 // our engine debug levels
 enum kDebugLevels {
@@ -107,7 +109,9 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
-	ResourceManager *getResMgr() { return _resmgr; }
+	ResourceManager *getResMgr() const { return _resmgr; }
+	Kernel *getKernel() const { return _kernel; }
+	Vocabulary *getVocabulary() const { return _vocabulary; }
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
@@ -122,6 +126,8 @@ private:
 	const SciGameDescription *_gameDescription;
 	ResourceManager *_resmgr;
 	EngineState *_gamestate;
+	Kernel *_kernel;
+	Vocabulary *_vocabulary;
 	Console *_console;
 };
 

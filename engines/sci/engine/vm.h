@@ -419,7 +419,7 @@ void script_debug(EngineState *s, bool bp);
  * @return		0 on success, 1 if vocab.996 (the class table) is missing
  * 				or corrupted
  */
-int script_init_engine(EngineState *s);
+int script_init_engine(EngineState *);
 
 /**
  * Sets the gamestate's save_dir to the parameter path
