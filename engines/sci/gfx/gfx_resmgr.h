@@ -90,9 +90,7 @@ typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
 /** Graphics resource manager */
 class GfxResManager {
 public:
-	GfxResManager(int version, gfx_options_t *options,
-			GfxDriver *driver, ResourceManager *resManager);
-
+	GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager);
 	~GfxResManager();
 
 	/**

@@ -49,12 +49,13 @@ struct param_struct {
 	GfxDriver *driver;
 };
 
-GfxResManager::GfxResManager(int version, gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
-				_version(version), _options(options), _driver(driver), _resManager(resManager),
+GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
+				_options(options), _driver(driver), _resManager(resManager),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
 	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
+	_version = resManager->_volVersion;
 
 	if (!_resManager->isVGA()) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
