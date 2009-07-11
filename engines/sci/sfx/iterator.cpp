@@ -1173,7 +1173,9 @@ TimerSongIterator::TimerSongIterator(int delta)
 
 int TimerSongIterator::nextCommand(byte *buf, int *result) {
 	if (_delta) {
-	   return _delta;
+		int d = _delta;
+		_delta = 0;
+		return d;
 	}
 	return SI_FINISHED;
 }
