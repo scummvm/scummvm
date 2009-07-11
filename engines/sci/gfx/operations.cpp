@@ -424,7 +424,7 @@ int gfxop_init(int version, GfxState *state,
 
 	state->driver = new GfxDriver(xfact, yfact, mode);
 
-	state->gfxResMan = new GfxResManager(version, state->options, state->driver, resManager);
+	state->gfxResMan = new GfxResManager(state->options, state->driver, resManager);
 	
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 

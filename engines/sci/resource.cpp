@@ -470,6 +470,15 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	} else {
 		_mapVersion = detectMapVersion();
 		_volVersion = detectVolVersion();
+		if (_volVersion == 0 && _mapVersion > 0) {
+			warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
+			_volVersion = _mapVersion;
+		}
+
+		if (_mapVersion == 0 && _volVersion > 0) {
+			warning("Map version not detected, but volume version has been detected. Setting map version to volume version");
+			_mapVersion = _volVersion;
+		}
 	}
 	debug("Using resource map version %d %s", _mapVersion, versionNames[_mapVersion]);
 	debug("Using volume version %d %s", _volVersion, versionNames[_volVersion]);
@@ -526,6 +535,12 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 			}
 			i++;
 		}
+	}
+
+	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
+	if (version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
+		debug("Resmgr: Detected QFG1 VGA");
+		_isVGA = true;
 	}
 
 	_sciVersion = version;
@@ -712,7 +727,7 @@ int ResourceManager::detectMapVersion() {
 		}
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open resource map file");
+		error("Failed to open resource map file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// detection
@@ -792,7 +807,7 @@ int ResourceManager::detectVolVersion() {
 		}
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open volume file");
+		error("Failed to open volume file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes

@@ -823,7 +823,6 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				sampleLen = s->_sound.startAudio(65535, number);
 				// Also create iterator, that will fire SI_FINISHED event, when the sound is done playing
 				s->_sound.sfx_add_song(build_timeriterator(s, sampleLen), 0, handle, number);
-				PUT_SEL32V(obj, signal, sampleLen);
 			} else {
 				if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
 					warning("Could not open song number %d", number);

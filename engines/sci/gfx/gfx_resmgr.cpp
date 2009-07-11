@@ -49,12 +49,18 @@ struct param_struct {
 	GfxDriver *driver;
 };
 
-GfxResManager::GfxResManager(int version, gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
-				_version(version), _options(options), _driver(driver), _resManager(resManager),
+GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
+				_options(options), _driver(driver), _resManager(resManager),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
 	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
+	_version = resManager->_volVersion;
+
+	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
+	if (_version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
+		_version = SCI_VERSION_1_1;
+	}
 
 	if (!_resManager->isVGA()) {
 		_staticPalette = gfx_sci0_pic_colors->getref();

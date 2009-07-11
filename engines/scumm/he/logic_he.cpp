@@ -357,8 +357,8 @@ int32 LogicHErace::op_1140(int32 *args) {
 	const double scalarProduct = x * args[0] + y * args[1];
 
 	// Finally compute the projection of (arg2,arg3) onto (arg0,arg1)
-	double projX = args[0] - 2 * scalarProduct * args[2];
-	double projY = args[1] - 2 * scalarProduct * args[3];
+	double projX = args[0] - 2 * scalarProduct * x;
+	double projY = args[1] - 2 * scalarProduct * y;
 
 	projX = projX * 20.0 / 23.0;	// FIXME: Why is this here?
 
