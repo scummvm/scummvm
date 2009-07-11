@@ -470,6 +470,15 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	} else {
 		_mapVersion = detectMapVersion();
 		_volVersion = detectVolVersion();
+		if (_volVersion == 0 && _mapVersion > 0) {
+			warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
+			_volVersion = _mapVersion;
+		}
+
+		if (_mapVersion == 0 && _volVersion > 0) {
+			warning("Map version not detected, but volume version has been detected. Setting map version to volume version");
+			_mapVersion = _volVersion;
+		}
 	}
 	debug("Using resource map version %d %s", _mapVersion, versionNames[_mapVersion]);
 	debug("Using volume version %d %s", _volVersion, versionNames[_volVersion]);
