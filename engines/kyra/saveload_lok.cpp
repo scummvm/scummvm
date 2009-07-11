@@ -167,7 +167,6 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 		}
 	}
 
-	_screen->_disableScreen = true;
 	loadMainScreen(8);
 
 	if (queryGameFlag(0x2D)) {
@@ -185,19 +184,16 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	setHandItem(_itemInHand);
 	_animator->setBrandonAnimSeqSize(3, 48);
 	redrawInventory(0);
-	_animator->_noDrawShapesFlag = 1;
+	_brandonPosX = brandonX;
+	_brandonPosY = brandonY;
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
-	_animator->_noDrawShapesFlag = 0;
 
-	_currentCharacter->x1 = brandonX;
-	_currentCharacter->y1 = brandonY;
 	_animator->animRefreshNPC(0);
 	_animator->restoreAllObjectBackgrounds();
 	_animator->preserveAnyChangedBackgrounds();
 	_animator->prepDrawAllObjects();
 	_animator->copyChangedObjectsForward(0);
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
-	_screen->_disableScreen = false;
 	_screen->updateScreen();
 
 	setMousePos(brandonX, brandonY);
