@@ -154,6 +154,7 @@ void Font::createOutline(FontData *font) {
 	unsigned char *destPointer2;
 	unsigned char *destPointer3;
 	unsigned char charRep;
+	int nextIndex = 0;
 
 
 	// Populate new font style character data
@@ -167,7 +168,7 @@ void Font::createOutline(FontData *font) {
 
 		bool skip = false;
 
-		if (i > 0 && font->normal.fontCharEntry[i].width != 0 && font->normal.fontCharEntry[i].index < font->normal.fontCharEntry[i-1].index) {
+		if (font->normal.fontCharEntry[i].width != 0 && font->normal.fontCharEntry[i].index < nextIndex) {
 			// Some characters are copies of earlier characters.
 			// Look up the original, and make sure not to grow the size of
 			// the outline font twice.
@@ -200,8 +201,10 @@ void Font::createOutline(FontData *font) {
 		font->outline.fontCharEntry[i].width = font->normal.fontCharEntry[i].width + 2;
 		font->outline.fontCharEntry[i].byteWidth = newByteWidth;
 
-		if (!skip)
+		if (!skip) {
 			newRowLength += newByteWidth;
+			nextIndex = font->normal.fontCharEntry[i].index + oldByteWidth;
+		}
 	}
 
 	debug(2, "New row length: %d", newRowLength);
