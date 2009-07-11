@@ -537,6 +537,12 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		}
 	}
 
+	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
+	if (version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
+		debug("Resmgr: Detected QFG1 VGA");
+		_isVGA = true;
+	}
+
 	_sciVersion = version;
 	// temporary version printout - should be reworked later
 	switch (_sciVersion) {
@@ -721,7 +727,7 @@ int ResourceManager::detectMapVersion() {
 		}
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open resource map file");
+		error("Failed to open resource map file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// detection
@@ -801,7 +807,7 @@ int ResourceManager::detectVolVersion() {
 		}
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open volume file");
+		error("Failed to open volume file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
