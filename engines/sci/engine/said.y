@@ -670,7 +670,7 @@ static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 
 	}
 
-	scidprintf("Generic failure\n");
+	scidprintf("augment_match_expression_p(): Generic failure\n");
 
 	return 0;
 }
