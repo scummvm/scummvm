@@ -181,6 +181,28 @@ private:
 
 #define PLAYMASK_NONE 0x0
 
+/***************************/
+/*--------- Timer ---------*/
+/***************************/
+
+/**
+ * A song iterator which waits a specified time and then fires
+ * SI_FINISHED. Used by DoSound, where audio resources are played (SCI1)
+ */
+class TimerSongIterator : public SongIterator {
+protected:
+	int _delta; /**!< Remaining time */
+
+public:
+	TimerSongIterator(int delta);
+
+	int nextCommand(byte *buf, int *result);
+	Audio::AudioStream *getAudioStream();
+	SongIterator *handleMessage(Message msg);
+	int getTimepos();
+	SongIterator *clone(int delta);
+};
+
 /**********************************/
 /*--------- Fast Forward ---------*/
 /**********************************/

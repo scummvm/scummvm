@@ -1164,6 +1164,41 @@ int CleanupSongIterator::nextCommand(byte *buf, int *result) {
 		return SI_FINISHED;
 }
 
+/**********************/
+/*-- Timer iterator --*/
+/**********************/
+TimerSongIterator::TimerSongIterator(int delta)
+	: _delta(delta) {
+}
+
+int TimerSongIterator::nextCommand(byte *buf, int *result) {
+	if (_delta) {
+	   return _delta;
+	}
+	return SI_FINISHED;
+}
+
+SongIterator *TimerSongIterator::handleMessage(Message msg) {
+	return NULL;
+}
+
+int TimerSongIterator::getTimepos() {
+	return 0;
+}
+
+Audio::AudioStream *TimerSongIterator::getAudioStream() {
+	return NULL;
+}
+
+SongIterator *TimerSongIterator::clone(int delta) {
+	TimerSongIterator *newit = new TimerSongIterator(*this);
+	return newit;
+}
+
+SongIterator *new_timer_iterator(int delta) {
+	return new TimerSongIterator(delta);
+}
+
 /**********************************/
 /*-- Fast-forward song iterator --*/
 /**********************************/

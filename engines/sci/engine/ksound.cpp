@@ -148,6 +148,9 @@ SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type,
 	return songit_new(song->data, song->size, type, id);
 }
 
+SongIterator *build_timeriterator(EngineState *s, int delta) {
+	return new_timer_iterator(delta);
+}
 
 void process_sound_events(EngineState *s) { /* Get all sound events, apply their changes to the heap */
 	int result;
@@ -798,6 +801,7 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int looping = GET_SEL32V(obj, loop);
 		//int vol = GET_SEL32V(obj, vol);
 		int pri = GET_SEL32V(obj, pri);
+		int sampleLen = 0;
 		Song *song = s->_sound._songlib.findSong(handle);
 
 		if (GET_SEL32V(obj, nodePtr) && (song && number != song->_resourceNum)) {
@@ -815,8 +819,11 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				s->_version >= SCI_VERSION_1_1) {
 				// Found a relevant audio resource, play it
 				s->_sound.stopAudio();
-				PUT_SEL32V(obj, signal, s->_sound.startAudio(65535, number));
-				return s->r_acc;
+				warning("Initializing audio resource instead of requested sound resource %d\n", number);
+				sampleLen = s->_sound.startAudio(65535, number);
+				// Also create iterator, that will fire SI_FINISHED event, when the sound is done playing
+				s->_sound.sfx_add_song(build_timeriterator(s, sampleLen), 0, handle, number);
+				PUT_SEL32V(obj, signal, sampleLen);
 			} else {
 				if (!s->resmgr->testResource(ResourceId(kResourceTypeSound, number))) {
 					warning("Could not open song number %d", number);
@@ -825,11 +832,11 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 					PUT_SEL32V(obj, signal, -1);
 					return s->r_acc;
 				}
+				debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
+				s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
+				                          handle), 0, handle, number);
 			}
 
-			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
-			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
-			                          handle), 0, handle, number);
 			PUT_SEL32(obj, nodePtr, obj);
 			PUT_SEL32(obj, handle, obj);
 		}
