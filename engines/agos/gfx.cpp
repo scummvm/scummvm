@@ -667,7 +667,7 @@ void AGOSEngine_Simon1::drawImage(VC10_state *state) {
 			state->surf2_addr = getBackGround();
 			state->surf2_pitch = _backGroundBuf->pitch;
 
-			state->surf_addr = (byte *)_window4BackScn;
+			state->surf_addr = (byte *)_window4BackScn->pixels;
 			state->surf_pitch = _videoWindows[18] * 16;
 
 			xoffs = ((vlut[0] - _videoWindows[16]) * 2 + state->x) * 8;
