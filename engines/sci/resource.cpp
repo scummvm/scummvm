@@ -883,6 +883,21 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
 		return;
 	}
+
+	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
+	if (patch_data_offset & 0x80) {
+		switch (patch_data_offset & 0x7F) {
+			case 0:
+				patch_data_offset = 24;
+				break;
+			case 1:
+				patch_data_offset = 2;
+				break;
+			default:
+				warning("Resource patch unsupported special case %X\n", patch_data_offset);
+		}
+	}
+
 	if (patch_data_offset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
 		      source->location_name.c_str(), patch_data_offset + 2, fsize);

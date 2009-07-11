@@ -159,7 +159,9 @@ void initSystem(void) {
 	switchPal = 0;
 	masterScreen = 0;
 
+	changeCursor(CURSOR_NOMOUSE);
 	changeCursor(CURSOR_NORMAL);
+	mouseOn();
 
 	strcpy(cmdLine, "");
 

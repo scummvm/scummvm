@@ -281,6 +281,12 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask);
 */
 SongIterator *songit_new(byte *data, uint size, SongIteratorType type, songit_id_t id);
 
+/* Constructs a new song timer iterator object
+** Parameters: (int) delta: The delta after which to fire SI_FINISHED
+** Returns   : (SongIterator *) A newly allocated but uninitialized song
+**             iterator
+*/
+SongIterator *new_timer_iterator(int delta);
 
 /* Handles a message to the song iterator
 ** Parameters: (SongIterator **): A reference to the variable storing the song iterator

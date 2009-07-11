@@ -74,7 +74,6 @@ Screen::~Screen() {
 }
 
 bool Screen::init() {
-	_disableScreen = false;
 	_debugEnabled = false;
 
 	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
@@ -219,9 +218,6 @@ void Screen::setResolution() {
 }
 
 void Screen::updateScreen() {
-	if (_disableScreen)
-		return;
-
 	if (_useOverlays)
 		updateDirtyRectsOvl();
 	else

@@ -384,10 +384,15 @@ Kernel::~Kernel() {
 void Kernel::detectSciFeatures() {
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
-	if (!r) // No such resource?
-		error("Kernel: Could not retrieve selector names");
+	Common::StringList staticSelectorTable;
+	
+	if (!r) { // No such resource?
+		staticSelectorTable = checkStaticSelectorNames();
+		if (staticSelectorTable.empty())
+			error("Kernel: Could not retrieve selector names");
+	}
 
-	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	int count = staticSelectorTable.empty() ? READ_LE_UINT16(r->data) + 1 : staticSelectorTable.size(); // Counter is slightly off
 	features = 0;
 
 	// Initialize features based on SCI version
@@ -397,10 +402,16 @@ void Kernel::detectSciFeatures() {
 	}
 
 	for (int i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = READ_LE_UINT16(r->data + offset);
-
-		Common::String tmp((const char *)r->data + offset + 2, len);
+		Common::String tmp;
+		
+		if (staticSelectorTable.empty()) {
+			int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+			int len = READ_LE_UINT16(r->data + offset);
+			
+			tmp = Common::String((const char *)r->data + offset + 2, len);
+		} else {
+			tmp = staticSelectorTable[i];
+		}
 
 		if (tmp == "setTarget")     // "motionInited" can also be used
 			features &= ~kFeatureOldScriptHeader;
@@ -459,8 +470,22 @@ void Kernel::detectSciFeatures() {
 void Kernel::loadSelectorNames() {
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
-	if (!r) // No such resource?
-		error("Kernel: Could not retrieve selector names");
+	if (!r) { // No such resource?
+		// Check if we have a table for this game
+		// Some demos do not have a selector table
+		Common::StringList staticSelectorTable = checkStaticSelectorNames();
+		
+		if (staticSelectorTable.empty())
+			error("Kernel: Could not retrieve selector names");
+		
+		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
+			_selectorNames.push_back(staticSelectorTable[i]);
+			if (features & kFeatureOldScriptHeader)
+				_selectorNames.push_back(staticSelectorTable[i]);
+		}
+			
+		return;
+	}
 
 	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 

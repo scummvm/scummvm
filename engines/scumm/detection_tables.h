@@ -230,13 +230,13 @@ static const GameSettings gameVariantsTable[] = {
 
 	{"monkey2",  0, 0, GID_MONKEY2,  5, 0, MDT_ADLIB | MDT_MIDI, 0, UNK, GUIO_NOSPEECH},
 
-	{"atlantis", 0, 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI, 0, UNK, GUIO_NOSPEECH},
+	{"atlantis", "", 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI, 0, UNK, GUIO_NOSPEECH},
 	{"atlantis", "CD" , 0, GID_INDY4,    5, 0, MDT_ADLIB | MDT_MIDI, 0, UNK, GUIO_NONE},
 
-	{"tentacle", 0, 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOSPEECH},
+	{"tentacle", "", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOSPEECH},
 	{"tentacle", "CD", 0, GID_TENTACLE, 6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NONE},
 
-	{"samnmax",  0, 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOSPEECH},
+	{"samnmax",  "", 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NOSPEECH},
 	{"samnmax",  "CD", 0, GID_SAMNMAX,  6, 0, MDT_ADLIB | MDT_MIDI, GF_USE_KEY, UNK, GUIO_NONE},
 
 #ifdef ENABLE_SCUMM_7_8

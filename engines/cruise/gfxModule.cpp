@@ -217,6 +217,12 @@ void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, i
 	}
 }
 
+void gfxModuleData_Init(void) {
+	memset(globalScreen, 0, 320 * 200);
+	memset(page00, 0, 320 * 200);
+	memset(page10, 0, 320 * 200);
+}
+
 void gfxModuleData_flipScreen(void) {
 	memcpy(globalScreen, gfxModuleData.pPage00, 320 * 200);
 
