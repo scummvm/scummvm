@@ -335,7 +335,6 @@ public:
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
-	bool _disableScreen;
 
 	// decoding functions
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
