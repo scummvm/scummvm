@@ -545,7 +545,7 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 
 bool Console::cmdRegisters(int argc, const char **argv) {
 	DebugPrintf("Current register values:\n");
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), scriptState.restadjust);
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), scriptState.restAdjust);
 
 	if (!_vm->_gamestate->_executionStack.empty()) {
 		EngineState *s = _vm->_gamestate;	// for PRINT_STK
@@ -3225,11 +3225,6 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 // TODO Re-implement this
 int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int opcode, opnumber;
-
-	if (!g_debugstate_valid) {
-		printf("Not in debug state\n");
-		return 1;
-	}
 
 	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;

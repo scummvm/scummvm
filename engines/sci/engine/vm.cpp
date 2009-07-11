@@ -552,7 +552,7 @@ void run_vm(EngineState *s, int restoring) {
 	StackPtr s_temp; // Temporary stack pointer
 	int16 opparams[4]; // opcode parameters
 
-	scriptState.restadjust = s->restAdjust;
+	scriptState.restAdjust = s->restAdjust;
 	// &rest adjusts the parameter count by this value
 	// Current execution data:
 	scriptState.xs = &(s->_executionStack.back());
@@ -931,17 +931,17 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x20: { // call
 			int argc = (opparams[1] >> 1) // Given as offset, but we need count
-			           + 1 + scriptState.restadjust;
+			           + 1 + scriptState.restAdjust;
 			StackPtr call_base = scriptState.xs->sp - argc;
-			scriptState.xs->sp[1].offset += scriptState.restadjust;
+			scriptState.xs->sp[1].offset += scriptState.restAdjust;
 
-			xs_new = add_exec_stack_entry(s, make_reg(scriptState.xs->addr.pc.segment, 
-										  scriptState.xs->addr.pc.offset + opparams[0]),
-			                              scriptState.xs->sp, scriptState.xs->objp,
-										  (validate_arithmetic(*call_base)) + scriptState.restadjust,
-			                              call_base, NULL_SELECTOR, scriptState.xs->objp, 
-										  s->_executionStack.size()-1, scriptState.xs->local_segment);
-			scriptState.restadjust = 0; // Used up the &rest adjustment
+			xs_new = add_exec_stack_entry(s, make_reg(scriptState.xs->addr.pc.segment,
+											scriptState.xs->addr.pc.offset + opparams[0]),
+											scriptState.xs->sp, scriptState.xs->objp, 
+											(validate_arithmetic(*call_base)) + scriptState.restAdjust,
+											call_base, NULL_SELECTOR, scriptState.xs->objp,
+											s->_executionStack.size()-1, scriptState.xs->local_segment);
+			scriptState.restAdjust = 0; // Used up the &rest adjustment
 			scriptState.xs->sp = call_base;
 
 			s->_executionStackPosChanged = true;
@@ -953,8 +953,8 @@ void run_vm(EngineState *s, int restoring) {
 
 			scriptState.xs->sp -= (opparams[1] >> 1) + 1;
 			if (!s->_kernel->hasOldScriptHeader()) {
-				scriptState.xs->sp -= scriptState.restadjust;
-				s->restAdjust = 0; // We just used up the restadjust, remember?
+				scriptState.xs->sp -= scriptState.restAdjust;
+				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
 			}
 
 			if (opparams[0] >= (int)s->_kernel->_kernelFuncs.size()) {
@@ -963,15 +963,15 @@ void run_vm(EngineState *s, int restoring) {
 				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
 
 				if (!s->_kernel->hasOldScriptHeader())
-					argc += scriptState.restadjust;
+					argc += scriptState.restAdjust;
 
 				if (s->_kernel->_kernelFuncs[opparams[0]].signature
-				        && !kernel_matches_signature(s, 
-							s->_kernel->_kernelFuncs[opparams[0]].signature, argc, 
-							scriptState.xs->sp + 1)) {
+						&& !kernel_matches_signature(s,
+						s->_kernel->_kernelFuncs[opparams[0]].signature, argc,
+						scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
 				} else {
-					s->r_acc = s->_kernel->_kernelFuncs[opparams[0]].fun(s, opparams[0], 
+					s->r_acc = s->_kernel->_kernelFuncs[opparams[0]].fun(s, opparams[0],
 														argc, scriptState.xs->sp + 1);
 				}
 				// Call kernel function
@@ -983,33 +983,33 @@ void run_vm(EngineState *s, int restoring) {
 				s->_executionStackPosChanged = true;
 
 				if (!s->_kernel->hasOldScriptHeader())
-					scriptState.restadjust = s->restAdjust;
+					scriptState.restAdjust = s->restAdjust;
 
 			}
 			break;
 
 		case 0x22: // callb
-			temp = ((opparams[1] >> 1) + scriptState.restadjust + 1);
+			temp = ((opparams[1] >> 1) + scriptState.restAdjust + 1);
 			s_temp = scriptState.xs->sp;
 			scriptState.xs->sp -= temp;
 
-			scriptState.xs->sp[0].offset += scriptState.restadjust;
-			xs_new = execute_method(s, 0, opparams[0], s_temp, scriptState.xs->objp, 
+			scriptState.xs->sp[0].offset += scriptState.restAdjust;
+			xs_new = execute_method(s, 0, opparams[0], s_temp, scriptState.xs->objp,
 									scriptState.xs->sp[0].offset, scriptState.xs->sp);
-			scriptState.restadjust = 0; // Used up the &rest adjustment
+			scriptState.restAdjust = 0; // Used up the &rest adjustment
 			if (xs_new)    // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
 			break;
 
 		case 0x23: // calle
-			temp = ((opparams[2] >> 1) + scriptState.restadjust + 1);
+			temp = ((opparams[2] >> 1) + scriptState.restAdjust + 1);
 			s_temp = scriptState.xs->sp;
 			scriptState.xs->sp -= temp;
 
-			scriptState.xs->sp[0].offset += scriptState.restadjust;
-			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, scriptState.xs->objp, 
+			scriptState.xs->sp[0].offset += scriptState.restAdjust;
+			xs_new = execute_method(s, opparams[0], opparams[1], s_temp, scriptState.xs->objp,
 									scriptState.xs->sp[0].offset, scriptState.xs->sp);
-			scriptState.restadjust = 0; // Used up the &rest adjustment
+			scriptState.restAdjust = 0; // Used up the &rest adjustment
 
 			if (xs_new)  // in case of error, keep old stack
 				s->_executionStackPosChanged = true;
@@ -1027,7 +1027,7 @@ void run_vm(EngineState *s, int restoring) {
 					s->_executionStack.pop_back();
 
 					s->_executionStackPosChanged = true;
-					s->restAdjust = scriptState.restadjust; // Update &rest
+					s->restAdjust = scriptState.restAdjust; // Update &rest
 					return; // "Hard" return
 				}
 
@@ -1059,37 +1059,37 @@ void run_vm(EngineState *s, int restoring) {
 
 		case 0x25: // send
 			s_temp = scriptState.xs->sp;
-			scriptState.xs->sp -= ((opparams[0] >> 1) + scriptState.restadjust); // Adjust stack
+			scriptState.xs->sp -= ((opparams[0] >> 1) + scriptState.restAdjust); // Adjust stack
 
-			scriptState.xs->sp[1].offset += scriptState.restadjust;
-			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp, 
-					(int)(opparams[0] >> 1) + scriptState.restadjust, scriptState.xs->sp);
+			scriptState.xs->sp[1].offset += scriptState.restAdjust;
+			xs_new = send_selector(s, s->r_acc, s->r_acc, s_temp,
+									(int)(opparams[0] >> 1) + (uint16)scriptState.restAdjust, scriptState.xs->sp);
 
 			if (xs_new && xs_new != scriptState.xs)
 				s->_executionStackPosChanged = true;
 
-			scriptState.restadjust = 0;
+			scriptState.restAdjust = 0;
 
 			break;
 
 		case 0x28: // class
-			s->r_acc = get_class_address(s, (unsigned)opparams[0], SCRIPT_GET_LOCK, 
+			s->r_acc = get_class_address(s, (unsigned)opparams[0], SCRIPT_GET_LOCK,
 											scriptState.xs->addr.pc);
 			break;
 
 		case 0x2a: // self
 			s_temp = scriptState.xs->sp;
-			scriptState.xs->sp -= ((opparams[0] >> 1) + scriptState.restadjust); // Adjust stack
+			scriptState.xs->sp -= ((opparams[0] >> 1) + scriptState.restAdjust); // Adjust stack
 
-			scriptState.xs->sp[1].offset += scriptState.restadjust;
-			xs_new = send_selector(s, scriptState.xs->objp, scriptState.xs->objp, 
-									s_temp, (int)(opparams[0] >> 1) + scriptState.restadjust, 
+			scriptState.xs->sp[1].offset += scriptState.restAdjust;
+			xs_new = send_selector(s, scriptState.xs->objp, scriptState.xs->objp,
+									s_temp, (int)(opparams[0] >> 1) + (uint16)scriptState.restAdjust,
 									scriptState.xs->sp);
 
 			if (xs_new && xs_new != scriptState.xs)
 				s->_executionStackPosChanged = true;
 
-			scriptState.restadjust = 0;
+			scriptState.restAdjust = 0;
 			break;
 
 		case 0x2b: // super
@@ -1099,24 +1099,24 @@ void run_vm(EngineState *s, int restoring) {
 				error("[VM]: Invalid superclass in object");
 			else {
 				s_temp = scriptState.xs->sp;
-				scriptState.xs->sp -= ((opparams[1] >> 1) + scriptState.restadjust); // Adjust stack
+				scriptState.xs->sp -= ((opparams[1] >> 1) + scriptState.restAdjust); // Adjust stack
 
-				scriptState.xs->sp[1].offset += scriptState.restadjust;
-				xs_new = send_selector(s, r_temp, scriptState.xs->objp, s_temp, 
-										(int)(opparams[1] >> 1) + scriptState.restadjust, 
+				scriptState.xs->sp[1].offset += scriptState.restAdjust;
+				xs_new = send_selector(s, r_temp, scriptState.xs->objp, s_temp,
+										(int)(opparams[1] >> 1) + (uint16)scriptState.restAdjust,
 										scriptState.xs->sp);
 
 				if (xs_new && xs_new != scriptState.xs)
 					s->_executionStackPosChanged = true;
 
-				scriptState.restadjust = 0;
+				scriptState.restAdjust = 0;
 			}
 
 			break;
 
 		case 0x2c: // &rest
 			temp = (uint16) opparams[0]; // First argument
-			scriptState.restadjust = MAX<uint16>(scriptState.xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
+			scriptState.restAdjust = MAX<int16>(scriptState.xs->argc - temp + 1, 0); // +1 because temp counts the paramcount while argc doesn't
 
 			for (; temp <= scriptState.xs->argc; temp++)
 				PUSH32(scriptState.xs->variables_argp[temp]);

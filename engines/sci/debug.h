@@ -46,7 +46,7 @@ struct ScriptState {
 	int old_pc_offset;
 	StackPtr old_sp;
 	ExecStack *xs;
-	int16 restadjust;
+	int16 restAdjust;
 	reg_t *variables[4];		// global, local, temp, param, as immediate pointers
 	reg_t *variables_base[4];	// Used for referencing VM ops
 	SegmentId variables_seg[4];	// Same as above, contains segment IDs
