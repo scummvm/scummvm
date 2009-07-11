@@ -800,16 +800,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif // ENABLE_SCI32
 
-	// Hoyle 1 - English DOS Non-Interactive Demo
-	{{"hoyle1", "Demo", {
-		{"resource.map", 0, "60f764020a6b788bbbe415dbc2ccb9f3", 931},
-		{"resource.000", 0, "5fe3670e3ddcd4f85c10013b5453141a", 615522},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
-		GF_FOR_SCI0_BEFORE_629,
-		SCI_VERSION_AUTODETECT,
-		SCI_VERSION_0
-	},
-
 	// Hoyle 1 - English DOS (supplied by wibble92 in bug report #2644547)
 	// SCI interpreter version 0.000.530
 	{{"hoyle1", "", {
