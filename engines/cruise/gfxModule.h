@@ -56,6 +56,7 @@ void gfxCopyRect(const uint8 *sourceBuffer, int width, int height, byte *dest, i
 void gfxModuleData_gfxCopyScreen(const uint8 *sourcePtr, uint8 *destPtr);
 void convertGfxFromMode4(const uint8 *sourcePtr, int width, int height, uint8 *destPtr);
 void convertGfxFromMode5(const uint8 *sourcePtr, int width, int height, uint8 *destPtr);
+void gfxModuleData_Init(void);
 void gfxModuleData_flipScreen(void);
 //void gfxModuleData_setPal(uint8 * ptr);
 void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8 *pOutput);

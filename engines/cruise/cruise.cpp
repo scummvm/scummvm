@@ -118,6 +118,7 @@ void CruiseEngine::initialize() {
 	// video init stuff
 
 	initSystem();
+	gfxModuleData_Init();
 
 	// another bit of video init
 
