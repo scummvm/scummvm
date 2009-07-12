@@ -70,7 +70,8 @@ private:
 
 	uint8 *_cache;
 
-	int _eof;
+	bool _eof;
+	bool _err;
 	int _sema;
 
 

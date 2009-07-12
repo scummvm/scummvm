@@ -58,6 +58,7 @@ Ps2File::Ps2File(void) {
 	_cacheSize = 0;
 	_cachePos = 0;
 	_eof = false;
+	_err = false;
 
 	// _cache = (uint8 *)malloc(PS2_CACHE_MAX);
 
@@ -224,10 +225,11 @@ bool Ps2File::eof(void) {
 }
 
 bool Ps2File::getErr(void) {
-	return _eof;
+	return _err;
 }
 
 void Ps2File::setErr(bool err) {
+	_err = err;
 	_eof = err;
 }
 
@@ -261,7 +263,9 @@ int Ps2File::seek(int32 offset, int origin) {
 		_eof = false;
 		res = 0;
 	}
-	else _eof = true;
+	else {
+		_eof = true;
+	}
 
 	// printf("seek [%d]  %d  %d\n", _fd, offset, origin);
 	// printf("  res = %d\n", res);
@@ -350,10 +354,17 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 	printf("read (1) : _cachePos = %d\n", _cachePos);
 #endif
 
+	if (len == 0) {
+#ifdef __PS2_FILE_SEMA__
+		SignalSema(_sema);
+#endif
+		return 0;
+	}
+
 	if (_filePos >= _fileSize) {
 		_eof = true;
 #ifdef __PS2_FILE_SEMA__
-    SignalSema(_sema);
+		SignalSema(_sema);
 #endif
 		return 0;
 	}
@@ -526,11 +537,11 @@ int ps2_fflush(FILE *stream) {
 int ps2_ferror(FILE *stream) {
 	int err = ((Ps2File*)stream)->getErr();
 
-	if (err)
+	if (err) {
 		printf("ferror -> %d\n", err);
+	}
 
-	return 0; // kyra temp
-	// return err;
+	return err;
 }
 
 void ps2_clearerr(FILE *stream) {
