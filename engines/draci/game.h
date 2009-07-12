@@ -111,7 +111,12 @@ public:
 	// HACK: this is only for testing
 	void incRoomNum() { 
 		int n = _currentRoom._roomNum;
-		n = n < 25 ? n+1 : n;
+		n = n < 37 ? n+1 : n;
+
+		// disable former distributor logo
+		if (n == 30)
+			++n;
+
 		_currentRoom._roomNum = n;
 	}
 
@@ -119,6 +124,11 @@ public:
 	void decRoomNum() { 
 		int n = _currentRoom._roomNum;
 		n = n > 0 ? n-1 : n;
+
+		// disable former distributor logo
+		if (n == 30)
+			--n;
+
 		_currentRoom._roomNum = n;
 	}
 
