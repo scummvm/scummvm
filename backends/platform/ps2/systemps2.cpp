@@ -66,6 +66,10 @@
 #include "icon.h"
 #include "ps2temp.h"
 
+#ifdef __PS2_DEBUG__
+#include <debug.h>
+#endif
+
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
 
 extern void *_gp;
@@ -95,6 +99,11 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath);
 
 extern AsyncFio fio;
 
+#ifdef __PS2_DEBUG__
+extern "C" int gdb_stub_main(int argc, char *argv[]);
+extern "C" void breakpoint(void);
+#endif
+
 extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
@@ -117,6 +126,9 @@ extern "C" int main(int argc, char *argv[]) {
 		sioprintf("Result = %d\n", res);
 	}
 
+#ifdef __PS2_DEBUG__
+	gdb_stub_main(argc, argv);
+#endif
 	sioprintf("Creating system\n");
 	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
 
@@ -209,7 +221,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 				}
 			} else
 				sioprintf("Module \"%s\" wasn't found: %d\n", modules[i].path, modules[i].errorCode);
-			
+
 			if ((modules[i].errorCode < 0) || (res < 0) || (rv < 0)) {
 				if (!(modules[i].fileRef->flags & OPTIONAL)) {
 					if (modules[i].errorCode < 0)
@@ -220,7 +232,7 @@ void OSystem_PS2::startIrxModules(int numModules, IrxReference *modules) {
 					quit();
 				}
 			}
-			
+
 			if (modules[i].buffer)
 				free(modules[i].buffer);
 		} else {
@@ -241,6 +253,8 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_printY = 0;
 	_msgClearTime = 0;
 	_systemQuit = false;
+	_modeChanged = false;
+	_screenChangeCount = 0;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
@@ -328,7 +342,7 @@ void OSystem_PS2::init(void) {
 	sioprintf("Timer...\n");
 	_scummTimerManager = new DefaultTimerManager();
 	_scummMixer = new Audio::MixerImpl(this);
-	_scummMixer->setOutputRate(44100);
+	_scummMixer->setOutputRate(48000);
 	_scummMixer->setReady(true);
 	initTimer();
 
@@ -519,6 +533,9 @@ void OSystem_PS2::initSize(uint width, uint height) {
 
 	_oldMouseX = width / 2;
 	_oldMouseY = height / 2;
+
+	_modeChanged = true;
+	_screenChangeCount++;
 	printf("done\n");
 }
 
@@ -643,11 +660,11 @@ void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	_screen->copyOverlayRect((uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
-Graphics::Surface *OSystem_PS2::lockScreen() {
+Graphics::Surface *OSystem_PS2::lockScreen(void) {
 	return _screen->lockScreen();
 }
 
-void OSystem_PS2::unlockScreen() {
+void OSystem_PS2::unlockScreen(void) {
 	_screen->unlockScreen();
 }
 
@@ -670,7 +687,16 @@ int OSystem_PS2::getDefaultGraphicsMode(void) const {
 }
 
 bool OSystem_PS2::pollEvent(Common::Event &event) {
-	bool res = _input->pollEvent(&event);
+	bool res;
+
+	if (_modeChanged) {
+		_modeChanged = false;
+		event.type = Common::EVENT_SCREEN_CHANGED;
+		return true;
+	}
+
+	res = _input->pollEvent(&event);
+
 	if (res && (event.type == Common::EVENT_MOUSEMOVE))
 		_screen->setMouseXy(event.mouse.x, event.mouse.y);
 	return res;
@@ -705,7 +731,7 @@ void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
 		while ((*lnEnd) && (*lnEnd != '\n'))
 			lnEnd++;
 		*lnEnd = '\0';
-		
+
 		Common::String str(lnSta);
 		int width = Graphics::g_sysfont.getStringWidth(str);
 		if (width > maxWidth)
@@ -803,17 +829,17 @@ void OSystem_PS2::quit(void) {
 		// ("", 0, NULL);
 
 		/* back to PS2 Browser */
-/*		
+/*
 		__asm__ __volatile__(
 			"   li $3, 0x04;"
 			"   syscall;"
 			"   nop;"
         );
 */
-	
+
 /*
 		SifIopReset("rom0:UNDL ", 0);
-		while (!SifIopSync()) ; 
+		while (!SifIopSync()) ;
 		// SifIopReboot(...);
 */
 		#else
@@ -941,7 +967,7 @@ void OSystem_PS2::makeConfigPath() {
 		sprintf(path, "mc0:ScummVM/ScummVM.ini");
 	else
 		ps2_fclose(src);
-		
+
 	_configFile = strdup(path);
 }
 
@@ -949,7 +975,7 @@ Common::SeekableReadStream *OSystem_PS2::openConfigFileForReading() {
 	Common::FSNode file(_configFile);
 	return file.openForReading();
 }
-    
+ 
 Common::WriteStream *OSystem_PS2::openConfigFileForWriting() {
 	Common::FSNode file(_configFile);
 	return file.openForWriting();

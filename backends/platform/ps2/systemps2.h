@@ -105,6 +105,7 @@ public:
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
 	virtual void quit();
 
@@ -144,7 +145,6 @@ private:
 	DefaultTimerManager *_scummTimerManager;
 	Audio::MixerImpl *_scummMixer;
 
-
 	bool _mouseVisible;
 	bool _useMouse, _useKbd, _useHdd, _usbMassLoaded, _useNet;
 
@@ -156,6 +156,8 @@ private:
 	uint16		_oldMouseX, _oldMouseY;
 	uint32		_msgClearTime;
 	uint16		_printY;
+	bool _modeChanged;
+	int _screenChangeCount;
 
 	int			_mutexSema;
 	Ps2Mutex	_mutex[MAX_MUTEXES];
@@ -172,4 +174,3 @@ private:
 };
 
 #endif // SYSTEMPS2_H
-

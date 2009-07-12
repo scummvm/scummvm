@@ -35,6 +35,8 @@
 #include "graphics/surface.h"
 #include "backends/platform/ps2/ps2debug.h"
 
+extern "C" void breakpoint(void);
+
 extern void *_gp;
 
 enum Buffers {
@@ -188,7 +190,7 @@ Gs2dScreen::Gs2dScreen(uint16 width, uint16 height, TVMode tvMode) {
 	_clutPtrs[TEXT]   = _clutPtrs[SCREEN] + 0x2000;
 	_texPtrs[SCREEN]  = _clutPtrs[SCREEN] + 0x3000;
 	_texPtrs[TEXT]    = 0;						  // these buffers are stored in the alpha gaps of the frame buffers
-	_texPtrs[MOUSE]	  = 128 * 256 * 4;			  
+	_texPtrs[MOUSE]	  = 128 * 256 * 4;
 	_texPtrs[PRINTF]  = _texPtrs[MOUSE] + M_SIZE * M_SIZE * 4;
 
 	_showOverlay = false;
@@ -312,6 +314,8 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	WaitSema(g_DmacSema);
 	WaitSema(g_VblankSema);
 
+	// breakpoint();
+
 	_dmaPipe->flush();
 	_width = width;
 	_height = height;
@@ -325,6 +329,7 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	memset(_screenBuf, 0, _width * height);
 	memset(_overlayBuf, 0, _width * height * 2);
 	memset(_clut, 0, 256 * sizeof(uint32));
+	_clut[1] = GS_RGBA(0xC0, 0xC0, 0xC0, 0);
 
 	// clear video ram
 	_dmaPipe->uploadTex(_clutPtrs[MOUSE], 64, 0, 0, GS_PSMCT32, _clut, 16, 16);
@@ -333,7 +338,8 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	_dmaPipe->flush();
 	_dmaPipe->waitForDma();
 
-	_clutChanged = _screenChanged = _overlayChanged = false;
+	/*_clutChanged = */ _screenChanged = _overlayChanged = false;
+	_clutChanged = true; // reload palette on scr change
 
 	_texCoords[1].u = SCALE(_width);
 	_texCoords[1].v = SCALE(_height);
@@ -570,6 +576,9 @@ void Gs2dScreen::copyOverlayRect(const uint16 *buf, uint16 pitch, uint16 x, uint
 
 void Gs2dScreen::clearOverlay(void) {
 	WaitSema(g_DmacSema);
+
+	// breakpoint();
+
 	_overlayChanged = true;
 	// first convert our clut to 16 bit RGBA for the overlay...
 	uint16 palette[256];
@@ -584,6 +593,9 @@ void Gs2dScreen::clearOverlay(void) {
 }
 
 void Gs2dScreen::grabOverlay(uint16 *buf, uint16 pitch) {
+
+	// breakpoint();
+
 	uint16 *src = _overlayBuf;
 	for (uint32 cnt = 0; cnt < _height; cnt++) {
 		memcpy(buf, src, _width * 2);

@@ -41,7 +41,7 @@ static const char netArg[] = "192.168.0.10" "\0" "255.255.255.0" "\0" "192.168.0
 
 IrxFile irxFiles[] = {
 	{ "SIO2MAN", BIOS, NOTHING, NULL, 0 },
-	{ "MCMAN",   BIOS, NOTHING, NULL, 0 }, 
+	{ "MCMAN",   BIOS, NOTHING, NULL, 0 },
 	{ "MCSERV",  BIOS, NOTHING, NULL, 0 },
 	{ "PADMAN",  BIOS, NOTHING, NULL, 0 },
 	{ "LIBSD",   BIOS, NOTHING, NULL, 0 },
@@ -55,15 +55,16 @@ IrxFile irxFiles[] = {
 	{ "USB_MASS.IRX", USB | OPTIONAL, MASS_DRIVER, NULL, 0 },
 	{ "PS2MOUSE.IRX", USB | OPTIONAL, MOUSE_DRIVER, NULL, 0 },
 	{ "RPCKBD.IRX",   USB | OPTIONAL, KBD_DRIVER, NULL, 0 },
-
+#ifndef NO_ADAPTOR
 	{ "POWEROFF.IRX", HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
 	{ "PS2DEV9.IRX",  HDD | OPTIONAL | NOT_HOST | DEPENDANCY, HDD_DRIVER, NULL, 0 },
 	{ "PS2ATAD.IRX",  HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, NULL, 0 },
 	{ "PS2HDD.IRX",   HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, hddArg, sizeof(hddArg) },
 	{ "PS2FS.IRX",    HDD | OPTIONAL | DEPENDANCY, HDD_DRIVER, pfsArg, sizeof(pfsArg) },
-	{ "PS2IP.IRX",    NET | NOT_HOST, NET_DRIVER, NULL, 0 },
-	{ "PS2SMAP.IRX",  NET | NOT_HOST, NET_DRIVER, netArg, sizeof(netArg) },
-	{ "PS2HOST.IRX",  NET | NOT_HOST, NET_DRIVER, NULL, 0 }
+	{ "PS2IP.IRX",    NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, NULL, 0 },
+	{ "PS2SMAP.IRX",  NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, netArg, sizeof(netArg) },
+	{ "PS2HOST.IRX",  NET | OPTIONAL | NOT_HOST | DEPENDANCY, NET_DRIVER, NULL, 0 }
+#endif
 };
 
 static const int numIrxFiles = sizeof(irxFiles) / sizeof(irxFiles[0]);
@@ -73,7 +74,7 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 	PS2Device device = _getDev(elfPath);
 
 	printf("elf path: %s, device %d\n", elfPath, device);
-	
+
 	strcpy(bootPath, elfPath);
 
 	char *pathPos = bootPath;
@@ -115,7 +116,7 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath) {
 	return device;
 }
 
-int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {	
+int loadIrxModules(int device, const char *irxPath, IrxReference **modules) {
 
 	IrxReference *resModules = (IrxReference *)malloc(numIrxFiles * sizeof(IrxReference));
 	IrxReference *curModule = resModules;

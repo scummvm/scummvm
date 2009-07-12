@@ -56,18 +56,18 @@ public:
 	virtual bool getErr(void);
 	virtual void setErr(bool);
 
-	
+
 private:
 	void cacheReadAhead(void);
 	void cacheReadSync(void);
 
 	int _fd;
+	uint32 _mode;
 	uint32 _fileSize;
 	uint32 _filePos;
 	uint32 _cacheSize;
 	uint32 _cachePos;
 
-	// uint8 cache[2048];
 	uint8 *_cache;
 
 	int _eof;
