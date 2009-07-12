@@ -312,7 +312,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), s->_kernel->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", obj_get_name(s, send_obj), ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -952,26 +952,26 @@ void run_vm(EngineState *s, int restoring) {
 			gc_countdown(s);
 
 			scriptState.xs->sp -= (opparams[1] >> 1) + 1;
-			if (!s->_kernel->hasOldScriptHeader()) {
+			if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 				scriptState.xs->sp -= scriptState.restAdjust;
 				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
 			}
 
-			if (opparams[0] >= (int)s->_kernel->_kernelFuncs.size()) {
+			if (opparams[0] >= (int)((SciEngine*)g_engine)->getKernel()->_kernelFuncs.size()) {
 				error("Invalid kernel function 0x%x requested\n", opparams[0]);
 			} else {
 				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
 
-				if (!s->_kernel->hasOldScriptHeader())
+				if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 					argc += scriptState.restAdjust;
 
-				if (s->_kernel->_kernelFuncs[opparams[0]].signature
+				if (((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature
 						&& !kernel_matches_signature(s,
-						s->_kernel->_kernelFuncs[opparams[0]].signature, argc,
+						((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature, argc,
 						scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
 				} else {
-					s->r_acc = s->_kernel->_kernelFuncs[opparams[0]].fun(s, opparams[0],
+					s->r_acc = ((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].fun(s, opparams[0],
 														argc, scriptState.xs->sp + 1);
 				}
 				// Call kernel function
@@ -982,7 +982,7 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = &(s->_executionStack.back());
 				s->_executionStackPosChanged = true;
 
-				if (!s->_kernel->hasOldScriptHeader())
+				if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 					scriptState.restAdjust = s->restAdjust;
 
 			}
@@ -1194,7 +1194,7 @@ void run_vm(EngineState *s, int restoring) {
 			if (s->_version >= SCI_VERSION_1_1) {
 				s->r_acc.offset = opparams[0] + local_script->script_size;
 			} else {
-				if (s->_kernel->hasLofsAbsolute())
+				if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
 					s->r_acc.offset = opparams[0];
 				else
 					s->r_acc.offset = scriptState.xs->addr.pc.offset + opparams[0];
@@ -1214,7 +1214,7 @@ void run_vm(EngineState *s, int restoring) {
 			if (s->_version >= SCI_VERSION_1_1) {
 				r_temp.offset = opparams[0] + local_script->script_size;
 			} else {
-				if (s->_kernel->hasLofsAbsolute())
+				if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
 					r_temp.offset = opparams[0];
 				else
 					r_temp.offset = scriptState.xs->addr.pc.offset + opparams[0];
@@ -1500,7 +1500,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
-	if (s->_kernel->hasOldScriptHeader())
+	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 		selector_id &= ~1;
 
 	if (!obj) {
@@ -1659,7 +1659,7 @@ int script_instantiate_sci0(EngineState *s, int script_nr) {
 
 	Script *scr = s->seg_manager->getScript(seg_id);
 
-	if (s->_kernel->hasOldScriptHeader()) {
+	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
 
@@ -1835,7 +1835,7 @@ int script_instantiate(EngineState *s, int script_nr) {
 }
 
 void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
-	reg_t reg = make_reg(seg, s->_kernel->hasOldScriptHeader() ? 2 : 0);
+	reg_t reg = make_reg(seg, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader() ? 2 : 0);
 	int objtype, objlength;
 	Script *scr = s->seg_manager->getScript(seg);
 
@@ -1879,7 +1879,7 @@ void script_uninstantiate_sci0(EngineState *s, int script_nr, SegmentId seg) {
 }
 
 void script_uninstantiate(EngineState *s, int script_nr) {
-	reg_t reg = make_reg(0, s->_kernel->hasOldScriptHeader() ? 2 : 0);
+	reg_t reg = make_reg(0, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader() ? 2 : 0);
 
 	reg.segment = s->seg_manager->segGet(script_nr);
 	Script *scr = script_locate_by_segment(s, reg.segment);
@@ -1938,7 +1938,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			script_init_engine(s);
 			game_init(s);
 			sfx_reset_player();
-			_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play);
+			_init_stack_base_with_selector(s, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play);
 
 			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 
@@ -1957,7 +1957,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 					debugC(2, kDebugLevelVM, "Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
-					_init_stack_base_with_selector(s, s->_kernel->_selectorMap.replay);
+					_init_stack_base_with_selector(s, ((SciEngine*)g_engine)->getKernel()->_selectorMap.replay);
 
 					send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 				}
@@ -1976,7 +1976,7 @@ int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
 	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameName.c_str());
-	_init_stack_base_with_selector(s, s->_kernel->_selectorMap.play); // Call the play selector
+	_init_stack_base_with_selector(s, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {

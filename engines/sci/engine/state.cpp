@@ -113,9 +113,6 @@ EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 fla
 	seg_manager = 0;
 	gc_countdown = 0;
 
-	_vocabulary = 0;
-	_kernel = 0;
-
 	successor = 0;
 }
 

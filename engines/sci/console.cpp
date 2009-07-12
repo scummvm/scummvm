@@ -366,8 +366,8 @@ ResourceType parseResourceType(const char *resid) {
 }
 
 const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
-		return s->_kernel->getSelectorName(selector).c_str();
+	if (selector >= 0 && selector < (int)((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize())
+		return ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str();
 	else
 		return "--INVALID--";
 }
@@ -381,8 +381,8 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	DebugPrintf("Opcode names in numeric order [index: type name]:\n");
-	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getOpcodesSize(); seeker++) {
-		opcode op = _vm->_gamestate->_kernel->getOpcode(seeker);
+	for (uint seeker = 0; seeker < _vm->getKernel()->getOpcodesSize(); seeker++) {
+		opcode op = _vm->getKernel()->getOpcode(seeker);
 		DebugPrintf("%03x: %03x %20s | ", seeker, op.type, op.name.c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
@@ -400,9 +400,9 @@ bool Console::cmdSelector(int argc, const char **argv) {
 		return true;
 	}
 
-	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getSelectorNamesSize(); seeker++) {
-		if (!scumm_stricmp(_vm->_gamestate->_kernel->getSelectorName(seeker).c_str(), argv[1])) {
-			DebugPrintf("Selector %s found at %03x\n", _vm->_gamestate->_kernel->getSelectorName(seeker).c_str(), seeker);
+	for (uint seeker = 0; seeker < _vm->getKernel()->getSelectorNamesSize(); seeker++) {
+		if (!scumm_stricmp(_vm->getKernel()->getSelectorName(seeker).c_str(), argv[1])) {
+			DebugPrintf("Selector %s found at %03x\n", _vm->getKernel()->getSelectorName(seeker).c_str(), seeker);
 			return true;
 		}
 	}
@@ -414,8 +414,8 @@ bool Console::cmdSelector(int argc, const char **argv) {
 
 bool Console::cmdSelectors(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
-	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getSelectorNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, _vm->_gamestate->_kernel->getSelectorName(seeker).c_str());
+	for (uint seeker = 0; seeker < _vm->getKernel()->getSelectorNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, _vm->getKernel()->getSelectorName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -427,8 +427,8 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	DebugPrintf("Kernel function names in numeric order:\n");
-	for (uint seeker = 0; seeker <  _vm->_gamestate->_kernel->getKernelNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, _vm->_gamestate->_kernel->getKernelName(seeker).c_str());
+	for (uint seeker = 0; seeker <  _vm->getKernel()->getKernelNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, _vm->getKernel()->getKernelName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -439,13 +439,13 @@ bool Console::cmdKernelFunctions(int argc, const char **argv) {
 }
 
 bool Console::cmdSuffixes(int argc, const char **argv) {
-	_vm->_gamestate->_vocabulary->printSuffixes();
+	_vm->getVocabulary()->printSuffixes();
 
 	return true;
 }
 
 bool Console::cmdParserWords(int argc, const char **argv) {
-	_vm->_gamestate->_vocabulary->printParserWords();
+	_vm->getVocabulary()->printParserWords();
 
 	return true;
 }
@@ -604,7 +604,7 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gamestate->_kernel->dissectScript(atoi(argv[1]), _vm->_gamestate->_vocabulary);
+	_vm->getKernel()->dissectScript(atoi(argv[1]), _vm->getVocabulary());
 
 	return true;
 }
@@ -894,10 +894,10 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 bool Console::cmdSentenceFragments(int argc, const char **argv) {
 	DebugPrintf("Sentence fragments (used to build Parse trees)\n");
 
-	for (uint i = 0; i < _vm->_gamestate->_vocabulary->getParserBranchesSize(); i++) {
+	for (uint i = 0; i < _vm->getVocabulary()->getParserBranchesSize(); i++) {
 		int j = 0;
 
-		const parse_tree_branch_t &branch = _vm->_gamestate->_vocabulary->getParseTreeBranch(i);
+		const parse_tree_branch_t &branch = _vm->getVocabulary()->getParseTreeBranch(i);
 		DebugPrintf("R%02d: [%x] ->", i, branch.id);
 		while ((j < 10) && branch.data[j]) {
 			int dat = branch.data[j++];
@@ -929,7 +929,7 @@ bool Console::cmdSentenceFragments(int argc, const char **argv) {
 		DebugPrintf("\n");
 	}
 
-	DebugPrintf("%d rules.\n", _vm->_gamestate->_vocabulary->getParserBranchesSize());
+	DebugPrintf("%d rules.\n", _vm->getVocabulary()->getParserBranchesSize());
 
 	return true;
 }
@@ -952,7 +952,7 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Parsing '%s'\n", string);
-	bool res = _vm->_gamestate->_vocabulary->tokenizeString(words, string, &error);
+	bool res = _vm->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
@@ -963,7 +963,7 @@ bool Console::cmdParse(int argc, const char **argv) {
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
-		if (_vm->_gamestate->_vocabulary->parseGNF(_vm->_gamestate->parser_nodes, words, true))
+		if (_vm->getVocabulary()->parseGNF(_vm->_gamestate->parser_nodes, words, true))
 			syntax_fail = 1; // Building a tree failed
 
 		if (syntax_fail)
@@ -1214,7 +1214,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
-	_vm->_gamestate->_vocabulary->buildGNF(true);
+	_vm->getVocabulary()->buildGNF(true);
 
 	return true;
 }
@@ -2049,12 +2049,12 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			printf(" %x:[%x]  k%s(", i, call.origin, _vm->_gamestate->_kernel->getKernelName(-(call.selector) - 42).c_str());
+			printf(" %x:[%x]  k%s(", i, call.origin, _vm->getKernel()->getKernelName(-(call.selector) - 42).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
 			printf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname, _vm->_gamestate->_kernel->getSelectorName(call.selector).c_str());
+			          objname, _vm->getKernel()->getSelectorName(call.selector).c_str());
 			break;
 		}
 
@@ -2139,8 +2139,8 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 		callk_index = strtoul(argv[1], &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
-			for (uint i = 0; i < _vm->_gamestate->_kernel->getKernelNamesSize(); i++)
-				if (argv[1] == _vm->_gamestate->_kernel->getKernelName(i)) {
+			for (uint i = 0; i < _vm->getKernel()->getKernelNamesSize(); i++)
+				if (argv[1] == _vm->getKernel()->getKernelName(i)) {
 					callk_index = i;
 					break;
 				}
@@ -2176,7 +2176,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 	}
 
 	Object *obj = obj_get(_vm->_gamestate, objAddr);
-	int selector_id = _vm->_gamestate->_kernel->findSelector(argv[2]);
+	int selector_id = _vm->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
 	if (!obj) {
@@ -2276,7 +2276,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	Object *o;
 	reg_t fptr;
 
-	selector_id = _vm->_gamestate->_kernel->findSelector(selector_name);
+	selector_id = _vm->getKernel()->findSelector(selector_name);
 
 	if (selector_id < 0) {
 		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
@@ -3108,7 +3108,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int have_rects = 0;
 	Common::Rect nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s, pos, s->_kernel->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
+	if (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -3122,7 +3122,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	x = GET_SELECTOR(pos, x);
 	y = GET_SELECTOR(pos, y);
 	priority = GET_SELECTOR(pos, priority);
-	if (s->_kernel->_selectorMap.z > 0) {
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > 0) {
 		z = GET_SELECTOR(pos, z);
 		printf("(%d,%d,%d)\n", x, y, z);
 	} else
@@ -3186,10 +3186,10 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	}
 
 
-	is_view = (lookup_selector(s, pos, s->_kernel->_selectorMap.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.nsTop, NULL) == kSelectorVariable);
+	is_view = (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
 		printf("Not a dynamic View object.\n");

@@ -138,7 +138,7 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 	if (!script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
-	if (s->_kernel->hasOldScriptHeader()) {
+	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (s->_version < SCI_VERSION_1_1) {

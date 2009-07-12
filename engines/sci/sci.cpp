@@ -100,7 +100,10 @@ SciEngine::~SciEngine() {
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 
+	delete _kernel;
+	delete _vocabulary;
 	delete _console;
+	delete _resmgr;
 }
 
 Common::Error SciEngine::run() {
@@ -143,6 +146,8 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	_kernel = new Kernel(_resmgr);
+	_vocabulary = new Vocabulary(_resmgr);
 	script_adjust_opcode_formats(_resmgr->_sciVersion);
 
 #if 0
@@ -234,8 +239,6 @@ Common::Error SciEngine::run() {
 	script_free_breakpoints(_gamestate);
 
 	delete _gamestate;
-
-	delete _resmgr;
 
 	gfxop_exit(&gfx_state);
 

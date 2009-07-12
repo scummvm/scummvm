@@ -510,22 +510,22 @@ const Common::KeyCode Ps2Input::_usbToSdlk[0x100] = {
 };
 
 const Common::KeyCode Ps2Input::_padCodes[16] = {
-	Common::KEYCODE_1,		 // Select
-	Common::KEYCODE_INVALID,			 // L3
-	Common::KEYCODE_INVALID,			 // R3
-	Common::KEYCODE_F5,	 // Start
-	Common::KEYCODE_INVALID,			 //	Up
-	Common::KEYCODE_INVALID,			 //	Right
-	Common::KEYCODE_INVALID,			 //	Down
-	Common::KEYCODE_INVALID,			 //	Left
-	Common::KEYCODE_KP0,	 //	L2
-	Common::KEYCODE_INVALID,			 //	R2
-	Common::KEYCODE_n,		 //	L1
-	Common::KEYCODE_y,		 //	R1
-	Common::KEYCODE_ESCAPE, // Triangle
-	Common::KEYCODE_INVALID,			 //	Circle  => Right mouse button
-	Common::KEYCODE_INVALID,			 //	Cross	=> Left mouse button
-	Common::KEYCODE_RETURN	 //	Square
+	Common::KEYCODE_1,					// Select
+	Common::KEYCODE_INVALID,			// L3
+	Common::KEYCODE_INVALID,			// R3
+	Common::KEYCODE_F5,					// Start
+	Common::KEYCODE_INVALID,			// Up
+	Common::KEYCODE_INVALID,			// Right
+	Common::KEYCODE_INVALID,			// Down
+	Common::KEYCODE_INVALID,			// Left
+	Common::KEYCODE_KP0,				// L2
+	Common::KEYCODE_PERIOD,				// R2
+	Common::KEYCODE_n,					// L1
+	Common::KEYCODE_y,					// R1
+	Common::KEYCODE_ESCAPE,				// Triangle
+	Common::KEYCODE_INVALID,			// Circle  => Right mouse button
+	Common::KEYCODE_INVALID,			// Cross	=> Left mouse button
+	Common::KEYCODE_RETURN				// Square
 };
 
 const Common::KeyCode Ps2Input::_padFlags[16] = {
@@ -544,7 +544,7 @@ const Common::KeyCode Ps2Input::_padFlags[16] = {
 	Common::KEYCODE_INVALID,			 // Triangle
 	Common::KEYCODE_INVALID,			 //	Circle
 	Common::KEYCODE_INVALID,			 //	Cross
-	Common::KEYCODE_INVALID			 //	Square
+	Common::KEYCODE_INVALID				 //	Square
 };
 
 

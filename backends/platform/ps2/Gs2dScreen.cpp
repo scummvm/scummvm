@@ -337,6 +337,7 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	memset(_screenBuf, 0, _width * height);
 	memset(_overlayBuf, 0, _width * height * 2);
 	memset(_clut, 0, 256 * sizeof(uint32));
+	_clut[1] = GS_RGBA(0xC0, 0xC0, 0xC0, 0);
 
 	// clear video ram
 	_dmaPipe->uploadTex(_clutPtrs[MOUSE], 64, 0, 0, GS_PSMCT32, _clut, 16, 16);
@@ -345,7 +346,8 @@ void Gs2dScreen::newScreenSize(uint16 width, uint16 height) {
 	_dmaPipe->flush();
 	_dmaPipe->waitForDma();
 
-	_clutChanged = _screenChanged = _overlayChanged = false;
+	/*_clutChanged = */ _screenChanged = _overlayChanged = false;
+	_clutChanged = true; // reload palette on scr change
 
 	_texCoords[1].u = SCALE(_width);
 	_texCoords[1].v = SCALE(_height);
@@ -392,6 +394,13 @@ void Gs2dScreen::copyScreenRect(const uint8 *buf, int pitch, int x, int y, int w
 void Gs2dScreen::clearScreen(void) {
 	WaitSema(g_DmacSema);
 	memset(_screenBuf, 0, _width * _height);
+	_screenChanged = true;
+	SignalSema(g_DmacSema);
+}
+
+void Gs2dScreen::fillScreen(uint32 col) {
+	WaitSema(g_DmacSema);
+	memset(_screenBuf, col, _width * _height);
 	_screenChanged = true;
 	SignalSema(g_DmacSema);
 }
@@ -541,11 +550,11 @@ Graphics::PixelFormat Gs2dScreen::getOverlayFormat(void) {
 }
 
 int16 Gs2dScreen::getOverlayWidth(void) {
-	return _videoMode.overlayWidth;
+	return _width; // _videoMode.overlayWidth;
 }
 
 int16 Gs2dScreen::getOverlayHeight(void) {
-	return _videoMode.overlayHeight;
+	return _height; // _videoMode.overlayHeight;
 }
 
 void Gs2dScreen::setShakePos(int shake) {

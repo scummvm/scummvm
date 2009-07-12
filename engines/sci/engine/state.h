@@ -257,9 +257,6 @@ public:
 
 	MessageState _msgState;
 
-	Vocabulary *_vocabulary;
-	Kernel *_kernel;
-
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
 private:
@@ -283,7 +280,7 @@ PaletteEntry get_pic_color(EngineState *s, int color);
 // misleading. A different name (and a different place for declaring this)
 // would be highly welcome.
 static inline reg_t not_register(EngineState *s, reg_t r) {
-	if (s->_kernel->_selectorMap.cantBeHere != -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.cantBeHere != -1)
 		return make_reg(0, !r.offset);
 	else
 		return r;

@@ -239,10 +239,10 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const Common::String &patte
 	if (!savePath.exists() || !savePath.isDirectory())
 		return Common::StringList();
 
-	printf("listSavefiles = %s\n", pattern);
+	printf("listSavefiles = %s\n", pattern.c_str());
 
 	if (_mc) {
-		strcpy(temp, pattern);
+		strcpy(temp, pattern.c_str());
 
 		// mcSplit(temp, game, ext);
 		game = strdup(strtok(temp, "."));
@@ -255,7 +255,7 @@ Common::StringList Ps2SaveFileManager::listSavefiles(const Common::String &patte
 	}
 	else {
 		_dir = Common::String(savePath.getPath());
-		search = Common::String(pattern);
+		search = pattern;
 	}
 
 	Common::FSDirectory dir(_dir);

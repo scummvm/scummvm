@@ -35,6 +35,8 @@
 
 namespace Cruise {
 
+enum RelationType {RT_REL = 30, RT_MSG = 50};
+
 static int playerDontAskQuit;
 unsigned int timer = 0;
 
@@ -1024,8 +1026,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 		}
 
 		if ((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj)) {
-//			int x = 60;
-//			int y = 60;
+			int x = 60;
+			int y = 60;
 
 			objectParamsQuery params;
 			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
@@ -1035,7 +1037,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 			}
 
 			if ((pHeader->obj2OldState == -1) || (params.state == pHeader->obj2OldState)) {
-				if (pHeader->type == 30) { // REL
+				if (pHeader->type == RT_REL) { // REL
 					if (currentScriptPtr) {
 						attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 					} else {
@@ -1073,8 +1075,69 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 							changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
 						}
 					}
-				} else if (pHeader->type == 50) {
-					ASSERT(0);
+				} else if (pHeader->type == RT_MSG) {
+
+					if (pHeader->obj2Number >= 0) {
+						if ((pHeader->trackX !=-1) && (pHeader->trackY !=-1) && 
+								(pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
+							x = pHeader->trackX - 100;
+							y = pHeader->trackY - 150;
+						} else if (params.scale >= 0) {
+							x = params.X - 100;
+							y = params.Y - 40;
+						}
+
+						if (pHeader->obj2NewState != -1) {
+							objInit(obj2Ovl, pHeader->obj2Number, pHeader->obj2NewState);
+						}
+					}
+
+					if ((pHeader->obj1Number >= 0) && (pHeader->obj1NewState != -1)) {
+						int obj1Ovl = pHeader->obj1Overlay;
+						if (!obj1Ovl) obj1Ovl = ovlIdx;
+						objInit(obj1Ovl, pHeader->obj1Number, pHeader->obj1NewState);
+					}
+
+					if (currentScriptPtr) {
+						createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+					} else {
+						createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
+					}
+
+					userWait = 1;
+					autoOvl = ovlIdx;
+					autoMsg = pHeader->id;
+				
+					if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+						actorStruct *pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+						if (pTrack)	 {
+							objectParamsQuery naratorParams;
+							animationStart = false;
+
+							if (pHeader->trackDirection == 9999) {
+								getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+								pTrack->x_dest = naratorParams.X;
+								pTrack->y_dest = naratorParams.Y;
+								pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pHeader->trackX,pHeader->trackY, 0, 0);
+							} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+								getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+								pTrack->x_dest = naratorParams.X;
+								pTrack->y_dest = naratorParams.Y;
+								pTrack->endDirection = pHeader->trackDirection;
+							} else {
+								pTrack->x_dest = pHeader->trackX;
+								pTrack->y_dest = pHeader->trackY;
+								pTrack->endDirection = pHeader->trackDirection;
+							}
+
+							pTrack->flag = 1;
+							autoTrack = true;
+							userWait = 0;
+							userEnabled = 0;
+							freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
+						}
+					}
 				}
 			}
 		}
@@ -1112,7 +1175,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 
 		if (pHeader->obj2Number == nObj2) {
 			// REL
-			if (pHeader->type == 30) {
+			if (pHeader->type == RT_REL) {
 				if (currentScriptPtr) {
 					attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 				} else {
@@ -1150,7 +1213,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
 					}
 				}
-			} else if (pHeader->type == 50) { // MSG
+			} else if (pHeader->type == RT_MSG) { // MSG
 				int obj1Ovl = pHeader->obj1Overlay;
 				if (!obj1Ovl)
 					obj1Ovl = ovlIdx;

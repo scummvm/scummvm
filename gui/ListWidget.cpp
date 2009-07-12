@@ -564,7 +564,7 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		// Restrict the list to everything which contains all words in _filter
 		// as substrings, ignoring case.
 		
-		Common::StringTokenizer tok(filter);
+		Common::StringTokenizer tok(_filter);
 		String tmp;
 		int n = 0;
 
