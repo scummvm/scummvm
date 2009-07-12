@@ -477,7 +477,11 @@ void NORETURN error(const char *s, ...) {
 
 
 	// Print the error message to stderr
+#ifndef __PLAYSTATION2__
 	fputs(buf_output, stderr);
+#else
+	fprintf(stderr, "%s\n", buf_output);
+#endif
 
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.
