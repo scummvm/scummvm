@@ -84,7 +84,7 @@ public:
 	// Overloaded from SDL backend (master volume and sample rate subtleties)
 	void setupMixer();
 	// Overloaded from OSystem
-	//void engineInit();
+	void engineInit();
 	void getTimeAndDate(struct tm &t) const;
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
@@ -145,7 +145,6 @@ protected:
 	//int getGraphicsMode() const;
 	int getDefaultGraphicsMode() const;
 
-	void setWindowCaption(const char *caption);
 	bool openCD(int drive);
 	int getOutputSampleRate() const;
 
