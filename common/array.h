@@ -222,7 +222,13 @@ public:
 
 		T *old_storage = _storage;
 		_capacity = newCapacity;
+		// PS2 gcc 3.2.2 can't do "new T[newCapacity]()" but only
+		// "new T[newCapacity]" -> quick fix until we update tools.
+		#ifndef __PLAYSTATION2__
 		_storage = new T[newCapacity]();
+		#else
+		_storage = new T[newCapacity];
+		#endif
 		assert(_storage);
 
 		if (old_storage) {
@@ -273,7 +279,13 @@ protected:
 				// If there is not enough space, allocate more and
 				// copy old elements over.
 				uint newCapacity = roundUpCapacity(_size + n);
+				// PS2 gcc 3.2.2 can't do "new T[newCapacity]()" but only
+				// "new T[newCapacity]" -> quick fix until we update tools.
+				#ifndef __PLAYSTATION2__
 				newStorage = new T[newCapacity]();
+				#else
+				newStorage = new T[newCapacity];
+				#endif
 				assert(newStorage);
 				copy(_storage, _storage + idx, newStorage);
 				pos = newStorage + idx;
