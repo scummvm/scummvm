@@ -480,7 +480,7 @@ void NORETURN error(const char *s, ...) {
 #ifndef __PLAYSTATION2__
 	fputs(buf_output, stderr);
 #else
-	fprintf(stderr, "%s\n", buf_output);
+	fprintf(stderr, "%s", buf_output);
 #endif
 
 	// Unless this error -originated- within the debugger itself, we
