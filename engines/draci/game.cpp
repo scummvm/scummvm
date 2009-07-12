@@ -320,6 +320,8 @@ void Game::changeRoom(uint roomNum) {
 	_vm->_spritesArchive->clearCache();
 	_vm->_paletteArchive->clearCache();
 
+	_vm->_screen->clearScreen();
+
 	_vm->_anims->deleteOverlays();
 
 	int oldRoomNum = _currentRoom._roomNum;
