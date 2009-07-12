@@ -350,6 +350,9 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 
 				// Calculate result
 				res = (this->*(func._handler))(arg1);
+
+				// Push the result on the evaluation stack
+				stk.push(res);
 			
 				debugC(3, kDraciBytecodeDebugLevel, "\t\tcall: %s(%d) (res: %d)",
 					func._name.c_str(), arg1, res);
