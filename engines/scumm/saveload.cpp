@@ -137,7 +137,7 @@ bool ScummEngine::saveState(Common::OutSaveFile *out, bool writeHeader) {
 		memcpy(hdr.name, _saveLoadName, sizeof(hdr.name));
 		saveSaveGameHeader(out, hdr);
 	}
-#if !defined(__DS__)
+#if !defined(__DS__) /* && !defined(__PLAYSTATION2__) */
 	Graphics::saveThumbnail(*out);
 #endif
 	saveInfos(out);

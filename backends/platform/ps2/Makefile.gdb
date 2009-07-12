@@ -13,28 +13,28 @@ DISABLE_HQ_SCALERS = true
 
 ENABLE_SCUMM = $(ENABLED)
 ENABLE_SCUMM_7_8 = $(ENABLED)
-ENABLE_HE = $(ENABLED)
-ENABLE_AGI = $(ENABLED)
-ENABLE_AGOS = $(ENABLED)
-ENABLE_CINE = $(ENABLED)
-ENABLE_CRUISE = $(ENABLED)
-ENABLE_DRASCULA = $(ENABLED)
-ENABLE_GOB = $(ENABLED)
-ENABLE_IGOR = $(ENABLED)
-ENABLE_KYRA = $(ENABLED)
-ENABLE_LURE = $(ENABLED)
-# ENABLE_M4 = $(ENABLED)
-ENABLE_MADE = $(ENABLED)
-ENABLE_PARALLACTION = $(ENABLED)
-ENABLE_QUEEN = $(ENABLED)
-ENABLE_SAGA = $(ENABLED)
-ENABLE_SAGA2 = $(ENABLED)
-ENABLE_IHNM = $(ENABLED)
-ENABLE_SKY = $(ENABLED)
-ENABLE_SWORD1 = $(ENABLED)
-ENABLE_SWORD2 = $(ENABLED)
-# ENABLE_TINSEL = $(ENABLED)
-ENABLE_TOUCHE = $(ENABLED)
+#ENABLE_HE = $(ENABLED)
+#ENABLE_AGI = $(ENABLED)
+#ENABLE_AGOS = $(ENABLED)
+#ENABLE_CINE = $(ENABLED)
+#ENABLE_CRUISE = $(ENABLED)
+#ENABLE_DRASCULA = $(ENABLED)
+#ENABLE_GOB = $(ENABLED)
+#ENABLE_IGOR = $(ENABLED)
+#ENABLE_KYRA = $(ENABLED)
+#ENABLE_LURE = $(ENABLED)
+ # ENABLE_M4 = $(ENABLED)
+#ENABLE_MADE = $(ENABLED)
+#ENABLE_PARALLACTION = $(ENABLED)
+#ENABLE_QUEEN = $(ENABLED)
+#ENABLE_SAGA = $(ENABLED)
+#ENABLE_SAGA2 = $(ENABLED)
+#ENABLE_IHNM = $(ENABLED)
+#ENABLE_SKY = $(ENABLED)
+#ENABLE_SWORD1 = $(ENABLED)
+#ENABLE_SWORD2 = $(ENABLED)
+ # ENABLE_TINSEL = $(ENABLED)
+#ENABLE_TOUCHE = $(ENABLED)
 
 HAVE_GCC3 = true
 
@@ -53,11 +53,11 @@ VPATH = $(srcdir)
 INCDIR = ../../../
 # DEPDIR = .deps
 
-DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
+DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -D__PS2_DEBUG__ -g -Wall -Wno-multichar
 
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
-INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
+INCLUDES += -I $(PS2GDB)/ee -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I . -I $(srcdir) -I $(srcdir)/engines
 
 TARGET = elf/scummvm.elf
 
@@ -83,10 +83,9 @@ MODULE_DIRS += .
 include $(srcdir)/Makefile.common
 
 LDFLAGS += -mno-crt0 $(PS2SDK)/ee/startup/crt0.o -T $(PS2SDK)/ee/startup/linkfile 
-LDFLAGS += -L $(PS2SDK)/ee/lib -L .
+LDFLAGS += -L $(PS2GDB)/lib  -L $(PS2SDK)/ee/lib -L .
 LDFLAGS += $(addprefix -L$(PS2_EXTRA),$(PS2_EXTRA_LIBS)) 
-LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++ 
-LDFLAGS += -s 
+LDFLAGS += -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lps2gdbStub -lps2ip -ldebug -lkernel -lstdc++
 
 all: $(TARGET)
 

@@ -66,6 +66,10 @@
 #include "icon.h"
 #include "ps2temp.h"
 
+#ifdef __PS2_DEBUG__
+#include <debug.h>
+#endif
+
 // asm("mfc0	%0, $9\n" : "=r"(tickStart));
 
 extern void *_gp;
@@ -95,6 +99,11 @@ PS2Device detectBootPath(const char *elfPath, char *bootPath);
 
 extern AsyncFio fio;
 
+#ifdef __PS2_DEBUG__
+extern "C" int gdb_stub_main(int argc, char *argv[]);
+extern "C" void breakpoint(void);
+#endif
+
 extern "C" int scummvm_main(int argc, char *argv[]);
 
 extern "C" int main(int argc, char *argv[]) {
@@ -116,6 +125,10 @@ extern "C" int main(int argc, char *argv[]) {
 		int res = ChangeThreadPriority(tid, 20);
 		sioprintf("Result = %d\n", res);
 	}
+
+#ifdef __PS2_DEBUG__
+	gdb_stub_main(argc, argv);
+#endif
 
 	sioprintf("Creating system\n");
 	g_system = g_systemPs2 = new OSystem_PS2(argv[0]);
@@ -241,6 +254,8 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 	_printY = 0;
 	_msgClearTime = 0;
 	_systemQuit = false;
+	_modeChanged = false;
+	_screenChangeCount = 0;
 
 	_screen = new Gs2dScreen(320, 200, TV_DONT_CARE);
 
@@ -327,9 +342,8 @@ OSystem_PS2::OSystem_PS2(const char *elfPath) {
 void OSystem_PS2::init(void) {
 	sioprintf("Timer...\n");
 	_scummTimerManager = new DefaultTimerManager();
-	_scummEventManager = new DefaultEventManager();
 	_scummMixer = new Audio::MixerImpl(this);
-	_scummMixer->setOutputRate(44100);
+	_scummMixer->setOutputRate(48000);
 	_scummMixer->setReady(true);
 	initTimer();
 
@@ -520,6 +534,9 @@ void OSystem_PS2::initSize(uint width, uint height) {
 
 	_oldMouseX = width / 2;
 	_oldMouseY = height / 2;
+
+	_modeChanged = true;
+	_screenChangeCount++;
 	printf("done\n");
 }
 
@@ -574,11 +591,11 @@ void OSystem_PS2::delayMillis(uint msecs) {
 Common::TimerManager *OSystem_PS2::getTimerManager() {
 	return _scummTimerManager;
 }
-
+/*
 Common::EventManager *OSystem_PS2::getEventManager() {
-	return _scummEventManager;
+	return getEventManager();
 }
-
+*/
 Audio::Mixer *OSystem_PS2::getMixer() {
 	return _scummMixer;
 }
@@ -661,12 +678,16 @@ int16 OSystem_PS2::getOverlayHeight(void) {
 	return _screen->getOverlayHeight();
 }
 
-Graphics::Surface *OSystem_PS2::lockScreen() {
+Graphics::Surface *OSystem_PS2::lockScreen(void) {
 	return _screen->lockScreen();
 }
 
 void OSystem_PS2::unlockScreen(void) {
 	_screen->unlockScreen();
+}
+
+void OSystem_PS2::fillScreen(uint32 col) {
+	_screen->fillScreen(col);
 }
 
 const OSystem::GraphicsMode OSystem_PS2::_graphicsMode = { NULL, NULL, 0 };
@@ -688,7 +709,16 @@ int OSystem_PS2::getDefaultGraphicsMode(void) const {
 }
 
 bool OSystem_PS2::pollEvent(Common::Event &event) {
-	bool res = _input->pollEvent(&event);
+	bool res;
+
+	if (_modeChanged) {
+		_modeChanged = false;
+		event.type = Common::EVENT_SCREEN_CHANGED;
+		return true;
+	}
+
+	res = _input->pollEvent(&event);
+
 	if (res && (event.type == Common::EVENT_MOUSEMOVE))
 		_screen->setMouseXy(event.mouse.x, event.mouse.y);
 	return res;
