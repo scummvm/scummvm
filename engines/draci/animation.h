@@ -46,8 +46,6 @@ public:
 	void setID(int id);
 	int getID();
 
-	void setDelay(uint delay);
-
 	void nextFrame(bool force = false);
 	void drawFrame(Surface *surface);
 
@@ -68,7 +66,6 @@ private:
 	int _id;	
 	uint _currentFrame;
 	uint _z;
-	uint _delay;
 	uint _tick;
 	bool _playing;
 	bool _looping;

@@ -49,12 +49,20 @@ public:
 	virtual void setX(int x) { _x = x; }
 	virtual void setY(int y) { _y = y; }
 
+	void setDelay(int delay) { _delay = delay; }
+	int getDelay() { return _delay; }	
+
 	virtual Common::Rect getRect() const = 0;
 	
 private:
 	uint16 _width;	//!< Width of the sprite
 	uint16 _height;	//!< Height of the sprite
 	int _x, _y;	//!< Sprite coordinates
+
+	/** The time a drawable should stay on the screen 
+	 *  before being replaced by another or deleted
+	 */
+	int _delay;
 };
 
 /**

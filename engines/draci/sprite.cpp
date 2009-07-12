@@ -61,6 +61,7 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y,
 	 _height = height;
 	 _x = x;
 	 _y = y;
+	_delay = 0;
 
 	_mirror = false;
 
@@ -83,6 +84,7 @@ Sprite::Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise)
 
 	 _x = x;
 	 _y = y;
+	_delay = 0;
 
 	_mirror = false;	
 
@@ -180,6 +182,7 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 	
 	_x = x;
 	_y = y;
+	_delay = 0;
 	
 	_text = new byte[len];
 	memcpy(_text, str.c_str(), len);

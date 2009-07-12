@@ -33,7 +33,6 @@ Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_z = 0;
 	_playing = false;
 	_looping = false;
-	_delay = 0;
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
 }	
@@ -52,12 +51,6 @@ void Animation::setLooping(bool looping) {
 		looping, _id);
 }
 
-void Animation::setDelay(uint delay) {
-	_delay = delay;
-	debugC(7, kDraciAnimationDebugLevel, "Setting delay to %u on animation %d", 
-		delay, _id);
-}
-
 void Animation::nextFrame(bool force) {
 
 	// If there's only one or no frames, return
@@ -65,8 +58,9 @@ void Animation::nextFrame(bool force) {
 		return;
 
 	Common::Rect frameRect = _frames[_currentFrame]->getRect();
+	Drawable *frame = _frames[_currentFrame];
 
-	if (force || (_tick + _delay <= _vm->_system->getMillis())) {
+	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis())) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
 		if ((_currentFrame == getFramesNum() - 1) && !_looping) {
@@ -75,13 +69,14 @@ void Animation::nextFrame(bool force) {
 		} else {
 			_vm->_screen->getSurface()->markDirtyRect(frameRect);
 			_currentFrame = nextFrameNum();
-			_tick += _delay;
+			_tick += frame->getDelay();
 		}
 	}
 
 	debugC(6, kDraciAnimationDebugLevel, 
 	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d", 
-	_id, _tick, _delay, _tick + _delay, _vm->_system->getMillis(), _currentFrame, _frames.size());
+	_id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(), 
+	_currentFrame, _frames.size());
 }
 
 uint Animation::nextFrameNum() {
