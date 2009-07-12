@@ -125,7 +125,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 		error("No DATA chunk found in file: '%s'", filename);
 
 	if (stream->err())
-		error("Read error while parsing file '%s", filename);
+		error("Read error while parsing file '%s'", filename);
 
 	delete stream;
 
