@@ -135,7 +135,6 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 			g_system->initSize(width, height, format);
 		else { 
 			Graphics::PixelFormat Format = g_system->getSupportedFormats().front();
-			debug("%d,%X,%X,%X",Format.bytesPerPixel << 3, Format.rBits(), Format.gBits(), Format.bBits());
 			g_system->initSize(width, height, &Format);
 		}
 #else
