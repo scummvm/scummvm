@@ -204,6 +204,7 @@ public:
 	void freeScores();
 	void resetChannel(ChannelContext &chan, bool rightChannel);
 
+	static int8 MaxTrax::pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
 	int calcNote(VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(ChannelContext &channel, byte note);

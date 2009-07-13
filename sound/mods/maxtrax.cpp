@@ -340,6 +340,50 @@ void MaxTrax::killVoice(byte num) {
 	Paula::setChannelVolume(num, 0);
 }
 
+int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
+	pick &= 3;
+	enum { kPrioFlagFixedSide = 1 << 3 };
+	if ((pri & (kPrioFlagFixedSide)) == 0) {
+		const bool leftSide = (uint)(pick - 1) > 1;
+		const int leftBest = MIN(voices[0].status, voices[3].status);
+		const int rightBest = MIN(voices[1].status, voices[2].status);
+		const int sameSide = (leftSide) ? leftBest : rightBest;
+		const int otherSide = leftBest + rightBest - sameSide;
+
+		if (sameSide > VoiceContext::kStatusRelease && otherSide <= VoiceContext::kStatusRelease) {
+			pick ^= 1; // switches sides
+		}
+	}
+	pri &= ~kPrioFlagFixedSide;
+
+	for (int i = 1; i > 0; --i) {
+		const VoiceContext *voice = &voices[pick];
+		const VoiceContext *alternate = &voices[pick ^ 3];
+
+		if (voice->status >  alternate->status 
+			|| (voice->status == alternate->status && voice->lastVolume > alternate->lastVolume)) {
+			// TODO: tiebreaking
+			pick ^= 3; // switch channels
+			const VoiceContext *tmp = voice;
+			voice = alternate;
+			alternate = tmp;
+		}
+
+		if ((voice->flags & VoiceContext::kFlagBlocked) != 0 || voice->priority > pri) {
+			pick ^= 3; // switch channels
+			if ((alternate->flags & VoiceContext::kFlagBlocked) != 0 || alternate->priority > pri) {
+				// if not already done, switch sides and try again
+				pick ^= 1;
+				continue;
+			}
+		}
+		// succeded
+		return (int8)pick;
+	}
+	// failed
+	return -1;
+}
+
 int MaxTrax::calcNote(VoiceContext &voice) {
 	const ChannelContext &channel = *voice.channel;
 	voice.lastPeriod = 0;
@@ -381,9 +425,12 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 		voice.periodOffset = octave << 16;
 	}
 	tone -= voice.periodOffset;
-	if (tone >= PERIOD_LIMIT)
-		// we need to scale with log(2)
-		voice.lastPeriod = (uint16)expf((float)tone * (float)(0.69314718055994530942 / (1 << 16)));
+	if (tone >= PERIOD_LIMIT) {
+		// calculate 2^tone and round towards nearest integer 
+		// 2*2^tone = exp((tone+1) * ln(2))
+		const uint16 periodX2 = (uint16)expf((float)(tone + (1 << 16)) * (float)(0.69314718055994530942 / (1 << 16)));
+		voice.lastPeriod = (periodX2 + 1) / 2;
+	}
 	return octave;
 }
 
@@ -417,12 +464,9 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			return voiceNum;
 		}
 	} else {
-		// TODO:
-		// pickvoice based on channel.isRightChannel
-		// return if no channel found
-		voiceNum = (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 0 : 1;
-		static int c = 0;
-		voiceNum = (&channel - _channelCtx) % 4;
+		voiceNum = pickvoice(_voiceCtx, (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
+		if (voiceNum < 0)
+			return voiceNum;
 	}
 	assert(voiceNum >= 0 && voiceNum < ARRAYSIZE(_voiceCtx));
 
@@ -453,6 +497,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	if (!period)
 		period = 1000;
 
+	// TODO: since the original player is using the OS-functions, more than 1 sample could be queued up already
 	// get samplestart for the given octave
 	const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
 	if (patch.sampleAttackLen) {
@@ -463,6 +508,11 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 
 		Paula::enableChannel(voiceNum);
 		// wait  for dma-clear
+		// FIXME: this is a workaround to enable oneshot-samples and it currently might crash Paula
+		if (patch.sampleTotalLen == patch.sampleAttackLen) {
+			Paula::setChannelSampleStart(voiceNum, 0);
+			Paula::setChannelSampleLen(voiceNum, 0);
+		}
 	}
 
 	if (patch.sampleTotalLen > patch.sampleAttackLen) {
