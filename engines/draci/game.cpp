@@ -144,7 +144,7 @@ void Game::init() {
 	changeRoom(0);
 }
 
-void Game::loadRoom(uint roomNum) {
+void Game::loadRoom(int roomNum) {
 
 	BAFile *f;
 	f = _vm->_roomsArchive->getFile(roomNum * 4);
@@ -208,7 +208,7 @@ int Game::loadAnimation(uint animNum, uint z) {
 	BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
 	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);	
 
-	int numFrames = animationReader.readByte();
+	uint numFrames = animationReader.readByte();
 
 	// FIXME: handle these properly
 	animationReader.readByte(); // Memory logic field, not used
@@ -354,6 +354,10 @@ int Game::getVariable(int numVar) {
 
 void Game::setVariable(int numVar, int value) {
 	_variables[numVar] = value;
+}
+
+int Game::getIconStatus(int iconID) {
+	return _iconStatus[iconID];
 }
 
 Game::~Game() {

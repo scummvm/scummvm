@@ -122,6 +122,12 @@ private:
 
 	int funcRandom(int n);
 	int funcNot(int n);
+	int funcIsIcoOn(int iconID);
+	int funcIcoStat(int iconID);
+	int funcIsObjOn(int objID);
+	int funcIsObjOff(int objID);
+	int funcIsObjAway(int objID);
+
 
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum);

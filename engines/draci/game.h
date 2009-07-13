@@ -58,7 +58,7 @@ struct GameObject {
 	Common::Array<int> _anims;
 	GPL2Program _program;
 	byte *_title;
-	byte _location;
+	int _location;
 	bool _visible;
 };
 
@@ -132,7 +132,7 @@ public:
 		_currentRoom._roomNum = n;
 	}
 
-	void loadRoom(uint roomNum);
+	void loadRoom(int roomNum);
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
@@ -141,6 +141,8 @@ public:
 
 	int getVariable(int varNum);
 	void setVariable(int varNum, int value);	
+
+	int getIconStatus(int iconID);
 
 private:
 	DraciEngine *_vm;

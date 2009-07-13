@@ -118,13 +118,13 @@ void Script::setupCommandList() {
 	static const GPL2Function gplFunctions[] = {
 		{ "Not", 		&Script::funcNot },
 		{ "Random", 	&Script::funcRandom },
-		{ "IsIcoOn", 	NULL },
+		{ "IsIcoOn", 	&Script::funcIsIcoOn },
 		{ "IsIcoAct", 	NULL },
-		{ "IcoStat", 	NULL },
+		{ "IcoStat", 	&Script::funcIcoStat },
 		{ "ActIco", 	NULL },
-		{ "IsObjOn", 	NULL },
-		{ "IsObjOff", 	NULL },
-		{ "IsObjAway", 	NULL },
+		{ "IsObjOn", 	&Script::funcIsObjOn },
+		{ "IsObjOff", 	&Script::funcIsObjOff },
+		{ "IsObjAway", 	&Script::funcIsObjAway },
 		{ "ObjStat", 	NULL },
 		{ "LastBlock", 	NULL },
 		{ "AtBegin", 	NULL },
@@ -220,6 +220,46 @@ int Script::funcRandom(int n) {
 
 int Script::funcNot(int n) {
 	return !n;
+}
+
+int Script::funcIsIcoOn(int iconID) {
+	iconID -= 1;
+
+	return _vm->_game->getIconStatus(iconID) == 1;
+} 
+
+int Script::funcIcoStat(int iconID) {
+	iconID -= 1;
+
+	int status = _vm->_game->getIconStatus(iconID);
+	return (status == 1) ? 1 : 2;
+}
+
+int Script::funcIsObjOn(int objID) {
+	objID -= 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	return obj->_visible;
+}
+
+int Script::funcIsObjOff(int objID) {
+	objID -= 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	// We index locations from 0 (as opposed to the original player where it was from 1)
+	// That's why the "invalid" location 0 from the data files is converted to -1
+	return !obj->_visible && obj->_location != -1;
+}
+
+int Script::funcIsObjAway(int objID) {
+	objID -= 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	// see Script::funcIsObjOff
+	return !obj->_visible && obj->_location == -1;
 }
 
 /* GPL commands */
