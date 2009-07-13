@@ -1155,6 +1155,14 @@
 							AssemblerOutput="2"
 						/>
 					</FileConfiguration>
+					<FileConfiguration
+						Name="Release_Command|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							AssemblerOutput="2"
+						/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath="..\..\sound\mods\maxtrax.h"

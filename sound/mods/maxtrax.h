@@ -121,7 +121,7 @@ public:
 
 		int16	microtonal;
 
-		uint16	portamento;
+		uint16	portamentoTime;
 
 		int16	pitchBend;
 		int16	pitchReal;
@@ -207,7 +207,7 @@ public:
 	static int8 MaxTrax::pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
 	int calcNote(VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
-	void noteOff(ChannelContext &channel, byte note);
+	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);
 
 	void setTempo(const uint16 tempo) {

@@ -75,9 +75,10 @@ void MaxTrax::interrupt() {
 		if (!voice.channel || voice.stopEventCommand >= 0x80)
 			continue;
 		const int channelNo = voice.stopEventParameter;
+		assert(channelNo == voice.channel - _channelCtx);
 		voice.stopEventTime -= (channelNo < kNumChannels) ? _playerCtx.tickUnit : _playerCtx.frameUnit;
 		if (voice.stopEventTime <= 0) {
-			noteOff(_channelCtx[channelNo], voice.stopEventCommand);
+			noteOff(voice, voice.stopEventCommand);
 			voice.stopEventCommand = 0xFF;
 		}
 	}
@@ -95,7 +96,6 @@ void MaxTrax::interrupt() {
 			debug("CurTime, EventTime, NextEvent: %d, %d, %d", millis, eventTime, eventTime + curEvent[1].startTime );
 
 			if (cmd < 0x80) {
-				_playerCtx.addedNote = false;
 				const uint16 vol = (data & 0xF0) >> 1;
 
 				const int8 voiceIndex = noteOn(channel, cmd, vol, kPriorityScore);
@@ -128,7 +128,7 @@ void MaxTrax::interrupt() {
 					break;
 				case 0xE0:	// BEND
 					channel.pitchBend = ((stopTime & 0x7F00) >> 1) | (stopTime & 0x7f);
-					// channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
+					channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
 					channel.pitchReal = ((channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
 					channel.flags |= ChannelContext::kFlagAltered;
 					break;
@@ -177,8 +177,7 @@ void MaxTrax::interrupt() {
 		byte newVolume = 0xFF; // if set to 0 this means skip recalc
 		switch (voice.status) {
 		case VoiceContext::kStatusSustain:
-			// and no modulation 
-			if ((channel.flags & ChannelContext::kFlagAltered) == 0 && (voice.flags & VoiceContext::kFlagPortamento) == 0)
+			if ((channel.flags & (ChannelContext::kFlagAltered | VoiceContext::kFlagPortamento)) == 0 && !channel.modulation)
 				continue;
 			// goto .l18
 			envHandling = false;
@@ -273,19 +272,18 @@ void MaxTrax::interrupt() {
 				vol = (vol * voice.channel->volume) >> 7;
 
 			newVolume = (byte)MIN(vol, (uint16)0x64);
-			voice.lastVolume = newVolume;
+			voice.lastVolume = newVolume = 0x64;
 
 			if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
 				voice.portaTicks += _playerCtx.tickUnit;
-				if ((uint16)(voice.portaTicks >> 8) >= channel.portamento) {
+				if ((uint16)(voice.portaTicks >> 8) >= channel.portamentoTime) {
 					voice.flags &= ~VoiceContext::kFlagPortamento;
 					voice.baseNote = voice.endNote;
 				}
 				voice.flags |= VoiceContext::kFlagRecalc;
 				calcNote(voice);
 			} else {
-				// modulation
-				if ((channel.flags & ChannelContext::kFlagAltered) != 0) {
+				if ((channel.flags & ChannelContext::kFlagAltered) != 0 || channel.modulation) {
 					voice.flags |= VoiceContext::kFlagRecalc;
 					calcNote(voice);
 				}
@@ -392,7 +390,7 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 	if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
 		// microtonal crap
 
-		bend = (int16)((int8)(voice.endNote - voice.baseNote) * voice.portaTicks) / channel.portamento;
+		bend = (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
 	}
 	// modulation
 	if (channel.modulation && (channel.flags & ChannelContext::kFlagModVolume) == 0) {
@@ -445,110 +443,103 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		return -1;
 	int8 voiceNum = -1;
 	if ((channel.flags & ChannelContext::kFlagMono) != 0  && channel.voicesActive) {
-		for (voiceNum = ARRAYSIZE(_voiceCtx) - 1; voiceNum >= 0 && _voiceCtx[voiceNum].channel != &channel; --voiceNum)
+		VoiceContext *voice = _voiceCtx + ARRAYSIZE(_voiceCtx) - 1;
+		for (voiceNum = ARRAYSIZE(_voiceCtx) - 1; voiceNum >= 0 && voice->channel != &channel; --voiceNum, --voice)
 			;
-		if (voiceNum < 0)
-			return -1;
-
-		VoiceContext &voice = _voiceCtx[voiceNum];
-		if (voice.status >= VoiceContext::kStatusSustain && (channel.flags & ChannelContext::kFlagPortamento) != 0) {
+		if (voiceNum >= 0 && voice->status >= VoiceContext::kStatusSustain && (channel.flags & ChannelContext::kFlagPortamento) != 0) {
 			// reset previous porta
-			if ((voice.flags & VoiceContext::kFlagPortamento) != 0)
-				voice.baseNote = voice.endNote;
-			voice.portaTicks = 0;
-			voice.flags |= VoiceContext::kFlagPortamento;
-			voice.endNote = channel.lastNote = note;
-			voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
-			_playerCtx.addedNote = true;
-			_playerCtx.lastVoice = voiceNum;
+			if ((voice->flags & VoiceContext::kFlagPortamento) != 0)
+				voice->baseNote = voice->endNote;
+			voice->portaTicks = 0;
+			voice->flags |= VoiceContext::kFlagPortamento;
+			voice->endNote = channel.lastNote = note;
+			voice->noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
 			return voiceNum;
 		}
+
 	} else {
 		voiceNum = pickvoice(_voiceCtx, (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
-		if (voiceNum < 0)
-			return voiceNum;
-	}
-	assert(voiceNum >= 0 && voiceNum < ARRAYSIZE(_voiceCtx));
+		if (voiceNum >= 0) {
+			VoiceContext &voice = _voiceCtx[voiceNum];
+			voice.flags = 0;
+			if (voice.channel) {
+				killVoice(voiceNum);
+				voice.flags |= VoiceContext::kFlagStolen;
+			}
+			voice.channel = &channel;
+			voice.patch = &patch;
+			voice.baseNote = note;
 
-	VoiceContext &voice = _voiceCtx[voiceNum];
-	voice.flags = 0;
-	if (voice.channel) {
-		killVoice(voiceNum);
-		voice.flags |= VoiceContext::kFlagStolen;
-	}
-	voice.channel = &channel;
-	voice.patch = &patch;
-	voice.baseNote = note;
+			int useOctave = calcNote(voice);
+			voice.priority = (byte)pri;
+			voice.status = VoiceContext::kStatusStart;
 
-	int useOctave = calcNote(voice);
-	voice.priority = (byte)pri;
-	voice.status = VoiceContext::kStatusStart;
+			voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
 
-	voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
+			// ifeq HAS_FULLCHANVOL macro
+			if (channel.volume < 128)
+				voice.noteVolume = (voice.noteVolume * channel.volume) >> 7;
 
-	// ifeq HAS_FULLCHANVOL macro
-	if (channel.volume < 128)
-		voice.noteVolume = (voice.noteVolume * channel.volume) >> 7;
+			voice.baseVolume = 0;
+			voice.lastTicks = 0;
 
-	voice.baseVolume = 0;
-	voice.lastTicks = 0;
+			uint16 period = voice.lastPeriod;
+			if (!period)
+				period = 1000;
 
-	uint16 period = voice.lastPeriod;
-	if (!period)
-		period = 1000;
+			// TODO: since the original player is using the OS-functions, more than 1 sample could be queued up already
+			// get samplestart for the given octave
+			const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
+			if (patch.sampleAttackLen) {
+				Paula::setChannelSampleStart(voiceNum, samplePtr);
+				Paula::setChannelSampleLen(voiceNum, (patch.sampleAttackLen << useOctave) / 2);
+				Paula::setChannelPeriod(voiceNum, period);
+				Paula::setChannelVolume(voiceNum, 0);
 
-	// TODO: since the original player is using the OS-functions, more than 1 sample could be queued up already
-	// get samplestart for the given octave
-	const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
-	if (patch.sampleAttackLen) {
-		Paula::setChannelSampleStart(voiceNum, samplePtr);
-		Paula::setChannelSampleLen(voiceNum, (patch.sampleAttackLen << useOctave) / 2);
-		Paula::setChannelPeriod(voiceNum, period);
-		Paula::setChannelVolume(voiceNum, 0);
+				Paula::enableChannel(voiceNum);
+				// wait  for dma-clear
+				// FIXME: this is a workaround to enable oneshot-samples and it currently might crash Paula
+				if (patch.sampleTotalLen == patch.sampleAttackLen) {
+					Paula::setChannelSampleStart(voiceNum, 0);
+					Paula::setChannelSampleLen(voiceNum, 0);
+				}
+			}
 
-		Paula::enableChannel(voiceNum);
-		// wait  for dma-clear
-		// FIXME: this is a workaround to enable oneshot-samples and it currently might crash Paula
-		if (patch.sampleTotalLen == patch.sampleAttackLen) {
-			Paula::setChannelSampleStart(voiceNum, 0);
-			Paula::setChannelSampleLen(voiceNum, 0);
+			if (patch.sampleTotalLen > patch.sampleAttackLen) {
+				Paula::setChannelSampleStart(voiceNum, samplePtr + (patch.sampleAttackLen << useOctave));
+				Paula::setChannelSampleLen(voiceNum, ((patch.sampleTotalLen - patch.sampleAttackLen) << useOctave) / 2);
+				if (!patch.sampleAttackLen) {
+					// need to enable channel
+					Paula::setChannelPeriod(voiceNum, period);
+					Paula::setChannelVolume(voiceNum, 0);
+
+					Paula::enableChannel(voiceNum);
+				}
+				// another pointless wait for DMA-Clear???
+			}
+
+			channel.voicesActive++;
+			if (&channel < &_channelCtx[kNumChannels]) {
+				if ((channel.flags & ChannelContext::kFlagPortamento) != 0) {
+					if ((channel.flags & ChannelContext::kFlagMono) != 0 && channel.lastNote < 0x80 && channel.lastNote != voice.baseNote) {
+						voice.portaTicks = 0;
+						voice.endNote = voice.baseNote;
+						voice.baseNote = channel.lastNote;
+						voice.flags |= VoiceContext::kFlagPortamento;
+					}
+					channel.lastNote = note;
+				}
+			}
 		}
 	}
-
-	if (patch.sampleTotalLen > patch.sampleAttackLen) {
-		Paula::setChannelSampleStart(voiceNum, samplePtr + (patch.sampleAttackLen << useOctave));
-		Paula::setChannelSampleLen(voiceNum, ((patch.sampleTotalLen - patch.sampleAttackLen) << useOctave) / 2);
-		if (!patch.sampleAttackLen) {
-			// need to enable channel
-			Paula::setChannelPeriod(voiceNum, period);
-			Paula::setChannelVolume(voiceNum, 0);
-
-			Paula::enableChannel(voiceNum);
-		}
-		// another pointless wait for DMA-Clear???
-	}
-
-	channel.voicesActive++;
-	if (&channel < &_channelCtx[kNumChannels]) {
-		const byte flagsSet = ChannelContext::kFlagMono | ChannelContext::kFlagPortamento;
-		if ((channel.flags & flagsSet) == flagsSet && channel.lastNote < 0x80 && channel.lastNote != voice.baseNote) {
-			voice.portaTicks = 0;
-			voice.endNote = voice.baseNote;
-			voice.baseNote = channel.lastNote;
-			voice.flags |= VoiceContext::kFlagPortamento;
-		}
-		if ((channel.flags & ChannelContext::kFlagPortamento) != 0)
-			channel.lastNote = note;
-	}
-	_playerCtx.addedNote = true;
-	_playerCtx.lastVoice = voiceNum;
 	return voiceNum;
 }
 
-void MaxTrax::noteOff(ChannelContext &channel, const byte note) {
-	VoiceContext &voice = _voiceCtx[_playerCtx.lastVoice];
-	if (channel.voicesActive && voice.channel == &channel && voice.status != VoiceContext::kStatusRelease) {
+void MaxTrax::noteOff(VoiceContext &voice, const byte note) {
+	ChannelContext &channel = *voice.channel;
+	if (channel.voicesActive && voice.status != VoiceContext::kStatusRelease) {
 		const byte refNote = ((voice.flags & VoiceContext::kFlagPortamento) != 0) ? voice.endNote : voice.baseNote;
+		assert(refNote == note);
 		if (refNote == note) {
 			if ((channel.flags & ChannelContext::kFlagDamper) != 0)
 				voice.flags |= VoiceContext::kFlagDamper;
@@ -562,7 +553,7 @@ void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
 	chan.modulation = 0;
 	chan.modulationTime = 1000;
 	chan.microtonal = -1;
-	chan.portamento = 500;
+	chan.portamentoTime = 500;
 	chan.pitchBend = 64 << 7;
 	chan.pitchReal = 0;
 	chan.pitchBendRange = 24;
