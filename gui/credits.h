@@ -381,7 +381,7 @@ static const char *credits[] = {
 "C2""HTML/CSS for the website",
 "C0""David Jensen",
 "C2""SVG logo conversion",
-"C0""Jean Marc",
+"C0""Jean Marc Gimenez",
 "C2""ScummVM logo",
 "C0""Raina",
 "C2""ScummVM forum buttons",
