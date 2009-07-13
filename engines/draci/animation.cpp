@@ -208,7 +208,11 @@ void AnimationManager::addOverlay(Drawable *overlay, uint z) {
 }
 
 void AnimationManager::drawScene(Surface *surf) {
-	
+
+	// Fill the screen with colour zero since some rooms may rely on the screen being black	
+	_vm->_screen->getSurface()->fill(0);
+
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
