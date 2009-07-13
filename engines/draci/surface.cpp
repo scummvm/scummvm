@@ -106,15 +106,24 @@ Common::List<Common::Rect> *Surface::getDirtyRects() {
 /**
  * @brief Returns the current transparent colour of the surface
  */
-uint8 Surface::getTransparentColour() {
+uint Surface::getTransparentColour() {
 	return _transparentColour;
 }
 
 /**
  * @brief Sets the surface's transparent colour
  */
-void Surface::setTransparentColour(uint8 colour) {
+void Surface::setTransparentColour(uint colour) {
 	_transparentColour = colour;
+}
+
+/**
+ * @ brief Fills the surface with the specified colour
+ */
+void Surface::fill(uint colour) {
+	byte *ptr = (byte *)getBasePtr(0, 0);
+
+	memset(ptr, colour, w * h);
 }
 
 } // End of namespace Draci

@@ -42,14 +42,15 @@ public:
 	void markDirty();
 	void markClean();
 	bool needsFullUpdate();
-	uint8 getTransparentColour();
-	void setTransparentColour(uint8 colour);
+	uint getTransparentColour();
+	void setTransparentColour(uint colour);
+	void fill(uint colour);
 
 private:
 	/** The current transparent colour of the surface. See getTransparentColour() and
 	 *	setTransparentColour().
 	 */
-	uint8 _transparentColour;
+	uint _transparentColour;
 	
 	/** Set when the surface is scheduled for a full update. 
 	 *	See markDirty(), markClean(). Accessed via needsFullUpdate().
