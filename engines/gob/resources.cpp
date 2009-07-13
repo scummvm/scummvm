@@ -158,29 +158,29 @@ bool Resources::load(const Common::String &fileName) {
 
 	_extFile = fileBase + ".ext";
 
-	if (!loadTOTResourceTable()) {
-		unload();
+	bool hasTOTRes = loadTOTResourceTable();
+	bool hasEXTRes = loadEXTResourceTable();
+
+	if (!hasTOTRes && !hasEXTRes)
 		return false;
+
+	if (hasTOTRes) {
+		if (!loadTOTTextTable(fileBase)) {
+			unload();
+			return false;
+		}
+
+		if (!loadIMFile()) {
+			unload();
+			return false;
+		}
 	}
 
-	if (!loadEXTResourceTable()) {
-		unload();
-		return false;
-	}
-
-	if (!loadTOTTextTable(fileBase)) {
-		unload();
-		return false;
-	}
-
-	if (!loadIMFile()) {
-		unload();
-		return false;
-	}
-
-	if (!loadEXFile()) {
-		unload();
-		return false;
+	if (hasEXTRes) {
+		if (!loadEXFile()) {
+			unload();
+			return false;
+		}
 	}
 
 	return true;
@@ -286,7 +286,7 @@ bool Resources::loadEXTResourceTable() {
 
 	DataStream *stream = _vm->_dataIO->getDataStream(_extFile.c_str());
 	if (!stream)
-		return true;
+		return false;
 
 	_extResourceTable->itemsCount = stream->readSint16LE();
 	_extResourceTable->unknown    = stream->readByte();
