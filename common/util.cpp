@@ -24,6 +24,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "gui/debugger.h"
 #include "engines/engine.h"
 
@@ -418,6 +419,14 @@ String getGameGUIOptionsDescription(uint32 options) {
 	res.trim();
 
 	return res;
+}
+
+void updateGameGUIOptions(const uint32 options) {
+	if ((options && !ConfMan.hasKey("guioptions")) ||
+	    (ConfMan.hasKey("guioptions") && options != parseGameGUIOptions(ConfMan.get("guioptions")))) {
+		ConfMan.set("guioptions", getGameGUIOptionsDescription(options));
+		ConfMan.flushToDisk();
+	}
 }
 
 }	// End of namespace Common

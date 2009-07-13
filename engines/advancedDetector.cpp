@@ -296,13 +296,7 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	const uint32 guiOptions = agdDesc->guioptions | params.guioptions;
-
-	if ((guiOptions && !ConfMan.hasKey("guioptions")) ||
-	    (ConfMan.hasKey("guioptions") && parseGameGUIOptions(ConfMan.get("guioptions")) != guiOptions)) {
-		ConfMan.set("guioptions", Common::getGameGUIOptionsDescription(guiOptions));
-		ConfMan.flushToDisk();
-	}
+	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions);
 
 	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
 	if (!createInstance(syst, engine, agdDesc))

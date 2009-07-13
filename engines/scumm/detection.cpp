@@ -884,13 +884,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 
 	// If the GUI options were updated, we catch this here and update them in the users config
 	// file transparently.
-	const uint32 guiOptions = res.game.guioptions;
-
-	if ((guiOptions && !ConfMan.hasKey("guioptions")) ||
-	    (ConfMan.hasKey("guioptions") && parseGameGUIOptions(ConfMan.get("guioptions")) != guiOptions)) {
-		ConfMan.set("guioptions", Common::getGameGUIOptionsDescription(guiOptions));
-		ConfMan.flushToDisk();
-	}
+	Common::updateGameGUIOptions(res.game.guioptions);
 
 	// Finally, we have massaged the GameDescriptor to our satisfaction, and can
 	// instantiate the appropriate game engine. Hooray!
