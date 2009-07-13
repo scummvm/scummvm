@@ -507,6 +507,13 @@ int ps2_fputc(int c, FILE *stream) {
 
 int ps2_fputs(const char *s, FILE *stream) {
 	int len = strlen(s);
+
+	if (stream == stderr || stream == stdout) {
+		printf("%s", s);
+		sioprintf("%s", s);
+		return len;
+	}
+
 	if (ps2_fwrite(s, 1, len, stream) == (size_t)len)
 		return len;
 	else

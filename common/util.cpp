@@ -24,6 +24,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 #include "gui/debugger.h"
 #include "engines/engine.h"
 
@@ -420,6 +421,14 @@ String getGameGUIOptionsDescription(uint32 options) {
 	return res;
 }
 
+void updateGameGUIOptions(const uint32 options) {
+	if ((options && !ConfMan.hasKey("guioptions")) ||
+	    (ConfMan.hasKey("guioptions") && options != parseGameGUIOptions(ConfMan.get("guioptions")))) {
+		ConfMan.set("guioptions", getGameGUIOptionsDescription(options));
+		ConfMan.flushToDisk();
+	}
+}
+
 }	// End of namespace Common
 
 
@@ -477,11 +486,7 @@ void NORETURN error(const char *s, ...) {
 
 
 	// Print the error message to stderr
-#ifndef __PLAYSTATION2__
 	fputs(buf_output, stderr);
-#else
-	fprintf(stderr, "%s", buf_output);
-#endif
 
 	// Unless this error -originated- within the debugger itself, we
 	// now invoke the debugger, if available / supported.

@@ -102,7 +102,7 @@ void TuckerEngine::handleCreditsSequence() {
 				counter2 = 0;
 			}
 		}
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		++counter3;
 		if (counter3 == 2) {
 			counter3 = 0;
@@ -172,7 +172,7 @@ void TuckerEngine::handleCongratulationsSequence() {
 	stopSounds();
 	loadImage("congrat.pcx", _loadTempBuf, 1);
 	Graphics::copyRect(_locationBackgroundGfxBuf, 640, _loadTempBuf, 320, 320, 200);
-	_fullRedrawCounter = 2;
+	_fullRedraw = true;
 	redrawScreen(0);
 	while (!_quitGame && _timerCounter2 < 450) {
 		while (_fadePaletteCounter < 14) {
@@ -242,7 +242,7 @@ void TuckerEngine::handleNewPartSequence() {
 			++_fadePaletteCounter;
 		}
 		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		updateSprites();
 		drawSprite(0);
 		redrawScreen(0);
@@ -259,7 +259,7 @@ void TuckerEngine::handleNewPartSequence() {
 			--_fadePaletteCounter;
 		}
 		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		updateSprites();
 		drawSprite(0);
 		redrawScreen(0);
@@ -294,7 +294,7 @@ void TuckerEngine::handleMeanwhileSequence() {
 			++_fadePaletteCounter;
 		}
 		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		redrawScreen(0);
 		waitForTimer(3);
 		++i;
@@ -305,11 +305,12 @@ void TuckerEngine::handleMeanwhileSequence() {
 			--_fadePaletteCounter;
 		}
 		Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		redrawScreen(0);
 		waitForTimer(3);
 	} while (_fadePaletteCounter > 0);
 	memcpy(_currentPalette, backupPalette, 256 * 3);
+	_fullRedraw = true;
 }
 
 void TuckerEngine::handleMapSequence() {
@@ -337,7 +338,7 @@ void TuckerEngine::handleMapSequence() {
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf + 89600, 320, 320, 200);
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		if (_flagsTable[7] > 0 && _mousePosX > 30 && _mousePosX < 86 && _mousePosY > 36 && _mousePosY < 86) {
 			textNum = 13;
 			_nextLocationNum = (_partNum == 1) ? 3 : 65;
@@ -459,7 +460,7 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 		waitForTimer(2);
 		updateMouseState();
 		Graphics::copyRect(_locationBackgroundGfxBuf + _scrollOffset, 640, _quadBackgroundGfxBuf, 320, 320, 200);
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 		if (_fadePaletteCounter < 14) {
 			fadeOutPalette();
 			++_fadePaletteCounter;

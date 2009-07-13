@@ -359,6 +359,8 @@ protected:
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 
+	virtual void parseEvent(Common::Event event);
+
 	virtual void initCharset(int charset);
 
 	virtual void clearDrawQueues();
@@ -386,6 +388,7 @@ protected:
 	byte VAR_PLATFORM;
 	byte VAR_PLATFORM_VERSION;
 	byte VAR_CURRENT_CHARSET;
+	byte VAR_KEY_STATE;
 	byte VAR_COLOR_DEPTH;
 };
 

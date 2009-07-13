@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/keyboard.h"
@@ -498,6 +499,8 @@ protected:
 public:
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
+	virtual void parseEvent(Common::Event event);
+
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
@@ -1378,8 +1381,6 @@ public:
 
 	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
-
-	byte VAR_KEY_STATE;			// Used in parseEvents()
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;
