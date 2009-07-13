@@ -442,7 +442,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	VAR_SCRIPT_CYCLE = 0xFF;
 
 	VAR_NUM_GLOBAL_OBJS = 0xFF;
-	VAR_KEY_STATE = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -784,6 +783,7 @@ ScummEngine_v80he::ScummEngine_v80he(OSystem *syst, const DetectorResult &dr)
 	VAR_PLATFORM = 0xFF;
 	VAR_PLATFORM_VERSION = 0xFF;
 	VAR_CURRENT_CHARSET = 0xFF;
+	VAR_KEY_STATE = 0xFF;
 	VAR_COLOR_DEPTH = 0xFF;
 }
 
