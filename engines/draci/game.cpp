@@ -103,11 +103,12 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_variables[i] = variableData.readUint16LE();
 	}
 
-	// Read in item status
+	// Read in item icon status
 	
 	file = initArchive.getFile(1);
-	_itemStatus = new byte[file->_length];
-	memcpy(_itemStatus, file->_data, file->_length);
+	_iconStatus = new byte[file->_length];
+	memcpy(_iconStatus, file->_data, file->_length);
+	uint numIcons = file->_length;
 	
 	// Read in object status
 	
@@ -130,7 +131,8 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	assert(numDialogs == _info->_numDialogs);
 	assert(numPersons == _info->_numPersons);
 	assert(numVariables == _info->_numVariables);
-	assert(numObjects == _info->_numObjects);	
+	assert(numObjects == _info->_numObjects);
+	assert(numIcons == _info->_numIcons);	
 }
 
 void Game::init() {
@@ -358,7 +360,7 @@ Game::~Game() {
 	delete[] _persons;
 	delete[] _variables;
 	delete[] _dialogOffsets;
-	delete[] _itemStatus;
+	delete[] _iconStatus;
 	delete[] _objects;
 	delete _info;
 }

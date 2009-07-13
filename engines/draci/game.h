@@ -148,7 +148,7 @@ private:
 	GameInfo *_info;
 	Person *_persons;
 	uint16 *_dialogOffsets;
-	byte *_itemStatus;
+	byte *_iconStatus;
 	GameObject *_objects;
 	Room _currentRoom;	
 };
