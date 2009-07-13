@@ -1740,6 +1740,10 @@ void TuckerEngine::drawBackgroundSprites() {
 }
 
 void TuckerEngine::drawCurrentSprite() {
+	// Workaround original game glitch: skip first bud frame drawing when entering location (tracker item #2597763)
+	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
+		return;
+	}
 	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
 	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset;
 	int xPos = _xPosCurrent;
