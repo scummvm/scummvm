@@ -30,7 +30,7 @@ namespace Graphics {
 
 // Function to blit a rect from one color format to another
 bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
-						int w, int h, Graphics::PixelFormat dstFmt, Graphics::PixelFormat srcFmt) {
+						int w, int h, const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt) {
 	// Error out if conversion is impossible
 	if ((srcFmt.bytesPerPixel == 1) || (dstFmt.bytesPerPixel == 1)
 			 || (!srcFmt.bytesPerPixel) || (!dstFmt.bytesPerPixel)
@@ -38,8 +38,21 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		return false;
 
 	// Don't perform unnecessary conversion
-	if (srcFmt == dstFmt)
-		return true;
+	if (srcFmt == dstFmt) {
+		if (dst == src) 
+			return true;
+		if (dstpitch == srcpitch && ((w * dstFmt.bytesPerPixel) == dstpitch)) {
+			memcpy(dst,src,dstpitch * h);
+			return true;
+		} else {
+			for (int i = 0; i < h; i++) {
+				memcpy(dst,src,w * dstFmt.bytesPerPixel);
+				dst += dstpitch;
+				src += srcpitch;
+			}
+			return true;
+		}
+	}
 
 	// Faster, but larger, to provide optimized handling for each case.
 	int srcDelta, dstDelta;
