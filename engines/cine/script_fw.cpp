@@ -1443,6 +1443,38 @@ int FWScript::o1_palRotate() {
 int FWScript::o1_break() {
 	debugC(5, kCineDebugScript, "Line: %d: break", _line);
 
+	// WORKAROUND for bug #2669415 ("FW: half walking speed in a screen").
+	// The problem was that in Amiga/Atari ST versions of Future Wars the
+	// walking speed has halved in a forest scene where a monk's robe hangs
+	// on a tree branch (Up and to the left from the medieval castle's front).
+	//
+	// Initialization script for the scene is PART02.PRC's 26th script (011_INIT)
+	// and the background used in the scene is L11.PI1. The difference between
+	// the PC version and the Amiga/Atari ST version of the script is that the
+	// PC version calls scripts 37 and 36 for handling movement of the character
+	// when Amiga/Atari ST version calls scripts 22 and 21 for the same purpose
+	// (Scripts 37 and 22 handle vertical movement, 36 and 21 the horizontal).
+	//
+	// The called scripts only differ functionally so that all BREAK opcodes have been
+	// doubled in the Amiga/Atari ST versions (i.e. one BREAK has become two BREAKs)
+	// and in script 21 after LABEL_25 there's an extra opcode that isn't in script 36:
+	// SET globalvars[251], 0.
+	//
+	// As a BREAK opcode stops the execution of a script it causes a pause and
+	// with the BREAKs doubled the pause is twice as long in the Amiga/Atari ST versions.
+	// Thus the longer pause is eliminated by running only one BREAK when several
+	// are designated (i.e. ignoring a BREAK if there's another BREAK after it).
+	//
+	// TODO: Check whether the speed is halved in any other scenes in Amiga/Atari ST versions under ScummVM
+	// TODO: Check whether the speed is halved when running the original executable under an emulator
+	if (g_cine->getGameType() == Cine::GType_FW &&
+		(g_cine->getPlatform() == Common::kPlatformAmiga || g_cine->getPlatform() == Common::kPlatformAtariST) &&
+		_pos < _script._size && _script.getByte(_pos) == (0x4F + 1) && // Is the next opcode a BREAK too?
+		scumm_stricmp(currentPrcName, "PART02.PRC") == 0 &&
+		scumm_stricmp(renderer->getBgName(), "L11.PI1") == 0) {
+		return 0;
+	}
+
 	return 1;
 }
 
