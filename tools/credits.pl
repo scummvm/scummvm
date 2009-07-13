@@ -527,6 +527,11 @@ begin_credits("Credits");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
+	  begin_section("Drascula");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+	  end_section();
+
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Joost Peters", "joostp", "");
