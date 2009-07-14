@@ -528,7 +528,7 @@ void valide_noeud(int16 table[], int16 p, int *nclick, int16 solution0[20 + 3][2
 					return;
 				}
 
-				/****** COUPE LE CHEMIN ******/
+				/****** Trim down any un-necessary walk points ******/
 
 				i++;
 				d = 0;
