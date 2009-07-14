@@ -733,6 +733,14 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 		}
 	}
 
+	if (stream.err() || stream.eos()) {
+		free(data->bits);
+		free(data->offset);
+		free(data->width);
+		free(data);
+		return 0;
+	}
+
 	FontDesc desc;
 	desc.name = data->name;
 	desc.maxwidth = data->maxwidth;
@@ -752,8 +760,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 	desc.bits_size = data->bits_size;
 
 	font = new NewFont(desc, data);
-	if (!font || stream.err()) {
-		delete font;
+	if (!font) {
 		free(data->bits);
 		free(data->offset);
 		free(data->width);
