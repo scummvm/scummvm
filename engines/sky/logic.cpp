@@ -1702,6 +1702,15 @@ bool Logic::fnQuit(uint32 a, uint32 b, uint32 c) {
 }
 
 bool Logic::fnSpeakMe(uint32 targetId, uint32 mesgNum, uint32 animNum) {
+	/* WORKAROUND for #2687172: When Mrs. Piermont is talking
+	   on the phone in her apartment, ignore her fnSpeakMe calls
+	   on other screens, as the lack of speech files for these lines
+	   will cause Foster's speech to be aborted if the timing is bad.
+	*/
+	if (targetId == 0x4039 && animNum == 0x9B && Logic::_scriptVariables[SCREEN] != 38) {
+		return false;
+	}
+
 	stdSpeak(_skyCompact->fetchCpt(targetId), mesgNum, animNum, 0);
 	return false;	//drop out of script
 }
