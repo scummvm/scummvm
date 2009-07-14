@@ -255,8 +255,10 @@ void Grid::removeGrid(uint32 x, uint32 y, uint32 width, Compact *cpt) {
 }
 
 uint8 *Grid::giveGrid(uint32 pScreen) {
-	assert((_gridConvertTable[pScreen] >= 0) && (_gridConvertTable[pScreen] < TOT_NO_GRIDS));
-	return _gameGrids[_gridConvertTable[pScreen]];
+	if ((_gridConvertTable[pScreen] >= 0) && (_gridConvertTable[pScreen] < TOT_NO_GRIDS)) {
+		return _gameGrids[_gridConvertTable[pScreen]];
+	}
+	return 0;
 }
 
 } // End of namespace Sky
