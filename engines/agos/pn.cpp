@@ -269,16 +269,16 @@ void AGOSEngine_PN::processor() {
 	_variableArray[16] = _quickshort[6];
 	_variableArray[17] = _quickshort[7];
 	_variableArray[19] = getptr(55L);
+
+	// q indicates the process to run and is 0 the first time,
+	// but 1 later on (i.e., when we are "called" from badload()).
 	setposition(q, 0);
 	doline(0);
 }
 
 void AGOSEngine_PN::setqptrs() {
-	int a = 0;
-
-	while (a < 11) {
-		_quickptr[a] = getlong(3L * a);
-		a++;
+	for (int i = 0; i < 11; ++i) {
+		_quickptr[i] = getlong(3 * i);
 	}
 	_quickptr[11] = getlong(58L);
 	_quickptr[12] = getlong(61L);

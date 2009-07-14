@@ -30,6 +30,10 @@
 
 namespace AGOS {
 
+enum {
+	kJmpClassNum = -1
+};
+
 #define OPCODE(x)	_OPCODE(AGOSEngine_PN, x)
 
 void AGOSEngine_PN::setupOpcodes() {
@@ -122,7 +126,7 @@ void AGOSEngine_PN::setupOpcodes() {
 
 void AGOSEngine_PN::executeOpcode(int opcode) {
 	OpcodeProcPN op = _opcodesPN[opcode].proc;
-	(this->*op) ();
+	(this->*op)();
 }
 
 int AGOSEngine_PN::readfromline() {
@@ -303,11 +307,10 @@ void AGOSEngine_PN::opn_opcode21() {
 
 void AGOSEngine_PN::opn_opcode22() {
 	int pf[8];
-	int a;
-	a = varval();
-	funcentry(pf, a);
+	int n = varval();
+	funcentry(pf, n);
 	funccpy(pf);
-	setposition(a, 0);
+	setposition(n, 0);
 	setScriptReturn(true);
 }
 
@@ -316,19 +319,27 @@ void AGOSEngine_PN::opn_opcode23() {
 }
 
 void AGOSEngine_PN::opn_opcode24() {
-	popstack(-1);
+	popstack(kJmpClassNum);
+	// Jump back to the last doline, which will return 2-1=1.
+	// That value then is returned to actCallD, which once again
+	// returns it. In the end, this amounts to a setScriptReturn(true)
+	// (but possibly in a different level than the current one).
 	longjmp(*(_stackbase->savearea), 2);
 	setScriptReturn(false);
 }
 
 void AGOSEngine_PN::opn_opcode25() {
-	popstack(-1);
+	popstack(kJmpClassNum);
+	// Jump back to the last doline, which will return 1-1=0.
+	// That value then is returned to actCallD, which once again
+	// returns it. In the end, this amounts to a setScriptReturn(false)
+	// (but possibly in a different level than the current one).
 	longjmp(*(_stackbase->savearea), 1);
 	setScriptReturn(false);
 }
 
 void AGOSEngine_PN::opn_opcode26() {
-	while ((_stackbase != NULL) && (_stackbase->classnum != -1))
+	while ((_stackbase != NULL) && (_stackbase->classnum != kJmpClassNum))
 		junkstack();
 	dumpstack();
 	setScriptReturn(true);
@@ -348,6 +359,8 @@ void AGOSEngine_PN::opn_opcode28() {
 
 void AGOSEngine_PN::opn_opcode29() {
 	popstack(varval());
+	// Jump back to the last doline indicated by the top stackfram.
+	// The -1 tells it to simply go on with its business.
 	longjmp(*(_stackbase->savearea), -1);
 	setScriptReturn(false);
 }
@@ -837,7 +850,7 @@ void AGOSEngine_PN::setbitf(uint32 ptr, int offs, int val) {
 int AGOSEngine_PN::actCallD(int n) {
 	int pf[8];
 	funcentry(pf, n);
-	addstack(-1);
+	addstack(kJmpClassNum);
 	funccpy(pf);
 	setposition(n, 0);
 	return doline(1);
@@ -862,7 +875,7 @@ int AGOSEngine_PN::doaction() {
 
 int AGOSEngine_PN::doline(int needsave) {
 	int x;
-	jmp_buf *ljmpbuff = NULL;
+	jmp_buf *old_jmpbuf = NULL;
 	jmp_buf *mybuf;
 
 	mybuf = (jmp_buf *)malloc(sizeof(jmp_buf));
@@ -874,16 +887,25 @@ int AGOSEngine_PN::doline(int needsave) {
 	// (and of course 0 when it returns directly, as always).
 	if (x > 0) {
 		dumpstack();
-		_cjmpbuff = ljmpbuff;
+		// Restore the active jmpbuf to its previous value,
+		// then return the longjmp value (will be 2-1=1 or 1-1=0).
+		_cjmpbuff = old_jmpbuf;
 		free((char *)mybuf);
 		return (x - 1);
 	}
 
 	if (x == -1) {
+		// Make this doline instance the active one (again).
+		// This is used to "return" over possibly multiple
+		// layers of nested script invocations.
+		// Kind of like throwing an exception.
 		_cjmpbuff = mybuf;
 		goto carryon;
 	}
-	ljmpbuff = _cjmpbuff;
+	
+	// Remember the previous active jmpbuf (gets restored 
+	// above when a longjmp with a positive param occurs).
+	old_jmpbuf = _cjmpbuff;
 	_cjmpbuff = mybuf;
 	if (needsave)
 		_stackbase->savearea = mybuf;
@@ -963,13 +985,9 @@ void AGOSEngine_PN::funccpy(int *store) {
 }
 
 void AGOSEngine_PN::funcentry(int *store, int procn) {
-	int ct = 0;
-	int nprm;
-
-	nprm = _dataBase[getlong(_quickptr[6] + 3L * procn)];
-	while (ct < nprm) {
+	int numParams = _dataBase[getlong(_quickptr[6] + 3 * procn)];
+	for (int i = 0; i < numParams; ++i) {
 		*store++ = varval();
-		ct++;
 	}
 }
 
@@ -1082,7 +1100,7 @@ void AGOSEngine_PN::junkstack() {
 		error("junkstack: Stack underflow or unknown longjmp");
 
 	a = _stackbase->nextframe;
-	if (_stackbase->classnum == -1)
+	if (_stackbase->classnum == kJmpClassNum)
 		free((char *)_stackbase->savearea);
 	free((char *)_stackbase);
 	_stackbase = a;
