@@ -36,11 +36,11 @@ void AGOSEngine_PN::setupOpcodes() {
 	static const OpcodeEntryPN opcodes[] = {
 		/* 00 */
 		OPCODE(opn_opcode00),
-		OPCODE(opn_opcode01),
-		OPCODE(opn_opcode02),
-		OPCODE(opn_opcode03),
+		OPCODE(opn_add),
+		OPCODE(opn_sub),
+		OPCODE(opn_mul),
 		/* 04 */
-		OPCODE(opn_opcode04),
+		OPCODE(opn_div),
 		OPCODE(opn_opcode05),
 		OPCODE(opn_opcode06),
 		OPCODE(opn_opcode07),
@@ -56,11 +56,11 @@ void AGOSEngine_PN::setupOpcodes() {
 		OPCODE(opn_opcode15),
 		/* 16 */
 		OPCODE(opn_opcode16),
-		OPCODE(opn_opcode17),
-		OPCODE(opn_opcode18),
-		OPCODE(opn_opcode19),
+		OPCODE(opn_lt),
+		OPCODE(opn_gt),
+		OPCODE(opn_eq),
 		/* 20 */
-		OPCODE(opn_opcode20),
+		OPCODE(opn_neq),
 		OPCODE(opn_opcode21),
 		OPCODE(opn_opcode22),
 		OPCODE(opn_opcode23),
@@ -125,10 +125,11 @@ void AGOSEngine_PN::executeOpcode(int opcode) {
 	(this->*op) ();
 }
 
-#define readfromline() (_linct-- ? (int)*_workptr++ : readoverr())
-
-int readoverr() {
-	error("readfromline: Internal Error - Line Over-run");
+int AGOSEngine_PN::readfromline() {
+	if (!_linct)
+		error("readfromline: Internal Error - Line Over-run");
+	_linct--;
+	return *_workptr++;
 }
 
 // -----------------------------------------------------------------------
@@ -142,30 +143,30 @@ void AGOSEngine_PN::opn_opcode00() {
 	setScriptReturn(true);
 }
 
-void AGOSEngine_PN::opn_opcode01() {
+void AGOSEngine_PN::opn_add() {
 	uint8 *str = _workptr;
 	int32 sp = varval() + varval();
 	_variableArray[12] = sp % 65536;
 	_variableArray[13] = sp / 65536;
 	if (sp > 65535)
-		sp=65535;
+		sp = 65535;
 	writeval(str, (int)sp);
 	setScriptReturn(true);
 }
 
-void AGOSEngine_PN::opn_opcode02() {
+void AGOSEngine_PN::opn_sub() {
 	uint8 *str = _workptr;
 	int32 sp = varval();
 	sp -= varval();
 	_variableArray[12] = sp % 65536;
 	_variableArray[13] = sp / 65536;
-	if(sp < 0)
+	if (sp < 0)
 		sp = 0;
 	writeval(str, (int)sp);
 	setScriptReturn(true);
 }
 
-void AGOSEngine_PN::opn_opcode03() {
+void AGOSEngine_PN::opn_mul() {
 	uint8 *str = _workptr;
 	int32 sp = varval() * varval();
 	_variableArray[12] = sp % 65536;
@@ -176,12 +177,12 @@ void AGOSEngine_PN::opn_opcode03() {
 	setScriptReturn(true);
 }
 
-void AGOSEngine_PN::opn_opcode04() {
+void AGOSEngine_PN::opn_div() {
 	uint8 *str = _workptr;
 	int32 sp = varval();
 	int32 sp2 = varval();
 	if (sp2 == 0)
-		error("Division by 0");
+		error("opn_div: Division by 0");
 	sp = sp / sp2;
 	_variableArray[12] = sp % 65536;
 	_variableArray[13] = sp / 65536;
@@ -234,7 +235,7 @@ void AGOSEngine_PN::opn_opcode12() {
 	char bf[8];
 	int a = 0;
 	sprintf(bf,"%d", varval());
-	while(bf[a])
+	while (bf[a])
 		pcf(bf[a++]);
 	setScriptReturn(true);
 }
@@ -243,7 +244,7 @@ void AGOSEngine_PN::opn_opcode13() {
 	char bf[8];
 	int a = 0;
 	sprintf(bf,"%d", varval());
-	while(bf[a])
+	while (bf[a])
 		pcf(bf[a++]);
 	pcf((uint8)'\n');
 	setScriptReturn(true);
@@ -271,25 +272,25 @@ void AGOSEngine_PN::opn_opcode16() {
 	setScriptReturn((sp >= 0 && sp <= 4));
 }
 
-void AGOSEngine_PN::opn_opcode17() {
+void AGOSEngine_PN::opn_lt() {
 	int16 v1 = varval();
 	int16 v2 = varval();
 	setScriptReturn(v1 < v2);
 }
 
-void AGOSEngine_PN::opn_opcode18() {
+void AGOSEngine_PN::opn_gt() {
 	int16 v1 = varval();
 	int16 v2 = varval();
 	setScriptReturn(v1 > v2);
 }
 
-void AGOSEngine_PN::opn_opcode19() {
+void AGOSEngine_PN::opn_eq() {
 	int16 v1 = varval();
 	int16 v2 = varval();
 	setScriptReturn(v1 == v2);
 }
 
-void AGOSEngine_PN::opn_opcode20() {
+void AGOSEngine_PN::opn_neq() {
 	int16 v1 = varval();
 	int16 v2 = varval();
 	setScriptReturn(v1 != v2);
@@ -395,7 +396,8 @@ void AGOSEngine_PN::opn_opcode32() {
 	char bf[60];
 	int a, slot;
 
-	if ((a = varval()) > 2) {
+	a = varval();
+	if (a > 2) {
 		setScriptReturn(true);
 		return;
 	}
@@ -451,10 +453,8 @@ void AGOSEngine_PN::opn_opcode35() {
 }
 
 void AGOSEngine_PN::opn_opcode36() {
-	int ct = 0;
-	while (ct < _dataBase[57] + 1)
-		_wordcp[ct++] = 0;
-	ct = 1;
+	for (int i = 0; i < _dataBase[57] + 1; ++i)
+		_wordcp[i] = 0;
 	if (isspace(*_inpp))
 		while ((*_inpp) && (isspace(*_inpp)))
 			_inpp++;
@@ -468,6 +468,8 @@ void AGOSEngine_PN::opn_opcode36() {
 		setScriptReturn(true);
 		return;
 	}
+
+	int ct = 1;
 	while ((*_inpp != '.') && (*_inpp != ',') && (!isspace(*_inpp)) && (*_inpp != '\0') &&
 		(*_inpp!='"')) {
 		if (ct < _dataBase[57])
@@ -734,37 +736,38 @@ int AGOSEngine_PN::varval() {
 	int a;
 	int b;
 
-	if ((a = readfromline()) < 247) {
+	a = readfromline();
+	if (a < 247) {
 		return a;
 	}
 
 	switch (a) {
 		case 249:
 			b = readfromline();
-			return((int)(b + 256 * readfromline()));
+			return (int)(b + 256 * readfromline());
 			break;
 		case 250:
-			return(readfromline());
+			return readfromline();
 		case 251:
-			return((int)_variableArray[varval()]);
+			return (int)_variableArray[varval()];
 		case 252:
 			b = varval();
-			return((int)_dataBase[_quickptr[0] + b * _quickshort[0] + varval()]);
+			return (int)_dataBase[_quickptr[0] + b * _quickshort[0] + varval()];
 		case 254:
 			b = varval();
-			return((int)_dataBase[_quickptr[3] + b * _quickshort[2] + varval()]);
+			return (int)_dataBase[_quickptr[3] + b * _quickshort[2] + varval()];
 		case 247:
 			b = varval();
-			return((int)getptr(_quickptr[11] + (b * _quickshort[4]) + (2 * varval())));
+			return (int)getptr(_quickptr[11] + (b * _quickshort[4]) + (2 * varval()));
 		case 248:
 			b = varval();
-			return((int)getptr(_quickptr[12] + (b * _quickshort[5]) + (2 * varval())));
+			return (int)getptr(_quickptr[12] + (b * _quickshort[5]) + (2 * varval()));
 		case 253:
 			b = varval();
-			return(bitextract((int32)_quickptr[1] + b * _quickshort[1], varval()));
+			return bitextract((int32)_quickptr[1] + b * _quickshort[1], varval());
 		case 255:
 			b = varval();
-			return(bitextract((int32)_quickptr[4] + b * _quickshort[3], varval()));
+			return bitextract((int32)_quickptr[4] + b * _quickshort[3], varval());
 		default:
 			error("VARVAL : Illegal code %d encountered", a);
 	}
@@ -837,7 +840,7 @@ int AGOSEngine_PN::actCallD(int n) {
 	addstack(-1);
 	funccpy(pf);
 	setposition(n, 0);
-	return(doline(1));
+	return doline(1);
 }
 
 int AGOSEngine_PN::doaction() {
@@ -866,7 +869,10 @@ int AGOSEngine_PN::doline(int needsave) {
 	if (mybuf == NULL)
 		error("doline: Out of memory - stack overflow");
 
-	if ((x = setjmp(*mybuf)) > 0) {
+	x = setjmp(*mybuf);
+	// Looking at the longjmp calls below, x can be -1, 1 or 2
+	// (and of course 0 when it returns directly, as always).
+	if (x > 0) {
 		dumpstack();
 		_cjmpbuff = ljmpbuff;
 		free((char *)mybuf);
@@ -882,24 +888,24 @@ int AGOSEngine_PN::doline(int needsave) {
 	if (needsave)
 		_stackbase->savearea = mybuf;
 
-nln:	_linct = ((*_linebase) & 127) - 1;
-	_workptr = _linebase + 1;
-	if (*_linebase > 127) {
-		x = varval();
-		if (x != (int)_variableArray[1])
-			goto skipln;
-	}
+	do {
+		_linct = ((*_linebase) & 127) - 1;
+		_workptr = _linebase + 1;
+		if (*_linebase > 127) {
+			x = varval();
+			if (x != (int)_variableArray[1])
+				goto skipln;
+		}
 
 carryon:
-	do {
-		x = doaction();
-	} while (x && !shouldQuit());
+		do {
+			x = doaction();
+		} while (x && !shouldQuit());
 
-skipln:	_linebase += 127 & *_linebase;
-	_linembr++;
-
-	if (!shouldQuit())
-		goto nln;
+skipln:
+		_linebase += 127 & *_linebase;
+		_linembr++;
+	} while (!shouldQuit());
 
 	return 0;
 }
@@ -951,12 +957,8 @@ int AGOSEngine_PN::findset() {
 }
 
 void AGOSEngine_PN::funccpy(int *store) {
-	int a = 0;
-	int b = 24;
-
-	while (a < 8) {
-		_variableArray[b++] = *store++;
-		a++;
+	for (int i = 24; i < 32; ++i) {
+		_variableArray[i] = *store++;
 	}
 }
 
@@ -990,23 +992,28 @@ int AGOSEngine_PN::gvwrd(uint8 *wptr, int mask) {
 int AGOSEngine_PN::setposition(int process, int line) {
 	uint8 *ourptr;
 	int np;
-	int ct = 0;
-	ourptr = _dataBase + getlong(_quickptr[6] + 3L * process);
+	int ct;
+
+	ourptr = _dataBase + getlong(_quickptr[6] + 3 * process);
 	np = *ourptr++;
-	while (ct < line) {
+	for (ct = 0; ct < line; ++ct) {
 		ourptr += (127 & *ourptr);
-		ct++;
 	}
-x1:	_linebase = ourptr;
-	_linct = (127 & (*ourptr)) - 1;
-	if (*ourptr++ > 127) {
+
+	while (true) {
+		_linebase = ourptr;
+		_linct = (127 & *ourptr) - 1;
+		if (*ourptr++ <= 127)
+			break;
+
 		ct = varval();
-		if (ct != (int)_variableArray[1]) {
-			ourptr += _linct - 1;
-			line++;
-			goto x1;
-		}
+		if (ct == (int)_variableArray[1])
+			break;
+
+		ourptr += _linct - 1;
+		line++;
 	}
+
 	_linembr = line;
 	_procnum = process;
 	_variableArray[0] = process;
@@ -1035,22 +1042,20 @@ int AGOSEngine_PN::wrdmatch(uint8 *word1, int mask1, uint8 *word2, int mask2) {
 // -----------------------------------------------------------------------
 
 void AGOSEngine_PN::addstack(int type) {
-	struct stackframe *a;
-	int pt, ct = 0;
+	StackFrame *a;
+	int i;
 
-	a = (struct stackframe *)malloc(sizeof(struct stackframe));
+	a = (StackFrame *)malloc(sizeof(StackFrame));
 	if (a == NULL)
 		error("addstack: Out of memory - stack overflow");
 
 	a->nextframe = _stackbase;
 	_stackbase = a;
-	pt = 0;
-	while (ct < 6)
-		a->flag[ct++] = _variableArray[pt++];
-	ct = 0;
-	pt = 24;
-	while (ct < 8)
-		a->param[ct++] = _variableArray[pt++];
+
+	for (i = 0; i < 6; ++i)
+		a->flag[i] = _variableArray[i];
+	for (i = 0; i < 8; ++i)
+		a->param[i] = _variableArray[24 + i];
 	a->classnum = type;
 	a->ll = _linct;
 	a->linenum = _linembr;
@@ -1060,7 +1065,7 @@ void AGOSEngine_PN::addstack(int type) {
 }
 
 void AGOSEngine_PN::dumpstack() {
-	struct stackframe *a;
+	StackFrame *a;
 
 	if (_stackbase == NULL)
 		error("dumpstack: Stack underflow or unknown longjmp");
@@ -1071,7 +1076,7 @@ void AGOSEngine_PN::dumpstack() {
 }
 
 void AGOSEngine_PN::junkstack() {
-	struct stackframe *a;
+	StackFrame *a;
 
 	if (_stackbase == NULL)
 		error("junkstack: Stack underflow or unknown longjmp");
@@ -1084,7 +1089,7 @@ void AGOSEngine_PN::junkstack() {
 }
 
 void AGOSEngine_PN::popstack(int type) {
-	int a = 0, b;
+	int i;
 
 	while ((_stackbase != NULL) && (_stackbase->classnum != type))
 		junkstack();
@@ -1097,13 +1102,10 @@ void AGOSEngine_PN::popstack(int type) {
 	_workptr = _stackbase->linpos;
 	_procnum = _stackbase->process;
 	_linembr = _stackbase->linenum;
-	b = 0;
-	while (a < 6)
-		_variableArray[b++] = _stackbase->flag[a++];
-	b = 24;
-	a = 0;
-	while (a < 8)
-		_variableArray[b++] = _stackbase->param[a++];
+	for (i = 0; i < 6; ++i)
+		_variableArray[i] = _stackbase->flag[i];
+	for (i = 0; i < 8; ++i)
+		_variableArray[24 + i] = _stackbase->param[i];
 }
 
 } // End of namespace AGOS
