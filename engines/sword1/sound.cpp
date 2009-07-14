@@ -77,11 +77,11 @@ void Sound::checkSpeechFileEndianness() {
 	// little endian assumption. The one with the smallest sum should be the
 	// correct one (the sound wave is supposed to be relatively smooth).
 	// It needs at least 1000 samples to get stable result (the code below is
-	// using the first 2000 samples of the wav sound.
+	// using the first 2000 samples of the wav sound).
 
-	// Init speach file if not already done.
+	// Init speech file if not already done.
 	if (!_currentCowFile) {
-		// Open one of the speech file. It uses SwordEngine::_systemVars.currentCD
+		// Open one of the speech files. It uses SwordEngine::_systemVars.currentCD
 		// to decide which file to open, therefore if it is currently set to zero
 		// we have to set it to either 1 or 2 (I decided to set it to 1 as this is
 		// more likely to be the first file that will be needed).
@@ -92,22 +92,22 @@ void Sound::checkSpeechFileEndianness() {
 		}
 		initCowSystem();
 		if (no_current_cd) {
-			// In case it fails with CD1 retyr with CD2
+			// In case it fails with CD1 retry with CD2
 			if (!_currentCowFile) {
 				SwordEngine::_systemVars.currentCD = 2;
 				initCowSystem();
 			}
-			// Reset curentCD flag
+			// Reset currentCD flag
 			SwordEngine::_systemVars.currentCD = 0;
 		}
 	}
 
-	// Testing for endianness makes sense only if using the nom compressed files.
+	// Testing for endianness makes sense only if using the uncompressed files.
 	if (_cowHeader == NULL || (_cowMode != CowWave && _cowMode != CowDemo))
 		return;
 
 	// I picked the sample to use randomly (I just made sure it is long enough so that there is
-	// a fair change of the heuristic to have a stable result and work for every languages).
+	// a fair change of the heuristic to have a stable result and work for every language).
 	int roomNo = _currentCowFile == 1 ? 1 : 129;
 	int localNo = _currentCowFile == 1 ? 2 : 933;
 	// Get the speech data and apply the heuristic
@@ -119,7 +119,7 @@ void Sound::checkSpeechFileEndianness() {
 		double be_diff_sum = 0., le_diff_sum = 0.;
 		_bigEndianSpeech = false;
 		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
-		// Compute average of differecen between two consecutive samples for both BE and LE
+		// Compute average of difference between two consecutive samples for both BE and LE
 		if (data) {
 			if (size > 4000)
 				size = 2000;
