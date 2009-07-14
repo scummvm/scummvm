@@ -70,11 +70,6 @@ public:
 		int		scoreIndex;
 		const Event	*nextEvent;
 		int32	nextEventTime;
-
-		bool	addedNote;
-		byte	lastVoice;
-		byte	voicesActive;
-
 	} _playerCtx;
 
 	struct Envelope {
@@ -141,6 +136,7 @@ public:
 			kFlagAltered = 1 << 6
 		};
 		byte	flags;
+		bool	isAltered;
 
 		uint8	lastNote;
 		uint8	program;
@@ -156,7 +152,7 @@ public:
 		uint32	ticksLeft;
 		int32	portaTicks;
 		int32	incrVolume;
-		uint32	periodOffset;
+		int32	periodOffset;
 		/*ifne FASTSOUND
 			APTR	voice_CurFastIOB			; current fast iob playing
 			APTR	voice_NextFastIOB			; next fast iob to play
@@ -183,17 +179,18 @@ public:
 		byte	status;
 		enum {
 			kFlagStolen = 1 << 0,
-			kFlagPortamento = 1 << 1,
+			//kFlagPortamento = 1 << 1,
 			kFlagDamper = 1 << 2,
 			kFlagBlocked = 1 << 3,
 			kFlagRecalc = 1 << 4
 		};
 		byte	flags;
 		byte	lastVolume;
+		bool	hasPortamento;
 
 		int32	stopEventTime;
-		byte	stopEventCommand;
-		byte	stopEventParameter;
+		byte	stopEventCommand;	// TODO: Remove?
+		byte	stopEventParameter;	// TODO: Remove?
 	} _voiceCtx[kNumVoices];
 
 	bool load(Common::SeekableReadStream &musicData, bool loadScores = true, bool loadSamples = true);
@@ -204,8 +201,9 @@ public:
 	void freeScores();
 	void resetChannel(ChannelContext &chan, bool rightChannel);
 
-	static int8 MaxTrax::pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
-	int calcNote(VoiceContext &voice);
+	static int8 pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
+	int32 calcVolumeDelta(int32 delta, uint16 time);
+	uint16 calcNote(const VoiceContext &voice, int32 *offset = 0);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);

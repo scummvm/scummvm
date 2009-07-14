@@ -72,41 +72,42 @@ void MaxTrax::interrupt() {
 	const int32 millis = _playerCtx.ticks >> 8; // d4
 	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 		VoiceContext &voice = _voiceCtx[i]; // a3
-		if (!voice.channel || voice.stopEventCommand >= 0x80)
-			continue;
-		const int channelNo = voice.stopEventParameter;
-		assert(channelNo == voice.channel - _channelCtx);
-		voice.stopEventTime -= (channelNo < kNumChannels) ? _playerCtx.tickUnit : _playerCtx.frameUnit;
-		if (voice.stopEventTime <= 0) {
-			noteOff(voice, voice.stopEventCommand);
-			voice.stopEventCommand = 0xFF;
+		if (voice.channel && voice.stopEventCommand < 0x80) {
+			const int channelNo = voice.stopEventParameter;
+			assert(channelNo == voice.channel - _channelCtx); // TODO remove
+			voice.stopEventTime -= (channelNo < kNumChannels) ? _playerCtx.tickUnit : _playerCtx.frameUnit;
+			if (voice.stopEventTime <= 0) {
+				noteOff(voice, voice.stopEventCommand);
+				voice.stopEventCommand = 0xFF;
+			}
 		}
 	}
 
 	if (_playerCtx.musicPlaying) {
 		const Event *curEvent = _playerCtx.nextEvent;
-		int32 eventTime = _playerCtx.nextEventTime;
-		for (; eventTime <= millis; eventTime += (++curEvent)->startTime) {
+		int32 eventDelta = _playerCtx.nextEventTime - millis;
+		for (; eventDelta <= 0; eventDelta += (++curEvent)->startTime) {
 			const byte cmd = curEvent->command;
 			const byte data = curEvent->parameter;
 			const uint16 stopTime = curEvent->stopTime;
 			ChannelContext &channel = _channelCtx[data & 0x0F];
 
 			outPutEvent(*curEvent);
-			debug("CurTime, EventTime, NextEvent: %d, %d, %d", millis, eventTime, eventTime + curEvent[1].startTime );
+			debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
 
-			if (cmd < 0x80) {
+			if (cmd < 0x80) {	// Note
 				const uint16 vol = (data & 0xF0) >> 1;
-
 				const int8 voiceIndex = noteOn(channel, cmd, vol, kPriorityScore);
 				if (voiceIndex >= 0) {
 					VoiceContext &voice = _voiceCtx[voiceIndex];
 					voice.stopEventCommand = cmd;
 					voice.stopEventParameter = data & 0x0F;
-					voice.stopEventTime = (eventTime + stopTime - millis) << 8;
+					voice.stopEventTime = (eventDelta + stopTime) << 8;
 				}
+
 			} else {
 				switch (cmd) {
+
 				case 0x80:	// TEMPO
 					if ((_playerCtx.tickUnit >> 8) > stopTime) {
 						setTempo(data << 4);
@@ -118,69 +119,72 @@ void MaxTrax::interrupt() {
 						_playerCtx.tempoTicks = 0;
 					}
 					break;
+
 /*				case 0xA0:	// SPECIAL
 					break;
+
 				case 0xB0:	// CONTROL
 					// TODO: controlChange((byte)stopTime, (byte)(stopTime >> 8))
 					break;
+
 */				case 0xC0:	// PROGRAM
 					channel.patch = &_patch[stopTime & (kNumPatches - 1)];
 					break;
+
 				case 0xE0:	// BEND
 					channel.pitchBend = ((stopTime & 0x7F00) >> 1) | (stopTime & 0x7f);
-					channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
-					channel.pitchReal = ((channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
-					channel.flags |= ChannelContext::kFlagAltered;
+					// channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
+					channel.pitchReal = (((int32)channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
+					channel.isAltered = true;
 					break;
+
 				case 0xFF:	// END
 					if (_playerCtx.musicLoop) {
-						// event -1 as it gets increased at the end of the loop
-						curEvent = _scores[_playerCtx.scoreIndex].events - 1;
+						curEvent = _scores[_playerCtx.scoreIndex].events;
+						eventDelta = curEvent->startTime - millis;
 						_playerCtx.ticks = 0;
-						eventTime = 0;
 					} else
 						_playerCtx.musicPlaying = false;
-					break;
+					// stop processing for this tick
+					goto endOfEventLoop;
+
 				default:
 					debug("Unhandled Command");
 					outPutEvent(*curEvent);
 				}
 			}
 		}
+endOfEventLoop:
 		_playerCtx.nextEvent = curEvent;
-		_playerCtx.nextEventTime = eventTime;
+		_playerCtx.nextEventTime = eventDelta + millis;
 
 		// tempoEffect
 		if (_playerCtx.tempoTime) {
 			_playerCtx.tempoTicks += _playerCtx.tickUnit;
-			uint16 newTempo;
+			uint16 newTempo = _playerCtx.tempoStart;
 			if (_playerCtx.tempoTicks < _playerCtx.tempoTime) {
-				const uint16 delta = (_playerCtx.tempoTicks * _playerCtx.tempoDelta) / _playerCtx.tempoTime;
-				newTempo = delta;
+				newTempo += (_playerCtx.tempoTicks * _playerCtx.tempoDelta) / _playerCtx.tempoTime;
 			} else {
 				_playerCtx.tempoTime = 0;
-				newTempo = _playerCtx.tempoDelta;
+				newTempo += _playerCtx.tempoDelta;
 			}
 			setTempo(_playerCtx.tempoStart + newTempo);
 		}
 	}
 
-	// envelopes
+	// Handling of Envelopes and Portamento
 	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
-		VoiceContext &voice = _voiceCtx[i]; // a2
+		VoiceContext &voice = _voiceCtx[i];
 		if (!voice.channel)
 			continue;
-		const ChannelContext &channel = *voice.channel; // a3
-		const Patch &patch = *voice.patch; // a5, used with start and later
-		voice.lastTicks += _playerCtx.tickUnit;
-		bool envHandling = true;
-		byte newVolume = 0xFF; // if set to 0 this means skip recalc
+		const ChannelContext &channel = *voice.channel;
+		const Patch &patch = *voice.patch;
+
 		switch (voice.status) {
 		case VoiceContext::kStatusSustain:
-			if ((channel.flags & (ChannelContext::kFlagAltered | VoiceContext::kFlagPortamento)) == 0 && !channel.modulation)
+			if (!channel.isAltered && !voice.hasPortamento && !channel.modulation)
 				continue;
-			// goto .l18
-			envHandling = false;
+			// Update Volume and Period
 			break;
 
 		case VoiceContext::kStatusHalt:
@@ -188,119 +192,112 @@ void MaxTrax::interrupt() {
 			continue;
 
 		case VoiceContext::kStatusStart:
-			voice.envelope = patch.attackPtr;
 			if (patch.attackLen) {
+				voice.envelope = patch.attackPtr;
 				const uint16 duration = voice.envelope->duration;
 				voice.envelopeLeft = patch.attackLen;
 				voice.ticksLeft = duration << 8;
 				voice.status = VoiceContext::kStatusAttack;
-				voice.lastTicks = _playerCtx.tickUnit;
-				const int32 vol = voice.envelope->volume;
-				voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
-				// skip to I9
+				voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume, duration);
+				// Process Envelope
 			} else {
 				voice.status = VoiceContext::kStatusSustain;
 				voice.baseVolume = patch.volume;
-				voice.lastTicks = _playerCtx.tickUnit;
-				// goto .l18
-				envHandling = false;
+				// Update Volume and Period
 			}
 			break;
 
 		case VoiceContext::kStatusRelease:
-			voice.envelope = patch.attackPtr + patch.attackLen;
 			if (patch.releaseLen) {
+				voice.envelope = patch.attackPtr + patch.attackLen;
 				const uint16 duration = voice.envelope->duration;
 				voice.envelopeLeft = patch.releaseLen;
 				voice.ticksLeft = duration << 8;
 				voice.status = VoiceContext::kStatusDecay;
-				voice.lastTicks = _playerCtx.tickUnit;
-				const int32 vol = voice.envelope->volume - voice.baseVolume;
-				voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
-				// skip to I9
+				voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume - voice.baseVolume, duration);
+				// Process Envelope
 			} else {
 				voice.status = VoiceContext::kStatusHalt;
-				// set d4 = 0, goto I17
-				envHandling = false;
-				newVolume = 0;
+				voice.lastVolume = 0;
+				// Send Audio Packet
 			}
 			break;
 		}
-		// .I9 - env managment
-		if (envHandling) {
+
+		// Process Envelope
+		const uint16 envUnit = _playerCtx.frameUnit;
+		if (voice.envelope) {
+			// TODO remove paranoid asserts
 			assert(voice.status != VoiceContext::kStatusSustain);
+			assert(voice.status == VoiceContext::kStatusAttack || VoiceContext::kStatusRelease);
 			assert(voice.envelope);
 			assert(voice.envelopeLeft >= 0);
-			if (voice.ticksLeft > _playerCtx.tickUnit) {
+			if (voice.ticksLeft > envUnit) {	// envelope still active
 				voice.baseVolume = (uint16)MIN(MAX(0, voice.baseVolume + voice.incrVolume), 0x8000);
-				voice.ticksLeft -= _playerCtx.tickUnit;
-				// goto .l18
-			} else {
-				// a0 = voice.envelope
+				voice.ticksLeft -= envUnit;
+				// Update Volume and Period
+
+			} else {	// next or last Envelope
 				voice.baseVolume = voice.envelope->volume;
 				assert(voice.envelopeLeft > 0);
 				if (--voice.envelopeLeft) {
 					++voice.envelope;
 					const uint16 duration = voice.envelope->duration;
 					voice.ticksLeft = duration << 8;
-					const int32 vol = voice.envelope->volume - voice.baseVolume;
-					voice.incrVolume = (duration) ? (1000 * vol) / (duration * _playerCtx.vBlankFreq) : vol;
-					// goto .l18
+					voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume - voice.baseVolume, duration);
+					// Update Volume and Period
 				} else if (voice.status == VoiceContext::kStatusDecay) {
-					voice.envelope = 0;
 					voice.status = VoiceContext::kStatusHalt;
-					// set d4 = 0, goto I17
-					newVolume = 0;
+					voice.envelope = 0;
+					voice.lastVolume = 0;
+					// Send Audio Packet
 				} else {
 					assert(voice.status == VoiceContext::kStatusAttack);
 					voice.status = VoiceContext::kStatusSustain;
-					voice.lastTicks = _playerCtx.tickUnit;
 					voice.envelope = 0;
-					// goto .l18
+					// Update Volume and Period
 				}
 			}
-		} else
-			assert(voice.envelope == 0);
+		}
 
-		// .l18 - recalc 
-		if (newVolume) {
-			// calc volume
+		// Update Volume and Period
+		if (voice.status >= VoiceContext::kStatusDecay) {
+			// Calc volume
 			uint16 vol = (voice.noteVolume < (1 << 7)) ? (voice.noteVolume * _playerCtx.volume) >> 7 : _playerCtx.volume;
 			if (voice.baseVolume < (1 << 15))
 				vol = (uint16)(((uint32)vol * voice.baseVolume) >> 15);
 			if (voice.channel->volume < (1 << 7))
 				vol = (vol * voice.channel->volume) >> 7;
+			voice.lastVolume = (byte)MIN(vol, (uint16)0x64);
 
-			newVolume = (byte)MIN(vol, (uint16)0x64);
-			voice.lastVolume = newVolume = 0x64;
-
-			if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
-				voice.portaTicks += _playerCtx.tickUnit;
+			// Calc Period
+			if (voice.hasPortamento) {
+				voice.portaTicks += envUnit;
 				if ((uint16)(voice.portaTicks >> 8) >= channel.portamentoTime) {
-					voice.flags &= ~VoiceContext::kFlagPortamento;
+					voice.hasPortamento = false;
 					voice.baseNote = voice.endNote;
 				}
-				voice.flags |= VoiceContext::kFlagRecalc;
-				calcNote(voice);
-			} else {
-				if ((channel.flags & ChannelContext::kFlagAltered) != 0 || channel.modulation) {
-					voice.flags |= VoiceContext::kFlagRecalc;
-					calcNote(voice);
-				}
-			}
+				voice.lastPeriod = calcNote(voice);
+			} else if (channel.isAltered || channel.modulation)
+				voice.lastPeriod = calcNote(voice);
 		}
 
-		// .l17 - send audio package
+		// Send Audio Packet
 		Paula::setChannelPeriod(i, (voice.lastPeriod) ? voice.lastPeriod : 1000);
-		Paula::setChannelVolume(i, (voice.lastPeriod) ? newVolume : 0);
+		Paula::setChannelVolume(i, (voice.lastPeriod) ? voice.lastVolume : 0);
 	}
-	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i) {
-		ChannelContext &channel = _channelCtx[i];
-		channel.flags &= ~ChannelContext::kFlagAltered;
-	}
+	for (ChannelContext *c = _channelCtx; c != &_channelCtx[ARRAYSIZE(_channelCtx)]; ++c)
+		c->isAltered = false;
 
 
 	//modulation stuff,  sinevalue += tickunit
+}
+
+int32 MaxTrax::calcVolumeDelta(int32 delta, uint16 time) {
+	const int32 div = time * _playerCtx.vBlankFreq;
+	if (div <= 1000)
+		return delta; // time to small or 0
+	return (1000 * delta) / div;
 }
 
 void MaxTrax::stopMusic() {
@@ -327,8 +324,10 @@ void MaxTrax::killVoice(byte num) {
 	VoiceContext &voice = _voiceCtx[num];
 	--(voice.channel->voicesActive);
 	voice.channel = 0;
+	voice.envelope = 0;
 	voice.status = VoiceContext::kStatusFree;
 	voice.flags = 0;
+	voice.hasPortamento = false;
 	voice.priority = 0;
 	voice.uinqueId = 0;
 
@@ -382,14 +381,11 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 	return -1;
 }
 
-int MaxTrax::calcNote(VoiceContext &voice) {
+uint16 MaxTrax::calcNote(const VoiceContext &voice, int32 *offset) {
 	const ChannelContext &channel = *voice.channel;
-	voice.lastPeriod = 0;
-
 	int16 bend = 0;
-	if ((voice.flags & VoiceContext::kFlagPortamento) != 0) {
+	if (voice.hasPortamento) {
 		// microtonal crap
-
 		bend = (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
 	}
 	// modulation
@@ -416,20 +412,21 @@ int MaxTrax::calcNote(VoiceContext &voice) {
 	enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
 
 	tone = K_VALUE - tone;
-	int octave = 0;
 
-	if ((voice.flags & VoiceContext::kFlagRecalc) == 0) {
-		octave = (tone > PREF_PERIOD) ? MIN((int)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int)patch.sampleOctaves - 1) : 0;
-		voice.periodOffset = octave << 16;
-	}
-	tone -= voice.periodOffset;
+	// calculate which sample to use
+	if (offset) {
+		*offset = ((tone > PREF_PERIOD) ? MIN((int32)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int32)(patch.sampleOctaves - 1)) : 0) << 16;
+		tone -= *offset;
+	} else
+		tone -= voice.periodOffset;
+
 	if (tone >= PERIOD_LIMIT) {
 		// calculate 2^tone and round towards nearest integer 
 		// 2*2^tone = exp((tone+1) * ln(2))
 		const uint16 periodX2 = (uint16)expf((float)(tone + (1 << 16)) * (float)(0.69314718055994530942 / (1 << 16)));
-		voice.lastPeriod = (periodX2 + 1) / 2;
+		return (periodX2 + 1) / 2;
 	}
-	return octave;
+	return 0;
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
@@ -448,13 +445,12 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			;
 		if (voiceNum >= 0 && voice->status >= VoiceContext::kStatusSustain && (channel.flags & ChannelContext::kFlagPortamento) != 0) {
 			// reset previous porta
-			if ((voice->flags & VoiceContext::kFlagPortamento) != 0)
+			if (voice->hasPortamento)
 				voice->baseNote = voice->endNote;
 			voice->portaTicks = 0;
-			voice->flags |= VoiceContext::kFlagPortamento;
+			voice->hasPortamento = true;
 			voice->endNote = channel.lastNote = note;
 			voice->noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
-			return voiceNum;
 		}
 
 	} else {
@@ -469,8 +465,12 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			voice.channel = &channel;
 			voice.patch = &patch;
 			voice.baseNote = note;
+			voice.hasPortamento = false;
 
-			int useOctave = calcNote(voice);
+			
+			voice.lastPeriod = calcNote(voice, &voice.periodOffset);
+			const int useOctave = voice.periodOffset >> 16;
+
 			voice.priority = (byte)pri;
 			voice.status = VoiceContext::kStatusStart;
 
@@ -481,11 +481,8 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 				voice.noteVolume = (voice.noteVolume * channel.volume) >> 7;
 
 			voice.baseVolume = 0;
-			voice.lastTicks = 0;
 
-			uint16 period = voice.lastPeriod;
-			if (!period)
-				period = 1000;
+			const uint16 period = (voice.lastPeriod) ? voice.lastPeriod : 1000;
 
 			// TODO: since the original player is using the OS-functions, more than 1 sample could be queued up already
 			// get samplestart for the given octave
@@ -525,7 +522,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 						voice.portaTicks = 0;
 						voice.endNote = voice.baseNote;
 						voice.baseNote = channel.lastNote;
-						voice.flags |= VoiceContext::kFlagPortamento;
+						voice.hasPortamento = true;
 					}
 					channel.lastNote = note;
 				}
@@ -538,7 +535,8 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 void MaxTrax::noteOff(VoiceContext &voice, const byte note) {
 	ChannelContext &channel = *voice.channel;
 	if (channel.voicesActive && voice.status != VoiceContext::kStatusRelease) {
-		const byte refNote = ((voice.flags & VoiceContext::kFlagPortamento) != 0) ? voice.endNote : voice.baseNote;
+		// TODO is this check really necessary?
+		const byte refNote = (voice.hasPortamento) ? voice.endNote : voice.baseNote;
 		assert(refNote == note);
 		if (refNote == note) {
 			if ((channel.flags & ChannelContext::kFlagDamper) != 0)
@@ -559,7 +557,7 @@ void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
 	chan.pitchBendRange = 24;
 	chan.volume = 128;
 	chan.flags &= ~ChannelContext::kFlagPortamento & ~ChannelContext::kFlagMicrotonal;
-	chan.flags |= ChannelContext::kFlagAltered;
+	chan.isAltered = true;
 	if (rightChannel)
 		chan.flags |= ChannelContext::kFlagRightChannel;
 	else
