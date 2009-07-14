@@ -53,8 +53,8 @@ void Animation::setLooping(bool looping) {
 
 void Animation::nextFrame(bool force) {
 
-	// If there's only one or no frames, return
-	if (getFramesNum() < 2)
+	// If there's only one or no frames, or if the animation is not playing, return
+	if (getFramesNum() < 2 || !_playing)
 		return;
 
 	Common::Rect frameRect = _frames[_currentFrame]->getRect();
@@ -89,7 +89,8 @@ uint Animation::nextFrameNum() {
 
 void Animation::drawFrame(Surface *surface) {
 	
-	if (_frames.size() == 0)
+	// If there are no frames or the animation is not playing, return
+	if (_frames.size() == 0 || !_playing)
 		return;
 
 	if (_id == kOverlayImage) {			
@@ -157,19 +158,21 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 void AnimationManager::play(int id) {
 	Animation *anim = getAnimation(id);
 
-	if (anim) 
+	if (anim) {
 		anim->setPlaying(true);
 
-	debugC(5, kDraciAnimationDebugLevel, "Playing animation %d...", id);
+		debugC(5, kDraciAnimationDebugLevel, "Playing animation %d...", id);
+	}
 }
 
 void AnimationManager::stop(int id) {
 	Animation *anim = getAnimation(id);
 	
-	if (anim) 
+	if (anim) {
 		anim->setPlaying(false);
-
-	debugC(5, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
+	
+		debugC(5, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
+	}
 }
 
 Animation *AnimationManager::getAnimation(int id) {
@@ -211,7 +214,6 @@ void AnimationManager::drawScene(Surface *surf) {
 
 	// Fill the screen with colour zero since some rooms may rely on the screen being black	
 	_vm->_screen->getSurface()->fill(0);
-
 
 	Common::List<Animation *>::iterator it;
 
