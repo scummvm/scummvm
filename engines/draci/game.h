@@ -63,7 +63,7 @@ struct GameObject {
 };
 
 struct GameInfo {
-	byte _currentRoom;
+	byte _startRoom;
 	byte _mapRoom;
 	uint16 _numObjects;
 	uint16 _numIcons;

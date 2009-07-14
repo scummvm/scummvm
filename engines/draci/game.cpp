@@ -73,7 +73,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	file = initArchive.getFile(3);
 	Common::MemoryReadStream gameData(file->_data, file->_length);
 	
-	_info._currentRoom = gameData.readByte() - 1;
+	_info._startRoom = gameData.readByte() - 1;
 	_info._mapRoom = gameData.readByte() - 1;
 	_info._numObjects = gameData.readUint16LE();
 	_info._numIcons = gameData.readUint16LE();
