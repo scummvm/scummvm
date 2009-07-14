@@ -72,24 +72,23 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	
 	file = initArchive.getFile(3);
 	Common::MemoryReadStream gameData(file->_data, file->_length);
-	_info = new GameInfo();
 	
-	_info->_currentRoom = gameData.readByte() - 1;
-	_info->_mapRoom = gameData.readByte() - 1;
-	_info->_numObjects = gameData.readUint16LE();
-	_info->_numIcons = gameData.readUint16LE();
-	_info->_numVariables = gameData.readByte();
-	_info->_numPersons = gameData.readByte();
-	_info->_numDialogs = gameData.readByte();
-	_info->_maxIconWidth = gameData.readUint16LE();
-	_info->_maxIconHeight = gameData.readUint16LE();
-	_info->_musicLength = gameData.readUint16LE();
-	_info->_crc[0] = gameData.readUint16LE();
-	_info->_crc[1] = gameData.readUint16LE();
-	_info->_crc[2] = gameData.readUint16LE();
-	_info->_crc[3] = gameData.readUint16LE();
+	_info._currentRoom = gameData.readByte() - 1;
+	_info._mapRoom = gameData.readByte() - 1;
+	_info._numObjects = gameData.readUint16LE();
+	_info._numIcons = gameData.readUint16LE();
+	_info._numVariables = gameData.readByte();
+	_info._numPersons = gameData.readByte();
+	_info._numDialogs = gameData.readByte();
+	_info._maxIconWidth = gameData.readUint16LE();
+	_info._maxIconHeight = gameData.readUint16LE();
+	_info._musicLength = gameData.readUint16LE();
+	_info._crc[0] = gameData.readUint16LE();
+	_info._crc[1] = gameData.readUint16LE();
+	_info._crc[2] = gameData.readUint16LE();
+	_info._crc[3] = gameData.readUint16LE();
 
-	_info->_numDialogBlocks = curOffset;
+	_info._numDialogBlocks = curOffset;
 
 	// Read in variables
 	
@@ -128,11 +127,11 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_objects[i]._location = (~(1 << 7) & tmp) - 1;
  	}
 
-	assert(numDialogs == _info->_numDialogs);
-	assert(numPersons == _info->_numPersons);
-	assert(numVariables == _info->_numVariables);
-	assert(numObjects == _info->_numObjects);
-	assert(numIcons == _info->_numIcons);	
+	assert(numDialogs == _info._numDialogs);
+	assert(numPersons == _info._numPersons);
+	assert(numVariables == _info._numVariables);
+	assert(numObjects == _info._numObjects);
+	assert(numIcons == _info._numIcons);	
 }
 
 void Game::init() {
@@ -172,7 +171,7 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._escRoom = roomReader.readByte() - 1;
 	_currentRoom._numGates = roomReader.readByte();
 
-	for (uint i = 0; i < _info->_numObjects; ++i) {
+	for (uint i = 0; i < _info._numObjects; ++i) {
 		debugC(1, kDraciLogicDebugLevel, 
 			"Checking if object %d (%d) is at the current location (%d)", i,
 			_objects[i]._location, roomNum);
@@ -186,7 +185,7 @@ void Game::loadRoom(int roomNum) {
 	// Run the init scripts	for room objects
 	// We can't do this in the above loop because some objects' scripts reference
 	// other objects that may not yet be loaded
-	for (uint i = 0; i < _info->_numObjects; ++i) {
+	for (uint i = 0; i < _info._numObjects; ++i) {
 		if (_objects[i]._location == roomNum) {
 			_vm->_script->run(getObject(i)->_program, getObject(i)->_init);
 		}
@@ -328,7 +327,7 @@ void Game::changeRoom(uint roomNum) {
 
 	int oldRoomNum = _currentRoom._roomNum;
 
-	for (uint i = 0; i < _info->_numObjects; ++i) {
+	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
 	
 		if (i != 0 && obj->_location == oldRoomNum) {
@@ -366,7 +365,6 @@ Game::~Game() {
 	delete[] _dialogOffsets;
 	delete[] _iconStatus;
 	delete[] _objects;
-	delete _info;
 }
 
 GameObject::~GameObject() { 
