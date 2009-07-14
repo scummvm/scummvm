@@ -207,9 +207,7 @@ void OpenCDGraphFile(void) {
 
 	// As the theory goes, the right CD will be in there!
 
-	cdGraphStream.clearIOFailed();
-	cdGraphStream.open(szCdPlayFile);
-	if (cdGraphStream.ioFailed())
+	if (!cdGraphStream.open(szCdPlayFile))
 		error(CANNOT_FIND_FILE, szCdPlayFile);
 }
 
