@@ -172,12 +172,12 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._numGates = roomReader.readByte();
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
-		debugC(1, kDraciLogicDebugLevel, 
+		debugC(2, kDraciLogicDebugLevel, 
 			"Checking if object %d (%d) is at the current location (%d)", i,
 			_objects[i]._location, roomNum);
 
 		if (_objects[i]._location == roomNum) {
-			debugC(1, kDraciLogicDebugLevel, "Loading object %d from room %d", i, roomNum);
+			debugC(2, kDraciLogicDebugLevel, "Loading object %d from room %d", i, roomNum);
 			loadObject(i);
 		}
 	}
@@ -317,6 +317,9 @@ void Game::loadOverlays() {
 }
 
 void Game::changeRoom(uint roomNum) {
+	
+	debugC(1, kDraciLogicDebugLevel, "Changing to room %d", roomNum);
+
 	_vm->_roomsArchive->clearCache();
 	_vm->_spritesArchive->clearCache();
 	_vm->_paletteArchive->clearCache();
