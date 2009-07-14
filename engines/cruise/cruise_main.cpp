@@ -1906,7 +1906,7 @@ void CruiseEngine::mainLoop(void) {
 
 					getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 
-					if (mouseX != oldMouseX && mouseY != oldMouseY) {
+					if (mouseX != oldMouseX || mouseY != oldMouseY) {
 						int objectType;
 						int newCursor1;
 						int newCursor2;
