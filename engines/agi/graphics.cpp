@@ -846,7 +846,7 @@ void GfxMgr::setAGIPal(int p0) {
 
 	//Chunks4-7 are duplicates of chunks0-3
 
-	if (agipal.ioFailed()) {
+	if (agipal.eos() || agipal.err()) {
 		warning("Couldn't read AGIPAL palette from '%s'. Not changing palette", filename);
 		return;
 	}

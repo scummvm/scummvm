@@ -70,7 +70,7 @@ bool WagProperty::read(Common::SeekableReadStream &stream) {
 	_propNum  = stream.readByte();
 	_propSize = stream.readUint16LE();
 
-	if (stream.ioFailed()) { // Check that we got the whole header
+	if (stream.eos() || stream.err()) { // Check that we got the whole header
 		_readOk = false;
 		return _readOk;
 	}
