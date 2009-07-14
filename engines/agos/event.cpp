@@ -484,7 +484,7 @@ void AGOSEngine::delay(uint amount) {
 						_fastMode ^= 1;
 					} else if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger->attach();
-					} else if (event.kbd.keycode == Common::KEYCODE_u) {
+					} else if (event.kbd.keycode == Common::KEYCODE_s) {
 						dumpAllSubroutines();
 					} else if (event.kbd.keycode == Common::KEYCODE_i) {
 						dumpAllVgaImageFiles();
