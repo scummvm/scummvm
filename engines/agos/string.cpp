@@ -136,6 +136,18 @@ const byte *AGOSEngine::getStringPtrByID(uint16 stringId, bool upperCase) {
 		strcpy((char *)dst, (const char *)stringPtr);
 	}
 
+	// WORKAROUND bug #1538873: The French version used excess spaces, 
+	// at the end of many messages, so we strip off those excess spaces.
+	if (getGameType() == GType_SIMON1 && _language == Common::FR_FRA) {
+		uint16 len = strlen((const char *)dst) - 1;
+
+		while (len && dst[len] == 32) {
+			dst[len] = 0;
+			len--;
+		}
+
+	}
+
 	if (upperCase && *dst) {
 		if (islower(*dst))
 			*dst = toupper(*dst);
