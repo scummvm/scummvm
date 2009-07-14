@@ -753,6 +753,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 	font = new NewFont(desc, data);
 	if (!font || stream.err()) {
+		delete font;
 		free(data->bits);
 		free(data->offset);
 		free(data->width);
