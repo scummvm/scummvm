@@ -68,6 +68,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"playtoons5", "Playtoons 5 - The Stone of Wakan"},
 	{"playtnck1", "Playtoons Construction Kit 1 - Monsters"},
 	{"playtnck2", "Playtoons Construction Kit 2 - Knights"},
+	{"playtnck3", "Playtoons Construction Kit 3 - Far West"},
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
@@ -3640,6 +3641,24 @@ static const GOBGameDescription gameDescriptions[] = {
 			{
 				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
 				{"dan.itk", 0, "74eeb075bd2cb47b243349730264af01", 3213312},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytnCk,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"playtnck3",
+			"",
+			{
+				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
+				{"dan.itk", 0, "9a8f62809eca5a52f429b5b6a8e70f8f", 2861056},
 				{0, 0, 0, 0}
 			},
 			FR_FRA,
