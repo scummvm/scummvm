@@ -1139,6 +1139,14 @@
 		DF7585F7100CB75800CC3324 /* static_selectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7585F6100CB75800CC3324 /* static_selectors.cpp */; };
 		DF7585F8100CB75800CC3324 /* static_selectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7585F6100CB75800CC3324 /* static_selectors.cpp */; };
 		DF7585F9100CB75800CC3324 /* static_selectors.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7585F6100CB75800CC3324 /* static_selectors.cpp */; };
+		DF758619100CBA0200CC3324 /* osys_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758614100CBA0200CC3324 /* osys_events.cpp */; };
+		DF75861A100CBA0200CC3324 /* osys_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758615100CBA0200CC3324 /* osys_main.cpp */; };
+		DF75861B100CBA0200CC3324 /* osys_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758617100CBA0200CC3324 /* osys_sound.cpp */; };
+		DF75861C100CBA0200CC3324 /* osys_video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758618100CBA0200CC3324 /* osys_video.cpp */; };
+		DF75861D100CBA0200CC3324 /* osys_events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758614100CBA0200CC3324 /* osys_events.cpp */; };
+		DF75861E100CBA0200CC3324 /* osys_main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758615100CBA0200CC3324 /* osys_main.cpp */; };
+		DF75861F100CBA0200CC3324 /* osys_sound.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758617100CBA0200CC3324 /* osys_sound.cpp */; };
+		DF758620100CBA0200CC3324 /* osys_video.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF758618100CBA0200CC3324 /* osys_video.cpp */; };
 		DF7A40330FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */; };
 		DF7A40340FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */; };
 		DF7A40350FB6E8960094E50F /* gfx_pixmap_scale.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */; };
@@ -1882,7 +1890,6 @@
 		DFE4782B0D81F4E900B6D1FB /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470D80D81F4E700B6D1FB /* default-events.cpp */; };
 		DFE478380D81F4E900B6D1FB /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470F60D81F4E700B6D1FB /* posix-fs-factory.cpp */; };
 		DFE478C50D81F4E900B6D1FB /* iphone_main.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE471E10D81F4E700B6D1FB /* iphone_main.m */; };
-		DFE478C90D81F4E900B6D1FB /* osys_iphone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE471E60D81F4E700B6D1FB /* osys_iphone.cpp */; };
 		DFE479B60D81F4E900B6D1FB /* posix-provider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473810D81F4E800B6D1FB /* posix-provider.cpp */; };
 		DFE479BA0D81F4E900B6D1FB /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE4738E0D81F4E800B6D1FB /* default-saves.cpp */; };
 		DFE479BB0D81F4E900B6D1FB /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473900D81F4E800B6D1FB /* savefile.cpp */; };
@@ -1993,7 +2000,6 @@
 		DFF9591B0FB22D5700A3EC78 /* default-events.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470D80D81F4E700B6D1FB /* default-events.cpp */; };
 		DFF9591C0FB22D5700A3EC78 /* posix-fs-factory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE470F60D81F4E700B6D1FB /* posix-fs-factory.cpp */; };
 		DFF9591D0FB22D5700A3EC78 /* iphone_main.m in Sources */ = {isa = PBXBuildFile; fileRef = DFE471E10D81F4E700B6D1FB /* iphone_main.m */; };
-		DFF9591E0FB22D5700A3EC78 /* osys_iphone.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE471E60D81F4E700B6D1FB /* osys_iphone.cpp */; };
 		DFF9591F0FB22D5700A3EC78 /* posix-provider.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473810D81F4E800B6D1FB /* posix-provider.cpp */; };
 		DFF959200FB22D5700A3EC78 /* default-saves.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE4738E0D81F4E800B6D1FB /* default-saves.cpp */; };
 		DFF959210FB22D5700A3EC78 /* savefile.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DFE473900D81F4E800B6D1FB /* savefile.cpp */; };
@@ -3189,6 +3195,11 @@
 		DF7585EB100CB6EA00CC3324 /* sjis.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sjis.h; sourceTree = "<group>"; };
 		DF7585F0100CB70600CC3324 /* saveload_playtoons.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveload_playtoons.cpp; sourceTree = "<group>"; };
 		DF7585F6100CB75800CC3324 /* static_selectors.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = static_selectors.cpp; sourceTree = "<group>"; };
+		DF758614100CBA0200CC3324 /* osys_events.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_events.cpp; sourceTree = "<group>"; };
+		DF758615100CBA0200CC3324 /* osys_main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_main.cpp; sourceTree = "<group>"; };
+		DF758616100CBA0200CC3324 /* osys_main.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osys_main.h; sourceTree = "<group>"; };
+		DF758617100CBA0200CC3324 /* osys_sound.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_sound.cpp; sourceTree = "<group>"; };
+		DF758618100CBA0200CC3324 /* osys_video.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_video.cpp; sourceTree = "<group>"; };
 		DF7A40320FB6E8960094E50F /* gfx_pixmap_scale.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = gfx_pixmap_scale.cpp; sourceTree = "<group>"; };
 		DF7E8BF00ED5FC77001CB19F /* saveload.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = saveload.cpp; sourceTree = "<group>"; };
 		DF7E8BF10ED5FC77001CB19F /* saveload.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = saveload.h; sourceTree = "<group>"; };
@@ -4425,8 +4436,6 @@
 		DFE471DE0D81F4E700B6D1FB /* iphone_common.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_common.h; sourceTree = "<group>"; };
 		DFE471DF0D81F4E700B6D1FB /* iphone_keyboard.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = iphone_keyboard.h; sourceTree = "<group>"; };
 		DFE471E10D81F4E700B6D1FB /* iphone_main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = iphone_main.m; sourceTree = "<group>"; };
-		DFE471E60D81F4E700B6D1FB /* osys_iphone.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = osys_iphone.cpp; sourceTree = "<group>"; };
-		DFE471E70D81F4E700B6D1FB /* osys_iphone.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = osys_iphone.h; sourceTree = "<group>"; };
 		DFE4737F0D81F4E800B6D1FB /* dynamic-plugin.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "dynamic-plugin.h"; sourceTree = "<group>"; };
 		DFE473810D81F4E800B6D1FB /* posix-provider.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = "posix-provider.cpp"; sourceTree = "<group>"; };
 		DFE473820D81F4E800B6D1FB /* posix-provider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "posix-provider.h"; sourceTree = "<group>"; };
@@ -6600,6 +6609,11 @@
 		DFE471D70D81F4E700B6D1FB /* iphone */ = {
 			isa = PBXGroup;
 			children = (
+				DF758614100CBA0200CC3324 /* osys_events.cpp */,
+				DF758615100CBA0200CC3324 /* osys_main.cpp */,
+				DF758616100CBA0200CC3324 /* osys_main.h */,
+				DF758617100CBA0200CC3324 /* osys_sound.cpp */,
+				DF758618100CBA0200CC3324 /* osys_video.cpp */,
 				DF8428960E7BAAAB00F5680E /* blit.cpp */,
 				DF841FD90E7BA61800F5680E /* iphone_keyboard.m */,
 				DF841FDA0E7BA61800F5680E /* iphone_video.h */,
@@ -6608,8 +6622,6 @@
 				DFE471DE0D81F4E700B6D1FB /* iphone_common.h */,
 				DFE471DF0D81F4E700B6D1FB /* iphone_keyboard.h */,
 				DFE471E10D81F4E700B6D1FB /* iphone_main.m */,
-				DFE471E60D81F4E700B6D1FB /* osys_iphone.cpp */,
-				DFE471E70D81F4E700B6D1FB /* osys_iphone.h */,
 			);
 			path = iphone;
 			sourceTree = "<group>";
@@ -7117,7 +7129,6 @@
 				DFE4782B0D81F4E900B6D1FB /* default-events.cpp in Sources */,
 				DFE478380D81F4E900B6D1FB /* posix-fs-factory.cpp in Sources */,
 				DFE478C50D81F4E900B6D1FB /* iphone_main.m in Sources */,
-				DFE478C90D81F4E900B6D1FB /* osys_iphone.cpp in Sources */,
 				DFE479B60D81F4E900B6D1FB /* posix-provider.cpp in Sources */,
 				DFE479BA0D81F4E900B6D1FB /* default-saves.cpp in Sources */,
 				DFE479BB0D81F4E900B6D1FB /* savefile.cpp in Sources */,
@@ -8045,6 +8056,10 @@
 				DF7585EE100CB6EA00CC3324 /* sjis.cpp in Sources */,
 				DF7585F3100CB70600CC3324 /* saveload_playtoons.cpp in Sources */,
 				DF7585F9100CB75800CC3324 /* static_selectors.cpp in Sources */,
+				DF75861D100CBA0200CC3324 /* osys_events.cpp in Sources */,
+				DF75861E100CBA0200CC3324 /* osys_main.cpp in Sources */,
+				DF75861F100CBA0200CC3324 /* osys_sound.cpp in Sources */,
+				DF758620100CBA0200CC3324 /* osys_video.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -9004,7 +9019,6 @@
 				DFF9591B0FB22D5700A3EC78 /* default-events.cpp in Sources */,
 				DFF9591C0FB22D5700A3EC78 /* posix-fs-factory.cpp in Sources */,
 				DFF9591D0FB22D5700A3EC78 /* iphone_main.m in Sources */,
-				DFF9591E0FB22D5700A3EC78 /* osys_iphone.cpp in Sources */,
 				DFF9591F0FB22D5700A3EC78 /* posix-provider.cpp in Sources */,
 				DFF959200FB22D5700A3EC78 /* default-saves.cpp in Sources */,
 				DFF959210FB22D5700A3EC78 /* savefile.cpp in Sources */,
@@ -9932,6 +9946,10 @@
 				DF7585ED100CB6EA00CC3324 /* sjis.cpp in Sources */,
 				DF7585F2100CB70600CC3324 /* saveload_playtoons.cpp in Sources */,
 				DF7585F8100CB75800CC3324 /* static_selectors.cpp in Sources */,
+				DF758619100CBA0200CC3324 /* osys_events.cpp in Sources */,
+				DF75861A100CBA0200CC3324 /* osys_main.cpp in Sources */,
+				DF75861B100CBA0200CC3324 /* osys_sound.cpp in Sources */,
+				DF75861C100CBA0200CC3324 /* osys_video.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
