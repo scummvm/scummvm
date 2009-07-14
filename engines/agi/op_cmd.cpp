@@ -1256,7 +1256,7 @@ cmd(restart_game) {
 	int sel;
 
 	g_sound->stopSound();
-	sel = g_agi->getflag(fAutoRestart) ? 1 :
+	sel = g_agi->getflag(fAutoRestart) ? 0 :
 		g_agi->selectionBox(" Restart game, or continue? \n\n\n", buttons);
 
 	if (sel == 0) {
