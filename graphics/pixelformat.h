@@ -57,16 +57,16 @@ struct PixelFormat {
 		rShift = gShift = bShift = aShift = 0;
 	}
 
-	inline PixelFormat(int BytesPerPixel, 
-						int RLoss, int GLoss, int BLoss, int ALoss, 
-						int RShift, int GShift, int BShift, int AShift) {
+	inline PixelFormat(byte BytesPerPixel, 
+						byte RBits, byte GBits, byte BBits, byte ABits, 
+						byte RShift, byte GShift, byte BShift, byte AShift) {
 		bytesPerPixel = BytesPerPixel;
-		rLoss = RLoss, gLoss = GLoss, bLoss = BLoss, aLoss = ALoss;
+		rLoss = 8 - RBits, gLoss = 8 - GBits, bLoss = 8 - BBits, aLoss = 8 - ABits;
 		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
 	}
 
 	static inline PixelFormat createFormatCLUT8() {
-		return PixelFormat(1, 8, 8, 8, 8, 0, 0, 0, 0);
+		return PixelFormat(1, 0, 0, 0, 0, 0, 0, 0, 0);
 	}
 
 	inline bool operator==(const PixelFormat &fmt) const {

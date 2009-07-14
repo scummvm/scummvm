@@ -213,30 +213,30 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 const Graphics::PixelFormat RGBList[] = {
 #ifdef ENABLE_32BIT
 	// RGBA8888, ARGB8888, RGB888
-	Graphics::PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0),
-	Graphics::PixelFormat(4, 0, 0, 0, 0, 16, 8, 0, 24),
-	Graphics::PixelFormat(3, 0, 0, 0, 8, 16, 8, 0, 0),
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
+	Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
 #endif
 	// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
-	Graphics::PixelFormat(2, 3, 2, 3, 8, 11, 5, 0, 0),
-	Graphics::PixelFormat(2, 3, 3, 3, 7, 10, 5, 0, 15),
-	Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0),
+	Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+	Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
+	Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
 	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
 	Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
 };
 const Graphics::PixelFormat BGRList[] = {
 #ifdef ENABLE_32BIT
 	// ABGR8888, BGRA8888, BGR888
-	Graphics::PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24),
-	Graphics::PixelFormat(4, 0, 0, 0, 0, 8, 16, 24, 0),
-	Graphics::PixelFormat(3, 0, 0, 0, 8, 0, 8, 16, 0),
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
+	Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
 #endif
 	// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
-	Graphics::PixelFormat(2, 3, 2, 3, 8, 0, 5, 11, 0),
-	Graphics::PixelFormat(2, 3, 3, 3, 7, 0, 5, 10, 15),
-	Graphics::PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0),
+	Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
+	Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
+	Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0),
 	Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
-	Graphics::PixelFormat(2, 3, 3, 3, 8, 4, 8, 12, 0)
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
 };
 
 // TODO: prioritize matching alpha masks
