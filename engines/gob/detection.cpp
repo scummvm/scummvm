@@ -3561,7 +3561,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
-
 	{
 		{
 			"playtoons4",
@@ -3572,6 +3571,24 @@ static const GOBGameDescription gameDescriptions[] = {
 				{0, 0, 0, 0}
 			},
 			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{ //Supplied by goodoldgeorg in bug report #2820006
+		{
+			"playtoons4",
+			"",
+			{
+				{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
+				{"manda.stk", 0, "69a79c9f61b2618e482726f2ff68078d", 6499208},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
