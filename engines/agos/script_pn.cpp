@@ -328,7 +328,7 @@ void AGOSEngine_PN::opn_opcode25() {
 }
 
 void AGOSEngine_PN::opn_opcode26() {
-	while ((_stackbase->classnum != -1) && (_stackbase != NULL))
+	while ((_stackbase != NULL) && (_stackbase->classnum != -1))
 		junkstack();
 	dumpstack();
 	setScriptReturn(true);
