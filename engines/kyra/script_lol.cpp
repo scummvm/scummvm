@@ -2345,8 +2345,8 @@ int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	int h2 = (h1 * factor) / 100;
 
 	anim->wsa->displayFrame(frame, 2, x1, y1, anim->wsaCopyParams & 0xF0FF, 0, 0);
-	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, _flags.isDemo ? 0 : 8, 0);
-	if (!_flags.isDemo)
+	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, _flags.isDemo && _flags.platform != Common::kPlatformPC98 ? 0 : 8, 0);
+	if (!_flags.isDemo && _flags.platform != Common::kPlatformPC98)
 		_screen->checkedPageUpdate(8, 4);
 	_screen->updateScreen();
 
