@@ -912,21 +912,21 @@ void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground b
 		return;
 
 	switch (bgtype) {
-		case kDialogBackgroundMain:
-			queueDD(kDDMainDialogBackground, r);
-			break;
+	case kDialogBackgroundMain:
+		queueDD(kDDMainDialogBackground, r);
+		break;
 
-		case kDialogBackgroundSpecial:
-			queueDD(kDDSpecialColorBackground, r);
-			break;
+	case kDialogBackgroundSpecial:
+		queueDD(kDDSpecialColorBackground, r);
+		break;
 
-		case kDialogBackgroundPlain:
-			queueDD(kDDPlainColorBackground, r);
-			break;
+	case kDialogBackgroundPlain:
+		queueDD(kDDPlainColorBackground, r);
+		break;
 
-		case kDialogBackgroundDefault:
-			queueDD(kDDDefaultBackground, r);
-			break;
+	case kDialogBackgroundDefault:
+		queueDD(kDDDefaultBackground, r);
+		break;
 	}
 }
 
@@ -1039,26 +1039,26 @@ void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, Wid
 	}
 
 	switch (font) {
-		case kFontStyleNormal:
-			queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kFontStyleNormal:
+		queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	switch (state) {
-		case kStateDisabled:
-			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kStateDisabled:
+		queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 
-		case kStateHighlight:
-			queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kStateHighlight:
+		queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 
-		case kStateEnabled:
-			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kStateEnabled:
+		queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 	}
 }
 
