@@ -93,6 +93,7 @@ protected:
 	int _curVerbSlot;
 
 	bool _forcedWaitForMessage;
+	bool _skipVideo;
 
 public:
 	ScummEngine_v6(OSystem *syst, const DetectorResult &dr);
