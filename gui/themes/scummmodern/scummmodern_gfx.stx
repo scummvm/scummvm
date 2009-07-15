@@ -271,7 +271,7 @@
 					radius = '4'
 					stroke = '0'
 					fill = 'background'
-					bg_color = '248, 228, 152'
+					bg_color = '248, 232, 168'
 					shadow = '3'
 		/>
 	</drawdata>
