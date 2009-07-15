@@ -407,13 +407,8 @@ void ListWidget::drawWidget() {
 		bool inverted = false;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos) {
-			if (_hasFocus)
-				inverted = true;
-			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1),
-													0, ThemeEngine::kWidgetBackgroundBorderSmall);
-		}
+		if (_selectedItem == pos)
+			inverted = true;
 
 		Common::Rect r(getEditRect());
 		int pad = _leftPadding;
