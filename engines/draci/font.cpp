@@ -33,18 +33,6 @@ namespace Draci {
 const Common::String kFontSmall("Small.fon");
 const Common::String kFontBig("Big.fon"); 
 
-Font::Font() {
-
-	_fontHeight = 0;
-	_maxCharWidth = 0;
-	_charWidths = NULL;
-	_charData = NULL;
-	
-	setFont(kFontBig);
-
-	_currentFontColour = kFontColour1;
-}
-
 Font::Font(const Common::String &filename) { 
 
 	_fontHeight = 0;
@@ -52,7 +40,7 @@ Font::Font(const Common::String &filename) {
 	_charWidths = NULL;
 	_charData = NULL;
 
-	setFont(filename);
+	loadFont(filename);
 
 	_currentFontColour = kFontColour1;
 }
@@ -88,7 +76,7 @@ void Font::setColour(uint8 colour) {
  *				[138 * fontHeight * maxWidth bytes] character data, stored row-wise 
  */
 
-bool Font::setFont(const Common::String &filename) {
+bool Font::loadFont(const Common::String &filename) {
 	
 	// Free previously loaded font (if any)
 	freeFont();

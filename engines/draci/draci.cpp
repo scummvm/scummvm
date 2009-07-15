@@ -85,15 +85,15 @@ int DraciEngine::init() {
 	_overlaysArchive = new BArchive(overlaysPath);
 	_animationsArchive = new BArchive(animationsPath);
 
+	// Load the game's fonts
+	_smallFont = new Font(kFontSmall);
+	_bigFont = new Font(kFontBig);
+
 	_screen = new Screen(this);
-	_font = new Font();
 	_anims = new AnimationManager(this);
 	_mouse = new Mouse(this);
 	_script = new Script(this);
 	_game = new Game(this);
-
-	// Load default font
-	_font->setFont(kFontBig);
 
 	if(!_objectsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening objects archive failed");
@@ -166,8 +166,11 @@ DraciEngine::~DraciEngine() {
 	// Dispose your resources here
  
  	// TODO: Investigate possibility of using sharedPtr or similar
+
+	delete _smallFont;
+	delete _bigFont;
+
 	delete _screen;
-	delete _font;
 	delete _mouse;
 	delete _game;
 	delete _script;

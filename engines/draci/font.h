@@ -53,11 +53,10 @@ class Font {
 	
 public: 
 	
-	Font();
 	Font(const Common::String &filename);
 	~Font();
 
-	bool setFont(const Common::String &filename);
+	bool loadFont(const Common::String &filename);
 	uint8 getFontHeight() const { return _fontHeight; };
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;

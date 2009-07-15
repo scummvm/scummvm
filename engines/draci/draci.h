@@ -51,12 +51,14 @@ public:
 
 	bool hasFeature(Engine::EngineFeature f) const;
 
-	Font *_font;
 	Screen *_screen;
 	Mouse *_mouse;
 	Game *_game;
 	Script *_script;
 	AnimationManager *_anims;
+
+	Font *_smallFont;
+	Font *_bigFont;
 
 	BArchive *_objectsArchive;
 	BArchive *_spritesArchive;
