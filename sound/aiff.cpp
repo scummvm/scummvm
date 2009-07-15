@@ -94,7 +94,7 @@ bool loadAIFFFromStream(Common::SeekableReadStream &stream, int &size, int &rate
 	uint16 numChannels = 0, bitsPerSample = 0;
 	uint32 numSampleFrames = 0, offset = 0, blockSize = 0, soundOffset = 0;
 
-	while ((!foundCOMM || !foundSSND) && !stream.ioFailed()) {
+	while (!(foundCOMM && foundSSND) && !stream.err() && !stream.eos()) {
 		uint32 length, pos;
 
 		stream.read(buf, 4);

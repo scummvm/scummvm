@@ -98,7 +98,7 @@ uint16 ResMan_t7g::getRef(Common::String name, Common::String scriptname) {
 
 	uint16 resNum;
 	bool found = false;
-	for (resNum = 0; !found && !rlFile.ioFailed(); resNum++) {
+	for (resNum = 0; !found && !rlFile.err() && !rlFile.eos(); resNum++) {
 		// Read the resource name
 		char readname[12];
 		rlFile.read(readname, 12);
