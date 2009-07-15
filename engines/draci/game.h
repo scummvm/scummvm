@@ -86,8 +86,8 @@ struct Room {
 	byte _music;
 	byte _map;
 	byte _palette;
-	uint16 _numMasks;
-	uint16 _init, _look, _use, _canUse;
+	int _numMasks;
+	int _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	bool _mouseOn, _heroOn;
 	double _pers0, _persStep;

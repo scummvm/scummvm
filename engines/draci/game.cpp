@@ -138,9 +138,10 @@ void Game::init() {
 	loadObject(kDragonObject);
 	
 	GameObject *dragon = getObject(kDragonObject);
+	debugC(4, kDraciLogicDebugLevel, "Running init program for the dragon object...");
 	_vm->_script->run(dragon->_program, dragon->_init);
 
-	changeRoom(0);
+	changeRoom(_info._startRoom);
 }
 
 void Game::loadRoom(int roomNum) {
@@ -156,28 +157,52 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._music = roomReader.readByte();
 	_currentRoom._map = roomReader.readByte();
 	_currentRoom._palette = roomReader.readByte() - 1;
-	_currentRoom._numMasks = roomReader.readUint16LE();
-	_currentRoom._init = roomReader.readUint16LE();
-	_currentRoom._look = roomReader.readUint16LE();
-	_currentRoom._use = roomReader.readUint16LE();
-	_currentRoom._canUse = roomReader.readUint16LE();
+	_currentRoom._numMasks = roomReader.readSint16LE();
+	_currentRoom._init = roomReader.readSint16LE();
+	_currentRoom._look = roomReader.readSint16LE();
+	_currentRoom._use = roomReader.readSint16LE();
+	_currentRoom._canUse = roomReader.readSint16LE();
 	_currentRoom._imInit = roomReader.readByte();
 	_currentRoom._imLook = roomReader.readByte();
 	_currentRoom._imUse = roomReader.readByte();
 	_currentRoom._mouseOn = roomReader.readByte();
 	_currentRoom._heroOn = roomReader.readByte();
-	roomReader.read(&_currentRoom._pers0, 12);
-	roomReader.read(&_currentRoom._persStep, 12);
+	roomReader.read(&_currentRoom._pers0, 6);
+	roomReader.read(&_currentRoom._persStep, 6);
 	_currentRoom._escRoom = roomReader.readByte() - 1;
 	_currentRoom._numGates = roomReader.readByte();
 
+	debugC(4, kDraciLogicDebugLevel, "_music: %d", _currentRoom._music);
+	debugC(4, kDraciLogicDebugLevel, "_map: %d", _currentRoom._map);
+	debugC(4, kDraciLogicDebugLevel, "_palette: %d", _currentRoom._palette);
+	debugC(4, kDraciLogicDebugLevel, "_numMasks: %d", _currentRoom._numMasks);
+	debugC(4, kDraciLogicDebugLevel, "_init: %d", _currentRoom._init);
+	debugC(4, kDraciLogicDebugLevel, "_look: %d", _currentRoom._look);
+	debugC(4, kDraciLogicDebugLevel, "_use: %d", _currentRoom._use);
+	debugC(4, kDraciLogicDebugLevel, "_canUse: %d", _currentRoom._canUse);
+	debugC(4, kDraciLogicDebugLevel, "_imInit: %d", _currentRoom._imInit);
+	debugC(4, kDraciLogicDebugLevel, "_imLook: %d", _currentRoom._imLook);
+	debugC(4, kDraciLogicDebugLevel, "_imUse: %d", _currentRoom._imUse);
+	debugC(4, kDraciLogicDebugLevel, "_mouseOn: %d", _currentRoom._mouseOn);
+	debugC(4, kDraciLogicDebugLevel, "_heroOn: %d", _currentRoom._heroOn);
+	debugC(4, kDraciLogicDebugLevel, "_pers0: %f", _currentRoom._pers0);
+	debugC(4, kDraciLogicDebugLevel, "_persStep: %f", _currentRoom._persStep);
+	debugC(4, kDraciLogicDebugLevel, "_escRoom: %d", _currentRoom._escRoom);
+	debugC(4, kDraciLogicDebugLevel, "_numGates: %d", _currentRoom._numGates);
+
+	Common::Array<int> gates;
+
+	for (uint i = 0; i < _currentRoom._numGates; ++i) {
+		gates.push_back(roomReader.readSint16LE());
+	}
+
 	for (uint i = 0; i < _info._numObjects; ++i) {
-		debugC(2, kDraciLogicDebugLevel, 
+		debugC(7, kDraciLogicDebugLevel, 
 			"Checking if object %d (%d) is at the current location (%d)", i,
 			_objects[i]._location, roomNum);
 
 		if (_objects[i]._location == roomNum) {
-			debugC(2, kDraciLogicDebugLevel, "Loading object %d from room %d", i, roomNum);
+			debugC(6, kDraciLogicDebugLevel, "Loading object %d from room %d", i, roomNum);
 			loadObject(i);
 		}
 	}
@@ -187,6 +212,8 @@ void Game::loadRoom(int roomNum) {
 	// other objects that may not yet be loaded
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		if (_objects[i]._location == roomNum) {
+			debugC(6, kDraciLogicDebugLevel, 
+				"Running init program for object %d (offset %d)", i, getObject(i)->_init);		
 			_vm->_script->run(getObject(i)->_program, getObject(i)->_init);
 		}
 	}
@@ -196,7 +223,13 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._program._length = f->_length;
 	memcpy(_currentRoom._program._bytecode, f->_data, f->_length);
 
+	debugC(4, kDraciLogicDebugLevel, "Running room init program...");
 	_vm->_script->run(_currentRoom._program, _currentRoom._init);
+
+	for (uint i = 0; i < _currentRoom._numGates; ++i) {
+		debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
+		_vm->_script->run(_currentRoom._program, gates[i]);
+	}
 
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);

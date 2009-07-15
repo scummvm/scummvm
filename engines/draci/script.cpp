@@ -484,17 +484,19 @@ int Script::run(GPL2Program program, uint16 offset) {
 	// Seek to the requested part of the program
 	reader.seek(offset);
 	
+	debugC(3, kDraciBytecodeDebugLevel, 
+		"Starting GPL program at offset %d (program length: %d)", offset, program._length);
+
 	const GPL2Command *cmd;
 	do {
 
-		debugC(3, kDraciBytecodeDebugLevel, 
-			"Program length = %d Current position = %d "
-			"Jump = %d New Position = %d", program._length,
-			reader.pos(), _jump, reader.pos() + _jump);
-
 		// Account for GPL jump that some commands set
-		if (_jump != 0)		
+		if (_jump != 0)	{
+			debugC(6, kDraciBytecodeDebugLevel, 
+				"Jumping from offset %d to %d (%d bytes)", 
+				reader.pos(), reader.pos() + _jump, _jump);	
 			reader.seek(_jump, SEEK_CUR);
+		}
 
 		// Reset jump
 		_jump = 0;
