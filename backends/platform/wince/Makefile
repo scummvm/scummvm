@@ -186,6 +186,7 @@ OBJS += $(srcdir)/gui/Actions.o $(srcdir)/gui/Key.o $(srcdir)/gui/KeysDialog.o
 OBJS += ../sdl/sdl.o ../sdl/graphics.o ../sdl/events.o ../sdl/hardwarekeys.o
 OBJS += missing/missing.o
 OBJS += ARMscaler.o
+OBJS += smartLandScale.o
 ifndef DYNAMIC_MODULES
 OBJS += PocketSCUMM.o
 endif

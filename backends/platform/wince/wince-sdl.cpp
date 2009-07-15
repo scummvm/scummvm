@@ -1209,8 +1209,13 @@ bool OSystem_WINCE3::update_scalers() {
 	if (CEDevice::hasSmartphoneResolution()) {
 		if (_videoMode.screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
+#ifdef ARM
+		_scaleFactorXm = 11;
+		_scaleFactorXd = 16;
+#else
 		_scaleFactorXm = 2;
 		_scaleFactorXd = 3;
+#endif
 		_scaleFactorYm = 7;
 		_scaleFactorYd = 8;
 		_scalerProc = SmartphoneLandscape;
