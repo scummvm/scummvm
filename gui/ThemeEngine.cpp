@@ -167,6 +167,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
 	{kDDDefaultBackground,			"default_bg",		true,	kDDNone},
 	{kDDTextSelectionBackground,	"text_selection",	false,	kDDNone},
+	{kDDTextSelectionFocusBackground,	"text_selection_focus",	false,	kDDNone},
 
 	{kDDWidgetBackgroundDefault,	"widget_default",	true,	kDDNone},
 	{kDDWidgetBackgroundSmall,		"widget_small",		true,	kDDNone},
@@ -1018,14 +1019,23 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 	}
 }
 
-void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!ready())
 		return;
 
-	if (inverted) {
+	switch (inverted) {
+	case kTextInversion:
 		queueDD(kDDTextSelectionBackground, r);
 		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
 		return;
+
+	case kTextInversionFocus:
+		queueDD(kDDTextSelectionFocusBackground, r);
+		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
+
+	default:
+		break;
 	}
 
 	switch (font) {

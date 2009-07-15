@@ -142,6 +142,13 @@
 	<drawdata id = 'text_selection' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
+					fg_color = 'darkgray'
+		/>
+	</drawdata>
+
+	<drawdata id = 'text_selection_focus' cache = 'false'>
+		<drawstep	func = 'square'
+					fill = 'foreground'
 					fg_color = 'bgreen'
 		/>
 	</drawdata>

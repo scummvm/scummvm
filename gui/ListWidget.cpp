@@ -404,11 +404,15 @@ void ListWidget::drawWidget() {
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = kLineHeight;
-		bool inverted = false;
+		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
-		if (_selectedItem == pos)
-			inverted = true;
+		if (_selectedItem == pos) {
+			if (_hasFocus)
+				inverted = ThemeEngine::kTextInversionFocus;
+			else
+				inverted = ThemeEngine::kTextInversion;
+		}
 
 		Common::Rect r(getEditRect());
 		int pad = _leftPadding;
