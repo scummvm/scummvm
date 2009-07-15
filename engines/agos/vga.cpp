@@ -1186,7 +1186,8 @@ void AGOSEngine::vc32_saveScreen() {
 		byte *src = (byte *)screen->pixels;
 		for (int i = 0; i < _screenHeight; i++) {
 			memcpy(dst, src, _screenWidth);
-			dst += screen->pitch;
+			dst += _backGroundBuf->pitch;
+			src += screen->pitch;
 		}
 		_system->unlockScreen();
 	} else {
