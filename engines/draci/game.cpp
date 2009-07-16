@@ -157,7 +157,7 @@ void Game::loadRoom(int roomNum) {
 	roomReader.readUint32LE(); // Pointer to room title, not used
 
 	_currentRoom._music = roomReader.readByte();
-	_currentRoom._map = roomReader.readByte();
+	_currentRoom._map = roomReader.readByte() - 1;
 	_currentRoom._palette = roomReader.readByte() - 1;
 	_currentRoom._numMasks = roomReader.readSint16LE();
 	_currentRoom._init = roomReader.readSint16LE();
