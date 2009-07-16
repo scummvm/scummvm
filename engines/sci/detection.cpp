@@ -1149,6 +1149,25 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_1
 	},
 
+	// King's Quest 5 - French DOS Floppy (from the King's Quest Collector's Edition 1994)
+	// Supplied by aroenai in bug report #2812611
+	// VERSION file reports "1.000", SCI interpreter version 1.000.784
+	{{"kq5", "", {
+		{"resource.map", 0, "eb7853832f3bb10900b13b421a0bbe7f", 8283},
+		{"resource.000", 0, "f063775b279208c14a83eda47073be90", 332806},
+		{"resource.001", 0, "3e6add38564250fd1a5bb10593007530", 1136827},
+		{"resource.002", 0, "d9a97a9cf6c79bbe8f19378f6dea45d5", 1343738},
+		{"resource.003", 0, "bef90d755076c110e67ee3e635503f82", 1324811},
+		{"resource.004", 0, "c14dbafcfbe00855ac6b2f2701058047", 1332216},
+		{"resource.005", 0, "f4b31cafc5defac75125c5f7b7f9a31a", 1268334},
+		{"resource.006", 0, "f7dc85307632ef657ceb1651204f6f51", 1210081},
+		{"resource.007", 0, "7db4d0a1d8d547c0019cb7d2a6acbdd4", 1338473},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
 	// King's Quest 5 - Italian DOS Floppy (from glorifindel)
 	// SCI interpreter version 1.000.060
 	{{"kq5", "", {
