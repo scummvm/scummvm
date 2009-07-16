@@ -340,7 +340,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		gfxr_pic_t *pic;
+		gfxr_pic_t *pic = NULL;
 		gfxr_pic_t *unscaled_pic = NULL;
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS

@@ -2203,6 +2203,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	},
 #endif // ENABLE_SCI32
 
+	{{"pepper", "", {
+		{"resource.map", 0, "72726dc81c1b4c1110c486be77369bc8", 5179},
+		{"resource.000", 0, "670d0c53622429f4b11275caf7f8d292", 5459574},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1_1
+	},
+
 	// Pepper - English DOS Non-Interactive Demo
 	// Executable scanning reports "1.001.060", VERSION file reports "1.000"
 	{{"pepper", "Demo", {

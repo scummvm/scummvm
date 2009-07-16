@@ -1712,8 +1712,11 @@ static int _gfxop_set_pic(GfxState *state) {
 	// FIXME: The _gfxop_install_pixmap call below updates the OSystem palette.
 	// This is too soon, since it causes brief palette corruption until the
 	// screen is updated too. (Possibly related: EngineState::pic_not_valid .)
-	state->pic->visual_map->palette->forceInto(state->driver->getMode()->palette);
-	_gfxop_install_pixmap(state->driver, state->pic->visual_map);
+	// SCI1.1 games don't use per-picture palettes
+	if (state->gfxResMan->getVersion() < SCI_VERSION_1_1) {
+		state->pic->visual_map->palette->forceInto(state->driver->getMode()->palette);
+		_gfxop_install_pixmap(state->driver, state->pic->visual_map);
+	}
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 	if (state->options->pic0_unscaled)
