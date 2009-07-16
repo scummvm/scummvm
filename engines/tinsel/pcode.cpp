@@ -142,7 +142,7 @@ const WorkaroundEntry workaroundList[] = {
 	// * Giving the brochure to the beekeeper
 	// * Stealing the mallets from the wizards
 	// This fix ensures that the global is reset when the Garden scene is loaded (both entering and restoring a game)
-	{TINSEL_V2, true, 2888147476, 0, fragment3_size, fragment3},
+	{TINSEL_V2, true, 2888147476U, 0, fragment3_size, fragment3},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
