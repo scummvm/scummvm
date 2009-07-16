@@ -54,7 +54,7 @@
 		/>
 			
 		<widget name = 'Button'
-				size = '108, 24'
+				size = '112, 28'
 		/>
 		<widget name = 'Slider'
 				size = '128, 18'
@@ -115,31 +115,31 @@
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'LoadGameButton' 
-						height = '20' 
+						height = '24' 
 				/>
 				<widget name = 'AddGameButton' 
-						height = '20'
+						height = '24'
 				/>
 				<widget name = 'EditGameButton' 
-						height = '20'
+						height = '24'
 				/>
 				<widget name = 'RemoveGameButton' 
-						height = '20'
+						height = '24'
 				/>
 			</layout>
 			<space size = '4'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'QuitButton' 
-						height = '20'
+						height = '24'
 				/>
 				<widget name = 'AboutButton' 
-						height = '20'
+						height = '24'
 				/>
 				<widget name = 'OptionsButton' 
-						height = '20'
+						height = '24'
 				/>
 				<widget name = 'StartButton' 
-						height = '20'
+						height = '24'
 				/>
 			</layout>
 		</layout>
