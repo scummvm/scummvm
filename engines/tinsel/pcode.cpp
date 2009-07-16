@@ -136,9 +136,11 @@ const WorkaroundEntry workaroundList[] = {
 	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
 
 	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
-	// But if the game is saved/restored during it, the animation sequence is reset without the global being 
-	// cleared.  If the brochure is then used on the beekeeper before the bees do the sequence again, their sequence 
-	// is prevented, and the game goes into an infinite loop waiting for a non-playing animation to finish.
+	// But if the game is saved/restored during it, the animation sequence is reset without the global being cleared.
+	// This causes bugs in several actions which try to disable the bees animation, since they wait indefinitely for
+	// the global to be cleared, incorrectly believing the animation is currently playing. This includes
+	// * Giving the brochure to the beekeeper
+	// * Stealing the mallets from the wizards
 	// This fix ensures that the global is reset when the Garden scene is loaded (both entering and restoring a game)
 	{TINSEL_V2, true, 2888147476, 0, fragment3_size, fragment3},
 
