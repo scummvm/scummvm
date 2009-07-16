@@ -60,6 +60,7 @@ public:
 	Font *_smallFont;
 	Font *_bigFont;
 
+	BArchive *_iconsArchive;
 	BArchive *_objectsArchive;
 	BArchive *_spritesArchive;
 	BArchive *_paletteArchive;

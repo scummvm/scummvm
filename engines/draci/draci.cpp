@@ -50,6 +50,7 @@ const Common::String spritesPath("OBR_AN.DFW");
 const Common::String overlaysPath("OBR_MAS.DFW");
 const Common::String roomsPath("MIST.DFW");
 const Common::String animationsPath("ANIM.DFW");
+const Common::String iconsPath("HRA.DFW");
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
  : Engine(syst) {
@@ -84,6 +85,7 @@ int DraciEngine::init() {
 	_roomsArchive = new BArchive(roomsPath);
 	_overlaysArchive = new BArchive(overlaysPath);
 	_animationsArchive = new BArchive(animationsPath);
+	_iconsArchive = new BArchive(iconsPath);
 
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);
@@ -179,6 +181,7 @@ DraciEngine::~DraciEngine() {
 	delete _roomsArchive;
 	delete _overlaysArchive;
 	delete _animationsArchive;
+	delete _iconsArchive;
 	
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();

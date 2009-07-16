@@ -98,21 +98,11 @@ void Mouse::setPosition(uint16 x, uint16 y) {
 }
 
 // FIXME: Handle hotspots properly
-// TODO: Implement a resource manager
 void Mouse::setCursorType(CursorType cur) {
 	_cursorType = cur;
 	
-	Common::String path("HRA.DFW");
 	BAFile *f;
-	BArchive ar;
-	ar.openArchive(path);
-	
-	if(ar.isOpen()) {
-		f = ar.getFile(_cursorType);	
-	} else {
-		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened - %s", path.c_str());
-		return;
-	}	
+	f = _vm->_iconsArchive->getFile(_cursorType);	
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
