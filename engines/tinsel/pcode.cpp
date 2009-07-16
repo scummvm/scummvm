@@ -128,8 +128,11 @@ const WorkaroundEntry workaroundList[] = {
 
 	// In DW1-GRA, Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
 	// into walkable areas, saving and restoring the game, it will error if you try to move. 
-	// This fragment turns off NPC blocking for the Outside Inn room so that the luggage won't block
+	// This fragment turns off NPC blocking for the Outside Inn rooms so that the luggage won't block
+	// Past Outside Inn
 	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
+	// Present Outside Inn
+	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
