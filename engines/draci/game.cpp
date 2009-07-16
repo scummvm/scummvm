@@ -142,6 +142,8 @@ void Game::init() {
 	_vm->_script->run(dragon->_program, dragon->_init);
 
 	changeRoom(_info._startRoom);
+
+	_vm->_mouse->setCursorType(kNormalCursor);
 }
 
 void Game::loadRoom(int roomNum) {
@@ -190,6 +192,17 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "_escRoom: %d", _currentRoom._escRoom);
 	debugC(4, kDraciLogicDebugLevel, "_numGates: %d", _currentRoom._numGates);
 
+
+	// Set cursor state
+	if (_currentRoom._mouseOn) {
+		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
+		_vm->_mouse->cursorOn();
+	} else {
+		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
+		_vm->_mouse->cursorOff();
+	}
+
+
 	Common::Array<int> gates;
 
 	for (uint i = 0; i < _currentRoom._numGates; ++i) {
@@ -226,6 +239,8 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "Running room init program...");
 	_vm->_script->run(_currentRoom._program, _currentRoom._init);
 
+	// HACK: Gates' scripts shouldn't be run unconditionally
+	// This is for testing
 	for (uint i = 0; i < _currentRoom._numGates; ++i) {
 		debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
 		_vm->_script->run(_currentRoom._program, gates[i]);

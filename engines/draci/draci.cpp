@@ -139,9 +139,6 @@ int DraciEngine::go() {
 
 	_game->init();
 
-	_mouse->setCursorType(kNormalCursor);
-	_mouse->cursorOn();
-
 	Common::Event event;
 	bool quit = false;
 	while (!quit) {
