@@ -641,6 +641,8 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
+    _numLines = HELP_NUM_LINES;
+
 	// Dummy entries
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
 		_key[i] = new StaticTextWidget(this, 0, 0, 10, 10, "", Graphics::kTextAlignRight);
@@ -658,15 +660,20 @@ void HelpDialog::reflowLayout() {
 
 	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
 
+    /* Make sure than we don't have more lines than what we can fit
+     * on the space that the layout reserves for text */
+    _numLines = MIN(HELP_NUM_LINES, (int)(h / lineHeight));
+
+
 	int keyW = w * 20 / 100;
 	int dscX = x + keyW + 32;
 	int dscW = w * 80 / 100;
 
 	int xoff = (_w >> 1) - (w >> 1);
 
-	for (int i = 0; i < HELP_NUM_LINES; i++) {
-		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight + 2);
-		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight + 2);
+	for (int i = 0; i < _numLines; i++) {
+		_key[i]->resize(xoff + x, y + lineHeight * i, keyW, lineHeight);
+		_dsc[i]->resize(xoff + dscX, y + lineHeight * i, dscW, lineHeight);
 	}
 
 	displayKeyBindings();
@@ -675,6 +682,7 @@ void HelpDialog::reflowLayout() {
 void HelpDialog::displayKeyBindings() {
 
 	String titleStr, *keyStr, *dscStr;
+    int i;
 
 #ifndef __DS__
 	ScummHelp::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
@@ -684,7 +692,7 @@ void HelpDialog::displayKeyBindings() {
 #endif
 
 	_title->setLabel(titleStr);
-	for (int i = 0; i < HELP_NUM_LINES; i++) {
+	for (i = 0; i < _numLines; i++) {
 		_key[i]->setLabel(keyStr[i]);
 		_dsc[i]->setLabel(dscStr[i]);
 	}

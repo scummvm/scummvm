@@ -54,7 +54,7 @@
 		/>
 			
 		<widget name = 'Button'
-				size = '112, 28'
+				size = '108, 24'
 		/>
 		<widget name = 'Slider'
 				size = '128, 18'
@@ -115,31 +115,31 @@
 			<widget name = 'GameList'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'LoadGameButton' 
-						height = '24' 
+						height = '20' 
 				/>
 				<widget name = 'AddGameButton' 
-						height = '24'
+						height = '20'
 				/>
 				<widget name = 'EditGameButton' 
-						height = '24'
+						height = '20'
 				/>
 				<widget name = 'RemoveGameButton' 
-						height = '24'
+						height = '20'
 				/>
 			</layout>
 			<space size = '4'/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10'>
 				<widget name = 'QuitButton' 
-						height = '24'
+						height = '20'
 				/>
 				<widget name = 'AboutButton' 
-						height = '24'
+						height = '20'
 				/>
 				<widget name = 'OptionsButton' 
-						height = '24'
+						height = '20'
 				/>
 				<widget name = 'StartButton' 
-						height = '24'
+						height = '20'
 				/>
 			</layout>
 		</layout>
@@ -745,7 +745,7 @@
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'HelpText'
-					height = '220'
+					height = '200'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 16, 0'>
 				<widget name = 'Prev'
