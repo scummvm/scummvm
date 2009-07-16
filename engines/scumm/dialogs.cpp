@@ -641,7 +641,7 @@ HelpDialog::HelpDialog(const GameSettings &game)
 	new GUI::ButtonWidget(this, "ScummHelp.Close", "Close", kCloseCmd, 'C');
 	_prevButton->clearFlags(WIDGET_ENABLED);
 
-    _numLines = HELP_NUM_LINES;
+	_numLines = HELP_NUM_LINES;
 
 	// Dummy entries
 	for (int i = 0; i < HELP_NUM_LINES; i++) {
@@ -662,7 +662,7 @@ void HelpDialog::reflowLayout() {
 
 	// Make sure than we don't have more lines than what we can fit
 	// on the space that the layout reserves for text
-    _numLines = MIN(HELP_NUM_LINES, (int)(h / lineHeight));
+	_numLines = MIN(HELP_NUM_LINES, (int)(h / lineHeight));
 
 	int keyW = w * 20 / 100;
 	int dscX = x + keyW + 32;
