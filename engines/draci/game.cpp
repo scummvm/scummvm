@@ -315,7 +315,7 @@ void Game::loadObject(uint objNum) {
 	obj->_imLook = objReader.readByte();
 	obj->_imUse = objReader.readByte();
 	obj->_walkDir = objReader.readByte();
-	obj->_priority = objReader.readByte();
+	obj->_z = objReader.readByte();
 	objReader.readUint16LE(); // idxSeq field, not used
 	objReader.readUint16LE(); // numSeq field, not used
 	obj->_lookX = objReader.readUint16LE();

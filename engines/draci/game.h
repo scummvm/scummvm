@@ -68,6 +68,7 @@ public:
 		_data = data + mapReader.pos();
 	}
 
+
 private:
 	int _realWidth, _realHeight;
 	int _deltaX, _deltaY;
@@ -84,7 +85,7 @@ struct GameObject {
 	uint16 _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	byte _walkDir;
-	byte _priority;
+	byte _z;
 	uint16 _lookX, _lookY, _useX, _useY;
 	byte _lookDir, _useDir;
 	uint16 _absNum;
