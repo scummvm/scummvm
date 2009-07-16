@@ -114,25 +114,33 @@ static uint32 hMasterScript;
 
 //----------------- SCRIPT BUGS WORKAROUNDS --------------
 
-const byte fragment1[] = {(byte)OP_ZERO, (byte) OP_GSTORE | OPSIZE16, 206, 0};
+const byte fragment1[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 206, 0};
 const int fragment1_size = 4;
 const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
 const int fragment2_size = 2;
-
+const byte fragment3[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 490 % 256, 490 / 256};
+const int fragment3_size = 4;
 
 const WorkaroundEntry workaroundList[] = {
-	// Global 206 in DW1-SCN is whether Rincewind is trying to take the book back to the present.
+	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
 	// In the GRA version, it was global 373, and was reset when he is returned to the past, but 
 	// was forgotten in the SCN version, so this ensures the flag is properly reset
 	{TINSEL_V1, true, 427942095, 1, fragment1_size, fragment1},
 
-	// In DW1-GRA, Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
+	// DW1-GRA: Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
 	// into walkable areas, saving and restoring the game, it will error if you try to move. 
 	// This fragment turns off NPC blocking for the Outside Inn rooms so that the luggage won't block
 	// Past Outside Inn
 	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
 	// Present Outside Inn
 	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
+
+	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
+	// But if the game is saved/restored during it, the animation sequence is reset without the global being 
+	// cleared.  If the brochure is then used on the beekeeper before the bees do the sequence again, their sequence 
+	// is prevented, and the game goes into an infinite loop waiting for a non-playing animation to finish.
+	// This fix ensures that the global is reset when the Garden scene is loaded (both entering and restoring a game)
+	{TINSEL_V2, true, 2888147476, 0, fragment3_size, fragment3},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
