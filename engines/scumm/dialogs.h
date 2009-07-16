@@ -124,7 +124,7 @@ protected:
 
 	int _page;
 	int _numPages;
-    int _numLines;
+	int _numLines;
 
 	const GameSettings _game;
 

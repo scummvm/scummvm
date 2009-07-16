@@ -660,10 +660,9 @@ void HelpDialog::reflowLayout() {
 
 	g_gui.xmlEval()->getWidgetData("ScummHelp.HelpText", x, y, w, h);
 
-    /* Make sure than we don't have more lines than what we can fit
-     * on the space that the layout reserves for text */
+	// Make sure than we don't have more lines than what we can fit
+	// on the space that the layout reserves for text
     _numLines = MIN(HELP_NUM_LINES, (int)(h / lineHeight));
-
 
 	int keyW = w * 20 / 100;
 	int dscX = x + keyW + 32;
@@ -680,9 +679,7 @@ void HelpDialog::reflowLayout() {
 }
 
 void HelpDialog::displayKeyBindings() {
-
 	String titleStr, *keyStr, *dscStr;
-    int i;
 
 #ifndef __DS__
 	ScummHelp::updateStrings(_game.id, _game.version, _game.platform, _page, titleStr, keyStr, dscStr);
@@ -692,7 +689,7 @@ void HelpDialog::displayKeyBindings() {
 #endif
 
 	_title->setLabel(titleStr);
-	for (i = 0; i < _numLines; i++) {
+	for (int i = 0; i < _numLines; i++) {
 		_key[i]->setLabel(keyStr[i]);
 		_dsc[i]->setLabel(dscStr[i]);
 	}
