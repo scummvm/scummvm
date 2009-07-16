@@ -116,12 +116,21 @@ static uint32 hMasterScript;
 
 const byte fragment1[] = {(byte)OP_ZERO, (byte) OP_GSTORE | OPSIZE16, 206, 0};
 const int fragment1_size = 4;
+const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
+const int fragment2_size = 2;
+
 
 const WorkaroundEntry workaroundList[] = {
 	// Global 206 in DW1-SCN is whether Rincewind is trying to take the book back to the present.
 	// In the GRA version, it was global 373, and was reset when he is returned to the past, but 
 	// was forgotten in the SCN version, so this ensures the flag is properly reset
 	{TINSEL_V1, true, 427942095, 1, fragment1_size, fragment1},
+
+	// In DW1-GRA, Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
+	// into walkable areas, saving and restoring the game, it will error if you try to move. 
+	// This fragment turns off NPC blocking for the Outside Inn room so that the luggage won't block
+	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
+
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
 
