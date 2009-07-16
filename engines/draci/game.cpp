@@ -157,7 +157,11 @@ void Game::loadRoom(int roomNum) {
 	roomReader.readUint32LE(); // Pointer to room title, not used
 
 	_currentRoom._music = roomReader.readByte();
-	_currentRoom._map = roomReader.readByte() - 1;
+
+	int mapIdx = roomReader.readByte() - 1;
+	f = _vm->_walkingMapsArchive->getFile(mapIdx);
+	_currentRoom._walkingMap.load(f->_data, f->_length);
+
 	_currentRoom._palette = roomReader.readByte() - 1;
 	_currentRoom._numMasks = roomReader.readSint16LE();
 	_currentRoom._init = roomReader.readSint16LE();
@@ -174,23 +178,23 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._escRoom = roomReader.readByte() - 1;
 	_currentRoom._numGates = roomReader.readByte();
 
-	debugC(4, kDraciLogicDebugLevel, "_music: %d", _currentRoom._music);
-	debugC(4, kDraciLogicDebugLevel, "_map: %d", _currentRoom._map);
-	debugC(4, kDraciLogicDebugLevel, "_palette: %d", _currentRoom._palette);
-	debugC(4, kDraciLogicDebugLevel, "_numMasks: %d", _currentRoom._numMasks);
-	debugC(4, kDraciLogicDebugLevel, "_init: %d", _currentRoom._init);
-	debugC(4, kDraciLogicDebugLevel, "_look: %d", _currentRoom._look);
-	debugC(4, kDraciLogicDebugLevel, "_use: %d", _currentRoom._use);
-	debugC(4, kDraciLogicDebugLevel, "_canUse: %d", _currentRoom._canUse);
-	debugC(4, kDraciLogicDebugLevel, "_imInit: %d", _currentRoom._imInit);
-	debugC(4, kDraciLogicDebugLevel, "_imLook: %d", _currentRoom._imLook);
-	debugC(4, kDraciLogicDebugLevel, "_imUse: %d", _currentRoom._imUse);
-	debugC(4, kDraciLogicDebugLevel, "_mouseOn: %d", _currentRoom._mouseOn);
-	debugC(4, kDraciLogicDebugLevel, "_heroOn: %d", _currentRoom._heroOn);
-	debugC(4, kDraciLogicDebugLevel, "_pers0: %f", _currentRoom._pers0);
-	debugC(4, kDraciLogicDebugLevel, "_persStep: %f", _currentRoom._persStep);
-	debugC(4, kDraciLogicDebugLevel, "_escRoom: %d", _currentRoom._escRoom);
-	debugC(4, kDraciLogicDebugLevel, "_numGates: %d", _currentRoom._numGates);
+	debugC(4, kDraciLogicDebugLevel, "Music: %d", _currentRoom._music);
+	debugC(4, kDraciLogicDebugLevel, "Map: %d", mapIdx);
+	debugC(4, kDraciLogicDebugLevel, "Palette: %d", _currentRoom._palette);
+	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numMasks);
+	debugC(4, kDraciLogicDebugLevel, "Init: %d", _currentRoom._init);
+	debugC(4, kDraciLogicDebugLevel, "Look: %d", _currentRoom._look);
+	debugC(4, kDraciLogicDebugLevel, "Use: %d", _currentRoom._use);
+	debugC(4, kDraciLogicDebugLevel, "CanUse: %d", _currentRoom._canUse);
+	debugC(4, kDraciLogicDebugLevel, "ImInit: %d", _currentRoom._imInit);
+	debugC(4, kDraciLogicDebugLevel, "ImLook: %d", _currentRoom._imLook);
+	debugC(4, kDraciLogicDebugLevel, "ImUse: %d", _currentRoom._imUse);
+	debugC(4, kDraciLogicDebugLevel, "MouseOn: %d", _currentRoom._mouseOn);
+	debugC(4, kDraciLogicDebugLevel, "HeroOn: %d", _currentRoom._heroOn);
+	debugC(4, kDraciLogicDebugLevel, "Pers0: %f", _currentRoom._pers0);
+	debugC(4, kDraciLogicDebugLevel, "PersStep: %f", _currentRoom._persStep);
+	debugC(4, kDraciLogicDebugLevel, "EscRoom: %d", _currentRoom._escRoom);
+	debugC(4, kDraciLogicDebugLevel, "Gates: %d", _currentRoom._numGates);
 
 
 	// Set cursor state

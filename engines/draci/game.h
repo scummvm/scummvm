@@ -43,6 +43,39 @@ enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
 };
 
+class WalkingMap {
+
+public:	
+	WalkingMap() {
+		_realWidth = 0;
+		_realHeight = 0;
+		_mapWidth = 0;
+		_mapHeight = 0;
+		_byteWidth = 0;
+		_data = NULL;
+	}	
+
+	void load(byte *data, uint length) {
+		Common::MemoryReadStream mapReader(data, length);
+
+		_realWidth = mapReader.readUint16LE();
+		_realHeight = mapReader.readUint16LE();
+		_mapWidth = mapReader.readUint16LE();
+		_mapHeight = mapReader.readUint16LE();
+		_byteWidth = mapReader.readUint16LE();
+
+		// Set the data pointer to raw map data
+		_data = data + mapReader.pos();
+	}
+
+private:
+	int _realWidth, _realHeight;
+	int _deltaX, _deltaY;
+	int _mapWidth, _mapHeight;
+	int _byteWidth;
+	byte *_data;
+};
+
 struct GameObject {
 	
 	GameObject() : _title(NULL) {}
@@ -84,7 +117,7 @@ struct Person {
 struct Room {
 	byte _roomNum;	
 	byte _music;
-	byte _map;
+	WalkingMap _walkingMap;
 	byte _palette;
 	int _numMasks;
 	int _init, _look, _use, _canUse;

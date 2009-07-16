@@ -67,6 +67,7 @@ public:
 	BArchive *_roomsArchive;
 	BArchive *_overlaysArchive;
 	BArchive *_animationsArchive;
+	BArchive *_walkingMapsArchive;
 
 	Common::RandomSource _rnd;
 };
