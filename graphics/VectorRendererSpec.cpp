@@ -596,8 +596,7 @@ drawSquare(int x, int y, int w, int h) {
 template<typename PixelType>
 void VectorRendererSpec<PixelType>::
 drawRoundedSquare(int x, int y, int r, int w, int h) {
-
-    x++; y++; w--; h--;
+	x++; y++; w--; h--;
 
 	if (x + w > Base::_activeSurface->w || y + h > Base::_activeSurface->h ||
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0)
@@ -927,8 +926,8 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	x = MAX(x - bevel, 0);
 	y = MAX(y - bevel, 0);
 
-    w = w + (bevel * 2);
-    h = h + (bevel * 2);
+	w = w + (bevel * 2);
+	h = h + (bevel * 2);
 #endif
 
 	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
