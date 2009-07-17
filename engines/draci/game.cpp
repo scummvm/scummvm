@@ -53,6 +53,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_persons[i]._y = personData.readByte();
 		_persons[i]._fontColour = personData.readUint16LE();
 	}
+
+	// Close persons file
+	file->close();
 	
 	// Read in dialog offsets
 	
@@ -60,7 +63,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	Common::MemoryReadStream dialogData(file->_data, file->_length);
 	
 	unsigned int numDialogs = file->_length / sizeof(uint16);
-	_dialogOffsets = new uint16[numDialogs];	
+	_dialogOffsets = new uint[numDialogs];	
 	
 	unsigned int curOffset;
 	for (i = 0, curOffset = 0; i < numDialogs; ++i) {
@@ -68,6 +71,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		curOffset += dialogData.readUint16LE();
 	}
 	
+	// Close dialogs file
+	file->close();	
+
 	// Read in game info
 	
 	file = initArchive.getFile(3);
@@ -90,6 +96,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	_info._numDialogBlocks = curOffset;
 
+	// Close game info file
+	file->close();
+
 	// Read in variables
 	
 	file = initArchive.getFile(2);
@@ -102,11 +111,13 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_variables[i] = variableData.readUint16LE();
 	}
 
+	// Close variables file
+	file->close();
+
 	// Read in item icon status
 	
 	file = initArchive.getFile(1);
-	_iconStatus = new byte[file->_length];
-	memcpy(_iconStatus, file->_data, file->_length);
+	_iconStatus = file->_data;
 	uint numIcons = file->_length;
 	
 	// Read in object status
@@ -126,6 +137,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		// Set object location
 		_objects[i]._location = (~(1 << 7) & tmp) - 1;
  	}
+	
+	// Close object status file
+	file->close();
 
 	assert(numDialogs == _info._numDialogs);
 	assert(numPersons == _info._numPersons);
@@ -247,9 +261,8 @@ void Game::loadRoom(int roomNum) {
 	}
 
 	f = _vm->_roomsArchive->getFile(roomNum * 4 + 3);
-	_currentRoom._program._bytecode = new byte[f->_length];
+	_currentRoom._program._bytecode = f->_data;
 	_currentRoom._program._length = f->_length;
-	memcpy(_currentRoom._program._bytecode, f->_data, f->_length);
 
 	debugC(4, kDraciLogicDebugLevel, "Running room init program...");
 	_vm->_script->run(_currentRoom._program, _currentRoom._init);
@@ -339,13 +352,11 @@ void Game::loadObject(uint objNum) {
 	obj->_absNum = objNum;
 	
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 1);
-	obj->_title = new byte[file->_length];
-	memcpy(obj->_title, file->_data, file->_length);
+	obj->_title = file->_data;
 	
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 2);
-	obj->_program._bytecode = new byte[file->_length];
+	obj->_program._bytecode = file->_data;
 	obj->_program._length = file->_length;
-	memcpy(obj->_program._bytecode, file->_data, file->_length);
 }
 
 GameObject *Game::getObject(uint objNum) {
@@ -383,9 +394,12 @@ void Game::changeRoom(uint roomNum) {
 	
 	debugC(1, kDraciLogicDebugLevel, "Changing to room %d", roomNum);
 
+	// Clear archives
 	_vm->_roomsArchive->clearCache();
 	_vm->_spritesArchive->clearCache();
 	_vm->_paletteArchive->clearCache();
+	_vm->_animationsArchive->clearCache();
+	_vm->_walkingMapsArchive->clearCache();
 
 	_vm->_screen->clearScreen();
 
@@ -429,13 +443,7 @@ Game::~Game() {
 	delete[] _persons;
 	delete[] _variables;
 	delete[] _dialogOffsets;
-	delete[] _iconStatus;
 	delete[] _objects;
-}
-
-GameObject::~GameObject() { 
-	delete[] _title;
-	delete[] _program._bytecode;
 }
 
 bool WalkingMap::isWalkable(int x, int y) {

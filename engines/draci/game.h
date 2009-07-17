@@ -83,9 +83,8 @@ private:
 struct GameObject {
 	
 	GameObject() : _title(NULL) {}
-	~GameObject();
 		
-	uint16 _init, _look, _use, _canUse;
+	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	byte _walkDir;
 	byte _z;
@@ -187,7 +186,7 @@ private:
 	int *_variables;
 	GameInfo _info;
 	Person *_persons;
-	uint16 *_dialogOffsets;
+	uint *_dialogOffsets;
 	byte *_iconStatus;
 	GameObject *_objects;
 	Room _currentRoom;
