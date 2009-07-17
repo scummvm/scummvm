@@ -276,6 +276,7 @@ endOfEventLoop:
 				if ((uint16)(voice.portaTicks >> 8) >= channel.portamentoTime) {
 					voice.hasPortamento = false;
 					voice.baseNote = voice.endNote;
+					voice.preCalcNote = precalcNote(voice.baseNote, patch.tune);
 				}
 				voice.lastPeriod = calcNote(voice);
 			} else if (channel.isAltered || channel.modulation)
@@ -329,7 +330,7 @@ void MaxTrax::killVoice(byte num) {
 	voice.flags = 0;
 	voice.hasPortamento = false;
 	voice.priority = 0;
-	voice.uinqueId = 0;
+	//voice.uinqueId = 0;
 
 	// "stop" voice, set period to 1, vol to 0
 	Paula::disableChannel(num);
@@ -385,9 +386,7 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice, int32 *offset) {
 	const ChannelContext &channel = *voice.channel;
 	int16 bend = channel.pitchReal;
 	if (voice.hasPortamento)
-		bend = (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
-
-	const Patch &patch = *voice.patch;
+		bend += (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
 
 	// 0x9fd77 ~ log2(1017)  MIDI F5 ?
 	// 0x8fd77 ~ log2(508.5) MIDI F4 ?
@@ -396,11 +395,12 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice, int32 *offset) {
 
 	// tone = voice.baseNote << 8 + microtonal
 	// bend = channelPitch + porta + modulation
-	int32 tone = K_VALUE + 0x3C000 - ((voice.baseNote << 14) + (bend << 6) + (patch.tune << 14) / 24) / 3;
+
+	int32 tone = voice.preCalcNote + (bend << 6) / 3;
 
 	// calculate which sample to use
 	if (offset) {
-		*offset = (tone <= PREF_PERIOD) ? 0 : MIN((int32)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int32)(patch.sampleOctaves - 1)) << 16;
+		*offset = (tone <= PREF_PERIOD) ? 0 : MIN((int32)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int32)(voice.patch->sampleOctaves - 1)) << 16;
 		tone -= *offset;
 	} else
 		tone -= voice.periodOffset;
@@ -432,6 +432,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			// reset previous porta
 			if (voice->hasPortamento)
 				voice->baseNote = voice->endNote;
+			voice->preCalcNote = precalcNote(voice->baseNote, patch.tune);
 			voice->portaTicks = 0;
 			voice->hasPortamento = true;
 			voice->endNote = channel.lastNote = note;
@@ -450,6 +451,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			voice.channel = &channel;
 			voice.patch = &patch;
 			voice.baseNote = note;
+			voice.preCalcNote = precalcNote(voice.baseNote, patch.tune);
 			voice.hasPortamento = false;
 
 			
@@ -507,6 +509,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 						voice.portaTicks = 0;
 						voice.endNote = voice.baseNote;
 						voice.baseNote = channel.lastNote;
+						voice.preCalcNote = precalcNote(voice.baseNote, patch.tune);
 						voice.hasPortamento = true;
 					}
 					channel.lastNote = note;

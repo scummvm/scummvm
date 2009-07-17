@@ -147,8 +147,8 @@ public:
 		ChannelContext *channel;
 		const Patch	*patch;
 		const Envelope *envelope;
-		uint32	uinqueId;
-		uint32	lastTicks;
+//		uint32	uinqueId;
+		int32	preCalcNote;
 		uint32	ticksLeft;
 		int32	portaTicks;
 		int32	incrVolume;
@@ -211,6 +211,10 @@ public:
 
 	void setTempo(const uint16 tempo) {
 		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
+	}
+
+	static int32 precalcNote(byte baseNote, int16 tune) {
+		return 0x9fd77 + 0x3C000 - ((baseNote << 14) + (tune << 11) / 3) / 3;
 	}
 
 	static void outPutEvent(const Event &ev, int num = -1) {
