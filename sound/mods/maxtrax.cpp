@@ -567,7 +567,6 @@ void MaxTrax::freePatches() {
 	}
 	memset(const_cast<Patch *>(_patch), 0, sizeof(_patch));
 }
-// LONG PlayNote(UWORD note,UWORD patch,UWORD duration,UWORD volume,UWORD pan)
 
 int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide) {
 	assert(patch < ARRAYSIZE(_patch));

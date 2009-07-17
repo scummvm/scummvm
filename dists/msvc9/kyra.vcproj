@@ -502,6 +502,10 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\kyra\sound_amiga.cpp"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\kyra\sound_digital.cpp"
 			>
 		</File>
