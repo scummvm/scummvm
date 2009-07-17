@@ -163,7 +163,7 @@ endOfEventLoop:
 			_playerCtx.tempoTicks += _playerCtx.tickUnit;
 			uint16 newTempo = _playerCtx.tempoStart;
 			if (_playerCtx.tempoTicks < _playerCtx.tempoTime) {
-				newTempo += (_playerCtx.tempoTicks * _playerCtx.tempoDelta) / _playerCtx.tempoTime;
+				newTempo += (uint16)((_playerCtx.tempoTicks * _playerCtx.tempoDelta) / _playerCtx.tempoTime);
 			} else {
 				_playerCtx.tempoTime = 0;
 				newTempo += _playerCtx.tempoDelta;
@@ -383,39 +383,24 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 
 uint16 MaxTrax::calcNote(const VoiceContext &voice, int32 *offset) {
 	const ChannelContext &channel = *voice.channel;
-	int16 bend = 0;
-	if (voice.hasPortamento) {
-		// microtonal crap
+	int16 bend = channel.pitchReal;
+	if (voice.hasPortamento)
 		bend = (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
-	}
-	// modulation
-	if (channel.modulation && (channel.flags & ChannelContext::kFlagModVolume) == 0) {
-		// TODO get sine
-		int32 sinevalue = 0;
-		// TODO
-	}
-
-	int32 tone = bend + channel.pitchReal;
-	// more it-never-worked microtonal code
-	tone += voice.baseNote << 8;
 
 	const Patch &patch = *voice.patch;
-	tone += ((int16)patch.tune << 8) / 24;
 
-	tone -= 45 << 8; // MIDI note 45
-
-	tone = (((tone * 4) / 3) << 4);
-	// 0x9fd77 ~ log2(1017)
-	// 0x8fd77 ~ log2(508.5)
-	// 0x6f73d ~ log2(125)
-
+	// 0x9fd77 ~ log2(1017)  MIDI F5 ?
+	// 0x8fd77 ~ log2(508.5) MIDI F4 ?
+	// 0x6f73d ~ log2(125) ~ 5675Hz
 	enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
 
-	tone = K_VALUE - tone;
+	// tone = voice.baseNote << 8 + microtonal
+	// bend = channelPitch + porta + modulation
+	int32 tone = K_VALUE + 0x3C000 - ((voice.baseNote << 14) + (bend << 6) + (patch.tune << 14) / 24) / 3;
 
 	// calculate which sample to use
 	if (offset) {
-		*offset = ((tone > PREF_PERIOD) ? MIN((int32)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int32)(patch.sampleOctaves - 1)) : 0) << 16;
+		*offset = (tone <= PREF_PERIOD) ? 0 : MIN((int32)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int32)(patch.sampleOctaves - 1)) << 16;
 		tone -= *offset;
 	} else
 		tone -= voice.periodOffset;
@@ -582,6 +567,24 @@ void MaxTrax::freePatches() {
 	}
 	memset(const_cast<Patch *>(_patch), 0, sizeof(_patch));
 }
+// LONG PlayNote(UWORD note,UWORD patch,UWORD duration,UWORD volume,UWORD pan)
+
+int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide) {
+	assert(patch < ARRAYSIZE(_patch));
+
+	ChannelContext &channel = _channelCtx[kNumChannels];
+	channel.flags = (rightSide) ? ChannelContext::kFlagRightChannel : 0;
+	channel.isAltered = false;
+	channel.patch = &_patch[patch];
+	const int8 voiceIndex = noteOn(channel, note, (byte)volume, kPriorityNote);
+	if (voiceIndex >= 0) {
+		VoiceContext &voice = _voiceCtx[voiceIndex];
+		voice.stopEventCommand = note;
+		voice.stopEventParameter = kNumChannels;
+		voice.stopEventTime = duration << 8;
+	}
+	return voiceIndex;
+}
 
 bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool loadSamples) {
 	bool res = false;
@@ -660,7 +663,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			// pointer to samples needed?
 			Patch &curPatch = const_cast<Patch &>(_patch[number]);
 
-			curPatch.tune = musicData.readUint16BE();
+			curPatch.tune = musicData.readSint16BE();
 			curPatch.volume = musicData.readUint16BE();
 			curPatch.sampleOctaves = musicData.readUint16BE();
 			curPatch.sampleAttackLen = musicData.readUint32BE();

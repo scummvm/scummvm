@@ -83,7 +83,7 @@ public:
 		uint16	attackLen;
 		uint16	releaseLen;
 
-		uint16	tune;
+		int16	tune;
 		uint16	volume;
 
 		// this was the SampleData struct in the assembler source
@@ -132,8 +132,8 @@ public:
 			kFlagDamper = 1 << 2,
 			kFlagMono = 1 << 3,
 			kFlagMicrotonal = 1 << 4,
-			kFlagModVolume = 1 << 5,
-			kFlagAltered = 1 << 6
+			kFlagModVolume = 1 << 5//,
+			//kFlagAltered = 1 << 6
 		};
 		byte	flags;
 		bool	isAltered;
@@ -203,10 +203,11 @@ public:
 
 	static int8 pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
 	int32 calcVolumeDelta(int32 delta, uint16 time);
-	uint16 calcNote(const VoiceContext &voice, int32 *offset = 0);
+	static uint16 calcNote(const VoiceContext &voice, int32 *offset = 0);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);
+	int playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide);
 
 	void setTempo(const uint16 tempo) {
 		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
