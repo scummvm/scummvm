@@ -325,6 +325,7 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		endFrame = lastFrame;
 	palCmd &= 0x3F;
 
+	int16 realStartFrame = startFrame;
 	if (video.getCurrentFrame() != startFrame) {
 		if (!forceSeek && (video.getFeatures() & Graphics::CoktelVideo::kFeaturesSound))
 			startFrame = video.getCurrentFrame();
@@ -340,7 +341,9 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 	bool canceled = false;
 
 	while (startFrame <= lastFrame) {
-		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame)) {
+		if (doPlay(startFrame, breakKey,
+					palCmd, palStart, palEnd, palFrame, endFrame, startFrame < realStartFrame)) {
+
 			canceled = true;
 			break;
 		}
@@ -630,7 +633,7 @@ Common::MemoryReadStream *VideoPlayer::getExtraData(const char *fileName, int sl
 
 void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame) {
+		int16 palFrame, int16 endFrame, bool noRetrace) {
 
 	if (!_primaryVideo)
 		return;
@@ -703,7 +706,9 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 			_vm->_draw->blitInvalidated();
 		} else
 			_vm->_video->dirtyRectsAdd(state.left, state.top, state.right, state.bottom);
-		_vm->_video->retrace();
+
+		if (!noRetrace)
+			_vm->_video->retrace();
 	}
 
 
@@ -713,9 +718,9 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 
 bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame) {
+		int16 palFrame, int16 endFrame, bool noRetrace) {
 
-	playFrame(frame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame);
+	playFrame(frame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame, noRetrace);
 
 	_vm->_util->processInput();
 
