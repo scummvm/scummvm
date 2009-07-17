@@ -156,6 +156,7 @@ VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm) {
 	_backSurf = false;
 	_needBlit = false;
 	_noCursorSwitch = false;
+	_woodruffCohCottWorkaround = false;
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -246,6 +247,14 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 			    !scumm_stricmp(fileName, "AMIL3B.IMD") ||
 			    !scumm_stricmp(fileName, "DELB.IMD"))
 				_noCursorSwitch = true;
+		}
+
+		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
+		// This is a bug in video, so we work around it.
+		_woodruffCohCottWorkaround = false;
+		if (_vm->getGameType() == kGameTypeWoodruff) {
+			if (!scumm_stricmp(fileName, "SQ32-03.VMD"))
+				_woodruffCohCottWorkaround = true;
 		}
 
 		_ownSurf = false;
@@ -656,6 +665,12 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 
 	Graphics::CoktelVideo::State state = video.nextFrame();
 	WRITE_VAR(11, frame);
+
+	if (_woodruffCohCottWorkaround && (frame == 32)) {
+		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish
+		// To prevent that, we'll never draw that part
+		state.left += 50;
+	}
 
 	if (_needBlit)
 		_vm->_draw->forceBlit(true);

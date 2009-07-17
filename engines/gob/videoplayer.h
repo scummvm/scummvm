@@ -152,6 +152,8 @@ private:
 	bool _needBlit;
 	bool _noCursorSwitch;
 
+	bool _woodruffCohCottWorkaround;
+
 	bool findFile(char *fileName, Type &which);
 
 	const Video *getVideoBySlot(int slot = -1) const;
