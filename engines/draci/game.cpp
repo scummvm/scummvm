@@ -174,7 +174,7 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._walkingMap.load(f->_data, f->_length);
 
 	_currentRoom._palette = roomReader.readByte() - 1;
-	_currentRoom._numMasks = roomReader.readSint16LE();
+	_currentRoom._numOverlays = roomReader.readSint16LE();
 	_currentRoom._init = roomReader.readSint16LE();
 	_currentRoom._look = roomReader.readSint16LE();
 	_currentRoom._use = roomReader.readSint16LE();
@@ -192,7 +192,7 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "Music: %d", _currentRoom._music);
 	debugC(4, kDraciLogicDebugLevel, "Map: %d", mapIdx);
 	debugC(4, kDraciLogicDebugLevel, "Palette: %d", _currentRoom._palette);
-	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numMasks);
+	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numOverlays);
 	debugC(4, kDraciLogicDebugLevel, "Init: %d", _currentRoom._init);
 	debugC(4, kDraciLogicDebugLevel, "Look: %d", _currentRoom._look);
 	debugC(4, kDraciLogicDebugLevel, "Use: %d", _currentRoom._use);
@@ -361,7 +361,7 @@ void Game::loadOverlays() {
 	Common::MemoryReadStream overlayReader(overlayHeader->_data, overlayHeader->_length);
  	BAFile *overlayFile;
  
- 	for (uint i = 0; i < _currentRoom._numMasks; i++) {
+ 	for (int i = 0; i < _currentRoom._numOverlays; i++) {
  
 		num = overlayReader.readUint16LE() - 1;
  		x = overlayReader.readUint16LE();

@@ -123,7 +123,7 @@ struct Room {
 	byte _music;
 	WalkingMap _walkingMap;
 	byte _palette;
-	int _numMasks;
+	int _numOverlays;
 	int _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	bool _mouseOn, _heroOn;
