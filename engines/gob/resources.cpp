@@ -255,7 +255,7 @@ bool Resources::loadTOTResourceTable() {
 		TOTResourceItem &item = _totResourceTable->items[i];
 
 		item.offset = stream->readSint32LE();
-		item.size   = stream->readSint16LE();
+		item.size   = stream->readUint16LE();
 		item.width  = stream->readSint16LE();
 		item.height = stream->readSint16LE();
 
@@ -645,7 +645,7 @@ Resource *Resources::getEXTResource(uint16 id) const {
 }
 
 byte *Resources::getTOTData(TOTResourceItem &totItem) const {
-	if (totItem.size < 0)
+	if (totItem.size == 0)
 		return 0;
 
 	int32 offset = _totResourceTable->dataOffset + totItem.offset - _totResStart;
@@ -657,7 +657,7 @@ byte *Resources::getTOTData(TOTResourceItem &totItem) const {
 }
 
 byte *Resources::getIMData(TOTResourceItem &totItem) const {
-	if (totItem.size < 0)
+	if (totItem.size == 0)
 		return 0;
 
 	int32 indexOffset = totItem.index * 4;
