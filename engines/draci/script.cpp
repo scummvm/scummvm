@@ -270,7 +270,7 @@ void Script::load(Common::Queue<int> &params) {
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
-	_vm->_game->loadAnimation(animID, obj->_priority);
+	_vm->_game->loadAnimation(animID, obj->_z);
 	obj->_anims.push_back(animID);
 }
 

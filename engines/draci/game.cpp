@@ -146,6 +146,17 @@ void Game::init() {
 	_vm->_mouse->setCursorType(kNormalCursor);
 }
 
+void Game::loop() {
+	
+	if (_currentRoom._mouseOn) {
+		int x = _vm->_mouse->getPosX();
+		int y = _vm->_mouse->getPosY();
+		if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
+			debugC(4, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
+		}
+	}
+}
+
 void Game::loadRoom(int roomNum) {
 
 	BAFile *f;
@@ -425,6 +436,19 @@ Game::~Game() {
 GameObject::~GameObject() { 
 	delete[] _title;
 	delete[] _program._bytecode;
+}
+
+bool WalkingMap::isWalkable(int x, int y) {
+
+	// Convert to map pixels
+	x = x / _deltaX;
+	y = y / _deltaY;
+
+	int pixelIndex = _mapWidth * y + x;
+	int byteIndex = pixelIndex / 8;
+	int mapByte = _data[byteIndex];
+
+	return mapByte & (1 << pixelIndex % 8);
 }
 
 } 

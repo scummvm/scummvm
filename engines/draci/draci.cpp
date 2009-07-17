@@ -155,6 +155,7 @@ int DraciEngine::go() {
 				_mouse->handleEvent(event);
 			}		
 		}
+		_game->loop();
 		_anims->drawScene(_screen->getSurface());
 		_screen->copyToScreen();
 		_system->delayMillis(20);

@@ -60,6 +60,8 @@ public:
 
 		_realWidth = mapReader.readUint16LE();
 		_realHeight = mapReader.readUint16LE();
+		_deltaX = mapReader.readUint16LE();
+		_deltaY = mapReader.readUint16LE();
 		_mapWidth = mapReader.readUint16LE();
 		_mapHeight = mapReader.readUint16LE();
 		_byteWidth = mapReader.readUint16LE();
@@ -68,6 +70,7 @@ public:
 		_data = data + mapReader.pos();
 	}
 
+	bool isWalkable(int x, int y);
 
 private:
 	int _realWidth, _realHeight;
@@ -137,6 +140,7 @@ public:
 	~Game();
 
 	void init();
+	void loop();
 
 	void changeRoom(uint roomNum);
 
@@ -186,7 +190,7 @@ private:
 	uint16 *_dialogOffsets;
 	byte *_iconStatus;
 	GameObject *_objects;
-	Room _currentRoom;	
+	Room _currentRoom;
 };
 
 } // End of namespace Draci
