@@ -207,6 +207,7 @@ void AGOSEngine::vc53_dissolveIn() {
 	uint16 speed = vcReadNextWord() + 1;
 
 	byte *src, *dst, *srcOffs, *srcOffs2, *dstOffs, *dstOffs2;
+	int16 xoffs, yoffs;
 	uint8 color = 0;
 
 	// Only uses Video Window 4
@@ -218,15 +219,13 @@ void AGOSEngine::vc53_dissolveIn() {
 	uint16 dissolveDelay = dissolveCheck * 2 / speed;
 	uint16 dissolveCount = dissolveCheck * 2 / speed;
 
-	Graphics::Surface *screen = _system->lockScreen();
-
-	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
-	int16 yoffs = _videoWindows[num * 4 + 1];
-	int16 offs = xoffs + yoffs * screen->pitch;
+	int16 x = _videoWindows[num * 4 + 0] * 16;
+	int16 y = _videoWindows[num * 4 + 1];
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
-		byte *dstPtr = (byte *)screen->pixels + offs;
+		Graphics::Surface *screen = _system->lockScreen();
+		byte *dstPtr = (byte *)screen->pixels + x + y * screen->pitch;
 
 		yoffs = _rnd.getRandomNumber(dissolveY);
 		dst = dstPtr + yoffs * screen->pitch;
@@ -285,6 +284,7 @@ void AGOSEngine::vc54_dissolveOut() {
 	uint16 speed = vcReadNextWord() + 1;
 
 	byte *dst, *dstOffs;
+	int16 xoffs, yoffs;
 
 	uint16 dissolveX = _videoWindows[num * 4 + 2] * 8;
 	uint16 dissolveY = (_videoWindows[num * 4 + 3] + 1) / 2;
@@ -292,15 +292,13 @@ void AGOSEngine::vc54_dissolveOut() {
 	uint16 dissolveDelay = dissolveCheck * 2 / speed;
 	uint16 dissolveCount = dissolveCheck * 2 / speed;
 
-	Graphics::Surface *screen = _system->lockScreen();
-
-	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
-	int16 yoffs = _videoWindows[num * 4 + 1];
-	int16 offs = xoffs + yoffs * screen->pitch;
+	int16 x = _videoWindows[num * 4 + 0] * 16;
+	int16 y = _videoWindows[num * 4 + 1];
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
-		byte *dstPtr = (byte *)screen->pixels + offs;
+		Graphics::Surface *screen = _system->lockScreen();
+		byte *dstPtr = (byte *)screen->pixels + x + y * screen->pitch;
 		color |= dstPtr[0] & 0xF0;
 
 		yoffs = _rnd.getRandomNumber(dissolveY);
