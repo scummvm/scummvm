@@ -114,6 +114,31 @@ int DraciEngine::init() {
 		return Common::kUnknownError;
 	}
 
+	if(!_roomsArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening rooms archive failed");
+		return Common::kUnknownError;
+	}
+
+	if(!_overlaysArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening overlays archive failed");
+		return Common::kUnknownError;
+	}
+
+	if(!_animationsArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening animations archive failed");
+		return Common::kUnknownError;
+	}
+
+	if(!_iconsArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening icons archive failed");
+		return Common::kUnknownError;
+	}
+
+	if(!_walkingMapsArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening walking maps archive failed");
+		return Common::kUnknownError;
+	}
+
 	// Basic archive test
 	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
 	Common::String path("INIT.DFW");	
