@@ -588,15 +588,22 @@ Resource *Resources::getTOTResource(uint16 id) const {
 	if (totItem.type == kResourceTOT)
 		data = getTOTData(totItem);
 
-	if (!data)
+	if (!data) {
+		warning("Failed to load TOT resource (%s, %d/%d, %d)",
+				_totFile.c_str(), id, _totResourceTable->itemsCount - 1, totItem.type);
 		return 0;
+	}
 
 	return new Resource(data, totItem.size, false, totItem.width, totItem.height);
 }
 
 Resource *Resources::getEXTResource(uint16 id) const {
-	if (!_extResourceTable || (id > _extResourceTable->itemsCount))
+	if (!_extResourceTable || (id > _extResourceTable->itemsCount)) {
+		warning("Trying to load non-existent EXT resource (%s, %d/%d)",
+				_totFile.c_str(), id,
+				_extResourceTable ? (_extResourceTable->itemsCount - 1) : -1);
 		return 0;
+	}
 
 	EXTResourceItem &extItem = _extResourceTable->items[id];
 
@@ -617,8 +624,11 @@ Resource *Resources::getEXTResource(uint16 id) const {
 	if (extItem.type == kResourceEX)
 		data = getEXData(extItem, size);
 
-	if (!data)
+	if (!data) {
+		warning("Failed to load EXT resource (%s, %d/%d, %d)",
+				_totFile.c_str(), id, _extResourceTable->itemsCount - 1, extItem.type);
 		return 0;
+	}
 
 	if (extItem.packed) {
 		byte *packedData = data;
