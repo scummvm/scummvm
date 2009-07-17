@@ -159,7 +159,9 @@ void initSystem(void) {
 	switchPal = 0;
 	masterScreen = 0;
 
+	changeCursor(CURSOR_NOMOUSE);
 	changeCursor(CURSOR_NORMAL);
+	mouseOn();
 
 	strcpy(cmdLine, "");
 
@@ -242,7 +244,7 @@ int32 prepareWordRender(int32 inRightBorder_X, int16 wordSpacingWidth,
 			if (character == '|' || !character) {
 				finish = 1;
 			} else {
-				if (charData) {
+				if (charData >= 0) {
 					if (pixelCount + wordSpacingWidth +
 							(int16)fontData[charData].charWidth >= inRightBorder_X) {
 						finish = 1;

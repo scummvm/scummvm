@@ -35,9 +35,6 @@ namespace Sci {
 
 #define GFX_DEBUG
 
-/* General output macros */
-#define GFXERROR sciprintf("GFX Error: %s, L%d:", __FILE__, __LINE__); error
-
 /***********************/
 /*** Data structures ***/
 /***********************/
@@ -192,7 +189,7 @@ struct gfx_pixmap_t {
 	 * As a special exception, 256 colors are allowed for background pictures
 	 * (which do not use transparency)
 	 */
-	int colors_nr() const { return palette ? palette->size() : 0; }
+	int colors_nr() const { return palette ? MIN<int>(palette->size(), 256) : 0; }
 
 	uint32 flags;
 	/* @} */

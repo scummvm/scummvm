@@ -143,7 +143,7 @@ public:
 	void handleKeyDown(Common::KeyState state);
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
-	int printf(const char *format, ...);
+	int printf(const char *format, ...) GCC_PRINTF(2, 3);
 	int vprintf(const char *format, va_list argptr);
 #undef putchar
 	void putchar(int c);

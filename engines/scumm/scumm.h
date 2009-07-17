@@ -28,6 +28,7 @@
 
 #include "engines/engine.h"
 #include "common/endian.h"
+#include "common/events.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/keyboard.h"
@@ -128,7 +129,7 @@ enum GameFeatures {
 };
 
 /* SCUMM Debug Channels */
-void debugC(int level, const char *s, ...);
+void debugC(int level, const char *s, ...) GCC_PRINTF(2, 3);
 
 enum {
 	DEBUG_GENERAL	=	1 << 0,		// General debug
@@ -498,6 +499,8 @@ protected:
 public:
 	void parseEvents();	// Used by IMuseDigital::startSound
 protected:
+	virtual void parseEvent(Common::Event event);
+
 	void waitForTimer(int msec_delay);
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
@@ -528,7 +531,7 @@ protected:
 	void versionDialog();
 	void scummMenuDialog();
 
-	char displayMessage(const char *altButton, const char *message, ...);
+	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
 
 	byte _fastMode;
 
@@ -543,15 +546,13 @@ public:
 	// VAR is a wrapper around scummVar, which attempts to include additional
 	// useful information should an illegal var access be detected.
 	#define VAR(x)	scummVar(x, #x, __FILE__, __LINE__)
-	int32& scummVar(byte var, const char *varName, const char *file, int line)
-	{
+	int32& scummVar(byte var, const char *varName, const char *file, int line) {
 		if (var == 0xFF) {
 			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
 		return _scummVars[var];
 	}
-	int32 scummVar(byte var, const char *varName, const char *file, int line) const
-	{
+	int32 scummVar(byte var, const char *varName, const char *file, int line) const {
 		if (var == 0xFF) {
 			error("Illegal access to variable %s in file %s, line %d", varName, file, line);
 		}
@@ -1377,8 +1378,6 @@ public:
 
 	byte VAR_SCRIPT_CYCLE;			// Used in runScript()/runObjectScript()
 	byte VAR_NUM_SCRIPT_CYCLES;		// Used in runAllScripts()
-
-	byte VAR_KEY_STATE;			// Used in parseEvents()
 
 	// Exists both in V7 and in V72HE:
 	byte VAR_NUM_GLOBAL_OBJS;

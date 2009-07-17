@@ -29,6 +29,7 @@
 #include "gob/draw.h"
 #include "gob/global.h"
 #include "gob/util.h"
+#include "gob/dataio.h"
 #include "gob/game.h"
 #include "gob/script.h"
 #include "gob/inter.h"
@@ -60,7 +61,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_backDeltaX = 0;
 	_backDeltaY = 0;
 
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < kFontCount; i++)
 		_fonts[i] = 0;
 
 	_spritesArray.resize(SPRITES_COUNT);
@@ -128,7 +129,7 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 }
 
 Draw::~Draw() {
-	for (int i = 0; i < 8; i++)
+	for (int i = 0; i < kFontCount; i++)
 		delete _fonts[i];
 }
 
@@ -346,6 +347,8 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 	if ((fontIndex < 0) || (fontIndex > 7) || !_fonts[fontIndex])
 		return 0;
 
+	Font &font = *_fonts[fontIndex];
+
 	int len = 0;
 
 	if (_vm->_global->_language == 10) {
@@ -355,16 +358,16 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 				len += japaneseExtraCharLen[4];
 				i++;
 			} else
-				len += _fonts[fontIndex]->itemWidth;
+				len += font.getCharWidth();
 		}
 
 	} else {
 
-		if (_fonts[fontIndex]->extraData)
-			while (*str != 0)
-				len += *(_fonts[fontIndex]->extraData + (*str++ - _fonts[fontIndex]->startItem));
+		if (!font.isMonospaced())
+			while (*str != '\0')
+				len += font.getCharWidth(*str++);
 		else
-			len = (strlen(str) * _fonts[fontIndex]->itemWidth);
+			len = strlen(str) * font.getCharWidth();
 
 	}
 
@@ -372,14 +375,11 @@ int Draw::stringLength(const char *str, int16 fontIndex) {
 }
 
 void Draw::drawString(const char *str, int16 x, int16 y, int16 color1, int16 color2,
-		int16 transp, SurfaceDesc &dest, Video::FontDesc *font) {
+		int16 transp, SurfaceDesc &dest, const Font &font) {
 
 	while (*str != '\0') {
 		_vm->_video->drawLetter(*str, x, y, font, transp, color1, color2, dest);
-		if (!font->extraData)
-			x += font->itemWidth;
-		else
-			x += *(font->extraData + (*str - font->startItem));
+		x += font.getCharWidth(*str);
 		str++;
 	}
 }
@@ -407,23 +407,23 @@ void Draw::printTextCentered(int16 id, int16 left, int16 top, int16 right,
 	if (str[0] == '\0')
 		return;
 
-	int16 width = 0;
-
 	_transparency = 1;
 	_destSpriteX = left;
 	_destSpriteY = top;
 	_fontIndex = fontIndex;
 	_frontColor = color;
 	_textToPrint = str;
-	if (_fonts[fontIndex]->extraData != 0) {
-		byte *data = _fonts[fontIndex]->extraData;
-		int length = strlen(str);
 
-		for (int i = 0; i < length; i++)
-			width += *(data + (str[i] - _fonts[_fontIndex]->startItem));
+	Font &font = *_fonts[fontIndex];
+
+	int16 width = 0;
+	if (!font.isMonospaced()) {
+		const char *s = str;
+		while (*s != '\0')
+			width += font.getCharWidth(*s++);
 	}
 	else
-		width = strlen(str) * _fonts[fontIndex]->itemWidth;
+		width = strlen(str) * font.getCharWidth();
 
 	adjustCoords(1, &width, 0);
 	_destSpriteX += (right - left + 1 - width) / 2;
@@ -544,6 +544,26 @@ void Draw::wobble(SurfaceDesc &surfDesc) {
 	_vm->_video->dirtyRectsAll();
 
 	delete[] offsets;
+}
+
+Font *Draw::loadFont(const char *path) const {
+	if (!_vm->_dataIO->existData(path))
+		return 0;
+
+	byte *data = _vm->_dataIO->getData(path);
+
+	return new Font(data);
+}
+
+bool Draw::loadFont(int fontIndex, const char *path) {
+	if ((fontIndex < 0) || (fontIndex >= kFontCount))
+		return false;
+
+	delete _fonts[fontIndex];
+
+	_fonts[fontIndex] = loadFont(path);
+
+	return _fonts[fontIndex] != 0;
 }
 
 } // End of namespace Gob

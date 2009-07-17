@@ -154,6 +154,7 @@ void Font::createOutline(FontData *font) {
 	unsigned char *destPointer2;
 	unsigned char *destPointer3;
 	unsigned char charRep;
+	int nextIndex = 0;
 
 
 	// Populate new font style character data
@@ -165,6 +166,25 @@ void Font::createOutline(FontData *font) {
 			index += indexOffset;
 		}
 
+		bool skip = false;
+
+		if (font->normal.fontCharEntry[i].width != 0 && font->normal.fontCharEntry[i].index < nextIndex) {
+			// Some characters are copies of earlier characters.
+			// Look up the original, and make sure not to grow the size of
+			// the outline font twice.
+			skip = true;
+			bool found = false;
+			for (int j = 0; j < i; j++) {
+				if (font->normal.fontCharEntry[i].index == font->normal.fontCharEntry[j].index) {
+					index = font->outline.fontCharEntry[j].index;
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				error("Invalid index backreference in font char %d", i);
+		}
+
 		font->outline.fontCharEntry[i].index = index;
 		font->outline.fontCharEntry[i].tracking = font->normal.fontCharEntry[i].tracking;
 		font->outline.fontCharEntry[i].flag = font->normal.fontCharEntry[i].flag;
@@ -173,14 +193,18 @@ void Font::createOutline(FontData *font) {
 			newByteWidth = getByteLen(font->normal.fontCharEntry[i].width + 2);
 			oldByteWidth = getByteLen(font->normal.fontCharEntry[i].width);
 
-			if (newByteWidth > oldByteWidth) {
+			if (!skip && newByteWidth > oldByteWidth) {
 				indexOffset++;
 			}
 		}
 
 		font->outline.fontCharEntry[i].width = font->normal.fontCharEntry[i].width + 2;
 		font->outline.fontCharEntry[i].byteWidth = newByteWidth;
-		newRowLength += newByteWidth;
+
+		if (!skip) {
+			newRowLength += newByteWidth;
+			nextIndex = font->normal.fontCharEntry[i].index + oldByteWidth;
+		}
 	}
 
 	debug(2, "New row length: %d", newRowLength);
@@ -196,6 +220,10 @@ void Font::createOutline(FontData *font) {
 
 	// Generate outline font representation
 	for (i = 0; i < FONT_CHARCOUNT; i++) {
+		if (i > 0 && font->normal.fontCharEntry[i].index < font->normal.fontCharEntry[i-1].index) {
+			// Skip copies
+			continue;
+		}
 		for (row = 0; row < font->normal.header.charHeight; row++) {
 			for (currentByte = 0; currentByte < font->outline.fontCharEntry[i].byteWidth; currentByte++) {
 				basePointer = font->outline.font + font->outline.fontCharEntry[i].index + currentByte;

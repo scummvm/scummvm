@@ -143,6 +143,9 @@ public:
 	virtual int shouldQuit() const { return _shouldQuit; }
 	virtual int shouldRTL() const { return _shouldRTL; }
 	virtual void resetRTL() { _shouldRTL = false; }
+#ifdef FORCE_RTL
+	virtual void resetQuit() { _shouldQuit = false; }
+#endif
 
 #ifdef ENABLE_KEYMAPPER
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }

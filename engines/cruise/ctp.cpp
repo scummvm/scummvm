@@ -106,7 +106,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 	int16 *destination;
 
 	int startX = X - ((upscaleValue(hotPointX, scale) + 0x8000) >> 16);
-//	int startY = Y - ((upscaleValue(hotPointY, scale) + 0x8000) >> 16);
+	int startY = Y - ((upscaleValue(hotPointY, scale) + 0x8000) >> 16);
 
 	numPoints = *(walkboxData++);
 
@@ -117,7 +117,7 @@ void renderCTPWalkBox(int16 *walkboxData, int hotPointX, int hotPointY, int X, i
 		int pointY = *(walkboxData++);
 
 		int scaledX = ((upscaleValue(pointX, scale) + 0x8000) >> 16) + startX;
-		int scaledY = ((upscaleValue(pointY, scale) + 0x8000) >> 16) + startX;
+		int scaledY = ((upscaleValue(pointY, scale) + 0x8000) >> 16) + startY;
 
 		*(destination++) = scaledX;
 		*(destination++) = scaledY;
@@ -209,9 +209,9 @@ int setNodeState(int nodeIdx, int nodeState) {
 	int oldState = walkboxState[nodeIdx];
 
 	if (nodeState == -1)
-		return
+		return oldState;
 
-		    walkboxState[nodeIdx] = nodeState;
+	walkboxState[nodeIdx] = nodeState;
 
 	return oldState;
 }

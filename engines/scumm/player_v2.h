@@ -242,8 +242,8 @@ protected:
 	Voice2 _cmsVoices[8];
 	MusicChip _cmsChips[2];
 	
-	char _tempo;
-	char _tempoSum;
+	int8 _tempo;
+	int8 _tempoSum;
 	byte _looping;
 	byte _octaveMask;
 	int16 _midiDelay;

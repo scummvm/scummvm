@@ -57,7 +57,11 @@ ScummVM Team
 
     Cinematique evo 2:
        Vincent Hamm          - original CruisE engine author
-       Paul Gilbert
+       Paul Gilbert         
+
+    Drascula:
+       Filippos Karapetis   
+       Pawel Kolodziejski   
 
     FOTAQ:
        Gregory Montoir      
@@ -324,7 +328,7 @@ Other contributions
      Dobo Balazs           - Website design
      Yaroslav Fedevych     - HTML/CSS for the website
      David Jensen          - SVG logo conversion
-     Jean Marc             - ScummVM logo
+     Jean Marc Gimenez     - ScummVM logo
      Raina                 - ScummVM forum buttons
 
   Code contributions

@@ -243,24 +243,23 @@ enum ExecStackType {
 };
 
 struct ExecStack {
-	reg_t objp;
-	reg_t sendp; /**< Pointer to the object containing the invoked method */
+	reg_t objp;  // Pointer to the beginning of the current object
+	reg_t sendp; // Pointer to the object containing the invoked method
 
 	union {
-		ObjVarRef varp; /**< Variable pointer for r/w access */
-		reg_t pc; /**< Not accurate for the TOS element */
+		ObjVarRef varp; // Variable pointer for r/w access
+		reg_t pc;       // Pointer to the initial program counter. Not accurate for the TOS element
 	} addr;
 
-	StackPtr fp; /**< Frame pointer */
-	StackPtr sp; /**< Stack pointer */
+	StackPtr fp; // Frame pointer
+	StackPtr sp; // Stack pointer
 	int argc;
 
-	/* former variables[4]: [all other values are derived] */
-	StackPtr variables_argp; /**< Argument pointer */
-	SegmentId local_segment; /**< local variables etc. */
+	StackPtr variables_argp; // Argument pointer
+	SegmentId local_segment; // local variables etc
 
-	Selector selector; /**< The selector which was used to call or -1 if not applicable */
-	int origin;   /**< The stack frame position the call was made from, or -1 if it was the initial call.  */
+	Selector selector;      // The selector which was used to call or -1 if not applicable
+	int origin;             // The stack frame position the call was made from, or -1 if it was the initial call
 	ExecStackType type;
 
 	reg_t* getVarPointer(EngineState *s) const;
@@ -409,27 +408,10 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file);
 
 /**
  * Debugger functionality
- * @param[in] s					The state at which debugging should take
- * 								place
- * @param[in] pc				Pointer to the program counter
- * @param[in] sp				Pointer to the stack pointer
- * @param[in] pp				Pointer to the frame pointer
- * @param[in] objp				Pointer to the object base pointer
- * @param[in] restadjust		Pointer to the &rest adjustment value
- * @param[in] segids			four-element array containing segment IDs
- * 								for locals etc.
- * @param[in] variables			four-element array referencing registers
- * 								for globals etc.
- * @param[in] variables_base	four-element array referencing register 
- * 								bases for temps etc.
- * @param[in] variables_nr		four-element array giving sizes for params
- * 								etc. (may be NULL)
- * @param[in] bp				Flag, set to 1 when a breakpoint is
- * 								triggered
+ * @param[in] s					The state at which debugging should take place
+ * @param[in] bp				Flag, set to true when a breakpoint is triggered
  */
-void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp, 
-		reg_t *objp, int *restadjust, SegmentId *segids, reg_t **variables,
-		reg_t **variables_base, int *variables_nr, int bp);
+void script_debug(EngineState *s, bool bp);
 
 /**
  * Initializes a EngineState block
@@ -437,7 +419,7 @@ void script_debug(EngineState *s, reg_t *pc, StackPtr *sp, StackPtr *pp,
  * @return		0 on success, 1 if vocab.996 (the class table) is missing
  * 				or corrupted
  */
-int script_init_engine(EngineState *s);
+int script_init_engine(EngineState *);
 
 /**
  * Sets the gamestate's save_dir to the parameter path

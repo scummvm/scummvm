@@ -35,18 +35,15 @@
 namespace AGOS {
 
 byte *AGOSEngine::getBackBuf() {
-	_dxSurfacePitch = _screenWidth;
-	return _backBuf;
+	return (byte *)_backBuf->pixels;
 }
 
 byte *AGOSEngine::getBackGround() {
-	_dxSurfacePitch = _screenWidth;
-	return _backGroundBuf;
+	return (byte *)_backGroundBuf->pixels;
 }
 
 byte *AGOSEngine::getScaleBuf() {
-	_dxSurfacePitch = _screenWidth;
-	return _scaleBuf;
+	return (byte *)_scaleBuf->pixels;
 }
 
 void AGOSEngine_Feeble::animateSpritesByY() {
@@ -166,7 +163,7 @@ void AGOSEngine::animateSprites() {
 			_wallOn--;
 
 			VC10_state state;
-			state.srcPtr = getBackGround() + 3 * _screenWidth + 3 * 16;
+			state.srcPtr = getBackGround() + 3 * _backGroundBuf->pitch + 3 * 16;
 			state.height = state.draw_height = 127;
 			state.width = state.draw_width = 14;
 			state.y = 0;
@@ -230,7 +227,7 @@ void AGOSEngine::animateSprites() {
 		debug(0, "Using special wall");
 
 		uint8 color, h, len;
-		byte *dst = _window4BackScn;
+		byte *dst = (byte *)_window4BackScn->pixels;
 
 		color = (_variableArray[293] & 1) ? 13 : 15;
 		_wallOn = 2;
@@ -260,7 +257,7 @@ void AGOSEngine::animateSprites() {
 	} else if (getGameType() == GType_ELVIRA2 && _variableArray[71] & 2) {
 		// Used by the Unholy Barrier spell
 		uint8 color, h, len;
-		byte *dst = _window4BackScn;
+		byte *dst = (byte *)_window4BackScn->pixels;
 
 		color = 1;
 		_wallOn = 2;
@@ -495,18 +492,18 @@ void AGOSEngine::saveBackGround(VgaSprite *vsp) {
 	int16 y = vsp->y - _scrollY;
 
 	if (_window3Flag == 1) {
-		animTable->srcPtr = (const byte *)_window4BackScn;
+		animTable->srcPtr = (const byte *)_window4BackScn->pixels;
 	} else {
 		int xoffs = (_videoWindows[vsp->windowNum * 4 + 0] * 2 + x) * 8;
 		int yoffs = (_videoWindows[vsp->windowNum * 4 + 1] + y);
-		animTable->srcPtr = getBackGround() + xoffs + yoffs * _screenWidth;
+		animTable->srcPtr = getBackGround() + yoffs * _backGroundBuf->pitch + xoffs;
 	}
 
 	animTable->x = x;
 	animTable->y = y;
 
 	animTable->width = READ_BE_UINT16(ptr + 6) / 16;
-	if (vsp->flags & 40) {
+	if (vsp->flags & 0x40) {
 		animTable->width++;
 	}
 
@@ -571,39 +568,39 @@ void AGOSEngine::displayBoxStars() {
 
 				dst = (byte *)screen->pixels;
 
-				dst += (((_dxSurfacePitch / 4) * y_) * 4) + x_;
+				dst += (((screen->pitch / 4) * y_) * 4) + x_;
 
-				b = _dxSurfacePitch;
+				b = screen->pitch;
 				dst[4] = color;
 				dst[b+1] = color;
 				dst[b+4] = color;
 				dst[b+7] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b+2] = color;
 				dst[b+4] = color;
 				dst[b+6] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b+3] = color;
 				dst[b+5] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b] = color;
 				dst[b+1] = color;
 				dst[b+2] = color;
 				dst[b+6] = color;
 				dst[b+7] = color;
 				dst[b+8] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b+3] = color;
 				dst[b+5] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b+2] = color;
 				dst[b+4] = color;
 				dst[b+6] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b+1] = color;
 				dst[b+4] = color;
 				dst[b+7] = color;
-				b += _dxSurfacePitch;
+				b += screen->pitch;
 				dst[b+4] = color;
 			}
 		} while (ha++, --count);
@@ -645,7 +642,7 @@ void AGOSEngine::scrollScreen() {
 		}
 
 		src = _scrollImage + y / 2;
-		decodeRow(dst, src + readUint32Wrapper(src), _scrollWidth, _dxSurfacePitch);
+		decodeRow(dst, src + readUint32Wrapper(src), _scrollWidth, _backGroundBuf->pitch);
 
 		_scrollY += _scrollFlag;
 		vcWriteVar(250, _scrollY);
@@ -670,13 +667,19 @@ void AGOSEngine::scrollScreen() {
 			src = _scrollImage + x / 2;
 		else
 			src = _scrollImage + x * 4;
-		decodeColumn(dst, src + readUint32Wrapper(src), _scrollHeight, _dxSurfacePitch);
+		decodeColumn(dst, src + readUint32Wrapper(src), _scrollHeight, _backGroundBuf->pitch);
 
 		_scrollX += _scrollFlag;
 		vcWriteVar(251, _scrollX);
 
 		if (getGameType() == GType_SIMON2) {
-			memcpy(_window4BackScn, _backGroundBuf, _scrollHeight * _screenWidth);
+			src = getBackGround();
+			dst = (byte *)_window4BackScn->pixels;
+			for (int i = 0; i < _scrollHeight; i++) {
+				memcpy(dst, src, _screenWidth);
+				src += _backGroundBuf->pitch;
+				dst += _window4BackScn->pitch;
+			}
 		} else {
 			fillBackFromBackGround(_scrollHeight, _screenWidth);
 		}
@@ -707,27 +710,53 @@ void AGOSEngine::clearSurfaces() {
 	_system->fillScreen(0);
 
 	if (_backBuf) {
-		memset(_backBuf, 0, _screenHeight * _screenWidth);
+		memset(getBackBuf(), 0, _backBuf->h * _backBuf->pitch);
 	}
 }
 
 void AGOSEngine::fillBackFromBackGround(uint16 height, uint16 width) {
-	memcpy(_backBuf, _backGroundBuf, height * width);
+	byte *src = getBackGround();
+	byte *dst = getBackBuf();
+	for (int i = 0; i < height; i++) {
+		memcpy(dst, src, width);
+		src += _backGroundBuf->pitch;
+		dst += _backBuf->pitch;
+	}
 }
 
 void AGOSEngine::fillBackFromFront() {
 	Graphics::Surface *screen = _system->lockScreen();
-	memcpy(_backBuf, (byte *)screen->pixels, _screenHeight * _screenWidth);
+	byte *src = (byte *)screen->pixels;
+	byte *dst = getBackBuf();
+
+	for (int i = 0; i < _screenHeight; i++) {
+		memcpy(dst, src, _screenWidth);
+		src += screen->pitch;
+		dst += _backBuf->pitch;
+	}
 	_system->unlockScreen();
 }
 
 void AGOSEngine::fillBackGroundFromBack() {
-	memcpy(_backGroundBuf, _backBuf, _screenHeight * _screenWidth);
+	byte *src = getBackBuf();
+	byte *dst = getBackGround();
+	for (int i = 0; i < _screenHeight; i++) {
+		memcpy(dst, src, _screenWidth);
+		src += _backBuf->pitch;
+		dst += _backGroundBuf->pitch;
+	}
 }
 
 void AGOSEngine::fillBackGroundFromFront() {
 	Graphics::Surface *screen = _system->lockScreen();
-	memcpy(_backGroundBuf, (byte *)screen->pixels, _screenHeight * _screenWidth);
+	byte *src = (byte *)screen->pixels;
+	byte *dst = getBackGround();
+
+	for (int i = 0; i < _screenHeight; i++) {
+		memcpy(dst, src, _screenWidth);
+		src += screen->pitch;
+		dst += _backGroundBuf->pitch;
+	}
 	_system->unlockScreen();
 }
 
@@ -756,8 +785,13 @@ void AGOSEngine::displayScreen() {
 
 	Graphics::Surface *screen = _system->lockScreen();
 	if (getGameType() == GType_PP || getGameType() == GType_FF) {
-		memcpy((byte *)screen->pixels, getBackBuf(), _screenWidth * _screenHeight);
-
+		byte *src = getBackBuf();
+		byte *dst = (byte *)screen->pixels;
+		for (int i = 0; i < _screenHeight; i++) {
+			memcpy(dst, src, _screenWidth);
+			src += _backBuf->pitch;
+			dst += screen->pitch;
+		}
 		if (getGameId() != GID_DIMP)
 			fillBackFromBackGround(_screenHeight, _screenWidth);
 	} else {
@@ -767,12 +801,12 @@ void AGOSEngine::displayScreen() {
 			uint16 srcWidth, width, height;
 			byte *dst = (byte *)screen->pixels;
 
-			const byte *src = _window4BackScn;
+			const byte *src = (const byte *)_window4BackScn->pixels;
 			if (_window3Flag == 1) {
 				src = getBackGround();
 			}
 
-			dst += (_moveYMin + _videoWindows[17]) * _screenWidth;
+			dst += (_moveYMin + _videoWindows[17]) * screen->pitch;
 			dst += (_videoWindows[16] * 16) + _moveXMin;
 
 			src += (_videoWindows[18] * 16 * _moveYMin);
@@ -785,7 +819,7 @@ void AGOSEngine::displayScreen() {
 
 			for (; height > 0; height--) {
 				memcpy(dst, src, width);
-				dst += _screenWidth;
+				dst += screen->pitch;
 				src += srcWidth;
 			}
 
@@ -798,12 +832,12 @@ void AGOSEngine::displayScreen() {
 		if (_window6Flag == 2) {
 			_window6Flag = 0;
 
-			byte *src = _window6BackScn;
-			byte *dst = (byte *)screen->pixels + 16320;
+			byte *src = (byte *)_window6BackScn->pixels;
+			byte *dst = (byte *)screen->pixels + 51 * screen->pitch;
 			for (int i = 0; i < 80; i++) {
-				memcpy(dst, src, 48);
-				dst += _screenWidth;
-				src += 48;
+				memcpy(dst, src, _window6BackScn->w);
+				dst += screen->pitch;
+				src += _window6BackScn->pitch;
 			}
 		}
 	}

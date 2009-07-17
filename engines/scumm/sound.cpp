@@ -1690,7 +1690,7 @@ static void convertADResource(ResourceManager *res, const GameSettings& game, in
 		} else {
 			dw = 500000 * 256 / ticks;
 		}
-		debugC(DEBUG_SOUND, "  ticks = %d, speed = %ld", ticks, dw);
+		debugC(DEBUG_SOUND, "  ticks = %d, speed = %d", ticks, dw);
 
 		// Write a tempo change Meta event
 		memcpy(ptr, "\x00\xFF\x51\x03", 4); ptr += 4;

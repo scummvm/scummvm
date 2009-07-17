@@ -35,6 +35,8 @@ namespace Sci {
 
 class Console;
 struct EngineState;
+class Kernel;
+class Vocabulary;
 
 // our engine debug levels
 enum kDebugLevels {
@@ -49,16 +51,16 @@ enum kDebugLevels {
 	kDebugLevelGfxDriver  = 1 << 8,
 	kDebugLevelBaseSetter = 1 << 9,
 	kDebugLevelParser     = 1 << 10,
-	// FIXME: seems that debug level 11 is special (check debugC in common/debug.cpp)
-	kDebugLevelMenu       = 1 << 12,
-	kDebugLevelSaid       = 1 << 13,
-	kDebugLevelFile       = 1 << 14,
-	kDebugLevelTime       = 1 << 15,
-	kDebugLevelRoom       = 1 << 16,
-	kDebugLevelAvoidPath  = 1 << 17,
-	kDebugLevelDclInflate = 1 << 18,
-	kDebugLevelVM         = 1 << 19,
-	kDebugLevelScripts    = 1 << 20
+	kDebugLevelMenu       = 1 << 11,
+	kDebugLevelSaid       = 1 << 12,
+	kDebugLevelFile       = 1 << 13,
+	kDebugLevelTime       = 1 << 14,
+	kDebugLevelRoom       = 1 << 15,
+	kDebugLevelAvoidPath  = 1 << 16,
+	kDebugLevelDclInflate = 1 << 17,
+	kDebugLevelVM         = 1 << 18,
+	kDebugLevelScripts    = 1 << 19,
+	kDebugLevelGC         = 1 << 20
 };
 
 struct SciGameDescription {
@@ -72,69 +74,21 @@ enum SciGameVersions {
 	SCI_VERSION_AUTODETECT = 0,
 	SCI_VERSION_0 = 1,
 	SCI_VERSION_01 = 2,
-	SCI_VERSION_01_VGA = 3,
-	SCI_VERSION_01_VGA_ODD = 4,
-	SCI_VERSION_1_EARLY = 5,
-	SCI_VERSION_1_LATE = 6,
-	SCI_VERSION_1_1 = 7,
-	SCI_VERSION_32 = 8
+	SCI_VERSION_01_VGA_ODD = 3,
+	SCI_VERSION_1 = 4,
+	SCI_VERSION_1_1 = 5,
+	SCI_VERSION_32 = 6
 };
 
-extern const char *versionNames[9];
+extern const char *versionNames[7];
 
 enum SciGameFlags {
-	/*
-	** SCI0 flags
-	*/
-
-	/* Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2)
-	** Old SCI versions used two word header for script blocks (first word equal
-	** to 0x82, meaning of the second one unknown). New SCI versions used one
-	** word header.
-	** Also, old SCI versions assign 120 degrees to left & right, and 60 to up
-	** and down. Later versions use an even 90 degree distribution.
-	*/
-	GF_SCI0_OLD				= (1 << 0),
-
-	/* Applies to all versions before 0.000.502
-	** Old SCI versions used to interpret the third DrawPic() parameter inversely,
-	** with the opposite default value (obviously).
-	** Also, they used 15 priority zones from 42 to 200 instead of 14 priority
-	** zones from 42 to 190.
-	*/
-	GF_SCI0_OLDGFXFUNCS		= (1 << 1),
+	// SCI0 flags
 
 	/* Applies to all versions before 0.000.629
-	** Older SCI versions had simpler code for GetTime()
-	*/
-	GF_SCI0_OLDGETTIME		= (1 << 2),
-	
-	/* Applies to any game that requires the SCI1 kernel vocab
-	** Some games (such as the King's Quest I demo) require the default kernel vocab table.
-	*/
-	GF_SCI0_SCI1VOCAB       = (1 << 3),
-
-	// ----------------------------------------------------------------------------
-
-	/*
-	** SCI1 flags
-	*/
-
-	/*
-	** Used to distinguish SCI1 EGA games
-	*/
-	GF_SCI1_EGA				= (1 << 4),
-
-	/* Applies to all SCI1 versions after 1.000.200
-    ** In late SCI1 versions, the argument of lofs[as] instructions
-	** is absolute rather than relative.
-	*/
-	GF_SCI1_LOFSABSOLUTE	= (1 << 5),
-
-	/* Applies to all versions from 1.000.510 onwards
-	** kDoSound() is different than in earlier SCI1 versions.
-	*/
-	GF_SCI1_NEWDOSOUND		= (1 << 6)
+	 * Older SCI versions had simpler code for GetTime()
+	 */
+	GF_SCI0_OLDGETTIME		= (1 << 0)
 };
 
 class SciEngine : public Engine {
@@ -147,6 +101,7 @@ public:
 	virtual Common::Error run();
 	void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
+	Console *getSciDebugger();
 
 	const char* getGameID() const;
 	int getResourceVersion() const;
@@ -154,7 +109,9 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
-	ResourceManager *getResMgr() { return _resmgr; }
+	ResourceManager *getResMgr() const { return _resmgr; }
+	Kernel *getKernel() const { return _kernel; }
+	Vocabulary *getVocabulary() const { return _vocabulary; }
 
 	Common::String getSavegameName(int nr) const;
 	Common::String getSavegamePattern() const;
@@ -169,6 +126,8 @@ private:
 	const SciGameDescription *_gameDescription;
 	ResourceManager *_resmgr;
 	EngineState *_gamestate;
+	Kernel *_kernel;
+	Vocabulary *_vocabulary;
 	Console *_console;
 };
 

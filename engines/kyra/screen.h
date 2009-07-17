@@ -35,6 +35,10 @@
 
 class OSystem;
 
+namespace Graphics {
+class FontSJIS;
+} // end of namespace Graphics
+
 namespace Kyra {
 
 typedef Common::Functor0<void> UpdateFunctor;
@@ -331,7 +335,6 @@ public:
 	uint8 *_shapePages[2];
 	int _maskMinY, _maskMaxY;
 	FontId _currentFont;
-	bool _disableScreen;
 
 	// decoding functions
 	static void decodeFrame3(const uint8 *src, uint8 *dst, uint32 size);
@@ -360,11 +363,6 @@ protected:
 	void drawCharANSI(uint8 c, int x, int y);
 	void drawCharSJIS(uint16 c, int x, int y);
 
-	enum {
-		SJIS_CHARSIZE = 18,
-		SJIS_CHARS = 8192
-	};
-
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
 	template<bool noXor> static void wrapped_decodeFrameDelta(uint8 *dst, const uint8 *src);
@@ -377,10 +375,7 @@ protected:
 	bool _useSJIS;
 	bool _use16ColorMode;
 
-	uint8 *_sjisFontData;
-	uint8 *_sjisTempPage;
-	uint8 *_sjisTempPage2;
-	uint8 *_sjisSourceChar;
+	Graphics::FontSJIS *_sjisFont;
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;
@@ -421,10 +416,10 @@ protected:
 	int drawShapeMarginScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
 	int drawShapeSkipScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt);
 	int drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt);
-	void drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState);
-	void drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState);
-	void drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState);
-	void drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState);
+	void drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState);
+	void drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState);
+	void drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState);
+	void drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState);
 
 	void drawShapePlotType0(uint8 *dst, uint8 cmd);
 	void drawShapePlotType1(uint8 *dst, uint8 cmd);
@@ -446,7 +441,7 @@ protected:
 	void drawShapePlotType52(uint8 *dst, uint8 cmd);
 
 	typedef int (Screen::*DsMarginSkipFunc)(uint8 *&dst, const uint8 *&src, int &cnt);
-	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, uint16 scaleState);
+	typedef void (Screen::*DsLineFunc)(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState);
 	typedef void (Screen::*DsPlotFunc)(uint8 *dst, uint8 cmd);
 
 	DsMarginSkipFunc _dsProcessMargin;

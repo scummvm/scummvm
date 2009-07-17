@@ -95,7 +95,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 #ifdef DEBUG_PARSER
 		debugC(2, kDebugLevelParser, "Said block:", 0);
-		s->_vocabulary->decipherSaidBlock(said_block);
+		((SciEngine*)g_engine)->getVocabulary()->decipherSaidBlock(said_block);
 #endif
 
 	if (s->parser_event.isNull() || (GET_SEL32V(s->parser_event, claimed))) {
@@ -112,7 +112,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 #ifdef DEBUG_PARSER
-		sciprintf("Match.\n");
+		printf("kSaid: Match.\n");
 #endif
 
 		s->r_acc = make_reg(0, 1);
@@ -190,15 +190,11 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
+	Vocabulary *voc = ((SciEngine*)g_engine)->getVocabulary();
 
 	s->parser_event = event;
 
-	if (s->parser_valid == 2) {
-		sciprintf("Parsing skipped: Parser in simparse mode\n");
-		return s->r_acc;
-	}
-
-	bool res = s->_vocabulary->tokenizeString(words, string, &error);
+	bool res = voc->tokenizeString(words, string, &error);
 	s->parser_valid = 0; /* not valid */
 
 	if (res && !words.empty()) {
@@ -216,7 +212,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 #endif
 
-		if (s->_vocabulary->parseGNF(s->parser_nodes, words))
+		if (voc->parseGNF(s->parser_nodes, words))
 			syntax_fail = 1; /* Building a tree failed */
 
 		if (syntax_fail) {

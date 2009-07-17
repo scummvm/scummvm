@@ -35,12 +35,12 @@
 
 namespace Cruise {
 
+enum RelationType {RT_REL = 30, RT_MSG = 50};
+
 static int playerDontAskQuit;
 unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
-
-extern bool isBlack;
 
 void drawBlackSolidBoxSmall() {
 //  gfxModuleData.drawSolidBox(64,100,256,117,0);
@@ -514,6 +514,7 @@ void CruiseEngine::initAllData(void) {
 	strcpy(lastOverlay, "AUTO00");
 
 	_gameSpeed = GAME_FRAME_DELAY_1;
+	_speedFlag = false;
 
 	return;
 }
@@ -1025,8 +1026,8 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 		}
 
 		if ((obj2Ovl == nOvl) && (pHeader->obj2Number != -1) && (pHeader->obj2Number == nObj)) {
-//			int x = 60;
-//			int y = 60;
+			int x = 60;
+			int y = 60;
 
 			objectParamsQuery params;
 			memset(&params, 0, sizeof(objectParamsQuery)); // to remove warning
@@ -1036,7 +1037,7 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 			}
 
 			if ((pHeader->obj2OldState == -1) || (params.state == pHeader->obj2OldState)) {
-				if (pHeader->type == 30) { // REL
+				if (pHeader->type == RT_REL) { // REL
 					if (currentScriptPtr) {
 						attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 					} else {
@@ -1074,8 +1075,69 @@ void callSubRelation(menuElementSubStruct *pMenuElement, int nOvl, int nObj) {
 							changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
 						}
 					}
-				} else if (pHeader->type == 50) {
-					ASSERT(0);
+				} else if (pHeader->type == RT_MSG) {
+
+					if (pHeader->obj2Number >= 0) {
+						if ((pHeader->trackX !=-1) && (pHeader->trackY !=-1) && 
+								(pHeader->trackX != 9999) && (pHeader->trackY != 9999)) {
+							x = pHeader->trackX - 100;
+							y = pHeader->trackY - 150;
+						} else if (params.scale >= 0) {
+							x = params.X - 100;
+							y = params.Y - 40;
+						}
+
+						if (pHeader->obj2NewState != -1) {
+							objInit(obj2Ovl, pHeader->obj2Number, pHeader->obj2NewState);
+						}
+					}
+
+					if ((pHeader->obj1Number >= 0) && (pHeader->obj1NewState != -1)) {
+						int obj1Ovl = pHeader->obj1Overlay;
+						if (!obj1Ovl) obj1Ovl = ovlIdx;
+						objInit(obj1Ovl, pHeader->obj1Number, pHeader->obj1NewState);
+					}
+
+					if (currentScriptPtr) {
+						createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, currentScriptPtr->overlayNumber, currentScriptPtr->scriptNumber);
+					} else {
+						createTextObject(&cellHead, ovlIdx, pHeader->id, x, y, 200, findHighColor(), masterScreen, 0, 0);
+					}
+
+					userWait = 1;
+					autoOvl = ovlIdx;
+					autoMsg = pHeader->id;
+				
+					if ((narratorOvl > 0) && (pHeader->trackX != -1) && (pHeader->trackY != -1)) {
+						actorStruct *pTrack = findActor(&actorHead, narratorOvl, narratorIdx, 0);
+
+						if (pTrack)	 {
+							objectParamsQuery naratorParams;
+							animationStart = false;
+
+							if (pHeader->trackDirection == 9999) {
+								getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+								pTrack->x_dest = naratorParams.X;
+								pTrack->y_dest = naratorParams.Y;
+								pTrack->endDirection = direction(naratorParams.X, naratorParams.Y, pHeader->trackX,pHeader->trackY, 0, 0);
+							} else if ((pHeader->trackX == 9999) && (pHeader->trackY == 9999)) {
+								getMultipleObjectParam(narratorOvl, narratorIdx, &naratorParams);
+								pTrack->x_dest = naratorParams.X;
+								pTrack->y_dest = naratorParams.Y;
+								pTrack->endDirection = pHeader->trackDirection;
+							} else {
+								pTrack->x_dest = pHeader->trackX;
+								pTrack->y_dest = pHeader->trackY;
+								pTrack->endDirection = pHeader->trackDirection;
+							}
+
+							pTrack->flag = 1;
+							autoTrack = true;
+							userWait = 0;
+							userEnabled = 0;
+							freezeCell(&cellHead, ovlIdx, pHeader->id, 5, -1, 0, 9998);
+						}
+					}
 				}
 			}
 		}
@@ -1113,7 +1175,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 
 		if (pHeader->obj2Number == nObj2) {
 			// REL
-			if (pHeader->type == 30) {
+			if (pHeader->type == RT_REL) {
 				if (currentScriptPtr) {
 					attacheNewScriptToTail(&relHead, ovlIdx, pHeader->id, 30, currentScriptPtr->scriptNumber, currentScriptPtr->overlayNumber, scriptType_REL);
 				} else {
@@ -1151,7 +1213,7 @@ void callRelation(menuElementSubStruct *pMenuElement, int nObj2) {
 						changeScriptParamInList(ovlIdx, pHeader->id, &relHead, 0, 9998);
 					}
 				}
-			} else if (pHeader->type == 50) { // MSG
+			} else if (pHeader->type == RT_MSG) { // MSG
 				int obj1Ovl = pHeader->obj1Overlay;
 				if (!obj1Ovl)
 					obj1Ovl = ovlIdx;
@@ -1293,11 +1355,6 @@ int CruiseEngine::processInput(void) {
 		buttonDown = 0;
 	}
 
-	if (userDelay && !userWait) {
-		userDelay--;
-		return 0;
-	}
-
 	// Check for Exit 'X' key
 	if (keyboardCode == Common::KEYCODE_x)
 		return 1;
@@ -1343,6 +1400,8 @@ int CruiseEngine::processInput(void) {
 		// Check for left mouse button click or Space to end user waiting
 		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == MB_LEFT))
 			userWait = 0;
+
+		keyboardCode = Common::KEYCODE_INVALID;
 		return 0;
 	}
 
@@ -1567,11 +1626,14 @@ int currentMouseButton = 0;
 
 bool bFastMode = false;
 
-void manageEvents() {
+bool manageEvents() {
 	Common::Event event;
+	bool result = false;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (eventMan->pollEvent(event) && !result) {
+		result = true;
+
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			currentMouseButton |= MB_LEFT;
@@ -1588,11 +1650,12 @@ void manageEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
 			currentMouseY = event.mouse.y;
+			result = false;
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			playerDontAskQuit = 1;
-			return;
+			break;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
@@ -1612,72 +1675,6 @@ void manageEvents() {
 				break;
 			}
 
-			/*
-			 * switch (event.kbd.keycode) {
-			 * case '\n':
-			 * case '\r':
-			 * case 261: // Keypad 5
-			 * if (allowPlayerInput) {
-			 * mouseLeft = 1;
-			 * }
-			 * break;
-			 * case 27:  // ESC
-			 * if (allowPlayerInput) {
-			 * mouseRight = 1;
-			 * }
-			 * break;
-			 * case 282: // F1
-			 * if (allowPlayerInput) {
-			 * playerCommand = 0; // EXAMINE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 283: // F2
-			 * if (allowPlayerInput) {
-			 * playerCommand = 1; // TAKE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 284: // F3
-			 * if (allowPlayerInput) {
-			 * playerCommand = 2; // INVENTORY
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 285: // F4
-			 * if (allowPlayerInput) {
-			 * playerCommand = 3; // USE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 286: // F5
-			 * if (allowPlayerInput) {
-			 * playerCommand = 4; // ACTIVATE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 287: // F6
-			 * if (allowPlayerInput) {
-			 * playerCommand = 5; // SPEAK
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 290: // F9
-			 * if (allowPlayerInput && !inMenu) {
-			 * makeActionMenu();
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 291: // F10
-			 * if (!disableSystemMenu && !inMenu) {
-			 * g_cine->makeSystemMenu();
-			 * }
-			 * break;
-			 * default:
-			 * //lastKeyStroke = event.kbd.keycode;
-			 * break;
-			 * }
-			 * break; */
 			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					// Start the debugger
@@ -1694,17 +1691,10 @@ void manageEvents() {
 		}
 	}
 
-	/*if (count) {
-	 * mouseData.left = mouseLeft;
-	 * mouseData.right = mouseRight;
-	 * mouseLeft = 0;
-	 * mouseRight = 0;
-	 * }
-	 */
+	return result;
 }
 
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
-	manageEvents();
 	*pMouseX = currentMouseX;
 	*pMouseY = currentMouseY;
 	*pMouseButton = currentMouseButton;
@@ -1747,11 +1737,15 @@ void CruiseEngine::mainLoop(void) {
 
 		if (!bFastMode) {
 			// Delay for the specified amount of time, but still respond to events
+			bool skipEvents = false;
+
 			while (currentTick < lastTick + _gameSpeed) {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 
-				manageEvents();
+				if (!skipEvents)
+					skipEvents = manageEvents();
+
 				if (playerDontAskQuit) break;
 
 				if (_vm->getDebugger()->isAttached())
@@ -1784,35 +1778,35 @@ void CruiseEngine::mainLoop(void) {
 //      t_start=Osystem_GetTicks();
 
 //      readKeyboard();
-		bool isUserWait = userWait != 0;
 
+		bool isUserWait = userWait != 0;
 		playerDontAskQuit = processInput();
 		if (playerDontAskQuit)
 			break;
-
-		if (isUserWait && !userWait) {
-			// User waiting has ended
-			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
-			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
-
-			mainDraw(0);
-			flipScreen();
-		}
 
 		if (enableUser) {
 			userEnabled = 1;
 			enableUser = 0;
 		}
 
-		if (userWait < 1) {
-			manageScripts(&relHead);
-			manageScripts(&procHead);
-
-			removeFinishedScripts(&relHead);
-			removeFinishedScripts(&procHead);
-
-			processAnimation();
+		if (userDelay && !userWait) {
+			userDelay--;
+			continue;
 		}
+
+		if (isUserWait & !userWait) {
+			// User waiting has ended
+			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
+			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+		} 
+
+		manageScripts(&relHead);
+		manageScripts(&procHead);
+
+		removeFinishedScripts(&relHead);
+		removeFinishedScripts(&procHead);
+
+		processAnimation();
 
 		if (remdo) {
 			// ASSERT(0);
@@ -1837,10 +1831,8 @@ void CruiseEngine::mainLoop(void) {
 				PCFadeFlag = 0;
 
 			/*if (!PCFadeFlag)*/
-			if (!isUserWait) {
-				mainDraw(0);
-				flipScreen();
-			}
+			mainDraw(userWait);
+			flipScreen();
 
 			if (userEnabled && !userWait && !autoTrack) {
 				if (currentActiveMenu == -1) {
@@ -1849,7 +1841,7 @@ void CruiseEngine::mainLoop(void) {
 
 					getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 
-					if (mouseX != oldMouseX && mouseY != oldMouseY) {
+					if (mouseX != oldMouseX || mouseY != oldMouseY) {
 						int objectType;
 						int newCursor1;
 						int newCursor2;
@@ -1874,38 +1866,9 @@ void CruiseEngine::mainLoop(void) {
 				changeCursor(CURSOR_NORMAL);
 			}
 
-			if (isUserWait) {
-				// User Wait handling
-				if (userWait == 1) {
-					// Initial step
-					do {
-						// Make sure any previous mouse press is released
-						getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
-					} while (mouseButton != 0);
-
-					++userWait;
-//					mainDraw(0);
-//					flipScreen();
-				} else {
-					// Standard handling
-/*
-					manageScripts(&relHead);
-					manageScripts(&procHead);
-
-					removeFinishedScripts(&relHead);
-					removeFinishedScripts(&procHead);
-*/
-					if (isBlack) {
-						// This is a bit of a hack to ensure that user waits directly after a palette fade
-						// have time to restore the palette before waiting starts
-						mainDraw(0);
-						flipScreen();
-					} else {
-						// Draw the next screen
-						processAnimation();
-						gfxModuleData_flipScreen();
-					}
-				}
+			if (userWait == 1) {
+				// Waiting for press - original wait loop has been integrated into the
+				// main event loop
 				continue;
 			}
 

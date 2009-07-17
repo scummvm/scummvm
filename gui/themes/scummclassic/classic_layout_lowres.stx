@@ -744,7 +744,7 @@
 	</dialog>
 
 	<dialog name = 'ScummHelp' overlays = 'screen'>
-		<layout type = 'vertical' padding = '8, 8, 0, 0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Title'
 					width = '180'
 					height = 'Globals.Line.Height'

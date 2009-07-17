@@ -118,6 +118,7 @@ void CruiseEngine::initialize() {
 	// video init stuff
 
 	initSystem();
+	gfxModuleData_Init();
 
 	// another bit of video init
 
@@ -139,6 +140,14 @@ void CruiseEngine::initialize() {
 void CruiseEngine::deinitialise() {
 	polyStructNorm.clear();
 	polyStructExp.clear();
+
+	// Clear any backgrounds
+	for (int i = 0; i < 8; ++i) {
+		if (backgroundScreens[i]) {
+			free(backgroundScreens[i]);
+			backgroundScreens[i] = NULL;
+		}
+	}
 }
 
 bool CruiseEngine::loadLanguageStrings() {

@@ -28,6 +28,8 @@
 #include "agos/agos.h"
 #include "agos/intern.h"
 
+#include "graphics/surface.h"
+
 namespace AGOS {
 
 void AGOSEngine_Simon2::setupVideoOpcodes(VgaOpcodeProc *op) {
@@ -215,7 +217,7 @@ void AGOSEngine_Simon2::clearVideoWindow(uint16 num, uint16 color) {
 	uint16 xoffs = vlut[0] * 16;
 	uint16 yoffs = vlut[1];
 	uint16 dstWidth = _videoWindows[18] * 16;
-	byte *dst = _window4BackScn + xoffs + yoffs * dstWidth;
+	byte *dst = (byte *)_window4BackScn->pixels + xoffs + yoffs * dstWidth;
 
 	setMoveRect(0, 0, vlut[2] * 16, vlut[3]);
 

@@ -1,7 +1,7 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
-0.14.0 (2009-??-??)
+1.0.0 (2009-??-??)
  New Games:
    - Added support for Discworld.
    - Added support for Discworld 2 - Missing Presumed ...!?.
@@ -9,6 +9,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for Leather Goddesses of Phobos 2.
    - Added support for The Manhole.
    - Added support for Rodney's Funscreen.
+   - Added support for Cruise for a Corpse.
 
  General:
    - Added experimental AdLib emulator from DOSBox.
@@ -35,6 +36,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Dropped support for the now obsolete MPEG2 cutscenes.
    - Dropped support for playing cutscene sound without the video.
    - Added support for the PlayStation version.
+
+ Gob:
+   - Introduced a new savegame format to fix a fatal flaw of the old one,
+     breaking compatibility with old savegames made on big-endian systems.
 
  KYRA:
    - Added support for PC Speaker based music and sound effects.
@@ -323,7 +328,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Renamed Simon engine to AGOS.
 
  Kyrandia:
-   - Added support for FM-Towns version (both English and Japanese).
+   - Added support for FM-TOWNS version (both English and Japanese).
 
  BASS:
    - Fixed long-standing font bug. We were using the control panel font for

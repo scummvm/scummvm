@@ -367,12 +367,12 @@ void AGOSEngine::drawStuff(const byte *src, uint xoffs) {
 	const uint8 y = (getPlatform() == Common::kPlatformAtariST) ? 132 : 135;
 
 	Graphics::Surface *screen = _system->lockScreen();
-	byte *dst = (byte *)screen->pixels + y * _screenWidth + xoffs;
+	byte *dst = (byte *)screen->pixels + y * screen->pitch + xoffs;
 
 	for (uint h = 0; h < 6; h++) {
 		memcpy(dst, src, 4);
 		src += 4;
-		dst += _screenWidth;
+		dst += screen->pitch;
 	}
 
 	_system->unlockScreen();
@@ -484,7 +484,7 @@ void AGOSEngine::delay(uint amount) {
 						_fastMode ^= 1;
 					} else if (event.kbd.keycode == Common::KEYCODE_d) {
 						_debugger->attach();
-					} else if (event.kbd.keycode == Common::KEYCODE_u) {
+					} else if (event.kbd.keycode == Common::KEYCODE_s) {
 						dumpAllSubroutines();
 					} else if (event.kbd.keycode == Common::KEYCODE_i) {
 						dumpAllVgaImageFiles();

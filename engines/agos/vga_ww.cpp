@@ -145,14 +145,20 @@ void AGOSEngine::vc61() {
 	uint h, tmp;
 
 	Graphics::Surface *screen = _system->lockScreen();
+	dstPtr = (byte *)screen->pixels;
 
 	if (a == 6) {
 		src = _curVgaFile2 + 800;
-		dstPtr = (byte *)screen->pixels;
-		memcpy(dstPtr, src, 64000);
+		dst = dstPtr;
+
+		for (int i = 0; i < _screenHeight; i++) {
+			memcpy(dst, src, _screenWidth);
+			src += 320;
+			dst += screen->pitch;
+		}
+
 		tmp = 4 - 1;
 	} else {
-		dstPtr = (byte *)screen->pixels;
 		tmp = a - 1;
 	}
 
@@ -160,15 +166,14 @@ void AGOSEngine::vc61() {
 	while (tmp--)
 		src += 1536 * 16 + 1712;
 
-
 	src += 800;
 
 	if (a != 5) {
-		dst = dstPtr + 7448;
+		dst = dstPtr + 23 * screen->pitch + 88;
 		for (h = 0; h < 177; h++) {
 			memcpy(dst, src, 144);
 			src += 144;
-			dst += _screenWidth;
+			dst += screen->pitch;
 		}
 
 		if (a != 6) {
@@ -179,11 +184,11 @@ void AGOSEngine::vc61() {
 		src = _curVgaFile2 + 9984 * 16 + 15344;
 	}
 
-	dst = dstPtr + 50296;
+	dst = dstPtr + 157 * screen->pitch + 56;
 	for (h = 0; h < 17; h++) {
 		memcpy(dst, src, 208);
 		src += 208;
-		dst += _screenWidth;
+		dst += screen->pitch;
 	}
 
 	_system->unlockScreen();

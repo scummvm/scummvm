@@ -98,7 +98,10 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_textDisplayed = false;
 	_textAreaBuffer = new uint8[320*40];
 	assert(_textAreaBuffer);
-	_drawPage2 = (_vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL) ? 0 : 8;
+	if ((_vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().isDemo) && _vm->gameFlags().gameID == GI_LOL)
+		_drawPage2 = 0;
+	else
+		_drawPage2 = 8;
 
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
@@ -169,7 +172,7 @@ TIM *TIMInterpreter::load(const char *filename, const Common::Array<const TIMOpc
 		error("No AVTL chunk found in file: '%s'", filename);
 
 	if (stream->err())
-		error("Read error while parsing file '%s", filename);
+		error("Read error while parsing file '%s'", filename);
 
 	delete stream;
 
@@ -461,7 +464,10 @@ TIMInterpreter::Animation *TIMInterpreter::initAnimStruct(int index, const char 
 	anim->wsaCopyParams = wsaFlags;
 	const bool isLoLDemo = _vm->gameFlags().isDemo && _vm->gameFlags().gameID == GI_LOL;
 
-	_drawPage2 = (isLoLDemo || _currentTim->isLoLOutro) ? 0 : 8;
+	if (isLoLDemo || _vm->gameFlags().platform == Common::kPlatformPC98 || _currentTim->isLoLOutro)
+		_drawPage2 = 0;
+	else
+		_drawPage2 = 8;
 
 	uint16 wsaOpenFlags = 0;
 	if (isLoLDemo) {

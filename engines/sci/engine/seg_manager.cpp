@@ -121,7 +121,7 @@ Script *SegManager::allocateScript(EngineState *s, int script_nr, SegmentId *seg
 	// allocate the MemObject
 	mem = memObjAllocate(*seg_id, script_nr, MEM_OBJ_SCRIPT);
 	if (!mem) {
-		sciprintf("%s, %d, Not enough memory, ", __FILE__, __LINE__);
+		error("allocateScript: Not enough memory");
 		return NULL;
 	}
 
@@ -138,7 +138,7 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 	if (!script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
-	if (s->_flags & GF_SCI0_OLD) {
+	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (s->_version < SCI_VERSION_1_1) {
@@ -154,10 +154,10 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 		}
 
 		if (scr.buf_size > 65535) {
-			sciprintf("Script and heap sizes combined exceed 64K.\n"
+			error("Script and heap sizes combined exceed 64K.\n"
 			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
-			          "fixed in the next major version!\n");
+			          "fixed in the next major version");
 			return;
 		}
 	}
@@ -172,7 +172,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	dbgPrint("scr.buf ", scr.buf);
 	if (!scr.buf) {
 		scr.freeScript();
-		sciprintf("SegManager: Not enough memory space for script size");
+		warning("SegManager: Not enough memory space for script size");
 		scr.buf_size = 0;
 		return 0;
 	}
@@ -235,7 +235,7 @@ int SegManager::deallocateScript(int script_nr) {
 MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectType type) {
 	MemObject *mem = MemObject::createMemObject(type);
 	if (!mem) {
-		sciprintf("SegManager: invalid mobj ");
+		warning("SegManager: invalid mobj");
 		return NULL;
 	}
 
@@ -313,7 +313,7 @@ int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, S
 		return 0;
 
 	if (rel & 1) {
-		sciprintf("Error: Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
+		warning("Attempt to relocate odd variable #%d.5e (relative to %04x)\n", idx, block_location);
 		return 0;
 	}
 	block[idx].segment = segment; // Perform relocation
@@ -372,18 +372,17 @@ void SegManager::scriptRelocate(reg_t block) {
 			}
 
 			if (!done) {
-				sciprintf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				sciprintf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
+				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
+				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
 				if (scr->locals_block)
-					sciprintf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
+					printf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
 				else
-					sciprintf("- No locals\n");
+					printf("- No locals\n");
 				for (k = 0; k < scr->_objects.size(); k++)
-					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
-// SQ3 script 71 has broken relocation entries.
-// Since this is mainstream, we can't break out as we used to do.
-				sciprintf("Trying to continue anyway...\n");
-//				BREAKPOINT();
+					printf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
+				// SQ3 script 71 has broken relocation entries.
+				// Since this is mainstream, we can't break out as we used to do.
+				printf("Trying to continue anyway...\n");
 			}
 		}
 	}
@@ -413,15 +412,15 @@ void SegManager::heapRelocate(reg_t block) {
 			}
 
 			if (!done) {
-				sciprintf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
-				sciprintf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
+				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
+				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
 				if (scr->locals_block)
-					sciprintf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
+					printf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
 				else
-					sciprintf("- No locals\n");
+					printf("- No locals\n");
 				for (k = 0; k < scr->_objects.size(); k++)
-					sciprintf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
-				sciprintf("Triggering breakpoint...\n");
+					printf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
+				printf("Triggering breakpoint...\n");
 				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 			}
 		}
@@ -596,7 +595,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	scr->locals_offset = location.offset;
 
 	if (!(location.offset + count * 2 + 1 < scr->buf_size)) {
-		sciprintf("Locals extend beyond end of script: offset %04x, count %x vs size %x\n", location.offset, count, (uint)scr->buf_size);
+		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->buf_size);
 		count = (scr->buf_size - location.offset) >> 1;
 	}
 
@@ -719,7 +718,7 @@ SegmentId SegManager::allocateStringFrags() {
 uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 	Script *scr = getScript(seg);
 	if (scr->exports_nr <= pubfunct) {
-		sciprintf("pubfunct is invalid");
+		warning("validateExportFunc(): pubfunct is invalid");
 		return 0;
 	}
 
@@ -735,7 +734,7 @@ void SegManager::free_hunk_entry(reg_t addr) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
 
 	if (!ht) {
-		sciprintf("Attempt to free Hunk from address %04x:%04x: Invalid segment type\n", PRINT_REG(addr));
+		warning("Attempt to free Hunk from address %04x:%04x: Invalid segment type", PRINT_REG(addr));
 		return;
 	}
 

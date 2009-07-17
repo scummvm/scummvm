@@ -342,7 +342,7 @@ protected:
 	void playSpeechForAction(int i);
 	void drawSpeechText(int xStart, int y, const uint8 *dataPtr, int num, int color);
 	int splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int &lineCharsCount, int &lineWidth);
-	void drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int dstOffset, uint8 color);
+	void drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int x, int y, uint8 color);
 	void redrawScreen(int offset);
 	void redrawScreenRect(const Common::Rect &clip, const Common::Rect &dirty);
 	void addDirtyRect(int x, int y, int w, int h);
@@ -801,7 +801,7 @@ protected:
 	uint8 *_currentGfxBackground;
 	int _fadePaletteCounter;
 	uint8 _currentPalette[768];
-	int _fullRedrawCounter;
+	bool _fullRedraw;
 	int _dirtyRectsPrevCount, _dirtyRectsCount;
 	Common::Rect _dirtyRectsTable[2][kMaxDirtyRects];
 

@@ -186,7 +186,7 @@ gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int cha
 		int ch = (int) text[i];
 
 		if (ch >= font->chars_nr) {
-			GFXERROR("Invalid character 0x%02x encountered!\n", text[i]);
+			error("Invalid character 0x%02x encountered", text[i]);
 			return NULL;
 		}
 

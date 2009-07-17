@@ -267,7 +267,7 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s, motion_class, s->_kernel->_selectorMap.doit, NULL, &fptr) != kSelectorMethod) {
+		if (lookup_selector(s, motion_class, ((SciEngine*)g_engine)->getKernel()->_selectorMap.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
@@ -275,7 +275,7 @@ static void bresenham_autodetect(EngineState *s) {
 
 		buf = s->seg_manager->getScript(fptr.segment)->buf + fptr.offset;
 		handle_movecnt = (s->_version <= SCI_VERSION_0 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
-		sciprintf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
+		printf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
 		warning("bresenham_autodetect failed");
 		handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
@@ -313,7 +313,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bdelta = GET_SEL32SV(mover, b_incr);
 	axis = GET_SEL32SV(mover, b_xAxis);
 
-	//sciprintf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
+	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
 	if (handle_movecnt) {
 		if (max_movcnt > movcnt) {
@@ -362,7 +362,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
-	if (s->_kernel->_selectorMap.cantBeHere != -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.cantBeHere != -1)
 		invoke_selector(INV_SEL(client, cantBeHere, kStopOnInvalidSelector), 0);
 	else
 		invoke_selector(INV_SEL(client, canBeHere, kStopOnInvalidSelector), 0);

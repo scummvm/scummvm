@@ -27,9 +27,9 @@
 #define SYSTEMPS2_H
 
 #include "common/system.h"
+#include "backends/base-backend.h"
 
 class DefaultTimerManager;
-class DefaultEventManager;
 class DefaultSaveFileManager;
 
 class Gs2dScreen;
@@ -54,7 +54,7 @@ namespace Audio {
 	class MixerImpl;
 };
 
-class OSystem_PS2 : public OSystem {
+class OSystem_PS2 : public BaseBackend {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
@@ -72,6 +72,7 @@ public:
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
 	virtual void updateScreen();
+	virtual void fillScreen(uint32);
 	/* TODO : check */
 	virtual void displayMessageOnOSD(const char *msg) { printf("displayMessageOnOSD: %s\n", msg); };
 	/* */
@@ -92,7 +93,7 @@ public:
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 	virtual Common::TimerManager *getTimerManager();
-	virtual Common::EventManager *getEventManager();
+//	virtual Common::EventManager *getEventManager();
 	virtual bool pollEvent(Common::Event &event);
 
 	virtual Audio::Mixer *getMixer();
@@ -112,14 +113,14 @@ public:
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
+	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
 	virtual void quit();
 
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-	virtual Graphics::PixelFormat getOverlayFormat() const;
-
+	virtual Graphics::PixelFormat getOverlayFormat() const; 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 
@@ -149,7 +150,6 @@ private:
 	void readRtcTime(void);
 
 	DefaultTimerManager *_scummTimerManager;
-	DefaultEventManager *_scummEventManager;
 	Audio::MixerImpl *_scummMixer;
 
 	bool _mouseVisible;
@@ -163,6 +163,8 @@ private:
 	uint16		_oldMouseX, _oldMouseY;
 	uint32		_msgClearTime;
 	uint16		_printY;
+	bool _modeChanged;
+	int _screenChangeCount;
 
 	int			_mutexSema;
 	Ps2Mutex	_mutex[MAX_MUTEXES];
@@ -179,4 +181,3 @@ private:
 };
 
 #endif // SYSTEMPS2_H
-

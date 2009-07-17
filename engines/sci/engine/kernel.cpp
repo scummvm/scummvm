@@ -38,127 +38,9 @@ namespace Sci {
 
 // Default kernel name table
 #define SCI0_KNAMES_WELL_DEFINED 0x6e
-#define SCI0_KNAMES_DEFAULT_ENTRIES_NR 0x72
-#define SCI1_KNAMES_DEFAULT_ENTRIES_NR 0x89
+#define SCI_KNAMES_DEFAULT_ENTRIES_NR 0x89
 
-static const char *sci0_default_knames[SCI0_KNAMES_DEFAULT_ENTRIES_NR] = {
-	/*0x00*/ "Load",
-	/*0x01*/ "UnLoad",
-	/*0x02*/ "ScriptID",
-	/*0x03*/ "DisposeScript",
-	/*0x04*/ "Clone",
-	/*0x05*/ "DisposeClone",
-	/*0x06*/ "IsObject",
-	/*0x07*/ "RespondsTo",
-	/*0x08*/ "DrawPic",
-	/*0x09*/ "Show",
-	/*0x0a*/ "PicNotValid",
-	/*0x0b*/ "Animate",
-	/*0x0c*/ "SetNowSeen",
-	/*0x0d*/ "NumLoops",
-	/*0x0e*/ "NumCels",
-	/*0x0f*/ "CelWide",
-	/*0x10*/ "CelHigh",
-	/*0x11*/ "DrawCel",
-	/*0x12*/ "AddToPic",
-	/*0x13*/ "NewWindow",
-	/*0x14*/ "GetPort",
-	/*0x15*/ "SetPort",
-	/*0x16*/ "DisposeWindow",
-	/*0x17*/ "DrawControl",
-	/*0x18*/ "HiliteControl",
-	/*0x19*/ "EditControl",
-	/*0x1a*/ "TextSize",
-	/*0x1b*/ "Display",
-	/*0x1c*/ "GetEvent",
-	/*0x1d*/ "GlobalToLocal",
-	/*0x1e*/ "LocalToGlobal",
-	/*0x1f*/ "MapKeyToDir",
-	/*0x20*/ "DrawMenuBar",
-	/*0x21*/ "MenuSelect",
-	/*0x22*/ "AddMenu",
-	/*0x23*/ "DrawStatus",
-	/*0x24*/ "Parse",
-	/*0x25*/ "Said",
-	/*0x26*/ "SetSynonyms",
-	/*0x27*/ "HaveMouse",
-	/*0x28*/ "SetCursor",
-	/*0x29*/ "FOpen",
-	/*0x2a*/ "FPuts",
-	/*0x2b*/ "FGets",
-	/*0x2c*/ "FClose",
-	/*0x2d*/ "SaveGame",
-	/*0x2e*/ "RestoreGame",
-	/*0x2f*/ "RestartGame",
-	/*0x30*/ "GameIsRestarting",
-	/*0x31*/ "DoSound",
-	/*0x32*/ "NewList",
-	/*0x33*/ "DisposeList",
-	/*0x34*/ "NewNode",
-	/*0x35*/ "FirstNode",
-	/*0x36*/ "LastNode",
-	/*0x37*/ "EmptyList",
-	/*0x38*/ "NextNode",
-	/*0x39*/ "PrevNode",
-	/*0x3a*/ "NodeValue",
-	/*0x3b*/ "AddAfter",
-	/*0x3c*/ "AddToFront",
-	/*0x3d*/ "AddToEnd",
-	/*0x3e*/ "FindKey",
-	/*0x3f*/ "DeleteKey",
-	/*0x40*/ "Random",
-	/*0x41*/ "Abs",
-	/*0x42*/ "Sqrt",
-	/*0x43*/ "GetAngle",
-	/*0x44*/ "GetDistance",
-	/*0x45*/ "Wait",
-	/*0x46*/ "GetTime",
-	/*0x47*/ "StrEnd",
-	/*0x48*/ "StrCat",
-	/*0x49*/ "StrCmp",
-	/*0x4a*/ "StrLen",
-	/*0x4b*/ "StrCpy",
-	/*0x4c*/ "Format",
-	/*0x4d*/ "GetFarText",
-	/*0x4e*/ "ReadNumber",
-	/*0x4f*/ "BaseSetter",
-	/*0x50*/ "DirLoop",
-	/*0x51*/ "CanBeHere",
-	/*0x52*/ "OnControl",
-	/*0x53*/ "InitBresen",
-	/*0x54*/ "DoBresen",
-	/*0x55*/ "DoAvoider",
-	/*0x56*/ "SetJump",
-	/*0x57*/ "SetDebug",
-	/*0x58*/ "InspectObj",
-	/*0x59*/ "ShowSends",
-	/*0x5a*/ "ShowObjs",
-	/*0x5b*/ "ShowFree",
-	/*0x5c*/ "MemoryInfo",
-	/*0x5d*/ "StackUsage",
-	/*0x5e*/ "Profiler",
-	/*0x5f*/ "GetMenu",
-	/*0x60*/ "SetMenu",
-	/*0x61*/ "GetSaveFiles",
-	/*0x62*/ "GetCWD",
-	/*0x63*/ "CheckFreeSpace",
-	/*0x64*/ "ValidPath",
-	/*0x65*/ "CoordPri",
-	/*0x66*/ "StrAt",
-	/*0x67*/ "DeviceInfo",
-	/*0x68*/ "GetSaveDir",
-	/*0x69*/ "CheckSaveGame",
-	/*0x6a*/ "ShakeScreen",
-	/*0x6b*/ "FlushResources",
-	/*0x6c*/ "SinMult",
-	/*0x6d*/ "CosMult",
-	/*0x6e*/ "SinDiv",
-	/*0x6f*/ "CosDiv",
-	/*0x70*/ "Graph",
-	/*0x71*/ SCRIPT_UNKNOWN_FUNCTION_STRING
-};
-
-static const char *sci1_default_knames[SCI1_KNAMES_DEFAULT_ENTRIES_NR] = {
+static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
 	/*0x02*/ "ScriptID",
@@ -427,7 +309,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
-	/*72*/	NOFUN("unknown72"),
+	/*72*/	NOFUN("unknown72"),		// ShiftScreen, perhaps?
 	/*73*/	NOFUN("unknown73"),
 
 	// Experimental functions
@@ -440,7 +322,6 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
 
 	// Non-experimental Functions without a fixed ID
-
 	DEFUN("CosMult", kTimesCos, "ii"),
 	DEFUN("SinMult", kTimesSin, "ii"),
 	/*(?)*/	DEFUN("CosDiv", kCosDiv, "ii"),
@@ -459,6 +340,21 @@ SciKernelFunction kfunct_mappers[] = {
 	// Special and NOP stuff
 	{NULL, k_Unknown, NULL},
 
+	// Stub functions
+	DEFUN("ShiftScreen", kStub, ".*"),
+	DEFUN("MemorySegment", kStub, ".*"),
+	DEFUN("ListOps", kStub, ".*"),
+	DEFUN("ATan", kStub, ".*"),
+	DEFUN("StrSplit", kStub, ".*"),
+	DEFUN("MergePoly", kStub, ".*"),
+	DEFUN("AssertPalette", kStub, ".*"),
+	DEFUN("TextColors", kStub, ".*"),
+	DEFUN("TextFonts", kStub, ".*"),
+	DEFUN("Record", kStub, ".*"),
+	DEFUN("PlayBack", kStub, ".*"),
+	DEFUN("DbugStr", kStub, ".*"),
+	DEFUN("Platform", kStub, ".*"),    // SCI1
+
 	{NULL, NULL, NULL} // Terminator
 };
 
@@ -471,36 +367,127 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resmgr, bool isOldSci0) : _resmgr(resmgr) {
+Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
-	loadKernelNames();
-
+	detectSciFeatures(); // must be called before loadSelectorNames()
+	loadSelectorNames();
+	mapSelectors();      // Map a few special selectors for later use
 	loadOpcodes();
-
-	if (!loadSelectorNames(isOldSci0)) {
-		error("Kernel: Could not retrieve selector names");
-	}
-
-	// Map the kernel functions
-	mapFunctions();
-
-	// Map a few special selectors for later use
-	mapSelectors();
+	loadKernelNames();
+	mapFunctions();      // Map the kernel functions
 }
 
 Kernel::~Kernel() {
 }
 
-bool Kernel::loadSelectorNames(bool isOldSci0) {
-	int count;
-
+void Kernel::detectSciFeatures() {
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
-	if (!r) // No such resource?
-		return false;
+	Common::StringList staticSelectorTable;
+	
+	if (!r) { // No such resource?
+		staticSelectorTable = checkStaticSelectorNames();
+		if (staticSelectorTable.empty())
+			error("Kernel: Could not retrieve selector names");
+	}
 
-	count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
+	int count = staticSelectorTable.empty() ? READ_LE_UINT16(r->data) + 1 : staticSelectorTable.size(); // Counter is slightly off
+	features = 0;
+
+	// Initialize features based on SCI version
+	if (_resmgr->_sciVersion == SCI_VERSION_0) {
+		features |= kFeatureOldScriptHeader;
+		features |= kFeatureOldGfxFunctions;
+	}
+
+	for (int i = 0; i < count; i++) {
+		Common::String tmp;
+		
+		if (staticSelectorTable.empty()) {
+			int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+			int len = READ_LE_UINT16(r->data + offset);
+			
+			tmp = Common::String((const char *)r->data + offset + 2, len);
+		} else {
+			tmp = staticSelectorTable[i];
+		}
+
+		if (tmp == "setTarget")     // "motionInited" can also be used
+			features &= ~kFeatureOldScriptHeader;
+
+		if (tmp == "motionCue")
+			features &= ~kFeatureOldGfxFunctions;
+
+		if (tmp == "egoMoveSpeed" && _resmgr->_sciVersion < SCI_VERSION_1_1)
+			features |= kFeatureLofsAbsolute;
+
+		if (tmp == "sightAngle" && _resmgr->_sciVersion == SCI_VERSION_0)
+			features |= kFeatureSci0Sci1Table;
+
+		if (tmp == "setVol")
+			features |= kFeatureSci1Sound;
+
+		if (tmp == "nodePtr")
+			features |= kFeatureSci01Sound;
+	}
+
+	if (features & kFeatureSci1Sound)
+		features &= ~kFeatureSci01Sound;
+
+	printf("Kernel auto-detected features:\n");
+
+	printf("Script block headers: ");
+	if (features & kFeatureOldScriptHeader)
+		printf("old\n");
+	else
+		printf("new\n");
+
+	printf("Graphics functions: ");
+	if (features & kFeatureOldGfxFunctions)
+		printf("old\n");
+	else
+		printf("new\n");
+
+	printf("lofs parameters: ");
+	if (features & kFeatureLofsAbsolute)
+		printf("absolute\n");
+	else
+		printf("relative\n");
+
+	printf("Sound functions: ");
+	if (features & kFeatureSci1Sound)
+		printf("SCI1\n");
+	else if (features & kFeatureSci01Sound)
+		printf("SCI01\n");
+	else
+		printf("SCI0\n");
+
+	if (features & kFeatureSci0Sci1Table)
+		printf("Found SCI0 game using a SCI1 kernel table\n");
+}
+
+void Kernel::loadSelectorNames() {
+	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
+
+	if (!r) { // No such resource?
+		// Check if we have a table for this game
+		// Some demos do not have a selector table
+		Common::StringList staticSelectorTable = checkStaticSelectorNames();
+		
+		if (staticSelectorTable.empty())
+			error("Kernel: Could not retrieve selector names");
+		
+		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
+			_selectorNames.push_back(staticSelectorTable[i]);
+			if (features & kFeatureOldScriptHeader)
+				_selectorNames.push_back(staticSelectorTable[i]);
+		}
+			
+		return;
+	}
+
+	int count = READ_LE_UINT16(r->data) + 1; // Counter is slightly off
 
 	for (int i = 0; i < count; i++) {
 		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
@@ -508,14 +495,13 @@ bool Kernel::loadSelectorNames(bool isOldSci0) {
 
 		Common::String tmp((const char *)r->data + offset + 2, len);
 		_selectorNames.push_back(tmp);
+		//printf("%s\n", tmp.c_str());	// debug
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (isOldSci0)
+		if (features & kFeatureOldScriptHeader)
 			_selectorNames.push_back(tmp);
 	}
-
-	return true;
 }
 
 bool Kernel::loadOpcodes() {
@@ -706,15 +692,15 @@ void Kernel::mapFunctions() {
 				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
 				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
-			} else
+			} else {
+				//warning("Ignoring function %s\n", kfunct_mappers[found].name);
 				++ignored;
+			}
 		}
 	} // for all functions requesting to be mapped
 
-	sciprintf("Handled %d/%d kernel functions, mapping %d", mapped + ignored, getKernelNamesSize(), mapped);
-	if (ignored)
-		sciprintf(" and ignoring %d", ignored);
-	sciprintf(".\n");
+	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n", 
+				mapped + ignored, getKernelNamesSize(), mapped, ignored);
 
 	return;
 }
@@ -792,12 +778,12 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 			int type = determine_reg_type(s, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
-				sciprintf("[KERN] Could not determine type of ref %04x:%04x; failing signature check\n", PRINT_REG(*argv));
+				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
 				return false;
 			}
 
 			if (type & KSIG_INVALID) {
-				sciprintf("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid\n",
+				warning("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid",
 				          PRINT_REG(*argv), kernel_argtype_description(type));
 				return false;
 			}
@@ -846,70 +832,40 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 	return (reg_t*)_kernel_dereference_pointer(s, pointer, entries, sizeof(reg_t));
 }
 
-// Alternative kernel func names retriever. Required for KQ1/SCI (at least).
-static void _vocab_get_knames0alt(const Resource *r, Common::StringList &names) {
-	uint idx = 0;
+void Kernel::setDefaultKernelNames() {
+	bool isSci0 = (_resmgr->_sciVersion == SCI_VERSION_0);
+	int offset = 0;
 
-	while (idx < r->size) {
-		Common::String tmp((const char *)r->data + idx);
-		names.push_back(tmp);
-		idx += tmp.size() + 1;
+	// Check if we have a SCI01 game which uses a SCI1 kernel table (e.g. the KQ1 demo
+	// and full version). We do this by checking if the sightAngle selector exists, as no
+	// SCI0 game seems to have it
+	if (features & kFeatureSci0Sci1Table)
+		isSci0 = false;
+
+	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
+	for (int i = 0; i < SCI_KNAMES_DEFAULT_ENTRIES_NR; i++) {
+		// In SCI0, Platform was DoAvoider
+		if (!strcmp(sci_default_knames[i], "Platform") && isSci0) {
+			_kernelNames[i + offset] = "DoAvoider";
+			continue;
+		}
+
+		_kernelNames[i + offset] = sci_default_knames[i];
+
+		// SCI0 has 4 extra functions between SetCursor (0x28) and Savegame
+		if (!strcmp(sci_default_knames[i], "SetCursor") && isSci0) {
+			_kernelNames[i + 1] = "FOpen";
+			_kernelNames[i + 2] = "FPuts";
+			_kernelNames[i + 3] = "FGets";
+			_kernelNames[i + 4] = "FClose";
+			offset = 4;
+		}
 	}
 
-	// The mystery kernel function- one in each SCI0 package
-	names.push_back(SCRIPT_UNKNOWN_FUNCTION_STRING);
-}
-
-static void vocab_get_knames0(ResourceManager *resmgr, Common::StringList &names) {
-	int count, i, index = 2, empty_to_add = 1;
-	Resource *r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
-
-	if (!r) { // No kernel name table found? Fall back to default table
-		names.resize(SCI0_KNAMES_DEFAULT_ENTRIES_NR);
-		for (i = 0; i < SCI0_KNAMES_DEFAULT_ENTRIES_NR; i++)
-			names[i] = sci0_default_knames[i];
-		return;
+	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
+		// HACK: KQ6CD calls unimplemented function 0x26
+		_kernelNames[0x26] = "Dummy";
 	}
-
-	count = READ_LE_UINT16(r->data);
-
-	if (count > 1023) {
-		_vocab_get_knames0alt(r, names);
-		return;
-	}
-
-	if (count < SCI0_KNAMES_WELL_DEFINED) {
-		empty_to_add = SCI0_KNAMES_WELL_DEFINED - count;
-		sciprintf("Less than %d kernel functions; adding %d\n", SCI0_KNAMES_WELL_DEFINED, empty_to_add);
-	}
-
-	names.resize(count + 1 + empty_to_add);
-
-	for (i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + index);
-		int len = READ_LE_UINT16(r->data + offset);
-		//fprintf(stderr,"Getting name %d of %d...\n", i, count);
-		index += 2;
-		names[i] = Common::String((const char *)r->data + offset + 2, len);
-	}
-
-	for (i = 0; i < empty_to_add; i++) {
-		names[count + i] = SCRIPT_UNKNOWN_FUNCTION_STRING;
-	}
-}
-
-static void vocab_get_knames1(ResourceManager *resmgr, Common::StringList &names) {
-	// vocab.999/999.voc is notoriously unreliable in SCI1 games, and should not be used
-	// We hardcode the default SCI1 kernel names here (i.e. the ones inside the "special"
-	// 999.voc file from FreeSCI). All SCI1 games seem to be working with this change, but
-	// if any SCI1 game has different kernel vocabulary names, it might not work. It seems
-	// that all SCI1 games use the same kernel vocabulary names though, so this seems to be
-	// a safe change. If there's any SCI1 game with different kernel vocabulary names, we can
-	// add special flags to it to our detector
-
-	names.resize(SCI1_KNAMES_DEFAULT_ENTRIES_NR);
-	for (int i = 0; i < SCI1_KNAMES_DEFAULT_ENTRIES_NR; i++)
-		names[i] = sci1_default_knames[i];
 }
 
 #ifdef ENABLE_SCI32
@@ -945,27 +901,10 @@ bool Kernel::loadKernelNames() {
 	switch (_resmgr->_sciVersion) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
-		// HACK: The KQ1 demo requires the SCI1 vocabulary.
-		if (((SciEngine*)g_engine)->getFlags() & GF_SCI0_SCI1VOCAB)
-			vocab_get_knames1(_resmgr, _kernelNames);
-		else
-			vocab_get_knames0(_resmgr, _kernelNames);
-		break;
-	case SCI_VERSION_01_VGA:
 	case SCI_VERSION_01_VGA_ODD:
-		// HACK: KQ5 needs the SCI1 default vocabulary names to work correctly.
-		// Having more vocabulary names (like in SCI1) doesn't seem to have any
-		// ill effects, other than resulting in unmapped functions towards the
-		// end, which are never used by the game interpreter anyway
-		// return vocab_get_knames0(resmgr, count);
-	case SCI_VERSION_1_EARLY:
-	case SCI_VERSION_1_LATE:
-		vocab_get_knames1(_resmgr, _kernelNames);
-		break;
+	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:
-		vocab_get_knames1(_resmgr, _kernelNames);
-		// KQ6CD calls unimplemented function 0x26
-                _kernelNames[0x26] = "Dummy";
+		setDefaultKernelNames();
 		break;
 #ifdef ENABLE_SCI32
 	case SCI_VERSION_32:

@@ -133,7 +133,7 @@ bool IIgsEnvelope::read(Common::SeekableReadStream &stream) {
 		seg[segNum].inc = stream.readUint16LE();
 	}
 
-	return !stream.ioFailed();
+	return !(stream.eos() || stream.err());
 }
 
 /** Reads an Apple IIGS wave information structure from the given stream. */
@@ -154,7 +154,7 @@ bool IIgsWaveInfo::read(Common::SeekableReadStream &stream, bool ignoreAddr) {
 	if (ignoreAddr)
 		addr = 0;
 
-	return !stream.ioFailed();
+	return !(stream.eos() || stream.err());
 }
 
 bool IIgsWaveInfo::finalize(Common::SeekableReadStream &uint8Wave) {
@@ -219,7 +219,7 @@ bool IIgsInstrumentHeader::read(Common::SeekableReadStream &stream, bool ignoreA
 	byte wac      = stream.readByte(); // Read A wave count
 	byte wbc      = stream.readByte(); // Read B wave count
 	oscList.read(stream, wac, ignoreAddr); // Read the oscillators
-	return (wac == wbc) && !stream.ioFailed(); // A and B wave counts must match
+	return (wac == wbc) && !(stream.eos() || stream.err()); // A and B wave counts must match
 }
 
 bool IIgsInstrumentHeader::finalize(Common::SeekableReadStream &uint8Wave) {
@@ -1158,7 +1158,7 @@ bool SoundMgr::convertWave(Common::SeekableReadStream &source, int8 *dest, uint 
 	// Convert the wave from 8-bit unsigned to 8-bit signed format
 	for (uint i = 0; i < length; i++)
 		dest[i] = (int8) ((int) source.readByte() - 128);
-	return !source.ioFailed();
+	return !(source.eos() || source.err());
 }
 
 bool IIgsSoundMgr::loadWaveFile(const Common::FSNode &wavePath, const IIgsExeInfo &exeInfo) {

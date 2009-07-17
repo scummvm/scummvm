@@ -572,8 +572,10 @@ bitmap_t bdf_hexval(unsigned char *buf) {
 
 NewFont *NewFont::loadFont(Common::SeekableReadStream &stream) {
 	NewFontData *data = bdf_read_font(stream);
-	if (!data)
+	if (!data || stream.err()) {
+		free_font(data);
 		return 0;
+	}
 
 	FontDesc desc;
 	desc.name = data->name;
@@ -673,7 +675,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 	data->defaultchar = stream.readUint16BE();
 	data->bits_size = stream.readUint32BE();
 
-	data->bits = (bitmap_t*)malloc(sizeof(bitmap_t)*data->bits_size);
+	data->bits = (bitmap_t *)malloc(sizeof(bitmap_t) * data->bits_size);
 	if (!data->bits) {
 		free(data);
 		return 0;
@@ -685,7 +687,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 	bool hasOffsetTable = (stream.readByte() != 0);
 	if (hasOffsetTable) {
-		data->offset = (unsigned long*)malloc(sizeof(unsigned long)*data->size);
+		data->offset = (unsigned long *)malloc(sizeof(unsigned long) * data->size);
 		if (!data->offset) {
 			free(data->bits);
 			free(data);
@@ -699,7 +701,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 	bool hasWidthTable = (stream.readByte() != 0);
 	if (hasWidthTable) {
-		data->width = (unsigned char*)malloc(sizeof(unsigned char)*data->size);
+		data->width = (unsigned char *)malloc(sizeof(unsigned char) * data->size);
 		if (!data->width) {
 			free(data->bits);
 			free(data->offset);
@@ -714,7 +716,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 
 	bool hasBBXTable = (stream.readByte() != 0);
 	if (hasBBXTable) {
-		data->bbx = (BBX *)malloc(sizeof(BBX)*data->size);
+		data->bbx = (BBX *)malloc(sizeof(BBX) * data->size);
 		if (!data->bbx) {
 			free(data->bits);
 			free(data->offset);
@@ -729,6 +731,14 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 			data->bbx[i].x = (int8)stream.readByte();
 			data->bbx[i].y = (int8)stream.readByte();
 		}
+	}
+
+	if (stream.err() || stream.eos()) {
+		free(data->bits);
+		free(data->offset);
+		free(data->width);
+		free(data);
+		return 0;
 	}
 
 	FontDesc desc;
@@ -750,7 +760,7 @@ NewFont *NewFont::loadFromCache(Common::SeekableReadStream &stream) {
 	desc.bits_size = data->bits_size;
 
 	font = new NewFont(desc, data);
-	if (!font || stream.ioFailed()) {
+	if (!font) {
 		free(data->bits);
 		free(data->offset);
 		free(data->width);

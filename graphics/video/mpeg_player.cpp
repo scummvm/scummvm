@@ -86,12 +86,9 @@ bool BaseAnimationState::init(const char *name) {
 	}
 
 	p = 0;
-	while (1) {
+	while (!f.eos()) {
 		_palettes[p].end = f.readUint16LE();
 		_palettes[p].cnt = f.readUint16LE();
-
-		if (f.ioFailed())
-			break;
 
 		for (i = 0; i < _palettes[p].cnt; i++) {
 			_palettes[p].pal[4 * i] = f.readByte();

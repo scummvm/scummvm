@@ -305,7 +305,7 @@ void TuckerEngine::restart() {
 	_currentGfxBackground = 0;
 	_fadePaletteCounter = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
-	_fullRedrawCounter = 0;
+	_fullRedraw = false;
 	_dirtyRectsPrevCount = _dirtyRectsCount = 0;
 
 	_updateLocationFadePaletteCounter = 0;
@@ -469,7 +469,7 @@ void TuckerEngine::mainLoop() {
 					_mainSpritesBaseOffset = 1;
 				}
 			}
-			_fullRedrawCounter = 2;
+			_fullRedraw = true;
 		} else {
 			_currentGfxBackground = _quadBackgroundGfxBuf;
 		}
@@ -1460,7 +1460,7 @@ void TuckerEngine::updateScreenScrolling() {
 		}
 	}
 	if (scrollPrevOffset != _scrollOffset) {
-		_fullRedrawCounter = 2;
+		_fullRedraw = true;
 	}
 }
 
@@ -1733,34 +1733,40 @@ void TuckerEngine::drawBackgroundSprites() {
 		} else if (_xPosCurrent > 320 && _xPosCurrent < 640) {
 			srcX += 320;
 		}
-		int offset = _backgroundSprOffset + srcY * 640 + srcX;
-		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], false);
-		addDirtyRect(offset % 640, offset / 640, srcW, srcH);
+		srcX += _backgroundSprOffset;
+		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + srcY * 640 + srcX, _backgroundSpriteDataPtr + frameOffset + 12, srcW, srcH, 0, _locationHeightTable[_locationNum], false);
+		addDirtyRect(srcX, srcY, srcW, srcH);
 	}
 }
 
 void TuckerEngine::drawCurrentSprite() {
-	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
-	int offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset) * 640 + _xPosCurrent;
-	if (_mirroredDrawing == 0) {
-		offset += chr->xOffset - 14;
-	} else {
-		offset -= chr->xSize + chr->xOffset - 14;
+	// Workaround original game glitch: skip first bud frame drawing when entering location (tracker item #2597763)
+	if ((_locationNum == 17 || _locationNum == 18) && _currentSpriteAnimationFrame == 16) {
+		return;
 	}
-	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
+	SpriteFrame *chr = &_spriteFramesTable[_currentSpriteAnimationFrame];
+	int yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr->yOffset;
+	int xPos = _xPosCurrent;
+	if (_mirroredDrawing == 0) {
+		xPos += chr->xOffset - 14;
+	} else {
+		xPos -= chr->xSize + chr->xOffset - 14;
+	}
+	Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr->sourceOffset, chr->xSize, chr->ySize,
 		chr->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
-	addDirtyRect(offset % 640, offset / 640, chr->xSize, chr->ySize);
+	addDirtyRect(xPos, yPos, chr->xSize, chr->ySize);
 	if (_currentSpriteAnimationLength > 1) {
 		SpriteFrame *chr2 = &_spriteFramesTable[_currentSpriteAnimationFrame2];
-		offset = (_yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset) * 640 + _xPosCurrent;
+		yPos = _yPosCurrent + _mainSpritesBaseOffset - 54 + chr2->yOffset;
+		xPos = _xPosCurrent;
 		if (_mirroredDrawing == 0) {
-			offset += chr2->xOffset - 14;
+			xPos += chr2->xOffset - 14;
 		} else {
-			offset -= chr2->xSize + chr2->xOffset - 14;
+			xPos -= chr2->xSize + chr2->xOffset - 14;
 		}
-		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + offset, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
+		Graphics::decodeRLE_248(_locationBackgroundGfxBuf + yPos * 640 + xPos, _spritesGfxBuf + chr2->sourceOffset, chr2->xSize, chr2->ySize,
 			chr2->yOffset, _locationHeightTable[_locationNum], _mirroredDrawing != 0);
-		addDirtyRect(offset % 640, offset / 640, chr2->xSize, chr2->ySize);
+		addDirtyRect(xPos, yPos, chr2->xSize, chr2->ySize);
 	}
 }
 
@@ -1891,13 +1897,13 @@ void TuckerEngine::drawSprite(int num) {
 		int srcH = READ_LE_UINT16(p + frameOffset + 2);
 		int srcX = READ_LE_UINT16(p + frameOffset + 8);
 		int srcY = READ_LE_UINT16(p + frameOffset + 10);
-		int dstOffset = s->gfxBackgroundOffset + srcX;
-		if (dstOffset < 600 && (_scrollOffset + 320 < dstOffset || _scrollOffset - srcW > dstOffset)) {
+		int xPos = s->gfxBackgroundOffset + srcX;
+		if (xPos < 600 && (_scrollOffset + 320 < xPos || _scrollOffset - srcW > xPos)) {
 			return;
 		}
 		s->xSource = srcX;
 		s->gfxBackgroundOffset += s->backgroundOffset;
-		uint8 *dstPtr = _locationBackgroundGfxBuf + srcY * 640 + dstOffset;
+		uint8 *dstPtr = _locationBackgroundGfxBuf + srcY * 640 + xPos;
 		const uint8 *srcPtr = p + frameOffset + 12;
 		switch (s->colorType) {
 		case 0:
@@ -1910,7 +1916,7 @@ void TuckerEngine::drawSprite(int num) {
 			Graphics::decodeRLE_248(dstPtr, srcPtr, srcW, srcH, 0, s->yMaxBackground, s->flipX != 0);
 			break;
 		}
-		addDirtyRect(dstOffset % 640, dstOffset / 640 + srcY, srcW, srcH);
+		addDirtyRect(xPos, srcY, srcW, srcH);
 	}
 }
 
@@ -2826,7 +2832,7 @@ void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf + offset, numStr[i], 640, 102, _charsetGfxBuf);
 		offset += 8;
 	}
-	addDirtyRect(x, y, Graphics::_charset.charW * 3, Graphics::_charset.charH);
+	addDirtyRect(_scrollOffset + x, y, Graphics::_charset.charW * 3, Graphics::_charset.charH);
 }
 
 void TuckerEngine::drawStringAlt(int offset, int color, const uint8 *str, int strLen) {
@@ -3740,20 +3746,20 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 		y = count * 10;
 	}
 	for (int i = 0; i < count; ++i) {
-		int dstOffset = xStart - lines[i].w / 2;
-		if (dstOffset < _scrollOffset) {
-			dstOffset = _scrollOffset;
-		} else if (dstOffset > _scrollOffset + 320 - lines[i].w) {
-			dstOffset = _scrollOffset + 320 - lines[i].w;
+		int yPos, xPos = xStart - lines[i].w / 2;
+		if (xPos < _scrollOffset) {
+			xPos = _scrollOffset;
+		} else if (xPos > _scrollOffset + 320 - lines[i].w) {
+			xPos = _scrollOffset + 320 - lines[i].w;
 		}
 		if (_conversationOptionsCount != 0) {
-			dstOffset = xStart + _scrollOffset;
-			dstOffset += (i * 10 + y) * 640;
+			xPos = xStart + _scrollOffset;
+			yPos = i * 10 + y;
 			_panelItemWidth = count;
 		} else {
-			dstOffset += (y - (count - i) * 10) * 640;
+			yPos = y - (count - i) * 10;
 		}
-		drawSpeechTextLine(dataPtr, lines[i].offset, lines[i].count, dstOffset, color);
+		drawSpeechTextLine(dataPtr, lines[i].offset, lines[i].count, xPos, yPos, color);
 	}
 }
 
@@ -3780,23 +3786,24 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 	return ret;
 }
 
-void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int dstOffset, uint8 color) {
-	int startOffset = dstOffset;
+void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int x, int y, uint8 color) {
+	int xStart = x;
 	int i = 0;
 	for (; i < count && dataPtr[pos] != '\n'; ++i) {
-		Graphics::drawStringChar(_locationBackgroundGfxBuf + dstOffset, dataPtr[pos], 640, color, _charsetGfxBuf);
-		dstOffset += _charWidthTable[dataPtr[pos]];
+		Graphics::drawStringChar(_locationBackgroundGfxBuf + y * 640 + x, dataPtr[pos], 640, color, _charsetGfxBuf);
+		x += _charWidthTable[dataPtr[pos]];
 		++pos;
 	}
-	addDirtyRect(startOffset % 640, startOffset / 640, Graphics::_charset.charW * i, Graphics::_charset.charH);
+	addDirtyRect(xStart, y, Graphics::_charset.charW * i, Graphics::_charset.charH);
 }
 
 void TuckerEngine::redrawScreen(int offset) {
-	debug(9, "redrawScreen() _fullRedrawCounter %d offset %d _dirtyRectsCount %d", _fullRedrawCounter, offset, _dirtyRectsCount);
+	debug(9, "redrawScreen() _fullRedraw %d offset %d _dirtyRectsCount %d", _fullRedraw, offset, _dirtyRectsCount);
 	assert(offset <= kScreenWidth);
-	if (_fullRedrawCounter > 0) {
-		--_fullRedrawCounter;
+	if (_fullRedraw) {
+		_fullRedraw = false;
 		_system->copyRectToScreen(_locationBackgroundGfxBuf + offset, kScreenPitch, 0, 0, kScreenWidth, kScreenHeight);
+		_dirtyRectsPrevCount = _dirtyRectsCount = 0;
 	} else {
 		const int xClip = offset % kScreenPitch;
 		const int yClip = offset / kScreenPitch;
@@ -3806,13 +3813,11 @@ void TuckerEngine::redrawScreen(int offset) {
 		}
 		for (int i = 0; i < _dirtyRectsCount; ++i) {
 			redrawScreenRect(clipRect, _dirtyRectsTable[0][i]);
-		}
-		_dirtyRectsPrevCount = _dirtyRectsCount;
-		for (int i = 0; i < _dirtyRectsCount; ++i) {
 			_dirtyRectsTable[1][i] = _dirtyRectsTable[0][i];
 		}
+		_dirtyRectsPrevCount = _dirtyRectsCount;
+		_dirtyRectsCount = 0;
 	}
-	_dirtyRectsCount = 0;
 	_system->updateScreen();
 }
 
@@ -3827,17 +3832,33 @@ void TuckerEngine::redrawScreenRect(const Common::Rect &clip, const Common::Rect
 		if (w <= 0 || h <= 0) {
 			return;
 		}
+#if 0
+		static const uint8 outlineColor = 0;
+		memset(_locationBackgroundGfxBuf + r.top           * 640 + r.left, outlineColor, w);
+		memset(_locationBackgroundGfxBuf + (r.top + h - 1) * 640 + r.left, outlineColor, w);
+		for (int y = r.top; y < r.top + h; ++y) {
+			_locationBackgroundGfxBuf[y * 640 + r.left] = outlineColor;
+			_locationBackgroundGfxBuf[y * 640 + r.left + w - 1] = outlineColor;
+		}
+#endif
 		_system->copyRectToScreen(src, 640, r.left, r.top, w, h);
 	}
 }
 
 void TuckerEngine::addDirtyRect(int x, int y, int w, int h) {
-	if (_dirtyRectsCount >= kMaxDirtyRects) {
-		_fullRedrawCounter = 2;
-		_dirtyRectsCount = 0;
-	} else {
-		_dirtyRectsTable[0][_dirtyRectsCount] = Common::Rect(x, y, x + w, y + h);
-		++_dirtyRectsCount;
+	if (!_fullRedraw) {
+		Common::Rect r(x, y, x + w, y + h);
+		for (int i = 0; i < _dirtyRectsCount; ++i) {
+			if (_dirtyRectsTable[0][i].contains(r)) {
+				return;
+			}
+		}
+		if (_dirtyRectsCount < kMaxDirtyRects) {
+			_dirtyRectsTable[0][_dirtyRectsCount] = r;
+			++_dirtyRectsCount;
+		} else {
+			_fullRedraw = true;
+		}
 	}
 }
 

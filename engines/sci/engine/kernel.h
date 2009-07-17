@@ -55,9 +55,18 @@ struct KernelFuncWithSignature {
 	Common::String orig_name; /**< Original name, in case we couldn't map it */
 };
 
+enum AutoDetectedFeatures {
+	kFeatureOldScriptHeader = 1 << 0,
+	kFeatureOldGfxFunctions = 1 << 1,
+	kFeatureLofsAbsolute    = 1 << 2,
+	kFeatureSci01Sound      = 1 << 3,
+	kFeatureSci1Sound       = 1 << 4,
+	kFeatureSci0Sci1Table   = 1 << 5
+};
+
 class Kernel {
 public:
-	Kernel(ResourceManager *resmgr, bool isOldSci0);
+	Kernel(ResourceManager *resmgr);
 	~Kernel();
 
 	uint getOpcodesSize() const { return _opcodes.size(); }
@@ -83,6 +92,42 @@ public:
 	*/
 	bool hasKernelFunction(const char *functionName) const;
 
+	/**
+	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
+	 * Old SCI versions used two word header for script blocks (first word equal
+	 * to 0x82, meaning of the second one unknown). New SCI versions used one
+	 * word header.
+	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
+	 * and down. Later versions use an even 90 degree distribution.
+	 */
+	bool hasOldScriptHeader() const { return (features & kFeatureOldScriptHeader); }
+
+	/**
+	 * Applies to all versions before 0.000.502
+	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
+	 * with the opposite default value (obviously).
+	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
+	 * zones from 42 to 190.
+	 */
+	bool usesOldGfxFunctions() const { return (features & kFeatureOldGfxFunctions); }
+
+	/**
+	 * Applies to all SCI1 versions after 1.000.200
+	 * In late SCI1 versions, the argument of lofs[as] instructions
+	 * is absolute rather than relative.
+	 */
+	bool hasLofsAbsolute() const { return (features & kFeatureLofsAbsolute); }
+
+	/**
+	 * Determines if the game is using SCI01 sound functions
+	 */
+	bool usesSci01SoundFunctions() const { return (features & kFeatureSci01Sound); }
+
+	/**
+	 * Determines if the game is using SCI1 sound functions
+	 */
+	bool usesSci1SoundFunctions() const { return (features & kFeatureSci1Sound); }
+
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
 	void dumpScriptObject(char *data, int seeker, int objsize);
@@ -104,15 +149,30 @@ private:
 	bool loadKernelNames();
 
 	/**
-	* Loads the kernel selector names.
-	* @return True upon success, false otherwise.
-	*/
-	bool loadSelectorNames(bool isOldSci0);
+	 * Sets the default kernel function names, based on the SCI version used
+	 */
+	void setDefaultKernelNames();
+
+	/**
+	 * Loads the kernel selector names.
+	 */
+	void loadSelectorNames();
+	
+	/**
+	 * Check for any hardcoded selector table we might have that can be used
+	 * if a game is missing the selector names.
+	 */
+	Common::StringList checkStaticSelectorNames();
 
 	/**
 	 * Maps special selectors
 	 */
 	void mapSelectors();
+
+	/**
+	 * Detects SCI features based on the existence of certain selectors
+	 */
+	void detectSciFeatures();
 
 	/**
 	 * Maps kernel functions
@@ -126,6 +186,7 @@ private:
 	bool loadOpcodes();
 
 	ResourceManager *_resmgr;
+	uint32 features;
 
 	// Kernel-related lists
 	/**
@@ -144,7 +205,7 @@ enum SelectorInvocation {
 	kContinueOnInvalidSelector = 1
 };
 
-#define GET_SEL32(_o_, _slc_) read_selector(s, _o_, s->_kernel->_selectorMap._slc_, __FILE__, __LINE__)
+#define GET_SEL32(_o_, _slc_) read_selector(s, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
 #define GET_SEL32SV(_o_, _slc_) ((int16)(GET_SEL32(_o_, _slc_).offset))
 /* Retrieves a selector from an object
@@ -155,8 +216,8 @@ enum SelectorInvocation {
 ** selector_map_t and mapped in script.c.
 */
 
-#define PUT_SEL32(_o_, _slc_, _val_) write_selector(s, _o_, s->_kernel->_selectorMap._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(s, _o_, s->_kernel->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
+#define PUT_SEL32(_o_, _slc_, _val_) write_selector(s, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, _val_, __FILE__, __LINE__)
+#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(s, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read
@@ -168,7 +229,7 @@ enum SelectorInvocation {
 
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  s->_kernel->_selectorMap._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
+	s, _object_,  ((SciEngine*)g_engine)->getKernel()->_selectorMap._selector_, _noinvalid_, funct_nr, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */
@@ -482,12 +543,10 @@ reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 // The Unknown/Unnamed kernel function
-reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // for unimplemented kernel functions
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv);
 // for kernel functions that don't do anything
-reg_t kFsciEmu(EngineState *s, int funct_nr, int argc, reg_t *argv);
-// Emulating "old" kernel functions on the heap
 
 
 } // End of namespace Sci

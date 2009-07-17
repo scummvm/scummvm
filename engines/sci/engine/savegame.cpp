@@ -464,15 +464,15 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 
 	if (s->execution_stack_base) {
-		sciprintf("Cannot save from below kernel function\n");
+		warning("Cannot save from below kernel function");
 		return 1;
 	}
 
 /*
 	if (s->sound_server) {
 		if ((s->sound_server->save)(s, dirname)) {
-			sciprintf("Saving failed for the sound subsystem\n");
-			chdir("..");
+			warning("Saving failed for the sound subsystem");
+			//chdir("..");
 			return 1;
 		}
 	}
@@ -497,7 +497,7 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	if (s->_flags & GF_SCI0_OLD)
+	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 		buf += 2;
 
 	do {
@@ -616,7 +616,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						base_obj = obj_get(s, scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
 
 						if (!base_obj) {
-							sciprintf("Object without a base class: Script %d, index %d (reg address %04x:%04x\n",
+							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
 								  scr->nr, j, PRINT_REG(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
 						}
@@ -646,18 +646,18 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 				CloneTable *ct = (CloneTable *)mobj;
 
 				/*
-				sciprintf("Free list: ");
+				printf("Free list: ");
 				for (uint j = ct->first_free; j != HEAPENTRY_INVALID; j = ct->_table[j].next_free) {
-					sciprintf("%d ", j);
+					printf("%d ", j);
 				}
-				sciprintf("\n");
+				printf("\n");
 
-				sciprintf("Entries w/zero vars: ");
+				printf("Entries w/zero vars: ");
 				for (uint j = 0; j < ct->_table.size(); j++) {
 					if (ct->_table[j].variables == NULL)
-						sciprintf("%d ", j);
+						printf("%d ", j);
 				}
-				sciprintf("\n");
+				printf("\n");
 				*/
 
 				for (uint j = 0; j < ct->_table.size(); j++) {
@@ -669,7 +669,7 @@ static void reconstruct_clones(EngineState *s, SegManager *self) {
 					CloneTable::Entry &seeker = ct->_table[j];
 					base_obj = obj_get(s, seeker._variables[SCRIPT_SPECIES_SELECTOR]);
 					if (!base_obj) {
-						sciprintf("Clone entry without a base class: %d\n", j);
+						printf("Clone entry without a base class: %d\n", j);
 						seeker.base = seeker.base_obj = NULL;
 						seeker.base_vars = seeker.base_method = NULL;
 					} else {
@@ -729,7 +729,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 /*
 	if (s->sound_server) {
 		if ((s->sound_server->restore)(s, dirname)) {
-			sciprintf("Restoring failed for the sound subsystem\n");
+			warning("Restoring failed for the sound subsystem");
 			return NULL;
 		}
 	}
@@ -746,9 +746,9 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	if ((meta.savegame_version < MINIMUM_SAVEGAME_VERSION) ||
 	    (meta.savegame_version > CURRENT_SAVEGAME_VERSION)) {
 		if (meta.savegame_version < MINIMUM_SAVEGAME_VERSION)
-			sciprintf("Old savegame version detected- can't load\n");
+			warning("Old savegame version detected- can't load");
 		else
-			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d- maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
 
 		return NULL;
 	}
@@ -814,20 +814,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->game_start_time = g_system->getMillis() - retval->game_time * 1000;
 
 	// static parser information:
-	assert(0 == retval->_vocabulary);
-	retval->_vocabulary = s->_vocabulary;
-//	s->_vocabulary = 0;	// FIXME: We should set s->_vocabulary to 0 here,
-// else it could be freed when the old EngineState is freed. Luckily, this freeing currently
-// never happens, so we don't need to. 
 
 	retval->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
-
-	// static VM/Kernel information:
-	assert(0 == retval->_kernel);
-	retval->_kernel = s->_kernel;
-//	s->_kernel = 0;	// FIXME: We should set s->_kernel to 0 here,
-// else it could be freed when the old EngineState is freed. Luckily, this freeing currently
-// never happens, so we don't need to. 
 
 	// Copy breakpoint information from current game instance
 	retval->have_bp = s->have_bp;
@@ -864,9 +852,9 @@ bool get_savegame_metadata(Common::SeekableReadStream *stream, SavegameMetadata 
 	if ((meta->savegame_version < MINIMUM_SAVEGAME_VERSION) ||
 	    (meta->savegame_version > CURRENT_SAVEGAME_VERSION)) {
 		if (meta->savegame_version < MINIMUM_SAVEGAME_VERSION)
-			sciprintf("Old savegame version detected- can't load\n");
+			warning("Old savegame version detected- can't load");
 		else
-			sciprintf("Savegame version is %d- maximum supported is %0d\n", meta->savegame_version, CURRENT_SAVEGAME_VERSION);
+			warning("Savegame version is %d- maximum supported is %0d", meta->savegame_version, CURRENT_SAVEGAME_VERSION);
 
 		return false;
 	}

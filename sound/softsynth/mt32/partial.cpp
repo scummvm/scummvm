@@ -35,9 +35,9 @@
 // powf, resulting in a linker error because of multiple definitions.
 // Hence we re-define them here. The only potential drawback is that it
 // might be a little bit slower this way.
-#define powf pow
-#define floorf floor
-#define fabsf fabs
+#define powf(x,y)	((float)pow(x,y))
+#define floorf(x)	((float)floorf(x))
+#define fabsf(x)	((float)fabs(x))
 #endif
 
 #define FIXEDPOINT_UDIV(x, y, point) (((x) << (point)) / ((y)))
@@ -504,10 +504,10 @@ Bit16s *Partial::mixBuffersRingMix(Bit16s * buf1, Bit16s *buf2, int len) {
 		a = ((float)*buf1) / 8192.0f;
 		b = ((float)*buf2) / 8192.0f;
 		a = (a * b) + a;
-		if (a>1.0)
-			a = 1.0;
-		if (a<-1.0)
-			a = -1.0;
+		if (a > 1.0f)
+			a = 1.0f;
+		if (a < -1.0f)
+			a = -1.0f;
 		*buf1 = (Bit16s)(a * 8192.0f);
 		buf1++;
 		buf2++;
@@ -537,10 +537,10 @@ Bit16s *Partial::mixBuffersRing(Bit16s * buf1, Bit16s *buf2, int len) {
 		a = ((float)*buf1) / 8192.0f;
 		b = ((float)*buf2) / 8192.0f;
 		a *= b;
-		if (a>1.0)
-			a = 1.0;
-		if (a<-1.0)
-			a = -1.0;
+		if (a > 1.0f)
+			a = 1.0f;
+		if (a < -1.0f)
+			a = -1.0f;
 		*buf1 = (Bit16s)(a * 8192.0f);
 		buf1++;
 		buf2++;

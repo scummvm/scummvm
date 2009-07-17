@@ -43,10 +43,8 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	debug(2, "Initializing graphics");
 
-	if (s->resmgr->_sciVersion <= SCI_VERSION_01 || (s->_flags & GF_SCI1_EGA)) {
-		int i;
-
-		for (i = 0; i < 16; i++) {
+	if (!s->resmgr->isVGA()) {
+		for (int i = 0; i < 16; i++) {
 			if (gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
 					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1)) {
 				return 1;
@@ -89,7 +87,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->priority_first = 42; // Priority zone 0 ends here
 
-	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -97,7 +95,7 @@ int _reset_graphics_input(EngineState *s) {
 	font_nr = -1;
 	do {
 		resource = s->resmgr->testResource(ResourceId(kResourceTypeFont, ++font_nr));
-	} while ((!resource) && (font_nr < sci_max_resource_nr[s->resmgr->_sciVersion]));
+	} while ((!resource) && (font_nr < 65536));
 
 	if (!resource) {
 		debug(2, "No text font was found.");
@@ -111,7 +109,7 @@ int _reset_graphics_input(EngineState *s) {
 	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
-	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
+	if (s->resmgr->isVGA()) {
 		// This bit sets the foreground and background colors in VGA SCI games
 		gfx_color_t fgcolor;
 		gfx_color_t bgcolor;
@@ -259,7 +257,7 @@ static int create_class_table_sci0(EngineState *s) {
 		Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
 
 		if (script) {
-			if (s->_flags & GF_SCI0_OLD)
+			if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
 				magic_offset = seeker = 2;
 			else
 				magic_offset = seeker = 0;
@@ -364,20 +362,17 @@ int script_init_engine(EngineState *s) {
 
 
 	s->r_acc = s->r_prev = NULL_REG;
-	s->r_amp_rest = 0;
+	s->restAdjust = 0;
 
 	s->_executionStack.clear();    // Start without any execution stack
 	s->execution_stack_base = -1; // No vm is running yet
-
-	s->_kernel = new Kernel(s->resmgr, (s->_flags & GF_SCI0_OLD));
-	s->_vocabulary = new Vocabulary(s->resmgr);
 
 	s->restarting_flags = SCI_GAME_IS_NOT_RESTARTING;
 
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if ((s->_flags & GF_SCI1_LOFSABSOLUTE) && s->_version < SCI_VERSION_1_1)
+	if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
 		s->seg_manager->setExportWidth(1);
 	else
 		s->seg_manager->setExportWidth(0);
@@ -414,11 +409,6 @@ void script_free_engine(EngineState *s) {
 	script_free_vm_memory(s);
 
 	debug(2, "Freeing state-dependant data");
-
-	delete s->_vocabulary;
-	s->_vocabulary = 0;
-	delete s->_kernel;
-	s->_kernel = 0;
 }
 
 void script_free_breakpoints(EngineState *s) {
@@ -466,7 +456,7 @@ int game_init(EngineState *s) {
 	s->successor = NULL; // No successor
 	s->_statusBarText.clear(); // Status bar is blank
 	s->status_bar_foreground = 0;
-	s->status_bar_background = (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) ? 255 : 15;
+	s->status_bar_background = !s->resmgr->isVGA() ? 15 : 255;
 
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
 	str->name = strdup("parser-base");

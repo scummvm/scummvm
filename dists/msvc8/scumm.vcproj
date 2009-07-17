@@ -8,837 +8,186 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="scumm_Debug"
-			IntermediateDirectory="scumm_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;ENABLE_SCUMM_7_8;ENABLE_HE;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/scumm.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="scumm_Release"
-			IntermediateDirectory="scumm_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;ENABLE_SCUMM_7_8;ENABLE_HE;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/scumm.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<Filter
-			Name="smush"
-			>
-			<File
-				RelativePath="..\..\engines\scumm\smush\channel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\channel.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\chunk_type.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\codec1.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\codec37.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\codec37.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\codec47.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\codec47.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\imuse_channel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\saud_channel.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\smush_font.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\smush_font.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\smush_mixer.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\smush_mixer.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\smush_player.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\smush\smush_player.h"
-				>
-			</File>
+		<Filter Name="smush">
+			<File RelativePath="..\..\engines\scumm\smush\channel.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\channel.h" />
+			<File RelativePath="..\..\engines\scumm\smush\chunk_type.h" />
+			<File RelativePath="..\..\engines\scumm\smush\codec1.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\codec37.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\codec37.h" />
+			<File RelativePath="..\..\engines\scumm\smush\codec47.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\codec47.h" />
+			<File RelativePath="..\..\engines\scumm\smush\imuse_channel.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\saud_channel.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_font.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_font.h" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_mixer.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_mixer.h" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_player.cpp" />
+			<File RelativePath="..\..\engines\scumm\smush\smush_player.h" />
 		</Filter>
-		<Filter
-			Name="imuse_digi"
-			>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_codecs.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_music.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_script.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h"
-				>
-			</File>
+		<Filter Name="imuse_digi">
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_bndmgr.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_codecs.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_music.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_script.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_sndmgr.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_tables.h" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse_digi\dimuse_track.h" />
 		</Filter>
-		<Filter
-			Name="insane"
-			>
-			<File
-				RelativePath="..\..\engines\scumm\insane\insane.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\insane\insane.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\insane\insane_ben.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\insane\insane_enemy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\insane\insane_iact.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\insane\insane_scenes.cpp"
-				>
-			</File>
+		<Filter Name="insane">
+			<File RelativePath="..\..\engines\scumm\insane\insane.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane.h" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_ben.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_enemy.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_iact.cpp" />
+			<File RelativePath="..\..\engines\scumm\insane\insane_scenes.cpp" />
 		</Filter>
-		<Filter
-			Name="he"
-			>
-			<File
-				RelativePath="..\..\engines\scumm\he\animation_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\animation_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\cup_player_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\cup_player_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\floodfill_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\floodfill_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\intern_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\logic_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\logic_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\palette_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\resource_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\resource_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v100he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v60he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v70he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v71he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v72he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v80he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\script_v90he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\sound_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\sound_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\sprite_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\sprite_he.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\wiz_he.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\he\wiz_he.h"
-				>
-			</File>
+		<Filter Name="he">
+			<File RelativePath="..\..\engines\scumm\he\animation_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\animation_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\cup_player_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\cup_player_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\floodfill_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\floodfill_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\intern_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\logic_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\logic_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\palette_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\resource_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\resource_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\script_v100he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\script_v60he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\script_v70he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\script_v71he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\script_v72he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\script_v80he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\script_v90he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\sound_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\sound_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\sprite_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\sprite_he.h" />
+			<File RelativePath="..\..\engines\scumm\he\wiz_he.cpp" />
+			<File RelativePath="..\..\engines\scumm\he\wiz_he.h" />
 		</Filter>
-		<Filter
-			Name="imuse"
-			>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse_internal.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse_part.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\instrument.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\instrument.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\sysex.h"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp"
-				>
-			</File>
+		<Filter Name="imuse">
+			<File RelativePath="..\..\engines\scumm\imuse\imuse.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse\imuse.h" />
+			<File RelativePath="..\..\engines\scumm\imuse\imuse_internal.h" />
+			<File RelativePath="..\..\engines\scumm\imuse\imuse_part.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse\imuse_player.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse\instrument.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse\instrument.h" />
+			<File RelativePath="..\..\engines\scumm\imuse\sysex.h" />
+			<File RelativePath="..\..\engines\scumm\imuse\sysex_samnmax.cpp" />
+			<File RelativePath="..\..\engines\scumm\imuse\sysex_scumm.cpp" />
 		</Filter>
-		<File
-			RelativePath="..\..\engines\scumm\actor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\actor.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\akos.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\akos.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\base-costume.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\base-costume.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\bomp.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\bomp.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\boxes.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\boxes.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\camera.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\charset-fontdata.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\charset.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\charset.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\costume.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\costume.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\cursor.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\debugger.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\debugger.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\detection.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\detection_tables.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\dialogs.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\dialogs.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\file.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\file.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\file_nes.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\file_nes.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\gfx.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\gfx.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\help.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\help.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\input.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\intern.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\midiparser_eup.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\midiparser_ro.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\music.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\nut_renderer.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\nut_renderer.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\object.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\object.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\palette.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_mod.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_mod.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_nes.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_nes.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v1.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v2.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v2a.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v2a.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v2cms.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v3a.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\player_v3a.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\resource.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\resource.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\resource_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\resource_v3.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\resource_v4.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\room.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\saveload.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v0.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v2.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v3.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v4.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v5.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v6.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\script_v8.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm-md5.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v0.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v2.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v3.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v4.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v5.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v6.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v7.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\scumm_v8.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\string.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\usage_bits.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\usage_bits.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\util.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\util.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\vars.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\verbs.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\scumm\verbs.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\scumm\actor.cpp" />
+		<File RelativePath="..\..\engines\scumm\actor.h" />
+		<File RelativePath="..\..\engines\scumm\akos.cpp" />
+		<File RelativePath="..\..\engines\scumm\akos.h" />
+		<File RelativePath="..\..\engines\scumm\base-costume.cpp" />
+		<File RelativePath="..\..\engines\scumm\base-costume.h" />
+		<File RelativePath="..\..\engines\scumm\bomp.cpp" />
+		<File RelativePath="..\..\engines\scumm\bomp.h" />
+		<File RelativePath="..\..\engines\scumm\boxes.cpp" />
+		<File RelativePath="..\..\engines\scumm\boxes.h" />
+		<File RelativePath="..\..\engines\scumm\camera.cpp" />
+		<File RelativePath="..\..\engines\scumm\charset-fontdata.cpp" />
+		<File RelativePath="..\..\engines\scumm\charset.cpp" />
+		<File RelativePath="..\..\engines\scumm\charset.h" />
+		<File RelativePath="..\..\engines\scumm\costume.cpp" />
+		<File RelativePath="..\..\engines\scumm\costume.h" />
+		<File RelativePath="..\..\engines\scumm\cursor.cpp" />
+		<File RelativePath="..\..\engines\scumm\debugger.cpp" />
+		<File RelativePath="..\..\engines\scumm\debugger.h" />
+		<File RelativePath="..\..\engines\scumm\detection.cpp" />
+		<File RelativePath="..\..\engines\scumm\detection.h" />
+		<File RelativePath="..\..\engines\scumm\detection_tables.h" />
+		<File RelativePath="..\..\engines\scumm\dialogs.cpp" />
+		<File RelativePath="..\..\engines\scumm\dialogs.h" />
+		<File RelativePath="..\..\engines\scumm\file.cpp" />
+		<File RelativePath="..\..\engines\scumm\file.h" />
+		<File RelativePath="..\..\engines\scumm\file_nes.cpp" />
+		<File RelativePath="..\..\engines\scumm\file_nes.h" />
+		<File RelativePath="..\..\engines\scumm\gfx.cpp" />
+		<File RelativePath="..\..\engines\scumm\gfx.h" />
+		<File RelativePath="..\..\engines\scumm\help.cpp" />
+		<File RelativePath="..\..\engines\scumm\help.h" />
+		<File RelativePath="..\..\engines\scumm\input.cpp" />
+		<File RelativePath="..\..\engines\scumm\intern.h" />
+		<File RelativePath="..\..\engines\scumm\midiparser_eup.cpp" />
+		<File RelativePath="..\..\engines\scumm\midiparser_ro.cpp" />
+		<File RelativePath="..\..\engines\scumm\music.h" />
+		<File RelativePath="..\..\engines\scumm\nut_renderer.cpp" />
+		<File RelativePath="..\..\engines\scumm\nut_renderer.h" />
+		<File RelativePath="..\..\engines\scumm\object.cpp" />
+		<File RelativePath="..\..\engines\scumm\object.h" />
+		<File RelativePath="..\..\engines\scumm\palette.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_mod.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_mod.h" />
+		<File RelativePath="..\..\engines\scumm\player_nes.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_nes.h" />
+		<File RelativePath="..\..\engines\scumm\player_v1.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_v1.h" />
+		<File RelativePath="..\..\engines\scumm\player_v2.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_v2.h" />
+		<File RelativePath="..\..\engines\scumm\player_v2a.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_v2a.h" />
+		<File RelativePath="..\..\engines\scumm\player_v2cms.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_v3a.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_v3a.h" />
+		<File RelativePath="..\..\engines\scumm\resource.cpp" />
+		<File RelativePath="..\..\engines\scumm\resource.h" />
+		<File RelativePath="..\..\engines\scumm\resource_v2.cpp" />
+		<File RelativePath="..\..\engines\scumm\resource_v3.cpp" />
+		<File RelativePath="..\..\engines\scumm\resource_v4.cpp" />
+		<File RelativePath="..\..\engines\scumm\room.cpp" />
+		<File RelativePath="..\..\engines\scumm\saveload.cpp" />
+		<File RelativePath="..\..\engines\scumm\saveload.h" />
+		<File RelativePath="..\..\engines\scumm\script.cpp" />
+		<File RelativePath="..\..\engines\scumm\script.h" />
+		<File RelativePath="..\..\engines\scumm\script_v0.cpp" />
+		<File RelativePath="..\..\engines\scumm\script_v2.cpp" />
+		<File RelativePath="..\..\engines\scumm\script_v3.cpp" />
+		<File RelativePath="..\..\engines\scumm\script_v4.cpp" />
+		<File RelativePath="..\..\engines\scumm\script_v5.cpp" />
+		<File RelativePath="..\..\engines\scumm\script_v6.cpp" />
+		<File RelativePath="..\..\engines\scumm\script_v8.cpp" />
+		<File RelativePath="..\..\engines\scumm\scumm-md5.h" />
+		<File RelativePath="..\..\engines\scumm\scumm.cpp" />
+		<File RelativePath="..\..\engines\scumm\scumm.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v0.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v2.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v3.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v4.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v5.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v6.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v7.h" />
+		<File RelativePath="..\..\engines\scumm\scumm_v8.h" />
+		<File RelativePath="..\..\engines\scumm\sound.cpp" />
+		<File RelativePath="..\..\engines\scumm\sound.h" />
+		<File RelativePath="..\..\engines\scumm\string.cpp" />
+		<File RelativePath="..\..\engines\scumm\usage_bits.cpp" />
+		<File RelativePath="..\..\engines\scumm\usage_bits.h" />
+		<File RelativePath="..\..\engines\scumm\util.cpp" />
+		<File RelativePath="..\..\engines\scumm\util.h" />
+		<File RelativePath="..\..\engines\scumm\vars.cpp" />
+		<File RelativePath="..\..\engines\scumm\verbs.cpp" />
+		<File RelativePath="..\..\engines\scumm\verbs.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

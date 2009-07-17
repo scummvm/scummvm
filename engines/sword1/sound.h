@@ -95,6 +95,8 @@ public:
 
 	void engine(void);
 
+	void checkSpeechFileEndianness();
+
 private:
 	uint8 _sfxVolL, _sfxVolR, _speechVolL, _speechVolR;
 	void playSample(QueueElement *elem);
@@ -116,6 +118,7 @@ private:
 	uint8		 _endOfQueue;
 	Audio::Mixer *_mixer;
 	ResMan *_resMan;
+	bool _bigEndianSpeech;
 	char _filePath[100];
 	static const char _musicList[270];
 	static const uint16 _roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM];

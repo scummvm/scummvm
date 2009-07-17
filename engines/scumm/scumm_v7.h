@@ -103,6 +103,7 @@ protected:
 
 	virtual void scummLoop_handleSound();
 	virtual void scummLoop_handleDrawing();
+	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
 	virtual void setupScumm();

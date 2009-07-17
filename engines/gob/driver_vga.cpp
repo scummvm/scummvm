@@ -70,24 +70,22 @@ void VGAVideoDriver::fillRect(SurfaceDesc &dest, int16 left, int16 top,
 }
 
 void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
-		Video::FontDesc *fontDesc, byte color1, byte color2,
+		const Font &font, byte color1, byte color2,
 		byte transp, SurfaceDesc &dest) {
-	byte *src, *dst;
 	uint16 data;
 
-	src = fontDesc->dataPtr +
-		(item - fontDesc->startItem) * (fontDesc->itemSize & 0xFF);
-	dst = dest.getVidMem() + x + dest.getWidth() * y;
+	const byte *src = font.getCharData(item);
+	byte *dst = dest.getVidMem() + x + dest.getWidth() * y;
 
-	int nWidth = fontDesc->itemWidth;
+	int nWidth = font.getCharWidth();
 
 	if (nWidth & 7)
 		nWidth = (nWidth & 0xF8) + 8;
 
 	nWidth >>= 3;
 
-	for (int i = 0; i < fontDesc->itemHeight; i++) {
-		int width = fontDesc->itemWidth;
+	for (int i = 0; i < font.getCharHeight(); i++) {
+		int width = font.getCharWidth();
 
 		for (int k = 0; k < nWidth; k++) {
 
@@ -106,7 +104,7 @@ void VGAVideoDriver::drawLetter(unsigned char item, int16 x, int16 y,
 
 		}
 
-		dst += dest.getWidth() - fontDesc->itemWidth;
+		dst += dest.getWidth() - font.getCharWidth();
 	}
 }
 

@@ -9,317 +9,50 @@
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="sword1_Debug"
-			IntermediateDirectory="sword1_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword1.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="sword1_Release"
-			IntermediateDirectory="sword1_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS;USE_MPEG2"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/sword1.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\sword1\animation.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\animation.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\collision.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\control.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\control.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\debug.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\debug.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\eventman.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\eventman.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\logic.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\logic.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\memman.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\memman.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\menu.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\menu.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\mouse.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\mouse.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\music.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\music.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\object.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\objectman.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\objectman.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\resman.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\resman.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\router.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\router.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\screen.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\screen.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\sound.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\staticres.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\sword1.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\sword1.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\sworddefs.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\swordres.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\text.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\sword1\text.h"
-			>
-		</File>
+		<File RelativePath="..\..\engines\sword1\animation.cpp" />
+		<File RelativePath="..\..\engines\sword1\animation.h" />
+		<File RelativePath="..\..\engines\sword1\collision.h" />
+		<File RelativePath="..\..\engines\sword1\control.cpp" />
+		<File RelativePath="..\..\engines\sword1\control.h" />
+		<File RelativePath="..\..\engines\sword1\debug.cpp" />
+		<File RelativePath="..\..\engines\sword1\debug.h" />
+		<File RelativePath="..\..\engines\sword1\detection.cpp" />
+		<File RelativePath="..\..\engines\sword1\eventman.cpp" />
+		<File RelativePath="..\..\engines\sword1\eventman.h" />
+		<File RelativePath="..\..\engines\sword1\logic.cpp" />
+		<File RelativePath="..\..\engines\sword1\logic.h" />
+		<File RelativePath="..\..\engines\sword1\memman.cpp" />
+		<File RelativePath="..\..\engines\sword1\memman.h" />
+		<File RelativePath="..\..\engines\sword1\menu.cpp" />
+		<File RelativePath="..\..\engines\sword1\menu.h" />
+		<File RelativePath="..\..\engines\sword1\mouse.cpp" />
+		<File RelativePath="..\..\engines\sword1\mouse.h" />
+		<File RelativePath="..\..\engines\sword1\music.cpp" />
+		<File RelativePath="..\..\engines\sword1\music.h" />
+		<File RelativePath="..\..\engines\sword1\object.h" />
+		<File RelativePath="..\..\engines\sword1\objectman.cpp" />
+		<File RelativePath="..\..\engines\sword1\objectman.h" />
+		<File RelativePath="..\..\engines\sword1\resman.cpp" />
+		<File RelativePath="..\..\engines\sword1\resman.h" />
+		<File RelativePath="..\..\engines\sword1\router.cpp" />
+		<File RelativePath="..\..\engines\sword1\router.h" />
+		<File RelativePath="..\..\engines\sword1\screen.cpp" />
+		<File RelativePath="..\..\engines\sword1\screen.h" />
+		<File RelativePath="..\..\engines\sword1\sound.cpp" />
+		<File RelativePath="..\..\engines\sword1\sound.h" />
+		<File RelativePath="..\..\engines\sword1\staticres.cpp" />
+		<File RelativePath="..\..\engines\sword1\sword1.cpp" />
+		<File RelativePath="..\..\engines\sword1\sword1.h" />
+		<File RelativePath="..\..\engines\sword1\sworddefs.h" />
+		<File RelativePath="..\..\engines\sword1\swordres.h" />
+		<File RelativePath="..\..\engines\sword1\text.cpp" />
+		<File RelativePath="..\..\engines\sword1\text.h" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

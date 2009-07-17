@@ -527,6 +527,11 @@ begin_credits("Credits");
 		  add_person("Paul Gilbert", "dreammaster", "");
 	  end_section();
 
+	  begin_section("Drascula");
+		  add_person("Filippos Karapetis", "[md5]", "");
+		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
+	  end_section();
+
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Joost Peters", "joostp", "");
@@ -832,7 +837,7 @@ begin_credits("Credits");
 		  add_person("Dob&oacute; Bal&aacute;zs", "draven", "Website design");
 		  add_person("Yaroslav Fedevych", "jafd", "HTML/CSS for the website");
 		  add_person("David Jensen", "Tyst", "SVG logo conversion");
-		  add_person("Jean Marc", "", "ScummVM logo");
+		  add_person("Jean Marc Gimenez", "", "ScummVM logo");
 		  add_person("", "Raina", "ScummVM forum buttons");
 	  end_persons();
 	end_section();

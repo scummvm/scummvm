@@ -158,29 +158,29 @@ bool Resources::load(const Common::String &fileName) {
 
 	_extFile = fileBase + ".ext";
 
-	if (!loadTOTResourceTable()) {
-		unload();
+	bool hasTOTRes = loadTOTResourceTable();
+	bool hasEXTRes = loadEXTResourceTable();
+
+	if (!hasTOTRes && !hasEXTRes)
 		return false;
+
+	if (hasTOTRes) {
+		if (!loadTOTTextTable(fileBase)) {
+			unload();
+			return false;
+		}
+
+		if (!loadIMFile()) {
+			unload();
+			return false;
+		}
 	}
 
-	if (!loadEXTResourceTable()) {
-		unload();
-		return false;
-	}
-
-	if (!loadTOTTextTable(fileBase)) {
-		unload();
-		return false;
-	}
-
-	if (!loadIMFile()) {
-		unload();
-		return false;
-	}
-
-	if (!loadEXFile()) {
-		unload();
-		return false;
+	if (hasEXTRes) {
+		if (!loadEXFile()) {
+			unload();
+			return false;
+		}
 	}
 
 	return true;
@@ -255,7 +255,7 @@ bool Resources::loadTOTResourceTable() {
 		TOTResourceItem &item = _totResourceTable->items[i];
 
 		item.offset = stream->readSint32LE();
-		item.size   = stream->readSint16LE();
+		item.size   = stream->readUint16LE();
 		item.width  = stream->readSint16LE();
 		item.height = stream->readSint16LE();
 
@@ -286,7 +286,7 @@ bool Resources::loadEXTResourceTable() {
 
 	DataStream *stream = _vm->_dataIO->getDataStream(_extFile.c_str());
 	if (!stream)
-		return true;
+		return false;
 
 	_extResourceTable->itemsCount = stream->readSint16LE();
 	_extResourceTable->unknown    = stream->readByte();
@@ -588,15 +588,22 @@ Resource *Resources::getTOTResource(uint16 id) const {
 	if (totItem.type == kResourceTOT)
 		data = getTOTData(totItem);
 
-	if (!data)
+	if (!data) {
+		warning("Failed to load TOT resource (%s, %d/%d, %d)",
+				_totFile.c_str(), id, _totResourceTable->itemsCount - 1, totItem.type);
 		return 0;
+	}
 
 	return new Resource(data, totItem.size, false, totItem.width, totItem.height);
 }
 
 Resource *Resources::getEXTResource(uint16 id) const {
-	if (!_extResourceTable || (id > _extResourceTable->itemsCount))
+	if (!_extResourceTable || (id > _extResourceTable->itemsCount)) {
+		warning("Trying to load non-existent EXT resource (%s, %d/%d)",
+				_totFile.c_str(), id,
+				_extResourceTable ? (_extResourceTable->itemsCount - 1) : -1);
 		return 0;
+	}
 
 	EXTResourceItem &extItem = _extResourceTable->items[id];
 
@@ -617,8 +624,11 @@ Resource *Resources::getEXTResource(uint16 id) const {
 	if (extItem.type == kResourceEX)
 		data = getEXData(extItem, size);
 
-	if (!data)
+	if (!data) {
+		warning("Failed to load EXT resource (%s, %d/%d, %d)",
+				_totFile.c_str(), id, _extResourceTable->itemsCount - 1, extItem.type);
 		return 0;
+	}
 
 	if (extItem.packed) {
 		byte *packedData = data;
@@ -635,7 +645,7 @@ Resource *Resources::getEXTResource(uint16 id) const {
 }
 
 byte *Resources::getTOTData(TOTResourceItem &totItem) const {
-	if (totItem.size < 0)
+	if (totItem.size == 0)
 		return 0;
 
 	int32 offset = _totResourceTable->dataOffset + totItem.offset - _totResStart;
@@ -647,7 +657,7 @@ byte *Resources::getTOTData(TOTResourceItem &totItem) const {
 }
 
 byte *Resources::getIMData(TOTResourceItem &totItem) const {
-	if (totItem.size < 0)
+	if (totItem.size == 0)
 		return 0;
 
 	int32 indexOffset = totItem.index * 4;

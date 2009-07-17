@@ -129,7 +129,6 @@ void AGOSEngine::vc36_pause() {
 	_keyPressed.reset();
 
 	windowPutChar(_windowArray[2], 13);
-	windowPutChar(_windowArray[2], 128);
 	_wiped = oldWiped;
 
 	_videoLockOut &= ~8;
@@ -168,7 +167,7 @@ void AGOSEngine::vc48_specialEffect() {
 					if (dst[w] == 15)
 						dst[w] = 4;
 				}
-				dst += _screenWidth;
+				dst += screen->pitch;
 			}
 			_system->unlockScreen();
 		} else if (num == 2) {

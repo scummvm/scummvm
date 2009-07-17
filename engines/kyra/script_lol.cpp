@@ -135,6 +135,11 @@ int LoLEngine::olol_drawScene(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_rollDice(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_rollDice(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	return rollDice(stackPos(0), stackPos(1));
+}
+
 int LoLEngine::olol_moveParty(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_moveParty(%p) (%d)", (const void *)script, stackPos(0));
 	int mode = stackPos(0);
@@ -831,10 +836,10 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->hitPoints = (l->properties->hitPoints * _monsterModifiers[_monsterDifficulty]) >> 8;
 
 		if (_currentLevel == 12 && l->type == 2)
-			l->hitPoints = (l->hitPoints * (_rnd.getRandomNumberRng(1, 128) + 192)) >> 8;
+			l->hitPoints = (l->hitPoints * (rollDice(1, 128) + 192)) >> 8;
 
 		l->numDistAttacks = l->properties->numDistAttacks;
-		l->distAttackTick = _rnd.getRandomNumberRng(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
+		l->distAttackTick = rollDice(1, calcMonsterSkillLevel(l->id | 0x8000, 8)) - 1;
 		l->flyingHeight = 2;
 		l->flags = stackPos(5);
 		l->assignedItems = 0;
@@ -1366,18 +1371,18 @@ int LoLEngine::olol_characterSkillTest(EMCState *script){
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSkillTest(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
 	int skill = stackPos(0);
 	int n = countActiveCharacters();
-	uint m = 0;
+	int m = 0;
 	int c = 0;
 
 	for	(int i = 0; i < n ; i++) {
-		uint v = _characters[i].skillModifiers[skill] + _characters[i].skillLevels[skill] + 25;
+		int v = _characters[i].skillModifiers[skill] + _characters[i].skillLevels[skill] + 25;
 		if (v > m) {
 			m = v;
 			c = i;
 		}
 	}
 
-	return (_rnd.getRandomNumberRng(1, 100) > m) ? -1 : c;
+	return (rollDice(1, 100) > m) ? -1 : c;
 }
 
 int LoLEngine::olol_countAllMonsters(EMCState *script){
@@ -1440,7 +1445,7 @@ int LoLEngine::olol_calcInflictableDamage(EMCState *script) {
 int LoLEngine::olol_getInflictedDamage(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getInflictedDamage(%p) (%d)", (const void *)script, stackPos(0));
 	int mx = stackPos(0);
-	return mx ? _rnd.getRandomNumberRng(2, mx) : 0;
+	return rollDice(2, mx);
 }
 
 int LoLEngine::olol_checkForCertainPartyMember(EMCState *script) {
@@ -2340,8 +2345,8 @@ int LoLEngine::tlol_processWsaFrame(const TIM *tim, const uint16 *param) {
 	int h2 = (h1 * factor) / 100;
 
 	anim->wsa->displayFrame(frame, 2, x1, y1, anim->wsaCopyParams & 0xF0FF, 0, 0);
-	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, _flags.isDemo ? 0 : 8, 0);
-	if (!_flags.isDemo)
+	_screen->wsaFrameAnimationStep(x1, y1, x2, y2, w1, h1, w2, h2, 2, _flags.isDemo && _flags.platform != Common::kPlatformPC98 ? 0 : 8, 0);
+	if (!_flags.isDemo && _flags.platform != Common::kPlatformPC98)
 		_screen->checkedPageUpdate(8, 4);
 	_screen->updateScreen();
 
@@ -2617,7 +2622,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_setWallType);
 	Opcode(olol_getWallType);
 	Opcode(olol_drawScene);
-	Opcode(o1_getRand);
+	Opcode(olol_rollDice);
 
 	// 0x04
 	Opcode(olol_moveParty);

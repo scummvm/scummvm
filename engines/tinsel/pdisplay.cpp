@@ -55,14 +55,6 @@ extern int newestString;	// The overrun counter, in STRRES.C
 #endif
 
 
-//----------------- EXTERNAL FUNCTIONS ---------------------
-
-// in BG.C
-extern int BgWidth(void);
-extern int BgHeight(void);
-
-
-
 //----------------- LOCAL DEFINES --------------------
 
 #define LPOSX	295		// X-co-ord of lead actor's position display

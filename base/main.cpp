@@ -416,11 +416,15 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
+			#ifndef FORCE_RTL
 			if (result == 0 && !g_system->getEventManager()->shouldRTL())
 				break;
-
+			#endif
 			// Reset RTL flag in case we want to load another engine
 			g_system->getEventManager()->resetRTL();
+			#ifdef FORCE_RTL
+			g_system->getEventManager()->resetQuit();
+			#endif
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.

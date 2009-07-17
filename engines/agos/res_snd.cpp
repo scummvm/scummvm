@@ -332,7 +332,7 @@ void AGOSEngine::playSting(uint16 soundId) {
 
 	mus_file.seek(soundId * 2, SEEK_SET);
 	mus_offset = mus_file.readUint16LE();
-	if (mus_file.ioFailed())
+	if (mus_file.err())
 		error("playSting: Can't read sting %d offset", soundId);
 
 	mus_file.seek(mus_offset, SEEK_SET);
@@ -527,6 +527,7 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 	byte *dst;
 	uint32 offs, size = 0;
+	uint32 rate = 8000;
 
 	if (_curSfxFile == NULL)
 		return;
@@ -570,13 +571,23 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 		offs = READ_BE_UINT32(dst + 8);
 	}
 
-	// TODO: Handle other sound flags and frequency
+	if (getGameType() == GType_PN) {
+		if (freq == 0) {
+			rate = 4600;
+		} else if (freq == 1) {
+			rate = 7400;
+		} else {
+			rate = 9400;
+		}
+	}
+
+	// TODO: Handle other sound flags in Amiga/AtariST versions
 	if (flags == 2 && _sound->isSfxActive()) {
-		_sound->queueSound(dst + offs, sound, size, 8000);
+		_sound->queueSound(dst + offs, sound, size, rate);
 	} else {
 		if (flags == 0)
 			_sound->stopSfx();
-		_sound->playRawData(dst + offs, sound, size, 8000);
+		_sound->playRawData(dst + offs, sound, size, rate);
 	}
 }
 

@@ -276,8 +276,6 @@ protected:
 
 	Subroutine *_subroutineList;
 
-	uint16 _dxSurfacePitch;
-
 	uint8 _recursionDepth;
 
 	uint32 _lastVgaTick;
@@ -527,8 +525,6 @@ protected:
 	uint8 _window3Flag;
 	uint8 _window4Flag;
 	uint8 _window6Flag;
-	byte *_window4BackScn;
-	byte *_window6BackScn;
 
 	uint16 _moveXMin, _moveYMin;
 	uint16 _moveXMax, _moveYMax;
@@ -566,9 +562,11 @@ protected:
 	byte _saveLoadType, _saveLoadSlot;
 	char _saveLoadName[108];
 
-	byte *_backGroundBuf;
-	byte *_backBuf;
-	byte *_scaleBuf;
+	Graphics::Surface *_backGroundBuf;
+	Graphics::Surface *_backBuf;
+	Graphics::Surface *_scaleBuf;
+	Graphics::Surface *_window4BackScn;
+	Graphics::Surface *_window6BackScn;
 
 	Common::RandomSource _rnd;
 
@@ -615,8 +613,8 @@ protected:
 
 	void paletteFadeOut(byte *palPtr, uint num, uint size);
 
-	byte *allocateItem(uint size);
-	byte *allocateTable(uint size);
+	void *allocateItem(uint size);
+	void *allocateTable(uint size);
 	void alignTableMem();
 
 	Child *findChildOfType(Item *i, uint child);
@@ -673,7 +671,7 @@ protected:
 	void uncompressText(byte *ptr);
 	byte *uncompressToken(byte a, byte *ptr);
 
-	void showMessageFormat(const char *s, ...);
+	void showMessageFormat(const char *s, ...) GCC_PRINTF(2, 3);
 	const byte *getStringPtrByID(uint16 stringId, bool upperCase = false);
 	const byte *getLocalStringByID(uint16 stringId);
 	uint getNextStringID();
@@ -1267,8 +1265,8 @@ protected:
 
 #ifdef ENABLE_PN
 class AGOSEngine_PN : public AGOSEngine {
-	struct stackframe {
-		struct stackframe *nextframe;
+	struct StackFrame {
+		StackFrame *nextframe;
 		int16 flag[6];
 		int16 param[8];
 		int16 classnum;
@@ -1278,7 +1276,7 @@ class AGOSEngine_PN : public AGOSEngine {
 		int16 linenum;
 		int16 process;
 		jmp_buf *savearea;
-		stackframe() { memset(this, 0, sizeof(*this)); }
+		StackFrame() { memset(this, 0, sizeof(*this)); }
 	};
 
 
@@ -1286,6 +1284,7 @@ class AGOSEngine_PN : public AGOSEngine {
 	void demoSeq();
 	void introSeq();
 	void setupBoxes();
+	int readfromline();
 public:
 	AGOSEngine_PN(OSystem *system);
 	~AGOSEngine_PN();
@@ -1299,10 +1298,10 @@ public:
 	int actCallD(int n);
 
 	void opn_opcode00();
-	void opn_opcode01();
-	void opn_opcode02();
-	void opn_opcode03();
-	void opn_opcode04();
+	void opn_add();
+	void opn_sub();
+	void opn_mul();
+	void opn_div();
 	void opn_opcode05();
 	void opn_opcode06();
 	void opn_opcode07();
@@ -1315,10 +1314,10 @@ public:
 	void opn_opcode14();
 	void opn_opcode15();
 	void opn_opcode16();
-	void opn_opcode17();
-	void opn_opcode18();
-	void opn_opcode19();
-	void opn_opcode20();
+	void opn_lt();
+	void opn_gt();
+	void opn_eq();
+	void opn_neq();
 	void opn_opcode21();
 	void opn_opcode22();
 	void opn_opcode23();
@@ -1359,14 +1358,14 @@ public:
 	void opn_opcode62();
 	void opn_opcode63();
 
-	stackframe *_stackbase;
+	StackFrame *_stackbase;
 
 	byte *_dataBase, *_textBase;
 	uint32 _dataBaseSize, _textBaseSize;
 
 	HitArea _invHitAreas[45];
 
-        char _buffer[80];
+	char _buffer[80];
 	char _inputline[61];
 	char _saveFile[20];
 	char _sb[80];
@@ -1392,7 +1391,7 @@ public:
 	uint16 _objects;
 	int16 _objectCountS;
 
-        int16 _bp;
+	int16 _bp;
 	int16 _xofs;
 	int16 _havinit;
 	uint16 _seed;
@@ -1977,7 +1976,7 @@ protected:
 	virtual void printScreenText(uint vgaSpriteId, uint color, const char *stringPtr, int16 x, int16 y, int16 width);
 
 	void printInteractText(uint16 num, const char *string);
-	void sendInteractText(uint16 num, const char *fmt, ...);
+	void sendInteractText(uint16 num, const char *fmt, ...) GCC_PRINTF(3, 4);
 
 	void checkLinkBox();
 	void hyperLinkOn(uint16 x);

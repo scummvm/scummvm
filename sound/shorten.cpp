@@ -23,6 +23,10 @@
  *
  */
 
+#include "sound/shorten.h"
+
+#ifdef SOUND_SHORTEN_H
+
 // Based on etree's Shorten tool, version 3.6.1
 // http://etree.org/shnutils/shorten/
 
@@ -32,7 +36,6 @@
 #include "common/util.h"
 #include "common/stream.h"
 
-#include "sound/shorten.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -526,3 +529,6 @@ AudioStream *makeShortenStream(Common::SeekableReadStream &stream) {
 }
 
 } // End of namespace Audio
+
+#endif // defined(SOUND_SHORTEN_H)
+

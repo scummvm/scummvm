@@ -105,6 +105,22 @@ Widget *ListWidget::findWidget(int x, int y) {
 }
 
 void ListWidget::setSelected(int item) {
+	// HACK/FIXME: If our _listIndex has a non zero size,
+	// we will need to look up, whether the user selected
+	// item is present in that list
+	if (_listIndex.size()) {
+		int filteredItem = -1;
+
+		for (uint i = 0; i < _listIndex.size(); ++i) {
+			if (_listIndex[i] == item) {
+				filteredItem = i;
+				break;
+			}
+		}
+
+		item = filteredItem;
+	}
+
 	assert(item >= -1 && item < (int)_list.size());
 
 	// We only have to do something if the widget is enabled and the selection actually changes
@@ -131,6 +147,7 @@ void ListWidget::setList(const StringList &list) {
 	_dataList = list;
 	_list = list;
 	_filter.clear();
+	_listIndex.clear();
 
 	int size = list.size();
 	if (_currentPos >= size)
@@ -387,15 +404,14 @@ void ListWidget::drawWidget() {
 	for (i = 0, pos = _currentPos; i < _entriesPerPage && pos < len; i++, pos++) {
 		const int y = _y + _topPadding + kLineHeight * i;
 		const int fontHeight = kLineHeight;
-		bool inverted = false;
+		ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone;
 
 		// Draw the selected item inverted, on a highlighted background.
 		if (_selectedItem == pos) {
 			if (_hasFocus)
-				inverted = true;
+				inverted = ThemeEngine::kTextInversionFocus;
 			else
-				g_gui.theme()->drawWidgetBackground(Common::Rect(_x, y - 1, _x + _w - 1, y + fontHeight - 1),
-													0, ThemeEngine::kWidgetBackgroundBorderSmall);
+				inverted = ThemeEngine::kTextInversion;
 		}
 
 		Common::Rect r(getEditRect());
@@ -560,9 +576,12 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 	if (_filter.empty()) {
 		// No filter -> display everything
 		_list = _dataList;
+		_listIndex.clear();
 	} else {
-		// Restrict the list to everything which contains _filter as a substring,
-		// ignoring case.
+		// Restrict the list to everything which contains all words in _filter
+		// as substrings, ignoring case.
+		
+		Common::StringTokenizer tok(_filter);
 		String tmp;
 		int n = 0;
 
@@ -572,7 +591,16 @@ void ListWidget::setFilter(const String &filter, bool redraw) {
 		for (StringList::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
 			tmp = *i;
 			tmp.toLowercase();
-			if (tmp.contains(_filter)) {
+			bool matches = true;
+			tok.reset();
+			while (!tok.empty()) {
+				if (!tmp.contains(tok.nextToken())) {
+					matches = false;
+					break;
+				}
+			}
+
+			if (matches) {
 				_list.push_back(*i);
 				_listIndex.push_back(n);
 			}

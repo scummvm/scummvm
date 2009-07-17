@@ -267,6 +267,12 @@ static void fgets_wrapper(EngineState *s, char *dest, int maxsize, int handle) {
 		return;
 	}
 	f->_in->readLine_NEW(dest, maxsize);
+	// The returned string must not have an ending LF
+	int strSize = strlen(dest);
+	if (strSize > 0) {
+		if (dest[strSize - 1] == 0x0A)
+			dest[strSize - 1] = 0;
+	}
 
 	debugC(2, kDebugLevelFile, "FGets'ed \"%s\"\n", dest);
 }
@@ -328,7 +334,7 @@ reg_t kGetCWD(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 void delete_savegame(EngineState *s, int savedir_nr) {
 	Common::String filename = ((Sci::SciEngine*)g_engine)->getSavegameName(savedir_nr);
 
-	sciprintf("Deleting savegame '%s'\n", filename.c_str());
+	//printf("Deleting savegame '%s'\n", filename.c_str());
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
 	saveFileMan->removeSavefile(filename);
@@ -658,14 +664,14 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				shrink_execution_stack(s, s->execution_stack_base + 1);
 			} else {
 				s->r_acc = make_reg(0, 1);
-				sciprintf("Restoring failed (game_id = '%s').\n", game_id);
+				warning("Restoring failed (game_id = '%s')", game_id);
 			}
 			return s->r_acc;
 		}
 	}
 
 	s->r_acc = make_reg(0, 1);
-	sciprintf("Savegame #%d not found!\n", savedir_nr);
+	warning("Savegame #%d not found", savedir_nr);
 
 	return s->r_acc;
 }

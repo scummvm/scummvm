@@ -600,12 +600,12 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0)
 		return;
 
-	if ((r << 1) > w || (r << 1) > h)
-		r = MIN(w >> 1, h >> 1);
+	if ((r * 2) > w || (r * 2) > h)
+		r = MIN(w /2, h / 2);
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
-		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset < Base::_activeSurface->h) {
+		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h) {
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
@@ -919,10 +919,12 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	}
 
 	int i, j;
+
 	x = MAX(x - bevel, 0);
 	y = MAX(y - bevel, 0);
-	h += bevel << 1;
-	w += bevel << 1;
+
+	w = MIN(w + (bevel * 2), (int)_activeSurface->w);
+	h = MIN(h + (bevel * 2), (int)_activeSurface->h);
 
 	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 

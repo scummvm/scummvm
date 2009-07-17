@@ -81,14 +81,14 @@ void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::Stri
 	gfx_color_t black = s->ega_colors[0];
 
 	if (!status_bar->_visual) {
-		GFXERROR("Attempt to change title bar without visual!\n");
+		error("Attempt to change title bar without visual");
 		return;
 	}
 
 	state = status_bar->_visual->_gfxState;
 
 	if (!state) {
-		GFXERROR("Attempt to change title bar with stateless visual!\n");
+		error("Attempt to change title bar with stateless visual");
 		return;
 	}
 
@@ -121,7 +121,8 @@ void sciw_set_status_bar(EngineState *s, GfxPort *status_bar, const Common::Stri
 
 static void sciw_make_window_fit(rect_t *rect, GfxPort *parent) {
 	// This window is meant to cover the whole screen, so we allow it to go through.
-	if (rect->width == 319 && rect->height == 189) return;
+	if (rect->width == 319 && rect->height == 189)
+		return;
 
 	if (rect->x + rect->width > parent->_bounds.x + parent->_bounds.width)
 		rect->x -= (rect->x + rect->width) - (parent->_bounds.x + parent->_bounds.width) + 2;
@@ -220,7 +221,7 @@ GfxPort *sciw_new_window(EngineState *s,
 
 		if (!(flags & kWindowNoDropShadow)) {
 			if (gfxop_set_color(state, &black, 0, 0, 0, 0x80, bgcolor.priority, -1)) {
-				GFXERROR("Could not get black/semitrans color entry!\n");
+				error("Could not get black/semitrans color entry");
 				return NULL;
 			}
 
@@ -236,7 +237,7 @@ GfxPort *sciw_new_window(EngineState *s,
 		// Draw frame
 
 		if (gfxop_set_color(state, &black, 0, 0, 0, 0, bgcolor.priority, -1)) {
-			GFXERROR("Could not get black color entry!\n");
+			error("Could not get black color entry");
 			return NULL;
 		}
 
@@ -418,7 +419,7 @@ GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone, int view, i
 	gfxw_set_id(list, ID.segment, ID.offset);
 
 	if (!port->_visual) {
-		GFXERROR("Attempting to create icon control for virtual port!\n");
+		error("Attempting to create icon control for virtual port");
 		return NULL;
 	}
 
@@ -429,7 +430,7 @@ GfxList *sciw_new_icon_control(GfxPort *port, reg_t ID, rect_t zone, int view, i
 	                          ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
 
 	if (!icon) {
-		GFXERROR("Attempt to create icon control with cel %d/%d/%d (invalid)\n", view, loop, cel);
+		error("Attempt to create icon control with cel %d/%d/%d (invalid)", view, loop, cel);
 		return NULL;
 	}
 
@@ -461,7 +462,7 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 	columns = (zone.height - 20);
 
 	if (font_height <= 0) {
-		GFXERROR("Attempt to create list control with invalid font %d\n", font_nr);
+		error("Attempt to create list control with invalid font %d", font_nr);
 		delete list;
 		return NULL;
 	}
@@ -565,7 +566,7 @@ GfxPort *sciw_new_menu(EngineState *s, GfxPort *status_bar, Menubar *menubar, in
 		return NULL;
 
 	if (selection >= (int)menubar->_menus.size()) {
-		GFXERROR("Attempt to make menu #%d of %d\n", selection, menubar->_menus.size());
+		error("Attempt to make menu #%d of %d", selection, menubar->_menus.size());
 		return NULL;
 	}
 

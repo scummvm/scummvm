@@ -73,7 +73,7 @@ add_engine agi "AGI" yes
 add_engine agos "AGOS" yes "pn"
 add_engine pn "Personal Nightmare" no
 add_engine cine "Cinematique evo 1" yes
-add_engine cruise "Cinematique evo 2" no
+add_engine cruise "Cinematique evo 2" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes
@@ -93,7 +93,7 @@ add_engine sci32 "SCI32 games" no
 add_engine sky "Beneath a Steel Sky" yes
 add_engine sword1 "Broken Sword 1" yes
 add_engine sword2 "Broken Sword 2" yes
-add_engine tinsel "Tinsel" no
+add_engine tinsel "Tinsel" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
 
@@ -292,7 +292,7 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
-        tmpopt=`echo $1 | sed 's/_/-/g'`
+	tmpopt=`echo $1 | sed 's/_/-/g'`
 	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }

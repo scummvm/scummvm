@@ -40,6 +40,82 @@
 
 namespace Gob {
 
+Font::Font(const byte *data) : _dataPtr(data) {
+	assert(data);
+
+	bool hasWidths = _dataPtr[0] & 0x80;
+
+	_data       = _dataPtr + 4;
+	_itemWidth  = _dataPtr[0] & 0x7F;
+	_itemHeight = _dataPtr[1];
+	_startItem  = _dataPtr[2];
+	_endItem    = _dataPtr[3];
+	_charWidths = 0;
+
+	uint8 rowAlignedBits = (_itemWidth - 1) / 8 + 1;
+
+	_itemSize = rowAlignedBits * _itemHeight;
+	_bitWidth = _itemWidth;
+
+	if (hasWidths)
+		_charWidths = _dataPtr + 4 + _itemSize * getCharCount();
+}
+
+Font::~Font() {
+	delete[] _dataPtr;
+}
+
+uint8 Font::getCharWidth(uint8 c) const {
+	if (!_charWidths || (_endItem == 0))
+		return _itemWidth;
+
+	if ((c < _startItem) || (c > _endItem))
+		return _itemWidth;
+
+	return _charWidths[c - _startItem];
+}
+
+uint8 Font::getCharWidth() const {
+	return _itemWidth;
+}
+
+uint8 Font::getCharHeight() const {
+	return _itemHeight;
+}
+
+uint16 Font::getCharCount() const {
+	return _endItem - _startItem + 1;
+}
+
+uint8 Font::getFirstChar() const {
+	return _startItem;
+}
+
+uint8 Font::getLastChar() const {
+	return _endItem;
+}
+
+uint8 Font::getCharSize() const {
+	return _itemSize;
+}
+
+bool Font::isMonospaced() const {
+	return _charWidths == 0;
+}
+
+const byte *Font::getCharData(uint8 c) const {
+	if (_endItem == 0) {
+		warning("Font::getCharData(): _endItem == 0");
+		return 0;
+	}
+
+	if ((c < _startItem) || (c > _endItem))
+		return 0;
+
+	return _data + (c - _startItem) * _itemSize;
+}
+
+
 SurfaceDesc::SurfaceDesc(int16 vidMode, int16 width, int16 height,
 		byte *vidMem) : _width(width), _height(height) {
 
@@ -381,41 +457,9 @@ void Video::drawSpriteDouble(SurfaceDesc &source, SurfaceDesc &dest,
 	_videoDriver->drawSpriteDouble(source, dest, left, top, right, bottom, x, y, transp);
 }
 
-void Video::drawLetter(int16 item, int16 x, int16 y, FontDesc *fontDesc,
+void Video::drawLetter(int16 item, int16 x, int16 y, const Font &font,
 		int16 color1, int16 color2, int16 transp, SurfaceDesc &dest) {
-	byte *dataPtr;
-	byte *itemData;
-	int16 itemSize;
-	int16 newItem;
-	int16 curItem;
-	int16 newItemPos;
-	int16 curItemPos;
-
-	if (fontDesc->endItem == 0) {
-		itemSize = fontDesc->itemSize + 3;
-		dataPtr = fontDesc->dataPtr;
-		//        startItem
-		curItem = READ_LE_UINT16(dataPtr - 2) - 1;
-
-		curItemPos = 0;
-		do {
-			newItemPos = ((curItemPos + curItem) / 2) * itemSize;
-			itemData = fontDesc->dataPtr + newItemPos;
-			newItem = (READ_LE_UINT16(itemData) & 0x7FFF);
-			if (item > newItem)
-				curItem = newItemPos - 1;
-			else
-				curItemPos = newItemPos + 1;
-		} while ((newItem != item) && (curItemPos <= curItem));
-
-		if (newItem != item)
-			return;
-
-		fontDesc->dataPtr = itemData + 3;
-		item = 0;
-	}
-
-	_videoDriver->drawLetter((unsigned char)item, x, y, fontDesc, color1, color2, transp, dest);
+	_videoDriver->drawLetter((unsigned char)item, x, y, font, color1, color2, transp, dest);
 }
 
 void Video::drawPackedSprite(byte *sprBuf, int16 width, int16 height,

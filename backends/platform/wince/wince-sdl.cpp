@@ -908,18 +908,13 @@ int OSystem_WINCE3::getOutputSampleRate() const {
 	return _sampleRate;
 }
 
-void OSystem_WINCE3::setWindowCaption(const char *caption) {
+void OSystem_WINCE3::engineInit() {
 	check_mappings(); // called here to initialize virtual keys handling
 
 	//update_game_settings();
 	// finalize mixer init
 	compute_sample_rate();
 	setupMixer();
-
-FIXME: move check_mappings() etc. calls to engineInit() & engineDone()
-
-	// handle the actual event
-	OSystem_SDL::setWindowCaption(caption);
 }
 
 bool OSystem_WINCE3::openCD(int drive) {
@@ -1214,8 +1209,13 @@ bool OSystem_WINCE3::update_scalers() {
 	if (CEDevice::hasSmartphoneResolution()) {
 		if (_videoMode.screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
+#ifdef ARM
+		_scaleFactorXm = 11;
+		_scaleFactorXd = 16;
+#else
 		_scaleFactorXm = 2;
 		_scaleFactorXd = 3;
+#endif
 		_scaleFactorYm = 7;
 		_scaleFactorYd = 8;
 		_scalerProc = SmartphoneLandscape;

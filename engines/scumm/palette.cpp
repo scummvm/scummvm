@@ -417,13 +417,9 @@ void ScummEngine::moveMemInPalRes(int start, int end, byte direction) {
 }
 
 void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
-	byte *pal, *target, *between;
-	byte *string1, *string2, *string3;
-	int i;
-
-	string1 = getStringAddress(resID);
-	string2 = getStringAddress(resID + 1);
-	string3 = getStringAddress(resID + 2);
+	byte *string1 = getStringAddress(resID);
+	byte *string2 = getStringAddress(resID + 1);
+	byte *string3 = getStringAddress(resID + 2);
 	if (!string1 || !string2 || !string3) {
 		error("palManipulateInit(%d,%d,%d,%d): Cannot obtain string resources %d, %d and %d",
 				resID, start, end, time, resID, resID + 1, resID + 2);
@@ -443,29 +439,24 @@ void ScummEngine::palManipulateInit(int resID, int start, int end, int time) {
 	if (!_palManipIntermediatePal)
 		_palManipIntermediatePal = (byte *)calloc(0x600, 1);
 
-	pal = _currentPalette + start * 3;
-	target = _palManipPalette + start * 3;
-	between = _palManipIntermediatePal + start * 6;
+	byte *pal = _currentPalette + start * 3;
+	byte *target = _palManipPalette + start * 3;
+	uint16 *between = (uint16 *)(_palManipIntermediatePal + start * 6);
 
-	for (i = start; i < end; ++i) {
+	for (int i = start; i < end; ++i) {
 		*target++ = *string1++;
 		*target++ = *string2++;
 		*target++ = *string3++;
-		*(uint16 *)between = ((uint16) *pal++) << 8;
-		between += 2;
-		*(uint16 *)between = ((uint16) *pal++) << 8;
-		between += 2;
-		*(uint16 *)between = ((uint16) *pal++) << 8;
-		between += 2;
+		*between++ = ((uint16) *pal++) << 8;
+		*between++ = ((uint16) *pal++) << 8;
+		*between++ = ((uint16) *pal++) << 8;
 	}
 
 	_palManipCounter = time;
 }
 
 void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) {
-	byte *pal, *target, *between;
 	const byte *new_pal;
-	int i;
 
 	new_pal = getPalettePtr(resID, _roomResource);
 
@@ -480,20 +471,17 @@ void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) 
 	if (!_palManipIntermediatePal)
 		_palManipIntermediatePal = (byte *)calloc(0x600, 1);
 
-	pal = _currentPalette + start * 3;
-	target = _palManipPalette + start * 3;
-	between = _palManipIntermediatePal + start * 6;
+	byte *pal = _currentPalette + start * 3;
+	byte *target = _palManipPalette + start * 3;
+	uint16 *between = (uint16 *)(_palManipIntermediatePal + start * 6);
 
-	for (i = start; i < end; ++i) {
+	for (int i = start; i < end; ++i) {
 		*target++ = *new_pal++;
 		*target++ = *new_pal++;
 		*target++ = *new_pal++;
-		*(uint16 *)between = ((uint16) *pal++) << 8;
-		between += 2;
-		*(uint16 *)between = ((uint16) *pal++) << 8;
-		between += 2;
-		*(uint16 *)between = ((uint16) *pal++) << 8;
-		between += 2;
+		*between++ = ((uint16) *pal++) << 8;
+		*between++ = ((uint16) *pal++) << 8;
+		*between++ = ((uint16) *pal++) << 8;
 	}
 
 	_palManipCounter = time;
@@ -501,26 +489,24 @@ void ScummEngine_v6::palManipulateInit(int resID, int start, int end, int time) 
 
 
 void ScummEngine::palManipulate() {
-	byte *target, *pal, *between;
-	int i, j;
-
 	if (!_palManipCounter || !_palManipPalette || !_palManipIntermediatePal)
 		return;
 
-	target = _palManipPalette + _palManipStart * 3;
-	pal = _currentPalette + _palManipStart * 3;
-	between = _palManipIntermediatePal + _palManipStart * 6;
+	byte *target = _palManipPalette + _palManipStart * 3;
+	byte *pal = _currentPalette + _palManipStart * 3;
+	uint16 *between = (uint16 *)(_palManipIntermediatePal + _palManipStart * 6);
 
-	for (i = _palManipStart; i < _palManipEnd; ++i) {
-		j = (*((uint16 *)between) += ((*target++ << 8) - *((uint16 *)between)) / _palManipCounter);
+	for (int i = _palManipStart; i < _palManipEnd; ++i) {
+		int j;
+		j = (*between += ((*target++ << 8) - *between) / _palManipCounter);
 		*pal++ = j >> 8;
-		between += 2;
-		j = (*((uint16 *)between) += ((*target++ << 8) - *((uint16 *)between)) / _palManipCounter);
+		between++;
+		j = (*between += ((*target++ << 8) - *between) / _palManipCounter);
 		*pal++ = j >> 8;
-		between += 2;
-		j = (*((uint16 *)between) += ((*target++ << 8) - *((uint16 *)between)) / _palManipCounter);
+		between++;
+		j = (*between += ((*target++ << 8) - *between) / _palManipCounter);
 		*pal++ = j >> 8;
-		between += 2;
+		between++;
 	}
 	setDirtyColors(_palManipStart, _palManipEnd);
 	_palManipCounter--;

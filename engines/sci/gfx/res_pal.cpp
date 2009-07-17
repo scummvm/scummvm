@@ -44,6 +44,11 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 	int entry_size = (format == SCI_PAL_FORMAT_VARIABLE_FLAGS) ? 4 : 3;
 	byte *pal_data = resource + 37;
 	int _colors_nr = READ_LE_UINT16(resource + 29);
+
+	// Happens at the beginning of Pepper
+	if (_colors_nr > 256)
+		return NULL;
+
 	Palette *retval = new Palette(_colors_nr + start_color);
 	int i;
 
@@ -76,7 +81,7 @@ Palette *gfxr_read_pal1(int id, byte *resource, int size) {
 	unsigned int colors[MAX_COLORS] = {0};
 
 	if (size < PALETTE_START + 4) {
-		GFXERROR("Palette resource too small in %04x\n", id);
+		error("Palette resource too small in %04x", id);
 		return NULL;
 	}
 
@@ -88,7 +93,7 @@ Palette *gfxr_read_pal1(int id, byte *resource, int size) {
 	}
 
 	if (counter < MAX_COLORS) {
-		GFXERROR("Palette %04x ends prematurely\n", id);
+		error("SCI1 palette %04x ends prematurely", id);
 		return NULL;
 	}
 
@@ -117,7 +122,7 @@ Palette *gfxr_read_pal1_amiga(Common::File &file) {
 		b2 = file.readByte();
 
 		if (b1 == EOF || b2 == EOF) {
-			GFXERROR("Palette file ends prematurely\n");
+			error("Amiga palette file ends prematurely");
 			return NULL;
 		}
 

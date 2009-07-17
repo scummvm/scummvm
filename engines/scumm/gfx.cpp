@@ -36,7 +36,7 @@
 #include "scumm/util.h"
 
 #ifdef USE_ARM_GFX_ASM
-extern "C" void asmDrawStripToScreen(int height, int width, byte const* text, byte const* src, byte* dst,
+extern "C" void asmDrawStripToScreen(int height, int width, void const* text, void const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
 extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
 #endif /* USE_ARM_GFX_ASM */
@@ -574,13 +574,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	if (width <= 0 || height <= 0)
 		return;
 
-	const byte *src = vs->getPixels(x, top);
+	const void *src = vs->getPixels(x, top);
 	int m = _textSurfaceMultiplier;
 	int vsPitch;
 	int pitch = vs->pitch;
 
 	if (_useCJKMode && _textSurfaceMultiplier == 2) {
-		scale2x(_fmtownsBuf, _screenWidth * m, src, vs->pitch,  width, height);
+		scale2x(_fmtownsBuf, _screenWidth * m, (const byte *)src, vs->pitch,  width, height);
 		src = _fmtownsBuf;
 
 		vsPitch = _screenWidth * m - width * m;
@@ -599,7 +599,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		// Compute pointer to the text surface
 		assert(_compositeBuf);
-		const byte *text = (byte *)_textSurface.getBasePtr(x * m, y * m);
+		const void *text = _textSurface.getBasePtr(x * m, y * m);
 
 		// The values x, width, etc. are all multiples of 8 at this point,
 		// so loop unrolloing might be a good idea...
@@ -677,7 +677,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	}
 
 	// Finally blit the whole thing to the screen
-	_system->copyRectToScreen(src, pitch, x, y, width, height);
+	_system->copyRectToScreen((const byte *)src, pitch, x, y, width, height);
 }
 
 // CGA

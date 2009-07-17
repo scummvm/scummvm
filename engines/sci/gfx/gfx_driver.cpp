@@ -25,6 +25,7 @@
 
 #include "common/scummsys.h"
 #include "common/system.h"
+#include "graphics/cursorman.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -204,7 +205,7 @@ int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 		g_system->updateScreen();
 		break;
 	default:
-		GFXERROR("Invalid buffer %d in update!\n", buffer);
+		error("Invalid buffer %d in update", buffer);
 		return GFX_ERROR;
 	}
 
@@ -252,22 +253,21 @@ byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
 
 int GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 	if ((pointer == NULL) || (hotspot == NULL)) {
-		g_system->showMouse(false);
+		CursorMan.showMouse(false);
 	} else {
 		byte *cursorData = createCursor(pointer);
 
-		// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
-		// Note that some cursors don't have a palette in SQ5
+		// FIXME: The palette size check is a workaround for cursors using non-palette color GFX_CURSOR_TRANSPARENT
+		// Note that some cursors don't have a palette (e.g. in SQ5 and QFG3)
 		byte color_key = GFX_CURSOR_TRANSPARENT;
 		if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (unsigned int)pointer->color_key < pointer->palette->size()))
 			color_key = pointer->palette->getColor(pointer->color_key).parent_index;
-		// Some cursors in SQ5 don't have a palette. The cursor palette seems to use 64 colors, so setting the color key to 63 works
-		// TODO: Is this correct?
+		// Some cursors don't have a palette, so we set the color key directly
 		if (!pointer->palette)
-			color_key = 63;
+			color_key = pointer->color_key;
 
-		g_system->setMouseCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
-		g_system->showMouse(true);
+		CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
+		CursorMan.showMouse(true);
 
 		delete[] cursorData;
 		cursorData = 0;

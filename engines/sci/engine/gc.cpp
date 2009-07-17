@@ -29,7 +29,6 @@
 namespace Sci {
 
 //#define DEBUG_GC
-//#define DEBUG_GC_VERBOSE
 
 struct WorklistManager {
 	Common::Array<reg_t> _worklist;
@@ -39,9 +38,7 @@ struct WorklistManager {
 		if (!reg.segment) // No numbers
 			return;
 
-	#ifdef DEBUG_GC_VERBOSE
-		sciprintf("[GC] Adding %04x:%04x\n", PRINT_REG(reg));
-	#endif
+		debugC(2, kDebugLevelGC, "[GC] Adding %04x:%04x\n", PRINT_REG(reg));
 
 		if (_map.contains(reg))
 			return; // already dealt with it
@@ -92,9 +89,8 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		for (pos = s->stack_base; pos < xs.sp; pos++)
 			wm.push(*pos);
 	}
-#ifdef DEBUG_GC_VERBOSE
-	sciprintf("[GC] -- Finished adding value stack");
-#endif
+
+	debugC(2, kDebugLevelGC, "[GC] -- Finished adding value stack");
 
 	// Init: Execution Stack
 	Common::List<ExecStack>::iterator iter;
@@ -109,9 +105,8 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 				wm.push(*(es.getVarPointer(s)));
 		}
 	}
-#ifdef DEBUG_GC_VERBOSE
-	sciprintf("[GC] -- Finished adding execution stack");
-#endif
+
+	debugC(2, kDebugLevelGC, "[GC] -- Finished adding execution stack");
 
 	// Init: Explicitly loaded scripts
 	for (i = 1; i < sm->_heap.size(); i++)
@@ -129,18 +124,15 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 				}
 			}
 		}
-#ifdef DEBUG_GC_VERBOSE
-	sciprintf("[GC] -- Finished explicitly loaded scripts, done with root set");
-#endif
+
+	debugC(2, kDebugLevelGC, "[GC] -- Finished explicitly loaded scripts, done with root set\n");
 
 	// Run Worklist Algorithm
 	while (!wm._worklist.empty()) {
 		reg_t reg = wm._worklist.back();
 		wm._worklist.pop_back();
 		if (reg.segment != s->stack_segment) { // No need to repeat this one
-#ifdef DEBUG_GC_VERBOSE
-			sciprintf("[GC] Checking %04x:%04x\n", PRINT_REG(reg));
-#endif
+			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x\n", PRINT_REG(reg));
 			if (reg.segment < sm->_heap.size() && sm->_heap[reg.segment])
 				sm->_heap[reg.segment]->listAllOutgoingReferences(s, reg, &wm, add_outgoing_refs);
 		}
@@ -170,7 +162,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 		// Not found -> we can free it
 		deallocator->mobj->freeAtAddress(deallocator->segmgr, addr);
 #ifdef DEBUG_GC
-		sciprintf("[GC] Deallocating %04x:%04x\n", PRINT_REG(addr));
+		debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x\n", PRINT_REG(addr));
 		deallocator->segcount[deallocator->mobj->getType()]++;
 #endif
 	}
@@ -183,7 +175,7 @@ void run_gc(EngineState *s) {
 	SegManager *sm = s->seg_manager;
 
 #ifdef DEBUG_GC
-	sciprintf("[GC] Running...\n");
+	debugC(2, kDebugLevelGC, "[GC] Running...\n");
 	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
 #endif
 
@@ -205,10 +197,10 @@ void run_gc(EngineState *s) {
 #ifdef DEBUG_GC
 	{
 		int i;
-		sciprintf("[GC] Summary:\n");
+		debugC(2, kDebugLevelGC, "[GC] Summary:\n");
 		for (i = 0; i <= MEM_OBJ_MAX; i++)
 			if (deallocator.segcount[i])
-				sciprintf("\t%d\t* %s\n", deallocator.segcount[i], deallocator.segnames[i]);
+				debugC(2, kDebugLevelGC, "\t%d\t* %s\n", deallocator.segcount[i], deallocator.segnames[i]);
 	}
 #endif
 }

@@ -22,6 +22,7 @@
  * $Id$
  */
 
+#include "common/config-manager.h"
 #include "common/timer.h"
 
 #include "scumm/actor.h"
@@ -135,6 +136,11 @@ void IMuseDigital::startSound(int soundId, const char *soundName, int soundType,
 				freq = (freq * a->_talkFrequency) / 256;
 				track->pan = a->_talkPan;
 				track->vol = a->_talkVolume * 1000;
+			}
+
+			// The volume is set to zero, when using subtitles only setting in COMI
+			if (ConfMan.getBool("speech_mute") || _vm->VAR(_vm->VAR_VOICE_MODE) == 2) {
+				track->vol = 0;
 			}
 		}
 

@@ -142,6 +142,13 @@
 	<drawdata id = 'text_selection' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
+					fg_color = 'darkgray'
+		/>
+	</drawdata>
+
+	<drawdata id = 'text_selection_focus' cache = 'false'>
+		<drawstep	func = 'square'
+					fill = 'foreground'
 					fg_color = 'bgreen'
 		/>
 	</drawdata>
@@ -264,7 +271,7 @@
 					radius = '4'
 					stroke = '0'
 					fill = 'background'
-					bg_color = '248, 228, 152'
+					bg_color = '248, 232, 168'
 					shadow = '3'
 		/>
 	</drawdata>

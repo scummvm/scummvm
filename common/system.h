@@ -408,10 +408,10 @@ public:
 	 */
 	enum TransactionError {
 		kTransactionSuccess = 0,					/**< Everything fine (use EQUAL check for this one!) */
-		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switchting aspect ratio correction mode */
-		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switchting fullscreen mode */
-		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switchting the GFX graphics mode (setGraphicsMode) */
-		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switchting the screen dimensions (initSize) */
+		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switching aspect ratio correction mode */
+		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switching fullscreen mode */
+		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
+		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switching the screen dimensions (initSize) */
 	};
 
 	/**

@@ -77,7 +77,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 	uint8 height = vlut[3];
 
 	if (num == 4) {
-		byte *dst = _window4BackScn;
+		byte *dst = (byte *)_window4BackScn->pixels;
 
 		for (uint8 h = 0; h < height; h++) {
 			for (uint8 w = 0; w < width; w++) {
@@ -90,7 +90,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 		}
 	} else {
 		Graphics::Surface *screen = _system->lockScreen();
-		byte *dst = (byte *)screen->pixels + vlut[0] * 16 + vlut[1] * _dxSurfacePitch;
+		byte *dst = (byte *)screen->getBasePtr(vlut[0] * 16, vlut[1]);
 
 		if (getGameType() == GType_ELVIRA2 && num == 7) {
 			dst -= 8;
@@ -104,7 +104,7 @@ void AGOSEngine::vc45_setWindowPalette() {
 				val |= color * 16;
 				WRITE_LE_UINT16(dst + w * 2, val);
 			}
-			dst += _dxSurfacePitch;
+			dst += screen->pitch;
 		}
 
 		_system->unlockScreen();
@@ -207,6 +207,7 @@ void AGOSEngine::vc53_dissolveIn() {
 	uint16 speed = vcReadNextWord() + 1;
 
 	byte *src, *dst, *srcOffs, *srcOffs2, *dstOffs, *dstOffs2;
+	int16 xoffs, yoffs;
 	uint8 color = 0;
 
 	// Only uses Video Window 4
@@ -218,18 +219,17 @@ void AGOSEngine::vc53_dissolveIn() {
 	uint16 dissolveDelay = dissolveCheck * 2 / speed;
 	uint16 dissolveCount = dissolveCheck * 2 / speed;
 
-	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
-	int16 yoffs = _videoWindows[num * 4 + 1];
-	int16 offs = xoffs + yoffs * _screenWidth;
+	int16 x = _videoWindows[num * 4 + 0] * 16;
+	int16 y = _videoWindows[num * 4 + 1];
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
 		Graphics::Surface *screen = _system->lockScreen();
-		byte *dstPtr = (byte *)screen->pixels + offs;
+		byte *dstPtr = (byte *)screen->pixels + x + y * screen->pitch;
 
 		yoffs = _rnd.getRandomNumber(dissolveY);
-		dst = dstPtr + yoffs * _screenWidth;
-		src = _window4BackScn + yoffs * 224;
+		dst = dstPtr + yoffs * screen->pitch;
+		src = (byte *)_window4BackScn->pixels + yoffs * _window4BackScn->pitch;
 
 		xoffs = _rnd.getRandomNumber(dissolveX);
 		dst += xoffs;
@@ -252,15 +252,15 @@ void AGOSEngine::vc53_dissolveIn() {
 		dstOffs2 = dst;
 
 		yoffs = (dissolveY - 1) * 2 - (yoffs * 2);
-		src = srcOffs + yoffs * 224;
-		dst = dstOffs + yoffs * _screenWidth;
+		src = srcOffs + yoffs * _window4BackScn->pitch;
+		dst = dstOffs + yoffs * screen->pitch;
 
 		color = 0xF0;
 		*dst &= color;
 		*dst |= *src & 0xF;
 
-		dst = dstOffs2 + yoffs * _screenWidth;
-		src = srcOffs2 + yoffs * 224;
+		dst = dstOffs2 + yoffs * screen->pitch;
+		src = srcOffs2 + yoffs * _window4BackScn->pitch;
 
 		*dst &= color;
 		*dst |= *src & 0xF;
@@ -284,6 +284,7 @@ void AGOSEngine::vc54_dissolveOut() {
 	uint16 speed = vcReadNextWord() + 1;
 
 	byte *dst, *dstOffs;
+	int16 xoffs, yoffs;
 
 	uint16 dissolveX = _videoWindows[num * 4 + 2] * 8;
 	uint16 dissolveY = (_videoWindows[num * 4 + 3] + 1) / 2;
@@ -291,19 +292,18 @@ void AGOSEngine::vc54_dissolveOut() {
 	uint16 dissolveDelay = dissolveCheck * 2 / speed;
 	uint16 dissolveCount = dissolveCheck * 2 / speed;
 
-	int16 xoffs = _videoWindows[num * 4 + 0] * 16;
-	int16 yoffs = _videoWindows[num * 4 + 1];
-	int16 offs = xoffs + yoffs * _screenWidth;
+	int16 x = _videoWindows[num * 4 + 0] * 16;
+	int16 y = _videoWindows[num * 4 + 1];
 
 	uint16 count = dissolveCheck * 2;
 	while (count--) {
 		Graphics::Surface *screen = _system->lockScreen();
-		byte *dstPtr = (byte *)screen->pixels + offs;
+		byte *dstPtr = (byte *)screen->pixels + x + y * screen->pitch;
 		color |= dstPtr[0] & 0xF0;
 
 		yoffs = _rnd.getRandomNumber(dissolveY);
 		xoffs = _rnd.getRandomNumber(dissolveX);
-		dst = dstPtr + xoffs + yoffs * _screenWidth;
+		dst = dstPtr + xoffs + yoffs * screen->pitch;
 		*dst = color;
 
 		dstOffs = dst;
@@ -313,7 +313,7 @@ void AGOSEngine::vc54_dissolveOut() {
 		*dst = color;
 
 		yoffs = (dissolveY - 1) * 2 - (yoffs * 2);
-		dst = dstOffs + yoffs * _screenWidth;
+		dst = dstOffs + yoffs * screen->pitch;
 		*dst = color;
 
 		dst += xoffs;
@@ -354,18 +354,22 @@ void AGOSEngine::vc55_moveBox() {
 }
 
 void AGOSEngine::vc56_fullScreen() {
+	uint8 palette[1024];
+
 	Graphics::Surface *screen = _system->lockScreen();
-
 	byte *dst = (byte *)screen->pixels;
-	byte *src = _curVgaFile2 + 32;
+	byte *src = _curVgaFile2 + 800;
 
-	memcpy(dst, src + 768, _screenHeight * _screenWidth);
-
+	for (int i = 0; i < _screenHeight; i++) {
+		memcpy(dst, src, _screenWidth);
+		src += 320;
+		dst += screen->pitch;
+	}
 	 _system->unlockScreen();
 
 	//fullFade();
 
-	uint8 palette[1024];
+	src = _curVgaFile2 + 32;
 	for (int i = 0; i < 256; i++) {
 		palette[i * 4 + 0] = *src++ * 4;
 		palette[i * 4 + 1] = *src++ * 4;

@@ -28,11 +28,52 @@
 
 #include "common/keyboard.h"
 
-#include "gob/video.h"
-
 namespace Gob {
 
+class GobEngine;
+
 #define KEYBUFSIZE 16
+
+enum MouseButtons {
+	kMouseButtonsNone  = 0,
+	kMouseButtonsLeft  = 1,
+	kMouseButtonsRight = 2,
+	kMouseButtonsBoth  = 3,
+	kMouseButtonsAny   = 4
+};
+
+enum Keys {
+	kKeyNone      = 0x0000,
+	kKeyBackspace = 0x0E08,
+	kKeySpace     = 0x3920,
+	kKeyReturn    = 0x1C0D,
+	kKeyEscape    = 0x011B,
+	kKeyDelete    = 0x5300,
+	kKeyUp        = 0x4800,
+	kKeyDown      = 0x5000,
+	kKeyRight     = 0x4D00,
+	kKeyLeft      = 0x4B00,
+	kKeyF1        = 0x3B00,
+	kKeyF2        = 0x3C00,
+	kKeyF3        = 0x3D00,
+	kKeyF4        = 0x3E00,
+	kKeyF5        = 0x3F00,
+	kKeyF6        = 0x4000,
+	kKeyF7        = 0x4100,
+	kKeyF8        = 0x4200,
+	kKeyF9        = 0x4300,
+	kKeyF10       = 0x4400
+};
+
+enum ShortKey {
+	kShortKeyUp        = 0x0B,
+	kShortKeyDown      = 0x0A,
+	kShortKeyRight     = 0x09,
+	kShortKeyLeft      = 0x08,
+	kShortKeyEscape    = 0x1B,
+	kShortKeyBackspace = 0x19,
+	kShortKeyDelete    = 0x1A
+};
 
 class Util {
 public:
@@ -66,7 +107,7 @@ public:
 	int16 checkKey(void);
 	bool checkKey(int16 &key);
 
-	void getMouseState(int16 *pX, int16 *pY, int16 *pButtons);
+	void getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons);
 	void setMousePos(int16 x, int16 y);
 	void waitMouseUp(void);
 	void waitMouseDown(void);
@@ -80,11 +121,9 @@ public:
 	void waitEndFrame();
 	void setScrollOffset(int16 x = -1, int16 y = -1);
 
-	Video::FontDesc *loadFont(const char *path);
-
 	static void insertStr(const char *str1, char *str2, int16 pos);
 	static void cutFromStr(char *str, int16 from, int16 cutlen);
-	static void prepareStr(char *str);
+	static void cleanupStr(char *str);
 	static void replaceChar(char *str, char c1, char c2);
 
 	static void listInsertFront(List *list, void *data);
@@ -95,7 +134,8 @@ public:
 	Util(GobEngine *vm);
 
 protected:
-	int16 _mouseButtons;
+	MouseButtons _mouseButtons;
+
 	Common::KeyState _keyBuffer[KEYBUFSIZE];
 	int16 _keyBufferHead;
 	int16 _keyBufferTail;

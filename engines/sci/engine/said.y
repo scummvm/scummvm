@@ -65,9 +65,10 @@ namespace Sci {
 
 
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
-#define scidprintf sciprintf
+#define scidprintf printf
 #else
-#define scidprintf if (0) sciprintf
+void print_nothing(...) { }
+#define scidprintf print_nothing
 #endif
 
 
@@ -383,23 +384,23 @@ static int said_parse_spec(EngineState *s, byte *spec) {
 	if (nextitem == SAID_TERM)
 		yyparse();
 	else {
-		sciprintf("Error: SAID spec is too long\n");
+		warning("SAID spec is too long");
 		return 1;
 	}
 
 	if (said_parse_error) {
-		sciprintf("Error while parsing SAID spec: %s\n", said_parse_error);
+		warning("Error while parsing SAID spec: %s", said_parse_error);
 		free(said_parse_error);
 		return 1;
 	}
 
 	if (said_tree_pos == 0) {
-		sciprintf("Error: Out of tree space while parsing SAID spec\n");
+		warning("Out of tree space while parsing SAID spec");
 		return 1;
 	}
 
 	if (said_blessed != 1) {
-		sciprintf("Error: Found multiple top branches\n");
+		warning("Found multiple top branches");
 		return 1;
 	}
 
@@ -502,7 +503,7 @@ static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, in
 		if ((word = aug_get_wgroup(tree, pos))) { // found a word
 			if (!refbranch && major == WORD_TYPE_BASE) {
 				if ((*base_words_nr) == maxwords) {
-					sciprintf("Out of regular words\n");
+					warning("Out of regular words");
 					return; // return gracefully
 				}
 
@@ -512,7 +513,7 @@ static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, in
 			}
 			if (major == WORD_TYPE_REF || refbranch) {
 				if ((*ref_words_nr) == maxwords) {
-					sciprintf("Out of reference words\n");
+					warning("Out of reference words");
 					return; // return gracefully
 				}
 
@@ -521,7 +522,7 @@ static void aug_find_words_recursively(parse_tree_node_t *tree, int startpos, in
 
 			}
 			if (major != WORD_TYPE_SYNTACTIC_SUGAR && major != WORD_TYPE_BASE && major != WORD_TYPE_REF)
-				sciprintf("aug_find_words_recursively(): Unknown word type %03x\n", major);
+				warning("aug_find_words_recursively(): Unknown word type %03x", major);
 
 		} else // Did NOT find a word group: Attempt to recurse
 			aug_find_words_recursively(tree, pos, base_words, base_words_nr,
@@ -566,7 +567,7 @@ static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 	int cmajor, cminor, cpos;
 	cpos = aug_get_first_child(saidt, augment_pos, &cmajor, &cminor);
 	if (!cpos) {
-		sciprintf("augment_match_expression_p(): Empty condition\n");
+		warning("augment_match_expression_p(): Empty condition");
 		return 1;
 	}
 
@@ -602,7 +603,7 @@ static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 					gchild = aug_get_next_sibling(saidt, gchild, &gc_major, &gc_minor);
 				}
 			} else
-				sciprintf("augment_match_expression_p(): Unknown type 141 minor number %3x\n", cminor);
+				warning("augment_match_expression_p(): Unknown type 141 minor number %3x", cminor);
 
 			cpos = aug_get_next_sibling(saidt, cpos, &cmajor, &cminor);
 
@@ -633,7 +634,7 @@ static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 					gchild = aug_get_next_sibling(saidt, gchild, &gc_major, &gc_minor);
 				}
 			} else
-				sciprintf("augment_match_expression_p(): Unknown type 144 minor number %3x\n", cminor);
+				warning("augment_match_expression_p(): Unknown type 144 minor number %3x", cminor);
 
 			cpos = aug_get_next_sibling(saidt, cpos, &cmajor, &cminor);
 
@@ -659,17 +660,17 @@ static int augment_match_expression_p(parse_tree_node_t *saidt, int augment_pos,
 			break;
 
 		default:
-			sciprintf("augment_match_expression_p(): (subp1) Unkonwn sub-bracket predicate %03x\n", cmajor);
+			warning("augment_match_expression_p(): (subp1) Unkonwn sub-bracket predicate %03x", cmajor);
 		}
 
 		break;
 
 	default:
-		sciprintf("augment_match_expression_p(): Unknown predicate %03x\n", major);
+		warning("augment_match_expression_p(): Unknown predicate %03x", major);
 
 	}
 
-	scidprintf("Generic failure\n");
+	scidprintf("augment_match_expression_p(): Generic failure\n");
 
 	return 0;
 }
@@ -727,13 +728,13 @@ static int augment_sentence_part(parse_tree_node_t *saidt, int augment_pos, pars
 			aug_find_words(parset, parse_branch, base_words, &base_words_nr, ref_words, &ref_words_nr, AUGMENT_MAX_WORDS);
 			foundwords |= (ref_words_nr | base_words_nr);
 #ifdef SCI_DEBUG_PARSE_TREE_AUGMENTATION
-			sciprintf("%d base words:", base_words_nr);
+			printf("%d base words:", base_words_nr);
 			for (i = 0; i < base_words_nr; i++)
-				sciprintf(" %03x", base_words[i]);
-			sciprintf("\n%d reference words:", ref_words_nr);
+				printf(" %03x", base_words[i]);
+			printf("\n%d reference words:", ref_words_nr);
 			for (i = 0; i < ref_words_nr; i++)
-				sciprintf(" %03x", ref_words[i]);
-			sciprintf("\n");
+				printf(" %03x", ref_words[i]);
+			printf("\n");
 #endif
 
 			success = augment_sentence_expression(saidt, augment_pos, parset, parse_basepos, major, minor,
@@ -763,13 +764,13 @@ static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *sai
 
 	parse_basepos = aug_get_base_node(parset);
 	if (!parse_basepos) {
-		sciprintf("augment_parse_nodes(): Parse tree is corrupt\n");
+		warning("augment_parse_nodes(): Parse tree is corrupt");
 		return 0;
 	}
 
 	augment_basepos = aug_get_base_node(saidt);
 	if (!augment_basepos) {
-		sciprintf("augment_parse_nodes(): Said tree is corrupt\n");
+		warning("augment_parse_nodes(): Said tree is corrupt");
 		return 0;
 	}
 
@@ -803,8 +804,8 @@ int said(EngineState *s, byte *spec, int verbose) {
 
 	if (s->parser_valid) {
 		if (said_parse_spec(s, spec)) {
-			sciprintf("Offending spec was: ");
-			s->_vocabulary->decypherSaidBlock(spec);
+			warning("Offending spec was: ");
+			((SciEngine*)g_engine)->getVocabulary()->decypherSaidBlock(spec);
 			return SAID_NO_MATCH;
 		}
 

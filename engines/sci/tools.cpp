@@ -45,35 +45,4 @@ int sci_ffs(int bits) {
 	return retval;
 }
 
-bool g_redirect_sciprintf_to_gui = false;
-
-void sciprintf(const char *fmt, ...) {
-	va_list argp;
-
-	assert(fmt);
-
-	// First determine how big a buffer we need
-	va_start(argp, fmt);
-	int bufsize = vsnprintf(0, 0, fmt, argp);
-	assert(bufsize >= 0);
-	va_end(argp);
-
-	// Allocate buffer for the full printed string
-	char *buf = (char *)malloc(bufsize + 1);
-	assert(buf);
-
-	// Print everything according to fmt into buf
-	va_start(argp, fmt); // reset argp
-	int bufsize2 = vsnprintf(buf, bufsize + 1, fmt, argp);
-	assert(bufsize == bufsize2);
-	va_end(argp);
-
-	// Display the result suitably
-	if (g_redirect_sciprintf_to_gui)
-		((SciEngine *)g_engine)->getDebugger()->DebugPrintf("%s", buf);
-	printf("%s", buf);
-
-	free(buf);
-}
-
 } // End of namespace Sci

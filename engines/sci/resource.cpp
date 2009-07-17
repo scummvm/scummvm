@@ -42,20 +42,6 @@ namespace Sci {
 
 //#define SCI_VERBOSE_RESMGR 1
 
-const char *sci_version_types[] = {
-	"SCI version undetermined (Autodetect failed / not run)",
-	"SCI version 0.xxx",
-	"SCI version 0.xxx w/ 1.000 compression",
-	"SCI version 1.000 w/ 0.xxx resource.map",
-	"SCI version 1.000 w/ special resource.map",
-	"SCI version 1.000 (early)",
-	"SCI version 1.000 (late)",
-	"SCI version 1.001",
-	"SCI WIN/32"
-};
-
-const int sci_max_resource_nr[] = {65536, 1000, 2048, 2048, 2048, 65536, 65536, 65536};
-
 static const char *sci_error_types[] = {
 	"No error",
 	"I/O error",
@@ -359,7 +345,7 @@ int ResourceManager::guessSciVersion() {
 		file.close();
 
 		if (compression == 3) {
-			return SCI_VERSION_01_VGA;
+			return SCI_VERSION_01;
 		}
 	}
 
@@ -383,7 +369,7 @@ int ResourceManager::guessSciVersion() {
 		file.close();
 
 		if (compression == 3) {
-			return SCI_VERSION_01_VGA;
+			return SCI_VERSION_01;
 		}
 	}
 
@@ -484,9 +470,18 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	} else {
 		_mapVersion = detectMapVersion();
 		_volVersion = detectVolVersion();
+		if (_volVersion == 0 && _mapVersion > 0) {
+			warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
+			_volVersion = _mapVersion;
+		}
+
+		if (_mapVersion == 0 && _volVersion > 0) {
+			warning("Map version not detected, but volume version has been detected. Setting map version to volume version");
+			_mapVersion = _volVersion;
+		}
 	}
-	debug("Using resource map version %d %s", _mapVersion, sci_version_types[_mapVersion]);
-	debug("Using volume version %d %s", _volVersion, sci_version_types[_volVersion]);
+	debug("Using resource map version %d %s", _mapVersion, versionNames[_mapVersion]);
+	debug("Using volume version %d %s", _volVersion, versionNames[_volVersion]);
 
 	scanNewSources();
 	addInternalSources();
@@ -496,29 +491,22 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		switch (_mapVersion) {
 		case SCI_VERSION_0:
 			if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
-				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
 				version = guessSciVersion();
-				if (version != SCI_VERSION_01_VGA) {
+				if (version != SCI_VERSION_01) {
 					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
 				}
 			} else {
-				version = guessSciVersion() ? SCI_VERSION_01_VGA : SCI_VERSION_0;
+				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 			}
 			break;
 		case SCI_VERSION_01_VGA_ODD:
 			version = _mapVersion;
 			break;
-		case SCI_VERSION_1: {
-			Resource *res = testResource(ResourceId(kResourceTypeScript, 0));
-
-			_sciVersion = version = SCI_VERSION_1_EARLY;
-			loadResource(res);
-
-			if (res->status == kResStatusNoMalloc)
-				version = SCI_VERSION_1_LATE;
+		case SCI_VERSION_1:
+			_sciVersion = version = SCI_VERSION_1;
 			break;
-		}
 		case SCI_VERSION_1_1:
 			// No need to handle SCI 1.1 here - it was done in resource_map.cpp
 			version = SCI_VERSION_1_1;
@@ -526,6 +514,34 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		default:
 			version = SCI_VERSION_AUTODETECT;
 		}
+
+	_isVGA = false;
+
+	// Determine if the game is using EGA graphics or not
+	if (version == SCI_VERSION_0) {
+		_isVGA = false;		// There is no SCI0 VGA game
+	} else if (version >= SCI_VERSION_1_1) {
+		_isVGA = true;		// There is no SCI11 EGA game
+	} else {
+		// SCI01 or SCI1: EGA games have the second byte of their views set
+		// to 0, VGA ones to non-zero
+		int i = 0;
+
+		while (true) {
+			Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
+			if (res) {
+				_isVGA = (res->data[1] != 0);
+				break;
+			}
+			i++;
+		}
+	}
+
+	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
+	if (version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
+		debug("Resmgr: Detected QFG1 VGA");
+		_isVGA = true;
+	}
 
 	_sciVersion = version;
 	// temporary version printout - should be reworked later
@@ -536,17 +552,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	case SCI_VERSION_01:
 		debug("Resmgr: Detected SCI01");
 		break;
-	case SCI_VERSION_01_VGA:
-		debug("Resmgr: Detected SCI01VGA - KQ5 or similar");
-		break;
 	case SCI_VERSION_01_VGA_ODD:
 		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar");
 		break;
-	case SCI_VERSION_1_EARLY:
-		debug("Resmgr: Detected SCI1 Early");
-		break;
-	case SCI_VERSION_1_LATE:
-		debug("Resmgr: Detected SCI1 Late");
+	case SCI_VERSION_1:
+		debug("Resmgr: Detected SCI1");
 		break;
 	case SCI_VERSION_1_1:
 		debug("Resmgr: Detected SCI1.1");
@@ -560,6 +570,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		debug("Resmgr: Couldn't determine SCI version");
 		break;
 	}
+
+	if (_isVGA)
+		debug("Resmgr: Detected VGA graphic resources");
+	else
+		debug("Resmgr: Detected non-VGA/EGA graphic resources");
 }
 
 ResourceManager::~ResourceManager() {
@@ -581,7 +596,7 @@ ResourceManager::~ResourceManager() {
 
 void ResourceManager::removeFromLRU(Resource *res) {
 	if (res->status != kResStatusEnqueued) {
-		sciprintf("Resmgr: Oops: trying to remove resource that isn't enqueued\n");
+		warning("Resmgr: trying to remove resource that isn't enqueued");
 		return;
 	}
 	_LRU.remove(res);
@@ -591,16 +606,15 @@ void ResourceManager::removeFromLRU(Resource *res) {
 
 void ResourceManager::addToLRU(Resource *res) {
 	if (res->status != kResStatusAllocated) {
-		warning("Resmgr: Oops: trying to enqueue resource with state %d", res->status);
+		warning("Resmgr: trying to enqueue resource with state %d", res->status);
 		return;
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
-#if (SCI_VERBOSE_RESMGR > 1)
+#if SCI_VERBOSE_RESMGR
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	      getResourceTypeName(res->type), res->number, res->size,
 	      mgr->_memoryLRU);
-
 #endif
 	res->status = kResStatusEnqueued;
 }
@@ -629,7 +643,7 @@ void ResourceManager::freeOldResources() {
 		removeFromLRU(goner);
 		goner->unalloc();
 #ifdef SCI_VERBOSE_RESMGR
-		sciprintf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
+		printf("Resmgr-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
 }
@@ -648,16 +662,7 @@ Common::List<ResourceId> *ResourceManager::listResources(ResourceType type, int 
 }
 
 Resource *ResourceManager::findResource(ResourceId id, bool lock) {
-	Resource *retval;
-
-	if (id.number >= sci_max_resource_nr[_sciVersion]) {
-		ResourceId moddedId = ResourceId(id.type, id.number % sci_max_resource_nr[_sciVersion], id.tuple);
-		sciprintf("[resmgr] Requested invalid resource %s, mapped to %s\n",
-		          id.toString().c_str(), moddedId.toString().c_str());
-		id = moddedId;
-	}
-
-	retval = testResource(id);
+	Resource *retval = testResource(id);
 
 	if (!retval)
 		return NULL;
@@ -686,7 +691,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 	if (retval->data)
 		return retval;
 	else {
-		sciprintf("Resmgr: Failed to read %s\n", retval->id.toString().c_str());
+		warning("Resmgr: Failed to read %s", retval->id.toString().c_str());
 		return NULL;
 	}
 }
@@ -711,7 +716,7 @@ void ResourceManager::unlockResource(Resource *res) {
 int ResourceManager::detectMapVersion() {
 	Common::File file;
 	byte buff[6];
-	ResourceSource *rsrc;
+	ResourceSource *rsrc= 0;
 
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
@@ -722,7 +727,7 @@ int ResourceManager::detectMapVersion() {
 		}
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open resource map file");
+		error("Failed to open resource map file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// detection
@@ -738,32 +743,51 @@ int ResourceManager::detectMapVersion() {
 		}
 		return SCI_VERSION_0;
 	}
-	// SCI1E/L and some SCI1.1 maps have last directory entry set to 0xFF
-	// and offset set to filesize
-	// SCI1 have 6-bytes entries, while SCI1.1 have 5-byte entries
-	file.seek(1, SEEK_SET);
-	uint16 off1, off = file.readUint16LE();
-	uint16 nEntries  = off / 3;
-	file.seek(1, SEEK_CUR);
-	file.seek(off - 3, SEEK_SET);
-	if (file.readByte() == 0xFF && file.readUint16LE() == file.size()) {
-		file.seek(3, SEEK_SET);
-		for (int i = 0; i < nEntries; i++) {
-			file.seek(1, SEEK_CUR);
-			off1 = file.readUint16LE();
-			if ((off1 - off) % 5 && (off1 - off) % 6 == 0)
-				return SCI_VERSION_1;
-			if ((off1 - off) % 5 == 0 && (off1 - off) % 6)
-				return SCI_VERSION_1_1;
-			off = off1;
+
+	// SCI1 and SCI1.1 maps consist of a fixed 3-byte header, a directory list (3-bytes each) that has one entry
+	// of id FFh and points to EOF. The actual entries have 6-bytes on SCI1 and 5-bytes on SCI1.1
+	byte directoryType = 0;
+	uint16 directoryOffset = 0;
+	uint16 lastDirectoryOffset = 0;
+	uint16 directorySize = 0;
+	int    mapDetected = 0;
+	file.seek(0, SEEK_SET);
+	while (!file.eos()) {
+		directoryType = file.readByte();
+		directoryOffset = file.readUint16LE();
+		if ((directoryType < 0x80) || ((directoryType > 0xA0) && (directoryType != 0xFF)))
+			break;
+		// Offset is above file size? -> definitely not SCI1/SCI1.1
+		if (directoryOffset > file.size())
+			break;
+		if (lastDirectoryOffset) {
+			directorySize = directoryOffset - lastDirectoryOffset;
+			if ((directorySize % 5) && (directorySize % 6 == 0))
+				mapDetected = SCI_VERSION_1;
+			if ((directorySize % 5 == 0) && (directorySize % 6))
+				mapDetected = SCI_VERSION_1_1;
 		}
-		return SCI_VERSION_1;
+		if (directoryType==0xFF) {
+			// FFh entry needs to point to EOF
+			if (directoryOffset != file.size())
+				break;
+			if (mapDetected) 
+				return mapDetected;
+			return SCI_VERSION_1;
+		}
+		lastDirectoryOffset = directoryOffset;
 	}
 
 #ifdef ENABLE_SCI32
 	// late SCI1.1 and SCI32 maps have last directory entry set to 0xFF
 	// offset set to filesize and 4 more bytes
-	file.seek(off - 7, SEEK_SET);
+
+	// TODO/FIXME: This code was not updated in r42300, which changed the behavior of this
+	// function a lot. To make it compile again "off" was changed to the newly introduced
+	// "lastDirectoryOffset". This is probably not the correct fix, since before r43000
+	// the loop above could not prematurely terminate and thus this would always check the
+	// last directory entry instead of the last checked directory entry.
+	file.seek(lastDirectoryOffset - 7, SEEK_SET);
 	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
 		return SCI_VERSION_32; // TODO : check if there is a difference between these maps
 #endif
@@ -783,7 +807,7 @@ int ResourceManager::detectVolVersion() {
 		}
 	}
 	if (file.isOpen() == false) {
-		warning("Failed to open volume file");
+		error("Failed to open volume file");
 		return SCI_VERSION_AUTODETECT;
 	}
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
@@ -874,6 +898,21 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 		debug("Patching %s failed - resource type mismatch", source->location_name.c_str());
 		return;
 	}
+
+	// Fixes SQ5/German, patch file special case logic taken from SCI View disassembly
+	if (patch_data_offset & 0x80) {
+		switch (patch_data_offset & 0x7F) {
+			case 0:
+				patch_data_offset = 24;
+				break;
+			case 1:
+				patch_data_offset = 2;
+				break;
+			default:
+				warning("Resource patch unsupported special case %X\n", patch_data_offset);
+		}
+	}
+
 	if (patch_data_offset + 2 >= fsize) {
 		debug("Patching %s failed - patch starting at offset %d can't be in file of size %d",
 		      source->location_name.c_str(), patch_data_offset + 2, fsize);
@@ -984,6 +1023,9 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
 			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
+			if (!res->source) {
+				warning("Could not get volume for resource %d, VolumeID %d\n", id, offset >> bShift);
+			}
 			_resMap.setVal(resId, res);
 		}
 	} while (!file.eos());

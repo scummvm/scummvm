@@ -62,6 +62,7 @@ enum DrawData {
 	kDDPlainColorBackground,
 	kDDDefaultBackground,
 	kDDTextSelectionBackground,
+	kDDTextSelectionFocusBackground,
 
 	kDDWidgetBackgroundDefault,
 	kDDWidgetBackgroundSmall,
@@ -155,6 +156,13 @@ public:
 	};
 
 	typedef State WidgetStateInfo;
+
+	//! Text inversion state of the text to be draw
+	enum TextInversionState {
+		kTextInversionNone,	//!< Indicates that the text should not be drawn inverted
+		kTextInversion,		//!< Indicates that the text should be drawn inverted, but not focused
+		kTextInversionFocus	//!< Indicates thte the test should be drawn inverted, and focused
+	};
 
 	enum ScrollbarState {
 		kScrollbarStateNo,
@@ -302,7 +310,7 @@ public:
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
 
 	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled);
 

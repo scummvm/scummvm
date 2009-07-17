@@ -27,6 +27,7 @@
 
 #include "common/util.h"
 
+#include "sci/sci.h"
 #include "sci/sfx/iterator_internal.h"
 #include "sci/sfx/misc.h"	// for sfx_player_tell_synth
 #include "sci/tools.h"
@@ -233,7 +234,7 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 			channel->state = SI_STATE_DELTA_TIME;
 			channel->total_timepos = channel->loop_timepos;
 			channel->last_cmd = 0xfe;
-			fprintf(stderr, "Looping song iterator %08lx.\n", ID);
+			debugC(2, kDebugLevelSound, "Looping song iterator %08lx.\n", ID);
 			return SI_LOOP;
 		} else {
 			channel->state = SI_STATE_FINISHED;
@@ -287,15 +288,15 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 					voices += _polyphony[i];
 				}
 
-				sciprintf("SET_POLYPHONY(%d, %d) for a total of %d voices\n", midi_channel, buf[2], voices);
-				sciprintf("[iterator-1] DEBUG: Polyphony = [ ");
+				printf("SET_POLYPHONY(%d, %d) for a total of %d voices\n", midi_channel, buf[2], voices);
+				printf("[iterator] DEBUG: Polyphony = [ ");
 				for (i = 0; i < self1->_numChannels; i++)
-					sciprintf("%d ", _polyphony[i]);
-				sciprintf("]\n");
-				sciprintf("[iterator-1] DEBUG: Importance = [ ");
+					printf("%d ", _polyphony[i]);
+				printf("]\n");
+				printf("[iterator] DEBUG: Importance = [ ");
 				for (i = 0; i < self1->_numChannels; i++)
-					sciprintf("%d ", _importance[i]);
-				sciprintf("]\n");
+					printf("%d ", _importance[i]);
+				printf("]\n");
 			}
 #endif
 			break;
@@ -304,7 +305,7 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 			break;
 
 		case SCI_MIDI_CHANNEL_MUTE:
-			sciprintf("CHANNEL_MUTE(%d, %d)\n", midi_channel, buf[2]);
+			warning("CHANNEL_MUTE(%d, %d)", midi_channel, buf[2]);
 			break;
 
 		case SCI_MIDI_HOLD: {
@@ -379,7 +380,7 @@ int BaseSongIterator::processMidi(byte *buf, int *result,
 		channel->state = SI_STATE_FINISHED;
 		delay = (size * 50 + format.rate - 1) / format.rate; /* number of ticks to completion*/
 
-		fprintf(stderr, "delaying %d ticks\n", delay);
+		debugC(2, kDebugLevelSound, "delaying %d ticks\n", delay);
 		return delay;
 	}
 
@@ -523,7 +524,7 @@ static int _sci0_get_pcm_data(Sci0SongIterator *self,
 }
 
 static Audio::AudioStream *makeStream(byte *data, int size, sfx_pcm_config_t conf) {
-	printf("Playing PCM data of size %d, rate %d\n", size, conf.rate);
+	debugC(2, kDebugLevelSound, "Playing PCM data of size %d, rate %d\n", size, conf.rate);
 
 	// Duplicate the data
 	byte *sound = (byte *)malloc(size);
@@ -563,7 +564,7 @@ SongIterator *Sci0SongIterator::handleMessage(Message msg) {
 
 		case _SIMSG_BASEMSG_PRINT:
 			print_tabs_id(msg._arg.i, ID);
-			fprintf(stderr, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
+			debugC(2, kDebugLevelSound, "SCI0: dev=%d, active-chan=%d, size=%d, loops=%d\n",
 			        _deviceId, _numActiveChannels, _data.size(), _loops);
 			break;
 
@@ -680,7 +681,7 @@ int Sci1SongIterator::initSample(const int offset) {
 
 	CHECK_FOR_END_ABSOLUTE((uint)offset + 10);
 	if (_data[offset + 1] != 0)
-		sciprintf("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero\n",
+		warning("[iterator-1] In sample at offset 0x04x: Byte #1 is %02x instead of zero",
 		          _data[offset + 1]);
 
 	rate = (int16)READ_LE_UINT16(_data.begin() + offset + 2);
@@ -739,9 +740,7 @@ int Sci1SongIterator::initSong() {
 	}
 
 	if (_data[offset] == 0xff) {
-		sciprintf("[iterator-1] Song does not support"
-		          " hardware 0x%02x\n",
-		          _deviceId);
+		warning("[iterator] Song does not support hardware 0x%02x", _deviceId);
 		return 1;
 	}
 
@@ -765,16 +764,18 @@ int Sci1SongIterator::initSong() {
 		} else {
 			/* Regular MIDI channel */
 			if (_numChannels >= MIDI_CHANNELS) {
-				sciprintf("[iterator-1] Warning: Song has more than %d channels, cutting them off\n",
+				warning("[iterator] Song has more than %d channels, cutting them off",
 				          MIDI_CHANNELS);
 				break; /* Scan for remaining samples */
 			} else {
 				int channel_nr = _data[track_offset] & 0xf;
 				SongIteratorChannel &channel = _channels[_numChannels++];
 
+				/*
 				if (_data[track_offset] & 0xf0)
 					printf("Channel %d has mapping bits %02x\n",
 					       channel_nr, _data[track_offset] & 0xf0);
+				*/
 
 				// Add 2 to skip over header bytes */
 				channel.init(channel_nr, track_offset + 2, track_offset + end);
@@ -801,8 +802,8 @@ int Sci1SongIterator::initSong() {
 	for (Common::List<Sci1Sample>::iterator seeker = _samples.begin();
 			seeker != _samples.end(); ++seeker) {
 		int prev_last_time = last_time;
-		sciprintf("[iterator-1] Detected sample: %d Hz, %d bytes at time %d\n",
-		          seeker->format.rate, seeker->size, seeker->delta);
+		//printf("[iterator] Detected sample: %d Hz, %d bytes at time %d\n",
+		//          seeker->format.rate, seeker->size, seeker->delta);
 		last_time = seeker->delta;
 		seeker->delta -= prev_last_time;
 	}
@@ -884,8 +885,7 @@ Audio::AudioStream *Sci1SongIterator::getAudioStream() {
 int Sci1SongIterator::nextCommand(byte *buf, int *result) {
 
 	if (!_initialised) {
-		sciprintf("[iterator-1] DEBUG: Initialising for %d\n",
-		          _deviceId);
+		//printf("[iterator] DEBUG: Initialising for %d\n", _deviceId);
 		_initialised = true;
 		if (initSong())
 			return SI_FINISHED;
@@ -981,7 +981,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 				playmask |= _channels[i].playmask;
 
 			print_tabs_id(msg._arg.i, ID);
-			fprintf(stderr, "SCI1: chan-nr=%d, playmask=%04x\n",
+			debugC(2, kDebugLevelSound, "SCI1: chan-nr=%d, playmask=%04x\n",
 			        _numChannels, playmask);
 		}
 		break;
@@ -1010,7 +1010,7 @@ SongIterator *Sci1SongIterator::handleMessage(Message msg) {
 				  ;
 
 				if (_deviceId == 0xff) {
-					sciprintf("[iterator-1] Warning: Device %d(%d) not supported",
+					warning("[iterator] Device %d(%d) not supported",
 					          msg._arg.i & 0xff, sfx_pcm_available());
 				}
 				if (_initialised) {
@@ -1143,7 +1143,7 @@ public:
 SongIterator *CleanupSongIterator::handleMessage(Message msg) {
 	if (msg._class == _SIMSG_BASEMSG_PRINT && msg._type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg._arg.i, ID);
-		fprintf(stderr, "CLEANUP\n");
+		debugC(2, kDebugLevelSound, "CLEANUP\n");
 	}
 
 	return NULL;
@@ -1162,6 +1162,43 @@ int CleanupSongIterator::nextCommand(byte *buf, int *result) {
 		return 0;
 	} else
 		return SI_FINISHED;
+}
+
+/**********************/
+/*-- Timer iterator --*/
+/**********************/
+TimerSongIterator::TimerSongIterator(int delta)
+	: _delta(delta) {
+}
+
+int TimerSongIterator::nextCommand(byte *buf, int *result) {
+	if (_delta) {
+		int d = _delta;
+		_delta = 0;
+		return d;
+	}
+	return SI_FINISHED;
+}
+
+SongIterator *TimerSongIterator::handleMessage(Message msg) {
+	return NULL;
+}
+
+int TimerSongIterator::getTimepos() {
+	return 0;
+}
+
+Audio::AudioStream *TimerSongIterator::getAudioStream() {
+	return NULL;
+}
+
+SongIterator *TimerSongIterator::clone(int delta) {
+	TimerSongIterator *newit = new TimerSongIterator(*this);
+	return newit;
+}
+
+SongIterator *new_timer_iterator(int delta) {
+	return new TimerSongIterator(delta);
 }
 
 /**********************************/
@@ -1209,7 +1246,7 @@ SongIterator *FastForwardSongIterator::handleMessage(Message msg) {
 
 	if (msg._class == _SIMSG_BASE && msg._type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg._arg.i, ID);
-		fprintf(stderr, "FASTFORWARD:\n");
+		debugC(2, kDebugLevelSound, "FASTFORWARD:\n");
 		msg._arg.i++;
 	}
 
@@ -1266,6 +1303,14 @@ static void song_iterator_remove_death_listener(SongIterator *it, TeeSongIterato
 			it->_deathListeners[i] = 0;
 			return;
 		}
+	}
+}
+
+static void song_iterator_transfer_death_listeners(SongIterator *it, SongIterator *it_from) {
+	for (int i = 0; i < SONGIT_MAX_LISTENERS; ++i) {
+		if (it_from->_deathListeners[i])
+			song_iterator_add_death_listener(it, it_from->_deathListeners[i]);
+		it_from->_deathListeners[i] = 0;
 	}
 }
 
@@ -1505,12 +1550,16 @@ SongIterator *TeeSongIterator::handleMessage(Message msg) {
 			delete _children[TEE_LEFT].it;
 			_children[TEE_LEFT].it = 0;
 			old_it = _children[TEE_RIGHT].it;
+			song_iterator_remove_death_listener(old_it, this);
+			song_iterator_transfer_death_listeners(old_it, this);
 			delete this;
 			return old_it;
 		} else if (!(_status & TEE_RIGHT_ACTIVE)) {
 			delete _children[TEE_RIGHT].it;
 			_children[TEE_RIGHT].it = 0;
 			old_it = _children[TEE_LEFT].it;
+			song_iterator_remove_death_listener(old_it, this);
+			song_iterator_transfer_death_listeners(old_it, this);
 			delete this;
 			return old_it;
 		}
@@ -1521,7 +1570,7 @@ SongIterator *TeeSongIterator::handleMessage(Message msg) {
 
 	if (msg._class == _SIMSG_BASE && msg._type == _SIMSG_BASEMSG_PRINT) {
 		print_tabs_id(msg._arg.i, ID);
-		fprintf(stderr, "TEE:\n");
+		debugC(2, kDebugLevelSound, "TEE:\n");
 		msg._arg.i++;
 	}
 
@@ -1565,15 +1614,15 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 	do {
 		retval = (*it)->nextCommand(buf, result);
 		if (retval == SI_MORPH) {
-			fprintf(stderr, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
+			debugC(2, kDebugLevelSound, "  Morphing %p (stored at %p)\n", (void *)*it, (void *)it);
 			if (!SIMSG_SEND((*it), SIMSG_ACK_MORPH)) {
 				error("SI_MORPH failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
 			} else
-				fprintf(stderr, "SI_MORPH successful\n");
+				debugC(2, kDebugLevelSound, "SI_MORPH successful\n");
 		}
 
 		if (retval == SI_FINISHED)
-			fprintf(stderr, "[song-iterator] Song finished. mask = %04x, cm=%04x\n",
+			debugC(2, kDebugLevelSound, "[song-iterator] Song finished. mask = %04x, cm=%04x\n",
 			        mask, (*it)->channel_mask);
 		if (retval == SI_FINISHED
 		        && (mask & IT_READER_MAY_CLEAN)
@@ -1582,9 +1631,11 @@ int songit_next(SongIterator **it, byte *buf, int *result, int mask) {
 					       ** cleanup iterator */
 			int channel_mask = (*it)->channel_mask;
 
-			if (mask & IT_READER_MAY_FREE)
-				delete *it;
+			SongIterator *old_it = *it;
 			*it = new CleanupSongIterator(channel_mask);
+			song_iterator_transfer_death_listeners(*it, old_it);
+			if (mask & IT_READER_MAY_FREE)
+				delete old_it;
 			retval = -9999; /* Continue */
 		}
 	} while (!(  /* Until one of the following holds */

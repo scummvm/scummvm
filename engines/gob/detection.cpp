@@ -68,9 +68,11 @@ static const PlainGameDescriptor gobGames[] = {
 	{"playtoons5", "Playtoons 5 - The Stone of Wakan"},
 	{"playtnck1", "Playtoons Construction Kit 1 - Monsters"},
 	{"playtnck2", "Playtoons Construction Kit 2 - Knights"},
+	{"playtnck3", "Playtoons Construction Kit 3 - Far West"},
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
+	{"magicstones", "The Land of the Magic Stones"},
 	{"adibou4", "Adibou v4"},
 	{"adibouunknown", "Adibou (not yet supported)"},
 	{0, 0}
@@ -3438,6 +3440,24 @@ static const GOBGameDescription gameDescriptions[] = {
 			"playtoons2",
 			"",
 			{
+				{"playtoon.stk", 0, "4772c96be88a57f0561519e4a1526c62", 24406262},
+				{"spirou.stk", 0, "5d9c7644d0c47840169b4d016765cc1a", 9816201},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"playtoons2",
+			"",
+			{
 				{"playtoon.stk", 0, "55a85036dd93cce93532d8f743d90074", 17467154},
 				{"spirou.stk", 0, "e3e1b6148dd72fafc3637f1a8e5764f5", 9812043},
 				{0, 0, 0, 0}
@@ -3541,7 +3561,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
-
 	{
 		{
 			"playtoons4",
@@ -3552,6 +3571,24 @@ static const GOBGameDescription gameDescriptions[] = {
 				{0, 0, 0, 0}
 			},
 			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytoon,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{ //Supplied by goodoldgeorg in bug report #2820006
+		{
+			"playtoons4",
+			"",
+			{
+				{"playtoon.stk", 0, "9e513e993a5b0e2496add3f50c08764b", 30448506},
+				{"manda.stk", 0, "69a79c9f61b2618e482726f2ff68078d", 6499208},
+				{0, 0, 0, 0}
+			},
+			EN_ANY,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
@@ -3631,6 +3668,42 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypePlaytnCk,
 		kFeatures640,
 		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"playtnck3",
+			"",
+			{
+				{"playtoon.stk", 0, "5f9aae29265f1f105ad8ec195dff81de", 68382024},
+				{"dan.itk", 0, "9a8f62809eca5a52f429b5b6a8e70f8f", 2861056},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypePlaytnCk,
+		kFeatures640,
+		"intro2.stk", 0, 0
+	},
+	{
+		{
+			"magicstones",
+			"",
+			{
+				{"ed4.stk", 0, "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882},
+				{"ed4cd.itk", 0, "0627a91d9a6f4772c33747ce752024c2", 606993908},
+				{0, 0, 0, 0}
+			},
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeMagicStones,
+		kFeatures800x600,
+		"ed4.stk", "main.obc", 0
 	},
 	{
 		{
@@ -4189,6 +4262,20 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
+			"magicstones",
+			"unknown",
+			AD_ENTRY1(0, 0),
+			UNK_LANG,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeMagicStones,
+		kFeatures800x600,
+		"ed4.stk", "main.obc", 0
+	},
+	{
+		{
 			"adibou4",
 			"",
 			AD_ENTRY1(0, 0),
@@ -4241,8 +4328,9 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[19], { "intro.stk", "bambou.itk", 0 } },
 	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[22], { "adif41.stk", "adim41.stk", 0 } },
-	{ &fallbackDescs[23], { "coktelplayer.scn", 0 } },
+	{ &fallbackDescs[22], { "ed4.stk", 0 } },
+	{ &fallbackDescs[23], { "adif41.stk", "adim41.stk", 0 } },
+	{ &fallbackDescs[24], { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
 };
 

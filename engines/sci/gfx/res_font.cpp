@@ -44,12 +44,12 @@ static int calc_char(byte *dest, int total_width, int total_height, byte *src, i
 	src += 2;
 
 	if ((width >> 3) > total_width || height > total_height) {
-		GFXERROR("Weird character: width=%d/%d, height=%d/%d\n", width, total_width, height, total_height);
+		error("Weird character: width=%d/%d, height=%d/%d", width, total_width, height, total_height);
 		return GFX_ERROR;
 	}
 
 	if (byte_width * height + 2 > size) {
-		GFXERROR("Character extends to %d of %d allowed bytes\n", byte_width * height + 2, size);
+		error("Character extends to %d of %d allowed bytes", byte_width * height + 2, size);
 		return GFX_ERROR;
 	}
 
@@ -71,7 +71,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 	++font_counter;
 
 	if (size < 6) {
-		GFXERROR("Font %04x size is %d- this is a joke, right?\n", id, size);
+		error("Font %04x size is %d", id, size);
 		gfxr_free_font(font);
 		return NULL;
 	}
@@ -81,15 +81,15 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 
 	if (chars_nr < 0 || chars_nr > 256 || max_height < 0) {
 		if (chars_nr < 0 || chars_nr > 256)
-			GFXERROR("Font %04x: Invalid number of characters: %d\n", id, chars_nr);
+			error("Font %04x: Invalid number of characters: %d", id, chars_nr);
 		if (max_height < 0)
-			GFXERROR("Font %04x: Invalid font height: %d\n", id, max_height);
+			error("Font %04x: Invalid font height: %d", id, max_height);
 		gfxr_free_font(font);
 		return NULL;
 	}
 
 	if (size < 6 + chars_nr * 2) {
-		GFXERROR("Font %04x: Insufficient space for %d characters in font\n", id, chars_nr);
+		error("Font %04x: Insufficient space for %d characters in font", id, chars_nr);
 		gfxr_free_font(font);
 		return NULL;
 	}
@@ -101,7 +101,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 		int offset = READ_LE_UINT16(resource + (i << 1) + 6);
 
 		if (offset >= size) {
-			GFXERROR("Font %04x: Error: Character 0x%02x is at offset 0x%04x (beyond 0x%04x)\n", id, i, offset, size);
+			error("Font %04x: Error: Character 0x%02x is at offset 0x%04x (beyond 0x%04x)", id, i, offset, size);
 			gfxr_free_font(font);
 			return NULL;
 		}
@@ -130,7 +130,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 		int offset = READ_LE_UINT16(resource + (i << 1) + 6);
 
 		if (calc_char(font->data + (font->char_size * i), font->row_size, max_height, resource + offset, size - offset)) {
-			GFXERROR("Problem occured in font %04x, char %d/%d\n", id, i, chars_nr);
+			error("Problem occured in font %04x, char %d/%d", id, i, chars_nr);
 			gfxr_free_font(font);
 			return NULL;
 		}

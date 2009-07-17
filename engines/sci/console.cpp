@@ -50,10 +50,6 @@ int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 bool g_debug_weak_validations = true;
-// Script related variables
-int g_debug_seeking = 0; // Stepping forward until some special condition is met
-int g_debug_seek_special = 0;  // Used for special seeks
-int g_debug_seek_level = 0; // Used for seekers that want to check their exec stack depth
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -71,6 +67,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	// Kernel
 //	DCmd_Register("classes",			WRAP_METHOD(Console, cmdClasses));	// TODO
 	DCmd_Register("opcodes",			WRAP_METHOD(Console, cmdOpcodes));
+	DCmd_Register("selector",			WRAP_METHOD(Console, cmdSelector));
 	DCmd_Register("selectors",			WRAP_METHOD(Console, cmdSelectors));
 	DCmd_Register("functions",			WRAP_METHOD(Console, cmdKernelFunctions));
 	DCmd_Register("class_table",		WRAP_METHOD(Console, cmdClassTable));
@@ -192,18 +189,25 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
 		"Dirty frames management\n");
 	*/
+
+	scriptState.seeking = kDebugSeekNothing;
+	scriptState.seekLevel = 0;
+	scriptState.runningStep = 0;
+	scriptState.stopOnEvent = false;
 }
 
 Console::~Console() {
 }
 
 void Console::preEnter() {
-	_vm->_gamestate->_sound.sfx_suspend(true);
+	if (_vm->_gamestate)
+		_vm->_gamestate->_sound.sfx_suspend(true);
 	_vm->_mixer->pauseAll(true);
 }
 
 void Console::postEnter() {
-	_vm->_gamestate->_sound.sfx_suspend(false);
+	if (_vm->_gamestate)
+		_vm->_gamestate->_sound.sfx_suspend(false);
 	_vm->_mixer->pauseAll(false);
 }
 
@@ -237,6 +241,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf("Kernel:\n");
 	DebugPrintf(" opcodes - Lists the opcode names\n");
 	DebugPrintf(" selectors - Lists the selector names\n");
+	DebugPrintf(" selector - Attempts to find the requested selector by name\n");
 	DebugPrintf(" functions - Lists the kernel functions\n");
 	DebugPrintf(" class_table - Shows the available classes\n");
 	DebugPrintf("\n");
@@ -361,25 +366,23 @@ ResourceType parseResourceType(const char *resid) {
 }
 
 const char *selector_name(EngineState *s, int selector) {
-	if (selector >= 0 && selector < (int)s->_kernel->getSelectorNamesSize())
-		return s->_kernel->getSelectorName(selector).c_str();
+	if (selector >= 0 && selector < (int)((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize())
+		return ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str();
 	else
 		return "--INVALID--";
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
-	int ver = _vm->getVersion();
-
-	DebugPrintf("Resource file version:        %s\n", sci_version_types[_vm->getResMgr()->_sciVersion]);
-	DebugPrintf("Emulated interpreter version: %s\n", versionNames[ver]);
+	DebugPrintf("Resource file version:        %s\n", versionNames[_vm->getResMgr()->_sciVersion]);
+	DebugPrintf("Emulated interpreter version: %s\n", versionNames[_vm->getVersion()]);
 
 	return true;
 }
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	DebugPrintf("Opcode names in numeric order [index: type name]:\n");
-	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getOpcodesSize(); seeker++) {
-		opcode op = _vm->_gamestate->_kernel->getOpcode(seeker);
+	for (uint seeker = 0; seeker < _vm->getKernel()->getOpcodesSize(); seeker++) {
+		opcode op = _vm->getKernel()->getOpcode(seeker);
 		DebugPrintf("%03x: %03x %20s | ", seeker, op.type, op.name.c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
@@ -390,10 +393,29 @@ bool Console::cmdOpcodes(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdSelector(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Attempts to find the requested selector by name.\n");
+		DebugPrintf("Usage: %s <selector name>\n", argv[0]);
+		return true;
+	}
+
+	for (uint seeker = 0; seeker < _vm->getKernel()->getSelectorNamesSize(); seeker++) {
+		if (!scumm_stricmp(_vm->getKernel()->getSelectorName(seeker).c_str(), argv[1])) {
+			DebugPrintf("Selector %s found at %03x\n", _vm->getKernel()->getSelectorName(seeker).c_str(), seeker);
+			return true;
+		}
+	}
+
+	DebugPrintf("Selector %s wasn't found\n", argv[1]);
+
+	return true;
+}
+
 bool Console::cmdSelectors(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
-	for (uint seeker = 0; seeker < _vm->_gamestate->_kernel->getSelectorNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, _vm->_gamestate->_kernel->getSelectorName(seeker).c_str());
+	for (uint seeker = 0; seeker < _vm->getKernel()->getSelectorNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, _vm->getKernel()->getSelectorName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -405,8 +427,8 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	DebugPrintf("Kernel function names in numeric order:\n");
-	for (uint seeker = 0; seeker <  _vm->_gamestate->_kernel->getKernelNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, _vm->_gamestate->_kernel->getKernelName(seeker).c_str());
+	for (uint seeker = 0; seeker <  _vm->getKernel()->getKernelNamesSize(); seeker++) {
+		DebugPrintf("%03x: %20s | ", seeker, _vm->getKernel()->getKernelName(seeker).c_str());
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
@@ -417,13 +439,13 @@ bool Console::cmdKernelFunctions(int argc, const char **argv) {
 }
 
 bool Console::cmdSuffixes(int argc, const char **argv) {
-	_vm->_gamestate->_vocabulary->printSuffixes();
+	_vm->getVocabulary()->printSuffixes();
 
 	return true;
 }
 
 bool Console::cmdParserWords(int argc, const char **argv) {
-	_vm->_gamestate->_vocabulary->printParserWords();
+	_vm->getVocabulary()->printParserWords();
 
 	return true;
 }
@@ -438,6 +460,7 @@ enum {
 
 int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, const char **argv) {
 	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 
 	if (type == kParseNil)
 		return 0;
@@ -448,11 +471,11 @@ int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, con
 		return *pos;
 	}
 	if (type == kParseEndOfInput) {
-		sciprintf("Unbalanced parentheses\n");
+		con->DebugPrintf("Unbalanced parentheses\n");
 		return -1;
 	}
 	if (type == kParseClosingParenthesis) {
-		sciprintf("Syntax error at token %d\n", *i);
+		con->DebugPrintf("Syntax error at token %d\n", *i);
 		return -1;
 	}
 
@@ -482,7 +505,7 @@ int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, con
 
 	const char *token = argv[(*i)++];
 	if (strcmp(token, ")"))
-		sciprintf("Expected ')' at token %d\n", *i);
+		con->DebugPrintf("Expected ')' at token %d\n", *i);
 
 	return oldPos;
 }
@@ -522,16 +545,13 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 
 bool Console::cmdRegisters(int argc, const char **argv) {
 	DebugPrintf("Current register values:\n");
-#if 0
-		// TODO: p_restadjust
-	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), *p_restadjust);
-#endif
+	DebugPrintf("acc=%04x:%04x prev=%04x:%04x &rest=%x\n", PRINT_REG(_vm->_gamestate->r_acc), PRINT_REG(_vm->_gamestate->r_prev), scriptState.restAdjust);
 
 	if (!_vm->_gamestate->_executionStack.empty()) {
-#if 0
-		// TODO: p_pc, p_objp, p_pp, p_sp
-		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", PRINT_REG(*p_pc), PRINT_REG(*p_objp), PRINT_STK(*p_pp), PRINT_STK(*p_sp));
-#endif
+		EngineState *s = _vm->_gamestate;	// for PRINT_STK
+		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", 
+					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp), 
+					PRINT_STK(scriptState.xs->fp), PRINT_STK(scriptState.xs->sp));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
@@ -547,11 +567,6 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	}
 
 	int resNum = atoi(argv[2]);
-	if (resNum == 0) {
-		DebugPrintf("The resource number specified is not a number");
-		return true;
-	}
-
 	ResourceType res = parseResourceType(argv[1]);
 
 	if (res == kResourceTypeInvalid)
@@ -589,7 +604,7 @@ bool Console::cmdDissectScript(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gamestate->_kernel->dissectScript(atoi(argv[1]), _vm->_gamestate->_vocabulary);
+	_vm->getKernel()->dissectScript(atoi(argv[1]), _vm->getVocabulary());
 
 	return true;
 }
@@ -608,11 +623,6 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	}
 
 	int resNum = atoi(argv[2]);
-	if (resNum == 0) {
-		DebugPrintf("The resource number specified is not a number");
-		return true;
-	}
-
 	ResourceType res = parseResourceType(argv[1]);
 
 	if (res == kResourceTypeInvalid)
@@ -835,7 +845,6 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 		_vm->_gamestate->successor = newstate; // Set successor
 
 		script_abort_flag = 2; // Abort current game with replay
-		g_debugstate_valid = 0;
 
 		shrink_execution_stack(_vm->_gamestate, _vm->_gamestate->execution_stack_base + 1);
 		return 0;
@@ -866,7 +875,6 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 	_vm->_gamestate->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	script_abort_flag = 1;
-	g_debugstate_valid = 0;
 
 	return false;
 }
@@ -886,10 +894,10 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 bool Console::cmdSentenceFragments(int argc, const char **argv) {
 	DebugPrintf("Sentence fragments (used to build Parse trees)\n");
 
-	for (uint i = 0; i < _vm->_gamestate->_vocabulary->getParserBranchesSize(); i++) {
+	for (uint i = 0; i < _vm->getVocabulary()->getParserBranchesSize(); i++) {
 		int j = 0;
 
-		const parse_tree_branch_t &branch = _vm->_gamestate->_vocabulary->getParseTreeBranch(i);
+		const parse_tree_branch_t &branch = _vm->getVocabulary()->getParseTreeBranch(i);
 		DebugPrintf("R%02d: [%x] ->", i, branch.id);
 		while ((j < 10) && branch.data[j]) {
 			int dat = branch.data[j++];
@@ -921,7 +929,7 @@ bool Console::cmdSentenceFragments(int argc, const char **argv) {
 		DebugPrintf("\n");
 	}
 
-	DebugPrintf("%d rules.\n", _vm->_gamestate->_vocabulary->getParserBranchesSize());
+	DebugPrintf("%d rules.\n", _vm->getVocabulary()->getParserBranchesSize());
 
 	return true;
 }
@@ -944,7 +952,7 @@ bool Console::cmdParse(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Parsing '%s'\n", string);
-	bool res = _vm->_gamestate->_vocabulary->tokenizeString(words, string, &error);
+	bool res = _vm->getVocabulary()->tokenizeString(words, string, &error);
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
@@ -955,7 +963,7 @@ bool Console::cmdParse(int argc, const char **argv) {
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
-		if (_vm->_gamestate->_vocabulary->parseGNF(_vm->_gamestate->parser_nodes, words, true))
+		if (_vm->getVocabulary()->parseGNF(_vm->_gamestate->parser_nodes, words, true))
 			syntax_fail = 1; // Building a tree failed
 
 		if (syntax_fail)
@@ -1206,7 +1214,7 @@ bool Console::cmdPrintPort(int argc, const char **argv) {
 bool Console::cmdParseGrammar(int argc, const char **argv) {
 	DebugPrintf("Parse grammar, in strict GNF:\n");
 
-	_vm->_gamestate->_vocabulary->buildGNF(true);
+	_vm->getVocabulary()->buildGNF(true);
 
 	return true;
 }
@@ -1598,7 +1606,7 @@ bool Console::cmdGCObjects(int argc, const char **argv) {
 
 void _print_address(void * _, reg_t addr) {
 	if (addr.segment)
-		((SciEngine *)g_engine)->getDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
+		((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("  %04x:%04x\n", PRINT_REG(addr));
 }
 
 bool Console::cmdGCShowReachable(int argc, const char **argv) {
@@ -1689,20 +1697,16 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVarlist(int argc, const char **argv) {
-	//const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = {"global", "local", "temp", "param"};
 
 	DebugPrintf("Addresses of variables in the VM:\n");
 
-#if 0
-	// TODO: p_var_segs, p_vars, p_var_base, p_var_max
-
 	for (int i = 0; i < 4; i++) {
-		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(p_var_segs[i], p_vars[i] - p_var_base[i])));
-		if (p_var_max)
-			DebugPrintf("  total %d", p_var_max[i]);
+		DebugPrintf("%s vars at %04x:%04x ", varnames[i], PRINT_REG(make_reg(scriptState.variables_seg[i], scriptState.variables[i] - scriptState.variables_base[i])));
+		if (scriptState.variables_max)
+			DebugPrintf("  total %d", scriptState.variables_max[i]);
 		DebugPrintf("\n");
 	}
-#endif
 
 	return true;
 }
@@ -1718,7 +1722,7 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-	//const char *varnames[] = {"global", "local", "temp", "param"};
+	const char *varnames[] = {"global", "local", "temp", "param"};
 	const char *varabbrev = "gltp";
 	const char *vartype_pre = strchr(varabbrev, *argv[1]);
 	int vartype;
@@ -1736,31 +1740,21 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 		return true;
 	}
 
-#if 0
-	// TODO: p_var_max
-	if ((p_var_max) && (p_var_max[vartype] <= idx)) {
-		DebugPrintf("Max. index is %d (0x%x)\n", p_var_max[vartype], p_var_max[vartype]);
+	if ((scriptState.variables_max) && (scriptState.variables_max[vartype] <= idx)) {
+		DebugPrintf("Max. index is %d (0x%x)\n", scriptState.variables_max[vartype], scriptState.variables_max[vartype]);
 		return true;
 	}
-#endif
 
 	switch (argc) {
 	case 2:
-#if 0
-		// TODO: p_vars
-		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(p_vars[vartype][idx]));
-#endif
+		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(scriptState.variables[vartype][idx]));
 		break;
 	case 3:
-#if 0
-		// TODO: p_vars
-
-		if (parse_reg_t(_vm->_gamestate, argv[3], &p_vars[vartype][idx])) {
+		if (parse_reg_t(_vm->_gamestate, argv[3], &scriptState.variables[vartype][idx])) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
 		}
-#endif
 		break;
 	default:
 		DebugPrintf("Too many arguments\n");
@@ -1933,7 +1927,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_OBJECT:
 			DebugPrintf("object\n");
-			printObject(_vm->_gamestate, reg);
+			printObject(reg);
 			break;
 		case KSIG_REF: {
 			int size;
@@ -1988,25 +1982,21 @@ bool Console::cmdViewObject(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Information on the object at the given address:\n");
-	printObject(_vm->_gamestate, addr);
+	printObject(addr);
 
 	return true;
 }
 
 bool Console::cmdViewActiveObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class:\n");
-
-#if 0
-	// TODO: p_objp
-	printObject(_vm->_gamestate, *p_objp);
-#endif
+	printObject(scriptState.xs->objp);
 
 	return true;
 }
 
 bool Console::cmdViewAccumulatorObject(int argc, const char **argv) {
 	DebugPrintf("Information on the currently active object or class at the address indexed by the accumulator:\n");
-	printObject(_vm->_gamestate, _vm->_gamestate->r_acc);
+	printObject(_vm->_gamestate->r_acc);
 
 	return true;
 }
@@ -2040,7 +2030,7 @@ bool Console::cmdSetAccumulator(int argc, const char **argv) {
 bool Console::cmdBacktrace(int argc, const char **argv) {
 	DebugPrintf("Dumping the send/self/super/call/calle/callb stack:\n");
 
-	DebugPrintf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
+	printf("Call stack (current base: 0x%x):\n", _vm->_gamestate->execution_stack_base);
 	Common::List<ExecStack>::iterator iter;
 	uint i = 0;
 
@@ -2053,18 +2043,18 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		switch (call.type) {
 
 		case EXEC_STACK_TYPE_CALL: {// Normal function
-			sciprintf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
+			printf(" %x:[%x]  %s::%s(", i, call.origin, objname, (call.selector == -1) ? "<call[be]?>" :
 			          selector_name(_vm->_gamestate, call.selector));
 		}
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			sciprintf(" %x:[%x]  k%s(", i, call.origin, _vm->_gamestate->_kernel->getKernelName(-(call.selector) - 42).c_str());
+			printf(" %x:[%x]  k%s(", i, call.origin, _vm->getKernel()->getKernelName(-(call.selector) - 42).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
-			sciprintf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
-			          objname, _vm->_gamestate->_kernel->getSelectorName(call.selector).c_str());
+			printf(" %x:[%x] vs%s %s::%s (", i, call.origin, (call.argc) ? "write" : "read",
+			          objname, _vm->getKernel()->getSelectorName(call.selector).c_str());
 			break;
 		}
 
@@ -2074,31 +2064,31 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 			totalparamc = 16;
 
 		for (paramc = 1; paramc <= totalparamc; paramc++) {
-			sciprintf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
+			printf("%04x:%04x", PRINT_REG(call.variables_argp[paramc]));
 
 			if (paramc < call.argc)
-				sciprintf(", ");
+				printf(", ");
 		}
 
 		if (call.argc > 16)
-			sciprintf("...");
+			printf("...");
 
-		sciprintf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
+		printf(")\n    obj@%04x:%04x", PRINT_REG(call.objp));
 		if (call.type == EXEC_STACK_TYPE_CALL) {
-			sciprintf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
+			printf(" pc=%04x:%04x", PRINT_REG(call.addr.pc));
 			if (call.sp == CALL_SP_CARRY)
-				sciprintf(" sp,fp:carry");
+				printf(" sp,fp:carry");
 			else {
-				sciprintf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
-				sciprintf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
+				printf(" sp=ST:%04x", (unsigned)(call.sp - _vm->_gamestate->stack_base));
+				printf(" fp=ST:%04x", (unsigned)(call.fp - _vm->_gamestate->stack_base));
 			}
 		} else
-			sciprintf(" pc:none");
+			printf(" pc:none");
 
-		sciprintf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
+		printf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			sciprintf(" script: %d", (*(Script *)_vm->_gamestate->seg_manager->_heap[call.addr.pc.segment]).nr);
-		sciprintf("\n");
+			printf(" script: %d", (*(Script *)_vm->_gamestate->seg_manager->_heap[call.addr.pc.segment]).nr);
+		printf("\n");
 	}
 
 	return 0;
@@ -2106,24 +2096,21 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 }
 
 bool Console::cmdStep(int argc, const char **argv) {
-	g_debugstate_valid = 0;
 	if (argc == 2 && atoi(argv[1]) > 0)
-		g_debug_step_running = atoi(argv[1]) - 1;
+		scriptState.runningStep = atoi(argv[1]) - 1;
 
 	return true;
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
-	g_stop_on_event = 1;
-	g_debugstate_valid = 0;
+	scriptState.stopOnEvent = true;
 
 	return true;
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
-	g_debug_seeking = kDebugSeekLevelRet;
-	g_debug_seek_level = _vm->_gamestate->_executionStack.size() - 1;
-	g_debugstate_valid = 0;
+	scriptState.seeking = kDebugSeekLevelRet;
+	scriptState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
 
 	return true;
 }
@@ -2135,9 +2122,8 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 		return true;
 	}
 
-	g_debug_seeking = kDebugSeekGlobal;
-	g_debug_seek_special = atoi(argv[1]);
-	g_debugstate_valid = 0;
+	scriptState.seeking = kDebugSeekGlobal;
+	scriptState.seekSpecial = atoi(argv[1]);
 
 	return true;
 }
@@ -2153,8 +2139,8 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 		callk_index = strtoul(argv[1], &endptr, 0);
 		if (*endptr != '\0') {
 			callk_index = -1;
-			for (uint i = 0; i < _vm->_gamestate->_kernel->getKernelNamesSize(); i++)
-				if (argv[1] == _vm->_gamestate->_kernel->getKernelName(i)) {
+			for (uint i = 0; i < _vm->getKernel()->getKernelNamesSize(); i++)
+				if (argv[1] == _vm->getKernel()->getKernelName(i)) {
 					callk_index = i;
 					break;
 				}
@@ -2165,12 +2151,10 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 			}
 		}
 
-		g_debug_seeking = kDebugSeekSpecialCallk;
-		g_debug_seek_special = callk_index;
-		g_debugstate_valid = 0;
+		scriptState.seeking = kDebugSeekSpecialCallk;
+		scriptState.seekSpecial = callk_index;
 	} else {
-		g_debug_seeking = kDebugSeekCallk;
-		g_debugstate_valid = 0;
+		scriptState.seeking = kDebugSeekCallk;
 	}
 
 	return true;
@@ -2192,7 +2176,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 	}
 
 	Object *obj = obj_get(_vm->_gamestate, objAddr);
-	int selector_id = _vm->_gamestate->_kernel->findSelector(argv[2]);
+	int selector_id = _vm->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
 	if (!obj) {
@@ -2211,8 +2195,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO
-		//addr = disassemble(_vm->_gamestate, addr, 0, 0);
+		addr = disassemble(_vm->_gamestate, addr, 0, 0);
 	} while (addr.offset > 0);
 
 	return true;
@@ -2263,9 +2246,7 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 	}
 
 	do {
-		// TODO
-		//vpc = disassemble(_vm->_gamestate, vpc, do_bwc, do_bytes);
-
+		vpc = disassemble(_vm->_gamestate, vpc, do_bwc, do_bytes);
 	} while ((vpc.offset > 0) && (vpc.offset + 6 < size) && (--op_count));
 
 	return true;
@@ -2295,24 +2276,24 @@ bool Console::cmdSend(int argc, const char **argv) {
 	Object *o;
 	reg_t fptr;
 
-	selector_id = _vm->_gamestate->_kernel->findSelector(selector_name);
+	selector_id = _vm->getKernel()->findSelector(selector_name);
 
 	if (selector_id < 0) {
-		sciprintf("Unknown selector: \"%s\"\n", selector_name);
-		return 1;
+		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
+		return true;
 	}
 
 	o = obj_get(_vm->_gamestate, object);
 	if (o == NULL) {
-		sciprintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
-		return 1;
+		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
+		return true;
 	}
 
 	SelectorType selector_type = lookup_selector(_vm->_gamestate, object, selector_id, 0, &fptr);
 
 	if (selector_type == kSelectorNone) {
-		sciprintf("Object does not support selector: \"%s\"\n", selector_name);
-		return 1;
+		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
+		return true;
 	}
 
 	stackframe[0] = make_reg(0, selector_id);
@@ -2346,8 +2327,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 }
 
 bool Console::cmdGo(int argc, const char **argv) {
-	g_debug_seeking = 0;
-	g_debugstate_valid = 0;
+	scriptState.seeking = kDebugSeekNothing;
 
 	return true;
 }
@@ -2761,9 +2741,8 @@ bool Console::cmdExit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		script_abort_flag = 1; // Terminate VM
-		g_debugstate_valid = 0;
-		g_debug_seeking = 0;
-		g_debug_step_running = 0;
+		scriptState.seeking = kDebugSeekNothing;
+		scriptState.runningStep = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
@@ -3047,46 +3026,47 @@ int Console::printNode(reg_t addr) {
 	return 0;
 }
 
-int printObject(EngineState *s, reg_t pos) {
+int Console::printObject(reg_t pos) {
+	EngineState *s = _vm->_gamestate;	// for the several defines in this function
 	Object *obj = obj_get(s, pos);
 	Object *var_container = obj;
 	int i;
 
 	if (!obj) {
-		sciprintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
+		DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
 		return 1;
 	}
 
 	// Object header
-	sciprintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
 				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
 		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
-	sciprintf("  -- member variables:\n");
+	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
-		sciprintf("    ");
+		printf("    ");
 		if (i < var_container->variable_names_nr) {
-			sciprintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
+			DebugPrintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
 		} else
-			sciprintf("p#%x = ", i);
+			DebugPrintf("p#%x = ", i);
 
 		reg_t val = obj->_variables[i];
-		sciprintf("%04x:%04x", PRINT_REG(val));
+		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
 		Object *ref = obj_get(s, val);
 		if (ref)
-			sciprintf(" (%s)", obj_get_name(s, val));
+			DebugPrintf(" (%s)", obj_get_name(s, val));
 
-		sciprintf("\n");
+		DebugPrintf("\n");
 	}
-	sciprintf("  -- methods:\n");
+	DebugPrintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		sciprintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
+		DebugPrintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->seg_manager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		sciprintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
+		DebugPrintf("\nOwner script:\t%d\n", s->seg_manager->getScript(pos.segment)->nr);
 
 	return 0;
 }
@@ -3128,7 +3108,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int have_rects = 0;
 	Common::Rect nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s, pos, s->_kernel->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
+	if (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -3137,39 +3117,39 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 
 	GETRECT(view, loop, signal, cel);
 
-	sciprintf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
+	printf("\n-- View information:\ncel %d/%d/%d at ", view, loop, cel);
 
 	x = GET_SELECTOR(pos, x);
 	y = GET_SELECTOR(pos, y);
 	priority = GET_SELECTOR(pos, priority);
-	if (s->_kernel->_selectorMap.z > 0) {
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > 0) {
 		z = GET_SELECTOR(pos, z);
-		sciprintf("(%d,%d,%d)\n", x, y, z);
+		printf("(%d,%d,%d)\n", x, y, z);
 	} else
-		sciprintf("(%d,%d)\n", x, y);
+		printf("(%d,%d)\n", x, y);
 
 	if (priority == -1)
-		sciprintf("No priority.\n\n");
+		printf("No priority.\n\n");
 	else
-		sciprintf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
+		printf("Priority = %d (band starts at %d)\n\n", priority, PRIORITY_BAND_FIRST(priority));
 
 	if (have_rects) {
-		sciprintf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
-		sciprintf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
-		sciprintf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
+		printf("nsRect: [%d..%d]x[%d..%d]\n", nsLeft, nsRight, nsTop, nsBottom);
+		printf("lsRect: [%d..%d]x[%d..%d]\n", lsLeft, lsRight, lsTop, lsBottom);
+		printf("brRect: [%d..%d]x[%d..%d]\n", brLeft, brRight, brTop, brBottom);
 	}
 
 	nsrect = get_nsrect(s, pos, 0);
 	nsrect_clipped = get_nsrect(s, pos, 1);
 	brrect = set_base(s, pos);
-	sciprintf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
-	sciprintf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
-	sciprintf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
-	sciprintf("\n signals = %04x:\n", signal);
+	printf("new nsRect: [%d..%d]x[%d..%d]\n", nsrect.x, nsrect.xend, nsrect.y, nsrect.yend);
+	printf("new clipped nsRect: [%d..%d]x[%d..%d]\n", nsrect_clipped.x, nsrect_clipped.xend, nsrect_clipped.y, nsrect_clipped.yend);
+	printf("new brRect: [%d..%d]x[%d..%d]\n", brrect.x, brrect.xend, brrect.y, brrect.yend);
+	printf("\n signals = %04x:\n", signal);
 
 	for (i = 0; i < 16; i++)
 		if (signal & (1 << i))
-			sciprintf("  %04x: %s\n", 1 << i, signals[i]);
+			printf("  %04x: %s\n", 1 << i, signals[i]);
 }
 #endif
 #undef GETRECT
@@ -3191,28 +3171,28 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	int brLeft, brRight, brBottom, brTop;
 
 	if (!s) {
-		sciprintf("Not in debug state!\n");
+		printf("Not in debug state!\n");
 		return 1;
 	}
 
 	if ((pos < 4) || (pos > 0xfff0)) {
-		sciprintf("Invalid address.\n");
+		printf("Invalid address.\n");
 		return 1;
 	}
 
 	if (((int16)READ_LE_UINT16(s->heap + pos + SCRIPT_OBJECT_MAGIC_OFFSET)) != SCRIPT_OBJECT_MAGIC_NUMBER) {
-		sciprintf("Not an object.\n");
+		printf("Not an object.\n");
 		return 0;
 	}
 
 
-	is_view = (lookup_selector(s, pos, s->_kernel->_selectorMap.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s, pos, s->_kernel->_selectorMap.nsTop, NULL) == kSelectorVariable);
+	is_view = (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
-		sciprintf("Not a dynamic View object.\n");
+		printf("Not a dynamic View object.\n");
 		return 0;
 	}
 
@@ -3246,39 +3226,33 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	int opcode, opnumber;
 
-	if (!g_debugstate_valid) {
-		sciprintf("Not in debug state\n");
-		return 1;
-	}
-
-	g_debugstate_valid = 0;
 	opcode = s->_heap[*p_pc];
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		g_debug_seeking = kDebugSeekSO;
-		g_debug_seek_level = s->_executionStack.size()-1;
-		// Store in g_debug_seek_special the offset of the next command after send
+		scriptState.seeking = kDebugSeekSO;
+		scriptState.seekLevel = s->_executionStack.size()-1;
+		// Store in scriptState.seekSpecial the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			g_debug_seek_special = *p_pc + 5;
+			scriptState.seekSpecial = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			g_debug_seek_special = *p_pc + 4;
+			scriptState.seekSpecial = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			g_debug_seek_special = *p_pc + 3;
+			scriptState.seekSpecial = *p_pc + 3;
 			break;
 
 		default:
-			g_debug_seek_special = *p_pc + 2;
+			scriptState.seekSpecial = *p_pc + 2;
 		}
 	}
 

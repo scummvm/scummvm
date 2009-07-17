@@ -32,7 +32,7 @@ namespace Gob {
 
 class Init {
 public:
-	void initGame();
+	virtual void initGame();
 
 	virtual void initVideo() = 0;
 
@@ -70,6 +70,14 @@ public:
 
 	Init_v3(GobEngine *vm);
 	virtual ~Init_v3() {}
+};
+
+class Init_v6 : public Init_v3 {
+public:
+	virtual void initGame();
+
+	Init_v6(GobEngine *vm);
+	virtual ~Init_v6() {}
 };
 
 } // End of namespace Gob

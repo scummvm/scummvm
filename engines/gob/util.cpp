@@ -38,14 +38,14 @@
 namespace Gob {
 
 Util::Util(GobEngine *vm) : _vm(vm) {
-	_mouseButtons = 0;
-	_keyBufferHead = 0;
-	_keyBufferTail = 0;
-	_fastMode = 0;
-	_frameRate = 12;
-	_frameWaitTime = 0;
+	_mouseButtons   = kMouseButtonsNone,
+	_keyBufferHead  = 0;
+	_keyBufferTail  = 0;
+	_fastMode       = 0;
+	_frameRate      = 12;
+	_frameWaitTime  = 0;
 	_startFrameTime = 0;
-	_frameWaitLag = 0;
+	_frameWaitLag   = 0;
 }
 
 uint32 Util::getTimeKey(void) {
@@ -85,7 +85,7 @@ void Util::longDelay(uint16 msecs) {
 }
 
 void Util::initInput(void) {
-	_mouseButtons = 0;
+	_mouseButtons  = kMouseButtonsNone;
 	_keyBufferHead = _keyBufferTail = 0;
 }
 
@@ -103,16 +103,16 @@ void Util::processInput(bool scroll) {
 			y = event.mouse.y;
 			break;
 		case Common::EVENT_LBUTTONDOWN:
-			_mouseButtons |= 1;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsLeft));
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			_mouseButtons |= 2;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsRight));
 			break;
 		case Common::EVENT_LBUTTONUP:
-			_mouseButtons &= ~1;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsLeft));
 			break;
 		case Common::EVENT_RBUTTONUP:
-			_mouseButtons &= ~2;
+			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL) {
@@ -179,26 +179,26 @@ int16 Util::translateKey(const Common::KeyState &key) {
 		int16 from;
 		int16 to;
 	} keys[] = {
-		{Common::KEYCODE_INVALID,   0x0000},
-		{Common::KEYCODE_BACKSPACE, 0x0E08},
-		{Common::KEYCODE_SPACE,     0x3920},
-		{Common::KEYCODE_RETURN,    0x1C0D},
-		{Common::KEYCODE_ESCAPE,    0x011B},
-		{Common::KEYCODE_DELETE,    0x5300},
-		{Common::KEYCODE_UP,        0x4800},
-		{Common::KEYCODE_DOWN,      0x5000},
-		{Common::KEYCODE_RIGHT,     0x4D00},
-		{Common::KEYCODE_LEFT,      0x4B00},
-		{Common::KEYCODE_F1,        0x3B00},
-		{Common::KEYCODE_F2,        0x3C00},
-		{Common::KEYCODE_F3,        0x3D00},
-		{Common::KEYCODE_F4,        0x3E00},
-		{Common::KEYCODE_F5,        0x011B},
-		{Common::KEYCODE_F6,        0x4000},
-		{Common::KEYCODE_F7,        0x4100},
-		{Common::KEYCODE_F8,        0x4200},
-		{Common::KEYCODE_F9,        0x4300},
-		{Common::KEYCODE_F10,       0x4400}
+		{Common::KEYCODE_INVALID,   kKeyNone     },
+		{Common::KEYCODE_BACKSPACE, kKeyBackspace},
+		{Common::KEYCODE_SPACE,     kKeySpace    },
+		{Common::KEYCODE_RETURN,    kKeyReturn   },
+		{Common::KEYCODE_ESCAPE,    kKeyEscape   },
+		{Common::KEYCODE_DELETE,    kKeyDelete   },
+		{Common::KEYCODE_UP,        kKeyUp       },
+		{Common::KEYCODE_DOWN,      kKeyDown     },
+		{Common::KEYCODE_RIGHT,     kKeyRight    },
+		{Common::KEYCODE_LEFT,      kKeyLeft     },
+		{Common::KEYCODE_F1,        kKeyF1       },
+		{Common::KEYCODE_F2,        kKeyF2       },
+		{Common::KEYCODE_F3,        kKeyF3       },
+		{Common::KEYCODE_F4,        kKeyF4       },
+		{Common::KEYCODE_F5,        kKeyEscape   },
+		{Common::KEYCODE_F6,        kKeyF6       },
+		{Common::KEYCODE_F7,        kKeyF7       },
+		{Common::KEYCODE_F8,        kKeyF8       },
+		{Common::KEYCODE_F9,        kKeyF9       },
+		{Common::KEYCODE_F10,       kKeyF10      }
 	};
 
 	for (int i = 0; i < ARRAYSIZE(keys); i++)
@@ -246,7 +246,7 @@ bool Util::checkKey(int16 &key) {
 	return true;
 }
 
-void Util::getMouseState(int16 *pX, int16 *pY, int16 *pButtons) {
+void Util::getMouseState(int16 *pX, int16 *pY, MouseButtons *pButtons) {
 	Common::Point mouse = g_system->getEventManager()->getMousePos();
 	*pX = mouse.x + _vm->_video->_scrollOffsetX - _vm->_video->_screenDeltaX;
 	*pY = mouse.y + _vm->_video->_scrollOffsetY - _vm->_video->_screenDeltaY;
@@ -264,15 +264,15 @@ void Util::setMousePos(int16 x, int16 y) {
 void Util::waitMouseUp(void) {
 	do {
 		processInput();
-		if (_mouseButtons != 0)
+		if (_mouseButtons != kMouseButtonsNone)
 			delay(10);
-	} while (_mouseButtons != 0);
+	} while (_mouseButtons != kMouseButtonsNone);
 }
 
 void Util::waitMouseDown(void) {
 	int16 x;
 	int16 y;
-	int16 buttons;
+	MouseButtons buttons;
 
 	do {
 		processInput();
@@ -283,7 +283,7 @@ void Util::waitMouseDown(void) {
 }
 
 void Util::waitMouseRelease(char drawMouse) {
-	int16 buttons;
+	MouseButtons buttons;
 	int16 mouseX;
 	int16 mouseY;
 
@@ -300,8 +300,8 @@ void Util::forceMouseUp(bool onlyWhenSynced) {
 	if (onlyWhenSynced && (_vm->_game->_mouseButtons != _mouseButtons))
 		return;
 
-	_vm->_game->_mouseButtons = 0;
-	_mouseButtons = 0;
+	_vm->_game->_mouseButtons = kMouseButtonsNone;
+	_mouseButtons             = kMouseButtonsNone;
 }
 
 void Util::clearPalette(void) {
@@ -379,38 +379,6 @@ void Util::setScrollOffset(int16 x, int16 y) {
 	_vm->_video->waitRetrace();
 }
 
-Video::FontDesc *Util::loadFont(const char *path) {
-	Video::FontDesc *fontDesc = new Video::FontDesc;
-	byte *data;
-
-	if (!fontDesc)
-		return 0;
-
-	data = _vm->_dataIO->getData(path);
-	if (!data) {
-		delete fontDesc;
-		return 0;
-	}
-
-	fontDesc->dataPtr = data + 4;
-	fontDesc->itemWidth = data[0] & 0x7F;
-	fontDesc->itemHeight = data[1];
-	fontDesc->startItem = data[2];
-	fontDesc->endItem = data[3];
-
-	fontDesc->itemSize =
-	    ((fontDesc->itemWidth - 1) / 8 + 1) * fontDesc->itemHeight;
-	fontDesc->bitWidth = fontDesc->itemWidth;
-
-	if (data[0] & 0x80)
-		fontDesc->extraData = data + 4 + fontDesc->itemSize *
-			(fontDesc->endItem - fontDesc->startItem + 1);
-	else
-		fontDesc->extraData = 0;
-
-	return fontDesc;
-}
-
 void Util::insertStr(const char *str1, char *str2, int16 pos) {
 	int len1 = strlen(str1);
 	int len2 = strlen(str2);
@@ -452,7 +420,7 @@ static const char trStr2[] =
 	"                                                           ";
 static const char trStr3[] = "                                ";
 
-void Util::prepareStr(char *str) {
+void Util::cleanupStr(char *str) {
 	char *start, *end;
 	char buf[300];
 
@@ -460,17 +428,20 @@ void Util::prepareStr(char *str) {
 	strcat(buf, trStr2);
 	strcat(buf, trStr3);
 
+	// Translating "wrong" characters
 	for (size_t i = 0; i < strlen(str); i++)
-		str[i] = buf[str[i] - 32];
+		str[i] = buf[MIN<int>(str[i] - 32, 32)];
 
+	// Trim spaces left
 	while (str[0] == ' ')
 		cutFromStr(str, 0, 1);
 
+	// Trim spaces right
 	while ((strlen(str) > 0) && (str[strlen(str) - 1] == ' '))
 		cutFromStr(str, strlen(str) - 1, 1);
 
+	// Merge double spaces
 	start = strchr(str, ' ');
-
 	while (start) {
 		if (start[1] == ' ') {
 			cutFromStr(str, start - str, 1);

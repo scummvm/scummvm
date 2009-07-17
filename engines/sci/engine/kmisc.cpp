@@ -94,9 +94,10 @@ reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	sciprintf("Debug mode activated\n");
+	printf("Debug mode activated\n");
 
-	g_debug_seeking = g_debug_step_running = 0;
+	scriptState.seeking = kDebugSeekNothing;
+	scriptState.runningStep = 0;
 	return s->r_acc;
 }
 
@@ -236,20 +237,27 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kstub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	sciprintf("Unimplemented syscall: %s[%x](", s->_kernel->getKernelName(funct_nr).c_str(), funct_nr);
+reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	char tmpbuf[200];
+	sprintf(tmpbuf, "Unimplemented syscall: %s[%x] (", 
+					((SciEngine*)g_engine)->getKernel()->getKernelName(funct_nr).c_str(), funct_nr);
 
 	for (int i = 0; i < argc; i++) {
-		sciprintf("%04x:%04x", PRINT_REG(argv[i]));
-		if (i + 1 < argc) sciprintf(", ");
+		char tmpbuf2[20];
+		sprintf(tmpbuf2, "%04x:%04x", PRINT_REG(argv[i]));
+		if (i + 1 < argc)
+			strcat(tmpbuf2, ", ");
+		strcat(tmpbuf, tmpbuf2);
 	}
-	sciprintf(")\n");
+	strcat(tmpbuf, ")");
+
+	warning(tmpbuf);
 
 	return NULL_REG;
 }
 
 reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, s->_kernel->_kernelFuncs[funct_nr].orig_name.c_str());
+	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, ((SciEngine*)g_engine)->getKernel()->_kernelFuncs[funct_nr].orig_name.c_str());
 	return NULL_REG;
 }
 

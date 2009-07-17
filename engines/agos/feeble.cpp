@@ -161,21 +161,16 @@ void AGOSEngine_FeebleDemo::exitMenu() {
 	playVideo("fbye1.smk", true);
 
 	HitArea *ha;
-	while (!shouldQuit()) {
+	do {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!shouldQuit()) {
-			if (_lastHitArea3 != 0)
-				break;
+		while (!shouldQuit() && _lastHitArea3 == 0) {
 			delay(1);
 		}
 
 		ha = _lastHitArea;
-
-		if (ha != NULL && ha->id == 21)
-			break;
-	}
+	} while (!shouldQuit() && !(ha != NULL && ha->id == 21));
 
 	playVideo("fbye2.smk");
 	quitGame();
@@ -202,9 +197,7 @@ void AGOSEngine_FeebleDemo::filmMenu() {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!shouldQuit()) {
-			if (_lastHitArea3 != 0)
-				break;
+		while (!shouldQuit() && _lastHitArea3 == 0) {
 			handleWobble();
 			delay(1);
 		}
@@ -287,25 +280,23 @@ void AGOSEngine_FeebleDemo::mainMenu() {
 
 	startInteractiveVideo("mainmenu.smk");
 
-	HitArea *ha;
-	while (!shouldQuit()) {
+	HitArea *ha = 0;
+	do {
 		_lastHitArea = NULL;
 		_lastHitArea3 = NULL;
 
-		while (!shouldQuit()) {
-			if (_lastHitArea3 != 0)
-				break;
+		while (_lastHitArea3 == 0) {
+			if (shouldQuit())
+				return;
 			handleText();
 			delay(1);
 		}
 
 		ha = _lastHitArea;
+	} while (ha == NULL || !(ha->id >= 1 && ha->id <= 6));
 
-		if (ha == NULL) {
-		} else if (ha->id >= 1 && ha->id <= 6) {
-			break;
-		}
-	}
+	if (shouldQuit())
+		return;
 
 	stopInteractiveVideo();
 
@@ -384,11 +375,9 @@ void AGOSEngine_FeebleDemo::waitForSpace() {
 		windowPutChar(_textWindow, *message);
 
 	mouseOff();
-	while (!shouldQuit()) {
+	do {
 		delay(1);
-		if (_keyPressed.keycode == Common::KEYCODE_SPACE)
-			break;
-	}
+	} while (!shouldQuit() && (_keyPressed.keycode != Common::KEYCODE_SPACE));
 	_keyPressed.reset();
 	mouseOn();
 }

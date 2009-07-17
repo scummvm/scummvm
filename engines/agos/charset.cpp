@@ -639,13 +639,13 @@ void AGOSEngine::windowScroll(WindowBlock *window) {
 		w = window->width * 8;
 		h = (window->height -1) * 8;
 
-		dst = (byte *)screen->pixels + window->y * _screenWidth + window->x * 8;
-		src = dst + 8 * _screenWidth;
+		dst = (byte *)screen->pixels + window->y * screen->pitch + window->x * 8;
+		src = dst + 8 * screen->pitch;
 
 		do {
 			memcpy(dst, src, w);
-			src += _screenWidth;
-			dst += _screenWidth;
+			src += screen->pitch;
+			dst += screen->pitch;
 		} while (--h);
 
 		_system->unlockScreen();

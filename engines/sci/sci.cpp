@@ -29,6 +29,7 @@
 
 #include "engines/advancedDetector.h"
 #include "sci/sci.h"
+#include "sci/debug.h"
 #include "sci/console.h"
 
 #include "sci/engine/state.h"
@@ -42,14 +43,12 @@ namespace Sci {
 
 class GfxDriver;
 
-const char *versionNames[9] = {
+const char *versionNames[7] = {
 	"Autodetected",
 	"SCI0",
-	"SCI01 EGA",
-	"SCI01 VGA",
+	"SCI01",
 	"SCI01 VGA ODD",
-	"SCI1 early",
-	"SCI1 late",
+	"SCI1",
 	"SCI1.1",
 	"SCI32"
 };
@@ -87,6 +86,9 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelDclInflate, "DCL", "DCL inflate debugging");
 	Common::addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
+	Common::addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
+
+	_gamestate = 0;
 
 	printf("SciEngine::SciEngine\n");
 }
@@ -98,7 +100,10 @@ SciEngine::~SciEngine() {
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 
+	delete _kernel;
+	delete _vocabulary;
 	delete _console;
+	delete _resmgr;
 }
 
 Common::Error SciEngine::run() {
@@ -135,6 +140,8 @@ Common::Error SciEngine::run() {
 		return Common::kNoGameDataFoundError;
 	}
 
+	_kernel = new Kernel(_resmgr);
+	_vocabulary = new Vocabulary(_resmgr);
 	script_adjust_opcode_formats(_resmgr->_sciVersion);
 
 #if 0
@@ -146,37 +153,16 @@ Common::Error SciEngine::run() {
 	_gamestate = new EngineState(_resmgr, version, flags);
 
 	// Verify that we haven't got an invalid game detection entry
-	if (version < SCI_VERSION_1_EARLY) {
+	if (version < SCI_VERSION_1) {
 		// SCI0/SCI01
-		if (flags & GF_SCI1_EGA ||
-			flags & GF_SCI1_LOFSABSOLUTE ||
-			flags & GF_SCI1_NEWDOSOUND) {
-			error("This game entry is erroneous. It's marked as SCI0/SCI01, but it has SCI1 flags set");
-		}
-	} else if (version >= SCI_VERSION_1_EARLY && version <= SCI_VERSION_1_LATE) {
-		// SCI1
-
-		if (flags & GF_SCI0_OLD ||
-			flags & GF_SCI0_OLDGFXFUNCS ||
-			flags & GF_SCI0_OLDGETTIME ||
-			flags & GF_SCI0_SCI1VOCAB) {
+	} else if (version == SCI_VERSION_1) {
+		if (flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
 		}
 	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
-		if (flags & GF_SCI1_EGA ||
-			flags & GF_SCI1_LOFSABSOLUTE ||
-			flags & GF_SCI1_NEWDOSOUND) {
-			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI1 flags set");
-		}
-
-		if (flags & GF_SCI0_OLD ||
-			flags & GF_SCI0_OLDGFXFUNCS ||
-			flags & GF_SCI0_OLDGETTIME ||
-			flags & GF_SCI0_SCI1VOCAB) {
+		if (flags & GF_SCI0_OLDGETTIME) {
 			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
 		}
-
-		// SCI1.1 / SCI32
 	} else {
 		error ("Unknown SCI version in game entry");
 	}
@@ -223,8 +209,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	bool isVGA = _resmgr->_sciVersion >= SCI_VERSION_01_VGA && !(getFlags() & GF_SCI1_EGA);
-	if (gfxop_init(_resmgr->_sciVersion, isVGA, &gfx_state, &gfx_options, _resmgr)) {
+	if (gfxop_init(_resmgr->_sciVersion, &gfx_state, &gfx_options, _resmgr)) {
 		warning("Graphics initialization failed. Aborting...");
 		return Common::kUnknownError;
 	}
@@ -249,14 +234,27 @@ Common::Error SciEngine::run() {
 
 	delete _gamestate;
 
-	delete _resmgr;
-
 	gfxop_exit(&gfx_state);
 
 	return Common::kNoError;
 }
 
+// Invoked by error() when a severe error occurs
 GUI::Debugger *SciEngine::getDebugger() {
+	if (_gamestate) {
+		ExecStack *xs = &(_gamestate->_executionStack.back());
+		xs->addr.pc.offset = scriptState.old_pc_offset;
+		xs->sp = scriptState.old_sp;
+	}
+
+	scriptState.runningStep = 0; // Stop multiple execution
+	scriptState.seeking = kDebugSeekNothing; // Stop special seeks
+
+	return _console;
+}
+
+// Used to obtain the engine's console in order to print messages to it
+Console *SciEngine::getSciDebugger() {
 	return _console;
 }
 

@@ -127,6 +127,10 @@ bool Script::skip(int32 offset) {
 	return seek(offset, SEEK_CUR);
 }
 
+bool Script::skipBlock() {
+	return seek(peekUint16(2) + 2, SEEK_CUR);
+}
+
 int32 Script::getOffset(byte *ptr) const {
 	if (!_totData)
 		return -1;

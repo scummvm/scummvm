@@ -1816,9 +1816,8 @@ void ScummEngine::loadFlObject(uint object, uint room) {
 	assert(flob);
 
 	// Copy object code + object image to floating object
-	((uint32 *)flob)[0] = MKID_BE('FLOB');
-	((uint32 *)flob)[1] = TO_BE_32(flob_size);
-
+	WRITE_UINT32(flob, MKID_BE('FLOB'));
+	WRITE_BE_UINT32(flob + 4, flob_size);
 	memcpy(flob + 8, foir.obcd, obcd_size);
 	memcpy(flob + 8 + obcd_size, foir.obim, obim_size);
 

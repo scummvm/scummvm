@@ -369,7 +369,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	 */
 
 	// Search for the bend on the left side
-	m = (resptr[199] - resptr[0]) / 199.0;
+	m = (resptr[199] - resptr[0]) / 199.0f;
 	for (lowerIdx = 0; lowerIdx < 199 && (resptr[lowerIdx] == 1 || resptr[lowerIdx] == 255); lowerIdx++) {
 		oldM = m;
 		m = (resptr[199] - resptr[lowerIdx+1]) / (float)(199 - (lowerIdx+1));
@@ -383,7 +383,7 @@ void ScummEngine::convertScaleTableToScaleSlot(int slot) {
 	}
 
 	// Search for the bend on the right side
-	m = (resptr[199] - resptr[0]) / 199.0;
+	m = (resptr[199] - resptr[0]) / 199.0f;
 	for (upperIdx = 199; upperIdx > 1 && (resptr[upperIdx] == 1 || resptr[upperIdx] == 255); upperIdx--) {
 		oldM = m;
 		m = (resptr[upperIdx-1] - resptr[0]) / (float)(upperIdx-1);

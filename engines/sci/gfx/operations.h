@@ -135,7 +135,6 @@ struct GfxState {
  * Initializes a graphics mode.
  *
  * @param[in] version		The interpreter version
- * @param[in] isVGA			true if using VGA resolution
  * @param[in] state			The state to initialize
  * @param[in] xfact			Horizontal scale factor
  * @param[in] yfact			Vertical scale factors
@@ -147,7 +146,7 @@ struct GfxState {
  * 							is unavailable, or GFX_FATAL if the graphics driver
  * 							is unable to provide any useful graphics support
  */
-int gfxop_init(int version, bool isVGA, GfxState *state, gfx_options_t *options,
+int gfxop_init(int version, GfxState *state, gfx_options_t *options,
 	ResourceManager *resManager, int xfact = 1, int yfact = 1,
 	gfx_color_mode_t bpp = GFX_COLOR_MODE_INDEX);
 

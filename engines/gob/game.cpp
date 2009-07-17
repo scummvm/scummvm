@@ -29,14 +29,15 @@
 #include "gob/game.h"
 #include "gob/helper.h"
 #include "gob/global.h"
-#include "gob/util.h"
 #include "gob/dataio.h"
 #include "gob/variables.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/inter.h"
 #include "gob/draw.h"
 #include "gob/mult.h"
+#include "gob/scenery.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
 
@@ -170,30 +171,14 @@ bool Environments::has(Resources *resources, uint8 startEnv, int16 except) const
 
 
 Game::Game(GobEngine *vm) : _vm(vm) {
-	_collisionAreas = 0;
-	_shouldPushColls = 0;
-
 	_captureCount = 0;
-
-	_collStackSize = 0;
-
-	for (int i = 0; i < 5; i++) {
-		_collStack[i] = 0;
-		_collStackElemSizes[i] = 0;
-	}
 
 	_curTotFile[0] = 0;
 	_totToLoad[0] = 0;
 
 	_startTimeKey = 0;
-	_mouseButtons = 0;
+	_mouseButtons = kMouseButtonsNone;
 
-	_lastCollKey = 0;
-	_lastCollAreaIndex = 0;
-	_lastCollId = 0;
-
-	_activeCollResId = 0;
-	_activeCollIndex = 0;
 	_handleMouse = 0;
 	_forceHandleMouse = 0;
 	_menuLevel = 0;
@@ -201,10 +186,7 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_preventScroll = false;
 	_scrollHandleMouse = false;
 
-	_noCd = false;
-
 	_tempStr[0] = 0;
-	_collStr[0] = 0;
 
 	_numEnvironments = 0;
 	_curEnvironment = 0;
@@ -212,19 +194,181 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 	_environments = new Environments(_vm);
 	_script       = new Script(_vm);
 	_resources    = new Resources(_vm);
+	_hotspots     = new Hotspots(_vm);
 }
 
 Game::~Game() {
 	delete _environments;
 	delete _script;
 	delete _resources;
+	delete _hotspots;
 }
 
-void Game::freeCollision(int16 id) {
-	for (int i = 0; i < 250; i++) {
-		if (_collisionAreas[i].id == id)
-			_collisionAreas[i].left = 0xFFFF;
+void Game::prepareStart() {
+	_vm->_global->_pPaletteDesc->unused2 = _vm->_draw->_unusedPalette2;
+	_vm->_global->_pPaletteDesc->unused1 = _vm->_draw->_unusedPalette1;
+	_vm->_global->_pPaletteDesc->vgaPal = _vm->_draw->_vgaPalette;
+
+	_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
+
+	_vm->_draw->initScreen();
+	_vm->_video->fillRect(*_vm->_draw->_frontSurface, 0, 0,
+			_vm->_video->_surfWidth - 1, _vm->_video->_surfHeight - 1, 1);
+
+	_vm->_util->setMousePos(152, 92);
+	_vm->_draw->_cursorX = _vm->_global->_inter_mouseX = 152;
+	_vm->_draw->_cursorY = _vm->_global->_inter_mouseY = 92;
+
+	_vm->_draw->_invalidatedCount = 0;
+	_vm->_draw->_noInvalidated = true;
+	_vm->_draw->_applyPal = false;
+	_vm->_draw->_paletteCleared = false;
+	_vm->_draw->_cursorWidth = 16;
+	_vm->_draw->_cursorHeight = 16;
+	_vm->_draw->_transparentCursor = 1;
+
+	for (int i = 0; i < 40; i++) {
+		_vm->_draw->_cursorAnimLow[i] = -1;
+		_vm->_draw->_cursorAnimDelays[i] = 0;
+		_vm->_draw->_cursorAnimHigh[i] = 0;
 	}
+
+	_vm->_draw->_renderFlags = 0;
+	_vm->_draw->_backDeltaX = 0;
+	_vm->_draw->_backDeltaY = 0;
+
+	_startTimeKey = _vm->_util->getTimeKey();
+}
+
+void Game::playTot(int16 skipPlay) {
+	char savedTotName[20];
+	int16 *oldCaptureCounter;
+	int16 *oldBreakFrom;
+	int16 *oldNestLevel;
+	int16 _captureCounter;
+	int16 breakFrom;
+	int16 nestLevel;
+
+	oldNestLevel = _vm->_inter->_nestLevel;
+	oldBreakFrom = _vm->_inter->_breakFromLevel;
+	oldCaptureCounter = _vm->_scenery->_pCaptureCounter;
+
+	_script->push();
+
+	_vm->_inter->_nestLevel = &nestLevel;
+	_vm->_inter->_breakFromLevel = &breakFrom;
+	_vm->_scenery->_pCaptureCounter = &_captureCounter;
+	strcpy(savedTotName, _curTotFile);
+
+	if (skipPlay <= 0) {
+		while (!_vm->shouldQuit()) {
+			if (_vm->_inter->_variables)
+				_vm->_draw->animateCursor(4);
+
+			if (skipPlay != -1) {
+				_vm->_inter->initControlVars(1);
+
+				for (int i = 0; i < 4; i++) {
+					_vm->_draw->_fontToSprite[i].sprite = -1;
+					_vm->_draw->_fontToSprite[i].base = -1;
+					_vm->_draw->_fontToSprite[i].width = -1;
+					_vm->_draw->_fontToSprite[i].height = -1;
+				}
+
+				_vm->_mult->initAll();
+				_vm->_mult->zeroMultData();
+
+				_vm->_draw->_spritesArray[20] = _vm->_draw->_frontSurface;
+				_vm->_draw->_spritesArray[21] = _vm->_draw->_backSurface;
+				_vm->_draw->_cursorSpritesBack = _vm->_draw->_cursorSprites;
+			} else
+				_vm->_inter->initControlVars(0);
+
+			_vm->_draw->_cursorHotspotXVar = -1;
+			_totToLoad[0] = 0;
+
+			if ((_curTotFile[0] == 0) && (!_script->isLoaded()))
+				break;
+
+			if (skipPlay == -2) {
+				_vm->_vidPlayer->primaryClose();
+				skipPlay = 0;
+			}
+
+			if (!_script->load(_curTotFile)) {
+				_vm->_draw->blitCursor();
+				_vm->_inter->_terminate = 2;
+				break;
+			}
+
+			_resources->load(_curTotFile);
+
+			_vm->_global->_inter_animDataSize = _script->getAnimDataSize();
+			if (!_vm->_inter->_variables)
+				_vm->_inter->allocateVars(_script->getVariablesCount() & 0xFFFF);
+
+			_script->seek(_script->getFunctionOffset(TOTFile::kFunctionStart));
+
+			_vm->_inter->renewTimeInVars();
+
+			WRITE_VAR(13, _vm->_global->_useMouse);
+			WRITE_VAR(14, _vm->_global->_soundFlags);
+			WRITE_VAR(15, _vm->_global->_fakeVideoMode);
+			WRITE_VAR(16, _vm->_global->_language);
+
+			_vm->_inter->callSub(2);
+
+			if (_totToLoad[0] != 0)
+				_vm->_inter->_terminate = 0;
+
+			_vm->_draw->blitInvalidated();
+
+			_script->unload();
+
+			_resources->unload();
+
+			for (int i = 0; i < *_vm->_scenery->_pCaptureCounter; i++)
+				capturePop(0);
+
+			if (skipPlay != -1) {
+				_vm->_goblin->freeObjects();
+
+				_vm->_sound->blasterStop(0);
+
+				for (int i = 0; i < Sound::kSoundsCount; i++) {
+					SoundDesc *sound = _vm->_sound->sampleGetBySlot(i);
+
+					if (sound &&
+					   ((sound->getType() == SOUND_SND) || (sound->getType() == SOUND_WAV)))
+						_vm->_sound->sampleFree(sound);
+				}
+			}
+
+			if (_totToLoad[0] == 0)
+				break;
+
+			strcpy(_curTotFile, _totToLoad);
+		}
+	} else {
+		_vm->_inter->initControlVars(0);
+		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
+		_script->seek(_script->getFunctionOffset(skipPlay + 1));
+
+		_menuLevel++;
+		_vm->_inter->callSub(2);
+		_menuLevel--;
+
+		if (_vm->_inter->_terminate != 0)
+			_vm->_inter->_terminate = 2;
+	}
+
+	strcpy(_curTotFile, savedTotName);
+
+	_vm->_inter->_nestLevel = oldNestLevel;
+	_vm->_inter->_breakFromLevel = oldBreakFrom;
+	_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
+
+	_script->pop();
 }
 
 void Game::capturePush(int16 left, int16 top, int16 width, int16 height) {
@@ -349,7 +493,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 }
 
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
-		int16 *pButtons, char handleMouse) {
+		MouseButtons *pButtons, char handleMouse) {
 
 	_vm->_util->processInput(true);
 
@@ -373,28 +517,17 @@ int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,
 	if (pMouseX && pMouseY && pButtons) {
 		_vm->_util->getMouseState(pMouseX, pMouseY, pButtons);
 
-		if (*pButtons == 3)
-			*pButtons = 0;
+		if (*pButtons == kMouseButtonsBoth)
+			*pButtons = kMouseButtonsNone;
 	}
 
 	return _vm->_util->checkKey();
 }
 
-int16 Game::adjustKey(int16 key) {
-	if (key <= 0x60 || key >= 0x7B)
-		return key;
-
-	return key - 0x20;
-}
-
-void Game::start(void) {
-	_collisionAreas = new Collision[250];
-	memset(_collisionAreas, 0, 250 * sizeof(Collision));
-
+void Game::start() {
 	prepareStart();
 	playTot(-2);
 
-	delete[] _collisionAreas;
 	_vm->_draw->closeScreen();
 
 	for (int i = 0; i < SPRITES_COUNT; i++)
@@ -405,6 +538,9 @@ void Game::start(void) {
 // flagbits: 0 = freeInterVariables, 1 = skipPlay
 void Game::totSub(int8 flags, const char *newTotFile) {
 	int8 curBackupPos;
+
+	if ((flags == 16) || (flags == 17))
+		warning("Urban Stub: Game::totSub(), flags == %d", flags);
 
 	if (_numEnvironments >= Environments::kEnvironmentCount)
 		return;
@@ -417,13 +553,14 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 
 	_script = new Script(_vm);
 	_resources = new Resources(_vm);
+
+	if (flags & 0x80)
+		warning("Urban Stub: Game::totSub(), flags & 0x80");
+
 	if (flags & 1)
 		_vm->_inter->_variables = 0;
 
 	strncpy0(_curTotFile, newTotFile, 9);
-//	if (_vm->getGameType() == kGameTypeGeisha)
-//		strcat(_curTotFile, ".0OT");
-//	else
 	strcat(_curTotFile, ".TOT");
 
 	if (_vm->_inter->_terminate != 0) {
@@ -431,7 +568,7 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 		return;
 	}
 
-	pushCollisions(0);
+	_hotspots->push(0, true);
 
 	if (flags & 2)
 		playTot(-1);
@@ -441,7 +578,8 @@ void Game::totSub(int8 flags, const char *newTotFile) {
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;
 
-	popCollisions();
+	_hotspots->clear();
+	_hotspots->pop();
 
 	if ((flags & 1) && _vm->_inter->_variables) {
 		_vm->_inter->delocateVars();
@@ -489,100 +627,19 @@ void Game::switchTotSub(int16 index, int16 skipPlay) {
 		return;
 	}
 
-	pushCollisions(0);
+	_hotspots->push(0, true);
 	playTot(skipPlay);
 
 	if (_vm->_inter->_terminate != 2)
 		_vm->_inter->_terminate = 0;
 
-	popCollisions();
+	_hotspots->pop();
 
 	clearUnusedEnvironment();
 
 	_curEnvironment = curBackupPos;
 	_numEnvironments = backupedCount;
 	_environments->get(_curEnvironment);
-}
-
-void Game::setCollisions(byte arg_0) {
-	uint16 left;
-	uint16 top;
-	uint16 width;
-	uint16 height;
-	Collision *collArea;
-
-	for (collArea = _collisionAreas; collArea->left != 0xFFFF; collArea++) {
-		if (((collArea->id & 0xC000) != 0x8000) || (collArea->funcSub == 0))
-			continue;
-
-		_script->call(collArea->funcSub);
-
-		left = _script->readValExpr();
-		top = _script->readValExpr();
-		width = _script->readValExpr();
-		height = _script->readValExpr();
-		if ((_vm->_draw->_renderFlags & RENDERFLAG_CAPTUREPOP) &&
-				(left != 0xFFFF)) {
-			left += _vm->_draw->_backDeltaX;
-			top += _vm->_draw->_backDeltaY;
-		}
-		if (_vm->_draw->_needAdjust != 2) {
-			_vm->_draw->adjustCoords(0, &left, &top);
-			if ((collArea->flags & 0x0F) < 3)
-				_vm->_draw->adjustCoords(2, &width, &height);
-			else {
-				height &= 0xFFFE;
-				_vm->_draw->adjustCoords(2, 0, &height);
-			}
-		}
-		collArea->left = left;
-		collArea->top = top;
-		collArea->right = left + width - 1;
-		collArea->bottom = top + height - 1;
-
-		_script->pop();
-	}
-}
-
-void Game::collSub(uint16 offset) {
-	int16 collStackSize;
-
-	_script->call(offset);
-
-	_shouldPushColls = 1;
-	collStackSize = _collStackSize;
-
-	_vm->_inter->funcBlock(0);
-
-	if (collStackSize != _collStackSize)
-		popCollisions();
-
-	_shouldPushColls = 0;
-
-	_script->pop();
-
-	setCollisions();
-}
-
-void Game::collAreaSub(int16 index, int8 enter) {
-	uint16 collId;
-
-	collId = _collisionAreas[index].id & 0xF000;
-
-	if ((collId == 0xA000) || (collId == 0x9000)) {
-		if (enter == 0)
-			WRITE_VAR(17, _collisionAreas[index].id & 0x0FFF);
-		else
-			WRITE_VAR(17, -(_collisionAreas[index].id & 0x0FFF));
-	}
-
-	if (enter != 0) {
-		if (_collisionAreas[index].funcEnter != 0)
-			collSub(_collisionAreas[index].funcEnter);
-	} else {
-		if (_collisionAreas[index].funcLeave != 0)
-			collSub(_collisionAreas[index].funcLeave);
-	}
 }
 
 void Game::clearUnusedEnvironment() {
@@ -594,7 +651,6 @@ void Game::clearUnusedEnvironment() {
 		delete _resources;
 		_resources = 0;
 	}
-
 }
 
 } // End of namespace Gob

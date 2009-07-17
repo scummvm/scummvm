@@ -31,10 +31,12 @@
 #include "gob/inter.h"
 #include "gob/helper.h"
 #include "gob/global.h"
+#include "gob/dataio.h"
 #include "gob/game.h"
 #include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/draw.h"
 #include "gob/sound/sound.h"
 #include "gob/videoplayer.h"
@@ -64,7 +66,7 @@ void Inter_v6::setupOpcodesFunc() {
 	OPCODEFUNC(0x03, o6_loadCursor);
 	OPCODEFUNC(0x09, o6_assign);
 	OPCODEFUNC(0x13, o6_palLoad);
-	OPCODEFUNC(0x19, o6_freeCollision);
+	OPCODEFUNC(0x19, o6_removeHotspot);
 	OPCODEFUNC(0x33, o6_fillRect);
 }
 
@@ -187,7 +189,7 @@ void Inter_v6::o6_openItk() {
 	// (it checks CD1.ITK - CD4.ITK and the first that's found determines
 	// the CD number), while its NO_CD modus wants everything in CD1.ITK.
 	// So we just open the other ITKs, too.
-	if (_vm->_game->_noCd && !scumm_stricmp(fileName, "CD1.ITK")) {
+	if (_vm->_global->_noCd && !scumm_stricmp(fileName, "CD1.ITK")) {
 		_vm->_dataIO->openDataFile("CD2.ITK", true);
 		_vm->_dataIO->openDataFile("CD3.ITK", true);
 		_vm->_dataIO->openDataFile("CD4.ITK", true);
@@ -351,36 +353,33 @@ bool Inter_v6::o6_palLoad(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v6::o6_freeCollision(OpFuncParams &params) {
+bool Inter_v6::o6_removeHotspot(OpFuncParams &params) {
 	int16 id;
+	uint8 stateType1    = Hotspots::kStateFilledDisabled | Hotspots::kStateType1;
+	uint8 stateType2    = Hotspots::kStateFilledDisabled | Hotspots::kStateType2;
+	uint8 stateDisabled = Hotspots::kStateDisabled;
 
 	id = _vm->_game->_script->readValExpr();
 
 	switch (id + 5) {
 	case 0:
-		_vm->_game->pushCollisions(1);
+		_vm->_game->_hotspots->push(1);
 		break;
 	case 1:
-		_vm->_game->popCollisions();
+		_vm->_game->_hotspots->pop();
 		break;
 	case 2:
-		_vm->_game->pushCollisions(2);
+		_vm->_game->_hotspots->push(2);
 		break;
 	case 3:
-		for (int i = 0; i < 150; i++) {
-			if (((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xD000) ||
-					((_vm->_game->_collisionAreas[i].id & 0xF000) == 0x4000))
-				_vm->_game->_collisionAreas[i].left = 0xFFFF;
-		}
+		_vm->_game->_hotspots->removeState(stateType1);
+		_vm->_game->_hotspots->removeState(stateDisabled);
 		break;
 	case 4:
-		for (int i = 0; i < 150; i++) {
-			if ((_vm->_game->_collisionAreas[i].id & 0xF000) == 0xE000)
-				_vm->_game->_collisionAreas[i].left = 0xFFFF;
-		}
+		_vm->_game->_hotspots->removeState(stateType2);
 		break;
 	default:
-		_vm->_game->freeCollision(0xE000 + id);
+		_vm->_game->_hotspots->remove((stateType2 << 12) + id);
 		break;
 	}
 

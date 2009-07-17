@@ -46,8 +46,8 @@ public:
 	int curDimIndex() { return _curDimIndex; }
 	void modifyScreenDim(int dim, int x, int y, int w, int h);
 
-	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...);
-	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...);
+	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) GCC_PRINTF(2, 8);
+	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) GCC_PRINTF(2, 9);
 
 	void drawGridBox(int x, int y, int w, int h, int col);
 	void fadeClearSceneWindow(int delay);
@@ -109,25 +109,8 @@ private:
 
 	uint8 *_levelOverlays[8];
 
-	static const uint8 _paletteConvTable[256];
 	void mergeOverlay(int x, int y, int w, int h);
 	void postProcessCursor(uint8 *data, int width, int height, int pitch);
-
-	// magic atlas
-	void calcBoundariesIntern(int dstX, int dstY, int c, int d);
-
-	int _internDimX;
-	int _internDimY;
-	int _internDimW;
-	int _internDimH;
-	int _internDimDstX;
-	int _internBlockWidth;
-	int _internDimDstY;
-	int _internBlockHeight;
-	int _internDimU5;
-	int _internDimU6;
-	int _internBlockWidth2;
-	int _internDimU8;
 };
 
 } // end of namespace Kyra

@@ -59,7 +59,7 @@ byte *ScummEngine_v71he::heFindResourceData(uint32 tag, byte *ptr) {
 byte *ScummEngine_v71he::heFindResource(uint32 tag, byte *searchin) {
 	uint32 curpos, totalsize, size;
 
-	debugC(DEBUG_RESOURCE, "heFindResource(%s, %lx)", tag2str(tag), searchin);
+	debugC(DEBUG_RESOURCE, "heFindResource(%s, %p)", tag2str(tag), (const void *)searchin);
 
 	assert(searchin);
 	searchin += 4;

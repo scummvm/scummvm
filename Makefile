@@ -27,6 +27,12 @@ CXXFLAGS+= -Wno-long-long -Wno-multichar -Wno-unknown-pragmas -Wno-reorder
 CXXFLAGS+= -Wpointer-arith -Wcast-qual -Wcast-align
 CXXFLAGS+= -Wshadow -Wimplicit -Wnon-virtual-dtor -Wwrite-strings
 
+# Currently we disable this gcc flag, since it will also warn in cases,
+# where using GCC_PRINTF (means: __attribute__((format(printf, x, y))))
+# is not possible, thus it would fail compiliation with -Werror without
+# being helpful.
+#CXXFLAGS+= -Wmissing-format-attribute
+
 # Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
 CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
 

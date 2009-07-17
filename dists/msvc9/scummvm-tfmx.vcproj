@@ -18,9 +18,8 @@
 	<Configurations>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory="$(SolutionDir)$(SolutionName)-$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(SolutionName)-$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets=".\ScummVM_Debug.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -40,24 +39,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;ENABLE_SCUMM;ENABLE_LOL;USE_ZLIB"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
 				SuppressStartupBanner="false"
 				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
 				DisableSpecificWarnings="4512"
 			/>
 			<Tool
@@ -73,15 +58,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib"
 				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
-				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
-				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
-				SubSystem="1"
-				EntryPointSymbol="WinMainCRTStartup"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -107,9 +84,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(SolutionName)-$(ConfigurationName)"
-			IntermediateDirectory="$(SolutionDir)$(SolutionName)-$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets=".\ScummVM_Release.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -131,23 +107,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ENABLE_SCUMM;ENABLE_LOL;USE_ZLIB"
-				StringPooling="true"
-				MinimalRebuild="false"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -162,17 +124,10 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="winmm.lib sdl.lib zlib.lib"
 				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
-				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="false"
-				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				EntryPointSymbol="WinMainCRTStartup"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -198,9 +153,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug_Command|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets=".\ScummVM_Debug.vsprops"
 			CharacterSet="2"
 			>
 			<Tool
@@ -220,24 +174,11 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="0"
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NOT_TFMX_CMDLINE_TOOL;MXTX_CMDLINE_TOOL"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
 				SuppressStartupBanner="false"
 				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
 				DisableSpecificWarnings="4512"
 			/>
 			<Tool
@@ -254,15 +195,7 @@
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="winmm.lib sdl.lib zlib.lib libmad.lib vorbisfile_static.lib vorbis_static.lib ogg_static.lib"
 				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
-				LinkIncremental="2"
-				IgnoreDefaultLibraryNames="libc.lib;libcmt.lib;msvcrt.lib"
-				GenerateDebugInformation="true"
 				ProgramDatabaseFile="$(OutDir)/scummvm.pdb"
-				SubSystem="1"
-				EntryPointSymbol="WinMainCRTStartup"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -288,9 +221,8 @@
 		</Configuration>
 		<Configuration
 			Name="Release_Command|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
+			InheritedPropertySheets=".\ScummVM_Release.vsprops"
 			CharacterSet="2"
 			WholeProgramOptimization="1"
 			>
@@ -312,23 +244,9 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="2"
-				EnableIntrinsicFunctions="true"
 				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;TFMX_CMDLINE_TOOL"
-				StringPooling="true"
-				MinimalRebuild="false"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				RuntimeTypeInfo="true"
 				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				DebugInformationFormat="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -344,17 +262,10 @@
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="winmm.lib sdl.lib"
 				OutputFile="$(OutDir)\$(ProjectName)-tfmx.exe"
-				LinkIncremental="1"
 				SuppressStartupBanner="true"
-				IgnoreDefaultLibraryNames="libc.lib"
 				GenerateDebugInformation="false"
-				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				EntryPointSymbol="WinMainCRTStartup"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -722,47 +633,11 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\sound\iff.cpp"
+				RelativePath="..\..\sound\iff_sound.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug_Command|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release_Command|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)\$(InputName)1.obj"
-						XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
-					/>
-				</FileConfiguration>
 			</File>
 			<File
-				RelativePath="..\..\sound\iff.h"
+				RelativePath="..\..\sound\iff_sound.h"
 				>
 			</File>
 			<File
@@ -1806,6 +1681,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\scaler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\sjis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\sjis.h"
 				>
 			</File>
 			<File

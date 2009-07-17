@@ -51,6 +51,7 @@ Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;
+	_bigEndianSpeech = false;
 	_cowHeader = NULL;
 	_endOfQueue = 0;
 	_currentCowFile = 0;
@@ -66,6 +67,83 @@ Sound::~Sound(void) {
 	_endOfQueue = 0;
 	closeCowSystem();
 }
+
+void Sound::checkSpeechFileEndianness() {
+	// Some mac versions (not all of them) use big endian wav, although
+	// the wav header doesn't indicate it.
+	// Use heuristic to determine endianness of speech.
+	// The heuristic consist in computing the sum of the absolute difference for
+	// every two consecutive samples. This is done both with a big endian and a
+	// little endian assumption. The one with the smallest sum should be the
+	// correct one (the sound wave is supposed to be relatively smooth).
+	// It needs at least 1000 samples to get stable result (the code below is
+	// using the first 2000 samples of the wav sound).
+
+	// Init speech file if not already done.
+	if (!_currentCowFile) {
+		// Open one of the speech files. It uses SwordEngine::_systemVars.currentCD
+		// to decide which file to open, therefore if it is currently set to zero
+		// we have to set it to either 1 or 2 (I decided to set it to 1 as this is
+		// more likely to be the first file that will be needed).
+		bool no_current_cd = false;
+		if (SwordEngine::_systemVars.currentCD == 0) {
+			SwordEngine::_systemVars.currentCD = 1;
+			no_current_cd = true;
+		}
+		initCowSystem();
+		if (no_current_cd) {
+			// In case it fails with CD1 retry with CD2
+			if (!_currentCowFile) {
+				SwordEngine::_systemVars.currentCD = 2;
+				initCowSystem();
+			}
+			// Reset currentCD flag
+			SwordEngine::_systemVars.currentCD = 0;
+		}
+	}
+
+	// Testing for endianness makes sense only if using the uncompressed files.
+	if (_cowHeader == NULL || (_cowMode != CowWave && _cowMode != CowDemo))
+		return;
+
+	// I picked the sample to use randomly (I just made sure it is long enough so that there is
+	// a fair change of the heuristic to have a stable result and work for every language).
+	int roomNo = _currentCowFile == 1 ? 1 : 129;
+	int localNo = _currentCowFile == 1 ? 2 : 933;
+	// Get the speech data and apply the heuristic
+	uint32 locIndex = _cowHeader[roomNo] >> 2;
+	uint32 sampleSize = _cowHeader[locIndex + (localNo * 2)];
+	uint32 index = _cowHeader[locIndex + (localNo * 2) - 1];
+	if (sampleSize) {
+		uint32 size;
+		double be_diff_sum = 0., le_diff_sum = 0.;
+		_bigEndianSpeech = false;
+		int16 *data = uncompressSpeech(index + _cowHeaderSize, sampleSize, &size);
+		// Compute average of difference between two consecutive samples for both BE and LE
+		if (data) {
+			if (size > 4000)
+				size = 2000;
+			else
+				size /= 2;
+			int16 prev_be_value = (int16)SWAP_BYTES_16(*((uint16*)(data)));
+			for (uint32 i = 1 ; i < size ; ++i) {
+				le_diff_sum += fabs((double)(data[i] - data[i-1]));
+				int16 be_value = (int16)SWAP_BYTES_16(*((uint16*)(data + i)));
+				be_diff_sum += fabs((double)(be_value - prev_be_value));
+				prev_be_value = be_value;
+			}
+			delete [] data;
+		}
+		// Set the big endian flag
+		_bigEndianSpeech = (be_diff_sum < le_diff_sum);
+		if (_bigEndianSpeech)
+			debug(6, "Mac version: using big endian speech file");
+		else
+			debug(6, "Mac version: using little endian speech file");
+		debug(8, "Speech endianness heuristic: average = %f for BE and %f for LE, computed on %d samples)", be_diff_sum / (size - 1), le_diff_sum / (size - 1), size);
+	}
+}
+
 
 int Sound::addToQueue(int32 fxNo) {
 	bool alreadyInQueue = false;
@@ -386,21 +464,32 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 		int16 *dstData = (int16*)malloc(resSize * 2);
 		int32 samplesLeft = resSize;
 		while (srcPos < cSize && samplesLeft > 0) {
-			length = (int16)READ_LE_UINT16(srcData + srcPos);
+			length = (int16)(_bigEndianSpeech ? READ_BE_UINT16(srcData + srcPos) : READ_LE_UINT16(srcData + srcPos));
 			srcPos++;
 			if (length < 0) {
 				length = -length;
 				if (length > samplesLeft)
 					length = samplesLeft;
+				int16 value;
+				if (_bigEndianSpeech) {
+					value = (int16)SWAP_BYTES_16(*((uint16*)(srcData + srcPos)));
+				} else {
+					value = srcData[srcPos];
+				}
 				for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
-					dstData[dstPos++] = srcData[srcPos];
+					dstData[dstPos++] = value;
 				srcPos++;
 			} else {
 				if (length > samplesLeft)
 					length = samplesLeft;
-				memcpy(dstData + dstPos, srcData + srcPos, length * 2);
-				dstPos += length;
-				srcPos += length;
+				if (_bigEndianSpeech) {
+					for (uint16 cnt = 0; cnt < (uint16)length; cnt++)
+						dstData[dstPos++] = (int16)SWAP_BYTES_16(*((uint16*)(srcData + (srcPos++))));
+				} else {
+					memcpy(dstData + dstPos, srcData + srcPos, length * 2);
+					dstPos += length;
+					srcPos += length;
+				}
 			}
 			samplesLeft -= length;
 		}

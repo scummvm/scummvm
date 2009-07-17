@@ -993,7 +993,7 @@ public:
 	bool predictiveDialog(void);
 
 private:
-	void printStatus(const char *message, ...);
+	void printStatus(const char *message, ...) GCC_PRINTF(2, 3);
 	void printText2(int l, const char *msg, int foff, int xoff, int yoff, int len, int fg, int bg, bool checkerboard = false);
 	void blitTextbox(const char *p, int y, int x, int len);
 	void eraseTextbox();

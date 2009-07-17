@@ -107,6 +107,18 @@ protected:
 
 	void setWindowCaption(const char *caption);
 
+	/**
+	 * Allows the backend to perform engine specific init.
+	 * Called just before the engine is run.
+	 */
+	virtual void engineInit();
+
+	/**
+	 * Allows the backend to perform engine specific de-init.
+	 * Called after the engine finishes.
+	 */
+	virtual void engineDone();
+
 	//
 	// Used to intialized special game mappings
 	//

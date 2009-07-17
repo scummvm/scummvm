@@ -345,7 +345,7 @@ void PopUpDialog::drawMenuEntry(int entry, bool hilite) {
 		g_gui.theme()->drawLineSeparator(Common::Rect(x, y, x+w, y+kLineHeight));
 	} else {
 		g_gui.theme()->drawText(Common::Rect(x+1, y+2, x+w, y+2+kLineHeight), name,	hilite ? ThemeEngine::kStateHighlight : ThemeEngine::kStateEnabled,
-								Graphics::kTextAlignLeft, false, _leftPadding);
+								Graphics::kTextAlignLeft, ThemeEngine::kTextInversionNone, _leftPadding);
 	}
 }
 

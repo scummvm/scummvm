@@ -141,6 +141,8 @@ public:
 	// Can be 1, 2 or 3 for normal, double and triple speed, respectively
 	uint8 _speedFactor;
 
+	bool _noCd;
+
 	Global(GobEngine *vm);
 	~Global();
 

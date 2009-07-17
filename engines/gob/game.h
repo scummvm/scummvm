@@ -26,11 +26,14 @@
 #ifndef GOB_GAME_H
 #define GOB_GAME_H
 
+#include "gob/util.h"
+
 namespace Gob {
 
 class Script;
 class Resources;
 class Variables;
+class Hotspots;
 
 class Environments {
 public:
@@ -67,52 +70,29 @@ private:
 
 class Game {
 public:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
-	struct Collision {
-		int16 id;
-		uint16 left;
-		uint16 top;
-		uint16 right;
-		uint16 bottom;
-		int16 flags;
-		int16 key;
-		uint16 funcEnter;
-		uint16 funcLeave;
-		uint16 funcSub;
-		Script *script;
-	} PACKED_STRUCT;
-
-	struct InputDesc {
-		int16 fontIndex;
-		int16 backColor;
-		int16 frontColor;
-		byte *ptr;
-	} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
-	Collision *_collisionAreas;
-	Collision *_collStack[5];
-
-	Script *_script;
+	Script    *_script;
 	Resources *_resources;
+	Hotspots  *_hotspots;
 
 	char _curTotFile[14];
 	char _totToLoad[20];
 
 	int32 _startTimeKey;
-	int16 _mouseButtons;
+	MouseButtons _mouseButtons;
 
 	bool _noScroll;
 	bool _preventScroll;
 	bool _scrollHandleMouse;
 
-	bool _noCd;
+	byte _handleMouse;
+	char _forceHandleMouse;
 
 	Game(GobEngine *vm);
 	virtual ~Game();
+
+	void prepareStart();
+
+	void playTot(int16 skipPlay);
 
 	void capturePush(int16 left, int16 top, int16 width, int16 height);
 	void capturePop(char doDraw);
@@ -122,59 +102,20 @@ public:
 	void evaluateScroll(int16 x, int16 y);
 
 	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
-			int16 *pButtons = 0, char handleMouse = 0);
-	void start(void);
+			MouseButtons *pButtons = 0, char handleMouse = 0);
+	void start();
 
-	virtual void totSub(int8 flags, const char *newTotFile);
-	virtual void switchTotSub(int16 index, int16 skipPlay);
-
-	void freeCollision(int16 id);
-
-	virtual void playTot(int16 skipPlay) = 0;
-
-	virtual void clearCollisions(void) = 0;
-	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
-			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0) = 0;
-	virtual void collisionsBlock(void) = 0;
-	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-			InputDesc *inpDesc, int16 *collResId,
-			int16 *collIndex, bool mono = true) = 0;
-	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
-			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-			char inpType, int16 *pTotTime, int16 *collResId,
-			int16 *collIndex, bool mono = true) = 0;
-	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
-			int16 *pResId, int16 *pResIndex) = 0;
-
-	virtual void prepareStart(void) = 0;
-
-	virtual void pushCollisions(char all) = 0;
-	virtual void popCollisions(void) = 0;
+	void totSub(int8 flags, const char *newTotFile);
+	void switchTotSub(int16 index, int16 skipPlay);
 
 protected:
-	int16 _lastCollKey;
-	int16 _lastCollAreaIndex;
-	int16 _lastCollId;
-
-	int16 _activeCollResId;
-	int16 _activeCollIndex;
-	byte _handleMouse;
-	char _forceHandleMouse;
 	uint32 _menuLevel;
 
 	char _tempStr[256];
 
-	int16 _collStackSize;
-	int16 _collStackElemSizes[5];
-
-	char _shouldPushColls;
-
 	// Capture
 	Common::Rect _captureStack[20];
 	int16 _captureCount;
-
-	char _collStr[256];
 
 	// For totSub()
 	int8 _curEnvironment;
@@ -183,127 +124,7 @@ protected:
 
 	GobEngine *_vm;
 
-	virtual int16 adjustKey(int16 key);
-
-	void collAreaSub(int16 index, int8 enter);
-
-	virtual void setCollisions(byte arg_0 = 1);
-	virtual void collSub(uint16 offset);
-
-	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex) = 0;
-
 	void clearUnusedEnvironment();
-};
-
-class Game_v1 : public Game {
-public:
-	virtual void playTot(int16 skipPlay);
-
-	virtual void clearCollisions(void);
-	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
-			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
-	virtual void collisionsBlock(void);
-	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-			InputDesc *inpDesc, int16 *collResId,
-			int16 *collIndex, bool mono = true);
-	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
-			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-			char inpType, int16 *pTotTime, int16 *collResId,
-			int16 *collIndex, bool mono = true);
-	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
-			int16 *pResId, int16 *pResIndex);
-
-	virtual void prepareStart(void);
-
-	virtual void pushCollisions(char all);
-	virtual void popCollisions(void);
-
-	Game_v1(GobEngine *vm);
-	virtual ~Game_v1() {}
-
-protected:
-	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
-};
-
-class Game_v2 : public Game_v1 {
-public:
-	virtual void playTot(int16 skipPlay);
-
-	virtual void clearCollisions(void);
-	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
-			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
-	virtual void collisionsBlock(void);
-	virtual int16 multiEdit(int16 time, int16 index, int16 *pCurPos,
-			InputDesc *inpDesc, int16 *collResId,
-			int16 *collIndex, bool mono = true);
-	virtual int16 inputArea(int16 xPos, int16 yPos, int16 width, int16 height,
-			int16 backColor, int16 frontColor, char *str, int16 fontIndex,
-			char inpType, int16 *pTotTime, int16 *collResId,
-			int16 *collIndex, bool mono = true);
-	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
-			int16 *pResId, int16 *pResIndex);
-
-	virtual void prepareStart(void);
-
-	virtual void pushCollisions(char all);
-	virtual void popCollisions(void);
-
-	Game_v2(GobEngine *vm);
-	virtual ~Game_v2() {}
-
-protected:
-	struct CollLast {
-		int16 key;
-		int16 id;
-		int16 areaIndex;
-	};
-
-	CollLast _collLasts[5];
-
-	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
-};
-
-class Game_v6 : public Game_v2 {
-public:
-	virtual void totSub(int8 flags, const char *newTotFile);
-
-	virtual int16 addNewCollision(int16 id, uint16 left, uint16 top,
-			uint16 right, uint16 bottom, int16 flags, int16 key,
-			uint16 funcEnter, uint16 funcLeave, uint16 funcSub = 0);
-
-	virtual void prepareStart(void);
-
-	virtual void pushCollisions(char all);
-
-	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
-			int16 *pResId, int16 *pResIndex);
-	virtual void collisionsBlock(void);
-
-	Game_v6(GobEngine *vm);
-	virtual ~Game_v6() {}
-
-protected:
-	uint32 _someTimeDly;
-
-	virtual void setCollisions(byte arg_0 = 1);
-	virtual void collSub(uint16 offset);
-
-	virtual int16 adjustKey(int16 key);
-
-	virtual int16 checkMousePoint(int16 all, int16 *resId, int16 *resIndex);
-
-	void collSubReenter();
-};
-
-class Game_Fascination : public Game_v2 {
-public:
-	virtual int16 checkCollisions(byte handleMouse, int16 deltaTime,
-			int16 *pResId, int16 *pResIndex);
-
-	Game_Fascination(GobEngine *vm);
-	virtual ~Game_Fascination() {}
 };
 
 } // End of namespace Gob

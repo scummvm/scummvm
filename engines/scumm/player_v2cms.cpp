@@ -1428,6 +1428,10 @@ int Player_V2CMS::readBuffer(int16 *buffer, const int numSamples) {
 			}
 		
 			_tempoSum += _tempo;
+			// FIXME: _tempoSum is declared as char; on some systems char is unsigned.
+			// E.g. on OS X. Hence the following check is always false.
+			// Moral of the story: Use uint8, int8 or any of the other types provided by
+			// ScummVM if you want to ensure signedness and number of available bits.
 			if (_tempoSum < 0) {
 				// this have to be called in the same rate as in the original (I think)
 				processMidiData(1);

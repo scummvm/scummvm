@@ -49,7 +49,7 @@ bool loadChunkHeader(Common::SeekableReadStream &in, ChunkHeader &header) {
 	header.id      = in.readUint32BE();
 	header.version = in.readUint32BE();
 	header.size    = in.readUint32BE();
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 /*! \brief Savegame format detector
@@ -240,21 +240,21 @@ bool loadObjectTable(Common::SeekableReadStream &in) {
 		in.read(objectTable[i].name, 20);
 		objectTable[i].part = in.readUint16BE();
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadZoneData(Common::SeekableReadStream &in) {
 	for (int i = 0; i < 16; i++) {
 		zoneData[i] = in.readUint16BE();
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadCommandVariables(Common::SeekableReadStream &in) {
 	for (int i = 0; i < 4; i++) {
 		commandVar3[i] = in.readUint16BE();
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadScreenParams(Common::SeekableReadStream &in) {
@@ -265,7 +265,7 @@ bool loadScreenParams(Common::SeekableReadStream &in) {
 	in.readUint16BE();
 	in.readUint16BE();
 	in.readUint16BE();
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadGlobalScripts(Common::SeekableReadStream &in) {
@@ -273,7 +273,7 @@ bool loadGlobalScripts(Common::SeekableReadStream &in) {
 	for (int i = 0; i < size; i++) {
 		loadScriptFromSave(in, true);
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadObjectScripts(Common::SeekableReadStream &in) {
@@ -281,7 +281,7 @@ bool loadObjectScripts(Common::SeekableReadStream &in) {
 	for (int i = 0; i < size; i++) {
 		loadScriptFromSave(in, false);
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadOverlayList(Common::SeekableReadStream &in) {
@@ -289,7 +289,7 @@ bool loadOverlayList(Common::SeekableReadStream &in) {
 	for (int i = 0; i < size; i++) {
 		loadOverlayFromSave(in);
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadSeqList(Common::SeekableReadStream &in) {
@@ -312,14 +312,14 @@ bool loadSeqList(Common::SeekableReadStream &in) {
 		tmp.var1E  = in.readSint16BE();
 		seqList.push_back(tmp);
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool loadZoneQuery(Common::SeekableReadStream &in) {
 	for (int i = 0; i < 16; i++) {
 		zoneQuery[i] = in.readUint16BE();
 	}
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 void saveObjectTable(Common::OutSaveFile &out) {
@@ -632,7 +632,7 @@ bool CineEngine::loadTempSaveOS(Common::SeekableReadStream &in) {
 		warning("loadTempSaveOS: Loaded the savefile but didn't exhaust it completely. Something was left over");
 	}
 
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFormat saveGameFormat) {
@@ -755,7 +755,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 		}
 	}
 
-	return !in.ioFailed();
+	return !(in.eos() || in.err());
 }
 
 bool CineEngine::makeLoad(char *saveName) {

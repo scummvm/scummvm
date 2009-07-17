@@ -1324,7 +1324,9 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				_stream->skip(part.size);
 			}
 
-		} else if (part.type == kPartTypeVideo) {
+		} else if ((part.type == kPartTypeVideo) && !_hasVideo) {
+			warning("Header claims there's no video, but video frame part found");
+		} else if ((part.type == kPartTypeVideo) && _hasVideo) {
 			state.flags &= ~kStateNoVideoData;
 
 			uint32 size = part.size;
@@ -1817,16 +1819,18 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 		return 0;
 	}
 
-	byte *data = (byte *) malloc(_extraData[i].realSize);
-
-	_stream->seek(_extraData[i].offset);
-	if (_stream->ioFailed() || (((uint32) _stream->pos()) != _extraData[i].offset)) {
-		warning("Vmd::getExtraData(): Can't seek to offset %d to get extra data file \"%s\"",
+	if (!_stream->seek(_extraData[i].offset)) {
+		warning("Vmd::getExtraData(): Can't seek to offset %d to (file \"%s\")",
 				_extraData[i].offset, fileName);
 		return 0;
 	}
 
-	_stream->read(data, _extraData[i].realSize);
+	byte *data = (byte *) malloc(_extraData[i].realSize);
+	if (_stream->read(data, _extraData[i].realSize) != _extraData[i].realSize) {
+		free(data);
+		warning("Vmd::getExtraData(): Couldn't read %d bytes (file \"%s\")",
+				_extraData[i].realSize, fileName);
+	}
 
 	Common::MemoryReadStream *stream =
 		new Common::MemoryReadStream(data, _extraData[i].realSize, true);

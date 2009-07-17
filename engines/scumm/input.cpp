@@ -55,145 +55,173 @@ enum MouseButtonStatus {
 	msClicked = 2
 };
 
+#ifdef ENABLE_HE
+void ScummEngine_v80he::parseEvent(Common::Event event) {
+	ScummEngine::parseEvent(event);
+
+	// Keyboard is controlled via variable
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		if (event.kbd.keycode == Common::KEYCODE_LEFT)
+			VAR(VAR_KEY_STATE) |= 1;
+
+		if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+			VAR(VAR_KEY_STATE) |= 2;
+
+		if (event.kbd.keycode == Common::KEYCODE_UP)
+			VAR(VAR_KEY_STATE) |= 4;
+
+		if (event.kbd.keycode == Common::KEYCODE_DOWN)
+			VAR(VAR_KEY_STATE) |= 8;
+
+		if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT)
+			VAR(VAR_KEY_STATE) |= 16;
+
+		if (event.kbd.keycode == Common::KEYCODE_LCTRL || event.kbd.keycode == Common::KEYCODE_RCTRL)
+			VAR(VAR_KEY_STATE) |= 32;
+		break;
+
+	case Common::EVENT_KEYUP:
+		if (event.kbd.keycode == Common::KEYCODE_LEFT)
+			VAR(VAR_KEY_STATE) &= ~1;
+
+		if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+			VAR(VAR_KEY_STATE) &= ~2;
+
+		if (event.kbd.keycode == Common::KEYCODE_UP)
+			VAR(VAR_KEY_STATE) &= ~4;
+
+		if (event.kbd.keycode == Common::KEYCODE_DOWN)
+			VAR(VAR_KEY_STATE) &= ~8;
+
+		if (event.kbd.keycode == Common::KEYCODE_LSHIFT || event.kbd.keycode == Common::KEYCODE_RSHIFT)
+			VAR(VAR_KEY_STATE) &= ~16;
+
+		if (event.kbd.keycode == Common::KEYCODE_LCTRL || event.kbd.keycode == Common::KEYCODE_RCTRL)
+			VAR(VAR_KEY_STATE) &= ~32;
+		break;
+
+	default:
+		break;
+	}
+}
+#endif
+
+void ScummEngine::parseEvent(Common::Event event) {
+	switch (event.type) {
+	case Common::EVENT_KEYDOWN:
+		if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
+			&& (event.kbd.flags == Common::KBD_ALT ||
+				event.kbd.flags == Common::KBD_CTRL)) {
+			_saveLoadSlot = event.kbd.keycode - '0';
+
+			//  don't overwrite autosave (slot 0)
+			if (_saveLoadSlot == 0)
+				_saveLoadSlot = 10;
+
+			sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+			_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
+			_saveTemporaryState = false;
+		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+			_fastMode ^= 1;
+		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
+			_fastMode ^= 2;
+		} else if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
+				event.kbd.ascii == '~' || event.kbd.ascii == '#') {
+			_debugger->attach();
+		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
+			_res->resourceStats();
+		} else {
+			// Normal key press, pass on to the game.
+			_keyPressed = event.kbd;
+		}
+
+		// FIXME: We are using ASCII values to index the _keyDownMap here,
+		// yet later one code which checks _keyDownMap will use KEYCODEs
+		// to do so. That is, we are mixing ascii and keycode values here,
+		// which is bad. We probably should be only using keycodes, but at
+		// least INSANE checks for "Shift-V" by looking for the 'V' key
+		// being pressed. It would be easy to solve that by also storing
+		// the modifier flags. However, since getKeyState() is also called
+		// by scripts, we have to be careful with semantic changes.
+		if (_keyPressed.ascii >= 512)
+			debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
+		else
+			_keyDownMap[_keyPressed.ascii] = true;
+		break;
+
+	case Common::EVENT_KEYUP:
+		if (event.kbd.ascii >= 512) {
+			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
+		} else {
+			_keyDownMap[event.kbd.ascii] = false;
+
+			// Due to some weird bug with capslock key pressed
+			// generated keydown event is for lower letter but
+			// keyup is for upper letter
+			// On most (all?) keyboards it is safe to assume that
+			// both upper and lower letters are unpressed on keyup event
+			//
+			// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
+			//
+			// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
+			_keyDownMap[toupper(event.kbd.ascii)] = false;
+		}
+		break;
+
+
+	// We update the mouse position whenever the mouse moves or a click occurs.
+	// The latter is done to accomodate systems with a touchpad / pen controller.
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN:
+	case Common::EVENT_MOUSEMOVE:
+		if (event.type == Common::EVENT_LBUTTONDOWN)
+			_leftBtnPressed |= msClicked|msDown;
+		else if (event.type == Common::EVENT_RBUTTONDOWN)
+			_rightBtnPressed |= msClicked|msDown;
+		_mouse.x = event.mouse.x;
+		_mouse.y = event.mouse.y;
+
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
+			_mouse.x >>= 1;
+			_mouse.y = _mouse.y * 4 / 7;
+		} else if (_useCJKMode && _textSurfaceMultiplier == 2) {
+			_mouse.x >>= 1;
+			_mouse.y >>= 1;
+		}
+		break;
+	case Common::EVENT_LBUTTONUP:
+		_leftBtnPressed &= ~msDown;
+		break;
+
+	case Common::EVENT_RBUTTONUP:
+		_rightBtnPressed &= ~msDown;
+		break;
+
+	// The following two cases enable dialog choices to be scrolled
+	// through in the SegaCD version of MI. Values are taken from script-14.
+	// See bug report #1193185 for details.
+	case Common::EVENT_WHEELDOWN:
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
+		break;
+
+	case Common::EVENT_WHEELUP:
+		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
+			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
+		break;
+
+	default:
+		break;
+	}
+}
+
 void ScummEngine::parseEvents() {
 	Common::Event event;
 
 	while (_eventMan->pollEvent(event)) {
-
-		switch (event.type) {
-		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
-				&& (event.kbd.flags == Common::KBD_ALT ||
-					event.kbd.flags == Common::KBD_CTRL)) {
-				_saveLoadSlot = event.kbd.keycode - '0';
-
-				//  don't overwrite autosave (slot 0)
-				if (_saveLoadSlot == 0)
-					_saveLoadSlot = 10;
-
-				sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-				_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
-				_saveTemporaryState = false;
-			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
-				_fastMode ^= 1;
-			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
-				_fastMode ^= 2;
-			} else if ((event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'd') ||
-					event.kbd.ascii == '~' || event.kbd.ascii == '#') {
-				_debugger->attach();
-			} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 's') {
-				_res->resourceStats();
-			} else {
-				// Normal key press, pass on to the game.
-				_keyPressed = event.kbd;
-			}
-
-			if (_game.heversion >= 80) {
-				// FIXME: Move this code & VAR_KEY_STATE to class ScummEngine_v80he
-
-				// Keyboard is controlled via variable
-				int keyState = 0;
-
-				if (event.kbd.keycode == Common::KEYCODE_LEFT) // Left
-					keyState = 1;
-
-				if (event.kbd.keycode == Common::KEYCODE_RIGHT) // Right
-					keyState |= 2;
-
-				if (event.kbd.keycode == Common::KEYCODE_UP) // Up
-					keyState |= 4;
-
-				if (event.kbd.keycode == Common::KEYCODE_DOWN) // Down
-					keyState |= 8;
-
-				if (event.kbd.flags == Common::KBD_SHIFT)
-					keyState |= 16;
-
-				if (event.kbd.flags == Common::KBD_CTRL)
-					keyState |= 32;
-
-				VAR(VAR_KEY_STATE) = keyState;
-			}
-
-			// FIXME: We are using ASCII values to index the _keyDownMap here,
-			// yet later one code which checks _keyDownMap will use KEYCODEs
-			// to do so. That is, we are mixing ascii and keycode values here,
-			// which is bad. We probably should be only using keycodes, but at
-			// least INSANE checks for "Shift-V" by looking for the 'V' key
-			// being pressed. It would be easy to solve that by also storing
-			// the modifier flags. However, since getKeyState() is also called
-			// by scripts, we have to be careful with semantic changes.
-			if (_keyPressed.ascii >= 512)
-				debugC(DEBUG_GENERAL, "_keyPressed > 512 (%d)", _keyPressed.ascii);
-			else
-				_keyDownMap[_keyPressed.ascii] = true;
-			break;
-
-		case Common::EVENT_KEYUP:
-			if (event.kbd.ascii >= 512) {
-				debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
-			} else {
-				_keyDownMap[event.kbd.ascii] = false;
-
-				// Due to some weird bug with capslock key pressed
-				// generated keydown event is for lower letter but
-				// keyup is for upper letter
-				// On most (all?) keyboards it is safe to assume that
-				// both upper and lower letters are unpressed on keyup event
-				//
-				// Fixes bug #1709430: "FT: CAPSLOCK + V enables cheating for all fights"
-				//
-				// Fingolfin remarks: This wouldn't be a problem if we used keycodes.
-				_keyDownMap[toupper(event.kbd.ascii)] = false;
-			}
-			break;
-
-
-		// We update the mouse position whenever the mouse moves or a click occurs.
-		// The latter is done to accomodate systems with a touchpad / pen controller.
-		case Common::EVENT_LBUTTONDOWN:
-		case Common::EVENT_RBUTTONDOWN:
-		case Common::EVENT_MOUSEMOVE:
-			if (event.type == Common::EVENT_LBUTTONDOWN)
-				_leftBtnPressed |= msClicked|msDown;
-			else if (event.type == Common::EVENT_RBUTTONDOWN)
-				_rightBtnPressed |= msClicked|msDown;
-			_mouse.x = event.mouse.x;
-			_mouse.y = event.mouse.y;
-
-			if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-				_mouse.x -= (Common::kHercW - _screenWidth * 2) / 2;
-				_mouse.x >>= 1;
-				_mouse.y = _mouse.y * 4 / 7;
-			} else if (_useCJKMode && _textSurfaceMultiplier == 2) {
-				_mouse.x >>= 1;
-				_mouse.y >>= 1;
-			}
-			break;
-		case Common::EVENT_LBUTTONUP:
-			_leftBtnPressed &= ~msDown;
-			break;
-
-		case Common::EVENT_RBUTTONUP:
-			_rightBtnPressed &= ~msDown;
-			break;
-
-		// The following two cases enable dialog choices to be scrolled
-		// through in the SegaCD version of MI. Values are taken from script-14.
-		// See bug report #1193185 for details.
-		case Common::EVENT_WHEELDOWN:
-			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-				_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
-			break;
-
-		case Common::EVENT_WHEELUP:
-			if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
-				_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
-			break;
-
-		default:
-			break;
-		}
+		parseEvent(event);
 	}
 }
 
@@ -229,6 +257,18 @@ void ScummEngine_v0::processInput() {
 
 	ScummEngine::processInput();
 }
+
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::processInput() {
+	ScummEngine::processInput();
+
+	if (_skipVideo && !_smushActive) {
+		abortCutscene();
+		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
+		_skipVideo = false;
+	}
+}
+#endif
 
 void ScummEngine::processInput() {
 	Common::KeyState lastKeyHit = _keyPressed;
@@ -364,9 +404,10 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 				_insane->escapeKeyHandler();
 			else
 				_smushVideoShouldFinish = true;
-		}
-		if (!_smushActive || _smushVideoShouldFinish)
+			_skipVideo = true;
+		} else {
 			abortCutscene();
+		}
 
 		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
 

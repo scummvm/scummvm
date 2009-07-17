@@ -474,7 +474,7 @@ bool Win32ResExtractor::check_offset(byte *memory, int total_size, const char *n
 	int need_size = (int)((byte *)offset - memory + size);
 
 	debugC(DEBUG_RESOURCE, "check_offset: size=%x vs %x offset=%x size=%x",
-		need_size, total_size, (byte *)offset - memory, size);
+		need_size, total_size, (uint)((byte *)offset - memory), size);
 
 	if (need_size < 0 || need_size > total_size) {
 		error("%s: premature end", name);
@@ -913,7 +913,7 @@ int Win32ResExtractor::convertIcons(byte *data, int datasize, byte **cursor, int
 				if (entries[c].dib_size	!= bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
 					debugC(DEBUG_RESOURCE, "incorrect total size of bitmap (%d specified; %d real)",
 					    entries[c].dib_size,
-					    bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad)
+					    (int)(bitmap.size + image_size + mask_size + palette_count * sizeof(Win32RGBQuad))
 					);
 
 				image_data = (byte *)malloc(image_size);

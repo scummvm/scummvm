@@ -58,10 +58,11 @@ Ps2File::Ps2File(void) {
 	_cacheSize = 0;
 	_cachePos = 0;
 	_eof = false;
+	_err = false;
 
 	// _cache = (uint8 *)malloc(PS2_CACHE_MAX);
 
-	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE);
+	_cacheBuf = (uint8*)memalign(64, CACHE_SIZE * 2);
 
 	_cacheOpRunning = 0;
 	_filePos = _physFilePos = _cachePos = 0;
@@ -80,7 +81,16 @@ Ps2File::Ps2File(void) {
 }
 
 Ps2File::~Ps2File(void) {
+	uint32 w;
 	if (_fd >= 0) {
+
+		if (_mode != O_RDONLY) {
+			fio.seek(_fd, 0, SEEK_SET);
+			fio.write(_fd, _cacheBuf, _filePos);
+			w = fio.sync(_fd);
+			printf("flushed wbuf: %x of %x\n", w, _filePos);
+		}
+
 		fio.close(_fd);
 		uint32 r = fio.sync(_fd);
 		printf("close [%d] - sync'd = %d\n", _fd, r);
@@ -95,24 +105,87 @@ Ps2File::~Ps2File(void) {
 }
 
 bool Ps2File::open(const char *name, int mode) {
-	assert(_fd < 0);
+#if 1
+	_fd = fio.open(name, mode);
+
+	printf("open %s [%d]\n", name, _fd);
+
+	if (_fd >= 0) {
+		_mode = mode;
+		_filePos = 0;
+
+		if (_mode == O_RDONLY) {
+			_fileSize = fio.seek(_fd, 0, SEEK_END);
+			fio.seek(_fd, 0, SEEK_SET);
+		}
+		else
+			_fileSize = 0;
+
+		printf("  _mode = %x\n", _mode);
+		printf("  _fileSize = %d\n", _fileSize);
+		// printf("  _filePos = %d\n", _filePos);
+
+		return true;
+	}
+
+	return false;
+#else
+	uint32 r;
+
+	// hack: FIO does not reports size for RW (?)
+	_fd = fio.open(name, O_RDONLY);
+	if (_fd >= 0) {
+		_fileSize = fio.seek(_fd, 0, SEEK_END);
+		fio.seek(_fd, 0, SEEK_SET); /* rewind ! */
+
+		if (_fileSize && mode != O_RDONLY) {
+			fio.read(_fd, _cacheBuf, _fileSize);
+			r = fio.sync(_fd);
+			printf(" sz=%d, read=%d\n", _fileSize, r);
+			assert(r == _fileSize);
+		}
+
+		fio.close(_fd);
+	}
+	else
+		_fileSize = 0; /* new file */
 
 	_fd = fio.open(name, mode);
 
 	printf("open %s [%d]\n", name, _fd);
 
 	if (_fd >= 0) {
-		_fileSize = fio.seek(_fd, 0, SEEK_END);
-		if (mode == O_RDONLY)
-		// if (!(mode & O_APPEND))
-			fio.seek(_fd, 0, SEEK_SET);
+		_mode = mode;
+		_filePos = 0;
 
+		if (_fileSize) { /* existing data */
+			if (mode == O_RDONLY) {
+				/* DANGER: for w* modes it will truncate your fine files */
+				fio.seek(_fd, 0, SEEK_SET);
+			}
+			else if (_mode & O_APPEND) {
+				fio.seek(_fd, 0, _fileSize);
+				_filePos = _fileSize;
+			}
+			#if 0 /* file already trunc'd when opened as w* -> moved up */
+			if (mode != O_RDONLY) {
+				fio.read(_fd, _cacheBuf, _fileSize);
+				r = fio.sync(_fd);
+				printf(" sz=%d, read=%d\n", _fileSize, r);
+				assert(r == _fileSize);
+				// _fileSize = fio.seek(_fd, 0, SEEK_END);
+			}
+			#endif
+		}
+
+		printf("  _mode = %x\n", _mode);
 		printf("  _fileSize = %d\n", _fileSize);
 		printf("  _filePos = %d\n", _filePos);
 
 		return true;
 	} else
 		return false;
+#endif
 }
 
 int32 Ps2File::tell(void) {
@@ -152,10 +225,11 @@ bool Ps2File::eof(void) {
 }
 
 bool Ps2File::getErr(void) {
-	return _eof;
+	return _err;
 }
 
 void Ps2File::setErr(bool err) {
+	_err = err;
 	_eof = err;
 }
 
@@ -189,7 +263,9 @@ int Ps2File::seek(int32 offset, int origin) {
 		_eof = false;
 		res = 0;
 	}
-	else _eof = true;
+	else {
+		_eof = true;
+	}
 
 	// printf("seek [%d]  %d  %d\n", _fd, offset, origin);
 	// printf("  res = %d\n", res);
@@ -225,7 +301,7 @@ void Ps2File::cacheReadAhead(void) {
 			_cachePos = cachePosEnd = _filePos & ~READ_ALIGN_MASK;
 			assert(_filePos == _physFilePos);
 		} else {
-            		uint32 cacheDiff = _filePos - _cachePos;
+			uint32 cacheDiff = _filePos - _cachePos;
 			assert(_bytesInCache >= cacheDiff);
 			cacheDiff &= ~READ_ALIGN_MASK;
 			_bytesInCache -= cacheDiff;
@@ -278,10 +354,17 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 	printf("read (1) : _cachePos = %d\n", _cachePos);
 #endif
 
+	if (len == 0) {
+#ifdef __PS2_FILE_SEMA__
+		SignalSema(_sema);
+#endif
+		return 0;
+	}
+
 	if (_filePos >= _fileSize) {
 		_eof = true;
 #ifdef __PS2_FILE_SEMA__
-    SignalSema(_sema);
+		SignalSema(_sema);
 #endif
 		return 0;
 	}
@@ -344,32 +427,18 @@ uint32 Ps2File::read(void *dest, uint32 len) {
 }
 
 uint32 Ps2File::write(const void *src, uint32 len) {
-	uint32 w;
 #ifdef __PS2_FILE_SEMA__
 	WaitSema(_sema);
 #endif
-	_cacheSize = 0;
 
-	w = fio.sync(_fd);
-	assert(w==0);
-
-	fio.seek(_fd, _filePos, SEEK_SET);
-	fio.write(_fd, src, len);
-
-	w = fio.sync(_fd);
+	memcpy(&_cacheBuf[_filePos], src, len);
+	_filePos += len;
 
 #ifdef __PS2_FILE_SEMA__
 	SignalSema(_sema);
 #endif
 
-	if (w) {
-		_filePos += w;
-		if (w < len)
-			_eof = true;
-		return w;
-	}
-
-	return 0;
+	return len;
 }
 
 FILE *ps2_fopen(const char *fname, const char *mode) {
@@ -438,6 +507,13 @@ int ps2_fputc(int c, FILE *stream) {
 
 int ps2_fputs(const char *s, FILE *stream) {
 	int len = strlen(s);
+
+	if (stream == stderr || stream == stdout) {
+		printf("%s", s);
+		sioprintf("%s", s);
+		return len;
+	}
+
 	if (ps2_fwrite(s, 1, len, stream) == (size_t)len)
 		return len;
 	else
@@ -468,8 +544,9 @@ int ps2_fflush(FILE *stream) {
 int ps2_ferror(FILE *stream) {
 	int err = ((Ps2File*)stream)->getErr();
 
-	if (err)
+	if (err) {
 		printf("ferror -> %d\n", err);
+	}
 
 	return err;
 }

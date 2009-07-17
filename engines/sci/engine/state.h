@@ -208,7 +208,7 @@ public:
 	bool _executionStackPosChanged;   /**< Set to true if the execution stack position should be re-evaluated by the vm */
 
 	reg_t r_acc; /**< Accumulator */
-	unsigned int r_amp_rest; /**< &rest register (only used for save games) */
+	int16 restAdjust; /**< &rest register (only used for save games) */
 	reg_t r_prev; /**< previous comparison result */
 
 	SegmentId stack_segment; /**< Heap area for the stack to use */
@@ -257,9 +257,6 @@ public:
 
 	MessageState _msgState;
 
-	Vocabulary *_vocabulary;
-	Kernel *_kernel;
-
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
 private:
@@ -283,7 +280,7 @@ PaletteEntry get_pic_color(EngineState *s, int color);
 // misleading. A different name (and a different place for declaring this)
 // would be highly welcome.
 static inline reg_t not_register(EngineState *s, reg_t r) {
-	if (s->_kernel->_selectorMap.cantBeHere != -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.cantBeHere != -1)
 		return make_reg(0, !r.offset);
 	else
 		return r;

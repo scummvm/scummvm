@@ -37,6 +37,7 @@
 #include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/resources.h"
+#include "gob/hotspots.h"
 #include "gob/goblin.h"
 #include "gob/inter.h"
 #include "gob/map.h"
@@ -147,7 +148,7 @@ void Inter_v1::setupOpcodesFunc() {
 	OPCODEFUNC(0x3E, o1_getFreeMem);
 	OPCODEFUNC(0x3F, o1_checkData);
 
-	OPCODEFUNC(0x41, o1_prepareStr);
+	OPCODEFUNC(0x41, o1_cleanupStr);
 	OPCODEFUNC(0x42, o1_insertStr);
 	OPCODEFUNC(0x43, o1_cutStr);
 
@@ -867,7 +868,16 @@ bool Inter_v1::o1_loadSpriteToPos(OpFuncParams &params) {
 	_vm->_draw->_spriteLeft = _vm->_game->_script->readInt16();
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
-	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+
+	// WORKAROUND: The EGA version of Gobliiins 1 has an invalid expression there
+	if (_vm->isEGA() && (_vm->_game->_script->pos() == 1398) &&
+			!scumm_stricmp(_vm->_game->_curTotFile, "intro.tot")) {
+
+		_vm->_draw->_destSpriteY = 0;
+		_vm->_game->_script->skip(1);
+
+	} else
+		_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
 	_vm->_draw->_transparency = _vm->_game->_script->peekByte() & 1;
 	_vm->_draw->_destSurface = ((int16) (_vm->_game->_script->peekByte() >> 1)) - 1;
@@ -1095,7 +1105,7 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 		if (!resource)
 			break;
 
-		memcpy((char *) _vm->_draw->_vgaPalette, resource->getData(), MIN(768, resource->getSize()));
+		memcpy((char *) _vm->_draw->_vgaPalette, resource->getData(), MIN<int>(768, resource->getSize()));
 		delete resource;
 		break;
 
@@ -1173,7 +1183,7 @@ bool Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
-		key = _vm->_game->checkCollisions(0, 0, 0, 0);
+		key = _vm->_game->_hotspots->check(0, 0);
 		storeKey(key);
 
 		_vm->_util->clearKeyBuf();
@@ -1601,11 +1611,11 @@ bool Inter_v1::o1_checkData(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v1::o1_prepareStr(OpFuncParams &params) {
+bool Inter_v1::o1_cleanupStr(OpFuncParams &params) {
 	int16 strVar;
 
 	strVar = _vm->_game->_script->readVarIndex();
-	_vm->_util->prepareStr(GET_VARO_FSTR(strVar));
+	_vm->_util->cleanupStr(GET_VARO_FSTR(strVar));
 	return false;
 }
 
@@ -1702,12 +1712,9 @@ bool Inter_v1::o1_loadFont(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 	index = _vm->_game->_script->readInt16();
 
-	delete _vm->_draw->_fonts[index];
-
 	_vm->_draw->animateCursor(4);
 
-	_vm->_draw->_fonts[index] =
-		_vm->_util->loadFont(_vm->_game->_script->getResultStr());
+	_vm->_draw->loadFont(index, _vm->_game->_script->getResultStr());
 
 	return false;
 }

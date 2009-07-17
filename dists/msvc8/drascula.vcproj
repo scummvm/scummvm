@@ -8,221 +8,26 @@
 	Keyword="Win32Proj"
 	>
 	<Platforms>
-		<Platform
-			Name="Win32"
-		/>
+		<Platform Name="Win32" />
 	</Platforms>
-	<ToolFiles>
-	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Debug|Win32"
-			OutputDirectory="drascula_Debug"
-			IntermediateDirectory="drascula_Debug"
-			ConfigurationType="4"
-			CharacterSet="2"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="0"
-				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;_DEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				MinimalRebuild="true"
-				ExceptionHandling="1"
-				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
-				BufferSecurityCheck="true"
-				EnableFunctionLevelLinking="true"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				SuppressStartupBanner="false"
-				Detect64BitPortabilityProblems="false"
-				DebugInformationFormat="4"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/drascula.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="drascula_Release"
-			IntermediateDirectory="drascula_Release"
-			ConfigurationType="4"
-			CharacterSet="2"
-			WholeProgramOptimization="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalOptions="/wd4201 /wd4512 /wd4511 /wd4100 /wd4121 /wd4310 /wd4706 /wd4127 /wd4189 /wd4702 /wd4996"
-				Optimization="3"
-				InlineFunctionExpansion="2"
-				EnableIntrinsicFunctions="true"
-				FavorSizeOrSpeed="2"
-				OmitFramePointers="true"
-				AdditionalIncludeDirectories="../../;../../engines"
-				PreprocessorDefinitions="WIN32;NDEBUG;USE_ZLIB;USE_MAD;USE_VORBIS"
-				StringPooling="true"
-				ExceptionHandling="1"
-				RuntimeLibrary="0"
-				BufferSecurityCheck="false"
-				EnableFunctionLevelLinking="false"
-				DisableLanguageExtensions="false"
-				ForceConformanceInForLoopScope="true"
-				UsePrecompiledHeader="0"
-				WarningLevel="4"
-				WarnAsError="true"
-				DebugInformationFormat="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/drascula.lib"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
-	<References>
-	</References>
 	<Files>
-		<File
-			RelativePath="..\..\engines\drascula\actors.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\animation.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\converse.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\detection.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\drascula.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\drascula.h"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\graphics.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\interface.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\objects.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\palette.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\rooms.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\saveload.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\sound.cpp"
-			>
-		</File>
-		<File
-			RelativePath="..\..\engines\drascula\talk.cpp"
-			>
-		</File>
+		<File RelativePath="..\..\engines\drascula\actors.cpp" />
+		<File RelativePath="..\..\engines\drascula\animation.cpp" />
+		<File RelativePath="..\..\engines\drascula\converse.cpp" />
+		<File RelativePath="..\..\engines\drascula\detection.cpp" />
+		<File RelativePath="..\..\engines\drascula\drascula.cpp" />
+		<File RelativePath="..\..\engines\drascula\drascula.h" />
+		<File RelativePath="..\..\engines\drascula\graphics.cpp" />
+		<File RelativePath="..\..\engines\drascula\interface.cpp" />
+		<File RelativePath="..\..\engines\drascula\objects.cpp" />
+		<File RelativePath="..\..\engines\drascula\palette.cpp" />
+		<File RelativePath="..\..\engines\drascula\rooms.cpp" />
+		<File RelativePath="..\..\engines\drascula\saveload.cpp" />
+		<File RelativePath="..\..\engines\drascula\sound.cpp" />
+		<File RelativePath="..\..\engines\drascula\talk.cpp" />
 	</Files>
-	<Globals>
-	</Globals>
 </VisualStudioProject>

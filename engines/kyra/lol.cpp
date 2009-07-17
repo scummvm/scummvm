@@ -214,8 +214,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_compassBroken = _drainMagic = 0;
 	_dialogueField = false;
 
-	_rndSpecial = 0x12349876;
-
 	_buttonData = 0;
 	_activeButtons = 0;
 	gui_resetButtonList();
@@ -1082,7 +1080,7 @@ bool LoLEngine::addCharacter(int id) {
 
 	loadCharFaceShapes(numChars, id);
 
-	_characters[numChars].nextAnimUpdateCountdown = (int16) _rnd.getRandomNumberRng(1, 12) + 6;
+	_characters[numChars].nextAnimUpdateCountdown = rollDice(1, 12) + 6;
 
 	for (i = 0; i < 11; i++) {
 		if (_characters[numChars].items[i]) {
@@ -1176,7 +1174,7 @@ void LoLEngine::updatePortraitSpeechAnim() {
 		}
 	}
 
-	int f = _rnd.getRandomNumberRng(1, 6) - 1;
+	int f = rollDice(1, 6) - 1;
 	if (f == _characters[_updateCharNum].curFaceFrame)
 		f++;
 	if (f > 5)
@@ -1404,24 +1402,24 @@ void LoLEngine::increaseExperience(int charNum, int skill, uint32 points) {
 		switch (skill) {
 		case 0:
 			_txt->printMessage(0x8003, getLangString(0x4023), _characters[charNum].name);
-			inc = _rnd.getRandomNumberRng(4, 6);
+			inc = rollDice(4, 6);
 			_characters[charNum].hitPointsCur += inc;
 			_characters[charNum].hitPointsMax += inc;
 			break;
 
 		case 1:
 			_txt->printMessage(0x8003, getLangString(0x4025), _characters[charNum].name);
-			inc = _rnd.getRandomNumberRng(2, 6);
+			inc = rollDice(2, 6);
 			_characters[charNum].hitPointsCur += inc;
 			_characters[charNum].hitPointsMax += inc;
 			break;
 
 		case 2:
 			_txt->printMessage(0x8003, getLangString(0x4024), _characters[charNum].name);
-			inc = (_characters[charNum].defaultModifiers[6] * (_rnd.getRandomNumberRng(1, 8) + 17)) >> 8;
+			inc = (_characters[charNum].defaultModifiers[6] * (rollDice(1, 8) + 17)) >> 8;
 			_characters[charNum].magicPointsCur += inc;
 			_characters[charNum].magicPointsMax += inc;
-			inc = _rnd.getRandomNumberRng(1, 6);
+			inc = rollDice(1, 6);
 			_characters[charNum].hitPointsCur += inc;
 			_characters[charNum].hitPointsMax += inc;
 			break;
@@ -1874,6 +1872,17 @@ void LoLEngine::delay(uint32 millis, bool doUpdate, bool) {
 	}
 }
 
+int LoLEngine::rollDice(int times, int pips) {
+	if (times <= 0 || pips <= 0)
+		return 0;
+
+	int res = 0;
+	while (times--)
+		res += _rnd.getRandomNumberRng(1, pips);
+
+	return res;
+}
+
 void LoLEngine::updateEnvironmentalSfx(int soundId) {
 	snd_processEnvironmentalSoundEffect(soundId, _currentBlock);
 }
@@ -1885,7 +1894,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 	_activeSpell.spell = spellType;
 	_activeSpell.p = &_spellProperties[spellType];
 
-	_activeSpell.level = spellLevel < 0 ? -spellLevel : spellLevel;
+	_activeSpell.level = ABS(spellLevel);
 
 	if ((_spellProperties[spellType].flags & 0x100) && testWallFlag(calcNewBlockPosition(_currentBlock, _currentDirection), _currentDirection, 1)) {
 		_txt->printMessage(2, getLangString(0x4257));
@@ -2260,7 +2269,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	} else {
 		uint16 o = _levelBlockProperties[calcNewBlockPosition(_currentBlock, _currentDirection)].assignedObjects;
 		while (o & 0x8000) {
-			int might = _rnd.getRandomNumberRng(iceDamageMin[spellLevel], iceDamageMax[spellLevel]) + iceDamageAdd[spellLevel];
+			int might = rollDice(iceDamageMin[spellLevel], iceDamageMax[spellLevel]) + iceDamageAdd[spellLevel];
 			int dmg = calcInflictableDamagePerItem(charNum, 0, might, 3, 2);
 
 			MonsterInPlay *m = &_monsters[o & 0x7fff];
@@ -2880,7 +2889,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 	uint16 step = 0;
 
 	do {
-		step = (step & 0xff) + (hpDiff * 256) / (bezelAnimData[numUses * 3 + 2]);
+		step = (step & 0xff) + (hpDiff * 256) / (bezelAnimData[numUses * 3 + 1]);
 		increaseCharacterHitpoints(charNum, step / 256, true);
 		gui_drawCharPortraitWithStats(charNum);
 
@@ -3192,7 +3201,7 @@ int LoLEngine::battleHitSkillTest(int16 attacker, int16 target, int skill) {
 		evadeChanceModifier = _characters[target].defaultModifiers[3];
 	}
 
-	int r = _rnd.getRandomNumberRng(1, 100);
+	int r = rollDice(1, 100);
 	if (r >= sk)
 		return 2;
 
@@ -3230,9 +3239,9 @@ int LoLEngine::inflictDamage(uint16 target, int damage, uint16 attacker, int ski
 			m->hitPoints -= damage;
 			m->damageReceived = 0x8000 | damage;
 			m->flags |= 0x10;
-			m->hitOffsX = _rnd.getRandomNumberRng(1, 24);
+			m->hitOffsX = rollDice(1, 24);
 			m->hitOffsX -= 12;
-			m->hitOffsY = _rnd.getRandomNumberRng(1, 24);
+			m->hitOffsY = rollDice(1, 24);
 			m->hitOffsY -= 12;
 			m->hitPoints = CLIP<int16>(m->hitPoints, 0, m->properties->hitPoints);
 
@@ -3436,7 +3445,7 @@ void LoLEngine::checkForPartyDeath() {
 }
 
 void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, int16 damage) {
-	if (_rnd.getRandomNumberRng(1, 100) > monster->properties->attackSkillChance)
+	if (rollDice(1, 100) > monster->properties->attackSkillChance)
 		return;
 
 	int t = 0;
@@ -3506,7 +3515,7 @@ void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, in
 }
 
 void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker, int flags, int skill, int damage) {
-	if (_rnd.getRandomNumberRng(1, 100) > monster->properties->defenseSkillChance)
+	if (rollDice(1, 100) > monster->properties->defenseSkillChance)
 		return;
 
 	int itm = 0;
@@ -3593,7 +3602,7 @@ int LoLEngine::paralyzePoisonCharacter(int charNum, int typeFlag, int immunityFl
 	if (!(_characters[charNum].flags & 1) || (_characters[charNum].flags & immunityFlags))
 		return 0;
 
-	if ((int)_rnd.getRandomNumberRng(1, 100) > hitChance)
+	if (rollDice(1, 100) > hitChance)
 		return 0;
 
 	int r = 0;
@@ -3711,7 +3720,7 @@ void LoLEngine::launchMagicViper() {
 	_screen->copyPage(12, 0);
 	_screen->copyPage(12, 2);
 
-	int t = _rnd.getRandomNumberRng(1, 4);
+	int t = rollDice(1, 4);
 
 	for (int i = 0; i < 4; i++) {
 		if (!(_characters[i].flags & 1)) {

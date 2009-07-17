@@ -226,7 +226,7 @@ void AGOSEngine::alignTableMem() {
 	}
 }
 
-byte *AGOSEngine::allocateTable(uint size) {
+void *AGOSEngine::allocateTable(uint size) {
 	byte *org = _tablesHeapPtr;
 
 	size = (size + 1) & ~1;

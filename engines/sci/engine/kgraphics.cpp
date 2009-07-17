@@ -25,6 +25,7 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "graphics/cursorman.h"
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
@@ -163,7 +164,7 @@ int _find_view_priority(EngineState *s, int y) {
 				return j;
 		return 14; // Maximum
 	} else {
-		if (!(s->_flags & GF_SCI0_OLDGFXFUNCS))
+		if (!((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 : SCI0_VIEW_PRIORITY(y);
@@ -171,7 +172,7 @@ int _find_view_priority(EngineState *s, int y) {
 }
 
 int _find_priority_band(EngineState *s, int nr) {
-	if (!(s->_flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 14)) {
+	if (!((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions() && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
 		else {
@@ -180,7 +181,7 @@ int _find_priority_band(EngineState *s, int nr) {
 		return 0;
 	}
 
-	if ((s->_flags & GF_SCI0_OLDGFXFUNCS) && (nr < 0 || nr > 15)) {
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions() && (nr < 0 || nr > 15)) {
 		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
@@ -190,7 +191,7 @@ int _find_priority_band(EngineState *s, int nr) {
 	else {
 		int retval;
 
-		if (!(s->_flags & GF_SCI0_OLDGFXFUNCS))
+		if (!((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 			retval = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 		else
 			retval = SCI0_PRIORITY_BAND_FIRST(nr);
@@ -268,7 +269,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 }
 
 PaletteEntry get_pic_color(EngineState *s, int color) {
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
+	if (!s->resmgr->isVGA())
 		return s->ega_colors[color].visual;
 
 	if (color == -1 || color == 255)     // -1 occurs in Eco Quest 1. Not sure if this is the best approach, but it seems to work
@@ -285,7 +286,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
 	gfx_color_t retval;
 
-	if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA) {
+	if (!s->resmgr->isVGA()) {
 		retval = s->ega_colors[(color >=0 && color < 16)? color : 0];
 		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
 		                (color == -1) ? 255 : 0, priority, control);
@@ -303,21 +304,26 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
-		if (s->_version < SCI_VERSION_1_1) {
+		if (s->_version < SCI_VERSION_1) {
+			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
+		} else if (s->_version == SCI_VERSION_1) {
 			if (argv[0].toSint16() <= 1) {
 				// Newer (SCI1.1) semantics: show/hide cursor
-				g_system->showMouse(argv[0].toSint16() != 0);
+				CursorMan.showMouse(argv[0].toSint16() != 0);
 			} else {
 				// Pre-SCI1.1: set cursor according to the first parameter
 				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
 			}
-		} else {
+		} else if (s->_version >= SCI_VERSION_1_1) {
 			// SCI1.1: Show/hide cursor
-			g_system->showMouse(argv[0].toSint16() != 0);
+			CursorMan.showMouse(argv[0].toSint16() != 0);
 		}
 		break;
 	case 2 :
-		if (s->_version < SCI_VERSION_1_1) {
+		if (s->_version < SCI_VERSION_1) {
+			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
+						argv[1].toSint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
+		} else if (s->_version == SCI_VERSION_1) {
 			// Pre-SCI1.1: set cursor according to the first parameter, and toggle its
 			// visibility based on the second parameter
 			// Some late SCI1 games actually use the SCI1.1 version of this call (EcoQuest 1
@@ -336,7 +342,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
 							Common::Point(argv[0].toUint16(), argv[1].toUint16())));
 			}
-		} else {
+		} else if (s->_version >= SCI_VERSION_1_1) {
 			// SCI1.1 and newer: set pointer position
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
 						Common::Point(argv[0].toUint16(), argv[1].toUint16())));
@@ -411,7 +417,7 @@ reg_t kShow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				s->visual->draw(Common::Point(0, 0));
 
 			gfxop_update(s->gfx_state);
-			sciprintf("Switching visible map to %x\n", s->pic_visible_map);
+			debugC(2, kDebugLevelGraphics, "Switching visible map to %x\n", s->pic_visible_map);
 		}
 		break;
 
@@ -433,13 +439,12 @@ reg_t kPicNotValid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
-	sciprintf("_k_redraw_box(): Unimplemented!\n");
+	warning("_k_redraw_box(): Unimplemented");
 #if 0
 	int i;
 	ViewObject *list = s->dyn_views;
 
-	sciprintf("Reanimating views\n", s->dyn_views_nr);
-
+	printf("Reanimating views\n", s->dyn_views_nr);
 
 	for (i = 0;i < s->dyn_views_nr;i++) {
 		*(list[i].underBitsp) = graph_save_box(s, list[i].nsLeft, list[i].nsTop, list[i].nsRight - list[i].nsLeft,
@@ -497,7 +502,7 @@ reg_t kGraph(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	case K_GRAPH_GET_COLORS_NR:
 
-		return make_reg(0, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 0x10 : 0x100);
+		return make_reg(0, !s->resmgr->isVGA() ? 0x10 : 0x100);
 		break;
 
 	case K_GRAPH_DRAW_LINE: {
@@ -691,7 +696,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int funct_nr, int argc,
 
 	angle %= 360;
 
-	if (!(s->_flags & GF_SCI0_OLD)) {
+	if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 		if (angle < 45)
 			loop = 3;
 		else if (angle < 136)
@@ -997,7 +1002,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 
-	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 		add_to_pic = (argc > 2) ? argv[2].toSint16() : false;
 
 	dp.nr = argv[0].toSint16();
@@ -1051,7 +1056,7 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	s->priority_first = 42;
 
-	if (s->_flags & GF_SCI0_OLDGFXFUNCS)
+	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;
@@ -1074,7 +1079,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 	x = GET_SEL32SV(object, x);
 	original_y = y = GET_SEL32SV(object, y);
 
-	if (s->_kernel->_selectorMap.z > -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > -1)
 		z = GET_SEL32SV(object, z);
 	else
 		z = 0;
@@ -1128,7 +1133,7 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 void _k_base_setter(EngineState *s, reg_t object) {
 	Common::Rect absrect = set_base(s, object);
 
-	if (lookup_selector(s, object, s->_kernel->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
+	if (lookup_selector(s, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	// Note: there was a check here for a very old version of SCI, which supposedly needed
@@ -1209,7 +1214,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 	x = GET_SEL32SV(object, x);
 	y = GET_SEL32SV(object, y);
 
-	if (s->_kernel->_selectorMap.z > -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > -1)
 		z = GET_SEL32SV(object, z);
 	else
 		z = 0;
@@ -1233,7 +1238,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 static void _k_set_now_seen(EngineState *s, reg_t object) {
 	Common::Rect absrect = get_nsrect(s, object, 0);
 
-	if (lookup_selector(s, object, s->_kernel->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
+	if (lookup_selector(s, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
@@ -1719,7 +1724,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
-			int has_nsrect = lookup_selector(s, obj, s->_kernel->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
+			int has_nsrect = lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
 				int temp;
@@ -1741,7 +1746,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 			}
 #ifdef DEBUG_LSRECT
 			else
-				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, s->_kernel->_selectorMap.nsBottom, NULL, NULL));
+				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -1895,7 +1900,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	loop = oldloop = sign_extend_byte(GET_SEL32V(obj, loop));
 	cel = oldcel = sign_extend_byte(GET_SEL32V(obj, cel));
 
-	if (s->_kernel->_selectorMap.palette)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.palette)
 		palette = GET_SEL32V(obj, palette);
 	else
 		palette = 0;
@@ -1918,7 +1923,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	}
 
 	ObjVarRef under_bitsp;
-	if (lookup_selector(s, obj, s->_kernel->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp.obj = NULL_REG;
 		under_bits = NULL_REG;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
@@ -1926,7 +1931,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 		under_bits = *under_bitsp.getPointer(s);
 
 	ObjVarRef signalp;
-	if (lookup_selector(s, obj, s->_kernel->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp.obj = NULL_REG;
 		signal = 0;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
@@ -2019,7 +2024,7 @@ static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
 	while (view) {
 		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
-		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, s->_kernel->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
+		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);
@@ -2458,7 +2463,7 @@ reg_t kDisposeWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	while (id > 0 && (!s->visual->_portRefs[id] || (s->visual->_portRefs[id]->_flags & GFXW_FLAG_NO_IMPLICIT_SWITCH)))
 		id--;
 
-	sciprintf("Activating port %d after disposing window %d\n", id, goner_nr);
+	debugC(2, kDebugLevelGraphics, "Activating port %d after disposing window %d\n", id, goner_nr);
 	s->port = (id >= 0) ? s->visual->_portRefs[id] : 0;
 
 	if (!s->port)
@@ -2497,7 +2502,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int16 bgColor = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
 	if (bgColor >= 0) {
-		if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA)
+		if (!s->resmgr->isVGA())
 			bgcolor.visual = get_pic_color(s, MIN<int>(bgColor, 15));
 		else
 			bgcolor.visual = get_pic_color(s, bgColor);
@@ -2523,7 +2528,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	black.alpha = 0;
 	black.control = -1;
 	black.priority = -1;
-	lWhite.visual = get_pic_color(s, s->resmgr->_sciVersion < SCI_VERSION_01_VGA ? 15 : 255);
+	lWhite.visual = get_pic_color(s, !s->resmgr->isVGA() ? 15 : 255);
 	lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
@@ -3144,7 +3149,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	bg_color = port->_bgcolor;
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
 	// SCI0 case should be checked
-	if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) {
+	if (s->resmgr->isVGA()) {
 		// This priority check fixes the colors in the menus in KQ5
 		// TODO/FIXME: Is this correct?
 		if (color0.priority >= 0)
@@ -3186,10 +3191,10 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_color(%d)\n", temp);
-			if ((s->resmgr->_sciVersion < SCI_VERSION_01_VGA) && temp >= 0 && temp <= 15)
+			if (!s->resmgr->isVGA() && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
 			else
-				if (s->resmgr->_sciVersion >= SCI_VERSION_01_VGA && temp >= 0 && temp < 256) {
+				if (s->resmgr->isVGA() && temp >= 0 && temp < 256) {
 					color0.visual = get_pic_color(s, temp);
 					color0.mask = GFX_MASK_VISUAL;
 				} else
@@ -3203,10 +3208,10 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_bg_color(%d)\n", temp);
-			if (s->resmgr->_sciVersion < SCI_VERSION_01_VGA && temp >= 0 && temp <= 15)
+			if (!s->resmgr->isVGA() && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
 			else
-				if ((s->resmgr->_sciVersion >= SCI_VERSION_01_VGA) && temp >= 0 && temp <= 256) {
+				if (s->resmgr->isVGA() && temp >= 0 && temp <= 256) {
 					bg_color.visual = get_pic_color(s, temp);
 					bg_color.mask = GFX_MASK_VISUAL;
 				} else

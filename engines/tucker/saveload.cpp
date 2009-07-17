@@ -88,7 +88,7 @@ Common::Error TuckerEngine::loadGameState(int num) {
 		} else {
 			f->skip(2);
 			saveOrLoadGameStateData(*f);
-			if (f->ioFailed()) {
+			if (f->err() || f->eos()) {
 				warning("Can't read file '%s'", gameStateFileName.c_str());
 				ret = Common::kReadingFailed;
 			} else {

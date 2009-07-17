@@ -126,7 +126,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 		}
 	}
 
-	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
+	return ((in->err() || in->eos()) ? kRSHEIoError : kRSHENoError);
 }
 
 Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {
@@ -168,7 +168,7 @@ Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filena
 				delete in;
 				return 0;
 			} else if ((header.flags & GF_FMTOWNS) && !(_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98)) {
-				warning("Can not load FM-Towns/PC98 savefile for this (non FM-Towns/PC98) gameversion");
+				warning("Can not load FM-TOWNS/PC98 savefile for this (non FM-TOWNS/PC98) gameversion");
 				delete in;
 				return 0;
 			}

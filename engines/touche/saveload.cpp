@@ -355,10 +355,10 @@ Common::Error ToucheEngine::loadGameState(int num) {
 		} else {
 			f->skip(2 + kGameStateDescriptionLen);
 			loadGameStateData(f);
-			if (!f->ioFailed()) {
-				loadOk = true;
-			} else {
+			if (f->err() || f->eos()) {
 				warning("Can't read file '%s'", gameStateFileName.c_str());
+			} else {
+				loadOk = true;
 			}
 		}
 		delete f;
