@@ -43,7 +43,7 @@ struct BAFile {
 	byte _stopper;		//!< Not used in BAR files, needed for DFW
 
 	/** Releases the file data (for memory considerations) */
-	void closeFile(void) {  
+	void close(void) {  
 		delete[] _data;
 		_data = NULL;
 	}

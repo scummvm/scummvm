@@ -375,6 +375,8 @@ BAFile *BArchive::loadFileDFW(unsigned int i) const {
 
 	assert(len == _files[i]._length && "Uncompressed file not of the expected length");
 
+	delete[] buf;
+
 	return _files + i;
 }
 
@@ -386,7 +388,7 @@ void BArchive::clearCache() {
 
 	// Delete all cached data
 	for (unsigned int i = 0; i < _fileCount; ++i) {
-		_files[i].closeFile();
+		_files[i].close();
 	}
 }
 	
