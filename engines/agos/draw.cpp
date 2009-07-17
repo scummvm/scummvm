@@ -503,7 +503,7 @@ void AGOSEngine::saveBackGround(VgaSprite *vsp) {
 	animTable->y = y;
 
 	animTable->width = READ_BE_UINT16(ptr + 6) / 16;
-	if (vsp->flags & 40) {
+	if (vsp->flags & 0x40) {
 		animTable->width++;
 	}
 
