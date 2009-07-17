@@ -152,7 +152,7 @@ public:
 		uint32	ticksLeft;
 		int32	portaTicks;
 		int32	incrVolume;
-		int32	periodOffset;
+//		int32	periodOffset;
 		/*ifne FASTSOUND
 			APTR	voice_CurFastIOB			; current fast iob playing
 			APTR	voice_NextFastIOB			; next fast iob to play
@@ -164,8 +164,9 @@ public:
 		uint16	lastPeriod;
 		byte	baseNote;
 		byte	endNote;
-		byte	number;
-		byte	link;
+		byte	octave;
+//		byte	number;
+//		byte	link;
 		byte	priority;
 		enum {
 			kStatusFree,
@@ -203,7 +204,7 @@ public:
 
 	static int8 pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
 	int32 calcVolumeDelta(int32 delta, uint16 time);
-	static uint16 calcNote(const VoiceContext &voice, int32 *offset = 0);
+	static uint16 calcNote(const VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);
@@ -213,8 +214,8 @@ public:
 		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
 	}
 
-	static int32 precalcNote(byte baseNote, int16 tune) {
-		return 0x9fd77 + 0x3C000 - ((baseNote << 14) + (tune << 11) / 3) / 3;
+	static int32 precalcNote(byte baseNote, int16 tune, byte octave) {
+		return 0x9fd77 + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
 	}
 
 	static void outPutEvent(const Event &ev, int num = -1) {

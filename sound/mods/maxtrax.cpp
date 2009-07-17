@@ -276,7 +276,7 @@ endOfEventLoop:
 				if ((uint16)(voice.portaTicks >> 8) >= channel.portamentoTime) {
 					voice.hasPortamento = false;
 					voice.baseNote = voice.endNote;
-					voice.preCalcNote = precalcNote(voice.baseNote, patch.tune);
+					voice.preCalcNote = precalcNote(voice.baseNote, patch.tune, voice.octave);
 				}
 				voice.lastPeriod = calcNote(voice);
 			} else if (channel.isAltered || channel.modulation)
@@ -382,7 +382,7 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 	return -1;
 }
 
-uint16 MaxTrax::calcNote(const VoiceContext &voice, int32 *offset) {
+uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 	const ChannelContext &channel = *voice.channel;
 	int16 bend = channel.pitchReal;
 	if (voice.hasPortamento)
@@ -396,19 +396,12 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice, int32 *offset) {
 	// tone = voice.baseNote << 8 + microtonal
 	// bend = channelPitch + porta + modulation
 
-	int32 tone = voice.preCalcNote + (bend << 6) / 3;
+	const int32 tone = voice.preCalcNote + (bend << 6) / 3;
 
-	// calculate which sample to use
-	if (offset) {
-		*offset = (tone <= PREF_PERIOD) ? 0 : MIN((int32)((tone + 0xFFFF - PREF_PERIOD) >> 16), (int32)(voice.patch->sampleOctaves - 1)) << 16;
-		tone -= *offset;
-	} else
-		tone -= voice.periodOffset;
-
-	if (tone >= PERIOD_LIMIT) {
+	if (tone >= PERIOD_LIMIT + (1 << 16)) {
 		// calculate 2^tone and round towards nearest integer 
 		// 2*2^tone = exp((tone+1) * ln(2))
-		const uint16 periodX2 = (uint16)expf((float)(tone + (1 << 16)) * (float)(0.69314718055994530942 / (1 << 16)));
+		const uint16 periodX2 = (uint16)expf((float)tone * (float)(0.69314718055994530942 / (1 << 16)));
 		return (periodX2 + 1) / 2;
 	}
 	return 0;
@@ -432,7 +425,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			// reset previous porta
 			if (voice->hasPortamento)
 				voice->baseNote = voice->endNote;
-			voice->preCalcNote = precalcNote(voice->baseNote, patch.tune);
+			voice->preCalcNote = precalcNote(voice->baseNote, patch.tune, voice->octave);
 			voice->portaTicks = 0;
 			voice->hasPortamento = true;
 			voice->endNote = channel.lastNote = note;
@@ -444,6 +437,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		if (voiceNum >= 0) {
 			VoiceContext &voice = _voiceCtx[voiceNum];
 			voice.flags = 0;
+			voice.hasPortamento = false;
 			if (voice.channel) {
 				killVoice(voiceNum);
 				voice.flags |= VoiceContext::kFlagStolen;
@@ -451,12 +445,15 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			voice.channel = &channel;
 			voice.patch = &patch;
 			voice.baseNote = note;
-			voice.preCalcNote = precalcNote(voice.baseNote, patch.tune);
-			voice.hasPortamento = false;
 
+			const int32 plainNote = precalcNote(voice.baseNote, patch.tune, 0);
+			const int32 PREF_PERIOD1 = 0x8fd77 + (1 << 16);
+			// calculate which sample to use
+			const int useOctave = (plainNote <= PREF_PERIOD1) ? 0 : MIN<int32>((plainNote + 0xFFFF - PREF_PERIOD1) >> 16, patch.sampleOctaves - 1);
+			voice.octave = (byte)useOctave;
+			voice.preCalcNote = plainNote - (useOctave << 16);
 			
-			voice.lastPeriod = calcNote(voice, &voice.periodOffset);
-			const int useOctave = voice.periodOffset >> 16;
+			voice.lastPeriod = calcNote(voice);
 
 			voice.priority = (byte)pri;
 			voice.status = VoiceContext::kStatusStart;
@@ -509,7 +506,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 						voice.portaTicks = 0;
 						voice.endNote = voice.baseNote;
 						voice.baseNote = channel.lastNote;
-						voice.preCalcNote = precalcNote(voice.baseNote, patch.tune);
+						voice.preCalcNote = precalcNote(voice.baseNote, patch.tune, voice.octave);
 						voice.hasPortamento = true;
 					}
 					channel.lastNote = note;
