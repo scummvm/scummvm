@@ -1798,6 +1798,9 @@ void CruiseEngine::mainLoop(void) {
 			// User waiting has ended
 			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
 			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+
+			// Disable any mouse click used to end the user wait
+			currentMouseButton = 0;
 		} 
 
 		manageScripts(&relHead);
@@ -1898,8 +1901,6 @@ void CruiseEngine::mainLoop(void) {
 			// Keep ScummVM being responsive even when displayOn is false
 			g_system->updateScreen();
 		}
-
-		manageEvents();
 
 	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
 }
