@@ -86,7 +86,7 @@ void Animation::nextFrame(bool force) {
 		} else {
 			_vm->_screen->getSurface()->markDirtyRect(frameRect);
 			_currentFrame = nextFrameNum();
-			_tick += frame->getDelay();
+			_tick = _vm->_system->getMillis();
 		}
 	}
 
