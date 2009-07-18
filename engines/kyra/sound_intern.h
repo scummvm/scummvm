@@ -316,7 +316,7 @@ protected:
 		uint8	patch;
 		int8	volume;
 		int8	pan;
-	} kEffectsTable[120];
+	} tableEffectsIntro[40], tableEffectsGame[120];
 };
 
 } // end of namespace Kyra
