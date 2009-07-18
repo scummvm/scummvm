@@ -171,11 +171,10 @@ void Game::loop() {
 
 			Animation *anim = _vm->_anims->getAnimation(animID);
 			Drawable *frame = anim->getFrame();
-			y -= frame->getHeight();
-			
-			// HACK: Z needs to be handled according to Y position
-			anim->setZ(256);
 
+			anim->setZ(y+1);
+
+			y -= frame->getHeight();
 			anim->setRelative(x, y); 
 
 			_vm->_anims->play(animID);
