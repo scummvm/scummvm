@@ -33,7 +33,7 @@ Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_z = 0;
 	_relX = 0;
 	_relY = 0;
-	_playing = false;
+	setPlaying(false);
 	_looping = false;
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
@@ -82,7 +82,7 @@ void Animation::nextFrame(bool force) {
 		// The animation is also restarted to frame zero
 		if ((_currentFrame == getFramesNum() - 1) && !_looping) {
 			_currentFrame = 0;
-			_playing = false;
+			setPlaying(false);
 		} else {
 			_vm->_screen->getSurface()->markDirtyRect(frameRect);
 			_currentFrame = nextFrameNum();
@@ -150,6 +150,7 @@ bool Animation::isPlaying() {
 }
 
 void Animation::setPlaying(bool playing) {
+	_tick = _vm->_system->getMillis();
 	_playing = playing;
 }
 
