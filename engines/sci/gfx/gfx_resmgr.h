@@ -270,8 +270,7 @@ public:
 	/**
 	 * Retrieves a color from the static palette
 	 */
-	const PaletteEntry &getColor(int color)
-	{
+	const PaletteEntry &getColor(int color) {
 		return _staticPalette->getColor(color);
 	}
 
@@ -312,6 +311,11 @@ public:
 	int getColorCount() {
 		return _staticPalette ? _staticPalette->size() : 0;
 	}
+
+	/**
+	 * Returns the resource version that the resource manager is using
+	 */
+	int getVersion() { return _version; }
 
 private:
 	int _version;

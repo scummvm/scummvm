@@ -109,7 +109,7 @@ private:
 
 	struct TOTResourceItem {
 		ResourceType type;
-		int16 size;
+		uint16 size;
 		int16 width;
 		int16 height;
 		union {

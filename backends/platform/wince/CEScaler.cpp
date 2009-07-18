@@ -53,6 +53,15 @@ void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPt
 }
 MAKE_WRAPPER(PocketPCPortrait)
 
+void PocketPCRawPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+
+	while (height--) {
+		memcpy(dstPtr, srcPtr, width*sizeof(uint16_t));
+		srcPtr += srcPitch;
+		dstPtr += dstPitch;
+	}
+}
+
 // Our version of an aspect scaler. Main difference is the out-of-place
 // operation, omitting a straight blit step the sdl backend does. Also,
 // tests show unaligned access errors with the stock aspect scaler.
@@ -117,6 +126,7 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 #ifdef ARM
 extern "C" {
 	void PocketPCHalfARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask, int round);
+	void SmartphoneLandscapeARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask);
 	// Rounding constants and masks used for different pixel formats
 	int roundingconstants[] = { 0x00200802, 0x00201002 };
 	int redbluegreenMasks[] = { 0x03E07C1F, 0x07E0F81F };
@@ -156,7 +166,7 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 	if (gBitFormat == 565)
 		PocketPCHalfTemplate<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
-		PocketPCHalfTemplate<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		PocketPCHalfTemplate<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 #endif
 }
 
@@ -217,4 +227,15 @@ void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *ds
 		}
 	}
 }
-MAKE_WRAPPER(SmartphoneLandscape)
+
+void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+#ifdef ARM
+	int maskUsed = (gBitFormat == 565);
+	SmartphoneLandscapeARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed]);
+#else
+	if (gBitFormat == 565)
+		SmartphoneLandscape<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+	else
+		SmartphoneLandscape<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+#endif
+}

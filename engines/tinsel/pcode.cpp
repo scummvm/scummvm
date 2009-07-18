@@ -112,6 +112,43 @@ static INT_CONTEXT *icList = 0;
 
 static uint32 hMasterScript;
 
+//----------------- SCRIPT BUGS WORKAROUNDS --------------
+
+const byte fragment1[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 206, 0};
+const int fragment1_size = 4;
+const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
+const int fragment2_size = 2;
+const byte fragment3[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 490 % 256, 490 / 256};
+const int fragment3_size = 4;
+
+const WorkaroundEntry workaroundList[] = {
+	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
+	// In the GRA version, it was global 373, and was reset when he is returned to the past, but 
+	// was forgotten in the SCN version, so this ensures the flag is properly reset
+	{TINSEL_V1, true, 427942095, 1, fragment1_size, fragment1},
+
+	// DW1-GRA: Rincewind exiting the Inn is blocked by the luggage. Whilst you can then move
+	// into walkable areas, saving and restoring the game, it will error if you try to move. 
+	// This fragment turns off NPC blocking for the Outside Inn rooms so that the luggage won't block
+	// Past Outside Inn
+	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
+	// Present Outside Inn
+	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
+
+	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
+	// But if the game is saved/restored during it, the animation sequence is reset without the global being cleared.
+	// This causes bugs in several actions which try to disable the bees animation, since they wait indefinitely for
+	// the global to be cleared, incorrectly believing the animation is currently playing. This includes
+	// * Giving the brochure to the beekeeper
+	// * Stealing the mallets from the wizards
+	// This fix ensures that the global is reset when the Garden scene is loaded (both entering and restoring a game)
+	{TINSEL_V2, true, 2888147476U, 0, fragment3_size, fragment3},
+
+	{TINSEL_V0, false, 0, 0, 0, NULL}
+};
+
+//----------------- LOCAL GLOBAL DATA --------------------
+
 /**
  * Keeps the code array pointer up to date.
  */
@@ -398,28 +435,65 @@ void SaveInterpretContexts(INT_CONTEXT *sICInfo) {
 }
 
 /**
- * Fetch (and sign extend, if necessary) a 8/16/32 bit value from the code
- * stream and advance the instruction pointer accordingly.
+ * Fetches up to 4 bytes from the code script
  */
-static int32 Fetch(byte opcode, byte *code, int &ip) {
-	int32 tmp;
-	if (TinselV0) {
-		// Fetch a 32 bit value.
-		tmp = (int32)READ_LE_UINT32(code + ip++ * 4);
-	} else if (opcode & OPSIZE8) {
+static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, int &ip, uint numBytes) {
+	assert(numBytes <= 4 && numBytes != 3);
+	const byte *code = scriptCode;
+
+	if (wkEntry != NULL) {
+		if (ip >= wkEntry->numBytes) {
+			// Finished the workaround
+			ip = wkEntry->ip;
+			wkEntry = NULL;
+		} else {
+			code = wkEntry->script;
+		}
+	}
+
+	uint32 tmp;
+	switch (numBytes) {
+	case 0:
+		// Instruction byte
+		tmp = code[ip++ * (TinselV0 ? 4 : 1)];
+		break;
+	case 1:
 		// Fetch and sign extend a 8 bit value to 32 bits.
-		tmp = *(int8 *)(code + ip);
-		ip += 1;
-	} else if (opcode & OPSIZE16) {
+		tmp = (int8)code[ip++];
+		break;
+	case 2:
 		// Fetch and sign extend a 16 bit value to 32 bits.
 		tmp = (int16)READ_LE_UINT16(code + ip);
 		ip += 2;
-	} else {
-		// Fetch a 32 bit value.
-		tmp = (int32)READ_LE_UINT32(code + ip);
-		ip += 4;
+		break;
+	default:
+		if (TinselV0)
+			tmp = (int32)READ_LE_UINT32(code + ip++ * 4);
+		else {
+			tmp = (int32)READ_LE_UINT32(code + ip);
+			ip += 4;
+		}
+		break;
 	}
+
 	return tmp;
+}
+
+/**
+ * Fetch (and sign extend, if necessary) a 8/16/32 bit value from the code
+ * stream and advance the instruction pointer accordingly.
+ */
+static int32 Fetch(byte opcode, const byte *code, const WorkaroundEntry* &wkEntry, int &ip) {
+	if (TinselV0)
+		// Fetch a 32 bit value.
+		return GetBytes(code, wkEntry, ip, 4);
+	else if (opcode & OPSIZE8)
+		// Fetch and sign extend a 8 bit value to 32 bits.
+		return GetBytes(code, wkEntry, ip, 1);
+	else if (opcode & OPSIZE16)
+		return GetBytes(code, wkEntry, ip, 2);
+	
+	return GetBytes(code, wkEntry, ip, 4);
 }
 
 /**
@@ -429,7 +503,25 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 	do {
 		int tmp, tmp2;
 		int ip = ic->ip;
-		byte opcode = ic->code[ip++ * (TinselV0 ? 4 : 1)];
+		const WorkaroundEntry *wkEntry = ic->fragmentPtr;
+
+		if (wkEntry == NULL) {
+			// Check to see if a workaround fragment needs to be executed
+			for (wkEntry = workaroundList; wkEntry->script != NULL; ++wkEntry) {
+				if ((wkEntry->version == TinselVersion) && 
+					(wkEntry->hCode == ic->hCode) &&
+					(wkEntry->ip == ip) &&
+					(!TinselV1 || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
+					// Point to start of workaround fragment
+					ip = 0;
+					break;
+				}
+			}
+			if (wkEntry->script == NULL)
+				wkEntry = NULL;
+		}
+
+		byte opcode = (byte)GetBytes(ic->code, wkEntry, ip, 0);
 		if (TinselV0 && ((opcode & OPMASK) > OP_IMM))
 			opcode += 3;
 
@@ -447,7 +539,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		case OP_FONT:			// loads font handle onto stack
 		case OP_PAL:			// loads palette handle onto stack
 
-			ic->stack[++ic->sp] = Fetch(opcode, ic->code, ip);
+			ic->stack[++ic->sp] = Fetch(opcode, ic->code, wkEntry, ip);
 			break;
 
 		case OP_ZERO:			// loads zero onto stack
@@ -464,31 +556,31 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 		case OP_LOAD:			// loads local variable onto stack
 
-			ic->stack[++ic->sp] = ic->stack[ic->bp + Fetch(opcode, ic->code, ip)];
+			ic->stack[++ic->sp] = ic->stack[ic->bp + Fetch(opcode, ic->code, wkEntry, ip)];
 			break;
 
 		case OP_GLOAD:				// loads global variable onto stack
 
-			tmp = Fetch(opcode, ic->code, ip);
+			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			assert(0 <= tmp && tmp < numGlobals);
 			ic->stack[++ic->sp] = pGlobals[tmp];
 			break;
 
 		case OP_STORE:				// pops stack and stores in local variable
 
-			ic->stack[ic->bp + Fetch(opcode, ic->code, ip)] = ic->stack[ic->sp--];
+			ic->stack[ic->bp + Fetch(opcode, ic->code, wkEntry, ip)] = ic->stack[ic->sp--];
 			break;
 
 		case OP_GSTORE:				// pops stack and stores in global variable
 
-			tmp = Fetch(opcode, ic->code, ip);
+			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			assert(0 <= tmp && tmp < numGlobals);
 			pGlobals[tmp] = ic->stack[ic->sp--];
 			break;
 
 		case OP_CALL:				// procedure call
 
-			tmp = Fetch(opcode, ic->code, ip);
+			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			//assert(0 <= tmp && tmp < codeSize);	// TODO: Verify jumps are not out of bounds
 			ic->stack[ic->sp + 1] = 0;	// static link
 			ic->stack[ic->sp + 2] = ic->bp;	// dynamic link
@@ -499,7 +591,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 		case OP_LIBCALL:		// library procedure or function call
 
-			tmp = Fetch(opcode, ic->code, ip);
+			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			// NOTE: Interpret() itself is not using the coroutine facilities,
 			// but still accepts a CORO_PARAM, so from the outside it looks
 			// like a coroutine. In fact it may still acts as a kind of "proxy"
@@ -538,17 +630,17 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 		case OP_ALLOC:			// allocate storage on stack
 
-			ic->sp += (int32)Fetch(opcode, ic->code, ip);
+			ic->sp += (int32)Fetch(opcode, ic->code, wkEntry, ip);
 			break;
 
 		case OP_JUMP:	// unconditional jump
 
-			ip = Fetch(opcode, ic->code, ip);
+			ip = Fetch(opcode, ic->code, wkEntry, ip);
 			break;
 
 		case OP_JMPFALSE:	// conditional jump
 
-			tmp = Fetch(opcode, ic->code, ip);
+			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			if (ic->stack[ic->sp--] == 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
@@ -557,7 +649,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 
 		case OP_JMPTRUE:	// conditional jump
 
-			tmp = Fetch(opcode, ic->code, ip);
+			tmp = Fetch(opcode, ic->code, wkEntry, ip);
 			if (ic->stack[ic->sp--] != 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
@@ -660,6 +752,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		// check for stack under-overflow
 		assert(ic->sp >= 0 && ic->sp < PCODE_STACK_SIZE);
 		ic->ip = ip;
+		ic->fragmentPtr = wkEntry;
 	} while (!ic->bHalt);
 
 	// make sure stack is unwound

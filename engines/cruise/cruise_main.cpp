@@ -1626,11 +1626,14 @@ int currentMouseButton = 0;
 
 bool bFastMode = false;
 
-void manageEvents() {
+bool manageEvents() {
 	Common::Event event;
+	bool result = false;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event)) {
+	while (eventMan->pollEvent(event) && !result) {
+		result = true;
+
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
 			currentMouseButton |= MB_LEFT;
@@ -1647,11 +1650,12 @@ void manageEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
 			currentMouseY = event.mouse.y;
+			result = false;
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
 			playerDontAskQuit = 1;
-			return;
+			break;
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
@@ -1671,72 +1675,6 @@ void manageEvents() {
 				break;
 			}
 
-			/*
-			 * switch (event.kbd.keycode) {
-			 * case '\n':
-			 * case '\r':
-			 * case 261: // Keypad 5
-			 * if (allowPlayerInput) {
-			 * mouseLeft = 1;
-			 * }
-			 * break;
-			 * case 27:  // ESC
-			 * if (allowPlayerInput) {
-			 * mouseRight = 1;
-			 * }
-			 * break;
-			 * case 282: // F1
-			 * if (allowPlayerInput) {
-			 * playerCommand = 0; // EXAMINE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 283: // F2
-			 * if (allowPlayerInput) {
-			 * playerCommand = 1; // TAKE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 284: // F3
-			 * if (allowPlayerInput) {
-			 * playerCommand = 2; // INVENTORY
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 285: // F4
-			 * if (allowPlayerInput) {
-			 * playerCommand = 3; // USE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 286: // F5
-			 * if (allowPlayerInput) {
-			 * playerCommand = 4; // ACTIVATE
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 287: // F6
-			 * if (allowPlayerInput) {
-			 * playerCommand = 5; // SPEAK
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 290: // F9
-			 * if (allowPlayerInput && !inMenu) {
-			 * makeActionMenu();
-			 * makeCommandLine();
-			 * }
-			 * break;
-			 * case 291: // F10
-			 * if (!disableSystemMenu && !inMenu) {
-			 * g_cine->makeSystemMenu();
-			 * }
-			 * break;
-			 * default:
-			 * //lastKeyStroke = event.kbd.keycode;
-			 * break;
-			 * }
-			 * break; */
 			if (event.kbd.flags == Common::KBD_CTRL) {
 				if (event.kbd.keycode == Common::KEYCODE_d) {
 					// Start the debugger
@@ -1753,17 +1691,10 @@ void manageEvents() {
 		}
 	}
 
-	/*if (count) {
-	 * mouseData.left = mouseLeft;
-	 * mouseData.right = mouseRight;
-	 * mouseLeft = 0;
-	 * mouseRight = 0;
-	 * }
-	 */
+	return result;
 }
 
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
-	manageEvents();
 	*pMouseX = currentMouseX;
 	*pMouseY = currentMouseY;
 	*pMouseButton = currentMouseButton;
@@ -1806,11 +1737,15 @@ void CruiseEngine::mainLoop(void) {
 
 		if (!bFastMode) {
 			// Delay for the specified amount of time, but still respond to events
+			bool skipEvents = false;
+
 			while (currentTick < lastTick + _gameSpeed) {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 
-				manageEvents();
+				if (!skipEvents)
+					skipEvents = manageEvents();
+
 				if (playerDontAskQuit) break;
 
 				if (_vm->getDebugger()->isAttached())
@@ -1906,7 +1841,7 @@ void CruiseEngine::mainLoop(void) {
 
 					getMouseStatus(&main10, &mouseX, &mouseButton, &mouseY);
 
-					if (mouseX != oldMouseX && mouseY != oldMouseY) {
+					if (mouseX != oldMouseX || mouseY != oldMouseY) {
 						int objectType;
 						int newCursor1;
 						int newCursor2;

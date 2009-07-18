@@ -146,7 +146,7 @@ void updateMenuMouse(int mouseX, int mouseY, menuStruct *pMenu) {
 	}
 }
 
-void manageEvents();
+bool manageEvents();
 
 int processMenu(menuStruct *pMenu) {
 	int16 mouseX;

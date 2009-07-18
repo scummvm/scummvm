@@ -332,7 +332,7 @@ void AGOSEngine::playSting(uint16 soundId) {
 
 	mus_file.seek(soundId * 2, SEEK_SET);
 	mus_offset = mus_file.readUint16LE();
-	if (mus_file.ioFailed())
+	if (mus_file.err())
 		error("playSting: Can't read sting %d offset", soundId);
 
 	mus_file.seek(mus_offset, SEEK_SET);

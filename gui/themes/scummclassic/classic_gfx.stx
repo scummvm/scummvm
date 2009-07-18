@@ -78,6 +78,13 @@
 	<drawdata id = 'text_selection' cache = 'false'>
 		<drawstep	func = 'square'
 					fill = 'foreground'
+					fg_color = 'lightgrey'
+		/>
+	</drawdata>
+
+	<drawdata id = 'text_selection_focus' cache = 'false'>
+		<drawstep	func = 'square'
+					fill = 'foreground'
 					fg_color = 'green'
 		/>
 	</drawdata>

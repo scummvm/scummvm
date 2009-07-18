@@ -224,7 +224,7 @@ void LoLEngine::showIntro() {
 	while (!_tim->finished() && !shouldQuit() && !skipFlag()) {
 		updateInput();
 		_tim->exec(intro, false);
-		if (!_flags.isDemo)
+		if (!_flags.isDemo && _flags.platform != Common::kPlatformPC98)
 			_screen->checkedPageUpdate(8, 4);
 
 		if (_tim->_palDiff) {

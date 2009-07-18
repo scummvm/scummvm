@@ -129,7 +129,6 @@ void AGOSEngine::vc36_pause() {
 	_keyPressed.reset();
 
 	windowPutChar(_windowArray[2], 13);
-	windowPutChar(_windowArray[2], 128);
 	_wiped = oldWiped;
 
 	_videoLockOut &= ~8;

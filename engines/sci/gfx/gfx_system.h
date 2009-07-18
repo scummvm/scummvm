@@ -192,7 +192,7 @@ struct gfx_pixmap_t {
 	 * As a special exception, 256 colors are allowed for background pictures
 	 * (which do not use transparency)
 	 */
-	int colors_nr() const { return palette ? palette->size() : 0; }
+	int colors_nr() const { return palette ? MIN<int>(palette->size(), 256) : 0; }
 
 	uint32 flags;
 	/* @} */

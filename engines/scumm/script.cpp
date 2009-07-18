@@ -1367,17 +1367,6 @@ void ScummEngine::abortCutscene() {
 
 		VAR(VAR_OVERRIDE) = 1;
 		vm.cutScenePtr[idx] = 0;
-
-		// HACK to fix issues with SMUSH and the way it does keyboard handling.
-		// In particular, normally abortCutscene() is being called while no
-		// scripts are active. But SMUSH runs from *inside* the script engine.
-		// And it calls abortCutscene() if ESC is pressed... not good.
-		// Proper fix might be to let SMUSH/INSANE run from outside the script
-		// engine but that would require lots of changes and may actually have
-		// negative effects, too. So we cheat here, to fix bug #751670.
-		if (_game.version == 7)
-			getScriptEntryPoint();
-
 	}
 }
 

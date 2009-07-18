@@ -1415,6 +1415,9 @@ void ScummEngine_v7::loadLanguageBundle() {
 }
 
 void ScummEngine_v7::playSpeech(const byte *ptr) {
+	if (_game.id == GID_DIG && (ConfMan.getBool("speech_mute") || VAR(VAR_VOICE_MODE) == 2))
+		return;
+
 	if ((_game.id == GID_DIG || _game.id == GID_CMI) && ptr[0]) {
 		char pointer[20];
 		strcpy(pointer, (const char *)ptr);

@@ -208,8 +208,11 @@ Common::Error SkyEngine::go() {
 		_skyScreen->recreate();
 		_skyScreen->spriteEngine();
 		if (_debugger->showGrid()) {
-			_skyScreen->showGrid(_skyLogic->_skyGrid->giveGrid(Logic::_scriptVariables[SCREEN]));
-			_skyScreen->forceRefresh();
+			uint8 *grid = _skyLogic->_skyGrid->giveGrid(Logic::_scriptVariables[SCREEN]);
+			if (grid) {
+				_skyScreen->showGrid(grid);
+				_skyScreen->forceRefresh();
+			}
 		}
 		_skyScreen->flip();
 

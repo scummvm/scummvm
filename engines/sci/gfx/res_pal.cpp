@@ -44,6 +44,11 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size) {
 	int entry_size = (format == SCI_PAL_FORMAT_VARIABLE_FLAGS) ? 4 : 3;
 	byte *pal_data = resource + 37;
 	int _colors_nr = READ_LE_UINT16(resource + 29);
+
+	// Happens at the beginning of Pepper
+	if (_colors_nr > 256)
+		return NULL;
+
 	Palette *retval = new Palette(_colors_nr + start_color);
 	int i;
 

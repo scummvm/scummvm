@@ -434,7 +434,7 @@ void KyraEngine_LoK::mainLoop() {
 		// FIXME: Why is this here?
 		_screen->showMouse();
 
-		int inputFlag = checkInput(_buttonList, true);
+		int inputFlag = checkInput(_buttonList, _currentCharacter->sceneId != 210);
 		removeInputTop();
 
 		updateMousePointer();

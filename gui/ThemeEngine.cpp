@@ -167,6 +167,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 	{kDDPlainColorBackground,		"plain_bg",			true,	kDDNone},
 	{kDDDefaultBackground,			"default_bg",		true,	kDDNone},
 	{kDDTextSelectionBackground,	"text_selection",	false,	kDDNone},
+	{kDDTextSelectionFocusBackground,	"text_selection_focus",	false,	kDDNone},
 
 	{kDDWidgetBackgroundDefault,	"widget_default",	true,	kDDNone},
 	{kDDWidgetBackgroundSmall,		"widget_small",		true,	kDDNone},
@@ -911,21 +912,21 @@ void ThemeEngine::drawDialogBackground(const Common::Rect &r, DialogBackground b
 		return;
 
 	switch (bgtype) {
-		case kDialogBackgroundMain:
-			queueDD(kDDMainDialogBackground, r);
-			break;
+	case kDialogBackgroundMain:
+		queueDD(kDDMainDialogBackground, r);
+		break;
 
-		case kDialogBackgroundSpecial:
-			queueDD(kDDSpecialColorBackground, r);
-			break;
+	case kDialogBackgroundSpecial:
+		queueDD(kDDSpecialColorBackground, r);
+		break;
 
-		case kDialogBackgroundPlain:
-			queueDD(kDDPlainColorBackground, r);
-			break;
+	case kDialogBackgroundPlain:
+		queueDD(kDDPlainColorBackground, r);
+		break;
 
-		case kDialogBackgroundDefault:
-			queueDD(kDDDefaultBackground, r);
-			break;
+	case kDialogBackgroundDefault:
+		queueDD(kDDDefaultBackground, r);
+		break;
 	}
 }
 
@@ -995,60 +996,66 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 	if (!ready())
 		return;
 
-	const int tabOffset = 2;
-	tabWidth -= tabOffset;
-
 	queueDD(kDDTabBackground, Common::Rect(r.left, r.top, r.right, r.top + tabHeight));
 
 	for (int i = 0; i < (int)tabs.size(); ++i) {
 		if (i == active)
 			continue;
 
-		Common::Rect tabRect(r.left + i * (tabWidth + tabOffset), r.top, r.left + i * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
+		Common::Rect tabRect(r.left + i * tabWidth, r.top, r.left + (i + 1) * tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
 		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
 
 	if (active >= 0) {
-		Common::Rect tabRect(r.left + active * (tabWidth + tabOffset), r.top, r.left + active * (tabWidth + tabOffset) + tabWidth, r.top + tabHeight);
-		const uint16 tabLeft = active * (tabWidth + tabOffset);
+		Common::Rect tabRect(r.left + active * tabWidth, r.top, r.left + (active + 1) * tabWidth, r.top + tabHeight);
+		const uint16 tabLeft = active * tabWidth;
 		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
 		queueDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
 		queueDDText(getTextData(kDDTabActive), tabRect, tabs[active], false, false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
 	}
 }
 
-void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, bool inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font) {
 	if (!ready())
 		return;
 
-	if (inverted) {
+	switch (inverted) {
+	case kTextInversion:
 		queueDD(kDDTextSelectionBackground, r);
 		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
 		return;
+
+	case kTextInversionFocus:
+		queueDD(kDDTextSelectionFocusBackground, r);
+		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
+
+	default:
+		break;
 	}
 
 	switch (font) {
-		case kFontStyleNormal:
-			queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kFontStyleNormal:
+		queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 
-		default:
-			break;
+	default:
+		break;
 	}
 
 	switch (state) {
-		case kStateDisabled:
-			queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kStateDisabled:
+		queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 
-		case kStateHighlight:
-			queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kStateHighlight:
+		queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 
-		case kStateEnabled:
-			queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-			return;
+	case kStateEnabled:
+		queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
+		return;
 	}
 }
 

@@ -732,14 +732,14 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'ScummHelp' overlays = 'screen'>
-		<layout type = 'vertical' padding = '8, 8, 0, 0'>
+	<dialog name = 'ScummHelp' overlays = 'screen' inset = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Title'
 					width = '180'
 					height = 'Globals.Line.Height'
 			/>
 			<widget name = 'HelpText'
-					height = '140'
+					height = '130'
 			/>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>
 				<widget name = 'Prev'

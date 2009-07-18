@@ -126,7 +126,7 @@ KyraEngine_v1::kReadSaveHeaderError KyraEngine_v1::readSaveHeader(Common::Seekab
 		}
 	}
 
-	return (in->ioFailed() ? kRSHEIoError : kRSHENoError);
+	return ((in->err() || in->eos()) ? kRSHEIoError : kRSHENoError);
 }
 
 Common::SeekableReadStream *KyraEngine_v1::openSaveForReading(const char *filename, SaveHeader &header) {

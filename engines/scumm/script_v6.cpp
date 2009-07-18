@@ -1396,6 +1396,7 @@ void ScummEngine_v6::o6_getVerbFromXY() {
 
 void ScummEngine_v6::o6_beginOverride() {
 	beginOverride();
+	_skipVideo = 0;
 }
 
 void ScummEngine_v6::o6_endOverride() {
@@ -2457,7 +2458,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 		break;
 	case 6: {
 			// SMUSH movie playback
-			if (args[1] == 0) {
+			if (args[1] == 0 && !_skipVideo) {
 				const char *videoname = (const char *)getStringAddressVar(VAR_VIDEONAME);
 				assert(videoname);
 
@@ -2474,7 +2475,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 				if (_game.id == GID_DIG) {
 					_disableFadeInEffect = true;
 				}
-			} else if (_game.id == GID_FT) {
+			} else if (_game.id == GID_FT && !_skipVideo) {
 				const int insaneVarNum = ((_game.features & GF_DEMO) && (_game.platform == Common::kPlatformPC))
 					? 232 : 233;
 

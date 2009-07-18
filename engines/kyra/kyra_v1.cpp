@@ -115,7 +115,6 @@ Common::Error KyraEngine_v1::init() {
 				_sound = new SoundTownsPC98_v2(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
 			_sound = new SoundAdlibPC(this, _mixer);
-			assert(_sound);
 		} else {
 			Sound::kType type;
 
@@ -125,7 +124,6 @@ Common::Error KyraEngine_v1::init() {
 				type = Sound::kMidiMT32;
 			else
 				type = Sound::kMidiGM;
-
 
 			MidiDriver *driver = 0;
 
@@ -151,9 +149,10 @@ Common::Error KyraEngine_v1::init() {
 				assert(adlib);
 
 				_sound = new MixedSoundDriver(this, _mixer, soundMidiPc, adlib);
-				assert(_sound);
 			}
 		}
+
+		assert(_sound);
 	}
 
 	if (_sound)

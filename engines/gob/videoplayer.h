@@ -70,7 +70,7 @@ public:
 
 	void playFrame(int16 frame, int16 breakKey = kShortKeyEscape,
 			uint16 palCmd = 8, int16 palStart = 0, int16 palEnd = 255,
-			int16 palFrame = -1 , int16 endFrame = -1);
+			int16 palFrame = -1 , int16 endFrame = -1, bool noRetrace = false);
 
 	int slotOpen(const char *videoFile, Type which = kVideoTypeTry);
 	void slotPlay(int slot, int16 frame = -1);
@@ -152,6 +152,8 @@ private:
 	bool _needBlit;
 	bool _noCursorSwitch;
 
+	bool _woodruffCohCottWorkaround;
+
 	bool findFile(char *fileName, Type &which);
 
 	const Video *getVideoBySlot(int slot = -1) const;
@@ -162,7 +164,7 @@ private:
 	void copyPalette(Graphics::CoktelVideo &video, int16 palStart = -1, int16 palEnd = -1);
 	bool doPlay(int16 frame, int16 breakKey,
 			uint16 palCmd, int16 palStart, int16 palEnd,
-			int16 palFrame, int16 endFrame);
+			int16 palFrame, int16 endFrame, bool noRetrace = false);
 	void evalBgShading(Graphics::CoktelVideo &video);
 };
 

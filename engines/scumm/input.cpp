@@ -258,6 +258,18 @@ void ScummEngine_v0::processInput() {
 	ScummEngine::processInput();
 }
 
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::processInput() {
+	ScummEngine::processInput();
+
+	if (_skipVideo && !_smushActive) {
+		abortCutscene();
+		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
+		_skipVideo = false;
+	}
+}
+#endif
+
 void ScummEngine::processInput() {
 	Common::KeyState lastKeyHit = _keyPressed;
 	_keyPressed.reset();
@@ -392,9 +404,10 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 				_insane->escapeKeyHandler();
 			else
 				_smushVideoShouldFinish = true;
-		}
-		if (!_smushActive || _smushVideoShouldFinish)
+			_skipVideo = true;
+		} else {
 			abortCutscene();
+		}
 
 		_mouseAndKeyboardStat = Common::ASCII_ESCAPE;
 
