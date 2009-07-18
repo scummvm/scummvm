@@ -55,7 +55,7 @@ void ScriptManager::setScript(ActionDefinitions *action) {
 	if (_currentScript) {
 		for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
 			debugC(kDebugLevelScripts,
-				"Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)\n",
+				"Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
 				i,
 				_currentScript->commands[0].numLines - 1,
 				_currentScript->commands[i].opcode,
