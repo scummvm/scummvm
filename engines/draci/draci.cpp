@@ -28,6 +28,7 @@
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
+#include "common/keyboard.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -175,6 +176,12 @@ int DraciEngine::go() {
 			switch (event.type) {
 			case Common::EVENT_QUIT:
 				quit = true;
+				break;
+			case Common::EVENT_KEYDOWN:
+				if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+					_game->changeRoom(_game->nextRoomNum());
+				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+					_game->changeRoom(_game->prevRoomNum());
 				break;
 			default:
 				_mouse->handleEvent(event);

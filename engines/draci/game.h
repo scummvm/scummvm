@@ -135,6 +135,7 @@ struct Room {
 class Game {
 
 public:
+
 	Game(DraciEngine *vm);
 	~Game();
 
@@ -142,11 +143,10 @@ public:
 	void loop();
 
 	void changeRoom(uint roomNum);
-
 	int getRoomNum();
 
 	// HACK: this is only for testing
-	void incRoomNum() { 
+	int nextRoomNum() { 
 		int n = _currentRoom._roomNum;
 		n = n < 37 ? n+1 : n;
 
@@ -154,11 +154,11 @@ public:
 		if (n == 30)
 			++n;
 
-		_currentRoom._roomNum = n;
+		return n;
 	}
 
 	// HACK: same as above
-	void decRoomNum() { 
+	int prevRoomNum() { 
 		int n = _currentRoom._roomNum;
 		n = n > 0 ? n-1 : n;
 
@@ -166,7 +166,7 @@ public:
 		if (n == 30)
 			--n;
 
-		_currentRoom._roomNum = n;
+		return n;
 	}
 
 	void loadRoom(int roomNum);
