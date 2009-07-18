@@ -120,9 +120,9 @@ void ScriptManager::processActionList() {
 				break;
 
 			case kJumpIfGameFlag:
-				if(currentCommand.param1 >= 0) {
+				if (currentCommand.param1) {
 					bool doJump = false;
-					if(currentCommand.param2) {
+					if (currentCommand.param2) {
 						doJump = _gameFlags[currentCommand.param1] == 0;
 					}
 					else {
