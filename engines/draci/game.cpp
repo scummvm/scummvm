@@ -235,7 +235,6 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "EscRoom: %d", _currentRoom._escRoom);
 	debugC(4, kDraciLogicDebugLevel, "Gates: %d", _currentRoom._numGates);
 
-
 	// Read in the gates' numbers
 	Common::Array<int> gates;
 
@@ -446,6 +445,12 @@ void Game::changeRoom(uint roomNum) {
 	_vm->_anims->deleteAnimation(-2);
 
 	int oldRoomNum = _currentRoom._roomNum;
+
+	// TODO: Make objects capable of stopping their own animations
+	GameObject *dragon = getObject(kDragonObject);
+	for (uint i = 0; i < dragon->_anims.size(); ++i) {
+		_vm->_anims->stop(dragon->_anims[i]);
+	}
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
