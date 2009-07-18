@@ -2232,7 +2232,7 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 	_vm->_gamestate->seg_manager->dereference(vpc, &size);
 	size += vpc.offset; // total segment size
 
-	for (int i = 1; i < argc; i++) {
+	for (int i = 2; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
 			do_bwc = 1;
 		else if (!scumm_stricmp(argv[i], "bc"))
