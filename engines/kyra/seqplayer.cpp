@@ -413,17 +413,12 @@ void SeqPlayer::s1_fillRect() {
 
 void SeqPlayer::s1_playEffect() {
 	uint8 track = *_seqData++;
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return;
 	_vm->delay(3 * _vm->tickLength());
 	_sound->playSoundEffect(track);
 }
 
 void SeqPlayer::s1_playTrack() {
 	uint8 msg = *_seqData++;
-
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return;
 
 	if (msg == 1) {
 		_sound->beginFadeOut();

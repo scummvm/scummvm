@@ -48,7 +48,7 @@ MaxTrax::MaxTrax(int rate, bool stereo)
 
 	uint32 colorClock = kPalSystemClock / 2;
 
-	for (int i = 0; i < kNumChannels; ++i)
+	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i)
 		resetChannel(_channelCtx[i], (i & 1) != 0);
 
 	// init extraChannel
@@ -92,8 +92,8 @@ void MaxTrax::interrupt() {
 			const uint16 stopTime = curEvent->stopTime;
 			ChannelContext &channel = _channelCtx[data & 0x0F];
 
-			outPutEvent(*curEvent);
-			debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
+			//outPutEvent(*curEvent);
+			//debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
 
 			if (cmd < 0x80) {	// Note
 				const uint16 vol = (data & 0xF0) >> 1;
@@ -307,6 +307,7 @@ void MaxTrax::stopMusic() {
 bool MaxTrax::doSong(int songIndex, int advance) {
 	if (songIndex < 0 || songIndex >= _numScores)
 		return false;
+	Common::StackLock lock(_mutex);
 	Paula::pausePlay(true);
 	_playerCtx.musicPlaying = false;
 	_playerCtx.musicLoop = false;
@@ -569,6 +570,7 @@ void MaxTrax::freePatches() {
 }
 
 int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide) {
+	Common::StackLock lock(_mutex);
 	assert(patch < ARRAYSIZE(_patch));
 
 	ChannelContext &channel = _channelCtx[kNumChannels];
@@ -586,6 +588,7 @@ int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, boo
 }
 
 bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool loadSamples) {
+	Common::StackLock lock(_mutex);
 	bool res = false;
 	stopMusic();
 	if (loadSamples)

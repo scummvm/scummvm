@@ -310,6 +310,13 @@ protected:
 	uint _fileLoaded;
 
 	static const char *const kFilenameTable[3][2];
+	static const struct EffectEntry {
+		uint16	duration;
+		uint8	note;
+		uint8	patch;
+		int8	volume;
+		int8	pan;
+	} kEffectsTable[120];
 };
 
 } // end of namespace Kyra
