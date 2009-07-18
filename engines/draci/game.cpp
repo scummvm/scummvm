@@ -157,8 +157,6 @@ void Game::init() {
 
 	_currentRoom._roomNum = _info._startRoom;
 	changeRoom(_info._startRoom);
-
-	_vm->_mouse->setCursorType(kNormalCursor);
 }
 
 void Game::loop() {
@@ -237,21 +235,15 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "EscRoom: %d", _currentRoom._escRoom);
 	debugC(4, kDraciLogicDebugLevel, "Gates: %d", _currentRoom._numGates);
 
-	// Set cursor state
-	if (_currentRoom._mouseOn) {
-		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
-		_vm->_mouse->cursorOn();
-	} else {
-		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
-		_vm->_mouse->cursorOff();
-	}
 
+	// Read in the gates' numbers
 	Common::Array<int> gates;
 
 	for (uint i = 0; i < _currentRoom._numGates; ++i) {
 		gates.push_back(roomReader.readSint16LE());
 	}
 
+	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		debugC(7, kDraciLogicDebugLevel, 
 			"Checking if object %d (%d) is at the current location (%d)", i,
@@ -274,6 +266,7 @@ void Game::loadRoom(int roomNum) {
 		}
 	}
 
+	// Load the room's GPL program and run the init part
 	f = _vm->_roomsArchive->getFile(roomNum * 4 + 3);
 	_currentRoom._program._bytecode = f->_data;
 	_currentRoom._program._length = f->_length;
@@ -288,8 +281,21 @@ void Game::loadRoom(int roomNum) {
 		_vm->_script->run(_currentRoom._program, gates[i]);
 	}
 
+	// Set room palette
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
+
+	// Set cursor state
+	// Need to do this after we set the palette since the cursors use it
+	if (_currentRoom._mouseOn) {
+		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
+		_vm->_mouse->cursorOn();
+	} else {
+		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
+		_vm->_mouse->cursorOff();
+	}
+
+	_vm->_mouse->setCursorType(kNormalCursor);
 
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[kScreenWidth * kScreenHeight];
