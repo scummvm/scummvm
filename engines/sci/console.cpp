@@ -2092,7 +2092,6 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		printf("\n");
 	}
 
-	return 0;
 	return true;
 }
 
