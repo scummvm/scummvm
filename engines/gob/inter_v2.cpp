@@ -587,6 +587,11 @@ void Inter_v2::o2_totSub() {
 	if (!scumm_stricmp(totFile, "edit"))
 		_vm->_util->forceMouseUp();
 
+	// WORKAROUND: For some reason, the variable indicating which TOT to load next
+	// is overwritten in the guard house card game in Woodruff
+	if ((_vm->getGameType() == kGameTypeWoodruff) && !scumm_stricmp(totFile, "6"))
+		strcpy(totFile, "EMAP2011");
+
 	flags = _vm->_game->_script->readByte();
 	_vm->_game->totSub(flags, totFile);
 }
@@ -1297,16 +1302,23 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 	size = -1;
 	handle = 1;
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_game->_script->getResultStr());
+	char *file = _vm->_game->_script->getResultStr();
+
+	// WORKAROUND: For some reason, the variable indicating which TOT to load next
+	// is overwritten in the guard house card game in Woodruff
+	if ((_vm->getGameType() == kGameTypeWoodruff) && !scumm_stricmp(file, "6.TOT"))
+		strcpy(file, "EMAP2011.TOT");
+
+	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeNone) {
 
-		if (_vm->_dataIO->existData(_vm->_game->_script->getResultStr()))
-			size = _vm->_dataIO->getDataSize(_vm->_game->_script->getResultStr());
+		if (_vm->_dataIO->existData(file))
+			size = _vm->_dataIO->getDataSize(file);
 		else
-			warning("File \"%s\" not found", _vm->_game->_script->getResultStr());
+			warning("File \"%s\" not found", file);
 
 	} else if (mode == SaveLoad::kSaveModeSave)
-		size = _vm->_saveLoad->getSize(_vm->_game->_script->getResultStr());
+		size = _vm->_saveLoad->getSize(file);
 	else if (mode == SaveLoad::kSaveModeExists)
 		size = 23;
 
@@ -1314,7 +1326,7 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 		handle = -1;
 
 	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
-			_vm->_game->_script->getResultStr(), size);
+			file, size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
@@ -1338,13 +1350,15 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 	offset = _vm->_game->_script->getResultInt();
 	retSize = 0;
 
-	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
-			_vm->_game->_script->getResultStr(), dataVar, size, offset);
+	char *file = _vm->_game->_script->getResultStr();
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_game->_script->getResultStr());
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
+			file, dataVar, size, offset);
+
+	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(_vm->_game->_script->getResultStr(), dataVar, size, offset))
+		if (_vm->_saveLoad->load(file, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 		return false;
 	} else if (mode == SaveLoad::kSaveModeIgnore)
@@ -1352,7 +1366,7 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	if (size < 0) {
 		warning("Attempted to read a raw sprite from file \"%s\"",
-				_vm->_game->_script->getResultStr());
+				file);
 		return false ;
 	} else if (size == 0) {
 		dataVar = 0;
@@ -1361,13 +1375,13 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	buf = _variables->getAddressOff8(dataVar);
 
-	if (_vm->_game->_script->getResultStr()[0] == 0) {
+	if (file[0] == 0) {
 		WRITE_VAR(1, size);
 		return false;
 	}
 
 	WRITE_VAR(1, 1);
-	handle = _vm->_dataIO->openData(_vm->_game->_script->getResultStr());
+	handle = _vm->_dataIO->openData(file);
 
 	if (handle < 0)
 		return false;
@@ -1408,17 +1422,19 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 	offset = _vm->_game->_script->getResultInt();
 
+	char *file = _vm->_game->_script->getResultStr();
+
 	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
-			_vm->_game->_script->getResultStr(), dataVar, size, offset);
+			file, dataVar, size, offset);
 
 	WRITE_VAR(1, 1);
 
-	mode = _vm->_saveLoad->getSaveMode(_vm->_game->_script->getResultStr());
+	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
-		if (_vm->_saveLoad->save(_vm->_game->_script->getResultStr(), dataVar, size, offset))
+		if (_vm->_saveLoad->save(file, dataVar, size, offset))
 			WRITE_VAR(1, 0);
 	} else if (mode == SaveLoad::kSaveModeNone)
-		warning("Attempted to write to file \"%s\"", _vm->_game->_script->getResultStr());
+		warning("Attempted to write to file \"%s\"", file);
 
 	return false;
 }
