@@ -664,10 +664,11 @@ void AGOSEngine_PN::handleKeyboard() {
 		}
 	}
 	if (chr == -1) {
-		chr = _keyPressed.ascii;
-		if (chr == 8 || chr == 13) {
+		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE || _keyPressed.keycode == Common::KEYCODE_RETURN) {
+			chr = _keyPressed.keycode;
 			addChar(chr);
 		} else if (!(_videoLockOut & 0x10)) {
+			chr = _keyPressed.ascii;
 			if (chr >= 32)
 				addChar(chr);
 		}
