@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -1553,15 +1551,19 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 #ifdef ENABLE_PN
 // Personal Nightmare specific
 bool AGOSEngine_PN::badload(int8 errorNum) {
+printf("badload(%d)\n", errorNum);
 	if (errorNum == -2)
 		return 0;
-	/* Load error recovery routine */
+	// Load error recovery routine
+
+	// Clear any stack
 	while (_stackbase != NULL) {
-		/* Clear any stack */
 		dumpstack();
 	}
-	/* Restart from process 1 */
-	longjmp(_loadfail, 1);
+
+	// Restart from process 1
+	_tagOfActiveDoline = 1;
+	_dolineReturnVal = 2;
 	return 1;
 }
 
@@ -1582,7 +1584,7 @@ void AGOSEngine_PN::getFilename() {
 	}
 }
 
-int AGOSEngine_PN::loadfl(char *name) {
+int AGOSEngine_PN::loadFile(char *name) {
 	Common::InSaveFile *f;
 	haltAnimation();
 
@@ -1615,7 +1617,7 @@ int AGOSEngine_PN::loadfl(char *name) {
 	return 0;
 }
 
-int AGOSEngine_PN::savfl(char *name) {
+int AGOSEngine_PN::saveFile(char *name) {
 	Common::OutSaveFile *f;
 	sysftodb();
 	haltAnimation();

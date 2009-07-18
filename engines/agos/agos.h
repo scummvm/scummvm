@@ -1470,8 +1470,8 @@ protected:
 	virtual void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 
 	bool badload(int8 errorNum);
-	int loadfl(char *name);
-	int savfl(char *name);
+	int loadFile(char *name);
+	int saveFile(char *name);
 	void getFilename();
 	void sysftodb();
 	void dbtosysf();

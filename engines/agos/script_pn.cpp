@@ -397,7 +397,7 @@ void AGOSEngine_PN::opn_opcode31() {
 	if (slot == -1) {
 		setScriptReturn(false);
 	} else {
-		a = loadfl(bf);
+		a = loadFile(bf);
 		if (a)
 			setScriptReturn(badload(a));
 		else
@@ -434,7 +434,7 @@ void AGOSEngine_PN::opn_opcode32() {
 			break;
 	}
 
-	a = savfl(bf);
+	a = saveFile(bf);
 	setScriptReturn(a);
 }
 
@@ -918,7 +918,7 @@ int AGOSEngine_PN::doline(int needsave) {
 				if (x > 0) {
 					dumpstack();
 					// Restore the active jmpbuf to its previous value,
-					// then return the longjmp value (will be 2-1=1 or 1-1=0).
+					// then return _dolineReturnVal-1 (will be 2-1=1 or 1-1=0).
 					_tagOfActiveDoline = myTag - 1;
 					return (x - 1);
 				}

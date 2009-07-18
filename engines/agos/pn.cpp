@@ -251,29 +251,33 @@ void AGOSEngine_PN::setupBoxes() {
 }
 
 void AGOSEngine_PN::processor() {
-	int q;
-
 	setqptrs();
-	q = setjmp(_loadfail);
 
-	_variableArray[6] = 0;
+	_tagOfActiveDoline = 0;
+	int q = 0;
+	do {
+		assert(_tagOfActiveDoline == 0);
+		_dolineReturnVal = 0;
 
-	if (getPlatform() == Common::kPlatformAtariST) {
-		_variableArray[21] = 2;
-	} else if (getPlatform() == Common::kPlatformAmiga) {
-		_variableArray[21] = 0;
-	} else {
-		_variableArray[21] = 1;
-	}
+		_variableArray[6] = 0;
 
-	_variableArray[16] = _quickshort[6];
-	_variableArray[17] = _quickshort[7];
-	_variableArray[19] = getptr(55L);
+		if (getPlatform() == Common::kPlatformAtariST) {
+			_variableArray[21] = 2;
+		} else if (getPlatform() == Common::kPlatformAmiga) {
+			_variableArray[21] = 0;
+		} else {
+			_variableArray[21] = 1;
+		}
 
-	// q indicates the process to run and is 0 the first time,
-	// but 1 later on (i.e., when we are "called" from badload()).
-	setposition(q, 0);
-	doline(0);
+		_variableArray[16] = _quickshort[6];
+		_variableArray[17] = _quickshort[7];
+		_variableArray[19] = getptr(55L);
+
+		// q indicates the process to run and is 0 the first time,
+		// but 1 later on (i.e., when we are "called" from badload()).
+		setposition(0, 0);
+		q = doline(0);
+	} while (q);
 }
 
 void AGOSEngine_PN::setqptrs() {
