@@ -171,6 +171,7 @@ int DraciEngine::go() {
 
 	Common::Event event;
 	bool quit = false;
+	bool showWalkingMap = false;
 	while (!quit) {
 		while (_eventMan->pollEvent(event)) {
 			switch (event.type) {
@@ -182,7 +183,17 @@ int DraciEngine::go() {
 					_game->changeRoom(_game->nextRoomNum());
 				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 					_game->changeRoom(_game->prevRoomNum());
-				break;
+				else if (event.kbd.keycode == Common::KEYCODE_w) { // Show walking map toggle
+					// Toggle
+					showWalkingMap = !showWalkingMap;
+
+					if (showWalkingMap) {
+						_anims->play(-2);
+					} else {
+						_anims->stop(-2);
+					}
+				}
+				break;					
 			default:
 				_mouse->handleEvent(event);
 			}		

@@ -155,6 +155,7 @@ void Game::init() {
 	debugC(4, kDraciLogicDebugLevel, "Running init program for the dragon object...");
 	_vm->_script->run(dragon->_program, dragon->_init);
 
+	_currentRoom._roomNum = _info._startRoom;
 	changeRoom(_info._startRoom);
 
 	_vm->_mouse->setCursorType(kNormalCursor);
@@ -165,7 +166,22 @@ void Game::loop() {
 	if (_currentRoom._mouseOn) {
 		int x = _vm->_mouse->getPosX();
 		int y = _vm->_mouse->getPosY();
+
 		if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
+			
+			int animID = getObject(kDragonObject)->_anims[0];
+
+			Animation *anim = _vm->_anims->getAnimation(animID);
+			Drawable *frame = anim->getFrame();
+			y -= frame->getHeight();
+			
+			// HACK: Z needs to be handled according to Y position
+			anim->setZ(256);
+
+			anim->setRelative(x, y); 
+
+			_vm->_anims->play(animID);
+
 			debugC(4, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
 		}
 	}
@@ -221,7 +237,6 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "EscRoom: %d", _currentRoom._escRoom);
 	debugC(4, kDraciLogicDebugLevel, "Gates: %d", _currentRoom._numGates);
 
-
 	// Set cursor state
 	if (_currentRoom._mouseOn) {
 		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
@@ -230,7 +245,6 @@ void Game::loadRoom(int roomNum) {
 		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
 		_vm->_mouse->cursorOff();
 	}
-
 
 	Common::Array<int> gates;
 
@@ -276,6 +290,23 @@ void Game::loadRoom(int roomNum) {
 
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
+
+	// HACK: Create a visible overlay from the walking map so we can test it
+	byte *wlk = new byte[kScreenWidth * kScreenHeight];
+	memset(wlk, 255, kScreenWidth * kScreenHeight);
+
+	for (uint i = 0; i < kScreenWidth; ++i) {
+		for (uint j = 0; j < kScreenHeight; ++j) {
+			if (_currentRoom._walkingMap.isWalkable(i, j)) {
+				wlk[j * kScreenWidth + i] = 2;
+			}
+		}
+	}
+
+	Sprite *ov = new Sprite(wlk, kScreenWidth, kScreenHeight, 0, 0, false);
+
+	Animation *map = _vm->_anims->addAnimation(-2, 255, false);
+	map->addFrame(ov);
 }
 
 int Game::loadAnimation(uint animNum, uint z) {
@@ -404,17 +435,20 @@ void Game::changeRoom(uint roomNum) {
 	_vm->_screen->clearScreen();
 
 	_vm->_anims->deleteOverlays();
+	
+	// Delete walking map testing overlay
+	_vm->_anims->deleteAnimation(-2);
 
 	int oldRoomNum = _currentRoom._roomNum;
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
-	
-		if (i != 0 && obj->_location == oldRoomNum) {
+		
+		if (i != 0 && (obj->_location == oldRoomNum)) {
 			for (uint j = 0; j < obj->_anims.size(); ++j) {
 					_vm->_anims->deleteAnimation(obj->_anims[j]);
-					obj->_anims.pop_back();
 			}
+			obj->_anims.clear();
 		}
 	}
 
@@ -458,5 +492,6 @@ bool WalkingMap::isWalkable(int x, int y) {
 
 	return mapByte & (1 << pixelIndex % 8);
 }
+
 
 } 
