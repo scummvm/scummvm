@@ -35,6 +35,10 @@ namespace AGOS {
 AGOSEngine_PN::AGOSEngine_PN(OSystem *system)
 	: AGOSEngine(system) {
 
+	_stackbase = 0;
+	_tagOfActiveDoline = 0;
+	_dolineReturnVal = 0;
+
 	_dataBase = 0;
 	_dataBaseSize = 0;
 	_textBase = 0;
@@ -70,7 +74,7 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system)
 	_objects = 0;
 	_objectCountS = 0;
 
-        _bp = 0;
+	_bp = 0;
 	_xofs = 0;
 	_havinit = 0;
 	_seed = 0;
@@ -84,16 +88,12 @@ AGOSEngine_PN::AGOSEngine_PN(OSystem *system)
 
 	_linebase = 0;
 	_workptr = 0;
-
-	_cjmpbuff = NULL;
 }
 
 AGOSEngine_PN::~AGOSEngine_PN() {
 	free(_dataBase);
 	free(_textBase);
 
-	free(_cjmpbuff);
-	free(_stackbase);
 }
 
 const byte egaPalette[48] = {

@@ -324,8 +324,8 @@ void AGOSEngine_PN::opn_opcode24() {
 	// That value then is returned to actCallD, which once again
 	// returns it. In the end, this amounts to a setScriptReturn(true)
 	// (but possibly in a different level than the current one).
-	longjmp(*(_stackbase->savearea), 2);
-	setScriptReturn(false);
+	_dolineReturnVal = 2;
+	_tagOfActiveDoline = _stackbase->tagOfParentDoline;
 }
 
 void AGOSEngine_PN::opn_opcode25() {
@@ -334,13 +334,13 @@ void AGOSEngine_PN::opn_opcode25() {
 	// That value then is returned to actCallD, which once again
 	// returns it. In the end, this amounts to a setScriptReturn(false)
 	// (but possibly in a different level than the current one).
-	longjmp(*(_stackbase->savearea), 1);
-	setScriptReturn(false);
+	_dolineReturnVal = 1;
+	_tagOfActiveDoline = _stackbase->tagOfParentDoline;
 }
 
 void AGOSEngine_PN::opn_opcode26() {
 	while ((_stackbase != NULL) && (_stackbase->classnum != kJmpClassNum))
-		junkstack();
+		dumpstack();
 	dumpstack();
 	setScriptReturn(true);
 }
@@ -353,16 +353,16 @@ void AGOSEngine_PN::opn_opcode27() {
 
 void AGOSEngine_PN::opn_opcode28() {
 	addstack(varval());
-	_stackbase->savearea = _cjmpbuff;
+	_stackbase->tagOfParentDoline = _tagOfActiveDoline;
 	setScriptReturn(false);
 }
 
 void AGOSEngine_PN::opn_opcode29() {
 	popstack(varval());
-	// Jump back to the last doline indicated by the top stackfram.
+	// Jump back to the last doline indicated by the top stackframe.
 	// The -1 tells it to simply go on with its business.
-	longjmp(*(_stackbase->savearea), -1);
-	setScriptReturn(false);
+	_dolineReturnVal = -1;
+	_tagOfActiveDoline = _stackbase->tagOfParentDoline;
 }
 
 void AGOSEngine_PN::opn_opcode30() {
@@ -520,19 +520,32 @@ void AGOSEngine_PN::opn_opcode39() {
 }
 
 void AGOSEngine_PN::opn_opcode40() {
-	setScriptReturn(doaction() | doaction());
+	int a = doaction();
+	if (_dolineReturnVal != 0)
+		return;
+	int b = doaction();
+	setScriptReturn(a | b);
 }
 
 void AGOSEngine_PN::opn_opcode41() {
-	setScriptReturn(doaction() & doaction());
+	int a = doaction();
+	if (_dolineReturnVal != 0)
+		return;
+	int b = doaction();
+	setScriptReturn(a & b);
 }
 
 void AGOSEngine_PN::opn_opcode42() {
-	setScriptReturn(doaction() ^ doaction());
+	int a = doaction();
+	if (_dolineReturnVal != 0)
+		return;
+	int b = doaction();
+	setScriptReturn(a ^ b);
 }
 
 void AGOSEngine_PN::opn_opcode43() {
-	setScriptReturn(!(doaction()));
+	int a = doaction();
+	setScriptReturn(!a);
 }
 
 void AGOSEngine_PN::opn_opcode44() {
@@ -874,41 +887,14 @@ int AGOSEngine_PN::doaction() {
 }
 
 int AGOSEngine_PN::doline(int needsave) {
+	assert(!_stackbase == !needsave);
+
 	int x;
-	jmp_buf *old_jmpbuf = NULL;
-	jmp_buf *mybuf;
+	int myTag = ++_tagOfActiveDoline;	// Obtain a unique tag for this doline invocation
+	_dolineReturnVal = 0;
 
-	mybuf = (jmp_buf *)malloc(sizeof(jmp_buf));
-	if (mybuf == NULL)
-		error("doline: Out of memory - stack overflow");
-
-	x = setjmp(*mybuf);
-	// Looking at the longjmp calls below, x can be -1, 1 or 2
-	// (and of course 0 when it returns directly, as always).
-	if (x > 0) {
-		dumpstack();
-		// Restore the active jmpbuf to its previous value,
-		// then return the longjmp value (will be 2-1=1 or 1-1=0).
-		_cjmpbuff = old_jmpbuf;
-		free((char *)mybuf);
-		return (x - 1);
-	}
-
-	if (x == -1) {
-		// Make this doline instance the active one (again).
-		// This is used to "return" over possibly multiple
-		// layers of nested script invocations.
-		// Kind of like throwing an exception.
-		_cjmpbuff = mybuf;
-		goto carryon;
-	}
-	
-	// Remember the previous active jmpbuf (gets restored 
-	// above when a longjmp with a positive param occurs).
-	old_jmpbuf = _cjmpbuff;
-	_cjmpbuff = mybuf;
 	if (needsave)
-		_stackbase->savearea = mybuf;
+		_stackbase->tagOfParentDoline = myTag;
 
 	do {
 		_linct = ((*_linebase) & 127) - 1;
@@ -919,9 +905,25 @@ int AGOSEngine_PN::doline(int needsave) {
 				goto skipln;
 		}
 
-carryon:
 		do {
 			x = doaction();
+
+			if (_dolineReturnVal != 0) {
+				if (_tagOfActiveDoline != myTag)
+					return 0;
+
+				x = _dolineReturnVal;
+				_dolineReturnVal = 0;
+
+				if (x > 0) {
+					dumpstack();
+					// Restore the active jmpbuf to its previous value,
+					// then return the longjmp value (will be 2-1=1 or 1-1=0).
+					_tagOfActiveDoline = myTag - 1;
+					return (x - 1);
+				}
+			}
+
 		} while (x && !shouldQuit());
 
 skipln:
@@ -1063,7 +1065,7 @@ void AGOSEngine_PN::addstack(int type) {
 	StackFrame *a;
 	int i;
 
-	a = (StackFrame *)malloc(sizeof(StackFrame));
+	a = (StackFrame *)calloc(1, sizeof(StackFrame));
 	if (a == NULL)
 		error("addstack: Out of memory - stack overflow");
 
@@ -1093,24 +1095,13 @@ void AGOSEngine_PN::dumpstack() {
 	_stackbase = a;
 }
 
-void AGOSEngine_PN::junkstack() {
-	StackFrame *a;
-
-	if (_stackbase == NULL)
-		error("junkstack: Stack underflow or unknown longjmp");
-
-	a = _stackbase->nextframe;
-	if (_stackbase->classnum == kJmpClassNum)
-		free((char *)_stackbase->savearea);
-	free((char *)_stackbase);
-	_stackbase = a;
-}
-
 void AGOSEngine_PN::popstack(int type) {
-	int i;
+	int i = 0;
 
-	while ((_stackbase != NULL) && (_stackbase->classnum != type))
-		junkstack();
+	while ((_stackbase != NULL) && (_stackbase->classnum != type)) {
+		dumpstack();
+		++i;
+	}
 
 	if (_stackbase == NULL)
 		error("popstack: Stack underflow or unknown longjmp");
