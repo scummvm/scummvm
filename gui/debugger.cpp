@@ -307,7 +307,8 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 				} else {
 					// take common prefix of previous match and this command
 					for (uint j = 0; j < completion.size(); j++) {
-						if (completion[j] != i->_key[inputlen + j]) {
+						if (inputlen + j >= i->_key.size() ||
+								completion[j] != i->_key[inputlen + j]) {
 							completion = Common::String(completion.begin(), completion.begin() + j);
 							// If there is no unambiguous completion, abort
 							if (completion.empty())
