@@ -120,13 +120,18 @@ void ScriptManager::processActionList() {
 				break;
 
 			case kJumpIfGameFlag:
-				// TODO
-				// need to know the source object that owns the
-				// script we're parsing so that it's flags can
-				// be checked
-				// param1 = flag
-				// param2 = false command
-				// param3 = true command
+				if(currentCommand.param1 >= 0) {
+					bool doJump = false;
+					if(currentCommand.param2) {
+						doJump = _gameFlags[currentCommand.param1] == 0;
+					}
+					else {
+						doJump = _gameFlags[currentCommand.param1] != 0;
+					}
+					
+					if(doJump)
+						_currentLine = currentCommand.param3;
+				}
 				break;
 
 			case kSetGameFlag:
