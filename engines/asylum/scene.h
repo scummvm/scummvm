@@ -64,6 +64,8 @@ public:
 	void setActorAction(int actorIndex, int action);
 	void actorVisible(int actorIndex, bool visible);
 	bool actorVisible(int actorIndex);
+	
+	void setScenePosition(int x, int y);
 
 private:
 #if 0
