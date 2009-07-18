@@ -294,8 +294,8 @@ void AnimationManager::sortAnimations() {
 		// If we find an animation out of order, reinsert it
 		if ((*next)->getZ() < (*cur)->getZ()) {
 
-			Animation *anim = *cur;
-			_animations.erase(cur);
+			Animation *anim = *next;
+			_animations.erase(next);
 
 			insertAnimation(anim);
 		}
