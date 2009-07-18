@@ -31,6 +31,8 @@ namespace Draci {
 Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_id = kUnused;
 	_z = 0;
+	_relX = 0;
+	_relY = 0;
 	_playing = false;
 	_looping = false;
 	_tick = _vm->_system->getMillis();
@@ -45,6 +47,17 @@ bool Animation::isLooping() {
 	return _looping;
 }
 
+void Animation::setRelative(int relx, int rely) {
+
+	// Delete the previous frame
+	Common::Rect frameRect = _frames[_currentFrame]->getRect();
+	frameRect.translate(_relX, _relY);
+	_vm->_screen->getSurface()->markDirtyRect(frameRect);
+
+	_relX = relx;
+	_relY = rely;
+}
+
 void Animation::setLooping(bool looping) {
 	_looping = looping;
 	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d", 
@@ -57,8 +70,12 @@ void Animation::nextFrame(bool force) {
 	if (getFramesNum() < 2 || !_playing)
 		return;
 
-	Common::Rect frameRect = _frames[_currentFrame]->getRect();
 	Drawable *frame = _frames[_currentFrame];
+
+	Common::Rect frameRect = frame->getRect();
+	
+	// Translate rectangle to compensate for relative coordinates	
+	frameRect.translate(_relX, _relY);
 
 	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis())) {
 		// If we are at the last frame and not looping, stop the animation
@@ -97,7 +114,18 @@ void Animation::drawFrame(Surface *surface) {
 		_frames[_currentFrame]->draw(surface, false);
 	}
 	else {
-		_frames[_currentFrame]->draw(surface, true);
+		Drawable *ptr = _frames[_currentFrame];
+		int x = ptr->getX();
+		int y = ptr->getY();
+		int newX = x + _relX;
+		int newY = y + _relY;
+
+		ptr->setX(newX);
+		ptr->setY(newY);
+		ptr->draw(surface, true);
+
+		ptr->setX(x);
+		ptr->setY(y);
 	}
 }
 
@@ -129,13 +157,23 @@ void Animation::addFrame(Drawable *frame) {
 	_frames.push_back(frame);	
 }
 
+Drawable *Animation::getFrame(int frameNum) {
+
+	// If no argument is passed, return the current frame
+	if (frameNum == kCurrentFrame) {
+		return _frames[_currentFrame];
+	} else {
+		return _frames[frameNum];
+	}
+}
+
 uint Animation::getFramesNum() {
 	return _frames.size();
 }
 
 void Animation::deleteFrames() {
 	
-	for (uint i = 0; i < getFramesNum(); ++i) {		
+	for (int i = getFramesNum() - 1; i >= 0; --i) {		
 		delete _frames[i];
 		_frames.pop_back();	
 	}
@@ -168,6 +206,11 @@ void AnimationManager::play(int id) {
 void AnimationManager::stop(int id) {
 	Animation *anim = getAnimation(id);
 	
+	// Clean up the last frame that was drawn before stopping
+	Common::Rect frameRect = anim->getFrame()->getRect();
+	frameRect.translate(anim->_relX, anim->_relY);
+	_vm->_screen->getSurface()->markDirtyRect(frameRect);
+
 	if (anim) {
 		anim->setPlaying(false);
 	
@@ -215,6 +258,8 @@ void AnimationManager::drawScene(Surface *surf) {
 	// Fill the screen with colour zero since some rooms may rely on the screen being black	
 	_vm->_screen->getSurface()->fill(0);
 
+	sortAnimations();
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -227,10 +272,42 @@ void AnimationManager::drawScene(Surface *surf) {
 	}
 }
 
+void AnimationManager::sortAnimations() {
+	Common::List<Animation *>::iterator cur;
+	Common::List<Animation *>::iterator next;
+
+	cur = _animations.begin();
+
+	// If the list is empty, we're done
+	if (cur == _animations.end())
+		return;	
+
+	while(1) {
+		next = cur;
+		next++;
+
+		// If we are at the last element, we're done
+		if (next == _animations.end())
+			break;
+
+		// If we find an animation out of order, reinsert it
+		if ((*next)->getZ() < (*cur)->getZ()) {
+
+			Animation *anim = *cur;
+			_animations.erase(cur);
+
+			insertAnimation(anim);
+		}
+
+		// Advance to next animation
+		cur = next;
+	}
+}
+
 void AnimationManager::deleteAnimation(int id) {
 	
 	Common::List<Animation *>::iterator it;
-
+  
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == id) {
 			(*it)->deleteFrames();
@@ -245,10 +322,10 @@ void AnimationManager::deleteOverlays() {
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if((*it)->getID() == kOverlayImage)
+		if ((*it)->getID() == kOverlayImage) {
 			(*it)->deleteFrames();
-		
-		_animations.erase(it);	
+			_animations.erase(it);
+		}	
 	}
 }
 

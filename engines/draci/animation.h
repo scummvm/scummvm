@@ -32,6 +32,8 @@ namespace Draci {
 
 enum { kOverlayImage = -1, kUnused = -2 };
 
+enum { kCurrentFrame = -1 };
+
 class DraciEngine;
 
 class Animation {
@@ -50,6 +52,7 @@ public:
 	void drawFrame(Surface *surface);
 
 	void addFrame(Drawable *frame);
+	Drawable *getFrame(int frameNum = kCurrentFrame);
 	uint getFramesNum();
 	void deleteFrames();
 
@@ -59,6 +62,11 @@ public:
 	bool isLooping();
 	void setLooping(bool looping);
 
+	void setRelative(int relx, int rely);
+
+	int _relX;
+	int _relY;
+
 private:
 	
 	uint nextFrameNum();
@@ -66,6 +74,7 @@ private:
 	int _id;	
 	uint _currentFrame;
 	uint _z;
+
 	uint _tick;
 	bool _playing;
 	bool _looping;
@@ -96,7 +105,7 @@ public:
 	Animation *getAnimation(int id);
 
 private:
-	
+	void sortAnimations();	
 	void insertAnimation(Animation *anim);
 
 	DraciEngine *_vm;
