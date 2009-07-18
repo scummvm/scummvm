@@ -33,26 +33,24 @@
 namespace Audio {
 
 MaxTrax::MaxTrax(int rate, bool stereo)
-	: Paula(stereo, rate, rate/50), _playerCtx(), _voiceCtx(), _patch(), _channelCtx(), _scores(), _numScores(), _microtonal() {
+	: Paula(stereo, rate, rate/50), _voiceCtx(), _patch(), _scores(), _numScores(), _microtonal() {
 	_playerCtx.maxScoreNum = 128;
 	_playerCtx.vBlankFreq = 50;
 	_playerCtx.frameUnit = (uint16)((1000 * (1<<8)) /  _playerCtx.vBlankFreq);
 	_playerCtx.scoreIndex = -1;
-	// glob_CurrentScore = _scoreptr;
+	_playerCtx.nextEvent = 0;
 	_playerCtx.volume = 0x64;
 
+	_playerCtx.tempo = 120;
 	_playerCtx.tempoTime = 0;
 
-	uint32 uinqueId = 0;
-	byte flags = 0;
+	//uint32 uinqueId = 0;
+	//byte flags = 0;
 
-	uint32 colorClock = kPalSystemClock / 2;
+	//uint32 colorClock = kPalSystemClock / 2;
 
 	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i)
 		resetChannel(_channelCtx[i], (i & 1) != 0);
-
-	// init extraChannel
-	// extraChannel. chan_Number = 16, chan_Flags = chan_VoicesActive = 0
 }
 
 MaxTrax::~MaxTrax() {
@@ -92,8 +90,8 @@ void MaxTrax::interrupt() {
 			const uint16 stopTime = curEvent->stopTime;
 			ChannelContext &channel = _channelCtx[data & 0x0F];
 
-			//outPutEvent(*curEvent);
-			//debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
+			outPutEvent(*curEvent);
+			debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
 
 			if (cmd < 0x80) {	// Note
 				const uint16 vol = (data & 0xF0) >> 1;
@@ -302,13 +300,16 @@ int32 MaxTrax::calcVolumeDelta(int32 delta, uint16 time) {
 }
 
 void MaxTrax::stopMusic() {
+	Common::StackLock lock(_mutex);
+	_playerCtx.musicPlaying = false;
+	_playerCtx.scoreIndex = -1;
+	_playerCtx.nextEvent = 0;
 }
 
 bool MaxTrax::doSong(int songIndex, int advance) {
 	if (songIndex < 0 || songIndex >= _numScores)
 		return false;
 	Common::StackLock lock(_mutex);
-	Paula::pausePlay(true);
 	_playerCtx.musicPlaying = false;
 	_playerCtx.musicLoop = false;
 
@@ -316,6 +317,12 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 	_playerCtx.nextEvent = _scores[songIndex].events;
 	_playerCtx.nextEventTime = _playerCtx.nextEvent->startTime;
 	_playerCtx.scoreIndex = songIndex;
+	_playerCtx.ticks = 0;
+
+	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
+		killVoice(i);
+	for (int i = 0; i < kNumChannels; ++i)
+		resetChannel(_channelCtx[i], (i & 1) != 0);
 
 	_playerCtx.musicPlaying = true;
 	Paula::startPaula();
@@ -324,7 +331,8 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 
 void MaxTrax::killVoice(byte num) {
 	VoiceContext &voice = _voiceCtx[num];
-	--(voice.channel->voicesActive);
+	if (voice.channel)
+		--(voice.channel->voicesActive);
 	voice.channel = 0;
 	voice.envelope = 0;
 	voice.status = VoiceContext::kStatusFree;
@@ -542,12 +550,12 @@ void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
 	chan.pitchReal = 0;
 	chan.pitchBendRange = 24;
 	chan.volume = 128;
-	chan.flags &= ~ChannelContext::kFlagPortamento & ~ChannelContext::kFlagMicrotonal;
+//	chan.flags &= ~ChannelContext::kFlagPortamento & ~ChannelContext::kFlagMicrotonal;
 	chan.isAltered = true;
 	if (rightChannel)
-		chan.flags |= ChannelContext::kFlagRightChannel;
+		chan.flags = ChannelContext::kFlagRightChannel;
 	else
-		chan.flags &= ~ChannelContext::kFlagRightChannel;
+		chan.flags = 0; //~ChannelContext::kFlagRightChannel;
 }
 
 void MaxTrax::freeScores() {
