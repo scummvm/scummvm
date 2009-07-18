@@ -126,12 +126,12 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
 	_worldStats->width				= stream->readUint32LE();
 	_worldStats->height				= stream->readUint32LE();
-	_worldStats->field_88			= stream->readUint32LE();
+	_worldStats->motionStatus		= stream->readUint32LE();
 	_worldStats->field_8C			= stream->readUint32LE();
 	_worldStats->numActions			= stream->readUint32LE();
 	_worldStats->numBarriers		= stream->readUint32LE();
-	_worldStats->field_98			= stream->readUint32LE();
-	_worldStats->field_9C			= stream->readUint32LE();
+	_worldStats->targetX			= stream->readUint32LE();
+	_worldStats->targetY			= stream->readUint32LE();
 	_worldStats->field_A0			= stream->readUint32LE();
 	_worldStats->field_A4			= stream->readUint32LE();
 	_worldStats->field_A8			= stream->readUint32LE();

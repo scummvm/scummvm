@@ -165,6 +165,24 @@ bool Scene::actorVisible(int actorIndex) {
 	return false;
 }
 
+void Scene::setScenePosition(int x, int y)
+{
+	GraphicFrame *bg = _bgResource->getFrame(0);
+	_startX = x;
+	_startY = y;
+	
+	if (_startX < 0)
+		_startX = 0;
+	if (_startX > (bg->surface.w - 640))
+		_startX = bg->surface.w - 640;
+		
+	
+	if (_startX < 0)
+		_startY = 0;
+	if (_startX > (bg->surface.h - 480))
+		_startY = bg->surface.h - 480;		
+}
+
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	_ev = event;
 
