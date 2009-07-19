@@ -89,7 +89,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 
 	if (!hasCmd) {
 		player->playSong(0);
-		player->playNote(0x18, 0x03, 0x0F52, 120,  1);
+		//player->playNote(0x18, 0x03, 0x0F52, 120,  1);
 	}
 
 	int maxsecs = 10 * 60;
