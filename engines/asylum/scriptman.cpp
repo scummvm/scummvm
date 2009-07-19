@@ -232,6 +232,13 @@ void ScriptManager::processActionList() {
 				_delayedVideoIndex = currentCommand.param1;
 				break;
 
+            case kRunBlowUpPuzzle: {
+                int blowUpPuzzleIdx = currentCommand.param1;
+                // TODO: do proper blow up puzzle initialization
+                //_scene->_blowUp = new BlowUpPuzzleVCR(_scene->_screen, _scene->_sound, _scene);
+            }
+                break;
+
 			case kWaitUntilFramePlayed: {
 				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
 				if (barrierIndex >= 0) {

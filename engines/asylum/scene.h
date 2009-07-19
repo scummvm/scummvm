@@ -33,6 +33,7 @@
 #include "asylum/graphics.h"
 #include "asylum/text.h"
 #include "asylum/sceneres.h"
+#include "asylum/blowuppuzzle.h"
 
 namespace Asylum {
 
@@ -40,7 +41,7 @@ class Screen;
 class Sound;
 class SceneResource;
 class Text;
-class Interpreter;
+class BlowUpPuzzle;
 struct ActionDefinitions;
 struct PolyDefinitions;
 
@@ -73,20 +74,26 @@ private:
 #endif
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
+public:
+    uint8	        _sceneIdx;
+
+    SceneResource	*_sceneResource;
+
+    ResourcePack	*_resPack;
+	ResourcePack	*_speechPack;
+	ResourcePack	*_musPack;
+
+private:
 	Screen		  *_screen;
 	Sound		  *_sound;
+    BlowUpPuzzle  *_blowUp;
 	Common::Event *_ev;
 
 	Text			*_text;
-	SceneResource	*_sceneResource;
-	ResourcePack	*_resPack;
-	ResourcePack	*_speechPack;
-	ResourcePack	*_musPack;
 	GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
 	GraphicFrame	*_background;
 
-	uint8	_sceneIdx;
 	uint32	_mouseX;
 	uint32	_mouseY;
 	int32	_startX;

@@ -150,7 +150,7 @@ enum opcodes {
 	k_unk34_Status,
 	k_unk35,
 	k_unk36,
-	kRunMinigame,
+	kRunBlowUpPuzzle,
 	kJumpIfFlag2Bit3,
 	kSetFlag2Bit3,
 	kClearFlag2Bit3,

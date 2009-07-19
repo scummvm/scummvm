@@ -178,6 +178,14 @@
 			>
 		</File>
 		<File
+			RelativePath="..\..\engines\asylum\blowuppuzzle.cpp"
+			>
+		</File>
+		<File
+			RelativePath="..\..\engines\asylum\blowuppuzzle.h"
+			>
+		</File>
+		<File
 			RelativePath="..\..\engines\asylum\console.cpp"
 			>
 		</File>
