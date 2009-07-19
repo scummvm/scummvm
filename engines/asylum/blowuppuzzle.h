@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://asylumengine.googlecode.com/svn/trunk/menu.h $
- * $Id: menu.h 236 2009-07-08 19:17:47Z sev.mail $
+ * $URL$
+ * $Id$
  *
  */
 
