@@ -654,7 +654,7 @@ void run_vm(EngineState *s, int restoring) {
 
 		}
 
-		if (script_abort_flag)
+		if (script_abort_flag || g_engine->shouldQuit())
 			return; // Emergency
 
 		// Debug if this has been requested:
