@@ -45,6 +45,7 @@ SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 }
 
 SoundAmiga::~SoundAmiga() {
+	_mixer->stopHandle(_musicHandle);
 	delete _driver;
 }
 
@@ -131,11 +132,12 @@ void SoundAmiga::haltTrack() {
 void SoundAmiga::beginFadeOut() {
 	for (int i = 0x3F; i >= 0; --i) {
 		_driver->setVolume((byte)i);
-		_vm->delayWithTicks(1);
+		// TODO: use _tickLength or delayWithTicks but thats bugged
+		_vm->delay(1000 / 60);
 	}
 
 	_driver->stopMusic();
-	_vm->delayWithTicks(1);
+	_vm->delay(1000 / 60);
 	_driver->setVolume(0x40);
 }
 
