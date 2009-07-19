@@ -72,11 +72,11 @@ public:
 	
 	int getBarrierIndexById(uint32 id);
 
-private:
 	WorldStats	 *_worldStats;
 	GamePolygons *_gamePolygons;
 	ActionList	 *_actionList;
 	MainActor	 *_mainActor;
+private:
 
 	void loadWorldStats(Common::SeekableReadStream *stream);
 	void loadGamePolygons(Common::SeekableReadStream *stream);
