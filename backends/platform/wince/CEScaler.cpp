@@ -225,8 +225,8 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 	SmartphoneLandscapeARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed]);
 #else
 	if (gBitFormat == 565)
-		SmartphoneLandscape<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		SmartphoneLandscapeTemplate<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
-		SmartphoneLandscape<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		SmartphoneLandscapeTemplate<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 #endif
 }
