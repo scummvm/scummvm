@@ -386,7 +386,7 @@ void AGOSEngine_PN::opn_opcode31() {
 			strcpy(bf, genSaveName(slot));
 			break;
 		case 1:
-			strcpy(bf, "test.sav");
+			strcpy(bf, "pn.sav");
 			break;
 		case 2:
 			// NOTE: Is this case ever used?
@@ -426,7 +426,7 @@ void AGOSEngine_PN::opn_opcode32() {
 				strcpy(bf, genSaveName(curSlot));
 			break;
 		case 1:
-			strcpy(bf, "test.sav");
+			strcpy(bf, "pn.sav");
 			break;
 		case 2:
 			// NOTE: Is this case ever used?
