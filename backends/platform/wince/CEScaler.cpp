@@ -53,15 +53,6 @@ void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPt
 }
 MAKE_WRAPPER(PocketPCPortrait)
 
-void PocketPCRawPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-
-	while (height--) {
-		memcpy(dstPtr, srcPtr, width*sizeof(uint16_t));
-		srcPtr += srcPitch;
-		dstPtr += dstPitch;
-	}
-}
-
 // Our version of an aspect scaler. Main difference is the out-of-place
 // operation, omitting a straight blit step the sdl backend does. Also,
 // tests show unaligned access errors with the stock aspect scaler.
