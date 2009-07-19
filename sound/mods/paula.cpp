@@ -130,41 +130,54 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 			int16 *p = buffer;
 			int end = 0;
 			int neededSamples = nSamples;
+			assert(offset < sLen);
 
 			// Compute the number of samples to generate; that is, either generate
 			// just as many as were requested, or until the buffer is used up.
 			// Note that dividing two frac_t yields an integer (as the denominators
 			// cancel out each other).
 			// Note that 'end' could be 0 here. No harm in that :-).
-			end = MIN(neededSamples, (int)((sLen - offset + rate - 1) / rate));
+			const int leftSamples = (int)((sLen - offset + rate - 1) / rate);
+			end = MIN(neededSamples, leftSamples);
 			mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
 			neededSamples -= end;
 
-			// If we have not yet generated enough samples, and looping is active: loop!
-			if (neededSamples > 0 && _voice[voice].lengthRepeat > 2) {
-				// At this point we know that we have used up all samples in the buffer, so reset it.
-				_voice[voice].data = data = _voice[voice].dataRepeat;
+			if (leftSamples > 0 && end == leftSamples) {
+				dmaCount++;
+				data = _voice[voice].data = _voice[voice].dataRepeat;
 				_voice[voice].length = _voice[voice].lengthRepeat;
+				// TODO: offset -= sLen; but make sure there is no way offset >= 2*sLen
+				offset &= FRAC_LO_MASK;
+			}
+
+			// If we have not yet generated enough samples, and looping is active: loop!
+			if (neededSamples > 0 && _voice[voice].length > 2) {
 				sLen = intToFrac(_voice[voice].length);
 
 				// If the "rate" exceeds the sample rate, we would have to perform constant
 				// wrap arounds. So, apply the first step of the euclidean algorithm to
 				// achieve the same more efficiently: Take rate modulo sLen
-				// TODO: This messes up dmaCount
+				// TODO: This messes up dmaCount and shouldnt happen?
 				if (sLen < rate)
-					rate %= sLen;
+					warning("Paula: lenght %d is lesser than rate", _voice[voice].length);
+//					rate %= sLen;
 
 				// Repeat as long as necessary.
 				while (neededSamples > 0) {
-					// TODO offset -= sLen, but only if same rate otherwise need to scale first
+					// TODO: offset -= sLen; but make sure there is no way offset >= 2*sLen
 					offset &= FRAC_LO_MASK;
 					dmaCount++;
-
 					// Compute the number of samples to generate (see above) and mix 'em.
 					end = MIN(neededSamples, (int)((sLen - offset + rate - 1) / rate));
 					mixBuffer<stereo>(p, data, offset, rate, end, _voice[voice].volume, _voice[voice].panning);
 					neededSamples -= end;
 				}
+
+				if (offset < sLen)
+					dmaCount--;
+				else
+					offset &= FRAC_LO_MASK;
+
 			}
 
 			// Write back the cached data

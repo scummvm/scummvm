@@ -74,7 +74,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 				param = atoi(argv[++i]);
 				debug( "play Song %02X", param);
 
-				player->doSong(param);
+				player->playSong(param);
 
 				//player->noteOn(player->_channelCtx[0], 43, 64, 0);
 
@@ -88,7 +88,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 	}
 
 	if (!hasCmd) {
-		player->doSong(0);
+		player->playSong(0);
 		player->playNote(0x18, 0x03, 0x0F52, 120,  1);
 	}
 

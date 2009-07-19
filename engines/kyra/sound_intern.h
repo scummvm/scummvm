@@ -290,13 +290,13 @@ public:
 	SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer);
 	~SoundAmiga();
 
-	virtual kType getMusicType() const { return kPC98; } //FIXME
+	virtual kType getMusicType() const { return kAmiga; } //FIXME
 
 	bool init();
 
 	void process() {}
 	void loadSoundFile(uint file);
-	void loadSoundFile(Common::String);
+	void loadSoundFile(Common::String) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();
@@ -307,7 +307,7 @@ public:
 
 protected:
 	Audio::MaxTrax *_driver;
-	uint _fileLoaded;
+	enum FileType { kFileNone = -1, kFileIntro = 0, kFileGame = 1, kFileFinal = 2 } _fileLoaded;
 
 	static const char *const kFilenameTable[3][2];
 	static const struct EffectEntry {

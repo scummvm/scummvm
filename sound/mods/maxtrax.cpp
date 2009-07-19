@@ -33,7 +33,7 @@
 namespace Audio {
 
 MaxTrax::MaxTrax(int rate, bool stereo)
-	: Paula(stereo, rate, rate/50), _voiceCtx(), _patch(), _scores(), _numScores(), _microtonal() {
+	: Paula(stereo, rate, rate/50), _voiceCtx(), _patch(), _scores(), _numScores() {
 	_playerCtx.maxScoreNum = 128;
 	_playerCtx.vBlankFreq = 50;
 	_playerCtx.frameUnit = (uint16)((1000 * (1<<8)) /  _playerCtx.vBlankFreq);
@@ -180,7 +180,7 @@ endOfEventLoop:
 
 		switch (voice.status) {
 		case VoiceContext::kStatusSustain:
-			if (!channel.isAltered && !voice.hasPortamento && !channel.modulation)
+			if (!channel.isAltered && !voice.hasPortamento/* && !channel.modulation*/)
 				continue;
 			// Update Volume and Period
 			break;
@@ -277,7 +277,7 @@ endOfEventLoop:
 					voice.preCalcNote = precalcNote(voice.baseNote, patch.tune, voice.octave);
 				}
 				voice.lastPeriod = calcNote(voice);
-			} else if (channel.isAltered || channel.modulation)
+			} else if (channel.isAltered/* || channel.modulation*/)
 				voice.lastPeriod = calcNote(voice);
 		}
 
@@ -288,8 +288,20 @@ endOfEventLoop:
 	for (ChannelContext *c = _channelCtx; c != &_channelCtx[ARRAYSIZE(_channelCtx)]; ++c)
 		c->isAltered = false;
 
-
 	//modulation stuff,  sinevalue += tickunit
+
+	// we need to check if some voices have no sustainSample.
+	// in that case they are finished after the attackSample is done
+	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+		VoiceContext &voice = _voiceCtx[i];
+		if (voice.dmaOff && Paula::getChannelDmaCount((byte)i) >= voice.dmaOff ) {
+			voice.isBlocked = false;
+			voice.priority = 0;
+			voice.dmaOff = 0;
+			if (voice.status == VoiceContext::kStatusSustain)
+				voice.status = VoiceContext::kStatusRelease;
+		}
+	}
 }
 
 int32 MaxTrax::calcVolumeDelta(int32 delta, uint16 time) {
@@ -306,12 +318,12 @@ void MaxTrax::stopMusic() {
 	_playerCtx.nextEvent = 0;
 }
 
-bool MaxTrax::doSong(int songIndex, int advance) {
+bool MaxTrax::playSong(int songIndex, bool loop, int advance) {
 	if (songIndex < 0 || songIndex >= _numScores)
 		return false;
 	Common::StackLock lock(_mutex);
 	_playerCtx.musicPlaying = false;
-	_playerCtx.musicLoop = false;
+	_playerCtx.musicLoop = loop;
 
 	setTempo(_playerCtx.tempoInitial << 4);
 	_playerCtx.tempoTime = 0;
@@ -326,9 +338,9 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 	const Event *cev = _scores[songIndex].events;
 	// Songs are special markers in the score
 	for (; advance > 0; --advance) {
-		// TODO - check for boundaries
+		// TODO - check for boundaries 
 		for(; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
-			;
+			; // no end_command or special_command + end
 	}
 	_playerCtx.nextEvent = cev;
 	_playerCtx.nextEventTime = cev->startTime;
@@ -345,9 +357,11 @@ void MaxTrax::killVoice(byte num) {
 	voice.channel = 0;
 	voice.envelope = 0;
 	voice.status = VoiceContext::kStatusFree;
-	voice.flags = 0;
+	voice.isBlocked = false;
+	voice.hasDamper = false;
 	voice.hasPortamento = false;
 	voice.priority = 0;
+	voice.dmaOff = 0;
 	//voice.uinqueId = 0;
 
 	// "stop" voice, set period to 1, vol to 0
@@ -357,7 +371,6 @@ void MaxTrax::killVoice(byte num) {
 }
 
 int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
-	pick &= 3;
 	enum { kPrioFlagFixedSide = 1 << 3 };
 	if ((pri & (kPrioFlagFixedSide)) == 0) {
 		const bool leftSide = (uint)(pick - 1) > 1;
@@ -366,17 +379,16 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 		const int sameSide = (leftSide) ? leftBest : rightBest;
 		const int otherSide = leftBest + rightBest - sameSide;
 
-		if (sameSide > VoiceContext::kStatusRelease && otherSide <= VoiceContext::kStatusRelease) {
+		if (sameSide > VoiceContext::kStatusRelease && otherSide <= VoiceContext::kStatusRelease)
 			pick ^= 1; // switches sides
-		}
 	}
-	pri &= ~kPrioFlagFixedSide;
+	pick &= 3;
 
-	for (int i = 1; i > 0; --i) {
+	for (int i = 2; i > 0; --i) {
 		const VoiceContext *voice = &voices[pick];
 		const VoiceContext *alternate = &voices[pick ^ 3];
 
-		if (voice->status >  alternate->status 
+		if (voice->status > alternate->status 
 			|| (voice->status == alternate->status && voice->lastVolume > alternate->lastVolume)) {
 			// TODO: tiebreaking
 			pick ^= 3; // switch channels
@@ -385,9 +397,9 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 			alternate = tmp;
 		}
 
-		if ((voice->flags & VoiceContext::kFlagBlocked) != 0 || voice->priority > pri) {
+		if (voice->isBlocked || voice->priority > pri) {
 			pick ^= 3; // switch channels
-			if ((alternate->flags & VoiceContext::kFlagBlocked) != 0 || alternate->priority > pri) {
+			if (alternate->isBlocked || alternate->priority > pri) {
 				// if not already done, switch sides and try again
 				pick ^= 1;
 				continue;
@@ -397,6 +409,7 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 		return (int8)pick;
 	}
 	// failed
+	debug("Nopick");
 	return -1;
 }
 
@@ -426,13 +439,13 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
-	if (channel.microtonal >= 0)
-		_microtonal[note % 127] = channel.microtonal;
+//	if (channel.microtonal >= 0)
+//		_microtonal[note % 127] = channel.microtonal;
 	if (!volume)
 		return -1;
 
 	const Patch &patch = *channel.patch;
-	if (!patch.samplePtr)
+	if (!patch.samplePtr || patch.sampleTotalLen == 0)
 		return -1;
 	int8 voiceNum = -1;
 	if ((channel.flags & ChannelContext::kFlagMono) != 0  && channel.voicesActive) {
@@ -454,12 +467,11 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		voiceNum = pickvoice(_voiceCtx, (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
 		if (voiceNum >= 0) {
 			VoiceContext &voice = _voiceCtx[voiceNum];
-			voice.flags = 0;
+			voice.hasDamper = false;
+			voice.isBlocked = false;
 			voice.hasPortamento = false;
-			if (voice.channel) {
+			if (voice.channel)
 				killVoice(voiceNum);
-				voice.flags |= VoiceContext::kFlagStolen;
-			}
 			voice.channel = &channel;
 			voice.patch = &patch;
 			voice.baseNote = note;
@@ -501,6 +513,8 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 				if (patch.sampleTotalLen == patch.sampleAttackLen) {
 					Paula::setChannelSampleStart(voiceNum, 0);
 					Paula::setChannelSampleLen(voiceNum, 0);
+					Paula::setChannelDmaCount(voiceNum);
+					voice.dmaOff = 1;
 				}
 			}
 
@@ -543,7 +557,7 @@ void MaxTrax::noteOff(VoiceContext &voice, const byte note) {
 		assert(refNote == note);
 		if (refNote == note) {
 			if ((channel.flags & ChannelContext::kFlagDamper) != 0)
-				voice.flags |= VoiceContext::kFlagDamper;
+				voice.hasDamper = true;
 			else
 				voice.status = VoiceContext::kStatusRelease;
 		}
@@ -551,9 +565,9 @@ void MaxTrax::noteOff(VoiceContext &voice, const byte note) {
 }
 
 void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
-	chan.modulation = 0;
-	chan.modulationTime = 1000;
-	chan.microtonal = -1;
+//	chan.modulation = 0;
+//	chan.modulationTime = 1000;
+//	chan.microtonal = -1;
 	chan.portamentoTime = 500;
 	chan.pitchBend = 64 << 7;
 	chan.pitchReal = 0;
@@ -575,7 +589,7 @@ void MaxTrax::freeScores() {
 		_scores = 0;
 	}
 	_numScores = 0;
-	memset(_microtonal, 0, sizeof(_microtonal));
+//	memset(_microtonal, 0, sizeof(_microtonal));
 }
 
 void MaxTrax::freePatches() {
@@ -600,6 +614,7 @@ int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, boo
 		voice.stopEventCommand = note;
 		voice.stopEventParameter = kNumChannels;
 		voice.stopEventTime = duration << 8;
+		debug("Extranote: %d, stoptime: %d", voiceIndex, (voice.stopEventTime / (_playerCtx.frameUnit * 50)) );
 	}
 	return voiceIndex;
 }
@@ -629,10 +644,10 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 
 	if (flags & (1 << 15)) {
 		debug("Song has microtonal");
-		if (loadScores) {
+/*		if (loadScores) {
 			for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
 				_microtonal[i] = musicData.readUint16BE();
-		} else
+		} else*/
 			musicData.skip(128 * 2);
 	}
 

@@ -35,18 +35,38 @@ public:
 	MaxTrax(int rate, bool stereo);
 	virtual ~MaxTrax();
 
+	bool load(Common::SeekableReadStream &musicData, bool loadScores = true, bool loadSamples = true);
+	bool playSong(int songIndex, bool loop = false, int advance = 0);
+	int playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide);
+	void setVolume(const byte volume) { _playerCtx.volume = volume; }
+	void setTempo(const uint16 tempo) {
+		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
+	}
+	void stopMusic();
+
 protected:
 	void interrupt();
 
 private:
-public:
-
 	enum { kNumPatches = 64, kNumVoices = 4, kNumChannels = 16, kNumExtraChannels = 1 };
 	enum { kPriorityScore, kPriorityNote, kPrioritySound };
-	int16	_microtonal[128];
-	struct Event;
+//	int16	_microtonal[128];
 
-	struct PlayerContext {
+	struct Event {
+		uint16	startTime;
+		uint16	stopTime;
+		byte	command;
+		byte	parameter;
+	};
+
+	struct Score {
+		const Event	*events;
+		uint32	numEvents;
+	} *_scores;
+
+	int _numScores;
+
+	struct {
 		uint16	vBlankFreq;
 		int32	ticks;
 		int32	tickUnit;
@@ -93,20 +113,6 @@ public:
 		uint16	sampleOctaves;
 	} _patch[kNumPatches];
 
-	struct Event {
-		uint16	startTime;
-		uint16	stopTime;
-		byte	command;
-		byte	parameter;
-	};
-
-	struct Score {
-		const Event	*events;
-		uint32	numEvents;
-	} *_scores;
-
-	int _numScores;
-
 	struct ChannelContext {
 		const Patch	*patch;
 		uint16	regParamNumber;
@@ -114,7 +120,7 @@ public:
 		uint16	modulation;
 		uint16	modulationTime;
 
-		int16	microtonal;
+//		int16	microtonal;
 
 		uint16	portamentoTime;
 
@@ -131,7 +137,7 @@ public:
 			kFlagPortamento = 1 << 1,
 			kFlagDamper = 1 << 2,
 			kFlagMono = 1 << 3,
-			kFlagMicrotonal = 1 << 4,
+//			kFlagMicrotonal = 1 << 4,
 			kFlagModVolume = 1 << 5//,
 			//kFlagAltered = 1 << 6
 		};
@@ -139,7 +145,7 @@ public:
 		bool	isAltered;
 
 		uint8	lastNote;
-		uint8	program;
+//		uint8	program;
 
 	} _channelCtx[kNumChannels + kNumExtraChannels];
 
@@ -178,26 +184,17 @@ public:
 			kStatusStart
 		};
 		byte	status;
-		enum {
-			kFlagStolen = 1 << 0,
-			//kFlagPortamento = 1 << 1,
-			kFlagDamper = 1 << 2,
-			kFlagBlocked = 1 << 3,
-			kFlagRecalc = 1 << 4
-		};
-		byte	flags;
+		bool	hasDamper;
+		bool	isBlocked;
 		byte	lastVolume;
 		bool	hasPortamento;
+		byte	dmaOff;
 
 		int32	stopEventTime;
 		byte	stopEventCommand;	// TODO: Remove?
 		byte	stopEventParameter;	// TODO: Remove?
 	} _voiceCtx[kNumVoices];
 
-	bool load(Common::SeekableReadStream &musicData, bool loadScores = true, bool loadSamples = true);
-	bool doSong(int songIndex, int advance = 0);
-
-	void stopMusic();
 	void freePatches();
 	void freeScores();
 	void resetChannel(ChannelContext &chan, bool rightChannel);
@@ -208,14 +205,6 @@ public:
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);
-	int playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide);
-
-	void setVolume(const byte volume) {
-		_playerCtx.volume = volume;
-	}
-	void setTempo(const uint16 tempo) {
-		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
-	}
 
 	static int32 precalcNote(byte baseNote, int16 tune, byte octave) {
 		return 0x9fd77 + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);

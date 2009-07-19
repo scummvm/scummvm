@@ -41,7 +41,7 @@ const char *const SoundAmiga::kFilenameTable[3][2] = {
 };
 
 SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _driver(0), _fileLoaded((uint)-1) {
+	Sound(vm, mixer), _driver(0), _fileLoaded(kFileNone) {
 }
 
 SoundAmiga::~SoundAmiga() {
@@ -56,7 +56,7 @@ bool SoundAmiga::init() {
 
 void SoundAmiga::loadSoundFile(uint file) {
 	assert(file < ARRAYSIZE(kFilenameTable));
-	if (_fileLoaded == file)
+	if (_fileLoaded == (FileType)file)
 		return;
 
 	Common::SeekableReadStream *scoreIn = _vm->resource()->createReadStream(kFilenameTable[file][0]);
@@ -65,19 +65,16 @@ void SoundAmiga::loadSoundFile(uint file) {
 		if (scoreIn && sampleIn) {
 			_driver->load(*scoreIn, true, false);
 			_driver->load(*sampleIn, false, true);
-			_fileLoaded = file;
+			_fileLoaded = (FileType)file;
 		}
 		delete sampleIn;
 	} else {
 		if (scoreIn) {
 			_driver->load(*scoreIn);
-			_fileLoaded = file;
+			_fileLoaded = (FileType)file;
 		}
 	}
 	delete scoreIn;
-}
-void SoundAmiga::loadSoundFile(Common::String) {
-	assert("Dont call me" == 0);
 }
 
 void SoundAmiga::playTrack(uint8 track) {
@@ -96,11 +93,12 @@ void SoundAmiga::playTrack(uint8 track) {
 	// intro
 	if (track >= 2) {
 		track -= 2;
-		_driver->setVolume(0x40);
-		_driver->doSong(track);
-		_driver->setTempo(tempoIntro[track] << 4);
-		if (!_mixer->isSoundHandleActive(_soundChannels[0]))
-			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+		if (_driver->playSong(track)) {
+			_driver->setVolume(0x40);
+			_driver->setTempo(tempoIntro[track] << 4);
+			if (!_mixer->isSoundHandleActive(_soundChannels[0]))
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+		}
 	} else if (track == 0){
 		_driver->stopMusic();
 	} else { // track == 1
@@ -111,13 +109,13 @@ void SoundAmiga::playTrack(uint8 track) {
 	if (false && track < 0x80 && track != 3) {
 		if (track >= 2) {
 			track -= 0xB;
-			_driver->setVolume(0x40);
-			if (loopIngame)
-				; // TODO: enable looping
-			_driver->doSong(track);
-			_driver->setTempo(tempoIngame[track] << 4);
-			if (!_mixer->isSoundHandleActive(_soundChannels[0]))
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+			if (_driver->playSong(track, loopIngame[track] != 0)) {
+				_driver->setVolume(0x40);
+			
+				_driver->setTempo(tempoIngame[track] << 4);
+				if (!_mixer->isSoundHandleActive(_soundChannels[0]))
+					_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+			}
 		} else if (track == 0){
 			_driver->stopMusic();
 		} else { // track == 1
@@ -147,7 +145,7 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	// intro
 	assert(track < ARRAYSIZE(tableEffectsIntro));
 	const EffectEntry &entry = tableEffectsIntro[track];
-	_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, entry.pan != 0);
+	bool success = _driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, entry.pan != 0) >= 0;
 	if (!_mixer->isSoundHandleActive(_soundChannels[0]))
 		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
 
@@ -166,7 +164,6 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 		_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, pan != 0);
 		if (!_mixer->isSoundHandleActive(_soundChannels[0]))
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
-
 	}
 	}
 }
