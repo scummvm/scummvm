@@ -254,8 +254,8 @@ Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
 	if (_hwscreen) {
 		// Get our currently set hardware format
 		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel, 
-			_hwscreen->format->Rloss, _hwscreen->format->Gloss, 
-			_hwscreen->format->Bloss, _hwscreen->format->Aloss, 
+			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss, 
+			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss, 
 			_hwscreen->format->Rshift, _hwscreen->format->Gshift, 
 			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
 
