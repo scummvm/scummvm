@@ -625,7 +625,6 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		_playerCtx.tempoInitial = songTempo;
 		_playerCtx.filterOn = (flags & 1) != 0;
 		_playerCtx.handleVolume = (flags & 2) != 0;
-		debug("Header: MXTX %02X %02X", _playerCtx.tempo, flags);
 	}
 
 	if (flags & (1 << 15)) {
@@ -643,7 +642,6 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 
 	if (loadScores) {
 		const uint16 tempScores = MIN(scoresInFile, _playerCtx.maxScoreNum);
-		debug("#Scores: %d, loading # of scores: %d", scoresInFile, tempScores);
 		Score *curScore =_scores = new Score[tempScores];
 		
 		for (int i = tempScores; i > 0; --i, ++curScore) {
@@ -661,17 +659,13 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		_numScores = scoresLoaded = tempScores;
 	}
 
-	if (false && !loadSamples)
+	if (!loadSamples)
 		return true;
 
 	// skip over remaining scores in file
 	for (int i = scoresInFile - scoresLoaded; i > 0; --i)
 		musicData.skip(musicData.readUint32BE() * 6);
 
-	for (int i = 0; i < _numScores; ++i)
-		outPutScore(_scores[i], i);
-
-	debug("samples start at filepos %08X", musicData.pos());
 	// uint16 number of Samples
 	const uint16 wavesInFile = musicData.readUint16BE();
 	if (loadSamples) {
@@ -694,7 +688,6 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			curPatch.releaseLen = musicData.readUint16BE();
 			const uint32 totalEnvs = curPatch.attackLen + curPatch.releaseLen;
 
-			debug("wave nr %d at %08X - %d octaves", number, musicData.pos(), curPatch.sampleOctaves);
 			// Allocate space for both attack and release Segment.
 			Envelope *envPtr = new Envelope[totalEnvs];
 			// Attack Segment
@@ -713,7 +706,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			curPatch.samplePtr = allocSamples;
 			musicData.read(allocSamples, totalSamples);
 		}
-	} else if (wavesInFile > 0){
+	} /* else if (wavesInFile > 0){ // only necessary if we need to consume the whole stream to point at end of data
 		uint32 skipLen = 3 * 2;
 		for (int i = wavesInFile; i > 0; --i) {
 			musicData.skip(skipLen);
@@ -722,15 +715,13 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			const uint32 sustainLen = musicData.readUint32BE();
 			const uint16 attackCount = musicData.readUint16BE();
 			const uint16 releaseCount = musicData.readUint16BE();
-			debug("wave nr %d at %08X", 0, musicData.pos());
 			
 			skipLen = attackCount * 4 + releaseCount * 4 
 				+ (attackLen + sustainLen) * ((1 << octaves) - 1)
 				+ 3 * 2;
 		}
 		musicData.skip(skipLen - 3 * 2);
-	}
-	debug("endpos %08X", musicData.pos());
+	} */
 	return res;
 }
 
