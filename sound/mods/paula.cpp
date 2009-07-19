@@ -159,7 +159,7 @@ int Paula::readBufferIntern(int16 *buffer, const int numSamples) {
 				// achieve the same more efficiently: Take rate modulo sLen
 				// TODO: This messes up dmaCount and shouldnt happen?
 				if (sLen < rate)
-					warning("Paula: lenght %d is lesser than rate", _voice[voice].length);
+					warning("Paula: length %d is lesser than rate", _voice[voice].length);
 //					rate %= sLen;
 
 				// Repeat as long as necessary.

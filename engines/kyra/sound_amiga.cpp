@@ -131,11 +131,11 @@ void SoundAmiga::haltTrack() {
 void SoundAmiga::beginFadeOut() {
 	for (int i = 0x3F; i >= 0; --i) {
 		_driver->setVolume((byte)i);
-		_vm->delay(1000 / 50);
+		_vm->delayWithTicks(1);
 	}
 
 	_driver->stopMusic();
-	_vm->delay(1000 / 50);
+	_vm->delayWithTicks(1);
 	_driver->setVolume(0x40);
 }
 
