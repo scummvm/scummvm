@@ -31,6 +31,8 @@
 #include "draci/script.h"
 #include "draci/animation.h"
 
+#include <cmath>
+
 namespace Draci {
 
 Game::Game(DraciEngine *vm) : _vm(vm) {
@@ -211,8 +213,22 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._imUse = roomReader.readByte();
 	_currentRoom._mouseOn = roomReader.readByte();
 	_currentRoom._heroOn = roomReader.readByte();
-	roomReader.read(&_currentRoom._pers0, 6);
-	roomReader.read(&_currentRoom._persStep, 6);
+
+	// Read in pers0 and persStep (stored as 6-byte Pascal reals)
+	byte real[6];
+
+	for (int i = 5; i >= 0; --i) {
+		real[i] = roomReader.readByte();
+	}
+
+	_currentRoom._pers0 = real_to_double(real);
+
+	for (int i = 5; i >= 0; --i) {
+		real[i] = roomReader.readByte();
+	}
+
+	_currentRoom._persStep = real_to_double(real);
+
 	_currentRoom._escRoom = roomReader.readByte() - 1;
 	_currentRoom._numGates = roomReader.readByte();
 
@@ -503,5 +519,45 @@ bool WalkingMap::isWalkable(int x, int y) {
 	return mapByte & (1 << pixelIndex % 8);
 }
 
+static double real_to_double(byte real[6]) {
+
+	// Extract sign bit
+	int sign = real[0] & (1 << 7);
+	
+	// Extract exponent and adjust for bias
+	int exp = real[5] - 129;
+
+	double mantissa;
+	double tmp = 0.0;
+
+	if (real[5] == 0) {
+		mantissa = 0.0;
+	} else {
+		
+		// Process the first four least significant bytes
+		for (int i = 4; i >= 1; --i) {		
+			tmp += real[i];
+			tmp /= 1 << 8;
+		}
+
+		// Process the most significant byte (remove the sign bit)
+		tmp += real[0] & ((1 << 7) - 1);
+		tmp /= 1 << 8;
+
+		// Calculate mantissa
+		mantissa = 1.0;
+		mantissa += 2.0 * tmp;
+	}
+
+	// Flip sign if necessary
+	if (sign) {
+		mantissa = -mantissa;
+	}
+
+	// Calculate final value
+	return mantissa * pow(2.0, exp);	
+}
+	
+	
 
 } 

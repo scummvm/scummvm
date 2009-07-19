@@ -43,6 +43,8 @@ enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
 };
 
+static double real_to_double(byte real[6]);
+
 class WalkingMap {
 
 public:	
