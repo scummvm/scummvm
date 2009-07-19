@@ -35,6 +35,8 @@
 
 namespace Draci {
 
+static double real_to_double(byte real[6]);
+
 Game::Game(DraciEngine *vm) : _vm(vm) {
 	unsigned int i;
 	Common::String path("INIT.DFW");
@@ -555,9 +557,7 @@ static double real_to_double(byte real[6]) {
 	}
 
 	// Calculate final value
-	return mantissa * pow(2.0, exp);	
+	return ldexp(mantissa, exp);	
 }
-	
-	
 
 } 
