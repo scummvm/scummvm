@@ -314,8 +314,7 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 	_playerCtx.musicLoop = false;
 
 	setTempo(_playerCtx.tempoInitial << 4);
-	_playerCtx.nextEvent = _scores[songIndex].events;
-	_playerCtx.nextEventTime = _playerCtx.nextEvent->startTime;
+	_playerCtx.tempoTime = 0;
 	_playerCtx.scoreIndex = songIndex;
 	_playerCtx.ticks = 0;
 
@@ -323,6 +322,16 @@ bool MaxTrax::doSong(int songIndex, int advance) {
 		killVoice(i);
 	for (int i = 0; i < kNumChannels; ++i)
 		resetChannel(_channelCtx[i], (i & 1) != 0);
+
+	const Event *cev = _scores[songIndex].events;
+	// Songs are special markers in the score
+	for (; advance > 0; --advance) {
+		// TODO - check for boundaries
+		for(; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
+			;
+	}
+	_playerCtx.nextEvent = cev;
+	_playerCtx.nextEventTime = cev->startTime;
 
 	_playerCtx.musicPlaying = true;
 	Paula::startPaula();

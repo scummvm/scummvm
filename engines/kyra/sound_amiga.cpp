@@ -81,12 +81,54 @@ void SoundAmiga::loadSoundFile(Common::String) {
 }
 
 void SoundAmiga::playTrack(uint8 track) {
-	_driver->doSong(track - 2);
-	if (!_mixer->isSoundHandleActive(_soundChannels[0]))
+	static const byte tempoIntro[6] = { 0x46, 0x55, 0x3C, 0x41, 0x78, 0x50 };
+	static const byte tempoIngame[23] = {
+		0x64, 0x64, 0x64, 0x64, 0x64, 0x73, 0x4B, 0x64,
+		0x64, 0x64, 0x55, 0x9C, 0x6E, 0x91, 0x78, 0x84,
+		0x32, 0x64, 0x64, 0x6E, 0x3C, 0xD8, 0xAF
+	};
+	static const byte loopIngame[23] = {
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01,
+		0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+	};
+
+	// intro
+	if (track >= 2) {
+		track -= 2;
+		_driver->setVolume(0x40);
+		_driver->doSong(track);
+		_driver->setTempo(tempoIntro[track] << 4);
+		if (!_mixer->isSoundHandleActive(_soundChannels[0]))
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+	} else if (track == 0){
+		_driver->stopMusic();
+	} else { // track == 1
+		beginFadeOut();
+	}
+
+	// ingame
+	if (false && track < 0x80 && track != 3) {
+		if (track >= 2) {
+			track -= 0xB;
+			_driver->setVolume(0x40);
+			if (loopIngame)
+				; // TODO: enable looping
+			_driver->doSong(track);
+			_driver->setTempo(tempoIngame[track] << 4);
+			if (!_mixer->isSoundHandleActive(_soundChannels[0]))
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+		} else if (track == 0){
+			_driver->stopMusic();
+		} else { // track == 1
+			beginFadeOut();
+	}
+
+	}
 }
 
 void SoundAmiga::haltTrack() {
+
 
 }
 
@@ -105,21 +147,25 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
 
 
-	/* // ingame? 
+	// ingame
+	if (0) {
 	uint16 extVar = 1; // maybe indicates music playing or enabled
 	uint16 extVar2 = 1; // sound loaded ?
-	if (0x61 <= track && track <= 0x63 && extVar) {
-		assert(false);//some music-commands
-	}
-	assert(track < ARRAYSIZE(kEffectsTable));
-	const EffectEntry &entry = kEffectsTable[track];
+	if (0x61 <= track && track <= 0x63 && extVar)
+		playTrack(track - 0x4F);
+
+	assert(track < ARRAYSIZE(tableEffectsGame));
+	const EffectEntry &entry = tableEffectsGame[track];
 	if (extVar2 && entry.note) {
 		byte pan = (entry.pan == 2) ? 0 : entry.pan;
 		_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, pan != 0);
 		if (!_mixer->isSoundHandleActive(_soundChannels[0]))
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
-	}*/
+
+	}
+	}
 }
+
 
 const SoundAmiga::EffectEntry SoundAmiga::tableEffectsIntro[40] = {
 	{ 0x0000, 0x00, 0x00,   0,  0 },

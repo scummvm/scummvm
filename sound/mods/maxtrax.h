@@ -210,6 +210,9 @@ public:
 	void killVoice(byte num);
 	int playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide);
 
+	void setVolume(const byte volume) {
+		_playerCtx.volume = volume;
+	}
 	void setTempo(const uint16 tempo) {
 		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
 	}
