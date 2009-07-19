@@ -90,8 +90,8 @@ void MaxTrax::interrupt() {
 			const uint16 stopTime = curEvent->stopTime;
 			ChannelContext &channel = _channelCtx[data & 0x0F];
 
-			outPutEvent(*curEvent);
-			debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
+			// outPutEvent(*curEvent);
+			// debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
 
 			if (cmd < 0x80) {	// Note
 				const uint16 vol = (data & 0xF0) >> 1;
