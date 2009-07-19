@@ -35,7 +35,7 @@ namespace GUI {
 // Choose between text console or ScummConsole
 #define USE_CONSOLE	1
 
-#ifdef USE_CONSOLE
+#if USE_CONSOLE
 class ConsoleDialog;
 #endif
 
@@ -86,7 +86,9 @@ private:
 	bool _isAttached;
 	char *_errStr;
 	bool _firstTime;
+#if USE_CONSOLE
 	GUI::ConsoleDialog *_debuggerDialog;
+#endif
 
 protected:
 	// Hook for subclasses: Called just before enter() is run

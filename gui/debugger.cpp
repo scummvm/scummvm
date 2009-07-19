@@ -39,9 +39,11 @@ Debugger::Debugger() {
 	_isAttached = false;
 	_errStr = NULL;
 	_firstTime = true;
+#if USE_CONSOLE
 	_debuggerDialog = new GUI::ConsoleDialog(1.0f, 0.67f);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
+#endif
 
 	//DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
@@ -55,7 +57,9 @@ Debugger::Debugger() {
 }
 
 Debugger::~Debugger() {
+#if USE_CONSOLE
 	delete _debuggerDialog;
+#endif
 }
 
 
@@ -357,8 +361,11 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 // Print a list of all registered commands (and variables, if any),
 // nicely word-wrapped.
 bool Debugger::Cmd_Help(int argc, const char **argv) {
-
+#if USE_CONSOLE
 	const int charsPerLine = _debuggerDialog->getCharsPerLine();
+#else
+	const int charsPerLine = 80;
+#endif
 	int width, size;
 	uint i;
 
