@@ -307,6 +307,7 @@ public:
 
 protected:
 	Audio::MaxTrax *_driver;
+	Audio::SoundHandle _musicHandle;
 	enum FileType { kFileNone = -1, kFileIntro = 0, kFileGame = 1, kFileFinal = 2 } _fileLoaded;
 
 	static const char *const kFilenameTable[3][2];

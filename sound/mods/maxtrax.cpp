@@ -339,7 +339,7 @@ bool MaxTrax::playSong(int songIndex, bool loop, int advance) {
 	// Songs are special markers in the score
 	for (; advance > 0; --advance) {
 		// TODO - check for boundaries 
-		for(; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
+		for (; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
 			; // no end_command or special_command + end
 	}
 	_playerCtx.nextEvent = cev;

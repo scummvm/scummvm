@@ -40,8 +40,8 @@ const char *const SoundAmiga::kFilenameTable[3][2] = {
 	{ "finalescr.mx", 0 }
 };
 
-SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer) :
-	Sound(vm, mixer), _driver(0), _fileLoaded(kFileNone) {
+SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
+	: Sound(vm, mixer), _driver(0), _musicHandle(), _fileLoaded(kFileNone) {
 }
 
 SoundAmiga::~SoundAmiga() {
@@ -96,8 +96,8 @@ void SoundAmiga::playTrack(uint8 track) {
 		if (_driver->playSong(track)) {
 			_driver->setVolume(0x40);
 			_driver->setTempo(tempoIntro[track] << 4);
-			if (!_mixer->isSoundHandleActive(_soundChannels[0]))
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+			if (!_mixer->isSoundHandleActive(_musicHandle))
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 		}
 	} else if (track == 0){
 		_driver->stopMusic();
@@ -113,8 +113,8 @@ void SoundAmiga::playTrack(uint8 track) {
 				_driver->setVolume(0x40);
 			
 				_driver->setTempo(tempoIngame[track] << 4);
-				if (!_mixer->isSoundHandleActive(_soundChannels[0]))
-					_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+				if (!_mixer->isSoundHandleActive(_musicHandle))
+					_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 			}
 		} else if (track == 0){
 			_driver->stopMusic();
@@ -146,8 +146,8 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	assert(track < ARRAYSIZE(tableEffectsIntro));
 	const EffectEntry &entry = tableEffectsIntro[track];
 	bool success = _driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, entry.pan != 0) >= 0;
-	if (!_mixer->isSoundHandleActive(_soundChannels[0]))
-		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+	if (!_mixer->isSoundHandleActive(_musicHandle))
+		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 
 
 	// ingame
@@ -162,8 +162,8 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	if (extVar2 && entry.note) {
 		byte pan = (entry.pan == 2) ? 0 : entry.pan;
 		_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, pan != 0);
-		if (!_mixer->isSoundHandleActive(_soundChannels[0]))
-			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_soundChannels[0], _driver);
+		if (!_mixer->isSoundHandleActive(_musicHandle))
+			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 	}
 	}
 }
