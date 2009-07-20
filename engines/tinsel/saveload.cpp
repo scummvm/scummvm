@@ -84,6 +84,8 @@ extern void syncGlobInfo(Common::Serializer &s);
 // in POLYGONS.C
 extern void syncPolyInfo(Common::Serializer &s);
 
+extern int sceneCtr;
+
 //----------------- LOCAL DEFINES --------------------
 
 struct SaveGameHeader {
@@ -510,6 +512,10 @@ save_failure:
 void ProcessSRQueue(void) {
 	switch (SRstate) {
 	case SR_DORESTORE:
+		// If a load has been done directly from title screens, set a larger value for scene ctr so the
+		// code used to skip the title screens in Discworld 1 gets properly disabled
+		if (sceneCtr < 10) sceneCtr = 10;
+
 		if (DoRestore()) {
 			DoRestoreScene(srsd, false);
 		}
