@@ -91,20 +91,19 @@ void CUP_Player::close() {
 }
 
 void CUP_Player::play() {
-	while (parseNextHeaderTag(_fileStream)) {
-		if (_fileStream.ioFailed()) {
-			return;
-		}
-	}
+	while (parseNextHeaderTag(_fileStream)) { }
+
+	if (_fileStream.eos() || _fileStream.err())
+		return;
+
 	debug(1, "rate %d width %d height %d", _playbackRate, _width, _height);
 
 	int ticks = _system->getMillis();
 	while (_dataSize != 0 && !_vm->shouldQuit()) {
-		while (parseNextBlockTag(_fileStream)) {
-			if (_fileStream.ioFailed()) {
-				return;
-			}
-		}
+		while (parseNextBlockTag(_fileStream)) { }
+		if (_fileStream.eos() || _fileStream.err())
+			return;
+
 		int diff = _system->getMillis() - ticks;
 		if (diff >= 0 && diff <= _playbackRate) {
 			_system->delayMillis(_playbackRate - diff);
@@ -200,6 +199,10 @@ void CUP_Player::waitForSfxChannel(int channel) {
 bool CUP_Player::parseNextHeaderTag(Common::SeekableReadStream &dataStream) {
 	uint32 tag = dataStream.readUint32BE();
 	uint32 size = dataStream.readUint32BE() - 8;
+
+	if (dataStream.eos())
+		return false;
+
 	uint32 next = dataStream.pos() + size;
 	debug(1, "New header tag %s %d dataSize %d", tag2str(tag), size, _dataSize);
 	switch (tag) {
