@@ -229,7 +229,7 @@ bool AGOSEngine::confirmOverWrite(WindowBlock *window) {
 		break;
 	case Common::DE_DEU:
 		message1 = "\rDatei existiert bereits.\r\r";
-		message2 = "     berschreiben ?\r\r";
+		message2 = "   Ueberschreiben ?\r\r";
 		message3 = "     Ja        Nein";
 		break;
 	default:
@@ -1551,7 +1551,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 #ifdef ENABLE_PN
 // Personal Nightmare specific
 bool AGOSEngine_PN::badload(int8 errorNum) {
-printf("badload(%d)\n", errorNum);
 	if (errorNum == -2)
 		return 0;
 	// Load error recovery routine
@@ -1563,7 +1562,7 @@ printf("badload(%d)\n", errorNum);
 
 	// Restart from process 1
 	_tagOfActiveDoline = 1;
-	_dolineReturnVal = 2;
+	_dolineReturnVal = 3;
 	return 1;
 }
 
@@ -1574,7 +1573,7 @@ void AGOSEngine_PN::getFilename() {
 	memset(_saveFile, 0, sizeof(_saveFile));
 	while (!shouldQuit() && !strlen(_saveFile)) {
 		const char *msg = "File name : ";
-	        pcf((unsigned char)'\n');
+		pcf((unsigned char)'\n');
 		while (*msg)
 			pcf((unsigned char)*msg++);
 
@@ -1611,7 +1610,7 @@ int AGOSEngine_PN::loadFile(char *name) {
 		delete f;
 		return -1;
 	}
-		delete f;
+	delete f;
 	restartAnimation();
 	dbtosysf();
 	return 0;
@@ -1627,7 +1626,7 @@ int AGOSEngine_PN::saveFile(char *name) {
 		restartAnimation();
 
 		const char *msg = "Couldn't save. ";
-	        pcf((unsigned char)'\n');
+		pcf((unsigned char)'\n');
 		while (*msg)
 			pcf((unsigned char)*msg++);
 

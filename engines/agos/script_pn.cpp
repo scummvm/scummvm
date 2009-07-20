@@ -916,7 +916,8 @@ int AGOSEngine_PN::doline(int needsave) {
 				_dolineReturnVal = 0;
 
 				if (x > 0) {
-					dumpstack();
+					if (x != 3)
+						dumpstack();
 					// Restore the active jmpbuf to its previous value,
 					// then return _dolineReturnVal-1 (will be 2-1=1 or 1-1=0).
 					_tagOfActiveDoline = myTag - 1;
