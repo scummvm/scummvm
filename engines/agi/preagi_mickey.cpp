@@ -1267,7 +1267,7 @@ void Mickey::pressOB(int iButton) {
 	}
 
 	// print pressed buttons
-	printLine("MICKEY HAS PRESSED:                   ");
+	printLine("MICKEY HAS PRESSED:                  ");
 	_vm->drawStr(20, 22, IDA_DEFAULT, szButtons);
 	waitAnyKey();
 }
