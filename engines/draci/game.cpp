@@ -171,16 +171,33 @@ void Game::loop() {
 
 		if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
 			
+			// Fetch dragon's animation ID
+			// FIXME: Need to add proper walking (this only warps the dragon to position)
 			int animID = getObject(kDragonObject)->_anims[0];
 
 			Animation *anim = _vm->_anims->getAnimation(animID);
 			Drawable *frame = anim->getFrame();
 
+			// Calculate scaling factor
+			double scaleX = _currentRoom._pers0 + _currentRoom._persStep * y;
+			double scaleY = scaleX;
+
+			// Calculate scaled height of sprite
+			int height = frame->getScaledHeight(scaleY);
+
+			// Set the Z coordinate for the dragon's animation
 			anim->setZ(y+1);
 
-			y -= frame->getHeight();
-			anim->setRelative(x, y); 
+			// We naturally want the dragon to position its feet to the location of the
+			// click but sprites are drawn from their top-left corner so we subtract
+			// the height of the dragon's sprite
+			y -= height;
+			anim->setRelative(x, y);
 
+			// Set the scaling factor
+			anim->setScaling(scaleX, scaleY);
+
+			// Play the animation
 			_vm->_anims->play(animID);
 
 			debugC(4, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
@@ -221,6 +238,7 @@ void Game::loadRoom(int roomNum) {
 
 	for (int i = 5; i >= 0; --i) {
 		real[i] = roomReader.readByte();
+		debug(2, "%d", real[i]);
 	}
 
 	_currentRoom._pers0 = real_to_double(real);

@@ -38,10 +38,16 @@ friend class Text;
 
 public:
 	virtual void draw(Surface *surface, bool markDirty = true) const = 0;
+	virtual void drawScaled(Surface *surface, double scaleX, double scaleY, 
+		bool markDirty = true) const = 0;
+
 	virtual ~Drawable() {};
 	
 	virtual uint16 getWidth() { return _width; }
 	virtual uint16 getHeight() { return _height; }
+
+	virtual uint getScaledWidth(double scaleX) const = 0;
+	virtual uint getScaledHeight(double scaleY) const = 0;
 
 	virtual int getX() { return _x; }
 	virtual int getY() { return _y; }
@@ -53,6 +59,7 @@ public:
 	int getDelay() { return _delay; }	
 
 	virtual Common::Rect getRect() const = 0;
+	virtual	Common::Rect getScaledRect(double scaleX, double scaleY) const = 0;
 	
 private:
 	uint16 _width;	//!< Width of the sprite
@@ -89,11 +96,17 @@ public:
 	~Sprite();
 
 	void draw(Surface *surface, bool markDirty = true) const;
+	void drawScaled(Surface *surface, double scaleX, double scaleY, bool markDirty = true) const;
 	
 	void setMirrorOn();
 	void setMirrorOff();
 
 	virtual Common::Rect getRect() const;
+	Common::Rect getScaledRect(double scaleX, double scaleY) const;
+
+	virtual uint getScaledWidth(double scaleX) const;
+	virtual uint getScaledHeight(double scaleY) const;
+
 	const byte *getBuffer() const { return _data; }
 
 private:

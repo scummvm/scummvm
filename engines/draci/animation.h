@@ -37,7 +37,7 @@ enum { kCurrentFrame = -1 };
 class DraciEngine;
 
 class Animation {
-
+	
 public:
 	Animation(DraciEngine *vm);
 	~Animation();	
@@ -62,10 +62,14 @@ public:
 	bool isLooping();
 	void setLooping(bool looping);
 
-	void setRelative(int relx, int rely);
+	double getScaleX() const;
+	double getScaleY() const;
+	void setScaling(double scalex, double scaley);
+	bool isScaled() const;
 
-	int _relX;
-	int _relY;
+	void setRelative(int relx, int rely);
+	int getRelativeX();
+	int getRelativeY();
 
 private:
 	
@@ -74,6 +78,12 @@ private:
 	int _id;	
 	uint _currentFrame;
 	uint _z;
+
+	int _relX;
+	int _relY;
+
+	double _scaleX;
+	double _scaleY;
 
 	uint _tick;
 	bool _playing;

@@ -29,6 +29,8 @@
 #include "draci/sprite.h"
 #include "draci/font.h"
 
+#include <cmath>
+
 namespace Draci {
 
 /**
@@ -115,6 +117,87 @@ void Sprite::setMirrorOff() {
 	_mirror = false;
 }
 
+// TODO: Research what kind of sampling the original player uses
+void Sprite::drawScaled(Surface *surface, double scaleX, double scaleY, bool markDirty) const {
+
+	Common::Rect sourceRect(0, 0, _width, _height);
+	Common::Rect destRect(_x, _y, _x + getScaledWidth(scaleX), _y + getScaledHeight(scaleY));
+	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
+	Common::Rect clippedDestRect(destRect);
+
+	clippedDestRect.clip(surfaceRect);
+
+	// Calculate by how much we need to adjust the source rectangle to account for cropping
+	const int adjustLeft = clippedDestRect.left - destRect.left;
+	const int adjustRight = clippedDestRect.right - destRect.right;
+	const int adjustTop = clippedDestRect.top - destRect.top;
+	const int adjustBottom = clippedDestRect.bottom - destRect.bottom;
+
+	// Resize source rectangle
+	sourceRect.left += adjustLeft;
+	sourceRect.right += adjustRight;
+	sourceRect.top += adjustTop;
+	sourceRect.bottom += adjustBottom;
+
+	// Get pointers to source and destination buffers
+	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
+	byte *src = _data;
+
+	const int transparent = surface->getTransparentColour();
+
+	// Calculate how many rows and columns we need to draw
+	const int rows = clippedDestRect.bottom - clippedDestRect.top;
+	const int columns = clippedDestRect.right - clippedDestRect.left;
+
+	int *rowIndices = new int[rows];
+	int *columnIndices = new int[columns];
+
+	// Precalculate pixel indexes
+	for (int i = 0; i < rows; ++i) {
+		rowIndices[i] = lround(i / scaleY);
+	}
+
+	for (int j = 0; j < columns; ++j) {
+		columnIndices[j] = lround(j / scaleX);
+	}
+
+	// Blit the sprite to the surface
+	for (int i = 0; i < rows; ++i) {
+
+		// Fetch index of current row to be drawn
+		int row = rowIndices[i];
+		
+		for (int j = 0, q = sourceRect.left; j < columns; ++j, ++q) {
+			
+			// Fetch index of current column to be drawn
+			int column = columnIndices[j];
+
+			// Don't blit if the pixel is transparent on the target surface
+			if (src[row * _width + column] != transparent) {
+
+				// Draw the sprite mirrored if the _mirror flag is set						
+				if (_mirror) {
+					dst[sourceRect.right - q - 1] = src[row * _width + column];
+				} else {
+					dst[q] = src[row * _width + column];
+				}
+			}
+		}
+
+		// Advance to next row
+		dst += surface->pitch;
+	}
+
+	// Mark the sprite's rectangle dirty
+	if (markDirty) {	
+		surface->markDirtyRect(destRect);
+	}
+
+	delete[] rowIndices;
+	delete[] columnIndices;
+}
+	
+
 /**
  *  @brief Draws the sprite to a Draci::Surface
  *  @param surface Pointer to a Draci::Surface
@@ -131,16 +214,19 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 
 	clippedDestRect.clip(surfaceRect);
 
-	int adjustLeft = clippedDestRect.left - destRect.left;
-	int adjustRight = clippedDestRect.right - destRect.right;
-	int adjustTop = clippedDestRect.top - destRect.top;
-	int adjustBottom = clippedDestRect.bottom - destRect.bottom;
+	// Calculate by how much we need to adjust the source rectangle to account for cropping
+	const int adjustLeft = clippedDestRect.left - destRect.left;
+	const int adjustRight = clippedDestRect.right - destRect.right;
+	const int adjustTop = clippedDestRect.top - destRect.top;
+ 	const int adjustBottom = clippedDestRect.bottom - destRect.bottom;
 
+	// Resize source rectangle
 	sourceRect.left += adjustLeft;
 	sourceRect.right += adjustRight;
 	sourceRect.top += adjustTop;
 	sourceRect.bottom += adjustBottom;
 
+	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
 	byte *src = _data;
 
@@ -162,6 +248,7 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 			}		
 		}
 
+		// Advance to next row
 		dst += surface->pitch;
 	}
 
@@ -173,6 +260,18 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 
 Common::Rect Sprite::getRect() const {
 	return Common::Rect(_x, _y, _x + _width, _y + _height);
+}
+
+Common::Rect Sprite::getScaledRect(double scaleX, double scaleY) const {
+	return Common::Rect(_x, _y, _x + getScaledWidth(scaleX), _y + getScaledHeight(scaleY));
+}
+
+uint Sprite::getScaledHeight(double scaleY) const {
+	return lround(scaleY * _height);
+}
+
+uint Sprite::getScaledWidth(double scaleX) const {
+	return lround(scaleX * _width);
 }
 
 Text::Text(const Common::String &str, Font *font, byte fontColour, 

@@ -134,6 +134,9 @@ struct Room {
 
 class Game {
 
+	// HACK: Remove this before committing; if anyone sees this, remind me :D
+	friend class Animation;
+
 public:
 
 	Game(DraciEngine *vm);
