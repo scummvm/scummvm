@@ -30,7 +30,7 @@
 
 namespace Draci {
 
-enum { kOverlayImage = -1, kUnused = -2 };
+enum { kOverlayImage = -1, kWalkingMapOverlay = -2, kUnused = -3 };
 
 enum { kCurrentFrame = -1 };
 

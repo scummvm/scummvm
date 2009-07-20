@@ -181,23 +181,27 @@ int DraciEngine::go() {
 			case Common::EVENT_KEYDOWN:
 				if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 					_game->changeRoom(_game->nextRoomNum());
+
 				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 					_game->changeRoom(_game->prevRoomNum());
-				else if (event.kbd.keycode == Common::KEYCODE_w) { // Show walking map toggle
-					// Toggle
-					showWalkingMap = !showWalkingMap;
 
-					if (showWalkingMap) {
-						_anims->play(-2);
-					} else {
-						_anims->stop(-2);
-					}
+				// Show walking map toggle
+				else if (event.kbd.keycode == Common::KEYCODE_w) { 
+					showWalkingMap = !showWalkingMap;
 				}
 				break;					
 			default:
 				_mouse->handleEvent(event);
 			}		
 		}
+
+		// Show walking map overlay
+		if (showWalkingMap) {
+			_anims->play(kWalkingMapOverlay);
+		} else {
+			_anims->stop(kWalkingMapOverlay);
+		}
+
 		_game->loop();
 		_anims->drawScene(_screen->getSurface());
 		_screen->copyToScreen();

@@ -345,7 +345,7 @@ void Game::loadRoom(int roomNum) {
 
 	Sprite *ov = new Sprite(wlk, kScreenWidth, kScreenHeight, 0, 0, false);
 
-	Animation *map = _vm->_anims->addAnimation(-2, 255, false);
+	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
 	map->addFrame(ov);
 }
 
