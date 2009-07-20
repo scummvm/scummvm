@@ -29,6 +29,7 @@
 #include "common/file.h"
 #include "common/util.h"
 
+#include "groovie/cell.h"
 #include "groovie/groovie.h"
 
 #define BOARDSIZE 7
@@ -43,24 +44,59 @@ class Script;
 
 class CellGame {
 public:
-	CellGame(byte *board);
+	CellGame();
 	~CellGame();
-	int8 calcMove(byte *origboard, uint8 color, uint8 depth);
 	byte getStartX();
 	byte getStartY();
 	byte getEndX();
 	byte getEndY();
+	int playStauf(byte color, uint16 depth, byte *scriptBoard);
 
 private:
-	bool validMove(byte *board, uint8 color, int8 endX, int8 endY);
-	void execMove(byte *board, uint8 color, int8 startX, int8 startY, int8 endX, int8 endY);
-	uint8 countBoard(byte* board, uint8 color);
-	byte *_board;
+	void copyToTempBoard();
+	void copyFromTempBoard();
+	void copyToShadowBoard();
+	void pushBoard();
+	void popBoard();
+	void pushShadowBoard();
+	void popShadowBoard();
+	void clearMoves();
+	void pushMove();
+	void resetMove();
+	bool canMoveFunc1(int8 color);
+	bool canMoveFunc2(int8 color);
+	bool canMoveFunc3(int8 color);
+	void takeCells(uint16 whereTo, int8 color);
+	void countAllCells();
+	int countCellsOnTempBoard(int8 color);
+	void makeMove(int8 color);
+	int getBoardWeight(int8 color1, int8 color2);
+	void chooseBestMove(int8 color);
+	int8 calcBestWeight(int8 color1, int8 color2, uint16 depth, int bestWeight);
+	int16 doGame(int8 color, int depth);
+	int16 calcMove(int8 color, uint16 depth);
 
 	byte _startX;
 	byte _startY;
 	byte _endX;
 	byte _endY;
+
+	int8 _board[57];
+	int8 _tempBoard[58];
+	int8 _shadowBoard[64];
+	int8 _boardStack[570];
+	int _boardStackPtr;
+
+	int8 _boardSum[58];
+
+	int8 _stack_startXY[128];
+	int8 _stack_endXY[128];
+	int8 _stack_pass[128];
+	int _stack_index;
+
+	int _coeff3;
+	bool _flag1, _flag2, _flag4;
+	int _moveCount;
 };
 
 } // End of Groovie namespace

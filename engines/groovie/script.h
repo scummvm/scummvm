@@ -40,6 +40,7 @@ enum EngineVersion {
 };
 
 class GroovieEngine;
+class CellGame;
 
 class Script {
 	friend class Debugger;
@@ -119,6 +120,8 @@ private:
 	Debugger *_debugger;
 	Common::String _debugString;
 	uint16 _oldInstruction;
+
+	CellGame *_staufsMove;
 
 	// Helper functions
 	uint8 getCodeByte(uint16 address);
