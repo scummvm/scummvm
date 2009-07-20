@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="ScummVM_Global"
+	OutputDirectory="$(ConfigurationName)"
+	IntermediateDirectory="$(ConfigurationName)/$(ProjectName)"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="../..;../../engines"
+		PreprocessorDefinitions="USE_NASM;USE_ZLIB;ENABLE_KYRA;ENABLE_LOL;ENABLE_SCUMM;ENABLE_SCUMM_7_8;ENABLE_HE"
+		ExceptionHandling="0"
+		RuntimeTypeInfo="false"
+		WarningLevel="4"
+		WarnAsError="true"
+		CompileAs="0"
+		DisableSpecificWarnings="4068;4100;4103;4121;4127;4189;4201;4221;4244;4250;4310;4351;4355;4510;4511;4512;4610;4701;4702;4706;4800;4996"
+	/>
+	<Tool
+		Name="VCLibrarianTool"
+		IgnoreDefaultLibraryNames=""
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		IgnoreDefaultLibraryNames=""
+		SubSystem="1"
+		EntryPointSymbol="WinMainCRTStartup"
+	/>
+</VisualStudioPropertySheet>
