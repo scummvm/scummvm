@@ -613,7 +613,8 @@ int8 CellGame::calcBestWeight(int8 color1, int8 color2, uint16 depth, int bestWe
 	} else {
 		res = getBoardWeight(color1, curColor);
 	}
-	if (res < bestWeight && color1 != curColor || _flag4) {
+
+	if ((res < bestWeight && color1 != curColor) || _flag4) {
 		popBoard();
 		return res;
 	}
