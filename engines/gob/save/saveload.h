@@ -74,15 +74,15 @@ protected:
 /** Save/Load class for Gobliins 2, Ween: The Prophecy and Bargon Attack. */
 class SaveLoad_v2 : public SaveLoad {
 public:
+	static const uint32 kSlotCount = 15;
+	static const uint32 kSlotNameLength = 40;
+
 	SaveLoad_v2(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v2();
 
 	SaveMode getSaveMode(const char *fileName) const;
 
 protected:
-	static const uint32 kSlotCount = 15;
-	static const uint32 kSlotNameLength = 40;
-
 	struct SaveFile {
 		const char *sourceName;
 		SaveMode mode;
@@ -136,6 +136,9 @@ protected:
 /** Save/Load class for Goblins 3 and Lost in Time. */
 class SaveLoad_v3 : public SaveLoad {
 public:
+	static const uint32 kSlotCount = 30;
+	static const uint32 kSlotNameLength = 40;
+
 	enum ScreenshotType {
 		kScreenshotTypeGob3, //!< Goblins 3 type screenshot
 		kScreenshotTypeLost  //!< Lost in Time type screenshot
@@ -147,9 +150,6 @@ public:
 	SaveMode getSaveMode(const char *fileName) const;
 
 protected:
-	static const uint32 kSlotCount = 30;
-	static const uint32 kSlotNameLength = 40;
-
 	struct SaveFile {
 		const char *sourceName;
 		SaveMode mode;
@@ -264,15 +264,15 @@ protected:
 /** Save/Load class for Woodruff. */
 class SaveLoad_v4 : public SaveLoad {
 public:
+	static const uint32 kSlotCount = 10;
+	static const uint32 kSlotNameLength = 40;
+
 	SaveLoad_v4(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v4();
 
 	SaveMode getSaveMode(const char *fileName) const;
 
 protected:
-	static const uint32 kSlotCount = 10;
-	static const uint32 kSlotNameLength = 40;
-
 	struct SaveFile {
 		const char *sourceName;
 		SaveMode mode;
@@ -386,15 +386,15 @@ protected:
 /** Save/Load class for Urban Runner. */
 class SaveLoad_v6 : public SaveLoad {
 public:
+	static const uint32 kSlotCount = 60;
+	static const uint32 kSlotNameLength = 40;
+
 	SaveLoad_v6(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v6();
 
 	SaveMode getSaveMode(const char *fileName) const;
 
 protected:
-	static const uint32 kSlotCount = 60;
-	static const uint32 kSlotNameLength = 40;
-
 	struct SaveFile {
 		const char *sourceName;
 		SaveMode mode;
