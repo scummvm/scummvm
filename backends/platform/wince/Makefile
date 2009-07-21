@@ -76,6 +76,7 @@ USE_ARM_SOUND_ASM = 1
 USE_ARM_SMUSH_ASM = 1
 USE_ARM_GFX_ASM   = 1
 USE_ARM_COSTUME_ASM = 1
+USE_ARM_SCALER_ASM = 1
 
 ########################################################################
 ##    Hopefully you shouldn't need to change anything below here.     ##
@@ -165,6 +166,10 @@ endif
 
 ifdef USE_ARM_COSTUME_ASM
 DEFINES += -DUSE_ARM_COSTUME_ASM
+endif
+
+ifdef USE_ARM_SCALER_ASM
+DEFINES += -DUSE_ARM_SCALER_ASM
 endif
 
 ########################################################################

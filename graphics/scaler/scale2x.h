@@ -52,5 +52,13 @@ static inline void scale2x_mmx_emms(void)
 
 #endif
 
+#if defined(USE_ARM_SCALER_ASM)
+
+extern "C" void scale2x_8_arm(scale2x_uint8* dst0, scale2x_uint8* dst1, const scale2x_uint8* src0, const scale2x_uint8* src1, const scale2x_uint8* src2, unsigned count);
+extern "C" void scale2x_16_arm(scale2x_uint16* dst0, scale2x_uint16* dst1, const scale2x_uint16* src0, const scale2x_uint16* src1, const scale2x_uint16* src2, unsigned count);
+extern "C" void scale2x_32_arm(scale2x_uint32* dst0, scale2x_uint32* dst1, const scale2x_uint32* src0, const scale2x_uint32* src1, const scale2x_uint32* src2, unsigned count);
+
+#endif
+
 #endif
 

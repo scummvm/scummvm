@@ -59,6 +59,10 @@ static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const
 		case 1 : scale2x_8_mmx(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
 		case 2 : scale2x_16_mmx(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
 		case 4 : scale2x_32_mmx(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
+#elif defined(USE_ARM_SCALER_ASM)
+		case 1 : scale2x_8_arm(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
+		case 2 : scale2x_16_arm(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
+		case 4 : scale2x_32_arm(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
 #else
 		case 1 : scale2x_8_def(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
 		case 2 : scale2x_16_def(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
