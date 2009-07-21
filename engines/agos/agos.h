@@ -1248,6 +1248,7 @@ protected:
 	void hitarea_stuff_helper_2();
 	void fastFadeIn();
 	void slowFadeIn();
+	void fullFade();
 
 	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
 

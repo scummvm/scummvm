@@ -353,9 +353,32 @@ void AGOSEngine::vc55_moveBox() {
 	_needHitAreaRecalc++;
 }
 
-void AGOSEngine::vc56_fullScreen() {
-	uint8 palette[1024];
+void AGOSEngine::fullFade() {
+	uint8 *srcPal, *dstPal;
+	int c, p;
 
+	for (c = 64; c != 0; c --) {
+		srcPal = _curVgaFile2 + 32;
+		dstPal = _currentPalette;
+		for (p = 768; p !=0 ; p -= 3) {
+			uint8 r = srcPal[0] * 4;
+			if (dstPal[0] != r)
+				dstPal[0] += 4;
+			uint8 g = srcPal[1] * 4;
+			if (dstPal[1] != g)
+				dstPal[1] += 4;
+			uint8 b = srcPal[2] * 4;
+			if (dstPal[2] != b)
+				dstPal[2] += 4;
+			srcPal += 3;
+			dstPal += 4;
+		}
+		_system->setPalette(_currentPalette, 0, 256);
+		delay(5);
+	}
+}
+
+void AGOSEngine::vc56_fullScreen() {
 	Graphics::Surface *screen = _system->lockScreen();
 	byte *dst = (byte *)screen->pixels;
 	byte *src = _curVgaFile2 + 800;
@@ -367,23 +390,12 @@ void AGOSEngine::vc56_fullScreen() {
 	}
 	 _system->unlockScreen();
 
-	//fullFade();
-
-	src = _curVgaFile2 + 32;
-	for (int i = 0; i < 256; i++) {
-		palette[i * 4 + 0] = *src++ * 4;
-		palette[i * 4 + 1] = *src++ * 4;
-		palette[i * 4 + 2] = *src++ * 4;
-		palette[i * 4 + 3] = 0;
-	}
-
-	_system->setPalette(palette, 0, 256);
+	fullFade();
 }
 
 void AGOSEngine::vc57_blackPalette() {
-	uint8 palette[1024];
-	memset(palette, 0, sizeof(palette));
-	_system->setPalette(palette, 0, 256);
+	memset(_currentPalette, 0, sizeof(_currentPalette));
+	_system->setPalette(_currentPalette, 0, 256);
 }
 
 void AGOSEngine::vc58_checkCodeWheel() {
