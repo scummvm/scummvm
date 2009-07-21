@@ -105,7 +105,7 @@ public:
 	void decode(int32 origsize);
 	void decode_f(int32 origsize);
 
-	MemoryReadStream *_compressed;
+	BufferedReadStream *_compressed;
 	MemoryWriteStream *_outstream;
 
 //protected:
@@ -360,6 +360,9 @@ bool ArjFile::open(const Common::String &filename) {
 		return false;
 
 	ArjHeader *hdr = _headers[_fileMap[filename]];
+
+	// TODO: It would be good if ArjFile could decompress files in a streaming
+	// mode, so it would not need to pre-allocate the entire output.
 	byte *uncompressedData = (byte *)malloc(hdr->origSize);
 
 	File archiveFile;
@@ -372,10 +375,11 @@ bool ArjFile::open(const Common::String &filename) {
 	} else {
 		ArjDecoder *decoder = new ArjDecoder(hdr);
 
-		byte *compressedData = (byte *)malloc(hdr->compSize);
-		archiveFile.read(compressedData, hdr->compSize);
-
-		decoder->_compressed = new MemoryReadStream(compressedData, hdr->compSize, true);
+		// TODO: It might not be appropriate to use this wrapper inside ArjFile.
+		// If reading from archiveFile directly is too slow to be usable,
+		// maybe the filesystem code should instead wrap its files
+		// in a BufferedReadStream.
+		decoder->_compressed = new BufferedReadStream(&archiveFile, 4096, false);
 		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
