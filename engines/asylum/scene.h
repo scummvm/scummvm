@@ -108,9 +108,10 @@ private:
 	void updateCursor();
 	void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
-	void ShowPolygons();
-	void ShowBarriers();
-	void ShowWalkRegion(PolyDefinitions *poly);
+	void debugScreenScrolling(GraphicFrame *bg);
+	void debugShowPolygons();
+	void debugShowBarriers();
+	void debugShowWalkRegion(PolyDefinitions *poly);
 	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 	
 	friend class ScriptManager;
