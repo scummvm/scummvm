@@ -230,7 +230,6 @@ void Scene::updateCursor() {
 }
 
 void Scene::update() {
-	//bool scrollScreen = false;
 	GraphicFrame *bg         = _bgResource->getFrame(0);
 	MainActor    *mainActor  = _sceneResource->getMainActor();
 	WorldStats   *worldStats = _sceneResource->getWorldStats();
@@ -238,25 +237,9 @@ void Scene::update() {
 	int32 curHotspot = -1;
 	int32 curBarrier = -1;
 
-	/*
-	// Horizontal scrolling
-	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP) {
-		_startX -= SCROLL_STEP;
-		//scrollScreen = true;
-	} else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP) {
-		_startX += SCROLL_STEP;
-		//scrollScreen = true;
-	}
-
-	// Vertical scrolling
-	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP) {
-		_startY -= SCROLL_STEP;
-		//scrollScreen = true;
-	} else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP) {
-		_startY += SCROLL_STEP;
-		//scrollScreen = true;
-	}
-	*/
+	// DEBUG
+	// Force the screen to scroll if the mouse approaches the edges
+	// debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
 	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
@@ -270,8 +253,6 @@ void Scene::update() {
 	// TESTING
 	// Main actor walking
 	if (!_rightButton) {
-		//mainActor->setAction(15);	// face south
-		//mainActor->drawActorAt(_screen, mainActor->_actorX, mainActor->_actorY);
 		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01)	// TESTING - only draw if visible flag
 			mainActor->drawActor(_screen);
 	} else {
@@ -281,30 +262,14 @@ void Scene::update() {
 
 		// Change cursor
 		switch (mainActor->getCurrentAction()) {
-		case kWalkN:
-			newCursor = worldStats->commonRes.curScrollUp;
-			break;
-		case kWalkNE:
-			newCursor = worldStats->commonRes.curScrollUpRight;
-			break;
-		case kWalkNW:
-			newCursor = worldStats->commonRes.curScrollUpLeft;
-			break;
-		case kWalkS:
-			newCursor = worldStats->commonRes.curScrollDown;
-			break;
-		case kWalkSE:
-			newCursor = worldStats->commonRes.curScrollDownRight;
-			break;
-		case kWalkSW:
-			newCursor = worldStats->commonRes.curScrollDownLeft;
-			break;
-		case kWalkW:
-			newCursor = worldStats->commonRes.curScrollLeft;
-			break;
-		case kWalkE:
-			newCursor = worldStats->commonRes.curScrollRight;
-			break;
+		case kWalkN:  newCursor = worldStats->commonRes.curScrollUp; break;
+		case kWalkNE: newCursor = worldStats->commonRes.curScrollUpRight; break;
+		case kWalkNW: newCursor = worldStats->commonRes.curScrollUpLeft; break;
+		case kWalkS:  newCursor = worldStats->commonRes.curScrollDown; break;
+		case kWalkSE: newCursor = worldStats->commonRes.curScrollDownRight;	break;
+		case kWalkSW: newCursor = worldStats->commonRes.curScrollDownLeft; break;
+		case kWalkW:  newCursor = worldStats->commonRes.curScrollLeft; break;
+		case kWalkE:  newCursor = worldStats->commonRes.curScrollRight; break;
 		}
 
 		if (_cursorResource->getEntryNum() != newCursor) {
@@ -314,9 +279,9 @@ void Scene::update() {
 	}
 
 	if (g_debugPolygons)
-		ShowPolygons();
+		debugShowPolygons();
 	if (g_debugBarriers)
-		ShowBarriers();
+		debugShowBarriers();
 
 	// Check if we're within a barrier
 	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
@@ -355,7 +320,7 @@ void Scene::update() {
 		if (worldStats->actions[a].actionType == 0) {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[worldStats->actions[a].polyIdx];
 			if (pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
-				ShowWalkRegion(&poly);
+				debugShowWalkRegion(&poly);
 				break;
 			}
 		}
@@ -505,8 +470,22 @@ bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
 	return inside_flag;
 }
 
+void Scene::debugScreenScrolling(GraphicFrame *bg) {
+	// Horizontal scrolling
+	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP)
+		_startX -= SCROLL_STEP;
+	else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP)
+		_startX += SCROLL_STEP;
+
+	// Vertical scrolling
+	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP)
+		_startY -= SCROLL_STEP;
+	else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP)
+		_startY += SCROLL_STEP;
+}
+
 // WALK REGION DEBUG
-void Scene::ShowWalkRegion(PolyDefinitions *poly) {
+void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 	Graphics::Surface surface;
 	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1, poly->boundingRect.bottom - poly->boundingRect.top + 1, 1);
 
@@ -525,7 +504,7 @@ void Scene::ShowWalkRegion(PolyDefinitions *poly) {
 }
 
 // POLYGONS DEBUG
-void Scene::ShowPolygons() {
+void Scene::debugShowPolygons() {
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 		Graphics::Surface surface;
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
@@ -540,9 +519,6 @@ void Scene::ShowPolygons() {
 				poly.points[(i+1) % poly.numPoints].y - poly.boundingRect.top, 0xFF);
 		}
 		
-		// Draw Bounding Box
-		//surface.frameRect(Common::Rect(0, 0, surface.w, surface.h), 0xFF);   
-
 		copyToBackBufferClipped(&surface, poly.boundingRect.left, poly.boundingRect.top);
 
 		surface.free();
@@ -550,7 +526,7 @@ void Scene::ShowPolygons() {
 }
 
 // BARRIER DEBUGGING
-void Scene::ShowBarriers() {
+void Scene::debugShowBarriers() {
 	for (uint32 p = 0; p < _sceneResource->getWorldStats()->numBarriers; p++) {
 		Graphics::Surface surface;
 		BarrierItem b = _sceneResource->getWorldStats()->barriers[p];
