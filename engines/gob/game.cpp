@@ -275,6 +275,12 @@ void Game::playTot(int16 skipPlay) {
 					_vm->_draw->_fontToSprite[i].height = -1;
 				}
 
+				// Gobliiins music stopping
+				if (_vm->getGameType() == kGameTypeGob1) {
+					_vm->_sound->adlibStop();
+					_vm->_sound->cdStop();
+				}
+
 				_vm->_mult->initAll();
 				_vm->_mult->zeroMultData();
 
