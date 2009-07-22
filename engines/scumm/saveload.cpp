@@ -95,6 +95,10 @@ Common::Error ScummEngine::saveGameState(int slot, const char *desc) {
 }
 
 bool ScummEngine::canSaveGameStateCurrently() {
+	// For v4+ games do not allow to save in room 0
+	if (_game.version >= 4)
+		return (_currentRoom != 0);
+
 	// FIXME: For now always allow loading in V0-V3 games
 	// TODO: Should we disallow saving in some more places,
 	// e.g. when a SAN movie is playing? Not sure whether the

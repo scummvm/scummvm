@@ -439,7 +439,7 @@ ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 	new GUI::ButtonWidget(this, "ScummMain.Resume", "Resume", kPlayCmd, 'P');
 
 	new GUI::ButtonWidget(this, "ScummMain.Load", "Load", kLoadCmd, 'L');
-	new GUI::ButtonWidget(this, "ScummMain.Save", "Save", kSaveCmd, 'S');
+	_saveButton = new GUI::ButtonWidget(this, "ScummMain.Save", "Save", kSaveCmd, 'S');
 
 	new GUI::ButtonWidget(this, "ScummMain.Options", "Options", kOptionsCmd, 'O');
 #ifndef DISABLE_HELP
@@ -469,6 +469,15 @@ ScummMenuDialog::~ScummMenuDialog() {
 #endif
 	delete _saveDialog;
 	delete _loadDialog;
+}
+
+void ScummMenuDialog::reflowLayout() {
+	// For v4+ games do not allow to save in room 0 just as original did.
+	// It is not possible to load such saves
+	if ((_vm->_game.version >= 4) && (_vm->_currentRoom == 0))
+		_saveButton->setEnabled(false);
+
+	Dialog::reflowLayout();
 }
 
 void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
