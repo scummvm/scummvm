@@ -49,8 +49,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  KYRA:
    - Added support for PC Speaker based music and sound effects.
-   - Added support for 16 color dithering in Kyrandia PC-9801 (Japanese version
-     only).
+   - Added support for 16 color dithering in Kyrandia PC-9801.
 
 0.13.1 (2009-04-27)
  AGOS:
