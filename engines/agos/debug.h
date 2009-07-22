@@ -2549,7 +2549,7 @@ const char *const ww_videoOpcodeNameTable[] = {
 	"j|IF_EGA",
 	/* 60 */
 	"d|STOP_ANIMATE",
-	"d|VC_61",
+	"d|INTRO",
 	"|FASTFADEOUT",
 	"|FASTFADEIN",
 };
