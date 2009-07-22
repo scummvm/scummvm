@@ -489,11 +489,6 @@ int AgiEngine::agiInit() {
 
 	_game.mouseFence.setWidth(0); // Reset
 
-	_game.lastController = 0;
-	for (i = 0; i < MAX_DIRS; i++)
-		_game.controllerOccured[i] = false;
-
-
 	return ec;
 }
 
@@ -718,6 +713,12 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_predictiveDictLine = NULL;
 	_predictiveDictLineCount = 0;
 	_firstSlot = 0;
+
+	// NOTE: On game reload the keys do not get set again,
+	// thus it is incorrect to reset it in agiInit(). Fixes bug #2823762
+	_game.lastController = 0;
+	for (int i = 0; i < MAX_DIRS; i++)
+		_game.controllerOccured[i] = false;
 }
 
 void AgiEngine::initialize() {
