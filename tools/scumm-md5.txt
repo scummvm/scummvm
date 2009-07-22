@@ -262,79 +262,79 @@ monkey2	Monkey Island 2: LeChuck's Revenge
 	387a544b8b10b26912d8413bab63a853	-1	en	DOS	-	Demo	non-interactive	khalek
 
 atlantis	Indiana Jones and the Fate of Atlantis
-	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	-	Floppy	-	dhewg
-	20da6fce37805423966aaa8f3c2426aa	-1	fr	Amiga	-	Floppy	-	Joachim Eberhard
-	4f267a901719623de7dde83e47d5b474	-1	de	Amiga	-	Floppy	-	ghoostkilla
-	e534d29afb3c6e0ee9dc3d53c5956714	-1	de	Amiga	-	Floppy	alt?	Tobias Fleischer
-	5798972220cd458be2626d54c80f71d7	-1	it	Amiga	-	Floppy	-	Andrea Petrucci
-	15f588e887e857e8c56fe6ade4956168	-1	es	Amiga	-	Floppy	-	VooD
-	c63ee46143ba65f9ce14cf539ca51bd7	-1	en	DOS	-	Floppy	-	Andrea Petrucci
-	edfdb24a499d92c59f824c52987c0eec	-1	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
-	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	-	Floppy	-	Fingolfin
-	8f3758ff98c9c5d78e5d635222cad026	-1	it	DOS	-	Floppy	-	Andrea Petrucci
-	9bd2a8f72613e715c199246dd511e10f	-1	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
-	06b187468113f9ae5a400b148a847fac	12075	en	Mac	-	Floppy	six data files	Lars N sbye Christensen
-	d6dd0646404768a63e963891a96daadd	12035	en	Mac	-	Floppy	two data files	Fingolfin
+	3a03dab514e4038df192d8a8de469788	-1	en	Amiga	Floppy	Floppy	-	dhewg
+	20da6fce37805423966aaa8f3c2426aa	-1	fr	Amiga	Floppy	Floppy	-	Joachim Eberhard
+	4f267a901719623de7dde83e47d5b474	-1	de	Amiga	Floppy	Floppy	-	ghoostkilla
+	e534d29afb3c6e0ee9dc3d53c5956714	-1	de	Amiga	Floppy	Floppy	alt?	Tobias Fleischer
+	5798972220cd458be2626d54c80f71d7	-1	it	Amiga	Floppy	Floppy	-	Andrea Petrucci
+	15f588e887e857e8c56fe6ade4956168	-1	es	Amiga	Floppy	Floppy	-	VooD
+	c63ee46143ba65f9ce14cf539ca51bd7	-1	en	DOS	Floppy	Floppy	-	Andrea Petrucci
+	edfdb24a499d92c59f824c52987c0eec	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	1fbebd7b2b692df5297870447a80cfed	12030	de	DOS	Floppy	Floppy	-	Fingolfin
+	8f3758ff98c9c5d78e5d635222cad026	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
+	9bd2a8f72613e715c199246dd511e10f	-1	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
+	06b187468113f9ae5a400b148a847fac	12075	en	Mac	Floppy	Floppy	six data files	Lars N sbye Christensen
+	d6dd0646404768a63e963891a96daadd	12035	en	Mac	Floppy	Floppy	two data files	Fingolfin
 
-	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	CD	CD	-	Fingolfin
-	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	CD	CD	-	Scott Summers
-	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	CD	CD	Mac bundle	Joachim Eberhard
-	8e9417564f33790815445b2136efa667	11915	jp	Mac	CD	CD	-	Petr Maruska
+	182344899c2e2998fca0bebcd82aa81a	12035	en	DOS	-	CD	-	Fingolfin
+	1a6e5ae2777a6a33f06ffc0226210934	-1	en	Mac	-	CD	-	Scott Summers
+	2d9d46f23cb07bbc90b8ad464d3e4ff8	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+	8e9417564f33790815445b2136efa667	11915	jp	Mac	-	CD	-	Petr Maruska
 
-	c7be10f775404fd9785a8b92a06d240c	-1	en	FM-TOWNS	CD	-	-	dhewg, Andrea Petrucci
-	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	CD	-	-	Andrea Petrucci
+	c7be10f775404fd9785a8b92a06d240c	-1	en	FM-TOWNS	-	-	-	dhewg, Andrea Petrucci
+	4d34042713958b971cb139fba4658586	-1	jp	FM-TOWNS	-	-	-	Andrea Petrucci
 
-	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	-	Demo	-	
-	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	-	Demo	-	Simon Krumrein, sev
-	99b6f822b0b2612415407865438697d6	-1	en	DOS	CD	Demo	non-interactive	
-	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	CD	Demo	non-interactive	khalek, Fingolfin
+	035deab53b47bc43abc763560d0f8d4b	-1	en	DOS	Floppy	Demo	-	
+	98744fe66ff730e8c2b3b1f58803ab0b	-1	en	DOS	Floppy	Demo	-	Simon Krumrein, sev
+	99b6f822b0b2612415407865438697d6	-1	en	DOS	-	Demo	non-interactive	
+	28d24a33448fab6795850bc9f159a4a2	11170	jp	FM-TOWNS	-	Demo	non-interactive	khalek, Fingolfin
 
 tentacle	Day of the Tentacle
-	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	-	Floppy	Version A ?	
-	2723fea3dae0cb47768c424b145ae0e7	7932	en	DOS	-	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci, Fingolfin
-	92b078d9d6d9d751da9c26b8b3075779	-1	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
-	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	-	Floppy	alt?	Nicolas Joly
-	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	-	Floppy	-	Andrej Sinicyn, Andrea Petrucci
-	50fcdc982a25063b78ad46bf389b8e8d	-1	it	DOS	-	Floppy	-	Andrea Petrucci
-	ae94f110a14ce71fc515d5b648827a8f	-1	es	DOS	-	Floppy	-	abnog, Andrea Petrucci
+	acad97ab1c6fc2a5b2d98abf6db4a190	-1	en	All?	Floppy	Floppy	Version A ?	
+	2723fea3dae0cb47768c424b145ae0e7	7932	en	DOS	Floppy	Floppy	Version B ?	Andrej Sinicyn, Andrea Petrucci, Fingolfin
+	92b078d9d6d9d751da9c26b8b3075779	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	94aaedbb8f26d71ed3ad6dd34490e29e	-1	fr	DOS	Floppy	Floppy	alt?	Nicolas Joly
+	57b0d89af79befe1cabce3bece869e7f	-1	de	DOS	Floppy	Floppy	-	Andrej Sinicyn, Andrea Petrucci
+	50fcdc982a25063b78ad46bf389b8e8d	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
+	ae94f110a14ce71fc515d5b648827a8f	-1	es	DOS	Floppy	Floppy	-	abnog, Andrea Petrucci
 
-	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	CD	CD	-	Fingolfin
-	8aa05d3cdb0e795436043f0546af2da2	-1	fr	All?	CD	CD?	-	Andrea Petrucci
-	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	CD	CD	-	Fingolfin
-	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	CD	CD	-	Andrea Petrucci
-	883af4b0af4f77a92f1dcf1d0a283140	-1	es	All?	CD	CD	-	Andrea Petrucci
-	cc04a076779379524ed4d9c5ee3c6fb1	282467632	en	Mac	CD	CD	Mac bundle	Fingolfin, Joachim Eberhard
-	ede149fda3edfc1dbd7347e0737cb583	-1	fr	Mac	CD	CD	Mac bundle	ThierryFR
-	f73883f13b5a302749a5bad31d909780	-1	de	Mac	CD	CD	Mac bundle	morrissey
+	4167a92a1d46baa4f4127d918d561f88	7932	en	All?	-	CD	-	Fingolfin
+	8aa05d3cdb0e795436043f0546af2da2	-1	fr	All?	-	CD?	-	Andrea Petrucci
+	6e959d65358eedf9b68b81e304b97fa4	7932	de	All?	-	CD	-	Fingolfin
+	4fbbe9f64b8bc547503a379a301183ce	-1	it	All?	-	CD	-	Andrea Petrucci
+	883af4b0af4f77a92f1dcf1d0a283140	-1	es	All?	-	CD	-	Andrea Petrucci
+	cc04a076779379524ed4d9c5ee3c6fb1	282467632	en	Mac	-	CD	Mac bundle	Fingolfin, Joachim Eberhard
+	ede149fda3edfc1dbd7347e0737cb583	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
+	f73883f13b5a302749a5bad31d909780	-1	de	Mac	-	CD	Mac bundle	morrissey
 
-	c83079157ec765a28de445aec9768d60	7477	en	All	CD	Demo	-	Fingolfin
-	17fa250eb72dae2dad511ba79c0b6b0a	-1	fr	DOS	CD	Demo	-	cyx
-	ac1642b6edfb8521ca03760126f1c250	-1	de	DOS	CD	Demo	-	Simon Krumrein, sev
-	2a41b53cf1a90b6e6f26c10cc6041084	2439158	en	Mac	CD	Demo	Mac bundle	Fingolfin
+	c83079157ec765a28de445aec9768d60	7477	en	All	-	Demo	-	Fingolfin
+	17fa250eb72dae2dad511ba79c0b6b0a	-1	fr	DOS	-	Demo	-	cyx
+	ac1642b6edfb8521ca03760126f1c250	-1	de	DOS	-	Demo	-	Simon Krumrein, sev
+	2a41b53cf1a90b6e6f26c10cc6041084	2439158	en	Mac	-	Demo	Mac bundle	Fingolfin
 
 samnmax	Sam &amp; Max Hit the Road
-	3b301b7892f883ce42ab4be6a274fea6	-1	en	DOS	-	Floppy	-	Andrea Petrucci
-	a3036878840720fbefa41e6965fa4a0a	-1	en	DOS	-	Floppy	alt?	Andrea Petrucci
-	ef347474f3c7be3b29584eaa133cca05	-1	fr	DOS	-	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
-	f27b1ba0eadaf2a6617b2b58192d1dbf	-1	de	DOS	-	Floppy	-	dhewg, Andrea Petrucci
-	b289a2a8cbedbf45786e0b4ad2f510f1	-1	it	DOS	-	Floppy	-	Andrea Petrucci
-	fc53ce0e5f6562b1c1e1b4b8203acafb	-1	es	DOS	-	Floppy	-	Andrea Petrucci
+	3b301b7892f883ce42ab4be6a274fea6	-1	en	DOS	Floppy	Floppy	-	Andrea Petrucci
+	a3036878840720fbefa41e6965fa4a0a	-1	en	DOS	Floppy	Floppy	alt?	Andrea Petrucci
+	ef347474f3c7be3b29584eaa133cca05	-1	fr	DOS	Floppy	Floppy	-	Nicolas Sauz&egrave;de, Andrea Petrucci
+	f27b1ba0eadaf2a6617b2b58192d1dbf	-1	de	DOS	Floppy	Floppy	-	dhewg, Andrea Petrucci
+	b289a2a8cbedbf45786e0b4ad2f510f1	-1	it	DOS	Floppy	Floppy	-	Andrea Petrucci
+	fc53ce0e5f6562b1c1e1b4b8203acafb	-1	es	DOS	Floppy	Floppy	-	Andrea Petrucci
 
-	d917f311a448e3cc7239c31bddb00dd2	9080	en	All?	CD	CD	-	Fingolfin
-	7edd665bbede7ea8b7233f8e650be6f8	-1	fr	All?	CD	CD	-	Andrea Petrucci
-	0fb73eddfcf584c02ba097984df131ba	9080	de	All?	CD	CD	-	Fingolfin
-	0f6f2e716ba896a44e5059bba1de7ca9	-1	it	All?	CD	CD	-	Andrea Petrucci
-	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	CD	CD	-	Andrea Petrucci
-	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	CD	CD	-	
-	166553538ff320c69edafeee29525419	-1	en	Mac	CD	CD	Mac bundle	Joachim Eberhard
-	3a5d13675e9a23aedac0bac7730f0ac1	-1	fr	Mac	CD	CD	Mac bundle	ThierryFR
+	d917f311a448e3cc7239c31bddb00dd2	9080	en	All?	-	CD	-	Fingolfin
+	7edd665bbede7ea8b7233f8e650be6f8	-1	fr	All?	-	CD	-	Andrea Petrucci
+	0fb73eddfcf584c02ba097984df131ba	9080	de	All?	-	CD	-	Fingolfin
+	0f6f2e716ba896a44e5059bba1de7ca9	-1	it	All?	-	CD	-	Andrea Petrucci
+	4ba7fb331296c283e73d8f5b2096e551	-1	es	All?	-	CD	-	Andrea Petrucci
+	d43352a805d78b5f4936c6d7779bf575	-1	ru	DOS	-	CD	-	
+	166553538ff320c69edafeee29525419	-1	en	Mac	-	CD	Mac bundle	Joachim Eberhard
+	3a5d13675e9a23aedac0bac7730f0ac1	-1	fr	Mac	-	CD	Mac bundle	ThierryFR
 
-	c3196c5349e53e387aaff1533d95e53a	-1	en	DOS	-	Demo	-	
-	0e4c5d54a0ad4b26132e78b5ea76642a	6485	en	DOS	-	Demo	WIP	Fingolfin
-	d9d0dd93d16ab4dec55cabc2b86bbd17	6478	en	DOS	CD	Demo	non-interactive	Fingolfin
-	cc8ba2b0df2f9c450bcf055fe2711979	7485	de	DOS	-	Demo	-	Simon Krumrein, sev, Fingolfin
-	0425954a9db5c340861672892c3e678d	-1	en	All	CD	Demo	-	Kirben
-	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	CD	Demo	Mac bundle	Fingolfin
+	c3196c5349e53e387aaff1533d95e53a	-1	en	DOS	Floppy	Demo	-	
+	0e4c5d54a0ad4b26132e78b5ea76642a	6485	en	DOS	Floppy	Demo	WIP	Fingolfin
+	d9d0dd93d16ab4dec55cabc2b86bbd17	6478	en	DOS	-	Demo	non-interactive	Fingolfin
+	cc8ba2b0df2f9c450bcf055fe2711979	7485	de	DOS	Floppy	Demo	-	Simon Krumrein, sev, Fingolfin
+	0425954a9db5c340861672892c3e678d	-1	en	All	-	Demo	-	Kirben
+	6dead580b0ff14d5f7b33b4219f04159	16556335	en	Mac	-	Demo	Mac bundle	Fingolfin
 
 ft	Full Throttle
 	41958e24d03181ff9a381a66d048a581	-1	br	All?	-	-	-	Danilo E.S.
