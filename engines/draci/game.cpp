@@ -195,7 +195,7 @@ void Game::loop() {
 			// the current height of the dragon's sprite
 			// We also need to do this before we change the frames' scaled dimensions
 			// so setRelative() can correctly delete the old frame
-			y -= scaleY * height;
+			y -= (int)(scaleY * height);
 			anim->setRelative(x, y);
 
 			// Set the scaled dimensions for all frames
@@ -203,8 +203,8 @@ void Game::loop() {
 				frame = anim->getFrame(i);				
 
 				// Calculate scaled dimensions
-				uint scaledWidth = scaleX * frame->getWidth();
-				uint scaledHeight = scaleY * frame->getHeight();
+				uint scaledWidth = (uint)(scaleX * frame->getWidth());
+				uint scaledHeight = (uint)(scaleY * frame->getHeight());
 
 				frame->setScaled(scaledWidth, scaledHeight);
 			}
@@ -386,8 +386,8 @@ int Game::loadAnimation(uint animNum, uint z) {
 		uint scaledWidth = animationReader.readUint16LE();
 		uint scaledHeight = animationReader.readUint16LE();
 		byte mirror = animationReader.readByte();
-		uint sample = animationReader.readUint16LE();
-		uint freq = animationReader.readUint16LE();
+		/* uint sample = */ animationReader.readUint16LE();
+		/* uint freq = */ animationReader.readUint16LE();
 		uint delay = animationReader.readUint16LE();
 
 		BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
