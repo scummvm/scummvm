@@ -33,8 +33,6 @@ Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_z = 0;
 	_relX = 0;
 	_relY = 0;
-	_scaleX = 1.0;
-	_scaleY = 1.0;
 	setPlaying(false);
 	_looping = false;
 	_tick = _vm->_system->getMillis();
@@ -54,35 +52,12 @@ void Animation::setRelative(int relx, int rely) {
 	// Delete the previous frame
 	Common::Rect frameRect;
 
-	if (isScaled()) {
-		frameRect = getFrame()->getScaledRect(_scaleX, _scaleY);
-	} else {
-		frameRect = getFrame()->getRect();
-	}
-
+	frameRect = getFrame()->getRect();
 	frameRect.translate(_relX, _relY);
 	_vm->_screen->getSurface()->markDirtyRect(frameRect);
 
 	_relX = relx;
 	_relY = rely;
-}
-
-void Animation::setScaling(double scalex, double scaley) {
-	
-	_scaleX = scalex;
-	_scaleY = scaley;
-}
-
-bool Animation::isScaled() const {
-	return !(_scaleX == 1.0 && _scaleY == 1.0);
-}
-
-double Animation::getScaleX() const {
-	return _scaleX;
-}
-
-double Animation::getScaleY() const {
-	return _scaleY;
 }
 
 void Animation::setLooping(bool looping) {
@@ -100,12 +75,7 @@ void Animation::nextFrame(bool force) {
 	Drawable *frame = _frames[_currentFrame];
 
 	Common::Rect frameRect;
-
-	if (isScaled()) {
-		frameRect = frame->getScaledRect(_scaleX, _scaleY);
-	} else {
-		frameRect = frame->getRect();
-	}
+	frameRect = frame->getRect();
 	
 	// Translate rectangle to compensate for relative coordinates	
 	frameRect.translate(_relX, _relY);
@@ -124,9 +94,9 @@ void Animation::nextFrame(bool force) {
 	}
 
 	debugC(6, kDraciAnimationDebugLevel, 
-	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d", 
+	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d", 
 	_id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(), 
-	_currentFrame, _frames.size());
+	_currentFrame, _frames.size(), frame->getX(), frame->getY());
 }
 
 uint Animation::nextFrameNum() {
@@ -143,32 +113,29 @@ void Animation::drawFrame(Surface *surface) {
 	if (_frames.size() == 0 || !_playing)
 		return;
 
-	if (_id == kOverlayImage) {			
-		_frames[_currentFrame]->drawScaled(surface, _scaleX, _scaleY, false);
-	}
-	else {
-		Drawable *ptr = _frames[_currentFrame];
+	Drawable *frame = _frames[_currentFrame];
 
-		int x = ptr->getX();
-		int y = ptr->getY();
+	if (_id == kOverlayImage) {			
+		frame->draw(surface, false);
+	} else {
+
+		int x = frame->getX();
+		int y = frame->getY();
 
 		// Take account relative coordinates
 		int newX = x + _relX;
 		int newY = y + _relY;
 
 		// Translate the frame to those relative coordinates
-		ptr->setX(newX);
-		ptr->setY(newY);
+		frame->setX(newX);
+		frame->setY(newY);
 
 		// Draw frame
-		if (isScaled())
-			ptr->drawScaled(surface, _scaleX, _scaleY, true);
-		else
-			ptr->drawScaled(surface, _scaleX, _scaleY, true);
+		frame->drawScaled(surface, true);
 
 		// Revert back to old coordinates
-		ptr->setX(x);
-		ptr->setY(y);
+		frame->setX(x);
+		frame->setY(y);
 	}
 }
 
@@ -261,11 +228,7 @@ void AnimationManager::stop(int id) {
 	// Clean up the last frame that was drawn before stopping
 	Common::Rect frameRect;
 
-	if (anim->isScaled()) {
-		frameRect = anim->getFrame()->getScaledRect(anim->getScaleX(), anim->getScaleY());
-	} else {
-		frameRect = anim->getFrame()->getRect();
-	}
+	frameRect = anim->getFrame()->getRect();
 
 	frameRect.translate(anim->getRelativeX(), anim->getRelativeY());
 	_vm->_screen->getSurface()->markDirtyRect(frameRect);

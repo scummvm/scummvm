@@ -61,8 +61,13 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y,
 
 	 _width = width;
 	 _height = height;
+
+	_scaledWidth = _width;
+	_scaledHeight = _height;
+
 	 _x = x;
 	 _y = y;
+
 	_delay = 0;
 
 	_mirror = false;
@@ -86,6 +91,7 @@ Sprite::Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise)
 
 	 _x = x;
 	 _y = y;
+
 	_delay = 0;
 
 	_mirror = false;	
@@ -94,6 +100,9 @@ Sprite::Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise)
 
 	_width = reader.readSint16LE();
 	_height = reader.readSint16LE();
+
+	_scaledWidth = _width;
+	_scaledHeight = _height;
 
 	_data = new byte[_width * _height];
 
@@ -118,10 +127,10 @@ void Sprite::setMirrorOff() {
 }
 
 // TODO: Research what kind of sampling the original player uses
-void Sprite::drawScaled(Surface *surface, double scaleX, double scaleY, bool markDirty) const {
+void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 	Common::Rect sourceRect(0, 0, _width, _height);
-	Common::Rect destRect(_x, _y, _x + getScaledWidth(scaleX), _y + getScaledHeight(scaleY));
+	Common::Rect destRect(_x, _y, _x + _scaledWidth, _y + _scaledHeight);
 	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
 	Common::Rect clippedDestRect(destRect);
 
@@ -151,6 +160,10 @@ void Sprite::drawScaled(Surface *surface, double scaleX, double scaleY, bool mar
 
 	int *rowIndices = new int[rows];
 	int *columnIndices = new int[columns];
+
+	// Calculate scaling factors
+	double scaleX = double(_scaledWidth) / _width;
+	double scaleY = double(_scaledHeight) / _height;
 
 	// Precalculate pixel indexes
 	for (int i = 0; i < rows; ++i) {
@@ -258,20 +271,11 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 	}
 }
 
-Common::Rect Sprite::getRect() const {
-	return Common::Rect(_x, _y, _x + _width, _y + _height);
-}
-
-Common::Rect Sprite::getScaledRect(double scaleX, double scaleY) const {
-	return Common::Rect(_x, _y, _x + getScaledWidth(scaleX), _y + getScaledHeight(scaleY));
-}
-
-uint Sprite::getScaledHeight(double scaleY) const {
-	return lround(scaleY * _height);
-}
-
-uint Sprite::getScaledWidth(double scaleX) const {
-	return lround(scaleX * _width);
+Common::Rect Sprite::getRect(bool scaled) const {
+	if (scaled) 
+		return Common::Rect(_x, _y, _x + _scaledWidth, _y + _scaledHeight);
+	else
+		return Common::Rect(_x, _y, _x + _width, _y + _height);
 }
 
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
@@ -293,6 +297,9 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 
 	_width = _font->getStringWidth(str, _spacing);
 	_height = _font->getFontHeight();
+
+	_scaledWidth = _width;
+	_scaledHeight = _height;
 } 
 
 Text::~Text() {

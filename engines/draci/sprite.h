@@ -38,16 +38,20 @@ friend class Text;
 
 public:
 	virtual void draw(Surface *surface, bool markDirty = true) const = 0;
-	virtual void drawScaled(Surface *surface, double scaleX, double scaleY, 
-		bool markDirty = true) const = 0;
+	virtual void drawScaled(Surface *surface, bool markDirty = true) const = 0;
 
 	virtual ~Drawable() {};
 	
 	virtual uint16 getWidth() { return _width; }
 	virtual uint16 getHeight() { return _height; }
 
-	virtual uint getScaledWidth(double scaleX) const = 0;
-	virtual uint getScaledHeight(double scaleY) const = 0;
+	virtual uint getScaledWidth() const { return _scaledWidth; }
+	virtual uint getScaledHeight() const { return _scaledHeight; }
+
+	virtual void setScaled(uint width, uint height) { 
+		_scaledWidth = width;
+		_scaledHeight = height;
+	}
 
 	virtual int getX() { return _x; }
 	virtual int getY() { return _y; }
@@ -58,13 +62,14 @@ public:
 	void setDelay(int delay) { _delay = delay; }
 	int getDelay() { return _delay; }	
 
-	virtual Common::Rect getRect() const = 0;
-	virtual	Common::Rect getScaledRect(double scaleX, double scaleY) const = 0;
+	virtual Common::Rect getRect(bool scaled = true) const = 0;
 	
 private:
-	uint16 _width;	//!< Width of the sprite
-	uint16 _height;	//!< Height of the sprite
-	int _x, _y;	//!< Sprite coordinates
+	uint16 _width;		//!< Width of the sprite
+	uint16 _height;		//!< Height of the sprite
+	uint _scaledWidth; 	//!< Scaled width of the sprite
+	uint _scaledHeight; //!< Scaled height of the sprite
+	int _x, _y;			//!< Sprite coordinates
 
 	/** The time a drawable should stay on the screen 
 	 *  before being replaced by another or deleted
@@ -89,23 +94,18 @@ class Sprite : public Drawable {
 
 public:
 	Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
-
 	
 	Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise); 
 
 	~Sprite();
 
 	void draw(Surface *surface, bool markDirty = true) const;
-	void drawScaled(Surface *surface, double scaleX, double scaleY, bool markDirty = true) const;
+	void drawScaled(Surface *surface, bool markDirty = true) const;
 	
 	void setMirrorOn();
 	void setMirrorOff();
 
-	virtual Common::Rect getRect() const;
-	Common::Rect getScaledRect(double scaleX, double scaleY) const;
-
-	virtual uint getScaledWidth(double scaleX) const;
-	virtual uint getScaledHeight(double scaleY) const;
+	virtual Common::Rect getRect(bool scaled = true) const;
 
 	const byte *getBuffer() const { return _data; }
 

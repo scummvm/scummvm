@@ -62,11 +62,6 @@ public:
 	bool isLooping();
 	void setLooping(bool looping);
 
-	double getScaleX() const;
-	double getScaleY() const;
-	void setScaling(double scalex, double scaley);
-	bool isScaled() const;
-
 	void setRelative(int relx, int rely);
 	int getRelativeX();
 	int getRelativeY();
@@ -81,9 +76,6 @@ private:
 
 	int _relX;
 	int _relY;
-
-	double _scaleX;
-	double _scaleY;
 
 	uint _tick;
 	bool _playing;

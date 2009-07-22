@@ -176,26 +176,32 @@ void Game::loop() {
 			int animID = getObject(kDragonObject)->_anims[0];
 
 			Animation *anim = _vm->_anims->getAnimation(animID);
-			Drawable *frame = anim->getFrame();
 
-			// Calculate scaling factor
+			// Calculate scaling factors
 			double scaleX = _currentRoom._pers0 + _currentRoom._persStep * y;
 			double scaleY = scaleX;
 
-			// Calculate scaled height of sprite
-			int height = frame->getScaledHeight(scaleY);
+			Drawable *frame;
+
+			// Set the scaled dimensions for all frames
+			for (uint i = 0; i < anim->getFramesNum(); ++i) {
+				frame = anim->getFrame(i);				
+
+				// Calculate scaled dimensions
+				uint scaledWidth = scaleX * frame->getWidth();
+				uint scaledHeight = scaleY * frame->getHeight();
+
+				frame->setScaled(scaledWidth, scaledHeight);
+			}
 
 			// Set the Z coordinate for the dragon's animation
 			anim->setZ(y+1);
 
 			// We naturally want the dragon to position its feet to the location of the
 			// click but sprites are drawn from their top-left corner so we subtract
-			// the height of the dragon's sprite
-			y -= height;
+			// the current height of the dragon's sprite
+			y -= frame->getScaledHeight();
 			anim->setRelative(x, y);
-
-			// Set the scaling factor
-			anim->setScaling(scaleX, scaleY);
 
 			// Play the animation
 			_vm->_anims->play(animID);
@@ -238,7 +244,6 @@ void Game::loadRoom(int roomNum) {
 
 	for (int i = 5; i >= 0; --i) {
 		real[i] = roomReader.readByte();
-		debug(2, "%d", real[i]);
 	}
 
 	_currentRoom._pers0 = real_to_double(real);
@@ -372,8 +377,8 @@ int Game::loadAnimation(uint animNum, uint z) {
 		uint spriteNum = animationReader.readUint16LE() - 1;
 		int x = animationReader.readSint16LE();
 		int y = animationReader.readSint16LE();
-		uint zoomX = animationReader.readUint16LE();
-		uint zoomY = animationReader.readUint16LE();
+		uint scaledWidth = animationReader.readUint16LE();
+		uint scaledHeight = animationReader.readUint16LE();
 		byte mirror = animationReader.readByte();
 		uint sample = animationReader.readUint16LE();
 		uint freq = animationReader.readUint16LE();
@@ -382,6 +387,8 @@ int Game::loadAnimation(uint animNum, uint z) {
 		BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
 
 		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, true);
+
+		sp->setScaled(scaledWidth, scaledHeight);
 
 		if (mirror) 
 			sp->setMirrorOn();
