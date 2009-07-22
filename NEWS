@@ -44,6 +44,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Introduced a new savegame format to fix a fatal flaw of the old one,
      breaking compatibility with old savegames made on big-endian systems.
 
+ Groovie:
+   - Increased microscope puzzle difficulty to match original.
+
  KYRA:
    - Added support for PC Speaker based music and sound effects.
    - Added support for 16 color dithering in Kyrandia PC-9801 (Japanese version
