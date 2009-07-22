@@ -42,31 +42,31 @@ public:
 
 	virtual ~Drawable() {};
 	
-	virtual uint16 getWidth() { return _width; }
-	virtual uint16 getHeight() { return _height; }
+	uint getWidth() const { return _width; }
+	uint getHeight() const { return _height; }
 
-	virtual uint getScaledWidth() const { return _scaledWidth; }
-	virtual uint getScaledHeight() const { return _scaledHeight; }
+	uint getScaledWidth() const { return _scaledWidth; }
+	uint getScaledHeight() const { return _scaledHeight; }
 
-	virtual void setScaled(uint width, uint height) { 
+	void setScaled(uint width, uint height) { 
 		_scaledWidth = width;
 		_scaledHeight = height;
 	}
 
-	virtual int getX() { return _x; }
-	virtual int getY() { return _y; }
+	int getX() const { return _x; }
+	int getY() const { return _y; }
 
-	virtual void setX(int x) { _x = x; }
-	virtual void setY(int y) { _y = y; }
+	void setX(int x) { _x = x; }
+	void setY(int y) { _y = y; }
 
 	void setDelay(int delay) { _delay = delay; }
-	int getDelay() { return _delay; }	
+	int getDelay() const { return _delay; }	
 
 	virtual Common::Rect getRect(bool scaled = true) const = 0;
 	
 private:
-	uint16 _width;		//!< Width of the sprite
-	uint16 _height;		//!< Height of the sprite
+	uint _width;		//!< Width of the sprite
+	uint _height;		//!< Height of the sprite
 	uint _scaledWidth; 	//!< Scaled width of the sprite
 	uint _scaledHeight; //!< Scaled height of the sprite
 	int _x, _y;			//!< Sprite coordinates
@@ -105,7 +105,7 @@ public:
 	void setMirrorOn();
 	void setMirrorOff();
 
-	virtual Common::Rect getRect(bool scaled = true) const;
+	Common::Rect getRect(bool scaled = true) const;
 
 	const byte *getBuffer() const { return _data; }
 
@@ -127,7 +127,7 @@ public:
 	
 	void draw(Surface *surface, bool markDirty = true) const;
 
-	virtual Common::Rect getRect() const;
+	Common::Rect getRect() const;
 
 private:
 	byte *_text;
