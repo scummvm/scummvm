@@ -421,4 +421,26 @@ int AgiEngine::waitAnyKey() {
 	return key;
 }
 
+bool AgiEngine::isKeypress(void) {
+	processEvents();
+	return _keyQueueStart != _keyQueueEnd;
+}
+
+int AgiEngine::getKeypress(void) {
+	int k;
+
+	while (_keyQueueStart == _keyQueueEnd)	// block
+		pollTimer();
+
+	keyDequeue(k);
+
+	return k;
+}
+
+void AgiEngine::clearKeyQueue(void) {
+	while (isKeypress()) {
+		getKeypress();
+	}
+}
+
 } // End of namespace Agi
