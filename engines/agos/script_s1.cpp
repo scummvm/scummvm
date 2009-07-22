@@ -576,18 +576,15 @@ void AGOSEngine_Simon1::os1_specialFade() {
 	// 187: fade to black
 	uint i;
 
-	memcpy(_videoBuf1, _currentPalette, 4 * 256);
-
 	for (i = 32; i != 0; --i) {
-		paletteFadeOut(_videoBuf1, 32, 8);
-		paletteFadeOut(_videoBuf1 + 4 * 48, 144, 8);
-		paletteFadeOut(_videoBuf1 + 4 * 208, 48, 8);
-		_system->setPalette(_videoBuf1, 0, 256);
+		paletteFadeOut(_currentPalette, 32, 8);
+		paletteFadeOut(_currentPalette + 4 * 48, 144, 8);
+		paletteFadeOut(_currentPalette + 4 * 208, 48, 8);
+		_system->setPalette(_currentPalette, 0, 256);
 		delay(5);
 	}
 
-	memcpy(_currentPalette, _videoBuf1, 1024);
-	memcpy(_displayPalette, _videoBuf1, 1024);
+	memcpy(_displayPalette, _currentPalette, 1024);
 }
 
 void AGOSEngine::scriptMouseOff() {
