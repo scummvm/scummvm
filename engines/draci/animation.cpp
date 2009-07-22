@@ -33,7 +33,7 @@ Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_z = 0;
 	_relX = 0;
 	_relY = 0;
-	setPlaying(false);
+	_playing = false;
 	_looping = false;
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
@@ -87,8 +87,11 @@ void Animation::nextFrame(bool force) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
 		if ((_currentFrame == getFramesNum() - 1) && !_looping) {
+			// When the animation reaches its end, stop it
+			_vm->_anims->stop(_id);
+
+			// Reset the frame to 0
 			_currentFrame = 0;
-			setPlaying(false);
 		} else {
 			// Mark old frame dirty so it gets deleted
 			markDirtyRect(surface);
@@ -213,7 +216,6 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	anim->setID(id);
 	anim->setZ(z);
 	anim->setPlaying(playing);
-	anim->setLooping(false);
 
 	insertAnimation(anim);
 

@@ -321,10 +321,10 @@ void Game::loadRoom(int roomNum) {
 
 	// HACK: Gates' scripts shouldn't be run unconditionally
 	// This is for testing
-	for (uint i = 0; i < _currentRoom._numGates; ++i) {
-		debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
-		_vm->_script->run(_currentRoom._program, gates[i]);
-	}
+	//for (uint i = 0; i < _currentRoom._numGates; ++i) {
+	//	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
+	//	_vm->_script->run(_currentRoom._program, gates[i]);
+	//}
 
 	// Set room palette
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
