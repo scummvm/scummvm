@@ -181,7 +181,22 @@ void Game::loop() {
 			double scaleX = _currentRoom._pers0 + _currentRoom._persStep * y;
 			double scaleY = scaleX;
 
-			Drawable *frame;
+			// Set the Z coordinate for the dragon's animation
+			anim->setZ(y+1);
+
+			// Fetch current frame
+			Drawable *frame = anim->getFrame();
+
+			// Fetch base height of the frame
+			uint height = frame->getHeight();
+
+			// We naturally want the dragon to position its feet to the location of the
+			// click but sprites are drawn from their top-left corner so we subtract
+			// the current height of the dragon's sprite
+			// We also need to do this before we change the frames' scaled dimensions
+			// so setRelative() can correctly delete the old frame
+			y -= scaleY * height;
+			anim->setRelative(x, y);
 
 			// Set the scaled dimensions for all frames
 			for (uint i = 0; i < anim->getFramesNum(); ++i) {
@@ -193,15 +208,6 @@ void Game::loop() {
 
 				frame->setScaled(scaledWidth, scaledHeight);
 			}
-
-			// Set the Z coordinate for the dragon's animation
-			anim->setZ(y+1);
-
-			// We naturally want the dragon to position its feet to the location of the
-			// click but sprites are drawn from their top-left corner so we subtract
-			// the current height of the dragon's sprite
-			y -= frame->getScaledHeight();
-			anim->setRelative(x, y);
 
 			// Play the animation
 			_vm->_anims->play(animID);

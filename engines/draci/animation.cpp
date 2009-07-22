@@ -50,11 +50,7 @@ bool Animation::isLooping() {
 void Animation::setRelative(int relx, int rely) {
 
 	// Delete the previous frame
-	Common::Rect frameRect;
-
-	frameRect = getFrame()->getRect();
-	frameRect.translate(_relX, _relY);
-	_vm->_screen->getSurface()->markDirtyRect(frameRect);
+	markDirtyRect(_vm->_screen->getSurface());
 
 	_relX = relx;
 	_relY = rely;
@@ -66,6 +62,18 @@ void Animation::setLooping(bool looping) {
 		looping, _id);
 }
 
+void Animation::markDirtyRect(Surface *surface) {
+	// Fetch the current frame's rectangle
+	Drawable *frame = _frames[_currentFrame];
+	Common::Rect frameRect = frame->getRect();			
+
+	// Translate rectangle to compensate for relative coordinates	
+	frameRect.translate(_relX, _relY);
+
+	// Mark the rectangle dirty on the surface
+	surface->markDirtyRect(frameRect);
+}	
+
 void Animation::nextFrame(bool force) {
 
 	// If there's only one or no frames, or if the animation is not playing, return
@@ -73,13 +81,8 @@ void Animation::nextFrame(bool force) {
 		return;
 
 	Drawable *frame = _frames[_currentFrame];
-
-	Common::Rect frameRect;
-	frameRect = frame->getRect();
+	Surface *surface = _vm->_screen->getSurface();
 	
-	// Translate rectangle to compensate for relative coordinates	
-	frameRect.translate(_relX, _relY);
-
 	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis())) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
@@ -87,9 +90,14 @@ void Animation::nextFrame(bool force) {
 			_currentFrame = 0;
 			setPlaying(false);
 		} else {
-			_vm->_screen->getSurface()->markDirtyRect(frameRect);
+			// Mark old frame dirty so it gets deleted
+			markDirtyRect(surface);
+
 			_currentFrame = nextFrameNum();
 			_tick = _vm->_system->getMillis();
+
+			// Fetch new frame and mark it dirty
+			markDirtyRect(surface);
 		}
 	}
 
@@ -131,7 +139,7 @@ void Animation::drawFrame(Surface *surface) {
 		frame->setY(newY);
 
 		// Draw frame
-		frame->drawScaled(surface, true);
+		frame->drawScaled(surface, false);
 
 		// Revert back to old coordinates
 		frame->setX(x);
@@ -215,6 +223,9 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 void AnimationManager::play(int id) {
 	Animation *anim = getAnimation(id);
 
+	// Mark the first frame dirty so it gets displayed
+	anim->markDirtyRect(_vm->_screen->getSurface());
+
 	if (anim) {
 		anim->setPlaying(true);
 
@@ -226,12 +237,7 @@ void AnimationManager::stop(int id) {
 	Animation *anim = getAnimation(id);
 	
 	// Clean up the last frame that was drawn before stopping
-	Common::Rect frameRect;
-
-	frameRect = anim->getFrame()->getRect();
-
-	frameRect.translate(anim->getRelativeX(), anim->getRelativeY());
-	_vm->_screen->getSurface()->markDirtyRect(frameRect);
+	anim->markDirtyRect(_vm->_screen->getSurface());
 
 	if (anim) {
 		anim->setPlaying(false);

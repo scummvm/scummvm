@@ -66,6 +66,8 @@ public:
 	int getRelativeX();
 	int getRelativeY();
 
+	void markDirtyRect(Surface *surface);
+
 private:
 	
 	uint nextFrameNum();
