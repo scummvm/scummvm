@@ -180,7 +180,7 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 		// Fetch index of current row to be drawn
 		int row = rowIndices[i];
 		
-		for (int j = 0, q = sourceRect.left; j < columns; ++j, ++q) {
+		for (int j = 0; j < columns; ++j) {
 			
 			// Fetch index of current column to be drawn
 			int column = columnIndices[j];
@@ -190,9 +190,9 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 				// Draw the sprite mirrored if the _mirror flag is set						
 				if (_mirror) {
-					dst[sourceRect.right - q - 1] = src[row * _width + column];
+					dst[sourceRect.left + columns - j - 1] = src[row * _width + column];
 				} else {
-					dst[q] = src[row * _width + column];
+					dst[sourceRect.left + j] = src[row * _width + column];
 				}
 			}
 		}
