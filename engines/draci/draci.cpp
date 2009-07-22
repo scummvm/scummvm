@@ -196,9 +196,11 @@ int DraciEngine::go() {
 		}
 
 		// Show walking map overlay
-		if (showWalkingMap) {
+		// If the walking map overlay is already in the wanted state don't
+		// start / stop it constantly
+		if (showWalkingMap && !_anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
 			_anims->play(kWalkingMapOverlay);
-		} else {
+		} else if (!showWalkingMap && _anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
 			_anims->stop(kWalkingMapOverlay);
 		}
 
