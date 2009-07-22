@@ -388,6 +388,17 @@ int Game::loadAnimation(uint animNum, uint z) {
 
 		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, true);
 
+		// Some frames set the scaled dimensions to 0 even though other frames
+		// from the same animations have them set to normal values
+		// We work around this by assuming it means no scaling is necessary
+		if (scaledWidth == 0) {
+			scaledWidth = sp->getWidth();
+		}
+
+		if (scaledHeight == 0) {
+			scaledHeight = sp->getHeight();
+		}
+
 		sp->setScaled(scaledWidth, scaledHeight);
 
 		if (mirror) 
