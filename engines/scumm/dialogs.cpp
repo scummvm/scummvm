@@ -472,9 +472,7 @@ ScummMenuDialog::~ScummMenuDialog() {
 }
 
 void ScummMenuDialog::reflowLayout() {
-	// For v4+ games do not allow to save in room 0 just as original did.
-	// It is not possible to load such saves
-	if ((_vm->_game.version >= 4) && (_vm->_currentRoom == 0))
+	if (!_vm->canSaveGameStateCurrently())
 		_saveButton->setEnabled(false);
 
 	Dialog::reflowLayout();

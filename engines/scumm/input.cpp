@@ -111,8 +111,8 @@ void ScummEngine::parseEvent(Common::Event event) {
 	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 		if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
-			&& (event.kbd.flags == Common::KBD_ALT ||
-				event.kbd.flags == Common::KBD_CTRL)) {
+			&& event.kbd.flags == Common::KBD_CTRL &&
+				canLoadGameStateCurrently()) {
 			_saveLoadSlot = event.kbd.keycode - '0';
 
 			//  don't overwrite autosave (slot 0)
@@ -120,8 +120,24 @@ void ScummEngine::parseEvent(Common::Event event) {
 				_saveLoadSlot = 10;
 
 			sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
-			_saveLoadFlag = (event.kbd.flags == Common::KBD_ALT) ? 1 : 2;
+			_saveLoadFlag = 2;
 			_saveTemporaryState = false;
+		} else if (event.kbd.keycode >= '0' && event.kbd.keycode <= '9'
+			&& event.kbd.flags == Common::KBD_ALT &&
+				canSaveGameStateCurrently()) {
+			_saveLoadSlot = event.kbd.keycode - '0';
+
+			//  don't overwrite autosave (slot 0)
+			if (_saveLoadSlot == 0)
+				_saveLoadSlot = 10;
+
+			sprintf(_saveLoadName, "Quicksave %d", _saveLoadSlot);
+			_saveLoadFlag = 1;
+			_saveTemporaryState = false;
+		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
+
+
+
 		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'f') {
 			_fastMode ^= 1;
 		} else if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == 'g') {
