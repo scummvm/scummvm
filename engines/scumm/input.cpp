@@ -302,17 +302,6 @@ void ScummEngine::processInput() {
 	//
 	_mouseAndKeyboardStat = 0;
 
-	// Interpret 'return' as left click and 'tab' as right click
-	if (lastKeyHit.keycode && _cursor.state > 0) {
-		if (lastKeyHit.keycode == Common::KEYCODE_TAB) {
-			_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
-			lastKeyHit.reset();
-		} else if (lastKeyHit.keycode == Common::KEYCODE_RETURN) {
-			_mouseAndKeyboardStat = MBS_LEFT_CLICK;
-			lastKeyHit.reset();
-		}
-	}
-
 	if ((_leftBtnPressed & msClicked) && (_rightBtnPressed & msClicked) && _game.version >= 4) {
 		// Pressing both mouse buttons is treated as if you pressed
 		// the cutscene exit key (ESC) in V4+ games. That mimicks
