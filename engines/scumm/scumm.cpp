@@ -1896,7 +1896,7 @@ void ScummEngine::scummLoop(int delta) {
 	}
 
 	// Trigger autosave if necessary.
-	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime)) {
+	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently()) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
