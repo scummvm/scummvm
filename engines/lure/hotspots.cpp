@@ -2691,7 +2691,19 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				return;
 			}
 			h.currentActions().top().setAction(WALKING);
-			h.setPosition(h.x(), h.y() & 0xfff8);
+
+			// WORKAROUND: A character that had enteredg an exit area might have been blocked from entering the new room.
+			// The Y position adjust below could thus place a character further into the exit area. So don't do the
+			// position adjustment if the user is already in an exit area
+			int16 x = h.x() + (h.widthCopy() >> 1);
+			int16 y = h.y() + h.heightCopy() - (h.yCorrection() >> 1);
+
+			RoomData *roomData = Resources::getReference().getRoom(h.roomNumber());
+			RoomExitData *exitRec = roomData->exits.checkExits(x, y);
+
+			if (!exitRec)
+				h.setPosition(h.x(), h.y() & 0xfff8);
+
 		} else if (h.blockedState() == BS_FINAL) {
 			// If this point is reached, the character twice hasn't found a walking path
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character is hopelessly blocked");
