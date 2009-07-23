@@ -93,7 +93,7 @@ void ScummEngine_v60he::setupOpcodes() {
 	_opcodes[0xed].setProc(0, 0);
 }
 
-int ScummEngine_v60he::convertFilePath(byte *dst) {
+int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 	debug(1, "convertFilePath: original filePath is %s", dst);
 
 	int len = resStrLen(dst);
@@ -113,16 +113,25 @@ int ScummEngine_v60he::convertFilePath(byte *dst) {
 
 	// Strip path
 	int r = 0;
-	if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
+	if (dst[len - 3] == 's' && dst[len - 2] == 'g') { // Save Game File
+		// Change filename prefix to target name, for save game files.
+		char saveName[20];
+		sprintf(saveName, "%s.sg%c", _targetName.c_str(), dst[len - 1]);
+		memcpy(dst, saveName, 20);
+	} else if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
+		// The default game data path is set to './' by ScummVM
 		r = 2;
 	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (HE72 - HE100)
+		// The default save game path is set to '*/' by ScummVM
 		r = 2;
 	} else if (dst[0] == 'c' && dst[1] == ':') { // Save Game Path (HE60 - HE71)
+		// The default save path is game path (DOS) or 'c:/hegames/' (Windows)
 		for (r = len; r != 0; r--) {
 			if (dst[r - 1] == '/')
 				break;
 		}
 	} else if (dst[0] == 'u' && dst[1] == 's') { // Save Game Path (Moonbase Commander)
+		// The default save path is 'user/'
 		r = 5;
 	}
 
@@ -269,7 +278,7 @@ void ScummEngine_v60he::o60_roomOps() {
 		len = resStrLen(_scriptPointer);
 		_scriptPointer += len + 1;
 
-		r = convertFilePath(buffer);
+		r = convertFilePath(buffer, sizeof(buffer));
 		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
 		debug(1, "o60_roomOps: case 221: filename %s", _saveLoadFileName);
 
@@ -684,7 +693,7 @@ void ScummEngine_v60he::o60_openFile() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	filename = (char *)buffer + convertFilePath(buffer);
+	filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 	debug(1, "Final filename to %s", filename);
 
 	mode = pop();
@@ -738,7 +747,7 @@ void ScummEngine_v60he::o60_deleteFile() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	filename = (char *)buffer + convertFilePath(buffer);
+	filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 
 	debug(1, "o60_deleteFile (\"%s\")", filename);
 
@@ -760,8 +769,8 @@ void ScummEngine_v60he::o60_rename() {
 	len = resStrLen(_scriptPointer);
 	_scriptPointer += len + 1;
 
-	oldFilename = (char *)buffer1 + convertFilePath(buffer1);
-	newFilename = (char *)buffer2 + convertFilePath(buffer2);
+	oldFilename = (char *)buffer1 + convertFilePath(buffer1, sizeof(buffer1));
+	newFilename = (char *)buffer2 + convertFilePath(buffer2, sizeof(buffer2));
 
 	debug(1, "o60_rename (\"%s\" to \"%s\")", oldFilename, newFilename);
 

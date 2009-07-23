@@ -2083,7 +2083,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 			Common::File f;
 
 			memcpy(filename, params->filename, 260);
-			_vm->convertFilePath(filename);
+			_vm->convertFilePath(filename, sizeof(filename));
 
 			if (f.open((const char *)filename)) {
 				uint32 id = f.readUint32BE();
@@ -2126,7 +2126,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 				break;
 			case 0:
 				memcpy(filename, params->filename, 260);
-				_vm->convertFilePath(filename);
+				_vm->convertFilePath(filename, sizeof(filename));
 
 				if (!f.open((const char *)filename)) {
 					debug(0, "Unable to open for write '%s'", filename);

@@ -86,6 +86,12 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	// FIXME: Actually, we might wish to support loading in more places.
 	// As long as we are sure it won't cause any problems... Are we
 	// aware of *any* spots where loading is not supported?
+
+	// HE games are limited to original load and save interface only,
+	// due to numerous glitches (see bug #1726909) that can occur.
+	if (_game.heversion >= 60)
+		return false;
+
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
@@ -99,6 +105,11 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	// TODO: Should we disallow saving in some more places,
 	// e.g. when a SAN movie is playing? Not sure whether the
 	// original EXE allowed this.
+
+	// HE games are limited to original load and save interface only,
+	// due to numerous glitches (see bug #1726909) that can occur.
+	if (_game.heversion >= 60)
+		return false;
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if  
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
