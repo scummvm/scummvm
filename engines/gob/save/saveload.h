@@ -289,6 +289,8 @@ protected:
 		GameHandler(GobEngine *vm, const char *target);
 		~GameHandler();
 
+		int getLastSlot() const;
+
 		int32 getSize();
 		bool load(int16 dataVar, int32 size, int32 offset);
 		bool save(int16 dataVar, int32 size, int32 offset);
@@ -316,6 +318,8 @@ protected:
 		bool _hasIndex;
 
 		File *_slotFile;
+
+		int _lastSlot;
 
 		SaveReader *_reader;
 		SaveWriter *_writer;
