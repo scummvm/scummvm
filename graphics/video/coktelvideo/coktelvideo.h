@@ -335,16 +335,26 @@ public:
 protected:
 	enum PartType {
 		kPartTypeSeparator = 0,
-		kPartTypeAudio = 1,
-		kPartTypeVideo = 2,
-		kPartTypeExtraData = 3
+		kPartTypeAudio     = 1,
+		kPartTypeVideo     = 2,
+		kPartTypeExtraData = 3,
+		kPartType4         = 4,
+		kPartTypeSpeech    = 5
 	};
+
+	enum AudioFormat {
+		kAudioFormat8bitDirect = 0,
+		kAudioFormat16bitDPCM  = 1,
+		kAudioFormat16bitADPCM = 2
+	};
+
 	struct ExtraData {
 		char name[16];
 		uint32 offset;
 		uint32 size;
 		uint32 realSize;
 	} PACKED_STRUCT;
+
 	struct Part {
 		PartType type;
 		byte field_1;
@@ -356,6 +366,7 @@ protected:
 		int16 bottom;
 		byte flags;
 	} PACKED_STRUCT;
+
 	struct Frame {
 		uint32 offset;
 		Part *parts;
@@ -364,7 +375,9 @@ protected:
 		~Frame() { delete[] parts; }
 	} PACKED_STRUCT;
 
-	static const uint16 _tableADPCM[128];
+	static const uint16 _tableDPCM[128];
+	static const int32  _tableADPCM[];
+	static const int32  _tableADPCMStep[];
 
 	bool _hasVideo;
 
@@ -374,8 +387,11 @@ protected:
 
 	Common::Array<ExtraData> _extraData;
 
-	byte _soundBytesPerSample;
-	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+	byte   _soundBytesPerSample;
+	byte   _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+	uint32 _soundHeaderSize;
+	uint32 _soundDataSize;
+	AudioFormat _audioFormat;
 
 	bool _externalCodec;
 	byte _blitMode;
@@ -404,12 +420,17 @@ protected:
 	void blit16(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 	void blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 
+	byte *deDPCM(const byte *data, uint32 &size, int32 init);
+	byte *deADPCM(const byte *data, uint32 &size, int32 init, int32 v28);
+
+	byte *soundEmpty(uint32 &size);
+	byte *sound8bitDirect(uint32 &size);
+	byte *sound16bitDPCM(uint32 &size);
+	byte *sound16bitADPCM(uint32 &size);
+
 	void emptySoundSlice(uint32 size);
-	void soundSlice8bit(uint32 size);
-	void soundSlice16bit(uint32 size, int16 &init);
 	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
-	void deADPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
 };
 
 } // End of namespace Graphics
