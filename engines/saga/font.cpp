@@ -144,7 +144,6 @@ void Font::createOutline(FontData *font) {
 	int row;
 	int newByteWidth;
 	int newRowLength = 0;
-	int index;
 	int currentByte;
 	unsigned char *basePointer;
 	unsigned char *srcPointer;
