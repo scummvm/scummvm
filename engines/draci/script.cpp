@@ -46,7 +46,7 @@ void Script::setupCommandList() {
 		{ 3,  1, "if", 					2, { 4, 3 }, &Script::c_If },
 		{ 4,  1, "Start", 				2, { 3, 2 }, &Script::start },
 		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::load },
-		{ 5,  2, "StartPlay", 			2, { 3, 2 }, NULL },
+		{ 5,  2, "StartPlay", 			2, { 3, 2 }, &Script::start },
 		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
 		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
 		{ 6,  1, "Talk", 				2, { 3, 2 }, NULL },
