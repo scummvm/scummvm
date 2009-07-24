@@ -995,6 +995,11 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	}
 
 	_string[a].xpos = _charset->_str.right;
+
+	if (_game.heversion >= 60) {
+		_string[a]._default.xpos = _string[a].xpos;
+		_string[a]._default.ypos = _string[a].ypos;
+	}
 }
 
 int ScummEngine::convertMessageToString(const byte *msg, byte *dst, int dstSize) {
