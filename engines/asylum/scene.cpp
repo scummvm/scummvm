@@ -262,14 +262,30 @@ void Scene::update() {
 
 		// Change cursor
 		switch (mainActor->getCurrentAction()) {
-		case kWalkN:  newCursor = worldStats->commonRes.curScrollUp; break;
-		case kWalkNE: newCursor = worldStats->commonRes.curScrollUpRight; break;
-		case kWalkNW: newCursor = worldStats->commonRes.curScrollUpLeft; break;
-		case kWalkS:  newCursor = worldStats->commonRes.curScrollDown; break;
-		case kWalkSE: newCursor = worldStats->commonRes.curScrollDownRight;	break;
-		case kWalkSW: newCursor = worldStats->commonRes.curScrollDownLeft; break;
-		case kWalkW:  newCursor = worldStats->commonRes.curScrollLeft; break;
-		case kWalkE:  newCursor = worldStats->commonRes.curScrollRight; break;
+		case kWalkN:
+			newCursor = worldStats->commonRes.curScrollUp;
+			break;
+		case kWalkNE:
+			newCursor = worldStats->commonRes.curScrollUpRight;
+			break;
+		case kWalkNW:
+			newCursor = worldStats->commonRes.curScrollUpLeft;
+			break;
+		case kWalkS:
+			newCursor = worldStats->commonRes.curScrollDown;
+			break;
+		case kWalkSE:
+			newCursor = worldStats->commonRes.curScrollDownRight;
+			break;
+		case kWalkSW:
+			newCursor = worldStats->commonRes.curScrollDownLeft;
+			break;
+		case kWalkW:
+			newCursor = worldStats->commonRes.curScrollLeft;
+			break;
+		case kWalkE:
+			newCursor = worldStats->commonRes.curScrollRight;
+			break;
 		}
 
 		if (_cursorResource->getEntryNum() != newCursor) {
