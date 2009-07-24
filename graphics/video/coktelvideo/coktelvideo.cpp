@@ -1904,17 +1904,46 @@ void Vmd::filledSoundSlice(uint32 size) {
 		_audioStream->queueBuffer(sound, size);
 }
 
-void Vmd::filledSoundSlices(uint32 size, uint32 mask) {
-	int n = MIN<int>(_soundSlicesCount - 1, 31);
-	for (int i = 0; i < n; i++) {
+uint8 Vmd::evaluateMask(uint32 mask, bool *fillInfo, uint8 &max) {
+	max = MIN<int>(_soundSlicesCount - 1, 31);
 
-		if (mask & 1)
-			emptySoundSlice(_soundDataSize * _soundBytesPerSample);
-		else
-			filledSoundSlice(_soundDataSize + _soundHeaderSize);
+	uint8 n = 0;
+	for (int i = 0; i < max; i++) {
+
+		if (!(mask & 1)) {
+			n++;
+			*fillInfo++ = true;
+		} else
+			*fillInfo++ = false;
 
 		mask >>= 1;
 	}
+
+	return n;
+}
+
+void Vmd::filledSoundSlices(uint32 size, uint32 mask) {
+	bool fillInfo[32];
+
+	uint8 max;
+	uint8 n = evaluateMask(mask, fillInfo, max);
+
+	int32 extraSize;
+
+	extraSize = size - n * _soundDataSize;
+
+	if (_soundSlicesCount > 32)
+		extraSize -= (_soundSlicesCount - 32) * _soundDataSize;
+
+	if (n > 0)
+		extraSize /= n;
+
+	for (uint8 i = 0; i < max; i++)
+		if (fillInfo[i])
+			filledSoundSlice(_soundDataSize + extraSize);
+		else
+			emptySoundSlice(_soundDataSize * _soundBytesPerSample);
+
 	if (_soundSlicesCount > 32)
 		filledSoundSlice((_soundSlicesCount - 32) * _soundDataSize + _soundHeaderSize);
 }

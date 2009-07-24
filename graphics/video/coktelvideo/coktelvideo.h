@@ -433,6 +433,7 @@ protected:
 	byte *sound16bitDPCM(uint32 &size);
 	byte *sound16bitADPCM(uint32 &size);
 
+	uint8 evaluateMask(uint32 mask, bool *fillInfo, uint8 &max);
 	void emptySoundSlice(uint32 size);
 	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
