@@ -1511,7 +1511,10 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 		int16 h = MIN(height, sH);
 
 		for (int i = 0; i < h; i++) {
-			memcpy(dest, srcPtr, w);
+			for (int j = 0; j < w; j++)
+				if (srcPtr[j])
+					dest[j] = srcPtr[j];
+
 			srcPtr += postScaleX(width);
 			dest += sW;
 		}
