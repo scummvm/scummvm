@@ -706,7 +706,7 @@ void ScummEngine_v6::o6_jump() {
 	// he's let you inside, will cause the game to hang, if you end the conversation.
 	// This is a script bug, due to a missing jump in one segment of the script.
 	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1) {
-		offset = 1984;
+		offset = -18;
 	} 
 
 	_scriptPointer += offset;
