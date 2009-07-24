@@ -216,7 +216,7 @@ void Draw_v2::printTotText(int16 id) {
 	dataPtr = textItem->getData();
 	ptr     = dataPtr;
 
-	if ((_renderFlags & RENDERFLAG_SKIPOPTIONALTEXT) && (ptr[1] & 0x80)) {
+	if ((ptr[1] & 0x80) && !_vm->subtitles()) {
 		delete textItem;
 		return;
 	}
@@ -449,6 +449,10 @@ void Draw_v2::printTotText(int16 id) {
 			ptr++;
 			offX = destX + (int16)READ_LE_UINT16(ptr);
 			offY = destY + (int16)READ_LE_UINT16(ptr + 2);
+			if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
+				offX += (int16)READ_LE_UINT16(ptr);
+				offY += (int16)READ_LE_UINT16(ptr + 2);
+			}
 			ptr += 4;
 			break;
 

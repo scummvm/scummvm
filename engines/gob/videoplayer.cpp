@@ -711,6 +711,9 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 			_vm->_video->retrace();
 	}
 
+	// Subtitle
+	if (state.flags & Graphics::CoktelVideo::kStateSpeech)
+		_vm->_draw->printTotText(state.speechId);
 
 	if (modifiedPal && ((palCmd == 2) || (palCmd == 4)))
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);

@@ -76,7 +76,9 @@ public:
 		/** Had to explicitely seek to the frame. */
 		kStateSeeked = 0x2000,
 		/** Reached a break-point. */
-		kStateBreak = 0x8000
+		kStateBreak = 0x8000,
+		/** Frame marks the beginning of speech. */
+		kStateSpeech = 0x4000000
 	};
 
 	struct State {
@@ -90,8 +92,10 @@ public:
 		int16 bottom;
 		/** Set accordingly to what was done. */
 		uint32 flags;
+		/** The id of the spoken words. */
+		uint16 speechId;
 
-		State() : left(0), top(0), right(0), bottom(0), flags(0) { }
+		State() : left(0), top(0), right(0), bottom(0), flags(0), speechId(0) { }
 	};
 
 	virtual ~CoktelVideo() { }
@@ -364,6 +368,7 @@ protected:
 		int16 top;
 		int16 right;
 		int16 bottom;
+		uint16 id;
 		byte flags;
 	} PACKED_STRUCT;
 

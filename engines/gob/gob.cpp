@@ -213,6 +213,10 @@ bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
 
+bool GobEngine::subtitles() const {
+	return ConfMan.getBool("subtitles");
+}
+
 Common::Error GobEngine::run() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");

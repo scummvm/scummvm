@@ -1114,6 +1114,10 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 				_frames[i].parts[j].field_E = _stream->readByte();
 				_frames[i].parts[j].flags   = _stream->readByte();
 
+			} else if (_frames[i].parts[j].type == kPartTypeSpeech) {
+				_frames[i].parts[j].id = _stream->readUint16LE();
+				// Speech text file name
+				_stream->skip(8);
 			} else if (_frames[i].parts[j].type == kPartTypeExtraData) {
 				if (!separator)
 					numExtraData++;
@@ -1367,7 +1371,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			}
 
 		} else if ((part.type == kPartTypeVideo) && !_hasVideo) {
-			warning("Vmd::processFrame(): Header claims there's no video, but video found");
+			warning("Vmd::processFrame(): Header claims there's no video, but video found (%d)", part.size);
+			_stream->skip(part.size);
 		} else if ((part.type == kPartTypeVideo) && _hasVideo) {
 			state.flags &= ~kStateNoVideoData;
 
@@ -1409,6 +1414,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 			// Unknown
 			_stream->skip(part.size);
 		} else if (part.type == kPartTypeSpeech) {
+			state.flags |= kStateSpeech;
+			state.speechId = part.id;
 			// Always triggers when speech starts
 			_stream->skip(part.size);
 		} else {
@@ -1863,14 +1870,14 @@ byte *Vmd::sound16bitADPCM(uint32 &size) {
 	int32 init = _stream->readSint16LE();
 	size -= 2;
 
-	int32 v28 = _stream->readByte();
+	int32 index = _stream->readByte();
 	size--;
 
 	byte *data  = new byte[size];
 	byte *sound = 0;
 
 	if (_stream->read(data, size) == size)
-		sound = deADPCM(data, size, init, v28);
+		sound = deADPCM(data, size, init, index);
 
 	delete[] data;
 

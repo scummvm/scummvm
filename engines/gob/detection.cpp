@@ -2750,7 +2750,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2764,7 +2764,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2778,7 +2778,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2792,7 +2792,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2806,7 +2806,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2820,7 +2820,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2834,7 +2834,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2848,7 +2848,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2862,7 +2862,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2876,7 +2876,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2890,7 +2890,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2904,7 +2904,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2918,7 +2918,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2932,7 +2932,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2946,7 +2946,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2960,7 +2960,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2974,7 +2974,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -2988,7 +2988,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3002,7 +3002,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3016,7 +3016,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			EN_GRB,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3030,7 +3030,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			DE_DEU,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3044,7 +3044,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3058,7 +3058,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			IT_ITA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3072,7 +3072,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ES_ESP,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,
@@ -3086,7 +3086,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			PL_POL,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NOSPEECH
 		},
 		kGameTypeWoodruff,
 		kFeatures640,

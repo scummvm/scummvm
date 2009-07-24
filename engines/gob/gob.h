@@ -221,6 +221,8 @@ public:
 	bool is800x600() const;
 	bool isDemo() const;
 
+	bool subtitles() const;
+
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();
 

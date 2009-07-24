@@ -632,6 +632,11 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
 		}
 
+		// Subtitle
+		Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState(obj.videoSlot - 1);
+		if (state.flags & Graphics::CoktelVideo::kStateSpeech)
+			_vm->_draw->printTotText(state.speechId);
+
 		destX  = 0;
 		destY  = 0;
 		left   = *(obj.pPosX);
