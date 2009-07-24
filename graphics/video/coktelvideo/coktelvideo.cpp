@@ -901,86 +901,31 @@ Vmd::~Vmd() {
 	clear();
 }
 
-bool Vmd::load(Common::SeekableReadStream &stream) {
-	unload();
-
-	_stream = &stream;
-
-	uint16 headerLength;
-	uint16 handle;
-
-	headerLength = _stream->readUint16LE();
-	handle       = _stream->readUint16LE();
-	_version     = _stream->readUint16LE();
-
-	if (!(_version & 2))
-		_features |= kFeaturesPalette;
-	else
+bool Vmd::assessVideoProperties() {
+	if (_bytesPerPixel > 1)
 		_features |= kFeaturesFullColor;
-
-	// Version checking
-	if (headerLength != 814) {
-		warning("Vmd::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
-		unload();
-		return false;
-	}
-
-	_framesCount = _stream->readUint16LE();
-
-	_x      = _stream->readSint16LE();
-	_y      = _stream->readSint16LE();
-	_width  = _stream->readSint16LE();
-	_height = _stream->readSint16LE();
-
-	if ((_width != 0) && (_height != 0)) {
-
-		_hasVideo = true;
-		_features |= kFeaturesVideo;
-
-		if (_features & kFeaturesFullColor)
-			_codecIndeo3 = new Indeo3(_width, _height, _palLUT);
-
-	} else
-		_hasVideo = false;
-
-	if (_width > 320) {
-		if (!(_version & 4)) {
-			_version |= 4;
-			handle = 0;
-		}
-	}
-
-	if (handle > 2) {
-		warning("Vmd::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
-		unload();
-		return false;
-	}
-
-	_bytesPerPixel = handle + 1;
-
-	if (_bytesPerPixel > 1) {
-		_features |=  kFeaturesFullColor;
-		_features &= ~kFeaturesPalette;
-	}
-
-	_flags = _stream->readUint16LE();
-
-	_partsPerFrame = _stream->readUint16LE();
-	_firstFramePos = _stream->readUint32LE();
-	_stream->skip(4); // Unknown
-
-	_stream->read((byte *) _palette, 768);
-
-	_frameDataSize = _stream->readUint32LE();
-	_vidBufferSize = _stream->readUint32LE();
-
-	_doubleMode = false;
+	else
+		_features |= kFeaturesPalette;
 
 	if ((_version & 2) && !(_version & 8)) {
 		_externalCodec = true;
 		_frameDataSize = _vidBufferSize = 0;
 	} else
 		_externalCodec = false;
+
+	if (_externalCodec) {
+		if (_videoCodec == MKID_BE('iv32')) {
+			_features &= ~kFeaturesPalette;
+			_features |=  kFeaturesFullColor;
+			_codecIndeo3 = new Indeo3(_width, _height, _palLUT);
+		} else {
+			char *fourcc = (char *) &_videoCodec;
+
+			warning("Vmd::assessVideoProperties(): Unknow video codec FourCC \'%c%c%c%c\'",
+					fourcc[3], fourcc[2], fourcc[1], fourcc[0]);
+			return false;
+		}
+	}
 
 	_preScaleX  = 1;
 	_postScaleX = 1;
@@ -1032,56 +977,51 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	if (_externalCodec && _codecIndeo3)
 		_features |= kFeaturesSupportsDouble;
 
-	_soundFreq        = _stream->readSint16LE();
-	_soundSliceSize   = _stream->readSint16LE();
-	_soundSlicesCount = _stream->readSint16LE();
-	_soundFlags       = _stream->readUint16LE();
+	return true;
+}
 
-	_hasSound = (_soundFreq != 0);
+bool Vmd::assessAudioProperties() {
+	_features |= kFeaturesSound;
 
-	if (_hasSound) {
-		_features |= kFeaturesSound;
+	_soundStereo = (_soundFlags & 0x8000) ? 1 : ((_soundFlags & 0x200) ? 2 : 0);
+	if (_soundStereo > 0) {
+		warning("Vmd::assessAudioProperties(): TODO: Stereo sound");
+		return false;
+	}
 
-		_soundStereo = (_soundFlags & 0x8000) ? 1 : ((_soundFlags & 0x200) ? 2 : 0);
-		if (_soundStereo > 0) {
-			warning("Vmd::load(): TODO: Stereo sound");
-			unload();
-			return false;
-		}
+	if (_soundSliceSize < 0) {
+		_soundBytesPerSample = 2;
+		_soundSliceSize      = -_soundSliceSize;
 
-		if (_soundSliceSize < 0) {
-			_soundBytesPerSample = 2;
-			_soundSliceSize      = -_soundSliceSize;
-
-			if (_soundFlags & 0x10) {
-				_audioFormat     = kAudioFormat16bitADPCM;
-				_soundHeaderSize = 3;
-				_soundDataSize   = _soundSliceSize >> 1;
-			} else {
-				_audioFormat     = kAudioFormat16bitDPCM;
-				_soundHeaderSize = 1;
-				_soundDataSize   = _soundSliceSize;
-			}
+		if (_soundFlags & 0x10) {
+			_audioFormat     = kAudioFormat16bitADPCM;
+			_soundHeaderSize = 3;
+			_soundDataSize   = _soundSliceSize >> 1;
 		} else {
-			_soundBytesPerSample = 1;
-			_audioFormat         = kAudioFormat8bitDirect;
-			_soundHeaderSize     = 0;
-			_soundDataSize       = _soundSliceSize;
+			_audioFormat     = kAudioFormat16bitDPCM;
+			_soundHeaderSize = 1;
+			_soundDataSize   = _soundSliceSize;
 		}
+	} else {
+		_soundBytesPerSample = 1;
+		_audioFormat         = kAudioFormat8bitDirect;
+		_soundHeaderSize     = 0;
+		_soundDataSize       = _soundSliceSize;
+	}
 
-		_soundSliceLength = (uint32) (((double) (1000 << 16)) /
-				((double) _soundFreq / (double) _soundSliceSize));
-		_frameLength = _soundSliceLength >> 16;
+	_soundSliceLength = (uint32) (((double) (1000 << 16)) /
+			((double) _soundFreq / (double) _soundSliceSize));
+	_frameLength = _soundSliceLength >> 16;
 
-		_soundStage = 1;
-		_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
-				(_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0);
-	} else
-		_frameLength = 1000 / _frameRate;
+	_soundStage = 1;
+	_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
+			(_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0);
 
-	_frameInfoOffset = _stream->readUint32LE();
+	return true;
+}
 
-	int numExtraData = 0;
+void Vmd::readFrameTable(int &numExtraData) {
+	numExtraData = 0;
 
 	_stream->seek(_frameInfoOffset);
 	_frames = new Frame[_framesCount];
@@ -1132,16 +1072,9 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 		}
 	}
+}
 
-	_stream->seek(_firstFramePos);
-
-	if (numExtraData == 0)
-		return true;
-
-	_extraData.reserve(numExtraData);
-
-	numExtraData = 0;
-
+void Vmd::readExtraData() {
 	uint32 ssize = _stream->size();
 	for (uint16 i = 0; i < _framesCount; i++) {
 		_stream->seek(_frames[i].offset);
@@ -1171,6 +1104,105 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 				_stream->skip(_frames[i].parts[j].size);
 		}
 	}
+}
+
+bool Vmd::load(Common::SeekableReadStream &stream) {
+	unload();
+
+	_stream = &stream;
+
+	uint16 headerLength;
+	uint16 handle;
+
+	headerLength = _stream->readUint16LE();
+	handle       = _stream->readUint16LE();
+	_version     = _stream->readUint16LE();
+
+	// Version checking
+	if (headerLength != 814) {
+		warning("Vmd::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+		unload();
+		return false;
+	}
+
+	_framesCount = _stream->readUint16LE();
+
+	_x      = _stream->readSint16LE();
+	_y      = _stream->readSint16LE();
+	_width  = _stream->readSint16LE();
+	_height = _stream->readSint16LE();
+
+	if ((_width != 0) && (_height != 0)) {
+
+		_hasVideo = true;
+		_features |= kFeaturesVideo;
+
+	} else
+		_hasVideo = false;
+
+	if (_width > 320) {
+		if (!(_version & 4)) {
+			_version |= 4;
+			handle = 0;
+		}
+	}
+
+	if (handle > 2) {
+		warning("Vmd::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+		unload();
+		return false;
+	}
+
+	_bytesPerPixel = handle + 1;
+
+	_flags = _stream->readUint16LE();
+
+	_partsPerFrame = _stream->readUint16LE();
+	_firstFramePos = _stream->readUint32LE();
+
+	_videoCodec = _stream->readUint32BE();
+
+	_stream->read((byte *) _palette, 768);
+
+	_frameDataSize = _stream->readUint32LE();
+	_vidBufferSize = _stream->readUint32LE();
+
+	_doubleMode = false;
+
+	if (_hasVideo) {
+		if (!assessVideoProperties()) {
+			unload();
+			return false;
+		}
+	}
+
+	_soundFreq        = _stream->readSint16LE();
+	_soundSliceSize   = _stream->readSint16LE();
+	_soundSlicesCount = _stream->readSint16LE();
+	_soundFlags       = _stream->readUint16LE();
+
+	_hasSound = (_soundFreq != 0);
+
+	if (_hasSound) {
+		if (!assessAudioProperties()) {
+			unload();
+			return false;
+		}
+	} else
+		_frameLength = 1000 / _frameRate;
+
+	_frameInfoOffset = _stream->readUint32LE();
+
+	int numExtraData;
+	readFrameTable(numExtraData);
+
+	_stream->seek(_firstFramePos);
+
+	if (numExtraData == 0)
+		return true;
+
+	_extraData.reserve(numExtraData);
+	readExtraData();
 
 	_stream->seek(_firstFramePos);
 	return true;
@@ -1285,7 +1317,8 @@ void Vmd::clear(bool del) {
 		delete[] _vidMemBuffer;
 	}
 
-	_hasVideo = true;
+	_hasVideo   = true;
+	_videoCodec = 0;
 
 	_codecIndeo3 = 0;
 

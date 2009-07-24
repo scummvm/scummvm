@@ -385,6 +385,7 @@ protected:
 	static const int32  _tableADPCMStep[];
 
 	bool _hasVideo;
+	uint32 _videoCodec;
 
 	uint32 _frameInfoOffset;
 	uint16 _partsPerFrame;
@@ -412,6 +413,11 @@ protected:
 	Indeo3 *_codecIndeo3;
 
 	void clear(bool del = true);
+
+	bool assessVideoProperties();
+	bool assessAudioProperties();
+	void readFrameTable(int &numExtraData);
+	void readExtraData();
 
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
