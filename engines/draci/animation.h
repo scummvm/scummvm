@@ -66,6 +66,8 @@ public:
 	int getRelativeX();
 	int getRelativeY();
 
+	void setScaleFactors(double scaleX, double scaleY);
+
 	void markDirtyRect(Surface *surface);
 
 private:
@@ -78,6 +80,9 @@ private:
 
 	int _relX;
 	int _relY;
+
+	double _scaleX;
+	double _scaleY;
 
 	uint _tick;
 	bool _playing;

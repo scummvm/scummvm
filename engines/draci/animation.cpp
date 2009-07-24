@@ -33,6 +33,8 @@ Animation::Animation(DraciEngine *vm) : _vm(vm) {
 	_z = 0;
 	_relX = 0;
 	_relY = 0;
+	_scaleX = 1.0;
+	_scaleY = 1.0;
 	_playing = false;
 	_looping = false;
 	_tick = _vm->_system->getMillis();
@@ -69,6 +71,10 @@ void Animation::markDirtyRect(Surface *surface) {
 
 	// Translate rectangle to compensate for relative coordinates	
 	frameRect.translate(_relX, _relY);
+	
+	// Take animation scaling into account
+	frameRect.setWidth(frameRect.width() * _scaleX);
+	frameRect.setHeight(frameRect.height() * _scaleY);
 
 	// Mark the rectangle dirty on the surface
 	surface->markDirtyRect(frameRect);
@@ -141,12 +147,23 @@ void Animation::drawFrame(Surface *surface) {
 		frame->setX(newX);
 		frame->setY(newY);
 
+		// Save scaled width and height
+		int scaledWidth = frame->getScaledWidth();
+		int scaledHeight = frame->getScaledHeight();
+
+		// Take into account per-animation scaling and adjust the current frames dimensions	
+		if (_scaleX != 1.0 || _scaleY != 1.0)
+			frame->setScaled(scaledWidth * _scaleX, scaledHeight * _scaleY);
+
 		// Draw frame
 		frame->drawScaled(surface, false);
 
 		// Revert back to old coordinates
 		frame->setX(x);
 		frame->setY(y);
+
+		// Revert back to old dimensions
+		frame->setScaled(scaledWidth, scaledHeight);
 	}
 }
 
@@ -181,6 +198,13 @@ bool Animation::isPlaying() {
 void Animation::setPlaying(bool playing) {
 	_tick = _vm->_system->getMillis();
 	_playing = playing;
+}
+
+void Animation::setScaleFactors(double scaleX, double scaleY) {
+	markDirtyRect(_vm->_screen->getSurface());	
+	
+	_scaleX = scaleX;
+	_scaleY = scaleY;
 }
 
 void Animation::addFrame(Drawable *frame) {
