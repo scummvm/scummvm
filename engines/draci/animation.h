@@ -30,16 +30,30 @@
 
 namespace Draci {
 
+/**
+  * Animation IDs for those animations that don't have their IDs
+  * specified in the data files.
+  */
 enum { kOverlayImage = -1, kWalkingMapOverlay = -2, kUnused = -3 };
 
+/**
+  * Default argument to Animation::getFrame() that makes it return 
+  * the current frame instead of the user specifying it.
+  */
 enum { kCurrentFrame = -1 };
+
+/** 
+  * Used by overlays as a neutral index that won't get 
+  * released with the GPL Release command.
+  */
+enum { kIgnoreIndex = -2 };
 
 class DraciEngine;
 
 class Animation {
 	
 public:
-	Animation(DraciEngine *vm);
+	Animation(DraciEngine *v, int index);
 	~Animation();	
 	
 	uint getZ();
@@ -66,6 +80,9 @@ public:
 	int getRelativeX();
 	int getRelativeY();
 
+	int getIndex();
+	void setIndex(int index);
+
 	void setScaleFactors(double scaleX, double scaleY);
 
 	void markDirtyRect(Surface *surface);
@@ -74,7 +91,16 @@ private:
 	
 	uint nextFrameNum();
 
-	int _id;	
+	/** Internal animation ID 
+	  *	(as specified in the data files and the bytecode)
+	  */
+	int _id; 
+	
+	/** The recency index of an animation, i.e. the most recently added animation has
+	  * the highest index. Some script commands need this.
+	  */
+	int _index;
+
 	uint _currentFrame;
 	uint _z;
 
@@ -96,7 +122,7 @@ private:
 class AnimationManager {
 
 public:
-	AnimationManager(DraciEngine *vm) : _vm(vm) {};
+	AnimationManager(DraciEngine *vm) : _vm(vm), _lastIndex(-1) {}
 	~AnimationManager() { deleteAll(); }
 
 	Animation *addAnimation(int id, uint z, bool playing = false);
@@ -113,12 +139,20 @@ public:
 
 	Animation *getAnimation(int id);
 
+	int getLastIndex();
+	void deleteAfterIndex(int index);
+
 private:
 	void sortAnimations();	
 	void insertAnimation(Animation *anim);
 
 	DraciEngine *_vm;
 	Common::List<Animation *> _animations;
+
+	/** The index of the most recently added animation. 
+	  *	See Animation::_index for details.
+	  */
+	int _lastIndex;
 };
 
 }

@@ -177,12 +177,16 @@ public:
 	void loadOverlays();
 	void loadObject(uint numObj);
 
+	uint getNumObjects();
 	GameObject *getObject(uint objNum);
 
 	int getVariable(int varNum);
 	void setVariable(int varNum, int value);	
 
 	int getIconStatus(int iconID);
+
+	int getMarkedAnimationIndex();
+	void setMarkedAnimationIndex(int index);
 
 private:
 	DraciEngine *_vm;
@@ -193,6 +197,8 @@ private:
 	byte *_iconStatus;
 	GameObject *_objects;
 	Room _currentRoom;
+
+	int _markedAnimationIndex; //!< Used by the Mark GPL command
 };
 
 } // End of namespace Draci

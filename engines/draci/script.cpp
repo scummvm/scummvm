@@ -78,8 +78,8 @@ void Script::setupCommandList() {
 		{ 18, 3, "StopMusic", 			0, { 0 }, NULL },
 		{ 18, 4, "FadeOutMusic",		1, { 1 }, NULL },
 		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
-		{ 19, 1, "Mark", 				0, { 0 }, NULL },
-		{ 19, 2, "Release", 			0, { 0 }, NULL },
+		{ 19, 1, "Mark", 				0, { 0 }, &Script::mark },
+		{ 19, 2, "Release", 			0, { 0 }, &Script::release },
 		{ 20, 1, "Play", 				0, { 0 }, NULL },
 		{ 21, 1, "LoadMap", 			1, { 2 }, NULL },
 		{ 21, 2, "RoomMap", 			0, { 0 }, NULL },
@@ -305,6 +305,30 @@ void Script::c_Let(Common::Queue<int> &params) {
 	int value = params.pop();
 
 	_vm->_game->setVariable(var, value);
+}
+
+void Script::mark(Common::Queue<int> &params) {
+	_vm->_game->setMarkedAnimationIndex(_vm->_anims->getLastIndex());
+}
+
+void Script::release(Common::Queue<int> &params) {
+	int markedIndex = _vm->_game->getMarkedAnimationIndex();
+
+	// Also delete those animations from the game's objects
+	for (uint i = 0; i < _vm->_game->getNumObjects(); ++i) {
+		GameObject *obj = _vm->_game->getObject(i);
+
+		for (uint j = 0; j < obj->_anims.size(); ++j) {
+			Animation *anim;
+
+			anim = _vm->_anims->getAnimation(obj->_anims[j]);
+			if (anim != NULL && anim->getIndex() > markedIndex)
+				obj->_anims.remove_at(j);
+		}
+	}
+
+	// Delete animations which have an index greater than the marked index
+	_vm->_anims->deleteAfterIndex(markedIndex);
 }
 
 /**

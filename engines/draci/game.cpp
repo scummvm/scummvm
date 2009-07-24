@@ -448,6 +448,10 @@ GameObject *Game::getObject(uint objNum) {
 	return _objects + objNum;
 }
 
+uint Game::getNumObjects() {
+	return _info._numObjects;
+}
+
 void Game::loadOverlays() {
  	uint x, y, z, num;
  
@@ -531,6 +535,24 @@ void Game::setVariable(int numVar, int value) {
 
 int Game::getIconStatus(int iconID) {
 	return _iconStatus[iconID];
+}
+
+/**
+ * The GPL command Mark sets the animation index (which specifies the order in which 
+ * animations were loaded in) which is then used by the Release command to delete
+ * all animations that have an index greater than the one marked.
+ */
+
+int Game::getMarkedAnimationIndex() {
+	return _markedAnimationIndex;
+}
+
+/**
+ * See Game::getMarkedAnimationIndex().
+ */
+
+void Game::setMarkedAnimationIndex(int index) {
+	_markedAnimationIndex = index;
 }
 
 Game::~Game() {

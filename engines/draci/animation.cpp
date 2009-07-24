@@ -28,8 +28,9 @@
 
 namespace Draci {
 
-Animation::Animation(DraciEngine *vm) : _vm(vm) {
+Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_id = kUnused;
+	_index = index;
 	_z = 0;
 	_relX = 0;
 	_relY = 0;
@@ -201,6 +202,11 @@ void Animation::setPlaying(bool playing) {
 }
 
 void Animation::setScaleFactors(double scaleX, double scaleY) {
+	
+	debugC(5, kDraciAnimationDebugLevel, 
+		"Setting scaling factors on anim %d (scaleX: %.3f scaleY: %.3f)", 
+		_id, scaleX, scaleY);
+
 	markDirtyRect(_vm->_screen->getSurface());	
 	
 	_scaleX = scaleX;
@@ -209,6 +215,14 @@ void Animation::setScaleFactors(double scaleX, double scaleY) {
 
 void Animation::addFrame(Drawable *frame) {
 	_frames.push_back(frame);	
+}
+
+int Animation::getIndex() {
+	return _index;
+}
+
+void Animation::setIndex(int index) {
+	_index = index;
 }
 
 Drawable *Animation::getFrame(int frameNum) {
@@ -235,7 +249,10 @@ void Animation::deleteFrames() {
 
 Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	
-	Animation *anim = new Animation(_vm);
+	// Increment animation index
+	++_lastIndex;
+
+	Animation *anim = new Animation(_vm, _lastIndex);
 	
 	anim->setID(id);
 	anim->setZ(z);
@@ -249,26 +266,26 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 void AnimationManager::play(int id) {
 	Animation *anim = getAnimation(id);
 
-	// Mark the first frame dirty so it gets displayed
-	anim->markDirtyRect(_vm->_screen->getSurface());
-
 	if (anim) {
+		// Mark the first frame dirty so it gets displayed
+		anim->markDirtyRect(_vm->_screen->getSurface());
+
 		anim->setPlaying(true);
 
-		debugC(5, kDraciAnimationDebugLevel, "Playing animation %d...", id);
+		debugC(3, kDraciAnimationDebugLevel, "Playing animation %d...", id);
 	}
 }
 
 void AnimationManager::stop(int id) {
 	Animation *anim = getAnimation(id);
 	
-	// Clean up the last frame that was drawn before stopping
-	anim->markDirtyRect(_vm->_screen->getSurface());
-
 	if (anim) {
+		// Clean up the last frame that was drawn before stopping
+		anim->markDirtyRect(_vm->_screen->getSurface());
+
 		anim->setPlaying(false);
 	
-		debugC(5, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
+		debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
 	}
 }
 
@@ -298,7 +315,11 @@ void AnimationManager::insertAnimation(Animation *animObj) {
 }
 
 void AnimationManager::addOverlay(Drawable *overlay, uint z) {
-	Animation *anim = new Animation(_vm);
+	// Since this is an overlay, we don't need it to be deleted 
+	// when the GPL Release command is invoked so we pass the index
+	// as kIgnoreIndex
+	Animation *anim = new Animation(_vm, kIgnoreIndex);
+	
 	anim->setID(kOverlayImage);
 	anim->setZ(z);
 	anim->setPlaying(true);
@@ -362,17 +383,38 @@ void AnimationManager::deleteAnimation(int id) {
 	
 	Common::List<Animation *>::iterator it;
   
+	int index = -1;
+
+	// Iterate for the first time to delete the animation
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == id) {
 			(*it)->deleteFrames();
 			_animations.erase(it);
+
+			// Remember index of the deleted animation
+			index = (*it)->getIndex();
+
+			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", id);
+
 			break;
 		}
 	}
+
+	// Iterate the second time to decrease indexes greater than the deleted animation index
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
+		if ((*it)->getIndex() == index && (*it)->getIndex() != kIgnoreIndex) {
+			(*it)->setIndex(index-1);
+		}
+	}
+
+	// Decrement index of last animation 
+	_lastIndex -= 1;
 }
 
 void AnimationManager::deleteOverlays() {
 	
+	debugC(3, kDraciAnimationDebugLevel, "Deleting overlays...");
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -384,7 +426,9 @@ void AnimationManager::deleteOverlays() {
 }
 
 void AnimationManager::deleteAll() {
-	
+
+	debugC(3, kDraciAnimationDebugLevel, "Deleting all animations...");
+
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -392,6 +436,29 @@ void AnimationManager::deleteAll() {
 	}
 
 	_animations.clear();
+
+	_lastIndex = -1;
+}
+
+int AnimationManager::getLastIndex() {
+	return _lastIndex;
+}
+
+void AnimationManager::deleteAfterIndex(int index) {
+
+	Common::List<Animation *>::iterator it;
+
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
+		if ((*it)->getIndex() > index) {
+
+			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", (*it)->getID());
+
+			(*it)->deleteFrames();
+			_animations.erase(it);
+		}
+	}
+	
+	_lastIndex = index;
 }
 
 }

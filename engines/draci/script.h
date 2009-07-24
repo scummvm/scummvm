@@ -104,6 +104,8 @@ private:
 	void c_Let(Common::Queue<int> &params);
 	void load(Common::Queue<int> &params);
 	void start(Common::Queue<int> &params);
+	void mark(Common::Queue<int> &params);
+	void release(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);
