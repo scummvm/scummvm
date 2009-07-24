@@ -306,7 +306,6 @@ void GobEngine::pauseEngineIntern(bool pause) {
 	} else {
 		uint32 duration = _system->getMillis() - _pauseStart;
 
-		_vidPlayer->notifyPaused(duration);
 		_util->notifyPaused(duration);
 
 		_game->_startTimeKey += duration;

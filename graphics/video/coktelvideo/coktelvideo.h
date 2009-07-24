@@ -175,9 +175,6 @@ public:
 	/** Wait for the frame to end. */
 	virtual void waitEndFrame() = 0;
 
-	/** Notifies the video that it was paused for duration ms. */
-	virtual void notifyPaused(uint32 duration) = 0;
-
 	/** Copy the current frame.
 	 *
 	 *  @param dest The memory to which to copy the current frame.
@@ -223,8 +220,6 @@ public:
 	bool hasExtraData(const char *fileName) const;
 	Common::MemoryReadStream *getExtraData(const char *fileName);
 
-	void notifyPaused(uint32 duration);
-
 	void setFrameRate(int16 frameRate);
 
 	bool load(Common::SeekableReadStream &stream);
@@ -251,6 +246,22 @@ public:
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
 
 protected:
+	enum Command {
+		kCommandNextSound   = 0xFF00,
+		kCommandStartSound  = 0xFF01,
+
+		kCommandBreak       = 0xFFF0,
+		kCommandBreakSkip0  = 0xFFF1,
+		kCommandBreakSkip16 = 0xFFF2,
+		kCommandBreakSkip32 = 0xFFF3,
+		kCommandBreakMask   = 0xFFF8,
+
+		kCommandPalette     = 0xFFF4,
+		kCommandVideoData   = 0xFFFC,
+
+		kCommandJump        = 0xFFFD
+	};
+
 	struct Coord {
 		int16 left;
 		int16 top;
@@ -329,9 +340,23 @@ protected:
 	void deleteVidMem(bool del = true);
 	void clear(bool del = true);
 
+	bool loadCoordinates();
+	bool loadFrameTableOffsets(uint32 &framesPosPos, uint32 &framesCoordsPos);
+	bool assessVideoProperties();
+	bool assessAudioProperties();
+	bool loadFrameTables(uint32 framesPosPos, uint32 framesCoordsPos);
+
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
 	void deLZ77(byte *dest, byte *src);
+
+	void calcFrameCoords(uint16 frame, State &state);
+
+	void nextSoundSlice(bool hasNextCmd);
+	bool initialSoundSlice(bool hasNextCmd);
+	void emptySoundSlice(bool hasNextCmd);
+
+	void videoData(uint32 size, State &state);
 };
 
 class Vmd : public Imd {

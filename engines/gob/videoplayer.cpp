@@ -797,13 +797,4 @@ void VideoPlayer::evalBgShading(Graphics::CoktelVideo &video) {
 		_vm->_sound->bgUnshade();
 }
 
-void VideoPlayer::notifyPaused(uint32 duration) {
-	if (_primaryVideo->isOpen())
-		_primaryVideo->getVideo()->notifyPaused(duration);
-
-	for (uint i = 0; i < _videoSlots.size(); i++)
-		if (_videoSlots[i] && _videoSlots[i]->isOpen())
-			_videoSlots[i]->getVideo()->notifyPaused(duration);
-}
-
 } // End of namespace Gob

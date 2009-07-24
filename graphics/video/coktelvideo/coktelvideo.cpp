@@ -101,6 +101,130 @@ Common::MemoryReadStream *Imd::getExtraData(const char *fileName) {
  return 0;
 }
 
+bool Imd::loadCoordinates() {
+	// Standard coordinates
+	if (_version >= 3) {
+		_stdX = _stream->readUint16LE();
+		if (_stdX > 1) {
+			warning("IMD: More than one standard coordinate quad found (%d)", _stdX);
+			return false;
+		}
+		if (_stdX != 0) {
+			_stdX      = _stream->readSint16LE();
+			_stdY      = _stream->readSint16LE();
+			_stdWidth  = _stream->readSint16LE();
+			_stdHeight = _stream->readSint16LE();
+			_features |= kFeaturesStdCoords;
+		} else
+			_stdX = -1;
+	} else
+		_stdX = -1;
+
+	return true;
+}
+
+bool Imd::loadFrameTableOffsets(uint32 &framesPosPos, uint32 &framesCoordsPos) {
+	framesPosPos     = 0;
+	framesCoordsPos = 0;
+
+	// Frame positions
+	if (_version >= 4) {
+		framesPosPos = _stream->readUint32LE();
+		if (framesPosPos != 0) {
+			_framesPos = new uint32[_framesCount];
+			assert(_framesPos);
+			_features |= kFeaturesFramesPos;
+		}
+	}
+
+	// Frame coordinates
+	if (_features & kFeaturesFrameCoords)
+		framesCoordsPos = _stream->readUint32LE();
+
+	return true;
+}
+
+bool Imd::assessVideoProperties() {
+	// Sizes of the frame data and extra video buffer
+	if (_features & kFeaturesDataSize) {
+		_frameDataSize = _stream->readUint16LE();
+		if (_frameDataSize == 0) {
+			_frameDataSize = _stream->readUint32LE();
+			_vidBufferSize = _stream->readUint32LE();
+		} else
+			_vidBufferSize = _stream->readUint16LE();
+	} else {
+		_frameDataSize = _width * _height + 500;
+		if (!(_flags & 0x100) || (_flags & 0x1000))
+			_vidBufferSize = _frameDataSize;
+	}
+
+	// Allocating working memory
+	_frameData = new byte[_frameDataSize + 500];
+	assert(_frameData);
+	memset(_frameData, 0, _frameDataSize + 500);
+	_vidBuffer = new byte[_vidBufferSize + 500];
+	assert(_vidBuffer);
+	memset(_vidBuffer, 0, _vidBufferSize + 500);
+
+	return true;
+}
+
+bool Imd::assessAudioProperties() {
+	if (_features & kFeaturesSound) {
+		_soundFreq        = _stream->readSint16LE();
+		_soundSliceSize   = _stream->readSint16LE();
+		_soundSlicesCount = _stream->readSint16LE();
+
+		if (_soundFreq < 0)
+			_soundFreq = -_soundFreq;
+
+		if (_soundSlicesCount < 0)
+			_soundSlicesCount = -_soundSlicesCount - 1;
+
+		if (_soundSlicesCount > 40) {
+			warning("Imd::load(): More than 40 sound slices found (%d)", _soundSlicesCount);
+			return false;
+		}
+
+		_soundSliceLength = (uint32) (((double) (1000 << 16)) /
+				((double) _soundFreq / (double) _soundSliceSize));
+		_frameLength = _soundSliceLength >> 16;
+
+		_soundStage = 1;
+		_hasSound   = true;
+
+		_audioStream = Audio::makeAppendableAudioStream(_soundFreq, 0);
+	} else
+		_frameLength = 1000 / _frameRate;
+
+	return true;
+}
+
+bool Imd::loadFrameTables(uint32 framesPosPos, uint32 framesCoordsPos) {
+	// Positions table
+	if (_framesPos) {
+		_stream->seek(framesPosPos, SEEK_SET);
+		for (int i = 0; i < _framesCount; i++)
+			_framesPos[i] = _stream->readUint32LE();
+	}
+
+	// Coordinates table
+	if (_features & kFeaturesFrameCoords) {
+		_stream->seek(framesCoordsPos, SEEK_SET);
+		_frameCoords = new Coord[_framesCount];
+		assert(_frameCoords);
+		for (int i = 0; i < _framesCount; i++) {
+			_frameCoords[i].left   = _stream->readSint16LE();
+			_frameCoords[i].top    = _stream->readSint16LE();
+			_frameCoords[i].right  = _stream->readSint16LE();
+			_frameCoords[i].bottom = _stream->readSint16LE();
+		}
+	}
+
+	return true;
+}
+
 bool Imd::load(Common::SeekableReadStream &stream) {
 	unload();
 
@@ -136,123 +260,40 @@ bool Imd::load(Common::SeekableReadStream &stream) {
 	// Palette
 	_stream->read((byte *) _palette, 768);
 
-	// Standard coordinates
-	if (_version >= 3) {
-		_stdX = _stream->readUint16LE();
-		if (_stdX > 1) {
-			warning("IMD: More than one standard coordinate quad found (%d)", _stdX);
-			unload();
-			return false;
-		}
-		if (_stdX != 0) {
-			_stdX      = _stream->readSint16LE();
-			_stdY      = _stream->readSint16LE();
-			_stdWidth  = _stream->readSint16LE();
-			_stdHeight = _stream->readSint16LE();
-			_features |= kFeaturesStdCoords;
-		} else
-			_stdX = -1;
-	} else
-		_stdX = -1;
-
-	// Offset to frame positions table
-	uint32 framesPosPos = 0;
-	if (_version >= 4) {
-		framesPosPos = _stream->readUint32LE();
-		if (framesPosPos != 0) {
-			_framesPos = new uint32[_framesCount];
-			assert(_framesPos);
-			_features |= kFeaturesFramesPos;
-		}
+	if (!loadCoordinates()) {
+		unload();
+		return false;
 	}
 
-	// Offset to frame coordinates
-	uint32 framesCoordsPos = 0;
-	if (_features & kFeaturesFrameCoords)
-		framesCoordsPos = _stream->readUint32LE();
-
-	// Sound
-	if (_features & kFeaturesSound) {
-		_soundFreq        = _stream->readSint16LE();
-		_soundSliceSize   = _stream->readSint16LE();
-		_soundSlicesCount = _stream->readSint16LE();
-
-		if (_soundFreq < 0)
-			_soundFreq = -_soundFreq;
-
-		if (_soundSlicesCount < 0)
-			_soundSlicesCount = -_soundSlicesCount - 1;
-
-		if (_soundSlicesCount > 40) {
-			warning("Imd::load(): More than 40 sound slices found (%d)", _soundSlicesCount);
-			unload();
-			return false;
-		}
-
-		_soundSliceLength = (uint32) (((double) (1000 << 16)) /
-				((double) _soundFreq / (double) _soundSliceSize));
-		_frameLength = _soundSliceLength >> 16;
-
-		_soundStage = 1;
-		_hasSound   = true;
-
-		_audioStream = Audio::makeAppendableAudioStream(_soundFreq, 0);
-	} else
-		_frameLength = 1000 / _frameRate;
-
-	// Sizes of the frame data and extra video buffer
-	if (_features & kFeaturesDataSize) {
-		_frameDataSize = _stream->readUint16LE();
-		if (_frameDataSize == 0) {
-			_frameDataSize = _stream->readUint32LE();
-			_vidBufferSize = _stream->readUint32LE();
-		} else
-			_vidBufferSize = _stream->readUint16LE();
-	} else {
-		_frameDataSize = _width * _height + 500;
-		if (!(_flags & 0x100) || (_flags & 0x1000))
-			_vidBufferSize = _frameDataSize;
+	uint32 framesPosPos, frameCoordsPos;
+	if (!loadFrameTableOffsets(framesPosPos, frameCoordsPos)) {
+		unload();
+		return false;
 	}
 
-	// Frame positions table
-	if (_framesPos) {
-		_stream->seek(framesPosPos, SEEK_SET);
-		for (int i = 0; i < _framesCount; i++)
-			_framesPos[i] = _stream->readUint32LE();
+	if (!assessAudioProperties()) {
+		unload();
+		return false;
 	}
 
-	// Frame coordinates table
-	if (_features & kFeaturesFrameCoords) {
-		_stream->seek(framesCoordsPos, SEEK_SET);
-		_frameCoords = new Coord[_framesCount];
-		assert(_frameCoords);
-		for (int i = 0; i < _framesCount; i++) {
-			_frameCoords[i].left   = _stream->readSint16LE();
-			_frameCoords[i].top    = _stream->readSint16LE();
-			_frameCoords[i].right  = _stream->readSint16LE();
-			_frameCoords[i].bottom = _stream->readSint16LE();
-		}
+	if (!assessVideoProperties()) {
+		unload();
+		return false;
+	}
+
+	if (!loadFrameTables(framesPosPos, frameCoordsPos)) {
+		unload();
+		return false;
 	}
 
 	// Seek to the first frame
 	_stream->seek(_firstFramePos, SEEK_SET);
-
-	// Allocating working memory
-	_frameData = new byte[_frameDataSize + 500];
-	assert(_frameData);
-	memset(_frameData, 0, _frameDataSize + 500);
-	_vidBuffer = new byte[_vidBufferSize + 500];
-	assert(_vidBuffer);
-	memset(_vidBuffer, 0, _vidBufferSize + 500);
 
 	return true;
 }
 
 void Imd::unload() {
 	clear();
-}
-
-void Imd::notifyPaused(uint32 duration) {
 }
 
 void Imd::setFrameRate(int16 frameRate) {
@@ -526,6 +567,88 @@ void Imd::clear(bool del) {
 	_lastFrameTime = 0;
 }
 
+void Imd::nextSoundSlice(bool hasNextCmd) {
+	if (hasNextCmd || !_soundEnabled) {
+		_stream->seek(_soundSliceSize, SEEK_CUR);
+		return;
+	}
+
+	byte *soundBuf = new byte[_soundSliceSize];
+
+	_stream->read(soundBuf, _soundSliceSize);
+	unsignedToSigned(soundBuf, _soundSliceSize);
+
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize);
+}
+
+bool Imd::initialSoundSlice(bool hasNextCmd) {
+	int dataLength = _soundSliceSize * _soundSlicesCount;
+
+	if (hasNextCmd || !_soundEnabled) {
+		_stream->seek(dataLength, SEEK_CUR);
+		return false;
+	}
+
+	byte *soundBuf = new byte[dataLength];
+
+	_stream->read(soundBuf, dataLength);
+	unsignedToSigned(soundBuf, dataLength);
+
+	_audioStream->queueBuffer(soundBuf, dataLength);
+
+	return _soundStage == 1;
+}
+
+void Imd::emptySoundSlice(bool hasNextCmd) {
+	if (hasNextCmd || !_soundEnabled)
+		return;
+
+	byte *soundBuf = new byte[_soundSliceSize];
+
+	memset(soundBuf, 0, _soundSliceSize);
+
+	_audioStream->queueBuffer(soundBuf, _soundSliceSize);
+}
+
+void Imd::videoData(uint32 size, State &state) {
+	_stream->read(_frameData, size);
+	_frameDataLen = size;
+
+	if (_vidMemWidth <= state.right) {
+		state.left   = 0;
+		state.right -= state.left;
+	}
+	if (_vidMemWidth <= state.right)
+		state.right = _vidMemWidth - 1;
+	if (_vidMemHeight <= state.bottom) {
+		state.top     = 0;
+		state.bottom -= state.top;
+	}
+	if (_vidMemHeight <= state.bottom)
+		state.bottom = _vidMemHeight -1;
+
+	state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
+	state.flags |= _frameData[0];
+}
+
+void Imd::calcFrameCoords(uint16 frame, State &state) {
+	if (_stdX != -1) {
+		state.left   = _stdX;
+		state.top    = _stdY;
+		state.right  = _stdWidth  + state.left - 1;
+		state.bottom = _stdHeight + state.top  - 1;
+		state.flags |= kStateStdCoords;
+	}
+	if (_frameCoords &&
+			(_frameCoords[frame].left != -1)) {
+		state.left   = _frameCoords[frame].left;
+		state.top    = _frameCoords[frame].top;
+		state.right  = _frameCoords[frame].right;
+		state.bottom = _frameCoords[frame].bottom;
+		state.flags |= kStateFrameCoords;
+	}
+}
+
 CoktelVideo::State Imd::processFrame(uint16 frame) {
 	State state;
 	uint32 cmd = 0;
@@ -551,41 +674,29 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 	state.bottom = _height + state.top  - 1;
 
 	do {
-		if (frame != 0) {
-			if (_stdX != -1) {
-				state.left   = _stdX;
-				state.top    = _stdY;
-				state.right  = _stdWidth  + state.left - 1;
-				state.bottom = _stdHeight + state.top  - 1;
-				state.flags |= kStateStdCoords;
-			}
-			if (_frameCoords &&
-					(_frameCoords[frame].left != -1)) {
-				state.left   = _frameCoords[frame].left;
-				state.top    = _frameCoords[frame].top;
-				state.right  = _frameCoords[frame].right;
-				state.bottom = _frameCoords[frame].bottom;
-				state.flags |= kStateFrameCoords;
-			}
-		}
+		if (frame != 0)
+			calcFrameCoords(frame, state);
 
 		cmd = _stream->readUint16LE();
 
-		if ((cmd & 0xFFF8) == 0xFFF0) {
-			if (cmd == 0xFFF0) {
+		if ((cmd & kCommandBreakMask) == kCommandBreak) {
+			// Flow control
+
+			if (cmd == kCommandBreak) {
 				_stream->seek(2, SEEK_CUR);
 				cmd = _stream->readUint16LE();
 			}
 
-			if (cmd == 0xFFF1) {
+			// Break
+			if (cmd == kCommandBreakSkip0) {
 				state.flags = kStateBreak;
 				continue;
-			} else if (cmd == 0xFFF2) { // Skip (16 bit)
+			} else if (cmd == kCommandBreakSkip16) {
 				cmd = _stream->readUint16LE();
 				_stream->seek(cmd, SEEK_CUR);
 				state.flags = kStateBreak;
 				continue;
-			} else if (cmd == 0xFFF3) { // Skip (32 bit)
+			} else if (cmd == kCommandBreakSkip32) {
 				cmd = _stream->readUint32LE();
 				_stream->seek(cmd, SEEK_CUR);
 				state.flags = kStateBreak;
@@ -593,59 +704,24 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 			}
 		}
 
+		// Audio
 		if (_soundStage != 0) {
-			byte *soundBuf;
+			if (cmd == kCommandNextSound) {
 
-			if (cmd == 0xFF00) {
-				// Next sound slice data
-
-				if (!hasNextCmd && _soundEnabled) {
-					soundBuf = new byte[_soundSliceSize];
-					assert(soundBuf);
-
-					_stream->read(soundBuf, _soundSliceSize);
-					unsignedToSigned(soundBuf, _soundSliceSize);
-					_audioStream->queueBuffer(soundBuf, _soundSliceSize);
-				} else
-					_stream->seek(_soundSliceSize, SEEK_CUR);
-
+				nextSoundSlice(hasNextCmd);
 				cmd = _stream->readUint16LE();
 
-			} else if (cmd == 0xFF01) {
-				// Initial sound data (all slices)
+			} else if (cmd == kCommandStartSound) {
 
-				int dataLength = _soundSliceSize * _soundSlicesCount;
-
-				if (!hasNextCmd && _soundEnabled) {
-					soundBuf = new byte[dataLength];
-					assert(soundBuf);
-
-					_stream->read(soundBuf, dataLength);
-					unsignedToSigned(soundBuf, dataLength);
-
-					if (_soundStage == 1)
-						startSound = true;
-
-					_audioStream->queueBuffer(soundBuf, dataLength);
-				} else
-					_stream->seek(dataLength, SEEK_CUR);
-
+				startSound = initialSoundSlice(hasNextCmd);
 				cmd = _stream->readUint16LE();
 
-			} else if (!hasNextCmd && (_soundEnabled)) {
-				// Empty sound slice
-
-				soundBuf = new byte[_soundSliceSize];
-				assert(soundBuf);
-
-				memset(soundBuf, 0, _soundSliceSize);
-
-				_audioStream->queueBuffer(soundBuf, _soundSliceSize);
-			}
+			} else
+				emptySoundSlice(hasNextCmd);
 		}
 
 		// Set palette
-		if (cmd == 0xFFF4) {
+		if (cmd == kCommandPalette) {
 			_stream->seek(2, SEEK_CUR);
 			state.flags |= kStatePalette;
 
@@ -655,8 +731,8 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 
 		hasNextCmd = false;
 
-		// Jump to frame
-		if (cmd == 0xFFFD) {
+		if (cmd == kCommandJump) {
+			// Jump to frame
 
 			frame = _stream->readSint16LE();
 			if (_framesPos) {
@@ -667,37 +743,17 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 				state.flags |= kStateJump;
 			}
 
-		} else if (cmd == 0xFFFC) {
+		} else if (cmd == kCommandVideoData) {
+			uint32 size = _stream->readUint32LE() + 2;
+
+			videoData(size, state);
 
 			state.flags |= 1;
-			cmd = _stream->readUint32LE();
-			_stream->read(_frameData, cmd + 2);
-			_frameDataLen = cmd + 2;
 
-			if (_vidMemWidth <= state.right) {
-				state.left   = 0;
-				state.right -= state.left;
-			}
-			if (_vidMemWidth <= state.right)
-				state.right = _vidMemWidth - 1;
-			if (_vidMemHeight <= state.bottom) {
-				state.top     = 0;
-				state.bottom -= state.top;
-			}
-			if (_vidMemHeight <= state.bottom)
-				state.bottom = _vidMemHeight -1;
-
-			state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
-			state.flags |= _frameData[0];
-
-		// Frame video data
 		} else if (cmd != 0) {
+			uint32 size = cmd + 2;
 
-			_stream->read(_frameData, cmd + 2);
-			_frameDataLen = cmd + 2;
-
-			state.flags |= renderFrame(state.left, state.top, state.right, state.bottom);
-			state.flags |= _frameData[0];
+			videoData(size, state);
 
 		} else
 			state.flags |= kStateNoVideoData;
