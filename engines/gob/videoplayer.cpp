@@ -772,7 +772,7 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 		height = _primaryVideo->getVideo()->getHeight();
 
 		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
-			_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height);
+			_primaryVideo->getVideo()->getFrameCoords(1, x, y, width, height);
 
 		WRITE_VAR_OFFSET(varX, x);
 		WRITE_VAR_OFFSET(varY, y);

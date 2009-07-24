@@ -127,8 +127,8 @@ public:
 	/** Returns the current frame's palette. */
 	virtual const byte *getPalette() const = 0;
 
-	/** Reads the video's anchor pointer */
-	virtual bool getAnchor(int16 frame, uint16 partType,
+	/** Returns the frame's coordinates */
+	virtual bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height) = 0;
 
 	/** Returns whether that extra data file exists */
@@ -218,7 +218,7 @@ public:
 	uint32 getSyncLag() const { return _skipFrames; }
 	const byte *getPalette() const { return _palette; }
 
-	bool getAnchor(int16 frame, uint16 partType,
+	bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height) { return false; }
 
 	bool hasExtraData(const char *fileName) const { return false; }
@@ -317,7 +317,7 @@ public:
 	Vmd(Graphics::PaletteLUT *palLUT = 0);
 	~Vmd();
 
-	bool getAnchor(int16 frame, uint16 partType,
+	bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height);
 
 	bool hasExtraData(const char *fileName) const;
@@ -353,38 +353,42 @@ protected:
 	};
 
 	struct ExtraData {
-		char name[16];
+		char   name[16];
 		uint32 offset;
 		uint32 size;
 		uint32 realSize;
+
+		ExtraData();
 	} PACKED_STRUCT;
 
 	struct Part {
 		PartType type;
-		byte field_1;
-		byte field_E;
-		uint32 size;
-		int16 left;
-		int16 top;
-		int16 right;
-		int16 bottom;
-		uint16 id;
-		byte flags;
+		byte     field_1;
+		byte     field_E;
+		uint32   size;
+		int16    left;
+		int16    top;
+		int16    right;
+		int16    bottom;
+		uint16   id;
+		byte     flags;
+
+		Part();
 	} PACKED_STRUCT;
 
 	struct Frame {
 		uint32 offset;
-		Part *parts;
+		Part  *parts;
 
-		Frame() : parts(0) { }
-		~Frame() { delete[] parts; }
+		Frame();
+		~Frame();
 	} PACKED_STRUCT;
 
 	static const uint16 _tableDPCM[128];
 	static const int32  _tableADPCM[];
 	static const int32  _tableADPCMStep[];
 
-	bool _hasVideo;
+	bool   _hasVideo;
 	uint32 _videoCodec;
 
 	uint32 _frameInfoOffset;
@@ -413,6 +417,9 @@ protected:
 	Indeo3 *_codecIndeo3;
 
 	void clear(bool del = true);
+
+	bool getPartCoords(int16 frame, PartType type,
+			int16 &x, int16 &y, int16 &width, int16 &height);
 
 	bool assessVideoProperties();
 	bool assessAudioProperties();

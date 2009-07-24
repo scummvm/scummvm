@@ -857,6 +857,40 @@ void Imd::deLZ77(byte *dest, byte *src) {
 	}
 }
 
+
+Vmd::ExtraData::ExtraData() {
+	memset(name, 0, 16);
+
+	offset   = 0;
+	size     = 0;
+	realSize = 0;
+}
+
+
+Vmd::Part::Part() {
+	type    = kPartTypeSeparator;
+	field_1 = 0;
+	field_E = 0;
+	size    = 0;
+	left    = 0;
+	top     = 0;
+	right   = 0;
+	bottom  = 0;
+	id      = 0;
+	flags   = 0;
+}
+
+
+Vmd::Frame::Frame() {
+	parts  = 0;
+	offset = 0;
+}
+
+Vmd::Frame::~Frame() {
+	delete[] parts;
+}
+
+
 const uint16 Vmd::_tableDPCM[128] = {
 	0x0000, 0x0008, 0x0010, 0x0020, 0x0030, 0x0040, 0x0050, 0x0060, 0x0070, 0x0080,
 	0x0090, 0x00A0, 0x00B0, 0x00C0, 0x00D0, 0x00E0, 0x00F0, 0x0100, 0x0110, 0x0120,
@@ -1990,43 +2024,40 @@ void Vmd::filledSoundSlices(uint32 size, uint32 mask) {
 		filledSoundSlice((_soundSlicesCount - 32) * _soundDataSize + _soundHeaderSize);
 }
 
-bool Vmd::getAnchor(int16 frame, uint16 partType,
+bool Vmd::getPartCoords(int16 frame, PartType type,
 		int16 &x, int16 &y, int16 &width, int16 &height) {
 
-	uint32 pos = _stream->pos();
-
-	_stream->seek(_frameInfoOffset);
-	// Offsets to frames
-	_stream->skip(_framesCount * 6);
-	// Jump to the specified frame
-	_stream->skip(_partsPerFrame * frame * 16);
-
-	// Find the anchor part
-	uint16 i;
-	for (i = 0; i < _partsPerFrame; i++) {
-		byte type = _stream->readByte();
-
-		if ((type == kPartTypeSeparator) || (type == partType))
-			break;
-
-		_stream->skip(15);
-	}
-
-	if (i == _partsPerFrame) {
-		// No anchor
-
-		_stream->seek(pos);
+	if (frame >= _framesCount)
 		return false;
+
+	Frame &f = _frames[frame];
+
+	// Look for a part matching the requested type, stopping at a separator
+	Part *part = 0;
+	for (int i = 0; i < _partsPerFrame; i++) {
+		Part &p = f.parts[i];
+
+		if ((p.type == kPartTypeSeparator) || (p.type == type)) {
+			part = &p;
+			break;
+		}
 	}
 
-	_stream->skip(5);
-	x      = _stream->readSint16LE();
-	y      = _stream->readSint16LE();
-	width  = _stream->readSint16LE() - x + 1;
-	height = _stream->readSint16LE() - y + 1;
+	if (!part)
+		return false;
 
-	_stream->seek(pos);
+	x      = part->left;
+	y      = part->top;
+	width  = part->right  - part->left + 1;
+	height = part->bottom - part->top  + 1;
+
 	return true;
+}
+
+bool Vmd::getFrameCoords(int16 frame,
+		int16 &x, int16 &y, int16 &width, int16 &height) {
+
+	return getPartCoords(frame, kPartTypeVideo, x, y, width, height);
 }
 
 bool Vmd::hasExtraData(const char *fileName) const {
