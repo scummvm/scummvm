@@ -202,29 +202,28 @@ public:
 	Imd();
 	~Imd();
 
-	uint32 getFeatures() const { return _features; }
-	uint16 getFlags() const { return _flags; }
-	int16 getX() const { return _x; }
-	int16 getY() const { return _y; }
-	int16 getWidth() const { return _width; }
-	int16 getHeight() const { return _height; }
-	uint16 getFramesCount() const { return _framesCount; }
-	uint16 getCurrentFrame() const { return _curFrame; }
-	int16 getFrameRate() const {
-		if (_hasSound)
-			return 1000 / (_soundSliceLength >> 16);
-		return _frameRate;
-	}
-	uint32 getSyncLag() const { return _skipFrames; }
-	const byte *getPalette() const { return _palette; }
+	uint32 getFeatures() const;
+	uint16 getFlags()    const;
+
+	int16  getX()      const;
+	int16  getY()      const;
+	int16  getWidth()  const;
+	int16  getHeight() const;
+
+	uint16 getFramesCount()  const;
+	uint16 getCurrentFrame() const;
+	int16  getFrameRate()    const;
+	uint32 getSyncLag()      const;
+
+	const byte *getPalette() const;
 
 	bool getFrameCoords(int16 frame,
-			int16 &x, int16 &y, int16 &width, int16 &height) { return false; }
+			int16 &x, int16 &y, int16 &width, int16 &height);
 
-	bool hasExtraData(const char *fileName) const { return false; }
-	Common::MemoryReadStream *getExtraData(const char *fileName) { return 0; }
+	bool hasExtraData(const char *fileName) const;
+	Common::MemoryReadStream *getExtraData(const char *fileName);
 
-	void notifyPaused(uint32 duration) { }
+	void notifyPaused(uint32 duration);
 
 	void setFrameRate(int16 frameRate);
 
@@ -235,7 +234,7 @@ public:
 	void setVideoMemory(byte *vidMem, uint16 width, uint16 height);
 	void setVideoMemory();
 
-	void setDoubleMode(bool doubleMode) { }
+	void setDoubleMode(bool doubleMode);
 
 	void enableSound(Audio::Mixer &mixer);
 	void disableSound();
@@ -260,49 +259,72 @@ protected:
 	} PACKED_STRUCT;
 
 	Common::SeekableReadStream *_stream;
+
+	// Properties
 	uint16 _version;
 	uint32 _features;
 	uint16 _flags;
-	int16 _x, _y, _width, _height;
-	int16 _stdX, _stdY, _stdWidth, _stdHeight;
-	uint16 _framesCount, _curFrame;
+
+	// Current coordinates
+	int16 _x;
+	int16 _y;
+	int16 _width;
+	int16 _height;
+
+	// Standard coordinates gives by the header
+	int16 _stdX;
+	int16 _stdY;
+	int16 _stdWidth;
+	int16 _stdHeight;
+
+	uint16 _framesCount;
+	uint16 _curFrame;
+
 	uint32 *_framesPos;
-	uint32 _firstFramePos;
+	uint32  _firstFramePos;
 	Coord *_frameCoords;
 
-	uint32 _frameDataSize, _vidBufferSize;
-	byte *_frameData, *_vidBuffer;
+	// Buffer for raw frame data
+	byte  *_frameData;
+	uint32 _frameDataSize;
 	uint32 _frameDataLen;
+
+	// Buffer for uncompressed raw frame data
+	byte  *_vidBuffer;
+	uint32 _vidBufferSize;
 
 	byte _palette[768];
 
-	bool _hasOwnVidMem;
-	byte *_vidMem;
-	uint16 _vidMemWidth, _vidMemHeight;
+	// Video memory
+	bool  _hasOwnVidMem;
+	byte  *_vidMem;
+	uint16 _vidMemWidth;
+	uint16 _vidMemHeight;
 
-	bool _hasSound;
-	bool _soundEnabled;
-	uint8 _soundStage; // (0: no sound, 1: loaded, 2: playing)
-	uint32 _skipFrames;
-
+	// Sound properties
 	uint16 _soundFlags;
-	int16 _soundFreq;
-	int16 _soundSliceSize;
-	int16 _soundSlicesCount;
+	int16  _soundFreq;
+	int16  _soundSliceSize;
+	int16  _soundSlicesCount;
 	uint32 _soundSliceLength;
+
+	// Current sound state
+	bool   _hasSound;
+	bool   _soundEnabled;
+	uint8  _soundStage; // (0: no sound, 1: loaded, 2: playing)
+	uint32 _skipFrames;
 
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
-	int16 _frameRate;
+	// Current video state
+	int16  _frameRate;
 	uint32 _frameLength;
 	uint32 _lastFrameTime;
 
 	Audio::Mixer *_mixer;
 
-	void unsignedToSigned(byte *buffer, int length) {
-		while (length-- > 0) *buffer++ ^= 0x80;
-	}
+	void unsignedToSigned(byte *buffer, int length);
 
 	void deleteVidMem(bool del = true);
 	void clear(bool del = true);
@@ -384,6 +406,7 @@ protected:
 		~Frame();
 	} PACKED_STRUCT;
 
+	// Tables for the audio decompressors
 	static const uint16 _tableDPCM[128];
 	static const int32  _tableADPCM[];
 	static const int32  _tableADPCMStep[];
@@ -397,12 +420,14 @@ protected:
 
 	Common::Array<ExtraData> _extraData;
 
+	// Sound properties
 	byte   _soundBytesPerSample;
 	byte   _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
 	uint32 _soundHeaderSize;
 	uint32 _soundDataSize;
 	AudioFormat _audioFormat;
 
+	// Video properties
 	bool _externalCodec;
 	byte _blitMode;
 	byte _bytesPerPixel;

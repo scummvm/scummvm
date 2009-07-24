@@ -40,6 +40,67 @@ Imd::~Imd() {
 	clear();
 }
 
+uint32 Imd::getFeatures() const {
+ return _features;
+}
+
+uint16 Imd::getFlags() const {
+ return _flags;
+}
+
+int16 Imd::getX() const {
+ return _x;
+}
+
+int16 Imd::getY() const {
+ return _y;
+}
+
+int16 Imd::getWidth() const {
+ return _width;
+}
+
+int16 Imd::getHeight() const {
+ return _height;
+}
+
+uint16 Imd::getFramesCount() const {
+ return _framesCount;
+}
+
+uint16 Imd::getCurrentFrame() const {
+ return _curFrame;
+}
+
+int16 Imd::getFrameRate() const {
+	if (!_hasSound)
+		return _frameRate;
+
+	return 1000 / (_soundSliceLength >> 16);
+}
+
+uint32 Imd::getSyncLag() const {
+ return _skipFrames;
+}
+
+const byte *Imd::getPalette() const {
+ return _palette;
+}
+
+bool Imd::getFrameCoords(int16 frame,
+		int16 &x, int16 &y, int16 &width, int16 &height) {
+
+ return false;
+}
+
+bool Imd::hasExtraData(const char *fileName) const {
+ return false;
+}
+
+Common::MemoryReadStream *Imd::getExtraData(const char *fileName) {
+ return 0;
+}
+
 bool Imd::load(Common::SeekableReadStream &stream) {
 	unload();
 
@@ -191,6 +252,9 @@ void Imd::unload() {
 	clear();
 }
 
+void Imd::notifyPaused(uint32 duration) {
+}
+
 void Imd::setFrameRate(int16 frameRate) {
 	if (frameRate == 0)
 		frameRate = 1;
@@ -249,6 +313,9 @@ void Imd::setVideoMemory() {
 		_vidMemWidth  = _width;
 		_vidMemHeight = _height;
 	}
+}
+
+void Imd::setDoubleMode(bool doubleMode) {
 }
 
 void Imd::enableSound(Audio::Mixer &mixer) {
@@ -855,6 +922,10 @@ void Imd::deLZ77(byte *dest, byte *src) {
 		frameLength -= chunkLength;
 
 	}
+}
+
+inline void Imd::unsignedToSigned(byte *buffer, int length) {
+	while (length-- > 0) *buffer++ ^= 0x80;
 }
 
 
