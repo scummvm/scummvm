@@ -1149,20 +1149,15 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	} else
 		_hasVideo = false;
 
-	if (_width > 320) {
-		if (!(_version & 4)) {
-			_version |= 4;
-			handle = 0;
-		}
-	}
+	_bytesPerPixel = 1;
+	if (_version & 4)
+		_bytesPerPixel = handle + 1;
 
-	if (handle > 2) {
-		warning("Vmd::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
+	if (_bytesPerPixel > 3) {
+		warning("Vmd::load(): Requested %d bytes per pixel (%d, %d, %d)", _bytesPerPixel, headerLength, handle, _version);
 		unload();
 		return false;
 	}
-
-	_bytesPerPixel = handle + 1;
 
 	_flags = _stream->readUint16LE();
 
