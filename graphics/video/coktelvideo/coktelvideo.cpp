@@ -1118,8 +1118,17 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 	handle       = _stream->readUint16LE();
 	_version     = _stream->readUint16LE();
 
+	bool readPalette;
+
 	// Version checking
-	if (headerLength != 814) {
+	if (headerLength == 50) {
+		// Newer version, used in Addy 5 upwards
+		warning("Vmd::load(): TODO: Addy 5 videos");
+		readPalette = false;
+	} else if (headerLength == 814) {
+		// Old version
+		readPalette = true;
+	} else {
 		warning("Vmd::load(): Version incorrect (%d, %d, %d)", headerLength, handle, _version);
 		unload();
 		return false;
@@ -1162,7 +1171,8 @@ bool Vmd::load(Common::SeekableReadStream &stream) {
 
 	_videoCodec = _stream->readUint32BE();
 
-	_stream->read((byte *) _palette, 768);
+	if (readPalette)
+		_stream->read((byte *) _palette, 768);
 
 	_frameDataSize = _stream->readUint32LE();
 	_vidBufferSize = _stream->readUint32LE();
@@ -1397,6 +1407,10 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 						startSound = true;
 				}
 
+				_stream->skip(part.size);
+			} else if (part.flags == 4) {
+				warning("Vmd::processFrame(): TODO: Addy 5 sound type 4 (%d)", part.size);
+				disableSound();
 				_stream->skip(part.size);
 			} else {
 				warning("Vmd::processFrame(): Unknown sound type %d", part.flags);
