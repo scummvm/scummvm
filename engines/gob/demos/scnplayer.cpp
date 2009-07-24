@@ -66,6 +66,8 @@ bool SCNPlayer::playStream(Common::SeekableReadStream &scn) {
 			_rebase0 = true;
 		} else if (lineStartsWith(line, "REBASE0:OFF")) {
 			_rebase0 = false;
+		} else if (lineStartsWith(line, "ADL ")) {
+			playADL(line.c_str() + 4);
 		}
 
 		// Mind user input

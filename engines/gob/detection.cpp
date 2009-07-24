@@ -4299,7 +4299,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			GUIO_NONE
 		},
 		kGameTypeUrban,
-		kFeatures640 | kFeaturesSCNDemo,
+		kFeaturesAdlib | kFeatures640 | kFeaturesSCNDemo,
 		"", "", 8
 	}
 };

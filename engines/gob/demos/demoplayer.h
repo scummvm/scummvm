@@ -57,9 +57,11 @@ protected:
 	void evaluateVideoMode(const char *mode);
 	void clearScreen();
 	void playVideo(const char *fileName);
+	void playADL(const char *params);
 
 	void playVideoNormal();
 	void playVideoDoubled();
+	void playADL(const Common::String &fileName, bool waitEsc = true, int32 repeat = -1);
 
 private:
 	enum ScriptSource {
