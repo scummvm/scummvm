@@ -77,6 +77,9 @@ public:
 	int16 _backDeltaX;
 	int16 _backDeltaY;
 
+	int16 _subtitleFont;
+	int16 _subtitleColor;
+
 	FontToSprite _fontToSprite[4];
 	Font *_fonts[kFontCount];
 

@@ -216,7 +216,9 @@ void Draw_v2::printTotText(int16 id) {
 	dataPtr = textItem->getData();
 	ptr     = dataPtr;
 
-	if ((ptr[1] & 0x80) && !_vm->subtitles()) {
+	bool isSubtitle = (ptr[1] & 0x80) != 0;
+
+	if (isSubtitle && !_vm->subtitles()) {
 		delete textItem;
 		return;
 	}
@@ -398,9 +400,14 @@ void Draw_v2::printTotText(int16 id) {
 			} else {
 				_destSpriteX = offX;
 				_destSpriteY = offY;
-				_fontIndex = fontIndex;
-				_frontColor = frontColor;
+				_fontIndex   = fontIndex;
+				_frontColor  = frontColor;
 				_textToPrint = str;
+
+				if (isSubtitle) {
+					_fontIndex  = _subtitleFont;
+					_frontColor = _subtitleColor;
+				}
 
 				if (_needAdjust != 2) {
 					if ((_destSpriteX >= destX) && (_destSpriteY >= destY) &&
@@ -461,11 +468,19 @@ void Draw_v2::printTotText(int16 id) {
 			fontIndex = ((*ptr & 0xF0) >> 4) & 7;
 			frontColor = *ptr & 0x0F;
 			ptr++;
+
+			if (isSubtitle) {
+				_subtitleFont  = fontIndex;
+				_subtitleColor = frontColor;
+			}
 			break;
 
 		case 4:
 			ptr++;
 			frontColor = *ptr++;
+
+			if (isSubtitle)
+				_subtitleColor = frontColor;
 			break;
 
 		case 6:
