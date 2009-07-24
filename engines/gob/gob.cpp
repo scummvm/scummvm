@@ -422,7 +422,7 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v4(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_map = new Map_v4(this);
+		_map = new Map_v2(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
@@ -434,7 +434,7 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v5(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_map = new Map_v4(this);
+		_map = new Map_v2(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
 		_saveLoad = new SaveLoad(this);
@@ -447,7 +447,7 @@ bool GobEngine::initGameParts() {
 		_inter = new Inter_v6(this);
 		_mult = new Mult_v2(this);
 		_draw = new Draw_v2(this);
-		_map = new Map_v4(this);
+		_map = new Map_v2(this);
 		_goblin = new Goblin_v4(this);
 		_scenery = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v6(this, _targetName.c_str());

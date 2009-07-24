@@ -60,7 +60,10 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 
 	id = _vm->_game->_script->readInt16();
 
-	if (id == -1) {
+	if (((uint16) id) >= 65520) {
+		warning("Map_v2::loadMapObjects(): ID >= 65520");
+		return;
+	} else if (id == -1) {
 		_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var);
 		return;
 	}
@@ -71,19 +74,29 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 
 	Common::SeekableReadStream &mapData = *resource->stream();
 
-	if (mapData.readByte() == 3) {
+	_widthByte = mapData.readByte();
+	if (_widthByte == 4) {
 		_screenWidth = 640;
-		_passWidth = 65;
+		_screenHeight = 400;
+	} else if (_widthByte == 3) {
+		_screenWidth = 640;
+		_screenHeight = 200;
 	} else {
 		_screenWidth = 320;
-		_passWidth = 40;
+		_screenHeight = 200;
 	}
+
 	_wayPointsCount = mapData.readByte();
 	_tilesWidth = mapData.readSint16LE();
 	_tilesHeight = mapData.readSint16LE();
 
 	_bigTiles = !(_tilesHeight & 0xFF00);
 	_tilesHeight &= 0xFF;
+
+	if (_widthByte == 4) {
+		_screenWidth = mapData.readSint16LE();
+		_screenHeight = mapData.readSint16LE();
+	}
 
 	_mapWidth = _screenWidth / _tilesWidth;
 	_mapHeight = _screenHeight / _tilesHeight;
@@ -103,6 +116,11 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		_wayPoints[i].y = mapData.readSByte();
 		_wayPoints[i].notWalkable = mapData.readSByte();
 	}
+
+	if (_widthByte == 4)
+		_mapWidth = VAR(17);
+
+	_passWidth = _mapWidth;
 
 	// In the original asm, this writes byte-wise into the variables-array
 	tmpPos = mapData.pos();
