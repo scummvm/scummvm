@@ -701,6 +701,14 @@ void ScummEngine_v6::o6_ifNot() {
 
 void ScummEngine_v6::o6_jump() {
 	int offset = fetchScriptWordSigned();
+
+	// WORKAROUND bug #2826144: Talking to the guard at the bigfoot party, after 
+	// he's let you inside, will cause the game to hang, if you end the conversation.
+	// This is a script bug, due to a missing jump in one segment of the script.
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 101 && readVar(0x8000 + 97) == 1 && offset == 1) {
+		offset = 1984;
+	} 
+
 	_scriptPointer += offset;
 }
 
