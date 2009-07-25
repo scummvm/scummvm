@@ -1673,8 +1673,8 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	_screen->getPalette(0).copy(_screen->getPalette(2), 241, 6);
 	_cauldronState = state;
 	_cauldronUseCount = 0;
-	//if (state == 5)
-	// sub_27149();
+	if (state == 5)
+		setDlgIndex(5);
 }
 
 void KyraEngine_HoF::clearCauldronTable() {
