@@ -284,6 +284,8 @@ private:
 	void dispatchEvent(const Event &event);
 };
 
+#define g_eventDispatcher (Common::EventDispatcher::instance())
+
 class Keymapper;
 
 /**
