@@ -100,7 +100,7 @@ protected:
 
 	virtual void setBuiltinCursor(int index);
 
-	void runObject(int obj, int entry);
+	virtual void runObject(int obj, int entry);
 
 	/* Version 2 script opcodes */
 	void o2_actorFromPos();

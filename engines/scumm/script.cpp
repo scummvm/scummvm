@@ -133,6 +133,8 @@ void ScummEngine::runObjectScript(int object, int entry, bool freezeResistant, b
 
 	initializeLocals(slot, vars);
 
+	// V0 Ensure we don't try and access objects via index inside the script
+	_v0ObjectIndex = false;
 	runScriptNested(slot);
 }
 

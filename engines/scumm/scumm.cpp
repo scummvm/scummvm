@@ -134,6 +134,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 
 	// Init all vars
+	_v0ObjectIndex = false;
+	_v0ObjectInInventory = false;
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
@@ -664,7 +666,17 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
+	_verbExecuting = false;
+	_verbPickup = false;
 	_currentMode = 0;
+
+	_activeObject2 = 0;
+	_activeObjectIndex = 0;
+	_activeObject2Index = 0;
+	_activeInvExecute = false;
+	_activeObject2Inv = false;
+	_activeObjectObtained = false;
+	_activeObject2Obtained = false;
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)

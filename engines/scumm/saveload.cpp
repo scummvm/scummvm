@@ -1384,9 +1384,12 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 void ScummEngine_v0::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
-	// TODO: Save additional variables
-	// _currentMode
-	// _currentLights
+	const SaveLoadEntry v0Entrys[] = {
+		MKLINE(ScummEngine_v0, _currentMode, sleByte, VER(78)),
+		MKLINE(ScummEngine_v0, _currentLights, sleByte, VER(78)),
+		MKEND()
+	};
+ 	s->saveLoadEntries(this, v0Entrys);
 }
 
 void ScummEngine_v5::saveOrLoad(Serializer *s) {
