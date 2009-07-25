@@ -104,7 +104,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_dispatcher.registerSource(boss, false);
 	_dispatcher.registerSource(&_artificialEventSource, false);
 
-	_dispatcher.registerObserver(this, 0, false);
+	_dispatcher.registerObserver(this, kEventManPriority, false);
 
 	_recordFile = NULL;
 	_recordTimeFile = NULL;

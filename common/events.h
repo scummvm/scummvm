@@ -396,6 +396,14 @@ public:
 	virtual Common::Keymapper *getKeymapper() = 0;
 #endif
 
+	enum {
+		/**
+		 * Priority of the event manager, for now it's lowest since it eats
+		 * *all* events, we might to change that in the future though.
+		 */
+		kEventManPriority = 0
+	};
+
 	/**
 	 * Returns the underlying EventDispatcher.
 	 */
