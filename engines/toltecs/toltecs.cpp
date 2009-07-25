@@ -22,6 +22,7 @@
  */
 
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -67,7 +68,7 @@ ToltecsEngine::ToltecsEngine(OSystem *syst, const ToltecsGameDescription *gameDe
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	_rnd = new Common::RandomSource();
-	syst->getEventManager()->registerRandomSource(*_rnd, "toltecs");
+	g_eventRec.registerRandomSource(*_rnd, "toltecs");
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
