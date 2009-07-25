@@ -247,6 +247,8 @@ void Imd::setVideoMemory() {
 		_vidMem = new byte[_width * _height];
 		_vidMemWidth = _width;
 		_vidMemHeight = _height;
+
+		memset(_vidMem, 0, _width * _height);
 	}
 }
 
