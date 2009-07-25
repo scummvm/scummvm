@@ -525,11 +525,12 @@ int ScummEngine::findObject(int x, int y) {
 				}
 #endif
 				if (_objs[i].x_pos <= x && _objs[i].width + _objs[i].x_pos > x &&
-				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y)
+				    _objs[i].y_pos <= y && _objs[i].height + _objs[i].y_pos > y) {
 					if (_game.version == 0 && _v0ObjectIndex)
 						return i;
 					else
 						return _objs[i].obj_nr;
+				}
 				break;
 			}
 		} while ((_objs[b].state & mask) == a);
@@ -1212,7 +1213,7 @@ void ScummEngine::setObjectName(int obj) {
 uint32 ScummEngine::getOBCDOffs(int object) const {
 	int i;
 
-	if (_objectOwnerTable[object] != OF_OWNER_ROOM && (_game.version != 0) ||  _v0ObjectInInventory)
+	if ((_objectOwnerTable[object] != OF_OWNER_ROOM && (_game.version != 0))  || _v0ObjectInInventory)
 		return 0;
 
 	// V0 MM Return by Index
