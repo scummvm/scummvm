@@ -235,13 +235,30 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	}	// for
 }
 
-void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
+int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 	int signY, letterY, letterX = 0;
 	uint len = strlen(said);
 
 	int screenX = 1;
+	int lines = 1;
 
 	for (uint h = 0; h < len; h++) {
+		int wordLength;
+
+		// Look ahead to the end of the word.
+		wordLength = 0;
+		int pos = h;
+		while (said[pos] && said[pos] != ' ') {
+			wordLength++;
+			pos++;
+		}
+
+		if (screenX + wordLength * CHAR_WIDTH_OPC > 317) {
+			screenX = 0;
+			screenY += (CHAR_HEIGHT + 2);
+			lines++;
+		}
+
 		if (game == 1) {
 			letterY = 6;
 			signY = 15;
@@ -281,6 +298,8 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 
 		screenX = screenX + CHAR_WIDTH_OPC;
 	}
+
+	return lines;
 }
 
 bool DrasculaEngine::textFitsCentered(char *text, int x) {

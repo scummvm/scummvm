@@ -564,7 +564,7 @@ public:
 	void playTalkSequence(int sequence);
 	void doTalkSequenceCommand(TalkSequenceCommand cmd);
 	void converse(int);
-	void print_abc_opc(const char *, int, int);
+	int print_abc_opc(const char *, int, int);
 	void response(int);
 	void activatePendulum();
 

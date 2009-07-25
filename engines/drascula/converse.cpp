@@ -143,6 +143,7 @@ void DrasculaEngine::converse(int index) {
 		game3 = kDialogOptionUnselected;
 	char phrase1[78], phrase2[78], phrase3[78], phrase4[78];
 	char sound1[13], sound2[13], sound3[13], sound4[13];
+	int phrase1_bottom, phrase2_bottom, phrase3_bottom, phrase4_bottom;
 	int answer1, answer2, answer3;
 	char buffer[256];
 
@@ -207,12 +208,12 @@ void DrasculaEngine::converse(int index) {
 
 		updateEvents();
 
-		print_abc_opc(phrase1, 2, game1);
-		print_abc_opc(phrase2, 10, game2);
-		print_abc_opc(phrase3, 18, game3);
-		print_abc_opc(phrase4, 26, kDialogOptionUnselected);
+		phrase1_bottom = 8 * print_abc_opc(phrase1, 2, game1);
+		phrase2_bottom = phrase1_bottom + 8 * print_abc_opc(phrase2, phrase1_bottom + 2, game2);
+		phrase3_bottom = phrase2_bottom + 8 * print_abc_opc(phrase3, phrase2_bottom + 2, game3);
+		phrase4_bottom = phrase3_bottom + 8 * print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionUnselected);
 
-		if (mouseY > 0 && mouseY < 9) {
+		if (mouseY > 0 && mouseY < phrase1_bottom) {
 			if (game1 == kDialogOptionClicked && _color != kColorWhite)
 				color_abc(kColorWhite);
 			else if (game1 != kDialogOptionClicked && _color != kColorLightGreen)
@@ -226,13 +227,13 @@ void DrasculaEngine::converse(int index) {
 				talk(phrase1, sound1);
 				response(answer1);
 			}
-		} else if (mouseY > 8 && mouseY < 17) {
+		} else if (mouseY > phrase1_bottom && mouseY < phrase2_bottom) {
 			if (game2 == kDialogOptionClicked && _color != kColorWhite)
 				color_abc(kColorWhite);
 			else if (game2 != kDialogOptionClicked && _color != kColorLightGreen)
 				color_abc(kColorLightGreen);
 
-			print_abc_opc(phrase2, 10, kDialogOptionSelected);
+			print_abc_opc(phrase2, phrase1_bottom + 2, kDialogOptionSelected);
 
 			if (leftMouseButton == 1) {
 				delay(100);
@@ -240,13 +241,13 @@ void DrasculaEngine::converse(int index) {
 				talk(phrase2, sound2);
 				response(answer2);
 			}
-		} else if (mouseY > 16 && mouseY < 25) {
+		} else if (mouseY > phrase2_bottom && mouseY < phrase3_bottom) {
 			if (game3 == kDialogOptionClicked && _color != kColorWhite)
 				color_abc(kColorWhite);
 			else if (game3 != kDialogOptionClicked && _color != kColorLightGreen)
 				color_abc(kColorLightGreen);
 
-			print_abc_opc(phrase3, 18, kDialogOptionSelected);
+			print_abc_opc(phrase3, phrase2_bottom + 2, kDialogOptionSelected);
 
 			if (leftMouseButton == 1) {
 				delay(100);
@@ -254,8 +255,8 @@ void DrasculaEngine::converse(int index) {
 				talk(phrase3, sound3);
 				response(answer3);
 			}
-		} else if (mouseY > 24 && mouseY < 33) {
-			print_abc_opc(phrase4, 26, kDialogOptionSelected);
+		} else if (mouseY > phrase3_bottom && mouseY < phrase4_bottom) {
+			print_abc_opc(phrase4, phrase3_bottom + 2, kDialogOptionSelected);
 
 			if (leftMouseButton == 1) {
 				delay(100);
