@@ -488,7 +488,7 @@ protected:
 	void blit16(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 	void blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 
-	byte *deDPCM(const byte *data, uint32 &size, int32 init);
+	byte *deDPCM(const byte *data, uint32 &size, int32 init[2]);
 	byte *deADPCM(const byte *data, uint32 &size, int32 init, int32 v28);
 
 	byte *soundEmpty(uint32 &size);

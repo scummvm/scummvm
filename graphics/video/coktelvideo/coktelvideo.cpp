@@ -1144,13 +1144,11 @@ bool Vmd::assessVideoProperties() {
 }
 
 bool Vmd::assessAudioProperties() {
+	bool supportedFormat = true;
+
 	_features |= kFeaturesSound;
 
 	_soundStereo = (_soundFlags & 0x8000) ? 1 : ((_soundFlags & 0x200) ? 2 : 0);
-	if (_soundStereo > 0) {
-		warning("Vmd::assessAudioProperties(): TODO: Stereo sound");
-		return false;
-	}
 
 	if (_soundSliceSize < 0) {
 		_soundBytesPerSample = 2;
@@ -1160,16 +1158,37 @@ bool Vmd::assessAudioProperties() {
 			_audioFormat     = kAudioFormat16bitADPCM;
 			_soundHeaderSize = 3;
 			_soundDataSize   = _soundSliceSize >> 1;
+
+			if (_soundStereo > 0)
+				supportedFormat = false;
+
 		} else {
 			_audioFormat     = kAudioFormat16bitDPCM;
 			_soundHeaderSize = 1;
 			_soundDataSize   = _soundSliceSize;
+
+			if (_soundStereo == 1) {
+				supportedFormat = false;
+			} else if (_soundStereo == 2) {
+				_soundDataSize = 2 * _soundDataSize + 2;
+				_soundHeaderSize = 4;
+			}
+
 		}
 	} else {
 		_soundBytesPerSample = 1;
 		_audioFormat         = kAudioFormat8bitDirect;
 		_soundHeaderSize     = 0;
 		_soundDataSize       = _soundSliceSize;
+
+		if (_soundStereo > 0)
+			supportedFormat = false;
+	}
+
+	if (!supportedFormat) {
+		warning("Vmd::assessAudioProperties(): Unsupported audio format: %d bits, encoding %d, stereo %d",
+				_soundBytesPerSample * 8, _audioFormat, _soundStereo);
+		return false;
 	}
 
 	_soundSliceLength = (uint32) (((double) (1000 << 16)) /
@@ -1177,8 +1196,13 @@ bool Vmd::assessAudioProperties() {
 	_frameLength = _soundSliceLength >> 16;
 
 	_soundStage = 1;
-	_audioStream = Audio::makeAppendableAudioStream(_soundFreq,
-			(_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0);
+
+	uint32 flags = 0;
+
+	flags |= (_soundBytesPerSample == 2) ? Audio::Mixer::FLAG_16BITS : 0;
+	flags |= (_soundStereo > 0) ? Audio::Mixer::FLAG_STEREO : 0;
+
+	_audioStream = Audio::makeAppendableAudioStream(_soundFreq, flags);
 
 	return true;
 }
@@ -1527,6 +1551,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 		setVideoMemory();
 
 	for (uint16 i = 0; (i < _partsPerFrame) && (frame < _framesCount); i++) {
+		uint32 pos = _stream->pos();
+
 		Part &part = _frames[frame].parts[i];
 
 		if (part.type == kPartTypeAudio) {
@@ -1574,6 +1600,8 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 				warning("Vmd::processFrame(): Unknown sound type %d", part.flags);
 				_stream->skip(part.size);
 			}
+
+			_stream->seek(pos + part.size);
 
 		} else if ((part.type == kPartTypeVideo) && !_hasVideo) {
 			warning("Vmd::processFrame(): Header claims there's no video, but video found (%d)", part.size);
@@ -1941,25 +1969,37 @@ void Vmd::blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 heigh
 	delete dither;
 }
 
-byte *Vmd::deDPCM(const byte *data, uint32 &size, int32 init) {
+byte *Vmd::deDPCM(const byte *data, uint32 &size, int32 init[2]) {
 	if (!data || (size == 0))
 		return 0;
 
+	int channels = (_soundStereo > 0) ? 2 : 1;
+
 	uint32 inSize  = size;
-	uint32 outSize = size * 2;
+	uint32 outSize = (size + channels) * 2;
 
 	byte *sound = new byte[outSize];
 
 	int16 *out = (int16 *) sound;
 
+	int channel = 0;
+
+	for (int i = 0; i < channels; i++) {
+		*out++        = TO_BE_16(init[channel]);
+
+		channel = (channel + 1) % channels;
+	}
+
 	while (inSize-- > 0) {
 		if (*data & 0x80)
-			init -= _tableDPCM[*data++ & 0x7F];
+			init[channel] -= _tableDPCM[*data++ & 0x7F];
 		else
-			init += _tableDPCM[*data++];
+			init[channel] += _tableDPCM[*data++];
 
-		init   = CLIP<int32>(init, -32768, 32767);
-		*out++ = TO_BE_16(init);
+		init[channel] = CLIP<int32>(init[channel], -32768, 32767);
+		*out++        = TO_BE_16(init[channel]);
+
+		channel = (channel + 1) % channels;
 	}
 
 	size = outSize;
@@ -2052,8 +2092,15 @@ byte *Vmd::sound16bitDPCM(uint32 &size) {
 		return 0;
 	}
 
-	int32 init = _stream->readSint16LE();
+	int32 init[2];
+
+	init[0] = _stream->readSint16LE();
 	size -= 2;
+
+	if (_soundStereo > 0) {
+		init[1] = _stream->readSint16LE();
+		size -= 2;
+	}
 
 	byte *data  = new byte[size];
 	byte *sound = 0;
