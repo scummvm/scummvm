@@ -527,9 +527,15 @@ void Actor_v2::walkActor() {
 	if (_moving & MF_TURN) {
 		new_dir = updateActorDirection(false);
 		// FIXME: is this correct?
-		if (_facing != new_dir)
+		if (_facing != new_dir) {
+			
+			// Actor never stops walking when an object has been selected without this
+			if (_vm->_game.version ==0)
+				_moving = 0;
+			
 			setDirection(new_dir);
-		else
+
+		} else
 			_moving = 0;
 		return;
 	}
@@ -816,6 +822,16 @@ void Actor::setDirection(int direction) {
 	// If there is no costume set for this actor, we are finished
 	if (_costume == 0)
 		return;
+
+	// V0 MM
+	if (_vm->_game.version == 0) {
+		if (_moving)
+			_vm->_costumeLoader->costumeDecodeData(this, _walkFrame, 0);
+		else
+			_vm->_costumeLoader->costumeDecodeData(this, _standFrame, 0);
+		_needRedraw = true;
+		return;
+	}
 
 	// Update the costume for the new direction (and mark the actor for redraw)
 	aMask = 0x8000;
@@ -1224,7 +1240,10 @@ void Actor::showActor() {
 
 	_vm->ensureResourceLoaded(rtCostume, _costume);
 
-	if (_vm->_game.version <= 2) {
+	if (_vm->_game.version == 0) {
+		_cost.reset();
+		startAnimActor(_standFrame);
+	} else if (_vm->_game.version <= 2) {
 		_cost.reset();
 		startAnimActor(_standFrame);
 		startAnimActor(_initFrame);
@@ -1380,6 +1399,13 @@ void ScummEngine::processActors() {
 	Actor** end = _sortedActors + numactors;
 	for (Actor** ac = _sortedActors; ac != end; ++ac) {
 		Actor* a = *ac;
+		
+		// V0 MM: 0x057B
+		if (_game.version == 0) {
+			ActorC64 *A = (ActorC64*) a;
+			if ((A->_speaking & 1))
+				A->_speaking ^= 0xFE;
+		}
 		// Draw and animate the actors, except those w/o a costume.
 		// Note: We could 'optimize' this a little bit by only putting
 		// actors with a costume into the _sortedActors array in the
@@ -1572,6 +1598,8 @@ void Actor_v2::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		// we need to shift it 8 pixels to the left
 		if (_facing == 90)
 			bcr->_actorX -= 8;
+	} else if (_vm->_game.version == 0) {
+			bcr->_actorX += 12;
 	} else if (_vm->_game.version <= 2) {
 		// HACK: We have to adjust the x position by one strip (8 pixels) in
 		// V2 games. However, it is not quite clear to me why. And to fully
@@ -1703,6 +1731,12 @@ void Actor::animateActor(int anim) {
 	case 4:				// turn to new direction
 		turnToDirection(dir);
 		break;
+	case 64:
+		if (_vm->_game.version == 0) {
+			_moving &= ~MF_TURN;
+			setDirection(dir);
+			break;
+		}
 	default:
 		if (_vm->_game.version <= 2)
 			startAnimActor(anim / 4);
@@ -2167,21 +2201,38 @@ void Actor::setActorCostume(int c) {
 	}
 }
 
-static const char* v0ActorNames[7] = {
+static const char* v0ActorNames[0x19] = {
 	"Syd",
 	"Razor",
 	"Dave",
 	"Michael",
 	"Bernard",
 	"Wendy",
-	"Jeff"
+	"Jeff",
+	"",
+	"Dr Fred",
+	"Nurse Edna",
+	"Weird Ed",
+	"Dead Cousin Ted",
+	"Purple Tentacle",
+	"Green Tentacle",
+	"Meteor",
+	"Plant",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"",
+	"Sandy"
 };
 
 const byte *Actor::getActorName() {
-	const byte *ptr;
+	const byte *ptr = NULL;
 
 	if (_vm->_game.version == 0) {
-		ptr = (const byte *)v0ActorNames[_number - 1];
+		if (_number)
+			ptr = (const byte *)v0ActorNames[_number - 1];
 	} else {
 		ptr = _vm->getResourceAddress(rtActorName, _number);
 	}

@@ -666,7 +666,19 @@ void ScummEngine_v0::o_animateActor() {
 	int unk = fetchScriptByte();
 	debug(0,"o_animateActor: unk %d", unk);
 
-	Actor *a = derefActor(act, "o_animateActor");
+	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
+
+	// 0x6993
+	if (anim == 0xFE) {
+		a->_speaking = 0x80;	// Enabled, but not switching
+		return;
+	}
+	// 0x69A3
+	if (anim == 0xFD) {
+		a->_speaking = 0x00;
+		return;
+	}
+
 	a->animateActor(anim);
 }
 
@@ -738,8 +750,13 @@ void ScummEngine_v0::o_setActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
+	
+	// 0x63ED
+	if (act >= _numActors)
+		return;
 
 	ActorC64 *a = (ActorC64 *)derefActor(act, "o_setActorBitVar");
+
 	if (mod)
 		a->_miscflags |= mask;
 	else

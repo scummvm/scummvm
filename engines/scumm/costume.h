@@ -79,8 +79,12 @@ public:
 	byte increaseAnims(Actor *a);
 
 	int _maxHeight;
+
 protected:
-	byte increaseAnim(Actor *a, int slot);
+	void actorSpeak(ActorC64 *a, int &cmd);
+	int dirToDirStop( int oldDir );
+	void frameUpdate(ActorC64 *A, int cmd);
+	
 };
 
 class ClassicCostumeRenderer : public BaseCostumeRenderer {
