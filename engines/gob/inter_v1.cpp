@@ -972,6 +972,7 @@ bool Inter_v1::o1_loadTot(OpFuncParams &params) {
 
 bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 	int index1, index2;
+	int16 id;
 	byte cmd;
 	Resource *resource;
 
@@ -1116,13 +1117,21 @@ bool Inter_v1::o1_palLoad(OpFuncParams &params) {
 	case 61:
 		index1 =  _vm->_game->_script->readByte();
 		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
-		resource = _vm->_game->_resources->getResource(_vm->_game->_script->readInt16());
+		id     = _vm->_game->_script->readInt16();
+		resource = _vm->_game->_resources->getResource(id);
 		if (!resource)
 			break;
 
 		memcpy((char *) _vm->_draw->_vgaPalette + index1 * 3,
 		       resource->getData() + index1 * 3, index2);
 		delete resource;
+
+		// WORKAROUND: The Last Dynasty overwrites the 0. palette entry but depends on it staying black.
+		if ((_vm->getGameType() == kGameTypeDynasty) && (index1 == 0)) {
+			_vm->_draw->_vgaPalette[0].red   = 0;
+			_vm->_draw->_vgaPalette[0].green = 0;
+			_vm->_draw->_vgaPalette[0].blue  = 0;
+		}
 
 		if (_vm->_draw->_applyPal) {
 			_vm->_draw->_applyPal = false;
