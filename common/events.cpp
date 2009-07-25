@@ -95,7 +95,7 @@ void EventDispatcher::unregisterSource(EventSource *source) {
 			_sources.erase(i);
 			return;
 		}
-	}	
+	}
 }
 
 void EventDispatcher::registerObserver(EventObserver *obs, uint priority, bool autoFree) {

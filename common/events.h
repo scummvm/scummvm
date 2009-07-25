@@ -234,7 +234,7 @@ public:
  * Another speciality is the support for a event mapper, which
  * will catch events and create new events out of them. This
  * mapper will be processed before an event is sent to the
- * observers. 
+ * observers.
  */
 class EventDispatcher {
 public:
@@ -300,7 +300,7 @@ private:
 	struct SourceEntry : public Entry {
 		EventSource *source;
 	};
-	
+
 	Common::List<SourceEntry> _sources;
 
 	struct ObserverEntry : public Entry {
