@@ -159,6 +159,36 @@ public:
 };
 
 /**
+ * An artificial event source. This is class is used as an event source, which is
+ * made up by client specific events.
+ *
+ * Example usage cases for this are the Keymapper or the DefaultEventManager.
+ */
+class ArtificialEventSource : public EventSource {
+protected:
+	Common::Queue<Common::Event> _artificialEventQueue;
+public:
+	void addEvent(const Common::Event &ev) {
+		_artificialEventQueue.push(ev);
+	}
+
+	bool pollEvent(Common::Event &ev) {
+	if (!_artificialEventQueue.empty()) {
+			ev = _artificialEventQueue.pop();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * By default an artificial event source prevents its events
+	 * from being mapped.
+	 */
+	virtual bool allowMapping() const { return false; }
+};
+
+/**
  * Object which catches and processes Events.
  *
  * An example for this is the Engine object, it is catching events and processing them.
