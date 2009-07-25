@@ -34,6 +34,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/EventRecorder.h"
 #include "common/events.h"
 #include "common/util.h"
 
@@ -318,7 +319,7 @@ OSystem_GP2X::~OSystem_GP2X() {
 
 uint32 OSystem_GP2X::getMillis() {
 	uint32 millis = SDL_GetTicks();
-	getEventManager()->processMillis(millis);
+	g_eventRec.processMillis(millis);
 	return millis;
 }
 
