@@ -353,10 +353,6 @@ public:
 #ifdef ENABLE_KEYMAPPER
 	virtual Common::Keymapper *getKeymapper() = 0;
 #endif
-
-protected:
-
-	Common::Queue<Common::Event> artificialEventQueue;
 };
 
 } // End of namespace Common

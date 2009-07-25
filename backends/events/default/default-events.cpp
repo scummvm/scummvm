@@ -219,9 +219,6 @@ DefaultEventManager::~DefaultEventManager() {
 	g_system->unlockMutex(_timeMutex);
 	g_system->unlockMutex(_recorderMutex);
 
-	if (!artificialEventQueue.empty())
-		artificialEventQueue.clear();
-
 	if (_playbackFile != NULL) {
 		delete _playbackFile;
 	}
@@ -383,8 +380,8 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = g_system->getMillis();
 	bool result;
 
-	if (!artificialEventQueue.empty()) {
-		event = artificialEventQueue.pop();
+	if (!_artificialEventQueue.empty()) {
+		event = _artificialEventQueue.pop();
 		result = true;
 	} else {
 		result = _boss->pollEvent(event);
@@ -602,9 +599,9 @@ void DefaultEventManager::pushEvent(const Common::Event &event) {
 	// If already received an EVENT_QUIT, don't add another one
 	if (event.type == Common::EVENT_QUIT) {
 		if (!_shouldQuit)
-			artificialEventQueue.push(event);
+			_artificialEventQueue.push(event);
 	} else
-		artificialEventQueue.push(event);
+		_artificialEventQueue.push(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)
