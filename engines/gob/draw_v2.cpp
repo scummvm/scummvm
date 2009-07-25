@@ -218,7 +218,7 @@ void Draw_v2::printTotText(int16 id) {
 
 	bool isSubtitle = (ptr[1] & 0x80) != 0;
 
-	if (isSubtitle && !_vm->subtitles()) {
+	if (isSubtitle && !_vm->_global->_doSubtitles) {
 		delete textItem;
 		return;
 	}

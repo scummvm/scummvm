@@ -32,12 +32,14 @@ namespace Gob {
 
 class Init {
 public:
+	Init(GobEngine *vm);
+	virtual ~Init();
+
 	virtual void initGame();
 
 	virtual void initVideo() = 0;
 
-	Init(GobEngine *vm);
-	virtual ~Init() {}
+	virtual void updateConfig();
 
 protected:
 	Video::PalDesc *_palDesc;
@@ -50,34 +52,42 @@ protected:
 
 class Init_v1 : public Init {
 public:
-	virtual void initVideo();
-
 	Init_v1(GobEngine *vm);
-	virtual ~Init_v1() {}
+	~Init_v1();
+
+	void initVideo();
 };
 
 class Init_v2 : public Init_v1 {
 public:
-	virtual void initVideo();
-
 	Init_v2(GobEngine *vm);
-	virtual ~Init_v2() {}
+	~Init_v2();
+
+	void initVideo();
 };
 
 class Init_v3 : public Init_v2 {
 public:
-	virtual void initVideo();
-
 	Init_v3(GobEngine *vm);
-	virtual ~Init_v3() {}
+	~Init_v3();
+
+	void initVideo();
+};
+
+class Init_v4 : public Init_v3 {
+public:
+	Init_v4(GobEngine *vm);
+	~Init_v4();
+
+	void updateConfig();
 };
 
 class Init_v6 : public Init_v3 {
 public:
-	virtual void initGame();
-
 	Init_v6(GobEngine *vm);
-	virtual ~Init_v6() {}
+	~Init_v6();
+
+	void initGame();
 };
 
 } // End of namespace Gob

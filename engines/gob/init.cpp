@@ -49,6 +49,9 @@ Init::Init(GobEngine *vm) : _vm(vm) {
 	_palDesc = 0;
 }
 
+Init::~Init() {
+}
+
 void Init::cleanup() {
 	_vm->_video->freeDriver();
 	_vm->_global->_primarySurfDesc.reset();
@@ -87,6 +90,7 @@ void Init::initGame() {
 	char buffer[128];
 
 	initVideo();
+	updateConfig();
 
 	if (!_vm->isDemo()) {
 		if (_vm->_dataIO->existData(_vm->_startStk.c_str()))
@@ -204,6 +208,9 @@ void Init::initGame() {
 	_vm->_dataIO->closeDataFile();
 	_vm->_video->initPrimary(-1);
 	cleanup();
+}
+
+void Init::updateConfig() {
 }
 
 } // End of namespace Gob

@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	init_v1.o \
 	init_v2.o \
 	init_v3.o \
+	init_v4.o \
 	init_v6.o \
 	inter.o \
 	inter_v1.o \

@@ -165,6 +165,7 @@ private:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
+	virtual void syncSoundSettings();
 
 	bool initGameParts();
 	void deinitGameParts();
@@ -220,8 +221,6 @@ public:
 	bool isBATDemo() const;
 	bool is800x600() const;
 	bool isDemo() const;
-
-	bool subtitles() const;
 
 	GobEngine(OSystem *syst);
 	virtual ~GobEngine();

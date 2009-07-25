@@ -214,10 +214,6 @@ bool GobEngine::isDemo() const {
 	return (isSCNDemo() || isBATDemo());
 }
 
-bool GobEngine::subtitles() const {
-	return ConfMan.getBool("subtitles");
-}
-
 Common::Error GobEngine::run() {
 	if (!initGameParts()) {
 		GUIErrorMessage("GobEngine::init(): Unknown version of game engine");
@@ -318,6 +314,12 @@ void GobEngine::pauseEngineIntern(bool pause) {
 	_mixer->pauseAll(pause);
 }
 
+void GobEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	_init->updateConfig();
+}
+
 void GobEngine::pauseGame() {
 	pauseEngineIntern(true);
 
@@ -333,139 +335,138 @@ bool GobEngine::initGameParts() {
 
 	_saveLoad = 0;
 
-	_global = new Global(this);
-	_util = new Util(this);
-	_dataIO = new DataIO(this);
-	_palAnim = new PalAnim(this);
+	_global    = new Global(this);
+	_util      = new Util(this);
+	_dataIO    = new DataIO(this);
+	_palAnim   = new PalAnim(this);
 	_vidPlayer = new VideoPlayer(this);
-	_sound = new Sound(this);
-	_game = new Game(this);
+	_sound     = new Sound(this);
+	_game      = new Game(this);
 
 	switch (_gameType) {
 	case kGameTypeGeisha:
 	case kGameTypeAdibouUnknown:
 	case kGameTypeGob1:
-		_init = new Init_v1(this);
-		_video = new Video_v1(this);
-		_inter = new Inter_v1(this);
-		_mult = new Mult_v1(this);
-		_draw = new Draw_v1(this);
-		_map = new Map_v1(this);
-		_goblin = new Goblin_v1(this);
-		_scenery = new Scenery_v1(this);
+		_init     = new Init_v1(this);
+		_video    = new Video_v1(this);
+		_inter    = new Inter_v1(this);
+		_mult     = new Mult_v1(this);
+		_draw     = new Draw_v1(this);
+		_map      = new Map_v1(this);
+		_goblin   = new Goblin_v1(this);
+		_scenery  = new Scenery_v1(this);
 		break;
 
 	case kGameTypeFascination:
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_Fascination(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v2(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_Fascination(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v2(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 		break;
 
 	case kGameTypeWeen:
 	case kGameTypeGob2:
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v2(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v2(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v2(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v2(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 		break;
 
 	case kGameTypeBargon:
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_Bargon(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_Bargon(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v2(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_Bargon(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_Bargon(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v2(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v2(this, _targetName.c_str());
 		break;
 
 	case kGameTypeGob3:
 	case kGameTypeInca2:
-		_init = new Init_v3(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v3(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v3(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v3(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v3(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v3(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), SaveLoad_v3::kScreenshotTypeGob3);
 		break;
 
 	case kGameTypeLostInTime:
-		_init = new Init_v3(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v3(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v3(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v3(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v3(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v3(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v3(this, _targetName.c_str(), SaveLoad_v3::kScreenshotTypeLost);
 		break;
 
 	case kGameTypeWoodruff:
-		_init = new Init_v3(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v4(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v4(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v4(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v4(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v4(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v4(this, _targetName.c_str());
 		break;
 
 	case kGameTypeDynasty:
-		_init = new Init_v3(this);
-		_video = new Video_v2(this);
-		_inter = new Inter_v5(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v4(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v3(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v5(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v4(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad(this);
 		break;
 
 	case kGameTypeAdibou4:
 	case kGameTypeUrban:
-		_init = new Init_v6(this);
-		_video = new Video_v6(this);
-		_inter = new Inter_v6(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v4(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v6(this);
+		_video    = new Video_v6(this);
+		_inter    = new Inter_v6(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v4(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v6(this, _targetName.c_str());
 		break;
 
 	case kGameTypePlaytoon:
 	case kGameTypePlaytnCk:
 	case kGameTypeBambou:
-		_init = new Init_v2(this);
-		_video = new Video_v2(this);
-//		_inter = new Inter_Playtoons(this);
-		_inter = new Inter_v6(this);
-		_mult = new Mult_v2(this);
-		_draw = new Draw_v2(this);
-		_map = new Map_v2(this);
-		_goblin = new Goblin_v2(this);
-		_scenery = new Scenery_v2(this);
+		_init     = new Init_v2(this);
+		_video    = new Video_v2(this);
+		_inter    = new Inter_v6(this);
+		_mult     = new Mult_v2(this);
+		_draw     = new Draw_v2(this);
+		_map      = new Map_v2(this);
+		_goblin   = new Goblin_v2(this);
+		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_Playtoons(this);
 		break;
 
