@@ -218,6 +218,11 @@ public:
 
 	uint hash() const;
 
+	/**
+	 * Printf-like function. Returns a formatted String.
+	 */
+	static Common::String printf(const char *fmt, ...) GCC_PRINTF(1,2);
+
 public:
 	typedef char *        iterator;
 	typedef const char *  const_iterator;

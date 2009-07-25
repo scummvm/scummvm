@@ -28,6 +28,8 @@
 
 #include "common/memorypool.h"
 
+#include <stdarg.h>
+
 #if !defined(__SYMBIAN32__)
 #include <new>
 #endif
@@ -434,6 +436,34 @@ void String::trim() {
 uint String::hash() const {
 	return hashit(c_str());
 }
+
+// static
+String String::printf(const char *fmt, ...)
+{
+	String output;
+	assert(output.isStorageIntern());
+
+	va_list va;
+	va_start(va, fmt);
+	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
+	va_end(va);
+
+	if (len < (int)_builtinCapacity) {
+		// vsnprintf succeeded
+		output._size = len;
+	} else {
+		// vsnprintf didn't have enough space, so grow buffer
+		output.ensureCapacity(len, false);
+		va_start(va, fmt);
+		int len2 = vsnprintf(output._str, len+1, fmt, va);
+		va_end(va);
+		assert(len == len2);
+		output._size = len2;
+	}
+
+	return output;
+}
+
 
 #pragma mark -
 
