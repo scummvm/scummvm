@@ -50,8 +50,8 @@ void Script::setupCommandList() {
 		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
 		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
 		{ 6,  1, "Talk", 				2, { 3, 2 }, NULL },
-		{ 7,  1, "ObjStat", 			2, { 3, 3 }, NULL },
-		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, NULL },
+		{ 7,  1, "ObjStat", 			2, { 3, 3 }, &Script::objStat },
+		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, &Script::objStatOn },
 		{ 8,  1, "IcoStat", 			2, { 3, 3 }, NULL },
 		{ 9,  1, "Dialogue", 			1, { 2 }, NULL },
 		{ 9,  2, "ExitDialogue", 		0, { 0 }, NULL },
@@ -249,7 +249,7 @@ int Script::funcIsObjOff(int objID) {
 	GameObject *obj = _vm->_game->getObject(objID);
 
 	// We index locations from 0 (as opposed to the original player where it was from 1)
-	// That's why the "invalid" location 0 from the data files is converted to -1
+	// That's why the "away" location 0 from the data files is converted to -1
 	return !obj->_visible && obj->_location != -1;
 }
 
@@ -329,6 +329,36 @@ void Script::release(Common::Queue<int> &params) {
 
 	// Delete animations which have an index greater than the marked index
 	_vm->_anims->deleteAfterIndex(markedIndex);
+}
+
+void Script::objStatOn(Common::Queue<int> &params) {
+	int objID = params.pop() - 1;
+	int roomID = params.pop() - 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	obj->_location = roomID;
+	obj->_visible = true;
+}
+
+void Script::objStat(Common::Queue<int> &params) {
+	int status = params.pop();
+	int objID = params.pop() - 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	if (status == 1) {
+		return;
+	} else if (status == 2) {
+		obj->_visible = false;
+	} else {
+		obj->_visible = false;
+		obj->_location = -1;
+	}
+		
+	for (uint i = 0; i < obj->_anims.size(); ++i) {
+		_vm->_anims->stop(obj->_anims[i]);
+	}	
 }
 
 /**

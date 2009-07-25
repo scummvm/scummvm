@@ -106,6 +106,8 @@ private:
 	void start(Common::Queue<int> &params);
 	void mark(Common::Queue<int> &params);
 	void release(Common::Queue<int> &params);
+	void objStat(Common::Queue<int> &params);
+	void objStatOn(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);
