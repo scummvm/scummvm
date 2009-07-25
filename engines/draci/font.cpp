@@ -211,15 +211,24 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
 	assert(y >= 0);
 
 	int curx = x;
+	int cury = y;
 
 	for (unsigned int i = 0; i < len; ++i) {
+
+		// If we encounter the '|' char (newline and end of string marker),
+		// skip it and go to the start of the next line
+		if (str[i] == '|') {
+			cury += getFontHeight() + 1;
+			curx = x;
+			continue;
+		}
 		
 		// Return early if there's no more space on the screen	
-		if (curx >= dst->w) {
+		if (curx >= dst->w || cury >= dst->h) {
 			return;
 		}		
-			
-		drawChar(dst, str[i], curx, y, markDirty);
+		
+		drawChar(dst, str[i], curx, cury, markDirty);
 		curx += getCharWidth(str[i]) + spacing;
 	}
 }
