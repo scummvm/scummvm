@@ -699,11 +699,9 @@ bool ScummEngine_v0::verbMoveToActor(int actor) {
 	Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
 	Actor *a2 =derefActor(actor, "checkExecVerbs");
 
-
 	if (!a->_moving) {
 		int dist =  getDist(a->getRealPos().x, a->getRealPos().y, a2->getRealPos().x, a2->getRealPos().y);
-
-		if (dist>5)
+		if (dist > 5)
 			a->startWalkActor(a2->getRealPos().x, a2->getRealPos().y, 1);
 		else
 			return false;
@@ -731,13 +729,12 @@ bool ScummEngine_v0::verbMove(int object, int objectIndex, bool invObject) {
 	int dist =  getDist(a->getRealPos().x, a->getRealPos().y, x, y);
 
 	// FIXME: This should be changed once the walkbox problem is fixed
-	if (dist>0x5) {
+	if (dist > 0x5) {
 		a->startWalkActor(x, y, dir);
 		VAR(6) = x;
 		VAR(7) = y;
 		return true;
 	} else {
-
 		// Finished walk, are we picking up the item?
 		if (_verbPickup) {
 			int oldActive = _activeObject, oldIndex = _activeObjectIndex;
@@ -855,7 +852,6 @@ bool ScummEngine_v0::verbExec() {
 	if (_activeVerb == 3 && _activeInventory && _activeActor) {
 		// FIXME: Actors need to turn and face each other
 		// And walk to each other
-		//
 		if (verbMoveToActor(_activeActor))
 			return true;
 
@@ -914,7 +910,6 @@ bool ScummEngine_v0::verbExec() {
 		_v0ObjectIndex = false;
 	} else if (_activeInventory) {
 		if (verbExecutes(_activeInventory, true) == false) {
-			
 			if (_activeObject2 && verbExecutes(_activeObject2, true)) {
 				_v0ObjectInInventory = true;
 				
@@ -950,7 +945,6 @@ void ScummEngine_v0::checkExecVerbs() {
 
 	// Is a verb currently executing
 	if (_verbExecuting) {
-
 		// Check if mouse click
 		if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 			int over = findVerbAtPos(_mouse.x, _mouse.y);
@@ -1026,7 +1020,6 @@ void ScummEngine_v0::checkExecVerbs() {
 
 			if (_activeVerb == 11 && !((!(_activeObject || _activeInventory)) || !_activeObject2))
 				return;
-
 		} else {
 			int over = findVerbAtPos(_mouse.x, _mouse.y);
 			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
@@ -1062,7 +1055,6 @@ void ScummEngine_v0::checkExecVerbs() {
 			
 			// Clicked on nothing, walk here?
 			if (!over && !act && _activeVerb == 13 && !obj && _currentMode != 0) {
-
 				// Clear all selected
 				resetSentence();
 
