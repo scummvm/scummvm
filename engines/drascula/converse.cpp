@@ -266,6 +266,7 @@ void DrasculaEngine::converse(int index) {
 		} else if (_color != kColorLightGreen)
 			color_abc(kColorLightGreen);
 
+		_system->delayMillis(10);
 		updateScreen();
 	} // while (breakOut == 0)
 
