@@ -41,7 +41,7 @@ namespace Common {
 }
 
 
-class DefaultEventManager : public Common::EventManager {
+class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	Common::EventSource *_boss;
 
 #ifdef ENABLE_VKEYBD
@@ -73,6 +73,12 @@ class DefaultEventManager : public Common::EventManager {
 
 		bool allowMapping() const { return false; }
 	} _artificialEventSource;
+
+	Common::Queue<Common::Event> _eventQueue;
+	bool notifyEvent(const Common::Event &ev) {
+		_eventQueue.push(ev);
+		return true;
+	}
 
 	Common::Point _mousePos;
 	int _buttonState;

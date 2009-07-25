@@ -594,7 +594,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {
-
 	// If already received an EVENT_QUIT, don't add another one
 	if (event.type == Common::EVENT_QUIT) {
 		if (!_shouldQuit)
