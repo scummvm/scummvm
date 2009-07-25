@@ -236,9 +236,11 @@ public:
  * mapper will be processed before an event is sent to the
  * observers. 
  */
-class EventDispatcher : public Singleton<EventDispatcher> {
-	friend class Singleton<SingletonBaseType>;
+class EventDispatcher {
 public:
+	EventDispatcher();
+	~EventDispatcher();
+
 	/**
 	 * Tries to catch events from the registered event
 	 * sources and dispatch them to the observers.
@@ -289,9 +291,6 @@ public:
 	 */
 	void unregisterObserver(EventObserver *obs);
 private:
-	EventDispatcher();
-	~EventDispatcher();
-
 	EventMapper *_mapper;
 
 	struct Entry {
@@ -313,8 +312,6 @@ private:
 
 	void dispatchEvent(const Event &event);
 };
-
-#define g_eventDispatcher (Common::EventDispatcher::instance())
 
 class Keymapper;
 
@@ -398,6 +395,14 @@ public:
 #ifdef ENABLE_KEYMAPPER
 	virtual Common::Keymapper *getKeymapper() = 0;
 #endif
+
+	/**
+	 * Returns the underlying EventDispatcher.
+	 */
+	EventDispatcher *getEventDispatcher() { return &_dispatcher; }
+
+protected:
+	EventDispatcher _dispatcher;
 };
 
 } // End of namespace Common

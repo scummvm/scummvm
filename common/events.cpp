@@ -25,8 +25,6 @@
 
 #include "common/events.h"
 
-DECLARE_SINGLETON(Common::EventDispatcher);
-
 namespace Common {
 
 EventDispatcher::EventDispatcher() : _mapper(0) {

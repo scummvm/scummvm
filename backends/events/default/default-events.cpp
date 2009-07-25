@@ -101,10 +101,10 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 
 	assert(boss);
 
-	g_eventDispatcher.registerSource(boss, false);
-	g_eventDispatcher.registerSource(&_artificialEventSource, false);
+	_dispatcher.registerSource(boss, false);
+	_dispatcher.registerSource(&_artificialEventSource, false);
 
-	g_eventDispatcher.registerObserver(this, 0, false);
+	_dispatcher.registerObserver(this, 0, false);
 
 	_recordFile = NULL;
 	_recordTimeFile = NULL;
@@ -207,7 +207,7 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 #ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
 	// EventDispatcher will automatically free the keymapper
-	g_eventDispatcher.registerMapper(_keymapper);
+	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
 #endif
 }
@@ -383,7 +383,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = g_system->getMillis();
 	bool result = false;
 
-	g_eventDispatcher.dispatch();
+	_dispatcher.dispatch();
 	if (!_eventQueue.empty()) {
 		event = _eventQueue.pop();
 		result = true;
