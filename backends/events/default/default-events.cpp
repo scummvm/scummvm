@@ -380,8 +380,7 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = g_system->getMillis();
 	bool result;
 
-	if (!_artificialEventQueue.empty()) {
-		event = _artificialEventQueue.pop();
+	if (_artificialEventSource.pollEvent(event)) {
 		result = true;
 	} else {
 		result = _boss->pollEvent(event);
@@ -599,9 +598,9 @@ void DefaultEventManager::pushEvent(const Common::Event &event) {
 	// If already received an EVENT_QUIT, don't add another one
 	if (event.type == Common::EVENT_QUIT) {
 		if (!_shouldQuit)
-			_artificialEventQueue.push(event);
+			_artificialEventSource.addEvent(event);
 	} else
-		_artificialEventQueue.push(event);
+		_artificialEventSource.addEvent(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

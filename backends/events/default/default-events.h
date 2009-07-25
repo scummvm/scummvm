@@ -53,7 +53,26 @@ class DefaultEventManager : public Common::EventManager {
 	bool _remap;
 #endif
 
-	Common::Queue<Common::Event> _artificialEventQueue;
+	// TODO: Maybe move this to common/events.h, when other code uses something similar
+	class ArtificialEventSource : public Common::EventSource {
+	private:
+		Common::Queue<Common::Event> _artificialEventQueue;
+	public:
+		void addEvent(const Common::Event &ev) {
+			_artificialEventQueue.push(ev);
+		}
+
+		bool pollEvent(Common::Event &ev) {
+			if (!_artificialEventQueue.empty()) {
+				ev = _artificialEventQueue.pop();
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		bool allowMapping() const { return false; }
+	} _artificialEventSource;
 
 	Common::Point _mousePos;
 	int _buttonState;
