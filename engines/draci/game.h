@@ -187,6 +187,8 @@ public:
 		return n;
 	}
 
+	void walkHero(int x, int y);
+
 	void loadRoom(int roomNum);
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();

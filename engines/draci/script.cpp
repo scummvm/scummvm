@@ -58,9 +58,9 @@ void Script::setupCommandList() {
 		{ 9,  3, "ResetDialogue", 		0, { 0 }, NULL },
 		{ 9,  4, "ResetDialogueFrom", 	0, { 0 }, NULL },
 		{ 9,  5, "ResetBlock", 			1, { 3 }, NULL },
-		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, NULL },
-		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, NULL },
-		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, NULL },
+		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, &Script::walkOn },
+		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
+		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
 		{ 11, 1, "LoadPalette", 		1, { 2 }, NULL },
 		{ 12, 1, "SetPalette", 			0, { 0 }, NULL },
 		{ 12, 2, "BlackPalette", 		0, { 0 }, NULL },
@@ -402,6 +402,17 @@ void Script::execUse(Common::Queue<int> &params) {
 	run(obj->_program, obj->_use);
 }
 
+void Script::walkOn(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int x = params.pop();
+	int y = params.pop();
+	params.pop(); // facing direction, not used yet
+
+	_vm->_game->walkHero(x, y);
+}
 /**
  * @brief Evaluates mathematical expressions
  * @param reader Stream reader set to the beginning of the expression
