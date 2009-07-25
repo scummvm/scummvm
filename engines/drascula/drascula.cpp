@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -92,7 +93,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	*textName = 0;
 
 	_rnd = new Common::RandomSource();
-	syst->getEventManager()->registerRandomSource(*_rnd, "drascula");
+	g_eventRec.registerRandomSource(*_rnd, "drascula");
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)

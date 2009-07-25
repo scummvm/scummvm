@@ -28,6 +28,7 @@
 
 #include "common/util.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/system.h"
 
 #include "sword1/sound.h"
@@ -47,7 +48,7 @@ namespace Sword1 {
 #define SPEECH_FLAGS (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_LITTLE_ENDIAN)
 
 Sound::Sound(const char *searchPath, Audio::Mixer *mixer, ResMan *pResMan) {
-	g_system->getEventManager()->registerRandomSource(_rnd, "sword1sound");
+	g_eventRec.registerRandomSource(_rnd, "sword1sound");
 	strcpy(_filePath, searchPath);
 	_mixer = mixer;
 	_resMan = pResMan;

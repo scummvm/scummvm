@@ -25,6 +25,7 @@
 
 #include "common/md5.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -515,7 +516,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	parseFeatures();
 
 	_rnd = new Common::RandomSource();
-	syst->getEventManager()->registerRandomSource(*_rnd, "agi");
+	g_eventRec.registerRandomSource(*_rnd, "agi");
 
 	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");

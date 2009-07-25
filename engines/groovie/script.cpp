@@ -33,6 +33,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #define NUM_OPCODES 90
 
@@ -73,7 +74,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	}
 
 	// Initialize the random source
-	_vm->_system->getEventManager()->registerRandomSource(_random, "GroovieScripts");
+	g_eventRec.registerRandomSource(_random, "GroovieScripts");
 
 	// Prepare the variables
 	_bitflags = 0;

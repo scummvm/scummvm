@@ -33,7 +33,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
-#include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/util.h"
 
 #ifdef UNIX
@@ -257,7 +257,7 @@ OSystem_SDL::~OSystem_SDL() {
 
 uint32 OSystem_SDL::getMillis() {
 	uint32 millis = SDL_GetTicks();
-	getEventManager()->processMillis(millis);
+	g_eventRec.processMillis(millis);
 	return millis;
 }
 

@@ -31,6 +31,7 @@
 #include "common/savefile.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #include "queen/queen.h"
 #include "queen/bankman.h"
@@ -193,7 +194,7 @@ namespace Queen {
 
 QueenEngine::QueenEngine(OSystem *syst)
 	: Engine(syst), _debugger(0) {
-	syst->getEventManager()->registerRandomSource(randomizer, "queen");
+	g_eventRec.registerRandomSource(randomizer, "queen");
 }
 
 QueenEngine::~QueenEngine() {

@@ -30,6 +30,7 @@
 #include "lure/lure.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 namespace Lure {
 
@@ -42,7 +43,7 @@ Resources &Resources::getReference() {
 }
 
 Resources::Resources() {
-	g_system->getEventManager()->registerRandomSource(_rnd, "lureResources");
+	g_eventRec.registerRandomSource(_rnd, "lureResources");
 	int_resources = this;
 	reloadData();
 

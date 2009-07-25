@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	config-manager.o \
 	debug.o \
 	events.o \
+	EventRecorder.o \
 	file.o \
 	fs.o \
 	hashmap.o \

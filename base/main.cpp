@@ -41,6 +41,7 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
@@ -354,6 +355,14 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
+
+	// Directly after initializing the event manager, we will initialize our
+	// event recorder.
+	//
+	// TODO: This is just to match the current behavior, when we further extend
+	// our event recorder, we might do this at another place. Or even change
+	// the whole API for that ;-).
+	g_eventRec.init();
 
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);

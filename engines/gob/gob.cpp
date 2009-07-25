@@ -25,6 +25,7 @@
 
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #include "base/plugins.h"
 #include "common/config-manager.h"
@@ -129,7 +130,7 @@ GobEngine::GobEngine(OSystem *syst) : Engine(syst) {
 	Common::addDebugChannel(kDebugHotspots, "Hotspots", "Hotspots debug level");
 	Common::addDebugChannel(kDebugDemo, "Demo", "Demo script debug level");
 
-	syst->getEventManager()->registerRandomSource(_rnd, "gob");
+	g_eventRec.registerRandomSource(_rnd, "gob");
 }
 
 GobEngine::~GobEngine() {

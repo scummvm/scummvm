@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -74,7 +75,7 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 			_gameId = g->id;
 
 	_rnd = new Common::RandomSource();
-	syst->getEventManager()->registerRandomSource(*_rnd, "made");
+	g_eventRec.registerRandomSource(*_rnd, "made");
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)

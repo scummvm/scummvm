@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/md5.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/system.h"
 
 #include "gui/message.h"
@@ -539,7 +540,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
 		Common::addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 
-	syst->getEventManager()->registerRandomSource(_rnd, "scumm");
+	g_eventRec.registerRandomSource(_rnd, "scumm");
 }
 
 

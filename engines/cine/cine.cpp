@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -64,7 +65,7 @@ CineEngine::CineEngine(OSystem *syst, const CINEGameDescription *gameDesc) : Eng
 
 	g_cine = this;
 
-	syst->getEventManager()->registerRandomSource(_rnd, "cine");
+	g_eventRec.registerRandomSource(_rnd, "cine");
 }
 
 CineEngine::~CineEngine() {
