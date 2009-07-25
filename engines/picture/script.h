@@ -186,7 +186,7 @@ protected:
 	void sfRunOptionsScreen();
 	void sfPrecacheSprites();
 	void sfPrecacheSounds1();
-	void sfDeleteAllPbfFilesByExternalArray();
+	void sfDeletePrecachedFiles();
 	void sfPrecacheSounds2();
 	void sfRestoreStackPtr();
 	void sfSaveStackPtr();

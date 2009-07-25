@@ -401,7 +401,6 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 		if (*textData == 0x1E) {
 			textData++;
 			addTalkTextRect(font, x, y, length, width, item);
-			// CHECKME?
 			width = 0;
 			length = 0;
 		} else {
@@ -417,10 +416,6 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 					wordWidth += font.getCharWidth(ch) + font.getSpacing() - 1;
 				}
 			}
-			
-			debug(0, "## width = %d; wordWidth = %d; width + wordWidth = %d; maxWidth + font.getWidth() = %d",
-				width, wordWidth, width + wordWidth, maxWidth + font.getWidth());
-			
 			if (width + wordWidth > maxWidth + font.getWidth()) {
 				addTalkTextRect(font, x, y, length, width, item);
 				width = wordWidth;
@@ -433,8 +428,6 @@ void Screen::updateTalkText(int16 slotIndex, int16 slotOffset) {
 	}
 
 	addTalkTextRect(font, x, y, length, width, item);
-
-	debug(0, "## item->lineCount = %d", item->lineCount);
 
 	if (item->lineCount > 0) {
 		int16 ysub = (font.getHeight() - 1) * item->lineCount;
@@ -533,7 +526,6 @@ void Screen::drawGuiTextMulti(byte *textData) {
 	wrapState.sourceString = textData;
 
 	do {
-	
 		if (*wrapState.sourceString == 0x0A) {
 			// Set text position
 			y = wrapState.sourceString[1];
@@ -551,7 +543,6 @@ void Screen::drawGuiTextMulti(byte *textData) {
 			wrapState.len2 = wrapGuiText(_fontResIndexArray[1], 640, wrapState);
 			drawGuiText(x - wrapState.width / 2, y, _fontColor1, _fontColor2, _fontResIndexArray[1], wrapState);
 		}
-	
 	} while (*wrapState.sourceString != 0xFF);
 
 	_guiRefresh = true;

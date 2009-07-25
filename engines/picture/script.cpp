@@ -138,7 +138,7 @@ void ScriptInterpreter::setupScriptFunctions() {
 	RegisterScriptFunction(sfRunOptionsScreen);
 	RegisterScriptFunction(sfPrecacheSprites);
 	RegisterScriptFunction(sfPrecacheSounds1);
-	RegisterScriptFunction(sfDeleteAllPbfFilesByExternalArray);
+	RegisterScriptFunction(sfDeletePrecachedFiles);
 	RegisterScriptFunction(sfPrecacheSounds2);
 	RegisterScriptFunction(sfRestoreStackPtr);
 	RegisterScriptFunction(sfSaveStackPtr);
@@ -602,7 +602,6 @@ int16 ScriptInterpreter::getGameVar(uint variable) {
 			warning("Getting unimplemented game variable %s (%d)", getVarName(variable), variable);
 			break;
 	}
-
 	
 	return value;
 
@@ -680,7 +679,6 @@ void ScriptInterpreter::setGameVar(uint variable, int16 value) {
 			break;
 	}
 
-
 }
 
 byte ScriptInterpreter::arg8(int16 offset) {
@@ -702,27 +700,27 @@ int16 ScriptInterpreter::popInt16() {
 }
 
 void ScriptInterpreter::localWrite8(int16 offset, byte value) {
-	debug(1, "localWrite8(%d, %d)", offset, value);
+	//debug(1, "localWrite8(%d, %d)", offset, value);
 	_localData[offset] = value;
 }
 
 byte ScriptInterpreter::localRead8(int16 offset) {
-	debug(1, "localRead8(%d) -> %d", offset, _localData[offset]);
+	//debug(1, "localRead8(%d) -> %d", offset, _localData[offset]);
 	return _localData[offset];
 }
 
 void ScriptInterpreter::localWrite16(int16 offset, int16 value) {
-	debug(1, "localWrite16(%d, %d)", offset, value);
+	//debug(1, "localWrite16(%d, %d)", offset, value);
 	WRITE_LE_UINT16(&_localData[offset], value);
 }
 
 int16 ScriptInterpreter::localRead16(int16 offset) {
-	debug(1, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
+	//debug(1, "localRead16(%d) -> %d", offset, (int16)READ_LE_UINT16(&_localData[offset]));
 	return (int16)READ_LE_UINT16(&_localData[offset]);
 }
 
 byte *ScriptInterpreter::localPtr(int16 offset) {
-	debug(1, "localPtr(%d)", offset);
+	//debug(1, "localPtr(%d)", offset);
 	return &_localData[offset];
 }
 
@@ -1068,7 +1066,7 @@ void ScriptInterpreter::sfClearScreen() {
 }
 
 void ScriptInterpreter::sfHandleInput() {
-	// TODO: Recheck what this does, I don't remember
+	// TODO: Recheck what this does
 	int16 varOfs = arg16(3);
 	localWrite16(varOfs, 0);
 }
@@ -1077,43 +1075,26 @@ void ScriptInterpreter::sfRunOptionsScreen() {
 	// TODO
 }
 
+/* NOTE: The opcodes sfPrecacheSprites, sfPrecacheSounds1, sfPrecacheSounds2 and
+    sfDeletePrecachedFiles were used by the original engine to handle precaching
+	of data so the game doesn't stall while playing (due to the slow speed of
+	CD-Drives back then). This is not needed in ScummVM since all supported
+	systems are fast enough to load data in-game. */
+		
 void ScriptInterpreter::sfPrecacheSprites() {
-#if 0
-	// DEBUG
-	int16 *resArray = (int16*)localPtr(arg16(3));
-	while (*resArray != -1) {
-		debug("ScriptInterpreter::sfPrecacheSprites() index = %d", *resArray);
-		_vm->_arc->dump(*resArray, "pc1");
-		resArray++;
-	}
-#endif
+	// See note above
 }
 
 void ScriptInterpreter::sfPrecacheSounds1() {
-#if 0
-	// DEBUG
-	int16 *resArray = (int16*)localPtr(arg16(3));
-	while (*resArray != -1) {
-		debug("ScriptInterpreter::sfPrecacheSounds1() index = %d", *resArray);
-		_vm->_arc->dump(*resArray, "pc2");
-		resArray++;
-	}
-#endif
+	// See note above
 }
 
-void ScriptInterpreter::sfDeleteAllPbfFilesByExternalArray() {
+void ScriptInterpreter::sfDeletePrecachedFiles() {
+	// See note above
 }
 
 void ScriptInterpreter::sfPrecacheSounds2() {
-#if 0
-	// DEBUG
-	int16 *resArray = (int16*)localPtr(arg16(3));
-	while (*resArray != -1) {
-		debug("ScriptInterpreter::sfPrecacheSounds2() index = %d", *resArray);
-		_vm->_arc->dump(*resArray, "pc3");
-		resArray++;
-	}
-#endif
+	// See note above
 }
 
 void ScriptInterpreter::sfRestoreStackPtr() {
