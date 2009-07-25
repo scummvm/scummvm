@@ -1718,7 +1718,9 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	byte *imdVidMem = _vidMem + sW * top + left;
 	byte *srcPtr;
 
-	if ((width < 0) || (height < 0))
+	if ((left < 0) || (top < 0) || (right < 0) || (bottom < 0))
+		return 1;
+	if ((width <= 0) || (height <= 0))
 		return 1;
 
 	uint8 type;
