@@ -499,7 +499,7 @@ void Game::changeRoom(uint roomNum) {
 	_vm->_anims->deleteOverlays();
 	
 	// Delete walking map testing overlay
-	_vm->_anims->deleteAnimation(-2);
+	_vm->_anims->deleteAnimation(kWalkingMapOverlay);
 
 	int oldRoomNum = _currentRoom._roomNum;
 
