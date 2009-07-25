@@ -126,7 +126,6 @@ void Sprite::setMirrorOff() {
 	_mirror = false;
 }
 
-// TODO: Research what kind of sampling the original player uses
 void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 	Common::Rect sourceRect(0, 0, _width, _height);
@@ -155,8 +154,8 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 	const int transparent = surface->getTransparentColour();
 
 	// Calculate how many rows and columns we need to draw
-	const int rows = clippedDestRect.bottom - clippedDestRect.top;
-	const int columns = clippedDestRect.right - clippedDestRect.left;
+	const int rows = clippedDestRect.height();
+	const int columns = clippedDestRect.width();
 
 	int *rowIndices = new int[rows];
 	int *columnIndices = new int[columns];
