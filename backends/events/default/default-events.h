@@ -42,8 +42,6 @@ namespace Common {
 
 
 class DefaultEventManager : public Common::EventManager, Common::EventObserver {
-	Common::EventSource *_boss;
-
 #ifdef ENABLE_VKEYBD
 	Common::VirtualKeyboard *_vk;
 #endif

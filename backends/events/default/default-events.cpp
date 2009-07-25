@@ -93,14 +93,18 @@ void writeRecord(Common::OutSaveFile *outFile, uint32 diff, Common::Event &event
 }
 
 DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
-	_boss(boss),
 	_buttonState(0),
 	_modifierState(0),
 	_shouldQuit(false),
 	_shouldRTL(false),
 	_confirmExitDialogActive(false) {
 
-	assert(_boss);
+	assert(boss);
+
+	g_eventDispatcher.registerSource(boss, false);
+	g_eventDispatcher.registerSource(&_artificialEventSource, false);
+
+	g_eventDispatcher.registerObserver(this, 0, false);
 
 	_recordFile = NULL;
 	_recordTimeFile = NULL;
@@ -378,12 +382,12 @@ void DefaultEventManager::processMillis(uint32 &millis) {
 
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = g_system->getMillis();
-	bool result;
+	bool result = false;
 
-	if (_artificialEventSource.pollEvent(event)) {
+	g_eventDispatcher.dispatch();
+	if (!_eventQueue.empty()) {
+		event = _eventQueue.pop();
 		result = true;
-	} else {
-		result = _boss->pollEvent(event);
 
 #ifdef ENABLE_KEYMAPPER
 		if (result) {
