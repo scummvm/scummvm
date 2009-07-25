@@ -188,6 +188,9 @@ public:
  * An example for this is the Keymapper.
  */
 class EventMapper : public EventSource, public EventObserver {
+public:
+	/** For event mappers resulting events should never be mapped */
+	bool allowMapping() const { return false; }
 };
 
 /**
