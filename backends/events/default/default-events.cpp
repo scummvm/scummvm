@@ -206,14 +206,13 @@ DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 #endif
 #ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
+	// EventDispatcher will automatically free the keymapper
+	g_eventDispatcher.registerMapper(_keymapper);
 	_remap = false;
 #endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
-#ifdef ENABLE_KEYMAPPER
-	delete _keymapper;
-#endif
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
@@ -388,21 +387,6 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 	if (!_eventQueue.empty()) {
 		event = _eventQueue.pop();
 		result = true;
-
-#ifdef ENABLE_KEYMAPPER
-		if (result) {
-			// send key press events to keymapper
-			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_keymapper->mapKeyDown(event.kbd)) {
-					result = false;
-				}
-			} else if (event.type == Common::EVENT_KEYUP) {
-				if (_keymapper->mapKeyUp(event.kbd)) {
-					result = false;
-				}
-			}
-		}
-#endif
 	}
 
 	if (_recordMode != kPassthrough)  {

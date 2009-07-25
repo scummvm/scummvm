@@ -51,26 +51,7 @@ class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 	bool _remap;
 #endif
 
-	// TODO: Maybe move this to common/events.h, when other code uses something similar
-	class ArtificialEventSource : public Common::EventSource {
-	private:
-		Common::Queue<Common::Event> _artificialEventQueue;
-	public:
-		void addEvent(const Common::Event &ev) {
-			_artificialEventQueue.push(ev);
-		}
-
-		bool pollEvent(Common::Event &ev) {
-			if (!_artificialEventQueue.empty()) {
-				ev = _artificialEventQueue.pop();
-				return true;
-			} else {
-				return false;
-			}
-		}
-
-		bool allowMapping() const { return false; }
-	} _artificialEventSource;
+	Common::ArtificialEventSource _artificialEventSource;
 
 	Common::Queue<Common::Event> _eventQueue;
 	bool notifyEvent(const Common::Event &ev) {
