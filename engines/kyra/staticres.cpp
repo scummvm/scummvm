@@ -67,6 +67,23 @@ bool checkKyraDat(Common::SeekableReadStream *file) {
 			return false;
 	return true;
 }
+
+class CachedArchiveMember : public Common::ArchiveMember {
+	Common::String _name;
+	Common::SeekableReadStream *_stream;
+public:
+	CachedArchiveMember(Common::SeekableReadStream *stream, Common::String name) 
+		: _name(name), _stream(stream) {}
+
+	~CachedArchiveMember() { delete _stream; }
+
+	Common::String getName() const { return _name; }
+
+	Common::SeekableReadStream *createReadStream() const {
+		return new Common::SeekableSubReadStream(_stream, 0, _stream->size());
+	}
+};
+
 } // end of anonymous namespace
 
 // used for the KYRA.DAT file which still uses
@@ -151,9 +168,9 @@ bool StaticResource::loadStaticResourceFile() {
 			continue;
 		}
 
-		delete file; file = 0;
+		Common::ArchiveMemberPtr kyraDat(new CachedArchiveMember(file, "KYRA.DAT"));
 
-		if (!res->loadPakFile(staticDataFilename(), *i))
+		if (!res->loadPakFile(staticDataFilename(), kyraDat))
 			continue;
 
 		if (tryKyraDatLoad()) {
