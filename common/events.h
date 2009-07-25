@@ -31,6 +31,9 @@
 #include "common/rect.h"
 #include "common/noncopyable.h"
 
+#include "common/list.h"
+#include "common/singleton.h"
+
 namespace Common {
 
 /**
@@ -124,6 +127,146 @@ struct Event {
 	Common::Point mouse;
 
 	Event() : type(EVENT_INVALID), synthetic(false) {}
+};
+
+/**
+ * A source of Events.
+ *
+ * An example for this is OSystem, it provides events created by the system
+ * and or user.
+ */
+class EventSource {
+public:
+	virtual ~EventSource() {}
+
+	/**
+	 * Queries a event from the source.
+	 *
+	 * @param	event 	a reference to the event struct, where the event should be stored.
+	 * @return	true if an event was polled, false otherwise.
+	 */
+	virtual bool pollEvent(Event &event) = 0;
+};
+
+/**
+ * Object which catches and processes Events.
+ *
+ * An example for this is the Engine object, it is catching events and processing them.
+ */
+class EventObserver {
+public:
+	virtual ~EventObserver() {}
+
+	/**
+	 * Notifies the source of an incoming event.
+	 *
+	 * An obeser is supposed to eat the event, with returning true, when
+	 * it might want prevent other observers from preventing to receive
+	 * the event. An usage example here is the keymapper:
+	 * If it processes an Event, it should 'eat' it and create a new
+	 * event, which the EventDispatcher will then catch.
+	 *
+	 * @param	event	the event, which is incoming.
+	 * @return	true if this observer uses this event, false otherwise.
+	 */
+	virtual bool notifyEvent(const Event &event) = 0;
+};
+
+/**
+ * A event mapper, which will map events to others.
+ *
+ * An example for this is the Keymapper.
+ */
+class EventMapper : public EventSource, public EventObserver {
+};
+
+/**
+ * Dispatches events from various sources to various observers.
+ *
+ * EventDispatcher is using a priority based approach. Observers
+ * with higher priority will be notified before observers with
+ * lower priority. Because of the possibility that oberservers
+ * might 'eat' events, not all observers might be notified.
+ *
+ * Another speciality is the support for a event mapper, which
+ * will catch events and create new events out of them. This
+ * mapper will be processed before an event is sent to the
+ * observers. 
+ */
+class EventDispatcher : public Singleton<EventDispatcher> {
+	friend class Singleton<SingletonBaseType>;
+public:
+	/**
+	 * Tries to catch events from the registered event
+	 * sources and dispatch them to the observers.
+	 */
+	void dispatch();
+
+	/**
+	 * Registers an event mapper with the dispatcher.
+	 *
+	 * The ownership of the "mapper" variable will pass
+	 * to the EventDispatcher, thus it will be deleted
+	 * with "delete", when EventDispatcher is destroyed.
+	 *
+	 * Note there is only one mapper per EventDispatcher
+	 * possible, thus when this method is called twice,
+	 * the former mapper will be destroied.
+	 */
+	void registerMapper(EventMapper *mapper);
+
+	/**
+	 * Queries the setup event mapper.
+	 */
+	EventMapper *queryMapper() const { return _mapper; }
+
+	/**
+	 * Registers a new EventSource with the Dispatcher.
+	 */
+	void registerSource(EventSource *source, bool autoFree);
+
+	/**
+	 * Unregisters a EventSource.
+	 *
+	 * This takes the "autoFree" flag passed to registerSource into account.
+	 */
+	void unregisterSource(EventSource *source);
+
+	/**
+	 * Registers a new EventObserver with the Dispatcher.
+	 */
+	void registerObserver(EventObserver *obs, uint priority, bool autoFree);
+
+	/**
+	 * Unregisters a EventObserver.
+	 *
+	 * This takes the "autoFree" flag passed to registerObserver into account.
+	 */
+	void unregisterObserver(EventObserver *obs);
+private:
+	EventDispatcher();
+	~EventDispatcher();
+
+	EventMapper *_mapper;
+
+	struct Entry {
+		bool autoFree;
+	};
+
+	struct SourceEntry : public Entry {
+		EventSource *source;
+	};
+	
+	Common::List<SourceEntry> _sources;
+
+	struct ObserverEntry : public Entry {
+		uint priority;
+		EventObserver *observer;
+	};
+
+	Common::List<ObserverEntry> _observers;
+
+	void dispatchEvent(const Event &event);
 };
 
 class Keymapper;
