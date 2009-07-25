@@ -138,6 +138,18 @@ enum LoopStatus {
 	kStatusFade
 };
 
+/**
+  * Enumerates the animations for the dragon's movement.
+  */
+
+enum Movement {
+	kMoveUndefined, kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
+	kMoveRightDown, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
+	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
+	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
+	kSpeakRight, kSpeakLeft, kStopRight, kStopLeft
+};
+
 class Game {
 
 public:
