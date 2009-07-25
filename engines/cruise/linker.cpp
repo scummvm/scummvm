@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/endian.h"
 #include "cruise/cruise_main.h"
 
 namespace Cruise {
@@ -192,9 +193,7 @@ int updateScriptImport(int ovlIdx) {
 										*(ptr + 1) = 0;
 										*(ptr + 2) = out2;	// update the overlay number
 
-										*(int16 *)(ptr + 4) = ptrDest2->idx;
-
-										bigEndianShortToNative((int16 *)(ptr + 4));
+										WRITE_BE_UINT16(ptr + 4, ptrDest2->idx);
 									} else {
 										int var_4 = ptrDest2->var4;
 
@@ -213,17 +212,7 @@ int updateScriptImport(int ovlIdx) {
 										*(ptrData + temp) = param2;
 										*(ptrData + temp + 1) = out2;
 
-										*(int16 *)(ptrData + temp + 2) = ptrDest2->idx;
-
-										bigEndianShortToNative
-										(
-										    (int16
-										     *)
-										    (ptrData
-										     +
-										     temp
-										     +
-										     2));
+										WRITE_BE_UINT16(ptrData + temp + 2, ptrDest2->idx);
 									}
 								}
 							}
