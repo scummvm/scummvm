@@ -438,8 +438,7 @@ uint String::hash() const {
 }
 
 // static
-String String::printf(const char *fmt, ...)
-{
+String String::printf(const char *fmt, ...) {
 	String output;
 	assert(output.isStorageIntern());
 
