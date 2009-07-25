@@ -183,9 +183,7 @@ int updateScriptImport(int ovlIdx) {
 									uint8 *ptr = ptrData + temp;
 
 									*(ptr + 1) = out2;
-									*(int16 *)(ptr + 2) = ptrDest2->idx;
-
-									bigEndianShortToNative((int16 *)(ptr + 2));
+									WRITE_BE_UINT16(ptr + 2, ptrDest2->idx);
 								} else {
 									if (param2 == 20 || param2 == 30 || param2 == 40 || param2 == 50) {	// this patch a double push
 										uint8 *ptr = ptrData + temp;
