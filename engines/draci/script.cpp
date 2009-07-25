@@ -565,6 +565,10 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) {
 
 int Script::run(GPL2Program program, uint16 offset) {
 
+	// Mark the last animation index before we do anything so a Release command
+	// doesn't unload too many animations if we forget to use a Mark command first
+	_vm->_game->setMarkedAnimationIndex(_vm->_anims->getLastIndex());
+
 	// Stream reader for the whole program
 	Common::MemoryReadStream reader(program._bytecode, program._length);
 	
