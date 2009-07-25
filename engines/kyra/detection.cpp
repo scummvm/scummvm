@@ -200,6 +200,7 @@ const KYRAGameDescription adGameDescs[] = {
 		KYRA1_FLOPPY_FLAGS
 	},
 
+#if 0
 	{
 		{
 			"kyra1",
@@ -212,6 +213,7 @@ const KYRAGameDescription adGameDescs[] = {
 		},
 		KYRA1_AMIGA_FLAGS
 	},
+#endif
 
 	{
 		{
