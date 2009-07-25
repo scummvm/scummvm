@@ -30,6 +30,7 @@
 
 #include "backends/platform/gp2x/gp2x-common.h"
 #include "common/util.h"
+#include "common/mutex.h"
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
