@@ -108,6 +108,9 @@ private:
 	void release(Common::Queue<int> &params);
 	void objStat(Common::Queue<int> &params);
 	void objStatOn(Common::Queue<int> &params);
+	void execInit(Common::Queue<int> &params);
+	void execLook(Common::Queue<int> &params);
+	void execUse(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);

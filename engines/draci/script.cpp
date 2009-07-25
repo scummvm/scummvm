@@ -67,9 +67,9 @@ void Script::setupCommandList() {
 		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, NULL },
 		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, NULL },
 		{ 14, 1, "NewRoom", 			2, { 3, 1 }, NULL },
-		{ 15, 1, "ExecInit", 			1, { 3 }, NULL },
-		{ 15, 2, "ExecLook", 			1, { 3 }, NULL },
-		{ 15, 3, "ExecUse", 			1, { 3 }, NULL },
+		{ 15, 1, "ExecInit", 			1, { 3 }, &Script::execInit },
+		{ 15, 2, "ExecLook", 			1, { 3 }, &Script::execLook },
+		{ 15, 3, "ExecUse", 			1, { 3 }, &Script::execUse },
 		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },
 		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },
 		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },
@@ -367,6 +367,39 @@ void Script::objStat(Common::Queue<int> &params) {
 	for (uint i = 0; i < obj->_anims.size(); ++i) {
 		_vm->_anims->stop(obj->_anims[i]);
 	}	
+}
+
+void Script::execInit(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int objID = params.pop() - 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+	run(obj->_program, obj->_init);
+}
+
+void Script::execLook(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int objID = params.pop() - 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+	run(obj->_program, obj->_look);
+}
+
+void Script::execUse(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int objID = params.pop() - 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+	run(obj->_program, obj->_use);
 }
 
 /**
