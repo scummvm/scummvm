@@ -39,14 +39,13 @@ static double real_to_double(byte real[6]);
 
 Game::Game(DraciEngine *vm) : _vm(vm) {
 	unsigned int i;
-	Common::String path("INIT.DFW");
 	
-	BArchive initArchive(path);
+	BArchive *initArchive = _vm->_initArchive;
 	BAFile *file;
 	
 	// Read in persons
 	
-	file = initArchive.getFile(5);
+	file = initArchive->getFile(5);
 	Common::MemoryReadStream personData(file->_data, file->_length);
 	
 	unsigned int numPersons = file->_length / personSize;
@@ -63,7 +62,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	
 	// Read in dialog offsets
 	
-	file = initArchive.getFile(4);
+	file = initArchive->getFile(4);
 	Common::MemoryReadStream dialogData(file->_data, file->_length);
 	
 	unsigned int numDialogs = file->_length / sizeof(uint16);
@@ -80,7 +79,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	// Read in game info
 	
-	file = initArchive.getFile(3);
+	file = initArchive->getFile(3);
 	Common::MemoryReadStream gameData(file->_data, file->_length);
 	
 	_info._startRoom = gameData.readByte() - 1;
@@ -105,7 +104,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	// Read in variables
 	
-	file = initArchive.getFile(2);
+	file = initArchive->getFile(2);
 	unsigned int numVariables = file->_length / sizeof (int16);
 
 	_variables = new int[numVariables];
@@ -120,13 +119,13 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	// Read in item icon status
 	
-	file = initArchive.getFile(1);
+	file = initArchive->getFile(1);
 	_iconStatus = file->_data;
 	uint numIcons = file->_length;
 	
 	// Read in object status
 	
-	file = initArchive.getFile(0);
+	file = initArchive->getFile(0);
 	unsigned int numObjects = file->_length;
 	
 	_objects = new GameObject[numObjects];
@@ -153,6 +152,8 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 }
 
 void Game::init() {
+	_loopStatus = kStatusOrdinary;
+
 	loadObject(kDragonObject);
 	
 	GameObject *dragon = getObject(kDragonObject);
@@ -519,6 +520,14 @@ void Game::changeRoom(uint roomNum) {
 	_currentRoom._roomNum = roomNum;
 	loadRoom(roomNum);
 	loadOverlays();
+}
+
+void Game::setLoopStatus(LoopStatus status) {
+	_loopStatus = status;
+}
+
+LoopStatus Game::getLoopStatus() {
+	return _loopStatus;
 }
 
 int Game::getRoomNum() {

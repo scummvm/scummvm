@@ -53,6 +53,7 @@ const Common::String roomsPath("MIST.DFW");
 const Common::String animationsPath("ANIM.DFW");
 const Common::String iconsPath("HRA.DFW");
 const Common::String walkingMapsPath("MAPY.DFW");
+const Common::String initPath("INIT.DFW");
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
  : Engine(syst) {
@@ -81,6 +82,7 @@ int DraciEngine::init() {
 	initGraphics(kScreenWidth, kScreenHeight, false);
 
 	// Open game's archives
+	_initArchive = new BArchive(initPath);
 	_objectsArchive = new BArchive(objectsPath);
 	_spritesArchive = new BArchive(spritesPath);
 	_paletteArchive = new BArchive(palettePath);
@@ -227,6 +229,7 @@ DraciEngine::~DraciEngine() {
 	delete _script;
 	delete _anims;
 
+	delete _initArchive;
 	delete _paletteArchive;
 	delete _objectsArchive;
 	delete _spritesArchive;

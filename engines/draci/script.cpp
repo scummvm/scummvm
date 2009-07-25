@@ -265,6 +265,10 @@ int Script::funcIsObjAway(int objID) {
 /* GPL commands */
 
 void Script::load(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
 
@@ -275,6 +279,10 @@ void Script::load(Common::Queue<int> &params) {
 }
 
 void Script::start(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
 

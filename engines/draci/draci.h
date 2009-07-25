@@ -68,6 +68,7 @@ public:
 	BArchive *_overlaysArchive;
 	BArchive *_animationsArchive;
 	BArchive *_walkingMapsArchive;
+	BArchive *_initArchive;
 
 	Common::RandomSource _rnd;
 };

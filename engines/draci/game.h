@@ -132,6 +132,12 @@ struct Room {
 	GPL2Program _program;
 };
 
+enum LoopStatus { 
+	kStatusGate, kStatusOrdinary, kStatusInventory, 
+	kStatusDialogue, kStatusTalk, kStatusStrange, 
+	kStatusFade
+};
+
 class Game {
 
 public:
@@ -185,15 +191,22 @@ public:
 	int getMarkedAnimationIndex();
 	void setMarkedAnimationIndex(int index);
 
+	void setLoopStatus(LoopStatus status);
+	LoopStatus getLoopStatus();
+
 private:
 	DraciEngine *_vm;
-	int *_variables;
+
 	GameInfo _info;
-	Person *_persons;
 	uint *_dialogOffsets;
+
+	int *_variables;
 	byte *_iconStatus;
+	Person *_persons;
 	GameObject *_objects;
+
 	Room _currentRoom;
+	LoopStatus _loopStatus;
 
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
 };
