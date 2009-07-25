@@ -199,6 +199,8 @@ public:
 	/**
 	 * Tries to catch events from the registered event
 	 * sources and dispatch them to the observers.
+	 *
+	 * This dispatches *all* events the sources offer.
 	 */
 	void dispatch();
 

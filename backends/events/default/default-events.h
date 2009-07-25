@@ -41,20 +41,8 @@ namespace Common {
 }
 
 
-class EventProvider {
-public:
-	virtual ~EventProvider() {}
-	/**
-	 * Get the next event in the event queue.
-	 * @param event	point to an Common::Event struct, which will be filled with the event data.
-	 * @return true if an event was retrieved.
-	 */
-	virtual bool pollEvent(Common::Event &event) = 0;
-};
-
-
 class DefaultEventManager : public Common::EventManager {
-	EventProvider *_boss;
+	Common::EventSource *_boss;
 
 #ifdef ENABLE_VKEYBD
 	Common::VirtualKeyboard *_vk;
@@ -128,7 +116,7 @@ class DefaultEventManager : public Common::EventManager {
 	void record(Common::Event &event);
 	bool playback(Common::Event &event);
 public:
-	DefaultEventManager(EventProvider *boss);
+	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
 
 	virtual void init();

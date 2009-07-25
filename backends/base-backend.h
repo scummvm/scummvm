@@ -29,7 +29,7 @@
 #include "common/system.h"
 #include "backends/events/default/default-events.h"
 
-class BaseBackend : public OSystem, EventProvider {
+class BaseBackend : public OSystem, Common::EventSource {
 public:
 	virtual Common::EventManager *getEventManager();
 	virtual void displayMessageOnOSD(const char *msg);

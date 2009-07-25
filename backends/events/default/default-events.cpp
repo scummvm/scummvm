@@ -92,7 +92,7 @@ void writeRecord(Common::OutSaveFile *outFile, uint32 diff, Common::Event &event
 	}
 }
 
-DefaultEventManager::DefaultEventManager(EventProvider *boss) :
+DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_boss(boss),
 	_buttonState(0),
 	_modifierState(0),
