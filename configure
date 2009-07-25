@@ -110,8 +110,10 @@ _alsa=auto
 _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
-_mt32emu=yes
+_readline=auto
 # Default option behaviour yes/no
+_text_console=no
+_mt32emu=yes
 _build_hq_scalers=yes
 _build_scalers=yes
 # Default vkeybd/keymapper options
@@ -580,6 +582,7 @@ $engines_help
   --disable-mt32emu        don't enable the integrated MT-32 emulator
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-scalers        exclude scalers
+  --enable-text-console    use text console instead of graphical console
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -611,6 +614,9 @@ Optional Libraries:
 
   --with-nasm-prefix=DIR   Prefix where nasm executable is installed (optional)
   --disable-nasm           disable assembly language optimizations [autodetect]
+
+  --with-readline-prefix=DIR    Prefix where readline is installed (optional)
+  --disable-readline       disable readline support in text console [autodetect]
 
 Some influential environment variables:
   LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
@@ -647,6 +653,8 @@ for ac_option in $@; do
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
+	--enable-readline)        _readline=yes   ;;
+	--disable-readline)       _readline=no    ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
@@ -655,6 +663,8 @@ for ac_option in $@; do
 	--disable-vkeybd)         _vkeybd=no      ;;
 	--enable-keymapper)       _keymapper=yes  ;;
 	--disable-keymapper)      _keymapper=no   ;;
+	--enable-text-console)    _text_console=yes ;;
+	--disable-text-console)   _text_console=no ;;
 	--with-fluidsynth-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		FLUIDSYNTH_CFLAGS="-I$arg/include"
@@ -699,6 +709,11 @@ for ac_option in $@; do
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		ZLIB_CFLAGS="-I$arg/include"
 		ZLIB_LIBS="-L$arg/lib"
+		;;
+	--with-readline-prefix=*)
+		arg=`echo $ac_option | cut -d '=' -f 2`
+		READLINE_CFLAGS="-I$arg/include"
+		READLINE_LIBS="-L$arg/lib"
 		;;
 	--backend=*)
 		_backend=`echo $ac_option | cut -d '=' -f 2`
@@ -1802,6 +1817,45 @@ echo "$_fluidsynth"
 rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 
 #
+# Check for readline if text_console is enabled
+#
+echocheck "readline"
+if test "$_text_console" = yes ; then
+	if test "$_readline" = auto ; then
+		_readline=no
+		cat > $TMPC << EOF
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
+
+int main(void) {
+	char *x = readline("");
+}
+EOF
+		cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS -lreadline && _readline=yes
+	fi
+	echo "$_readline"
+	rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
+else
+	_readline=no
+	echo "skipping (text console disabled)"
+fi
+
+if test "$_readline" = yes ; then
+	_def_readline='#define USE_READLINE'
+	LIBS="$LIBS $READLINE_LIBS -lreadline"
+	INCLUDES="$INCLUDES $READLINE_CFLAGS"
+else
+	_def_readline='#undef USE_READLINE'
+fi
+
+if test "$_text_console" = yes ; then
+	_def_text_console='#define USE_TEXT_CONSOLE'
+else
+	_def_text_console='#undef USE_TEXT_CONSOLE'
+fi
+
+#
 # Check for nasm
 #
 if test "$_have_x86" = yes ; then
@@ -1882,6 +1936,10 @@ fi
 
 if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emu"
+fi
+
+if test "$_text_console" = yes ; then
+	echo_n ", text console"
 fi
 
 if test "$_vkeybd" = yes ; then
@@ -2095,6 +2153,10 @@ $_def_alsa
 $_def_zlib
 $_def_mpeg2
 $_def_fluidsynth
+$_def_readline
+
+/* Options */
+$_def_text_console
 $_def_mt32emu
 
 /* Plugin settings */
