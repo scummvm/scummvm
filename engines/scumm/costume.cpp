@@ -1214,7 +1214,7 @@ void C64CostumeLoader::frameUpdate(ActorC64 *a, int cmd ) {
 
 // based on 0x2BCA, doesn't match disassembly because 'oldDir' variable
 // is not the same value as stored in the original interpreter
-int C64CostumeLoader::dirToDirStop( int oldDir ) {
+int C64CostumeLoader::dirToDirStop(int oldDir) {
 	switch (oldDir) {
 		case 0:
 			return 4;	// Left
@@ -1237,7 +1237,7 @@ void C64CostumeLoader::actorSpeak(ActorC64 *a, int &cmd) {
 }
 
 void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
-	ActorC64 *A = (ActorC64*) a;
+	ActorC64 *A = (ActorC64 *)a;
 	int dir = newDirToOldDir(a->getFacing());
 	int command = dir;
 	
@@ -1275,7 +1275,7 @@ void C64CostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 }
 
 byte C64CostumeLoader::increaseAnims(Actor *a) {
-	ActorC64 *A = (ActorC64*) a;
+	ActorC64 *A = (ActorC64 *)a;
 	
 	// check if the actor speak flag has changed since last frame increase
 	if (A->_speaking != A->_speakingPrev) {
