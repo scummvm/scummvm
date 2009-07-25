@@ -803,6 +803,7 @@ void DrasculaEngine::talk_sync(const char *said, const char *filename, const cha
 
 	p = 0;
 
+	memset(buf, 0, sizeof(buf));
 	talkInit(filename);
 
 	do {
