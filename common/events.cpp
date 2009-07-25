@@ -51,8 +51,12 @@ void EventDispatcher::dispatch() {
 	Common::Event event;
 
 	for (Common::List<SourceEntry>::iterator i = _sources.begin(); i != _sources.end(); ++i) {
+		const bool allowMapping = i->source->allowMapping();
+
 		while (i->source->pollEvent(event)) {
-			if (_mapper) {
+			// We only try to process the events via the setup event mapper, when
+			// we have a setup mapper and when the event source allows mapping.
+			if (_mapper && allowMapping) {
 				if (_mapper->notifyEvent(event)) {
 					// We allow the event mapper to create multiple events, when
 					// eating an event.

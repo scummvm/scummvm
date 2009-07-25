@@ -146,6 +146,16 @@ public:
 	 * @return	true if an event was polled, false otherwise.
 	 */
 	virtual bool pollEvent(Event &event) = 0;
+
+	/**
+	 * Checks whether events from this source are allowed to be mapped.
+	 *
+	 * Possible event sources not allowing mapping are: the event recorder/player and/or
+	 * the EventManager, which allows user events to be pushed.
+	 *
+	 * By default we allow mapping for every event source.
+	 */
+	virtual bool allowMapping() const { return true; }
 };
 
 /**
