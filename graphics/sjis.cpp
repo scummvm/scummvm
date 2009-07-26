@@ -106,8 +106,10 @@ void FontSJIS16x16::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, C
 
 void FontSJIS16x16::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
 	const uint16 *glyphSource = getCharData(ch);
-	if (!glyphSource)
-		warning("SJIS: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
+	if (!glyphSource) {
+		warning("FontSJIS16x16::drawChar: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
+		return;
+	}
 
 	if (bpp == 1) {
 		if (!_outlineEnabled)
