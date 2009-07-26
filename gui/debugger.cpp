@@ -121,12 +121,13 @@ void Debugger::onFrame() {
 }
 
 #if defined(USE_TEXT_CONSOLE) && defined(USE_READLINE)
-static Debugger* g_readline_debugger;
+namespace {
+Debugger *g_readline_debugger;
 
-char * readline_completionFunction (const char *text, int state)
-{
+char *readline_completionFunction(const char *text, int state) {
 	return g_readline_debugger->readlineComplete(text, state);
 }
+} // end of anonymous namespace
 #endif
 
 // Main Debugger Loop
@@ -358,8 +359,7 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 }
 
 #if defined(USE_TEXT_CONSOLE) && defined(USE_READLINE)
-char* Debugger::readlineComplete(const char *input, int state)
-{
+char *Debugger::readlineComplete(const char *input, int state) {
 	static CommandsMap::const_iterator iter;
 
 	// We assume that _cmds isn't changed between calls to readlineComplete,

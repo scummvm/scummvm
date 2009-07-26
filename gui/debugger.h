@@ -123,7 +123,7 @@ private:
 	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon);
 #elif defined(USE_READLINE)
 public:
-	char* readlineComplete(const char *input, int state);
+	char *readlineComplete(const char *input, int state);
 #endif
 
 };
