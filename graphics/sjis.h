@@ -87,19 +87,9 @@ public:
 	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const = 0;
 };
 
-/**
- * FM-TOWNS ROM based SJIS compatible font.
- *
- * This is used in KYRA and SCI.
- */
-class FontTowns : public FontSJIS {
+class FontSJIS16x16 : public FontSJIS {
 public:
-	FontTowns() : _outlineEnabled(false) {}
-
-	/**
-	 * Loads the ROM data from the given read stream.
-	 */
-	bool loadFromStream(Common::ReadStream &stream);
+	FontSJIS16x16() : _outlineEnabled(false) {}
 
 	void enableOutline(bool enable) { _outlineEnabled = enable; }
 
@@ -115,14 +105,32 @@ private:
 	template<typename Color>
 	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
 
+	bool _outlineEnabled;
+protected:
+
+	virtual const uint16 *getCharData(uint16 c) const = 0;
+};
+
+/**
+ * FM-TOWNS ROM based SJIS compatible font.
+ *
+ * This is used in KYRA and SCI.
+ */
+class FontTowns : public FontSJIS16x16 {
+public:
+	/**
+	 * Loads the ROM data from the given read stream.
+	 */
+	bool loadFromStream(Common::ReadStream &stream);
+
+private:
 	enum {
 		kFontRomSize = 262144
 	};
 
-	bool _outlineEnabled;
 	uint16 _fontData[kFontRomSize / 2];
 
-	static uint sjisToChunk(uint8 low, uint8 high);
+	const uint16 *getCharData(uint16 c) const;
 };
 
 // TODO: Consider adding support for PC98 ROM

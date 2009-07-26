@@ -30,14 +30,8 @@
 
 namespace Graphics {
 
-bool FontTowns::loadFromStream(Common::ReadStream &stream) {
-	for (uint i = 0; i < (kFontRomSize / 2); ++i)
-		_fontData[i] = stream.readUint16BE();
-	return !stream.err();
-}
-
 template<typename Color>
-void FontTowns::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
+void FontSJIS16x16::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
 	uint32 outlineGlyph[18];
 	memset(outlineGlyph, 0, sizeof(outlineGlyph));
 
@@ -72,7 +66,7 @@ void FontTowns::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch
 }
 
 template<typename Color>
-void FontTowns::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const {
+void FontSJIS16x16::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const {
 	for (int y = 0; y < 16; ++y) {
 		Color *lineBuf = (Color *)dst;
 		uint16 line = *glyph++;
@@ -88,8 +82,8 @@ void FontTowns::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color
 	}
 }
 
-void FontTowns::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
-	const uint16 *glyphSource = _fontData + sjisToChunk(ch & 0xFF, ch >> 8) * 16;
+void FontSJIS16x16::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
+	const uint16 *glyphSource = getCharData(ch);
 
 	if (bpp == 1) {
 		if (!_outlineEnabled)
@@ -106,7 +100,16 @@ void FontTowns::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, ui
 	}
 }
 
-uint FontTowns::sjisToChunk(uint8 f, uint8 s) {
+bool FontTowns::loadFromStream(Common::ReadStream &stream) {
+	for (uint i = 0; i < (kFontRomSize / 2); ++i)
+		_fontData[i] = stream.readUint16BE();
+	return !stream.err();
+}
+
+const uint16 *FontTowns::getCharData(uint16 ch) const {
+	uint8 f = ch & 0xFF;
+	uint8 s = ch >> 8;
+
 	// copied from scumm\charset.cpp
 	enum {
 		KANA = 0,
@@ -188,7 +191,7 @@ uint FontTowns::sjisToChunk(uint8 f, uint8 s) {
 	}
 
 	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
-	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
+	return _fontData + (((chunk_f + chunk) * 32 + (s - base)) + cr) * 16;
 }
 
 } // end of namespace Graphics
