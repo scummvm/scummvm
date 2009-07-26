@@ -206,10 +206,34 @@ int m_first_Y;
 int m_scaleValue;
 int m_color;
 
-int16 DIST_3D[512];
-int16 polyBuffer2[512];
-int16 XMIN_XMAX[404];
-int16 polyBuffer4[512];
+/* 
+   FIXME: Whether intentional or not, the game often seems to use negative indexing
+   of one or more of the arrays below and expects(?) to end up in the preceding one.
+   This "worked" on many platforms so far, but on OSX apparently the buffers don't
+   occupy contiguous memory, and this causes severe corruption and subsequent crashes.
+   Since I'm not really familiar with how the strange drawing code is supposed to work,
+   or whether this behaviour is intentional or not, the short-term fix is to allocate a big
+   buffer and setup pointers within it.  This fixes the crashes I'm seeing without causing any
+   (visual) side-effects.
+   If anyone wants to look, this is easily reproduced by starting the game and examining the rug.
+   drawPolyMode1() will then (indirectly) negatively index polyBuffer4.   Good luck!
+*/
+
+//int16 DIST_3D[512];
+//int16 polyBuffer2[512];
+//int16 XMIN_XMAX[404];
+//int16 polyBuffer4[512];
+
+int16 bigPolyBuf[512 + 512 + 404 + 512];	/* consolidates the 4 separate buffers above */
+
+//set up the replacement index pointers.
+int16 *DIST_3D = &bigPolyBuf[0];
+int16 *polyBuffer2 = &bigPolyBuf[512];
+int16 *XMIN_XMAX = &bigPolyBuf[512 + 512];
+int16 *polyBuffer4 = &bigPolyBuf[512 + 512 + 404];
+
+
+
 
 // this function fills the sizeTable for the poly (OLD: mainDrawSub1Sub2)
 void getPolySize(int positionX, int positionY, int scale, int sizeTable[4], unsigned char *dataPtr) {
