@@ -101,10 +101,19 @@ void FontSJIS16x16::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1
 	}
 }
 
-bool FontTowns::loadFromStream(Common::ReadStream &stream) {
+// FM-TOWNS ROM font
+
+bool FontTowns::loadData() {
+	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("FMT_FNT.ROM");
+	if (!data)
+		return false;
+
 	for (uint i = 0; i < (kFontRomSize / 2); ++i)
-		_fontData[i] = stream.readUint16BE();
-	return !stream.err();
+		_fontData[i] = data->readUint16BE();
+
+	bool retValue = !data->err();
+	delete data;
+	return retValue;
 }
 
 const uint16 *FontTowns::getCharData(uint16 ch) const {

@@ -50,6 +50,11 @@ public:
 	virtual ~FontSJIS() {}
 
 	/**
+	 * Load the font data.
+	 */
+	virtual bool loadData() = 0;
+
+	/**
 	 * Enable outline drawing.
 	 *
 	 * After changing outline state, getFontHeight and getFontWidth might return
@@ -87,6 +92,9 @@ public:
 	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const = 0;
 };
 
+/**
+ * A base class to render 16x16 monochrome SJIS fonts.
+ */
 class FontSJIS16x16 : public FontSJIS {
 public:
 	FontSJIS16x16() : _outlineEnabled(false) {}
@@ -119,9 +127,9 @@ protected:
 class FontTowns : public FontSJIS16x16 {
 public:
 	/**
-	 * Loads the ROM data from the given read stream.
+	 * Loads the ROM data from "FMT_FNT.ROM".
 	 */
-	bool loadFromStream(Common::ReadStream &stream);
+	bool loadData();
 
 private:
 	enum {
@@ -142,7 +150,7 @@ public:
 	~FontSjisSVM() { delete[] _fontData; }
 
 	/**
-	 * Load the ROM data from "SJIS.FNT".
+	 * Load the font data from "SJIS.FNT".
 	 */
 	bool loadData();
 
