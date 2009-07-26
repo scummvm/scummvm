@@ -95,24 +95,7 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
-			// First of all try to load the original ROM
-			if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-				_sjisFont = new Graphics::FontTowns();
-				if (_sjisFont && !_sjisFont->loadData()) {
-					delete _sjisFont;
-					_sjisFont = 0;
-				}
-			}
-
-			// If we were not able to load any system ROM, we'll try the
-			// ScummVM SJIS font.
-			if (!_sjisFont) {
-				_sjisFont = new Graphics::FontSjisSVM();
-				if (_sjisFont && !_sjisFont->loadData()) {
-					delete _sjisFont;
-					_sjisFont = 0;
-				}
-			}
+			_sjisFont = Graphics::FontSJIS::createFont(_vm->gameFlags().platform);
 
 			if (!_sjisFont)
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
