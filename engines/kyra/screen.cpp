@@ -95,6 +95,14 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
+			// First we try to use ScummVM's own SJIS font.
+			Graphics::FontSjisSVM *font = new Graphics::FontSjisSVM();
+			if (!font || !font->loadData()) {
+				delete font;
+			} else {
+				_sjisFont = font;
+			}
+
 			if (!_sjisFont) {
 				// we use the FM-TOWNS font rom for PC-98, too, until we feel
 				// like adding support for the PC-98 font
