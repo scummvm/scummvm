@@ -31,17 +31,19 @@
 
 namespace Graphics {
 
-FontSJIS *FontSJIS::createFont() {
+FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
 	FontSJIS *ret = 0;
 
-	// First try ScummVM's font.
-	ret = new FontSjisSVM();
-	if (ret && ret->loadData())
-		return ret;
-	delete ret;
+	// Try the font ROM of the specified platform
+	if (platform == Common::kPlatformFMTowns) {
+		ret = new FontTowns();
+		if (ret && ret->loadData())
+			return ret;
+		delete ret;
+	}
 
-	// Next try the FM-Towns font ROM.
-	ret = new FontTowns();
+	// Try ScummVM's font.
+	ret = new FontSjisSVM();
 	if (ret && ret->loadData())
 		return ret;
 	delete ret;

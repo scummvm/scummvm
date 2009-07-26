@@ -35,6 +35,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 #include "graphics/surface.h"
 
@@ -54,13 +55,13 @@ public:
 	 * It will also call loadData, so the user can just start
 	 * using the font.
 	 *
-	 * It will prefer ScummVM's font.
+	 * It'll prefer the platform specific ROM file, when platform
+	 * is set to a value, which's font ROM is supported.
+	 * So far that is only kPlatformFMTowns.
 	 *
-	 * TODO: Consider adding some way to overwrite the first checked
-	 * font, some games might want to prefer the original ROM over
-	 * ScummVM's.
+	 * The last file tried is ScummVM's SJIS.FNT file.
 	 */
-	static FontSJIS *createFont();
+	static FontSJIS *createFont(const Common::Platform platform = Common::kPlatformUnknown);
 
 	/**
 	 * Load the font data.
