@@ -5,7 +5,7 @@ MODULE_OBJS := \
 	config-file.o \
 	config-manager.o \
 	debug.o \
-	events.o \
+	EventDispatcher.o \
 	EventRecorder.o \
 	file.o \
 	fs.o \
