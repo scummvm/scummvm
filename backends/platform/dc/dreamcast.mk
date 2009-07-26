@@ -6,8 +6,7 @@ ronindir = /usr/local/ronin
 CC := $(CXX)
 ASFLAGS := $(CXXFLAGS)
 
-
-dist : SCUMMVM.BIN plugin_dist
+dist : SCUMMVM.BIN IP.BIN plugin_dist
 
 plugin_dist : plugins
 	@[ -z "$(PLUGINS)" ] || for p in $(or $(PLUGINS),none); do \
@@ -24,4 +23,12 @@ SCUMMVM.BIN : scummvm.bin
 scummvm.bin : scummvm.elf
 	sh-elf-objcopy -S -R .stack -O binary $< $@
 
+IP.BIN : ip.txt
+	makeip $< $@
+
+ip.txt : $(srcdir)/backends/platform/dc/ip.txt.in
+	if [ x"$(VER_EXTRA)" = xsvn ]; then \
+	  if [ -z "$(VER_SVNREV)" ]; then ver="SVN"; else ver="r$(VER_SVNREV)"; fi; \
+	else ver="V$(VERSION)"; fi; \
+	sed -e 's/[@]VERSION[@]/'"$$ver"/ -e 's/[@]DATE[@]/$(shell date '+%Y%m%d')/' < $< > $@
 
