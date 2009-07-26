@@ -172,14 +172,14 @@ protected:
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(simple);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(move);
 	DECLARE_UNQUALIFIED_COMMAND_PARSER(endcommands);
-
+public:
 	virtual void parseGetData(ZonePtr z);
 	virtual void parseExamineData(ZonePtr z);
 	virtual void parseDoorData(ZonePtr z);
 	virtual void parseMergeData(ZonePtr z);
 	virtual void parseHearData(ZonePtr z);
 	virtual void parseSpeakData(ZonePtr z);
-
+protected:
 	Common::String	parseComment();
 	Common::String	parseDialogueString();
 	Dialogue	*parseDialogue();
@@ -289,10 +289,12 @@ protected:
 	DECLARE_UNQUALIFIED_ANIM_PARSER(endanimation);
 
 	virtual void	parseZoneTypeBlock(ZonePtr z);
-	void			parsePathData(ZonePtr z);
-	void			parseGetData(ZonePtr z);
-	void			parseDoorData(ZonePtr z);
-	void			parseAnswerCounter(Answer *answer);
+public:
+	virtual void	parsePathData(ZonePtr z);
+	virtual void	parseGetData(ZonePtr z);
+	virtual void	parseDoorData(ZonePtr z);
+protected:
+	void	parseAnswerCounter(Answer *answer);
 	virtual Answer *parseAnswer();
 
 public:
