@@ -141,7 +141,7 @@ void DrasculaEngine::converse(int index) {
 	int game1 = kDialogOptionUnselected,
 		game2 = kDialogOptionUnselected,
 		game3 = kDialogOptionUnselected;
-	char phrase1[78], phrase2[78], phrase3[78], phrase4[78];
+	char phrase1[128], phrase2[128], phrase3[128], phrase4[128];
 	char sound1[13], sound2[13], sound3[13], sound4[13];
 	int phrase1_bottom, phrase2_bottom, phrase3_bottom, phrase4_bottom;
 	int answer1, answer2, answer3;
