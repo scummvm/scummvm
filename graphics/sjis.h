@@ -50,6 +50,19 @@ public:
 	virtual ~FontSJIS() {}
 
 	/**
+	 * Creates the first SJIS font, which ROM/font file is present.
+	 * It will also call loadData, so the user can just start
+	 * using the font.
+	 *
+	 * It will prefer ScummVM's font.
+	 *
+	 * TODO: Consider adding some way to overwrite the first checked
+	 * font, some games might want to prefer the original ROM over
+	 * ScummVM's.
+	 */
+	static FontSJIS *createFont();
+
+	/**
 	 * Load the font data.
 	 */
 	virtual bool loadData() = 0;

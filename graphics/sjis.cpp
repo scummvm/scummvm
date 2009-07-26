@@ -31,6 +31,24 @@
 
 namespace Graphics {
 
+FontSJIS *FontSJIS::createFont() {
+	FontSJIS *ret = 0;
+
+	// First try ScummVM's font.
+	ret = new FontSjisSVM();
+	if (ret && ret->loadData())
+		return ret;
+	delete ret;
+
+	// Next try the FM-Towns font ROM.
+	ret = new FontTowns();
+	if (ret && ret->loadData())
+		return ret;
+	delete ret;
+
+	return 0;
+}
+
 template<typename Color>
 void FontSJIS16x16::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
 	uint32 outlineGlyph[18];
