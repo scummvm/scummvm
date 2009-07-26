@@ -1,6 +1,13 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
+1.1.0 (????-??-??)
+ General:
+   - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
+
+ KYRA:
+   - Adapted KYRA to support the custom SJIS font.
+
 1.0.0 (2009-??-??)
  New Games:
    - Added support for Discworld.
