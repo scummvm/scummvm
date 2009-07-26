@@ -27,6 +27,7 @@
 #ifdef GRAPHICS_SJIS_H
 
 #include "common/debug.h"
+#include "common/archive.h"
 
 namespace Graphics {
 
@@ -192,6 +193,52 @@ const uint16 *FontTowns::getCharData(uint16 ch) const {
 
 	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
 	return _fontData + (((chunk_f + chunk) * 32 + (s - base)) + cr) * 16;
+}
+
+// ScummVM SJIS font
+
+bool FontSjisSVM::loadData() {
+	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("SJIS.FNT");
+	if (!data)
+		return false;
+
+	uint32 version = data->readUint32BE();
+	if (version != 1) {
+		delete data;
+		return false;
+	}
+	uint numChars = data->readUint16BE();
+
+	_fontData = new uint16[numChars * 16];
+	assert(_fontData);
+
+	for (uint i = 0; i < numChars * 16; ++i)
+		_fontData[i] = data->readUint16BE();
+	
+	bool retValue = !data->err();
+	delete data;
+	return retValue;
+}
+
+const uint16 *FontSjisSVM::getCharData(uint16 c) const {
+	const uint8 fB = c & 0xFF;
+	const uint8 sB = c >> 8;
+
+	// We only allow 2 byte SJIS characters.
+	if (fB <= 0x80 || fB >= 0xF0 || (fB >= 0xA0 && fB <= 0xDF) || sB == 0x7F)
+		return 0;
+
+	int base = fB;
+	base -= 0x81;
+	if (base >= 0x5F)
+		base -= 0x40;
+
+	int index = sB;
+	index -= 0x40;
+	if (index >= 0x3F)
+		--index;
+
+	return _fontData + (base * 0xBC + index) * 16;
 }
 
 } // end of namespace Graphics

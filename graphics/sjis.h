@@ -133,6 +133,25 @@ private:
 	const uint16 *getCharData(uint16 c) const;
 };
 
+/**
+ * Our custom SJIS FNT.
+ */
+class FontSjisSVM : public FontSJIS16x16 {
+public:
+	FontSjisSVM() : _fontData(0) {}
+	~FontSjisSVM() { delete[] _fontData; }
+
+	/**
+	 * Load the ROM data from "SJIS.FNT".
+	 */
+	bool loadData();
+
+private:
+	uint16 *_fontData;
+
+	const uint16 *getCharData(uint16 c) const;
+};
+
 // TODO: Consider adding support for PC98 ROM
 
 } // end of namespace Graphics
