@@ -29,8 +29,8 @@
 namespace Cruise {
 
 extern int currentTransparent;
-extern int16 polyBuffer2[512];
-extern int16 XMIN_XMAX[404];
+extern int16 *polyBuffer2;
+extern int16 *XMIN_XMAX;
 extern int m_color;
 
 int upscaleValue(int value, int scale);
