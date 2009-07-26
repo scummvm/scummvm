@@ -88,6 +88,10 @@ public:
 
 	/**
 	 * Draws a SJIS encoded character on the given surface.
+	 *
+	 * TODO: Currently there is no assurance, that this method will only draw within
+	 * the surface boundaries. Thus the caller has to assure the glyph will fit at
+	 * the specified position.
 	 */
 	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
 		drawChar(dst.getBasePtr(x, y), ch, c1, c2, dst.pitch, dst.bytesPerPixel);
