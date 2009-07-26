@@ -28,6 +28,7 @@
 
 #include "common/debug.h"
 #include "common/archive.h"
+#include "common/endian.h"
 
 namespace Graphics {
 
@@ -232,6 +233,14 @@ bool FontSjisSVM::loadData() {
 	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("SJIS.FNT");
 	if (!data)
 		return false;
+	
+	uint32 magic1 = data->readUint32BE();
+	uint32 magic2 = data->readUint32BE();
+
+	if (magic1 != MKID_BE('SCVM') || magic2 != MKID_BE('SJIS')) {
+		delete data;
+		return false;
+	}
 
 	uint32 version = data->readUint32BE();
 	if (version != 1) {
