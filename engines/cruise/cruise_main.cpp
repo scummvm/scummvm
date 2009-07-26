@@ -1538,20 +1538,17 @@ int CruiseEngine::processInput(void) {
 								aniX = mouseX;
 								aniY = mouseY;
 								animationStart = true;
-								buttonDown = 0;
 							}
 						} else {
 							aniX = mouseX;
 							aniY = mouseY;
 							animationStart = true;
-							buttonDown = 0;
 						}
 					} else {
 						// No object found, we move the character to the cursor
 						aniX = mouseX;
 						aniY = mouseY;
 						animationStart = true;
-						buttonDown = 0;
 					}
 				} else {
 					// handle click in menu
