@@ -96,7 +96,7 @@ public:
 	 * Draws a SJIS char on the given raw buffer.
 	 *
 	 * @param dst	pointer to the destination
-	 * @param ch	character to draw
+	 * @param ch	character to draw (in little endian)
 	 * @param pitch	pitch of the destination buffer (size in *bytes*)
 	 * @param bpp	bytes per pixel of the destination buffer
 	 * @param c1	forground color
