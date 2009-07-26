@@ -1411,24 +1411,25 @@ void LocationParser_ns::parseSpeakData(ZonePtr z) {
 	}
 }
 
+typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr);
+static ZoneTypeParser parsers[] = {
+	0,	// no type
+	&LocationParser_ns::parseExamineData,
+	&LocationParser_ns::parseDoorData,
+	&LocationParser_ns::parseGetData,
+	&LocationParser_ns::parseMergeData,
+	0,	// taste
+	&LocationParser_ns::parseHearData,
+	0,	// feel
+	&LocationParser_ns::parseSpeakData,
+	0,	// none
+	0,	// trap
+	0,	// you
+	0	// command
+};
+
 void LocationParser_ns::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
-	typedef void (LocationParser_ns::*ZoneTypeParser)(ZonePtr);
-	ZoneTypeParser parsers[] = {
-		0,	// no type
-		&LocationParser_ns::parseExamineData,
-		&LocationParser_ns::parseDoorData,
-		&LocationParser_ns::parseGetData,
-		&LocationParser_ns::parseMergeData,
-		0,	// taste
-		&LocationParser_ns::parseHearData,
-		0,	// feel
-		&LocationParser_ns::parseSpeakData,
-		0,	// none
-		0,	// trap
-		0,	// you
-		0	// command
-	};
 
 	ZoneTypeParser p = parsers[ACTIONTYPE(z)];
 	do {
