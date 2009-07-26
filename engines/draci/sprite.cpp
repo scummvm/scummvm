@@ -331,7 +331,8 @@ void Text::draw(Surface *surface, bool markDirty) const {
 	_font->drawString(surface, _text, _length, _x, _y, _spacing);
 }
 
-Common::Rect Text::getRect() const {
+// TODO: Handle scaled parameter properly by implementing Text scaling
+Common::Rect Text::getRect(bool scaled) const {
 	return Common::Rect(_x, _y, _x + _width, _y + _height);
 }
 			

@@ -33,9 +33,6 @@ namespace Draci {
 
 class Drawable {
 
-friend class Sprite;
-friend class Text;
-
 public:
 	virtual void draw(Surface *surface, bool markDirty = true) const = 0;
 	virtual void drawScaled(Surface *surface, bool markDirty = true) const = 0;
@@ -64,7 +61,7 @@ public:
 
 	virtual Common::Rect getRect(bool scaled = true) const = 0;
 	
-private:
+protected:
 	uint _width;		//!< Width of the sprite
 	uint _height;		//!< Height of the sprite
 	uint _scaledWidth; 	//!< Scaled width of the sprite
@@ -124,10 +121,14 @@ public:
 	void setText(const Common::String &str);
 	void setColour(byte fontColour);
 	void setSpacing(uint spacing);
-	
+
 	void draw(Surface *surface, bool markDirty = true) const;
 
-	Common::Rect getRect() const;
+	// TODO: drawScaled just calls draw so Text can be accessed through a Drawable pointer. 
+	// Handle scaling text sometimes (not essential).
+
+	void drawScaled(Surface *surface, bool markDirty = true) const { draw(surface, markDirty); }
+	Common::Rect getRect(bool) const;
 
 private:
 	byte *_text;
