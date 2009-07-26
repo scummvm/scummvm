@@ -1286,7 +1286,7 @@ if test -n "$_host"; then
 			;;
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DNOSERIAL"
 			CXXFLAGS="$CXXFLAGS -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions"
 			_endian=little
 			_need_memalign=yes
@@ -1928,7 +1928,7 @@ case $_backend in
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
-		LIBS="$LIBS -lronin -lm"
+		LIBS="$LIBS -lronin-noserial -lm"
 		;;
 	wii)
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
