@@ -1,4 +1,4 @@
-ScummVM - GP2X WIZ SPECIFIC README - HEAD SVN
+ScummVM - GP2X WIZ SPECIFIC README - 1.0.0
 ------------------------------------------------------------------------
 
 Contents:
@@ -23,19 +23,9 @@ About the backend/port
 This is the readme for the offficial GP2X WIZ ScummVM backend (also known as
 the GP2X WIZ port).
 
-This is an SVN test release of ScummVM for the GP2X WIZ, it would be
-appreciated if this SVN test distribution was not mirrored and that
-people be directed to http://scummvm.distant-earth.com/ instead for
-updated SVN builds.
-
 Full supported official releases of the GP2X WIZ ScummVM backend are made in
 line with main official releases and are avalalble from the ScummVM
 downloads page <http://www.scummvm.org/downloads.php>.
-
-This build is in an active state of development and as such no
-"expected" behavior can be guaranteed ;).
-
-SVN builds are quickly tested with firmware 1.0.0 for reference.
 
 Please refer to the GP2X/GP2X WIZ ScummVM forum
 <http://forums.scummvm.org/viewforum.php?f=14> and WiKi
@@ -111,16 +101,15 @@ Fancy button combos:
 
 NOTE: To use button combos press and hold the Left Trigger then...
 
-Right Trigger: 0 (For skipping the copy protection in Monkey Island 2)
+Right Trigger: Display Virtual Keyboard 
+  (or if it VKeybd is disabled 0 (For skipping the copy protection in Monkey Island 2)
 Menu: Bring up the Global main menu for ScummVM
 Select: Exit ScummVM completely (and gracefully)
 
 ------------------------------------------------------------------------
 Know issues
 
-Possible random crash (well SegFault). I have had this happen twice and
-have not tracked down the cause.
-It happens very infrequently, both times it was in the DOTT CD intro.
+No major known issues
 
 ------------------------------------------------------------------------
 Additional resources/links
