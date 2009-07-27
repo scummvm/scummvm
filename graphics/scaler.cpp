@@ -189,22 +189,20 @@ void Normal1x(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPit
 #ifndef DISABLE_SCALERS
 #ifdef USE_ARM_SCALER_ASM
 extern "C" void Normal2xAspectMask(const uint8  *srcPtr,
-                                   uint32  srcPitch,
-                                   uint8  *dstPtr,
-                                   uint32  dstPitch,
-                                   int     width,
-                                   int     height,
-                                   uint32  mask);
+                                         uint32  srcPitch,
+                                         uint8  *dstPtr,
+                                         uint32  dstPitch,
+                                         int     width,
+                                         int     height,
+                                         uint32  mask);
                                    
 void Normal2xAspect(const uint8  *srcPtr,
                           uint32  srcPitch,
                           uint8  *dstPtr,
                           uint32  dstPitch,
                           int     width,
-                          int     height)
-{
-	if (gBitFormat == 565)
-	{
+                          int     height) {
+	if (gBitFormat == 565) {
 		Normal2xAspectMask(srcPtr,
 		                   srcPitch,
 		                   dstPtr,
@@ -212,9 +210,7 @@ void Normal2xAspect(const uint8  *srcPtr,
 		                   width,
 		                   height,
 		                   0x07e0F81F);
-	}
-	else
-	{
+	} else {
 		Normal2xAspectMask(srcPtr,
 		                   srcPitch,
 		                   dstPtr,
@@ -229,18 +225,18 @@ extern "C" void Normal2xARM(const uint8  *srcPtr,
                                   uint32  srcPitch,
                                   uint8  *dstPtr,
                                   uint32  dstPitch,
-              		    int     width,
-              		    int     height);
+                                  int     width,
+                                  int     height);
 
 void Normal2x(const uint8  *srcPtr,
                     uint32  srcPitch,
                     uint8  *dstPtr,
                     uint32  dstPitch,
-		    int     width,
-		    int     height)
-{
+                    int     width,
+                    int     height) {
 	Normal2xARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 }
+
 #else
 /**
  * Trivial nearest-neighbour 2x scaler.
