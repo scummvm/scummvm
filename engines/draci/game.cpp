@@ -153,6 +153,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 void Game::init() {
 	_loopStatus = kStatusOrdinary;
+	_objUnderCursor = kOverlayImage;
+
+	_vm->_anims->addText(kTitleText, true);
 
 	loadObject(kDragonObject);
 	
@@ -173,9 +176,42 @@ void Game::loop() {
 		if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
 			walkHero(x, y);
 		}
+
+		int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+
+		int curObject = getObjectWithAnimation(animUnderCursor);
+
+		Animation *atitle = _vm->_anims->getAnimation(kTitleText);
+
+		// TODO: Handle displaying title in the proper location
+
+		atitle->deleteFrames();
+		if (curObject != kNotFound) {					
+			GameObject *obj = &_objects[curObject];
+			Text *title = new Text (obj->_title, _vm->_bigFont, kFontColour1, 0, 0);
+			atitle->addFrame(title);
+		}
+
+		debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
+
+		
 	}
 }
 
+int Game::getObjectWithAnimation(int animID) {
+	for (uint i = 0; i < _info._numObjects; ++i) {
+		GameObject *obj = &_objects[i];
+	
+		for (uint j = 0; j < obj->_anims.size(); ++j) {
+			if (obj->_anims[j] == animID) {
+				return i;
+			}
+		}
+	}
+
+	return kNotFound;
+}
+	
 void Game::walkHero(int x, int y) {
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
@@ -441,8 +477,12 @@ void Game::loadObject(uint objNum) {
 	obj->_absNum = objNum;
 	
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 1);
-	obj->_title = file->_data;
 	
+	// The first byte of the file is the length of the string (without the length)
+	assert(file->_length - 1 == file->_data[0]);
+
+	obj->_title = Common::String((char *)(file->_data+1), file->_length-1);
+
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 2);
 	obj->_program._bytecode = file->_data;
 	obj->_program._length = file->_length;

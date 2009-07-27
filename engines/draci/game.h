@@ -43,6 +43,10 @@ enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
 };
 
+enum {
+	kNotFound = -1
+};
+
 class WalkingMap {
 
 public:	
@@ -82,7 +86,7 @@ private:
 
 struct GameObject {
 	
-	GameObject() : _title(NULL) {}
+	GameObject() {}
 		
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
@@ -93,7 +97,7 @@ struct GameObject {
 	uint16 _absNum;
 	Common::Array<int> _anims;
 	GPL2Program _program;
-	byte *_title;
+	Common::String _title;
 	int _location;
 	bool _visible;
 };
@@ -196,6 +200,7 @@ public:
 
 	uint getNumObjects();
 	GameObject *getObject(uint objNum);
+	int getObjectWithAnimation(int animID);
 
 	int getVariable(int varNum);
 	void setVariable(int varNum, int value);	
@@ -221,6 +226,8 @@ private:
 
 	Room _currentRoom;
 	LoopStatus _loopStatus;
+
+	int _objUnderCursor;
 
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
 };
