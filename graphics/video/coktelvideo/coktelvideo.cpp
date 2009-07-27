@@ -41,35 +41,35 @@ Imd::~Imd() {
 }
 
 uint32 Imd::getFeatures() const {
- return _features;
+	return _features;
 }
 
 uint16 Imd::getFlags() const {
- return _flags;
+	return _flags;
 }
 
 int16 Imd::getX() const {
- return _x;
+	return _x;
 }
 
 int16 Imd::getY() const {
- return _y;
+	return _y;
 }
 
 int16 Imd::getWidth() const {
- return _width;
+	return _width;
 }
 
 int16 Imd::getHeight() const {
- return _height;
+	return _height;
 }
 
 uint16 Imd::getFramesCount() const {
- return _framesCount;
+	return _framesCount;
 }
 
 uint16 Imd::getCurrentFrame() const {
- return _curFrame;
+	return _curFrame;
 }
 
 int16 Imd::getFrameRate() const {
@@ -80,25 +80,25 @@ int16 Imd::getFrameRate() const {
 }
 
 uint32 Imd::getSyncLag() const {
- return _skipFrames;
+	return _skipFrames;
 }
 
 const byte *Imd::getPalette() const {
- return _palette;
+	return _palette;
 }
 
 bool Imd::getFrameCoords(int16 frame,
 		int16 &x, int16 &y, int16 &width, int16 &height) {
 
- return false;
+	return false;
 }
 
 bool Imd::hasExtraData(const char *fileName) const {
- return false;
+	return false;
 }
 
 Common::MemoryReadStream *Imd::getExtraData(const char *fileName) {
- return 0;
+	return 0;
 }
 
 bool Imd::loadCoordinates() {
@@ -436,7 +436,7 @@ CoktelVideo::State Imd::nextFrame() {
 }
 
 void Imd::waitEndFrame() {
-	if (_soundEnabled && _hasSound) {
+	if (_soundEnabled && _hasSound) {;
 		if (_soundStage != 2)
 			return;
 
@@ -780,6 +780,111 @@ CoktelVideo::State Imd::processFrame(uint16 frame) {
 	return state;
 }
 
+// A whole, completely filled block
+void Imd::renderBlockWhole(byte *dest, const byte *src, int16 width, int16 height,
+		int16 destWidth, int16 destHeight) {
+
+	int16 w = MIN(width, destWidth);
+	int16 h = MIN(height, destHeight);
+
+	for (int i = 0; i < h; i++) {
+		memcpy(dest, src, w);
+
+		src  += width;
+		dest += destWidth;
+	}
+}
+
+// A quarter-wide whole, completely filled block
+void Imd::renderBlockWhole4X(byte *dest, const byte *src, int16 width, int16 height,
+		int16 destWidth, int16 destHeight) {
+
+	for (int i = 0; i < height; i++) {
+		byte *destBak = dest;
+
+		for (int j = 0; j < width; j += 4, dest += 4, src++)
+			memset(dest, *src, 4);
+
+		dest = destBak + destWidth;
+	}
+}
+
+// A half-high whole, completely filled block
+void Imd::renderBlockWhole2Y(byte *dest, const byte *src, int16 width, int16 height,
+		int16 destWidth, int16 destHeight) {
+
+	while (height > 1) {
+		memcpy(dest            , src, width);
+		memcpy(dest + destWidth, src, width);
+
+		height -= 2;
+		dest   += 2 * destWidth;
+		src    += width;
+	}
+
+	if (height == 1)
+		memcpy(dest, src, width);
+}
+
+// A sparse block
+void Imd::renderBlockSparse(byte *dest, const byte *src, int16 width, int16 height,
+		int16 destWidth, int16 destHeight) {
+
+	for (int i = 0; i < height; i++) {
+		byte  *destBak    = dest;
+		uint16 pixWritten = 0;
+
+		while (pixWritten < width) {
+			uint16 pixCount = *src++;
+
+			if (pixCount & 0x80) { // Data
+				pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
+				memcpy(dest, src, pixCount);
+
+				pixWritten += pixCount;
+				dest       += pixCount;
+				src        += pixCount;
+			} else { // "Hole"
+				pixWritten += pixCount + 1;
+				dest       += pixCount + 1;
+			}
+
+		}
+
+		dest = destBak + destWidth;
+	}
+}
+
+// A half-high sparse block
+void Imd::renderBlockSparse2Y(byte *dest, const byte *src, int16 width, int16 height,
+		int16 destWidth, int16 destHeight) {
+
+	for (int i = 0; i < height; i += 2) {
+		byte  *destBak    = dest;
+		uint16 pixWritten = 0;
+
+		while (pixWritten < width) {
+			uint16 pixCount = *src++;
+
+			if (pixCount & 0x80) { // Data
+				pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
+				memcpy(dest            , src, pixCount);
+				memcpy(dest + destWidth, src, pixCount);
+
+				pixWritten += pixCount;
+				dest       += pixCount;
+				src        += pixCount;
+			} else { // "Hole"
+				pixWritten += pixCount + 1;
+				dest       += pixCount + 1;
+			}
+
+		}
+
+		dest = destBak + destWidth;
+	}
+}
+
 uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 	if (!_frameData || !_vidMem || (_width <= 0) || (_height <= 0))
 		return 0;
@@ -789,6 +894,7 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 	int16 width  = right  - left + 1;
 	int16 height = bottom - top  + 1;
 	int16 sW     = _vidMemWidth;
+	int16 sH     = _vidMemHeight;
 
 	byte *dataPtr   = _frameData;
 	byte *imdVidMem = _vidMem + sW * top + left;
@@ -809,88 +915,30 @@ uint32 Imd::renderFrame(int16 left, int16 top, int16 right, int16 bottom) {
 
 	srcPtr = dataPtr;
 
-	if (type & 0x80) { // Frame data is compressed
+	if (type & 0x80) {
+		// Frame data is compressed
+
 		srcPtr = _vidBuffer;
 		type &= 0x7F;
 		if ((type == 2) && (width == sW)) {
+			// Directly uncompress onto the video surface
 			deLZ77(imdVidMem, dataPtr);
 			return retVal;
 		} else
 			deLZ77(srcPtr, dataPtr);
 	}
 
-	uint16 pixCount, pixWritten;
-	byte *imdVidMemBak;
-
-	if (type == 2) { // Whole block
-		for (int i = 0; i < height; i++) {
-			memcpy(imdVidMem, srcPtr, width);
-			srcPtr    += width;
-			imdVidMem += sW;
-		}
-	} else if (type == 1) { // Sparse block
-		imdVidMemBak = imdVidMem;
-		for (int i = 0; i < height; i++) {
-			pixWritten = 0;
-			while (pixWritten < width) {
-				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // Data
-					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
-					memcpy(imdVidMem, srcPtr, pixCount);
-
-					pixWritten += pixCount;
-					imdVidMem  += pixCount;
-					srcPtr     += pixCount;
-				} else { // "Hole"
-					pixCount    = (pixCount + 1) % 256;
-					pixWritten += pixCount;
-					imdVidMem  += pixCount;
-				}
-			}
-			imdVidMemBak += sW;
-			imdVidMem     = imdVidMemBak;
-		}
-	} else if (type == 0x42) { // Whole quarter-wide block
-		for (int i = 0; i < height; i++) {
-			imdVidMemBak = imdVidMem;
-
-			for (int j = 0; j < width; j += 4, imdVidMem += 4, srcPtr++)
-				memset(imdVidMem, *srcPtr, 4);
-
-			imdVidMemBak += sW;
-			imdVidMem     = imdVidMemBak;
-		}
-	} else if ((type & 0xF) == 2) { // Whole half-high block
-		for (; height > 1; height -= 2, imdVidMem += sW + sW, srcPtr += width) {
-			memcpy(imdVidMem, srcPtr, width);
-			memcpy(imdVidMem + sW, srcPtr, width);
-		}
-		if (height == -1)
-			memcpy(imdVidMem, srcPtr, width);
-	} else { // Sparse half-high block
-		imdVidMemBak = imdVidMem;
-		for (int i = 0; i < height; i += 2) {
-			pixWritten = 0;
-			while (pixWritten < width) {
-				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // Data
-					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
-					memcpy(imdVidMem, srcPtr, pixCount);
-					memcpy(imdVidMem + sW, srcPtr, pixCount);
-
-					pixWritten += pixCount;
-					imdVidMem  += pixCount;
-					srcPtr     += pixCount;
-				} else { // "Hole"
-					pixCount    = (pixCount + 1) % 256;
-					pixWritten += pixCount;
-					imdVidMem  += pixCount;
-				}
-			}
-			imdVidMemBak += sW + sW;
-			imdVidMem     = imdVidMemBak;
-		}
-	}
+	// Evaluate the block type
+	if      (type == 0x01)
+		renderBlockSparse  (imdVidMem, srcPtr, width, height, sW, sH);
+	else if (type == 0x02)
+		renderBlockWhole   (imdVidMem, srcPtr, width, height, sW, sH);
+	else if (type == 0x42)
+		renderBlockWhole4X (imdVidMem, srcPtr, width, height, sW, sH);
+	else if ((type & 0x0F) == 0x02)
+		renderBlockWhole2Y (imdVidMem, srcPtr, width, height, sW, sH);
+	else
+		renderBlockSparse2Y(imdVidMem, srcPtr, width, height, sW, sH);
 
 	return retVal;
 }
@@ -1677,7 +1725,7 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 	return state;
 }
 
-void Vmd::deRLE(byte *&srcPtr, byte *&destPtr, int16 len) {
+void Vmd::deRLE(byte *&destPtr, const byte *&srcPtr, int16 len) {
 	srcPtr++;
 
 	if (len & 1)
@@ -1702,6 +1750,40 @@ void Vmd::deRLE(byte *&srcPtr, byte *&destPtr, int16 len) {
 		}
 		len -= tmp;
 	}
+}
+
+// A run-length-encoded sparse block
+void Vmd::renderBlockRLE(byte *dest, const byte *src, int16 width, int16 height,
+		int16 destWidth, int16 destHeight) {
+
+	for (int i = 0; i < height; i++) {
+		byte  *destBak    = dest;
+		uint16 pixWritten = 0;
+
+		while (pixWritten < width) {
+			uint16 pixCount = *src++;
+
+			if (pixCount & 0x80) {
+				pixCount = (pixCount & 0x7F) + 1;
+
+				if (*src != 0xFF) { // Normal copy
+					memcpy(dest, src, pixCount);
+					dest += pixCount;
+					src  += pixCount;
+				} else
+					deRLE(dest, src, pixCount);
+
+				pixWritten += pixCount;
+			} else { // "Hole"
+				dest       += pixCount + 1;
+				pixWritten += pixCount + 1;
+			}
+
+		}
+
+		dest = destBak + destWidth;
+	}
+
 }
 
 uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
@@ -1758,10 +1840,13 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 			sH = _height;
 		}
 
-		if (type & 0x80) { // Frame data is compressed
+		if (type & 0x80) {
+			// Frame data is compressed
+
 			srcPtr = _vidBuffer;
 			type &= 0x7F;
 			if ((type == 2) && (postScaleX(width) == sW)) {
+				// Directly uncompress onto the video surface
 				deLZ77(dest, dataPtr);
 				blit(imdVidMem, dest, width, height);
 				return 1;
@@ -1771,110 +1856,22 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 
 	}
 
-	uint16 pixCount, pixWritten;
-	byte *destBak;
+	width = postScaleX(width);
 
-	if (type == 1) { // Sparse block
-		destBak = dest;
-		for (int i = 0; i < height; i++) {
-			pixWritten = 0;
-			while (pixWritten < postScaleX(width)) {
-				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // Data
-					pixCount = MIN<int>((pixCount & 0x7F) + 1, postScaleX(width) - pixWritten);
-					memcpy(dest, srcPtr, pixCount);
+	// Evaluate the block type
+	if      (type == 0x01)
+		renderBlockSparse  (dest, srcPtr, width, height, sW, sH);
+	else if (type == 0x02)
+		renderBlockWhole   (dest, srcPtr, width, height, sW, sH);
+	else if (type == 0x03)
+		renderBlockRLE     (dest, srcPtr, width, height, sW, sH);
+	else if (type == 0x42)
+		renderBlockWhole4X (dest, srcPtr, width, height, sW, sH);
+	else if ((type & 0x0F) == 0x02)
+		renderBlockWhole2Y (dest, srcPtr, width, height, sW, sH);
+	else
+		renderBlockSparse2Y(dest, srcPtr, width, height, sW, sH);
 
-					pixWritten += pixCount;
-					dest       += pixCount;
-					srcPtr     += pixCount;
-				} else { // "Hole"
-					pixCount    = (pixCount + 1) % 256;
-					pixWritten += pixCount;
-					dest       += pixCount;
-				}
-			}
-			destBak += sW;
-			dest = destBak;
-		}
-	} else if (type == 2) { // Whole block
-		int16 w = MIN<int32>(postScaleX(width), sW);
-		int16 h = MIN(height, sH);
-
-		for (int i = 0; i < h; i++) {
-			memcpy(dest, srcPtr, w);
-
-			srcPtr += postScaleX(width);
-			dest   += sW;
-		}
-
-	} else if (type == 3) { // RLE block
-		for (int i = 0; i < height; i++) {
-			destBak = dest;
-
-			pixWritten = 0;
-			while (pixWritten < width) {
-				pixCount = *srcPtr++;
-				if (pixCount & 0x80) {
-					pixCount = (pixCount & 0x7F) + 1;
-
-					if (*srcPtr != 0xFF) { // Normal copy
-						memcpy(dest, srcPtr, pixCount);
-						dest   += pixCount;
-						srcPtr += pixCount;
-					} else
-						deRLE(srcPtr, dest, pixCount);
-
-					pixWritten += pixCount;
-				} else { // "Hole"
-					dest       += pixCount + 1;
-					pixWritten += pixCount + 1;
-				}
-
-			}
-			destBak += sW;
-			dest = destBak;
-		}
-	} else if (type == 0x42) { // Whole quarter-wide block
-		for (int i = 0; i < height; i++) {
-			destBak = dest;
-
-			for (int j = 0; j < width; j += 4, dest += 4, srcPtr++)
-				memset(dest, *srcPtr, 4);
-
-			destBak += sW;
-			dest     = destBak;
-		}
-	} else if ((type & 0xF) == 2) { // Whole half-high block
-		for (; height > 1; height -= 2, dest += sW + sW, srcPtr += width) {
-			memcpy(dest, srcPtr, width);
-			memcpy(dest + sW, srcPtr, width);
-		}
-		if (height == -1)
-			memcpy(dest, srcPtr, width);
-	} else { // Sparse half-high block
-		destBak = dest;
-		for (int i = 0; i < height; i += 2) {
-			pixWritten = 0;
-			while (pixWritten < width) {
-				pixCount = *srcPtr++;
-				if (pixCount & 0x80) { // Data
-					pixCount = MIN((pixCount & 0x7F) + 1, width - pixWritten);
-					memcpy(dest, srcPtr, pixCount);
-					memcpy(dest + sW, srcPtr, pixCount);
-
-					pixWritten += pixCount;
-					dest       += pixCount;
-					srcPtr     += pixCount;
-				} else { // "Hole"
-					pixCount    = (pixCount + 1) % 256;
-					pixWritten += pixCount;
-					dest       += pixCount;
-				}
-			}
-			destBak += sW + sW;
-			dest     = destBak;
-		}
-	}
 
 	dest = _vidMemBuffer + postScaleX(_width) * (top - _y) + postScaleX(left - _x);
 	blit(imdVidMem, dest, width, height);

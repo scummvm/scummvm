@@ -350,6 +350,17 @@ protected:
 	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
 	void deLZ77(byte *dest, byte *src);
 
+	void renderBlockWhole   (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockWhole4X (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockWhole2Y (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockSparse  (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockSparse2Y(byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+
 	void calcFrameCoords(uint16 frame, State &state);
 
 	void nextSoundSlice(bool hasNextCmd);
@@ -479,7 +490,10 @@ protected:
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
+	void renderBlockRLE(byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+
+	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 len);
 
 	inline int32 preScaleX(int32 x) const;
 	inline int32 postScaleX(int32 x) const;
