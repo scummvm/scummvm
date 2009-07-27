@@ -1147,10 +1147,69 @@ void OSystem_WINCE3::setGraphicsModeIntern() {
 }
 
 bool OSystem_WINCE3::update_scalers() {
+	_videoMode.aspectRatioCorrection = false;
+
 	if (_videoMode.mode != GFX_NORMAL)
 		return false;
 
-	_videoMode.aspectRatioCorrection = false;
+        /* If we're on a device with a large enough screen to accomodate a
+         * doubled screen, double the screen. */
+	if ((!_orientationLandscape) &&
+	    (_videoMode.screenWidth == 320 || !_videoMode.screenWidth) &&
+	    (getScreenWidth() >= 640) &&
+	    (getScreenHeight() >= 480))
+	{
+#ifdef USE_ARM_SCALER_ASM
+		if (!_panelVisible && !_overlayVisible && _canBeAspectScaled)
+		{
+			_scaleFactorXm = 2;
+			_scaleFactorXd = 1;
+			_scaleFactorYm = 12;
+			_scaleFactorYd = 5;
+			_scalerProc = Normal2xAspect;
+			_modeFlags = 0;
+			_videoMode.aspectRatioCorrection = true;
+		}
+		else
+#endif
+		{
+			_scaleFactorXm = 2;
+			_scaleFactorXd = 1;
+			_scaleFactorYm = 2;
+			_scaleFactorYd = 1;
+			_scalerProc = Normal2x;
+			_modeFlags = 0;
+		}
+		return true;
+	}
+	if ((_orientationLandscape) &&
+	    (_videoMode.screenWidth == 320 || !_videoMode.screenWidth) &&
+	    (getScreenWidth() >= 480) &&
+	    (getScreenHeight() >= 640))
+	{
+#ifdef USE_ARM_SCALER_ASM
+		if (!_panelVisible && !_overlayVisible && _canBeAspectScaled)
+		{
+			_scaleFactorXm = 2;
+			_scaleFactorXd = 1;
+			_scaleFactorYm = 12;
+			_scaleFactorYd = 5;
+			_scalerProc = Normal2xAspect;
+			_modeFlags = 0;
+			_videoMode.aspectRatioCorrection = true;
+		}
+		else
+#endif
+		{
+			_scaleFactorXm = 2;
+			_scaleFactorXd = 1;
+			_scaleFactorYm = 2;
+			_scaleFactorYd = 1;
+			_scalerProc = Normal2x;
+			_modeFlags = 0;
+		}
+		return true;
+	}
 
 	if (CEDevice::hasPocketPCResolution()) {
 		if (	(!_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth))
@@ -1369,13 +1428,8 @@ bool OSystem_WINCE3::loadGFXMode() {
 
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	// Always use full screen mode to have a "clean screen"
-	if (!_videoMode.aspectRatioCorrection) {
-		displayWidth = _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd;
-		displayHeight = _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd;
-	} else {
-		displayWidth = _videoMode.screenWidth;
-		displayHeight = _videoMode.screenHeight;
-	}
+	displayWidth = _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd;
+	displayHeight = _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd;
 
 	switch (_orientationLandscape) {
 		case 1:
