@@ -178,8 +178,10 @@ void Game::loop() {
 		}
 
 		int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+		Animation *anim = _vm->_anims->getAnimation(animUnderCursor);
 
 		int curObject = getObjectWithAnimation(animUnderCursor);
+		GameObject *obj = &_objects[curObject];
 
 		Animation *atitle = _vm->_anims->getAnimation(kTitleText);
 
@@ -187,9 +189,19 @@ void Game::loop() {
 
 		atitle->deleteFrames();
 		if (curObject != kNotFound) {					
-			GameObject *obj = &_objects[curObject];
 			Text *title = new Text (obj->_title, _vm->_bigFont, kFontColour1, 0, 0);
 			atitle->addFrame(title);
+
+			// HACK: Test running look and use scripts
+			if (_vm->_mouse->lButtonPressed()) {
+				_vm->_script->run(obj->_program, obj->_look);
+				_vm->_mouse->lButtonSet(false);				
+			}
+
+			if (_vm->_mouse->rButtonPressed()) {
+				_vm->_script->run(obj->_program, obj->_use);
+				_vm->_mouse->rButtonSet(false);				
+			}
 		}
 
 		debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
