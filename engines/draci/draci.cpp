@@ -223,11 +223,11 @@ DraciEngine::~DraciEngine() {
 	delete _smallFont;
 	delete _bigFont;
 
-	delete _screen;
 	delete _mouse;
-	delete _game;
 	delete _script;
 	delete _anims;
+	delete _game;
+	delete _screen;
 
 	delete _initArchive;
 	delete _paletteArchive;
