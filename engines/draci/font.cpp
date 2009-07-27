@@ -29,7 +29,7 @@
 #include "draci/font.h"
 
 namespace Draci {
-
+de
 const Common::String kFontSmall("Small.fon");
 const Common::String kFontBig("Big.fon"); 
 
@@ -188,7 +188,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 	}
 
 	if (markDirty) {
-		Common::Rect r(tx, ty, tx + xPixelsToDraw, ty + yPixelsToDraw);
+		Common::Rect r(tx, ty, tx + xPixelsToDraw + 1, ty + yPixelsToDraw);
 		dst->markDirtyRect(r);
 	}
 }
@@ -218,14 +218,14 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
 		// If we encounter the '|' char (newline and end of string marker),
 		// skip it and go to the start of the next line
 		if (str[i] == '|') {
-			cury += getFontHeight() + 1;
+			cury += getFontHeight();
 			curx = x;
 			continue;
 		}
 		
-		// Return early if there's no more space on the screen	
-		if (curx >= dst->w || cury >= dst->h) {
-			return;
+		// Break early if there's no more space on the screen	
+		if (curx >= dst->w - 1 || cury >= dst->h - 1) {
+			break;
 		}		
 		
 		drawChar(dst, str[i], curx, cury, markDirty);
@@ -260,16 +260,53 @@ void Font::drawString(Surface *dst, const Common::String &str,
 
 int Font::getStringWidth(const Common::String &str, int spacing) const {
 	int width = 0;	
+
+	// Real length, including '|' separators
 	uint len = str.size();
-	for (unsigned int i = 0; i < len; ++i) {
+
+	// Here we will store the in-game length of the longest line
+	uint lineLength = 0;
+
+	for (unsigned int i = 0, tmp = 0; i < len; ++i) {
+
+		// Newline char encountered, skip it and store the new length if it is greater
+		if (str[i] == '|') {
+			if (tmp > width) {
+				width = tmp;
+			}
+			continue;
+		}
+
 		uint8 charIndex = str[i] - kCharIndexOffset;
-		width += _charWidths[charIndex];
+		tmp += _charWidths[charIndex];
+		tmp += spacing;
 	}
 
-	// Add width of spaces, if any
-	width += (len - 1) * spacing;
+	return width + 1;
+}
 
-	return width;
+/**
+ * @brief Calculate the height of a string by counting the number of '|' chars (which
+ * 		  are used as newline characters and end-of-string markers)
+ *
+ * @param str 		String to draw
+ * @param spacing	Space to leave between individual characters. Defaults to 0. 
+ *
+ * @return The calculated height of the string 
+ */
+
+
+int Font::getStringHeight(const Common::String &str) const {
+	uint len = str.size();
+	int separators = 0;
+
+	for (unsigned int i = 0; i < len; ++i) {
+		if (str[i] == '|') {
+			++separators;
+		}
+	}
+	
+	return separators * getFontHeight();
 }
 
 } // End of namespace Draci

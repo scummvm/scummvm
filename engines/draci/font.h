@@ -68,6 +68,8 @@ public:
 					int x, int y, int spacing, bool markDirty = true) const;
 	
 	int getStringWidth(const Common::String &str, int spacing = 0) const;
+	int getStringHeight(const Common::String &str) const;
+
 	void setColour(uint8 colour);
 
 private:
