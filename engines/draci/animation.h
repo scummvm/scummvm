@@ -34,7 +34,7 @@ namespace Draci {
   * Animation IDs for those animations that don't have their IDs
   * specified in the data files.
   */
-enum { kOverlayImage = -1, kWalkingMapOverlay = -2, kUnused = -3 };
+enum { kOverlayImage = -1, kWalkingMapOverlay = -2, kTitleText = -3, kUnused = -4 };
 
 /**
   * Default argument to Animation::getFrame() that makes it return 
@@ -84,6 +84,8 @@ public:
 	void setIndex(int index);
 
 	void setScaleFactors(double scaleX, double scaleY);
+	double getScaleX();
+	double getScaleY();
 
 	void markDirtyRect(Surface *surface);
 
@@ -126,6 +128,7 @@ public:
 	~AnimationManager() { deleteAll(); }
 
 	Animation *addAnimation(int id, uint z, bool playing = false);
+	Animation *addText(int id, bool playing = false);
 	void addOverlay(Drawable *overlay, uint z);
 	
 	void play(int id);
@@ -141,6 +144,8 @@ public:
 
 	int getLastIndex();
 	void deleteAfterIndex(int index);
+
+	int getTopAnimationID(int x, int y);
 
 private:
 	void sortAnimations();	

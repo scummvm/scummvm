@@ -213,6 +213,14 @@ void Animation::setScaleFactors(double scaleX, double scaleY) {
 	_scaleY = scaleY;
 }
 
+double Animation::getScaleX() {
+	return _scaleX;
+}
+
+double Animation::getScaleY() {
+	return _scaleY;
+}
+
 void Animation::addFrame(Drawable *frame) {
 	_frames.push_back(frame);	
 }
@@ -226,6 +234,11 @@ void Animation::setIndex(int index) {
 }
 
 Drawable *Animation::getFrame(int frameNum) {
+
+	// If there are no frames stored, return NULL
+	if (_frames.size() == 0) {
+		return NULL;
+	}
 
 	// If no argument is passed, return the current frame
 	if (frameNum == kCurrentFrame) {
@@ -241,6 +254,13 @@ uint Animation::getFramesNum() {
 
 void Animation::deleteFrames() {
 	
+	// If there are no frames to delete, return
+	if (_frames.size() == 0) {
+		return;
+	}
+
+	markDirtyRect(_vm->_screen->getSurface());
+
 	for (int i = getFramesNum() - 1; i >= 0; --i) {		
 		delete _frames[i];
 		_frames.pop_back();	
@@ -256,6 +276,19 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	
 	anim->setID(id);
 	anim->setZ(z);
+	anim->setPlaying(playing);
+
+	insertAnimation(anim);
+
+	return anim;
+}
+
+Animation *AnimationManager::addText(int id, bool playing) {
+
+	Animation *anim = new Animation(_vm, kIgnoreIndex);
+
+	anim->setID(id);
+	anim->setZ(256);
 	anim->setPlaying(playing);
 
 	insertAnimation(anim);
@@ -461,4 +494,77 @@ void AnimationManager::deleteAfterIndex(int index) {
 	_lastIndex = index;
 }
 
+int AnimationManager::getTopAnimationID(int x, int y) {
+
+	Common::List<Animation *>::iterator it;
+
+	// The default return value if no animations were found on these coordinates (not even overlays)
+	// i.e. the black background shows through so treat it as an overlay
+	int retval = kOverlayImage;
+
+	// Get transparent colour for the current screen
+	const int transparent = _vm->_screen->getSurface()->getTransparentColour();
+
+	for (it = _animations.reverse_begin(); it != _animations.end(); --it) {
+
+		Animation *anim = *it;
+
+		// If the animation is not playing, ignore it
+		if (!anim->isPlaying()) {
+			continue;
+		}
+
+		Drawable *frame = anim->getFrame();
+
+		if (frame == NULL) {
+			continue;
+		}
+
+		int oldX = frame->getX();
+		int oldY = frame->getY();
+
+		// Take account relative coordinates
+		int newX = oldX + anim->getRelativeX();
+		int newY = oldY + anim->getRelativeY();
+
+		// Translate the frame to those relative coordinates
+		frame->setX(newX);
+		frame->setY(newY);
+
+		// Save scaled width and height
+		int scaledWidth = frame->getScaledWidth();
+		int scaledHeight = frame->getScaledHeight();
+
+		// Take into account per-animation scaling and adjust the current frames dimensions	
+		if (anim->getScaleX() != 1.0 || anim->getScaleY() != 1.0)
+			frame->setScaled(scaledWidth * anim->getScaleX(), scaledHeight * anim->getScaleY());
+
+		if (frame->getRect().contains(x, y)) {
+
+			if (frame->getType() == kDrawableText) {
+
+				retval = anim->getID();
+
+			} else if (frame->getType() == kDrawableSprite && 
+					   reinterpret_cast<Sprite *>(frame)->getPixel(x, y) != transparent) {
+
+				retval = anim->getID();
+			}	
+		}
+
+		// Revert back to old coordinates
+		frame->setX(oldX);
+		frame->setY(oldY);
+
+		// Revert back to old dimensions
+		frame->setScaled(scaledWidth, scaledHeight);
+
+		// Found an animation
+		if (retval != kOverlayImage)
+			break;
+	}
+
+	return retval;
+}
+			
 }
