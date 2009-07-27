@@ -52,8 +52,9 @@ bool Animation::isLooping() {
 
 void Animation::setRelative(int relx, int rely) {
 
-	// Delete the previous frame
-	markDirtyRect(_vm->_screen->getSurface());
+	// Delete the previous frame if there is one
+	if (_frames.size() > 0)	
+		markDirtyRect(_vm->_screen->getSurface());
 
 	_relX = relx;
 	_relY = rely;
