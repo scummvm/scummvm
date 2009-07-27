@@ -53,6 +53,9 @@ public:
 	CursorType getCursorType() { return _cursorType; }
 	bool lButtonPressed() { return _lButton; }
 	bool rButtonPressed() { return _rButton; }
+	void lButtonSet(bool state) { _lButton = state; }
+	void rButtonSet(bool state) { _rButton = state; }
+
 	uint16 getPosX() { return _x; }
 	uint16 getPosY() { return _y; }
 
