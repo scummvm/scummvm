@@ -126,6 +126,28 @@ void Sprite::setMirrorOff() {
 	_mirror = false;
 }
 
+
+int Sprite::getPixel(int x, int y) const {
+	
+	Common::Rect rect = getRect();
+
+	int dy = y - rect.top;
+	int dx = x - rect.left;
+	
+	// Calculate scaling factors
+	double scaleX = double(_scaledWidth) / _width;
+	double scaleY = double(_scaledHeight) / _height;
+
+	int sy = lround(dy * scaleY);
+	int sx = lround(dx * scaleX);
+
+	if (_mirror)
+		return _data[sy * _width + (_width - sx)];
+	else
+		return _data[sy * _width + sx];
+}
+
+
 void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 	Common::Rect sourceRect(0, 0, _width, _height);
@@ -269,6 +291,7 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 		surface->markDirtyRect(destRect);
 	}
 }
+	
 
 Common::Rect Sprite::getRect(bool scaled) const {
 	if (scaled) 
@@ -279,15 +302,11 @@ Common::Rect Sprite::getRect(bool scaled) const {
 
 Text::Text(const Common::String &str, Font *font, byte fontColour, 
 				int x, int y, uint spacing) {
-	uint len = str.size();
-	_length = len;
-	
 	_x = x;
 	_y = y;
 	_delay = 0;
 	
-	_text = new byte[len];
-	memcpy(_text, str.c_str(), len);
+	_text = str;
 	
 	_spacing = spacing;
 	_colour = fontColour;
@@ -295,27 +314,17 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 	_font = font;
 
 	_width = _font->getStringWidth(str, _spacing);
-	_height = _font->getFontHeight();
+	_height = _font->getStringHeight(str);
 
 	_scaledWidth = _width;
 	_scaledHeight = _height;
 } 
 
-Text::~Text() {
-	delete[] _text;
-}
-
 void Text::setText(const Common::String &str) {
-	delete[] _text;
-	
-	uint len = str.size();
-	_length = len;
-
 	_width = _font->getStringWidth(str, _spacing);
-	_height = _font->getFontHeight();
+	_height = _font->getStringHeight(str);
 
-	 _text = new byte[len];
-	memcpy(_text, str.c_str(), len);
+	 _text = str;
 }
 
 void Text::setColour(byte fontColour) {
@@ -328,7 +337,8 @@ void Text::setSpacing(uint spacing) {
 
 void Text::draw(Surface *surface, bool markDirty) const {
 	_font->setColour(_colour);
-	_font->drawString(surface, _text, _length, _x, _y, _spacing);
+
+	_font->drawString(surface, _text, _x, _y, _spacing);
 }
 
 // TODO: Handle scaled parameter properly by implementing Text scaling

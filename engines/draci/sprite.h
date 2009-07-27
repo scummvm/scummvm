@@ -31,6 +31,8 @@
 
 namespace Draci {
 
+enum DrawableType { kDrawableText, kDrawableSprite };
+
 class Drawable {
 
 public:
@@ -60,6 +62,8 @@ public:
 	int getDelay() const { return _delay; }	
 
 	virtual Common::Rect getRect(bool scaled = true) const = 0;
+
+	virtual DrawableType getType() const = 0;
 	
 protected:
 	uint _width;		//!< Width of the sprite
@@ -105,6 +109,9 @@ public:
 	Common::Rect getRect(bool scaled = true) const;
 
 	const byte *getBuffer() const { return _data; }
+	int getPixel(int x, int y) const;
+
+	DrawableType getType() const { return kDrawableSprite; }
 
 private:
 	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
@@ -116,7 +123,7 @@ class Text : public Drawable {
 public:
 	Text(const Common::String &str, Font *font, byte fontColour, 
 		int x, int y, uint spacing = 0);
-	~Text();
+	~Text() {};
 	
 	void setText(const Common::String &str);
 	void setColour(byte fontColour);
@@ -130,8 +137,10 @@ public:
 	void drawScaled(Surface *surface, bool markDirty = true) const { draw(surface, markDirty); }
 	Common::Rect getRect(bool) const;
 
+	DrawableType getType() const { return kDrawableText; }
+
 private:
-	byte *_text;
+	Common::String _text;
 	uint _length;
 	uint8 _colour;
 	uint _spacing;
