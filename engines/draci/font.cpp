@@ -29,7 +29,7 @@
 #include "draci/font.h"
 
 namespace Draci {
-de
+
 const Common::String kFontSmall("Small.fon");
 const Common::String kFontBig("Big.fon"); 
 
@@ -259,13 +259,10 @@ void Font::drawString(Surface *dst, const Common::String &str,
  */
 
 int Font::getStringWidth(const Common::String &str, int spacing) const {
-	int width = 0;	
+	unsigned int width = 0;	
 
 	// Real length, including '|' separators
 	uint len = str.size();
-
-	// Here we will store the in-game length of the longest line
-	uint lineLength = 0;
 
 	for (unsigned int i = 0, tmp = 0; i < len; ++i) {
 
