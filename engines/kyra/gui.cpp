@@ -538,18 +538,18 @@ int MainMenu::handle(int dim) {
 			int item = (mouse.y - menuRect.top) / fh;
 
 			if (item != selected) {
-				printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.menuTable[5], 0, 5);
-				printString(_static.strings[item], textPos, menuRect.top + item * fh, _static.menuTable[6], 0, 5);
+				printString("%s", textPos, menuRect.top + selected * fh, _static.menuTable[5], 0, 5, _static.strings[selected]);
+				printString("%s", textPos, menuRect.top + item * fh, _static.menuTable[6], 0, 5, _static.strings[item]);
 
 				selected = item;
 			}
 
 			if (mousePressed) {
 				for (int i = 0; i < 3; i++) {
-					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.menuTable[5], 0, 5);
+					printString("%s", textPos, menuRect.top + selected * fh, _static.menuTable[5], 0, 5, _static.strings[selected]);
 					_screen->updateScreen();
 					_system->delayMillis(50);
-					printString(_static.strings[selected], textPos, menuRect.top + selected * fh, _static.menuTable[6], 0, 5);
+					printString("%s", textPos, menuRect.top + selected * fh, _static.menuTable[6], 0, 5, _static.strings[selected]);
 					_screen->updateScreen();
 					_system->delayMillis(50);
 				}
@@ -577,7 +577,7 @@ void MainMenu::draw(int select) {
 	for (int i = 0; i < _static.menuTable[3]; ++i) {
 		int curY = top + i * _screen->getFontHeight();
 		int color = (i == select) ? _static.menuTable[6] : _static.menuTable[5];
-		printString(_static.strings[i], ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5);
+		printString("%s", ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5, _static.strings[i]);
 	}
 }
 
