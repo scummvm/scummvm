@@ -94,7 +94,7 @@ private:
 	// TODO: This is part of a temporary HACK to allow only 1 instance
 	static bool _hasInstance;
 public:
-	OPL() { _hasInstance = true; }
+	OPL() { assert(!_hasInstance); _hasInstance = true; }
 	virtual ~OPL() { _hasInstance = false; }
 
 	/**
