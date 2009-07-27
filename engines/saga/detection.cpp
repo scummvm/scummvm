@@ -204,7 +204,7 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 		// Obtain the last 2 digits of the filename, since they correspond to the save slot
 		slotNum = atoi(file->c_str() + file->size() - 2);
 
-		if (slotNum >= 0 && slotNum <= 99) {
+		if (slotNum >= 0 && slotNum < MAX_SAVES) {
 			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
 			if (in) {
 				for (int i = 0; i < 3; i++)
@@ -219,7 +219,7 @@ SaveStateList SagaMetaEngine::listSaves(const char *target) const {
 	return saveList;
 }
 
-int SagaMetaEngine::getMaximumSaveSlot() const { return 99; }
+int SagaMetaEngine::getMaximumSaveSlot() const { return MAX_SAVES - 1; }
 
 void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 	char extension[6];
