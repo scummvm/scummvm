@@ -111,16 +111,15 @@ Fancy button combos:
 
 NOTE: To use button combos press and hold the Left Trigger then...
 
-Right Trigger: 0 (For skipping the copy protection in Monkey Island 2)
+Right Trigger: Display Virtual Keyboard 
+  (or if it VKeybd is disabled 0 (For skipping the copy protection in Monkey Island 2)
 Menu: Bring up the Global main menu for ScummVM
 Select: Exit ScummVM completely (and gracefully)
 
 ------------------------------------------------------------------------
 Know issues
 
-Possible random crash (well SegFault). I have had this happen twice and
-have not tracked down the cause.
-It happens very infrequently, both times it was in the DOTT CD intro.
+No major known issues
 
 ------------------------------------------------------------------------
 Additional resources/links

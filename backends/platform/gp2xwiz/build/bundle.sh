@@ -8,6 +8,8 @@ mkdir "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm"
 mkdir "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/saves"
 mkdir "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/plugins"
 mkdir "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/engine-data"
+mkdir "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib"
+
 
 echo "Please put your save games in this dir" >> "scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/saves/PUT_SAVES_IN_THIS_DIR"
 
@@ -26,6 +28,13 @@ cp ../../../../backends/vkeybd/packs/vkeybd_default.zip ./scummvm-wiz-`date '+%Y
 cp ../../../../dists/pred.dic ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/
 cp ../../../../dists/engine-data/* ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/engine-data
 cp ../../../../plugins/* ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/plugins
+
+# Copy over dynamic libs needed by the app (as the ones in the default filesystem are broken).
+f=`which arm-open2x-linux-g++`
+loc=`dirname "$f"`
+cp $loc/../lib/libz.so.1.2.3 ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib/libz.so.1
+cp $loc/../lib/libvorbisidec.so.1.0.2 ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/lib/libvorbisidec.so.1
+
 
 echo Making Stripped exe.
 arm-open2x-linux-strip ./scummvm-wiz-`date '+%Y-%m-%d'`/scummvm/scummvm.wiz

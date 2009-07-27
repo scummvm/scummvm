@@ -1,5 +1,9 @@
 #!/bin/sh
 
+# Export the location of any libs ScummVM depends on
+# (to avoid installing to the NAND and overwriting the broken ones there).
+export LD_LIBRARY_PATH=`pwd`/lib:$LD_LIBRARY_PATH
+
 # Run ScummVM, important this bit.
 ./scummvm.wiz --fullscreen --gfx-mode=1x --config=$(pwd)/.scummvmrc 
 
