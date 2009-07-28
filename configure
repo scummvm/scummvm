@@ -267,7 +267,7 @@ find_sdlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	mingw* | *os2-emx)
+	mingw* | *os2-emx | wince)
 		_exeext=".exe"
 		;;
 	arm-riscos)
@@ -553,7 +553,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wii, psp, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wince, wii, psp, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -569,6 +569,7 @@ Special configuration feature:
                                           wii for Nintendo Wii
                                           gamecube for Nintendo Gamecube
                                           iphone for Apple iPhone
+                                          wince for Windows CE
                                           psp for PlayStation Portable 
 
 Optional Features:
@@ -818,6 +819,11 @@ iphone)
 	_host_os=iphone
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin9
+	;;
+wince)
+	_host_os=wince
+	_host_cpu=arm
+	_host_alias=arm-wince-mingw32ce
 	;;
 neuros)
 	_host_os=linux
@@ -1165,6 +1171,10 @@ case $_host_os in
 	psp)
 		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
+	wince)
+		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__= -Wno-multichar"
+		;;
 	# given this is a shell script assume some type of unix
 	*)
 		echo "WARNING: could not establish system type, assuming unix like"
@@ -1304,6 +1314,32 @@ if test -n "$_host"; then
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
 			_strip=$_host_alias-strip
+			;;
+		wince)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_TREMOLO = 1'
+			add_line_to_config_mk 'USE_MAD = 1'
+			add_line_to_config_mk 'USE_MPEG2 = 1'
+			add_line_to_config_mk 'USE_FLAC = 1'
+			add_line_to_config_mk 'USE_ZLIB = 1'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="wince"
+			_ar="$_host_alias-ar cru"
+			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
+			_windres=$_host_alias-windres
+			_mt32emu="no"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/wince/wince.mk'
 			;;
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1989,6 +2025,11 @@ case $_backend in
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
+	wince)
+		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/libs/include -I$(srcdir)/backends/platform/wince/libs/include/sdl -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
+		LDFLAGS="$LDFLAGS "'-L$(srcdir)/backends/platform/wince/libs/lib'
+		LIBS="$LIBS -static -lSDL"
+		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
@@ -2024,7 +2065,7 @@ if test "$_cxx_major" -ge "3" ; then
 	case $_host_os in
 	# newlib-based system include files suppress non-C89 function 
 	# declarations under __STRICT_ANSI__
-	mingw* | dreamcast | wii | gamecube | psp | amigaos*)
+	mingw* | dreamcast | wii | gamecube | psp | wince | amigaos*)
 		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
 		;;
 	*)
