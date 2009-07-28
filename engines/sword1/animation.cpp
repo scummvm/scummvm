@@ -160,6 +160,9 @@ void MoviePlayer::play(void) {
 	stopEvent.kbd = Common::KEYCODE_ESCAPE;
 	stopEvents.push_back(stopEvent);
 
+	_textX = 0;
+	_textY = 0;
+
 	terminated = !playVideo(stopEvents);
 
 	if (terminated)
@@ -200,12 +203,15 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 		}
 	}
 
-	if (_textMan->giveSpriteData(2)) {
-		byte *src = (byte *)_textMan->giveSpriteData(2) + sizeof(FrameHeader);
-		byte *dst = screen + _textY * _decoder->getWidth() + _textX * 1;
+	byte *src, *dst;
+	int x, y;
 
-		for (int y = 0; y < _textHeight; y++) {
-			for (int x = 0; x < _textWidth; x++) {
+	if (_textMan->giveSpriteData(2)) {
+		src = (byte *)_textMan->giveSpriteData(2) + sizeof(FrameHeader);
+		dst = screen + _textY * SCREEN_WIDTH + _textX * 1;
+
+		for (y = 0; y < _textHeight; y++) {
+			for (x = 0; x < _textWidth; x++) {
 				switch (src[x]) {
 				case BORDER_COL:
 					dst[x] = _decoder->getBlack();
@@ -216,8 +222,34 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 				}
 			}
 			src += _textWidth;
-			dst += _decoder->getWidth();
+			dst += SCREEN_WIDTH;
 		}
+	} else if (_textX && _textY) {
+		// If the frame doesn't cover the entire screen, we have to
+		// erase the subtitles manually.
+
+		int frameWidth = _decoder->getWidth();
+		int frameHeight = _decoder->getHeight();
+		int frameX = (_system->getWidth() - frameWidth) / 2;
+		int frameY = (_system->getHeight() - frameHeight) / 2;
+
+		dst = screen + _textY * _system->getWidth();
+
+		for (y = 0; y < _textHeight; y++) {
+			if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
+				memset(dst + _textX, _decoder->getBlack(), _textWidth);
+			} else {
+				if (frameX > _textX)
+					memset(dst + _textX, _decoder->getBlack(), frameX - _textX);
+				if (frameX + frameWidth < _textX + _textWidth)
+					memset(dst + frameX + frameWidth, _decoder->getBlack(), _textX + _textWidth - (frameX + frameWidth));
+			}
+
+			dst += _system->getWidth();
+		}
+
+		_textX = 0;
+		_textY = 0;
 	}
 }
 
