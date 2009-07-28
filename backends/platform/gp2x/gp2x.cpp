@@ -448,7 +448,6 @@ void OSystem_GP2X::quit() {
 
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
-	//CloseRam();
 	GP2X_HW::deviceDeinit();
 
 	SDL_RemoveTimer(_timerID);

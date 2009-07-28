@@ -24,10 +24,622 @@
  */
 
 #include "backends/platform/gp2xwiz/gp2xwiz-sdl.h"
+#include "backends/platform/gp2xwiz/gp2xwiz-scaler.h" // TODO: Make GFX_HALF/HalfScale generic.
+
+#include "common/mutex.h"
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/scaler.h"
+#include "graphics/scaler/intern.h"
+#include "graphics/surface.h"
+
+static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+	{"1x", "Fullscreen", GFX_NORMAL},
+	{0, 0, 0}
+};
 
 
-/* TODO: Add code to ensure that overlay is always 320*240 and maybe invoke some custom scale code. */
+const OSystem::GraphicsMode *OSystem_GP2XWIZ::getSupportedGraphicsModes() const {
+	return s_supportedGraphicsModes;
+}
+
+int OSystem_GP2XWIZ::getDefaultGraphicsMode() const {
+	return GFX_NORMAL;
+}
+
+//bool OSystem_GP2XWIZ::setGraphicsMode(const char *name) {
+//	// let parent OSystem_SDL handle it
+//	return setGraphicsMode(GFX_NORMAL);
+//}
+
+bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
+	Common::StackLock lock(_graphicsMutex);
+
+	assert(_transactionMode == kTransactionActive);
+
+	if (_oldVideoMode.setup && _oldVideoMode.mode == mode)
+		return true;
+
+	int newScaleFactor = 1;
+
+	switch(mode) {
+	case GFX_NORMAL:
+		newScaleFactor = 1;
+		break;
+    case GFX_HALF:
+        newScaleFactor = 1;
+        break;
+	default:
+		warning("unknown gfx mode %d", mode);
+		return false;
+	}
+
+	_transactionDetails.normal1xScaler = (mode == GFX_NORMAL);
+	if (_oldVideoMode.setup && _oldVideoMode.scaleFactor != newScaleFactor)
+		_transactionDetails.needHotswap = true;
+
+	_transactionDetails.needUpdatescreen = true;
+
+	_videoMode.mode = mode;
+	_videoMode.scaleFactor = newScaleFactor;
+
+	return true;
+}
+
+void OSystem_GP2XWIZ::setGraphicsModeIntern() {
+	Common::StackLock lock(_graphicsMutex);
+	ScalerProc *newScalerProc = 0;
+
+	switch (_videoMode.mode) {
+	case GFX_NORMAL:
+		newScalerProc = Normal1x;
+		break;
+    case GFX_HALF:
+        newScalerProc = HalfScale;
+        break;
+
+	default:
+		error("Unknown gfx mode %d", _videoMode.mode);
+	}
+
+	_scalerProc = newScalerProc;
+
+	if (!_screen || !_hwscreen)
+		return;
+
+	// Blit everything to the screen
+	_forceFull = true;
+
+	// Even if the old and new scale factors are the same, we may have a
+	// different scaler for the cursor now.
+	blitCursor();
+}
+
+
+void OSystem_GP2XWIZ::initSize(uint w, uint h) {
+    assert(_transactionMode == kTransactionActive);
+
+    printf("Init Size: w=%d, h=%d\n", w, h);
+
+	// Avoid redundant res changes
+	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
+		return;
+
+    _videoMode.screenWidth = w;
+	_videoMode.screenHeight = h;
+    if(w > 320 || h > 240){
+        setGraphicsMode(GFX_HALF);
+        setGraphicsModeIntern();
+        toggleMouseGrab();
+    }
+
+	_cksumNum = (w * h / (8 * 8));
+
+	_transactionDetails.sizeChanged = true;
+
+	free(_dirtyChecksums);
+	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
+}
 
 bool OSystem_GP2XWIZ::loadGFXMode() {
-	OSystem_SDL::loadGFXMode();
+	assert(_inited);
+	_forceFull = true;
+
+	int hwW, hwH;
+    if(_videoMode.mode == GFX_HALF){
+	    _videoMode.overlayWidth = _videoMode.screenWidth/2;
+	    _videoMode.overlayHeight = _videoMode.screenHeight/2;
+    } else {
+        _videoMode.overlayWidth = _videoMode.screenWidth;
+	    _videoMode.overlayHeight = _videoMode.screenHeight;
+    }
+
+	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
+		_videoMode.aspectRatioCorrection = false;
+
+	if (_videoMode.aspectRatioCorrection)
+		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
+
+    if(_videoMode.mode == GFX_HALF){
+	    hwW = _videoMode.screenWidth/2;
+	    hwH = effectiveScreenHeight()/2;
+    } else {
+        hwW = _videoMode.screenWidth;
+	    hwH = effectiveScreenHeight();
+    }
+
+	//
+	// Create the surface that contains the 8 bit game data
+	//
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
+	if (_screen == NULL)
+		error("allocating _screen failed");
+
+	//
+	// Create the surface that contains the scaled graphics in 16 bit mode
+	//
+
+	_hwscreen = SDL_SetVideoMode(hwW, hwH, 16,
+		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
+	);
+	if (_hwscreen == NULL) {
+		// DON'T use error(), as this tries to bring up the debug
+		// console, which WON'T WORK now that _hwscreen is hosed.
+
+		if (!_oldVideoMode.setup) {
+			warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
+			quit();
+		} else {
+			return false;
+		}
+	}
+
+	//
+	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
+	//
+
+	// Need some extra bytes around when using 2xSaI
+	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + 3, _videoMode.screenHeight + 3,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+
+	if (_tmpscreen == NULL)
+		error("allocating _tmpscreen failed");
+
+	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth, _videoMode.overlayHeight,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+
+	if (_overlayscreen == NULL)
+		error("allocating _overlayscreen failed");
+
+	_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
+
+	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
+	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
+	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
+	_overlayFormat.aLoss = _overlayscreen->format->Aloss;
+
+	_overlayFormat.rShift = _overlayscreen->format->Rshift;
+	_overlayFormat.gShift = _overlayscreen->format->Gshift;
+	_overlayFormat.bShift = _overlayscreen->format->Bshift;
+	_overlayFormat.aShift = _overlayscreen->format->Ashift;
+
+	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth + 3, _videoMode.overlayHeight + 3,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+
+	if (_tmpscreen2 == NULL)
+		error("allocating _tmpscreen2 failed");
+
+#ifdef USE_OSD
+	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
+						_hwscreen->w,
+						_hwscreen->h,
+						16,
+						_hwscreen->format->Rmask,
+						_hwscreen->format->Gmask,
+						_hwscreen->format->Bmask,
+						_hwscreen->format->Amask);
+	if (_osdSurface == NULL)
+		error("allocating _osdSurface failed");
+	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
+#endif
+
+	// keyboard cursor control, some other better place for it?
+	_km.x_max = _videoMode.screenWidth * _videoMode.scaleFactor - 1;
+	_km.y_max = effectiveScreenHeight() - 1;
+	_km.delay_time = 25;
+	_km.last_time = 0;
+
+	// Distinguish 555 and 565 mode
+	if (_hwscreen->format->Rmask == 0x7C00)
+		InitScalers(555);
+	else
+		InitScalers(565);
+
+    // We need this to tell HalfScale the pixel format.
+    // TODO: Find a better home.
+    screenPixelFormat = _hwscreen->format;
+	return true;
 }
+
+void OSystem_GP2XWIZ::drawMouse() {
+	if (!_mouseVisible || !_mouseSurface) {
+		_mouseBackup.x = _mouseBackup.y = _mouseBackup.w = _mouseBackup.h = 0;
+		return;
+	}
+
+	SDL_Rect dst;
+	int scale;
+	int width, height;
+	int hotX, hotY;
+
+    if(_videoMode.mode == GFX_HALF && !_overlayVisible){
+	    dst.x = _mouseCurState.x/2;
+	    dst.y = _mouseCurState.y/2;
+    } else {
+        dst.x = _mouseCurState.x;
+	    dst.y = _mouseCurState.y;
+    }
+
+	if (!_overlayVisible) {
+		scale = _videoMode.scaleFactor;
+		width = _videoMode.screenWidth;
+		height = _videoMode.screenHeight;
+		dst.w = _mouseCurState.vW;
+		dst.h = _mouseCurState.vH;
+		hotX = _mouseCurState.vHotX;
+		hotY = _mouseCurState.vHotY;
+	} else {
+		scale = 1;
+		width = _videoMode.overlayWidth;
+		height = _videoMode.overlayHeight;
+		dst.w = _mouseCurState.rW;
+		dst.h = _mouseCurState.rH;
+		hotX = _mouseCurState.rHotX;
+		hotY = _mouseCurState.rHotY;
+	}
+
+	// The mouse is undrawn using virtual coordinates, i.e. they may be
+	// scaled and aspect-ratio corrected.
+
+	_mouseBackup.x = dst.x - hotX;
+	_mouseBackup.y = dst.y - hotY;
+	_mouseBackup.w = dst.w;
+	_mouseBackup.h = dst.h;
+
+	// We draw the pre-scaled cursor image, so now we need to adjust for
+	// scaling, shake position and aspect ratio correction manually.
+
+	if (!_overlayVisible) {
+		dst.y += _currentShakePos;
+	}
+
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+		dst.y = real2Aspect(dst.y);
+
+	dst.x = scale * dst.x - _mouseCurState.rHotX;
+	dst.y = scale * dst.y - _mouseCurState.rHotY;
+	dst.w = _mouseCurState.rW;
+	dst.h = _mouseCurState.rH;
+
+	// Note that SDL_BlitSurface() and addDirtyRect() will both perform any
+	// clipping necessary
+
+	if (SDL_BlitSurface(_mouseSurface, NULL, _hwscreen, &dst) != 0)
+		error("SDL_BlitSurface failed: %s", SDL_GetError());
+
+	// The screen will be updated using real surface coordinates, i.e.
+	// they will not be scaled or aspect-ratio corrected.
+    addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
+}
+
+void OSystem_GP2XWIZ::undrawMouse() {
+	const int x = _mouseBackup.x;
+	const int y = _mouseBackup.y;
+
+	// When we switch bigger overlay off mouse jumps. Argh!
+	// This is intended to prevent undrawing offscreen mouse
+	if (!_overlayVisible && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
+		return;
+
+	if (_mouseBackup.w != 0 && _mouseBackup.h != 0){
+        if(_videoMode.mode == GFX_HALF && !_overlayVisible){
+		    addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+        } else {
+            addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
+        }
+    }
+}
+
+void OSystem_GP2XWIZ::internUpdateScreen() {
+	SDL_Surface *srcSurf, *origSurf;
+	int height, width;
+	ScalerProc *scalerProc;
+	int scale1;
+
+#if defined (DEBUG) && ! defined(_WIN32_WCE) // definitions not available for non-DEBUG here. (needed this to compile in SYMBIAN32 & linux?)
+	assert(_hwscreen != NULL);
+	assert(_hwscreen->map->sw_data != NULL);
+#endif
+
+	// If the shake position changed, fill the dirty area with blackness
+	if (_currentShakePos != _newShakePos) {
+		SDL_Rect blackrect = {0, 0, _videoMode.screenWidth * _videoMode.scaleFactor, _newShakePos * _videoMode.scaleFactor};
+
+		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
+
+		SDL_FillRect(_hwscreen, &blackrect, 0);
+
+		_currentShakePos = _newShakePos;
+
+		_forceFull = true;
+	}
+
+	// Check whether the palette was changed in the meantime and update the
+	// screen surface accordingly.
+	if (_screen && _paletteDirtyEnd != 0) {
+		SDL_SetColors(_screen, _currentPalette + _paletteDirtyStart,
+			_paletteDirtyStart,
+			_paletteDirtyEnd - _paletteDirtyStart);
+
+		_paletteDirtyEnd = 0;
+
+		_forceFull = true;
+	}
+
+#ifdef USE_OSD
+	// OSD visible (i.e. non-transparent)?
+	if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
+		// Updated alpha value
+		const int diff = SDL_GetTicks() - _osdFadeStartTime;
+		if (diff > 0) {
+			if (diff >= kOSDFadeOutDuration) {
+				// Back to full transparency
+				_osdAlpha = SDL_ALPHA_TRANSPARENT;
+			} else {
+				// Do a linear fade out...
+				const int startAlpha = SDL_ALPHA_TRANSPARENT + kOSDInitialAlpha * (SDL_ALPHA_OPAQUE - SDL_ALPHA_TRANSPARENT) / 100;
+				_osdAlpha = startAlpha + diff * (SDL_ALPHA_TRANSPARENT - startAlpha) / kOSDFadeOutDuration;
+			}
+			SDL_SetAlpha(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, _osdAlpha);
+			_forceFull = true;
+		}
+	}
+#endif
+
+	if (!_overlayVisible) {
+		origSurf = _screen;
+		srcSurf = _tmpscreen;
+		width = _videoMode.screenWidth;
+		height = _videoMode.screenHeight;
+		scalerProc = _scalerProc;
+		scale1 = _videoMode.scaleFactor;
+	} else {
+		origSurf = _overlayscreen;
+		srcSurf = _tmpscreen2;
+		width = _videoMode.overlayWidth;
+		height = _videoMode.overlayHeight;
+		scalerProc = Normal1x;
+
+		scale1 = 1;
+	}
+
+	// Add the area covered by the mouse cursor to the list of dirty rects if
+	// we have to redraw the mouse.
+	if (_mouseNeedsRedraw)
+		undrawMouse();
+
+	// Force a full redraw if requested
+	if (_forceFull) {
+		_numDirtyRects = 1;
+		_dirtyRectList[0].x = 0;
+		_dirtyRectList[0].y = 0;
+		_dirtyRectList[0].w = width;
+		_dirtyRectList[0].h = height;
+	}
+
+	// Only draw anything if necessary
+	if (_numDirtyRects > 0 || _mouseNeedsRedraw) {
+		SDL_Rect *r;
+		SDL_Rect dst;
+		uint32 srcPitch, dstPitch;
+		SDL_Rect *lastRect = _dirtyRectList + _numDirtyRects;
+
+		for (r = _dirtyRectList; r != lastRect; ++r) {
+			dst = *r;
+			dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
+
+			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
+				error("SDL_BlitSurface failed: %s", SDL_GetError());
+		}
+
+		SDL_LockSurface(srcSurf);
+		SDL_LockSurface(_hwscreen);
+
+		srcPitch = srcSurf->pitch;
+		dstPitch = _hwscreen->pitch;
+
+		for (r = _dirtyRectList; r != lastRect; ++r) {
+			register int dst_y = r->y + _currentShakePos;
+			register int dst_h = 0;
+            register int dst_w = r->w;
+			register int orig_dst_y = 0;
+			register int dst_x = r->x;
+            register int src_y;
+            register int src_x;
+
+			if (dst_y < height) {
+				dst_h = r->h;
+				if (dst_h > height - dst_y)
+					dst_h = height - dst_y;
+
+				orig_dst_y = dst_y;
+                src_x = dst_x;
+                src_y = dst_y;
+
+				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+					dst_y = real2Aspect(dst_y);
+
+				assert(scalerProc != NULL);
+
+                if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
+                    if(dst_x%2==1){
+                        dst_x--;
+                        dst_w++;
+                    }
+                    if(dst_y%2==1){
+                        dst_y--;
+                        dst_h++;
+                    }
+                    src_x = dst_x;
+                    src_y = dst_y;
+                    dst_x /= 2;
+                    dst_y /= 2;
+                }
+                scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
+						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
+			}
+            if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
+			    r->x = dst_x;
+			    r->y = dst_y;
+			    r->w = r->w/2;
+			    r->h = dst_h/2;
+            } else {
+			    r->y = dst_y;
+			    r->w = r->w;
+			    r->h = dst_h;
+            }
+
+#ifndef DISABLE_SCALERS
+			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
+				r->h = stretch200To240((uint8 *) _hwscreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1);
+#endif
+		}
+		SDL_UnlockSurface(srcSurf);
+		SDL_UnlockSurface(_hwscreen);
+
+		// Readjust the dirty rect list in case we are doing a full update.
+		// This is necessary if shaking is active.
+		if (_forceFull) {
+			_dirtyRectList[0].y = 0;
+			_dirtyRectList[0].h = (_videoMode.mode == GFX_HALF) ? effectiveScreenHeight()/2 : effectiveScreenHeight();
+		}
+
+		drawMouse();
+
+#ifdef USE_OSD
+		if (_osdAlpha != SDL_ALPHA_TRANSPARENT) {
+			SDL_BlitSurface(_osdSurface, 0, _hwscreen, 0);
+		}
+#endif
+		// Finally, blit all our changes to the screen
+		SDL_UpdateRects(_hwscreen, _numDirtyRects, _dirtyRectList);
+	}
+
+	_numDirtyRects = 0;
+	_forceFull = false;
+	_mouseNeedsRedraw = false;
+}
+
+
+#pragma mark -
+#pragma mark --- Overloaded Overlays ---
+#pragma mark -
+
+void OSystem_GP2XWIZ::showOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
+	int x, y;
+
+	if (_overlayVisible)
+		return;
+
+	_overlayVisible = true;
+
+    if(_videoMode.mode == GFX_HALF){
+        _mouseCurState.x /= 2;
+        _mouseCurState.y /= 2;
+    }
+
+	// Since resolution could change, put mouse to adjusted position
+	// Fixes bug #1349059
+	x = _mouseCurState.x * _videoMode.scaleFactor;
+	if (_videoMode.aspectRatioCorrection)
+		y = real2Aspect(_mouseCurState.y) * _videoMode.scaleFactor;
+	else
+		y = _mouseCurState.y * _videoMode.scaleFactor;
+
+	warpMouse(x, y);
+
+	clearOverlay();
+}
+
+void OSystem_GP2XWIZ::hideOverlay() {
+	assert (_transactionMode == kTransactionNone);
+
+	if (!_overlayVisible)
+		return;
+
+	int x, y;
+
+	_overlayVisible = false;
+
+    if(_videoMode.mode == GFX_HALF){
+        _mouseCurState.x *= 2;
+        _mouseCurState.y *= 2;
+    }
+
+	// Since resolution could change, put mouse to adjusted position
+	// Fixes bug #1349059
+	x = _mouseCurState.x / _videoMode.scaleFactor;
+	y = _mouseCurState.y / _videoMode.scaleFactor;
+	if (_videoMode.aspectRatioCorrection)
+		y = aspect2Real(y);
+
+	warpMouse(x, y);
+
+	clearOverlay();
+
+	_forceFull = true;
+}
+
+void OSystem_GP2XWIZ::warpMouse(int x, int y) {
+	int y1 = y;
+
+	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+		y1 = real2Aspect(y);
+
+	if (_mouseCurState.x != x || _mouseCurState.y != y) {
+        if(_videoMode.mode == GFX_HALF && !_overlayVisible){
+            x /= 2;
+            y /= 2;
+        }
+		if (!_overlayVisible)
+			SDL_WarpMouse(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
+		else
+			SDL_WarpMouse(x, y1);
+
+		// SDL_WarpMouse() generates a mouse movement event, so
+		// setMousePos() would be called eventually. However, the
+		// cannon script in CoMI calls this function twice each time
+		// the cannon is reloaded. Unless we update the mouse position
+		// immediately the second call is ignored, causing the cannon
+		// to change its aim.
+
+		setMousePos(x, y);
+	}
+}
+

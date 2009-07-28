@@ -196,3 +196,4 @@ void gp2x_video_wait_vsync(void)
 }
 
 } /* namespace GP2X_HW */
+
