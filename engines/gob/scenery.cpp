@@ -185,7 +185,7 @@ int16 Scenery::loadStatic(char search) {
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex]++;
 		} else {
-			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0; sprIndex--);
+			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0; sprIndex--) { }
 
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex] = 1;
