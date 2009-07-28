@@ -2312,7 +2312,7 @@ void Inter_v1::o1_setItemPos(OpGobParams &params) {
 void Inter_v1::o1_loadObjects(OpGobParams &params) {
 	params.extraData = _vm->_game->_script->readInt16();
 
-	_vm->_goblin->loadObjects((char *) VAR_ADDRESS(params.extraData));
+	_vm->_goblin->loadObjects(_variables->getAddressVarString(params.extraData));
 }
 
 void Inter_v1::o1_freeObjects(OpGobParams &params) {

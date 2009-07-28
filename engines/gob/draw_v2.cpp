@@ -521,8 +521,7 @@ void Draw_v2::printTotText(int16 id) {
 
 		case 10:
 			str[0] = (char) 255;
-			WRITE_LE_UINT16((uint16 *) (str + 1),
-					ptr - _vm->_game->_resources->getTexts());
+			WRITE_LE_UINT16(str + 1, ptr - _vm->_game->_resources->getTexts());
 			str[3] = 0;
 			ptr++;
 			for (int i = *ptr++; i > 0; i--) {

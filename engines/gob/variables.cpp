@@ -123,22 +123,6 @@ uint8 *Variables::getAddressVar8(uint32 var) {
 	return getAddressOff8(var * 4);
 }
 
-const uint16 *Variables::getAddressVar16(uint32 var) const {
-	return getAddressOff16(var * 4);
-}
-
-uint16 *Variables::getAddressVar16(uint32 var) {
-	return getAddressOff16(var * 4);
-}
-
-const uint32 *Variables::getAddressVar32(uint32 var) const {
-	return getAddressOff32(var * 4);
-}
-
-uint32 *Variables::getAddressVar32(uint32 var) {
-	return getAddressOff32(var * 4);
-}
-
 const char *Variables::getAddressVarString(uint32 var) const {
 	return getAddressOffString(var * 4);
 }
@@ -153,22 +137,6 @@ const uint8 *Variables::getAddressOff8(uint32 offset) const {
 
 uint8 *Variables::getAddressOff8(uint32 offset) {
 	return ((uint8 *) (_vars + offset));
-}
-
-const uint16 *Variables::getAddressOff16(uint32 offset) const {
-	return ((const uint16 *) (_vars + offset));
-}
-
-uint16 *Variables::getAddressOff16(uint32 offset) {
-	return ((uint16 *) (_vars + offset));
-}
-
-const uint32 *Variables::getAddressOff32(uint32 offset) const {
-	return ((const uint32 *) (_vars + offset));
-}
-
-uint32 *Variables::getAddressOff32(uint32 offset) {
-	return ((uint32 *) (_vars + offset));
 }
 
 const char *Variables::getAddressOffString(uint32 offset) const {
