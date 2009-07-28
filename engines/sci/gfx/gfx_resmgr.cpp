@@ -326,7 +326,8 @@ gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 	/* palette */ NULL,
 
 	/* color masks */ 0, 0, 0, 0,
-	/* color shifts */ 0, 0, 0, 0
+	/* color shifts */ 0, 0, 0, 0,
+	Graphics::PixelFormat()
 };
 
 gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_palette, bool scaled) {
