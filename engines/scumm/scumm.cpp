@@ -217,7 +217,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_roomResource = 0;
 	OF_OWNER_ROOM = 0;
 	_verbMouseOver = 0;
-	_inventoryOffset = 0;
 	_classData = NULL;
 	_actorToPrintStrFor = 0;
 	_sentenceNum = 0;
@@ -648,6 +647,8 @@ ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
 
 ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v3old(syst, dr) {
+
+	_inventoryOffset = 0;
 
 	_activeInventory = 0;
 	_activeObject = 0;

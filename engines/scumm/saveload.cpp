@@ -1382,7 +1382,7 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 }
 
 void ScummEngine_v0::saveOrLoad(Serializer *s) {
-	ScummEngine::saveOrLoad(s);
+	ScummEngine_v2::saveOrLoad(s);
 
 	const SaveLoadEntry v0Entrys[] = {
 		MKLINE(ScummEngine_v0, _currentMode, sleByte, VER(78)),
@@ -1390,6 +1390,23 @@ void ScummEngine_v0::saveOrLoad(Serializer *s) {
 		MKEND()
 	};
  	s->saveLoadEntries(this, v0Entrys);
+}
+
+
+void ScummEngine_v2::saveOrLoad(Serializer *s) {
+	ScummEngine::saveOrLoad(s);
+
+	const SaveLoadEntry v2Entrys[] = {
+		MKLINE(ScummEngine_v2, _inventoryOffset, sleUint16, VER(79)),
+		MKEND()
+	};
+	s->saveLoadEntries(this, v2Entrys);
+
+	// In old saves we didn't store _inventoryOffset -> reset it to
+	// a sane default when loading one of those.
+	if (s->getVersion() < 79 && s->isLoading()) {
+		_inventoryOffset = 0;
+	}
 }
 
 void ScummEngine_v5::saveOrLoad(Serializer *s) {

@@ -45,6 +45,7 @@ protected:
 	int8 _mouseOverBoxV2;
 
 	char _sentenceBuf[256];
+	uint16 _inventoryOffset;
 
 	int _activeInventory;
 	int _activeObject;
@@ -65,6 +66,8 @@ protected:
 	virtual void setupScummVars();
 	virtual void resetScummVars();
 	virtual void decodeParseString();
+
+	virtual void saveOrLoad(Serializer *s);
 
 	virtual void processKeyboard(Common::KeyState lastKeyHit);
 
