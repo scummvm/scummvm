@@ -95,7 +95,7 @@ void Scenery::init() {
 
 int16 Scenery::loadStatic(char search) {
 	int16 size;
-	int16 *backsPtr;
+	byte *backsPtr;
 	int16 picsCount;
 	int16 resId;
 	int16 sceneryIndex;
@@ -108,7 +108,7 @@ int16 Scenery::loadStatic(char search) {
 	_vm->_game->_script->evalExpr(&sceneryIndex);
 
 	size      = _vm->_game->_script->readInt16();
-	backsPtr  = (int16 *) (_vm->_game->_script->getData() + _vm->_game->_script->pos());
+	backsPtr  = _vm->_game->_script->getData() + _vm->_game->_script->pos();
 	_vm->_game->_script->skip(size * 2);
 	picsCount = _vm->_game->_script->readInt16();
 	resId     = _vm->_game->_script->readInt16();
@@ -162,7 +162,7 @@ int16 Scenery::loadStatic(char search) {
 			ptr->layers[i].planes = 0;
 
 		ptr->layers[i].backResId = (int16) READ_LE_UINT16(backsPtr);
-		backsPtr++;
+		backsPtr += 2;
 	}
 
 	ptr->pieces      = new PieceDesc*[picsCount];

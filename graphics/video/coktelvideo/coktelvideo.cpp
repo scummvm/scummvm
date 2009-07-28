@@ -1973,11 +1973,10 @@ byte *Vmd::deDPCM(const byte *data, uint32 &size, int32 init[2]) {
 	int channels = (_soundStereo > 0) ? 2 : 1;
 
 	uint32 inSize  = size;
-	uint32 outSize = (size + channels) * 2;
+	uint32 outSize = size + channels;
 
-	byte *sound = new byte[outSize];
-
-	int16 *out = (int16 *) sound;
+	int16 *out   = new int16[outSize];
+	byte  *sound = (byte *) out;
 
 	int channel = 0;
 
@@ -1999,7 +1998,7 @@ byte *Vmd::deDPCM(const byte *data, uint32 &size, int32 init[2]) {
 		channel = (channel + 1) % channels;
 	}
 
-	size = outSize;
+	size = outSize * 2;
 	return sound;
 }
 
@@ -2008,10 +2007,10 @@ byte *Vmd::deADPCM(const byte *data, uint32 &size, int32 init, int32 index) {
 	if (!data || (size == 0))
 		return 0;
 
-	uint32 outSize = size * 4;
+	uint32 outSize = size * 2;
 
-	byte  *sound = new byte[outSize];
-	int16 *out   = (int16 *) sound;
+	int16 *out   = new int16[outSize];
+	byte  *sound = (byte *) out;
 
 	index = CLIP<int32>(index, 0, 88);
 
@@ -2056,7 +2055,7 @@ byte *Vmd::deADPCM(const byte *data, uint32 &size, int32 init, int32 index) {
 		*out++ = TO_BE_16(init);
 	}
 
-	size = outSize;
+	size = outSize * 2;
 	return sound;
 }
 
