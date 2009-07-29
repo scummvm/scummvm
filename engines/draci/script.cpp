@@ -619,12 +619,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 /**
  * @brief Find the current command in the internal table
  *
- * @param G_LoopStatus=Inventory then Exit;
-  G_LoopSubStatus:= Strange;
-  G_QuitLoop:= True;
-  Loop;
-  G_QuitLoop:= False;
-  G_LoopSubStatus:= Ordinary; num 		Command number
+ * @param num 		Command number
  * @param subnum 	Command subnumer
  *
  * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
