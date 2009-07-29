@@ -126,13 +126,6 @@ public:
 	 */
 	const char *getName() const { return _name.c_str(); }
 
-	/**
-	 * DEPRECATED: Use err() or eos() instead.
-	 * Returns true if any I/O failure occurred or the end of the
-	 * stream was reached while reading.
-	 */
-	bool ioFailed() const;
-
 	bool err() const;	// implement abstract Stream method
 	void clearErr();	// implement abstract Stream method
 	bool eos() const;	// implement abstract SeekableReadStream method

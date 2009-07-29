@@ -120,10 +120,6 @@ bool File::isOpen() const {
 	return _handle != NULL;
 }
 
-bool File::ioFailed() const {
-	return !_handle || (eos() || err());
-}
-
 bool File::err() const {
 	assert(_handle);
 	return _handle->err();
