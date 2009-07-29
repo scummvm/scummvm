@@ -55,7 +55,8 @@ class BigHuffmanTree;
  */
 class SmackerDecoder : public VideoDecoder {
 public:
-	SmackerDecoder(Audio::Mixer *mixer);
+	SmackerDecoder(Audio::Mixer *mixer,
+			Audio::Mixer::SoundType soundType = Audio::Mixer::kSFXSoundType);
 	virtual ~SmackerDecoder();
 
 	int getHeight();
@@ -113,6 +114,7 @@ private:
 	// The RGB palette
 	byte *_palette;
 
+	Audio::Mixer::SoundType _soundType;
 	Audio::Mixer *_mixer;
 	bool _audioStarted;
 	Audio::AppendableAudioStream *_audioStream;

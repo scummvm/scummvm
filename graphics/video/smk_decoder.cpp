@@ -348,8 +348,8 @@ uint32 BigHuffmanTree::getCode(BitStream &bs) {
 	return v;
 }
 
-SmackerDecoder::SmackerDecoder(Audio::Mixer *mixer)
-	: _audioStarted(false), _audioStream(0), _mixer(mixer) {
+SmackerDecoder::SmackerDecoder(Audio::Mixer *mixer, Audio::Mixer::SoundType soundType)
+	: _audioStarted(false), _audioStream(0), _mixer(mixer), _soundType(soundType) {
 }
 
 SmackerDecoder::~SmackerDecoder() {
@@ -583,7 +583,7 @@ bool SmackerDecoder::decodeNextFrame() {
 			}
 
 			if (!_audioStarted) {
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioHandle, _audioStream, -1, 255);
+				_mixer->playInputStream(_soundType, &_audioHandle, _audioStream, -1, 255);
 				_audioStarted = true;
 			}
 		} else {
