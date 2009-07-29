@@ -66,7 +66,7 @@ bool Sword2Engine::initStartMenu() {
 	int start_ids[MAX_starts];
 	int lineno = 0;
 
-	while (!fp.eos() && !fp.ioFailed()) {
+	while (!fp.eos() && !fp.err()) {
 		Common::String line = fp.readLine();
 
 		// Skip empty lines or, more likely, the end of the stream.
@@ -103,7 +103,7 @@ bool Sword2Engine::initStartMenu() {
 	}
 
 	// An I/O error before EOS? That's bad, but this is not a vital file.
-	if (fp.ioFailed() && !fp.eos())
+	if (fp.err() && !fp.eos())
 		warning("I/O error while reading startup.inf");
 
 	fp.close();

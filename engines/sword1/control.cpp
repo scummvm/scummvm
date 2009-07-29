@@ -1207,7 +1207,7 @@ bool Control::restoreGameFromFile(uint8 slot) {
 	for (uint32 cnt2 = 0; cnt2 < playerSize; cnt2++)
 		playerBuf[cnt2] = inf->readUint32LE();
 
-	if (inf->ioFailed()) {
+	if (inf->err() || inf->eos()) {
 		displayMessage(0, "Can't read from file '%s'. (%s)", fName, _saveFileMan->popErrorDesc().c_str());
 		delete inf;
 		free(_restoreBuf);
