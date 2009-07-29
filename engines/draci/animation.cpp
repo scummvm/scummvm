@@ -40,6 +40,7 @@ Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_looping = false;
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
+	_callback = &Animation::doNothing;
 }	
 
 Animation::~Animation() {
@@ -95,8 +96,8 @@ void Animation::nextFrame(bool force) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
 		if ((_currentFrame == getFrameCount() - 1) && !_looping) {
-			// When the animation reaches its end, stop it
-			_vm->_anims->stop(_id);
+			// When the animation reaches its end, call the preset callback
+			(this->*_callback)();
 
 			// Reset the frame to 0
 			_currentFrame = 0;
@@ -270,6 +271,14 @@ void Animation::deleteFrames() {
 		delete _frames[i];
 		_frames.pop_back();	
 	}
+}
+
+void Animation::stopAnimation() { 
+	_vm->_anims->stop(_id);
+}
+
+void Animation::exitGameLoop() { 
+	_vm->_game->setExitLoop(true);
 }
 
 Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {

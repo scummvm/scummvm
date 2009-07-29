@@ -51,7 +51,9 @@ enum { kIgnoreIndex = -2 };
 class DraciEngine;
 
 class Animation {
-	
+
+typedef void (Animation::* AnimationCallback)();
+
 public:
 	Animation(DraciEngine *v, int index);
 	~Animation();	
@@ -90,6 +92,14 @@ public:
 
 	void markDirtyRect(Surface *surface);
 
+	// Animation callbacks
+
+	void registerCallback(AnimationCallback callback) { _callback = callback; }
+
+	void doNothing() {}
+	void stopAnimation();
+	void exitGameLoop();
+
 private:
 	
 	uint nextFrameNum();
@@ -117,6 +127,8 @@ private:
 	bool _playing;
 	bool _looping;
 	Common::Array<Drawable*> _frames;
+
+	AnimationCallback _callback;
 
 	DraciEngine *_vm;
 };
