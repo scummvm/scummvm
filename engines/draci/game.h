@@ -86,8 +86,6 @@ private:
 
 struct GameObject {
 	
-	GameObject() {}
-		
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	byte _walkDir;
@@ -162,6 +160,7 @@ public:
 	~Game();
 
 	void init();
+	void start();
 	void loop();
 
 	void changeRoom(uint roomNum);
@@ -213,6 +212,9 @@ public:
 	void setLoopStatus(LoopStatus status);
 	LoopStatus getLoopStatus();
 
+	bool shouldQuit() { return _shouldQuit; }
+	void setQuit(bool quit) { _shouldQuit = quit; }
+
 private:
 	DraciEngine *_vm;
 
@@ -227,8 +229,9 @@ private:
 	Room _currentRoom;
 	LoopStatus _loopStatus;
 
-	int _objUnderCursor;
+	bool _shouldQuit;
 
+	int _objUnderCursor;
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
 };
 

@@ -142,6 +142,8 @@ int DraciEngine::init() {
 		return Common::kUnknownError;
 	}
 
+	_showWalkingMap = false;
+
 	// Basic archive test
 	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
 	Common::String path("INIT.DFW");	
@@ -167,54 +169,49 @@ int DraciEngine::init() {
 int DraciEngine::go() {
 	debugC(1, kDraciGeneralDebugLevel, "DraciEngine::go()");
  
-	debugC(2, kDraciGeneralDebugLevel, "Running graphics/animation test...");
-
 	_game->init();
-
-	Common::Event event;
-	bool quit = false;
-	bool showWalkingMap = false;
-	while (!quit) {
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_QUIT:
-				quit = true;
-				break;
-			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_RIGHT)
-					_game->changeRoom(_game->nextRoomNum());
-
-				else if (event.kbd.keycode == Common::KEYCODE_LEFT)
-					_game->changeRoom(_game->prevRoomNum());
-
-				// Show walking map toggle
-				else if (event.kbd.keycode == Common::KEYCODE_w) { 
-					showWalkingMap = !showWalkingMap;
-				}
-				break;					
-			default:
-				_mouse->handleEvent(event);
-			}		
-		}
-
-		// Show walking map overlay
-		// If the walking map overlay is already in the wanted state don't
-		// start / stop it constantly
-		if (showWalkingMap && !_anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
-			_anims->play(kWalkingMapOverlay);
-		} else if (!showWalkingMap && _anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
-			_anims->stop(kWalkingMapOverlay);
-		}
-
-		_game->loop();
-		_anims->drawScene(_screen->getSurface());
-		_screen->copyToScreen();
-		_system->delayMillis(20);
-	}
+	_game->start();
 
 	return Common::kNoError;
 }
 
+bool DraciEngine::handleEvents() {
+	Common::Event event;
+	bool quit = false;
+
+	while (_eventMan->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_QUIT:
+			_game->setQuit(true);
+			break;
+		case Common::EVENT_KEYDOWN:
+			if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+				_game->changeRoom(_game->nextRoomNum());
+
+			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				_game->changeRoom(_game->prevRoomNum());
+
+			// Show walking map toggle
+			else if (event.kbd.keycode == Common::KEYCODE_w) { 
+				_showWalkingMap = !_showWalkingMap;
+			}
+			break;					
+		default:
+			_mouse->handleEvent(event);
+		}		
+	}
+
+	// Show walking map overlay
+	// If the walking map overlay is already in the wanted state don't
+	// start / stop it constantly
+	if (_showWalkingMap && !_anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
+		_anims->play(kWalkingMapOverlay);
+	} else if (!_showWalkingMap && _anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
+		_anims->stop(kWalkingMapOverlay);
+	}
+
+	return quit;
+}
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
  

@@ -50,6 +50,8 @@ public:
 	Common::Error run();
 
 	bool hasFeature(Engine::EngineFeature f) const;
+	
+	bool handleEvents();
 
 	Screen *_screen;
 	Mouse *_mouse;
@@ -69,6 +71,8 @@ public:
 	BArchive *_animationsArchive;
 	BArchive *_walkingMapsArchive;
 	BArchive *_initArchive;
+
+	bool _showWalkingMap;
 
 	Common::RandomSource _rnd;
 };

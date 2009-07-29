@@ -151,11 +151,21 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	assert(numIcons == _info._numIcons);	
 }
 
+void Game::start() {
+	while (!shouldQuit()) {
+		Game::loop();
+	}
+}
+
 void Game::init() {
+	_shouldQuit = false;
 	_loopStatus = kStatusOrdinary;
 	_objUnderCursor = kOverlayImage;
 
-	_vm->_anims->addText(kTitleText, true);
+	// Initialize animation for object / room titles
+	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
+	Text *title = new Text ("", _vm->_bigFont, kFontColour3, 0, 0);
+	titleAnim->addFrame(title);
 
 	loadObject(kDragonObject);
 	
@@ -169,6 +179,11 @@ void Game::init() {
 
 void Game::loop() {
 	
+	_vm->handleEvents();
+
+	if (shouldQuit())
+		return;
+
 	if (_currentRoom._mouseOn) {
 		int x = _vm->_mouse->getPosX();
 		int y = _vm->_mouse->getPosY();
@@ -178,36 +193,40 @@ void Game::loop() {
 		}
 
 		int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-		Animation *anim = _vm->_anims->getAnimation(animUnderCursor);
+		//Animation *anim = _vm->_anims->getAnimation(animUnderCursor);
 
 		int curObject = getObjectWithAnimation(animUnderCursor);
 		GameObject *obj = &_objects[curObject];
 
-		Animation *atitle = _vm->_anims->getAnimation(kTitleText);
+		Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
 
 		// TODO: Handle displaying title in the proper location
 
-		atitle->deleteFrames();
 		if (curObject != kNotFound) {					
-			Text *title = new Text (obj->_title, _vm->_bigFont, kFontColour1, 0, 0);
-			atitle->addFrame(title);
+			titleAnim->markDirtyRect(_vm->_screen->getSurface());			
+			reinterpret_cast<Text *>(titleAnim->getFrame())->setText(obj->_title);
 
 			// HACK: Test running look and use scripts
 			if (_vm->_mouse->lButtonPressed()) {
-				_vm->_script->run(obj->_program, obj->_look);
 				_vm->_mouse->lButtonSet(false);				
+				_vm->_script->run(obj->_program, obj->_look);
 			}
 
 			if (_vm->_mouse->rButtonPressed()) {
+				_vm->_mouse->rButtonSet(false);
 				_vm->_script->run(obj->_program, obj->_use);
-				_vm->_mouse->rButtonSet(false);				
 			}
+		} else {
+			titleAnim->markDirtyRect(_vm->_screen->getSurface());
+			reinterpret_cast<Text *>(titleAnim->getFrame())->setText("");
 		}
 
 		debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
-
-		
 	}
+
+	_vm->_anims->drawScene(_vm->_screen->getSurface());
+	_vm->_screen->copyToScreen();
+	_vm->_system->delayMillis(20);
 }
 
 int Game::getObjectWithAnimation(int animID) {
@@ -625,6 +644,7 @@ Game::~Game() {
 	delete[] _dialogOffsets;
 	delete[] _objects;
 }
+
 
 bool WalkingMap::isWalkable(int x, int y) {
 
