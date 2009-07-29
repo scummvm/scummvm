@@ -36,7 +36,7 @@ namespace Draci {
 class DraciEngine;
 
 enum {
-	kDragonObject
+	kDragonObject = 0
 };
 
 enum StructSizes {
