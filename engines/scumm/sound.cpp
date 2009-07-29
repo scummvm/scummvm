@@ -420,17 +420,16 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		int loopStart = 0, loopEnd = 0;
-#if 0	// Disabling this until after 0.11.0
 		int loopcount = ptr[27];
 		if (loopcount > 1) {
 			// TODO: We can only loop once, or infinitely many times, but
 			// have no support for a finite number of repetitions.
-			// This is
+			// So far, I have seen only 1 and 255 (for infinite repetitions),
+			// so maybe this is not really a problem.
 			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
 			loopEnd = READ_BE_UINT16(ptr + 14);
 			flags |= Audio::Mixer::FLAG_LOOP;
 		}
-#endif
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate,

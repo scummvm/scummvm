@@ -1179,7 +1179,7 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 		args[4] = VAR(VAR_VIRT_MOUSE_Y);
 	}
 
-	// Macintosh verison of indy3ega used different interface, so adjust values.
+	// Macintosh version of indy3ega used different interface, so adjust values.
 	if (_game.id == GID_INDY3 && _game.platform == Common::kPlatformMacintosh) {
 		if (clickArea == kVerbClickArea && (val >= 101 && val <= 108)) {
 			if (val == 107) {
