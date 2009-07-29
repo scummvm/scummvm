@@ -85,7 +85,7 @@ void Animation::markDirtyRect(Surface *surface) {
 void Animation::nextFrame(bool force) {
 
 	// If there's only one or no frames, or if the animation is not playing, return
-	if (getFramesNum() < 2 || !_playing)
+	if (getFrameCount() < 2 || !_playing)
 		return;
 
 	Drawable *frame = _frames[_currentFrame];
@@ -94,7 +94,7 @@ void Animation::nextFrame(bool force) {
 	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis())) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
-		if ((_currentFrame == getFramesNum() - 1) && !_looping) {
+		if ((_currentFrame == getFrameCount() - 1) && !_looping) {
 			// When the animation reaches its end, stop it
 			_vm->_anims->stop(_id);
 
@@ -120,7 +120,7 @@ void Animation::nextFrame(bool force) {
 
 uint Animation::nextFrameNum() {
 
-	if ((_currentFrame == getFramesNum() - 1) && _looping)
+	if ((_currentFrame == getFrameCount() - 1) && _looping)
 		return 0;
 	else
 		return _currentFrame + 1;
@@ -249,8 +249,12 @@ Drawable *Animation::getFrame(int frameNum) {
 	}
 }
 
-uint Animation::getFramesNum() {
+uint Animation::getFrameCount() {
 	return _frames.size();
+}
+
+uint Animation::currentFrameNum() {
+	return _currentFrame;
 }
 
 void Animation::deleteFrames() {
@@ -262,7 +266,7 @@ void Animation::deleteFrames() {
 
 	markDirtyRect(_vm->_screen->getSurface());
 
-	for (int i = getFramesNum() - 1; i >= 0; --i) {		
+	for (int i = getFrameCount() - 1; i >= 0; --i) {		
 		delete _frames[i];
 		_frames.pop_back();	
 	}
