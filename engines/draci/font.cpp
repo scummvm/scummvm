@@ -266,17 +266,21 @@ int Font::getStringWidth(const Common::String &str, int spacing) const {
 
 	for (unsigned int i = 0, tmp = 0; i < len; ++i) {
 
-		// Newline char encountered, skip it and store the new length if it is greater
-		if (str[i] == '|') {
+		if (str[i] != '|') {
+			uint8 charIndex = str[i] - kCharIndexOffset;
+			tmp += _charWidths[charIndex];
+			tmp += spacing;
+		}
+
+		// Newline char encountered, skip it and store the new length if it is greater.
+		// Also, all strings in the data files should end with '|' but not all do.
+		// This is why we check whether we are at the last char too.
+		if (str[i] == '|' || i == len - 1) {
 			if (tmp > width) {
 				width = tmp;
 			}
 			continue;
 		}
-
-		uint8 charIndex = str[i] - kCharIndexOffset;
-		tmp += _charWidths[charIndex];
-		tmp += spacing;
 	}
 
 	return width + 1;
@@ -298,7 +302,9 @@ int Font::getStringHeight(const Common::String &str) const {
 	int separators = 0;
 
 	for (unsigned int i = 0; i < len; ++i) {
-		if (str[i] == '|') {
+		// All strings in the data files should end with '|' but not all do.
+		// This is why we check whether we are at the last char too.
+		if (str[i] == '|' || i == len - 1) {
 			++separators;
 		}
 	}
