@@ -159,6 +159,7 @@ void Game::start() {
 
 void Game::init() {
 	_shouldQuit = false;
+	_shouldExitLoop = false;
 	_loopStatus = kStatusOrdinary;
 	_objUnderCursor = kOverlayImage;
 
@@ -179,54 +180,57 @@ void Game::init() {
 
 void Game::loop() {
 	
-	_vm->handleEvents();
+	do {
+		_vm->handleEvents();
 
-	if (shouldQuit())
-		return;
+		if (_currentRoom._mouseOn) {
+			int x = _vm->_mouse->getPosX();
+			int y = _vm->_mouse->getPosY();
 
-	if (_currentRoom._mouseOn) {
-		int x = _vm->_mouse->getPosX();
-		int y = _vm->_mouse->getPosY();
-
-		if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
-			walkHero(x, y);
-		}
-
-		int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-		//Animation *anim = _vm->_anims->getAnimation(animUnderCursor);
-
-		int curObject = getObjectWithAnimation(animUnderCursor);
-		GameObject *obj = &_objects[curObject];
-
-		Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
-
-		// TODO: Handle displaying title in the proper location
-
-		if (curObject != kNotFound) {					
-			titleAnim->markDirtyRect(_vm->_screen->getSurface());			
-			reinterpret_cast<Text *>(titleAnim->getFrame())->setText(obj->_title);
-
-			// HACK: Test running look and use scripts
-			if (_vm->_mouse->lButtonPressed()) {
-				_vm->_mouse->lButtonSet(false);				
-				_vm->_script->run(obj->_program, obj->_look);
+			if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
+				walkHero(x, y);
 			}
 
-			if (_vm->_mouse->rButtonPressed()) {
-				_vm->_mouse->rButtonSet(false);
-				_vm->_script->run(obj->_program, obj->_use);
+			int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+			//Animation *anim = _vm->_anims->getAnimation(animUnderCursor);
+
+			int curObject = getObjectWithAnimation(animUnderCursor);
+			GameObject *obj = &_objects[curObject];
+
+			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+
+			// TODO: Handle displaying title in the proper location
+
+			if (curObject != kNotFound) {					
+				titleAnim->markDirtyRect(_vm->_screen->getSurface());			
+				reinterpret_cast<Text *>(titleAnim->getFrame())->setText(obj->_title);
+
+				// HACK: Test running look and use scripts
+				if (_vm->_mouse->lButtonPressed()) {
+					_vm->_mouse->lButtonSet(false);				
+					_vm->_script->run(obj->_program, obj->_look);
+				}
+
+				if (_vm->_mouse->rButtonPressed()) {
+					_vm->_mouse->rButtonSet(false);
+					_vm->_script->run(obj->_program, obj->_use);
+				}
+			} else {
+				titleAnim->markDirtyRect(_vm->_screen->getSurface());
+				reinterpret_cast<Text *>(titleAnim->getFrame())->setText("");
 			}
-		} else {
-			titleAnim->markDirtyRect(_vm->_screen->getSurface());
-			reinterpret_cast<Text *>(titleAnim->getFrame())->setText("");
+
+			debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
 		}
 
-		debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
-	}
+		if (shouldQuit())
+			return;
 
-	_vm->_anims->drawScene(_vm->_screen->getSurface());
-	_vm->_screen->copyToScreen();
-	_vm->_system->delayMillis(20);
+		_vm->_anims->drawScene(_vm->_screen->getSurface());
+		_vm->_screen->copyToScreen();
+		_vm->_system->delayMillis(20);
+
+	} while (!shouldExitLoop());
 }
 
 int Game::getObjectWithAnimation(int animID) {
@@ -382,10 +386,10 @@ void Game::loadRoom(int roomNum) {
 
 	// HACK: Gates' scripts shouldn't be run unconditionally
 	// This is for testing
-	for (uint i = 0; i < _currentRoom._numGates; ++i) {
-		debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
-		_vm->_script->run(_currentRoom._program, gates[i]);
-	}
+	//for (uint i = 0; i < _currentRoom._numGates; ++i) {
+	//	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
+	//	_vm->_script->run(_currentRoom._program, gates[i]);
+	//}
 
 	// Set room palette
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);

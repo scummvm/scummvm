@@ -215,6 +215,9 @@ public:
 	bool shouldQuit() { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
 
+	bool shouldExitLoop() { return _shouldExitLoop; }
+	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
+
 private:
 	DraciEngine *_vm;
 
@@ -230,6 +233,7 @@ private:
 	LoopStatus _loopStatus;
 
 	bool _shouldQuit;
+	bool _shouldExitLoop;
 
 	int _objUnderCursor;
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
