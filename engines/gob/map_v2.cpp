@@ -79,9 +79,11 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		_screenWidth = 640;
 		_screenHeight = 400;
 	} else if (_widthByte == 3) {
+		_passWidth = 65;
 		_screenWidth = 640;
 		_screenHeight = 200;
 	} else {
+		_passWidth = 40;
 		_screenWidth = 320;
 		_screenHeight = 200;
 	}
@@ -117,10 +119,10 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 		_wayPoints[i].notWalkable = mapData.readSByte();
 	}
 
-	if (_widthByte == 4)
-		_mapWidth = VAR(17);
-
-	_passWidth = _mapWidth;
+	if (_widthByte == 4) {
+		_mapWidth  = VAR(17);
+		_passWidth = _mapWidth;
+	}
 
 	// In the original asm, this writes byte-wise into the variables-array
 	tmpPos = mapData.pos();
