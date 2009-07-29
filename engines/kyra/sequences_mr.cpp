@@ -42,7 +42,8 @@ void KyraEngine_MR::showBadConscience() {
 		_badConscienceAnim = 6;
 	else if (_currentChapter == 5 && _rnd.getRandomNumberRng(1, 100) <= 25)
 		_badConscienceAnim = 7;
-	else if (_characterShapeFile == 9)
+
+	if (_characterShapeFile == 9)
 		_badConscienceAnim = 4;
 
 	_badConsciencePosition = (_mainCharacter.x1 <= 160);
