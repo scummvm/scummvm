@@ -35,7 +35,7 @@ namespace Scumm {
  */
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
-	int _currentMode;
+	byte _currentMode;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);

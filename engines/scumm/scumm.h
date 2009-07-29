@@ -884,7 +884,6 @@ protected:
 protected:
 	/* Should be in Verb class */
 	uint16 _verbMouseOver;
-	int _inventoryOffset;
 	int8 _userPut;
 	uint16 _userState;
 
