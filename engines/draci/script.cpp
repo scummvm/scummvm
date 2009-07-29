@@ -80,7 +80,7 @@ void Script::setupCommandList() {
 		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
 		{ 19, 1, "Mark", 				0, { 0 }, &Script::mark },
 		{ 19, 2, "Release", 			0, { 0 }, &Script::release },
-		{ 20, 1, "Play", 				0, { 0 }, NULL },
+		{ 20, 1, "Play", 				0, { 0 }, &Script::play },
 		{ 21, 1, "LoadMap", 			1, { 2 }, NULL },
 		{ 21, 2, "RoomMap", 			0, { 0 }, NULL },
 		{ 22, 1, "DisableQuickHero", 	0, { 0 }, NULL },
@@ -131,7 +131,7 @@ void Script::setupCommandList() {
 		{ "BlockVar", 	NULL },
 		{ "HasBeen", 	NULL },
 		{ "MaxLine", 	NULL },
-		{ "ActPhase", 	NULL },
+		{ "ActPhase", 	&Script::funcActPhase },
 		{ "Cheat",  	NULL },
 	};
 
@@ -262,7 +262,35 @@ int Script::funcIsObjAway(int objID) {
 	return !obj->_visible && obj->_location == -1;
 }
 
+int Script::funcActPhase(int objID) {
+
+	objID -= 1;	
+
+	// Default return value
+	int ret = 0;
+
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return ret;
+	}
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	bool visible = (objID == kDragonObject || obj->_visible);
+
+	if (visible && (obj->_location == _vm->_game->getRoomNum())) {
+		int animID = obj->_anims[0];
+		Animation *anim = _vm->_anims->getAnimation(animID);
+		ret = anim->currentFrameNum();
+	}
+
+	return ret;
+}
+
 /* GPL commands */
+
+void Script::play(Common::Queue<int> &params) {
+	_vm->_game->loop();
+}
 
 void Script::load(Common::Queue<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
@@ -271,11 +299,33 @@ void Script::load(Common::Queue<int> &params) {
 
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
-
+	
+	uint i;
 	GameObject *obj = _vm->_game->getObject(objID);
 
+	// If the animation is already loaded, return
+	for(i = 0; i < obj->_anims.size(); ++i) {
+		if (obj->_anims[i] == animID) {
+			return; 
+		}
+	}
+
+	// Load the animation into memory
+
 	_vm->_game->loadAnimation(animID, obj->_z);
-	obj->_anims.push_back(animID);
+	
+	// We insert the ID of the loaded animation into the object's internal array
+	// of owned animation IDs.
+	// Care must be taken to store them sorted (increasing order) as some things
+	// depend on this.
+
+	for(i = 0; i < obj->_anims.size(); ++i) {
+		if (obj->_anims[i] > animID) {		
+			break;
+		}
+	}
+
+	obj->_anims.insert_at(i, animID);
 }
 
 void Script::start(Common::Queue<int> &params) {
@@ -287,11 +337,12 @@ void Script::start(Common::Queue<int> &params) {
 	int animID = params.pop() - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
-	
+
 	bool visible = (objID == kDragonObject || obj->_visible);
 
-	if (visible && (obj->_location == _vm->_game->getRoomNum()))
+	if (visible && (obj->_location == _vm->_game->getRoomNum())) {
 		_vm->_anims->play(animID);
+	}
 }
 
 void Script::c_If(Common::Queue<int> &params) {

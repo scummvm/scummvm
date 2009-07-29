@@ -112,6 +112,7 @@ private:
 	void execLook(Common::Queue<int> &params);
 	void execUse(Common::Queue<int> &params);
 	void walkOn(Common::Queue<int> &params);
+	void play(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);
@@ -135,6 +136,7 @@ private:
 	int funcIsObjOn(int objID);
 	int funcIsObjOff(int objID);
 	int funcIsObjAway(int objID);
+	int funcActPhase(int objID);
 
 
 	void setupCommandList();
