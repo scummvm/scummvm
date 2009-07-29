@@ -275,9 +275,9 @@ int Script::funcActPhase(int objID) {
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
-	bool visible = (objID == kDragonObject || obj->_visible);
+	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
-	if (visible && (obj->_location == _vm->_game->getRoomNum())) {
+	if (objID == kDragonObject || visible) {
 		int animID = obj->_anims[0];
 		Animation *anim = _vm->_anims->getAnimation(animID);
 		ret = anim->currentFrameNum();
@@ -355,9 +355,9 @@ void Script::start(Common::Queue<int> &params) {
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	anim->registerCallback(&Animation::stopAnimation);	
 
-	bool visible = (objID == kDragonObject || obj->_visible);
+	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
-	if (visible && (obj->_location == _vm->_game->getRoomNum())) {
+	if (objID == kDragonObject || visible) {
 		_vm->_anims->play(animID);
 	}
 }
@@ -382,19 +382,19 @@ void Script::startPlay(Common::Queue<int> &params) {
 	anim->registerCallback(&Animation::exitGameLoop);	
 
 	_vm->_game->setLoopStatus(kStatusStrange);
-	_vm->_anims->play(animID);
+
+	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
+
+	if (objID == kDragonObject || visible) {
+		_vm->_anims->play(animID);
+	}	
+
 	_vm->_game->loop();
 	_vm->_game->setExitLoop(false);    
 	_vm->_anims->stop(animID);
 	_vm->_game->setLoopStatus(kStatusOrdinary);
 
 	anim->registerCallback(&Animation::doNothing);
-
-	bool visible = (objID == kDragonObject || obj->_visible);
-
-	if (visible && (obj->_location == _vm->_game->getRoomNum())) {
-		_vm->_anims->play(animID);
-	}
 }
 
 void Script::c_If(Common::Queue<int> &params) {
