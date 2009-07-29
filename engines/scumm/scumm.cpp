@@ -184,6 +184,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed = 0;
 	_rightBtnPressed = 0;
+	_lastInputScriptTime = 0;
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;

@@ -23,10 +23,9 @@
  *
  */
 
-
-
 #include "common/config-manager.h"
 #include "common/util.h"
+#include "common/system.h"
 
 #include "scumm/actor.h"
 #include "scumm/object.h"
@@ -1195,6 +1194,12 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 				args[1] = VAR(82 + (val - 100));
 			}
 		}
+
+		// Clicks are handled differently in Indy3 mac: param 2 of the
+		// input script is set to 0 for normal clicks, and to 1 for double clicks.
+		uint32 time = _system->getMillis();
+		args[2] = (time < _lastInputScriptTime + 500);	// 500 ms double click delay
+		_lastInputScriptTime = time;
 	}
 
 	if (verbScript)

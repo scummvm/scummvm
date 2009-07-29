@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/timer.h"
+#include "common/util.h"
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
@@ -31,10 +34,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
-
-#include "common/config-manager.h"
-#include "common/timer.h"
-#include "common/util.h"
 
 #include "sound/adpcm.h"
 #include "sound/audiocd.h"
@@ -45,8 +44,6 @@
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
-
-
 
 namespace Scumm {
 
