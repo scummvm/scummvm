@@ -92,6 +92,13 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	if (_game.heversion >= 60)
 		return false;
 
+	// COMI always disables saving/loading (to tell the truth:
+	// the main menu) via its scripts, thus we need to make an
+	// exception here. This the same forced overwriting of the
+	// script decisions as in ScummEngine::processKeyboard.
+	if (_game.id == GID_CMI)
+		return true;
+
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
@@ -110,6 +117,13 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	// due to numerous glitches (see bug #1726909) that can occur.
 	if (_game.heversion >= 60)
 		return false;
+
+	// COMI always disables saving/loading (to tell the truth:
+	// the main menu) via its scripts, thus we need to make an
+	// exception here. This the same forced overwriting of the
+	// script decisions as in ScummEngine::processKeyboard.
+	if (_game.id == GID_CMI)
+		return true;
 
 	// SCUMM v4+ doesn't allow saving in room 0 or if  
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
