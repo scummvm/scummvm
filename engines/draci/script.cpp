@@ -46,7 +46,7 @@ void Script::setupCommandList() {
 		{ 3,  1, "if", 					2, { 4, 3 }, &Script::c_If },
 		{ 4,  1, "Start", 				2, { 3, 2 }, &Script::start },
 		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::load },
-		{ 5,  2, "StartPlay", 			2, { 3, 2 }, &Script::start },
+		{ 5,  2, "StartPlay", 			2, { 3, 2 }, &Script::startPlay },
 		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
 		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
 		{ 6,  1, "Talk", 				2, { 3, 2 }, NULL },
@@ -289,7 +289,15 @@ int Script::funcActPhase(int objID) {
 /* GPL commands */
 
 void Script::play(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	_vm->_game->setLoopStatus(kStatusStrange);
+	_vm->_game->setExitLoop(true);    
 	_vm->_game->loop();
+	_vm->_game->setExitLoop(false);    
+	_vm->_game->setLoopStatus(kStatusOrdinary);
 }
 
 void Script::load(Common::Queue<int> &params) {
@@ -337,6 +345,50 @@ void Script::start(Common::Queue<int> &params) {
 	int animID = params.pop() - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
+
+	// Stop all animation that the object owns
+
+	for (uint i = 0; i < obj->_anims.size(); ++i) {
+		_vm->_anims->stop(obj->_anims[i]);
+	}
+
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	anim->registerCallback(&Animation::stopAnimation);	
+
+	bool visible = (objID == kDragonObject || obj->_visible);
+
+	if (visible && (obj->_location == _vm->_game->getRoomNum())) {
+		_vm->_anims->play(animID);
+	}
+}
+
+void Script::startPlay(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int objID = params.pop() - 1;
+	int animID = params.pop() - 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	// Stop all animation that the object owns
+
+	for (uint i = 0; i < obj->_anims.size(); ++i) {
+		_vm->_anims->stop(obj->_anims[i]);
+	}
+
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	anim->registerCallback(&Animation::exitGameLoop);	
+
+	_vm->_game->setLoopStatus(kStatusStrange);
+	_vm->_anims->play(animID);
+	_vm->_game->loop();
+	_vm->_game->setExitLoop(false);    
+	_vm->_anims->stop(animID);
+	_vm->_game->setLoopStatus(kStatusOrdinary);
+
+	anim->registerCallback(&Animation::doNothing);
 
 	bool visible = (objID == kDragonObject || obj->_visible);
 
@@ -567,7 +619,12 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 /**
  * @brief Find the current command in the internal table
  *
- * @param num 		Command number
+ * @param G_LoopStatus=Inventory then Exit;
+  G_LoopSubStatus:= Strange;
+  G_QuitLoop:= True;
+  Loop;
+  G_QuitLoop:= False;
+  G_LoopSubStatus:= Ordinary; num 		Command number
  * @param subnum 	Command subnumer
  *
  * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
