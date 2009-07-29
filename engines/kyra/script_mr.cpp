@@ -1114,6 +1114,12 @@ int KyraEngine_MR::o3a_setCharacterFrame(EMCState *script) {
 	return 0;
 }
 
+int KyraEngine_MR::o3a_playSoundEffect(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3a_playSoundEffect(%p) (%d)", (const void *)script, stackPos(0));
+	snd_playSoundEffect(stackPos(0), 200);
+	return 0;
+}
+
 #pragma mark -
 
 int KyraEngine_MR::o3d_updateAnim(EMCState *script) {
@@ -1374,7 +1380,7 @@ void KyraEngine_MR::setupOpcodeTable() {
 	// 0x00
 	Opcode(o2a_setAnimationShapes);
 	Opcode(o3a_setCharacterFrame);
-	Opcode(o3_playSoundEffect);
+	Opcode(o3a_playSoundEffect);
 	Opcode(o3_dummy);
 	// 0x04
 	Opcode(o2a_setResetFrame);
