@@ -788,92 +788,65 @@ void ScummEngine::runInventoryScript(int i) {
 }
 
 void ScummEngine::inventoryScriptIndy3Mac() {
-	VerbSlot *vs;
-	int args[24];
-	int j, slot;
+	int slot;
 
-	memset(args, 0, sizeof(args));
+	// VAR(67) controls the scroll offset of the inventory in Indy3 for Macintosh.
+	// The inventory consists of two columns with three items visible in each,
+	// so a maximum of six items are visible at once.
 
-	if (VAR(67) < 0) {
+	// The scroll offset must be non-negative and if there are six or less items
+	// in the inventory, the inventory is fixed in the top position.
+	const int invCount = getInventoryCount(VAR(VAR_EGO));
+	if (VAR(67) < 0 || invCount <= 6) {
 		VAR(67) = 0;
 	}
-	args[5] = getInventoryCount(VAR(VAR_EGO));
-	if (args[5] <= 6) {
-		VAR(67) = 0;
-	}
-	if (args[5] >= 6) {
-		args[5] -= 6;
-	}
-	args[6] = 0;
-	if (VAR(67) >= args[5]) {
-		VAR(67) = args[5];
-		args[4] = args[5];
-		args[5] /= 2;
-		args[5] *= 2;
-		args[4] -= args[5];
-		if (args[4]) {
+
+	// If there are more than six items in the inventory, clamp the scroll position
+	// to be at most invCount-6, rounded up to the next even integer.
+	bool scrolledToBottom = false;
+	if (invCount > 6 && VAR(67) >= invCount - 6) {
+		VAR(67) = invCount - 6;
+		// Odd number of inventory items? -> increment VAR(67) to make it even
+		if (invCount & 1) {
 			VAR(67)++;
 		}
-		args[6]++;
-	}
-	args[2] = 1;
-	for (j = 1; j < 7; j++) {
-		args[1] = (VAR(67) + args[2]);
-		args[3] = findInventory(VAR(VAR_EGO),args[1]);
-		VAR(82 + args[2]) = args[3];
-		args[2]++;
+		scrolledToBottom = true;
 	}
 
-	byte tmp[6];
+	// Now update var 83 till 89 to contain the inventory IDs of the
+	// corresponding inventory slots.
+	// Also setup fake verbs for the inventory
+	byte tmp[6] = { 0xFF, 0x06, 0x52, 0x00, 0x00, 0x00 };
+	for (int j = 1; j < 7; j++) {
+		int tmpA = (VAR(67) + j);
+		int tmpB = findInventory(VAR(VAR_EGO), tmpA);
+		VAR(82 + j) = tmpB;
 
-	tmp[0] = 0xFF;
-	tmp[1] = 0x06;
-	tmp[3] = 0x00;
-	tmp[4] = 0x00;
-
-	for (j = 0; j < 6; j++) {
-		tmp[2] = 0x53 + j;
-
-		slot = getVerbSlot(101 + j, 0);
-		vs = &_verbs[slot];
+		// Setup fake verb
+		tmp[2] = 0x52 + j;
+		slot = getVerbSlot(100 + j, 0);
 		loadPtrToResource(rtVerb, slot, tmp);
+
+		VerbSlot *vs = &_verbs[slot];
 		vs->type = kTextVerbType;
 		vs->imgindex = 0;
 		vs->curmode = 1;
 		drawVerb(slot, 0);
 	}
 
-	args[5] = getInventoryCount(VAR(VAR_EGO));
-	if (args[5] > 6) {
-		slot = getVerbSlot(107, 0);
-		if (VAR(67)) {
-			vs = &_verbs[slot];
-			vs->curmode = 1;
-		} else {
-			vs = &_verbs[slot];
-			vs->curmode = 0;
-		}
-		drawVerb(slot, 0);
-		slot = getVerbSlot(108, 0);
-		if (!args[6]) {
-			vs = &_verbs[slot];
-			vs->curmode = 1;
-		} else {
-			vs = &_verbs[slot];
-			vs->curmode = 0;
-		}
-		drawVerb(slot, 0);
-	} else {
-		slot = getVerbSlot(107, 0);
-		vs = &_verbs[slot];
-		vs->curmode = 0;
-		drawVerb(slot, 0);
-		slot = getVerbSlot(108, 0);
-		vs = &_verbs[slot];
-		vs->curmode = 0;
-		drawVerb(slot, 0);
-	}
+	// Enable up arrow if there are more than six items and we are not already
+	// scrolled all the way up.
+	slot = getVerbSlot(107, 0);
+	_verbs[slot].curmode = (invCount > 6 && VAR(67)) ? 1 : 0;
+	drawVerb(slot, 0);
 
+	// Enable down arrow if there are more than six items and we are not already
+	// scrolled all the way down.
+	slot = getVerbSlot(108, 0);
+	_verbs[slot].curmode = (invCount > 6 && !scrolledToBottom) ? 1 : 0;
+	drawVerb(slot, 0);
+
+	// Redraw!
 	verbMouseOver(0);
 }
 
@@ -1218,8 +1191,8 @@ void ScummEngine::runInputScript(int clickArea, int val, int mode) {
 				inventoryScriptIndy3Mac();
 				return;
 			} else {
-				args[0] = 3;
-				args[1] = VAR(83 + (val - 101));
+				args[0] = kInventoryClickArea;
+				args[1] = VAR(82 + (val - 100));
 			}
 		}
 	}
