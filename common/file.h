@@ -133,12 +133,6 @@ public:
 	 */
 	bool ioFailed() const;
 
-	/**
-	 * DEPRECATED: Don't use this unless you are still using ioFailed().
-	 * Reset the I/O error status.
-	 */
-	void clearIOFailed();
-
 	bool err() const;	// implement abstract Stream method
 	void clearErr();	// implement abstract Stream method
 	bool eos() const;	// implement abstract SeekableReadStream method

@@ -124,11 +124,6 @@ bool File::ioFailed() const {
 	return !_handle || (eos() || err());
 }
 
-void File::clearIOFailed() {
-	if (_handle)
-		_handle->clearErr();
-}
-
 bool File::err() const {
 	assert(_handle);
 	return _handle->err();

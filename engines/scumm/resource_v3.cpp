@@ -80,7 +80,7 @@ void ScummEngine_v3old::readIndexFile() {
 	_fileHandle->seek(_numScripts * 3, SEEK_CUR);
 	_numSounds = _fileHandle->readByte();
 
-	_fileHandle->clearIOFailed();
+	_fileHandle->clearErr();
 	_fileHandle->seek(0, SEEK_SET);
 
 	readMAXS(0);
