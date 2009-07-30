@@ -98,14 +98,14 @@ void Scene::enterScene() {
 	_isActive = true;
 }
 
-int Scene::getDefaultActionIndex() {
+ActionDefinitions* Scene::getDefaultActionList() {
 	if (_sceneResource)
-		return _sceneResource->getWorldStats()->actionListIdx;
+		return getActionList(_sceneResource->getWorldStats()->actionListIdx);
 	else
-		return -1;
+		return 0;
 }
 
-ActionDefinitions * Scene::getActionList(int actionListIndex) {
+ActionDefinitions* Scene::getActionList(int actionListIndex) {
 	if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions))
 		return &_sceneResource->getActionList()->actions[actionListIndex];
 	else

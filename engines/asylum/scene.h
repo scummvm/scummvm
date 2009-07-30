@@ -58,8 +58,8 @@ public:
 	bool isActive() { return _isActive; }
 	int getSceneIndex() { return _sceneIdx; }
 	
-	int getDefaultActionIndex();
-	ActionDefinitions *getActionList(int actionListIndex);
+	ActionDefinitions* getDefaultActionList();
+	ActionDefinitions* getActionList(int actionListIndex);
 	
 	void setActorPosition(int actorIndex, int x, int y);
 	void setActorAction(int actorIndex, int action);
