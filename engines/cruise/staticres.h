@@ -41,9 +41,11 @@ extern int actor_invstat[][13];
 
 extern short int english_fontCharacterTable[256];
 extern short int german_fontCharacterTable[256];
+extern short int spanish_fontCharacterTable[256];
 
 #define fontCharacterTable (_vm->getLanguage() == Common::DE_DEU ? \
-	german_fontCharacterTable : english_fontCharacterTable)
+	german_fontCharacterTable : (_vm->getLanguage() == Common::ES_ESP ? \
+	spanish_fontCharacterTable : english_fontCharacterTable))
 
 // Mouse cursor data
 extern const byte mouseCursorNormal[];
