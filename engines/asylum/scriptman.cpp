@@ -71,7 +71,6 @@ void ScriptManager::setScript(ActionDefinitions *action) {
 
 void ScriptManager::setScene(Scene* scene) {
 	_scene = scene;
-	_stats = _scene->_sceneResource->getWorldStats();
 }
 
 void ScriptManager::setScriptIndex(uint32 index) {
@@ -205,9 +204,7 @@ void ScriptManager::processActionList() {
 				else
 					actorIndex = currentCommand.param1;
 
-				printf("%d\n", _stats->actors[actorIndex].field_40);
-
-				if (_stats->actors[actorIndex].field_40 == 5) {
+				if (_scene->_sceneResource->getWorldStats()->actors[actorIndex].field_40 == 5) {
 					/*
 					  v14 = 2468 * characterIndex;
 					  v19 = scene.characters[characterIndex].direction;

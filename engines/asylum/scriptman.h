@@ -33,9 +33,6 @@
 namespace Asylum {
 
 struct ActionCommand;
-struct ActionItem;
-struct BarrierItem;
-struct WorldStats;
 
 class ScriptManager: public Common::Singleton<ScriptManager> {
 public:
@@ -61,8 +58,6 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 	ScriptManager();
 	~ScriptManager();
-
-	WorldStats* _stats;
 
 	int  _currentLine;
 	int  _currentLoops;
