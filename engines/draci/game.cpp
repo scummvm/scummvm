@@ -175,6 +175,7 @@ void Game::init() {
 	_vm->_script->run(dragon->_program, dragon->_init);
 
 	_currentRoom._roomNum = _info._startRoom;
+	_currentGate = 0;
 	changeRoom(_info._startRoom);
 }
 
@@ -350,7 +351,7 @@ void Game::loadRoom(int roomNum) {
 	Common::Array<int> gates;
 
 	for (uint i = 0; i < _currentRoom._numGates; ++i) {
-		gates.push_back(roomReader.readSint16LE());
+		gates.push_back(roomReader.readSint16LE() - 1);
 	}
 
 	// Load the room's objects
@@ -598,6 +599,22 @@ void Game::changeRoom(uint roomNum) {
 	_currentRoom._roomNum = roomNum;
 	loadRoom(roomNum);
 	loadOverlays();
+}
+
+int Game::getRoomNum() {
+	return _currentRoom;
+}
+
+void Game::setRoomNum(int room) {
+	_currentRoom = room;
+}
+
+int Game::getGateNum() {
+	return _currentGate;
+}
+
+void Game::setGateNum(int gate) {
+	_currentGate = gate;
 }
 
 void Game::setLoopStatus(LoopStatus status) {

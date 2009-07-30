@@ -204,6 +204,12 @@ public:
 	int getVariable(int varNum);
 	void setVariable(int varNum, int value);	
 
+	int getRoomNum();
+	void setRoomNum(int room);
+
+	int getGateNum();
+	void setGateNum(int gate);
+
 	int getIconStatus(int iconID);
 
 	int getMarkedAnimationIndex();
@@ -230,6 +236,8 @@ private:
 	GameObject *_objects;
 
 	Room _currentRoom;
+	int _currentGate;	
+
 	LoopStatus _loopStatus;
 
 	bool _shouldQuit;
