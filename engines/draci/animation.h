@@ -69,6 +69,7 @@ public:
 
 	void addFrame(Drawable *frame);
 	Drawable *getFrame(int frameNum = kCurrentFrame);
+	void setCurrentFrame(uint frame);
 	uint currentFrameNum();
 	uint getFrameCount();
 	void deleteFrames();

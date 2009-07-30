@@ -98,9 +98,6 @@ void Animation::nextFrame(bool force) {
 		if ((_currentFrame == getFrameCount() - 1) && !_looping) {
 			// When the animation reaches its end, call the preset callback
 			(this->*_callback)();
-
-			// Reset the frame to 0
-			_currentFrame = 0;
 		} else {
 			// Mark old frame dirty so it gets deleted
 			markDirtyRect(surface);
@@ -258,6 +255,16 @@ uint Animation::currentFrameNum() {
 	return _currentFrame;
 }
 
+void Animation::setCurrentFrame(uint frame) {
+
+	// Check whether the value is sane
+	if (frame > _frames.size()) {
+		return;
+	}
+
+	_currentFrame = frame;
+}
+
 void Animation::deleteFrames() {
 	
 	// If there are no frames to delete, return
@@ -331,6 +338,10 @@ void AnimationManager::stop(int id) {
 		anim->markDirtyRect(_vm->_screen->getSurface());
 
 		anim->setPlaying(false);
+
+		// Reset the animation to the beginning
+		anim->setCurrentFrame(0);
+
 	
 		debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
 	}
