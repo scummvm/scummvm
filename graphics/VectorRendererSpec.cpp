@@ -367,7 +367,9 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	uint lum;
 
 	// Mask to clear the last bit of every color component and all unused bits
-	const uint32 colorMask = ~((1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) | ~(_alphaMask | _redMask | _greenMask | _blueMask));
+	const uint32 colorMask = ~((1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) // R/G/B components
+			| (_format.aLoss == 8 ? 0 : (1 << _format.aShift)) // Alpha component
+			| ~(_alphaMask | _redMask | _greenMask | _blueMask)); // All unused bits
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
