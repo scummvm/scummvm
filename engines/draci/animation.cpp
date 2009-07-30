@@ -258,7 +258,7 @@ uint Animation::currentFrameNum() {
 void Animation::setCurrentFrame(uint frame) {
 
 	// Check whether the value is sane
-	if (frame > _frames.size()) {
+	if (frame >= _frames.size()) {
 		return;
 	}
 
