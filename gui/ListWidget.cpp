@@ -24,6 +24,8 @@
 
 #include "common/system.h"
 #include "common/events.h"
+#include "common/frac.h"
+
 #include "gui/ListWidget.h"
 #include "gui/ScrollBarWidget.h"
 #include "gui/dialog.h"
@@ -538,13 +540,15 @@ void ListWidget::reflowLayout() {
 	// of the list.
 	// We do a rough rounding on the decimal places of Entries Per Page,
 	// to add another entry even if it goes a tad over the padding.
-	_entriesPerPage = ((_h - _topPadding - _bottomPadding) << 16) / kLineHeight;
+	frac_t entriesPerPage = intToFrac(_h - _topPadding - _bottomPadding) / kLineHeight;
 
-	if ((uint)(_entriesPerPage & 0xFFFF) >= 0xF000)
-		_entriesPerPage += (1 << 16);
+	// Our threshold before we add another entry is 0.9375 (0xF000 with FRAC_BITS being 16).
+	const frac_t threshold = intToFrac(15) / 16;
 
-	_entriesPerPage >>= 16;
+	if ((frac_t)(entriesPerPage & FRAC_LO_MASK) >= threshold)
+		entriesPerPage += FRAC_ONE;
 
+	_entriesPerPage = fracToInt(entriesPerPage);
 	assert(_entriesPerPage > 0);
 
 	delete[] _textWidth;
