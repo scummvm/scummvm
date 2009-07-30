@@ -15,14 +15,19 @@ ScummVM Team
   ------------
     SCUMM:
        Torbjorn Andersson   
+       James Brown           - (retired)
+       Jonathan Gray         - (retired)
+       Vincent Hamm          - (retired)
        Max Horn             
        Travis Howell        
        Pawel Kolodziejski    - Codecs, iMUSE, Smush, etc.
        Gregory Montoir      
        Eugene Sandulenko     - FT INSANE, MM NES, MM C64, game detection,
                                Herc/CGA
+       Ludvig Strigeus       - (retired)
 
     HE:
+       Jonathan Gray         - (retired)
        Travis Howell        
        Gregory Montoir      
        Eugene Sandulenko    
@@ -35,42 +40,53 @@ ScummVM Team
        Walter van Niftrik   
        Kari Salminen        
        Eugene Sandulenko    
+       David Symonds         - (retired)
 
     AGOS:
        Torbjorn Andersson   
        Paul Gilbert         
        Travis Howell        
+       Oliver Kiehl          - (retired)
+       Ludvig Strigeus       - (retired)
 
     BASS:
+       Robert Goeffringmann  - (retired)
+       Oliver Kiehl          - (retired)
        Joost Peters         
 
     Broken Sword 1:
+       Fabio Battaglia       - PSX version support
+       Robert Goeffringmann  - (retired)
 
     Broken Sword 2:
        Torbjorn Andersson   
+       Fabio Battaglia       - PSX version support
+       Jonathan Gray         - (retired)
 
     Cinematique evo 1:
-       Vincent Hamm          - original CinE engine author
+       Vincent Hamm          - (retired)
        Pawel Kolodziejski   
        Gregory Montoir      
+       Kari Salminen        
        Eugene Sandulenko    
 
     Cinematique evo 2:
-       Vincent Hamm          - original CruisE engine author
        Paul Gilbert         
+       Vincent Hamm          - (retired)
 
     Drascula:
        Filippos Karapetis   
        Pawel Kolodziejski   
 
     FOTAQ:
+       David Eriksson        - (retired)
        Gregory Montoir      
        Joost Peters         
 
     Gob:
        Torbjorn Andersson   
+       Arnaud Boutonne      
        Sven Hesse           
-       Willem Jan Palenstijn
        Eugene Sandulenko    
 
     Groovie:
@@ -103,7 +119,6 @@ ScummVM Team
 
     SAGA:
        Torbjorn Andersson   
-       Sven Hesse           
        Filippos Karapetis   
        Andrew Kurushin      
        Eugene Sandulenko    
@@ -114,11 +129,13 @@ ScummVM Team
        Max Horn             
        Filippos Karapetis   
        Walter van Niftrik   
+       Willem Jan Palenstijn
        Jordi Vilalta Prat   
        Lars Skovlund        
 
     Tinsel:
        Torbjorn Andersson   
+       Fabio Battaglia       - PSX version support
        Paul Gilbert         
        Sven Hesse           
        Max Horn             
@@ -152,9 +169,11 @@ ScummVM Team
        Chris Apers          
 
     PocketPC / WinCE:
+       Nicolas Bacca         - (retired)
        Kostas Nakos         
 
     PlayStation 2:
+       Robert Goeffringmann  - (retired)
        Max Lingua           
 
     PSP (PlayStation Portable):
@@ -185,13 +204,19 @@ ScummVM Team
 
     Miscellaneous:
        David Corrales-Lopez  - Filesystem access improvements (GSoC 2007
-                               task)
-       Jerome Fisher         - MT-32 emulator
+                               task) (retired)
+       Jerome Fisher         - MT-32 emulator (retired)
+       Benjamin Haisch       - Heavily improved de-/encoder for DXA videos
        Jochen Hoenicke       - Speaker & PCjr sound support, AdLib work
+                               (retired)
        Chris Page            - Return to launcher, savestate improvements,
-                               leak fixes, ... (GSoC 2008 task)
+                               leak fixes, ... (GSoC 2008 task) (retired)
        Robin Watts           - ARM assembly routines for nice speedups on
                                several ports; improvements to the sound mixer
+
+  Website (code)
+  --------------
+     Fredrik Wendel       
 
   Website (content)
   -----------------
@@ -201,6 +226,108 @@ ScummVM Team
   -------------
      Joachim Eberhard      - Numerous contributions to documentation
      Matthew Hoops         - Wiki editor
+
+  Retired Team Members
+  --------------------
+     Ralph Brorsen         - Help with GUI implementation
+     Jamieson Christian    - iMUSE, MIDI, all things musical
+     Felix Jakschitsch     - Zak256 reverse engineering
+     Mutwin Kraus          - Original MacOS porter
+     Peter Moraliyski      - Port: GP32
+     Jeremy Newman         - Former webmaster
+     Lionel Ulmer          - Port: X11
+     Won Star              - Former GP32 porter
+
+Other contributions
+*******************
+  Packages
+  --------
+    AmigaOS 4:
+       Hans-Jorg Frieden     - (retired)
+       Hubert Maier         
+       Juha Niemimaki        - (retired)
+
+    Atari/FreeMiNT:
+       Keith Scroggins      
+
+    BeOS:
+       Stefan Parviainen    
+       Luc Schrijvers       
+
+    Debian GNU/Linux:
+       Tore Anderson         - (retired)
+       David Weinehall      
+
+    Fedora / RedHat:
+       Willem Jan Palenstijn
+
+    Mac OS X:
+       Max Horn             
+       Oystein Eftevaag     
+
+    Mandriva:
+       Dominik Scherer      
+
+    MorphOS:
+       Fabien Coeurjoly     
+       Ruediger Hanke        - (retired)
+
+    OS/2:
+       Paul Smedley         
+
+    SlackWare:
+       Robert Kelsen        
+
+    Solaris x86:
+       Laurent Blume        
+
+    Solaris SPARC:
+       Markus Strangl       
+
+    Win32:
+       Travis Howell        
+
+    Win64:
+       Chris Gray           
+
+  Websites (design)
+  -----------------
+     Dobo Balazs           - Website design
+     Yaroslav Fedevych     - HTML/CSS for the website
+     David Jensen          - SVG logo conversion
+     Jean Marc Gimenez     - ScummVM logo
+     Raina                 - ScummVM forum buttons
+
+  Code contributions
+  ------------------
+     Ori Avtalion          - Subtitle control options in the GUI; BASS GUI
+                             fixes
+     Stuart Caie           - Decoders for Amiga and AtariST data files (AGOS
+                             engine)
+     Paolo Costabel        - PSP port contributions
+     Thierry Crozat        - Support for Broken Sword 1 Macintosh version
+     Martin Doucha         - CinE engine objectification
+     Thomas Fach-Pedersen  - ProTracker module player
+     Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
+     Kovacs Endre Janos    - Several fixes for Simon1
+     Jeroen Janssen        - Numerous readability and bugfix patches
+     Andreas Karlsson      - Initial port for SymbianOS
+     Claudio Matsuoka      - Daily Linux builds
+     Thomas Mayer          - PSP port contributions
+     Sean Murray           - ScummVM tools GUI application (GSoC 2007 task)
+     n0p                   - Windows CE port aspect ratio correction scaler
+                             and right click input method
+     Mikesch Nepomuk       - MI1 VGA floppy patches
+     Nicolas Noble         - Config file and ALSA support
+     Tim Phillips          - Initial MI1 CD music support
+     Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
+                             NES support
+     segra                 - Improved support for Apple II/C64 versions of MM
+     Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
+     Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom audio
+     Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
+                             support
+     Andre Souza           - SDL-based OpenGL renderer
 
   FreeSCI Contributors
   --------------------
@@ -250,118 +377,10 @@ ScummVM Team
      Sean Terrell         
 
      Special thanks to Prof. Dr. Gary Nutt for allowing the FreeSCI VM
-     extension as a course project in his Advanced OS course
+     extension as a course project in his Advanced OS course.
 
      Special thanks to Bob Heitman and Corey Cole for their support of
-     FreeSCI
-
-  Retired Team Members
-  --------------------
-     Tore Anderson         - Former Debian GNU/Linux maintainer
-     Nicolas Bacca         - Former WinCE porter
-     Ralph Brorsen         - Help with GUI implementation
-     Jamieson Christian    - iMUSE, MIDI, all things musical
-     David Eriksson        - Engines: FOTAQ
-     Hans-Jorg Frieden     - Former AmigaOS 4 packager
-     Robert Goeffringmann  - Original PS2 porter; Engines: BASS, BS1
-     Jonathan Gray         - Engines: SCUMM, HE, BS2
-     Ruediger Hanke        - Port: MorphOS
-     Felix Jakschitsch     - Zak256 reverse engineering
-     Oliver Kiehl          - Engines: AGOS, BASS
-     Mutwin Kraus          - Original MacOS porter
-     Peter Moraliyski      - Port: GP32
-     Juha Niemimaki        - Former AmigaOS 4 packager
-     Jeremy Newman         - Former webmaster
-     Lionel Ulmer          - Port: X11
-     Won Star              - Former GP32 porter
-     David Symonds         - Engines: AGI
-
-Other contributions
-*******************
-  Packages
-  --------
-    AmigaOS 4:
-       Hubert Maier         
-
-    Atari/FreeMiNT:
-       Keith Scroggins      
-
-    BeOS:
-       Stefan Parviainen    
-       Luc Schrijvers       
-
-    Debian GNU/Linux:
-       David Weinehall      
-
-    Fedora / RedHat:
-       Willem Jan Palenstijn
-
-    Mac OS X:
-       Max Horn             
-       Oystein Eftevaag     
-
-    Mandriva:
-       Dominik Scherer      
-
-    MorphOS:
-       Fabien Coeurjoly     
-
-    OS/2:
-       Paul Smedley         
-
-    SlackWare:
-       Robert Kelsen        
-
-    Solaris x86:
-       Laurent Blume        
-
-    Solaris SPARC:
-       Markus Strangl       
-
-    Win32:
-       Travis Howell        
-
-    Win64:
-       Chris Gray           
-
-  Websites (design)
-  -----------------
-     Dobo Balazs           - Website design
-     Yaroslav Fedevych     - HTML/CSS for the website
-     David Jensen          - SVG logo conversion
-     Jean Marc Gimenez     - ScummVM logo
-     Raina                 - ScummVM forum buttons
-
-  Code contributions
-  ------------------
-     Ori Avtalion          - Subtitle control options in the GUI; BASS GUI
-                             fixes
-     Stuart Caie           - Decoders for Amiga and AtariST data files (AGOS
-                             engine)
-     Paolo Costabel        - PSP port contributions
-     Thierry Crozat        - Support for Broken Sword 1 Macintosh version
-     Martin Doucha         - CinE engine objectification
-     Thomas Fach-Pedersen  - ProTracker module player
-     Benjamin Haisch       - Heavily improved de-/encoder for DXA videos
-     Janne Huttunen        - V3 actor mask support, Dig/FT SMUSH audio
-     Kovacs Endre Janos    - Several fixes for Simon1
-     Jeroen Janssen        - Numerous readability and bugfix patches
-     Andreas Karlsson      - Initial port for SymbianOS
-     Claudio Matsuoka      - Daily Linux builds
-     Thomas Mayer          - PSP port contributions
-     Sean Murray           - ScummVM tools GUI application (GSoC 2007 task)
-     n0p                   - Windows CE port aspect ratio correction scaler
-                             and right click input method
-     Mikesch Nepomuk       - MI1 VGA floppy patches
-     Nicolas Noble         - Config file and ALSA support
-     Tim Phillips          - Initial MI1 CD music support
-     Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
-                             NES support
-     Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
-     Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom audio
-     Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
-                             support
-     Andre Souza           - SDL-based OpenGL renderer
+     FreeSCI.
 
    And to all the contributors, users, and beta testers we've missed. Thanks!
 
