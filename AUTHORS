@@ -179,6 +179,7 @@ ScummVM Team
        Eugene Sandulenko    
 
     GUI:
+       Vicent Marti         
        Eugene Sandulenko    
        Johannes Schickel    
 
@@ -356,6 +357,7 @@ Other contributions
      Tim Phillips          - Initial MI1 CD music support
      Quietust              - Sound support for Amiga SCUMM V2/V3 games, MM
                              NES support
+     segra                 - Improved support for Apple II/C64 versions of MM
      Andreas Roever        - Broken Sword 1/2 MPEG2 cutscene support
      Edward Rudd           - Fixes for playing MP3 versions of MI1/Loom audio
      Daniel Schepler       - Final MI1 CD music support, initial Ogg Vorbis
