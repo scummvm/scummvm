@@ -279,7 +279,7 @@ get_system_exe_extension() {
 	gp2x-linux)
 		_exeext=".gp2x"
 		;;	
-	dreamcast | wii | gamecube | psp)
+	dreamcast | wii | gamecube | nds | psp)
 		_exeext=".elf"
 		;;
 	*)
@@ -553,7 +553,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wince, wii, psp, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, wii, wince, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -568,6 +568,7 @@ Special configuration feature:
                                           dreamcast for Sega Dreamcast
                                           wii for Nintendo Wii
                                           gamecube for Nintendo Gamecube
+                                          nds for Nintendo DS
                                           iphone for Apple iPhone
                                           wince for Windows CE
                                           psp for PlayStation Portable 
@@ -841,16 +842,21 @@ wii)
 	_host_cpu=ppc
 	_host_alias=powerpc-gekko
 	;;
+gamecube)
+	_host_os=gamecube
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
+nds)
+	_host_os=nds
+	_host_cpu=arm
+	_host_alias=arm-eabi
+	;;
 psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
 	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
-	;;
-gamecube)
-	_host_os=gamecube
-	_host_cpu=ppc
-	_host_alias=powerpc-gekko
 	;;
 *)
 	if test -n "$_host"; then
@@ -888,7 +894,7 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-wii | gamecube)
+wii | gamecube | nds)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -1168,6 +1174,9 @@ case $_host_os in
 		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
 		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
 		;;
+	nds)
+		# TODO nds
+		;;
 	psp)
 		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
@@ -1398,6 +1407,24 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			;;
+		nds)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			# TODO: complete this
+			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
+			DEFINES="$DEFINES -DUSE_ARM_SMUSH_ASM"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend="nds"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/ds/ds.mk'
+			# TODO: Enable more ARM optimizations -- requires testing!
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		psp)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -2045,6 +2072,9 @@ case $_backend in
 			LIBS="$LIBS -ldi -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
 			;;
 		esac
+		;;
+	nds)
+		# TODO nds
 		;;
 	psp)
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
