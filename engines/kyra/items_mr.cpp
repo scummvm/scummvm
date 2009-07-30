@@ -87,7 +87,8 @@ void KyraEngine_MR::setMouseCursor(uint16 item) {
 		shape = item+248;
 	}
 
-	if ((int16)item != _itemInHand)
+	_mouseState = item;
+	if ((int16)item >= 0)
 		_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));
 }
 
