@@ -176,6 +176,10 @@ void Game::init() {
 
 	_currentRoom._roomNum = _info._startRoom;
 	_currentGate = 0;
+
+	_variables[0] = _currentRoom._roomNum;
+	_variables[1] = _currentGate;
+
 	changeRoom(_info._startRoom);
 }
 
@@ -602,11 +606,11 @@ void Game::changeRoom(uint roomNum) {
 }
 
 int Game::getRoomNum() {
-	return _currentRoom;
+	return _currentRoom._roomNum;
 }
 
 void Game::setRoomNum(int room) {
-	_currentRoom = room;
+	_currentRoom._roomNum = room;
 }
 
 int Game::getGateNum() {
@@ -623,10 +627,6 @@ void Game::setLoopStatus(LoopStatus status) {
 
 LoopStatus Game::getLoopStatus() {
 	return _loopStatus;
-}
-
-int Game::getRoomNum() {
-	return _currentRoom._roomNum;
 }
 
 int Game::getVariable(int numVar) {

@@ -164,7 +164,6 @@ public:
 	void loop();
 
 	void changeRoom(uint roomNum);
-	int getRoomNum();
 
 	// HACK: this is only for testing
 	int nextRoomNum() { 
