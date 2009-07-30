@@ -39,9 +39,9 @@ namespace Asylum {
 
 class Screen;
 class Sound;
-class SceneResource;
 class Text;
 class BlowUpPuzzle;
+class SceneResource;
 struct ActionDefinitions;
 struct PolyDefinitions;
 
@@ -68,22 +68,22 @@ public:
 	
 	void setScenePosition(int x, int y);
 
+	SceneResource*   getResources() { return _sceneResource; }
+	ResourcePack*	 getResourcePack() { return _resPack; }
+	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
+
 private:
 #if 0
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
 #endif
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
-public:
-    uint8	        _sceneIdx;
-
-    SceneResource	*_sceneResource;
-
+	uint8	        _sceneIdx;
+	SceneResource	*_sceneResource;
     ResourcePack	*_resPack;
 	ResourcePack	*_speechPack;
 	ResourcePack	*_musPack;
 
-private:
 	Screen		  *_screen;
 	Sound		  *_sound;
     BlowUpPuzzle  *_blowUp;
