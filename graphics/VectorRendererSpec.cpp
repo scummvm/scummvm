@@ -366,22 +366,22 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	uint8 r, g, b;
 	uint lum;
 
-	const uint32 shiftMask = (uint32)~(
-		(1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) | (_format.aLoss == 8 ? 0 : (1 << _format.aShift))) >> 1;
+	// Mask to clear the last bit of every color component and all unused bits
+	const uint32 colorMask = ~((1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) | ~(_alphaMask | _redMask | _greenMask | _blueMask));
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
 		int n = (pixels + 7) >> 3;
 		switch (pixels % 8) {
 		case 0: do {
-					*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 7:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 6:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 5:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 4:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 3:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 2:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 1:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+					*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 7:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 6:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 5:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 4:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 3:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 2:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 1:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
 				} while (--n > 0);
 		}
 
@@ -421,10 +421,10 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= ((_gradientStart&_redMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= ((_gradientStart&_greenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= ((_gradientStart&_blueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
-	output |= ~(_redMask | _greenMask | _blueMask);
+	output |= ((_gradientStart & _redMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
+	output |= ((_gradientStart & _greenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
+	output |= ((_gradientStart & _blueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	output |= _alphaMask;
 
 	return output;
 }
