@@ -67,16 +67,6 @@ public:
 	virtual void reflowLayout();
 };
 
-Common::String SaveLoad_ns::genOldSaveFileName(uint slot) {
-	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
-
-	char s[20];
-	sprintf(s, "game.%i", slot);
-
-	return Common::String(s);
-}
-
-
 Common::String SaveLoad::genSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
 
@@ -431,23 +421,9 @@ void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 }
 
 void SaveLoad_ns::renameOldSavefiles() {
+	Common::StringList oldFilenames = _saveFileMan->listSavefiles("game.*");
 
-	bool exists[NUM_SAVESLOTS];
-	uint num = 0;
-	uint i;
-
-	for (i = 0; i < NUM_SAVESLOTS; i++) {
-		exists[i] = false;
-		Common::String name = genOldSaveFileName(i);
-		Common::InSaveFile *f = _saveFileMan->openForLoading(name);
-		if (f) {
-			exists[i] = true;
-			num++;
-		}
-		delete f;
-	}
-
-	if (num == 0) {
+	if (oldFilenames.size() == 0) {
 		// there are no old savefiles: nothing to do
 		return;
 	}
@@ -463,22 +439,24 @@ void SaveLoad_ns::renameOldSavefiles() {
 		return;
 	}
 
-	uint success = 0;
-	for (i = 0; i < NUM_SAVESLOTS; i++) {
-		if (exists[i]) {
-			Common::String oldName = genOldSaveFileName(i);
-			Common::String newName = genSaveFileName(i);
-			if (_saveFileMan->renameSavefile(oldName, newName)) {
-				success++;
-			} else {
-				warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
-					_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
-			}
+	uint success = 0, id;
+	Common::String oldName, newName;
+	for (uint i = 0; i < oldFilenames.size(); ++i) {
+		oldName = oldFilenames[i];
+		int e = sscanf(oldName.c_str(), "game.%u", &id);
+		assert(e == 1);
+		newName = genSaveFileName(id);
+
+		if (_saveFileMan->renameSavefile(oldName, newName)) {
+			success++;
+		} else {
+			warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
+				_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
 		}
 	}
 
 	char msg[200];
-	if (success == num) {
+	if (success == oldFilenames.size()) {
 		sprintf(msg, "ScummVM successfully converted all your savefiles.");
 	} else {
 		sprintf(msg,
