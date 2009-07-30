@@ -108,7 +108,7 @@ Common::Error AsylumEngine::go() {
 
 	// TODO This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P
-	ScriptMan.setScript(_scene->getActionList(_scene->getDefaultActionIndex()));
+	ScriptMan.setScript(_scene->getDefaultActionList());
 
 	// Set up main menu
 	_mainMenu = new MainMenu(_screen, _sound, _scene);
@@ -210,7 +210,7 @@ void AsylumEngine::processDelayedEvents() {
 
 		_scene->enterScene();
 		ScriptMan.setDelayedSceneIndex(-1);
-		ScriptMan.setScript(_scene->getActionList(_scene->getDefaultActionIndex()));
+		ScriptMan.setScript(_scene->getDefaultActionList());
 	}
 }
 
