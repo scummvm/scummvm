@@ -49,15 +49,14 @@ void BlowUpPuzzle::updateCursor() {
 // BlowUp Puzzle VCR
 
 BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene) : BlowUpPuzzle(screen, sound, scene) {
-	this->_mouseX				= 0;
-	_mouseY				= 0;
-	_leftClick			= false;
-	_curMouseCursor		= 0;
-	_cursorStep			= 1;
-	_active				= false;
-
-	_cursorResource = new GraphicResource(_scene->_resPack, 2);
-    _bgResource		= new GraphicResource(_scene->_resPack, _scene->_sceneResource->_worldStats->grResId[0]);
+	this->_mouseX	= 0;
+	_mouseY			= 0;
+	_leftClick		= false;
+	_curMouseCursor	= 0;
+	_cursorStep		= 1;
+	_active			= false;
+	_cursorResource = _scene->getGraphicResource(2);
+    _bgResource		= _scene->getGraphicResource(_scene->getResources()->getWorldStats()->grResId[0]);
 }
 
 BlowUpPuzzleVCR::~BlowUpPuzzleVCR() {
@@ -70,7 +69,7 @@ void BlowUpPuzzleVCR::openBlowUp() {
 	_scene->deactivate();
 
 	// Load the graphics palette
-	_screen->setPalette(_scene->_resPack, 183);
+	_screen->setPalette(_scene->getResourcePack(), 183);
 
     // show blow up puzzle BG
 	GraphicFrame *bg = _bgResource->getFrame(1);
