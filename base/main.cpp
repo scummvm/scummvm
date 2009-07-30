@@ -169,9 +169,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
-	Common::String desc = EngineMan.findGame(ConfMan.get("gameid")).description();
-	if (caption.empty() && !desc.empty())
-		caption = desc;
+	if (caption.empty()) {
+		caption = EngineMan.findGame(ConfMan.get("gameid")).description();
+	}
 	if (caption.empty())
 		caption = ConfMan.getActiveDomainName();	// Use the domain (=target) name
 	if (!caption.empty())	{
