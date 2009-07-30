@@ -519,11 +519,13 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Broken Sword 1");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
 		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 	  end_section();
 
 	  begin_section("Broken Sword 2");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
 		  add_person("Jonathan Gray", "khalek", "(retired)");
 	  end_section();
 
@@ -569,7 +571,7 @@ begin_credits("Credits");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 		  add_person("Florian Kagerer", "athrxx", "");
 		  add_person("Gregory Montoir", "cyx", "");
-		  add_person("Johannes Schickel", "10rdH070", "");
+		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 
 	  begin_section("Lure");
@@ -611,6 +613,7 @@ begin_credits("Credits");
 
 	  begin_section("Tinsel");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Sven Hesse", "DrMcCoy", "");
 		  add_person("Max Horn", "Fingolfin", "");
@@ -693,7 +696,7 @@ begin_credits("Credits");
 	  begin_section("GUI");
 		  add_person("Vicent Marti", "tanoku", "");
 		  add_person("Eugene Sandulenko", "sev", "");
-		  add_person("Johannes Schickel", "10rdH070", "");
+		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 
 	  begin_section("Miscellaneous");
