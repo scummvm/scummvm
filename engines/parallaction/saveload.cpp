@@ -431,7 +431,7 @@ void SaveLoad_ns::renameOldSavefiles() {
 	GUI::MessageDialog dialog0(
 		"ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
 		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-		"Press OK to convert them now, otherwise you will be asked you next time.\n", "OK", "Cancel");
+		"Press OK to convert them now, otherwise you will be asked next time.\n", "OK", "Cancel");
 
 	int choice = dialog0.runModal();
 	if (choice == 0) {
