@@ -629,14 +629,14 @@ void ScummEngine_v2::checkExecVerbs() {
 			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
 				if (_mouseAndKeyboardStat == vs->key) {
 					// Trigger verb as if the user clicked it
-					runInputScript(1, vs->verbid, 1);
+					runInputScript(kVerbClickArea, vs->verbid, 1);
 					return;
 				}
 			}
 		}
 
 		// Generic keyboard input
-		runInputScript(4, _mouseAndKeyboardStat, 1);
+		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
@@ -649,7 +649,7 @@ void ScummEngine_v2::checkExecVerbs() {
 
 		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
-			runInputScript(5, 0, 0);
+			runInputScript(kSentenceClickArea, 0, 0);
 		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
@@ -657,7 +657,7 @@ void ScummEngine_v2::checkExecVerbs() {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
 				// Verb was clicked
-				runInputScript(1, _verbs[over].verbid, code);
+				runInputScript(kVerbClickArea, _verbs[over].verbid, code);
 			} else {
 				// Scene was clicked
 				runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);

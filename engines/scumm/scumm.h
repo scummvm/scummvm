@@ -612,6 +612,12 @@ protected:
 	uint16 _mouseAndKeyboardStat;
 	byte _leftBtnPressed, _rightBtnPressed;
 
+	/**
+	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
+	 * This is currently only used for Indy3 mac to detect "double clicks".
+	 */
+	uint32 _lastInputScriptTime;
+
 	/** The bootparam, to be passed to the script 1, the bootscript. */
 	int _bootParam;
 
