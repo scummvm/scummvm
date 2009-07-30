@@ -55,7 +55,7 @@
 static inline void stage_scale2x(void* dst0, void* dst1, const void* src0, const void* src1, const void* src2, unsigned pixel, unsigned pixel_per_row)
 {
 	switch (pixel) {
-#if defined(__GNUC__) && defined(__i386__)
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 		case 1 : scale2x_8_mmx(DST(8,0), DST(8,1), SRC(8,0), SRC(8,1), SRC(8,2), pixel_per_row); break;
 		case 2 : scale2x_16_mmx(DST(16,0), DST(16,1), SRC(16,0), SRC(16,1), SRC(16,2), pixel_per_row); break;
 		case 4 : scale2x_32_mmx(DST(32,0), DST(32,1), SRC(32,0), SRC(32,1), SRC(32,2), pixel_per_row); break;
@@ -129,7 +129,7 @@ static void scale2x(void* void_dst, unsigned dst_slice, const void* void_src, un
 		--count;
 	}
 
-#if defined(__GNUC__) && defined(__i386__)
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 	scale2x_mmx_emms();
 #endif
 }
@@ -229,7 +229,7 @@ static void scale4x_buf(void* void_dst, unsigned dst_slice, void* void_mid, unsi
 		--count;
 	}
 
-#if defined(__GNUC__) && defined(__i386__)
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 	scale2x_mmx_emms();
 #endif
 }
@@ -307,7 +307,7 @@ int scale_precondition(unsigned scale, unsigned pixel, unsigned width, unsigned 
 		break;
 	}
 
-#if defined(__GNUC__) && defined(__i386__)
+#if defined(__GNUC__) && (defined(__i386__) || defined(__x86_64__))
 	switch (scale) {
 	case 2 :
 	case 4 :
