@@ -95,7 +95,7 @@ enum opcodes {
 	kHideActor,
 	kShowActor,
 	kSetActorStats,
-	k_unk0C_SET_SCENE_FIELD88,
+	kSetSceneMotionStat,
 	kDisableActor,
 	kEnableActor,
 	kEnableBarriers,
