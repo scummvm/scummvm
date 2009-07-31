@@ -195,7 +195,7 @@ void ScriptManager::processActionList() {
 			}
 				break;
 
-/* 0x0C */  //case k_unk0C_SET_SCENE_FIELD88:
+/* 0x0C */  //case kSetSceneMotionStat:
 /* 0x0D */  //case kDisableActor:
 /* 0x0E */  case kEnableActor: {
 				int actorIndex = 0;
@@ -467,9 +467,9 @@ void ScriptManager::processActionListSub02(ActionCommand *command, int a3, int a
 			int v8 = command->param4;
 
 			for (int i = 7; i > 0; i--) {
-				barrierIdx = _scene->_sceneResource->getBarrierIndexById(v8);
+				barrierIdx = _scene->getResources()->getBarrierIndexById(v8);
 				if (barrierIdx)
-					_scene->_sceneResource->getWorldStats()->barriers[barrierIdx].field_67C = 0;
+					_scene->getResources()->getWorldStats()->barriers[barrierIdx].field_67C = 0;
 				v8 += 4;
 			}
 		}
