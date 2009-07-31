@@ -35,6 +35,7 @@
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
+	{"½x", "Downscale", GFX_HALF},
 	{0, 0, 0}
 };
 
@@ -46,11 +47,6 @@ const OSystem::GraphicsMode *OSystem_GP2XWIZ::getSupportedGraphicsModes() const 
 int OSystem_GP2XWIZ::getDefaultGraphicsMode() const {
 	return GFX_NORMAL;
 }
-
-//bool OSystem_GP2XWIZ::setGraphicsMode(const char *name) {
-//	// let parent OSystem_SDL handle it
-//	return setGraphicsMode(GFX_NORMAL);
-//}
 
 bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
@@ -142,135 +138,14 @@ void OSystem_GP2XWIZ::initSize(uint w, uint h) {
 }
 
 bool OSystem_GP2XWIZ::loadGFXMode() {
-	assert(_inited);
-	_forceFull = true;
-
-	int hwW, hwH;
-    if(_videoMode.mode == GFX_HALF){
-	    _videoMode.overlayWidth = _videoMode.screenWidth/2;
-	    _videoMode.overlayHeight = _videoMode.screenHeight/2;
-    } else {
-        _videoMode.overlayWidth = _videoMode.screenWidth;
-	    _videoMode.overlayHeight = _videoMode.screenHeight;
-    }
+	_videoMode.overlayWidth = 320;
+	_videoMode.overlayHeight = 240;
+	_videoMode.fullscreen = true;
 
 	if (_videoMode.screenHeight != 200 && _videoMode.screenHeight != 400)
 		_videoMode.aspectRatioCorrection = false;
 
-	if (_videoMode.aspectRatioCorrection)
-		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
-
-    if(_videoMode.mode == GFX_HALF){
-	    hwW = _videoMode.screenWidth/2;
-	    hwH = effectiveScreenHeight()/2;
-    } else {
-        hwW = _videoMode.screenWidth;
-	    hwH = effectiveScreenHeight();
-    }
-
-	//
-	// Create the surface that contains the 8 bit game data
-	//
-	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
-	if (_screen == NULL)
-		error("allocating _screen failed");
-
-	//
-	// Create the surface that contains the scaled graphics in 16 bit mode
-	//
-
-	_hwscreen = SDL_SetVideoMode(hwW, hwH, 16,
-		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
-	);
-	if (_hwscreen == NULL) {
-		// DON'T use error(), as this tries to bring up the debug
-		// console, which WON'T WORK now that _hwscreen is hosed.
-
-		if (!_oldVideoMode.setup) {
-			warning("SDL_SetVideoMode says we can't switch to that mode (%s)", SDL_GetError());
-			quit();
-		} else {
-			return false;
-		}
-	}
-
-	//
-	// Create the surface used for the graphics in 16 bit before scaling, and also the overlay
-	//
-
-	// Need some extra bytes around when using 2xSaI
-	_tmpscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth + 3, _videoMode.screenHeight + 3,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-
-	if (_tmpscreen == NULL)
-		error("allocating _tmpscreen failed");
-
-	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth, _videoMode.overlayHeight,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-
-	if (_overlayscreen == NULL)
-		error("allocating _overlayscreen failed");
-
-	_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
-
-	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
-	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
-	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
-	_overlayFormat.aLoss = _overlayscreen->format->Aloss;
-
-	_overlayFormat.rShift = _overlayscreen->format->Rshift;
-	_overlayFormat.gShift = _overlayscreen->format->Gshift;
-	_overlayFormat.bShift = _overlayscreen->format->Bshift;
-	_overlayFormat.aShift = _overlayscreen->format->Ashift;
-
-	_tmpscreen2 = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.overlayWidth + 3, _videoMode.overlayHeight + 3,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-
-	if (_tmpscreen2 == NULL)
-		error("allocating _tmpscreen2 failed");
-
-#ifdef USE_OSD
-	_osdSurface = SDL_CreateRGBSurface(SDL_SWSURFACE | SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA,
-						_hwscreen->w,
-						_hwscreen->h,
-						16,
-						_hwscreen->format->Rmask,
-						_hwscreen->format->Gmask,
-						_hwscreen->format->Bmask,
-						_hwscreen->format->Amask);
-	if (_osdSurface == NULL)
-		error("allocating _osdSurface failed");
-	SDL_SetColorKey(_osdSurface, SDL_RLEACCEL | SDL_SRCCOLORKEY | SDL_SRCALPHA, kOSDColorKey);
-#endif
-
-	// keyboard cursor control, some other better place for it?
-	_km.x_max = _videoMode.screenWidth * _videoMode.scaleFactor - 1;
-	_km.y_max = effectiveScreenHeight() - 1;
-	_km.delay_time = 25;
-	_km.last_time = 0;
-
-	// Distinguish 555 and 565 mode
-	if (_hwscreen->format->Rmask == 0x7C00)
-		InitScalers(555);
-	else
-		InitScalers(565);
-
-    // We need this to tell HalfScale the pixel format.
-    // TODO: Find a better home.
-    screenPixelFormat = _hwscreen->format;
-	return true;
+	OSystem_SDL::loadGFXMode();
 }
 
 void OSystem_GP2XWIZ::drawMouse() {

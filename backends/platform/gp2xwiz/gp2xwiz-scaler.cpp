@@ -35,10 +35,6 @@ extern "C" {
 }
 
 void HalfScale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	int maskUsed;
-	if (screenPixelFormat->Rmask == 0x7C00)
-		maskUsed = (gBitFormat == 555);
-	else
-		maskUsed = (gBitFormat == 565);
+	int maskUsed = (gBitFormat == 565);
 	PocketPCHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed],roundingconstants[maskUsed]);
 }

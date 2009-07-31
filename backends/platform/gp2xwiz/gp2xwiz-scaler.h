@@ -36,10 +36,7 @@ enum {
     GFX_HALF = 12
 };
 
-extern SDL_PixelFormat *screenPixelFormat;
-
 // TODO/FIXME: Move this platform specific scaler into /graphics/scaler and properly merge with the WinCE PocketPCHalf that it is based on.
-
 DECLARE_SCALER(HalfScale);
 
 #endif
