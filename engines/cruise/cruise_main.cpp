@@ -1390,7 +1390,7 @@ int CruiseEngine::processInput(void) {
 	}
 
 	// Player Menu - test for both buttons or the F10 key
-	if (((button & MB_BOTH) == MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
+	if (((button & CRS_MB_BOTH) == CRS_MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
 		changeCursor(CURSOR_NORMAL);
 		keyboardCode = Common::KEYCODE_INVALID;
 		return (playerMenu(mouseX, mouseY));
@@ -1398,7 +1398,7 @@ int CruiseEngine::processInput(void) {
 
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
-		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == MB_LEFT))
+		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == CRS_MB_LEFT))
 			userWait = 0;
 
 		keyboardCode = Common::KEYCODE_INVALID;
@@ -1450,7 +1450,7 @@ int CruiseEngine::processInput(void) {
 				menuDown = 0;
 			}
 		} else {
-			if ((button & MB_LEFT) && (buttonDown == 0)) {
+			if ((button & CRS_MB_LEFT) && (buttonDown == 0)) {
 				if (menuTable[0]) {
 					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
 
@@ -1472,7 +1472,7 @@ int CruiseEngine::processInput(void) {
 			}
 		}
 
-	} else if ((button & MB_LEFT) && (buttonDown == 0)) {
+	} else if ((button & CRS_MB_LEFT) && (buttonDown == 0)) {
 		// left click
 		buttonDown = 1;
 
@@ -1587,7 +1587,7 @@ int CruiseEngine::processInput(void) {
 				}
 			}
 		}
-	} else if ((button & MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
+	} else if ((button & CRS_MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
 		if (buttonDown == 0) {
 			keyboardCode = Common::KEYCODE_INVALID;
 
