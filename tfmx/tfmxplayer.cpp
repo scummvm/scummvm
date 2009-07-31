@@ -19,6 +19,7 @@ using namespace Common;
 
 #define MUSICFILE "mdat.monkey"
 #define SAMPLEFILE "smpl.monkey"
+const int samplerate = 48000;
 
 Audio::Tfmx *loadTfmxfile(const char *mdatName, const char *sampleName) {
 	FSNode fileDir(FILEDIR);
@@ -37,7 +38,7 @@ Audio::Tfmx *loadTfmxfile(const char *mdatName, const char *sampleName) {
 		return 0;
 	}
 
-	Audio::Tfmx *player = new Audio::Tfmx(44100, true);
+	Audio::Tfmx *player = new Audio::Tfmx(samplerate, true);
 	player->load(*musicIn, *sampleIn);
 	delete musicIn;
 	delete sampleIn;
@@ -135,7 +136,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 		Common::FSNode file("out.raw");
 		WriteStream *wav = file.createWriteStream();
 		int16 buf[2 * 1024];
-		int32 maxsamples = (maxsecs <= 0) ? 0 : maxsecs * 44100;
+		int32 maxsamples = (maxsecs <= 0) ? 0 : maxsecs * samplerate;
 		while (!player->endOfData() && maxsamples > 0) {
 			int read = player->readBuffer(buf, ARRAYSIZE(buf));
 			wav->write(buf, read * 2);
@@ -143,7 +144,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 		}
 		delete wav;
 
-		runFlac(2, 16, 44100, "out.raw");
+		runFlac(2, 16, samplerate, "out.raw");
 	}
 
 #ifdef _MSC_VER

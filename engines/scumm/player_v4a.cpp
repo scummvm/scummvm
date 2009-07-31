@@ -49,7 +49,7 @@ bool Player_V4A::init() {
 	if (mdatExists && sampleExists) {
 		Audio::Tfmx *play =  new Audio::Tfmx(_mixer->getOutputRate(), true);
 		if (play->load(fileMdat, fileSample)) {
-			play->setSignalPtr(_signal);
+			play->setSignalPtr(_signal, ARRAYSIZE(_signal));
 			_tfmxPlay = play;
 		} else
 			delete play;

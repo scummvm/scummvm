@@ -45,7 +45,6 @@ public:
 	Tfmx(int rate, bool stereo);
 	virtual ~Tfmx();
 
-	void interrupt();
 	void stopSong(bool stopAudio = true);
 	void doSong(int songPos, bool stopAudio = false);
 	int doSfx(uint16 sfxIndex, bool unlockChannel = false);
@@ -53,17 +52,13 @@ public:
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
 	int getTicks() const { return _playerCtx.tickCount; } 
 	int getSongIndex() const { return _playerCtx.song; }
-	void setSignalPtr(uint16 *ptr) { _playerCtx.signal = ptr; }
-	void stopMacroEffect(int channel) {
-		assert(0 <= channel && channel < kNumVoices);
-		Common::StackLock lock(_mutex);
-		unlockMacroChannel(_channelCtx[channel]);
-		clearMacroProgramm(_channelCtx[channel]);
-		Paula::disableChannel(_channelCtx[channel].paulaChannel);
-	}
+	void setSignalPtr(uint16 *ptr, uint16 numSignals) { _playerCtx.signal = ptr; _playerCtx.numSignals = numSignals; }
+	void stopMacroEffect(int channel);
 
-// Note: everythings public so the debug-Routines work.
-// private:
+protected:
+	void interrupt();
+
+private:
 	enum { kPalDefaultCiaVal = 11822, kNtscDefaultCiaVal = 14320, kCiaBaseInterval = 0x1B51F8 };
 	enum { kNumVoices = 4, kNumChannels = 8, kNumSubsongs = 32, kMaxPatternOffsets = 128, kMaxMacroOffsets = 128 };
 
@@ -146,7 +141,7 @@ public:
 		uint16	macroReturnStep;
 		uint8	macroLoopCount;
 		bool	macroRun;
-		int8	macroSfxRun; 
+		int8	macroSfxRun;	//!< values are the folowing: -1 macro disabled, 0 macro init, 1 macro running
 
 		uint32	customMacro;
 		uint8	customMacroIndex;
@@ -225,10 +220,11 @@ public:
 		int		tickCount;
 
 		uint16	*signal;
+		uint16	numSignals;
 
 		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;
-private:
+
 	static void initMacroProgramm(ChannelContext &channel) {
 		channel.macroStep = 0;
 		channel.macroWait = 0;
@@ -281,6 +277,19 @@ private:
 		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
 		if (!channel.portaDelta)
 			channel.period = channel.refPeriod;
+	}
+
+	void initFadeCommand(const uint8 fadeTempo, const int8 endVol) {
+		_playerCtx.fadeCount = _playerCtx.fadeSkip = fadeTempo;
+		_playerCtx.fadeEndVolume = endVol;
+
+		if (fadeTempo) {
+			const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
+			_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
+		} else {
+			_playerCtx.volume = endVol;
+			_playerCtx.fadeDelta = 0;
+		}
 	}
 
 	void effects(ChannelContext &channel);

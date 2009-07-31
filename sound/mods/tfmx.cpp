@@ -30,9 +30,13 @@
 #include "common/debug.h"
 
 #include "sound/mods/tfmx.h"
-#ifdef _MSC_VER
-#include "tfmx/tfmxdebug.h"
-#endif
+
+// couple debug-functions
+namespace {
+	void displayPatternstep(const void *const vptr);
+	void displayMacroStep(const void *const vptr);
+}
+
 namespace Audio {
 
 const uint16 Tfmx::noteIntervalls[64] = {
@@ -99,10 +103,8 @@ void Tfmx::interrupt() {
 
 		// see if we have to run the macro-program
 		if (channel.macroRun) {
-			if (!channel.macroWait) {
+			if (!channel.macroWait)
 				macroRun(channel);
-				//assert( !channel.deferWait ); // we can remove this variable as it should be never true after macroRun?
-			}
 			else
 				--channel.macroWait;
 		}
@@ -454,7 +456,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			break;
 
 		case 0x20:	// Signal. Parameters: signalnumber/value
-			if (_playerCtx.signal)
+			if (_playerCtx.numSignals > macroPtr[1])
 				_playerCtx.signal[macroPtr[1]] = READ_BE_UINT16(&macroPtr[2]);
 			continue;
 
@@ -612,15 +614,7 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				continue;
 
 			case 10:	// fade master volume
-				_playerCtx.fadeCount = _playerCtx.fadeSkip = patternPtr[1];
-				_playerCtx.fadeEndVolume = (int8)patternPtr[3];
-				if (_playerCtx.fadeSkip) {
-					const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
-					_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
-				} else {
-					_playerCtx.volume = _playerCtx.fadeEndVolume;
-					_playerCtx.fadeDelta = 0;
-				}
+				initFadeCommand((uint8)patternPtr[1], (int8)patternPtr[1]);
 				++_trackCtx.posInd;
 				continue;
 
@@ -642,7 +636,7 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				continue;
 
 			case 13: 	// Cue
-				if (_playerCtx.signal)
+				if (_playerCtx.numSignals > patternPtr[1])
 					_playerCtx.signal[patternPtr[1]] = READ_BE_UINT16(&patternPtr[2]);
 				continue;
 
@@ -709,16 +703,8 @@ bool Tfmx::trackRun(const bool incStep) {
 				break;
 			}
 			case 4:	// Fade
-				_playerCtx.fadeCount = _playerCtx.fadeSkip = (uint8)READ_BE_UINT16(&trackData[2]);
-				_playerCtx.fadeEndVolume = (int8)READ_BE_UINT16(&trackData[3]);
-
-				if (_playerCtx.fadeSkip) {
-					const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
-					_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
-				} else {
-					_playerCtx.volume = _playerCtx.fadeEndVolume;
-					_playerCtx.fadeDelta = 0;
-				}
+				// load the LSB of the 16bit words
+				initFadeCommand(((uint8 *)&trackData[2])[1], ((int8 *)&trackData[3])[1]);
 				break;
 
 			case 3:	// Unknown, stops player aswell
@@ -919,6 +905,14 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 	startPaula();
 }
 
+void  Tfmx::stopMacroEffect(int channel) {
+	assert(0 <= channel && channel < kNumVoices);
+	Common::StackLock lock(_mutex);
+	unlockMacroChannel(_channelCtx[channel]);
+	clearMacroProgramm(_channelCtx[channel]);
+	Paula::disableChannel(_channelCtx[channel].paulaChannel);
+}
+
 void Tfmx::stopSong(bool stopAudio) {
 	Common::StackLock lock(_mutex);
 	_playerCtx.song = -1;
@@ -994,3 +988,94 @@ int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 }
 
 }	// End of namespace Audio
+
+// some debugging functions
+namespace {
+#ifndef NDEBUG
+void displayMacroStep(const void *const vptr) {
+	const char *tableMacros[] = {
+		"DMAoff+Resetxx/xx/xx flag/addset/vol   ",
+		"DMAon (start sample at selected begin) ",
+		"SetBegin    xxxxxx   sample-startadress",
+		"SetLen      ..xxxx   sample-length     ",
+		"Wait        ..xxxx   count (VBI''s)    ",
+		"Loop        xx/xxxx  count/step        ",
+		"Cont        xx/xxxx  macro-number/step ",
+		"-------------STOP----------------------",
+		"AddNote     xx/xxxx  note/detune       ",
+		"SetNote     xx/xxxx  note/detune       ",
+		"Reset   Vibrato-Portamento-Envelope    ",
+		"Portamento  xx/../xx count/speed       ",
+		"Vibrato     xx/../xx speed/intensity   ",
+		"AddVolume   ....xx   volume 00-3F      ",
+		"SetVolume   ....xx   volume 00-3F      ",
+		"Envelope    xx/xx/xx speed/count/endvol",
+		"Loop key up xx/xxxx  count/step        ",
+		"AddBegin    xx/xxxx  count/add to start",
+		"AddLen      ..xxxx   add to sample-len ",
+		"DMAoff stop sample but no clear        ",
+		"Wait key up ....xx   count (VBI''s)    ",
+		"Go submacro xx/xxxx  macro-number/step ",
+		"--------Return to old macro------------",
+		"Setperiod   ..xxxx   DMA period        ",
+		"Sampleloop  ..xxxx   relative adress   ",
+		"-------Set one shot sample-------------",
+		"Wait on DMA ..xxxx   count (Wavecycles)",
+		"Random play xx/xx/xx macro/speed/mode  ",
+		"Splitkey    xx/xxxx  key/macrostep     ",
+		"Splitvolume xx/xxxx  volume/macrostep  ",
+		"Addvol+note xx/fe/xx note/CONST./volume",
+		"SetPrevNote xx/xxxx  note/detune       ",
+		"Signal      xx/xxxx  signalnumber/value",
+		"Play macro  xx/.x/xx macro/chan/detune ",
+		"SID setbeg  xxxxxx   sample-startadress",
+		"SID setlen  xx/xxxx  buflen/sourcelen  ",
+		"SID op3 ofs xxxxxx   offset            ",
+		"SID op3 frq xx/xxxx  speed/amplitude   ",
+		"SID op2 ofs xxxxxx   offset            ",
+		"SID op2 frq xx/xxxx  speed/amplitude   ",
+		"SID op1     xx/xx/xx speed/amplitude/TC",
+		"SID stop    xx....   flag (1=clear all)"
+	};
+
+	const byte *const macroData = (const byte *const)vptr;
+	if (macroData[0] < ARRAYSIZE(tableMacros))
+		debug("%s %02X%02X%02X", tableMacros[macroData[0]], macroData[1], macroData[2], macroData[3]);
+	else
+		debug("Unkown Macro #%02X %02X%02X%02X", macroData[0], macroData[1], macroData[2], macroData[3]);
+}
+
+void displayPatternstep(const void *const vptr) {
+	const char *tablePatterns[] = {
+		"End --Next track  step--",
+		"Loop[count     / step.w]",
+		"Cont[patternno./ step.w]",
+		"Wait[count 00-FF--------",
+		"Stop--Stop this pattern-",
+		"Kup^-Set key up/channel]",
+		"Vibr[speed     / rate.b]",
+		"Enve[speed /endvolume.b]",
+		"GsPt[patternno./ step.w]",
+		"RoPt-Return old pattern-",
+		"Fade[speed /endvolume.b]",
+		"PPat[patt./track+transp]",
+		"Lock---------ch./time.b]",
+		"Cue [number.b/  value.w]",
+		"Stop-Stop custompattern-",
+		"NOP!-no operation-------"
+	};
+
+	const byte *const patData = (const byte *const)vptr;
+	const byte command = patData[0];
+	if (command < 0xF0) { // Playnote
+		const byte flags = command >> 6; // 0-1 means note+detune, 2 means wait, 3 means portamento?
+		char *flagsSt[] = { "Note ", "Note ", "Wait ", "Porta" };
+		debug("%s %02X%02X%02X%02X", flagsSt[flags], patData[0], patData[1], patData[2], patData[3]);
+	} else
+		debug("%s %02X%02X%02X",tablePatterns[command & 0xF], patData[1], patData[2], patData[3]);
+}
+#else
+void displayMacroStep(const void *const vptr, int chan, int index) {}
+void displayPatternstep(const void *const vptr) {}
+#endif
+}	// End of namespace
