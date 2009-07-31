@@ -1625,29 +1625,28 @@ bool bFastMode = false;
 
 bool manageEvents() {
 	Common::Event event;
-	bool result = false;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event) && !result) {
-		result = true;
+	while (eventMan->pollEvent(event)) {
+		bool abortFlag = true;
 
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			currentMouseButton |= MB_LEFT;
+			currentMouseButton |= CRS_MB_LEFT;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			currentMouseButton &= ~MB_LEFT;
+			currentMouseButton &= ~CRS_MB_LEFT;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			currentMouseButton |= MB_RIGHT;
+			currentMouseButton |= CRS_MB_RIGHT;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			currentMouseButton &= ~MB_RIGHT;
+			currentMouseButton &= ~CRS_MB_RIGHT;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
 			currentMouseY = event.mouse.y;
-			result = false;
+			abortFlag = false;
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
@@ -1656,7 +1655,7 @@ bool manageEvents() {
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				currentMouseButton &= ~MB_MIDDLE;
+				currentMouseButton &= ~CRS_MB_MIDDLE;
 				break;
 			default:
 				break;
@@ -1665,7 +1664,7 @@ bool manageEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				currentMouseButton |= MB_MIDDLE;
+				currentMouseButton |= CRS_MB_MIDDLE;
 				break;
 			default:
 				keyboardCode = event.kbd.keycode;
@@ -1686,9 +1685,12 @@ bool manageEvents() {
 		default:
 			break;
 		}
+
+		if (abortFlag)
+			return true;
 	}
 
-	return result;
+	return false;
 }
 
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
