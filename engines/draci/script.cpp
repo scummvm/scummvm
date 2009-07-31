@@ -66,7 +66,7 @@ void Script::setupCommandList() {
 		{ 12, 2, "BlackPalette", 		0, { 0 }, NULL },
 		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, NULL },
 		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, NULL },
-		{ 14, 1, "NewRoom", 			2, { 3, 1 }, NULL },
+		{ 14, 1, "NewRoom", 			2, { 3, 1 }, &Script::newRoom },
 		{ 15, 1, "ExecInit", 			1, { 3 }, &Script::execInit },
 		{ 15, 2, "ExecLook", 			1, { 3 }, &Script::execLook },
 		{ 15, 3, "ExecUse", 			1, { 3 }, &Script::execUse },
@@ -516,6 +516,23 @@ void Script::walkOn(Common::Queue<int> &params) {
 
 	_vm->_game->walkHero(x, y);
 }
+
+void Script::newRoom(Common::Queue<int> &params) {
+
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int room = params.pop() - 1;
+	int gate = params.pop() - 1;
+
+	_vm->_game->setRoomNum(room);
+	_vm->_game->setGateNum(gate);
+
+	// HACK: Won't be needed once I've implemented the loop properly
+	_vm->_game->_roomChange = true;
+}
+
 /**
  * @brief Evaluates mathematical expressions
  * @param reader Stream reader set to the beginning of the expression
@@ -679,6 +696,8 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) {
 
 int Script::run(GPL2Program program, uint16 offset) {
 
+	int oldJump = _jump;
+
 	// Mark the last animation index before we do anything so a Release command
 	// doesn't unload too many animations if we forget to use a Mark command first
 	_vm->_game->setMarkedAnimationIndex(_vm->_anims->getLastIndex());
@@ -748,6 +767,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 		else {
 			debugC(1, kDraciBytecodeDebugLevel, "Unknown opcode %d, %d",
 				num, subnum);
+			abort();
 		}
 
 		GPLHandler handler = cmd->_handler;
@@ -758,6 +778,8 @@ int Script::run(GPL2Program program, uint16 offset) {
 		}
 
 	} while (cmd->_name != "gplend" && cmd->_name != "exit");
+
+	_jump = oldJump;
 
 	return 0;
 }

@@ -153,13 +153,31 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 void Game::start() {
 	while (!shouldQuit()) {
-		Game::loop();
+
+		if (_newRoom != _currentRoom._roomNum) {
+
+			changeRoom(_newRoom);
+			
+			_currentRoom._roomNum = _newRoom;
+			_currentGate = _newGate;
+
+			// HACK: Won't be needed once I've implemented the loop properly
+			_roomChange = false;
+
+			runGateProgram(_newGate);
+ 		}
+
+		loop();
 	}
 }
 
 void Game::init() {
 	_shouldQuit = false;
 	_shouldExitLoop = false;
+
+	// HACK: Won't be needed once I've implemented the loop properly
+	_roomChange = false;
+
 	_loopStatus = kStatusOrdinary;
 	_objUnderCursor = kOverlayImage;
 
@@ -177,15 +195,20 @@ void Game::init() {
 	_currentRoom._roomNum = _info._startRoom;
 	_currentGate = 0;
 
-	_variables[0] = _currentRoom._roomNum;
-	_variables[1] = _currentGate;
+	_newRoom = _currentRoom._roomNum;
+	_newGate = _currentGate;
 
-	changeRoom(_info._startRoom);
+	_variables[0] = _currentGate;
+	_variables[1] = _currentRoom._roomNum;
+
+	changeRoom(_currentRoom._roomNum);
+	runGateProgram(_currentGate);
 }
 
 void Game::loop() {
-	
+
 	do {
+
 		_vm->handleEvents();
 
 		if (_currentRoom._mouseOn) {
@@ -234,6 +257,9 @@ void Game::loop() {
 		_vm->_anims->drawScene(_vm->_screen->getSurface());
 		_vm->_screen->copyToScreen();
 		_vm->_system->delayMillis(20);
+
+		// HACK: Won't be needed once the game loop is implemented properly
+		_shouldExitLoop = _shouldExitLoop || _roomChange;
 
 	} while (!shouldExitLoop());
 }
@@ -352,10 +378,11 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "Gates: %d", _currentRoom._numGates);
 
 	// Read in the gates' numbers
-	Common::Array<int> gates;
+
+	_currentRoom._gates.clear();
 
 	for (uint i = 0; i < _currentRoom._numGates; ++i) {
-		gates.push_back(roomReader.readSint16LE() - 1);
+		_currentRoom._gates.push_back(roomReader.readSint16LE());
 	}
 
 	// Load the room's objects
@@ -605,12 +632,39 @@ void Game::changeRoom(uint roomNum) {
 	loadOverlays();
 }
 
+void Game::runGateProgram(int gate) {
+
+	// Mark last animation
+	int lastAnimIndex = _vm->_anims->getLastIndex();
+
+	// Run gate program
+	_vm->_script->run(_currentRoom._program, _currentRoom._gates[gate]);
+	
+	// Delete all animations loaded after the marked one 
+	// (from objects and from the AnimationManager)
+	for (uint i = 0; i < getNumObjects(); ++i) {
+		GameObject *obj = &_objects[i];
+
+		for (uint j = 0; j < obj->_anims.size(); ++j) {
+			Animation *anim;
+
+			anim = _vm->_anims->getAnimation(obj->_anims[j]);
+			if (anim != NULL && anim->getIndex() > lastAnimIndex)
+				obj->_anims.remove_at(j);
+		}
+	}
+
+	_vm->_anims->deleteAfterIndex(lastAnimIndex);
+
+	setExitLoop(false);
+}
+
 int Game::getRoomNum() {
 	return _currentRoom._roomNum;
 }
 
 void Game::setRoomNum(int room) {
-	_currentRoom._roomNum = room;
+	_newRoom = room;
 }
 
 int Game::getGateNum() {
@@ -618,7 +672,7 @@ int Game::getGateNum() {
 }
 
 void Game::setGateNum(int gate) {
-	_currentGate = gate;
+	_newGate = gate;
 }
 
 void Game::setLoopStatus(LoopStatus status) {

@@ -131,6 +131,7 @@ struct Room {
 	double _pers0, _persStep;
 	byte _escRoom;
 	byte _numGates;
+	Common::Array<int> _gates;
 	GPL2Program _program;
 };
 
@@ -223,6 +224,10 @@ public:
 	bool shouldExitLoop() { return _shouldExitLoop; }
 	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
 
+	void runGateProgram(int gate);
+
+	bool _roomChange;
+
 private:
 	DraciEngine *_vm;
 
@@ -236,6 +241,8 @@ private:
 
 	Room _currentRoom;
 	int _currentGate;	
+	int _newRoom;
+	int _newGate;
 
 	LoopStatus _loopStatus;
 
