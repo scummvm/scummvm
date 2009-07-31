@@ -1,5 +1,5 @@
  "<?xml version = '1.0'?>"
-"<layout_info resolution='-320xY,-256x240'> "
+"<layout_info resolution='-320xY,-256x240,-Xx272'> "
 "<globals> "
 "<def var='Line.Height' value='16' /> "
 "<def var='Font.Height' value='16' /> "
