@@ -19,7 +19,6 @@ echo "Please put your save games in this dir" >> "scummvm-gp2x-`date '+%Y-%m-%d'
 
 cp ./scummvm.gpe ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./scummvm.png ./scummvm-gp2x-`date '+%Y-%m-%d'`/
-cp ./README-GP2X.html ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./README-GP2X ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ./mmuhack.o ./scummvm-gp2x-`date '+%Y-%m-%d'`/
 cp ../../../../scummvm.gp2x ./scummvm-gp2x-`date '+%Y-%m-%d'`/
