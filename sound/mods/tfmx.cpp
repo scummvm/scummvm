@@ -212,18 +212,6 @@ void Tfmx::effects(ChannelContext &channel) {
 	Paula::setChannelVolume(channel.paulaChannel, finVol);
 }
 
-static void warnMacroUnimplemented(const byte *macroPtr, int level) {
-	if (level > 0)
-		return;
-	if (level == 0)
-		debug("Warning - Macro not supported:");
-	else
-		debug("Warning - Macro not completely supported:");
-#ifdef _MSC_VER
-	displayMacroStep(macroPtr);
-#endif
-}
-
 void Tfmx::macroRun(ChannelContext &channel) {
 	bool deferWait = false;
 	for (;;) {
@@ -263,8 +251,6 @@ void Tfmx::macroRun(ChannelContext &channel) {
 
 		case 0x01:	// DMA On
 			// TODO: Parameter macroPtr[1] - en-/disable effects
-			if (macroPtr[1])
-				debug("Tfmx: DMA On %i", (int8)macroPtr[1]);
 			channel.dmaIntCount = 0;
 			if (deferWait) {
 				// TODO
@@ -372,7 +358,6 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.addBeginDelta = (int16)READ_BE_UINT16(&macroPtr[2]);
 			channel.sampleStart += channel.addBeginDelta;
 			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
-			warnMacroUnimplemented(macroPtr, 1);
 			continue;
 
 		case 0x12:	// AddLen. Parameters: added Length(W)
@@ -437,9 +422,9 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			Paula::setChannelDmaCount(channel.paulaChannel);
 			break;
 
-		case 0x1B:	// Random play. Parameters: macro/speed/mode
+/*		case 0x1B:	// Random play. Parameters: macro/speed/mode
 			warnMacroUnimplemented(macroPtr, 0);
-			continue;
+			continue;*/
 
 		case 0x1C:	// Branch on Note. Parameters: note/macrostep(W)
 			if (channel.note > macroPtr[1])
@@ -451,9 +436,9 @@ void Tfmx::macroRun(ChannelContext &channel) {
 				channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 			continue;
 
-		case 0x1E:	// Addvol+note. Parameters: note/CONST./volume
+/*		case 0x1E:	// Addvol+note. Parameters: note/CONST./volume
 			warnMacroUnimplemented(macroPtr, 0);
-			continue;
+			continue;*/
 
 		case 0x1F:	// AddPrevNote. Parameters: Note, Finetune(W)
 			setNoteMacro(channel, channel.prevNote + macroPtr[1], READ_BE_UINT16(&macroPtr[2]));
@@ -467,28 +452,12 @@ void Tfmx::macroRun(ChannelContext &channel) {
 		case 0x21:	// Play macro. Parameters: macro/chan/detune
 			noteCommand(channel.note, (channel.relVol << 4) | macroPtr[1], macroPtr[2], macroPtr[3]);
 			continue;
-	#if defined(TFMX_NOT_IMPLEMENTED)
-		// used by Gem`X according to the docs
-		case 0x22:	// SID setbeg. Parameters: sample-startadress
-			return true;
-		case 0x23:	// SID setlen. Parameters: buflen/sourcelen 
-			return true;
-		case 0x24:	// SID op3 ofs. Parameters: offset
-			return true;
-		case 0x25:	// SID op3 frq. Parameters: speed/amplitude
-			return true;
-		case 0x26:	// SID op2 ofs. Parameters: offset
-			return true;
-		case 0x27:	// SID op2 frq. Parameters: speed/amplitude
-			return true;
-		case 0x28:	// ID op1. Parameters: speed/amplitude/TC
-			return true;
-		case 0x29:	// SID stop. Parameters: flag (1=clear all)
-			return true;
-		// 30-34 used by Carribean Disaster
-	#endif
+
+		// 0x22 - 0x29 are used by Gem`X
+		// 0x30 - 0x34 are used by Carribean Disaster
+
 		default:
-			warnMacroUnimplemented(macroPtr, 0);
+			debug(3, "TFMX: Macro %02X not supported", macroPtr[0]);
 		}
 		if (!deferWait)
 			return;
@@ -528,18 +497,6 @@ startPatterns:
 	if (_playerCtx.stopWithLastPattern && !runningPatterns) {
 		stopPaula();
 	}
-}
-
-static void warnPatternUnimplemented(const byte *patternPtr, int level) {
-	if (level > 0)
-		return;
-	if (level == 0)
-		debug("Warning - Pattern not supported:");
-	else
-		debug("Warning - Pattern not completely supported:");
-#ifdef _MSC_VER
-	displayPatternstep(patternPtr);
-#endif
 }
 
 bool Tfmx::patternRun(PatternContext &pattern) {
@@ -590,8 +547,8 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				return false;
 
 			case 14: 	// Stop custompattern
-				// TODO ?
-				warnPatternUnimplemented(patternPtr, 1);
+				// TODO apparently toggles on/off pattern channel 7
+				debug(3, "Tfmx: Encountered 'Stop custompattern' command");
 				// FT
 			case 4: 	// Stop this pattern
 				pattern.command = 0xFF;
@@ -610,11 +567,16 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				continue;
 
 			case 8: 	// Subroutine
-				warnPatternUnimplemented(patternPtr, 0);
+				pattern.savedOffset = pattern.offset;
+				pattern.savedStep = pattern.step;
+
+				pattern.offset = _patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
+				pattern.step = READ_BE_UINT16(&patternPtr[2]);
 				continue;
 
 			case 9: 	// Return from Subroutine
-				warnPatternUnimplemented(patternPtr, 0);
+				pattern.offset = pattern.savedOffset;
+				pattern.step = pattern.savedStep;
 				continue;
 
 			case 10:	// fade master volume
@@ -713,7 +675,7 @@ bool Tfmx::trackRun(const bool incStep) {
 
 			case 3:	// Unknown, stops player aswell
 			default:
-				debug("Unknown Command: %02X", READ_BE_UINT16(&trackData[1]));
+				debug(3, "Tfmx: Unknown Trackstep Command: %02X", READ_BE_UINT16(&trackData[1]));
 				// MI-Player handles this by stopping the player, we just continue
 			}
 		}
