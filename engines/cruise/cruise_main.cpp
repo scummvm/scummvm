@@ -1625,11 +1625,10 @@ bool bFastMode = false;
 
 bool manageEvents() {
 	Common::Event event;
-	bool result = false;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event) && !result) {
-		result = true;
+	while (eventMan->pollEvent(event)) {
+		bool abortFlag = true;
 
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
@@ -1647,7 +1646,7 @@ bool manageEvents() {
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
 			currentMouseY = event.mouse.y;
-			result = false;
+			abortFlag = false;
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
@@ -1686,9 +1685,12 @@ bool manageEvents() {
 		default:
 			break;
 		}
+
+		if (abortFlag)
+			return true;
 	}
 
-	return result;
+	return false;
 }
 
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
