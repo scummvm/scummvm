@@ -70,16 +70,20 @@ Tfmx::~Tfmx() {
 void Tfmx::interrupt() {
 	assert(!_end);
 	++_playerCtx.tickCount;
+
 	for (int i = 0; i < kNumVoices; ++i) {
-		ChannelContext &channel = _channelCtx[i];
-		if (channel.dmaIntCount) {
+		if (_channelCtx[i].dmaIntCount) {
 			// wait for DMA Interupts to happen
-			int doneDma = getChannelDmaCount(channel.paulaChannel);
-			if (doneDma >= channel.dmaIntCount) {
-				channel.dmaIntCount = 0;
-				channel.macroRun = true;
+			int doneDma = getChannelDmaCount(i);
+			if (doneDma >= _channelCtx[i].dmaIntCount) {
+				_channelCtx[i].dmaIntCount = 0;
+				_channelCtx[i].macroRun = true;
 			}
 		}
+	}
+
+	for (int i = 0; i < kNumVoices; ++i) {
+		ChannelContext &channel = _channelCtx[i];
 
 		if (channel.sfxLockTime >= 0)
 			--channel.sfxLockTime;
