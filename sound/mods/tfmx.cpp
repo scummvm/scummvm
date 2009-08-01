@@ -213,7 +213,7 @@ void Tfmx::effects(ChannelContext &channel) {
 }
 
 void Tfmx::macroRun(ChannelContext &channel) {
-	bool deferWait = false;
+	bool deferWait = channel.deferWait;
 	for (;;) {
 		const byte *const macroPtr = (byte *)(_resource.getMacroPtr(channel.macroOffset) + channel.macroStep);
 		++channel.macroStep;
@@ -276,7 +276,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 		case 0x04:	// Wait. Parameters: Ticks to wait(W).
 			// TODO: some unkown Parameter? (macroPtr[1] & 1)
 			channel.macroWait = READ_BE_UINT16(&macroPtr[2]);
-			return;
+			break;
 
 		case 0x10:	// Loop Key Up. Parameters: Loopcount, MacroStep(W)
 			if (channel.keyUp)
@@ -401,7 +401,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			// TODO: MI loads 24 bit, but thats useless?
 			const uint16 temp = /* ((int8)macroPtr[1] << 16) | */ READ_BE_UINT16(&macroPtr[2]);
 			if (macroPtr[1] || (temp & 1))
-				warning("Tfmx: Problematic value for sampleloop: %i", (macroPtr[1] << 16) | temp);
+				warning("Tfmx: Problematic value for sampleloop: %06X", (macroPtr[1] << 16) | temp);
 			channel.sampleStart += temp & 0xFFFE;
 			channel.sampleLen -= (temp / 2) /* & 0x7FFF */;
 			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
@@ -871,7 +871,7 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 	startPaula();
 }
 
-void  Tfmx::stopMacroEffect(int channel) {
+void Tfmx::stopMacroEffect(int channel) {
 	assert(0 <= channel && channel < kNumVoices);
 	Common::StackLock lock(_mutex);
 	unlockMacroChannel(_channelCtx[channel]);

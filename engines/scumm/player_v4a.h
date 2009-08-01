@@ -53,21 +53,23 @@ public:
 	virtual int  getSoundStatus(int sound) const;
 
 private:
-	ScummEngine *_vm;
+	ScummEngine *const _vm;
+	Audio::Mixer *const _mixer;
 
-	Audio::Tfmx *_tfmxPlay;
+	Audio::Tfmx *_tfmxMusic;
 	Audio::Tfmx *_tfmxSfx;
-	Audio::Mixer *_mixer;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandle;
 
 	int _musicId;
-	uint16 _signal[4];
-	
+	uint16 _signal;
+
 	struct SfxChan {
 		int id;
-		byte type;
+//		byte type;
 	} _sfxSlots[4];
+
+	int8 _initState; // < 0: failed, 0: uninitialised, > 0: initialised  
 
 	int getSfxChan(int id) const {
 		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i)
@@ -78,13 +80,13 @@ private:
 
 	void setSfxSlot(int channel, int id, byte type = 0) {
 		_sfxSlots[channel].id = id;
-		_sfxSlots[channel].type = type;
+//		_sfxSlots[channel].type = type;
 	}
 
 	void clearSfxSlots() {
 		for (int i = 0; i < ARRAYSIZE(_sfxSlots); ++i){
 			_sfxSlots[i].id = 0;
-			_sfxSlots[i].type = 0;
+//			_sfxSlots[i].type = 0;
 		}
 	}
 

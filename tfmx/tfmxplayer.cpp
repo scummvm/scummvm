@@ -72,7 +72,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 			if (i + 1 < argc) {
 				param = atoi(argv[++i]);
 				debug( "play Macro %02X", param);
-				dumpMacro(*player, param);
+				//dumpMacro(*player, param);
 				player->doMacro(0x1B, param);
 				hasCmd = true;
 			}
@@ -80,7 +80,7 @@ void modcmdmain(const int argc, const char *const argv[]) {
 			if (i + 1 < argc) {
 				param = atoi(argv[++i]);
 				debug( "play Song %02X", param);
-				dumpTrackstepsBySong(*player, param);
+				//dumpTrackstepsBySong(*player, param);
 				player->doSong(param);
 				hasCmd = true;
 			}
@@ -96,13 +96,13 @@ void modcmdmain(const int argc, const char *const argv[]) {
 		} else  if (!strcmp("-flac", argv[i])) {
 			playflag = 2;
 		} else  if (!strcmp("-hack-patternstop", argv[i]))
-			player->_playerCtx.stopWithLastPattern = true;
+			// player->_playerCtx.stopWithLastPattern = true;
 		++i;
 	}
 
 	if (!hasCmd) {
 		player->doSong(4);
-		dumpTrackstepsBySong(*player, 4);
+		//dumpTrackstepsBySong(*player, 4);
 	}
 
 

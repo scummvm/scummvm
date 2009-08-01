@@ -232,6 +232,7 @@ private:
 		channel.macroSfxRun = 0;
 		channel.macroLoopCount = 0xFF;
 		channel.dmaIntCount = 0;
+		channel.deferWait = false;
 	}
 
 	static void clearEffects(ChannelContext &channel) {

@@ -175,7 +175,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="0"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;NOT_TFMX_CMDLINE_TOOL;MXTX_CMDLINE_TOOL"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;TFMX_CMDLINE_TOOL;NMXTX_CMDLINE_TOOL"
 				UsePrecompiledHeader="0"
 				SuppressStartupBanner="false"
 				Detect64BitPortabilityProblems="false"
@@ -2018,6 +2018,14 @@
 						Name="VCCLCompilerTool"
 					/>
 				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug_Command|Win32"
+					ExcludedFromBuild="true"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+					/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath="..\..\tfmx\tfmxdebug.h"
@@ -2028,7 +2036,6 @@
 				>
 				<FileConfiguration
 					Name="Debug|Win32"
-					ExcludedFromBuild="true"
 					>
 					<Tool
 						Name="VCCLCompilerTool"
