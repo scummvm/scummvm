@@ -33,14 +33,12 @@
 #include "asylum/graphics.h"
 #include "asylum/text.h"
 #include "asylum/sceneres.h"
-#include "asylum/blowuppuzzle.h"
 
 namespace Asylum {
 
 class Screen;
 class Sound;
 class Text;
-class BlowUpPuzzle;
 class SceneResource;
 struct ActionDefinitions;
 struct PolyDefinitions;
@@ -86,7 +84,6 @@ private:
 
 	Screen		  *_screen;
 	Sound		  *_sound;
-    BlowUpPuzzle  *_blowUp;
 	Common::Event *_ev;
 
 	Text			*_text;
