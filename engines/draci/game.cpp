@@ -184,6 +184,10 @@ void Game::start() {
 			runGateProgram(_newGate);
  		}
 
+		// Mimic the original engine by setting the loop status to Ordinary before
+		// entering the main loop
+		setLoopStatus(kStatusOrdinary);
+
 		loop();
 	}
 }
@@ -433,13 +437,6 @@ void Game::loadRoom(int roomNum) {
 	debugC(4, kDraciLogicDebugLevel, "Running room init program...");
 	_vm->_script->run(_currentRoom._program, _currentRoom._init);
 
-	// HACK: Gates' scripts shouldn't be run unconditionally
-	// This is for testing
-	//for (uint i = 0; i < _currentRoom._numGates; ++i) {
-	//	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", i);
-	//	_vm->_script->run(_currentRoom._program, gates[i]);
-	//}
-
 	// Set room palette
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
@@ -650,6 +647,11 @@ void Game::changeRoom(uint roomNum) {
 }
 
 void Game::runGateProgram(int gate) {
+
+	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", gate);
+
+	// Set the appropriate loop statu before executing the gate program
+	setLoopStatus(kStatusGate);
 
 	// Mark last animation
 	int lastAnimIndex = _vm->_anims->getLastIndex();
