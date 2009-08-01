@@ -115,12 +115,17 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
-void BlowUpPuzzleVCR::update() {
-    //updateCursor();
+int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
+    return  x >= BlowUpPuzzleVCRPolies[polyIdx].left && x <= BlowUpPuzzleVCRPolies[polyIdx].right && 
+            y >= BlowUpPuzzleVCRPolies[polyIdx].top  && y <= BlowUpPuzzleVCRPolies[polyIdx].bottom;
+}
 
+void BlowUpPuzzleVCR::update() {
     if (_leftClick) {
 		_leftClick = false;
     }
+
+    isCursorInPolyRegion();
 
     // VCR Jacks State
     // 0 -> on table
@@ -229,6 +234,29 @@ void BlowUpPuzzleVCR::updateYellowJack() {
         GraphicResource *jack = _scene->getGraphicResource(grResId);
         GraphicFrame *fra = jack->getFrame(0);
         _screen->copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, x, y, fra->surface.w, fra->surface.h);
+    }
+}
+
+
+void BlowUpPuzzleVCR::isCursorInPolyRegion() {
+    
+    // TODO: check if jack states are shadow, if not than do this
+    if(1) {
+        if(inPolyRegion(_mouseX, _mouseY, 0) ||
+           inPolyRegion(_mouseX, _mouseY, 1) ||
+           inPolyRegion(_mouseX, _mouseY, 2) ||
+           inPolyRegion(_mouseX, _mouseY, 3) ||
+           inPolyRegion(_mouseX, _mouseY, 7) ||
+           inPolyRegion(_mouseX, _mouseY, 8) ||
+           inPolyRegion(_mouseX, _mouseY, 9)) {
+            updateCursor();
+        } else {
+            if(_curMouseCursor != 0) { // reset cursor
+                _curMouseCursor = 0;
+                _cursorStep = 1;
+                updateCursor();
+            }
+        }
     }
 }
 
