@@ -70,6 +70,8 @@ public:
 	BArchive *_overlaysArchive;
 	BArchive *_animationsArchive;
 	BArchive *_walkingMapsArchive;
+	BArchive *_itemsArchive;
+	BArchive *_itemImagesArchive;
 	BArchive *_initArchive;
 
 	bool _showWalkingMap;

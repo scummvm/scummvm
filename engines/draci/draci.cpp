@@ -53,6 +53,8 @@ const Common::String roomsPath("MIST.DFW");
 const Common::String animationsPath("ANIM.DFW");
 const Common::String iconsPath("HRA.DFW");
 const Common::String walkingMapsPath("MAPY.DFW");
+const Common::String itemsPath("IKONY.DFW");
+const Common::String itemImagesPath("OBR_IK.DFW");
 const Common::String initPath("INIT.DFW");
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
@@ -91,6 +93,8 @@ int DraciEngine::init() {
 	_animationsArchive = new BArchive(animationsPath);
 	_iconsArchive = new BArchive(iconsPath);
 	_walkingMapsArchive = new BArchive(walkingMapsPath);
+	_itemsArchive = new BArchive(itemsPath);
+	_itemImagesArchive = new BArchive(itemImagesPath);
 
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);
@@ -235,6 +239,8 @@ DraciEngine::~DraciEngine() {
 	delete _animationsArchive;
 	delete _iconsArchive;
 	delete _walkingMapsArchive;
+	delete _itemsArchive;
+	delete _itemImagesArchive;
 	
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
