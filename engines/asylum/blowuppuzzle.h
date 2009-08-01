@@ -77,7 +77,7 @@ protected:
 
 
 
-/*const Common::Rect BlowUpPuzzleVCRPolies[10] = {
+const Common::Rect BlowUpPuzzleVCRPolies[10] = {
     Common::Rect(0x0F7, 0x157, 0x13A, 0x183),
     Common::Rect(0x14B, 0x15C, 0x17B, 0x18B),
     Common::Rect(0x18C, 0x161, 0x1D2, 0x18F),
@@ -85,10 +85,10 @@ protected:
     Common::Rect(0x154, 0x196, 0x173, 0x1AF),
     Common::Rect(0x19A, 0x19B, 0x1B9, 0x1B3),
     Common::Rect(0x1E3, 0x1A0, 0x202, 0x1BC),
-    Common::Rect(0x0,   0x19B, 0x3C,  1E0),
+    Common::Rect(0x0,   0x19B, 0x3C,  0x1E0),
     Common::Rect(0x4C,  0x1AC, 0x0A0, 0x1E0),
     Common::Rect(0x0BB, 0x1B7, 0x0F0, 0x1E0)
-};*/
+};
 
 class BlowUpPuzzleVCR : public BlowUpPuzzle {
 public:
@@ -123,11 +123,15 @@ private:
     GraphicResource *_redJack;
     GraphicResource *_yellowJack;*/
 
+    int inPolyRegion(int x, int y, int polyIdx);
+
     void update();
 
     void updateBlackJack();
     void updateRedJack();
     void updateYellowJack();
+
+    void isCursorInPolyRegion();
 }; // end of class BlowUpPuzzleVCR
 
 
