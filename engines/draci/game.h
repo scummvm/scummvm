@@ -216,7 +216,9 @@ public:
 	void setMarkedAnimationIndex(int index);
 
 	void setLoopStatus(LoopStatus status);
+	void setLoopSubstatus(LoopStatus status);
 	LoopStatus getLoopStatus();
+	LoopStatus getLoopSubstatus();
 
 	bool shouldQuit() { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
@@ -245,6 +247,7 @@ private:
 	int _newGate;
 
 	LoopStatus _loopStatus;
+	LoopStatus _loopSubstatus;
 
 	bool _shouldQuit;
 	bool _shouldExitLoop;

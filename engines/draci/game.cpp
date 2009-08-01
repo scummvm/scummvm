@@ -154,16 +154,22 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 void Game::start() {
 	while (!shouldQuit()) {
 
+		// If the scheduled room differs from the current one, do a room change
 		if (_newRoom != _currentRoom._roomNum) {
 
+			setLoopSubstatus(kStatusOrdinary);
+	
+			// Do the actual change
 			changeRoom(_newRoom);
 			
+			// Set the current room / gate to the new value
 			_currentRoom._roomNum = _newRoom;
 			_currentGate = _newGate;
 
 			// HACK: Won't be needed once I've implemented the loop properly
 			_roomChange = false;
 
+			// Run the program for the gate the dragon came through
 			runGateProgram(_newGate);
  		}
 
@@ -679,8 +685,16 @@ void Game::setLoopStatus(LoopStatus status) {
 	_loopStatus = status;
 }
 
+void Game::setLoopSubstatus(LoopStatus status) {
+	_loopSubstatus = status;
+}
+
 LoopStatus Game::getLoopStatus() {
 	return _loopStatus;
+}
+
+LoopStatus Game::getLoopSubstatus() {
+	return _loopSubstatus;
 }
 
 int Game::getVariable(int numVar) {
