@@ -157,6 +157,17 @@ void Game::start() {
 		// If the scheduled room differs from the current one, do a room change
 		if (_newRoom != _currentRoom._roomNum) {
 
+			// Set the first two variables to the new room / gate
+			_variables[0] = _newGate;
+			_variables[1] = _newRoom;
+
+			// If the new room is the map room, set the appropriate coordinates
+			// for the dragon in the persons array
+			if (_newRoom == _info._mapRoom) {
+				_persons[kDragonObject]._x = 160;
+				_persons[kDragonObject]._y = 0;
+			}
+
 			setLoopSubstatus(kStatusOrdinary);
 	
 			// Do the actual change
