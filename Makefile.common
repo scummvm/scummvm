@@ -25,7 +25,6 @@ MODULES += \
 	engines \
 	gui \
 	graphics \
-	tfmx \
 	sound \
 	backends \
 	common \
