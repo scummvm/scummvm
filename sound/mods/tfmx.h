@@ -28,16 +28,6 @@
 
 #include "sound/mods/paula.h"
 
-namespace {
-#ifndef NDEBUG
-inline void boundaryCheck(const void *bufStart, size_t bufLen, const void *address, size_t accessLen = 1) {
-	assert(bufStart <= address && (const byte *)address + accessLen <= (const byte *)bufStart + bufLen);
-}
-#else
-inline void boundaryCheck(const void *, size_t, void *, size_t = 1) {}
-#endif
-}
-
 namespace Audio {
 
 class Tfmx : public Paula {
@@ -49,11 +39,17 @@ public:
 	void doSong(int songPos, bool stopAudio = false);
 	int doSfx(uint16 sfxIndex, bool unlockChannel = false);
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
-	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData);
 	int getTicks() const { return _playerCtx.tickCount; } 
 	int getSongIndex() const { return _playerCtx.song; }
 	void setSignalPtr(uint16 *ptr, uint16 numSignals) { _playerCtx.signal = ptr; _playerCtx.numSignals = numSignals; }
 	void stopMacroEffect(int channel);
+
+	struct MdatResource;
+	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData, bool autoDelete = true);
+	void setModuleData(Tfmx &otherPlayer);
+	void setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true);
+	static bool loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musicData);
+	static bool loadSampleFile(int8 *&sampleData, uint32 &sampleLen, Common::SeekableReadStream &sampleStream);
 
 protected:
 	void interrupt();
@@ -64,71 +60,46 @@ private:
 
 	static const uint16 noteIntervalls[64];
 
-	struct Resource {
+public: // TODO change this to private somehow=
+	struct MdatResource {
+		const byte *mdatAlloc;	//!< allocated Block of Memory
+		const byte *mdatData;  	//!< Start of mdat-File, might point before mdatAlloc to correct Offset
+		uint32 mdatLen;
+
+		uint16 headerFlags;
+//		uint32 headerUnknown;
+//		char textField[6 * 40];
+
+		struct Subsong {
+			uint16 songstart;	//!< Index in Trackstep-Table
+			uint16 songend;		//!< Last index in Trackstep-Table
+			uint16 tempo;
+		} subsong[kNumSubsongs];
+
 		uint32 trackstepOffset;	//!< Offset in mdat
 		uint32 sfxTableOffset;
 
-		byte *mdatData;  	//!< Currently the whole mdat-File
-		byte *sampleData;	//!< Currently the whole sample-File
-		
-		uint32 mdatLen;  
+		uint32 patternOffset[kMaxPatternOffsets];	//!< Offset in mdat
+		uint32 macroOffset[kMaxMacroOffsets];	//!< Offset in mdat
+
+		void boundaryCheck(const void *address, size_t accessLen = 1) const {
+			assert(mdatAlloc <= address && (const byte *)address + accessLen <= (const byte *)mdatData + mdatLen);
+		}
+	};
+
+private:
+	const MdatResource *_resource;
+
+	struct SampleResource {
+		const int8 *sampleData;	//!< The whole sample-File
 		uint32 sampleLen;
 
-		byte header[10];
-		uint16 headerFlags;
-		uint32 headerUnknown;
-		char textField[6 * 40];
-
-		const byte *getSfxPtr(uint16 index = 0) {
-			byte *sfxPtr = (byte *)(mdatData + sfxTableOffset + index * 8);
-
-			boundaryCheck(mdatData, mdatLen, sfxPtr, 8);
-			return sfxPtr;
+		void boundaryCheck(const void *address, size_t accessLen = 2) const {
+			assert(sampleData <= address && (const byte *)address + accessLen <= (const byte *)sampleData + sampleLen);
 		}
+	} _resourceSample;
 
-		const uint16 *getTrackPtr(uint16 trackstep = 0) {
-			uint16 *trackData = (uint16 *)(mdatData + trackstepOffset + 16 * trackstep);
-
-			boundaryCheck(mdatData, mdatLen, trackData, 16);
-			return trackData;
-		}
-
-		const uint32 *getPatternPtr(uint32 offset) {
-			uint32 *pattData = (uint32 *)(mdatData + offset);
-
-			boundaryCheck(mdatData, mdatLen, pattData, 4);
-			return pattData;
-		}
-
-		const uint32 *getMacroPtr(uint32 offset) {
-			uint32 *macroData = (uint32 *)(mdatData + offset);
-
-			boundaryCheck(mdatData, mdatLen, macroData, 4);
-			return macroData;
-		}
-
-		const int8 *getSamplePtr(const uint32 offset) {
-			int8 *sample = (int8 *)(sampleData + offset);
-
-			boundaryCheck(sampleData, sampleLen, sample, 2);
-			return sample;
-		}
-		Resource() : mdatData(), mdatLen(), sampleData(), sampleLen() {}
-
-		~Resource() {
-			delete[] mdatData;
-			delete[] sampleData;
-		}
-	} _resource;
-
-	uint32 _patternOffset[kMaxPatternOffsets];	//!< Offset in mdat
-	uint32 _macroOffset[kMaxMacroOffsets];	//!< Offset in mdat
-
-	struct Subsong {
-		uint16 songstart;	//!< Index in Trackstep-Table
-		uint16 songend;		//!< Last index in Trackstep-Table
-		uint16 tempo;
-	} _subsong[kNumSubsongs];
+	bool _deleteResource;
 
 	struct ChannelContext {
 		byte	paulaChannel;
@@ -225,6 +196,41 @@ private:
 		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;
 
+	const byte *getSfxPtr(uint16 index = 0) const {
+		const byte *sfxPtr = (byte *)(_resource->mdatData + _resource->sfxTableOffset + index * 8);
+
+		_resource->boundaryCheck(sfxPtr, 8);
+		return sfxPtr;
+	}
+
+	const uint16 *getTrackPtr(uint16 trackstep = 0) const {
+		const uint16 *trackData = (uint16 *)(_resource->mdatData + _resource->trackstepOffset + 16 * trackstep);
+
+		_resource->boundaryCheck(trackData, 16);
+		return trackData;
+	}
+
+	const uint32 *getPatternPtr(uint32 offset) const {
+		const uint32 *pattData = (uint32 *)(_resource->mdatData + offset);
+
+		_resource->boundaryCheck(pattData, 4);
+		return pattData;
+	}
+
+	const uint32 *getMacroPtr(uint32 offset) const {
+		const uint32 *macroData = (uint32 *)(_resource->mdatData + offset);
+
+		_resource->boundaryCheck(macroData, 4);
+		return macroData;
+	}
+
+	const int8 *getSamplePtr(const uint32 offset) const {
+		const int8 *sample = _resourceSample.sampleData + offset;
+
+		_resourceSample.boundaryCheck(sample, 2);
+		return sample;
+	}
+
 	static void initMacroProgramm(ChannelContext &channel) {
 		channel.macroStep = 0;
 		channel.macroWait = 0;
@@ -293,6 +299,8 @@ private:
 		}
 	}
 
+	
+	void freeResourceData();
 	void effects(ChannelContext &channel);
 	void macroRun(ChannelContext &channel);
 	void advancePatterns();

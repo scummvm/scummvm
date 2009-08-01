@@ -48,7 +48,7 @@ const uint16 Tfmx::noteIntervalls[64] = {
 	 214,  202,  191,  180 };
 
 Tfmx::Tfmx(int rate, bool stereo)
-: Paula(stereo, rate), _resource(), _playerCtx() {
+: Paula(stereo, rate), _resource(), _resourceSample(), _playerCtx() {
 	_playerCtx.stopWithLastPattern = false;
 
 	for (int i = 0; i < kNumVoices; ++i) 
@@ -65,6 +65,7 @@ Tfmx::Tfmx(int rate, bool stereo)
 }
 
 Tfmx::~Tfmx() {
+	freeResourceData();
 }
 
 void Tfmx::interrupt() {
@@ -131,7 +132,7 @@ void Tfmx::effects(ChannelContext &channel) {
 	// addBegin
 	if (channel.addBeginLength) {
 		channel.sampleStart += channel.addBeginDelta;
-		Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+		Paula::setChannelSampleStart(channel.paulaChannel, getSamplePtr(channel.sampleStart));
 		if (!(--channel.addBeginCount)) {
 			channel.addBeginCount = channel.addBeginLength;
 			channel.addBeginDelta = -channel.addBeginDelta;
@@ -215,7 +216,7 @@ void Tfmx::effects(ChannelContext &channel) {
 void Tfmx::macroRun(ChannelContext &channel) {
 	bool deferWait = channel.deferWait;
 	for (;;) {
-		const byte *const macroPtr = (byte *)(_resource.getMacroPtr(channel.macroOffset) + channel.macroStep);
+		const byte *const macroPtr = (byte *)(getMacroPtr(channel.macroOffset) + channel.macroStep);
 		++channel.macroStep;
 
 		switch (macroPtr[0]) {
@@ -265,7 +266,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 		case 0x02:	// SetBeginn. Parameters: SampleOffset(L)
 			channel.addBeginLength = 0;
 			channel.sampleStart = READ_BE_UINT32(macroPtr) & 0xFFFFFF;
-			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+			Paula::setChannelSampleStart(channel.paulaChannel, getSamplePtr(channel.sampleStart));
 			continue;
 
 		case 0x03:	// SetLength. Parameters: SampleLength(W)
@@ -293,7 +294,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 
 		case 0x06:	// Jump. Parameters: MacroIndex, MacroStep(W)
 			channel.macroIndex = macroPtr[1] & (kMaxMacroOffsets - 1);
-			channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
+			channel.macroOffset = _resource->macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
 			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 			channel.macroLoopCount = 0xFF;
 			continue;
@@ -357,7 +358,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.addBeginLength = channel.addBeginCount = macroPtr[1];
 			channel.addBeginDelta = (int16)READ_BE_UINT16(&macroPtr[2]);
 			channel.sampleStart += channel.addBeginDelta;
-			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+			Paula::setChannelSampleStart(channel.paulaChannel, getSamplePtr(channel.sampleStart));
 			continue;
 
 		case 0x12:	// AddLen. Parameters: added Length(W)
@@ -379,7 +380,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.macroReturnOffset = channel.macroOffset;
 			channel.macroReturnStep = channel.macroStep;
 
-			channel.macroOffset = _macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
+			channel.macroOffset = _resource->macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
 			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 			// TODO: MI does some weird stuff there. Figure out which varioables need to be set
 			continue;
@@ -404,7 +405,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 				warning("Tfmx: Problematic value for sampleloop: %06X", (macroPtr[1] << 16) | temp);
 			channel.sampleStart += temp & 0xFFFE;
 			channel.sampleLen -= (temp / 2) /* & 0x7FFF */;
-			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(channel.sampleStart));
+			Paula::setChannelSampleStart(channel.paulaChannel, getSamplePtr(channel.sampleStart));
 			Paula::setChannelSampleLen(channel.paulaChannel, channel.sampleLen);
 			continue;
 		}
@@ -412,7 +413,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.addBeginLength = 0;
 			channel.sampleStart = 0;
 			channel.sampleLen = 1;
-			Paula::setChannelSampleStart(channel.paulaChannel, _resource.getSamplePtr(0));
+			Paula::setChannelSampleStart(channel.paulaChannel, getSamplePtr(0));
 			Paula::setChannelSampleLen(channel.paulaChannel, 1);
 			continue;
 
@@ -501,7 +502,7 @@ startPatterns:
 
 bool Tfmx::patternRun(PatternContext &pattern) {
 	for (;;) {
-		const byte *const patternPtr = (byte *)(_resource.getPatternPtr(pattern.offset) + pattern.step);
+		const byte *const patternPtr = (byte *)(getPatternPtr(pattern.offset) + pattern.step);
 		++pattern.step;
 		const byte pattCmd = patternPtr[0];
 
@@ -538,7 +539,7 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				continue;
 
 			case 2: 	// Jump. Parameters: PatternIndex, PatternStep(W)
-				pattern.offset = _patternOffset[patternPtr[1]];
+				pattern.offset = _resource->patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
 				pattern.step = READ_BE_UINT16(&patternPtr[2]);
 				continue;
 
@@ -570,7 +571,7 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				pattern.savedOffset = pattern.offset;
 				pattern.savedStep = pattern.step;
 
-				pattern.offset = _patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
+				pattern.offset = _resource->patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
 				pattern.step = READ_BE_UINT16(&patternPtr[2]);
 				continue;
 
@@ -588,7 +589,7 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				PatternContext &target = _patternCtx[patternPtr[2] & (kNumChannels - 1)];
 
 				target.command = patternPtr[1];
-				target.offset = _patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
+				target.offset = _resource->patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
 				target.expose = patternPtr[3];
 				target.step = 0;
 				target.wait = 0;
@@ -623,7 +624,7 @@ bool Tfmx::trackRun(const bool incStep) {
 			++_trackCtx.posInd;
 	}
 	for (;;) {
-		const uint16 *const trackData = _resource.getTrackPtr(_trackCtx.posInd);
+		const uint16 *const trackData = getTrackPtr(_trackCtx.posInd);
 
 		if (trackData[0] != FROM_BE_16(0xEFFE)) {
 			// 8 commands for Patterns
@@ -636,7 +637,7 @@ bool Tfmx::trackRun(const bool incStep) {
 					_patternCtx[i].step = 0;
 					_patternCtx[i].wait = 0;
 					_patternCtx[i].loopCount = 0xFF;
-					_patternCtx[i].offset = _patternOffset[patNum];
+					_patternCtx[i].offset = _resource->patternOffset[patNum];
 				}
 				_patternCtx[i].command = (uint8)patNum;
 				_patternCtx[i].expose = patCmd & 0xFF;
@@ -703,7 +704,7 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 		channel.prevNote = channel.note;
 		channel.note = note;
 		channel.macroIndex = param1 & (kMaxMacroOffsets - 1);
-		channel.macroOffset = _macroOffset[param1 & (kMaxMacroOffsets - 1)];
+		channel.macroOffset = _resource->macroOffset[param1 & (kMaxMacroOffsets - 1)];
 		channel.relVol = (param2 >> 4) & 0xF;
 		channel.fineTune = (int8)param3;
 
@@ -736,127 +737,181 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 	}
 }
 
-bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData) {
-	bool res;
+void Tfmx::setModuleData(Tfmx &otherPlayer) {
+	setModuleData(otherPlayer._resource, otherPlayer._resourceSample.sampleData, otherPlayer._resourceSample.sampleLen, false);
+}
 
-	assert(0 == _resource.mdatData);
-	assert(0 == _resource.sampleData);
+bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData, bool autoDelete) {
+	MdatResource *mdat = new MdatResource();
+	if (loadMdatFile(*mdat, musicData)) {
+		int8 *sampleDat = 0;
+		uint32 sampleLen = 0;
+		if (loadSampleFile(sampleDat, sampleLen, sampleData)) {
+			setModuleData(mdat, sampleDat, sampleLen, autoDelete);
+			return true;
+		}
+	}
+	delete[] mdat->mdatAlloc;
+	delete mdat;
+	return false;
+}
 
-	// TODO: Sanity checks if we have a valid TFMX-Module
-	// TODO: check for Stream-Errors (other than using asserts)
+void Tfmx::freeResourceData() {
+	if (_deleteResource) {
+		if (_resource) {
+			delete[] _resource->mdatAlloc;
+			delete _resource;
+		}
+		delete[] _resourceSample.sampleData;
+	}
+	_resource = 0;
+	_resourceSample.sampleData = 0;
+	_resourceSample.sampleLen = 0;
+}
 
-	// 0x0000: 10 Bytes Header "TFMX-SONG "
-	// 0x000A: int16 ?
+void Tfmx::setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete) {
+	Common::StackLock lock(_mutex);
+	// TODO: stop sound and deallocate previous resources
+	_resource = resource;
+	_resourceSample.sampleData = sampleData;
+	_resourceSample.sampleLen = sampleData ? sampleLen : 0;
+	_deleteResource = autoDelete;
+}
+
+bool Tfmx::loadSampleFile(int8 *&sampleData, uint32 &sampleLen, Common::SeekableReadStream &sampleStream) {
+	assert(!sampleData);
+	sampleData = 0;
+	sampleLen = 0;
+
+	const int32 sampleSize = sampleStream.size();
+	if (sampleSize < 4) {
+		warning("Tfmx: Cant load Samplefile");
+		return false;
+	}
+
+	int8 *sampleAlloc = new int8[sampleSize];
+	if (!sampleAlloc) {
+		warning("Tfmx: Could not allocate Memory: %dKB", sampleSize / 1024);
+		return false;
+	}
+
+	if (sampleStream.read(sampleAlloc, sampleSize) == (uint32)sampleSize) {
+		sampleAlloc[0] = sampleAlloc[1] = sampleAlloc[2] = sampleAlloc[3] = 0;
+		sampleData = sampleAlloc;
+		sampleLen = sampleSize;
+	} else {
+		delete sampleAlloc;
+		warning("Tfmx: Encountered IO-Error");
+		return false;
+	}
+	return true;
+}
+
+bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musicData) {
+	assert(!resource.mdatAlloc);
+
+	resource.mdatAlloc = 0;
+	resource.mdatData = 0;
+	resource.mdatLen = 0;
+
+	bool hasHeader = false;
+	const int32 mdatSize = musicData.size();
+	if (mdatSize >= 0x200) {
+		byte buf[16] = { 0 };
+		// 0x0000: 10 Bytes Header "TFMX-SONG "
+		musicData.read(buf, 10);
+		hasHeader = memcmp(buf, "TFMX-SONG ", 10) == 0;
+	}
+	
+	if (!hasHeader) {
+		warning("Tfmx: File is not a Tfmx Module");
+		return false;
+	}
+
+	// 0x000A: int16 flags
+	resource.headerFlags = musicData.readUint16BE();
 	// 0x000C: int32 ?
-	musicData.read(_resource.header, 10);
-	_resource.headerFlags = musicData.readUint16BE();
-	_resource.headerUnknown = musicData.readUint32BE();
-
-	// This might affect timing
-	// bool isPalModule = (_resource.headerFlags & 2) != 0;
-
 	// 0x0010: 6*40 Textfield
-	musicData.read(_resource.textField, 6 * 40);
+	musicData.skip(4 + 6 * 40);
 
 	/* 0x0100: Songstart x 32*/
 	for (int i = 0; i < kNumSubsongs; ++i)
-		_subsong[i].songstart = musicData.readUint16BE();
-
+		resource.subsong[i].songstart = musicData.readUint16BE();
 	/* 0x0140: Songend x 32*/
 	for (int i = 0; i < kNumSubsongs; ++i)
-		_subsong[i].songend = musicData.readUint16BE();
-
+		resource.subsong[i].songend = musicData.readUint16BE();
 	/* 0x0180: Tempo x 32*/
 	for (int i = 0; i < kNumSubsongs; ++i)
-		_subsong[i].tempo  = musicData.readUint16BE();
+		resource.subsong[i].tempo  = musicData.readUint16BE();
 
 	/* 0x01c0: unused ? */
 	musicData.skip(16);
 
 	/* 0x01d0: trackstep, pattern data p, macro data p */
-	uint32 offTrackstep = musicData.readUint32BE();
-	uint32 offPatternP = musicData.readUint32BE();
-	uint32 offMacroP = musicData.readUint32BE();
-	_resource.sfxTableOffset = 0x200;
-	bool getSfxIndex = false;
+	const uint32 offTrackstep = musicData.readUint32BE();
+	uint32 offPatternP, offMacroP;
 
 	// This is how MI`s TFMX-Player tests for unpacked Modules.
-	if (offTrackstep == 0) {
-		offTrackstep	= 0x600 + 0x200;
+	if (!offTrackstep) { // unpacked File
+		resource.trackstepOffset = 0x600 + 0x200;
 		offPatternP		= 0x200 + 0x200;
 		offMacroP		= 0x400 + 0x200;
-		getSfxIndex = true;
-		_resource.sfxTableOffset = 0x5FC;
+	} else { // packed File
+		resource.trackstepOffset = offTrackstep;
+		offPatternP = musicData.readUint32BE();
+		offMacroP = musicData.readUint32BE();
 	}
 
-	_resource.trackstepOffset = offTrackstep;
+	// End of basic header, check if everything worked ok
+	if (musicData.err()) {
+		warning("Tfmx: Encountered IO-Error");
+		return false;
+	}
+
+	// TODO: if a File is packed it could have for Ex only 2 Patterns/Macros
+	// the following loops could then read beyond EOF. 
+	// To correctly handle this it would be necessary to sort the pointers and
+	// figure out the number of Macros/Patterns
+	// We could also analyze pointers if they are correct offsets,
+	// so that accesses can be unchecked later
 
 	// Read in pattern starting offsets
 	musicData.seek(offPatternP);
 	for (int i = 0; i < kMaxPatternOffsets; ++i)
-		_patternOffset[i] = musicData.readUint32BE();
+		resource.patternOffset[i] = musicData.readUint32BE();
 
-	res = musicData.err();
-	assert(!res);
-
-	if (getSfxIndex)
-		_resource.sfxTableOffset = _patternOffset[127];
+	// use last PatternOffset (stored at 0x5FC in mdat) if unpacked File
+	// or fixed offset 0x200 if packed
+	resource.sfxTableOffset = !offTrackstep ? resource.patternOffset[127] : 0x200;
 
 	// Read in macro starting offsets
 	musicData.seek(offMacroP);
 	for (int i = 0; i < kMaxMacroOffsets; ++i)
-		_macroOffset[i] = musicData.readUint32BE();
+		resource.macroOffset[i] = musicData.readUint32BE();
 
-	res = musicData.err();
-	assert(!res);
-
-	// Read in whole mdat-file
-	int32 size = musicData.size();
-	assert(size != -1);
-	// TODO: special routine if size = -1?
-
-	_resource.mdatData = new byte[size];
-	assert(_resource.mdatData);
-	_resource.mdatLen = size;
-	musicData.seek(0);
-	musicData.read(_resource.mdatData, size);
+	// Read in mdat-file
+	// TODO: we can skip everything thats already stored in the resource-structure.
+	const int32 mdatOffset = 0x200;	// 0x200 is very conservative
+	const uint32 allocSize = (uint32)mdatSize - mdatOffset;
 	
-	res = musicData.err();
-	assert(!res);
-	musicData.readByte();
-	res = musicData.eos();
-	assert(res);
-
-
-	// TODO: It would be possible to analyze the pointers and be able to
-	// seperate the file in trackstep, patterns and macro blocks
-	// Modules could do weird stuff like having those blocks mixed though.
-	// TODO: Analyze pointers if they are correct offsets,
-	// so that accesses can be unchecked later
-
-	// Read in whole sample-file
-	size = sampleData.size();
-	assert(size >= 4);
-	assert(size != -1);
-	// TODO: special routine if size = -1?
-
-	_resource.sampleData = new byte[size];
-	assert(_resource.sampleData);
-	_resource.sampleLen = size;
-	sampleData.seek(0);
-	sampleData.read(_resource.sampleData, size);
-	for (int i = 0; i < 4; ++i)
-		_resource.sampleData[i] = 0;
-	
-	res = sampleData.err();
-	assert(!res);
-	sampleData.readByte();
-	res = sampleData.eos();
-	assert(res);
+	byte *mdatAlloc = new byte[allocSize];
+	if (!mdatAlloc) {
+		warning("Tfmx: Could not allocate Memory: %dKB", allocSize / 1024);
+		return false;
+	}
+	musicData.seek(mdatOffset);
+	if (musicData.read(mdatAlloc, allocSize) == allocSize) {
+		resource.mdatAlloc = mdatAlloc;
+		resource.mdatData = mdatAlloc - mdatOffset;
+		resource.mdatLen = mdatSize;
+	} else {
+		delete mdatAlloc;
+		warning("Tfmx: Encountered IO-Error");
+		return false;
+	}
 
 	return true;
 }
-
 
 void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo) {
 	assert(0 <= macro && macro < kMaxMacroOffsets);
@@ -901,11 +956,11 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 	_playerCtx.song = (int8)songPos;
 
 	_trackCtx.loopCount = -1;
-	_trackCtx.startInd = _trackCtx.posInd = _subsong[songPos].songstart;
-	_trackCtx.stopInd = _subsong[songPos].songend;
+	_trackCtx.startInd = _trackCtx.posInd = _resource->subsong[songPos].songstart;
+	_trackCtx.stopInd = _resource->subsong[songPos].songend;
 
-	const bool palFlag = (_resource.headerFlags & 2) != 0;
-	const uint16 tempo = _subsong[songPos].tempo;
+	const bool palFlag = (_resource->headerFlags & 2) != 0;
+	const uint16 tempo = _resource->subsong[songPos].tempo;
 	uint16 ciaIntervall;
 	if (tempo >= 0x10) {
 		ciaIntervall = (uint16)(kCiaBaseInterval / tempo);
@@ -925,7 +980,7 @@ int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 	assert(0 <= sfxIndex && sfxIndex < 128);
 	Common::StackLock lock(_mutex);
 
-	const byte *sfxEntry = _resource.getSfxPtr(sfxIndex);
+	const byte *sfxEntry = getSfxPtr(sfxIndex);
 	if (sfxEntry[0] == 0xFB) {
 		// custompattern
 		const uint8 patCmd = sfxEntry[2];

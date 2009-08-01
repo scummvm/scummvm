@@ -546,10 +546,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 ScummEngine::~ScummEngine() {
 	Common::clearAllDebugChannels();
 
-	if (_musicEngine) {
-		_musicEngine->terminate();
-		delete _musicEngine;
-	}
+	delete _musicEngine;
 
 	_mixer->stopAll();
 

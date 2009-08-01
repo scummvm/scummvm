@@ -56,8 +56,8 @@ private:
 	ScummEngine *const _vm;
 	Audio::Mixer *const _mixer;
 
-	Audio::Tfmx *_tfmxMusic;
-	Audio::Tfmx *_tfmxSfx;
+	Audio::Tfmx _tfmxMusic;
+	Audio::Tfmx _tfmxSfx;
 	Audio::SoundHandle _musicHandle;
 	Audio::SoundHandle _sfxHandle;
 
