@@ -55,6 +55,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 AsylumEngine::~AsylumEngine() {
 	Common::clearAllDebugChannels();
 
+    delete _blowUp;
 	delete _console;
 	delete _scene;
 	delete _mainMenu;
@@ -81,6 +82,7 @@ Common::Error AsylumEngine::init() {
 	_console	= new Console(this);
 	_mainMenu	= 0;
 	_scene		= 0;
+    _blowUp		= 0;
 
 	return Common::kNoError;
 }
@@ -101,6 +103,8 @@ Common::Error AsylumEngine::go() {
 
 	// Set up the game's main scene
 	_scene = new Scene(_screen, _sound, 5);
+
+    _blowUp = new BlowUpPuzzleVCR(_screen, _sound, _scene);
 
 	// TODO Since the ScriptMan is a singleton, setScene assignments could
 	// probably be rolled into the Scene constructor :D
@@ -147,10 +151,19 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 					_scene->enterScene();
 				} else if (_scene->isActive()) {
 					_mainMenu->openMenu();
+                } else if (_blowUp->isActive()) {
+                    _blowUp->closeBlowUp();
+                    _scene->enterScene();
 				}
 
 				return;
 			}
+
+            // FIXME: TEST ONLY
+            if (ev.kbd.keycode == Common::KEYCODE_b) {
+                //_mainMenu->closeMenu();
+                _blowUp->openBlowUp();
+            }
 
 			if (ev.kbd.flags == Common::KBD_CTRL) {
 				if (ev.kbd.keycode == Common::KEYCODE_d)
@@ -161,7 +174,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 	}
 
 	if (doUpdate) {
-		if (_mainMenu->isActive() || _scene->isActive()) {
+		if (_mainMenu->isActive() || _scene->isActive() || _blowUp->isActive()) {
 			// Copy background image
 			_screen->copyBackBufferToScreen();
 		}
@@ -176,6 +189,9 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 	} else if (_scene->isActive()) {
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
+    } else if (_blowUp->isActive()) {
+		// Pass events to BlowUp Puzzles
+		_blowUp->handleEvent(&ev, doUpdate);
 	}
 }
 

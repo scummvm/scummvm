@@ -35,6 +35,7 @@
 #include "asylum/sound.h"
 #include "asylum/video.h"
 #include "asylum/scriptman.h"
+#include "asylum/blowuppuzzle.h"
 
 namespace Asylum {
 
@@ -45,6 +46,8 @@ class Scene;
 class Screen;
 class Sound;
 class Video;
+class BlowUpPuzzle;
+class BlowUpPuzzleVCR;
 
 enum kDebugLevels {
 	kDebugLevelMain =	   1 << 0,
@@ -78,12 +81,13 @@ private:
 	Common::Language	 _language;
 	Common::RandomSource _rnd;
 
-	Console		*_console;
-	Scene		*_scene;
-	MainMenu	*_mainMenu;
-	Screen		*_screen;
-	Sound		*_sound;
-	Video		*_video;
+	Console         *_console;
+	Scene           *_scene;
+	MainMenu        *_mainMenu;
+	Screen          *_screen;
+	Sound           *_sound;
+	Video           *_video;
+    BlowUpPuzzle    *_blowUp;
 
 	friend class Console;
 };

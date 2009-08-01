@@ -352,7 +352,6 @@ void ScriptManager::processActionList() {
 /* 0x37 */  case kRunBlowUpPuzzle: {
 				int blowUpPuzzleIdx = currentCommand.param1;
 				// TODO: do proper blow up puzzle initialization
-				//_scene->_blowUp = new BlowUpPuzzleVCR(_scene->_screen, _scene->_sound, _scene);
 			}
 				break;
 
