@@ -140,9 +140,9 @@ void BlowUpPuzzleVCR::update() {
 
     updateCursorInPolyRegion();
 
-    updateYellowJack();
+    updateBlackJack();
     updateRedJack();
-    updateBlackJack();   
+    updateYellowJack();
 }
 
 void BlowUpPuzzleVCR::updateBlackJack() {
@@ -185,7 +185,7 @@ void BlowUpPuzzleVCR::updateBlackJack() {
             // Shadow Info
             int shadowY = (_mouseY - 356) / 4;
             if(_mouseY < 356) {
-                shadowY = 356;
+                shadowY = 0;
             }
             grResId = _scene->getResources()->getWorldStats()->grResId[30];
             frameNum = 0;
@@ -277,13 +277,13 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 
     if ( _jacksState[kBlack] == kOnHand ) {
         showCursor = 1;
-    } else if ( _jacksState[kRed] == 4 ) {
+    } else if ( _jacksState[kRed] == kOnHand ) {
         showCursor = 2;
     } else {
-        showCursor = ((_jacksState[kYellow] != 4) - 1) & 3;
+        showCursor = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
     }
 
-    if(showCursor) {
+    if(!showCursor) {
         if(inPolyRegion(_mouseX, _mouseY, kRewindButton)
            || inPolyRegion(_mouseX, _mouseY, kStopButton)
            || inPolyRegion(_mouseX, _mouseY, kPlayButton)
@@ -291,15 +291,19 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
            || inPolyRegion(_mouseX, _mouseY, kBlackJack)
            || inPolyRegion(_mouseX, _mouseY, kRedJack)
            || inPolyRegion(_mouseX, _mouseY, kYellowJack)) {
-            //updateCursor();
+            updateCursor();
         } else {
             if(_curMouseCursor != 0) { // reset cursor
+                _screen->showCursor();
                 _curMouseCursor = 0;
                 _cursorStep = 1;
                 updateCursor();
             }
         }
+    } else {
+        _screen->hideCursor();
     }
+
 }
 
 void BlowUpPuzzleVCR::handleMouseDown() {
