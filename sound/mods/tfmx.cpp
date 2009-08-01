@@ -48,7 +48,12 @@ const uint16 Tfmx::noteIntervalls[64] = {
 	 214,  202,  191,  180 };
 
 Tfmx::Tfmx(int rate, bool stereo)
-: Paula(stereo, rate), _resource(), _resourceSample(), _playerCtx() {
+	: Paula(stereo, rate), 
+	  _resource(), 
+	  _resourceSample(), 
+	  _playerCtx(),
+	  _deleteResource(false) {
+
 	_playerCtx.stopWithLastPattern = false;
 
 	for (int i = 0; i < kNumVoices; ++i) 
@@ -114,7 +119,7 @@ void Tfmx::interrupt() {
 				--channel.macroWait;
 		}
 
-		Paula::setChannelPeriod(channel.paulaChannel, channel.period);
+		Paula::setChannelPeriod(i, channel.period);
 		if (channel.macroSfxRun >= 0)
 			channel.macroSfxRun = 1;
 

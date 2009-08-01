@@ -32,17 +32,17 @@
 
 namespace Scumm {
 
-Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer) :
-	_vm(scumm),
-	_mixer(mixer),
-	_tfmxMusic(_mixer->getOutputRate(), true),
-	_tfmxSfx(_mixer->getOutputRate(), true),
-	_musicHandle(),
-	_sfxHandle(),
-	_musicId(),
-	_sfxSlots(),
-	_initState(0),
-	_signal(0) {
+Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
+	: _vm(scumm),
+	  _mixer(mixer),
+	  _tfmxMusic(_mixer->getOutputRate(), true),
+	  _tfmxSfx(_mixer->getOutputRate(), true),
+	  _musicHandle(),
+	  _sfxHandle(),
+	  _musicId(),
+	  _sfxSlots(),
+	  _initState(0),
+	  _signal(0) {
 
 	assert(scumm);
 	assert(mixer);
