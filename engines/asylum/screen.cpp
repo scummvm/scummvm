@@ -74,8 +74,8 @@ void Screen::copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, in
 
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
-			if (buffer[curX + curY * pitch] != 0) {
-				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
+			if (buffer[curX + curY * pitch] != 0 && (x + curX + (y + curY) * 640 <= 640*480)) {
+                screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
 		}
 	}
