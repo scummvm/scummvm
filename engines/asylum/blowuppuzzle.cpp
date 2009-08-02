@@ -46,7 +46,44 @@ void BlowUpPuzzle::updateCursor() {
 	_screen->setCursor(_cursorResource, _curMouseCursor);
 }
 
-// BlowUp Puzzle VCR
+void BlowUpPuzzle::addGraphicToQueue(GraphicQueueItem item) {
+    _queueItems.push_back(item);
+}
+
+void BlowUpPuzzle::updateGraphicsInQueue() {
+    // sort by priority first
+    graphicsSelectionSort();
+    for(uint i = 0; i < _queueItems.size(); i++) {
+        GraphicResource *jack = _scene->getGraphicResource(_queueItems[i].resId);
+        GraphicFrame *fra = jack->getFrame(_queueItems[i].frameIdx);
+        _screen->copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x, _queueItems[i].y, fra->surface.w, fra->surface.h);
+    }
+}
+
+void BlowUpPuzzle::graphicsSelectionSort() {
+    uint minIdx;
+
+    for (uint i = 0; i < _queueItems.size() - 1; i++) {
+        minIdx = i;
+
+        for (uint j = i + 1; j < _queueItems.size(); j++)
+            if (_queueItems[j].priority > _queueItems[i].priority)
+                minIdx = j;
+
+        if(i != minIdx)
+            swapGraphicItem(i, minIdx);
+   }
+}
+
+void BlowUpPuzzle::swapGraphicItem(int item1, int item2) {
+   GraphicQueueItem temp;
+   temp = _queueItems[item1];
+   _queueItems[item1] = _queueItems[item2];
+   _queueItems[item2] = temp;
+} 
+
+
+// BlowUp Puzzle VCR ---------------------------------------------------------------------------------------------
 
 BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene) : BlowUpPuzzle(screen, sound, scene) {
 	_mouseX	            = 0;
@@ -126,13 +163,13 @@ int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
 }
 
 void BlowUpPuzzleVCR::update() {
-    // TODO: set states
+    _queueItems.clear();
+
     if (_leftClickDown) {
 		_leftClickDown = false;
         handleMouseDown();
     }
 
-    // TODO: put sound working
     if (_leftClickUp) {
 		_leftClickUp = false;
         handleMouseUp();
@@ -143,20 +180,22 @@ void BlowUpPuzzleVCR::update() {
     updateBlackJack();
     updateRedJack();
     updateYellowJack();
+
+    if(!_isAccomplished) {
+        updateGraphicsInQueue();
+    }
 }
 
 void BlowUpPuzzleVCR::updateBlackJack() {
-    int grResId = -1;
-    int frameNum = 0;
-    int x = 0;
-    int y = 0;
+    GraphicQueueItem jackItem;
 
     switch(_jacksState[kBlack]){
         case kOnTable:
-            grResId = _scene->getResources()->getWorldStats()->grResId[1];
-            frameNum = 0;
-            x = 0;
-            y = 411;
+            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[1];
+            jackItem.frameIdx = 0;
+            jackItem.x = 0;
+            jackItem.y = 411;
+            jackItem.priority = 3;
             break;
         case kPluggedOnRed:
             break;
@@ -165,58 +204,54 @@ void BlowUpPuzzleVCR::updateBlackJack() {
         case kPluggedOnBlack:
             break;
         case kOnHand: {
-            // Jack info
+            // Jack info --------------------------
             int jackY = _mouseY;
             if(_mouseY < 356) {
                 jackY = 356;
             }
 
-            GraphicResource *j = _scene->getGraphicResource(_scene->getResources()->getWorldStats()->grResId[27]);
-            GraphicFrame *f = j->getFrame(0);
-            
-            // FIXME: this must be a special copy to screen function to cut parts of the screen (shouldn't be calculated here
-            int newHeight = (480-_mouseY) + 14;
-            if (newHeight > f->surface.h) {
-                newHeight = f->surface.h;
-            }
+            GraphicQueueItem jackItemOnHand;
+            jackItemOnHand.resId = _scene->getResources()->getWorldStats()->grResId[27];
+            jackItemOnHand.frameIdx = 0;
+            jackItemOnHand.x = _mouseX - 114;
+            jackItemOnHand.y = jackY - 14;
+            jackItemOnHand.priority = 1;
 
-            _screen->copyRectToScreenWithTransparency((byte *)f->surface.pixels, f->surface.w, _mouseX - 114, jackY - 14, f->surface.w, newHeight);
-            
-            // Shadow Info
+            addGraphicToQueue(jackItemOnHand);
+
+            // Shadow Info -------------------------
             int shadowY = (_mouseY - 356) / 4;
             if(_mouseY < 356) {
                 shadowY = 0;
             }
-            grResId = _scene->getResources()->getWorldStats()->grResId[30];
-            frameNum = 0;
-            x = _mouseX - shadowY;
-            y = 450;
+            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[30];
+            jackItem.frameIdx = 0;
+            jackItem.x = _mouseX - shadowY;
+            jackItem.y = 450;
+            jackItem.priority = 2;
             }
             break;
         default:
+            jackItem.resId = 0;
             break;
     }
 
-    if(grResId != -1)
+    if(jackItem.resId != 0)
     {
-        GraphicResource *jack = _scene->getGraphicResource(grResId);
-        GraphicFrame *fra = jack->getFrame(0);
-        _screen->copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, x, y, fra->surface.w, fra->surface.h);
+        addGraphicToQueue(jackItem);
     }
 }
 
 void BlowUpPuzzleVCR::updateRedJack() {
-    int grResId = -1;
-    int frameNum = 0;
-    int x = 0;
-    int y = 0;
+    GraphicQueueItem jackItem;
 
     switch(_jacksState[kRed]){
         case kOnTable:
-            grResId = _scene->getResources()->getWorldStats()->grResId[2];
-            frameNum = 0;
-            x = 76;
-            y = 428;
+            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[2];
+            jackItem.frameIdx = 0;
+            jackItem.x = 76;
+            jackItem.y = 428;
+            jackItem.priority = 3;
             break;
         case kPluggedOnRed:
             break;
@@ -227,29 +262,26 @@ void BlowUpPuzzleVCR::updateRedJack() {
         case kOnHand:
             break;
         default:
+            jackItem.resId = 0;
             break;
     }
 
-    if(grResId != -1)
+    if(jackItem.resId != 0)
     {
-        GraphicResource *jack = _scene->getGraphicResource(grResId);
-        GraphicFrame *fra = jack->getFrame(0);
-        _screen->copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, x, y, fra->surface.w, fra->surface.h);
+        addGraphicToQueue(jackItem);
     }
 }
 
 void BlowUpPuzzleVCR::updateYellowJack() {
-    int grResId = -1;
-    int frameNum = 0;
-    int x = 0;
-    int y = 0;
+    GraphicQueueItem jackItem;
 
     switch(_jacksState[kYellow]){
         case kOnTable:
-            grResId = _scene->getResources()->getWorldStats()->grResId[3];
-            frameNum = 0;
-            x = 187;
-            y = 439;
+            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[3];
+            jackItem.frameIdx = 0;
+            jackItem.x = 187;
+            jackItem.y = 439;
+            jackItem.priority = 3;
             break;
         case kPluggedOnRed:
             break;
@@ -260,14 +292,13 @@ void BlowUpPuzzleVCR::updateYellowJack() {
         case kOnHand:
             break;
         default:
+            jackItem.resId = 0;
             break;
     }
 
-    if(grResId != -1)
+    if(jackItem.resId != 0)
     {
-        GraphicResource *jack = _scene->getGraphicResource(grResId);
-        GraphicFrame *fra = jack->getFrame(0);
-        _screen->copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, x, y, fra->surface.w, fra->surface.h);
+        addGraphicToQueue(jackItem);
     }
 }
 

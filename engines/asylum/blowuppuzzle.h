@@ -39,6 +39,17 @@ class Scene;
 class Screen;
 class Sound;
 
+typedef struct GraphicQueueItem {
+	uint32 resId;
+	uint32 frameIdx;
+	uint32 x;
+	uint32 y;
+	uint32 flags;
+	uint32 transTableNum;
+    uint32 priority;
+
+} GraphicQueueItem;
+
 class BlowUpPuzzle {
 public:
 	BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene);
@@ -67,16 +78,21 @@ protected:
     GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
 
-	void updateCursor();
+    Common::Array<GraphicQueueItem> _queueItems;
 
+	void updateCursor();
     virtual void update() {};
+
+    // This should probably be inside screen class
+    void addGraphicToQueue(GraphicQueueItem item);
+    void updateGraphicsInQueue();
+    void graphicsSelectionSort();
+    void swapGraphicItem(int item1, int item2);
 
 }; // end of class BlowUpPuzzle
 
 
-
-
-
+// ---- VCR -------------------
 
 const Common::Rect BlowUpPuzzleVCRPolies[10] = {
     Common::Rect(0x0F7, 0x157, 0x13A, 0x183), // rewind button region
@@ -133,10 +149,6 @@ private:
     int _isAccomplished;
     // TODO: members for playing sound
 
-    /*GraphicResource *_blackJack;
-    GraphicResource *_redJack;
-    GraphicResource *_yellowJack;*/
-
     int inPolyRegion(int x, int y, int polyIdx);
 
     void update();
@@ -150,7 +162,6 @@ private:
     void handleMouseDown();
     void handleMouseUp();
 }; // end of class BlowUpPuzzleVCR
-
 
 } // end of namespace Asylum
 
