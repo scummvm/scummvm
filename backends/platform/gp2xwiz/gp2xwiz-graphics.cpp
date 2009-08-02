@@ -334,7 +334,7 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
 			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
@@ -371,11 +371,11 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 				assert(scalerProc != NULL);
 
                 if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
-                    if(dst_x%2==1){
+                    if(dst_x % 2 == 1){
                         dst_x--;
                         dst_w++;
                     }
-                    if(dst_y%2==1){
+                    if(dst_y % 2 == 1){
                         dst_y--;
                         dst_h++;
                     }

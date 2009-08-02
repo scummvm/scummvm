@@ -675,7 +675,7 @@ void OSystem_SDL::internUpdateScreen() {
 
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			dst = *r;
-			dst.x++;	// Shift rect by one since 2xSai needs to acces the data around
+			dst.x++;	// Shift rect by one since 2xSai needs to access the data around
 			dst.y++;	// any pixel to scale it, and we want to avoid mem access crashes.
 
 			if (SDL_BlitSurface(origSurf, r, srcSurf, &dst) != 0)
