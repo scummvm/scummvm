@@ -522,7 +522,7 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 	assert(flags & (DWM_FIXED | DWM_MOVEABLE));
 
 	// align the size to machine boundary requirements
-	size = (size + sizeof(int) - 1) & ~(sizeof(int) - 1);
+	size = (size + sizeof(void *) - 1) & ~(sizeof(void *) - 1);
 
 	// validate the size
 	assert(size);
