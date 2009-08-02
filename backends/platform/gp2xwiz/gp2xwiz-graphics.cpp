@@ -35,7 +35,7 @@
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 	{"1x", "Fullscreen", GFX_NORMAL},
-	{"½x", "Downscale", GFX_HALF},
+//	{"½x", "Downscale", GFX_HALF},
 	{0, 0, 0}
 };
 
@@ -381,22 +381,24 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
                     }
                     src_x = dst_x;
                     src_y = dst_y;
-                    dst_x /= 2;
-                    dst_y /= 2;
+                    dst_x = dst_x / 2;
+                    dst_y = dst_y / 2;
                 }
                 scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
 						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
+
             if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
-			    r->x = dst_x;
-			    r->y = dst_y;
-			    r->w = r->w/2;
-			    r->h = dst_h/2;
+			    r->w = r->w / 2;
+			    r->h = dst_h / 2;
             } else {
-			    r->y = dst_y;
 			    r->w = r->w;
 			    r->h = dst_h;
             }
+
+		    r->x = dst_x;
+		    r->y = dst_y;
+
 
 #ifndef DISABLE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
@@ -429,92 +431,28 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 	_mouseNeedsRedraw = false;
 }
 
-
-#pragma mark -
-#pragma mark --- Overloaded Overlays ---
-#pragma mark -
-
 void OSystem_GP2XWIZ::showOverlay() {
-	assert (_transactionMode == kTransactionNone);
-
-	int x, y;
-
-	if (_overlayVisible)
-		return;
-
-	_overlayVisible = true;
-
     if(_videoMode.mode == GFX_HALF){
-        _mouseCurState.x /= 2;
-        _mouseCurState.y /= 2;
+        _mouseCurState.x = _mouseCurState.x / 2;
+        _mouseCurState.y = _mouseCurState.y / 2;
     }
-
-	// Since resolution could change, put mouse to adjusted position
-	// Fixes bug #1349059
-	x = _mouseCurState.x * _videoMode.scaleFactor;
-	if (_videoMode.aspectRatioCorrection)
-		y = real2Aspect(_mouseCurState.y) * _videoMode.scaleFactor;
-	else
-		y = _mouseCurState.y * _videoMode.scaleFactor;
-
-	warpMouse(x, y);
-
-	clearOverlay();
+	OSystem_SDL::showOverlay();
 }
 
 void OSystem_GP2XWIZ::hideOverlay() {
-	assert (_transactionMode == kTransactionNone);
-
-	if (!_overlayVisible)
-		return;
-
-	int x, y;
-
-	_overlayVisible = false;
-
     if(_videoMode.mode == GFX_HALF){
-        _mouseCurState.x *= 2;
-        _mouseCurState.y *= 2;
+        _mouseCurState.x = _mouseCurState.x / 2;
+        _mouseCurState.y = _mouseCurState.y / 2;
     }
-
-	// Since resolution could change, put mouse to adjusted position
-	// Fixes bug #1349059
-	x = _mouseCurState.x / _videoMode.scaleFactor;
-	y = _mouseCurState.y / _videoMode.scaleFactor;
-	if (_videoMode.aspectRatioCorrection)
-		y = aspect2Real(y);
-
-	warpMouse(x, y);
-
-	clearOverlay();
-
-	_forceFull = true;
+	OSystem_SDL::hideOverlay();
 }
 
 void OSystem_GP2XWIZ::warpMouse(int x, int y) {
-	int y1 = y;
-
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
-		y1 = real2Aspect(y);
-
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
         if(_videoMode.mode == GFX_HALF && !_overlayVisible){
-            x /= 2;
-            y /= 2;
+            x = x / 2;
+            y = y / 2;
         }
-		if (!_overlayVisible)
-			SDL_WarpMouse(x * _videoMode.scaleFactor, y1 * _videoMode.scaleFactor);
-		else
-			SDL_WarpMouse(x, y1);
-
-		// SDL_WarpMouse() generates a mouse movement event, so
-		// setMousePos() would be called eventually. However, the
-		// cannon script in CoMI calls this function twice each time
-		// the cannon is reloaded. Unless we update the mouse position
-		// immediately the second call is ignored, causing the cannon
-		// to change its aim.
-
-		setMousePos(x, y);
 	}
+	OSystem_SDL::warpMouse(x, y);
 }
-
