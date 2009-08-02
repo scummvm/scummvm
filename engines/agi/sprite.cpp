@@ -56,9 +56,10 @@ struct Sprite {
 void *SpritesMgr::poolAlloc(int size) {
 	uint8 *x;
 
-	// Adjust size to 32-bit boundary to prevent data misalignment
+	// Adjust size to sizeof(void *) boundary to prevent data misalignment
 	// errors.
-	size = (size + 3) & ~3;
+	const int alignPadding = sizeof(void*) - 1;
+	size = (size + alignPadding) & ~alignPadding;
 
 	x = _poolTop;
 	_poolTop += size;
