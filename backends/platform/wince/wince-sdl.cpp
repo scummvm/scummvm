@@ -403,9 +403,8 @@ static Uint32 timer_handler_wrapper(Uint32 interval) {
 void OSystem_WINCE3::initBackend()
 {
 	// Instantiate our own sound mixer
-	// mixer init is postponed until a game engine is selected.
-	if (_mixer == 0)
-		_mixer = new Audio::MixerImpl(this);
+	// mixer init is rerun when a game engine is selected.
+	setupMixer();
 
 	// Create the timer. CE SDL does not support multiple timers (SDL_AddTimer).
 	// We work around this by using the SetTimer function, since we only use
@@ -792,11 +791,15 @@ void OSystem_WINCE3::setupMixer() {
 	SDL_AudioSpec desired;
 	int thread_priority;
 
+	compute_sample_rate();
 	if (_sampleRate == 0)
 		warning("setSoundCallback called with 0 _sampleRate. Audio will not work.");
+	else if (_mixer && _mixer->getOutputRate() == _sampleRate) {
+		debug(1, "Skipping sound mixer re-init: samplerate is good");
+		return;
+	}
 
 	memset(&desired, 0, sizeof(desired));
-
 	desired.freq = _sampleRate;
 	desired.format = AUDIO_S16SYS;
 	desired.channels = 2;
@@ -913,7 +916,6 @@ void OSystem_WINCE3::engineInit() {
 
 	//update_game_settings();
 	// finalize mixer init
-	compute_sample_rate();
 	setupMixer();
 }
 
@@ -1085,8 +1087,6 @@ void OSystem_WINCE3::update_game_settings() {
 		ConfMan.setBool("no_doubletap_rightclick", true);
 		ConfMan.flushToDisk();
 	}
-
-	compute_sample_rate();
 }
 
 void OSystem_WINCE3::initSize(uint w, uint h) {
