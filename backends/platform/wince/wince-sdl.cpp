@@ -1147,13 +1147,13 @@ void OSystem_WINCE3::setGraphicsModeIntern() {
 }
 
 bool OSystem_WINCE3::update_scalers() {
-	if (_videoMode.mode != GFX_NORMAL)
-		return false;
-
 	_videoMode.aspectRatioCorrection = false;
 
 	if (CEDevice::hasPocketPCResolution()) {
-		if (	(!_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth))
+		if (_videoMode.mode != GFX_NORMAL)
+			return false;
+
+		if ((!_orientationLandscape && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth))
 			|| CEDevice::hasSquareQVGAResolution() ) {
 			if (getScreenWidth() != 320) {
 				_scaleFactorXm = 3;
@@ -1204,9 +1204,32 @@ bool OSystem_WINCE3::update_scalers() {
 		}
 
 		return true;
-	}
+	} else if (CEDevice::hasWideResolution()) {
+#ifdef USE_ARM_SCALER_ASM
+		if ( _videoMode.mode == GFX_DOUBLESIZE && (_videoMode.screenWidth == 320 || !_videoMode.screenWidth) ) {
+			if ( !_panelVisible && !_overlayVisible && _canBeAspectScaled ) {
+				_scaleFactorXm = 2;
+				_scaleFactorXd = 1;
+				_scaleFactorYm = 12;
+				_scaleFactorYd = 5;
+				_scalerProc = Normal2xAspect;
+				_modeFlags = 0;
+				_videoMode.aspectRatioCorrection = true;
+			} else if ( (_panelVisible || _overlayVisible) && _canBeAspectScaled ) {
+				_scaleFactorXm = 2;
+				_scaleFactorXd = 1;
+				_scaleFactorYm = 2;
+				_scaleFactorYd = 1;
+				_scalerProc = Normal2x;
+				_modeFlags = 0;
+			}
+			return true;
+		}
+#endif
+	} else if (CEDevice::hasSmartphoneResolution()) {
+		if (_videoMode.mode != GFX_NORMAL)
+			return false;
 
-	if (CEDevice::hasSmartphoneResolution()) {
 		if (_videoMode.screenWidth > 320)
 			error("Game resolution not supported on Smartphone");
 #ifdef ARM
@@ -1373,8 +1396,8 @@ bool OSystem_WINCE3::loadGFXMode() {
 		displayWidth = _videoMode.screenWidth * _scaleFactorXm / _scaleFactorXd;
 		displayHeight = _videoMode.screenHeight * _scaleFactorYm / _scaleFactorYd;
 	} else {
-		displayWidth = _videoMode.screenWidth;
-		displayHeight = _videoMode.screenHeight;
+		displayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		displayHeight = _videoMode.screenHeight* _videoMode.scaleFactor;
 	}
 
 	switch (_orientationLandscape) {

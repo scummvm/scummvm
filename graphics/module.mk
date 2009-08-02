@@ -37,7 +37,8 @@ MODULE_OBJS += \
 
 ifdef USE_ARM_SCALER_ASM
 MODULE_OBJS += \
-	scaler/scale2xARM.o
+	scaler/scale2xARM.o \
+	scaler/Normal2xARM.o
 endif
 
 ifndef DISABLE_HQ_SCALERS
