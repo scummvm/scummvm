@@ -49,7 +49,7 @@ void Script::setupCommandList() {
 		{ 5,  2, "StartPlay", 			2, { 3, 2 }, &Script::startPlay },
 		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
 		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
-		{ 6,  1, "Talk", 				2, { 3, 2 }, NULL },
+		{ 6,  1, "Talk", 				2, { 3, 2 }, &Script::talk },
 		{ 7,  1, "ObjStat", 			2, { 3, 3 }, &Script::objStat },
 		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, &Script::objStatOn },
 		{ 8,  1, "IcoStat", 			2, { 3, 3 }, NULL },
@@ -532,6 +532,73 @@ void Script::newRoom(Common::Queue<int> &params) {
 	// HACK: Won't be needed once I've implemented the loop properly
 	_vm->_game->_roomChange = true;
 }
+
+void Script::talk(Common::Queue<int> &params) {
+
+	int personID = params.pop() - 1;
+	int sentenceID = params.pop() - 1;
+
+	// Fetch string
+	BAFile *f = _vm->_stringsArchive->getFile(sentenceID);
+
+	// Fetch frame for the speech text
+	Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText);
+	Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
+
+	// Fetch person info
+	Person *person = _vm->_game->getPerson(personID);
+
+	// Set the string and text colour
+	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect(true));
+	speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
+	speechFrame->setColour(person->_fontColour);
+
+	// Set the loop substatus to an appropriate value
+	_vm->_game->setLoopSubstatus(kStatusTalk);
+
+	// Record time
+	_vm->_game->setSpeechTick(_vm->_system->getMillis());
+
+	// TODO: Implement inventory part
+
+	// Set speech text coordinates
+	// TODO: Put this into a function   
+
+	int x = person->_x;
+	int y = person->_y;
+
+	int difX = speechFrame->getWidth() / 2;
+	int difY = speechFrame->getHeight();
+	int newX = x - difX;
+	int newY = y - difY;
+	
+	if (newX < 0)
+		newX = 0;
+
+	if (newX + 2 * difX >= kScreenWidth - 1)
+		newX = (kScreenWidth - 1) - difX * 2;
+
+	if (newY < 0)
+		newY = 0;
+
+	if (newY + difY >= kScreenHeight - 1)
+		newY = (kScreenHeight - 1) - difY * 2;
+
+	speechFrame->setX(newX);
+	speechFrame->setY(newY);
+
+	// Call the game loop to enable interactivity until the text expires
+	_vm->_game->loop();
+
+	// Delete the text
+	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect(true));
+	speechFrame->setText("");
+
+	// Revert to "normal" loop status
+	_vm->_game->setLoopSubstatus(kStatusOrdinary);
+	_vm->_game->setExitLoop(false);
+}
+
 
 /**
  * @brief Evaluates mathematical expressions

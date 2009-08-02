@@ -115,6 +115,7 @@ private:
 	void play(Common::Queue<int> &params);
 	void startPlay(Common::Queue<int> &params);
 	void newRoom(Common::Queue<int> &params);
+	void talk(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);
