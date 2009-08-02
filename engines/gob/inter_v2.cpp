@@ -25,6 +25,8 @@
 
 #include "common/endian.h"
 
+#include "gui/message.h"
+
 #include "sound/mixer.h"
 #include "sound/mods/infogrames.h"
 
@@ -1357,10 +1359,19 @@ bool Inter_v2::o2_readData(OpFuncParams &params) {
 
 	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
+
 		WRITE_VAR(1, 1);
-		if (_vm->_saveLoad->load(file, dataVar, size, offset))
+
+		if (!_vm->_saveLoad->load(file, dataVar, size, offset)) {
+
+			GUI::MessageDialog dialog("Failed to load game state from file.");
+			dialog.runModal();
+
+		} else
 			WRITE_VAR(1, 0);
+
 		return false;
+
 	} else if (mode == SaveLoad::kSaveModeIgnore)
 		return false;
 
@@ -1431,8 +1442,15 @@ bool Inter_v2::o2_writeData(OpFuncParams &params) {
 
 	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeSave) {
-		if (_vm->_saveLoad->save(file, dataVar, size, offset))
+
+		if (!_vm->_saveLoad->save(file, dataVar, size, offset)) {
+
+			GUI::MessageDialog dialog("Failed to save game state to file.");
+			dialog.runModal();
+
+		} else
 			WRITE_VAR(1, 0);
+
 	} else if (mode == SaveLoad::kSaveModeNone)
 		warning("Attempted to write to file \"%s\"", file);
 
