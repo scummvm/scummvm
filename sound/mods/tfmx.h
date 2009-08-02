@@ -200,28 +200,28 @@ private:
 	} _playerCtx;
 
 	const byte *getSfxPtr(uint16 index = 0) const {
-		const byte *sfxPtr = (byte *)(_resource->mdatData + _resource->sfxTableOffset + index * 8);
+		const byte *sfxPtr = (const byte *)(_resource->mdatData + _resource->sfxTableOffset + index * 8);
 
 		_resource->boundaryCheck(sfxPtr, 8);
 		return sfxPtr;
 	}
 
 	const uint16 *getTrackPtr(uint16 trackstep = 0) const {
-		const uint16 *trackData = (uint16 *)(_resource->mdatData + _resource->trackstepOffset + 16 * trackstep);
+		const uint16 *trackData = (const uint16 *)(_resource->mdatData + _resource->trackstepOffset + 16 * trackstep);
 
 		_resource->boundaryCheck(trackData, 16);
 		return trackData;
 	}
 
 	const uint32 *getPatternPtr(uint32 offset) const {
-		const uint32 *pattData = (uint32 *)(_resource->mdatData + offset);
+		const uint32 *pattData = (const uint32 *)(_resource->mdatData + offset);
 
 		_resource->boundaryCheck(pattData, 4);
 		return pattData;
 	}
 
 	const uint32 *getMacroPtr(uint32 offset) const {
-		const uint32 *macroData = (uint32 *)(_resource->mdatData + offset);
+		const uint32 *macroData = (const uint32 *)(_resource->mdatData + offset);
 
 		_resource->boundaryCheck(macroData, 4);
 		return macroData;

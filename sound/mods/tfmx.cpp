@@ -1096,7 +1096,7 @@ void displayPatternstep(const void *const vptr) {
 	const byte command = patData[0];
 	if (command < 0xF0) { // Playnote
 		const byte flags = command >> 6; // 0-1 means note+detune, 2 means wait, 3 means portamento?
-		char *flagsSt[] = { "Note ", "Note ", "Wait ", "Porta" };
+		const char *flagsSt[] = { "Note ", "Note ", "Wait ", "Porta" };
 		debug("%s %02X%02X%02X%02X", flagsSt[flags], patData[0], patData[1], patData[2], patData[3]);
 	} else
 		debug("%s %02X%02X%02X",tablePatterns[command & 0xF], patData[1], patData[2], patData[3]);
