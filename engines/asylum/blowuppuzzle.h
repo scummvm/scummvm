@@ -94,6 +94,12 @@ protected:
 
 // ---- VCR -------------------
 
+typedef struct JackInfo {
+	uint32 resId;
+	uint32 x;
+    uint32 y;
+} JackInfo;
+
 const Common::Rect BlowUpPuzzleVCRPolies[10] = {
     Common::Rect(0x0F7, 0x157, 0x13A, 0x183), // rewind button region
     Common::Rect(0x14B, 0x15C, 0x17B, 0x18B), // stop button region
@@ -153,6 +159,9 @@ private:
 
     void update();
 
+    GraphicQueueItem getGraphicJackItem(int resId);
+    GraphicQueueItem getGraphicShadowItem();
+    void updateJack(Jack jack, JackInfo onTable, JackInfo pluggedOnRed, JackInfo pluggedOnYellow, JackInfo pluggedOnBlack, int resIdOnHand);
     void updateBlackJack();
     void updateRedJack();
     void updateYellowJack();
