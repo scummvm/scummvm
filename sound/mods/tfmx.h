@@ -31,6 +31,8 @@
 namespace Audio {
 
 class Tfmx : public Paula {
+private:
+	struct MdatResource;
 public:
 	Tfmx(int rate, bool stereo);
 	virtual ~Tfmx();
@@ -44,23 +46,27 @@ public:
 	void setSignalPtr(uint16 *ptr, uint16 numSignals) { _playerCtx.signal = ptr; _playerCtx.numSignals = numSignals; }
 	void stopMacroEffect(int channel);
 
-	struct MdatResource;
+	void freeResources() { _deleteResource = true; freeResourceDataImpl(); }
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData, bool autoDelete = true);
 	void setModuleData(Tfmx &otherPlayer);
-	void setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true);
-	static bool loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musicData);
-	static bool loadSampleFile(int8 *&sampleData, uint32 &sampleLen, Common::SeekableReadStream &sampleStream);
+	/* must be called with resources loaded by loadMdatFile */
+	void setModuleDataVoid(const void *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true) {
+		setModuleData((const MdatResource *)resource, sampleData, sampleLen, autoDelete);
+	}
+	
+	static const MdatResource *loadMdatFile(Common::SeekableReadStream &musicData);
+	static const int8 *loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &sampleStream);
 
 protected:
 	void interrupt();
 
 private:
+	void setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true);
+
 	enum { kPalDefaultCiaVal = 11822, kNtscDefaultCiaVal = 14320, kCiaBaseInterval = 0x1B51F8 };
 	enum { kNumVoices = 4, kNumChannels = 8, kNumSubsongs = 32, kMaxPatternOffsets = 128, kMaxMacroOffsets = 128 };
-
 	static const uint16 noteIntervalls[64];
 
-public: // TODO change this to private somehow=
 	struct MdatResource {
 		const byte *mdatAlloc;	//!< allocated Block of Memory
 		const byte *mdatData;  	//!< Start of mdat-File, might point before mdatAlloc to correct Offset
@@ -85,10 +91,7 @@ public: // TODO change this to private somehow=
 		void boundaryCheck(const void *address, size_t accessLen = 1) const {
 			assert(mdatAlloc <= address && (const byte *)address + accessLen <= (const byte *)mdatData + mdatLen);
 		}
-	};
-
-private:
-	const MdatResource *_resource;
+	} const *_resource;
 
 	struct SampleResource {
 		const int8 *sampleData;	//!< The whole sample-File
@@ -300,7 +303,7 @@ private:
 	}
 
 	
-	void freeResourceData();
+	void freeResourceDataImpl();
 	void effects(ChannelContext &channel);
 	void macroRun(ChannelContext &channel);
 	void advancePatterns();

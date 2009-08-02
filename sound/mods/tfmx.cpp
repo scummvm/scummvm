@@ -70,7 +70,7 @@ Tfmx::Tfmx(int rate, bool stereo)
 }
 
 Tfmx::~Tfmx() {
-	freeResourceData();
+	freeResourceDataImpl();
 }
 
 void Tfmx::interrupt() {
@@ -747,21 +747,21 @@ void Tfmx::setModuleData(Tfmx &otherPlayer) {
 }
 
 bool Tfmx::load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData, bool autoDelete) {
-	MdatResource *mdat = new MdatResource();
-	if (loadMdatFile(*mdat, musicData)) {
-		int8 *sampleDat = 0;
+	const MdatResource *mdat = loadMdatFile(musicData);
+	if (mdat) {
 		uint32 sampleLen = 0;
-		if (loadSampleFile(sampleDat, sampleLen, sampleData)) {
+		const int8 *sampleDat = loadSampleFile(sampleLen, sampleData);
+		if (sampleDat) {
 			setModuleData(mdat, sampleDat, sampleLen, autoDelete);
 			return true;
 		}
+		delete[] mdat->mdatAlloc;
+		delete mdat;
 	}
-	delete[] mdat->mdatAlloc;
-	delete mdat;
 	return false;
 }
 
-void Tfmx::freeResourceData() {
+void Tfmx::freeResourceDataImpl() {
 	if (_deleteResource) {
 		if (_resource) {
 			delete[] _resource->mdatAlloc;
@@ -772,6 +772,7 @@ void Tfmx::freeResourceData() {
 	_resource = 0;
 	_resourceSample.sampleData = 0;
 	_resourceSample.sampleLen = 0;
+	_deleteResource = false;
 }
 
 void Tfmx::setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete) {
@@ -783,9 +784,7 @@ void Tfmx::setModuleData(const MdatResource *resource, const int8 *sampleData, u
 	_deleteResource = autoDelete;
 }
 
-bool Tfmx::loadSampleFile(int8 *&sampleData, uint32 &sampleLen, Common::SeekableReadStream &sampleStream) {
-	assert(!sampleData);
-	sampleData = 0;
+const int8 *Tfmx::loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &sampleStream) {
 	sampleLen = 0;
 
 	const int32 sampleSize = sampleStream.size();
@@ -797,28 +796,21 @@ bool Tfmx::loadSampleFile(int8 *&sampleData, uint32 &sampleLen, Common::Seekable
 	int8 *sampleAlloc = new int8[sampleSize];
 	if (!sampleAlloc) {
 		warning("Tfmx: Could not allocate Memory: %dKB", sampleSize / 1024);
-		return false;
+		return 0;
 	}
 
 	if (sampleStream.read(sampleAlloc, sampleSize) == (uint32)sampleSize) {
 		sampleAlloc[0] = sampleAlloc[1] = sampleAlloc[2] = sampleAlloc[3] = 0;
-		sampleData = sampleAlloc;
 		sampleLen = sampleSize;
 	} else {
 		delete sampleAlloc;
 		warning("Tfmx: Encountered IO-Error");
-		return false;
+		return 0;
 	}
-	return true;
+	return sampleAlloc;
 }
 
-bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musicData) {
-	assert(!resource.mdatAlloc);
-
-	resource.mdatAlloc = 0;
-	resource.mdatData = 0;
-	resource.mdatLen = 0;
-
+const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicData) {
 	bool hasHeader = false;
 	const int32 mdatSize = musicData.size();
 	if (mdatSize >= 0x200) {
@@ -830,24 +822,30 @@ bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musi
 	
 	if (!hasHeader) {
 		warning("Tfmx: File is not a Tfmx Module");
-		return false;
+		return 0;
 	}
 
+	MdatResource *resource = new MdatResource;
+
+	resource->mdatAlloc = 0;
+	resource->mdatData = 0;
+	resource->mdatLen = 0;
+
 	// 0x000A: int16 flags
-	resource.headerFlags = musicData.readUint16BE();
+	resource->headerFlags = musicData.readUint16BE();
 	// 0x000C: int32 ?
 	// 0x0010: 6*40 Textfield
 	musicData.skip(4 + 6 * 40);
 
 	/* 0x0100: Songstart x 32*/
 	for (int i = 0; i < kNumSubsongs; ++i)
-		resource.subsong[i].songstart = musicData.readUint16BE();
+		resource->subsong[i].songstart = musicData.readUint16BE();
 	/* 0x0140: Songend x 32*/
 	for (int i = 0; i < kNumSubsongs; ++i)
-		resource.subsong[i].songend = musicData.readUint16BE();
+		resource->subsong[i].songend = musicData.readUint16BE();
 	/* 0x0180: Tempo x 32*/
 	for (int i = 0; i < kNumSubsongs; ++i)
-		resource.subsong[i].tempo  = musicData.readUint16BE();
+		resource->subsong[i].tempo  = musicData.readUint16BE();
 
 	/* 0x01c0: unused ? */
 	musicData.skip(16);
@@ -858,11 +856,11 @@ bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musi
 
 	// This is how MI`s TFMX-Player tests for unpacked Modules.
 	if (!offTrackstep) { // unpacked File
-		resource.trackstepOffset = 0x600 + 0x200;
+		resource->trackstepOffset = 0x600 + 0x200;
 		offPatternP		= 0x200 + 0x200;
 		offMacroP		= 0x400 + 0x200;
 	} else { // packed File
-		resource.trackstepOffset = offTrackstep;
+		resource->trackstepOffset = offTrackstep;
 		offPatternP = musicData.readUint32BE();
 		offMacroP = musicData.readUint32BE();
 	}
@@ -870,7 +868,8 @@ bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musi
 	// End of basic header, check if everything worked ok
 	if (musicData.err()) {
 		warning("Tfmx: Encountered IO-Error");
-		return false;
+		delete resource;
+		return 0;
 	}
 
 	// TODO: if a File is packed it could have for Ex only 2 Patterns/Macros
@@ -883,16 +882,16 @@ bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musi
 	// Read in pattern starting offsets
 	musicData.seek(offPatternP);
 	for (int i = 0; i < kMaxPatternOffsets; ++i)
-		resource.patternOffset[i] = musicData.readUint32BE();
+		resource->patternOffset[i] = musicData.readUint32BE();
 
 	// use last PatternOffset (stored at 0x5FC in mdat) if unpacked File
 	// or fixed offset 0x200 if packed
-	resource.sfxTableOffset = !offTrackstep ? resource.patternOffset[127] : 0x200;
+	resource->sfxTableOffset = !offTrackstep ? resource->patternOffset[127] : 0x200;
 
 	// Read in macro starting offsets
 	musicData.seek(offMacroP);
 	for (int i = 0; i < kMaxMacroOffsets; ++i)
-		resource.macroOffset[i] = musicData.readUint32BE();
+		resource->macroOffset[i] = musicData.readUint32BE();
 
 	// Read in mdat-file
 	// TODO: we can skip everything thats already stored in the resource-structure.
@@ -902,20 +901,22 @@ bool Tfmx::loadMdatFile(MdatResource &resource, Common::SeekableReadStream &musi
 	byte *mdatAlloc = new byte[allocSize];
 	if (!mdatAlloc) {
 		warning("Tfmx: Could not allocate Memory: %dKB", allocSize / 1024);
-		return false;
+		delete resource;
+		return 0;
 	}
 	musicData.seek(mdatOffset);
 	if (musicData.read(mdatAlloc, allocSize) == allocSize) {
-		resource.mdatAlloc = mdatAlloc;
-		resource.mdatData = mdatAlloc - mdatOffset;
-		resource.mdatLen = mdatSize;
+		resource->mdatAlloc = mdatAlloc;
+		resource->mdatData = mdatAlloc - mdatOffset;
+		resource->mdatLen = mdatSize;
 	} else {
 		delete mdatAlloc;
 		warning("Tfmx: Encountered IO-Error");
-		return false;
+		delete resource;
+		return 0;
 	}
 
-	return true;
+	return resource;
 }
 
 void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo) {

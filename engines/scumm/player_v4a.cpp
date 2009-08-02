@@ -54,11 +54,11 @@ bool Player_V4A::init() {
 	if (_vm->_game.id != GID_MONKEY_VGA)
 		error("player_v4a - unknown game");
 	
-	Common::File fileMdat;
-	Common::File fileSample;
+	Common::File fileMdat, fileSample;
 
 	if (fileMdat.open("music.dat") && fileSample.open("sample.dat")) {
-		if (_tfmxMusic.load(fileMdat, fileSample)) {
+		// explicitly request that no instance delets the resources automatically
+		if (_tfmxMusic.load(fileMdat, fileSample, false)) {
 			_tfmxSfx.setModuleData(_tfmxMusic);
 			return true;
 		}
@@ -69,6 +69,7 @@ bool Player_V4A::init() {
 Player_V4A::~Player_V4A() {
 	_mixer->stopHandle(_musicHandle);
 	_mixer->stopHandle(_sfxHandle);
+	_tfmxMusic.freeResources();
 }
 
 void Player_V4A::setMusicVolume(int vol) {
