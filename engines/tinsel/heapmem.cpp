@@ -285,7 +285,8 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 	}
 
 #ifdef SCUMM_NEED_ALIGNMENT
-	size = (size + 3) & ~3;	//round up to nearest multiple of 4, this ensures the addresses that are returned are 4-byte aligned as well.
+	const int alignPadding = sizeof(void*) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	while ((flags & DWM_NOALLOC) == 0 && bCompacted) {
