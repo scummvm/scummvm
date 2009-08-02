@@ -179,7 +179,12 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 			}
 			
 			// Paint pixel (if not transparent)
-			if (colour != _transparent)			
+			// HACK: Temporary turned off transparency because the dragon's colour of the
+			// font appears to be 255 (which should be transparent).
+			// This would not be a problem if the font background was also not colour
+			// 255 (apparently) so I don't know how to handle the background being 
+			// transparent and at the same time a non-transparent font body.
+			//if (colour != _transparent)			
 				ptr[x] = colour;
 		}
 
@@ -279,7 +284,8 @@ int Font::getStringWidth(const Common::String &str, int spacing) const {
 			if (tmp > width) {
 				width = tmp;
 			}
-			continue;
+
+			tmp = 0;
 		}
 	}
 
