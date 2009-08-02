@@ -47,6 +47,11 @@ enum {
 	kNotFound = -1
 };
 
+enum SpeechConstants {
+	kBaseSpeechDuration = 200,
+	kSpeechTimeUnit = 400
+};
+
 class WalkingMap {
 
 public:	
@@ -204,6 +209,8 @@ public:
 	int getVariable(int varNum);
 	void setVariable(int varNum, int value);	
 
+	Person *getPerson(int personID);
+
 	int getRoomNum();
 	void setRoomNum(int room);
 
@@ -228,6 +235,8 @@ public:
 
 	void runGateProgram(int gate);
 
+	void setSpeechTick(uint tick);
+
 	bool _roomChange;
 
 private:
@@ -251,6 +260,8 @@ private:
 
 	bool _shouldQuit;
 	bool _shouldExitLoop;
+
+	uint _speechTick;
 
 	int _objUnderCursor;
 	int _markedAnimationIndex; //!< Used by the Mark GPL command

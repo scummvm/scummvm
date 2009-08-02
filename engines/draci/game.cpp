@@ -52,9 +52,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	_persons = new Person[numPersons];
 	
 	for (i = 0; i < numPersons; ++i) {
-		_persons[i]._x = personData.readByte();
-		_persons[i]._y = personData.readByte();
-		_persons[i]._fontColour = personData.readUint16LE();
+		_persons[i]._x = personData.readUint16LE();
+		_persons[i]._y = personData.readUint16LE();
+		_persons[i]._fontColour = personData.readByte();
 	}
 
 	// Close persons file
@@ -277,6 +277,21 @@ void Game::loop() {
 			debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
 		}
 
+		if (_loopSubstatus == kStatusTalk) {
+			Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText); 			
+			Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
+
+			uint speechDuration = kBaseSpeechDuration + 
+								  speechFrame->getLength() * kSpeechTimeUnit / 
+							 	  (128 / 16 + 1);
+				
+			if ((_vm->_system->getMillis() - _speechTick) >= speechDuration) {
+				_shouldExitLoop = true;
+			} else {
+				_shouldExitLoop = false;
+			}
+		}
+
 		if (shouldQuit())
 			return;
 
@@ -323,6 +338,9 @@ void Game::walkHero(int x, int y) {
 
 	// Fetch base height of the frame
 	uint height = frame->getHeight();
+
+  	_persons[kDragonObject]._x = x;
+	_persons[kDragonObject]._y = y - lround(scaleY) * height;
 
 	// We naturally want the dragon to position its feet to the location of the
 	// click but sprites are drawn from their top-left corner so we subtract
@@ -725,6 +743,14 @@ void Game::setVariable(int numVar, int value) {
 
 int Game::getIconStatus(int iconID) {
 	return _iconStatus[iconID];
+}
+
+Person *Game::getPerson(int personID) {
+	return &_persons[personID];
+}
+
+void Game::setSpeechTick(uint tick) {
+	_speechTick = tick;
 }
 
 /**
