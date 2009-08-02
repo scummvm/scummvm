@@ -73,6 +73,7 @@ public:
 	BArchive *_itemsArchive;
 	BArchive *_itemImagesArchive;
 	BArchive *_initArchive;
+	BArchive *_stringsArchive;
 
 	bool _showWalkingMap;
 
