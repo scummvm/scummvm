@@ -307,6 +307,13 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 	_delay = 0;
 	
 	_text = str;
+
+	_length = 0;
+	for (uint i = 0; i < _text.size(); ++i) {
+		if (_text[i] != '|') {
+			++_length;
+		}
+	}
 	
 	_spacing = spacing;
 	_colour = fontColour;
@@ -321,10 +328,18 @@ Text::Text(const Common::String &str, Font *font, byte fontColour,
 } 
 
 void Text::setText(const Common::String &str) {
+
 	_width = _font->getStringWidth(str, _spacing);
 	_height = _font->getStringHeight(str);
 
 	 _text = str;
+
+	_length = 0;
+	for (uint i = 0; i < _text.size(); ++i) {
+		if (_text[i] != '|') {
+			++_length;
+		}
+	}
 }
 
 void Text::setColour(byte fontColour) {
@@ -333,6 +348,10 @@ void Text::setColour(byte fontColour) {
 
 void Text::setSpacing(uint spacing) {
 	_spacing = spacing;
+}
+
+uint Text::getLength() {
+	return _length;
 }
 
 void Text::draw(Surface *surface, bool markDirty) const {

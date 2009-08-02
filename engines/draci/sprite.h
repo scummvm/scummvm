@@ -129,6 +129,8 @@ public:
 	void setColour(byte fontColour);
 	void setSpacing(uint spacing);
 
+	uint getLength();
+
 	void draw(Surface *surface, bool markDirty = true) const;
 
 	// TODO: drawScaled just calls draw so Text can be accessed through a Drawable pointer. 
