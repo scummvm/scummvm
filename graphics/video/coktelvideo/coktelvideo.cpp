@@ -423,6 +423,7 @@ void Imd::seekFrame(int32 frame, int16 whence, bool restart) {
 	} else if (restart && (_soundStage == 0)) {
 		for (int i = ((frame > _curFrame) ? _curFrame : 0); i <= frame; i++)
 			processFrame(i);
+		return;
 	} else
 		error("Imd::seekFrame(): Frame %d is not directly accessible", frame);
 

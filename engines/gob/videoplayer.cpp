@@ -739,6 +739,8 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_inter->storeKey(_vm->_util->checkKey());
 		if (VAR(0) == (unsigned) breakKey) {
 			_primaryVideo->getVideo()->disableSound();
+			// Seek to the last frame. Some scripts depend on that.
+			_primaryVideo->getVideo()->seekFrame(endFrame, SEEK_SET, true);
 			return true;
 		}
 	}
