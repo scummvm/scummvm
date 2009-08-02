@@ -175,131 +175,152 @@ void BlowUpPuzzleVCR::update() {
         handleMouseUp();
     }
 
-    updateCursorInPolyRegion();
-
     updateBlackJack();
     updateRedJack();
     updateYellowJack();
+
+    updateCursorInPolyRegion();
 
     if(!_isAccomplished) {
         updateGraphicsInQueue();
     }
 }
 
-void BlowUpPuzzleVCR::updateBlackJack() {
-    GraphicQueueItem jackItem;
+GraphicQueueItem BlowUpPuzzleVCR::getGraphicJackItem(int resId) {
+    GraphicQueueItem jackItemOnHand;
 
-    switch(_jacksState[kBlack]){
+    int jackY = _mouseY;
+    if(_mouseY < 356) {
+        jackY = 356;
+    }
+
+    jackItemOnHand.resId = _scene->getResources()->getWorldStats()->grResId[resId];
+    jackItemOnHand.frameIdx = 0;
+    jackItemOnHand.x = _mouseX - 114;
+    jackItemOnHand.y = jackY - 14;
+    jackItemOnHand.priority = 1;
+    
+    return jackItemOnHand;
+}
+
+GraphicQueueItem BlowUpPuzzleVCR::getGraphicShadowItem() {
+    GraphicQueueItem shadowItem;
+
+    int shadowY = (_mouseY - 356) / 4;
+    if(_mouseY < 356) {
+        shadowY = 0;
+    }
+    shadowItem.resId = _scene->getResources()->getWorldStats()->grResId[30];
+    shadowItem.frameIdx = 0;
+    shadowItem.x = _mouseX - shadowY;
+    shadowItem.y = 450;
+    shadowItem.priority = 2;
+    
+    return shadowItem;
+}
+
+void BlowUpPuzzleVCR::updateJack(Jack jack, JackInfo onTable, JackInfo pluggedOnRed, JackInfo pluggedOnYellow, JackInfo pluggedOnBlack, int resIdOnHand) {
+    GraphicQueueItem item;
+
+    switch(_jacksState[jack]){
         case kOnTable:
-            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[1];
-            jackItem.frameIdx = 0;
-            jackItem.x = 0;
-            jackItem.y = 411;
-            jackItem.priority = 3;
+            item.resId = _scene->getResources()->getWorldStats()->grResId[onTable.resId];
+            item.frameIdx = 0;
+            item.x = onTable.x;
+            item.y = onTable.y;
+            item.priority = 3;
             break;
         case kPluggedOnRed:
+            item.resId = _scene->getResources()->getWorldStats()->grResId[pluggedOnRed.resId];
+            item.frameIdx = 0;
+            item.x = 329;
+            item.y = 407;
+            item.priority = 3;
             break;
         case kPluggedOnYellow:
+            item.resId = _scene->getResources()->getWorldStats()->grResId[pluggedOnYellow.resId];
+            item.frameIdx = 0;
+            item.x = 402;
+            item.y = 413;
+            item.priority = 3;
             break;
         case kPluggedOnBlack:
+            item.resId = _scene->getResources()->getWorldStats()->grResId[pluggedOnBlack.resId];
+            item.frameIdx = 0;
+            item.x = 477;
+            item.y = 418;
+            item.priority = 3;
             break;
         case kOnHand: {
-            // Jack info --------------------------
-            int jackY = _mouseY;
-            if(_mouseY < 356) {
-                jackY = 356;
-            }
-
-            GraphicQueueItem jackItemOnHand;
-            jackItemOnHand.resId = _scene->getResources()->getWorldStats()->grResId[27];
-            jackItemOnHand.frameIdx = 0;
-            jackItemOnHand.x = _mouseX - 114;
-            jackItemOnHand.y = jackY - 14;
-            jackItemOnHand.priority = 1;
-
+            GraphicQueueItem jackItemOnHand = getGraphicJackItem(resIdOnHand);
             addGraphicToQueue(jackItemOnHand);
 
-            // Shadow Info -------------------------
-            int shadowY = (_mouseY - 356) / 4;
-            if(_mouseY < 356) {
-                shadowY = 0;
-            }
-            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[30];
-            jackItem.frameIdx = 0;
-            jackItem.x = _mouseX - shadowY;
-            jackItem.y = 450;
-            jackItem.priority = 2;
-            }
+            item = getGraphicShadowItem();
+        }
             break;
         default:
-            jackItem.resId = 0;
+            item.resId = 0;
             break;
     }
 
-    if(jackItem.resId != 0)
+    if(item.resId != 0)
     {
-        addGraphicToQueue(jackItem);
+        addGraphicToQueue(item);
     }
+}
+
+void BlowUpPuzzleVCR::updateBlackJack() {
+    JackInfo onTable;
+    onTable.resId = 1;
+    onTable.x = 0;
+    onTable.y = 411;
+
+    JackInfo pluggedOnRed;
+    pluggedOnRed.resId = 5;
+
+    JackInfo pluggedOnYellow;
+    pluggedOnYellow.resId = 8;
+
+    JackInfo pluggedOnBlack;
+    pluggedOnBlack.resId = 11;
+
+    updateJack(kBlack, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 27);
 }
 
 void BlowUpPuzzleVCR::updateRedJack() {
-    GraphicQueueItem jackItem;
+    JackInfo onTable;
+    onTable.resId = 2;
+    onTable.x = 76;
+    onTable.y = 428;
 
-    switch(_jacksState[kRed]){
-        case kOnTable:
-            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[2];
-            jackItem.frameIdx = 0;
-            jackItem.x = 76;
-            jackItem.y = 428;
-            jackItem.priority = 3;
-            break;
-        case kPluggedOnRed:
-            break;
-        case kPluggedOnYellow:
-            break;
-        case kPluggedOnBlack:
-            break;
-        case kOnHand:
-            break;
-        default:
-            jackItem.resId = 0;
-            break;
-    }
+    JackInfo pluggedOnRed;
+    pluggedOnRed.resId = 4;
 
-    if(jackItem.resId != 0)
-    {
-        addGraphicToQueue(jackItem);
-    }
+    JackInfo pluggedOnYellow;
+    pluggedOnYellow.resId = 7;
+
+    JackInfo pluggedOnBlack;
+    pluggedOnBlack.resId = 10;
+
+    updateJack(kRed, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 25);
 }
 
 void BlowUpPuzzleVCR::updateYellowJack() {
-    GraphicQueueItem jackItem;
+    JackInfo onTable;
+    onTable.resId = 3;
+    onTable.x = 187;
+    onTable.y = 439;
 
-    switch(_jacksState[kYellow]){
-        case kOnTable:
-            jackItem.resId = _scene->getResources()->getWorldStats()->grResId[3];
-            jackItem.frameIdx = 0;
-            jackItem.x = 187;
-            jackItem.y = 439;
-            jackItem.priority = 3;
-            break;
-        case kPluggedOnRed:
-            break;
-        case kPluggedOnYellow:
-            break;
-        case kPluggedOnBlack:
-            break;
-        case kOnHand:
-            break;
-        default:
-            jackItem.resId = 0;
-            break;
-    }
+    JackInfo pluggedOnRed;
+    pluggedOnRed.resId = 6;
 
-    if(jackItem.resId != 0)
-    {
-        addGraphicToQueue(jackItem);
-    }
+    JackInfo pluggedOnYellow;
+    pluggedOnYellow.resId = 9;
+
+    JackInfo pluggedOnBlack;
+    pluggedOnBlack.resId = 12;
+
+    updateJack(kYellow, onTable, pluggedOnRed, pluggedOnYellow, pluggedOnBlack, 26);
 }
 
 
@@ -338,17 +359,42 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 }
 
 void BlowUpPuzzleVCR::handleMouseDown() {
-    // TODO: Jack hole regions
-    if(inPolyRegion(_mouseX, _mouseY, kRedHole)) { // red jack hole
+    /*int newState = 1; // v1
+    if(_jacksState[kBlack] != kOnHand) {
+        if(_jacksState[kRed] == kOnHand) {
+            newState = 2;
+        } else {
+            newState = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
+        }
+    }*/
 
+    // TODO: put jacks in holes
+    if(inPolyRegion(_mouseX, _mouseY, kRedHole)) { 
     }
 
-    if(inPolyRegion(_mouseX, _mouseY, kYellowHole)) { // yellow jack hole
-
+    if(inPolyRegion(_mouseX, _mouseY, kYellowHole)) { 
     }
 
-    if(inPolyRegion(_mouseX, _mouseY, kBlackHole)) { // black jack hole
+    if(inPolyRegion(_mouseX, _mouseY, kBlackHole)) { 
+    }
 
+    // Put jacks on table --
+    int jackType = 0;
+    if(_jacksState[kBlack] == kOnHand) {
+        jackType = kBlack+1;
+    } else if(_jacksState[kRed] == kOnHand) {
+        jackType = kRed+1;
+    } else {
+        jackType = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
+    }
+    if(jackType) {
+        if (_mouseX >= (uint32)BlowUpPuzzleVCRPolies[kBlackJack].left && _mouseX <= (uint32)BlowUpPuzzleVCRPolies[kYellowJack].right &&
+            _mouseY >= (uint32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _mouseY <= (uint32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {
+            _jacksState[jackType-1] = kOnTable;
+            _sound->playSfx(_scene->getResourcePack(), _scene->getResources()->getWorldStats()->grResId[50]);
+            _screen->showCursor();
+        }
+        return;
     }
 
     // Get Jacks from Table
