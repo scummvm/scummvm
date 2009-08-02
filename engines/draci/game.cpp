@@ -204,8 +204,13 @@ void Game::init() {
 
 	// Initialize animation for object / room titles
 	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
-	Text *title = new Text ("", _vm->_bigFont, kFontColour3, 0, 0);
+	Text *title = new Text("", _vm->_bigFont, kFontColour3, 0, 0);
 	titleAnim->addFrame(title);
+
+	// Initialize animation for speech text
+	Animation *speechAnim = _vm->_anims->addText(kSpeechText, true);
+	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0);
+	speechAnim->addFrame(speech);
 
 	loadObject(kDragonObject);
 	

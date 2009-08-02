@@ -34,7 +34,11 @@ namespace Draci {
   * Animation IDs for those animations that don't have their IDs
   * specified in the data files.
   */
-enum { kOverlayImage = -1, kWalkingMapOverlay = -2, kTitleText = -3, kUnused = -4 };
+enum { kOverlayImage = -1, 
+	   kWalkingMapOverlay = -2, 
+	   kTitleText = -3, 
+	   kSpeechText = -4,
+	   kUnused = -5 };
 
 /**
   * Default argument to Animation::getFrame() that makes it return 
