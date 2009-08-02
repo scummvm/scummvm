@@ -37,6 +37,8 @@
 #include "common/serializer.h"
 #include "common/savefile.h"
 
+#include "gui/message.h"
+
 namespace Tinsel {
 
 
@@ -452,6 +454,11 @@ static bool DoRestore() {
 
 	delete f;
 
+	if (failed) {
+		GUI::MessageDialog dialog("Failed to load game state from file.");
+		dialog.runModal();
+	}
+
 	return !failed;
 }
 
@@ -473,10 +480,10 @@ static void DoSave(void) {
 	fname = SaveSceneName;
 
 	f = _vm->getSaveFileMan()->openForSaving(fname);
-	if (f == NULL)
-		return;
-
 	Common::Serializer s(0, f);
+
+	if (f == NULL)
+		goto save_failure;
 
 	// Write out a savegame header
 	SaveGameHeader hdr;
@@ -502,8 +509,12 @@ static void DoSave(void) {
 	return;
 
 save_failure:
-	delete f;
-	_vm->getSaveFileMan()->removeSavefile(fname);
+	if (f) {
+		delete f;
+		_vm->getSaveFileMan()->removeSavefile(fname);
+	}
+	GUI::MessageDialog dialog("Failed to save game state to file.");
+	dialog.runModal();
 }
 
 /**
