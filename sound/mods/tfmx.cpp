@@ -983,14 +983,14 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 }
 
 int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
-	assert(0 <= sfxIndex && sfxIndex < 128);
+	assert(sfxIndex < 128);
 	Common::StackLock lock(_mutex);
 
 	const byte *sfxEntry = getSfxPtr(sfxIndex);
 	if (sfxEntry[0] == 0xFB) {
 		// custompattern
-		const uint8 patCmd = sfxEntry[2];
-		const int8 patExp = (int8)sfxEntry[3];
+		/* const uint8 patCmd = sfxEntry[2];
+		const int8 patExp = (int8)sfxEntry[3]; */
 	} else {
 		// custommacro
 		const byte channelNo = ((_playerCtx.song >= 0) ? sfxEntry[2] : sfxEntry[4]) & (kNumVoices - 1);
