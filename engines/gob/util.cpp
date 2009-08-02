@@ -45,7 +45,6 @@ Util::Util(GobEngine *vm) : _vm(vm) {
 	_frameRate      = 12;
 	_frameWaitTime  = 0;
 	_startFrameTime = 0;
-	_frameWaitLag   = 0;
 }
 
 uint32 Util::getTimeKey(void) {
@@ -331,12 +330,10 @@ void Util::setFrameRate(int16 rate) {
 	_frameRate = rate;
 	_frameWaitTime = 1000 / rate;
 	_startFrameTime = getTimeKey();
-	_frameWaitLag = 0;
 }
 
 void Util::notifyNewAnim() {
 	_startFrameTime = getTimeKey();
-	_frameWaitLag = 0;
 }
 
 void Util::waitEndFrame() {
@@ -350,17 +347,12 @@ void Util::waitEndFrame() {
 		return;
 	}
 
-	int32 waitTime = _frameWaitTime - _frameWaitLag;
-	int32 toWait = waitTime - time;
+	int32 toWait = _frameWaitTime - time;
 
 	if (toWait > 0)
 		delay(toWait);
 
-	int32 now = getTimeKey();
-
-	_frameWaitLag = (now - _startFrameTime) - waitTime;
-
-	_startFrameTime = now;
+	_startFrameTime = getTimeKey();
 }
 
 void Util::setScrollOffset(int16 x, int16 y) {

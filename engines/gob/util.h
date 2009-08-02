@@ -145,7 +145,6 @@ protected:
 	int16 _frameRate;
 	int16 _frameWaitTime;
 	uint32 _startFrameTime;
-	int32 _frameWaitLag;
 
 	GobEngine *_vm;
 
