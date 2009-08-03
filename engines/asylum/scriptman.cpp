@@ -34,13 +34,13 @@ static bool g_initialized = false;
 
 ScriptManager::ScriptManager() {
 	if (!g_initialized) {
-		g_initialized		  = true;
-		_currentLine 		  = 0;
-		_currentLoops 		  = 0;
-		_processing 		  = false;
-		_delayedSceneIndex 	  = -1;
-		_delayedVideoIndex 	  = -1;
-		_allowInput			  = true;
+		g_initialized		= true;
+		_currentLine 		= 0;
+		_currentLoops 		= 0;
+		_processing 		= false;
+		_delayedSceneIndex 	= -1;
+		_delayedVideoIndex 	= -1;
+		_allowInput			= true;
 
 		memset(_gameFlags, 0, 1512);
 	}
@@ -145,7 +145,11 @@ void ScriptManager::processActionList() {
 				if (barrierIndex >= 0)
 					_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
-					debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
+					debugC(kDebugLevelScripts,
+							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
+							currentCommand.param1,
+							_scene->getSceneIndex(),
+							_currentLine);
 			}
 				break;
 
@@ -160,7 +164,11 @@ void ScriptManager::processActionList() {
 				if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors))
 					_scene->actorVisible(actorIndex, false);
 				else
-					debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
+					debugC(kDebugLevelScripts,
+							"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
+							currentCommand.param1,
+							_scene->getSceneIndex(),
+							_currentLine);
 			}
 				break;
 
@@ -171,11 +179,14 @@ void ScriptManager::processActionList() {
 				else
 					actorIndex = currentCommand.param1;
 
-				if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors)) {
+				if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors))
 					_scene->actorVisible(actorIndex, true);
-				}
 				else
-					debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
+					debugC(kDebugLevelScripts,
+							"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
+							currentCommand.param1,
+							_scene->getSceneIndex(),
+							_currentLine);
 			}
 				break;
 
@@ -191,7 +202,11 @@ void ScriptManager::processActionList() {
 					_scene->setActorAction(actorIndex, currentCommand.param4);
 				}
 				else
-					debugC(kDebugLevelScripts, "Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
+					debugC(kDebugLevelScripts,
+							"Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.",
+							currentCommand.param1,
+							_scene->getSceneIndex(),
+							_currentLine);
 			}
 				break;
 
@@ -205,55 +220,7 @@ void ScriptManager::processActionList() {
 					actorIndex = currentCommand.param1;
 
 				if (_scene->_sceneResource->getWorldStats()->actors[actorIndex].field_40 == 5) {
-					/*
-					  v14 = 2468 * characterIndex;
-					  v19 = scene.characters[characterIndex].direction;
-					  if ( v19 > 4 )
-						v20 = 8 - v19;
-					  else
-						v20 = scene.characters[characterIndex].direction;
-					  v21 = scene.characters[0].grResTable[characterIndex + v20 + 616 * characterIndex + 5];
-					 LABEL_82:
-					  *(int *)((char *)&scene.characters[0].grResId + v14) = v21;
-					  v16 = v21;
-				LABEL_83:
-					  *(int *)((char *)&scene.characters[0].frameCount + v14) = grGetFrameCount__(v16);
-					  *(int *)((char *)&scene.characters[0].frameNumber + v14) = 0;
-					  goto LABEL_84;
-					default:
-					  goto LABEL_84;
-				  }
-				  while ( 1 )
-				  {
-					v32 = *v30 < (unsigned __int8)*v31;
-					if ( *v30 != *v31 )
-					  break;
-					if ( !*v30 )
-					  goto LABEL_70;
-					v42 = *(v30 + 1);
-					v43 = *(v31 + 1);
-					v33 = *(v30 + 1);
-					v32 = v42 < v43;
-					if ( v42 != v43 )
-					  break;
-					v30 += 2;
-					v31 += 2;
-					if ( !v33 )
-					{
-				LABEL_70:
-					  v34 = 0;
-					  goto LABEL_72;
-					}
-				  }
-				  v34 = -v32 - (v32 - 1);
-				LABEL_72:
-				  if ( !v34 )
-					v3 = 4;
-				LABEL_84:
-				  result = 617 * v4;
-				  scene.characters[v4].field_40 = v3;
-
-					 */
+					enableActorSub(actorIndex, 4);
 				}
 			}
 				break;
@@ -261,20 +228,25 @@ void ScriptManager::processActionList() {
 /* 0x0F */  case kEnableBarriers: {
 				int barIdx = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
 				int sndIdx = currentCommand.param3;
-				int v59 = currentCommand.param2;
-				int v61 = _currentScript->counter; // actionList + 1773
+				int v59    = currentCommand.param2;
 
-				if (!v61 && _scene->getSceneIndex() != 13)
-						_scene->_sound->playSfx(_scene->_resPack, ((sndIdx != 0) & 5) - 2146303999);
+				if (!_currentScript->counter && _scene->getSceneIndex() != 13 && sndIdx != 0) {
+					// TODO
+					// Find a script that actually has a valid param3
+					// to see if this code is accurate :P
+					ResourcePack *tmpRes = new ResourcePack(12);
+					_scene->_sound->playSfx(tmpRes, ((sndIdx != 0) & 5) + 0x80120001);
+					delete tmpRes;
+				}
 
-				if (v61 >= 3 * v59 - 1) {
+				if (_currentScript->counter >= 3 * v59 - 1) {
 					_currentScript->counter = 0;
 					_scene->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = 0;
-					// processActionListSub02(currentCommand.opcode, v59, _currentScript->counter, 2);
+					processActionListSub02(_currentScript, &currentCommand, 2);
 					_currentLoops = 1; // v4 = 1;
 				} else {
 					int v64;
-					int v62 = v61 + 1;
+					int v62 = _currentScript->counter + 1;
 					_currentScript->counter = v62;
 					if (sndIdx) {
 						v64 = 1;
@@ -285,7 +257,7 @@ void ScriptManager::processActionList() {
 						_scene->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = v62 / v59 + 1;
 					}
 
-					//processActionListSub02(currentCommand.opcode, v59, _currentScript->counter, v64);
+					processActionListSub02(_currentScript, &currentCommand, v64);
 
 				}
 			}
@@ -301,7 +273,11 @@ void ScriptManager::processActionList() {
 				if (barrierIndex >= 0)
 					_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFDF;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
-					debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
+					debugC(kDebugLevelScripts,
+							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
+							currentCommand.param1,
+							_scene->getSceneIndex(),
+							_currentLine);
 			}
 				break;
 
@@ -332,7 +308,9 @@ void ScriptManager::processActionList() {
 /* 0x2A */  //case kJumpIfActorField638:
 /* 0x2B */  case kChangeScene:
 				_delayedSceneIndex = currentCommand.param1 + 4;
-				debug(kDebugLevelScripts, "Queueing Scene Change to scene %d...", currentCommand.param1 + 4);
+				debug(kDebugLevelScripts,
+						"Queueing Scene Change to scene %d...",
+						currentCommand.param1 + 4);
 				break;
 
 /* 0x2C */  //case k_unk2C_ActorSub:
@@ -374,7 +352,8 @@ void ScriptManager::processActionList() {
 						waitCycle = true;
 					}
 				} else
-					debugC(kDebugLevelScripts, "Requested invalid object ID:0x%02X in Scene %d Line %d.",
+					debugC(kDebugLevelScripts,
+							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
 							currentCommand.param1,
 							_scene->getSceneIndex(),
 							_currentLine);
@@ -392,7 +371,11 @@ void ScriptManager::processActionList() {
 					else
 						_scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1);
 				} else
-					debugC(kDebugLevelScripts, "Requested invalid sound ID:0x%02X in Scene %d Line %d.", currentCommand.param1, _scene->getSceneIndex(), _currentLine);
+					debugC(kDebugLevelScripts,
+							"Requested invalid sound ID:0x%02X in Scene %d Line %d.",
+							currentCommand.param1,
+							_scene->getSceneIndex(),
+							_currentLine);
 				break;
 
 /* 0x42 */  //case k_unk42:
@@ -430,7 +413,8 @@ void ScriptManager::processActionList() {
 /* 0x62 */  //case k_unk62_SHOW_OPTIONS_SCREEN:
 
 			default:
-				debugC(kDebugLevelScripts, "Unhandled opcode 0x%02X in Scene %d Line %d.",
+				debugC(kDebugLevelScripts,
+						"Unhandled opcode 0x%02X in Scene %d Line %d.",
 						currentCommand.opcode,
 						_scene->getSceneIndex(),
 						_currentLine);
@@ -454,7 +438,7 @@ void ScriptManager::processActionList() {
 	_processing = false;
 }
 
-void ScriptManager::processActionListSub02(ActionCommand *command, int a3, int a4) {
+void ScriptManager::processActionListSub02(ActionDefinitions* script, ActionCommand *command, int a4) {
 	int v4 = 0;
 	int result;
 	int barrierIdx = 0;
@@ -472,24 +456,61 @@ void ScriptManager::processActionListSub02(ActionCommand *command, int a3, int a
 				v8 += 4;
 			}
 		}
-
+		// TODO
 		switch (_scene->getSceneIndex()) {
 		case 7:
+			warning("Scene 7 / v4 != 0 Not Implemented");
 			break;
 		case 6:
+			warning("Scene 6 / v4 != 0 Not Implemented");
 			break;
 		case 8:
+			warning("Scene 8 / v4 != 0 Not Implemented");
 			break;
 		case 3:
+			warning("Scene 3 / v4 != 0 Not Implemented");
 			break;
 		case 4:
+			warning("Scene 4 / v4 != 0 Not Implemented");
 			break;
 		default:
 			return;
 		}
-
-
+	} else {
+		int v13 = command->param4;
+		int v4 = script->counter / command->param2 + 4;
+		for (int i = 7; i > 0; i--) {
+			barrierIdx = _scene->getResources()->getBarrierIndexById(v13);
+			if (barrierIdx >= 0)
+				_scene->getResources()->getWorldStats()->barriers[barrierIdx].field_67C = v4;
+			v13 += 4;
+		}
+		// TODO
+		switch (_scene->getSceneIndex()) {
+		case 7:
+			warning("Scene 7 / v4 = 0 Not Implemented");
+			break;
+		case 6:
+			warning("Scene 6 / v4 = 0 Not Implemented");
+			break;
+		case 8:
+			warning("Scene 8 / v4 = 0 Not Implemented");
+			break;
+		case 3:
+			warning("Scene 3 / v4 = 0 Not Implemented");
+			break;
+		case 4:
+			warning("Scene 4 / v4 = 0 Not Implemented");
+			break;
+		default:
+			return;
+		}
 	}
+
+}
+
+void ScriptManager::enableActorSub(int actorIndex, int condition) {
+
 }
 
 ScriptManager::~ScriptManager() {

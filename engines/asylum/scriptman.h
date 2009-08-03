@@ -75,7 +75,8 @@ private:
 	// most sense
 	int _gameFlags[1512];
 
-	void processActionListSub02(ActionCommand* command, int a3, int a4);
+	void processActionListSub02(ActionDefinitions* script, ActionCommand* command,  int a4);
+	void enableActorSub(int actorIndex, int condition);
 
 	friend class Console;
 
