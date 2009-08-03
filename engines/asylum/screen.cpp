@@ -87,7 +87,10 @@ void Screen::setPalette(byte *rgbPalette) {
 	byte palette[256 * 4];
 	byte *p = rgbPalette;
 
-	for (int i = 0; i < 256; i++) {
+    // skip first color and set it to black always.
+    memset(palette, 0, 4); p+=3;
+
+	for (int i = 1; i < 256; i++) {
 		palette[i * 4 + 0] = *p++ << 2;
 		palette[i * 4 + 1] = *p++ << 2;
 		palette[i * 4 + 2] = *p++ << 2;

@@ -227,15 +227,15 @@ void ScriptManager::processActionList() {
 
 /* 0x0F */  case kEnableBarriers: {
 				int barIdx = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
-				int sndIdx = currentCommand.param3;
-				int v59    = currentCommand.param2;
+				uint32 sndIdx = currentCommand.param3;
+				uint32 v59    = currentCommand.param2;
 
 				if (!_currentScript->counter && _scene->getSceneIndex() != 13 && sndIdx != 0) {
 					// TODO
 					// Find a script that actually has a valid param3
 					// to see if this code is accurate :P
 					ResourcePack *tmpRes = new ResourcePack(12);
-					_scene->_sound->playSfx(tmpRes, ((sndIdx != 0) & 5) + 0x80120001);
+					_scene->_sound->playSfx(tmpRes, ((int)(sndIdx != 0) & 5) + 0x80120001);
 					delete tmpRes;
 				}
 
