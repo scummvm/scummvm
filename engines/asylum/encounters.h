@@ -38,6 +38,17 @@ typedef struct EncounterItem {
 	uint16 value;
 } EncounterItem;
 
+typedef struct EncounterStruct {
+	uint32 x1;
+	uint32 y1;
+	uint32 x2;
+	uint32 y2;
+	uint32 frameNum;
+	uint32 transTableNum;
+	uint32 status;
+	uint32 grResId;
+};
+
 class Encounter {
 public:
 	Encounter();
