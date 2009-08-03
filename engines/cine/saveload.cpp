@@ -468,8 +468,17 @@ bool CineEngine::loadSaveDirectory(void) {
 		return false;
 	}
 
+	// Initialize all savegames' descriptions to empty strings
+	// so that if the savegames' descriptions can only be partially read from file
+	// then the missing ones are correctly set to empty strings.
+	memset(currentSaveName, 0, sizeof(currentSaveName));
+
 	fHandle->read(currentSaveName, 10 * 20);
 	delete fHandle;
+
+	// Make sure all savegames' descriptions end with a trailing zero.
+	for (int i = 0; i < ARRAYSIZE(currentSaveName); i++)
+		currentSaveName[i][sizeof(CommandeType) - 1] = 0;
 
 	return true;
 }
