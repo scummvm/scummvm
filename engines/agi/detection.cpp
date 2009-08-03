@@ -1290,20 +1290,6 @@ const ADGameDescription *AgiMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 namespace Agi {
 
-Common::Error AgiBase::loadGameState(int slot) {
-	static char saveLoadSlot[12];
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
-	loadGame(saveLoadSlot);
-	return Common::kNoError;	// TODO: return success/failure
-}
-
-Common::Error AgiBase::saveGameState(int slot, const char *desc) {
-	static char saveLoadSlot[12];
-	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
-	saveGame(saveLoadSlot, desc);
-	return Common::kNoError;	// TODO: return success/failure
-}
-
 bool AgiBase::canLoadGameStateCurrently() {
 	return (!(getGameType() == GType_PreAGI) && getflag(fMenusWork) && !_noSaveLoadAllowed);
 }
