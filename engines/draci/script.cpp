@@ -638,8 +638,8 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 
 		case kMathOperator:
 			value = reader.readSint16LE();
-			arg1 = stk.pop();
 			arg2 = stk.pop();
+			arg1 = stk.pop();
 
 			// Fetch operator
 			oper = _operatorList[value-1];
