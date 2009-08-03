@@ -54,7 +54,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	for (i = 0; i < numPersons; ++i) {
 		_persons[i]._x = personData.readUint16LE();
 		_persons[i]._y = personData.readUint16LE();
-		_persons[i]._fontColour = personData.readByte();
+		_persons[i]._fontColour = personData.readByte() - 1;
 	}
 
 	// Close persons file
