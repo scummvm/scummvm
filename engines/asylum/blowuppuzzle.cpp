@@ -90,6 +90,7 @@ BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene) : B
 	_mouseY			    = 0;
 	_leftClickUp	    = false;
     _leftClickDown	    = false;
+    _rightClickDown     = false;
 	_curMouseCursor	    = 0;
 	_cursorStep		    = 1;
 	_active			    = false;
@@ -128,6 +129,7 @@ void BlowUpPuzzleVCR::openBlowUp() {
 
 	_leftClickUp = false;
     _leftClickDown = false;
+    _rightClickDown = false;
 	_mouseX = _mouseY = 0;
 }
 
@@ -150,6 +152,9 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
     case Common::EVENT_LBUTTONDOWN:
 		_leftClickDown = true;
 		break;
+    case Common::EVENT_RBUTTONDOWN:
+		_rightClickDown = true;
+	    break;
 	default:
 		break;
 	}
@@ -165,6 +170,13 @@ int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
 
 void BlowUpPuzzleVCR::update() {
     _queueItems.clear();
+
+    if (_rightClickDown) { // quits BlowUp Puzzle
+		_rightClickDown = false;
+        closeBlowUp();
+        // TODO: stop sound fx grResId[47] (TV On sfx)
+        _scene->enterScene();
+    }
 
     if (_leftClickDown) {
 		_leftClickDown = false;
@@ -329,9 +341,9 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
     int showCursor = 0;
 
     if ( _jacksState[kBlack] == kOnHand ) {
-        showCursor = 1;
+        showCursor = kBlack+1;
     } else if ( _jacksState[kRed] == kOnHand ) {
-        showCursor = 2;
+        showCursor = kRed+1;
     } else {
         showCursor = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
     }
@@ -346,11 +358,22 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
            || inPolyRegion(_mouseX, _mouseY, kYellowJack)) {
             updateCursor();
         } else {
-            if(_curMouseCursor != 0) { // reset cursor
-                _screen->showCursor();
-                _curMouseCursor = 0;
-                _cursorStep = 1;
-                updateCursor();
+            if(inPolyRegion(_mouseX, _mouseY, kRedHole) && _holesState[kPluggedOnRed-1]
+                || inPolyRegion(_mouseX, _mouseY, kYellowHole) && _holesState[kPluggedOnYellow-1]
+                || inPolyRegion(_mouseX, _mouseY, kBlackHole) && _holesState[kPluggedOnBlack-1]) {
+                if(_curMouseCursor != 2) { // reset cursor
+                    _screen->showCursor();
+                    _curMouseCursor = 2;
+                    _cursorStep = 1;
+                    updateCursor();
+                }
+            } else {
+                if(_curMouseCursor != 0) { // reset cursor
+                    _screen->showCursor();
+                    _curMouseCursor = 0;
+                    _cursorStep = 1;
+                    updateCursor();
+                }
             }
         }
     } else {
@@ -359,28 +382,30 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 
 }
 
-void BlowUpPuzzleVCR::handleMouseDown() {
-    int jackType = 1; // v1
-    if(_jacksState[kBlack] != kOnHand) {
-        if(_jacksState[kRed] == kOnHand) {
-            jackType = 2;
-        } else {
-            jackType = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
+// common function to set and unset the jack on holes for each type of jack
+int BlowUpPuzzleVCR::setJackOnHole(int jackType, JackState plugged) {
+    if(!_holesState[plugged-1]) {
+        if(_jacksState[jackType-1] == kOnHand) {
+            _jacksState[jackType-1] = plugged;
+            _holesState[plugged-1] = jackType; // set jack on red
+            _sound->playSfx(_scene->getResourcePack(), _scene->getResources()->getWorldStats()->grResId[44]);
         }
+    } else if(jackType == 0) {
+        jackType = _holesState[plugged-1];
+        _jacksState[jackType-1] = kOnHand;
+        _holesState[plugged-1] = 0;
+        _sound->playSfx(_scene->getResourcePack(), _scene->getResources()->getWorldStats()->grResId[43]);
+        return 0;
     }
+    return 1;
+}
 
-    // TODO: put jacks in holes
-    if(inPolyRegion(_mouseX, _mouseY, kRedHole)) { 
-    }
+void BlowUpPuzzleVCR::handleMouseDown() {
 
-    if(inPolyRegion(_mouseX, _mouseY, kYellowHole)) { 
-    }
+    if(_isAccomplished)
+        return;
 
-    if(inPolyRegion(_mouseX, _mouseY, kBlackHole)) { 
-    }
-
-    // Put jacks on table --
-    jackType = 0;
+    int jackType = 0;
     if(_jacksState[kBlack] == kOnHand) {
         jackType = kBlack+1;
     } else if(_jacksState[kRed] == kOnHand) {
@@ -388,6 +413,25 @@ void BlowUpPuzzleVCR::handleMouseDown() {
     } else {
         jackType = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
     }
+
+    // Plug-in jacks
+    if(inPolyRegion(_mouseX, _mouseY, kRedHole)) { 
+        if(!setJackOnHole(jackType, kPluggedOnRed)) {
+            return;
+        }
+    }
+    if(inPolyRegion(_mouseX, _mouseY, kYellowHole)) {
+        if(!setJackOnHole(jackType, kPluggedOnYellow)) {
+            return;
+        }
+    }
+    if(inPolyRegion(_mouseX, _mouseY, kBlackHole)) { 
+        if(!setJackOnHole(jackType, kPluggedOnBlack)) {
+            return;
+        }
+    }
+
+    // Put jacks on table --
     if(jackType) {
         if (_mouseX >= (uint32)BlowUpPuzzleVCRPolies[kBlackJack].left && _mouseX <= (uint32)BlowUpPuzzleVCRPolies[kYellowJack].right &&
             _mouseY >= (uint32)BlowUpPuzzleVCRPolies[kBlackJack].top  && _mouseY <= (uint32)BlowUpPuzzleVCRPolies[kYellowJack].bottom) {

@@ -73,6 +73,7 @@ protected:
 	int32	_cursorStep;
 	bool    _leftClickUp;
     bool    _leftClickDown;
+    bool    _rightClickDown;
 	bool    _active;
 
     GraphicResource *_bgResource;
@@ -154,7 +155,6 @@ private:
     int _buttonsState[4];
     int _tvScreenAnimIdx;
     int _isAccomplished;
-    // TODO: members for playing sound
 
     int inPolyRegion(int x, int y, int polyIdx);
 
@@ -169,6 +169,7 @@ private:
 
     void updateCursorInPolyRegion();
 
+    int setJackOnHole(int jackType, JackState plugged);
     void handleMouseDown();
     void handleMouseUp();
 }; // end of class BlowUpPuzzleVCR
