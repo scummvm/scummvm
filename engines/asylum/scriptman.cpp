@@ -363,19 +363,24 @@ void ScriptManager::processActionList() {
 /* 0x3E */  //case kUpdateMatteBars:
 /* 0x3F */  //case k_unk3F:
 /* 0x40 */  //case k_unk40_SOUND:
-/* 0x41 */  case kPlaySpeech:
+/* 0x41 */  case kPlaySpeech: {
 				//	TODO - Add support for other param options
-				if (currentCommand.param1 >= 0) {
-					if (currentCommand.param3 && currentCommand.param1 > 0)	//	HACK - Find out why sometimes an offset is needed and other times not
-						_scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1 - 9);
-					else
-						_scene->_sound->playSfx(_scene->_speechPack, currentCommand.param1);
+				uint32 sndIdx = currentCommand.param1;
+				if ((int)currentCommand.param1 >= 0) {
+					if (sndIdx >= 259) {
+						sndIdx -= 9;
+						_scene->_sound->playSfx(_scene->_speechPack, sndIdx - 0x7FFD0000);
+					} else {
+						_scene->_sound->playSfx(_scene->_speechPack, sndIdx);
+					}
+
 				} else
 					debugC(kDebugLevelScripts,
 							"Requested invalid sound ID:0x%02X in Scene %d Line %d.",
 							currentCommand.param1,
 							_scene->getSceneIndex(),
 							_currentLine);
+			}
 				break;
 
 /* 0x42 */  //case k_unk42:
