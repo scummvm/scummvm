@@ -196,6 +196,10 @@ void Script::directGameLoad(int slot) {
 	// TODO: We'll probably need to start by running the beginning of the
 	// script to let it do the soundcard initialization and then do the
 	// actual loading.
+
+	// Due to HACK above, the call to check valid save slots is not run.
+	// As this is where we load save names, manually call it here.
+	o_checkvalidsaves();
 }
 
 void Script::step() {
