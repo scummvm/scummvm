@@ -607,35 +607,37 @@ SaveStateList CineMetaEngine::listSaves(const char *target) const {
 	pattern += ".?";
 	Common::StringList filenames = saveFileMan->listSavefiles(pattern);
 	sort(filenames.begin(), filenames.end());
-	Common::StringList::const_iterator file = filenames.begin();
+	Common::StringList::const_iterator file;
 
 	Common::String filename = target;
 	filename += ".dir";
 	Common::InSaveFile *in = saveFileMan->openForLoading(filename);
 	if (in) {
-		int8 ch;
-		char saveDesc[20];
-		do {
+		typedef char CommandeType[20];
+		CommandeType saveNames[10];
+
+		// Initialize all savegames' descriptions to empty strings
+		// so that if the savegames' descriptions can only be partially read from file
+		// then the missing ones are correctly set to empty strings.
+		memset(saveNames, 0, sizeof(saveNames));
+
+		in->read(saveNames, 10 * 20);
+		CommandeType saveDesc;
+
+		for (file = filenames.begin(); file != filenames.end(); ++file) {
+			// Jump over savegame files that don't end with a digit (e.g. "fw.3" is ok, "fw.a" is not).
+			if (!isdigit(file->lastChar()))
+				continue;
+
 			// Obtain the last digit of the filename, since they correspond to the save slot
 			int slotNum = atoi(file->c_str() + file->size() - 1);
 
-			uint pos = 0;
-			do {
-				ch = in->readByte();
-				if (pos < (sizeof(saveDesc) - 1)) {
-					if (ch < 32 || in->eos()) {
-						saveDesc[pos++] = '\0';
-					}
-					else if (ch >= 32) {
-						saveDesc[pos++] = ch;
-					}
-				}
-			} while (ch >= 32 && !in->eos());
-			if (saveDesc[0] != 0) {
-				saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
-				file++;
-			}
-		} while (!in->eos());
+			// Copy the savegame description making sure it ends with a trailing zero
+			strncpy(saveDesc, saveNames[slotNum], 20);
+			saveDesc[sizeof(CommandeType) - 1] = 0;
+
+			saveList.push_back(SaveStateDescriptor(slotNum, saveDesc));
+		}
 	}
 
 	delete in;
@@ -649,6 +651,11 @@ void CineMetaEngine::removeSaveState(const char *target, int slot) const {
 	// Load savegame descriptions from index file
 	typedef char CommandeType[20];
 	CommandeType saveNames[10];
+
+	// Initialize all savegames' descriptions to empty strings
+	// so that if the savegames' descriptions can only be partially read from file
+	// then the missing ones are correctly set to empty strings.
+	memset(saveNames, 0, sizeof(saveNames));
 
 	Common::InSaveFile *in;
 	char tmp[80];
@@ -707,8 +714,9 @@ Common::Error CineEngine::saveGameState(int slot, const char *desc) {
 	// Load savegame descriptions from index file
 	loadSaveDirectory();
 
-	// Set description for selected slot
+	// Set description for selected slot making sure it ends with a trailing zero
 	strncpy(currentSaveName[slot], desc, 20);
+	currentSaveName[slot][sizeof(CommandeType) - 1] = 0;
 
 	// Update savegame descriptions
 	char indexFile[80];
