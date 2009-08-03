@@ -115,8 +115,6 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 void OSystem_GP2XWIZ::initSize(uint w, uint h) {
     assert(_transactionMode == kTransactionActive);
 
-    printf("Init Size: w=%d, h=%d\n", w, h);
-
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
@@ -371,11 +369,11 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 				assert(scalerProc != NULL);
 
                 if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
-                    if(dst_x % 2 == 1){
+                    if(dst_x%2==1){
                         dst_x--;
                         dst_w++;
                     }
-                    if(dst_y % 2 == 1){
+                    if(dst_y%2==1){
                         dst_y--;
                         dst_h++;
                     }
@@ -441,8 +439,8 @@ void OSystem_GP2XWIZ::showOverlay() {
 
 void OSystem_GP2XWIZ::hideOverlay() {
     if(_videoMode.mode == GFX_HALF){
-        _mouseCurState.x = _mouseCurState.x / 2;
-        _mouseCurState.y = _mouseCurState.y / 2;
+        _mouseCurState.x = _mouseCurState.x * 2;
+        _mouseCurState.y = _mouseCurState.y * 2;
     }
 	OSystem_SDL::hideOverlay();
 }
