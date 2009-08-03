@@ -150,6 +150,7 @@ private:
 	};
 
     int _jacksState[3];
+    int _holesState[3];
     int _buttonsState[4];
     int _tvScreenAnimIdx;
     int _isAccomplished;

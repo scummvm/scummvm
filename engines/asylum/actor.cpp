@@ -136,7 +136,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 	// Walking left...
 	if (x < _actorX) {
 		newAction = kWalkW;
-		_actorX--;
+		_actorX-=2;
 		if (ABS(y - _actorY) <= 30) {
 			setAction(newAction);
 			drawActor(screen);
@@ -147,7 +147,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 	// Walking right...
 	if (x > _actorX) {
 		newAction = kWalkE;
-		_actorX++;
+		_actorX+=2;
 		if (ABS(y - _actorY) <= 30) {
 			setAction(newAction);
 			drawActor(screen);
@@ -163,7 +163,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 			newAction = kWalkNE;	// up right
 		else
 			newAction = kWalkN;
-		_actorY--;
+		_actorY-=2;
 	}
 
 	// Walking down...
@@ -174,7 +174,7 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
 			newAction = kWalkSE;	// down right
 		else
 			newAction = kWalkS;
-		_actorY++;
+		_actorY+=2;
 	}
 
 	setAction(newAction);

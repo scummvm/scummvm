@@ -47,7 +47,7 @@ typedef struct EncounterStruct {
 	uint32 transTableNum;
 	uint32 status;
 	uint32 grResId;
-};
+} EncounterStruct;
 
 class Encounter {
 public:

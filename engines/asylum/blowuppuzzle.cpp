@@ -100,6 +100,7 @@ BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene) : B
 
     // reset all states
     memset(&_jacksState,0,sizeof(_jacksState));
+    memset(&_holesState,0,sizeof(_holesState));
     memset(&_buttonsState,0,sizeof(_buttonsState));
 }
 
@@ -115,8 +116,8 @@ void BlowUpPuzzleVCR::openBlowUp() {
     //_sound->stopSfx();
 
 	// Load the graphics palette
-	_screen->setPalette(_scene->getResourcePack(), 183);
-	
+	_screen->setPalette(_scene->getResourcePack(), _scene->getResources()->getWorldStats()->grResId[29]);
+    
     // show blow up puzzle BG
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
@@ -359,14 +360,14 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
 }
 
 void BlowUpPuzzleVCR::handleMouseDown() {
-    /*int newState = 1; // v1
+    int jackType = 1; // v1
     if(_jacksState[kBlack] != kOnHand) {
         if(_jacksState[kRed] == kOnHand) {
-            newState = 2;
+            jackType = 2;
         } else {
-            newState = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
+            jackType = ((_jacksState[kYellow] != kOnHand) - 1) & 3;
         }
-    }*/
+    }
 
     // TODO: put jacks in holes
     if(inPolyRegion(_mouseX, _mouseY, kRedHole)) { 
@@ -379,7 +380,7 @@ void BlowUpPuzzleVCR::handleMouseDown() {
     }
 
     // Put jacks on table --
-    int jackType = 0;
+    jackType = 0;
     if(_jacksState[kBlack] == kOnHand) {
         jackType = kBlack+1;
     } else if(_jacksState[kRed] == kOnHand) {
