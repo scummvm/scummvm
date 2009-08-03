@@ -972,11 +972,39 @@ void AgiEngine::checkQuickLoad() {
 
 		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
 
+		_sprites->eraseBoth();
+		_sound->stopSound();
+
 		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
 			_game.exitAllLogics = 1;
 			_menu->enableAll();
 		}
 	}
+}
+
+Common::Error AgiEngine::loadGameState(int slot) {
+	static char saveLoadSlot[12];
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+
+	_sprites->eraseBoth();
+	_sound->stopSound();
+
+	if (loadGame(saveLoadSlot) == errOK) {
+		_game.exitAllLogics = 1;
+		_menu->enableAll();
+		return Common::kNoError;
+	} else {
+		return Common::kUnknownError;
+	}
+}
+
+Common::Error AgiEngine::saveGameState(int slot, const char *desc) {
+	static char saveLoadSlot[12];
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+	if (saveGame(saveLoadSlot, desc) == errOK)
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
 }
 
 } // End of namespace Agi
