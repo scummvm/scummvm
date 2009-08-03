@@ -11,11 +11,19 @@ Contents:
     * Recent changes <#Recent_changes>
     * How to save <#How_to_save>
     * Controller mappings <#Controller_mappings>
-    * Know issues <#Know_issues>
-    * Major TODO's <#Major_TODOs>
+    * Known issues <#Known_issues>
     * Additional resources/links <#Additional_resourceslinks>
     * Credits <#Credits>
 
+------------------------------------------------------------------------
+
+Please refer to the:
+
+GP2X/GP2XWiz ScummVM Forum: <http://forums.scummvm.org/viewforum.php?f=14> 
+WiKi: <http://wiki.scummvm.org/index.php/GP2XWiz> 
+
+for the most current information on the port and any updates to this 
+documentation.
 
 ------------------------------------------------------------------------
 About the backend/port
@@ -26,11 +34,6 @@ the GP2X WIZ port).
 Full supported official releases of the GP2X WIZ ScummVM backend are made in
 line with main official releases and are avalalble from the ScummVM
 downloads page <http://www.scummvm.org/downloads.php>.
-
-Please refer to the GP2X/GP2X WIZ ScummVM forum
-<http://forums.scummvm.org/viewforum.php?f=14> and WiKi
-<http://wiki.scummvm.org/index.php/GP2X> for the latest information on
-the port.
 
 ------------------------------------------------------------------------
 Game compatibility
@@ -102,12 +105,11 @@ Fancy button combos:
 NOTE: To use button combos press and hold the Left Trigger then...
 
 Right Trigger: Display Virtual Keyboard 
-  (or if it VKeybd is disabled 0 (For skipping the copy protection in Monkey Island 2)
 Menu: Bring up the Global main menu for ScummVM
 Select: Exit ScummVM completely (and gracefully)
 
 ------------------------------------------------------------------------
-Know issues
+Known issues
 
 No major known issues
 
@@ -117,7 +119,7 @@ Additional resources/links
     * ScummVM WiKi GP2X page <http://wiki.scummvm.org/index.php/GP2X>
     * ScummVM forums GP2X forum
       <http://forums.scummvm.org/viewforum.php?f=14>
-    * My own ScummVM page <http://www.distant-earth.com/scummvm> (for
+    * My own ScummVM page <http://scummvm.distant-earth.com/> (for
       SVN/test builds)
     * Main ScummVM site <http://www.scummvm.org> (for official supported
       release builds)

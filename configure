@@ -1201,7 +1201,7 @@ if test -n "$_host"; then
 			;;
 		gp2xwiz)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM -DDISABLE_DOSBOX_OPL"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			LDFLAGS="$LDFLAGS"
 			_endian=little
@@ -1222,7 +1222,7 @@ if test -n "$_host"; then
 			;;	
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM -DDISABLE_DOSBOX_OPL"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			LDFLAGS="$LDFLAGS -static"
 			_endian=little

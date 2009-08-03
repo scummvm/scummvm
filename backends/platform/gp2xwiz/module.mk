@@ -1,6 +1,8 @@
 MODULE := backends/platform/gp2xwiz
 
 MODULE_OBJS := \
+	gp2xwiz-scaler.o \
+	../wince/ARMscaler.o \
 	gp2xwiz-graphics.o \
 	gp2xwiz-events.o \
 	gp2xwiz-hw.o \
