@@ -1870,64 +1870,64 @@ void DrasculaEngine::clearRoom() {
 	_system->updateScreen();
 }
 
-bool DrasculaEngine::exitRoom(int l) {
-	debug(2, "Exiting room from door %d", l);
+bool DrasculaEngine::exitRoom(int doorNumber) {
+	debug(2, "Exiting room from door %d", doorNumber);
 
 	int roomNum = 0;
 
 	// Player can't exit the inn in chapter 1
-	if (currentChapter == 1 && objectNum[l] == 104) {
+	if (currentChapter == 1 && objectNum[doorNumber] == 104) {
 		return false;
 	}
 
-	if (currentChapter == 1 && objectNum[l] == 105 && flags[0] == 0) {
+	if (currentChapter == 1 && objectNum[doorNumber] == 105 && flags[0] == 0) {
 		talk(442);
 		return false;
 	}
 
-	updateDoor(l);
-	if (isDoor[l] != 0 &&
-		((currentChapter != 3 && currentChapter != 5) || visible[l] == 1)) {
+	updateDoor(doorNumber);
+	if (isDoor[doorNumber] != 0 &&
+		((currentChapter != 3 && currentChapter != 5) || visible[doorNumber] == 1)) {
 
 		hideCursor();
-		gotoObject(roomObjX[l], roomObjY[l]);
+		gotoObject(roomObjX[doorNumber], roomObjY[doorNumber]);
 		if (currentChapter != 2) {
-			trackProtagonist = trackObj[l];
+			trackProtagonist = trackObj[doorNumber];
 			updateRoom();
 			updateScreen();
 		}
 		characterMoved = 0;
-		trackProtagonist = trackCharacter_alkeva[l];
-		objExit = roomExits[l];
+		trackProtagonist = trackCharacter_alkeva[doorNumber];
+		objExit = roomExits[doorNumber];
 		doBreak = 1;
 		previousMusic = roomMusic;
 
 		// Object specific actions
-		if (currentChapter == 1 && objectNum[l] == 105) {
+		if (currentChapter == 1 && objectNum[doorNumber] == 105) {
 			animation_2_1();
 			return true;
 		} else if (currentChapter == 2) {
-			if (objectNum[l] == 136)
+			if (objectNum[doorNumber] == 136)
 				animation_2_2();
-			if (objectNum[l] == 124) {
+			if (objectNum[doorNumber] == 124) {
 				gotoObject(163, 106);
 				gotoObject(287, 101);
 				trackProtagonist = 0;
 			}
-			if (objectNum[l] == 173) {
+			if (objectNum[doorNumber] == 173) {
 				animation_35_2();
 				return true;
 			}
-			if (objectNum[l] == 146 && flags[39] == 1) {
+			if (objectNum[doorNumber] == 146 && flags[39] == 1) {
 				flags[5] = 1;
 				flags[11] = 1;
 			}
-			if (objectNum[l] == 176 && flags[29] == 1) {
+			if (objectNum[doorNumber] == 176 && flags[29] == 1) {
 				flags[29] = 0;
 				removeObject(kItemEarWithEarPlug);
 				addObject(kItemEarplugs);
 			}
-		} else if (currentChapter == 4 && objectNum[l] == 108) {
+		} else if (currentChapter == 4 && objectNum[doorNumber] == 108) {
 			gotoObject(171, 78);
 		}
 
@@ -1935,7 +1935,7 @@ bool DrasculaEngine::exitRoom(int l) {
 			hare_se_ve = 1;
 
 		clearRoom();
-		sscanf(_targetSurface[l], "%d", &roomNum);
+		sscanf(_targetSurface[doorNumber], "%d", &roomNum);
 		curX = -1;
 		enterRoom(roomNum);
 

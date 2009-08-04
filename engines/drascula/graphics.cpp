@@ -48,7 +48,7 @@ void DrasculaEngine::allocMemory() {
 	assert(tableSurface);
 	extraSurface = (byte *)malloc(64000);
 	assert(extraSurface);
-	crosshairCursor = (byte *)malloc(40 * 25);
+	crosshairCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
 	assert(crosshairCursor);
 	mouseCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
 	assert(mouseCursor);

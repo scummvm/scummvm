@@ -712,7 +712,8 @@ bool DrasculaEngine::verify2() {
 
 Common::KeyCode DrasculaEngine::getScan() {
 	updateEvents();
-	if (_keyBufferHead == _keyBufferTail) return Common::KEYCODE_INVALID;
+	if (_keyBufferHead == _keyBufferTail)
+		return Common::KEYCODE_INVALID;
 
 	Common::KeyCode key = _keyBuffer[_keyBufferTail].keycode;
 	_keyBufferTail = (_keyBufferTail + 1) % KEYBUFSIZE;
