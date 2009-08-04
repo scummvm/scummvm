@@ -133,8 +133,6 @@ void TextObject::createBitmap() {
 	Common::String message;
 	char *c = (char *)msg.c_str();
 
-	int lineWidth = 0;
-
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up
 	// text justification
@@ -147,23 +145,60 @@ void TextObject::createBitmap() {
 
 	// format the output message to incorporate line wrapping
 	// (if necessary) for the text object
-	_numberLines = 1;
-	lineWidth = 0;
-	for (unsigned int i = 0; i < msg.size(); i++) {
+	const int left = 10;
+	const int right = 630;
+	const int maxWidth = 620;
+	int stringWidth = 0;
+
+	for (int i = 0; i < (int)msg.size(); i++)
+		stringWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
+	
+	_numberLines = (stringWidth / maxWidth) + 1;
+	int numberCharsPerLine = (msg.size() / _numberLines) + 1;
+
+	int line = 1;
+	int lineWidth = 0;
+	int maxLineWidth = 0;
+	for (int i = 0; i < (int)msg.size(); i++) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
-		if ((_width != 0 && lineWidth > (_width - _x))
-				|| (_justify == CENTER && (_x - lineWidth / 2 < 0 || _x + lineWidth / 2 > 640))
-				|| (_justify == LJUSTIFY && (_x + lineWidth > 640))
-				|| (_justify == RJUSTIFY && (_x - lineWidth < 0))) {
+		if (i + 1 == numberCharsPerLine * line) {
+			if (lineWidth > maxLineWidth)
+				maxLineWidth = lineWidth;
+
+			++line;
 			lineWidth = 0;
-//			for (; msg[i] != ' ' || i > 0; i--)
-//				message.deleteLastChar();
+
+			if (message.contains(' ')) {
+				while (msg[i] != ' ' && i > 0) {
+					message.deleteLastChar();
+					--i;
+				} 
+			} else if (msg[i] != ' ') { // if it is an unique word
+				message.deleteLastChar();
+				message += '-';
+				--i;
+ 			}
 			message += '\n';
 			_numberLines++;
+
 			continue; // don't add the space back
+		}
+
+		if (lineWidth > maxLineWidth)
+			maxLineWidth = lineWidth;
+		if (_justify == RJUSTIFY && (_x - maxLineWidth < left))
+			setX(-_x + maxLineWidth + 2 * left);
+		else if (_justify == LJUSTIFY && (_x + maxLineWidth > right))
+			setX((- maxLineWidth / 2) + right);
+		else if (_justify == CENTER) {
+			if (_x - maxLineWidth / 2 < left)
+				setX(-_x + maxLineWidth + 2 * left);
+			else if (_x + maxLineWidth / 2 > right)
+				setX((- maxLineWidth / 2) + right);
 		}
 		message += msg[i];
 	}
+
 	_textObjectHandle = (GfxBase::TextObjectHandle **)malloc(sizeof(long) * _numberLines);
 	_bitmapWidthPtr = new int[_numberLines];
 
