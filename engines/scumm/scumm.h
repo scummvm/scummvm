@@ -1127,7 +1127,6 @@ protected:
 	bool _haveActorSpeechMsg;
 	bool _useTalkAnims;
 	uint16 _defaultTalkDelay;
-	int _tempMusic;
 	int _saveSound;
 	bool _native_mt32;
 	bool _enable_gs;
