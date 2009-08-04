@@ -35,15 +35,44 @@ public:
 	Tfmx(int rate, bool stereo);
 	virtual ~Tfmx();
 
-	void stopSong(bool stopAudio = true);
+	/**
+	 * Stops a playing Song (but leaves macros running) and optionally also stops the player
+	 *
+	 * @param stopAudio	stops player and audio output
+	 * @param dataSize	number of bytes to be written
+	 * @return the number of bytes which were actually written.
+	 */
+	void stopSong(bool stopAudio = true) { Common::StackLock lock(_mutex); stopSongImpl(stopAudio); }
+	/**
+	 * Stops currently playing Song (if any) and cues up a new one.
+	 * if stopAudio is specified, the player gets reset before starting the new song
+	 *
+	 * @param songPos	index of Song to play
+	 * @param stopAudio	stops player and audio output
+	 * @param dataSize	number of bytes to be written
+	 * @return the number of bytes which were actually written.
+	 */
 	void doSong(int songPos, bool stopAudio = false);
+	/**
+	 * plays an effect from the sfx-table, does not start audio-playback. 
+	 *
+	 * @param sfxIndex	index of effect to play
+	 * @param unlockChannel	overwrite higher priority effects
+	 * @return	index of the channel which now queued up the effect.
+	 *			-1 in case the effect couldnt be queued up
+	 */
 	int doSfx(uint16 sfxIndex, bool unlockChannel = false);
+	/**
+	 * stop a running macro channel
+	 *
+	 * @param channel	index of effect to stop
+	 */
+	void stopMacroEffect(int channel);
+
 	void doMacro(int note, int macro, int relVol = 0, int finetune = 0, int channelNo = 0);
 	int getTicks() const { return _playerCtx.tickCount; } 
 	int getSongIndex() const { return _playerCtx.song; }
 	void setSignalPtr(uint16 *ptr, uint16 numSignals) { _playerCtx.signal = ptr; _playerCtx.numSignals = numSignals; }
-	void stopMacroEffect(int channel);
-
 	void freeResources() { _deleteResource = true; freeResourceDataImpl(); }
 	bool load(Common::SeekableReadStream &musicData, Common::SeekableReadStream &sampleData, bool autoDelete = true);
 	void setModuleData(Tfmx &otherPlayer);
@@ -92,6 +121,10 @@ private:
 	} _resourceSample;
 
 	bool _deleteResource;
+
+	bool hasResources() {
+		return _resource && _resource->mdatLen && _resourceSample.sampleLen;
+	}
 
 	struct ChannelContext {
 		byte	paulaChannel;
@@ -267,20 +300,22 @@ private:
 		pattern.savedStep = 0;
 	}
 
-	void stopPatternChannels() {
+	void stopSongImpl(bool stopAudio = true) {
+		 _playerCtx.song = -1;
 		for (int i = 0; i < kNumChannels; ++i) {
 			_patternCtx[i].command = 0xFF;
 			_patternCtx[i].expose = 0;
 		}
-	}
-
-	void stopMacroChannels() {
-		for (int i = 0; i < kNumVoices; ++i) {
-			clearEffects(_channelCtx[i]);
-			unlockMacroChannel(_channelCtx[i]);
-			haltMacroProgramm(_channelCtx[i]);
-			_channelCtx[i].note = 0;
-			_channelCtx[i].volume = 0;
+		if (stopAudio) {
+			stopPaula();
+			for (int i = 0; i < kNumVoices; ++i) {
+				clearEffects(_channelCtx[i]);
+				unlockMacroChannel(_channelCtx[i]);
+				haltMacroProgramm(_channelCtx[i]);
+				_channelCtx[i].note = 0;
+				_channelCtx[i].volume = 0;
+				Paula::disableChannel(i);
+			}
 		}
 	}
 

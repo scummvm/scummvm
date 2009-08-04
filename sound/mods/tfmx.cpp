@@ -59,11 +59,9 @@ Tfmx::Tfmx(int rate, bool stereo)
 	for (int i = 0; i < kNumVoices; ++i) 
 		_channelCtx[i].paulaChannel = (byte)i;
 
-	_playerCtx.song = -1;
 	_playerCtx.volume = 0x40;
 	_playerCtx.patternSkip = 6;
-	stopPatternChannels();
-	stopMacroChannels();
+	stopSongImpl();
 
 	setTimerBaseValue(kPalCiaClock);
 	setInterruptFreqUnscaled(kPalDefaultCiaVal);
@@ -242,17 +240,12 @@ void Tfmx::macroRun(ChannelContext &channel) {
 				// those commands are: Wait, WaitDMA, AddPrevNote, AddNote, SetNote, <unknown Cmd>
 				// DMA On is affected aswell
 				// TODO remember time disabled, remember pending dmaoff?.
-			} else {
-				//TODO ?
 			}
 
-			if (macroPtr[2])
-				channel.volume = macroPtr[3];
-			else if (macroPtr[3])
-				channel.volume = channel.relVol * 3 + macroPtr[3];
-			else
-				continue;
-			Paula::setChannelVolume(channel.paulaChannel, channel.volume);
+			if (macroPtr[2] || macroPtr[3]) {
+				channel.volume = (macroPtr[2] ? 0 : channel.relVol * 3) + macroPtr[3];
+				Paula::setChannelVolume(channel.paulaChannel, channel.volume);
+			}
 			continue;
 
 		case 0x01:	// DMA On
@@ -919,6 +912,8 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 	assert(0 <= note && note < 0xC0);
 	Common::StackLock lock(_mutex);
 
+	if (!hasResources())
+		return;
 	channelNo &= (kNumVoices - 1);
 	ChannelContext &channel = _channelCtx[channelNo];
 	unlockMacroChannel(channel);
@@ -935,30 +930,19 @@ void Tfmx::stopMacroEffect(int channel) {
 	Paula::disableChannel(_channelCtx[channel].paulaChannel);
 }
 
-void Tfmx::stopSong(bool stopAudio) {
-	Common::StackLock lock(_mutex);
-	_playerCtx.song = -1;
-	if (stopAudio) {
-		stopMacroChannels();
-		stopPaula();
-	}
-}
-
 void Tfmx::doSong(int songPos, bool stopAudio) {
 	assert(0 <= songPos && songPos < kNumSubsongs);
 	Common::StackLock lock(_mutex);
 
-	stopPatternChannels();
-	if (stopAudio) {
-		stopMacroChannels();
-		stopPaula();
-	}
+	stopSongImpl(stopAudio);
 
-	_playerCtx.song = (int8)songPos;
+	if (!hasResources())
+		return;
 
 	_trackCtx.loopCount = -1;
 	_trackCtx.startInd = _trackCtx.posInd = _resource->subsong[songPos].songstart;
 	_trackCtx.stopInd = _resource->subsong[songPos].songend;
+	_playerCtx.song = (int8)songPos;
 
 	const bool palFlag = (_resource->headerFlags & 2) != 0;
 	const uint16 tempo = _resource->subsong[songPos].tempo;
@@ -981,8 +965,11 @@ int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 	assert(sfxIndex < 128);
 	Common::StackLock lock(_mutex);
 
+	if (!hasResources())
+		return -1;
 	const byte *sfxEntry = getSfxPtr(sfxIndex);
 	if (sfxEntry[0] == 0xFB) {
+		warning("Tfmx: custom patterns are not supported");
 		// custompattern
 		/* const uint8 patCmd = sfxEntry[2];
 		const int8 patExp = (int8)sfxEntry[3]; */
