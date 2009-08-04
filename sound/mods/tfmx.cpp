@@ -1003,7 +1003,7 @@ void Tfmx::doMacro(int note, int macro, int relVol, int finetune, int channelNo)
 	ChannelContext &channel = _channelCtx[channelNo];
 	unlockMacroChannel(channel);
 
-	noteCommand((uint8)note, (uint8)macro, (uint8)(relVol << 4) | channelNo, (uint8)finetune);
+	noteCommand((uint8)note, (uint8)macro, (uint8)((relVol << 4) | channelNo), (uint8)finetune);
 	startPaula();
 }
 

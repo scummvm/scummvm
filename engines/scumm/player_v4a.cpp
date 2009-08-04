@@ -62,7 +62,9 @@ bool Player_V4A::init() {
 			_tfmxSfx.setModuleData(_tfmxMusic);
 			return true;
 		}
-	}
+	} else
+		warning("player_v4a: couldnt load one of the music resources: music.dat, sample.dat");
+	
 	return false;
 }
 

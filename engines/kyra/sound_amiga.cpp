@@ -41,7 +41,10 @@ const char *const SoundAmiga::kFilenameTable[3][2] = {
 };
 
 SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
-	: Sound(vm, mixer), _driver(0), _musicHandle(), _fileLoaded(kFileNone) {
+	: Sound(vm, mixer),
+	  _driver(0),
+	  _musicHandle(),
+	  _fileLoaded(kFileNone) {
 }
 
 SoundAmiga::~SoundAmiga() {
@@ -51,7 +54,6 @@ SoundAmiga::~SoundAmiga() {
 
 bool SoundAmiga::init() {
 	_driver = new Audio::MaxTrax(_mixer->getOutputRate(), true);
-
 	return _driver != 0;
 }
 

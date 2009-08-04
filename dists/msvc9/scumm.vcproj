@@ -645,6 +645,14 @@
 		<File
 			RelativePath="..\..\engines\scumm\player_v4a.cpp"
 			>
+			<FileConfiguration
+				Name="Debug|Win32"
+				>
+				<Tool
+					Name="VCCLCompilerTool"
+					DisableSpecificWarnings="$(NOINHERIT)"
+				/>
+			</FileConfiguration>
 		</File>
 		<File
 			RelativePath="..\..\engines\scumm\player_v4a.h"
