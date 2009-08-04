@@ -124,6 +124,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	bool is_groovie = (gameid == "groovie");
 	bool is_tinsel = (gameid == "tinsel");
 	bool is_cruise = (gameid == "cruise");
+	bool is_made = (gameid == "made");
 
 	GUI_Actions::initInstanceGame();
 
@@ -145,7 +146,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	} else if (is_cine || is_drascula || is_cruise) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); //F10
-	} else if (is_agi) {
+	} else if (is_agi || is_made) {
 		_action_enabled[SMARTPHONE_ACTION_SAVE] = true;
 		_key_action[SMARTPHONE_ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
 	} else if (is_parallaction) {
@@ -162,7 +163,7 @@ void CEActionsSmartphone::initInstanceGame() {
 	_action_enabled[SMARTPHONE_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker ||
-			is_groovie || is_cruise)
+			is_groovie || is_cruise || is_made)
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(VK_ESCAPE);
 	else
 		_key_action[SMARTPHONE_ACTION_SKIP].setKey(KEY_ALL_SKIP);
