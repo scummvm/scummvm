@@ -118,12 +118,54 @@ void Surface::setTransparentColour(uint colour) {
 }
 
 /**
- * @ brief Fills the surface with the specified colour
+ * @brief Fills the surface with the specified colour
  */
 void Surface::fill(uint colour) {
 	byte *ptr = (byte *)getBasePtr(0, 0);
 
 	memset(ptr, colour, w * h);
+}
+
+/**
+ * @brief Calculates horizontal center of an object
+ *
+ * @param x 	The x coordinate of the center
+ * @param width The width of the object to be centered (in pixels)
+ *
+ * @return The centered x coordinate
+ */
+uint Surface::centerOnX(uint x, uint width) {
+
+	int newX = x - width / 2;
+
+	if (newX < 0)
+		newX = 0;
+
+	if (newX + width >= (uint)w - 1)
+		newX = (w - 1) - width;
+
+	return newX;
+}
+
+/**
+ * @brief Calculates vertical center of an object
+ *
+ * @param y 	The y coordinate of the center
+ * @param height The height of the object to be centered (in pixels)
+ *
+ * @return The centered y coordinate
+ */
+uint Surface::centerOnY(uint y, uint height) {
+	
+	int newY = y - height / 2;
+	
+	if (newY < 0)
+		newY = 0;
+
+	if (newY + height >= (uint)h - 1)
+		newY = (h - 1) - height;
+
+	return newY;
 }
 
 } // End of namespace Draci

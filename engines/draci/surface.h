@@ -45,6 +45,8 @@ public:
 	uint getTransparentColour();
 	void setTransparentColour(uint colour);
 	void fill(uint colour);
+	uint centerOnY(uint y, uint height);
+	uint centerOnX(uint x, uint width);
 
 private:
 	/** The current transparent colour of the surface. See getTransparentColour() and
