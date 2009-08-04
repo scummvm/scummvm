@@ -242,7 +242,6 @@ private:
 
 	static void clearMacroProgramm(ChannelContext &channel) {
 		channel.macroRun = false;
-		channel.macroSfxRun = 0;
 		channel.dmaIntCount = 0;
 	}
 

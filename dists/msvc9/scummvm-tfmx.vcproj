@@ -2034,13 +2034,6 @@
 			<File
 				RelativePath="..\..\TFMX\tfmxplayer.cpp"
 				>
-				<FileConfiguration
-					Name="Debug|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-					/>
-				</FileConfiguration>
 			</File>
 		</Filter>
 	</Files>
