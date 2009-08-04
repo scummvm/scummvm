@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="gob"
 	ProjectGUID="{976D947A-A45F-4437-991E-412F695C64C7}"
 	RootNamespace="gob"
@@ -15,6 +15,33 @@
 		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
 	</Configurations>
 	<Files>
+		<Filter Name="demos">
+			<File RelativePath="..\..\engines\gob\demos\batplayer.cpp" />
+			<File RelativePath="..\..\engines\gob\demos\batplayer.h" />
+			<File RelativePath="..\..\engines\gob\demos\demoplayer.cpp" />
+			<File RelativePath="..\..\engines\gob\demos\demoplayer.h" />
+			<File RelativePath="..\..\engines\gob\demos\scnplayer.cpp" />
+			<File RelativePath="..\..\engines\gob\demos\scnplayer.h" />
+		</Filter>
+		<Filter Name="save">
+			<File RelativePath="..\..\engines\gob\save\saveconverter.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveconverter.h" />
+			<File RelativePath="..\..\engines\gob\save\saveconverter_v2.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveconverter_v3.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveconverter_v4.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveconverter_v6.cpp" />
+			<File RelativePath="..\..\engines\gob\save\savefile.cpp" />
+			<File RelativePath="..\..\engines\gob\save\savefile.h" />
+			<File RelativePath="..\..\engines\gob\save\savehandler.cpp" />
+			<File RelativePath="..\..\engines\gob\save\savehandler.h" />
+			<File RelativePath="..\..\engines\gob\save\saveload.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveload.h" />
+			<File RelativePath="..\..\engines\gob\save\saveload_v2.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveload_v3.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveload_v4.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveload_v6.cpp" />
+			<File RelativePath="..\..\engines\gob\save\saveload_playtoons.cpp" />
+		</Filter>
 		<Filter Name="sound">
 			<File RelativePath="..\..\engines\gob\sound\adlib.cpp" />
 			<File RelativePath="..\..\engines\gob\sound\adlib.h" />
@@ -37,12 +64,8 @@
 			<File RelativePath="..\..\engines\gob\sound\soundmixer.cpp" />
 			<File RelativePath="..\..\engines\gob\sound\soundmixer.h" />
 		</Filter>
-		<File RelativePath="..\..\engines\gob\demos\batplayer.cpp" />
-		<File RelativePath="..\..\engines\gob\demos\batplayer.h" />
 		<File RelativePath="..\..\engines\gob\dataio.cpp" />
 		<File RelativePath="..\..\engines\gob\dataio.h" />
-		<File RelativePath="..\..\engines\gob\demos\demoplayer.cpp" />
-		<File RelativePath="..\..\engines\gob\demos\demoplayer.h" />
 		<File RelativePath="..\..\engines\gob\detection.cpp" />
 		<File RelativePath="..\..\engines\gob\draw.cpp" />
 		<File RelativePath="..\..\engines\gob\draw.h" />
@@ -74,6 +97,7 @@
 		<File RelativePath="..\..\engines\gob\init_v1.cpp" />
 		<File RelativePath="..\..\engines\gob\init_v2.cpp" />
 		<File RelativePath="..\..\engines\gob\init_v3.cpp" />
+		<File RelativePath="..\..\engines\gob\init_v4.cpp" />
 		<File RelativePath="..\..\engines\gob\init_v6.cpp" />
 		<File RelativePath="..\..\engines\gob\inter.cpp" />
 		<File RelativePath="..\..\engines\gob\inter.h" />
@@ -89,7 +113,6 @@
 		<File RelativePath="..\..\engines\gob\map.h" />
 		<File RelativePath="..\..\engines\gob\map_v1.cpp" />
 		<File RelativePath="..\..\engines\gob\map_v2.cpp" />
-		<File RelativePath="..\..\engines\gob\map_v4.cpp" />
 		<File RelativePath="..\..\engines\gob\mult.cpp" />
 		<File RelativePath="..\..\engines\gob\mult.h" />
 		<File RelativePath="..\..\engines\gob\mult_v1.cpp" />
@@ -98,29 +121,10 @@
 		<File RelativePath="..\..\engines\gob\palanim.h" />
 		<File RelativePath="..\..\engines\gob\resources.cpp" />
 		<File RelativePath="..\..\engines\gob\resources.h" />
-		<File RelativePath="..\..\engines\gob\save\saveconverter.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveconverter.h" />
-		<File RelativePath="..\..\engines\gob\save\saveconverter_v2.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveconverter_v3.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveconverter_v4.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveconverter_v6.cpp" />
-		<File RelativePath="..\..\engines\gob\save\savefile.cpp" />
-		<File RelativePath="..\..\engines\gob\save\savefile.h" />
-		<File RelativePath="..\..\engines\gob\save\savehandler.cpp" />
-		<File RelativePath="..\..\engines\gob\save\savehandler.h" />
-		<File RelativePath="..\..\engines\gob\save\saveload.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveload.h" />
-		<File RelativePath="..\..\engines\gob\save\saveload_v2.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveload_v3.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveload_v4.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveload_v6.cpp" />
-		<File RelativePath="..\..\engines\gob\save\saveload_playtoons.cpp" />
 		<File RelativePath="..\..\engines\gob\scenery.cpp" />
 		<File RelativePath="..\..\engines\gob\scenery.h" />
 		<File RelativePath="..\..\engines\gob\scenery_v1.cpp" />
 		<File RelativePath="..\..\engines\gob\scenery_v2.cpp" />
-		<File RelativePath="..\..\engines\gob\demos\scnplayer.cpp" />
-		<File RelativePath="..\..\engines\gob\demos\scnplayer.h" />
 		<File RelativePath="..\..\engines\gob\script.cpp" />
 		<File RelativePath="..\..\engines\gob\script.h" />
 		<File RelativePath="..\..\engines\gob\totfile.cpp" />
