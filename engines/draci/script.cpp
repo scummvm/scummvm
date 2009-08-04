@@ -538,6 +538,8 @@ void Script::talk(Common::Queue<int> &params) {
 	int personID = params.pop() - 1;
 	int sentenceID = params.pop() - 1;
 
+	Surface *surface = _vm->_screen->getSurface();
+
 	// Fetch string
 	BAFile *f = _vm->_stringsArchive->getFile(sentenceID);
 
@@ -549,7 +551,7 @@ void Script::talk(Common::Queue<int> &params) {
 	Person *person = _vm->_game->getPerson(personID);
 
 	// Set the string and text colour
-	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect(true));
+	surface->markDirtyRect(speechFrame->getRect(true));
 	speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
 	speechFrame->setColour(person->_fontColour);
 
@@ -562,30 +564,12 @@ void Script::talk(Common::Queue<int> &params) {
 	// TODO: Implement inventory part
 
 	// Set speech text coordinates
-	// TODO: Put this into a function   
 
-	int x = person->_x;
-	int y = person->_y;
+	int x = surface->centerOnX(person->_x, speechFrame->getWidth());
+	int y = surface->centerOnX(person->_y, speechFrame->getHeight() * 2);
 
-	int difX = speechFrame->getWidth() / 2;
-	int difY = speechFrame->getHeight();
-	int newX = x - difX;
-	int newY = y - difY;
-	
-	if (newX < 0)
-		newX = 0;
-
-	if (newX + 2 * difX >= kScreenWidth - 1)
-		newX = (kScreenWidth - 1) - difX * 2;
-
-	if (newY < 0)
-		newY = 0;
-
-	if (newY + difY >= kScreenHeight - 1)
-		newY = (kScreenHeight - 1) - difY * 2;
-
-	speechFrame->setX(newX);
-	speechFrame->setY(newY);
+	speechFrame->setX(x);
+	speechFrame->setY(y);
 
 	// Call the game loop to enable interactivity until the text expires
 	_vm->_game->loop();
