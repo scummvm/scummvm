@@ -182,10 +182,6 @@ Common::Error DrasculaEngine::run() {
 
 	for (;;) {
 		int i;
-
-		VGA = (byte *)malloc(320 * 200);
-		memset(VGA, 0, 64000);
-
 		takeObject = 0;
 		_menuBar = false;
 		_menuScreen = false;
@@ -296,7 +292,6 @@ void DrasculaEngine::endChapter() {
 	MusicFadeout();
 	stopMusic();
 	freeMemory();
-	free(VGA);
 }
 
 bool DrasculaEngine::runCurrentChapter() {

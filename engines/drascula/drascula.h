@@ -344,7 +344,6 @@ public:
 	byte *mouseCursor;
 
 	// Graphics buffers/pointers
-	byte *VGA;
 	byte *bgSurface;
 	byte *backSurface;
 	byte *drawSurface3;
@@ -353,7 +352,6 @@ public:
 	byte *extraSurface;	// not sure about this one, was "dir_hare_dch"
 	byte *screenSurface;
 	byte *frontSurface;
-	byte *textSurface;
 	byte *memPtr;
 	byte *mSession;
 

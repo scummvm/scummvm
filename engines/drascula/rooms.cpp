@@ -1866,7 +1866,6 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 }
 
 void DrasculaEngine::clearRoom() {
-	memset(VGA, 0, 64000);
 	_system->fillScreen(0);
 	_system->updateScreen();
 }
