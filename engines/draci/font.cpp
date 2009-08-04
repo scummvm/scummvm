@@ -209,31 +209,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 
 void Font::drawString(Surface *dst, const byte *str, uint len, 
 							int x, int y, int spacing, bool markDirty) const {
-	assert(dst != NULL);
-	assert(x >= 0);
-	assert(y >= 0);
-
-	int curx = x;
-	int cury = y;
-
-	for (unsigned int i = 0; i < len; ++i) {
-
-		// If we encounter the '|' char (newline and end of string marker),
-		// skip it and go to the start of the next line
-		if (str[i] == '|') {
-			cury += getFontHeight();
-			curx = x;
-			continue;
-		}
-		
-		// Break early if there's no more space on the screen	
-		if (curx >= dst->w - 1 || cury >= dst->h - 1) {
-			break;
-		}		
-		
-		drawChar(dst, str[i], curx, cury, markDirty);
-		curx += getCharWidth(str[i]) + spacing;
-	}
+	drawString(dst, Common::String((const char *)str, len), x, y, spacing, markDirty);
 }
 
 /**
@@ -248,8 +224,33 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
 
 void Font::drawString(Surface *dst, const Common::String &str, 
 							int x, int y, int spacing, bool markDirty) const {
+	assert(dst != NULL);
+	assert(x >= 0);
+	assert(y >= 0);
 
-	drawString(dst, (byte *) str.c_str(), str.size(), x, y, spacing, markDirty);
+	uint widest = getStringWidth(str, spacing);
+
+	int curx = x + (widest - getLineWidth(str, 0, spacing)) / 2;
+	int cury = y;
+	
+	for (uint i = 0; i < str.size(); ++i) {
+
+		// If we encounter the '|' char (newline and end of string marker),
+		// skip it and go to the start of the next line
+		if (str[i] == '|') {
+			cury += getFontHeight();
+			curx = x + (widest - getLineWidth(str, i+1, spacing) - 1) / 2;
+			continue;
+		}
+		
+		// Break early if there's no more space on the screen	
+		if (curx >= dst->w - 1 || cury >= dst->h - 1) {
+			break;
+		}		
+		
+		drawChar(dst, str[i], curx, cury, markDirty);
+		curx += getCharWidth(str[i]) + spacing;
+	}
 }
 
 /**
@@ -261,7 +262,7 @@ void Font::drawString(Surface *dst, const Common::String &str,
  * @return The calculated width of the string 
  */
 
-int Font::getStringWidth(const Common::String &str, int spacing) const {
+uint Font::getStringWidth(const Common::String &str, int spacing) const {
 	unsigned int width = 0;	
 
 	// Real length, including '|' separators
@@ -290,6 +291,30 @@ int Font::getStringWidth(const Common::String &str, int spacing) const {
 	return width + 1;
 }
 
+uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing) const {
+
+	uint width = 0;
+
+	// If the index is greater or equal to the string size, 
+	// the width of the line is 0
+	if (startIndex >= str.size())
+		return 0;
+
+	for (uint i = startIndex; i < str.size(); ++i) {
+
+		// EOL encountered		
+		if (str[i] == '|')
+			break;
+
+		// Add width of the current char
+		uint8 charIndex = str[i] - kCharIndexOffset;
+		width += _charWidths[charIndex];
+		width += spacing;
+	}
+
+	return width;
+}
+
 /**
  * @brief Calculate the height of a string by counting the number of '|' chars (which
  * 		  are used as newline characters and end-of-string markers)
@@ -301,7 +326,7 @@ int Font::getStringWidth(const Common::String &str, int spacing) const {
  */
 
 
-int Font::getStringHeight(const Common::String &str) const {
+uint Font::getStringHeight(const Common::String &str) const {
 	uint len = str.size();
 	int separators = 0;
 
@@ -314,6 +339,6 @@ int Font::getStringHeight(const Common::String &str) const {
 	}
 	
 	return separators * getFontHeight();
-}
+}	
 
 } // End of namespace Draci

@@ -67,8 +67,9 @@ public:
 	void drawString(Surface *dst, const Common::String &str, 
 					int x, int y, int spacing, bool markDirty = true) const;
 	
-	int getStringWidth(const Common::String &str, int spacing = 0) const;
-	int getStringHeight(const Common::String &str) const;
+	uint getStringWidth(const Common::String &str, int spacing = 0) const;
+	uint getStringHeight(const Common::String &str) const;
+	uint getLineWidth(const Common::String &str, uint startIndex, int spacing = 0) const;
 
 	void setColour(uint8 colour);
 
