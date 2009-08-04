@@ -30,6 +30,37 @@
 
 #include "common/file.h"
 
+namespace {
+// TODO: move this ingenious class into audiostream.h?
+class FakeAudioStream : public Audio::AudioStream {
+	protected:
+		const int _rate;
+		const int32 _playtime;
+		const bool _stereo;
+		uint32 _remainingSamples;
+
+	public:
+		FakeAudioStream(int rate, bool stereo = true, int32 playtime = Audio::AudioStream::kUnknownPlayTime)
+			: _rate(rate), _playtime(playtime), _stereo(stereo) {
+			_remainingSamples = (playtime < 0) ? (uint32)-1 : (uint32)(((double)_playtime * rate) / 1000);
+		}
+		int readBuffer(int16 *buffer, const int numSamples) {
+			uint32 redSamples = MIN((uint32)numSamples, _remainingSamples);
+			assert((int32)redSamples > 0);
+			memset(buffer, 0, redSamples * 2);
+			if (_playtime > 0)
+				_remainingSamples -= redSamples;
+			return (int)redSamples;
+		}
+
+		bool isStereo() const			{ return _stereo; }
+		bool endOfData() const			{ return _remainingSamples == 0; }
+
+		int getRate() const				{ return _rate; }
+		int32 getTotalPlayTime() const	{ return _playtime; }
+};
+}
+
 namespace Scumm {
 
 Player_V4A::Player_V4A(ScummEngine *scumm, Audio::Mixer *mixer)
@@ -80,12 +111,15 @@ void Player_V4A::setMusicVolume(int vol) {
 
 void Player_V4A::stopAllSounds() {
 	debug(5, "player_v4a: stopAllSounds");
-	_tfmxMusic.stopSong();
-	_signal = 0;		
-	_musicId = 0;
+	if (_initState > 0) {
+		_tfmxMusic.stopSong();
+		_signal = 0;		
+		_musicId = 0;
 
-	_tfmxSfx.stopSong();
-	clearSfxSlots();
+		_tfmxSfx.stopSong();
+		clearSfxSlots();
+	} else
+		_mixer->stopHandle(_musicHandle);
 }
 
 void Player_V4A::stopSound(int nr) {
@@ -94,7 +128,10 @@ void Player_V4A::stopSound(int nr) {
 		return;
 	if (nr == _musicId) {
 		_musicId = 0;
-		_tfmxMusic.stopSong();
+		if (_initState > 0)
+			_tfmxMusic.stopSong();
+		else
+			_mixer->stopHandle(_musicHandle);
 		_signal = 0;
 	} else {
 		const int chan = getSfxChan(nr);
@@ -128,9 +165,6 @@ void Player_V4A::startSound(int nr) {
 	if (!_initState)
 		_initState = init() ? 1 : -1;
 
-	if (_initState <= 0)
-		return;
-
 	int index = monkeyCommands[val];
 	const byte type = ptr[6];
 	if (index < 0) {	// SoundFX
@@ -144,7 +178,7 @@ void Player_V4A::startSound(int nr) {
 		const int chan = _tfmxSfx.doSfx((uint16)index);
 		if (chan >= 0 && chan < ARRAYSIZE(_sfxSlots))
 			setSfxSlot(chan, nr, type);
-		else
+		else if (_initState > 0)
 			warning("player_v4a: custom %i is not of required type", index);
 
 		// the Tfmx-player newer "ends" the output by itself, so this should be threadsafe
@@ -156,13 +190,20 @@ void Player_V4A::startSound(int nr) {
 		if (ptr[6] != 0x7F)
 			warning("player_v4a: Song has wrong type");
 
-		_tfmxMusic.doSong(index);
-		_signal = 2;
-		_musicId = nr;
+		if (_initState > 0) {
+			_tfmxMusic.doSong(index);
+			_signal = 2;
 
-		// the Tfmx-player newer "ends" the output by itself, so this should be threadsafe 
-		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &_tfmxMusic, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+			// the Tfmx-player newer "ends" the output by itself, so this should be threadsafe 
+			if (!_mixer->isSoundHandleActive(_musicHandle))
+				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, &_tfmxMusic, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+		} else {
+			// We need to make an inputstream for the getMusicTimer() function (otherwise some scenes like the intro will hang). 
+			// Specifying an id makes sure there is always just one active
+			_signal = 0;
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, new FakeAudioStream(_mixer->getOutputRate()), 1);
+		}
+		_musicId = nr;
 	}
 }
 
