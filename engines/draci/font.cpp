@@ -158,6 +158,10 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 			int curr = y * _maxCharWidth + x;
 			int colour = _charData[charOffset + curr];
 
+			// If pixel is transparent, skip it
+			if (colour == _transparent)			
+				continue;
+
 			// Replace colour with font colours
 			switch (colour) {
 
@@ -177,10 +181,9 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 				colour = kFontColour4;
 				break;
 			}
-			
-			// Paint pixel (if not transparent)
-			if (colour != _transparent)			
-				ptr[x] = colour;
+
+			// Paint the pixel
+			ptr[x] = colour;
 		}
 
 		// Advance to next row
