@@ -81,7 +81,6 @@ Scene::~Scene() {
 
 void Scene::enterScene() {
 	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
-
 	_background = _bgResource->getFrame(0);
 	_screen->copyToBackBuffer(
 			((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w,
