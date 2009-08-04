@@ -256,90 +256,14 @@ private:
 		return sample;
 	}
 
-	static void initMacroProgramm(ChannelContext &channel) {
-		channel.macroStep = 0;
-		channel.macroWait = 0;
-		channel.macroRun = true;
-		channel.macroSfxRun = 0;
-		channel.macroLoopCount = 0xFF;
-		channel.dmaIntCount = 0;
-		channel.deferWait = false;
-
-		channel.macroReturnOffset = 0;
-		channel.macroReturnStep = 0;
-	}
-
-	static void clearEffects(ChannelContext &channel) {
-		channel.addBeginLength = 0;
-		channel.envSkip = 0;
-		channel.vibLength = 0;
-		channel.portaDelta = 0;
-	}
-
-	static void haltMacroProgramm(ChannelContext &channel) {
-		channel.macroRun = false;
-		channel.dmaIntCount = 0;
-	}
-
-	static void unlockMacroChannel(ChannelContext &channel) {
-		channel.customMacro = 0;
-		channel.customMacroPrio = false;
-		channel.sfxLocked = false;
-		channel.sfxLockTime = -1;
-	}
-
-	static void initPattern(PatternContext &pattern, uint8 cmd, int8 expose, uint32 offset) {
-		pattern.command = cmd;
-		pattern.offset = offset;
-		pattern.expose = expose;
-		pattern.step = 0;
-		pattern.wait = 0;
-		pattern.loopCount = 0xFF;
-
-		pattern.savedOffset = 0;
-		pattern.savedStep = 0;
-	}
-
-	void stopSongImpl(bool stopAudio = true) {
-		 _playerCtx.song = -1;
-		for (int i = 0; i < kNumChannels; ++i) {
-			_patternCtx[i].command = 0xFF;
-			_patternCtx[i].expose = 0;
-		}
-		if (stopAudio) {
-			stopPaula();
-			for (int i = 0; i < kNumVoices; ++i) {
-				clearEffects(_channelCtx[i]);
-				unlockMacroChannel(_channelCtx[i]);
-				haltMacroProgramm(_channelCtx[i]);
-				_channelCtx[i].note = 0;
-				_channelCtx[i].volume = 0;
-				Paula::disableChannel(i);
-			}
-		}
-	}
-
-	static void setNoteMacro(ChannelContext &channel, uint note, int fineTune) {
-		const uint16 noteInt = noteIntervalls[note & 0x3F];
-		const uint16 finetune = (uint16)(fineTune + channel.fineTune + (1 << 8));
-		channel.refPeriod = ((uint32)noteInt * finetune >> 8);
-		if (!channel.portaDelta)
-			channel.period = channel.refPeriod;
-	}
-
-	void initFadeCommand(const uint8 fadeTempo, const int8 endVol) {
-		_playerCtx.fadeCount = _playerCtx.fadeSkip = fadeTempo;
-		_playerCtx.fadeEndVolume = endVol;
-
-		if (fadeTempo) {
-			const int diff = _playerCtx.fadeEndVolume - _playerCtx.volume;
-			_playerCtx.fadeDelta = (diff != 0) ? ((diff > 0) ? 1 : -1) : 0;
-		} else {
-			_playerCtx.volume = endVol;
-			_playerCtx.fadeDelta = 0;
-		}
-	}
-
+	static inline void initMacroProgramm(ChannelContext &channel);
+	static inline void clearEffects(ChannelContext &channel);
+	static inline void haltMacroProgramm(ChannelContext &channel);
+	static inline void unlockMacroChannel(ChannelContext &channel);
+	static inline void initPattern(PatternContext &pattern, uint8 cmd, int8 expose, uint32 offset);
+	void stopSongImpl(bool stopAudio = true);
+	static void inline setNoteMacro(ChannelContext &channel, uint note, int fineTune);
+	void initFadeCommand(const uint8 fadeTempo, const int8 endVol);
 	void setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true);
 	static const MdatResource *loadMdatFile(Common::SeekableReadStream &musicData);
 	static const int8 *loadSampleFile(uint32 &sampleLen, Common::SeekableReadStream &sampleStream);	
