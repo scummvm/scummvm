@@ -134,6 +134,7 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_groovie = (gameid == "groovie");
 	bool is_tinsel = (gameid == "tinsel");
 	bool is_cruise = (gameid == "cruise");
+	bool is_made = (gameid == "made");
 
 	GUI_Actions::initInstanceGame();
 
@@ -162,7 +163,7 @@ void CEActionsPocket::initInstanceGame() {
 	} else if (is_cine || is_drascula || is_cruise) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
-	} else if (is_agi) {
+	} else if (is_agi || is_made) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
 	} else if (is_parallaction) {
@@ -178,7 +179,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
-	if (!is_cine && !is_parallaction && !is_groovie && !is_cruise)
+	if (!is_cine && !is_parallaction && !is_groovie && !is_cruise && !is_made)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
