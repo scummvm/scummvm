@@ -6,26 +6,19 @@ Release version: 0.13.0
 New in this version
 -------------------
 
-0.13.0:
-Important: Two builds for ScummVM CE
+1.0.0rc1:
+This version features optimized ARM assembly versions for the Smartphone,
+Normal2x and Normal2xAspect scalers, courtesy of Robin Watts. There should
+be a speed improvement when using these scalers.
 
-For this release, two binaries (executables) are provided. The first,
-with file name scummvm1.exe, includes support for the following engines:
- - scumm, sword1, sword2, queen, sky, lure, agi, touche
-while the second, with file name scummvm2.exe:
- - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker
-The user must make sure to execute the correct file for a game. All 
-previously detected games will be shown in the launcher. Trying to launch
-a gob engine game with scummvm1.exe will not work.
-Detection also works as implied: scummvm1.exe will detect only the games
-for which it has support; the same holds for scummvm2.exe.
-This change has been done so users with less free memory can play more
-memory hungry games.
+Also new is the aspect 2x upscaling mode, which is auto detected and used
+when the scaler is set to (normal) 2x mode and the panel is hidden. Hence,
+a 320x200 game running on a VGA or higher resolution device will be 
+aspect scaled to fill the 640x480 screen.
 
-Also noted are problems with flac support. Your mileage may vary. Please
-consider using ogg or mp3 for those games (smaller sizes are better for
-handheld devices too!)
-
+Be aware that Discworld 2 tries to allocate a big chunk of memory (10 MB)
+and this will fail on many devices (file under the not enough memory
+category).
 
 ------------------------------------------------------------------------
 
@@ -590,6 +583,20 @@ By default, the double tap to right click action is disabled in this game
 as this interferes with the game's controls. This setting can be overridden
 (see 'no_doubletap_rightclick' parameter above).
 
+-----------------
+-- Discworld 2 --
+-----------------
+
+Crashes at startup of this game are usually due to the high memory 
+requirements of this game.
+
+-------------------------
+-- Cruise for a Corpse --
+-------------------------
+
+As with Discworld, the double-tap-to-right-click action interferes and will
+be disabled by default.
+
 
 ------------------------------------------------------------------------
 Support
@@ -636,6 +643,27 @@ http://www.scummvm.org/
 ------------------------------------------------------------------------
 Old news follow ...
 ------------------------------------------------------------------------
+
+0.13.0:
+Important: Two builds for ScummVM CE
+
+For this release, two binaries (executables) are provided. The first,
+with file name scummvm1.exe, includes support for the following engines:
+ - scumm, sword1, sword2, queen, sky, lure, agi, touche
+while the second, with file name scummvm2.exe:
+ - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker
+The user must make sure to execute the correct file for a game. All 
+previously detected games will be shown in the launcher. Trying to launch
+a gob engine game with scummvm1.exe will not work.
+Detection also works as implied: scummvm1.exe will detect only the games
+for which it has support; the same holds for scummvm2.exe.
+This change has been done so users with less free memory can play more
+memory hungry games.
+
+Also noted are problems with flac support. Your mileage may vary. Please
+consider using ogg or mp3 for those games (smaller sizes are better for
+handheld devices too!)
+
 
 0.12.0:
 - Improved SMUSH support (deprecated 'Smush_force_redraw' option)
