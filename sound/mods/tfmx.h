@@ -231,6 +231,9 @@ private:
 		channel.macroLoopCount = 0xFF;
 		channel.dmaIntCount = 0;
 		channel.deferWait = false;
+
+		channel.macroReturnOffset = 0;
+		channel.macroReturnStep = 0;
 	}
 
 	static void clearEffects(ChannelContext &channel) {
@@ -240,7 +243,7 @@ private:
 		channel.portaDelta = 0;
 	}
 
-	static void clearMacroProgramm(ChannelContext &channel) {
+	static void haltMacroProgramm(ChannelContext &channel) {
 		channel.macroRun = false;
 		channel.dmaIntCount = 0;
 	}
@@ -250,6 +253,18 @@ private:
 		channel.customMacroPrio = false;
 		channel.sfxLocked = false;
 		channel.sfxLockTime = -1;
+	}
+
+	static void initPattern(PatternContext &pattern, uint8 cmd, int8 expose, uint32 offset) {
+		pattern.command = cmd;
+		pattern.offset = offset;
+		pattern.expose = expose;
+		pattern.step = 0;
+		pattern.wait = 0;
+		pattern.loopCount = 0xFF;
+
+		pattern.savedOffset = 0;
+		pattern.savedStep = 0;
 	}
 
 	void stopPatternChannels() {
@@ -263,7 +278,7 @@ private:
 		for (int i = 0; i < kNumVoices; ++i) {
 			clearEffects(_channelCtx[i]);
 			unlockMacroChannel(_channelCtx[i]);
-			clearMacroProgramm(_channelCtx[i]);
+			haltMacroProgramm(_channelCtx[i]);
 			_channelCtx[i].note = 0;
 			_channelCtx[i].volume = 0;
 		}

@@ -334,6 +334,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.vibLength = macroPtr[1];
 			channel.vibCount = macroPtr[1] / 2;
 			channel.vibDelta = macroPtr[3];
+			// TODO: Perhaps a bug, vibValue could be left uninitialised
 			if (!channel.portaDelta) {
 				channel.period = channel.refPeriod;
 				channel.vibValue = 0;
@@ -358,7 +359,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			channel.envEndVolume = macroPtr[3];
 			continue;
 
-		case 0x11:	// Add Begin. Parameters: times, Offset(W)
+		case 0x11:	// Add Beginn. Parameters: times, Offset(W)
 			channel.addBeginLength = channel.addBeginCount = macroPtr[1];
 			channel.addBeginDelta = (int16)READ_BE_UINT16(&macroPtr[2]);
 			channel.sampleStart += channel.addBeginDelta;
@@ -482,8 +483,10 @@ startPatterns:
 				// issue all Steps for this tick
 				if (patternRun(pattern)) {
 					// we load the next Trackstep Command and then process all Channels again
-					trackRun(true);
-					goto startPatterns;
+					if (trackRun(true))
+						goto startPatterns;
+					else
+						break;
 				}
 
 			} else 
@@ -493,7 +496,7 @@ startPatterns:
 			pattern.command = 0xFF;
 			ChannelContext &channel = _channelCtx[pattern.expose & (kNumVoices - 1)];
 			if (!channel.sfxLocked) {
-				clearMacroProgramm(channel);
+				haltMacroProgramm(channel);
 				Paula::disableChannel(channel.paulaChannel);
 			}
 		} // else this pattern-Channel is stopped
@@ -587,16 +590,8 @@ bool Tfmx::patternRun(PatternContext &pattern) {
 				initFadeCommand((uint8)patternPtr[1], (int8)patternPtr[3]);
 				continue;
 
-			case 11: {	// play pattern. Parameters: patternCmd, channel, expose
-				PatternContext &target = _patternCtx[patternPtr[2] & (kNumChannels - 1)];
-
-				target.command = patternPtr[1];
-				target.offset = _resource->patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)];
-				target.expose = patternPtr[3];
-				target.step = 0;
-				target.wait = 0;
-				target.loopCount = 0xFF;
-				}
+			case 11:	// play pattern. Parameters: patternCmd, channel, expose
+				initPattern(_patternCtx[patternPtr[2] & (kNumChannels - 1)], patternPtr[1], patternPtr[3], _resource->patternOffset[patternPtr[1] & (kMaxPatternOffsets - 1)]);
 				continue;
 
 			case 12: 	// Lock. Parameters: lockFlag, channel, lockTime
@@ -631,18 +626,16 @@ bool Tfmx::trackRun(const bool incStep) {
 		if (trackData[0] != FROM_BE_16(0xEFFE)) {
 			// 8 commands for Patterns
 			for (int i = 0; i < 8; ++i) {
-				const uint patCmd = READ_BE_UINT16(&trackData[i]);
+				const uint8 *patCmd = (const uint8 *)&trackData[i];
 				// First byte is pattern number
-				const uint patNum = (patCmd >> 8);
+				const uint8 patNum = patCmd[0];
 				// if highest bit is set then keep previous pattern
 				if (patNum < 0x80) {
-					_patternCtx[i].step = 0;
-					_patternCtx[i].wait = 0;
-					_patternCtx[i].loopCount = 0xFF;
-					_patternCtx[i].offset = _resource->patternOffset[patNum];
+					initPattern(_patternCtx[i], patNum, patCmd[1], _resource->patternOffset[patNum]);
+				} else {
+					_patternCtx[i].command = patNum;
+					_patternCtx[i].expose = (int8)patCmd[1];
 				}
-				_patternCtx[i].command = (uint8)patNum;
-				_patternCtx[i].expose = patCmd & 0xFF;
 			}
 			return true;
 
@@ -938,7 +931,7 @@ void Tfmx::stopMacroEffect(int channel) {
 	assert(0 <= channel && channel < kNumVoices);
 	Common::StackLock lock(_mutex);
 	unlockMacroChannel(_channelCtx[channel]);
-	clearMacroProgramm(_channelCtx[channel]);
+	haltMacroProgramm(_channelCtx[channel]);
 	Paula::disableChannel(_channelCtx[channel].paulaChannel);
 }
 
