@@ -102,7 +102,19 @@ private:
 	bool	_isActive;
 
 	void update();
+
+	/**
+	 * Check whether the cursor resource needs to be changed, and
+	 * if so, make that change
+	 */
 	void updateCursor();
+
+	/**
+	 * Update the cursor to visually indicate that it is over a
+	 * clickable region (by running its associated animation)
+	 */
+	void animateCursor();
+
 	void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
 
 	void debugScreenScrolling(GraphicFrame *bg);

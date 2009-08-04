@@ -220,6 +220,43 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 }
 
 void Scene::updateCursor() {
+	uint32 newCursor = 0;
+
+	// Change cursor
+	switch (_sceneResource->getMainActor()->getCurrentAction()) {
+	case kWalkN:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollUp;
+		break;
+	case kWalkNE:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollUpRight;
+		break;
+	case kWalkNW:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollUpLeft;
+		break;
+	case kWalkS:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollDown;
+		break;
+	case kWalkSE:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollDownRight;
+		break;
+	case kWalkSW:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollDownLeft;
+		break;
+	case kWalkW:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollLeft;
+		break;
+	case kWalkE:
+		newCursor = _sceneResource->getWorldStats()->commonRes.curScrollRight;
+		break;
+	}
+
+	if (_cursorResource->getEntryNum() != newCursor) {
+		delete _cursorResource;
+		_cursorResource = new GraphicResource(_resPack, newCursor);
+	}
+}
+
+void Scene::animateCursor() {
 	_curMouseCursor += _cursorStep;
 	if (_curMouseCursor == 0)
 		_cursorStep = 1;
@@ -242,9 +279,19 @@ void Scene::update() {
 	// debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
-	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, 0, 0, 640, 480);
+	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
+			bg->surface.w,
+			0,
+			0,
+			640,
+			480);
 
+	// TODO
+	// This is a hack for scene 1. This really shouldn't be hardcoded, as the
+	// activation of this barrier should be interpreted by the script manager,
+	// but at the moment, we're not sure where it is in the script.
 	updateBarrier(_screen, _resPack, 1);	// inside the middle room
+
 	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
 		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)	//	TODO - enums for flags (0x20 is visible/playing?)
 			updateBarrier(_screen, _resPack, b);
@@ -257,41 +304,7 @@ void Scene::update() {
 			mainActor->drawActor(_screen);
 	} else {
 		mainActor->walkTo(_screen, _mouseX, _mouseY);
-
-		uint32 newCursor = 0;
-
-		// Change cursor
-		switch (mainActor->getCurrentAction()) {
-		case kWalkN:
-			newCursor = worldStats->commonRes.curScrollUp;
-			break;
-		case kWalkNE:
-			newCursor = worldStats->commonRes.curScrollUpRight;
-			break;
-		case kWalkNW:
-			newCursor = worldStats->commonRes.curScrollUpLeft;
-			break;
-		case kWalkS:
-			newCursor = worldStats->commonRes.curScrollDown;
-			break;
-		case kWalkSE:
-			newCursor = worldStats->commonRes.curScrollDownRight;
-			break;
-		case kWalkSW:
-			newCursor = worldStats->commonRes.curScrollDownLeft;
-			break;
-		case kWalkW:
-			newCursor = worldStats->commonRes.curScrollLeft;
-			break;
-		case kWalkE:
-			newCursor = worldStats->commonRes.curScrollRight;
-			break;
-		}
-
-		if (_cursorResource->getEntryNum() != newCursor) {
-			delete _cursorResource;
-			_cursorResource = new GraphicResource(_resPack, newCursor);
-		}
+		updateCursor();
 	}
 
 	if (g_debugPolygons)
@@ -304,7 +317,7 @@ void Scene::update() {
 		BarrierItem b = worldStats->barriers[p];
 		if (b.flags & 0x20) {
 			if ((b.boundingRect.left + b.x <= _mouseX + _startX) && (_mouseX + _startX < b.boundingRect.right + b.x) && (b.boundingRect.top + b.y <= _mouseY + _startY) && (_mouseY + _startY < b.boundingRect.bottom + b.y)) {
-				updateCursor();
+				animateCursor();
 				curBarrier = (int32)p;
 				break;
 			}
@@ -323,7 +336,7 @@ void Scene::update() {
 			if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
 				if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
 					curHotspot = (int32)p;
-					updateCursor();
+					animateCursor();
 					break;
 				}
 			}
@@ -356,24 +369,7 @@ void Scene::update() {
 							worldStats->actions[a].actionListIdx2,
 							worldStats->actions[a].actionType,
 							worldStats->actions[a].soundResId);
-
-					// TODO
-					// This isn't always loading the right audio resources when it processes
-					// the action list ... investigate
 					ScriptMan.setScript(&_sceneResource->getActionList()->actions[worldStats->actions[a].actionListIdx1]);
-
-					/*
-					// TODO: This should all be moved to a script related class
-					ActionDefinitions actionDefs = _sceneResource->getActionList()->actions[worldStats->actions[a].actionListIdx1];
-					for (int command = 0; command < 161; command++) {
-						if (actionDefs.commands[command].opcode == 65) {	// play voice
-							_sound->playSfx(_speechPack, actionDefs.commands[command].param1);
-							//_text->drawResText(actionDefs.commands[command].param1+83);
-							// TODO: param2 (usually 1) -> number of loops?
-						}
-					}
-					break;
-					*/
 				}
 			}
 		} else if (curBarrier >= 0) {
@@ -503,7 +499,9 @@ void Scene::debugScreenScrolling(GraphicFrame *bg) {
 // WALK REGION DEBUG
 void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 	Graphics::Surface surface;
-	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1, poly->boundingRect.bottom - poly->boundingRect.top + 1, 1);
+	surface.create(poly->boundingRect.right - poly->boundingRect.left + 1,
+			poly->boundingRect.bottom - poly->boundingRect.top + 1,
+			1);
 
 	// Draw all lines in Polygon
 	for (uint32 i=0; i < poly->numPoints; i++) {
@@ -524,7 +522,9 @@ void Scene::debugShowPolygons() {
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 		Graphics::Surface surface;
 		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
-		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1, poly.boundingRect.bottom - poly.boundingRect.top + 1, 1);
+		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
+				poly.boundingRect.bottom - poly.boundingRect.top + 1,
+				1);
 		
 		// Draw all lines in Polygon
 		for (uint32 i=0; i < poly.numPoints; i++) {
@@ -548,7 +548,9 @@ void Scene::debugShowBarriers() {
 		BarrierItem b = _sceneResource->getWorldStats()->barriers[p];
 
 		if (b.flags & 0x20) {
-			surface.create(b.boundingRect.right - b.boundingRect.left + 1, b.boundingRect.bottom - b.boundingRect.top + 1, 1);
+			surface.create(b.boundingRect.right - b.boundingRect.left + 1,
+					b.boundingRect.bottom - b.boundingRect.top + 1,
+					1);
 			surface.frameRect(b.boundingRect, 0x22);
 			copyToBackBufferClipped(&surface, b.x, b.y);
 		}
