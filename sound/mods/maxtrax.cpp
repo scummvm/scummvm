@@ -621,7 +621,6 @@ int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, boo
 
 bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool loadSamples) {
 	Common::StackLock lock(_mutex);
-	bool res = false;
 	stopMusic();
 	if (loadSamples)
 		freePatches();
@@ -737,7 +736,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		}
 		musicData.skip(skipLen - 3 * 2);
 	} */
-	return res;
+	return true;
 }
 
 }	// End of namespace Audio

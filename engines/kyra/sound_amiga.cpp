@@ -34,12 +34,6 @@
 
 namespace Kyra {
 
-const char *const SoundAmiga::kFilenameTable[3][2] = {
-	{ "introscr.mx", "introinst.mx" },
-	{ "kyramusic.mx", 0 },
-	{ "finalescr.mx", 0 }
-};
-
 SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	: Sound(vm, mixer),
 	  _driver(0),
@@ -58,26 +52,39 @@ bool SoundAmiga::init() {
 }
 
 void SoundAmiga::loadSoundFile(uint file) {
-	assert(file < ARRAYSIZE(kFilenameTable));
+	static const char *const tableFilenames[3][2] = {
+		{ "introscr.mx", "introinst.mx" },
+		{ "kyramusic.mx", 0 },
+		{ "finalescr.mx", 0 }
+	};
+	assert(file < ARRAYSIZE(tableFilenames));
 	if (_fileLoaded == (FileType)file)
 		return;
+	const char* scoreName = tableFilenames[file][0];
+	const char* sampleName = tableFilenames[file][1];
+	bool loaded = false;
 
-	Common::SeekableReadStream *scoreIn = _vm->resource()->createReadStream(kFilenameTable[file][0]);
-	if (kFilenameTable[file][1]) {
-		Common::SeekableReadStream *sampleIn = _vm->resource()->createReadStream(kFilenameTable[file][1]);
+	Common::SeekableReadStream *scoreIn = _vm->resource()->createReadStream(scoreName);
+	if (sampleName) {
+		Common::SeekableReadStream *sampleIn = _vm->resource()->createReadStream(sampleName);
 		if (scoreIn && sampleIn) {
-			_driver->load(*scoreIn, true, false);
-			_driver->load(*sampleIn, false, true);
-			_fileLoaded = (FileType)file;
-		}
+			_fileLoaded = kFileNone;
+			loaded = _driver->load(*scoreIn, true, false);
+			loaded = loaded && _driver->load(*sampleIn, false, true);
+		} else
+			warning("SoundAmiga: missing atleast one of those music files: %s, %s", scoreName, sampleName);
 		delete sampleIn;
 	} else {
 		if (scoreIn) {
-			_driver->load(*scoreIn);
-			_fileLoaded = (FileType)file;
-		}
+			_fileLoaded = kFileNone;
+			loaded = _driver->load(*scoreIn);
+		} else
+			warning("SoundAmiga: missing music file: %s", scoreName);
 	}
 	delete scoreIn;
+
+	if (loaded)
+		_fileLoaded = (FileType)file;
 }
 
 void SoundAmiga::playTrack(uint8 track) {
@@ -93,29 +100,13 @@ void SoundAmiga::playTrack(uint8 track) {
 		0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
 	};
 
-	// intro
-	if (track >= 2) {
-		track -= 2;
-		if (_driver->playSong(track)) {
-			_driver->setVolume(0x40);
-			_driver->setTempo(tempoIntro[track] << 4);
-			if (!_mixer->isSoundHandleActive(_musicHandle))
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-		}
-	} else if (track == 0){
-		_driver->stopMusic();
-	} else { // track == 1
-		beginFadeOut();
-	}
-
-	// ingame
-	if (false && track < 0x80 && track != 3) {
+	switch (_fileLoaded) {
+	case kFileIntro:
 		if (track >= 2) {
-			track -= 0xB;
-			if (_driver->playSong(track, loopIngame[track] != 0)) {
+			track -= 2;
+			if (_driver->playSong(track)) {
 				_driver->setVolume(0x40);
-			
-				_driver->setTempo(tempoIngame[track] << 4);
+				_driver->setTempo(tempoIntro[track] << 4);
 				if (!_mixer->isSoundHandleActive(_musicHandle))
 					_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 			}
@@ -123,12 +114,32 @@ void SoundAmiga::playTrack(uint8 track) {
 			_driver->stopMusic();
 		} else { // track == 1
 			beginFadeOut();
-	}
+		}
+		break;
 
+	case kFileGame:
+		if (track < 0x80 && track != 3) {
+			if (track >= 2) {
+				track -= 0xB;
+				if (_driver->playSong(track, loopIngame[track] != 0)) {
+					_driver->setVolume(0x40);
+				
+					_driver->setTempo(tempoIngame[track] << 4);
+					if (!_mixer->isSoundHandleActive(_musicHandle))
+						_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+				}
+			} else if (track == 0){
+				_driver->stopMusic();
+			} else { // track == 1
+				beginFadeOut();
+			}
+		}
+		break;
 	}
 }
 
 void SoundAmiga::haltTrack() {
+	_driver->stopMusic();
 }
 
 void SoundAmiga::beginFadeOut() {
@@ -145,29 +156,33 @@ void SoundAmiga::beginFadeOut() {
 void SoundAmiga::playSoundEffect(uint8 track) {
 	debug("play sfx %d", track);
 
-	// intro
-	assert(track < ARRAYSIZE(tableEffectsIntro));
-	const EffectEntry &entry = tableEffectsIntro[track];
-	bool success = _driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, entry.pan != 0) >= 0;
-	if (!_mixer->isSoundHandleActive(_musicHandle))
-		_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-
-
-	// ingame
-	if (0) {
-	uint16 extVar = 1; // maybe indicates music playing or enabled
-	uint16 extVar2 = 1; // sound loaded ?
-	if (0x61 <= track && track <= 0x63 && extVar)
-		playTrack(track - 0x4F);
-
-	assert(track < ARRAYSIZE(tableEffectsGame));
-	const EffectEntry &entry = tableEffectsGame[track];
-	if (extVar2 && entry.note) {
-		byte pan = (entry.pan == 2) ? 0 : entry.pan;
-		_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, pan != 0);
+	switch (_fileLoaded) {
+	case kFileIntro: {
+		assert(track < ARRAYSIZE(tableEffectsIntro));
+		const EffectEntry &entry = tableEffectsIntro[track];
+		bool success = _driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, entry.pan != 0) >= 0;
 		if (!_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-	}
+		}
+		break;
+
+
+	case kFileGame: {
+		uint16 extVar = 1; // maybe indicates music playing or enabled
+		uint16 extVar2 = 1; // sound loaded ?
+		if (0x61 <= track && track <= 0x63 && extVar)
+			playTrack(track - 0x4F);
+
+		assert(track < ARRAYSIZE(tableEffectsGame));
+		const EffectEntry &entry = tableEffectsGame[track];
+		if (extVar2 && entry.note) {
+			byte pan = (entry.pan == 2) ? 0 : entry.pan;
+			_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, pan != 0);
+			if (!_mixer->isSoundHandleActive(_musicHandle))
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+		}
+		}
+		break;
 	}
 }
 
