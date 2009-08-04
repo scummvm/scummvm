@@ -125,7 +125,7 @@ void ScriptManager::processActionList() {
 					else
 						doJump = _gameFlags[currentCommand.param1] != 0;
 					
-					if(doJump)
+					if (doJump)
 						_currentLine = currentCommand.param3;
 				}
 				break;
