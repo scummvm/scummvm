@@ -83,7 +83,6 @@ protected:
 private:
 	enum { kPalDefaultCiaVal = 11822, kNtscDefaultCiaVal = 14320, kCiaBaseInterval = 0x1B51F8 };
 	enum { kNumVoices = 4, kNumChannels = 8, kNumSubsongs = 32, kMaxPatternOffsets = 128, kMaxMacroOffsets = 128 };
-	static const uint16 noteIntervalls[64];
 
 	struct MdatResource {
 		const byte *mdatAlloc;	//!< allocated Block of Memory

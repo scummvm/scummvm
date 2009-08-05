@@ -38,17 +38,17 @@
 namespace {
 	void displayPatternstep(const void *const vptr);
 	void displayMacroStep(const void *const vptr);
-}
 
-namespace Audio {
-
-const uint16 Tfmx::noteIntervalls[64] = {
+	const uint16 noteIntervalls[64] = {
 	1710, 1614, 1524, 1438, 1357, 1281, 1209, 1141, 1077, 1017,  960,  908,
 	 856,  810,  764,  720,  680,  642,  606,  571,  539,  509,  480,  454,
 	 428,  404,  381,  360,  340,  320,  303,  286,  270,  254,  240,  227,
 	 214,  202,  191,  180,  170,  160,  151,  143,  135,  127,  120,  113,
 	 214,  202,  191,  180,  170,  160,  151,  143,  135,  127,  120,  113,
 	 214,  202,  191,  180 };
+}
+
+namespace Audio {
 
 Tfmx::Tfmx(int rate, bool stereo)
 	: Paula(stereo, rate), 
