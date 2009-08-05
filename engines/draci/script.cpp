@@ -566,7 +566,7 @@ void Script::talk(Common::Queue<int> &params) {
 	// Set speech text coordinates
 
 	int x = surface->centerOnX(person->_x, speechFrame->getWidth());
-	int y = surface->centerOnX(person->_y, speechFrame->getHeight() * 2);
+	int y = surface->centerOnY(person->_y, speechFrame->getHeight() * 2);
 
 	speechFrame->setX(x);
 	speechFrame->setY(y);
