@@ -303,6 +303,8 @@ int GetMidiVolume() {
 	return volMusic;
 }
 
+static int priorVolMusic = 0;
+
 /**
  * Sets the volume of the MIDI music.
  * @param vol			New volume - 0..MAXMIDIVOL
@@ -310,23 +312,24 @@ int GetMidiVolume() {
 void SetMidiVolume(int vol)	{
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
 
-	if (vol == 0 && volMusic == 0)	{
+	if (vol == 0 && priorVolMusic == 0)	{
 		// Nothing to do
-	} else if (vol == 0 && volMusic != 0) {
+	} else if (vol == 0 && priorVolMusic != 0) {
 		// Stop current midi sequence
 		StopMidi();
-	} else if (vol != 0 && volMusic == 0) {
+		_vm->_midiMusic->setVolume(vol);
+	} else if (vol != 0 && priorVolMusic == 0) {
 		// Perhaps restart last midi sequence
 		if (currentLoop) {
 			PlayMidiSequence(currentMidi, true);
 			_vm->_midiMusic->setVolume(vol);
 		}
-	} else if (vol != 0 && volMusic != 0) {
+	} else if (vol != 0 && priorVolMusic != 0) {
 		// Alter current volume
 		_vm->_midiMusic->setVolume(vol);
 	}
 
-	volMusic = vol;
+	priorVolMusic = vol;
 }
 
 /**
