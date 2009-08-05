@@ -105,7 +105,7 @@ Common::Error AsylumEngine::go() {
 	// Set up the game's main scene
 	_scene = new Scene(_screen, _sound, 5);
 
-    _blowUp = new BlowUpPuzzleVCR(_screen, _sound, _scene);
+    _blowUp = new BlowUpPuzzleVCR(_screen, _sound, _scene, _video);
 
 	// TODO Since the ScriptMan is a singleton, setScene assignments could
 	// probably be rolled into the Scene constructor :D

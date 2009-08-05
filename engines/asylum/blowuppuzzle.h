@@ -38,6 +38,7 @@ namespace Asylum {
 class Scene;
 class Screen;
 class Sound;
+class Video;
 
 typedef struct GraphicQueueItem {
 	uint32 resId;
@@ -52,7 +53,7 @@ typedef struct GraphicQueueItem {
 
 class BlowUpPuzzle {
 public:
-	BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene);
+	BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene, Video *video);
 	virtual ~BlowUpPuzzle();
 
     virtual void handleEvent(Common::Event *event, bool doUpdate){};
@@ -66,6 +67,7 @@ protected:
 	Screen *_screen;
 	Sound  *_sound;
     Scene  *_scene;
+    Video  *_video;
 
 	uint32	_mouseX;
 	uint32	_mouseY;
@@ -117,7 +119,7 @@ const Common::Rect BlowUpPuzzleVCRPolies[10] = {
 
 class BlowUpPuzzleVCR : public BlowUpPuzzle {
 public:
-    BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene);
+    BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene, Video *video);
 	~BlowUpPuzzleVCR();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
