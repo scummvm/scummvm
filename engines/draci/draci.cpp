@@ -191,12 +191,21 @@ bool DraciEngine::handleEvents() {
 			_game->setQuit(true);
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_RIGHT)
-				_game->changeRoom(_game->nextRoomNum());
-
-			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
-				_game->changeRoom(_game->prevRoomNum());
-
+			if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
+				_game->setRoomNum(_game->nextRoomNum());
+				_game->setGateNum(0);
+				_game->_roomChange = true;
+			}
+			else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
+				_game->setRoomNum(_game->prevRoomNum());
+				_game->setGateNum(0);
+				_game->_roomChange = true;
+			}
+			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				_game->setRoomNum(_game->getEscRoom());
+				_game->setGateNum(0);
+				_game->_roomChange = true;
+			}
 			// Show walking map toggle
 			else if (event.kbd.keycode == Common::KEYCODE_w) { 
 				_showWalkingMap = !_showWalkingMap;
