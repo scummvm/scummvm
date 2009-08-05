@@ -25,6 +25,7 @@
 
 #include "common/md5.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -271,19 +272,6 @@ void AgiEngine::processEvents() {
 	}
 }
 
-void AgiEngine::checkQuickLoad() {
-	if (ConfMan.hasKey("save_slot")) {
-		char saveNameBuffer[256];
-
-		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
-
-		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
-			_game.exitAllLogics = 1;
-			_menu->enableAll();
-		}
-	}
-}
-
 void AgiEngine::pollTimer(void) {
 	static uint32 m = 0;
 	uint32 dm;
@@ -301,38 +289,8 @@ void AgiEngine::pollTimer(void) {
 	m = g_tickTimer;
 }
 
-bool AgiEngine::isKeypress(void) {
-	processEvents();
-	return _keyQueueStart != _keyQueueEnd;
-}
-
-int AgiEngine::getKeypress(void) {
-	int k;
-
-	while (_keyQueueStart == _keyQueueEnd)	// block
-		pollTimer();
-
-	keyDequeue(k);
-
-	return k;
-}
-
-void AgiEngine::clearKeyQueue(void) {
-	while (isKeypress()) {
-		getKeypress();
-	}
-}
-
 void AgiEngine::agiTimerFunctionLow(void *refCon) {
 	g_tickTimer++;
-}
-
-void AgiEngine::clearImageStack(void) {
-	_imageStack.clear();
-}
-
-void AgiEngine::releaseImageStack(void) {
-	_imageStack.clear();
 }
 
 void AgiEngine::pause(uint32 msec) {
@@ -346,38 +304,6 @@ void AgiEngine::pause(uint32 msec) {
 		_system->delayMillis(10);
 	}
 	_gfx->setCursor(_renderMode == Common::kRenderAmiga);
-}
-
-void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {
-	ImageStackElement pnew;
-
-	pnew.type = type;
-	pnew.pad = 0;
-	pnew.parm1 = p1;
-	pnew.parm2 = p2;
-	pnew.parm3 = p3;
-	pnew.parm4 = p4;
-	pnew.parm5 = p5;
-	pnew.parm6 = p6;
-	pnew.parm7 = p7;
-
-	_imageStack.push(pnew);
-}
-
-void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
-		int16 p4, int16 p5, int16 p6, int16 p7) {
-	switch (type) {
-	case ADD_PIC:
-		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
-		agiLoadResource(rPICTURE, p1);
-		_picture->decodePicture(p1, p2, p3 != 0);
-		break;
-	case ADD_VIEW:
-		agiLoadResource(rVIEW, p1);
-		_sprites->addToPic(p1, p2, p3, p4, p5, p6, p7);
-		break;
-	}
 }
 
 void AgiEngine::initPriTable() {
@@ -489,11 +415,6 @@ int AgiEngine::agiInit() {
 
 	_game.mouseFence.setWidth(0); // Reset
 
-	_game.lastController = 0;
-	for (i = 0; i < MAX_DIRS; i++)
-		_game.controllerOccured[i] = false;
-
-
 	return ec;
 }
 
@@ -526,21 +447,6 @@ int AgiEngine::agiDeinit() {
 	unloadWords();
 
 	clearImageStack();
-
-	return ec;
-}
-
-int AgiEngine::agiDetectGame() {
-	int ec = errOK;
-
-	assert(_gameDescription != NULL);
-
-	if (getVersion() <= 0x2999) {
-		_loader = new AgiLoader_v2(this);
-	} else {
-		_loader = new AgiLoader_v3(this);
-	}
-	ec = _loader->detectGame();
 
 	return ec;
 }
@@ -587,67 +493,6 @@ static const GameSettings agiSettings[] = {
 	{NULL, NULL, 0, 0, NULL}
 };
 
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, bool positive) const {
-	if (_amigaStyle) {
-		if (positive) {
-			if (pressed) { // Positive pressed Amiga-style button
-				if (_olderAgi) {
-					return AgiTextColor(amigaBlack, amigaOrange);
-				} else {
-					return AgiTextColor(amigaBlack, amigaPurple);
-				}
-			} else { // Positive unpressed Amiga-style button
-				return AgiTextColor(amigaWhite, amigaGreen);
-			}
-		} else { // _amigaStyle && !positive
-			if (pressed) { // Negative pressed Amiga-style button
-				return AgiTextColor(amigaBlack, amigaCyan);
-			} else { // Negative unpressed Amiga-style button
-				return AgiTextColor(amigaWhite, amigaRed);
-			}
-		}
-	} else { // PC-style button
-		if (hasFocus || pressed) { // A pressed or in focus PC-style button
-			return AgiTextColor(pcWhite, pcBlack);
-		} else { // An unpressed PC-style button without focus
-			return AgiTextColor(pcBlack, pcWhite);
-		}
-	}
-}
-
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, int baseFgColor, int baseBgColor) const {
-	return getColor(hasFocus, pressed, AgiTextColor(baseFgColor, baseBgColor));
-}
-
-AgiTextColor AgiButtonStyle::getColor(bool hasFocus, bool pressed, const AgiTextColor &baseColor) const {
-	if (hasFocus || pressed)
-		return baseColor.swap();
-	else
-		return baseColor;
-}
-
-int AgiButtonStyle::getTextOffset(bool hasFocus, bool pressed) const {
-	return (pressed && !_amigaStyle) ? 1 : 0;
-}
-
-bool AgiButtonStyle::getBorder(bool hasFocus, bool pressed) const {
-	return _amigaStyle && !_authenticAmiga && (hasFocus || pressed);
-}
-
-void AgiButtonStyle::setAmigaStyle(bool amigaStyle, bool olderAgi, bool authenticAmiga) {
-	_amigaStyle		= amigaStyle;
-	_olderAgi		= olderAgi;
-	_authenticAmiga	= authenticAmiga;
-}
-
-void AgiButtonStyle::setPcStyle(bool pcStyle) {
-	setAmigaStyle(!pcStyle);
-}
-
-AgiButtonStyle::AgiButtonStyle(Common::RenderMode renderMode) {
-	setAmigaStyle(renderMode == Common::kRenderAmiga);
-}
-
 AgiBase::AgiBase(OSystem *syst, const AGIGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	_noSaveLoadAllowed = false;
 
@@ -671,7 +516,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	parseFeatures();
 
 	_rnd = new Common::RandomSource();
-	syst->getEventManager()->registerRandomSource(*_rnd, "agi");
+	g_eventRec.registerRandomSource(*_rnd, "agi");
 
 	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
@@ -718,6 +563,12 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_predictiveDictLine = NULL;
 	_predictiveDictLineCount = 0;
 	_firstSlot = 0;
+
+	// NOTE: On game reload the keys do not get set again,
+	// thus it is incorrect to reset it in agiInit(). Fixes bug #2823762
+	_game.lastController = 0;
+	for (int i = 0; i < MAX_DIRS; i++)
+		_game.controllerOccured[i] = false;
 }
 
 void AgiEngine::initialize() {

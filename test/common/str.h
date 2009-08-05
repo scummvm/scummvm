@@ -285,4 +285,12 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(!Common::matchString("monkey.s99",  "monkey.s*1"));
 		TS_ASSERT(Common::matchString("monkey.s101", "monkey.s*1"));
 	}
+
+	void test_string_printf() {
+		TS_ASSERT( Common::String::printf("") == "" );
+		TS_ASSERT( Common::String::printf("%s", "test") == "test" );
+		TS_ASSERT( Common::String::printf("%s.s%.02d", "monkey", 1) == "monkey.s01" );
+		TS_ASSERT( Common::String::printf("%s%X", "test", 1234) == "test4D2" );
+		TS_ASSERT( Common::String::printf("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456) == "Some text to make this string longer than the default built-in capacity 123456" );
+	}
 };

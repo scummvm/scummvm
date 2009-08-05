@@ -62,7 +62,6 @@ public:
 class SaveLoad_ns : public SaveLoad {
 
 	Parallaction_ns *_vm;
-	Common::String genOldSaveFileName(uint slot);
 
 protected:
 	void renameOldSavefiles();

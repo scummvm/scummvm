@@ -766,6 +766,10 @@ void PCSoundFxPlayer::doSync(Common::Serializer &s) {
 		for (int i = 0; i < NUM_CHANNELS; ++i) {
 			_instrumentsChannelTable[i] = -1;
 		}
+
+		_numOrders = _sfxData[470];
+		_eventsDelay = (244 - _sfxData[471]) * 100 / 1060;
+		_updateTicksCounter = 0;
 	}
 
 	s.syncAsSint16LE(_songPlayed);

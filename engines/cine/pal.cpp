@@ -239,9 +239,6 @@ Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, b
 }
 
 // a.k.a. transformColor
-// Parameter color components (i.e. r, g and b) are in range [-7, 7]
-// e.g. r = 7 sets the resulting color's red component to maximum
-// e.g. r = -7 sets the resulting color's red component to minimum (i.e. zero)
 Cine::Palette::Color Palette::saturatedAddColor(Cine::Palette::Color baseColor, signed r, signed g, signed b) const {
 	Cine::Palette::Color result;
 	result.r = CLIP<int>(baseColor.r + r, 0, _format.rMax());

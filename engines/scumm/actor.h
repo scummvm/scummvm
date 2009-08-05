@@ -380,11 +380,15 @@ protected:
 
 class ActorC64 : public Actor_v2 {
 public:
-	// FIXME: This flag is never saved, which might lead to broken save states.
+	// FIXME: These vars are never saved, which might lead to broken save states.
 	byte _miscflags;
+	byte _speaking, _speakingPrev;
+	byte _costCommand, _costFrame;
 
 public:
-	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {}
+	ActorC64(ScummEngine *scumm, int id) : Actor_v2(scumm, id) {
+		 _speaking = _speakingPrev = _costCommand = _costFrame = 0;
+	}
 	virtual void initActor(int mode) {
 		Actor_v2::initActor(mode);
 		if (mode == -1) {

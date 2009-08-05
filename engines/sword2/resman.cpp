@@ -151,7 +151,7 @@ bool ResourceManager::init() {
 	for (i = 0; i < size / 2; i++)
 		_resConvTable[i] = file.readUint16LE();
 
-	if (file.ioFailed()) {
+	if (file.eos() || file.err()) {
 		file.close();
 		GUIErrorMessage("Broken Sword 2: Cannot read resource.tab");
 		return false;
@@ -178,7 +178,7 @@ bool ResourceManager::init() {
 
 			cdInf[i].cd = file.readByte();
 
-			if (file.ioFailed()) {
+			if (file.eos() || file.err()) {
 				delete cdInf;
 				file.close();
 				GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
@@ -477,7 +477,7 @@ void ResourceManager::readCluIndex(uint16 fileNum, Common::File *file) {
 	_resFiles[fileNum].entryTab = (uint32*)malloc(tableSize);
 	_resFiles[fileNum].numEntries = tableSize / 8;
 	file->read(_resFiles[fileNum].entryTab, tableSize);
-	if (file->ioFailed())
+	if (file->eos() || file->err())
 		error("unable to read index table from file %s", _resFiles[fileNum].fileName);
 
 #ifdef SCUMM_BIG_ENDIAN

@@ -1138,9 +1138,19 @@ void ScummEngine_v5::o5_ifClassOfIs() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
-		b = getClass(obj, cls);
-		if (((cls & 0x80) && !b) || (!(cls & 0x80) && b))
-			cond = false;
+
+		// WORKAROUND bug #1668393: Due to a script bug, the wrong opcode is used
+		// to check the state of the inside door (object 465) of the Hostel on Mars,
+		// when opening the Hostel door from the outside.
+		if (_game.id == GID_ZAK && _game.platform == Common::kPlatformFMTowns &&
+		    vm.slot[_currentScript].number == 205 && _currentRoom == 185 &&
+		    obj == 465 && cls == 0) {
+			cond = (getState(obj) == 0);
+		} else {
+			b = getClass(obj, cls);
+			if (((cls & 0x80) && !b) || (!(cls & 0x80) && b))
+				cond = false;
+		}
 	}
 	jumpRelative(cond);
 }
@@ -1775,7 +1785,7 @@ void ScummEngine_v5::o5_roomOps() {
 			while ((chr = fetchScriptByte()))
 				filename += chr;
 
-			if (filename.hasPrefix("iq-") || filename.hasPrefix("IQ-") || filename.hasSuffix("-iq")) {
+			if (filename.hasPrefix("iq-") || filename.hasPrefix("IQ-") || filename.hasSuffix("-iq") || filename.hasSuffix("-IQ")) {
 				filename = _targetName + ".iq";
 			} else {
 				error("SO_LOAD_STRING: Unsupported filename %s", filename.c_str());

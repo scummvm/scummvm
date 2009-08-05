@@ -201,7 +201,7 @@ int32 Script::readInt32() {
 char *Script::readString(int32 length) {
 	if (length < 0) {
 		length = 0;
-		while (_totPtr[length++] != '\0');
+		while (_totPtr[length++] != '\0') { }
 	}
 
 	char *string = (char *) _totPtr;

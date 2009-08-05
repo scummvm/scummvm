@@ -155,6 +155,7 @@ void ScummEngine_v0::switchActor(int slot) {
 	VAR(VAR_EGO) = VAR(97 + slot);
 	actorFollowCamera(VAR(VAR_EGO));
 	resetVerbs();
+	resetSentence(false);
 	setUserState(247);
 }
 
@@ -376,14 +377,8 @@ void ScummEngine_v2::checkV2Inventory(int x, int y) {
 
 	if (object > 0) {
 		if (_game.version == 0) {
-			if (_activeInventory != object) {
-				_activeInventory = object;
-			} else if (_activeVerb != 3 && _activeVerb != 13) {
-				if (_activeObject)
-					runObject(_activeObject, _activeVerb);
-				else
-					runObject(_activeInventory, _activeVerb);
-			}
+			_activeInventory = object;
+
 		} else {
 			runInputScript(kInventoryClickArea, object, 0);
 		}
@@ -425,7 +420,9 @@ void ScummEngine_v2::redrawV2Inventory() {
 		_string[1].right = _mouseOverBoxesV2[i].rect.right - 1;
 		_string[1].color = _mouseOverBoxesV2[i].color;
 
+		_v0ObjectInInventory = true;
 		const byte *tmp = getObjOrActorName(obj);
+		_v0ObjectInInventory = false;
 		assert(tmp);
 
 		// Prevent inventory entries from overflowing by truncating the text
@@ -629,14 +626,14 @@ void ScummEngine_v2::checkExecVerbs() {
 			if (vs->verbid && vs->saveid == 0 && vs->curmode == 1) {
 				if (_mouseAndKeyboardStat == vs->key) {
 					// Trigger verb as if the user clicked it
-					runInputScript(1, vs->verbid, 1);
+					runInputScript(kVerbClickArea, vs->verbid, 1);
 					return;
 				}
 			}
 		}
 
 		// Generic keyboard input
-		runInputScript(4, _mouseAndKeyboardStat, 1);
+		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
 		VirtScreen *zone = findVirtScreen(_mouse.y);
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
@@ -649,7 +646,7 @@ void ScummEngine_v2::checkExecVerbs() {
 
 		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// Click into V2 sentence line
-			runInputScript(5, 0, 0);
+			runInputScript(kSentenceClickArea, 0, 0);
 		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + inventoryArea) {
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
@@ -657,11 +654,30 @@ void ScummEngine_v2::checkExecVerbs() {
 			over = findVerbAtPos(_mouse.x, _mouse.y);
 			if (over != 0) {
 				// Verb was clicked
-				runInputScript(1, _verbs[over].verbid, code);
+				runInputScript(kVerbClickArea, _verbs[over].verbid, code);
 			} else {
 				// Scene was clicked
 				runInputScript((zone->number == kMainVirtScreen) ? kSceneClickArea : kVerbClickArea, 0, code);
 			}
+		}
+	}
+}
+
+void ScummEngine_v0::runObject(int obj, int entry) {
+	int prev = _v0ObjectInInventory;
+
+	if (getVerbEntrypoint(obj, entry) != 0) {
+		_v0ObjectInInventory = prev;
+		runObjectScript(obj, entry, false, false, NULL);
+	} else if (entry != 13 && entry != 15) {
+		if (_activeVerb != 3) {
+			VAR(9) = entry;
+			runScript(3, 0, 0, 0);
+
+		// For some reasons, certain objects don't have a "give" script
+		} else if (VAR(5) > 0 && VAR(5) < 8) {
+			if (_activeInventory)
+				setOwnerOf(_activeInventory, VAR(5));
 		}
 	}
 }
@@ -679,9 +695,292 @@ void ScummEngine_v2::runObject(int obj, int entry) {
 	_activeVerb = 13;
 }
 
+bool ScummEngine_v0::verbMoveToActor(int actor) {
+	Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+	Actor *a2 =derefActor(actor, "checkExecVerbs");
+
+	if (!a->_moving) {
+		int dist =  getDist(a->getRealPos().x, a->getRealPos().y, a2->getRealPos().x, a2->getRealPos().y);
+		if (dist > 5)
+			a->startWalkActor(a2->getRealPos().x, a2->getRealPos().y, 1);
+		else
+			return false;
+
+		return true;
+	} 
+
+	return true;
+}
+
+bool ScummEngine_v0::verbMove(int object, int objectIndex, bool invObject) {
+	int x, y, dir;
+	Actor *a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+
+	if (_currentMode != 3 && _currentMode != 2)
+		return false;
+
+	if (a->_moving)
+		return true;
+
+	_v0ObjectIndex = true;
+	getObjectXYPos(objectIndex, x, y, dir);
+	_v0ObjectIndex = false;
+	// Detect distance from target object
+	int dist =  getDist(a->getRealPos().x, a->getRealPos().y, x, y);
+
+	// FIXME: This should be changed once the walkbox problem is fixed
+	if (dist > 0x5) {
+		a->startWalkActor(x, y, dir);
+		VAR(6) = x;
+		VAR(7) = y;
+		return true;
+	} else {
+		// Finished walk, are we picking up the item?
+		if (_verbPickup) {
+			int oldActive = _activeObject, oldIndex = _activeObjectIndex;
+			_activeObject = object;
+			_activeObjectIndex = objectIndex;
+
+			_v0ObjectIndex = true;
+			// Execute pickup 
+			runObject(objectIndex, 14);			
+			_v0ObjectIndex = false;
+
+			_activeObject = oldActive;
+			_activeObjectIndex = oldIndex;
+
+			// Finished picking up
+			_verbPickup = false;
+		}	
+	}
+
+	return false;
+}
+
+bool ScummEngine_v0::verbObtain(int obj, int objIndex) {
+	bool didPickup = false;
+
+	int prep, where = whereIsObjectInventory(obj);
+
+	if (objIndex == 0)
+		return false;
+
+	if (where != WIO_INVENTORY) {
+		_v0ObjectIndex = true;
+		prep = verbPrep(objIndex);
+
+		if (prep == 1 || prep == 4) {
+			if (_activeVerb != 13 && _activeVerb != 14) {
+				_verbPickup = true;
+				didPickup = true;
+			}
+		} else {
+			_verbPickup = false;
+		}
+
+		if (verbMove(obj, objIndex, false))
+			return true;
+
+		if (didPickup && (prep == 1 || prep == 4))
+			if (_activeVerb != 13 && _activeVerb != 14)
+				_activeInventory = obj;
+	}
+
+	return false;
+}
+
+int ScummEngine_v0::verbPrep(int object) {
+	if (!_v0ObjectInInventory) 	
+		_v0ObjectIndex = true;
+	else
+		_v0ObjectIndex = false;
+	byte *ptr = getOBCDFromObject(object);
+	_v0ObjectIndex = false;
+	assert(ptr);
+	return (*(ptr + 11) >> 5);
+}
+
+bool ScummEngine_v0::verbExecutes(int object, bool inventory) {
+	_v0ObjectInInventory = inventory;
+	int prep = verbPrep(object);
+
+	if (prep == 2 || prep == 0) {
+		return true;
+	}
+
+	return false;
+}
+
+bool ScummEngine_v0::verbExec() {
+	int prep = 0;
+	int entry = (_currentMode != 0 && _currentMode != 1) ? _activeVerb : 15;
+
+	if ((!_activeInvExecute && _activeObject && getObjectIndex(_activeObject) == -1)) {
+		resetSentence();
+		return false;
+	}
+
+	// Lets try walk to the object
+	if (_activeObject && _activeObjectIndex && !_activeObjectObtained && _currentMode != 0) {
+		prep = verbPrep(_activeObjectIndex);
+		
+		if (verbObtain(_activeObject, _activeObjectIndex))
+			return true;
+
+		_activeObjectObtained = true;
+	}
+
+	if (_activeObject2 && _activeObject2Index && !_activeObject2Obtained && _currentMode != 0) {
+		prep = verbPrep(_activeObject2Index);
+
+		_v0ObjectInInventory = false;
+		if (verbObtain(_activeObject2, _activeObject2Index))
+			return true;
+		
+		if (prep != 1 && prep != 4) {
+			_activeInventory = _activeObject;
+			_activeObject = _activeObject2;
+			_activeObjectIndex = _activeObject2Index;
+			_activeObject2 = 0;
+			_activeObject2Index = 0;
+		}
+
+		_activeObject2Obtained = true;
+	}
+
+	// Give-To
+	if (_activeVerb == 3 && _activeInventory && _activeActor) {
+		// FIXME: Actors need to turn and face each other
+		// And walk to each other
+		if (verbMoveToActor(_activeActor))
+			return true;
+
+		_v0ObjectInInventory = true;
+		VAR(5) = _activeActor;
+		runObject(_activeInventory , 3);
+		_v0ObjectInInventory = false;
+
+		resetSentence();
+		return false;
+	}
+
+	if (_activeActor) {
+		_v0ObjectIndex = true;
+		runObject(_activeActor, entry);
+		_v0ObjectIndex = false;
+		_verbExecuting = false;
+
+		resetSentence();
+		return false;
+	}
+
+	// If we've finished walking (now near target), execute the action
+	if (_activeObject && _activeObjectIndex && verbPrep(_activeObjectIndex) == 2) {
+		_v0ObjectIndex = true;
+		runObject(_activeObjectIndex, entry);
+		_v0ObjectIndex = false;
+		_verbExecuting = false;
+
+		if ((_currentMode == 3 || _currentMode == 2) && _activeVerb == 13)
+			return false;
+
+		resetSentence();
+		return false;
+	}
+
+	// We acted on an inventory item
+	if (_activeInventory && verbExecutes(_activeInventory, true) && _activeVerb != 3) {
+		_v0ObjectInInventory = true;
+		runObject(_activeInventory, _activeVerb);
+
+		_verbExecuting = false;
+
+		if (_currentMode == 3 && _activeVerb == 13) {
+			resetSentence(true);
+			return false;
+		}
+		
+		resetSentence();
+		return false;
+	}
+
+	if (_activeObject) {
+		_v0ObjectIndex = true;
+		runObject(_activeObjectIndex, entry);
+		_v0ObjectIndex = false;
+	} else if (_activeInventory) {
+		if (verbExecutes(_activeInventory, true) == false) {
+			if (_activeObject2 && verbExecutes(_activeObject2, true)) {
+				_v0ObjectInInventory = true;
+				
+				_activeObject = _activeInventory;
+				_activeInventory = _activeObject2;
+				
+				runObject(_activeObject, _activeVerb);
+			} else {
+				_v0ObjectInInventory = true;
+				runObject(_activeInventory, _activeVerb);
+			}
+		} else {
+			runObject(_activeInventory, _activeVerb);
+			_v0ObjectInInventory = true;
+		}
+	}
+
+	_verbExecuting = false;
+
+	if (_activeVerb == 13) {
+		resetSentence(true);
+		return false;
+	}
+
+	resetSentence();
+
+	return false;
+}
+
 void ScummEngine_v0::checkExecVerbs() {
 	Actor *a;
 	VirtScreen *zone = findVirtScreen(_mouse.y);
+
+	// Is a verb currently executing
+	if (_verbExecuting) {
+		// Check if mouse click
+		if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
+			int over = findVerbAtPos(_mouse.x, _mouse.y);
+			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
+			int obj  = findObject(_virtualMouse.x, _virtualMouse.y);
+			
+			if (over && over != _activeVerb) {
+				_activeVerb = over;
+				_verbExecuting = false;
+				return;
+			}
+
+			if (!obj && !act && !over) {
+				resetSentence(false);	
+			} else {
+				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+				a->stopActorMoving();
+			}
+		} else {
+			if (_verbExecuting && !verbExec())
+				return;
+		}
+	}
+
+	// What-Is selected, any object we hover over is selected, on mouse press we set to WalkTo
+	if (_activeVerb == 15) {
+		int obj = findObject(_virtualMouse.x, _virtualMouse.y);
+		int objIdx = findObjectIndex(_virtualMouse.x, _virtualMouse.y);
+		_activeObject = obj;
+		_activeObjectIndex = objIdx;
+
+		if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK))
+			_activeVerb = 13;	// Walk-To
+
+		return;
+	}
 
 	if (_userPut <= 0 || _mouseAndKeyboardStat == 0)
 		return;
@@ -693,61 +992,147 @@ void ScummEngine_v0::checkExecVerbs() {
 		if (zone->number == kVerbVirtScreen && _mouse.y <= zone->topline + 8) {
 			// TODO
 		} else if (zone->number == kVerbVirtScreen && _mouse.y > zone->topline + 32) {
+			int prevInventory = _activeInventory;
+
 			// Click into V2 inventory
 			checkV2Inventory(_mouse.x, _mouse.y);
+			if (!_activeInventory)
+				return;
+			
+			// Did we just change the selected inventory item?
+			if (prevInventory && prevInventory != _activeInventory && _activeInventory != _activeObject2) {
+				_activeObject = 0;
+				_activeInvExecute = true;
+				_activeObject2Inv = true;
+				_activeObject2 = _activeInventory;
+				_activeInventory = prevInventory;
+				return;
+			}
+
+			// is the new selected inventory the same as the last selected?, reset to previous if it is
+			if (_activeInventory == _activeObject2)
+				_activeInventory = prevInventory;
+
+			// Inventory Selected changed
+			if (prevInventory != _activeInventory)
+				if (!_activeObject2 || prevInventory != _activeObject2)
+					return;
+
+			if (_activeVerb == 11 && !((!(_activeObject || _activeInventory)) || !_activeObject2))
+				return;
 		} else {
 			int over = findVerbAtPos(_mouse.x, _mouse.y);
+			int act  = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
+			int obj  = findObject(_virtualMouse.x, _virtualMouse.y);
+			int objIdx = findObjectIndex(_virtualMouse.x, _virtualMouse.y);
+
+			if ((_activeObject || _activeInventory) && act) {
+				obj = 0;
+				objIdx = 0;
+			}
 
 			// Handle New Kid verb options
-			if (_activeVerb == 7) {
+			if (_activeVerb == 7 || over == 7) {
+				// Disable New-Kid (in the secret lab)
+				if (_currentMode == 2 || _currentMode == 0)
+					return;
+
+				if (_activeVerb != 7) {
+					_activeVerb = over;
+					over = 0;
+				} 
+
 				if (over) {
 					_activeVerb = 13;
 					switchActor(_verbs[over].verbid - 1);
-				}
-				return;
-			}
-
-			if (over) {
-				_activeVerb = _verbs[over].verbid;
-				// Selected New Kid verb
-				if (_activeVerb == 7)
-					setNewKidVerbs();
-
-				return;
-			}
-
-			int act = getActorFromPos(_virtualMouse.x, _virtualMouse.y);
-			int obj = findObject(_virtualMouse.x, _virtualMouse.y);
-			if (act != 0 && _activeVerb == 3 && _activeInventory != 0) {
-				// Give inventory item to actor
-				VAR(5) = act;
-				runObject(_activeInventory, _activeVerb);
-			} else if (obj) {
-				if (_currentMode == 3 && _activeVerb != 13 && obj != _activeObject) {
-					_activeObject = obj;
 					return;
 				}
 
-				_activeObject = obj;
-				if (_currentMode == 3) {
-					int x, y, dir;
-					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-					getObjectXYPos(obj, x, y, dir);
-					a->startWalkActor(x, y, dir);
-				}
+				setNewKidVerbs();
 
-				int entry = (_currentMode == 3) ? _activeVerb : 15;
-				runObject(_activeObject, entry);
-			} else if (zone->number == kMainVirtScreen) {
-				a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
-				a->startWalkActor(_virtualMouse.x / V12_X_MULTIPLIER, _virtualMouse.y / V12_Y_MULTIPLIER, -1);
+				return;
+			}
+			
+			// Clicked on nothing, walk here?
+			if (!over && !act && _activeVerb == 13 && !obj && _currentMode != 0) {
+				// Clear all selected
+				resetSentence();
+
+				// 0xB31
+				VAR(6) = _virtualMouse.x / V12_X_MULTIPLIER;
+				VAR(7) = _virtualMouse.y / V12_Y_MULTIPLIER;
+
+				if (zone->number == kMainVirtScreen) {
+					a = derefActor(VAR(VAR_EGO), "checkExecVerbs");
+					a->stopActorMoving();
+					a->startWalkActor(_virtualMouse.x / V12_X_MULTIPLIER, _virtualMouse.y / V12_Y_MULTIPLIER, -1);
+				}
+				return;
 			}
 
-			_activeInventory = 0;
-			_activeObject = 0;
-			_activeVerb = 13;
+			// No new verb, use previous
+			if (over == 0)
+				over = _activeVerb;
+
+			// No verb selected, use walk-to
+			if (!_activeVerb)
+				_activeVerb = over = 13;		// Walk-To
+
+			// New verb selected
+			if (_activeVerb != over) {
+				_activeVerb = over;
+				if (_activeVerb == 13) {
+					resetSentence();
+				}
+				return;
+			}
+
+			// Only allowing targetting actors if its the GIVE/USE verb
+			if (_activeVerb == 3 || _activeVerb == 11) {
+				// Different actor selected?
+				if (act) {
+					if (_activeActor != act) {
+						_activeActor = act;
+						return;
+					}
+				}
+			}
+
+			if (obj && obj != _activeObject) {
+				if (!_activeObject)
+					if (_activeInventory)
+						_activeInvExecute = true;
+
+				// USE
+				if (_activeVerb == 11 || _activeVerb == 8) {
+					if (obj != _activeObject || obj != _activeObject2) {
+						if (!_activeObject || _activeInventory) {
+							_activeObject = obj;
+							_activeObjectIndex = objIdx;
+							return;
+						} else {
+							if (_activeObject2 != obj) {
+								_activeObject2 = obj;
+								_activeObject2Index = objIdx;
+								return;
+							}
+						}
+					}
+				} else {
+					_activeObject = obj;
+					_activeObjectIndex = objIdx;
+						
+					if (_activeVerb != 13)
+						return;
+					
+					//return;
+				}
+			}
 		}
-	}
+
+		_verbExecuting = true;
+
+	}	// mouse k/b action
 }
 
 void ScummEngine::verbMouseOver(int verb) {

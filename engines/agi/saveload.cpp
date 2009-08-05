@@ -32,6 +32,7 @@
 
 #include "common/file.h"
 #include "graphics/thumbnail.h"
+#include "common/config-manager.h"
 
 #include "agi/agi.h"
 #include "agi/graphics.h"
@@ -923,6 +924,87 @@ int AgiEngine::loadGameSimple() {
 	}
 
 	return rc;
+}
+
+void AgiEngine::recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) {
+	ImageStackElement pnew;
+
+	pnew.type = type;
+	pnew.pad = 0;
+	pnew.parm1 = p1;
+	pnew.parm2 = p2;
+	pnew.parm3 = p3;
+	pnew.parm4 = p4;
+	pnew.parm5 = p5;
+	pnew.parm6 = p6;
+	pnew.parm7 = p7;
+
+	_imageStack.push(pnew);
+}
+
+void AgiEngine::replayImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,
+		int16 p4, int16 p5, int16 p6, int16 p7) {
+	switch (type) {
+	case ADD_PIC:
+		debugC(8, kDebugLevelMain, "--- decoding picture %d ---", p1);
+		agiLoadResource(rPICTURE, p1);
+		_picture->decodePicture(p1, p2, p3 != 0);
+		break;
+	case ADD_VIEW:
+		agiLoadResource(rVIEW, p1);
+		_sprites->addToPic(p1, p2, p3, p4, p5, p6, p7);
+		break;
+	}
+}
+
+void AgiEngine::clearImageStack(void) {
+	_imageStack.clear();
+}
+
+void AgiEngine::releaseImageStack(void) {
+	_imageStack.clear();
+}
+
+void AgiEngine::checkQuickLoad() {
+	if (ConfMan.hasKey("save_slot")) {
+		char saveNameBuffer[256];
+
+		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+
+		_sprites->eraseBoth();
+		_sound->stopSound();
+
+		if (loadGame(saveNameBuffer, false) == errOK) {	 // Do not check game id
+			_game.exitAllLogics = 1;
+			_menu->enableAll();
+		}
+	}
+}
+
+Common::Error AgiEngine::loadGameState(int slot) {
+	static char saveLoadSlot[12];
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+
+	_sprites->eraseBoth();
+	_sound->stopSound();
+
+	if (loadGame(saveLoadSlot) == errOK) {
+		_game.exitAllLogics = 1;
+		_menu->enableAll();
+		return Common::kNoError;
+	} else {
+		return Common::kUnknownError;
+	}
+}
+
+Common::Error AgiEngine::saveGameState(int slot, const char *desc) {
+	static char saveLoadSlot[12];
+	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
+	if (saveGame(saveLoadSlot, desc) == errOK)
+		return Common::kNoError;
+	else
+		return Common::kUnknownError;
 }
 
 } // End of namespace Agi

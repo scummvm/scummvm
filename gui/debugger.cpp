@@ -27,9 +27,13 @@
 #include "common/system.h"
 
 #include "gui/debugger.h"
-#if USE_CONSOLE
+#ifndef USE_TEXT_CONSOLE
 	#include "gui/console.h"
+#elif defined(USE_READLINE)
+	#include <readline/readline.h>
+	#include <readline/history.h>
 #endif
+
 
 namespace GUI {
 
@@ -39,9 +43,11 @@ Debugger::Debugger() {
 	_isAttached = false;
 	_errStr = NULL;
 	_firstTime = true;
+#ifndef USE_TEXT_CONSOLE
 	_debuggerDialog = new GUI::ConsoleDialog(1.0f, 0.67f);
 	_debuggerDialog->setInputCallback(debuggerInputCallback, this);
 	_debuggerDialog->setCompletionCallback(debuggerCompletionCallback, this);
+#endif
 
 	//DCmd_Register("continue",			WRAP_METHOD(Debugger, Cmd_Exit));
 	DCmd_Register("exit",				WRAP_METHOD(Debugger, Cmd_Exit));
@@ -55,7 +61,9 @@ Debugger::Debugger() {
 }
 
 Debugger::~Debugger() {
+#ifndef USE_TEXT_CONSOLE
 	delete _debuggerDialog;
+#endif
 }
 
 
@@ -65,7 +73,7 @@ int Debugger::DebugPrintf(const char *format, ...) {
 
 	va_start(argptr, format);
 	int count;
-#if USE_CONSOLE
+#ifndef USE_TEXT_CONSOLE
 	count = _debuggerDialog->vprintf(format, argptr);
 #else
 	count = ::vprintf(format, argptr);
@@ -112,9 +120,22 @@ void Debugger::onFrame() {
 	}
 }
 
+#if defined(USE_TEXT_CONSOLE) && defined(USE_READLINE)
+namespace {
+Debugger *g_readline_debugger;
+
+char *readline_completionFunction(const char *text, int state) {
+	return g_readline_debugger->readlineComplete(text, state);
+}
+} // end of anonymous namespace
+#endif
+
 // Main Debugger Loop
 void Debugger::enter() {
-#if USE_CONSOLE
+	// TODO: Having three I/O methods #ifdef-ed in this file is not the
+	// cleanest approach to this...
+
+#ifndef USE_TEXT_CONSOLE
 	if (_firstTime) {
 		DebugPrintf("Debugger started, type 'exit' to return to the game.\n");
 		DebugPrintf("Type 'help' to see a little list of commands and variables.\n");
@@ -129,18 +150,28 @@ void Debugger::enter() {
 
 	_debuggerDialog->runModal();
 #else
-	// TODO: compared to the console input, this here is very bare bone.
-	// For example, no support for tab completion and no history. At least
-	// we should re-add (optional) support for the readline library.
-	// Or maybe instead of choosing between a console dialog and stdio,
-	// we should move that choice into the ConsoleDialog class - that is,
-	// the console dialog code could be #ifdef'ed to not print to the dialog
-	// but rather to stdio. This way, we could also reuse the command history
-	// and tab completion of the console. It would still require a lot of
-	// work, but at least no dependency on a 3rd party library...
-
 	printf("Debugger entered, please switch to this console for input.\n");
 
+#ifdef USE_READLINE
+	// TODO: add support for saving/loading history?
+
+	g_readline_debugger = this;
+	rl_completion_entry_function = &readline_completionFunction;
+	
+	char *line_read = 0;
+	do {
+		free(line_read);
+		line_read = readline("debug> ");
+
+		if (line_read && line_read[0])
+			add_history(line_read);
+
+	} while (line_read && parseCommand(line_read));
+
+	free(line_read);
+	line_read = 0;
+
+#else
 	int i;
 	char buf[256];
 
@@ -156,6 +187,7 @@ void Debugger::enter() {
 		if (i == 0)
 			continue;
 	} while (parseCommand(buf));
+#endif
 
 #endif
 }
@@ -307,7 +339,8 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 				} else {
 					// take common prefix of previous match and this command
 					for (uint j = 0; j < completion.size(); j++) {
-						if (completion[j] != i->_key[inputlen + j]) {
+						if (inputlen + j >= i->_key.size() ||
+								completion[j] != i->_key[inputlen + j]) {
 							completion = Common::String(completion.begin(), completion.begin() + j);
 							// If there is no unambiguous completion, abort
 							if (completion.empty())
@@ -324,6 +357,29 @@ bool Debugger::tabComplete(const char *input, Common::String &completion) const 
 
 	return true;
 }
+
+#if defined(USE_TEXT_CONSOLE) && defined(USE_READLINE)
+char *Debugger::readlineComplete(const char *input, int state) {
+	static CommandsMap::const_iterator iter;
+
+	// We assume that _cmds isn't changed between calls to readlineComplete,
+	// unless state is 0.
+	if (state == 0) {
+		iter = _cmds.begin();
+	} else {
+		++iter;
+	}
+
+	for (; iter != _cmds.end(); ++iter) {
+		if (iter->_key.hasPrefix(input)) {
+			char *ret = (char *)malloc(iter->_key.size() + 1);
+			strcpy(ret, iter->_key.c_str());
+			return ret;
+		}	
+	}
+	return 0;
+}
+#endif
 
 // Variable registration function
 void Debugger::DVar_Register(const Common::String &varname, void *pointer, int type, int optional) {
@@ -356,8 +412,15 @@ bool Debugger::Cmd_Exit(int argc, const char **argv) {
 // Print a list of all registered commands (and variables, if any),
 // nicely word-wrapped.
 bool Debugger::Cmd_Help(int argc, const char **argv) {
-
+#ifndef USE_TEXT_CONSOLE
 	const int charsPerLine = _debuggerDialog->getCharsPerLine();
+#elif defined(USE_READLINE)
+	int charsPerLine, rows;
+	rl_get_screen_size(&rows, &charsPerLine);
+#else
+	// Can we do better?
+	const int charsPerLine = 80;
+#endif
 	int width, size;
 	uint i;
 
@@ -452,7 +515,7 @@ bool Debugger::Cmd_DebugFlagDisable(int argc, const char **argv) {
 }
 
 // Console handler
-#if USE_CONSOLE
+#ifndef USE_TEXT_CONSOLE
 bool Debugger::debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon) {
 	Debugger *debugger = (Debugger *)refCon;
 

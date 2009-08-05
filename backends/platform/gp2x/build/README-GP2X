@@ -12,10 +12,19 @@ Contents:
     * How to save <#How_to_save>
     * Controller mappings <#Controller_mappings>
     * Know issues <#Know_issues>
-    * Major TODO's <#Major_TODOs>
+    * TODO's <#Major_TODOs>
     * Additional resources/links <#Additional_resourceslinks>
     * Credits <#Credits>
 
+------------------------------------------------------------------------
+
+Please refer to the:
+
+GP2X/GP2XWiz ScummVM Forum: <http://forums.scummvm.org/viewforum.php?f=14> 
+WiKi: <http://wiki.scummvm.org/index.php/GP2X> 
+
+for the most current information on the port and any updates to this 
+documentation.
 
 ------------------------------------------------------------------------
 About the backend/port
@@ -57,22 +66,6 @@ Included engines
 
 Just because an engine is included does not mean any/all of its games
 are supported. Please check game compatability for more infomation.
-
-    * Scumm - (All games supported by ScummVM should work to some
-      extent, using the hardware scalar if needed)
-    * AGOS (AKA Simon) - (Simon the Sorcerer one and two).
-    * Sky - (Beneath a Steel Sky)
-    * Sword - (Broken Sword 1) - This engine uses the hardware scalar to
-      downsize the graphics to fix on the GP2X. It is NOT very nice to
-      look at.
-    * Sword2 - (Broken Sword 2) - This engine uses the hardware scalar
-      to downsize the graphics to fix on the GP2X. It is NOT very nice
-      to look at.
-    * Gob - (Goblins one)
-    * Queen - (Flight of the Amazon Queen)
-    * Kyra - (The Legend of Kyrandia)
-
-All other game engines are disabled in this release.
 
 ------------------------------------------------------------------------
 Supported audio options
@@ -169,16 +162,10 @@ It happens very infrequently, both times it was in the DOTT CD intro.
 Saving often is never a bad idea anyhow.
 
 ------------------------------------------------------------------------
-Major TODO's
+TODO's
 
 Fix save support when using the Sky engine (Beneath a Steel Sky) - You
 CAN'T save at the moment but auto save works.
-Look into inconsistencies with AGOS engine and map Y key to a button
-combination to allow clean quitting (Simon 1/2).
-Add splash-screen and pre-ScummVM config menu (CPU speed, LCD timings
-etc.) - Partly done.
-Fix TV out, maybe make it an option in the pre-ScummVM config menu.
-Any help appreciated :).
 
 ------------------------------------------------------------------------
 Additional resources/links
@@ -186,7 +173,7 @@ Additional resources/links
     * ScummVM WiKi GP2X page <http://wiki.scummvm.org/index.php/GP2X>
     * ScummVM forums GP2X forum
       <http://forums.scummvm.org/viewforum.php?f=14>
-    * My own ScummVM page <http://www.distant-earth.com/scummvm> (for
+    * My own ScummVM page <http://scummvm.distant-earth.com/> (for
       SVN/test builds)
     * Main ScummVM site <http://www.scummvm.org> (for official supported
       release builds)
@@ -197,4 +184,3 @@ Credits
 Core ScummVM code (c) The ScummVM Team
 Portions of the GP2X backend (c) John Willis
 Detailed (c) information can be found within the source code
-

@@ -193,20 +193,8 @@ void AGOSEngine::vc61() {
 
 	_system->unlockScreen();
 
-	if (a == 6) {
-		//fullFade();
-		src = _curVgaFile2 + 32;
-
-		uint8 palette[1024];
-		for (int i = 0; i < 256; i++) {
-			palette[i * 4 + 0] = *src++ * 4;
-			palette[i * 4 + 1] = *src++ * 4;
-			palette[i * 4 + 2] = *src++ * 4;
-			palette[i * 4 + 3] = 0;
-		}
-
-		_system->setPalette(palette, 0, 256);
-	}
+	if (a == 6)
+		fullFade();
 }
 
 void AGOSEngine::vc62_fastFadeOut() {
@@ -220,8 +208,6 @@ void AGOSEngine::vc62_fastFadeOut() {
 			if (_windowNum == 4)
 				_fastFadeCount = 208;
 		}
-
-		memcpy(_videoBuf1, _currentPalette, _fastFadeCount * 4);
 
 		if (getGameType() == GType_FF || getGameType() == GType_PP) {
 			if (getGameType() == GType_FF && getBitFlag(75)) {
@@ -237,8 +223,8 @@ void AGOSEngine::vc62_fastFadeOut() {
 		}
 
 		for (i = fadeCount; i != 0; --i) {
-			paletteFadeOut(_videoBuf1, _fastFadeCount, fadeSize);
-			_system->setPalette(_videoBuf1, 0, _fastFadeCount);
+			paletteFadeOut(_currentPalette, _fastFadeCount, fadeSize);
+			_system->setPalette(_currentPalette, 0, _fastFadeCount);
 			delay(5);
 		}
 

@@ -382,7 +382,7 @@ int loadFNTSub(uint8 *ptr, int destIdx) {
 
 		currentPtr = destPtr + 14;
 
-		for (i = 0; i < *(int16 *)(destPtr + 8); i++) {
+		for (i = 0; i < (int16)READ_UINT16(destPtr + 8); i++) {
 			bigEndianLongToNative((int32 *) currentPtr);
 			currentPtr += 4;
 

@@ -2345,7 +2345,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		if (params->processFlags & kWPFUseFile) {
 			Common::SeekableReadStream *f = NULL;
 			memcpy(buffer, params->filename, 260);
-			const char *filename = (char *)buffer + _vm->convertFilePath(buffer);
+			const char *filename = (char *)buffer + _vm->convertFilePath(buffer, sizeof(buffer));
 
 			if (!_vm->_saveFileMan->listSavefiles(filename).empty()) {
 				f = _vm->_saveFileMan->openForLoading(filename);
@@ -2390,7 +2390,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		if (params->processFlags & kWPFUseFile) {
 			Common::OutSaveFile *f;
 			memcpy(buffer, params->filename, 260);
-			const char *filename = (char *)buffer + _vm->convertFilePath(buffer);
+			const char *filename = (char *)buffer + _vm->convertFilePath(buffer, sizeof(buffer));
 
 			switch (params->fileWriteMode) {
 			case 2:

@@ -1658,7 +1658,7 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	if (!file)
 		error("Couldn't load cauldron palette");
 	file->seek(state*18, SEEK_SET);
-	_screen->getPalette(0).loadVGAPalette(*file, 241, 6);
+	_screen->getPalette(2).loadVGAPalette(*file, 241, 6);
 	delete file;
 	file = 0;
 
@@ -1673,8 +1673,8 @@ void KyraEngine_HoF::setCauldronState(uint8 state, bool paletteFade) {
 	_screen->getPalette(0).copy(_screen->getPalette(2), 241, 6);
 	_cauldronState = state;
 	_cauldronUseCount = 0;
-	//if (state == 5)
-	// sub_27149();
+	if (state == 5)
+		setDlgIndex(5);
 }
 
 void KyraEngine_HoF::clearCauldronTable() {

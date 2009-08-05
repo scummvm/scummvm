@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #include "queen/music.h"
 #include "queen/queen.h"
@@ -84,7 +85,7 @@ MidiMusic::MidiMusic(QueenEngine *vm)
 	_parser->setMidiDriver(this);
 	_parser->setTimerRate(_driver->getBaseTempo());
 
-	vm->getEventManager()->registerRandomSource(_rnd, "queenMusic");
+	g_eventRec.registerRandomSource(_rnd, "queenMusic");
 }
 
 MidiMusic::~MidiMusic() {

@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
@@ -65,7 +66,7 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_debugger = new Debugger();
 	_sound = new PCSound(_mixer, this);
 
-	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
+	g_eventRec.registerRandomSource(_rnd, "cruise");
 }
 
 CruiseEngine::~CruiseEngine() {

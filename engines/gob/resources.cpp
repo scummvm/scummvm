@@ -144,8 +144,6 @@ Resources::~Resources() {
 bool Resources::load(const Common::String &fileName) {
 	unload();
 
-	Common::String fileBase;
-
 	_totFile = TOTFile::createFileName(fileName, _hasLOM);
 
 	if (_hasLOM) {
@@ -154,9 +152,9 @@ bool Resources::load(const Common::String &fileName) {
 		return false;
 	}
 
-	fileBase = TOTFile::getFileBase(fileName);
+	_fileBase = TOTFile::getFileBase(fileName);
 
-	_extFile = fileBase + ".ext";
+	_extFile = _fileBase + ".ext";
 
 	bool hasTOTRes = loadTOTResourceTable();
 	bool hasEXTRes = loadEXTResourceTable();
@@ -165,7 +163,7 @@ bool Resources::load(const Common::String &fileName) {
 		return false;
 
 	if (hasTOTRes) {
-		if (!loadTOTTextTable(fileBase)) {
+		if (!loadTOTTextTable(_fileBase)) {
 			unload();
 			return false;
 		}
@@ -195,6 +193,7 @@ void Resources::unload(bool del) {
 		delete[] _totData;
 		delete[] _imData;
 
+		_fileBase.clear();
 		_totFile.clear();
 		_extFile.clear();
 		_exFile.clear();
@@ -571,6 +570,41 @@ byte *Resources::getTexts() const {
 		return 0;
 
 	return _totTextTable->data;
+}
+
+bool Resources::dumpResource(const Resource &resource,
+		const Common::String &fileName) const {
+
+	Common::DumpFile dump;
+
+	if (!dump.open(fileName))
+		return false;
+
+	if (dump.write(resource.getData(), resource.getSize()) != ((uint32) resource.getSize()))
+		return false;
+
+	if (!dump.flush())
+		return false;
+	if (dump.err())
+		return false;
+
+	dump.close();
+	return true;
+}
+
+bool Resources::dumpResource(const Resource &resource, uint16 id,
+		const Common::String &ext) const {
+
+	Common::String fileName = _fileBase;
+
+	char idStr[7];
+
+	snprintf(idStr, 7, "_%05d", id);
+	fileName += idStr;
+	fileName += ".";
+	fileName += ext;
+
+	return dumpResource(resource, fileName);
 }
 
 Resource *Resources::getTOTResource(uint16 id) const {

@@ -34,6 +34,9 @@ namespace Gob {
 Init_v3::Init_v3(GobEngine *vm) : Init_v2(vm) {
 }
 
+Init_v3::~Init_v3() {
+}
+
 void Init_v3::initVideo() {
 	Init_v2::initVideo();
 

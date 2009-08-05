@@ -53,6 +53,7 @@
 
 #include "common/file.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/endian.h"
 #include "common/system.h"
 #include "common/config-manager.h"
@@ -192,7 +193,7 @@ Common::Error M4Engine::run() {
 	_animation = new Animation(this);
 	//_callbacks = new Callbacks(this);
 	_random = new Common::RandomSource();
-	g_system->getEventManager()->registerRandomSource(*_random, "m4");
+	g_eventRec.registerRandomSource(*_random, "m4");
 
 	if (isM4())
 		return goM4();

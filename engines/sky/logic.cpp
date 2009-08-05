@@ -27,6 +27,7 @@
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/system.h"
 
 #include "sky/autoroute.h"
@@ -73,7 +74,7 @@ void Logic::setupLogicTable() {
 }
 
 Logic::Logic(SkyCompact *skyCompact, Screen *skyScreen, Disk *skyDisk, Text *skyText, MusicBase *skyMusic, Mouse *skyMouse, Sound *skySound) {
-	g_system->getEventManager()->registerRandomSource(_rnd, "sky");
+	g_eventRec.registerRandomSource(_rnd, "sky");
 
 	_skyCompact = skyCompact;
 	_skyScreen = skyScreen;

@@ -711,6 +711,9 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 			_vm->_video->retrace();
 	}
 
+	// Subtitle
+	if (state.flags & Graphics::CoktelVideo::kStateSpeech)
+		_vm->_draw->printTotText(state.speechId);
 
 	if (modifiedPal && ((palCmd == 2) || (palCmd == 4)))
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
@@ -736,6 +739,8 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_inter->storeKey(_vm->_util->checkKey());
 		if (VAR(0) == (unsigned) breakKey) {
 			_primaryVideo->getVideo()->disableSound();
+			// Seek to the last frame. Some scripts depend on that.
+			_primaryVideo->getVideo()->seekFrame(endFrame, SEEK_SET, true);
 			return true;
 		}
 	}
@@ -769,7 +774,7 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 		height = _primaryVideo->getVideo()->getHeight();
 
 		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
-			_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height);
+			_primaryVideo->getVideo()->getFrameCoords(1, x, y, width, height);
 
 		WRITE_VAR_OFFSET(varX, x);
 		WRITE_VAR_OFFSET(varY, y);
@@ -792,15 +797,6 @@ void VideoPlayer::evalBgShading(Graphics::CoktelVideo &video) {
 		_vm->_sound->bgShade();
 	else
 		_vm->_sound->bgUnshade();
-}
-
-void VideoPlayer::notifyPaused(uint32 duration) {
-	if (_primaryVideo->isOpen())
-		_primaryVideo->getVideo()->notifyPaused(duration);
-
-	for (uint i = 0; i < _videoSlots.size(); i++)
-		if (_videoSlots[i] && _videoSlots[i]->isOpen())
-			_videoSlots[i]->getVideo()->notifyPaused(duration);
 }
 
 } // End of namespace Gob

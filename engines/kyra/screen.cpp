@@ -95,25 +95,10 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
-			if (!_sjisFont) {
-				// we use the FM-TOWNS font rom for PC-98, too, until we feel
-				// like adding support for the PC-98 font
-				//if (_vm->gameFlags().platform == Common::kPlatformFMTowns) {
-					// FM-TOWNS
-					Common::SeekableReadStream *rom = _vm->resource()->createReadStream("FMT_FNT.ROM");
-					Graphics::FontTowns *townsFont = new Graphics::FontTowns();
-					if (!rom || !townsFont || !townsFont->loadFromStream(*rom))
-						error("Could not load font rom ('FMT_FNT.ROM') required for this version");
-					_sjisFont = townsFont;
-					delete rom;
-				/*} else {
-					// PC-98
-					_sjisFontData = _vm->resource()->fileData("FONT.ROM", 0);
-					if (!_sjisFontData)
-						error("missing font rom ('FONT.ROM') required for this version");
-				}*/
-			}
-			
+			_sjisFont = Graphics::FontSJIS::createFont(_vm->gameFlags().platform);
+
+			if (!_sjisFont)
+				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 			_sjisFont->enableOutline(!_use16ColorMode);
 		}
 	}

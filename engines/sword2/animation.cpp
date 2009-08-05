@@ -116,7 +116,7 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 
 	terminated = !playVideo(stopEvents);
 
-	closeTextObject(_currentMovieText);
+	closeTextObject(_currentMovieText, NULL);
 
 	if (terminated) {
 		_snd->stopHandle(*_bgSoundHandle);
@@ -171,7 +171,7 @@ void MoviePlayer::openTextObject(uint32 index) {
 	}
 }
 
-void MoviePlayer::closeTextObject(uint32 index) {
+void MoviePlayer::closeTextObject(uint32 index, byte *screen) {
 	if (index < _numMovieTexts) {
 		MovieText *text = &_movieTexts[index];
 
@@ -179,6 +179,32 @@ void MoviePlayer::closeTextObject(uint32 index) {
 		text->_textMem = NULL;
 
 		if (_textSurface) {
+			if (screen) {
+				// If the frame doesn't cover the entire
+				// screen, we have to erase the subtitles
+				// manually.
+
+				int frameWidth = _decoder->getWidth();
+				int frameHeight = _decoder->getHeight();
+				int frameX = (_system->getWidth() - frameWidth) / 2;
+				int frameY = (_system->getHeight() - frameHeight) / 2;
+
+				byte *dst = screen + _textY * _system->getWidth();
+
+				for (int y = 0; y < text->_textSprite.h; y++) {
+					if (_textY + y < frameY || _textY + y >= frameY + frameHeight) {
+						memset(dst + _textX, _decoder->getBlack(), text->_textSprite.w);
+					} else {
+						if (frameX > _textX)
+							memset(dst + _textX, _decoder->getBlack(), frameX - _textX);
+						if (frameX + frameWidth < _textX + text->_textSprite.w)
+							memset(dst + frameX + frameWidth, _decoder->getBlack(), _textX + text->_textSprite.w - (frameX + frameWidth));
+					}
+
+					dst += _system->getWidth();
+				}
+			}
+
 			_vm->_screen->deleteSurface(_textSurface);
 			_textSurface = NULL;
 		}
@@ -204,7 +230,7 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 			src = buffer;
 		}
 
-		byte *dst = screen + _textY * _decoder->getWidth() + _textX;
+		byte *dst = screen + _textY * RENDERWIDE + _textX;
 
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
@@ -214,14 +240,10 @@ void MoviePlayer::drawTextObject(uint32 index, byte *screen) {
 					dst[x] = white;
 			}
 			src += width;
-			dst += _decoder->getWidth();
+			dst += RENDERWIDE;
 		}
 	}
 }
-
-// FIXME: This assumes that the subtitles always fit within the frame of the
-// movie. In Broken Sword 2, that's a fairly safe assumption, but not
-// necessarily in all other games.
 
 void MoviePlayer::performPostProcessing(byte *screen) {
 	MovieText *text;
@@ -247,6 +269,7 @@ void MoviePlayer::performPostProcessing(byte *screen) {
 		if (frame <= text->_endFrame) {
 			drawTextObject(_currentMovieText, screen);
 		} else {
+			closeTextObject(_currentMovieText, screen);
 			_currentMovieText++;
 		}
 	}

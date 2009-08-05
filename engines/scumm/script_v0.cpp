@@ -410,41 +410,43 @@ void ScummEngine_v0::decodeParseString() {
 	actorTalk(buffer);
 }
 
-void ScummEngine_v0::drawSentence() {
-	Common::Rect sentenceline;
+void ScummEngine_v0::drawSentenceWord(int object, bool usePrep, bool objInInventory) {
 	const byte *temp;
 	int sentencePrep = 0;
+	
+	// If object not in inventory, we except an index
+	if (!objInInventory)
+		_v0ObjectIndex = true;
+	else
+		_v0ObjectInInventory = true;
 
-	if (!(_userState & 32))
-		return;
+	temp = getObjOrActorName(object);
 
-	if (getResourceAddress(rtVerb, _activeVerb)) {
-		strcpy(_sentenceBuf, (char*)getResourceAddress(rtVerb, _activeVerb));
-	} else {
-		return;
+	_v0ObjectInInventory = false;
+	_v0ObjectIndex = false;
+
+	// Append the 'object-name'
+	if (temp) {
+		strcat(_sentenceBuf, " ");
+		strcat(_sentenceBuf, (const char*)temp);
 	}
 
-	if (_activeObject > 0) {
-		temp = getObjOrActorName(_activeObject);
-		if (temp) {
-			strcat(_sentenceBuf, " ");
-			strcat(_sentenceBuf, (const char*)temp);
-		}
+	// Append the modifier? (With / On / To / In)
+	if (!usePrep)
+		return;
 
-		if (_verbs[_activeVerb].prep == 0xFF) {
-			byte *ptr = getOBCDFromObject(_activeObject);
-			assert(ptr);
-			sentencePrep = (*(ptr + 11) >> 5);
-		} else {
-			sentencePrep = _verbs[_activeVerb].prep;
-		}
+	if (_verbs[_activeVerb].prep == 0xFF) {
+		_v0ObjectInInventory = objInInventory;
+		sentencePrep = verbPrep(object);
+	} else {
+		sentencePrep = _verbs[_activeVerb].prep;
 	}
 
 	if (sentencePrep > 0 && sentencePrep <= 4) {
 		// The prepositions, like the fonts, were hard code in the engine. Thus
 		// we have to do that, too, and provde localized versions for all the
 		// languages MM/Zak are available in.
-		const char *prepositions[][5] = {
+		static const char *prepositions[][5] = {
 			{ " ", " in", " with", " on", " to" },   // English
 			{ " ", " mit", " mit", " mit", " zu" },  // German
 			{ " ", " dans", " avec", " sur", " <" }, // French
@@ -471,13 +473,65 @@ void ScummEngine_v0::drawSentence() {
 
 		strcat(_sentenceBuf, prepositions[lang][sentencePrep]);
 	}
+}
 
-	if (_activeInventory > 0) {
-		temp = getObjOrActorName(_activeInventory);
-		if (temp) {
-			strcat(_sentenceBuf, " ");
-			strcat(_sentenceBuf, (const char*)temp);
+void ScummEngine_v0::drawSentence() {
+	Common::Rect sentenceline;
+	bool		 inventoryFirst = false;
+
+	if (!(_userState & 32))
+		return;
+
+	// Current Verb, Walk/Use
+	if (getResourceAddress(rtVerb, _activeVerb)) {
+		strcpy(_sentenceBuf, (char*)getResourceAddress(rtVerb, _activeVerb));
+	} else {
+		return;
+	}
+
+	// If using inventory first, draw it first
+	if (_activeInvExecute && _activeInventory) {
+		drawSentenceWord(_activeInventory, true, true);
+	} else {
+		// Not using inventory, use selected object
+		if (_activeObject)
+			drawSentenceWord(_activeObjectIndex, true, false);
+		else
+			inventoryFirst = true;
+	}
+		
+
+	// Draw the inventory?
+	if (_activeInventory > 0 && _activeObject2 == 0) {
+		// Only if inventory isnt first (it will already be drawn by now)
+		if (!_activeInvExecute) {
+			drawSentenceWord(_activeInventory, inventoryFirst, true);
+		} else {
+			// Draw the active object, which could be inventory based, or room based
+			if (_activeObject && !_activeObjectIndex) {
+				drawSentenceWord(_activeObject, inventoryFirst, true);
+			} else // Room based
+				drawSentenceWord(_activeObjectIndex, inventoryFirst, false);
 		}
+	
+	// Draw the 2nd active object 
+	} else if (_activeObject2) {
+
+		// 2nd Object is in inventory
+		if (_activeObject2Inv) {
+			_v0ObjectInInventory = true;
+			drawSentenceWord(_activeObject2, inventoryFirst, true);
+		} else {
+			drawSentenceWord(_activeObject2Index, inventoryFirst, false);
+		}
+	}
+
+	// Draw the active actor
+	if (_activeActor) {
+		Actor *a = derefActor(_activeActor, "");
+		
+		strcat(_sentenceBuf, " ");
+		strcat(_sentenceBuf, (const char*)a->getActorName());
 	}
 
 	_string[2].charset = 1;
@@ -664,9 +718,22 @@ void ScummEngine_v0::o_animateActor() {
 	int act = getVarOrDirectByte(PARAM_1);
 	int anim = getVarOrDirectByte(PARAM_2);
 	int unk = fetchScriptByte();
+
 	debug(0,"o_animateActor: unk %d", unk);
 
-	Actor *a = derefActor(act, "o_animateActor");
+	ActorC64 *a = (ActorC64*) derefActor(act, "o_animateActor");
+
+	// 0x6993
+	if (anim == 0xFE) {
+		a->_speaking = 0x80;	// Enabled, but not switching
+		return;
+	}
+	// 0x69A3
+	if (anim == 0xFD) {
+		a->_speaking = 0x00;
+		return;
+	}
+
 	a->animateActor(anim);
 }
 
@@ -713,9 +780,9 @@ void ScummEngine_v0::o_pickupObject() {
 	if (getObjectIndex(obj) == -1)
 		return;
 
-	if (whereIsObject(obj) == WIO_INVENTORY)	/* Don't take an */
+	if (whereIsObjectInventory(_activeObject2) == WIO_INVENTORY)	/* Don't take an */
 		return;					/* object twice */
-
+	
 	addObjectToInventory(obj, _roomResource);
 	markObjectRectAsDirty(obj);
 	putOwner(obj, VAR(VAR_EGO));
@@ -738,8 +805,13 @@ void ScummEngine_v0::o_setActorBitVar() {
 	byte act = getVarOrDirectByte(PARAM_1);
 	byte mask = getVarOrDirectByte(PARAM_2);
 	byte mod = getVarOrDirectByte(PARAM_3);
+	
+	// 0x63ED
+	if (act >= _numActors)
+		return;
 
 	ActorC64 *a = (ActorC64 *)derefActor(act, "o_setActorBitVar");
+
 	if (mod)
 		a->_miscflags |= mask;
 	else
@@ -900,10 +972,25 @@ void ScummEngine_v0::o_setOwnerOf() {
 	setOwnerOf(obj, owner);
 }
 
-void ScummEngine_v0::resetSentence() {
-	_activeInventory = 0;
-	_activeObject = 0;
+void ScummEngine_v0::resetSentence(bool walking) {
 	_activeVerb = 13;
+
+	if (!walking) {
+		_activeInventory = 0;
+		_activeObject = 0;
+		_activeObject2 = 0;
+		_activeObjectIndex = 0;
+		_activeObject2Index = 0;
+	}
+
+	_verbExecuting = false;
+	_verbPickup = false;
+
+	_activeActor = 0;
+	_activeInvExecute = false;
+	_activeObject2Inv = false;
+	_activeObjectObtained = false;
+	_activeObject2Obtained = false;
 }
 
 } // End of namespace Scumm

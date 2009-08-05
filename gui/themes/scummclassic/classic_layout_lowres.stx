@@ -454,7 +454,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Graphics' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
 			/>
@@ -463,7 +463,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Audio' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
 			/>
@@ -472,7 +472,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_MIDI' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
 			/>
@@ -481,7 +481,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Volume' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'EnableTabCheckbox'
 					type = 'Checkbox'
 			/>
@@ -490,7 +490,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Game' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' center = 'true'>
 				<widget name = 'Id'
 						width = '35'
@@ -536,7 +536,7 @@
 	</dialog>
 
 	<dialog name = 'GameOptions_Paths' overlays = 'Dialog.GameOptions.TabWidget' shading = 'dim'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '16' center = 'true'>
 				<widget name = 'Savepath'
 						type = 'Button'

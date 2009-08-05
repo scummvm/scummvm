@@ -81,8 +81,13 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 }
 
 void OSystem_GP2XWIZ::fillMouseEvent(Common::Event &event, int x, int y) {
-	event.mouse.x = x;
-	event.mouse.y = y;
+    if(_videoMode.mode == GFX_HALF && !_overlayVisible){
+	    event.mouse.x = x*2;
+	    event.mouse.y = y*2;
+    } else {
+        event.mouse.x = x;
+	    event.mouse.y = y;
+    }
 
 	// Update the "keyboard mouse" coords
 	_km.x = x;
@@ -203,7 +208,7 @@ bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 
 	Combos:
 
-	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP)
+	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP) or Virtual Keyboard if enabled
 	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 	GP2X_BUTTON_L &	GP2X_BUTTON_MENU			Common::EVENT_MAINMENU (ScummVM Global Main Menu)
 	GP2X_BUTTON_L &	GP2X_BUTTON_A				Common::EVENT_PREDICTIVE_DIALOG for predictive text entry box (AGI games)

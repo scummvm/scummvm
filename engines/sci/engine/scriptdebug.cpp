@@ -311,11 +311,18 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 void script_debug(EngineState *s, bool bp) {
 	// Do we support a separate console?
 
-	printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
-	disassemble(s, scriptState.xs->addr.pc, 0, 1);
-	if (scriptState.seeking == kDebugSeekGlobal)
-		printf("Global %d (0x%x) = %04x:%04x\n", scriptState.seekSpecial,
-		          scriptState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[scriptState.seekSpecial]));
+	/* if (sci_debug_flags & _DEBUG_FLAG_LOGGING) { */
+		printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
+		disassemble(s, scriptState.xs->addr.pc, 0, 1);
+		if (scriptState.seeking == kDebugSeekGlobal)
+			printf("Global %d (0x%x) = %04x:%04x\n", scriptState.seekSpecial,
+			          scriptState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[scriptState.seekSpecial]));
+	/* } */
+
+#if 0
+	if (!scriptState.debugging)
+		return;
+#endif
 
 	if (scriptState.seeking && !bp) { // Are we looking for something special?
 		MemObject *mobj = GET_SEGMENT(*s->seg_manager, scriptState.xs->addr.pc.segment, MEM_OBJ_SCRIPT);
@@ -370,9 +377,19 @@ void script_debug(EngineState *s, bool bp) {
 			// OK, found whatever we were looking for
 		}
 	}
-	
+
 	printf("Step #%d\n", script_step_counter);
 	disassemble(s, scriptState.xs->addr.pc, 0, 1);
+
+	if (scriptState.runningStep) {
+		scriptState.runningStep--;
+		return;
+	}
+
+	scriptState.debugging = false;
+
+	Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+	con->attach();
 }
 
 } // End of namespace Sci

@@ -285,10 +285,6 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 void AGOSEngine::playMusic(uint16 music, uint16 track) {
 	stopMusic();
 
-	// FIXME: Music too unstable, when switching locations.
-	if (getPlatform() == Common::kPlatformPC && getGameType() == GType_WW)
-		return;
-
 	if (getPlatform() == Common::kPlatformAmiga) {
 		playModule(music);
 	} else if (getPlatform() == Common::kPlatformAtariST) {

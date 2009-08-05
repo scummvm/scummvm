@@ -11,19 +11,27 @@ Contents:
     * Recent changes <#Recent_changes>
     * How to save <#How_to_save>
     * Controller mappings <#Controller_mappings>
-    * Know issues <#Know_issues>
-    * Major TODO's <#Major_TODOs>
+    * Known issues <#Knonw_issues>
     * Additional resources/links <#Additional_resourceslinks>
     * Credits <#Credits>
 
+------------------------------------------------------------------------
+
+Please refer to the:
+
+GP2X/GP2XWiz ScummVM Forum: <http://forums.scummvm.org/viewforum.php?f=14> 
+WiKi: <http://wiki.scummvm.org/index.php/GP2XWiz> 
+
+for the most current information on the port and any updates to this 
+documentation.
 
 ------------------------------------------------------------------------
 About the backend/port
 
-This is the readme for the offficial GP2X WIZ ScummVM backend (also known as
-the GP2X WIZ port).
+This is the readme for the official GP2XWiz ScummVM backend (also known as
+the GP2XWiz port).
 
-This is an SVN test release of ScummVM for the GP2X WIZ, it would be
+This is an SVN test release of ScummVM for the GP2XWiz, it would be
 appreciated if this SVN test distribution was not mirrored and that
 people be directed to http://scummvm.distant-earth.com/ instead for
 updated SVN builds.
@@ -35,19 +43,12 @@ downloads page <http://www.scummvm.org/downloads.php>.
 This build is in an active state of development and as such no
 "expected" behavior can be guaranteed ;).
 
-SVN builds are quickly tested with firmware 1.0.0 for reference.
-
-Please refer to the GP2X/GP2X WIZ ScummVM forum
-<http://forums.scummvm.org/viewforum.php?f=14> and WiKi
-<http://wiki.scummvm.org/index.php/GP2X> for the latest information on
-the port.
-
 ------------------------------------------------------------------------
 Game compatibility
 
 For information on the compatability of a specific game please refer to
-the GP2X compatability section of the ScummVM WiKi
-<http://wiki.scummvm.org/index.php/GP2X#Compatibility_List>.
+the GP2XWiz compatability section of the ScummVM WiKi
+<http://wiki.scummvm.org/index.php/GP2XWiz#Compatibility_List>.
 
 Please note the version and date of the ScummVM build you are running
 when reviewing the above list.
@@ -105,22 +106,20 @@ Right Trigger: Return
 Select: Escape
 Y: Space Bar (Pause)
 Menu: Game Menu (Save, Load, Quit etc.)
-Volume Buttons: Increase and Decrease volume (5% per press)
+Volume Buttons: Increase and Decrease volume
 
 Fancy button combos:
 
 NOTE: To use button combos press and hold the Left Trigger then...
 
-Right Trigger: 0 (For skipping the copy protection in Monkey Island 2)
+Right Trigger: Display Virtual Keyboard 
 Menu: Bring up the Global main menu for ScummVM
 Select: Exit ScummVM completely (and gracefully)
 
 ------------------------------------------------------------------------
-Know issues
+Known issues
 
-Possible random crash (well SegFault). I have had this happen twice and
-have not tracked down the cause.
-It happens very infrequently, both times it was in the DOTT CD intro.
+No major known issues
 
 ------------------------------------------------------------------------
 Additional resources/links
@@ -128,7 +127,7 @@ Additional resources/links
     * ScummVM WiKi GP2X page <http://wiki.scummvm.org/index.php/GP2X>
     * ScummVM forums GP2X forum
       <http://forums.scummvm.org/viewforum.php?f=14>
-    * My own ScummVM page <http://www.distant-earth.com/scummvm> (for
+    * My own ScummVM page <http://scummvm.distant-earth.com/> (for
       SVN/test builds)
     * Main ScummVM site <http://www.scummvm.org> (for official supported
       release builds)

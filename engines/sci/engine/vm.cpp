@@ -258,6 +258,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 			if (bp->type == BREAK_EXPORT && bp->data.address == bpaddress) {
 				Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
+				scriptState.debugging = true;
 				breakpointFlag = true;
 				break;
 			}
@@ -325,6 +326,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					print_send_action = 1;
 					breakpointFlag = true;
+					scriptState.debugging = true;
 					break;
 				}
 				bp = bp->next;
@@ -652,17 +654,19 @@ void run_vm(EngineState *s, int restoring) {
 
 		}
 
-		if (script_abort_flag)
+		if (script_abort_flag || g_engine->shouldQuit())
 			return; // Emergency
 
-// TODO: re-enable this
-#if 0
 		// Debug if this has been requested:
-		if (script_debug_flag || sci_debug_flags) {
+		// TODO: re-implement sci_debug_flags
+		if (scriptState.debugging /* sci_debug_flags*/) {
 			script_debug(s, breakpointFlag);
 			breakpointFlag = false;
 		}
-#endif
+		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
+		if (con->isAttached()) {
+			con->onFrame();
+		}
 
 #ifndef DISABLE_VALIDATIONS
 		if (scriptState.xs->sp < scriptState.xs->fp)

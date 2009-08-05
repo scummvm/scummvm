@@ -23,6 +23,7 @@ MODULE_OBJS := \
 	init_v1.o \
 	init_v2.o \
 	init_v3.o \
+	init_v4.o \
 	init_v6.o \
 	inter.o \
 	inter_v1.o \
@@ -36,7 +37,6 @@ MODULE_OBJS := \
 	map.o \
 	map_v1.o \
 	map_v2.o \
-	map_v4.o \
 	mult.o \
 	mult_v1.o \
 	mult_v2.o \

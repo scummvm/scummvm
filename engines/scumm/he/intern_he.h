@@ -78,7 +78,7 @@ protected:
 	int virtScreenSave(byte *dst, int x1, int y1, int x2, int y2);
 	void virtScreenLoad(int resIdx, int x1, int y1, int x2, int y2);
 
-	int convertFilePath(byte *dst);
+	int convertFilePath(byte *dst, int dstSize);
 	virtual void decodeParseString(int a, int b);
 	void swapObjects(int object1, int object2);
 

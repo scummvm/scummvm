@@ -774,18 +774,18 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 }
 
 void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
-	byte *dstL1 = dst;
-	byte *dstL2 = dst + dstPitch;
+	uint16 *dstL1 = (uint16 *)dst;
+	uint16 *dstL2 = (uint16 *)(dst + dstPitch);
 
-	int dstAdd = dstPitch * 2 - w * 2;
-	int srcAdd = srcPitch - w;
+	const int dstAdd = dstPitch - w;
+	const int srcAdd = srcPitch - w;
 
 	while (h--) {
-		for (int x = 0; x < w; ++x, dstL1 += 2, dstL2 += 2) {
+		for (int x = 0; x < w; ++x) {
 			uint16 col = *src++;
 			col |= col << 8;
-			*(uint16*)(dstL1) = col;
-			*(uint16*)(dstL2) = col;
+			*dstL1++ = col;
+			*dstL2++ = col;
 		}
 		dstL1 += dstAdd; dstL2 += dstAdd;
 		src += srcAdd;

@@ -34,6 +34,7 @@
 #include "gob/draw.h"
 #include "gob/inter.h"
 #include "gob/videoplayer.h"
+#include "gob/sound/sound.h"
 
 namespace Gob {
 
@@ -186,6 +187,30 @@ void DemoPlayer::playVideo(const char *fileName) {
 	free(filePtr);
 }
 
+void DemoPlayer::playADL(const char *params) {
+	const char *end;
+
+	end = strchr(params, ' ');
+	if (!end)
+		end = params + strlen(params);
+
+	Common::String fileName(params, end);
+	bool  waitEsc = true;
+	int32 repeat  = -1;
+
+	if (*end != '\0') {
+		const char *start = end + 1;
+
+		waitEsc = (*start != '0');
+
+		end = strchr(start, ' ');
+		if (end)
+			repeat = atoi(end + 1);
+	}
+
+	playADL(fileName, waitEsc, repeat);
+}
+
 void DemoPlayer::playVideoNormal() {
 	_vm->_vidPlayer->primaryPlay();
 }
@@ -230,6 +255,26 @@ void DemoPlayer::playVideoDoubled() {
 			_vm->_vidPlayer->slotWaitEndFrame();
 
 		}
+	}
+}
+
+void DemoPlayer::playADL(const Common::String &fileName, bool waitEsc, int32 repeat) {
+	debugC(1, kDebugDemo, "Playing ADL \"%s\" (%d, %d)", fileName.c_str(), waitEsc, repeat);
+
+	_vm->_sound->adlibUnload();
+	_vm->_sound->adlibLoadADL(fileName.c_str());
+	_vm->_sound->adlibSetRepeating(repeat);
+	_vm->_sound->adlibPlay();
+
+	if (!waitEsc)
+		return;
+
+	int16 key = 0;
+	while (!_vm->shouldQuit() && (key != kKeyEscape) && _vm->_sound->adlibIsPlaying()) {
+		_vm->_util->longDelay(1);
+		while (_vm->_util->checkKey(key))
+			if (key == kKeyEscape)
+				break;
 	}
 }
 

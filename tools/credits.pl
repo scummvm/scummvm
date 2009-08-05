@@ -475,14 +475,19 @@ begin_credits("Credits");
     begin_section("Engine Teams");
 	  begin_section("SCUMM");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("James Brown", "ender", "(retired)");
+		  add_person("Jonathan Gray", "khalek", "(retired)");
+		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "Codecs, iMUSE, Smush, etc.");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "FT INSANE, MM NES, MM C64, game detection, Herc/CGA");
+		  add_person("Ludvig Strigeus", "ludde", "(retired)");
 	  end_section();
 
 	  begin_section("HE");
+		  add_person("Jonathan Gray", "khalek", "(retired)");
 		  add_person("Travis Howell", "Kirben", "");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Eugene Sandulenko", "sev", "");
@@ -496,35 +501,45 @@ begin_credits("Credits");
 		  add_person("Walter van Niftrik", "waltervn", "");
 		  add_person("Kari Salminen", "Buddha^", "");
 		  add_person("Eugene Sandulenko", "sev", "");
+		  add_person("David Symonds", "dsymonds", "(retired)");
 	  end_section();
 
 	  begin_section("AGOS");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Travis Howell", "Kirben", "");
+		  add_person("Oliver Kiehl", "olki", "(retired)");
+		  add_person("Ludvig Strigeus", "ludde", "(retired)");
 	  end_section();
 
 	  begin_section("BASS");	# Beneath a Steel Sky
+		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
+		  add_person("Oliver Kiehl", "olki", "(retired)");
 		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
 	  begin_section("Broken Sword 1");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
+		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 	  end_section();
 
 	  begin_section("Broken Sword 2");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
+		  add_person("Jonathan Gray", "khalek", "(retired)");
 	  end_section();
 
 	  begin_section("Cinematique evo 1");
-		  add_person("Vincent Hamm", "yazoo", "original CinE engine author");
+		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 		  add_person("Pawe&#322; Ko&#322;odziejski", "aquadran", "");
 		  add_person("Gregory Montoir", "cyx", "");
+		  add_person("Kari Salminen", "Buddha^", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
 	  begin_section("Cinematique evo 2");
-		  add_person("Vincent Hamm", "yazoo", "original CruisE engine author");
 		  add_person("Paul Gilbert", "dreammaster", "");
+		  add_person("Vincent Hamm", "yaz0r", "(retired)");
 	  end_section();
 
 	  begin_section("Drascula");
@@ -533,14 +548,15 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("FOTAQ");	# Flight of the Amazon Queen
+		  add_person("David Eriksson", "twogood", "(retired)");
 		  add_person("Gregory Montoir", "cyx", "");
 		  add_person("Joost Peters", "joostp", "");
 	  end_section();
 
 	  begin_section("Gob");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Arnaud Boutonn&eacute;", "Strangerke", "");
 		  add_person("Sven Hesse", "DrMcCoy", "");
-		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 	  end_section();
 
@@ -565,12 +581,12 @@ begin_credits("Credits");
 	  begin_section("M4");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
 		  add_person("Paul Gilbert", "dreammaster", "");
-		  add_person("Benjamin Haisch", "johndoe", "");
+		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 	  end_section();
 	  
 	  begin_section("MADE");
-		  add_person("Benjamin Haisch", "johndoe", "");
+		  add_person("Benjamin Haisch", "john_doe", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 	  end_section();
 	  
@@ -580,7 +596,6 @@ begin_credits("Credits");
 
 	  begin_section("SAGA");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
-		  add_person("Sven Hesse", "DrMcCoy", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Andrew Kurushin", "ajax16384", "");
 		  add_person("Eugene Sandulenko", "sev", "");
@@ -592,12 +607,14 @@ begin_credits("Credits");
 		  add_person("Max Horn", "Fingolfin", "");
 		  add_person("Filippos Karapetis", "[md5]", "");
 		  add_person("Walter van Niftrik", "waltervn", "");
+		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Jordi Vilalta Prat", "jvprat", "");
 		  add_person("Lars Skovlund", "lskovlun", "");
 	  end_section();
 
 	  begin_section("Tinsel");
 		  add_person("Torbj&ouml;rn Andersson", "eriktorbjorn", "");
+		  add_person("Fabio Battaglia", "Hkz", "PSX version support");
 		  add_person("Paul Gilbert", "dreammaster", "");
 		  add_person("Sven Hesse", "DrMcCoy", "");
 		  add_person("Max Horn", "Fingolfin", "");
@@ -642,10 +659,12 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("PocketPC / WinCE");
+		add_person("Nicolas Bacca", "arisme", "(retired)");
 		  add_person("Kostas Nakos", "Jubanka", "");
 	  end_section();
 
 	  begin_section("PlayStation 2");
+		  add_person("Robert G&ouml;ffringmann", "lavosspawn", "(retired)");
 		  add_person("Max Lingua", "sunmax", "");
 	  end_section();
 
@@ -676,17 +695,25 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("GUI");
+		  add_person("Vicent Marti", "tanoku", "");
 		  add_person("Eugene Sandulenko", "sev", "");
 		  add_person("Johannes Schickel", "LordHoto", "");
 	  end_section();
 
 	  begin_section("Miscellaneous");
-		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements (GSoC 2007 task)");
-		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator");
-		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work");
-		add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task)");
+		add_person("David Corrales-Lopez", "david_corrales", "Filesystem access improvements (GSoC 2007 task) (retired)");
+		add_person("Jerome Fisher", "KingGuppy", "MT-32 emulator (retired)");
+		add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
+		add_person("Jochen Hoenicke", "hoenicke", "Speaker &amp; PCjr sound support, AdLib work (retired)");
+		add_person("Chris Page", "cp88", "Return to launcher, savestate improvements, leak fixes, ... (GSoC 2008 task) (retired)");
 		add_person("Robin Watts", "robinwatts", "ARM assembly routines for nice speedups on several ports; improvements to the sound mixer");
 	  end_section();
+    end_section();
+
+    begin_section("Website (code)");
+	  begin_persons();
+		add_person("Fredrik Wendel", "", "");
+	  end_persons();
     end_section();
 
     begin_section("Website (content)");
@@ -694,77 +721,22 @@ begin_credits("Credits");
     end_section();
 
     begin_section("Documentation");
-	begin_persons();
+	  begin_persons();
 		add_person("Joachim Eberhard", "joachimeberhard", "Numerous contributions to documentation");
 		add_person("Matthew Hoops", "clone2727", "Wiki editor");
-		end_persons();
-    end_section();
-
-    begin_section("FreeSCI Contributors");
-	begin_persons();
-		add_person("Anders Baden Nielsen", "", "PPC testing");
-		add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
-		add_person("Carl Muckenhoupt", "", "Sources to the SCI resource viewer tools that started it all");
-		add_person("Chris Kehler", "", "Makefile enhancements");
-		add_person("Christoph Reichenbach", "", "UN*X code, VM/Graphics/Sound/other infrastructure");
-		add_person("Christopher T. Lansdown", "", "Original CVS maintainer, Alpha compatibility fixes");
-		add_person("Claudio Matsuoka", "", "CVS snapshots, daily builds, BeOS and cygwin ports");
-		add_person("Dark Minister", "", "SCI research (bytecode and parser)");
-		add_person("Dmitry Jemerov", "", "Port to the Win32 platform, numerous bugfixes");
-		add_person("Emmanuel Jeandel", "", "Bugfixes and bug reports");
-		add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
-		add_person("George Reid", "", "FreeBSD package management");
-		add_person("Hubert Maier", "", "AmigaOS 4 port");
-		add_person("Hugues Valois", "", "Game selection menu");
-		add_person("Johannes Manhave", "", "Document format translation");
-		add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
-		add_person("Lars Skovlund", "", "Project maintenance, most documentation, bugfixes, SCI1 support");
-		add_person("Magnus Reftel", "", "Heap implementation, Python class viewer, bugfixes");
-		add_person("Matt Hargett", "", "Clean-ups, bugfixes, Hardcore QA, Win32");
-		add_person("Max Horn", "", "SetJump implementation");
-		add_person("Paul David Doherty", "", "Game version information");
-		add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
-		add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
-		add_person("Rainer De Temple", "", "SCI research");
-		add_person("Ravi I.", "", "SCI0 sound resource specification");
-		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
-		add_person("Rune Orsval", "", "Configuration file editor");
-		add_person("Rickard Lind", "", "MT32->GM MIDI mapping magic, sound research");
-		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
-		add_person("Robey Pointer", "", "Bug tracking system hosting");
-		add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
-		add_person("Solomon Peachy", "", "SDL ports and much of the sound subsystem");
-		add_person("Vyacheslav Dikonov", "", "Config script improvements");
-		add_person("Walter van Niftrik", "", "Ports to the Dreamcast and GP32 platforms");
-		add_person("Xiaojun Chen", "", "");
-		add_person("Sean Terrell", "", "");
-	end_persons();
-	add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
-					"for allowing the FreeSCI VM extension as a ".
-					"course project in his Advanced OS course");
-	add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI");
+	  end_persons();
     end_section();
 
     begin_section("Retired Team Members");
 	  begin_persons();
-		add_person("Tore Anderson", "tore", "Former Debian GNU/Linux maintainer");
-		add_person("Nicolas Bacca", "arisme", "Former WinCE porter");
-		add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
-		add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
-		add_person("David Eriksson", "twogood", "Engines: FOTAQ");
-		add_person("Hans-J&ouml;rg Frieden", "", "Former AmigaOS 4 packager");
-		add_person("Robert G&ouml;ffringmann", "lavosspawn", "Original PS2 porter; Engines: BASS, BS1");
-		add_person("Jonathan Gray", "khalek", "Engines: SCUMM, HE, BS2");
-		add_person("R&uuml;diger Hanke", "", "Port: MorphOS");
-		add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
-		add_person("Oliver Kiehl", "olki", "Engines: AGOS, BASS");
-		add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
-		add_person("Peter Moraliyski", "ph0x", "Port: GP32");
-		add_person("Juha Niemim&auml;ki", "", "Former AmigaOS 4 packager");
-		add_person("Jeremy Newman", "laxdragon", "Former webmaster");
-		add_person("Lionel Ulmer", "bbrox", "Port: X11");
-		add_person("Won Star", "wonst719", "Former GP32 porter");
-		add_person("David Symonds", "dsymonds", "Engines: AGI");
+		  add_person("Ralph Brorsen", "painelf", "Help with GUI implementation");
+		  add_person("Jamieson Christian", "jamieson630", "iMUSE, MIDI, all things musical");
+		  add_person("Felix Jakschitsch", "yot", "Zak256 reverse engineering");
+		  add_person("Mutwin Kraus", "mutle", "Original MacOS porter");
+		  add_person("Peter Moraliyski", "ph0x", "Port: GP32");
+		  add_person("Jeremy Newman", "laxdragon", "Former webmaster");
+		  add_person("Lionel Ulmer", "bbrox", "Port: X11");
+		  add_person("Won Star", "wonst719", "Former GP32 porter");
 	  end_persons();
     end_section();
   end_section();
@@ -774,7 +746,9 @@ begin_credits("Credits");
 
 	begin_section("Packages");
 	  begin_section("AmigaOS 4");
+		  add_person("Hans-J&ouml;rg Frieden", "", "(retired)");
 		  add_person("Hubert Maier", "Raziel_AOne", "");
+		  add_person("Juha Niemim&auml;ki", "", "(retired)");
 	  end_section();
 
 	  begin_section("Atari/FreeMiNT");
@@ -787,6 +761,7 @@ begin_credits("Credits");
 	  end_section();
 
 	  begin_section("Debian GNU/Linux");
+		  add_person("Tore Anderson", "tore", "(retired)");
 		  add_person("David Weinehall", "tao", "");
 	  end_section();
 
@@ -805,6 +780,7 @@ begin_credits("Credits");
 
 	  begin_section("MorphOS");
 		  add_person("Fabien Coeurjoly", "fab1", "");
+		  add_person("R&uuml;diger Hanke", "", "(retired)");
 	  end_section();
 
 	  begin_section("OS/2");
@@ -850,7 +826,6 @@ begin_credits("Credits");
 		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");
 		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");
 		  add_person("Thomas Fach-Pedersen", "madmoose", "ProTracker module player");
-		  add_person("Benjamin Haisch", "john_doe", "Heavily improved de-/encoder for DXA videos");
 		  add_person("Janne Huttunen", "", "V3 actor mask support, Dig/FT SMUSH audio");
 		  add_person("Kov&aacute;cs Endre J&aacute;nos", "", "Several fixes for Simon1");
 		  add_person("Jeroen Janssen", "japj", "Numerous readability and bugfix patches");
@@ -863,11 +838,57 @@ begin_credits("Credits");
 		  add_person("Nicolas Noble", "pixels", "Config file and ALSA support");
 		  add_person("Tim Phillips", "realmz", "Initial MI1 CD music support");
 		  add_person("", "Quietust", "Sound support for Amiga SCUMM V2/V3 games, MM NES support");
+		  add_person("", "segra", "Improved support for Apple II/C64 versions of MM");
 		  add_person("Andreas R&ouml;ver", "", "Broken Sword 1/2 MPEG2 cutscene support");
 		  add_person("Edward Rudd", "urkle", "Fixes for playing MP3 versions of MI1/Loom audio");
 		  add_person("Daniel Schepler", "dschepler", "Final MI1 CD music support, initial Ogg Vorbis support");
 		  add_person("Andr&eacute; Souza", "luke_br", "SDL-based OpenGL renderer");
 	  end_persons();
+	end_section();
+
+	begin_section("FreeSCI Contributors");
+	  begin_persons();
+		add_person("Anders Baden Nielsen", "", "PPC testing");
+		add_person("Bas Zoetekouw", "", "Man pages, debian package management, CVS maintenance");
+		add_person("Carl Muckenhoupt", "", "Sources to the SCI resource viewer tools that started it all");
+		add_person("Chris Kehler", "", "Makefile enhancements");
+		add_person("Christoph Reichenbach", "", "UN*X code, VM/Graphics/Sound/other infrastructure");
+		add_person("Christopher T. Lansdown", "", "Original CVS maintainer, Alpha compatibility fixes");
+		add_person("Claudio Matsuoka", "", "CVS snapshots, daily builds, BeOS and cygwin ports");
+		add_person("Dark Minister", "", "SCI research (bytecode and parser)");
+		add_person("Dmitry Jemerov", "", "Port to the Win32 platform, numerous bugfixes");
+		add_person("Emmanuel Jeandel", "", "Bugfixes and bug reports");
+		add_person("Francois-R Boyer", "", "MT-32 information and mapping code");
+		add_person("George Reid", "", "FreeBSD package management");
+		add_person("Hubert Maier", "", "AmigaOS 4 port");
+		add_person("Hugues Valois", "", "Game selection menu");
+		add_person("Johannes Manhave", "", "Document format translation");
+		add_person("Jordi Vilalta", "", "Numerous code and website clean-up patches");
+		add_person("Lars Skovlund", "", "Project maintenance, most documentation, bugfixes, SCI1 support");
+		add_person("Magnus Reftel", "", "Heap implementation, Python class viewer, bugfixes");
+		add_person("Matt Hargett", "", "Clean-ups, bugfixes, Hardcore QA, Win32");
+		add_person("Max Horn", "", "SetJump implementation");
+		add_person("Paul David Doherty", "", "Game version information");
+		add_person("Petr Vyhnak", "", "The DCL-INFLATE algorithm, many Win32 improvements");
+		add_person("Rainer Canavan", "", "IRIX MIDI driver and bug fixes");
+		add_person("Rainer De Temple", "", "SCI research");
+		add_person("Ravi I.", "", "SCI0 sound resource specification");
+		add_person("Ruediger Hanke", "", "Port to the MorphOS platform");
+		add_person("Rune Orsval", "", "Configuration file editor");
+		add_person("Rickard Lind", "", "MT32->GM MIDI mapping magic, sound research");
+		add_person("Rink Springer", "", "Port to the DOS platform, several bug fixes");
+		add_person("Robey Pointer", "", "Bug tracking system hosting");
+		add_person("Sergey Lapin", "", "Port of Carl's type 2 decompression code");
+		add_person("Solomon Peachy", "", "SDL ports and much of the sound subsystem");
+		add_person("Vyacheslav Dikonov", "", "Config script improvements");
+		add_person("Walter van Niftrik", "", "Ports to the Dreamcast and GP32 platforms");
+		add_person("Xiaojun Chen", "", "");
+		add_person("Sean Terrell", "", "");
+	  end_persons();
+	  add_paragraph("Special thanks to Prof. Dr. Gary Nutt ".
+					  "for allowing the FreeSCI VM extension as a ".
+					  "course project in his Advanced OS course.");
+	  add_paragraph("Special thanks to Bob Heitman and Corey Cole for their support of FreeSCI.");
 	end_section();
 
     add_paragraph("And to all the contributors, users, and beta testers we've missed. Thanks!");

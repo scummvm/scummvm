@@ -328,7 +328,7 @@ int AgiEngine::playGame() {
 	_game.vars[vKey] = 0;
 
 	debugC(2, kDebugLevelMain, "Entering main loop");
-	bool firstLoop = true;
+	bool firstLoop = !getflag(fRestartGame); // Do not restore on game restart
 
 	do {
 

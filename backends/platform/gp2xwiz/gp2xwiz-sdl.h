@@ -27,6 +27,7 @@
 #define GP2XWIZ_SDL_H
 
 #include "backends/platform/sdl/sdl.h"
+#include "backends/platform/gp2xwiz/gp2xwiz-scaler.h"
 
 #include <SDL.h>
 
@@ -42,12 +43,24 @@ public:
 	OSystem_GP2XWIZ() {}
 
 	/* Graphics */
-	bool loadGFXMode();
+    void initSize(uint w, uint h);
+    void setGraphicsModeIntern();
+    bool setGraphicsMode(int mode);
+    void internUpdateScreen();
+    const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
+	bool setGraphicsMode(const char *name);
+    int getDefaultGraphicsMode() const;
+    bool loadGFXMode();
+    void drawMouse();
+    void undrawMouse();
+    void showOverlay();
+    void hideOverlay();
 
 	/* Event Stuff */
 	bool pollEvent(Common::Event &event);
 	void moveStick();
 	void fillMouseEvent(Common::Event&, int, int);
+	void warpMouse(int, int);
 	bool remapKey(SDL_Event&, Common::Event&);
 
 	/* Platform Setup Stuff */

@@ -135,7 +135,7 @@ EXT_C char *getcwd(char *buffer, int maxlen) {
 #endif
 EXT_C void GetCurrentDirectory(int len, char *buf) {
 	getcwd(buf,len);
-};
+}
 
 /*
 Windows CE fopen has non-standard behavior -- not

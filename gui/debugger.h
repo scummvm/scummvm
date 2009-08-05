@@ -32,10 +32,7 @@
 
 namespace GUI {
 
-// Choose between text console or ScummConsole
-#define USE_CONSOLE	1
-
-#ifdef USE_CONSOLE
+#ifndef USE_TEXT_CONSOLE
 class ConsoleDialog;
 #endif
 
@@ -86,7 +83,9 @@ private:
 	bool _isAttached;
 	char *_errStr;
 	bool _firstTime;
+#ifndef USE_TEXT_CONSOLE
 	GUI::ConsoleDialog *_debuggerDialog;
+#endif
 
 protected:
 	// Hook for subclasses: Called just before enter() is run
@@ -118,11 +117,15 @@ protected:
 	bool Cmd_DebugFlagEnable(int argc, const char **argv);
 	bool Cmd_DebugFlagDisable(int argc, const char **argv);
 
-#if USE_CONSOLE
+#ifndef USE_TEXT_CONSOLE
 private:
 	static bool debuggerInputCallback(GUI::ConsoleDialog *console, const char *input, void *refCon);
 	static bool debuggerCompletionCallback(GUI::ConsoleDialog *console, const char *input, Common::String &completion, void *refCon);
+#elif defined(USE_READLINE)
+public:
+	char *readlineComplete(const char *input, int state);
 #endif
+
 };
 
 }	// End of namespace GUI

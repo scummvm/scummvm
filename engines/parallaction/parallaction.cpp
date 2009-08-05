@@ -25,6 +25,7 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/util.h"
 #include "common/system.h"
@@ -70,7 +71,7 @@ Parallaction::Parallaction(OSystem *syst, const PARALLACTIONGameDescription *gam
 	Common::addDebugChannel(kDebugMenu, "menu", "Menu debug level");
 	Common::addDebugChannel(kDebugInventory, "inventory", "Inventory debug level");
 
-	syst->getEventManager()->registerRandomSource(_rnd, "parallaction");
+	g_eventRec.registerRandomSource(_rnd, "parallaction");
 }
 
 

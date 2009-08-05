@@ -33,6 +33,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #define NUM_OPCODES 90
 
@@ -61,7 +62,7 @@ static void debugScript(int level, bool nl, const char *s, ...) {
 Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_code(NULL), _savedCode(NULL), _stacktop(0),
 	_debugger(NULL), _vm(vm),
-	_videoFile(NULL), _videoRef(0), _font(NULL) {
+	_videoFile(NULL), _videoRef(0), _font(NULL), _staufsMove(NULL) {
 	// Initialize the opcode set depending on the engine version
 	switch (version) {
 	case kGroovieT7G:
@@ -73,7 +74,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	}
 
 	// Initialize the random source
-	_vm->_system->getEventManager()->registerRandomSource(_random, "GroovieScripts");
+	g_eventRec.registerRandomSource(_random, "GroovieScripts");
 
 	// Prepare the variables
 	_bitflags = 0;
@@ -196,6 +197,10 @@ void Script::directGameLoad(int slot) {
 	// TODO: We'll probably need to start by running the beginning of the
 	// script to let it do the soundcard initialization and then do the
 	// actual loading.
+
+	// Due to HACK above, the call to check valid save slots is not run.
+	// As this is where we load save names, manually call it here.
+	o_checkvalidsaves();
 }
 
 void Script::step() {
@@ -1391,32 +1396,21 @@ void Script::o_sub() {
 }
 
 void Script::o_cellmove() {
-	uint16 arg = readScript8bits();
+	uint16 depth = readScript8bits();
 	byte *scriptBoard = &_variables[0x19];
-	byte *board = (byte *) malloc (BOARDSIZE * BOARDSIZE * sizeof(byte));
 	byte startX, startY, endX, endY;
 
-	debugScript(1, true, "CELL MOVE var[0x%02X]", arg);
+	debugScript(1, true, "CELL MOVE var[0x%02X]", depth);
 
-	// Arguments used by the original implementation: (2, arg, scriptBoard)
-	for (int y = 0; y < 7; y++) {
-		for (int x = 0; x < 7; x++) {
-			uint8 offset = x + BOARDSIZE * y;
-			*(board + offset) = 0;
-			if (*scriptBoard == 0x32) *(board + offset) = CELL_BLUE;
-			if (*scriptBoard == 0x42) *(board + offset) = CELL_GREEN;
-			scriptBoard++;
-			debugScript(1, false, "%d", *(board + offset));
-		}
-		debugScript(1, false, "\n");
-	}
+	if (!_staufsMove)
+		_staufsMove = new CellGame;
 
-	CellGame staufsMove((byte *) board);
-	staufsMove.calcMove((byte *) board, CELL_GREEN, 2);
-	startX = staufsMove.getStartX();
-	startY = staufsMove.getStartY();
-	endX = staufsMove.getEndX();
-	endY = staufsMove.getEndY();
+	_staufsMove->playStauf(2, depth, scriptBoard);
+
+	startX = _staufsMove->getStartX();
+	startY = _staufsMove->getStartY();
+	endX = _staufsMove->getEndX();
+	endY = _staufsMove->getEndY();
 
 	// Set the movement origin
 	setVariable(0, startY); // y
@@ -1424,8 +1418,6 @@ void Script::o_cellmove() {
 	// Set the movement destination
 	setVariable(2, endY);
 	setVariable(3, endX);
-
-	free(board);
 }
 
 void Script::o_returnscript() {

@@ -76,7 +76,9 @@ public:
 		/** Had to explicitely seek to the frame. */
 		kStateSeeked = 0x2000,
 		/** Reached a break-point. */
-		kStateBreak = 0x8000
+		kStateBreak = 0x8000,
+		/** Frame marks the beginning of speech. */
+		kStateSpeech = 0x4000000
 	};
 
 	struct State {
@@ -90,8 +92,10 @@ public:
 		int16 bottom;
 		/** Set accordingly to what was done. */
 		uint32 flags;
+		/** The id of the spoken words. */
+		uint16 speechId;
 
-		State() : left(0), top(0), right(0), bottom(0), flags(0) { }
+		State() : left(0), top(0), right(0), bottom(0), flags(0), speechId(0) { }
 	};
 
 	virtual ~CoktelVideo() { }
@@ -123,8 +127,8 @@ public:
 	/** Returns the current frame's palette. */
 	virtual const byte *getPalette() const = 0;
 
-	/** Reads the video's anchor pointer */
-	virtual bool getAnchor(int16 frame, uint16 partType,
+	/** Returns the frame's coordinates */
+	virtual bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height) = 0;
 
 	/** Returns whether that extra data file exists */
@@ -171,9 +175,6 @@ public:
 	/** Wait for the frame to end. */
 	virtual void waitEndFrame() = 0;
 
-	/** Notifies the video that it was paused for duration ms. */
-	virtual void notifyPaused(uint32 duration) = 0;
-
 	/** Copy the current frame.
 	 *
 	 *  @param dest The memory to which to copy the current frame.
@@ -198,29 +199,26 @@ public:
 	Imd();
 	~Imd();
 
-	uint32 getFeatures() const { return _features; }
-	uint16 getFlags() const { return _flags; }
-	int16 getX() const { return _x; }
-	int16 getY() const { return _y; }
-	int16 getWidth() const { return _width; }
-	int16 getHeight() const { return _height; }
-	uint16 getFramesCount() const { return _framesCount; }
-	uint16 getCurrentFrame() const { return _curFrame; }
-	int16 getFrameRate() const {
-		if (_hasSound)
-			return 1000 / (_soundSliceLength >> 16);
-		return _frameRate;
-	}
-	uint32 getSyncLag() const { return _skipFrames; }
-	const byte *getPalette() const { return _palette; }
+	uint32 getFeatures() const;
+	uint16 getFlags()    const;
 
-	bool getAnchor(int16 frame, uint16 partType,
-			int16 &x, int16 &y, int16 &width, int16 &height) { return false; }
+	int16  getX()      const;
+	int16  getY()      const;
+	int16  getWidth()  const;
+	int16  getHeight() const;
 
-	bool hasExtraData(const char *fileName) const { return false; }
-	Common::MemoryReadStream *getExtraData(const char *fileName) { return 0; }
+	uint16 getFramesCount()  const;
+	uint16 getCurrentFrame() const;
+	int16  getFrameRate()    const;
+	uint32 getSyncLag()      const;
 
-	void notifyPaused(uint32 duration) { }
+	const byte *getPalette() const;
+
+	bool getFrameCoords(int16 frame,
+			int16 &x, int16 &y, int16 &width, int16 &height);
+
+	bool hasExtraData(const char *fileName) const;
+	Common::MemoryReadStream *getExtraData(const char *fileName);
 
 	void setFrameRate(int16 frameRate);
 
@@ -231,7 +229,7 @@ public:
 	void setVideoMemory(byte *vidMem, uint16 width, uint16 height);
 	void setVideoMemory();
 
-	void setDoubleMode(bool doubleMode) { }
+	void setDoubleMode(bool doubleMode);
 
 	void enableSound(Audio::Mixer &mixer);
 	void disableSound();
@@ -248,6 +246,22 @@ public:
 			uint16 x, uint16 y, uint16 pitch, int16 transp = -1);
 
 protected:
+	enum Command {
+		kCommandNextSound   = 0xFF00,
+		kCommandStartSound  = 0xFF01,
+
+		kCommandBreak       = 0xFFF0,
+		kCommandBreakSkip0  = 0xFFF1,
+		kCommandBreakSkip16 = 0xFFF2,
+		kCommandBreakSkip32 = 0xFFF3,
+		kCommandBreakMask   = 0xFFF8,
+
+		kCommandPalette     = 0xFFF4,
+		kCommandVideoData   = 0xFFFC,
+
+		kCommandJump        = 0xFFFD
+	};
+
 	struct Coord {
 		int16 left;
 		int16 top;
@@ -256,56 +270,104 @@ protected:
 	} PACKED_STRUCT;
 
 	Common::SeekableReadStream *_stream;
+
+	// Properties
 	uint16 _version;
 	uint32 _features;
 	uint16 _flags;
-	int16 _x, _y, _width, _height;
-	int16 _stdX, _stdY, _stdWidth, _stdHeight;
-	uint16 _framesCount, _curFrame;
+
+	// Current coordinates
+	int16 _x;
+	int16 _y;
+	int16 _width;
+	int16 _height;
+
+	// Standard coordinates gives by the header
+	int16 _stdX;
+	int16 _stdY;
+	int16 _stdWidth;
+	int16 _stdHeight;
+
+	uint16 _framesCount;
+	uint16 _curFrame;
+
 	uint32 *_framesPos;
-	uint32 _firstFramePos;
+	uint32  _firstFramePos;
 	Coord *_frameCoords;
 
-	uint32 _frameDataSize, _vidBufferSize;
-	byte *_frameData, *_vidBuffer;
+	// Buffer for raw frame data
+	byte  *_frameData;
+	uint32 _frameDataSize;
 	uint32 _frameDataLen;
+
+	// Buffer for uncompressed raw frame data
+	byte  *_vidBuffer;
+	uint32 _vidBufferSize;
 
 	byte _palette[768];
 
-	bool _hasOwnVidMem;
-	byte *_vidMem;
-	uint16 _vidMemWidth, _vidMemHeight;
+	// Video memory
+	bool  _hasOwnVidMem;
+	byte  *_vidMem;
+	uint16 _vidMemWidth;
+	uint16 _vidMemHeight;
 
-	bool _hasSound;
-	bool _soundEnabled;
-	uint8 _soundStage; // (0: no sound, 1: loaded, 2: playing)
-	uint32 _skipFrames;
-
+	// Sound properties
 	uint16 _soundFlags;
-	int16 _soundFreq;
-	int16 _soundSliceSize;
-	int16 _soundSlicesCount;
+	int16  _soundFreq;
+	int16  _soundSliceSize;
+	int16  _soundSlicesCount;
 	uint32 _soundSliceLength;
+
+	// Current sound state
+	bool   _hasSound;
+	bool   _soundEnabled;
+	uint8  _soundStage; // (0: no sound, 1: loaded, 2: playing)
+	uint32 _skipFrames;
 
 	Audio::AppendableAudioStream *_audioStream;
 	Audio::SoundHandle _audioHandle;
 
-	int16 _frameRate;
+	// Current video state
+	int16  _frameRate;
 	uint32 _frameLength;
 	uint32 _lastFrameTime;
 
 	Audio::Mixer *_mixer;
 
-	void unsignedToSigned(byte *buffer, int length) {
-		while (length-- > 0) *buffer++ ^= 0x80;
-	}
+	void unsignedToSigned(byte *buffer, int length);
 
 	void deleteVidMem(bool del = true);
 	void clear(bool del = true);
 
+	bool loadCoordinates();
+	bool loadFrameTableOffsets(uint32 &framesPosPos, uint32 &framesCoordsPos);
+	bool assessVideoProperties();
+	bool assessAudioProperties();
+	bool loadFrameTables(uint32 framesPosPos, uint32 framesCoordsPos);
+
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 left, int16 top, int16 right, int16 bottom);
 	void deLZ77(byte *dest, byte *src);
+
+	void renderBlockWhole   (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockWhole4X (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockWhole2Y (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockSparse  (byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+	void renderBlockSparse2Y(byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+
+	void calcFrameCoords(uint16 frame, State &state);
+
+	void nextSoundSlice(bool hasNextCmd);
+	bool initialSoundSlice(bool hasNextCmd);
+	void emptySoundSlice(bool hasNextCmd);
+
+	void videoData(uint32 size, State &state);
 };
 
 class Vmd : public Imd {
@@ -313,7 +375,7 @@ public:
 	Vmd(Graphics::PaletteLUT *palLUT = 0);
 	~Vmd();
 
-	bool getAnchor(int16 frame, uint16 partType,
+	bool getFrameCoords(int16 frame,
 			int16 &x, int16 &y, int16 &width, int16 &height);
 
 	bool hasExtraData(const char *fileName) const;
@@ -335,38 +397,58 @@ public:
 protected:
 	enum PartType {
 		kPartTypeSeparator = 0,
-		kPartTypeAudio = 1,
-		kPartTypeVideo = 2,
-		kPartTypeExtraData = 3
+		kPartTypeAudio     = 1,
+		kPartTypeVideo     = 2,
+		kPartTypeExtraData = 3,
+		kPartType4         = 4,
+		kPartTypeSpeech    = 5
 	};
+
+	enum AudioFormat {
+		kAudioFormat8bitDirect = 0,
+		kAudioFormat16bitDPCM  = 1,
+		kAudioFormat16bitADPCM = 2
+	};
+
 	struct ExtraData {
-		char name[16];
+		char   name[16];
 		uint32 offset;
 		uint32 size;
 		uint32 realSize;
+
+		ExtraData();
 	} PACKED_STRUCT;
+
 	struct Part {
 		PartType type;
-		byte field_1;
-		byte field_E;
-		uint32 size;
-		int16 left;
-		int16 top;
-		int16 right;
-		int16 bottom;
-		byte flags;
+		byte     field_1;
+		byte     field_E;
+		uint32   size;
+		int16    left;
+		int16    top;
+		int16    right;
+		int16    bottom;
+		uint16   id;
+		byte     flags;
+
+		Part();
 	} PACKED_STRUCT;
+
 	struct Frame {
 		uint32 offset;
-		Part *parts;
+		Part  *parts;
 
-		Frame() : parts(0) { }
-		~Frame() { delete[] parts; }
+		Frame();
+		~Frame();
 	} PACKED_STRUCT;
 
-	static const uint16 _tableADPCM[128];
+	// Tables for the audio decompressors
+	static const uint16 _tableDPCM[128];
+	static const int32  _tableADPCM[];
+	static const int32  _tableADPCMStep[];
 
-	bool _hasVideo;
+	bool   _hasVideo;
+	uint32 _videoCodec;
 
 	uint32 _frameInfoOffset;
 	uint16 _partsPerFrame;
@@ -374,9 +456,14 @@ protected:
 
 	Common::Array<ExtraData> _extraData;
 
-	byte _soundBytesPerSample;
-	byte _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+	// Sound properties
+	byte   _soundBytesPerSample;
+	byte   _soundStereo; // (0: mono, 1: old-style stereo, 2: new-style stereo)
+	uint32 _soundHeaderSize;
+	uint32 _soundDataSize;
+	AudioFormat _audioFormat;
 
+	// Video properties
 	bool _externalCodec;
 	byte _blitMode;
 	byte _bytesPerPixel;
@@ -392,10 +479,21 @@ protected:
 
 	void clear(bool del = true);
 
+	bool getPartCoords(int16 frame, PartType type,
+			int16 &x, int16 &y, int16 &width, int16 &height);
+
+	bool assessVideoProperties();
+	bool assessAudioProperties();
+	void readFrameTable(int &numExtraData);
+	void readExtraData();
+
 	State processFrame(uint16 frame);
 	uint32 renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom);
 
-	void deRLE(byte *&srcPtr, byte *&destPtr, int16 len);
+	void renderBlockRLE(byte *dest, const byte *src, int16 width, int16 height,
+			int16 destWidth, int16 destHeight);
+
+	void deRLE(byte *&destPtr, const byte *&srcPtr, int16 len);
 
 	inline int32 preScaleX(int32 x) const;
 	inline int32 postScaleX(int32 x) const;
@@ -404,12 +502,18 @@ protected:
 	void blit16(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 	void blit24(byte *dest, byte *src, int16 srcPitch, int16 width, int16 height);
 
+	byte *deDPCM(const byte *data, uint32 &size, int32 init[2]);
+	byte *deADPCM(const byte *data, uint32 &size, int32 init, int32 v28);
+
+	byte *soundEmpty(uint32 &size);
+	byte *sound8bitDirect(uint32 &size);
+	byte *sound16bitDPCM(uint32 &size);
+	byte *sound16bitADPCM(uint32 &size);
+
+	uint8 evaluateMask(uint32 mask, bool *fillInfo, uint8 &max);
 	void emptySoundSlice(uint32 size);
-	void soundSlice8bit(uint32 size);
-	void soundSlice16bit(uint32 size, int16 &init);
 	void filledSoundSlice(uint32 size);
 	void filledSoundSlices(uint32 size, uint32 mask);
-	void deADPCM(byte *soundBuf, byte *dataBuf, int16 &init, uint32 n);
 };
 
 } // End of namespace Graphics

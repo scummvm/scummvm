@@ -1390,7 +1390,7 @@ int CruiseEngine::processInput(void) {
 	}
 
 	// Player Menu - test for both buttons or the F10 key
-	if (((button & MB_BOTH) == MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
+	if (((button & CRS_MB_BOTH) == CRS_MB_BOTH) || (keyboardCode == Common::KEYCODE_F10)) {
 		changeCursor(CURSOR_NORMAL);
 		keyboardCode = Common::KEYCODE_INVALID;
 		return (playerMenu(mouseX, mouseY));
@@ -1398,7 +1398,7 @@ int CruiseEngine::processInput(void) {
 
 	if (userWait) {
 		// Check for left mouse button click or Space to end user waiting
-		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == MB_LEFT))
+		if ((keyboardCode == Common::KEYCODE_SPACE) || (button == CRS_MB_LEFT))
 			userWait = 0;
 
 		keyboardCode = Common::KEYCODE_INVALID;
@@ -1450,7 +1450,7 @@ int CruiseEngine::processInput(void) {
 				menuDown = 0;
 			}
 		} else {
-			if ((button & MB_LEFT) && (buttonDown == 0)) {
+			if ((button & CRS_MB_LEFT) && (buttonDown == 0)) {
 				if (menuTable[0]) {
 					callRelation(getSelectedEntryInMenu(menuTable[0]), dialogueObj);
 
@@ -1472,7 +1472,7 @@ int CruiseEngine::processInput(void) {
 			}
 		}
 
-	} else if ((button & MB_LEFT) && (buttonDown == 0)) {
+	} else if ((button & CRS_MB_LEFT) && (buttonDown == 0)) {
 		// left click
 		buttonDown = 1;
 
@@ -1538,20 +1538,17 @@ int CruiseEngine::processInput(void) {
 								aniX = mouseX;
 								aniY = mouseY;
 								animationStart = true;
-								buttonDown = 0;
 							}
 						} else {
 							aniX = mouseX;
 							aniY = mouseY;
 							animationStart = true;
-							buttonDown = 0;
 						}
 					} else {
 						// No object found, we move the character to the cursor
 						aniX = mouseX;
 						aniY = mouseY;
 						animationStart = true;
-						buttonDown = 0;
 					}
 				} else {
 					// handle click in menu
@@ -1590,7 +1587,7 @@ int CruiseEngine::processInput(void) {
 				}
 			}
 		}
-	} else if ((button & MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
+	} else if ((button & CRS_MB_RIGHT) || (keyboardCode == Common::KEYCODE_F9)) {
 		if (buttonDown == 0) {
 			keyboardCode = Common::KEYCODE_INVALID;
 
@@ -1628,29 +1625,28 @@ bool bFastMode = false;
 
 bool manageEvents() {
 	Common::Event event;
-	bool result = false;
 
 	Common::EventManager * eventMan = g_system->getEventManager();
-	while (eventMan->pollEvent(event) && !result) {
-		result = true;
+	while (eventMan->pollEvent(event)) {
+		bool abortFlag = true;
 
 		switch (event.type) {
 		case Common::EVENT_LBUTTONDOWN:
-			currentMouseButton |= MB_LEFT;
+			currentMouseButton |= CRS_MB_LEFT;
 			break;
 		case Common::EVENT_LBUTTONUP:
-			currentMouseButton &= ~MB_LEFT;
+			currentMouseButton &= ~CRS_MB_LEFT;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
-			currentMouseButton |= MB_RIGHT;
+			currentMouseButton |= CRS_MB_RIGHT;
 			break;
 		case Common::EVENT_RBUTTONUP:
-			currentMouseButton &= ~MB_RIGHT;
+			currentMouseButton &= ~CRS_MB_RIGHT;
 			break;
 		case Common::EVENT_MOUSEMOVE:
 			currentMouseX = event.mouse.x;
 			currentMouseY = event.mouse.y;
-			result = false;
+			abortFlag = false;
 			break;
 		case Common::EVENT_QUIT:
 		case Common::EVENT_RTL:
@@ -1659,7 +1655,7 @@ bool manageEvents() {
 		case Common::EVENT_KEYUP:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				currentMouseButton &= ~MB_MIDDLE;
+				currentMouseButton &= ~CRS_MB_MIDDLE;
 				break;
 			default:
 				break;
@@ -1668,7 +1664,7 @@ bool manageEvents() {
 		case Common::EVENT_KEYDOWN:
 			switch (event.kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				currentMouseButton |= MB_MIDDLE;
+				currentMouseButton |= CRS_MB_MIDDLE;
 				break;
 			default:
 				keyboardCode = event.kbd.keycode;
@@ -1689,9 +1685,12 @@ bool manageEvents() {
 		default:
 			break;
 		}
+
+		if (abortFlag)
+			return true;
 	}
 
-	return result;
+	return false;
 }
 
 void getMouseStatus(int16 *pMouseVar, int16 *pMouseX, int16 *pMouseButton, int16 *pMouseY) {
@@ -1798,6 +1797,9 @@ void CruiseEngine::mainLoop(void) {
 			// User waiting has ended
 			changeScriptParamInList(-1, -1, &procHead, 9999, 0);
 			changeScriptParamInList(-1, -1, &relHead, 9999, 0);
+
+			// Disable any mouse click used to end the user wait
+			currentMouseButton = 0;
 		} 
 
 		manageScripts(&relHead);
@@ -1898,8 +1900,6 @@ void CruiseEngine::mainLoop(void) {
 			// Keep ScummVM being responsive even when displayOn is false
 			g_system->updateScreen();
 		}
-
-		manageEvents();
 
 	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
 }

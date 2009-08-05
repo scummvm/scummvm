@@ -148,9 +148,9 @@ void OSystem_GP2XWIZ::initBackend() {
 	WIZ_HW::mixerMoveVolume(0);
 
 	/* Up default volume values as we use a seperate system level volume anyway. */
-	ConfMan.registerDefault("music_volume", 220);
-	ConfMan.registerDefault("sfx_volume", 220);
-	ConfMan.registerDefault("speech_volume", 220);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
 
 	/* Trigger autosave every 4 minutes - On low batts 5 mins is about your warning time. */
 	ConfMan.registerDefault("autosave_period", 4 * 60);

@@ -723,6 +723,32 @@ GameDescriptor ScummMetaEngine::findGame(const char *gameid) const {
 	return AdvancedDetector::findGameID(gameid, gameDescriptions, obsoleteGameIDsTable);
 }
 
+static Common::String generatePreferredTarget(const DetectorResult &x) {
+	Common::String res(x.game.gameid);
+
+	if (x.game.preferredTag) {
+		res = res + "-" + x.game.preferredTag;
+	}
+
+	if (x.game.features & GF_DEMO) {
+		res = res + "-demo";
+	}
+
+	// Append the platform, if a non-standard one has been specified.
+	if (x.game.platform != Common::kPlatformPC && x.game.platform != Common::kPlatformUnknown) {
+		// HACK: For CoMI, it's pointless to encode the fact that it's for Windows
+		if (x.game.id != GID_CMI)
+			res = res + "-" + Common::getPlatformAbbrev(x.game.platform);
+	}
+
+	// Append the language, if a non-standard one has been specified
+	if (x.language != Common::EN_ANY && x.language != Common::UNK_LANG) {
+		res = res + "-" + Common::getLanguageCode(x.language);
+	}
+
+	return res;
+}
+
 GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 	GameList detectedGames;
 	Common::List<DetectorResult> results;
@@ -737,33 +763,33 @@ GameList ScummMetaEngine::detectGames(const Common::FSList &fslist) const {
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
 		GameDescriptor dg(x->game.gameid, g->description, x->language, x->game.platform);
-		dg.updateDesc(x->extra);	// Append additional information, if set, to the description.
+
+		// Append additional information, if set, to the description.
+		dg.updateDesc(x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
-		Common::String res(x->game.gameid);
+		dg["preferredtarget"] = generatePreferredTarget(*x);
 
-		if (x->game.preferredTag) {
-			res = res + "-" + x->game.preferredTag;
+		// HACK: Detect and distinguish the FM-TOWNS demos
+		if (x->game.platform == Common::kPlatformFMTowns && (x->game.features & GF_DEMO)) {
+			if (x->md5 == "2d388339d6050d8ccaa757b64633954e") {
+				// Indy + Loom demo
+				dg.description() = "Indiana Jones and the Last Crusade & Loom";
+				dg.updateDesc(x->extra);
+				dg["preferredtarget"] = "indyloom";
+			} else if (x->md5 == "77f5c9cc0986eb729c1a6b4c8823bbae") {
+				// Zak + Loom demo
+				dg.description() = "Zak McKracken & Loom";
+				dg.updateDesc(x->extra);
+				dg["preferredtarget"] = "zakloom";
+			} else if (x->md5 == "3938ee1aa4433fca9d9308c9891172b1") {
+				// Indy + Zak demo
+				dg.description() = "Indiana Jones and the Last Crusade & Zak McKracken";
+				dg.updateDesc(x->extra);
+				dg["preferredtarget"] = "indyzak";
+			}
 		}
-
-		if (x->game.features & GF_DEMO) {
-			res = res + "-demo";
-		}
-
-		// Append the platform, if a non-standard one has been specified.
-		if (x->game.platform != Common::kPlatformPC && x->game.platform != Common::kPlatformUnknown) {
-			// HACK: For CoMI, it's pointless to encode the fact that it's for Windows
-			if (x->game.id != GID_CMI)
-				res = res + "-" + Common::getPlatformAbbrev(x->game.platform);
-		}
-
-		// Append the language, if a non-standard one has been specified
-		if (x->language != Common::EN_ANY && x->language != Common::UNK_LANG) {
-			res = res + "-" + Common::getLanguageCode(x->language);
-		}
-
-		dg["preferredtarget"] = res;
 
 		dg.setGUIOptions(x->game.guioptions);
 

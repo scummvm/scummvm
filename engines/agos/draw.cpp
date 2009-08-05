@@ -871,13 +871,11 @@ void AGOSEngine::slowFadeIn() {
 	_fastFadeInFlag &= ~0x8000;
 	_paletteFlag = false;
 
-	memset(_videoBuf1, 0, 1024);
-	memcpy(_currentPalette, _displayPalette, 1024);
-	memcpy(_videoBuf1 + 1024, _displayPalette, 1024);
+	memset(_currentPalette, 0, sizeof(_currentPalette));
 
 	for (c = 255; c >= 0; c -= 4) {
-		src = _videoBuf1 + 1024;
-		dst = _videoBuf1;
+		src = _displayPalette;
+		dst = _currentPalette;
 
 		for (p = _fastFadeInFlag; p !=0 ; p -= 3) {
 			if (src[0] >= c)
@@ -889,7 +887,7 @@ void AGOSEngine::slowFadeIn() {
 			src += 4;
 			dst += 4;
 		}
-		_system->setPalette(_videoBuf1, 0, _fastFadeCount);
+		_system->setPalette(_currentPalette, 0, _fastFadeCount);
 		delay(5);
 	}
 	_fastFadeInFlag = 0;

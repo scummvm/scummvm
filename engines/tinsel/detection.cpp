@@ -79,6 +79,8 @@ namespace Tinsel {
 
 using Common::GUIO_NONE;
 using Common::GUIO_NOSPEECH;
+using Common::GUIO_NOSFX;
+using Common::GUIO_NOMUSIC;
 
 static const TinselGameDescription gameDescriptions[] = {
 
@@ -101,7 +103,7 @@ static const TinselGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_DEMO,
-			GUIO_NOSPEECH
+			GUIO_NOSPEECH | GUIO_NOSFX | GUIO_NOMUSIC
 		},
 		GID_DW1,
 		0,

@@ -126,6 +126,10 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 		switch (info.event & 0x0F) {
 		case 0x0:
 			// Trigged by MOD2/MOD6/MOD15 in Waxworks
+			// Pure guesswork
+			info.ext.type = *(_position._play_pos++);
+			info.length = readVLQ(_position._play_pos);
+			info.ext.data = _position._play_pos;
 			break;
 
 		case 0x3: // Not sure, Song Select?

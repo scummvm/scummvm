@@ -25,6 +25,7 @@
 
 
 #include "common/system.h"
+#include "common/EventRecorder.h"
 #include "common/events.h"
 
 #include "graphics/cursorman.h"
@@ -74,7 +75,7 @@ Display::Display(QueenEngine *vm, OSystem *system)
 	memset(&_dynalum, 0, sizeof(_dynalum));
 
 	setupInkColors();
-	system->getEventManager()->registerRandomSource(_rnd, "queenDisplay");
+	g_eventRec.registerRandomSource(_rnd, "queenDisplay");
 }
 
 Display::~Display() {

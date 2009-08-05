@@ -882,7 +882,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 	if (resnumber == -1)
 		return;
 	if (!file.open(source->location_name)) {
-		perror("""__FILE__"": (""__LINE__""): failed to open");
+		warning("ResourceManager::processPatch(): failed to open %s", source->location_name.c_str());
 		return;
 	}
 	fsize = file.size();
@@ -1007,8 +1007,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		offset = file.readUint32LE();
 
 		if (file.ioFailed()) {
-			warning("Error while reading %s: ", map->location_name.c_str());
-			perror("");
+			warning("Error while reading %s", map->location_name.c_str());
 			return SCI_ERROR_RESMAP_NOT_FOUND;
 		}
 		if (offset == 0xFFFFFFFF)
@@ -1079,8 +1078,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 				}
 			}
 			if (file.ioFailed()) {
-				warning("Error while reading %s: ", map->location_name.c_str());
-				perror("");
+				warning("Error while reading %s", map->location_name.c_str());
 				return SCI_ERROR_RESMAP_NOT_FOUND;
 			}
 			resId = ResourceId((ResourceType)type, number);

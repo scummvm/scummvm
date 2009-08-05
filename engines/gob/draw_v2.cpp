@@ -216,7 +216,9 @@ void Draw_v2::printTotText(int16 id) {
 	dataPtr = textItem->getData();
 	ptr     = dataPtr;
 
-	if ((_renderFlags & RENDERFLAG_SKIPOPTIONALTEXT) && (ptr[1] & 0x80)) {
+	bool isSubtitle = (ptr[1] & 0x80) != 0;
+
+	if (isSubtitle && !_vm->_global->_doSubtitles) {
 		delete textItem;
 		return;
 	}
@@ -398,9 +400,14 @@ void Draw_v2::printTotText(int16 id) {
 			} else {
 				_destSpriteX = offX;
 				_destSpriteY = offY;
-				_fontIndex = fontIndex;
-				_frontColor = frontColor;
+				_fontIndex   = fontIndex;
+				_frontColor  = frontColor;
 				_textToPrint = str;
+
+				if (isSubtitle) {
+					_fontIndex  = _subtitleFont;
+					_frontColor = _subtitleColor;
+				}
 
 				if (_needAdjust != 2) {
 					if ((_destSpriteX >= destX) && (_destSpriteY >= destY) &&
@@ -449,6 +456,10 @@ void Draw_v2::printTotText(int16 id) {
 			ptr++;
 			offX = destX + (int16)READ_LE_UINT16(ptr);
 			offY = destY + (int16)READ_LE_UINT16(ptr + 2);
+			if (_renderFlags & RENDERFLAG_DOUBLECOORDS) {
+				offX += (int16)READ_LE_UINT16(ptr);
+				offY += (int16)READ_LE_UINT16(ptr + 2);
+			}
 			ptr += 4;
 			break;
 
@@ -457,11 +468,19 @@ void Draw_v2::printTotText(int16 id) {
 			fontIndex = ((*ptr & 0xF0) >> 4) & 7;
 			frontColor = *ptr & 0x0F;
 			ptr++;
+
+			if (isSubtitle) {
+				_subtitleFont  = fontIndex;
+				_subtitleColor = frontColor;
+			}
 			break;
 
 		case 4:
 			ptr++;
 			frontColor = *ptr++;
+
+			if (isSubtitle)
+				_subtitleColor = frontColor;
 			break;
 
 		case 6:
@@ -502,8 +521,7 @@ void Draw_v2::printTotText(int16 id) {
 
 		case 10:
 			str[0] = (char) 255;
-			WRITE_LE_UINT16((uint16 *) (str + 1),
-					ptr - _vm->_game->_resources->getTexts());
+			WRITE_LE_UINT16(str + 1, ptr - _vm->_game->_resources->getTexts());
 			str[3] = 0;
 			ptr++;
 			for (int i = *ptr++; i > 0; i--) {

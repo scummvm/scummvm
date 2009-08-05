@@ -64,7 +64,7 @@
 #endif
 
 #ifdef NDS
- #include <nds/jtypes.h>
+ #include <nds/ndstypes.h>
 #else
  #include "gba_types.h"
 #endif

@@ -204,14 +204,6 @@ protected:
 	void loadGoblinStates(Common::SeekableReadStream &data, int index);
 };
 
-class Map_v4 : public Map_v2 {
-public:
-	virtual void loadMapObjects(const char *avjFile);
-
-	Map_v4(GobEngine *vm);
-	virtual ~Map_v4();
-};
-
 } // End of namespace Gob
 
 #endif // GOB_MAP_H

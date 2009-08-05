@@ -179,7 +179,7 @@ public:
 	 * DEPRECATED
 	 * Default implementation for backward compatibility
 	 */
-	virtual bool ioFailed() { return (eos() || err()); }
+	inline bool ioFailed() { return (eos() || err()); }
 
 	/**
 	 * Read an unsigned byte from the stream and return it.

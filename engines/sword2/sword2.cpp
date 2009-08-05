@@ -33,6 +33,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -305,7 +306,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst) {
 
 	_gmmLoadSlot = -1; // Used to manage GMM Loading
 
-	syst->getEventManager()->registerRandomSource(_rnd, "sword2");
+	g_eventRec.registerRandomSource(_rnd, "sword2");
 }
 
 Sword2Engine::~Sword2Engine() {

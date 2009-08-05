@@ -1248,6 +1248,7 @@ protected:
 	void hitarea_stuff_helper_2();
 	void fastFadeIn();
 	void slowFadeIn();
+	void fullFade();
 
 	virtual void vcStopAnimation(uint16 zone, uint16 sprite);
 
@@ -1265,20 +1266,6 @@ protected:
 
 #ifdef ENABLE_PN
 class AGOSEngine_PN : public AGOSEngine {
-	struct StackFrame {
-		StackFrame *nextframe;
-		int16 flag[6];
-		int16 param[8];
-		int16 classnum;
-		uint8 *linpos;
-		uint8 *lbase;
-		int16 ll;
-		int16 linenum;
-		int16 process;
-		jmp_buf *savearea;
-		StackFrame() { memset(this, 0, sizeof(*this)); }
-	};
-
 
 	virtual Common::Error go();
 	void demoSeq();
@@ -1358,7 +1345,29 @@ public:
 	void opn_opcode62();
 	void opn_opcode63();
 
+protected:
+	struct StackFrame {
+		StackFrame *nextframe;
+		int16 flag[6];
+		int16 param[8];
+		int16 classnum;
+		uint8 *linpos;
+		uint8 *lbase;
+		int16 ll;
+		int16 linenum;
+		int16 process;
+		int tagOfParentDoline;	///< tag of the doline "instance" to which this StackFrame belongs
+		StackFrame() { memset(this, 0, sizeof(*this)); }
+	};
+
+
 	StackFrame *_stackbase;
+
+	int _tagOfActiveDoline;	///< tag of the active doline "instance"
+	int _dolineReturnVal;
+
+	jmp_buf _loadfail;
+
 
 	byte *_dataBase, *_textBase;
 	uint32 _dataBaseSize, _textBaseSize;
@@ -1404,8 +1413,6 @@ public:
 	int _linembr;
 	uint8 *_linebase;
 	uint8 *_workptr;
-	jmp_buf *_cjmpbuff;
-	jmp_buf _loadfail;
 
 	uint16 getptr(uint32 pos);
 	uint32 getlong(uint32 pos);
@@ -1429,7 +1436,6 @@ public:
 
 	void addstack(int type);
 	void dumpstack();
-	void junkstack();
 	void popstack(int type);
 	void funccpy(int *store);
 	void funcentry(int *storestore, int procn);
@@ -1465,8 +1471,8 @@ public:
 	virtual void windowPutChar(WindowBlock *window, byte c, byte b = 0);
 
 	bool badload(int8 errorNum);
-	int loadfl(char *name);
-	int savfl(char *name);
+	int loadFile(char *name);
+	int saveFile(char *name);
 	void getFilename();
 	void sysftodb();
 	void dbtosysf();

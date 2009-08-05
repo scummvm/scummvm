@@ -1427,7 +1427,7 @@ void ScummEngine_v90he::o90_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
-			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
+			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename, sizeof(_videoParams.filename));
 			if (_videoParams.flags & 2) {
 				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
 			} else {

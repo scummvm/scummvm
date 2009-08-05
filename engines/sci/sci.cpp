@@ -289,9 +289,7 @@ uint32 SciEngine::getFlags() const {
 }
 
 Common::String SciEngine::getSavegameName(int nr) const {
-	char extension[6];
-	snprintf(extension, sizeof(extension), ".%03d", nr);
-	return _targetName + extension;
+	return _targetName + Common::String::printf(".%03d", nr);
 }
 
 Common::String SciEngine::getSavegamePattern() const {

@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/md5.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/system.h"
 
 #include "gui/message.h"
@@ -136,6 +137,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 
 	// Init all vars
+	_v0ObjectIndex = false;
+	_v0ObjectInInventory = false;
 	_imuse = NULL;
 	_imuseDigital = NULL;
 	_musicEngine = NULL;
@@ -183,6 +186,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed = 0;
 	_rightBtnPressed = 0;
+	_lastInputScriptTime = 0;
 	_bootParam = 0;
 	_dumpScripts = false;
 	_debugMode = 0;
@@ -216,7 +220,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_roomResource = 0;
 	OF_OWNER_ROOM = 0;
 	_verbMouseOver = 0;
-	_inventoryOffset = 0;
 	_classData = NULL;
 	_actorToPrintStrFor = 0;
 	_sentenceNum = 0;
@@ -542,7 +545,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	for (int i = 0; i < ARRAYSIZE(debugChannels); ++i)
 		Common::addDebugChannel(debugChannels[i].flag,  debugChannels[i].channel, debugChannels[i].desc);
 
-	syst->getEventManager()->registerRandomSource(_rnd, "scumm");
+	g_eventRec.registerRandomSource(_rnd, "scumm");
 }
 
 
@@ -651,6 +654,8 @@ ScummEngine_v3old::ScummEngine_v3old(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v3old(syst, dr) {
 
+	_inventoryOffset = 0;
+
 	_activeInventory = 0;
 	_activeObject = 0;
 	_activeVerb = 0;
@@ -669,7 +674,17 @@ ScummEngine_v2::ScummEngine_v2(OSystem *syst, const DetectorResult &dr)
 ScummEngine_v0::ScummEngine_v0(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v2(syst, dr) {
 
+	_verbExecuting = false;
+	_verbPickup = false;
 	_currentMode = 0;
+
+	_activeObject2 = 0;
+	_activeObjectIndex = 0;
+	_activeObject2Index = 0;
+	_activeInvExecute = false;
+	_activeObject2Inv = false;
+	_activeObjectObtained = false;
+	_activeObject2Obtained = false;
 }
 
 ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
@@ -1907,7 +1922,7 @@ void ScummEngine::scummLoop(int delta) {
 	}
 
 	// Trigger autosave if necessary.
-	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime)) {
+	if (!_saveLoadFlag && shouldPerformAutoSave(_lastSaveTime) && canSaveGameStateCurrently()) {
 		_saveLoadSlot = 0;
 		sprintf(_saveLoadName, "Autosave %d", _saveLoadSlot);
 		_saveLoadFlag = 1;
