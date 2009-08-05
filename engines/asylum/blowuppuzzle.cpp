@@ -29,8 +29,8 @@
 
 namespace Asylum {
 
-BlowUpPuzzle::BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene) :
-	_screen(screen), _sound(sound), _scene(scene) {
+BlowUpPuzzle::BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene, Video *video) :
+	_screen(screen), _sound(sound), _scene(scene), _video(video) {
 }
 
 BlowUpPuzzle::~BlowUpPuzzle() {
@@ -97,7 +97,7 @@ void BlowUpPuzzle::swapGraphicItem(int item1, int item2) {
 
 // BlowUp Puzzle VCR ---------------------------------------------------------------------------------------------
 
-BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene) : BlowUpPuzzle(screen, sound, scene) {
+BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene, Video *video) : BlowUpPuzzle(screen, sound, scene, video) {
 	_mouseX	            = 0;
 	_mouseY			    = 0;
 	_leftClickUp	    = false;
@@ -219,6 +219,22 @@ void BlowUpPuzzleVCR::update() {
 
     if(_isAccomplished) {
         debug("BlowUpPuzzle ACCOMPLISHED!!");
+
+        updateGraphicsInQueue();
+
+        int barSize = 0;
+        do { 
+            _screen->drawWideScreen(barSize);
+            barSize += 4;
+        } while(barSize < 84);
+
+        // TODO: fade palette to grey
+      
+        _video->playVideo(2, kSubtitlesOn);
+
+        _isAccomplished = false;
+        _active = false;
+        _scene->enterScene();
     } else {
         updateGraphicsInQueue();
     } 

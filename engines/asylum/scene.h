@@ -68,6 +68,7 @@ public:
 
 	SceneResource*   getResources() { return _sceneResource; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
+    ResourcePack*	 getResourceMusicPack() { return _musPack; }
 	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
 
 private:

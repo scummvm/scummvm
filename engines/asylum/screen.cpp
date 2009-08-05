@@ -100,4 +100,14 @@ void Screen::setPalette(byte *rgbPalette) {
 	_sys->setPalette(palette, 0, 256);
 }
 
+void Screen::drawWideScreen(int16 barSize) {
+    if(barSize > 0) {
+        
+        _sys->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
+        _sys->unlockScreen();
+        _sys->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
+        _sys->unlockScreen();
+    }
+}
+
 } // end of namespace Asylum
