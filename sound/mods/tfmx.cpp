@@ -1177,5 +1177,5 @@ void displayPatternstep(const void *const vptr) {}
 #endif
 }	// End of namespace
 
-#endif // #if defined(ENABLE_SCUMM)
+#endif // #if defined(SOUND_MODS_TFMX_H)
 

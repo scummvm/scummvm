@@ -33,10 +33,25 @@
 // test for engines using this class.
 #if defined(SOUND_MODS_MAXTRAX_H)
 
+namespace {
+int32 precalcNote(byte baseNote, int16 tune, byte octave) {
+	return 0x9fd77 + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
+}
+int32 calcVolumeDelta(int32 delta, uint16 time, uint16 vBlankFreq) {
+	const int32 div = time * vBlankFreq;
+	// div <= 1000 means time to small (or even 0)
+	return (div <= 1000) ? delta : (1000 * delta) / div;
+}
+}
+
 namespace Audio {
 
 MaxTrax::MaxTrax(int rate, bool stereo)
-	: Paula(stereo, rate, rate/50), _voiceCtx(), _patch(), _scores(), _numScores() {
+	: Paula(stereo, rate, rate/50),
+	  _voiceCtx(),
+	  _patch(),
+	  _scores(),
+	  _numScores() {
 	_playerCtx.maxScoreNum = 128;
 	_playerCtx.vBlankFreq = 50;
 	_playerCtx.frameUnit = (uint16)((1000 * (1<<8)) /  _playerCtx.vBlankFreq);
@@ -46,11 +61,6 @@ MaxTrax::MaxTrax(int rate, bool stereo)
 
 	_playerCtx.tempo = 120;
 	_playerCtx.tempoTime = 0;
-
-	//uint32 uinqueId = 0;
-	//byte flags = 0;
-
-	//uint32 colorClock = kPalSystemClock / 2;
 
 	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i)
 		resetChannel(_channelCtx[i], (i & 1) != 0);
@@ -120,21 +130,13 @@ void MaxTrax::interrupt() {
 						_playerCtx.tempoTicks = 0;
 					}
 					break;
-
-/*				case 0xA0:	// SPECIAL
-					break;
-
-				case 0xB0:	// CONTROL
-					// TODO: controlChange((byte)stopTime, (byte)(stopTime >> 8))
-					break;
-
-*/				case 0xC0:	// PROGRAM
+				
+				case 0xC0:	// PROGRAM
 					channel.patch = &_patch[stopTime & (kNumPatches - 1)];
 					break;
 
 				case 0xE0:	// BEND
 					channel.pitchBend = ((stopTime & 0x7F00) >> 1) | (stopTime & 0x7f);
-					// channel.pitchReal = ((int32)(channel.pitchBendRange << 8) * (channel.pitchBend - (64 << 7))) / (64 << 7);
 					channel.pitchReal = (((int32)channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
 					channel.isAltered = true;
 					break;
@@ -149,6 +151,9 @@ void MaxTrax::interrupt() {
 					// stop processing for this tick
 					goto endOfEventLoop;
 
+				case 0xA0:	// SPECIAL
+				case 0xB0:	// CONTROL
+					// TODO: controlChange((byte)stopTime, (byte)(stopTime >> 8))
 				default:
 					debug("Unhandled Command");
 					outPutEvent(*curEvent);
@@ -199,7 +204,7 @@ endOfEventLoop:
 				voice.envelopeLeft = patch.attackLen;
 				voice.ticksLeft = duration << 8;
 				voice.status = VoiceContext::kStatusAttack;
-				voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume, duration);
+				voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume, duration, _playerCtx.vBlankFreq);
 				// Process Envelope
 			} else {
 				voice.status = VoiceContext::kStatusSustain;
@@ -215,7 +220,7 @@ endOfEventLoop:
 				voice.envelopeLeft = patch.releaseLen;
 				voice.ticksLeft = duration << 8;
 				voice.status = VoiceContext::kStatusDecay;
-				voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume - voice.baseVolume, duration);
+				voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume - voice.baseVolume, duration, _playerCtx.vBlankFreq);
 				// Process Envelope
 			} else {
 				voice.status = VoiceContext::kStatusHalt;
@@ -228,11 +233,6 @@ endOfEventLoop:
 		// Process Envelope
 		const uint16 envUnit = _playerCtx.frameUnit;
 		if (voice.envelope) {
-			// TODO remove paranoid asserts
-			assert(voice.status != VoiceContext::kStatusSustain);
-			assert(voice.status == VoiceContext::kStatusAttack || VoiceContext::kStatusRelease);
-			assert(voice.envelope);
-			assert(voice.envelopeLeft >= 0);
 			if (voice.ticksLeft > envUnit) {	// envelope still active
 				voice.baseVolume = (uint16)MIN(MAX(0, voice.baseVolume + voice.incrVolume), 0x8000);
 				voice.ticksLeft -= envUnit;
@@ -245,7 +245,7 @@ endOfEventLoop:
 					++voice.envelope;
 					const uint16 duration = voice.envelope->duration;
 					voice.ticksLeft = duration << 8;
-					voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume - voice.baseVolume, duration);
+					voice.incrVolume = calcVolumeDelta((int32)voice.envelope->volume - voice.baseVolume, duration, _playerCtx.vBlankFreq);
 					// Update Volume and Period
 				} else if (voice.status == VoiceContext::kStatusDecay) {
 					voice.status = VoiceContext::kStatusHalt;
@@ -285,8 +285,8 @@ endOfEventLoop:
 		}
 
 		// Send Audio Packet
-		Paula::setChannelPeriod(i, (voice.lastPeriod) ? voice.lastPeriod : 1000);
-		Paula::setChannelVolume(i, (voice.lastPeriod) ? voice.lastVolume : 0);
+		Paula::setChannelPeriod((byte)i, (voice.lastPeriod) ? voice.lastPeriod : 1000);
+		Paula::setChannelVolume((byte)i, (voice.lastPeriod) ? voice.lastVolume : 0);
 	}
 	for (ChannelContext *c = _channelCtx; c != &_channelCtx[ARRAYSIZE(_channelCtx)]; ++c)
 		c->isAltered = false;
@@ -307,13 +307,6 @@ endOfEventLoop:
 	}
 }
 
-int32 MaxTrax::calcVolumeDelta(int32 delta, uint16 time) {
-	const int32 div = time * _playerCtx.vBlankFreq;
-	if (div <= 1000)
-		return delta; // time to small or 0
-	return (1000 * delta) / div;
-}
-
 void MaxTrax::stopMusic() {
 	Common::StackLock lock(_mutex);
 	_playerCtx.musicPlaying = false;
@@ -321,7 +314,7 @@ void MaxTrax::stopMusic() {
 	_playerCtx.nextEvent = 0;
 }
 
-bool MaxTrax::playSong(int songIndex, bool loop, int advance) {
+bool MaxTrax::playSong(int songIndex, bool loop) {
 	if (songIndex < 0 || songIndex >= _numScores)
 		return false;
 	Common::StackLock lock(_mutex);
@@ -334,23 +327,29 @@ bool MaxTrax::playSong(int songIndex, bool loop, int advance) {
 	_playerCtx.ticks = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
-		killVoice(i);
+		killVoice((byte)i);
 	for (int i = 0; i < kNumChannels; ++i)
 		resetChannel(_channelCtx[i], (i & 1) != 0);
 
-	const Event *cev = _scores[songIndex].events;
-	// Songs are special markers in the score
-	for (; advance > 0; --advance) {
-		// TODO - check for boundaries 
-		for (; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
-			; // no end_command or special_command + end
-	}
-	_playerCtx.nextEvent = cev;
-	_playerCtx.nextEventTime = cev->startTime;
+	_playerCtx.nextEvent = _scores[songIndex].events;;
+	_playerCtx.nextEventTime = _playerCtx.nextEvent->startTime;
 
 	_playerCtx.musicPlaying = true;
 	Paula::startPaula();
 	return true;
+}
+
+void MaxTrax::advanceSong(int advance) {
+	Common::StackLock lock(_mutex);
+	const Event *cev = _playerCtx.nextEvent;
+	if (cev) {
+		for (; advance > 0; --advance) {
+			// TODO - check for boundaries 
+			for (; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
+				; // no end_command or special_command + end
+		}
+		_playerCtx.nextEvent = cev;
+	}
 }
 
 void MaxTrax::killVoice(byte num) {
@@ -742,6 +741,48 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 	return true;
 }
 
+#ifndef NDEBUG
+void MaxTrax::outPutEvent(const Event &ev, int num) {
+	struct {
+		byte cmd;
+		const char *name;
+		const char *param;
+	} COMMANDS[] = {
+		{0x80, "TEMPO   ", "TEMPO, N/A      "},
+		{0xa0, "SPECIAL ", "CHAN, SPEC # | VAL"},
+		{0xb0, "CONTROL ", "CHAN, CTRL # | VAL"},
+		{0xc0, "PROGRAM ", "CHANNEL, PROG # "},
+		{0xe0, "BEND    ", "CHANNEL, BEND VALUE"},
+		{0xf0, "SYSEX   ", "TYPE, SIZE      "},
+		{0xf8, "REALTIME", "REALTIME, N/A   "},
+		{0xff, "END     ", "N/A, N/A        "},
+		{0xff, "NOTE    ", "VOL | CHAN, STOP"},
+	};
+
+	int i = 0;
+	for (; i < ARRAYSIZE(COMMANDS) - 1 && ev.command != COMMANDS[i].cmd; ++i)
+		;
+
+	if (num == -1)
+		debug("Event    : %02X %s %s %02X %04X %04X", ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
+	else
+		debug("Event %3d: %02X %s %s %02X %04X %04X", num, ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
+}
+
+void MaxTrax::outPutScore(const Score &sc, int num) {
+	if (num == -1)
+		debug("score   : %i Events", sc.numEvents);
+	else
+		debug("score %2d: %i Events", num, sc.numEvents);
+	for (uint i = 0; i < sc.numEvents; ++i)
+		outPutEvent(sc.events[i], i);
+	debug("");
+}
+#else
+void MaxTrax::outPutEvent(const Event &ev, int num) {}
+void MaxTrax::outPutScore(const Score &sc, int num) {}
+#endif	// #ifndef NDEBUG
+
 }	// End of namespace Audio
 
-#endif // #if defined(ENABLE_KYRA)
+#endif // #if defined(SOUND_MODS_MAXTRAX_H)

@@ -41,7 +41,8 @@ public:
 	virtual ~MaxTrax();
 
 	bool load(Common::SeekableReadStream &musicData, bool loadScores = true, bool loadSamples = true);
-	bool playSong(int songIndex, bool loop = false, int advance = 0);
+	bool playSong(int songIndex, bool loop = false);
+	void advanceSong(int advance = 1);
 	int playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide);
 	void setVolume(const byte volume) { _playerCtx.volume = volume; }
 	void setTempo(const uint16 tempo) {
@@ -143,8 +144,7 @@ private:
 			kFlagDamper = 1 << 2,
 			kFlagMono = 1 << 3,
 //			kFlagMicrotonal = 1 << 4,
-			kFlagModVolume = 1 << 5//,
-			//kFlagAltered = 1 << 6
+			kFlagModVolume = 1 << 5
 		};
 		byte	flags;
 		bool	isAltered;
@@ -205,52 +205,13 @@ private:
 	void resetChannel(ChannelContext &chan, bool rightChannel);
 
 	static int8 pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
-	int32 calcVolumeDelta(int32 delta, uint16 time);
 	static uint16 calcNote(const VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);
 
-	static int32 precalcNote(byte baseNote, int16 tune, byte octave) {
-		return 0x9fd77 + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
-	}
-
-	static void outPutEvent(const Event &ev, int num = -1) {
-		struct {
-			byte cmd;
-			const char *name;
-			const char *param;
-		} COMMANDS[] = {
-			{0x80, "TEMPO   ", "TEMPO, N/A      "},
-			{0xa0, "SPECIAL ", "CHAN, SPEC # | VAL"},
-			{0xb0, "CONTROL ", "CHAN, CTRL # | VAL"},
-			{0xc0, "PROGRAM ", "CHANNEL, PROG # "},
-			{0xe0, "BEND    ", "CHANNEL, BEND VALUE"},
-			{0xf0, "SYSEX   ", "TYPE, SIZE      "},
-			{0xf8, "REALTIME", "REALTIME, N/A   "},
-			{0xff, "END     ", "N/A, N/A        "},
-			{0xff, "NOTE    ", "VOL | CHAN, STOP"},
-		};
-
-		int i = 0;
-		for (; i < ARRAYSIZE(COMMANDS) - 1 && ev.command != COMMANDS[i].cmd; ++i)
-			;
-
-		if (num == -1)
-			debug("Event    : %02X %s %s %02X %04X %04X", ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
-		else
-			debug("Event %3d: %02X %s %s %02X %04X %04X", num, ev.command, COMMANDS[i].name, COMMANDS[i].param, ev.parameter, ev.startTime, ev.stopTime);
-	}
-
-	static void outPutScore(const Score &sc, int num = -1) {
-		if (num == -1)
-			debug("score   : %i Events", sc.numEvents);
-		else
-			debug("score %2d: %i Events", num, sc.numEvents);
-		for (uint i = 0; i < sc.numEvents; ++i)
-			outPutEvent(sc.events[i], i);
-		debug("");
-	}
+	static void outPutEvent(const Event &ev, int num = -1);
+	static void outPutScore(const Score &sc, int num = -1);
 };
 }	// End of namespace Audio
 

@@ -1023,6 +1023,14 @@
 					RelativePath="..\..\sound\mods\maxtrax.cpp"
 					>
 					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCLCompilerTool"
+							DisableSpecificWarnings="$(NOINHERIT)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
 						Name="Debug_Command|Win32"
 						>
 						<Tool
