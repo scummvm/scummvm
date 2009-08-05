@@ -264,7 +264,7 @@ void Game::loop() {
 
 			// If there is an object under the cursor, display its title and enable
 			// executing its look and use scripts
-			if (curObject != kNotFound) {					
+			if (curObject != kObjectNotFound) {					
 				// Mark dirty rectangle to update the text
 				titleAnim->markDirtyRect(surface);	
 
@@ -337,7 +337,7 @@ int Game::getObjectWithAnimation(int animID) {
 		}
 	}
 
-	return kNotFound;
+	return kObjectNotFound;
 }
 	
 void Game::walkHero(int x, int y) {

@@ -202,9 +202,14 @@ bool DraciEngine::handleEvents() {
 				_game->_roomChange = true;
 			}
 			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				_game->setRoomNum(_game->getEscRoom());
-				_game->setGateNum(0);
-				_game->_roomChange = true;
+				int escRoom = _game->getEscRoom();
+
+				// Check if there is an escape room defined for the current room
+				if (escRoom != kNoEscRoom) {				
+					_game->setRoomNum(_game->getEscRoom());
+					_game->setGateNum(0);
+					_game->_roomChange = true;
+				}
 			}
 			// Show walking map toggle
 			else if (event.kbd.keycode == Common::KEYCODE_w) { 

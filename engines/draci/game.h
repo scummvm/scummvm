@@ -43,8 +43,17 @@ enum StructSizes {
 	personSize = sizeof(uint16) * 2 + sizeof(byte)
 };
 
+
+// Used as a return value for Game::getObjectWithAnimation() if no object
+// owns the animation in question
 enum {
-	kNotFound = -1
+	kObjectNotFound = -1
+};
+
+// Used as the value of the _escRoom field of the current room if there is 
+// no escape room defined
+enum {
+	kNoEscRoom = -1
 };
 
 enum SpeechConstants {
@@ -95,9 +104,9 @@ struct GameObject {
 	bool _imInit, _imLook, _imUse;
 	byte _walkDir;
 	byte _z;
-	uint16 _lookX, _lookY, _useX, _useY;
+	uint _lookX, _lookY, _useX, _useY;
 	byte _lookDir, _useDir;
-	uint16 _absNum;
+	uint _absNum;
 	Common::Array<int> _anims;
 	GPL2Program _program;
 	Common::String _title;
@@ -106,26 +115,26 @@ struct GameObject {
 };
 
 struct GameInfo {
-	byte _startRoom;
-	byte _mapRoom;
-	uint16 _numObjects;
-	uint16 _numIcons;
+	int _startRoom;
+	int _mapRoom;
+	uint _numObjects;
+	uint _numIcons;
 	byte _numVariables;
 	byte _numPersons;
 	byte _numDialogs;
-	uint16 _maxIconWidth, _maxIconHeight;
-	uint16 _musicLength;
-	uint16 _crc[4];
-	uint16 _numDialogBlocks;
+	uint _maxIconWidth, _maxIconHeight;
+	uint _musicLength;
+	uint _crc[4];
+	uint _numDialogBlocks;
 };
 
 struct Person {
-	uint16 _x, _y;
+	uint _x, _y;
 	byte _fontColour;
 };
 
 struct Room {
-	byte _roomNum;	
+	int _roomNum;	
 	byte _music;
 	WalkingMap _walkingMap;
 	byte _palette;
@@ -134,7 +143,7 @@ struct Room {
 	bool _imInit, _imLook, _imUse;
 	bool _mouseOn, _heroOn;
 	double _pers0, _persStep;
-	byte _escRoom;
+	int _escRoom;
 	byte _numGates;
 	Common::Array<int> _gates;
 	GPL2Program _program;
