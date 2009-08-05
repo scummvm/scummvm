@@ -219,6 +219,8 @@ public:
 
 	int getIconStatus(int iconID);
 
+	int getEscRoom();
+
 	int getMarkedAnimationIndex();
 	void setMarkedAnimationIndex(int index);
 

@@ -204,7 +204,7 @@ void Game::init() {
 
 	// Initialize animation for object / room titles
 	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
-	Text *title = new Text("", _vm->_smallFont, kFontColour3, 0, 0);
+	Text *title = new Text("", _vm->_smallFont, kTitleColour, 0, 0);
 	titleAnim->addFrame(title);
 
 	// Initialize animation for speech text
@@ -773,6 +773,10 @@ Person *Game::getPerson(int personID) {
 
 void Game::setSpeechTick(uint tick) {
 	_speechTick = tick;
+}
+
+int Game::getEscRoom() {
+	return _currentRoom._escRoom;
 }
 
 /**
