@@ -27,6 +27,7 @@
 #include "common/events.h"
 #include "common/system.h"
 #include "common/file.h"
+#include "common/EventRecorder.h"
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
@@ -49,7 +50,7 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
 
-	_eventMan->registerRandomSource(_rnd, "asylum");
+	g_eventRec.registerRandomSource(_rnd, "asylum");
 }
 
 AsylumEngine::~AsylumEngine() {
