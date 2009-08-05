@@ -219,6 +219,7 @@ private:
 	void o_sethotspotleft();
 	void o_getcd();
 	void o_playcd();
+	void o_musicdelay();
 	void o_hotspot_outrect();
 	void o_stub56();
 	void o_stub59();
