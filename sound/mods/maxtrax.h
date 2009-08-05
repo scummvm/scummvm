@@ -25,6 +25,7 @@
 
 // see if all engines using this class are DISABLED
 #if !defined(ENABLE_KYRA)
+#error trying to include the MaxTrax Header with no engine enabled that uses it
 
 // normal Header Guard
 #elif !defined SOUND_MODS_MAXTRAX_H
@@ -253,4 +254,4 @@ private:
 };
 }	// End of namespace Audio
 
-#endif
+#endif // !defined SOUND_MODS_MAXTRAX_H

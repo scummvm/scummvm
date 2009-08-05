@@ -25,6 +25,7 @@
 
 // see if all engines using this class are DISABLED
 #if !defined(ENABLE_SCUMM)
+#error trying to include the Tfmx Header with no engine enabled that uses it
 
 // normal Header Guard
 #elif !defined(SOUND_MODS_TFMX_H)
