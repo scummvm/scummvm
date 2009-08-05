@@ -97,7 +97,7 @@ BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene) : B
     _cursorResource     = _scene->getGraphicResource(_scene->getResources()->getWorldStats()->grResId[28]);
     _bgResource		    = _scene->getGraphicResource(_scene->getResources()->getWorldStats()->grResId[0]);
     _tvScreenAnimIdx    = 0;
-    _isAccomplished     = 0;
+    _isAccomplished     = false;
 
     // reset all states
     memset(&_jacksState,0,sizeof(_jacksState));
@@ -452,10 +452,45 @@ void BlowUpPuzzleVCR::handleMouseDown() {
     }
 
     // TODO: VCR button regions
+    if (inPolyRegion(_mouseX, _mouseY, kRewindButton)) {
+        _sound->playSfx(_scene->getResourcePack(), _scene->getResources()->getWorldStats()->grResId[39]);
+        if(!_buttonsState[kRewind]) {
+            _buttonsState[kRewind] = 2;
+            return;
+        }
+        if(_buttonsState[kRewind] == 1) {
+            _buttonsState[kRewind] = 3;
+            return;
+        }
+    } else if (inPolyRegion(_mouseX, _mouseY, kPlayButton)) {
+        
+    } else if (inPolyRegion(_mouseX, _mouseY, kStopButton)) {
+        
+    } else if (inPolyRegion(_mouseX, _mouseY, kRecButton)) {
+        
+    }
 }
 
 void BlowUpPuzzleVCR::handleMouseUp() {
+    if(_isAccomplished)
+        return;
 
+    // TODO: check rec button states
+
+    // TODO: check rewind button states
+
+    // if button play ON than check the jacks
+    if(1) { // play button == 3
+        // TODO: reset button play state
+        if(_holesState[kRed] == kPluggedOnRed && _holesState[kYellow] == kPluggedOnYellow && _holesState[kBlack] == kPluggedOnBlack) {
+            // TODO: set game flag 220
+            _isAccomplished = true;
+        }
+    } else { //if() { // play button == 2
+        // TODO: reset state
+    }
+
+    // TODO: check stop button states
 }
 
 } // end of namespace Asylum
