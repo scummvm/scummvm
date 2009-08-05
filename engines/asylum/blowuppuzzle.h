@@ -81,10 +81,11 @@ protected:
 
     Common::Array<GraphicQueueItem> _queueItems;
 
-	void updateCursor();
+	void updateCursor(); 
     virtual void update() {};
 
-    // This should probably be inside screen class
+    // FIXME This should probably be inside screen class
+    void addGraphicToQueue(uint32 redId, uint32 x, uint32 y, uint32 frameIdx, uint32 flags, uint32 priority);
     void addGraphicToQueue(GraphicQueueItem item);
     void updateGraphicsInQueue();
     void graphicsSelectionSort();
@@ -95,11 +96,11 @@ protected:
 
 // ---- VCR -------------------
 
-typedef struct JackInfo {
+typedef struct VCRDrawInfo {
 	uint32 resId;
 	uint32 x;
     uint32 y;
-} JackInfo;
+} VCRDrawInfo;
 
 const Common::Rect BlowUpPuzzleVCRPolies[10] = {
     Common::Rect(0x0F7, 0x157, 0x13A, 0x183), // rewind button region
@@ -141,7 +142,7 @@ private:
 		kRewindButton   = 0,
 		kStopButton     = 1,
 		kPlayButton     = 2,
-		kRecButton      = 3,
+		kPowerButton    = 3,
         kRedHole        = 4,
         kYellowHole     = 5,
         kBlackHole      = 6,
@@ -154,7 +155,14 @@ private:
 		kRewind  = 0,
 		kStop    = 1,
 		kPlay    = 2,
-        kRec     = 3
+        kPower   = 3
+	};
+
+    enum ButtonState {
+		kOFF     = 0,
+		kON      = 1,
+		kDownON  = 2,
+        kDownOFF = 3
 	};
 
     int _jacksState[3];
@@ -167,16 +175,24 @@ private:
 
     void update();
 
+    void updateCursorInPolyRegion();
+
     GraphicQueueItem getGraphicJackItem(int resId);
     GraphicQueueItem getGraphicShadowItem();
-    void updateJack(Jack jack, JackInfo onTable, JackInfo pluggedOnRed, JackInfo pluggedOnYellow, JackInfo pluggedOnBlack, int resIdOnHand);
+    void updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo pluggedOnRed, VCRDrawInfo pluggedOnYellow, VCRDrawInfo pluggedOnBlack, int resIdOnHand);
     void updateBlackJack();
     void updateRedJack();
     void updateYellowJack();
+    int setJackOnHole(int jackType, JackState plugged);   
 
-    void updateCursorInPolyRegion();
+    void updateButton(Button button, VCRDrawInfo btON, VCRDrawInfo btDown);
+    void updatePowerButton();
+    void updateRewindButton();
+    void updatePlayButton();
+    void updateStopButton();
 
-    int setJackOnHole(int jackType, JackState plugged);
+    void updateTVSync();
+    
     void handleMouseDown();
     void handleMouseUp();
 }; // end of class BlowUpPuzzleVCR
