@@ -44,6 +44,9 @@ public:
 	void playCD(uint8 track);
 	void startBackground();
 
+	void frameTick();
+	void setBackgroundDelay(uint16 delay);
+
 	// Volume
 	void setUserVolume(uint16 volume);
 	void setGameVolume(uint16 volume, uint16 time);
@@ -54,6 +57,8 @@ private:
 	bool _isPlaying;
 	uint32 _backgroundFileRef;
 	uint8 _prevCDtrack;
+
+	uint16 _backgroundDelay;
 
 	// Volume fading
 	uint32 _fadingStartTime;

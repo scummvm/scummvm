@@ -35,7 +35,7 @@ namespace Groovie {
 
 MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_vm(vm), _isPlaying(false), _backgroundFileRef(0), _gameVolume(100),
-	_prevCDtrack(0) {
+	_prevCDtrack(0), _backgroundDelay(0) {
 }
 
 void MusicPlayer::playSong(uint32 fileref) {
@@ -54,6 +54,18 @@ void MusicPlayer::setBackgroundSong(uint32 fileref) {
 
 	debugC(1, kGroovieDebugMIDI | kGroovieDebugAll, "Groovie::Music: Changing the background song: %04X", fileref);
 	_backgroundFileRef = fileref;
+}
+
+void MusicPlayer::frameTick() {
+	if (_backgroundDelay > 0) {
+		_backgroundDelay--;
+		if (_backgroundDelay == 0)
+			playSong(_backgroundFileRef);
+	}
+}
+
+void MusicPlayer::setBackgroundDelay(uint16 delay) {
+	_backgroundDelay = delay;
 }
 
 void MusicPlayer::playCD(uint8 track) {
