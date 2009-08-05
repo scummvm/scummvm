@@ -273,8 +273,8 @@ void GuiManager::runLoop() {
 			lastRedraw = _system->getMillis();
 		}
 
-		Common::Event event;
-		while (eventMan->pollEvent(event)) {
+		Common::Event Event;
+		while (eventMan->pollEvent(Event)) {
 
 			// The top dialog can change during the event loop. In that case, flush all the
 			// dialog-related events since they were probably generated while the old dialog
@@ -282,10 +282,10 @@ void GuiManager::runLoop() {
 			//
 			// This hopefully fixes strange behaviour/crashes with pop-up widgets. (Most easily
 			// triggered in 3x mode or when running ScummVM under Valgrind.)
-			if (activeDialog != getTopDialog() && event.type != Common::EVENT_SCREEN_CHANGED)
+			if (activeDialog != getTopDialog() && Event.type != Common::EVENT_SCREEN_CHANGED)
 				continue;
 
-			Common::Point mouse(event.mouse.x - activeDialog->_x, event.mouse.y - activeDialog->_y);
+			Common::Point mouse(Event.mouse.x - activeDialog->_x, Event.mouse.y - activeDialog->_y);
 
 			if (lastRedraw + waitTime < _system->getMillis()) {
 				_theme->updateScreen();
@@ -293,12 +293,12 @@ void GuiManager::runLoop() {
 				lastRedraw = _system->getMillis();
 			}
 
-			switch (event.type) {
+			switch (Event.type) {
 			case Common::EVENT_KEYDOWN:
-				activeDialog->handleKeyDown(event.kbd);
+				activeDialog->handleKeyDown(Event.kbd);
 				break;
 			case Common::EVENT_KEYUP:
-				activeDialog->handleKeyUp(event.kbd);
+				activeDialog->handleKeyUp(Event.kbd);
 				break;
 			case Common::EVENT_MOUSEMOVE:
 				activeDialog->handleMouseMoved(mouse.x, mouse.y, 0);
@@ -306,15 +306,15 @@ void GuiManager::runLoop() {
 			// We don't distinguish between mousebuttons (for now at least)
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_RBUTTONDOWN:
-				button = (event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
+				button = (Event.type == Common::EVENT_LBUTTONDOWN ? 1 : 2);
 				time = _system->getMillis();
 				if (_lastClick.count && (time < _lastClick.time + kDoubleClickDelay)
-							&& ABS(_lastClick.x - event.mouse.x) < 3
-							&& ABS(_lastClick.y - event.mouse.y) < 3) {
+							&& ABS(_lastClick.x - Event.mouse.x) < 3
+							&& ABS(_lastClick.y - Event.mouse.y) < 3) {
 					_lastClick.count++;
 				} else {
-					_lastClick.x = event.mouse.x;
-					_lastClick.y = event.mouse.y;
+					_lastClick.x = Event.mouse.x;
+					_lastClick.y = Event.mouse.y;
 					_lastClick.count = 1;
 				}
 				_lastClick.time = time;
@@ -322,7 +322,7 @@ void GuiManager::runLoop() {
 				break;
 			case Common::EVENT_LBUTTONUP:
 			case Common::EVENT_RBUTTONUP:
-				button = (event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
+				button = (Event.type == Common::EVENT_LBUTTONUP ? 1 : 2);
 				activeDialog->handleMouseUp(mouse.x, mouse.y, button, _lastClick.count);
 				break;
 			case Common::EVENT_WHEELUP:
