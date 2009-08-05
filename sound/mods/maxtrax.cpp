@@ -30,6 +30,9 @@
 
 #include "sound/mods/maxtrax.h"
 
+// test for engines using this class.
+#if defined(ENABLE_KYRA)
+
 namespace Audio {
 
 MaxTrax::MaxTrax(int rate, bool stereo)
@@ -740,3 +743,5 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 }
 
 }	// End of namespace Audio
+
+#endif // #if defined(ENABLE_KYRA)

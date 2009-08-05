@@ -31,6 +31,9 @@
 
 #include "sound/mods/tfmx.h"
 
+// test for engines using this class.
+#if defined(ENABLE_SCUMM)
+
 // couple debug-functions
 namespace {
 	void displayPatternstep(const void *const vptr);
@@ -1173,3 +1176,6 @@ void displayMacroStep(const void *const vptr, int chan, int index) {}
 void displayPatternstep(const void *const vptr) {}
 #endif
 }	// End of namespace
+
+#endif // #if defined(ENABLE_SCUMM)
+
