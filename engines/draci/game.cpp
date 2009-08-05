@@ -204,7 +204,7 @@ void Game::init() {
 
 	// Initialize animation for object / room titles
 	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
-	Text *title = new Text("", _vm->_bigFont, kFontColour3, 0, 0);
+	Text *title = new Text("", _vm->_smallFont, kFontColour3, 0, 0);
 	titleAnim->addFrame(title);
 
 	// Initialize animation for speech text
@@ -233,31 +233,48 @@ void Game::init() {
 
 void Game::loop() {
 
+	Surface *surface = _vm->_screen->getSurface();
+
+	const int smallFontHeight = _vm->_smallFont->getFontHeight();
+
 	do {
 
 		_vm->handleEvents();
 
 		if (_currentRoom._mouseOn) {
+
+			// Fetch mouse coordinates			
 			int x = _vm->_mouse->getPosX();
 			int y = _vm->_mouse->getPosY();
 
+			// If the player clicked on a walkable position, move the dragon there
 			if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
 				walkHero(x, y);
 			}
 
+			// Find the game object under the cursor
+			// (to be more precise, one that corresponds to the animation under the cursor)
 			int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-			//Animation *anim = _vm->_anims->getAnimation(animUnderCursor);
-
 			int curObject = getObjectWithAnimation(animUnderCursor);
 			GameObject *obj = &_objects[curObject];
 
+			// Fetch the dedicated objects' title animation / current frame
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+			Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
 
-			// TODO: Handle displaying title in the proper location
-
+			// If there is an object under the cursor, display its title and enable
+			// executing its look and use scripts
 			if (curObject != kNotFound) {					
-				titleAnim->markDirtyRect(_vm->_screen->getSurface());			
-				reinterpret_cast<Text *>(titleAnim->getFrame())->setText(obj->_title);
+				// Mark dirty rectangle to update the text
+				titleAnim->markDirtyRect(surface);	
+
+				// Set the title for the current object
+				title->setText(obj->_title);
+
+				// Move the title to the correct place (just above the cursor)
+				int newX = surface->centerOnX(x, title->getWidth());
+				int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
+				titleAnim->setRelative(newX, newY);
 
 				// HACK: Test running look and use scripts
 				if (_vm->_mouse->lButtonPressed()) {
@@ -270,13 +287,15 @@ void Game::loop() {
 					_vm->_script->run(obj->_program, obj->_use);
 				}
 			} else {
-				titleAnim->markDirtyRect(_vm->_screen->getSurface());
-				reinterpret_cast<Text *>(titleAnim->getFrame())->setText("");
+				// If there is no object under the cursor, just delete the previous title				
+				titleAnim->markDirtyRect(surface);
+				title->setText("");
 			}
 
 			debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
 		}
 
+		// Handle character talking (if there is any)
 		if (_loopSubstatus == kStatusTalk) {
 			Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText); 			
 			Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
@@ -292,9 +311,11 @@ void Game::loop() {
 			}
 		}
 
+		// This returns true if we got a signal to quit the game
 		if (shouldQuit())
 			return;
 
+		// Advance animations and redraw screen
 		_vm->_anims->drawScene(_vm->_screen->getSurface());
 		_vm->_screen->copyToScreen();
 		_vm->_system->delayMillis(20);
@@ -336,10 +357,11 @@ void Game::walkHero(int x, int y) {
 	// Fetch current frame
 	Drawable *frame = anim->getFrame();
 
-	// Fetch base height of the frame
+	// Fetch base dimensions of the frame
 	uint height = frame->getHeight();
+	uint width = frame->getWidth();
 
-  	_persons[kDragonObject]._x = x;
+  	_persons[kDragonObject]._x = x + (lround(scaleX) * width) / 2;
 	_persons[kDragonObject]._y = y - lround(scaleY) * height;
 
 	// We naturally want the dragon to position its feet to the location of the
