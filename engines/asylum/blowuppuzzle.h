@@ -150,11 +150,18 @@ private:
         kYellowJack     = 9
 	};
 
+    enum Button {
+		kRewind  = 0,
+		kStop    = 1,
+		kPlay    = 2,
+        kRec     = 3
+	};
+
     int _jacksState[3];
     int _holesState[3];
     int _buttonsState[4];
     int _tvScreenAnimIdx;
-    int _isAccomplished;
+    bool _isAccomplished;
 
     int inPolyRegion(int x, int y, int polyIdx);
 
