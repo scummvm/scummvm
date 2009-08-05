@@ -23,7 +23,11 @@
  *
  */
 
-#ifndef SOUND_MODS_MAXTRAX_H
+// see if all engines using this class are DISABLED
+#if !defined(ENABLE_KYRA)
+
+// normal Header Guard
+#elif !defined SOUND_MODS_MAXTRAX_H
 #define SOUND_MODS_MAXTRAX_H
 
 #include "sound/mods/paula.h"

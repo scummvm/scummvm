@@ -23,7 +23,11 @@
  *
  */
 
-#ifndef SOUND_MODS_TFMX_H
+// see if all engines using this class are DISABLED
+#if !defined(ENABLE_SCUMM)
+
+// normal Header Guard
+#elif !defined(SOUND_MODS_TFMX_H)
 #define SOUND_MODS_TFMX_H
 
 #include "sound/mods/paula.h"
@@ -277,4 +281,4 @@ private:
 
 }	// End of namespace Audio
 
-#endif
+#endif // !defined(SOUND_MODS_TFMX_H)

@@ -31,7 +31,7 @@
 #include "sound/mods/maxtrax.h"
 
 // test for engines using this class.
-#if defined(ENABLE_KYRA)
+#if defined(SOUND_MODS_MAXTRAX_H)
 
 namespace Audio {
 

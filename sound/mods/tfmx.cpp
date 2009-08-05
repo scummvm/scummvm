@@ -32,7 +32,7 @@
 #include "sound/mods/tfmx.h"
 
 // test for engines using this class.
-#if defined(ENABLE_SCUMM)
+#if defined(SOUND_MODS_TFMX_H)
 
 // couple debug-functions
 namespace {
