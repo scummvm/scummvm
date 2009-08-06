@@ -80,6 +80,10 @@ void Mouse::cursorOff() {
 	CursorMan.showMouse(false);
 }
 
+bool Mouse::isCursorOn() {
+	return CursorMan.isVisible();
+}
+
 void Mouse::setPosition(uint16 x, uint16 y) {
 	_vm->_system->warpMouse(x, y);
 }

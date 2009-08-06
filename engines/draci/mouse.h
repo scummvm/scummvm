@@ -48,6 +48,7 @@ public:
 	void handleEvent(Common::Event event);
 	void cursorOn();
 	void cursorOff();
+	bool isCursorOn();
 	void setPosition(uint16 x, uint16 y);
 	void setCursorType(CursorType cur);
 	CursorType getCursorType() { return _cursorType; }
