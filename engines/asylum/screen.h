@@ -48,6 +48,7 @@ public:
 	void setPalette(byte *rgbPalette);
 	void setPalette(ResourcePack *resPack, int entry) { setPalette(resPack->getResource(entry)->data + 32); }
     void drawWideScreen(int16 barSize);
+    void clearScreen();
 
 	void showCursor() { _sys->showMouse(true); }
 	void hideCursor() { _sys->showMouse(false); }

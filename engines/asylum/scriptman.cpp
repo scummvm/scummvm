@@ -97,6 +97,7 @@ void ScriptManager::processActionList() {
 				//	TODO - processActionLists has run too many iterations
 			}
 
+            // TODO: this should be a pointer to allow changes in commands array
 			ActionCommand currentCommand = _currentScript->commands[_currentLine];
 
 			switch (currentCommand.opcode) {
@@ -318,12 +319,19 @@ void ScriptManager::processActionList() {
 				_delayedVideoIndex = currentCommand.param1;
 				break;
 
-/* 0x2E */  //case kStopAllObjectsSounds:
+/* 0x2E */  case kStopAllBarriersSounds:
+                // TODO: do this for all barriers that have sfx playing
+                _scene->_sound->stopSfx();
+                break;
+
 /* 0x2F */  //case kSetActionFlag01:
 /* 0x30 */  //case kClearActionFlag01:
 /* 0x31 */  //case kResetSceneRect:
 /* 0x32 */  //case kChangeMusicById:
-/* 0x33 */  //case kStopMusic:
+/* 0x33 */  case kStopMusic:
+                _scene->_sound->stopMusic();
+                break;
+
 /* 0x34 */  //case k_unk34_Status:
 /* 0x35 */  //case k_unk35:
 /* 0x36 */  //case k_unk36:
@@ -361,13 +369,23 @@ void ScriptManager::processActionList() {
 			}
 				break;
 
-/* 0x3E */  //case kUpdateMatteBars:
+/* 0x3E */  case kUpdateWideScreen: {
+                int barSize = currentCommand.param1;
+                if(barSize >= 22) {
+                    currentCommand.param1 = 0;
+                } else {
+                    _scene->_screen->drawWideScreen(4 * barSize);
+                    currentCommand.param1++;
+                }
+            }
+                break;
+            
 /* 0x3F */  //case k_unk3F:
 /* 0x40 */  //case k_unk40_SOUND:
 /* 0x41 */  case kPlaySpeech: {
 				//	TODO - Add support for other param options
 				uint32 sndIdx = currentCommand.param1;
-				if ((int)currentCommand.param1 >= 0) {
+				if ((int)sndIdx >= 0) {
 					if (sndIdx >= 259) {
 						sndIdx -= 9;
 						_scene->_sound->playSfx(_scene->_speechPack, sndIdx - 0x7FFD0000);
@@ -394,10 +412,26 @@ void ScriptManager::processActionList() {
 /* 0x49 */  //case k_unk49_MATTE_90:
 /* 0x4A */  //case kJumpIfSoundPlaying:
 /* 0x4B */  //case kChangePlayerCharacterIndex:
-/* 0x4C */  //case kChangeActorField40:
+/* 0x4C */  case kChangeActorField40: { // TODO: figure out what is this field and what values are set
+                int actorIdx = currentCommand.param1;
+                int fieldType = currentCommand.param2;
+                if(fieldType) {
+                    if(_scene->getResources()->getWorldStats()->actors[actorIdx].field_40 < 11) {
+                        _scene->getResources()->getWorldStats()->actors[actorIdx].field_40 = 14;
+                    }
+                } else {
+                    _scene->getResources()->getWorldStats()->actors[actorIdx].field_40 = 4;
+                }
+            }
+                break;
 /* 0x4D */  //case kStopSound:
 /* 0x4E */  //case k_unk4E_RANDOM_COMMAND:
-/* 0x4F */  //case kDrawGame:
+/* 0x4F */  case kClearScreen:
+                if(currentCommand.param1) {
+                    _scene->_screen->clearScreen();
+                }
+                break;
+
 /* 0x50 */  //case kQuit:
 /* 0x51 */  //case kJumpObjectFrame:
 /* 0x52 */  //case k_unk52:
