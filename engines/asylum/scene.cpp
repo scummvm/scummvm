@@ -34,7 +34,7 @@ namespace Asylum {
 int g_debugPolygons;
 int g_debugBarriers;
 
-Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _sound(sound) {
+Scene::Scene(Screen *screen, Sound *sound, Video *video, uint8 sceneIdx): _screen(screen), _sound(sound), _video(video) {
 	_sceneIdx		= sceneIdx;
 	_sceneResource	= new SceneResource;
 
@@ -51,6 +51,8 @@ Scene::Scene(Screen *screen, Sound *sound, uint8 sceneIdx): _screen(screen), _so
 		sprintf(musPackFileName, "mus.%03d", sceneIdx);
 		_musPack 	= new ResourcePack(musPackFileName);
 		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.backgroundImage);
+
+        _blowUp = 0;
 	}
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
@@ -77,6 +79,7 @@ Scene::~Scene() {
 	delete _resPack;
 	delete _text;
 	delete _sceneResource;
+    delete _blowUp;
  }
 
 void Scene::enterScene() {

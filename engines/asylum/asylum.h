@@ -46,8 +46,6 @@ class Scene;
 class Screen;
 class Sound;
 class Video;
-class BlowUpPuzzle;
-class BlowUpPuzzleVCR;
 
 enum kDebugLevels {
 	kDebugLevelMain =	   1 << 0,
@@ -87,7 +85,6 @@ private:
 	Screen          *_screen;
 	Sound           *_sound;
 	Video           *_video;
-    BlowUpPuzzle    *_blowUp;
 
 	friend class Console;
 };

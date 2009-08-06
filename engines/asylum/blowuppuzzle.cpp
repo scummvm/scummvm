@@ -29,8 +29,8 @@
 
 namespace Asylum {
 
-BlowUpPuzzle::BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene, Video *video) :
-	_screen(screen), _sound(sound), _scene(scene), _video(video) {
+BlowUpPuzzle::BlowUpPuzzle(Scene *scene) :
+	_scene(scene), _screen(scene->getScreen()), _sound(scene->getSound()), _video(scene->getVideo()) {
 }
 
 BlowUpPuzzle::~BlowUpPuzzle() {
@@ -97,7 +97,7 @@ void BlowUpPuzzle::swapGraphicItem(int item1, int item2) {
 
 // BlowUp Puzzle VCR ---------------------------------------------------------------------------------------------
 
-BlowUpPuzzleVCR::BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene, Video *video) : BlowUpPuzzle(screen, sound, scene, video) {
+BlowUpPuzzleVCR::BlowUpPuzzleVCR(Scene *scene) : BlowUpPuzzle(scene) {
 	_mouseX	            = 0;
 	_mouseY			    = 0;
 	_leftClickUp	    = false;
