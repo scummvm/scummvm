@@ -89,10 +89,12 @@ public:
 	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };	
 
 	int run(GPL2Program program, uint16 offset);
+	void endCurrentProgram();
 
 private:
 	
 	int _jump;
+	bool _endProgram;
 
 	/** List of all GPL commands. Initialised in the constructor. */
 	const GPL2Command *_commandList;

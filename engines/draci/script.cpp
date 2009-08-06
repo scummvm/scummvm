@@ -583,6 +583,9 @@ void Script::talk(Common::Queue<int> &params) {
 	_vm->_game->setExitLoop(false);
 }
 
+void Script::endCurrentProgram() {
+	_endProgram = true;
+}
 
 /**
  * @brief Evaluates mathematical expressions
@@ -797,6 +800,10 @@ int Script::run(GPL2Program program, uint16 offset) {
 		// extract low byte, i.e. the command subnumber
 		byte subnum = cmdpair & 0xFF;
 
+		// This might get set by some GPL commands via Script::endCurrentProgram()
+		// if they need a program to stop midway
+		_endProgram = false;
+
 		if ((cmd = findCommand(num, subnum))) {
 			int tmp;
 
@@ -828,8 +835,9 @@ int Script::run(GPL2Program program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_name != "gplend" && cmd->_name != "exit");
+	} while (cmd->_name != "gplend" && cmd->_name != "exit" && !_endProgram);
 
+	_endProgram = false;
 	_jump = oldJump;
 
 	return 0;
