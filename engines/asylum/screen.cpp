@@ -110,4 +110,8 @@ void Screen::drawWideScreen(int16 barSize) {
     }
 }
 
+void Screen::clearScreen() {
+    _sys->fillScreen(0);
+}
+
 } // end of namespace Asylum

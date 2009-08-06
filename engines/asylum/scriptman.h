@@ -130,7 +130,7 @@ enum opcodes {
 	kChangeScene,
 	k_unk2C_ActorSub,
 	kPlayMovie,
-	kStopAllObjectsSounds,
+	kStopAllBarriersSounds,
 	kSetActionFlag01,
 	kClearActionFlag01,		// 0x30
 	kResetSceneRect,
@@ -146,7 +146,7 @@ enum opcodes {
 	k_unk3B_PALETTE_MOD,
 	k_unk3C_CMP_VAL,
 	kWaitUntilFramePlayed,
-	kUpdateMatteBars,
+	kUpdateWideScreen,
 	k_unk3F,
 	k_unk40_SOUND,			// 0x40
 	kPlaySpeech,
@@ -163,7 +163,7 @@ enum opcodes {
 	kChangeActorField40,
 	kStopSound,
 	k_unk4E_RANDOM_COMMAND,
-	kDrawGame,
+	kClearScreen,
 	kQuit,					// 0x50
 	kJumpObjectFrame,
 	k_unk52,
