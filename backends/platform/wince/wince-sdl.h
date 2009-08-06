@@ -94,6 +94,7 @@ public:
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend
 	void undrawMouse();
 	void blitCursor();
+	bool showMouse(bool visible);
 	void setMousePos(int x, int y);
 	void copyRectToScreen(const byte *src, int pitch, int x, int y, int w, int h); // overloaded by CE backend (FIXME)
 	void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);

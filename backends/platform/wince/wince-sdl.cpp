@@ -1934,8 +1934,7 @@ void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseData = (byte *) malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
 
-	if (w > _mouseBackupDim || h > _mouseBackupDim)
-	{
+	if (w > _mouseBackupDim || h > _mouseBackupDim) {
 		// mouse has been undrawn, adjust sprite backup area
 		free(_mouseBackupOld);
 		free(_mouseBackupToolbar);
@@ -2050,7 +2049,6 @@ void OSystem_WINCE3::undrawMouse() {
 
 	if (_mouseNeedsRedraw)
 		return;
-	_mouseNeedsRedraw = true;
 
 	int old_mouse_x = _mouseCurState.x - _mouseHotspotX;
 	int old_mouse_y = _mouseCurState.y - _mouseHotspotY;
@@ -2101,6 +2099,22 @@ void OSystem_WINCE3::undrawMouse() {
 	addDirtyRect(old_mouse_x, old_mouse_y, old_mouse_w, old_mouse_h);
 
 	SDL_UnlockSurface(_overlayVisible ? _overlayscreen : _screen);
+
+	_mouseNeedsRedraw = true;
+}
+
+bool OSystem_WINCE3::showMouse(bool visible) {
+	if (_mouseVisible == visible)
+		return visible;
+
+	if (visible == false)
+		undrawMouse();
+
+	bool last = _mouseVisible;
+	_mouseVisible = visible;
+	_mouseNeedsRedraw = true;
+
+	return last;
 }
 
 void OSystem_WINCE3::drawToolbarMouse(SDL_Surface *surf, bool draw) {
