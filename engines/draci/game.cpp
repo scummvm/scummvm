@@ -266,27 +266,40 @@ void Game::loop() {
 				// If there is an object under the cursor, display its title and enable
 				// executing its look and use scripts
 				if (curObject != kObjectNotFound) {					
-					// Mark dirty rectangle to update the text
-					titleAnim->markDirtyRect(surface);	
 
-					// Set the title for the current object
-					title->setText(obj->_title);
+					if(_vm->_mouse->isCursorOn()) {
+						// Mark dirty rectangle to delete the previous text
+						titleAnim->markDirtyRect(surface);	
 
-					// Move the title to the correct place (just above the cursor)
-					int newX = surface->centerOnX(x, title->getWidth());
-					int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
-					titleAnim->setRelative(newX, newY);
+						// Set the title for the current object
+						title->setText(obj->_title);
+
+						// Move the title to the correct place (just above the cursor)
+						int newX = surface->centerOnX(x, title->getWidth());
+						int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
+						titleAnim->setRelative(newX, newY);
+					}
 
 					if (_loopSubstatus == kStatusOrdinary) {
 						// HACK: Test running look and use scripts
 						if (_vm->_mouse->lButtonPressed()) {
+							// Delete title text
+							title->setText("");
+
+							_vm->_mouse->cursorOff();
 							_vm->_mouse->lButtonSet(false);				
 							_vm->_script->run(obj->_program, obj->_look);
+							_vm->_mouse->cursorOn();
 						}
 
 						if (_vm->_mouse->rButtonPressed()) {
+							// Delete title text
+							title->setText("");
+
+							_vm->_mouse->cursorOff();
 							_vm->_mouse->rButtonSet(false);
 							_vm->_script->run(obj->_program, obj->_use);
+							_vm->_mouse->cursorOn();
 						}
 					}
 				} else {
