@@ -53,7 +53,7 @@ typedef struct GraphicQueueItem {
 
 class BlowUpPuzzle {
 public:
-	BlowUpPuzzle(Screen *screen, Sound *sound, Scene *scene, Video *video);
+	BlowUpPuzzle(Scene *scene);
 	virtual ~BlowUpPuzzle();
 
     virtual void handleEvent(Common::Event *event, bool doUpdate){};
@@ -119,7 +119,7 @@ const Common::Rect BlowUpPuzzleVCRPolies[10] = {
 
 class BlowUpPuzzleVCR : public BlowUpPuzzle {
 public:
-    BlowUpPuzzleVCR(Screen *screen, Sound *sound, Scene *scene, Video *video);
+    BlowUpPuzzleVCR(Scene *scene);
 	~BlowUpPuzzleVCR();
 
 	void handleEvent(Common::Event *event, bool doUpdate);

@@ -38,14 +38,16 @@ namespace Asylum {
 
 class Screen;
 class Sound;
+class Video;
 class Text;
 class SceneResource;
+class BlowUpPuzzle;
 struct ActionDefinitions;
 struct PolyDefinitions;
 
 class Scene {
 public:
-	Scene(Screen *screen, Sound *sound, uint8 sceneIdx);
+	Scene(Screen *screen, Sound *sound, Video *video, uint8 sceneIdx);
 	~Scene();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -70,6 +72,13 @@ public:
 	ResourcePack*	 getResourcePack() { return _resPack; }
     ResourcePack*	 getResourceMusicPack() { return _musPack; }
 	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
+    
+    BlowUpPuzzle*   getBlowUpPuzzle() { return _blowUp; }
+    void            setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
+
+    Screen* getScreen() { return _screen; }
+    Sound*  getSound() { return _sound; }
+    Video*  getVideo() { return _video; }
 
 private:
 #if 0
@@ -85,6 +94,8 @@ private:
 
 	Screen		  *_screen;
 	Sound		  *_sound;
+    Video		  *_video;
+    BlowUpPuzzle  *_blowUp;
 	Common::Event *_ev;
 
 	Text			*_text;
