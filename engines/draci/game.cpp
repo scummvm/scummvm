@@ -330,9 +330,16 @@ void Game::loop() {
 			uint speechDuration = kBaseSpeechDuration + 
 								  speechFrame->getLength() * kSpeechTimeUnit / 
 							 	  (128 / 16 + 1);
-				
-			if ((_vm->_system->getMillis() - _speechTick) >= speechDuration) {
+
+			// If the current speech text has expired or the user clicked a mouse button, 
+			// advance to the next line of text			
+			if (_vm->_mouse->lButtonPressed() || 
+				_vm->_mouse->rButtonPressed() || 
+				(_vm->_system->getMillis() - _speechTick) >= speechDuration) {
+
 				_shouldExitLoop = true;
+				_vm->_mouse->lButtonSet(false);
+				_vm->_mouse->rButtonSet(false);
 			} else {
 				_shouldExitLoop = false;
 			}
