@@ -206,9 +206,14 @@ bool DraciEngine::handleEvents() {
 
 				// Check if there is an escape room defined for the current room
 				if (escRoom != kNoEscRoom) {				
+
+					// Schedule room change
 					_game->setRoomNum(_game->getEscRoom());
 					_game->setGateNum(0);
 					_game->_roomChange = true;
+
+					// End any currently running GPL programs
+					_script->endCurrentProgram();
 				}
 			}
 			// Show walking map toggle
