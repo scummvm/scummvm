@@ -247,11 +247,6 @@ void Game::loop() {
 			int x = _vm->_mouse->getPosX();
 			int y = _vm->_mouse->getPosY();
 
-			// If the player clicked on a walkable position, move the dragon there
-			if (_vm->_mouse->lButtonPressed() && _currentRoom._walkingMap.isWalkable(x, y)) {
-				walkHero(x, y);
-			}
-
 			// Find the game object under the cursor
 			// (to be more precise, one that corresponds to the animation under the cursor)
 			int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
@@ -303,9 +298,24 @@ void Game::loop() {
 						}
 					}
 				} else {
-					// If there is no object under the cursor, just delete the previous title				
+					// We haven't found an object under the cursor
+
+					// Delete the previous title				
 					titleAnim->markDirtyRect(surface);
 					title->setText("");
+
+					// TODO: Implement "smart" walkability checking (so one can click
+					// anywhere on the screen and the engine finds the nearest walkable
+					// point)
+
+					// If the player clicked on a walkable position and we are in the
+					// appropriate loop status, move the dragon there
+					if (_vm->_mouse->lButtonPressed() && 
+						_currentRoom._walkingMap.isWalkable(x, y) &&
+						_loopSubstatus == kStatusOrdinary) {
+
+						walkHero(x, y);
+					}
 				}
 
 				debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
