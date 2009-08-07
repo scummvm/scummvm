@@ -681,6 +681,7 @@ void GUI_LoK::updateSavegameString() {
 }
 
 int GUI_LoK::saveGame(Button *button) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	updateMenuButton(button);
 	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
 
@@ -729,6 +730,7 @@ int GUI_LoK::saveGame(Button *button) {
 		}
 	}
 
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	return 0;
 }
 
