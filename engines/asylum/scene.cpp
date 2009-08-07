@@ -25,6 +25,7 @@
 
 #include "asylum/scene.h"
 #include "asylum/sceneres.h"
+#include "asylum/utilities.h"
 
 namespace Asylum {
 
@@ -98,6 +99,7 @@ void Scene::enterScene() {
 	_sound->playMusic(_musPack, 0);
 
 	_isActive = true;
+	_walking  = false;
 }
 
 ActionDefinitions* Scene::getDefaultActionList() {
@@ -299,13 +301,41 @@ void Scene::update() {
 			updateBarrier(_screen, _resPack, b);
 	}
 
+	// DEBUGGING
+	// Check current walk region
+	PolyDefinitions currentWalkRegion;
+
+	for (uint32 a = 0; a < worldStats->numActions; a++) {
+		if (worldStats->actions[a].actionType == 0) {
+			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[worldStats->actions[a].polyIdx];
+			if (Utils.pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
+				debugShowWalkRegion(&poly);
+				currentWalkRegion = poly;
+				break;
+			}
+		}
+	}
+
+
 	// TESTING
 	// Main actor walking
 	if (!_rightButton) {
-		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01)	// TESTING - only draw if visible flag
+		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01) {	// TESTING - only draw if visible flag
+			// Check if the character was walking before the right-button
+			// was released. If so, change the resource to one where he/she
+			// is standing still, facing the last active direction
+			if (_walking) {
+				int currentAction = mainActor->getCurrentAction();
+				if (currentAction > 0)
+					mainActor->setAction(currentAction + 5);
+				_walking = false;
+			}
 			mainActor->drawActor(_screen);
+		}
 	} else {
-		mainActor->walkTo(_screen, _mouseX, _mouseY);
+		_walking = true;
+
+		mainActor->walkTo(_screen, _mouseX, _mouseY, &currentWalkRegion);
 		updateCursor();
 	}
 
@@ -318,7 +348,10 @@ void Scene::update() {
 	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
 		BarrierItem b = worldStats->barriers[p];
 		if (b.flags & 0x20) {
-			if ((b.boundingRect.left + b.x <= _mouseX + _startX) && (_mouseX + _startX < b.boundingRect.right + b.x) && (b.boundingRect.top + b.y <= _mouseY + _startY) && (_mouseY + _startY < b.boundingRect.bottom + b.y)) {
+			if ((b.boundingRect.left + b.x <= _mouseX + _startX) &&
+				(_mouseX + _startX < b.boundingRect.right + b.x) &&
+				(b.boundingRect.top + b.y <= _mouseY + _startY) &&
+				(_mouseY + _startY < b.boundingRect.bottom + b.y)) {
 				animateCursor();
 				curBarrier = (int32)p;
 				break;
@@ -336,23 +369,11 @@ void Scene::update() {
 		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
 			if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
-				if (pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
+				if (Utils.pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
 					curHotspot = (int32)p;
 					animateCursor();
 					break;
 				}
-			}
-		}
-	}
-
-	// DEBUGGING
-	// Check current walk region
-	for (uint32 a = 0; a < worldStats->numActions; a++) {
-		if (worldStats->actions[a].actionType == 0) {
-			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[worldStats->actions[a].polyIdx];
-			if (pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
-				debugShowWalkRegion(&poly);
-				break;
 			}
 		}
 	}
@@ -456,32 +477,6 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 	_sceneResource->getWorldStats()->barriers[barrierIndex] = barrier;
 
 	delete gra;
-}
-
-bool Scene::pointInPoly(PolyDefinitions *poly, int x, int y) {
-	// Copied from backends/vkeybd/polygon.cpp
-	int  yflag0;
-	int  yflag1;
-	bool inside_flag = false;
-	unsigned int pt;
-
-	Common::Point *vtx0 = &poly->points[poly->numPoints - 1];
-	Common::Point *vtx1 = &poly->points[0];
-
-	yflag0 = (vtx0->y >= y);
-	for (pt = 0; pt < poly->numPoints; pt++, vtx1++) {
-		yflag1 = (vtx1->y >= y);
-		if (yflag0 != yflag1) {
-			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
-				inside_flag = !inside_flag;
-			}
-		}
-		yflag0 = yflag1;
-		vtx0   = vtx1;
-	}
-
-	return inside_flag;
 }
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {

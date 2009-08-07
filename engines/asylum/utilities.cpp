@@ -23,51 +23,51 @@
  *
  */
 
-#ifndef ASYLUM_ENCOUNTERS_H_
-#define ASYLUM_ENCOUNTERS_H_
+#include "asylum/utilities.h"
 
-#include "common/array.h"
-#include "asylum/scene.h"
+#include "common/system.h"
+
+DECLARE_SINGLETON(Asylum::Utilities);
 
 namespace Asylum {
 
-typedef struct EncounterItem {
-	uint32 keywordIndex;
-	uint32 field2;
-	uint32 scriptResId;
-	uint32 array[50];
-	uint16 value;
-} EncounterItem;
+static bool g_initialized = false;
 
-typedef struct EncounterStruct {
-	uint32 x1;
-	uint32 y1;
-	uint32 x2;
-	uint32 y2;
-	uint32 frameNum;
-	uint32 transTableNum;
-	uint32 status;
-	uint32 grResId;
-} EncounterStruct;
+Utilities::Utilities() {
+	if (!g_initialized) {
+		g_initialized = true;
+	}
 
-class Encounter {
-public:
-	Encounter(Scene *scene);
-	virtual ~Encounter();
+}
 
-	void setVariable(int idx, int value) { _variables[idx] = value; }
-	void run(int encounterIdx, int barrierId1, int barrierId2, int characterIdx);
+Utilities::~Utilities() {
+	g_initialized = false;
+}
 
-private:
-	uint16 *_variables;
-	uint16 _anvilStyleFlag;
+bool Utilities::pointInPoly(PolyDefinitions *poly, int x, int y) {
+	// Copied from backends/vkeybd/polygon.cpp
+	int  yflag0;
+	int  yflag1;
+	bool inside_flag = false;
+	unsigned int pt;
 
-	EncounterItem *_currentEncounter;
-	Common::Array<EncounterItem> _items;
-	Scene *_scene;
+	Common::Point *vtx0 = &poly->points[poly->numPoints - 1];
+	Common::Point *vtx1 = &poly->points[0];
 
-}; // end of class Encounter
+	yflag0 = (vtx0->y >= y);
+	for (pt = 0; pt < poly->numPoints; pt++, vtx1++) {
+		yflag1 = (vtx1->y >= y);
+		if (yflag0 != yflag1) {
+			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
+				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
+				inside_flag = !inside_flag;
+			}
+		}
+		yflag0 = yflag1;
+		vtx0   = vtx1;
+	}
+
+	return inside_flag;
+}
 
 } // end of namespace Asylum
-
-#endif

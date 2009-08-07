@@ -23,50 +23,26 @@
  *
  */
 
-#ifndef ASYLUM_ENCOUNTERS_H_
-#define ASYLUM_ENCOUNTERS_H_
+#ifndef ASYLUM_UTILITIES_H_
+#define ASYLUM_UTILITIES_H_
 
-#include "common/array.h"
-#include "asylum/scene.h"
+#include "common/singleton.h"
+
+#include "asylum/sceneres.h"
 
 namespace Asylum {
 
-typedef struct EncounterItem {
-	uint32 keywordIndex;
-	uint32 field2;
-	uint32 scriptResId;
-	uint32 array[50];
-	uint16 value;
-} EncounterItem;
-
-typedef struct EncounterStruct {
-	uint32 x1;
-	uint32 y1;
-	uint32 x2;
-	uint32 y2;
-	uint32 frameNum;
-	uint32 transTableNum;
-	uint32 status;
-	uint32 grResId;
-} EncounterStruct;
-
-class Encounter {
+class Utilities: public Common::Singleton<Utilities> {
 public:
-	Encounter(Scene *scene);
-	virtual ~Encounter();
-
-	void setVariable(int idx, int value) { _variables[idx] = value; }
-	void run(int encounterIdx, int barrierId1, int barrierId2, int characterIdx);
+	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 
 private:
-	uint16 *_variables;
-	uint16 _anvilStyleFlag;
+	friend class Common::Singleton<SingletonBaseType>;
+	Utilities();
+	~Utilities();
+}; // end of class Utilities
 
-	EncounterItem *_currentEncounter;
-	Common::Array<EncounterItem> _items;
-	Scene *_scene;
-
-}; // end of class Encounter
+#define Utils	(::Asylum::Utilities::instance())
 
 } // end of namespace Asylum
 

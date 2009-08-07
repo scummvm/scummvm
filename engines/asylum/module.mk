@@ -16,7 +16,8 @@ MODULE_OBJS := \
 	actor.o \
 	encounters.o \
 	scriptman.o \
-	blowuppuzzle.o
+	blowuppuzzle.o \
+	utilities.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)

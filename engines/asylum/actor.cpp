@@ -23,10 +23,11 @@
  *
  */
 
+#include "common/endian.h"
+
 #include "asylum/actor.h"
 #include "asylum/screen.h"
-
-#include "common/endian.h"
+#include "asylum/utilities.h"
 
 namespace Asylum {
 
@@ -129,52 +130,79 @@ void MainActor::drawActor(Screen *screen) {
 			frame->surface.h );
 }
 
-void MainActor::walkTo(Screen *screen, uint16 x, uint16 y) {
+void MainActor::walkTo(Screen *screen, uint16 x, uint16 y, PolyDefinitions *region) {
 	// TODO: pathfinding! The character can walk literally anywhere
 	int newAction = _currentAction;
 
+	// step is the increment by which to move the
+	// actor in a given direction
+	int step = 2;
+
+	uint16 newX = _actorX;
+	uint16 newY = _actorY;
+	bool   done = false;
 	// Walking left...
 	if (x < _actorX) {
 		newAction = kWalkW;
-		_actorX-=2;
-		if (ABS(y - _actorY) <= 30) {
-			setAction(newAction);
-			drawActor(screen);
-			return;
-		}
+		newX -= step;
+		if (ABS(y - _actorY) <= 30)
+			done = true;
 	}
 
 	// Walking right...
 	if (x > _actorX) {
 		newAction = kWalkE;
-		_actorX+=2;
-		if (ABS(y - _actorY) <= 30) {
-			setAction(newAction);
-			drawActor(screen);
-			return;
-		}
+		newX += step;
+		if (ABS(y - _actorY) <= 30)
+			done = true;
 	}
 
 	// Walking up...
-	if (y < _actorY) {
+	if (y < _actorY && !done) {
 		if (newAction != _currentAction && newAction == kWalkW && _actorX - x > 30)
 			newAction = kWalkNW;	// up left
 		else if (newAction != _currentAction && newAction == kWalkE && x - _actorX > 30)
 			newAction = kWalkNE;	// up right
 		else
 			newAction = kWalkN;
-		_actorY-=2;
+
+		newY -= step;
 	}
 
 	// Walking down...
-	if (y > _actorY) {
+	if (y > _actorY && !done) {
 		if (newAction != _currentAction && newAction == kWalkW && _actorX - x > 30)
 			newAction = kWalkSW;	// down left
 		else if (newAction != _currentAction && newAction == kWalkE && x - _actorX > 30)
 			newAction = kWalkSE;	// down right
 		else
 			newAction = kWalkS;
-		_actorY+=2;
+
+		newY += step;
+	}
+
+	// DEBUGGING
+	// Show registration point from
+	// which we're calculating the
+	// actor's barrier hit-test
+	Graphics::Surface surface;
+	surface.create(5, 5, 1);
+	Common::Rect rect;
+
+	rect.top = newY;
+	rect.left = newX;
+	rect.right = newX;
+	rect.bottom = newY + 4;
+	surface.frameRect(rect, 0x33);
+
+	screen->copyRectToScreen((byte*)surface.pixels, 5, newX, newY, 5, 5);
+
+	surface.free();
+
+
+	if (Utils.pointInPoly(region, newX, newY)) {
+		_actorX = newX;
+		_actorY = newY;
 	}
 
 	setAction(newAction);

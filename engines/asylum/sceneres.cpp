@@ -48,6 +48,10 @@ int SceneResource::getBarrierIndexById(uint32 id) {
 	return -1;
 }
 
+BarrierItem* SceneResource::getBarrierById(uint32 id) {
+	return &_worldStats->barriers[getBarrierIndexById(id)];
+}
+
 bool SceneResource::load(uint8 sceneIdx) {
 	char sceneTag[6];
 	Common::File* fd = new Common::File;
