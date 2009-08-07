@@ -227,7 +227,7 @@ uint32 VideoText::getTextWidth(const char *text) {
 
 void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
 	assert (_fontResource);
-	const char *curChar = text;
+	const byte *curChar = (byte *)text;
 	int curX = x;
 
 	while (*curChar) {
