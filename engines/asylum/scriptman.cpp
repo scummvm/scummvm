@@ -80,7 +80,23 @@ void ScriptManager::setScriptIndex(uint32 index) {
 }
 
 void ScriptManager::setGameFlag(int flag) {
-	_gameFlags[flag] &= ~(1 << flag);
+	_gameFlags[flag / 32] |= 1 << flag % -32;
+}
+
+void ScriptManager::clearGameFlag(int flag) {
+	_gameFlags[flag / 32] &= ~(1 << flag % -32);
+}
+
+void ScriptManager::toggleGameFlag(int flag) {
+	_gameFlags[flag / 32] ^= 1 << flag % -32;
+}
+
+bool ScriptManager::isGameFlagSet(int flag) {
+	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 != 0;
+}
+
+bool ScriptManager::isGameFlagNotSet(int flag) {
+	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
 }
 
 void ScriptManager::processActionList() {
@@ -107,28 +123,37 @@ void ScriptManager::processActionList() {
 				lineIncrement = 0;
 				break;
 
-/* 0x01 */  case kSetGameFlag:
-				setGameFlag(currentCommand->param1);
+/* 0x01 */  case kSetGameFlag: {
+                int flagNum = currentCommand->param1;
+                if(flagNum >= 0)
+				    setGameFlag(currentCommand->param1);
+            }
 				break;
 
 /* 0x02 */  case kClearGameFlag: {
 				int flagNum = currentCommand->param1;
-				_gameFlags[flagNum] &= ~(1 << flagNum);
+				if(flagNum >= 0)
+				    clearGameFlag(currentCommand->param1);
 			}
 				break;
 
-/* 0x03 */  //case kToogleGameFlag:
-/* 0x04 */  case kJumpIfGameFlag:
-				if (currentCommand->param1) {
-					bool doJump = false;
+/* 0x03 */  case kToogleGameFlag: {
+                int flagNum = currentCommand->param1;
+				if(flagNum >= 0)
+				    toggleGameFlag(currentCommand->param1);
+            }
+                break;
+/* 0x04 */  case kJumpIfGameFlag: {
+                int flagNum = currentCommand->param1;
+				if (flagNum) {
+					bool doJump = isGameFlagNotSet(flagNum);
 					if (currentCommand->param2)
-						doJump = _gameFlags[currentCommand->param1] == 0;
-					else
-						doJump = _gameFlags[currentCommand->param1] != 0;
+						doJump = isGameFlagSet(flagNum);
 					
 					if (doJump)
 						_currentLine = currentCommand->param3;
 				}
+            }
 				break;
 
 /* 0x05 */  case kHideCursor:
@@ -139,6 +164,7 @@ void ScriptManager::processActionList() {
 /* 0x06 */  case kShowCursor:
 				_scene->_screen->showCursor();
 				_allowInput = true;
+                // TODO: clear_flag_01()
 				break;
 
 /* 0x07 */  case kPlayAnimation: {
