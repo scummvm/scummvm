@@ -1043,6 +1043,7 @@ void Tfmx::doSong(int songPos, bool stopAudio) {
 		_playerCtx.patternSkip = tempo;
 	}
 	setInterruptFreqUnscaled(ciaIntervall);
+	Paula::setAudioFilter(true);
 
 	_playerCtx.patternCount = 0;
 	if (trackRun())

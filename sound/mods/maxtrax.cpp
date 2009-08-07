@@ -57,7 +57,7 @@ MaxTrax::MaxTrax(int rate, bool stereo)
 	_playerCtx.frameUnit = (uint16)((1000 * (1<<8)) /  _playerCtx.vBlankFreq);
 	_playerCtx.scoreIndex = -1;
 	_playerCtx.nextEvent = 0;
-	_playerCtx.volume = 0x64;
+	_playerCtx.volume = 0x40;
 
 	_playerCtx.tempo = 120;
 	_playerCtx.tempoTime = 0;
@@ -322,6 +322,7 @@ bool MaxTrax::playSong(int songIndex, bool loop) {
 	_playerCtx.musicLoop = loop;
 
 	setTempo(_playerCtx.tempoInitial << 4);
+	Paula::setAudioFilter(_playerCtx.filterOn);
 	_playerCtx.tempoTime = 0;
 	_playerCtx.scoreIndex = songIndex;
 	_playerCtx.ticks = 0;
@@ -567,14 +568,15 @@ void MaxTrax::noteOff(VoiceContext &voice, const byte note) {
 }
 
 void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
-//	chan.modulation = 0;
-//	chan.modulationTime = 1000;
-//	chan.microtonal = -1;
+	chan.modulation = 0;
+	chan.modulationTime = 1000;
+	chan.microtonal = -1;
 	chan.portamentoTime = 500;
 	chan.pitchBend = 64 << 7;
 	chan.pitchReal = 0;
 	chan.pitchBendRange = 24;
 	chan.volume = 128;
+	// TODO: Not all flags sre (re)set, this might make a difference for the unimplemented commands
 //	chan.flags &= ~ChannelContext::kFlagPortamento & ~ChannelContext::kFlagMicrotonal;
 	chan.isAltered = true;
 	if (rightChannel)
@@ -616,7 +618,6 @@ int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, boo
 		voice.stopEventCommand = note;
 		voice.stopEventParameter = kNumChannels;
 		voice.stopEventTime = duration << 8;
-		debug("Extranote: %d, stoptime: %d", voiceIndex, (voice.stopEventTime / (_playerCtx.frameUnit * 50)) );
 	}
 	return voiceIndex;
 }

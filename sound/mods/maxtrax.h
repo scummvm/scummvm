@@ -25,7 +25,6 @@
 
 // see if all engines using this class are DISABLED
 #if !defined(ENABLE_KYRA)
-#error trying to include the MaxTrax Header with no engine enabled that uses it
 
 // normal Header Guard
 #elif !defined SOUND_MODS_MAXTRAX_H
@@ -126,7 +125,7 @@ private:
 		uint16	modulation;
 		uint16	modulationTime;
 
-//		int16	microtonal;
+		int16	microtonal;
 
 		uint16	portamentoTime;
 
@@ -136,14 +135,13 @@ private:
 
 		uint8	volume;
 		uint8	voicesActive;
-//		uint8	number;
 
 		enum {
 			kFlagRightChannel = 1 << 0,
 			kFlagPortamento = 1 << 1,
 			kFlagDamper = 1 << 2,
 			kFlagMono = 1 << 3,
-//			kFlagMicrotonal = 1 << 4,
+			kFlagMicrotonal = 1 << 4,
 			kFlagModVolume = 1 << 5
 		};
 		byte	flags;
