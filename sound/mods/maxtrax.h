@@ -43,11 +43,15 @@ public:
 	bool playSong(int songIndex, bool loop = false);
 	void advanceSong(int advance = 1);
 	int playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide);
-	void setVolume(const byte volume) { _playerCtx.volume = volume; }
-	void setTempo(const uint16 tempo) {
-		_playerCtx.tickUnit = (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * _playerCtx.vBlankFreq));
-	}
+	void setVolume(const byte volume) { Common::StackLock lock(_mutex); _playerCtx.volume = volume; }
+	void setTempo(const uint16 tempo);
 	void stopMusic();
+	/**
+	 * Set a callback function for sync-events.
+	 * @param callback Callback function, will be called synchronously, so DONT modify the player 
+	 *		directly in response
+	 */
+	void setSignalCallback(void (*callback) (int)) { Common::StackLock lock(_mutex); _playerCtx.syncCallBack = callback; }
 
 protected:
 	void interrupt();
@@ -95,6 +99,10 @@ private:
 		int		scoreIndex;
 		const Event	*nextEvent;
 		int32	nextEventTime;
+
+		void (*syncCallBack) (int);
+		const Event	*repeatPoint[4];
+		byte	repeatCount[4];
 	} _playerCtx;
 
 	struct Envelope {

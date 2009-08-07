@@ -42,6 +42,9 @@ int32 calcVolumeDelta(int32 delta, uint16 time, uint16 vBlankFreq) {
 	// div <= 1000 means time to small (or even 0)
 	return (div <= 1000) ? delta : (1000 * delta) / div;
 }
+int32 calcTempo(const uint16 tempo, uint16 vBlankFreq) {
+	return (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * vBlankFreq));
+}
 }
 
 namespace Audio {
@@ -61,6 +64,7 @@ MaxTrax::MaxTrax(int rate, bool stereo)
 
 	_playerCtx.tempo = 120;
 	_playerCtx.tempoTime = 0;
+	_playerCtx.syncCallBack = 0;
 
 	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i)
 		resetChannel(_channelCtx[i], (i & 1) != 0);
@@ -99,44 +103,41 @@ void MaxTrax::interrupt() {
 		int32 eventDelta = _playerCtx.nextEventTime - millis;
 		for (; eventDelta <= 0; eventDelta += (++curEvent)->startTime) {
 			const byte cmd = curEvent->command;
-			const byte data = curEvent->parameter;
-			const uint16 stopTime = curEvent->stopTime;
-			ChannelContext &channel = _channelCtx[data & 0x0F];
+			ChannelContext &channel = _channelCtx[curEvent->parameter & 0x0F];
 
 			// outPutEvent(*curEvent);
 			// debug("CurTime, EventDelta, NextDelta: %d, %d, %d", millis, eventDelta, eventDelta + curEvent[1].startTime );
 
 			if (cmd < 0x80) {	// Note
-				const uint16 vol = (data & 0xF0) >> 1;
-				const int8 voiceIndex = noteOn(channel, cmd, vol, kPriorityScore);
+				const int8 voiceIndex = noteOn(channel, cmd, (curEvent->parameter & 0xF0) >> 1, kPriorityScore);
 				if (voiceIndex >= 0) {
 					VoiceContext &voice = _voiceCtx[voiceIndex];
 					voice.stopEventCommand = cmd;
-					voice.stopEventParameter = data & 0x0F;
-					voice.stopEventTime = (eventDelta + stopTime) << 8;
+					voice.stopEventParameter = curEvent->parameter & 0x0F;
+					voice.stopEventTime = (eventDelta + curEvent->stopTime) << 8;
 				}
 
 			} else {
 				switch (cmd) {
 
 				case 0x80:	// TEMPO
-					if ((_playerCtx.tickUnit >> 8) > stopTime) {
-						setTempo(data << 4);
+					if ((_playerCtx.tickUnit >> 8) > curEvent->stopTime) {
+						_playerCtx.tickUnit = calcTempo(curEvent->parameter << 4, _playerCtx.vBlankFreq);
 						_playerCtx.tempoTime = 0;
 					} else {
 						_playerCtx.tempoStart = _playerCtx.tempo;
-						_playerCtx.tempoDelta = (data << 4) - _playerCtx.tempoStart;
-						_playerCtx.tempoTime  = (stopTime << 8);
+						_playerCtx.tempoDelta = (curEvent->parameter << 4) - _playerCtx.tempoStart;
+						_playerCtx.tempoTime  = (curEvent->stopTime << 8);
 						_playerCtx.tempoTicks = 0;
 					}
 					break;
 				
 				case 0xC0:	// PROGRAM
-					channel.patch = &_patch[stopTime & (kNumPatches - 1)];
+					channel.patch = &_patch[curEvent->stopTime & (kNumPatches - 1)];
 					break;
 
 				case 0xE0:	// BEND
-					channel.pitchBend = ((stopTime & 0x7F00) >> 1) | (stopTime & 0x7f);
+					channel.pitchBend = ((curEvent->stopTime & 0x7F00) >> 1) | (curEvent->stopTime & 0x7f);
 					channel.pitchReal = (((int32)channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
 					channel.isAltered = true;
 					break;
@@ -151,7 +152,36 @@ void MaxTrax::interrupt() {
 					// stop processing for this tick
 					goto endOfEventLoop;
 
-				case 0xA0:	// SPECIAL
+				case 0xA0: 	// SPECIAL
+					switch (curEvent->stopTime >> 8){
+					case 0x01:	// SPECIAL_SYNC
+						if (_playerCtx.syncCallBack)
+							_playerCtx.syncCallBack(curEvent->stopTime & 0xFF);
+						break;
+					case 0x02:	// SPECIAL_BEGINREP
+						// we allow a depth of 4 loops
+						for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i) {
+							if (!_playerCtx.repeatPoint[i]) {
+								_playerCtx.repeatPoint[i] = curEvent;
+								_playerCtx.repeatCount[i] = curEvent->stopTime & 0xFF;
+								break;
+							}
+						}
+						break;
+					case 0x03:	// SPECIAL_ENDREP
+						for (int i = ARRAYSIZE(_playerCtx.repeatPoint) - 1; i >= 0; --i) {
+							if (_playerCtx.repeatPoint[i]) {
+								if (_playerCtx.repeatCount[i]--)
+									curEvent = _playerCtx.repeatPoint[i]; // gets incremented by 1 at end of loop
+								else
+									_playerCtx.repeatPoint[i] = 0;
+								break;
+							}
+						}
+						break;
+					}
+					break;
+
 				case 0xB0:	// CONTROL
 					// TODO: controlChange((byte)stopTime, (byte)(stopTime >> 8))
 				default:
@@ -174,7 +204,7 @@ endOfEventLoop:
 				_playerCtx.tempoTime = 0;
 				newTempo += _playerCtx.tempoDelta;
 			}
-			setTempo(_playerCtx.tempoStart + newTempo);
+			_playerCtx.tickUnit = calcTempo(_playerCtx.tempoStart + newTempo, _playerCtx.vBlankFreq);
 		}
 	}
 
@@ -307,6 +337,11 @@ endOfEventLoop:
 	}
 }
 
+void MaxTrax::setTempo(const uint16 tempo) {
+	Common::StackLock lock(_mutex);
+	_playerCtx.tickUnit = calcTempo(tempo, _playerCtx.vBlankFreq);
+}
+
 void MaxTrax::stopMusic() {
 	Common::StackLock lock(_mutex);
 	_playerCtx.musicPlaying = false;
@@ -327,6 +362,8 @@ bool MaxTrax::playSong(int songIndex, bool loop) {
 	_playerCtx.scoreIndex = songIndex;
 	_playerCtx.ticks = 0;
 
+	for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i)
+		_playerCtx.repeatPoint[i] = 0;
 	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
 		killVoice((byte)i);
 	for (int i = 0; i < kNumChannels; ++i)
