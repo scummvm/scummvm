@@ -62,6 +62,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _video;
 	delete _sound;
 	delete _screen;
+	delete _encounter;
 }
 
 Common::Error AsylumEngine::run() {
@@ -115,6 +116,10 @@ Common::Error AsylumEngine::go() {
 	// Set up main menu
 	_mainMenu = new MainMenu(_screen, _sound, _scene);
 
+
+	// XXX Testing
+	_encounter = new Encounter(_scene);
+
 	// Enter first scene
 	_scene->enterScene();
 
@@ -155,6 +160,11 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 				}
 
 				return;
+			}
+
+			// XXX Encounter TEST
+			if (ev.kbd.keycode == Common::KEYCODE_e) {
+				_encounter->run(1, 1584, 1584, 0);
 			}
 
             // FIXME: TEST ONLY

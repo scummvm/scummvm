@@ -60,7 +60,7 @@ public:
 	
 	ActionDefinitions* getDefaultActionList();
 	ActionDefinitions* getActionList(int actionListIndex);
-	
+
 	void setActorPosition(int actorIndex, int x, int y);
 	void setActorAction(int actorIndex, int action);
 	void actorVisible(int actorIndex, bool visible);
@@ -103,6 +103,7 @@ private:
 	GraphicResource *_cursorResource;
 	GraphicFrame	*_background;
 
+	bool	_walking;
 	uint32	_mouseX;
 	uint32	_mouseY;
 	int32	_startX;
@@ -133,7 +134,6 @@ private:
 	void debugShowPolygons();
 	void debugShowBarriers();
 	void debugShowWalkRegion(PolyDefinitions *poly);
-	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 	
 	friend class ScriptManager;
 }; // end of class Scene

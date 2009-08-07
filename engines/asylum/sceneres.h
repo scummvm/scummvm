@@ -44,6 +44,7 @@ class AsylumEngine;
 class WorldStats;
 class GamePolygons;
 class ActionList;
+struct BarrierItem;
 
 #if 0
 // TODO/FIXME: Are there REALLY any points which go beyond 32768???
@@ -71,6 +72,7 @@ public:
 	MainActor*	  getMainActor()	{ return _mainActor; }
 	
 	int getBarrierIndexById(uint32 id);
+	BarrierItem* getBarrierById(uint32 id);
 
 private:
 

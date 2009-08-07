@@ -32,6 +32,7 @@
 namespace Asylum {
 
 class Screen;
+struct PolyDefinitions;
 
 // TODO properly use this enum as opposed to just
 // using it for visual reference :P
@@ -137,7 +138,7 @@ public:
 	void setActionByIndex(int index);
 	void drawActorAt(Screen *screen, uint16 x, uint16 y);
 	void drawActor(Screen *screen);
-	void walkTo(Screen *screen, uint16 x, uint16 y);
+	void walkTo(Screen *screen, uint16 x, uint16 y, PolyDefinitions *region);
 	int getCurrentAction() { return _currentAction; }
 
 	uint16 _actorX, _actorY;
