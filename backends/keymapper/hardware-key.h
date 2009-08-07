@@ -127,7 +127,27 @@ public:
 		List<const HardwareKey*>::const_iterator it;
 
 		for (it = _keys.begin(); it != _keys.end(); it++) {
-			if ((*it)->key == keystate)
+			if ((*it)->key.keycode == keystate.keycode)
+				return (*it);
+		}
+		return 0;
+	}
+
+	const HardwareMod *findHardwareMod(const char *id) const {
+		List<const HardwareMod*>::const_iterator it;
+
+		for (it = _mods.begin(); it != _mods.end(); it++) {
+			if (strncmp((*it)->hwModId, id, HWKEY_ID_SIZE) == 0)
+				return (*it);
+		}
+		return 0;
+	}
+
+	const HardwareMod *findHardwareMod(const KeyState& keystate) const {
+		List<const HardwareMod*>::const_iterator it;
+
+		for (it = _mods.begin(); it != _mods.end(); it++) {
+			if ((*it)->modFlags == keystate.flags)
 				return (*it);
 		}
 		return 0;

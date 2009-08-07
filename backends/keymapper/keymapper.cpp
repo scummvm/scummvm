@@ -272,6 +272,10 @@ const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
 	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
 }
 
+const HardwareMod *Keymapper::findHardwareMod(const KeyState& key) {
+	return (_hardwareKeys) ? _hardwareKeys->findHardwareMod(key) : 0;
+}
+
 } // end of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER

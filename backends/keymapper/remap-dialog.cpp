@@ -239,11 +239,15 @@ void RemapDialog::handleKeyDown(Common::KeyState state) {
 void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
 		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
+		const HardwareMod *hwmod = _keymapper->findHardwareMod(state);
 
 		debug(0, "Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
 
 		if (hwkey) {
-			_activeRemapAction->mapKey(hwkey);
+			HardwareKey *temphwkey = new HardwareKey(*hwkey);
+			temphwkey->description = hwkey->description;
+			temphwkey->key.flags = hwmod->modFlags;
+			_activeRemapAction->mapKey(temphwkey);
 			_activeRemapAction->getParent()->saveMappings();
 			_changes = true;
 			stopRemapping();

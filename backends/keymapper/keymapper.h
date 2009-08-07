@@ -170,6 +170,11 @@ public:
 	 */
 	const HardwareKey *findHardwareKey(const KeyState& key);
 
+	/**
+	 * Return a HardwareMod pointer for the given key state
+	 */
+	const HardwareMod *findHardwareMod(const KeyState& key);
+
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
 	const Stack<MapRecord>& getActiveStack() const { return _activeMaps; }
