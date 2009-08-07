@@ -42,7 +42,7 @@ deb:
 
 # Special target to create a application wrapper for Mac OS X
 bundle_name = ScummVM.app
-bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
+bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -57,7 +57,7 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
 	$(STRIP) $(bundle_name)/Contents/MacOS/scummvm
 
-iphonebundle: iphone $(srcdir)/dists/iphone/Info.plist
+iphonebundle: iphone
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
