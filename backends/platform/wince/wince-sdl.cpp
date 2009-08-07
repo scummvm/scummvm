@@ -2471,9 +2471,12 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 			}
 
 			if (_toolbarHandler.action(event.mouse.x, event.mouse.y, false)) {
-				if (!_toolbarHandler.drawn())
+				if (!_toolbarHandler.drawn()) {
 					_toolbarHighDrawn = false;
 					internUpdateScreen();
+				}
+				return false;
+
 			}
 			return true;
 
