@@ -98,9 +98,9 @@ void ScriptManager::processActionList() {
 			}
 
             // TODO: this should be a pointer to allow changes in commands array
-			ActionCommand currentCommand = _currentScript->commands[_currentLine];
+			ActionCommand *currentCommand = &_currentScript->commands[_currentLine];
 
-			switch (currentCommand.opcode) {
+			switch (currentCommand->opcode) {
 
 /* 0x00 */ 	case kReturn0:
 				done 		  = true;
@@ -108,26 +108,26 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x01 */  case kSetGameFlag:
-				setGameFlag(currentCommand.param1);
+				setGameFlag(currentCommand->param1);
 				break;
 
 /* 0x02 */  case kClearGameFlag: {
-				int flagNum = currentCommand.param1;
+				int flagNum = currentCommand->param1;
 				_gameFlags[flagNum] &= ~(1 << flagNum);
 			}
 				break;
 
 /* 0x03 */  //case kToogleGameFlag:
 /* 0x04 */  case kJumpIfGameFlag:
-				if (currentCommand.param1) {
+				if (currentCommand->param1) {
 					bool doJump = false;
-					if (currentCommand.param2)
-						doJump = _gameFlags[currentCommand.param1] == 0;
+					if (currentCommand->param2)
+						doJump = _gameFlags[currentCommand->param1] == 0;
 					else
-						doJump = _gameFlags[currentCommand.param1] != 0;
+						doJump = _gameFlags[currentCommand->param1] != 0;
 					
 					if (doJump)
-						_currentLine = currentCommand.param3;
+						_currentLine = currentCommand->param3;
 				}
 				break;
 
@@ -142,13 +142,13 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x07 */  case kPlayAnimation: {
-				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
+				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0)
 					_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
@@ -157,17 +157,17 @@ void ScriptManager::processActionList() {
 /* 0x08 */  //case kMoveScenePosition:
 /* 0x09 */  case kHideActor: {
 				uint32 actorIndex = 0;
-				if (currentCommand.param1 == -1)
+				if (currentCommand->param1 == -1)
 					;//actorIndex = _scene->getWorldStats()->playerActor;
 				else
-					actorIndex = currentCommand.param1;
+					actorIndex = currentCommand->param1;
 
 				if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors))
 					_scene->actorVisible(actorIndex, false);
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
@@ -175,17 +175,17 @@ void ScriptManager::processActionList() {
 
 /* 0x0A */  case kShowActor: {
 				uint32 actorIndex = 0;
-				if (currentCommand.param1 == -1)
+				if (currentCommand->param1 == -1)
 					;//actorIndex = _scene->getWorldStats()->playerActor;
 				else
-					actorIndex = currentCommand.param1;
+					actorIndex = currentCommand->param1;
 
 				if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors))
 					_scene->actorVisible(actorIndex, true);
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
@@ -193,19 +193,19 @@ void ScriptManager::processActionList() {
 
 /* 0x0B */  case kSetActorStats: {
 				uint32 actorIndex = 0;
-				if (currentCommand.param1 == -1)
+				if (currentCommand->param1 == -1)
 					;//actorIndex = _scene->getWorldStats()->playerActor;
 				else
-					actorIndex = currentCommand.param1;
+					actorIndex = currentCommand->param1;
 
 				if ((actorIndex >= 0) && (actorIndex < _scene->_sceneResource->getWorldStats()->numActors)) {
-					_scene->setActorPosition(actorIndex, currentCommand.param2, currentCommand.param3);
-					_scene->setActorAction(actorIndex, currentCommand.param4);
+					_scene->setActorPosition(actorIndex, currentCommand->param2, currentCommand->param3);
+					_scene->setActorAction(actorIndex, currentCommand->param4);
 				}
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
@@ -215,10 +215,10 @@ void ScriptManager::processActionList() {
 /* 0x0D */  //case kDisableActor:
 /* 0x0E */  case kEnableActor: {
 				int actorIndex = 0;
-				if (currentCommand.param1 == -1)
+				if (currentCommand->param1 == -1)
 					;//actorIndex = _scene->getWorldStats()->playerActor;
 				else
-					actorIndex = currentCommand.param1;
+					actorIndex = currentCommand->param1;
 
 				if (_scene->_sceneResource->getWorldStats()->actors[actorIndex].field_40 == 5) {
 					enableActorSub(actorIndex, 4);
@@ -227,9 +227,9 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x0F */  case kEnableBarriers: {
-				int barIdx = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
-				uint32 sndIdx = currentCommand.param3;
-				uint32 v59    = currentCommand.param2;
+				int barIdx = _scene->_sceneResource->getBarrierIndexById(currentCommand->param1);
+				uint32 sndIdx = currentCommand->param3;
+				uint32 v59    = currentCommand->param2;
 
 				if (!_currentScript->counter && _scene->getSceneIndex() != 13 && sndIdx != 0) {
 					// TODO
@@ -243,7 +243,7 @@ void ScriptManager::processActionList() {
 				if (_currentScript->counter >= 3 * v59 - 1) {
 					_currentScript->counter = 0;
 					_scene->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = 0;
-					processActionListSub02(_currentScript, &currentCommand, 2);
+					processActionListSub02(_currentScript, currentCommand, 2);
 					_currentLoops = 1; // v4 = 1;
 				} else {
 					int v64;
@@ -258,7 +258,7 @@ void ScriptManager::processActionList() {
 						_scene->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = v62 / v59 + 1;
 					}
 
-					processActionListSub02(_currentScript, &currentCommand, v64);
+					processActionListSub02(_currentScript, currentCommand, v64);
 
 				}
 			}
@@ -270,13 +270,13 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x11 */  case kDestroyObject: {
-				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
+				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0)
 					_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFDF;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
@@ -308,15 +308,15 @@ void ScriptManager::processActionList() {
 /* 0x29 */  //case kSetActorField638:
 /* 0x2A */  //case kJumpIfActorField638:
 /* 0x2B */  case kChangeScene:
-				_delayedSceneIndex = currentCommand.param1 + 4;
+				_delayedSceneIndex = currentCommand->param1 + 4;
 				debug(kDebugLevelScripts,
 						"Queueing Scene Change to scene %d...",
-						currentCommand.param1 + 4);
+						_delayedSceneIndex);
 				break;
 
 /* 0x2C */  //case k_unk2C_ActorSub:
 /* 0x2D */  case kPlayMovie:
-				_delayedVideoIndex = currentCommand.param1;
+				_delayedVideoIndex = currentCommand->param1;
 				break;
 
 /* 0x2E */  case kStopAllBarriersSounds:
@@ -336,7 +336,7 @@ void ScriptManager::processActionList() {
 /* 0x35 */  //case k_unk35:
 /* 0x36 */  //case k_unk36:
 /* 0x37 */  case kRunBlowUpPuzzle: {
-				int blowUpPuzzleIdx = currentCommand.param1;
+				int blowUpPuzzleIdx = currentCommand->param1;
                 _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
                 _scene->getBlowUpPuzzle()->openBlowUp();
 			}
@@ -348,13 +348,13 @@ void ScriptManager::processActionList() {
 /* 0x3B */  //case k_unk3B_PALETTE_MOD:
 /* 0x3C */  //case k_unk3C_CMP_VAL:
 /* 0x3D */  case kWaitUntilFramePlayed: {
-				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand.param1);
+				int barrierIndex = _scene->_sceneResource->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0) {
 					uint32 frameNum = 0;
-					if (currentCommand.param2 == -1)
+					if (currentCommand->param2 == -1)
 						frameNum = _scene->_sceneResource->getWorldStats()->barriers[barrierIndex].frameCount - 1;
 					else
-						frameNum = currentCommand.param2;
+						frameNum = currentCommand->param2;
 
 					if (_scene->_sceneResource->getWorldStats()->barriers[barrierIndex].tickCount < frameNum) {
 						lineIncrement = 0;
@@ -363,19 +363,19 @@ void ScriptManager::processActionList() {
 				} else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
 				break;
 
 /* 0x3E */  case kUpdateWideScreen: {
-                int barSize = currentCommand.param1;
+                int barSize = currentCommand->param1;
                 if(barSize >= 22) {
-                    currentCommand.param1 = 0;
+                    currentCommand->param1 = 0;
                 } else {
                     _scene->_screen->drawWideScreen(4 * barSize);
-                    currentCommand.param1++;
+                    currentCommand->param1++;
                 }
             }
                 break;
@@ -384,7 +384,7 @@ void ScriptManager::processActionList() {
 /* 0x40 */  //case k_unk40_SOUND:
 /* 0x41 */  case kPlaySpeech: {
 				//	TODO - Add support for other param options
-				uint32 sndIdx = currentCommand.param1;
+				uint32 sndIdx = currentCommand->param1;
 				if ((int)sndIdx >= 0) {
 					if (sndIdx >= 259) {
 						sndIdx -= 9;
@@ -396,7 +396,7 @@ void ScriptManager::processActionList() {
 				} else
 					debugC(kDebugLevelScripts,
 							"Requested invalid sound ID:0x%02X in Scene %d Line %d.",
-							currentCommand.param1,
+							currentCommand->param1,
 							_scene->getSceneIndex(),
 							_currentLine);
 			}
@@ -413,8 +413,8 @@ void ScriptManager::processActionList() {
 /* 0x4A */  //case kJumpIfSoundPlaying:
 /* 0x4B */  //case kChangePlayerCharacterIndex:
 /* 0x4C */  case kChangeActorField40: { // TODO: figure out what is this field and what values are set
-                int actorIdx = currentCommand.param1;
-                int fieldType = currentCommand.param2;
+                int actorIdx = currentCommand->param1;
+                int fieldType = currentCommand->param2;
                 if(fieldType) {
                     if(_scene->getResources()->getWorldStats()->actors[actorIdx].field_40 < 11) {
                         _scene->getResources()->getWorldStats()->actors[actorIdx].field_40 = 14;
@@ -427,7 +427,7 @@ void ScriptManager::processActionList() {
 /* 0x4D */  //case kStopSound:
 /* 0x4E */  //case k_unk4E_RANDOM_COMMAND:
 /* 0x4F */  case kClearScreen:
-                if(currentCommand.param1) {
+                if(currentCommand->param1) {
                     _scene->_screen->clearScreen();
                 }
                 break;
@@ -455,7 +455,7 @@ void ScriptManager::processActionList() {
 			default:
 				debugC(kDebugLevelScripts,
 						"Unhandled opcode 0x%02X in Scene %d Line %d.",
-						currentCommand.opcode,
+						currentCommand->opcode,
 						_scene->getSceneIndex(),
 						_currentLine);
 				break;
