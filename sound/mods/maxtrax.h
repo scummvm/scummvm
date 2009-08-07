@@ -142,7 +142,7 @@ private:
 		int8	pitchBendRange;
 
 		uint8	volume;
-		uint8	voicesActive;
+//		uint8	voicesActive;
 
 		enum {
 			kFlagRightChannel = 1 << 0,
@@ -206,6 +206,7 @@ private:
 		byte	stopEventParameter;	// TODO: Remove?
 	} _voiceCtx[kNumVoices];
 
+	void MaxTrax::controlCh(ChannelContext &channel, byte command, byte data);
 	void freePatches();
 	void freeScores();
 	void resetChannel(ChannelContext &chan, bool rightChannel);
