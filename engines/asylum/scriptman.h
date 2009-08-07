@@ -53,6 +53,10 @@ public:
 	bool isProcessing() { return _processing; }
 
 	void setGameFlag(int flag);
+    void clearGameFlag(int flag);
+    void toggleGameFlag(int flag);
+    bool isGameFlagSet(int flag);
+    bool isGameFlagNotSet(int flag);
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
