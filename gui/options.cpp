@@ -48,6 +48,7 @@ enum {
 	kMidiGainChanged		= 'mgch',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
+	kMuteAllChanged			= 'mute',
 	kSubtitleToggle			= 'sttg',
 	kSubtitleSpeedChanged	= 'stsc',
 	kSpeechVolumeChanged	= 'vcvc',
@@ -454,6 +455,10 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_speechVolumeLabel->setValue(_speechVolumeSlider->getValue());
 		_speechVolumeLabel->draw();
 		break;
+	case kMuteAllChanged:
+		// 'true' because if control is disabled then event do not pass
+		setVolumeSettingsState(true);
+		break;
 	case kSubtitleToggle:
 		if (_subMode < 2)
 			_subMode++;
@@ -535,7 +540,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 
 	_enableVolumeSettings = enabled;
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions & Common::GUIO_NOMUSIC)
 		ena = false;
 
@@ -543,7 +548,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeSlider->setEnabled(ena);
 	_musicVolumeLabel->setEnabled(ena);
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions & Common::GUIO_NOSFX)
 		ena = false;
 
@@ -551,7 +556,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeSlider->setEnabled(ena);
 	_sfxVolumeLabel->setEnabled(ena);
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions & Common::GUIO_NOSPEECH)
 		ena = false;
 
@@ -701,7 +706,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const String &prefix) {
 	_musicVolumeSlider->setMaxValue(Audio::Mixer::kMaxMixerVolume);
 	_musicVolumeLabel->setFlags(WIDGET_CLEARBG);
 
-	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", "Mute All", 0, 0);
+	_muteCheckbox = new CheckboxWidget(boss, prefix + "vcMuteCheckbox", "Mute All", kMuteAllChanged, 0);
 
 
 	_sfxVolumeDesc = new StaticTextWidget(boss, prefix + "vcSfxText", "SFX volume:");
