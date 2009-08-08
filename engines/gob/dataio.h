@@ -26,16 +26,14 @@
 #ifndef GOB_DATAIO_H
 #define GOB_DATAIO_H
 
-
 #include "common/endian.h"
-
 #include "common/file.h"
 
 namespace Gob {
 
-#define MAX_FILES	30
-#define MAX_DATA_FILES	8
-#define MAX_SLOT_COUNT	8
+#define MAX_FILES      30
+#define MAX_DATA_FILES  8
+#define MAX_SLOT_COUNT  8
 
 class DataIO;
 
@@ -56,20 +54,20 @@ public:
 
 private:
 	DataIO *_io;
-	int16 _handle;
-	uint32 _size;
-	byte *_data;
+	int16   _handle;
+	uint32  _size;
+	byte   *_data;
+	bool    _dispose;
 	Common::MemoryReadStream *_stream;
-	bool _dispose;
 };
 
 class DataIO {
 public:
 	struct ChunkDesc {
-		char chunkName[13];
+		char   chunkName[13];
 		uint32 size;
 		uint32 offset;
-		byte packed;
+		byte   packed;
 		ChunkDesc() : size(0), offset(0), packed(0) { chunkName[0] = 0; }
 	};
 
@@ -77,10 +75,13 @@ public:
 
 	void openDataFile(const char *src, bool itk = 0);
 	void closeDataFile(bool itk = 0);
+
 	byte *getUnpackedData(const char *name);
-	void closeData(int16 handle);
+
+	void  closeData(int16 handle);
 	int16 openData(const char *path);
-	bool existData(const char *path);
+	bool  existData(const char *path);
+
 	DataStream *openAsStream(int16 handle, bool dispose = false);
 
 	int32 getDataSize(const char *name);
@@ -92,34 +93,47 @@ public:
 
 protected:
 	Common::File _filesHandles[MAX_FILES];
-	struct ChunkDesc *_dataFiles[MAX_DATA_FILES];
-	uint16 _numDataChunks[MAX_DATA_FILES];
-	int16 _dataFileHandles[MAX_DATA_FILES];
-	bool _dataFileItk[MAX_DATA_FILES];
-	int32 _chunkPos[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 _chunkOffset[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 _chunkSize[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	bool _isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
-	int32 _packedSize;
+
+	ChunkDesc *_dataFiles      [MAX_DATA_FILES];
+	uint16     _numDataChunks  [MAX_DATA_FILES];
+	int16      _dataFileHandles[MAX_DATA_FILES];
+	bool       _dataFileItk    [MAX_DATA_FILES];
+
+	ChunkDesc *_chunk        [MAX_SLOT_COUNT * MAX_DATA_FILES];
+	int32      _chunkPos     [MAX_SLOT_COUNT * MAX_DATA_FILES];
+	bool       _isCurrentSlot[MAX_SLOT_COUNT * MAX_DATA_FILES];
 
 	class GobEngine *_vm;
+
+	bool isDataFileChunk(int16 handle) const;
+	bool isPacked       (int16 handle) const;
+
+	int getFile (int16 handle) const;
+	int getSlot (int16 handle) const;
+	int getIndex(int16 handle) const;
+
+	int   getIndex (int file, int slot) const;
+	int16 getHandle(int file, int slot) const;
 
 	int16 file_open(const char *path);
 	Common::File *file_getHandle(int16 handle);
 	const Common::File *file_getHandle(int16 handle) const;
 
 	int16 getChunk(const char *chunkName);
-	char freeChunk(int16 handle);
+	char  freeChunk(int16 handle);
 	int32 readChunk(int16 handle, byte *buf, uint16 size);
 	int16 seekChunk(int16 handle, int32 pos, int16 from);
+
 	uint32 getChunkPos(int16 handle) const;
-	int32 getChunkSize(const char *chunkName);
+
+	int32 getChunkSize(const char *chunkName, int32 &packSize);
 
 	uint32 getPos(int16 handle);
-	void seekData(int16 handle, int32 pos, int16 from);
+	void   seekData(int16 handle, int32 pos, int16 from);
+
 	int32 readData(int16 handle, byte *buf, uint16 size);
 
-friend class DataStream;
+	friend class DataStream;
 };
 
 } // End of namespace Gob
