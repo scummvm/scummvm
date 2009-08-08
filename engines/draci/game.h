@@ -89,6 +89,7 @@ public:
 	}
 
 	bool isWalkable(int x, int y);
+	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect);
 
 private:
 	int _realWidth, _realHeight;
