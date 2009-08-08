@@ -168,4 +168,12 @@ uint Surface::centerOnY(uint y, uint height) {
 	return newY;
 }
 
+/**
+ * @brief Returns a Common::Rect corresponding to the surface.
+ */
+
+Common::Rect Surface::getRect() {
+	return Common::Rect(w, h);
+}
+
 } // End of namespace Draci
