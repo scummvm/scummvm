@@ -36,14 +36,11 @@
 
 namespace Asylum {
 
-class Scene;
-class Screen;
-class Sound;
 class Text;
 
 class MainMenu {
 public:
-	MainMenu(Screen *screen, Sound *sound, Scene *scene);
+	MainMenu();
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -83,10 +80,6 @@ private:
 	};
 
 	Common::Event *_ev;
-
-	Screen *_screen;
-	Sound  *_sound;
-	Scene  *_scene;
 
 	uint32	_mouseX;
 	uint32	_mouseY;

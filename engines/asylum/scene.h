@@ -47,7 +47,7 @@ struct PolyDefinitions;
 
 class Scene {
 public:
-	Scene(Screen *screen, Sound *sound, Video *video, uint8 sceneIdx);
+	Scene(uint8 sceneIdx);
 	~Scene();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -76,10 +76,6 @@ public:
     BlowUpPuzzle*   getBlowUpPuzzle() { return _blowUp; }
     void            setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 
-    Screen* getScreen() { return _screen; }
-    Sound*  getSound() { return _sound; }
-    Video*  getVideo() { return _video; }
-
 private:
 #if 0
 	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
@@ -91,13 +87,8 @@ private:
     ResourcePack	*_resPack;
 	ResourcePack	*_speechPack;
 	ResourcePack	*_musPack;
-
-	Screen		  *_screen;
-	Sound		  *_sound;
-    Video		  *_video;
-    BlowUpPuzzle  *_blowUp;
-	Common::Event *_ev;
-
+    BlowUpPuzzle    *_blowUp;
+	Common::Event   *_ev;
 	Text			*_text;
 	GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;

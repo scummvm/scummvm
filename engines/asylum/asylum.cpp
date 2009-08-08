@@ -31,6 +31,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -84,6 +85,10 @@ Common::Error AsylumEngine::init() {
 	_mainMenu	= 0;
 	_scene		= 0;
 
+	Shared.setScreen(_screen);
+	Shared.setSound(_sound);
+	Shared.setVideo(_video);
+
 	return Common::kNoError;
 }
 
@@ -102,19 +107,17 @@ Common::Error AsylumEngine::go() {
 	//_video->playVideo(1, kSubtitlesOn);
 
 	// Set up the game's main scene
-	_scene = new Scene(_screen, _sound, _video, 5);
-    _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene)); // this will be done by a Script command
+	_scene = new Scene(5);
+	Shared.setScene(_scene);
 
-	// TODO Since the ScriptMan is a singleton, setScene assignments could
-	// probably be rolled into the Scene constructor :D
-	ScriptMan.setScene(_scene);
+    _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR()); // this will be done by a Script command
 
 	// TODO This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P
 	ScriptMan.setScript(_scene->getDefaultActionList());
 
 	// Set up main menu
-	_mainMenu = new MainMenu(_screen, _sound, _scene);
+	_mainMenu = new MainMenu();
 
 
 	// XXX Testing
@@ -228,11 +231,9 @@ void AsylumEngine::processDelayedEvents() {
 		if (_scene)
 			delete _scene;
 
-		_scene = new Scene(_screen, _sound, _video, sceneIdx);
-
-		ScriptMan.setScene(_scene);
-
+		_scene = new Scene(sceneIdx);
 		_scene->enterScene();
+
 		ScriptMan.setDelayedSceneIndex(-1);
 		ScriptMan.setScript(_scene->getDefaultActionList());
 	}

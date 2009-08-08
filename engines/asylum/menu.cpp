@@ -26,14 +26,14 @@
 #include "asylum/menu.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
 /** This fixes the menu icons text x position on screen */
 const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
 
-MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
-	_screen(screen), _sound(sound), _scene(scene) {
+MainMenu::MainMenu() {
 	_mouseX				= 0;
 	_mouseY				= 0;
 	_leftClick			= false;
@@ -58,7 +58,7 @@ MainMenu::MainMenu(Screen *screen, Sound *sound, Scene *scene) :
 	_creditsResource	 = 0;
 	_creditsFadeResource = 0;
 
-	_text = new Text(_screen);
+	_text = new Text(Shared.getScreen());
 	_text->loadFont(_resPack, 16);	// 0x80010010, yellow font
 }
 
@@ -75,27 +75,27 @@ MainMenu::~MainMenu() {
 
 void MainMenu::openMenu() {
 	_active = true;
-	_scene->deactivate();
+	Shared.getScene()->deactivate();
 
 	// yellow font
 	_text->loadFont(_resPack, 0x80010010);
 
 	// Load the graphics palette
-	_screen->setPalette(_resPack, 17);
+	Shared.getScreen()->setPalette(_resPack, 17);
 	// Copy the bright background to the back buffer
 	GraphicFrame *bg = _bgResource->getFrame(1);
-	_screen->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set mouse cursor
-	_screen->setCursor(_cursorResource, 0);
-	_screen->showCursor();
+	Shared.getScreen()->setCursor(_cursorResource, 0);
+	Shared.getScreen()->showCursor();
 
 	// Stop all sounds
-	_sound->stopMusic();
-	_sound->stopSfx();
+	Shared.getSound()->stopMusic();
+	Shared.getSound()->stopSfx();
 
 	// Start playing music
-	_sound->playMusic(_resPack, 39);
+	Shared.getSound()->playMusic(_resPack, 39);
 
 	_previousActiveIcon = _activeIcon = -1;
 	_leftClick = false;
@@ -105,11 +105,11 @@ void MainMenu::openMenu() {
 
 void MainMenu::closeMenu() {
 	_active = false;
-	_scene->activate();
+	Shared.getScene()->activate();
 
 	// Stop menu sounds and menu music
-	_sound->stopSfx();
-	_sound->stopMusic();
+	Shared.getSound()->stopSfx();
+	Shared.getSound()->stopMusic();
 }
 
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
@@ -147,13 +147,13 @@ void MainMenu::update() {
 		if (_activeIcon != -1) {
 			// Copy the dark background to the back buffer
 			GraphicFrame *bg = _bgResource->getFrame(0);
-			_screen->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+			Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 			_activeMenuScreen = (MenuScreen) _activeIcon;
 
 			// Set the cursor
 			delete _cursorResource;
 			_cursorResource = new GraphicResource(_resPack, 3);
-			_screen->setCursor(_cursorResource, 0);
+			Shared.getScreen()->setCursor(_cursorResource, 0);
 		}
 
 		switch (_activeIcon) {
@@ -195,15 +195,15 @@ void MainMenu::update() {
 				_creditsFadeResource = new GraphicResource(_resPack, 23);
 			_creditsTextScroll = 0x1E0 - 30;
 			// Set credits palette
-			_screen->setPalette(_resPack, 26);
+			Shared.getScreen()->setPalette(_resPack, 26);
 			// Stop all sounds
-			_sound->stopMusic();
+			Shared.getSound()->stopMusic();
 			// Start playing music
-			_sound->playMusic(_resPack, 38);
+			Shared.getSound()->playMusic(_resPack, 38);
 			break;
 		case kReturnToGame:
 			closeMenu();
-			_scene->enterScene();
+			Shared.getScene()->enterScene();
 			break;
 		}
 	}
@@ -216,7 +216,7 @@ void MainMenu::updateCursor() {
 	if (_curMouseCursor == _cursorResource->getFrameCount() - 1)
 		_cursorStep = -1;
 
-	_screen->setCursor(_cursorResource, _curMouseCursor);
+	Shared.getScreen()->setCursor(_cursorResource, _curMouseCursor);
 }
 
 void MainMenu::updateEyesAnimation() {
@@ -249,7 +249,7 @@ void MainMenu::updateEyesAnimation() {
 	// TODO: kEyesCrossed state
 
 	GraphicFrame *eyeFrame = _eyeResource->getFrame(eyeFrameNum);
-	_screen->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->surface.w, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
+	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->surface.w, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
 }
 
 void MainMenu::updateMainMenu() {
@@ -289,7 +289,7 @@ void MainMenu::updateMainMenu() {
 			}
 
 			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
-			_screen->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+			Shared.getScreen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 			// Cycle icon frame
 			_curIconFrame++;
@@ -300,8 +300,8 @@ void MainMenu::updateMainMenu() {
 			_text->drawResTextCentered(MenuIconFixedXpos[iconNum], iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
 
 			// Play creepy voice
-			if (!_sound->isSfxActive() && _activeIcon != _previousActiveIcon) {
-				_sound->playSfx(_resPack, iconNum + 44);
+			if (!Shared.getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
+				Shared.getSound()->playSfx(_resPack, iconNum + 44);
 				_previousActiveIcon = _activeIcon;
 			}
 
@@ -312,7 +312,7 @@ void MainMenu::updateMainMenu() {
 
 void MainMenu::updateSubMenu() {
 	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
-	_screen->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 	// Cycle icon frame
 	_curIconFrame++;
@@ -580,10 +580,10 @@ void MainMenu::updateSubMenuShowCredits() {
 	int maxBound = 0;
 
 	GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
-	_screen->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
+	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
 	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->getFrameCount() - 1, _creditsBgFrame));
-	_screen->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
+	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
 
 	_creditsBgFrame++;
 	if (_creditsBgFrame >= _creditsResource->getFrameCount())
@@ -624,11 +624,11 @@ void MainMenu::updateSubMenuShowCredits() {
 
 	if (_leftClick) {
 		// Restore palette
-		_screen->setPalette(_resPack, 17);
+		Shared.getScreen()->setPalette(_resPack, 17);
 		// Stop all sounds
-		_sound->stopMusic();
+		Shared.getSound()->stopMusic();
 		// Start playing music
-		_sound->playMusic(_resPack, 39);
+		Shared.getSound()->playMusic(_resPack, 39);
 		exitSubMenu();
 	}
 }
@@ -639,12 +639,12 @@ void MainMenu::exitSubMenu() {
 
 	// Copy the bright background to the back buffer
 	GraphicFrame *bg = _bgResource->getFrame(1);
-	_screen->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set the cursor
 	delete _cursorResource;
 	_cursorResource = new GraphicResource(_resPack, 2);
-	_screen->setCursor(_cursorResource, 0);
+	Shared.getScreen()->setCursor(_cursorResource, 0);
 }
 
 } // end of namespace Asylum

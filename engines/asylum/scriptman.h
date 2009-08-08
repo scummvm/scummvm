@@ -39,7 +39,6 @@ public:
 
 	void processActionList();
 
-	void setScene(Scene *scene);
 	void setScript(ActionDefinitions *action);
 	void setScriptIndex(uint32 index);
 
@@ -70,7 +69,6 @@ private:
 	int  _delayedVideoIndex;
 	bool _allowInput;
 
-	Scene 			  *_scene;
 	ActionDefinitions *_currentScript;
 
 	// NOTE

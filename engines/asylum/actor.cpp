@@ -27,7 +27,7 @@
 
 #include "asylum/actor.h"
 #include "asylum/screen.h"
-#include "asylum/utilities.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -39,10 +39,12 @@ MainActor::MainActor(uint8 *data) {
 		dataPtr += 4;
 	}
 
-	_resPack = 0;
-	_graphic = 0;
-	_actorX = _actorY = 0;
-	_currentAction = 0;
+	_resPack         = 0;
+	_graphic         = 0;
+	_actorX          = 0;
+	_actorY          = 0;
+	_currentAction   = 0;
+	_currentWalkArea = 0;
 }
 
 MainActor::~MainActor() {
@@ -103,10 +105,10 @@ GraphicFrame *MainActor::getFrame() {
 	return frame;
 }
 
-void MainActor::drawActorAt(Screen *screen, uint16 x, uint16 y) {
+void MainActor::drawActorAt(uint16 x, uint16 y) {
 	GraphicFrame *frame = getFrame();
 
-	screen->copyRectToScreenWithTransparency(
+	Shared.getScreen()->copyRectToScreenWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
 			x,
@@ -118,10 +120,10 @@ void MainActor::drawActorAt(Screen *screen, uint16 x, uint16 y) {
 	_actorY = y;
 }
 
-void MainActor::drawActor(Screen *screen) {
+void MainActor::drawActor() {
 	GraphicFrame *frame = getFrame();
 
-	screen->copyToBackBufferWithTransparency(
+	Shared.getScreen()->copyToBackBufferWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
 			_actorX,
@@ -130,7 +132,14 @@ void MainActor::drawActor(Screen *screen) {
 			frame->surface.h );
 }
 
-void MainActor::walkTo(Screen *screen, uint16 x, uint16 y, PolyDefinitions *region) {
+void MainActor::setWalkArea(ActionItem *target) {
+	if (_currentWalkArea != target) {
+		ScriptMan.setScriptIndex(target->actionListIdx1);
+		_currentWalkArea = target;
+	}
+}
+
+void MainActor::walkTo(uint16 x, uint16 y) {
 	// TODO: pathfinding! The character can walk literally anywhere
 	int newAction = _currentAction;
 
@@ -195,18 +204,47 @@ void MainActor::walkTo(Screen *screen, uint16 x, uint16 y, PolyDefinitions *regi
 	rect.bottom = newY + 4;
 	surface.frameRect(rect, 0x33);
 
-	screen->copyRectToScreen((byte*)surface.pixels, 5, newX, newY, 5, 5);
+	Shared.getScreen()->copyRectToScreen((byte*)surface.pixels, 5, newX, newY, 5, 5);
 
 	surface.free();
 
+	int availableAreas[5];
+	int areaPtr = 0;
+	ActionItem *area;
 
-	if (Utils.pointInPoly(region, newX, newY)) {
-		_actorX = newX;
-		_actorY = newY;
+	// Check what valid walk region(s) is/are currently available
+	for (uint32 a = 0; a < Shared.getScene()->getResources()->getWorldStats()->numActions; a++) {
+		if (Shared.getScene()->getResources()->getWorldStats()->actions[a].actionType == 0) {
+			area = &Shared.getScene()->getResources()->getWorldStats()->actions[a];
+			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
+			if (Shared.pointInPoly(&poly, _actorX, _actorY)) {
+				availableAreas[areaPtr] = a;
+				areaPtr++;
+
+				if (areaPtr > 5)
+					error("More than 5 overlapping walk regions found. Increase buffer");
+			}
+		}
+	}
+
+	// Set the current walk region to the first available action area
+	// in the collection
+	setWalkArea(&Shared.getScene()->getResources()->getWorldStats()->actions[availableAreas[0]]);
+
+	// Check that we can walk in the current direction within any of the available
+	// walkable regions
+	for (int i = 0; i < areaPtr; i++) {
+		area = &Shared.getScene()->getResources()->getWorldStats()->actions[availableAreas[i]];
+		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
+		if (Shared.pointInPoly(region, newX, newY)) {
+			_actorX = newX;
+			_actorY = newY;
+			break;
+		}
 	}
 
 	setAction(newAction);
-	drawActor(screen);
+	drawActor();
 }
 
 } // end of namespace Asylum

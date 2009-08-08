@@ -25,7 +25,7 @@
 
 #include "asylum/scene.h"
 #include "asylum/sceneres.h"
-#include "asylum/utilities.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -35,12 +35,12 @@ namespace Asylum {
 int g_debugPolygons;
 int g_debugBarriers;
 
-Scene::Scene(Screen *screen, Sound *sound, Video *video, uint8 sceneIdx): _screen(screen), _sound(sound), _video(video) {
+Scene::Scene(uint8 sceneIdx) {
 	_sceneIdx		= sceneIdx;
 	_sceneResource	= new SceneResource;
 
 	if (_sceneResource->load(_sceneIdx)) {
-		_text 		= new Text(_screen);
+		_text 		= new Text(Shared.getScreen());
 		_resPack 	= new ResourcePack(sceneIdx);
 		_speechPack = new ResourcePack(3);
 
@@ -84,19 +84,19 @@ Scene::~Scene() {
  }
 
 void Scene::enterScene() {
-	_screen->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
+	Shared.getScreen()->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
 	_background = _bgResource->getFrame(0);
-	_screen->copyToBackBuffer(
+	Shared.getScreen()->copyToBackBuffer(
 			((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w,
 			0, 0, 640, 480);
 
 	_cursorStep		= 1;
 	_curMouseCursor	= 0;
-	_screen->setCursor(_cursorResource, 0);
-	_screen->showCursor();
+	Shared.getScreen()->setCursor(_cursorResource, 0);
+	Shared.getScreen()->showCursor();
 
 	// Music testing: play the first music track
-	_sound->playMusic(_musPack, 0);
+	Shared.getSound()->playMusic(_musPack, 0);
 
 	_isActive = true;
 	_walking  = false;
@@ -267,7 +267,7 @@ void Scene::animateCursor() {
 	if (_curMouseCursor == _cursorResource->getFrameCount() - 1)
 		_cursorStep = -1;
 
-	_screen->setCursor(_cursorResource, _curMouseCursor);
+	Shared.getScreen()->setCursor(_cursorResource, _curMouseCursor);
 }
 
 void Scene::update() {
@@ -283,7 +283,7 @@ void Scene::update() {
 	// debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
-	_screen->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
+	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
 			bg->surface.w,
 			0,
 			0,
@@ -294,24 +294,23 @@ void Scene::update() {
 	// This is a hack for scene 1. This really shouldn't be hardcoded, as the
 	// activation of this barrier should be interpreted by the script manager,
 	// but at the moment, we're not sure where it is in the script.
-	updateBarrier(_screen, _resPack, 1);	// inside the middle room
+	updateBarrier(Shared.getScreen(), _resPack, 1);	// inside the middle room
 
 	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
 		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)	//	TODO - enums for flags (0x20 is visible/playing?)
-			updateBarrier(_screen, _resPack, b);
+			updateBarrier(Shared.getScreen(), _resPack, b);
 	}
 
 	// DEBUGGING
 	// Check current walk region
-	PolyDefinitions currentWalkRegion;
-
 	for (uint32 a = 0; a < worldStats->numActions; a++) {
 		if (worldStats->actions[a].actionType == 0) {
-			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[worldStats->actions[a].polyIdx];
-			if (Utils.pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
+			ActionItem *area = &worldStats->actions[a];
+			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[area->polyIdx];
+			if (Shared.pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
 				debugShowWalkRegion(&poly);
-				currentWalkRegion = poly;
-				break;
+				mainActor->setWalkArea(area);
+				//break;
 			}
 		}
 	}
@@ -330,12 +329,12 @@ void Scene::update() {
 					mainActor->setAction(currentAction + 5);
 				_walking = false;
 			}
-			mainActor->drawActor(_screen);
+			mainActor->drawActor();
 		}
 	} else {
 		_walking = true;
 
-		mainActor->walkTo(_screen, _mouseX, _mouseY, &currentWalkRegion);
+		mainActor->walkTo(_mouseX, _mouseY);
 		updateCursor();
 	}
 
@@ -369,7 +368,7 @@ void Scene::update() {
 		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
 			if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
-				if (Utils.pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
+				if (Shared.pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
 					curHotspot = (int32)p;
 					animateCursor();
 					break;
@@ -440,7 +439,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		if (surface->h > 480)
 			startY = _startY;
 		
-		_screen->copyToBackBufferWithTransparency(
+		Shared.getScreen()->copyToBackBufferWithTransparency(
 				((byte*)surface->pixels) +
 				startY * surface->pitch +
 				startX * surface->bytesPerPixel,

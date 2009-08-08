@@ -23,27 +23,51 @@
  *
  */
 
-#ifndef ASYLUM_UTILITIES_H_
-#define ASYLUM_UTILITIES_H_
+#include "asylum/shared.h"
 
-#include "common/singleton.h"
+#include "common/system.h"
 
-#include "asylum/sceneres.h"
+DECLARE_SINGLETON(Asylum::SharedResources);
 
 namespace Asylum {
 
-class Utilities: public Common::Singleton<Utilities> {
-public:
-	bool pointInPoly(PolyDefinitions *poly, int x, int y);
+static bool g_initialized = false;
 
-private:
-	friend class Common::Singleton<SingletonBaseType>;
-	Utilities();
-	~Utilities();
-}; // end of class Utilities
+SharedResources::SharedResources() {
+	if (!g_initialized) {
+		g_initialized = true;
+	}
 
-#define Utils	(::Asylum::Utilities::instance())
+}
+
+SharedResources::~SharedResources() {
+	g_initialized = false;
+}
+
+bool SharedResources::pointInPoly(PolyDefinitions *poly, int x, int y) {
+	// Copied from backends/vkeybd/polygon.cpp
+	int  yflag0;
+	int  yflag1;
+	bool inside_flag = false;
+	unsigned int pt;
+
+	Common::Point *vtx0 = &poly->points[poly->numPoints - 1];
+	Common::Point *vtx1 = &poly->points[0];
+
+	yflag0 = (vtx0->y >= y);
+	for (pt = 0; pt < poly->numPoints; pt++, vtx1++) {
+		yflag1 = (vtx1->y >= y);
+		if (yflag0 != yflag1) {
+			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
+				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
+				inside_flag = !inside_flag;
+			}
+		}
+		yflag0 = yflag1;
+		vtx0   = vtx1;
+	}
+
+	return inside_flag;
+}
 
 } // end of namespace Asylum
-
-#endif
