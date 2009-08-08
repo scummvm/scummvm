@@ -183,8 +183,13 @@ Common::Error KyraEngine_LoK::init() {
 
 	_sound->setSoundList(&_soundData[kMusicIntro]);
 
-	_trackMap = _dosTrackMap;
-	_trackMapSize = _dosTrackMapSize;
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_trackMap = _amigaTrackMap;
+		_trackMapSize = _amigaTrackMapSize;
+	} else {
+		_trackMap = _dosTrackMap;
+		_trackMapSize = _dosTrackMapSize;
+	}
 
 	if (!_sound->init())
 		error("Couldn't init sound");

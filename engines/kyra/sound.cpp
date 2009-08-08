@@ -215,6 +215,13 @@ void KyraEngine_v1::snd_playWanderScoreViaMap(int command, int restart) {
 				_sound->playTrack(command);
 			}
 		}
+	} else if (_flags.platform == Common::kPlatformAmiga) {
+		if (_curMusicTheme != 1)
+			snd_playTheme(1, -1);
+
+		assert(command < _trackMapSize);
+		if (_trackMap[_lastMusicCommand] != _trackMap[command])
+			_sound->playTrack(_trackMap[command]);
 	}
 
 	_lastMusicCommand = command;

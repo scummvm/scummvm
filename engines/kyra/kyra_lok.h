@@ -504,6 +504,9 @@ protected:
 	static const int8 _dosTrackMap[];
 	static const int _dosTrackMapSize;
 
+	static const int8 _amigaTrackMap[];
+	static const int _amigaTrackMapSize;
+
 	// TODO: get rid of all variables having pointers to the static resources if possible
 	// i.e. let them directly use the _staticres functions
 	void initStaticResource();

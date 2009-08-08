@@ -2332,6 +2332,18 @@ const int8 KyraEngine_LoK::_dosTrackMap[] = {
 
 const int KyraEngine_LoK::_dosTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_dosTrackMap);
 
+const int8 KyraEngine_LoK::_amigaTrackMap[] = {
+	 0,  1, 32, 26, 31, 30, 33, 33,
+	32, 17, 27, 32, 25, 29, 25, 24,
+	23, 26, 26, 30, 28, 21, 21, 15,
+	 3, 15, 23, 25, 33, 21, 30, 22,
+	15,  3, 33, 11, 12, 13, 14, 22,
+	22, 22,  3,  3,  3, 23,  3,  3,
+	23,  3,  3,  3,  3,  3,  3, 33
+};
+
+const int KyraEngine_LoK::_amigaTrackMapSize = ARRAYSIZE(KyraEngine_LoK::_amigaTrackMap);
+
 // kyra engine v2 static data
 
 const int GUI_v2::_sliderBarsPosition[] = {
