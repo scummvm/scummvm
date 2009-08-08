@@ -1118,6 +1118,7 @@ void CopyMovieToScreen(void) {
 	BmvDrawText(true);
 	PalettesToVideoDAC();			// Keep palette up-to-date
 	UpdateScreenRect(Common::Rect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT));
+	g_system->updateScreen();
 	BmvDrawText(false);
 }
 
