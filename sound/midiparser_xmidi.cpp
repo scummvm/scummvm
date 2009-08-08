@@ -115,6 +115,8 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				byte *pos = _position._play_pos;
 				if (_loopCount < ARRAYSIZE(_loop) - 1)
 					_loopCount++;
+				else
+					warning("XMIDI: Exceeding maximum loop count %d", ARRAYSIZE(_loop));
 
 				_loop[_loopCount].pos = pos;
 				_loop[_loopCount].repeat = info.basic.param2;
@@ -127,11 +129,14 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 					// End the current loop.
 					_loopCount--;
 				} else {
-					_position._play_pos = _loop[_loopCount].pos;
 					// Repeat 0 means "loop forever".
 					if (_loop[_loopCount].repeat) {
 						if (--_loop[_loopCount].repeat == 0)
 							_loopCount--;
+						else
+							_position._play_pos = _loop[_loopCount].pos;
+					} else {
+						_position._play_pos = _loop[_loopCount].pos;
 					}
 				}
 			}
@@ -155,7 +160,6 @@ void MidiParser_XMIDI::parseNextEvent(EventInfo &info) {
 				warning("Unsupported XMIDI controller %d (0x%2x)",
 					info.basic.param1, info.basic.param1);
 			}
-			break;
 		}
 
 		// Should we really keep passing the XMIDI controller events to
