@@ -323,12 +323,8 @@ void Game::loop() {
 					titleAnim->markDirtyRect(surface);
 					title->setText("");
 
-					// TODO: Implement "smart" walkability checking (so one can click
-					// anywhere on the screen and the engine finds the nearest walkable
-					// point)
-
-					// If the player clicked on a walkable position and we are in the
-					// appropriate loop status, move the dragon there
+					// If we are in the appropriate loop status and the player clicked
+					// on the room, move the dragon to the nearest walkable point
 					if (_vm->_mouse->lButtonPressed() && 
 						_loopSubstatus == kStatusOrdinary) {
 
