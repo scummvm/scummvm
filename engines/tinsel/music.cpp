@@ -189,7 +189,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	}
 
 	// the index and length of the last tune loaded
-	static uint32 dwLastMidiIndex;
+	static uint32 dwLastMidiIndex = 0;
 	//static uint32 dwLastSeqLen;
 
 	uint32 dwSeqLen = 0;	// length of the sequence
@@ -257,14 +257,15 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 		midiStream.close();
 
 		// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
-		// which actually affects all ports, since it's specific to the multi language
-		// version.
+		// which actually affects all ports, since it's specific to the GRA version.
 		//
-		// The multilanguage version does not seem to set the channel volume at all for
-		// the intro track, thus we need to do that here. We only initialize the
-		// channels used in that sequence. And we are using 127 as default channel volume.
-		if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 &&
-			(_vm->getFeatures() & (GF_USE_3FLAGS | GF_USE_4FLAGS | GF_USE_5FLAGS))) {
+		// The GRA version does not seem to set the channel volume at all for the first
+		// intro track, thus we need to do that here. We only initialize the channels
+		// used in that sequence. And we are using 127 as default channel volume.
+		//
+		// Only in the GRA version dwFileOffset can be "38888", just to be sure, we
+		// check for the SCN files feature flag not being set though.
+		if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 && !(_vm->getFeatures() & GF_SCNFILES)) {
 			_vm->_midiMusic->send(0x7F07B0 |  3);
 			_vm->_midiMusic->send(0x7F07B0 |  5);
 			_vm->_midiMusic->send(0x7F07B0 |  8);
