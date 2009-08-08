@@ -754,8 +754,10 @@ static int OPLOpenTable(void) {
 }
 
 static void OPLCloseTable(void) {
+#ifndef __DS__
 	free(TL_TABLE);
 	free(SIN_TABLE);
+#endif
 	free(AMS_TABLE);
 	free(VIB_TABLE);
 	free(ENV_CURVE);
@@ -1137,7 +1139,11 @@ FM_OPL *OPLCreate(int type, int clock, int rate) {
 /* ----------  Destroy one of vietual YM3812 ----------       */
 void OPLDestroy(FM_OPL *OPL) {
 	OPL_UnLockTable();
+#ifdef __DS__
+	DS::fastRamReset();
+#else
 	free(OPL);
+#endif
 }
 
 /* ----------  Option handlers ----------       */
