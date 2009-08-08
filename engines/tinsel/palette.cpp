@@ -133,7 +133,6 @@ void psxPaletteMapper(PALQ *originalPal, uint8 *psxClut, byte *mapperTable) {
 void PalettesToVideoDAC(void) {
 	PALQ *pPalQ;				// palette Q iterator
 	VIDEO_DAC_Q *pDACtail = vidDACdata;	// set tail pointer
-	bool needUpdate = false;
 
 	// while Q is not empty
 	while (pDAChead != pDACtail) {
@@ -162,9 +161,6 @@ void PalettesToVideoDAC(void) {
 			pColours = pDACtail->pal.pRGBarray;
 		}
 
-		if (pDACtail->numColours > 0)
-			needUpdate = true;
-
 		// update the system palette
 		g_system->setPalette((byte *)pColours, pDACtail->destDACindex, pDACtail->numColours);
 
@@ -179,9 +175,6 @@ void PalettesToVideoDAC(void) {
 	// clear all palette moved bits
 	for (pPalQ = palAllocData; pPalQ < palAllocData + NUM_PALETTES; pPalQ++)
 		pPalQ->posInDAC &= ~PALETTE_MOVED;
-
-	if (needUpdate)
-		g_system->updateScreen();
 }
 
 /**
