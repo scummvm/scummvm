@@ -316,19 +316,27 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 #endif
 
 	if (bd || bu) {
-		PAD_EVENT(PADS_Z, Common::KEYCODE_RETURN, Common::ASCII_RETURN, 0);
-		PAD_EVENT(PADS_X, Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, 0);
-		PAD_EVENT(PADS_Y, Common::KEYCODE_PERIOD, '.', 0);
-		PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, 0);
-		PAD_EVENT(PADS_UP, Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
-		PAD_EVENT(PADS_DOWN, Common::KEYCODE_F7, Common::ASCII_F7, 0);
-		//PAD_EVENT(PADS_LEFT, Common::KEYCODE_F8, Common::ASCII_F8, 0);
+		byte flags = 0;
+
+		if (bh & PADS_UP) {
+			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
+
+			flags = Common::KBD_SHIFT;
+		}
 
 		if (bd & PADS_RIGHT) {
 			event.type = Common::EVENT_PREDICTIVE_DIALOG;
 
 			return true;
 		}
+
+		PAD_EVENT(PADS_Z, Common::KEYCODE_RETURN, Common::ASCII_RETURN, flags);
+		PAD_EVENT(PADS_X, Common::KEYCODE_ESCAPE, Common::ASCII_ESCAPE, flags);
+		PAD_EVENT(PADS_Y, Common::KEYCODE_PERIOD, '.', flags);
+		PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, flags);
+		PAD_EVENT(PADS_UP, Common::KEYCODE_LSHIFT, 0, flags);
+		PAD_EVENT(PADS_DOWN, Common::KEYCODE_F7, Common::ASCII_F7, flags);
+		//PAD_EVENT(PADS_LEFT, Common::KEYCODE_F8, Common::ASCII_F8, 0);
 
 		if ((bd | bu) & (PADS_A | PADS_B)) {
 			if (bd & PADS_A)
