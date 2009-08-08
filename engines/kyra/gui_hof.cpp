@@ -757,7 +757,6 @@ int GUI_HoF::optionsButton(Button *button) {
 	initMenu(*_currentMenu);
 	_madeSave = false;
 	_loadedSave = false;
-	_vm->_itemInHand = -1;
 	updateAllMenuButtons();
 
 	if (_isDeathMenu) {
@@ -821,6 +820,7 @@ void GUI_HoF::resetState(int item) {
 	_vm->setNextIdleAnimTimer();
 	_isDeathMenu = false;
 	if (!_loadedSave) {
+		_vm->_itemInHand = -1;
 		_vm->setHandItem(item);
 	} else {
 		_vm->setHandItem(_vm->_itemInHand);

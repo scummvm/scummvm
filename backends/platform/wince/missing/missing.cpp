@@ -42,6 +42,7 @@
 #endif
 #include "time.h"
 #include "dirent.h"
+#include "common/debug.h"
 
 char *strdup(const char *strSource);
 
@@ -135,7 +136,7 @@ EXT_C char *getcwd(char *buffer, int maxlen) {
 #endif
 EXT_C void GetCurrentDirectory(int len, char *buf) {
 	getcwd(buf,len);
-};
+}
 
 /*
 Windows CE fopen has non-standard behavior -- not
@@ -182,11 +183,19 @@ int _access(const char *path, int mode) {
 	HANDLE h = FindFirstFile(fname, &ffd);
 	FindClose(h);
 
-	if (h == INVALID_HANDLE_VALUE)
-		return -1;  //Can't find file
+	if (h == INVALID_HANDLE_VALUE) {
+		// WORKAROUND: WinCE 3.0 doesn't find paths ending in '\'
+		if (path[strlen(path)-1] == '\\') {
+			char p2[MAX_PATH];
+			strncpy(p2, path, strlen(path)-1);
+			p2[strlen(path) - 1]= '\0';
+			return _access(p2, mode);
+		} else
+			return -1;  //Can't find file
+	}
 
-	if (ffd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
-		// WORKAROUND: WinCE (or the emulator) sometimes returns bogus direcotry
+	if (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) {
+		// WORKAROUND: WinCE (or the emulator) sometimes returns bogus directory
 		// hits for files that don't exist. TRIPLE checking for the same fname
 		// seems to weed out those false positives.
 		// Exhibited in kyra engine.
@@ -206,7 +215,7 @@ int _access(const char *path, int mode) {
 			return 0;
 		case 06: //Check Read & Write permission
 		case 02: //Check Write permission
-			return ffd.dwFileAttributes&FILE_ATTRIBUTE_READONLY?-1:0;
+			return ffd.dwFileAttributes & FILE_ATTRIBUTE_READONLY ? -1 : 0;
 		case 04: //Check Read permission
 			return 0; //Assume always have read permission
 	}

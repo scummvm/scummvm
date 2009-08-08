@@ -362,13 +362,6 @@ private:
 	 * 					'seg' is a valid segment
 	 */
 	bool check(SegmentId seg);
-
-	void dbgPrint(const char* msg, void *i);	// for debug only
-
-	// Perform garbage collection
-	// Parameters: (EngineState *) s: The state to operate on
-	// Effects   : Unreachable objects in 's' are deallocated
-	//void sm_gc(EngineState *s);
 };
 
 } // End of namespace Sci

@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -92,7 +93,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 	*textName = 0;
 
 	_rnd = new Common::RandomSource();
-	syst->getEventManager()->registerRandomSource(*_rnd, "drascula");
+	g_eventRec.registerRandomSource(*_rnd, "drascula");
 
 	int cd_num = ConfMan.getInt("cdrom");
 	if (cd_num >= 0)
@@ -181,10 +182,6 @@ Common::Error DrasculaEngine::run() {
 
 	for (;;) {
 		int i;
-
-		VGA = (byte *)malloc(320 * 200);
-		memset(VGA, 0, 64000);
-
 		takeObject = 0;
 		_menuBar = false;
 		_menuScreen = false;
@@ -295,7 +292,6 @@ void DrasculaEngine::endChapter() {
 	MusicFadeout();
 	stopMusic();
 	freeMemory();
-	free(VGA);
 }
 
 bool DrasculaEngine::runCurrentChapter() {
@@ -716,7 +712,8 @@ bool DrasculaEngine::verify2() {
 
 Common::KeyCode DrasculaEngine::getScan() {
 	updateEvents();
-	if (_keyBufferHead == _keyBufferTail) return Common::KEYCODE_INVALID;
+	if (_keyBufferHead == _keyBufferTail)
+		return Common::KEYCODE_INVALID;
 
 	Common::KeyCode key = _keyBuffer[_keyBufferTail].keycode;
 	_keyBufferTail = (_keyBufferTail + 1) % KEYBUFSIZE;

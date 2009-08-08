@@ -29,6 +29,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #include "sound/mixer.h"
 
@@ -114,7 +115,7 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
 
 	_displayClip.left = _displayClip.top = 0;
-	syst->getEventManager()->registerRandomSource(_rnd, "saga");
+	g_eventRec.registerRandomSource(_rnd, "saga");
 }
 
 SagaEngine::~SagaEngine() {

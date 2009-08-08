@@ -1671,7 +1671,7 @@ void TuckerEngine::execData3PreUpdate_locationNum26() {
 
 void TuckerEngine::updateSprite_locationNum27(int i) {
 	int state;
-	if (_flagsTable[155] < 3 || _flagsTable[125] == 5) {
+	if (_flagsTable[155] < 3 || _flagsTable[155] == 5) {
 		state = -1;
 	} else if (_flagsTable[155] == 3) {
 		state = 1;

@@ -133,12 +133,14 @@ void CEActionsPocket::initInstanceGame() {
 	bool is_tucker = (gameid == "tucker");
 	bool is_groovie = (gameid == "groovie");
 	bool is_tinsel = (gameid == "tinsel");
+	bool is_cruise = (gameid == "cruise");
+	bool is_made = (gameid == "made");
 
 	GUI_Actions::initInstanceGame();
 
 	// See if a right click mapping could be needed
 	if (is_sword1 || is_sword2 || is_sky || is_queen || is_comi || is_gob || is_tinsel ||
-			is_samnmax || is_cine || is_touche || is_parallaction || is_drascula)
+			is_samnmax || is_cine || is_touche || is_parallaction || is_drascula || is_cruise)
 		_right_click_needed = true;
 
 	// See if a "hide toolbar" mapping could be needed
@@ -158,10 +160,10 @@ void CEActionsPocket::initInstanceGame() {
 	} else if (is_sky) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F5, SDLK_F5);
-	} else if (is_cine || is_drascula) {
+	} else if (is_cine || is_drascula || is_cruise) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_F10, SDLK_F10); // F10
-	} else if (is_agi) {
+	} else if (is_agi || is_made) {
 		_action_enabled[POCKET_ACTION_SAVE] = true;
 		_key_action[POCKET_ACTION_SAVE].setKey(Common::ASCII_ESCAPE, SDLK_ESCAPE);
 	} else if (is_parallaction) {
@@ -177,7 +179,7 @@ void CEActionsPocket::initInstanceGame() {
 	// Quit
 	_action_enabled[POCKET_ACTION_QUIT] = true;
 	// Skip
-	if (!is_cine && !is_parallaction && !is_groovie)
+	if (!is_cine && !is_parallaction && !is_groovie && !is_cruise && !is_made)
 		_action_enabled[POCKET_ACTION_SKIP] = true;
 	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
@@ -214,6 +216,12 @@ void CEActionsPocket::initInstanceGame() {
 		_key_action[POCKET_ACTION_MULTI].setKey('V', SDLK_v, KMOD_SHIFT); // FT cheat : shift-V
 	// Key bind method
 	_action_enabled[POCKET_ACTION_BINDKEYS] = true;
+	// Disable double-tap right-click for convenience
+	if (is_tinsel || is_cruise)
+		if (!ConfMan.hasKey("no_doubletap_rightclick")) {
+			ConfMan.setBool("no_doubletap_rightclick", true);
+			ConfMan.flushToDisk();
+		}
 }
 
 

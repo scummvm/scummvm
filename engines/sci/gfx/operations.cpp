@@ -1380,7 +1380,6 @@ static sci_event_t scummvm_get_event(GfxDriver *drv) {
 				// Open debug console
 				Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 				con->attach();
-				con->onFrame();
 
 				// Clear keyboard event
 				input.type = SCI_EVT_NONE;

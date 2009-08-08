@@ -189,7 +189,7 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 	}
 
 	// the index and length of the last tune loaded
-	static uint32 dwLastMidiIndex;
+	static uint32 dwLastMidiIndex = 0;
 	//static uint32 dwLastSeqLen;
 
 	uint32 dwSeqLen = 0;	// length of the sequence
@@ -256,6 +256,23 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 		midiStream.close();
 
+		// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
+		// which actually affects all ports, since it's specific to the GRA version.
+		//
+		// The GRA version does not seem to set the channel volume at all for the first
+		// intro track, thus we need to do that here. We only initialize the channels
+		// used in that sequence. And we are using 127 as default channel volume.
+		//
+		// Only in the GRA version dwFileOffset can be "38888", just to be sure, we
+		// check for the SCN files feature flag not being set though.
+		if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 && !(_vm->getFeatures() & GF_SCNFILES)) {
+			_vm->_midiMusic->send(0x7F07B0 |  3);
+			_vm->_midiMusic->send(0x7F07B0 |  5);
+			_vm->_midiMusic->send(0x7F07B0 |  8);
+			_vm->_midiMusic->send(0x7F07B0 | 10);
+			_vm->_midiMusic->send(0x7F07B0 | 13);
+		}
+
 		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 
 		// Store the length
@@ -303,6 +320,8 @@ int GetMidiVolume() {
 	return volMusic;
 }
 
+static int priorVolMusic = 0;
+
 /**
  * Sets the volume of the MIDI music.
  * @param vol			New volume - 0..MAXMIDIVOL
@@ -310,23 +329,24 @@ int GetMidiVolume() {
 void SetMidiVolume(int vol)	{
 	assert(vol >= 0 && vol <= Audio::Mixer::kMaxChannelVolume);
 
-	if (vol == 0 && volMusic == 0)	{
+	if (vol == 0 && priorVolMusic == 0)	{
 		// Nothing to do
-	} else if (vol == 0 && volMusic != 0) {
+	} else if (vol == 0 && priorVolMusic != 0) {
 		// Stop current midi sequence
 		StopMidi();
-	} else if (vol != 0 && volMusic == 0) {
+		_vm->_midiMusic->setVolume(vol);
+	} else if (vol != 0 && priorVolMusic == 0) {
 		// Perhaps restart last midi sequence
-		if (currentLoop) {
+		if (currentLoop)
 			PlayMidiSequence(currentMidi, true);
-			_vm->_midiMusic->setVolume(vol);
-		}
-	} else if (vol != 0 && volMusic != 0) {
+
+		_vm->_midiMusic->setVolume(vol);
+	} else if (vol != 0 && priorVolMusic != 0) {
 		// Alter current volume
 		_vm->_midiMusic->setVolume(vol);
 	}
 
-	volMusic = vol;
+	priorVolMusic = vol;
 }
 
 /**
@@ -374,6 +394,7 @@ void DeleteMidiBuffer() {
 
 MidiMusicPlayer::MidiMusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false) {
 	memset(_channel, 0, sizeof(_channel));
+	memset(_channelVolume, 0, sizeof(_channelVolume));
 	_masterVolume = 0;
 	this->open();
 	_xmidiParser = MidiParser::createParser_XMIDI();

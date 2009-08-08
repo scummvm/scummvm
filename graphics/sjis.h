@@ -35,6 +35,7 @@
 
 #include "common/scummsys.h"
 #include "common/stream.h"
+#include "common/util.h"
 
 #include "graphics/surface.h"
 
@@ -48,6 +49,24 @@ namespace Graphics {
 class FontSJIS {
 public:
 	virtual ~FontSJIS() {}
+
+	/**
+	 * Creates the first SJIS font, which ROM/font file is present.
+	 * It will also call loadData, so the user can just start
+	 * using the font.
+	 *
+	 * It'll prefer the platform specific ROM file, when platform
+	 * is set to a value, which's font ROM is supported.
+	 * So far that is only kPlatformFMTowns.
+	 *
+	 * The last file tried is ScummVM's SJIS.FNT file.
+	 */
+	static FontSJIS *createFont(const Common::Platform platform = Common::kPlatformUnknown);
+
+	/**
+	 * Load the font data.
+	 */
+	virtual bool loadData() = 0;
 
 	/**
 	 * Enable outline drawing.
@@ -69,6 +88,10 @@ public:
 
 	/**
 	 * Draws a SJIS encoded character on the given surface.
+	 *
+	 * TODO: Currently there is no assurance, that this method will only draw within
+	 * the surface boundaries. Thus the caller has to assure the glyph will fit at
+	 * the specified position.
 	 */
 	void drawChar(Graphics::Surface &dst, uint16 ch, int x, int y, uint32 c1, uint32 c2) const {
 		drawChar(dst.getBasePtr(x, y), ch, c1, c2, dst.pitch, dst.bytesPerPixel);
@@ -78,7 +101,7 @@ public:
 	 * Draws a SJIS char on the given raw buffer.
 	 *
 	 * @param dst	pointer to the destination
-	 * @param ch	character to draw
+	 * @param ch	character to draw (in little endian)
 	 * @param pitch	pitch of the destination buffer (size in *bytes*)
 	 * @param bpp	bytes per pixel of the destination buffer
 	 * @param c1	forground color
@@ -88,18 +111,11 @@ public:
 };
 
 /**
- * FM-TOWNS ROM based SJIS compatible font.
- *
- * This is used in KYRA and SCI.
+ * A base class to render 16x16 monochrome SJIS fonts.
  */
-class FontTowns : public FontSJIS {
+class FontSJIS16x16 : public FontSJIS {
 public:
-	FontTowns() : _outlineEnabled(false) {}
-
-	/**
-	 * Loads the ROM data from the given read stream.
-	 */
-	bool loadFromStream(Common::ReadStream &stream);
+	FontSJIS16x16() : _outlineEnabled(false) {}
 
 	void enableOutline(bool enable) { _outlineEnabled = enable; }
 
@@ -115,14 +131,51 @@ private:
 	template<typename Color>
 	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
 
+	bool _outlineEnabled;
+protected:
+
+	virtual const uint16 *getCharData(uint16 c) const = 0;
+};
+
+/**
+ * FM-TOWNS ROM based SJIS compatible font.
+ *
+ * This is used in KYRA and SCI.
+ */
+class FontTowns : public FontSJIS16x16 {
+public:
+	/**
+	 * Loads the ROM data from "FMT_FNT.ROM".
+	 */
+	bool loadData();
+
+private:
 	enum {
 		kFontRomSize = 262144
 	};
 
-	bool _outlineEnabled;
 	uint16 _fontData[kFontRomSize / 2];
 
-	static uint sjisToChunk(uint8 low, uint8 high);
+	const uint16 *getCharData(uint16 c) const;
+};
+
+/**
+ * Our custom SJIS FNT.
+ */
+class FontSjisSVM : public FontSJIS16x16 {
+public:
+	FontSjisSVM() : _fontData(0) {}
+	~FontSjisSVM() { delete[] _fontData; }
+
+	/**
+	 * Load the font data from "SJIS.FNT".
+	 */
+	bool loadData();
+
+private:
+	uint16 *_fontData;
+
+	const uint16 *getCharData(uint16 c) const;
 };
 
 // TODO: Consider adding support for PC98 ROM

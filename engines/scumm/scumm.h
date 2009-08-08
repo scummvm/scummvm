@@ -565,6 +565,9 @@ protected:
 	int32 *_scummVars;
 	byte *_bitVars;
 
+	bool _v0ObjectIndex;			// V0 Use object index, instead of object number
+	bool _v0ObjectInInventory;		// V0 Use object number from inventory
+
 	/* Global resource tables */
 	int _numVariables, _numBitVariables, _numLocalObjects;
 	int _numGlobalObjects, _numArray, _numVerbs, _numFlObject;
@@ -611,6 +614,12 @@ protected:
 
 	uint16 _mouseAndKeyboardStat;
 	byte _leftBtnPressed, _rightBtnPressed;
+
+	/**
+	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
+	 * This is currently only used for Indy3 mac to detect "double clicks".
+	 */
+	uint32 _lastInputScriptTime;
 
 	/** The bootparam, to be passed to the script 1, the bootscript. */
 	int _bootParam;
@@ -858,12 +867,14 @@ protected:
 	int getObjNewDir(int obj);
 	int getObjectIndex(int object) const;
 	int getObjectImageCount(int object);
+	int whereIsObjectInventory(int object);
 	int whereIsObject(int object) const;
 	int findObject(int x, int y);
 	void findObjectInRoom(FindObjectInRoom *fo, byte findWhat, uint object, uint room);
 public:
 	int getObjectOrActorXY(int object, int &x, int &y);	// Used in actor.cpp, hence public
 protected:
+	int getDist(int x, int y, int x2, int y2);
 	int getObjActToObjActDist(int a, int b); // Not sure how to handle
 	const byte *getObjOrActorName(int obj);		 // these three..
 	void setObjectName(int obj);
@@ -884,7 +895,6 @@ protected:
 protected:
 	/* Should be in Verb class */
 	uint16 _verbMouseOver;
-	int _inventoryOffset;
 	int8 _userPut;
 	uint16 _userState;
 

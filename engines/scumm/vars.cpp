@@ -538,9 +538,7 @@ void ScummEngine_v8::setupScummVars() {
 #endif
 
 void ScummEngine_v0::resetScummVars() {
-	_activeInventory = 0;
-	_activeObject = 0;
-	_activeVerb = 13;
+	resetSentence();
 
 	VAR(VAR_EGO) = 3;
 

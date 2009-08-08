@@ -88,6 +88,8 @@ public:
 	~ScummMenuDialog();
 	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
 
+	virtual void reflowLayout();
+
 protected:
 	ScummEngine		*_vm;
 
@@ -98,6 +100,8 @@ protected:
 #endif
 	SaveLoadChooser	*_saveDialog;
 	SaveLoadChooser	*_loadDialog;
+
+	GUI::ButtonWidget *_saveButton;
 
 	void save();
 	void load();

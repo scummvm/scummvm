@@ -263,9 +263,9 @@ void ResMan::resOpen(uint32 id) {  // load resource ID into memory
 		_memMan->alloc(memHandle, size);
 		Common::File *clusFile = resFile(id);
 		assert(clusFile);
-		clusFile->seek( resOffset(id) );
-		clusFile->read( memHandle->data, size);
-		if (clusFile->ioFailed()) {
+		clusFile->seek(resOffset(id));
+		clusFile->read(memHandle->data, size);
+		if (clusFile->err() || clusFile->eos()) {
 			error("Can't read %d bytes from offset %d from cluster file %s\nResource ID: %d (%08X)", size, resOffset(id), _prj.clu[(id >> 24) - 1].label, id, id);
 		}
 	} else

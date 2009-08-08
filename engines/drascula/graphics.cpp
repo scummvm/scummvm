@@ -24,6 +24,7 @@
  */
 
 #include "drascula/drascula.h"
+#include "graphics/surface.h"
 
 namespace Drascula {
 
@@ -47,7 +48,7 @@ void DrasculaEngine::allocMemory() {
 	assert(tableSurface);
 	extraSurface = (byte *)malloc(64000);
 	assert(extraSurface);
-	crosshairCursor = (byte *)malloc(40 * 25);
+	crosshairCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
 	assert(crosshairCursor);
 	mouseCursor = (byte *)malloc(OBJWIDTH * OBJHEIGHT);
 	assert(mouseCursor);
@@ -126,16 +127,18 @@ void DrasculaEngine::showFrame(bool firstFrame) {
 	}
 
 	byte *prevFrame = (byte *)malloc(64000);
-	memcpy(prevFrame, VGA, 64000);
+	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
+	memcpy(prevFrame, screenBuffer, 64000);
 
-	decodeRLE(pcxData, VGA);
+	decodeRLE(pcxData, screenBuffer);
 	free(pcxData);
 
 	if (!firstFrame)
-		mixVideo(VGA, prevFrame);
+		mixVideo(screenBuffer, prevFrame);
 
-	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	_system->unlockScreen();
 	_system->updateScreen();
+
 	if (firstFrame)
 		setPalette(cPal);
 
@@ -192,8 +195,9 @@ void DrasculaEngine::copyRect(int xorg, int yorg, int xdes, int ydes, int width,
 }
 
 void DrasculaEngine::updateScreen(int xorg, int yorg, int xdes, int ydes, int width, int height, byte *buffer) {
-	copyBackground(xorg, yorg, xdes, ydes, width, height, buffer, VGA);
-	_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+	byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
+	copyBackground(xorg, yorg, xdes, ydes, width, height, buffer, screenBuffer);
+	_system->unlockScreen();
 	_system->updateScreen();
 }
 
@@ -235,13 +239,30 @@ void DrasculaEngine::print_abc(const char *said, int screenX, int screenY) {
 	}	// for
 }
 
-void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
+int DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 	int signY, letterY, letterX = 0;
 	uint len = strlen(said);
 
 	int screenX = 1;
+	int lines = 1;
 
 	for (uint h = 0; h < len; h++) {
+		int wordLength;
+
+		// Look ahead to the end of the word.
+		wordLength = 0;
+		int pos = h;
+		while (said[pos] && said[pos] != ' ') {
+			wordLength++;
+			pos++;
+		}
+
+		if (screenX + wordLength * CHAR_WIDTH_OPC > 317) {
+			screenX = 0;
+			screenY += (CHAR_HEIGHT + 2);
+			lines++;
+		}
+
 		if (game == 1) {
 			letterY = 6;
 			signY = 15;
@@ -281,6 +302,8 @@ void DrasculaEngine::print_abc_opc(const char *said, int screenY, int game) {
 
 		screenX = screenX + CHAR_WIDTH_OPC;
 	}
+
+	return lines;
 }
 
 bool DrasculaEngine::textFitsCentered(char *text, int x) {
@@ -402,6 +425,7 @@ void DrasculaEngine::screenSaver() {
 
 		int x1_, y1_, off1, off2;
 
+		byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
 		for (int i = 0; i < 200; i++) {
 			for (int j = 0; j < 320; j++) {
 				x1_ = j + tempRow[i];
@@ -419,10 +443,11 @@ void DrasculaEngine::screenSaver() {
 				y1_ = checkWrapY(y1_);
 				off2 = 320 * y1_ + x1_;
 
-				VGA[320 * i + j] = ghost[bgSurface[off2] + (copia[off1] << 8)];
+				screenBuffer[320 * i + j] = ghost[bgSurface[off2] + (copia[off1] << 8)];
 			}
 		}
-		_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+
+		_system->unlockScreen();
 		_system->updateScreen();
 
 		_system->delayMillis(20);
@@ -515,11 +540,14 @@ int DrasculaEngine::playFrameSSN() {
 			decodeRLE(BufferSSN, screenSurface);
 			free(BufferSSN);
 			waitFrameSSN();
+
+			byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
 			if (FrameSSN)
-				mixVideo(VGA, screenSurface);
+				mixVideo(screenBuffer, screenSurface);
 			else
-				memcpy(VGA, screenSurface, 64000);
-			_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+				memcpy(screenBuffer, screenSurface, 64000);
+			
+			_system->unlockScreen();
 			_system->updateScreen();
 			FrameSSN++;
 		} else {
@@ -534,11 +562,13 @@ int DrasculaEngine::playFrameSSN() {
 				decodeOffset(BufferSSN, screenSurface, length);
 				free(BufferSSN);
 				waitFrameSSN();
+				byte *screenBuffer = (byte *)_system->lockScreen()->pixels;
 				if (FrameSSN)
-					mixVideo(VGA, screenSurface);
+					mixVideo(screenBuffer, screenSurface);
 				else
-					memcpy(VGA, screenSurface, 64000);
-				_system->copyRectToScreen((const byte *)VGA, 320, 0, 0, 320, 200);
+					memcpy(screenBuffer, screenSurface, 64000);
+
+				_system->unlockScreen();
 				_system->updateScreen();
 				FrameSSN++;
 			}

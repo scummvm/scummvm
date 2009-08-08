@@ -121,9 +121,9 @@ void SoundDesc::convToSigned() {
 		return;
 
 	if (_mixerFlags & Audio::Mixer::FLAG_16BITS) {
-		uint16 *data = (uint16 *) _dataPtr;
-		for (uint32 i = 0; i < _size; i++)
-			data[i] ^= 0x8000;
+		byte *data = _dataPtr;
+		for (uint32 i = 0; i < _size; i++, data += 2)
+			WRITE_LE_UINT16(data, READ_LE_UINT16(data) ^ 0x8000);
 	} else
 		for (uint32 i = 0; i < _size; i++)
 			_dataPtr[i] ^= 0x80;

@@ -24,6 +24,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/EventRecorder.h"
 
 #include "sound/mididrv.h"
 #include "sound/mixer.h"
@@ -84,7 +85,7 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	Common::addDebugChannel(kDebugLevelMovie, "Movie", "Movie debug level");
 	Common::addDebugChannel(kDebugLevelTimer, "Timer", "Timer debug level");
 
-	_eventMan->registerRandomSource(_rnd, "kyra");
+	g_eventRec.registerRandomSource(_rnd, "kyra");
 }
 
 ::GUI::Debugger *KyraEngine_v1::getDebugger() {

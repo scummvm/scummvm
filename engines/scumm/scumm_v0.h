@@ -35,7 +35,20 @@ namespace Scumm {
  */
 class ScummEngine_v0 : public ScummEngine_v2 {
 protected:
-	int _currentMode;
+	byte _currentMode;
+	bool _verbExecuting;			// is a verb executing
+	bool _verbPickup;				// are we picking up an object during a verb execute
+
+	int _activeActor;				// Actor Number
+	int _activeObject2;				// 2nd Object Number
+
+	bool _activeInvExecute;			// is activeInventory first to be executed
+	bool _activeObject2Inv;			// is activeobject2 in the inventory
+	bool _activeObjectObtained;		// collected _activeobject?
+	bool _activeObject2Obtained;	// collected _activeObject2?
+
+	int _activeObjectIndex;
+	int _activeObject2Index;
 
 public:
 	ScummEngine_v0(OSystem *syst, const DetectorResult &dr);
@@ -53,12 +66,25 @@ protected:
 
 	virtual void processInput();
 
+	virtual void runObject(int obj, int entry);
 	virtual void saveOrLoad(Serializer *s);
+
+	// V0 MM Verb commands
+	int  verbPrep(int object);
+	bool verbMove(int object, int objectIndex, bool invObject);
+	bool verbMoveToActor(int actor);
+	bool verbObtain(int object, int objIndex);
+	bool verbExecutes(int object, bool inventory = false);
+	bool verbExec();
+
+	int findObjectIndex(int x, int y);
 
 	virtual void checkExecVerbs();
 	virtual void handleMouseOver(bool updateInventory);
 	void resetVerbs();
 	void setNewKidVerbs();
+
+	void drawSentenceWord(int object, bool usePrep, bool objInInventory);
 	void drawSentence();
 
 	void switchActor(int slot);
@@ -68,7 +94,7 @@ protected:
 
 	virtual int getActiveObject();
 
-	virtual void resetSentence();
+	virtual void resetSentence(bool walking = false);
 
 	/* Version C64 script opcodes */
 	void o_stopCurrentScript();

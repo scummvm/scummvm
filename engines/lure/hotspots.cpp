@@ -38,6 +38,7 @@
 #include "lure/sound.h"
 #include "lure/lure.h"
 #include "common/endian.h"
+#include "common/EventRecorder.h"
 
 namespace Lure {
 
@@ -600,7 +601,7 @@ void Hotspot::setRandomDest() {
 	Common::RandomSource rnd;
 	int16 xp, yp;
 
-	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	if (currentActions().isEmpty())
 		currentActions().addFront(START_WALKING, roomNumber());
@@ -2691,7 +2692,19 @@ void HotspotTickHandlers::standardCharacterAnimHandler(Hotspot &h) {
 				return;
 			}
 			h.currentActions().top().setAction(WALKING);
-			h.setPosition(h.x(), h.y() & 0xfff8);
+
+			// WORKAROUND: A character that had enteredg an exit area might have been blocked from entering the new room.
+			// The Y position adjust below could thus place a character further into the exit area. So don't do the
+			// position adjustment if the user is already in an exit area
+			int16 x = h.x() + (h.widthCopy() >> 1);
+			int16 y = h.y() + h.heightCopy() - (h.yCorrection() >> 1);
+
+			RoomData *roomData = Resources::getReference().getRoom(h.roomNumber());
+			RoomExitData *exitRec = roomData->exits.checkExits(x, y);
+
+			if (!exitRec)
+				h.setPosition(h.x(), h.y() & 0xfff8);
+
 		} else if (h.blockedState() == BS_FINAL) {
 			// If this point is reached, the character twice hasn't found a walking path
 			debugC(ERROR_DETAILED, kLureDebugAnimations, "Character is hopelessly blocked");
@@ -3135,7 +3148,7 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 	Common::RandomSource rnd;
 	RandomActionType actionType;
 	uint16 scheduleId;
-	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	int actionIndex = rnd.getRandomNumber(set->numActions() - 1);
 	set->getEntry(actionIndex, actionType, scheduleId);
@@ -3325,7 +3338,7 @@ void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 	ValueTableData &fields = Resources::getReference().fieldList();
 	Common::RandomSource rnd;
 
-	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	h.handleTalkDialog();
 	if (h.frameCtr() > 0) {
@@ -3368,7 +3381,7 @@ void HotspotTickHandlers::morkusAnimHandler(Hotspot &h) {
 	if (h.executeScript()) {
 		// Script is done - set new script to one of two alternates randomly
 		Common::RandomSource rnd;
-		g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+		g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 		h.setHotspotScript(rnd.getRandomNumber(100) >= 50 ? 0x54 : 0);
 		h.setFrameCtr(20 + rnd.getRandomNumber(63));
@@ -3668,7 +3681,7 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 	Common::RandomSource rnd;
 	static bool ewanXOffset = false;
 
-	g_system->getEventManager()->registerRandomSource(rnd, "lureHotspots");
+	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	h.handleTalkDialog();
 	if (h.delayCtr() > 0) {

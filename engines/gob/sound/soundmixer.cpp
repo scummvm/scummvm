@@ -33,8 +33,7 @@ SoundMixer::SoundMixer(Audio::Mixer &mixer, Audio::Mixer::SoundType type) : _mix
 
 	_rate = _mixer->getOutputRate();
 	_end = true;
-	_data8 = 0;
-	_data16 = 0;
+	_data = 0;
 	_length = 0;
 	_freq = 0;
 	_repCount = 0;
@@ -61,9 +60,9 @@ SoundMixer::~SoundMixer() {
 
 inline int16 SoundMixer::getData(int offset) {
 	if (!_16bit)
-		return (int16) _data8[offset];
+		return (int16) ((int8) _data[offset]);
 	else
-		return (int16) FROM_LE_16(_data16[offset]);
+		return (int16) READ_LE_UINT16(_data + (offset * 2));
 }
 
 bool SoundMixer::isPlaying() const {
@@ -78,8 +77,7 @@ void SoundMixer::stop(int16 fadeLength) {
 	Common::StackLock slock(_mutex);
 
 	if (fadeLength <= 0) {
-		_data8 = 0;
-		_data16 = 0;
+		_data = 0;
 		_end = true;
 		_playingSound = 0;
 		return;
@@ -109,13 +107,7 @@ void SoundMixer::setSample(SoundDesc &sndDesc, int16 repCount, int16 frequency,
 
 	_16bit = (sndDesc._mixerFlags & Audio::Mixer::FLAG_16BITS) != 0;
 
-	if (_16bit) {
-		_data16 = (int16 *) sndDesc.getData();
-		_shift = 0;
-	} else {
-		_data8 = (int8 *) sndDesc.getData();
-		_shift = 8;
-	}
+	_data = sndDesc.getData();
 
 	_length = sndDesc.size();
 	_freq = frequency;
@@ -171,7 +163,7 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
 
 	for (int i = 0; i < numSamples; i++) {
-		if (!_data8 && !_data16)
+		if (!_data)
 			return i;
 		if (_end || (_offset >= _length))
 			checkEndSample();
@@ -181,7 +173,7 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 		// Linear interpolation. See sound/rate.cpp
 
 		int16 val = (_last + (((_cur - _last) * _offsetFrac +
-					FRAC_HALF) >> FRAC_BITS)) << _shift;
+					FRAC_HALF) >> FRAC_BITS)) << (_16bit ? 0 : 8);
 		*buffer++ = (val * _fadeVol) >> 16;
 
 		_offsetFrac += _offsetInc;
@@ -211,8 +203,7 @@ int SoundMixer::readBuffer(int16 *buffer, const int numSamples) {
 
 void SoundMixer::endFade() {
 	if (_fadeVolStep > 0) {
-		_data8 = 0;
-		_data16 = 0;
+		_data = 0;
 		_end = true;
 		_playingSound = 0;
 	} else {

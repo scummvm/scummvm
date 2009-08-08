@@ -713,7 +713,7 @@ void ScummEngine_v72he::o72_roomOps() {
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
 
-		r = convertFilePath(buffer);
+		r = convertFilePath(buffer, sizeof(buffer));
 		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
 		debug(1, "o72_roomOps: case 221: filename %s", _saveLoadFileName);
 
@@ -1401,7 +1401,7 @@ void ScummEngine_v72he::o72_openFile() {
 		strcpy((char *)buffer, "moonbase.ini");
 	}
 
-	const char *filename = (char *)buffer + convertFilePath(buffer);
+	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 	debug(1, "Final filename to %s", filename);
 
 	slot = -1;
@@ -1547,7 +1547,7 @@ void ScummEngine_v72he::o72_deleteFile() {
 	byte buffer[256];
 
 	copyScriptString(buffer, sizeof(buffer));
-	const char *filename = (char *)buffer + convertFilePath(buffer);
+	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 
 	debug(1, "o72_deleteFile(%s)", filename);
 
@@ -1562,8 +1562,8 @@ void ScummEngine_v72he::o72_rename() {
 	copyScriptString(buffer1, sizeof(buffer1));
 	copyScriptString(buffer2, sizeof(buffer2));
 
-	const char *newFilename = (char *)buffer1 + convertFilePath(buffer1);
-	const char *oldFilename = (char *)buffer2 + convertFilePath(buffer2);
+	const char *newFilename = (char *)buffer1 + convertFilePath(buffer1, sizeof(buffer1));
+	const char *oldFilename = (char *)buffer2 + convertFilePath(buffer2, sizeof(buffer2));
 
 	_saveFileMan->renameSavefile(oldFilename, newFilename);
 

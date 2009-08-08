@@ -42,7 +42,7 @@ deb:
 
 # Special target to create a application wrapper for Mac OS X
 bundle_name = ScummVM.app
-bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
+bundle: scummvm-static
 	mkdir -p $(bundle_name)/Contents/MacOS
 	mkdir -p $(bundle_name)/Contents/Resources
 	echo "APPL????" > $(bundle_name)/Contents/PkgInfo
@@ -57,7 +57,7 @@ bundle: scummvm-static $(srcdir)/dists/macosx/Info.plist
 	chmod 755 $(bundle_name)/Contents/MacOS/scummvm
 	$(STRIP) $(bundle_name)/Contents/MacOS/scummvm
 
-iphonebundle: iphone $(srcdir)/dists/iphone/Info.plist
+iphonebundle: iphone
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
@@ -205,3 +205,31 @@ endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
 
 .PHONY: deb bundle osxsnap win32dist wiidist install uninstall
+
+#
+# ARM specific
+#
+ifdef USE_TREMOLO
+DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
+LIBS += -ltremolo
+endif
+
+ifdef USE_ARM_SMUSH_ASM
+DEFINES += -DUSE_ARM_SMUSH_ASM
+endif
+
+ifdef USE_ARM_SOUND_ASM
+DEFINES += -DUSE_ARM_SOUND_ASM
+endif
+
+ifdef USE_ARM_GFX_ASM
+DEFINES += -DUSE_ARM_GFX_ASM
+endif
+
+ifdef USE_ARM_COSTUME_ASM
+DEFINES += -DUSE_ARM_COSTUME_ASM
+endif
+
+ifdef USE_ARM_SCALER_ASM
+DEFINES += -DUSE_ARM_SCALER_ASM
+endif

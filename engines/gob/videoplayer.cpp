@@ -156,6 +156,7 @@ VideoPlayer::VideoPlayer(GobEngine *vm) : _vm(vm) {
 	_backSurf = false;
 	_needBlit = false;
 	_noCursorSwitch = false;
+	_woodruffCohCottWorkaround = false;
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -248,6 +249,14 @@ bool VideoPlayer::primaryOpen(const char *videoFile, int16 x, int16 y,
 				_noCursorSwitch = true;
 		}
 
+		// WORKAROUND: In Woodruff, Coh Cott vanished in one video on her party.
+		// This is a bug in video, so we work around it.
+		_woodruffCohCottWorkaround = false;
+		if (_vm->getGameType() == kGameTypeWoodruff) {
+			if (!scumm_stricmp(fileName, "SQ32-03.VMD"))
+				_woodruffCohCottWorkaround = true;
+		}
+
 		_ownSurf = false;
 
 		if (!(flags & kFlagNoVideo)) {
@@ -316,6 +325,7 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 		endFrame = lastFrame;
 	palCmd &= 0x3F;
 
+	int16 realStartFrame = startFrame;
 	if (video.getCurrentFrame() != startFrame) {
 		if (!forceSeek && (video.getFeatures() & Graphics::CoktelVideo::kFeaturesSound))
 			startFrame = video.getCurrentFrame();
@@ -331,7 +341,9 @@ bool VideoPlayer::primaryPlay(int16 startFrame, int16 lastFrame, int16 breakKey,
 	bool canceled = false;
 
 	while (startFrame <= lastFrame) {
-		if (doPlay(startFrame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame)) {
+		if (doPlay(startFrame, breakKey,
+					palCmd, palStart, palEnd, palFrame, endFrame, startFrame < realStartFrame)) {
+
 			canceled = true;
 			break;
 		}
@@ -621,7 +633,7 @@ Common::MemoryReadStream *VideoPlayer::getExtraData(const char *fileName, int sl
 
 void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame) {
+		int16 palFrame, int16 endFrame, bool noRetrace) {
 
 	if (!_primaryVideo)
 		return;
@@ -657,6 +669,12 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 	Graphics::CoktelVideo::State state = video.nextFrame();
 	WRITE_VAR(11, frame);
 
+	if (_woodruffCohCottWorkaround && (frame == 32)) {
+		// WORKAROUND: This frame mistakenly masks Coh Cott, making her vanish
+		// To prevent that, we'll never draw that part
+		state.left += 50;
+	}
+
 	if (_needBlit)
 		_vm->_draw->forceBlit(true);
 
@@ -688,9 +706,14 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 			_vm->_draw->blitInvalidated();
 		} else
 			_vm->_video->dirtyRectsAdd(state.left, state.top, state.right, state.bottom);
-		_vm->_video->retrace();
+
+		if (!noRetrace)
+			_vm->_video->retrace();
 	}
 
+	// Subtitle
+	if (state.flags & Graphics::CoktelVideo::kStateSpeech)
+		_vm->_draw->printTotText(state.speechId);
 
 	if (modifiedPal && ((palCmd == 2) || (palCmd == 4)))
 		_vm->_palAnim->fade(_vm->_global->_pPaletteDesc, -2, 0);
@@ -698,9 +721,9 @@ void VideoPlayer::playFrame(int16 frame, int16 breakKey,
 
 bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		uint16 palCmd, int16 palStart, int16 palEnd,
-		int16 palFrame, int16 endFrame) {
+		int16 palFrame, int16 endFrame, bool noRetrace) {
 
-	playFrame(frame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame);
+	playFrame(frame, breakKey, palCmd, palStart, palEnd, palFrame, endFrame, noRetrace);
 
 	_vm->_util->processInput();
 
@@ -716,6 +739,8 @@ bool VideoPlayer::doPlay(int16 frame, int16 breakKey,
 		_vm->_inter->storeKey(_vm->_util->checkKey());
 		if (VAR(0) == (unsigned) breakKey) {
 			_primaryVideo->getVideo()->disableSound();
+			// Seek to the last frame. Some scripts depend on that.
+			_primaryVideo->getVideo()->seekFrame(endFrame, SEEK_SET, true);
 			return true;
 		}
 	}
@@ -749,7 +774,7 @@ void VideoPlayer::writeVideoInfo(const char *videoFile, int16 varX, int16 varY,
 		height = _primaryVideo->getVideo()->getHeight();
 
 		if (VAR_OFFSET(varX) == 0xFFFFFFFF)
-			_primaryVideo->getVideo()->getAnchor(1, 2, x, y, width, height);
+			_primaryVideo->getVideo()->getFrameCoords(1, x, y, width, height);
 
 		WRITE_VAR_OFFSET(varX, x);
 		WRITE_VAR_OFFSET(varY, y);
@@ -772,15 +797,6 @@ void VideoPlayer::evalBgShading(Graphics::CoktelVideo &video) {
 		_vm->_sound->bgShade();
 	else
 		_vm->_sound->bgUnshade();
-}
-
-void VideoPlayer::notifyPaused(uint32 duration) {
-	if (_primaryVideo->isOpen())
-		_primaryVideo->getVideo()->notifyPaused(duration);
-
-	for (uint i = 0; i < _videoSlots.size(); i++)
-		if (_videoSlots[i] && _videoSlots[i]->isOpen())
-			_videoSlots[i]->getVideo()->notifyPaused(duration);
 }
 
 } // End of namespace Gob

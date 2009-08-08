@@ -69,23 +69,11 @@ public:
 	const uint8 *getAddressVar8(uint32 var) const;
 	uint8 *getAddressVar8(uint32 var);
 
-	const uint16 *getAddressVar16(uint32 var) const;
-	uint16 *getAddressVar16(uint32 var);
-
-	const uint32 *getAddressVar32(uint32 var) const;
-	uint32 *getAddressVar32(uint32 var);
-
 	const char *getAddressVarString(uint32 var) const;
 	char *getAddressVarString(uint32 var);
 
 	const uint8 *getAddressOff8(uint32 offset) const;
 	uint8 *getAddressOff8(uint32 offset);
-
-	const uint16 *getAddressOff16(uint32 offset) const;
-	uint16 *getAddressOff16(uint32 offset);
-
-	const uint32 *getAddressOff32(uint32 offset) const;
-	uint32 *getAddressOff32(uint32 offset);
 
 	const char *getAddressOffString(uint32 offset) const;
 	char *getAddressOffString(uint32 offset);

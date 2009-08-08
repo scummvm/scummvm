@@ -98,7 +98,7 @@ protected:
 	void performPostProcessing(byte *screen);
 
 	void openTextObject(uint32 index);
-	void closeTextObject(uint32 index);
+	void closeTextObject(uint32 index, byte *screen);
 	void drawTextObject(uint32 index, byte *screen);
 };
 

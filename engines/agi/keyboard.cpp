@@ -393,6 +393,11 @@ int AgiEngine::waitKey() {
 
 		_gfx->doUpdate();
 	}
+
+	// Have to clear it as original did not set this variable, and we do it in doPollKeyboard()
+	// Fixes bug #2823759
+	_game.keypress = 0;
+
 	return key;
 }
 
@@ -409,7 +414,33 @@ int AgiEngine::waitAnyKey() {
 			break;
 		_gfx->doUpdate();
 	}
+
+	// Have to clear it as original did not set this variable, and we do it in doPollKeyboard()
+	_game.keypress = 0;
+
 	return key;
+}
+
+bool AgiEngine::isKeypress(void) {
+	processEvents();
+	return _keyQueueStart != _keyQueueEnd;
+}
+
+int AgiEngine::getKeypress(void) {
+	int k;
+
+	while (_keyQueueStart == _keyQueueEnd)	// block
+		pollTimer();
+
+	keyDequeue(k);
+
+	return k;
+}
+
+void AgiEngine::clearKeyQueue(void) {
+	while (isKeypress()) {
+		getKeypress();
+	}
 }
 
 } // End of namespace Agi

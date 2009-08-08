@@ -34,6 +34,7 @@
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
+#include "common/EventRecorder.h"
 #include "common/events.h"
 #include "common/util.h"
 
@@ -232,15 +233,16 @@ void OSystem_GP2X::initBackend() {
 		// switch. Still, it's a potential future change to keep in mind.
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+	}
 
-	// Initialise any GP2X specific stuff we may want (Volume, Batt Status etc.)
-	GP2X_device_init();
+	/* Initialise any GP2X specific stuff we may want (Batt Status, scaler etc.) */
+	GP2X_HW::deviceInit();
+
+	/* Set Default hardware mixer volume to a preset level (VOLUME_INITIAL). This is done to 'reset' volume level if set by other apps. */
+	GP2X_HW::mixerMoveVolume(0);
 
 	// Set Default hardware mixer volume to a plesent level.
 	// This is done to 'reset' volume level if set by other apps.
-	GP2X_mixer_set_volume(70, 70);
-
-	}
 
 	//if (SDL_GP2X_MouseType() == 0) {
 	//	// No mouse, F100 default state.
@@ -318,7 +320,7 @@ OSystem_GP2X::~OSystem_GP2X() {
 
 uint32 OSystem_GP2X::getMillis() {
 	uint32 millis = SDL_GetTicks();
-	getEventManager()->processMillis(millis);
+	g_eventRec.processMillis(millis);
 	return millis;
 }
 
@@ -446,8 +448,7 @@ void OSystem_GP2X::quit() {
 
 	if (_joystick)
 		SDL_JoystickClose(_joystick);
-	//CloseRam();
-	GP2X_device_deinit();
+	GP2X_HW::deviceDeinit();
 
 	SDL_RemoveTimer(_timerID);
 	closeMixer();

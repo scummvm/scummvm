@@ -808,26 +808,27 @@ void LocationParser_br::parseDoorData(ZonePtr z) {
 	}
 }
 
+typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr);
+static ZoneTypeParser parsers[] = {
+	0,	// no type
+	&LocationParser_br::parseExamineData,
+	&LocationParser_br::parseDoorData,
+	&LocationParser_br::parseGetData,
+	&LocationParser_br::parseMergeData,
+	0,	// taste
+	&LocationParser_br::parseHearData,
+	0,	// feel
+	&LocationParser_br::parseSpeakData,
+	0,	// none
+	0,	// trap
+	0,	// you
+	0,	// command
+	&LocationParser_br::parsePathData,
+	0,	// box
+};
+
 void LocationParser_br::parseZoneTypeBlock(ZonePtr z) {
 	debugC(7, kDebugParser, "parseZoneTypeBlock(name: %s, type: %x)", z->_name, z->_type);
-	typedef void (LocationParser_br::*ZoneTypeParser)(ZonePtr);
-	ZoneTypeParser parsers[] = {
-		0,	// no type
-		&LocationParser_br::parseExamineData,
-		&LocationParser_br::parseDoorData,
-		&LocationParser_br::parseGetData,
-		&LocationParser_br::parseMergeData,
-		0,	// taste
-		&LocationParser_br::parseHearData,
-		0,	// feel
-		&LocationParser_br::parseSpeakData,
-		0,	// none
-		0,	// trap
-		0,	// you
-		0,	// command
-		&LocationParser_br::parsePathData,
-		0,	// box
-	};
 
 	ZoneTypeParser p = parsers[ACTIONTYPE(z)];
 	do {

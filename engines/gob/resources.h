@@ -91,6 +91,11 @@ public:
 
 	byte *getTexts() const;
 
+	bool dumpResource(const Resource &resource,
+			const Common::String &fileName) const;
+	bool dumpResource(const Resource &resource, uint16 id,
+			const Common::String &ext = "dmp") const;
+
 private:
 	// Structure sizes in the files
 	static const int kTOTResItemSize   = 4 + 2 + 2 + 2;
@@ -166,6 +171,7 @@ private:
 
 	GobEngine *_vm;
 
+	Common::String _fileBase;
 	Common::String _totFile;
 	Common::String _extFile;
 	Common::String _exFile;

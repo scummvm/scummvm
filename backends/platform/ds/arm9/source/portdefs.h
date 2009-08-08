@@ -36,7 +36,7 @@ typedef unsigned int u32;
 typedef signed int s32;
 */
 
-#include "nds/jtypes.h"
+#include "nds/ndstypes.h"
 
 
 // Somebody removed these from scummsys.h, but they're still required, so I'm adding them here

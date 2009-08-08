@@ -318,6 +318,8 @@ void Draw_v1::spriteOperation(int16 operation) {
 	int16 perLine;
 	Resource *resource;
 
+	operation &= 0x0F;
+
 	if (_sourceSurface >= 100)
 		_sourceSurface -= 80;
 	if (_destSurface >= 100)

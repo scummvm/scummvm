@@ -760,8 +760,6 @@ public:
 	void initVersion(void);
 	void setVersion(uint16 version);
 
-	Common::Error loadGameState(int slot);
-	Common::Error saveGameState(int slot, const char *desc);
 	bool canLoadGameStateCurrently();
 	bool canSaveGameStateCurrently();
 };
@@ -785,6 +783,8 @@ public:
 		return _gameId;
 	}
 
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
 
 private:
 

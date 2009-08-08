@@ -495,6 +495,7 @@ private:
 	bool _useFrameTable;
 
 	int o3a_setCharacterFrame(EMCState *script);
+	int o3a_playSoundEffect(EMCState *script);
 
 	// special shape code
 	int initAnimationShapes(uint8 *filedata);

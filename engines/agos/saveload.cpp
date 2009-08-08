@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -231,7 +229,7 @@ bool AGOSEngine::confirmOverWrite(WindowBlock *window) {
 		break;
 	case Common::DE_DEU:
 		message1 = "\rDatei existiert bereits.\r\r";
-		message2 = "     berschreiben ?\r\r";
+		message2 = "   Ueberschreiben ?\r\r";
 		message3 = "     Ja        Nein";
 		break;
 	default:
@@ -1555,13 +1553,16 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 bool AGOSEngine_PN::badload(int8 errorNum) {
 	if (errorNum == -2)
 		return 0;
-	/* Load error recovery routine */
+	// Load error recovery routine
+
+	// Clear any stack
 	while (_stackbase != NULL) {
-		/* Clear any stack */
 		dumpstack();
 	}
-	/* Restart from process 1 */
-	longjmp(_loadfail, 1);
+
+	// Restart from process 1
+	_tagOfActiveDoline = 1;
+	_dolineReturnVal = 3;
 	return 1;
 }
 
@@ -1572,7 +1573,7 @@ void AGOSEngine_PN::getFilename() {
 	memset(_saveFile, 0, sizeof(_saveFile));
 	while (!shouldQuit() && !strlen(_saveFile)) {
 		const char *msg = "File name : ";
-	        pcf((unsigned char)'\n');
+		pcf((unsigned char)'\n');
 		while (*msg)
 			pcf((unsigned char)*msg++);
 
@@ -1582,7 +1583,7 @@ void AGOSEngine_PN::getFilename() {
 	}
 }
 
-int AGOSEngine_PN::loadfl(char *name) {
+int AGOSEngine_PN::loadFile(char *name) {
 	Common::InSaveFile *f;
 	haltAnimation();
 
@@ -1609,13 +1610,13 @@ int AGOSEngine_PN::loadfl(char *name) {
 		delete f;
 		return -1;
 	}
-		delete f;
+	delete f;
 	restartAnimation();
 	dbtosysf();
 	return 0;
 }
 
-int AGOSEngine_PN::savfl(char *name) {
+int AGOSEngine_PN::saveFile(char *name) {
 	Common::OutSaveFile *f;
 	sysftodb();
 	haltAnimation();
@@ -1625,7 +1626,7 @@ int AGOSEngine_PN::savfl(char *name) {
 		restartAnimation();
 
 		const char *msg = "Couldn't save. ";
-	        pcf((unsigned char)'\n');
+		pcf((unsigned char)'\n');
 		while (*msg)
 			pcf((unsigned char)*msg++);
 

@@ -661,7 +661,9 @@ int GUI_v2::clickSaveSlot(Button *caller) {
 
 	initMenu(_savenameMenu);
 	_screen->fillRect(0x26, 0x5B, 0x11F, 0x66, textFieldColor2());
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	const char *desc = nameInputProcess(_saveDescription, 0x27, 0x5C, textFieldColor1(), textFieldColor2(), textFieldColor3(), 0x50);
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	restorePage1(_vm->_screenBuffer);
 	backUpPage1(_vm->_screenBuffer);
 	if (desc) {

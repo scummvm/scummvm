@@ -55,7 +55,7 @@ private:
 	byte _encbyte;
 	int32	_subFileStart;
 	int32	_subFileLen;
-	bool	_myIoFailed;
+	bool	_myEos; // Have we read past the end of the subfile?
 
 	void setSubfileRange(int32 start, int32 len);
 	void resetSubfile();
@@ -67,8 +67,7 @@ public:
 	bool open(const Common::String &filename);
 	bool openSubFile(const Common::String &filename);
 
-	bool ioFailed() const { return _myIoFailed || BaseScummFile::ioFailed(); }
-	void clearIOFailed() { _myIoFailed = false; BaseScummFile::clearIOFailed(); }
+	void clearErr() { _myEos = false; BaseScummFile::clearErr(); }
 
 	bool eos() const;
 	int32 pos() const;

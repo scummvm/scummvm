@@ -179,6 +179,7 @@ int processMenu(menuStruct *pMenu) {
 		flipScreen();
 
 		manageEvents();
+		g_system->delayMillis(10);
 
 //    readKeyboard();
 	} while (!si);

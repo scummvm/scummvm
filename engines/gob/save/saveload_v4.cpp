@@ -84,6 +84,8 @@ SaveLoad_v4::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveH
 
 	_slotFile = new File(vm, target);
 
+	_lastSlot = -1;
+
 	_writer = 0;
 	_reader = 0;
 }
@@ -92,6 +94,10 @@ SaveLoad_v4::GameHandler::~GameHandler() {
 	delete _slotFile;
 	delete _reader;
 	delete _writer;
+}
+
+int SaveLoad_v4::GameHandler::getLastSlot() const {
+	return _lastSlot;
 }
 
 int32 SaveLoad_v4::GameHandler::getSize() {
@@ -178,6 +184,7 @@ bool SaveLoad_v4::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		if (!vars.writeInto(0, 0, varSize))
 			return false;
 
+		_lastSlot = slot;
 	}
 
 	return true;
@@ -261,6 +268,7 @@ bool SaveLoad_v4::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		if (!_writer->writePart(1, &vars))
 			return false;
 
+		_lastSlot = slot;
 	}
 
 	return true;
@@ -465,7 +473,11 @@ bool SaveLoad_v4::ScreenPropsHandler::load(int16 dataVar, int32 size, int32 offs
 		return false;
 	}
 
-	return _gameHandler->loadScreenProps(_file->getSlot(offset), _curProps->_props);
+	int slot = _gameHandler->getLastSlot();
+	if (slot == -1)
+		slot = _file->getSlot(offset);
+
+	return _gameHandler->loadScreenProps(slot, _curProps->_props);
 }
 
 bool SaveLoad_v4::ScreenPropsHandler::save(int16 dataVar, int32 size, int32 offset) {
@@ -474,7 +486,11 @@ bool SaveLoad_v4::ScreenPropsHandler::save(int16 dataVar, int32 size, int32 offs
 		return false;
 	}
 
-	return _gameHandler->saveScreenProps(_file->getSlot(offset), _curProps->_props);
+	int slot = _gameHandler->getLastSlot();
+	if (slot == -1)
+		slot = _file->getSlot(offset);
+
+	return _gameHandler->saveScreenProps(slot, _curProps->_props);
 }
 
 

@@ -53,15 +53,6 @@ void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPt
 }
 MAKE_WRAPPER(PocketPCPortrait)
 
-void PocketPCRawPortrait(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-
-	while (height--) {
-		memcpy(dstPtr, srcPtr, width*sizeof(uint16_t));
-		srcPtr += srcPitch;
-		dstPtr += dstPitch;
-	}
-}
-
 // Our version of an aspect scaler. Main difference is the out-of-place
 // operation, omitting a straight blit step the sdl backend does. Also,
 // tests show unaligned access errors with the stock aspect scaler.
@@ -234,8 +225,8 @@ void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, ui
 	SmartphoneLandscapeARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed]);
 #else
 	if (gBitFormat == 565)
-		SmartphoneLandscape<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		SmartphoneLandscapeTemplate<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 	else
-		SmartphoneLandscape<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
+		SmartphoneLandscapeTemplate<555>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
 #endif
 }

@@ -35,7 +35,7 @@
 #include "common/events.h"
 
 // FIXME move joystick defines out and replace with confile file options
-// we should really allow users to map any key to a joystick button
+// we should really allow users to map any key to a joystick button using the keymapper.
 #define JOY_DEADZONE 2200
 
 #define JOY_XAXIS 0
@@ -273,7 +273,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 
 	Combos:
 
-	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP)
+	GP2X_BUTTON_VOLUP &	GP2X_BUTTON_VOLDOWN		0 (For Monkey 2 CP) or Virtual Keyboard if enabled
 	GP2X_BUTTON_L &	GP2X_BUTTON_SELECT			Common::EVENT_QUIT (Calls Sync() to make sure SD is flushed)
 	GP2X_BUTTON_L &	GP2X_BUTTON_Y				Toggles setZoomOnMouse() for larger then 320*240 games to scale to the point + raduis.
 	GP2X_BUTTON_L &	GP2X_BUTTON_START			Common::EVENT_MAINMENU (ScummVM Global Main Menu)
@@ -434,29 +434,22 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 						}
 						break;
 					case GP2X_BUTTON_VOLUP:
-						//if (GP2X_BUTTON_STATE_L == TRUE) {
-						//	displayMessageOnOSD("Setting CPU Speed at 230MHz");
-						//	GP2X_setCpuspeed(200);
-							//event.kbd.keycode = Common::KEYCODE_PLUS;
-							//event.kbd.ascii = mapKey(SDLK_PLUS, ev.key.keysym.mod, 0);
-						//} else {
-							GP2X_mixer_move_volume(1);
+						GP2X_HW::mixerMoveVolume(2);
+						if (GP2X_HW::volumeLevel == 100) {
+							displayMessageOnOSD("Maximum Volume");
+						} else {
 							displayMessageOnOSD("Increasing Volume");
-						//}
+						}
 						break;
 
 					case GP2X_BUTTON_VOLDOWN:
-						//if (GP2X_BUTTON_STATE_L == TRUE) {
-						//	displayMessageOnOSD("Setting CPU Speed at 60MHz");
-						//	GP2X_setCpuspeed(60);
-							//event.kbd.keycode = Common::KEYCODE_MINUS;
-							//event.kbd.ascii = mapKey(SDLK_MINUS, ev.key.keysym.mod, 0);
-						//} else {
-							GP2X_mixer_move_volume(0);
+						GP2X_HW::mixerMoveVolume(1);
+						if (GP2X_HW::volumeLevel == 0) {
+							displayMessageOnOSD("Minimal Volume");
+						} else {
 							displayMessageOnOSD("Decreasing Volume");
-						//}
+						}
 						break;
-
 				}
 			}
 			return true;

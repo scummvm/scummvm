@@ -266,18 +266,19 @@ struct ExecStack {
 };
 
 
+// These types are used both as identifiers and as elements of bitfields
 enum BreakpointType {
 	/**
 	 * Break when selector is executed. data contains (char *) selector name
 	 * (in the format Object::Method)
 	 */
-	BREAK_SELECTOR,
+	BREAK_SELECTOR = 1,
 
 	/**
 	 * Break when an exported function is called. data contains
 	 * script_no << 16 | export_no.
 	 */
-	BREAK_EXPORT
+	BREAK_EXPORT = 2
 };
 
 struct Breakpoint {

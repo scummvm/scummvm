@@ -27,6 +27,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #include "agos/debugger.h"
 #include "agos/intern.h"
@@ -528,7 +529,7 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 	File::addDefaultDirectory(_gameDataDir.getChild("speech"));
 	File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
 
-	syst->getEventManager()->registerRandomSource(_rnd, "agos");
+	g_eventRec.registerRandomSource(_rnd, "agos");
 }
 
 Common::Error AGOSEngine::init() {

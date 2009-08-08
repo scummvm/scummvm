@@ -229,7 +229,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, _gameDataDir.getPath().c_str());
 #endif
 
-		result = displayMessage("Quit", buf);
+		result = displayMessage("Quit", "%s", buf);
 		if (!result) {
 			error("Cannot find file: '%s'", filename);
 		}
@@ -253,10 +253,10 @@ void ScummEngine::readIndexFile() {
 
 	if (_game.version <= 5) {
 		// Figure out the sizes of various resources
-		while (!_fileHandle->eos()) {
+		while (true) {
 			blocktype = _fileHandle->readUint32BE();
 			itemsize = _fileHandle->readUint32BE();
-			if (_fileHandle->ioFailed())
+			if (_fileHandle->eos() || _fileHandle->err())
 				break;
 			switch (blocktype) {
 			case MKID_BE('DOBJ'):
@@ -285,7 +285,6 @@ void ScummEngine::readIndexFile() {
 			}
 			_fileHandle->seek(itemsize - 8, SEEK_CUR);
 		}
-		_fileHandle->clearIOFailed();
 		_fileHandle->seek(0, SEEK_SET);
 	}
 
@@ -300,7 +299,7 @@ void ScummEngine::readIndexFile() {
 		blocktype = _fileHandle->readUint32BE();
 		itemsize = _fileHandle->readUint32BE();
 
-		if (_fileHandle->ioFailed())
+		if (_fileHandle->eos() || _fileHandle->err())
 			break;
 
 		numblock++;
@@ -689,7 +688,7 @@ int ScummEngine::loadResource(int type, int idx) {
 		dumpResource("script-", idx, getResourceAddress(rtScript, idx));
 	}
 
-	if (!_fileHandle->ioFailed()) {
+	if (!_fileHandle->err() && !_fileHandle->eos()) {
 		return 1;
 	}
 

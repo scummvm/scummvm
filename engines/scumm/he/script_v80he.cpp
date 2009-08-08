@@ -89,7 +89,7 @@ void ScummEngine_v80he::o80_getFileSize() {
 	byte buffer[256];
 
 	copyScriptString(buffer, sizeof(buffer));
-	const char *filename = (char *)buffer + convertFilePath(buffer);
+	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 
 	Common::SeekableReadStream *f = 0;
 	if (!_saveFileMan->listSavefiles(filename).empty()) {
@@ -154,7 +154,7 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	copyScriptString(section, sizeof(section));
 	copyScriptString(filename, sizeof(filename));
 
-	r = convertFilePath(filename);
+	r = convertFilePath(filename, sizeof(filename));
 
 	if (_game.id == GID_TREASUREHUNT) {
 		// WORKAROUND: Remove invalid characters
@@ -222,7 +222,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 		error("o80_writeConfigFile: default type %d", subOp);
 	}
 
-	r = convertFilePath(filename);
+	r = convertFilePath(filename, sizeof(filename));
 
 	if (_game.id == GID_TREASUREHUNT) {
 		// WORKAROUND: Remove invalid characters

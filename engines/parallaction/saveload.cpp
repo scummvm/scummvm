@@ -67,16 +67,6 @@ public:
 	virtual void reflowLayout();
 };
 
-Common::String SaveLoad_ns::genOldSaveFileName(uint slot) {
-	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
-
-	char s[20];
-	sprintf(s, "game.%i", slot);
-
-	return Common::String(s);
-}
-
-
 Common::String SaveLoad::genSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
 
@@ -430,55 +420,55 @@ void SaveLoad_ns::getGamePartProgress(bool *complete, int size) {
 	complete[2] = s.contains("dough");
 }
 
-void SaveLoad_ns::renameOldSavefiles() {
-
-	bool exists[NUM_SAVESLOTS];
-	uint num = 0;
-	uint i;
-
-	for (i = 0; i < NUM_SAVESLOTS; i++) {
-		exists[i] = false;
-		Common::String name = genOldSaveFileName(i);
-		Common::InSaveFile *f = _saveFileMan->openForLoading(name);
-		if (f) {
-			exists[i] = true;
-			num++;
-		}
-		delete f;
-	}
-
-	if (num == 0) {
-		// there are no old savefiles: nothing to do
-		return;
-	}
-
+static bool askRenameOldSavefiles() {
 	GUI::MessageDialog dialog0(
 		"ScummVM found that you have old savefiles for Nippon Safes that should be renamed.\n"
 		"The old names are no longer supported, so you will not be able to load your games if you don't convert them.\n\n"
-		"Press OK to convert them now, otherwise you will be asked you next time.\n", "OK", "Cancel");
+		"Press OK to convert them now, otherwise you will be asked next time.\n", "OK", "Cancel");
 
-	int choice = dialog0.runModal();
-	if (choice == 0) {
-		// user pressed cancel
-		return;
-	}
+	return (dialog0.runModal() != 0);
+}
 
-	uint success = 0;
-	for (i = 0; i < NUM_SAVESLOTS; i++) {
-		if (exists[i]) {
-			Common::String oldName = genOldSaveFileName(i);
-			Common::String newName = genSaveFileName(i);
-			if (_saveFileMan->renameSavefile(oldName, newName)) {
-				success++;
-			} else {
-				warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
-					_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
-			}
+void SaveLoad_ns::renameOldSavefiles() {
+	Common::StringList oldFilenames = _saveFileMan->listSavefiles("game.*");
+	uint numOldSaves = oldFilenames.size();
+
+	bool rename = false;
+	uint success = 0, id;
+	Common::String oldName, newName;
+	for (uint i = 0; i < oldFilenames.size(); ++i) {
+		oldName = oldFilenames[i];
+		int e = sscanf(oldName.c_str(), "game.%u", &id);
+		if (e != 1) {
+			// this wasn't a savefile, so adjust numOldSaves accordingly				
+			--numOldSaves;
+			continue;
+		}
+
+		if (!rename) {
+			rename = askRenameOldSavefiles();			
+		}
+		if (!rename) {
+			// return immediately if the user doesn't want to rename the files
+			return;
+		}
+
+		newName = genSaveFileName(id);
+		if (_saveFileMan->renameSavefile(oldName, newName)) {
+			success++;
+		} else {
+			warning("Error %i (%s) occurred while renaming %s to %s", _saveFileMan->getError(),
+				_saveFileMan->getErrorDesc().c_str(), oldName.c_str(), newName.c_str());
 		}
 	}
 
+	if (numOldSaves == 0) {
+		// there were no old savefiles: nothing to notify
+		return;
+	}
+
 	char msg[200];
-	if (success == num) {
+	if (success == numOldSaves) {
 		sprintf(msg, "ScummVM successfully converted all your savefiles.");
 	} else {
 		sprintf(msg,

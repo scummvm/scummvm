@@ -37,6 +37,8 @@
 #include "common/serializer.h"
 #include "common/savefile.h"
 
+#include "gui/message.h"
+
 namespace Tinsel {
 
 
@@ -83,6 +85,8 @@ extern void syncGlobInfo(Common::Serializer &s);
 
 // in POLYGONS.C
 extern void syncPolyInfo(Common::Serializer &s);
+
+extern int sceneCtr;
 
 //----------------- LOCAL DEFINES --------------------
 
@@ -450,6 +454,11 @@ static bool DoRestore() {
 
 	delete f;
 
+	if (failed) {
+		GUI::MessageDialog dialog("Failed to load game state from file.");
+		dialog.runModal();
+	}
+
 	return !failed;
 }
 
@@ -471,10 +480,10 @@ static void DoSave(void) {
 	fname = SaveSceneName;
 
 	f = _vm->getSaveFileMan()->openForSaving(fname);
-	if (f == NULL)
-		return;
-
 	Common::Serializer s(0, f);
+
+	if (f == NULL)
+		goto save_failure;
 
 	// Write out a savegame header
 	SaveGameHeader hdr;
@@ -500,8 +509,12 @@ static void DoSave(void) {
 	return;
 
 save_failure:
-	delete f;
-	_vm->getSaveFileMan()->removeSavefile(fname);
+	if (f) {
+		delete f;
+		_vm->getSaveFileMan()->removeSavefile(fname);
+	}
+	GUI::MessageDialog dialog("Failed to save game state to file.");
+	dialog.runModal();
 }
 
 /**
@@ -510,6 +523,10 @@ save_failure:
 void ProcessSRQueue(void) {
 	switch (SRstate) {
 	case SR_DORESTORE:
+		// If a load has been done directly from title screens, set a larger value for scene ctr so the
+		// code used to skip the title screens in Discworld 1 gets properly disabled
+		if (sceneCtr < 10) sceneCtr = 10;
+
 		if (DoRestore()) {
 			DoRestoreScene(srsd, false);
 		}

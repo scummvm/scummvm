@@ -75,8 +75,6 @@ class SaveLoad;
 #define GET_VAR_FSTR(var)           _vm->_inter->_variables->getAddressVarString(var)
 #define GET_VARO_FSTR(off)          _vm->_inter->_variables->getAddressOffString(off)
 
-#define VAR_ADDRESS(var)            _vm->_inter->_variables->getAddressVar32(var)
-
 #define WRITE_VAR_OFFSET(off, val)  WRITE_VARO_UINT32((off), (val))
 #define WRITE_VAR(var, val)         WRITE_VAR_UINT32((var), (val))
 #define VAR_OFFSET(off)             READ_VARO_UINT32(off)
@@ -165,6 +163,7 @@ private:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 	virtual void pauseEngineIntern(bool pause);
+	virtual void syncSoundSettings();
 
 	bool initGameParts();
 	void deinitGameParts();

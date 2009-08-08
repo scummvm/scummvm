@@ -124,6 +124,8 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 
 	_speedFactor = 1;
 
+	_doSubtitles = false;
+
 	_noCd = false;
 }
 

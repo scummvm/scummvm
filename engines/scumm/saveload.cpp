@@ -86,6 +86,19 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	// FIXME: Actually, we might wish to support loading in more places.
 	// As long as we are sure it won't cause any problems... Are we
 	// aware of *any* spots where loading is not supported?
+
+	// HE games are limited to original load and save interface only,
+	// due to numerous glitches (see bug #1726909) that can occur.
+	if (_game.heversion >= 60)
+		return false;
+
+	// COMI always disables saving/loading (to tell the truth:
+	// the main menu) via its scripts, thus we need to make an
+	// exception here. This the same forced overwriting of the
+	// script decisions as in ScummEngine::processKeyboard.
+	if (_game.id == GID_CMI)
+		return true;
+
 	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
 }
 
@@ -99,7 +112,22 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	// TODO: Should we disallow saving in some more places,
 	// e.g. when a SAN movie is playing? Not sure whether the
 	// original EXE allowed this.
-	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
+
+	// HE games are limited to original load and save interface only,
+	// due to numerous glitches (see bug #1726909) that can occur.
+	if (_game.heversion >= 60)
+		return false;
+
+	// COMI always disables saving/loading (to tell the truth:
+	// the main menu) via its scripts, thus we need to make an
+	// exception here. This the same forced overwriting of the
+	// script decisions as in ScummEngine::processKeyboard.
+	if (_game.id == GID_CMI)
+		return true;
+
+	// SCUMM v4+ doesn't allow saving in room 0 or if  
+	// VAR(VAR_MAINMENU_KEY) to set to zero.
+	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0));
 }
 
 
@@ -1368,11 +1396,31 @@ void ScummEngine::saveOrLoad(Serializer *s) {
 }
 
 void ScummEngine_v0::saveOrLoad(Serializer *s) {
+	ScummEngine_v2::saveOrLoad(s);
+
+	const SaveLoadEntry v0Entrys[] = {
+		MKLINE(ScummEngine_v0, _currentMode, sleByte, VER(78)),
+		MKLINE(ScummEngine_v0, _currentLights, sleByte, VER(78)),
+		MKEND()
+	};
+ 	s->saveLoadEntries(this, v0Entrys);
+}
+
+
+void ScummEngine_v2::saveOrLoad(Serializer *s) {
 	ScummEngine::saveOrLoad(s);
 
-	// TODO: Save additional variables
-	// _currentMode
-	// _currentLights
+	const SaveLoadEntry v2Entrys[] = {
+		MKLINE(ScummEngine_v2, _inventoryOffset, sleUint16, VER(79)),
+		MKEND()
+	};
+	s->saveLoadEntries(this, v2Entrys);
+
+	// In old saves we didn't store _inventoryOffset -> reset it to
+	// a sane default when loading one of those.
+	if (s->getVersion() < 79 && s->isLoading()) {
+		_inventoryOffset = 0;
+	}
 }
 
 void ScummEngine_v5::saveOrLoad(Serializer *s) {

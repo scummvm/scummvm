@@ -122,14 +122,14 @@ bool SaveConverter::swapDataEndian(byte *data, const byte *sizes, uint32 count) 
 
 	while (count-- > 0) {
 		if      (*sizes == 3) // 32bit value (3 additional bytes)
-			*((uint32 *) data) = SWAP_BYTES_32(*((uint32 *) data));
+			WRITE_UINT32(data, SWAP_BYTES_32(READ_UINT32(data)));
 		else if (*sizes == 1) // 16bit value (1 additional byte)
-			*((uint16 *) data) = SWAP_BYTES_16(*((uint16 *) data));
+			WRITE_UINT16(data, SWAP_BYTES_16(READ_UINT16(data)));
 		else if (*sizes != 0) // else, it has to be an 8bit value
 			return false;
 
 		count -= *sizes;
-		data += *sizes + 1;
+		data  += *sizes + 1;
 		sizes += *sizes + 1;
 	}
 

@@ -27,17 +27,33 @@
 #ifdef GRAPHICS_SJIS_H
 
 #include "common/debug.h"
+#include "common/archive.h"
+#include "common/endian.h"
 
 namespace Graphics {
 
-bool FontTowns::loadFromStream(Common::ReadStream &stream) {
-	for (uint i = 0; i < (kFontRomSize / 2); ++i)
-		_fontData[i] = stream.readUint16BE();
-	return !stream.err();
+FontSJIS *FontSJIS::createFont(const Common::Platform platform) {
+	FontSJIS *ret = 0;
+
+	// Try the font ROM of the specified platform
+	if (platform == Common::kPlatformFMTowns) {
+		ret = new FontTowns();
+		if (ret && ret->loadData())
+			return ret;
+		delete ret;
+	}
+
+	// Try ScummVM's font.
+	ret = new FontSjisSVM();
+	if (ret && ret->loadData())
+		return ret;
+	delete ret;
+
+	return 0;
 }
 
 template<typename Color>
-void FontTowns::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
+void FontSJIS16x16::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
 	uint32 outlineGlyph[18];
 	memset(outlineGlyph, 0, sizeof(outlineGlyph));
 
@@ -72,7 +88,7 @@ void FontTowns::drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch
 }
 
 template<typename Color>
-void FontTowns::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const {
+void FontSJIS16x16::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const {
 	for (int y = 0; y < 16; ++y) {
 		Color *lineBuf = (Color *)dst;
 		uint16 line = *glyph++;
@@ -88,8 +104,12 @@ void FontTowns::drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color
 	}
 }
 
-void FontTowns::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
-	const uint16 *glyphSource = _fontData + sjisToChunk(ch & 0xFF, ch >> 8) * 16;
+void FontSJIS16x16::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
+	const uint16 *glyphSource = getCharData(ch);
+	if (!glyphSource) {
+		warning("FontSJIS16x16::drawChar: Font does not offer data for %02X %02X", ch & 0xFF, ch >> 8);
+		return;
+	}
 
 	if (bpp == 1) {
 		if (!_outlineEnabled)
@@ -106,7 +126,25 @@ void FontTowns::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, ui
 	}
 }
 
-uint FontTowns::sjisToChunk(uint8 f, uint8 s) {
+// FM-TOWNS ROM font
+
+bool FontTowns::loadData() {
+	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("FMT_FNT.ROM");
+	if (!data)
+		return false;
+
+	for (uint i = 0; i < (kFontRomSize / 2); ++i)
+		_fontData[i] = data->readUint16BE();
+
+	bool retValue = !data->err();
+	delete data;
+	return retValue;
+}
+
+const uint16 *FontTowns::getCharData(uint16 ch) const {
+	uint8 f = ch & 0xFF;
+	uint8 s = ch >> 8;
+
 	// copied from scumm\charset.cpp
 	enum {
 		KANA = 0,
@@ -188,7 +226,61 @@ uint FontTowns::sjisToChunk(uint8 f, uint8 s) {
 	}
 
 	debug(6, "Kanji: %c%c f 0x%x s 0x%x base 0x%x c %d p %d chunk %d cr %d index %d", f, s, f, s, base, c, p, chunk, cr, ((chunk_f + chunk) * 32 + (s - base)) + cr);
-	return ((chunk_f + chunk) * 32 + (s - base)) + cr;
+	return _fontData + (((chunk_f + chunk) * 32 + (s - base)) + cr) * 16;
+}
+
+// ScummVM SJIS font
+
+bool FontSjisSVM::loadData() {
+	Common::SeekableReadStream *data = SearchMan.createReadStreamForMember("SJIS.FNT");
+	if (!data)
+		return false;
+	
+	uint32 magic1 = data->readUint32BE();
+	uint32 magic2 = data->readUint32BE();
+
+	if (magic1 != MKID_BE('SCVM') || magic2 != MKID_BE('SJIS')) {
+		delete data;
+		return false;
+	}
+
+	uint32 version = data->readUint32BE();
+	if (version != 1) {
+		delete data;
+		return false;
+	}
+	uint numChars = data->readUint16BE();
+
+	_fontData = new uint16[numChars * 16];
+	assert(_fontData);
+
+	for (uint i = 0; i < numChars * 16; ++i)
+		_fontData[i] = data->readUint16BE();
+	
+	bool retValue = !data->err();
+	delete data;
+	return retValue;
+}
+
+const uint16 *FontSjisSVM::getCharData(uint16 c) const {
+	const uint8 fB = c & 0xFF;
+	const uint8 sB = c >> 8;
+
+	// We only allow 2 byte SJIS characters.
+	if (fB <= 0x80 || fB >= 0xF0 || (fB >= 0xA0 && fB <= 0xDF) || sB == 0x7F)
+		return 0;
+
+	int base = fB;
+	base -= 0x81;
+	if (base >= 0x5F)
+		base -= 0x40;
+
+	int index = sB;
+	index -= 0x40;
+	if (index >= 0x3F)
+		--index;
+
+	return _fontData + (base * 0xBC + index) * 16;
 }
 
 } // end of namespace Graphics

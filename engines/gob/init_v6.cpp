@@ -34,6 +34,9 @@ namespace Gob {
 Init_v6::Init_v6(GobEngine *vm) : Init_v3(vm) {
 }
 
+Init_v6::~Init_v6() {
+}
+
 void Init_v6::initGame() {
 	_vm->_global->_noCd = false;
 

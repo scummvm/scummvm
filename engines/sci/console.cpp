@@ -194,6 +194,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	scriptState.seekLevel = 0;
 	scriptState.runningStep = 0;
 	scriptState.stopOnEvent = false;
+	scriptState.debugging = false;
 }
 
 Console::~Console() {
@@ -2091,28 +2092,30 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		printf("\n");
 	}
 
-	return 0;
 	return true;
 }
 
 bool Console::cmdStep(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0)
 		scriptState.runningStep = atoi(argv[1]) - 1;
+	scriptState.debugging = true;
 
-	return true;
+	return false;
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
 	scriptState.stopOnEvent = true;
+	scriptState.debugging = true;
 
-	return true;
+	return false;
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
 	scriptState.seeking = kDebugSeekLevelRet;
 	scriptState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
+	scriptState.debugging = true;
 
-	return true;
+	return false;
 }
 
 bool Console::cmdStepGlobal(int argc, const char **argv) {
@@ -2124,8 +2127,9 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 
 	scriptState.seeking = kDebugSeekGlobal;
 	scriptState.seekSpecial = atoi(argv[1]);
+	scriptState.debugging = true;
 
-	return true;
+	return false;
 }
 
 bool Console::cmdStepCallk(int argc, const char **argv) {
@@ -2156,8 +2160,9 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 	} else {
 		scriptState.seeking = kDebugSeekCallk;
 	}
+	scriptState.debugging = true;
 
-	return true;
+	return false;
 }
 
 bool Console::cmdDissassemble(int argc, const char **argv) {
@@ -2227,7 +2232,7 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 	_vm->_gamestate->seg_manager->dereference(vpc, &size);
 	size += vpc.offset; // total segment size
 
-	for (int i = 1; i < argc; i++) {
+	for (int i = 2; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
 			do_bwc = 1;
 		else if (!scumm_stricmp(argv[i], "bc"))
@@ -2322,14 +2327,16 @@ bool Console::cmdSend(int argc, const char **argv) {
 	xstack->fp += argc;
 
 	_vm->_gamestate->_executionStackPosChanged = true;
+	scriptState.debugging = true;
 
-	return true;
+	return false;
 }
 
 bool Console::cmdGo(int argc, const char **argv) {
+	// CHECKME: is this necessary?
 	scriptState.seeking = kDebugSeekNothing;
 
-	return true;
+	return Cmd_Exit(argc, argv);
 }
 
 bool Console::cmdBreakpointList(int argc, const char **argv) {

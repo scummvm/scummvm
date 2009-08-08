@@ -28,6 +28,7 @@
 #include "common/util.h"
 #include "common/system.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 
 #include "sword1/logic.h"
 #include "sword1/text.h"
@@ -55,7 +56,7 @@ namespace Sword1 {
 uint32 Logic::_scriptVars[NUM_SCRIPT_VARS];
 
 Logic::Logic(SwordEngine *vm, ObjectMan *pObjMan, ResMan *resMan, Screen *pScreen, Mouse *pMouse, Sound *pSound, Music *pMusic, Menu *pMenu, OSystem *system, Audio::Mixer *mixer) {
-	g_system->getEventManager()->registerRandomSource(_rnd, "sword1");
+	g_eventRec.registerRandomSource(_rnd, "sword1");
 
 	_vm = vm;
 	_objMan = pObjMan;

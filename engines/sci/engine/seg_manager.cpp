@@ -169,7 +169,9 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 	setScriptSize(scr, s, script_nr);
 	scr.buf = (byte *)malloc(scr.buf_size);
 
-	dbgPrint("scr.buf ", scr.buf);
+#ifdef DEBUG_SEG_MANAGER
+	printf("scr.buf = %p ", scr.buf);
+#endif
 	if (!scr.buf) {
 		scr.freeScript();
 		warning("SegManager: Not enough memory space for script size");
@@ -863,15 +865,6 @@ int SegManager::freeDynmem(reg_t addr) {
 
 	return 0; // OK
 }
-
-void SegManager::dbgPrint(const char* msg, void *i) {
-#ifdef DEBUG_SEG_MANAGER
-	char buf[1000];
-	sprintf(buf, "%s = [0x%x], dec:[%d]", msg, i, i);
-	perror(buf);
-#endif
-}
-
 
 
 } // End of namespace Sci

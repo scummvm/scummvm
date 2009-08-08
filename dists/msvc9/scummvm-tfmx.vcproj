@@ -389,6 +389,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\EventDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\EventRecorder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\EventRecorder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\events.h"
 				>
 			</File>

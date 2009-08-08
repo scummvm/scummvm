@@ -126,7 +126,7 @@ bool ScummFile::openSubFile(const Common::String &filename) {
 
 
 bool ScummFile::eos() const {
-	return _subFileLen ? (pos() >= _subFileLen) : File::eos(); // FIXME
+	return _subFileLen ? _myEos : File::eos();
 }
 
 int32 ScummFile::pos() const {
@@ -154,7 +154,10 @@ bool ScummFile::seek(int32 offs, int whence) {
 		assert((int32)_subFileStart <= offs && offs <= (int32)(_subFileStart + _subFileLen));
 		whence = SEEK_SET;
 	}
-	return File::seek(offs, whence);
+	bool ret = File::seek(offs, whence);
+	if (ret)
+		_myEos = false;
+	return ret;
 }
 
 uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
@@ -167,7 +170,7 @@ uint32 ScummFile::read(void *dataPtr, uint32 dataSize) {
 		int32 newPos = curPos + dataSize;
 		if (newPos > _subFileLen) {
 			dataSize = _subFileLen - curPos;
-			_myIoFailed = true;
+			_myEos = true;
 		}
 	}
 

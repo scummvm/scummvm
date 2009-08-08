@@ -26,6 +26,7 @@
 #include "common/endian.h"
 #include "common/error.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/keyboard.h"
 #include "common/file.h"
 #include "common/savefile.h"
@@ -934,7 +935,7 @@ Common::Error TinselEngine::run() {
 		_screenSurface.create(320, 200, 1);
 	}
 
-	g_system->getEventManager()->registerRandomSource(_random, "tinsel");
+	g_eventRec.registerRandomSource(_random, "tinsel");
 
 	_console = new Console();
 

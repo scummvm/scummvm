@@ -56,10 +56,10 @@
 namespace Cruise {
 
 enum MouseButton {
-	MB_LEFT = 1,
-	MB_RIGHT = 2,
-	MB_MIDDLE = 4,
-	MB_BOTH = MB_LEFT | MB_RIGHT
+	CRS_MB_LEFT = 1,
+	CRS_MB_RIGHT = 2,
+	CRS_MB_MIDDLE = 4,
+	CRS_MB_BOTH = CRS_MB_LEFT | CRS_MB_RIGHT
 };
 
 /*#define DUMP_SCRIPT

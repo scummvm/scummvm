@@ -95,7 +95,7 @@ void Scenery::init() {
 
 int16 Scenery::loadStatic(char search) {
 	int16 size;
-	int16 *backsPtr;
+	byte *backsPtr;
 	int16 picsCount;
 	int16 resId;
 	int16 sceneryIndex;
@@ -108,7 +108,7 @@ int16 Scenery::loadStatic(char search) {
 	_vm->_game->_script->evalExpr(&sceneryIndex);
 
 	size      = _vm->_game->_script->readInt16();
-	backsPtr  = (int16 *) (_vm->_game->_script->getData() + _vm->_game->_script->pos());
+	backsPtr  = _vm->_game->_script->getData() + _vm->_game->_script->pos();
 	_vm->_game->_script->skip(size * 2);
 	picsCount = _vm->_game->_script->readInt16();
 	resId     = _vm->_game->_script->readInt16();
@@ -162,7 +162,7 @@ int16 Scenery::loadStatic(char search) {
 			ptr->layers[i].planes = 0;
 
 		ptr->layers[i].backResId = (int16) READ_LE_UINT16(backsPtr);
-		backsPtr++;
+		backsPtr += 2;
 	}
 
 	ptr->pieces      = new PieceDesc*[picsCount];
@@ -185,7 +185,7 @@ int16 Scenery::loadStatic(char search) {
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex]++;
 		} else {
-			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0; sprIndex--);
+			for (sprIndex = 19; _vm->_draw->_spritesArray[sprIndex] != 0; sprIndex--) { }
 
 			_staticPictToSprite[7 * sceneryIndex + i] = sprIndex;
 			_spriteRefs[sprIndex] = 1;
@@ -631,6 +631,11 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			while (_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < (frameWrap * 256 + frame))
 				_vm->_vidPlayer->slotPlay(obj.videoSlot - 1);
 		}
+
+		// Subtitle
+		Graphics::CoktelVideo::State state = _vm->_vidPlayer->getState(obj.videoSlot - 1);
+		if (state.flags & Graphics::CoktelVideo::kStateSpeech)
+			_vm->_draw->printTotText(state.speechId);
 
 		destX  = 0;
 		destY  = 0;

@@ -23,6 +23,9 @@
  *
  */
 
+#include "common/config-manager.h"
+#include "common/timer.h"
+#include "common/util.h"
 
 #include "scumm/actor.h"
 #include "scumm/file.h"
@@ -31,10 +34,6 @@
 #include "scumm/scumm.h"
 #include "scumm/sound.h"
 #include "scumm/util.h"
-
-#include "common/config-manager.h"
-#include "common/timer.h"
-#include "common/util.h"
 
 #include "sound/adpcm.h"
 #include "sound/audiocd.h"
@@ -45,8 +44,6 @@
 #include "sound/voc.h"
 #include "sound/vorbis.h"
 #include "sound/wave.h"
-
-
 
 namespace Scumm {
 
@@ -420,17 +417,16 @@ void Sound::playSound(int soundID) {
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
 		int loopStart = 0, loopEnd = 0;
-#if 0	// Disabling this until after 0.11.0
 		int loopcount = ptr[27];
 		if (loopcount > 1) {
 			// TODO: We can only loop once, or infinitely many times, but
 			// have no support for a finite number of repetitions.
-			// This is
+			// So far, I have seen only 1 and 255 (for infinite repetitions),
+			// so maybe this is not really a problem.
 			loopStart = READ_BE_UINT16(ptr + 10) - READ_BE_UINT16(ptr + 8);
 			loopEnd = READ_BE_UINT16(ptr + 14);
 			flags |= Audio::Mixer::FLAG_LOOP;
 		}
-#endif
 
 		memcpy(sound, ptr + READ_BE_UINT16(ptr + 8), size);
 		_mixer->playRaw(Audio::Mixer::kSFXSoundType, NULL, sound, size, rate,

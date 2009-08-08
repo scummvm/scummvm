@@ -120,6 +120,12 @@ const byte fragment2[] = {OP_LIBCALL | OPSIZE8, 110};
 const int fragment2_size = 2;
 const byte fragment3[] = {OP_ZERO, OP_GSTORE | OPSIZE16, 490 % 256, 490 / 256};
 const int fragment3_size = 4;
+const byte fragment4[] = {OP_IMM | OPSIZE16, 900 % 256, 900 / 256, OP_JUMP, 466 % 256, 466 / 256};
+const int fragment4_size = 6;
+const byte fragment5[] = {OP_IMM | OPSIZE16, 901 % 256, 901 / 256, OP_JUMP, 488 % 256, 488 / 256};
+const int fragment5_size = 6;
+const byte fragment6[] = {OP_IMM | OPSIZE16, 903 % 256, 903 / 256, OP_JUMP, 516 % 256, 516 / 256};
+const int fragment6_size = 6;
 
 const WorkaroundEntry workaroundList[] = {
 	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
@@ -134,6 +140,12 @@ const WorkaroundEntry workaroundList[] = {
 	{TINSEL_V1, false, 444622076, 0,  fragment2_size, fragment2},
 	// Present Outside Inn
 	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
+
+	// DW1-GRA: Talking to palace guards in Act 2 gives !!!HIGH STRING||| - this happens if you initiate dialog
+	// with one of the guards, but not the other. So this fix routes the talk parameters of the broken one
+	{TINSEL_V1, false, 310506872, 463, fragment4_size, fragment4},
+	{TINSEL_V1, false, 310506872, 485, fragment5_size, fragment5},
+	{TINSEL_V1, false, 310506872, 513, fragment6_size, fragment6},
 
 	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
 	// But if the game is saved/restored during it, the animation sequence is reset without the global being cleared.
@@ -636,6 +648,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		case OP_JUMP:	// unconditional jump
 
 			ip = Fetch(opcode, ic->code, wkEntry, ip);
+			wkEntry = NULL;					// In case a jump occurs from a workaround
 			break;
 
 		case OP_JMPFALSE:	// conditional jump
@@ -644,6 +657,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			if (ic->stack[ic->sp--] == 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
+				wkEntry = NULL;					// In case a jump occurs from a workaround
 			}
 			break;
 
@@ -653,6 +667,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			if (ic->stack[ic->sp--] != 0) {
 				// condition satisfied - do the jump
 				ip = tmp;
+				wkEntry = NULL;					// In case a jump occurs from a workaround
 			}
 			break;
 

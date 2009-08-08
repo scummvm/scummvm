@@ -1621,7 +1621,7 @@ void ScummEngine_v100he::o100_roomOps() {
 
 		copyScriptString((byte *)buffer, sizeof(buffer));
 
-		r = convertFilePath(buffer);
+		r = convertFilePath(buffer, sizeof(buffer));
 		memcpy(_saveLoadFileName, buffer + r, sizeof(buffer) - r);
 		debug(1, "o100_roomOps: case 137: filename %s", _saveLoadFileName);
 
@@ -2239,7 +2239,7 @@ void ScummEngine_v100he::o100_videoOps() {
 			if (_videoParams.flags == 0)
 				_videoParams.flags = 4;
 
-			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename);
+			const char *filename = (char *)_videoParams.filename + convertFilePath(_videoParams.filename, sizeof(_videoParams.filename));
 			if (_videoParams.flags == 2) {
 				VAR(119) = _moviePlay->load(filename, _videoParams.flags, _videoParams.wizResNum);
 			} else {

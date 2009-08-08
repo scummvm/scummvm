@@ -39,7 +39,7 @@
 
 namespace Common {
 
-class Keymapper {
+class Keymapper : public Common::EventMapper, private Common::ArtificialEventSource {
 public:
 
 	struct MapRecord {
@@ -133,6 +133,10 @@ public:
 	 * Pop the top keymap off the active stack.
 	 */
 	void popKeymap();
+
+	// Implementation of the EventMapper interface
+	bool notifyEvent(const Common::Event &ev);
+	bool pollEvent(Common::Event &ev) { return Common::ArtificialEventSource::pollEvent(ev); }
 
 	/**
 	 * @brief Map a key press event.

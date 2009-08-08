@@ -303,6 +303,8 @@ void Draw::dirtiedRect(SurfaceDescPtr surface,
 		invalidateRect(left, top, right, bottom);
 	else if (surface == _frontSurface)
 		_vm->_video->dirtyRectsAdd(left, top, right, bottom);
+	else if (_vm->_video->_splitSurf && (surface == _vm->_video->_splitSurf))
+		_vm->_video->retrace();
 }
 
 void Draw::initSpriteSurf(int16 index, int16 width, int16 height,

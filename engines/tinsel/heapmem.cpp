@@ -285,7 +285,8 @@ MEM_NODE *MemoryAlloc(int flags, long size) {
 	}
 
 #ifdef SCUMM_NEED_ALIGNMENT
-	size = (size + 3) & ~3;	//round up to nearest multiple of 4, this ensures the addresses that are returned are 4-byte aligned as well.
+	const int alignPadding = sizeof(void*) - 1;
+	size = (size + alignPadding) & ~alignPadding;	//round up to nearest multiple of sizeof(void*), this ensures the addresses that are returned are alignment-safe.
 #endif
 
 	while ((flags & DWM_NOALLOC) == 0 && bCompacted) {
@@ -521,7 +522,7 @@ MEM_NODE *MemoryReAlloc(MEM_NODE *pMemNode, long size, int flags) {
 	assert(flags & (DWM_FIXED | DWM_MOVEABLE));
 
 	// align the size to machine boundary requirements
-	size = (size + sizeof(int) - 1) & ~(sizeof(int) - 1);
+	size = (size + sizeof(void *) - 1) & ~(sizeof(void *) - 1);
 
 	// validate the size
 	assert(size);

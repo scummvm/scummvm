@@ -38,6 +38,7 @@ enum DebugSeeking {
 };
 
 struct ScriptState {
+	bool debugging;
 	bool stopOnEvent;
 	DebugSeeking seeking;		// Stepping forward until some special condition is met
 	int runningStep;			// Set to > 0 to allow multiple stepping
