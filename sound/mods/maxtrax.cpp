@@ -34,45 +34,57 @@
 #if defined(SOUND_MODS_MAXTRAX_H)
 
 namespace {
+
+enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
+enum { NO_BEND = 64 << 7, MAX_BEND_RANGE = 24 };
+
 int32 precalcNote(byte baseNote, int16 tune, byte octave) {
-	return 0x9fd77 + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
+	return K_VALUE + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
 }
+
 int32 calcVolumeDelta(int32 delta, uint16 time, uint16 vBlankFreq) {
 	const int32 div = time * vBlankFreq;
 	// div <= 1000 means time to small (or even 0)
 	return (div <= 1000) ? delta : (1000 * delta) / div;
 }
+
 int32 calcTempo(const uint16 tempo, uint16 vBlankFreq) {
 	return (int32)(((uint32)(tempo & 0xFFF0) << 8) / (uint16)(5 * vBlankFreq));
 }
 
-// 0x9fd77 ~ log2(1017)  MIDI F5 ?
-// 0x8fd77 ~ log2(508.5) MIDI F4 ?
-// 0x6f73d ~ log2(125) ~ 5675Hz
-enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
+void nullFunc(int) {}
+
+// define sinetable if needed and setup a compile-time constant
+#ifdef MAXTRAX_HAS_MODULATION
+const int8 tableSine[256] = { 0 };
+static const bool kHasModulation = true;
+#else
+const bool kHasModulation = false;
+#endif
+
 }
 
 namespace Audio {
 
 MaxTrax::MaxTrax(int rate, bool stereo)
 	: Paula(stereo, rate, rate/50),
-	  _voiceCtx(),
 	  _patch(),
 	  _scores(),
 	  _numScores() {
 	_playerCtx.maxScoreNum = 128;
 	_playerCtx.vBlankFreq = 50;
-	_playerCtx.frameUnit = (uint16)((1000 * (1<<8)) /  _playerCtx.vBlankFreq);
+	_playerCtx.frameUnit = (uint16)((1000 << 8) /  _playerCtx.vBlankFreq);
 	_playerCtx.scoreIndex = -1;
-	_playerCtx.nextEvent = 0;
 	_playerCtx.volume = 0x40;
 
 	_playerCtx.tempo = 120;
 	_playerCtx.tempoTime = 0;
-	_playerCtx.syncCallBack = 0;
+	_playerCtx.filterOn = true;
+	_playerCtx.syncCallBack = &nullFunc;
 
+	resetPlayer();
 	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i)
-		resetChannel(_channelCtx[i], (i & 1) != 0);
+		_channelCtx[i].regParamNumber = 0;
 }
 
 MaxTrax::~MaxTrax() {
@@ -90,20 +102,22 @@ void MaxTrax::interrupt() {
 
 	_playerCtx.ticks += _playerCtx.tickUnit;
 	const int32 millis = _playerCtx.ticks >> 8; // d4
+
 	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
-		VoiceContext &voice = _voiceCtx[i]; // a3
-		if (voice.channel && voice.stopEventCommand < 0x80) {
-			const int channelNo = voice.stopEventParameter;
-			assert(channelNo == voice.channel - _channelCtx); // TODO remove
-			voice.stopEventTime -= (channelNo < kNumChannels) ? _playerCtx.tickUnit : _playerCtx.frameUnit;
-			if (voice.stopEventTime <= 0) {
-				noteOff(voice, voice.stopEventCommand);
-				voice.stopEventCommand = 0xFF;
+		VoiceContext &voice = _voiceCtx[i];
+		if (voice.stopEventTime >= 0) {
+			assert(voice.channel);
+			voice.stopEventTime -= (voice.channel < &_channelCtx[kNumChannels]) ? _playerCtx.tickUnit : _playerCtx.frameUnit;
+			if (voice.stopEventTime <= 0 && voice.status > VoiceContext::kStatusRelease) {
+				if ((voice.channel->flags & ChannelContext::kFlagDamper) != 0)
+					voice.hasDamper = true;
+				else
+					voice.status = VoiceContext::kStatusRelease;
 			}
 		}
 	}
 
-	if (_playerCtx.musicPlaying) {
+	if (_playerCtx.scoreIndex >= 0) {
 		const Event *curEvent = _playerCtx.nextEvent;
 		int32 eventDelta = _playerCtx.nextEventTime - millis;
 		for (; eventDelta <= 0; eventDelta += (++curEvent)->startTime) {
@@ -115,12 +129,8 @@ void MaxTrax::interrupt() {
 
 			if (cmd < 0x80) {	// Note
 				const int8 voiceIndex = noteOn(channel, cmd, (curEvent->parameter & 0xF0) >> 1, kPriorityScore);
-				if (voiceIndex >= 0) {
-					VoiceContext &voice = _voiceCtx[voiceIndex];
-					voice.stopEventCommand = cmd;
-					voice.stopEventParameter = curEvent->parameter & 0x0F;
-					voice.stopEventTime = (eventDelta + curEvent->stopTime) << 8;
-				}
+				if (voiceIndex >= 0)
+					_voiceCtx[voiceIndex].stopEventTime = MAX(0, (eventDelta + curEvent->stopTime) << 8);
 
 			} else {
 				switch (cmd) {
@@ -153,15 +163,14 @@ void MaxTrax::interrupt() {
 						eventDelta = curEvent->startTime - millis;
 						_playerCtx.ticks = 0;
 					} else
-						_playerCtx.musicPlaying = false;
+						_playerCtx.scoreIndex = -1;
 					// stop processing for this tick
 					goto endOfEventLoop;
 
 				case 0xA0: 	// SPECIAL
 					switch (curEvent->stopTime >> 8){
 					case 0x01:	// SPECIAL_SYNC
-						if (_playerCtx.syncCallBack)
-							_playerCtx.syncCallBack(curEvent->stopTime & 0xFF);
+						_playerCtx.syncCallBack(curEvent->stopTime & 0xFF);
 						break;
 					case 0x02:	// SPECIAL_BEGINREP
 						// we allow a depth of 4 loops
@@ -225,7 +234,16 @@ endOfEventLoop:
 
 		switch (voice.status) {
 		case VoiceContext::kStatusSustain:
-			if (!channel.isAltered && !voice.hasPortamento/* && !channel.modulation*/)
+			// we need to check if some voices have no sustainSample.
+			// in that case they are finished after the attackSample is done
+			if (voice.dmaOff && Paula::getChannelDmaCount((byte)i) >= voice.dmaOff ) {
+				voice.dmaOff = 0;
+				voice.isBlocked = false;
+				voice.priority = 0;
+				voice.status = VoiceContext::kStatusRelease;
+			}
+			// still act if voice is in sustain
+			if (!channel.isAltered && !voice.hasPortamento && (!kHasModulation || !channel.modulation))
 				continue;
 			// Update Volume and Period
 			break;
@@ -264,6 +282,7 @@ endOfEventLoop:
 				voice.lastVolume = 0;
 				// Send Audio Packet
 			}
+			voice.stopEventTime = -1;
 			break;
 		}
 
@@ -317,7 +336,7 @@ endOfEventLoop:
 					voice.preCalcNote = precalcNote(voice.baseNote, patch.tune, voice.octave);
 				}
 				voice.lastPeriod = calcNote(voice);
-			} else if (channel.isAltered/* || channel.modulation*/)
+			} else if (channel.isAltered || (kHasModulation && channel.modulation))
 				voice.lastPeriod = calcNote(voice);
 		}
 
@@ -328,20 +347,10 @@ endOfEventLoop:
 	for (ChannelContext *c = _channelCtx; c != &_channelCtx[ARRAYSIZE(_channelCtx)]; ++c)
 		c->isAltered = false;
 
-	//modulation stuff,  sinevalue += tickunit
-
-	// we need to check if some voices have no sustainSample.
-	// in that case they are finished after the attackSample is done
-	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
-		VoiceContext &voice = _voiceCtx[i];
-		if (voice.dmaOff && Paula::getChannelDmaCount((byte)i) >= voice.dmaOff ) {
-			voice.isBlocked = false;
-			voice.priority = 0;
-			voice.dmaOff = 0;
-			if (voice.status == VoiceContext::kStatusSustain)
-				voice.status = VoiceContext::kStatusRelease;
-		}
-	}
+	// original player had _playerCtx.sineValue = _playerCtx.frameUnit >> 2
+	// this should fit the comments that modtime=1000 is one second ?
+	if (kHasModulation)
+		_playerCtx.sineValue += _playerCtx.frameUnit;
 }
 
 void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte data) {
@@ -359,7 +368,11 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		channel.portamentoTime = (channel.portamentoTime & 0x3f80) || data;
 		break;
 	case 0x06:	// data entry MSB
-		// TODO implement
+		if (channel.regParamNumber == 0) {
+			channel.pitchBendRange = (int8)MIN((uint8)MAX_BEND_RANGE, (uint8)data);
+			channel.pitchReal = (((int32)channel.pitchBendRange * channel.pitchBend) >> 5) - (channel.pitchBendRange << 8);
+			channel.isAltered = true;
+		}
 		break;
 	case 0x07:	// Main Volume MSB
 		channel.volume = (data == 0) ? 0 : data + 1;
@@ -419,8 +432,7 @@ void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte 
 		channel.regParamNumber = (channel.regParamNumber & 0xFF00) || data;
 		break;
 	case 0x79:	// Reset All Controllers
-		// TODO: dont reset Pan
-		resetChannel(channel, false);
+		resetChannel(channel, ((&channel - _channelCtx) & 1) != 0);
 		break;
 	case 0x7E:	// MONO mode
 		channel.flags |= ChannelContext::kFlagMono;
@@ -442,7 +454,7 @@ allNotesOff:
 	case 0x78:	// All Sounds Off
 		for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
 			if (_voiceCtx[i].channel == &channel)
-				killVoice(i);
+				killVoice((byte)i);
 		}
 		break;
 	}
@@ -453,51 +465,74 @@ void MaxTrax::setTempo(const uint16 tempo) {
 	_playerCtx.tickUnit = calcTempo(tempo, _playerCtx.vBlankFreq);
 }
 
+void MaxTrax::resetPlayer() {
+	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
+		killVoice((byte)i);
+
+	for (int i = 0; i < kNumChannels; ++i) {
+		_channelCtx[i].flags = 0;
+		_channelCtx[i].lastNote = (uint8)-1;
+		resetChannel(_channelCtx[i], (i & 1) != 0);
+		_channelCtx[i].patch = &_patch[i];
+	}
+
+	for (int i = kNumChannels; i < ARRAYSIZE(_channelCtx); ++i) {
+		_channelCtx[i].flags = 0;
+		_channelCtx[i].lastNote = (uint8)-1;
+		resetChannel(_channelCtx[i], (i & 1) != 0);
+		_channelCtx[i].patch = 0;
+	}
+
+#ifdef MAXTRAX_HAS_MICROTONAL
+	for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
+		_microtonal[i] = (int16)(i << 8);
+#endif
+}
+
 void MaxTrax::stopMusic() {
 	Common::StackLock lock(_mutex);
-	_playerCtx.musicPlaying = false;
 	_playerCtx.scoreIndex = -1;
-	_playerCtx.nextEvent = 0;
+	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i) {
+		if (_voiceCtx[i].channel < &_channelCtx[kNumChannels])
+			killVoice((byte)i);
+	}
 }
 
 bool MaxTrax::playSong(int songIndex, bool loop) {
 	if (songIndex < 0 || songIndex >= _numScores)
 		return false;
 	Common::StackLock lock(_mutex);
-	_playerCtx.musicPlaying = false;
-	_playerCtx.musicLoop = loop;
+	_playerCtx.scoreIndex = -1;
+	resetPlayer();
+	for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i)
+		_playerCtx.repeatPoint[i] = 0;
 
 	setTempo(_playerCtx.tempoInitial << 4);
 	Paula::setAudioFilter(_playerCtx.filterOn);
+	_playerCtx.musicLoop = loop;
 	_playerCtx.tempoTime = 0;
 	_playerCtx.scoreIndex = songIndex;
 	_playerCtx.ticks = 0;
 
-	for (int i = 0; i < ARRAYSIZE(_playerCtx.repeatPoint); ++i)
-		_playerCtx.repeatPoint[i] = 0;
-	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
-		killVoice((byte)i);
-	for (int i = 0; i < kNumChannels; ++i)
-		resetChannel(_channelCtx[i], (i & 1) != 0);
-
 	_playerCtx.nextEvent = _scores[songIndex].events;;
 	_playerCtx.nextEventTime = _playerCtx.nextEvent->startTime;
 
-	_playerCtx.musicPlaying = true;
 	Paula::startPaula();
 	return true;
 }
 
 void MaxTrax::advanceSong(int advance) {
 	Common::StackLock lock(_mutex);
-	const Event *cev = _playerCtx.nextEvent;
-	if (cev) {
-		for (; advance > 0; --advance) {
-			// TODO - check for boundaries 
-			for (; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
-				; // no end_command or special_command + end
+	if (_playerCtx.scoreIndex >= 0) {
+		const Event *cev = _playerCtx.nextEvent;
+		if (cev) {
+			for (; advance > 0; --advance) {
+				// TODO - check for boundaries 
+				for (; cev->command != 0xFF && (cev->command != 0xA0 || (cev->stopTime >> 8) != 0x00); ++cev)
+					; // no end_command or special_command + end
+			}
+			_playerCtx.nextEvent = cev;
 		}
-		_playerCtx.nextEvent = cev;
 	}
 }
 
@@ -510,10 +545,9 @@ void MaxTrax::killVoice(byte num) {
 	voice.hasDamper = false;
 	voice.hasPortamento = false;
 	voice.priority = 0;
+	voice.stopEventTime = -1;
 	voice.dmaOff = 0;
 	//voice.uinqueId = 0;
-
-	voice.stopEventCommand = 0xFF;
 
 	// "stop" voice, set period to 1, vol to 0
 	Paula::disableChannel(num);
@@ -560,15 +594,38 @@ int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
 		return (int8)pick;
 	}
 	// failed
-	debug("Nopick");
+	debug(5, "MaxTrax: could not find channel for note");
 	return -1;
 }
 
 uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 	const ChannelContext &channel = *voice.channel;
 	int16 bend = channel.pitchReal;
+
+#ifdef MAXTRAX_HAS_MICROTONAL
+	if (voice.hasPortamento) {
+		if ((channel.flags & ChannelContext::kFlagMicrotonal) != 0)
+			bend += (int16)(((_microtonal[voice.endNote] - _microtonal[voice.baseNote]) * voice.portaTicks) >> 8) / channel.portamentoTime;
+		else
+			bend += (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
+	}
+
+	if ((channel.flags & ChannelContext::kFlagMicrotonal) != 0)
+		bend += _microtonal[voice.baseNote];
+#else
 	if (voice.hasPortamento)
 		bend += (int16)(((int8)(voice.endNote - voice.baseNote)) * voice.portaTicks) / channel.portamentoTime;
+#endif
+
+#ifdef MAXTRAX_HAS_MODULATION
+	if (channel.modulation) {
+		if ((channel.flags & ChannelContext::kFlagModVolume) == 0) {
+			int sineInd = (_playerCtx.sineValue / channel.modulationTime) & 0xFF;
+			// TODO - use table
+			bend += (int16)(sinf(sineInd * (float)((2 * PI) / 256)) * channel.modulation);
+		} 
+	}
+#endif
 
 	// tone = voice.baseNote << 8 + microtonal
 	// bend = channelPitch + porta + modulation
@@ -585,8 +642,11 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
-//	if (channel.microtonal >= 0)
-//		_microtonal[note % 127] = channel.microtonal;
+#ifdef MAXTRAX_HAS_MICROTONAL
+	if (channel.microtonal >= 0)
+		_microtonal[note % 127] = channel.microtonal;
+#endif
+
 	if (!volume)
 		return -1;
 
@@ -634,7 +694,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		voice.octave = (byte)useOctave;
 		voice.preCalcNote = plainNote - (useOctave << 16);
 
-		// next calculate the actual period which depends on wheter porta is enabled
+		// next calculate the actual period which depends on wether porta is enabled
 		if (&channel < &_channelCtx[kNumChannels] && (channel.flags & ChannelContext::kFlagPortamento) != 0) {
 			if ((channel.flags & ChannelContext::kFlagMono) != 0 && channel.lastNote < 0x80 && channel.lastNote != note) {
 				voice.portaTicks = 0;
@@ -688,25 +748,9 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			Paula::setChannelSampleLen(voiceNum, 0);
 			Paula::setChannelDmaCount(voiceNum);
 			voice.dmaOff = 1;
-
 		}
 	}
 	return voiceNum;
-}
-
-void MaxTrax::noteOff(VoiceContext &voice, const byte note) {
-	const ChannelContext &channel = *voice.channel;
-	if (/*channel.voicesActive && */voice.status != VoiceContext::kStatusRelease) {
-		// TODO is this check really necessary?
-		const byte refNote = (voice.hasPortamento) ? voice.endNote : voice.baseNote;
-		assert(refNote == note);
-		if (refNote == note) {
-			if ((channel.flags & ChannelContext::kFlagDamper) != 0)
-				voice.hasDamper = true;
-			else
-				voice.status = VoiceContext::kStatusRelease;
-		}
-	}
 }
 
 void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
@@ -714,17 +758,14 @@ void MaxTrax::resetChannel(ChannelContext &chan, bool rightChannel) {
 	chan.modulationTime = 1000;
 	chan.microtonal = -1;
 	chan.portamentoTime = 500;
-	chan.pitchBend = 64 << 7;
+	chan.pitchBend = NO_BEND;
 	chan.pitchReal = 0;
-	chan.pitchBendRange = 24;
+	chan.pitchBendRange = MAX_BEND_RANGE;
 	chan.volume = 128;
-	// TODO: Not all flags sre (re)set, this might make a difference for the unimplemented commands
-//	chan.flags &= ~ChannelContext::kFlagPortamento & ~ChannelContext::kFlagMicrotonal;
+	chan.flags &= ~(ChannelContext::kFlagPortamento | ChannelContext::kFlagMicrotonal | ChannelContext::kFlagRightChannel);
 	chan.isAltered = true;
 	if (rightChannel)
-		chan.flags = ChannelContext::kFlagRightChannel;
-	else
-		chan.flags = 0; //~ChannelContext::kFlagRightChannel;
+		chan.flags |= ChannelContext::kFlagRightChannel;
 }
 
 void MaxTrax::freeScores() {
@@ -735,7 +776,8 @@ void MaxTrax::freeScores() {
 		_scores = 0;
 	}
 	_numScores = 0;
-//	memset(_microtonal, 0, sizeof(_microtonal));
+	_playerCtx.tempo = 120;
+	_playerCtx.filterOn = true;
 }
 
 void MaxTrax::freePatches() {
@@ -743,7 +785,12 @@ void MaxTrax::freePatches() {
 		delete[] _patch[i].samplePtr;
 		delete[] _patch[i].attackPtr;
 	}
-	memset(const_cast<Patch *>(_patch), 0, sizeof(_patch));
+	memset(_patch, 0, sizeof(_patch));
+}
+
+void MaxTrax::setSignalCallback(void (*callback) (int)) {
+	Common::StackLock lock(_mutex);
+	_playerCtx.syncCallBack = (callback == 0) ? nullFunc : callback;
 }
 
 int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, bool rightSide) {
@@ -755,12 +802,8 @@ int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, boo
 	channel.isAltered = false;
 	channel.patch = &_patch[patch];
 	const int8 voiceIndex = noteOn(channel, note, (byte)volume, kPriorityNote);
-	if (voiceIndex >= 0) {
-		VoiceContext &voice = _voiceCtx[voiceIndex];
-		voice.stopEventCommand = note;
-		voice.stopEventParameter = kNumChannels;
-		voice.stopEventTime = duration << 8;
-	}
+	if (voiceIndex >= 0)
+		_voiceCtx[voiceIndex].stopEventTime = duration << 8;
 	return voiceIndex;
 }
 
@@ -774,7 +817,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 	// 0x0000: 4 Bytes Header "MXTX"
 	// 0x0004: uint16 tempo
 	// 0x0006: uint16 flags. bit0 = lowpassfilter, bit1 = attackvolume, bit15 = microtonal	
-	if (musicData.readUint32BE() != 0x4D585458) {
+	if (musicData.size() < 10 || musicData.readUint32BE() != 0x4D585458) {
 		warning("Maxtrax: File is not a Maxtrax Module");
 		return false;
 	}
@@ -787,25 +830,37 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 	}
 
 	if (flags & (1 << 15)) {
-		debug("Song has microtonal");
-/*		if (loadScores) {
+		debug(5, "Maxtrax: Song has microtonal");
+#ifdef MAXTRAX_HAS_MICROTONAL
+		if (loadScores) {
 			for (int i = 0; i < ARRAYSIZE(_microtonal); ++i)
 				_microtonal[i] = musicData.readUint16BE();
-		} else*/
+		} else
 			musicData.skip(128 * 2);
+#else
+		musicData.skip(128 * 2);
+#endif
 	}
 
 	int scoresLoaded = 0;
 	// uint16 number of Scores
 	const uint16 scoresInFile = musicData.readUint16BE();
 
+	if (musicData.err() || musicData.eos())
+		goto ioError;
+
 	if (loadScores) {
 		const uint16 tempScores = MIN(scoresInFile, _playerCtx.maxScoreNum);
-		Score *curScore =_scores = new Score[tempScores];
+		Score *curScore = new Score[tempScores];
+		if (!curScore)
+			goto allocError;
+		_scores = curScore;
 		
-		for (int i = tempScores; i > 0; --i, ++curScore) {
+		for (scoresLoaded = 0; scoresLoaded < tempScores; ++scoresLoaded, ++curScore) {
 			const uint32 numEvents = musicData.readUint32BE();
 			Event *curEvent = new Event[numEvents];
+			if (!curEvent)
+				goto allocError;
 			curScore->events = curEvent;
 			for (int j = numEvents; j > 0; --j, ++curEvent) {
 				curEvent->command = musicData.readByte();
@@ -815,25 +870,22 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			}
 			curScore->numEvents = numEvents;
 		}
-		_numScores = scoresLoaded = tempScores;
+		_numScores = scoresLoaded;
 	}
 
-	if (!loadSamples)
-		return true;
-
-	// skip over remaining scores in file
-	for (int i = scoresInFile - scoresLoaded; i > 0; --i)
-		musicData.skip(musicData.readUint32BE() * 6);
-
-	// uint16 number of Samples
-	const uint16 wavesInFile = musicData.readUint16BE();
 	if (loadSamples) {
+		// skip over remaining scores in file
+		for (int i = scoresInFile - scoresLoaded; i > 0; --i)
+			musicData.skip(musicData.readUint32BE() * 6);
+
+		// uint16 number of Samples
+		const uint16 wavesInFile = musicData.readUint16BE();
 		for (int i = wavesInFile; i > 0; --i) {
 			// load disksample structure
 			const uint16 number = musicData.readUint16BE();
 			assert(number < ARRAYSIZE(_patch));
 			// pointer to samples needed?
-			Patch &curPatch = const_cast<Patch &>(_patch[number]);
+			Patch &curPatch = _patch[number];
 
 			curPatch.tune = musicData.readSint16BE();
 			curPatch.volume = musicData.readUint16BE();
@@ -849,7 +901,10 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 
 			// Allocate space for both attack and release Segment.
 			Envelope *envPtr = new Envelope[totalEnvs];
+			if (!envPtr)
+				goto allocError;
 			// Attack Segment
+			delete curPatch.attackPtr;
 			curPatch.attackPtr = envPtr;
 			// Release Segment
 			// curPatch.releasePtr = envPtr + curPatch.attackLen;
@@ -862,26 +917,20 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 
 			// read Samples
 			int8 *allocSamples = new int8[totalSamples];
+			if (!allocSamples)
+				goto allocError;
 			curPatch.samplePtr = allocSamples;
 			musicData.read(allocSamples, totalSamples);
 		}
-	} /* else if (wavesInFile > 0){ // only necessary if we need to consume the whole stream to point at end of data
-		uint32 skipLen = 3 * 2;
-		for (int i = wavesInFile; i > 0; --i) {
-			musicData.skip(skipLen);
-			const uint16 octaves = musicData.readUint16BE();
-			const uint32 attackLen = musicData.readUint32BE();
-			const uint32 sustainLen = musicData.readUint32BE();
-			const uint16 attackCount = musicData.readUint16BE();
-			const uint16 releaseCount = musicData.readUint16BE();
-			
-			skipLen = attackCount * 4 + releaseCount * 4 
-				+ (attackLen + sustainLen) * ((1 << octaves) - 1)
-				+ 3 * 2;
-		}
-		musicData.skip(skipLen - 3 * 2);
-	} */
-	return true;
+	}
+	if (!musicData.err() && !musicData.eos())
+		return true;
+ioError:
+	warning("Maxtrax: Encountered IO-Error");
+	return false;
+allocError:
+	warning("Maxtrax: Could not allocate Memory");
+	return false;
 }
 
 #ifndef NDEBUG

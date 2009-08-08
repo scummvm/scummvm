@@ -30,6 +30,9 @@
 #elif !defined SOUND_MODS_MAXTRAX_H
 #define SOUND_MODS_MAXTRAX_H
 
+// #define MAXTRAX_HAS_MODULATION
+// #define MAXTRAX_HAS_MICROTONAL
+
 #include "sound/mods/paula.h"
 
 namespace Audio {
@@ -51,7 +54,7 @@ public:
 	 * @param callback Callback function, will be called synchronously, so DONT modify the player 
 	 *		directly in response
 	 */
-	void setSignalCallback(void (*callback) (int)) { Common::StackLock lock(_mutex); _playerCtx.syncCallBack = callback; }
+	void setSignalCallback(void (*callback) (int));
 
 protected:
 	void interrupt();
@@ -59,7 +62,10 @@ protected:
 private:
 	enum { kNumPatches = 64, kNumVoices = 4, kNumChannels = 16, kNumExtraChannels = 1 };
 	enum { kPriorityScore, kPriorityNote, kPrioritySound };
-//	int16	_microtonal[128];
+
+#ifdef MAXTRAX_HAS_MICROTONAL
+	int16	_microtonal[128];
+#endif
 
 	struct Event {
 		uint16	startTime;
@@ -68,7 +74,7 @@ private:
 		byte	parameter;
 	};
 
-	struct Score {
+	const struct Score {
 		const Event	*events;
 		uint32	numEvents;
 	} *_scores;
@@ -76,6 +82,7 @@ private:
 	int _numScores;
 
 	struct {
+		uint32	sineValue;
 		uint16	vBlankFreq;
 		int32	ticks;
 		int32	tickUnit;
@@ -93,7 +100,6 @@ private:
 
 		bool	filterOn;
 		bool	handleVolume;
-		bool	musicPlaying;
 		bool	musicLoop;
 
 		int		scoreIndex;
@@ -110,7 +116,7 @@ private:
 		uint16	volume;
 	};
 
-	const struct Patch {
+	struct Patch {
 		const Envelope *attackPtr;
 		//Envelope *releasePtr;
 		uint16	attackLen;
@@ -170,11 +176,6 @@ private:
 		int32	portaTicks;
 		int32	incrVolume;
 //		int32	periodOffset;
-		/*ifne FASTSOUND
-			APTR	voice_CurFastIOB			; current fast iob playing
-			APTR	voice_NextFastIOB			; next fast iob to play
-			APTR	voice_FastBuffer			; pointer to buffer area
-		endc*/
 		uint16	envelopeLeft;
 		uint16	noteVolume;
 		uint16	baseVolume;
@@ -202,19 +203,17 @@ private:
 		byte	dmaOff;
 
 		int32	stopEventTime;
-		byte	stopEventCommand;	// TODO: Remove?
-		byte	stopEventParameter;	// TODO: Remove?
 	} _voiceCtx[kNumVoices];
 
 	void MaxTrax::controlCh(ChannelContext &channel, byte command, byte data);
 	void freePatches();
 	void freeScores();
 	void resetChannel(ChannelContext &chan, bool rightChannel);
+	void resetPlayer();
 
 	static int8 pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
-	static uint16 calcNote(const VoiceContext &voice);
+	uint16 calcNote(const VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
-	void noteOff(VoiceContext &voice, byte note);
 	void killVoice(byte num);
 
 	static void outPutEvent(const Event &ev, int num = -1);
