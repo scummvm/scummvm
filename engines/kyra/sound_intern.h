@@ -309,14 +309,6 @@ protected:
 	Audio::MaxTrax *_driver;
 	Audio::SoundHandle _musicHandle;
 	enum FileType { kFileNone = -1, kFileIntro = 0, kFileGame = 1, kFileFinal = 2 } _fileLoaded;
-
-	static const struct EffectEntry {
-		uint16	duration;
-		uint8	note;
-		uint8	patch;
-		int8	volume;
-		int8	pan;
-	} tableEffectsIntro[40], tableEffectsGame[120];
 };
 
 } // end of namespace Kyra

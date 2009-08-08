@@ -32,6 +32,18 @@
 #include "sound/mods/maxtrax.h"
 #include "sound/audiostream.h"
 
+namespace {
+struct EffectEntry {
+	uint16	duration;
+	uint8	note;
+	uint8	patch;
+	int8	volume;
+	int8	pan;
+};
+extern const EffectEntry tableEffectsIntro[40];
+extern const EffectEntry tableEffectsGame[120];
+}
+
 namespace Kyra {
 
 SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
@@ -97,7 +109,7 @@ void SoundAmiga::playTrack(uint8 track) {
 	static const byte loopIngame[23] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01,
-		0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00,
+		0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00
 	};
 
 	switch (_fileLoaded) {
@@ -186,8 +198,11 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	}
 }
 
+} // end of namespace Kyra
 
-const SoundAmiga::EffectEntry SoundAmiga::tableEffectsIntro[40] = {
+namespace {
+
+const EffectEntry tableEffectsIntro[40] = {
 	{ 0x0000, 0x00, 0x00,   0,  0 },
 	{ 0x0000, 0x00, 0x00,   0,  0 },
 	{ 0x0000, 0x00, 0x00,   0,  0 },
@@ -230,7 +245,7 @@ const SoundAmiga::EffectEntry SoundAmiga::tableEffectsIntro[40] = {
 	{ 0x0000, 0x00, 0x00,   0,  0 }
 };
 
-const SoundAmiga::EffectEntry SoundAmiga::tableEffectsGame[120] = {
+const EffectEntry tableEffectsGame[120] = {
 	{ 0x0000, 0x00, 0x00,   0,  0 },
 	{ 0x0000, 0x01, 0x00,   0,  0 },
 	{ 0x0000, 0x00, 0x00,   0,  0 },
@@ -353,4 +368,4 @@ const SoundAmiga::EffectEntry SoundAmiga::tableEffectsGame[120] = {
 	{ 0x0156, 0x3C, 0x13, 120,  2 }
 };
 
-} // end of namespace Kyra
+} // end of namespace
