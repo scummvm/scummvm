@@ -277,7 +277,7 @@ void Game::loop() {
 					}
 
 					if (_loopSubstatus == kStatusOrdinary) {
-						// HACK: Test running look and use scripts
+
 						if (_vm->_mouse->lButtonPressed()) {
 							// Delete title text
 							title->setText("");
@@ -297,23 +297,30 @@ void Game::loop() {
 							_vm->_mouse->cursorOn();
 						}
 
+						// TODO: Handle global use scripts (the use script for the room itself)
+
 						if (_vm->_mouse->rButtonPressed()) {
 							// Delete title text
 							title->setText("");
 
-							_vm->_mouse->cursorOff();
 							_vm->_mouse->rButtonSet(false);
 
-							if (!obj->_imUse) {
-								if (obj->_useDir == 0) {
-									walkHero(x, y);
-								} else {
-									walkHero(obj->_useX, obj->_useY);
-								}
-							}
+							if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
+								_vm->_mouse->cursorOff();
 
-							_vm->_script->run(obj->_program, obj->_use);
-							_vm->_mouse->cursorOn();
+								if (!obj->_imUse) {
+									if (obj->_useDir == 0) {
+										walkHero(x, y);
+									} else {
+										walkHero(obj->_useX, obj->_useY);
+									}
+								}
+
+								_vm->_script->run(obj->_program, obj->_use);
+								_vm->_mouse->cursorOn();
+							} else {
+								walkHero(x, y);
+							}	
 						}
 					}
 				} else {
