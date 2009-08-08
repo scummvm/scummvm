@@ -240,9 +240,9 @@ endOfEventLoop:
 				voice.dmaOff = 0;
 				voice.isBlocked = false;
 				voice.priority = 0;
-				voice.status = VoiceContext::kStatusRelease;
+				// disable it in next tick
+				voice.stopEventTime = 0;
 			}
-			// still act if voice is in sustain
 			if (!channel.isAltered && !voice.hasPortamento && (!kHasModulation || !channel.modulation))
 				continue;
 			// Update Volume and Period
