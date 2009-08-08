@@ -345,7 +345,14 @@ void SaveLoadChooser::updateSaveList() {
 			}
 		}
 
-		saveNames.push_back(x->description());
+		// Show "Untitled savestate" for empty/whitespace savegame descriptions
+		Common::String description = x->description();
+		Common::String trimmedDescription = description;
+		trimmedDescription.trim();
+		if (trimmedDescription.empty())
+			description = "Untitled savestate";
+
+		saveNames.push_back(description);
 		curSlot++;
 	}
 
