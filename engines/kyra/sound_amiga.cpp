@@ -65,9 +65,9 @@ bool SoundAmiga::init() {
 
 void SoundAmiga::loadSoundFile(uint file) {
 	static const char *const tableFilenames[3][2] = {
-		{ "introscr.mx", "introinst.mx" },
+		{ "introscr.mx",  "introinst.mx" },
 		{ "kyramusic.mx", 0 },
-		{ "finalescr.mx", 0 }
+		{ "finalescr.mx", "introinst.mx" }
 	};
 	assert(file < ARRAYSIZE(tableFilenames));
 	if (_fileLoaded == (FileType)file)
@@ -112,42 +112,54 @@ void SoundAmiga::playTrack(uint8 track) {
 		0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00
 	};
 
+	int score = -1;
+	bool loop = false;
+	byte volume = 0x40;
+	byte tempo = 0;
+
+
 	switch (_fileLoaded) {
+	case kFileFinal:
+		// score 0 gets started immediately after loading the music-files with different tempo.
+		// we need to define a track-value for the fake call of this function
+		if (track == 10) {
+			score = 0;
+			loop = true;
+			tempo = 0x78;
+			break;
+		}
+		// if this is not the hardcoded start of the song then
+		// Fallthrough
 	case kFileIntro:
-		if (track >= 2) {
-			track -= 2;
-			if (_driver->playSong(track)) {
-				_driver->setVolume(0x40);
-				_driver->setTempo(tempoIntro[track] << 4);
-				if (!_mixer->isSoundHandleActive(_musicHandle))
-					_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-			}
-		} else if (track == 0){
-			_driver->stopMusic();
-		} else { // track == 1
-			beginFadeOut();
+		if (track >= 2 && track < ARRAYSIZE(tempoIntro) + 2) {
+			score = track - 2;
+			tempo = tempoIntro[score];
 		}
 		break;
 
 	case kFileGame:
-		if (track < 0x80 && track != 3) {
-			if (track >= 2) {
-				track -= 0xB;
-				if (_driver->playSong(track, loopIngame[track] != 0)) {
-					_driver->setVolume(0x40);
-				
-					_driver->setTempo(tempoIngame[track] << 4);
-					if (!_mixer->isSoundHandleActive(_musicHandle))
-						_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-				}
-			} else if (track == 0){
-				_driver->stopMusic();
-			} else { // track == 1
-				beginFadeOut();
-			}
+		if (track >= 11 && track < ARRAYSIZE(tempoIngame) + 11) {
+			score = track - 11;
+			loop = loopIngame[track] != 0;
+			tempo = tempoIngame[track];
 		}
 		break;
+
+	default:
+		return;
 	}
+
+	if (score >= 0) {
+		if (_driver->playSong(score, loop)) {
+			_driver->setVolume(volume);
+			_driver->setTempo(tempo << 4);
+			if (!_mixer->isSoundHandleActive(_musicHandle))
+				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
+		}
+	} else if (track == 0)
+		_driver->stopMusic();
+	else if (track == 1)
+		beginFadeOut();
 }
 
 void SoundAmiga::haltTrack() {
@@ -167,34 +179,38 @@ void SoundAmiga::beginFadeOut() {
 
 void SoundAmiga::playSoundEffect(uint8 track) {
 	debug("play sfx %d", track);
+	const EffectEntry *entry = 0;
+	bool pan = false;
 
 	switch (_fileLoaded) {
-	case kFileIntro: {
+	case kFileFinal:
+	case kFileIntro:
 		assert(track < ARRAYSIZE(tableEffectsIntro));
-		const EffectEntry &entry = tableEffectsIntro[track];
-		bool success = _driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, entry.pan != 0) >= 0;
-		if (!_mixer->isSoundHandleActive(_musicHandle))
-			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-		}
+		entry = &tableEffectsIntro[track];
+		pan = (entry->pan != 0);
 		break;
 
-
-	case kFileGame: {
-		uint16 extVar = 1; // maybe indicates music playing or enabled
-		uint16 extVar2 = 1; // sound loaded ?
-		if (0x61 <= track && track <= 0x63 && extVar)
+	case kFileGame:
+		// 0x61 <= track && track <= 0x63 && variable(0x1BFE2) which might indicate song playing in game and finale
+		if (0x61 <= track && track <= 0x63)
 			playTrack(track - 0x4F);
 
 		assert(track < ARRAYSIZE(tableEffectsGame));
-		const EffectEntry &entry = tableEffectsGame[track];
-		if (extVar2 && entry.note) {
-			byte pan = (entry.pan == 2) ? 0 : entry.pan;
-			_driver->playNote(entry.note, entry.patch, entry.duration, entry.volume, pan != 0);
-			if (!_mixer->isSoundHandleActive(_musicHandle))
-				_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
-		}
+		// variable(0x1BFE2) && tableEffectsGame[track].note, which gets set for ingame and unset for finale
+		// (and some function reverses its state)
+		if (tableEffectsGame[track].note) { 
+			entry = &tableEffectsGame[track];
+			pan = (entry->pan != 0) && (entry->pan != 2);
 		}
 		break;
+	default:
+		;
+	}
+
+	if (entry) {
+		const bool success = _driver->playNote(entry->note, entry->patch, entry->duration, entry->volume, pan);
+		if (success && !_mixer->isSoundHandleActive(_musicHandle))
+			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 	}
 }
 
