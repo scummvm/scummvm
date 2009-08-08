@@ -32,7 +32,7 @@
 namespace Asylum {
 
 class Screen;
-struct PolyDefinitions;
+struct ActionItem;
 
 // TODO properly use this enum as opposed to just
 // using it for visual reference :P
@@ -134,21 +134,24 @@ public:
 	virtual ~MainActor();
 
 	void setResourcePack(ResourcePack *resPack) { _resPack = resPack; }
+	void setWalkArea(ActionItem *target); // depreciate
 	void setAction(int action);
 	void setActionByIndex(int index);
-	void drawActorAt(Screen *screen, uint16 x, uint16 y);
-	void drawActor(Screen *screen);
-	void walkTo(Screen *screen, uint16 x, uint16 y, PolyDefinitions *region);
+	void drawActorAt(uint16 x, uint16 y);
+	void drawActor();
+	void walkTo(uint16 x, uint16 y);
 	int getCurrentAction() { return _currentAction; }
 
 	uint16 _actorX, _actorY;
 
 private:
 	GraphicResource *_graphic;
-	ResourcePack *_resPack;
-	uint32 _resources[61];
-	uint8  _currentFrame;
-	int _currentAction;
+	ResourcePack    *_resPack;
+	uint32          _resources[61];
+	uint8           _currentFrame;
+	int             _currentAction;
+
+	ActionItem 		*_currentWalkArea;
 
 	GraphicFrame *getFrame();
 
