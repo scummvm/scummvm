@@ -339,7 +339,7 @@ void SetMidiVolume(int vol)	{
 		if (currentLoop)
 			PlayMidiSequence(currentMidi, true);
 
-			_vm->_midiMusic->setVolume(vol);
+		_vm->_midiMusic->setVolume(vol);
 	} else if (vol != 0 && priorVolMusic != 0) {
 		// Alter current volume
 		_vm->_midiMusic->setVolume(vol);
