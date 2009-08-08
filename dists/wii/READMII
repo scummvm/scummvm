@@ -44,10 +44,9 @@ CONTROLS
     plus: "." (skip current line of text)
     2: enter
     home: f5 (scummvm menu)
-    dpad up: shift (mass add for the gui)
-    dpad down: "0"
-    dpad left: "y"
-    dpad right: "n"
+    dpad up: shift (mass add for the gui, combined with home: GMM)
+    dpad down: virtual keyboard
+    dpad right: predictive dialog (only in AGI games)
 
   gamecube pad
 
@@ -58,10 +57,9 @@ CONTROLS
     y: "." (skip current line of text)
     z: enter
     start: f5 (scummvm menu)
-    dpad up: shift (mass add for the gui)
-    dpad down: "0"
-    dpad left: "y"
-    dpad right: "n"
+    dpad up: shift (mass add for the gui, combined with start: GMM)
+    dpad down: virtual keyboard
+    dpad right: predictive dialog (only in AGI games)
 
 DISPLAY SETUP
 
