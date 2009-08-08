@@ -205,7 +205,7 @@ private:
 		int32	stopEventTime;
 	} _voiceCtx[kNumVoices];
 
-	void MaxTrax::controlCh(ChannelContext &channel, byte command, byte data);
+	void controlCh(ChannelContext &channel, byte command, byte data);
 	void freePatches();
 	void freeScores();
 	void resetChannel(ChannelContext &chan, bool rightChannel);

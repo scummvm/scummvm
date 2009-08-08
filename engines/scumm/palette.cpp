@@ -201,8 +201,13 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	assertRange(0, numcolor, 256, "setPaletteFromPtr: numcolor");
 
 	dest = _currentPalette;
+	if ((_game.platform == Common::kPlatformAmiga) && _game.version == 4 && _renderMode != Common::kRenderEGA) {
+		firstIndex = 16;
+		dest += 3 * 16;
+		ptr += 3 * 16;
+	}
 
-	for (i = 0; i < numcolor; i++) {
+	for (i = firstIndex; i < numcolor; i++) {
 		r = *ptr++;
 		g = *ptr++;
 		b = *ptr++;
@@ -227,7 +232,7 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 		memcpy(_darkenPalette, _currentPalette, 768);
 	}
 
-	setDirtyColors(0, numcolor - 1);
+	setDirtyColors(firstIndex, numcolor - 1);
 }
 
 void ScummEngine::setDirtyColors(int min, int max) {
