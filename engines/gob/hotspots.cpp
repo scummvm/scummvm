@@ -628,8 +628,6 @@ bool Hotspots::checkHotspotChanged() {
 }
 
 uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index) {
-	_vm->_game->_scrollHandleMouse = handleMouse != 0;
-
 	if (delay >= -1) {
 		_currentKey   = 0;
 		_currentId    = 0;
@@ -678,6 +676,9 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 				_vm->_draw->blitInvalidated();
 			_vm->_video->waitRetrace();
 		}
+
+		if (handleMouse)
+			_vm->_game->evaluateScroll();
 
 		// Update keyboard and mouse state
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,

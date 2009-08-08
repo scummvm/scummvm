@@ -935,6 +935,8 @@ void Inter_v2::o2_setScrollOffset() {
 	offsetY = _vm->_game->_script->readValExpr();
 
 	if (offsetX == -1) {
+		_vm->_game->_preventScroll = !_vm->_game->_preventScroll;
+
 		WRITE_VAR(2, _vm->_draw->_scrollOffsetX);
 		WRITE_VAR(3, _vm->_draw->_scrollOffsetY);
 	} else {
@@ -996,11 +998,8 @@ void Inter_v2::o2_playImd() {
 		close = false;
 	}
 
-	if (startFrame >= 0) {
-		_vm->_game->_preventScroll = true;
+	if (startFrame >= 0)
 		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
-		_vm->_game->_preventScroll = false;
-	}
 
 	if (close)
 		_vm->_vidPlayer->primaryClose();
