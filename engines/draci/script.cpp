@@ -598,6 +598,8 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	GPL2Operator oper;
 	GPL2Function func;
 
+	debugC(3, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
+
 	// Read in initial math object
 	obj = (mathExpressionObject)reader.readSint16LE();
 
@@ -685,6 +687,36 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	}
 
 	return stk.pop();
+}
+
+/**
+ * @brief Evaluates a GPL mathematical expression on a given offset and returns 
+ * the result (which is normally a boolean-like value)
+ * 
+ * @param program	A GPL2Program instance of the program containing the expression
+ * @param offset	Offset of the expression inside the program (in multiples of 2 bytes)
+ * 
+ * @return The result of the expression converted to a bool.
+ *
+ * Reference: the function equivalent to this one is called "Can()" in the original engine.
+ */
+bool Script::testExpression(GPL2Program program, uint16 offset) {
+	
+	// Initialize program reader
+	Common::MemoryReadStream reader(program._bytecode, program._length);
+
+	// Offset is given as number of 16-bit integers so we need to convert
+	// it to a number of bytes  
+	offset -= 1;
+	offset *= 2;
+
+	// Seek to the expression
+	reader.seek(offset);
+
+	debugC(2, kDraciBytecodeDebugLevel, 
+		"Evaluating (standalone) GPL expression at offset %d:", offset);
+
+	return (bool)handleMathExpression(reader);
 }
 
 /**
@@ -812,7 +844,8 @@ int Script::run(GPL2Program program, uint16 offset) {
 
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
-					debugC(2, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
+					debugC(2, kDraciBytecodeDebugLevel, 
+						"Evaluating (in-script) GPL expression at offset %d: ", offset);
 					params.push(handleMathExpression(reader));
 				}
 				else {
