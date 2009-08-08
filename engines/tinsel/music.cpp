@@ -256,6 +256,22 @@ bool PlayMidiSequence(uint32 dwFileOffset, bool bLoop) {
 
 		midiStream.close();
 
+		// WORKAROUND for bug #2820054 "DW1: No intro music at first start on Wii",
+		// which actually affects all ports, since it's specific to the multi language
+		// version.
+		//
+		// The multilanguage version does not seem to set the channel volume at all for
+		// the intro track, thus we need to do that here. We only initialize the
+		// channels used in that sequence. And we are using 127 as default channel volume.
+		if (_vm->getGameID() == GID_DW1 && dwFileOffset == 38888 &&
+			(_vm->getFeatures() & (GF_USE_3FLAGS | GF_USE_4FLAGS | GF_USE_5FLAGS))) {
+			_vm->_midiMusic->send(0x7F07B0 |  3);
+			_vm->_midiMusic->send(0x7F07B0 |  5);
+			_vm->_midiMusic->send(0x7F07B0 |  8);
+			_vm->_midiMusic->send(0x7F07B0 | 10);
+			_vm->_midiMusic->send(0x7F07B0 | 13);
+		}
+
 		_vm->_midiMusic->playXMIDI(midiBuffer.pDat, dwSeqLen, bLoop);
 
 		// Store the length
@@ -320,10 +336,10 @@ void SetMidiVolume(int vol)	{
 		_vm->_midiMusic->setVolume(vol);
 	} else if (vol != 0 && priorVolMusic == 0) {
 		// Perhaps restart last midi sequence
-		if (currentLoop) {
+		if (currentLoop)
 			PlayMidiSequence(currentMidi, true);
+
 			_vm->_midiMusic->setVolume(vol);
-		}
 	} else if (vol != 0 && priorVolMusic != 0) {
 		// Alter current volume
 		_vm->_midiMusic->setVolume(vol);
@@ -377,6 +393,7 @@ void DeleteMidiBuffer() {
 
 MidiMusicPlayer::MidiMusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false) {
 	memset(_channel, 0, sizeof(_channel));
+	memset(_channelVolume, 0, sizeof(_channelVolume));
 	_masterVolume = 0;
 	this->open();
 	_xmidiParser = MidiParser::createParser_XMIDI();
