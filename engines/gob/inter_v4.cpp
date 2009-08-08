@@ -233,11 +233,8 @@ void Inter_v4::o4_playVmdOrMusic() {
 		return;
 	}
 
-	if (startFrame >= 0) {
-		_vm->_game->_preventScroll = true;
+	if (startFrame >= 0)
 		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
-		_vm->_game->_preventScroll = false;
-	}
 
 	if (close)
 		_vm->_vidPlayer->primaryClose();
