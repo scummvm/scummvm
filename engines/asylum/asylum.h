@@ -82,6 +82,8 @@ private:
 	Common::Language	 _language;
 	Common::RandomSource _rnd;
 
+	bool _introPlaying;
+
 	Console   *_console;
 	Scene     *_scene;
 	MainMenu  *_mainMenu;
