@@ -324,7 +324,8 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	_screen->hideMouse();
 	_screen->fillRect(8, 143, 311, 152, 12);
 
-	if (_startSentencePalIndex != color || _fadeText != false) {
+	// TODO: Amiga support
+	if ((_startSentencePalIndex != color || _fadeText != false) && _flags.platform != Common::kPlatformAmiga) {
 		_currSentenceColor[0] = _screen->getPalette(0)[765] = _screen->getPalette(0)[color*3];
 		_currSentenceColor[1] = _screen->getPalette(0)[766] = _screen->getPalette(0)[color*3+1];
 		_currSentenceColor[2] = _screen->getPalette(0)[767] = _screen->getPalette(0)[color*3+2];

@@ -449,7 +449,8 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		return 0;
 	}
 	// XXX
-	_screen->setPaletteIndex(0xFE, 60, 60, 0);
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+		_screen->setPaletteIndex(0xFE, 60, 60, 0);
 	for (int i = 0; i < 6; i++) {
 		_menuButtonData[i].data0Val1 = _menuButtonData[i].data1Val1 = _menuButtonData[i].data2Val1 = 4;
 		_menuButtonData[i].data0Callback = _redrawShadedButtonFunctor;
