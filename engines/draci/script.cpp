@@ -81,8 +81,8 @@ void Script::setupCommandList() {
 		{ 19, 1, "Mark", 				0, { 0 }, &Script::mark },
 		{ 19, 2, "Release", 			0, { 0 }, &Script::release },
 		{ 20, 1, "Play", 				0, { 0 }, &Script::play },
-		{ 21, 1, "LoadMap", 			1, { 2 }, NULL },
-		{ 21, 2, "RoomMap", 			0, { 0 }, NULL },
+		{ 21, 1, "LoadMap", 			1, { 2 }, &Script::loadMap },
+		{ 21, 2, "RoomMap", 			0, { 0 }, &Script::roomMap },
 		{ 22, 1, "DisableQuickHero", 	0, { 0 }, NULL },
 		{ 22, 2, "EnableQuickHero", 	0, { 0 }, NULL },
 		{ 23, 1, "DisableSpeedText", 	0, { 0 }, NULL },
@@ -119,9 +119,9 @@ void Script::setupCommandList() {
 		{ "Not", 		&Script::funcNot },
 		{ "Random", 	&Script::funcRandom },
 		{ "IsIcoOn", 	&Script::funcIsIcoOn },
-		{ "IsIcoAct", 	NULL },
+		{ "IsIcoAct", 	&Script::funcIsIcoAct },
 		{ "IcoStat", 	&Script::funcIcoStat },
-		{ "ActIco", 	NULL },
+		{ "ActIco", 	&Script::funcActIco },
 		{ "IsObjOn", 	&Script::funcIsObjOn },
 		{ "IsObjOff", 	&Script::funcIsObjOff },
 		{ "IsObjAway", 	&Script::funcIsObjAway },
@@ -233,6 +233,22 @@ int Script::funcIcoStat(int iconID) {
 
 	int status = _vm->_game->getIconStatus(iconID);
 	return (status == 1) ? 1 : 2;
+}
+
+int Script::funcIsIcoAct(int iconID) {
+	iconID -= 1;
+
+	return _vm->_game->getCurrentIcon() == iconID;
+}
+
+int Script::funcActIco(int iconID) {
+	
+	// The parameter seems to be an omission in the original player since it's not
+	// used in the implementation of the function. It's possible that the functions were
+	// implemented in such a way that they had to have a single parameter so this is only
+	// passed as a dummy.
+
+	return _vm->_game->getCurrentIcon();
 }
 
 int Script::funcIsObjOn(int objID) {
@@ -555,6 +571,14 @@ void Script::talk(Common::Queue<int> &params) {
 	speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
 	speechFrame->setColour(person->_fontColour);
 
+	// HACK: Some strings in the English data files are too long to fit the screen
+	// This is a temporary resolution.
+	if (speechFrame->getWidth() >= kScreenWidth) {
+		speechFrame->setFont(_vm->_smallFont);
+	} else {
+		speechFrame->setFont(_vm->_bigFont);		
+	}
+
 	// Set the loop substatus to an appropriate value
 	_vm->_game->setLoopSubstatus(kStatusTalk);
 
@@ -581,6 +605,18 @@ void Script::talk(Common::Queue<int> &params) {
 	// Revert to "normal" loop status
 	_vm->_game->setLoopSubstatus(kStatusOrdinary);
 	_vm->_game->setExitLoop(false);
+}
+
+void Script::loadMap(Common::Queue<int> &params) {
+	int mapID = params.pop() - 1;
+
+	_vm->_game->loadWalkingMap(mapID);
+}
+
+void Script::roomMap(Common::Queue<int> &params) {
+
+	// Load the default walking map for the room
+	_vm->_game->loadWalkingMap();
 }
 
 void Script::endCurrentProgram() {

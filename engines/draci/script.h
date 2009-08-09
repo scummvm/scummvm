@@ -119,6 +119,8 @@ private:
 	void startPlay(Common::Queue<int> &params);
 	void newRoom(Common::Queue<int> &params);
 	void talk(Common::Queue<int> &params);
+	void loadMap(Common::Queue<int> &params);
+	void roomMap(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);
@@ -139,6 +141,8 @@ private:
 	int funcNot(int n);
 	int funcIsIcoOn(int iconID);
 	int funcIcoStat(int iconID);
+	int funcActIco(int iconID);
+	int funcIsIcoAct(int iconID);
 	int funcIsObjOn(int objID);
 	int funcIsObjOff(int objID);
 	int funcIsObjAway(int objID);
