@@ -765,6 +765,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\sound\mods\maxtrax.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\maxtrax.h"
+					>
+				</File>
+				<File
 					RelativePath="..\..\sound\mods\module.cpp"
 					>
 				</File>
@@ -802,6 +810,14 @@
 				</File>
 				<File
 					RelativePath="..\..\sound\mods\soundfx.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\tfmx.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\sound\mods\tfmx.h"
 					>
 				</File>
 			</Filter>
