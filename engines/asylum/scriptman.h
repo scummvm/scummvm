@@ -56,6 +56,9 @@ public:
     void toggleGameFlag(int flag);
     bool isGameFlagSet(int flag);
     bool isGameFlagNotSet(int flag);
+    
+    int checkBarrierFlags(int barrierId);
+    int setBarrierNextFrame(int barrierId, int barrierFlags);
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
