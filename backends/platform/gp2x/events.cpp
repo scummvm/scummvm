@@ -35,7 +35,7 @@
 #include "common/events.h"
 
 // FIXME move joystick defines out and replace with confile file options
-// we should really allow users to map any key to a joystick button
+// we should really allow users to map any key to a joystick button using the keymapper.
 #define JOY_DEADZONE 2200
 
 #define JOY_XAXIS 0
@@ -93,7 +93,7 @@ void OSystem_GP2X::fillMouseEvent(Common::Event &event, int x, int y) {
 	if (!_overlayVisible) {
 		event.mouse.x /= _videoMode.scaleFactor;
 		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatio)
+		if (_videoMode.aspectRatioCorrection)
 			event.mouse.y = aspect2Real(event.mouse.y);
 	}
 }

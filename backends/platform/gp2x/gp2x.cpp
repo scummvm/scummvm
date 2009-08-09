@@ -130,8 +130,6 @@ void OSystem_GP2X::initBackend() {
 
 	ConfMan.registerDefault("savepath", savePath);
 
-	_savefile = new DefaultSaveFileManager(savePath);
-
 	#ifdef DUMP_STDOUT
 		// The GP2X has a serial console but most users do not use this so we
 		// output all our STDOUT and STDERR to files for debug purposes.
@@ -185,9 +183,9 @@ void OSystem_GP2X::initBackend() {
 	ConfMan.registerDefault("aspect_ratio", true);
 
 	/* Up default volume values as we use a seperate system level volume anyway. */
-	ConfMan.registerDefault("music_volume", 220);
-	ConfMan.registerDefault("sfx_volume", 220);
-	ConfMan.registerDefault("speech_volume", 220);
+	ConfMan.registerDefault("music_volume", 192);
+	ConfMan.registerDefault("sfx_volume", 192);
+	ConfMan.registerDefault("speech_volume", 192);
 	ConfMan.registerDefault("autosave_period", 3 * 60);	// Trigger autosave every 3 minutes - On low batts 4 mins is about your warning time.
 
 	memset(&_oldVideoMode, 0, sizeof(_oldVideoMode));
@@ -198,7 +196,7 @@ void OSystem_GP2X::initBackend() {
 	_videoMode.mode = GFX_NORMAL;
 	_videoMode.scaleFactor = 1;
 	_scalerProc = Normal1x;
-	_videoMode.aspectRatio  = ConfMan.getBool("aspect_ratio");
+	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
 	_scalerType = 0;
 	_modeFlags = 0;
 	_adjustZoomOnMouse = false;
@@ -209,16 +207,12 @@ void OSystem_GP2X::initBackend() {
 		_joystick = SDL_JoystickOpen(joystick_num);
 	}
 
+	_savefile = new DefaultSaveFileManager();
 	// Create and hook up the mixer, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
 	if (_mixer == 0) {
 		setupMixer();
 	}
-
-	// Setup the keymapper with backend's set of keys
-	// NOTE: must be done before creating TimerManager
-	// to avoid race conditions in creating EventManager
-	setupKeymapper();
 
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
@@ -240,27 +234,6 @@ void OSystem_GP2X::initBackend() {
 	/* Set Default hardware mixer volume to a preset level (VOLUME_INITIAL). This is done to 'reset' volume level if set by other apps. */
 	GP2X_HW::mixerMoveVolume(0);
 
-	// Set Default hardware mixer volume to a plesent level.
-	// This is done to 'reset' volume level if set by other apps.
-
-	//if (SDL_GP2X_MouseType() == 0) {
-	//	// No mouse, F100 default state.
-	//	_gp2xInputType = 0;
-	//	displayMessageOnOSD("F100 GP2X Found");
-	//}
-
-	//if (SDL_GP2X_MouseType() == 1) {
-	//	// USB mouse found.
-	//	_gp2xInputType = 1;
-	//	displayMessageOnOSD("USB Mouse Found");
-	//}
-
-	//if (SDL_GP2X_MouseType() == 2) {
-	//	// F200 touch screen found. - F200 default state.
-	//	_gp2xInputType = 2;
-	//	displayMessageOnOSD("Touch Screen Found");
-	//}
-
 	OSystem::initBackend();
 
 	_inited = true;
@@ -274,7 +247,7 @@ OSystem_GP2X::OSystem_GP2X()
 	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),
 	_cdrom(0), _scalerProc(0), _modeChanged(false), _screenChangeCount(0), _dirtyChecksums(0),
-	_mouseVisible(false), _mouseDrawn(false), _mouseData(0), _mouseSurface(0),
+	_mouseVisible(false), _mouseNeedsRedraw(false), _mouseData(0), _mouseSurface(0),
 	_mouseOrigSurface(0), _cursorTargetScale(1), _cursorPaletteDisabled(true),
 	_joystick(0),
 	_currentShakePos(0), _newShakePos(0),
@@ -433,7 +406,7 @@ bool OSystem_GP2X::getFeatureState(Feature f) {
 	case kFeatureFullscreenMode:
 		return false;
 	case kFeatureAspectRatioCorrection:
-		return _videoMode.aspectRatio;
+		return _videoMode.aspectRatioCorrection;
 	case kFeatureAutoComputeDirtyRects:
 		return _modeFlags & DF_WANT_RECT_OPTIM;
 	default:
@@ -457,12 +430,12 @@ void OSystem_GP2X::quit() {
 	free(_cursorPalette);
 	free(_mouseData);
 
-	delete _savefile;
 	delete _timer;
 	SDL_ShowCursor(SDL_ENABLE);
 	SDL_Quit();
 
 	delete getEventManager();
+	delete _savefile;
 
 	#ifdef DUMP_STDOUT
 		printf("%s\n", "Debug: STDOUT and STDERR text files closed.");
@@ -609,7 +582,7 @@ void OSystem_GP2X::setupMixer() {
 		_samplesPerSec = SAMPLES_PER_SEC;
 
 	//Quick EVIL Hack - DJWillis
-	_samplesPerSec = 11025;
+//	_samplesPerSec = 11025;
 
 	// Determine the sample buffer size. We want it to store enough data for
 	// about 1/16th of a second. Note that it must be a power of two.

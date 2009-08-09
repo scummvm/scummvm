@@ -42,18 +42,7 @@ namespace Audio {
 }
 
 enum {
-	GFX_NORMAL = 0,
-	GFX_DOUBLESIZE = 1,
-	GFX_TRIPLESIZE = 2,
-	GFX_2XSAI = 3,
-	GFX_SUPER2XSAI = 4,
-	GFX_SUPEREAGLE = 5,
-	GFX_ADVMAME2X = 6,
-	GFX_ADVMAME3X = 7,
-	GFX_HQ2X = 8,
-	GFX_HQ3X = 9,
-	GFX_TV2X = 10,
-	GFX_DOTMATRIX = 11
+	GFX_NORMAL = 0
 };
 
 
@@ -248,7 +237,7 @@ protected:
 		bool setup;
 
 		bool fullscreen;
-		bool aspectRatio;
+		bool aspectRatioCorrection;
 
 		int mode;
 		int scaleFactor;
@@ -274,16 +263,11 @@ protected:
 	bool _modeChanged;
 	int _screenChangeCount;
 
-	/** True if aspect ratio correction is enabled. */
-	bool _adjustAspectRatio;
-
-	/** True if zoom on mouse is enabled. (only set by > 240 high games) */
+	/* True if zoom on mouse is enabled. (only set by > 240 high games) */
 	bool _adjustZoomOnMouse;
-	//_adjustZoomOnMouse = false;
 
 	enum {
 		NUM_DIRTY_RECT = 100,
-
 		MAX_MOUSE_W = 80,
 		MAX_MOUSE_H = 80,
 		MAX_SCALING = 3
@@ -332,7 +316,7 @@ protected:
 	// mouse
 	KbdMouse _km;
 	bool _mouseVisible;
-	bool _mouseDrawn;
+	bool _mouseNeedsRedraw;
 	byte *_mouseData;
 	SDL_Rect _mouseBackup;
 	MousePos _mouseCurState;
@@ -419,7 +403,7 @@ protected:
 	bool saveScreenshot(const char *filename);
 
 	int effectiveScreenHeight() const {
-		return (_videoMode.aspectRatio ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
+		return (_videoMode.aspectRatioCorrection ? real2Aspect(_videoMode.screenHeight) : _videoMode.screenHeight)
 			* _videoMode.scaleFactor;
 	}
 
