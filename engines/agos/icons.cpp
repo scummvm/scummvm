@@ -985,8 +985,8 @@ void AGOSEngine_Elvira2::removeArrows(WindowBlock *window, uint num) {
 
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (num != 2) {
-		uint y = window->height * 4 + window->y - 19;
-		uint x = window->width + window->x;
+		uint y = window->y + window->height * 4 - 19;
+		uint x = (window->x + window->width) * 8;
 		restoreBlock(x, y, x + 16, y + 38);
 	} else {
 		colorBlock(window, 240, 151, 16, 38);
