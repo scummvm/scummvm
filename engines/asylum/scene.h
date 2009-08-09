@@ -70,7 +70,9 @@ public:
 
 	SceneResource*   getResources() { return _sceneResource; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
-    ResourcePack*	 getResourceMusicPack() { return _musPack; }
+    ResourcePack*	 getMusicPack() { return _musPack; }
+    ResourcePack*	 getSpeechPack() { return _speechPack; }
+
 	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
     
     BlowUpPuzzle*   getBlowUpPuzzle() { return _blowUp; }
@@ -125,8 +127,6 @@ private:
 	void debugShowPolygons();
 	void debugShowBarriers();
 	void debugShowWalkRegion(PolyDefinitions *poly);
-	
-	friend class ScriptManager;
 }; // end of class Scene
 
 } // end of namespace Asylum
