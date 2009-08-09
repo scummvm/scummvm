@@ -294,10 +294,10 @@ void Scene::update() {
 	// This is a hack for scene 1. This really shouldn't be hardcoded, as the
 	// activation of this barrier should be interpreted by the script manager,
 	// but at the moment, we're not sure where it is in the script.
-	updateBarrier(Shared.getScreen(), _resPack, 1);	// inside the middle room
+    updateBarrier(Shared.getScreen(), _resPack, 1);	// inside the middle room
 
 	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
-		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20) != 0)	//	TODO - enums for flags (0x20 is visible/playing?)
+		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20))	//	TODO - enums for flags (0x20 is visible/playing?)
 			updateBarrier(Shared.getScreen(), _resPack, b);
 	}
 

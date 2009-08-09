@@ -123,10 +123,10 @@ Common::Error AsylumEngine::go() {
 	// Also, this routine is used to set game flags 4 and 12, so if we're
 	// skipping the intro, but not loading a save file, those flags
 	// need to be set somewhere else.
-	playIntro();
+	//playIntro();
 
 	// Enter first scene
-	//_scene->enterScene();
+	_scene->enterScene();
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -150,7 +150,7 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 void AsylumEngine::playIntro() {
 	_video->playVideo(1, kSubtitlesOn);
 	if (_scene->getResources()->getWorldStats()->musicCurrentResId != 0xFFFFFD66)
-		_sound->playMusic(_scene->getResourceMusicPack(),
+		_sound->playMusic(_scene->getMusicPack(),
 						  _scene->getResources()->getWorldStats()->musicCurrentResId);
 
 	_screen->clearScreen();

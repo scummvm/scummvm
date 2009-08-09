@@ -96,6 +96,26 @@ bool ScriptManager::isGameFlagNotSet(int flag) {
 	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
 }
 
+// TODO: put this under scene resource
+int ScriptManager::checkBarrierFlags(int barrierId) {
+    int flags = Shared.getScene()->getResources()->getBarrierById(barrierId)->flags;
+    return flags & 1 && (flags & 8 || flags & 0x10000);
+}
+int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
+    int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
+
+    BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
+    int newFlag = barrierFlags | 1 | barrier->flags;
+
+    if(newFlag & 0x10000) {
+        barrier->frameIdx = barrier->frameCount - 1;
+    } else {
+        barrier->frameIdx = 0;
+    }
+
+    return barrierIndex;
+}
+
 void ScriptManager::processActionList() {
 	bool done = false, waitCycle = false;
 	int lineIncrement = 1;
@@ -110,7 +130,6 @@ void ScriptManager::processActionList() {
 				//	TODO - processActionLists has run too many iterations
 			}
 
-            // TODO: this should be a pointer to allow changes in commands array
 			ActionCommand *currentCommand = &_currentScript->commands[_currentLine];
 
 			switch (currentCommand->opcode) {
@@ -165,6 +184,51 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x07 */  case kPlayAnimation: {
+                /*int barrierId = currentCommand->param1;
+                if(currentCommand->param2 == 2) {
+                    if(!checkBarrierFlags(barrierId)) {
+                        currentCommand->param2 = 1;
+                        return;
+                    }
+                    lineIncrement = 1;
+                } else {
+                    int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
+                    BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
+
+                    if(currentCommand->param4) { // RECHECK THIS
+                        int newBarriedIndex = 213 * barrierIndex;
+                        barrier->flags &= 0xFFFEF1C7;
+                        Shared.getScene()->getResources()->getBarrierByIndex(2*newBarriedIndex)->flags = barrier->flags | 0x20;
+                    } else if(currentCommand->param3) {
+                        barrier->flags &= 0xFFFEF1C7;
+                        barrier->flags |= 0x10000;
+                    } else {
+                        barrier->flags &= 0x10000;
+                        if(barrier->flags == 0) {
+                            barrier->flags &= 0x10E38;
+                            if(barrier->flags == 0) {
+                                barrier->flags |= 8;
+                            }
+                        } else {
+                            barrier->flags |= 8;
+                            barrier->flags &= 0xFFFEFFFF;
+                        }
+                    }
+
+                    setBarrierNextFrame(barrierId, barrier->flags);
+
+                    if(barrier->field_688 == 1) {
+                        // TODO: get barrier position
+                    }
+
+                    if(currentCommand->param2) {
+                        currentCommand->param2 = 2;
+                        lineIncrement = 1;
+                    }
+                }*/
+
+
+                // TODO: take this part of the code when the updateBarrier function is like original and decomment the above code
 				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0)
 					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)

@@ -73,6 +73,7 @@ public:
 	
 	int getBarrierIndexById(uint32 id);
 	BarrierItem* getBarrierById(uint32 id);
+    BarrierItem* getBarrierByIndex(uint32 idx);
 
 private:
 
