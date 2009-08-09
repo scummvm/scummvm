@@ -183,6 +183,16 @@ void Game::start() {
 
 			// Run the program for the gate the dragon came through
 			runGateProgram(_newGate);
+
+			// Set cursor state
+			// Need to do this after we set the palette since the cursors use it
+			if (_currentRoom._mouseOn) {
+				debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
+				_vm->_mouse->cursorOn();
+			} else {
+				debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
+				_vm->_mouse->cursorOff();
+			}
  		}
 
 		// Mimic the original engine by setting the loop status to Ordinary before
@@ -613,16 +623,6 @@ void Game::loadRoom(int roomNum) {
 	// Set room palette
 	f = _vm->_paletteArchive->getFile(_currentRoom._palette);
 	_vm->_screen->setPalette(f->_data, 0, kNumColours);
-
-	// Set cursor state
-	// Need to do this after we set the palette since the cursors use it
-	if (_currentRoom._mouseOn) {
-		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
-		_vm->_mouse->cursorOn();
-	} else {
-		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
-		_vm->_mouse->cursorOff();
-	}
 
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[kScreenWidth * kScreenHeight];
