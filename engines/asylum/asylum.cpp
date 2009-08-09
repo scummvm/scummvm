@@ -163,7 +163,7 @@ void AsylumEngine::playIntro() {
 	_sound->playSfx(introRes, 7);
 
 	if (_sound->isSfxActive()) {
-		while( _sound->isSfxActive()) {
+		while (_sound->isSfxActive()) {
 			;
 		}
 	}
@@ -202,12 +202,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 				return;
 			}
 
-			// XXX Encounter TEST
-			if (ev.kbd.keycode == Common::KEYCODE_e) {
-				//_encounter->run(1, 1584, 1584, 0);
-			}
-
-            // FIXME: TEST ONLY
+            // XXX: TEST ONLY
             if (ev.kbd.keycode == Common::KEYCODE_b) {
                 //_mainMenu->closeMenu();
                 _scene->getBlowUpPuzzle()->openBlowUp();
@@ -222,25 +217,23 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 	}
 
 	if (doUpdate) {
-		if (_mainMenu->isActive() || _scene->isActive() || _scene->getBlowUpPuzzle()->isActive()) {
+		if (_mainMenu->isActive() || _scene->isActive() || _scene->getBlowUpPuzzle()->isActive())
 			// Copy background image
 			_screen->copyBackBufferToScreen();
-		}
 
 		if (_console->isAttached())
 			_console->onFrame();
 	}
 
-	if (_mainMenu->isActive()) {
+	if (_mainMenu->isActive())
 		// Main menu active, pass events to it
 		_mainMenu->handleEvent(&ev, doUpdate);
-	} else if (_scene->isActive()) {
+	else if (_scene->isActive())
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
-    } else if (_scene->getBlowUpPuzzle()->isActive()) {
+    else if (_scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
-	}
 }
 
 void AsylumEngine::processDelayedEvents() {
@@ -252,11 +245,10 @@ void AsylumEngine::processDelayedEvents() {
 		_video->playVideo(videoIdx, kSubtitlesOn);
 		ScriptMan.setDelayedVideoIndex(-1);
 
-		if (_mainMenu->isActive()) {
+		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
-		} else if (_scene->isActive()) {
+		else if (_scene->isActive())
 			_scene->enterScene();
-		}
 	}
 
 	// check for a delayed scene change
