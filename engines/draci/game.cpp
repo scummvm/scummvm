@@ -197,6 +197,10 @@ void Game::init() {
 	_shouldQuit = false;
 	_shouldExitLoop = false;
 
+	_currentIcon = kNoIcon;
+
+	_vm->_mouse->setCursorType(kNormalCursor);
+
 	// HACK: Won't be needed once I've implemented the loop properly
 	_roomChange = false;
 
@@ -236,8 +240,6 @@ void Game::loop() {
 
 	Surface *surface = _vm->_screen->getSurface();
 
-	const int smallFontHeight = _vm->_smallFont->getFontHeight();
-
 	do {
 
 		_vm->handleEvents();
@@ -248,45 +250,37 @@ void Game::loop() {
 			int x = _vm->_mouse->getPosX();
 			int y = _vm->_mouse->getPosY();
 
-			// Find the game object under the cursor
-			// (to be more precise, one that corresponds to the animation under the cursor)
-			int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-			int curObject = getObjectWithAnimation(animUnderCursor);
-			GameObject *obj = &_objects[curObject];
-
 			// Fetch the dedicated objects' title animation / current frame
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
 			Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
 
-			if (_loopStatus == kStatusOrdinary) {
-				// If there is an object under the cursor, display its title and enable
-				// executing its look and use scripts
-				if (curObject != kObjectNotFound) {					
+			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kStatusOrdinary) {
+				if(_vm->_mouse->isCursorOn()) {
+					// Find the game object under the cursor
+					// (to be more precise, one that corresponds to the animation under the cursor)
+					int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+					int curObject = getObjectWithAnimation(animUnderCursor);
 
-					if(_vm->_mouse->isCursorOn()) {
-						// Mark dirty rectangle to delete the previous text
-						titleAnim->markDirtyRect(surface);	
+					updateTitle();
 
-						// Set the title for the current object
-						title->setText(obj->_title);
-
-						// Move the title to the correct place (just above the cursor)
-						int newX = surface->centerOnX(x, title->getWidth());
-						int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
-						titleAnim->setRelative(newX, newY);
+					_objUnderCursor = curObject;
+					if (_objUnderCursor != _oldObjUnderCursor) {
+						_oldObjUnderCursor = _objUnderCursor;
+						updateCursor();
 					}
 
-					if (_loopSubstatus == kStatusOrdinary) {
+					if (_vm->_mouse->lButtonPressed()) {
+						_vm->_mouse->lButtonSet(false);				
 
-						if (_vm->_mouse->lButtonPressed()) {
-							// Delete title text
+						if (_objUnderCursor != kObjectNotFound) {
+							GameObject *obj = &_objects[_objUnderCursor];
+			
+							_vm->_mouse->cursorOff();
+							titleAnim->markDirtyRect(surface);
 							title->setText("");
 
-							_vm->_mouse->cursorOff();
-							_vm->_mouse->lButtonSet(false);				
-							
 							if (!obj->_imLook) {
-								if (obj->_lookDir == 0) {
+								if (obj->_lookDir == -1) {
 									walkHero(x, y);
 								} else {
 									walkHero(obj->_lookX, obj->_lookY);
@@ -295,21 +289,24 @@ void Game::loop() {
 
 							_vm->_script->run(obj->_program, obj->_look);
 							_vm->_mouse->cursorOn();
+						} else {
+							walkHero(x, y);
 						}
+					}
 
-						// TODO: Handle global use scripts (the use script for the room itself)
+					if (_vm->_mouse->rButtonPressed()) {
+						_vm->_mouse->rButtonSet(false);
 
-						if (_vm->_mouse->rButtonPressed()) {
-							// Delete title text
-							title->setText("");
-
-							_vm->_mouse->rButtonSet(false);
+						if (_objUnderCursor != kObjectNotFound) {
+							GameObject *obj = &_objects[_objUnderCursor];
 
 							if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
 								_vm->_mouse->cursorOff();
+								titleAnim->markDirtyRect(surface);
+								title->setText("");
 
 								if (!obj->_imUse) {
-									if (obj->_useDir == 0) {
+									if (obj->_useDir == -1) {
 										walkHero(x, y);
 									} else {
 										walkHero(obj->_useX, obj->_useY);
@@ -320,26 +317,23 @@ void Game::loop() {
 								_vm->_mouse->cursorOn();
 							} else {
 								walkHero(x, y);
-							}	
+							}
+						} else {
+							if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
+								_vm->_mouse->cursorOff();
+								titleAnim->markDirtyRect(surface);
+								title->setText("");
+
+
+								_vm->_script->run(_currentRoom._program, _currentRoom._use);
+								_vm->_mouse->cursorOn();
+							} else {
+								walkHero(x, y);
+							}
 						}
 					}
-				} else {
-					// We haven't found an object under the cursor
-
-					// Delete the previous title				
-					titleAnim->markDirtyRect(surface);
-					title->setText("");
-
-					// If we are in the appropriate loop status and the player clicked
-					// on the room, move the dragon to the nearest walkable point
-					if (_vm->_mouse->lButtonPressed() && 
-						_loopSubstatus == kStatusOrdinary) {
-
-						walkHero(x, y);
-					}
+					debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
 				}
-
-				debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
 			}
 		}
 
@@ -371,7 +365,9 @@ void Game::loop() {
 			return;
 
 		// Advance animations and redraw screen
-		_vm->_anims->drawScene(_vm->_screen->getSurface());
+		if (_loopStatus != kStatusInventory) {
+			_vm->_anims->drawScene(surface);
+		}
 		_vm->_screen->copyToScreen();
 		_vm->_system->delayMillis(20);
 
@@ -380,6 +376,75 @@ void Game::loop() {
 
 	} while (!shouldExitLoop());
 }
+
+void Game::updateCursor() {
+
+	_vm->_mouse->setCursorType(kNormalCursor);
+
+	if (_currentIcon != kNoIcon) {
+		_vm->_mouse->loadItemCursor(_currentIcon);
+	}
+
+	if (_objUnderCursor == kObjectNotFound) {					
+
+		if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
+			if (_currentIcon == kNoIcon) {
+				_vm->_mouse->setCursorType(kHighlightedCursor);
+			} else {
+				_vm->_mouse->loadItemCursor(_currentIcon, true);
+			}
+		}
+	} else {
+		GameObject *obj = &_objects[_objUnderCursor];
+
+		_vm->_mouse->setCursorType((CursorType)obj->_walkDir);
+		
+		if (!(obj->_walkDir > 0)) {
+			if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
+				if (_currentIcon == kNoIcon) {
+					_vm->_mouse->setCursorType(kHighlightedCursor);
+				} else {
+					_vm->_mouse->loadItemCursor(_currentIcon, true);
+				}
+			}
+		}
+	}
+}
+
+void Game::updateTitle() {
+
+	Surface *surface = _vm->_screen->getSurface();
+	const int smallFontHeight = _vm->_smallFont->getFontHeight();
+
+	// Fetch mouse coordinates			
+	int x = _vm->_mouse->getPosX();
+	int y = _vm->_mouse->getPosY();
+
+	// Fetch the dedicated objects' title animation / current frame
+	Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
+	Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
+
+	// Mark dirty rectangle to delete the previous text
+	titleAnim->markDirtyRect(surface);	
+	
+	if (_objUnderCursor == kObjectNotFound) {
+		title->setText("");
+	} else {
+		GameObject *obj = &_objects[_objUnderCursor];	
+		title->setText(obj->_title);
+	}
+
+	// Move the title to the correct place (just above the cursor)
+	int newX = surface->centerOnX(x, title->getWidth());
+	int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
+	titleAnim->setRelative(newX, newY);
+
+	if (titleAnim->isPlaying()) {
+		titleAnim->markDirtyRect(surface);
+	} else {
+		_vm->_anims->play(titleAnim->getID());
+	}
+}	
 
 int Game::getObjectWithAnimation(int animID) {
 	for (uint i = 0; i < _info._numObjects; ++i) {
@@ -398,10 +463,13 @@ int Game::getObjectWithAnimation(int animID) {
 void Game::walkHero(int x, int y) {
 
 	Surface *surface = _vm->_screen->getSurface();
+	
 	Common::Point p = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
 
 	x = p.x;
 	y = p.y;
+
+	debugC(4, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
 
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
@@ -426,19 +494,18 @@ void Game::walkHero(int x, int y) {
   	_persons[kDragonObject]._x = x + (lround(scaleX) * width) / 2;
 	_persons[kDragonObject]._y = y - lround(scaleY) * height;
 
+	// Set the per-animation scaling factor
+	anim->setScaleFactors(scaleX, scaleY);
+
 	// We naturally want the dragon to position its feet to the location of the
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
 	y -= (int)(scaleY * height);
+	//x -= (int)(scaleX * width) / 2;
 	anim->setRelative(x, y);
-
-	// Set the per-animation scaling factor
-	anim->setScaleFactors(scaleX, scaleY);
 
 	// Play the animation
 	_vm->_anims->play(animID);
-
-	debugC(4, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
 }
 
 void Game::loadRoom(int roomNum) {
@@ -453,9 +520,8 @@ void Game::loadRoom(int roomNum) {
 
 	_currentRoom._music = roomReader.readByte();
 
-	int mapIdx = roomReader.readByte() - 1;
-	f = _vm->_walkingMapsArchive->getFile(mapIdx);
-	_currentRoom._walkingMap.load(f->_data, f->_length);
+	int mapID = roomReader.readByte() - 1;
+	loadWalkingMap(mapID);
 
 	_currentRoom._palette = roomReader.readByte() - 1;
 	_currentRoom._numOverlays = roomReader.readSint16LE();
@@ -488,7 +554,7 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._numGates = roomReader.readByte();
 
 	debugC(4, kDraciLogicDebugLevel, "Music: %d", _currentRoom._music);
-	debugC(4, kDraciLogicDebugLevel, "Map: %d", mapIdx);
+	debugC(4, kDraciLogicDebugLevel, "Map: %d", mapID);
 	debugC(4, kDraciLogicDebugLevel, "Palette: %d", _currentRoom._palette);
 	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numOverlays);
 	debugC(4, kDraciLogicDebugLevel, "Init: %d", _currentRoom._init);
@@ -557,8 +623,6 @@ void Game::loadRoom(int roomNum) {
 		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
 		_vm->_mouse->cursorOff();
 	}
-
-	_vm->_mouse->setCursorType(kNormalCursor);
 
 	// HACK: Create a visible overlay from the walking map so we can test it
 	byte *wlk = new byte[kScreenWidth * kScreenHeight];
@@ -651,7 +715,7 @@ void Game::loadObject(uint objNum) {
 	obj->_imInit = objReader.readByte();
 	obj->_imLook = objReader.readByte();
 	obj->_imUse = objReader.readByte();
-	obj->_walkDir = objReader.readByte();
+	obj->_walkDir = objReader.readByte() - 1;
 	obj->_z = objReader.readByte();
 	objReader.readUint16LE(); // idxSeq field, not used
 	objReader.readUint16LE(); // numSeq field, not used
@@ -659,8 +723,8 @@ void Game::loadObject(uint objNum) {
 	obj->_lookY = objReader.readUint16LE();
 	obj->_useX = objReader.readUint16LE();
 	obj->_useY = objReader.readUint16LE();
-	obj->_lookDir = objReader.readByte();
-	obj->_useDir = objReader.readByte();
+	obj->_lookDir = objReader.readByte() - 1;
+	obj->_useDir = objReader.readByte() - 1;
 	
 	obj->_absNum = objNum;
 	
@@ -674,6 +738,13 @@ void Game::loadObject(uint objNum) {
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 2);
 	obj->_program._bytecode = file->_data;
 	obj->_program._length = file->_length;
+}
+
+void Game::loadWalkingMap(int mapID) {
+
+	BAFile *f;
+	f = _vm->_walkingMapsArchive->getFile(mapID);
+	_currentRoom._walkingMap.load(f->_data, f->_length);
 }
 
 GameObject *Game::getObject(uint objNum) {
@@ -829,6 +900,10 @@ int Game::getIconStatus(int iconID) {
 	return _iconStatus[iconID];
 }
 
+int Game::getCurrentIcon() {
+	return _currentIcon;
+}
+
 Person *Game::getPerson(int personID) {
 	return &_persons[personID];
 }
@@ -894,6 +969,12 @@ bool WalkingMap::isWalkable(int x, int y) {
  */
 Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Rect searchRect) {
 
+	// If the starting point is walkable, just return that
+	if (searchRect.contains(startX, startY) && isWalkable(startX, startY)) {
+		return Common::Point(startX, startY);
+	}
+	
+
 	int signs[] = { 1, -1 };
 	const uint kSignsNum = 2;
 
@@ -942,6 +1023,13 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 					if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
 						return Common::Point(finalX, finalY);
 					}
+				}
+			}
+
+			if (x == y) {
+				// If the starting point is walkable, just return that
+				if (searchRect.contains(finalX, finalY) && isWalkable(finalX, finalY)) {
+					return Common::Point(finalX, finalY);
 				}
 			}
 

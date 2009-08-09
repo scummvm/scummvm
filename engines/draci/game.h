@@ -56,6 +56,18 @@ enum {
 	kNoEscRoom = -1
 };
 
+// Used as a value to Game::_currentIcon and means there is no icon (game item) selected
+// and a "real" cursor image is used
+enum {
+	kNoIcon = -1
+};
+
+// Used as a default parameter in Game::loadWalkingMap() to specify that the default
+// walking map to the room is to be loaded.
+enum {
+	kDefaultRoomMap = -1
+};
+
 enum SpeechConstants {
 	kBaseSpeechDuration = 200,
 	kSpeechTimeUnit = 400
@@ -103,10 +115,10 @@ struct GameObject {
 	
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
-	byte _walkDir;
+	int _walkDir;
 	byte _z;
 	uint _lookX, _lookY, _useX, _useY;
-	byte _lookDir, _useDir;
+	int _lookDir, _useDir;
 	uint _absNum;
 	Common::Array<int> _anims;
 	GPL2Program _program;
@@ -211,6 +223,7 @@ public:
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
+	void loadWalkingMap(int mapID = kDefaultRoomMap);
 
 	uint getNumObjects();
 	GameObject *getObject(uint objNum);
@@ -228,6 +241,7 @@ public:
 	void setGateNum(int gate);
 
 	int getIconStatus(int iconID);
+	int getCurrentIcon();
 
 	int getEscRoom();
 
@@ -249,6 +263,9 @@ public:
 
 	void setSpeechTick(uint tick);
 
+	void updateTitle();
+	void updateCursor();
+
 	bool _roomChange;
 
 private:
@@ -267,6 +284,8 @@ private:
 	int _newRoom;
 	int _newGate;
 
+	int _currentIcon;
+
 	LoopStatus _loopStatus;
 	LoopStatus _loopSubstatus;
 
@@ -276,6 +295,8 @@ private:
 	uint _speechTick;
 
 	int _objUnderCursor;
+	int _oldObjUnderCursor;	
+
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
 };
 
