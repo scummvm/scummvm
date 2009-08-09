@@ -949,8 +949,9 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	Font *&fnt = _fonts[fontId];
 
 	if (!fnt) {
-		// FIXME: add font support for Amiga version
-		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			fnt = new AMIGAFont();
+		else
 			fnt = new DOSFont();
 
 		assert(fnt);
@@ -1979,8 +1980,8 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 		wrapped_decodeFrameDeltaPage<false>(dst, src, pitch);
 }
 
-void Screen::convertAmigaGfx(uint8 *data, int w, int h, int depth, bool wsa) {
-	const int planeWidth = (w + 7) / 8;
+void Screen::convertAmigaGfx(uint8 *data, int w, int h, int depth, bool wsa, int bytesPerPlane) {
+	const int planeWidth = (bytesPerPlane == -1) ? (w + 7) / 8 : bytesPerPlane; 
 	const int planeSize = planeWidth * h;
 	const uint imageSize = planeSize * depth;
 
@@ -3056,6 +3057,116 @@ void DOSFont::unload() {
 	_colorMap = 0;
 	_width = _height = _numGlyphs = 0;
 	_bitmapOffsets = 0;
+}
+
+
+AMIGAFont::AMIGAFont() {
+	_width = _height = 0;
+	memset(_chars, 0, sizeof(_chars));
+}
+
+bool AMIGAFont::load(Common::SeekableReadStream &file) {
+	const uint16 dataSize = file.readUint16BE();
+	if (dataSize + 2 != file.size())
+		return false;
+
+	_width = file.readByte();
+	_height = file.readByte();
+
+	// Read the character definition offset table
+	uint16 offsets[ARRAYSIZE(_chars)];
+	for (int i = 0; i < ARRAYSIZE(_chars); ++i)
+		offsets[i] = file.readUint16BE() + 4;
+
+	if (file.err())
+		return false;
+
+	for (int i = 0; i < ARRAYSIZE(_chars); ++i) {
+		file.seek(offsets[i], SEEK_SET);
+
+		_chars[i].yOffset = file.readByte();
+		_chars[i].xOffset = file.readByte();
+		_chars[i].width = file.readByte();
+		file.readByte(); // unused
+
+		// If the y offset is 255, then the character
+		// does not have any bitmap representation
+		if (_chars[i].yOffset != 255) {
+			Character::Graphics &g = _chars[i].graphics;
+
+			g.width = file.readUint16BE();
+			g.height = file.readUint16BE();
+
+			int depth = file.readByte();
+			int specialWidth = file.readByte();
+			int flags = file.readByte();
+			int bytesPerPlane = file.readByte();
+
+			assert(depth != 0 && specialWidth == 0 && flags == 0 && bytesPerPlane != 0);
+
+			// Allocate a temporary buffer to store the plane data
+			const int planesSize = bytesPerPlane * g.height * depth;
+			uint8 *tempData = new uint8[MAX(g.width * g.height, planesSize)];
+			assert(tempData);
+
+			file.read(tempData, planesSize);
+
+			// Convert the plane based graphics to our graphic format
+			Screen::convertAmigaGfx(tempData, g.width, g.height, depth, false, bytesPerPlane);
+
+			// Create a buffer perfectly fitting the character
+			g.bitmap = new uint8[g.width * g.height];
+			assert(g.bitmap);
+
+			memcpy(g.bitmap, tempData, g.width * g.height);
+			delete[] tempData;
+		}
+
+		if (file.err())
+			return false;
+	}
+
+	return !file.err();
+}
+
+int AMIGAFont::getCharWidth(uint8 c) const {
+	if (c >= 255)
+		return 0;
+	return _chars[c].width;
+}
+
+void AMIGAFont::drawChar(uint8 c, byte *dst, int pitch) const {
+	if (c >= 255)
+		return;
+
+	if (_chars[c].yOffset == 255)
+		return;
+
+	dst += _chars[c].yOffset * pitch;
+	dst += _chars[c].xOffset;
+
+	pitch -= _chars[c].graphics.width;
+
+	const uint8 *src = _chars[c].graphics.bitmap;
+	assert(src);
+
+	for (int y = 0; y < _chars[c].graphics.height; ++y) {
+		for (int x = 0; x < _chars[c].graphics.width; ++x) {
+			if (*src)
+				*dst = *src;
+			++src;
+			++dst;
+		}
+
+		dst += pitch;
+	}
+}
+
+void AMIGAFont::unload() {
+	_width = _height = 0;
+	for (int i = 0; i < ARRAYSIZE(_chars); ++i)
+		delete[] _chars[i].graphics.bitmap;
+	memset(_chars, 0, sizeof(_chars));
 }
 
 #pragma mark -

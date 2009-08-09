@@ -135,6 +135,38 @@ private:
 };
 
 /**
+ * Implementation of the Font interface for AMIGA fonts.
+ */
+class AMIGAFont : public Font {
+public:
+	AMIGAFont();
+	~AMIGAFont() { unload(); }
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint8 c) const;
+	void setColorMap(const uint8 *src) {}
+	void drawChar(uint8 c, byte *dst, int pitch) const;
+
+private:
+	void unload();
+
+	int _width, _height;
+
+	struct Character {
+		uint8 yOffset, xOffset, width;
+
+		struct Graphics {
+			uint16 width, height;
+			uint8 *bitmap;
+		} graphics;
+	};
+
+	Character _chars[255];
+};
+
+/**
  * A class that manages KYRA palettes.
  *
  * This class stores the palette data as VGA RGB internally.
@@ -409,7 +441,7 @@ public:
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
 
-	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false);
+	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false, int bytesPerPlane = -1);
 	static void convertAmigaMsc(uint8 *data);
 
 protected:
