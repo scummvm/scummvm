@@ -123,18 +123,6 @@ void CruiseEngine::initialize() {
 	// another bit of video init
 
 	readVolCnf();
-
-	// Setup mixer
-//	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
-//	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
-
-	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
-	_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
-	_adlib = (midiDriver == MD_ADLIB);
-
-	_driver = MidiDriver::createMidi(midiDriver);
-	if (_mt32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
 }
 
 void CruiseEngine::deinitialise() {
