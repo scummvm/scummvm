@@ -269,7 +269,6 @@ int16 AGOSEngine::matchSaveGame(const char *name, uint16 max) {
 			in->read(dst, 8);
 			delete in;
 
-			printf("Find: name %s file %s\n", name, (const char *)dst);
 			if (!scumm_stricmp(name, dst)) {
 				return slot;
 			}
@@ -284,7 +283,7 @@ void AGOSEngine::userGame(bool load) {
 	const char *message1;
 	int i = 0, numSaveGames;
 	char *name;
-	char buf[8];
+	char buf[10];
 
 	numSaveGames = countSaveGames();
 
@@ -313,7 +312,7 @@ restart:
 	for (; *message1; message1++)
 		windowPutChar(window, *message1);
 
-	memset(buf, 0, 8);
+	memset(buf, 0, 10);
 	name = buf;
 	_saveGameNameLen = 0;
 
