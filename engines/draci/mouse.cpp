@@ -103,7 +103,7 @@ void Mouse::setCursorType(CursorType cur) {
 void Mouse::loadItemCursor(int itemID, bool highlighted) {
 	
 	BAFile *f;
-	f = _vm->_itemImagesArchive->getFile(itemID + highlighted);
+	f = _vm->_itemImagesArchive->getFile(2 * itemID + highlighted);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
