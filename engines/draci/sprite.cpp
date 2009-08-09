@@ -364,6 +364,13 @@ void Text::draw(Surface *surface, bool markDirty) const {
 Common::Rect Text::getRect(bool scaled) const {
 	return Common::Rect(_x, _y, _x + _width, _y + _height);
 }
+
+void Text::setFont(Font *font) {
+	_font = font;
+
+	_width = _font->getStringWidth(_text, _spacing);
+	_height = _font->getStringHeight(_text);
+}
 			
 } // End of namespace Draci	
 		
