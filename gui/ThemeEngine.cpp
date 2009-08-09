@@ -180,7 +180,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 
 	{kDDSliderFull,					"slider_full",		false,	kDDNone},
 	{kDDSliderHover,				"slider_hover",		false,	kDDNone},
-	{kDDSliderDisabled,				"slider_disabled",	true,	kDDNone},
+	{kDDSliderDisabled,				"slider_disabled",	false,	kDDNone},
 
 	{kDDCheckboxDefault,			"checkbox_default",			true,	kDDNone},
 	{kDDCheckboxDisabled,			"checkbox_disabled",		true,	kDDNone},
