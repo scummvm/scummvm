@@ -165,9 +165,9 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x07 */  case kPlayAnimation: {
-				int barrierIndex = Shared.getScene()->_sceneResource->getBarrierIndexById(currentCommand->param1);
+				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0)
-					Shared.getScene()->_sceneResource->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
+					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
@@ -185,7 +185,7 @@ void ScriptManager::processActionList() {
 				else
 					actorIndex = currentCommand->param1;
 
-				if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->_sceneResource->getWorldStats()->numActors))
+				if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors))
 					Shared.getScene()->actorVisible(actorIndex, false);
 				else
 					debugC(kDebugLevelScripts,
@@ -203,7 +203,7 @@ void ScriptManager::processActionList() {
 				else
 					actorIndex = currentCommand->param1;
 
-				if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->_sceneResource->getWorldStats()->numActors))
+				if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors))
 					Shared.getScene()->actorVisible(actorIndex, true);
 				else
 					debugC(kDebugLevelScripts,
@@ -221,7 +221,7 @@ void ScriptManager::processActionList() {
 				else
 					actorIndex = currentCommand->param1;
 
-				if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->_sceneResource->getWorldStats()->numActors)) {
+				if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors)) {
 					Shared.getScene()->setActorPosition(actorIndex, currentCommand->param2, currentCommand->param3);
 					Shared.getScene()->setActorAction(actorIndex, currentCommand->param4);
 				}
@@ -243,14 +243,14 @@ void ScriptManager::processActionList() {
 				else
 					actorIndex = currentCommand->param1;
 
-				if (Shared.getScene()->_sceneResource->getWorldStats()->actors[actorIndex].field_40 == 5) {
+				if (Shared.getScene()->getResources()->getWorldStats()->actors[actorIndex].field_40 == 5) {
 					enableActorSub(actorIndex, 4);
 				}
 			}
 				break;
 
 /* 0x0F */  case kEnableBarriers: {
-				int barIdx = Shared.getScene()->_sceneResource->getBarrierIndexById(currentCommand->param1);
+				int barIdx = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				uint32 sndIdx = currentCommand->param3;
 				uint32 v59    = currentCommand->param2;
 
@@ -265,7 +265,7 @@ void ScriptManager::processActionList() {
 
 				if (_currentScript->counter >= 3 * v59 - 1) {
 					_currentScript->counter = 0;
-					Shared.getScene()->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = 0;
+					Shared.getScene()->getResources()->getWorldStats()->barriers[barIdx].field_67C = 0;
 					processActionListSub02(_currentScript, currentCommand, 2);
 					_currentLoops = 1; // v4 = 1;
 				} else {
@@ -275,10 +275,10 @@ void ScriptManager::processActionList() {
 					if (sndIdx) {
 						v64 = 1;
 						int v170 = 3 - v62 / v59;
-						Shared.getScene()->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = v170;
+						Shared.getScene()->getResources()->getWorldStats()->barriers[barIdx].field_67C = v170;
 					} else {
 						v64 = 0;
-						Shared.getScene()->_sceneResource->getWorldStats()->barriers[barIdx].field_67C = v62 / v59 + 1;
+						Shared.getScene()->getResources()->getWorldStats()->barriers[barIdx].field_67C = v62 / v59 + 1;
 					}
 
 					processActionListSub02(_currentScript, currentCommand, v64);
@@ -293,9 +293,9 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x11 */  case kDestroyObject: {
-				int barrierIndex = Shared.getScene()->_sceneResource->getBarrierIndexById(currentCommand->param1);
+				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0)
-					Shared.getScene()->_sceneResource->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFDF;	//	TODO - enums for flags (0x20 is visible/playing?)
+					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFDF;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
@@ -371,15 +371,15 @@ void ScriptManager::processActionList() {
 /* 0x3B */  //case k_unk3B_PALETTE_MOD:
 /* 0x3C */  //case k_unk3C_CMP_VAL:
 /* 0x3D */  case kWaitUntilFramePlayed: {
-				int barrierIndex = Shared.getScene()->_sceneResource->getBarrierIndexById(currentCommand->param1);
+				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0) {
 					uint32 frameNum = 0;
 					if (currentCommand->param2 == -1)
-						frameNum = Shared.getScene()->_sceneResource->getWorldStats()->barriers[barrierIndex].frameCount - 1;
+						frameNum = Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].frameCount - 1;
 					else
 						frameNum = currentCommand->param2;
 
-					if (Shared.getScene()->_sceneResource->getWorldStats()->barriers[barrierIndex].tickCount < frameNum) {
+					if (Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].tickCount < frameNum) {
 						lineIncrement = 0;
 						waitCycle = true;
 					}
@@ -411,9 +411,9 @@ void ScriptManager::processActionList() {
 				if ((int)sndIdx >= 0) {
 					if (sndIdx >= 259) {
 						sndIdx -= 9;
-						Shared.getSound()->playSfx(Shared.getScene()->_speechPack, sndIdx - 0x7FFD0000);
+						Shared.getSound()->playSfx(Shared.getScene()->getSpeechPack(), sndIdx - 0x7FFD0000);
 					} else {
-						Shared.getSound()->playSfx(Shared.getScene()->_speechPack, sndIdx);
+						Shared.getSound()->playSfx(Shared.getScene()->getSpeechPack(), sndIdx);
 					}
 
 				} else
