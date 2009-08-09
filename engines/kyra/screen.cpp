@@ -2068,85 +2068,94 @@ void Screen::decodeFrameDeltaPage(uint8 *dst, const uint8 *src, int pitch, bool 
 		wrapped_decodeFrameDeltaPage<false>(dst, src, pitch);
 }
 
-void Screen::convertAmigaGfx(uint8 *data, int w, int h, bool offscreen) {
-	static uint8 tmp[320*200];
+void Screen::convertAmigaGfx(uint8 *data, int w, int h, int depth, bool wsa) {
+	const int planeWidth = (w + 7) / 8;
+	const int planeSize = planeWidth * h;
+	const uint imageSize = planeSize * depth;
 
-	if (offscreen) {
-		uint8 *curLine = tmp;
-		const uint8 *src = data;
-		int hC = h;
-		while (hC--) {
-			uint8 *dst1 = curLine;
-			uint8 *dst2 = dst1 + 8000;
-			uint8 *dst3 = dst2 + 8000;
-			uint8 *dst4 = dst3 + 8000;
-			uint8 *dst5 = dst4 + 8000;
+	// Our static buffer which holds the plane data. We need this
+	// because the "data" pointer is both source and destination pointer.
+	// The buffer has enough space to fit the AMIGA MSC files, which are
+	// the biggest graphics files found in the AMIGA version.
+	static uint8 temp[40320];
+	assert(imageSize <= sizeof(temp));
 
-			int width = w >> 3;
-			while (width--) {
-				*dst1++ = *src++;
-				*dst2++ = *src++;
-				*dst3++ = *src++;
-				*dst4++ = *src++;
-				*dst5++ = *src++;
-			}
-
-			curLine += 40;
+	// WSA files store their graphics data in a little different format, than
+	// the usual AMIGA graphics format used in BitMaps. Thus we need to do
+	// some special handling for them here. Means we convert them into
+	// the usual format.
+	//
+	// TODO: We might think of moving this conversion into the WSAMovieAmiga
+	// class.
+	if (wsa) {
+		const byte *src = data;
+		for (int y = 0; y < h; ++y) {
+			for (int x = 0; x < planeWidth; ++x)
+				for (int i = 0; i < depth; ++i)
+					temp[y * planeWidth + x + planeSize * i] = *src++;
 		}
 	} else {
-		memcpy(tmp, data, w*h);
+		memcpy(temp, data, imageSize);
 	}
 
 	for (int y = 0; y < h; ++y) {
 		for (int x = 0; x < w; ++x) {
-			int bytePos = x/8+y*40;
-			int bitPos = 7-(x&7);
+			const int bytePos = x / 8 + y * planeWidth;
+			const int bitPos = 7 - (x & 7); // x & 7 == x % 8
 
-			byte colorIndex = 0;
-			colorIndex |= (((tmp[bytePos + 8000 * 0] & (1 << bitPos)) >> bitPos) & 0x1) << 0;
-			colorIndex |= (((tmp[bytePos + 8000 * 1] & (1 << bitPos)) >> bitPos) & 0x1) << 1;
-			colorIndex |= (((tmp[bytePos + 8000 * 2] & (1 << bitPos)) >> bitPos) & 0x1) << 2;
-			colorIndex |= (((tmp[bytePos + 8000 * 3] & (1 << bitPos)) >> bitPos) & 0x1) << 3;
-			colorIndex |= (((tmp[bytePos + 8000 * 4] & (1 << bitPos)) >> bitPos) & 0x1) << 4;
-			*data++ = colorIndex;
+			byte col = 0;
+
+			for (int i = 0; i < depth; ++i)
+				col |= ((temp[bytePos + planeSize * i] >> bitPos) & 1) << i;
+
+			*data++ = col;
 		}
 	}
 }
 
 void Screen::convertAmigaMsc(uint8 *data) {
-	byte *plane1 = data + 5760 * 1;
-	byte *plane2 = data + 5760 * 2;
-	byte *plane3 = data + 5760 * 3;
-	byte *plane4 = data + 5760 * 4;
-	byte *plane5 = data + 5760 * 5;
-	byte *plane6 = data + 5760 * 6;
-	for (int i = 0; i < 5760; ++i) {
-		byte d = plane6[i];
-		d = (plane5[i] |= d);
-		d = (plane4[i] |= d);
-		d = (plane3[i] |= d);
-		d = (plane2[i] |= d);
-		d = (plane1[i] |= d);
-	}
-	byte dst[320*144];
-	memset(dst, 0, sizeof(dst));
-	static const byte flagTable[] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
-	for (int y = 0; y < 144; ++y) {
-		for (int x = 0; x < 320; ++x) {
-			if (!(flagTable[x&7] & data[y*40+(x>>3)]))
-				dst[y*320+x] |= 0x80;
+	// MSC files are always 320x144, thus we can safely assume
+	// this to be correct. Also they contain 7 planes instead
+	// of the normal 5 planes, which is used in 32 color mode.
+	// The need for 7 planes can be explained, because the MSC
+	// files have 6 bits for the layer number (bits 1 to 6)
+	// and one bit for the "blocked" flag (bit 0), and every
+	// plane contains one bit per pixel.
+	convertAmigaGfx(data, 320, 144, 7);
 
-			int layer = 0;
-			for (int i = 0; i < 7; ++i) {
-				if (flagTable[x&7] & data[y*40+(x>>3)+i*5760])
-					layer = i;
-			}
+	// We need to do some post conversion, since
+	// the AMIGA MSC format is different from the DOS
+	// one we use internally for our code.That is even
+	// after converting it from the AMIGA plane based
+	// approach to one byte per pixel approach.
+	for (int i = 0; i < 320 * 144; ++i) {
+		// The lowest bit indicates, whether the position
+		// is walkable or not. If the bit is set, the
+		// position is walkable, elsewise it is blocked.
+		if (data[i] & 1)
+			data[i] &= 0xFE;
+		else
+			data[i] |= 0x80;
 
-			if (layer)
-				dst[y*320+x] |= (layer+1);
-		}
+		// The graphics layer for the pixel is saved
+		// in the following format:
+		// The highest bit set indicates the number of
+		// the graphics layer. We count the first
+		// bit as 0 here, thus we need to add one,
+		// to get the correct number.
+		//
+		// Funnily since the first bit (bit 0) is
+		// resevered for testing whether the position
+		// is walkable or not, there is no possibility
+		// for layer 1 to be present.
+		int layer = 0;
+		for (int k = 0; k < 7; ++k)
+			if (data[i] & (1 << k))
+				layer = k + 1;
+
+		data[i] &= 0x80;
+		data[i] |= layer;
 	}
-	memcpy(data, dst, 320*144);
 }
 
 template<bool noXor>
@@ -2815,7 +2824,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 		if (!scumm_stricmp(ext, "MSC"))
 			Screen::convertAmigaMsc(dstData);
 		else
-			Screen::convertAmigaGfx(dstData, 320, 200, false);
+			Screen::convertAmigaGfx(dstData, 320, 200);
 	}
 
 	if (skip)

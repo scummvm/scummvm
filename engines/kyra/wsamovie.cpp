@@ -262,7 +262,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, uint16
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
 			Screen::decodeFrameDelta(dst, _deltaBuffer, true);
-			Screen::convertAmigaGfx(dst, _width, _height);
+			Screen::convertAmigaGfx(dst, _width, _height, 5, true);
 
 			if (_flags & WF_OFFSCREEN_DECODE) {
 				dst = _offscreenBuffer;
@@ -341,7 +341,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 	const uint8 *src = _frameData + _frameOffsTable[frameNum];
 	Screen::decodeFrame4(src, _deltaBuffer, _deltaBufferSize);
 	Screen::decodeFrameDelta(dst, _deltaBuffer, true);
-	Screen::convertAmigaGfx(dst, _width, _height);
+	Screen::convertAmigaGfx(dst, _width, _height, 5, true);
 
 	src = dst;
 	dst = 0;

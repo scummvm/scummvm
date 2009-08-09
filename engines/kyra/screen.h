@@ -342,7 +342,7 @@ public:
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
 
-	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
+	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false);
 	static void convertAmigaMsc(uint8 *data);
 
 protected:
