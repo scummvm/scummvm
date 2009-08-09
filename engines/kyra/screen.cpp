@@ -2715,6 +2715,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 
 	uint8 *srcPtr = srcData + 10 + palSize;
 	uint8 *dstData = getPagePtr(dstPage);
+	memset(dstData, 0, SCREEN_PAGE_SIZE);
 	if (dstPage == 0 || tempPage == 0)
 		_forceFullUpdate = true;
 
