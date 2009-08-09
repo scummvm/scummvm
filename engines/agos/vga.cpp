@@ -1258,7 +1258,7 @@ void AGOSEngine::clearVideoWindow(uint16 num, uint16 color) {
 			dst += screen->pitch;
 		}
 		 _system->unlockScreen();
-	} else if (num == 4) {
+	} else {
 		const uint16 *vlut = &_videoWindows[num * 4];
 		uint16 xoffs = (vlut[0] - _videoWindows[16]) * 16;
 		uint16 yoffs = (vlut[1] - _videoWindows[17]);
