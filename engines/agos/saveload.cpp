@@ -269,6 +269,7 @@ int16 AGOSEngine::matchSaveGame(const char *name, uint16 max) {
 			in->read(dst, 8);
 			delete in;
 
+			printf("Find: name %s file %s\n", name, (const char *)dst);
 			if (!scumm_stricmp(name, dst)) {
 				return slot;
 			}
