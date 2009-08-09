@@ -299,6 +299,10 @@ void Scene::update() {
 	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
 		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20))	//	TODO - enums for flags (0x20 is visible/playing?)
 			updateBarrier(Shared.getScreen(), _resPack, b);
+
+        if (_sceneResource->getWorldStats()->barriers[b].flags & 8) {
+            updateBarrier(Shared.getScreen(), _resPack, b);
+        }
 	}
 
 	// DEBUGGING
@@ -467,6 +471,7 @@ void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex)
 		barrier.tickCount++;
 	} else {
 		barrier.tickCount = barrier.frameIdx;
+        barrier.flags &= 0xFFFFFFF7;
 	}
 	
 	_sceneResource->getWorldStats()->barriers[barrierIndex] = barrier;

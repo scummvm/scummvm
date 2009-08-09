@@ -184,7 +184,7 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x07 */  case kPlayAnimation: {
-                /*int barrierId = currentCommand->param1;
+                int barrierId = currentCommand->param1;
                 if(currentCommand->param2 == 2) {
                     if(!checkBarrierFlags(barrierId)) {
                         currentCommand->param2 = 1;
@@ -225,11 +225,11 @@ void ScriptManager::processActionList() {
                         currentCommand->param2 = 2;
                         lineIncrement = 1;
                     }
-                }*/
+                }
 
 
                 // TODO: take this part of the code when the updateBarrier function is like original and decomment the above code
-				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
+				/*int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0)
 					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
 				else
@@ -237,7 +237,7 @@ void ScriptManager::processActionList() {
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
 							currentCommand->param1,
 							Shared.getScene()->getSceneIndex(),
-							_currentLine);
+							_currentLine);*/
 			}
 				break;
 
