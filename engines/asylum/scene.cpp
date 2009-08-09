@@ -119,7 +119,7 @@ ActionDefinitions* Scene::getActionList(int actionListIndex) {
 void Scene::setActorPosition(int actorIndex, int x, int y) {
 	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
 		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.left = x;
-		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.top = y;
+		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.top  = y;
 	}
 	
 	// FIXME - Remove this once mainActor uses proper actor info
@@ -280,7 +280,7 @@ void Scene::update() {
 
 	// DEBUG
 	// Force the screen to scroll if the mouse approaches the edges
-	// debugScreenScrolling(bg);
+	//debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
 	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
@@ -309,15 +309,11 @@ void Scene::update() {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[area->polyIdx];
 			if (Shared.pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
 				debugShowWalkRegion(&poly);
-				mainActor->setWalkArea(area);
 				//break;
 			}
 		}
 	}
 
-
-	// TESTING
-	// Main actor walking
 	if (!_rightButton) {
 		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01) {	// TESTING - only draw if visible flag
 			// Check if the character was walking before the right-button
@@ -438,7 +434,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 			startX = _startX;
 		if (surface->h > 480)
 			startY = _startY;
-		
+
 		Shared.getScreen()->copyToBackBufferWithTransparency(
 				((byte*)surface->pixels) +
 				startY * surface->pitch +
