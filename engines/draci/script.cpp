@@ -125,7 +125,7 @@ void Script::setupCommandList() {
 		{ "IsObjOn", 	&Script::funcIsObjOn },
 		{ "IsObjOff", 	&Script::funcIsObjOff },
 		{ "IsObjAway", 	&Script::funcIsObjAway },
-		{ "ObjStat", 	NULL },
+		{ "ObjStat", 	&Script::funcObjStat },
 		{ "LastBlock", 	NULL },
 		{ "AtBegin", 	NULL },
 		{ "BlockVar", 	NULL },
@@ -267,6 +267,22 @@ int Script::funcIsObjOff(int objID) {
 	// We index locations from 0 (as opposed to the original player where it was from 1)
 	// That's why the "away" location 0 from the data files is converted to -1
 	return !obj->_visible && obj->_location != -1;
+}
+
+int Script::funcObjStat(int objID) {
+	objID -= 1;
+
+	GameObject *obj = _vm->_game->getObject(objID);
+
+	if (obj->_location == _vm->_game->getRoomNum()) {
+		if (obj->_visible) {
+			return 1; 	// object is ON (in the room and visible)
+		} else {
+			return 2; 	// object is OFF (in the room, not visible)
+		}
+	} else {
+		return 3; 		// object is AWAY (not in the room)
+	}
 }
 
 int Script::funcIsObjAway(int objID) {

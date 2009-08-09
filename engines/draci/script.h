@@ -147,6 +147,7 @@ private:
 	int funcIsObjOff(int objID);
 	int funcIsObjAway(int objID);
 	int funcActPhase(int objID);
+	int funcObjStat(int objID);
 
 
 	void setupCommandList();
