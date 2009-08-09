@@ -1309,10 +1309,6 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_TREMOLO = 1'
-			add_line_to_config_mk 'USE_MAD = 1'
-			add_line_to_config_mk 'USE_MPEG2 = 1'
-			add_line_to_config_mk 'USE_FLAC = 1'
-			add_line_to_config_mk 'USE_ZLIB = 1'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1968,8 +1964,7 @@ case $_backend in
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
 	wince)
-		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/libs/include -I$(srcdir)/backends/platform/wince/libs/include/sdl -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
-		LDFLAGS="$LDFLAGS "'-L$(srcdir)/backends/platform/wince/libs/lib'
+		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
 		LIBS="$LIBS -static -lSDL"
 		;;
 	dc)

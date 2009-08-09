@@ -205,3 +205,31 @@ endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
 
 .PHONY: deb bundle osxsnap win32dist wiidist install uninstall
+
+#
+# ARM specific
+#
+ifdef USE_TREMOLO
+DEFINES += -DUSE_TREMOR -DUSE_VORBIS -DUSE_TREMOLO
+LIBS += -ltremolo
+endif
+
+ifdef USE_ARM_SMUSH_ASM
+DEFINES += -DUSE_ARM_SMUSH_ASM
+endif
+
+ifdef USE_ARM_SOUND_ASM
+DEFINES += -DUSE_ARM_SOUND_ASM
+endif
+
+ifdef USE_ARM_GFX_ASM
+DEFINES += -DUSE_ARM_GFX_ASM
+endif
+
+ifdef USE_ARM_COSTUME_ASM
+DEFINES += -DUSE_ARM_COSTUME_ASM
+endif
+
+ifdef USE_ARM_SCALER_ASM
+DEFINES += -DUSE_ARM_SCALER_ASM
+endif

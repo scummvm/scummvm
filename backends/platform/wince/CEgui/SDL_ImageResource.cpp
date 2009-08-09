@@ -60,7 +60,7 @@ namespace CEGUI {
 		_surface = SDL_LoadBMP_RW(surfaceData, 1);
 
 		return _surface;
-	};
+	}
 
 	SDL_Surface* SDL_ImageResource::get() {
 		return _surface;
