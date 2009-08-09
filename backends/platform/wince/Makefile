@@ -50,10 +50,10 @@ ENABLE_MADE = STATIC_PLUGIN
 ## Pick which libraries you want to use here
 
 USE_MAD           = 1
-USE_MPEG2         = 1
+#USE_MPEG2         = 1
 #USE_TREMOR        = 1
 USE_TREMOLO       = 1
-USE_FLAC          = 1
+#USE_FLAC          = 1
 USE_ZLIB          = 1
 
 ########################################################################
@@ -113,7 +113,7 @@ INCLUDES := -I$(srcdir) -I. -I$(srcdir)/engines -Imissing/gcc -Ilibs/include -Il
 
 CFLAGS :=
 ifndef UNOPTIMIZED_BUILD
-CFLAGS += -O3 -march=armv4 -mtune=xscale
+CFLAGS += -O2 -march=armv4 -mtune=xscale
 endif
 
 LDFLAGS := -Wl,-Map,scummvm.exe.map -Wl,--stack,65536
