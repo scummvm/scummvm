@@ -37,7 +37,7 @@
 #include <unistd.h>
 #include <string.h>
 
-#include "gp2x-mem.h"
+#include "backends/platform/gp2x/gp2x-mem.h"
 
 void SetClock (unsigned c)
 {
