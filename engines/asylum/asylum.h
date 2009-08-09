@@ -77,6 +77,7 @@ private:
 	void waitForTimer(int msec_delay);
 	void updateMouseCursor();
 	void processDelayedEvents();
+	void playIntro();
 
 	Common::Language	 _language;
 	Common::RandomSource _rnd;

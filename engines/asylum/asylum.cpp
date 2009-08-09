@@ -93,38 +93,40 @@ Common::Error AsylumEngine::init() {
 }
 
 Common::Error AsylumEngine::go() {
-	// initializing game
 	// TODO: save dialogue key codes into sntrm_k.txt (need to figure out why they use such thing)
 	// TODO: load startup configurations (address 0041A970)
 	// TODO: init unknown game stuffs (address 0040F430)
 	// TODO: if savegame exists on folder, than start NewGame()
 
-	// Play intro movie
-	// Disabled for quick testing
-	//_video->playVideo(0, kSubtitlesOn);	// Note: this video has no subtitles
-
-	// Play first chapter movie (for testing)
-	//_video->playVideo(1, kSubtitlesOn);
-
 	// Set up the game's main scene
 	_scene = new Scene(5);
 	Shared.setScene(_scene);
 
+	// XXX This is just here for testing purposes. It is also defined
+	// in the processActionList() method when the necessary action is fired.
+	// Once the blowup puzzle testing is removed from checkForEvent(), this
+	// can be removed as well.
     _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR()); // this will be done by a Script command
 
-	// TODO This can probably also be rolled into the scene constructor.
+	// XXX This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P
 	ScriptMan.setScript(_scene->getDefaultActionList());
 
 	// Set up main menu
 	_mainMenu = new MainMenu();
 
-
 	// XXX Testing
 	_encounter = new Encounter(_scene);
 
+	// TODO you should be able to skip this if you want. The original
+	// allows this through the /SKIP command line argument.
+	// Also, this routine is used to set game flags 4 and 12, so if we're
+	// skipping the intro, but not loading a save file, those flags
+	// need to be set somewhere else.
+	playIntro();
+
 	// Enter first scene
-	_scene->enterScene();
+	//_scene->enterScene();
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -143,6 +145,41 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 		_system->updateScreen();
 		ScriptMan.processActionList();
 	}
+}
+
+void AsylumEngine::playIntro() {
+	_video->playVideo(1, kSubtitlesOn);
+	if (_scene->getResources()->getWorldStats()->musicCurrentResId != 0xFFFFFD66)
+		_sound->playMusic(_scene->getResourceMusicPack(),
+						  _scene->getResources()->getWorldStats()->musicCurrentResId);
+
+	_screen->clearScreen();
+
+	ScriptMan.setGameFlag(4);
+	ScriptMan.setGameFlag(12);
+
+	ResourcePack *introRes = new ResourcePack(18);
+
+	_sound->playSfx(introRes, 7);
+
+	if (_sound->isSfxActive()) {
+		while( _sound->isSfxActive()) {
+			;
+		}
+	}
+
+	delete introRes;
+
+	// TODO Since we've currently only got one sfx handle to play with in
+	// the sound class, entering the scene overwrites the "alarm" loop.
+	// This sound is technically supposed to play until the actor disables
+	// the alarm by flipping the switch. The sound class needs to be extended
+	// to be able to handle multiple handles.
+	// The currently active sound resources can probably also be buffered into
+	// the scene's soundResId[] array (seems that's the way the original worked,
+	// especially when you examine isSoundinList() or isSoundPlaying())
+
+	_scene->enterScene();
 }
 
 void AsylumEngine::checkForEvent(bool doUpdate) {
@@ -167,7 +204,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
 
 			// XXX Encounter TEST
 			if (ev.kbd.keycode == Common::KEYCODE_e) {
-				_encounter->run(1, 1584, 1584, 0);
+				//_encounter->run(1, 1584, 1584, 0);
 			}
 
             // FIXME: TEST ONLY
@@ -232,6 +269,7 @@ void AsylumEngine::processDelayedEvents() {
 			delete _scene;
 
 		_scene = new Scene(sceneIdx);
+		Shared.setScene(_scene);
 		_scene->enterScene();
 
 		ScriptMan.setDelayedSceneIndex(-1);

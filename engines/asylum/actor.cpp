@@ -136,11 +136,11 @@ void MainActor::setWalkArea(ActionItem *target) {
 	if (_currentWalkArea != target) {
 		ScriptMan.setScriptIndex(target->actionListIdx1);
 		_currentWalkArea = target;
+		debugC(kDebugLevelScripts, "%s", target->name);
 	}
 }
 
 void MainActor::walkTo(uint16 x, uint16 y) {
-	// TODO: pathfinding! The character can walk literally anywhere
 	int newAction = _currentAction;
 
 	// step is the increment by which to move the
@@ -150,6 +150,7 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 	uint16 newX = _actorX;
 	uint16 newY = _actorY;
 	bool   done = false;
+
 	// Walking left...
 	if (x < _actorX) {
 		newAction = kWalkW;
@@ -191,22 +192,26 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 	}
 
 	// DEBUGGING
-	// Show registration point from
-	// which we're calculating the
+	// Show registration point from which we're calculating the
 	// actor's barrier hit-test
 	Graphics::Surface surface;
 	surface.create(5, 5, 1);
 	Common::Rect rect;
 
-	rect.top = newY;
-	rect.left = newX;
-	rect.right = newX;
+	rect.top    = newY;
+	rect.left   = newX;
+	rect.right  = newX;
 	rect.bottom = newY + 4;
 	surface.frameRect(rect, 0x33);
 
 	Shared.getScreen()->copyRectToScreen((byte*)surface.pixels, 5, newX, newY, 5, 5);
 
 	surface.free();
+
+	// TODO Basic pathfinding implementation is done. Now it needs to be refined to
+	// actually make it playable. The logic is currently VERY rigid, so you have to have
+	// the actor at the PERFECT spot to be able to intersect a walk region and move to
+	// the next one.
 
 	int availableAreas[5];
 	int areaPtr = 0;
