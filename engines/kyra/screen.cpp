@@ -48,6 +48,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	_drawShapeVar5 = 0;
 
 	_sjisFont = 0;
+	memset(_fonts, 0, sizeof(_fonts));
 }
 
 Screen::~Screen() {
@@ -56,10 +57,8 @@ Screen::~Screen() {
 
 	delete[] _pagePtrs[0];
 
-	for (int f = 0; f < ARRAYSIZE(_fonts); ++f) {
-		delete[] _fonts[f].fontData;
-		_fonts[f].fontData = NULL;
-	}
+	for (int f = 0; f < ARRAYSIZE(_fonts); ++f)
+		delete _fonts[f];
 
 	delete _sjisFont;
 	delete _screenPalette;
@@ -102,7 +101,6 @@ bool Screen::init() {
 			_sjisFont->enableOutline(!_use16ColorMode);
 		}
 	}
-
 
 	_curPage = 0;
 	uint8 *pagePtr = new uint8[SCREEN_PAGE_SIZE * 8];
@@ -948,81 +946,51 @@ void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 }
 
 bool Screen::loadFont(FontId fontId, const char *filename) {
-	Font *fnt = &_fonts[fontId];
+	Font *&fnt = _fonts[fontId];
 
-	// FIXME: add font support for amiga version
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return true;
+	if (!fnt) {
+		// FIXME: add font support for Amiga version
+		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+			fnt = new DOSFont();
 
-	if (!fnt)
-		error("fontId %d is invalid", fontId);
+		assert(fnt);
+	}
 
-	if (fnt->fontData)
-		delete[] fnt->fontData;
+	Common::SeekableReadStream *file = _vm->resource()->createReadStream(filename);
+	if (!file)
+		error("Font file '%s' is missing", filename);
 
-	uint32 sz = 0;
-	uint8 *fontData = fnt->fontData = _vm->resource()->fileData(filename, &sz);
-
-	if (!fontData || !sz)
-		error("Couldn't load font file '%s'", filename);
-
-	uint16 fontSig = READ_LE_UINT16(fontData + 2);
-
-	if (fontSig != 0x500)
-		error("Invalid font data (file '%s', fontSig: %.04X)", filename, fontSig);
-
-	fnt->charWidthTable = fontData + READ_LE_UINT16(fontData + 8);
-	fnt->fontDescOffset = READ_LE_UINT16(fontData + 4);
-	fnt->charBitmapOffset = READ_LE_UINT16(fontData + 6);
-	fnt->charWidthTableOffset = READ_LE_UINT16(fontData + 8);
-	fnt->charHeightTableOffset = READ_LE_UINT16(fontData + 0xC);
-
-	fnt->lastGlyph = *(fnt->fontData + fnt->fontDescOffset + 3);
-
-	return true;
+	bool ret = fnt->load(*file);
+	fnt->setColorMap(_textColorsMap);
+	delete file;
+	return ret;
 }
 
 Screen::FontId Screen::setFont(FontId fontId) {
 	FontId prev = _currentFont;
 	_currentFont = fontId;
+
+	assert(_fonts[_currentFont]);
+
 	return prev;
 }
 
 int Screen::getFontHeight() const {
-	// FIXME: add font support for amiga version
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return 0;
-
-	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 4);
+	return _fonts[_currentFont]->getHeight();
 }
 
 int Screen::getFontWidth() const {
-	// FIXME: add font support for amiga version
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return 0;
-
-	return *(_fonts[_currentFont].fontData + _fonts[_currentFont].fontDescOffset + 5);
+	return _fonts[_currentFont]->getWidth();
 }
 
 int Screen::getCharWidth(uint16 c) const {
-	// FIXME: add font support for amiga version
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return 0;
-
 	if ((c & 0xFF00) && _sjisFont)
 		return _sjisFont->getFontWidth() >> 1;
 
-	if (_fonts[_currentFont].lastGlyph < c)
-		return 0;
-	else
-		return (int)_fonts[_currentFont].charWidthTable[c] + _charWidth;
+	return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
 }
 
 int Screen::getTextWidth(const char *str) const {
-	// FIXME: add font support for amiga version
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return 0;
-
 	int curLineLen = 0;
 	int maxLineLen = 0;
 	while (1) {
@@ -1050,9 +1018,6 @@ int Screen::getTextWidth(const char *str) const {
 }
 
 void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2) {
-	// FIXME: add font support for amiga version
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
-		return;
 	uint8 cmap[2];
 	cmap[0] = color2;
 	cmap[1] = color1;
@@ -1107,73 +1072,19 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 void Screen::drawCharANSI(uint8 c, int x, int y) {
-	Font *fnt = &_fonts[_currentFont];
+	Font *fnt = _fonts[_currentFont];
+	assert(fnt);
 
-	if (c > fnt->lastGlyph)
+	const int charWidth = fnt->getCharWidth(c);
+	const int charHeight = fnt->getHeight();
+
+	if (x + charWidth > SCREEN_W || y + charHeight > SCREEN_H)
 		return;
 
-	uint8 *dst = getPagePtr(_curPage) + y * SCREEN_W + x;
-
-	uint16 bitmapOffset = READ_LE_UINT16(fnt->fontData + fnt->charBitmapOffset + c * 2);
-	if (bitmapOffset == 0)
-		return;
-
-	uint8 charWidth = *(fnt->fontData + fnt->charWidthTableOffset + c);
-	if (!charWidth || charWidth + x > SCREEN_W)
-		return;
-
-	uint8 charH0 = getFontHeight();
-	if (!charH0 || charH0 + y > SCREEN_H)
-		return;
-
-	uint8 charH1 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2);
-	uint8 charH2 = *(fnt->fontData + fnt->charHeightTableOffset + c * 2 + 1);
-
-	charH0 -= charH1 + charH2;
-
-	const uint8 *src = fnt->fontData + bitmapOffset;
-	const int pitch = SCREEN_W - charWidth;
-
-	while (charH1--) {
-		uint8 col = _textColorsMap[0];
-		for (int i = 0; i < charWidth; ++i) {
-			if (col != 0)
-				*dst = col;
-			++dst;
-		}
-		dst += pitch;
-	}
-
-	while (charH2--) {
-		uint8 b = 0;
-		for (int i = 0; i < charWidth; ++i) {
-			uint8 col;
-			if (i & 1) {
-				col = _textColorsMap[b >> 4];
-			} else {
-				b = *src++;
-				col = _textColorsMap[b & 0xF];
-			}
-			if (col != 0) {
-				*dst = col;
-			}
-			++dst;
-		}
-		dst += pitch;
-	}
-
-	while (charH0--) {
-		uint8 col = _textColorsMap[0];
-		for (int i = 0; i < charWidth; ++i) {
-			if (col != 0)
-				*dst = col;
-			++dst;
-		}
-		dst += pitch;
-	}
+	fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W + x, SCREEN_W);
 
 	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, charWidth, getFontHeight());
+		addDirtyRect(x, y, charWidth, charHeight);
 }
 
 void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int sd, int flags, ...) {
@@ -3031,6 +2942,120 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	_sjisFont->drawChar(destPage, c, 640, 1, color1, color2);
 
 	_sjisFont->enableOutline(!_use16ColorMode);
+}
+
+#pragma mark -
+
+DOSFont::DOSFont() {
+	_data = _widthTable = _heightTable = 0;
+	_colorMap = 0;
+	_width = _height = _numGlyphs = 0;
+	_bitmapOffsets = 0;
+}
+
+bool DOSFont::load(Common::SeekableReadStream &file) {
+	unload();
+
+	_data = new uint8[file.size()];
+	assert(_data);
+
+	file.read(_data, file.size());
+	if (file.err())
+		return false;
+
+	const uint16 fontSig = READ_LE_UINT16(_data + 2);
+
+	if (fontSig != 0x0500) {
+		warning("DOSFont: invalid font: %.04X)", fontSig);
+		return false;
+	}
+
+	const uint16 descOffset = READ_LE_UINT16(_data + 4);
+
+	_width = _data[descOffset + 5];
+	_height = _data[descOffset + 4];
+	_numGlyphs = _data[descOffset + 3] + 1;
+
+	_bitmapOffsets = (uint16 *)(_data + READ_LE_UINT16(_data + 6));
+	_widthTable = _data + READ_LE_UINT16(_data + 8);
+	_heightTable = _data + READ_LE_UINT16(_data + 12);
+
+	for (int i = 0; i < _numGlyphs; ++i)
+		_bitmapOffsets[i] = READ_LE_UINT16(&_bitmapOffsets[i]);
+
+	return true;
+}
+
+int DOSFont::getCharWidth(uint8 c) const {
+	if (c >= _numGlyphs)
+		return 0;
+	return _widthTable[c];
+}
+
+void DOSFont::drawChar(uint8 c, byte *dst, int pitch) const {
+	if (c >= _numGlyphs)
+		return;
+
+	if (!_bitmapOffsets[c])
+		return;
+
+	const uint8 *src = _data + _bitmapOffsets[c];
+	const uint8 charWidth = _widthTable[c];
+
+	if (!charWidth)
+		return;
+
+	pitch -= charWidth;
+
+	uint8 charH1 = _heightTable[c * 2 + 0];
+	uint8 charH2 = _heightTable[c * 2 + 1];
+	uint8 charH0 = _height - (charH1 + charH2);
+
+	while (charH1--) {
+		uint8 col = _colorMap[0];
+		for (int i = 0; i < charWidth; ++i) {
+			if (col != 0)
+				*dst = col;
+			++dst;
+		}
+		dst += pitch;
+	}
+
+	while (charH2--) {
+		uint8 b = 0;
+		for (int i = 0; i < charWidth; ++i) {
+			uint8 col;
+			if (i & 1) {
+				col = _colorMap[b >> 4];
+			} else {
+				b = *src++;
+				col = _colorMap[b & 0xF];
+			}
+			if (col != 0) {
+				*dst = col;
+			}
+			++dst;
+		}
+		dst += pitch;
+	}
+
+	while (charH0--) {
+		uint8 col = _colorMap[0];
+		for (int i = 0; i < charWidth; ++i) {
+			if (col != 0)
+				*dst = col;
+			++dst;
+		}
+		dst += pitch;
+	}
+}
+
+void DOSFont::unload() {
+	delete[] _data;
+	_data = _widthTable = _heightTable = 0;
+	_colorMap = 0;
+	_width = _height = _numGlyphs = 0;
+	_bitmapOffsets = 0;
 }
 
 #pragma mark -
