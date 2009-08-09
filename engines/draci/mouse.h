@@ -50,8 +50,9 @@ public:
 	void cursorOff();
 	bool isCursorOn();
 	void setPosition(uint16 x, uint16 y);
-	void setCursorType(CursorType cur);
 	CursorType getCursorType() { return _cursorType; }
+	void setCursorType(CursorType cur);
+	void loadItemCursor(int itemID, bool highlighted = false);
 	bool lButtonPressed() { return _lButton; }
 	bool rButtonPressed() { return _rButton; }
 	void lButtonSet(bool state) { _lButton = state; }

@@ -88,12 +88,22 @@ void Mouse::setPosition(uint16 x, uint16 y) {
 	_vm->_system->warpMouse(x, y);
 }
 
-// FIXME: Handle hotspots properly
 void Mouse::setCursorType(CursorType cur) {
 	_cursorType = cur;
+
+	BAFile *f;
+	f = _vm->_iconsArchive->getFile(_cursorType);
+
+	Sprite sp(f->_data, f->_length, 0, 0, true);
+	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
+	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(), 
+			sp.getWidth() / 2, sp.getHeight() / 2);
+}
+
+void Mouse::loadItemCursor(int itemID, bool highlighted) {
 	
 	BAFile *f;
-	f = _vm->_iconsArchive->getFile(_cursorType);	
+	f = _vm->_itemImagesArchive->getFile(itemID + highlighted);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
