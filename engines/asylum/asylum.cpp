@@ -89,6 +89,8 @@ Common::Error AsylumEngine::init() {
 	Shared.setSound(_sound);
 	Shared.setVideo(_video);
 
+	_introPlaying = false;
+
 	return Common::kNoError;
 }
 
@@ -123,10 +125,10 @@ Common::Error AsylumEngine::go() {
 	// Also, this routine is used to set game flags 4 and 12, so if we're
 	// skipping the intro, but not loading a save file, those flags
 	// need to be set somewhere else.
-	//playIntro();
+	playIntro();
 
 	// Enter first scene
-	_scene->enterScene();
+	//_scene->enterScene();
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
@@ -162,27 +164,40 @@ void AsylumEngine::playIntro() {
 
 	_sound->playSfx(introRes, 7);
 
-	if (_sound->isSfxActive()) {
-		while (_sound->isSfxActive()) {
-			;
-		}
-	}
+	_introPlaying = true;
 
 	delete introRes;
-
-	// TODO Since we've currently only got one sfx handle to play with in
-	// the sound class, entering the scene overwrites the "alarm" loop.
-	// This sound is technically supposed to play until the actor disables
-	// the alarm by flipping the switch. The sound class needs to be extended
-	// to be able to handle multiple handles.
-	// The currently active sound resources can probably also be buffered into
-	// the scene's soundResId[] array (seems that's the way the original worked,
-	// especially when you examine isSoundinList() or isSoundPlaying())
-
-	_scene->enterScene();
 }
 
 void AsylumEngine::checkForEvent(bool doUpdate) {
+
+	// NOTE
+	// In the original version of Sanitarium, the control loop for the sound
+	// effect that played after the intro video involved a while loop that
+	// executed until the sound handle was released.
+	// This caused the application to be locked until the while loop's execution
+	// completed successfully. Our implementation circumvents this issue
+	// by moving the logic to the event loop and checking whether a flag is
+	// set to determine if control should be returned to the engine.
+	if (_introPlaying) {
+		if (!_sound->isSfxActive()) {
+			_introPlaying = false;
+
+			// TODO Since we've currently only got one sfx handle to play with in
+			// the sound class, entering the scene overwrites the "alarm" loop.
+			// This sound is technically supposed to play until the actor disables
+			// the alarm by flipping the switch. The sound class needs to be extended
+			// to be able to handle multiple handles.
+			// The currently active sound resources can probably also be buffered into
+			// the scene's soundResId[] array (seems that's the way the original worked,
+			// especially when you examine isSoundinList() or isSoundPlaying())
+
+			_scene->enterScene();
+		} else {
+			return;
+		}
+	}
+
 	Common::Event ev;
 
 	if (_system->getEventManager()->pollEvent(ev)) {
@@ -234,6 +249,10 @@ void AsylumEngine::checkForEvent(bool doUpdate) {
     else if (_scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
+
+	if (_introPlaying) {
+
+	}
 }
 
 void AsylumEngine::processDelayedEvents() {
