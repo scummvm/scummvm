@@ -44,18 +44,6 @@
 
 		#ifdef _MSC_VER
 		#pragma once
-		#if (_MSC_VER < 1300)
-		#pragma warning( disable : 4068 ) // turn off "unknown pragma" warning
-		#pragma	warning( disable : 4103 ) // turn off "alignement changed after including header" warning. We use pack-start.h file
-		#pragma warning( disable : 4244 ) // turn off "conversion type" warning
-		#pragma warning( disable : 4250 ) // turn off "inherits via dominance" warning
-		#pragma warning( disable : 4351 ) // turn off "new behavior ... will be default initialized" warning
-		#pragma warning( disable : 4355 ) // turn off "base member init" warning
-		#pragma warning( disable : 4510 ) // turn off "default constructor could not be generated"
-		#pragma warning( disable : 4610 ) // turn off "struct can never be instantiated - user defined constructor required"
-		#pragma warning( disable : 4701 ) // turn off "potentially uninitialized variables" warning
-		#pragma warning( disable : 4800 ) // turn off "forcing value to bool 'true' or 'false' (performance warning)"
-		#endif
 
 		// vsnprintf is already defined in Visual Studio 2008
 		#if (_MSC_VER < 1500)

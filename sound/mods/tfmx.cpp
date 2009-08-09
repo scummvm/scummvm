@@ -1179,4 +1179,3 @@ void displayPatternstep(const void *const vptr) {}
 }	// End of namespace
 
 #endif // #if defined(SOUND_MODS_TFMX_H)
-

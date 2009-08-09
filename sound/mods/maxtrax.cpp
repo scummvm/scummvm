@@ -22,6 +22,7 @@
  * $Id$
  *
  */
+
 #include "common/scummsys.h"
 #include "common/endian.h"
 #include "common/stream.h"

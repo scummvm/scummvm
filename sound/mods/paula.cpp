@@ -28,7 +28,7 @@
 namespace Audio {
 
 Paula::Paula(bool stereo, int rate, uint interruptFreq) :
-		_stereo(stereo), _rate(rate), _periodScale((kPalSystemClock / 2.0) / rate), _intFreq(interruptFreq) {
+		_stereo(stereo), _rate(rate), _periodScale((double)kPalPaulaClock / rate), _intFreq(interruptFreq) {
 
 	clearVoices();
 	_voice[0].panning = 191;

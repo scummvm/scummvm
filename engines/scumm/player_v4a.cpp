@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "engines/engine.h"
 #include "scumm/player_v4a.h"
 #include "scumm/scumm.h"

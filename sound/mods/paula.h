@@ -44,7 +44,9 @@ public:
 		kPalSystemClock  = 7093790,
 		kNtscSystemClock = 7159090,
 		kPalCiaClock     = kPalSystemClock / 10,
-		kNtscCiaClock    = kNtscSystemClock / 10
+		kNtscCiaClock    = kNtscSystemClock / 10,
+		kPalPaulaClock   = kPalSystemClock / 2,
+		kNtscPauleClock  = kNtscSystemClock / 2
 	};
 
 	Paula(bool stereo = false, int rate = 44100, uint interruptFreq = 0);
