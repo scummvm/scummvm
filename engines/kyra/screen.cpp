@@ -650,7 +650,9 @@ void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) 
 	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 		return;
 
-	uint8 screenPal[256 * 4];
+	uint8 screenPal[32 * 4];
+
+	assert(32 <= pal.getNumColors());
 
 	for (int i = 0; i < pal.getNumColors(); ++i) {
 		if (i != 0x10) {
