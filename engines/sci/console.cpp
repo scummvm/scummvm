@@ -165,7 +165,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
-	DCmd_Register("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
+	DCmd_Register("vmvars",				WRAP_METHOD(Console, cmdVMVars));
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
@@ -1713,7 +1713,7 @@ bool Console::cmdVMVarlist(int argc, const char **argv) {
 }
 
 bool Console::cmdVMVars(int argc, const char **argv) {
-	if (argc < 2) {
+	if (argc < 3) {
 		DebugPrintf("Displays or changes variables in the VM\n");
 		DebugPrintf("Usage: %s <type> <varnum> [<value>]\n", argv[0]);
 		DebugPrintf("First parameter is either g(lobal), l(ocal), t(emp) or p(aram).\n");
@@ -1747,10 +1747,10 @@ bool Console::cmdVMVars(int argc, const char **argv) {
 	}
 
 	switch (argc) {
-	case 2:
+	case 3:
 		DebugPrintf("%s var %d == %04x:%04x\n", varnames[vartype], idx, PRINT_REG(scriptState.variables[vartype][idx]));
 		break;
-	case 3:
+	case 4:
 		if (parse_reg_t(_vm->_gamestate, argv[3], &scriptState.variables[vartype][idx])) {
 			DebugPrintf("Invalid address passed.\n");
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
