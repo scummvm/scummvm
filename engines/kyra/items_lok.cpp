@@ -914,7 +914,7 @@ int KyraEngine_LoK::getItemListIndex(uint16 item) {
 	if (_flags.platform != Common::kPlatformAmiga)
 		return item;
 
-	// "Unkown item" is at 81.
+	// "Unknown item" is at 81.
 	if (item == 0xFFFF || item == 0xFF)
 		return 81;
 	// The first item names are mapped directly
@@ -963,6 +963,7 @@ int KyraEngine_LoK::getItemListIndex(uint16 item) {
 	else if (item >= 95)
 		return item - 25;
 
+	// This should never happen, but still GCC warns about it.
 	return 81;
 }
 
