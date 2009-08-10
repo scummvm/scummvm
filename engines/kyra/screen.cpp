@@ -643,6 +643,8 @@ void Screen::enableInterfacePalette(bool e) {
 	_forceFullUpdate = true;
 	_dirtyRects.clear();
 
+	// TODO: We might need to reset the mouse cursor
+
 	updateScreen();
 }
 
