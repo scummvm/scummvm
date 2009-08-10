@@ -245,9 +245,11 @@ void Screen_LoK::postProcessCursor(uint8 *data, int width, int height, int pitch
 		pitch -= width;
 
 		for (int y = 0; y < height; ++y) {
-			for (int x = 0; x < width; ++x)
+			for (int x = 0; x < width; ++x) {
 				if (*data != _cursorColorKey)
-					*data++ += 32;
+					*data += 32;
+				++data;
+			}
 
 			data += pitch;
 		}
