@@ -14,7 +14,7 @@ const ExtractEntry kyra1AmigaEng[] = {
 	{ kCharacterImageFilenames, 0x0000C814, 0x0000C904 },
 	{ kDefaultShapes, 0x00039230, 0x000396BA },
 	{ kItemNames, 0x0001A3B8, 0x0001A738 },
-	{ kTakenStrings, 0x0000F9F4, 0x0000FAF0 },
+	{ kTakenStrings, 0x0000FAE8, 0x0000FAF0 },
 	{ kPlacedStrings, 0x0000FAF0, 0x0000FAFA },
 	{ kDroppedStrings, 0x000101F2, 0x000101FC },
 	{ kNoDropStrings, 0x0000C98E, 0x0000C9D6 },
