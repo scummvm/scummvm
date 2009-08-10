@@ -320,6 +320,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("Lock", kLock, "iii*"),
 	/*(?)*/	DEFUN("Palette", kPalette, "i.*"),
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
+	/*7b*/	DEFUN("StrSplit", kStrSplit, "rrZr"),
 
 	// Non-experimental Functions without a fixed ID
 	DEFUN("CosMult", kTimesCos, "ii"),
@@ -345,7 +346,6 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("MemorySegment", kStub, ".*"),
 	DEFUN("ListOps", kStub, ".*"),
 	DEFUN("ATan", kStub, ".*"),
-	DEFUN("StrSplit", kStub, ".*"),
 	DEFUN("MergePoly", kStub, ".*"),
 	DEFUN("AssertPalette", kStub, ".*"),
 	DEFUN("TextColors", kStub, ".*"),

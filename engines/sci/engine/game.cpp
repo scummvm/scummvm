@@ -497,6 +497,9 @@ int game_init(EngineState *s) {
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
 		game_init_sound(s, 0);
 
+	// Load game language into printLang property of game object
+	s->getLanguage();
+
 	return 0;
 }
 
