@@ -646,16 +646,22 @@ void Screen::enableInterfacePalette(bool e) {
 	updateScreen();
 }
 
-void Screen::setInterfacePalette(const Palette &pal) {
+void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) {
 	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 		return;
 
 	uint8 screenPal[256 * 4];
 
 	for (int i = 0; i < pal.getNumColors(); ++i) {
-		screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
-		screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
-		screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
+		if (i != 0x10) {
+			screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+			screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+			screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
+		} else {
+			screenPal[4 * i + 0] = (r * 0xFF) / 0x3F;
+			screenPal[4 * i + 1] = (g * 0xFF) / 0x3F;
+			screenPal[4 * i + 2] = (b * 0xFF) / 0x3F;
+		}
 		screenPal[4 * i + 3] = 0;
 	}
 

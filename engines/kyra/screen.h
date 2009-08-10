@@ -357,7 +357,7 @@ public:
 
 	// AMIGA version only
 	void enableInterfacePalette(bool e);
-	void setInterfacePalette(const Palette &pal);
+	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
 
 	void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);

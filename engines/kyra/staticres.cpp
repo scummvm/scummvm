@@ -1602,7 +1602,7 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->copyPalette(1, 0);
-		_screen->setInterfacePalette(_screen->getPalette(1));
+		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);
 
 		// TODO: Move this to a better place
 		_screen->enableInterfacePalette(true);
