@@ -110,7 +110,7 @@ bool Screen::init() {
 
 	memset(_shapePages, 0, sizeof(_shapePages));
 
-	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 12 : 4;
+	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 13 : 4;
 	const int numColors = _use16ColorMode ? 16 : ((_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256);
 
 	_interfacePaletteEnabled = false;
@@ -3247,9 +3247,9 @@ void Palette::loadAmigaPalette(Common::ReadStream &stream, int startIndex, int c
 
 	for (int i = 0; i < colors; ++i) {
 		uint16 col = stream.readUint16BE();
-		_palData[(i + startIndex) * 3 + 2] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
-		_palData[(i + startIndex) * 3 + 1] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
-		_palData[(i + startIndex) * 3 + 0] = ((col & 0xF) * 0xFF) / 0x3F; col >>= 4;
+		_palData[(i + startIndex) * 3 + 2] = ((col & 0xF) * 0x3F) / 0xF; col >>= 4;
+		_palData[(i + startIndex) * 3 + 1] = ((col & 0xF) * 0x3F) / 0xF; col >>= 4;
+		_palData[(i + startIndex) * 3 + 0] = ((col & 0xF) * 0x3F) / 0xF; col >>= 4;
 	}
 }
 
@@ -3259,9 +3259,9 @@ void Palette::loadPC98Palette(Common::ReadStream &stream, int startIndex, int co
 	for (int i = 0; i < colors; ++i) {
 		const byte g = stream.readByte(), r = stream.readByte(), b = stream.readByte();
 
-		_palData[(i + startIndex) * 3 + 0] = ((r & 0x0F) * 0x3F) / 0x0F;
-		_palData[(i + startIndex) * 3 + 1] = ((g & 0x0F) * 0x3F) / 0x0F;
-		_palData[(i + startIndex) * 3 + 2] = ((b & 0x0F) * 0x3F) / 0x0F;
+		_palData[(i + startIndex) * 3 + 0] = ((r & 0xF) * 0x3F) / 0xF;
+		_palData[(i + startIndex) * 3 + 1] = ((g & 0xF) * 0x3F) / 0xF;
+		_palData[(i + startIndex) * 3 + 2] = ((b & 0xF) * 0x3F) / 0xF;
 	}
 }
 
