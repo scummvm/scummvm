@@ -391,8 +391,8 @@ void Sound::playSound(int soundID) {
 		000070: 01 18 5a 00  10 00 02 28  5f 00 01 00  00 00 00 00   |..Z....(_.......|
 		*/
 	}
-	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && (ptr[26] == 0)) {
-		// Sound fomat as used in Indy3 EGA Mac.
+	else if ((_vm->_game.platform == Common::kPlatformMacintosh) && (_vm->_game.id == GID_INDY3) && READ_BE_UINT16(ptr + 8) == 0x1C) {
+		// Sound format as used in Indy3 EGA Mac.
 		// It seems to be closely related to the Amiga format, see player_v3a.cpp
 		// The following is known:
 		// offset 0, 16 LE: total size
@@ -411,8 +411,8 @@ void Sound::playSound(int soundID) {
 
 		flags = Audio::Mixer::FLAG_AUTOFREE;
 		size = READ_BE_UINT16(ptr + 12);
-		if (size == 0)	// WORKAROUND bug #1852635: Sound 54 has size 0.
-			return;
+		assert(size);
+		
 		rate = 3579545 / READ_BE_UINT16(ptr + 20);
 		sound = (char *)malloc(size);
 		int vol = ptr[24] * 4;
