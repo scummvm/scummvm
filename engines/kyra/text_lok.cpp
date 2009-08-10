@@ -326,7 +326,9 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 
 	if (_flags.platform == Common::kPlatformAmiga) {
 		if (color != 19) {
-			memset(_currSentenceColor, 0x3F, sizeof(_currSentenceColor));
+			_currSentenceColor[0] = 0x3F;
+			_currSentenceColor[1] = 0x3F;
+			_currSentenceColor[2] = 0x3F;
 
 			_screen->setInterfacePalette(_screen->getPalette(1),
 					_currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
