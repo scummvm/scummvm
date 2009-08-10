@@ -2254,6 +2254,22 @@ void GUI_LoK::initStaticResource() {
 	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
 	_menu[5].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeText);
 	_menu[5].item[5].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsApply);
+
+	// The AMIGA version uses different colors, due to its 32 color nature. We did setup the 256 color version
+	// colors above, so we need to overwrite those with the correct values over here.
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		for (int i = 0; i < 6; ++i) {
+			_menu[i].bkgdColor = 17;
+			_menu[i].color1 = 31;
+			_menu[i].color2 = 18;
+
+			for (int j = 0; j < _menu[i].numberOfItems; ++j) {
+				_menu[i].item[j].bkgdColor = 17;
+				_menu[i].item[j].color1 = 31;
+				_menu[i].item[j].color2 = 18;
+			}
+		}
+	}
 }
 
 void KyraEngine_LoK::setupButtonData() {

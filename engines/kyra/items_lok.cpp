@@ -920,19 +920,19 @@ int KyraEngine_LoK::getItemListIndex(uint16 item) {
 	// The first item names are mapped directly
 	else if (item <= 28)
 		return item;
-	// There's only one string for all "Fireberries"
+	// There's only one string for "Fireberries"
 	else if (item >= 29 && item <= 33)
 		return 29;
 	// Correct offsets
 	else if (item >= 34 && item <= 59)
 		return item - 4;
-	// There's only one string for all "Red Potion"
+	// There's only one string for "Red Potion"
 	else if (item >= 60 && item <= 61)
 		return 56;
-	// There's only one string for all "Blue Potion"
+	// There's only one string for "Blue Potion"
 	else if (item >= 62 && item <= 63)
 		return 57;
-	// There's only one string for all "Yellow Potion"
+	// There's only one string for "Yellow Potion"
 	else if (item >= 64 && item <= 65)
 		return 58;
 	// Correct offsets
