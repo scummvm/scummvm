@@ -47,6 +47,8 @@ SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
 	{  "titre.007", kSaveModeExists, 0, 0}, // Playtoons CK 2 empty title (???)
 	{  "titre.008", kSaveModeExists, 0, 0}, // Playtoons CK 3 empty title (???)
 	{  "mdo.def",  kSaveModeExists, 0, 0},
+	{  "dan.itk",  kSaveModeNone, 0, 0},
+	{  "did.inf",  kSaveModeSave, 0, 0},
 };
 
 SaveLoad::SaveMode SaveLoad_Playtoons::getSaveMode(const char *fileName) const {
