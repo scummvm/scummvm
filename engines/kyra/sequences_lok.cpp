@@ -901,13 +901,13 @@ int KyraEngine_LoK::seq_playEnd() {
 	if (_endSequenceNeedLoading) {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
-		_finalA = new WSAMovie_v1(this);
+		_finalA = createWSAMovie();
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);
-		_finalB = new WSAMovie_v1(this);
+		_finalB = createWSAMovie();
 		assert(_finalB);
 		_finalB->open("finalb.wsa", 1, 0);
-		_finalC = new WSAMovie_v1(this);
+		_finalC = createWSAMovie();
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
 		_finalC->open("finalc.wsa", 1, 0);
