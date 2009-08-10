@@ -579,7 +579,73 @@ int KyraEngine_LoK::o1_restoreAllObjectBackgrounds(EMCState *script) {
 
 int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCustomPaletteRange(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (_currentCharacter->sceneId == 45) {
+			const int palette = stackPos(0) - 17;
+
+			uint8 r, g, b;
+
+			switch (palette) {
+			case 0:
+				// 0x88F
+				r = 33;
+				g = 33;
+				b = 63;
+				break;
+
+			case 1:
+				// 0x00F
+				r = 0;
+				g = 0;
+				b = 63;
+				break;
+
+			case 2:
+				// 0xF88
+				r = 63;
+				g = 33;
+				b = 33;
+				break;
+
+			case 3:
+				// 0xF00
+				r = 63;
+				g = 0;
+				b = 0;
+				break;
+
+			case 4:
+				// 0xFF9
+				r = 63;
+				g = 63;
+				b = 37;
+				break;
+
+			case 5:
+				// 0xFF1
+				r = 63;
+				g = 63;
+				b = 4;
+				break;
+
+			default:
+				// 0xFFF
+				r = 63;
+				g = 63;
+				b = 63;
+			}
+
+			_screen->getPalette(4)[12 * 3 + 0] = r;
+			_screen->getPalette(4)[12 * 3 + 1] = g;
+			_screen->getPalette(4)[12 * 3 + 2] = b;
+		} else if (stackPos(0) == 29) {
+			_screen->copyPalette(0, 11);
+		} else if (stackPos(0) == 13) {
+			_screen->copyPalette(0, 12);
+		}
+	} else {
+		_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
+	}
 	return 0;
 }
 
