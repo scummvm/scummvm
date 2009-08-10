@@ -1203,6 +1203,66 @@ bool KyraEngine_LoK::lineIsPassable(int x, int y) {
 
 #pragma mark -
 
+void KyraEngine_LoK::setupZanthiaPalette(int pal) {
+	uint8 r, g, b;
+
+	switch (pal - 17) {
+	case 0:
+		// 0x88F
+		r = 33;
+		g = 33;
+		b = 63;
+		break;
+
+	case 1:
+		// 0x00F
+		r = 0;
+		g = 0;
+		b = 63;
+		break;
+
+	case 2:
+		// 0xF88
+		r = 63;
+		g = 33;
+		b = 33;
+		break;
+
+	case 3:
+		// 0xF00
+		r = 63;
+		g = 0;
+		b = 0;
+		break;
+
+	case 4:
+		// 0xFF9
+		r = 63;
+		g = 63;
+		b = 37;
+		break;
+
+	case 5:
+		// 0xFF1
+		r = 63;
+		g = 63;
+		b = 4;
+		break;
+
+	default:
+		// 0xFFF
+		r = 63;
+		g = 63;
+		b = 63;
+	}
+
+	_screen->getPalette(4)[12 * 3 + 0] = r;
+	_screen->getPalette(4)[12 * 3 + 1] = g;
+	_screen->getPalette(4)[12 * 3 + 2] = b;
+}
+
+#pragma mark -
+
 void KyraEngine_LoK::setupSceneResource(int sceneId) {
 	if (!_flags.isTalkie)
 		return;
