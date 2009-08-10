@@ -75,11 +75,10 @@ int WSAMovie_v1::open(const char *filename, int offscreenDecode, Palette *palBuf
 	}
 
 	if (_numFrames & 0x8000) {
-		// This is used in the Amiga version, the wsa playing code
-		// doesn't include any handling of it though, so we disable
-		// this warning for now.
-		//warning("Unhandled wsa flags 0x80");
-		_flags |= 0x80;
+		// This is used in the Amiga version.
+		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+			warning("Unhandled wsa flags 0x8000");
+		_flags |= WF_FLIPPED;
 		_numFrames &= 0x7FFF;
 	}
 	_currentFrame = _numFrames;
@@ -262,7 +261,7 @@ void WSAMovieAmiga::displayFrame(int frameNum, int pageNum, int x, int y, uint16
 	if (_currentFrame == _numFrames) {
 		if (!(_flags & WF_NO_FIRST_FRAME)) {
 			Screen::decodeFrameDelta(dst, _deltaBuffer, true);
-			Screen::convertAmigaGfx(dst, _width, _height, 5, true);
+			Screen::convertAmigaGfx(dst, _width, _height, 5, (_flags & WF_FLIPPED) != 0);
 
 			if (_flags & WF_OFFSCREEN_DECODE) {
 				dst = _offscreenBuffer;
@@ -341,7 +340,7 @@ void WSAMovieAmiga::processFrame(int frameNum, uint8 *dst) {
 	const uint8 *src = _frameData + _frameOffsTable[frameNum];
 	Screen::decodeFrame4(src, _deltaBuffer, _deltaBufferSize);
 	Screen::decodeFrameDelta(dst, _deltaBuffer, true);
-	Screen::convertAmigaGfx(dst, _width, _height, 5, true);
+	Screen::convertAmigaGfx(dst, _width, _height, 5, (_flags & WF_FLIPPED) != 0);
 
 	src = dst;
 	dst = 0;
