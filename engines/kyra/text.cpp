@@ -214,32 +214,6 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	_talkMessagePrinted = true;
 }
 
-void TextDisplayer::printIntroTextMessage(const char *text, int x, int y, uint8 col1, uint8 col2, uint8 col3, int dstPage, Screen::FontId font) {
-	char *str = preprocessString(text);
-	int lineCount = buildMessageSubstrings(str);
-	int top = y - lineCount * 10;
-	if (top < 0) {
-		top = 0;
-	}
-	_talkMessageY = top;
-	_talkMessageH = lineCount * 10;
-	int w = getWidestLineWidth(lineCount);
-	int x1, x2;
-	calcWidestLineBounds(x1, x2, w, x);
-	_talkCoords.x = x1;
-	_talkCoords.w = w + 2;
-	int curPage = _screen->setCurPage(dstPage);
-
-	for (int i = 0; i < lineCount; ++i) {
-		top = i * 10 + _talkMessageY;
-		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
-		int left = getCenterStringX(msg, x1, x2);
-		printText(msg, left, top, col1, col2, col3, font);
-	}
-	_screen->_curPage = curPage;
-	_talkMessagePrinted = true;
-}
-
 void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
