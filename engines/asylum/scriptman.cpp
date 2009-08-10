@@ -162,9 +162,9 @@ void ScriptManager::processActionList() {
 /* 0x04 */  case kJumpIfGameFlag: {
                 int flagNum = currentCommand->param1;
 				if (flagNum) {
-					bool doJump = isGameFlagNotSet(flagNum);
+					bool doJump = isGameFlagSet(flagNum);
 					if (currentCommand->param2)
-						doJump = isGameFlagSet(flagNum);
+						doJump = isGameFlagNotSet(flagNum);
 					
 					if (doJump)
 						_currentLine = currentCommand->param3;
@@ -319,12 +319,10 @@ void ScriptManager::processActionList() {
 				uint32 v59    = currentCommand->param2;
 
 				if (!_currentScript->counter && Shared.getScene()->getSceneIndex() != 13 && sndIdx != 0) {
-					// TODO
-					// Find a script that actually has a valid param3
-					// to see if this code is accurate :P
-					ResourcePack *tmpRes = new ResourcePack(12);
-					Shared.getSound()->playSfx(tmpRes, ((int)(sndIdx != 0) & 5) + 0x80120001);
-					delete tmpRes;
+					ResourcePack *sfx = new ResourcePack(18);
+					Shared.getSound()->playSfx(sfx, ((unsigned int)(sndIdx != 0) & 5) + 0x80120001);
+					delete sfx;
+					//Shared.getSound()->playSfx(Shared.getScene()->getSpeechPack(),sndIdx + 86);
 				}
 
 				if (_currentScript->counter >= 3 * v59 - 1) {
