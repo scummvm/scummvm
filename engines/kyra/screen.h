@@ -355,6 +355,10 @@ public:
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	virtual void setScreenPalette(const Palette &pal);
 
+	// AMIGA version only
+	void enableInterfacePalette(bool e);
+	void setInterfacePalette(const Palette &pal);
+
 	void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
 	void copyPalette(const int dst, const int src);
@@ -567,6 +571,9 @@ protected:
 	int _drawShapeVar3;
 	int _drawShapeVar4;
 	int _drawShapeVar5;
+
+	// AMIGA version
+	bool _interfacePaletteEnabled;
 
 	// debug
 	bool _debugEnabled;

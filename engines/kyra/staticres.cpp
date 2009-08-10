@@ -1598,10 +1598,15 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 	else
 		warning("no main graphics file found");
 
-	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->copyPalette(1, 0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0, Screen::CR_NO_P_CHECK);
 
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->copyPalette(1, 0);
+		_screen->setInterfacePalette(_screen->getPalette(1));
+
+		// TODO: Move this to a better place
+		_screen->enableInterfacePalette(true);
+	}
 }
 
 void KyraEngine_HoF::initStaticResource() {

@@ -113,6 +113,8 @@ bool Screen::init() {
 	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 12 : 4;
 	const int numColors = _use16ColorMode ? 16 : ((_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256);
 
+	_interfacePaletteEnabled = false;
+
 	_screenPalette = new Palette(numColors);
 	assert(_screenPalette);
 
@@ -217,8 +219,23 @@ void Screen::updateScreen() {
 }
 
 void Screen::updateDirtyRects() {
-	if (_forceFullUpdate) {
-		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+	// TODO: Enable dirty rect handling for the AMIGA version
+	if (_forceFullUpdate || _vm->gameFlags().platform == Common::kPlatformAmiga) {
+		if (_interfacePaletteEnabled) {
+			_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, 136);
+
+			// Page 8 is not used by Kyra 1 AMIGA, thus we can use it to adjust the colors
+			copyRegion(0, 136, 0, 0, 320, 64, 0, 8, CR_NO_P_CHECK);
+
+			uint8 *dst = getPagePtr(8);
+			for (int y = 0; y < 64; ++y)
+				for (int x = 0; x < 320; ++x)
+					*dst++ += 32;
+
+			_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, 0, 136, SCREEN_W, 64);
+		} else {
+			_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
+		}
 	} else {
 		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
@@ -618,6 +635,31 @@ void Screen::setScreenPalette(const Palette &pal) {
 	}
 
 	_system->setPalette(screenPal, 0, pal.getNumColors());
+}
+
+void Screen::enableInterfacePalette(bool e) {
+	_interfacePaletteEnabled = e;
+
+	_forceFullUpdate = true;
+	_dirtyRects.clear();
+
+	updateScreen();
+}
+
+void Screen::setInterfacePalette(const Palette &pal) {
+	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+		return;
+
+	uint8 screenPal[256 * 4];
+
+	for (int i = 0; i < pal.getNumColors(); ++i) {
+		screenPal[4 * i + 0] = (pal[i * 3 + 0] * 0xFF) / 0x3F;
+		screenPal[4 * i + 1] = (pal[i * 3 + 1] * 0xFF) / 0x3F;
+		screenPal[4 * i + 2] = (pal[i * 3 + 2] * 0xFF) / 0x3F;
+		screenPal[4 * i + 3] = 0;
+	}
+
+	_system->setPalette(screenPal, 32, pal.getNumColors());
 }
 
 void Screen::copyToPage0(int y, int h, uint8 page, uint8 *seqBuf) {
