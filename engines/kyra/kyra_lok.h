@@ -289,6 +289,8 @@ protected:
 	void removeHandItem();
 	void setMouseItem(uint16 item);
 
+	int getItemListIndex(uint16 item);
+
 	// -> graphics effects
 	void wipeDownMouseItem(int xpos, int ypos);
 	void itemSpecialFX(int x, int y, int item);

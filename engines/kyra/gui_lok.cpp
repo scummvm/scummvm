@@ -59,7 +59,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			snd_playSoundEffect(0x35);
 			setMouseItem(inventoryItem);
-			updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			_itemInHand = inventoryItem;
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = 0xFF;
@@ -73,9 +73,9 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			setMouseItem(inventoryItem);
 			// TODO: Proper support for both taken strings in Amiga version
 			if (_flags.platform == Common::kPlatformAmiga)
-				updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
+				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			else
-				updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
+				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[1], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = inventoryItem;
@@ -84,7 +84,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			_screen->hideMouse();
 			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			_screen->setMouseCursor(1, 1, _shapes[0]);
-			updateSentenceCommand(_itemList[_itemInHand], _placedList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _placedList[0], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = -1;

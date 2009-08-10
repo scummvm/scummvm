@@ -664,7 +664,7 @@ int KyraEngine_LoK::processInputHelper(int xpos, int ypos) {
 			currentRoom->itemsTable[item] = 0xFF;
 			setMouseItem(item2);
 			assert(_itemList && _takenList);
-			updateSentenceCommand(_itemList[item2], _takenList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(item2)], _takenList[0], 179);
 			_itemInHand = item2;
 			_screen->showMouse();
 			clickEventHandler2();

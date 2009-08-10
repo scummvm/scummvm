@@ -414,7 +414,7 @@ int KyraEngine_LoK::processItemDrop(uint16 sceneId, uint8 item, int x, int y, in
 
 	if (unk1 == 0 && unk2 != 0) {
 		assert(_itemList && _droppedList);
-		updateSentenceCommand(_itemList[item], _droppedList[0], 179);
+		updateSentenceCommand(_itemList[getItemListIndex(item)], _droppedList[0], 179);
 	}
 
 	return 1;
@@ -434,7 +434,7 @@ void KyraEngine_LoK::exchangeItemWithMouseItem(uint16 sceneId, int itemIndex) {
 
 	setMouseItem(_itemInHand);
 	assert(_itemList && _takenList);
-	updateSentenceCommand(_itemList[_itemInHand], _takenList[1], 179);
+	updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _takenList[1], 179);
 	_screen->showMouse();
 	clickEventHandler2();
 }
@@ -908,6 +908,62 @@ void KyraEngine_LoK::backUpItemRect1(int xpos, int ypos) {
 void KyraEngine_LoK::restoreItemRect1(int xpos, int ypos) {
 	_screen->rectClip(xpos, ypos, 4<<3, 32);
 	_screen->copyBlockToPage(_screen->_curPage, xpos, ypos, 4<<3, 32, _itemBkgBackUp[1]);
+}
+
+int KyraEngine_LoK::getItemListIndex(uint16 item) {
+	if (_flags.platform != Common::kPlatformAmiga)
+		return item;
+
+	// "Unkown item" is at 81.
+	if (item == 0xFFFF || item == 0xFF)
+		return 81;
+	// The first item names are mapped directly
+	else if (item <= 28)
+		return item;
+	// There's only one string for all "Fireberries"
+	else if (item >= 29 && item <= 33)
+		return 29;
+	// Correct offsets
+	else if (item >= 34 && item <= 59)
+		return item - 4;
+	// There's only one string for all "Red Potion"
+	else if (item >= 60 && item <= 61)
+		return 56;
+	// There's only one string for all "Blue Potion"
+	else if (item >= 62 && item <= 63)
+		return 57;
+	// There's only one string for all "Yellow Potion"
+	else if (item >= 64 && item <= 65)
+		return 58;
+	// Correct offsets
+	else if (item >= 66 && item <= 69)
+		return item - 7;
+	// There's only one string for "Fresh Water"
+	else if (item >= 70 && item <= 71)
+		return 63;
+	// There's only one string for "Salt Water"
+	else if (item >= 72 && item <= 73)
+		return 64;
+	// There's only one string for "Mineral Water"
+	else if (item >= 74 && item <= 75)
+		return 65;
+	// There's only one string for "Magical Water"
+	else if (item >= 76 && item <= 77)
+		return 66;
+	// There's only one string for "Empty Flask"
+	else if (item >= 78 && item <= 79)
+		return 67;
+	// There's only one string for "Scroll"
+	else if (item >= 80 && item <= 89)
+		return 68;
+	// There's only one string for "Parchment scrap"
+	else if (item >= 90 && item <= 94)
+		return 69;
+	// Correct offsets
+	else if (item >= 95)
+		return item - 25;
+
+	return 81;
 }
 
 } // end of namespace Kyra
