@@ -369,6 +369,10 @@ void GUI_LoK::setGUILabels() {
 		offsetOptions = 10;
 		offsetOn = 0;
 		walkspeedGarbageOffset = 0;
+	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		// English Amiga version
+		offsetOptions = 8;
+		walkspeedGarbageOffset = 2;
 	}
 
 	assert(offset + 27 < _vm->_guiStringsSize);
@@ -928,6 +932,9 @@ void GUI_LoK::setupControls(Menu &menu) {
 			menu.item[3].itemString = "ERROR";
 		}
 	} else {
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			clickableOffset = 5;
+
 		menu.item[4].enabled = 0;
 		menu.item[4].labelString = 0;
 	}
