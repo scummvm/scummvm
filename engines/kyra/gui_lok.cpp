@@ -456,9 +456,15 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		_vm->snd_playSoundEffect(0x36);
 		return 0;
 	}
+
 	// XXX
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		_screen->setPaletteIndex(0x10, 0x3F, 0x3F, 0x3F);
+		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);
+	} else {
 		_screen->setPaletteIndex(0xFE, 60, 60, 0);
+	}
+
 	for (int i = 0; i < 6; i++) {
 		_menuButtonData[i].data0Val1 = _menuButtonData[i].data1Val1 = _menuButtonData[i].data2Val1 = 4;
 		_menuButtonData[i].data0Callback = _redrawShadedButtonFunctor;

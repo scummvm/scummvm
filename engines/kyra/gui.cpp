@@ -95,7 +95,8 @@ void GUI::initMenu(Menu &menu) {
 	if (_vm->gameFlags().gameID == GI_LOL) {
 		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 9);
 	} else {
-		printMenuText(getMenuTitle(menu), textX - 1, textY + 1, defaultColor1(), defaultColor2(), 0);
+		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+			printMenuText(getMenuTitle(menu), textX - 1, textY + 1, defaultColor1(), defaultColor2(), 0);
 		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 0);
 	}
 
@@ -142,7 +143,9 @@ void GUI::initMenu(Menu &menu) {
 				else
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 			} else {
-				printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+				if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+					printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+
 				if (i == menu.highlightedItem)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
 				else
@@ -158,7 +161,8 @@ void GUI::initMenu(Menu &menu) {
 				menu.item[i].labelY = menu.item[i].y + 3;
 				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 10);
 			} else {
-				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
+				if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+					printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX - 1, menu.y + menu.item[i].labelY + 1, defaultColor1(), 0, 0);
 				printMenuText(getMenuItemLabel(menu.item[i]), menu.x + menu.item[i].labelX, menu.y + menu.item[i].labelY, menu.item[i].textColor, 0, 0);
 			}
 		}
@@ -253,7 +257,8 @@ void GUI::redrawText(const Menu &menu) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 	} else {
-		printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
 	}
 }
@@ -278,7 +283,8 @@ void GUI::redrawHighlight(const Menu &menu) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
 	} else {
-		printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
 	}
 }
