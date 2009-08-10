@@ -336,7 +336,8 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 
 	_text->printText(sentence, 8, 143, 0xFF, 12, 0);
 	_screen->showMouse();
-	setTextFadeTimerCountdown(15);
+	if (_flags.platform != Common::kPlatformAmiga)
+		setTextFadeTimerCountdown(15);
 	_fadeText = false;
 }
 
