@@ -457,7 +457,6 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		return 0;
 	}
 
-	// XXX
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		_screen->setPaletteIndex(0x10, 0x3F, 0x3F, 0x3F);
 		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);

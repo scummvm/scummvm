@@ -330,7 +330,10 @@ int GUI::redrawButtonCallback(Button *button) {
 		return 0;
 
 	_screen->hideMouse();
-	_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 0xF8);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 17);
+	else
+		_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 0xF8);
 	_screen->showMouse();
 
 	return 0;
@@ -341,7 +344,10 @@ int GUI::redrawShadedButtonCallback(Button *button) {
 		return 0;
 
 	_screen->hideMouse();
-	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xF9, 0xFA);
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 31, 18);
+	else
+		_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 0xF9, 0xFA);
 	_screen->showMouse();
 
 	return 0;
