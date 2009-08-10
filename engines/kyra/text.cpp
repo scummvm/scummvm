@@ -255,80 +255,80 @@ void TextDisplayer::setTextColor(uint8 color) {
 	case 4:
 		// 0x09E
 		r = 0;
-		g = 36;
-		b = 56;
+		g = 37;
+		b = 58;
 		break;
 
 	case 5:
 		// 0xFF5
-		r = 60;
-		g = 60;
-		b = 20;
+		r = 63;
+		g = 63;
+		b = 21;
 		break;
 
 	case 27:
 		// 0x5FF
-		r = 20;
-		g = 60;
-		b = 60;
+		r = 21;
+		g = 63;
+		b = 63;
 		break;
 
 	case 34:
 		// 0x8E5
-		r = 32;
-		g = 56;
-		b = 20;
+		r = 33;
+		g = 58;
+		b = 21;
 		break;
 
 	case 58:
 		// 0x9FB
-		r = 36;
-		g = 60;
-		b = 44;
+		r = 37;
+		g = 63;
+		b = 46;
 		break;
 
 	case 85:
 		// 0x7CF
-		r = 28;
-		g = 48;
-		b = 60;
+		r = 29;
+		g = 50;
+		b = 63;
 		break;
 
 	case 114:
 	case 117:
 		// 0xFAF
-		r = 60;
-		g = 40;
-		b = 60;
+		r = 63;
+		g = 42;
+		b = 63;
 		break;
 
 	case 128:
 	case 129:
 		// 0xFCC
-		r = 60;
-		g = 48;
-		b = 48;
+		r = 63;
+		g = 50;
+		b = 50;
 		break;
 
 	case 201:
 		// 0xFD8
-		r = 60;
-		g = 52;
-		b = 32;
+		r = 63;
+		g = 54;
+		b = 33;
 		break;
 
 	case 216:
 		// 0xFC6
-		r = 60;
-		g = 48;
-		b = 24;
+		r = 63;
+		g = 50;
+		b = 25;
 		break;
 
 	default:
 		// 0xEEE
-		r = 56;
-		g = 56;
-		b = 56;
+		r = 58;
+		g = 58;
+		b = 58;
 	}
 
 	_screen->setPaletteIndex(0x10, r, g, b);
