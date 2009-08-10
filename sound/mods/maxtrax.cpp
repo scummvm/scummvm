@@ -221,7 +221,7 @@ endOfEventLoop:
 				_playerCtx.tempoTime = 0;
 				newTempo += _playerCtx.tempoDelta;
 			}
-			_playerCtx.tickUnit = calcTempo(_playerCtx.tempoStart + newTempo, _playerCtx.vBlankFreq);
+			_playerCtx.tickUnit = calcTempo(newTempo, _playerCtx.vBlankFreq);
 		}
 	}
 
@@ -470,18 +470,11 @@ void MaxTrax::resetPlayer() {
 	for (int i = 0; i < ARRAYSIZE(_voiceCtx); ++i)
 		killVoice((byte)i);
 
-	for (int i = 0; i < kNumChannels; ++i) {
+	for (int i = 0; i < ARRAYSIZE(_channelCtx); ++i) {
 		_channelCtx[i].flags = 0;
 		_channelCtx[i].lastNote = (uint8)-1;
 		resetChannel(_channelCtx[i], (i & 1) != 0);
-		_channelCtx[i].patch = &_patch[i];
-	}
-
-	for (int i = kNumChannels; i < ARRAYSIZE(_channelCtx); ++i) {
-		_channelCtx[i].flags = 0;
-		_channelCtx[i].lastNote = (uint8)-1;
-		resetChannel(_channelCtx[i], (i & 1) != 0);
-		_channelCtx[i].patch = 0;
+		_channelCtx[i].patch = (i < kNumChannels) ? &_patch[i] : 0;
 	}
 
 #ifdef MAXTRAX_HAS_MICROTONAL
