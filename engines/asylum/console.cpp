@@ -40,12 +40,23 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	DCmd_Register("video",			WRAP_METHOD(Console, cmdPlayVideo));
 	DCmd_Register("script",			WRAP_METHOD(Console, cmdRunScript));
 	DCmd_Register("scene",			WRAP_METHOD(Console, cmdChangeScene));
+	DCmd_Register("flags",			WRAP_METHOD(Console, cmdShowFlags));
 
 	DVar_Register("showpolygons",  &g_debugPolygons, DVAR_INT, 0);
 	DVar_Register("showbarriers",  &g_debugBarriers, DVAR_INT, 0);
 }
 
 Console::~Console() {
+}
+
+bool Console::cmdShowFlags(int argc, const char **argv) {
+	for (int i = 0; i < 1512; i++) {
+		if (ScriptMan.isGameFlagSet(i)) {
+			DebugPrintf("Game Flag %d is Active\n", i);
+		}
+	}
+
+	return true;
 }
 
 bool Console::cmdPlayVideo(int argc, const char **argv) {

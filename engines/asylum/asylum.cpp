@@ -125,10 +125,12 @@ Common::Error AsylumEngine::go() {
 	// Also, this routine is used to set game flags 4 and 12, so if we're
 	// skipping the intro, but not loading a save file, those flags
 	// need to be set somewhere else.
-	playIntro();
+	//playIntro();
 
 	// Enter first scene
-	//_scene->enterScene();
+	ScriptMan.setGameFlag(4);
+	ScriptMan.setGameFlag(12);
+	_scene->enterScene();
 
 	while (!shouldQuit()) {
 		checkForEvent(true);
