@@ -693,7 +693,7 @@ void KyraEngine_LoK::magicOutMouseItem(int animIndex, int itemPos) {
 
 	if (itemPos != -1) {
 		restoreItemRect1(x, y);
-		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, 12, 0);
+		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
 		backUpItemRect1(x, y);
 	}
 
@@ -715,7 +715,7 @@ void KyraEngine_LoK::magicOutMouseItem(int animIndex, int itemPos) {
 	} else {
 		_characterList[0].inventoryItems[itemPos] = 0xFF;
 		_screen->hideMouse();
-		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, 12, 0);
+		_screen->fillRect(_itemPosX[itemPos], _itemPosY[itemPos], _itemPosX[itemPos] + 15, _itemPosY[itemPos] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
 		_screen->showMouse();
 	}
 	_screen->showMouse();

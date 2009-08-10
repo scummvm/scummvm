@@ -1228,7 +1228,7 @@ int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 
 		switch (stackPos(0)) {
 		case -1:
-			// TODO
+			// The original seemed to draw some lines on page 2 here, which looks strange...
 			//if (!(_brandonStatusBit & 2))
 			//	warning("Unimplemented case for o1_setFireberryGlowPalette");
 			palIndex = 9;
