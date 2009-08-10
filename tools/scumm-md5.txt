@@ -62,7 +62,8 @@ maniac	Maniac Mansion
 	3905799e081b80a61d4460b7b733c206	262144	us	NES	NES	-	-	
 	81bbfa181184cb494e7a81dcfa94fbd9	262144	fr	NES	NES	-	-	
 	257f8c14d8c584f7ddd601bcb00920c7	262144	de	NES	NES	-	-	
-	f163cf53f7850e43fb482471e5c52e1a	262144	es	NES	NES	-	-	
+	f163cf53f7850e43fb482471e5c52e1a	262144	es	NES	NES	-	-
+	e28bc6dbec750bced1b7c98d6caa32ce	262144	it	NES	NES	-	-
 	22d07d6c386c9c25aca5dac2a0c0d94b	262144	se	NES	NES	-	-	
 	17f7296f63c78642724f057fd8e736a7	-1	gb	NES	NES	extracted	-	
 	91d5db93187fab54d823f73bd6441cb6	-1	us	NES	NES	extracted	-	
