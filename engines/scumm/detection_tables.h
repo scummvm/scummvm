@@ -413,6 +413,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maniac", "Maniac Mansion (SW).prg", kGenUnchanged, Common::SE_SWE, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (U).prg", kGenUnchanged, Common::EN_USA, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (G).prg", kGenUnchanged, Common::DE_DEU, Common::kPlatformNES, "NES" },
+	{ "maniac", "Maniac Mansion (I).prg", kGenUnchanged, Common::IT_ITA, Common::kPlatformNES, "NES" },
 	{ "maniac", "Maniac Mansion (Sp).prg", kGenUnchanged, Common::ES_ESP, Common::kPlatformNES, "NES" },
 
 	{ "zak", "%02d.LFL", kGenRoomNum, UNK_LANG, UNK, 0 },
