@@ -1321,9 +1321,11 @@ int KyraEngine_LoK::o1_drinkPotionAnimation(EMCState *script) {
 
 int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_makeAmuletAppear(%p) ()", (const void *)script);
-	WSAMovie_v1 amulet(this);
-	amulet.open("AMULET.WSA", 1, 0);
-	if (amulet.opened()) {
+	Movie *amulet = createWSAMovie();
+	assert(amulet);
+	amulet->open("AMULET.WSA", 1, 0);
+
+	if (amulet->opened()) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();
 		snd_playSoundEffect(0x70);
@@ -1341,7 +1343,7 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 			if (code == 14)
 				snd_playSoundEffect(0x73);
 
-			amulet.displayFrame(code, 0, 224, 152, 0, 0, 0);
+			amulet->displayFrame(code, 0, 224, 152, 0, 0, 0);
 			_animator->_updateScreen = true;
 
 			while (_system->getMillis() < nextTime) {
@@ -1353,6 +1355,8 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 		}
 		_screen->showMouse();
 	}
+
+	delete amulet;
 	setGameFlag(0x2D);
 	return 0;
 }
