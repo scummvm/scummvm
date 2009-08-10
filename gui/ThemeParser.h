@@ -147,7 +147,7 @@ protected:
 
 				XML_KEY(text)
 					XML_PROP(font, true)
-					XML_PROP(font_color, true)
+					XML_PROP(text_color, true)
 					XML_PROP(vertical_align, true)
 					XML_PROP(horizontal_align, true)
 				KEY_END()

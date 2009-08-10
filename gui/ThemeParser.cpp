@@ -249,7 +249,7 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 
 	Common::String id = getParentNode(node)->values["id"];
 	TextData textDataId = parseTextDataId(node->values["font"]);
-	TextColor textColorId = parseTextColorId(node->values["font_color"]);
+	TextColor textColorId = parseTextColorId(node->values["text_color"]);
 
 	if (!_theme->addTextData(id, textDataId, textColorId, alignH, alignV))
 		return parserError("Error adding Text Data for '%s'.", id.c_str());

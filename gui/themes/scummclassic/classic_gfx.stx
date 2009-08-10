@@ -190,7 +190,7 @@
 
 	<drawdata id = 'tab_active' cache = 'false'>
 		<text	font = 'text_default'
-				font_color = 'color_normal_hover'
+				text_color = 'color_normal_hover'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
@@ -203,7 +203,7 @@
 
 	<drawdata id = 'tab_inactive' cache = 'false'>
 		<text	font = 'text_default'
-				font_color = 'color_normal'
+				text_color = 'color_normal'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
@@ -267,7 +267,7 @@
 					orientation = 'bottom'
 		/>
 		<text	font = 'text_default'
-				font_color = 'color_normal'
+				text_color = 'color_normal'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
@@ -288,7 +288,7 @@
 					orientation = 'bottom'
 		/>
 		<text	font = 'text_default'
-				font_color = 'color_normal_disabled'
+				text_color = 'color_normal_disabled'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
@@ -309,7 +309,7 @@
 					orientation = 'bottom'
 		/>
 		<text	font = 'text_default'
-				font_color = 'color_normal_hover'
+				text_color = 'color_normal_hover'
 				vertical_align = 'center'
 				horizontal_align = 'left'
 		/>
@@ -343,7 +343,7 @@
 
 	<drawdata id = 'button_idle' cache = 'false'>
 		<text	font = 'text_button'
-				font_color = 'color_button'
+				text_color = 'color_button'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
@@ -355,7 +355,7 @@
 
 	<drawdata id = 'button_hover' cache = 'false'>
 		<text	font = 'text_button'
-				font_color = 'color_button_hover'
+				text_color = 'color_button_hover'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
@@ -367,7 +367,7 @@
 
 	<drawdata id = 'button_disabled' cache = 'false'>
 		<text	font = 'text_button'
-				font_color = 'color_button_disabled'
+				text_color = 'color_button_disabled'
 				vertical_align = 'center'
 				horizontal_align = 'center'
 		/>
@@ -379,7 +379,7 @@
 
 	<drawdata id = 'checkbox_disabled' cache = 'false'>
 		<text	font = 'text_default'
-				font_color = 'color_normal_disabled'
+				text_color = 'color_normal_disabled'
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
@@ -391,7 +391,7 @@
 
 	<drawdata id = 'checkbox_selected' cache = 'false'>
 		<text	font = 'text_default'
-				font_color = 'color_normal'
+				text_color = 'color_normal'
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
@@ -408,7 +408,7 @@
 
 	<drawdata id = 'checkbox_default' cache = 'false'>
 		<text	font = 'text_default'
-				font_color = 'color_normal'
+				text_color = 'color_normal'
 				vertical_align = 'top'
 				horizontal_align = 'left'
 		/>
