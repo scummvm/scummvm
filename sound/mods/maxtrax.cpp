@@ -57,8 +57,8 @@ void nullFunc(int) {}
 
 // define sinetable if needed and setup a compile-time constant
 #ifdef MAXTRAX_HAS_MODULATION
-const int8 tableSine[256] = { 0 };
-static const bool kHasModulation = true;
+const int8 tableSine[256] = { 0 }; // todo - fillin values
+const bool kHasModulation = true;
 #else
 const bool kHasModulation = false;
 #endif
@@ -67,14 +67,14 @@ const bool kHasModulation = false;
 
 namespace Audio {
 
-MaxTrax::MaxTrax(int rate, bool stereo)
-	: Paula(stereo, rate, rate/50),
+MaxTrax::MaxTrax(int rate, bool stereo, uint16 vBlankFreq, uint16 maxScores)
+	: Paula(stereo, rate, rate / vBlankFreq),
 	  _patch(),
 	  _scores(),
 	  _numScores() {
-	_playerCtx.maxScoreNum = 128;
-	_playerCtx.vBlankFreq = 50;
-	_playerCtx.frameUnit = (uint16)((1000 << 8) /  _playerCtx.vBlankFreq);
+	_playerCtx.maxScoreNum = maxScores;
+	_playerCtx.vBlankFreq = vBlankFreq;
+	_playerCtx.frameUnit = (uint16)((1000 << 8) /  vBlankFreq);
 	_playerCtx.scoreIndex = -1;
 	_playerCtx.volume = 0x40;
 
@@ -815,6 +815,7 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 		freePatches();
 	if (loadScores)
 		freeScores();
+	const char *errorMsg = 0;
 	// 0x0000: 4 Bytes Header "MXTX"
 	// 0x0004: uint16 tempo
 	// 0x0006: uint16 flags. bit0 = lowpassfilter, bit1 = attackvolume, bit15 = microtonal	
@@ -885,9 +886,14 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			// load disksample structure
 			const uint16 number = musicData.readUint16BE();
 			assert(number < ARRAYSIZE(_patch));
-			// pointer to samples needed?
-			Patch &curPatch = _patch[number];
 
+			Patch &curPatch = _patch[number];
+			if (curPatch.attackPtr || curPatch.samplePtr) {
+				delete curPatch.attackPtr;
+				curPatch.attackPtr = 0;
+				delete curPatch.samplePtr;
+				curPatch.samplePtr = 0;
+			}
 			curPatch.tune = musicData.readSint16BE();
 			curPatch.volume = musicData.readUint16BE();
 			curPatch.sampleOctaves = musicData.readUint16BE();
@@ -905,7 +911,6 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 			if (!envPtr)
 				goto allocError;
 			// Attack Segment
-			delete curPatch.attackPtr;
 			curPatch.attackPtr = envPtr;
 			// Release Segment
 			// curPatch.releasePtr = envPtr + curPatch.attackLen;
@@ -927,10 +932,16 @@ bool MaxTrax::load(Common::SeekableReadStream &musicData, bool loadScores, bool 
 	if (!musicData.err() && !musicData.eos())
 		return true;
 ioError:
-	warning("Maxtrax: Encountered IO-Error");
-	return false;
+	errorMsg = "Maxtrax: Encountered IO-Error";
 allocError:
-	warning("Maxtrax: Could not allocate Memory");
+	if (!errorMsg)
+		errorMsg = "Maxtrax: Could not allocate Memory";
+
+	warning(errorMsg);
+	if (loadSamples)
+		freePatches();
+	if (loadScores)
+		freeScores();
 	return false;
 }
 

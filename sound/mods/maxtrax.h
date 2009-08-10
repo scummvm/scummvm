@@ -39,7 +39,7 @@ namespace Audio {
 
 class MaxTrax : public Paula {
 public:
-	MaxTrax(int rate, bool stereo);
+	MaxTrax(int rate, bool stereo, uint16 vBlankFreq = 50, uint16 maxScores = 128);
 	virtual ~MaxTrax();
 
 	bool load(Common::SeekableReadStream &musicData, bool loadScores = true, bool loadSamples = true);
