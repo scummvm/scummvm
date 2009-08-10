@@ -1222,37 +1222,77 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 
 int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setFireberryGlowPalette(%p) (%d)", (const void *)script, stackPos(0));
-	int palIndex = 0;
-	switch (stackPos(0)) {
-	case 0x1E:
-		palIndex = 9;
-		break;
 
-	case 0x1F:
-		palIndex = 10;
-		break;
+	if (_flags.platform == Common::kPlatformAmiga) {
+		int palIndex = 0;
 
-	case 0x20:
-		palIndex = 11;
-		break;
+		switch (stackPos(0)) {
+		case -1:
+			// TODO
+			//if (!(_brandonStatusBit & 2))
+			//	warning("Unimplemented case for o1_setFireberryGlowPalette");
+			palIndex = 9;
+			break;
 
-	case 0x21:
-	case -1:
-		palIndex = 12;
-		break;
+		case 30:
+			palIndex = 7;
+			break;
 
-	default:
-		palIndex = 8;
-	}
-	if (_brandonStatusBit & 2) {
-		if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
-			_currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
-			(_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
-			palIndex = 14;
+		case 31:
+			palIndex = 8;
+			break;
+
+		case 32:
+		case 33:
+			palIndex = 9;
+			break;
+
+		case 28: case 29: default:
+			palIndex = 6;
 		}
+
+		if (_brandonStatusBit & 2) {
+			if (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)
+				palIndex = 10;
+		}
+
+		_screen->copyPalette(0, palIndex);
+	} else {
+		int palIndex = 0;
+
+		switch (stackPos(0)) {
+		case 0x1E:
+			palIndex = 9;
+			break;
+
+		case 0x1F:
+			palIndex = 10;
+			break;
+
+		case 0x20:
+			palIndex = 11;
+			break;
+
+		case 0x21:
+		case -1:
+			palIndex = 12;
+			break;
+
+		default:
+			palIndex = 8;
+		}
+
+		if (_brandonStatusBit & 2) {
+			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
+				_currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
+				(_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
+				palIndex = 14;
+			}
+		}
+
+		_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	}
 
-	_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	return 0;
 }
 

@@ -363,6 +363,9 @@ void KyraEngine_LoK::startup() {
 	loadMainScreen();
 	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->loadPaletteTable("PALETTE.DAT", 6);
+
 	// XXX
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
