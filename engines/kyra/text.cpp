@@ -200,6 +200,10 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage, Screen::CR_NO_P_CHECK);
 	int curPage = _screen->_curPage;
 	_screen->_curPage = srcPage;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		setTextColor(color);
+
 	for (int i = 0; i < lineCount; ++i) {
 		top = i * 10 + _talkMessageY;
 		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
@@ -248,7 +252,7 @@ void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1,
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {
-	uint8 colorTable[] = {0x0F, 0x9, 0x0C9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
+	uint8 colorTable[] = {0x0F, 0x09, 0xC9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
 	int top, left, x1, x2, w, x;
 	char *msg;
 
@@ -259,6 +263,9 @@ void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX
 	x = charX;
 	calcWidestLineBounds(x1, x2, w, x);
 
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		setTextColor(color);
+
 	for (int i = 0; i < lineCount; ++i) {
 		top = i * 10 + _talkMessageY;
 		msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
@@ -266,4 +273,91 @@ void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX
 		printText(msg, left, top, color, 0xC, 0);
 	}
 }
+
+void TextDisplayer::setTextColor(uint8 color) {
+	byte r, g, b;
+
+	switch (color) {
+	case 4:
+		// 0x09E
+		r = 0;
+		g = 36;
+		b = 56;
+		break;
+
+	case 5:
+		// 0xFF5
+		r = 60;
+		g = 60;
+		b = 20;
+		break;
+
+	case 27:
+		// 0x5FF
+		r = 20;
+		g = 60;
+		b = 60;
+		break;
+
+	case 34:
+		// 0x8E5
+		r = 32;
+		g = 56;
+		b = 20;
+		break;
+
+	case 58:
+		// 0x9FB
+		r = 36;
+		g = 60;
+		b = 44;
+		break;
+
+	case 85:
+		// 0x7CF
+		r = 28;
+		g = 48;
+		b = 60;
+		break;
+
+	case 114:
+	case 117:
+		// 0xFAF
+		r = 60;
+		g = 40;
+		b = 60;
+		break;
+
+	case 128:
+	case 129:
+		// 0xFCC
+		r = 60;
+		g = 48;
+		b = 48;
+		break;
+
+	case 201:
+		// 0xFD8
+		r = 60;
+		g = 52;
+		b = 32;
+		break;
+
+	case 216:
+		// 0xFC6
+		r = 60;
+		g = 48;
+		b = 24;
+		break;
+
+	default:
+		// 0xEEE
+		r = 56;
+		g = 56;
+		b = 56;
+	}
+
+	_screen->setPaletteIndex(0x10, r, g, b);
+}
+
 } // end of namespace Kyra

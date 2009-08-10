@@ -66,6 +66,9 @@ protected:
 		uint16 y, x, w;
 	};
 
+	// TODO: AMIGA and LoK specific, move to a better location
+	void setTextColor(uint8 color);
+
 	enum {
 		TALK_SUBSTRING_LEN = 80,
 		TALK_SUBSTRING_NUM = 6
@@ -76,6 +79,7 @@ protected:
 	TalkCoords _talkCoords;
 	bool _talkMessagePrinted;
 };
+
 } // end of namespace Kyra
 
 #endif
