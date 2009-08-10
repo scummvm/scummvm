@@ -322,7 +322,7 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 
 void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	_screen->hideMouse();
-	_screen->fillRect(8, 143, 311, 152, 12);
+	_screen->fillRect(8, 143, 311, 152, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 
 	// TODO: Amiga support
 	if ((_startSentencePalIndex != color || _fadeText != false) && _flags.platform != Common::kPlatformAmiga) {
@@ -334,7 +334,7 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 		_startSentencePalIndex = 0;
 	}
 
-	_text->printText(sentence, 8, 143, 0xFF, 12, 0);
+	_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
 	_screen->showMouse();
 	if (_flags.platform != Common::kPlatformAmiga)
 		setTextFadeTimerCountdown(15);

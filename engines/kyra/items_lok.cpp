@@ -879,7 +879,7 @@ void KyraEngine_LoK::redrawInventory(int page) {
 	_screen->_curPage = page;
 	_screen->hideMouse();
 	for (int i = 0; i < 10; ++i) {
-		_screen->fillRect(_itemPosX[i], _itemPosY[i], _itemPosX[i] + 15, _itemPosY[i] + 15, 12, page);
+		_screen->fillRect(_itemPosX[i], _itemPosY[i], _itemPosX[i] + 15, _itemPosY[i] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12, page);
 		if (_currentCharacter->inventoryItems[i] != 0xFF) {
 			uint8 item = _currentCharacter->inventoryItems[i];
 			_screen->drawShape(page, _shapes[216+item], _itemPosX[i], _itemPosY[i], 0, 0);

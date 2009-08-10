@@ -56,7 +56,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			return 0;
 		} else {
 			_screen->hideMouse();
-			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			snd_playSoundEffect(0x35);
 			setMouseItem(inventoryItem);
 			updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
@@ -68,7 +68,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 		if (inventoryItem != 0xFF) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
-			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
 			updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
