@@ -120,8 +120,11 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 #endif
 	// Segments
 	DCmd_Register("segment_table",		WRAP_METHOD(Console, cmdPrintSegmentTable));
+	DCmd_Register("segtable",			WRAP_METHOD(Console, cmdPrintSegmentTable));	// alias
 	DCmd_Register("segment_info",		WRAP_METHOD(Console, cmdSegmentInfo));
+	DCmd_Register("seginfo",			WRAP_METHOD(Console, cmdSegmentInfo));			// alias
 	DCmd_Register("segment_kill",		WRAP_METHOD(Console, cmdKillSegment));
+	DCmd_Register("segkill",			WRAP_METHOD(Console, cmdKillSegment));			// alias
 	// Garbage collection
 	DCmd_Register("gc",					WRAP_METHOD(Console, cmdGCInvoke));
 	DCmd_Register("gc_objects",			WRAP_METHOD(Console, cmdGCObjects));
@@ -157,7 +160,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
 	// Breakpoints
 	DCmd_Register("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
+	DCmd_Register("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
 	DCmd_Register("bp_del",				WRAP_METHOD(Console, cmdBreakpointDelete));
+	DCmd_Register("bpdel",				WRAP_METHOD(Console, cmdBreakpointDelete));			// alias
 	DCmd_Register("bp_exec_method",		WRAP_METHOD(Console, cmdBreakpointExecMethod));
 	DCmd_Register("bpx",				WRAP_METHOD(Console, cmdBreakpointExecMethod));		// alias
 	DCmd_Register("bp_exec_function",	WRAP_METHOD(Console, cmdBreakpointExecFunction));
@@ -165,7 +170,9 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	// VM
 	DCmd_Register("script_steps",		WRAP_METHOD(Console, cmdScriptSteps));
 	DCmd_Register("vm_varlist",			WRAP_METHOD(Console, cmdVMVarlist));
-	DCmd_Register("vmvars",				WRAP_METHOD(Console, cmdVMVars));
+	DCmd_Register("vmvarlist",			WRAP_METHOD(Console, cmdVMVarlist));	// alias
+	DCmd_Register("vm_vars",			WRAP_METHOD(Console, cmdVMVars));
+	DCmd_Register("vmvars",				WRAP_METHOD(Console, cmdVMVars));		// alias
 	DCmd_Register("stack",				WRAP_METHOD(Console, cmdStack));
 	DCmd_Register("value_type",			WRAP_METHOD(Console, cmdValueType));
 	DCmd_Register("view_listnode",		WRAP_METHOD(Console, cmdViewListNode));
@@ -300,9 +307,9 @@ bool Console::cmdHelp(int argc, const char **argv) {
 #endif
 	DebugPrintf("\n");
 	DebugPrintf("Segments:\n");
-	DebugPrintf(" segment_table - Lists all segments\n");
-	DebugPrintf(" segment_info - Provides information on the specified segment\n");
-	DebugPrintf(" segment_kill - Deletes the specified segment\n");
+	DebugPrintf(" segment_table / segtable - Lists all segments\n");
+	DebugPrintf(" segment_info / seginfo - Provides information on the specified segment\n");
+	DebugPrintf(" segment_kill / segkill - Deletes the specified segment\n");
 	DebugPrintf("\n");
 	DebugPrintf("Garbage collection:\n");
 	DebugPrintf(" gc - Invokes the garbage collector\n");
@@ -335,15 +342,15 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" go - Executes the script\n");
 	DebugPrintf("\n");
 	DebugPrintf("Breakpoints:\n");
-	DebugPrintf(" bp_list - Lists the current breakpoints\n");
-	DebugPrintf(" bp_del - Deletes a breakpoint with the specified index\n");
+	DebugPrintf(" bp_list / bplist - Lists the current breakpoints\n");
+	DebugPrintf(" bp_del / bpdel - Deletes a breakpoint with the specified index\n");
 	DebugPrintf(" bp_exec_method / bpx - Sets a breakpoint on the execution of the specified method\n");
 	DebugPrintf(" bp_exec_function / bpe - Sets a breakpoint on the execution of the specified exported function\n");
 	DebugPrintf("\n");
 	DebugPrintf("VM:\n");
 	DebugPrintf(" script_steps - Shows the number of executed SCI operations\n");
-	DebugPrintf(" vm_varlist - Shows the addresses of variables in the VM\n");
-	DebugPrintf(" vm_vars - Displays or changes variables in the VM\n");
+	DebugPrintf(" vm_varlist / vmvarlist - Shows the addresses of variables in the VM\n");
+	DebugPrintf(" vm_vars / vmvars - Displays or changes variables in the VM\n");
 	DebugPrintf(" stack - Lists the specified number of stack elements\n");
 	DebugPrintf(" value_type - Determines the type of a value\n");
 	DebugPrintf(" view_listnode - Examines the list node at the given address\n");
