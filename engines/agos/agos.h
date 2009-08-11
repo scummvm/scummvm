@@ -1364,9 +1364,6 @@ protected:
 	int _tagOfActiveDoline;	///< tag of the active doline "instance"
 	int _dolineReturnVal;
 
-	jmp_buf _loadfail;
-
-
 	byte *_dataBase, *_textBase;
 	uint32 _dataBaseSize, _textBaseSize;
 
