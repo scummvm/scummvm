@@ -63,6 +63,7 @@
 "..\..\..\..\dists\engine-data\igor.tbl"-"c:\data\scummvm\igor.tbl"
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\data\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\data\scummvm\drascula.dat"
+"..\..\..\..\dists\engine-data\m4.dat"-"c:\data\scummvm\m4.dat"
 
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\data\scummvm\scummvm.ini",FILENULL
