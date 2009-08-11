@@ -226,6 +226,7 @@ bool AGOSEngine::drawImage_clip(VC10_state *state) {
 	return (state->draw_width != 0 && state->draw_height != 0);
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	Common::Rect srcRect, dstRect;
 	float factor, xscale;
@@ -461,6 +462,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 		} while (--state->draw_height);
 	}
 }
+#endif
 
 void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
 	if (getGameType() == GType_SIMON1 && (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10)) {

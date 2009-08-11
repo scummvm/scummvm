@@ -24,6 +24,10 @@ MODULES += engines/agos
 ifdef ENABLE_PN
 DEFINES += -DENABLE_PN
 endif
+
+ifdef ENABLE_AGOS2
+DEFINES += -DENABLE_AGOS2
+endif
 endif
 
 ifdef ENABLE_CINE

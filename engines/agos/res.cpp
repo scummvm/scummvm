@@ -39,24 +39,26 @@ using Common::File;
 
 namespace AGOS {
 
+#ifdef ENABLE_AGOS2
 uint16 AGOSEngine_Feeble::to16Wrapper(uint value) {
 	return TO_LE_16(value);
-}
-
-uint16 AGOSEngine::to16Wrapper(uint value) {
-	return TO_BE_16(value);
 }
 
 uint16 AGOSEngine_Feeble::readUint16Wrapper(const void *src) {
 	return READ_LE_UINT16(src);
 }
 
-uint16 AGOSEngine::readUint16Wrapper(const void *src) {
-	return READ_BE_UINT16(src);
-}
-
 uint32 AGOSEngine_Feeble::readUint32Wrapper(const void *src) {
 	return READ_LE_UINT32(src);
+}
+#endif
+
+uint16 AGOSEngine::to16Wrapper(uint value) {
+	return TO_BE_16(value);
+}
+
+uint16 AGOSEngine::readUint16Wrapper(const void *src) {
+	return READ_BE_UINT16(src);
 }
 
 uint32 AGOSEngine::readUint32Wrapper(const void *src) {

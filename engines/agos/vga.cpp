@@ -106,7 +106,7 @@ void AGOSEngine_Elvira1::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[20] = &AGOSEngine::vc19_loop;
 	op[21] = &AGOSEngine::vc20_setRepeat;
 	op[22] = &AGOSEngine::vc21_endRepeat;
-	op[23] = &AGOSEngine::vc22_setPaletteOld;
+	op[23] = &AGOSEngine::vc22_setPalette;
 	op[24] = &AGOSEngine::vc23_setPriority;
 	op[25] = &AGOSEngine::vc24_setSpriteXY;
 	op[26] = &AGOSEngine::vc25_halt_sprite;
@@ -918,7 +918,7 @@ static const uint8 iconPalette[64] = {
 	0x77, 0x55, 0x00,
 };
 
-void AGOSEngine::vc22_setPaletteOld() {
+void AGOSEngine::vc22_setPalette() {
 	byte *offs, *palptr, *src;
 	uint16 b, num;
 
@@ -1302,12 +1302,7 @@ void AGOSEngine::vc36_setWindowImage() {
 	_displayScreen = false;
 	uint16 vga_res = vcReadNextWord();
 	uint16 windowNum = vcReadNextWord();
-
-	if (getGameType() == GType_FF || getGameType() == GType_PP) {
-		fillBackGroundFromFront();
-	} else {
-		setWindowImage(windowNum, vga_res);
-	}
+	setWindowImage(windowNum, vga_res);
 }
 
 void AGOSEngine::vc37_pokePalette() {

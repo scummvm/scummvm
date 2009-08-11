@@ -40,7 +40,7 @@ void AGOSEngine_Elvira2::setupVideoOpcodes(VgaOpcodeProc *op) {
 
 	op[17] = &AGOSEngine::vc17_waitEnd;
 	op[19] = &AGOSEngine::vc19_loop;
-	op[22] = &AGOSEngine::vc22_setPaletteOld;
+	op[22] = &AGOSEngine::vc22_setPalette;
 	op[28] = &AGOSEngine::vc28_playSFX;
 	op[32] = &AGOSEngine::vc32_saveScreen;
 	op[37] = &AGOSEngine::vc37_pokePalette;

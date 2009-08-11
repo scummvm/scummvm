@@ -32,6 +32,7 @@ using Common::GUIO_NOSPEECH;
 using Common::GUIO_NOSUBTITLES;
 
 static const AGOSGameDescription gameDescriptions[] = {
+#ifdef ENABLE_PN
 	// Personal Nightmare 1.1 - English Amiga
 	{
 		{
@@ -123,6 +124,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GID_PN,
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_EGA | GF_PLANAR
 	},
+#endif
 
 	// Elvira 1 - English Amiga Floppy Demo
 	{
@@ -2335,6 +2337,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GF_TALKIE
 	},
 
+#ifdef ENABLE_AGOS2
 	// The Feeble Files - English DOS Demo
 	{
 		{
@@ -2807,6 +2810,7 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GID_SWAMPY,
 		GF_OLD_BUNDLE | GF_TALKIE
 	},
+#endif
 	{ AD_TABLE_END_MARKER, 0, 0, 0 }
 };
 

@@ -348,6 +348,7 @@ static const byte _mouseOffs[29 * 32] = {
 	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	uint x;
 
@@ -379,6 +380,7 @@ void AGOSEngine_PuzzlePack::handleMouseMoved() {
 
 	drawMousePointer();
 }
+#endif
 
 void AGOSEngine_Simon1::handleMouseMoved() {
 	uint x;
@@ -638,6 +640,7 @@ void AGOSEngine::mouseOn() {
 	_videoLockOut &= ~1;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::initMouse() {
 	if (getGameId() == GID_DIMP) {
 		AGOSEngine_Simon1::initMouse();
@@ -652,46 +655,10 @@ void AGOSEngine_FeebleDemo::initMouse() {
 	// TODO: Add larger cursor
 	AGOSEngine_Simon1::initMouse();
 }
-
-static const byte mouseCursorPalette[] = {
-	0x00, 0x00, 0x00, 0x00, // Black
-	0xFF, 0xFF, 0xFF, 0x00, // White
-};
-
 void AGOSEngine_Feeble::initMouse() {
 	_maxCursorWidth = 40;
 	_maxCursorHeight = 40;
 	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
-}
-
-void AGOSEngine_Simon1::initMouse() {
-	AGOSEngine::initMouse();
-
-	const uint16 *src = _common_mouseInfo;
-	for (int i = 0; i < 16; i++) {
-		for (int j = 0; j < 16; j++) {
-			if (src[0] & (1 << (15 - (j % 16)))) {
-				if (src[1] & (1 << (15 - (j % 16)))) {
-					_mouseData[16 * i + j] = 1;
-				} else {
-					_mouseData[16 * i + j] = 0;
-				}
-			}
-		}
-		src += 2;
-	}
-
-	CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
-}
-
-void AGOSEngine::initMouse() {
-	_maxCursorWidth = 16;
-	_maxCursorHeight = 16;
-	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
-
-	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
-
-	CursorMan.replaceCursorPalette(mouseCursorPalette, 0, ARRAYSIZE(mouseCursorPalette) / 4);
 }
 
 void AGOSEngine_PuzzlePack::loadMouseImage() {
@@ -792,6 +759,42 @@ void AGOSEngine_Feeble::drawMousePointer() {
 
 		CursorMan.replaceCursor(_mouseData, _maxCursorWidth, _maxCursorHeight, hotspotX, hotspotY, 0);
 	}
+}
+#endif
+
+void AGOSEngine_Simon1::initMouse() {
+	AGOSEngine::initMouse();
+
+	const uint16 *src = _common_mouseInfo;
+	for (int i = 0; i < 16; i++) {
+		for (int j = 0; j < 16; j++) {
+			if (src[0] & (1 << (15 - (j % 16)))) {
+				if (src[1] & (1 << (15 - (j % 16)))) {
+					_mouseData[16 * i + j] = 1;
+				} else {
+					_mouseData[16 * i + j] = 0;
+				}
+			}
+		}
+		src += 2;
+	}
+
+	CursorMan.replaceCursor(_mouseData, 16, 16, 0, 0, 0xFF);
+}
+
+static const byte mouseCursorPalette[] = {
+	0x00, 0x00, 0x00, 0x00, // Black
+	0xFF, 0xFF, 0xFF, 0x00, // White
+};
+
+void AGOSEngine::initMouse() {
+	_maxCursorWidth = 16;
+	_maxCursorHeight = 16;
+	_mouseData = (byte *)calloc(_maxCursorWidth * _maxCursorHeight, 1);
+
+	memset(_mouseData, 0xFF, _maxCursorWidth * _maxCursorHeight);
+
+	CursorMan.replaceCursorPalette(mouseCursorPalette, 0, ARRAYSIZE(mouseCursorPalette) / 4);
 }
 
 void AGOSEngine::drawMousePointer() {
