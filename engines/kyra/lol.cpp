@@ -160,7 +160,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_flyingObjects = 0;
 	_monsters = 0;
 	_lastMouseRegion = 0;
-	_objectLastDirection = _monsterCountUnk = _monsterShiftAlt = 0;
+	_objectLastDirection = _monsterStepCounter = _monsterStepMode = 0;
 	_monsterCurBlock = 0;
 	_seqWindowX1 = _seqWindowY1 = _seqWindowX2 = _seqWindowY2 = _seqTrigger = 0;
 	_spsWindowX = _spsWindowY = _spsWindowW = _spsWindowH = 0;

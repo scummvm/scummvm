@@ -496,9 +496,8 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 		_monsterCurBlock = block;
 		if (testWallFlag(block, -1, wallFlag))
 			return 1;
-	}
-
-	_monsterCurBlock = 0;
+		_monsterCurBlock = 0;
+	}	
 
 	if (!(testFlag & 2))
 		return 0;
@@ -1372,12 +1371,12 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 	static const int8 walkMonsterTable1[] = { 7, -6, 5, -4, 3, -2, 1, 0 };
 	static const int8 walkMonsterTable2[] = { -7, 6, -5, 4, -3, 2, -1, 0 };
 
-	if (++_monsterCountUnk > 10) {
-		_monsterCountUnk = 0;
-		_monsterShiftAlt ^= 1;
+	if (++_monsterStepCounter > 10) {
+		_monsterStepCounter = 0;
+		_monsterStepMode ^= 1;
 	}
 
-	const int8 *tbl = _monsterShiftAlt ? walkMonsterTable2 : walkMonsterTable1;
+	const int8 *tbl = _monsterStepMode ? walkMonsterTable2 : walkMonsterTable1;
 
 	int sx = monster->x;
 	int sy = monster->y;
@@ -1411,8 +1410,10 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 		uint8 w = _levelBlockProperties[_monsterCurBlock].walls[(s >> 1) ^ 2];
 
 		if (_wllWallFlags[w] & 0x20) {
-			if (_wllBuffer3[w] == 5)
+			if (_wllBuffer3[w] == 5) {
 				openCloseDoor(_monsterCurBlock, 1);
+				return -1;
+			}
 		}
 
 		if (_wllWallFlags[w] & 8)
@@ -1423,10 +1424,10 @@ int LoLEngine::walkMonsterCalcNextStep(MonsterInPlay *monster) {
 }
 
 int LoLEngine::getMonsterDistance(uint16 block1, uint16 block2) {
-	int8 b1x = block1 & 0x1f;
-	int8 b1y = block1 >> 5;
-	int8 b2x = block2 & 0x1f;
-	int8 b2y = block2 >> 5;
+	int b1x = block1 & 0x1f;
+	int b1y = block1 >> 5;
+	int b2x = block2 & 0x1f;
+	int b2y = block2 >> 5;
 
 	uint8 dy = ABS(b2y - b1y);
 	uint8 dx = ABS(b2x - b1x);
@@ -1434,7 +1435,7 @@ int LoLEngine::getMonsterDistance(uint16 block1, uint16 block2) {
 	if (dx > dy)
 		SWAP(dx, dy);
 
-	return (dx << 1) + dy;
+	return (dx >> 1) + dy;
 }
 
 int LoLEngine::checkForPossibleDistanceAttack(uint16 monsterBlock, int direction, int distance, uint16 curBlock) {
@@ -1444,7 +1445,7 @@ int LoLEngine::checkForPossibleDistanceAttack(uint16 monsterBlock, int direction
 		return 5;
 
 	int dir = calcMonsterDirection(monsterBlock & 0x1f, monsterBlock >> 5, curBlock & 0x1f, curBlock >> 5);
-	if ((dir & 1) || (dir != direction << 1))
+	if ((dir & 1) || (dir != (direction << 1)))
 		return 5;
 
 	if (((monsterBlock & 0x1f) != (curBlock & 0x1f)) && ((monsterBlock & 0xffe0) != (curBlock & 0xffe0)))
