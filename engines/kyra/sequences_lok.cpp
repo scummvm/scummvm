@@ -1021,11 +1021,13 @@ void KyraEngine_LoK::seq_playEnding() {
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->loadBitmap("GEMCUT.CPS", 3, 3, &_screen->getPalette(0));
 		_screen->copyRegion(232, 136, 176, 56, 56, 56, 2, 2);
+		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 	} else {
 		_screen->loadBitmap("REUNION.CPS", 3, 3, &_screen->getPalette(0));
+		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	}
 
-	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_curPage = 0;
 	// XXX
 	assert(_homeString);
@@ -1058,8 +1060,10 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	memset(strings, 0, sizeof(strings));
 
+	_screen->enableInterfacePalette(false);
+
 	_screen->hideMouse();
-	if (!_flags.isTalkie) {
+	if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
 	} else
@@ -1079,7 +1083,8 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = 0;
 	uint32 size = 0;
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98
+			|| _flags.platform == Common::kPlatformAmiga) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];
@@ -1117,12 +1122,12 @@ void KyraEngine_LoK::seq_playCredits() {
 
 		if (*currentString == 1) {
 			currentString++;
-			if (!_flags.isTalkie)
+			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED6_FNT);
 		} else {
 			if (*currentString == 2)
 				currentString++;
-			if (!_flags.isTalkie)
+			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
 		strings[i].font = _screen->_currentFont;
@@ -1145,6 +1150,9 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	_screen->getPalette(2).clear();
 	_screen->setScreenPalette(_screen->getPalette(2));
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->setPaletteIndex(16, 63, 63, 63);
+
 	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
 
