@@ -27,6 +27,7 @@
 #define DRACI_GAME_H
 
 #include "common/str.h"
+#include "draci/barchive.h"
 #include "draci/script.h"
 #include "draci/animation.h"
 #include "draci/sprite.h"
@@ -66,6 +67,10 @@ enum {
 // walking map to the room is to be loaded.
 enum {
 	kDefaultRoomMap = -1
+};
+
+enum {
+	kNoDialogue = -1, kDialogueLines = 4
 };
 
 enum SpeechConstants {
@@ -134,17 +139,25 @@ struct GameInfo {
 	uint _numIcons;
 	byte _numVariables;
 	byte _numPersons;
-	byte _numDialogs;
+	byte _numDialogues;
 	uint _maxIconWidth, _maxIconHeight;
 	uint _musicLength;
 	uint _crc[4];
-	uint _numDialogBlocks;
+	uint _numDialogueBlocks;
 };
 
 struct Person {
 	uint _x, _y;
 	byte _fontColour;
 };
+
+struct Dialogue {
+	int _canLen;
+	byte *_canBlock;
+	Common::String _title;
+	GPL2Program _program;
+};
+	
 
 struct Room {
 	int _roomNum;	
@@ -266,13 +279,18 @@ public:
 	void updateTitle();
 	void updateCursor();
 
+	void dialogueMenu(int dialogueID);
+	int dialogueDraw();
+	void dialogueInit(int dialogID);
+	void dialogueDone();
+	void runDialogueProg(GPL2Program, int offset);
+
 	bool _roomChange;
 
 private:
 	DraciEngine *_vm;
 
 	GameInfo _info;
-	uint *_dialogOffsets;
 
 	int *_variables;
 	byte *_iconStatus;
@@ -286,6 +304,22 @@ private:
 
 	int _currentIcon;
 
+// HACK: remove public when tested and add getters instead
+public:
+	uint *_dialogueOffsets;
+	int _currentDialogue;
+	int *_dialogueVars;
+	BArchive *_dialogueArchive;
+	Dialogue *_dialogueBlocks;
+	bool _dialogueBegin;
+	bool _dialogueExit;
+	int _currentBlock;
+	int _lastBlock;
+	int _dialogueLines;
+	int _blockNum;
+	int _lines[4];
+	Animation *_dialogueAnims[4];
+	
 	LoopStatus _loopStatus;
 	LoopStatus _loopSubstatus;
 
@@ -296,6 +330,7 @@ private:
 
 	int _objUnderCursor;
 	int _oldObjUnderCursor;	
+	int _animUnderCursor;
 
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
 };

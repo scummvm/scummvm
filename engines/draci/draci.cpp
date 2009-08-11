@@ -211,6 +211,7 @@ bool DraciEngine::handleEvents() {
 					_game->setRoomNum(_game->getEscRoom());
 					_game->setGateNum(0);
 					_game->_roomChange = true;
+					_game->setExitLoop(true);
 
 					// End any currently running GPL programs
 					_script->endCurrentProgram();

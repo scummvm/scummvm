@@ -121,6 +121,11 @@ private:
 	void talk(Common::Queue<int> &params);
 	void loadMap(Common::Queue<int> &params);
 	void roomMap(Common::Queue<int> &params);
+	void dialogue(Common::Queue<int> &params);
+	void exitDialogue(Common::Queue<int> &params);
+	void resetDialogue(Common::Queue<int> &params);
+	void resetDialogueFrom(Common::Queue<int> &params);
+	void resetBlock(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);
@@ -148,7 +153,11 @@ private:
 	int funcIsObjAway(int objID);
 	int funcActPhase(int objID);
 	int funcObjStat(int objID);
-
+	int funcLastBlock(int blockID);
+	int funcAtBegin(int yesno);
+	int funcBlockVar(int blockID);
+	int funcHasBeen(int blockID);
+	int funcMaxLine(int lines);
 
 	void setupCommandList();
 	const GPL2Command *findCommand(byte num, byte subnum);

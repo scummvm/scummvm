@@ -53,11 +53,11 @@ void Script::setupCommandList() {
 		{ 7,  1, "ObjStat", 			2, { 3, 3 }, &Script::objStat },
 		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, &Script::objStatOn },
 		{ 8,  1, "IcoStat", 			2, { 3, 3 }, NULL },
-		{ 9,  1, "Dialogue", 			1, { 2 }, NULL },
-		{ 9,  2, "ExitDialogue", 		0, { 0 }, NULL },
-		{ 9,  3, "ResetDialogue", 		0, { 0 }, NULL },
-		{ 9,  4, "ResetDialogueFrom", 	0, { 0 }, NULL },
-		{ 9,  5, "ResetBlock", 			1, { 3 }, NULL },
+		{ 9,  1, "Dialogue", 			1, { 2 }, &Script::dialogue },
+		{ 9,  2, "ExitDialogue", 		0, { 0 }, &Script::exitDialogue },
+		{ 9,  3, "ResetDialogue", 		0, { 0 }, &Script::resetDialogue },
+		{ 9,  4, "ResetDialogueFrom", 	0, { 0 }, &Script::resetDialogueFrom },
+		{ 9,  5, "ResetBlock", 			1, { 3 }, &Script::resetBlock },
 		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, &Script::walkOn },
 		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
 		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
@@ -126,11 +126,11 @@ void Script::setupCommandList() {
 		{ "IsObjOff", 	&Script::funcIsObjOff },
 		{ "IsObjAway", 	&Script::funcIsObjAway },
 		{ "ObjStat", 	&Script::funcObjStat },
-		{ "LastBlock", 	NULL },
-		{ "AtBegin", 	NULL },
-		{ "BlockVar", 	NULL },
-		{ "HasBeen", 	NULL },
-		{ "MaxLine", 	NULL },
+		{ "LastBlock", 	&Script::funcLastBlock },
+		{ "AtBegin", 	&Script::funcAtBegin },
+		{ "BlockVar", 	&Script::funcBlockVar },
+		{ "HasBeen", 	&Script::funcHasBeen },
+		{ "MaxLine", 	&Script::funcMaxLine },
 		{ "ActPhase", 	&Script::funcActPhase },
 		{ "Cheat",  	NULL },
 	};
@@ -216,6 +216,27 @@ int Script::funcRandom(int n) {
 
 	n -= 1;
 	return _vm->_rnd.getRandomNumber(n);
+}
+
+int Script::funcAtBegin(int yesno) {
+	return _vm->_game->_dialogueBegin == yesno;
+}	
+
+int Script::funcLastBlock(int blockID) {
+
+	return _vm->_game->_lastBlock == blockID;
+}
+
+int Script::funcBlockVar(int blockID) {
+	return _vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue] + blockID];
+}
+
+int Script::funcHasBeen(int blockID) {
+	return _vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue] + blockID] > 0;
+}
+
+int Script::funcMaxLine(int lines) {
+	return _vm->_game->_dialogueLines < lines;
 }
 
 int Script::funcNot(int n) {
@@ -373,8 +394,11 @@ void Script::start(Common::Queue<int> &params) {
 		return;
 	}
 
-	int objID = params.pop() - 1;
-	int animID = params.pop() - 1;
+	int objID = params.pop();
+	int animID = params.pop();	
+
+	objID -= 1;
+	animID -= 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
 
@@ -623,10 +647,40 @@ void Script::talk(Common::Queue<int> &params) {
 	_vm->_game->setExitLoop(false);
 }
 
+void Script::dialogue(Common::Queue<int> &params) {
+	int dialogueID = params.pop() - 1;
+
+	_vm->_game->dialogueMenu(dialogueID);
+}
+
 void Script::loadMap(Common::Queue<int> &params) {
 	int mapID = params.pop() - 1;
 
 	_vm->_game->loadWalkingMap(mapID);
+}
+
+void Script::resetDialogue(Common::Queue<int> &params) {
+	
+	for (int i = 0; i < _vm->_game->_blockNum; ++i) {
+		_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+i] = 0;
+	}
+}
+
+void Script::resetDialogueFrom(Common::Queue<int> &params) {
+
+	for (int i = _vm->_game->_currentBlock; i < _vm->_game->_blockNum; ++i) {
+		_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+i] = 0;
+	}
+}
+
+void Script::resetBlock(Common::Queue<int> &params) {
+	int blockID = params.pop();
+
+	_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+blockID] = 0;
+}
+
+void Script::exitDialogue(Common::Queue<int> &params) {
+	_vm->_game->_dialogueExit = true;
 }
 
 void Script::roomMap(Common::Queue<int> &params) {

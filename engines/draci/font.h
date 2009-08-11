@@ -42,7 +42,8 @@ extern const Common::String kFontBig;
 enum { 
 	kFontColour1 = 2, kFontColour2 = 0,
 	kFontColour3 = 3, kFontColour4 = 4, 
-	kOverFontColour = 255, kTitleColour = 255 
+	kOverFontColour = 255, kTitleColour = 255,
+	kLineActiveColour = 254, kLineInactiveColour = 255
 };
 
 /**

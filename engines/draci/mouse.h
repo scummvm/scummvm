@@ -34,7 +34,7 @@ namespace Draci {
 enum CursorType { 
 	kNormalCursor, kArrowCursor1, 
 	kArrowCursor2, kArrowCursor3, 
-	kArrowCursor4, kDialogCursor,
+	kArrowCursor4, kDialogueCursor,
 	kHighlightedCursor, kMainMenuCursor
 };
 

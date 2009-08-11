@@ -35,6 +35,8 @@
 
 namespace Draci {
 
+const Common::String dialoguePath("ROZH");
+
 static double real_to_double(byte real[6]);
 
 Game::Game(DraciEngine *vm) : _vm(vm) {
@@ -61,21 +63,24 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	// Close persons file
 	file->close();
 	
-	// Read in dialog offsets
+	// Read in dialogue offsets
 	
 	file = initArchive->getFile(4);
-	Common::MemoryReadStream dialogData(file->_data, file->_length);
+	Common::MemoryReadStream dialogueData(file->_data, file->_length);
 	
-	unsigned int numDialogs = file->_length / sizeof(uint16);
-	_dialogOffsets = new uint[numDialogs];	
+	unsigned int numDialogues = file->_length / sizeof(uint16);
+	_dialogueOffsets = new uint[numDialogues];	
 	
 	unsigned int curOffset;
-	for (i = 0, curOffset = 0; i < numDialogs; ++i) {
-		_dialogOffsets[i] = curOffset;
-		curOffset += dialogData.readUint16LE();
+	for (i = 0, curOffset = 0; i < numDialogues; ++i) {
+		_dialogueOffsets[i] = curOffset;
+		curOffset += dialogueData.readUint16LE();
 	}
 	
-	// Close dialogs file
+	_dialogueVars = new int[curOffset];
+	memset(_dialogueVars, 0, sizeof (int) * curOffset);
+	
+	// Close dialogues file
 	file->close();	
 
 	// Read in game info
@@ -89,7 +94,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	_info._numIcons = gameData.readUint16LE();
 	_info._numVariables = gameData.readByte();
 	_info._numPersons = gameData.readByte();
-	_info._numDialogs = gameData.readByte();
+	_info._numDialogues = gameData.readByte();
 	_info._maxIconWidth = gameData.readUint16LE();
 	_info._maxIconHeight = gameData.readUint16LE();
 	_info._musicLength = gameData.readUint16LE();
@@ -98,7 +103,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	_info._crc[2] = gameData.readUint16LE();
 	_info._crc[3] = gameData.readUint16LE();
 
-	_info._numDialogBlocks = curOffset;
+	_info._numDialogueBlocks = curOffset;
 
 	// Close game info file
 	file->close();
@@ -145,7 +150,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	// Close object status file
 	file->close();
 
-	assert(numDialogs == _info._numDialogs);
+	assert(numDialogues == _info._numDialogues);
 	assert(numPersons == _info._numPersons);
 	assert(numVariables == _info._numVariables);
 	assert(numObjects == _info._numObjects);
@@ -227,6 +232,19 @@ void Game::init() {
 	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0);
 	speechAnim->addFrame(speech);
 
+	for (uint i = 0; i < kDialogueLines; ++i) {
+		_dialogueAnims[i] = _vm->_anims->addText(-10 - i, true);
+		Text *dialogueLine0 = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0);
+		_dialogueAnims[i]->addFrame(dialogueLine0);
+
+		_dialogueAnims[i]->setZ(254);
+		_dialogueAnims[i]->setRelative(1, 
+			kScreenHeight - (i + 1) * _vm->_smallFont->getFontHeight());
+
+		Text *text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
+		text->setText("");
+	}
+
 	loadObject(kDragonObject);
 	
 	GameObject *dragon = getObject(kDragonObject);
@@ -254,11 +272,23 @@ void Game::loop() {
 
 		_vm->handleEvents();
 
-		if (_currentRoom._mouseOn) {
+		// Fetch mouse coordinates			
+		int x = _vm->_mouse->getPosX();
+		int y = _vm->_mouse->getPosY();
 
-			// Fetch mouse coordinates			
-			int x = _vm->_mouse->getPosX();
-			int y = _vm->_mouse->getPosY();
+		if (_loopStatus == kStatusDialogue && _loopSubstatus == kStatusOrdinary) {
+
+			// Find animation under cursor
+			_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+
+			if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
+				_shouldExitLoop = true;
+				_vm->_mouse->lButtonSet(false);
+				_vm->_mouse->rButtonSet(false);
+			}
+		}
+
+		if (_currentRoom._mouseOn) {
 
 			// Fetch the dedicated objects' title animation / current frame
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
@@ -268,8 +298,8 @@ void Game::loop() {
 				if(_vm->_mouse->isCursorOn()) {
 					// Find the game object under the cursor
 					// (to be more precise, one that corresponds to the animation under the cursor)
-					int animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-					int curObject = getObjectWithAnimation(animUnderCursor);
+					_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+					int curObject = getObjectWithAnimation(_animUnderCursor);
 
 					updateTitle();
 
@@ -342,10 +372,11 @@ void Game::loop() {
 							}
 						}
 					}
-					debugC(2, kDraciAnimationDebugLevel, "Anim under cursor: %d", animUnderCursor); 
 				}
 			}
 		}
+
+		debug(8, "Anim under cursor: %d", _animUnderCursor); 
 
 		// Handle character talking (if there is any)
 		if (_loopSubstatus == kStatusTalk) {
@@ -382,7 +413,8 @@ void Game::loop() {
 		_vm->_system->delayMillis(20);
 
 		// HACK: Won't be needed once the game loop is implemented properly
-		_shouldExitLoop = _shouldExitLoop || _roomChange;
+		_shouldExitLoop = _shouldExitLoop || (_roomChange && 
+						(_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate));
 
 	} while (!shouldExitLoop());
 }
@@ -469,7 +501,193 @@ int Game::getObjectWithAnimation(int animID) {
 
 	return kObjectNotFound;
 }
+
+void Game::dialogueMenu(int dialogueID) {
 	
+	int oldLines, hit;
+
+	char tmp[5];
+	sprintf(tmp, "%d", dialogueID+1);
+	Common::String ext(tmp);
+	_dialogueArchive = new BArchive(dialoguePath + ext + ".dfw");
+
+	debugC(4, kDraciLogicDebugLevel, "Starting dialogue (ID: %d, Archive: %s)", 
+		dialogueID, (dialoguePath + ext + ".dfw").c_str());
+
+	_currentDialogue = dialogueID;
+	oldLines = 255;
+	dialogueInit(dialogueID);
+	
+	do {
+		_dialogueExit = false;
+		hit = dialogueDraw();
+		
+		debug(2, "Hit: %d, _lines[hit]: %d", hit, _lines[hit]);
+
+		if ((!_dialogueExit) && (hit != -1) && (_lines[hit] != -1)) {
+			if ((oldLines == 1) && (_dialogueLines == 1) && (_lines[hit] == _lastBlock)) {
+				break;
+			}
+			_currentBlock = _lines[hit];
+			runDialogueProg(_dialogueBlocks[_lines[hit]]._program, 1);
+		} else {
+			break;
+		}
+		_lastBlock = _lines[hit];
+		_dialogueVars[_dialogueOffsets[dialogueID] + _lastBlock + 1] += 1;
+		_dialogueBegin = false;
+		oldLines = _dialogueLines;
+
+	} while(!_dialogueExit);
+
+	dialogueDone();
+	_currentDialogue = kNoDialogue;
+}
+
+int Game::dialogueDraw() {
+	_dialogueLines = 0;
+	int i = 0;
+	int ret = 0;
+	
+	Animation *anim;
+	Text *dialogueLine;
+
+	while ((_dialogueLines < 4) && (i < _blockNum)) {
+		
+		GPL2Program blockTest;
+		blockTest._bytecode = _dialogueBlocks[i]._canBlock;
+		blockTest._length = _dialogueBlocks[i]._canLen;
+
+		debugC(3, kDraciLogicDebugLevel, "Testing dialogue block %d", i);
+		if (_vm->_script->testExpression(blockTest, 1)) {
+			anim = _dialogueAnims[_dialogueLines];
+			dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
+			dialogueLine->setText(_dialogueBlocks[i]._title);
+
+			dialogueLine->setColour(kLineInactiveColour);
+			_lines[_dialogueLines] = i;
+			_dialogueLines++;
+		}
+		++i;
+	}
+
+	for (i = _dialogueLines; i < kDialogueLines; ++i) {
+		_lines[i] = 0;
+		anim = _dialogueAnims[i];
+		dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
+		dialogueLine->setText("");
+	}
+
+	_oldObjUnderCursor = kObjectNotFound;
+
+	if (_dialogueLines > 1) {
+		_vm->_mouse->cursorOn();
+		_shouldExitLoop = false;
+		loop();
+		_vm->_mouse->cursorOff();
+		
+		bool notDialogueAnim = true;
+		for (uint j = 0; j < kDialogueLines; ++j) {
+			if (_dialogueAnims[j]->getID() == _animUnderCursor) {
+				notDialogueAnim = false;
+				break;
+			}
+		}		
+		
+		if (notDialogueAnim) {
+			ret = -1;
+		} else {
+			ret = _dialogueAnims[0]->getID() - _animUnderCursor;
+		}
+	} else {
+		ret = _dialogueLines - 1;
+	}
+
+	for (i = 0; i < kDialogueLines; ++i) {
+		dialogueLine = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
+		_dialogueAnims[i]->markDirtyRect(_vm->_screen->getSurface());
+		dialogueLine->setText("");
+	}
+
+	return ret;
+}
+
+void Game::dialogueInit(int dialogID) {
+	_vm->_mouse->setCursorType(kDialogueCursor);
+
+	_blockNum = _dialogueArchive->size() / 3;
+	_dialogueBlocks = new Dialogue[_blockNum];
+
+	BAFile *f;
+
+	for (uint i = 0; i < kDialogueLines; ++i) {
+		_lines[i] = 0;
+	}
+
+	for (int i = 0; i < _blockNum; ++i) {
+		f = _dialogueArchive->getFile(i * 3);
+		_dialogueBlocks[i]._canLen = f->_length;
+		_dialogueBlocks[i]._canBlock = f->_data;
+
+		f = _dialogueArchive->getFile(i * 3 + 1);
+
+		// The first byte of the file is the length of the string (without the length)
+		assert(f->_length - 1 == f->_data[0]);
+
+		_dialogueBlocks[i]._title = Common::String((char *)(f->_data+1), f->_length-1);
+	
+		f = _dialogueArchive->getFile(i * 3 + 2);
+		_dialogueBlocks[i]._program._bytecode = f->_data;
+		_dialogueBlocks[i]._program._length = f->_length;
+	}
+
+	for (uint i = 0; i < kDialogueLines; ++i) {
+		_vm->_anims->play(_dialogueAnims[i]->getID());
+	}
+
+	_loopStatus = kStatusDialogue;
+	_lastBlock = 0;
+	_dialogueBegin = true;
+}
+
+void Game::dialogueDone() {
+	for (uint i = 0; i < kDialogueLines; ++i) {
+		_vm->_anims->stop(_dialogueAnims[i]->getID());
+	}
+
+	_dialogueArchive->closeArchive();
+
+	delete[] _dialogueBlocks;
+
+	_loopStatus = kStatusOrdinary;
+	_vm->_mouse->setCursorType(kNormalCursor);
+}
+
+void Game::runDialogueProg(GPL2Program prog, int offset) {
+
+	// Mark last animation
+	int lastAnimIndex = _vm->_anims->getLastIndex();
+
+	// Run gate program
+	_vm->_script->run(prog, offset);
+	
+	// Delete all animations loaded after the marked one 
+	// (from objects and from the AnimationManager)
+	for (uint i = 0; i < getNumObjects(); ++i) {
+		GameObject *obj = &_objects[i];
+
+		for (uint j = 0; j < obj->_anims.size(); ++j) {
+			Animation *anim;
+
+			anim = _vm->_anims->getAnimation(obj->_anims[j]);
+			if (anim != NULL && anim->getIndex() > lastAnimIndex)
+				obj->_anims.remove_at(j);
+		}
+	}
+
+	_vm->_anims->deleteAfterIndex(lastAnimIndex);
+}
+
 void Game::walkHero(int x, int y) {
 
 	Surface *surface = _vm->_screen->getSurface();
@@ -937,7 +1155,7 @@ void Game::setMarkedAnimationIndex(int index) {
 Game::~Game() {
 	delete[] _persons;
 	delete[] _variables;
-	delete[] _dialogOffsets;
+	delete[] _dialogueOffsets;
 	delete[] _objects;
 }
 
