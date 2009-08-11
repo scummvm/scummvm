@@ -182,7 +182,16 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	}
 
 	setHandItem(_itemInHand);
-	_animator->setBrandonAnimSeqSize(3, 48);
+
+	// Will-O-Wisp uses a different shape size than Brandon's usual
+	// shape, thus we need to setup the correct size depending on
+	// his state over here. This fixes graphics glitches when loading
+	// saves, where Brandon is transformed into the Will-O-Wisp.
+	if (_brandonStatusBit & 2)
+		_animator->setBrandonAnimSeqSize(5, 48);
+	else
+		_animator->setBrandonAnimSeqSize(3, 48);
+
 	redrawInventory(0);
 	
 	_brandonPosX = _brandonPosY = -1;
