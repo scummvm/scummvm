@@ -6,6 +6,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
 
  KYRA:
+   - Added support for the Amiga version of The Legend of Kyrandia.
    - Adapted KYRA to support the custom SJIS font.
 
 1.0.0 (2009-??-??)
