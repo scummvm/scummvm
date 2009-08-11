@@ -236,6 +236,8 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 			}
 		} else {
 			setupZanthiaPalette(stackPos(0));
+			_screen->getPalette(0).copy(_screen->getPalette(4), 12, 1);
+			_screen->fadePalette(_screen->getPalette(0), 2);
 		}
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
