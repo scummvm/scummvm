@@ -212,6 +212,8 @@ void Game::init() {
 	_shouldQuit = false;
 	_shouldExitLoop = false;
 
+	_animUnderCursor = kOverlayImage;
+
 	_currentIcon = kNoIcon;
 
 	_vm->_mouse->setCursorType(kNormalCursor);
@@ -234,8 +236,8 @@ void Game::init() {
 
 	for (uint i = 0; i < kDialogueLines; ++i) {
 		_dialogueAnims[i] = _vm->_anims->addText(-10 - i, true);
-		Text *dialogueLine0 = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0);
-		_dialogueAnims[i]->addFrame(dialogueLine0);
+		Text *dialogueLine = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0);
+		_dialogueAnims[i]->addFrame(dialogueLine);
 
 		_dialogueAnims[i]->setZ(254);
 		_dialogueAnims[i]->setRelative(1, 
@@ -281,6 +283,16 @@ void Game::loop() {
 			// Find animation under cursor
 			_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
 
+			Text *text;
+			for (int i = 0; i < kDialogueLines; ++i) {
+				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
+				text->setColour(kLineInactiveColour);
+				
+				if (_animUnderCursor == _dialogueAnims[i]->getID()) {
+					text->setColour(kLineActiveColour);
+				}
+			}
+	
 			if (_vm->_mouse->lButtonPressed() || _vm->_mouse->rButtonPressed()) {
 				_shouldExitLoop = true;
 				_vm->_mouse->lButtonSet(false);
