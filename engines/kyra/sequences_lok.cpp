@@ -569,10 +569,15 @@ void KyraEngine_LoK::seq_winterScroll1() {
 			_sprites->_anims[i].play = false;
 			_animator->sprites()[i].active = 0;
 		}
-		_screen->getPalette(0).copy(palTable2()[0], 0, 20, 228);
-		_screen->fadePalette(_screen->getPalette(0), 72);
-		_screen->setScreenPalette(_screen->getPalette(0));
-		setGameFlag(0xB3);
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			_screen->copyPalette(0, 11);
+		} else {
+			_screen->getPalette(0).copy(palTable2()[0], 0, 20, 228);
+			_screen->fadePalette(_screen->getPalette(0), 72);
+			_screen->setScreenPalette(_screen->getPalette(0));
+			setGameFlag(0xB3);
+		}
 	} else {
 		delayWithTicks(120);
 	}
