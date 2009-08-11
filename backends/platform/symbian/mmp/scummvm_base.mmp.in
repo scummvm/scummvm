@@ -117,4 +117,9 @@ SOURCE     backends\keymapper\action.cpp
 SOURCE     backends\keymapper\keymap.cpp
 SOURCE     backends\keymapper\keymapper.cpp
 SOURCE     backends\keymapper\remap-dialog.cpp
-
+// Source files for virtual keyboard
+SOURCE     backends\vkeybd\image-map.cpp
+SOURCE     backends\vkeybd\polygon.cpp
+SOURCE     backends\vkeybd\virtual-keyboard-gui.cpp
+SOURCE     backends\vkeybd\virtual-keyboard-parser.cpp
+SOURCE     backends\vkeybd\virtual-keyboard.cpp
