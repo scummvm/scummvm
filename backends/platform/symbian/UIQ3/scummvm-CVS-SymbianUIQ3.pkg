@@ -61,7 +61,7 @@
 "..\..\..\..\dists\engine-data\lure.dat"-"c:\shared\scummvm\lure.dat"
 "..\..\..\..\dists\engine-data\drascula.dat"-"c:\shared\scummvm\drascula.dat"
 "..\..\..\..\dists\engine-data\m4.dat"-"c:\shared\scummvm\m4.dat"
-
+"..\..\..\vkeybd\packs\vkeybd_default.zip"-"c:\shared\scummvm\vkeybd_default.zip"
 ; Config/log files: 'empty' will automagically be removed on uninstall
 ""-"c:\shared\scummvm\scummvm.ini",FILENULL
 ""-"c:\shared\scummvm\scummvm.stdout.txt",FILENULL
