@@ -115,6 +115,7 @@ private:
 	void execLook(Common::Queue<int> &params);
 	void execUse(Common::Queue<int> &params);
 	void walkOn(Common::Queue<int> &params);
+	void walkOnPlay(Common::Queue<int> &params);
 	void play(Common::Queue<int> &params);
 	void startPlay(Common::Queue<int> &params);
 	void newRoom(Common::Queue<int> &params);

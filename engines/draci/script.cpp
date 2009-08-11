@@ -60,7 +60,7 @@ void Script::setupCommandList() {
 		{ 9,  5, "ResetBlock", 			1, { 3 }, &Script::resetBlock },
 		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, &Script::walkOn },
 		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
-		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
+		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOnPlay },
 		{ 11, 1, "LoadPalette", 		1, { 2 }, NULL },
 		{ 12, 1, "SetPalette", 			0, { 0 }, NULL },
 		{ 12, 2, "BlackPalette", 		0, { 0 }, NULL },
@@ -580,6 +580,27 @@ void Script::walkOn(Common::Queue<int> &params) {
 	params.pop(); // facing direction, not used yet
 
 	_vm->_game->walkHero(x, y);
+}
+
+void Script::walkOnPlay(Common::Queue<int> &params) {
+	if (_vm->_game->getLoopStatus() == kStatusInventory) {
+		return;
+	}
+
+	int x = params.pop();
+	int y = params.pop();
+	params.pop(); // facing direction, not used yet
+
+	// HACK: This should be an onDest action when hero walking is properly implemented
+	_vm->_game->setExitLoop(true);
+	
+	_vm->_game->walkHero(x, y);
+
+	_vm->_game->setLoopStatus(kStatusStrange);
+	_vm->_game->loop();
+	_vm->_game->setLoopStatus(kStatusOrdinary);
+
+	_vm->_game->setExitLoop(false);
 }
 
 void Script::newRoom(Common::Queue<int> &params) {
