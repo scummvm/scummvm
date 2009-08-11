@@ -179,7 +179,7 @@ void TextDisplayer::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
 void TextDisplayer::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
 	if (_talkMessagePrinted) {
 		_talkMessagePrinted = false;
-		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage, Screen::CR_NO_P_CHECK);
 	}
 }
 
