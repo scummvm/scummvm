@@ -57,8 +57,6 @@ void AGOSEngine_PN::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[20] = &AGOSEngine::vc19_loop;
 	op[21] = &AGOSEngine::vc20_setRepeat;
 	op[22] = &AGOSEngine::vc21_endRepeat;
-	// FIXME: This has been "vc22_setPaletteOld" before, but that does not seem to exist.
-	// Please check whether "vc22_setPalette" is fine to be used here.
 	op[23] = &AGOSEngine::vc22_setPalette;
 	op[24] = &AGOSEngine::vc23_setPriority;
 	op[25] = &AGOSEngine::vc24_setSpriteXY;
