@@ -1090,7 +1090,9 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
-	_screen->setFont(Screen::FID_6_FNT);
+
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie)
+		_screen->setFont(Screen::FID_6_FNT);
 	return 0;
 }
 
@@ -1101,7 +1103,9 @@ int KyraEngine_LoK::o1_specialEventRemoveBrynnsNote(EMCState *script) {
 	_screen->loadPageFromDisk("HIDPAGE.TMP", 2);
 	_screen->updateScreen();
 	_screen->showMouse();
-	_screen->setFont(Screen::FID_8_FNT);
+
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie)
+		_screen->setFont(Screen::FID_8_FNT);
 	return 0;
 }
 
