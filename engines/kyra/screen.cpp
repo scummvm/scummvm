@@ -206,6 +206,8 @@ void Screen::setResolution() {
 void Screen::updateScreen() {
 	if (_useOverlays)
 		updateDirtyRectsOvl();
+	else if (_isAmiga && _interfacePaletteEnabled)
+		updateDirtyRectsAmiga();
 	else
 		updateDirtyRects();
 
@@ -220,23 +222,8 @@ void Screen::updateScreen() {
 }
 
 void Screen::updateDirtyRects() {
-	// TODO: Enable dirty rect handling for the AMIGA version
-	if (_forceFullUpdate || _isAmiga) {
-		if (_interfacePaletteEnabled) {
-			_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, 136);
-
-			// Page 8 is not used by Kyra 1 AMIGA, thus we can use it to adjust the colors
-			copyRegion(0, 136, 0, 0, 320, 64, 0, 8, CR_NO_P_CHECK);
-
-			uint8 *dst = getPagePtr(8);
-			for (int y = 0; y < 64; ++y)
-				for (int x = 0; x < 320; ++x)
-					*dst++ += 32;
-
-			_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, 0, 136, SCREEN_W, 64);
-		} else {
-			_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
-		}
+	if (_forceFullUpdate) {
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, SCREEN_H);
 	} else {
 		const byte *page0 = getCPagePtr(0);
 		Common::List<Common::Rect>::iterator it;
@@ -244,6 +231,77 @@ void Screen::updateDirtyRects() {
 			_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
 		}
 	}
+	_forceFullUpdate = false;
+	_dirtyRects.clear();
+}
+
+void Screen::updateDirtyRectsAmiga() {
+	if (_forceFullUpdate) {
+		_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, 136);
+
+		// Page 8 is not used by Kyra 1 AMIGA, thus we can use it to adjust the colors
+		copyRegion(0, 136, 0, 0, 320, 64, 0, 8, CR_NO_P_CHECK);
+
+		uint8 *dst = getPagePtr(8);
+		for (int y = 0; y < 64; ++y)
+			for (int x = 0; x < 320; ++x)
+				*dst++ += 32;
+
+		_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, 0, 136, SCREEN_W, 64);
+	} else {
+		const byte *page0 = getCPagePtr(0);
+		Common::List<Common::Rect>::iterator it;
+
+		for (it = _dirtyRects.begin(); it != _dirtyRects.end(); ++it) {
+			if (it->bottom <= 136) {
+				_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, it->width(), it->height());
+			} else {
+				// Check whether the rectangle is part of both the screen and the interface
+				if (it->top < 136) {
+					// The rectangle covers both screen part and interface part
+
+					const int screenHeight = 136 - it->top;
+					const int interfaceHeight = it->bottom - 136;
+
+					const int width = it->width();
+					const int lineAdd = SCREEN_W - width;
+
+					// Copy the screen part verbatim
+					_system->copyRectToScreen(page0 + it->top * SCREEN_W + it->left, SCREEN_W, it->left, it->top, width, screenHeight);
+
+					// Adjust the interface part
+					copyRegion(it->left, 136, 0, 0, width, interfaceHeight, 0, 8, Screen::CR_NO_P_CHECK);
+
+					uint8 *dst = getPagePtr(8);
+					for (int y = 0; y < interfaceHeight; ++y) {
+						for (int x = 0; x < width; ++x)
+							*dst++ += 32;
+						dst += lineAdd;
+					}
+
+					_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, it->left, 136, width, interfaceHeight);
+				} else {
+					// The rectangle only covers the interface part
+
+					const int width = it->width();
+					const int height = it->height();
+					const int lineAdd = SCREEN_W - width;
+
+					copyRegion(it->left, it->top, 0, 0, width, height, 0, 8, Screen::CR_NO_P_CHECK);
+
+					uint8 *dst = getPagePtr(8);
+					for (int y = 0; y < height; ++y) {
+						for (int x = 0; x < width; ++x)
+							*dst++ += 32;
+						dst += lineAdd;
+					}
+
+					_system->copyRectToScreen(getCPagePtr(8), SCREEN_W, it->left, it->top, width, height);
+				}
+			}
+		}
+	}
+
 	_forceFullUpdate = false;
 	_dirtyRects.clear();
 }

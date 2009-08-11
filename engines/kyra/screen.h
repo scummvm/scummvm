@@ -452,6 +452,7 @@ public:
 protected:
 	uint8 *getPagePtr(int pageNum);
 	void updateDirtyRects();
+	void updateDirtyRectsAmiga();
 	void updateDirtyRectsOvl();
 
 	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
