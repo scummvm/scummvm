@@ -674,9 +674,9 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 				// HACK: In this way we won't get a screen with dirty side strips when
 				// loading a narrow room in a full screen room.
-				if(width == 224 && height == 240 && x == 16) { 
+				if (width == 224 && height == 240 && x == 16) { 
 					char blackbuf[16 * 240];
-					memset(blackbuf, 0, 16*240); // Prepare a buffer 16px wide and 240px high, to fit on a lateral strip
+					memset(blackbuf, 0, 16 * 240); // Prepare a buffer 16px wide and 240px high, to fit on a lateral strip
 
 					width = 240; // Fix right strip
 					_system->copyRectToScreen((const byte *)blackbuf, 16, 0, 0, 16, 240); // Fix left strip
