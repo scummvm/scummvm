@@ -478,6 +478,7 @@ protected:
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _isAmiga;
 
 	Graphics::FontSJIS *_sjisFont;
 	uint8 _sjisInvisibleColor;

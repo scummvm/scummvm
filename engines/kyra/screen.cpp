@@ -79,6 +79,7 @@ bool Screen::init() {
 	_useOverlays = false;
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
+	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
 
 	if (_vm->gameFlags().useHiResOverlay) {
 		_useOverlays = true;
@@ -110,8 +111,8 @@ bool Screen::init() {
 
 	memset(_shapePages, 0, sizeof(_shapePages));
 
-	const int paletteCount = (_vm->gameFlags().platform == Common::kPlatformAmiga) ? 13 : 4;
-	const int numColors = _use16ColorMode ? 16 : ((_vm->gameFlags().platform == Common::kPlatformAmiga) ? 32 : 256);
+	const int paletteCount = _isAmiga ? 13 : 4;
+	const int numColors = _use16ColorMode ? 16 : (_isAmiga ? 32 : 256);
 
 	_interfacePaletteEnabled = false;
 
@@ -220,7 +221,7 @@ void Screen::updateScreen() {
 
 void Screen::updateDirtyRects() {
 	// TODO: Enable dirty rect handling for the AMIGA version
-	if (_forceFullUpdate || _vm->gameFlags().platform == Common::kPlatformAmiga) {
+	if (_forceFullUpdate || _isAmiga) {
 		if (_interfacePaletteEnabled) {
 			_system->copyRectToScreen(getCPagePtr(0), SCREEN_W, 0, 0, SCREEN_W, 136);
 
@@ -606,7 +607,7 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
-	const int colors = (_vm->gameFlags().platform == Common::kPlatformAmiga ? 32 : 256);
+	const int colors = _isAmiga ? 32 : 256;
 	const uint8 *palData = getPalette(num).getData();
 
 	if (!palData) {
@@ -649,7 +650,7 @@ void Screen::enableInterfacePalette(bool e) {
 }
 
 void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) {
-	if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+	if (!_isAmiga)
 		return;
 
 	uint8 screenPal[32 * 4];
@@ -1001,7 +1002,7 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 	Font *&fnt = _fonts[fontId];
 
 	if (!fnt) {
-		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		if (_isAmiga)
 			fnt = new AMIGAFont();
 		else
 			fnt = new DOSFont();
@@ -2785,7 +2786,7 @@ void Screen::loadBitmap(const char *filename, int tempPage, int dstPage, Palette
 		error("Unhandled bitmap compression %d", compType);
 	}
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+	if (_isAmiga) {
 		if (!scumm_stricmp(ext, "MSC"))
 			Screen::convertAmigaMsc(dstData);
 		else
@@ -2806,7 +2807,7 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 
 	debugC(3, kDebugLevelScreen, "Screen::loadPalette('%s', %p)", filename, (const void *)&pal);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_isAmiga)
 		pal.loadAmigaPalette(*stream, 0, stream->size() / Palette::kAmigaBytesPerColor);
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
 		pal.loadPC98Palette(*stream, 0, stream->size() / Palette::kPC98BytesPerColor);
@@ -2825,7 +2826,7 @@ bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
 
 	debugC(3, kDebugLevelScreen, "Screen::loadPaletteTable('%s', %d)", filename, firstPalette);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+	if (_isAmiga) {
 		const int numColors = getPalette(firstPalette).getNumColors();
 		const int palSize = getPalette(firstPalette).getNumColors() * Palette::kAmigaBytesPerColor;
 		const int numPals = stream->size() / palSize;
@@ -2848,7 +2849,7 @@ bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
 void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
 	Common::MemoryReadStream stream(data, bytes, false);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	if (_isAmiga)
 		pal.loadAmigaPalette(stream, 0, stream.size() / Palette::kAmigaBytesPerColor);
 	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
 		pal.loadPC98Palette(stream, 0, stream.size() / Palette::kPC98BytesPerColor);
