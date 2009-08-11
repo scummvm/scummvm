@@ -718,10 +718,16 @@ void KyraEngine_LoK::seq_makeBrandonWisp() {
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 
-	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
-		_screen->fadeSpecialPalette(30, 234, 13, 4);
-	else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186)
-		_screen->fadeSpecialPalette(14, 228, 15, 4);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if ((_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) || 
+			(_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186))
+			_screen->fadePalette(_screen->getPalette(10), 0x54);
+	} else {
+		if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
+			_screen->fadeSpecialPalette(30, 234, 13, 4);
+		else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186)
+			_screen->fadeSpecialPalette(14, 228, 15, 4);
+	}
 
 	freeShapes123();
 	_screen->showMouse();
