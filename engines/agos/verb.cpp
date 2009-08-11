@@ -203,6 +203,7 @@ static const char *const czech_verb_prep_names[] = {
 	"", "", "", "komu ?"
 };
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::clearName() {
 	stopAnimateSimon2(2, 6);
 	_lastNameOn = NULL;
@@ -210,6 +211,7 @@ void AGOSEngine_Feeble::clearName() {
 	_mouseAnim = 1;
 	return;
 }
+#endif
 
 void AGOSEngine_Simon2::clearName() {
 	if (getBitFlag(79)) {
@@ -530,6 +532,7 @@ void AGOSEngine::defineBox(int id, int x, int y, int width, int height, int flag
 	_needHitAreaRecalc++;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::resetVerbs() {
 	_verbHitArea = 300;
 }
@@ -559,6 +562,7 @@ void AGOSEngine_Feeble::resetVerbs() {
 		setVerb(NULL);
 	}
 }
+#endif
 
 void AGOSEngine::resetVerbs() {
 	if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2)
@@ -590,6 +594,7 @@ void AGOSEngine::resetVerbs() {
 	}
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::setVerb(HitArea *ha) {
 	int cursor = _mouseCursor;
 	if (_noRightClick)
@@ -616,6 +621,7 @@ void AGOSEngine_Feeble::setVerb(HitArea *ha) {
 	_needHitAreaRecalc++;
 	_verbHitArea = cursor + 300;
 }
+#endif
 
 void AGOSEngine::setVerb(HitArea *ha) {
 	HitArea *tmp = _currentVerbBox;
@@ -654,9 +660,11 @@ void AGOSEngine::setVerb(HitArea *ha) {
 	_currentVerbBox = ha;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::hitarea_leave(HitArea *ha, bool state) {
 	invertBox(ha, state);
 }
+#endif
 
 void AGOSEngine::hitarea_leave(HitArea *ha, bool state) {
 	if (getGameType() == GType_SIMON2) {
@@ -917,6 +925,7 @@ void AGOSEngine::displayName(HitArea *ha) {
 		_lastNameOn = ha;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::invertBox(HitArea *ha, bool state) {
 	if (getBitFlag(205) || getBitFlag(206)) {
 		if (state != 0) {
@@ -959,6 +968,7 @@ void AGOSEngine_Feeble::invertBox(HitArea *ha, bool state) {
 		}
 	}
 }
+#endif
 
 void AGOSEngine::invertBox(HitArea *ha, byte a, byte b, byte c, byte d) {
 	byte *src, color;

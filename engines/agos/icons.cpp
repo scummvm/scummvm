@@ -374,6 +374,7 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	_videoLockOut &= ~0x8000;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
@@ -477,6 +478,7 @@ l1:;		itemRef = derefItem(itemRef->next);
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
 }
+#endif
 
 void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
@@ -581,6 +583,7 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 	}
 }
 
+#ifdef ENABLE_AGOS2
 uint AGOSEngine_Feeble::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) {
 	HitArea *ha = findEmptyHitArea();
 
@@ -596,6 +599,7 @@ uint AGOSEngine_Feeble::setupIconHitArea(WindowBlock *window, uint num, uint x, 
 
 	return ha - _hitAreas;
 }
+#endif
 
 uint AGOSEngine_Simon2::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) {
 	HitArea *ha = findEmptyHitArea();
@@ -683,6 +687,7 @@ uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y,
 	return ha - _hitAreas;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
@@ -712,6 +717,7 @@ void AGOSEngine_Feeble::addArrows(WindowBlock *window, uint8 num) {
 	ha->window = window;
 	ha->verb = 1;
 }
+#endif
 
 void AGOSEngine_Simon2::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;

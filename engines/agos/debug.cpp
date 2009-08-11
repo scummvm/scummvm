@@ -26,6 +26,8 @@
 // AGOS debug functions
 
 
+#include "common/file.h"
+
 #include "agos/debug.h"
 #include "agos/agos.h"
 #include "agos/intern.h"
@@ -323,6 +325,7 @@ void AGOSEngine::dumpAllVgaScriptFiles() {
 	}
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::dumpVgaFile(const byte *vga) {
 	const byte *pp;
 	const byte *p;
@@ -352,6 +355,7 @@ void AGOSEngine_Feeble::dumpVgaFile(const byte *vga) {
 		p += sizeof(ImageHeader_Feeble);
 	}
 }
+#endif
 
 void AGOSEngine_Simon1::dumpVgaFile(const byte *vga) {
 	const byte *pp;

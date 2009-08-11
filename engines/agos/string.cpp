@@ -25,6 +25,8 @@
 
 
 
+#include "common/file.h"
+
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -560,6 +562,7 @@ void AGOSEngine::printScreenText(uint vgaSpriteId, uint color, const char *strin
 	}
 }
 
+#ifdef ENABLE_AGOS2
 // The Feeble Files specific
 void AGOSEngine_Feeble::printScreenText(uint vgaSpriteId, uint color, const char *string, int16 x, int16 y, int16 width) {
 	char convertedString[320];
@@ -693,6 +696,7 @@ void AGOSEngine_Feeble::sendInteractText(uint16 num, const char *fmt, ...) {
 
 	printInteractText(num, string);
 }
+#endif
 
 // Waxworks specific
 uint16 AGOSEngine_Waxworks::getBoxSize() {
