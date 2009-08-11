@@ -208,9 +208,29 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screen = new uint8[Screen::SCREEN_W*Screen::SCREEN_H];
 	if (screen) {
 		_screen->queryPageFromDisk("SEENPAGE.TMP", 0, screen);
-
 		uint8 screenPal[768];
-		_screen->getRealPalette(2, screenPal);
+
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			_screen->getRealPalette(0, &screenPal[ 0]);
+			_screen->getRealPalette(1, &screenPal[96]);
+
+			// Set the interface palette text color to white
+			screenPal[96 + 16 * 3 + 0] = 0xFF;
+			screenPal[96 + 16 * 3 + 1] = 0xFF;
+			screenPal[96 + 16 * 3 + 2] = 0xFF;
+
+			if (_screen->isInterfacePaletteEnabled()) {
+				for (int y = 0; y < 64; ++y) {
+					for (int x = 0; x < 320; ++x) {
+						screen[(y + 136) * Screen::SCREEN_W + x] += 32;
+					}
+				}
+			}
+
+		} else {
+			_screen->getRealPalette(2, screenPal);
+		}
+
 		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 	}
 	delete[] screen;

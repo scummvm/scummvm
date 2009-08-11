@@ -356,6 +356,7 @@ public:
 	virtual void setScreenPalette(const Palette &pal);
 
 	// AMIGA version only
+	bool isInterfacePaletteEnabled() const { return _interfacePaletteEnabled; }
 	void enableInterfacePalette(bool e);
 	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
 
