@@ -807,53 +807,122 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 }
 
 void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
-	uint8 red, green, blue;
+	if (_flags.platform == Common::kPlatformAmiga) {
+		uint8 r, g, b;
 
-	switch (item) {
-	case 60:
-	case 61:
-		red = 63;
-		green = blue = 6;
-		break;
-	case 62:
-	case 63:
-		red = green = 0;
-		blue = 67;
-		break;
-	case 64:
-	case 65:
-		red = 84;
-		green = 78;
-		blue = 14;
-		break;
-	case 66:
-		red = blue = 0;
-		green = 48;
-		break;
-	case 67:
-		red = 100;
-		green = 48;
-		blue = 23;
-		break;
-	case 68:
-		red = 73;
-		green = 0;
-		blue = 89;
-		break;
-	case 69:
-		red = green = 73;
-		blue = 86;
-		break;
-	default:
-		red = 33;
-		green = 66;
-		blue = 100;
+		switch (item) {
+		case 60: case 61:
+			// 0xC22
+			r = 50;
+			g = 8;
+			b = 8;
+			break;
+
+		case 62: case 63: case 76:
+		case 77:
+			// 0x00E
+			r = 0;
+			g = 0;
+			b = 58;
+			break;
+
+		case 64: case 65:
+			// 0xFF5
+			r = 63;
+			g = 63;
+			b = 21;
+			break;
+
+		case 66:
+			// 0x090
+			r = 0;
+			g = 37;
+			b = 0;
+			break;
+
+		case 67:
+			// 0xC61
+			r = 50;
+			g = 25;
+			b = 4;
+			break;
+
+		case 68:
+			// 0xE2E
+			r = 58;
+			g = 8;
+			b = 58;
+			break;
+
+		case 69:
+			// 0xBBB
+			r = 46;
+			g = 46;
+			b = 46;
+			break;
+
+		default:
+			// 0xFFF
+			r = 63;
+			g = 63;
+			b = 63;
+		}
+
+		_screen->setPaletteIndex(16, r, g, b);
+	} else {
+		uint8 red, green, blue;
+
+		switch (item) {
+		case 60: case 61:
+			red = 63;
+			green = blue = 6;
+			break;
+
+		case 62: case 63:
+			red = green = 0;
+			blue = 67;
+			break;
+
+		case 64: case 65:
+			red = 84;
+			green = 78;
+			blue = 14;
+			break;
+
+		case 66:
+			red = blue = 0;
+			green = 48;
+			break;
+
+		case 67:
+			red = 100;
+			green = 48;
+			blue = 23;
+			break;
+
+		case 68:
+			red = 73;
+			green = 0;
+			blue = 89;
+			break;
+
+		case 69:
+			red = green = 73;
+			blue = 86;
+			break;
+
+		default:
+			red = 33;
+			green = 66;
+			blue = 100;
+		}
+
+		red   = red * 0x3F / 100;
+		green = green * 0x3F / 100;
+		blue  = blue * 0x3F / 100;
+
+		_screen->setPaletteIndex(0xFE, red, green, blue);
 	}
-	red   = (uint8)((double)red   * 0.63);
-	green = (uint8)((double)green * 0.63);
-	blue  = (uint8)((double)blue  * 0.63);
-
-	_screen->setPaletteIndex(0xFE, red, green, blue);
 
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -868,7 +937,9 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 		_animator->animRefreshNPC(0);
 		delayWithTicks(5);
 	}
+
 	snd_playSoundEffect(0x34);
+
 	for (int i = 0; i < 2; ++i) {
 		_currentCharacter->currentAnimFrame = 130;
 		_animator->animRefreshNPC(0);
@@ -892,7 +963,10 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 	_currentCharacter->currentAnimFrame = 7;
 	_animator->animRefreshNPC(0);
 	freeShapes123();
-	_screen->setPaletteIndex(0xFE, 30, 30, 30);
+
+	if (_flags.platform != Common::kPlatformAmiga)
+		_screen->setPaletteIndex(0xFE, 30, 30, 30);
+
 	_screen->showMouse();
 }
 
