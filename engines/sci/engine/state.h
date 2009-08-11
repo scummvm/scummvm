@@ -125,6 +125,7 @@ public:
 	virtual ~EngineState();
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
+	kLanguage getLanguage();
 public:
 	int widget_serial_counter; /**< Used for savegames */
 

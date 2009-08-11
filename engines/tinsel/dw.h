@@ -100,7 +100,7 @@ typedef int HPOLYGON;
 #define NO_ENTRY_NUM	(-3458)	// Magic unlikely number
 
 
-#define SAMPLETIMEOUT	(15*ONE_SECOND)
+#define SAMPLETIMEOUT	(20*ONE_SECOND)
 
 // Language for the resource strings
 enum LANGUAGE {

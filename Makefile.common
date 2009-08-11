@@ -148,25 +148,6 @@ endif
 
 
 ######################################################################
-# Create the files that depend on the version
-######################################################################
-
-VERSION_FILES = \
-	$(srcdir)/dists/iphone/Info.plist \
-	$(srcdir)/dists/macosx/Info.plist
-
-$(VERSION_FILES): %: %.in
-	@echo "Creating $@"
-	@cat $< | sed \
-		-e "s/@VER_MAJOR@/$(VER_MAJOR)/g" \
-		-e "s/@VER_MINOR@/$(VER_MINOR)/g" \
-		-e "s/@VER_PATCH@/$(VER_PATCH)/g" \
-		-e "s/@VER_EXTRA@/$(VER_EXTRA)/g" \
-		-e "s/@VERSION@/$(VERSION)/g" \
-		> $@
-
-
-######################################################################
 # Distribution settings
 ######################################################################
 

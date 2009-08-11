@@ -901,13 +901,13 @@ int KyraEngine_LoK::seq_playEnd() {
 	if (_endSequenceNeedLoading) {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
-		_finalA = new WSAMovie_v1(this);
+		_finalA = createWSAMovie();
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);
-		_finalB = new WSAMovie_v1(this);
+		_finalB = createWSAMovie();
 		assert(_finalB);
 		_finalB->open("finalb.wsa", 1, 0);
-		_finalC = new WSAMovie_v1(this);
+		_finalC = createWSAMovie();
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
 		_finalC->open("finalc.wsa", 1, 0);
@@ -1473,7 +1473,7 @@ int KyraEngine_LoK::handleBeadState() {
 					_beadStateVar = 0;
 				}
 			} else {
-				_screen->copyBlockToPage(_screen->_curPage, beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 				beadState1.x = x;
 				beadState1.y = y;
@@ -1663,6 +1663,14 @@ void KyraEngine_LoK::closeFinalWsa() {
 }
 
 void KyraEngine_LoK::updateKyragemFading() {
+	if (_flags.platform == Common::kPlatformAmiga) {
+		// The AMIGA version seems to have no fading for the Kyragem. The code does not
+		// alter the screen palette.
+		//
+		// TODO: Check this in the original.
+		return;
+	}
+
 	static const uint8 kyraGemPalette[0x28] = {
 		0x3F, 0x3B, 0x38, 0x34, 0x32, 0x2F, 0x2C, 0x29, 0x25, 0x22,
 		0x1F, 0x1C, 0x19, 0x16, 0x12, 0x0F, 0x0C, 0x0A, 0x06, 0x03,
@@ -1674,14 +1682,17 @@ void KyraEngine_LoK::updateKyragemFading() {
 		return;
 
 	_kyragemFadingState.timerCount = _system->getMillis() + 4 * _tickLength;
+
 	int palPos = 684;
 	for (int i = 0; i < 20; ++i) {
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.rOffset];
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.gOffset];
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.bOffset];
 	}
+
 	_screen->setScreenPalette(_screen->getPalette(0));
 	_animator->_updateScreen = true;
+
 	switch (_kyragemFadingState.nextOperation) {
 	case 0:
 		--_kyragemFadingState.bOffset;

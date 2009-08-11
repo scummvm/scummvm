@@ -70,6 +70,18 @@ enum {
 	GFX_DOTMATRIX = 11
 };
 
+class AspectRatio {
+	int _kw, _kh;
+public:
+	AspectRatio() { _kw = _kh = 0; }
+	AspectRatio(int w, int h);
+ 
+	bool isAuto() const { return (_kw | _kh) == 0; }
+	
+	int kw() const { return _kw; }
+	int kh() const { return _kh; }
+};
+
 
 class OSystem_SDL : public BaseBackend {
 public:
@@ -284,6 +296,7 @@ protected:
 
 		bool fullscreen;
 		bool aspectRatioCorrection;
+		AspectRatio desiredAspectRatio;
 
 		int mode;
 		int scaleFactor;
@@ -293,6 +306,7 @@ protected:
 #ifdef ENABLE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif
+		int hardwareWidth, hardwareHeight;
 	};
 	VideoState _videoMode, _oldVideoMode;
 

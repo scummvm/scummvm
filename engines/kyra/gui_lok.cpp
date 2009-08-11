@@ -56,10 +56,10 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			return 0;
 		} else {
 			_screen->hideMouse();
-			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			snd_playSoundEffect(0x35);
 			setMouseItem(inventoryItem);
-			updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			_itemInHand = inventoryItem;
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = 0xFF;
@@ -68,10 +68,14 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 		if (inventoryItem != 0xFF) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
-			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
-			updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
+			// TODO: Proper support for both taken strings in Amiga version
+			if (_flags.platform == Common::kPlatformAmiga)
+				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
+			else
+				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[1], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = inventoryItem;
@@ -80,7 +84,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			_screen->hideMouse();
 			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			_screen->setMouseCursor(1, 1, _shapes[0]);
-			updateSentenceCommand(_itemList[_itemInHand], _placedList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _placedList[0], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = -1;
@@ -365,6 +369,10 @@ void GUI_LoK::setGUILabels() {
 		offsetOptions = 10;
 		offsetOn = 0;
 		walkspeedGarbageOffset = 0;
+	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		// English Amiga version
+		offsetOptions = 8;
+		walkspeedGarbageOffset = 2;
 	}
 
 	assert(offset + 27 < _vm->_guiStringsSize);
@@ -448,8 +456,14 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		_vm->snd_playSoundEffect(0x36);
 		return 0;
 	}
-	// XXX
-	_screen->setPaletteIndex(0xFE, 60, 60, 0);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		_screen->setPaletteIndex(0x10, 0x3F, 0x3F, 0x3F);
+		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);
+	} else {
+		_screen->setPaletteIndex(0xFE, 60, 60, 0);
+	}
+
 	for (int i = 0; i < 6; i++) {
 		_menuButtonData[i].data0Val1 = _menuButtonData[i].data1Val1 = _menuButtonData[i].data2Val1 = 4;
 		_menuButtonData[i].data0Callback = _redrawShadedButtonFunctor;
@@ -681,6 +695,7 @@ void GUI_LoK::updateSavegameString() {
 }
 
 int GUI_LoK::saveGame(Button *button) {
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	updateMenuButton(button);
 	_vm->_gameToLoad = _menu[2].item[button->index-0xC].saveSlot;
 
@@ -729,6 +744,7 @@ int GUI_LoK::saveGame(Button *button) {
 		}
 	}
 
+	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	return 0;
 }
 
@@ -921,6 +937,9 @@ void GUI_LoK::setupControls(Menu &menu) {
 			menu.item[3].itemString = "ERROR";
 		}
 	} else {
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			clickableOffset = 5;
+
 		menu.item[4].enabled = 0;
 		menu.item[4].labelString = 0;
 	}

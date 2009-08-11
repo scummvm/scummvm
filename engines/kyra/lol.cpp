@@ -730,13 +730,16 @@ int LoLEngine::mainMenu() {
 		// 16 color mode
 		{
 			{ 0, 0, 0, 0, 0 },
-			{ 0x01, 0x04, 0x0C, 0x03, 0x00, 0xC1, 0xE1 },
+			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xC1, 0xE1 },
 			{ 0xCC, 0xDD, 0xDD, 0xDD },
 			Screen::FID_9_FNT, 1
 		}
 	};
 
 	int dataIndex = _flags.use16ColorMode ? 1 : 0;
+
+	if (!_flags.isTalkie)
+		--data[dataIndex].menuTable[3];
 
 	if (hasSave)
 		++data[dataIndex].menuTable[3];

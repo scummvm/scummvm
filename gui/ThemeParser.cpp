@@ -38,13 +38,9 @@ struct TextDataInfo {
 };
 
 static const TextDataInfo kTextDataDefaults[] = {
-	{kTextDataDefault,		"text_default"},
-	{kTextDataHover,		"text_hover"},
-	{kTextDataDisabled,		"text_disabled"},
-	{kTextDataInverted,		"text_inverted"},
-	{kTextDataButton,		"text_button"},
-	{kTextDataButtonHover,	"text_button_hover"},
-	{kTextDataNormalFont,	"text_normal"}
+	{ kTextDataDefault,			"text_default" },
+	{ kTextDataButton,			"text_button" },
+	{ kTextDataNormalFont,		"text_normal" }
 };
 
 
@@ -54,6 +50,33 @@ static TextData parseTextDataId(const Common::String &name) {
 			return kTextDataDefaults[i].id;
 
 	return kTextDataNone;
+}
+
+struct TextColorDataInfo {
+	TextColor id;
+	const char *name;
+};
+
+static const TextColorDataInfo kTextColorDefaults[] = {
+	{ kTextColorNormal,					"color_normal" },
+	{ kTextColorNormalInverted,			"color_normal_inverted" },
+	{ kTextColorNormalHover,			"color_normal_hover" },
+	{ kTextColorNormalDisabled,			"color_normal_disabled" },
+	{ kTextColorAlternative,			"color_alternative" },
+	{ kTextColorAlternativeInverted,	"color_alternative_inverted" },
+	{ kTextColorAlternativeHover,		"color_alternative_hover" },
+	{ kTextColorAlternativeDisabled,	"color_alternative_disabled" },
+	{ kTextColorButton,					"color_button" },
+	{ kTextColorButtonHover,			"color_button_hover" },
+	{ kTextColorButtonDisabled,			"color_button_disabled" }
+};
+
+static TextColor parseTextColorId(const Common::String &name) {
+	for (int i = 0; i < kTextColorMAX; ++i)
+		if (name.compareToIgnoreCase(kTextColorDefaults[i].name) == 0)
+			return kTextColorDefaults[i].id;
+
+	return kTextColorMAX;
 }
 
 static Graphics::TextAlign parseTextHAlign(const Common::String &val) {
@@ -148,21 +171,32 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_font(ParserNode *node) {
-	int red, green, blue;
-
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
 
+	TextData textDataId = parseTextDataId(node->values["id"]);
+	if (!_theme->addFont(textDataId, node->values["file"]))
+		return parserError("Error loading Font in theme engine.");
+
+	return true;
+}
+
+bool ThemeParser::parserCallback_text_color(ParserNode *node) {
+	int red, green, blue;
+
+	TextColor colorId = parseTextColorId(node->values["id"]);
+	if (colorId == kTextColorMAX)
+		return parserError("Error text color is not defined.");
+
 	if (_palette.contains(node->values["color"]))
 		getPaletteColor(node->values["color"], red, green, blue);
 	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
-		return parserError("Error parsing color value for font definition.");
+		return parserError("Error parsing color value for text color definition.");
 
-	TextData textDataId = parseTextDataId(node->values["id"]);
-	if (!_theme->addFont(textDataId, node->values["file"], red, green, blue))
-		return parserError("Error loading Font in theme engine.");
+	if (!_theme->addTextColor(colorId, red, green, blue))
+		return parserError("Error while adding text color information.");
 
 	return true;
 }
@@ -215,8 +249,9 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 
 	Common::String id = getParentNode(node)->values["id"];
 	TextData textDataId = parseTextDataId(node->values["font"]);
+	TextColor textColorId = parseTextColorId(node->values["text_color"]);
 
-	if (!_theme->addTextData(id, textDataId, alignH, alignV))
+	if (!_theme->addTextData(id, textDataId, textColorId, alignH, alignV))
 		return parserError("Error adding Text Data for '%s'.", id.c_str());
 
 	return true;

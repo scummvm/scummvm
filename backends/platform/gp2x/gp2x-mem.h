@@ -35,7 +35,6 @@
 extern "C" {
 #endif
 
-
 // Use Squidge's MMU patch rather then myown (his is neater).
 // The effect if not that great but cacheing the upper RAM is no bad thing (tm) ;).
 

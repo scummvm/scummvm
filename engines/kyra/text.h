@@ -50,8 +50,6 @@ public:
 	virtual void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
 	virtual void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
-	void printIntroTextMessage(const char *text, int x, int y, uint8 col1, uint8 col2, uint8 col3,
-			int dstPage, Screen::FontId font=Screen::FID_8_FNT);
 	virtual void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
 	void printCharacterText(const char *text, int8 charNum, int charX);
 
@@ -66,6 +64,9 @@ protected:
 		uint16 y, x, w;
 	};
 
+	// TODO: AMIGA and LoK specific, move to a better location
+	void setTextColor(uint8 color);
+
 	enum {
 		TALK_SUBSTRING_LEN = 80,
 		TALK_SUBSTRING_NUM = 6
@@ -76,6 +77,7 @@ protected:
 	TalkCoords _talkCoords;
 	bool _talkMessagePrinted;
 };
+
 } // end of namespace Kyra
 
 #endif

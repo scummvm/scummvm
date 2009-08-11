@@ -812,4 +812,21 @@ reg_t kSetQuitStr(EngineState *s, int funct_nr, int argc, reg_t *argv) {
         return s->r_acc;
 }
 
+reg_t kStrSplit(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	const char *format = kernel_dereference_char_pointer(s, argv[1], 0);
+	const char *sep = !argv[2].isNull() ? kernel_dereference_char_pointer(s, argv[2], 0) : NULL;
+	Common::String str = s->strSplit(format, sep);
+
+	// Make sure target buffer is large enough
+	char *buf = kernel_dereference_char_pointer(s, argv[0], str.size() + 1);
+
+	if (buf) {
+		strcpy(buf, str.c_str());
+		return argv[0];
+	} else {
+		warning("StrSplit: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(argv[0]), str.size() + 1, str.c_str());
+		return NULL_REG;
+	}
+}
+
 } // End of namespace Sci

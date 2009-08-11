@@ -56,15 +56,114 @@ struct ScreenDim {
 	uint16 unkE;
 };
 
-struct Font {
-	uint8 *fontData;
-	uint8 *charWidthTable;
-	uint16 fontDescOffset;
-	uint16 charBitmapOffset;
-	uint16 charWidthTableOffset;
-	uint16 charHeightTableOffset;
+/**
+ * A class that handles KYRA fonts.
+ */
+class Font {
+public:
+	virtual ~Font() {}
 
-	uint8 lastGlyph;
+	/**
+	 * Tries to load a file from the given stream
+	 */
+	virtual bool load(Common::SeekableReadStream &file) = 0;
+
+	/**
+	 * The font height.
+	 */
+	virtual int getHeight() const = 0;
+
+	/**
+	 * The font width, this is the maximal character
+	 * width.
+	 */
+	virtual int getWidth() const = 0;
+
+	/**
+	 * Gets the width of a specific character.
+	 */
+	virtual int getCharWidth(uint8 c) const = 0;
+
+	/**
+	 * Sets a text palette map. The map contains 16 entries.
+	 */
+	virtual void setColorMap(const uint8 *src) = 0;
+
+	/**
+	 * Draws a specific character.
+	 *
+	 * TODO/FIXME: Replace this with a nicer API. Currently
+	 * the user has to assure that the character fits.
+	 * We use this API, since it's hard to assure dirty rect
+	 * handling from outside Screen.
+	 */
+	virtual void drawChar(uint8 c, byte *dst, int pitch) const = 0;
+};
+
+/**
+ * Implementation of the Font interface for DOS fonts.
+ *
+ * TODO: Clean up the implementation. For example we might be able
+ * to not to keep the whole font in memory.
+ */
+class DOSFont : public Font {
+public:
+	DOSFont();
+	~DOSFont() { unload(); }
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint8 c) const;
+	void setColorMap(const uint8 *src) { _colorMap = src; }
+	void drawChar(uint8 c, byte *dst, int pitch) const;
+
+private:
+	void unload();
+
+	const uint8 *_colorMap;
+
+	uint8 *_data;
+
+	int _width, _height;
+
+	uint8 _numGlyphs;
+
+	uint8 *_widthTable;
+	uint8 *_heightTable;
+	uint16 *_bitmapOffsets;
+};
+
+/**
+ * Implementation of the Font interface for AMIGA fonts.
+ */
+class AMIGAFont : public Font {
+public:
+	AMIGAFont();
+	~AMIGAFont() { unload(); }
+
+	bool load(Common::SeekableReadStream &file);
+	int getHeight() const { return _height; }
+	int getWidth() const { return _width; }
+	int getCharWidth(uint8 c) const;
+	void setColorMap(const uint8 *src) {}
+	void drawChar(uint8 c, byte *dst, int pitch) const;
+
+private:
+	void unload();
+
+	int _width, _height;
+
+	struct Character {
+		uint8 yOffset, xOffset, width;
+
+		struct Graphics {
+			uint16 width, height;
+			uint8 *bitmap;
+		} graphics;
+	};
+
+	Character _chars[255];
 };
 
 /**
@@ -256,6 +355,10 @@ public:
 	void setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue);
 	virtual void setScreenPalette(const Palette &pal);
 
+	// AMIGA version only
+	void enableInterfacePalette(bool e);
+	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
+
 	void getRealPalette(int num, uint8 *dst);
 	Palette &getPalette(int num);
 	void copyPalette(const int dst, const int src);
@@ -342,7 +445,7 @@ public:
 	static void decodeFrameDelta(uint8 *dst, const uint8 *src, bool noXor = false);
 	static void decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch, bool noXor);
 
-	static void convertAmigaGfx(uint8 *data, int w, int h, bool offscreen = true);
+	static void convertAmigaGfx(uint8 *data, int w, int h, int depth = 5, bool wsa = false, int bytesPerPlane = -1);
 	static void convertAmigaMsc(uint8 *data);
 
 protected:
@@ -382,7 +485,7 @@ protected:
 	Common::Array<Palette *> _palettes;
 	Palette *_internFadePalette;
 
-	Font _fonts[FID_NUM];
+	Font *_fonts[FID_NUM];
 	uint8 _textColorsMap[16];
 
 	uint8 *_decodeShapeBuffer;
@@ -468,6 +571,9 @@ protected:
 	int _drawShapeVar3;
 	int _drawShapeVar4;
 	int _drawShapeVar5;
+
+	// AMIGA version
+	bool _interfacePaletteEnabled;
 
 	// debug
 	bool _debugEnabled;

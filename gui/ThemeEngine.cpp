@@ -56,10 +56,10 @@ const char * const ThemeEngine::kImageSearch = "search.bmp";
 
 struct TextDrawData {
 	const Graphics::Font *_fontPtr;
+};
 
-	struct {
-		uint8 r, g, b;
-	} _color;
+struct TextColorData {
+	int r, g, b;
 };
 
 struct WidgetDrawData {
@@ -67,6 +67,7 @@ struct WidgetDrawData {
 	Common::List<Graphics::DrawStep> _steps;
 
 	TextData _textDataId;
+	TextColor _textColorId;
 	Graphics::TextAlign _textAlignH;
 	GUI::ThemeEngine::TextAlignVertical _textAlignV;
 
@@ -116,16 +117,17 @@ protected:
 
 class ThemeItemTextData : public ThemeItem {
 public:
-	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const Common::Rect &area, const Common::String &text,
+	ThemeItemTextData(ThemeEngine *engine, const TextDrawData *data, const TextColorData *color, const Common::Rect &area, const Common::String &text,
 		Graphics::TextAlign alignH, GUI::ThemeEngine::TextAlignVertical alignV,
 		bool ellipsis, bool restoreBg, int deltaX) :
-		ThemeItem(engine, area), _data(data), _text(text), _alignH(alignH), _alignV(alignV),
+		ThemeItem(engine, area), _data(data), _color(color), _text(text), _alignH(alignH), _alignV(alignV),
 		_ellipsis(ellipsis), _restoreBg(restoreBg), _deltax(deltaX) {}
 
 	void drawSelf(bool draw, bool restore);
 
 protected:
 	const TextDrawData *_data;
+	const TextColorData *_color;
 	Common::String _text;
 	Graphics::TextAlign _alignH;
 	GUI::ThemeEngine::TextAlignVertical _alignV;
@@ -180,7 +182,7 @@ static const DrawDataInfo kDrawDataDefaults[] = {
 
 	{kDDSliderFull,					"slider_full",		false,	kDDNone},
 	{kDDSliderHover,				"slider_hover",		false,	kDDNone},
-	{kDDSliderDisabled,				"slider_disabled",	true,	kDDNone},
+	{kDDSliderDisabled,				"slider_disabled",	false,	kDDNone},
 
 	{kDDCheckboxDefault,			"checkbox_default",			true,	kDDNone},
 	{kDDCheckboxDisabled,			"checkbox_disabled",		true,	kDDNone},
@@ -232,7 +234,7 @@ void ThemeItemTextData::drawSelf(bool draw, bool restore) {
 		_engine->restoreBackground(_area);
 
 	if (draw) {
-		_engine->renderer()->setFgColor(_data->_color.r, _data->_color.g, _data->_color.b);
+		_engine->renderer()->setFgColor(_color->r, _color->g, _color->b);
 		_engine->renderer()->drawString(_data->_fontPtr, _text, _area, _alignH, _alignV, _deltax, _ellipsis);
 	}
 
@@ -275,6 +277,10 @@ ThemeEngine::ThemeEngine(Common::String id, GraphicsMode mode) :
 
 	for (int i = 0; i < kTextDataMAX; ++i) {
 		_texts[i] = 0;
+	}
+
+	for (int i = 0; i < kTextColorMAX; ++i) {
+		_textColors[i] = 0;
 	}
 
 	// We currently allow two different ways of theme selection in our config file:
@@ -532,20 +538,21 @@ void ThemeEngine::addDrawStep(const Common::String &drawDataId, const Graphics::
 	_widgets[id]->_steps.push_back(step);
 }
 
-bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
+bool ThemeEngine::addTextData(const Common::String &drawDataId, TextData textId, TextColor colorId, Graphics::TextAlign alignH, TextAlignVertical alignV) {
 	DrawData id = parseDrawDataId(drawDataId);
 
-	if (id == -1 || textId == -1 || !_widgets[id])
+	if (id == -1 || textId == -1 || colorId == kTextColorMAX || !_widgets[id])
 		return false;
 
 	_widgets[id]->_textDataId = textId;
+	_widgets[id]->_textColorId = colorId;
 	_widgets[id]->_textAlignH = alignH;
 	_widgets[id]->_textAlignV = alignV;
 
 	return true;
 }
 
-bool ThemeEngine::addFont(TextData textId, const Common::String &file, int r, int g, int b) {
+bool ThemeEngine::addFont(TextData textId, const Common::String &file) {
 	if (textId == -1)
 		return false;
 
@@ -569,11 +576,24 @@ bool ThemeEngine::addFont(TextData textId, const Common::String &file, int r, in
 		}
 	}
 
-	_texts[textId]->_color.r = r;
-	_texts[textId]->_color.g = g;
-	_texts[textId]->_color.b = b;
 	return true;
 
+}
+
+bool ThemeEngine::addTextColor(TextColor colorId, int r, int g, int b) {
+	if (colorId >= kTextColorMAX)
+		return false;
+
+	if (_textColors[colorId] != 0)
+		delete _textColors[colorId];
+
+	_textColors[colorId] = new TextColorData;
+
+	_textColors[colorId]->r = r;
+	_textColors[colorId]->g = g;
+	_textColors[colorId]->b = b;
+
+	return true;
 }
 
 bool ThemeEngine::addBitmap(const Common::String &filename) {
@@ -654,6 +674,11 @@ void ThemeEngine::unloadTheme() {
 	for (int i = 0; i < kTextDataMAX; ++i) {
 		delete _texts[i];
 		_texts[i] = 0;
+	}
+
+	for (int i = 0; i < kTextColorMAX; ++i) {
+		delete _textColors[i];
+		_textColors[i] = 0;
 	}
 
 	_themeEval->reset();
@@ -771,7 +796,7 @@ void ThemeEngine::queueDD(DrawData type, const Common::Rect &r, uint32 dynamic, 
 	}
 }
 
-void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
+void ThemeEngine::queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
 	bool ellipsis, Graphics::TextAlign alignH, TextAlignVertical alignV, int deltax) {
 
 	if (_texts[type] == 0)
@@ -780,7 +805,7 @@ void ThemeEngine::queueDDText(TextData type, const Common::Rect &r, const Common
 	Common::Rect area = r;
 	area.clip(_screen.w, _screen.h);
 
-	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], area, text, alignH, alignV, ellipsis, restoreBg, deltax);
+	ThemeItemTextData *q = new ThemeItemTextData(this, _texts[type], _textColors[color], area, text, alignH, alignV, ellipsis, restoreBg, deltax);
 
 	if (_buffering) {
 		_screenQueue.push_back(q);
@@ -824,7 +849,7 @@ void ThemeEngine::drawButton(const Common::Rect &r, const Common::String &str, W
 		dd = kDDButtonDisabled;
 
 	queueDD(dd, r, 0, hints & WIDGET_CLEARBG);
-	queueDDText(getTextData(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r, str, false, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawLineSeparator(const Common::Rect &r, WidgetStateInfo state) {
@@ -847,7 +872,6 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	if (state == kStateDisabled)
 		dd = kDDCheckboxDisabled;
 
-	TextData td = (state == kStateHighlight) ? kTextDataHover : getTextData(dd);
 	const int checkBoxSize = MIN((int)r.height(), getFontHeight());
 
 	r2.bottom = r2.top + checkBoxSize;
@@ -858,7 +882,7 @@ void ThemeEngine::drawCheckbox(const Common::Rect &r, const Common::String &str,
 	r2.left = r2.right + checkBoxSize;
 	r2.right = r.right;
 
-	queueDDText(td, r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
+	queueDDText(getTextData(dd), getTextColor(dd), r2, str, false, false, _widgets[kDDCheckboxDefault]->_textAlignH, _widgets[dd]->_textAlignV);
 }
 
 void ThemeEngine::drawSlider(const Common::Rect &r, int width, WidgetStateInfo state) {
@@ -958,7 +982,7 @@ void ThemeEngine::drawPopUpWidget(const Common::Rect &r, const Common::String &s
 
 	if (!sel.empty()) {
 		Common::Rect text(r.left + 3, r.top + 1, r.right - 10, r.bottom);
-		queueDDText(getTextData(dd), text, sel, true, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
+		queueDDText(getTextData(dd), getTextColor(dd), text, sel, true, false, _widgets[dd]->_textAlignH, _widgets[dd]->_textAlignV, deltax);
 	}
 }
 
@@ -1004,7 +1028,7 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 
 		Common::Rect tabRect(r.left + i * tabWidth, r.top, r.left + (i + 1) * tabWidth, r.top + tabHeight);
 		queueDD(kDDTabInactive, tabRect);
-		queueDDText(getTextData(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
+		queueDDText(getTextData(kDDTabInactive), getTextColor(kDDTabInactive), tabRect, tabs[i], false, false, _widgets[kDDTabInactive]->_textAlignH, _widgets[kDDTabInactive]->_textAlignV);
 	}
 
 	if (active >= 0) {
@@ -1012,64 +1036,98 @@ void ThemeEngine::drawTab(const Common::Rect &r, int tabHeight, int tabWidth, co
 		const uint16 tabLeft = active * tabWidth;
 		const uint16 tabRight =  MAX(r.right - tabRect.right, 0);
 		queueDD(kDDTabActive, tabRect, (tabLeft << 16) | (tabRight & 0xFFFF));
-		queueDDText(getTextData(kDDTabActive), tabRect, tabs[active], false, false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
+		queueDDText(getTextData(kDDTabActive), getTextColor(kDDTabActive), tabRect, tabs[active], false, false, _widgets[kDDTabActive]->_textAlignH, _widgets[kDDTabActive]->_textAlignV);
 	}
 }
 
-void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font) {
+void ThemeEngine::drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state, Graphics::TextAlign align, TextInversionState inverted, int deltax, bool useEllipsis, FontStyle font, FontColor color) {
 	if (!ready())
 		return;
+
+	TextColor colorId = kTextColorMAX;
+
+	switch (color) {
+	case kFontColorNormal:
+		if (inverted) {
+			colorId = kTextColorNormalInverted;
+		} else {
+			switch (state) {
+			case kStateDisabled:
+				colorId = kTextColorNormalDisabled;
+				break;
+
+			case kStateHighlight:
+				colorId = kTextColorNormalHover;
+				break;
+
+			case kStateEnabled:
+				colorId = kTextColorNormal;
+				break;
+			}
+		}
+		break;
+
+	case kFontColorAlternate:
+		if (inverted) {
+			colorId = kTextColorAlternativeInverted;
+		} else {
+			switch (state) {
+			case kStateDisabled:
+				colorId = kTextColorAlternativeDisabled;
+				break;
+
+			case kStateHighlight:
+				colorId = kTextColorAlternativeHover;
+				break;
+
+			case kStateEnabled:
+				colorId = kTextColorAlternative;
+				break;
+			}
+		}
+		break;
+
+	default:
+		return;
+	}
+
+	TextData textId = kTextDataNone;
+	if (font == kFontStyleNormal)
+		textId = kTextDataNormalFont;
+	else
+		textId = kTextDataDefault;
+
+	bool restore = true;
 
 	switch (inverted) {
 	case kTextInversion:
 		queueDD(kDDTextSelectionBackground, r);
-		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
-		return;
+		restore = false;
+		break;
 
 	case kTextInversionFocus:
 		queueDD(kDDTextSelectionFocusBackground, r);
-		queueDDText(kTextDataInverted, r, str, false, useEllipsis, align, kTextAlignVCenter, deltax);
-		return;
+		restore = false;
+		break;
 
 	default:
 		break;
 	}
 
-	switch (font) {
-	case kFontStyleNormal:
-		queueDDText(kTextDataNormalFont, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-		return;
-
-	default:
-		break;
-	}
-
-	switch (state) {
-	case kStateDisabled:
-		queueDDText(kTextDataDisabled, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-		return;
-
-	case kStateHighlight:
-		queueDDText(kTextDataHover, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-		return;
-
-	case kStateEnabled:
-		queueDDText(kTextDataDefault, r, str, true, useEllipsis, align, kTextAlignVCenter, deltax);
-		return;
-	}
+	queueDDText(textId, colorId, r, str, restore, useEllipsis, align, kTextAlignVCenter, deltax);
 }
 
-void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state) {
+void ThemeEngine::drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state, FontColor color) {
 	if (!ready())
 		return;
 
 	Common::Rect charArea = r;
 	charArea.clip(_screen.w, _screen.h);
 
-	uint32 color = _overlayFormat.RGBToColor(_texts[kTextDataDefault]->_color.r, _texts[kTextDataDefault]->_color.g, _texts[kTextDataDefault]->_color.b);
+	uint32 rgbColor = _overlayFormat.RGBToColor(_textColors[color]->r, _textColors[color]->g, _textColors[color]->b);
 
 	restoreBackground(charArea);
-	font->drawChar(&_screen, ch, charArea.left, charArea.top, color);
+	font->drawChar(&_screen, ch, charArea.left, charArea.top, rgbColor);
 	addDirtyRect(charArea);
 }
 
@@ -1266,6 +1324,9 @@ TextData ThemeEngine::getTextData(DrawData ddId) const {
 	return _widgets[ddId] ? (TextData)_widgets[ddId]->_textDataId : kTextDataNone;
 }
 
+TextColor ThemeEngine::getTextColor(DrawData ddId) const {
+	return _widgets[ddId] ? _widgets[ddId]->_textColorId : kTextColorMAX;
+}
 
 DrawData ThemeEngine::parseDrawDataId(const Common::String &name) const {
 	for (int i = 0; i < kDrawDataMAX; ++i)

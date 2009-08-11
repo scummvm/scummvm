@@ -249,6 +249,8 @@ void DrawBackgnd(void) {
 		UpdateScreenRect(*r);
 	}
 
+	g_system->updateScreen();
+
 	// delete all the clipping rectangles
 	ResetClipRect();
 }

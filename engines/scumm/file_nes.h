@@ -41,6 +41,7 @@ public:
 		kROMsetFrance,
 		kROMsetGermany,
 		kROMsetSpain,
+		kROMsetItaly,
 		kROMsetNum
 	};
 

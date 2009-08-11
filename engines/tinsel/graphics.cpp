@@ -713,7 +713,6 @@ void UpdateScreenRect(const Common::Rect &pClip) {
 	byte *pSrc = (byte *)_vm->screen().getBasePtr(pClip.left, pClip.top);
 	g_system->copyRectToScreen(pSrc, _vm->screen().pitch, pClip.left, pClip.top + yOffset,
 		pClip.width(), pClip.height());
-	g_system->updateScreen();
 }
 
 /**

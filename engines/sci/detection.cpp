@@ -569,6 +569,20 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		SCI_VERSION_1
 	},
 
+	// Eco Quest - French DOS Floppy (from Strangerke)
+	// SCI interpreter version 1.ECO.013
+	{{"ecoquest", "Floppy", {
+		{"resource.map", 0, "67742945cd59b896d9f22a549f605217", 4407},
+		{"resource.000", 0, "0b12a91c935e385308af8d17811deded", 973723},
+		{"resource.001", 0, "fc7fba54b6bb88fd7e9c229636599aa9", 1205841},
+		{"resource.002", 0, "b836c6ee9de67d814ac5d1b05f5b9858", 1173872},
+		{"resource.003", 0, "f8f767f9d6351432621c6e54c1b2ba8c", 1141520},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1
+	},
+
 	// Eco Quest 2 - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.001.055
 	{{"ecoquest2", "Demo", {
@@ -586,6 +600,17 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.map", 0, "28fb7b6abb9fc1cb8882d7c2e701b63f", 5658},
 		{"resource.000", 0, "cc1d17e5637528dbe4a812699e1cbfc6", 4208192},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0,
+		SCI_VERSION_AUTODETECT,
+		SCI_VERSION_1_1
+	},
+
+	// Eco Quest 2 - French DOS Floppy (from Strangerke)
+	// SCI interpreter version 1.001.081
+	{{"ecoquest2", "Floppy", {
+		{"resource.map", 0, "c22ab8b33c339c138b6b1697b77b9e79", 5588},
+		{"resource.000", 0, "1c4093f7248240329121fdf8c0d59152", 4231946},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0,
 		SCI_VERSION_AUTODETECT,
 		SCI_VERSION_1_1

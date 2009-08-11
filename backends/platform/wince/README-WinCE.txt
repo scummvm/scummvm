@@ -1,6 +1,6 @@
 ScummVM Windows CE FAQ
 Last updated: $Date$
-Release version: 0.13.0
+Release version: 1.0.0rc1
 ------------------------------------------------------------------------
 
 New in this version
@@ -19,6 +19,18 @@ aspect scaled to fill the 640x480 screen.
 Be aware that Discworld 2 tries to allocate a big chunk of memory (10 MB)
 and this will fail on many devices (file under the not enough memory
 category).
+
+From this version on, we're dropping support for FLAC and MPEG-2. The first
+is a pain to maintain, while the second has been gradually phased out in
+scummvm. Be sure to update your add-on packs and/or recompress your sound.
+
+This is still a 2-binary distribution. Here's what engines are compiled in
+the two executables:
+scummvm1.exe:
+ - scumm, sword1, sword2, queen, sky, lure, agi, touche, tinsel, cruise
+scummvm2.exe:
+ - gob, cine, saga, kyra, agos, parallaction, drascula, groovie, tucker, made
+
 
 ------------------------------------------------------------------------
 

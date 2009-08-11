@@ -126,9 +126,9 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 		}
 
 		if (g_debug_weak_validations)
-			warning(txt);
+			warning("%s", txt);
 		else
-			error(txt);
+			error("%s", txt);
 
 #ifdef STRICT_READ
 		return 1;

@@ -177,8 +177,8 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 					seq_createAmuletJewel(i-0x55, 10, 1, 1);
 			}
 		}
-		_screen->copyRegion(0, 0, 0, 0, 320, 200, 10, 8);
-		_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 0);
+
+		_screen->copyRegion(8, 8, 8, 8, 304, 212, 10, 0);
 	}
 
 	setHandItem(_itemInHand);

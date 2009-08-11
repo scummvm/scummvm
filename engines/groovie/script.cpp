@@ -579,6 +579,7 @@ bool Script::playvideofromref(uint32 fileref) {
 	// Video available, play one frame
 	if (_videoFile) {
 		bool endVideo = _vm->_videoPlayer->playFrame();
+		_vm->_musicPlayer->frameTick();
 
 		if (endVideo) {
 			// Close the file
@@ -1506,6 +1507,14 @@ void Script::o_playcd() {
 	_vm->_musicPlayer->playCD(val);
 }
 
+void Script::o_musicdelay() {
+	uint16 delay = readScript16bits();
+
+	debugScript(1, true, "MUSICDELAY %d", delay);
+
+	_vm->_musicPlayer->setBackgroundDelay(delay);
+}
+
 void Script::o_hotspot_outrect() {
 	uint16 left = readScript16bits();
 	uint16 top = readScript16bits();
@@ -1687,7 +1696,7 @@ Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
 	&Script::o_nop8,
 	&Script::o_getcd, // 0x4C
 	&Script::o_playcd,
-	&Script::o_nop16,
+	&Script::o_musicdelay,
 	&Script::o_nop16,
 	&Script::o_nop16, // 0x50
 	&Script::o_nop16,

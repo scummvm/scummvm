@@ -322,18 +322,27 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 
 void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	_screen->hideMouse();
-	_screen->fillRect(8, 143, 311, 152, 12);
+	_screen->fillRect(8, 143, 311, 152, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 
-	if (_startSentencePalIndex != color || _fadeText != false) {
-		_currSentenceColor[0] = _screen->getPalette(0)[765] = _screen->getPalette(0)[color*3];
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (color != 19) {
+			_currSentenceColor[0] = 0x3F;
+			_currSentenceColor[1] = 0x3F;
+			_currSentenceColor[2] = 0x3F;
+
+			_screen->setInterfacePalette(_screen->getPalette(1),
+					_currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
+		}
+	} else if (_startSentencePalIndex != color || _fadeText != false) {
+		_currSentenceColor[0] = _screen->getPalette(0)[765] = _screen->getPalette(0)[color*3+0];
 		_currSentenceColor[1] = _screen->getPalette(0)[766] = _screen->getPalette(0)[color*3+1];
 		_currSentenceColor[2] = _screen->getPalette(0)[767] = _screen->getPalette(0)[color*3+2];
 
 		_screen->setScreenPalette(_screen->getPalette(0));
-		_startSentencePalIndex = 0;
+		_startSentencePalIndex = color;
 	}
 
-	_text->printText(sentence, 8, 143, 0xFF, 12, 0);
+	_text->printText(sentence, 8, 143, 0xFF, _flags.platform == Common::kPlatformAmiga ? 19 : 12, 0);
 	_screen->showMouse();
 	setTextFadeTimerCountdown(15);
 	_fadeText = false;
@@ -364,10 +373,15 @@ void KyraEngine_LoK::updateTextFade() {
 			}
 	}
 
-	_screen->getPalette(0)[765] = _currSentenceColor[0];
-	_screen->getPalette(0)[766] = _currSentenceColor[1];
-	_screen->getPalette(0)[767] = _currSentenceColor[2];
-	_screen->setScreenPalette(_screen->getPalette(0));
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->setInterfacePalette(_screen->getPalette(1),
+				_currSentenceColor[0], _currSentenceColor[1], _currSentenceColor[2]);
+	} else {
+		_screen->getPalette(0)[765] = _currSentenceColor[0];
+		_screen->getPalette(0)[766] = _currSentenceColor[1];
+		_screen->getPalette(0)[767] = _currSentenceColor[2];
+		_screen->setScreenPalette(_screen->getPalette(0));
+	}
 
 	if (finished) {
 		_fadeText = false;

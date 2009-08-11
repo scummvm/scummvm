@@ -6,8 +6,6 @@ MODULE_OBJS := \
 	events.o \
 	graphics.o \
 	gp2x.o \
-#	gp2x-options.o \
-#	overload_help.o \
 
 MODULE_DIRS += \
 	backends/platform/gp2x/

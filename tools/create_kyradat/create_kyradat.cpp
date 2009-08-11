@@ -498,7 +498,11 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	for (uint32 i = 0; i < size; ++i) {
 		if (!data[i]) {
 			if (g->special == kAmigaVersion) {
-				if (!((i + 1) & 0x1))
+				if (i + 1 >= size)
+					++entries;
+				else if (!data[i+1])
+					continue;
+				else
 					++entries;
 			} else {
 				++entries;
@@ -554,6 +558,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 
 	uint8 *buffer = new uint8[targetsize];
 	assert(buffer);
+	memset(buffer, 0, targetsize);
 	uint8 *output = buffer;
 	const uint8 *input = (const uint8*) data;
 
@@ -561,7 +566,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
 		g->special == k2TownsFile2E || g->special == k2TownsFile2J || fmtPatch == 5) {
-		const byte * c = data + size;
+		const byte *c = data + size;
 		do {
 			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
 				memcpy(output, input, 0x0F);
@@ -611,8 +616,13 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 		// we need to strip some aligment zeros out here
 		int dstPos = 0;
 		for (uint32 i = 0; i < size; ++i) {
-			if (!data[i] && ((i+1) & 0x1))
-				continue;
+			if (!data[i]) {
+				if (i + 1 > size)
+					continue;
+				else if (i + 1 < size && !data[i+1])
+					continue;
+			}
+
 			*output++ = data[i];
 			++dstPos;
 		}
