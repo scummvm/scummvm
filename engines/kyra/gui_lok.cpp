@@ -371,8 +371,11 @@ void GUI_LoK::setGUILabels() {
 		walkspeedGarbageOffset = 0;
 	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
 		// English Amiga version
-		offsetOptions = 8;
+		offset = 23;
+		offsetOn = 23;
+		offsetOptions = 32;
 		walkspeedGarbageOffset = 2;
+		offsetMainMenu = 23;
 	}
 
 	assert(offset + 27 < _vm->_guiStringsSize);
