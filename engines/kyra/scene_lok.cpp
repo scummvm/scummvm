@@ -778,7 +778,7 @@ void KyraEngine_LoK::initSceneScreen(int brandonAlive) {
 		if (_unkScreenVar2 == 1)
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, _unkScreenVar3, false);
 		else
-			_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+			_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0, Screen::CR_NO_P_CHECK);
 
 		if (_unkScreenVar1 && !queryGameFlag(0xA0)) {
 			if (_currentCharacter->sceneId == 45 && _cauldronState)
