@@ -901,20 +901,25 @@ int KyraEngine_LoK::seq_playEnd() {
 	if (_endSequenceNeedLoading) {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
+
 		_finalA = createWSAMovie();
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);
+	
 		_finalB = createWSAMovie();
 		assert(_finalB);
 		_finalB->open("finalb.wsa", 1, 0);
+	
 		_finalC = createWSAMovie();
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
 		_finalC->open("finalc.wsa", 1, 0);
+	
 		_screen->_curPage = 0;
 		_beadStateVar = 0;
 		_malcolmFlag = 0;
 		_unkEndSeqVar2 = _system->getMillis() + 600 * _tickLength;
+
 		_screen->copyRegion(312, 0, 312, 0, 8, 136, 0, 2);
 	}
 
@@ -943,17 +948,25 @@ int KyraEngine_LoK::seq_playEnd() {
 			_endSequenceSkipFlag = 1;
 			if (_text->printed())
 				_text->restoreTalkTextMessageBkgd(2, 0);
+
 			_screen->_curPage = 0;
 			_screen->hideMouse();
-			_screen->fadeSpecialPalette(32, 228, 20, 60);
+
+			if (_flags.platform != Common::kPlatformAmiga)
+				_screen->fadeSpecialPalette(32, 228, 20, 60);
+	
 			delay(60 * _tickLength);
+
 			_screen->loadBitmap("GEMHEAL.CPS", 3, 3, &_screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, 1, 0);
+
 			uint32 nextTime = _system->getMillis() + 120 * _tickLength;
-			_finalA = new WSAMovie_v1(this);
+
+			_finalA = createWSAMovie();
 			assert(_finalA);
 			_finalA->open("finald.wsa", 1, 0);
+
 			delayUntil(nextTime);
 			snd_playSoundEffect(0x40);
 			for (int i = 0; i < 22; ++i) {
@@ -967,6 +980,7 @@ int KyraEngine_LoK::seq_playEnd() {
 				_screen->updateScreen();
 			}
 			delete _finalA;
+
 			_finalA = 0;
 			seq_playEnding();
 			return 1;
@@ -985,11 +999,13 @@ void KyraEngine_LoK::seq_brandonToStone() {
 	assert(_brandonStoneTable);
 	setupShapes123(_brandonStoneTable, 14, 0);
 	_animator->setBrandonAnimSeqSize(5, 51);
+
 	for (int i = 123; i <= 136; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		_animator->animRefreshNPC(0);
 		delayWithTicks(8);
 	}
+
 	_animator->resetBrandonAnimSeqSize();
 	freeShapes123();
 	_screen->showMouse();
@@ -1001,7 +1017,14 @@ void KyraEngine_LoK::seq_playEnding() {
 	_screen->hideMouse();
 	_screen->_curPage = 0;
 	_screen->fadeToBlack();
-	_screen->loadBitmap("REUNION.CPS", 3, 3, &_screen->getPalette(0));
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->loadBitmap("GEMCUT.CPS", 3, 3, &_screen->getPalette(0));
+		_screen->copyRegion(232, 136, 176, 56, 56, 56, 2, 2);
+	} else {
+		_screen->loadBitmap("REUNION.CPS", 3, 3, &_screen->getPalette(0));
+	}
+
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->_curPage = 0;
 	// XXX
