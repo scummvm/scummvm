@@ -302,11 +302,13 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 			for (i = 0; i < channels; i++)
 				_status.ch[i].sample1 = _stream->readSint16LE();
 
-			for (i = 0; i < channels; i++)
-				buffer[samples++] = _status.ch[i].sample2 = _stream->readSint16LE();
+			for (i = 0; i < channels; i++) {
+				_status.ch[i].sample2 = _stream->readSint16LE();
+				buffer[samples++] = TO_LE_16(_status.ch[i].sample2);
+			}
 
 			for (i = 0; i < channels; i++)
-				buffer[samples++] = _status.ch[i].sample1;
+				buffer[samples++] = TO_LE_16(_status.ch[i].sample1);
 
 			_blockPos = channels * 7;
 		}
