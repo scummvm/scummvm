@@ -402,12 +402,6 @@ List *lookup_list(EngineState *s, reg_t addr);
 #define _K_SOUND_STATUS_PLAYING 3
 
 
-
-/* Kernel optimization flags */
-#define KERNEL_OPT_FLAG_GOT_EVENT (1<<0)
-#define KERNEL_OPT_FLAG_GOT_2NDEVENT (1<<1)
-
-
 /******************** Kernel functions ********************/
 
 // New kernel functions
