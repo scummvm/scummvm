@@ -555,7 +555,9 @@ void KyraEngine_LoK::seq_winterScroll1() {
 		_animator->sprites()[0].active = 0;
 		_sprites->_anims[1].play = true;
 		_animator->sprites()[1].active = 1;
-		setGameFlag(0xA2);
+
+		if (_flags.platform != Common::kPlatformAmiga)
+			setGameFlag(0xA2);
 	}
 
 	for (int i = midpoint; i < 123 + numFrames; ++i) {
@@ -781,6 +783,7 @@ void KyraEngine_LoK::seq_dispelMagicAnimation() {
 
 void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	int newItem = -1;
+
 	static const uint8 flaskTable1[] = { 0x46, 0x48, 0x4A, 0x4C };
 	static const uint8 flaskTable2[] = { 0x47, 0x49, 0x4B, 0x4D };
 
@@ -802,12 +805,15 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	setMouseItem(newItem);
 	_screen->showMouse();
 	_itemInHand = newItem;
+
 	assert(_fullFlask);
 	assert(type < _fullFlask_Size && type >= 0);
+
 	static const uint16 voiceEntries[] = {
 		0x1F40, 0x1F41, 0x1F42, 0x1F45
 	};
 	assert(type < ARRAYSIZE(voiceEntries));
+
 	characterSays(voiceEntries[type], _fullFlask[type], 0, -2);
 }
 
