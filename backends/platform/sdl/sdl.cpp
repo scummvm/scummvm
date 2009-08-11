@@ -85,6 +85,31 @@ static Uint32 timer_handler(Uint32 interval, void *param) {
 	return interval;
 }
 
+AspectRatio::AspectRatio(int w, int h) {
+	// TODO : Validation and so on...
+	// Currently, we just ensure the program don't instantiate non-supported aspect ratios
+	_kw = w;
+	_kh = h;
+}
+
+static const size_t AR_COUNT = 4;
+static const char*       desiredAspectRatioAsStrings[AR_COUNT] = {            "auto",            "4/3",            "16/9",            "16/10" };
+static const AspectRatio desiredAspectRatios[AR_COUNT]         = { AspectRatio(0, 0), AspectRatio(4,3), AspectRatio(16,9), AspectRatio(16,10) };
+static AspectRatio getDesiredAspectRatio() {
+	//TODO : We could parse an arbitrary string, if we code enough proper validation
+	Common::String desiredAspectRatio = ConfMan.get("desired_screen_aspect_ratio");
+
+	for (size_t i = 0; i < AR_COUNT; i++) {
+		assert(desiredAspectRatioAsStrings[i] != NULL);
+
+		if (!scumm_stricmp(desiredAspectRatio.c_str(), desiredAspectRatioAsStrings[i])) {
+			return desiredAspectRatios[i];
+		}
+	}
+	// TODO : Report a warning
+	return AspectRatio(0, 0);
+}
+
 void OSystem_SDL::initBackend() {
 	assert(!_inited);
 
@@ -124,6 +149,7 @@ void OSystem_SDL::initBackend() {
 	_videoMode.mode = GFX_DOUBLESIZE;
 	_videoMode.scaleFactor = 2;
 	_videoMode.aspectRatioCorrection = ConfMan.getBool("aspect_ratio");
+	_videoMode.desiredAspectRatio = getDesiredAspectRatio();
 	_scalerProc = Normal2x;
 #else // for small screen platforms
 	_videoMode.mode = GFX_NORMAL;

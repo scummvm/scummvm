@@ -42,12 +42,6 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int oldx, oldy;
 	int modifier_mask = s->_version <= SCI_VERSION_0 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 
-	if (s->kernel_opt_flags & KERNEL_OPT_FLAG_GOT_2NDEVENT) {
-		// Penalty time- too many requests to this function without waiting!
-		int delay = s->script_000->locals_block->_locals[SCI_VARIABLE_GAME_SPEED].offset;
-		gfxop_sleep(s->gfx_state, delay * 1000 / 60);
-	}
-
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
 	if (g_debug_simulated_key && (mask & SCI_EVT_KEYBOARD)) {
@@ -70,15 +64,6 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	PUT_SEL32V(obj, y, s->gfx_state->pointer_pos.y);
 
 	//gfxop_set_pointer_position(s->gfx_state, Common::Point(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y));
-
-	if (e.type)
-		s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
-	else {
-		if (s->kernel_opt_flags & KERNEL_OPT_FLAG_GOT_EVENT)
-			s->kernel_opt_flags |= KERNEL_OPT_FLAG_GOT_2NDEVENT;
-		else
-			s->kernel_opt_flags |= KERNEL_OPT_FLAG_GOT_EVENT;
-	}
 
 	switch (e.type) {
 	case SCI_EVT_QUIT:

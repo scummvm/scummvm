@@ -374,6 +374,7 @@ void AGOSEngine::drawIcon(WindowBlock *window, uint icon, uint x, uint y) {
 	_videoLockOut &= ~0x8000;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
 	WindowBlock *window;
@@ -477,6 +478,7 @@ l1:;		itemRef = derefItem(itemRef->next);
 	window->iconPtr->upArrow = _scrollUpHitArea;
 	window->iconPtr->downArrow = _scrollDownHitArea;
 }
+#endif
 
 void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask) {
 	Item *item_ptr_org = itemRef;
@@ -581,6 +583,7 @@ void AGOSEngine::drawIconArray(uint num, Item *itemRef, int line, int classMask)
 	}
 }
 
+#ifdef ENABLE_AGOS2
 uint AGOSEngine_Feeble::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) {
 	HitArea *ha = findEmptyHitArea();
 
@@ -596,6 +599,7 @@ uint AGOSEngine_Feeble::setupIconHitArea(WindowBlock *window, uint num, uint x, 
 
 	return ha - _hitAreas;
 }
+#endif
 
 uint AGOSEngine_Simon2::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y, Item *itemPtr) {
 	HitArea *ha = findEmptyHitArea();
@@ -683,6 +687,7 @@ uint AGOSEngine::setupIconHitArea(WindowBlock *window, uint num, uint x, uint y,
 	return ha - _hitAreas;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
 
@@ -712,6 +717,7 @@ void AGOSEngine_Feeble::addArrows(WindowBlock *window, uint8 num) {
 	ha->window = window;
 	ha->verb = 1;
 }
+#endif
 
 void AGOSEngine_Simon2::addArrows(WindowBlock *window, uint8 num) {
 	HitArea *ha;
@@ -860,16 +866,16 @@ void AGOSEngine::addArrows(WindowBlock *window, uint8 num) {
 	x = 30;
 	y = 151;
 	if (num != 2) {
-		y = window->height * 4 + window->y - 19;
-		x = window->width + window->x;
+		y = window->y + window->height * 4 - 19;
+		x = window->x + window->width;
 	}
 	drawArrow(x, y, 16);
 
 	ha = findEmptyHitArea();
 	_scrollUpHitArea = ha - _hitAreas;
 
-	ha->x = 30 * 8;
-	ha->y = 151;
+	ha->x = x * 8;
+	ha->y = y;
 	ha->width = 16;
 	ha->height = 19;
 	ha->flags = kBFBoxInUse;
@@ -881,16 +887,16 @@ void AGOSEngine::addArrows(WindowBlock *window, uint8 num) {
 	x = 30;
 	y = 170;
 	if (num != 2) {
-		y = window->height * 4;
-		x = window->width + window->x;
+		y = window->y + window->height * 4;
+		x = window->x + window->width;
 	}
 	drawArrow(x, y, -16);
 
 	ha = findEmptyHitArea();
 	_scrollDownHitArea = ha - _hitAreas;
 
-	ha->x = 30 * 8;
-	ha->y = 170;
+	ha->x = x * 8;
+	ha->y = y;
 	ha->width = 16;
 	ha->height = 19;
 	ha->flags = kBFBoxInUse;
@@ -956,7 +962,8 @@ void AGOSEngine::drawArrow(uint16 x, uint16 y, int8 dir) {
 
 	for (h = 0; h < 19; h++) {
 		for (w = 0; w < 16; w++) {
-			dst[w] = src[w] + 16;
+			if (src[w]) 
+				dst[w] = src[w] + 16;
 		}
 
 		src += dir;
@@ -984,8 +991,8 @@ void AGOSEngine_Elvira2::removeArrows(WindowBlock *window, uint num) {
 
 void AGOSEngine::removeArrows(WindowBlock *window, uint num) {
 	if (num != 2) {
-		uint y = window->height * 4 + window->y - 19;
-		uint x = window->width + window->x;
+		uint y = window->y + window->height * 4 - 19;
+		uint x = (window->x + window->width) * 8;
 		restoreBlock(x, y, x + 16, y + 38);
 	} else {
 		colorBlock(window, 240, 151, 16, 38);

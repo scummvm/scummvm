@@ -114,9 +114,12 @@ EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 fla
 	gc_countdown = 0;
 
 	successor = 0;
+
+	speedThrottler = new SpeedThrottler(version);
 }
 
 EngineState::~EngineState() {
+	delete speedThrottler;
 }
 
 uint16 EngineState::currentRoomNumber() const {
@@ -172,15 +175,62 @@ Common::String EngineState::getLanguageString(const char *str, kLanguage lang) c
 		return Common::String(str);
 }
 
+kLanguage EngineState::getLanguage() {
+	kLanguage lang = K_LANG_ENGLISH;
+
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.printLang != -1) {
+		EngineState *s = this;
+
+		lang = (kLanguage)GET_SEL32V(s->game_obj, printLang);
+
+		if ((_version == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
+			// If language is set to none, we use the language from the game detector.
+			// SSCI reads this from resource.cfg (early games do not have a language
+			// setting in resource.cfg, but instead have the secondary language number
+			// hardcoded in the game script).
+			// SCI1.1 games always use the language setting from the config file
+			// (essentially disabling runtime language switching).
+			// Note: only a limited number of multilanguage games have been tested
+			// so far, so this information may not be 100% accurate.
+			switch (((Sci::SciEngine*)g_engine)->getLanguage()) {
+			case Common::FR_FRA:
+				lang = K_LANG_FRENCH;
+				break;
+			case Common::ES_ESP:
+				lang = K_LANG_SPANISH;
+				break;
+			case Common::IT_ITA:
+				lang = K_LANG_ITALIAN;
+				break;
+			case Common::DE_DEU:
+				lang = K_LANG_GERMAN;
+				break;
+			case Common::JA_JPN:
+				lang = K_LANG_JAPANESE;
+				break;
+			case Common::PT_BRA:
+				lang = K_LANG_PORTUGUESE;
+				break;
+			default:
+				lang = K_LANG_ENGLISH;
+			}
+
+			// Store language in printLang selector
+			PUT_SEL32V(s->game_obj, printLang, lang);
+		}
+	}
+
+	return lang;
+}
+
 Common::String EngineState::strSplit(const char *str, const char *sep) {
 	EngineState *s = this;
 
-	kLanguage lang = (kLanguage)GET_SEL32V(s->game_obj, printLang);
-	kLanguage subLang = (kLanguage)GET_SEL32V(s->game_obj, subtitleLang);
+	kLanguage lang = getLanguage();
+	kLanguage subLang = K_LANG_NONE;
 
-	// Use English when no language settings are present in the game
-	if (lang == K_LANG_NONE)
-		lang = K_LANG_ENGLISH;
+	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.subtitleLang != -1)
+		subLang = (kLanguage)GET_SEL32V(s->game_obj, subtitleLang);
 
 	Common::String retval = getLanguageString(str, lang);
 

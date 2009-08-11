@@ -179,7 +179,7 @@ void TextDisplayer::calcWidestLineBounds(int &x1, int &x2, int w, int cx) {
 void TextDisplayer::restoreTalkTextMessageBkgd(int srcPage, int dstPage) {
 	if (_talkMessagePrinted) {
 		_talkMessagePrinted = false;
-		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage);
+		_screen->copyRegion(_talkCoords.x, _talkCoords.y, _talkCoords.x, _talkMessageY, _talkCoords.w, _talkMessageH, srcPage, dstPage, Screen::CR_NO_P_CHECK);
 	}
 }
 
@@ -200,37 +200,15 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	_screen->copyRegion(_talkCoords.x, _talkMessageY, _talkCoords.x, _talkCoords.y, _talkCoords.w, _talkMessageH, srcPage, dstPage, Screen::CR_NO_P_CHECK);
 	int curPage = _screen->_curPage;
 	_screen->_curPage = srcPage;
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		setTextColor(color);
+
 	for (int i = 0; i < lineCount; ++i) {
 		top = i * 10 + _talkMessageY;
 		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
 		int left = getCenterStringX(msg, x1, x2);
 		printText(msg, left, top, color, 0xC, 0);
-	}
-	_screen->_curPage = curPage;
-	_talkMessagePrinted = true;
-}
-
-void TextDisplayer::printIntroTextMessage(const char *text, int x, int y, uint8 col1, uint8 col2, uint8 col3, int dstPage, Screen::FontId font) {
-	char *str = preprocessString(text);
-	int lineCount = buildMessageSubstrings(str);
-	int top = y - lineCount * 10;
-	if (top < 0) {
-		top = 0;
-	}
-	_talkMessageY = top;
-	_talkMessageH = lineCount * 10;
-	int w = getWidestLineWidth(lineCount);
-	int x1, x2;
-	calcWidestLineBounds(x1, x2, w, x);
-	_talkCoords.x = x1;
-	_talkCoords.w = w + 2;
-	int curPage = _screen->setCurPage(dstPage);
-
-	for (int i = 0; i < lineCount; ++i) {
-		top = i * 10 + _talkMessageY;
-		char *msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
-		int left = getCenterStringX(msg, x1, x2);
-		printText(msg, left, top, col1, col2, col3, font);
 	}
 	_screen->_curPage = curPage;
 	_talkMessagePrinted = true;
@@ -248,7 +226,7 @@ void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1,
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {
-	uint8 colorTable[] = {0x0F, 0x9, 0x0C9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
+	uint8 colorTable[] = {0x0F, 0x09, 0xC9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
 	int top, left, x1, x2, w, x;
 	char *msg;
 
@@ -259,6 +237,9 @@ void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX
 	x = charX;
 	calcWidestLineBounds(x1, x2, w, x);
 
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		setTextColor(color);
+
 	for (int i = 0; i < lineCount; ++i) {
 		top = i * 10 + _talkMessageY;
 		msg = &_talkSubstrings[i * TALK_SUBSTRING_LEN];
@@ -266,4 +247,91 @@ void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX
 		printText(msg, left, top, color, 0xC, 0);
 	}
 }
+
+void TextDisplayer::setTextColor(uint8 color) {
+	byte r, g, b;
+
+	switch (color) {
+	case 4:
+		// 0x09E
+		r = 0;
+		g = 37;
+		b = 58;
+		break;
+
+	case 5:
+		// 0xFF5
+		r = 63;
+		g = 63;
+		b = 21;
+		break;
+
+	case 27:
+		// 0x5FF
+		r = 21;
+		g = 63;
+		b = 63;
+		break;
+
+	case 34:
+		// 0x8E5
+		r = 33;
+		g = 58;
+		b = 21;
+		break;
+
+	case 58:
+		// 0x9FB
+		r = 37;
+		g = 63;
+		b = 46;
+		break;
+
+	case 85:
+		// 0x7CF
+		r = 29;
+		g = 50;
+		b = 63;
+		break;
+
+	case 114:
+	case 117:
+		// 0xFAF
+		r = 63;
+		g = 42;
+		b = 63;
+		break;
+
+	case 128:
+	case 129:
+		// 0xFCC
+		r = 63;
+		g = 50;
+		b = 50;
+		break;
+
+	case 201:
+		// 0xFD8
+		r = 63;
+		g = 54;
+		b = 33;
+		break;
+
+	case 216:
+		// 0xFC6
+		r = 63;
+		g = 50;
+		b = 25;
+		break;
+
+	default:
+		// 0xEEE
+		r = 58;
+		g = 58;
+		b = 58;
+	}
+
+	_screen->setPaletteIndex(0x10, r, g, b);
+}
+
 } // end of namespace Kyra

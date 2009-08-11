@@ -231,12 +231,13 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
 		if (_currentCharacter->sceneId != 45) {
 			if (stackPos(0) == 13) {
-				// TODO: Check this!
 				_screen->copyPalette(0, 12);
 				_screen->setScreenPalette(_screen->getPalette(0));
 			}
 		} else {
-			warning("KyraEngine_LoK::o1_fadeSpecialPalette not implemented");
+			setupZanthiaPalette(stackPos(0));
+			_screen->getPalette(0).copy(_screen->getPalette(4), 12, 1);
+			_screen->fadePalette(_screen->getPalette(0), 2);
 		}
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -579,7 +580,17 @@ int KyraEngine_LoK::o1_restoreAllObjectBackgrounds(EMCState *script) {
 
 int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setCustomPaletteRange(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if (_currentCharacter->sceneId == 45) {
+			setupZanthiaPalette(stackPos(0));
+		} else if (stackPos(0) == 29) {
+			_screen->copyPalette(0, 11);
+		} else if (stackPos(0) == 13) {
+			_screen->copyPalette(0, 12);
+		}
+	} else {
+		_screen->getPalette(1).copy(_specialPalettes[stackPos(0)], 0, stackPos(2), stackPos(1));
+	}
 	return 0;
 }
 
@@ -1081,7 +1092,9 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
-	_screen->setFont(Screen::FID_6_FNT);
+
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie)
+		_screen->setFont(Screen::FID_6_FNT);
 	return 0;
 }
 
@@ -1092,7 +1105,9 @@ int KyraEngine_LoK::o1_specialEventRemoveBrynnsNote(EMCState *script) {
 	_screen->loadPageFromDisk("HIDPAGE.TMP", 2);
 	_screen->updateScreen();
 	_screen->showMouse();
-	_screen->setFont(Screen::FID_8_FNT);
+
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie)
+		_screen->setFont(Screen::FID_8_FNT);
 	return 0;
 }
 
@@ -1213,37 +1228,77 @@ int KyraEngine_LoK::o1_findBrightestFireberry(EMCState *script) {
 
 int KyraEngine_LoK::o1_setFireberryGlowPalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_setFireberryGlowPalette(%p) (%d)", (const void *)script, stackPos(0));
-	int palIndex = 0;
-	switch (stackPos(0)) {
-	case 0x1E:
-		palIndex = 9;
-		break;
 
-	case 0x1F:
-		palIndex = 10;
-		break;
+	if (_flags.platform == Common::kPlatformAmiga) {
+		int palIndex = 0;
 
-	case 0x20:
-		palIndex = 11;
-		break;
+		switch (stackPos(0)) {
+		case -1:
+			// The original seemed to draw some lines on page 2 here, which looks strange...
+			//if (!(_brandonStatusBit & 2))
+			//	warning("Unimplemented case for o1_setFireberryGlowPalette");
+			palIndex = 9;
+			break;
 
-	case 0x21:
-	case -1:
-		palIndex = 12;
-		break;
+		case 30:
+			palIndex = 7;
+			break;
 
-	default:
-		palIndex = 8;
-	}
-	if (_brandonStatusBit & 2) {
-		if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
-			_currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
-			(_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
-			palIndex = 14;
+		case 31:
+			palIndex = 8;
+			break;
+
+		case 32:
+		case 33:
+			palIndex = 9;
+			break;
+
+		case 28: case 29: default:
+			palIndex = 6;
 		}
+
+		if (_brandonStatusBit & 2) {
+			if (_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)
+				palIndex = 10;
+		}
+
+		_screen->copyPalette(0, palIndex);
+	} else {
+		int palIndex = 0;
+
+		switch (stackPos(0)) {
+		case 0x1E:
+			palIndex = 9;
+			break;
+
+		case 0x1F:
+			palIndex = 10;
+			break;
+
+		case 0x20:
+			palIndex = 11;
+			break;
+
+		case 0x21:
+		case -1:
+			palIndex = 12;
+			break;
+
+		default:
+			palIndex = 8;
+		}
+
+		if (_brandonStatusBit & 2) {
+			if (_currentCharacter->sceneId != 133 && _currentCharacter->sceneId != 137 &&
+				_currentCharacter->sceneId != 165 && _currentCharacter->sceneId != 173 &&
+				(_currentCharacter->sceneId < 187 || _currentCharacter->sceneId > 198)) {
+				palIndex = 14;
+			}
+		}
+
+		_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	}
 
-	_screen->getPalette(1).copy(_specialPalettes[palIndex], 0, 15, 228);
 	return 0;
 }
 
@@ -1255,9 +1310,11 @@ int KyraEngine_LoK::o1_drinkPotionAnimation(EMCState *script) {
 
 int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_makeAmuletAppear(%p) ()", (const void *)script);
-	WSAMovie_v1 amulet(this);
-	amulet.open("AMULET.WSA", 1, 0);
-	if (amulet.opened()) {
+	Movie *amulet = createWSAMovie();
+	assert(amulet);
+	amulet->open("AMULET.WSA", 1, 0);
+
+	if (amulet->opened()) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();
 		snd_playSoundEffect(0x70);
@@ -1275,7 +1332,7 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 			if (code == 14)
 				snd_playSoundEffect(0x73);
 
-			amulet.displayFrame(code, 0, 224, 152, 0, 0, 0);
+			amulet->displayFrame(code, 0, 224, 152, 0, 0, 0);
 			_animator->_updateScreen = true;
 
 			while (_system->getMillis() < nextTime) {
@@ -1287,6 +1344,8 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 		}
 		_screen->showMouse();
 	}
+
+	delete amulet;
 	setGameFlag(0x2D);
 	return 0;
 }
@@ -1335,7 +1394,7 @@ int KyraEngine_LoK::o1_waitForConfirmationMouseClick(EMCState *script) {
 
 		updateInput();
 
-		int input = checkInput(_buttonList, false) & 0xFF;
+		int input = checkInput(0, false) & 0xFF;
 		removeInputTop();
 		if (input == 200)
 			break;

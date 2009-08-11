@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -72,6 +73,7 @@ int AGOSEngine::countSaveGames() {
 	return i;
 }
 
+#ifdef ENABLE_AGOS2
 char *AGOSEngine_PuzzlePack::genSaveName(int slot) {
 	static char buf[20];
 
@@ -88,6 +90,7 @@ char *AGOSEngine_Feeble::genSaveName(int slot) {
 	sprintf(buf, "feeble.%.3d", slot);
 	return buf;
 }
+#endif
 
 char *AGOSEngine_Simon2::genSaveName(int slot) {
 	static char buf[20];
@@ -283,7 +286,7 @@ void AGOSEngine::userGame(bool load) {
 	const char *message1;
 	int i = 0, numSaveGames;
 	char *name;
-	char buf[8];
+	char buf[10];
 
 	numSaveGames = countSaveGames();
 
@@ -312,7 +315,7 @@ restart:
 	for (; *message1; message1++)
 		windowPutChar(window, *message1);
 
-	memset(buf, 0, 8);
+	memset(buf, 0, 10);
 	name = buf;
 	_saveGameNameLen = 0;
 

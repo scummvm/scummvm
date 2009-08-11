@@ -389,7 +389,8 @@ void SeqPlayer::s1_copyRegionSpecial() {
 			const int x = (Screen::SCREEN_W - _screen->getTextWidth(copyStr)) / 2;
 			const int y = 179;
 			_screen->setTextColorMap(colorMap);
-			_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
+			if (_vm->gameFlags().platform != Common::kPlatformAmiga)
+				_screen->printText(copyStr, x + 1, y + 1, 0xB, 0xC);
 			_screen->printText(copyStr, x, y, 0xF, 0xC);
 		}
 		break;

@@ -141,7 +141,8 @@ void Util::processInput(bool scroll) {
 		y -= _vm->_video->_screenDeltaY;
 
 		_vm->_util->setMousePos(x, y);
-		_vm->_game->evaluateScroll(x, y);
+
+		_vm->_game->wantScroll(x, y);
 	}
 }
 

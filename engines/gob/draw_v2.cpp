@@ -46,6 +46,8 @@ Draw_v2::Draw_v2(GobEngine *vm) : Draw_v1(vm) {
 }
 
 void Draw_v2::initScreen() {
+	_vm->_game->_preventScroll = false;
+
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
 

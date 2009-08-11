@@ -9,7 +9,7 @@
 	<Tool
 		Name="VCCLCompilerTool"
 		AdditionalIncludeDirectories="../..;../../engines"
-		PreprocessorDefinitions="USE_NASM;USE_ZLIB;ENABLE_KYRA;ENABLE_LOL;ENABLE_SCUMM;ENABLE_SCUMM_7_8;ENABLE_HE"
+		PreprocessorDefinitions="USE_NASM;USE_ZLIB;ENABLE_AGOS2;ENABLE_PN;ENABLE_KYRA;ENABLE_LOL;ENABLE_SCUMM;ENABLE_SCUMM_7_8;ENABLE_HE"
 		ExceptionHandling="0"
 		RuntimeTypeInfo="false"
 		WarningLevel="4"

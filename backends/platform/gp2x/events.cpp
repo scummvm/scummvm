@@ -93,7 +93,7 @@ void OSystem_GP2X::fillMouseEvent(Common::Event &event, int x, int y) {
 	if (!_overlayVisible) {
 		event.mouse.x /= _videoMode.scaleFactor;
 		event.mouse.y /= _videoMode.scaleFactor;
-		if (_videoMode.aspectRatio)
+		if (_videoMode.aspectRatioCorrection)
 			event.mouse.y = aspect2Real(event.mouse.y);
 	}
 }

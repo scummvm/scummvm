@@ -555,7 +555,9 @@ void KyraEngine_LoK::seq_winterScroll1() {
 		_animator->sprites()[0].active = 0;
 		_sprites->_anims[1].play = true;
 		_animator->sprites()[1].active = 1;
-		setGameFlag(0xA2);
+
+		if (_flags.platform != Common::kPlatformAmiga)
+			setGameFlag(0xA2);
 	}
 
 	for (int i = midpoint; i < 123 + numFrames; ++i) {
@@ -569,10 +571,15 @@ void KyraEngine_LoK::seq_winterScroll1() {
 			_sprites->_anims[i].play = false;
 			_animator->sprites()[i].active = 0;
 		}
-		_screen->getPalette(0).copy(palTable2()[0], 0, 20, 228);
-		_screen->fadePalette(_screen->getPalette(0), 72);
-		_screen->setScreenPalette(_screen->getPalette(0));
-		setGameFlag(0xB3);
+
+		if (_flags.platform == Common::kPlatformAmiga) {
+			_screen->copyPalette(0, 11);
+		} else {
+			_screen->getPalette(0).copy(palTable2()[0], 0, 20, 228);
+			_screen->fadePalette(_screen->getPalette(0), 72);
+			_screen->setScreenPalette(_screen->getPalette(0));
+			setGameFlag(0xB3);
+		}
 	} else {
 		delayWithTicks(120);
 	}
@@ -673,7 +680,7 @@ void KyraEngine_LoK::seq_makeBrandonNormal2() {
 		_animator->animRefreshNPC(0);
 		delayWithTicks(8);
 	}
-	_animator->setBrandonAnimSeqSize(4, 48);
+	_animator->setBrandonAnimSeqSize(3, 48);
 	_currentCharacter->currentAnimFrame = 7;
 	_animator->animRefreshNPC(0);
 
@@ -718,10 +725,16 @@ void KyraEngine_LoK::seq_makeBrandonWisp() {
 	_animator->animRefreshNPC(0);
 	_animator->updateAllObjectShapes();
 
-	if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
-		_screen->fadeSpecialPalette(30, 234, 13, 4);
-	else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186)
-		_screen->fadeSpecialPalette(14, 228, 15, 4);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		if ((_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245) || 
+			(_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186))
+			_screen->fadePalette(_screen->getPalette(10), 0x54);
+	} else {
+		if (_currentCharacter->sceneId >= 229 && _currentCharacter->sceneId <= 245)
+			_screen->fadeSpecialPalette(30, 234, 13, 4);
+		else if (_currentCharacter->sceneId >= 118 && _currentCharacter->sceneId <= 186)
+			_screen->fadeSpecialPalette(14, 228, 15, 4);
+	}
 
 	freeShapes123();
 	_screen->showMouse();
@@ -770,6 +783,7 @@ void KyraEngine_LoK::seq_dispelMagicAnimation() {
 
 void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	int newItem = -1;
+
 	static const uint8 flaskTable1[] = { 0x46, 0x48, 0x4A, 0x4C };
 	static const uint8 flaskTable2[] = { 0x47, 0x49, 0x4B, 0x4D };
 
@@ -791,63 +805,135 @@ void KyraEngine_LoK::seq_fillFlaskWithWater(int item, int type) {
 	setMouseItem(newItem);
 	_screen->showMouse();
 	_itemInHand = newItem;
+
 	assert(_fullFlask);
 	assert(type < _fullFlask_Size && type >= 0);
+
 	static const uint16 voiceEntries[] = {
 		0x1F40, 0x1F41, 0x1F42, 0x1F45
 	};
 	assert(type < ARRAYSIZE(voiceEntries));
+
 	characterSays(voiceEntries[type], _fullFlask[type], 0, -2);
 }
 
 void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
-	uint8 red, green, blue;
+	if (_flags.platform == Common::kPlatformAmiga) {
+		uint8 r, g, b;
 
-	switch (item) {
-	case 60:
-	case 61:
-		red = 63;
-		green = blue = 6;
-		break;
-	case 62:
-	case 63:
-		red = green = 0;
-		blue = 67;
-		break;
-	case 64:
-	case 65:
-		red = 84;
-		green = 78;
-		blue = 14;
-		break;
-	case 66:
-		red = blue = 0;
-		green = 48;
-		break;
-	case 67:
-		red = 100;
-		green = 48;
-		blue = 23;
-		break;
-	case 68:
-		red = 73;
-		green = 0;
-		blue = 89;
-		break;
-	case 69:
-		red = green = 73;
-		blue = 86;
-		break;
-	default:
-		red = 33;
-		green = 66;
-		blue = 100;
+		switch (item) {
+		case 60: case 61:
+			// 0xC22
+			r = 50;
+			g = 8;
+			b = 8;
+			break;
+
+		case 62: case 63: case 76:
+		case 77:
+			// 0x00E
+			r = 0;
+			g = 0;
+			b = 58;
+			break;
+
+		case 64: case 65:
+			// 0xFF5
+			r = 63;
+			g = 63;
+			b = 21;
+			break;
+
+		case 66:
+			// 0x090
+			r = 0;
+			g = 37;
+			b = 0;
+			break;
+
+		case 67:
+			// 0xC61
+			r = 50;
+			g = 25;
+			b = 4;
+			break;
+
+		case 68:
+			// 0xE2E
+			r = 58;
+			g = 8;
+			b = 58;
+			break;
+
+		case 69:
+			// 0xBBB
+			r = 46;
+			g = 46;
+			b = 46;
+			break;
+
+		default:
+			// 0xFFF
+			r = 63;
+			g = 63;
+			b = 63;
+		}
+
+		_screen->setPaletteIndex(16, r, g, b);
+	} else {
+		uint8 red, green, blue;
+
+		switch (item) {
+		case 60: case 61:
+			red = 63;
+			green = blue = 6;
+			break;
+
+		case 62: case 63:
+			red = green = 0;
+			blue = 67;
+			break;
+
+		case 64: case 65:
+			red = 84;
+			green = 78;
+			blue = 14;
+			break;
+
+		case 66:
+			red = blue = 0;
+			green = 48;
+			break;
+
+		case 67:
+			red = 100;
+			green = 48;
+			blue = 23;
+			break;
+
+		case 68:
+			red = 73;
+			green = 0;
+			blue = 89;
+			break;
+
+		case 69:
+			red = green = 73;
+			blue = 86;
+			break;
+
+		default:
+			red = 33;
+			green = 66;
+			blue = 100;
+		}
+
+		red   = red * 0x3F / 100;
+		green = green * 0x3F / 100;
+		blue  = blue * 0x3F / 100;
+
+		_screen->setPaletteIndex(0xFE, red, green, blue);
 	}
-	red   = (uint8)((double)red   * 0.63);
-	green = (uint8)((double)green * 0.63);
-	blue  = (uint8)((double)blue  * 0.63);
-
-	_screen->setPaletteIndex(0xFE, red, green, blue);
 
 	_screen->hideMouse();
 	checkAmuletAnimFlags();
@@ -862,7 +948,9 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 		_animator->animRefreshNPC(0);
 		delayWithTicks(5);
 	}
+
 	snd_playSoundEffect(0x34);
+
 	for (int i = 0; i < 2; ++i) {
 		_currentCharacter->currentAnimFrame = 130;
 		_animator->animRefreshNPC(0);
@@ -886,7 +974,10 @@ void KyraEngine_LoK::seq_playDrinkPotionAnim(int item, int unk2, int flags) {
 	_currentCharacter->currentAnimFrame = 7;
 	_animator->animRefreshNPC(0);
 	freeShapes123();
-	_screen->setPaletteIndex(0xFE, 30, 30, 30);
+
+	if (_flags.platform != Common::kPlatformAmiga)
+		_screen->setPaletteIndex(0xFE, 30, 30, 30);
+
 	_screen->showMouse();
 }
 
@@ -901,20 +992,25 @@ int KyraEngine_LoK::seq_playEnd() {
 	if (_endSequenceNeedLoading) {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
-		_finalA = new WSAMovie_v1(this);
+
+		_finalA = createWSAMovie();
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);
-		_finalB = new WSAMovie_v1(this);
+	
+		_finalB = createWSAMovie();
 		assert(_finalB);
 		_finalB->open("finalb.wsa", 1, 0);
-		_finalC = new WSAMovie_v1(this);
+	
+		_finalC = createWSAMovie();
 		assert(_finalC);
 		_endSequenceNeedLoading = 0;
 		_finalC->open("finalc.wsa", 1, 0);
+	
 		_screen->_curPage = 0;
 		_beadStateVar = 0;
 		_malcolmFlag = 0;
 		_unkEndSeqVar2 = _system->getMillis() + 600 * _tickLength;
+
 		_screen->copyRegion(312, 0, 312, 0, 8, 136, 0, 2);
 	}
 
@@ -943,17 +1039,25 @@ int KyraEngine_LoK::seq_playEnd() {
 			_endSequenceSkipFlag = 1;
 			if (_text->printed())
 				_text->restoreTalkTextMessageBkgd(2, 0);
+
 			_screen->_curPage = 0;
 			_screen->hideMouse();
-			_screen->fadeSpecialPalette(32, 228, 20, 60);
+
+			if (_flags.platform != Common::kPlatformAmiga)
+				_screen->fadeSpecialPalette(32, 228, 20, 60);
+	
 			delay(60 * _tickLength);
+
 			_screen->loadBitmap("GEMHEAL.CPS", 3, 3, &_screen->getPalette(0));
 			_screen->setScreenPalette(_screen->getPalette(0));
 			_screen->shuffleScreen(8, 8, 304, 128, 2, 0, 1, 0);
+
 			uint32 nextTime = _system->getMillis() + 120 * _tickLength;
-			_finalA = new WSAMovie_v1(this);
+
+			_finalA = createWSAMovie();
 			assert(_finalA);
 			_finalA->open("finald.wsa", 1, 0);
+
 			delayUntil(nextTime);
 			snd_playSoundEffect(0x40);
 			for (int i = 0; i < 22; ++i) {
@@ -967,6 +1071,7 @@ int KyraEngine_LoK::seq_playEnd() {
 				_screen->updateScreen();
 			}
 			delete _finalA;
+
 			_finalA = 0;
 			seq_playEnding();
 			return 1;
@@ -985,11 +1090,13 @@ void KyraEngine_LoK::seq_brandonToStone() {
 	assert(_brandonStoneTable);
 	setupShapes123(_brandonStoneTable, 14, 0);
 	_animator->setBrandonAnimSeqSize(5, 51);
+
 	for (int i = 123; i <= 136; ++i) {
 		_currentCharacter->currentAnimFrame = i;
 		_animator->animRefreshNPC(0);
 		delayWithTicks(8);
 	}
+
 	_animator->resetBrandonAnimSeqSize();
 	freeShapes123();
 	_screen->showMouse();
@@ -1001,8 +1108,17 @@ void KyraEngine_LoK::seq_playEnding() {
 	_screen->hideMouse();
 	_screen->_curPage = 0;
 	_screen->fadeToBlack();
-	_screen->loadBitmap("REUNION.CPS", 3, 3, &_screen->getPalette(0));
-	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->loadBitmap("GEMCUT.CPS", 3, 3, &_screen->getPalette(0));
+		_screen->copyRegion(232, 136, 176, 56, 56, 56, 2, 2);
+		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+		_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
+	} else {
+		_screen->loadBitmap("REUNION.CPS", 3, 3, &_screen->getPalette(0));
+		_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
+	}
+
 	_screen->_curPage = 0;
 	// XXX
 	assert(_homeString);
@@ -1035,8 +1151,10 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	memset(strings, 0, sizeof(strings));
 
+	_screen->enableInterfacePalette(false);
+
 	_screen->hideMouse();
-	if (!_flags.isTalkie) {
+	if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
 	} else
@@ -1056,7 +1174,8 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = 0;
 	uint32 size = 0;
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98
+			|| _flags.platform == Common::kPlatformAmiga) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];
@@ -1094,12 +1213,12 @@ void KyraEngine_LoK::seq_playCredits() {
 
 		if (*currentString == 1) {
 			currentString++;
-			if (!_flags.isTalkie)
+			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED6_FNT);
 		} else {
 			if (*currentString == 2)
 				currentString++;
-			if (!_flags.isTalkie)
+			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
 		strings[i].font = _screen->_currentFont;
@@ -1122,6 +1241,9 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	_screen->getPalette(2).clear();
 	_screen->setScreenPalette(_screen->getPalette(2));
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->setPaletteIndex(16, 63, 63, 63);
+
 	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
 
@@ -1473,7 +1595,7 @@ int KyraEngine_LoK::handleBeadState() {
 					_beadStateVar = 0;
 				}
 			} else {
-				_screen->copyBlockToPage(_screen->_curPage, beadState1.x >> 3, beadState1.y, beadState1.width, beadState1.height, _endSequenceBackUpRect);
+				_screen->copyBlockToPage(_screen->_curPage, beadState1.x, beadState1.y, beadState1.width << 3, beadState1.height, _endSequenceBackUpRect);
 				_screen->addBitBlitRect(beadState1.x, beadState1.y, beadState1.width2, beadState1.height);
 				beadState1.x = x;
 				beadState1.y = y;
@@ -1663,6 +1785,14 @@ void KyraEngine_LoK::closeFinalWsa() {
 }
 
 void KyraEngine_LoK::updateKyragemFading() {
+	if (_flags.platform == Common::kPlatformAmiga) {
+		// The AMIGA version seems to have no fading for the Kyragem. The code does not
+		// alter the screen palette.
+		//
+		// TODO: Check this in the original.
+		return;
+	}
+
 	static const uint8 kyraGemPalette[0x28] = {
 		0x3F, 0x3B, 0x38, 0x34, 0x32, 0x2F, 0x2C, 0x29, 0x25, 0x22,
 		0x1F, 0x1C, 0x19, 0x16, 0x12, 0x0F, 0x0C, 0x0A, 0x06, 0x03,
@@ -1674,14 +1804,17 @@ void KyraEngine_LoK::updateKyragemFading() {
 		return;
 
 	_kyragemFadingState.timerCount = _system->getMillis() + 4 * _tickLength;
+
 	int palPos = 684;
 	for (int i = 0; i < 20; ++i) {
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.rOffset];
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.gOffset];
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.bOffset];
 	}
+
 	_screen->setScreenPalette(_screen->getPalette(0));
 	_animator->_updateScreen = true;
+
 	switch (_kyragemFadingState.nextOperation) {
 	case 0:
 		--_kyragemFadingState.bOffset;

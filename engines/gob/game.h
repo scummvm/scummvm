@@ -82,7 +82,10 @@ public:
 
 	bool _noScroll;
 	bool _preventScroll;
-	bool _scrollHandleMouse;
+
+	bool  _wantScroll;
+	int16 _wantScrollX;
+	int16 _wantScrollY;
 
 	byte _handleMouse;
 	char _forceHandleMouse;
@@ -99,7 +102,8 @@ public:
 
 	void freeSoundSlot(int16 slot);
 
-	void evaluateScroll(int16 x, int16 y);
+	void wantScroll(int16 x, int16 y);
+	void evaluateScroll();
 
 	int16 checkKeys(int16 *pMousex = 0, int16 *pMouseY = 0,
 			MouseButtons *pButtons = 0, char handleMouse = 0);
@@ -109,8 +113,6 @@ public:
 	void switchTotSub(int16 index, int16 skipPlay);
 
 protected:
-	uint32 _menuLevel;
-
 	char _tempStr[256];
 
 	// Capture

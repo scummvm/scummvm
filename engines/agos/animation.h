@@ -26,9 +26,6 @@
 #ifndef AGOS_ANIMATION_H
 #define AGOS_ANIMATION_H
 
-#include "common/file.h"
-#include "common/stream.h"
-
 #include "graphics/video/dxa_decoder.h"
 #include "graphics/video/smk_decoder.h"
 #include "sound/mixer.h"

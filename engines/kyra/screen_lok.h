@@ -59,6 +59,9 @@ public:
 	void addBitBlitRect(int x, int y, int w, int h);
 	void bitBlitRects();
 
+	// AMIGA specific
+	virtual void postProcessCursor(uint8 *data, int width, int height, int pitch);
+
 protected:
 	enum {
 		kNumBitBlitRects = 10

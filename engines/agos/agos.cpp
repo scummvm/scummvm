@@ -59,6 +59,7 @@ static const GameSpecificSettings puzzlepack_settings = {
 	"MUSIC",                               // speech_filename
 };
 
+#ifdef ENABLE_AGOS2
 AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	: AGOSEngine_Feeble(system) {
 
@@ -72,6 +73,7 @@ AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	_startSecondCount = 0;
 	_tSecondCount = 0;
 }
+#endif
 
 AGOSEngine_Simon2::AGOSEngine_Simon2(OSystem *system)
 	: AGOSEngine_Simon1(system) {
@@ -696,6 +698,7 @@ static const uint16 initialVideoWindows_PN[20] = {
 	 3, 2, 14, 129,
 };
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::setupGame() {
 	gss = &puzzlepack_settings;
 	_numVideoOpcodes = 85;
@@ -712,6 +715,7 @@ void AGOSEngine_PuzzlePack::setupGame() {
 
 	AGOSEngine::setupGame();
 }
+#endif
 
 void AGOSEngine_Simon2::setupGame() {
 	gss = &simon2_settings;

@@ -311,13 +311,15 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 void script_debug(EngineState *s, bool bp) {
 	// Do we support a separate console?
 
-	/* if (sci_debug_flags & _DEBUG_FLAG_LOGGING) { */
+#if 0
+	if (sci_debug_flags & _DEBUG_FLAG_LOGGING) {
 		printf("%d: acc=%04x:%04x  ", script_step_counter, PRINT_REG(s->r_acc));
 		disassemble(s, scriptState.xs->addr.pc, 0, 1);
 		if (scriptState.seeking == kDebugSeekGlobal)
 			printf("Global %d (0x%x) = %04x:%04x\n", scriptState.seekSpecial,
 			          scriptState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[scriptState.seekSpecial]));
-	/* } */
+	}
+#endif
 
 #if 0
 	if (!scriptState.debugging)

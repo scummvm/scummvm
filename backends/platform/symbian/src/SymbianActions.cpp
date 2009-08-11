@@ -163,7 +163,9 @@ void SymbianActions::initInstanceGame() {
 	bool is_drascula = (strncmp(gameid.c_str(), "drascula",8) == 0);
 	bool is_tucker = (gameid == "tucker");
 	bool is_groovie = (gameid == "groovie");
+	bool is_tinsel = (gameid == "tinsel");
 	bool is_cruise = (gameid == "cruise");
+	bool is_made = (gameid == "made");
 
 	Actions::initInstanceGame();
 
@@ -194,6 +196,8 @@ void SymbianActions::initInstanceGame() {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_ESCAPE, Common::KEYCODE_ESCAPE);
 		} else if (is_parallaction) {
 			_key_action[ACTION_SAVE].setKey('s', Common::KEYCODE_s);
+		} else if (is_tinsel) {
+			_key_action[ACTION_SAVE].setKey(Common::ASCII_F1, SDLK_F1);
 		} else {
 			_key_action[ACTION_SAVE].setKey(Common::ASCII_F5, Common::KEYCODE_F5); // F5 key
 		}
@@ -202,9 +206,9 @@ void SymbianActions::initInstanceGame() {
 	_action_enabled[ACTION_QUIT] = true;
 
 	// Skip text
-	if (!is_cine && !is_parallaction && !is_groovie)
+	if (!is_cine && !is_parallaction && !is_groovie && !is_cruise && !is_made)
 		_action_enabled[ACTION_SKIP_TEXT] = true;
-	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob ||
+	if (is_simon || is_sky || is_sword2 || is_queen || is_sword1 || is_gob || is_tinsel ||
 			is_saga || is_kyra || is_touche || is_lure || is_feeble || is_drascula || is_tucker)
 		_key_action[ACTION_SKIP_TEXT].setKey(Common::KEYCODE_ESCAPE, Common::KEYCODE_ESCAPE); // Escape key
 	else {

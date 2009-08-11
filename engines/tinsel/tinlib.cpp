@@ -2196,6 +2196,10 @@ static void PrintObj(CORO_PARAM, const SCNHANDLE hText, const INV_OBJECT *pinvo,
 								_ctx->bSample = false;
 							}
 						}
+
+						// Decrement the subtitles timeout counter
+						if (_ctx->ticks > 0) --_ctx->ticks;
+
 					} else {
 						// No sample - just depends on time
 						if (_ctx->ticks-- <= 0)
@@ -2327,6 +2331,10 @@ static void PrintObjNonPointed(CORO_PARAM, const SCNHANDLE text, const OBJECT *p
 						_ctx->bSample = false;
 					}
 				}
+
+				// Decrement the subtitles timeout counter
+				if (_ctx->ticks > 0) --_ctx->ticks;
+
 			} else {
 				// No sample - just depends on time
 				if (_ctx->ticks-- <= 0)
@@ -3437,6 +3445,10 @@ static void TalkOrSay(CORO_PARAM, SPEECH_TYPE speechType, SCNHANDLE hText, int x
 						_ctx->bSample = false;
 					}
 				}
+
+				// Decrement the subtitles timeout counter
+				if (_ctx->ticks > 0) --_ctx->ticks;
+
 			} else {
 				// No sample - just depends on time
 				if (_ctx->ticks-- <= 0)

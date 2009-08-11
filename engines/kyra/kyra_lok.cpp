@@ -368,6 +368,9 @@ void KyraEngine_LoK::startup() {
 	loadMainScreen();
 	_screen->loadPalette("PALETTE.COL", _screen->getPalette(0));
 
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->loadPaletteTable("PALETTE.DAT", 6);
+
 	// XXX
 	_animator->initAnimStateList();
 	setCharactersInDefaultScene();
@@ -669,7 +672,7 @@ int KyraEngine_LoK::processInputHelper(int xpos, int ypos) {
 			currentRoom->itemsTable[item] = 0xFF;
 			setMouseItem(item2);
 			assert(_itemList && _takenList);
-			updateSentenceCommand(_itemList[item2], _takenList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(item2)], _takenList[0], 179);
 			_itemInHand = item2;
 			_screen->showMouse();
 			clickEventHandler2();

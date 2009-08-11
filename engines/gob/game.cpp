@@ -181,10 +181,12 @@ Game::Game(GobEngine *vm) : _vm(vm) {
 
 	_handleMouse = 0;
 	_forceHandleMouse = 0;
-	_menuLevel = 0;
 	_noScroll = true;
 	_preventScroll = false;
-	_scrollHandleMouse = false;
+
+	_wantScroll  = false;
+	_wantScrollX = 0;
+	_wantScrollY = 0;
 
 	_tempStr[0] = 0;
 
@@ -360,9 +362,7 @@ void Game::playTot(int16 skipPlay) {
 		_vm->_scenery->_pCaptureCounter = oldCaptureCounter;
 		_script->seek(_script->getFunctionOffset(skipPlay + 1));
 
-		_menuLevel++;
 		_vm->_inter->callSub(2);
-		_menuLevel--;
 
 		if (_vm->_inter->_terminate != 0)
 			_vm->_inter->_terminate = 2;
@@ -439,22 +439,27 @@ void Game::freeSoundSlot(int16 slot) {
 	_vm->_sound->sampleFree(_vm->_sound->sampleGetBySlot(slot));
 }
 
-void Game::evaluateScroll(int16 x, int16 y) {
-	if (_preventScroll || !_scrollHandleMouse || (_menuLevel > 0))
+void Game::wantScroll(int16 x, int16 y) {
+	_wantScroll  = true;
+	_wantScrollX = x;
+	_wantScrollY = y;
+}
+
+void Game::evaluateScroll() {
+	if (_noScroll || _preventScroll || !_wantScroll)
 		return;
 
-	if (_noScroll ||
-	   ((_vm->_global->_videoMode != 0x14) && (_vm->_global->_videoMode != 0x18)))
+	if ((_vm->_global->_videoMode != 0x14) && (_vm->_global->_videoMode != 0x18))
 		return;
 
-	if ((x == 0) && (_vm->_draw->_scrollOffsetX > 0)) {
+	if ((_wantScrollX == 0) && (_vm->_draw->_scrollOffsetX > 0)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorWidth, _vm->_draw->_scrollOffsetX);
 		off = MAX(off / 2, 1);
 		_vm->_draw->_scrollOffsetX -= off;
 		_vm->_video->dirtyRectsAll();
-	} else if ((y == 0) && (_vm->_draw->_scrollOffsetY > 0)) {
+	} else if ((_wantScrollY == 0) && (_vm->_draw->_scrollOffsetY > 0)) {
 		uint16 off;
 
 		off = MIN(_vm->_draw->_cursorHeight, _vm->_draw->_scrollOffsetY);
@@ -463,9 +468,9 @@ void Game::evaluateScroll(int16 x, int16 y) {
 		_vm->_video->dirtyRectsAll();
 	}
 
-	int16 cursorRight = x + _vm->_draw->_cursorWidth;
-	int16 screenRight = _vm->_draw->_scrollOffsetX + _vm->_width;
-	int16 cursorBottom = y + _vm->_draw->_cursorHeight;
+	int16 cursorRight  = _wantScrollX + _vm->_draw->_cursorWidth;
+	int16 screenRight  = _vm->_draw->_scrollOffsetX + _vm->_width;
+	int16 cursorBottom = _wantScrollY + _vm->_draw->_cursorHeight;
 	int16 screenBottom = _vm->_draw->_scrollOffsetY + _vm->_height;
 
 	if ((cursorRight >= _vm->_width) &&
@@ -479,7 +484,7 @@ void Game::evaluateScroll(int16 x, int16 y) {
 		_vm->_draw->_scrollOffsetX += off;
 		_vm->_video->dirtyRectsAll();
 
-		_vm->_util->setMousePos(_vm->_width - _vm->_draw->_cursorWidth, y);
+		_vm->_util->setMousePos(_vm->_width - _vm->_draw->_cursorWidth, _wantScrollY);
 	} else if ((cursorBottom >= (_vm->_height - _vm->_video->_splitHeight2)) &&
 			(screenBottom < _vm->_video->_surfHeight)) {
 		uint16 off;
@@ -491,11 +496,13 @@ void Game::evaluateScroll(int16 x, int16 y) {
 		_vm->_draw->_scrollOffsetY += off;
 		_vm->_video->dirtyRectsAll();
 
-		_vm->_util->setMousePos(x, _vm->_height - _vm->_video->_splitHeight2 -
-				_vm->_draw->_cursorHeight);
+		_vm->_util->setMousePos(_wantScrollX,
+				_vm->_height - _vm->_video->_splitHeight2 - _vm->_draw->_cursorHeight);
 	}
 
 	_vm->_util->setScrollOffset();
+
+	_wantScroll = false;
 }
 
 int16 Game::checkKeys(int16 *pMouseX, int16 *pMouseY,

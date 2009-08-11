@@ -935,6 +935,8 @@ void Inter_v2::o2_setScrollOffset() {
 	offsetY = _vm->_game->_script->readValExpr();
 
 	if (offsetX == -1) {
+		_vm->_game->_preventScroll = !_vm->_game->_preventScroll;
+
 		WRITE_VAR(2, _vm->_draw->_scrollOffsetX);
 		WRITE_VAR(3, _vm->_draw->_scrollOffsetY);
 	} else {
@@ -996,11 +998,8 @@ void Inter_v2::o2_playImd() {
 		close = false;
 	}
 
-	if (startFrame >= 0) {
-		_vm->_game->_preventScroll = true;
+	if (startFrame >= 0)
 		_vm->_vidPlayer->primaryPlay(startFrame, lastFrame, breakKey, palCmd, palStart, palEnd, 0);
-		_vm->_game->_preventScroll = false;
-	}
 
 	if (close)
 		_vm->_vidPlayer->primaryClose();
@@ -1306,8 +1305,14 @@ bool Inter_v2::o2_checkData(OpFuncParams &params) {
 
 	char *file = _vm->_game->_script->getResultStr();
 
+	// WORKAROUND: In some games (at least all the Playtoons), some files are 
+	// read on CD (and only on CD). "@:\" is replaced by the CD drive letter.
+	// As the files are copied on the HDD, those characters are skipped. 
+	if (strncmp(file, "@:\\", 3) ==0 )
+		file += 3;
+
 	// WORKAROUND: For some reason, the variable indicating which TOT to load next
-	// is overwritten in the guard house card game in Woodruff
+	// is overwritten in the guard house card game in Woodruff.
 	if ((_vm->getGameType() == kGameTypeWoodruff) && !scumm_stricmp(file, "6.TOT"))
 		strcpy(file, "EMAP2011.TOT");
 

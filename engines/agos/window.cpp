@@ -122,6 +122,7 @@ void AGOSEngine::clearWindow(WindowBlock *window) {
 	window->scrollY = 0;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 	byte *dst;
 	uint16 h, w;
@@ -140,6 +141,7 @@ void AGOSEngine_Feeble::colorWindow(WindowBlock *window) {
 
 	_videoLockOut &= ~0x8000;
 }
+#endif
 
 void AGOSEngine::colorWindow(WindowBlock *window) {
 	uint16 y, h;

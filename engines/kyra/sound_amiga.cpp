@@ -156,8 +156,8 @@ void SoundAmiga::playTrack(uint8 track) {
 	case kFileGame:
 		if (track >= 11 && track < ARRAYSIZE(tempoIngame) + 11) {
 			score = track - 11;
-			loop = loopIngame[track] != 0;
-			tempo = tempoIngame[track];
+			loop = loopIngame[score] != 0;
+			tempo = tempoIngame[score];
 		}
 		break;
 

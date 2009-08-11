@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 48
+#define RESFILE_VERSION 49
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -1598,10 +1598,15 @@ void KyraEngine_LoK::loadMainScreen(int page) {
 	else
 		warning("no main graphics file found");
 
-	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->copyPalette(1, 0);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0, Screen::CR_NO_P_CHECK);
 
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, page, 0);
+	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->copyPalette(1, 0);
+		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);
+
+		// TODO: Move this to a better place
+		_screen->enableInterfacePalette(true);
+	}
 }
 
 void KyraEngine_HoF::initStaticResource() {
@@ -2249,6 +2254,22 @@ void GUI_LoK::initStaticResource() {
 	_menu[5].item[2].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeWalk);
 	_menu[5].item[4].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsChangeText);
 	_menu[5].item[5].callback = BUTTON_FUNCTOR(GUI_LoK, this, &GUI_LoK::controlsApply);
+
+	// The AMIGA version uses different colors, due to its 32 color nature. We did setup the 256 color version
+	// colors above, so we need to overwrite those with the correct values over here.
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		for (int i = 0; i < 6; ++i) {
+			_menu[i].bkgdColor = 17;
+			_menu[i].color1 = 31;
+			_menu[i].color2 = 18;
+
+			for (int j = 0; j < _menu[i].numberOfItems; ++j) {
+				_menu[i].item[j].bkgdColor = 17;
+				_menu[i].item[j].color1 = 31;
+				_menu[i].item[j].color2 = 18;
+			}
+		}
+	}
 }
 
 void KyraEngine_LoK::setupButtonData() {

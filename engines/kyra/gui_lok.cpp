@@ -56,10 +56,10 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			return 0;
 		} else {
 			_screen->hideMouse();
-			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			snd_playSoundEffect(0x35);
 			setMouseItem(inventoryItem);
-			updateSentenceCommand(_itemList[inventoryItem], _takenList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
 			_itemInHand = inventoryItem;
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = 0xFF;
@@ -68,10 +68,14 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 		if (inventoryItem != 0xFF) {
 			snd_playSoundEffect(0x35);
 			_screen->hideMouse();
-			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, 12);
+			_screen->fillRect(_itemPosX[itemOffset], _itemPosY[itemOffset], _itemPosX[itemOffset] + 15, _itemPosY[itemOffset] + 15, _flags.platform == Common::kPlatformAmiga ? 19 : 12);
 			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			setMouseItem(inventoryItem);
-			updateSentenceCommand(_itemList[inventoryItem], _takenList[1], 179);
+			// TODO: Proper support for both taken strings in Amiga version
+			if (_flags.platform == Common::kPlatformAmiga)
+				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[0], 179);
+			else
+				updateSentenceCommand(_itemList[getItemListIndex(inventoryItem)], _takenList[1], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = inventoryItem;
@@ -80,7 +84,7 @@ int KyraEngine_LoK::buttonInventoryCallback(Button *caller) {
 			_screen->hideMouse();
 			_screen->drawShape(0, _shapes[216+_itemInHand], _itemPosX[itemOffset], _itemPosY[itemOffset], 0, 0);
 			_screen->setMouseCursor(1, 1, _shapes[0]);
-			updateSentenceCommand(_itemList[_itemInHand], _placedList[0], 179);
+			updateSentenceCommand(_itemList[getItemListIndex(_itemInHand)], _placedList[0], 179);
 			_screen->showMouse();
 			_currentCharacter->inventoryItems[itemOffset] = _itemInHand;
 			_itemInHand = -1;
@@ -204,9 +208,29 @@ void GUI_LoK::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screen = new uint8[Screen::SCREEN_W*Screen::SCREEN_H];
 	if (screen) {
 		_screen->queryPageFromDisk("SEENPAGE.TMP", 0, screen);
-
 		uint8 screenPal[768];
-		_screen->getRealPalette(2, screenPal);
+
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+			_screen->getRealPalette(0, &screenPal[ 0]);
+			_screen->getRealPalette(1, &screenPal[96]);
+
+			// Set the interface palette text color to white
+			screenPal[96 + 16 * 3 + 0] = 0xFF;
+			screenPal[96 + 16 * 3 + 1] = 0xFF;
+			screenPal[96 + 16 * 3 + 2] = 0xFF;
+
+			if (_screen->isInterfacePaletteEnabled()) {
+				for (int y = 0; y < 64; ++y) {
+					for (int x = 0; x < 320; ++x) {
+						screen[(y + 136) * Screen::SCREEN_W + x] += 32;
+					}
+				}
+			}
+
+		} else {
+			_screen->getRealPalette(2, screenPal);
+		}
+
 		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
 	}
 	delete[] screen;
@@ -365,6 +389,13 @@ void GUI_LoK::setGUILabels() {
 		offsetOptions = 10;
 		offsetOn = 0;
 		walkspeedGarbageOffset = 0;
+	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		// English Amiga version
+		offset = 23;
+		offsetOn = 23;
+		offsetOptions = 32;
+		walkspeedGarbageOffset = 2;
+		offsetMainMenu = 23;
 	}
 
 	assert(offset + 27 < _vm->_guiStringsSize);
@@ -448,8 +479,14 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 		_vm->snd_playSoundEffect(0x36);
 		return 0;
 	}
-	// XXX
-	_screen->setPaletteIndex(0xFE, 60, 60, 0);
+
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		_screen->setPaletteIndex(0x10, 0x3F, 0x3F, 0x3F);
+		_screen->setInterfacePalette(_screen->getPalette(1), 0x3F, 0x3F, 0x3F);
+	} else {
+		_screen->setPaletteIndex(0xFE, 60, 60, 0);
+	}
+
 	for (int i = 0; i < 6; i++) {
 		_menuButtonData[i].data0Val1 = _menuButtonData[i].data1Val1 = _menuButtonData[i].data2Val1 = 4;
 		_menuButtonData[i].data0Callback = _redrawShadedButtonFunctor;
@@ -639,12 +676,12 @@ int GUI_LoK::loadGameMenu(Button *button) {
 }
 
 void GUI_LoK::redrawTextfield() {
-	_screen->fillRect(38, 91, 287, 102, 250);
+	_screen->fillRect(38, 91, 287, 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
 	_text->printText(_savegameName, 38, 92, 253, 0, 0);
 
 	_screen->_charWidth = -2;
 	int width = _screen->getTextWidth(_savegameName);
-	_screen->fillRect(39 + width, 93, 45 + width, 100, 254);
+	_screen->fillRect(39 + width, 93, 45 + width, 100, _vm->gameFlags().platform == Common::kPlatformAmiga ? 31 : 254);
 	_screen->_charWidth = 0;
 
 	_screen->updateScreen();
@@ -923,6 +960,9 @@ void GUI_LoK::setupControls(Menu &menu) {
 			menu.item[3].itemString = "ERROR";
 		}
 	} else {
+		if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+			clickableOffset = 5;
+
 		menu.item[4].enabled = 0;
 		menu.item[4].labelString = 0;
 	}

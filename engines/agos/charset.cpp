@@ -34,6 +34,7 @@
 
 namespace AGOS {
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 	if (_textWindow == NULL)
 		return;
@@ -64,6 +65,7 @@ void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 		}
 	}
 }
+#endif
 
 void AGOSEngine::doOutput(const byte *src, uint len) {
 	uint idx;
@@ -573,6 +575,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	}
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 	if (_noOracleScroll == 0) {
 		if (window->height < window->textRow + 30) {
@@ -603,6 +606,7 @@ void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 	window->textColumnOffset = 0;
 	window->textLength = 0;
 }
+#endif
 
 void AGOSEngine::windowNewLine(WindowBlock *window) {
 	window->textColumn = 0;

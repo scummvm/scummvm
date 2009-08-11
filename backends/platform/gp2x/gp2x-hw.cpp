@@ -56,7 +56,7 @@ enum {
 	VOLUME_UP				= 2,
 	VOLUME_CHANGE_RATE		= 8,
 	VOLUME_MIN				= 0,
-	VOLUME_INITIAL			= 70,
+	VOLUME_INITIAL			= 60,
 	VOLUME_MAX				= 100
 };
 

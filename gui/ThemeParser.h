@@ -67,8 +67,12 @@ protected:
 				XML_KEY(font)
 					XML_PROP(id, true)
 					XML_PROP(file, true)
-					XML_PROP(color, true)
 					XML_PROP(resolution, false)
+				KEY_END()
+
+				XML_KEY(text_color)
+					XML_PROP(id, true);
+					XML_PROP(color, true);
 				KEY_END()
 			KEY_END()
 
@@ -143,6 +147,7 @@ protected:
 
 				XML_KEY(text)
 					XML_PROP(font, true)
+					XML_PROP(text_color, true)
 					XML_PROP(vertical_align, true)
 					XML_PROP(horizontal_align, true)
 				KEY_END()
@@ -211,6 +216,7 @@ protected:
 	bool parserCallback_render_info(ParserNode *node);
 	bool parserCallback_defaults(ParserNode *node);
 	bool parserCallback_font(ParserNode *node);
+	bool parserCallback_text_color(ParserNode *node);
 	bool parserCallback_fonts(ParserNode *node);
 	bool parserCallback_text(ParserNode *node);
 	bool parserCallback_palette(ParserNode *node);

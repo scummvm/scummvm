@@ -552,6 +552,7 @@ void AGOSEngine::delay(uint amount) {
 	} while (cur < start + amount && !shouldQuit());
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::timerProc() {
 	_lastTickCount = _system->getMillis();
 
@@ -609,6 +610,7 @@ void AGOSEngine_Feeble::timerProc() {
 
 	_videoLockOut &= ~2;
 }
+#endif
 
 #ifdef ENABLE_PN
 void AGOSEngine_PN::timerProc() {
@@ -677,6 +679,7 @@ void AGOSEngine::timerProc() {
 	_videoLockOut &= ~2;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::dimpIdle() {
 	int z, n;
 
@@ -758,5 +761,6 @@ void AGOSEngine_PuzzlePack::dimpIdle() {
 		}
 	}
 }
+#endif
 
 } // End of namespace AGOS

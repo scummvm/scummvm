@@ -33,7 +33,7 @@ MessageTuple MessageState::getTuple() {
 
 	t.noun = *(_engineCursor.index_record + 0);
 	t.verb = *(_engineCursor.index_record + 1);
-	if (_version == 2101) {
+	if (_version == 2) {
 		t.cond = 0;
 		t.seq = 1;
 	} else {
@@ -47,7 +47,7 @@ MessageTuple MessageState::getTuple() {
 MessageTuple MessageState::getRefTuple() {
 	MessageTuple t;
 
-	if (_version == 2101) {
+	if (_version == 2) {
 		t.noun = 0;
 		t.verb = 0;
 		t.cond = 0;
@@ -68,7 +68,7 @@ void MessageState::initCursor() {
 }
 
 void MessageState::advanceCursor(bool increaseSeq) {
-	_engineCursor.index_record += ((_version == 2101) ? 4 : 11);
+	_engineCursor.index_record += ((_version == 2) ? 4 : 11);
 	_engineCursor.index++;
 
 	if (increaseSeq)
@@ -142,7 +142,7 @@ int MessageState::getMessage() {
 }
 
 int MessageState::getTalker() {
-	return (_version == 2101) ? -1 : *(_engineCursor.index_record + 4);
+	return (_version == 2) ? -1 : *(_engineCursor.index_record + 4);
 }
 
 MessageTuple &MessageState::getLastTuple() {
@@ -154,7 +154,7 @@ int MessageState::getLastModule() {
 }
 
 Common::String MessageState::getText() {
-	char *str = (char *)_currentResource->data + READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
+	char *str = (char *)_currentResource->data + READ_LE_UINT16(_engineCursor.index_record + ((_version == 2) ? 2 : 5));
 
 	Common::String strippedStr;
 	Common::String skippedSubstr;
@@ -215,7 +215,7 @@ void MessageState::gotoNext() {
 }
 
 int MessageState::getLength() {
-	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2101) ? 2 : 5));
+	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2) ? 2 : 5));
 	char *stringptr = (char *)_currentResource->data + offset;
 	return strlen(stringptr);
 }
@@ -244,8 +244,12 @@ int MessageState::loadRes(ResourceManager *resmgr, int module, bool lock) {
 	_locked = lock;
 
 	_version = READ_LE_UINT16(_currentResource->data);
+	debug(5, "Message: reading resource %d.msg, version %d.%03d", _module, _version / 1000, _version % 1000);
 
-	int offs = (_version == 2101) ? 0 : 4;
+	// We assume for now that storing the major version is sufficient
+	_version /= 1000;
+
+	int offs = (_version == 2) ? 0 : 4;
 	_recordCount = READ_LE_UINT16(_currentResource->data + 4 + offs);
 	_indexRecords = _currentResource->data + 6 + offs;
 

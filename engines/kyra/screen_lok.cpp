@@ -80,6 +80,9 @@ const ScreenDim *Screen_LoK::getScreenDim(int dim) {
 }
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return;
+
 	assert(_vm->palTable1()[palIndex]);
 
 	Palette tempPal(getPalette(0).getNumColors());
@@ -238,6 +241,22 @@ int Screen_LoK::getRectSize(int x, int y) {
 		y = 200;
 
 	return ((x*y) << 3);
+}
+
+void Screen_LoK::postProcessCursor(uint8 *data, int width, int height, int pitch) {
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga && _interfacePaletteEnabled) {
+		pitch -= width;
+
+		for (int y = 0; y < height; ++y) {
+			for (int x = 0; x < width; ++x) {
+				if (*data != _cursorColorKey)
+					*data += 32;
+				++data;
+			}
+
+			data += pitch;
+		}
+	}
 }
 
 #pragma mark -

@@ -664,11 +664,12 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, ((long)time - (long)s->last_wait_time) * 60 / 1000);
 	s->last_wait_time = time;
 
-	// Reset optimization flags: Game is playing along nicely anyway
-	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
-
 	sleep_time *= g_debug_sleeptime_factor;
 	GFX_ASSERT(gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60));
+
+	// Reset speed throttler: Game is playing along nicely anyway
+	if (sleep_time > 0)
+		s->speedThrottler->reset();
 
 	return s->r_acc;
 }

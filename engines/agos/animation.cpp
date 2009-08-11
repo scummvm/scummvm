@@ -27,6 +27,7 @@
 
 #include "common/endian.h"
 #include "common/events.h"
+#include "common/file.h"
 #include "common/system.h"
 
 #include "graphics/cursorman.h"

@@ -46,6 +46,7 @@ byte *AGOSEngine::getScaleBuf() {
 	return (byte *)_scaleBuf->pixels;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::animateSpritesByY() {
 	VgaSprite *vsp;
 	VgaPointersEntry *vpe;
@@ -147,6 +148,7 @@ void AGOSEngine_Feeble::animateSprites() {
 
 	_displayScreen = true;
 }
+#endif
 
 void AGOSEngine::animateSprites() {
 	VgaSprite *vsp;

@@ -68,6 +68,57 @@ int AGOSEngine::getScale(int16 y, int16 x) {
 	}
 }
 
+void AGOSEngine_Feeble::vc36_setWindowImage() {
+	_displayScreen = false;
+	vcReadNextWord();
+	vcReadNextWord();
+	fillBackGroundFromFront();
+}
+
+void AGOSEngine_Feeble::vc48_setPathFinder() {
+	uint16 a = (uint16)_variableArrayPtr[12];
+	const uint16 *p = _pathFindArray[a - 1];
+
+	VgaSprite *vsp = findCurSprite();
+	int16 x, y, ydiff;
+	int16 x1, y1, x2, y2;
+	uint pos = 0;
+
+	x = vsp->x;
+	while (x >= (int16)readUint16Wrapper(p + 2)) {
+		p += 2;
+		pos++;
+	}
+
+	x1 = readUint16Wrapper(p);
+	y1 = readUint16Wrapper(p + 1);
+	x2 = readUint16Wrapper(p + 2);
+	y2 = readUint16Wrapper(p + 3);
+
+	if (x2 != 9999) {
+		ydiff = y2 - y1;
+		if (ydiff < 0) {
+			ydiff = -ydiff;
+			x = vsp->x & 7;
+			ydiff *= x;
+			ydiff /= 8;
+			ydiff = -ydiff;
+		} else {
+			x = vsp->x & 7;
+			ydiff *= x;
+			ydiff /= 8;
+		}
+		y1 += ydiff;
+	}
+
+	y = vsp->y;
+	vsp->y = y1;
+	checkScrollY(y1 - y, y1);
+
+	_variableArrayPtr[11] = x1;
+	_variableArrayPtr[13] = pos;
+}
+
 void AGOSEngine::vc75_setScale() {
 	_baseY = vcReadNextWord();
 	_scale = vcReadNextWord() / 1000000.0f;

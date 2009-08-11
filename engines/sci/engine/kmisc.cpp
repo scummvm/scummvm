@@ -251,7 +251,7 @@ reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 	strcat(tmpbuf, ")");
 
-	warning(tmpbuf);
+	warning("%s", tmpbuf);
 
 	return NULL_REG;
 }

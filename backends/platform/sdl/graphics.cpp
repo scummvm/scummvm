@@ -358,11 +358,53 @@ void OSystem_SDL::initSize(uint w, uint h) {
 	_dirtyChecksums = (uint32 *)calloc(_cksumNum * 2, sizeof(uint32));
 }
 
+
+static void fixupResolutionForAspectRatio(AspectRatio desiredAspectRatio, int &width, int &height) {
+	assert(&width != &height);
+
+	if (desiredAspectRatio.isAuto())
+		return;
+	
+	int kw = desiredAspectRatio.kw();
+	int kh = desiredAspectRatio.kh();
+
+	const int w = width;
+	const int h = height;
+
+	SDL_Rect const* const*availableModes = SDL_ListModes(NULL, SDL_FULLSCREEN|SDL_SWSURFACE); //TODO : Maybe specify a pixel format
+	assert(availableModes);
+
+	const SDL_Rect *bestMode = NULL;
+	uint bestMetric = (uint)-1; // Metric is wasted space
+	while (const SDL_Rect *mode = *availableModes++) {
+		if (mode->w < w)
+			continue;
+		if (mode->h < h)
+			continue;
+		if (mode->h * kw != mode->w * kh)
+			continue;
+		//printf("%d %d\n", mode->w, mode->h);
+
+		uint metric = mode->w * mode->h - w * h;
+		if (metric > bestMetric)
+			continue;
+
+		bestMetric = metric;
+		bestMode = mode;
+	}
+
+	if (!bestMode) {
+		warning("Unable to enforce the desired aspect ratio!");
+		return;
+	}
+	//printf("%d %d\n", bestMode->w, bestMode->h);
+	width = bestMode->w;
+	height = bestMode->h;
+}
+
 bool OSystem_SDL::loadGFXMode() {
 	assert(_inited);
 	_forceFull = true;
-
-	int hwW, hwH;
 
 #if !defined(__MAEMO__) && !defined(GP2XWIZ)
 	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
@@ -374,11 +416,11 @@ bool OSystem_SDL::loadGFXMode() {
 	if (_videoMode.aspectRatioCorrection)
 		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 
-	hwW = _videoMode.screenWidth * _videoMode.scaleFactor;
-	hwH = effectiveScreenHeight();
+	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+	_videoMode.hardwareHeight = effectiveScreenHeight();
 #else
-	hwW = _videoMode.overlayWidth;
-	hwH = _videoMode.overlayHeight;
+	_videoMode.hardwareWidth = _videoMode.overlayWidth;
+	_videoMode.hardwareHeight = _videoMode.overlayHeight;
 #endif
 
 	//
@@ -392,7 +434,11 @@ bool OSystem_SDL::loadGFXMode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	_hwscreen = SDL_SetVideoMode(hwW, hwH, 16,
+	if(_videoMode.fullscreen) {
+		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
+	}
+
+	_hwscreen = SDL_SetVideoMode(_videoMode.hardwareWidth, _videoMode.hardwareHeight, 16,
 		_videoMode.fullscreen ? (SDL_FULLSCREEN|SDL_SWSURFACE) : SDL_SWSURFACE
 	);
 	if (_hwscreen == NULL) {

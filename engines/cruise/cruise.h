@@ -56,9 +56,7 @@ class CruiseEngine: public Engine {
 private:
 	bool _preLoad;
 	Debugger *_debugger;
-	MidiDriver *_driver;
 	PCSound *_sound;
-	bool _mt32, _adlib;
 	Common::StringList _langStrings;
 	CursorType _savedCursor;
 	uint32 lastTick, lastTickDebug;
@@ -89,8 +87,6 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	PCSound &sound() { return *_sound; }
-	bool mt32() const { return _mt32; }
-	bool adlib() const { return _adlib; }
 	virtual GUI::Debugger *getDebugger() { return _debugger; }
 	virtual void pauseEngine(bool pause);
 	const char *langString(LangStringId langId) { return _langStrings[(int)langId].c_str(); }

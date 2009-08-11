@@ -402,12 +402,6 @@ List *lookup_list(EngineState *s, reg_t addr);
 #define _K_SOUND_STATUS_PLAYING 3
 
 
-
-/* Kernel optimization flags */
-#define KERNEL_OPT_FLAG_GOT_EVENT (1<<0)
-#define KERNEL_OPT_FLAG_GOT_2NDEVENT (1<<1)
-
-
 /******************** Kernel functions ********************/
 
 // New kernel functions
@@ -540,6 +534,7 @@ reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kSetQuitStr(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kStrSplit(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 // The Unknown/Unnamed kernel function
