@@ -673,7 +673,7 @@ void KyraEngine_LoK::seq_makeBrandonNormal2() {
 		_animator->animRefreshNPC(0);
 		delayWithTicks(8);
 	}
-	_animator->setBrandonAnimSeqSize(4, 48);
+	_animator->setBrandonAnimSeqSize(3, 48);
 	_currentCharacter->currentAnimFrame = 7;
 	_animator->animRefreshNPC(0);
 

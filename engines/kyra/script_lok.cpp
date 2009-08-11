@@ -1335,7 +1335,7 @@ int KyraEngine_LoK::o1_waitForConfirmationMouseClick(EMCState *script) {
 
 		updateInput();
 
-		int input = checkInput(_buttonList, false) & 0xFF;
+		int input = checkInput(0, false) & 0xFF;
 		removeInputTop();
 		if (input == 200)
 			break;

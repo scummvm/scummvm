@@ -182,10 +182,27 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	}
 
 	setHandItem(_itemInHand);
-	_animator->setBrandonAnimSeqSize(3, 48);
+
+	// Will-O-Wisp uses a different shape size than Brandon's usual
+	// shape, thus we need to setup the correct size depending on
+	// his state over here. This fixes graphics glitches when loading
+	// saves, where Brandon is transformed into the Will-O-Wisp.
+	if (_brandonStatusBit & 2)
+		_animator->setBrandonAnimSeqSize(5, 48);
+	else
+		_animator->setBrandonAnimSeqSize(3, 48);
+
 	redrawInventory(0);
-	_brandonPosX = brandonX;
-	_brandonPosY = brandonY;
+	
+	_brandonPosX = _brandonPosY = -1;
+	
+	// Unlike the original we did restore Brandon's position in the scene screen on load.
+	// This appereantly caused graphics gliches in some scenes. For example bug #2835715
+	// ("KYRA: GFX glitch in Amiga version at the bridge") is caused by this feature.
+	// Thus we disable that for now.
+	//_brandonPosX = brandonX;
+	//_brandonPosY = brandonY;
+
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 
 	_animator->animRefreshNPC(0);
