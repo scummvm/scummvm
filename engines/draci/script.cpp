@@ -397,6 +397,15 @@ void Script::start(Common::Queue<int> &params) {
 	int objID = params.pop();
 	int animID = params.pop();	
 
+	// Fixes bug in the data files which makes the game crash in the intro
+	// TODO: This is possibly exclusive to the English version, so check for that
+	if (animID == 657) {
+		Common::Queue<int> tmp;
+		tmp.push(objID);
+		tmp.push(animID);
+		this->load(tmp);
+	}
+
 	objID -= 1;
 	animID -= 1;
 
