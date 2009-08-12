@@ -174,7 +174,7 @@ void Game::start() {
 				_persons[kDragonObject]._y = 0;
 			}
 
-			setLoopSubstatus(kStatusOrdinary);
+			setLoopSubstatus(kSubstatusOrdinary);
 	
 			// Do the actual change
 			changeRoom(_newRoom);
@@ -281,7 +281,7 @@ void Game::loop() {
 		int x = _vm->_mouse->getPosX();
 		int y = _vm->_mouse->getPosY();
 
-		if (_loopStatus == kStatusDialogue && _loopSubstatus == kStatusOrdinary) {
+		if (_loopStatus == kStatusDialogue && _loopSubstatus == kSubstatusOrdinary) {
 
 			// Find animation under cursor
 			_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
@@ -309,7 +309,7 @@ void Game::loop() {
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
 			Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
 
-			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kStatusOrdinary) {
+			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kSubstatusOrdinary) {
 				if(_vm->_mouse->isCursorOn()) {
 					// Find the game object under the cursor
 					// (to be more precise, one that corresponds to the animation under the cursor)
@@ -333,6 +333,7 @@ void Game::loop() {
 							_vm->_mouse->cursorOff();
 							titleAnim->markDirtyRect(surface);
 							title->setText("");
+							_objUnderCursor = kObjectNotFound;
 
 							if (!obj->_imLook) {
 								if (obj->_lookDir == -1) {
@@ -359,6 +360,7 @@ void Game::loop() {
 								_vm->_mouse->cursorOff();
 								titleAnim->markDirtyRect(surface);
 								title->setText("");
+								_objUnderCursor = kObjectNotFound;
 
 								if (!obj->_imUse) {
 									if (obj->_useDir == -1) {
@@ -394,7 +396,7 @@ void Game::loop() {
 		debug(8, "Anim under cursor: %d", _animUnderCursor); 
 
 		// Handle character talking (if there is any)
-		if (_loopSubstatus == kStatusTalk) {
+		if (_loopSubstatus == kSubstatusTalk) {
 			Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText); 			
 			Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
 
@@ -537,7 +539,7 @@ void Game::dialogueMenu(int dialogueID) {
 		_dialogueExit = false;
 		hit = dialogueDraw();
 		
-		debug(7, kDraciLogicDebugLevel, 
+		debugC(7, kDraciLogicDebugLevel, 
 			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d", 
 			hit, _lines[hit], _lastBlock, _dialogueLines, _dialogueExit);
 
@@ -1111,7 +1113,7 @@ void Game::setLoopStatus(LoopStatus status) {
 	_loopStatus = status;
 }
 
-void Game::setLoopSubstatus(LoopStatus status) {
+void Game::setLoopSubstatus(LoopSubstatus status) {
 	_loopSubstatus = status;
 }
 
@@ -1119,7 +1121,7 @@ LoopStatus Game::getLoopStatus() {
 	return _loopStatus;
 }
 
-LoopStatus Game::getLoopSubstatus() {
+LoopSubstatus Game::getLoopSubstatus() {
 	return _loopSubstatus;
 }
 

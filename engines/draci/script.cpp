@@ -346,11 +346,11 @@ void Script::play(Common::Queue<int> &params) {
 		return;
 	}
 
-	_vm->_game->setLoopStatus(kStatusStrange);
+	_vm->_game->setLoopSubstatus(kSubstatusStrange);
 	_vm->_game->setExitLoop(true);    
 	_vm->_game->loop();
 	_vm->_game->setExitLoop(false);    
-	_vm->_game->setLoopStatus(kStatusOrdinary);
+	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 }
 
 void Script::load(Common::Queue<int> &params) {
@@ -446,7 +446,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	anim->registerCallback(&Animation::exitGameLoop);	
 
-	_vm->_game->setLoopStatus(kStatusStrange);
+	_vm->_game->setLoopSubstatus(kSubstatusStrange);
 
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
@@ -457,7 +457,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	_vm->_game->loop();
 	_vm->_game->setExitLoop(false);    
 	_vm->_anims->stop(animID);
-	_vm->_game->setLoopStatus(kStatusOrdinary);
+	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 
 	anim->registerCallback(&Animation::doNothing);
 }
@@ -596,9 +596,9 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 	
 	_vm->_game->walkHero(x, y);
 
-	_vm->_game->setLoopSubstatus(kStatusStrange);
+	_vm->_game->setLoopSubstatus(kSubstatusStrange);
 	_vm->_game->loop();
-	_vm->_game->setLoopSubstatus(kStatusOrdinary);
+	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 
 	_vm->_game->setExitLoop(false);
 }
@@ -650,7 +650,7 @@ void Script::talk(Common::Queue<int> &params) {
 	}
 
 	// Set the loop substatus to an appropriate value
-	_vm->_game->setLoopSubstatus(kStatusTalk);
+	_vm->_game->setLoopSubstatus(kSubstatusTalk);
 
 	// Record time
 	_vm->_game->setSpeechTick(_vm->_system->getMillis());
@@ -673,7 +673,7 @@ void Script::talk(Common::Queue<int> &params) {
 	speechFrame->setText("");
 
 	// Revert to "normal" loop status
-	_vm->_game->setLoopSubstatus(kStatusOrdinary);
+	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 	_vm->_game->setExitLoop(false);
 }
 

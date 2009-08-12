@@ -175,10 +175,18 @@ struct Room {
 	GPL2Program _program;
 };
 
-enum LoopStatus { 
-	kStatusGate, kStatusOrdinary, kStatusInventory, 
-	kStatusDialogue, kStatusTalk, kStatusStrange, 
-	kStatusFade
+enum LoopStatus {
+	kStatusOrdinary, 
+	kStatusGate, 
+	kStatusInventory, 
+	kStatusDialogue
+};
+
+enum LoopSubstatus {
+	kSubstatusOrdinary, 
+	kSubstatusTalk, 
+	kSubstatusFade,
+	kSubstatusStrange
 };
 
 /**
@@ -262,9 +270,9 @@ public:
 	void setMarkedAnimationIndex(int index);
 
 	void setLoopStatus(LoopStatus status);
-	void setLoopSubstatus(LoopStatus status);
+	void setLoopSubstatus(LoopSubstatus status);
 	LoopStatus getLoopStatus();
-	LoopStatus getLoopSubstatus();
+	LoopSubstatus getLoopSubstatus();
 
 	bool shouldQuit() { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
@@ -321,7 +329,7 @@ public:
 	Animation *_dialogueAnims[4];
 	
 	LoopStatus _loopStatus;
-	LoopStatus _loopSubstatus;
+	LoopSubstatus _loopSubstatus;
 
 	bool _shouldQuit;
 	bool _shouldExitLoop;
