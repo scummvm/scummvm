@@ -695,7 +695,7 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 	// Mark last animation
 	int lastAnimIndex = _vm->_anims->getLastIndex();
 
-	// Run gate program
+	// Run the dialogue program
 	_vm->_script->run(prog, offset);
 	
 	// Delete all animations loaded after the marked one 
