@@ -297,10 +297,11 @@ void Game::loop() {
 			Text *text;
 			for (int i = 0; i < kDialogueLines; ++i) {
 				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
-				text->setColour(kLineInactiveColour);
 				
 				if (_animUnderCursor == _dialogueAnims[i]->getID()) {
 					text->setColour(kLineActiveColour);
+				} else {
+					text->setColour(kLineInactiveColour);
 				}
 			}
 	
