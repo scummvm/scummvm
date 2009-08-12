@@ -37,6 +37,22 @@ namespace Common {
 
 #define HWKEY_ID_SIZE (30)
 
+
+// Structure for describing specific key+modifier combos mapped to actions,
+// to allow for modifiers to work properly without having to define the whole 
+// hardware key set an additional time for each possible modifier combination
+struct ActionKey {
+	KeyCode keycode;
+	byte flags;
+	/** unique id used for saving/loading to config */
+	char actKeyId[HWKEY_ID_SIZE];
+
+	/** Human readable description */
+	String description;
+
+};
+
+	
 /**
 * Describes an available hardware key
 */
@@ -56,9 +72,12 @@ struct HardwareKey {
 	KeyType type;
 	ActionType preferredAction;
 
+	// Mask of modifiers that can possibly apply to this key.
+	uint32 modMask;
+
 	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "",
-				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType)
-		: key(ky), description(desc), type(typ), preferredAction(prefAct) {
+				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType, uint32 mods = ~0)
+		: key(ky), description(desc), type(typ), preferredAction(prefAct), modMask(mods) {
 		assert(i);
 		strncpy(hwKeyId, i, HWKEY_ID_SIZE);
 	}
