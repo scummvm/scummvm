@@ -25,6 +25,8 @@
 
 
 
+#ifdef ENABLE_AGOS2
+
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -486,3 +488,5 @@ void AGOSEngine_PuzzlePack::startAnOverlayAnim() {
 }
 
 } // End of namespace AGOS
+
+#endif // ENABLE_AGOS2

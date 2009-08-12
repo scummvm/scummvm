@@ -23,7 +23,7 @@
  *
  */
 
-
+#ifdef ENABLE_HE
 
 #include "scumm/he/animation_he.h"
 #include "scumm/he/intern_he.h"
@@ -103,3 +103,5 @@ void MoviePlayer::setPalette(byte *pal) {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

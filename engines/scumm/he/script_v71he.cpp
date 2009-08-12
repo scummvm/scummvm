@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_HE
+
 #include "scumm/actor.h"
 #include "scumm/he/intern_he.h"
 #include "scumm/scumm.h"
@@ -446,3 +448,5 @@ void ScummEngine_v71he::o71_polygonHit() {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

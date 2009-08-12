@@ -25,6 +25,8 @@
 
 
 
+#ifdef ENABLE_AGOS2
+
 #include "common/endian.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -542,3 +544,5 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 }
 
 } // End of namespace AGOS
+
+#endif // ENABLE_AGOS2

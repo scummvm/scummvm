@@ -220,4 +220,4 @@ void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
 
 } // End of namespace AGOS
 
-#endif
+#endif // ENABLE_PN

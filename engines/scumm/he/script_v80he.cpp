@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_HE
+
 #include "common/config-file.h"
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -529,3 +531,5 @@ void ScummEngine_v80he::o80_pickVarRandom() {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE
