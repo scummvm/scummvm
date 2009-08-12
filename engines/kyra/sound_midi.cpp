@@ -658,6 +658,9 @@ void SoundMidiPC::loadSfxFile(Common::String file) {
 }
 
 void SoundMidiPC::playTrack(uint8 track) {
+	if (!_musicEnabled)
+		return;
+
 	haltTrack();
 
 	Common::StackLock lock(_mutex);
@@ -685,6 +688,9 @@ bool SoundMidiPC::isPlaying() {
 }
 
 void SoundMidiPC::playSoundEffect(uint8 track) {
+	if (!_sfxEnabled)
+		return;
+
 	Common::StackLock lock(_mutex);
 	for (int i = 0; i < 3; ++i) {
 		if (!_sfx[i]->isPlaying()) {
