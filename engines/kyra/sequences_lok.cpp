@@ -36,6 +36,7 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/list.h"
 
 namespace Kyra {
 
@@ -1136,20 +1137,20 @@ void KyraEngine_LoK::seq_playEnding() {
 	seq_playCredits();
 }
 
+namespace {
+struct CreditsLine {
+	int16 x, y;
+	Screen::FontId font;
+	uint8 *str;
+};
+} // end of anonymous namespace
+
 void KyraEngine_LoK::seq_playCredits() {
 	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static const char stringTerms[] = { 0x5, 0xd, 0x0};
-	static const int numStrings = 250;
 
-	struct {
-		int16 x, y;
-		uint8 code;
-		uint8 unk1;
-		Screen::FontId font;
-		uint8 *str;
-	} strings[numStrings];
-
-	memset(strings, 0, sizeof(strings));
+	typedef Common::List<CreditsLine> CreditsLineList;
+	CreditsLineList lines;
 
 	_screen->enableInterfacePalette(false);
 
@@ -1157,6 +1158,8 @@ void KyraEngine_LoK::seq_playCredits() {
 	if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
+
+		_screen->setFont(Screen::FID_CRED8_FNT);
 	} else
 		_screen->setFont(Screen::FID_8_FNT);
 
@@ -1192,27 +1195,28 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *currentString = buffer;
 	int currentY = 200;
 
-	for (int i = 0; i < numStrings; i++) {
-		if (*nextString == 0)
-			break;
-
+	do {
 		currentString = nextString;
 		nextString = (uint8 *)strpbrk((const char *)currentString, stringTerms);
 		if (!nextString)
 			nextString = (uint8 *)strchr((const char *)currentString, 0);
 
-		strings[i].code = nextString[0];
+		CreditsLine line;
+
+		int lineEndCode = nextString[0];
 		*nextString = 0;
-		if (strings[i].code != 0)
+		if (lineEndCode != 0)
 			nextString++;
 
+		int alignment = 0;
 		if (*currentString == 3 || *currentString == 4) {
-			strings[i].unk1 = *currentString;
+			alignment = *currentString;
 			currentString++;
 		}
 
 		if (*currentString == 1) {
 			currentString++;
+
 			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED6_FNT);
 		} else if (*currentString == 2) {
@@ -1222,21 +1226,23 @@ void KyraEngine_LoK::seq_playCredits() {
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
 
-		strings[i].font = _screen->_currentFont;
+		line.font = _screen->_currentFont;
 
-		if (strings[i].unk1 == 3)
-			strings[i].x = 157 - _screen->getTextWidth((const char *)currentString);
-		else if (strings[i].unk1 == 4)
-			strings[i].x = 161;
+		if (alignment == 3)
+			line.x = 157 - _screen->getTextWidth((const char *)currentString);
+		else if (alignment == 4)
+			line.x = 161;
 		else
-			strings[i].x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
+			line.x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
 
-		strings[i].y = currentY;
-		if (strings[i].code != 5)
+		line.y = currentY;
+		if (lineEndCode != 5)
 			currentY += 10;
 
-		strings[i].str = currentString;
-	}
+		line.str = currentString;
+
+		lines.push_back(line);
+	} while (*nextString);
 
 	_screen->setCurPage(2);
 
@@ -1257,16 +1263,24 @@ void KyraEngine_LoK::seq_playCredits() {
 			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 
-			for (int i = 0; i < numStrings; i++) {
-				if (strings[i].y < 200 && strings[i].y > 0) {
-					if (strings[i].font != _screen->_currentFont)
-						_screen->setFont(strings[i].font);
-					_screen->printText((const char *)strings[i].str, strings[i].x, strings[i].y, 15, 0);
+			for (CreditsLineList::iterator it = lines.begin(); it != lines.end(); ++it) {
+				if (it->y < 0) {
+					it = lines.erase(it);
+					continue;
 				}
-				strings[i].y--;
-				if (strings[i].y > bottom)
-					bottom = strings[i].y;
+
+				if (it->y < 200) {
+					if (it->font != _screen->_currentFont)
+						_screen->setFont(it->font);
+
+					_screen->printText((const char *)it->str, it->x, it->y, 15, 0);
+				}
+
+				it->y--;
+				if (it->y > bottom)
+					bottom = it->y;
 			}
+
 			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 		}
