@@ -421,8 +421,6 @@ void Game::loop() {
 				_shouldExitLoop = true;
 				_vm->_mouse->lButtonSet(false);
 				_vm->_mouse->rButtonSet(false);
-			} else {
-				_shouldExitLoop = false;
 			}
 		}
 
