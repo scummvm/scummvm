@@ -1039,6 +1039,8 @@ void KyraEngine_LoK::seq_playCredits() {
 	if (!_flags.isTalkie) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
+
+		_screen->setFont(Screen::FID_CRED8_FNT);
 	} else
 		_screen->setFont(Screen::FID_8_FNT);
 
@@ -1096,12 +1098,12 @@ void KyraEngine_LoK::seq_playCredits() {
 			currentString++;
 			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED6_FNT);
-		} else {
-			if (*currentString == 2)
+		} else if (*currentString == 2) {
 				currentString++;
 			if (!_flags.isTalkie)
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
+
 		strings[i].font = _screen->_currentFont;
 
 		if (strings[i].unk1 == 3)
@@ -1122,7 +1124,7 @@ void KyraEngine_LoK::seq_playCredits() {
 
 	_screen->getPalette(2).clear();
 	_screen->setScreenPalette(_screen->getPalette(2));
-	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
 
 	Common::Event event;
@@ -1131,7 +1133,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	while (!finished) {
 		uint32 startLoop = _system->getMillis();
 		if (bottom > 175) {
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 
 			for (int i = 0; i < numStrings; i++) {
@@ -1144,7 +1146,7 @@ void KyraEngine_LoK::seq_playCredits() {
 				if (strings[i].y > bottom)
 					bottom = strings[i].y;
 			}
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 32, 0, 32, 320, 128, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 		}
 
