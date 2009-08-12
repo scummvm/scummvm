@@ -80,6 +80,7 @@ bool SoundAmiga::init() {
 }
 
 void SoundAmiga::loadSoundFile(uint file) {
+	debug(5, "SoundAmiga: playTrack %d", file);
 	static const char *const tableFilenames[3][2] = {
 		{ "introscr.mx",  "introinst.mx" },
 		{ "kyramusic.mx", 0 },
@@ -116,6 +117,7 @@ void SoundAmiga::loadSoundFile(uint file) {
 }
 
 void SoundAmiga::playTrack(uint8 track) {
+	debug(5, "SoundAmiga: playTrack %d", track);
 	static const byte tempoIntro[6] = { 0x46, 0x55, 0x3C, 0x41, 0x78, 0x50 };
 	static const byte tempoIngame[23] = {
 		0x64, 0x64, 0x64, 0x64, 0x64, 0x73, 0x4B, 0x64,
@@ -179,10 +181,12 @@ void SoundAmiga::playTrack(uint8 track) {
 }
 
 void SoundAmiga::haltTrack() {
+	debug(5, "SoundAmiga: haltTrack");
 	_driver->stopMusic();
 }
 
 void SoundAmiga::beginFadeOut() {
+	debug(5, "SoundAmiga: beginFadeOut");
 	for (int i = 0x3F; i >= 0; --i) {
 		_driver->setVolume((byte)i);
 		_vm->delay(_vm->tickLength());
@@ -194,7 +198,7 @@ void SoundAmiga::beginFadeOut() {
 }
 
 void SoundAmiga::playSoundEffect(uint8 track) {
-	debug("play sfx %d", track);
+	debug(5, "SoundAmiga: playSoundEffect %d", track);
 	const byte* tableEntry = 0;
 	bool pan = false;
 
