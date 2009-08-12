@@ -1215,7 +1215,7 @@ void KyraEngine_LoK::seq_playCredits() {
 			currentString++;
 			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED6_FNT);
-		} else if (*currentString == 2)
+		} else if (*currentString == 2) {
 			currentString++;
 
 			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
