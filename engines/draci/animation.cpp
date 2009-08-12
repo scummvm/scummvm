@@ -85,8 +85,8 @@ void Animation::markDirtyRect(Surface *surface) {
 
 void Animation::nextFrame(bool force) {
 
-	// If there's only one or no frames, or if the animation is not playing, return
-	if (getFrameCount() < 2 || !_playing)
+	// If there are no frames or if the animation is not playing, return
+	if (getFrameCount() == 0 || !_playing)
 		return;
 
 	Drawable *frame = _frames[_currentFrame];
