@@ -226,19 +226,25 @@ void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1,
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {
-	uint8 colorTable[] = {0x0F, 0x09, 0xC9, 0x80, 0x5, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3a};
 	int top, left, x1, x2, w, x;
 	char *msg;
 
-	uint8 color = colorTable[charNum];
 	text = preprocessString(text);
 	int lineCount = buildMessageSubstrings(text);
 	w = getWidestLineWidth(lineCount);
 	x = charX;
 	calcWidestLineBounds(x1, x2, w, x);
 
-	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+	uint8 color = 0;
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		const uint8 colorTable[] = { 0x1F, 0x1B, 0xC9, 0x80, 0x1E, 0x81, 0x11, 0xD8, 0x55, 0x3A, 0x3A };
+		color = colorTable[charNum];
+
 		setTextColor(color);
+	} else {
+		const uint8 colorTable[] = { 0x0F, 0x09, 0xC9, 0x80, 0x05, 0x81, 0x0E, 0xD8, 0x55, 0x3A, 0x3A };
+		color = colorTable[charNum];
+	}
 
 	for (int i = 0; i < lineCount; ++i) {
 		top = i * 10 + _talkMessageY;

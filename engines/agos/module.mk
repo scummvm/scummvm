@@ -14,16 +14,19 @@ MODULE_OBJS := \
 	gfx.o \
 	icons.o \
 	input.o \
+	input_pn.o \
 	items.o \
 	menus.o \
 	midi.o \
 	midiparser_s1d.o \
+	pn.o \
 	res.o \
 	res_ami.o \
 	res_snd.o \
 	rooms.o \
 	saveload.o \
 	script.o \
+	script_pn.o \
 	script_e1.o \
 	script_e2.o \
 	script_ww.o \
@@ -31,22 +34,18 @@ MODULE_OBJS := \
 	script_s2.o \
 	sound.o \
 	string.o \
+	string_pn.o \
 	subroutine.o \
 	verb.o \
+	verb_pn.o \
 	vga.o \
+	vga_pn.o \
 	vga_e2.o \
 	vga_ww.o \
 	vga_s1.o \
 	vga_s2.o \
 	window.o \
 	zones.o
-
-ifdef ENABLE_PN
-MODULE_OBJS += \
-	pn.o \
-	script_pn.o \
-	vga_pn.o
-endif
 
 ifdef ENABLE_AGOS2
 MODULE_OBJS += \

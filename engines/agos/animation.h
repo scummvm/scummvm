@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_AGOS2
+
 #ifndef AGOS_ANIMATION_H
 #define AGOS_ANIMATION_H
 
@@ -112,3 +114,5 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name);
 } // End of namespace AGOS
 
 #endif
+
+#endif // ENABLE_AGOS2

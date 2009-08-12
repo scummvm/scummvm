@@ -192,6 +192,7 @@ protected:
 
 	// -> credits
 	void seq_playCredits();
+	void seq_playCreditsAmiga();
 
 public:
 	// delay

@@ -36,6 +36,7 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/list.h"
 
 namespace Kyra {
 
@@ -1133,23 +1134,28 @@ void KyraEngine_LoK::seq_playEnding() {
 	_seqPlayerFlag = false;
 
 	_screen->showMouse();
-	seq_playCredits();
+	if (_flags.platform == Common::kPlatformAmiga) {
+		while (!shouldQuit())
+			seq_playCreditsAmiga();
+	} else {
+		seq_playCredits();
+	}
 }
+
+namespace {
+struct CreditsLine {
+	int16 x, y;
+	Screen::FontId font;
+	uint8 *str;
+};
+} // end of anonymous namespace
 
 void KyraEngine_LoK::seq_playCredits() {
 	static const uint8 colorMap[] = { 0, 0, 0xC, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 	static const char stringTerms[] = { 0x5, 0xd, 0x0};
-	static const int numStrings = 250;
 
-	struct {
-		int16 x, y;
-		uint8 code;
-		uint8 unk1;
-		Screen::FontId font;
-		uint8 *str;
-	} strings[numStrings];
-
-	memset(strings, 0, sizeof(strings));
+	typedef Common::List<CreditsLine> CreditsLineList;
+	CreditsLineList lines;
 
 	_screen->enableInterfacePalette(false);
 
@@ -1157,6 +1163,8 @@ void KyraEngine_LoK::seq_playCredits() {
 	if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga) {
 		_screen->loadFont(Screen::FID_CRED6_FNT, "CREDIT6.FNT");
 		_screen->loadFont(Screen::FID_CRED8_FNT, "CREDIT8.FNT");
+
+		_screen->setFont(Screen::FID_CRED8_FNT);
 	} else
 		_screen->setFont(Screen::FID_8_FNT);
 
@@ -1174,8 +1182,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *buffer = 0;
 	uint32 size = 0;
 
-	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98
-			|| _flags.platform == Common::kPlatformAmiga) {
+	if (_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) {
 		int sizeTmp = 0;
 		const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, sizeTmp);
 		buffer = new uint8[sizeTmp];
@@ -1192,97 +1199,96 @@ void KyraEngine_LoK::seq_playCredits() {
 	uint8 *currentString = buffer;
 	int currentY = 200;
 
-	for (int i = 0; i < numStrings; i++) {
-		if (*nextString == 0)
-			break;
-
+	do {
 		currentString = nextString;
 		nextString = (uint8 *)strpbrk((const char *)currentString, stringTerms);
 		if (!nextString)
 			nextString = (uint8 *)strchr((const char *)currentString, 0);
 
-		strings[i].code = nextString[0];
+		CreditsLine line;
+
+		int lineEndCode = nextString[0];
 		*nextString = 0;
-		if (strings[i].code != 0)
+		if (lineEndCode != 0)
 			nextString++;
 
+		int alignment = 0;
 		if (*currentString == 3 || *currentString == 4) {
-			strings[i].unk1 = *currentString;
+			alignment = *currentString;
 			currentString++;
 		}
 
 		if (*currentString == 1) {
 			currentString++;
+
 			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED6_FNT);
-		} else {
-			if (*currentString == 2)
-				currentString++;
+		} else if (*currentString == 2) {
+			currentString++;
+
 			if (!_flags.isTalkie && _flags.platform != Common::kPlatformAmiga)
 				_screen->setFont(Screen::FID_CRED8_FNT);
 		}
-		strings[i].font = _screen->_currentFont;
 
-		if (strings[i].unk1 == 3)
-			strings[i].x = 157 - _screen->getTextWidth((const char *)currentString);
-		else if (strings[i].unk1 == 4)
-			strings[i].x = 161;
+		line.font = _screen->_currentFont;
+
+		if (alignment == 3)
+			line.x = 157 - _screen->getTextWidth((const char *)currentString);
+		else if (alignment == 4)
+			line.x = 161;
 		else
-			strings[i].x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
+			line.x = (320  - _screen->getTextWidth((const char *)currentString)) / 2 + 1;
 
-		strings[i].y = currentY;
-		if (strings[i].code != 5)
+		line.y = currentY;
+		if (lineEndCode != 5)
 			currentY += 10;
 
-		strings[i].str = currentString;
-	}
+		line.str = currentString;
+
+		lines.push_back(line);
+	} while (*nextString);
 
 	_screen->setCurPage(2);
 
 	_screen->getPalette(2).clear();
 	_screen->setScreenPalette(_screen->getPalette(2));
-	if (_flags.platform == Common::kPlatformAmiga)
-		_screen->setPaletteIndex(16, 63, 63, 63);
 
-	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
 
-	Common::Event event;
 	bool finished = false;
 	int bottom = 201;
-	while (!finished) {
+	while (!finished && !shouldQuit()) {
 		uint32 startLoop = _system->getMillis();
+
 		if (bottom > 175) {
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 
-			for (int i = 0; i < numStrings; i++) {
-				if (strings[i].y < 200 && strings[i].y > 0) {
-					if (strings[i].font != _screen->_currentFont)
-						_screen->setFont(strings[i].font);
-					_screen->printText((const char *)strings[i].str, strings[i].x, strings[i].y, 15, 0);
+			for (CreditsLineList::iterator it = lines.begin(); it != lines.end(); ++it) {
+				if (it->y < 0) {
+					it = lines.erase(it);
+					continue;
 				}
-				strings[i].y--;
-				if (strings[i].y > bottom)
-					bottom = strings[i].y;
+
+				if (it->y < 200) {
+					if (it->font != _screen->_currentFont)
+						_screen->setFont(it->font);
+
+					_screen->printText((const char *)it->str, it->x, it->y, 15, 0);
+				}
+
+				it->y--;
+				if (it->y > bottom)
+					bottom = it->y;
 			}
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0, Screen::CR_NO_P_CHECK);
+
+			_screen->copyRegion(0, 32, 0, 32, 320, 128, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 		}
 
-		while (_eventMan->pollEvent(event)) {
-			switch (event.type) {
-			case Common::EVENT_KEYDOWN:
-				finished = true;
-				break;
-			case Common::EVENT_RTL:
-			case Common::EVENT_QUIT:
-				finished = true;
-				break;
-			default:
-				break;
-			}
-		}
+		if (checkInput(0, false))
+			finished = true;
 
 		uint32 now = _system->getMillis();
 		uint32 nextLoop = startLoop + _tickLength * 5;
@@ -1296,6 +1302,123 @@ void KyraEngine_LoK::seq_playCredits() {
 	_screen->fadeToBlack();
 	_screen->clearCurPage();
 	_screen->showMouse();
+}
+
+void KyraEngine_LoK::seq_playCreditsAmiga() {
+	_screen->setFont(Screen::FID_8_FNT);
+
+	_screen->loadBitmap("CHALET.CPS", 4, 2, &_screen->getPalette(0));
+	_screen->copyPage(2, 0);
+	_screen->setCurPage(2);
+
+	_screen->getPalette(2).clear();
+	_screen->setScreenPalette(_screen->getPalette(2));
+
+	_screen->getPalette(0).fill(16, 1, 63);
+	_screen->fadePalette(_screen->getPalette(0), 0x5A);
+
+	const char *theEnd = "THE END";
+
+	const int width = _screen->getTextWidth(theEnd);
+	int x = (320 - width) / 2 + 1;
+
+	_screen->copyRegion(x, 8, x, 8, width, 56, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(x, 8, 0, 8, width, 11, 0, 2, Screen::CR_NO_P_CHECK);
+	_screen->printText(theEnd, 0, 10, 31, 0);
+
+	for (int y = 18, h = 1; y >= 10 && !shouldQuit(); --y, ++h) {
+		uint32 endTime = _system->getMillis() + 3 * _tickLength;
+
+		_screen->copyRegion(0, y, x, 8, width, h, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+
+		delayUntil(endTime);
+	}
+
+	for (int y = 8; y <= 62 && !shouldQuit(); ++y) {
+		uint32 endTime = _system->getMillis() + 3 * _tickLength;
+
+		_screen->copyRegion(x, y, 0, 8, width, 11, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->printText(theEnd, 0, 9, 31, 0);
+		_screen->copyRegion(0, 8, x, y, width, 11, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->updateScreen();
+
+		delayUntil(endTime);
+	}
+
+	int size = 0;
+	const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, size);
+	char *buffer = new char[size];
+	assert(buffer);
+	memcpy(buffer, bufferTmp, size);
+	_staticres->unloadId(k1CreditsStrings);
+
+	char stringBuffer[81];
+	memset(stringBuffer, 0, sizeof(stringBuffer));
+
+	char *cur = buffer;
+	char *specialString = stringBuffer;
+	bool fillRectFlag = false, subWidth = false, centerFlag = false;
+	x = 0;
+	int specialX = 0;
+
+	const int fontHeight = _screen->getFontHeight();
+
+	do {
+		char code = *cur;
+
+		if (code == 3) {
+			fillRectFlag = subWidth = true;
+		} else if (code == 5) {
+			centerFlag = true;
+		} else if (code == 4) {
+			if (fillRectFlag) {
+				_screen->fillRect(0, 0, 319, 20, 0);
+
+				if (subWidth)
+					specialX = 157 - _screen->getTextWidth(stringBuffer);
+
+				_screen->printText(stringBuffer, specialX + 8, 0, 31, 0);
+			}
+
+			specialString = stringBuffer;
+			*specialString = 0;
+
+			x = 161;
+		} else if (code == 13) {
+			if (!fillRectFlag)
+				_screen->fillRect(0, 0, 319, 20, 0);
+
+			uint32 nextTime = _system->getMillis() + 8 * _tickLength;
+
+			if (centerFlag)
+				x = (320 - _screen->getTextWidth(stringBuffer)) / 2 - 8;
+
+			_screen->printText(stringBuffer, x + 8, 0, 31, 0);
+
+			for (int i = 0; i < fontHeight; ++i) {
+				_screen->copyRegion(0, 141, 0, 140, 320, 59, 0, 0, Screen::CR_NO_P_CHECK);
+				_screen->copyRegion(0, i, 0, 198, 320, 3, 2, 0, Screen::CR_NO_P_CHECK);
+				_screen->updateScreen();
+
+				delayUntil(nextTime);
+				nextTime = _system->getMillis() + 8 * _tickLength;
+			}
+
+			specialString = stringBuffer;
+			*specialString = 0;
+
+			centerFlag = fillRectFlag = false;
+		} else {
+			*specialString++ = code;
+			*specialString = 0;
+		}
+
+		if (checkInput(0, false))
+			break;
+	} while (++cur != buffer + size && !shouldQuit());
+
+	delete[] buffer;
 }
 
 bool KyraEngine_LoK::seq_skipSequence() const {

@@ -1262,7 +1262,6 @@ protected:
 	virtual char *genSaveName(int slot);
 };
 
-#ifdef ENABLE_PN
 class AGOSEngine_PN : public AGOSEngine {
 
 	virtual Common::Error go();
@@ -1510,7 +1509,6 @@ protected:
 
 	const OpcodeEntryPN *_opcodesPN;
 };
-#endif
 
 class AGOSEngine_Elvira1 : public AGOSEngine {
 public:

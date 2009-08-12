@@ -1190,6 +1190,8 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	const int charWidth = fnt->getCharWidth(c);
 	const int charHeight = fnt->getHeight();
 
+	if (x < 0 || y < 0)
+		return;
 	if (x + charWidth > SCREEN_W || y + charHeight > SCREEN_H)
 		return;
 

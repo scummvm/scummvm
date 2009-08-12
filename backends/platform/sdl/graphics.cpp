@@ -434,7 +434,7 @@ bool OSystem_SDL::loadGFXMode() {
 	// Create the surface that contains the scaled graphics in 16 bit mode
 	//
 
-	if(_videoMode.fullscreen) {
+	if (_videoMode.fullscreen) {
 		fixupResolutionForAspectRatio(_videoMode.desiredAspectRatio, _videoMode.hardwareWidth, _videoMode.hardwareHeight);
 	}
 

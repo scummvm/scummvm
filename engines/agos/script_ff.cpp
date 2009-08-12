@@ -25,6 +25,8 @@
 
 
 
+#ifdef ENABLE_AGOS2
+
 #include "common/system.h"
 
 #include "agos/animation.h"
@@ -675,3 +677,5 @@ void AGOSEngine_Feeble::off_b3NotZero() {
 }
 
 } // End of namespace AGOS
+
+#endif // ENABLE_AGOS2

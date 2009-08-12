@@ -213,7 +213,7 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 			playTrack(track - 0x4F);
 
 		assert(track < 120);
-		// variable(0x1BFE2) && tableEffectsGame[track].note, which gets set for ingame and unset for finale
+		// variable(0x1BFE4) && tableEffectsGame[track].note, which gets set for ingame and unset for finale
 		// (and some function reverses its state)
 		if (sfxTableGetNote(&_tableSfxGame[track * 8])) { 
 			tableEntry = &_tableSfxGame[track * 8];
