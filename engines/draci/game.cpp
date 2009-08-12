@@ -560,7 +560,7 @@ void Game::dialogueMenu(int dialogueID) {
 			break;
 		}
 		_lastBlock = _lines[hit];
-		_dialogueVars[_dialogueOffsets[dialogueID] + _lastBlock + 1] += 1;
+		_dialogueVars[_dialogueOffsets[dialogueID] + _lastBlock] += 1;
 		_dialogueBegin = false;
 		oldLines = _dialogueLines;
 
@@ -598,7 +598,7 @@ int Game::dialogueDraw() {
 	}
 
 	for (i = _dialogueLines; i < kDialogueLines; ++i) {
-		_lines[i] = 0;
+		_lines[i] = -1;
 		anim = _dialogueAnims[i];
 		dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
 		dialogueLine->setText("");
@@ -672,7 +672,7 @@ void Game::dialogueInit(int dialogID) {
 	}
 
 	_loopStatus = kStatusDialogue;
-	_lastBlock = 0;
+	_lastBlock = -1;
 	_dialogueBegin = true;
 }
 

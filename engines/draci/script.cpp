@@ -223,15 +223,20 @@ int Script::funcAtBegin(int yesno) {
 }	
 
 int Script::funcLastBlock(int blockID) {
+	blockID -= 1;
 
 	return _vm->_game->_lastBlock == blockID;
 }
 
 int Script::funcBlockVar(int blockID) {
+	blockID -= 1;
+
 	return _vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue] + blockID];
 }
 
 int Script::funcHasBeen(int blockID) {
+	blockID -= 1;
+
 	return _vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue] + blockID] > 0;
 }
 
@@ -692,7 +697,7 @@ void Script::resetDialogueFrom(Common::Queue<int> &params) {
 }
 
 void Script::resetBlock(Common::Queue<int> &params) {
-	int blockID = params.pop();
+	int blockID = params.pop() - 1;
 
 	_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+blockID] = 0;
 }
