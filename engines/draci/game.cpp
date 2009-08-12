@@ -270,6 +270,9 @@ void Game::loop() {
 
 	Surface *surface = _vm->_screen->getSurface();
 
+	debugC(6, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d", 
+		_loopStatus, _loopSubstatus);
+
 	do {
 
 		_vm->handleEvents();
@@ -534,7 +537,9 @@ void Game::dialogueMenu(int dialogueID) {
 		_dialogueExit = false;
 		hit = dialogueDraw();
 		
-		debug(2, "Hit: %d, _lines[hit]: %d", hit, _lines[hit]);
+		debug(7, kDraciLogicDebugLevel, 
+			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d", 
+			hit, _lines[hit], _lastBlock, _dialogueLines, _dialogueExit);
 
 		if ((!_dialogueExit) && (hit != -1) && (_lines[hit] != -1)) {
 			if ((oldLines == 1) && (_dialogueLines == 1) && (_lines[hit] == _lastBlock)) {
