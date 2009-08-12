@@ -168,8 +168,10 @@ void Game::start() {
 		if (_newRoom != _currentRoom._roomNum) {
 
 			// Set the first two variables to the new room / gate
-			_variables[0] = _newGate;
-			_variables[1] = _newRoom;
+			// Before setting these variables we have to convert the values to 
+			// 1-based indexing because this is how everything is stored in the data files
+			_variables[0] = _newGate + 1;
+			_variables[1] = _newRoom + 1;
 
 			// If the new room is the map room, set the appropriate coordinates
 			// for the dragon in the persons array
@@ -263,8 +265,10 @@ void Game::init() {
 	_newRoom = _currentRoom._roomNum;
 	_newGate = _currentGate;
 
-	_variables[0] = _currentGate;
-	_variables[1] = _currentRoom._roomNum;
+	// Before setting these variables we have to convert the values to 1-based indexing
+	// because this is how everything is stored in the data files
+	_variables[0] = _currentGate + 1;
+	_variables[1] = _currentRoom._roomNum + 1;
 
 	changeRoom(_currentRoom._roomNum);
 	runGateProgram(_currentGate);
