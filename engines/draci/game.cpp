@@ -160,6 +160,10 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 void Game::start() {
 	while (!shouldQuit()) {
 
+		// Whenever the top-level loop is entered, it should not finish unless
+		// the exit is triggered by a script
+		_shouldExitLoop = false;
+
 		// If the scheduled room differs from the current one, do a room change
 		if (_newRoom != _currentRoom._roomNum) {
 
