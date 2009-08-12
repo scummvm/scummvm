@@ -66,9 +66,7 @@ static const ADObsoleteGameID obsoleteGameIDsTable[] = {
 };
 
 static const PlainGameDescriptor simonGames[] = {
-#ifdef ENABLE_PN
 	{"pn", "Personal Nightmare"},
-#endif
 	{"elvira1", "Elvira - Mistress of the Dark"},
 	{"elvira2", "Elvira II - The Jaws of Cerberus"},
 	{"waxworks", "Waxworks"},
@@ -142,11 +140,9 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	bool res = true;
 
 	switch (gd->gameType) {
-#ifdef ENABLE_PN
 	case AGOS::GType_PN:
 		*engine = new AGOS::AGOSEngine_PN(syst);
 		break;
-#endif
 	case AGOS::GType_ELVIRA1:
 		*engine = new AGOS::AGOSEngine_Elvira1(syst);
 		break;

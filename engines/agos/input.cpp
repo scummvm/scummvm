@@ -624,7 +624,6 @@ bool AGOSEngine::processSpecialKeys() {
 	return verbCode;
 }
 
-#ifdef ENABLE_PN
 // Personal Nightmare specific
 void AGOSEngine_PN::clearInputLine() {
 	_inputting = false;
@@ -761,6 +760,5 @@ bool AGOSEngine_PN::processSpecialKeys() {
 	_keyPressed.reset();
 	return false;
 }
-#endif
 
 } // End of namespace AGOS

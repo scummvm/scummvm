@@ -32,7 +32,6 @@ using Common::GUIO_NOSPEECH;
 using Common::GUIO_NOSUBTITLES;
 
 static const AGOSGameDescription gameDescriptions[] = {
-#ifdef ENABLE_PN
 	// Personal Nightmare 1.1 - English Amiga
 	{
 		{
@@ -124,7 +123,6 @@ static const AGOSGameDescription gameDescriptions[] = {
 		GID_PN,
 		GF_OLD_BUNDLE | GF_CRUNCHED | GF_EGA | GF_PLANAR
 	},
-#endif
 
 	// Elvira 1 - English Amiga Floppy Demo
 	{

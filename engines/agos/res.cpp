@@ -152,7 +152,6 @@ int AGOSEngine::allocGamePcVars(Common::SeekableReadStream *in) {
 	return itemArrayInited;
 }
 
-#ifdef ENABLE_PN
 void AGOSEngine_PN::loadGamePcFile() {
 	Common::File in;
 
@@ -192,7 +191,6 @@ void AGOSEngine_PN::loadGamePcFile() {
 			error("Unknown compression format");
 	}
 }
-#endif
 
 void AGOSEngine::loadGamePcFile() {
 	Common::File in;

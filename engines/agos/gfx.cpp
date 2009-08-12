@@ -1262,7 +1262,6 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 	_vcPtr = vc_ptr_org;
 }
 
-#ifdef ENABLE_PN
 void AGOSEngine_PN::setWindowImageEx(uint16 mode, uint16 vga_res) {
 	if (!_initMouse) {
 		_initMouse = 1;
@@ -1270,7 +1269,6 @@ void AGOSEngine_PN::setWindowImageEx(uint16 mode, uint16 vga_res) {
 	}
 	setWindowImage(mode, vga_res);
 }
-#endif
 
 void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 	_window3Flag = 0;

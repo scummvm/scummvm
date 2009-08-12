@@ -613,7 +613,6 @@ void AGOSEngine_Feeble::timerProc() {
 }
 #endif
 
-#ifdef ENABLE_PN
 void AGOSEngine_PN::timerProc() {
 	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)
 		return;
@@ -652,7 +651,6 @@ void AGOSEngine_PN::timerProc() {
 
 	_videoLockOut &= ~2;
 }
-#endif
 
 void AGOSEngine::timerProc() {
 	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)

@@ -1551,7 +1551,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	return result;
 }
 
-#ifdef ENABLE_PN
 // Personal Nightmare specific
 bool AGOSEngine_PN::badload(int8 errorNum) {
 	if (errorNum == -2)
@@ -1675,6 +1674,5 @@ void AGOSEngine_PN::dbtosysf() {
 		ct++;
 	}
 }
-#endif
 
 } // End of namespace AGOS
