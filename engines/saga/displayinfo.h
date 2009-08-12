@@ -280,6 +280,7 @@ static const GameDisplayInfo ITE_DisplayInfo = {
 	ITE_ProtectPanelButtons
 };
 
+#if defined(ENABLE_IHNM) || defined(ENABLE_SAGA2)
 
 // IHNM
 #define IHNM_CONVERSE_MAX_TEXT_WIDTH (485 - 8)
@@ -360,6 +361,8 @@ static PanelButton IHNM_SavePanelButtons[] = {
 	{kPanelButtonSaveEdit, 22,56, 216,17, 0,'-',0, 0,0,0},
 	{kPanelButtonSaveText, -1,30, 0,0, kTextEnterSaveGameName,'-',0, 0,0,0},
 };
+
+#endif
 
 #ifdef ENABLE_IHNM
 static const GameDisplayInfo IHNM_DisplayInfo = {
