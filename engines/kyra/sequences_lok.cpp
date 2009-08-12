@@ -1251,7 +1251,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	if (_flags.platform == Common::kPlatformAmiga)
 		_screen->setPaletteIndex(16, 63, 63, 63);
 
-	_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
 
 	Common::Event event;
@@ -1260,7 +1260,7 @@ void KyraEngine_LoK::seq_playCredits() {
 	while (!finished) {
 		uint32 startLoop = _system->getMillis();
 		if (bottom > 175) {
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 4, 2, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 32, 0, 32, 320, 128, 4, 2, Screen::CR_NO_P_CHECK);
 			bottom = 0;
 
 			for (CreditsLineList::iterator it = lines.begin(); it != lines.end(); ++it) {
@@ -1281,7 +1281,7 @@ void KyraEngine_LoK::seq_playCredits() {
 					bottom = it->y;
 			}
 
-			_screen->copyRegion(8, 32, 8, 32, 312, 128, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 32, 0, 32, 320, 128, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->updateScreen();
 		}
 
