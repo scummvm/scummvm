@@ -28,6 +28,7 @@
 #include "asylum/asylum.h"
 #include "asylum/console.h"
 #include "asylum/scene.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -51,7 +52,7 @@ Console::~Console() {
 
 bool Console::cmdShowFlags(int argc, const char **argv) {
 	for (int i = 0; i < 1512; i++) {
-		if (ScriptMan.isGameFlagSet(i)) {
+		if (Shared.isGameFlagSet(i)) {
 			DebugPrintf("Game Flag %d is Active\n", i);
 		}
 	}

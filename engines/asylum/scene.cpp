@@ -69,7 +69,7 @@ Scene::Scene(uint8 sceneIdx) {
 	g_debugBarriers = 0;
 
 	// TODO Not sure why this is done ... yet
-	ScriptMan.setGameFlag(183);
+    Shared.setGameFlag(183);
 }
 
 Scene::~Scene() {
@@ -280,7 +280,7 @@ void Scene::update() {
 
 	// DEBUG
 	// Force the screen to scroll if the mouse approaches the edges
-	//debugScreenScrolling(bg);
+	debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
 	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
@@ -297,11 +297,14 @@ void Scene::update() {
     updateBarrier(Shared.getScreen(), _resPack, 1);	// inside the middle room
 
 	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
-		if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20))	//	TODO - enums for flags (0x20 is visible/playing?)
-			updateBarrier(Shared.getScreen(), _resPack, b);
+        if((_sceneResource->getWorldStats()->barriers[b].field_3C == 4)) {
+            if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20))	//	TODO - enums for flags (0x20 is visible/playing?)
+			    updateBarrier(Shared.getScreen(), _resPack, b);
 
         if (_sceneResource->getWorldStats()->barriers[b].flags & 8) {
             updateBarrier(Shared.getScreen(), _resPack, b);
+        }
+
         }
 	}
 
@@ -449,6 +452,49 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 				animRect.width(),
 				animRect.height());
 	}
+}
+
+// WIP:
+bool Scene::isBarrierFlagsSet(BarrierItem *barrier) {
+    if(barrier->flags & 1)
+    {
+        for(uint f=0; f < 10; f++) {
+            uint32 flag = barrier->gameFlags[f];
+            if(flag <= 0)
+            {
+                
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+// WIP: This is a new function that will treat all updates for Barriers when its done
+void Scene::updateBarriers(WorldStats *worldStats) {
+    Screen *screen = Shared.getScreen();
+    OSystem *system = Shared.getOSystem();
+
+    uint barriersCount = worldStats->barriers.size();
+    int startTickCount = 0;
+
+    if(barriersCount > 0) {
+        for(uint b=0; b < barriersCount; b++) {
+            BarrierItem *barrier = &worldStats->barriers[b];
+
+            startTickCount = system->getMillis();
+
+            if(barrier->field_3C == 4) {
+                if(isBarrierFlagsSet(barrier)) {
+                    
+                } else {
+                    // TODO: get tick count
+                    // update barrier sounds
+                }
+            }
+        }
+    }
 }
 
 void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex) {

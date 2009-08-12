@@ -50,12 +50,6 @@ public:
 
 	bool isInputAllowed() { return _allowInput; }
 	bool isProcessing() { return _processing; }
-
-	void setGameFlag(int flag);
-    void clearGameFlag(int flag);
-    void toggleGameFlag(int flag);
-    bool isGameFlagSet(int flag);
-    bool isGameFlagNotSet(int flag);
     
     int checkBarrierFlags(int barrierId);
     int setBarrierNextFrame(int barrierId, int barrierFlags);
@@ -73,12 +67,6 @@ private:
 	bool _allowInput;
 
 	ActionDefinitions *_currentScript;
-
-	// NOTE
-	// Storing the gameflags on the
-	// scriptmanager since this makes the
-	// most sense
-	int _gameFlags[1512];
 
 	void processActionListSub02(ActionDefinitions* script, ActionCommand* command,  int a4);
 	void enableActorSub(int actorIndex, int condition);
