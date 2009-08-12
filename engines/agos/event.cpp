@@ -557,7 +557,8 @@ void AGOSEngine_PuzzlePack::timerProc() {
 	_lastTickCount = _system->getMillis();
 
 	AGOSEngine_Feeble::timerProc();
-	dimpIdle();
+	if (getGameId() == GID_DIMP)
+		dimpIdle();
 }
 
 void AGOSEngine_Feeble::timerProc() {
