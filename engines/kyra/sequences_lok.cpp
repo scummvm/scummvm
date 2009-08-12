@@ -994,6 +994,14 @@ int KyraEngine_LoK::seq_playEnd() {
 		snd_playWanderScoreViaMap(50, 1);
 		setupPanPages();
 
+		if (_flags.platform == Common::kPlatformAmiga) {
+			_sound->loadSoundFile(kMusicFinale);
+
+			// The original used 0 here. Due to how our Sound code
+			// is implemented we need to use track 10 here though.
+			_sound->playTrack(10);
+		}
+
 		_finalA = createWSAMovie();
 		assert(_finalA);
 		_finalA->open("finala.wsa", 1, 0);

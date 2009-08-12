@@ -205,10 +205,11 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	switch (_fileLoaded) {
 	case kFileFinal:
 	case kFileIntro:
-		assert(track < 40);
-
-		tableEntry = &_tableSfxIntro[track * 8];
-		pan = (sfxTableGetPan(tableEntry) != 0);
+		// We only allow playing of sound effects, which are included in the table.
+		if (track < 40) {
+			tableEntry = &_tableSfxIntro[track * 8];
+			pan = (sfxTableGetPan(tableEntry) != 0);
+		}
 		break;
 
 	case kFileGame:
@@ -216,12 +217,14 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 		if (0x61 <= track && track <= 0x63)
 			playTrack(track - 0x4F);
 
-		assert(track < 120);
-		// variable(0x1BFE4) && tableEffectsGame[track].note, which gets set for ingame and unset for finale
-		// (and some function reverses its state)
-		if (sfxTableGetNote(&_tableSfxGame[track * 8])) { 
-			tableEntry = &_tableSfxGame[track * 8];
-			pan = (sfxTableGetPan(tableEntry) != 0) && (sfxTableGetPan(tableEntry) != 2);
+		// We only allow playing of sound effects, which are included in the table.
+		if (track < 120) {
+			// variable(0x1BFE4) && tableEffectsGame[track].note, which gets set for ingame and unset for finale
+			// (and some function reverses its state)
+			if (sfxTableGetNote(&_tableSfxGame[track * 8])) { 
+				tableEntry = &_tableSfxGame[track * 8];
+				pan = (sfxTableGetPan(tableEntry) != 0) && (sfxTableGetPan(tableEntry) != 2);
+			}
 		}
 		break;
 	default:
