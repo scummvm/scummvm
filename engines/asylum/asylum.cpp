@@ -85,6 +85,7 @@ Common::Error AsylumEngine::init() {
 	_mainMenu	= 0;
 	_scene		= 0;
 
+    Shared.setOSystem(_system);
 	Shared.setScreen(_screen);
 	Shared.setSound(_sound);
 	Shared.setVideo(_video);
@@ -128,8 +129,8 @@ Common::Error AsylumEngine::go() {
 	//playIntro();
 
 	// Enter first scene
-	ScriptMan.setGameFlag(4);
-	ScriptMan.setGameFlag(12);
+	Shared.setGameFlag(4);
+	Shared.setGameFlag(12);
 	_scene->enterScene();
 
 	while (!shouldQuit()) {
@@ -159,8 +160,8 @@ void AsylumEngine::playIntro() {
 
 	_screen->clearScreen();
 
-	ScriptMan.setGameFlag(4);
-	ScriptMan.setGameFlag(12);
+	Shared.setGameFlag(4);
+	Shared.setGameFlag(12);
 
 	ResourcePack *introRes = new ResourcePack(18);
 

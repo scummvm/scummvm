@@ -42,8 +42,6 @@ ScriptManager::ScriptManager() {
 		_delayedSceneIndex 	= -1;
 		_delayedVideoIndex 	= -1;
 		_allowInput			= true;
-
-		memset(_gameFlags, 0, 1512);
 	}
 }
 
@@ -76,31 +74,11 @@ void ScriptManager::setScriptIndex(uint32 index) {
 	setScript(Shared.getScene()->getActionList(index));
 }
 
-void ScriptManager::setGameFlag(int flag) {
-	_gameFlags[flag / 32] |= 1 << flag % -32;
-}
-
-void ScriptManager::clearGameFlag(int flag) {
-	_gameFlags[flag / 32] &= ~(1 << flag % -32);
-}
-
-void ScriptManager::toggleGameFlag(int flag) {
-	_gameFlags[flag / 32] ^= 1 << flag % -32;
-}
-
-bool ScriptManager::isGameFlagSet(int flag) {
-	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 != 0;
-}
-
-bool ScriptManager::isGameFlagNotSet(int flag) {
-	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
-}
-
-// TODO: put this under scene resource
 int ScriptManager::checkBarrierFlags(int barrierId) {
     int flags = Shared.getScene()->getResources()->getBarrierById(barrierId)->flags;
     return flags & 1 && (flags & 8 || flags & 0x10000);
 }
+
 int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
     int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
 
@@ -142,29 +120,29 @@ void ScriptManager::processActionList() {
 /* 0x01 */  case kSetGameFlag: {
                 int flagNum = currentCommand->param1;
                 if(flagNum >= 0)
-				    setGameFlag(currentCommand->param1);
+				    Shared.setGameFlag(currentCommand->param1);
             }
 				break;
 
 /* 0x02 */  case kClearGameFlag: {
 				int flagNum = currentCommand->param1;
 				if(flagNum >= 0)
-				    clearGameFlag(currentCommand->param1);
+				    Shared.clearGameFlag(currentCommand->param1);
 			}
 				break;
 
 /* 0x03 */  case kToogleGameFlag: {
                 int flagNum = currentCommand->param1;
 				if(flagNum >= 0)
-				    toggleGameFlag(currentCommand->param1);
+				    Shared.toggleGameFlag(currentCommand->param1);
             }
                 break;
 /* 0x04 */  case kJumpIfGameFlag: {
                 int flagNum = currentCommand->param1;
 				if (flagNum) {
-					bool doJump = isGameFlagSet(flagNum);
+					bool doJump = Shared.isGameFlagSet(flagNum);
 					if (currentCommand->param2)
-						doJump = isGameFlagNotSet(flagNum);
+						doJump = Shared.isGameFlagNotSet(flagNum);
 					
 					if (doJump)
 						_currentLine = currentCommand->param3;

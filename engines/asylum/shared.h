@@ -47,6 +47,9 @@ namespace Asylum {
 class SharedResources: public Common::Singleton<SharedResources> {
 public:
 
+    void setOSystem(OSystem* system) { _system = system; }
+    OSystem* getOSystem() { return _system; }
+
 	void setVideo(Video* video) { _video = video; }
 	Video* getVideo() { return _video; }
 
@@ -61,15 +64,28 @@ public:
 
 	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 
+    void setGameFlag(int flag);
+    void clearGameFlag(int flag);
+    void toggleGameFlag(int flag);
+    bool isGameFlagSet(int flag);
+    bool isGameFlagNotSet(int flag);
+
 private:
 	friend class Common::Singleton<SingletonBaseType>;
 	SharedResources();
 	~SharedResources();
 
+    OSystem *_system;
 	Video  *_video;
 	Screen *_screen;
 	Sound  *_sound;
 	Scene  *_scene;
+
+    // NOTE
+	// Storing the gameflags on the
+	// scriptmanager since this makes the
+	// most sense
+	int _gameFlags[1512];
 
 }; // end of class SharedResources
 

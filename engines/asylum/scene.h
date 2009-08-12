@@ -41,9 +41,11 @@ class Sound;
 class Video;
 class Text;
 class SceneResource;
+class WorldStats;
 class BlowUpPuzzle;
 struct ActionDefinitions;
 struct PolyDefinitions;
+struct BarrierItem;
 
 class Scene {
 public:
@@ -121,8 +123,11 @@ private:
 	 */
 	void animateCursor();
 
-	void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
+    bool isBarrierFlagsSet(BarrierItem *barrier);
+    void updateBarriers(WorldStats *worldStats);
 
+    void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
+    
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();
 	void debugShowBarriers();
