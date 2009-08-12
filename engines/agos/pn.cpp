@@ -298,4 +298,4 @@ void AGOSEngine_PN::setqptrs() {
 
 } // End of namespace AGOS
 
-#endif
+#endif // ENABLE_PN

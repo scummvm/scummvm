@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_HE
+
 #include "scumm/actor.h"
 #include "scumm/charset.h"
 #include "scumm/he/animation_he.h"
@@ -2353,3 +2355,5 @@ void ScummEngine_v90he::o90_kernelSetFunctions() {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

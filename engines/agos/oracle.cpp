@@ -25,6 +25,8 @@
 
 
 
+#ifdef ENABLE_AGOS2
+
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -520,3 +522,5 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 }
 
 } // End of namespace AGOS
+
+#endif // ENABLE_AGOS2

@@ -23,6 +23,7 @@
  *
  */
 
+#ifdef ENABLE_HE
 
 #include "common/system.h"
 #include "sound/audiostream.h"
@@ -521,3 +522,5 @@ void CUP_Player::handleTOIL(Common::SeekableReadStream &dataStream, uint32 dataS
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

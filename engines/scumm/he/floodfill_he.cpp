@@ -23,7 +23,7 @@
  *
  */
 
-
+#ifdef ENABLE_HE
 
 #include "scumm/he/floodfill_he.h"
 #include "scumm/he/intern_he.h"
@@ -293,3 +293,5 @@ void Wiz::fillWizFlood(const WizParameters *params) {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

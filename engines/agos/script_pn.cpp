@@ -1120,4 +1120,4 @@ void AGOSEngine_PN::popstack(int type) {
 
 } // End of namespace AGOS
 
-#endif
+#endif // ENABLE_PN

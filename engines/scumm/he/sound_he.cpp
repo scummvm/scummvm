@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "scumm/actor.h"
 #include "scumm/file.h"
 #include "scumm/imuse/imuse.h"
