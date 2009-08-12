@@ -596,9 +596,9 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 	
 	_vm->_game->walkHero(x, y);
 
-	_vm->_game->setLoopStatus(kStatusStrange);
+	_vm->_game->setLoopSubstatus(kStatusStrange);
 	_vm->_game->loop();
-	_vm->_game->setLoopStatus(kStatusOrdinary);
+	_vm->_game->setLoopSubstatus(kStatusOrdinary);
 
 	_vm->_game->setExitLoop(false);
 }
