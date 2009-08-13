@@ -33,6 +33,7 @@
 namespace Asylum {
 
 class AsylumEngine;
+struct ActionArea;
 
 class Console : public GUI::Debugger {
 public:
@@ -45,6 +46,9 @@ private:
 	bool cmdChangeScene(int argc, const char **argv);
 	bool cmdShowFlags(int argc, const char **argv);
 	bool cmdToggleFlag(int argc, const char **argv);
+	bool cmdDumpActionArea(int argc, const char **argv);
+
+	void printActionAreaStats(ActionArea *a);
 
 private:
 	AsylumEngine *_vm;
