@@ -589,6 +589,7 @@ void StaticResource::unloadId(int id) {
 		if (pos->id == id || id == -1) {
 			const FileType *filetype = getFiletype(pos->type);
 			(this->*(filetype->free))(pos->data, pos->size);
+			pos = _resList.erase(pos);
 			if (id != -1)
 				break;
 		}
