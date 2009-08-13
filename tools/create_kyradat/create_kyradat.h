@@ -257,6 +257,8 @@ enum kExtractID {
 	lolLightningDefs,
 	lolFireballCoords,
 
+	lolHistory,
+
 	kMaxResIDs
 };
 

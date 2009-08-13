@@ -44,7 +44,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 49
+#define RESFILE_VERSION 50 
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -444,16 +444,18 @@ bool StaticResource::init() {
 		{ kLolButtonList7, kLolRawDataBe16, "BUTTON7.LST" },
 		{ kLolButtonList8, kLolRawDataBe16, "BUTTON84.LST" },
 
-		{ lolLegendData, kRawData, "MAPLGND.DEF" },
-		{ lolMapCursorOvl, kRawData, "MAPCURSOR.PAL" },
-		{ lolMapStringId, kLolRawDataBe16, "MAPSTRID.LST" },
-		//{ lolMapPal, kRawData, "MAP.PAL" },
+		{ kLolLegendData, kRawData, "MAPLGND.DEF" },
+		{ kLolMapCursorOvl, kRawData, "MAPCURSOR.PAL" },
+		{ kLolMapStringId, kLolRawDataBe16, "MAPSTRID.LST" },
+		//{ kLolMapPal, kRawData, "MAP.PAL" },
 
-		{ lolSpellbookAnim, kRawData, "MBOOKA.DEF" },
-		{ lolSpellbookCoords, kRawData, "MBOOKC.DEF" },
-		{ lolHealShapeFrames, kRawData, "MHEAL.SHP" },
-		{ lolLightningDefs, kRawData, "MLGHTNG.DEF" },
-		{ lolFireballCoords, kLolRawDataBe16, "MFIREBLL.DEF" },
+		{ kLolSpellbookAnim, kRawData, "MBOOKA.DEF" },
+		{ kLolSpellbookCoords, kRawData, "MBOOKC.DEF" },
+		{ kLolHealShapeFrames, kRawData, "MHEAL.SHP" },
+		{ kLolLightningDefs, kRawData, "MLGHTNG.DEF" },
+		{ kLolFireballCoords, kLolRawDataBe16, "MFIREBLL.DEF" },
+
+		{ kLolHistory, kRawData, "HISTORY.FLS" },
 
 		{ 0, 0, 0 }
 	};
@@ -1875,10 +1877,10 @@ void LoLEngine::initStaticResource() {
 	_buttonList7 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList7, _buttonList7Size);
 	_buttonList8 = (const int16 *)_staticres->loadRawDataBe16(kLolButtonList8, _buttonList8Size);
 
-	_autoMapStrings = _staticres->loadRawDataBe16(lolMapStringId, _autoMapStringsSize);
+	_autoMapStrings = _staticres->loadRawDataBe16(kLolMapStringId, _autoMapStringsSize);
 
 	int tmpSize = 0;
-	const uint8 *tmp = _staticres->loadRawData(lolLegendData, tmpSize);
+	const uint8 *tmp = _staticres->loadRawData(kLolLegendData, tmpSize);
 	tmpSize /= 5;
 	if (tmp) {
 		_defaultLegendData = new MapLegendData[tmpSize];
@@ -1889,19 +1891,19 @@ void LoLEngine::initStaticResource() {
 			_defaultLegendData[i].stringId = READ_LE_UINT16(tmp);
 			tmp += 2;
 		}
-		_staticres->unloadId(lolLegendData);
+		_staticres->unloadId(kLolLegendData);
 	}
 
-	tmp = _staticres->loadRawData(lolMapCursorOvl, tmpSize);
+	tmp = _staticres->loadRawData(kLolMapCursorOvl, tmpSize);
 	_mapCursorOverlay = new uint8[tmpSize];
 	memcpy(_mapCursorOverlay, tmp, tmpSize);
-	_staticres->unloadId(lolMapCursorOvl);
+	_staticres->unloadId(kLolMapCursorOvl);
 
-	_updateSpellBookCoords = _staticres->loadRawData(lolSpellbookCoords, _updateSpellBookCoordsSize);
-	_updateSpellBookAnimData = _staticres->loadRawData(lolSpellbookAnim, _updateSpellBookAnimDataSize);
-	_healShapeFrames = _staticres->loadRawData(lolHealShapeFrames, _healShapeFramesSize);
+	_updateSpellBookCoords = _staticres->loadRawData(kLolSpellbookCoords, _updateSpellBookCoordsSize);
+	_updateSpellBookAnimData = _staticres->loadRawData(kLolSpellbookAnim, _updateSpellBookAnimDataSize);
+	_healShapeFrames = _staticres->loadRawData(kLolHealShapeFrames, _healShapeFramesSize);
 
-	tmp = _staticres->loadRawData(lolLightningDefs, tmpSize);
+	tmp = _staticres->loadRawData(kLolLightningDefs, tmpSize);
 	if (tmp) {
 		_lightningProps = new LightningProperty[5];
 		for (int i = 0; i < 5; i++) {
@@ -1909,10 +1911,10 @@ void LoLEngine::initStaticResource() {
 			_lightningProps[i].frameDiv = tmp[(i << 2) + 1];
 			_lightningProps[i].sfxId = READ_LE_UINT16(&tmp[(i << 2) + 2]);
 		}
-		_staticres->unloadId(lolLightningDefs);
+		_staticres->unloadId(kLolLightningDefs);
 	}
 
-	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(lolFireballCoords, _fireBallCoordsSize);
+	_fireBallCoords = (const int16*)_staticres->loadRawDataBe16(kLolFireballCoords, _fireBallCoordsSize);
 
 	_buttonCallbacks.clear();
 	_buttonCallbacks.reserve(95);

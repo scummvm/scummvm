@@ -481,6 +481,11 @@ const int kyra3Need[] = {
 	-1
 };
 
+const int lolCDFile1ENeed[] = {
+	lolHistory,
+	-1
+};
+
 const int lolCDFile2Need[] = {
 	lolCharacterDefs,
 	lolIngameSfxFiles,
@@ -604,6 +609,7 @@ const GameNeed gameNeedTable[] = {
 
 	{ kKyra3, -1, kyra3Need },
 
+	{ kLol, kLolCD, lolCDFile1ENeed },
 	{ kLol, kLolCD, lolCDFile2Need },
 
 	{ -1, -1, 0 }

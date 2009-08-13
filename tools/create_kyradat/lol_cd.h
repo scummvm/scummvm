@@ -1,3 +1,8 @@
+const ExtractEntry lolCDFile1E[] = {
+	{ lolHistory, 0x1FAA0, 0x1FC71 },
+	{ -1, 0, 0 }
+};
+
 const ExtractEntry lolCDFile2[] = {
 	{ lolCharacterDefs, 0x00029D60, 0x0002A1F2 },
 	{ lolIngameSfxFiles, 0x0002A330, 0x0002AC22 },
@@ -84,6 +89,7 @@ const ExtractEntry lolCDFile2[] = {
 };
 
 const Game lolGames[] = {
-	{ kLol, EN_ANY, kLolCD, "263998ec600afca1cc7b935c473df670", lolCDFile2},
+	{ kLol, EN_ANY, kLolCD, "9d1778314de80598c0b0d032e2a1a1cf", lolCDFile1E },
+	{ kLol, EN_ANY, kLolCD, "263998ec600afca1cc7b935c473df670", lolCDFile2 },
 	GAME_DUMMY_ENTRY
 };
