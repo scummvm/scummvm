@@ -294,7 +294,7 @@ void Tfmx::macroRun(ChannelContext &channel) {
 			continue;
 
 		case 0x06:	// Jump. Parameters: MacroIndex, MacroStep(W)
-			channel.macroIndex = macroPtr[1] & (kMaxMacroOffsets - 1);
+			// channel.macroIndex = macroPtr[1] & (kMaxMacroOffsets - 1);
 			channel.macroOffset = _resource->macroOffset[macroPtr[1] & (kMaxMacroOffsets - 1)];
 			channel.macroStep = READ_BE_UINT16(&macroPtr[2]);
 			channel.macroLoopCount = 0xFF;
@@ -693,7 +693,7 @@ void Tfmx::noteCommand(const uint8 note, const uint8 param1, const uint8 param2,
 
 		channel.prevNote = channel.note;
 		channel.note = note;
-		channel.macroIndex = param1 & (kMaxMacroOffsets - 1);
+		// channel.macroIndex = param1 & (kMaxMacroOffsets - 1);
 		channel.macroOffset = _resource->macroOffset[param1 & (kMaxMacroOffsets - 1)];
 		channel.relVol = param2 >> 4;
 		channel.fineTune = (int8)param3;
@@ -760,7 +760,8 @@ void Tfmx::haltMacroProgramm(ChannelContext &channel) {
 
 void Tfmx::unlockMacroChannel(ChannelContext &channel) {
 	channel.customMacro = 0;
-	channel.customMacroPrio = false;
+	channel.customMacroIndex = 0;
+	channel.customMacroPrio = 0;
 	channel.sfxLocked = false;
 	channel.sfxLockTime = -1;
 }
@@ -791,6 +792,13 @@ void Tfmx::stopSongImpl(bool stopAudio) {
 			haltMacroProgramm(_channelCtx[i]);
 			_channelCtx[i].note = 0;
 			_channelCtx[i].volume = 0;
+			_channelCtx[i].macroSfxRun = -1;
+			_channelCtx[i].vibValue = 0;
+
+			_channelCtx[i].sampleStart = 0;
+			_channelCtx[i].sampleLen = 2;
+			_channelCtx[i].refPeriod = 4;
+			_channelCtx[i].period = 4;
 			Paula::disableChannel(i);
 		}
 	}

@@ -132,7 +132,7 @@ private:
 	struct ChannelContext {
 		byte	paulaChannel;
 
-		byte	macroIndex;
+//		byte	macroIndex;
 		uint16	macroWait;
 		uint32	macroOffset;
 		uint32	macroReturnOffset;
