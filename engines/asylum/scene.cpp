@@ -280,7 +280,7 @@ void Scene::update() {
 
 	// DEBUG
 	// Force the screen to scroll if the mouse approaches the edges
-	debugScreenScrolling(bg);
+	//debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
 	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
