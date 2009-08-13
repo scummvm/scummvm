@@ -337,6 +337,31 @@ public:
 
 }; // end of class GamePolygons
 
+// TODO Initialize the ActionArea collection
+// if it's actually needed
+typedef struct ActionArea {
+	char   name[52];
+	uint32 id;
+	uint32 field01;
+	uint32 field02;
+	uint32 field_40;
+	uint32 field_44;
+	uint32 flags;
+	uint32 actionListIndex01;
+	uint32 actionListIndex02;
+	uint32 flags2;
+	uint32 flagNums[10];
+	uint32 field_7C;
+	uint32 polyIdx;
+	uint32 field_84;
+	uint32 field_88;
+	uint32 soundResId;
+	uint32 field_90;
+	uint32 paletteValue;
+	uint32 array[5];
+	uint32 volume;
+} ActionArea;
+
 typedef struct ActionCommand {
 	uint32 numLines;	//	Only set on the first line of each script
 	uint32 opcode;

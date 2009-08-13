@@ -42,6 +42,7 @@ Console::Console(AsylumEngine *vm) : GUI::Debugger() {
 	DCmd_Register("script",			WRAP_METHOD(Console, cmdRunScript));
 	DCmd_Register("scene",			WRAP_METHOD(Console, cmdChangeScene));
 	DCmd_Register("flags",			WRAP_METHOD(Console, cmdShowFlags));
+	DCmd_Register("toggle_flag",	WRAP_METHOD(Console, cmdToggleFlag));
 
 	DVar_Register("showpolygons",  &g_debugPolygons, DVAR_INT, 0);
 	DVar_Register("showbarriers",  &g_debugBarriers, DVAR_INT, 0);
@@ -56,6 +57,17 @@ bool Console::cmdShowFlags(int argc, const char **argv) {
 			DebugPrintf("Game Flag %d is Active\n", i);
 		}
 	}
+
+	return true;
+}
+
+bool Console::cmdToggleFlag(int argc, const char **argv) {
+	if (argc != 2 || atoi(argv[1]) > 1512 || atoi(argv[1]) < 0) {
+		DebugPrintf("Enter a value between 0 and 1512\n");
+		return true;
+	}
+	Shared.toggleGameFlag(atoi(argv[1]));
+	DebugPrintf("Flag %d == %d\n", atoi(argv[1]), Shared.isGameFlagSet(atoi(argv[1])));
 
 	return true;
 }

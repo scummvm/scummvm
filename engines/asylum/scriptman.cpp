@@ -277,7 +277,11 @@ void ScriptManager::processActionList() {
 				break;
 
 /* 0x0C */  //case kSetSceneMotionStat:
-/* 0x0D */  //case kDisableActor:
+/* 0x0D */  case kDisableActor: {
+				// TODO handle character index != 0
+				Shared.getScene()->getResources()->getMainActor()->disable(5);
+			}
+				break;
 /* 0x0E */  case kEnableActor: {
 				int actorIndex = 0;
 				if (currentCommand->param1 == -1)
@@ -353,7 +357,21 @@ void ScriptManager::processActionList() {
 /* 0x17 */  //case kClearFlag1Bit0:
 /* 0x18 */  //case k_unk18_PLAY_SND:
 /* 0x19 */  //case kJumpIfFlag2Bit0:
-/* 0x1A */  //case kSetFlag2Bit0:
+/* 0x1A */  case kSetFlag2Bit0: {
+				int targetType = currentCommand->param2;
+				if (targetType == 2)
+					Shared.getScene()->getResources()->getWorldStats()->actors[currentCommand->param1].flags2 |= 1;
+				else
+					if (targetType == 1) {
+						// int actionIdx = getActionIndex(currentCommand->param1);
+						//scene.actionAreas[actionIdx].flags |= 1;
+						debugC(kDebugLevelScripts, "ActionArea Flag Set not implemented");
+
+					} else {
+						Shared.getScene()->getResources()->getBarrierById(currentCommand->param1)->flags2 |= 1;
+					}
+			}
+				break;
 /* 0x1B */  //case kClearFlag2Bit0:
 /* 0x1C */  //case kJumpIfFlag2Bit2:
 /* 0x1D */  //case kSetFlag2Bit2:
@@ -409,7 +427,16 @@ void ScriptManager::processActionList() {
 /* 0x39 */  //case kSetFlag2Bit3:
 /* 0x3A */  //case kClearFlag2Bit3:
 /* 0x3B */  //case k_unk3B_PALETTE_MOD:
-/* 0x3C */  //case k_unk3C_CMP_VAL:
+/* 0x3C */  case k_unk3C_CMP_VAL: {
+				if (currentCommand->param1) {
+					if (currentCommand->param2 >= currentCommand->param1)
+						currentCommand->param2 = 0;
+					else
+						currentCommand->param2 = currentCommand->param1 + 1;
+						// XXX done = true; ???
+				}
+			}
+				break;
 /* 0x3D */  case kWaitUntilFramePlayed: {
 				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
 				if (barrierIndex >= 0) {
@@ -516,7 +543,8 @@ void ScriptManager::processActionList() {
 /* 0x62 */  //case k_unk62_SHOW_OPTIONS_SCREEN:
 
 			default:
-				debugC(kDebugLevelScripts,
+				//debugC(kDebugLevelScripts,
+				warning(
 						"Unhandled opcode 0x%02X in Scene %d Line %d.",
 						currentCommand->opcode,
 						Shared.getScene()->getSceneIndex(),
@@ -534,6 +562,8 @@ void ScriptManager::processActionList() {
 			_currentLine 	= 0;
 			_currentLoops	= 0;
 			_currentScript 	= 0;
+
+			Shared.clearGameFlag(183);
 		}
 
 	}

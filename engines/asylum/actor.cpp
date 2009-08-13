@@ -31,7 +31,7 @@
 
 namespace Asylum {
 
-MainActor::MainActor(uint8 *data) {
+MainActor::MainActor(uint8 *data, ActorItem *actorRef) {
 	byte *dataPtr = data;
 
 	for (uint32 i = 0; i < 60; i++){
@@ -45,6 +45,7 @@ MainActor::MainActor(uint8 *data) {
 	_actorY          = 0;
 	_currentAction   = 0;
 	_currentWalkArea = 0;
+	_actorRef		 = actorRef;
 }
 
 MainActor::~MainActor() {
@@ -226,15 +227,14 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
 
+				setWalkArea(&Shared.getScene()->getResources()->getWorldStats()->actions[a]);
+
 				if (areaPtr > 5)
 					error("More than 5 overlapping walk regions found. Increase buffer");
+
 			}
 		}
 	}
-
-	// Set the current walk region to the first available action area
-	// in the collection
-	setWalkArea(&Shared.getScene()->getResources()->getWorldStats()->actions[availableAreas[0]]);
 
 	// Check that we can walk in the current direction within any of the available
 	// walkable regions
@@ -250,6 +250,25 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 
 	setAction(newAction);
 	drawActor();
+}
+
+void MainActor::disable(int param) {
+	switch (param) {
+
+	case 5:
+		int dir = _actorRef->direction;
+		if (dir > 4)
+			_actorRef->direction = 8 - dir;
+
+		setAction(dir + 5);
+		break;
+
+	}
+
+}
+
+void MainActor::setDirection(int direction) {
+
 }
 
 } // end of namespace Asylum
