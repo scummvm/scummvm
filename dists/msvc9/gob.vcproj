@@ -104,6 +104,7 @@
 		<File RelativePath="..\..\engines\gob\inter.h" />
 		<File RelativePath="..\..\engines\gob\inter_bargon.cpp" />
 		<File RelativePath="..\..\engines\gob\inter_fascin.cpp" />
+		<File RelativePath="..\..\engines\gob\inter_playtoons.cpp" />
 		<File RelativePath="..\..\engines\gob\inter_v1.cpp" />
 		<File RelativePath="..\..\engines\gob\inter_v2.cpp" />
 		<File RelativePath="..\..\engines\gob\inter_v3.cpp" />
