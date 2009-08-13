@@ -161,20 +161,6 @@ typedef struct BarrierItem {
 
 } BarrierItem;
 
-// FIXME add unknown fields
-typedef struct ActionItem {
-	char   name[52];
-	uint32 id;
-	int32  actionListIdx1;
-	int32  actionListIdx2;
-	int32  actionType; // 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
-	int32  polyIdx;
-	uint32 soundResId;
-	uint32 palCorrection;
-	int32  soundVolume;
-
-} ActionItem;
-
 typedef struct CommonResources {
 	uint32 backgroundImage;
 	uint32 curScrollUp;
@@ -312,7 +298,7 @@ public:
 	Common::Array<BarrierItem> barriers; // maxsize 400
 	Common::Array<ActorItem>   actors;	 // maxsize 50
 	// TODO add rest fields
-	Common::Array<ActionItem>  actions;	 // maxsize 400
+	Common::Array<ActionArea>  actions;	 // maxsize 400
 
 }; // end of class WorldStats
 
@@ -337,8 +323,6 @@ public:
 
 }; // end of class GamePolygons
 
-// TODO Initialize the ActionArea collection
-// if it's actually needed
 typedef struct ActionArea {
 	char   name[52];
 	uint32 id;
@@ -347,9 +331,9 @@ typedef struct ActionArea {
 	uint32 field_40;
 	uint32 field_44;
 	uint32 flags;
-	uint32 actionListIndex01;
-	uint32 actionListIndex02;
-	uint32 flags2;
+	uint32 actionListIdx1;
+	uint32 actionListIdx2;
+	uint32 actionType; // aka flags2: 0-none, 1-findwhat, 2-talk, 3-findwhat??, 4-grab
 	uint32 flagNums[10];
 	uint32 field_7C;
 	uint32 polyIdx;

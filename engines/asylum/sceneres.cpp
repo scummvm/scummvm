@@ -339,12 +339,12 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 		}
 		
 		actor.actionIdx2 = stream->readUint32LE();
-		actor.field_924 = stream->readUint32LE();
+		actor.field_924  = stream->readUint32LE();
 		actor.tickValue1 = stream->readUint32LE();
-		actor.field_92C = stream->readUint32LE();
-		actor.flags2 = stream->readUint32LE();
-		actor.field_934 = stream->readUint32LE();
-		actor.field_938 = stream->readUint32LE();
+		actor.field_92C  = stream->readUint32LE();
+		actor.flags2     = stream->readUint32LE();
+		actor.field_934  = stream->readUint32LE();
+		actor.field_938  = stream->readUint32LE();
 		actor.soundResId = stream->readUint32LE();
 
 		// TODO skip field_940 till field_978
@@ -368,23 +368,31 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
 	// FIXME Figure out all the actions items
 	for (uint32 a = 0; a < _worldStats->numActions; a++) {
-		ActionItem action;
-		memset(&action, 0, sizeof(ActionItem));
+		ActionArea action;
+		memset(&action, 0, sizeof(ActionArea));
 
 		stream->read(action.name,52);
-		action.id			  = stream->readUint32LE();
-		stream->skip(0x14);
-		action.actionListIdx1 = stream->readUint32LE();
-		action.actionListIdx2 = stream->readUint32LE();
-		action.actionType	  = stream->readUint32LE();
-		stream->skip(0x2C);
-		action.polyIdx		  = stream->readUint32LE();
-		stream->skip(0x08);
-		action.soundResId	  = stream->readUint32LE();
-		stream->skip(0x04);
-		action.palCorrection  = stream->readUint32LE();
-		stream->skip(0x14);
-		action.soundVolume	  = stream->readUint32LE();
+		action.id				= stream->readUint32LE();
+		action.field01 			= stream->readUint32LE();
+		action.field02 			= stream->readUint32LE();
+		action.field_40 		= stream->readUint32LE();
+		action.field_44 		= stream->readUint32LE();
+		action.flags 			= stream->readUint32LE();
+		action.actionListIdx1 	= stream->readUint32LE();
+		action.actionListIdx2 	= stream->readUint32LE();
+		action.actionType 		= stream->readUint32LE();
+		for (int aa1 = 0; aa1 < 10; aa1++)
+			action.flagNums[aa1] = stream->readUint32LE();
+		action.field_7C 		= stream->readUint32LE();
+		action.polyIdx 			= stream->readUint32LE();
+		action.field_84 		= stream->readUint32LE();
+		action.field_88 		= stream->readUint32LE();
+		action.soundResId 		= stream->readUint32LE();
+		action.field_90 		= stream->readUint32LE();
+		action.paletteValue 	= stream->readUint32LE();
+		for (int aa2 = 0; aa2 < 5; aa2++)
+					action.array[aa2] = stream->readUint32LE();
+		action.volume 			= stream->readUint32LE();
 
 		_worldStats->actions.push_back(action);
 	}

@@ -312,7 +312,7 @@ void Scene::update() {
 	// Check current walk region
 	for (uint32 a = 0; a < worldStats->numActions; a++) {
 		if (worldStats->actions[a].actionType == 0) {
-			ActionItem *area = &worldStats->actions[a];
+			ActionArea *area = &worldStats->actions[a];
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[area->polyIdx];
 			if (Shared.pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
 				debugShowWalkRegion(&poly);
