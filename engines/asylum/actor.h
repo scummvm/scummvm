@@ -32,7 +32,7 @@
 namespace Asylum {
 
 class Screen;
-struct ActionItem;
+struct ActionArea;
 struct ActorItem;
 
 // TODO investigate other actor resources (from other
@@ -133,7 +133,7 @@ public:
 	virtual ~MainActor();
 
 	void setResourcePack(ResourcePack *resPack) { _resPack = resPack; }
-	void setWalkArea(ActionItem *target); // depreciate
+	void setWalkArea(ActionArea *target); // TODO depreciate
 	void setAction(int action);
 	void setActionByIndex(int index);
 	void drawActorAt(uint16 x, uint16 y);
@@ -152,7 +152,7 @@ private:
 	uint8           _currentFrame;
 	int             _currentAction;
 
-	ActionItem 	*_currentWalkArea;
+	ActionArea 	*_currentWalkArea;
 	ActorItem	*_actorRef;
 
 	GraphicFrame *getFrame();

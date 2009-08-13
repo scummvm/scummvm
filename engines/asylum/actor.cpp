@@ -133,7 +133,7 @@ void MainActor::drawActor() {
 			frame->surface.h );
 }
 
-void MainActor::setWalkArea(ActionItem *target) {
+void MainActor::setWalkArea(ActionArea *target) {
 	if (_currentWalkArea != target) {
 		ScriptMan.setScriptIndex(target->actionListIdx1);
 		_currentWalkArea = target;
@@ -216,7 +216,7 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 
 	int availableAreas[5];
 	int areaPtr = 0;
-	ActionItem *area;
+	ActionArea *area;
 
 	// Check what valid walk region(s) is/are currently available
 	for (uint32 a = 0; a < Shared.getScene()->getResources()->getWorldStats()->numActions; a++) {
