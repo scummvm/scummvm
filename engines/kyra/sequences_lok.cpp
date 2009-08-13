@@ -1353,7 +1353,6 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 	char *buffer = new char[size];
 	assert(buffer);
 	memcpy(buffer, bufferTmp, size);
-	_staticres->unloadId(k1CreditsStrings);
 
 	char stringBuffer[81];
 	memset(stringBuffer, 0, sizeof(stringBuffer));
