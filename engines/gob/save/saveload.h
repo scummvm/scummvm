@@ -450,12 +450,15 @@ protected:
 };
 
 /** Save/Load class for Playtoons. */
-/** Only used for the moment to check file presence */
-
 class SaveLoad_Playtoons : public SaveLoad {
 public:
-	SaveLoad_Playtoons(GobEngine *vm);
+	static const uint32 kSlotCount = 60;
+	static const uint32 kSlotNameLength = 40;
+
+	SaveLoad_Playtoons(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_Playtoons();
+
+	SaveMode getSaveMode(const char *fileName) const;
 
 protected:
 	struct SaveFile {
@@ -465,14 +468,45 @@ protected:
 		const char *description;
 	};
 
+	/** Handles the save slots. */
+	class GameHandler : public SaveHandler {
+	public:
+		GameHandler(GobEngine *vm, const char *target);
+		~GameHandler();
+
+		int32 getSize();
+		bool load(int16 dataVar, int32 size, int32 offset);
+		bool save(int16 dataVar, int32 size, int32 offset);
+
+	private:
+		/** Slot file construction. */
+		class File : public SlotFileIndexed {
+		public:
+			File(GobEngine *vm, const char *base);
+			~File();
+
+			int getSlot(int32 offset) const;
+			int getSlotRemainder(int32 offset) const;
+		};
+
+		byte _props[500];
+		/** The index. 500 bytes properties + kSlotCount * kSlotNameLength bytes. */
+		byte _index[2400];
+
+		File *_slotFile;
+
+		void buildIndex(byte *buffer) const;
+	};
+
 	static SaveFile _saveFiles[];
 
-	SaveMode getSaveMode(const char *fileName) const;
+	GameHandler *_gameHandler;
+
+	SaveHandler *getHandler(const char *fileName) const;
+	const char *getDescription(const char *fileName) const;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
-	
 	SaveFile *getSaveFile(const char *fileName);
-
 };
 
 } // End of namespace Gob
