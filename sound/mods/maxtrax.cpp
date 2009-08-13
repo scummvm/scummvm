@@ -541,6 +541,7 @@ void MaxTrax::killVoice(byte num) {
 	voice.priority = 0;
 	voice.stopEventTime = -1;
 	voice.dmaOff = 0;
+	voice.lastVolume = 0;
 	//voice.uinqueId = 0;
 
 	// "stop" voice, set period to 1, vol to 0

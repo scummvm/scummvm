@@ -170,7 +170,7 @@ void SoundAmiga::playTrack(uint8 track) {
 	}
 
 	if (score >= 0) {
-		if (_driver->playSong(score, loop)) {
+		if (_musicEnabled && _driver->playSong(score, loop)) {
 			_driver->setVolume(volume);
 			_driver->setTempo(tempo << 4);
 			if (!_mixer->isSoundHandleActive(_musicHandle))
@@ -215,25 +215,20 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 		break;
 
 	case kFileGame:
-		// 0x61 <= track && track <= 0x63 && variable(0x1BFE2) which might indicate song playing in game and finale
 		if (0x61 <= track && track <= 0x63)
 			playTrack(track - 0x4F);
 
-		// We only allow playing of sound effects, which are included in the table.
-		if (track < 120) {
-			// variable(0x1BFE4) && tableEffectsGame[track].note, which gets set for ingame and unset for finale
-			// (and some function reverses its state)
-			if (sfxTableGetNote(&_tableSfxGame[track * 8])) { 
-				tableEntry = &_tableSfxGame[track * 8];
-				pan = (sfxTableGetPan(tableEntry) != 0) && (sfxTableGetPan(tableEntry) != 2);
-			}
+		assert(track < 120);
+		if (sfxTableGetNote(&_tableSfxGame[track * 8])) { 
+			tableEntry = &_tableSfxGame[track * 8];
+			pan = (sfxTableGetPan(tableEntry) != 0) && (sfxTableGetPan(tableEntry) != 2);
 		}
 		break;
 	default:
 		;
 	}
 
-	if (tableEntry) {
+	if (_sfxEnabled && tableEntry) {
 		const bool success = _driver->playNote(sfxTableGetNote(tableEntry), sfxTableGetPatch(tableEntry), sfxTableGetDuration(tableEntry), sfxTableGetVolume(tableEntry), pan);
 		if (success && !_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
