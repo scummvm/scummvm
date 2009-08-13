@@ -97,10 +97,6 @@
 
 	<dialog name = 'Launcher' overlays = 'screen'>
 		<layout type = 'vertical' center = 'true' padding = '23, 23, 8, 23'>
-			<widget name = 'Version'
-					width = '247'
-					height = 'Globals.Line.Height'
-			/>
 			<widget name = 'Logo'
 					width = '283'
 					height = '80'
@@ -117,6 +113,10 @@
 				<widget name = 'SearchClearButton'
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
+				/>
+				<widget name = 'Version'
+						width = '247'
+						height = 'Globals.Line.Height'
 				/>
 				<space />
 			</layout>
