@@ -557,9 +557,9 @@ protected:
 	virtual void setupOpcodesFunc();
 	virtual void setupOpcodesGob();
 
-	bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params);
-	void Inter_Playtoons::oPlaytoons_CD_20_23();
-	void Inter_Playtoons::oPlaytoons_CD_25();
+	bool oPlaytoons_checkData(OpFuncParams &params);
+	void oPlaytoons_CD_20_23();
+	void oPlaytoons_CD_25();
 };
 
 } // End of namespace Gob
