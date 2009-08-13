@@ -44,6 +44,7 @@ private:
 	bool cmdRunScript(int argc, const char **argv);
 	bool cmdChangeScene(int argc, const char **argv);
 	bool cmdShowFlags(int argc, const char **argv);
+	bool cmdToggleFlag(int argc, const char **argv);
 
 private:
 	AsylumEngine *_vm;

@@ -33,9 +33,8 @@ namespace Asylum {
 
 class Screen;
 struct ActionItem;
+struct ActorItem;
 
-// TODO properly use this enum as opposed to just
-// using it for visual reference :P
 // TODO investigate other actor resources (from other
 // scenes) to see if the unused blocks in the actor
 // definition are in fact used elsewhere
@@ -130,7 +129,7 @@ enum ActorResources {
 
 class MainActor {
 public:
-	MainActor(uint8 *data);
+	MainActor(uint8 *data, ActorItem *actorRef);
 	virtual ~MainActor();
 
 	void setResourcePack(ResourcePack *resPack) { _resPack = resPack; }
@@ -140,6 +139,8 @@ public:
 	void drawActorAt(uint16 x, uint16 y);
 	void drawActor();
 	void walkTo(uint16 x, uint16 y);
+	void disable(int param);
+	void setDirection(int direction);
 	int getCurrentAction() { return _currentAction; }
 
 	uint16 _actorX, _actorY;
@@ -151,7 +152,8 @@ private:
 	uint8           _currentFrame;
 	int             _currentAction;
 
-	ActionItem 		*_currentWalkArea;
+	ActionItem 	*_currentWalkArea;
+	ActorItem	*_actorRef;
 
 	GraphicFrame *getFrame();
 

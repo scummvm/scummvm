@@ -362,7 +362,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 	stream->seek(0xA73B6);
 	uint8 mainActorData[500];
 	stream->read(mainActorData, 500);
-	_mainActor = new MainActor(mainActorData);
+	_mainActor = new MainActor(mainActorData, &_worldStats->actors[0]);
 
 	stream->seek(0xD6B5A); // where action items start
 
