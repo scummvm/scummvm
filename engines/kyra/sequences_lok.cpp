@@ -1287,8 +1287,10 @@ void KyraEngine_LoK::seq_playCredits() {
 			_screen->updateScreen();
 		}
 
-		if (checkInput(0, false))
+		if (checkInput(0, false)) {
+			removeInputTop();
 			finished = true;
+		}
 
 		uint32 now = _system->getMillis();
 		uint32 nextLoop = startLoop + _tickLength * 5;
@@ -1414,8 +1416,10 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 			*specialString = 0;
 		}
 
-		if (checkInput(0, false))
+		if (checkInput(0, false)) {
+			removeInputTop();
 			break;
+		}
 	} while (++cur != buffer + size && !shouldQuit());
 
 	delete[] buffer;
