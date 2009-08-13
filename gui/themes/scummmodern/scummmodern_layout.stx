@@ -101,21 +101,19 @@
 					width = '283'
 					height = '80'
 			/>
-			<layout type = 'horizontal' center = 'true' spacing = '5' padding = '10, 0, 0, 0'>
-				<layout type = 'horizontal' spacing = '5' padding = '0, 0, 0, 0'>
-					<widget name = 'SearchPic'
-							width = '16'
-							height = '17'
-					/>
-					<widget name = 'Search'
-							width = '150'
-							height = 'Globals.Line.Height'
-					/>
-					<widget name = 'SearchClearButton'
-							height = 'Globals.Line.Height'
-							width = 'Globals.Line.Height'
-					/>
-				</layout>
+			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
+				<widget name = 'SearchPic'
+						width = '16'
+						height = '17'
+				/>
+				<widget name = 'Search'
+						width = '150'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'SearchClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
 				<space />
 				<widget name = 'Version'
 						width = '247'
