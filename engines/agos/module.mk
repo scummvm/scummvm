@@ -2,7 +2,6 @@ MODULE := engines/agos
 
 MODULE_OBJS := \
 	agos.o \
-	animation.o \
 	charset.o \
 	charset-fontdata.o \
 	contain.o \
@@ -12,15 +11,14 @@ MODULE_OBJS := \
 	detection.o \
 	draw.o \
 	event.o \
-	feeble.o \
 	gfx.o \
 	icons.o \
 	input.o \
+	input_pn.o \
 	items.o \
 	menus.o \
 	midi.o \
 	midiparser_s1d.o \
-	oracle.o \
 	pn.o \
 	res.o \
 	res_ami.o \
@@ -28,27 +26,36 @@ MODULE_OBJS := \
 	rooms.o \
 	saveload.o \
 	script.o \
+	script_pn.o \
 	script_e1.o \
 	script_e2.o \
-	script_pn.o \
 	script_ww.o \
 	script_s1.o \
 	script_s2.o \
-	script_ff.o \
-	script_pp.o \
 	sound.o \
 	string.o \
+	string_pn.o \
 	subroutine.o \
 	verb.o \
+	verb_pn.o \
 	vga.o \
-	vga_e2.o \
 	vga_pn.o \
+	vga_e2.o \
 	vga_ww.o \
 	vga_s1.o \
 	vga_s2.o \
-	vga_ff.o \
 	window.o \
 	zones.o
+
+ifdef ENABLE_AGOS2
+MODULE_OBJS += \
+	animation.o \
+	feeble.o \
+	oracle.o \
+	script_ff.o \
+	script_pp.o \
+	vga_ff.o
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGOS), DYNAMIC_PLUGIN)

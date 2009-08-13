@@ -769,7 +769,9 @@ site, please see the section on reporting bugs.
       original game.
 
   The Legend of Kyrandia:
-    - Amiga versions aren't supported
+    - No music or sound effects in the Amiga and Macintosh floppy versions.
+    - Macintosh CD is using included DOS music and sound effects.
+    - PC-9821 version lacks support for sound effects.
 
   Humongous Entertainment games:
     - Only the original load and save interface can be used.

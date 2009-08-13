@@ -356,6 +356,7 @@ public:
 	virtual void setScreenPalette(const Palette &pal);
 
 	// AMIGA version only
+	bool isInterfacePaletteEnabled() const { return _interfacePaletteEnabled; }
 	void enableInterfacePalette(bool e);
 	void setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b);
 
@@ -451,6 +452,7 @@ public:
 protected:
 	uint8 *getPagePtr(int pageNum);
 	void updateDirtyRects();
+	void updateDirtyRectsAmiga();
 	void updateDirtyRectsOvl();
 
 	void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
@@ -477,6 +479,7 @@ protected:
 	bool _useOverlays;
 	bool _useSJIS;
 	bool _use16ColorMode;
+	bool _isAmiga;
 
 	Graphics::FontSJIS *_sjisFont;
 	uint8 _sjisInvisibleColor;

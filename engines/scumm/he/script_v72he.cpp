@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_HE
+
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -2048,3 +2050,5 @@ void ScummEngine_v72he::decodeParseString(int m, int n) {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

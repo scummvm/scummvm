@@ -236,6 +236,8 @@ int KyraEngine_LoK::o1_fadeSpecialPalette(EMCState *script) {
 			}
 		} else {
 			setupZanthiaPalette(stackPos(0));
+			_screen->getPalette(0).copy(_screen->getPalette(4), 12, 1);
+			_screen->fadePalette(_screen->getPalette(0), 2);
 		}
 	} else {
 		debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_fadeSpecialPalette(%p) (%d, %d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
@@ -1090,7 +1092,9 @@ int KyraEngine_LoK::o1_specialEventDisplayBrynnsNote(EMCState *script) {
 	_screen->copyRegion(63, 8, 63, 8, 194, 128, 2, 0);
 	_screen->updateScreen();
 	_screen->showMouse();
-	_screen->setFont(Screen::FID_6_FNT);
+
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie)
+		_screen->setFont(Screen::FID_6_FNT);
 	return 0;
 }
 
@@ -1101,7 +1105,9 @@ int KyraEngine_LoK::o1_specialEventRemoveBrynnsNote(EMCState *script) {
 	_screen->loadPageFromDisk("HIDPAGE.TMP", 2);
 	_screen->updateScreen();
 	_screen->showMouse();
-	_screen->setFont(Screen::FID_8_FNT);
+
+	if (_flags.platform != Common::kPlatformAmiga && !_flags.isTalkie)
+		_screen->setFont(Screen::FID_8_FNT);
 	return 0;
 }
 
@@ -1388,7 +1394,7 @@ int KyraEngine_LoK::o1_waitForConfirmationMouseClick(EMCState *script) {
 
 		updateInput();
 
-		int input = checkInput(_buttonList, false) & 0xFF;
+		int input = checkInput(0, false) & 0xFF;
 		removeInputTop();
 		if (input == 200)
 			break;

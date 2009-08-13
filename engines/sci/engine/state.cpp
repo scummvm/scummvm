@@ -114,9 +114,12 @@ EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 fla
 	gc_countdown = 0;
 
 	successor = 0;
+
+	speedThrottler = new SpeedThrottler(version);
 }
 
 EngineState::~EngineState() {
+	delete speedThrottler;
 }
 
 uint16 EngineState::currentRoomNumber() const {

@@ -23,7 +23,7 @@
  *
  */
 
-
+#ifdef ENABLE_HE
 
 #include "scumm/he/intern_he.h"
 #include "scumm/resource.h"
@@ -1442,3 +1442,5 @@ void Sprite::saveOrLoadSpriteData(Serializer *s) {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

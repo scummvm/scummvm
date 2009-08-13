@@ -80,6 +80,9 @@ const ScreenDim *Screen_LoK::getScreenDim(int dim) {
 }
 
 void Screen_LoK::fadeSpecialPalette(int palIndex, int startIndex, int size, int fadeTime) {
+	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
+		return;
+
 	assert(_vm->palTable1()[palIndex]);
 
 	Palette tempPal(getPalette(0).getNumColors());

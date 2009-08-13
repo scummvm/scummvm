@@ -34,6 +34,7 @@
 
 namespace AGOS {
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 	if (_textWindow == NULL)
 		return;
@@ -64,6 +65,7 @@ void AGOSEngine_Feeble::doOutput(const byte *src, uint len) {
 		}
 	}
 }
+#endif
 
 void AGOSEngine::doOutput(const byte *src, uint len) {
 	uint idx;
@@ -484,13 +486,11 @@ void AGOSEngine::openTextWindow() {
 		_textWindow = openWindow(8, 144, 24, 6, 1, 0, 15);
 }
 
-#ifdef ENABLE_PN
 void AGOSEngine_PN::windowPutChar(WindowBlock *window, byte c, byte b) {
 	if (_mousePrintFG || _wiped)
 		return;
 	AGOSEngine::windowPutChar(window, c, b);
 }
-#endif
 
 void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	byte width = 6;
@@ -573,6 +573,7 @@ void AGOSEngine::windowPutChar(WindowBlock *window, byte c, byte b) {
 	}
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 	if (_noOracleScroll == 0) {
 		if (window->height < window->textRow + 30) {
@@ -603,6 +604,7 @@ void AGOSEngine_Feeble::windowNewLine(WindowBlock *window) {
 	window->textColumnOffset = 0;
 	window->textLength = 0;
 }
+#endif
 
 void AGOSEngine::windowNewLine(WindowBlock *window) {
 	window->textColumn = 0;

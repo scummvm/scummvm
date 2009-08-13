@@ -552,11 +552,13 @@ void AGOSEngine::delay(uint amount) {
 	} while (cur < start + amount && !shouldQuit());
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::timerProc() {
 	_lastTickCount = _system->getMillis();
 
 	AGOSEngine_Feeble::timerProc();
-	dimpIdle();
+	if (getGameId() == GID_DIMP)
+		dimpIdle();
 }
 
 void AGOSEngine_Feeble::timerProc() {
@@ -609,8 +611,8 @@ void AGOSEngine_Feeble::timerProc() {
 
 	_videoLockOut &= ~2;
 }
+#endif
 
-#ifdef ENABLE_PN
 void AGOSEngine_PN::timerProc() {
 	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)
 		return;
@@ -649,7 +651,6 @@ void AGOSEngine_PN::timerProc() {
 
 	_videoLockOut &= ~2;
 }
-#endif
 
 void AGOSEngine::timerProc() {
 	if (_videoLockOut & 0x80E9 || _videoLockOut & 2)
@@ -677,6 +678,7 @@ void AGOSEngine::timerProc() {
 	_videoLockOut &= ~2;
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::dimpIdle() {
 	int z, n;
 
@@ -758,5 +760,6 @@ void AGOSEngine_PuzzlePack::dimpIdle() {
 		}
 	}
 }
+#endif
 
 } // End of namespace AGOS

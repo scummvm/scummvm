@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 48,
+	kKyraDatVersion = 49,
 	kIndexSize = 12
 };
 
@@ -500,7 +500,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			if (g->special == kAmigaVersion) {
 				if (i + 1 >= size)
 					++entries;
-				else if (!data[i+1])
+				else if (!data[i+1] && !(i & 1))
 					continue;
 				else
 					++entries;
@@ -616,7 +616,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 		// we need to strip some aligment zeros out here
 		int dstPos = 0;
 		for (uint32 i = 0; i < size; ++i) {
-			if (!data[i]) {
+			if (!data[i] && !(i & 1)) {
 				if (i + 1 > size)
 					continue;
 				else if (i + 1 < size && !data[i+1])

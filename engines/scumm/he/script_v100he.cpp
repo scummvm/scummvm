@@ -23,6 +23,8 @@
  *
  */
 
+#ifdef ENABLE_HE
+
 #include "common/system.h"
 
 #include "scumm/actor.h"
@@ -3028,3 +3030,5 @@ void ScummEngine_v100he::decodeParseString(int m, int n) {
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

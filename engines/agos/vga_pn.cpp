@@ -23,8 +23,6 @@
  *
  */
 
-#ifdef ENABLE_PN
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 #include "agos/vga.h"
@@ -57,7 +55,7 @@ void AGOSEngine_PN::setupVideoOpcodes(VgaOpcodeProc *op) {
 	op[20] = &AGOSEngine::vc19_loop;
 	op[21] = &AGOSEngine::vc20_setRepeat;
 	op[22] = &AGOSEngine::vc21_endRepeat;
-	op[23] = &AGOSEngine::vc22_setPaletteOld;
+	op[23] = &AGOSEngine::vc22_setPalette;
 	op[24] = &AGOSEngine::vc23_setPriority;
 	op[25] = &AGOSEngine::vc24_setSpriteXY;
 	op[26] = &AGOSEngine::vc25_halt_sprite;
@@ -219,5 +217,3 @@ void AGOSEngine_PN::clearVideoWindow(uint16 num, uint16 color) {
 }
 
 } // End of namespace AGOS
-
-#endif

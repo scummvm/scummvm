@@ -34,13 +34,12 @@
 #include "common/stack.h"
 #include "common/util.h"
 
+#ifdef ENABLE_AGOS2
 #include "agos/animation.h"
+#endif
 #include "agos/midi.h"
 #include "agos/sound.h"
 #include "agos/vga.h"
-
-// TODO: Replace with more portable code
-#include <setjmp.h>
 
 namespace AGOS {
 
@@ -892,6 +891,7 @@ public:
 	void vc19_loop();
 	void vc20_setRepeat();
 	void vc21_endRepeat();
+	virtual void vc22_setPalette();
 	void vc23_setPriority();
 	void vc24_setSpriteXY();
 	void vc25_halt_sprite();
@@ -904,7 +904,7 @@ public:
 	void vc33_setMouseOn();
 	void vc34_setMouseOff();
 	void vc35_clearWindow();
-	void vc36_setWindowImage();
+	virtual void vc36_setWindowImage();
 	void vc38_ifVarNotZero();
 	void vc39_setVar();
 	void vc40_scrollRight();
@@ -924,7 +924,6 @@ public:
 
 	// Video Script Opcodes, Elvira 1
 	void vc17_waitEnd();
-	void vc22_setPaletteOld();
 	void vc32_saveScreen();
 	void vc37_pokePalette();
 
@@ -962,10 +961,9 @@ public:
 	void vc45_setSpriteX();
 	void vc46_setSpriteY();
 	void vc47_addToVar();
-	void vc48_setPathFinder();
+	virtual void vc48_setPathFinder();
 	void vc59_ifSpeech();
 	void vc61_setMaskImage();
-	void vc22_setPaletteNew();
 
 	// Video Script Opcodes, Simon 2
 	void vc56_delayLong();
@@ -1264,7 +1262,6 @@ protected:
 	virtual char *genSaveName(int slot);
 };
 
-#ifdef ENABLE_PN
 class AGOSEngine_PN : public AGOSEngine {
 
 	virtual Common::Error go();
@@ -1365,9 +1362,6 @@ protected:
 
 	int _tagOfActiveDoline;	///< tag of the active doline "instance"
 	int _dolineReturnVal;
-
-	jmp_buf _loadfail;
-
 
 	byte *_dataBase, *_textBase;
 	uint32 _dataBaseSize, _textBaseSize;
@@ -1515,7 +1509,6 @@ protected:
 
 	const OpcodeEntryPN *_opcodesPN;
 };
-#endif
 
 class AGOSEngine_Elvira1 : public AGOSEngine {
 public:
@@ -1771,6 +1764,8 @@ public:
 
 	virtual void executeOpcode(int opcode);
 
+	virtual void vc22_setPalette();
+
 	// Opcodes, Simon 1
 	void os1_animate();
 	void os1_pauseGame();
@@ -1875,6 +1870,7 @@ protected:
 	virtual char *genSaveName(int slot);
 };
 
+#ifdef ENABLE_AGOS2
 class AGOSEngine_Feeble : public AGOSEngine_Simon2 {
 public:
 	AGOSEngine_Feeble(OSystem *system);
@@ -1885,6 +1881,9 @@ public:
 	virtual void setupVideoOpcodes(VgaOpcodeProc *op);
 
 	virtual void executeOpcode(int opcode);
+
+	virtual void vc36_setWindowImage();
+	virtual void vc48_setPathFinder();
 
 	void off_chance();
 	void off_jumpOut();
@@ -2092,6 +2091,7 @@ protected:
 
 	virtual char *genSaveName(int slot);
 };
+#endif
 
 } // End of namespace AGOS
 

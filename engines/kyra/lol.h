@@ -1296,8 +1296,8 @@ private:
 	uint8 _monsterAnimType[3];
 	uint16 _monsterCurBlock;
 	int _objectLastDirection;
-	int _monsterCountUnk;
-	int _monsterShiftAlt;
+	int _monsterStepCounter;
+	int _monsterStepMode;
 
 	const uint16 *_monsterModifiers;
 	int _monsterModifiersSize;

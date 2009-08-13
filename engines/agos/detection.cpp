@@ -72,11 +72,13 @@ static const PlainGameDescriptor simonGames[] = {
 	{"waxworks", "Waxworks"},
 	{"simon1", "Simon the Sorcerer 1"},
 	{"simon2", "Simon the Sorcerer 2"},
+#ifdef ENABLE_AGOS2
 	{"feeble", "The Feeble Files"},
 	{"dimp", "Demon in my Pocket"},
 	{"jumble", "Jumble"},
 	{"puzzle", "NoPatience"},
 	{"swampy", "Swampy Adventures"},
+#endif
 	{0, 0}
 };
 
@@ -138,11 +140,9 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	bool res = true;
 
 	switch (gd->gameType) {
-#ifdef ENABLE_PN
 	case AGOS::GType_PN:
 		*engine = new AGOS::AGOSEngine_PN(syst);
 		break;
-#endif
 	case AGOS::GType_ELVIRA1:
 		*engine = new AGOS::AGOSEngine_Elvira1(syst);
 		break;
@@ -158,6 +158,7 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case AGOS::GType_SIMON2:
 		*engine = new AGOS::AGOSEngine_Simon2(syst);
 		break;
+#ifdef ENABLE_AGOS2
 	case AGOS::GType_FF:
 		if (gd->features & GF_DEMO)
 			*engine = new AGOS::AGOSEngine_FeebleDemo(syst);
@@ -167,6 +168,7 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 	case AGOS::GType_PP:
 		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
 		break;
+#endif
 	default:
 		res = false;
 		error("AGOS engine: unknown gameType");

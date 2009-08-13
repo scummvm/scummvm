@@ -23,7 +23,7 @@
  *
  */
 
-#ifndef SCUMM_HE_ANIMATION_H
+#if !defined(SCUMM_HE_ANIMATION_H) && defined(ENABLE_HE)
 #define SCUMM_HE_ANIMATION_H
 
 #include "common/file.h"

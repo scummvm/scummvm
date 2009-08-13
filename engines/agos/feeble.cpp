@@ -23,6 +23,10 @@
  *
  */
 
+
+
+#ifdef ENABLE_AGOS2
+
 #include "common/config-manager.h"
 
 #include "agos/intern.h"
@@ -383,3 +387,5 @@ void AGOSEngine_FeebleDemo::waitForSpace() {
 }
 
 } // End of namespace AGOS
+
+#endif // ENABLE_AGOS2

@@ -23,7 +23,7 @@
  *
  */
 
-
+#ifdef ENABLE_HE
 
 #include "common/system.h"
 #include "graphics/cursorman.h"
@@ -2679,3 +2679,5 @@ int ScummEngine_v90he::computeWizHistogram(int resNum, int state, int x, int y, 
 }
 
 } // End of namespace Scumm
+
+#endif // ENABLE_HE

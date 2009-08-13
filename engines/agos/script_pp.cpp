@@ -25,6 +25,8 @@
 
 
 
+#ifdef ENABLE_AGOS2
+
 #include "common/system.h"
 
 #include "agos/agos.h"
@@ -457,3 +459,5 @@ void AGOSEngine_PuzzlePack::opp_restartClock() {
 }
 
 } // End of namespace AGOS
+
+#endif // ENABLE_AGOS2

@@ -35,6 +35,7 @@
 		<File RelativePath="..\..\engines\agos\gfx.cpp" />
 		<File RelativePath="..\..\engines\agos\icons.cpp" />
 		<File RelativePath="..\..\engines\agos\input.cpp" />
+		<File RelativePath="..\..\engines\agos\input_pn.cpp" />
 		<File RelativePath="..\..\engines\agos\intern.h" />
 		<File RelativePath="..\..\engines\agos\items.cpp" />
 		<File RelativePath="..\..\engines\agos\menus.cpp" />
@@ -60,8 +61,10 @@
 		<File RelativePath="..\..\engines\agos\sound.cpp" />
 		<File RelativePath="..\..\engines\agos\sound.h" />
 		<File RelativePath="..\..\engines\agos\string.cpp" />
+		<File RelativePath="..\..\engines\agos\string_pn.cpp" />
 		<File RelativePath="..\..\engines\agos\subroutine.cpp" />
 		<File RelativePath="..\..\engines\agos\verb.cpp" />
+		<File RelativePath="..\..\engines\agos\verb_pn.cpp" />
 		<File RelativePath="..\..\engines\agos\vga.cpp" />
 		<File RelativePath="..\..\engines\agos\vga.h" />
 		<File RelativePath="..\..\engines\agos\vga_e2.cpp" />

@@ -226,6 +226,7 @@ bool AGOSEngine::drawImage_clip(VC10_state *state) {
 	return (state->draw_width != 0 && state->draw_height != 0);
 }
 
+#ifdef ENABLE_AGOS2
 void AGOSEngine_Feeble::scaleClip(int16 h, int16 w, int16 y, int16 x, int16 scrollY) {
 	Common::Rect srcRect, dstRect;
 	float factor, xscale;
@@ -461,6 +462,7 @@ void AGOSEngine_Feeble::drawImage(VC10_state *state) {
 		} while (--state->draw_height);
 	}
 }
+#endif
 
 void AGOSEngine_Simon1::drawMaskedImage(VC10_state *state) {
 	if (getGameType() == GType_SIMON1 && (_windowNum == 3 || _windowNum == 4 || _windowNum >= 10)) {
@@ -1260,7 +1262,6 @@ void AGOSEngine::setImage(uint16 vgaSpriteId, bool vgaScript) {
 	_vcPtr = vc_ptr_org;
 }
 
-#ifdef ENABLE_PN
 void AGOSEngine_PN::setWindowImageEx(uint16 mode, uint16 vga_res) {
 	if (!_initMouse) {
 		_initMouse = 1;
@@ -1268,7 +1269,6 @@ void AGOSEngine_PN::setWindowImageEx(uint16 mode, uint16 vga_res) {
 	}
 	setWindowImage(mode, vga_res);
 }
-#endif
 
 void AGOSEngine::setWindowImageEx(uint16 mode, uint16 vgaSpriteId) {
 	_window3Flag = 0;

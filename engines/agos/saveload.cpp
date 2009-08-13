@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/file.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
@@ -72,6 +73,7 @@ int AGOSEngine::countSaveGames() {
 	return i;
 }
 
+#ifdef ENABLE_AGOS2
 char *AGOSEngine_PuzzlePack::genSaveName(int slot) {
 	static char buf[20];
 
@@ -88,6 +90,7 @@ char *AGOSEngine_Feeble::genSaveName(int slot) {
 	sprintf(buf, "feeble.%.3d", slot);
 	return buf;
 }
+#endif
 
 char *AGOSEngine_Simon2::genSaveName(int slot) {
 	static char buf[20];
@@ -1548,7 +1551,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 	return result;
 }
 
-#ifdef ENABLE_PN
 // Personal Nightmare specific
 bool AGOSEngine_PN::badload(int8 errorNum) {
 	if (errorNum == -2)
@@ -1672,6 +1674,5 @@ void AGOSEngine_PN::dbtosysf() {
 		ct++;
 	}
 }
-#endif
 
 } // End of namespace AGOS

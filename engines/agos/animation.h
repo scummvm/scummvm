@@ -23,11 +23,10 @@
  *
  */
 
+#ifdef ENABLE_AGOS2
+
 #ifndef AGOS_ANIMATION_H
 #define AGOS_ANIMATION_H
-
-#include "common/file.h"
-#include "common/stream.h"
 
 #include "graphics/video/dxa_decoder.h"
 #include "graphics/video/smk_decoder.h"
@@ -115,3 +114,5 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name);
 } // End of namespace AGOS
 
 #endif
+
+#endif // ENABLE_AGOS2
