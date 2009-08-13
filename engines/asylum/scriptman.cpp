@@ -543,8 +543,7 @@ void ScriptManager::processActionList() {
 /* 0x62 */  //case k_unk62_SHOW_OPTIONS_SCREEN:
 
 			default:
-				//debugC(kDebugLevelScripts,
-				warning(
+				debugC(kDebugLevelScripts,
 						"Unhandled opcode 0x%02X in Scene %d Line %d.",
 						currentCommand->opcode,
 						Shared.getScene()->getSceneIndex(),
