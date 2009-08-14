@@ -25,6 +25,11 @@
 #define __restrict__
 #endif
 
+#ifdef __sgi
+#define __restrict__ __restrict
+#endif
+
+
 typedef unsigned char scale2x_uint8;
 typedef unsigned short scale2x_uint16;
 typedef unsigned scale2x_uint32;
