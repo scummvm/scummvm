@@ -1,23 +1,32 @@
 all: pack_pbp
 clean: psp_clean
 
+
 PSP_EXE := scummvm$(EXEEXT)
 PSP_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
-EBOOT = EBOOT.PBP
+PSP_EBOOT = EBOOT.PBP
+PSP_EBOOT_SFO = param.sfo
+PSP_EBOOT_TITLE = ScummVM-PSP
+
+MKSFO = mksfo
 PACK_PBP = pack-pbp
+
 
 $(PSP_EXE_STRIPPED): $(PSP_EXE)
 	$(STRIP) $< -o $@
 
+$(PSP_EBOOT_SFO):
+	$(MKSFO) '$(PSP_EBOOT_TITLE)' $@
+
 psp_clean:
-	$(RM) $(PSP_EXE_STRIPPED) $(EBOOT)
+	$(RM) $(PSP_EXE_STRIPPED) $(PSP_EBOOT) $(PSP_EBOOT_SFO)
 
 psp_fixup_elf: $(PSP_EXE_STRIPPED)
 	$(PSPDEV)/bin/psp-fixup-imports $<
 
-pack_pbp: psp_fixup_elf
-	$(PACK_PBP) $(EBOOT) \
-	$(srcdir)/backends/platform/psp/param.sfo \
+pack_pbp: psp_fixup_elf $(PSP_EBOOT_SFO)
+	$(PACK_PBP) $(PSP_EBOOT) \
+	$(PSP_EBOOT_SFO) \
 	$(srcdir)/backends/platform/psp/icon0.png \
 	NULL \
 	$(srcdir)/backends/platform/psp/pic0.png \
