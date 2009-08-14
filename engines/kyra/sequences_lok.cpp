@@ -1135,8 +1135,15 @@ void KyraEngine_LoK::seq_playEnding() {
 
 	_screen->showMouse();
 	if (_flags.platform == Common::kPlatformAmiga) {
-		while (!shouldQuit())
+		_screen->setCurPage(2);
+
+		_screen->getPalette(2).clear();
+		_screen->setScreenPalette(_screen->getPalette(2));
+
+		while (!shouldQuit()) {
 			seq_playCreditsAmiga();
+			delayUntil(_system->getMillis() + 300 * _tickLength);
+		}
 	} else {
 		seq_playCredits();
 	}
@@ -1311,13 +1318,10 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 
 	_screen->loadBitmap("CHALET.CPS", 4, 2, &_screen->getPalette(0));
 	_screen->copyPage(2, 0);
-	_screen->setCurPage(2);
-
-	_screen->getPalette(2).clear();
-	_screen->setScreenPalette(_screen->getPalette(2));
 
 	_screen->getPalette(0).fill(16, 1, 63);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
+	_screen->updateScreen();
 
 	const char *theEnd = "THE END";
 
@@ -1397,7 +1401,7 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 
 			_screen->printText(stringBuffer, x + 8, 0, 31, 0);
 
-			for (int i = 0; i < fontHeight; ++i) {
+			for (int i = 0; i < fontHeight && !shouldQuit(); ++i) {
 				_screen->copyRegion(0, 141, 0, 140, 320, 59, 0, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(0, i, 0, 198, 320, 3, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
