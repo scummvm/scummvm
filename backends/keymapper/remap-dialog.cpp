@@ -239,15 +239,14 @@ void RemapDialog::handleKeyDown(Common::KeyState state) {
 void RemapDialog::handleKeyUp(Common::KeyState state) {
 	if (_activeRemapAction) {
 		const HardwareKey *hwkey = _keymapper->findHardwareKey(state);
-		const HardwareMod *hwmod = _keymapper->findHardwareMod(state);
 
-		debug(0, "Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
+		debug( "Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
 
 		if (hwkey) {
-			HardwareKey *temphwkey = new HardwareKey(*hwkey);
-			temphwkey->description = hwkey->description;
-			temphwkey->key.flags = hwmod->modFlags;
-			_activeRemapAction->mapKey(temphwkey);
+			HardwareKey *mappedkey = new HardwareKey(*hwkey);
+			mappedkey->description = hwkey->description;
+			mappedkey->key.flags = (state.flags & hwkey->modMask);
+			_activeRemapAction->mapKey(mappedkey);
 			_activeRemapAction->getParent()->saveMappings();
 			_changes = true;
 			stopRemapping();
@@ -363,8 +362,21 @@ void RemapDialog::refreshKeymap() {
 			const HardwareKey *mappedKey = info.action->getMappedKey();
 
 			if (mappedKey)
-				widg.keyButton->setLabel(mappedKey->description);
-			else
+			{
+				Common::String description = "";
+				if (mappedKey->key.flags)
+				{
+					byte flags = mappedKey->key.flags;
+					if (flags & KBD_CTRL)
+						description += "Ctrl+";
+					if (flags & KBD_SHIFT)
+						description += "Shift+";
+					if (flags & KBD_ALT)
+						description += "Alt+";
+				}
+				description += mappedKey->description;
+				widg.keyButton->setLabel(description);
+			} else
 				widg.keyButton->setLabel("-");
 
 			widg.actionText->setVisible(true);

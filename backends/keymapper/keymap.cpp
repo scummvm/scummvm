@@ -127,6 +127,10 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 	ConfigManager::Domain::iterator it;
 	String prefix = KEYMAP_KEY_PREFIX + _name + "_";
 
+	uint32 modId = 0;
+	char hwId[HWKEY_ID_SIZE+1];
+	memset(hwId,0,HWKEY_ID_SIZE+1);
+
 	for (it = _configDomain->begin(); it != _configDomain->end(); it++) {
 		const String& key = it->_key;
 
@@ -145,15 +149,17 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 			continue;
 		}
 
-		const HardwareKey *hwKey = hwKeys->findHardwareKey(it->_value.c_str());
+		sscanf(it->_value.c_str(),"%d,%s",&modId,hwId);
+		const HardwareKey *hwKey = hwKeys->findHardwareKey(hwId);
 
 		if (!hwKey) {
 			warning("HardwareKey with ID %s not known", it->_value.c_str());
 			_configDomain->erase(key);
 			continue;
 		}
-
-		ua->mapKey(hwKey);
+		HardwareKey *mappedKey = new HardwareKey(*hwKey);
+		mappedKey->key.flags = modId;
+		ua->mapKey(mappedKey);
 	}
 }
 
@@ -171,13 +177,19 @@ void Keymap::saveMappings() {
 
 		String actId((*it)->id, (*it)->id + actIdLen);
 		char hwId[HWKEY_ID_SIZE+1];
-
 		memset(hwId, 0, HWKEY_ID_SIZE+1);
+
+		char modId[4];
+		memset(modId, 0, 4);
 
 		if ((*it)->getMappedKey()) {
 			memcpy(hwId, (*it)->getMappedKey()->hwKeyId, HWKEY_ID_SIZE);
+			sprintf(modId,"%d",(*it)->getMappedKey()->key.flags);
 		}
-		_configDomain->setVal(prefix + actId, hwId);
+		String val = modId;
+		val += ',';
+		val += hwId;
+		_configDomain->setVal(prefix + actId, val);
 	}
 }
 
