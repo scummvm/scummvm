@@ -61,7 +61,7 @@ public:
 	uint8 getFontHeight() const { return _fontHeight; };
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;
-	void drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty = true) const;
+	void drawChar(Surface *dst, uint8 chr, int tx, int ty) const;
 	
 	void drawString(Surface *dst, const byte *str, uint len, int x, int y, 
 					int spacing, bool markDirty = true) const;

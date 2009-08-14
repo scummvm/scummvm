@@ -132,7 +132,7 @@ uint8 Font::getCharWidth(uint8 chr) const {
  * @param ty  	Vertical offset on the surface
  */
 
-void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) const {
+void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
 	assert(dst != NULL);
 	assert(tx >= 0);
 	assert(ty >= 0);
@@ -189,11 +189,6 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, bool markDirty) con
 		// Advance to next row
 		ptr += dst->pitch;	
 	}
-
-	if (markDirty) {
-		Common::Rect r(tx, ty, tx + xPixelsToDraw + 1, ty + yPixelsToDraw);
-		dst->markDirtyRect(r);
-	}
 }
 
 /**
@@ -248,8 +243,13 @@ void Font::drawString(Surface *dst, const Common::String &str,
 			break;
 		}		
 		
-		drawChar(dst, str[i], curx, cury, markDirty);
+		drawChar(dst, str[i], curx, cury);
 		curx += getCharWidth(str[i]) + spacing;
+	}
+
+	if (markDirty) {
+		Common::Rect r(x, y, x + widest, y + getStringHeight(str));
+		dst->markDirtyRect(r);
 	}
 }
 
