@@ -658,6 +658,10 @@ void Script::talk(Common::Queue<int> &params) {
 	speechFrame->setX(x);
 	speechFrame->setY(y);
 
+	// Prevent the loop from exiting early if other things left the loop in the
+	// "exit immediately" state
+	_vm->_game->setExitLoop(false);
+
 	// Call the game loop to enable interactivity until the text expires
 	_vm->_game->loop();
 
