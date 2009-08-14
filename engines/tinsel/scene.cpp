@@ -132,7 +132,7 @@ const SCENE_STRUC *GetSceneStruc(const byte *pStruc) {
 
 	// Copy appropriate fields into tempStruc, and return a pointer to it
 	const byte *p = pStruc;
-	memset(&tempStruc, sizeof(SCENE_STRUC), 0);
+	memset(&tempStruc, 0, sizeof(SCENE_STRUC));
 
 	tempStruc.numEntrance = READ_UINT32(p); p += sizeof(uint32);
 	tempStruc.numPoly = READ_UINT32(p); p += sizeof(uint32);
