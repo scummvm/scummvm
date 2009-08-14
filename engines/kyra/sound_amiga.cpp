@@ -120,13 +120,14 @@ void SoundAmiga::loadSoundFile(uint file) {
 void SoundAmiga::playTrack(uint8 track) {
 	debugC(5, kDebugLevelSound, "SoundAmiga::playTrack(%d)", track);
 
-	static const byte tempoIntro[6] = { 0x46, 0x55, 0x3C, 0x41, 0x78, 0x50 };
-	static const byte tempoIngame[23] = {
+	static const byte tempoIntro[] = { 0x46, 0x55, 0x3C, 0x41 };
+	static const byte tempoFinal[] = { 0x78, 0x50 };
+	static const byte tempoIngame[] = {
 		0x64, 0x64, 0x64, 0x64, 0x64, 0x73, 0x4B, 0x64,
 		0x64, 0x64, 0x55, 0x9C, 0x6E, 0x91, 0x78, 0x84,
 		0x32, 0x64, 0x64, 0x6E, 0x3C, 0xD8, 0xAF
 	};
-	static const byte loopIngame[23] = {
+	static const byte loopIngame[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x00, 0x01, 0x01, 0x01, 0x00, 0x01, 0x01,
 		0x00, 0x00, 0x00, 0x01, 0x00, 0x01, 0x00
@@ -139,17 +140,6 @@ void SoundAmiga::playTrack(uint8 track) {
 
 
 	switch (_fileLoaded) {
-	case kFileFinal:
-		// score 0 gets started immediately after loading the music-files with different tempo.
-		// we need to define a track-value for the fake call of this function
-		if (track == 10) {
-			score = 0;
-			loop = true;
-			tempo = 0x78;
-			break;
-		}
-		// if this is not the hardcoded start of the song then
-		// Fallthrough
 	case kFileIntro:
 		if (track >= 2 && track < ARRAYSIZE(tempoIntro) + 2) {
 			score = track - 2;
@@ -162,6 +152,16 @@ void SoundAmiga::playTrack(uint8 track) {
 			score = track - 11;
 			loop = loopIngame[score] != 0;
 			tempo = tempoIngame[score];
+		}
+		break;
+
+	case kFileFinal:
+		// score 0 gets started immediately after loading the music-files with different tempo.
+		// we need to define a track-value for the fake call of this function
+		if (track >= 2 && track < ARRAYSIZE(tempoFinal) + 2) {
+			score = track - 2;
+			loop = true;
+			tempo = tempoFinal[score];
 		}
 		break;
 

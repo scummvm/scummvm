@@ -997,9 +997,9 @@ int KyraEngine_LoK::seq_playEnd() {
 		if (_flags.platform == Common::kPlatformAmiga) {
 			_sound->loadSoundFile(kMusicFinale);
 
-			// The original used 0 here. Due to how our Sound code
-			// is implemented we need to use track 10 here though.
-			_sound->playTrack(10);
+			// The original started song 0 directly here. Since our player
+			// uses 0, 1 for stop and fade we start song 0 with 2
+			_sound->playTrack(2);
 		}
 
 		_finalA = createWSAMovie();
