@@ -359,7 +359,7 @@ typedef SCROLL_MONITOR *PSCROLL_MONITOR;
  */
 static void ScrollMonitorProcess(CORO_PARAM, const void *param) {
 	int		Loffset, Toffset;
-	const SCROLL_MONITOR *psm = (const SCROLL_MONITOR *)param;;
+	const SCROLL_MONITOR *psm = (const SCROLL_MONITOR *)param;
 
 	// COROUTINE
 	CORO_BEGIN_CONTEXT;
