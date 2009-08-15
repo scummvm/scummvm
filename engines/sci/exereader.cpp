@@ -313,8 +313,18 @@ bool getSciVersionFromString(Common::String versionString, SciVersion *version, 
 		} else {
 			return false;
 		}
+	} else if (versionString.hasPrefix("0.000.")) {
+		*version = SCI_VERSION_0;
 	} else if (versionString.hasPrefix("S.old.")) {
 		*version = SCI_VERSION_01;
+	} else if (versionString.hasPrefix("1.000.")) {
+		*version = SCI_VERSION_1;
+	} else if (versionString.hasPrefix("1.001.")) {
+		*version = SCI_VERSION_1_1;
+	} else if (versionString.hasPrefix("2.000.")
+		|| versionString.hasPrefix("2.100.")
+		|| versionString.hasPrefix("3.000.")) {
+		*version = SCI_VERSION_32;
 	} else if (versionString.hasPrefix("1.ECO.")
 		|| versionString.hasPrefix("1.SQ1.")
 		|| versionString.hasPrefix("1.SQ4.")
