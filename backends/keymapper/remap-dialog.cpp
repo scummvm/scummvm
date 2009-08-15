@@ -243,9 +243,12 @@ void RemapDialog::handleKeyUp(Common::KeyState state) {
 		debug( "Key: %d, %d (%c), %x", state.keycode, state.ascii, (state.ascii ? state.ascii : ' '), state.flags);
 
 		if (hwkey) {
+			//FIXME: this leaks memory and there's no good way to get this pointer again as 
+			//a non-const. this should be done differently when we switch to actionKeys.
 			HardwareKey *mappedkey = new HardwareKey(*hwkey);
 			mappedkey->description = hwkey->description;
 			mappedkey->key.flags = (state.flags & hwkey->modMask);
+
 			_activeRemapAction->mapKey(mappedkey);
 			_activeRemapAction->getParent()->saveMappings();
 			_changes = true;
