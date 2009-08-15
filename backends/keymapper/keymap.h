@@ -36,6 +36,7 @@
 #include "common/keyboard.h"
 #include "common/list.h"
 #include "backends/keymapper/action.h"
+#include "backends/keymapper/hardware-key.h"
 
 namespace Common {
 
@@ -49,6 +50,17 @@ template<> struct Hash<KeyState>
 	: public UnaryFunction<KeyState, uint> {
 
 	uint operator()(const KeyState &val) const {
+		return (uint)val.keycode | ((uint)val.flags << 24);
+	}
+};
+
+/**
+ * Hash function for ActionKey
+ */
+template<> struct Hash<ActionKey>
+	: public UnaryFunction<ActionKey, uint> {
+
+	uint operator()(const ActionKey &val) const {
 		return (uint)val.keycode | ((uint)val.flags << 24);
 	}
 };
@@ -89,7 +101,6 @@ public:
 
 	/**
 	 * Save this keymap's mappings to the config manager
-	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
 	 * @note Changes are *not* flushed to disk, to do so call ConfMan.flushToDisk()
 	 */
 	void saveMappings();
