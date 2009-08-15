@@ -1135,6 +1135,7 @@ void KyraEngine_LoK::seq_playEnding() {
 
 	_screen->showMouse();
 	if (_flags.platform == Common::kPlatformAmiga) {
+		_screen->_charWidth = -2;
 		_screen->setCurPage(2);
 
 		_screen->getPalette(2).clear();
@@ -1325,7 +1326,7 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 
 	const char *theEnd = "THE END";
 
-	const int width = _screen->getTextWidth(theEnd);
+	const int width = _screen->getTextWidth(theEnd) + 1;
 	int x = (320 - width) / 2 + 1;
 
 	_screen->copyRegion(x, 8, x, 8, width, 56, 0, 2, Screen::CR_NO_P_CHECK);
