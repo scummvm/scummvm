@@ -364,7 +364,10 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME_P("kq3", "2.0A 1988-08-28 (CE)", "ac30b7ca5a089b5e642fbcdcbe872c12", 0x2917, GID_KQ3, Common::kPlatformApple2GS),
 
 	// King's Quest 3 (Amiga) 2.15 11/15/89	# 2.333
-	GAME3_PS("kq3", "2.15 1989-11-15", "dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805, 0x3086, 0, GID_KQ3, Common::kPlatformAmiga),
+	// Original pauses with ESC, has menus accessible with mouse.
+	// ver = 0x3086 -> menus accessible with ESC or mouse, bug #2835581 (KQ3: Game Crash When Leaving Tavern as Fly).
+	// ver = 0x3149 -> menus accessible with mouse, ESC pauses game, bug #2835581 disappears.
+	GAME3_PS("kq3", "2.15 1989-11-15", "dirs", "8e35bded2bc5cf20f5eec2b15523b155", 1805, 0x3149, 0, GID_KQ3, Common::kPlatformAmiga),
 
 	// King's Quest 3 (PC) 1.01 11/08/86 [AGI 2.272]
 	// Does not have menus, crashes if menus are enforced. Therefore, ESC pauses the game
