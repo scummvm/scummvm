@@ -33,7 +33,8 @@ AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {
 }
 
 AbstractFSNode *PSPFilesystemFactory::makeCurrentDirectoryFileNode() const {
-	return new PSPFilesystemNode();
+	char buf[MAXPATHLEN];
+	return getcwd(buf, MAXPATHLEN) ? new PSPFilesystemNode(buf) : NULL;
 }
 
 AbstractFSNode *PSPFilesystemFactory::makeFileNodePath(const Common::String &path) const {

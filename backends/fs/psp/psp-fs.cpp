@@ -59,7 +59,7 @@ public:
 	 * @param path Common::String with the path the new node should point to.
 	 * @param verify true if the isValid and isDirectory flags should be verified during the construction.
 	 */
-	PSPFilesystemNode(const Common::String &p, bool verify);
+	PSPFilesystemNode(const Common::String &p, bool verify = true);
 
 	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
 	virtual Common::String getDisplayName() const { return _displayName; }
