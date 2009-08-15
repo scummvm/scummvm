@@ -510,6 +510,8 @@ int16 Op_LoadBackground(void) {
 		gfxModuleData_gfxWaitVSync();
 
 		result = loadBackground(bgName, bgIdx);
+
+		gfxModuleData_addDirtyRect(Common::Rect(0, 0, 320, 200));
 	}
 
 	changeCursor(CURSOR_NORMAL);
@@ -788,6 +790,7 @@ int16 Op_ClearScreen(void) {
 
 	if ((bgIdx >= 0) && (bgIdx < NBSCREENS) && (backgroundScreens[bgIdx])) {
 		memset(backgroundScreens[bgIdx], 0, 320 * 200);
+		backgroundChanged[bgIdx] = true;
 		strcpy(backgroundTable[0].name, "");
 	}
 
@@ -922,6 +925,7 @@ int16 Op_SetActiveBackground(void) {
 	if (newPlane >= 0 && newPlane < NBSCREENS) {
 		if (backgroundScreens[newPlane]) {
 			masterScreen = newPlane;
+			backgroundChanged[newPlane] = true;
 			switchPal = 1;
 		}
 	}
@@ -936,8 +940,10 @@ int16 Op_RemoveBackground(void) {
 		if (backgroundScreens[backgroundIdx])
 			free(backgroundScreens[backgroundIdx]);
 
-		if (masterScreen == backgroundIdx)
+		if (masterScreen == backgroundIdx) {
 			masterScreen = 0;
+			backgroundChanged[0] = true;
+		}
 
 		strcpy(backgroundTable[backgroundIdx].name, "");
 	} else {
