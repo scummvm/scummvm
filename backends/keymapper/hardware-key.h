@@ -31,6 +31,10 @@
 #ifdef ENABLE_KEYMAPPER
 
 #include "backends/keymapper/types.h"
+#include "common/str.h"
+#include "common/keyboard.h"
+#include "common/list.h"
+#include "common/util.h"
 
 namespace Common {
 
@@ -44,11 +48,15 @@ namespace Common {
 struct ActionKey {
 	KeyCode keycode;
 	byte flags;
-	/** unique id used for saving/loading to config */
-	char actKeyId[HWKEY_ID_SIZE];
 
-	/** Human readable description */
-	String description;
+	ActionKey (KeyCode ky, byte f) { 
+		keycode = ky;
+		flags = f;
+	}
+
+	bool operator ==(const ActionKey &x) const {
+		return keycode == x.keycode && flags == x.flags;
+	}
 
 };
 
@@ -73,10 +81,10 @@ struct HardwareKey {
 	ActionType preferredAction;
 
 	// Mask of modifiers that can possibly apply to this key.
-	uint32 modMask;
+	byte modMask;
 
-	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "",
-				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType, uint32 mods = ~0)
+	HardwareKey(const char *i, KeyState ky = KeyState(), String desc = "", byte mods = ~0,
+				KeyType typ = kGenericKeyType, ActionType prefAct = kGenericActionType)
 		: key(ky), description(desc), type(typ), preferredAction(prefAct), modMask(mods) {
 		assert(i);
 		strncpy(hwKeyId, i, HWKEY_ID_SIZE);
