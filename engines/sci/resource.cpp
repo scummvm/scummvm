@@ -428,7 +428,7 @@ void ResourceManager::scanNewSources() {
 				readResourcePatches(source);
 				break;
 			case kSourceExtMap:
-				if (_mapVersion < SCI_VERSION_1)
+				if (_mapVersion < kResVersionSci1Late)
 					readResourceMapSCI0(source);
 				else
 					readResourceMapSCI1(source);
@@ -453,74 +453,72 @@ void ResourceManager::freeResourceSources() {
 	_sources.clear();
 }
 
-ResourceManager::ResourceManager(int version, int maxMemory) {
+ResourceManager::ResourceManager(int maxMemory) {
 	_maxMemory = maxMemory;
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
 	_resMap.clear();
-	_sciVersion = version;
 	_audioMapSCI1 = NULL;
 
 	addAppropriateSources();
 
-	if (version != SCI_VERSION_AUTODETECT) {
-		_mapVersion = version;
-		_volVersion = version;
-	} else {
-		_mapVersion = detectMapVersion();
-		_volVersion = detectVolVersion();
-		if (_volVersion == 0 && _mapVersion > 0) {
-			warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
-			_volVersion = _mapVersion;
-		}
+	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
-		if (_mapVersion == 0 && _volVersion > 0) {
-			warning("Map version not detected, but volume version has been detected. Setting map version to volume version");
-			_mapVersion = _volVersion;
-		}
+	_mapVersion = detectMapVersion();
+	_volVersion = detectVolVersion();
+	if ((_volVersion == kResVersionUnknown) && (_mapVersion != kResVersionUnknown)) {
+		warning("Volume version not detected, but map version has been detected. Setting volume version to map version");
+		_volVersion = _mapVersion;
 	}
-	debug("Using resource map version %d %s", _mapVersion, versionNames[_mapVersion]);
-	debug("Using volume version %d %s", _volVersion, versionNames[_volVersion]);
+
+	if ((_mapVersion == kResVersionUnknown) && (_volVersion != kResVersionUnknown)) {
+		warning("Map version not detected, but volume version has been detected. Setting map version to volume version");
+		_mapVersion = _volVersion;
+	}
+
+	debug("Resmgr: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
+	debug("Resmgr: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
 	scanNewSources();
 	addInternalSources();
 	scanNewSources();
 
-	if (version == SCI_VERSION_AUTODETECT)
-		switch (_mapVersion) {
-		case SCI_VERSION_0:
-			if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
-				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
-			} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
-				version = guessSciVersion();
-				if (version != SCI_VERSION_01) {
-					version = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
-				}
-			} else {
-				version = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
+	switch (_mapVersion) {
+	case kResVersionSci0Sci1Early:
+		if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
+			_sciVersion = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
+		} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
+			_sciVersion = guessSciVersion();
+			if (_sciVersion != SCI_VERSION_01) {
+				_sciVersion = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
 			}
-			break;
-		case SCI_VERSION_01_VGA_ODD:
-			version = _mapVersion;
-			break;
-		case SCI_VERSION_1:
-			_sciVersion = version = SCI_VERSION_1;
-			break;
-		case SCI_VERSION_1_1:
-			// No need to handle SCI 1.1 here - it was done in resource_map.cpp
-			version = SCI_VERSION_1_1;
-			break;
-		default:
-			version = SCI_VERSION_AUTODETECT;
+		} else {
+			_sciVersion = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
 		}
+		break;
+	case kResVersionSci1Middle:
+		_sciVersion = SCI_VERSION_01;
+		break;
+	case kResVersionSci1Late:
+		_sciVersion = SCI_VERSION_1;
+		break;
+	case kResVersionSci11:
+		_sciVersion = SCI_VERSION_1_1;
+		break;
+	case kResVersionSci32:
+		_sciVersion = SCI_VERSION_32;
+		break;
+	default:
+		_sciVersion = SCI_VERSION_AUTODETECT;
+	}
 
 	_isVGA = false;
 
 	// Determine if the game is using EGA graphics or not
-	if (version == SCI_VERSION_0) {
+	if (_sciVersion == SCI_VERSION_0) {
 		_isVGA = false;		// There is no SCI0 VGA game
-	} else if (version >= SCI_VERSION_1_1) {
+	} else if (_sciVersion >= SCI_VERSION_1_1) {
 		_isVGA = true;		// There is no SCI11 EGA game
 	} else {
 		// SCI01 or SCI1: EGA games have the second byte of their views set
@@ -538,12 +536,11 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 	}
 
 	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
-	if (version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
+	if (_sciVersion == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
 		debug("Resmgr: Detected QFG1 VGA");
 		_isVGA = true;
 	}
 
-	_sciVersion = version;
 	// temporary version printout - should be reworked later
 	switch (_sciVersion) {
 	case SCI_VERSION_0:
@@ -551,9 +548,6 @@ ResourceManager::ResourceManager(int version, int maxMemory) {
 		break;
 	case SCI_VERSION_01:
 		debug("Resmgr: Detected SCI01");
-		break;
-	case SCI_VERSION_01_VGA_ODD:
-		debug("Resmgr: Detected SCI01VGA - Jones/CD or similar");
 		break;
 	case SCI_VERSION_1:
 		debug("Resmgr: Detected SCI1");
@@ -713,7 +707,26 @@ void ResourceManager::unlockResource(Resource *res) {
 	freeOldResources();
 }
 
-int ResourceManager::detectMapVersion() {
+const char *ResourceManager::versionDescription(ResVersion version) const {
+	switch (version) {
+	case kResVersionUnknown:
+		return "Unknown";
+	case kResVersionSci0Sci1Early:
+		return "SCI0 / Early SCI1";
+	case kResVersionSci1Middle:
+		return "Middle SCI1";
+	case kResVersionSci1Late:
+		return "Late SCI1";
+	case kResVersionSci11:
+		return "SCI1.1";
+	case kResVersionSci32:
+		return "SCI32";
+	}
+
+	return "Version not valid";
+}
+
+ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	Common::File file;
 	byte buff[6];
 	ResourceSource *rsrc= 0;
@@ -728,7 +741,7 @@ int ResourceManager::detectMapVersion() {
 	}
 	if (file.isOpen() == false) {
 		error("Failed to open resource map file");
-		return SCI_VERSION_AUTODETECT;
+		return kResVersionUnknown;
 	}
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
@@ -739,9 +752,9 @@ int ResourceManager::detectMapVersion() {
 		file.seek(0, SEEK_SET);
 		while (file.read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
 			if (getVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL)
-				return SCI_VERSION_01_VGA_ODD;
+				return kResVersionSci1Middle;
 		}
-		return SCI_VERSION_0;
+		return kResVersionSci0Sci1Early;
 	}
 
 	// SCI1 and SCI1.1 maps consist of a fixed 3-byte header, a directory list (3-bytes each) that has one entry
@@ -750,7 +763,7 @@ int ResourceManager::detectMapVersion() {
 	uint16 directoryOffset = 0;
 	uint16 lastDirectoryOffset = 0;
 	uint16 directorySize = 0;
-	int    mapDetected = 0;
+	ResVersion mapDetected = kResVersionUnknown;
 	file.seek(0, SEEK_SET);
 	while (!file.eos()) {
 		directoryType = file.readByte();
@@ -763,9 +776,9 @@ int ResourceManager::detectMapVersion() {
 		if (lastDirectoryOffset) {
 			directorySize = directoryOffset - lastDirectoryOffset;
 			if ((directorySize % 5) && (directorySize % 6 == 0))
-				mapDetected = SCI_VERSION_1;
+				mapDetected = kResVersionSci1Late;
 			if ((directorySize % 5 == 0) && (directorySize % 6))
-				mapDetected = SCI_VERSION_1_1;
+				mapDetected = kResVersionSci11;
 		}
 		if (directoryType==0xFF) {
 			// FFh entry needs to point to EOF
@@ -773,7 +786,7 @@ int ResourceManager::detectMapVersion() {
 				break;
 			if (mapDetected) 
 				return mapDetected;
-			return SCI_VERSION_1;
+			return kResVersionSci1Late;
 		}
 		lastDirectoryOffset = directoryOffset;
 	}
@@ -789,13 +802,13 @@ int ResourceManager::detectMapVersion() {
 	// last directory entry instead of the last checked directory entry.
 	file.seek(lastDirectoryOffset - 7, SEEK_SET);
 	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
-		return SCI_VERSION_32; // TODO : check if there is a difference between these maps
+		return kResVersionSci32; // TODO : check if there is a difference between these maps
 #endif
 
-	return SCI_VERSION_AUTODETECT;
+	return kResVersionUnknown;
 }
 
-int ResourceManager::detectVolVersion() {
+ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	Common::File file;
 	ResourceSource *rsrc;
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
@@ -808,7 +821,7 @@ int ResourceManager::detectVolVersion() {
 	}
 	if (file.isOpen() == false) {
 		error("Failed to open volume file");
-		return SCI_VERSION_AUTODETECT;
+		return kResVersionUnknown;
 	}
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
@@ -818,34 +831,34 @@ int ResourceManager::detectVolVersion() {
 	// Checking 1MB of data should be enough to determine the version
 	uint16 resId, wCompression;
 	uint32 dwPacked, dwUnpacked;
-	int curVersion = SCI_VERSION_0;
+	ResVersion curVersion = kResVersionSci0Sci1Early;
 	bool failed = false;
 
 	// Check for SCI0, SCI1, SCI1.1 and SCI32 v2 (Gabriel Knight 1 CD) formats
 	while (!file.eos() && file.pos() < 0x100000) {
-		if (curVersion > SCI_VERSION_0)
+		if (curVersion > kResVersionSci0Sci1Early)
 			file.readByte();
 		resId = file.readUint16LE();
-		dwPacked = (curVersion < SCI_VERSION_32) ? file.readUint16LE() : file.readUint32LE();
-		dwUnpacked = (curVersion < SCI_VERSION_32) ? file.readUint16LE() : file.readUint32LE();
-		wCompression = (curVersion < SCI_VERSION_32) ? file.readUint16LE() : file.readUint32LE();
+		dwPacked = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
+		dwUnpacked = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
+		wCompression = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
 		if (file.eos())
 			return curVersion;
 
-		int chk = (curVersion == SCI_VERSION_0) ? 4 : 20;
-		int offs = curVersion < SCI_VERSION_1_1 ? 4 : 0;
-		if ((curVersion < SCI_VERSION_32 && wCompression > chk)
-				|| (curVersion == SCI_VERSION_32 && wCompression != 0 && wCompression != 32)
+		int chk = (curVersion == kResVersionSci0Sci1Early) ? 4 : 20;
+		int offs = curVersion < kResVersionSci11 ? 4 : 0;
+		if ((curVersion < kResVersionSci32 && wCompression > chk)
+				|| (curVersion == kResVersionSci32 && wCompression != 0 && wCompression != 32)
 				|| (wCompression == 0 && dwPacked != dwUnpacked + offs)
 		        || (dwUnpacked < dwPacked - offs)) {
 
 			// Retry with a newer SCI version
-			if (curVersion == SCI_VERSION_0) {
-				curVersion = SCI_VERSION_1;
-			} else if (curVersion == SCI_VERSION_1) {
-				curVersion = SCI_VERSION_1_1;
-			} else if (curVersion == SCI_VERSION_1_1) {
-				curVersion = SCI_VERSION_32;
+			if (curVersion == kResVersionSci0Sci1Early) {
+				curVersion = kResVersionSci1Late;
+			} else if (curVersion == kResVersionSci1Late) {
+				curVersion = kResVersionSci11;
+			} else if (curVersion == kResVersionSci11) {
+				curVersion = kResVersionSci32;
 			} else {
 				// All version checks failed, exit loop
 				failed = true;
@@ -856,11 +869,11 @@ int ResourceManager::detectVolVersion() {
 			continue;
 		}
 
-		if (curVersion < SCI_VERSION_1_1)
+		if (curVersion < kResVersionSci11)
 			file.seek(dwPacked - 4, SEEK_CUR);
-		else if (curVersion == SCI_VERSION_1_1)
+		else if (curVersion == kResVersionSci11)
 			file.seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
-		else if (curVersion == SCI_VERSION_32)
+		else if (curVersion == kResVersionSci32)
 			file.seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
 	}
 
@@ -868,7 +881,7 @@ int ResourceManager::detectVolVersion() {
 		return curVersion;
 
 	// Failed to detect volume version
-	return SCI_VERSION_AUTODETECT;
+	return kResVersionUnknown;
 }
 
 // version-agnostic patch application
@@ -997,10 +1010,8 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 
 	file.seek(0, SEEK_SET);
 
-	byte bMask = 0xFC;
-	// FIXME: The code above seems to give correct results for Jones
-	//byte bMask = _mapVersion == SCI_VERSION_01_VGA_ODD ? 0xF0 : 0xFC;
-	byte bShift = _mapVersion == SCI_VERSION_01_VGA_ODD ? 28 : 26;
+	byte bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
+	byte bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
 
 	do {
 		id = file.readUint16LE();
@@ -1040,7 +1051,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 	resource_index_t resMap[32];
 	memset(resMap, 0, sizeof(resource_index_t) * 32);
 	byte type = 0, prevtype = 0;
-	byte nEntrySize = _mapVersion == SCI_VERSION_1_1 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
+	byte nEntrySize = _mapVersion == kResVersionSci11 ? SCI11_RESMAP_ENTRIES_SIZE : SCI1_RESMAP_ENTRIES_SIZE;
 	ResourceId resId;
 
 	// Read resource type and offsets to resource offsets block from .MAP file
@@ -1062,7 +1073,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 		for (int i = 0; i < resMap[type].wSize; i++) {
 			uint16 number = file.readUint16LE();
 			int volume_nr = 0;
-			if (_mapVersion == SCI_VERSION_1_1) {
+			if (_mapVersion == kResVersionSci11) {
 				// offset stored in 3 bytes
 				off = file.readUint16LE();
 				off |= file.readByte() << 16;
@@ -1070,7 +1081,7 @@ int ResourceManager::readResourceMapSCI1(ResourceSource *map) {
 			} else {
 				// offset/volume stored in 4 bytes
 				off = file.readUint32LE();
-				if (_mapVersion < SCI_VERSION_1_1) {
+				if (_mapVersion < kResVersionSci11) {
 					volume_nr = off >> 28; // most significant 4 bits
 					off &= 0x0FFFFFFF;     // least significant 28 bits
 				} else {
@@ -1351,7 +1362,8 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 	ResourceType type;
 
 	switch (_volVersion) {
-	case SCI_VERSION_0:
+	case kResVersionSci0Sci1Early:
+	case kResVersionSci1Middle:
 		w = file->readUint16LE();
 		type = (ResourceType)(w >> 11);
 		number = w & 0x7FF;
@@ -1359,14 +1371,14 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
-	case SCI_VERSION_1:
+	case kResVersionSci1Late:
 		type = (ResourceType)(file->readByte() & 0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint16LE() - 4;
 		szUnpacked = file->readUint16LE();
 		wCompression = file->readUint16LE();
 		break;
-	case SCI_VERSION_1_1:
+	case kResVersionSci11:
 		type = (ResourceType)(file->readByte() & 0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint16LE();
@@ -1374,7 +1386,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		wCompression = file->readUint16LE();
 		break;
 #ifdef ENABLE_SCI32
-	case SCI_VERSION_32:
+	case kResVersionSci32:
 		type = (ResourceType)(file->readByte() &0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint32LE();

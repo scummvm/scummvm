@@ -93,7 +93,6 @@ void script_adjust_opcode_formats(int res_version) {
 	case SCI_VERSION_0:
 		break;
 	case SCI_VERSION_01:
-	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:
 		g_opcode_formats[op_lofsa][0] = Script_Offset;
