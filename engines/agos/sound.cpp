@@ -633,7 +633,8 @@ void Sound::playEffects(uint sound) {
 	if (_effectsPaused)
 		return;
 
-	_mixer->stopHandle(_effectsHandle);
+	if (_vm->getGameType() == GType_SIMON1)
+		_mixer->stopHandle(_effectsHandle);
 	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 
