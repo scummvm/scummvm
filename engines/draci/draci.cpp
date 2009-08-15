@@ -194,12 +194,10 @@ bool DraciEngine::handleEvents() {
 			if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 				_game->setRoomNum(_game->nextRoomNum());
 				_game->setGateNum(0);
-				_game->_roomChange = true;
 			}
 			else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 				_game->setRoomNum(_game->prevRoomNum());
 				_game->setGateNum(0);
-				_game->_roomChange = true;
 			}
 			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				int escRoom = _game->getEscRoom();
@@ -210,7 +208,6 @@ bool DraciEngine::handleEvents() {
 					// Schedule room change
 					_game->setRoomNum(_game->getEscRoom());
 					_game->setGateNum(0);
-					_game->_roomChange = true;
 					_game->setExitLoop(true);
 
 					// End any currently running GPL programs

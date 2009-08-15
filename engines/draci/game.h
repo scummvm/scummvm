@@ -300,8 +300,6 @@ public:
 	void schedulePalette(int paletteID);
 	int getScheduledPalette();
 
-	bool _roomChange;
-
 private:
 	DraciEngine *_vm;
 

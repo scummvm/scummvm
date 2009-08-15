@@ -607,9 +607,6 @@ void Script::newRoom(Common::Queue<int> &params) {
 
 	_vm->_game->setRoomNum(room);
 	_vm->_game->setGateNum(gate);
-
-	// HACK: Won't be needed once I've implemented the loop properly
-	_vm->_game->_roomChange = true;
 }
 
 void Script::talk(Common::Queue<int> &params) {

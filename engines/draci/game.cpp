@@ -189,9 +189,6 @@ void Game::start() {
 			_currentRoom._roomNum = _newRoom;
 			_currentGate = _newGate;
 
-			// HACK: Won't be needed once I've implemented the loop properly
-			_roomChange = false;
-
 			// Run the program for the gate the dragon came through
 			runGateProgram(_newGate);
 
@@ -224,9 +221,6 @@ void Game::init() {
 	_currentIcon = kNoIcon;
 
 	_vm->_mouse->setCursorType(kNormalCursor);
-
-	// HACK: Won't be needed once I've implemented the loop properly
-	_roomChange = false;
 
 	_loopStatus = kStatusOrdinary;
 	_objUnderCursor = kOverlayImage;
