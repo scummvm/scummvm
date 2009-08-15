@@ -31,17 +31,17 @@
 
 namespace Cruise {
 
-extern int actor_move[][13];
+extern const int actor_move[][13];
 
-extern int actor_end[][13];
+extern const int actor_end[][13];
 
-extern int actor_stat[][13];
+extern const int actor_stat[][13];
 
-extern int actor_invstat[][13];
+extern const int actor_invstat[][13];
 
-extern short int english_fontCharacterTable[256];
-extern short int german_fontCharacterTable[256];
-extern short int spanish_fontCharacterTable[256];
+extern const int16 english_fontCharacterTable[256];
+extern const int16 german_fontCharacterTable[256];
+extern const int16 spanish_fontCharacterTable[256];
 
 #define fontCharacterTable (_vm->getLanguage() == Common::DE_DEU ? \
 	german_fontCharacterTable : (_vm->getLanguage() == Common::ES_ESP ? \
