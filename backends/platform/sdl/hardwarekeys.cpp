@@ -162,7 +162,7 @@ static const Key keys[] = {
 	{"F15", KEYCODE_F15, 0, "F15", kActionKeyType, ~0},
 
 
-//	// Modifier keys pressed alone
+	// Modifier keys pressed alone
 //	{"RSHIFT", KEYCODE_RSHIFT, 0, "Right Shift", kModiferKeyType, ~KBD_SHIFT},
 //	{"LSHIFT", KEYCODE_LSHIFT, 0, "Left Shift", kModiferKeyType, ~KBD_SHIFT},
 //	{"RCTRL", KEYCODE_RCTRL, 0, "Right Ctrl", kModiferKeyType, ~KBD_CTRL},
@@ -197,9 +197,6 @@ static const Mod modifiers[] = {
 	{ KBD_CTRL, "C+", "Ctrl+" },
 	{ KBD_ALT, "A+", "Alt+" },
 	{ KBD_SHIFT, "S+", "Shift+" },
-	{ KBD_CTRL | KBD_ALT, "C+A+", "Ctrl+Alt+" },
-	{ KBD_SHIFT | KBD_CTRL, "S+C+", "Shift+Ctrl+" },
-	{ KBD_SHIFT | KBD_CTRL | KBD_ALT, "S+C+A+", "Shift+Ctrl+Alt+" },
 	{ 0, 0, 0 }
 };
 #endif
@@ -207,7 +204,11 @@ static const Mod modifiers[] = {
 
 Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 #ifdef ENABLE_KEYMAPPER
-	HardwareKeySet *keySet = new HardwareKeySet();
+	static HardwareKeySet *keySet = new HardwareKeySet();
+	static bool keySetInited = false;
+	if (keySet && keySetInited)
+		return keySet;
+
 	const Key *key;
 	const Mod *mod;
 	char fullKeyId[50];
@@ -226,8 +227,10 @@ Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 		snprintf(fullKeyId, 50, "%s", key->hwId);
 		snprintf(fullKeyDesc, 100, "%s", key->desc);
 
-		keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, 0), fullKeyDesc, key->preferredAction));
+		keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, 0), fullKeyDesc, key->modableMask, key->preferredAction));
 	}
+
+	keySetInited = true;
 
 	return keySet;
 
