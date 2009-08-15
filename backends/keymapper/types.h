@@ -43,7 +43,7 @@ enum KeyType {
 	kTriggerRightKeyType,
 	kStartKeyType,
 	kSelectKeyType,
-//	kModiferKeyType,
+	kModiferKeyType,
 	/*  ...  */
 
 	kKeyTypeMax

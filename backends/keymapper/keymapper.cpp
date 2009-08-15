@@ -195,12 +195,13 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		// HACK: Temporary fix for modifier recognition, get the hwkey's keystate
 		// to correct for keydown and keyup generating different ascii codes in SDL
 		// to be solved more permanently by using a structure other than KeyState
+
 		const HardwareKey *hwkey = findHardwareKey(key);
 		if (!hwkey)
 			return false;
 
 		KeyState k = hwkey->key;
-		k.flags = key.flags;
+		k.flags = key.flags & hwkey->modMask;
 
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {

@@ -163,12 +163,12 @@ static const Key keys[] = {
 
 
 	// Modifier keys pressed alone
-//	{"RSHIFT", KEYCODE_RSHIFT, 0, "Right Shift", kModiferKeyType, ~KBD_SHIFT},
-//	{"LSHIFT", KEYCODE_LSHIFT, 0, "Left Shift", kModiferKeyType, ~KBD_SHIFT},
-//	{"RCTRL", KEYCODE_RCTRL, 0, "Right Ctrl", kModiferKeyType, ~KBD_CTRL},
-//	{"LCTRL", KEYCODE_LCTRL, 0, "Left Ctrl", kModiferKeyType, ~KBD_CTRL},
-//	{"RALT", KEYCODE_RALT, 0, "Right Alt", kModiferKeyType, ~KBD_ALT},
-//	{"LALT", KEYCODE_LALT, 0, "Left Alt", kModiferKeyType, ~KBD_ALT},
+	{"RSHIFT", KEYCODE_RSHIFT, 0, "Right Shift", kModiferKeyType, ~KBD_SHIFT},
+	{"LSHIFT", KEYCODE_LSHIFT, 0, "Left Shift", kModiferKeyType, ~KBD_SHIFT},
+	{"RCTRL", KEYCODE_RCTRL, 0, "Right Ctrl", kModiferKeyType, ~KBD_CTRL},
+	{"LCTRL", KEYCODE_LCTRL, 0, "Left Ctrl", kModiferKeyType, ~KBD_CTRL},
+	{"RALT", KEYCODE_RALT, 0, "Right Alt", kModiferKeyType, ~KBD_ALT},
+	{"LALT", KEYCODE_LALT, 0, "Left Alt", kModiferKeyType, ~KBD_ALT},
 
 
 	// Miscellaneous function keys
