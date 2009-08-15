@@ -61,9 +61,9 @@ void Script::setupCommandList() {
 		{ 10, 1, "WalkOn", 				3, { 1, 1, 3 }, &Script::walkOn },
 		{ 10, 2, "StayOn", 				3, { 1, 1, 3 }, &Script::walkOn }, // HACK: not a proper implementation
 		{ 10, 3, "WalkOnPlay", 			3, { 1, 1, 3 }, &Script::walkOnPlay },
-		{ 11, 1, "LoadPalette", 		1, { 2 }, NULL },
-		{ 12, 1, "SetPalette", 			0, { 0 }, NULL },
-		{ 12, 2, "BlackPalette", 		0, { 0 }, NULL },
+		{ 11, 1, "LoadPalette", 		1, { 2 }, &Script::loadPalette },
+		{ 12, 1, "SetPalette", 			0, { 0 }, &Script::setPalette },
+		{ 12, 2, "BlackPalette", 		0, { 0 }, &Script::blackPalette },
 		{ 13, 1, "FadePalette", 		3, { 1, 1, 1 }, NULL },
 		{ 13, 2, "FadePalettePlay", 	3, { 1, 1, 1 }, NULL },
 		{ 14, 1, "NewRoom", 			2, { 3, 1 }, &Script::newRoom },
@@ -714,6 +714,28 @@ void Script::roomMap(Common::Queue<int> &params) {
 
 	// Load the default walking map for the room
 	_vm->_game->loadWalkingMap();
+}
+
+void Script::loadPalette(Common::Queue<int> &params) {
+	int palette = params.pop() - 1;	
+
+	_vm->_game->schedulePalette(palette);
+}
+
+void Script::blackPalette(Common::Queue<int> &params) {
+
+	_vm->_game->schedulePalette(kBlackPalette);
+}
+
+void Script::setPalette(Common::Queue<int> &params) {
+
+	if (_vm->_game->getScheduledPalette() == -1) {
+		_vm->_screen->setPaletteEmpty();
+	} else {
+		BAFile *f;		
+		f = _vm->_paletteArchive->getFile(_vm->_game->getScheduledPalette());
+		_vm->_screen->setPalette(f->_data, 0, kNumColours);
+	}
 }
 
 void Script::endCurrentProgram() {

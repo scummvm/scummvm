@@ -127,6 +127,9 @@ private:
 	void resetDialogue(Common::Queue<int> &params);
 	void resetDialogueFrom(Common::Queue<int> &params);
 	void resetBlock(Common::Queue<int> &params);
+	void setPalette(Common::Queue<int> &params);
+	void blackPalette(Common::Queue<int> &params);
+	void loadPalette(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2);
 	int operOr(int op1, int op2);

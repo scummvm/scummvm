@@ -73,6 +73,10 @@ enum {
 	kNoDialogue = -1, kDialogueLines = 4
 };
 
+enum {
+	kBlackPalette = -1
+};
+
 enum SpeechConstants {
 	kBaseSpeechDuration = 200,
 	kSpeechTimeUnit = 400
@@ -293,6 +297,9 @@ public:
 	void dialogueDone();
 	void runDialogueProg(GPL2Program, int offset);
 
+	void schedulePalette(int paletteID);
+	int getScheduledPalette();
+
 	bool _roomChange;
 
 private:
@@ -341,6 +348,8 @@ public:
 	int _animUnderCursor;
 
 	int _markedAnimationIndex; //!< Used by the Mark GPL command
+
+	int _scheduledPalette;
 };
 
 } // End of namespace Draci

@@ -217,6 +217,7 @@ void Game::start() {
 void Game::init() {
 	_shouldQuit = false;
 	_shouldExitLoop = false;
+	_scheduledPalette = 0;
 
 	_animUnderCursor = kOverlayImage;
 
@@ -437,7 +438,7 @@ void Game::loop() {
 		_vm->_system->delayMillis(20);
 
 		// HACK: Won't be needed once the game loop is implemented properly
-		_shouldExitLoop = _shouldExitLoop || (_roomChange && 
+		_shouldExitLoop = _shouldExitLoop || (_newRoom != _currentRoom._roomNum && 
 						(_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate));
 
 	} while (!shouldExitLoop());
@@ -1158,6 +1159,14 @@ void Game::setSpeechTick(uint tick) {
 
 int Game::getEscRoom() {
 	return _currentRoom._escRoom;
+}
+
+void Game::schedulePalette(int paletteID) {
+	_scheduledPalette = paletteID;
+}
+
+int Game::getScheduledPalette() {
+	return _scheduledPalette;
 }
 
 /**
