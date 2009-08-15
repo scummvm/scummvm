@@ -128,7 +128,7 @@ Common::Error SciEngine::run() {
 
 	// FIXME/TODO: Move some of the stuff below to init()
 
-	sci_version_t version = getVersion();
+	SciVersion version = getVersion();
 	const uint32 flags = getFlags();
 
 	_resmgr = new ResourceManager(256 * 1024);
@@ -264,7 +264,7 @@ const char* SciEngine::getGameID() const {
 	return _gameDescription->desc.gameid;
 }
 
-int SciEngine::getVersion() const {
+SciVersion SciEngine::getVersion() const {
 	return _gameDescription->version;
 }
 

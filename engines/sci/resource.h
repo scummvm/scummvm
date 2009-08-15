@@ -45,6 +45,16 @@ namespace Sci {
 /** The maximum allowed size for a compressed or decompressed resource */
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 
+/** SCI versions */
+enum SciVersion {
+	SCI_VERSION_AUTODETECT = 0,
+	SCI_VERSION_0 = 1,
+	SCI_VERSION_01 = 2,
+	SCI_VERSION_1 = 3,
+	SCI_VERSION_1_1 = 4,
+	SCI_VERSION_32 = 5
+};
+
 /** Resource status types */
 enum ResourceStatus {
 	kResStatusNoMalloc = 0,
@@ -221,7 +231,7 @@ public:
 	 * Returns the SCI version as detected by the resource manager
 	 * @return SCI version
 	 */
-	sci_version_t sciVersion() const { return _sciVersion; }
+	SciVersion sciVersion() const { return _sciVersion; }
 
 	/**
 	 * Creates a new SCI resource manager.
@@ -285,7 +295,7 @@ protected:
 	ResourceSource *_audioMapSCI1; //!< Currently loaded audio map for SCI1
 	ResVersion _volVersion; //!< RESOURCE.0xx version
 	ResVersion _mapVersion; //!< RESOURCE.MAP version
-	sci_version_t _sciVersion; //!< Detected SCI version */
+	SciVersion _sciVersion; //!< Detected SCI version */
 
 	/**
 	 * Add a path to the resource manager's list of sources.
@@ -393,7 +403,7 @@ protected:
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 
-	int guessSciVersion();
+	SciVersion guessSciVersion();
 };
 
 } // End of namespace Sci

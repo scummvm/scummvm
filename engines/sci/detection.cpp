@@ -3326,9 +3326,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		}
 	}
 
-	if (exePlatform == Common::kPlatformUnknown)
-		return 0;
-
 	// If these files aren't found, it can't be SCI
 	if (!foundResMap && !foundRes000)
 		return 0;
@@ -3339,23 +3336,14 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.desc.language = Common::UNK_LANG;
 	s_fallbackDesc.desc.platform = exePlatform;
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-	s_fallbackDesc.version = SCI_VERSION_0;
+	getSciVersionFromString(exeVersionString, &s_fallbackDesc.version, s_fallbackDesc.desc.platform);
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");
 	printf("version number, from the game's executable:\n");
+	printf("Version: %s\n\n", exeVersionString.empty() ? "not found" : exeVersionString.c_str());
 
-	// Try to parse the executable version
-	if (getSciVersionFromString(exeVersionString, &s_fallbackDesc.version, s_fallbackDesc.desc.platform)) {
-		printf("Detected version: %s, parsed SCI version: %s\n",
-					exeVersionString.c_str(), versionNames[s_fallbackDesc.version]);
-
-		return (const ADGameDescription *)&s_fallbackDesc;
-	} else {
-		printf("Couldn't parse the interpreter version: %s (by executable scan)\n",
-			exeVersionString.c_str());
-		return NULL;
-	}
+	return (const ADGameDescription *)&s_fallbackDesc;
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {

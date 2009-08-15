@@ -319,7 +319,7 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 	return compressionMethod;
 }
 
-int ResourceManager::guessSciVersion() {
+SciVersion ResourceManager::guessSciVersion() {
 	Common::File file;
 	char filename[MAXPATHLEN];
 	int compression;

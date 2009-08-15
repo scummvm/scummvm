@@ -276,7 +276,7 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Comm
 			currentString[9] = 0;
 
 			// Return the current string if it's parseable
-			int version;
+			SciVersion version;
 			if (getSciVersionFromString(currentString, &version, platform)) {
 				delete[] buffer;
 				return currentString;
@@ -296,61 +296,44 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Comm
 	return resultString;
 }
 
-bool getSciVersionFromString(Common::String versionString, int *version, Common::Platform platform) {
-	// Map non-numeric versions to their numeric counterparts
-	Common::String mappedVersion = versionString;
+bool getSciVersionFromString(Common::String versionString, SciVersion *version, Common::Platform platform) {
+	*version = SCI_VERSION_AUTODETECT;
+
 	if (platform == Common::kPlatformAmiga) {
 		if (versionString.hasPrefix("1.002.")) {
-			mappedVersion = "0.000.685";
+			*version = SCI_VERSION_0;
 		} else if (versionString.hasPrefix("1.003.")) {
-			mappedVersion = "0.001.010";
+			*version = SCI_VERSION_01;
 		} else if (versionString.hasPrefix("1.004.")) {
-			mappedVersion = "1.000.784";
+			*version = SCI_VERSION_01;
 		} else if (versionString.hasPrefix("1.005.")) {
-			mappedVersion = "1.000.510";
+			*version = SCI_VERSION_1;
 		} else if (versionString == "x.yyy.zzz") {
 			// How to map it?
+		} else {
+			return false;
 		}
 	} else if (versionString.hasPrefix("S.old.")) {
-		// SCI 01
-		mappedVersion = "0.001.";
-		mappedVersion += versionString.c_str() + 6;
+		*version = SCI_VERSION_01;
 	} else if (versionString.hasPrefix("1.ECO.")
 		|| versionString.hasPrefix("1.SQ1.")
 		|| versionString.hasPrefix("1.SQ4.")
 		|| versionString.hasPrefix("1.LS5.")
 		|| versionString.hasPrefix("1.pq3.")
-		|| versionString.hasPrefix("FAIRY.")) {
-		// SCI 1.0
-		mappedVersion = "1.000.";
-		mappedVersion += versionString.c_str() + 6;
-	} else if (versionString.hasPrefix("T.A00.")) {
-		mappedVersion = "1.000.510";
+		|| versionString.hasPrefix("FAIRY.")
+		|| versionString.hasPrefix("T.A00.")) {
+		*version = SCI_VERSION_1;
 	} else if (versionString.hasPrefix("L.rry.")
 		|| versionString.hasPrefix("l.cfs.")) {
-		// SCI 1.1
-		mappedVersion = "1.001.";
-		mappedVersion += versionString.c_str() + 6;
-	} else if (versionString == "x.yyy.yyy") {
+		*version = SCI_VERSION_1_1;
+	} else if (versionString == "x.yyy.zzz") {
 		// How to map it?
+	} else {
+		// Unknown or not a version number
+		return false;
 	}
 
-	// Parse to a version number
-	char *endptr[3];
-	const char *ver = mappedVersion.c_str();
-	int major = strtol(ver, &endptr[0], 10);
-	//int minor = strtol(ver + 2, &endptr[1], 10);
-	//int patchlevel = strtol(ver + 6, &endptr[2], 10);
-
-	if (endptr[0] != ver + 1 || endptr[1] != ver + 5 || *endptr[2] != '\0') {
-		warning("Failed to parse version string '%s'", ver);
-		return true;
-	}
-
-	//printf("Detected version: %s, parsed version: %s\n", versionString, ver);
-	*version = major;
-
-	return false;
+	return true;
 }
 
 } // End of namespace Sci
