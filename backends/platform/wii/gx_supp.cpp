@@ -57,9 +57,9 @@ static float tex_xT = 0.0f, tex_yT = 0.0f;
 
 /* New texture based scaler */
 typedef struct tagcamera {
-	Vector pos;
-	Vector up;
-	Vector view;
+	guVector pos;
+	guVector up;
+	guVector view;
 } camera;
 
 static s16 square[] ATTRIBUTE_ALIGN(32) = {
