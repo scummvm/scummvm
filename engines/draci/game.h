@@ -150,6 +150,13 @@ struct GameInfo {
 	uint _numDialogueBlocks;
 };
 
+struct GameItem {
+	uint _init, _look, _use, _canUse;
+	bool _imInit, _imLook, _imUse;
+	GPL2Program _program;
+	Common::String _title;
+};
+
 struct Person {
 	uint _x, _y;
 	byte _fontColour;
@@ -161,7 +168,6 @@ struct Dialogue {
 	Common::String _title;
 	GPL2Program _program;
 };
-	
 
 struct Room {
 	int _roomNum;	
