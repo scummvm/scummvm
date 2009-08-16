@@ -135,13 +135,6 @@ void ScummEngine::parseEvent(Common::Event event) {
 			// Normal key press, pass on to the game.
 			_keyPressed = event.kbd;
 		}
-		
-		// WORKAROUND: On Mac OS X, the ascii value has to be set to the
-		// backspace keycode in order for the backspace to work in HE games.
-		// This includes using the backspace when entering coach names
-		// in the backyard games. 
-		if (_keyPressed.keycode == Common::KEYCODE_BACKSPACE)
-			_keyPressed.ascii = Common::KEYCODE_BACKSPACE;
 
 		// FIXME: We are using ASCII values to index the _keyDownMap here,
 		// yet later one code which checks _keyDownMap will use KEYCODEs
