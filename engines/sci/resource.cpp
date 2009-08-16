@@ -1532,7 +1532,8 @@ bool ResourceManager::hasOldScriptHeader() {
 		offset += skip;
 	}
 
-	return false;}
+	return false;
+}
 
 bool ResourceManager::hasSci0Voc999() {
 	Resource *res = findResource(ResourceId(kResourceTypeVocab, 999), 0);
