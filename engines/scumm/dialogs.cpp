@@ -471,10 +471,13 @@ ScummMenuDialog::~ScummMenuDialog() {
 	delete _loadDialog;
 }
 
-void ScummMenuDialog::reflowLayout() {
-	if (!_vm->canSaveGameStateCurrently())
-		_saveButton->setEnabled(false);
+int ScummMenuDialog::runModal() {
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
+	return ScummDialog::runModal();
+}
 
+void ScummMenuDialog::reflowLayout() {
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 	Dialog::reflowLayout();
 }
 
