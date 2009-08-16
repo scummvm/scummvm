@@ -744,10 +744,10 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 }
 
 void OptionsDialog::reflowLayout() {
-	Dialog::reflowLayout();
-
 	if (_graphicsTabId != -1 && _tabWidget)
 		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+
+	Dialog::reflowLayout();
 }
 
 #pragma mark -

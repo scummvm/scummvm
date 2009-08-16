@@ -91,7 +91,37 @@ int TabWidget::addTab(const String &title) {
 
 	int numTabs = _tabs.size();
 
+	// HACK: Nintendo DS uses a custom config dialog. This dialog does not work with
+	// our default "Globals.TabWidget.Tab.Width" setting.
+	//
+	// TODO: Add proper handling in the theme layout for such cases.
+	//
+	// There are different solutions to this problem:
+	//  - offer a "Tab.Width" setting per tab widget and thus let the Ninteno DS
+	//    backend set a default value for its special dialog.
+	//
+	//  - change our themes to use auto width calculaction by default
+	//
+	//  - change "Globals.TabWidget.Tab.Width" to be the minimal tab width setting and
+	//    rename it accordingly.
+	//    Actually this solution is pretty similar to our HACK for the Nintendo DS
+	//    backend. This hack enables auto width calculation by default with the
+	//    "Globals.TabWidget.Tab.Width" value as minimal width for the tab buttons.
+	//
+	//  - we might also consider letting every tab button having its own width.
+	//
+	//  - other solutions you can think of, which are hopefully less evil ;-).
+	//
+	// Of course also the Ninteno DS' dialog should be in our layouting engine, instead
+	// of being hard coded like it is right now.
+	//
+	// There are checks for __DS__ all over this source file to take care of the
+	// aforemnetioned problem.
+#ifdef __DS__
+	if (true) {
+#else
 	if (g_gui.xmlEval()->getVar("Globals.TabWidget.Tab.Width") == 0) {
+#endif
 		if (_tabWidth == 0)
 			_tabWidth = 40;
 		// Determine the new tab width
@@ -217,17 +247,20 @@ void TabWidget::reflowLayout() {
 
 	if (_tabWidth == 0) {
 		_tabWidth = 40;
+#ifdef __DS__
 	}
+	if (true) {
+#endif
+		int maxWidth = _w / _tabs.size();
 
-	int maxWidth = _w / _tabs.size();
-
-	for (uint i = 0; i < _tabs.size(); ++i) {
-		// Determine the new tab width
-		int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * 3;
-		if (_tabWidth < newWidth)
-			_tabWidth = newWidth;
-		if (_tabWidth > maxWidth)
-			_tabWidth = maxWidth;
+		for (uint i = 0; i < _tabs.size(); ++i) {
+			// Determine the new tab width
+			int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * 3;
+			if (_tabWidth < newWidth)
+				_tabWidth = newWidth;
+			if (_tabWidth > maxWidth)
+				_tabWidth = maxWidth;
+		}
 	}
 
 	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.PaddingRight", 0);
