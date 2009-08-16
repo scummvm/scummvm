@@ -48,6 +48,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	_drawShapeVar5 = 0;
 
 	_sjisFont = 0;
+	_currentFont = FID_8_FNT;
 }
 
 Screen::~Screen() {
