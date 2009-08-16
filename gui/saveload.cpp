@@ -255,8 +255,6 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 			if (thumb) {
 				_gfxWidget->setGfx(thumb);
 				_gfxWidget->useAlpha(256);
-			} else {
-				_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
 			}
 		}
 
