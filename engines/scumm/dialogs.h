@@ -90,6 +90,7 @@ public:
 
 	virtual void reflowLayout();
 
+	int runModal();
 protected:
 	ScummEngine		*_vm;
 
