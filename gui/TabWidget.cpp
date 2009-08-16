@@ -217,16 +217,17 @@ void TabWidget::reflowLayout() {
 
 	if (_tabWidth == 0) {
 		_tabWidth = 40;
-		int maxWidth = _w / _tabs.size();
+	}
 
-		for (uint i = 0; i < _tabs.size(); ++i) {
-			// Determine the new tab width
-			int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * 3;
-			if (_tabWidth < newWidth)
-				_tabWidth = newWidth;
-			if (_tabWidth > maxWidth)
-				_tabWidth = maxWidth;
-		}
+	int maxWidth = _w / _tabs.size();
+
+	for (uint i = 0; i < _tabs.size(); ++i) {
+		// Determine the new tab width
+		int newWidth = g_gui.getStringWidth(_tabs[i].title) + 2 * 3;
+		if (_tabWidth < newWidth)
+			_tabWidth = newWidth;
+		if (_tabWidth > maxWidth)
+			_tabWidth = maxWidth;
 	}
 
 	_butRP = g_gui.xmlEval()->getVar("Globals.TabWidget.NavButton.PaddingRight", 0);
