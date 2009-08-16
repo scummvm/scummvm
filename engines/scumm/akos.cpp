@@ -299,7 +299,6 @@ void AkosRenderer::setPalette(uint16 *new_palette) {
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
 
-#ifdef ENABLE_HE
 	if (_vm->_game.features & GF_16BIT_COLOR) {
 		if (_paletteNum) {
 			for (i = 0; i < size; i++)
@@ -318,13 +317,10 @@ void AkosRenderer::setPalette(uint16 *new_palette) {
 		for (i = 0; i < size; i++)
 			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * _vm->_hePaletteSlot + 768 + akpl[i]];
 	} else {
-#endif
 		for (i = 0; i < size; i++) {
 			_palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
 		}
-#ifdef ENABLE_HE
 	}
-#endif
 
 	if (_vm->_game.heversion == 70) {
 		for (i = 0; i < size; i++)

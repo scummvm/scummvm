@@ -194,19 +194,15 @@ void ScummEngine_v70he::setDefaultCursor() {
 		for (j = 0; j < 32; j++) {
 			switch ((p & (0x3 << 14)) >> 14) {
 				case 1:
-#ifdef ENABLE_HE
 					if (_bitDepth == 2)
 						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[4], palette[5], palette[6]));
 					else
-#endif
 						_grabbedCursor[32 * i + j] = 0xfe;
 					break;
 				case 2:
-#ifdef ENABLE_HE
 					if (_bitDepth == 2)
 						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[0], palette[1], palette[2]));
 					else
-#endif
 						_grabbedCursor[32 * i + j] = 0xfd;
 					break;
 				default:
