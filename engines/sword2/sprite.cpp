@@ -341,7 +341,7 @@ void Screen::recomposeCompPsxSprite(SpriteInfo *s) {
 	uint16 noStripes = (s->w / 254) + ((s->w % 254) ? 1 : 0);
 	uint16 lastStripeSize = (s->w % 254) ? s->w % 254 : 254;
 	byte *buffer = (byte *)malloc(s->w * s->h / 2);
-	byte *stripeBuffer = (byte *)malloc(254 * s->h);;
+	byte *stripeBuffer = (byte *)malloc(254 * s->h);
 
 	memset(buffer, 0, s->w * s->h / 2);
 	uint32 skipData = 0;

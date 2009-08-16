@@ -26,7 +26,7 @@
 
 
 #include "base/plugins.h"
-
+#include "common/savefile.h"
 #include "engines/advancedDetector.h"
 
 #include "cruise/cruise.h"
@@ -67,6 +67,19 @@ namespace Cruise {
 using Common::GUIO_NONE;
 
 static const CRUISEGameDescription gameDescriptions[] = {
+	{
+		{
+			"cruise",
+			"16 colours",
+			AD_ENTRY1("D1", "cd29a4cd9162076e9a18495fe56a48f3"),
+			Common::EN_GRB,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_CRUISE,
+		0,
+	},
 	{
 		{
 			"cruise",

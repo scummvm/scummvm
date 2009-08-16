@@ -55,7 +55,7 @@ GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, Resource
 	gfxr_init_static_palette();
 
 	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
-	_version = resManager->_volVersion;
+	_version = resManager->sciVersion();
 
 	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
 	if (_version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {

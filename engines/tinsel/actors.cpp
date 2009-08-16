@@ -1185,7 +1185,7 @@ SCNHANDLE GetActorTalkFilm(int ano) {
 void SetActorTalking(int ano, bool tf) {
 	assert(ano > 0 && ano <= NumActors); // illegal actor number
 
-	actorInfo[ano - 1].bTalking = tf;;
+	actorInfo[ano - 1].bTalking = tf;
 }
 
 bool ActorIsTalking(int ano) {

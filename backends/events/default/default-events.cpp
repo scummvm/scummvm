@@ -162,6 +162,12 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 #endif
+			else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+				// WORKAROUND: On Mac OS X, the ascii value for backspace
+				// has to be set to the backspace keycode in order to work
+				// properly.
+				event.kbd.ascii = Common::KEYCODE_BACKSPACE;
+			}
 			break;
 
 		case Common::EVENT_KEYUP:

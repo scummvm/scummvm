@@ -49,6 +49,8 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 
 	_sjisFont = 0;
 	memset(_fonts, 0, sizeof(_fonts));
+
+	_currentFont = FID_8_FNT;
 }
 
 Screen::~Screen() {
@@ -658,10 +660,18 @@ int Screen::fadePalStep(const Palette &pal, int diff) {
 }
 
 void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
-	getPalette(0)[index * 3 + 0] = red;
-	getPalette(0)[index * 3 + 1] = green;
-	getPalette(0)[index * 3 + 2] = blue;
-	setScreenPalette(getPalette(0));
+	Palette &pal = getPalette(0);
+
+	const int offset = index * 3;
+
+	if (pal[offset + 0] == red && pal[offset + 1] == green && pal[offset + 2] == blue)
+		return;
+
+	pal[offset + 0] = red;
+	pal[offset + 1] = green;
+	pal[offset + 2] = blue;
+
+	setScreenPalette(pal);
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {

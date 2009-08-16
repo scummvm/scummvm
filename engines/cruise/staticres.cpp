@@ -29,28 +29,28 @@
 
 namespace Cruise {
 
-int actor_move[][13] = {
+const int actor_move[][13] = {
 	{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 0},						// back
 	{13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 0},			// right side
 	{25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 0},			// front
 	{ -13, -14, -15, -16, -17, -18, -19, -20, -21, -22, -23, -24, 0}// left side
 };
 
-int actor_end[][13] = {
+const int actor_end[][13] = {
 	{37, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	// stat back
 	{38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	// stat right-side
 	{39, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},	// stat front
 	{ -38, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}	// stat left-side
 };
 
-int actor_stat[][13] = {
+const int actor_stat[][13] = {
 	{53, 54, 55, 56, 57, 0, 0, 0, 0, 0, 0, 0, 0},
 	{59, 60, 62, 63, 78, 0, 0, 0, 0, 0, 0, 0, 0},
 	{ -78, -63, -62, -60, -59, 0, 0, 0, 0, 0, 0, 0, 0},
 	{ -57, -56, -55, -54, -53, 0, 0, 0, 0, 0, 0, 0, 0}
 };
 
-int actor_invstat[][13] = {
+const int actor_invstat[][13] = {
 	{ -53, -54, -55, -56, -57, 0, 0, 0, 0, 0, 0, 0, 0},
 	{57, 56, 55, 54, 53, 0, 0, 0, 0, 0, 0, 0, 0},
 	{78, 63, 62, 60, 59, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -59,7 +59,7 @@ int actor_invstat[][13] = {
 
 // font character lookup tables
 
-int16 english_fontCharacterTable[256] = {
+const int16 english_fontCharacterTable[256] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1,
@@ -122,7 +122,7 @@ int16 english_fontCharacterTable[256] = {
 	-1,
 };
 
-int16 german_fontCharacterTable[256] = {
+const int16 german_fontCharacterTable[256] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1,
@@ -168,7 +168,7 @@ int16 german_fontCharacterTable[256] = {
 	-1, -1, -1, -1
 };
 
-int16 spanish_fontCharacterTable[256] = {
+const int16 spanish_fontCharacterTable[256] = {
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
 	-1,

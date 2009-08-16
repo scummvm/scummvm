@@ -89,8 +89,10 @@ int LoLEngine::processPrologue() {
 			showIntro();
 			break;
 
-		case 2:		// "Lore of the Lands" (only CD version)
-			break;
+		case 2: {	// "Lore of the Lands" (only CD version)
+			HistoryPlayer history(this);
+			history.play();
+			} break;
 
 		case 3:		// Load game
 			if (_gui->runMenu(_gui->_loadMenu))
@@ -121,7 +123,8 @@ void LoLEngine::setupPrologueData(bool load) {
 	static const char * const fileListCD[] = {
 		"GENERAL.PAK", "INTROVOC.PAK", "STARTUP.PAK", "INTRO1.PAK",
 		"INTRO2.PAK", "INTRO3.PAK", "INTRO4.PAK", "INTRO5.PAK",
-		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK", 0
+		"INTRO6.PAK", "INTRO7.PAK", "INTRO8.PAK", "INTRO9.PAK",
+		"HISTORY.PAK", 0
 	};
 
 	static const char * const fileListFloppyExtracted[] = {
@@ -681,6 +684,271 @@ void LoLEngine::showStarcraftLogo() {
 
 	_eventList.clear();
 	delete ci;
+}
+
+// history player
+
+HistoryPlayer::HistoryPlayer(LoLEngine *vm) : _system(vm->_system), _vm(vm), _screen(vm->screen()) {
+	_x = _y = _width = _height = 0;
+	_frame = _fireFrame = 0;
+	_nextFireTime = 0;
+
+	_wsa = new WSAMovie_v2(vm);
+	assert(_wsa);
+	_fireWsa = new WSAMovie_v2(vm);
+	assert(_fireWsa);
+}
+
+HistoryPlayer::~HistoryPlayer() {
+	delete _wsa;
+	delete _fireWsa;
+}
+
+void HistoryPlayer::play() {
+	int dataSize = 0;
+	const char *data = (const char *)_vm->staticres()->loadRawData(kLolHistory, dataSize);
+
+	if (!data)
+		error("Could not load history data");
+
+	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
+
+	Palette pal(256);
+	pal.fill(0, 256, 0);
+	_screen->fadePalette(pal, 0x1E);
+
+	_screen->loadBitmap("BACKGND.CPS", 8, 8, &pal);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 0, Screen::CR_NO_P_CHECK);
+	_screen->copyRegion(0, 0, 0, 0, 320, 200, 8, 2, Screen::CR_NO_P_CHECK);
+	_screen->updateScreen();
+
+	_screen->fadePalette(pal, 0x82);
+
+	_screen->copyRegion(_x, _y, _x, _y, _width, _height, 2, 0);
+	_screen->updateScreen();
+
+	pal.fill(0, 256, 0);
+	_screen->setFont(Screen::FID_9_FNT);
+
+	char tempWsaFilename[16];
+	char voiceFilename[13];
+	// the 'a' *has* to be lowercase
+	strncpy(voiceFilename, "PS_1a", sizeof(voiceFilename));
+
+	int part = 0;
+	Sound *sound = _vm->sound();
+
+	Common::Functor0Mem<void, HistoryPlayer> palFade(this, &HistoryPlayer::updateFire);
+
+	for (; voiceFilename[3] <= '9' && !_vm->shouldQuit() && !_vm->skipFlag(); ++voiceFilename[3], voiceFilename[4] = 'a') {
+		while (!_vm->shouldQuit() && !_vm->skipFlag()) {
+			if (!sound->voiceFileIsPresent(voiceFilename))
+				break;
+
+			if (data[part * 15] == voiceFilename[3] && data[part * 15 + 1] == voiceFilename[4]) {
+				switch (part) {
+				case 0:
+					loadWsa(&data[part * 15 + 2]);
+					playWsa(true);
+					sound->voicePlay(voiceFilename);
+					break;
+
+				case 1: case 2: case 8:
+				case 16: case 25:
+					sound->voicePlay(voiceFilename);
+					playWsa(true);
+					break;
+
+				case 3: case 7: case 10:
+				case 17: case 23: case 26:
+					sound->voicePlay(voiceFilename);
+					playWsa(true);
+					restoreWsaBkgd();
+					loadWsa(&data[part * 15 + 2]);
+					playWsa(true);
+					break;
+
+				case 6:
+					sound->voicePlay(voiceFilename);
+					playWsa(false);
+					restoreWsaBkgd();
+					loadWsa(&data[part * 15 + 2]);
+					playWsa(true);
+					_vm->delayWithTicks(30);
+					playWsa(true);
+					break;
+
+				case 9:
+					sound->voicePlay(voiceFilename);
+					loadWsa(&data[part * 15 + 2]);
+					playWsa(true);
+					break;
+
+				case 22:
+					playWsa(false);
+					restoreWsaBkgd();
+					loadWsa(&data[part * 15 + 2]);
+					_vm->delayWithTicks(30);
+					sound->voicePlay(voiceFilename);
+					playWsa(true);
+
+					strcpy(tempWsaFilename, &data[part * 15]);
+
+					for (int i = 1; i < 4 && !_vm->shouldQuit(); ++i) {
+						uint32 nextTime = _system->getMillis() + 30 * _vm->tickLength();
+						tempWsaFilename[8] = 'a' + i;
+
+						loadWsa(&tempWsaFilename[2]);
+						_vm->delayUntil(nextTime);
+
+						playWsa(true);
+					}
+
+					tempWsaFilename[8] = 'e';
+					loadWsa(&tempWsaFilename[2]);
+					break;
+
+				case 29:
+					sound->voicePlay(voiceFilename);
+					playWsa(false);
+					restoreWsaBkgd();
+					loadWsa(&data[part * 15 + 2]);
+
+					_fireWsa->open("FIRE.WSA", 0, 0);
+					playWsa(true);
+					_fireFrame = 0;
+
+					for (int i = 0; i < 12 && !_vm->shouldQuit(); ++i, ++_fireFrame) {
+						uint32 nextTime = _system->getMillis() + 3 * _vm->tickLength();
+
+						if (_fireFrame > 4)
+							_fireFrame = 0;
+
+						_fireWsa->displayFrame(_fireFrame, 0, 75, 51, 0, 0, 0);
+						_screen->updateScreen();
+						_vm->delayUntil(nextTime);
+					}
+
+					_screen->loadPalette("DRACPAL.PAL", pal);
+					_screen->fadePalette(pal, 0x78, &palFade);
+
+					while (sound->voiceIsPlaying() && !_vm->shouldQuit()) {
+						uint32 nextTime = _system->getMillis() + 3 * _vm->tickLength();
+
+						++_fireFrame;
+						if (_fireFrame > 4)
+							_fireFrame = 0;
+
+						_fireWsa->displayFrame(_fireFrame, 0, 75, 51, 0, 0, 0);
+						_screen->updateScreen();
+						_vm->delayUntil(nextTime);
+					}
+
+					_fireFrame = 0;
+					for (int i = 0; i < 10; ++i, ++_fireFrame) {
+						uint32 nextTime = _system->getMillis() + 3 * _vm->tickLength();
+
+						if (_fireFrame > 4)
+							_fireFrame = 0;
+
+						_fireWsa->displayFrame(_fireFrame, 0, 75, 51, 0, 0, 0);
+						_screen->updateScreen();
+						_vm->delayUntil(nextTime);
+					}
+
+					break;
+
+				default:
+					sound->voicePlay(voiceFilename);
+					playWsa(false);
+					restoreWsaBkgd();
+					loadWsa(&data[part * 15 + 2]);
+					playWsa(true);
+					break;
+				}
+
+				++part;
+			} else {
+				sound->voicePlay(voiceFilename);
+			}
+
+			while (sound->voiceIsPlaying() && !_vm->shouldQuit() && !_vm->skipFlag())
+				_vm->delay(10);
+
+			if (_vm->skipFlag()) {
+				sound->voiceStop();
+				_vm->resetSkipFlag();
+			}
+
+			++voiceFilename[4];
+		}
+
+		if (_vm->skipFlag())
+			_vm->resetSkipFlag();
+	}
+
+	if (_vm->skipFlag())
+		_vm->resetSkipFlag();
+
+	pal.fill(0, 256, 63);
+	if (_fireWsa->opened())
+		_screen->fadePalette(pal, 0x3C, &palFade);
+	else
+		_screen->fadePalette(pal, 0x3C);
+
+	_screen->clearPage(0);
+	pal.fill(0, 256, 0);
+	_screen->fadePalette(pal, 0x3C);
+}
+
+void HistoryPlayer::loadWsa(const char *filename) {
+	if (_wsa->opened())
+		_wsa->close();
+
+	Palette pal(256);
+	if (!_wsa->open(filename, 3, &pal))
+		error("Could not load WSA file: '%s'", filename);
+	_screen->setScreenPalette(pal);
+
+	_x = _wsa->xAdd();
+	_y = _wsa->yAdd();
+	_width = _wsa->width();
+	_height = _wsa->height();
+	_frame = 1;
+}
+
+void HistoryPlayer::playWsa(bool direction) {
+	const int tickLength = _vm->tickLength();
+
+	for (int i = 0; i < 15 && !_vm->shouldQuit(); ++i) {
+		uint32 nextTime = _system->getMillis() + 3 * tickLength;
+
+		_wsa->displayFrame(_frame, 2, 0, 0, 0, 0, 0);
+		_screen->copyRegion(_x, _y, _x, _y, _width, _height, 2, 0);
+		_screen->updateScreen();
+		_vm->delayUntil(nextTime);
+
+		if (direction)
+			++_frame;
+		else
+			--_frame;
+	}
+}
+
+void HistoryPlayer::restoreWsaBkgd() {
+	_screen->copyRegion(_x, _y, _x, _y, _width, _height, 8, 0);
+	_screen->copyRegion(_x, _y, _x, _y, _width, _height, 8, 2);
+	_screen->updateScreen();
+}
+
+void HistoryPlayer::updateFire() {
+	if (_system->getMillis() > _nextFireTime) {
+		_fireWsa->displayFrame(_fireFrame, 0, 75, 51, 0, 0, 0);
+		_fireFrame = (_fireFrame + 1) % 5;
+		_nextFireTime = _system->getMillis() + 4 * _vm->tickLength();
+	}
+
+	_screen->updateScreen();
 }
 
 // outro

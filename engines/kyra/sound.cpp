@@ -242,10 +242,15 @@ namespace {
 // A simple wrapper to create VOC streams the way like creating MP3, OGG/Vorbis and FLAC streams.
 // Possible TODO: Think of making this complete and moving it to sound/voc.cpp ?
 Audio::AudioStream *makeVOCStream(Common::SeekableReadStream *stream, bool disposeAfterUse, uint32 startTime, uint32 duration, uint numLoops) {
+
+#ifdef STREAM_AUDIO_FROM_DISK
+	Audio::AudioStream *as = Audio::makeVOCStream(*stream, Audio::Mixer::FLAG_UNSIGNED, 0, 0, disposeAfterUse);
+#else
 	Audio::AudioStream *as = Audio::makeVOCStream(*stream, Audio::Mixer::FLAG_UNSIGNED);
 
 	if (disposeAfterUse)
 		delete stream;
+#endif
 
 	return as;
 }

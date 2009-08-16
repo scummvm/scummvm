@@ -282,16 +282,18 @@ enum kKyraResources {
 	kLolButtonList7,
 	kLolButtonList8,
 
-	lolLegendData,
-	lolMapCursorOvl,
-	lolMapStringId,
-	//lolMapPal,
+	kLolLegendData,
+	kLolMapCursorOvl,
+	kLolMapStringId,
+	//kLolMapPal,
 
-	lolSpellbookAnim,
-	lolSpellbookCoords,
-	lolHealShapeFrames,
-	lolLightningDefs,
-	lolFireballCoords,
+	kLolSpellbookAnim,
+	kLolSpellbookCoords,
+	kLolHealShapeFrames,
+	kLolLightningDefs,
+	kLolFireballCoords,
+
+	kLolHistory,
 #endif // ENABLE_LOL
 
 	kMaxResIDs

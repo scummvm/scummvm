@@ -41,6 +41,7 @@
 #include "common/scummsys.h"
 
 namespace Common { class ReadStream; }
+namespace Common { class SeekableReadStream; }
 
 namespace Audio {
 
@@ -78,7 +79,7 @@ struct VocBlockHeader {
 extern int getSampleRateFromVOCRate(int vocSR);
 
 /**
- * Try to load a VOC from the given seekable stream. Returns a pointer to memory
+ * Try to load a VOC from the given stream. Returns a pointer to memory
  * containing the PCM sample data (allocated with malloc). It is the callers
  * responsibility to dellocate that data again later on! Currently this
  * function only supports uncompressed raw PCM data.
@@ -92,7 +93,7 @@ extern byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate)
  *
  * This function uses loadVOCFromStream() internally.
  */
-AudioStream *makeVOCStream(Common::ReadStream &stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0);
+AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags = 0, uint loopStart = 0, uint loopEnd = 0, bool takeOwnershipOfStream = false);
 
 } // End of namespace Audio
 

@@ -1431,6 +1431,7 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			_ar="$_host_alias-ar cru"
 			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
 			_backend="psp"
 			_build_scalers="no"
 			_build_hq_scalers="no"

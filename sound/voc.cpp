@@ -166,14 +166,155 @@ byte *loadVOCFromStream(Common::ReadStream &stream, int &size, int &rate) {
 	return loadVOCFromStream(stream, size, rate, loops, begin_loop, end_loop);
 }
 
-AudioStream *makeVOCStream(Common::ReadStream &stream, byte flags, uint loopStart, uint loopEnd) {
+
+#ifdef STREAM_AUDIO_FROM_DISK
+
+int parseVOCFormat(Common::SeekableReadStream& stream, LinearDiskStreamAudioBlock* block, int &rate, int &loops, int &begin_loop, int &end_loop) {
+	VocFileHeader fileHeader;
+	int currentBlock = 0;
+	int size = 0;
+
+	if (stream.read(&fileHeader, 8) != 8)
+		goto invalid;
+
+	if (!memcmp(&fileHeader, "VTLK", 4)) {
+		if (stream.read(&fileHeader, sizeof(VocFileHeader)) != sizeof(VocFileHeader))
+			goto invalid;
+	} else if (!memcmp(&fileHeader, "Creative", 8)) {
+		if (stream.read(((byte *)&fileHeader) + 8, sizeof(VocFileHeader) - 8) != sizeof(VocFileHeader) - 8)
+			goto invalid;
+	} else {
+	invalid:;
+		warning("loadVOCFromStream: Invalid header");
+		return 0;
+	}
+
+	if (memcmp(fileHeader.desc, "Creative Voice File", 19) != 0)
+		error("loadVOCFromStream: Invalid header");
+	if (fileHeader.desc[19] != 0x1A)
+		debug(3, "loadVOCFromStream: Partially invalid header");
+
+	int32 offset = FROM_LE_16(fileHeader.datablock_offset);
+	int16 version = FROM_LE_16(fileHeader.version);
+	int16 code = FROM_LE_16(fileHeader.id);
+	assert(offset == sizeof(VocFileHeader));
+	// 0x100 is an invalid VOC version used by German version of DOTT (Disk) and
+	// French version of Simon the Sorcerer 2 (CD)
+	assert(version == 0x010A || version == 0x0114 || version == 0x0100);
+	assert(code == ~version + 0x1234);
+
+	int len;
+	size = 0;
+	begin_loop = 0;
+	end_loop = 0;
+
+	while ((code = stream.readByte())) {
+		len = stream.readByte();
+		len |= stream.readByte() << 8;
+		len |= stream.readByte() << 16;
+
+		switch (code) {
+		case 1:
+		case 9: {
+			int packing;
+			if (code == 1) {
+				int time_constant = stream.readByte();
+				packing = stream.readByte();
+				len -= 2;
+				rate = getSampleRateFromVOCRate(time_constant);
+			} else {
+				rate = stream.readUint32LE();
+				int bits = stream.readByte();
+				int channels = stream.readByte();
+				if (bits != 8 || channels != 1) {
+					warning("Unsupported VOC file format (%d bits per sample, %d channels)", bits, channels);
+					break;
+				}
+				packing = stream.readUint16LE();
+				stream.readUint32LE();
+				len -= 12;
+			}
+			debug(9, "VOC Data Block: %d, %d, %d", rate, packing, len);
+			if (packing == 0) {
+				
+				// Found a data block - so add it to the block list
+				block[currentBlock].pos = stream.pos();
+				block[currentBlock].len = len;
+				currentBlock++;
+
+				stream.seek(len, SEEK_CUR);
+
+				size += len;
+				begin_loop = size;
+				end_loop = size;
+			} else {
+				warning("VOC file packing %d unsupported", packing);
+			}
+			} break;
+		case 3: // silence
+			// occur with a few Igor sounds, voc file starts with a silence block with a
+			// frequency different from the data block. Just ignore fow now (implementing
+			// it wouldn't make a big difference anyway...)
+			assert(len == 3);
+			stream.readUint16LE();
+			stream.readByte();
+			break;
+		case 6:	// begin of loop
+			assert(len == 2);
+			loops = stream.readUint16LE();
+			break;
+		case 7:	// end of loop
+			assert(len == 0);
+			break;
+		case 8: // "Extended"
+			// This occures in the LoL Intro demo. This block can usually be used to create stereo
+			// sound, but the LoL intro has only an empty block, thus this dummy implementation will
+			// work.
+			assert(len == 4);
+			stream.readUint16LE();
+			stream.readByte();
+			stream.readByte();
+			break;
+		default:
+			warning("Unhandled code in VOC file : %d", code);
+			return 0;
+		}
+	}
+	debug(4, "VOC Data Size : %d", size);
+	return currentBlock;
+}
+
+AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, bool takeOwnership) {
+	const int MAX_AUDIO_BLOCKS = 256;
+
+	LinearDiskStreamAudioBlock *block = new LinearDiskStreamAudioBlock[MAX_AUDIO_BLOCKS];
+	int rate, loops, begin_loop, end_loop;
+
+	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
+
+	AudioStream* audioStream = makeLinearDiskStream(stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
+
+	delete[] block;
+
+	return audioStream;
+}
+	
+#endif
+
+
+AudioStream *makeVOCStream(Common::SeekableReadStream &stream, byte flags, uint loopStart, uint loopEnd, bool takeOwnershipOfStream) {
+#ifdef STREAM_AUDIO_FROM_DISK
+	return makeVOCDiskStream(stream, flags, takeOwnershipOfStream);
+#else
 	int size, rate;
 
 	byte *data = loadVOCFromStream(stream, size, rate);
+
 	if (!data)
 		return 0;
 
 	return makeLinearInputStream(data, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, loopStart, loopEnd);
+#endif
 }
 
 

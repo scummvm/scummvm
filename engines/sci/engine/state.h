@@ -126,7 +126,7 @@ public:
 		kSegmentLength = 20 /**< Time segment length in ms */
 	};
 
-	SpeedThrottler(sci_version_t version) {
+	SpeedThrottler(SciVersion version) {
 		if (version >= SCI_VERSION_1_1)
 			_maxInstructions = 3300;
 		else if (version >= SCI_VERSION_1)
@@ -161,7 +161,7 @@ private:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, sci_version_t version, uint32 flags);
+	EngineState(ResourceManager *res, SciVersion version, uint32 flags);
 	virtual ~EngineState();
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
@@ -171,7 +171,7 @@ public:
 
 	ResourceManager *resmgr; /**< The resource manager */
 
-	const sci_version_t _version; /**< The approximated patchlevel of the version to emulate */
+	const SciVersion _version; /**< The approximated patchlevel of the version to emulate */
 	const uint32 _flags;			/**< Specific game flags */
 
 	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */

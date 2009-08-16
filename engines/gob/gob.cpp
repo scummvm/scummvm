@@ -460,14 +460,14 @@ bool GobEngine::initGameParts() {
 	case kGameTypePlaytnCk:
 	case kGameTypeBambou:
 		_init     = new Init_v2(this);
-		_video    = new Video_v2(this);
-		_inter    = new Inter_v6(this);
+		_video    = new Video_v6(this);
+		_inter    = new Inter_Playtoons(this);
 		_mult     = new Mult_v2(this);
 		_draw     = new Draw_v2(this);
 		_map      = new Map_v2(this);
-		_goblin   = new Goblin_v2(this);
+		_goblin   = new Goblin_v4(this);
 		_scenery  = new Scenery_v2(this);
-		_saveLoad = new SaveLoad_Playtoons(this);
+		_saveLoad = new SaveLoad_Playtoons(this, _targetName.c_str());
 		break;
 
 	default:

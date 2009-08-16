@@ -66,21 +66,10 @@ enum kDebugLevels {
 struct SciGameDescription {
 	ADGameDescription desc;
 	uint32 flags;
-	int res_version;
-	int version;
+	SciVersion version;
 };
 
-enum SciGameVersions {
-	SCI_VERSION_AUTODETECT = 0,
-	SCI_VERSION_0 = 1,
-	SCI_VERSION_01 = 2,
-	SCI_VERSION_01_VGA_ODD = 3,
-	SCI_VERSION_1 = 4,
-	SCI_VERSION_1_1 = 5,
-	SCI_VERSION_32 = 6
-};
-
-extern const char *versionNames[7];
+extern const char *versionNames[6];
 
 enum SciGameFlags {
 	// SCI0 flags
@@ -105,7 +94,7 @@ public:
 
 	const char* getGameID() const;
 	int getResourceVersion() const;
-	int getVersion() const;
+	SciVersion getVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;

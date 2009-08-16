@@ -33,7 +33,7 @@ namespace Sci {
 
 Common::Platform getGameExePlatform(Common::SeekableReadStream *exeStream);
 Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Common::Platform platform);
-bool getSciVersionFromString(Common::String versionString, int *version, Common::Platform platform);
+bool getSciVersionFromString(Common::String versionString, SciVersion *version, Common::Platform platform);
 
 } // End of namespace Sci
 
