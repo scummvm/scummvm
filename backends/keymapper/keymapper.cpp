@@ -190,33 +190,21 @@ bool Keymapper::mapKey(const KeyState& key, bool keyDown) {
 		return false;
 
 	Action *action = 0;
-
 	if (keyDown) {
-		// HACK: Temporary fix for modifier recognition, get the hwkey's keystate
-		// to correct for keydown and keyup generating different ascii codes in SDL
-		// to be solved more permanently by using a structure other than KeyState
-
-		const HardwareKey *hwkey = findHardwareKey(key);
-		if (!hwkey)
-			return false;
-
-		KeyState k = hwkey->key;
-		k.flags = key.flags & hwkey->modMask;
-
 		// Search for key in active keymap stack
 		for (int i = _activeMaps.size() - 1; i >= 0; --i) {
 			MapRecord mr = _activeMaps[i];
 
-			action = mr.keymap->getMappedAction(k);
+			action = mr.keymap->getMappedAction(key);
 
 			if (action || mr.inherit == false)
 				break;
 		}
 
 		if (action)
-			_keysDown[k] = action;
+			_keysDown[key] = action;
 	} else {
-		HashMap<KeyState, Action*>::iterator it = _keysDown.find(key);
+		HashMap<ActionKey, Action*>::iterator it = _keysDown.find(key);
 
 		if (it != _keysDown.end()) {
 			action = it->_value;
@@ -279,11 +267,11 @@ void Keymapper::executeAction(const Action *action, bool keyDown) {
 	}
 }
 
-const HardwareKey *Keymapper::findHardwareKey(const KeyState& key) {
+const HardwareKey *Keymapper::findHardwareKey(const ActionKey& key) {
 	return (_hardwareKeys) ? _hardwareKeys->findHardwareKey(key) : 0;
 }
 
-const HardwareMod *Keymapper::findHardwareMod(const KeyState& key) {
+const HardwareMod *Keymapper::findHardwareMod(const ActionKey& key) {
 	return (_hardwareKeys) ? _hardwareKeys->findHardwareMod(key) : 0;
 }
 

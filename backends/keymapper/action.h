@@ -59,7 +59,7 @@ struct Action {
 
 private:
 	/** Hardware key that is mapped to this Action */
-	const HardwareKey *_hwKey;
+	HardwareKey *_hwKey;
 	Keymap *_boss;
 
 public:
@@ -105,7 +105,7 @@ public:
 		return _boss;
 	}
 
-	void mapKey(const HardwareKey *key);
+	void mapKey(const HardwareKey *key, byte flags = 0);
 	const HardwareKey *getMappedKey() const;
 
 };

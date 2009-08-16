@@ -89,7 +89,7 @@ public:
 	 * @param key	the key that is mapped to the required Action
 	 * @return		a pointer to the Action or 0 if no
 	 */
-	Action *getMappedAction(const KeyState& ks) const;
+	Action *getMappedAction(const ActionKey& ks) const;
 
 	void setConfigDomain(ConfigManager::Domain *dom);
 
@@ -147,12 +147,12 @@ private:
 
 	void internalMapKey(Action *action, HardwareKey *hwKey);
 
-	Action *getParentMappedAction(KeyState key);
+	Action *getParentMappedAction(const ActionKey &key);
 
 	String _name;
 	Keymap *_parent;
 	List<Action*> _actions;
-	HashMap<KeyState, Action*> _keymap;
+	HashMap<ActionKey, Action*> _keymap;
 	ConfigManager::Domain *_configDomain;
 
 };

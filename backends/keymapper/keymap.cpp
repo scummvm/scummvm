@@ -60,7 +60,7 @@ void Keymap::addAction(Action *action) {
 }
 
 void Keymap::registerMapping(Action *action, const HardwareKey *hwKey) {
-	HashMap<KeyState, Action*>::iterator it;
+	HashMap<ActionKey, Action*>::iterator it;
 
 	it = _keymap.find(hwKey->key);
 
@@ -105,8 +105,8 @@ const Action *Keymap::findAction(const char *id) const {
 	return 0;
 }
 
-Action *Keymap::getMappedAction(const KeyState& ks) const {
-	HashMap<KeyState, Action*>::iterator it;
+Action *Keymap::getMappedAction(const ActionKey& ks) const {
+	HashMap<ActionKey, Action*>::iterator it;
 
 	it = _keymap.find(ks);
 
@@ -157,9 +157,7 @@ void Keymap::loadMappings(const HardwareKeySet *hwKeys) {
 			_configDomain->erase(key);
 			continue;
 		}
-		HardwareKey *mappedKey = new HardwareKey(*hwKey);
-		mappedKey->key.flags = modId;
-		ua->mapKey(mappedKey);
+		ua->mapKey(hwKey,modId);
 	}
 }
 
@@ -335,7 +333,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 	}
 }
 
-Action *Keymap::getParentMappedAction(KeyState key) {
+Action *Keymap::getParentMappedAction(const ActionKey &key) {
 	if (_parent) {
 		Action *act = _parent->getMappedAction(key);
 

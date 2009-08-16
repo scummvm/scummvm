@@ -43,14 +43,21 @@ Action::Action(Keymap *boss, const char *i,	String des, ActionType typ,
 	_boss->addAction(this);
 }
 
-void Action::mapKey(const HardwareKey *key) {
+void Action::mapKey(const HardwareKey *key, byte flags) {
 	if (_hwKey)
+	{
 		_boss->unregisterMapping(this);
+		delete _hwKey;
+	}
 
-	_hwKey = key;
-
-	if (_hwKey)
-		_boss->registerMapping(this, _hwKey);
+	if (key) {
+		_hwKey = new HardwareKey(*key);
+		if (flags)
+			_hwKey->key.flags = flags & _hwKey->modMask;
+		if (_hwKey)
+			_boss->registerMapping(this, _hwKey);
+	} else
+		_hwKey = NULL;
 }
 
 const HardwareKey *Action::getMappedKey() const {

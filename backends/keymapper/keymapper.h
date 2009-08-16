@@ -168,12 +168,12 @@ public:
 	/**
 	 * Return a HardwareKey pointer for the given key state
 	 */
-	const HardwareKey *findHardwareKey(const KeyState& key);
+	const HardwareKey *findHardwareKey(const ActionKey& key);
 
 	/**
 	 * Return a HardwareMod pointer for the given key state
 	 */
-	const HardwareMod *findHardwareMod(const KeyState& key);
+	const HardwareMod *findHardwareMod(const ActionKey& key);
 
 	Domain& getGlobalDomain() { return _globalDomain; }
 	Domain& getGameDomain() { return _gameDomain; }
@@ -198,7 +198,7 @@ private:
 	bool _enabled;
 
 	Stack<MapRecord> _activeMaps;
-	HashMap<KeyState, Action*> _keysDown;
+	HashMap<ActionKey, Action*> _keysDown;
 
 };
 

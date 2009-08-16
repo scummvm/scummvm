@@ -227,7 +227,7 @@ Common::HardwareKeySet *OSystem_SDL::getHardwareKeySet() {
 		snprintf(fullKeyId, 50, "%s", key->hwId);
 		snprintf(fullKeyDesc, 100, "%s", key->desc);
 
-		keySet->addHardwareKey(new HardwareKey(fullKeyId, KeyState(key->keycode, ascii, 0), fullKeyDesc, key->modableMask, key->preferredAction));
+		keySet->addHardwareKey(new HardwareKey(fullKeyId, ActionKey(key->keycode, 0), fullKeyDesc, key->modableMask, key->preferredAction));
 	}
 
 	keySetInited = true;
