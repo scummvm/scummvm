@@ -382,6 +382,8 @@ Kernel::~Kernel() {
 }
 
 void Kernel::detectSciFeatures() {
+	// FIXME Much of this is unreliable
+
 	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
 	Common::StringList staticSelectorTable;
@@ -396,9 +398,15 @@ void Kernel::detectSciFeatures() {
 	features = 0;
 
 	// Initialize features based on SCI version
-	if (_resmgr->sciVersion() == SCI_VERSION_0) {
+	switch (_resmgr->sciVersion()) {
+	case SCI_VERSION_0_EARLY:
 		features |= kFeatureOldScriptHeader;
+		/* Fallthrough */
+	case SCI_VERSION_0_LATE:
 		features |= kFeatureOldGfxFunctions;
+		break;
+	default:
+		break;
 	}
 
 	for (int i = 0; i < count; i++) {
@@ -413,17 +421,11 @@ void Kernel::detectSciFeatures() {
 			tmp = staticSelectorTable[i];
 		}
 
-		if (tmp == "setTarget")     // "motionInited" can also be used
-			features &= ~kFeatureOldScriptHeader;
-
 		if (tmp == "motionCue")
 			features &= ~kFeatureOldGfxFunctions;
 
 		if (tmp == "egoMoveSpeed" && _resmgr->sciVersion() < SCI_VERSION_1_1)
 			features |= kFeatureLofsAbsolute;
-
-		if (tmp == "sightAngle" && _resmgr->sciVersion() == SCI_VERSION_0)
-			features |= kFeatureSci0Sci1Table;
 
 		if (tmp == "setVol")
 			features |= kFeatureSci1Sound;
@@ -436,12 +438,6 @@ void Kernel::detectSciFeatures() {
 		features &= ~kFeatureSci01Sound;
 
 	printf("Kernel auto-detected features:\n");
-
-	printf("Script block headers: ");
-	if (features & kFeatureOldScriptHeader)
-		printf("old\n");
-	else
-		printf("new\n");
 
 	printf("Graphics functions: ");
 	if (features & kFeatureOldGfxFunctions)
@@ -462,9 +458,6 @@ void Kernel::detectSciFeatures() {
 		printf("SCI01\n");
 	else
 		printf("SCI0\n");
-
-	if (features & kFeatureSci0Sci1Table)
-		printf("Found SCI0 game using a SCI1 kernel table\n");
 }
 
 void Kernel::loadSelectorNames() {
@@ -642,15 +635,6 @@ void Kernel::mapFunctions() {
 	int mapped = 0;
 	int ignored = 0;
 	uint functions_nr = getKernelNamesSize();
-	uint max_functions_nr = (_resmgr->sciVersion() == SCI_VERSION_0) ? 0x72 : 0x7b;
-
-	if (functions_nr < max_functions_nr) {
-		warning("SCI version believed to have %d kernel"
-		        " functions, but only %d reported-- filling up remaining %d",
-		          max_functions_nr, functions_nr, max_functions_nr - functions_nr);
-
-		functions_nr = max_functions_nr;
-	}
 
 	_kernelFuncs.resize(functions_nr);
 
@@ -833,14 +817,8 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 }
 
 void Kernel::setDefaultKernelNames() {
-	bool isSci0 = (_resmgr->sciVersion() == SCI_VERSION_0);
+	bool isSci0 = (_resmgr->sciVersion() <= SCI_VERSION_0_LATE);
 	int offset = 0;
-
-	// Check if we have a SCI01 game which uses a SCI1 kernel table (e.g. the KQ1 demo
-	// and full version). We do this by checking if the sightAngle selector exists, as no
-	// SCI0 game seems to have it
-	if (features & kFeatureSci0Sci1Table)
-		isSci0 = false;
 
 	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
 	for (int i = 0; i < SCI_KNAMES_DEFAULT_ENTRIES_NR; i++) {
@@ -897,23 +875,7 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
 
 bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
-
-	switch (_resmgr->sciVersion()) {
-	case SCI_VERSION_0:
-	case SCI_VERSION_01:
-	case SCI_VERSION_1:
-	case SCI_VERSION_1_1:
-		setDefaultKernelNames();
-		break;
-#ifdef ENABLE_SCI32
-	case SCI_VERSION_32:
-		vocab_get_knames11(_resmgr, _kernelNames);
-#endif
-		break;
-	default:
-		break;
-	}
-
+	setDefaultKernelNames();
 	return true;
 }
 

@@ -88,18 +88,11 @@ opcode_format g_opcode_formats[128][4] = {
 };
 #undef END
 
-void script_adjust_opcode_formats(int res_version) {
-	switch (res_version) {
-	case SCI_VERSION_0:
-		break;
-	case SCI_VERSION_01:
-	case SCI_VERSION_1:
-	case SCI_VERSION_1_1:
+void script_adjust_opcode_formats(SciVersion version) {
+	// TODO: Check that this is correct
+	if ((version >= SCI_VERSION_1_1) || ((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute()) {
 		g_opcode_formats[op_lofsa][0] = Script_Offset;
 		g_opcode_formats[op_lofss][0] = Script_Offset;
-		break;
-	default:
-		error("script_adjust_opcode_formats(): Unknown script version %d\n", res_version);
 	}
 }
 

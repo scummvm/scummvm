@@ -231,15 +231,6 @@ public:
 	int calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
 			int flags, int default_palette, int nr);
 
-	/**
-	 * Determines whether support for pointers with more than two colors
-	 * is required.
-	 *
-	 * @return	false if no support for multi-colored pointers is required,
-	 * 			true otherwise
-	 */
-	bool multicoloredPointers() { return _version > SCI_VERSION_1; }
-
 
 	/**
 	 * Frees all resources currently allocated.

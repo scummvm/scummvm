@@ -202,7 +202,7 @@ enum sci_opcodes { /* FIXME */
 
 extern opcode_format g_opcode_formats[128][4];
 
-void script_adjust_opcode_formats(int res_version);
+void script_adjust_opcode_formats(SciVersion version);
 
 void script_free_breakpoints(EngineState *s);
 

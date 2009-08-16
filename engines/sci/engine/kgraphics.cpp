@@ -304,9 +304,9 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1 :
-		if (s->_version < SCI_VERSION_1) {
+		if (s->_version < SCI_VERSION_1_LATE) {
 			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
-		} else if (s->_version == SCI_VERSION_1) {
+		} else if (s->_version < SCI_VERSION_1_1) {
 			if (argv[0].toSint16() <= 1) {
 				// Newer (SCI1.1) semantics: show/hide cursor
 				CursorMan.showMouse(argv[0].toSint16() != 0);
@@ -314,16 +314,16 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				// Pre-SCI1.1: set cursor according to the first parameter
 				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
 			}
-		} else if (s->_version >= SCI_VERSION_1_1) {
+		} else  {
 			// SCI1.1: Show/hide cursor
 			CursorMan.showMouse(argv[0].toSint16() != 0);
 		}
 		break;
 	case 2 :
-		if (s->_version < SCI_VERSION_1) {
+		if (s->_version < SCI_VERSION_1_LATE) {
 			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
 						argv[1].toSint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
-		} else if (s->_version == SCI_VERSION_1) {
+		} else if (s->_version < SCI_VERSION_1_1) {
 			// Pre-SCI1.1: set cursor according to the first parameter, and toggle its
 			// visibility based on the second parameter
 			// Some late SCI1 games actually use the SCI1.1 version of this call (EcoQuest 1
@@ -342,7 +342,7 @@ reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
 							Common::Point(argv[0].toUint16(), argv[1].toUint16())));
 			}
-		} else if (s->_version >= SCI_VERSION_1_1) {
+		} else {
 			// SCI1.1 and newer: set pointer position
 			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
 						Common::Point(argv[0].toUint16(), argv[1].toUint16())));
