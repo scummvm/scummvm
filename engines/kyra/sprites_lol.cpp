@@ -1308,7 +1308,7 @@ bool LoLEngine::chasePartyWithDistanceAttacks(MonsterInPlay *monster) {
 				if (getMonsterDistance(monster->block, _monsters[i].block) < 7)
 					setMonsterMode(monster, 7);
 			}
-			_txt->printMessage(2, getLangString(0x401a));
+			_txt->printMessage(2, "%s", getLangString(0x401a));
 
 		} else if (flyingObject == 4) {
 			launchMagicViper();

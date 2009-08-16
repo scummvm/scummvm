@@ -1897,7 +1897,7 @@ int LoLEngine::castSpell(int charNum, int spellType, int spellLevel) {
 	_activeSpell.level = ABS(spellLevel);
 
 	if ((_spellProperties[spellType].flags & 0x100) && testWallFlag(calcNewBlockPosition(_currentBlock, _currentDirection), _currentDirection, 1)) {
-		_txt->printMessage(2, getLangString(0x4257));
+		_txt->printMessage(2, "%s", getLangString(0x4257));
 		return 0;
 	}
 
@@ -2059,7 +2059,7 @@ int LoLEngine::processMagicSpark(int charNum, int spellLevel) {
 }
 
 int LoLEngine::processMagicHealSelectTarget() {
-	_txt->printMessage(0, getLangString(0x4040));
+	_txt->printMessage(0, "%s", getLangString(0x4040));
 	gui_resetButtonList();
 	gui_setFaceFramesControlButtons(81, 0);
 	gui_initButtonsFromList(_buttonList8);
@@ -2926,7 +2926,7 @@ void LoLEngine::addSpellToScroll(int spell, int charNum) {
 		}
 
 		if (_availableSpells[i] == spell) {
-			_txt->printMessage(2, getLangString(0x42d0));
+			_txt->printMessage(2, "%s", getLangString(0x42d0));
 			return;
 		}
 	}
@@ -2962,7 +2962,7 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 				if (_availableSpells[ii] == -1)
 					continue;
 				uint8 col = (ii == _selectedSpell) ? 132 : 1;
-				_screen->fprintString(getLangString(_spellProperties[_availableSpells[ii]].spellNameCode), 24, y, col, 0, 0);
+				_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[ii]].spellNameCode));
 				y += 9;
 			}
 
@@ -3456,7 +3456,7 @@ void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, in
 		if (t) {
 			giveItemToMonster(monster, t);
 			if (characterSays(0x4019, _characters[target].id, true))
-				_txt->printMessage(6, getLangString(0x4019));
+				_txt->printMessage(6, "%s", getLangString(0x4019));
 		}
 		break;
 
@@ -3470,7 +3470,7 @@ void LoLEngine::applyMonsterAttackSkill(MonsterInPlay *monster, int16 target, in
 		if (t) {
 			deleteItem(t);
 			if (characterSays(0x401b, _characters[target].id, true))
-				_txt->printMessage(6, getLangString(0x401b));
+				_txt->printMessage(6, "%s", getLangString(0x401b));
 		}
 		break;
 
@@ -3538,12 +3538,12 @@ void LoLEngine::applyMonsterDefenseSkill(MonsterInPlay *monster, int16 attacker,
 			if (monster->properties->defenseSkillType == 1) {
 				giveItemToMonster(monster, itm);
 				if (characterSays(0x401c, _characters[attacker].id, true))
-					_txt->printMessage(6, getLangString(0x401c));
+					_txt->printMessage(6, "%s", getLangString(0x401c));
 
 			} else {
 				deleteItem(itm);
 				if (characterSays(0x401d, _characters[attacker].id, true))
-					_txt->printMessage(6, getLangString(0x401d));
+					_txt->printMessage(6, "%s", getLangString(0x401d));
 			}
 		}
 		break;
@@ -4312,7 +4312,7 @@ void LoLEngine::printMapText(uint16 stringId, int x, int y) {
 
 void LoLEngine::printMapExitButtonText() {
 	int cp = _screen->setCurPage(2);
-	_screen->fprintString(getLangString(0x4033), 295, 182, 172, 0, 5);
+	_screen->fprintString("%s", 295, 182, 172, 0, 5, getLangString(0x4033));
 	_screen->setCurPage(cp);
 }
 
