@@ -396,7 +396,7 @@ void Kernel::detectSciFeatures() {
 	features = 0;
 
 	// Initialize features based on SCI version
-	if (_resmgr->_sciVersion == SCI_VERSION_0) {
+	if (_resmgr->sciVersion() == SCI_VERSION_0) {
 		features |= kFeatureOldScriptHeader;
 		features |= kFeatureOldGfxFunctions;
 	}
@@ -419,10 +419,10 @@ void Kernel::detectSciFeatures() {
 		if (tmp == "motionCue")
 			features &= ~kFeatureOldGfxFunctions;
 
-		if (tmp == "egoMoveSpeed" && _resmgr->_sciVersion < SCI_VERSION_1_1)
+		if (tmp == "egoMoveSpeed" && _resmgr->sciVersion() < SCI_VERSION_1_1)
 			features |= kFeatureLofsAbsolute;
 
-		if (tmp == "sightAngle" && _resmgr->_sciVersion == SCI_VERSION_0)
+		if (tmp == "sightAngle" && _resmgr->sciVersion() == SCI_VERSION_0)
 			features |= kFeatureSci0Sci1Table;
 
 		if (tmp == "setVol")
@@ -642,7 +642,7 @@ void Kernel::mapFunctions() {
 	int mapped = 0;
 	int ignored = 0;
 	uint functions_nr = getKernelNamesSize();
-	uint max_functions_nr = (_resmgr->_sciVersion == SCI_VERSION_0) ? 0x72 : 0x7b;
+	uint max_functions_nr = (_resmgr->sciVersion() == SCI_VERSION_0) ? 0x72 : 0x7b;
 
 	if (functions_nr < max_functions_nr) {
 		warning("SCI version believed to have %d kernel"
@@ -833,7 +833,7 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 }
 
 void Kernel::setDefaultKernelNames() {
-	bool isSci0 = (_resmgr->_sciVersion == SCI_VERSION_0);
+	bool isSci0 = (_resmgr->sciVersion() == SCI_VERSION_0);
 	int offset = 0;
 
 	// Check if we have a SCI01 game which uses a SCI1 kernel table (e.g. the KQ1 demo
@@ -862,7 +862,7 @@ void Kernel::setDefaultKernelNames() {
 		}
 	}
 
-	if (_resmgr->_sciVersion == SCI_VERSION_1_1) {
+	if (_resmgr->sciVersion() == SCI_VERSION_1_1) {
 		// HACK: KQ6CD calls unimplemented function 0x26
 		_kernelNames[0x26] = "Dummy";
 	}
@@ -898,10 +898,9 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
 bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
 
-	switch (_resmgr->_sciVersion) {
+	switch (_resmgr->sciVersion()) {
 	case SCI_VERSION_0:
 	case SCI_VERSION_01:
-	case SCI_VERSION_01_VGA_ODD:
 	case SCI_VERSION_1:
 	case SCI_VERSION_1_1:
 		setDefaultKernelNames();

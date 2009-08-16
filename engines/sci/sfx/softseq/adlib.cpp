@@ -641,7 +641,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 
 	static_cast<MidiDriver_Adlib *>(_driver)->loadResource(res);
 
-	return static_cast<MidiDriver_Adlib *>(_driver)->open(resmgr->_sciVersion == SCI_VERSION_0);
+	return static_cast<MidiDriver_Adlib *>(_driver)->open(resmgr->sciVersion() == SCI_VERSION_0);
 }
 
 } // End of namespace Sci

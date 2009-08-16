@@ -133,8 +133,10 @@ public:
 };
 
 class VocSound : public BaseSound {
+	byte _flags;
 public:
-	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian) {}
+	VocSound(Audio::Mixer *mixer, File *file, uint32 base = 0, bool bigEndian = false) : BaseSound(mixer, file, base, bigEndian), _flags(0) {}
+	Audio::AudioStream *makeAudioStream(uint sound);
 	void playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol = 0);
 };
 
@@ -255,14 +257,15 @@ void WavSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType typ
 	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
 }
 
-void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
-	if (_offsets == NULL)
-		return;
-
+Audio::AudioStream *VocSound::makeAudioStream(uint sound) {
 	_file->seek(_offsets[sound], SEEK_SET);
+	return Audio::makeVOCStream(*_file, _flags);
+}
 
-	Audio::AudioStream *stream = Audio::makeVOCStream(*_file, flags);
-	_mixer->playInputStream(type, handle, stream);
+void VocSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
+	convertVolume(vol);
+	_flags = flags;
+	_mixer->playInputStream(type, handle, new LoopingAudioStream(this, sound, loopSound, (flags & Audio::Mixer::FLAG_LOOP) != 0), -1, vol);
 }
 
 void RawSound::playSound(uint sound, uint loopSound, Audio::Mixer::SoundType type, Audio::SoundHandle *handle, byte flags, int vol) {
@@ -630,7 +633,8 @@ void Sound::playEffects(uint sound) {
 	if (_effectsPaused)
 		return;
 
-	_mixer->stopHandle(_effectsHandle);
+	if (_vm->getGameType() == GType_SIMON1)
+		_mixer->stopHandle(_effectsHandle);
 	_effects->playSound(sound, Audio::Mixer::kSFXSoundType, &_effectsHandle, (_vm->getGameId() == GID_SIMON1CD32) ? 0 : Audio::Mixer::FLAG_UNSIGNED);
 }
 

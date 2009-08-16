@@ -547,6 +547,21 @@ protected:
 	void probe16bitMusic(char *fileName);
 };
 
+class Inter_Playtoons : public Inter_v6 {
+public:
+	Inter_Playtoons(GobEngine *vm);
+	virtual ~Inter_Playtoons() {}
+
+protected:
+	virtual void setupOpcodesDraw();
+	virtual void setupOpcodesFunc();
+	virtual void setupOpcodesGob();
+
+	bool oPlaytoons_checkData(OpFuncParams &params);
+	void oPlaytoons_CD_20_23();
+	void oPlaytoons_CD_25();
+};
+
 } // End of namespace Gob
 
 #endif // GOB_INTER_H

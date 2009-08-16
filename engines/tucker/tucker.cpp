@@ -687,7 +687,7 @@ void TuckerEngine::setupNewLocation() {
 	_fadePaletteCounter = 0;
 	_mainLoopCounter2 = 0;
 	_mainLoopCounter1 = 0;
-	_characterFacingDirection = 0;;
+	_characterFacingDirection = 0;
 	_skipPanelObjectUnderCursor = 0;
 	_locationMaskIgnore = 0;
 	_backgroundSprOffset = 0;

@@ -27,7 +27,7 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, sci_version_t version, uint32 flags)
+EngineState::EngineState(ResourceManager *res, SciVersion version, uint32 flags)
 : resmgr(res), _version(version), _flags(flags), _dirseeker(this) {
 	widget_serial_counter = 0;
 

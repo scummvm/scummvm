@@ -30,6 +30,7 @@ MODULE_OBJS := \
 	inter_v2.o \
 	inter_bargon.o \
 	inter_fascin.o \
+	inter_playtoons.o \
 	inter_v3.o \
 	inter_v4.o \
 	inter_v5.o \

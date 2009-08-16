@@ -97,19 +97,15 @@
 
 	<dialog name = 'Launcher' overlays = 'screen'>
 		<layout type = 'vertical' center = 'true' padding = '23, 23, 8, 23'>
-			<widget name = 'Version'
-					width = '247'
-					height = 'Globals.Line.Height'
-			/>
 			<widget name = 'Logo'
 					width = '283'
 					height = '80'
-			/>		
-			<layout type = 'horizontal' spacing = '5' padding = '10, 0, 0, 0'>
+			/>
+			<layout type = 'horizontal'  spacing = '5' padding = '10, 0, 0, 0'>
 				<widget name = 'SearchPic'
 						width = '16'
 						height = '17'
-				/>		
+				/>
 				<widget name = 'Search'
 						width = '150'
 						height = 'Globals.Line.Height'
@@ -118,6 +114,13 @@
 						height = 'Globals.Line.Height'
 						width = 'Globals.Line.Height'
 				/>
+				<space />
+				<widget name = 'Version'
+						width = '247'
+						height = 'Globals.Line.Height'
+						textalign = 'center'
+				/>
+				<space />
 				<space />
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0'>

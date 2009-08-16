@@ -3,7 +3,7 @@ const ExtractEntry lolDemo[] = {
 	{ k2SeqplayStrings, 0x0001B5EE, 0x0001B6F0 },
 	{ k2SeqplaySfxFiles, 0x0001B6F0, 0x0001B7B5 },
 	{ k2SeqplaySeqData, 0x0001B320, 0x0001B56C },
-	{ lolSeqplayIntroTracks, 0x0001B7B5, 0x0001B7CF },
+	{ kLolSeqplayIntroTracks, 0x0001B7B5, 0x0001B7CF },
 	{ -1, 0, 0 }
 };
 

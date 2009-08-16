@@ -43,11 +43,10 @@ namespace Sci {
 
 class GfxDriver;
 
-const char *versionNames[7] = {
+const char *versionNames[6] = {
 	"Autodetected",
 	"SCI0",
 	"SCI01",
-	"SCI01 VGA ODD",
 	"SCI1",
 	"SCI1.1",
 	"SCI32"
@@ -135,20 +134,23 @@ Common::Error SciEngine::run() {
 
 	// FIXME/TODO: Move some of the stuff below to init()
 
-	const sci_version_t version = getVersion();
+	SciVersion version = getVersion();
 	const uint32 flags = getFlags();
-	int res_version = getResourceVersion();
 
-	_resmgr = new ResourceManager(res_version, 256 * 1024);
+	_resmgr = new ResourceManager(256 * 1024);
 
 	if (!_resmgr) {
 		printf("No resources found, aborting...\n");
 		return Common::kNoGameDataFoundError;
 	}
 
+	// When version is set to autodetect, use version as determined by resource manager
+	if (version == SCI_VERSION_AUTODETECT)
+		version = _resmgr->sciVersion();
+
 	_kernel = new Kernel(_resmgr);
 	_vocabulary = new Vocabulary(_resmgr);
-	script_adjust_opcode_formats(_resmgr->_sciVersion);
+	script_adjust_opcode_formats(_resmgr->sciVersion());
 
 #if 0
 	printf("Mapping instruments to General Midi\n");
@@ -215,7 +217,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	if (gfxop_init(_resmgr->_sciVersion, &gfx_state, &gfx_options, _resmgr, gfxmode, 1, 1)) {
+	if (gfxop_init(_resmgr->sciVersion(), &gfx_state, &gfx_options, _resmgr, gfxmode, 1, 1)) {
 		warning("Graphics initialization failed. Aborting...");
 		return Common::kUnknownError;
 	}
@@ -268,12 +270,8 @@ const char* SciEngine::getGameID() const {
 	return _gameDescription->desc.gameid;
 }
 
-int SciEngine::getVersion() const {
+SciVersion SciEngine::getVersion() const {
 	return _gameDescription->version;
-}
-
-int SciEngine::getResourceVersion() const {
-	return _gameDescription->res_version;
 }
 
 Common::Language SciEngine::getLanguage() const {

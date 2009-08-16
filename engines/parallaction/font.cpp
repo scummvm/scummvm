@@ -256,7 +256,7 @@ public:
 
 	byte*	getData(uint16 index) {
 		assert(index < _numGlyphs);
-		return _data + (_height * _widths[index]) * index;;
+		return _data + (_height * _widths[index]) * index;
 	}
 
 	void	getRect(uint16 index, Common::Rect &r) {

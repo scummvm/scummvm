@@ -26,6 +26,8 @@
 
 #include "common/system.h"
 #include "common/endian.h"
+#include "common/list.h"
+#include "common/rect.h"
 
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
@@ -40,6 +42,12 @@ palEntry lpalette[256];
 
 int palDirtyMin = 256;
 int palDirtyMax = -1;
+
+typedef Common::List<Common::Rect> RectList;
+RectList _dirtyRects;
+RectList _priorFrameRects;
+
+bool _dirtyRectScreen = false;
 
 gfxModuleDataStruct gfxModuleData = {
 	0,			// use Tandy
@@ -229,7 +237,47 @@ void gfxModuleData_flipScreen(void) {
 	flip();
 }
 
+void gfxModuleData_addDirtyRect(const Common::Rect &r) {
+	_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0), 
+		MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
+}
+
+/**
+ * Creates the union of two rectangles.
+ */
+static bool unionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
+	pDest.left   = MIN(pSrc1.left, pSrc2.left);
+	pDest.top    = MIN(pSrc1.top, pSrc2.top);
+	pDest.right  = MAX(pSrc1.right, pSrc2.right);
+	pDest.bottom = MAX(pSrc1.bottom, pSrc2.bottom);
+
+	return !pDest.isEmpty();
+}
+
+static void mergeClipRects() {
+	RectList::iterator rOuter, rInner;
+
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
+
+			if ((*rOuter).intersects(*rInner)) {
+				// these two rectangles overlap, so translate it to a bigger rectangle
+				// that contains both of them
+				unionRectangle(*rOuter, *rOuter, *rInner);
+
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
+}
+
 void flip() {
+	RectList::iterator dr;
 	int i;
 	byte paletteRGBA[256 * 4];
 
@@ -245,7 +293,29 @@ void flip() {
 		palDirtyMax = -1;
 	}
 
-	g_system->copyRectToScreen(globalScreen, 320, 0, 0, 320, 200);
+	// Make a copy of the prior frame's dirty rects, and then backup the current frame's rects
+	RectList tempList = _priorFrameRects;
+	_priorFrameRects = _dirtyRects;
+
+	// Merge the prior frame's dirty rects into the current frame's list
+	for (dr = tempList.begin(); dr != tempList.end(); ++dr) {
+		Common::Rect &r = *dr;
+		_dirtyRects.push_back(Common::Rect(r.left, r.top, r.right, r.bottom));
+	}
+
+	// Merge any overlapping rects to simplify the drawing process
+	mergeClipRects();
+
+	// Copy any modified areas
+	for (dr = _dirtyRects.begin(); dr != _dirtyRects.end(); ++dr) {
+		Common::Rect &r = *dr;
+		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320, 
+			r.left, r.top, r.width(), r.height());
+	}
+
+	_dirtyRects.clear();
+
+	// Allow the screen to update
 	g_system->updateScreen();
 }
 

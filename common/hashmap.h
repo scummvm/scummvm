@@ -39,6 +39,13 @@
 #endif
 
 namespace Common {
+/**
+  * The sgi IRIX MIPSpro Compiler has difficulties with nested templates. 
+  * This and the other __sgi conditionals below work around these problems.
+  */
+#ifdef __sgi
+template<class T> class IteratorImpl;
+#endif
 
 // Enable the following #define if you want to check how many collisions the
 // code produces (many collisions indicate either a bad hash function, or a
@@ -125,7 +132,9 @@ public:
 	int lookupAndCreateIfMissing(const Key &key);
 	void expandStorage(uint newCapacity);
 
+#ifndef __sgi
 	template<class T> friend class IteratorImpl;
+#endif
 
 	/**
 	 * Simple HashMap iterator implementation.
@@ -133,7 +142,11 @@ public:
 	template<class NodeType>
 	class IteratorImpl {
 		friend class HashMap;
+#ifdef __sgi
+		template<class T> friend class Common::IteratorImpl;
+#else
 		template<class T> friend class IteratorImpl;
+#endif
 	protected:
 		typedef const HashMap hashmap_t;
 

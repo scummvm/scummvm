@@ -1197,7 +1197,7 @@ void AGOSEngine::vc32_saveScreen() {
 		uint16 height = _videoWindows[4 * 4 + 3];
 
 		byte *dst = (byte *)_backGroundBuf->getBasePtr(xoffs, yoffs);
-		byte *src = (byte *)_window4BackScn->pixels;;
+		byte *src = (byte *)_window4BackScn->pixels;
 		uint16 srcWidth = _videoWindows[4 * 4 + 2] * 16;
 		for (; height > 0; height--) {
 			memcpy(dst, src, width);

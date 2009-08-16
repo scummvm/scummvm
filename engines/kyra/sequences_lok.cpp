@@ -1135,8 +1135,16 @@ void KyraEngine_LoK::seq_playEnding() {
 
 	_screen->showMouse();
 	if (_flags.platform == Common::kPlatformAmiga) {
-		while (!shouldQuit())
+		_screen->_charWidth = -2;
+		_screen->setCurPage(2);
+
+		_screen->getPalette(2).clear();
+		_screen->setScreenPalette(_screen->getPalette(2));
+
+		while (!shouldQuit()) {
 			seq_playCreditsAmiga();
+			delayUntil(_system->getMillis() + 300 * _tickLength);
+		}
 	} else {
 		seq_playCredits();
 	}
@@ -1287,8 +1295,10 @@ void KyraEngine_LoK::seq_playCredits() {
 			_screen->updateScreen();
 		}
 
-		if (checkInput(0, false))
+		if (checkInput(0, false)) {
+			removeInputTop();
 			finished = true;
+		}
 
 		uint32 now = _system->getMillis();
 		uint32 nextLoop = startLoop + _tickLength * 5;
@@ -1309,17 +1319,14 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 
 	_screen->loadBitmap("CHALET.CPS", 4, 2, &_screen->getPalette(0));
 	_screen->copyPage(2, 0);
-	_screen->setCurPage(2);
-
-	_screen->getPalette(2).clear();
-	_screen->setScreenPalette(_screen->getPalette(2));
 
 	_screen->getPalette(0).fill(16, 1, 63);
 	_screen->fadePalette(_screen->getPalette(0), 0x5A);
+	_screen->updateScreen();
 
 	const char *theEnd = "THE END";
 
-	const int width = _screen->getTextWidth(theEnd);
+	const int width = _screen->getTextWidth(theEnd) + 1;
 	int x = (320 - width) / 2 + 1;
 
 	_screen->copyRegion(x, 8, x, 8, width, 56, 0, 2, Screen::CR_NO_P_CHECK);
@@ -1351,7 +1358,6 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 	char *buffer = new char[size];
 	assert(buffer);
 	memcpy(buffer, bufferTmp, size);
-	_staticres->unloadId(k1CreditsStrings);
 
 	char stringBuffer[81];
 	memset(stringBuffer, 0, sizeof(stringBuffer));
@@ -1396,7 +1402,7 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 
 			_screen->printText(stringBuffer, x + 8, 0, 31, 0);
 
-			for (int i = 0; i < fontHeight; ++i) {
+			for (int i = 0; i < fontHeight && !shouldQuit(); ++i) {
 				_screen->copyRegion(0, 141, 0, 140, 320, 59, 0, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(0, i, 0, 198, 320, 3, 2, 0, Screen::CR_NO_P_CHECK);
 				_screen->updateScreen();
@@ -1414,8 +1420,10 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 			*specialString = 0;
 		}
 
-		if (checkInput(0, false))
+		if (checkInput(0, false)) {
+			removeInputTop();
 			break;
+		}
 	} while (++cur != buffer + size && !shouldQuit());
 
 	delete[] buffer;

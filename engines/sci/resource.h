@@ -45,6 +45,16 @@ namespace Sci {
 /** The maximum allowed size for a compressed or decompressed resource */
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
 
+/** SCI versions */
+enum SciVersion {
+	SCI_VERSION_AUTODETECT = 0,
+	SCI_VERSION_0 = 1,
+	SCI_VERSION_01 = 2,
+	SCI_VERSION_1 = 3,
+	SCI_VERSION_1_1 = 4,
+	SCI_VERSION_32 = 5
+};
+
 /** Resource status types */
 enum ResourceStatus {
 	kResStatusNoMalloc = 0,
@@ -206,11 +216,22 @@ typedef Common::HashMap<ResourceId, Resource *, ResourceIdHash, ResourceIdEqualT
 
 class ResourceManager {
 public:
-	int _sciVersion; //!< SCI resource version to use */
-	int _mapVersion; //!< RESOURCE.MAP version
-	int _volVersion; //!< RESOURCE.0xx version
+	enum ResVersion {
+		kResVersionUnknown,
+		kResVersionSci0Sci1Early,
+		kResVersionSci1Middle,
+		kResVersionSci1Late,
+		kResVersionSci11,
+		kResVersionSci32
+	};
 
 	bool isVGA() const { return _isVGA; }
+
+	/**
+	 * Returns the SCI version as detected by the resource manager
+	 * @return SCI version
+	 */
+	SciVersion sciVersion() const { return _sciVersion; }
 
 	/**
 	 * Creates a new SCI resource manager.
@@ -222,7 +243,7 @@ public:
 	 *    for resources which are not explicitly locked. However, a warning will be
 	 *    issued whenever this limit is exceeded.
 	 */
-	ResourceManager(int version, int maxMemory);
+	ResourceManager(int maxMemory);
 	~ResourceManager();
 
 	/**
@@ -272,6 +293,9 @@ protected:
 	ResourceMap _resMap;
 	Common::List<Common::File *> _volumeFiles; //!< list of opened volume files
 	ResourceSource *_audioMapSCI1; //!< Currently loaded audio map for SCI1
+	ResVersion _volVersion; //!< RESOURCE.0xx version
+	ResVersion _mapVersion; //!< RESOURCE.MAP version
+	SciVersion _sciVersion; //!< Detected SCI version */
 
 	/**
 	 * Add a path to the resource manager's list of sources.
@@ -315,6 +339,13 @@ protected:
 	int addInternalSources();
 	void freeResourceSources();
 
+	/**
+	 * Returns a string describing a ResVersion
+	 * @param version: The resource version
+	 * @return: The description of version
+	 */
+	const char *versionDescription(ResVersion version) const;
+
 	Common::File *getVolumeFile(const char *filename);
 	void loadResource(Resource *res);
 	bool loadPatch(Resource *res, Common::File &file);
@@ -328,8 +359,8 @@ protected:
 	void removeAudioResource(ResourceId resId);
 
 	/**--- Resource map decoding functions ---*/
-	int detectMapVersion();
-	int detectVolVersion();
+	ResVersion detectMapVersion();
+	ResVersion detectVolVersion();
 
 	/**
 	 * Reads the SCI0 resource.map file from a local directory.
@@ -372,7 +403,7 @@ protected:
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 
-	int guessSciVersion();
+	SciVersion guessSciVersion();
 };
 
 } // End of namespace Sci

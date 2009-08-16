@@ -301,6 +301,7 @@ friend class GUI_LoL;
 friend class TextDisplayer_LoL;
 friend class TIMInterpreter_LoL;
 friend class Debugger_LoL;
+friend class HistoryPlayer;
 public:
 	LoLEngine(OSystem *system, const GameFlags &flags);
 	~LoLEngine();
@@ -1124,14 +1125,14 @@ private:
 	uint16 _dmScaleH;
 
 	int _lastMouseRegion;
-	int _seqWindowX1, _seqWindowY1,	_seqWindowX2, _seqWindowY2, _seqTrigger;
-	int _spsWindowX, _spsWindowY,	_spsWindowW, _spsWindowH;
+	int _seqWindowX1, _seqWindowY1, _seqWindowX2, _seqWindowY2, _seqTrigger;
+	int _spsWindowX, _spsWindowY, _spsWindowW, _spsWindowH;
 
 	uint8 *_tempBuffer5120;
 
-	const char *const * _levelDatList;
+	const char * const *_levelDatList;
 	int _levelDatListSize;
-	const char *const * _levelShpList;
+	const char * const *_levelShpList;
 	int _levelShpListSize;
 
 	const int8 *_dscUnk1;
@@ -1474,6 +1475,31 @@ private:
 
 	void generateTempData();
 	LevelTempData *_lvlTempData[29];
+};
+
+class HistoryPlayer {
+public:
+	HistoryPlayer(LoLEngine *vm);
+	~HistoryPlayer();
+
+	void play();
+private:
+	OSystem *_system;
+	LoLEngine *_vm;
+	Screen *_screen;
+
+	int _x, _y, _width, _height;
+	int _frame;
+	Movie *_wsa;
+
+	void loadWsa(const char *filename);
+	void playWsa(bool direction);
+	void restoreWsaBkgd();
+
+	Movie *_fireWsa;
+	int _fireFrame;
+	uint32 _nextFireTime;
+	void updateFire();
 };
 
 } // end of namespace Kyra
