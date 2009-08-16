@@ -532,8 +532,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 		
 		if (!_resManager->isVGA()) {
-			// TODO: Check which versions this applies to
-			int pal = (_version < SCI_VERSION_1_EARLY) ? -1 : palette;
+			int pal = (_version <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
 			if (_version < SCI_VERSION_1_1)
