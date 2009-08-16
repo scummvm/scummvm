@@ -235,6 +235,11 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	bool isWriteProtected = false;
 	bool startEditMode = _list->isEditable();
 
+	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	_date->setLabel("No date saved");
+	_time->setLabel("No time saved");
+	_playtime->setLabel("No playtime saved");
+
 	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
 		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
@@ -256,30 +261,16 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		}
 
 		if (_saveDateSupport) {
-			Common::String date = "Date: ";
 			if (desc.contains("save_date"))
-				date += desc.getVal("save_date");
-			else
-				date = "No date saved";
+				_date->setLabel("Date: " + desc.getVal("save_date"));
 
-			Common::String time = "Time: ";
 			if (desc.contains("save_time"))
-				time += desc.getVal("save_time");
-			else
-				time = "No time saved";
-
-			_date->setLabel(date);
-			_time->setLabel(time);
+				_time->setLabel("Time: " + desc.getVal("save_time"));
 		}
 
 		if (_playTimeSupport) {
-			Common::String time = "Playtime: ";
 			if (desc.contains("play_time"))
-				time += desc.getVal("play_time");
-			else
-				time = "No playtime saved";
-
-			_playtime->setLabel(time);
+				_playtime->setLabel("Playtime: " + desc.getVal("play_time"));
 		}
 	}
 
