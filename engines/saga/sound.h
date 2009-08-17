@@ -54,7 +54,6 @@ struct SoundBuffer {
 	size_t originalSize;
 	bool isBigEndian;
 	GameSoundTypes soundType;
-	Common::File *soundFile;
 	size_t fileOffset;
 };
 

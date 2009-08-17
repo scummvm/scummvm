@@ -365,8 +365,12 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		buffer.size = soundResourceLength;
 		buffer.soundType = resourceType;
-		buffer.soundFile = context->getFile(resourceData);
 		buffer.fileOffset = resourceData->offset + 9; // skip compressed sfx header: byte + uint16 + uint32 + byte + byte
+
+		if (!onlyHeader) {
+			buffer.buffer = (byte *)malloc(buffer.size);
+			readS.read(buffer.buffer, buffer.size);
+		}
 
 		result = true;
 		break;

@@ -91,25 +91,22 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 			_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
 					buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
-		Audio::AudioStream *stream = NULL;
-		Common::SeekableSubReadStream *soundStream = 
-				new Common::SeekableSubReadStream(buffer.soundFile, (uint32)buffer.fileOffset + 9, 
-				(uint32)buffer.fileOffset + buffer.size - 9);
+		Audio::AudioStream *stream = 0;
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
-				stream = Audio::makeMP3Stream(soundStream, true);
+				stream = Audio::makeMP3Stream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
 				break;
 #endif
 #ifdef USE_VORBIS
 			case kSoundOGG:
-				stream = Audio::makeVorbisStream(soundStream, true);
+				stream = Audio::makeVorbisStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
 				break;
 #endif
 #ifdef USE_FLAC
 			case kSoundFLAC:
-				stream = Audio::makeFlacStream(soundStream, true);
+				stream = Audio::makeFlacStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
 				break;
 #endif
 			default:
