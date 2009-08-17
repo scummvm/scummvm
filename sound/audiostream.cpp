@@ -211,14 +211,14 @@ protected:
 	int _audioBlockCount;		///< Number of blocks in _audioBlock
 	int _currentBlock;		///< Current audio block number
 
-	int _beginLoop;			///< Loop parameter, currently not implemented
-	int _endLoop;			///< Loop parameter, currently not implemented
-
+	int _beginLoop;			///< Loop start parameter
+	int _endLoop;			///< Loop end parameter, currently not implemented
+	bool _loop;				///< Determines if the stream should be looped when it finishes
 
 public:
-	LinearDiskStream(int rate, uint beginLoop, uint endLoop, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks)
+	LinearDiskStream(int rate, uint beginLoop, uint endLoop, bool disposeStream, Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, uint numBlocks, bool loop)
 		: _rate(rate), _stream(stream), _beginLoop(beginLoop), _endLoop(endLoop), _disposeAfterUse(disposeStream),
-		  _audioBlockCount(numBlocks) {
+		  _audioBlockCount(numBlocks), _loop(loop) {
 
 		// Allocate streaming buffer
 		if (is16Bit) {
@@ -296,7 +296,6 @@ int LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffe
 			_diskLeft = _audioBlock[_currentBlock].len;
 		}
 			
-
 		// Now read more data from disk if there is more to be read
 		if ((_bufferLeft == 0) && (_diskLeft > 0)) {
 			int32 readAmount = MIN(_diskLeft, BUFFER_SIZE);
@@ -314,6 +313,14 @@ int LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffe
 			// Set this flag now we've used the file, it restores it's
 			// original position.
 			restoreFilePosition = true;
+		}
+
+		// Looping
+		if (_diskLeft == 0 && _loop) {
+			// Reset the stream
+			_currentBlock = 0;
+			_filePos = _audioBlock[_currentBlock].pos + _beginLoop;
+			_diskLeft = _audioBlock[_currentBlock].len;
 		}
 	}
 
@@ -399,11 +406,11 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks, loop); \
 			else  \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks, loop); \
 		} else \
-			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks)
+			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks, loop)
 
 
 AudioStream *makeLinearDiskStream(Common::SeekableReadStream& stream, LinearDiskStreamAudioBlock* block, int numBlocks, int rate, byte flags, bool takeOwnership, uint loopStart, uint loopEnd) {
@@ -411,7 +418,7 @@ AudioStream *makeLinearDiskStream(Common::SeekableReadStream& stream, LinearDisk
 	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;
 	const bool isLE       = (flags & Audio::Mixer::FLAG_LITTLE_ENDIAN) != 0;
-
+	const bool loop       = (flags & Audio::Mixer::FLAG_LOOP) != 0;
 
 	if (isStereo) {
 		if (isUnsigned) {
