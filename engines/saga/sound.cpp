@@ -92,36 +92,24 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 					buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = NULL;
-#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
-		MemoryReadStream *tmp = NULL;
-#endif
+		Common::SeekableSubReadStream *soundStream = 
+				new Common::SeekableSubReadStream(buffer.soundFile, (uint32)buffer.fileOffset + 9, 
+				(uint32)buffer.fileOffset + buffer.size - 9);
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
-				debug(1, "Playing MP3 compressed sound");
-				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				tmp = buffer.soundFile->readStream(buffer.size);
-				assert(tmp);
-				stream = Audio::makeMP3Stream(tmp, true);
+				stream = Audio::makeMP3Stream(soundStream, true);
 				break;
 #endif
 #ifdef USE_VORBIS
 			case kSoundOGG:
-				debug(1, "Playing OGG compressed sound");
-				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				tmp = buffer.soundFile->readStream(buffer.size);
-				assert(tmp);
-				stream = Audio::makeVorbisStream(tmp, true);
+				stream = Audio::makeVorbisStream(soundStream, true);
 				break;
 #endif
 #ifdef USE_FLAC
 			case kSoundFLAC:
-				debug(1, "Playing FLAC compressed sound");
-				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				tmp = buffer.soundFile->readStream(buffer.size);
-				assert(tmp);
-				stream = Audio::makeFlacStream(tmp, true);
+				stream = Audio::makeFlacStream(soundStream, true);
 				break;
 #endif
 			default:
