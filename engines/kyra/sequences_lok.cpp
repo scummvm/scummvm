@@ -1134,6 +1134,11 @@ void KyraEngine_LoK::seq_playEnding() {
 	_seqPlayerFlag = false;
 
 	_screen->showMouse();
+
+	// To avoid any remaining input events, we remove the queue
+	// over here.
+	_eventList.clear();
+
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->_charWidth = -2;
 		_screen->setCurPage(2);
