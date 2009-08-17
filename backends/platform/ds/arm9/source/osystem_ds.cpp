@@ -837,13 +837,13 @@ void OSystem_DS::setCharactersEntered(int count) {
 
 Common::SeekableReadStream* OSystem_DS::createConfigReadStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	consolePrintf("R %s", DEFAULT_CONFIG_FILE);
+//	consolePrintf("R %s", DEFAULT_CONFIG_FILE);
 	return file.createReadStream();
 }
 
 Common::WriteStream* OSystem_DS::createConfigWriteStream() {
 	Common::FSNode file(DEFAULT_CONFIG_FILE);
-	consolePrintf("W %s", DEFAULT_CONFIG_FILE);
+//	consolePrintf("W %s", DEFAULT_CONFIG_FILE);
 	return file.createWriteStream();
 }
 
@@ -873,6 +873,9 @@ u16 OSystem_DS::applyGamma(u16 colour) {
 	return 0x8000 | r | (g << 5) | (b << 10);
 }
 
-
+void OSystem_DS::engineDone() {
+	// Scumm games appear not to stop their CD audio, so I stop the CD here.
+	stopCD();
+}
 
 

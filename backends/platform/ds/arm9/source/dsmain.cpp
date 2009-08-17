@@ -248,7 +248,7 @@ bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
 
-MouseMode mouseMode;
+MouseMode mouseMode = MOUSE_LEFT;
 
 int storedMouseX = 0;
 int storedMouseY = 0;

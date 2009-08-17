@@ -179,6 +179,8 @@ public:
 
 	u16 applyGamma(u16 colour);
 	void setGammaValue(int gamma) { _gammaValue = gamma; }
+
+	void engineDone();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
