@@ -560,6 +560,7 @@ protected:
 	bool oPlaytoons_checkData(OpFuncParams &params);
 	void oPlaytoons_CD_20_23();
 	void oPlaytoons_CD_25();
+    void oPlaytoons_openItk();
 };
 
 } // End of namespace Gob
