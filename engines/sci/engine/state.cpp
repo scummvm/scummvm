@@ -24,6 +24,8 @@
  */
 
 #include "sci/engine/state.h"
+#include "sci/engine/vm.h"
+#include "sci/console.h" // For parse_reg_t
 
 namespace Sci {
 
@@ -116,6 +118,8 @@ EngineState::EngineState(ResourceManager *res, SciVersion version, uint32 flags)
 	successor = 0;
 
 	speedThrottler = new SpeedThrottler(version);
+
+	_doSoundType = kDoSoundTypeUnknown;
 }
 
 EngineState::~EngineState() {
@@ -240,6 +244,77 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	}
 
 	return retval;
+}
+
+EngineState::DoSoundType EngineState::detectDoSoundType() {
+	if (_doSoundType == kDoSoundTypeUnknown) {
+		reg_t soundClass;
+		const uint checkBytes = 6; // Number of bytes to check
+
+		if (!parse_reg_t(this, "?Sound", &soundClass)) {
+			reg_t fptr;
+
+			Object *obj = obj_get(this, soundClass);
+			SelectorType sel = lookup_selector(this, soundClass, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play, NULL, &fptr);
+
+			if (obj && (sel == kSelectorMethod)) {
+				Script *script = seg_manager->getScript(fptr.segment);
+
+				if (fptr.offset > checkBytes) {
+					// Go to the last portion of Sound::init, should be right before the play function
+					fptr.offset -= checkBytes;
+					byte *buf = script->buf + fptr.offset;
+
+					// Check the call to DoSound's INIT_HANDLE function.
+					// It's either subfunction 0, 5 or 6, depending on the version of DoSound.
+					uint sum = 0;
+					for (uint i = 0; i < checkBytes; i++)
+						sum += buf[i];
+
+					switch(sum) {
+					case 0x1B2: // SCI0
+					case 0x1AE: // SCI01
+						_doSoundType = kDoSoundTypeSci0;
+						break;
+					case 0x13D:
+						_doSoundType = kDoSoundTypeSci1Early;
+						break;
+					case 0x13E:
+						_doSoundType = kDoSoundTypeSci1Late;
+					}
+				}
+			}
+		}
+
+		if (_doSoundType == kDoSoundTypeUnknown) {
+			warning("DoSound detection failed, taking an educated guess");
+
+			if (_version >= SCI_VERSION_1_MIDDLE)
+				_doSoundType = kDoSoundTypeSci1Late;
+			else if (_version > SCI_VERSION_01)
+				_doSoundType = kDoSoundTypeSci1Early;
+			else
+				_doSoundType = kDoSoundTypeSci0;
+		}
+
+		debugCN(1, kDebugLevelSound, "Detected DoSound type: ");
+
+		switch(_doSoundType) {
+		case kDoSoundTypeSci0:
+			debugC(1, kDebugLevelSound, "SCI0");
+			break;
+		case kDoSoundTypeSci1Early:
+			debugC(1, kDebugLevelSound, "SCI1 Early");
+			break;
+		case kDoSoundTypeSci1Late:
+			debugC(1, kDebugLevelSound, "SCI1 Late");
+			break;
+		default:
+			break;
+		}
+	}
+
+	return _doSoundType;
 }
 
 } // End of namespace Sci

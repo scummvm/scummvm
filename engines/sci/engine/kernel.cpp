@@ -370,8 +370,8 @@ static const char *argtype_description[] = {
 Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
-	detectSciFeatures(); // must be called before loadSelectorNames()
 	loadSelectorNames();
+	detectSciFeatures();
 	mapSelectors();      // Map a few special selectors for later use
 	loadOpcodes();
 	loadKernelNames();
@@ -382,60 +382,29 @@ Kernel::~Kernel() {
 }
 
 void Kernel::detectSciFeatures() {
-	// FIXME Much of this is unreliable
+	SciVersion version = _resmgr->sciVersion();
 
-	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
-
-	Common::StringList staticSelectorTable;
-	
-	if (!r) { // No such resource?
-		staticSelectorTable = checkStaticSelectorNames();
-		if (staticSelectorTable.empty())
-			error("Kernel: Could not retrieve selector names");
-	}
-
-	int count = staticSelectorTable.empty() ? READ_LE_UINT16(r->data) + 1 : staticSelectorTable.size(); // Counter is slightly off
 	features = 0;
 
 	// Initialize features based on SCI version
-	switch (_resmgr->sciVersion()) {
-	case SCI_VERSION_0_EARLY:
-		features |= kFeatureOldScriptHeader;
-		/* Fallthrough */
-	case SCI_VERSION_0_LATE:
-		features |= kFeatureOldGfxFunctions;
-		break;
-	default:
-		break;
+
+	// Script header and graphics functions
+	if (version == SCI_VERSION_0_EARLY) {
+		features |= kFeatureOldScriptHeader | kFeatureOldGfxFunctions;
+	} else if (version == SCI_VERSION_0_LATE) {
+		if (findSelector("motionCue") == -1)
+			features |= kFeatureOldGfxFunctions;
 	}
 
-	for (int i = 0; i < count; i++) {
-		Common::String tmp;
-		
-		if (staticSelectorTable.empty()) {
-			int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-			int len = READ_LE_UINT16(r->data + offset);
-			
-			tmp = Common::String((const char *)r->data + offset + 2, len);
-		} else {
-			tmp = staticSelectorTable[i];
-		}
-
-		if (tmp == "motionCue")
-			features &= ~kFeatureOldGfxFunctions;
-
-		if (tmp == "egoMoveSpeed" && _resmgr->sciVersion() < SCI_VERSION_1_1)
+	// Lofs absolute/relative
+	if (version >= SCI_VERSION_1_MIDDLE && version < SCI_VERSION_1_1) {
+		// Assume all games use absolute lofs
+		features |= kFeatureLofsAbsolute;
+	} else if (version == SCI_VERSION_1_EARLY) {
+		// Use heuristic
+		if (findSelector("egoMoveSpeed") != -1)
 			features |= kFeatureLofsAbsolute;
-
-		if (tmp == "setVol")
-			features |= kFeatureSci1Sound;
-
-		if (tmp == "nodePtr")
-			features |= kFeatureSci01Sound;
 	}
-
-	if (features & kFeatureSci1Sound)
-		features &= ~kFeatureSci01Sound;
 
 	printf("Kernel auto-detected features:\n");
 
@@ -445,19 +414,13 @@ void Kernel::detectSciFeatures() {
 	else
 		printf("new\n");
 
-	printf("lofs parameters: ");
-	if (features & kFeatureLofsAbsolute)
-		printf("absolute\n");
-	else
-		printf("relative\n");
-
-	printf("Sound functions: ");
-	if (features & kFeatureSci1Sound)
-		printf("SCI1\n");
-	else if (features & kFeatureSci01Sound)
-		printf("SCI01\n");
-	else
-		printf("SCI0\n");
+	if (version < SCI_VERSION_1_1) {
+		printf("lofs parameters: ");
+		if (features & kFeatureLofsAbsolute)
+			printf("absolute\n");
+		else
+			printf("relative\n");
+	}
 }
 
 void Kernel::loadSelectorNames() {
@@ -473,7 +436,7 @@ void Kernel::loadSelectorNames() {
 		
 		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
 			_selectorNames.push_back(staticSelectorTable[i]);
-			if (features & kFeatureOldScriptHeader)
+			if (_resmgr->sciVersion() == SCI_VERSION_0_EARLY)
 				_selectorNames.push_back(staticSelectorTable[i]);
 		}
 			
@@ -492,7 +455,7 @@ void Kernel::loadSelectorNames() {
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (features & kFeatureOldScriptHeader)
+		if (_resmgr->sciVersion() == SCI_VERSION_0_EARLY)
 			_selectorNames.push_back(tmp);
 	}
 }

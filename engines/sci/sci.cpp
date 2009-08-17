@@ -44,13 +44,14 @@ namespace Sci {
 class GfxDriver;
 
 // FIXME: error-prone
-const char *versionNames[9] = {
+const char *versionNames[10] = {
 	"Autodetect",
 	"SCI0 Early",
 	"SCI0 Late",
 	"SCI01",
 	"SCI1 EGA",
 	"SCI1 Early",
+	"SCI1 Middle",
 	"SCI1 Late",
 	"SCI1.1",
 	"SCI32"

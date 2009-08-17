@@ -60,9 +60,7 @@ struct KernelFuncWithSignature {
 enum AutoDetectedFeatures {
 	kFeatureOldScriptHeader = 1 << 0,
 	kFeatureOldGfxFunctions = 1 << 1,
-	kFeatureLofsAbsolute    = 1 << 2,
-	kFeatureSci01Sound      = 1 << 3,
-	kFeatureSci1Sound       = 1 << 4
+	kFeatureLofsAbsolute    = 1 << 2
 };
 
 class Kernel {
@@ -118,16 +116,6 @@ public:
 	 * is absolute rather than relative.
 	 */
 	bool hasLofsAbsolute() const { return (features & kFeatureLofsAbsolute); }
-
-	/**
-	 * Determines if the game is using SCI01 sound functions
-	 */
-	bool usesSci01SoundFunctions() const { return (features & kFeatureSci01Sound); }
-
-	/**
-	 * Determines if the game is using SCI1 sound functions
-	 */
-	bool usesSci1SoundFunctions() const { return (features & kFeatureSci1Sound); }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);

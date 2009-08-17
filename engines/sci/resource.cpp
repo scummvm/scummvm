@@ -1480,7 +1480,7 @@ SciVersion ResourceManager::detectSciVersion() {
 		// If this turns out to be unreliable, we could do some pic resource checks instead.
 		return SCI_VERSION_1_EARLY;
 	case kResVersionSci1Middle:
-		return SCI_VERSION_1_LATE;
+		return SCI_VERSION_1_MIDDLE;
 	case kResVersionSci1Late:
 		if (_viewType == kViewVga11) {
 			// SCI1.1 resources, assume SCI1.1

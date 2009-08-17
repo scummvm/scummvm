@@ -701,8 +701,7 @@ static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
 	SongIteratorType it_type;
 
-	if (((SciEngine *)g_engine)->getKernel()->usesSci01SoundFunctions()
-		|| ((SciEngine *)g_engine)->getKernel()->usesSci1SoundFunctions())
+	if (s->_version > SCI_VERSION_01)
 		it_type = SCI_SONG_ITERATOR_TYPE_SCI1;
 	else
 		it_type = SCI_SONG_ITERATOR_TYPE_SCI0;
