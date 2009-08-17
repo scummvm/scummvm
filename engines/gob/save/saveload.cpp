@@ -42,7 +42,7 @@ SaveLoad::~SaveLoad() {
 
 const char *SaveLoad::stripPath(const char *fileName) {
 	const char *backSlash;
-	if ((backSlash = strrchr(fileName, '\\')))
+	if (backSlash = strrchr(fileName, '\\'))
 		return backSlash + 1;
 
 	return fileName;
