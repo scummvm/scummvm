@@ -1234,8 +1234,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	}
 
 	if (flags & 0x200) {
-		++_drawShapeVar1;
-		_drawShapeVar1 &= (_vm->gameFlags().gameID == GI_KYRA1) ? 0x7 : 0xF;
+		_drawShapeVar1 = (_drawShapeVar1 + 1) & 0x7;
 		_drawShapeVar3 = drawShapeVar2[_drawShapeVar1];
 		_drawShapeVar4 = 0;
 		_drawShapeVar5 = 256;
