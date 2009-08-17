@@ -89,6 +89,7 @@
 
 		#endif
 
+
 		#if defined(ARRAYSIZE)
 		// VS2005beta2 introduces new stuff in winnt.h
 		#undef ARRAYSIZE
@@ -251,6 +252,8 @@
 	#define scumm_stricmp strcasecmp
 	#define scumm_strnicmp strncasecmp
 
+	#define STREAM_AUDIO_FROM_DISK
+
 	#ifndef CONFIG_H
 		/* need this for the SDL_BYTEORDER define */
 		#include <SDL_byteorder.h>
@@ -359,7 +362,7 @@
 	#define SCUMMVM_DONT_DEFINE_TYPES
 
 	#define STRINGBUFLEN 256
-	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
+//	#define printf(fmt, ...)					consolePrintf(fmt, ##__VA_ARGS__)
 
 #elif defined(__WII__)
 
