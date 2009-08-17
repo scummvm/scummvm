@@ -65,84 +65,45 @@ SndHandle *Sound::getHandle() {
 
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
-	byte flags;
 
-	flags = Audio::Mixer::FLAG_AUTOFREE;
+	buffer.flags |= Audio::Mixer::FLAG_AUTOFREE;
 
 	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
+		buffer.flags |= Audio::Mixer::FLAG_LOOP;
 
-	if (buffer.sampleBits == 16) {
-		flags |= Audio::Mixer::FLAG_16BITS;
-
-		if (!buffer.isBigEndian)
-			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
-	}
-	if (buffer.stereo)
-		flags |= Audio::Mixer::FLAG_STEREO;
-	if (!buffer.isSigned)
-		flags |= Audio::Mixer::FLAG_UNSIGNED;
+	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
+				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {
-		if (handleType == kVoiceHandle)
-			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
-					buffer.size, buffer.frequency, flags, -1, volume);
-		else
-			_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
-					buffer.size, buffer.frequency, flags, -1, volume);
+		_mixer->playRaw(soundType, handle, buffer.buffer,
+				buffer.size, buffer.frequency, buffer.flags, -1, volume);
 	} else {
-		Audio::AudioStream *stream = NULL;
-#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
-		MemoryReadStream *tmp = NULL;
-#endif
+		Audio::AudioStream *stream = 0;
 
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
-				debug(1, "Playing MP3 compressed sound");
-				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				tmp = buffer.soundFile->readStream(buffer.size);
-				assert(tmp);
-				stream = Audio::makeMP3Stream(tmp, true);
+				stream = Audio::makeMP3Stream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
 				break;
 #endif
 #ifdef USE_VORBIS
 			case kSoundOGG:
-				debug(1, "Playing OGG compressed sound");
-				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				tmp = buffer.soundFile->readStream(buffer.size);
-				assert(tmp);
-				stream = Audio::makeVorbisStream(tmp, true);
+				stream = Audio::makeVorbisStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
 				break;
 #endif
 #ifdef USE_FLAC
 			case kSoundFLAC:
-				debug(1, "Playing FLAC compressed sound");
-				buffer.soundFile->seek((long)buffer.fileOffset, SEEK_SET);
-				tmp = buffer.soundFile->readStream(buffer.size);
-				assert(tmp);
-				stream = Audio::makeFlacStream(tmp, true);
+				stream = Audio::makeFlacStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
 				break;
 #endif
 			default:
-				// No compression, play it as raw sound
-				if (handleType == kVoiceHandle)
-					_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
-							buffer.size, buffer.frequency, flags, -1, volume);
-				else
-					_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
-							buffer.size, buffer.frequency, flags, -1, volume);
+				// Unknown compression, ignore sample
+				warning("Unknown compression, ignoring sound");
 				break;
 		}
 
-		if (stream != NULL) {
-			if (handleType == kVoiceHandle)
-				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, stream, -1,
-							volume, 0, true, false);
-			else
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1,
-							volume, 0, true, false);
-		}
+		if (stream != NULL)
+			_mixer->playInputStream(soundType, handle, stream, -1, volume, 0, true, false);
 	}
 }
 

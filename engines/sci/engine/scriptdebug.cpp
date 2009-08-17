@@ -37,9 +37,10 @@ extern const char *selector_name(EngineState *s, int selector);
 ScriptState scriptState;
 
 int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
-	Object *obj = obj_get(s, objp);
+	Object *obj = obj_get(s->seg_manager, s->_version, objp);
 	byte *selectoroffset;
 	int selectors;
+	SciVersion version = s->_version;	// for the selector defines
 
 	if (!obj) {
 		warning("Applied propertyOffsetToId on non-object at %04x:%04x", PRINT_REG(objp));
@@ -52,7 +53,7 @@ int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
-			obj = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = obj_get(s->seg_manager, s->_version, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;
@@ -268,7 +269,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 				selector = sb[- stackframe].offset;
 
-				name = obj_get_name(s, called_obj_addr);
+				name = obj_get_name(s->seg_manager, s->_version, called_obj_addr);
 
 				if (!name)
 					name = "<invalid>";

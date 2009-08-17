@@ -889,10 +889,11 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
-	for (uint i = 0; i < _vm->_gamestate->_classtable.size(); i++) {
-		if (_vm->_gamestate->_classtable[i].reg.segment) {
+	for (uint i = 0; i < _vm->_gamestate->seg_manager->_classtable.size(); i++) {
+		if (_vm->_gamestate->seg_manager->_classtable[i].reg.segment) {
 			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, 
-					PRINT_REG(_vm->_gamestate->_classtable[i].reg), _vm->_gamestate->_classtable[i].script);
+					PRINT_REG(_vm->_gamestate->seg_manager->_classtable[i].reg), 
+					_vm->_gamestate->seg_manager->_classtable[i].script);
 		}
 	}
 
@@ -1394,10 +1395,11 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < scr->_objects.size(); i++) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = obj_get(_vm->_gamestate, scr->_objects[i].pos);
+			Object *obj = obj_get(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, scr->_objects[i].pos);
 			if (obj)
 				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i].pos), 
-							obj_get_name(_vm->_gamestate, scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
+							obj_get_name(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, 
+							scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
 		}
 	}
 	break;
@@ -1438,12 +1440,13 @@ bool Console::segmentInfo(int nr) {
 				reg_t objpos;
 				objpos.offset = i;
 				objpos.segment = nr;
-				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(_vm->_gamestate, objpos));
+				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, objpos));
 				// Object header
-				Object *obj = obj_get(_vm->_gamestate, ct->_table[i].pos);
+				Object *obj = obj_get(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, ct->_table[i].pos);
 				if (obj)
 					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].pos), 
-								obj_get_name(_vm->_gamestate, ct->_table[i].pos), obj->_variables.size(), obj->methods_nr);
+								obj_get_name(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, ct->_table[i].pos), 
+								obj->_variables.size(), obj->methods_nr);
 			}
 	}
 	break;
@@ -2045,7 +2048,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	for (iter = _vm->_gamestate->_executionStack.begin();
 	     iter != _vm->_gamestate->_executionStack.end(); ++iter, ++i) {
 		ExecStack &call = *iter;
-		const char *objname = obj_get_name(_vm->_gamestate, call.sendp);
+		const char *objname = obj_get_name(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, call.sendp);
 		int paramc, totalparamc;
 
 		switch (call.type) {
@@ -2187,7 +2190,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	Object *obj = obj_get(_vm->_gamestate, objAddr);
+	Object *obj = obj_get(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, objAddr);
 	int selector_id = _vm->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
@@ -2295,7 +2298,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	o = obj_get(_vm->_gamestate, object);
+	o = obj_get(_vm->_gamestate->seg_manager, _vm->_gamestate->_version, object);
 	if (o == NULL) {
 		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
@@ -2900,7 +2903,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				}
 
 				if (valid) {
-					const char *objname = obj_get_name(s, objpos);
+					const char *objname = obj_get_name(s->seg_manager, s->_version, objpos);
 					if (!strcmp(objname, str_objname)) {
 						// Found a match!
 						if ((index < 0) && (times_found > 0)) {
@@ -3042,9 +3045,10 @@ int Console::printNode(reg_t addr) {
 
 int Console::printObject(reg_t pos) {
 	EngineState *s = _vm->_gamestate;	// for the several defines in this function
-	Object *obj = obj_get(s, pos);
+	Object *obj = obj_get(s->seg_manager, s->_version, pos);
 	Object *var_container = obj;
 	int i;
+	SciVersion version = s->_version;	// for the selector defines
 
 	if (!obj) {
 		DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
@@ -3052,11 +3056,11 @@ int Console::printObject(reg_t pos) {
 	}
 
 	// Object header
-	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s, pos),
+	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s->seg_manager, s->_version, pos),
 				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-		var_container = obj_get(s, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+		var_container = obj_get(s->seg_manager, s->_version, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		printf("    ");
@@ -3068,9 +3072,9 @@ int Console::printObject(reg_t pos) {
 		reg_t val = obj->_variables[i];
 		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
-		Object *ref = obj_get(s, val);
+		Object *ref = obj_get(s->seg_manager, s->_version, val);
 		if (ref)
-			DebugPrintf(" (%s)", obj_get_name(s, val));
+			DebugPrintf(" (%s)", obj_get_name(s->seg_manager, s->_version, val));
 
 		DebugPrintf("\n");
 	}

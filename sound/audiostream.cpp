@@ -277,7 +277,7 @@ int LinearDiskStream<stereo, is16Bit, isUnsigned, isLE>::readBuffer(int16 *buffe
 	while (samples > 0 && ((_diskLeft > 0 || _bufferLeft > 0) || (_currentBlock != _audioBlockCount - 1))  ) {
 
 		// Output samples in the buffer to the output		
-		int len = MIN(samples, _bufferLeft);
+		int len = MIN<int>(samples, _bufferLeft);
 		samples -= len;
 		_bufferLeft -= len;
 

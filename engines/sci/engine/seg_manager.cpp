@@ -52,7 +52,7 @@ namespace Sci {
 
 #define INVALID_SCRIPT_ID -1
 
-SegManager::SegManager(bool sci1_1) {
+SegManager::SegManager(ResourceManager *resMgr, SciVersion version) {
 	id_seg_map = new IntMapper();
 	reserved_id = INVALID_SCRIPT_ID;
 	id_seg_map->checkKey(reserved_id, true);	// reserve entry 0 for INVALID_SCRIPT_ID
@@ -66,7 +66,8 @@ SegManager::SegManager(bool sci1_1) {
 	Hunks_seg_id = 0;
 
 	exports_wide = 0;
-	isSci1_1 = sci1_1;
+	_version = version;
+	_resMgr = resMgr;
 }
 
 // Destroy the object, free the memorys if allocated before
@@ -109,7 +110,7 @@ MemObject *SegManager::allocNonscriptSegment(MemObjectType type, SegmentId *segi
 // Returns   : 0 - allocation failure
 //             1 - allocated successfully
 //             seg_id - allocated segment id
-Script *SegManager::allocateScript(EngineState *s, int script_nr, SegmentId *seg_id) {
+Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 	bool was_added;
 	MemObject *mem;
 
@@ -128,20 +129,20 @@ Script *SegManager::allocateScript(EngineState *s, int script_nr, SegmentId *seg
 	return (Script *)mem;
 }
 
-void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
-	Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	Resource *heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+void SegManager::setScriptSize(Script &scr, int script_nr) {
+	Resource *script = _resMgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *heap = _resMgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	scr.script_size = script->size;
 	scr.heap_size = 0; // Set later
 
-	if (!script || (s->_version >= SCI_VERSION_1_1 && !heap)) {
+	if (!script || (_version >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
 	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (s->_version < SCI_VERSION_1_1) {
+	} else if (_version < SCI_VERSION_1_1) {
 		scr.buf_size = script->size;
 	} else {
 		scr.buf_size = script->size + heap->size;
@@ -163,10 +164,10 @@ void SegManager::setScriptSize(Script &scr, EngineState *s, int script_nr) {
 	}
 }
 
-int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
+int SegManager::initialiseScript(Script &scr, int script_nr) {
 	// allocate the script.buf
 
-	setScriptSize(scr, s, script_nr);
+	setScriptSize(scr, script_nr);
 	scr.buf = (byte *)malloc(scr.buf_size);
 
 #ifdef DEBUG_SEG_MANAGER
@@ -191,7 +192,7 @@ int SegManager::initialiseScript(Script &scr, EngineState *s, int script_nr) {
 
 	scr.obj_indices = new IntMapper();
 
-	if (s->_version >= SCI_VERSION_1_1)
+	if (_version >= SCI_VERSION_1_1)
 		scr.heap_start = scr.buf + scr.script_size;
 	else
 		scr.heap_start = scr.buf;
@@ -319,7 +320,7 @@ int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, S
 		return 0;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (isSci1_1)
+	if (_version == SCI_VERSION_1_1)
 		block[idx].offset += getScript(segment)->script_size;
 
 	return 1;
@@ -429,13 +430,51 @@ void SegManager::heapRelocate(reg_t block) {
 	}
 }
 
-#define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : get_class_address(s, id, SCRIPT_GET_LOCK, NULL_REG))
+SegmentId SegManager::getSegment(int script_nr, SCRIPT_GET load) {
+	SegmentId segment;
 
-reg_t get_class_address(EngineState *s, int classnr, SCRIPT_GET lock, reg_t caller);
+	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
+		script_instantiate(_resMgr, this, _version, script_nr);
 
-Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
+	segment = segGet(script_nr);
+
+	if (segment > 0) {
+		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
+			getScript(segment)->incrementLockers();
+
+		return segment;
+	} else
+		return 0;
+}
+
+#define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : get_class_address(id, SCRIPT_GET_LOCK, NULL_REG))
+
+reg_t SegManager::get_class_address(int classnr, SCRIPT_GET lock, reg_t caller) {
+	if (classnr < 0 || (int)_classtable.size() <= classnr || _classtable[classnr].script < 0) {
+		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classtable.size());
+		return NULL_REG;
+	} else {
+		Class *the_class = &_classtable[classnr];
+		if (!the_class->reg.segment) {
+			getSegment(the_class->script, lock);
+
+			if (!the_class->reg.segment) {
+				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"
+				          " Entering debugger.", classnr, the_class->script, the_class->script);
+				return NULL_REG;
+			}
+		} else
+			if (caller.segment != the_class->reg.segment)
+				getScript(the_class->reg.segment)->incrementLockers();
+
+		return the_class->reg;
+	}
+}
+
+Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 	Object *obj;
 	int id;
+	SciVersion version = _version;	// for the offset defines
 	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 	reg_t temp;
 
@@ -489,7 +528,7 @@ Object *SegManager::scriptObjInit0(EngineState *s, reg_t obj_pos) {
 	return obj;
 }
 
-Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
+Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 	Object *obj;
 	int id;
 	int base = obj_pos.offset;
@@ -543,11 +582,11 @@ Object *SegManager::scriptObjInit11(EngineState *s, reg_t obj_pos) {
 	return obj;
 }
 
-Object *SegManager::scriptObjInit(EngineState *s, reg_t obj_pos) {
-	if (!isSci1_1)
-		return scriptObjInit0(s, obj_pos);
+Object *SegManager::scriptObjInit(reg_t obj_pos) {
+	if (_version != SCI_VERSION_1_1)
+		return scriptObjInit0(obj_pos);
 	else
-		return scriptObjInit11(s, obj_pos);
+		return scriptObjInit11(obj_pos);
 }
 
 LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
@@ -588,7 +627,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
-	if (isSci1_1)
+	if (_version == SCI_VERSION_1_1)
 		count = READ_LE_UINT16(scr->buf + location.offset - 2);
 	else
 		count = (READ_LE_UINT16(scr->buf + location.offset - 2) - 4) >> 1;
@@ -627,24 +666,25 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 	}
 }
 
-void SegManager::scriptInitialiseObjectsSci11(EngineState *s, SegmentId seg) {
+void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
 	byte *seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
+	SciVersion version = _version;	// for the selector defines
 
 	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
 			int classpos = seeker - scr->buf;
 			int species = READ_LE_UINT16(seeker + 10);
 
-			if (species < 0 || species >= (int)s->_classtable.size()) {
+			if (species < 0 || species >= (int)_classtable.size()) {
 				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
-				          species, species, s->_classtable.size(), scr->nr);
+				          species, species, _classtable.size(), scr->nr);
 				return;
 			}
 
-			s->_classtable[species].script = scr->nr;
-			s->_classtable[species].reg.segment = seg;
-			s->_classtable[species].reg.offset = classpos;
+			_classtable[species].script = scr->nr;
+			_classtable[species].reg.segment = seg;
+			_classtable[species].reg.offset = classpos;
 		}
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
@@ -656,12 +696,12 @@ void SegManager::scriptInitialiseObjectsSci11(EngineState *s, SegmentId seg) {
 
 		reg.segment = seg;
 		reg.offset = seeker - scr->buf;
-		obj = scriptObjInit(s, reg);
+		obj = scriptObjInit(reg);
 
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
 			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			base_obj = obj_get(s, obj->_variables[5]);
+			base_obj = obj_get(s->seg_manager, s->_version, obj->_variables[5]);
 			obj->variable_names_nr = base_obj->variables_nr;
 			obj->base_obj = base_obj->base_obj;
 		}

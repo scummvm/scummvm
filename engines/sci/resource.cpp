@@ -319,63 +319,6 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 	return compressionMethod;
 }
 
-SciVersion ResourceManager::guessSciVersion() {
-	Common::File file;
-	char filename[MAXPATHLEN];
-	int compression;
-	Resource *res;
-	int i;
-
-	for (i = 0; i < 1000; i++) {
-		res = testResource(ResourceId(kResourceTypeView, i));
-
-		if (!res)
-			continue;
-
-		if (res->source->source_type == kSourceDirectory)
-			continue;
-
-		strcpy(filename, res->source->location_name.c_str());
-
-		if (!file.open(filename))
-			continue;
-		file.seek(res->file_offset, SEEK_SET);
-
-		compression = sci0_get_compression_method(file);
-		file.close();
-
-		if (compression == 3) {
-			return SCI_VERSION_01;
-		}
-	}
-
-	// Try the same thing with pics
-	for (i = 0; i < 1000; i++) {
-		res = testResource(ResourceId(kResourceTypePic, i));
-
-		if (!res)
-			continue;
-
-		if (res->source->source_type == kSourceDirectory)
-			continue;
-
-		strcpy(filename, res->source->location_name.c_str());
-
-		if (!file.open(filename))
-			continue;
-		file.seek(res->file_offset, SEEK_SET);
-
-		compression = sci0_get_compression_method(file);
-		file.close();
-
-		if (compression == 3) {
-			return SCI_VERSION_01;
-		}
-	}
-
-	return SCI_VERSION_AUTODETECT;
-}
-
 int ResourceManager::addAppropriateSources() {
 	ResourceSource *map;
 
@@ -484,91 +427,23 @@ ResourceManager::ResourceManager(int maxMemory) {
 	addInternalSources();
 	scanNewSources();
 
-	switch (_mapVersion) {
-	case kResVersionSci0Sci1Early:
-		if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB))) {
-			_sciVersion = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
-		} else if (testResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB))) {
-			_sciVersion = guessSciVersion();
-			if (_sciVersion != SCI_VERSION_01) {
-				_sciVersion = testResource(ResourceId(kResourceTypeVocab, 912)) ? SCI_VERSION_0 : SCI_VERSION_01;
-			}
-		} else {
-			_sciVersion = guessSciVersion() ? SCI_VERSION_01 : SCI_VERSION_0;
-		}
-		break;
-	case kResVersionSci1Middle:
-		_sciVersion = SCI_VERSION_01;
-		break;
-	case kResVersionSci1Late:
-		_sciVersion = SCI_VERSION_1;
-		break;
-	case kResVersionSci11:
-		_sciVersion = SCI_VERSION_1_1;
-		break;
-	case kResVersionSci32:
-		_sciVersion = SCI_VERSION_32;
-		break;
-	default:
-		_sciVersion = SCI_VERSION_AUTODETECT;
-	}
+	_sciVersion = detectSciVersion();
 
-	_isVGA = false;
-
-	// Determine if the game is using EGA graphics or not
-	if (_sciVersion == SCI_VERSION_0) {
-		_isVGA = false;		// There is no SCI0 VGA game
-	} else if (_sciVersion >= SCI_VERSION_1_1) {
-		_isVGA = true;		// There is no SCI11 EGA game
-	} else {
-		// SCI01 or SCI1: EGA games have the second byte of their views set
-		// to 0, VGA ones to non-zero
-		int i = 0;
-
-		while (true) {
-			Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
-			if (res) {
-				_isVGA = (res->data[1] != 0);
-				break;
-			}
-			i++;
-		}
-	}
-
-	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
-	if (_sciVersion == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
-		debug("Resmgr: Detected QFG1 VGA");
-		_isVGA = true;
-	}
-
-	// temporary version printout - should be reworked later
-	switch (_sciVersion) {
-	case SCI_VERSION_0:
-		debug("Resmgr: Detected SCI0");
-		break;
-	case SCI_VERSION_01:
-		debug("Resmgr: Detected SCI01");
-		break;
-	case SCI_VERSION_1:
-		debug("Resmgr: Detected SCI1");
-		break;
-	case SCI_VERSION_1_1:
-		debug("Resmgr: Detected SCI1.1");
-		break;
-#ifdef ENABLE_SCI32
-	case SCI_VERSION_32:
-		debug("Resmgr: Couldn't determine SCI version");
-		break;
-#endif
-	default:
-		debug("Resmgr: Couldn't determine SCI version");
-		break;
-	}
-
-	if (_isVGA)
-		debug("Resmgr: Detected VGA graphic resources");
+	if (_sciVersion != SCI_VERSION_AUTODETECT)
+		debug("Resmgr: Detected %s", versionNames[_sciVersion]);
 	else
-		debug("Resmgr: Detected non-VGA/EGA graphic resources");
+		debug("Resmgr: Couldn't determine SCI version");
+
+	switch (_viewType) {
+	case kViewEga:
+		debug("Resmgr: Detected EGA graphic resources");
+		break;
+	case kViewVga:
+		debug("Resmgr: Detected VGA graphic resources");
+		break;
+	case kViewVga11:
+		debug("Resmgr: Detected SCI1.1 VGA graphic resources");
+	}
 }
 
 ResourceManager::~ResourceManager() {
@@ -1408,10 +1283,10 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		compression = kCompNone;
 		break;
 	case 1:
-		compression = (_sciVersion == SCI_VERSION_0) ? kCompLZW : kCompHuffman;
+		compression = (_sciVersion <= SCI_VERSION_01) ? kCompLZW : kCompHuffman;
 		break;
 	case 2:
-		compression = (_sciVersion == SCI_VERSION_0) ? kCompHuffman : kCompLZW1;
+		compression = (_sciVersion <= SCI_VERSION_01) ? kCompHuffman : kCompLZW1;
 		break;
 	case 3:
 		compression = kCompLZW1View;
@@ -1481,6 +1356,242 @@ int ResourceManager::decompress(Resource *res, Common::File *file) {
 
 	delete dec;
 	return error;
+}
+
+ResourceCompression ResourceManager::getViewCompression() {
+	int viewsTested = 0;
+
+	// Test 10 views to see if any are compressed
+	for (int i = 0; i < 1000; i++) {
+		Common::File *file;
+		Resource *res = testResource(ResourceId(kResourceTypeView, i));
+
+		if (!res)
+			continue;
+
+		if (res->source->source_type != kSourceVolume)
+			continue;
+
+		file = getVolumeFile(res->source->location_name.c_str());
+		if (!file)
+			continue;
+		file->seek(res->file_offset, SEEK_SET);
+
+		uint32 szPacked;
+		ResourceCompression compression;
+
+		if (readResourceInfo(res, file, szPacked, compression))
+			continue;
+
+		if (compression != kCompNone)
+			return compression;
+
+		if (++viewsTested == 10)
+			break;
+	}
+
+	return kCompNone;
+}
+
+ResourceManager::ViewType ResourceManager::detectViewType() {
+	for (int i = 0; i < 1000; i++) {
+		Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
+		if (res) {
+			//FIXME: Amiga
+			switch(res->data[1]) {
+			case 0:
+				return kViewEga;
+			default:
+				return kViewVga;
+			}
+		}
+	}
+
+	warning("Resmgr: Couldn't find any views");
+	return kViewVga;
+}
+
+SciVersion ResourceManager::detectSciVersion() {
+	// We use the view compression to set a preliminary _sciVersion for the sake of getResourceInfo
+	// Pretend we have a SCI0 game
+	_sciVersion = SCI_VERSION_0_EARLY;
+	bool oldDecompressors = true;
+
+	ResourceCompression viewCompression = getViewCompression();
+	if (viewCompression != kCompLZW) {
+		// If it's a different compression type from kCompLZW, the game is probably
+		// SCI_VERSION_1_EGA or later. If the views are uncompressed, it is
+		// likely not an early disk game.
+		_sciVersion = SCI_VERSION_1_EGA;
+		oldDecompressors = false;
+	}
+
+	// Set view type
+	if (viewCompression == kCompDCL) {
+		// SCI1.1 VGA views
+		_viewType = kViewVga11;
+	} else {
+		// Otherwise we detect it from a view
+		_viewType = detectViewType();
+	}
+
+	switch (_mapVersion) {
+	case kResVersionSci0Sci1Early:
+		if (_viewType == kViewVga) {
+			// VGA
+			return SCI_VERSION_1_EARLY;
+		}
+
+		// EGA
+		if (hasOldScriptHeader())
+			return SCI_VERSION_0_EARLY;
+
+		if (oldDecompressors) {
+			// It's either SCI_VERSION_0_LATE or SCI_VERSION_01
+
+			// We first check for SCI1 vocab.999
+			if (testResource(ResourceId(kResourceTypeVocab, 999))) {
+				if (hasSci0Voc999()) {
+					return SCI_VERSION_0_LATE;
+				} else {
+					return SCI_VERSION_01;
+				}
+			}
+
+			// If vocab.999 is missing, we try vocab.900
+			if (testResource(ResourceId(kResourceTypeVocab, 900))) {
+				if (hasSci1Voc900()) {
+					return SCI_VERSION_01;
+				} else {
+					return SCI_VERSION_0_LATE;
+				}
+			}
+
+			warning("Failed to accurately determine SCI version");
+			// No parser, we assume SCI_VERSION_01.
+			return SCI_VERSION_01;
+		}
+
+		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
+		if (hasSci1Voc900())
+			return SCI_VERSION_1_EGA;
+
+		// SCI_VERSION_1_EARLY EGA versions seem to be lacking a valid vocab.900.
+		// If this turns out to be unreliable, we could do some pic resource checks instead.
+		return SCI_VERSION_1_EARLY;
+	case kResVersionSci1Middle:
+		return SCI_VERSION_1_LATE;
+	case kResVersionSci1Late:
+		if (_viewType == kViewVga11) {
+			// SCI1.1 resources, assume SCI1.1
+			return SCI_VERSION_1_1;
+		} 
+		return SCI_VERSION_1_LATE;
+	case kResVersionSci11:
+		return SCI_VERSION_1_1;
+	case kResVersionSci32:
+		return SCI_VERSION_32;
+	default:
+		return SCI_VERSION_AUTODETECT;
+	}
+}
+
+// Functions below are based on PD code by Brian Provinciano (SCI Studio)
+bool ResourceManager::hasOldScriptHeader() {
+	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);
+
+	if (!res) {
+		warning("Resmgr: Failed to find script.000");
+		return false;
+	}
+
+	uint offset = 2;
+	const int objTypes = 17;
+
+	while (offset < res->size) {
+		uint16 objType = READ_LE_UINT16(res->data + offset);
+
+		if (!objType) {
+			offset += 2;
+			// We should be at the end of the resource now
+			return offset == res->size;
+		}
+
+		if (objType >= objTypes) {
+			// Invalid objType
+			return false;
+		}
+
+		int skip = READ_LE_UINT16(res->data + offset + 2);
+
+		if (skip < 2) {
+			// Invalid size
+			return false;
+		}
+
+		offset += skip;
+	}
+
+	return false;
+}
+
+bool ResourceManager::hasSci0Voc999() {
+	Resource *res = findResource(ResourceId(kResourceTypeVocab, 999), 0);
+
+	if (!res) {
+		// No vocab present, possibly a demo version
+		return false;
+	}
+
+	if (res->size < 2)
+		return false;
+
+	uint16 count = READ_LE_UINT16(res->data);
+
+	// Make sure there's enough room for the pointers
+	if (res->size < (uint)count * 2)
+		return false;
+
+	// Iterate over all pointers
+	for (uint i = 0; i < count; i++) {
+		// Offset to string
+		uint16 offset = READ_LE_UINT16(res->data + 2 + count * 2);
+
+		// Look for end of string
+		do {
+			if (offset >= res->size) {
+				// Out of bounds
+				return false;
+			}
+		} while (res->data[offset++]);
+	}
+
+	return true;
+}
+
+bool ResourceManager::hasSci1Voc900() {
+	Resource *res = findResource(ResourceId(kResourceTypeVocab, 900), 0);
+
+	if (!res )
+		return false;
+
+	if (res->size < 0x1fe)
+		return false;
+
+	uint16 offset = 0x1fe;
+
+	while (offset < res->size) {
+		offset++;
+		do {
+			if (offset >= res->size) {
+				// Out of bounds;
+				return false;
+			}
+		} while (res->data[offset++]);
+		offset += 3;
+	}
+
+	return offset == res->size;
 }
 
 } // End of namespace Sci

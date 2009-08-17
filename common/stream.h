@@ -400,6 +400,7 @@ public:
 /**
  * SubReadStream provides access to a ReadStream restricted to the range
  * [currentPosition, currentPosition+end).
+ *
  * Manipulating the parent stream directly /will/ mess up a substream.
  * Likewise, manipulating two substreams of a parent stream will cause them to
  * step on each others toes.
@@ -434,6 +435,9 @@ public:
  * SeekableSubReadStream provides access to a SeekableReadStream restricted to
  * the range [begin, end).
  * The same caveats apply to SeekableSubReadStream as do to SeekableReadStream.
+ *
+ * Manipulating the parent stream directly /will/ mess up a substream.
+ * @see SubReadStream
  */
 class SeekableSubReadStream : public SubReadStream, public SeekableReadStream {
 protected:
@@ -451,6 +455,9 @@ public:
 /**
  * This is a wrapper around SeekableSubReadStream, but it adds non-endian
  * read methods whose endianness is set on the stream creation.
+ *
+ * Manipulating the parent stream directly /will/ mess up a substream.
+ * @see SubReadStream
  */
 class SeekableSubReadStreamEndian : public SeekableSubReadStream {
 public:

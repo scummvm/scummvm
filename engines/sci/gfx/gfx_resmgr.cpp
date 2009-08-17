@@ -57,11 +57,6 @@ GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, Resource
 	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
 	_version = resManager->sciVersion();
 
-	// Workaround for QFG1 VGA (has SCI 1.1 view data with SCI 1 compression)
-	if (_version == SCI_VERSION_1 && !strcmp(((SciEngine*)g_engine)->getGameID(), "qfg1")) {
-		_version = SCI_VERSION_1_1;
-	}
-
 	if (!_resManager->isVGA()) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
 	} else if (_version == SCI_VERSION_1_1) {
@@ -537,7 +532,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
 		
 		if (!_resManager->isVGA()) {
-			int pal = (_version == SCI_VERSION_0) ? -1 : palette;
+			int pal = (_version <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
 			if (_version < SCI_VERSION_1_1)
@@ -679,7 +674,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 		}
 
 		gfx_pixmap_t *cursor = gfxr_draw_cursor(GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num),
-										cursorRes->data, cursorRes->size, _version != SCI_VERSION_0);
+										cursorRes->data, cursorRes->size, _version > SCI_VERSION_01);
 
 		if (!cursor)
 			return NULL;

@@ -129,7 +129,7 @@ public:
 	SpeedThrottler(SciVersion version) {
 		if (version >= SCI_VERSION_1_1)
 			_maxInstructions = 3300;
-		else if (version >= SCI_VERSION_1)
+		else if (version >= SCI_VERSION_1_EARLY)
 			_maxInstructions = 2200;
 		else
 			_maxInstructions = 1100;
@@ -290,8 +290,6 @@ public:
 	SynonymList _synonyms; /**< The list of synonyms */
 
 	reg_t game_obj; /**< Pointer to the game object */
-
-	Common::Array<Class> _classtable; /**< Table of all classes */
 
 	SegManager *seg_manager;
 	int gc_countdown; /**< Number of kernel calls until next gc */

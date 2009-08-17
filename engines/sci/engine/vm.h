@@ -29,6 +29,7 @@
 /* VM and kernel declarations */
 
 #include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/resource.h"	// for SciVersion
 
 #include "common/util.h"
 
@@ -39,6 +40,7 @@ struct EngineState;
 typedef int sci_version_t;
 struct IntMapper;
 struct Object;
+class ResourceManager;
 
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000
@@ -67,12 +69,12 @@ struct Object;
 #define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
 
 /** Offset of the name pointer */
-#define SCRIPT_NAME_OFFSET (s->_version < SCI_VERSION_1_1 ? 14 -8 : 16)
-#define SCRIPT_NAME_SELECTOR (s->_version < SCI_VERSION_1_1 ? 3 : 8)
+#define SCRIPT_NAME_OFFSET (version < SCI_VERSION_1_1 ? 14 -8 : 16)
+#define SCRIPT_NAME_SELECTOR (version < SCI_VERSION_1_1 ? 3 : 8)
 
 /** Object-relative offset of the -info- selector */
-#define SCRIPT_INFO_OFFSET (s->_version < SCI_VERSION_1_1 ? 12 -8 : 14)
-#define SCRIPT_INFO_SELECTOR (s->_version < SCI_VERSION_1_1 ? 2 : 7)
+#define SCRIPT_INFO_OFFSET (version < SCI_VERSION_1_1 ? 12 -8 : 14)
+#define SCRIPT_INFO_SELECTOR (version < SCI_VERSION_1_1 ? 2 : 7)
 
 /** Flag fo the -info- selector */
 #define SCRIPT_INFO_CLONE 0x0001
@@ -84,18 +86,18 @@ struct Object;
 /** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
 /** Offset of this identifier */
-#define SCRIPT_OBJECT_MAGIC_OFFSET (s->_version < SCI_VERSION_1_1 ? -8 : 0)
+#define SCRIPT_OBJECT_MAGIC_OFFSET (version < SCI_VERSION_1_1 ? -8 : 0)
 
 /** Script-relative offset of the species ID */
 #define SCRIPT_SPECIES_OFFSET 8 -8
 
-#define SCRIPT_SUPERCLASS_OFFSET (s->_version < SCI_VERSION_1_1 ? 10 -8 : 12)
+#define SCRIPT_SUPERCLASS_OFFSET (version < SCI_VERSION_1_1 ? 10 -8 : 12)
 
 /*---------------------------------*/
 /* Script selector index variables */
 /*---------------------------------*/
-#define SCRIPT_SPECIES_SELECTOR (s->_version < SCI_VERSION_1_1 ? 0 : 5)
-#define SCRIPT_SUPERCLASS_SELECTOR (s->_version < SCI_VERSION_1_1 ? 1 : 6)
+#define SCRIPT_SPECIES_SELECTOR (version < SCI_VERSION_1_1 ? 0 : 5)
+#define SCRIPT_SUPERCLASS_SELECTOR (version < SCI_VERSION_1_1 ? 1 : 6)
 #define SCRIPT_CLASSSCRIPT_SELECTOR 4
 
 /** Magic adjustment value for lofsa and lofss */
@@ -467,31 +469,13 @@ SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
 
 /**
- * Parameters for script_get_segment()
- */
-typedef enum {
-	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
-	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
-	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
-} SCRIPT_GET;
-
-/**
- * Determines the segment occupied by a certain script
- * @param[in] s			The state to operate on
- * @param[in] script_id	The script in question
- * @param[in] load		One of SCRIPT_GET_*
- * @return				The script's segment, or 0 on failure
- */
-SegmentId script_get_segment(EngineState *s, int script_id, SCRIPT_GET load);
-
-/**
  * Looks up an entry of the exports table of a script
- * @param[in]  s			The state to operate on
+ * @param[in] segManager	The segment manager
  * @param[in]  script_nr	The script to look up in
  * @param[out] export_index	The index of the export entry to look up
  * @return					The handle
  */
-reg_t script_lookup_export(EngineState *s, int script_nr, int export_index);
+reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_index);
 
 /**
  * Makes sure that a script and its superclasses get loaded to the heap.
@@ -499,21 +483,24 @@ reg_t script_lookup_export(EngineState *s, int script_nr, int export_index);
  * increased. All scripts containing superclasses of this script are loaded
  * recursively as well, unless 'recursive' is set to zero. The 
  * complementary function is "script_uninstantiate()" below.
- * @param[in] s			The state to operate on
- * @param[in] script_nr	The script number to load
- * @return				The script's segment ID or 0 if out of heap
+ * @param[in] resMgr		The resource manager
+ * @param[in] segManager	The segment manager
+ * @param[in] version		The SCI version to use
+ * @param[in] script_nr		The script number to load
+ * @return					The script's segment ID or 0 if out of heap
  */
-int script_instantiate(EngineState *s, int script_nr);
+int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersion version, int script_nr);
 
 /**
  * Decreases the numer of lockers of a script and unloads it if that number
  * reaches zero. 
  * This function will recursively unload scripts containing its 
  * superclasses, if those aren't locked by other scripts as well.
- * @param[in] s			The state to operate on
+ * @param[in] segManager	The segment manager
+ * @param[in] version		The SCI version to use
  * @param[in] script_nr	The script number that is requestet to be unloaded
  */
-void script_uninstantiate(EngineState *s, int script_nr);
+void script_uninstantiate(SegManager *segManager, SciVersion version, int script_nr);
 
 /**
  * Initializes an SCI game
@@ -613,7 +600,7 @@ int kfree(EngineState *s, reg_t handle);
  * 					in a static buffer and need not be freed (neither may
  * 					it be modified).
  */
-const char *obj_get_name(EngineState *s, reg_t pos);
+const char *obj_get_name(SegManager *segManager, SciVersion version, reg_t pos);
 
 /**
  * Retrieves an object from the specified location
@@ -621,7 +608,7 @@ const char *obj_get_name(EngineState *s, reg_t pos);
  * @param[in] offset	The object's offset
  * @return				The object in question, or NULL if there is none
  */
-Object *obj_get(EngineState *s, reg_t offset);
+Object *obj_get(SegManager *segManager, SciVersion version, reg_t offset);
 
 /**
  * Shrink execution stack to size.

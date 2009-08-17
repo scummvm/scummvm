@@ -260,7 +260,6 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Comm
 
 	// String-encoded result, copied from buffer
 	char currentString[10];
-	Common::String resultString;
 
 	for (int i = 0; i < len; i++) {
 		unsigned char ch = *buf++;
@@ -275,15 +274,8 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Comm
 			// Terminate string
 			currentString[9] = 0;
 
-			// Return the current string if it's parseable
-			SciVersion version;
-			if (getSciVersionFromString(currentString, &version, platform)) {
-				delete[] buffer;
-				return currentString;
-			}
-
-			// Save the found string and continue searching
-			resultString = currentString;
+			// Return the current string
+			return currentString;
 		}
 
 		if (accept)
@@ -293,57 +285,7 @@ Common::String readSciVersionFromExe(Common::SeekableReadStream *exeStream, Comm
 	}
 
 	delete[] buffer;
-	return resultString;
-}
-
-bool getSciVersionFromString(Common::String versionString, SciVersion *version, Common::Platform platform) {
-	*version = SCI_VERSION_AUTODETECT;
-
-	if (platform == Common::kPlatformAmiga) {
-		if (versionString.hasPrefix("1.002.")) {
-			*version = SCI_VERSION_0;
-		} else if (versionString.hasPrefix("1.003.")) {
-			*version = SCI_VERSION_01;
-		} else if (versionString.hasPrefix("1.004.")) {
-			*version = SCI_VERSION_01;
-		} else if (versionString.hasPrefix("1.005.")) {
-			*version = SCI_VERSION_1;
-		} else if (versionString == "x.yyy.zzz") {
-			// How to map it?
-		} else {
-			return false;
-		}
-	} else if (versionString.hasPrefix("0.000.")) {
-		*version = SCI_VERSION_0;
-	} else if (versionString.hasPrefix("S.old.")) {
-		*version = SCI_VERSION_01;
-	} else if (versionString.hasPrefix("1.000.")) {
-		*version = SCI_VERSION_1;
-	} else if (versionString.hasPrefix("1.001.")) {
-		*version = SCI_VERSION_1_1;
-	} else if (versionString.hasPrefix("2.000.")
-		|| versionString.hasPrefix("2.100.")
-		|| versionString.hasPrefix("3.000.")) {
-		*version = SCI_VERSION_32;
-	} else if (versionString.hasPrefix("1.ECO.")
-		|| versionString.hasPrefix("1.SQ1.")
-		|| versionString.hasPrefix("1.SQ4.")
-		|| versionString.hasPrefix("1.LS5.")
-		|| versionString.hasPrefix("1.pq3.")
-		|| versionString.hasPrefix("FAIRY.")
-		|| versionString.hasPrefix("T.A00.")) {
-		*version = SCI_VERSION_1;
-	} else if (versionString.hasPrefix("L.rry.")
-		|| versionString.hasPrefix("l.cfs.")) {
-		*version = SCI_VERSION_1_1;
-	} else if (versionString == "x.yyy.zzz") {
-		// How to map it?
-	} else {
-		// Unknown or not a version number
-		return false;
-	}
-
-	return true;
+	return "unknown";
 }
 
 } // End of namespace Sci

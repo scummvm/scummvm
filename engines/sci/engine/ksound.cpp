@@ -157,9 +157,9 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	SongHandle handle;
 	int cue;
 
-	if (s->_version >= SCI_VERSION_01)
+	if (s->_version > SCI_VERSION_01)
 		return;
-	/* SCI01 and later explicitly poll for everything */
+	/* SCI1 and later explicitly poll for everything */
 
 	while ((result = s->_sound.sfx_poll(&handle, &cue))) {
 		reg_t obj = DEFROBNICATE_HANDLE(handle);

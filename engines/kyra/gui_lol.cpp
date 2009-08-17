@@ -127,7 +127,7 @@ void LoLEngine::gui_drawScroll() {
 		if (_availableSpells[i] == -1)
 			continue;
 		uint8 col = (i == _selectedSpell) ? 132 : 1;
-		_screen->fprintString(getLangString(_spellProperties[_availableSpells[i]].spellNameCode), 24, y, col, 0, 0);
+		_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[i]].spellNameCode));
 		y += 9;
 	}
 }
@@ -138,7 +138,7 @@ void LoLEngine::gui_highlightSelectedSpell(bool mode) {
 		if (_availableSpells[i] == -1)
 			continue;
 		uint8 col = (mode && (i == _selectedSpell)) ? 132 : 1;
-		_screen->fprintString(getLangString(_spellProperties[_availableSpells[i]].spellNameCode), 24, y, col, 0, 0);
+		_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[i]].spellNameCode));
 		y += 9;
 	}
 }
@@ -165,14 +165,14 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 	_screen->copyRegion(80, 143, 80, 143, 232, 35, 0, 2);
 	gui_drawAllCharPortraitsWithStats();
 
-	_screen->fprintString(l->name, 157, 9, 254, 0, 5);
+	_screen->fprintString("%s", 157, 9, 254, 0, 5, l->name);
 
 	gui_printCharInventoryStats(charNum);
 
 	for (int i = 0; i < 11; i++)
 		gui_drawCharInventoryItem(i);
 
-	_screen->fprintString(getLangString(0x4033), 182, 103, 172, 0, 5);
+	_screen->fprintString("%s", 182, 103, 172, 0, 5, getLangString(0x4033));
 
 	static const uint16 statusFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
 
@@ -232,14 +232,14 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 		y = index * 10 + 22;
 		col = 158;
 		if (redraw)
-			_screen->fprintString(getLangString(0x4014 + index), offs + 108, y, col, 0, 4);
+			_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
 	} else {
 		//skills
 		int s = index - 2;
 		y = s * 10 + 62;
 		col = _characters[_selectedCharacter].flags & (0x200 << s) ? 254 : 180;
 		if (redraw)
-			_screen->fprintString(getLangString(0x4014 + index), offs + 108, y, col, 0, 4);
+			_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
 	}
 
 	if (offs)
@@ -1215,7 +1215,7 @@ int LoLEngine::clickedPortraitEtcRight(Button *button) {
 		return 1;
 	}
 
-	_txt->printMessage(2, getLangString((flg & 8) ? 0x4029 : ((flg & 0x10) ? 0x402a : 0x402b)));
+	_txt->printMessage(2, "%s", getLangString((flg & 8) ? 0x4029 : ((flg & 0x10) ? 0x402a : 0x402b)));
 	return 1;
 }
 
@@ -1235,13 +1235,13 @@ int LoLEngine::clickedCharInventorySlot(Button *button) {
 			}
 
 			if (!f)
-				_txt->printMessage(_itemsInPlay[_itemInHand].itemPropertyIndex == 231 ? 2 : 0, getLangString(0x418C));
+				_txt->printMessage(_itemsInPlay[_itemInHand].itemPropertyIndex == 231 ? 2 : 0, "%s", getLangString(0x418C));
 
 			return 1;
 		}
 	} else {
 		if (!_characters[_selectedCharacter].items[button->arg]) {
-			_txt->printMessage(0, getLangString(_inventorySlotDesc[button->arg] + 8));
+			_txt->printMessage(0, "%s", getLangString(_inventorySlotDesc[button->arg] + 8));
 			return 1;
 		}
 	}
@@ -1506,7 +1506,7 @@ int LoLEngine::clickedSpellTargetCharacter(Button *button) {
 
 int LoLEngine::clickedSpellTargetScene(Button *button) {
 	LoLCharacter *c = &_characters[_activeSpell.charNum];
-	_txt->printMessage(0, getLangString(0x4041));
+	_txt->printMessage(0, "%s", getLangString(0x4041));
 
 	c->magicPointsCur += _activeSpell.p->mpRequired[_activeSpell.level];
 	if (c->magicPointsCur > c->magicPointsMax)
@@ -1633,7 +1633,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 		_screen->fillRect(112, 0, 288, 120, 1);
 		gui_drawAllCharPortraitsWithStats();
 
-		_txt->printMessage(0x8000, getLangString(0x4057));
+		_txt->printMessage(0x8000, "%s", getLangString(0x4057));
 		gui_toggleButtonDisplayMode(77, 0);
 
 		int h = 600 / tHp;
@@ -1761,7 +1761,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 		_partyAwake = true;
 		updateDrawPage2();
 		gui_drawScene(0);
-		_txt->printMessage(0x8000, getLangString(0x4059));
+		_txt->printMessage(0x8000, "%s", getLangString(0x4059));
 		_screen->fadeToPalette1(40);
 
 	} else {
@@ -1774,12 +1774,12 @@ int LoLEngine::clickedRestParty(Button *button) {
 				if (needPoisoningFlags & (1 << i))
 					setTemporaryFaceFrame(i, 3, 8, 0);
 			}
-			_txt->printMessage(0x8000, getLangString(0x405a));
+			_txt->printMessage(0x8000, "%s", getLangString(0x405a));
 			gui_drawAllCharPortraitsWithStats();
 
 		} else {
 			setTemporaryFaceFrameForAllCharacters(2, 4, 1);
-			_txt->printMessage(0x8000, getLangString(0x4058));
+			_txt->printMessage(0x8000, "%s", getLangString(0x4058));
 		}
 		gui_toggleButtonDisplayMode(77, 0);
 	}
@@ -1798,9 +1798,9 @@ int LoLEngine::clickedCompass(Button *button) {
 
 	if (_compassBroken) {
 		if (characterSays(0x425b, -1, true))
-			_txt->printMessage(4, getLangString(0x425b));
+			_txt->printMessage(4, "%s", getLangString(0x425b));
 	} else {
-		_txt->printMessage(0, getLangString(0x402f + _currentDirection));
+		_txt->printMessage(0, "%s", getLangString(0x402f + _currentDirection));
 	}
 
 	return 1;
@@ -1824,11 +1824,11 @@ int LoLEngine::clickedLamp(Button *button) {
 
 	if (_itemsInPlay[_itemInHand].itemPropertyIndex == 248) {
 		if (_lampOilStatus >= 100) {
-			_txt->printMessage(0, getLangString(0x4061));
+			_txt->printMessage(0, "%s", getLangString(0x4061));
 			return 1;
 		}
 
-		_txt->printMessage(0, getLangString(0x4062));
+		_txt->printMessage(0, "%s", getLangString(0x4062));
 
 		deleteItem(_itemInHand);
 		snd_playSoundEffect(181, -1);
@@ -1860,7 +1860,7 @@ int LoLEngine::clickedStatusIcon(Button *button) {
 	if (str == 0 || str > 3)
 		return 1;
 
-	_txt->printMessage(0x8002, getLangString(str == 1 ? 0x424c : (str == 2 ? 0x424e : 0x424d)));
+	_txt->printMessage(0x8002, "%s", getLangString(str == 1 ? 0x424c : (str == 2 ? 0x424e : 0x424d)));
 	return 1;
 }
 
@@ -2386,7 +2386,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 				fC = _screen->getTextWidth(_saveDescription);
 			}
 
-			_screen->fprintString(_saveDescription, (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0);
+			_screen->fprintString("%s", (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0, _saveDescription);
 			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, d->unk8, 0);
 			_screen->setCurPage(pg);
 		}
@@ -2485,7 +2485,7 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font) {
-	_screen->fprintString(str, x, y, c0, c1, flags);
+	_screen->fprintString("%s", x, y, c0, c1, flags, str);
 }
 
 int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {

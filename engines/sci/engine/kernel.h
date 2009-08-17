@@ -32,6 +32,8 @@
 
 #include "sci/uinput.h"
 #include "sci/vocabulary.h"
+#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/vm.h"
 
 namespace Sci {
 
@@ -60,8 +62,7 @@ enum AutoDetectedFeatures {
 	kFeatureOldGfxFunctions = 1 << 1,
 	kFeatureLofsAbsolute    = 1 << 2,
 	kFeatureSci01Sound      = 1 << 3,
-	kFeatureSci1Sound       = 1 << 4,
-	kFeatureSci0Sci1Table   = 1 << 5
+	kFeatureSci1Sound       = 1 << 4
 };
 
 class Kernel {
