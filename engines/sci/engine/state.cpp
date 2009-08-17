@@ -254,7 +254,7 @@ EngineState::DoSoundType EngineState::detectDoSoundType() {
 		if (!parse_reg_t(this, "?Sound", &soundClass)) {
 			reg_t fptr;
 
-			Object *obj = obj_get(this, soundClass);
+			Object *obj = obj_get(seg_manager, _version, soundClass);
 			SelectorType sel = lookup_selector(this, soundClass, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play, NULL, &fptr);
 
 			if (obj && (sel == kSelectorMethod)) {
