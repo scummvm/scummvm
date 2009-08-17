@@ -39,8 +39,6 @@ Mouse::Mouse(DraciEngine *vm) {
 }
 
 void Mouse::handleEvent(Common::Event event) {
-	_x = (uint16) event.mouse.x;
-	_y = (uint16) event.mouse.y;
 	
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
@@ -64,7 +62,9 @@ void Mouse::handleEvent(Common::Event event) {
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
-		setPosition(_x, _y);
+		debugC(6, kDraciGeneralDebugLevel, "Mouse move (x: %u y: %u)", _x, _y);
+		_x = (uint16) event.mouse.x;
+		_y = (uint16) event.mouse.y;
 		break;	
 
 	default:
