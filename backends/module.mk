@@ -11,6 +11,7 @@ MODULE_OBJS := \
 	fs/posix/posix-fs-factory.o \
 	fs/ps2/ps2-fs-factory.o \
 	fs/psp/psp-fs-factory.o \
+	fs/psp/psp-stream.o \
 	fs/symbian/symbian-fs-factory.o \
 	fs/windows/windows-fs-factory.o \
 	fs/wii/wii-fs-factory.o \

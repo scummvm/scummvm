@@ -77,12 +77,13 @@ LIBS	+= -lmad
 CXXFLAGS+= -DUSE_VORBIS -DUSE_TREMOR
 LIBS	+= -lvorbisidec
 
-LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspsdk -lpspuser
+LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspuser -lpsppower
 
 CXXFLAGS := $(CXXFLAGS) -fno-exceptions -fno-rtti
 
 TARGET = scummvm-psp
-OBJS := psp_main.o \
+OBJS := powerman.o \
+	psp_main.o \
 	osys_psp.o \
 	osys_psp_gu.o \
 	kbd_ss_c.o \

@@ -430,6 +430,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			} else if (buttonsChanged & PSP_CTRL_START) {
 				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
+				event.kbd.flags = Common::KBD_CTRL;	// Main menu to allow RTL
 /*			} else if (buttonsChanged & PSP_CTRL_SELECT) {
 				event.kbd.keycode = Common::KEYCODE_0;
 				event.kbd.ascii = '0';
