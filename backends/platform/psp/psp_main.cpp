@@ -146,6 +146,9 @@ int main(void) {
 
 	SetupCallbacks();
 
+	//change clock rate to 333mhz
+	scePowerSetClockFrequency(333, 333, 166);
+
 	static const char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
