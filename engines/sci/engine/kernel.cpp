@@ -33,11 +33,7 @@
 
 namespace Sci {
 
-/** The string used to identify the "unknown" SCI0 function for each game */
-#define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
-
 // Default kernel name table
-#define SCI0_KNAMES_WELL_DEFINED 0x6e
 #define SCI_KNAMES_DEFAULT_ENTRIES_NR 0x89
 
 static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
@@ -782,32 +778,40 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 }
 
 void Kernel::setDefaultKernelNames() {
-	bool isSci0 = (_resmgr->sciVersion() <= SCI_VERSION_0_LATE);
-	int offset = 0;
+	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
-	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
-	for (int i = 0; i < SCI_KNAMES_DEFAULT_ENTRIES_NR; i++) {
-		// In SCI0, Platform was DoAvoider
-		if (!strcmp(sci_default_knames[i], "Platform") && isSci0) {
-			_kernelNames[i + offset] = "DoAvoider";
-			continue;
-		}
+	switch (_resmgr->sciVersion()) {
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE:
+		// Insert SCI0 file functions after SetCursor (0x28)
+		_kernelNames.insert_at(0x29, "FOpen");
+		_kernelNames.insert_at(0x2A, "FPuts");
+		_kernelNames.insert_at(0x2B, "FGets");
+		_kernelNames.insert_at(0x2C, "FClose");
 
-		_kernelNames[i + offset] = sci_default_knames[i];
+		// Function 0x55 is DoAvoider
+		_kernelNames[0x55] = "DoAvoider";
 
-		// SCI0 has 4 extra functions between SetCursor (0x28) and Savegame
-		if (!strcmp(sci_default_knames[i], "SetCursor") && isSci0) {
-			_kernelNames[i + 1] = "FOpen";
-			_kernelNames[i + 2] = "FPuts";
-			_kernelNames[i + 3] = "FGets";
-			_kernelNames[i + 4] = "FClose";
-			offset = 4;
-		}
-	}
+		// Cut off unused functions
+		_kernelNames.resize(0x72);
+		break;
 
-	if (_resmgr->sciVersion() == SCI_VERSION_1_1) {
-		// HACK: KQ6CD calls unimplemented function 0x26
+	case SCI_VERSION_01:
+		// Multilingual SCI01 games have StrSplit as function 0x78
+		_kernelNames[0x78] = "StrSplit";
+
+		// Cut off unused functions
+		_kernelNames.resize(0x79);
+		break;
+
+	case SCI_VERSION_1_1:
+		// KQ6CD calls unimplemented function 0x26
 		_kernelNames[0x26] = "Dummy";
+		break;
+
+	default:
+		// Use default table for the other versions
+		break;
 	}
 }
 
