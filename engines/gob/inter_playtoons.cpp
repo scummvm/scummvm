@@ -150,7 +150,7 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 		strcat(fileName, ".ITK");
 
 	// Workaround for Bambou : In the script, the path is hardcoded (!!)
-	if ((backSlash = strrchr(fileName, '\\')) != 0) {
+	if ((backSlash = strrchr(fileName, '\\'))) {
 		debugC(2, kDebugFileIO, "Opening ITK file \"%s\" instead of \"%s\"", backSlash + 1, fileName);
 		_vm->_dataIO->openDataFile(backSlash + 1, true);
 	} else
