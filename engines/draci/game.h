@@ -324,6 +324,18 @@ public:
 	void dialogueDone();
 	void runDialogueProg(GPL2Program, int offset);
 
+	bool isDialogueBegin();
+	bool shouldExitDialogue();
+	void setDialogueExit(bool exit);
+	int getDialogueBlockNum();
+	int getDialogueVar(int dialogueID);
+	void setDialogueVar(int dialogueID, int value);
+	int getCurrentDialogue();
+	int getDialogueCurrentBlock();
+	int getDialogueLastBlock();
+	int getDialogueLinesNum();
+	int getCurrentDialogueOffset();
+
 	void schedulePalette(int paletteID);
 	int getScheduledPalette();
 
@@ -344,14 +356,11 @@ private:
 	int _inventory[kInventorySlots];
 	bool _inventoryExit;
 
-
 	Room _currentRoom;
 	int _currentGate;	
 	int _newRoom;
 	int _newGate;
 
-// HACK: remove public when tested and add getters instead
-public:
 	uint *_dialogueOffsets;
 	int _currentDialogue;
 	int *_dialogueVars;
@@ -361,7 +370,7 @@ public:
 	bool _dialogueExit;
 	int _currentBlock;
 	int _lastBlock;
-	int _dialogueLines;
+	int _dialogueLinesNum;
 	int _blockNum;
 	int _lines[kDialogueLines];
 	Animation *_dialogueAnims[kDialogueLines];

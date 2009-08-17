@@ -219,29 +219,31 @@ int Script::funcRandom(int n) {
 }
 
 int Script::funcAtBegin(int yesno) {
-	return _vm->_game->_dialogueBegin == yesno;
+	return _vm->_game->isDialogueBegin() == yesno;
 }	
 
 int Script::funcLastBlock(int blockID) {
 	blockID -= 1;
 
-	return _vm->_game->_lastBlock == blockID;
+	return _vm->_game->getDialogueLastBlock() == blockID;
 }
 
 int Script::funcBlockVar(int blockID) {
 	blockID -= 1;
-
-	return _vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue] + blockID];
+	
+	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
+	return _vm->_game->getDialogueVar(currentOffset + blockID);
 }
 
 int Script::funcHasBeen(int blockID) {
 	blockID -= 1;
 
-	return _vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue] + blockID] > 0;
+	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
+	return _vm->_game->getDialogueVar(currentOffset + blockID) > 0;
 }
 
 int Script::funcMaxLine(int lines) {
-	return _vm->_game->_dialogueLines < lines;
+	return _vm->_game->getDialogueLinesNum() < lines;
 }
 
 int Script::funcNot(int n) {
@@ -731,27 +733,33 @@ void Script::loadMap(Common::Queue<int> &params) {
 }
 
 void Script::resetDialogue(Common::Queue<int> &params) {
+
+	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 	
-	for (int i = 0; i < _vm->_game->_blockNum; ++i) {
-		_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+i] = 0;
+	for (int i = 0; i < _vm->_game->getDialogueBlockNum(); ++i) {
+		_vm->_game->setDialogueVar(currentOffset + i, 0);
 	}
 }
 
 void Script::resetDialogueFrom(Common::Queue<int> &params) {
 
-	for (int i = _vm->_game->_currentBlock; i < _vm->_game->_blockNum; ++i) {
-		_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+i] = 0;
+	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
+
+	for (int i = _vm->_game->getDialogueCurrentBlock(); i < _vm->_game->getDialogueBlockNum(); ++i) {
+		_vm->_game->setDialogueVar(currentOffset + i, 0);
 	}
 }
 
 void Script::resetBlock(Common::Queue<int> &params) {
 	int blockID = params.pop() - 1;
 
-	_vm->_game->_dialogueVars[_vm->_game->_dialogueOffsets[_vm->_game->_currentDialogue]+blockID] = 0;
+	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
+
+	_vm->_game->setDialogueVar(currentOffset + blockID, 0);
 }
 
 void Script::exitDialogue(Common::Queue<int> &params) {
-	_vm->_game->_dialogueExit = true;
+	_vm->_game->setDialogueExit(true);
 }
 
 void Script::roomMap(Common::Queue<int> &params) {

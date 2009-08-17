@@ -805,10 +805,10 @@ void Game::dialogueMenu(int dialogueID) {
 		
 		debugC(7, kDraciLogicDebugLevel, 
 			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d", 
-			hit, _lines[hit], _lastBlock, _dialogueLines, _dialogueExit);
+			hit, _lines[hit], _lastBlock, _dialogueLinesNum, _dialogueExit);
 
 		if ((!_dialogueExit) && (hit != -1) && (_lines[hit] != -1)) {
-			if ((oldLines == 1) && (_dialogueLines == 1) && (_lines[hit] == _lastBlock)) {
+			if ((oldLines == 1) && (_dialogueLinesNum == 1) && (_lines[hit] == _lastBlock)) {
 				break;
 			}
 			_currentBlock = _lines[hit];
@@ -819,7 +819,7 @@ void Game::dialogueMenu(int dialogueID) {
 		_lastBlock = _lines[hit];
 		_dialogueVars[_dialogueOffsets[dialogueID] + _lastBlock] += 1;
 		_dialogueBegin = false;
-		oldLines = _dialogueLines;
+		oldLines = _dialogueLinesNum;
 
 	} while(!_dialogueExit);
 
@@ -828,32 +828,32 @@ void Game::dialogueMenu(int dialogueID) {
 }
 
 int Game::dialogueDraw() {
-	_dialogueLines = 0;
+	_dialogueLinesNum = 0;
 	int i = 0;
 	int ret = 0;
 	
 	Animation *anim;
 	Text *dialogueLine;
 
-	while ((_dialogueLines < 4) && (i < _blockNum)) {
+	while ((_dialogueLinesNum < 4) && (i < _blockNum)) {
 		
 		GPL2Program blockTest;
 		blockTest._bytecode = _dialogueBlocks[i]._canBlock;
 		blockTest._length = _dialogueBlocks[i]._canLen;
 		debugC(3, kDraciLogicDebugLevel, "Testing dialogue block %d", i);
 		if (_vm->_script->testExpression(blockTest, 1)) {
-			anim = _dialogueAnims[_dialogueLines];
+			anim = _dialogueAnims[_dialogueLinesNum];
 			dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
 			dialogueLine->setText(_dialogueBlocks[i]._title);
 
 			dialogueLine->setColour(kLineInactiveColour);
-			_lines[_dialogueLines] = i;
-			_dialogueLines++;
+			_lines[_dialogueLinesNum] = i;
+			_dialogueLinesNum++;
 		}
 		++i;
 	}
 
-	for (i = _dialogueLines; i < kDialogueLines; ++i) {
+	for (i = _dialogueLinesNum; i < kDialogueLines; ++i) {
 		_lines[i] = -1;
 		anim = _dialogueAnims[i];
 		dialogueLine = reinterpret_cast<Text *>(anim->getFrame());
@@ -862,7 +862,7 @@ int Game::dialogueDraw() {
 
 	_oldObjUnderCursor = kObjectNotFound;
 
-	if (_dialogueLines > 1) {
+	if (_dialogueLinesNum > 1) {
 		_vm->_mouse->cursorOn();
 		_shouldExitLoop = false;
 		loop();
@@ -882,7 +882,7 @@ int Game::dialogueDraw() {
 			ret = _dialogueAnims[0]->getID() - _animUnderCursor;
 		}
 	} else {
-		ret = _dialogueLines - 1;
+		ret = _dialogueLinesNum - 1;
 	}
 
 	for (i = 0; i < kDialogueLines; ++i) {
@@ -968,6 +968,50 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 	}
 
 	_vm->_anims->deleteAfterIndex(lastAnimIndex);
+}
+
+bool Game::isDialogueBegin() {
+	return _dialogueBegin;
+}
+
+bool Game::shouldExitDialogue() {
+	return _dialogueExit;
+}
+
+void Game::setDialogueExit(bool exit) {
+	_dialogueExit = exit;
+}
+
+int Game::getDialogueBlockNum() {
+	return _blockNum;
+}
+
+int Game::getDialogueVar(int dialogueID) {
+	return _dialogueVars[dialogueID];
+}
+
+void Game::setDialogueVar(int dialogueID, int value) {
+	_dialogueVars[dialogueID] = value;
+}
+
+int Game::getCurrentDialogue() {
+	return _currentDialogue;
+}
+
+int Game::getDialogueLastBlock() {
+	return _lastBlock;
+}
+
+int Game::getDialogueLinesNum() {
+	return _dialogueLinesNum;	
+}
+
+int Game::getDialogueCurrentBlock() {
+	return _currentBlock;	
+}
+
+int Game::getCurrentDialogueOffset() {
+	return _dialogueOffsets[_currentDialogue];
 }
 
 void Game::walkHero(int x, int y) {
