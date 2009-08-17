@@ -43,7 +43,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	SaveHeader header;
 	Common::InSaveFile *saveFile = openSaveForReading(fileName, header);
 	if (!saveFile) {
-		_txt->printMessage(2, getLangString(0x425d));
+		_txt->printMessage(2, "%s", getLangString(0x425d));
 		return Common::kNoError;
 	}
 

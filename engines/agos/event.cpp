@@ -498,7 +498,6 @@ void AGOSEngine::delay(uint amount) {
 						_variableArray[41] = 1;
 				}
 
-				// Make sure backspace works right (this fixes a small issue on OS X)
 				_keyPressed = event.kbd;
 				break;
 			case Common::EVENT_MOUSEMOVE:

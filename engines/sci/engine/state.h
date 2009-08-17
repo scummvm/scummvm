@@ -129,7 +129,7 @@ public:
 	SpeedThrottler(SciVersion version) {
 		if (version >= SCI_VERSION_1_1)
 			_maxInstructions = 3300;
-		else if (version >= SCI_VERSION_1)
+		else if (version >= SCI_VERSION_1_EARLY)
 			_maxInstructions = 2200;
 		else
 			_maxInstructions = 1100;

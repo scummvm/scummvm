@@ -1818,7 +1818,6 @@ int AgiEngine::runLogic(int n) {
 		}
 
 		_game.execStack.back().curIP = ip;
-		processEvents();
 
 		switch (op = *(code + ip++)) {
 		case 0xff:	// if (open/close)

@@ -66,10 +66,9 @@ enum kDebugLevels {
 struct SciGameDescription {
 	ADGameDescription desc;
 	uint32 flags;
-	SciVersion version;
 };
 
-extern const char *versionNames[6];
+extern const char *versionNames[];
 
 enum SciGameFlags {
 	// SCI0 flags
@@ -113,6 +112,7 @@ public:
 
 private:
 	const SciGameDescription *_gameDescription;
+	SciVersion _version;
 	ResourceManager *_resmgr;
 	EngineState *_gamestate;
 	Kernel *_kernel;

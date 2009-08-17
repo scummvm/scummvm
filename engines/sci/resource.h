@@ -47,12 +47,15 @@ namespace Sci {
 
 /** SCI versions */
 enum SciVersion {
-	SCI_VERSION_AUTODETECT = 0,
-	SCI_VERSION_0 = 1,
-	SCI_VERSION_01 = 2,
-	SCI_VERSION_1 = 3,
-	SCI_VERSION_1_1 = 4,
-	SCI_VERSION_32 = 5
+	SCI_VERSION_AUTODETECT,
+	SCI_VERSION_0_EARLY, // Early KQ4, 1988 xmas card
+	SCI_VERSION_0_LATE, // KQ4, LSL2, LSL3, SQ3 etc
+	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
+	SCI_VERSION_1_EGA, // EGA with parser, QFG2
+	SCI_VERSION_1_EARLY, // KQ5. (EGA/VGA)
+	SCI_VERSION_1_LATE, // ECO1, LSL1, LSL5. (EGA/VGA)
+	SCI_VERSION_1_1, // KQ6, ECO2
+	SCI_VERSION_32 // GK
 };
 
 /** Resource status types */
@@ -225,7 +228,14 @@ public:
 		kResVersionSci32
 	};
 
-	bool isVGA() const { return _isVGA; }
+	// TODO: Amiga
+	enum ViewType {
+		kViewEga,
+		kViewVga,
+		kViewVga11
+	};
+
+	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
 
 	/**
 	 * Returns the SCI version as detected by the resource manager
@@ -284,7 +294,7 @@ public:
 	void setAudioLanguage(int language);
 
 protected:
-	bool _isVGA; // Used to determine if the game has EGA or VGA graphics
+	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory
@@ -403,7 +413,12 @@ protected:
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 
-	SciVersion guessSciVersion();
+	ResourceCompression getViewCompression();
+	ViewType detectViewType();
+	bool hasOldScriptHeader();
+	bool hasSci0Voc999();
+	bool hasSci1Voc900();
+	SciVersion detectSciVersion();
 };
 
 } // End of namespace Sci

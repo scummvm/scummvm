@@ -695,11 +695,11 @@ int32 IMuseInternal::doCommand_internal(int numargs, int a[]) {
 		return -1;
 
 	{
-		char string[128];
-		sprintf(string, "doCommand - %d (%d/%d)", a[0], (int)param, (int)cmd);
+		Common::String string = "doCommand - ";
+		string += Common::String::printf("%d (%d/%d)", a[0], (int)param, (int)cmd);
 		for (i = 1; i < numargs; ++i)
-			sprintf(string + strlen(string), ", %d", a[i]);
-		debugC(DEBUG_IMUSE, string);
+			string += Common::String::printf(", %d", a[i]);
+		debugC(DEBUG_IMUSE, "%s", string.c_str());
 	}
 
 	if (param == 0) {

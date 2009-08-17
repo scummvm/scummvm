@@ -471,10 +471,13 @@ ScummMenuDialog::~ScummMenuDialog() {
 	delete _loadDialog;
 }
 
-void ScummMenuDialog::reflowLayout() {
-	if (!_vm->canSaveGameStateCurrently())
-		_saveButton->setEnabled(false);
+int ScummMenuDialog::runModal() {
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
+	return ScummDialog::runModal();
+}
 
+void ScummMenuDialog::reflowLayout() {
+	_saveButton->setEnabled(_vm->canSaveGameStateCurrently());
 	Dialog::reflowLayout();
 }
 
@@ -745,7 +748,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 	_message = queryResString(res);
 
 	// Width and height are dummy
-	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
+	_text = new StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
 }
 
 InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
@@ -754,7 +757,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, const String& message)
 	_message = message;
 
 	// Width and height are dummy
-	_text = new StaticTextWidget(this, 4, 4, 10, 10, _message, kTextAlignCenter);
+	_text = new StaticTextWidget(this, 0, 0, 10, 10, _message, kTextAlignCenter);
 }
 
 void InfoDialog::setInfoText(const String& message) {
@@ -775,7 +778,7 @@ void InfoDialog::reflowLayout() {
 	_x = (screenW - width) / 2;
 	_y = (screenH - height) / 2;
 
-	_text->setSize(_w - 8, _h);
+	_text->setSize(_w, _h);
 }
 
 const Common::String InfoDialog::queryResString(int stringno) {

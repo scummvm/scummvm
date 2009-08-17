@@ -70,6 +70,19 @@ static const CRUISEGameDescription gameDescriptions[] = {
 	{
 		{
 			"cruise",
+			"16 colours",
+			AD_ENTRY1("D1", "cd29a4cd9162076e9a18495fe56a48f3"),
+			Common::EN_GRB,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_CRUISE,
+		0,
+	},
+	{
+		{
+			"cruise",
 			"16 colors",
 			AD_ENTRY1("D1", "41a7a4d426dbd048eb369cfee4bb2717"),
 			Common::FR_FRA,

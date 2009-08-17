@@ -43,11 +43,15 @@ namespace Sci {
 
 class GfxDriver;
 
-const char *versionNames[6] = {
-	"Autodetected",
-	"SCI0",
+// FIXME: error-prone
+const char *versionNames[9] = {
+	"Autodetect",
+	"SCI0 Early",
+	"SCI0 Late",
 	"SCI01",
-	"SCI1",
+	"SCI1 EGA",
+	"SCI1 Early",
+	"SCI1 Late",
 	"SCI1.1",
 	"SCI32"
 };
@@ -134,50 +138,24 @@ Common::Error SciEngine::run() {
 
 	// FIXME/TODO: Move some of the stuff below to init()
 
-	SciVersion version = getVersion();
 	const uint32 flags = getFlags();
 
 	_resmgr = new ResourceManager(256 * 1024);
+	_version = _resmgr->sciVersion();
 
 	if (!_resmgr) {
 		printf("No resources found, aborting...\n");
 		return Common::kNoGameDataFoundError;
 	}
 
-	// When version is set to autodetect, use version as determined by resource manager
-	if (version == SCI_VERSION_AUTODETECT)
-		version = _resmgr->sciVersion();
-
 	_kernel = new Kernel(_resmgr);
 	_vocabulary = new Vocabulary(_resmgr);
-	script_adjust_opcode_formats(_resmgr->sciVersion());
+	script_adjust_opcode_formats(_version);
 
-#if 0
-	printf("Mapping instruments to General Midi\n");
-
-	map_MIDI_instruments(_resmgr);
-#endif
-
-	_gamestate = new EngineState(_resmgr, version, flags);
-
-	// Verify that we haven't got an invalid game detection entry
-	if (version < SCI_VERSION_1) {
-		// SCI0/SCI01
-	} else if (version == SCI_VERSION_1) {
-		if (flags & GF_SCI0_OLDGETTIME) {
-			error("This game entry is erroneous. It's marked as SCI1, but it has SCI0 flags set");
-		}
-	} else if (version == SCI_VERSION_1_1 || version == SCI_VERSION_32) {
-		if (flags & GF_SCI0_OLDGETTIME) {
-			error("This game entry is erroneous. It's marked as SCI1.1/SCI32, but it has SCI0 flags set");
-		}
-	} else {
-		error ("Unknown SCI version in game entry");
-	}
+	_gamestate = new EngineState(_resmgr, _version, flags);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
-
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
@@ -232,7 +210,7 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	printf("Emulating SCI version %s\n", versionNames[version]);
+	printf("Emulating SCI version %s\n", versionNames[_version]);
 
 	game_run(&_gamestate); // Run the game
 
@@ -271,7 +249,7 @@ const char* SciEngine::getGameID() const {
 }
 
 SciVersion SciEngine::getVersion() const {
-	return _gameDescription->version;
+	return _version;
 }
 
 Common::Language SciEngine::getLanguage() const {

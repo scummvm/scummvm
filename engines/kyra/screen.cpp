@@ -49,6 +49,8 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 
 	_sjisFont = 0;
 	memset(_fonts, 0, sizeof(_fonts));
+
+	_currentFont = FID_8_FNT;
 }
 
 Screen::~Screen() {

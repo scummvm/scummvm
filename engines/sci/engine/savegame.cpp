@@ -693,7 +693,13 @@ int _reset_graphics_input(EngineState *s);
 
 static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
-	SongIteratorType it_type = s->resmgr->sciVersion() >= SCI_VERSION_01 ? SCI_SONG_ITERATOR_TYPE_SCI1 : SCI_SONG_ITERATOR_TYPE_SCI0;
+	SongIteratorType it_type;
+
+	if (((SciEngine *)g_engine)->getKernel()->usesSci01SoundFunctions()
+		|| ((SciEngine *)g_engine)->getKernel()->usesSci1SoundFunctions())
+		it_type = SCI_SONG_ITERATOR_TYPE_SCI1;
+	else
+		it_type = SCI_SONG_ITERATOR_TYPE_SCI0;
 
 	seeker = s->_sound._songlib._lib;
 

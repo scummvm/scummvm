@@ -220,7 +220,7 @@ void Script::step() {
 
 	// Only output if we're not re-doing the previous instruction
 	if (_currentInstruction != _oldInstruction) {
-		debugScript(1, false, _debugString.c_str());
+		debugScript(1, false, "%s", _debugString.c_str());
 
 		_oldInstruction = _currentInstruction;
 	}
