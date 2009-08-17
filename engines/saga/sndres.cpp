@@ -192,7 +192,6 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	GameSoundTypes resourceType = kSoundPCM;
 	byte *data = 0;
 	int rate = 0, size = 0;
-	byte flags = 0;
 	Common::File* file;
 
 	if (resourceId == (uint32)-1) {
@@ -269,21 +268,17 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 	}
 
-	// Default sound type is 16-bit PCM (used in ITE)
-	buffer.isBigEndian = context->isBigEndian;
-	if ((context->fileType & GAME_VOICEFILE) && (_vm->getFeatures() & GF_LE_VOICES))
-		buffer.isBigEndian = false;
+	// Default sound type is 16-bit signed PCM, used in ITE by PCM and VOX files
 	buffer.isCompressed = context->isCompressed;
 	buffer.soundType = resourceType;
 	buffer.originalSize = 0;
-	buffer.stereo = false;
-	buffer.isSigned = true;			// default for PCM and VOX
-	buffer.frequency = 22050;		// default for PCM and VOX
-	buffer.sampleBits = 16;			// default for PCM and VOX
+	// Set default flags and frequency for PCM, VOC and VOX files, which got no header
+	buffer.flags = Audio::Mixer::FLAG_16BITS;
+	buffer.frequency = 22050;
 	if (_vm->getGameId() == GID_ITE) {
 		if (_vm->getFeatures() & GF_8BIT_UNSIGNED_PCM) {	// older ITE demos
-			buffer.isSigned = false;
-			buffer.sampleBits = 8;
+			buffer.flags |= Audio::Mixer::FLAG_UNSIGNED;
+			buffer.flags &= ~Audio::Mixer::FLAG_16BITS;
 		} else {
 			// Voice files in newer ITE demo versions are OKI ADPCM (VOX) encoded
 			if (!scumm_stricmp(context->fileName, "voicesd.rsc"))
@@ -291,6 +286,12 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		}
 	}
 	buffer.buffer = NULL;
+
+	// Check for LE sounds
+	if (!context->isBigEndian)
+		buffer.flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
+	if ((context->fileType & GAME_VOICEFILE) && (_vm->getFeatures() & GF_LE_VOICES))
+		buffer.flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
 
 	// Older Mac versions of ITE were Macbinary packed
 	int soundOffset = (context->fileType & GAME_MACBINARY) ? 36 : 0;
@@ -321,25 +322,23 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 	case kSoundShorten:
 	case kSoundVOC:
 		if (resourceType == kSoundWAV) {
-			result = Audio::loadWAVFromStream(readS, size, rate, flags);
+			result = Audio::loadWAVFromStream(readS, size, rate, buffer.flags);
 		} else if (resourceType == kSoundAIFF) {
-			result = Audio::loadAIFFFromStream(readS, size, rate, flags);
+			result = Audio::loadAIFFFromStream(readS, size, rate, buffer.flags);
+#ifdef ENABLE_SAGA2
+		} else if (resourceType == kSoundShorten) {
+			result = Audio::loadShortenFromStream(readS, size, rate, buffer.flags);
+#endif
 		} else if (resourceType == kSoundVOC) {
 			data = Audio::loadVOCFromStream(readS, size, rate);
 			result = (data != 0);
 			if (onlyHeader)
 				free(data);
-#ifdef ENABLE_SAGA2
-		} else if (resourceType == kSoundShorten) {
-			result = Audio::loadShortenFromStream(readS, size, rate, flags);
-#endif
+			buffer.flags |= Audio::Mixer::FLAG_UNSIGNED;
 		}
 
 		if (result) {
 			buffer.frequency = rate;
-			buffer.sampleBits = (flags & Audio::Mixer::FLAG_16BITS) ? 16 : 8;
-			buffer.stereo = flags & Audio::Mixer::FLAG_STEREO;
-			buffer.isSigned = (resourceType == kSoundVOC) ? false : !(flags & Audio::Mixer::FLAG_UNSIGNED);
 			buffer.size = size;
 
 			if (!onlyHeader && resourceType != kSoundVOC) {
@@ -360,8 +359,10 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 		readS.readByte();	// Skip compression identifier byte
 		buffer.frequency = readS.readUint16LE();
 		buffer.originalSize = readS.readUint32LE();
-		buffer.sampleBits = readS.readByte();
-		buffer.stereo = (readS.readByte() == char(0)) ? false : true;
+		if (readS.readByte() == 8)	// read sample bits
+			buffer.flags &= ~Audio::Mixer::FLAG_16BITS;
+		if (readS.readByte() != 0)	// read stereo flag
+			buffer.flags |= Audio::Mixer::FLAG_STEREO;
 
 		buffer.size = soundResourceLength;
 		buffer.soundType = resourceType;
@@ -407,12 +408,12 @@ int SndRes::getVoiceLength(uint32 resourceId) {
 		msDouble = (double)buffer.size;
 	else
 		msDouble = (double)buffer.originalSize;
-	if (buffer.sampleBits == 16) {
+
+	if (buffer.flags & Audio::Mixer::FLAG_16BITS)
 		msDouble /= 2.0;
-	}
-	if (buffer.stereo) {
+
+	if (buffer.flags & Audio::Mixer::FLAG_STEREO)
 		msDouble /= 2.0;
-	}
 
 	msDouble = msDouble / buffer.frequency * 1000.0;
 	return (int)msDouble;

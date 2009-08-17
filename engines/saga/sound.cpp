@@ -65,29 +65,18 @@ SndHandle *Sound::getHandle() {
 
 void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int volume,
 				sndHandleType handleType, bool loop) {
-	byte flags;
 
-	flags = Audio::Mixer::FLAG_AUTOFREE;
+	buffer.flags |= Audio::Mixer::FLAG_AUTOFREE;
 
 	if (loop)
-		flags |= Audio::Mixer::FLAG_LOOP;
+		buffer.flags |= Audio::Mixer::FLAG_LOOP;
 
-	if (buffer.sampleBits == 16) {
-		flags |= Audio::Mixer::FLAG_16BITS;
-
-		if (!buffer.isBigEndian)
-			flags |= Audio::Mixer::FLAG_LITTLE_ENDIAN;
-	}
-	if (buffer.stereo)
-		flags |= Audio::Mixer::FLAG_STEREO;
-	if (!buffer.isSigned)
-		flags |= Audio::Mixer::FLAG_UNSIGNED;
+	Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
+				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 
 	if (!buffer.isCompressed) {
-		Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
-					Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
 		_mixer->playRaw(soundType, handle, buffer.buffer,
-				buffer.size, buffer.frequency, flags, -1, volume);
+				buffer.size, buffer.frequency, buffer.flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = 0;
 
@@ -113,14 +102,8 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 				break;
 		}
 
-		if (stream != NULL) {
-			if (handleType == kVoiceHandle)
-				_mixer->playInputStream(Audio::Mixer::kSpeechSoundType, handle, stream, -1,
-							volume, 0, true, false);
-			else
-				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, stream, -1,
-							volume, 0, true, false);
-		}
+		if (stream != NULL)
+			_mixer->playInputStream(soundType, handle, stream, -1, volume, 0, true, false);
 	}
 }
 
