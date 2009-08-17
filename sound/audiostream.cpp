@@ -406,14 +406,14 @@ AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte f
 #define MAKE_LINEAR_DISK(STEREO, UNSIGNED) \
 		if (is16Bit) { \
 			if (isLE) \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks, loop); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, true>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop); \
 			else  \
-				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks, loop); \
+				return new LinearDiskStream<STEREO, true, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop); \
 		} else \
-			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, &stream, block, numBlocks, loop)
+			return new LinearDiskStream<STEREO, false, UNSIGNED, false>(rate, loopStart, loopEnd, takeOwnership, stream, block, numBlocks, loop)
 
 
-AudioStream *makeLinearDiskStream(Common::SeekableReadStream& stream, LinearDiskStreamAudioBlock* block, int numBlocks, int rate, byte flags, bool takeOwnership, uint loopStart, uint loopEnd) {
+AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int numBlocks, int rate, byte flags, bool takeOwnership, uint loopStart, uint loopEnd) {
 	const bool isStereo   = (flags & Audio::Mixer::FLAG_STEREO) != 0;
 	const bool is16Bit    = (flags & Audio::Mixer::FLAG_16BITS) != 0;
 	const bool isUnsigned = (flags & Audio::Mixer::FLAG_UNSIGNED) != 0;

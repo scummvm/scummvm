@@ -133,7 +133,7 @@ struct LinearDiskStreamAudioBlock {
  *  start position and length of each block of uncompressed audio in the stream.
  */
 
-AudioStream *makeLinearDiskStream(Common::SeekableReadStream& stream, LinearDiskStreamAudioBlock* block, int 
+AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int 
 		numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
 
 /**
