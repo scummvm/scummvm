@@ -57,10 +57,10 @@ enum {
 	kNoEscRoom = -1
 };
 
-// Used as a value to Game::_currentIcon and means there is no icon (game item) selected
+// Used as a value to Game::_currentIcon and means there is no item selected
 // and a "real" cursor image is used
 enum {
-	kNoIcon = -1
+	kNoItem = -1
 };
 
 // Used as a default parameter in Game::loadWalkingMap() to specify that the default
@@ -80,6 +80,17 @@ enum {
 enum SpeechConstants {
 	kBaseSpeechDuration = 200,
 	kSpeechTimeUnit = 400
+};
+
+/** Inventory related magical constants */
+enum InventoryConstants {
+  kInventoryItemWidth = 25,
+  kInventoryItemHeight = 25,
+  kInventoryColumns = 7,
+  kInventoryLines = 5,
+  kInventoryX = 70, //!< Used for positioning of the inventory sprite on the X axis
+  kInventoryY = 30, //!< Used for positioning of the inventory sprite on the Y axis
+  kInventorySlots = kInventoryLines * kInventoryColumns
 };
 
 class WalkingMap {
@@ -140,11 +151,11 @@ struct GameInfo {
 	int _startRoom;
 	int _mapRoom;
 	uint _numObjects;
-	uint _numIcons;
+	uint _numItems;
 	byte _numVariables;
 	byte _numPersons;
 	byte _numDialogues;
-	uint _maxIconWidth, _maxIconHeight;
+	uint _maxItemWidth, _maxItemHeight;
 	uint _musicLength;
 	uint _crc[4];
 	uint _numDialogueBlocks;
@@ -255,6 +266,7 @@ public:
 	void loadOverlays();
 	void loadObject(uint numObj);
 	void loadWalkingMap(int mapID = kDefaultRoomMap);
+	void loadItem(int itemID);
 
 	uint getNumObjects();
 	GameObject *getObject(uint objNum);
@@ -271,8 +283,13 @@ public:
 	int getGateNum();
 	void setGateNum(int gate);
 
-	int getIconStatus(int iconID);
-	int getCurrentIcon();
+	int getItemStatus(int itemID);
+	void setItemStatus(int itemID, int status);
+	int getCurrentItem();
+	void setCurrentItem(int itemID);
+	void removeItem(int itemID);
+	void putItem(int itemID, int position);
+	void addItem(int itemID);
 
 	int getEscRoom();
 
@@ -297,6 +314,10 @@ public:
 	void updateTitle();
 	void updateCursor();
 
+	void inventoryInit();
+	void inventoryDraw();
+	void inventoryDone();
+
 	void dialogueMenu(int dialogueID);
 	int dialogueDraw();
 	void dialogueInit(int dialogID);
@@ -312,16 +333,22 @@ private:
 	GameInfo _info;
 
 	int *_variables;
-	byte *_iconStatus;
 	Person *_persons;
 	GameObject *_objects;
+
+	byte *_itemStatus;
+	GameItem *_items;
+	int _currentItem;
+	int _itemUnderCursor;
+
+	int _inventory[kInventorySlots];
+	bool _inventoryExit;
+
 
 	Room _currentRoom;
 	int _currentGate;	
 	int _newRoom;
 	int _newGate;
-
-	int _currentIcon;
 
 // HACK: remove public when tested and add getters instead
 public:
@@ -336,8 +363,8 @@ public:
 	int _lastBlock;
 	int _dialogueLines;
 	int _blockNum;
-	int _lines[4];
-	Animation *_dialogueAnims[4];
+	int _lines[kDialogueLines];
+	Animation *_dialogueAnims[kDialogueLines];
 	
 	LoopStatus _loopStatus;
 	LoopSubstatus _loopSubstatus;

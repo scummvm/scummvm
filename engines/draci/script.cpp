@@ -52,7 +52,7 @@ void Script::setupCommandList() {
 		{ 6,  1, "Talk", 				2, { 3, 2 }, &Script::talk },
 		{ 7,  1, "ObjStat", 			2, { 3, 3 }, &Script::objStat },
 		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, &Script::objStatOn },
-		{ 8,  1, "IcoStat", 			2, { 3, 3 }, NULL },
+		{ 8,  1, "IcoStat", 			2, { 3, 3 }, &Script::icoStat },
 		{ 9,  1, "Dialogue", 			1, { 2 }, &Script::dialogue },
 		{ 9,  2, "ExitDialogue", 		0, { 0 }, &Script::exitDialogue },
 		{ 9,  3, "ResetDialogue", 		0, { 0 }, &Script::resetDialogue },
@@ -248,33 +248,33 @@ int Script::funcNot(int n) {
 	return !n;
 }
 
-int Script::funcIsIcoOn(int iconID) {
-	iconID -= 1;
+int Script::funcIsIcoOn(int itemID) {
+	itemID -= 1;
 
-	return _vm->_game->getIconStatus(iconID) == 1;
+	return _vm->_game->getItemStatus(itemID) == 1;
 } 
 
-int Script::funcIcoStat(int iconID) {
-	iconID -= 1;
+int Script::funcIcoStat(int itemID) {
+	itemID -= 1;
 
-	int status = _vm->_game->getIconStatus(iconID);
+	int status = _vm->_game->getItemStatus(itemID);
 	return (status == 1) ? 1 : 2;
 }
 
-int Script::funcIsIcoAct(int iconID) {
-	iconID -= 1;
+int Script::funcIsIcoAct(int itemID) {
+	itemID -= 1;
 
-	return _vm->_game->getCurrentIcon() == iconID;
+	return _vm->_game->getCurrentItem() == itemID;
 }
 
-int Script::funcActIco(int iconID) {
+int Script::funcActIco(int itemID) {
 	
 	// The parameter seems to be an omission in the original player since it's not
 	// used in the implementation of the function. It's possible that the functions were
 	// implemented in such a way that they had to have a single parameter so this is only
 	// passed as a dummy.
 
-	return _vm->_game->getCurrentIcon();
+	return _vm->_game->getCurrentItem();
 }
 
 int Script::funcIsObjOn(int objID) {
@@ -498,6 +498,53 @@ void Script::release(Common::Queue<int> &params) {
 
 	// Delete animations which have an index greater than the marked index
 	_vm->_anims->deleteAfterIndex(markedIndex);
+}
+
+void Script::icoStat(Common::Queue<int> &params) {
+	int status = params.pop();
+	int itemID = params.pop() - 1;
+
+	_vm->_game->setItemStatus(itemID, status == 1);
+	
+	if (_vm->_game->getItemStatus(itemID) == 0) {
+
+		if (itemID != kNoItem) {
+			_vm->_anims->deleteAnimation(kInventoryItemsID - itemID);
+		}
+
+		_vm->_game->removeItem(itemID);		
+
+		if (_vm->_game->getCurrentItem() == itemID) {
+			_vm->_game->setCurrentItem(kNoItem);
+		}
+		
+		if (_vm->_mouse->getCursorType() == kNormalCursor) {
+			if (_vm->_game->getLoopStatus() == kStatusInventory) {
+				_vm->_mouse->cursorOff();
+			}
+		}
+	}
+
+	if (_vm->_game->getItemStatus(itemID) == 1) {
+
+		if (itemID != kNoItem) {
+			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID);
+			BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
+			Sprite *sp = new Sprite(f->_data, f->_length, 0, 0, true);
+			itemAnim->addFrame(sp);
+		}
+
+		_vm->_game->setCurrentItem(itemID);
+
+		_vm->_mouse->loadItemCursor(itemID);
+
+		// TODO: This is probably not needed but I'm leaving it to be sure for now
+		// The original engine needed to turn off the mouse temporarily when changing
+		// the cursor image. I'm just setting it to the final state of that transition.
+		if (_vm->_game->getLoopStatus() == kStatusInventory) {
+			_vm->_mouse->cursorOn();
+		}
+	}
 }
 
 void Script::objStatOn(Common::Queue<int> &params) {
@@ -750,7 +797,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 	GPL2Operator oper;
 	GPL2Function func;
 
-	debugC(3, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
+	debugC(4, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
 
 	// Read in initial math object
 	obj = (mathExpressionObject)reader.readSint16LE();
@@ -774,7 +821,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 		case kMathNumber:
 			value = reader.readSint16LE();
 			stk.push(value);
-			debugC(3, kDraciBytecodeDebugLevel, "\t\tnumber: %d", value);
+			debugC(4, kDraciBytecodeDebugLevel, "\t\tnumber: %d", value);
 			break;
 
 		case kMathOperator:
@@ -791,7 +838,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 			// Push result
 			stk.push(res);
 
-			debugC(3, kDraciBytecodeDebugLevel, "\t\t%d %s %d (res: %d)",
+			debugC(4, kDraciBytecodeDebugLevel, "\t\t%d %s %d (res: %d)",
 				arg1, oper._name.c_str(), arg2, res);
 			break;
 
@@ -800,7 +847,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 
 			stk.push(_vm->_game->getVariable(value));
 
-			debugC(3, kDraciBytecodeDebugLevel, "\t\tvariable: %d (%d)", value,
+			debugC(4, kDraciBytecodeDebugLevel, "\t\tvariable: %d (%d)", value,
 				_vm->_game->getVariable(value));
 			break;
 
@@ -817,7 +864,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 				// FIXME: Pushing dummy value for now, but should push return value
 				stk.push(0);
 
-				debugC(3, kDraciBytecodeDebugLevel, "\t\tcall: %s (not implemented)",
+				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s (not implemented)",
 					func._name.c_str());
 			} else {
 				arg1 = stk.pop();
@@ -828,7 +875,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
 				// Push the result on the evaluation stack
 				stk.push(res);
 			
-				debugC(3, kDraciBytecodeDebugLevel, "\t\tcall: %s(%d) (res: %d)",
+				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s(%d) (res: %d)",
 					func._name.c_str(), arg1, res);
 			}
 
@@ -865,7 +912,7 @@ bool Script::testExpression(GPL2Program program, uint16 offset) {
 	// Seek to the expression
 	reader.seek(offset);
 
-	debugC(2, kDraciBytecodeDebugLevel, 
+	debugC(4, kDraciBytecodeDebugLevel, 
 		"Evaluating (standalone) GPL expression at offset %d:", offset);
 
 	return (bool)handleMathExpression(reader);
@@ -962,7 +1009,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 
 		// Account for GPL jump that some commands set
 		if (_jump != 0)	{
-			debugC(6, kDraciBytecodeDebugLevel, 
+			debugC(3, kDraciBytecodeDebugLevel, 
 				"Jumping from offset %d to %d (%d bytes)", 
 				reader.pos(), reader.pos() + _jump, _jump);	
 			reader.seek(_jump, SEEK_CUR);
@@ -996,7 +1043,7 @@ int Script::run(GPL2Program program, uint16 offset) {
 
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
-					debugC(2, kDraciBytecodeDebugLevel, 
+					debugC(3, kDraciBytecodeDebugLevel, 
 						"Evaluating (in-script) GPL expression at offset %d: ", offset);
 					params.push(handleMathExpression(reader));
 				}

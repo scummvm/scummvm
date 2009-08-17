@@ -40,7 +40,6 @@ const Common::String dialoguePath("ROZH");
 static double real_to_double(byte real[6]);
 
 Game::Game(DraciEngine *vm) : _vm(vm) {
-	
 	unsigned int i;
 	
 	BArchive *initArchive = _vm->_initArchive;
@@ -91,12 +90,12 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	_info._startRoom = gameData.readByte() - 1;
 	_info._mapRoom = gameData.readByte() - 1;
 	_info._numObjects = gameData.readUint16LE();
-	_info._numIcons = gameData.readUint16LE();
+	_info._numItems = gameData.readUint16LE();
 	_info._numVariables = gameData.readByte();
 	_info._numPersons = gameData.readByte();
 	_info._numDialogues = gameData.readByte();
-	_info._maxIconWidth = gameData.readUint16LE();
-	_info._maxIconHeight = gameData.readUint16LE();
+	_info._maxItemWidth = gameData.readUint16LE();
+	_info._maxItemHeight = gameData.readUint16LE();
 	_info._musicLength = gameData.readUint16LE();
 	_info._crc[0] = gameData.readUint16LE();
 	_info._crc[1] = gameData.readUint16LE();
@@ -126,8 +125,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	// Read in item icon status
 	
 	file = initArchive->getFile(1);
-	_iconStatus = file->_data;
-	uint numIcons = file->_length;
+	_itemStatus = file->_data;
+	uint numItems = file->_length;
+	_items = new GameItem[numItems];
 	
 	// Read in object status
 	
@@ -154,7 +154,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	assert(numPersons == _info._numPersons);
 	assert(numVariables == _info._numVariables);
 	assert(numObjects == _info._numObjects);
-	assert(numIcons == _info._numIcons);	
+	assert(numItems == _info._numItems);	
 }
 
 void Game::start() {
@@ -218,12 +218,16 @@ void Game::init() {
 
 	_animUnderCursor = kOverlayImage;
 
-	_currentIcon = kNoIcon;
+	_currentItem = kNoItem;
+	_itemUnderCursor = kNoItem;
 
 	_vm->_mouse->setCursorType(kNormalCursor);
 
 	_loopStatus = kStatusOrdinary;
 	_objUnderCursor = kOverlayImage;
+
+	// Set the inventory to empty initially
+	memset(_inventory, kNoItem, kInventorySlots * sizeof (int));
 
 	// Initialize animation for object / room titles
 	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
@@ -235,8 +239,16 @@ void Game::init() {
 	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0);
 	speechAnim->addFrame(speech);
 
+	// Initialize inventory animation
+	BAFile *f = _vm->_iconsArchive->getFile(13);
+	Animation *inventoryAnim = _vm->_anims->addAnimation(kInventorySprite, 255, false);
+	Sprite *inventorySprite = new Sprite(f->_data, f->_length, 0, 0, true);
+	inventoryAnim->addFrame(inventorySprite);
+	inventoryAnim->setRelative((kScreenWidth - inventorySprite->getWidth()) / 2,
+								(kScreenHeight - inventorySprite->getHeight()) / 2);
+
 	for (uint i = 0; i < kDialogueLines; ++i) {
-		_dialogueAnims[i] = _vm->_anims->addText(-10 - i, true);
+		_dialogueAnims[i] = _vm->_anims->addText(kDialogueLinesID - i, true);
 		Text *dialogueLine = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0);
 		_dialogueAnims[i]->addFrame(dialogueLine);
 
@@ -246,6 +258,10 @@ void Game::init() {
 
 		Text *text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
 		text->setText("");
+	}
+
+	for (uint i = 0; i < _info._numItems; ++i) {
+		loadItem(i);
 	}
 
 	loadObject(kDragonObject);
@@ -273,10 +289,10 @@ void Game::loop() {
 
 	Surface *surface = _vm->_screen->getSurface();
 
-	debugC(6, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d", 
-		_loopStatus, _loopSubstatus);
-
 	do {
+
+	debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d", 
+		_loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
 
@@ -285,9 +301,6 @@ void Game::loop() {
 		int y = _vm->_mouse->getPosY();
 
 		if (_loopStatus == kStatusDialogue && _loopSubstatus == kSubstatusOrdinary) {
-
-			// Find animation under cursor
-			_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
 
 			Text *text;
 			for (int i = 0; i < kDialogueLines; ++i) {
@@ -307,33 +320,28 @@ void Game::loop() {
 			}
 		}
 
-		if (_currentRoom._mouseOn) {
+		if(_vm->_mouse->isCursorOn()) {
 
 			// Fetch the dedicated objects' title animation / current frame
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
 			Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
 
+			updateCursor();
+			updateTitle();
+
 			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kSubstatusOrdinary) {
-				if(_vm->_mouse->isCursorOn()) {
-					// Find the game object under the cursor
-					// (to be more precise, one that corresponds to the animation under the cursor)
-					_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
-					int curObject = getObjectWithAnimation(_animUnderCursor);
 
-					updateTitle();
-
-					_objUnderCursor = curObject;
-					if (_objUnderCursor != _oldObjUnderCursor) {
-						_oldObjUnderCursor = _objUnderCursor;
+				if (_vm->_mouse->lButtonPressed()) {
+					_vm->_mouse->lButtonSet(false);				
+					
+					if (_currentItem != kNoItem) {
+						putItem(_currentItem, 0);
+						_currentItem = kNoItem;
 						updateCursor();
-					}
-
-					if (_vm->_mouse->lButtonPressed()) {
-						_vm->_mouse->lButtonSet(false);				
-
+					} else {
 						if (_objUnderCursor != kObjectNotFound) {
 							GameObject *obj = &_objects[_objUnderCursor];
-			
+		
 							_vm->_mouse->cursorOff();
 							titleAnim->markDirtyRect(surface);
 							title->setText("");
@@ -353,51 +361,128 @@ void Game::loop() {
 							walkHero(x, y);
 						}
 					}
+				}
 
-					if (_vm->_mouse->rButtonPressed()) {
-						_vm->_mouse->rButtonSet(false);
+				if (_vm->_mouse->rButtonPressed()) {
+					_vm->_mouse->rButtonSet(false);
 
-						if (_objUnderCursor != kObjectNotFound) {
-							GameObject *obj = &_objects[_objUnderCursor];
+					if (_objUnderCursor != kObjectNotFound) {
+						GameObject *obj = &_objects[_objUnderCursor];
 
-							if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
-								_vm->_mouse->cursorOff();
-								titleAnim->markDirtyRect(surface);
-								title->setText("");
-								_objUnderCursor = kObjectNotFound;
+						if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
+							_vm->_mouse->cursorOff();
+							titleAnim->markDirtyRect(surface);
+							title->setText("");
+							_objUnderCursor = kObjectNotFound;
 
-								if (!obj->_imUse) {
-									if (obj->_useDir == -1) {
-										walkHero(x, y);
-									} else {
-										walkHero(obj->_useX, obj->_useY);
-									}
+							if (!obj->_imUse) {
+								if (obj->_useDir == -1) {
+									walkHero(x, y);
+								} else {
+									walkHero(obj->_useX, obj->_useY);
 								}
-
-								_vm->_script->run(obj->_program, obj->_use);
-								_vm->_mouse->cursorOn();
-							} else {
-								walkHero(x, y);
 							}
+
+							_vm->_script->run(obj->_program, obj->_use);
+							_vm->_mouse->cursorOn();
 						} else {
-							if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
-								_vm->_mouse->cursorOff();
-								titleAnim->markDirtyRect(surface);
-								title->setText("");
+							walkHero(x, y);
+						}
+					} else {
+						if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
+							_vm->_mouse->cursorOff();
+							titleAnim->markDirtyRect(surface);
+							title->setText("");
 
 
-								_vm->_script->run(_currentRoom._program, _currentRoom._use);
-								_vm->_mouse->cursorOn();
-							} else {
-								walkHero(x, y);
-							}
+							_vm->_script->run(_currentRoom._program, _currentRoom._use);
+							_vm->_mouse->cursorOn();
+						} else {
+							walkHero(x, y);
 						}
 					}
 				}
 			}
-		}
 
-		debug(8, "Anim under cursor: %d", _animUnderCursor); 
+			if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
+				if (_inventoryExit) {
+					inventoryDone();				
+				}
+
+				// If we are in inventory mode, all the animations except game items'
+				// images will necessarily be paused so we can safely assume that any
+				// animation under the cursor (a value returned by 
+				// AnimationManager::getTopAnimationID()) will be an item animation or.
+				// an overlay, for which we check. Item animations have their IDs 
+				// calculated by offseting their itemID from the ID of the last "special" 
+				// animation ID. In this way, we obtain its itemID. 
+				if (_animUnderCursor != kOverlayImage && _animUnderCursor != kInventorySprite) {
+					_itemUnderCursor = kInventoryItemsID - _animUnderCursor;
+				} else {
+					_itemUnderCursor = kNoItem;				
+				}
+
+				// If the user pressed the left mouse button
+				if (_vm->_mouse->lButtonPressed()) {
+					_vm->_mouse->lButtonSet(false);
+
+					// If there is an inventory item under the cursor and we aren't
+					// holding any item, run its look GPL program
+					if (_itemUnderCursor != kNoItem && _currentItem == kNoItem) {
+						const GPL2Program &program = _items[_itemUnderCursor]._program;
+						const int lookOffset = _items[_itemUnderCursor]._look;
+
+						_vm->_script->run(program, lookOffset);
+					// Otherwise, if we are holding an item, try to place it inside the
+					// inventory
+					} else if (_currentItem != kNoItem) {
+						// FIXME: This should place the item in the nearest inventory slot,
+						// not the first one available
+						putItem(_currentItem, 0);
+
+						// Remove it from our hands
+						_currentItem = kNoItem;
+					}
+				} else if (_vm->_mouse->rButtonPressed()) {
+					_vm->_mouse->rButtonSet(false);
+
+					Animation *inventoryAnim = _vm->_anims->getAnimation(kInventorySprite);
+					
+					// If we right-clicked outside the inventory, close it
+					if (!inventoryAnim->getFrame()->getRect().contains(x, y)) {
+						inventoryDone();					
+
+					// If there is an inventory item under our cursor
+					} else if (_itemUnderCursor != kNoItem) {
+
+						// Again, we have two possibilities:
+
+						// The first is that there is no item in our hands.
+						// In that case, just take the inventory item from the inventory.
+						if (_currentItem == kNoItem) {
+							_currentItem = _itemUnderCursor;
+							removeItem(_itemUnderCursor);
+
+						// The second is that there *is* an item in our hands.
+						// In that case, run the canUse script for the inventory item
+						// which will check if the two items are combinable and, finally,
+						// run the use script for the item.
+						} else {
+							const GPL2Program &program = _items[_itemUnderCursor]._program;
+							const int canUseOffset = _items[_itemUnderCursor]._canUse;
+							const int useOffset = _items[_itemUnderCursor]._use;
+
+							if (_vm->_script->testExpression(program, canUseOffset)) {
+								_vm->_script->run(program, useOffset);
+							}
+						}
+						updateCursor();
+					}
+				}
+			}		
+		}		
+		
+		debugC(5, kDraciLogicDebugLevel, "Anim under cursor: %d", _animUnderCursor); 
 
 		// Handle character talking (if there is any)
 		if (_loopSubstatus == kSubstatusTalk) {
@@ -425,9 +510,7 @@ void Game::loop() {
 			return;
 
 		// Advance animations and redraw screen
-		if (_loopStatus != kStatusInventory) {
-			_vm->_anims->drawScene(surface);
-		}
+		_vm->_anims->drawScene(surface);
 		_vm->_screen->copyToScreen();
 		_vm->_system->delayMillis(20);
 
@@ -440,40 +523,106 @@ void Game::loop() {
 
 void Game::updateCursor() {
 
-	_vm->_mouse->setCursorType(kNormalCursor);
+	// Fetch mouse coordinates			
+	int x = _vm->_mouse->getPosX();
+	int y = _vm->_mouse->getPosY();
 
-	if (_currentIcon != kNoIcon) {
-		_vm->_mouse->loadItemCursor(_currentIcon);
+	// Find animation under cursor
+	_animUnderCursor = _vm->_anims->getTopAnimationID(x, y);
+
+	// If we are inside a dialogue, all we need is to update the ID of the current
+	// animation under the cursor. This enables us to update the currently selected
+	// dialogue line (by recolouring it) but still leave the cursor unupdated when
+	// over background objects.
+	if (_loopStatus == kStatusDialogue)
+		return;
+
+	// If we are in inventory mode, we do a different kind of updating that handles
+	// inventory items and return early
+	if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
+
+		if (_currentItem == kNoItem) {
+			_vm->_mouse->setCursorType(kNormalCursor);
+		} else {
+			_vm->_mouse->loadItemCursor(_currentItem);
+		}
+
+		if (_itemUnderCursor != kNoItem) {
+			const GPL2Program &program = _items[_itemUnderCursor]._program;
+			const int canUseOffset = _items[_itemUnderCursor]._canUse;
+
+			if (_vm->_script->testExpression(program, canUseOffset)) {
+				if (_currentItem == kNoItem) {
+					_vm->_mouse->setCursorType(kHighlightedCursor);				
+				} else {
+					_vm->_mouse->loadItemCursor(_currentItem, true);			
+				}
+			}
+		}
+
+		return;
 	}
 
+	// Find the game object under the cursor
+	// (to be more precise, one that corresponds to the animation under the cursor)
+	int curObject = getObjectWithAnimation(_animUnderCursor);
+
+	// Update the game object under the cursor
+	_objUnderCursor = curObject;
+	if (_objUnderCursor != _oldObjUnderCursor) {
+		_oldObjUnderCursor = _objUnderCursor;
+	}
+
+	// Load the appropriate cursor (item image if an item is held or ordinary cursor
+	// if not)
+	if (_currentItem == kNoItem) {
+		_vm->_mouse->setCursorType(kNormalCursor);
+	} else {
+		_vm->_mouse->loadItemCursor(_currentItem);
+	}
+
+	// TODO: Handle main menu
+
+	// If there is no game object under the cursor, try using the room itself
 	if (_objUnderCursor == kObjectNotFound) {					
 
 		if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
-			if (_currentIcon == kNoIcon) {
+			if (_currentItem == kNoItem) {
 				_vm->_mouse->setCursorType(kHighlightedCursor);
 			} else {
-				_vm->_mouse->loadItemCursor(_currentIcon, true);
+				_vm->_mouse->loadItemCursor(_currentItem, true);
 			}
 		}
+	// If there *is* a game object under the cursor, update the cursor image
 	} else {
 		GameObject *obj = &_objects[_objUnderCursor];
-
-		_vm->_mouse->setCursorType((CursorType)obj->_walkDir);
 		
-		if (!(obj->_walkDir > 0)) {
+		// If there is no walking direction set on the object (i.e. the object
+		// is not a gate / exit), test whether it can be used and, if so,
+		// update the cursor image (highlight it).
+		if (obj->_walkDir == 0) {
 			if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
-				if (_currentIcon == kNoIcon) {
+				if (_currentItem == kNoItem) {
 					_vm->_mouse->setCursorType(kHighlightedCursor);
 				} else {
-					_vm->_mouse->loadItemCursor(_currentIcon, true);
+					_vm->_mouse->loadItemCursor(_currentItem, true);
 				}
 			}
+		// If the walking direction *is* set, the game object is a gate, so update
+		// the cursor image to the appropriate arrow.
+		} else {
+			_vm->_mouse->setCursorType((CursorType)obj->_walkDir);
 		}
 	}
 }
 
 void Game::updateTitle() {
 
+	// If we are inside a dialogue, don't update titles
+	if (_loopStatus == kStatusDialogue)
+		return;
+
+	// Fetch current surface and height of the small font (used for titles)
 	Surface *surface = _vm->_screen->getSurface();
 	const int smallFontHeight = _vm->_smallFont->getFontHeight();
 
@@ -488,6 +637,8 @@ void Game::updateTitle() {
 	// Mark dirty rectangle to delete the previous text
 	titleAnim->markDirtyRect(surface);	
 	
+	// If there is no object under the cursor, delete the title.
+	// Otherwise, show the object's title.
 	if (_objUnderCursor == kObjectNotFound) {
 		title->setText("");
 	} else {
@@ -500,6 +651,8 @@ void Game::updateTitle() {
 	int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
 	titleAnim->setRelative(newX, newY);
 
+	// If we are currently playing the title, mark it dirty so it gets updated.
+	// Otherwise, start playing the title animation.
 	if (titleAnim->isPlaying()) {
 		titleAnim->markDirtyRect(surface);
 	} else {
@@ -519,6 +672,115 @@ int Game::getObjectWithAnimation(int animID) {
 	}
 
 	return kObjectNotFound;
+}
+
+void Game::removeItem(int itemID) {
+
+	for (uint i = 0; i < kInventorySlots; ++i) {
+		if (_inventory[i] == itemID) {
+			_inventory[i] = kNoItem;
+			_vm->_anims->stop(kInventoryItemsID - itemID);
+			break;		
+		}
+	}
+}
+
+void Game::putItem(int itemID, int position) {
+
+	if (itemID == kNoItem)
+		return;
+
+	uint i = position;
+
+	if (position >= 0 && 
+		position < kInventoryLines * kInventoryColumns &&
+		_inventory[position] == kNoItem) {
+		_inventory[position] = itemID;
+	} else {
+		for (i = 0; i < kInventorySlots; ++i) {
+			if (_inventory[i] == kNoItem) {
+				_inventory[i] = itemID;
+				break;		
+			}
+		}
+	}
+
+	const int line = i / kInventoryColumns + 1;
+	const int column = i % kInventoryColumns + 1;
+
+	Animation *anim = _vm->_anims->getAnimation(kInventoryItemsID - itemID);
+	Drawable *frame = anim->getFrame();
+
+	const int x = kInventoryX + 
+				  (column * kInventoryItemWidth) -
+				  (kInventoryItemWidth / 2) -
+				  (frame->getWidth() / 2);
+
+	const int y = kInventoryY + 
+				  (line * kInventoryItemHeight) - 
+				  (kInventoryItemHeight / 2) -
+				  (frame->getHeight() / 2);
+	
+	debug(2, "itemID: %d position: %d line: %d column: %d x: %d y: %d", itemID, position, line, column, x, y);
+
+	anim->setRelative(x, y);
+
+	// If we are in inventory mode, we need to play the item animation, immediately
+	// upon returning it to its slot but *not* in other modes because it should be
+	// invisible then (along with the inventory)
+	if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
+		_vm->_anims->play(kInventoryItemsID - itemID);
+	}
+}
+
+void Game::inventoryInit() {
+
+	// Pause all "background" animations
+	_vm->_anims->pauseAnimations();
+
+	// Draw the inventory and the current items
+	inventoryDraw();
+ 	
+	// Turn cursor on if it is off
+	_vm->_mouse->cursorOn();
+	
+	// Set the appropriate loop status
+	_loopStatus = kStatusInventory;
+
+	// TODO: This will be used for exiting the inventory automatically when the mouse
+	// is outside it for some time
+	_inventoryExit = false;
+}
+
+void Game::inventoryDone() {
+	_vm->_mouse->cursorOn();
+	_loopStatus = kStatusOrdinary;
+
+	_vm->_anims->unpauseAnimations();
+
+	_vm->_anims->stop(kInventorySprite);
+
+	for (uint i = 0; i < kInventorySlots; ++i) {
+		if (_inventory[i] != kNoItem) {
+			_vm->_anims->stop(kInventoryItemsID - _inventory[i]);
+		}
+	}
+
+	// Reset item under cursor
+	_itemUnderCursor = kNoItem;
+
+	// TODO: Handle main menu
+}
+
+void Game::inventoryDraw() {
+
+	_vm->_anims->play(kInventorySprite);
+
+	for (uint i = 0; i < kInventorySlots; ++i) {
+		if (_inventory[i] != kNoItem) {
+			_vm->_anims->play(kInventoryItemsID - _inventory[i]);
+		}
+	}
 }
 
 void Game::dialogueMenu(int dialogueID) {
@@ -578,7 +840,6 @@ int Game::dialogueDraw() {
 		GPL2Program blockTest;
 		blockTest._bytecode = _dialogueBlocks[i]._canBlock;
 		blockTest._length = _dialogueBlocks[i]._canLen;
-
 		debugC(3, kDraciLogicDebugLevel, "Testing dialogue block %d", i);
 		if (_vm->_script->testExpression(blockTest, 1)) {
 			anim = _dialogueAnims[_dialogueLines];
@@ -755,6 +1016,33 @@ void Game::walkHero(int x, int y) {
 
 	// Play the animation
 	_vm->_anims->play(animID);
+}
+
+void Game::loadItem(int itemID) {
+	
+	BAFile *f = _vm->_itemsArchive->getFile(itemID * 3);
+	Common::MemoryReadStream itemReader(f->_data, f->_length);
+	
+	GameItem *item = _items + itemID;
+
+	item->_init = itemReader.readSint16LE();
+	item->_look = itemReader.readSint16LE();
+	item->_use = itemReader.readSint16LE();
+	item->_canUse = itemReader.readSint16LE();
+	item->_imInit = itemReader.readByte();
+	item->_imLook = itemReader.readByte();
+	item->_imUse = itemReader.readByte();
+
+	f = _vm->_itemsArchive->getFile(itemID * 3 + 1);
+
+	// The first byte is the length of the string
+	item->_title = Common::String((const char *)f->_data + 1, f->_length - 1);
+	assert(f->_data[0] == item->_title.size());
+
+	f = _vm->_itemsArchive->getFile(itemID * 3 + 2);
+
+	item->_program._bytecode = f->_data;
+	item->_program._length = f->_length;
 }
 
 void Game::loadRoom(int roomNum) {
@@ -1135,12 +1423,20 @@ void Game::setVariable(int numVar, int value) {
 	_variables[numVar] = value;
 }
 
-int Game::getIconStatus(int iconID) {
-	return _iconStatus[iconID];
+int Game::getItemStatus(int itemID) {
+	return _itemStatus[itemID];
 }
 
-int Game::getCurrentIcon() {
-	return _currentIcon;
+void Game::setItemStatus(int itemID, int status) {
+	_itemStatus[itemID] = status;	
+}
+
+int Game::getCurrentItem() {
+	return _currentItem;
+}
+
+void Game::setCurrentItem(int itemID) {
+	_currentItem = itemID;
 }
 
 Person *Game::getPerson(int personID) {
@@ -1186,6 +1482,7 @@ Game::~Game() {
 	delete[] _variables;
 	delete[] _dialogueOffsets;
 	delete[] _objects;
+	delete[] _items;
 }
 
 

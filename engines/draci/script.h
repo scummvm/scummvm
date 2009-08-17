@@ -109,6 +109,7 @@ private:
 	void start(Common::Queue<int> &params);
 	void mark(Common::Queue<int> &params);
 	void release(Common::Queue<int> &params);
+	void icoStat(Common::Queue<int> &params);	
 	void objStat(Common::Queue<int> &params);
 	void objStatOn(Common::Queue<int> &params);
 	void execInit(Common::Queue<int> &params);
