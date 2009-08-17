@@ -126,6 +126,10 @@ const byte fragment5[] = {OP_IMM | OPSIZE16, 901 % 256, 901 / 256, OP_JUMP, 488 
 const int fragment5_size = 6;
 const byte fragment6[] = {OP_IMM | OPSIZE16, 903 % 256, 903 / 256, OP_JUMP, 516 % 256, 516 / 256};
 const int fragment6_size = 6;
+const byte fragment7[] = {OP_IMM | OPSIZE16, 908 % 256, 908 / 256, OP_JUMP, 616 % 256, 616 / 256};
+const int fragment7_size = 6;
+const byte fragment8[] = {OP_IMM | OPSIZE16, 910 % 256, 910 / 256, OP_JUMP, 644 % 256, 644 / 256};
+const int fragment8_size = 6;
 
 const WorkaroundEntry workaroundList[] = {
 	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
@@ -146,6 +150,8 @@ const WorkaroundEntry workaroundList[] = {
 	{TINSEL_V1, false, 310506872, 463, fragment4_size, fragment4},
 	{TINSEL_V1, false, 310506872, 485, fragment5_size, fragment5},
 	{TINSEL_V1, false, 310506872, 513, fragment6_size, fragment6},
+	{TINSEL_V1, false, 310506872, 613, fragment7_size, fragment7},
+	{TINSEL_V1, false, 310506872, 641, fragment8_size, fragment8},
 
 	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
 	// But if the game is saved/restored during it, the animation sequence is reset without the global being cleared.
