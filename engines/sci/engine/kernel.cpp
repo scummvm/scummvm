@@ -706,6 +706,8 @@ int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 
 	mobj = s->seg_manager->_heap[reg.segment];
 
+	SciVersion version = s->_version;	// for the offset defines
+
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj).buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET

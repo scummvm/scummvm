@@ -28,6 +28,7 @@
 
 #include "sci/sci.h"
 #include "sci/exereader.h"
+#include "sci/engine/seg_manager.h"
 
 namespace Sci {
 
@@ -3085,6 +3086,19 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.desc.language = Common::UNK_LANG;
 	s_fallbackDesc.desc.platform = exePlatform;
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
+
+#if 0
+	// Determine the game id
+	// TODO
+	ResourceManager *resMgr = new ResourceManager(256 * 1024);
+	SciVersion version = resMgr->sciVersion();
+	SegManager *segManager = new SegManager(resMgr, version);
+	reg_t game_obj = script_lookup_export(segManager, 0, 0);
+	Common::String gameName = obj_get_name(segManager,version, game_obj);
+	debug(2, " \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
+	delete segManager;
+	delete resMgr;
+#endif
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");
