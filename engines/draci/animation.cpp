@@ -38,6 +38,7 @@ Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_scaleY = 1.0;
 	_playing = false;
 	_looping = false;
+	_paused = false;
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
 	_callback = &Animation::doNothing;
@@ -117,6 +118,9 @@ void Animation::nextFrame(bool force) {
 }
 
 uint Animation::nextFrameNum() {
+
+	if (_paused) 
+		return _currentFrame;
 
 	if ((_currentFrame == getFrameCount() - 1) && _looping)
 		return 0;
@@ -198,6 +202,14 @@ bool Animation::isPlaying() {
 void Animation::setPlaying(bool playing) {
 	_tick = _vm->_system->getMillis();
 	_playing = playing;
+}
+
+bool Animation::isPaused() {
+	return _paused;
+}
+
+void Animation::setPaused(bool paused) {
+	_paused = paused;
 }
 
 void Animation::setScaleFactors(double scaleX, double scaleY) {
@@ -304,12 +316,25 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	return anim;
 }
 
-Animation *AnimationManager::addText(int id, bool playing) {
+Animation *AnimationManager::addItem(int id, bool playing) {
 
 	Animation *anim = new Animation(_vm, kIgnoreIndex);
 
 	anim->setID(id);
 	anim->setZ(256);
+	anim->setPlaying(playing);
+
+	insertAnimation(anim);
+
+	return anim;
+}
+
+Animation *AnimationManager::addText(int id, bool playing) {
+
+	Animation *anim = new Animation(_vm, kIgnoreIndex);
+
+	anim->setID(id);
+	anim->setZ(257);
 	anim->setPlaying(playing);
 
 	insertAnimation(anim);
@@ -341,9 +366,36 @@ void AnimationManager::stop(int id) {
 
 		// Reset the animation to the beginning
 		anim->setCurrentFrame(0);
-
 	
 		debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
+	}
+}
+
+void AnimationManager::pauseAnimations() {
+
+	Common::List<Animation *>::iterator it;
+
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
+		if ((*it)->getID() > 0 || (*it)->getID() == kTitleText) {
+			// Clean up the last frame that was drawn before stopping
+			(*it)->markDirtyRect(_vm->_screen->getSurface());
+
+			(*it)->setPaused(true);
+		}
+	}
+}
+
+void AnimationManager::unpauseAnimations() {
+
+	Common::List<Animation *>::iterator it;
+
+	for (it = _animations.begin(); it != _animations.end(); ++it) {
+		if ((*it)->isPaused()) {
+			// Clean up the last frame that was drawn before stopping
+			(*it)->markDirtyRect(_vm->_screen->getSurface());
+
+			(*it)->setPaused(false);
+		}
 	}
 }
 
@@ -535,7 +587,7 @@ int AnimationManager::getTopAnimationID(int x, int y) {
 		Animation *anim = *it;
 
 		// If the animation is not playing, ignore it
-		if (!anim->isPlaying()) {
+		if (!anim->isPlaying() || anim->isPaused()) {
 			continue;
 		}
 

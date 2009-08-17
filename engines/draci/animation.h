@@ -38,7 +38,10 @@ enum { kOverlayImage = -1,
 	   kWalkingMapOverlay = -2, 
 	   kTitleText = -3, 
 	   kSpeechText = -4,
-	   kUnused = -5 };
+	   kInventorySprite = -5,
+	   kDialogueLinesID = -6,
+	   kUnused = -10,
+	   kInventoryItemsID = -11};
 
 /**
   * Default argument to Animation::getFrame() that makes it return 
@@ -80,6 +83,9 @@ public:
 
 	bool isPlaying();
 	void setPlaying(bool playing);
+
+	bool isPaused();
+	void setPaused(bool paused);
 
 	bool isLooping();
 	void setLooping(bool looping);
@@ -131,6 +137,7 @@ private:
 	uint _tick;
 	bool _playing;
 	bool _looping;
+	bool _paused;
 	Common::Array<Drawable*> _frames;
 
 	AnimationCallback _callback;
@@ -147,10 +154,13 @@ public:
 
 	Animation *addAnimation(int id, uint z, bool playing = false);
 	Animation *addText(int id, bool playing = false);
+	Animation *addItem(int id, bool playing = false);
 	void addOverlay(Drawable *overlay, uint z);
 	
 	void play(int id);
 	void stop(int id);
+	void pauseAnimations();
+	void unpauseAnimations();
 
 	void deleteAnimation(int id);
 	void deleteOverlays();
