@@ -84,12 +84,10 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 
 	if (!buffer.isCompressed) {
-		if (handleType == kVoiceHandle)
-			_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
-					buffer.size, buffer.frequency, flags, -1, volume);
-		else
-			_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
-					buffer.size, buffer.frequency, flags, -1, volume);
+		Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
+					Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+		_mixer->playRaw(soundType, handle, buffer.buffer,
+				buffer.size, buffer.frequency, flags, -1, volume);
 	} else {
 		Audio::AudioStream *stream = 0;
 
@@ -110,13 +108,8 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 				break;
 #endif
 			default:
-				// No compression, play it as raw sound
-				if (handleType == kVoiceHandle)
-					_mixer->playRaw(Audio::Mixer::kSpeechSoundType, handle, buffer.buffer,
-							buffer.size, buffer.frequency, flags, -1, volume);
-				else
-					_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer.buffer,
-							buffer.size, buffer.frequency, flags, -1, volume);
+				// Unknown compression, ignore sample
+				warning("Unknown compression, ignoring sound");
 				break;
 		}
 
