@@ -271,11 +271,25 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 		realTrackNumber = resourceId + 1;
 	}
 
+	// Try to open standalone digital track
+	char trackName[2][16];
+	sprintf(trackName[0], "track%d", realTrackNumber);
+	sprintf(trackName[1], "track%02d", realTrackNumber);
+	Audio::AudioStream *stream = 0;
+	for (int i = 0; i < 2; ++i) {
+		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 0, (flags == MUSIC_LOOP) ? 0 : 1);
+		if (stream) {
+			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+			_digitalMusic = true;
+			return;
+		}
+	}
+
 	if (_vm->getGameId() == GID_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
 			if (_digitalMusicContext != NULL) {
 				loopStart = 0;
-				// fix ITE sunstatm/sunspot score
+				// Fix ITE sunstatm/sunspot score
 				if (resourceId == MUSIC_SUNSPOT)
 					loopStart = 4 * 18727;
 
