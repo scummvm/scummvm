@@ -41,7 +41,6 @@ typedef int sci_version_t;
 struct IntMapper;
 struct Object;
 class ResourceManager;
-extern enum SciVersion;
 
 /** Number of bytes to be allocated for the stack */
 #define VM_STACK_SIZE 0x1000

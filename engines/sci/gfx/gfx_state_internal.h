@@ -26,6 +26,7 @@
 #ifndef SCI_GFX_GFX_STATE_INTERNAL_H
 #define SCI_GFX_GFX_STATE_INTERNAL_H
 
+#include "sci/engine/vm.h"
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/gfx_options.h"
 #include "sci/gfx/operations.h"

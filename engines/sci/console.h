@@ -29,6 +29,7 @@
 #define SCI_CONSOLE_H
 
 #include "gui/debugger.h"
+#include "sci/engine/vm.h"
 
 namespace Sci {
 

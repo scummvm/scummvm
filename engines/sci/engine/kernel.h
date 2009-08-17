@@ -32,6 +32,8 @@
 
 #include "sci/uinput.h"
 #include "sci/vocabulary.h"
+#include "sci/engine/vm_types.h"	// for reg_t
+#include "sci/engine/vm.h"
 
 namespace Sci {
 

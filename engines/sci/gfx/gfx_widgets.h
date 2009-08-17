@@ -29,6 +29,7 @@
 
 #include "common/rect.h"
 
+#include "sci/engine/vm.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/operations.h"
 

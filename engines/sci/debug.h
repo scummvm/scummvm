@@ -26,6 +26,9 @@
 #ifndef SCI_DEBUG_H
 #define SCI_DEBUG_H
 
+#include "sci/engine/vm_types.h"	// for StackPtr
+#include "sci/engine/vm.h"			// for ExecStack
+
 namespace Sci {
 
 enum DebugSeeking {

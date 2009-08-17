@@ -33,7 +33,6 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"			// for SoundHandle
 
-#include "sci/engine/vm.h"          // for Object
 #include "sci/decompressor.h"
 
 namespace Common {
