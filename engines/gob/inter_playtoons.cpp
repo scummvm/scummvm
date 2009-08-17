@@ -140,18 +140,17 @@ void Inter_Playtoons::oPlaytoons_CD_25() {
 }
 
 void Inter_Playtoons::oPlaytoons_openItk() {
-	
 	char fileName[128];
 	char *backSlash;
-	
+
 	_vm->_game->_script->evalExpr(0);
 	strncpy0(fileName, _vm->_game->_script->getResultStr(), 124);
-	
+
 	if (!strchr(fileName, '.'))
 		strcat(fileName, ".ITK");
-	
+
 	// Workaround for Bambou : In the script, the path is hardcoded (!!)
-	if (backSlash=strrchr(fileName, '\\')) {
+	if ((backSlash = strrchr(fileName, '\\')) != 0) {
 		debugC(2, kDebugFileIO, "Opening ITK file \"%s\" instead of \"%s\"", backSlash + 1, fileName);
 		_vm->_dataIO->openDataFile(backSlash + 1, true);
 	} else
