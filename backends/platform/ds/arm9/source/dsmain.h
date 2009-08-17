@@ -85,6 +85,7 @@ void 	setTalkPos(int x, int y);
 void 	setTopScreenTarget(int x, int y);
 void	set200PercentFixedScale(bool on);
 void	setTopScreenZoom(int percentage);
+void	setGamma(int gamma);
 
 // Timers
 void 	setTimerCallback(OSystem_DS::TimerProc proc, int interval);		// Setup a callback function at a regular interval

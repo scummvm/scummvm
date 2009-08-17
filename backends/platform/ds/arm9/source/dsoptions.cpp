@@ -94,17 +94,25 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 
 	_tab->addTab("Graphics");
 
-	new GUI::StaticTextWidget(_tab, 5, 70, 180, 15, "Initial top screen scale:", Graphics::kTextAlignLeft);
+	new GUI::StaticTextWidget(_tab, 5, 67, 180, 15, "Initial top screen scale:", Graphics::kTextAlignLeft);
 
-	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 85, 230, 20, "100%", 0x30000001, 'T');
-	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 100, 230, 20, "150%", 0x30000002, 'T');
-	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 115, 230, 20, "200%", 0x30000003, 'T');
+	_100PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 82, 80, 20, "100%", 0x30000001, 'T');
+	_150PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 97, 80, 20, "150%", 0x30000002, 'T');
+	_200PercentCheckbox = new GUI::CheckboxWidget(_tab, 5, 112, 80, 20, "200%", 0x30000003, 'T');
 
 	new GUI::StaticTextWidget(_tab, 5, 5, 180, 15, "Main screen scaling:", Graphics::kTextAlignLeft);
 
 	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, "Hardware scale (fast, but low quality)", 0x10000001, 'T');
 	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, "Software scale (good quality, but slower)", 0x10000002, 'S');
 	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, "Unscaled (you must scroll left and right)", 0x10000003, 'S');
+	
+	new GUI::StaticTextWidget(_tab, 5, 125, 110, 15, "Brightness:", Graphics::kTextAlignLeft);
+	_gammaCorrection = new GUI::SliderWidget(_tab, 130, 120, 130, 12, 1);
+	_gammaCorrection->setMinValue(0);
+	_gammaCorrection->setMaxValue(8);
+	_gammaCorrection->setValue(0);
+
+
 
 	_tab->addTab("General");
 
@@ -170,6 +178,12 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_150PercentCheckbox->setState(true);
 	}
 
+	if (ConfMan.hasKey("gamma", "ds")) {
+		_gammaCorrection->setValue(ConfMan.getInt("gamma", "ds"));
+	} else {
+		_gammaCorrection->setValue(0);
+	} 	
+
 	_highQualityAudioCheckbox->setState(confGetBool("22khzaudio", false));
 	_disablePowerOff->setState(confGetBool("disablepoweroff", false));
 
@@ -219,6 +233,7 @@ void DSOptionsDialog::updateConfigManager() {
 	ConfMan.setBool("touchpad", _touchPadStyle->getState(), "ds");
 	ConfMan.setBool("screentaps", _screenTaps->getState(), "ds");
 	ConfMan.setInt("sensitivity", _sensitivity->getValue(), "ds");
+	ConfMan.setInt("gamma", _gammaCorrection->getValue(), "ds");
 
 	u32 zoomLevel = 150;
 
@@ -394,6 +409,9 @@ void setOptions() {
 #endif
 
 	DS::setTapScreenClicksEnable(confGetBool("screentaps", false));
+
+	DS::setGamma(confGetInt("gamma", 0));
+
 
 	if (ConfMan.hasKey("touchpad", "ds")) {
 		bool enable = ConfMan.getBool("touchpad", "ds");

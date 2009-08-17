@@ -53,6 +53,7 @@ protected:
 	GUI::SliderWidget* _touchX;
 	GUI::SliderWidget* _touchY;
 	GUI::SliderWidget* _sensitivity;
+	GUI::SliderWidget* _gammaCorrection;
 	GUI::CheckboxWidget* _leftHandedCheckbox;
 	GUI::CheckboxWidget* _unscaledCheckbox;
 	GUI::CheckboxWidget* _100PercentCheckbox;

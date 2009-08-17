@@ -55,19 +55,22 @@ typedef signed int s32;
 #define DISABLE_TEXT_CONSOLE
 #define DISABLE_COMMAND_LINE
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-int consolePrintf(const char* s, ...);
-#ifdef __cplusplus
-}
-#endif
+#define STREAM_AUDIO_FROM_DISK
 
 //#undef assert
 //#define assert(expr) consolePrintf("Asserted!")
 #define NO_DEBUG_MSGS
 
-#define consolePrintf iprintf
+
+// This is defined in dsmain.cpp
+#ifdef __cplusplus
+extern "C" {
+#endif
+void consolePrintf(char * format, ...);
+#ifdef __cplusplus
+}
+#endif
+
 
 #ifdef assert
 #undef assert

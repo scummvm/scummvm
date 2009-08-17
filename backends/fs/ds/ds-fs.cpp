@@ -770,7 +770,7 @@ void std_clearerr(FILE* handle) {
 }
 
 void std_fprintf(FILE* handle, const char* fmt, ...) {
-	consolePrintf(fmt);
+	consolePrintf("%s", fmt);
 }
 
 

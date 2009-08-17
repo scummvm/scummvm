@@ -90,6 +90,7 @@ vpath %.s $(srcdir)
 ARM = 1
 USE_ARM_SOUND_ASM = 1
 USE_ARM_COSTUME_ASM = 1
+#WRAP_MALLOC = 1
 
 ifdef DS_BUILD_A
 	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
@@ -200,7 +201,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -211,6 +212,11 @@ DEFINES += -DREDUCE_MEMORY_USAGE
 # -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE 
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
+
+ifdef WRAP_MALLOC
+	LDFLAGS += -Wl,--wrap,malloc
+	DEFINES += -DWRAP_MALLOC
+endif
 
 INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
@@ -287,11 +293,12 @@ LIBCARTRESET_OBJS :=
 #$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
 OPT_SPEED := -O3
+#OPT_SPEED := -Os -mthumb
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
