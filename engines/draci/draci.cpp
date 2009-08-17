@@ -218,6 +218,15 @@ bool DraciEngine::handleEvents() {
 			else if (event.kbd.keycode == Common::KEYCODE_w) { 
 				_showWalkingMap = !_showWalkingMap;
 			}
+			else if (event.kbd.keycode == Common::KEYCODE_i) {
+				if(_game->getLoopStatus() == kStatusInventory &&
+				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
+					_game->inventoryDone();
+				} else if (_game->getLoopStatus() == kStatusOrdinary &&
+				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
+					_game->inventoryInit();
+				}		
+			}
 			break;					
 		default:
 			_mouse->handleEvent(event);
