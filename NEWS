@@ -59,6 +59,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for PC Speaker based music and sound effects.
    - Added support for 16 color dithering in Kyrandia PC-9801.
 
+ PSP port:
+   - Added support for sleep mode (suspend/resume).
+
  WinCE port:
     - Speed optimized versions of low-res Smartphone and 2x scalers.
     - New aspect correction scaler for VGA (or higher) devices.

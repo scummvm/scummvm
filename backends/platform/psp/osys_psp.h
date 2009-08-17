@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef OSYS_PSP_H
+#define OSYS_PSP_H
+
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
@@ -144,3 +147,5 @@ public:
 	virtual Common::WriteStream *createConfigWriteStream();
 };
 
+
+#endif /* OSYS_PSP_H */
