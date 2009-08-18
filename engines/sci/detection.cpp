@@ -3123,9 +3123,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			// therefore add the directory here, so that the game files can be opened later on
 			// TODO/FIXME: This should be removed, as it will cause problems with game detection:
 			// if we got a game A, and then try to detect another game B, adding a default
-			// directory here means that game A's files will be opened first. We either need to
-			// remove the directory added here, or rewrite all the functions which access game
-			// files
+			// directory here means that game A's files will be opened first. We need to rewrite
+			// all the functions that access game files to use FSNodes instead
 			Common::File::addDefaultDirectory(file->getParent().getPath());
 			foundResMap = true;
 		}
@@ -3167,20 +3166,22 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
 	// Determine the game id
-	ResourceManager *resMgr = new ResourceManager();
+	ResourceManager *resMgr = new ResourceManager(fslist);
 	SciVersion version = resMgr->sciVersion();
-	Kernel *kernel = new Kernel(resMgr);
-	SegManager *segManager = new SegManager(resMgr, version, kernel->hasOldScriptHeader());
-	if (!script_instantiate(resMgr, segManager, version, kernel->hasOldScriptHeader(), 0)) {
+	Kernel *kernel = new Kernel(resMgr, true);
+	bool hasOldScriptHeader = kernel->hasOldScriptHeader();
+	delete kernel;
+
+	SegManager *segManager = new SegManager(resMgr, version, hasOldScriptHeader);
+	if (!script_instantiate(resMgr, segManager, version, hasOldScriptHeader, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
-	Common::String gameName = obj_get_name(segManager,version, game_obj);
-	debug(2, " \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
+	Common::String gameName = obj_get_name(segManager, version, game_obj);
+	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
 	gameName.toLowercase();
 	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName).c_str());
-	delete kernel;
 	delete segManager;
 	delete resMgr;
 

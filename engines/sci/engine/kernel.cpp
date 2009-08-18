@@ -363,11 +363,15 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
+Kernel::Kernel(ResourceManager *resmgr, bool minimalLoad) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
 	loadSelectorNames();
 	detectSciFeatures();
+
+	if (minimalLoad)	// If we're only asked to detect game features, stop here
+		return;
+
 	mapSelectors();      // Map a few special selectors for later use
 	loadOpcodes();
 	loadKernelNames();

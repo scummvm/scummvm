@@ -28,6 +28,7 @@
 
 #include "common/str.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/archive.h"
 
 #include "sound/audiostream.h"
@@ -136,6 +137,7 @@ struct ResourceSource {
 	ResSourceType source_type;
 	bool scanned;
 	Common::String location_name;	// FIXME: Replace by FSNode ?
+	const Common::FSNode *resourceFile;
 	int volume_number;
 	ResourceSource *associated_map;
 };
@@ -247,6 +249,7 @@ public:
 	 * Creates a new SCI resource manager.
 	 */
 	ResourceManager();
+	ResourceManager(const Common::FSList &fslist);
 	~ResourceManager();
 
 	/**
@@ -306,6 +309,11 @@ protected:
 	SciVersion _sciVersion; //!< Detected SCI version */
 
 	/**
+	 * Initializes the resource manager
+	 */
+	void init();
+
+	/**
 	 * Add a path to the resource manager's list of sources.
 	 * @return a pointer to the added source structure, or NULL if an error occurred.
 	 */
@@ -322,12 +330,19 @@ protected:
 	 */
 	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const char *filename,
 	                          int number);
+
+	ResourceSource *addSource(ResourceSource *map, ResSourceType type, 
+								const Common::FSNode *resFile, int number);
+
 	/**
 	 * Add an external (i.e., separate file) map resource to the resource manager's list of sources.
 	 * @param file_name	 The name of the volume to add
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addExternalMap(const char *file_name);
+
+	ResourceSource *addExternalMap(const Common::FSNode *mapFile);
+
 	/**
 	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
 	 * @param name		The name of the resource to add
@@ -344,6 +359,7 @@ protected:
 	 */
 	void scanNewSources();
 	int addAppropriateSources();
+	int addAppropriateSources(const Common::FSList &fslist);
 	int addInternalSources();
 	void freeResourceSources();
 
