@@ -408,6 +408,7 @@ bool Menu::keyhandler(int key) {
 		if (d->enabled) {
 			debugC(6, kDebugLevelMenu | kDebugLevelInput, "event %d registered", d->event);
 			_vm->_game.controllerOccured[d->event] = true;
+			_vm->_menuSelected = true;
 			goto exit_menu;
 		}
 		break;
