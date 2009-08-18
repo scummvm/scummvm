@@ -205,18 +205,6 @@ void ScriptManager::processActionList() {
                         lineIncrement = 1;
                     }
                 }
-
-
-                // TODO: take this part of the code when the updateBarrier function is like original and decomment the above code
-				/*int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
-				if (barrierIndex >= 0)
-					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags |= 0x20;	//	TODO - enums for flags (0x20 is visible/playing?)
-				else
-					debugC(kDebugLevelScripts,
-							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
-							currentCommand->param1,
-							Shared.getScene()->getSceneIndex(),
-							_currentLine);*/
 			}
 				break;
 
