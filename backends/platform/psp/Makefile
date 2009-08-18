@@ -64,7 +64,7 @@ endif
 INCDIR   := $(srcdir) . $(srcdir)/engines/ . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
-CXXFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags`
+CXXFLAGS = -O3 -Wall -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags`
 CXXFLAGS:= $(addprefix -I,$(INCDIR)) $(CXXFLAGS)
 LDFLAGS := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 LIBS     =

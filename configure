@@ -1155,7 +1155,7 @@ case $_host_os in
 		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
 		;;
 	psp)
-		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
