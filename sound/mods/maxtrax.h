@@ -185,7 +185,6 @@ private:
 		byte	octave;
 //		byte	number;
 //		byte	link;
-		byte	priority;
 		enum {
 			kStatusFree,
 			kStatusHalt,
@@ -195,10 +194,12 @@ private:
 			kStatusAttack,
 			kStatusStart
 		};
+		uint8	isBlocked;
+		uint8	priority;
 		byte	status;
-		bool	hasDamper;
-		bool	isBlocked;
 		byte	lastVolume;
+		byte	tieBreak;
+		bool	hasDamper;
 		bool	hasPortamento;
 		byte	dmaOff;
 
@@ -211,7 +212,7 @@ private:
 	void resetChannel(ChannelContext &chan, bool rightChannel);
 	void resetPlayer();
 
-	static int8 pickvoice(const VoiceContext voice[4], uint pick, int16 pri);
+	int8 pickvoice(uint pick, int16 pri);
 	uint16 calcNote(const VoiceContext &voice);
 	int8 noteOn(ChannelContext &channel, byte note, uint16 volume, uint16 pri);
 	void killVoice(byte num);

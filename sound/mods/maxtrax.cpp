@@ -40,7 +40,7 @@ enum { K_VALUE = 0x9fd77, PREF_PERIOD = 0x8fd77, PERIOD_LIMIT = 0x6f73d };
 enum { NO_BEND = 64 << 7, MAX_BEND_RANGE = 24 };
 
 int32 precalcNote(byte baseNote, int16 tune, byte octave) {
-	return K_VALUE + 0x3C000 + (1 << 16) - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
+	return K_VALUE + 0x3C000 - ((baseNote << 14) + (tune << 11) / 3) / 3 - (octave << 16);
 }
 
 int32 calcVolumeDelta(int32 delta, uint16 time, uint16 vBlankFreq) {
@@ -55,15 +55,60 @@ int32 calcTempo(const uint16 tempo, uint16 vBlankFreq) {
 
 void nullFunc(int) {}
 
-// define sinetable if needed and setup a compile-time constant
-#ifdef MAXTRAX_HAS_MODULATION
-const int8 tableSine[256] = { 0 }; // todo - fillin values
-const bool kHasModulation = true;
+// Function to calculate 2^x, where x is a fixedpoint number with 16 fraction bits
+// using exp would be more accurate and needs less space if mathlibrary is already linked
+// but this function should be faster and doesnt use floats
+#if 1
+static const uint16 tablePow2[] = {
+		0,   178,   356,   535,   714,   893,  1073,  1254,  1435,  1617,  1799,  1981,  2164,  2348,  2532,  2716,
+	 2902,  3087,  3273,  3460,  3647,  3834,  4022,  4211,  4400,  4590,  4780,  4971,  5162,  5353,  5546,  5738,
+	 5932,  6125,  6320,  6514,  6710,  6906,  7102,  7299,  7496,  7694,  7893,  8092,  8292,  8492,  8693,  8894,
+	 9096,  9298,  9501,  9704,  9908, 10113, 10318, 10524, 10730, 10937, 11144, 11352, 11560, 11769, 11979, 12189,
+	12400, 12611, 12823, 13036, 13249, 13462, 13676, 13891, 14106, 14322, 14539, 14756, 14974, 15192, 15411, 15630,
+	15850, 16071, 16292, 16514, 16737, 16960, 17183, 17408, 17633, 17858, 18084, 18311, 18538, 18766, 18995, 19224,
+	19454, 19684, 19915, 20147, 20379, 20612, 20846, 21080, 21315, 21550, 21786, 22023, 22260, 22498, 22737, 22977,
+	23216, 23457, 23698, 23940, 24183, 24426, 24670, 24915, 25160, 25406, 25652, 25900, 26148, 26396, 26645, 26895,
+	27146, 27397, 27649, 27902, 28155, 28409, 28664, 28919, 29175, 29432, 29690, 29948, 30207, 30466, 30727, 30988,
+	31249, 31512, 31775, 32039, 32303, 32568, 32834, 33101, 33369, 33637, 33906, 34175, 34446, 34717, 34988, 35261,
+	35534, 35808, 36083, 36359, 36635, 36912, 37190, 37468, 37747, 38028, 38308, 38590, 38872, 39155, 39439, 39724,
+	40009, 40295, 40582, 40870, 41158, 41448, 41738, 42029, 42320, 42613, 42906, 43200, 43495, 43790, 44087, 44384,
+	44682, 44981, 45280, 45581, 45882, 46184, 46487, 46791, 47095, 47401, 47707, 48014, 48322, 48631, 48940, 49251,
+	49562, 49874, 50187, 50500, 50815, 51131, 51447, 51764, 52082, 52401, 52721, 53041, 53363, 53685, 54008, 54333,
+	54658, 54983, 55310, 55638, 55966, 56296, 56626, 56957, 57289, 57622, 57956, 58291, 58627, 58964, 59301, 59640,
+	59979, 60319, 60661, 61003, 61346, 61690, 62035, 62381, 62727, 63075, 63424, 63774, 64124, 64476, 64828, 65182,
+	    0
+};
+inline uint32 pow2Fixed(int32 val) {
+	const uint16 whole = val >> 16;
+	const uint8 index = (uint8)(val >> 8);
+	// calculate fractional part.
+	const uint16 base = tablePow2[index];
+	// linear interpolation and add 1.0
+	uint32 exponent = ((uint32)(uint16)(tablePow2[index + 1] - base) * (uint8)val) + ((uint32)base << 8) + (1 << 24);
+
+	if (whole < 24) {
+		// shift away all but the last fractional bit which is used for rounding,
+		// then round to nearest integer
+		exponent = ((exponent >> (23 - whole)) + 1) >> 1;
+	} else if (whole < 32) {
+		// no need to round here
+		exponent <<= whole - 24;
+	} else if (val > 0) {
+		// overflow
+		exponent = 0xFFFFFFFF;
+	} else  {
+		// negative integer, test if >= -0.5
+		exponent = (val >= -0x8000) ? 1 : 0;
+	}
+	return exponent;
+}
 #else
-const bool kHasModulation = false;
+inline uint32 pow2Fixed(int32 val) {
+	return (uint32)(expf((float)val * (float)(0.69314718055994530942 / (1 << 16))) + 0.5f);
+}
 #endif
 
-}
+}	// End of namespace
 
 namespace Audio {
 
@@ -239,12 +284,12 @@ endOfEventLoop:
 			// in that case they are finished after the attackSample is done
 			if (voice.dmaOff && Paula::getChannelDmaCount((byte)i) >= voice.dmaOff ) {
 				voice.dmaOff = 0;
-				voice.isBlocked = false;
+				voice.isBlocked = 0;
 				voice.priority = 0;
 				// disable it in next tick
 				voice.stopEventTime = 0;
 			}
-			if (!channel.isAltered && !voice.hasPortamento && (!kHasModulation || !channel.modulation))
+			if (!channel.isAltered && !voice.hasPortamento && !channel.modulation)
 				continue;
 			// Update Volume and Period
 			break;
@@ -337,7 +382,7 @@ endOfEventLoop:
 					voice.preCalcNote = precalcNote(voice.baseNote, patch.tune, voice.octave);
 				}
 				voice.lastPeriod = calcNote(voice);
-			} else if (channel.isAltered || (kHasModulation && channel.modulation))
+			} else if (channel.isAltered || channel.modulation)
 				voice.lastPeriod = calcNote(voice);
 		}
 
@@ -348,10 +393,11 @@ endOfEventLoop:
 	for (ChannelContext *c = _channelCtx; c != &_channelCtx[ARRAYSIZE(_channelCtx)]; ++c)
 		c->isAltered = false;
 
+#ifdef MAXTRAX_HAS_MODULATION
 	// original player had _playerCtx.sineValue = _playerCtx.frameUnit >> 2
 	// this should fit the comments that modtime=1000 is one second ?
-	if (kHasModulation)
-		_playerCtx.sineValue += _playerCtx.frameUnit;
+	_playerCtx.sineValue += _playerCtx.frameUnit;
+#endif
 }
 
 void MaxTrax::controlCh(ChannelContext &channel, const byte command, const byte data) {
@@ -535,13 +581,14 @@ void MaxTrax::killVoice(byte num) {
 	voice.channel = 0;
 	voice.envelope = 0;
 	voice.status = VoiceContext::kStatusFree;
-	voice.isBlocked = false;
+	voice.isBlocked = 0;
 	voice.hasDamper = false;
 	voice.hasPortamento = false;
 	voice.priority = 0;
 	voice.stopEventTime = -1;
 	voice.dmaOff = 0;
 	voice.lastVolume = 0;
+	voice.tieBreak = 0;
 	//voice.uinqueId = 0;
 
 	// "stop" voice, set period to 1, vol to 0
@@ -550,40 +597,46 @@ void MaxTrax::killVoice(byte num) {
 	Paula::setChannelVolume(num, 0);
 }
 
-int8 MaxTrax::pickvoice(const VoiceContext voices[4], uint pick, int16 pri) {
+int8 MaxTrax::pickvoice(uint pick, int16 pri) {
 	enum { kPrioFlagFixedSide = 1 << 3 };
+	pick &= 3;
 	if ((pri & (kPrioFlagFixedSide)) == 0) {
 		const bool leftSide = (uint)(pick - 1) > 1;
-		const int leftBest = MIN(voices[0].status, voices[3].status);
-		const int rightBest = MIN(voices[1].status, voices[2].status);
+		const int leftBest = MIN(_voiceCtx[0].status, _voiceCtx[3].status);
+		const int rightBest = MIN(_voiceCtx[1].status, _voiceCtx[2].status);
 		const int sameSide = (leftSide) ? leftBest : rightBest;
 		const int otherSide = leftBest + rightBest - sameSide;
 
 		if (sameSide > VoiceContext::kStatusRelease && otherSide <= VoiceContext::kStatusRelease)
 			pick ^= 1; // switches sides
 	}
-	pick &= 3;
+	pri &= ~kPrioFlagFixedSide;
 
 	for (int i = 2; i > 0; --i) {
-		const VoiceContext *voice = &voices[pick];
-		const VoiceContext *alternate = &voices[pick ^ 3];
+		VoiceContext *voice = &_voiceCtx[pick];
+		VoiceContext *alternate = &_voiceCtx[pick ^ 3];
 
-		if (voice->status > alternate->status 
-			|| (voice->status == alternate->status && voice->lastVolume > alternate->lastVolume)) {
-			// TODO: tiebreaking
+		const uint16 voiceVal = voice->status << 8 | voice->lastVolume;
+		const uint16 altVal = alternate->status << 8 | alternate->lastVolume;
+
+		if (voiceVal + voice->tieBreak > altVal 
+			|| voice->isBlocked > alternate->isBlocked) {
+
+			// this is somewhat different to the original player,
+			// but has a similar result
+			voice->tieBreak = 0;
+			alternate->tieBreak = 1;
+
 			pick ^= 3; // switch channels
-			const VoiceContext *tmp = voice;
+			VoiceContext *tmp = voice;
 			voice = alternate;
 			alternate = tmp;
 		}
 
 		if (voice->isBlocked || voice->priority > pri) {
-			pick ^= 3; // switch channels
-			if (alternate->isBlocked || alternate->priority > pri) {
-				// if not already done, switch sides and try again
-				pick ^= 1;
-				continue;
-			}
+			// if not already done, switch sides and try again
+			pick ^= 1;
+			continue;
 		}
 		// succeded
 		return (int8)pick;
@@ -613,11 +666,21 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 #endif
 
 #ifdef MAXTRAX_HAS_MODULATION
+	static const uint8 tableSine[] = {
+		  0,   5,  12,  18,  24,  30,  37,  43,  49,  55,  61,  67,  73,  79,  85,  91,
+		 97, 103, 108, 114, 120, 125, 131, 136, 141, 146, 151, 156, 161, 166, 171, 176,
+		180, 184, 189, 193, 197, 201, 205, 208, 212, 215, 219, 222, 225, 228, 230, 233,
+		236, 238, 240, 242, 244, 246, 247, 249, 250, 251, 252, 253, 254, 254, 255, 255,
+		255, 255, 255, 254, 254, 253, 252, 251, 250, 249, 247, 246, 244, 242, 240, 238,
+		236, 233, 230, 228, 225, 222, 219, 215, 212, 208, 205, 201, 197, 193, 189, 184,
+		180, 176, 171, 166, 161, 156, 151, 146, 141, 136, 131, 125, 120, 114, 108, 103,
+		 97,  91,  85,  79,  73,  67,  61,  55,  49,  43,  37,  30,  24,  18,  12,   5
+	};
 	if (channel.modulation) {
 		if ((channel.flags & ChannelContext::kFlagModVolume) == 0) {
-			int sineInd = (_playerCtx.sineValue / channel.modulationTime) & 0xFF;
-			// TODO - use table
-			bend += (int16)(sinf(sineInd * (float)((2 * PI) / 256)) * channel.modulation);
+			const uint8 sineByte = _playerCtx.sineValue / channel.modulationTime;
+			const int16 modVal = ((uint32)(uint16)(tableSine[sineByte & 0x7F] + (sineByte ? 1 : 0)) * channel.modulation) >> 8;
+			bend = (sineByte < 0x80) ? bend + modVal : bend - modVal;
 		} 
 	}
 #endif
@@ -627,13 +690,7 @@ uint16 MaxTrax::calcNote(const VoiceContext &voice) {
 
 	const int32 tone = voice.preCalcNote + (bend << 6) / 3;
 
-	if (tone >= PERIOD_LIMIT + (1 << 16)) {
-		// calculate 2^tone and round towards nearest integer 
-		// 2*2^tone = exp((tone+1) * ln(2))
-		const uint16 periodX2 = (uint16)expf((float)tone * (float)(0.69314718055994530942 / (1 << 16)));
-		return (periodX2 + 1) / 2;
-	}
-	return 0;
+	return (tone >= PERIOD_LIMIT) ? (uint16)pow2Fixed(tone) : 0;
 }
 
 int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, uint16 pri) {
@@ -650,13 +707,13 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		return -1;
 	int8 voiceNum = -1;
 	if ((channel.flags & ChannelContext::kFlagMono) == 0) {
-		voiceNum = pickvoice(_voiceCtx, (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
+		voiceNum = pickvoice((channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
 	} else {
 		VoiceContext *voice = _voiceCtx + ARRAYSIZE(_voiceCtx) - 1;
 		for (voiceNum = ARRAYSIZE(_voiceCtx) - 1; voiceNum >= 0 && voice->channel != &channel; --voiceNum, --voice)
 			;
 		if (voiceNum < 0)
-			voiceNum = pickvoice(_voiceCtx, (channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
+			voiceNum = pickvoice((channel.flags & ChannelContext::kFlagRightChannel) != 0 ? 1 : 0, pri);
 		else if (voice->status >= VoiceContext::kStatusSustain && (channel.flags & ChannelContext::kFlagPortamento) != 0) {
 			// reset previous porta
 			if (voice->hasPortamento)
@@ -673,7 +730,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 	if (voiceNum >= 0) {
 		VoiceContext &voice = _voiceCtx[voiceNum];
 		voice.hasDamper = false;
-		voice.isBlocked = false;
+		voice.isBlocked = 0;
 		voice.hasPortamento = false;
 		if (voice.channel)
 			killVoice(voiceNum);
@@ -683,10 +740,10 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 
 		// always base octave on the note in the command, regardless of porta
 		const int32 plainNote = precalcNote(note, patch.tune, 0);
-		const int32 PREF_PERIOD1 = PREF_PERIOD + (1 << 16);
 		// calculate which sample to use
-		const int useOctave = (plainNote <= PREF_PERIOD1) ? 0 : MIN<int32>((plainNote + 0xFFFF - PREF_PERIOD1) >> 16, patch.sampleOctaves - 1);
+		const int useOctave = (plainNote <= PREF_PERIOD) ? 0 : MIN<int32>((plainNote + 0xFFFF - PREF_PERIOD) >> 16, patch.sampleOctaves - 1);
 		voice.octave = (byte)useOctave;
+		// adjust precalculated value
 		voice.preCalcNote = plainNote - (useOctave << 16);
 
 		// next calculate the actual period which depends on wether porta is enabled
@@ -709,16 +766,12 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		voice.noteVolume = (_playerCtx.handleVolume) ? volume + 1 : 128;
 		voice.baseVolume = 0;
 
-		const uint16 period = (voice.lastPeriod) ? voice.lastPeriod : 1000;
-
 		// TODO: since the original player is using the OS-functions, more than 1 sample could be queued up already
 		// get samplestart for the given octave
 		const int8 *samplePtr = patch.samplePtr + (patch.sampleTotalLen << useOctave) - patch.sampleTotalLen;
 		if (patch.sampleAttackLen) {
 			Paula::setChannelSampleStart(voiceNum, samplePtr);
 			Paula::setChannelSampleLen(voiceNum, (patch.sampleAttackLen << useOctave) / 2);
-			Paula::setChannelPeriod(voiceNum, period);
-			Paula::setChannelVolume(voiceNum, 0);
 
 			Paula::enableChannel(voiceNum);
 			// wait  for dma-clear
@@ -727,13 +780,8 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		if (patch.sampleTotalLen > patch.sampleAttackLen) {
 			Paula::setChannelSampleStart(voiceNum, samplePtr + (patch.sampleAttackLen << useOctave));
 			Paula::setChannelSampleLen(voiceNum, ((patch.sampleTotalLen - patch.sampleAttackLen) << useOctave) / 2);
-			if (!patch.sampleAttackLen) {
-				// need to enable channel
-				Paula::setChannelPeriod(voiceNum, period);
-				Paula::setChannelVolume(voiceNum, 0);
-
-				Paula::enableChannel(voiceNum);
-			}
+			if (!patch.sampleAttackLen)
+				Paula::enableChannel(voiceNum); // need to enable channel
 			// another pointless wait for DMA-Clear???
 
 		} else { // no sustain sample
@@ -744,6 +792,9 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 			Paula::setChannelDmaCount(voiceNum);
 			voice.dmaOff = 1;
 		}
+
+		Paula::setChannelPeriod(voiceNum, (voice.lastPeriod) ? voice.lastPeriod : 1000);
+		Paula::setChannelVolume(voiceNum, 0);
 	}
 	return voiceNum;
 }
@@ -939,7 +990,7 @@ allocError:
 	return false;
 }
 
-#ifndef NDEBUG
+#if !defined(NDEBUG) && 0
 void MaxTrax::outPutEvent(const Event &ev, int num) {
 	struct {
 		byte cmd;
