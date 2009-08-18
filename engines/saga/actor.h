@@ -183,8 +183,8 @@ enum DragonMoveTypes {
 
 struct PathDirectionData {
 	int8 direction;
-	int x;
-	int y;
+	int16 x;
+	int16 y;
 };
 
 struct ActorFrameRange {
