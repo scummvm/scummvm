@@ -41,6 +41,7 @@
 unsigned int __attribute__((aligned(16))) list[262144];
 unsigned short __attribute__((aligned(16))) clut256[256];
 unsigned short __attribute__((aligned(16))) mouseClut[256];
+unsigned short __attribute__((aligned(16))) cursorPalette[256];
 unsigned short __attribute__((aligned(16))) kbClut[256];
 //unsigned int __attribute__((aligned(16))) offscreen256[640*480];
 //unsigned int __attribute__((aligned(16))) overlayBuffer256[640*480*2];
@@ -225,6 +226,24 @@ void OSystem_PSP_GU::setPalette(const byte *colors, uint start, uint num) {
 	sceKernelDcacheWritebackAll();
 }
 
+void OSystem_PSP_GU::setCursorPalette(const byte *colors, uint start, uint num) {
+	const byte *b = colors;
+
+	for (uint i = 0; i < num; ++i) {
+		cursorPalette[start + i] = RGBToColour(b[0], b[1], b[2]);
+		b += 4;
+	}
+
+	cursorPalette[0] = 0;
+
+	_cursorPaletteDisabled = false;
+	
+	sceKernelDcacheWritebackAll();
+}
+
+void OSystem_PSP_GU::disableCursorPalette(bool disable) {
+	_cursorPaletteDisabled = disable;
+}
 
 void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
 	//Clip the coordinates
@@ -364,7 +383,7 @@ void OSystem_PSP_GU::updateScreen() {
 	if (_mouseVisible) {
 		sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
 		sceGuClutMode(GU_PSM_5551, 0, 0xff, 0);
-		sceGuClutLoad(32, mouseClut); // upload 32*8 entries (256)
+		sceGuClutLoad(32, _cursorPaletteDisabled ? mouseClut : cursorPalette); // upload 32*8 entries (256)
 		sceGuAlphaFunc(GU_GREATER,0,0xff);
 		sceGuEnable(GU_ALPHA_TEST);
 		sceGuTexImage(0, MOUSE_SIZE, MOUSE_SIZE, MOUSE_SIZE, _mouseBuf);

@@ -47,6 +47,8 @@ public:
 	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) ;
 	void setPalette(const byte *colors, uint start, uint num);
+	void setCursorPalette(const byte *colors, uint start, uint num);
+	void disableCursorPalette(bool disable);
 	bool pollEvent(Common::Event &event);
 	int _graphicMode;
 	struct Vertex *_vertices;
