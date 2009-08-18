@@ -280,7 +280,7 @@ void Scene::update() {
 
 	// DEBUG
 	// Force the screen to scroll if the mouse approaches the edges
-	//debugScreenScrolling(bg);
+	debugScreenScrolling(bg);
 
 	// Copy the background to the back buffer before updating the scene animations
 	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
@@ -290,25 +290,6 @@ void Scene::update() {
 			640,
 			480);
     
-    /* COMMENTED WHILE DEVELOPING NEW VERSION
-	// TODO
-	// This is a hack for scene 1. This really shouldn't be hardcoded, as the
-	// activation of this barrier should be interpreted by the script manager,
-	// but at the moment, we're not sure where it is in the script.
-    updateBarrier(Shared.getScreen(), _resPack, 1);	// inside the middle room
-
-	for(uint b=0; b < _sceneResource->getWorldStats()->barriers.size(); b++) {
-        if((_sceneResource->getWorldStats()->barriers[b].field_3C == 4)) {
-            if ((_sceneResource->getWorldStats()->barriers[b].flags & 0x20))	//	TODO - enums for flags (0x20 is visible/playing?)
-			    updateBarrier(Shared.getScreen(), _resPack, b);
-
-        if (_sceneResource->getWorldStats()->barriers[b].flags & 8) {
-            updateBarrier(Shared.getScreen(), _resPack, b);
-        }
-
-        }
-	}*/
-
     processBarriers(worldStats);
 
 	// DEBUGGING
@@ -617,13 +598,6 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
         for(uint b=0; b < barriersCount; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
 
-            // DEBUG
-            /*printf("barrierIdx: %d\n",b);
-            if(b==28)
-                printf("barrierIdx: %d frameIdx:%d\n",b,barrier->frameIdx);*/
-
-            startTickCount = system->getMillis();
-
             if(barrier->field_3C == 4) {
                 if(isBarrierVisible(barrier)) {
                     uint32 flag = barrier->flags;
@@ -747,13 +721,11 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                     }
 
                     // TODO: this must be on drawBarrier function
-                    if(b!=10 && b!=17 && b!=34 && b!=54 && b!=57 && b!=61) { // TODO: fix this
-                        if(!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-                            GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
-                            GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
-                            copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
-                            delete gra;
-                        }
+                    if(!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
+                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+                        GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
+                        copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
+                        delete gra;
                     }
                 }
                 
