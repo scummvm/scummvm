@@ -172,7 +172,7 @@ void AsylumEngine::playIntro() {
 	delete introRes;
 }
 
-void AsylumEngine::checkForEvent(bool doUpdate) {
+void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 
 	// NOTE
 	// In the original version of Sanitarium, the control loop for the sound

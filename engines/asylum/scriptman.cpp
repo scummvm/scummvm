@@ -84,6 +84,7 @@ int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
 
     BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
     int newFlag = barrierFlags | 1 | barrier->flags;
+    barrier->flags |= barrierFlags | 1;
 
     if(newFlag & 0x10000) {
         barrier->frameIdx = barrier->frameCount - 1;
@@ -446,7 +447,7 @@ void ScriptManager::processActionList() {
 					else
 						frameNum = currentCommand->param2;
 
-					if (Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].tickCount < frameNum) {
+					if (Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].frameIdx < frameNum) {
 						lineIncrement = 0;
 						waitCycle = true;
 					}

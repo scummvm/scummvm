@@ -289,7 +289,8 @@ void Scene::update() {
 			0,
 			640,
 			480);
-
+    
+    /* COMMENTED WHILE DEVELOPING NEW VERSION
 	// TODO
 	// This is a hack for scene 1. This really shouldn't be hardcoded, as the
 	// activation of this barrier should be interpreted by the script manager,
@@ -306,7 +307,9 @@ void Scene::update() {
         }
 
         }
-	}
+	}*/
+
+    processBarriers(worldStats);
 
 	// DEBUGGING
 	// Check current walk region
@@ -454,49 +457,6 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 	}
 }
 
-// WIP:
-bool Scene::isBarrierFlagsSet(BarrierItem *barrier) {
-    if(barrier->flags & 1)
-    {
-        for(uint f=0; f < 10; f++) {
-            uint32 flag = barrier->gameFlags[f];
-            if(flag <= 0)
-            {
-                
-            }
-        }
-
-        return true;
-    }
-    return false;
-}
-
-// WIP: This is a new function that will treat all updates for Barriers when its done
-void Scene::updateBarriers(WorldStats *worldStats) {
-    Screen *screen = Shared.getScreen();
-    OSystem *system = Shared.getOSystem();
-
-    uint barriersCount = worldStats->barriers.size();
-    int startTickCount = 0;
-
-    if(barriersCount > 0) {
-        for(uint b=0; b < barriersCount; b++) {
-            BarrierItem *barrier = &worldStats->barriers[b];
-
-            startTickCount = system->getMillis();
-
-            if(barrier->field_3C == 4) {
-                if(isBarrierFlagsSet(barrier)) {
-                    
-                } else {
-                    // TODO: get tick count
-                    // update barrier sounds
-                }
-            }
-        }
-    }
-}
-
 void Scene::updateBarrier(Screen *screen, ResourcePack *res, uint8 barrierIndex) {
 	BarrierItem barrier  = _sceneResource->getWorldStats()->barriers[barrierIndex];
 	GraphicResource *gra = new GraphicResource(res, barrier.resId);
@@ -600,6 +560,159 @@ void Scene::debugShowBarriers() {
 
 		surface.free();
 	}
+}
+
+
+
+// -------------------------------------------
+// --- NEXT CODE BLOCK IS WORK IN PROGRESS ---
+// this block will improve scene process
+// and drawing
+// -------------------------------------------
+
+bool Scene::isBarrierVisible(BarrierItem *barrier) {
+    if((barrier->flags & 0xFF) & 1)
+    {
+        for(uint f=0; f < 10; f++) {
+            bool isSet = false;
+            uint32 flag = barrier->gameFlags[f];
+
+            if(flag <= 0)
+            {
+                isSet = Shared.isGameFlagNotSet(-flag);
+            } else {
+                isSet = Shared.isGameFlagSet(flag);
+            }
+
+            if(!isSet) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+uint32 Scene::getRandomResId(BarrierItem *barrier) {
+    int numRes = 1;
+    uint32 rndResId[5];
+    for(int i=0; i < 5; i++) {
+        if(barrier->field_68C[i]) {
+            rndResId[numRes] = barrier->field_68C[i];
+            numRes++;
+        }
+    }
+    return rndResId[rand() % numRes];
+}
+
+// This is a new function that will process all update for Barriers
+void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
+    Screen *screen = Shared.getScreen();
+    OSystem *system = Shared.getOSystem();
+
+    uint barriersCount = worldStats->barriers.size();
+    int startTickCount = 0;
+    bool canUpdateSound = false;
+
+    if(barriersCount > 0) {
+        for(uint b=0; b < barriersCount; b++) {
+            BarrierItem *barrier = &worldStats->barriers[b];
+
+            // DEBUG
+            /*printf("barrierIdx: %d\n",b);
+            if(b==28)
+                printf("barrierIdx: %d frameIdx:%d\n",b,barrier->frameIdx);*/
+
+            startTickCount = system->getMillis();
+
+            if(barrier->field_3C == 4) {
+                if(isBarrierVisible(barrier)) {
+                    uint32 flag = barrier->flags;
+                    if(flag & 0x20) {
+                        if(system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
+                            barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+                            // update ticks
+                            barrier->tickCount = system->getMillis();
+                            canUpdateSound = true;
+                        }
+                    } else if(flag & 0x10) {
+                        uint32 frameIdx = barrier->frameIdx;
+                        char equalZero = frameIdx == 0;
+                        char lessZero = frameIdx < 0;
+                        if(!frameIdx) {
+                            if(system->getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
+                                if(rand() % barrier->field_C0 == 1) {
+                                    if(barrier->field_68C) {
+                                        // TODO: fix this, and find a better way to get frame count
+                                        // Sometimes we get wrong random resource id
+
+                                        /*barrier->resId = getRandomResId(barrier);
+                                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+                                        barrier->frameCount = gra->getFrameCount();
+                                        delete gra; */
+                                    }
+                                    barrier->frameIdx++;
+                                }
+                                barrier->tickCount = system->getMillis();
+                                canUpdateSound = true;
+                            }
+                            frameIdx = barrier->frameIdx;
+                            equalZero = frameIdx == 0;
+                            lessZero = frameIdx < 0;
+                        }
+
+                        if(!(lessZero ^ 0 | equalZero)) {
+                            if(system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
+                                barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+                                // update ticks
+                                barrier->tickCount = system->getMillis();
+                                canUpdateSound = true;
+                            }
+                        }
+                    } else if(flag & 8) {
+						if(system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
+							uint32 frameIdx = barrier->frameIdx + 1;
+                            if(frameIdx < barrier->frameCount - 1) {
+                                if(barrier->field_688 == 1) {
+                                    // TODO: get global x, y positions
+                                }
+                            } else {
+                                barrier->flags &= 0xFFFFFFF7;
+                                if(barrier->field_688 == 1) {
+                                    // TODO: reset global x, y positions
+                                }
+                            }
+                            barrier->frameIdx = frameIdx;
+						}
+                    } else if((flag & 0xF) & 8) { // check this
+                        if(system->getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
+							if(rand() % (barrier->field_C0+1) == 1) { // TODO: THIS ISNT WORKING
+								barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+								// update ticks
+                                barrier->tickCount = system->getMillis();
+                                canUpdateSound = true;
+							}
+					    }
+					} else if(!((flag & 0xFFFF) & 6)) {
+
+                    }
+
+                    // TODO: go to next flags
+
+                    // FIXME: this must be on drawBarrier function
+                    if(b!=10 && b!=17 && b!=34 && b!=54 && b!=57 && b!=61) { // TODO: fix this
+                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+                        GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
+                        copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
+                    }
+                } else {
+                    // TODO: get tick count
+                    // update barrier sounds
+                }
+            }
+        }
+    }
 }
 
 } // end of namespace Asylum
