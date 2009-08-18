@@ -411,7 +411,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 */
 	uint32 buttonsChanged = pad.Buttons ^ _prevButtons;
 
-	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE)) {
+	if (buttonsChanged & (PSP_CTRL_CROSS | PSP_CTRL_CIRCLE | PSP_CTRL_LTRIGGER | PSP_CTRL_RTRIGGER | PSP_CTRL_START | PSP_CTRL_SELECT | PSP_CTRL_SQUARE | PSP_CTRL_TRIANGLE)) {
 		if (buttonsChanged & PSP_CTRL_CROSS) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_LBUTTONDOWN : Common::EVENT_LBUTTONUP;
 		} else if (buttonsChanged & PSP_CTRL_CIRCLE) {
@@ -419,24 +419,29 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 		} else {
 			//any of the other buttons.
 			event.type = buttonsChanged & pad.Buttons ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
+			event.kbd.ascii = 0;
 			event.kbd.flags = 0;
 
 			if (buttonsChanged & PSP_CTRL_LTRIGGER) {
 				event.kbd.keycode = Common::KEYCODE_ESCAPE;
 				event.kbd.ascii = 27;
-			} else if (buttonsChanged & PSP_CTRL_RTRIGGER) {
-				event.kbd.keycode = Common::KEYCODE_RETURN;
-				event.kbd.ascii = 13;
 			} else if (buttonsChanged & PSP_CTRL_START) {
 				event.kbd.keycode = Common::KEYCODE_F5;
 				event.kbd.ascii = Common::ASCII_F5;
-				event.kbd.flags = Common::KBD_CTRL;	// Main menu to allow RTL
+				if (pad.Buttons & PSP_CTRL_RTRIGGER) {
+					event.kbd.flags = Common::KBD_CTRL;	// Main menu to allow RTL
+				}
 /*			} else if (buttonsChanged & PSP_CTRL_SELECT) {
 				event.kbd.keycode = Common::KEYCODE_0;
 				event.kbd.ascii = '0';
 */			} else if (buttonsChanged & PSP_CTRL_SQUARE) {
 				event.kbd.keycode = Common::KEYCODE_PERIOD;
 				event.kbd.ascii = '.';
+			} else if (buttonsChanged & PSP_CTRL_TRIANGLE) {
+				event.kbd.keycode = Common::KEYCODE_RETURN;
+				event.kbd.ascii = 13;
+			} else if (pad.Buttons & PSP_CTRL_RTRIGGER) {
+				event.kbd.flags |= Common::KBD_SHIFT;
 			}
 
 		}
@@ -485,7 +490,7 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 				newY += _padAccel >> 2;
 
 			// If no movement then this has no effect
-			if (pad.Buttons & PSP_CTRL_TRIANGLE) {
+			if (pad.Buttons & PSP_CTRL_RTRIGGER) {
 				// Fine control mode for analog
 					if (analogStepAmountX != 0) {
 						if (analogStepAmountX > 0)
