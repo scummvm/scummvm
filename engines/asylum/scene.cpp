@@ -618,9 +618,9 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
             BarrierItem *barrier = &worldStats->barriers[b];
 
             // DEBUG
-            printf("barrierIdx: %d\n",b);
+            /*printf("barrierIdx: %d\n",b);
             if(b==28)
-                printf("barrierIdx: %d frameIdx:%d\n",b,barrier->frameIdx);
+                printf("barrierIdx: %d frameIdx:%d\n",b,barrier->frameIdx);*/
 
             startTickCount = system->getMillis();
 
@@ -628,7 +628,7 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                 if(isBarrierVisible(barrier)) {
                     uint32 flag = barrier->flags;
                     if(flag & 0x20) {
-                        if(system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
+                        if(system->getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
                             barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
                             // update ticks
                             barrier->tickCount = system->getMillis();
@@ -752,6 +752,7 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                             GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
                             GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
                             copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
+                            delete gra;
                         }
                     }
                 }
