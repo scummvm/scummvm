@@ -571,14 +571,12 @@ void Scene::debugShowBarriers() {
 // -------------------------------------------
 
 bool Scene::isBarrierVisible(BarrierItem *barrier) {
-    if((barrier->flags & 0xFF) & 1)
-    {
+    if((barrier->flags & 0xFF) & 1) {
         for(uint f=0; f < 10; f++) {
             bool isSet = false;
             uint32 flag = barrier->gameFlags[f];
 
-            if(flag <= 0)
-            {
+            if(flag <= 0) {
                 isSet = Shared.isGameFlagNotSet(-flag);
             } else {
                 isSet = Shared.isGameFlagSet(flag);
@@ -613,16 +611,16 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
 
     uint barriersCount = worldStats->barriers.size();
     int startTickCount = 0;
-    bool canUpdateSound = false;
+    bool canPlaySound = false;
 
     if(barriersCount > 0) {
         for(uint b=0; b < barriersCount; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
 
             // DEBUG
-            /*printf("barrierIdx: %d\n",b);
+            printf("barrierIdx: %d\n",b);
             if(b==28)
-                printf("barrierIdx: %d frameIdx:%d\n",b,barrier->frameIdx);*/
+                printf("barrierIdx: %d frameIdx:%d\n",b,barrier->frameIdx);
 
             startTickCount = system->getMillis();
 
@@ -634,7 +632,7 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                             barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
                             // update ticks
                             barrier->tickCount = system->getMillis();
-                            canUpdateSound = true;
+                            canPlaySound = true;
                         }
                     } else if(flag & 0x10) {
                         uint32 frameIdx = barrier->frameIdx;
@@ -655,7 +653,7 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                                     barrier->frameIdx++;
                                 }
                                 barrier->tickCount = system->getMillis();
-                                canUpdateSound = true;
+                                canPlaySound = true;
                             }
                             frameIdx = barrier->frameIdx;
                             equalZero = frameIdx == 0;
@@ -663,15 +661,17 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                         }
 
                         if(!(lessZero ^ 0 | equalZero)) {
-                            if(system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
+                            // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
+                            if(system->getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
                                 barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
                                 // update ticks
                                 barrier->tickCount = system->getMillis();
-                                canUpdateSound = true;
+                                canPlaySound = true;
                             }
                         }
                     } else if(flag & 8) {
-						if(system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) {
+                        // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
+						if(system->getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
 							uint32 frameIdx = barrier->frameIdx + 1;
                             if(frameIdx < barrier->frameCount - 1) {
                                 if(barrier->field_688 == 1) {
@@ -685,31 +685,82 @@ void Scene::processBarriers(WorldStats *worldStats) { // old updateBarriers
                             }
                             barrier->frameIdx = frameIdx;
 						}
-                    } else if((flag & 0xF) & 8) { // check this
+                    } else if((flag & 0xFF) & 8) { // check this
                         if(system->getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-							if(rand() % (barrier->field_C0+1) == 1) { // TODO: THIS ISNT WORKING
+							if(rand() % barrier->field_C0 == 1) { // TODO: THIS ISNT WORKING
 								barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
 								// update ticks
                                 barrier->tickCount = system->getMillis();
-                                canUpdateSound = true;
+                                canPlaySound = true;
 							}
 					    }
 					} else if(!((flag & 0xFFFF) & 6)) {
-
+                        // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
+                        if((system->getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) && (flag & 0x10000)) { 
+                            uint frameIdx = barrier->frameIdx - 1;
+                            if(frameIdx <= 0) {
+                                barrier->flags &= 0xFFFEFFFF;
+                                if(barrier->field_688 == 1) {
+                                    // TODO: reset global x, y positions
+                                }
+                                // update ticks
+                                barrier->tickCount = system->getMillis();
+                                canPlaySound = true;
+                            }
+                            if(barrier->field_688 == 1) {
+                                // TODO: get global x, y positions
+                            }
+                            barrier->frameIdx = frameIdx;
+                        } else if(system->getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                            if((flag & 0xFF) & 2) {
+                                if(barrier->frameIdx == barrier->frameCount - 1) {
+                                    barrier->frameIdx--;
+                                    barrier->flags = ((flag & 0xFF) & 0xFD) | 4;
+                                } else {
+                                    barrier->frameIdx++;
+                                }
+                            } else if((flag & 0xFF) & 4) {
+                                if(barrier->frameIdx) {
+                                    barrier->frameIdx--;
+                                } else {
+                                    barrier->frameIdx++;
+                                    barrier->flags = ((flag & 0xFF) & 0xFB) | 2;
+                                }
+                            }
+                        }
                     }
 
-                    // TODO: go to next flags
+                    flag = barrier->flags;
+                    flag &= 0x40000;
+                    if(flag != 0) {
+                        if(barrier->frameIdx == barrier->frameCount - 1) {
+                            if(barrier->field_B4 <= 15) {
+                                barrier->field_B4 -= 2;
+                                if(barrier->field_B4 < 0) // FIXME: check this
+                                    barrier->field_B4 = 0; 
+                            } else {
+                                barrier->field_B4 = 15;
+                            }
+                            if(!barrier->field_B4)
+                                barrier->flags &= 0xFFFEF1C7;
+                        }
+                    }
 
-                    // FIXME: this must be on drawBarrier function
+                    // TODO: this must be on drawBarrier function
                     if(b!=10 && b!=17 && b!=34 && b!=54 && b!=57 && b!=61) { // TODO: fix this
-                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
-                        GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
-                        copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
+                        if(!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
+                            GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+                            GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
+                            copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
+                        }
                     }
-                } else {
-                    // TODO: get tick count
-                    // update barrier sounds
                 }
+                
+                if(canPlaySound) {
+                    // TODO: play sounds
+                }
+
+                // TODO: get sound functions according with scene
             }
         }
     }

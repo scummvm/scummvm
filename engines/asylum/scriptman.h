@@ -94,7 +94,7 @@ enum opcodes {
 	kEnableActor,
 	kEnableBarriers,
 	kReturn,				// 0x10
-	kDestroyObject,
+	kDestroyBarrier,
 	k_unk12_JMP_WALK_ACTOR,
 	k_unk13_JMP_WALK_ACTOR,
 	k_unk14_JMP_WALK_ACTOR,
