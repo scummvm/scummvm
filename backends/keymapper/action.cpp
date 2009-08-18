@@ -32,9 +32,9 @@
 namespace Common {
 
 Action::Action(Keymap *boss, const char *i,	String des, ActionType typ,
-			   KeyType prefKey, int pri, int flg)
+			   KeyType prefKey, int pri)
 	: _boss(boss), description(des), type(typ), preferredKey(prefKey),
-	priority(pri), flags(flg), _hwKey(0) {
+	priority(pri), _hwKey(0) {
 	assert(i);
 	assert(_boss);
 

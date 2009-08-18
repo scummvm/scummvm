@@ -54,8 +54,6 @@ struct Action {
 	ActionType type;
 	KeyType preferredKey;
 	int priority;
-	int group;
-	int flags;
 
 private:
 	/** Hardware key that is mapped to this Action */
@@ -66,7 +64,7 @@ public:
 	Action(Keymap *boss, const char *id, String des = "",
 		   ActionType typ = kGenericActionType,
 		   KeyType prefKey = kGenericKeyType,
-		   int pri = 0, int flg = 0 );
+		   int pri = 0);
 
 	void addEvent(const Event &evt) {
 		events.push_back(evt);

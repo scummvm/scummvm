@@ -240,7 +240,7 @@ void Keymap::automaticMapping(HardwareKeySet *hwKeys) {
 
 	// First mapping pass:
 	// - Match if a key's preferred action type is the same as the action's
-	// type, or vice versa.
+	//   type, or vice versa.
 	// - Priority is given to:
 	//     - keys that match action types over key types.
 	//     - keys that have not been used by parent maps.
