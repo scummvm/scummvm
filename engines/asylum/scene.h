@@ -123,15 +123,29 @@ private:
 	 */
 	void animateCursor();
 
-    bool isBarrierFlagsSet(BarrierItem *barrier);
-    void updateBarriers(WorldStats *worldStats);
-
     void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
     
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();
 	void debugShowBarriers();
 	void debugShowWalkRegion(PolyDefinitions *poly);
+
+    // --------
+    // This are new functions to treat game process update and game draw exactly like original
+
+    int processScene(); // old updateGame (0040B5B0)
+    int processActors();
+    void processBarriers(WorldStats *worldStats);
+    int processAmbientSounds();
+    int processMusic();
+    int processAdjustScreen();
+
+    int drawScene();
+    int drawBarriers(); // old object_sub_40E1A0 (0040E1A0)
+
+    bool isBarrierVisible(BarrierItem *barrier);
+    uint32 getRandomResId(BarrierItem *barrier);
+    
 }; // end of class Scene
 
 } // end of namespace Asylum
