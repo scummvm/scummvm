@@ -549,6 +549,7 @@ void Resources::setTalkingCharacter(uint16 id) {
 uint16 englishLoadOffsets[] = {0x3afe, 0x41BD, 0x7167, 0x7172, 0x8617, 0x88ac, 0};
 
 Hotspot *Resources::activateHotspot(uint16 hotspotId) {
+	Resources &resources = Resources::getReference();
 	HotspotData *res = getHotspot(hotspotId);
 	if (!res) return NULL;
 	res->roomNumber &= 0x7fff; // clear any suppression bit in room #
@@ -560,7 +561,6 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 
 	// If it's NPC with a schedule, then activate the schedule
 	if ((res->npcScheduleId != 0) && (res->npcSchedule.isEmpty())) {
-		Resources &resources = Resources::getReference();
 		CharacterScheduleEntry *entry = resources.charSchedules().getEntry(res->npcScheduleId);
 		res->npcSchedule.addFront(DISPATCH_ACTION, entry, res->roomNumber);
 	}
@@ -620,9 +620,12 @@ Hotspot *Resources::activateHotspot(uint16 hotspotId) {
 			// Special post-load handling
 			if (res->loadOffset == 3) hotspot->setPersistant(true);
 			if (res->loadOffset == 5) hotspot->handleTalkDialog();
-			if (hotspotId == CASTLE_SKORL_ID)
+			if (hotspotId == CASTLE_SKORL_ID) {
 				// The Castle skorl has a default room #99, so it needs to be adjusted dynamically
-				res->npcSchedule.top().setRoomNumber(res->roomNumber);
+				res->npcSchedule.clear();
+				CharacterScheduleEntry *entry = resources.charSchedules().getEntry(res->npcScheduleId);
+				res->npcSchedule.addFront(DISPATCH_ACTION, entry, res->roomNumber);
+			}
 
 			// TODO: Figure out why there's a room set in the animation decode for a range of characters,
 			// particularly since it doesn't seem to match what happens in-game
