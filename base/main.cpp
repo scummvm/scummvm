@@ -419,7 +419,7 @@ extern "C" int scummvm_main(int argc, const char * const argv[]) {
 			warning("Could not find any engine capable of running the selected game");
 		}
 
-		// We will destory the AudioCDManager singleton here to save some memory.
+		// We will destroy the AudioCDManager singleton here to save some memory.
 		// This will not make the CD audio stop, one would have to enable this:
 		//AudioCD.stop();
 		// but the engine is responsible for stopping CD playback anyway and

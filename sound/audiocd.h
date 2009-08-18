@@ -69,7 +69,7 @@ private:
 
 	// FIXME: It might make sense to stop CD playback, when the AudioCDManager singleton
 	// is destroyed. Currently we can not do this, since in worst case the OSystem and
-	// along wiht it the Mixer will be destroyed before the AudioCDManager, thus
+	// along with it the Mixer will be destroyed before the AudioCDManager, thus
 	// leading to invalid memory access. If we can fix up the code to destroy the
 	// AudioCDManager before OSystem in *all* cases, that is including calling
 	// OSystem::quit, we might be able to implement it via a simple "stop()"
