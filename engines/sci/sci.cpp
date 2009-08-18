@@ -135,7 +135,7 @@ Common::Error SciEngine::run() {
 
 	const uint32 flags = getFlags();
 
-	_resmgr = new ResourceManager(256 * 1024);
+	_resmgr = new ResourceManager();
 	_version = _resmgr->sciVersion();
 
 	if (!_resmgr) {

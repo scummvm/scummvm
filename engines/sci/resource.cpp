@@ -396,8 +396,7 @@ void ResourceManager::freeResourceSources() {
 	_sources.clear();
 }
 
-ResourceManager::ResourceManager(int maxMemory) {
-	_maxMemory = maxMemory;
+ResourceManager::ResourceManager() {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
@@ -506,7 +505,7 @@ void ResourceManager::printLRU() {
 }
 
 void ResourceManager::freeOldResources() {
-	while (_maxMemory < _memoryLRU) {
+	while (MAX_MEMORY < _memoryLRU) {
 		assert(!_LRU.empty());
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
@@ -614,6 +613,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			break;
 		}
 	}
+
 	if (file.isOpen() == false) {
 		error("Failed to open resource map file");
 		return kResVersionUnknown;

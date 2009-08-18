@@ -245,15 +245,8 @@ public:
 
 	/**
 	 * Creates a new SCI resource manager.
-	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
-	 *						in the default case.
-	 * @param maxMemory		Maximum number of bytes to allow allocated for resources
-	 *
-	 * @note maxMemory will not be interpreted as a hard limit, only as a restriction
-	 *    for resources which are not explicitly locked. However, a warning will be
-	 *    issued whenever this limit is exceeded.
 	 */
-	ResourceManager(int maxMemory);
+	ResourceManager();
 	~ResourceManager();
 
 	/**
@@ -294,8 +287,13 @@ public:
 	void setAudioLanguage(int language);
 
 protected:
+	// Maximum number of bytes to allow being allocated for resources
+	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
+	// for resources which are not explicitly locked. However, a warning will be
+	// issued whenever this limit is exceeded.
+	#define MAX_MEMORY 256 * 1024	// 256KB
+
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
-	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory
 	int _memoryLRU;		//!< Amount of resource bytes under LRU control

@@ -3090,7 +3090,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 #if 0
 	// Determine the game id
 	// TODO
-	ResourceManager *resMgr = new ResourceManager(256 * 1024);
+	ResourceManager *resMgr = new ResourceManager();
 	SciVersion version = resMgr->sciVersion();
 	SegManager *segManager = new SegManager(resMgr, version);
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
