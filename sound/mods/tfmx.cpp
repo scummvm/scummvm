@@ -939,7 +939,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 	uint32 offPatternP, offMacroP;
 
 	// This is how MI`s TFMX-Player tests for unpacked Modules.
-	if (!offTrackstep) { // unpacked File
+	if (offTrackstep == 0) { // unpacked File
 		resource->trackstepOffset = 0x600 + 0x200;
 		offPatternP		= 0x200 + 0x200;
 		offMacroP		= 0x400 + 0x200;
@@ -970,7 +970,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 
 	// use last PatternOffset (stored at 0x5FC in mdat) if unpacked File
 	// or fixed offset 0x200 if packed
-	resource->sfxTableOffset = !offTrackstep ? resource->patternOffset[127] : 0x200;
+	resource->sfxTableOffset = offTrackstep ? 0x200 : resource->patternOffset[127];
 
 	// Read in macro starting offsets
 	musicData.seek(offMacroP);
@@ -979,7 +979,7 @@ const Tfmx::MdatResource *Tfmx::loadMdatFile(Common::SeekableReadStream &musicDa
 
 	// Read in mdat-file
 	// TODO: we can skip everything thats already stored in the resource-structure.
-	const int32 mdatOffset = 0x200;	// 0x200 is very conservative
+	const int32 mdatOffset = offTrackstep ? 0x200 : 0x600;	// 0x200 is very conservative
 	const uint32 allocSize = (uint32)mdatSize - mdatOffset;
 	
 	byte *mdatAlloc = new byte[allocSize];
