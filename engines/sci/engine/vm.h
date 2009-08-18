@@ -489,7 +489,7 @@ reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_ind
  * @param[in] script_nr		The script number to load
  * @return					The script's segment ID or 0 if out of heap
  */
-int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersion version, int script_nr);
+int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersion version, bool oldScriptHeader, int script_nr);
 
 /**
  * Decreases the numer of lockers of a script and unloads it if that number

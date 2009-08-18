@@ -27,6 +27,7 @@
 #include "base/plugins.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/exereader.h"
 #include "sci/engine/seg_manager.h"
 
@@ -3047,8 +3048,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		if (filename.contains("resource.map") || filename.contains("resmap.000"))
+		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
+			// resource.map is located in the same directory as the other resource files,
+			// therefore add the directory here, so that the game files can be opened later on
+			Common::File::addDefaultDirectory(file->getParent().getPath());
 			foundResMap = true;
+		}
 
 		if (filename.contains("resource.000") || filename.contains("resource.001")
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
@@ -3081,24 +3086,30 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 
 	// Set some defaults
-	s_fallbackDesc.desc.gameid = "sci";
 	s_fallbackDesc.desc.extra = "";
 	s_fallbackDesc.desc.language = Common::UNK_LANG;
 	s_fallbackDesc.desc.platform = exePlatform;
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
-#if 0
 	// Determine the game id
-	// TODO
 	ResourceManager *resMgr = new ResourceManager();
 	SciVersion version = resMgr->sciVersion();
-	SegManager *segManager = new SegManager(resMgr, version);
+	Kernel *kernel = new Kernel(resMgr);
+	SegManager *segManager = new SegManager(resMgr, version, kernel->hasOldScriptHeader());
+	if (!script_instantiate(resMgr, segManager, version, kernel->hasOldScriptHeader(), 0)) {
+		warning("fallbackDetect(): Could not instantiate script 0");
+		return 0;
+	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
 	Common::String gameName = obj_get_name(segManager,version, game_obj);
 	debug(2, " \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
+	gameName.toLowercase();
+	// TODO: Sierra's game IDs are not always the same as our own ones, we need to map them
+	// accordingly here
+	s_fallbackDesc.desc.gameid = strdup(gameName.c_str());
+	delete kernel;
 	delete segManager;
 	delete resMgr;
-#endif
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");

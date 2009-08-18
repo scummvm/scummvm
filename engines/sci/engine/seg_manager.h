@@ -58,7 +58,7 @@ public:
 	/**
 	 * Initialize the segment manager
 	 */
-	SegManager(ResourceManager *resMgr, SciVersion version);
+	SegManager(ResourceManager *resMgr, SciVersion version, bool oldScriptHeader);
 
 	/**
 	 * Deallocate all memory associated with the segment manager
@@ -342,6 +342,7 @@ public:
 
 private:
 	IntMapper *id_seg_map; ///< id - script id; seg - index of heap
+	bool _oldScriptHeader;
 public: // TODO: make private
 	Common::Array<MemObject *> _heap;
 	int reserved_id;
@@ -360,6 +361,8 @@ private:
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	MemObject *memObjAllocate(SegmentId segid, int hash_id, MemObjectType type);
 	int deallocate(SegmentId seg, bool recursive);
+	int createSci0ClassTable();
+	int createSci11ClassTable();
 
 	Hunk *alloc_Hunk(reg_t *);
 
