@@ -62,12 +62,8 @@ bool PmvPlayer::play(const char *filename) {
 	}
 
 	uint frameDelay = _fd->readUint16LE();
-	int unk;
 	_fd->skip(4);	// always 0?
-	unk = _fd->readByte();
-	debug(2, "%i", unk);
-	unk = _fd->readByte();
-	debug(2, "%i", unk);
+	uint frameCount = _fd->readUint16LE();
 	_fd->skip(4);	// always 0?
 
 	uint soundFreq = _fd->readUint16LE();
@@ -80,7 +76,7 @@ bool PmvPlayer::play(const char *filename) {
 	if (soundFreq == 22254) soundFreq = 22050;
 
 	for (int i = 0; i < 22; i++) {
-		unk = _fd->readUint16LE();
+		int unk = _fd->readUint16LE();
 		debug(2, "%i ", unk);
 	}
 
@@ -90,7 +86,7 @@ bool PmvPlayer::play(const char *filename) {
 	_fd->read(_paletteRGB, 768);
 	_vm->_screen->setRGBPalette(_paletteRGB);
 
-	uint32 frameCount = 0;
+	uint32 frameNumber = 0;
 	uint16 chunkCount = 0;
 	uint32 soundSize = 0;
 	uint32 soundChunkOfs = 0, palChunkOfs = 0;
@@ -108,7 +104,7 @@ bool PmvPlayer::play(const char *filename) {
 	// get it to work well?
 	_audioStream = Audio::makeAppendableAudioStream(soundFreq, Audio::Mixer::FLAG_UNSIGNED);
 
-	while (!_vm->shouldQuit() && !_aborted && !_fd->eos()) {
+	while (!_vm->shouldQuit() && !_aborted && !_fd->eos() && frameNumber < frameCount) {
 
 		int32 frameTime = _vm->_system->getMillis();
 
@@ -116,9 +112,6 @@ bool PmvPlayer::play(const char *filename) {
 		if (chunkType != MKID_BE('MFRM')) {
 			warning("Unknown chunk type");
 		}
-
-		if (_fd->eos())
-			break;
 
 		// Only reallocate the frame data buffer if its size has changed
 		if (prevChunkSize != chunkSize || !frameData) {
@@ -192,7 +185,7 @@ bool PmvPlayer::play(const char *filename) {
 		updateScreen();
 
 		if (skipFrames == 0) {
-			int32 waitTime = (frameCount * frameDelay) -
+			int32 waitTime = (frameNumber * frameDelay) -
 				(g_system->getMillis() - soundStartTime) - (_vm->_system->getMillis() - frameTime);
 
 			if (waitTime < 0) {
@@ -204,7 +197,7 @@ bool PmvPlayer::play(const char *filename) {
 		} else
 			skipFrames--;
 
-		frameCount++;
+		frameNumber++;
 
 	}
 
