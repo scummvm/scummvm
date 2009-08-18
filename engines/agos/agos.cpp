@@ -900,7 +900,7 @@ AGOSEngine::~AGOSEngine() {
 	if (_driver)
 		delete _driver;
 
-	AudioCD.destroy();
+	AudioCD.stop();
 
 	for (uint i = 0; i < _itemHeap.size(); i++) {
 		delete[] _itemHeap[i];

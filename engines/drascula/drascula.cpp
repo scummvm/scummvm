@@ -105,6 +105,7 @@ DrasculaEngine::DrasculaEngine(OSystem *syst, const DrasculaGameDescription *gam
 
 DrasculaEngine::~DrasculaEngine() {
 	delete _rnd;
+	stopSound();
 
 	free(_charMap);
 	free(_itemLocations);

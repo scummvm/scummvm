@@ -37,7 +37,7 @@ namespace Groovie {
 class MusicPlayer {
 public:
 	MusicPlayer(GroovieEngine *vm);
-	virtual ~MusicPlayer() {}
+	virtual ~MusicPlayer();
 
 	void playSong(uint32 fileref);
 	void setBackgroundSong(uint32 fileref);

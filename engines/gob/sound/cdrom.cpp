@@ -46,6 +46,7 @@ CDROM::CDROM() {
 }
 
 CDROM::~CDROM() {
+	stop();
 }
 
 void CDROM::readLIC(DataStream &stream) {

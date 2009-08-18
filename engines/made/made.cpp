@@ -126,6 +126,8 @@ MadeEngine::MadeEngine(OSystem *syst, const MadeGameDescription *gameDesc) : Eng
 }
 
 MadeEngine::~MadeEngine() {
+	AudioCD.stop();
+
 	delete _rnd;
 	delete _pmvPlayer;
 	delete _res;

@@ -887,6 +887,7 @@ TinselEngine::~TinselEngine() {
 	if (MoviePlaying())
 		FinishBMV();
 
+	AudioCD.stop();
 	delete _sound;
 	delete _midiMusic;
 	delete _pcmMusic;

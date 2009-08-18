@@ -38,6 +38,10 @@ MusicPlayer::MusicPlayer(GroovieEngine *vm) :
 	_prevCDtrack(0), _backgroundDelay(0) {
 }
 
+MusicPlayer::~MusicPlayer() {
+	AudioCD.stop();
+}
+
 void MusicPlayer::playSong(uint32 fileref) {
 	Common::StackLock lock(_mutex);
 
