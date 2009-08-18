@@ -188,7 +188,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 
 	if (flipX) {
 		linePtrAdd = -1;
-		sourceAdd = sourceSurface->w;
+		sourceAdd = sourceSurface->w - 1;
 	} else {
 		linePtrAdd = 1;
 		sourceAdd = 0;
@@ -210,6 +210,7 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 			}
 			linePtr += linePtrAdd;
 		}
+
 		source += sourcePitch;
 		dest += clipInfo.destSurface->pitch;
 		if (_vm->getGameID() != GID_RTZ)
