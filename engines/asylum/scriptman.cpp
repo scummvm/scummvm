@@ -337,11 +337,13 @@ void ScriptManager::processActionList() {
 				lineIncrement = 0;
 				break;
 
-/* 0x11 */  case kDestroyObject: {
+/* 0x11 */  case kDestroyBarrier: {
 				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
-				if (barrierIndex >= 0)
-					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFDF;	//	TODO - enums for flags (0x20 is visible/playing?)
-				else
+                if (barrierIndex >= 0) {
+					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFFFFE;
+                    Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags |= 0x20000;
+                    // TODO: delete graphic from draw queue
+                } else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
 							currentCommand->param1,
