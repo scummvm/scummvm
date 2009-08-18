@@ -79,6 +79,8 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 
 	memset(_palette, 0, sizeof(_palette));
 
+	_cursorPaletteDisabled = true;
+
 	_samplesPerSec = 0;
 
 	//init SDL
@@ -110,14 +112,14 @@ void OSystem_PSP::initBackend() {
 
 
 bool OSystem_PSP::hasFeature(Feature f) {
-	return false;
+	return (f == kFeatureOverlaySupportsAlpha || f == kFeatureCursorHasPalette);
 }
 
 void OSystem_PSP::setFeatureState(Feature f, bool enable) {
 }
 
 bool OSystem_PSP::getFeatureState(Feature f) {
-	return (f == kFeatureOverlaySupportsAlpha);
+	return false;
 }
 
 const OSystem::GraphicsMode* OSystem_PSP::getSupportedGraphicsModes() const {

@@ -68,6 +68,7 @@ protected:
 	int	_mouseHotspotX, _mouseHotspotY;
 	byte	_mouseKeyColour;
 	byte	*_mouseBuf;
+	bool	_cursorPaletteDisabled;
 
 	uint32	_prevButtons;
 	uint32	_lastPadCheck;
