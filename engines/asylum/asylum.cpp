@@ -148,7 +148,6 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 		checkForEvent(false);
 		processDelayedEvents();
 		_system->updateScreen();
-		ScriptMan.processActionList();
 	}
 }
 

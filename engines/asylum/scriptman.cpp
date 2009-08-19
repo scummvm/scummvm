@@ -95,7 +95,7 @@ int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
     return barrierIndex;
 }
 
-void ScriptManager::processActionList() {
+int ScriptManager::processActionList() {
 	bool done = false, waitCycle = false;
 	int lineIncrement = 1;
 
@@ -167,7 +167,7 @@ void ScriptManager::processActionList() {
                 if(currentCommand->param2 == 2) {
                     if(!checkBarrierFlags(barrierId)) {
                         currentCommand->param2 = 1;
-                        return;
+                        break;
                     }
                     lineIncrement = 1;
                 } else {
@@ -559,6 +559,8 @@ void ScriptManager::processActionList() {
 	}
 
 	_processing = false;
+
+    return 0;
 }
 
 void ScriptManager::processActionListSub02(ActionDefinitions* script, ActionCommand *command, int a4) {
