@@ -145,8 +145,8 @@ const WorkaroundEntry workaroundList[] = {
 	// Present Outside Inn
 	{TINSEL_V1, false, 352600876, 0,  fragment2_size, fragment2},
 
-	// DW1-GRA: Talking to palace guards in Act 2 gives !!!HIGH STRING||| - this happens if you initiate dialog
-	// with one of the guards, but not the other. So this fix routes the talk parameters of the broken one
+	// DW1-GRA: Talking to palace guards in Act 2 gives !!!HIGH STRING||| - this happens if you initiate dialog with
+	// one of the guards, but not the other. So these fragments provide the correct talk parameters where needed
 	{TINSEL_V1, false, 310506872, 463, fragment4_size, fragment4},
 	{TINSEL_V1, false, 310506872, 485, fragment5_size, fragment5},
 	{TINSEL_V1, false, 310506872, 513, fragment6_size, fragment6},
@@ -164,7 +164,7 @@ const WorkaroundEntry workaroundList[] = {
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
-//310505453, x
+
 //----------------- LOCAL GLOBAL DATA --------------------
 
 /**
