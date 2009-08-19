@@ -280,6 +280,11 @@ const uint16 *FontSjisSVM::getCharData(uint16 c) const {
 	if (index >= 0x3F)
 		--index;
 
+	// Another check if the passed character was an
+	// correctly encoded SJIS character.
+	if (index < 0 || index >= 0xBC || base < 0)
+		return 0;
+
 	return _fontData + (base * 0xBC + index) * 16;
 }
 
