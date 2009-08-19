@@ -37,7 +37,7 @@ struct ActionCommand;
 class ScriptManager: public Common::Singleton<ScriptManager> {
 public:
 
-	void processActionList();
+	int processActionList();
 
 	void setScript(ActionDefinitions *action);
 	void setScriptIndex(uint32 index);

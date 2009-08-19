@@ -110,6 +110,18 @@ private:
 	bool	_isActive;
 
 	void update();
+    
+    int processScene();
+    void processActors();
+    bool isBarrierVisible(BarrierItem *barrier);
+    uint32 getRandomResId(BarrierItem *barrier);
+    void processBarriers(WorldStats *worldStats);
+    void processAmbientSounds();
+    void processMusic();
+    void processAdjustScreen();
+
+    int drawScene();
+    int drawBarriers();
 
 	/**
 	 * Check whether the cursor resource needs to be changed, and
@@ -123,28 +135,13 @@ private:
 	 */
 	void animateCursor();
 
-    void updateBarrier(Screen *screen, ResourcePack *res, uint8 actorIndex);
-    
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();
 	void debugShowBarriers();
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
-    // --------
-    // This are new functions to treat game process update and game draw exactly like original
-
-    int processScene(); // old updateGame (0040B5B0)
-    int processActors();
-    void processBarriers(WorldStats *worldStats);
-    int processAmbientSounds();
-    int processMusic();
-    int processAdjustScreen();
-
-    int drawScene();
-    int drawBarriers(); // old object_sub_40E1A0 (0040E1A0)
-
-    bool isBarrierVisible(BarrierItem *barrier);
-    uint32 getRandomResId(BarrierItem *barrier);
+    // TODO: get rid of this
+    void OLD_UPDATE(GraphicFrame *bg, MainActor *mainActor, WorldStats *worldStats);
     
 }; // end of class Scene
 

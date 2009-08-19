@@ -48,7 +48,7 @@ class SharedResources: public Common::Singleton<SharedResources> {
 public:
 
     void setOSystem(OSystem* system) { _system = system; }
-    OSystem* getOSystem() { return _system; }
+    uint32 getMillis() { return _system->getMillis(); }
 
 	void setVideo(Video* video) { _video = video; }
 	Video* getVideo() { return _video; }
