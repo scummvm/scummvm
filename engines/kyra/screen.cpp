@@ -562,6 +562,12 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
+
+	if (_use16ColorMode) {
+		color &= 0x0F;
+		color |= (color << 4);
+	}
+
 	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 }
 
@@ -954,6 +960,11 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 
 	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
 
+	if (_use16ColorMode) {
+		color &= 0x0F;
+		color |= (color << 4);
+	}
+
 	if (xored) {
 		for (; y1 <= y2; ++y1) {
 			for (int x = x1; x <= x2; ++x)
@@ -1034,6 +1045,11 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W + x;
+
+	if (_use16ColorMode) {
+		color &= 0x0F;
+		color |= (color << 4);
+	}
 
 	if (vertical) {
 		assert((y + length) <= SCREEN_H);
@@ -2973,6 +2989,9 @@ byte *Screen::getOverlayPtr(int page) {
 
 	if (_vm->gameFlags().gameID == GI_KYRA2) {
 		if (page == 12 || page == 13)
+			return _sjisOverlayPtrs[3];
+	} else if (_vm->gameFlags().gameID == GI_LOL) {
+		if (page == 4 || page == 5)
 			return _sjisOverlayPtrs[3];
 	}
 

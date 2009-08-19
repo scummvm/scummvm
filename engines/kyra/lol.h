@@ -366,6 +366,10 @@ private:
 
 	static const CharacterPrev _charPreviews[];
 
+	// PC98 specific data
+	static const uint16 _charPosXPC98[];
+	static const uint8 _charNamesPC98[][11];
+
 	WSAMovie_v2 *_chargenWSA;
 	static const uint8 _chargenFrameTableTalkie[];
 	static const uint8 _chargenFrameTableFloppy[];

@@ -289,18 +289,56 @@ int LoLEngine::chooseCharacter() {
 	_screen->setFont(Screen::FID_9_FNT);
 	_screen->_curPage = 2;
 
-	for (int i = 0; i < 4; ++i)
-		_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, _charPreviews[i].name);
+	if (_flags.platform == Common::kPlatformPC98) {
+		_screen->fillRect(17, 29, 94, 97, 17);
+		_screen->fillRect(68, 167, 310, 199, 17);
+		_screen->drawClippedLine(68, 166, 311, 166, 238);
+		_screen->drawClippedLine(68, 166, 68, 199, 238);
+		_screen->drawClippedLine(311, 166, 311, 199, 238);
 
-	for (int i = 0; i < 4; ++i) {
-		_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 48, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[0]);
-		_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 56, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[1]);
-		_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 64, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[2]);
+		_screen->_curPage = 4;
+		_screen->fillRect(17, 29, 94, 97, 17);
+		_screen->_curPage = 2;
+
+		for (int i = 0; i < 4; ++i) {
+			_screen->printText((const char *)_charNamesPC98[i], _charPosXPC98[i], 168, 0xC1, 0x00);
+
+			// Since our SJIS font does not support ASCII digits currently, we have to use the
+			// digits from the SJIS range, which looks different to the original.
+			for (int j = 0; j < 3; ++j) {
+				uint8 buffer[5];
+				snprintf((char *)buffer, 5, "%2d", _charPreviews[i].attrib[j]);
+
+				buffer[3] = buffer[1] - '0' + 0x4F;
+				buffer[2] = 0x82;
+				if (buffer[0] != ' ') {
+					buffer[1] = buffer[0] - '0' + 0x4F;
+					buffer[0] = 0x82;
+				} else {
+					buffer[1] = 0x40;
+					buffer[0] = 0x81;
+				}
+				buffer[4] = 0x00;
+
+				_screen->printText((const char *)buffer, _charPosXPC98[i] + 16, 176 + j * 8, 0x81, 0x00);
+			}
+		}
+
+		_screen->printText(_tim->getCTableEntry(51), 72, 176, 0x81, 0x00);
+		_screen->printText(_tim->getCTableEntry(53), 72, 184, 0x81, 0x00);
+		_screen->printText(_tim->getCTableEntry(55), 72, 192, 0x81, 0x00);
+	} else {
+		for (int i = 0; i < 4; ++i) {
+			_screen->fprintStringIntro("%s", _charPreviews[i].x + 16, _charPreviews[i].y + 36, 0xC0, 0x00, 0x9C, 0x120, _charPreviews[i].name);
+			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 48, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[0]);
+			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 56, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[1]);
+			_screen->fprintStringIntro("%d", _charPreviews[i].x + 21, _charPreviews[i].y + 64, 0x98, 0x00, 0x9C, 0x220, _charPreviews[i].attrib[2]);
+		}
+
+		_screen->fprintStringIntro("%s", 36, 173, 0x98, 0x00, 0x9C, 0x20, _tim->getCTableEntry(51));
+		_screen->fprintStringIntro("%s", 36, 181, 0x98, 0x00, 0x9C, 0x20, _tim->getCTableEntry(53));
+		_screen->fprintStringIntro("%s", 36, 189, 0x98, 0x00, 0x9C, 0x20, _tim->getCTableEntry(55));
 	}
-
-	_screen->fprintStringIntro("%s", 36, 173, 0x98, 0x00, 0x9C, 0x20, _tim->getCTableEntry(51));
-	_screen->fprintStringIntro("%s", 36, 181, 0x98, 0x00, 0x9C, 0x20, _tim->getCTableEntry(53));
-	_screen->fprintStringIntro("%s", 36, 189, 0x98, 0x00, 0x9C, 0x20, _tim->getCTableEntry(55));
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
 	_screen->_curPage = 0;
@@ -337,6 +375,8 @@ int LoLEngine::chooseCharacter() {
 		} else {
 			break;
 		}
+
+		delay(10);
 	}
 
 	if (shouldQuit())
@@ -363,11 +403,13 @@ void LoLEngine::kingSelectionIntro() {
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	int y = 38;
 
-	_screen->fprintStringIntro("%s", 8, y, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(57));
-	_screen->fprintStringIntro("%s", 8, y + 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(58));
-	_screen->fprintStringIntro("%s", 8, y + 20, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(59));
-	_screen->fprintStringIntro("%s", 8, y + 30, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(60));
-	_screen->fprintStringIntro("%s", 8, y + 40, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(61));
+	if (_flags.platform == Common::kPlatformPC98) {
+		for (int i = 0; i < 5; ++i)
+			_screen->printText(_tim->getCTableEntry(57 + i), 16, 32 + i * 8, 0xC1, 0x00);
+	} else {
+		for (int i = 0; i < 5; ++i)
+			_screen->fprintStringIntro("%s", 8, y + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(57 + i));
+	}
 
 	_sound->voicePlay("KING01", &_speechHandle);
 
@@ -405,8 +447,13 @@ void LoLEngine::kingSelectionReminder() {
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 	int y = 48;
 
-	_screen->fprintStringIntro("%s", 8, y, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(62));
-	_screen->fprintStringIntro("%s", 8, y + 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(63));
+	if (_flags.platform == Common::kPlatformPC98) {
+		_screen->printText(_tim->getCTableEntry(62), 16, 32, 0xC1, 0x00);
+		_screen->printText(_tim->getCTableEntry(63), 16, 40, 0xC1, 0x00);
+	} else {
+		_screen->fprintStringIntro("%s", 8, y, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(62));
+		_screen->fprintStringIntro("%s", 8, y + 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(63));
+	}
 
 	_sound->voicePlay("KING02", &_speechHandle);
 
@@ -540,13 +587,17 @@ int LoLEngine::selectionCharInfo(int character) {
 	static const uint8 charSelectInfoIdx[] = { 0x1D, 0x22, 0x27, 0x2C };
 	const int idx = charSelectInfoIdx[character];
 
-	_screen->fprintStringIntro("%s", 50, 127, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+0));
-	_screen->fprintStringIntro("%s", 50, 137, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+1));
-	_screen->fprintStringIntro("%s", 50, 147, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+2));
-	_screen->fprintStringIntro("%s", 50, 157, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+3));
-	_screen->fprintStringIntro("%s", 50, 167, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+4));
+	if (_flags.platform == Common::kPlatformPC98) {
+		for (int i = 0; i < 5; ++i)
+			_screen->printText(_tim->getCTableEntry(idx+i), 60, 128 + i * 8, 0x41, 0x00);
 
-	_screen->fprintStringIntro("%s", 100, 168, 0x32, 0x00, 0xCF, 0x20, _tim->getCTableEntry(69));
+		_screen->printText(_tim->getCTableEntry(69), 112, 168, 0x01, 0x00);
+	} else {
+		for (int i = 0; i < 5; ++i)
+			_screen->fprintStringIntro("%s", 50, 127 + i * 10, 0x53, 0x00, 0xCF, 0x20, _tim->getCTableEntry(idx+i));
+
+		_screen->fprintStringIntro("%s", 100, 168, 0x32, 0x00, 0xCF, 0x20, _tim->getCTableEntry(69));
+	}
 
 	selectionCharInfoIntro(vocFilename);
 	if (_charSelectionInfoResult == -1) {
@@ -568,11 +619,13 @@ int LoLEngine::selectionCharInfo(int character) {
 	_screen->copyRegion(48, 127, 48, 160, 272, 35, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(0, 0, 0, 0, 112, 120, 4, 0, Screen::CR_NO_P_CHECK);
 
-	_screen->fprintStringIntro("%s", 3, 28, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(64));
-	_screen->fprintStringIntro("%s", 3, 38, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(65));
-	_screen->fprintStringIntro("%s", 3, 48, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(66));
-	_screen->fprintStringIntro("%s", 3, 58, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(67));
-	_screen->fprintStringIntro("%s", 3, 68, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(68));
+	if (_flags.platform == Common::kPlatformPC98) {
+		for (int i = 0; i < 5; ++i)
+			_screen->printText(_tim->getCTableEntry(64+i), 16, 32 + i * 8, 0xC1, 0x00);
+	} else {
+		for (int i = 0; i < 5; ++i)
+			_screen->fprintStringIntro("%s", 3, 28 + i * 10, 0x32, 0x00, 0x9C, 0x20, _tim->getCTableEntry(64+i));
+	}
 
 	resetSkipFlag();
 	kingSelectionOutro();
