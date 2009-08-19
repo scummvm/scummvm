@@ -820,7 +820,7 @@ void Kernel::setDefaultKernelNames() {
 }
 
 #ifdef ENABLE_SCI32
-static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
+//static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
 /*
  999.voc format for SCI1.1 games:
 	[b] # of kernel functions
@@ -830,7 +830,7 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
     {[w name-len][function name]}
 		...
 */
-	//unsigned int size = 64, pos = 3;
+/*	//unsigned int size = 64, pos = 3;
 	int len;
 	Resource *r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
 	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
@@ -843,7 +843,7 @@ static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &name
 		len = READ_LE_UINT16(r->data + off);
 		names[i] = Common::String((char *)r->data + off + 2, len);
 	}
-}
+}*/
 #endif
 
 bool Kernel::loadKernelNames() {
