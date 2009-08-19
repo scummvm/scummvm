@@ -59,6 +59,7 @@ protected:
 	uint16  _palette[256];
 	bool	_overlayVisible;
 	uint32	_shakePos;
+	uint32	_lastScreenUpdate;
 
 	Graphics::Surface _framebuffer;
 
