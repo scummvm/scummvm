@@ -43,7 +43,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	debug(2, "Initializing graphics");
 
-	if (!s->resmgr->isVGA()) {
+	if (s->resmgr->getViewType() == kViewEga) {
 		for (int i = 0; i < 16; i++) {
 			if (gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
 					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1)) {

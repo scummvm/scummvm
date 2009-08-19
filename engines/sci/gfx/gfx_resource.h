@@ -199,13 +199,13 @@ void gfxr_clear_pic0(gfxr_pic_t *pic, int titlebar_size);
  * @param[in] resource			Pointer to the resource data
  * @param[in] style				The drawing style
  * @param[in] resid				The resource ID
- * @param[in] sci1				true if SCI1, false otherwise
+ * @param[in] viewType			The view type for embedded views
  * @param[in] static_pal		The static palette
  * @param[in] portBounds		The bounds of the port being drawn to
  */
 void gfxr_draw_pic01(gfxr_pic_t *pic, int fill_normally,
 		int default_palette, int size, byte *resource,
-		gfxr_pic0_params_t *style, int resid, int sci1,
+		gfxr_pic0_params_t *style, int resid, ViewType viewType,
 		Palette *static_pal, Common::Rect portBounds);
 
 /**
@@ -321,9 +321,9 @@ Palette *gfxr_read_pal11(int id, byte *resource, int size);
  * @param[in] isSci11		true if SCI1.1, false otherwise
  * @return					The resulting view
  */
-gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, bool isSci11);
+gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType);
 
-gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, bool isAmiga, bool isSci11);
+gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, ViewType viewType);
 /** @} */
 
 } // End of namespace Sci

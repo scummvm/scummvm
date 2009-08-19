@@ -100,7 +100,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 		if (_version == SCI_VERSION_1_1)
 			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
-			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resManager->isVGA(), _staticPalette, _portBounds);
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
@@ -109,7 +109,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 	if (_version == SCI_VERSION_1_1)
 		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
-		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->isVGA(), _staticPalette, _portBounds);
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
 
 	if (!_resManager->isVGA()) {
 		if (need_unscaled)
@@ -536,7 +536,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			int pal = (_version <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
-			view = getVGAView(resid, viewRes->data, viewRes->size, _staticPalette, viewType == kViewVga11);
+			view = getVGAView(resid, viewRes->data, viewRes->size, viewType);
 
 			if (view->palette) {
 				// Palettize view

@@ -1135,7 +1135,7 @@ extern gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, i
 extern void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
-					 gfxr_pic0_params_t *style, int resid, int sci1, Palette *static_pal, Common::Rect portBounds) {
+					 gfxr_pic0_params_t *style, int resid, ViewType viewType, Palette *static_pal, Common::Rect portBounds) {
 	const int default_palette_table[GFXR_PIC0_PALETTE_SIZE] = {
 		0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
 		0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
@@ -1189,7 +1189,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		case PIC_OP_SET_COLOR:
 			p0printf("Set color @%d\n", pos);
 
-			if (!sci1) {
+			if (viewType == kViewEga) {
 				pal = *(resource + pos++);
 				index = pal % GFXR_PIC0_PALETTE_SIZE;
 				pal /= GFXR_PIC0_PALETTE_SIZE;
@@ -1216,7 +1216,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		case PIC_OP_SET_PRIORITY:
 			p0printf("Set priority @%d\n", pos);
 
-			if (!sci1) {
+			if (viewType == kViewEga) {
 				pal = *(resource + pos++);
 				index = pal % GFXR_PIC0_PALETTE_SIZE;
 				pal /= GFXR_PIC0_PALETTE_SIZE; // Ignore pal
@@ -1425,7 +1425,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			opx = *(resource + pos++);
 			p0printf("OPX: ");
 
-			if (sci1)
+			if (viewType != kViewEga)
 				opx += SCI1_OP_OFFSET; // See comment at the definition of SCI1_OP_OFFSET.
 
 			switch (opx) {
@@ -1509,11 +1509,13 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				bytesize = (*(resource + pos)) + (*(resource + pos + 1) << 8);
 				p0printf("(%d, %d)\n", posx, posy);
 				pos += 2;
-				if (!sci1 && !nodraw)
-					view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, flags & DRAWPIC1_FLAG_MIRRORED);
-				else
-					view = gfxr_draw_cel1(-1, -1, -1, flags & DRAWPIC1_FLAG_MIRRORED, resource + pos, resource + pos,
-										  bytesize, NULL, (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR), false);
+				if (!nodraw) {
+					if (viewType == kViewEga)
+						view = gfxr_draw_cel0(-1, -1, -1, resource + pos, bytesize, NULL, flags & DRAWPIC1_FLAG_MIRRORED);
+					else
+						view = gfxr_draw_cel1(-1, -1, -1, flags & DRAWPIC1_FLAG_MIRRORED, resource + pos, resource + pos,
+											  bytesize, NULL, viewType);
+				}
 				pos += bytesize;
 				if (nodraw)
 					continue;
@@ -1526,20 +1528,22 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				// we can only safely replace the palette if it's static
 				// *if it's not for some reason, we should die
 
-				if (view->palette && view->palette->isShared() && !sci1) {
+				if (view->palette && view->palette->isShared() && (viewType == kViewEga)) {
 					warning("gfx_draw_pic0(): can't set a non-static palette for an embedded view");
 				}
 
 				// For SCI0, use special color mapping to copy the low
 				// nibble of the color index to the high nibble.
 
-				if (sci1) {
-					if (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR) {
-						// Assume Amiga game
+				if (viewType != kViewEga) {
+					if (view->palette)
+						view->palette->free();
+
+					if (viewType == kViewAmiga) {
 						pic->visual_map->palette = static_pal->getref();
+					} else {
+						view->palette = pic->visual_map->palette->copy();
 					}
-					if (view->palette) view->palette->free();
-					view->palette = pic->visual_map->palette->copy();
 				} else
 					view->palette = embedded_view_pal->getref();
 
@@ -1648,7 +1652,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	pic->visual_map->palette = gfxr_read_pal11(-1, resource + palette_data_ptr, 1284);
 
 	if (has_bitmap)
-		view = gfxr_draw_cel1(-1, 0, 0, flags & DRAWPIC1_FLAG_MIRRORED, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL, 0, true);
+		view = gfxr_draw_cel1(-1, 0, 0, flags & DRAWPIC1_FLAG_MIRRORED, resource, resource + bitmap_data_ptr, size - bitmap_data_ptr, NULL, kViewVga11);
 
 	if (view) {
 		view->palette = pic->visual_map->palette->getref();
@@ -1677,7 +1681,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		warning("[GFX] No view was contained in SCI1.1 pic resource");
 	}
 
-	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, 1, static_pal, portBounds);
+	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, kViewVga11, static_pal, portBounds);
 }
 
 void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
