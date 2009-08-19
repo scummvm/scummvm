@@ -186,20 +186,14 @@ int KyraEngine_HoF::o2_displayWsaFrame(EMCState *script) {
 	int backUp = stackPos(8);
 
 	_screen->hideMouse();
-	uint32 endTime = _system->getMillis() + waitTime * _tickLength;
+	const uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 	_wsaSlots[slot]->displayFrame(frame, dstPage, x, y, copyParam | 0xC000, 0, 0);
 	_screen->updateScreen();
 
 	if (backUp)
 		memcpy(_gamePlayBuffer, _screen->getCPagePtr(3), 46080);
 
-	while (_system->getMillis() < endTime) {
-		if (doUpdate)
-			update();
-
-		if (endTime - _system->getMillis() >= 10)
-			delay(10);
-	}
+	delayUntil(endTime, false, doUpdate != 0);
 	_screen->showMouse();
 	return 0;
 }
@@ -224,34 +218,22 @@ int KyraEngine_HoF::o2_displayWsaSequentialFramesLooping(EMCState *script) {
 	while (curTime < maxTimes) {
 		if (startFrame < endFrame) {
 			for (int i = startFrame; i <= endFrame; ++i) {
-				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
+				const uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0, x, y, 0xC000 | copyFlags, 0, 0);
 
 				if (!skipFlag()) {
 					_screen->updateScreen();
-
-					do {
-						update();
-
-						if (endTime - _system->getMillis() >= 10)
-							delay(10);
-					} while (_system->getMillis() < endTime);
+					delayUntil(endTime, false, true);
 				}
 			}
 		} else {
 			for (int i = startFrame; i >= endFrame; --i) {
-				uint32 endTime = _system->getMillis() + waitTime * _tickLength;
+				const uint32 endTime = _system->getMillis() + waitTime * _tickLength;
 				_wsaSlots[slot]->displayFrame(i, 0, x, y, 0xC000 | copyFlags, 0, 0);
 
 				if (!skipFlag()) {
 					_screen->updateScreen();
-
-					do {
-						update();
-
-						if (endTime - _system->getMillis() >= 10 && !skipFlag())
-							delay(10);
-					} while (_system->getMillis() < endTime && !skipFlag());
+					delayUntil(endTime, false, true);
 				}
 			}
 		}
@@ -282,7 +264,7 @@ int KyraEngine_HoF::o2_displayWsaSequentialFrames(EMCState *script) {
 	_screen->hideMouse();
 
 	while (currentFrame <= lastFrame) {
-		uint32 endTime = _system->getMillis() + frameDelay;
+		const uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, 0, stackPos(0), stackPos(1), copyParam, 0, 0);
 		if (!skipFlag()) {
 			_screen->updateScreen();
@@ -310,7 +292,7 @@ int KyraEngine_HoF::o2_displayWsaSequence(EMCState *script) {
 	const int lastFrame = _wsaSlots[index]->frames();
 
 	while (currentFrame <= lastFrame) {
-		uint32 endTime = _system->getMillis() + frameDelay;
+		const uint32 endTime = _system->getMillis() + frameDelay;
 		_wsaSlots[index]->displayFrame(currentFrame++, 0, stackPos(0), stackPos(1), copyParam, 0, 0);
 		if (!skipFlag()) {
 			if (doUpdate)
