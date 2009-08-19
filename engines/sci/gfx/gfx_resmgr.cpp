@@ -530,28 +530,25 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			return NULL;
 
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
-		
-		if (!_resManager->isVGA()) {
+		ViewType viewType = _resManager->getViewType();
+
+		if (viewType == kViewEga) {
 			int pal = (_version <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
-			if (_version < SCI_VERSION_1_1)
-				view = getVGAView(resid, viewRes->data, viewRes->size, _staticPalette, false);
-			else
-				view = getVGAView(resid, viewRes->data, viewRes->size, 0, true);
+			view = getVGAView(resid, viewRes->data, viewRes->size, _staticPalette, viewType == kViewVga11);
 
-			if (!view->palette) {
-				view->palette = new Palette(_staticPalette->size());
-				view->palette->name = "interpreter_get_view";
-			}
-
-			// Palettize view
-			for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
-				const PaletteEntry& vc = view->palette->getColor(i);
-				if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
-					const PaletteEntry& sc = _staticPalette->getColor(i);
-					view->palette->setColor(i, sc.r, sc.g, sc.b);
+			if (view->palette) {
+				// Palettize view
+				for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
+					const PaletteEntry& vc = view->palette->getColor(i);
+					if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
+						const PaletteEntry& sc = _staticPalette->getColor(i);
+						view->palette->setColor(i, sc.r, sc.g, sc.b);
+					}
 				}
+			} else {
+				view->palette = _staticPalette->getref();
 			}
 		}
 
