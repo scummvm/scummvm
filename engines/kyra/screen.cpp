@@ -207,7 +207,7 @@ void Screen::setResolution() {
 }
 
 void Screen::updateScreen() {
-	bool needRealUpdate = _forceFullUpdate || _dirtyRects.size() || _paletteChanged;
+	bool needRealUpdate = _forceFullUpdate || !_dirtyRects.empty() || _paletteChanged;
 	_paletteChanged = false;
 
 	if (_useOverlays)
@@ -337,6 +337,7 @@ void Screen::updateDirtyRectsOvl() {
 			_system->copyRectToScreen(dst, 640, it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
 		}
 	}
+
 	_forceFullUpdate = false;
 	_dirtyRects.clear();
 }
