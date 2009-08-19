@@ -432,7 +432,6 @@ int KyraEngine_LoK::o1_runWSAFromBeginningToEnd(EMCState *script) {
 		const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 
 		_movieObjects[wsaIndex]->displayFrame(wsaFrame++, 0, xpos, ypos, 0, 0, 0);
-		_animator->_updateScreen = true;
 		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
 
@@ -454,7 +453,6 @@ int KyraEngine_LoK::o1_displayWSAFrame(EMCState *script) {
 	_screen->hideMouse();
 	const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
-	_animator->_updateScreen = true;
 	delayUntil(continueTime, false, true);
 	_screen->showMouse();
 	return 0;
@@ -487,7 +485,6 @@ int KyraEngine_LoK::o1_runWSAFrames(EMCState *script) {
 	for (; startFrame <= endFrame; ++startFrame) {
 		const uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
 		_movieObjects[wsaIndex]->displayFrame(startFrame, 0, xpos, ypos, 0, 0, 0);
-		_animator->_updateScreen = true;
 		delayUntil(nextRun, false, true);
 	}
 	_screen->showMouse();
@@ -576,7 +573,6 @@ int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 int KyraEngine_LoK::o1_loadPageFromDisk(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_loadPageFromDisk(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	_screen->loadPageFromDisk(stackPosString(0), stackPos(1));
-	_animator->_updateScreen = true;
 	return 0;
 }
 
@@ -644,7 +640,6 @@ int KyraEngine_LoK::o1_copyWSARegion(EMCState *script) {
 	int srcPage = stackPos(4);
 	int dstPage = stackPos(5);
 	_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, srcPage, dstPage);
-	_animator->_updateScreen = true;
 	return 0;
 }
 
@@ -674,7 +669,6 @@ int KyraEngine_LoK::o1_displayWSAFrameOnHidPage(EMCState *script) {
 	_screen->hideMouse();
 	const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	_movieObjects[wsaIndex]->displayFrame(frame, 2, xpos, ypos, 0, 0, 0);
-	_animator->_updateScreen = true;
 	delayUntil(continueTime, false, true);
 	_screen->showMouse();
 
@@ -749,8 +743,6 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			while (endFrame >= frame) {
 				const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
-				if (waitTime)
-					_animator->_updateScreen = true;
 				delayUntil(continueTime, false, true);
 				++frame;
 			}
@@ -759,8 +751,6 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 			while (endFrame <= frame) {
 				const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
-				if (waitTime)
-					_animator->_updateScreen = true;
 				delayUntil(continueTime, false, true);
 				--frame;
 			}
@@ -1278,8 +1268,6 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 				snd_playSoundEffect(0x73);
 
 			amulet->displayFrame(code, 0, 224, 152, 0, 0, 0);
-			_animator->_updateScreen = true;
-
 			delayUntil(nextTime, false, true);
 		}
 		_screen->showMouse();

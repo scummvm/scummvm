@@ -51,6 +51,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	memset(_fonts, 0, sizeof(_fonts));
 
 	_currentFont = FID_8_FNT;
+	_paletteChanged = true;
 }
 
 Screen::~Screen() {
@@ -206,6 +207,9 @@ void Screen::setResolution() {
 }
 
 void Screen::updateScreen() {
+	bool needRealUpdate = _forceFullUpdate || _dirtyRects.size() || _paletteChanged;
+	_paletteChanged = false;
+
 	if (_useOverlays)
 		updateDirtyRectsOvl();
 	else if (_isAmiga && _interfacePaletteEnabled)
@@ -214,13 +218,16 @@ void Screen::updateScreen() {
 		updateDirtyRects();
 
 	if (_debugEnabled) {
+		needRealUpdate = true;
+
 		if (!_useOverlays)
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
 		else
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 640, 0, SCREEN_W, SCREEN_H);
 	}
 
-	_system->updateScreen();
+	if (needRealUpdate)
+		_system->updateScreen();
 }
 
 void Screen::updateDirtyRects() {
@@ -709,6 +716,7 @@ void Screen::setScreenPalette(const Palette &pal) {
 		screenPal[4 * i + 3] = 0;
 	}
 
+	_paletteChanged = true;
 	_system->setPalette(screenPal, 0, pal.getNumColors());
 }
 
@@ -744,6 +752,7 @@ void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) 
 		screenPal[4 * i + 3] = 0;
 	}
 
+	_paletteChanged = true;
 	_system->setPalette(screenPal, 32, pal.getNumColors());
 }
 

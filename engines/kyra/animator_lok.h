@@ -95,7 +95,6 @@ public:
 	int16 fetchAnimHeight(const uint8 *shape, int16 mult);
 
 	int _noDrawShapesFlag;
-	bool _updateScreen;
 	uint16 _brandonDrawFrame;
 	int _brandonScaleX;
 	int _brandonScaleY;

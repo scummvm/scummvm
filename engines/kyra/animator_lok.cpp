@@ -37,7 +37,6 @@ Animator_LoK::Animator_LoK(KyraEngine_LoK *vm, OSystem *system) {
 	_vm = vm;
 	_screen = vm->screen();
 	_initOk = false;
-	_updateScreen = false;
 	_system = system;
 	_screenObjects = _actors = _items = _sprites = _objectQueue = 0;
 	_noDrawShapesFlag = 0;
@@ -382,15 +381,11 @@ void Animator_LoK::copyChangedObjectsForward(int refreshFlag) {
 
 				_screen->copyRegion(xpos << 3, ypos, xpos << 3, ypos, width << 3, height, 2, 0);
 				curObject->refreshFlag = 0;
-				_updateScreen = true;
 			}
 		}
 	}
 
-	if (_updateScreen) {
-		_screen->updateScreen();
-		_updateScreen = false;
-	}
+	_screen->updateScreen();
 }
 
 void Animator_LoK::updateAllObjectShapes() {

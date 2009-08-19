@@ -97,7 +97,6 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 			currPage = _screen->_curPage;
 			_screen->_curPage = 2;
 			_text->printCharacterText(chatStr, charNum, _characterList[charNum].x1);
-			_animator->_updateScreen = true;
 			_screen->_curPage = currPage;
 		}
 

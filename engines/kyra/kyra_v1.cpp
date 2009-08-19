@@ -434,11 +434,8 @@ void KyraEngine_v1::updateInput() {
 		}
 	}
 
-	// TODO: Check whether we should really call Screen::updateScreen here.
-	// We might simply want to call OSystem::updateScreen instead, since Screen::updateScreen
-	// copies changed screen parts to the screen buffer, which might not be desired.
 	if (updateScreen)
-		screen()->updateScreen();
+		_system->updateScreen();
 }
 
 void KyraEngine_v1::removeInputTop() {
