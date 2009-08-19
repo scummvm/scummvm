@@ -875,20 +875,15 @@ void HistoryPlayer::play() {
 			while (sound->voiceIsPlaying() && !_vm->shouldQuit() && !_vm->skipFlag())
 				_vm->delay(10);
 
-			if (_vm->skipFlag()) {
+			if (_vm->skipFlag())
 				sound->voiceStop();
-				_vm->resetSkipFlag();
-			}
 
 			++voiceFilename[4];
 		}
-
-		if (_vm->skipFlag())
-			_vm->resetSkipFlag();
 	}
 
 	if (_vm->skipFlag())
-		_vm->resetSkipFlag();
+		_vm->_eventList.clear();
 
 	pal.fill(0, 256, 63);
 	if (_fireWsa->opened())
@@ -899,6 +894,9 @@ void HistoryPlayer::play() {
 	_screen->clearPage(0);
 	pal.fill(0, 256, 0);
 	_screen->fadePalette(pal, 0x3C);
+
+	if (_vm->skipFlag())
+		_vm->_eventList.clear();
 }
 
 void HistoryPlayer::loadWsa(const char *filename) {
