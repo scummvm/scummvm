@@ -49,6 +49,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 
 	_sjisFont = 0;
 	_currentFont = FID_8_FNT;
+	_paletteChanged = true;
 }
 
 Screen::~Screen() {
@@ -219,19 +220,25 @@ void Screen::setResolution() {
 }
 
 void Screen::updateScreen() {
+	bool needRealUpdate = _forceFullUpdate || !_dirtyRects.empty() || _paletteChanged;
+	_paletteChanged = false;
+
 	if (_useOverlays)
 		updateDirtyRectsOvl();
 	else
 		updateDirtyRects();
 
 	if (_debugEnabled) {
+		needRealUpdate = true;
+
 		if (!_useOverlays)
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
 		else
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 640, 0, SCREEN_W, SCREEN_H);
 	}
 
-	_system->updateScreen();
+	if (needRealUpdate)
+		_system->updateScreen();
 }
 
 void Screen::updateDirtyRects() {
@@ -270,6 +277,7 @@ void Screen::updateDirtyRectsOvl() {
 			_system->copyRectToScreen(dst, 640, it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
 		}
 	}
+
 	_forceFullUpdate = false;
 	_dirtyRects.clear();
 }
@@ -635,6 +643,7 @@ void Screen::setScreenPalette(const Palette &pal) {
 		screenPal[4 * i + 3] = 0;
 	}
 
+	_paletteChanged = true;
 	_system->setPalette(screenPal, 0, pal.getNumColors());
 }
 

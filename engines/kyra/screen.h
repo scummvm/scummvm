@@ -209,7 +209,6 @@ public:
 	virtual bool init();
 	virtual void setResolution();
 
-
 	void updateScreen();
 
 	// debug functions
@@ -402,6 +401,7 @@ protected:
 	};
 
 	bool _forceFullUpdate;
+	bool _paletteChanged;
 	Common::List<Common::Rect> _dirtyRects;
 
 	void addDirtyRect(int x, int y, int w, int h);

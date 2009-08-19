@@ -228,10 +228,11 @@ void GUI::processHighlights(Menu &menu) {
 
 				menu.highlightedItem = i;
 				redrawHighlight(menu);
-				_screen->updateScreen();
 			}
 		}
 	}
+
+	_screen->updateScreen();
 }
 
 void GUI::redrawText(const Menu &menu) {
@@ -412,7 +413,8 @@ void GUI::checkTextfieldInput() {
 			Common::Point pos = _vm->getMousePos();
 			_vm->_mouseX = pos.x;
 			_vm->_mouseY = pos.y;
-			_screen->updateScreen();
+
+			_vm->_system->updateScreen();
 			_lastScreenUpdate = now;
 			} break;
 
@@ -478,14 +480,24 @@ bool MainMenu::getInput() {
 	Common::Event event;
 	Common::EventManager *eventMan = _vm->getEventManager();
 
+	bool updateScreen = false;
+
 	while (eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_LBUTTONUP:
 			return true;
+
+		case Common::EVENT_MOUSEMOVE:
+			updateScreen = true;
+			break;
+
 		default:
 			break;
 		}
 	}
+
+	if (updateScreen)
+		_system->updateScreen();
 	return false;
 }
 

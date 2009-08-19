@@ -1682,8 +1682,9 @@ void KyraEngine_LoK::updateKyragemFading() {
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.gOffset];
 		_screen->getPalette(0)[palPos++] = kyraGemPalette[i + _kyragemFadingState.bOffset];
 	}
+
 	_screen->setScreenPalette(_screen->getPalette(0));
-	_animator->_updateScreen = true;
+
 	switch (_kyragemFadingState.nextOperation) {
 	case 0:
 		--_kyragemFadingState.bOffset;
