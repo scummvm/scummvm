@@ -9,7 +9,7 @@ PSP_EBOOT_SFO = param.sfo
 PSP_EBOOT_TITLE = ScummVM-PSP
 DATE = $(shell date +%Y%m%d)
 
-MKSFO = mksfo
+MKSFO = mksfoex -d MEMSIZE=1
 PACK_PBP = pack-pbp
 
 $(PSP_EXE_STRIPPED): $(PSP_EXE)
