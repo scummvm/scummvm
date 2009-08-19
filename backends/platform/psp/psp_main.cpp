@@ -31,10 +31,14 @@
 #include <pspdebug.h>
 #endif
 
+#include <psppower.h>
+
 #include <common/system.h>
 #include <engines/engine.h>
 #include <base/main.h>
 #include <base/plugins.h>
+#include "backends/platform/psp/powerman.h"
+
 
 #include "osys_psp_gu.h"
 #include "./trace.h"
@@ -91,9 +95,18 @@ void loaderInit() {
 #endif
 
 /* Exit callback */
-SceKernelCallbackFunction exit_callback(int /*arg1*/, int /*arg2*/, void * /*common*/) {
+int exit_callback(void) {
 	sceKernelExitGame();
 	return 0;
+}
+
+/* Function for handling suspend/resume */
+void power_callback(int , int powerinfo) {
+	if (powerinfo & PSP_POWER_CB_POWER_SWITCH || powerinfo & PSP_POWER_CB_SUSPENDING) {
+		PowerMan.suspend();
+	} else if (powerinfo & PSP_POWER_CB_RESUME_COMPLETE) {
+		PowerMan.resume();
+	}
 }
 
 /* Callback thread */
@@ -102,6 +115,16 @@ int CallbackThread(SceSize /*size*/, void *arg) {
 
 	cbid = sceKernelCreateCallback("Exit Callback", (SceKernelCallbackFunction)exit_callback, NULL);
 	sceKernelRegisterExitCallback(cbid);
+	/* Set up callbacks for PSPIoStream */
+
+	cbid = sceKernelCreateCallback("Power Callback", (SceKernelCallbackFunction)power_callback, 0);
+	if (cbid >= 0) {
+		if(scePowerRegisterCallback(-1, cbid) < 0) {
+			PSPDebugTrace("SetupCallbacks(): Couldn't register callback for power_callback\n");
+		}
+	} else {
+		PSPDebugTrace("SetupCallbacks(): Couldn't create a callback for power_callback\n");
+	}
 
 	sceKernelSleepThreadCB();
 	return 0;
@@ -119,7 +142,12 @@ int SetupCallbacks(void) {
 
 #undef main
 int main(void) {
+	PowerManager::instance();	// Setup power manager
+
 	SetupCallbacks();
+
+	//change clock rate to 333mhz
+	scePowerSetClockFrequency(333, 333, 166);
 
 	static const char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
@@ -130,6 +158,8 @@ int main(void) {
 	int res = scummvm_main(argc, argv);
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
+
+	PowerManager::destroy();	// get rid of PowerManager
 
 	sceKernelSleepThread();
 

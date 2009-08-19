@@ -204,7 +204,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 }
 
 
-reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoSoundSci0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -383,7 +383,7 @@ reg_t kDoSound_SCI0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoSoundSci1Early(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -673,7 +673,7 @@ reg_t kDoSound_SCI01(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoSoundSci1Late(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -988,12 +988,17 @@ reg_t kDoSound_SCI1(EngineState *s, int funct_nr, int argc, reg_t *argv) {
  * Used for synthesized music playback
  */
 reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	if (((SciEngine*)g_engine)->getKernel()->usesSci1SoundFunctions())
-		return kDoSound_SCI1(s, funct_nr, argc, argv);
-	else if (((SciEngine*)g_engine)->getKernel()->usesSci01SoundFunctions())
-		return kDoSound_SCI01(s, funct_nr, argc, argv);
-	else
-		return kDoSound_SCI0(s, funct_nr, argc, argv);
+	switch(s->detectDoSoundType()) {
+	case EngineState::kDoSoundTypeSci0:
+		return kDoSoundSci0(s, funct_nr, argc, argv);
+	case EngineState::kDoSoundTypeSci1Early:
+		return kDoSoundSci1Early(s, funct_nr, argc, argv);
+	case EngineState::kDoSoundTypeSci1Late:
+		return kDoSoundSci1Late(s, funct_nr, argc, argv);
+	default:
+		warning("Unknown DoSound type");
+		return NULL_REG;
+	}
 }
 
 /**

@@ -13,15 +13,17 @@ Controls
 ========
 
 Left trigger		- ESC
-Right trigger		- Enter
+Right trigger		- Modifier key (see below for uses)
 Analog			- Mouse movement
+Right trigger + Analog	- Fine control mouse
 Directionals		- Mouse movement
-Analog + triangle	- Fine control mouse
+Triangle		- Enter
 Cross			- Mouse button 1
 Circle			- Mouse button 2
 Square			- '.' (skip dialogue in some games)
 Select			- Show/Hide Virtual Keyboard
 Start			- F5
+Right trigger + Start	- Return-To-Launcher menu
 
 Notes
 =====
@@ -31,9 +33,6 @@ Notes
   sometimes, as it ofcourse needs extra CPU power to decode these files.
   As such, it is recommended to play games in their original, uncompressed,
   form whenever possible.
-
-- Sleep/Suspend mode currently isn't supported, so don't use it when
-  running ScummVM.
 
 - This README may be outdated, for more up-to-date instructions and notes see
   the PSP Port Wiki: http://wiki.scummvm.org/index.php/PlayStation_Portable

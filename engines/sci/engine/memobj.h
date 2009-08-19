@@ -27,6 +27,7 @@
 #define SCI_ENGINE_MEMOBJ_H
 
 #include "common/serializer.h"
+#include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 
 //#include "common/util.h"

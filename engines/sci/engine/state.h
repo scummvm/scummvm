@@ -163,6 +163,14 @@ struct EngineState : public Common::Serializable {
 public:
 	EngineState(ResourceManager *res, SciVersion version, uint32 flags);
 	virtual ~EngineState();
+
+	enum DoSoundType {
+		kDoSoundTypeUnknown,
+		kDoSoundTypeSci0,
+		kDoSoundTypeSci1Early,
+		kDoSoundTypeSci1Late
+	};
+
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	kLanguage getLanguage();
@@ -272,6 +280,12 @@ public:
 	 */
 	Common::String strSplit(const char *str, const char *sep = "\r----------\r");
 
+	/**
+	 * Autodetects the DoSound type
+	 * @return DoSound type
+	 */
+	DoSoundType detectDoSoundType();
+
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
 	int have_bp;  /**< Bit mask specifying which types of breakpoints are used in bp_list */
@@ -291,8 +305,6 @@ public:
 
 	reg_t game_obj; /**< Pointer to the game object */
 
-	Common::Array<Class> _classtable; /**< Table of all classes */
-
 	SegManager *seg_manager;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
@@ -303,6 +315,7 @@ public:
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
 private:
+	DoSoundType _doSoundType;
 	kLanguage charToLanguage(const char c) const;
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 };

@@ -112,6 +112,20 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
 
 	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
+	newsrc->resourceFile = 0;
+	newsrc->scanned = false;
+	newsrc->associated_map = NULL;
+
+	_sources.push_back(newsrc);
+	return newsrc;
+}
+
+ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile) {
+	ResourceSource *newsrc = new ResourceSource();
+
+	newsrc->source_type = kSourceExtMap;
+	newsrc->location_name = mapFile->getName();
+	newsrc->resourceFile = mapFile;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
 
@@ -125,6 +139,21 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	newsrc->source_type = type;
 	newsrc->scanned = false;
 	newsrc->location_name = filename;
+	newsrc->resourceFile = 0;
+	newsrc->volume_number = number;
+	newsrc->associated_map = map;
+
+	_sources.push_back(newsrc);
+	return newsrc;
+}
+
+ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const Common::FSNode *resFile, int number) {
+	ResourceSource *newsrc = new ResourceSource();
+
+	newsrc->source_type = type;
+	newsrc->scanned = false;
+	newsrc->location_name = resFile->getName();
+	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
 
@@ -342,6 +371,48 @@ int ResourceManager::addAppropriateSources() {
 	return 1;
 }
 
+int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
+	ResourceSource *map = 0;
+
+	// First, find resource.map
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory())
+			continue;
+
+		Common::String filename = file->getName();
+		filename.toLowercase();
+
+		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
+			map = addExternalMap(file);
+			break;
+		}
+	}
+
+	if (!map)
+		return 0;
+
+	// Now find all the resource.0?? files
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory())
+			continue;
+
+		Common::String filename = file->getName();
+		filename.toLowercase();
+
+		if (filename.contains("resource.0")	|| filename.contains("ressci.0")) {
+			const char *dot = strrchr(filename.c_str(), '.');
+			int number = atoi(dot + 1);
+
+			addSource(map, kSourceVolume, file, number);
+		}
+	}
+
+	// This function is only called by the advanced detector, and we don't really need
+	// to add a patch directory or message.map here
+
+	return 1;
+}
+
 int ResourceManager::addInternalSources() {
 	Common::List<ResourceId> *resources = listResources(kResourceTypeMap);
 	Common::List<ResourceId>::iterator itr = resources->begin();
@@ -396,15 +467,22 @@ void ResourceManager::freeResourceSources() {
 	_sources.clear();
 }
 
-ResourceManager::ResourceManager(int maxMemory) {
-	_maxMemory = maxMemory;
+ResourceManager::ResourceManager() {
+	addAppropriateSources();
+	init();
+}
+
+ResourceManager::ResourceManager(const Common::FSList &fslist) {
+	addAppropriateSources(fslist);
+	init();
+}
+
+void ResourceManager::init() {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
 	_resMap.clear();
 	_audioMapSCI1 = NULL;
-
-	addAppropriateSources();
 
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
@@ -506,7 +584,7 @@ void ResourceManager::printLRU() {
 }
 
 void ResourceManager::freeOldResources() {
-	while (_maxMemory < _memoryLRU) {
+	while (MAX_MEMORY < _memoryLRU) {
 		assert(!_LRU.empty());
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
@@ -602,7 +680,8 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 }
 
 ResourceManager::ResVersion ResourceManager::detectMapVersion() {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
+	Common::File *file = 0;
 	byte buff[6];
 	ResourceSource *rsrc= 0;
 
@@ -610,22 +689,30 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 		rsrc = *it;
 
 		if (rsrc->source_type == kSourceExtMap) {
-			file.open(rsrc->location_name);
+			if (rsrc->resourceFile) {
+				fileStream = rsrc->resourceFile->createReadStream();
+			} else {
+				file = new Common::File();
+				file->open(rsrc->location_name);
+				if (file->isOpen())
+					fileStream = file;
+			}
 			break;
 		}
 	}
-	if (file.isOpen() == false) {
+
+	if (!fileStream) {
 		error("Failed to open resource map file");
 		return kResVersionUnknown;
 	}
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
-	file.seek(-4, SEEK_END);
-	uint32 uEnd = file.readUint32LE();
+	fileStream->seek(-4, SEEK_END);
+	uint32 uEnd = fileStream->readUint32LE();
 	if (uEnd == 0xFFFFFFFF) {
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
-		file.seek(0, SEEK_SET);
-		while (file.read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
+		fileStream->seek(0, SEEK_SET);
+		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
 			if (getVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL)
 				return kResVersionSci1Middle;
 		}
@@ -639,14 +726,15 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	uint16 lastDirectoryOffset = 0;
 	uint16 directorySize = 0;
 	ResVersion mapDetected = kResVersionUnknown;
-	file.seek(0, SEEK_SET);
-	while (!file.eos()) {
-		directoryType = file.readByte();
-		directoryOffset = file.readUint16LE();
+	fileStream->seek(0, SEEK_SET);
+
+	while (!fileStream->eos()) {
+		directoryType = fileStream->readByte();
+		directoryOffset = fileStream->readUint16LE();
 		if ((directoryType < 0x80) || ((directoryType > 0xA0) && (directoryType != 0xFF)))
 			break;
 		// Offset is above file size? -> definitely not SCI1/SCI1.1
-		if (directoryOffset > file.size())
+		if (directoryOffset > fileStream->size())
 			break;
 		if (lastDirectoryOffset) {
 			directorySize = directoryOffset - lastDirectoryOffset;
@@ -655,11 +743,14 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			if ((directorySize % 5 == 0) && (directorySize % 6))
 				mapDetected = kResVersionSci11;
 		}
-		if (directoryType==0xFF) {
+		if (directoryType == 0xFF) {
 			// FFh entry needs to point to EOF
-			if (directoryOffset != file.size())
+			if (directoryOffset != fileStream->size())
 				break;
-			if (mapDetected) 
+
+			delete fileStream;
+
+			if (mapDetected)
 				return mapDetected;
 			return kResVersionSci1Late;
 		}
@@ -675,29 +766,41 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	// "lastDirectoryOffset". This is probably not the correct fix, since before r43000
 	// the loop above could not prematurely terminate and thus this would always check the
 	// last directory entry instead of the last checked directory entry.
-	file.seek(lastDirectoryOffset - 7, SEEK_SET);
-	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
+	fileStream->seek(lastDirectoryOffset - 7, SEEK_SET);
+	if (fileStream->readByte() == 0xFF && fileStream->readUint16LE() == fileStream->size())
 		return kResVersionSci32; // TODO : check if there is a difference between these maps
 #endif
+
+	delete fileStream;
 
 	return kResVersionUnknown;
 }
 
 ResourceManager::ResVersion ResourceManager::detectVolVersion() {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
+	Common::File *file = 0;
 	ResourceSource *rsrc;
+
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
 
 		if (rsrc->source_type == kSourceVolume) {
-			file.open(rsrc->location_name);
+			if (rsrc->resourceFile) {
+				fileStream = rsrc->resourceFile->createReadStream();
+			} else {
+				file = new Common::File();
+				file->open(rsrc->location_name);
+				if (file->isOpen())
+					fileStream = file;
+			}
 			break;
 		}
 	}
-	if (file.isOpen() == false) {
+	if (!fileStream) {
 		error("Failed to open volume file");
 		return kResVersionUnknown;
 	}
+
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
@@ -710,15 +813,17 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	bool failed = false;
 
 	// Check for SCI0, SCI1, SCI1.1 and SCI32 v2 (Gabriel Knight 1 CD) formats
-	while (!file.eos() && file.pos() < 0x100000) {
+	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
 		if (curVersion > kResVersionSci0Sci1Early)
-			file.readByte();
-		resId = file.readUint16LE();
-		dwPacked = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
-		dwUnpacked = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
-		wCompression = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
-		if (file.eos())
+			fileStream->readByte();
+		resId = fileStream->readUint16LE();
+		dwPacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		dwUnpacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		wCompression = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		if (fileStream->eos()) {
+			delete fileStream;
 			return curVersion;
+		}
 
 		int chk = (curVersion == kResVersionSci0Sci1Early) ? 4 : 20;
 		int offs = curVersion < kResVersionSci11 ? 4 : 0;
@@ -740,17 +845,19 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 				break;
 			}
 
-			file.seek(0, SEEK_SET);
+			fileStream->seek(0, SEEK_SET);
 			continue;
 		}
 
 		if (curVersion < kResVersionSci11)
-			file.seek(dwPacked - 4, SEEK_CUR);
+			fileStream->seek(dwPacked - 4, SEEK_CUR);
 		else if (curVersion == kResVersionSci11)
-			file.seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
+			fileStream->seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
 		else if (curVersion == kResVersionSci32)
-			file.seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
+			fileStream->seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
 	}
+
+	delete fileStream;
 
 	if (!failed)
 		return curVersion;
@@ -1480,7 +1587,7 @@ SciVersion ResourceManager::detectSciVersion() {
 		// If this turns out to be unreliable, we could do some pic resource checks instead.
 		return SCI_VERSION_1_EARLY;
 	case kResVersionSci1Middle:
-		return SCI_VERSION_1_LATE;
+		return SCI_VERSION_1_MIDDLE;
 	case kResVersionSci1Late:
 		if (_viewType == kViewVga11) {
 			// SCI1.1 resources, assume SCI1.1

@@ -26,7 +26,8 @@
 
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
-#include "backends/fs/stdiostream.h"
+#include "backends/fs/psp/psp-stream.h"
+#include "backends/platform/psp/powerman.h"
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -34,6 +35,9 @@
 #include <pspkernel.h>
 
 #define	ROOT_PATH	"ms0:/"
+
+#include "backends/platform/psp/trace.h"
+
 
 /**
  * Implementation of the ScummVM file system API based on PSPSDK API.
@@ -61,13 +65,13 @@ public:
 	 */
 	PSPFilesystemNode(const Common::String &p, bool verify = true);
 
-	virtual bool exists() const { return access(_path.c_str(), F_OK) == 0; }
+	virtual bool exists() const;
 	virtual Common::String getDisplayName() const { return _displayName; }
 	virtual Common::String getName() const { return _displayName; }
 	virtual Common::String getPath() const { return _path; }
 	virtual bool isDirectory() const { return _isDirectory; }
-	virtual bool isReadable() const { return access(_path.c_str(), R_OK) == 0; }
-	virtual bool isWritable() const { return access(_path.c_str(), W_OK) == 0; }
+	virtual bool isReadable() const;
+	virtual bool isWritable() const;
 
 	virtual AbstractFSNode *getChild(const Common::String &n) const;
 	virtual bool getChildren(AbstractFSList &list, ListMode mode, bool hidden) const;
@@ -94,10 +98,43 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 
 	if (verify) {
 		struct stat st;
+		PowerMan.beginCriticalSection();
 		_isValid = (0 == stat(_path.c_str(), &st));
+		PowerMan.endCriticalSection();
 		_isDirectory = S_ISDIR(st.st_mode);
 	}
 }
+
+bool PSPFilesystemNode::exists() const {
+	int ret = 0;
+
+	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	ret = access(_path.c_str(), F_OK);
+	PowerMan.endCriticalSection();
+	
+	return ret == 0;
+}
+
+bool PSPFilesystemNode::isReadable() const {
+	int ret = 0;
+
+	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	ret = access(_path.c_str(), R_OK);
+	PowerMan.endCriticalSection();
+	
+	return ret == 0;
+}
+
+bool PSPFilesystemNode::isWritable() const {
+	int ret = 0;
+
+	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	ret = access(_path.c_str(), W_OK);
+	PowerMan.endCriticalSection();
+	
+	return ret == 0;
+}
+
 
 AbstractFSNode *PSPFilesystemNode::getChild(const Common::String &n) const {
 	// FIXME: Pretty lame implementation! We do no error checking to speak
@@ -117,6 +154,10 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 	//TODO: honor the hidden flag
 
+	bool ret = true;
+
+	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	
 	int dfd  = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
 		SceIoDirent dir;
@@ -149,10 +190,13 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 		}
 
 		sceIoDclose(dfd);
-		return true;
-	} else {
-		return false;
+		ret = true;
+	} else { // dfd <= 0
+		ret = false;
 	}
+
+	PowerMan.endCriticalSection();
+	return ret;
 }
 
 AbstractFSNode *PSPFilesystemNode::getParent() const {
@@ -166,11 +210,11 @@ AbstractFSNode *PSPFilesystemNode::getParent() const {
 }
 
 Common::SeekableReadStream *PSPFilesystemNode::createReadStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), false);
+	return PSPIoStream::makeFromPath(getPath(), false);
 }
 
 Common::WriteStream *PSPFilesystemNode::createWriteStream() {
-	return StdioStream::makeFromPath(getPath().c_str(), true);
+	return PSPIoStream::makeFromPath(getPath(), true);
 }
 
 #endif //#ifdef __PSP__

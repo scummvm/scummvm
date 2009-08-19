@@ -266,8 +266,8 @@ process_key:
 			}
 
 			// commented out to close Sarien bug #438872
-			if (key)
-				_game.keypress = key;
+			//if (key)
+			//	_game.keypress = key;
 		}
 		break;
 	case INPUT_GETSTRING:

@@ -33,11 +33,7 @@
 
 namespace Sci {
 
-/** The string used to identify the "unknown" SCI0 function for each game */
-#define SCRIPT_UNKNOWN_FUNCTION_STRING "[Unknown]"
-
 // Default kernel name table
-#define SCI0_KNAMES_WELL_DEFINED 0x6e
 #define SCI_KNAMES_DEFAULT_ENTRIES_NR 0x89
 
 static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
@@ -367,11 +363,15 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
+Kernel::Kernel(ResourceManager *resmgr, bool minimalLoad) : _resmgr(resmgr) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
-	detectSciFeatures(); // must be called before loadSelectorNames()
 	loadSelectorNames();
+	detectSciFeatures();
+
+	if (minimalLoad)	// If we're only asked to detect game features, stop here
+		return;
+
 	mapSelectors();      // Map a few special selectors for later use
 	loadOpcodes();
 	loadKernelNames();
@@ -382,60 +382,29 @@ Kernel::~Kernel() {
 }
 
 void Kernel::detectSciFeatures() {
-	// FIXME Much of this is unreliable
+	SciVersion version = _resmgr->sciVersion();
 
-	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
-
-	Common::StringList staticSelectorTable;
-	
-	if (!r) { // No such resource?
-		staticSelectorTable = checkStaticSelectorNames();
-		if (staticSelectorTable.empty())
-			error("Kernel: Could not retrieve selector names");
-	}
-
-	int count = staticSelectorTable.empty() ? READ_LE_UINT16(r->data) + 1 : staticSelectorTable.size(); // Counter is slightly off
 	features = 0;
 
 	// Initialize features based on SCI version
-	switch (_resmgr->sciVersion()) {
-	case SCI_VERSION_0_EARLY:
-		features |= kFeatureOldScriptHeader;
-		/* Fallthrough */
-	case SCI_VERSION_0_LATE:
-		features |= kFeatureOldGfxFunctions;
-		break;
-	default:
-		break;
+
+	// Script header and graphics functions
+	if (version == SCI_VERSION_0_EARLY) {
+		features |= kFeatureOldScriptHeader | kFeatureOldGfxFunctions;
+	} else if (version == SCI_VERSION_0_LATE) {
+		if (findSelector("motionCue") == -1)
+			features |= kFeatureOldGfxFunctions;
 	}
 
-	for (int i = 0; i < count; i++) {
-		Common::String tmp;
-		
-		if (staticSelectorTable.empty()) {
-			int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-			int len = READ_LE_UINT16(r->data + offset);
-			
-			tmp = Common::String((const char *)r->data + offset + 2, len);
-		} else {
-			tmp = staticSelectorTable[i];
-		}
-
-		if (tmp == "motionCue")
-			features &= ~kFeatureOldGfxFunctions;
-
-		if (tmp == "egoMoveSpeed" && _resmgr->sciVersion() < SCI_VERSION_1_1)
+	// Lofs absolute/relative
+	if (version >= SCI_VERSION_1_MIDDLE && version < SCI_VERSION_1_1) {
+		// Assume all games use absolute lofs
+		features |= kFeatureLofsAbsolute;
+	} else if (version == SCI_VERSION_1_EARLY) {
+		// Use heuristic
+		if (findSelector("egoMoveSpeed") != -1)
 			features |= kFeatureLofsAbsolute;
-
-		if (tmp == "setVol")
-			features |= kFeatureSci1Sound;
-
-		if (tmp == "nodePtr")
-			features |= kFeatureSci01Sound;
 	}
-
-	if (features & kFeatureSci1Sound)
-		features &= ~kFeatureSci01Sound;
 
 	printf("Kernel auto-detected features:\n");
 
@@ -445,19 +414,13 @@ void Kernel::detectSciFeatures() {
 	else
 		printf("new\n");
 
-	printf("lofs parameters: ");
-	if (features & kFeatureLofsAbsolute)
-		printf("absolute\n");
-	else
-		printf("relative\n");
-
-	printf("Sound functions: ");
-	if (features & kFeatureSci1Sound)
-		printf("SCI1\n");
-	else if (features & kFeatureSci01Sound)
-		printf("SCI01\n");
-	else
-		printf("SCI0\n");
+	if (version < SCI_VERSION_1_1) {
+		printf("lofs parameters: ");
+		if (features & kFeatureLofsAbsolute)
+			printf("absolute\n");
+		else
+			printf("relative\n");
+	}
 }
 
 void Kernel::loadSelectorNames() {
@@ -473,7 +436,7 @@ void Kernel::loadSelectorNames() {
 		
 		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
 			_selectorNames.push_back(staticSelectorTable[i]);
-			if (features & kFeatureOldScriptHeader)
+			if (_resmgr->sciVersion() == SCI_VERSION_0_EARLY)
 				_selectorNames.push_back(staticSelectorTable[i]);
 		}
 			
@@ -492,7 +455,7 @@ void Kernel::loadSelectorNames() {
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (features & kFeatureOldScriptHeader)
+		if (_resmgr->sciVersion() == SCI_VERSION_0_EARLY)
 			_selectorNames.push_back(tmp);
 	}
 }
@@ -706,6 +669,8 @@ int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 
 	mobj = s->seg_manager->_heap[reg.segment];
 
+	SciVersion version = s->_version;	// for the offset defines
+
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj).buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
@@ -817,32 +782,40 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 }
 
 void Kernel::setDefaultKernelNames() {
-	bool isSci0 = (_resmgr->sciVersion() <= SCI_VERSION_0_LATE);
-	int offset = 0;
+	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
-	_kernelNames.resize(SCI_KNAMES_DEFAULT_ENTRIES_NR + (isSci0 ? 4 : 0));
-	for (int i = 0; i < SCI_KNAMES_DEFAULT_ENTRIES_NR; i++) {
-		// In SCI0, Platform was DoAvoider
-		if (!strcmp(sci_default_knames[i], "Platform") && isSci0) {
-			_kernelNames[i + offset] = "DoAvoider";
-			continue;
-		}
+	switch (_resmgr->sciVersion()) {
+	case SCI_VERSION_0_EARLY:
+	case SCI_VERSION_0_LATE:
+		// Insert SCI0 file functions after SetCursor (0x28)
+		_kernelNames.insert_at(0x29, "FOpen");
+		_kernelNames.insert_at(0x2A, "FPuts");
+		_kernelNames.insert_at(0x2B, "FGets");
+		_kernelNames.insert_at(0x2C, "FClose");
 
-		_kernelNames[i + offset] = sci_default_knames[i];
+		// Function 0x55 is DoAvoider
+		_kernelNames[0x55] = "DoAvoider";
 
-		// SCI0 has 4 extra functions between SetCursor (0x28) and Savegame
-		if (!strcmp(sci_default_knames[i], "SetCursor") && isSci0) {
-			_kernelNames[i + 1] = "FOpen";
-			_kernelNames[i + 2] = "FPuts";
-			_kernelNames[i + 3] = "FGets";
-			_kernelNames[i + 4] = "FClose";
-			offset = 4;
-		}
-	}
+		// Cut off unused functions
+		_kernelNames.resize(0x72);
+		break;
 
-	if (_resmgr->sciVersion() == SCI_VERSION_1_1) {
-		// HACK: KQ6CD calls unimplemented function 0x26
+	case SCI_VERSION_01:
+		// Multilingual SCI01 games have StrSplit as function 0x78
+		_kernelNames[0x78] = "StrSplit";
+
+		// Cut off unused functions
+		_kernelNames.resize(0x79);
+		break;
+
+	case SCI_VERSION_1_1:
+		// KQ6CD calls unimplemented function 0x26
 		_kernelNames[0x26] = "Dummy";
+		break;
+
+	default:
+		// Use default table for the other versions
+		break;
 	}
 }
 

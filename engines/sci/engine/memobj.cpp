@@ -246,6 +246,7 @@ void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback not
 
 void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
 	Script *script = this;
+	SciVersion version = s->_version;	// for the offset defines
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);

@@ -188,159 +188,13 @@ int game_init_sound(EngineState *s, int sound_flags) {
 	return 0;
 }
 
-int create_class_table_sci11(EngineState *s) {
-	int scriptnr;
-	unsigned int seeker_offset;
-	char *seeker_ptr;
-	int classnr;
-
-	Resource *vocab996 = s->resmgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
-
-	if (!vocab996)
-		s->_classtable.resize(20);
-	else
-		s->_classtable.resize(vocab996->size >> 2);
-
-	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		Resource *heap = s->resmgr->findResource(ResourceId(kResourceTypeHeap, scriptnr), 0);
-
-		if (heap) {
-			int global_vars = READ_LE_UINT16(heap->data + 2);
-
-			seeker_ptr = (char*)heap->data + 4 + global_vars * 2;
-			seeker_offset = 4 + global_vars * 2;
-
-			while (READ_LE_UINT16((byte*)seeker_ptr) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-				if (READ_LE_UINT16((byte*)seeker_ptr + 14) & SCRIPT_INFO_CLASS) {
-					classnr = READ_LE_UINT16((byte*)seeker_ptr + 10);
-					if (classnr >= (int)s->_classtable.size()) {
-						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
-							        classnr, scriptnr, scriptnr, seeker_offset);
-							return 1;
-						}
-
-						s->_classtable.resize(classnr + 1); // Adjust maximum number of entries
-					}
-
-					s->_classtable[classnr].reg.offset = seeker_offset;
-					s->_classtable[classnr].reg.segment = 0;
-					s->_classtable[classnr].script = scriptnr;
-				}
-
-				seeker_ptr += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
-				seeker_offset += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
-			}
-		}
-	}
-
-	s->resmgr->unlockResource(vocab996);
-	vocab996 = NULL;
-	return 0;
-}
-
-static int create_class_table_sci0(EngineState *s) {
-	int scriptnr;
-	unsigned int seeker;
-	int classnr;
-	int magic_offset; // For strange scripts in older SCI versions
-
-	Resource *vocab996 = s->resmgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
-
-	if (!vocab996)
-		s->_classtable.resize(20);
-	else
-		s->_classtable.resize(vocab996->size >> 2);
-
-	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		int objtype = 0;
-		Resource *script = s->resmgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
-
-		if (script) {
-			if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
-				magic_offset = seeker = 2;
-			else
-				magic_offset = seeker = 0;
-
-			do {
-				while (seeker < script->size)	{
-					unsigned int lastseeker = seeker;
-					objtype = (int16)READ_LE_UINT16(script->data + seeker);
-					if (objtype == SCI_OBJ_CLASS || objtype == SCI_OBJ_TERMINATOR)
-						break;
-					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2);
-					if (seeker <= lastseeker) {
-						s->_classtable.clear();
-						error("Script version is invalid");
-					}
-				}
-
-				if (objtype == SCI_OBJ_CLASS) {
-					int sugg_script;
-
-					seeker -= SCRIPT_OBJECT_MAGIC_OFFSET; // Adjust position; script home is base +8 bytes
-
-					classnr = (int16)READ_LE_UINT16(script->data + seeker + 4 + SCRIPT_SPECIES_OFFSET);
-					if (classnr >= (int)s->_classtable.size()) {
-
-						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
-							        classnr, scriptnr, scriptnr, seeker);
-							return 1;
-						}
-
-						s->_classtable.resize(classnr + 1); // Adjust maximum number of entries
-					}
-
-					// Map the class ID to the script the corresponding class is contained in
-					// The script number is found in vocab.996, if it exists
-					if (!vocab996 || (uint32)classnr >= vocab996->size >> 2)
-						sugg_script = -1;
-					else
-						sugg_script = (int16)READ_LE_UINT16(vocab996->data + 2 + (classnr << 2));
-
-					// First, test whether the script hasn't been claimed, or if it's been claimed by the wrong script
-
-					if (sugg_script == -1 || scriptnr == sugg_script /*|| !s->_classtable[classnr].reg.segment*/)  {
-						// Now set the home script of the class
-						s->_classtable[classnr].reg.offset = seeker + 4 - magic_offset;
-						s->_classtable[classnr].reg.segment = 0;
-						s->_classtable[classnr].script = scriptnr;
-					}
-
-					seeker += SCRIPT_OBJECT_MAGIC_OFFSET; // Re-adjust position
-					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2); // Move to next
-				}
-
-			} while (objtype != SCI_OBJ_TERMINATOR && seeker <= script->size);
-
-		}
-	}
-	s->resmgr->unlockResource(vocab996);
-	vocab996 = NULL;
-	return 0;
-}
-
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
-	int result;
-
 	s->kernel_opt_flags = 0;
-
-	if (s->_version >= SCI_VERSION_1_1)
-		result = create_class_table_sci11(s);
-	else
-		result = create_class_table_sci0(s);
-
-	if (result) {
-		debug(2, "Failed to initialize class table");
-		return 1;
-	}
-
-	s->seg_manager = new SegManager(s->_version >= SCI_VERSION_1_1);
+	s->seg_manager = new SegManager(s->resmgr, s->_version, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader());
 	s->gc_countdown = GC_INTERVAL - 1;
 
-	SegmentId script_000_segment = script_get_segment(s, 0, SCRIPT_GET_LOCK);
+	SegmentId script_000_segment = s->seg_manager->getSegment(0, SCRIPT_GET_LOCK);
 
 	if (script_000_segment <= 0) {
 		debug(2, "Failed to instantiate script.000");
@@ -398,7 +252,8 @@ void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int le
 void script_free_vm_memory(EngineState *s) {
 	debug(2, "Freeing VM memory");
 
-	s->_classtable.clear();
+	if (s->seg_manager)
+		s->seg_manager->_classtable.clear();
 
 	// Close all opened file handles
 	s->_fileHandles.clear();
@@ -433,14 +288,13 @@ void script_free_breakpoints(EngineState *s) {
 
 int game_init(EngineState *s) {
 	// FIXME Use new VM instantiation code all over the place"
-	reg_t game_obj; // Address of the game object
 	DataStack *stack;
 
 	stack = s->seg_manager->allocateStack(VM_STACK_SIZE, &s->stack_segment);
 	s->stack_base = stack->entries;
 	s->stack_top = s->stack_base + VM_STACK_SIZE;
 
-	if (!script_instantiate(s, 0)) {
+	if (!script_instantiate(s->resmgr, s->seg_manager, s->_version, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader(), 0)) {
 		warning("game_init(): Could not instantiate script 0");
 		return 1;
 	}
@@ -473,20 +327,11 @@ int game_init(EngineState *s) {
 	srand(g_system->getMillis()); // Initialize random number generator
 
 //	script_dissect(0, s->_selectorNames);
-	game_obj = script_lookup_export(s, 0, 0);
 	// The first entry in the export table of script 0 points to the game object
+	s->game_obj = script_lookup_export(s->seg_manager, 0, 0);
+	s->_gameName = obj_get_name(s->seg_manager, s->_version, s->game_obj);
 
-	const char *tmp = obj_get_name(s, game_obj);
-
-	if (!tmp) {
-		warning("Error: script.000, export 0 (%04x:%04x) does not yield an object with a name -> sanity check failed", PRINT_REG(game_obj));
-		return 1;
-	}
-	s->_gameName = tmp;
-
-	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(game_obj));
-
-	s->game_obj = game_obj;
+	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->game_obj));
 
 	// Mark parse tree as unused
 	s->parser_nodes[0].type = kParseTreeLeafNode;
@@ -512,7 +357,9 @@ int game_exit(EngineState *s) {
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
 
+	s->seg_manager->_classtable.clear();
 	delete s->seg_manager;
+	s->seg_manager = 0;
 
 	s->_synonyms.clear();
 

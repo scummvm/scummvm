@@ -43,12 +43,22 @@ namespace Sci {
 		(((mgr)._heap[index]	&& ((mgr)._heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr)._heap[index]->getType() == MEM_OBJ_CLONES))? (mgr)._heap[index]	\
 		: NULL): NULL)
 
+/**
+ * Parameters for getSegment()
+ */
+typedef enum {
+	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
+	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
+	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
+} SCRIPT_GET;
+
+
 class SegManager : public Common::Serializable {
 public:
 	/**
 	 * Initialize the segment manager
 	 */
-	SegManager(bool sci1_1);
+	SegManager(ResourceManager *resMgr, SciVersion version, bool oldScriptHeader);
 
 	/**
 	 * Deallocate all memory associated with the segment manager
@@ -61,14 +71,12 @@ public:
 
 	/**
 	 * Allocate a script into the segment manager
-	 * @param s				The state containing resource manager 
-	 * 						handlers to load the script data
 	 * @param script_nr		The number of the script to load
 	 * @param seg_id		The segment ID of the newly allocated segment,
 	 * 						on success
 	 * @return				0 on failure, 1 on success
 	 */
-	Script *allocateScript(EngineState *s, int script_nr, SegmentId *seg_id);
+	Script *allocateScript(int script_nr, SegmentId *seg_id);
 
 	// The script must then be initialised; see section (1b.), below.
 
@@ -154,7 +162,7 @@ public:
 	 * @returns			A newly created Object describing the object,
 	 * 					stored within the relevant script
 	 */
-	Object *scriptObjInit(EngineState *s, reg_t obj_pos);
+	Object *scriptObjInit(reg_t obj_pos);
 
 	/**
 	 * Informs the segment manager that a code block must be relocated
@@ -317,21 +325,31 @@ public:
 	 */
 	byte *dereference(reg_t reg, int *size);
 
-
+	/**
+	 * Determines the segment occupied by a certain script
+	 * @param[in] script_id	The script in question
+	 * @param[in] load		One of SCRIPT_GET_*
+	 * @return				The script's segment, or 0 on failure
+	 */
+	SegmentId getSegment(int script_nr, SCRIPT_GET load);
+	reg_t get_class_address(int classnr, SCRIPT_GET lock, reg_t caller);
 
 
 	void heapRelocate(reg_t block);
 	void scriptRelocateExportsSci11(SegmentId seg);
-	void scriptInitialiseObjectsSci11(EngineState *s, SegmentId seg);
-	int initialiseScript(Script &scr, EngineState *s, int script_nr);
+	void scriptInitialiseObjectsSci11(SegmentId seg);
+	int initialiseScript(Script &scr, int script_nr);
 
 private:
 	IntMapper *id_seg_map; ///< id - script id; seg - index of heap
+	bool _oldScriptHeader;
 public: // TODO: make private
 	Common::Array<MemObject *> _heap;
 	int reserved_id;
 	int exports_wide;
-	bool isSci1_1;
+	SciVersion _version;
+	ResourceManager *_resMgr;
+	Common::Array<Class> _classtable; /**< Table of all classes */
 
 	SegmentId Clones_seg_id; ///< ID of the (a) clones segment
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment
@@ -343,6 +361,8 @@ private:
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	MemObject *memObjAllocate(SegmentId segid, int hash_id, MemObjectType type);
 	int deallocate(SegmentId seg, bool recursive);
+	int createSci0ClassTable();
+	int createSci11ClassTable();
 
 	Hunk *alloc_Hunk(reg_t *);
 
@@ -351,9 +371,9 @@ private:
 	int relocateObject(Object *obj, SegmentId segment, int location);
 
 	int findFreeId(int *id);
-	static void setScriptSize(Script &scr, EngineState *s, int script_nr);
-	Object *scriptObjInit0(EngineState *s, reg_t obj_pos);
-	Object *scriptObjInit11(EngineState *s, reg_t obj_pos);
+	void setScriptSize(Script &scr, int script_nr);
+	Object *scriptObjInit0(reg_t obj_pos);
+	Object *scriptObjInit11(reg_t obj_pos);
 
 	/**
 	 * Check segment validity

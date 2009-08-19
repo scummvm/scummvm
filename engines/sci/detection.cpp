@@ -27,7 +27,9 @@
 #include "base/plugins.h"
 
 #include "sci/sci.h"
+#include "sci/engine/kernel.h"
 #include "sci/exereader.h"
+#include "sci/engine/seg_manager.h"
 
 namespace Sci {
 
@@ -3031,6 +3033,76 @@ public:
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
+Common::String convertSierraGameId(Common::String sierraId) {
+	// TODO: SCI32 IDs
+
+	// TODO: astrochicken
+	// TODO: The internal id of christmas1998 is "demo"
+	if (sierraId == "card")
+		return "christmas1990";
+	// TODO: christmas1992
+	if (sierraId == "arthur")
+		return "camelot";
+	if (sierraId == "brain")
+		return "castlebrain";
+	// iceman is the same
+	// longbow is the same
+	if (sierraId == "eco")
+		return "ecoquest";
+	if (sierraId == "rain")
+		return "ecoquest2";
+	if (sierraId == "fp")
+		return "freddypharkas";
+	if (sierraId == "emc")
+		return "funseeker";
+	if (sierraId == "cardgames")
+		return "hoyle1";
+	if (sierraId == "solitare")
+		return "hoyle2";
+	// TODO: hoyle3
+	// TODO: hoyle4
+	if (sierraId == "kq1")
+		return "kq1sci";
+	if (sierraId == "kq4")
+		return "kq4sci";
+	if (sierraId == "lsl1")
+		return "lsl1sci";
+	// lsl2 is the same
+	// lsl3 is the same
+	// lsl5 is the same
+	// lsl6 is the same
+	// TODO: lslcasino
+	// TODO: fairytales
+	// TODO: mothergoose
+	// TODO: msastrochicken
+	if (sierraId == "cb1")
+		return "laurabow";
+	if (sierraId == "lb2")
+		return "laurabow2";
+	// TODO: lb2 floppy (its resources can't be read)
+	if (sierraId == "twisty")
+		return "pepper";
+	// TODO: pq1sci (its resources can't be read)
+	if (sierraId == "pq")
+		return "pq2";
+	// pq3 is the same
+	if (sierraId == "glory")
+		return "qfg1";
+	// TODO: qfg1 VGA (its resources can't be read)
+	if (sierraId == "trial")
+		return "qfg2";
+	if (sierraId == "qfg1")
+		return "qfg3";
+	// TODO: slater
+	if (sierraId == "sq1")
+		return "sq1sci";
+	// sq3 is the same
+	// sq4 is the same
+	// sq5 is the same
+	// TODO: islandbrain
+
+	return sierraId;
+}
 
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
@@ -3046,8 +3118,16 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		Common::String filename = file->getName();
 		filename.toLowercase();
 
-		if (filename.contains("resource.map") || filename.contains("resmap.000"))
+		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
+			// HACK: resource.map is located in the same directory as the other resource files,
+			// therefore add the directory here, so that the game files can be opened later on
+			// TODO/FIXME: This should be removed, as it will cause problems with game detection:
+			// if we got a game A, and then try to detect another game B, adding a default
+			// directory here means that game A's files will be opened first. We need to rewrite
+			// all the functions that access game files to use FSNodes instead
+			Common::File::addDefaultDirectory(file->getParent().getPath());
 			foundResMap = true;
+		}
 
 		if (filename.contains("resource.000") || filename.contains("resource.001")
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
@@ -3080,11 +3160,30 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 
 	// Set some defaults
-	s_fallbackDesc.desc.gameid = "sci";
 	s_fallbackDesc.desc.extra = "";
 	s_fallbackDesc.desc.language = Common::UNK_LANG;
 	s_fallbackDesc.desc.platform = exePlatform;
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
+
+	// Determine the game id
+	ResourceManager *resMgr = new ResourceManager(fslist);
+	SciVersion version = resMgr->sciVersion();
+	Kernel *kernel = new Kernel(resMgr, true);
+	bool hasOldScriptHeader = kernel->hasOldScriptHeader();
+	delete kernel;
+
+	SegManager *segManager = new SegManager(resMgr, version, hasOldScriptHeader);
+	if (!script_instantiate(resMgr, segManager, version, hasOldScriptHeader, 0)) {
+		warning("fallbackDetect(): Could not instantiate script 0");
+		return 0;
+	}
+	reg_t game_obj = script_lookup_export(segManager, 0, 0);
+	Common::String gameName = obj_get_name(segManager, version, game_obj);
+	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
+	gameName.toLowercase();
+	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName).c_str());
+	delete segManager;
+	delete resMgr;
 
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");

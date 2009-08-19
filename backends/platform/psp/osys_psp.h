@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef OSYS_PSP_H
+#define OSYS_PSP_H
+
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
@@ -65,6 +68,7 @@ protected:
 	int	_mouseHotspotX, _mouseHotspotY;
 	byte	_mouseKeyColour;
 	byte	*_mouseBuf;
+	bool	_cursorPaletteDisabled;
 
 	uint32	_prevButtons;
 	uint32	_lastPadCheck;
@@ -144,3 +148,5 @@ public:
 	virtual Common::WriteStream *createConfigWriteStream();
 };
 
+
+#endif /* OSYS_PSP_H */

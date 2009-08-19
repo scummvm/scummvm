@@ -366,6 +366,8 @@ static const char *credits[] = {
 "C2""Daily Linux builds",
 "C0""Thomas Mayer",
 "C2""PSP port contributions",
+"C0""Yotam Barnoy",
+"C2""PSP port suspend/resume support",
 "C0""Sean Murray",
 "C2""ScummVM tools GUI application (GSoC 2007 task)",
 "C0""n0p",

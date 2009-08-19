@@ -108,7 +108,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 }
 
 bool is_object(EngineState *s, reg_t object) {
-	return obj_get(s, object) != NULL;
+	return obj_get(s->seg_manager, s->_version, object) != NULL;
 }
 
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
@@ -184,7 +184,7 @@ reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	Object *parent_obj = obj_get(s, parent_addr);
+	Object *parent_obj = obj_get(s->seg_manager, s->_version, parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -205,6 +205,8 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 	clone_obj->flags = 0;
 
+	SciVersion version = s->_version;	// for the selector defines
+
 	// Mark as clone
 	clone_obj->_variables[SCRIPT_INFO_SELECTOR].offset = SCRIPT_INFO_CLONE;
 	clone_obj->_variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
@@ -220,7 +222,7 @@ extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t victim_addr = argv[0];
-	Clone *victim_obj = obj_get(s, victim_addr);
+	Clone *victim_obj = obj_get(s->seg_manager, s->_version, victim_addr);
 	uint16 underBits;
 
 	if (!victim_obj) {
@@ -228,6 +230,8 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		         PRINT_REG(victim_addr));
 		return s->r_acc;
 	}
+
+	SciVersion version = s->_version;	// for the selector defines
 
 	if (victim_obj->_variables[SCRIPT_INFO_SELECTOR].offset != SCRIPT_INFO_CLONE) {
 		//warning("Attempt to dispose something other than a clone at %04x", offset);
@@ -260,7 +264,7 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
 	int index = (argc > 1) ? argv[1].toUint16() : 0;
 
-	SegmentId scriptid = script_get_segment(s, script, SCRIPT_GET_LOAD);
+	SegmentId scriptid = s->seg_manager->getSegment(script, SCRIPT_GET_LOAD);
 	Script *scr;
 
 	if (argv[0].segment)
@@ -299,13 +303,13 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			scr->setLockers(1);
 	}
 
-	script_uninstantiate(s, script);
+	script_uninstantiate(s->seg_manager, s->_version, script);
 	s->_executionStackPosChanged = true;
 	return s->r_acc;
 }
 
 int is_heap_object(EngineState *s, reg_t pos) {
-	Object *obj = obj_get(s, pos);
+	Object *obj = obj_get(s->seg_manager, s->_version, pos);
 	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->seg_manager->scriptIsMarkedAsDeleted(pos.segment)));
 }
 

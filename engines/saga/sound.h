@@ -44,17 +44,13 @@ enum SOUND_FLAGS {
 
 struct SoundBuffer {
 	uint16 frequency;
-	int sampleBits;
-	bool stereo;
-	bool isSigned;
 	bool isCompressed;
+	byte flags;
 
 	byte *buffer;
 	size_t size;
 	size_t originalSize;
-	bool isBigEndian;
 	GameSoundTypes soundType;
-	Common::File *soundFile;
 	size_t fileOffset;
 };
 

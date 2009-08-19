@@ -1134,6 +1134,11 @@ void KyraEngine_LoK::seq_playEnding() {
 	_seqPlayerFlag = false;
 
 	_screen->showMouse();
+
+	// To avoid any remaining input events, we remove the queue
+	// over here.
+	_eventList.clear();
+
 	if (_flags.platform == Common::kPlatformAmiga) {
 		_screen->_charWidth = -2;
 		_screen->setCurPage(2);
@@ -1354,15 +1359,12 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 	}
 
 	int size = 0;
-	const uint8 *bufferTmp = _staticres->loadRawData(k1CreditsStrings, size);
-	char *buffer = new char[size];
-	assert(buffer);
-	memcpy(buffer, bufferTmp, size);
+	const char *creditsData = (const char *)_staticres->loadRawData(k1CreditsStrings, size);
 
 	char stringBuffer[81];
 	memset(stringBuffer, 0, sizeof(stringBuffer));
 
-	char *cur = buffer;
+	const char *cur = creditsData;
 	char *specialString = stringBuffer;
 	bool fillRectFlag = false, subWidth = false, centerFlag = false;
 	x = 0;
@@ -1424,9 +1426,7 @@ void KyraEngine_LoK::seq_playCreditsAmiga() {
 			removeInputTop();
 			break;
 		}
-	} while (++cur != buffer + size && !shouldQuit());
-
-	delete[] buffer;
+	} while (++cur != (creditsData + size) && !shouldQuit());
 }
 
 bool KyraEngine_LoK::seq_skipSequence() const {

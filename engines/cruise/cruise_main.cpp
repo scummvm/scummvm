@@ -1738,7 +1738,7 @@ void CruiseEngine::mainLoop(void) {
 			// Delay for the specified amount of time, but still respond to events
 			bool skipEvents = false;
 
-			while (currentTick < lastTick + _gameSpeed) {
+			do {
 				g_system->delayMillis(10);
 				currentTick = g_system->getMillis();
 
@@ -1749,7 +1749,7 @@ void CruiseEngine::mainLoop(void) {
 
 				if (_vm->getDebugger()->isAttached())
 					_vm->getDebugger()->onFrame();
-			}
+			} while (currentTick < lastTick + _gameSpeed);
 		} else {
 			manageEvents();
 

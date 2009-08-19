@@ -257,7 +257,7 @@ static void bresenham_autodetect(EngineState *s) {
 	reg_t motion_class;
 
 	if (!parse_reg_t(s, "?Motion", &motion_class)) {
-		Object *obj = obj_get(s, motion_class);
+		Object *obj = obj_get(s->seg_manager, s->_version, motion_class);
 		reg_t fptr;
 		byte *buf;
 
