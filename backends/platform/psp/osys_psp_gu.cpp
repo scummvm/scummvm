@@ -38,6 +38,8 @@
 #define MOUSE_SIZE	128
 #define	KBD_DATA_SIZE	130560
 
+#define	MAX_FPS	30
+
 unsigned int __attribute__((aligned(16))) list[262144];
 unsigned short __attribute__((aligned(16))) clut256[256];
 unsigned short __attribute__((aligned(16))) mouseClut[256];
@@ -295,6 +297,13 @@ void OSystem_PSP_GU::copyRectToScreen(const byte *buf, int pitch, int x, int y, 
 }
 
 void OSystem_PSP_GU::updateScreen() {
+	u32 now = getMillis();
+	if (now - _lastScreenUpdate < 1000 / MAX_FPS)
+		return;
+
+	_lastScreenUpdate = now;
+
+
 	sceGuStart(0,list);
 
 	sceGuClearColor(0xff000000);

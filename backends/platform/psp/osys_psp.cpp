@@ -75,7 +75,7 @@ const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 };
 
 
-OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
+OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _lastScreenUpdate(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
 
 	memset(_palette, 0, sizeof(_palette));
 
