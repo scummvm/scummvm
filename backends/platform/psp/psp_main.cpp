@@ -62,9 +62,8 @@ PSP_MODULE_INFO("SCUMMVM-PSP", 0, 1, 1);
  * code (crt0.c) starts this program in to be in usermode
  * even though the module was started in kernelmode
  */
-#ifndef USERSPACE_ONLY
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
-#endif
+PSP_HEAP_SIZE_KB(-128);	//Leave 128kb for thread stacks, etc.
 
 
 #ifndef USERSPACE_ONLY
@@ -142,12 +141,12 @@ int SetupCallbacks(void) {
 
 #undef main
 int main(void) {
+	//change clock rate to 333mhz
+	scePowerSetClockFrequency(333, 333, 166);
+
 	PowerManager::instance();	// Setup power manager
 
 	SetupCallbacks();
-
-	//change clock rate to 333mhz
-	scePowerSetClockFrequency(333, 333, 166);
 
 	static const char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;

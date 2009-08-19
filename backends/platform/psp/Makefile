@@ -49,7 +49,7 @@ STRIP   = psp-strip
 MKDIR	= mkdir -p
 RM	= rm -f
 RM_REC	= rm -rf
-MKSFO	= mksfo
+MKSFO	= mksfoex -d MEMSIZE=1
 PACK_PBP = pack-pbp
 FIXUP	= psp-fixup-imports
 
