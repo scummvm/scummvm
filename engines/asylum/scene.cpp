@@ -59,12 +59,13 @@ Scene::Scene(uint8 sceneIdx) {
 
 	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
 
-	_background  = 0;
-	_startX      = 0;
-	_startY      = 0;
-	_leftClick   = false;
-	_rightButton = false;
-	_isActive    = false;
+	_background    = 0;
+	_startX        = 0;
+	_startY        = 0;
+	_leftClick     = false;
+	_rightButton   = false;
+	_isActive      = false;
+    _skipDrawScene = 0;
 
 	g_debugPolygons = 0;
 	g_debugBarriers = 0;
@@ -276,7 +277,7 @@ void Scene::animateCursor() {
 // -------------------------------------------
 
 void Scene::update() {
-	if(processScene())
+	if(updateScene())
         return;
 
     // TODO: check game quality
@@ -285,7 +286,8 @@ void Scene::update() {
     //TODO: other process stuffs from sub 0040AE30
 }
 
-int Scene::processScene() {
+int Scene::updateScene() {
+    uint32 startTick = 0;
     GraphicFrame *bg         = _bgResource->getFrame(0);
 	MainActor    *mainActor  = _sceneResource->getMainActor();
 	WorldStats   *worldStats = _sceneResource->getWorldStats();
@@ -294,9 +296,32 @@ int Scene::processScene() {
 	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
 			                             bg->surface.w, 0, 0, 640, 480);
     
-    // TODO: processActors
+    // Actors
+    startTick = Shared.getMillis();
+    for(uint32 a=0; a < worldStats->numActors; a++) {
+        updateActor(a);
+    }
+    debugC(kDebugLevelScene, "UpdateActors Time: %d", Shared.getMillis() - startTick);
 
-    processBarriers(worldStats);
+    // Barriers
+    startTick = Shared.getMillis();
+    updateBarriers(worldStats);
+    debugC(kDebugLevelScene, "UpdateBarriers Time: %d", Shared.getMillis() - startTick);
+
+    // Ambient Sounds
+    startTick = Shared.getMillis();
+    updateAmbientSounds();
+    debugC(kDebugLevelScene, "UpdateAmbientSounds Time: %d", Shared.getMillis() - startTick);
+
+    // Music
+    startTick = Shared.getMillis();
+    updateMusic();
+    debugC(kDebugLevelScene, "UpdateMusic Time: %d", Shared.getMillis() - startTick);
+
+    // Adjust Screen
+    startTick = Shared.getMillis();
+    updateAdjustScreen();
+    debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", Shared.getMillis() - startTick);
 
 	// TODO: we must get rid of this
     OLD_UPDATE(bg, mainActor, worldStats);
@@ -306,6 +331,193 @@ int Scene::processScene() {
 
     return 0;
 }
+
+void Scene::updateActor(uint32 actor) {
+}
+
+bool Scene::isBarrierVisible(BarrierItem *barrier) {
+    if((barrier->flags & 0xFF) & 1) {
+        for(uint f=0; f < 10; f++) {
+            bool isSet = false;
+            uint32 flag = barrier->gameFlags[f];
+
+            if(flag <= 0) {
+                isSet = Shared.isGameFlagNotSet(-flag);
+            } else {
+                isSet = Shared.isGameFlagSet(flag);
+            }
+
+            if(!isSet) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    return false;
+}
+
+uint32 Scene::getRandomResId(BarrierItem *barrier) {
+    int numRes = 1;
+    uint32 rndResId[5];
+    for(int i=0; i < 5; i++) {
+        if(barrier->field_68C[i]) {
+            rndResId[numRes] = barrier->field_68C[i];
+            numRes++;
+        }
+    }
+    return rndResId[rand() % numRes];
+}
+
+void Scene::updateBarriers(WorldStats *worldStats) {
+    Screen *screen = Shared.getScreen();
+
+    uint barriersCount = worldStats->barriers.size();
+    int startTickCount = 0;
+    bool canPlaySound = false;
+
+    if(barriersCount > 0) {
+        for(uint b=0; b < barriersCount; b++) {
+            BarrierItem *barrier = &worldStats->barriers[b];
+
+            if(barrier->field_3C == 4) {
+                if(isBarrierVisible(barrier)) {
+                    uint32 flag = barrier->flags;
+                    if(flag & 0x20) {
+                        if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                            barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+                            barrier->tickCount = Shared.getMillis();
+                            canPlaySound = true;
+                        }
+                    } else if(flag & 0x10) {
+                        uint32 frameIdx = barrier->frameIdx;
+                        char equalZero = frameIdx == 0;
+                        char lessZero = frameIdx < 0;
+                        if(!frameIdx) {
+                            if(Shared.getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
+                                if(rand() % barrier->field_C0 == 1) {
+                                    if(barrier->field_68C) {
+                                        // TODO: fix this, and find a better way to get frame count
+                                        // Sometimes we get wrong random resource id
+
+                                        /*barrier->resId = getRandomResId(barrier);
+                                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+                                        barrier->frameCount = gra->getFrameCount();
+                                        delete gra; */
+                                    }
+                                    barrier->frameIdx++;
+                                }
+                                barrier->tickCount = Shared.getMillis();
+                                canPlaySound = true;
+                            }
+                            frameIdx = barrier->frameIdx;
+                            equalZero = frameIdx == 0;
+                            lessZero = frameIdx < 0;
+                        }
+
+                        if(!(lessZero ^ 0 | equalZero)) {
+                            // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
+                            if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                                barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+                                barrier->tickCount = Shared.getMillis();
+                                canPlaySound = true;
+                            }
+                        }
+                    } else if(flag & 8) {
+                        // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
+						if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+							uint32 frameIdx = barrier->frameIdx + 1;
+                            if(frameIdx < barrier->frameCount - 1) {
+                                if(barrier->field_688 == 1) {
+                                    // TODO: get global x, y positions
+                                }
+                            } else {
+                                barrier->flags &= 0xFFFFFFF7;
+                                if(barrier->field_688 == 1) {
+                                    // TODO: reset global x, y positions
+                                }
+                            }
+                            barrier->frameIdx = frameIdx;
+						}
+                    } else if((flag & 0xFF) & 8) { // check this
+                        if(Shared.getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
+							if(rand() % barrier->field_C0 == 1) { // TODO: THIS ISNT WORKING
+								barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+                                barrier->tickCount = Shared.getMillis();
+                                canPlaySound = true;
+							}
+					    }
+					} else if(!((flag & 0xFFFF) & 6)) {
+                        // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
+                        if((Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) && (flag & 0x10000)) { 
+                            uint frameIdx = barrier->frameIdx - 1;
+                            if(frameIdx <= 0) {
+                                barrier->flags &= 0xFFFEFFFF;
+                                if(barrier->field_688 == 1) {
+                                    // TODO: reset global x, y positions
+                                }
+                                barrier->tickCount = Shared.getMillis();
+                                canPlaySound = true;
+                            }
+                            if(barrier->field_688 == 1) {
+                                // TODO: get global x, y positions
+                            }
+                            barrier->frameIdx = frameIdx;
+                        } else if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                            if((flag & 0xFF) & 2) {
+                                if(barrier->frameIdx == barrier->frameCount - 1) {
+                                    barrier->frameIdx--;
+                                    barrier->flags = ((flag & 0xFF) & 0xFD) | 4;
+                                } else {
+                                    barrier->frameIdx++;
+                                }
+                            } else if((flag & 0xFF) & 4) {
+                                if(barrier->frameIdx) {
+                                    barrier->frameIdx--;
+                                } else {
+                                    barrier->frameIdx++;
+                                    barrier->flags = ((flag & 0xFF) & 0xFB) | 2;
+                                }
+                            }
+                        }
+                    }
+
+                    flag = barrier->flags;
+                    flag &= 0x40000;
+                    if(flag != 0) {
+                        if(barrier->frameIdx == barrier->frameCount - 1) {
+                            if(barrier->field_B4 <= 15) {
+                                barrier->field_B4 -= 2;
+                                if(barrier->field_B4 < 0) // FIXME: check this
+                                    barrier->field_B4 = 0; 
+                            } else {
+                                barrier->field_B4 = 15;
+                            }
+                            if(!barrier->field_B4)
+                                barrier->flags &= 0xFFFEF1C7;
+                        }
+                    }
+                }
+                
+                if(canPlaySound) {
+                    // TODO: play sounds
+                }
+
+                // TODO: get sound functions according with scene
+            }
+        }
+    }
+}
+
+void Scene::updateAmbientSounds() {
+}
+
+void Scene::updateMusic() {
+}
+
+void Scene::updateAdjustScreen() {
+}
+
 
 void Scene::OLD_UPDATE(GraphicFrame *bg, MainActor *mainActor, WorldStats *worldStats) {
 int32 curHotspot = -1;
@@ -417,213 +629,47 @@ int32 curHotspot = -1;
 	}
 }
 
-void Scene::processActors() {
-}
-
-bool Scene::isBarrierVisible(BarrierItem *barrier) {
-    if((barrier->flags & 0xFF) & 1) {
-        for(uint f=0; f < 10; f++) {
-            bool isSet = false;
-            uint32 flag = barrier->gameFlags[f];
-
-            if(flag <= 0) {
-                isSet = Shared.isGameFlagNotSet(-flag);
-            } else {
-                isSet = Shared.isGameFlagSet(flag);
-            }
-
-            if(!isSet) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    return false;
-}
-
-uint32 Scene::getRandomResId(BarrierItem *barrier) {
-    int numRes = 1;
-    uint32 rndResId[5];
-    for(int i=0; i < 5; i++) {
-        if(barrier->field_68C[i]) {
-            rndResId[numRes] = barrier->field_68C[i];
-            numRes++;
-        }
-    }
-    return rndResId[rand() % numRes];
-}
-
-void Scene::processBarriers(WorldStats *worldStats) {
-    Screen *screen = Shared.getScreen();
-
-    uint barriersCount = worldStats->barriers.size();
-    int startTickCount = 0;
-    bool canPlaySound = false;
-
-    if(barriersCount > 0) {
-        for(uint b=0; b < barriersCount; b++) {
-            BarrierItem *barrier = &worldStats->barriers[b];
-
-            if(barrier->field_3C == 4) {
-                if(isBarrierVisible(barrier)) {
-                    uint32 flag = barrier->flags;
-                    if(flag & 0x20) {
-                        if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
-                            barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
-                            // update ticks
-                            barrier->tickCount = Shared.getMillis();
-                            canPlaySound = true;
-                        }
-                    } else if(flag & 0x10) {
-                        uint32 frameIdx = barrier->frameIdx;
-                        char equalZero = frameIdx == 0;
-                        char lessZero = frameIdx < 0;
-                        if(!frameIdx) {
-                            if(Shared.getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-                                if(rand() % barrier->field_C0 == 1) {
-                                    if(barrier->field_68C) {
-                                        // TODO: fix this, and find a better way to get frame count
-                                        // Sometimes we get wrong random resource id
-
-                                        /*barrier->resId = getRandomResId(barrier);
-                                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
-                                        barrier->frameCount = gra->getFrameCount();
-                                        delete gra; */
-                                    }
-                                    barrier->frameIdx++;
-                                }
-                                barrier->tickCount = Shared.getMillis();
-                                canPlaySound = true;
-                            }
-                            frameIdx = barrier->frameIdx;
-                            equalZero = frameIdx == 0;
-                            lessZero = frameIdx < 0;
-                        }
-
-                        if(!(lessZero ^ 0 | equalZero)) {
-                            // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-                            if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
-                                barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
-                                // update ticks
-                                barrier->tickCount = Shared.getMillis();
-                                canPlaySound = true;
-                            }
-                        }
-                    } else if(flag & 8) {
-                        // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-						if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
-							uint32 frameIdx = barrier->frameIdx + 1;
-                            if(frameIdx < barrier->frameCount - 1) {
-                                if(barrier->field_688 == 1) {
-                                    // TODO: get global x, y positions
-                                }
-                            } else {
-                                barrier->flags &= 0xFFFFFFF7;
-                                if(barrier->field_688 == 1) {
-                                    // TODO: reset global x, y positions
-                                }
-                            }
-                            barrier->frameIdx = frameIdx;
-						}
-                    } else if((flag & 0xFF) & 8) { // check this
-                        if(Shared.getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
-							if(rand() % barrier->field_C0 == 1) { // TODO: THIS ISNT WORKING
-								barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
-								// update ticks
-                                barrier->tickCount = Shared.getMillis();
-                                canPlaySound = true;
-							}
-					    }
-					} else if(!((flag & 0xFFFF) & 6)) {
-                        // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-                        if((Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) && (flag & 0x10000)) { 
-                            uint frameIdx = barrier->frameIdx - 1;
-                            if(frameIdx <= 0) {
-                                barrier->flags &= 0xFFFEFFFF;
-                                if(barrier->field_688 == 1) {
-                                    // TODO: reset global x, y positions
-                                }
-                                // update ticks
-                                barrier->tickCount = Shared.getMillis();
-                                canPlaySound = true;
-                            }
-                            if(barrier->field_688 == 1) {
-                                // TODO: get global x, y positions
-                            }
-                            barrier->frameIdx = frameIdx;
-                        } else if(Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
-                            if((flag & 0xFF) & 2) {
-                                if(barrier->frameIdx == barrier->frameCount - 1) {
-                                    barrier->frameIdx--;
-                                    barrier->flags = ((flag & 0xFF) & 0xFD) | 4;
-                                } else {
-                                    barrier->frameIdx++;
-                                }
-                            } else if((flag & 0xFF) & 4) {
-                                if(barrier->frameIdx) {
-                                    barrier->frameIdx--;
-                                } else {
-                                    barrier->frameIdx++;
-                                    barrier->flags = ((flag & 0xFF) & 0xFB) | 2;
-                                }
-                            }
-                        }
-                    }
-
-                    flag = barrier->flags;
-                    flag &= 0x40000;
-                    if(flag != 0) {
-                        if(barrier->frameIdx == barrier->frameCount - 1) {
-                            if(barrier->field_B4 <= 15) {
-                                barrier->field_B4 -= 2;
-                                if(barrier->field_B4 < 0) // FIXME: check this
-                                    barrier->field_B4 = 0; 
-                            } else {
-                                barrier->field_B4 = 15;
-                            }
-                            if(!barrier->field_B4)
-                                barrier->flags &= 0xFFFEF1C7;
-                        }
-                    }
-
-                    // TODO: this must be on drawBarrier function
-                    if(!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-                        GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
-                        GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
-                        copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
-                        delete gra;
-                    }
-                }
-                
-                if(canPlaySound) {
-                    // TODO: play sounds
-                }
-
-                // TODO: get sound functions according with scene
-            }
-        }
-    }
-}
-
-void Scene::processAmbientSounds() {
-}
-
-void Scene::processMusic() {
-}
-
-void Scene::processAdjustScreen() {
-}
-
 // ----------------------------------
 // ---------- DRAW REGION -----------
 // ----------------------------------
 
 int Scene::drawScene() {
+
+    // TODO: clear graphic queue list
+
+    if(_skipDrawScene) {
+        // TODO: clear screen
+    } else {
+        // TODO: draw scene stuff
+        // TODO: prepare Actors and Barriers draw
+        // TODO: draw actors
+        drawBarriers();
+        // TODO: draw main actor stuff
+    }
+
     return 1;
 }
 
 int Scene::drawBarriers() {
+    WorldStats *worldStats = _sceneResource->getWorldStats();
+    uint barriersCount = worldStats->barriers.size();
+
+    if(barriersCount > 0) {
+        for(uint b=0; b < barriersCount; b++) {
+            BarrierItem *barrier = &worldStats->barriers[b];
+
+            if(isBarrierVisible(barrier)) { // TODO: should be isBarrierOnScreen
+                // FIXME: do this like original (next phase)
+                if(!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
+                    GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+                    GraphicFrame *fra = gra->getFrame(barrier->frameIdx);
+                    copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
+                    delete gra;
+                }
+            }
+        }
+    }
+
     return 1;
 }
 

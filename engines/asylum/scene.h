@@ -108,17 +108,18 @@ private:
 	uint32	_curMouseCursor;
 	int32	_cursorStep;
 	bool	_isActive;
+    bool	_skipDrawScene;
 
 	void update();
     
-    int processScene();
-    void processActors();
+    int updateScene();
+    void updateActor(uint32 actor);
     bool isBarrierVisible(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
-    void processBarriers(WorldStats *worldStats);
-    void processAmbientSounds();
-    void processMusic();
-    void processAdjustScreen();
+    void updateBarriers(WorldStats *worldStats);
+    void updateAmbientSounds();
+    void updateMusic();
+    void updateAdjustScreen();
 
     int drawScene();
     int drawBarriers();
