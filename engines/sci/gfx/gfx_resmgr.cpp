@@ -111,7 +111,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 	else
 		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
 
-	if (!_resManager->isVGA()) {
+	if (_version <= SCI_VERSION_1_EGA) {
 		if (need_unscaled)
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
