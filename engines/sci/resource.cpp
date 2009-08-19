@@ -510,7 +510,7 @@ void ResourceManager::init() {
 	if (_sciVersion != SCI_VERSION_AUTODETECT)
 		debug("Resmgr: Detected %s", versionNames[_sciVersion]);
 	else
-		debug("Resmgr: Couldn't determine SCI version");
+		warning("Resmgr: Couldn't determine SCI version");
 
 	switch (_viewType) {
 	case kViewEga:
@@ -521,6 +521,12 @@ void ResourceManager::init() {
 		break;
 	case kViewVga11:
 		debug("Resmgr: Detected SCI1.1 VGA graphic resources");
+		break;
+	case kViewAmiga:
+		debug("Resmgr: Detected Amiga graphic resources");
+		break;
+	default:
+		warning("Resmgr: Couldn't determine view type");
 	}
 }
 
@@ -1500,22 +1506,64 @@ ResourceCompression ResourceManager::getViewCompression() {
 	return kCompNone;
 }
 
-ResourceManager::ViewType ResourceManager::detectViewType() {
+ViewType ResourceManager::detectViewType() {
 	for (int i = 0; i < 1000; i++) {
 		Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
+
 		if (res) {
-			//FIXME: Amiga
 			switch(res->data[1]) {
-			case 0:
-				return kViewEga;
-			default:
+			case 128:
+				// If the 2nd byte is 128, it's a VGA game
 				return kViewVga;
+			case 0:
+				// EGA or Amiga, try to read as Amiga view
+
+				if (res->size < 10)
+					return kViewUnknown;
+
+				// Read offset of first loop
+				uint16 offset = READ_LE_UINT16(res->data + 8);
+
+				if (offset + 6U >= res->size)
+					return kViewUnknown;
+
+				// Read offset of first cel
+				offset = READ_LE_UINT16(res->data + offset + 4);
+
+				if (offset + 4U >= res->size)
+					return kViewUnknown;
+
+				// Check palette offset, amiga views have no palette
+				if (READ_LE_UINT16(res->data + 6) != 0)
+					return kViewEga;
+
+				uint16 width = READ_LE_UINT16(res->data + offset);
+				offset += 2;
+				uint16 height = READ_LE_UINT16(res->data + offset);
+				offset += 6;
+
+				// Check that the RLE data stays within bounds
+				int y;
+				for (y = 0; y < height; y++) {
+					int x = 0;
+
+					while ((x < width) && (offset < res->size)) {
+						byte op = res->data[offset++];
+						x += (op & 0x07) ? op & 0x07 : op >> 3;
+					}
+
+					// Make sure we got exactly the right number of pixels for this row
+					if (x != width)
+						return kViewEga;
+				}
+
+				return kViewAmiga;
 			}
 		}
 	}
 
 	warning("Resmgr: Couldn't find any views");
-	return kViewVga;
+	return kViewUnknown;
 }
 
 SciVersion ResourceManager::detectSciVersion() {

@@ -77,6 +77,15 @@ extern gfx_pixmap_color_t gfx_sci0_image_colors[][16];
  */
 extern Palette* gfx_sci0_pic_colors;
 
+
+enum ViewType {
+	kViewUnknown,
+	kViewEga,
+	kViewVga,
+	kViewVga11,
+	kViewAmiga
+};
+
 struct gfxr_pic0_params_t {
 	gfx_line_mode_t line_mode; /* one of GFX_LINE_MODE_* */
 	gfx_brush_mode_t brush_mode;

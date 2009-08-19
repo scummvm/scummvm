@@ -34,6 +34,8 @@
 #include "sound/audiostream.h"
 #include "sound/mixer.h"			// for SoundHandle
 
+#include "gfx/gfx_resource.h"		// for ViewType
+
 #include "sci/decompressor.h"
 
 namespace Common {
@@ -230,14 +232,9 @@ public:
 		kResVersionSci32
 	};
 
-	// TODO: Amiga
-	enum ViewType {
-		kViewEga,
-		kViewVga,
-		kViewVga11
-	};
-
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
+
+	ViewType getViewType() const { return _viewType; }
 
 	/**
 	 * Returns the SCI version as detected by the resource manager
