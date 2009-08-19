@@ -266,7 +266,7 @@ int KyraEngine_MR::o3_wipeDownMouseItem(EMCState *script) {
 		for (int curY = y, height = 20; height > 0; height -= 2, curY += 2) {
 			restoreGfxRect32x32(x, y);
 			_screen->setNewShapeHeight(shape, height);
-			uint32 waitTime = _system->getMillis() + _tickLength;
+			const uint32 waitTime = _system->getMillis() + _tickLength;
 			_screen->drawShape(0, shape, x, curY, 0, 0);
 			_screen->updateScreen();
 			delayUntil(waitTime);
@@ -1131,15 +1131,7 @@ int KyraEngine_MR::o3d_updateAnim(EMCState *script) {
 
 int KyraEngine_MR::o3d_delay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3d_delay(%p) (%d)", (const void *)script, stackPos(0));
-	const uint32 endTime = _system->getMillis() + stackPos(0) * _tickLength;
-	while (_system->getMillis() < endTime) {
-		if (_chatText)
-			updateWithText();
-		else
-			update();
-
-		_system->delayMillis(10);
-	}
+	delayUntil(_system->getMillis() + stackPos(0) * _tickLength, false, true);
 	return 0;
 }
 
