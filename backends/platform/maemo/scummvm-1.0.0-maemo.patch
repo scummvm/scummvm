@@ -1,0 +1,1072 @@
+diff -Naur scummvm-1.0.orig/debian/changelog scummvm-1.0/debian/changelog
+--- scummvm-1.0.orig/debian/changelog	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/changelog	2009-08-20 23:34:47.000000000 +0200
+@@ -0,0 +1,154 @@
++scummvm (1.0.0) unstable; urgency=low
++
++  * upstream 1.0.0 release
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Thu, 20 Aug 2009 23:33:59 +0200
++scummvm (0.13.1) unstable; urgency=low
++
++  * upstream 0.13.1 release
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Sat, 18 Apr 2009 22:40:42 +0200
++scummvm (0.13.0-2) unstable; urgency=low
++
++  * dbus_service.patch is incomplete - needs also install line in debian/rules
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Fri, 27 Feb 2009 20:37:29 +0100
++scummvm (0.13.0-1) unstable; urgency=low
++
++  * fix crash in task switcher caption code when .scummvmrc had fullscreen value set
++  * enabled also dbus_service.patch for home key switching back (not needed in OS < 2008)
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Fri, 27 Feb 2009 09:29:01 +0100
++scummvm (0.13.0) unstable; urgency=low
++
++  * upstream 0.13.0 release
++  * Feeble Files mapping
++  * task switcher item name patch from mikkov
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Wed, 18 Feb 2009 21:52:33 +0100
++scummvm (0.11.99-4) unstable; urgency=low
++
++  * Maemo extras-devel test version
++    - maemo-taskswitcher.patch: title shown right from the beginning
++      and title not fixed to "ScummVM" only
++    - dbus_service.patch: modify scummvm.desktop, scummvm.wrapper and
++      scummvm.service to make switching application automatically back 
++      via second home key long press to work
++
++ -- Mikko Vartiainen <mvartiainen@gmail.com>  Thu, 03 Jan 2009 01:59:52 +0200
++scummvm (0.11.99-3) unstable; urgency=low
++
++  * Maemo extras-devel test version
++    - maemo-taskswitcher.patch
++  
++ -- Mikko Vartiainen <mvartiainen@gmail.com>  Thu, 01 Jan 2009 13:13:13 +0200
++scummvm (0.11.99-2) unstable; urgency=low
++
++  * Maemo extras-devel test version
++    - keeping version below 0.12.0
++    - not in user/ category
++  
++ -- Mikko Vartiainen <mvartiainen@gmail.com>  Thu, 01 Jan 2009 02:04:14 +0200
++scummvm (0.12.0) unstable; urgency=low
++
++  * upstream 0.12.0 release
++  * update description
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Mon, 25 Aug 2008 21:47:41 +0200
++scummvm (0.11.99) unstable; urgency=low
++
++  * upstream 0.12.0 testing pre-release
++  * big icons added for OS2008 menu
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Fri, 22 Aug 2008 08:20:48 +0200
++scummvm (0.11.1) unstable; urgency=low
++
++  * upstream 0.11.1 release
++  * mapping for N810: zoom+ = menu for all games (except FW)
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Sat, 23 Feb 2008 20:41:37 +0100
++scummvm (0.11.0-2) unstable; urgency=low
++
++  * mapping for N800/770: zoom+ = y, zoom- = 1 (all games except FW)
++    this fixes save dialog in BS1 and also allows to exit some games via 'y'
++  * mapping for N810: zoom- = rightclick for all games
++  * updated to revision 30849 from 0.11 branch (some bugfixes for 0.11.1)
++  
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Mon, 11 Feb 2008 22:22:48 +0100
++scummvm (0.11.0-1) unstable; urgency=low
++
++  * theme files added back
++  * SWORD2,SAGA - added zoom keys =1/2 for saved games
++  * different mapping for N810 rightclick=zoom-,menu=zoom+ (currently only in LURE)
++  * added NEWS README COPYRIGHT do doc dir as per scummvm project guidelines
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Sun, 13 Jan 2008 22:58:41 +0100
++scummvm (0.11.0-0) unstable; urgency=low
++
++  * upstream 0.11 release
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Sat, 12 Jan 2008 22:26:34 +0100
++scummvm (0.10.0-5) unstable; urgency=low
++
++  * fixed for chinook, menu selection postinst script added
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Thu, 25 Oct 2007 09:56:32 +0200
++scummvm (0.10.0-4) unstable; urgency=low
++
++  * AGI - added pred.dic to DATA_PATH (=/usr/share/scummvm) to enable
++    predictive input
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Tue, 28 Aug 2007 09:58:29 +0200
++scummvm (0.10.0-3) unstable; urgency=low
++
++  * SCUMM - added mapping also for key up events (may fix right button in FT?)
++  * SWORD2 - added right button press mapping (not tested)
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Mon, 20 Aug 2007 22:39:07 +0200
++scummvm (0.10.0-2) unstable; urgency=low
++
++  * Future Wars - add mapping for left/up/down/right,zoom +/-
++  * fix SDL backend to set mouse position on button down event
++    as we may not have mousemove events with touchscreen
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Fri, 13 Jul 2007 09:56:37 +0200
++scummvm (0.10.0-1) unstable; urgency=low
++
++  * mapped F10 in Future Wars to menu key
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Wed, 11 Jul 2007 22:20:00 +0200
++scummvm (0.10.0) unstable; urgency=low
++
++  * upstream 0.10 release, enabled FLAC too
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Wed,  4 Jul 2007 12:48:48 +0200
++scummvm (0.9.1-1) unstable; urgency=low
++
++  * 0.9.1 mapped right mouse button in sword1
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Mon, 18 Jun 2007 21:15:31 +0200
++scummvm (0.9.1) unstable; urgency=low
++
++  * 0.9.1 upstream release
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Wed,  1 Nov 2006 20:40:51 +0100
++scummvm (0.9.0-3) unstable; urgency=low
++
++  * merged fixes in 0.9.0 upstream branch
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Mon,  9 Oct 2006 15:40:59 +0200
++scummvm (0.9.0-2) unstable; urgency=low
++
++  * merged fixes in 0.9.0 upstream branch
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Sat, 12 Aug 2006 20:10:47 +0200
++scummvm (0.9.0-1) unstable; urgency=low
++
++  * merged changes in 0.9.0 upstream release
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Sun, 23 Jul 2006 22:29:51 +0200
++scummvm (0.9.0) unstable; urgency=low
++
++  * 0.9.0 upstream release
++
++ -- Frantisek Dufka <dufkaf@seznam.cz>  Tue, 27 Jun 2006 20:30:54 +0200
+diff -Naur scummvm-1.0.orig/debian/compat scummvm-1.0/debian/compat
+--- scummvm-1.0.orig/debian/compat	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/compat	2009-08-20 22:33:03.000000000 +0200
+@@ -0,0 +1 @@
++4
+diff -Naur scummvm-1.0.orig/debian/control scummvm-1.0/debian/control
+--- scummvm-1.0.orig/debian/control	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/control	2009-08-20 22:33:03.000000000 +0200
+@@ -0,0 +1,52 @@
++Source: scummvm
++Section: user/games
++Priority: optional
++Maintainer: Frantisek Dufka <dufkaf@seznam.cz>
++Build-Depends: debhelper (>> 4.0.0), libsdl1.2-dev, libmad0-dev, libasound2-dev, libvorbisidec-dev, libmpeg2-4-dev, libflac-dev (>= 1.1.2), libz-dev, quilt
++
++Standards-Version: 3.6.1.1
++Package: scummvm
++Pre-Depends: maemo-select-menu-location
++Depends: ${shlibs:Depends}
++Architecture: armel
++Section: user/games
++Description: interpreter that will play graphic adventure games
++ written for LucasArts' SCUMM virtual machine, Sierra's AGI adventures,
++ Adventure Soft's Simon the Sorcerer 1, 2 and Feeble Files,
++ Revolution Software's Beneath a Steel Sky and Broken Sword 1 and 2,
++ Interactive Binary Illusions' Flight of the Amazon Queen,
++ Coktel Vision's Gobliiins, Wyrmkeep's Inherit the Earth,
++ Westwood's Legend of Kyrandia, and various others.
++ This package does not contain any actual games.
++XBS-Maemo-Icon-26:
++  iVBORw0KGgoAAAANSUhEUgAAABoAAAAaCAMAAACelLz8AAAC/VBMVEUICwcH
++  CQUKDAgLDQoMDwsOEAwREAUPEQ0QEg8PFQoRExAUEwoVFAwPGAcTFBIRFg0W
++  FQ0XFg4RGgkTGA8XGQsTGwwUHA0aGRIWGxMXHQkVHQ8aGhMbGxQcHQocGxUZ
++  HwsYIgcfHxgeIRUbJQwhIBofJAweJwgfKQocKwwgKgshKw0gLggfLg8jLQ8n
++  LwwpLhEmMwcoMRQjNgotLCYmNwQlNwwqOBQtOQgsOQ8xNh4sPQswNyQqQAUw
++  PAsuOiAsQgcwOyIqRgIsSAQvRgs0PyY1Rg06RA0+PDAwSwg2RxUzTQE4TQsz
++  VAc/SSo6VAk4VwE6VRM2XAVAUC85XwlJVCNEXQo+YwJGXwxMWS1JXC5AagBI
++  awJUagRIcQBSbwpHeAJTaD9OdwNXcwJKewZNfABacRlOfQBPfgBQfwBMggBW
++  fgBNgwNSgQJOhAVecUJjdSZefwNUiABZhgBjeDZieDxhezFQjQBgghZkhQ5j
++  iQJUkAZcixJmgDZnhCtckQpblgBekw5clwBqgkthlQBdmAJriz90hz5omgBs
++  mAhxlgd0mAB5lgBpnA16khdzmAtxnABooQBtnwB4jUpzngBkpQR5nQF8j0Vr
++  pQduoRZ4nRR3k014oQBzpAt8oAh/ogBvqA5trACBmypwqRF1pw+GogCAow+D
++  pQB8phJ/nUNurxh0rRd4rwmHqQd6qDOArwCJqwyDsgCMrgB8ryiFtAB7uQN8
++  sDKBuAWOsBWJqFR8ti2IsiOSswaBuRt6vxCOtgqXsgePrjR9wQCFuw2KuQyB
++  uSeSuACEux6JuR2OvACAxACEvCuSuhOHujSMwQGTtiqfuACRvwGOvRWHuz2T
++  wASPwwmYvwaLvTebuxiWvhmSwBqZwAmNu0aevgiKvkCVviaMvE6bwQycuTid
++  vhylvQyZwB2cwg+QywCawR6fwB+bwyGI0gaewCudxCOjwyOT1ACmwjiX0g+j
++  xTqmxzOd1gCV0i6kyyuoyTah1Sif2h6tzjukzF+pz1uq1Eeg2Uml3U1kaLAB
++  AAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAHrSURBVCjPY2BAAC5ubkFB
++  BkzAzggDfKgSUFEmKCmOIsPvktA0aVpbSYQ+FwsjkwpMBsi2m/X7z89v3759
++  +ngg1UqIlZEVponJYcW/rw9unH/04u2bc0vbo+WZWGCahEv/fj+6Yc2SZfv3
++  b5w6+eACHVYWmCazMz+unN44b3ZfV3dnx5yDiaKsUAOZGD2/fL58+PSGg3Gu
++  buEVWyZacLCzw6S8X324fOHqibMxWpKy5okBIjAZoNOt9r47e+HOnafbe/ND
++  DNWkOGAyDKwsCtXPTly4eufqm+fvHy4M1RRggsnJMLI6z9x99Oqtx7cuPP/2
++  ele5LjtCGyObbcHcDfuevHn+5s319RuSpOByrEwcwsqhlcvXHbp38+LxiXP6
++  DeBSTKzWvkrCun5Zq04dO7S6p67ZHibFziiRt6PYUk5YtfbUqSMTGnKyHaFS
++  rMDA3fHr7tqayKDWa0dWVmXHp5lCpRgZ2QI2HTl25NLt+1t3rppRFJ8SrwGX
++  4g9rmbJo0cpVqxZNaK5OS0nzF4NLMWkHZ1TVN9bXlxXmAo2L0uNgZITaxcjI
++  axAYH5+RATQrPtZHk5udA+Z2cIpQN3Hy8vOwMVLmYGTidoenDSawLAsnJz8L
++  kMUiY4ySpviYoKmKRVAcIyXKyIiLyygi+ADqVqrAkApevwAAAABJRU5ErkJg
++  gg==
+diff -Naur scummvm-1.0.orig/debian/copyright scummvm-1.0/debian/copyright
+--- scummvm-1.0.orig/debian/copyright	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/copyright	2009-08-20 22:33:03.000000000 +0200
+@@ -0,0 +1,20 @@
++ScummVM was debianized by Bastien Nocera <hadess@hadess.net> the 5th Apr 2002.
++It was adopted by Tore Anderson <tore@linpro.no> the 4th Oct 2002.
++Packaged for the Maemo platform by Tomas Junnoen <tomas@fs-security.com> Oct 2005
++Since 0.8.2 packaging for Maemo done by Frantisek Dufka <dufkaf@seznam.cz>
++
++It was downloaded from <http://www.scummvm.org/>.
++
++Upstream Authors: see AUTHORS file of the ScummVM source distribution.
++
++Copyright:
++
++ This program is free software; you can redistribute it and/or modify it
++ under the terms of the GNU General Public License as published by the
++ Free Software Foundation; either version 2, or (at your option) any
++ later version.
++
++ On Debian GNU/Linux systems, the complete text of the GNU General
++ Public License can be found in `/usr/share/common-licenses/GPL'.
++
++This copyright also applies to the Debian-related build scripts.
+diff -Naur scummvm-1.0.orig/debian/postinst scummvm-1.0/debian/postinst
+--- scummvm-1.0.orig/debian/postinst	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/postinst	2009-08-20 22:33:03.000000000 +0200
+@@ -0,0 +1,19 @@
++#! /bin/sh
++if [ "$1" = "configure"  ] ; then
++OSVER=$OSSO_VERSION
++[ -z "$OSVER" -a -f /etc/osso_software_version ] && OSVER=`cat /etc/osso_software_version`
++OSVER=`echo $OSVER | cut -d _ -f 2`
++case $OSVER in
++	2006*|2007*)
++		#nothing to do
++		true
++		;;
++	*)
++		#ugly trick, until this icon is removed big icon in menu does not show
++		[ -f /usr/share/icons/scummvm.xpm ] && rm /usr/share/icons/scummvm.xpm
++		;;
++esac
++	[ -x /usr/bin/gtk-update-icon-cache ] && /usr/bin/gtk-update-icon-cache /usr/share/icons/hicolor
++	[ -x /usr/bin/maemo-select-menu-location -a -z "$2" ] && /usr/bin/maemo-select-menu-location scummvm.desktop  tana_fi_games
++fi
++exit 0
+diff -Naur scummvm-1.0.orig/debian/rules scummvm-1.0/debian/rules
+--- scummvm-1.0.orig/debian/rules	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/rules	2009-08-20 22:33:03.000000000 +0200
+@@ -0,0 +1,58 @@
++#!/usr/bin/make -f
++
++#include /usr/share/quilt/quilt.make
++
++build: scummvm
++
++scummvm:
++	dh_testdir
++	CXXFLAGS="-Os -mcpu=arm926ej-s -fomit-frame-pointer -DMAEMO_SDL -I/usr/X11R6/include" ./configure --prefix=/usr --disable-debug --disable-mt32emu  --disable-hq-scalers --with-tremor-prefix=/usr --enable-tremor --with-zlib-prefix=/usr --enable-zlib --with-mad-prefix=/usr --enable-mad --enable-flac
++##  --host=arm-linux --enable-plugins --disable-scumm-7-8
++	$(MAKE)
++
++clean:
++	dh_testdir
++	dh_testroot
++	-$(MAKE) distclean
++	dh_clean
++
++install: build
++	dh_testdir
++	dh_testroot
++	dh_clean
++	dh_installdirs
++	install -m0755 scummvm debian/scummvm/usr/games/scummvm.bin
++	install -m0755 dists/maemo/scummvm.wrapper debian/scummvm/usr/games/scummvm
++	install -m0644 dists/maemo/scummvm.desktop debian/scummvm/usr/share/applications/hildon
++#	install -m0644 dists/maemo/scummvm.service debian/scummvm/usr/share/dbus-1/services
++	install -m0644 dists/maemo/scummvm26.png debian/scummvm/usr/share/icons/hicolor/26x26/hildon/scummvm.png
++	install -m0644 dists/maemo/scummvm40.png debian/scummvm/usr/share/icons/hicolor/40x40/hildon/scummvm.png
++	install -m0644 dists/maemo/scummvm48.png debian/scummvm/usr/share/icons/hicolor/48x48/hildon/scummvm.png
++	install -m0644 dists/maemo/scummvm64.png debian/scummvm/usr/share/icons/hicolor/64x64/hildon/scummvm.png
++	install -m0644 icons/scummvm.xpm debian/scummvm/usr/share/icons
++#	install -m0644 -d debian/scummvm/usr/lib/scummvm
++#	install -m0644 plugins/lib*.so debian/scummvm/usr/lib/scummvm
++	install -m0644 -d debian/scummvm/usr/share/scummvm
++	install -m0644 dists/pred.dic debian/scummvm/usr/share/scummvm
++#	install -m0644 gui/themes/modern.ini gui/themes/modern.zip gui/themes/classic080.ini debian/scummvm/usr/share/scummvm
++	install -m0644 gui/themes/scummclassic.zip  gui/themes/scummmodern.zip debian/scummvm/usr/share/scummvm
++	install -m0644 -d debian/scummvm/usr/share/doc/scummvm
++	install -m0644 NEWS README COPYRIGHT debian/scummvm/usr/share/doc/scummvm	 
++binary: binary-arch
++
++binary-arch: build install
++	dh_testdir
++	dh_testroot
++	dh_installchangelogs NEWS
++	dh_link
++	dh_strip
++	dh_fixperms
++	dh_installdeb
++	dh_shlibdeps
++	dh_gencontrol
++	dh_md5sums
++	dh_builddeb
++
++binary-indep:
++
++.PHONY: build clean binary install binary-arch binary-indep
+diff -Naur scummvm-1.0.orig/debian/scummvm.dirs scummvm-1.0/debian/scummvm.dirs
+--- scummvm-1.0.orig/debian/scummvm.dirs	1970-01-01 01:00:00.000000000 +0100
++++ scummvm-1.0/debian/scummvm.dirs	2009-08-20 22:33:03.000000000 +0200
+@@ -0,0 +1,8 @@
++usr/games
++usr/share/icons
++usr/share/icons/hicolor/26x26/hildon
++usr/share/icons/hicolor/40x40/hildon
++usr/share/icons/hicolor/48x48/hildon
++usr/share/icons/hicolor/64x64/hildon
++usr/share/applications/hildon
++usr/share/dbus-1/services
+\ No newline at end of file
+--- scummvm-1.0.orig/configure	2009-08-21 00:26:19.000000000 +0200
++++ scummvm-1.0/configure	2009-08-20 22:33:03.000000000 +0200
+@@ -1183,7 +1183,7 @@
+ 			;;
+ 		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
+ 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+-			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SMUSH_ASM"
++			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SMUSH_ASM -DUSE_ARM_SOUND_ASM -DUSE_ARM_GFX_ASM -DARM_USE_GFX_ASM -DUSE_ARM_COSTUME_ASM"
+ 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+ 			_endian=little
+ 			_need_memalign=yes
+@@ -1192,6 +1192,9 @@
+ 			type_4_byte='int'
+ 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+ 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
++			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
++			add_line_to_config_mk 'ARM_USE_GFX_ASM = 1'
++			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+ 			;;
+ 		bfin*)
+ 			_need_memalign=yes
+--- scummvm-1.0.orig/engines/kyra/module.mk	2009-08-21 00:22:52.000000000 +0200
++++ scummvm-1.0/engines/kyra/module.mk	2009-08-20 22:33:03.000000000 +0200
+@@ -93,3 +93,9 @@
+ 
+ # Include common rules
+ include $(srcdir)/rules.mk
++
++#ugly workaround, screen.cpp crashes gcc version 3.4.4 (CodeSourcery ARM 2005q3-2) with anything but -O3
++$(MODULE)/screen.o: $(MODULE)/screen.cpp
++	$(MKDIR) $(*D)/$(DEPDIR)
++	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) -O3 $(CPPFLAGS) -c $(<) -o $*.o
++
+--- scummvm-1.0.orig/engines/gob/util.cpp	2009-08-21 00:23:06.000000000 +0200
++++ scummvm-1.0/engines/gob/util.cpp	2009-08-20 23:11:37.000000000 +0200
+@@ -114,6 +114,12 @@
+ 			_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
+ 			break;
+ 		case Common::EVENT_KEYDOWN:
++#ifdef MAEMO_SDL
++			if (event.kbd.keycode==285){
++				_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) | ((uint32) kMouseButtonsRight));
++				break;
++			}
++#endif
+ 			if (event.kbd.flags == Common::KBD_CTRL) {
+ 				if (event.kbd.keycode == Common::KEYCODE_f)
+ 					_fastMode ^= 1;
+@@ -126,6 +132,10 @@
+ 			addKeyToBuffer(event.kbd);
+ 			break;
+ 		case Common::EVENT_KEYUP:
++#ifdef MAEMO_SDL
++			if (event.kbd.keycode==285)
++				_mouseButtons = (MouseButtons) (((uint32) _mouseButtons) & ~((uint32) kMouseButtonsRight));
++#endif
+ 			break;
+ 		default:
+ 			break;
+--- scummvm-1.0.orig/engines/queen/input.cpp	2009-04-18 23:42:41.000000000 +0200
++++ scummvm-1.0/engines/queen/input.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -176,7 +176,11 @@
+ 		}
+ 		break;
+ 	case Common::KEYCODE_F1: // use Journal
++#ifdef MAEMO_SDL
++	case Common::KEYCODE_F4: // menu key on N770
++#else
+ 	case Common::KEYCODE_F5:
++#endif
+ 		if (_cutawayRunning) {
+ 			if (_canQuit) {
+ 				_keyVerb = VERB_USE_JOURNAL;
+--- scummvm-1.0.orig/engines/sword1/sword1.cpp	2009-08-21 00:23:58.000000000 +0200
++++ scummvm-1.0/engines/sword1/sword1.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -703,8 +703,21 @@
+ 		while (_eventMan->pollEvent(event)) {
+ 			switch (event.type) {
+ 			case Common::EVENT_KEYDOWN:
++#ifdef MAEMO_SDL
++// map center to right button
++				if (event.kbd.keycode == 13) {
++					_mouseState |= BS1R_BUTTON_DOWN;
++				} else
++#endif
+ 				_keyPressed = event.kbd;
+ 				break;
++#ifdef MAEMO_SDL
++			case Common::EVENT_KEYUP:
++				if (event.kbd.keycode == 13) {
++					_mouseState |= BS1R_BUTTON_UP;
++				}
++				break;
++#endif
+ 			case Common::EVENT_MOUSEMOVE:
+ 				_mouseCoord = event.mouse;
+ 				break;
+--- scummvm-1.0.orig/engines/sword2/sword2.cpp	2009-08-21 00:24:00.000000000 +0200
++++ scummvm-1.0/engines/sword2/sword2.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -665,11 +665,27 @@
+ 						_gameSpeed = 1;
+ 				}
+ 			}
++#ifdef MAEMO_SDL
++// map center to right button
++			else if (event.kbd.keycode == 13 && !(_inputEventFilter & RD_RIGHTBUTTONDOWN)) {
++				_mouseEvent.pending = true;
++				_mouseEvent.buttons = RD_RIGHTBUTTONDOWN;
++			} else
++#endif
+ 			if (!(_inputEventFilter & RD_KEYDOWN)) {
+ 				_keyboardEvent.pending = true;
+ 				_keyboardEvent.kbd = event.kbd;
+ 			}
+ 			break;
++#ifdef MAEMO_SDL
++		case Common::EVENT_KEYUP:
++// map center to right button
++			if (event.kbd.keycode == 13 && !(_inputEventFilter & RD_RIGHTBUTTONUP)) {
++				_mouseEvent.pending = true;
++				_mouseEvent.buttons = RD_RIGHTBUTTONUP;
++			}
++			break;
++#endif
+ 		case Common::EVENT_LBUTTONDOWN:
+ 			if (!(_inputEventFilter & RD_LEFTBUTTONDOWN)) {
+ 				_mouseEvent.pending = true;
+--- scummvm-1.0.orig/engines/scumm/input.cpp	2009-08-21 00:24:05.000000000 +0200
++++ scummvm-1.0/engines/scumm/input.cpp	2009-08-20 22:49:26.000000000 +0200
+@@ -135,7 +135,20 @@
+ 			// Normal key press, pass on to the game.
+ 			_keyPressed = event.kbd;
+ 		}
+-
++#ifdef MAEMO_SDL
++               switch (_keyPressed.keycode) {
++                       case Common::KEYCODE_F8: _fastMode ^= 1; break ;// Map F8 (zoom out) to toggle fast mode                                                                                             
++                       case Common::KEYCODE_F4: _keyPressed.keycode = Common::KEYCODE_F5; _keyPressed.ascii=Common::ASCII_F5 ; break; // map F4 to F5 (menu key)
++                       case Common::KEYCODE_RETURN: _keyPressed.keycode = Common::KEYCODE_TAB; _keyPressed.ascii=Common::ASCII_TAB ; break; // map Select (return) to Tab (right mouse button)
++                       default: ;
++               }
++               if (_game.version < 7) switch(event.kbd.keycode){
++                       case Common::KEYCODE_UP: _keyPressed.ascii = ' '; _keyPressed.keycode=Common::KEYCODE_SPACE; break ;// map Up to space (pause game)
++                       case Common::KEYCODE_DOWN: _keyPressed.ascii ='.'; _keyPressed.keycode=Common::KEYCODE_PERIOD; break ;// map Down to . (skip one line of dialog)
++                       default: ;
++               }
++#endif
++ 
+ 		// FIXME: We are using ASCII values to index the _keyDownMap here,
+ 		// yet later one code which checks _keyDownMap will use KEYCODEs
+ 		// to do so. That is, we are mixing ascii and keycode values here,
+@@ -151,6 +164,20 @@
+ 		break;
+ 
+ 	case Common::EVENT_KEYUP:
++#ifdef MAEMO_SDL
++                       // map keyup with similar rules as keydown
++                       switch (event.kbd.keycode) {
++
++                               case Common::KEYCODE_F4: event.kbd.keycode = Common::KEYCODE_F5; event.kbd.ascii=Common::ASCII_F5 ; break; // map F4 to F5 (menu key)
++                               case Common::KEYCODE_RETURN: event.kbd.keycode = Common::KEYCODE_TAB; event.kbd.ascii=Common::ASCII_TAB ; break; // map Select (return) to Tab (right mouse button)
++                               default: ;
++                       }
++                       if (_game.version < 7) switch(event.kbd.keycode){
++                               case Common::KEYCODE_UP: event.kbd.ascii = ' '; event.kbd.keycode=Common::KEYCODE_SPACE; break ;// map Up to space (pause game)
++                               case Common::KEYCODE_DOWN: event.kbd.ascii ='.'; event.kbd.keycode=Common::KEYCODE_PERIOD; break ;// map Down to . (skip one line of dialog)
++                               default: ;
++                       }
++#endif
+ 		if (event.kbd.ascii >= 512) {
+ 			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
+ 		} else {
+@@ -507,9 +534,10 @@
+ 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
+ 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, 0);
+ 
++#ifndef MAEMO_SDL
+ 	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.flags == 0)) {
+ 		confirmRestartDialog();
+-
++#endif
+ 	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.flags == 0)) {
+ 		pauseGame();
+ 
+--- scummvm-1.0.orig/engines/scumm/dialogs.cpp	2009-08-21 00:24:05.000000000 +0200
++++ scummvm-1.0/engines/scumm/dialogs.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -828,7 +828,11 @@
+ }
+ 
+ void PauseDialog::handleKeyDown(Common::KeyState state) {
++#ifdef MAEMO_SDL
++	if (state.ascii == ' ' || state.keycode == Common::KEYCODE_UP )  // Close pause dialog if space or UP key is pressed
++#else
+ 	if (state.ascii == ' ')  // Close pause dialog if space key is pressed
++#endif
+ 		close();
+ 	else
+ 		ScummDialog::handleKeyDown(state);
+@@ -890,12 +894,19 @@
+ }
+ 
+ void ValueDisplayDialog::handleKeyDown(Common::KeyState state) {
++#ifdef MAEMO_SDL
++        if (state.ascii == _incKey || state.ascii == _decKey || state.keycode == 275 || state.keycode == 276) {
++                if ((state.ascii == _incKey || state.keycode == 275 ) && _value < _max)
++                        _value++;
++                else if ((state.ascii == _decKey || state.keycode == 276) && _value > _min)
++                        _value--;
++#else
+ 	if (state.ascii == _incKey || state.ascii == _decKey) {
+ 		if (state.ascii == _incKey && _value < _max)
+ 			_value++;
+ 		else if (state.ascii == _decKey && _value > _min)
+ 			_value--;
+-
++#endif
+ 		setResult(_value);
+ 		_timer = getMillis() + kDisplayDelay;
+ 		draw();
+--- scummvm-1.0.orig/engines/touche/touche.cpp	2009-08-21 00:24:05.000000000 +0200
++++ scummvm-1.0/engines/touche/touche.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -293,6 +293,13 @@
+ 	while (_eventMan->pollEvent(event)) {
+ 		switch (event.type) {
+ 		case Common::EVENT_KEYDOWN:
++#ifdef	MAEMO_SDL
++			if (event.kbd.keycode == 13) { // select button simulates righ button toggle
++				_inp_rightMouseButtonPressed=!_inp_rightMouseButtonPressed;
++			} else {
++				_inp_rightMouseButtonPressed = false;
++			}
++#endif
+ 			if (!handleKeyEvents) {
+ 				break;
+ 			}
+@@ -303,15 +310,25 @@
+ 						quitGame();
+ 					}
+ 				}
++#ifdef	MAEMO_SDL
++			} else if (event.kbd.keycode == Common::KEYCODE_F4) {
++#else
+ 			} else if (event.kbd.keycode == Common::KEYCODE_F5) {
++#endif
+ 				if (_flagsTable[618] == 0 && !_hideInventoryTexts) {
+ 					handleOptions(0);
+ 				}
++#ifdef	MAEMO_SDL
++			} else if (event.kbd.keycode == Common::KEYCODE_F8) {
++				_fastWalkMode = !_fastWalkMode;
++			}
++#else
+ 			} else if (event.kbd.keycode == Common::KEYCODE_F9) {
+ 				_fastWalkMode = true;
+ 			} else if (event.kbd.keycode == Common::KEYCODE_F10) {
+ 				_fastWalkMode = false;
+ 			}
++#endif
+ 			if (event.kbd.flags == Common::KBD_CTRL) {
+ 				if (event.kbd.keycode == Common::KEYCODE_d) {
+ 					// enable debugging stuff ?
+@@ -334,12 +351,22 @@
+ 		case Common::EVENT_LBUTTONDOWN:
+ 			_inp_leftMouseButtonPressed = true;
+ 			break;
++#ifdef	MAEMO_SDL
++		case Common::EVENT_LBUTTONUP:
++			// this is done elsewhere _inp_leftMouseButtonPressed = false;
++			_inp_rightMouseButtonPressed = false; // simulate rbutton up to close menu
++			break;
++		case Common::EVENT_RBUTTONDOWN:
++			_inp_rightMouseButtonPressed = !_inp_rightMouseButtonPressed;
++			break;
++#else
+ 		case Common::EVENT_RBUTTONDOWN:
+ 			_inp_rightMouseButtonPressed = true;
+ 			break;
+ 		case Common::EVENT_RBUTTONUP:
+ 			_inp_rightMouseButtonPressed = false;
+ 			break;
++#endif
+ 		default:
+ 			break;
+ 		}
+--- scummvm-1.0.orig/engines/sky/sky.cpp	2009-08-21 00:24:20.000000000 +0200
++++ scummvm-1.0/engines/sky/sky.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -406,6 +406,17 @@
+ 			switch (event.type) {
+ 			case Common::EVENT_KEYDOWN:
+ 				_keyPressed = event.kbd;
++#ifdef	MAEMO_SDL
++				// Maemo platform keybindings
++				if (_keyPressed.keycode == Common::KEYCODE_F4) // Map F4 (menu) to F5 (access main menu)
++					_keyPressed.keycode = Common::KEYCODE_F5;
++				if (_keyPressed.ascii == 13) // Map Select=Enter to right mouse button
++					_skyMouse->buttonPressed(1);
++				if (_keyPressed.keycode == Common::KEYCODE_F8) // Map F8 (zoom out) to toggle fast mode
++					_fastMode ^= 1;
++				if (_keyPressed.keycode == Common::KEYCODE_DOWN) // Map Down to . (skip one line of dialog)
++					_keyPressed.ascii = '.';
++#endif
+ 				break;
+ 			case Common::EVENT_MOUSEMOVE:
+ 				if (!(_systemVars.systemFlags & SF_MOUSE_LOCKED))
+--- scummvm-1.0.orig/engines/lure/menu.cpp	2009-04-18 23:42:41.000000000 +0200
++++ scummvm-1.0/engines/lure/menu.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -34,7 +34,7 @@
+ #include "lure/events.h"
+ #include "lure/lure.h"
+ 
+-#if defined(_WIN32_WCE) || defined(__SYMBIAN32__)
++#if defined(_WIN32_WCE) || defined(MAEMO_SDL) || defined(__SYMBIAN32__)
+ #define LURE_CLICKABLE_MENUS
+ #endif
+ 
+--- scummvm-1.0.orig/engines/cine/main_loop.cpp	2009-08-21 00:24:28.000000000 +0200
++++ scummvm-1.0/engines/cine/main_loop.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -75,18 +75,27 @@
+ 				mouseRight = 1;
+ 			}
+ 			break;
++#ifdef	MAEMO_SDL
++		case Common::KEYCODE_UP:
++#else
+ 		case Common::KEYCODE_F1:
++#endif
+ 			if (allowPlayerInput) {
+ 				playerCommand = 0; // EXAMINE
+ 				makeCommandLine();
+ 			}
+ 			break;
++#ifdef	MAEMO_SDL
++		case Common::KEYCODE_DOWN:
++#else
+ 		case Common::KEYCODE_F2:
++#endif
+ 			if (allowPlayerInput) {
+ 				playerCommand = 1; // TAKE
+ 				makeCommandLine();
+ 			}
+ 			break;
++#ifndef	MAEMO_SDL
+ 		case Common::KEYCODE_F3:
+ 			if (allowPlayerInput) {
+ 				playerCommand = 2; // INVENTORY
+@@ -99,13 +108,43 @@
+ 				makeCommandLine();
+ 			}
+ 			break;
++#else
++//map f3, f4 to f8,f7 = zoom +- keys, when in menu generate keypresses for savegame
++		case Common::KEYCODE_F8:
++			if (inMenu)
++				lastKeyStroke = '1';
++			else if (allowPlayerInput) {
++				playerCommand = 2; // INVENTORY
++				makeCommandLine();
++			}
++			break;
++		case Common::KEYCODE_F7:
++			if (inMenu)
++				lastKeyStroke = '2';
++			else 
++			if (allowPlayerInput) {
++				playerCommand = 3; // USE
++				makeCommandLine();
++			}
++			break;
++#endif
++#ifdef	MAEMO_SDL
++		case Common::KEYCODE_LEFT:
++//			if (event.kbd.flags&Common::KBD_SHIFT)
++//				moveUsingKeyboard(-1, 0); // Left
++#else
+ 		case Common::KEYCODE_F5:
++#endif
+ 			if (allowPlayerInput) {
+ 				playerCommand = 4; // ACTIVATE
+ 				makeCommandLine();
+ 			}
+ 			break;
++#ifdef	MAEMO_SDL
++		case Common::KEYCODE_RIGHT:
++#else
+ 		case Common::KEYCODE_F6:
++#endif
+ 			if (allowPlayerInput) {
+ 				playerCommand = 5; // SPEAK
+ 				makeCommandLine();
+@@ -117,7 +156,11 @@
+ 				makeCommandLine();
+ 			}
+ 			break;
++#ifdef	MAEMO_SDL
++		case Common::KEYCODE_F4: // Menu key
++#else
+ 		case Common::KEYCODE_F10:
++#endif
+ 			if (!disableSystemMenu && !inMenu) {
+ 				g_cine->makeSystemMenu();
+ 			}
+@@ -133,19 +176,19 @@
+ 		case Common::KEYCODE_KP_PLUS:
+ 			g_cine->modifyGameSpeed(+1); // Faster
+ 			break;
+-		case Common::KEYCODE_LEFT:
++//		case Common::KEYCODE_LEFT:
+ 		case Common::KEYCODE_KP4:
+ 			moveUsingKeyboard(-1, 0); // Left
+ 			break;
+-		case Common::KEYCODE_RIGHT:
++//		case Common::KEYCODE_RIGHT:
+ 		case Common::KEYCODE_KP6:
+ 			moveUsingKeyboard(+1, 0); // Right
+ 			break;
+-		case Common::KEYCODE_UP:
++//		case Common::KEYCODE_UP:
+ 		case Common::KEYCODE_KP8:
+ 			moveUsingKeyboard(0, +1); // Up
+ 			break;
+-		case Common::KEYCODE_DOWN:
++//		case Common::KEYCODE_DOWN:
+ 		case Common::KEYCODE_KP2:
+ 			moveUsingKeyboard(0, -1); // Down
+ 			break;
+--- scummvm-1.0.orig/backends/platform/sdl/graphics.cpp	2009-08-21 00:24:51.000000000 +0200
++++ scummvm-1.0/backends/platform/sdl/graphics.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -763,6 +763,14 @@
+ 		_videoMode.fullscreen = enable;
+ 		_transactionDetails.needHotswap = true;
+ 	}
++#ifdef MAEMO_SDL
++	char *caption;
++	char title[50];
++	title[49] = '\0';
++	SDL_WM_GetCaption(&caption, NULL);
++	if (caption!=NULL) {strncpy(title,caption,49);
++	setXWindowName(caption); }
++#endif
+ }
+ 
+ void OSystem_SDL::setAspectRatioCorrection(bool enable) {
+--- scummvm-1.0.orig/backends/platform/sdl/sdl.cpp	2009-08-21 00:24:51.000000000 +0200
++++ scummvm-1.0/backends/platform/sdl/sdl.cpp	2009-08-20 23:32:10.000000000 +0200
+@@ -47,6 +47,10 @@
+ #include "icons/scummvm.xpm"
+ 
+ #include <time.h>	// for getTimeAndDate()
++#ifdef        MAEMO_SDL
++#include <SDL/SDL_syswm.h>
++#include <X11/Xutil.h>
++#endif
+ 
+ //#define SAMPLES_PER_SEC 11025
+ #define SAMPLES_PER_SEC 22050
+@@ -184,7 +188,14 @@
+ 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
+ 	}
+ 
+-	// Invoke parent implementation of this method
++#ifdef        MAEMO_SDL
++	// some keymappings are done differently for devices with full keyboard (N810=RX-34)
++	_have_keyboard=0;
++	char *device=getenv("SCUMMVM_MAEMO_DEVICE");
++	if (device != NULL)
++	if ( (strcmp(device,"RX-44") == 0) || (strcmp(device,"RX-48") == 0)) _have_keyboard=1;
++#endif
++ 	// Invoke parent implementation of this method
+ 	OSystem::initBackend();
+ 
+ 	_inited = true;
+@@ -390,6 +401,20 @@
+ 	return file.createWriteStream();
+ }
+ 
++void OSystem_SDL::setXWindowName(const char *caption) {
++       SDL_SysWMinfo info;
++       SDL_VERSION(&info.version);
++       if ( SDL_GetWMInfo(&info) ) {
++               Display *dpy = info.info.x11.display;
++               Window win;
++               if (_videoMode.fullscreen)
++                       win = info.info.x11.fswindow;
++               else
++                       win = info.info.x11.wmwindow;
++               if (win) XStoreName(dpy, win, caption);
++       }
++}
++
+ void OSystem_SDL::setWindowCaption(const char *caption) {
+ 	Common::String cap;
+ 	byte c;
+@@ -406,6 +431,7 @@
+ 	}
+ 
+ 	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
++	setXWindowName(cap.c_str());
+ }
+ 
+ bool OSystem_SDL::hasFeature(Feature f) {
+--- scummvm-1.0.orig/backends/platform/sdl/events.cpp	2009-08-21 00:24:51.000000000 +0200
++++ scummvm-1.0/backends/platform/sdl/events.cpp	2009-08-20 22:33:03.000000000 +0200
+@@ -26,7 +26,9 @@
+ #include "backends/platform/sdl/sdl.h"
+ #include "common/util.h"
+ #include "common/events.h"
+-
++#ifdef MAEMO_SDL
++#include "common/config-manager.h"
++#endif
+ // FIXME move joystick defines out and replace with confile file options
+ // we should really allow users to map any key to a joystick button
+ #define JOY_DEADZONE 3200
+@@ -175,6 +177,9 @@
+ 	SDL_Event ev;
+ 	int axis;
+ 	byte b = 0;
++#ifdef  MAEMO_SDL
++	static bool got_motion = false;
++#endif
+ 
+ 	handleKbdMouse();
+ 
+@@ -189,10 +194,13 @@
+ 		switch (ev.type) {
+ 		case SDL_KEYDOWN:{
+ 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
+-
++#ifdef	MAEMO_SDL
++			if (ev.key.keysym.sym == SDLK_F6) {
++#else
+ 			// Alt-Return and Alt-Enter toggle full screen mode
+ 			if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN
+ 			                  || ev.key.keysym.sym == SDLK_KP_ENTER)) {
++#endif
+ 				beginGFXTransaction();
+ 					setFullscreenMode(!_videoMode.fullscreen);
+ 				endGFXTransaction();
+@@ -299,6 +307,9 @@
+ 			fillMouseEvent(event, ev.motion.x, ev.motion.y);
+ 
+ 			setMousePos(event.mouse.x, event.mouse.y);
++#ifdef  MAEMO_SDL
++			got_motion = true;
++#endif
+ 			return true;
+ 
+ 		case SDL_MOUSEBUTTONDOWN:
+@@ -320,7 +331,13 @@
+ 				break;
+ 
+ 			fillMouseEvent(event, ev.button.x, ev.button.y);
+-
++#ifdef  MAEMO_SDL
++			// we have touchscreen so we may have no mousemotion events between taps
++			if (!got_motion) {
++				setMousePos(event.mouse.x, event.mouse.y);
++				got_motion = false;
++			}
++#endif
+ 			return true;
+ 
+ 		case SDL_MOUSEBUTTONUP:
+@@ -457,7 +474,147 @@
+ 	return false;
+ }
+ 
++// called on SDL KEYUP and KEYDOWN events
+ bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
++#ifdef MAEMO_SDL
++	static int engine=0;
++#define	ENG_OTHER	-1
++//#define	ENG_SCUMM	1
++	static int game=0;
++#define GAME_OTHER	-1	
++#define GAME_LURE	1
++#define GAME_SWORD1	2
++#define GAME_SWORD2	3
++#define GAME_SAGA	4
++#define GAME_FW		5
++//#define GAME_SIMON1	6
++//#define GAME_SIMON2	7
++#define GAME_FEEBLE	8
++
++//#define GAME_TOUCHE	9
++
++	if (engine == 0){
++		// one time initialization
++		Common::String gameid(ConfMan.get("gameid"));
++		if (gameid.hasPrefix("lure")) {
++			game=GAME_LURE;
++			engine=ENG_OTHER;
++		} else if (gameid.hasPrefix("sword2")) {
++			game=GAME_SWORD2;
++			engine=ENG_OTHER;
++		} else if (gameid.hasPrefix("cine")) {
++			game=GAME_FW;
++			engine=ENG_OTHER;
++/*		} else if (gameid == "touche") {
++			game=GAME_TOUCHE;
++			engine=ENG_OTHER;
++		} else if (gameid == "simon1") {
++			game=GAME_SIMON1;
++			engine=ENG_OTHER;
++		} else if (gameid == "simon2") {
++			game=GAME_SIMON2;
++			engine=ENG_OTHER;
++*/
++		} else if (gameid.hasPrefix("feeble")) {
++			game=GAME_FEEBLE;
++			engine=ENG_OTHER;
++		} else if (gameid.hasPrefix("sword1")) {
++			game=GAME_SWORD1;
++			engine=ENG_OTHER;
++		} else if (gameid.hasPrefix("saga")) {
++			game=GAME_SAGA;
++			engine=ENG_OTHER;
++		} else {
++			game=GAME_OTHER;
++			engine=ENG_OTHER;
++		}
++	}
++	// engine specific mappings
++	switch (engine){
++		// nothing now
++	}
++	// game specific mapping
++	switch (game) {
++		case GAME_LURE:
++			if ((ev.key.keysym.sym==SDLK_F8 && _have_keyboard ) || (ev.key.keysym.sym==SDLK_F4 && !_have_keyboard)){
++				// map zoom - to right click if we have keyboard (N810), otherwise map menu key (770,N800)
++				event.type = ((ev.type==SDL_KEYUP) ? Common::EVENT_RBUTTONUP : Common::EVENT_RBUTTONDOWN );
++				event.mouse.x = _mouseCurState.x;
++				event.mouse.y = _mouseCurState.y;
++				return true;			 
++			
++			}
++			switch(ev.key.keysym.sym){
++				case SDLK_F5: // map F5 (home key) to f9 = restart game
++					ev.key.keysym.sym=SDLK_F9;
++					break;
++				case SDLK_F8: // map F8 (zoom - key) to F5 (save dialog) in game
++					ev.key.keysym.sym=SDLK_F5;
++					break;
++				case SDLK_F4: // same as above, only one mapping happens due to right click maping above 
++					ev.key.keysym.sym=SDLK_F5;
++				default:
++					;
++			}
++			break;
++		case GAME_FW:
++			// Future Wars - no mapping here
++			break;
++		case GAME_FEEBLE:
++			if ((ev.key.keysym.sym==SDLK_F8 && _have_keyboard ) || (ev.key.keysym.sym==SDLK_F4 && !_have_keyboard)){
++				// map zoom - to right click if we have keyboard (N810), otherwise map menu key (770,N800)
++				event.type = ((ev.type==SDL_KEYUP) ? Common::EVENT_RBUTTONUP : Common::EVENT_RBUTTONDOWN );
++				event.mouse.x = _mouseCurState.x;
++				event.mouse.y = _mouseCurState.y;
++				return true;			 
++			
++			}
++			if (!_have_keyboard) switch(ev.key.keysym.sym){
++				case SDLK_F7: // map F7 (zoom + key) to letter y
++					ev.key.keysym.sym=SDLK_y;
++					break;
++				case SDLK_F8: // map F8 (zoom - key) to letter 1
++					ev.key.keysym.sym=SDLK_1;
++					break;
++				default:
++					;
++			} 
++			break;
++		default:
++		//case GAME_SWORD2:
++		//case GAME_SWORD1:
++		//case GAME_SAGA: //I Have No Mouth
++			if (!_have_keyboard) switch(ev.key.keysym.sym){
++				case SDLK_F7: // map F7 (zoom + key) to letter y for save game entry and 'yes' replies (simon, touche)
++					ev.key.keysym.sym=SDLK_y;
++					break;
++				case SDLK_F8: // map F8 (zoom - key) to letter 1 for save game entry and copyprotection in monkey2
++					ev.key.keysym.sym=SDLK_1;
++					break;
++				default:
++					;
++			} else switch(ev.key.keysym.sym) {
++				case SDLK_F8: // map F8 (zoom - key) to right click
++					event.type = ((ev.type==SDL_KEYUP) ? Common::EVENT_RBUTTONUP : Common::EVENT_RBUTTONDOWN );
++					event.mouse.x = _mouseCurState.x;
++					event.mouse.y = _mouseCurState.y;
++					return true;
++				// now map F7 (=zoom+) to menu (=F4) so we can have same mapping for N810 and 770/800 for menu key
++				// N800's real menu key is hidden on retractable keyboard so we use zoom+ for it instead too				 
++				case SDLK_F7:
++					ev.key.keysym.sym=SDLK_F4;
++					break;
++				/* with real keyboard we can afford to lose F7, do not remap F4 back
++				case SDLK_F4:
++					ev.key.keysym.sym=SDLK_F7;
++					break; */
++				default:
++					;			
++			}
++			break;
++	}
++#endif //SDL_MAEMO
++
+ #ifdef LINUPY
+ 	// On Yopy map the End button to quit
+ 	if ((ev.key.keysym.sym == 293)) {
+--- scummvm-1.0.orig/backends/platform/sdl/sdl.h	2009-08-21 00:24:51.000000000 +0200
++++ scummvm-1.0/backends/platform/sdl/sdl.h	2009-08-20 22:33:03.000000000 +0200
+@@ -190,6 +190,7 @@
+ 	virtual int getGraphicsMode() const;
+ 
+ 	virtual void setWindowCaption(const char *caption);
++	void setXWindowName(const char *caption);
+ 	virtual bool openCD(int drive);
+ 
+ 	virtual bool hasFeature(Feature f);
+@@ -357,6 +358,9 @@
+ 	// joystick
+ 	SDL_Joystick *_joystick;
+ 
++#ifdef	MAEMO_SDL
++	int _have_keyboard;
++#endif
+ 	// Shake mode
+ 	int _currentShakePos;
+ 	int _newShakePos;
