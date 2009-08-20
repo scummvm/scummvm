@@ -166,7 +166,7 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 		}
 
 		if (scr.buf_size > 65535) {
-			error("Script and heap sizes combined exceed 64K.\n"
+			error("Script and heap sizes combined exceed 64K."
 			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
 			          "fixed in the next major version");
@@ -688,7 +688,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 			int species = READ_LE_UINT16(seeker + 10);
 
 			if (species < 0 || species >= (int)_classtable.size()) {
-				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
+				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
 				          species, species, _classtable.size(), scr->nr);
 				return;
 			}

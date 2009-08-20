@@ -1406,7 +1406,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 		err = nearest_intersection(pf_s, start, end, &intersection);
 
 		if (err == PF_FATAL) {
-			warning("AvoidPath: fatal error finding nearest intersecton");
+			warning("AvoidPath: fatal error finding nearest intersection");
 			delete pf_s;
 			return NULL;
 		}
