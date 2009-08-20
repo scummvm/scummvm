@@ -2308,6 +2308,15 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
+	// Quest for Glory 2 - English DOS Non-Interactive Demo
+	// Executable scanning reports "1.000.046"
+	{{"qfg2", "Demo", {
+		{"resource.map", 0, "e75eb86bdd517b3ef709058249986a87", 906},
+		{"resource.001", 0, "9b098f9e1008abe30e56c93b896494e6", 362123},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
+		0
+	},
+	
 	// Quest for Glory 3 - English DOS Non-Interactive Demo (from FRG)
 	// Executable scanning reports "1.001.021", VERSION file reports "1.000, 0.001.059, 6.12.92"
 	{{"qfg3", "Demo", {
