@@ -64,6 +64,7 @@ ListWidget::ListWidget(GuiObject *boss, const String &name, uint32 cmd)
 	_editable = true;
 
 	_quickSelect = true;
+	_editColor = ThemeEngine::kFontColorNormal;
 }
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
@@ -139,6 +140,16 @@ void ListWidget::setSelected(int item) {
 		scrollToCurrent();
 		draw();
 	}
+}
+
+ThemeEngine::FontColor ListWidget::getSelectionColor() const {
+	if (_listColors.empty())
+		return ThemeEngine::kFontColorNormal;
+
+	if (_filter.empty())
+		return _listColors[_selectedItem];
+	else
+		return _listColors[_listIndex[_selectedItem]];
 }
 
 void ListWidget::setList(const StringList &list, const ColorList *colors) {
@@ -460,6 +471,7 @@ void ListWidget::drawWidget() {
 
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
+			color = _editColor;
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
 			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2), buffer, _state,
@@ -526,6 +538,14 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
+		if (_listColors.empty()) {
+			_editColor = ThemeEngine::kFontColorNormal;
+		} else {
+			if (_filter.empty())
+				_editColor = _listColors[_selectedItem];
+			else
+				_editColor = _listColors[_listIndex[_selectedItem]];
+		}
 		draw();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	}

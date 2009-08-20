@@ -84,6 +84,8 @@ protected:
 
 	uint32			_cmd;
 
+	ThemeEngine::FontColor _editColor;
+
 public:
 	ListWidget(GuiObject *boss, const String &name, uint32 cmd = 0);
 	ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd = 0);
@@ -97,6 +99,7 @@ public:
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 	void setSelected(int item);
 	const String &getSelectedString() const		{ return _list[_selectedItem]; }
+	ThemeEngine::FontColor getSelectionColor() const;
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 	bool isEditable() const						{ return _editable; }
 	void setEditable(bool editable)				{ _editable = editable; }
@@ -104,6 +107,8 @@ public:
 	void scrollToEnd();
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	String getQuickSelectString() const 		{ return _quickSelectStr; }
+
+	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
 
 	void setFilter(const String &filter, bool redraw = true);
 
@@ -119,7 +124,7 @@ public:
 
 	virtual bool wantsFocus() { return true; }
 
-	// Made startEditMode for SCUMM's SaveLoadChooser
+	// Made startEditMode for SaveLoadChooser
 	void startEditMode();
 	void endEditMode();
 

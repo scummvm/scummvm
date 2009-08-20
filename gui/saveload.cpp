@@ -278,8 +278,15 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		// game is write protected
 		_chooseButton->setEnabled(selItem >= 0 && !isWriteProtected);
 
-		if (startEditMode)
+		if (startEditMode) {
 			_list->startEditMode();
+
+			if (_chooseButton->isEnabled() && _list->getSelectedString() == "Untitled savestate" &&
+					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
+				_list->setEditString("");
+				_list->setEditColor(ThemeEngine::kFontColorNormal);
+			}
+		}
 	} else {
 		// Disable the load button if nothing is selected, or if an empty
 		// list item is selected.
