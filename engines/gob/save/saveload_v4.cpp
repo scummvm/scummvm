@@ -63,7 +63,7 @@ int SaveLoad_v4::GameHandler::File::getSlot(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 1700) / varSize);
+	return ((offset - (kPropsSize + kIndexSize)) / varSize);
 }
 
 int SaveLoad_v4::GameHandler::File::getSlotRemainder(int32 offset) const {
@@ -72,14 +72,14 @@ int SaveLoad_v4::GameHandler::File::getSlotRemainder(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 1700) % varSize);
+	return ((offset - (kPropsSize + kIndexSize)) % varSize);
 }
 
 
 SaveLoad_v4::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
 	_firstSize = true;
-	memset(_props, 0, 500);
-	memset(_index, 0, 1200);
+	memset(_props, 0, kPropsSize);
+	memset(_index, 0, kIndexSize);
 	_hasIndex = false;
 
 	_slotFile = new File(vm, target);
@@ -112,7 +112,7 @@ int32 SaveLoad_v4::GameHandler::getSize() {
 	if (varSize == 0)
 		return -1;
 
-	return _slotFile->tallyUpFiles(varSize, 1700);
+	return _slotFile->tallyUpFiles(varSize, kPropsSize + kIndexSize);
 }
 
 bool SaveLoad_v4::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
@@ -127,22 +127,22 @@ bool SaveLoad_v4::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (offset < kPropsSize) {
 		// Global properties
 
 		debugC(3, kDebugSaveLoad, "Loading global properties");
 
-		if ((size + offset) > 500) {
+		if ((size + offset) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (offset == 500) {
+	} else if (offset == kPropsSize) {
 		// Save index
 
-		if (size != 1200) {
+		if (size != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -202,28 +202,28 @@ bool SaveLoad_v4::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (offset < kPropsSize) {
 		// Global properties
 
 		debugC(3, kDebugSaveLoad, "Saving global properties");
 
-		if ((size + offset) > 500) {
+		if ((size + offset) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyTo(dataVar, _props + offset, size);
 
-	} else if (offset == 500) {
+	} else if (offset == kPropsSize) {
 		// Save index
 
-		if (size != 1200) {
+		if (size != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
 
 		// Just copy the index into our buffer
-		_vm->_inter->_variables->copyTo(dataVar, _index, 1200);
+		_vm->_inter->_variables->copyTo(dataVar, _index, kIndexSize);
 		_hasIndex = true;
 
 	} else {

@@ -51,7 +51,7 @@ int SaveLoad_v2::GameHandler::File::getSlot(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 600) / varSize);
+	return ((offset - kIndexSize) / varSize);
 }
 
 int SaveLoad_v2::GameHandler::File::getSlotRemainder(int32 offset) const {
@@ -60,12 +60,12 @@ int SaveLoad_v2::GameHandler::File::getSlotRemainder(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 600) % varSize);
+	return ((offset - kIndexSize) % varSize);
 }
 
 
 SaveLoad_v2::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
-	memset(_index, 0, 600);
+	memset(_index, 0, kIndexSize);
 	_hasIndex = false;
 
 	_slotFile = new File(vm, target);
@@ -81,7 +81,7 @@ int32 SaveLoad_v2::GameHandler::getSize() {
 	if (varSize == 0)
 		return -1;
 
-	return _slotFile->tallyUpFiles(varSize, 600);
+	return _slotFile->tallyUpFiles(varSize, kIndexSize);
 }
 
 bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
@@ -99,7 +99,7 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if (offset == 0) {
 		// Save index
 
-		if (size != 600) {
+		if (size != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -184,13 +184,13 @@ bool SaveLoad_v2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if (offset == 0) {
 		// Save index
 
-		if (size != 600) {
+		if (size != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
 
 		// Just copy the index into our buffer
-		_vm->_inter->_variables->copyTo(dataVar, _index, 600);
+		_vm->_inter->_variables->copyTo(dataVar, _index, kIndexSize);
 		_hasIndex = true;
 
 	} else {

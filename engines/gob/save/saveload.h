@@ -77,6 +77,9 @@ public:
 	static const uint32 kSlotCount = 15;
 	static const uint32 kSlotNameLength = 40;
 
+	/** The index. kSlotCount * kSlotNameLength bytes. */
+	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
+
 	SaveLoad_v2(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v2();
 
@@ -111,8 +114,7 @@ protected:
 			int getSlotRemainder(int32 offset) const;
 		};
 
-		/** The index. kSlotCount * kSlotNameLength bytes. */
-		byte _index[600];
+		byte _index[kIndexSize];
 		bool _hasIndex;
 
 		File *_slotFile;
@@ -138,6 +140,10 @@ class SaveLoad_v3 : public SaveLoad {
 public:
 	static const uint32 kSlotCount = 30;
 	static const uint32 kSlotNameLength = 40;
+
+	static const uint32 kPropsSize = 500;
+	/** Index. kSlotCount * kSlotNameLength bytes. */
+	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	enum ScreenshotType {
 		kScreenshotTypeGob3, //!< Goblins 3 type screenshot
@@ -193,9 +199,8 @@ protected:
 		bool _firstSize;
 
 		/** Global properties. */
-		byte _props[500];
-		/** Index. kSlotCount * kSlotNameLength bytes. */
-		byte _index[1200];
+		byte _props[kPropsSize];
+		byte _index[kIndexSize];
 		bool _hasIndex;
 
 		SaveReader *_reader;
@@ -266,6 +271,10 @@ public:
 	static const uint32 kSlotCount = 10;
 	static const uint32 kSlotNameLength = 40;
 
+	static const uint32 kPropsSize = 500;
+	/** Index. kSlotCount * kSlotNameLength bytes + 800 bytes 0. */
+	static const uint32 kIndexSize = (kSlotCount * kSlotNameLength) + 800;
+
 	SaveLoad_v4(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v4();
 
@@ -311,9 +320,8 @@ protected:
 	private:
 		bool _firstSize;
 
-		byte _props[500];
-		/** The index. kSlotCount * kSlotNameLength bytes + 800 bytes 0. */
-		byte _index[1200];
+		byte _props[kPropsSize];
+		byte _index[kIndexSize];
 		bool _hasIndex;
 
 		File *_slotFile;
@@ -392,6 +400,10 @@ public:
 	static const uint32 kSlotCount = 60;
 	static const uint32 kSlotNameLength = 40;
 
+	static const uint32 kPropsSize = 500;
+	/** Index. kSlotCount * kSlotNameLength bytes. */
+	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
+
 	SaveLoad_v6(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_v6();
 
@@ -426,9 +438,8 @@ protected:
 			int getSlotRemainder(int32 offset) const;
 		};
 
-		byte _props[500];
-		/** The index. 500 bytes properties + kSlotCount * kSlotNameLength bytes. */
-		byte _index[2400];
+		byte _props[kPropsSize];
+		byte _index[kIndexSize];
 
 		File *_slotFile;
 
@@ -454,6 +465,10 @@ public:
 	static const uint32 kSlotCount = 60;
 	static const uint32 kSlotNameLength = 40;
 
+	static const uint32 kPropsSize = 1642;
+	/** Index. kSlotCount * kSlotNameLength bytes. */
+	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
+	
 	SaveLoad_Playtoons(GobEngine *vm, const char *targetName);
 	virtual ~SaveLoad_Playtoons();
 
@@ -488,9 +503,8 @@ protected:
 			int getSlotRemainder(int32 offset) const;
 		};
 
-		byte _props[500];
-		/** The index. 500 bytes properties + kSlotCount * kSlotNameLength bytes. */
-		byte _index[2400];
+		byte _props[kPropsSize];
+		byte _index[kIndexSize];
 
 		File *_slotFile;
 
