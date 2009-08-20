@@ -910,7 +910,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 				patch_data_offset = 2;
 				break;
 			default:
-				warning("Resource patch unsupported special case %X\n", patch_data_offset);
+				warning("Resource patch unsupported special case %X", patch_data_offset);
 		}
 	}
 
@@ -1022,7 +1022,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
 			if (!res->source) {
-				warning("Could not get volume for resource %d, VolumeID %d\n", id, offset >> bShift);
+				warning("Could not get volume for resource %d, VolumeID %d", id, offset >> bShift);
 			}
 			_resMap.setVal(resId, res);
 		}
