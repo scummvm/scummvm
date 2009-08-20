@@ -1996,8 +1996,14 @@ void GetPolyNode(HPOLYGON hp, int *pNodeX, int *pNodeY) {
 
 	Poly pp(LockMem(pHandle), Polys[hp]->pIndex);
 
-	*pNodeX = FROM_LE_32(pp.nodex);
-	*pNodeY = FROM_LE_32(pp.nodey);
+	// WORKAROUND: Invalid node adjustment for DW2 Cartwheel scene refer polygon
+	if (TinselV2 && (pHandle == 0x74191900) && (hp == 8)) {
+		*pNodeX = 480;
+		*pNodeY = 408;
+	} else {
+		*pNodeX = FROM_LE_32(pp.nodex);
+		*pNodeY = FROM_LE_32(pp.nodey);
+	}
 
 	if (TinselV2) {
 		*pNodeX += volatileStuff[hp].xoff;
