@@ -26,9 +26,6 @@
 // We place selector vocab name tables here for any game that doesn't have
 // them. This includes the King's Quest IV Demo and LSL3 Demo.
 
-#ifndef SCI_STATIC_SELECTORS_H
-#define SCI_STATIC_SELECTORS_H
-
 #include "sci/engine/kernel.h"
 
 namespace Sci {
@@ -425,5 +422,3 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 }
 	
 } // End of namespace Sci
-
-#endif // SCI_STATIC_SELECTORS_H
