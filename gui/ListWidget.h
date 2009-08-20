@@ -94,21 +94,31 @@ public:
 	virtual Widget *findWidget(int x, int y);
 
 	void setList(const StringList &list, const ColorList *colors = 0);
-	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 	const StringList &getList()	const			{ return _dataList; }
-	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
+
+	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
+
 	void setSelected(int item);
+	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
+
 	const String &getSelectedString() const		{ return _list[_selectedItem]; }
 	ThemeEngine::FontColor getSelectionColor() const;
+
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
-	bool isEditable() const						{ return _editable; }
-	void setEditable(bool editable)				{ _editable = editable; }
+
 	void scrollTo(int item);
 	void scrollToEnd();
+
 	void enableQuickSelect(bool enable) 		{ _quickSelect = enable; }
 	String getQuickSelectString() const 		{ return _quickSelectStr; }
 
+	bool isEditable() const						{ return _editable; }
+	void setEditable(bool editable)				{ _editable = editable; }
 	void setEditColor(ThemeEngine::FontColor color) { _editColor = color; }
+
+	// Made startEditMode/endEditMode for SaveLoadChooser
+	void startEditMode();
+	void endEditMode();
 
 	void setFilter(const String &filter, bool redraw = true);
 
@@ -123,10 +133,6 @@ public:
 	virtual void reflowLayout();
 
 	virtual bool wantsFocus() { return true; }
-
-	// Made startEditMode for SaveLoadChooser
-	void startEditMode();
-	void endEditMode();
 
 protected:
 	void drawWidget();
