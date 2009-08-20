@@ -147,7 +147,7 @@ typedef struct BarrierItem {
 	uint32		   tickCount;
 	uint32		   tickCount2;
 	uint32		   field_C0;
-	uint32		   field_C4;
+	uint32		   priority;
 	uint32		   actionListIdx;
 	SoundItem	   soundItems[16];
 	FrameSoundItem frameSoundItems[50];

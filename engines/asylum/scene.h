@@ -110,14 +110,16 @@ private:
 	void   update();
     int    updateScene();
     void   updateActor(uint32 actor);
-    bool   isBarrierVisible(BarrierItem *barrier);
-    uint32 getRandomResId(BarrierItem *barrier);
     void   updateBarriers(WorldStats *worldStats);
     void   updateAmbientSounds();
     void   updateMusic();
     void   updateAdjustScreen();
     int    drawScene();
     int    drawBarriers();
+
+    bool   isBarrierVisible(BarrierItem *barrier);
+    bool   isBarrierOnScreen(BarrierItem *barrier);
+    uint32 getRandomResId(BarrierItem *barrier);
 
 	/**
 	 * Check whether the cursor resource needs to be changed, and
@@ -137,7 +139,7 @@ private:
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
     // TODO: get rid of this
-    void OLD_UPDATE(GraphicFrame *bg, MainActor *mainActor, WorldStats *worldStats);
+    void OLD_UPDATE(WorldStats *worldStats);
     
 }; // end of class Scene
 

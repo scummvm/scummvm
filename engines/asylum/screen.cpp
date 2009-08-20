@@ -24,6 +24,7 @@
  */
 
 #include "asylum/screen.h"
+#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -112,6 +113,63 @@ void Screen::drawWideScreen(int16 barSize) {
 
 void Screen::clearScreen() {
     _sys->fillScreen(0);
+}
+
+void Screen::addGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority) {
+    GraphicQueueItem item;
+    item.resId = redId;
+    item.x = x;
+    item.y = y;
+    item.frameIdx = frameIdx;
+    item.flags = flags;
+    item.priority = priority;
+
+    _queueItems.push_back(item);
+}
+
+void Screen::addCrossFadeGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority) {
+    
+}
+
+void Screen::addGraphicToQueue(GraphicQueueItem item) {
+    _queueItems.push_back(item);
+}
+
+void Screen::drawGraphicsInQueue() {
+    // sort by priority first
+    graphicsSelectionSort();
+    for(uint i = 0; i < _queueItems.size(); i++) {
+        GraphicResource *grRes = Shared.getScene()->getGraphicResource(_queueItems[i].resId);
+        GraphicFrame *fra = grRes->getFrame(_queueItems[i].frameIdx);
+        copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x, _queueItems[i].y, fra->surface.w, fra->surface.h);
+        delete grRes;
+    }
+}
+
+void Screen::clearGraphicsInQueue() {
+    _queueItems.clear();
+}
+
+void Screen::graphicsSelectionSort() {
+    uint minIdx;
+
+    for (uint i = 0; i < _queueItems.size() - 1; i++) {
+        minIdx = i;
+
+        for (uint j = i + 1; j < _queueItems.size(); j++)
+            if (_queueItems[j].priority > _queueItems[i].priority)
+                minIdx = j;
+
+        if(i != minIdx)
+            swapGraphicItem(i, minIdx);
+   }
+}
+
+void Screen::swapGraphicItem(int item1, int item2) {
+   GraphicQueueItem temp;
+   temp = _queueItems[item1];
+   _queueItems[item1] = _queueItems[item2];
+   _queueItems[item2] = temp;
 }
 
 } // end of namespace Asylum

@@ -290,13 +290,7 @@ void Scene::update() {
 
 int Scene::updateScene() {
     uint32       startTick   = 0;
-    GraphicFrame *bg         = _bgResource->getFrame(0);
-	MainActor    *mainActor  = _sceneResource->getMainActor();
-	WorldStats   *worldStats = _sceneResource->getWorldStats();
-
-    // Copy the background to the back buffer before updating the scene animations
-	Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX,
-			                             bg->surface.w, 0, 0, 640, 480);
+    WorldStats   *worldStats = _sceneResource->getWorldStats();
     
     // Actors
     startTick = Shared.getMillis();
@@ -325,9 +319,6 @@ int Scene::updateScene() {
     updateAdjustScreen();
     debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", Shared.getMillis() - startTick);
 
-	// TODO: we must get rid of this
-    OLD_UPDATE(bg, mainActor, worldStats);
-
     if(ScriptMan.processActionList())
         return 1;
 
@@ -344,7 +335,7 @@ bool Scene::isBarrierVisible(BarrierItem *barrier) {
             uint32 flag  = barrier->gameFlags[f];
 
             if (flag <= 0) {
-                isSet = Shared.isGameFlagNotSet(-flag);
+                isSet = Shared.isGameFlagNotSet(flag); // -flag
             } else {
                 isSet = Shared.isGameFlagSet(flag);
             }
@@ -357,6 +348,15 @@ bool Scene::isBarrierVisible(BarrierItem *barrier) {
         return true;
     }
     return false;
+}
+
+
+bool Scene::isBarrierOnScreen(BarrierItem *barrier) {
+    WorldStats *worldStats = _sceneResource->getWorldStats();
+    Common::Rect screenRect = Common::Rect(worldStats->xLeft, worldStats->yTop, worldStats->xLeft + 640, worldStats->yTop + 480);
+    Common::Rect barrierRect = barrier->boundingRect;
+    barrierRect.translate(barrier->x, barrier->y);
+    return isBarrierVisible(barrier) && (barrier->flags & 1) && screenRect.intersects(barrierRect);
 }
 
 uint32 Scene::getRandomResId(BarrierItem *barrier) {
@@ -521,9 +521,10 @@ void Scene::updateAdjustScreen() {
 }
 
 
-void Scene::OLD_UPDATE(GraphicFrame *bg, MainActor *mainActor, WorldStats *worldStats) {
+void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	int32 curHotspot = -1;
 	int32 curBarrier = -1;
+   	MainActor *mainActor = _sceneResource->getMainActor();
 
 	// DEBUG
 	// Force the screen to scroll if the mouse approaches the edges
@@ -606,7 +607,7 @@ void Scene::OLD_UPDATE(GraphicFrame *bg, MainActor *mainActor, WorldStats *world
 
 		if (curHotspot >= 0) {
 			for (uint32 a = 0; a < worldStats->numActions; a++) {
-				if (worldStats->actions[a].polyIdx == curHotspot) {
+				if (worldStats->actions[a].polyIdx == (uint32)curHotspot) {
 					debugC(kDebugLevelScripts, "Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
 							worldStats->actions[a].id, 
 							worldStats->actions[a].name,
@@ -637,16 +638,25 @@ void Scene::OLD_UPDATE(GraphicFrame *bg, MainActor *mainActor, WorldStats *world
 
 int Scene::drawScene() {
 
-    // TODO: clear graphic queue list
+    Shared.getScreen()->clearGraphicsInQueue();
 
     if (_skipDrawScene) {
-        // TODO: clear screen
+        Shared.getScreen()->clearScreen();
     } else {
-        // TODO: draw scene stuff
+        // Draw scene background
+        WorldStats *worldStats = _sceneResource->getWorldStats();    
+        GraphicFrame *bg = _bgResource->getFrame(0);
+        Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, worldStats->xLeft, worldStats->yTop, 640, 480);
+
         // TODO: prepare Actors and Barriers draw
         // TODO: draw actors
         drawBarriers();
         // TODO: draw main actor stuff
+
+        Shared.getScreen()->drawGraphicsInQueue();
+        
+        // TODO: we must get rid of this
+        OLD_UPDATE(worldStats);
     }
 
     return 1;
@@ -660,13 +670,17 @@ int Scene::drawBarriers() {
         for (uint32 b = 0; b < barriersCount; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
 
-            if (isBarrierVisible(barrier)) { // TODO: should be isBarrierOnScreen
-                // FIXME: do this like original (next phase)
-                if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-                    GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
-                    GraphicFrame    *fra = gra->getFrame(barrier->frameIdx);
-                    copyToBackBufferClipped(&fra->surface, barrier->x, barrier->y);
-                    delete gra;
+            if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
+                if (isBarrierOnScreen(barrier)) {
+                    //TODO: need to do something here yet
+
+                    if (barrier->field_67C <= 0 || barrier->field_67C >= 4) { // TODO: still missing a condition for game quality config
+                        Shared.getScreen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
+                    } else {
+                        // TODO: Do Cross Fade
+                        // parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, worldStats->commonRes.backgroundImage, worldStats->xLeft, worldStats->yTop, 0, 0, barrier->field_67C - 1
+                        Shared.getScreen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
+                    }
                 }
             }
         }

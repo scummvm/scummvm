@@ -39,17 +39,7 @@ class Scene;
 class Screen;
 class Sound;
 class Video;
-
-typedef struct GraphicQueueItem {
-	uint32 resId;
-	uint32 frameIdx;
-	uint32 x;
-	uint32 y;
-	uint32 flags;
-	uint32 transTableNum;
-    uint32 priority;
-
-} GraphicQueueItem;
+struct GraphicQueueItem;
 
 class BlowUpPuzzle {
 public:
@@ -76,17 +66,8 @@ protected:
     GraphicResource *_bgResource;
 	GraphicResource *_cursorResource;
 
-    Common::Array<GraphicQueueItem> _queueItems;
-
 	void updateCursor(); 
     virtual void update() {};
-
-    // FIXME This should probably be inside screen class
-    void addGraphicToQueue(uint32 redId, uint32 x, uint32 y, uint32 frameIdx, uint32 flags, uint32 priority);
-    void addGraphicToQueue(GraphicQueueItem item);
-    void updateGraphicsInQueue();
-    void graphicsSelectionSort();
-    void swapGraphicItem(int item1, int item2);
 
 }; // end of class BlowUpPuzzle
 
