@@ -58,7 +58,7 @@ public:
 	void activate() { _isActive = true; }
 	void deactivate() { _isActive = false; }
 	bool isActive() { return _isActive; }
-	int getSceneIndex() { return _sceneIdx; }
+	int  getSceneIndex() { return _sceneIdx; }
 	
 	ActionDefinitions* getDefaultActionList();
 	ActionDefinitions* getActionList(int actionListIndex);
@@ -67,18 +67,15 @@ public:
 	void setActorAction(int actorIndex, int action);
 	void actorVisible(int actorIndex, bool visible);
 	bool actorVisible(int actorIndex);
-	
 	void setScenePosition(int x, int y);
 
 	SceneResource*   getResources() { return _sceneResource; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
     ResourcePack*	 getMusicPack() { return _musPack; }
     ResourcePack*	 getSpeechPack() { return _speechPack; }
-
 	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
-    
-    BlowUpPuzzle*   getBlowUpPuzzle() { return _blowUp; }
-    void            setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
+    BlowUpPuzzle*    getBlowUpPuzzle() { return _blowUp; }
+    void             setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 
 private:
 #if 0
@@ -110,19 +107,17 @@ private:
 	bool	_isActive;
     bool	_skipDrawScene;
 
-	void update();
-    
-    int updateScene();
-    void updateActor(uint32 actor);
-    bool isBarrierVisible(BarrierItem *barrier);
+	void   update();
+    int    updateScene();
+    void   updateActor(uint32 actor);
+    bool   isBarrierVisible(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
-    void updateBarriers(WorldStats *worldStats);
-    void updateAmbientSounds();
-    void updateMusic();
-    void updateAdjustScreen();
-
-    int drawScene();
-    int drawBarriers();
+    void   updateBarriers(WorldStats *worldStats);
+    void   updateAmbientSounds();
+    void   updateMusic();
+    void   updateAdjustScreen();
+    int    drawScene();
+    int    drawBarriers();
 
 	/**
 	 * Check whether the cursor resource needs to be changed, and
