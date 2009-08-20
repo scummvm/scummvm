@@ -28,6 +28,8 @@
 #include "gui/editable.h"
 #include "common/str.h"
 
+#include "gui/ThemeEngine.h"
+
 namespace GUI {
 
 class ScrollBarWidget;
@@ -51,9 +53,11 @@ class ListWidget : public EditableWidget {
 public:
 	typedef Common::String String;
 	typedef Common::StringList StringList;
+	typedef Common::Array<ThemeEngine::FontColor> ColorList;
 protected:
 	StringList		_list;
 	StringList		_dataList;
+	ColorList		_listColors;
 	Common::Array<int>		_listIndex;
 	bool			_editable;
 	bool			_editMode;
@@ -87,8 +91,8 @@ public:
 
 	virtual Widget *findWidget(int x, int y);
 
-	void setList(const StringList &list);
-	void append(const String &s);
+	void setList(const StringList &list, const ColorList *colors = 0);
+	void append(const String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 	const StringList &getList()	const			{ return _dataList; }
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 	void setSelected(int item);

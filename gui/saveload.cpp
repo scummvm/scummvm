@@ -316,6 +316,7 @@ void SaveLoadChooser::updateSaveList() {
 	int curSlot = 0;
 	int saveSlot = 0;
 	StringList saveNames;
+	ListWidget::ColorList colors;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
 		saveSlot = atoi(x->save_slot().c_str());
@@ -324,6 +325,7 @@ void SaveLoadChooser::updateSaveList() {
 				SaveStateDescriptor dummySave(curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
 				saveNames.push_back(dummySave.description());
+				colors.push_back(ThemeEngine::kFontColorNormal);
 				curSlot++;
 			}
 
@@ -338,8 +340,12 @@ void SaveLoadChooser::updateSaveList() {
 		Common::String description = x->description();
 		Common::String trimmedDescription = description;
 		trimmedDescription.trim();
-		if (trimmedDescription.empty())
+		if (trimmedDescription.empty()) {
 			description = "Untitled savestate";
+			colors.push_back(ThemeEngine::kFontColorAlternate);
+		} else {
+			colors.push_back(ThemeEngine::kFontColorNormal);
+		}
 
 		saveNames.push_back(description);
 		curSlot++;
@@ -351,9 +357,10 @@ void SaveLoadChooser::updateSaveList() {
 		saveNames.push_back(emptyDesc);
 		SaveStateDescriptor dummySave(i, "");
 		_saveList.push_back(dummySave);
+		colors.push_back(ThemeEngine::kFontColorNormal);
 	}
 
-	_list->setList(saveNames);
+	_list->setList(saveNames, &colors);
 }
 
 } // End of namespace GUI
