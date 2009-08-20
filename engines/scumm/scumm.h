@@ -667,9 +667,6 @@ public:
 	}
 	static Graphics::Surface *loadThumbnailFromSlot(const char *target, int slot);
 
-	bool loadInfosFromSlot(int slot, InfoStuff *stuff) {
-		return loadInfosFromSlot(_targetName.c_str(), slot, stuff);
-	}
 	static bool loadInfosFromSlot(const char *target, int slot, InfoStuff *stuff);
 
 protected:
