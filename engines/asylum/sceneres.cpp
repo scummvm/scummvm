@@ -235,7 +235,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 		barrier.tickCount	  = stream->readUint32LE();
 		barrier.tickCount2	  = stream->readUint32LE();
 		barrier.field_C0	  = stream->readUint32LE();
-		barrier.field_C4	  = stream->readUint32LE();
+		barrier.priority	  = stream->readUint32LE();
 		barrier.actionListIdx = stream->readUint32LE();
 
 		for (i = 0; i < 16; i++) {

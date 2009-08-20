@@ -46,54 +46,6 @@ void BlowUpPuzzle::updateCursor() {
 	Shared.getScreen()->setCursor(_cursorResource, _curMouseCursor);
 }
 
-void BlowUpPuzzle::addGraphicToQueue(uint32 redId, uint32 x, uint32 y, uint32 frameIdx, uint32 flags, uint32 priority) {
-    GraphicQueueItem item;
-    item.resId = redId;
-    item.x = x;
-    item.y = y;
-    item.frameIdx = frameIdx;
-    item.flags = flags;
-    item.priority = priority;
-
-    _queueItems.push_back(item);
-}
-
-void BlowUpPuzzle::addGraphicToQueue(GraphicQueueItem item) {
-    _queueItems.push_back(item);
-}
-
-void BlowUpPuzzle::updateGraphicsInQueue() {
-    // sort by priority first
-    graphicsSelectionSort();
-    for(uint i = 0; i < _queueItems.size(); i++) {
-        GraphicResource *jack = Shared.getScene()->getGraphicResource(_queueItems[i].resId);
-        GraphicFrame *fra = jack->getFrame(_queueItems[i].frameIdx);
-        Shared.getScreen()->copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x, _queueItems[i].y, fra->surface.w, fra->surface.h);
-    }
-}
-
-void BlowUpPuzzle::graphicsSelectionSort() {
-    uint minIdx;
-
-    for (uint i = 0; i < _queueItems.size() - 1; i++) {
-        minIdx = i;
-
-        for (uint j = i + 1; j < _queueItems.size(); j++)
-            if (_queueItems[j].priority > _queueItems[i].priority)
-                minIdx = j;
-
-        if(i != minIdx)
-            swapGraphicItem(i, minIdx);
-   }
-}
-
-void BlowUpPuzzle::swapGraphicItem(int item1, int item2) {
-   GraphicQueueItem temp;
-   temp = _queueItems[item1];
-   _queueItems[item1] = _queueItems[item2];
-   _queueItems[item2] = temp;
-} 
-
 
 // BlowUp Puzzle VCR ---------------------------------------------------------------------------------------------
 
@@ -181,7 +133,7 @@ int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
 }
 
 void BlowUpPuzzleVCR::update() {
-    _queueItems.clear();
+    Shared.getScreen()->clearGraphicsInQueue();
 
     if (_rightClickDown) { // quits BlowUp Puzzle
 		_rightClickDown = false;
@@ -212,15 +164,13 @@ void BlowUpPuzzleVCR::update() {
     updateStopButton();
 
     if(_buttonsState[kPower] == kON) {
-        addGraphicToQueue(Shared.getScene()->getResources()->getWorldStats()->grResId[22], 0, 37, _tvScreenAnimIdx, 0, 1);
-        addGraphicToQueue(Shared.getScene()->getResources()->getWorldStats()->grResId[23], 238, 22, _tvScreenAnimIdx++, 0, 1);
+        Shared.getScreen()->addGraphicToQueue(Shared.getScene()->getResources()->getWorldStats()->grResId[22], _tvScreenAnimIdx, 0, 37, 0, 0, 1);
+        Shared.getScreen()->addGraphicToQueue(Shared.getScene()->getResources()->getWorldStats()->grResId[23], _tvScreenAnimIdx++, 238, 22, 0, 0, 1);
         _tvScreenAnimIdx %= 6;
     }
 
     if(_isAccomplished) {
-        debug("BlowUpPuzzle ACCOMPLISHED!!");
-
-        updateGraphicsInQueue();
+        Shared.getScreen()->drawGraphicsInQueue();
 
         int barSize = 0;
         do { 
@@ -236,7 +186,7 @@ void BlowUpPuzzleVCR::update() {
         _active = false;
         Shared.getScene()->enterScene();
     } else {
-        updateGraphicsInQueue();
+        Shared.getScreen()->drawGraphicsInQueue();
     } 
 }
 
@@ -307,7 +257,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
             break;
         case kOnHand: {
             GraphicQueueItem jackItemOnHand = getGraphicJackItem(resIdOnHand);
-            addGraphicToQueue(jackItemOnHand);
+            Shared.getScreen()->addGraphicToQueue(jackItemOnHand);
 
             item = getGraphicShadowItem();
         }
@@ -319,7 +269,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
 
     if(item.resId != 0)
     {
-        addGraphicToQueue(item);
+        Shared.getScreen()->addGraphicToQueue(item);
     }
 }
 
@@ -422,7 +372,7 @@ void BlowUpPuzzleVCR::updateButton(Button button, VCRDrawInfo btON, VCRDrawInfo 
 
     if(item.resId != 0)
     {
-        addGraphicToQueue(item);
+        Shared.getScreen()->addGraphicToQueue(item);
     }
 }
 

@@ -35,6 +35,17 @@
 
 namespace Asylum {
 
+typedef struct GraphicQueueItem {
+	uint32 resId;
+	uint32 frameIdx;
+	uint32 x;
+	uint32 y;
+	uint32 flags;
+	uint32 transTableNum;
+    uint32 priority;
+
+} GraphicQueueItem;
+
 class Screen {
 public:
 	Screen(OSystem *sys);
@@ -58,9 +69,19 @@ public:
 		setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
 	}
 
+    void addGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority);
+    void addCrossFadeGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority);
+    void addGraphicToQueue(GraphicQueueItem item);
+    void drawGraphicsInQueue();
+    void clearGraphicsInQueue();
+    void graphicsSelectionSort();
+    void swapGraphicItem(int item1, int item2);
+
 private:
 	Graphics::Surface _backBuffer;
 	OSystem *_sys;
+
+    Common::Array<GraphicQueueItem> _queueItems;
 };
 
 } // end of namespace Asylum
