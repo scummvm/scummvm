@@ -29,6 +29,7 @@
 #include "gui/dialog.h"
 #include "gui/options.h"
 #include "gui/widget.h"
+#include "gui/saveload.h"
 
 #include "scumm/detection.h"
 #ifndef DISABLE_HELP
@@ -53,35 +54,6 @@ protected:
 	typedef Common::String String;
 };
 
-class SaveLoadChooser : public GUI::Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	bool _saveMode;
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::GraphicsWidget	*_gfxWidget;
-	GUI::StaticTextWidget	*_date;
-	GUI::StaticTextWidget	*_time;
-	GUI::StaticTextWidget	*_playtime;
-	GUI::ContainerWidget	*_container;
-	ScummEngine			*_vm;
-
-	uint8 _fillR, _fillG, _fillB;
-
-	void updateInfos(bool redraw);
-public:
-	SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine);
-	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;
-	void setList(const StringList& list);
-	int runModal();
-
-	virtual void reflowLayout();
-};
-
 class ScummMenuDialog : public ScummDialog {
 public:
 	ScummMenuDialog(ScummEngine *scumm);
@@ -99,8 +71,8 @@ protected:
 #ifndef DISABLE_HELP
 	GUI::Dialog		*_helpDialog;
 #endif
-	SaveLoadChooser	*_saveDialog;
-	SaveLoadChooser	*_loadDialog;
+	GUI::SaveLoadChooser	*_saveDialog;
+	GUI::SaveLoadChooser	*_loadDialog;
 
 	GUI::ButtonWidget *_saveButton;
 
