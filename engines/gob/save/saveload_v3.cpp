@@ -119,22 +119,22 @@ bool SaveLoad_v3::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < kPropsSize) {
+	if (((uint32) offset) < kPropsSize) {
 		// Global properties, like joker usage
 
 		debugC(3, kDebugSaveLoad, "Loading global properties");
 
-		if ((size + offset) > kPropsSize) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (offset == kPropsSize) {
+	} else if (((uint32) offset) == kPropsSize) {
 		// Save index
 
-		if (size != kIndexSize) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -193,22 +193,22 @@ bool SaveLoad_v3::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < kPropsSize) {
+	if (((uint32) offset) < kPropsSize) {
 		// Global properties, like joker usage
 
 		debugC(3, kDebugSaveLoad, "Saving global properties");
 
-		if ((size + offset) > kPropsSize) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyTo(dataVar, _props + offset, size);
 
-	} else if (offset == kPropsSize) {
+	} else if (((uint32) offset) == kPropsSize) {
 		// Save index
 
-		if (size != kIndexSize) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}

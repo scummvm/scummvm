@@ -95,22 +95,22 @@ bool SaveLoad_v6::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < kPropsSize) {
+	if (((uint32) offset) < kPropsSize) {
 		// Properties
 
 		refreshProps();
 
-		if ((offset + size) > kPropsSize) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (offset < kPropsSize + kIndexSize) {
+	} else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
-		if (size != kIndexSize) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
@@ -191,10 +191,10 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < kPropsSize) {
+	if (((uint32) offset) < kPropsSize) {
 		// Properties
 
-		if ((offset + size) > kPropsSize) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
@@ -203,10 +203,10 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 		refreshProps();
 
-	}  else if (offset < kPropsSize + kIndexSize) {
+	}  else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
-		if (size != kIndexSize) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}

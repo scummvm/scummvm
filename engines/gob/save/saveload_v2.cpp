@@ -99,7 +99,7 @@ bool SaveLoad_v2::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if (offset == 0) {
 		// Save index
 
-		if (size != kIndexSize) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -184,7 +184,7 @@ bool SaveLoad_v2::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if (offset == 0) {
 		// Save index
 
-		if (size != kIndexSize) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
