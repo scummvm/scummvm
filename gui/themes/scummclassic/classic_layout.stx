@@ -35,7 +35,7 @@
 		<def var = 'ShowGlobalMenuLogo' value = '0'/>
 		<def var = 'ShowSearchPic' value = '0'/>
 		
-		<def var = 'ScummSaveLoad.ExtInfo.Visible' value = '1'/>
+		<def var = 'SaveLoadChooser.ExtInfo.Visible' value = '1'/>
 
 		<def var = 'KeyMapper.Spacing' value = '10'/>
 		<def var = 'KeyMapper.LabelWidth' value = '100'/>
@@ -710,7 +710,7 @@
 		</layout>
 	</dialog>
 	
-	<dialog name = 'ScummSaveLoad' overlays = 'screen' inset = '8' shading = 'dim'>
+	<dialog name = 'SaveLoadChooser' overlays = 'screen' inset = '8' shading = 'dim'>
 		<layout type = 'vertical' padding = '8, 8, 8, 32' center = 'true'>
 			<widget name = 'Title'
 					height = 'Globals.Line.Height'

@@ -42,15 +42,15 @@ enum {
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("ScummSaveLoad"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: Dialog("SaveLoadChooser"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
-	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
+	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
+	_list = new GUI::ListWidget(this, "SaveLoadChooser.List");
 	_list->setNumberingMode(GUI::kListNumberingZero);
 	setSaveMode(false);
 
@@ -61,11 +61,11 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", Graphics::kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Delete", "Delete", kDelCmd, 0);
+	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", "Delete", kDelCmd, 0);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
@@ -172,11 +172,11 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1 && _thumbnailSupport) {
+	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && _thumbnailSupport) {
 		int16 x, y;
 		uint16 w, h;
 
-		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails.");
 
 		int thumbW = kThumbnailWidth;
