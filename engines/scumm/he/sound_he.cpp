@@ -645,6 +645,10 @@ void SoundHE::playHESound(int soundID, int heOffset, int heChannel, int heFlags)
 			Audio::AudioStream *voxStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
 
 			sound = (char *)malloc(size * 4);
+			/* On systems where it matters, malloc will return
+			 * even addresses, so the use of (void *) in the
+			 * following cast shuts the compiler from warning
+			 * unnecessarily. */
 			size = voxStream->readBuffer((int16*)(void *)sound, size * 2);
 			size *= 2; // 16bits.
 			delete voxStream;
