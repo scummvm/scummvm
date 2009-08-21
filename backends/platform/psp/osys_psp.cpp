@@ -31,7 +31,6 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/rect.h"
 #include "common/scummsys.h"
 
 #include "osys_psp.h"
@@ -40,14 +39,11 @@
 #include "backends/saves/psp/psp-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/surface.h"
-#include "graphics/scaler.h"
 #include "sound/mixer_intern.h"
 
 
 #define	SAMPLES_PER_SEC	44100
 
-#define	SCREEN_WIDTH	480
-#define	SCREEN_HEIGHT	272
 
 #define PIXEL_SIZE (4)
 #define BUF_WIDTH (512)
@@ -67,8 +63,6 @@ unsigned short __attribute__((aligned(16))) kbClut[256];
 //unsigned int __attribute__((aligned(16))) offscreen256[640*480];
 //unsigned int __attribute__((aligned(16))) overlayBuffer256[640*480*2];
 unsigned int __attribute__((aligned(16))) mouseBuf256[MOUSE_SIZE*MOUSE_SIZE];
-
-extern unsigned long RGBToColour(unsigned long r, unsigned long g, unsigned long b);
 
 extern unsigned int  size_keyboard_symbols_compressed;
 extern unsigned char keyboard_symbols_compressed[];
@@ -126,28 +120,6 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	SDL_Init(sdlFlags);
 
 
-	//sceKernelDcacheWritebackAll();
-
-	// setup
-	sceGuInit();
-	sceGuStart(0, displayList);
-	sceGuDrawBuffer(GU_PSM_8888, (void *)0, BUF_WIDTH);
-	sceGuDispBuffer(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT, (void*)PSP_FRAME_SIZE, BUF_WIDTH);
-	sceGuDepthBuffer((void*)(PSP_FRAME_SIZE * 2), BUF_WIDTH);
-	sceGuOffset(2048 - (PSP_SCREEN_WIDTH/2), 2048 - (PSP_SCREEN_HEIGHT/2));
-	sceGuViewport(2048, 2048, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
-	sceGuDepthRange(0xC350, 0x2710);
-	sceGuScissor(0, 0, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
-	sceGuEnable(GU_SCISSOR_TEST);
-	sceGuFrontFace(GU_CW);
-	sceGuEnable(GU_TEXTURE_2D);
-	sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
-	sceGuFinish();
-	sceGuSync(0,0);
-
-	sceDisplayWaitVblankStart();
-	sceGuDisplay(1);
-
 	//decompress keyboard data
 	uLongf kbdSize = KBD_DATA_SIZE;
 	keyboard_letters = (unsigned char *)memalign(16, KBD_DATA_SIZE);
@@ -178,6 +150,30 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	_keyboardMode = 0;
 	_mouseX = PSP_SCREEN_WIDTH >> 1;
 	_mouseY = PSP_SCREEN_HEIGHT >> 1;
+
+
+	//sceKernelDcacheWritebackAll();
+
+	// setup
+	sceGuInit();
+	sceGuStart(0, displayList);
+	sceGuDrawBuffer(GU_PSM_8888, (void *)0, BUF_WIDTH);
+	sceGuDispBuffer(PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT, (void*)PSP_FRAME_SIZE, BUF_WIDTH);
+	sceGuDepthBuffer((void*)(PSP_FRAME_SIZE * 2), BUF_WIDTH);
+	sceGuOffset(2048 - (PSP_SCREEN_WIDTH/2), 2048 - (PSP_SCREEN_HEIGHT/2));
+	sceGuViewport(2048, 2048, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
+	sceGuDepthRange(0xC350, 0x2710);
+	sceGuScissor(0, 0, PSP_SCREEN_WIDTH, PSP_SCREEN_HEIGHT);
+	sceGuEnable(GU_SCISSOR_TEST);
+	sceGuFrontFace(GU_CW);
+	sceGuEnable(GU_TEXTURE_2D);
+	sceGuClear(GU_COLOR_BUFFER_BIT|GU_DEPTH_BUFFER_BIT);
+	sceGuFinish();
+	sceGuSync(0,0);
+
+	sceDisplayWaitVblankStart();
+	sceGuDisplay(1);
+
 }
 
 OSystem_PSP::~OSystem_PSP() {
@@ -270,8 +266,10 @@ void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat 
 	_kbdClut[0] = 0xFFFF;
 	_kbdClut[246] = 0x4CCC;
 	_kbdClut[247] = 0x0000;
+
 	for (int i = 1; i < 31; i++)
 		_kbdClut[i] = 0xF888;
+
 	_mouseVisible = false;
 	sceKernelDcacheWritebackAll();
 }
@@ -293,10 +291,10 @@ void OSystem_PSP::setPalette(const byte *colors, uint start, uint num) {
 	}
 
 	//copy to CLUT
-	memcpy(_clut, _palette, 256*sizeof(unsigned short));
+	memcpy(_clut, _palette, 256 * sizeof(unsigned short));
 
 	//force update of mouse CLUT as well, as it may have been set up before this palette was set
-	memcpy(mouseClut, _palette, 256*sizeof(unsigned short));
+	memcpy(mouseClut, _palette, 256 * sizeof(unsigned short));
 	mouseClut[_mouseKeyColour] = 0;
 
 	sceKernelDcacheWritebackAll();
