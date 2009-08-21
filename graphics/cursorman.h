@@ -29,7 +29,7 @@
 #include "common/stack.h"
 #include "common/singleton.h"
 #include "graphics/pixelformat.h"
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 #include "common/system.h"
 #endif
 
@@ -179,7 +179,7 @@ private:
 
 		uint _size;
 		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 			if (!format)
 				_format = Graphics::PixelFormat::createFormatCLUT8();
 			 else 

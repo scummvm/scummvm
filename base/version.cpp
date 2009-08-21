@@ -86,7 +86,7 @@ const char *gScummVMFeatures = ""
 	"ALSA "
 #endif
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	"RGB "
 #endif
 

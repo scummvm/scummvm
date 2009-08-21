@@ -31,7 +31,7 @@
 
 #include "graphics/jpeg.h"
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 // Required for the YUV to RGB conversion
 #include "graphics/conversion.h"
 #endif
@@ -169,14 +169,14 @@ void ROQPlayer::buildShowBuf() {
 				// Just use the luminancy component
 				*out = *in;
 #endif // DITHER
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 			} else {
 				// Do the format conversion (YUV -> RGB -> Screen format)
 				byte r, g, b;
 				Graphics::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
 				// FIXME: this is fixed to 16bit
 				*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
-#endif // ENABLE_RGB_COLOR
+#endif // USE_RGB_COLOR
 			}
 
 			// Skip to the next pixel

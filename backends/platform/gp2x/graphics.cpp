@@ -243,7 +243,7 @@ int OSystem_GP2X::getGraphicsMode() const {
 void OSystem_GP2X::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	//avoid redundant format changes
 	Graphics::PixelFormat newFormat;
 	if (!format)
@@ -1231,7 +1231,7 @@ void OSystem_GP2X::warpMouse(int x, int y) {
 }
 
 void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	if (!format)
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
 	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
@@ -1274,7 +1274,7 @@ void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x
 	}
 
 	free(_mouseData);
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
 	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
 #else
@@ -1288,7 +1288,7 @@ void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x
 void OSystem_GP2X::blitCursor() {
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	uint32 color;
 	uint32 colormask = (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
 #else
@@ -1327,7 +1327,7 @@ void OSystem_GP2X::blitCursor() {
 
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 			if (_cursorFormat.bytesPerPixel > 1) {
 				color = (*(uint32 *) srcPtr) & colormask;
 				if (color != _mouseKeyColor) {	// transparent, don't draw
@@ -1347,7 +1347,7 @@ void OSystem_GP2X::blitCursor() {
 				}
 				dstPtr += 2;
 				srcPtr++;
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 			}
 #endif
 		}

@@ -109,7 +109,7 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 
 	Cursor *cur = _cursorStack.top();
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	uint size;
 	if (!format)
 		size = w * h;
@@ -134,7 +134,7 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	cur->_hotspotY = hotspotY;
 	cur->_keycolor = keycolor;
 	cur->_targetScale = targetScale;
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	if (format)
 		cur->_format = *format;
 	else

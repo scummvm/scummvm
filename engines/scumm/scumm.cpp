@@ -1100,7 +1100,7 @@ Common::Error ScummEngine::init() {
 					// there is no text surface for them. This takes that into account
 					(_screenWidth * _textSurfaceMultiplier > 320));
 	} else if (_game.features & GF_16BIT_COLOR) {
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
 		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, &format);
 		if (format != _system->getScreenFormat())

@@ -130,7 +130,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	g_system->beginGFXTransaction();
 
 		initCommonGFX(defaultTo1xScaler);
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 		if (format)
 			g_system->initSize(width, height, format);
 		else { 
@@ -160,7 +160,7 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 	}
 
 	// Just show warnings then these occur:
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	if (gfxError & OSystem::kTransactionFormatNotSupported) {
 		Common::String message = "Could not initialize color format.";
 

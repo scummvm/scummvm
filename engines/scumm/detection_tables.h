@@ -80,7 +80,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "puttputt", "Putt-Putt Joins the Parade" },
 
 #ifdef ENABLE_HE
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	{ "arttime", "Blue's Art Time Activities" },
 	{ "baseball2001", "Backyard Baseball 2001" },
 	{ "Baseball2003", "Backyard Baseball 2003" },
@@ -502,7 +502,7 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttputt", "Putt-Putt", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 #ifdef ENABLE_HE
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	{ "arttime", "arttime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "arttime", "Blues-ArtTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "arttime", "artdemo", kGenHEPC, UNK_LANG, UNK, 0 },

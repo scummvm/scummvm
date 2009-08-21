@@ -31,7 +31,7 @@
 #include "common/rect.h"
 
 #include "graphics/pixelformat.h"
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 #include "graphics/conversion.h"
 #endif
 
@@ -350,7 +350,7 @@ public:
 	 */
 	virtual int getGraphicsMode() const = 0;
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	/**
 	 * Determine the pixel format currently in use for screen rendering.
 	 * @return the active screen pixel format.

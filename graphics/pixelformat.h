@@ -157,7 +157,7 @@ struct PixelFormat {
  *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
  */
 inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
 		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
 			if (*i == *j)

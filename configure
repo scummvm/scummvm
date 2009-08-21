@@ -1669,7 +1669,12 @@ add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 #
 # Check whether 16bit color support is requested
 #
-add_to_config_mk_if_yes "$_16bit" 'ENABLE_RGB_COLOR = 1'
+if test "$_16bit" = no ; then
+	_def_16bit='#undef USE_RGB_COLOR'
+else
+	_def_16bit='#define USE_RGB_COLOR'
+fi
+add_to_config_mk_if_yes "$_16bit" 'USE_RGB_COLOR = 1'
 
 #
 # Check whether to enable the (hq) scalers
@@ -2260,6 +2265,7 @@ $_def_readline
 /* Options */
 $_def_text_console
 $_def_mt32emu
+$_def_16bit
 
 /* Plugin settings */
 $_def_plugin

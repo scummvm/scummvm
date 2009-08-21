@@ -1234,7 +1234,7 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	if (!cursor)
 		return false;
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	_cursorFormat.bytesPerPixel = 1;
 	_cursorFormat.rLoss = _cursorFormat.gLoss = _cursorFormat.bLoss = _cursorFormat.aLoss = 8;
 	_cursorFormat.rShift = _cursorFormat.gShift = _cursorFormat.bShift = _cursorFormat.aShift = 0;

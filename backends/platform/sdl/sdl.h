@@ -93,7 +93,7 @@ public:
 	void beginGFXTransaction(void);
 	TransactionError endGFXTransaction(void);
 
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	// Game screen
 	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
 
@@ -248,7 +248,7 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 	Graphics::PixelFormat _screenFormat;
 	Graphics::PixelFormat _cursorFormat;
 #endif
@@ -285,7 +285,7 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool normal1xScaler;
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 		bool formatChanged;
 #endif
 	};
@@ -304,7 +304,7 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 		int hardwareWidth, hardwareHeight;
-#ifdef ENABLE_RGB_COLOR
+#ifdef USE_RGB_COLOR
 		Graphics::PixelFormat format;
 #endif
 	};
