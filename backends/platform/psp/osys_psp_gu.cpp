@@ -141,7 +141,7 @@ OSystem_PSP_GU::~OSystem_PSP_GU() {
 	 sceGuTerm();
 }
 
-void OSystem_PSP_GU::initSize(uint width, uint height) {
+void OSystem_PSP_GU::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	PSPDebugTrace("initSize\n");
 	_screenWidth = width;
 	_screenHeight = height;
@@ -192,7 +192,7 @@ int OSystem_PSP_GU::getGraphicsMode() const {
 	return _graphicMode;
 }
 
-void OSystem_PSP_GU::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
+void OSystem_PSP_GU::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	//TODO: handle cursorTargetScale
 	_mouseWidth = w;
 	_mouseHeight = h;
@@ -200,7 +200,7 @@ void OSystem_PSP_GU::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
 
-	_mouseKeyColour = keycolor;
+	_mouseKeyColour = keycolor & 0xFF;
 
 	memcpy(mouseClut, _palette, 256*sizeof(unsigned short));
 	mouseClut[_mouseKeyColour] = 0;

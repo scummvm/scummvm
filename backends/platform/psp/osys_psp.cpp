@@ -143,7 +143,7 @@ int OSystem_PSP::getGraphicsMode() const {
 	return -1;
 }
 
-void OSystem_PSP::initSize(uint width, uint height) {
+void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	_overlayWidth = _screenWidth = width;
 	_overlayHeight = _screenHeight = height;
 
@@ -382,7 +382,7 @@ void OSystem_PSP::warpMouse(int x, int y) {
 	_mouseY = y;
 }
 
-void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
+void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	//TODO: handle cursorTargetScale
 	_mouseWidth = w;
 	_mouseHeight = h;
@@ -390,7 +390,7 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
 
-	_mouseKeyColour = keycolor;
+	_mouseKeyColour = keycolor & 0xFF;
 
 	free(_mouseBuf);
 

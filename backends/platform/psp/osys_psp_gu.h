@@ -39,12 +39,12 @@ public:
 	OSystem_PSP_GU();
 	~OSystem_PSP_GU();
 	void updateScreen();
-	void initSize(uint width, uint height);
+	void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	int getDefaultGraphicsMode() const;
 	bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	int getGraphicsMode() const;
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
 	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) ;
 	void setPalette(const byte *colors, uint start, uint num);
 	void setCursorPalette(const byte *colors, uint start, uint num);
