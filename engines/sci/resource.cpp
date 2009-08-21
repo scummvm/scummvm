@@ -351,12 +351,22 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 int ResourceManager::addAppropriateSources() {
 	ResourceSource *map;
 
-	if (!Common::File::exists("RESOURCE.MAP"))
+	if (Common::File::exists("RESOURCE.MAP"))
+		map = addExternalMap("RESOURCE.MAP");
+#ifdef ENABLE_SCI32
+	else if (Common::File::exists("RESMAP.000"))
+		map = addExternalMap("RESMAP.000");
+#endif
+	else
 		return 0;
-	map = addExternalMap("RESOURCE.MAP");
+	
 
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "RESOURCE.0??");
+	
+#ifdef ENABLE_SCI32
+	SearchMan.listMatchingMembers(files, "RESSCI.0??");
+#endif
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
@@ -707,10 +717,9 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 		}
 	}
 
-	if (!fileStream) {
+	if (!fileStream)
 		error("Failed to open resource map file");
-		return kResVersionUnknown;
-	}
+
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
 	fileStream->seek(-4, SEEK_END);
@@ -737,11 +746,20 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	while (!fileStream->eos()) {
 		directoryType = fileStream->readByte();
 		directoryOffset = fileStream->readUint16LE();
-		if ((directoryType < 0x80) || ((directoryType > 0xA0) && (directoryType != 0xFF)))
+		
+		// Only SCI32 has directory type < 0x80
+		if (directoryType < 0x80 && mapDetected != kResVersionUnknown && mapDetected != kResVersionSci32)
+			mapDetected = kResVersionSci32;
+		else
 			break;
+		
+		if (directoryType > 0xA0 && directoryType != 0xFF)
+			break;
+		
 		// Offset is above file size? -> definitely not SCI1/SCI1.1
 		if (directoryOffset > fileStream->size())
 			break;
+
 		if (lastDirectoryOffset) {
 			directorySize = directoryOffset - lastDirectoryOffset;
 			if ((directorySize % 5) && (directorySize % 6 == 0))
@@ -749,6 +767,7 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			if ((directorySize % 5 == 0) && (directorySize % 6))
 				mapDetected = kResVersionSci11;
 		}
+		
 		if (directoryType == 0xFF) {
 			// FFh entry needs to point to EOF
 			if (directoryOffset != fileStream->size())
@@ -760,22 +779,9 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 				return mapDetected;
 			return kResVersionSci1Late;
 		}
+
 		lastDirectoryOffset = directoryOffset;
 	}
-
-#ifdef ENABLE_SCI32
-	// late SCI1.1 and SCI32 maps have last directory entry set to 0xFF
-	// offset set to filesize and 4 more bytes
-
-	// TODO/FIXME: This code was not updated in r42300, which changed the behavior of this
-	// function a lot. To make it compile again "off" was changed to the newly introduced
-	// "lastDirectoryOffset". This is probably not the correct fix, since before r43000
-	// the loop above could not prematurely terminate and thus this would always check the
-	// last directory entry instead of the last checked directory entry.
-	fileStream->seek(lastDirectoryOffset - 7, SEEK_SET);
-	if (fileStream->readByte() == 0xFF && fileStream->readUint16LE() == fileStream->size())
-		return kResVersionSci32; // TODO : check if there is a difference between these maps
-#endif
 
 	delete fileStream;
 
@@ -851,7 +857,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 				break;
 			}
 
-			fileStream->seek(0, SEEK_SET);
+			fileStream->seek(0);
 			continue;
 		}
 
@@ -860,7 +866,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 		else if (curVersion == kResVersionSci11)
 			fileStream->seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
 		else if (curVersion == kResVersionSci32)
-			fileStream->seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
+			fileStream->seek(dwPacked - 2, SEEK_CUR);
 	}
 
 	delete fileStream;
