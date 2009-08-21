@@ -112,7 +112,7 @@ SciEngine::~SciEngine() {
 
 Common::Error SciEngine::run() {
 	Graphics::PixelFormat gfxmode;
-#ifdef ENABLE_RGB_COLOR
+#if 0 && defined(ENABLE_RGB_COLOR)
 	initGraphics(320, 200, false, NULL);
 #else
 	initGraphics(320, 200, false);
