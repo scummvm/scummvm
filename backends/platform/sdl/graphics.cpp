@@ -975,30 +975,6 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 		 * and just updates those, on the actual display. */
 		addDirtyRgnAuto(src);
 	} else {
-		/* Clip the coordinates */
-		if (x < 0) {
-			w += x;
-			src -= x;
-			x = 0;
-		}
-
-		if (y < 0) {
-			h += y;
-			src -= y * pitch;
-			y = 0;
-		}
-
-		if (w > _videoMode.screenWidth - x) {
-			w = _videoMode.screenWidth - x;
-		}
-
-		if (h > _videoMode.screenHeight - y) {
-			h = _videoMode.screenHeight - y;
-		}
-
-		if (w <= 0 || h <= 0)
-			return;
-
 		_cksumValid = false;
 		addDirtyRect(x, y, w, h);
 	}
