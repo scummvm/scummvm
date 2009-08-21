@@ -240,7 +240,7 @@ int OSystem_GP2X::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
-void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
+void OSystem_GP2X::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
 
 #ifdef ENABLE_RGB_COLOR
@@ -1230,7 +1230,7 @@ void OSystem_GP2X::warpMouse(int x, int y) {
 	}
 }
 
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 #ifdef ENABLE_RGB_COLOR
 	if (!format)
 		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
