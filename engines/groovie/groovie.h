@@ -85,6 +85,8 @@ protected:
 public:
 	void waitForInput();
 
+	Graphics::PixelFormat _pixelFormat;
+	bool _mode8bit;
 	Script _script;
 	ResMan *_resMan;
 	GrvCursorMan *_grvCursorMan;

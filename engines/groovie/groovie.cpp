@@ -70,7 +70,20 @@ GroovieEngine::~GroovieEngine() {
 
 Common::Error GroovieEngine::run() {
 	// Initialize the graphics
-	initGraphics(640, 480, true);
+	switch (_gameDescription->version) {
+	case kGroovieV2:
+		// Request the mode with the highest precision available
+		initGraphics(640, 480, true, NULL);
+
+		// Save the enabled mode as it can be both an RGB mode or CLUT8
+		_pixelFormat = _system->getScreenFormat();
+		_mode8bit = (_pixelFormat == Graphics::PixelFormat::createFormatCLUT8());
+		break;
+	case kGroovieT7G:
+		initGraphics(640, 480, true);
+		_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
+		break;
+	}
 
 	// Create debugger. It requires GFX to be initialized
 	_debugger = new Debugger(this);
@@ -204,11 +217,16 @@ Common::Error GroovieEngine::run() {
 
 			case Common::EVENT_LBUTTONDOWN:
 				// Send the event to the scripts
-				_script.setMouseClick();
+				_script.setMouseClick(1);
 
 				// Continue the script execution to handle
 				// the click
 				_waitingForInput = false;
+				break;
+
+			case Common::EVENT_RBUTTONDOWN:
+				// Send the event to the scripts (to skip the video)
+				_script.setMouseClick(2);
 				break;
 
 			case Common::EVENT_QUIT:
