@@ -80,13 +80,21 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "puttputt", "Putt-Putt Joins the Parade" },
 
 #ifdef ENABLE_HE
-	{ "airport", "Let's Explore the Airport with Buzzy" },
+#ifdef ENABLE_RGB_COLOR
 	{ "arttime", "Blue's Art Time Activities" },
-	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
-	{ "baseball", "Backyard Baseball" },
 	{ "baseball2001", "Backyard Baseball 2001" },
 	{ "Baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
+	{ "football2002", "Backyard Football 2002" },
+	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
+	{ "moonbase", "Moonbase Commander" },
+	{ "pjgames", "Pajama Sam: Games to Play On Any Day" },
+	{ "readtime", "Blue's Reading Time Activities" },
+	{ "Soccer2004", "Backyard Soccer 2004" },
+#endif
+	{ "airport", "Let's Explore the Airport with Buzzy" },
+	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
+	{ "baseball", "Backyard Baseball" },
 	{ "Blues123Time", "Blue's 123 Time Activities" },
 	{ "BluesABCTime", "Blue's ABC Time Activities" },
 	{ "BluesBirthday", "Blue's Birthday Adventure" },
@@ -96,31 +104,25 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "dog", "Putt-Putt and Pep's Dog on a Stick" },
 	{ "farm", "Let's Explore the Farm with Buzzy" },
 	{ "football", "Backyard Football" },
-	{ "football2002", "Backyard Football 2002" },
 	{ "freddi", "Freddi Fish 1: The Case of the Missing Kelp Seeds" },
 	{ "freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse" },
 	{ "freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell" },
 	{ "freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch" },
-	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
 	{ "FreddisFunShop", "Freddi Fish's One-Stop Fun Shop" },
 	{ "jungle", "Let's Explore the Jungle with Buzzy" },
 	{ "lost", "Pajama Sam's Lost & Found" },
 	{ "maze", "Freddi Fish and Luther's Maze Madness" },
-	{ "moonbase", "Moonbase Commander" },
 	{ "mustard", "SPY Fox in Hold the Mustard" },
 	{ "pajama", "Pajama Sam 1: No Need to Hide When It's Dark Outside" },
 	{ "pajama2", "Pajama Sam 2: Thunder and Lightning Aren't so Frightening" },
 	{ "pajama3", "Pajama Sam 3: You Are What You Eat From Your Head to Your Feet" },
-	{ "pjgames", "Pajama Sam: Games to Play On Any Day" },
 	{ "puttcircus", "Putt-Putt Joins the Circus" },
 	{ "puttrace", "Putt-Putt Enters the Race" },
 	{ "PuttsFunShop", "Putt-Putt's One-Stop Fun Shop" },
 	{ "putttime", "Putt-Putt Travels Through Time" },
 	{ "puttzoo", "Putt-Putt Saves the Zoo" },
-	{ "readtime", "Blue's Reading Time Activities" },
 	{ "SamsFunShop", "Pajama Sam's One-Stop Fun Shop" },
 	{ "soccer", "Backyard Soccer" },
-	{ "Soccer2004", "Backyard Soccer 2004" },
 	{ "SoccerMLS", "Backyard Soccer MLS Edition" },
 	{ "socks", "Pajama Sam's Sock Works" },
 	{ "spyfox", "SPY Fox 1: Dry Cereal" },
@@ -500,22 +502,11 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttputt", "Putt-Putt", kGenHEMacNoParens, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 #ifdef ENABLE_HE
-	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
+#ifdef ENABLE_RGB_COLOR
 	{ "arttime", "arttime", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "arttime", "Blues-ArtTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "arttime", "artdemo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "arttime", "Blues-ArtTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
-	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
-	{ "baseball", "baseball", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "baseball", "BaseBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "baseball", "basedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "baseball2001", "baseball2001", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "baseball2001", "bb2demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -528,6 +519,59 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "basketball", "basketball", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "basketball", "Basketball", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "football2002", "FootBall2002", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "football2002", "Football 2002", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiCove", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddicove", "FreddiDZZ", kGenHEPC, Common::NL_NLD, UNK, 0 },
+	{ "freddicove", "FreddiDZZ", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
+	{ "freddicove", "FreddiMML", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "freddicove", "FreddiMML", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
+	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FreddiCoveDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "freddicove", "ff5demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "freddicove", "FF5Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
+
+	{ "moonbase", "moonbase", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "moonbase", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
+
+	{ "pjgames", "pjgames", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "pjgames", "PJGames", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "readtime", "Blue's Reading Time", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "Blues-ReadingTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "readtime", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "readtime", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "Soccer2004", "Soccer2004", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "Soccer2004", "Soccer 2004", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "SF3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "spyozon", "Spy Ozone Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "SPYFoxAIW", kGenHEPC, Common::DE_DEU, UNK, 0 },
+	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "spyozon", "SPYFoxSOS", kGenHEPC, Common::FR_FRA, UNK, 0 },
+	{ "spyozon", "SPYFoxSOS", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "spyozon", "ozonepre.cup", kGenUnchanged, UNK_LANG, UNK, "HE CUP" },
+#endif
+
+	{ "airport", "airport", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "airport", "airdemo", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "airport", "Airport Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "airport", "The AirPort", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "balloon", "balloon", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "balloon", "Balloon-O-Rama", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "baseball", "baseball", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "baseball", "BaseBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+	{ "baseball", "basedemo.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
 
 	{ "blues123time", "Blues123time", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "blues123time", "Blue's 123 Time", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -570,9 +614,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "football", "FootBall", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "football", "FootBall Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "football", "footdemo", kGenHEPC, UNK_LANG, UNK, 0 },
-
-	{ "football2002", "FootBall2002", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "football2002", "Football 2002", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "freddi", "freddi", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "freddi", "Freddi", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -632,18 +673,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "freddi4", "MaliceMRC", kGenHEPC, Common::FR_FRA, UNK, 0 },
 	{ "freddi4", "Mm4demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
 
-	{ "freddicove", "freddicove", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FreddiCCC", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FreddiCove", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "FreddiDZZ", kGenHEPC, Common::NL_NLD, UNK, 0 },
-	{ "freddicove", "FreddiDZZ", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "FreddiMML", kGenHEPC, Common::FR_FRA, UNK, 0 },
-	{ "freddicove", "FreddiMML", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "FFCoveDemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FreddiCoveDemo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "freddicove", "ff5demo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "freddicove", "FF5Demo", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
-
 	{ "FreddisFunShop", "FreddisFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "FreddisFunShop", "Freddi's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
@@ -660,9 +689,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "maze", "Doolhof", kGenHEPC, Common::NL_NLD, UNK, 0 },
 	{ "maze", "Doolhof", kGenHEMac, Common::NL_NLD, Common::kPlatformMacintosh, 0 },
 	{ "maze", "Maze Madness", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
-	{ "moonbase", "moonbase", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "moonbase", "moondemo", kGenHEPC, UNK_LANG, UNK, 0 },
 
 	{ "mustard", "mustard", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "mustard", "Mustard", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -715,9 +741,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "pajama3", "PyjamaSKS", kGenHEPC, Common::DE_DEU, UNK, 0 },
 	{ "pajama3", "PyjamaSKS", kGenHEMac, Common::DE_DEU, Common::kPlatformMacintosh, 0 },
 	{ "pajama3", "UKPajamaEAT", kGenHEPC, Common::RU_RUS, UNK, 0 },
-
-	{ "pjgames", "pjgames", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "pjgames", "PJGames", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "puttcircus", "puttcircus", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "puttcircus", "circdemo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -788,11 +811,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "puttzoo", "Zoo Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "puttzoo", "Putt-Putt Saves the Zoo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
-	{ "readtime", "Blue's Reading Time", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "readtime", "Blues-ReadingTime", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "readtime", "readDemo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "readtime", "Blues-ReadingTime Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
 	{ "SamsFunShop", "SamsFunShop", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "SamsFunShop", "Sam's FunShop", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
@@ -801,9 +819,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "SoccerMLS", "SoccerMLS", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "SoccerMLS", "Backyard Soccer MLS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
-	{ "Soccer2004", "Soccer2004", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "Soccer2004", "Soccer 2004", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "socks", "socks", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "socks", "SockWorks", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
@@ -845,17 +860,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 	{ "spyfox2", "SpyFoxSR", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 	{ "spyfox2", "SPYMini", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyfox2", "spy2preview.cup", kGenUnchanged, UNK_LANG, UNK, 0 },
-
-	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "spyozon", "SF3Demo", kGenHEPC, Common::FR_FRA, UNK, 0 },
-	{ "spyozon", "Spy Ozone Demo", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyozon", "SPYFoxAIW", kGenHEPC, Common::DE_DEU, UNK, 0 },
-	{ "spyozon", "SPYFoxOZU", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "spyozon", "SPYFoxSOS", kGenHEPC, Common::FR_FRA, UNK, 0 },
-	{ "spyozon", "SPYFoxSOS", kGenHEMac, Common::FR_FRA, Common::kPlatformMacintosh, 0 },
-	{ "spyozon", "SpyOzon", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-	{ "spyozon", "ozonepre.cup", kGenUnchanged, UNK_LANG, UNK, "HE CUP" },
 
 	{ "thinker1", "1grademo", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "thinker1", "thinker1", kGenHEPC, UNK_LANG, UNK, 0 },
