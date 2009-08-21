@@ -2500,9 +2500,10 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE(Actor, _flip, sleByte, VER(32)),
 		MKLINE(Actor, _heSkipLimbs, sleByte, VER(32)),
 
-		// Actor palette grew from 64 to 256 bytes
+		// Actor palette grew from 64 to 256 bytes and switched to uint16 in HE games
 		MKARRAY_OLD(Actor, _palette[0], sleByte, 64, VER(8), VER(9)),
-		MKARRAY(Actor, _palette[0], sleByte, 256, VER(10)),
+		MKARRAY_OLD(Actor, _palette[0], sleByte, 256, VER(10), VER(79)),
+		MKARRAY(Actor, _palette[0], sleUint16, 256, VER(80)),
 
 		MK_OBSOLETE(Actor, _mask, sleByte, VER(8), VER(9)),
 		MKLINE(Actor, _shadowMode, sleByte, VER(8)),
