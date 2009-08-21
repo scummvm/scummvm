@@ -583,6 +583,7 @@ $engines_help
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-16bit          don't enable 16bit color support
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-scalers        exclude scalers
   --enable-text-console    use text console instead of graphical console
