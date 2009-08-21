@@ -30,9 +30,39 @@
 namespace Gob {
 
 SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
-	{    "did.inf", kSaveModeSave,   0, 0}, // 
-	{    "dan.itk", kSaveModeNone,   0, 0}, // Playtoons CK detection file
-
+	{   "did.inf", kSaveModeSave,   0, 0}, // Purpose ignored at the moment, intensively used to save things.
+	{   "dan.itk", kSaveModeNone,   0, 0}, // Playtoons CK detection file
+	{ "titre.009", kSaveModeIgnore, 0, 0}, // Playtoons theoritical title files that are checked for nothing
+	{ "titre.010", kSaveModeIgnore, 0, 0},
+	{ "titre.011", kSaveModeIgnore, 0, 0},
+	{ "titre.012", kSaveModeIgnore, 0, 0},
+	{ "titre.013", kSaveModeIgnore, 0, 0},
+	{ "titre.014", kSaveModeIgnore, 0, 0},
+	{ "titre.015", kSaveModeIgnore, 0, 0},
+	{ "titre.016", kSaveModeIgnore, 0, 0},
+	{ "titre.017", kSaveModeIgnore, 0, 0},
+	{ "titre.018", kSaveModeIgnore, 0, 0},
+	{ "titre.019", kSaveModeIgnore, 0, 0},
+	{ "titre.020", kSaveModeIgnore, 0, 0},
+	{ "titre.021", kSaveModeIgnore, 0, 0},
+	{ "titre.022", kSaveModeIgnore, 0, 0},
+	{ "titre.023", kSaveModeIgnore, 0, 0},
+	{ "titre.024", kSaveModeIgnore, 0, 0},
+	{ "titre.025", kSaveModeIgnore, 0, 0},
+	{ "titre.026", kSaveModeIgnore, 0, 0},
+	{ "titre.027", kSaveModeIgnore, 0, 0},
+	{ "titre.028", kSaveModeIgnore, 0, 0},
+	{ "titre.029", kSaveModeIgnore, 0, 0},
+	{ "titre.030", kSaveModeIgnore, 0, 0},
+	{ "titre.031", kSaveModeIgnore, 0, 0},
+	{ "titre.032", kSaveModeIgnore, 0, 0},
+	{ "titre.033", kSaveModeIgnore, 0, 0},
+	{ "titre.034", kSaveModeIgnore, 0, 0},
+	{ "titre.035", kSaveModeIgnore, 0, 0},
+	{ "titre.036", kSaveModeIgnore, 0, 0},
+	{ "titre.037", kSaveModeIgnore, 0, 0},
+	{ "titre.038", kSaveModeIgnore, 0, 0},
+	{ "titre.039", kSaveModeIgnore, 0, 0},
 };
 
 SaveLoad_Playtoons::GameHandler::File::File(GobEngine *vm, const char *base) :
