@@ -33,6 +33,27 @@
 
 namespace Scumm {
 
+uint8 *ScummEngine::getHEPaletteSlot(uint16 palSlot) {
+	assertRange(0, palSlot, _numPalettes, "palette");
+
+	if (_game.heversion >= 99) {
+		if (palSlot)
+			return _hePalettes + palSlot * _hePaletteSlot + 768;
+		else
+			return _hePalettes + _hePaletteSlot + 768;
+	}
+
+	return NULL;
+}
+
+uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b) {
+	uint16 ar = (r >> 3) << 10;
+	uint16 ag = (g >> 3) <<  5;
+	uint16 ab = (b >> 3) <<  0;
+	uint16 col = ar | ag | ab;
+	return col;
+}
+
 void ScummEngine::resetPalette() {
 	if (_game.version <= 1) {
 		if (_game.platform == Common::kPlatformApple2GS) {
@@ -310,9 +331,6 @@ void ScummEngine::setDirtyColors(int min, int max) {
 		_palDirtyMin = min;
 	if (_palDirtyMax < max)
 		_palDirtyMax = max;
-
-	if (_hePaletteCache)
-		memset(_hePaletteCache, -1, 65536);
 }
 
 void ScummEngine::initCycl(const byte *ptr) {
@@ -798,16 +816,6 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 }
 #endif
 
-
-int ScummEngine::convert16BitColor(uint16 color, uint8 r, uint8 g, uint8 b) {
-	// HACK: Find the closest matching color, and store in
-	// cache for faster access.
-	if (_hePaletteCache[color] == -1) {
-		_hePaletteCache[color] = remapPaletteColor(r, g, b, -1);
-	}
-
-	return _hePaletteCache[color];
-}
 
 int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	byte *pal;

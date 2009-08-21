@@ -110,7 +110,7 @@ _alsa=auto
 _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
-_readline=auto
+_16bit=yes_readline=auto
 # Default option behaviour yes/no
 _text_console=no
 _mt32emu=yes

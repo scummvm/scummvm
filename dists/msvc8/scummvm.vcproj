@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="8.00"
 	Name="scummvm"
 	ProjectGUID="{8434CB15-D08F-427D-9E6D-581AE5B28440}"
 	RootNamespace="scummvm"
@@ -47,6 +47,9 @@
 			<File RelativePath="..\..\common\debug.h" />
 			<File RelativePath="..\..\common\endian.h" />
 			<File RelativePath="..\..\common\error.h" />
+			<File RelativePath="..\..\common\EventDispatcher.cpp" />
+			<File RelativePath="..\..\common\EventRecorder.cpp" />
+			<File RelativePath="..\..\common\EventRecorder.h" />
 			<File RelativePath="..\..\common\events.h" />
 			<File RelativePath="..\..\common\file.cpp" />
 			<File RelativePath="..\..\common\file.h" />
@@ -347,6 +350,8 @@
 		</Filter>
 		<Filter Name="graphics">
 			<File RelativePath="..\..\graphics\colormasks.h" />
+			<File RelativePath="..\..\graphics\conversion.cpp" />
+			<File RelativePath="..\..\graphics\conversion.h" />
 			<File RelativePath="..\..\graphics\cursorman.cpp" />
 			<File RelativePath="..\..\graphics\cursorman.h" />
 			<File RelativePath="..\..\graphics\dither.cpp" />
@@ -357,6 +362,8 @@
 			<File RelativePath="..\..\graphics\fontman.h" />
 			<File RelativePath="..\..\graphics\iff.cpp" />
 			<File RelativePath="..\..\graphics\iff.h" />
+			<File RelativePath="..\..\graphics\jpeg.cpp" />
+			<File RelativePath="..\..\graphics\jpeg.h" />
 			<File RelativePath="..\..\graphics\imagedec.cpp" />
 			<File RelativePath="..\..\graphics\imagedec.h" />
 			<File RelativePath="..\..\graphics\pixelformat.h" />

@@ -122,6 +122,8 @@ int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 	} else if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
 		// The default game data path is set to './' by ScummVM
 		r = 2;
+	} else if (dst[2] == 'b' && dst[5] == 'k') { // Backyard Basketball INI
+		r = 13;
 	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (HE72 - HE100)
 		// The default save game path is set to '*/' by ScummVM
 		r = 2;

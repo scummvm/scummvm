@@ -243,7 +243,7 @@ void ScummEngine_v80he::o80_writeConfigFile() {
 }
 
 void ScummEngine_v80he::o80_cursorCommand() {
-	int a, i;
+	int a, b, i;
 	int args[16];
 
 	byte subOp = fetchScriptByte();
@@ -252,12 +252,12 @@ void ScummEngine_v80he::o80_cursorCommand() {
 	case 0x13:
 	case 0x14:
 		a = pop();
-		_wiz->loadWizCursor(a);
+		_wiz->loadWizCursor(a, 0);
 		break;
 	case 0x3C:
-		pop();
+		b = pop();
 		a = pop();
-		_wiz->loadWizCursor(a);
+		_wiz->loadWizCursor(a, b);
 		break;
 	case 0x90:		// SO_CURSOR_ON Turn cursor on
 		_cursor.state = 1;

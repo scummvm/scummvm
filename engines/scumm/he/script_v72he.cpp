@@ -1484,6 +1484,7 @@ void ScummEngine_v72he::o72_readFile() {
 		fetchScriptByte();
 		size = pop();
 		slot = pop();
+		assert(_hInFileTable[slot]);
 		val = readFileToArray(slot, size);
 		push(val);
 		break;
@@ -1573,7 +1574,7 @@ void ScummEngine_v72he::o72_rename() {
 }
 
 void ScummEngine_v72he::o72_getPixel() {
-	byte area;
+	uint16 area;
 
 	int y = pop();
 	int x = pop();
@@ -1588,11 +1589,17 @@ void ScummEngine_v72he::o72_getPixel() {
 	switch (subOp) {
 	case 9: // HE 100
 	case 218:
-		area = *vs->getBackPixels(x, y - vs->topline);
+		if (_game.features & GF_16BIT_COLOR)
+			area = READ_UINT16(vs->getBackPixels(x, y - vs->topline));
+		else
+			area = *vs->getBackPixels(x, y - vs->topline);
 		break;
 	case 8: // HE 100
 	case 219:
-		area = *vs->getPixels(x, y - vs->topline);
+		if (_game.features & GF_16BIT_COLOR)
+			area = READ_UINT16(vs->getPixels(x, y - vs->topline));
+		else
+			area = *vs->getPixels(x, y - vs->topline);
 		break;
 	default:
 		error("o72_getPixel: default case %d", subOp);
@@ -1805,9 +1812,7 @@ void ScummEngine_v72he::o72_readINI() {
 	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
-		if (!strcmp((char *)option, "NoFontsInstalled")) {
-			push(1);
-		} else if (!strcmp((char *)option, "NoPrinting")) {
+		if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));

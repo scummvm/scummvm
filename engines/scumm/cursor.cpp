@@ -111,11 +111,20 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 }
 
 void ScummEngine::updateCursor() {
-	const int transColor = (_game.heversion >= 80) ? 5 : 255;
+	int transColor = (_game.heversion >= 80) ? 5 : 255;
+#ifdef ENABLE_RGB_COLOR
+	Graphics::PixelFormat format = _system->getScreenFormat();
+	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY,
+							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
+							(_game.heversion == 70 ? 2 : 1),
+							&format);
+#else
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
 							_cursor.hotspotX, _cursor.hotspotY,
 							(_game.platform == Common::kPlatformNES ? _grabbedCursor[63] : transColor),
 							(_game.heversion == 70 ? 2 : 1));
+#endif
 }
 
 void ScummEngine_v6::grabCursor(int x, int y, int w, int h) {
@@ -138,7 +147,7 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 	uint size;
 	byte *dst;
 
-	size = width * height;
+	size = width * height * _bitDepth;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
 
@@ -148,8 +157,8 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 
 	dst = _grabbedCursor;
 	for (; height; height--) {
-		memcpy(dst, ptr, width);
-		dst += width;
+		memcpy(dst, ptr, width * _bitDepth);
+		dst += width * _bitDepth;
 		ptr += pitch;
 	}
 
@@ -166,8 +175,13 @@ void ScummEngine_v70he::setDefaultCursor() {
 	static const byte palette[] = {0,    0,    0,    0,
 								   0xff, 0xff, 0xff, 0,
 								   0,    0,    0,    0};
-
-	memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
+	
+	if (_bitDepth == 2) {
+		for (i = 0; i < 1024; i++)
+			WRITE_UINT16(_grabbedCursor + i * 2, 5);
+	} else {
+		memset(_grabbedCursor, 5, sizeof(_grabbedCursor));
+	}
 
 	_cursor.hotspotX = _cursor.hotspotY = 2;
 	src = default_he_cursor;
@@ -180,10 +194,16 @@ void ScummEngine_v70he::setDefaultCursor() {
 		for (j = 0; j < 32; j++) {
 			switch ((p & (0x3 << 14)) >> 14) {
 				case 1:
-					_grabbedCursor[32 * i + j] = 0xfe;
+					if (_bitDepth == 2)
+						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[4], palette[5], palette[6]));
+					else
+						_grabbedCursor[32 * i + j] = 0xfe;
 					break;
 				case 2:
-					_grabbedCursor[32 * i + j] = 0xfd;
+					if (_bitDepth == 2)
+						WRITE_UINT16(_grabbedCursor + 64 * i + j * 2, get16BitColor(palette[0], palette[1], palette[2]));
+					else
+						_grabbedCursor[32 * i + j] = 0xfd;
 					break;
 				default:
 					break;
@@ -195,9 +215,11 @@ void ScummEngine_v70he::setDefaultCursor() {
 		}
 	}
 
-	// Since white color position is not guaranteed
-	// we setup our own palette if supported by backend
-	CursorMan.replaceCursorPalette(palette, 0xfd, 3);
+	if (_bitDepth == 1) {
+		// Since white color position is not guaranteed
+		// we setup our own palette if supported by backend
+		CursorMan.replaceCursorPalette(palette, 0xfd, 3);
+	}
 
 	updateCursor();
 }

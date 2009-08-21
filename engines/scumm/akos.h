@@ -60,7 +60,7 @@ protected:
 	uint16 _codec;
 
 	// actor _palette
-	byte _palette[256];
+	uint16 _palette[256];
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
@@ -107,7 +107,7 @@ public:
 	int16 _actorHitX, _actorHitY;
 	bool _actorHitResult;
 
-	void setPalette(byte *_palette);
+	void setPalette(uint16 *_palette);
 	void setFacing(const Actor *a);
 	void setCostume(int costume, int shadow);
 

@@ -138,17 +138,16 @@ struct GfxState {
  * @param[in] state			The state to initialize
  * @param[in] xfact			Horizontal scale factor
  * @param[in] yfact			Vertical scale factors
- * @param[in] bpp			Bytes per pixel to initialize with, or 0
- * 							(GFX_COLOR_MODE_AUTO) to auto-detect
+ * @param[in] mode			Graphics mode to use
  * @param[in] options		Rendering options
  * @param[in] resManager	Resource manager to use
  * @return					GFX_OK on success, GFX_ERROR if that particular mode
  * 							is unavailable, or GFX_FATAL if the graphics driver
  * 							is unable to provide any useful graphics support
  */
-int gfxop_init(int version, GfxState *state, gfx_options_t *options,
-	ResourceManager *resManager, int xfact = 1, int yfact = 1,
-	gfx_color_mode_t bpp = GFX_COLOR_MODE_INDEX);
+int gfxop_init(int version, GfxState *state, 
+		gfx_options_t *options, ResourceManager *resManager,
+		Graphics::PixelFormat mode, int xfact = 1, int yfact = 1);
 
 /**
  * Deinitializes a currently active driver.

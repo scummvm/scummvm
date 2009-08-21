@@ -28,6 +28,10 @@
 #include "common/scummsys.h"
 #include "common/stack.h"
 #include "common/singleton.h"
+#include "graphics/pixelformat.h"
+#ifdef ENABLE_RGB_COLOR
+#include "common/system.h"
+#endif
 
 namespace Graphics {
 
@@ -59,18 +63,19 @@ public:
 	 * safely freed afterwards.
 	 *
 	 * @param buf		the new cursor data
-	 * @param w		the width
-	 * @param h		the height
+	 * @param w			the width
+	 * @param h			the height
 	 * @param hotspotX	the hotspot X coordinate
 	 * @param hotspotY	the hotspot Y coordinate
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
-	 *
+	 * @param format	a pointer to the pixel format which the cursor graphic uses, 
+	 *					CLUT8 will be used if this is NULL or not specified.
 	 * @note It is ok for the buffer to be a NULL pointer. It is sometimes
 	 *       useful to push a "dummy" cursor and modify it later. The
 	 *       cursor will be added to the stack, but not to the backend.
 	 */
-	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
+	void pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
 
 	/**
 	 * Pop a cursor from the stack, and restore the previous one to the
@@ -90,8 +95,10 @@ public:
 	 * @param hotspotY	the hotspot Y coordinate
 	 * @param keycolor	the index for the transparent color
 	 * @param targetScale	the scale for which the cursor is designed
+	 * @param format	a pointer to the pixel format which the cursor graphic uses,
+	 *					CLUT8 will be used if this is NULL or not specified.
 	 */
-	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1);
+	void replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL);
 
 	/**
 	 * Pop all of the cursors and cursor palettes from their respective stacks.
@@ -166,13 +173,24 @@ private:
 		uint _height;
 		int _hotspotX;
 		int _hotspotY;
-		byte _keycolor;
+		uint32 _keycolor;
+		Graphics::PixelFormat _format;
 		byte _targetScale;
 
 		uint _size;
-
-		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int targetScale = 1) {
+		Cursor(const byte *data, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int targetScale = 1, const Graphics::PixelFormat *format = NULL) {
+#ifdef ENABLE_RGB_COLOR
+			if (!format)
+				_format = Graphics::PixelFormat::createFormatCLUT8();
+			 else 
+				_format = *format;
+			_size = w * h * _format.bytesPerPixel;
+			_keycolor &= ((1 << (_format.bytesPerPixel << 3)) - 1);
+#else
+			_format = Graphics::PixelFormat::createFormatCLUT8();
 			_size = w * h;
+			_keycolor &= 0xFF;
+#endif
 			_data = new byte[_size];
 			if (data && _data)
 				memcpy(_data, data, _size);
@@ -180,7 +198,6 @@ private:
 			_height = h;
 			_hotspotX = hotspotX;
 			_hotspotY = hotspotY;
-			_keycolor = keycolor;
 			_targetScale = targetScale;
 		}
 
@@ -216,7 +233,6 @@ private:
 			delete[] _data;
 		}
 	};
-
 	Common::Stack<Cursor *> _cursorStack;
 	Common::Stack<Palette *> _cursorPaletteStack;
 };

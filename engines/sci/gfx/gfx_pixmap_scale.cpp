@@ -70,14 +70,11 @@ void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale
 	// Calculate all colors
 	for (i = 0; i < pxm->colors_nr(); i++) {
 		int col;
-
 		const PaletteEntry& color = pxm->palette->getColor(i);
 		if (mode->palette)
 			col = color.parent_index;
 		else {
-			col = mode->red_mask & ((EXTEND_COLOR(color.r)) >> mode->red_shift);
-			col |= mode->green_mask & ((EXTEND_COLOR(color.g)) >> mode->green_shift);
-			col |= mode->blue_mask & ((EXTEND_COLOR(color.b)) >> mode->blue_shift);
+			col = mode->format.ARGBToColor(0, color.r, color.g, color.b);
 			col |= alpha_ormask;
 		}
 		result_colors[i] = col;

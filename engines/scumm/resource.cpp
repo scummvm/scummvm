@@ -919,7 +919,11 @@ bool ScummEngine::isResourceInUse(int type, int i) const {
 	case rtCostume:
 		return isCostumeInUse(i);
 	case rtSound:
-		return _sound->isSoundInUse(i);
+		// Sound resource 1 is used for queued speech
+		if (_game.heversion >= 60 && i == 1)
+			return true;
+		else
+			return _sound->isSoundInUse(i);
 	case rtCharset:
 		return _charset->getCurID() == i;
 	case rtImage:

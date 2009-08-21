@@ -110,7 +110,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _currentScript(0xFF), // Let debug() work on init stage
 	  _messageDialog(0), _pauseDialog(0), _scummMenuDialog(0), _versionDialog(0) {
 
-	if (_game.platform == Common::kPlatformNES) {
+	if (_game.features & GF_16BIT_COLOR) {
+		_gdi = new Gdi16Bit(this);
+	} else if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
 	} else if (_game.version <= 1) {
 		_gdi = new GdiV1(this);
@@ -251,6 +253,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 
+	_bitDepth = 0;
 	_doEffect = false;
 	_snapScroll = false;
 	_currentLights = 0;
@@ -267,8 +270,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_palManipPalette = NULL;
 	_palManipIntermediatePal = NULL;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-	_hePaletteCache = NULL;
 	_hePalettes = NULL;
+	_hePaletteSlot = 0;
 	_shadowPalette = NULL;
 	_shadowPaletteSize = 0;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
@@ -523,9 +526,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
+	_bitDepth = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+
 	// Allocate gfx compositing buffer (not needed for V7/V8 games).
 	if (_game.version < 7)
-		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight);
+		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bitDepth);
 	else
 		_compositeBuf = 0;
 
@@ -830,7 +835,6 @@ ScummEngine_v90he::~ScummEngine_v90he() {
 		delete _logicHE;
 	}
 	if (_game.heversion >= 99) {
-		free(_hePaletteCache);
 		free(_hePalettes);
 	}
 }
@@ -1095,6 +1099,15 @@ Common::Error ScummEngine::init() {
 					// CJK FT and DIG use usual NUT fonts, not FM-TOWNS ROM, so
 					// there is no text surface for them. This takes that into account
 					(_screenWidth * _textSurfaceMultiplier > 320));
+	} else if (_game.features & GF_16BIT_COLOR) {
+#ifdef ENABLE_RGB_COLOR
+		Graphics::PixelFormat format = Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0);
+		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320, &format);
+		if (format != _system->getScreenFormat())
+			return Common::kUnsupportedColorMode;
+#else
+		error("16bit color support is required for this game");
+#endif
 	} else {
 		initGraphics(_screenWidth, _screenHeight, _screenWidth > 320);
 	}
@@ -1198,7 +1211,7 @@ void ScummEngine::setupScumm() {
 	int maxHeapThreshold = -1;
 
 	if (_game.features & GF_16BIT_COLOR) {
-		// 16Bit color games require double the memory, due to increased resource sizes.
+		// 16bit color games require double the memory, due to increased resource sizes.
 		maxHeapThreshold = 12 * 1024 * 1024;
 	} else if (_game.features & GF_NEW_COSTUMES) {
 		// Since the new costumes are very big, we increase the heap limit, to avoid having
@@ -1220,7 +1233,7 @@ void ScummEngine::setupScumm() {
 	}
 
 	free(_compositeBuf);
-	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier);
+	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bitDepth);
 }
 
 #ifdef ENABLE_SCUMM_7_8
@@ -1562,11 +1575,9 @@ void ScummEngine_v99he::resetScumm() {
 
 	ScummEngine_v90he::resetScumm();
 
-	_hePaletteCache = (int16 *)malloc(65536);
-	memset(_hePaletteCache, -1, 65536);
-
-	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * 1024);
-	memset(_hePalettes, 0, (_numPalettes + 1) * 1024);
+	_hePaletteSlot = (_game.features & GF_16BIT_COLOR) ? 1280 : 1024;
+	_hePalettes = (uint8 *)malloc((_numPalettes + 1) * _hePaletteSlot);
+	memset(_hePalettes, 0, (_numPalettes + 1) * _hePaletteSlot);
 
 	// Array 129 is set to base name
 	len = strlen(_filenamePattern.pattern);
