@@ -364,6 +364,8 @@
 			<File RelativePath="..\..\graphics\iff.h" />
 			<File RelativePath="..\..\graphics\imagedec.cpp" />
 			<File RelativePath="..\..\graphics\imagedec.h" />
+			<File RelativePath="..\..\graphics\jpeg.cpp" />
+			<File RelativePath="..\..\graphics\jpeg.h" />
 			<File RelativePath="..\..\graphics\pixelformat.h" />
 			<File RelativePath="..\..\graphics\primitives.cpp" />
 			<File RelativePath="..\..\graphics\primitives.h" />
