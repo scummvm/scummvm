@@ -40,7 +40,7 @@
 #include "backends/platform/psp/powerman.h"
 
 
-#include "osys_psp_gu.h"
+#include "osys_psp.h"
 #include "./trace.h"
 
 
@@ -151,7 +151,7 @@ int main(void) {
 	static const char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
-	g_system = new OSystem_PSP_GU();
+	g_system = new OSystem_PSP();
 	assert(g_system);
 
 	int res = scummvm_main(argc, argv);

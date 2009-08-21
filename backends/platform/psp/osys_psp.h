@@ -50,6 +50,11 @@ public:
 	static OSystem *instance();
 
 protected:
+	struct Vertex {
+		float u,v;
+		float x,y,z;
+	};
+
 	uint16	_screenWidth;
 	uint16	_screenHeight;
 	uint16  _overlayWidth;
@@ -70,6 +75,14 @@ protected:
 	byte	_mouseKeyColour;
 	byte	*_mouseBuf;
 	bool	_cursorPaletteDisabled;
+
+	int _graphicMode;
+	Vertex *_vertices;
+	unsigned short* _clut;
+	unsigned short* _kbdClut;
+	bool _keyboardVisible;
+	int _keySelected;
+	int _keyboardMode;
 
 	uint32	_prevButtons;
 	uint32	_lastPadCheck;
@@ -101,6 +114,8 @@ public:
 	virtual int16 getWidth();
 	virtual int16 getHeight();
 	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	virtual void disableCursorPalette(bool disable);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -123,6 +138,7 @@ public:
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
 
 	virtual bool pollEvent(Common::Event &event);
+	virtual bool processInput(Common::Event &event);
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
