@@ -240,8 +240,26 @@ int OSystem_GP2X::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
-void OSystem_GP2X::initSize(uint w, uint h){
+void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
+
+#ifdef ENABLE_RGB_COLOR
+	//avoid redundant format changes
+	Graphics::PixelFormat newFormat;
+	if (!format)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
+
+	assert(newFormat.bytesPerPixel > 0);
+
+	if (newFormat != _videoMode.format)
+	{
+		_videoMode.format = newFormat;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = newFormat;
+	}
+#endif
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -1212,7 +1230,17 @@ void OSystem_GP2X::warpMouse(int x, int y) {
 	}
 }
 
-void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+#ifdef ENABLE_RGB_COLOR
+	if (!format)
+		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
+		_cursorFormat = *format;
+	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+#else
+	keycolor &= 0xFF;
+#endif
+
 	if (w == 0 || h == 0)
 		return;
 
@@ -1246,16 +1274,26 @@ void OSystem_GP2X::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x
 	}
 
 	free(_mouseData);
-
+#ifdef ENABLE_RGB_COLOR
+	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
+	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
+#else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+#endif
+
 	blitCursor();
 }
 
 void OSystem_GP2X::blitCursor() {
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
+#ifdef ENABLE_RGB_COLOR
+	uint32 color;
+	uint32 colormask = (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+#else
 	byte color;
+#endif
 	int w, h, i, j;
 
 	if (!_mouseOrigSurface || !_mouseData)
@@ -1289,13 +1327,29 @@ void OSystem_GP2X::blitCursor() {
 
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			color = *srcPtr;
-			if (color != _mouseKeyColor) {	// transparent, don't draw
-				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-					palette[color].r, palette[color].g, palette[color].b);
+#ifdef ENABLE_RGB_COLOR
+			if (_cursorFormat.bytesPerPixel > 1) {
+				color = (*(uint32 *) srcPtr) & colormask;
+				if (color != _mouseKeyColor) {	// transparent, don't draw
+					uint8 r,g,b;
+					_cursorFormat.colorToRGB(color,r,g,b);
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+						r, g, b);
+				}
+				dstPtr += 2;
+				srcPtr += _cursorFormat.bytesPerPixel;
+			} else {
+#endif
+				color = *srcPtr;
+				if (color != _mouseKeyColor) {	// transparent, don't draw
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+						palette[color].r, palette[color].g, palette[color].b);
+				}
+				dstPtr += 2;
+				srcPtr++;
+#ifdef ENABLE_RGB_COLOR
 			}
-			dstPtr += 2;
-			srcPtr++;
+#endif
 		}
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
 	}
