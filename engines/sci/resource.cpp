@@ -356,6 +356,8 @@ int ResourceManager::addAppropriateSources() {
 #ifdef ENABLE_SCI32
 	else if (Common::File::exists("RESMAP.000"))
 		map = addExternalMap("RESMAP.000");
+	else if (Common::File::exists("RESMAP.001"))
+		map = addExternalMap("RESMAP.001");
 #endif
 	else
 		return 0;
@@ -746,14 +748,11 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	while (!fileStream->eos()) {
 		directoryType = fileStream->readByte();
 		directoryOffset = fileStream->readUint16LE();
-		
+
 		// Only SCI32 has directory type < 0x80
-		if (directoryType < 0x80 && mapDetected != kResVersionUnknown && mapDetected != kResVersionSci32)
+		if (directoryType < 0x80 && (mapDetected == kResVersionUnknown || mapDetected == kResVersionSci32))
 			mapDetected = kResVersionSci32;
-		else
-			break;
-		
-		if (directoryType > 0xA0 && directoryType != 0xFF)
+		else if ((directoryType < 0x80) || (directoryType > 0xA0 && directoryType != 0xFF))
 			break;
 		
 		// Offset is above file size? -> definitely not SCI1/SCI1.1
