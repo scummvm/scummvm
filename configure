@@ -110,7 +110,8 @@ _alsa=auto
 _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
-_16bit=yes_readline=auto
+_16bit=yes
+_readline=auto
 # Default option behaviour yes/no
 _text_console=no
 _mt32emu=yes
@@ -637,6 +638,8 @@ DEBFLAGS="-g"
 
 for ac_option in $@; do
 	case "$ac_option" in
+	--enable-16bit)           _16bit=yes      ;;
+	--disable-16bit)          _16bit=no       ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--disable-scalers)        _build_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
@@ -1647,6 +1650,11 @@ fi
 add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
 
 #
+# Check whether 16bit color support is requested
+#
+add_to_config_mk_if_yes "$_16bit" 'ENABLE_RGB_COLOR = 1'
+
+#
 # Check whether to enable the (hq) scalers
 #
 add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
@@ -1994,6 +2002,10 @@ echo_n "$_backend"
 
 if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"
+fi
+
+if test "$_16bit" = yes ; then
+	echo_n ", 16bit color"
 fi
 
 if test "$_build_hq_scalers" = yes ; then
