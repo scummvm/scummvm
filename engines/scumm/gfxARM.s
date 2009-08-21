@@ -126,9 +126,13 @@ asmCopy8Col:
 	@ r1 = dstPitch
 	@ r2 = src
 	@ r3 = height
-	STMFD	r13!,{r14}
-	SUB	r1,r1,#4
+	@ <> = bitdepth
+	LDR	r12,[r13]
+	STR	r14,[r13,#-4]!
+	CMP	r12,#8
+	BNE	copy8Col16
 
+	SUB	r1,r1,#4
 	TST	r3,#1
 	ADDNE   r3,r3,#1
 	BNE	roll2
@@ -145,4 +149,33 @@ roll2:
 	STR	r14,[r0],r1
 	BNE	yLoop2
 
-	LDMFD	r13!,{PC}
+	LDR	PC,[r13],#4
+
+copy8Col16:
+	STMFD	r13!,{r4-r5}
+	SUB	r1,r1,#12
+	TST	r3,#1
+	ADDNE   r3,r3,#1
+	BNE	roll3
+yLoop3:
+	LDR	r4, [r2],#4
+	LDR	r5, [r2],#4
+	LDR	r12,[r2],#4
+	LDR	r14,[r2],r1
+	STR	r4, [r0],#4
+	STR	r5, [r0],#4
+	STR	r12,[r0],#4
+	STR	r14,[r0],r1
+roll3:
+	LDR	r4, [r2],#4
+	LDR	r5, [r2],#4
+	LDR	r12,[r2],#4
+	LDR	r14,[r2],r1
+	SUBS	r3,r3,#2
+	STR	r4, [r0],#4
+	STR	r5, [r0],#4
+	STR	r12,[r0],#4
+	STR	r14,[r0],r1
+	BNE	yLoop3
+
+	LDMFD	r13!,{r4,r5,PC}

@@ -38,7 +38,7 @@
 #ifdef USE_ARM_GFX_ASM
 extern "C" void asmDrawStripToScreen(int height, int width, void const* text, void const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
-extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
+extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height, uint8_t bitDepth);
 #endif /* USE_ARM_GFX_ASM */
 
 namespace Scumm {
@@ -784,8 +784,8 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 }
 
 void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
-	uint16 *dstL1 = (uint16 *)dst;
-	uint16 *dstL2 = (uint16 *)(dst + dstPitch);
+	uint16 *dstL1 = (uint16 *)(void *)dst;
+	uint16 *dstL2 = (uint16 *)(void *)(dst + dstPitch);
 
 	const int dstAdd = dstPitch - w;
 	const int srcAdd = srcPitch - w;
@@ -1114,7 +1114,7 @@ static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitD
 
 #ifdef USE_ARM_GFX_ASM
 
-#define copy8Col(A,B,C,D) asmCopy8Col(A,B,C,D)
+#define copy8Col(A,B,C,D,E) asmCopy8Col(A,B,C,D,E)
 
 #else
 

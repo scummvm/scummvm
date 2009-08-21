@@ -1084,7 +1084,7 @@ void OSystem_WINCE3::update_game_settings() {
 		_noDoubleTapRMB = ConfMan.getBool("no_doubletap_rightclick");
 }
 
-void OSystem_WINCE3::initSize(uint w, uint h) {
+void OSystem_WINCE3::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	if (_hasSmartphoneResolution && h == 240)
 		h = 200;  // mainly for the launcher
 
@@ -1120,7 +1120,7 @@ void OSystem_WINCE3::initSize(uint w, uint h) {
 	_videoMode.overlayWidth = w;
 	_videoMode.overlayHeight = h;
 
-	OSystem_SDL::initSize(w, h);
+	OSystem_SDL::initSize(w, h, format);
 
 	if (_scalersChanged) {
 		unloadGFXMode();
