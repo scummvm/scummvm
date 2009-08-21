@@ -143,7 +143,8 @@ int OSystem_Wii::getGraphicsMode() const {
 	return _activeGraphicsMode;
 }
 
-void OSystem_Wii::initSize(uint width, uint height) {
+void OSystem_Wii::initSize(uint width, uint height,
+							const Graphics::PixelFormat *format) {
 	if (_gameWidth != width || _gameHeight != height) {
 		printf("initSize %u %u\n", width, height);
 
@@ -429,6 +430,10 @@ int16 OSystem_Wii::getOverlayHeight() {
 	return _overlayHeight;
 }
 
+Graphics::PixelFormat OSystem_Wii::getOverlayFormat() const {
+	return Graphics::createPixelFormat<565>();
+}
+
 bool OSystem_Wii::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
@@ -442,15 +447,16 @@ void OSystem_Wii::warpMouse(int x, int y) {
 }
 
 void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
-									int hotspotY, byte keycolor,
-									int cursorTargetScale) {
+									int hotspotY, uint32 keycolor,
+									int cursorTargetScale,
+									const Graphics::PixelFormat *format) {
 	(void) cursorTargetScale; // TODO
 
 	_mouseWidth = w;
 	_mouseHeight = h;
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
-	_mouseKeyColor = keycolor;
+	_mouseKeyColor = keycolor & 0xff;
 
 	if (_mouseCursor)
 		free(_mouseCursor);
