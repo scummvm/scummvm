@@ -129,7 +129,7 @@ asmCopy8Col:
 	@ <> = bitdepth
 	LDR	r12,[r13]
 	STR	r14,[r13,#-4]!
-	CMP	r12,#8
+	CMP	r12,#1
 	BNE	copy8Col16
 
 	SUB	r1,r1,#4
