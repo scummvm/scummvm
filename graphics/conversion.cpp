@@ -93,7 +93,6 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 		} else {
 			for (int y = 0; y < h; y++) {
 				for (int x = 0; x < w; x++, src += 3, dst += 3) {
-					uint8 r, g, b, a;
 					memcpy(col, src, 3);
 					srcFmt.colorToARGB(color, a, r, g, b);
 					color = dstFmt.ARGBToColor(a, r, g, b);
