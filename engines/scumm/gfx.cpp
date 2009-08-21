@@ -784,6 +784,8 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 }
 
 void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
+	/* dst and dstPitch should both be even. So the use of (void *) in
+	 * the following casts to avoid the unnecessary warning is valid. */
 	uint16 *dstL1 = (uint16 *)(void *)dst;
 	uint16 *dstL2 = (uint16 *)(void *)(dst + dstPitch);
 
