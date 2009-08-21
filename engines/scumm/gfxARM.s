@@ -117,7 +117,7 @@ end:
 	@                             int         dstPitch,
 	@                             const byte *src,
 	@                             int         height,
-	@                             int         bitdepth);
+	@                             uint8       bitdepth);
 	@
 	@ In addition, we assume that src and dst are both word (4 byte)
 	@ aligned. This is the same assumption that the old 'inline' version
