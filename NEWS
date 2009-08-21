@@ -2,6 +2,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
 1.1.0 (????-??-??)
+ New Games:
+   - Added support for Blue's Art Time Activities.
+   - Added support for Blue's Reading Time Activities.
+   - Added support for Freddi Fish 5: The Case of the Creature of Coral Cave.
+   - Added support for Pajama Sam: Games to Play On Any Day.
+
  General:
    - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
 
