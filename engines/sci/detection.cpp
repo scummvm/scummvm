@@ -3130,11 +3130,17 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
 			// HACK: resource.map is located in the same directory as the other resource files,
 			// therefore add the directory here, so that the game files can be opened later on
-			// TODO/FIXME: This should be removed, as it will cause problems with game detection:
-			// if we got a game A, and then try to detect another game B, adding a default
-			// directory here means that game A's files will be opened first. We need to rewrite
-			// all the functions that access game files to use FSNodes instead
-			Common::File::addDefaultDirectory(file->getParent().getPath());
+			// We now add the parent directory temporary to our SearchMan so the engine code
+			// used in the detection can access all files via Common::File without any problems.
+			// In all branches returning from this function, we need to have a call to
+			// SearchMan.remove to remove it from the default directory pool again.
+			//
+			// A proper solution to remove this hack would be to have the code, which is needed
+			// for detection, to operate on Stream objects, so they can be easily called from
+			// the detection code. This might be easily to achieve through refactoring the
+			// code needed for detection.
+			assert(!SearchMan.hasArchive("SCI_detection"));
+			SearchMan.addDirectory("SCI_detection", file->getParent());
 			foundResMap = true;
 		}
 
@@ -3165,8 +3171,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	}
 
 	// If these files aren't found, it can't be SCI
-	if (!foundResMap && !foundRes000)
+	if (!foundResMap && !foundRes000) {
+		SearchMan.remove("SCI_detection");
 		return 0;
+	}
 
 	// Set some defaults
 	s_fallbackDesc.desc.extra = "";
@@ -3184,6 +3192,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	SegManager *segManager = new SegManager(resMgr, version, hasOldScriptHeader);
 	if (!script_instantiate(resMgr, segManager, version, hasOldScriptHeader, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
+		SearchMan.remove("SCI_detection");
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
@@ -3198,6 +3207,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	printf("translation), please, report the data above, including the following\n");
 	printf("version number, from the game's executable:\n");
 	printf("Version: %s\n\n", exeVersionString.empty() ? "not found" : exeVersionString.c_str());
+
+	SearchMan.remove("SCI_detection");
 
 	return (const ADGameDescription *)&s_fallbackDesc;
 }
