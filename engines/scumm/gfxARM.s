@@ -116,7 +116,8 @@ end:
 	@ extern "C" void asmCopy8Col(byte       *dst,
 	@                             int         dstPitch,
 	@                             const byte *src,
-	@                             int         height);
+	@                             int         height,
+	@                             int         bitdepth);
 	@
 	@ In addition, we assume that src and dst are both word (4 byte)
 	@ aligned. This is the same assumption that the old 'inline' version
@@ -126,7 +127,7 @@ asmCopy8Col:
 	@ r1 = dstPitch
 	@ r2 = src
 	@ r3 = height
-	@ <> = bitdepth
+	@ <> = bitdepth (badly named, should be bytedepth, 1 or 2)
 	LDR	r12,[r13]
 	STR	r14,[r13,#-4]!
 	CMP	r12,#1
