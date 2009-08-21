@@ -2,9 +2,9 @@ diff -Naur scummvm-1.0.orig/debian/changelog scummvm-1.0/debian/changelog
 --- scummvm-1.0.orig/debian/changelog	1970-01-01 01:00:00.000000000 +0100
 +++ scummvm-1.0/debian/changelog	2009-08-20 23:34:47.000000000 +0200
 @@ -0,0 +1,154 @@
-+scummvm (1.0.0) unstable; urgency=low
++scummvm (1.0.0~rc1) unstable; urgency=low
 +
-+  * upstream 1.0.0 release
++  * upstream 1.0.0rc1 release
 +  
 + -- Frantisek Dufka <dufkaf@seznam.cz>  Thu, 20 Aug 2009 23:33:59 +0200
 +scummvm (0.13.1) unstable; urgency=low
