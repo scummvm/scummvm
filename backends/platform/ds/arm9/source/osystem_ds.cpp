@@ -38,6 +38,10 @@
 #include "touchkeyboard.h"
 #include "backends/fs/ds/ds-fs-factory.h"
 
+#ifdef ENABLE_AGI
+#include "wordcompletion.h"
+#endif
+
 #include <time.h>
 
 #if defined(DS_BUILD_A)
@@ -876,6 +880,11 @@ u16 OSystem_DS::applyGamma(u16 colour) {
 void OSystem_DS::engineDone() {
 	// Scumm games appear not to stop their CD audio, so I stop the CD here.
 	stopCD();
+
+#ifdef ENABLE_AGI
+	DS::clearAutoCompleteWordList();
+#endif
+	
 }
 
 

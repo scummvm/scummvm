@@ -60,6 +60,11 @@ int stringCompare(const void* a, const void* b) {
 	return scumm_stricmp(*as, *bs);
 }
 
+void clearAutoCompleteWordList() {
+	wordBufferPtrPos = 0;
+	wordBufferPos = 0;
+}
+
 void sortAutoCompleteWordList() {
 	// Sort the whole word list into alphabetical order
 	qsort((void *)wordBufferPtr, wordBufferPtrPos, 4, stringCompare);
