@@ -110,7 +110,7 @@ _alsa=auto
 _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
-_16bit=yes
+_16bit=auto
 _readline=auto
 # Default option behaviour yes/no
 _text_console=no
@@ -639,7 +639,6 @@ DEBFLAGS="-g"
 
 for ac_option in $@; do
 	case "$ac_option" in
-	--enable-16bit)           _16bit=yes      ;;
 	--disable-16bit)          _16bit=no       ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--disable-scalers)        _build_scalers=no ;;
@@ -1494,6 +1493,23 @@ EOF
 	esac
 	echo "$_need_memalign"
 fi
+
+#
+# Enable 16bit support only for backends which support it
+#
+case $_backend in
+	sdl)
+		if test "$_16bit" = auto ; then
+			_16bit=yes
+		else
+			_16bit=no
+		fi
+		;;
+	*)
+		_16bit=no
+		;;
+esac
+
 
 #
 # Add the results of the above checks to config.h
