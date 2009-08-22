@@ -200,8 +200,6 @@ void OSystem_Wii::initSize(uint width, uint height,
 		if(_gamePixels)
 			free(_gamePixels);
 
-		size_t bufsize;
-
 #ifdef USE_RGB_COLOR
 		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight *
 										_screenPF.bytesPerPixel);
