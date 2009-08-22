@@ -438,7 +438,7 @@ void OSystem_IPHONE::dirtyFullOverlayScreen() {
 	}
 }
 
-void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	//printf("setMouseCursor(%i, %i)\n", hotspotX, hotspotY);
 
 	if (_mouseBuf != NULL && (_mouseWidth != w || _mouseHeight != h)) {
@@ -455,7 +455,7 @@ void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
 
-	_mouseKeyColour = keycolor;
+	_mouseKeyColour = (byte)keycolor;
 
 	memcpy(_mouseBuf, buf, w * h);
 
