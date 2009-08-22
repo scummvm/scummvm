@@ -84,7 +84,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
 
   // Set the size of the video bitmap.
   // Typically, 320x200
-  void initSize(uint w, uint h);
+  void initSize(uint w, uint h, const Graphics::PixelFormat *format);
   int16 getHeight() { return _screen_h; }
   int16 getWidth() { return _screen_w; }
 
@@ -105,7 +105,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   void warpMouse(int x, int y);
 
   // Set the bitmap that's used when drawing the cursor.
-  void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale);
+  void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
 
   // Replace the specified range of cursor the palette with new colors.
   void setCursorPalette(const byte *colors, uint start, uint num);

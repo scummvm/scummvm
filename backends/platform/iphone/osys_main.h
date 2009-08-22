@@ -126,7 +126,7 @@ public:
 	bool setGraphicsMode(const char *name);
 	virtual bool setGraphicsMode(int mode);
 	virtual int getGraphicsMode() const;
-	virtual void initSize(uint width, uint height);
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getHeight();
 	virtual int16 getWidth();
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -149,7 +149,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();

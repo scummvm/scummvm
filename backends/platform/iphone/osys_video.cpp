@@ -46,7 +46,7 @@ int OSystem_IPHONE::getGraphicsMode() const {
 	return -1;
 }
 
-void OSystem_IPHONE::initSize(uint width, uint height) {
+void OSystem_IPHONE::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	//printf("initSize(%i, %i)\n", width, height);
 
 	_screenWidth = width;
@@ -438,7 +438,7 @@ void OSystem_IPHONE::dirtyFullOverlayScreen() {
 	}
 }
 
-void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale) {
+void OSystem_IPHONE::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	//printf("setMouseCursor(%i, %i)\n", hotspotX, hotspotY);
 
 	if (_mouseBuf != NULL && (_mouseWidth != w || _mouseHeight != h)) {
