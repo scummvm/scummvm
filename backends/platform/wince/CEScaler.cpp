@@ -28,18 +28,17 @@
 template<int bitFormat>
 void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
-	int i;
 
 	while (height--) {
-		i = 0;
 		work = dstPtr;
 
 		for (int i=0; i<width; i+=4) {
 			// Work with 4 pixels
-			uint16 color1 = *(((const uint16 *)srcPtr) + i);
-			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
-			uint16 color3 = *(((const uint16 *)srcPtr) + (i + 2));
-			uint16 color4 = *(((const uint16 *)srcPtr) + (i + 3));
+			// Cast via (void *) to avoid warning. This is safe.
+			uint16 color1 = *(((const uint16 *)(const void *)srcPtr) + i);
+			uint16 color2 = *(((const uint16 *)(const void *)srcPtr) + (i + 1));
+			uint16 color3 = *(((const uint16 *)(const void *)srcPtr) + (i + 2));
+			uint16 color4 = *(((const uint16 *)(const void *)srcPtr) + (i + 3));
 
 			*(((uint16 *)work) + 0) = interpolate32_3_1<bitFormat>(color1, color2);
 			*(((uint16 *)work) + 1) = interpolate32_1_1<bitFormat>(color2, color3);
@@ -65,7 +64,8 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 
 	int i,j;
 	unsigned int p1, p2;
-	uint8 *inbuf, *outbuf, *instart, *outstart;
+	const uint8 *inbuf, *instart;
+	uint8 *outbuf, *outstart;
 
 #define RB(x) ((x & RBM)<<8)
 #define G(x)  ((x & GM)<<3)
@@ -77,7 +77,7 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 
 #define MAKEPIXEL(rb,g) ((((rb)>>8) & RBM | ((g)>>3) & GM))
 
-	inbuf = (uint8 *)srcPtr;
+	inbuf = (const uint8 *)srcPtr;
 	outbuf = (uint8 *)dstPtr;
 	height /= 5;
 
@@ -86,22 +86,22 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 		outstart = outbuf;
 		for (j=0; j < width; j++) {
 
-			p1 = *(uint16*)inbuf; inbuf += srcPitch;
+			p1 = *(const uint16*)inbuf; inbuf += srcPitch;
 			*(uint16*)outbuf = p1; outbuf += dstPitch;
 
-			p2 = *(uint16*)inbuf; inbuf += srcPitch;
+			p2 = *(const uint16*)inbuf; inbuf += srcPitch;
 			*(uint16*)outbuf = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch;
 
 			p1 = p2;
-			p2 = *(uint16*)inbuf; inbuf += srcPitch;
+			p2 = *(const uint16*)inbuf; inbuf += srcPitch;
 			*(uint16*)outbuf = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch;
 
 			p1 = p2;
-			p2 = *(uint16*)inbuf; inbuf += srcPitch;
+			p2 = *(const uint16*)inbuf; inbuf += srcPitch;
 			*(uint16*)outbuf = MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  outbuf += dstPitch;
 
 			p1 = p2;
-			p2 = *(uint16*)inbuf;
+			p2 = *(const uint16*)inbuf;
 			*(uint16*)outbuf = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch;
 
 			*(uint16*)outbuf = p2;
@@ -127,11 +127,9 @@ extern "C" {
 template<int bitFormat>
 void PocketPCHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
-	int i;
 	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
 
 	while ((height -= 2) >= 0) {
-		i = 0;
 		work = dstPtr;
 
 		for (int i=0; i<width; i+=2) {
@@ -164,14 +162,11 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 template<int bitFormat>
 void PocketPCHalfZoomTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
-	int i;
-	uint16 srcPitch16 = (uint16)(srcPitch / sizeof(uint16));
 
 	if (!height)
 		return;
 
 	while (height--) {
-		i = 0;
 		work = dstPtr;
 
 		for (int i = 0; i < width; i += 2) {
@@ -190,11 +185,9 @@ MAKE_WRAPPER(PocketPCHalfZoom)
 template<int bitFormat>
 void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint8 *work;
-	int i;
 	int line = 0;
 
 	while (height--) {
-		i = 0;
 		work = dstPtr;
 
 		for (int i = 0; i < width; i += 3) {
