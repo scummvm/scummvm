@@ -740,7 +740,7 @@ void OSystem_SDL::setupMixer() {
 		_mixer->setReady(true);
 
 #ifdef MIXER_DOUBLE_BUFFERING
-		initThreadedMixer(_mixer, obtained.samples * 4);
+		initThreadedMixer(_mixer, _obtained.samples * 4);
 #endif
 
 		// start the sound system
