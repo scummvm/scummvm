@@ -210,7 +210,7 @@ public:
 
 protected:
 	bool _inited;
-	SDL_AudioSpec _obtained;
+	SDL_AudioSpec _obtainedRate;
 
 #ifdef USE_OSD
 	SDL_Surface *_osdSurface;

@@ -56,7 +56,7 @@ void OSystem_LINUXMOTO::suspendAudio() {
 int OSystem_LINUXMOTO::resumeAudio() {
 	if (!_audioSuspended)
 		return -2;
-	if (SDL_OpenAudio(&_obtained, NULL) < 0){
+	if (SDL_OpenAudio(&_obtainedRate, NULL) < 0){
 		return -1;
 	}
 	SDL_PauseAudio(0);
