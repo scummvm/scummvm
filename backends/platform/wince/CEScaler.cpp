@@ -82,30 +82,32 @@ void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr
 	outbuf = (uint8 *)dstPtr;
 	height /= 5;
 
+	// Various casts below go via (void *) to avoid warning. This is
+	// safe as these are all even addresses.
 	for (i = 0; i < height; i++) {
 		instart = inbuf;
 		outstart = outbuf;
 		for (j=0; j < width; j++) {
 
-			p1 = *(const uint16*)inbuf; inbuf += srcPitch;
-			*(uint16*)outbuf = p1; outbuf += dstPitch;
+			p1 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = p1; outbuf += dstPitch;
 
-			p2 = *(const uint16*)inbuf; inbuf += srcPitch;
-			*(uint16*)outbuf = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch;
-
-			p1 = p2;
-			p2 = *(const uint16*)inbuf; inbuf += srcPitch;
-			*(uint16*)outbuf = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch;
+			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P20(RB(p1))+P80(RB(p2)),P20(G(p1))+P80(G(p2)));  outbuf += dstPitch;
 
 			p1 = p2;
-			p2 = *(const uint16*)inbuf; inbuf += srcPitch;
-			*(uint16*)outbuf = MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  outbuf += dstPitch;
+			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P40(RB(p1))+P60(RB(p2)),P40(G(p1))+P60(G(p2)));  outbuf += dstPitch;
 
 			p1 = p2;
-			p2 = *(const uint16*)inbuf;
-			*(uint16*)outbuf = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch;
+			p2 = *(const uint16*)(const void *)inbuf; inbuf += srcPitch;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P60(RB(p1))+P40(RB(p2)),P60(G(p1))+P40(G(p2)));  outbuf += dstPitch;
 
-			*(uint16*)outbuf = p2;
+			p1 = p2;
+			p2 = *(const uint16*)(const void *)inbuf;
+			*(uint16*)(void *)outbuf = MAKEPIXEL(P80(RB(p1))+P20(RB(p2)),P80(G(p1))+P20(G(p2)));  outbuf += dstPitch;
+
+			*(uint16*)(void *)outbuf = p2;
 
 			inbuf = inbuf - srcPitch*4 + sizeof(uint16);
 			outbuf = outbuf - dstPitch*5 + sizeof(uint16);
