@@ -216,6 +216,7 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+	virtual void preprocessEvents(SDL_Event *event) {};
 
 #ifdef USE_OSD
 	void displayMessageOnOSD(const char *msg);
@@ -230,6 +231,7 @@ public:
 
 protected:
 	bool _inited;
+	SDL_AudioSpec _obtained;
 
 #ifdef USE_OSD
 	SDL_Surface *_osdSurface;

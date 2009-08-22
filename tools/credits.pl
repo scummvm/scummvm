@@ -646,6 +646,10 @@ begin_credits("Credits");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 	  end_section();
 
+	  begin_section("LinuxMoto");
+		  add_person("Lubomyr Lisen", "", "");
+	  end_section();
+
 	  begin_section("Maemo");
 		  add_person("Frantisek Dufka", "fanoush", "");
 	  end_section();
