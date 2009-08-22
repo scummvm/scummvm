@@ -22,7 +22,7 @@ TEST_LDFLAGS :=
 test: test/runner
 	./test/runner
 test/runner: test/runner.cpp $(TEST_LIBS)
-	$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TEST_LDFLAGS) $(TEST_CFLAGS) -o $@ $+
+	$(QUIET_LINK)$(CXX) $(CXXFLAGS) $(CPPFLAGS) $(TEST_LDFLAGS) $(TEST_CFLAGS) -o $@ $+
 test/runner.cpp: $(TESTS)
 	@mkdir -p test
 	$(srcdir)/test/cxxtest/cxxtestgen.py $(TEST_FLAGS) -o $@ $+

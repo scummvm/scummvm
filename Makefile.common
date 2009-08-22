@@ -62,9 +62,24 @@ DEPFILES =
 # the build date in gScummVMBuildDate is correct.
 base/version.o: $(filter-out base/libbase.a,$(OBJS))
 
+# Replace regular output with quiet messages
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifneq ($(VERBOSE_BUILD),1)
+ifneq ($(VERBOSE_BUILD),yes)
+QUIET_CXX    = @echo '   ' C++ '    ' $@;
+QUIET_NASM   = @echo '   ' NASM '   ' $@;
+QUIET_AR     = @echo '   ' AR '     ' $@;
+QUIET_RANLIB = @echo '   ' RANLIB ' ' $@;
+QUIET_PLUGIN = @echo '   ' PLUGIN ' ' $@;
+QUIET_LINK   = @echo '   ' LINK '   ' $@;
+QUIET        = @
+endif
+endif
+endif
+
 # The build rule for the ScummVM executable
 $(EXECUTABLE): $(OBJS)
-	$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+	$(QUIET_LINK)$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean
 	$(RM) config.h config.mk config.log
@@ -83,27 +98,27 @@ ifndef HAVE_GCC3
 # If you use GCC, disable the above and enable this for intelligent
 # dependency tracking.
 %.o: %.cpp
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(QUIET)$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
+	$(QUIET)$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
+	$(QUIET)$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
 else
 # If you even have GCC 3.x, you can use this build rule, which is safer; the above
 # rule can get you into a bad state if you Ctrl-C at the wrong moment.
 # Also, with this GCC inserts additional dummy rules for the involved headers,
 # which ensures a smooth compilation even if said headers become obsolete.
 %.o: %.cpp
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 %.o: %.m
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
 endif
 
 ifdef HAVE_NASM
 %.o: %.asm
-	$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
+	$(QUIET_NASM)$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
 endif
 
 # Include the dependency tracking files.

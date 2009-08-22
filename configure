@@ -125,6 +125,7 @@ _backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
+_verbose_build=no
 _dynamic_modules=no
 _plugins_default=static
 _nasm=auto
@@ -660,6 +661,7 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
@@ -1532,6 +1534,12 @@ add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
 
 add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
 
+#
+# Check whether to enable a verbose build
+#
+echo_n "Checking whether to have a verbose build... "
+echo "$_verbose_build"
+add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 
 #
 # Check whether plugin support is requested and possible
