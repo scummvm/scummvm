@@ -88,7 +88,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "football2002", "Backyard Football 2002" },
 	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
 	{ "moonbase", "Moonbase Commander" },
-	{ "pjgames", "Pajama Sam: Games to Play On Any Day" },
+	{ "pjgames", "Pajama Sam: Games to Play on Any Day" },
 	{ "readtime", "Blue's Reading Time Activities" },
 	{ "Soccer2004", "Backyard Soccer 2004" },
 	{ "SoccerMLS", "Backyard Soccer MLS Edition" },
