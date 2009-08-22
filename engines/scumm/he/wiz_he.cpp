@@ -40,6 +40,7 @@ Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
 	_imagesNum = 0;
 	memset(&_images, 0, sizeof(_images));
 	memset(&_polygons, 0, sizeof(_polygons));
+	_cursorImage = false;
 	_rectOverrideEnabled = false;
 }
 
@@ -1503,8 +1504,13 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		if (_vm->_bitDepth == 2) {
 			uint8 *tmpPtr = dst;
 			for (uint i = 0; i < height; i++) {
-				for (uint j = 0; j < width; j++)
-					WRITE_UINT16(tmpPtr + j * 2, transColor);
+				for (uint j = 0; j < width; j++) {
+					if (_cursorImage) {
+						WRITE_UINT16(tmpPtr + j * 2, transColor);
+					} else {
+						WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
+					}
+				}
 				tmpPtr += width * 2;
 			}
 		} else {
@@ -1967,8 +1973,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 			y_acc += pra->y_step;
 			if (bitDepth == 2) {
 				if (transColor == -1 || transColor != READ_LE_UINT16(src + src_offs * 2)) {
-					//if (transColor == -1 || READ_UINT16(dstPtr) != transColor)
-						writeColor(dstPtr, dstType, READ_LE_UINT16(src + src_offs * 2));
+					writeColor(dstPtr, dstType, READ_LE_UINT16(src + src_offs * 2));
 				}
 			} else {
 				if (transColor == -1 || transColor != src[src_offs])
@@ -2012,7 +2017,9 @@ void Wiz::loadWizCursor(int resId, int palette) {
 	}
 
 	const Common::Rect *r = NULL;
+	_cursorImage = true;
 	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette));
+	_cursorImage = false;
 
 	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);

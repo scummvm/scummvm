@@ -165,6 +165,7 @@ public:
 
 	void clearWizBuffer();
 	Common::Rect _rectOverride;
+	bool _cursorImage;
 	bool _rectOverrideEnabled;
 
 	void polygonClear();
