@@ -588,6 +588,7 @@ $engines_help
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-scalers        exclude scalers
   --enable-text-console    use text console instead of graphical console
+  --enable-verbose-build   enable regular echoing of commands during build process
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -621,7 +622,7 @@ Optional Libraries:
   --disable-nasm           disable assembly language optimizations [autodetect]
 
   --with-readline-prefix=DIR    Prefix where readline is installed (optional)
-  --disable-readline       disable readline support in text console [autodetect]  --enable-verbose-build   enable regular echoing of commands during build process
+  --disable-readline       disable readline support in text console [autodetect]
 
 Some influential environment variables:
   LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
