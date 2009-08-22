@@ -552,7 +552,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wince, wii, psp, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wince, wii, psp, linuxmoto, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -778,6 +778,16 @@ case $_host in
 linupy)
 	_host_os=linux
 	_host_cpu=arm
+	;;
+motoezx)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnu
+	;;
+motomagx)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnueabi
 	;;
 arm-riscos)
 	_host_os=riscos
@@ -1192,6 +1202,40 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			;;
+		motoezx)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DMOTOEZX -DUSE_ARM_SMUSH_ASM"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_ar="$_host_alias-ar cru"
+			_as="$_host_alias-as -mfpu=vfp"
+			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
+			_backend="linuxmoto"
+			;;
+		motomagx)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DMOTOMAGX -DUSE_ARM_SMUSH_ASM"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_ar="$_host_alias-ar cru"
+			_as="$_host_alias-as -mfpu=vfp"
+			_ranlib=$_host_alias-ranlib
+			_strip=$_host_alias-strip
+			_backend="linuxmoto"
 			;;
 		bfin*)
 			_need_memalign=yes
@@ -1947,6 +1991,12 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
+		;;
 	gp2x)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
@@ -2157,6 +2207,7 @@ LIBS += $LIBS
 RANLIB := $_ranlib
 STRIP := $_strip
 AR := $_ar
+AS := $_as
 WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
