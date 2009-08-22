@@ -91,6 +91,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "pjgames", "Pajama Sam: Games to Play On Any Day" },
 	{ "readtime", "Blue's Reading Time Activities" },
 	{ "Soccer2004", "Backyard Soccer 2004" },
+	{ "SoccerMLS", "Backyard Soccer MLS Edition" },
 #endif
 	{ "airport", "Let's Explore the Airport with Buzzy" },
 	{ "balloon", "Putt-Putt and Pep's Balloon-O-Rama" },
@@ -123,7 +124,6 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "puttzoo", "Putt-Putt Saves the Zoo" },
 	{ "SamsFunShop", "Pajama Sam's One-Stop Fun Shop" },
 	{ "soccer", "Backyard Soccer" },
-	{ "SoccerMLS", "Backyard Soccer MLS Edition" },
 	{ "socks", "Pajama Sam's Sock Works" },
 	{ "spyfox", "SPY Fox 1: Dry Cereal" },
 	{ "spyfox2", "SPY Fox 2: Some Assembly Required" },
@@ -345,8 +345,14 @@ static const GameSettings gameVariantsTable[] = {
 	{"SamsFunShop", 0, 0, GID_FUNSHOP, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED, UNK, GUIO_NOMIDI},
 	{"PuttsFunShop", 0, 0, GID_FUNSHOP, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED, UNK, GUIO_NOMIDI},
 
+	// Added the use of smacker videos
+	{"BluesTreasureHunt", 0, 0, GID_TREASUREHUNT, 6, 99, MDT_NONE, GF_HE_LOCALIZED | GF_USE_KEY, UNK, GUIO_NOMIDI},
+
+#ifdef USE_RGB_COLOR
 	// Added 16bit color
+	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 	{"baseball2001", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
+	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 	{"SoccerMLS", 0, 0, GID_SOCCER, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 	{"spyozon", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 
@@ -357,12 +363,7 @@ static const GameSettings gameVariantsTable[] = {
 	// Restructured the Scumm engine
 	{"pjgames", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 
-	// Uses smacker in external files, for testing only
-	{"arttime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
-	{"readtime", 0, 0, GID_HEGAME, 6, 99, MDT_NONE, GF_USE_KEY | GF_HE_LOCALIZED | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
-	{"BluesTreasureHunt", 0, 0, GID_TREASUREHUNT, 6, 99, MDT_NONE, GF_HE_LOCALIZED | GF_USE_KEY, UNK, GUIO_NOMIDI},
-
-	// Uses bink in external files for logos
+	// Added the use of bink videos
 	{"Baseball2003", 0, 0, GID_HEGAME, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 	{"basketball", 0, 0, GID_BASKETBALL, 6, 100, MDT_NONE, GF_USE_KEY| GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 	{"football2002", 0, 0, GID_FOOTBALL, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
@@ -371,6 +372,7 @@ static const GameSettings gameVariantsTable[] = {
 	// U32 code required, for testing only
 	{"moonbase", 0, 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR, UNK, GUIO_NOMIDI},
 	{"moonbase", "Demo", 0, GID_MOONBASE, 6, 100, MDT_NONE, GF_USE_KEY | GF_16BIT_COLOR | GF_DEMO, UNK, GUIO_NOMIDI},
+#endif
 
 	// The following are meant to be generic HE game variants and as such do
 	// not specify a game ID. Make sure that these are last in the table, else
@@ -548,6 +550,9 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "Soccer2004", "Soccer2004", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "Soccer2004", "Soccer 2004", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
+
+	{ "SoccerMLS", "SoccerMLS", kGenHEPC, UNK_LANG, UNK, 0 },
+	{ "SoccerMLS", "Backyard Soccer MLS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "spyozon", "spyozon", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "spyozon", "sf3-demo", kGenHEPC, UNK_LANG, UNK, 0 },
@@ -816,9 +821,6 @@ static const GameFilenamePattern gameFilenamesTable[] = {
 
 	{ "soccer", "soccer", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "soccer", "Soccer", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
-
-	{ "SoccerMLS", "SoccerMLS", kGenHEPC, UNK_LANG, UNK, 0 },
-	{ "SoccerMLS", "Backyard Soccer MLS", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
 
 	{ "socks", "socks", kGenHEPC, UNK_LANG, UNK, 0 },
 	{ "socks", "SockWorks", kGenHEMac, UNK_LANG, Common::kPlatformMacintosh, 0 },
