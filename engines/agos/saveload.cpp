@@ -1252,23 +1252,38 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 
 		if (_roomsListPtr) {
 			byte *p = _roomsListPtr;
-			for (;;) {
-				uint16 minNum = READ_BE_UINT16(p); p += 2;
-				if (minNum == 0)
-					break;
+			if (room == _currentRoom) {
+				for (;;) {
+					uint16 minNum = READ_BE_UINT16(p); p += 2;
+					if (minNum == 0)
+						break;
 
-				uint16 maxNum = READ_BE_UINT16(p); p += 2;
+					uint16 maxNum = READ_BE_UINT16(p); p += 2;
 
-				 for (uint16 z = minNum; z <= maxNum; z++) {
-					uint16 itemNum = z + 2;
-					Item *item = derefItem(itemNum);
-					item->parent = 0;
+					 for (uint16 z = minNum; z <= maxNum; z++) {
+						uint16 itemNum = z + 2;
+						Item *item = derefItem(itemNum);
 
-					num = (itemNum - _itemArrayInited);
-					item->state = _roomStates[num].state;
-					item->classFlags = _roomStates[num].classFlags;
-					SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
-					subRoom->roomExitStates = _roomStates[num].roomExitStates;
+						num = (itemNum - _itemArrayInited);
+						_roomStates[num].state = item->state;
+						_roomStates[num].classFlags = item->classFlags;
+						SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
+						_roomStates[num].roomExitStates = subRoom->roomExitStates;
+					}
+				}
+			} else {
+				for (;;) {
+					uint16 minNum = READ_BE_UINT16(p); p += 2;
+					if (minNum == 0)
+						break;
+
+					uint16 maxNum = READ_BE_UINT16(p); p += 2;
+
+					 for (uint16 z = minNum; z <= maxNum; z++) {
+						uint16 itemNum = z + 2;
+						Item *item = derefItem(itemNum);
+						item->parent = 0;
+					}
 				}
 			}
 		}
@@ -1439,7 +1454,6 @@ bool AGOSEngine_Elvira2::saveGame(uint slot, const char *caption) {
 				 for (uint16 z = minNum; z <= maxNum; z++) {
 					uint16 itemNum = z + 2;
 					Item *item = derefItem(itemNum);
-					item->parent = 0;
 
 					uint16 num = (itemNum - _itemArrayInited);
 					_roomStates[num].state = item->state;
