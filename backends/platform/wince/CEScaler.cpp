@@ -27,24 +27,25 @@
 
 template<int bitFormat>
 void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint8 *work;
+	uint16 *work;
 
+	// Various casts below go via (void *) to avoid warning. This is
+	// safe as these are all even addresses.
 	while (height--) {
-		work = dstPtr;
+		work = (uint16 *)(void *)dstPtr;
 
 		for (int i=0; i<width; i+=4) {
 			// Work with 4 pixels
-			// Cast via (void *) to avoid warning. This is safe.
 			uint16 color1 = *(((const uint16 *)(const void *)srcPtr) + i);
 			uint16 color2 = *(((const uint16 *)(const void *)srcPtr) + (i + 1));
 			uint16 color3 = *(((const uint16 *)(const void *)srcPtr) + (i + 2));
 			uint16 color4 = *(((const uint16 *)(const void *)srcPtr) + (i + 3));
 
-			*(((uint16 *)work) + 0) = interpolate32_3_1<bitFormat>(color1, color2);
-			*(((uint16 *)work) + 1) = interpolate32_1_1<bitFormat>(color2, color3);
-			*(((uint16 *)work) + 2) = interpolate32_3_1<bitFormat>(color4, color3);
+			work[0] = interpolate32_3_1<bitFormat>(color1, color2);
+			work[1] = interpolate32_1_1<bitFormat>(color2, color3);
+			work[2] = interpolate32_3_1<bitFormat>(color4, color3);
 
-			work += 3 * sizeof(uint16);
+			work += 3;
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
@@ -161,20 +162,20 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 
 template<int bitFormat>
 void PocketPCHalfZoomTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
-	uint8 *work;
+	uint16 *work;
 
 	if (!height)
 		return;
 
+	// Various casts below go via (void *) to avoid warning. This is
+	// safe as these are all even addresses.
 	while (height--) {
-		work = dstPtr;
+		work = (uint16 *)(void *)dstPtr;
 
 		for (int i = 0; i < width; i += 2) {
-			uint16 color1 = *(((const uint16 *)srcPtr) + i);
-			uint16 color2 = *(((const uint16 *)srcPtr) + (i + 1));
-			*(((uint16 *)work) + 0) = interpolate32_1_1<bitFormat>(color1, color2);
-
-			work += sizeof(uint16);
+			uint16 color1 = *(((const uint16 *)(const void *)srcPtr) + i);
+			uint16 color2 = *(((const uint16 *)(const void *)srcPtr) + (i + 1));
+			*work++ = interpolate32_1_1<bitFormat>(color1, color2);
 		}
 		srcPtr += srcPitch;
 		dstPtr += dstPitch;
