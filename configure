@@ -1498,7 +1498,7 @@ fi
 # Enable 16bit support only for backends which support it
 #
 case $_backend in
-	sdl)
+	sdl | wii)
 		if test "$_16bit" = auto ; then
 			_16bit=yes
 		else

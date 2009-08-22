@@ -52,6 +52,11 @@ OSystem_Wii::OSystem_Wii() :
 	_currentHeight(0),
 
 	_activeGraphicsMode(0),
+#ifdef USE_RGB_COLOR
+	_texturePF(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
+	_screenPF(Graphics::PixelFormat::createFormatCLUT8()),
+	_cursorPF(Graphics::PixelFormat::createFormatCLUT8()),
+#endif
 
 	_fullscreen(false),
 

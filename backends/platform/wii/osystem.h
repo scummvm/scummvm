@@ -75,6 +75,11 @@ private:
 	u16 _currentWidth, _currentHeight;
 
 	s32 _activeGraphicsMode;
+#ifdef USE_RGB_COLOR
+	const Graphics::PixelFormat _texturePF;
+	Graphics::PixelFormat _screenPF;
+	Graphics::PixelFormat _cursorPF;
+#endif
 
 	bool _fullscreen;
 
@@ -82,7 +87,7 @@ private:
 	s32 _mouseX, _mouseY;
 	u32 _mouseWidth, _mouseHeight;
 	s32 _mouseHotspotX, _mouseHotspotY;
-	u8 _mouseKeyColor;
+	u16 _mouseKeyColor;
 	u8 *_mouseCursor;
 
 	bool _kbd_active;
@@ -119,6 +124,10 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+#endif
 	virtual int getGraphicsMode() const;
 	virtual void initSize(uint width, uint height,
 							const Graphics::PixelFormat *format);
