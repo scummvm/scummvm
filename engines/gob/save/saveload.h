@@ -256,6 +256,7 @@ protected:
 
 	GameHandler *_gameHandler;
 	NotesHandler *_notesHandler;
+	TempSpriteHandler *_tempSpriteHandler;
 	ScreenshotHandler *_screenshotHandler;
 
 	SaveHandler *getHandler(const char *fileName) const;

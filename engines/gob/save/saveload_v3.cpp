@@ -33,8 +33,8 @@ namespace Gob {
 SaveLoad_v3::SaveFile SaveLoad_v3::_saveFiles[] = {
 	{    "cat.inf", kSaveModeSave  , 0, "savegame"},
 	{    "ima.inf", kSaveModeSave  , 0, "screenshot"},
+	{  "intro.$$$", kSaveModeSave  , 0, "temporary sprite"},
 	{   "bloc.inf", kSaveModeSave  , 0, "notes"},
-	{  "intro.$$$", kSaveModeIgnore, 0, "temporary sprite"},
 	{   "prot",     kSaveModeIgnore, 0, 0},
 	{ "config",     kSaveModeIgnore, 0, 0}
 };
@@ -496,17 +496,20 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType s
 		_screenshotHandler = new ScreenshotHandler(vm, _gameHandler, sShotType);
 	}
 
+	_tempSpriteHandler = new TempSpriteHandler(vm);
 	_notesHandler = new NotesHandler(2560, vm, targetName);
 
 	_saveFiles[0].handler = _gameHandler;
 	_saveFiles[1].handler = _screenshotHandler;
-	_saveFiles[2].handler = _notesHandler;
+	_saveFiles[2].handler = _tempSpriteHandler;
+	_saveFiles[3].handler = _notesHandler;
 }
 
 SaveLoad_v3::~SaveLoad_v3() {
 	delete _screenshotHandler;
 	delete _gameHandler;
 	delete _notesHandler;
+	delete _tempSpriteHandler;
 }
 
 const SaveLoad_v3::SaveFile *SaveLoad_v3::getSaveFile(const char *fileName) const {
