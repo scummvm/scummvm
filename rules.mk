@@ -23,7 +23,7 @@ ifdef TOOL_EXECUTABLE
 ################################################
 TOOL-$(MODULE) := $(MODULE)/$(TOOL_EXECUTABLE)$(EXEEXT)
 $(TOOL-$(MODULE)): $(MODULE_OBJS-$(MODULE))
-	$(CXX) $(LDFLAGS) $+ -o $@
+	$(QUIET_CXX)$(CXX) $(LDFLAGS) $+ -o $@
 
 # Reset TOOL_EXECUTABLE var
 TOOL_EXECUTABLE:=
@@ -42,8 +42,8 @@ ifdef PLUGIN
 ################################################
 PLUGIN-$(MODULE) := plugins/$(PLUGIN_PREFIX)$(notdir $(MODULE))$(PLUGIN_SUFFIX)
 $(PLUGIN-$(MODULE)): $(MODULE_OBJS-$(MODULE)) $(PLUGIN_EXTRA_DEPS)
-	$(MKDIR) plugins
-	$(CXX) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
+	$(QUIET)$(MKDIR) plugins
+	$(QUIET_PLUGIN)$(CXX) $(filter-out $(PLUGIN_EXTRA_DEPS),$+) $(PLUGIN_LDFLAGS) -o $@
 
 # Reset PLUGIN var
 PLUGIN:=
@@ -69,9 +69,9 @@ OBJS += $(MODULE_LIB-$(MODULE))
 
 # Convenience library target
 $(MODULE_LIB-$(MODULE)): $(MODULE_OBJS-$(MODULE))
-	-$(RM) $@
-	$(AR) $@ $+
-	$(RANLIB) $@
+	$(QUIET)-$(RM) $@
+	$(QUIET_AR)$(AR) $@ $+
+	$(QUIET_RANLIB)$(RANLIB) $@
 
 # Pseudo target for comfort, allows for "make common", "make gui" etc.
 $(MODULE): $(MODULE_LIB-$(MODULE))
