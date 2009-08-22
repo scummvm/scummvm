@@ -652,6 +652,8 @@ void AgiEngine::initialize() {
 }
 
 AgiEngine::~AgiEngine() {
+	_timer->removeTimerProc(agiTimerFunctionLow);
+
 	// If the engine hasn't been initialized yet via AgiEngine::initialize(), don't attempt to free any resources,
 	// as they haven't been allocated. Fixes bug #1742432 - AGI: Engine crashes if no game is detected
 	if (_game.state == STATE_INIT) {
