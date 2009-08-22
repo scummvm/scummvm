@@ -362,6 +362,10 @@ void Imd::setDoubleMode(bool doubleMode) {
 }
 
 void Imd::enableSound(Audio::Mixer &mixer) {
+	// Sanity check
+	if (mixer.getOutputRate() == 0)
+		return;
+
 	// Only possible on the first frame
 	if (_curFrame > 0)
 		return;
@@ -387,7 +391,7 @@ void Imd::disableSound() {
 }
 
 bool Imd::isSoundPlaying() const {
-	if (_audioStream && _mixer->isSoundHandleActive(_audioHandle))
+	if (_audioStream && _mixer && _mixer->isSoundHandleActive(_audioHandle))
 		return true;
 
 	return false;
@@ -1706,9 +1710,12 @@ CoktelVideo::State Vmd::processFrame(uint16 frame) {
 	}
 
 	if (startSound && _soundEnabled) {
-		_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
-		_skipFrames = 0;
-		_soundStage = 2;
+		if (_hasSound && _audioStream) {
+			_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_audioHandle, _audioStream);
+			_skipFrames = 0;
+			_soundStage = 2;
+		} else
+			_soundStage = 0;
 	}
 
 	if ((_curFrame == (_framesCount - 1)) && (_soundStage == 2)) {
