@@ -1504,7 +1504,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 			uint8 *tmpPtr = dst;
 			for (uint i = 0; i < height; i++) {
 				for (uint j = 0; j < width; j++)
-					WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
+					WRITE_UINT16(tmpPtr + j * 2, transColor);
 				tmpPtr += width * 2;
 			}
 		} else {
@@ -1750,7 +1750,7 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 		uint8 *tmpPtr = imageBuffer;
 		for (i = 0; i < dsth; i++) {
 			for (j = 0; j < dstw; j++)
-				WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
+				WRITE_UINT16(tmpPtr + j * 2, transColor);
 			tmpPtr += dstpitch;
 		}
 	} else {
@@ -1967,7 +1967,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 			y_acc += pra->y_step;
 			if (bitDepth == 2) {
 				if (transColor == -1 || transColor != READ_LE_UINT16(src + src_offs * 2)) {
-					//if (transColor == -1 || READ_LE_UINT16(dstPtr) != transColor)
+					//if (transColor == -1 || READ_UINT16(dstPtr) != transColor)
 						writeColor(dstPtr, dstType, READ_LE_UINT16(src + src_offs * 2));
 				}
 			} else {
