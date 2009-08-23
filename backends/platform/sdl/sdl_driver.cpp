@@ -230,11 +230,6 @@ bool OSystem_SDL::pollEvent(Common::Event &event) {
 			{
 				b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 
-				// Alt-Return and Alt-Enter toggle full screen mode
-				if (b == Common::KBD_ALT && (ev.key.keysym.sym == SDLK_RETURN || ev.key.keysym.sym == SDLK_KP_ENTER)) {
-					setFullscreenMode(_fullscreen);
-					break;
-				}
 #if defined(MACOSX)
 				// On Macintosh', Cmd-Q quits
 				if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
@@ -541,6 +536,18 @@ OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
+	if (_overlayscreen) {
+		SDL_FreeSurface(_overlayscreen);
+		_overlayscreen = NULL;
+#ifdef USE_OPENGL
+		if (_overlayNumTex > 0) {
+			glDeleteTextures(_overlayNumTex, _overlayTexIds);
+			delete[] _overlayTexIds;
+			_overlayNumTex = 0;
+		}
+#endif
+	}
+
 	delete _fsFactory;
 }
 
@@ -664,34 +671,260 @@ byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool a
 		warning("INFO: GL Stencil buffer bits: %d", glflag);
 	}
 #endif
+
+	_overlayWidth = screenW;
+	_overlayHeight = screenH;
+
+	Uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	rmask = 0x00001f00;
+	gmask = 0x000007e0;
+	bmask = 0x000000f8;
+	amask = 0x00000000;
+#else
+	rmask = 0x0000001f;
+	gmask = 0x000007e0;
+	bmask = 0x0000f800;
+	amask = 0x00000000;
+#endif
+	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
+						rmask, gmask, bmask, amask);
+
+	if (!_overlayscreen)
+		error("allocating _overlayscreen failed");
+
+	_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
+
+	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
+	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
+	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
+	_overlayFormat.aLoss = _overlayscreen->format->Aloss;
+
+	_overlayFormat.rShift = _overlayscreen->format->Rshift;
+	_overlayFormat.gShift = _overlayscreen->format->Gshift;
+	_overlayFormat.bShift = _overlayscreen->format->Bshift;
+	_overlayFormat.aShift = _overlayscreen->format->Ashift;
+
 	return (byte *)_screen->pixels;
 }
 
-void OSystem_SDL::setFullscreenMode(bool enable) {
-#ifdef USE_OPENGL
-	if (_opengl) {
-		warning("Switching on fly to Fullscreen mode is not allowed");
-		// switching to fullscreen mode it cause lost of texture
-		// and after that recreating
-		// for now it's not allowed
-	} else {
-#endif
-		warning("Switching on fly to Fullscreen mode is not allowed");
-		// We used to use SDL_WM_ToggleFullScreen() to switch to fullscreen
-		// mode, but since that was deemed too buggy for ScummVM it's probably
-		// too buggy for Residual as well.
-#ifdef USE_OPENGL
-	}
-#endif
-}
+#define BITMAP_TEXTURE_SIZE 256
 
 void OSystem_SDL::updateScreen() {
 #ifdef USE_OPENGL
-	if (_opengl)
+	if (_opengl) {
+		if (_overlayVisible) {
+			if (_overlayDirty) {
+				// remove if already exist
+				if (_overlayNumTex > 0) {
+					glDeleteTextures(_overlayNumTex, _overlayTexIds);
+					delete[] _overlayTexIds;
+					_overlayNumTex = 0;
+				}
+
+				_overlayNumTex = ((_overlayWidth + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
+								((_overlayHeight + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
+				_overlayTexIds = new GLuint[_overlayNumTex];
+				glGenTextures(_overlayNumTex, _overlayTexIds);
+				for (int i = 0; i < _overlayNumTex; i++) {
+					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[i]);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
+				}
+
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+				glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
+
+				int curTexIdx = 0;
+				for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
+					for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
+						int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
+						int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
+						glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (byte *)_overlayscreen->pixels + (y * 2 * _overlayWidth) + (2 * x));
+						curTexIdx++;
+					}
+				}
+				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+				glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+			}
+
+			// prepare view
+			glMatrixMode(GL_PROJECTION);
+			glLoadIdentity();
+			glOrtho(0, _overlayWidth, _overlayHeight, 0, 0, 1);
+			glMatrixMode(GL_MODELVIEW);
+			glLoadIdentity();
+			glMatrixMode(GL_TEXTURE);
+			glLoadIdentity();
+			glDisable(GL_LIGHTING);
+			glEnable(GL_TEXTURE_2D);
+			glDisable(GL_DEPTH_TEST);
+			glDepthMask(GL_FALSE);
+			glEnable(GL_SCISSOR_TEST);
+
+			glScissor(0, 0, _overlayWidth, _overlayHeight);
+
+			int curTexIdx = 0;
+			for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
+				for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
+					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
+					glBegin(GL_QUADS);
+					glTexCoord2f(0, 0);
+					glVertex2i(x, y);
+					glTexCoord2f(1.0, 0.0);
+					glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
+					glTexCoord2f(1.0, 1.0);
+					glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
+					glTexCoord2f(0.0, 1.0);
+					glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
+					glEnd();
+					curTexIdx++;
+				}
+			}
+
+			glDisable(GL_SCISSOR_TEST);
+			glDisable(GL_TEXTURE_2D);
+			glDepthMask(GL_TRUE);
+			glEnable(GL_DEPTH_TEST);
+			glEnable(GL_LIGHTING);
+		}
 		SDL_GL_SwapBuffers();
-	else
+	} else
 #endif
+	{
+		if (_overlayVisible) {
+			SDL_LockSurface(_screen);
+			SDL_LockSurface(_overlayscreen);
+			byte *src = (byte *)_overlayscreen->pixels;
+			byte *buf = (byte *)_screen->pixels;
+			int h = _overlayHeight;
+			do {
+				memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
+				src += _overlayscreen->pitch;
+				buf += _screen->pitch;
+			} while (--h);
+			SDL_UnlockSurface(_screen);
+			SDL_UnlockSurface(_overlayscreen);
+		}
 		SDL_Flip(_screen);
+	}
+}
+
+void OSystem_SDL::showOverlay() {
+	if (_overlayVisible)
+		return;
+
+	_overlayVisible = true;
+
+	clearOverlay();
+}
+
+void OSystem_SDL::hideOverlay() {
+	if (!_overlayVisible)
+		return;
+
+	_overlayVisible = false;
+
+	clearOverlay();
+}
+
+void OSystem_SDL::clearOverlay() {
+	if (!_overlayVisible)
+		return;
+
+#ifdef USE_OPENGL
+	if (_opengl) {
+		SDL_LockSurface(_overlayscreen);
+		glReadPixels(0, 0, _overlayWidth, _overlayWidth, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _overlayscreen->pixels);
+		SDL_UnlockSurface(_overlayscreen);
+	} else
+#endif
+	{
+		SDL_LockSurface(_screen);
+		SDL_LockSurface(_overlayscreen);
+		byte *src = (byte *)_screen->pixels;
+		byte *buf = (byte *)_overlayscreen->pixels;
+		int h = _overlayHeight;
+		do {
+			memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
+			src += _screen->pitch;
+			buf += _overlayscreen->pitch;
+		} while (--h);
+		SDL_UnlockSurface(_screen);
+		SDL_UnlockSurface(_overlayscreen);
+	}
+	_overlayDirty = true;
+}
+
+void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
+	if (_overlayscreen == NULL)
+		return;
+
+	if (SDL_LockSurface(_overlayscreen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	byte *src = (byte *)_overlayscreen->pixels;
+	int h = _overlayHeight;
+	do {
+		memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
+		src += _overlayscreen->pitch;
+		buf += pitch;
+	} while (--h);
+
+	SDL_UnlockSurface(_overlayscreen);
+}
+
+void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
+	if (!_overlayscreen)
+		return;
+
+	// Clip the coordinates
+	if (x < 0) {
+		w += x;
+		buf -= x;
+		x = 0;
+	}
+
+	if (y < 0) {
+		h += y;
+		buf -= y * pitch;
+		y = 0;
+	}
+
+	if (w > _overlayWidth - x) {
+		w = _overlayWidth - x;
+	}
+
+	if (h > _overlayHeight - y) {
+		h = _overlayHeight - y;
+	}
+
+	if (w <= 0 || h <= 0)
+		return;
+
+	if (SDL_LockSurface(_overlayscreen) == -1)
+		error("SDL_LockSurface failed: %s", SDL_GetError());
+
+	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * _overlayscreen->format->BytesPerPixel;
+	do {
+		memcpy(dst, buf, w * _overlayscreen->format->BytesPerPixel);
+		dst += _overlayscreen->pitch;
+		buf += pitch;
+	} while (--h);
+
+	SDL_UnlockSurface(_overlayscreen);
+}
+
+int16 OSystem_SDL::getHeight() {
+	return _screen->h;
+}
+
+int16 OSystem_SDL::getWidth() {
+	return _screen->w;
 }
 
 uint32 OSystem_SDL::getMillis() {
@@ -850,9 +1083,6 @@ bool OSystem_SDL::hasFeature(Feature f) {
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
 	switch (f) {
-	case kFeatureFullscreenMode:
-		setFullscreenMode(enable);
-		break;
 	case kFeatureIconifyWindow:
 		if (enable)
 			SDL_WM_IconifyWindow();

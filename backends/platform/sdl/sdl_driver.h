@@ -52,8 +52,6 @@ public:
 
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 
-	virtual void setFullscreenMode(bool enable);
-
 	// Update the dirty areas of the screen
 	void updateScreen();
 
@@ -108,6 +106,18 @@ public:
 	void unlockMutex(MutexRef mutex);
 	void deleteMutex(MutexRef mutex);
 
+	// Overlay
+	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
+	virtual void showOverlay();
+	virtual void hideOverlay();
+	virtual void clearOverlay();
+	virtual void grabOverlay(OverlayColor *buf, int pitch);
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
+	virtual int16 getHeight();
+	virtual int16 getWidth();
+	virtual int16 getOverlayHeight()  { return _overlayHeight; }
+	virtual int16 getOverlayWidth()   { return _overlayWidth; }
+
 	virtual void setWindowCaption(const char *caption);
 	virtual bool openCD(int drive);
 
@@ -129,6 +139,16 @@ private:
 	bool _fullscreen;
 	SDL_Surface *_screen;
 
+	// overlay
+	SDL_Surface *_overlayscreen;
+	bool _overlayVisible;
+	Graphics::PixelFormat _overlayFormat;
+	int _overlayWidth, _overlayHeight;
+	bool _overlayDirty;
+	int _overlayNumTex;
+	GLuint *_overlayTexIds;
+
+	// Audio
 	int _samplesPerSec;
 
 	// CD Audio

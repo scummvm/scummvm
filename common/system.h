@@ -32,6 +32,8 @@
 
 #include "graphics/pixelformat.h"
 
+typedef uint16 OverlayColor;
+
 namespace Audio {
 	class Mixer;
 }
@@ -152,7 +154,78 @@ public:
 	 */
 	virtual void updateScreen() = 0;
 
-	virtual void setFullscreenMode(bool enable) = 0;
+	//@}
+
+
+
+	/**
+	 * @name Overlay
+	 * In order to be able to display dialogs atop the game graphics, backends
+	 * must provide an overlay mode.
+	 *
+	 */
+	//@{
+
+	/** Activate the overlay mode. */
+	virtual void showOverlay() = 0;
+
+	/** Deactivate the overlay mode. */
+	virtual void hideOverlay() = 0;
+
+	/**
+	 * Returns the pixel format description of the overlay.
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getOverlayFormat() const = 0;
+
+	/**
+	 * Reset the overlay.
+	 *
+	 * After calling this method while the overlay mode is active, the user
+	 * should be seeing only the game graphics. How this is achieved depends
+	 * on how the backend implements the overlay. Either it sets all pixels of
+	 * the overlay to be transparent (when alpha blending is used).
+	 */
+	virtual void clearOverlay() = 0;
+
+	/**
+	 * Copy the content of the overlay into a buffer provided by the caller.
+	 */
+	virtual void grabOverlay(OverlayColor *buf, int pitch) = 0;
+
+	/**
+	 * Blit a graphics buffer to the overlay.
+	 * In a sense, this is the reverse of grabOverlay.
+	 *
+	 * @note The pitch parameter actually contains the 'pixel pitch', i.e.,
+	 * the number of pixels per scanline, and not as usual the number of bytes
+	 * per scanline.
+	 *
+	 * @todo Change 'pitch' to be byte and not pixel based
+	 *
+	 * @param buf		the buffer containing the graphics data source
+	 * @param pitch		the pixel pitch of the buffer (number of pixels in a scanline)
+	 * @param x			the x coordinate of the destination rectangle
+	 * @param y			the y coordinate of the destination rectangle
+	 * @param w			the width of the destination rectangle
+	 * @param h			the height of the destination rectangle
+	 *
+	 * @see copyRectToScreen
+	 * @see grabOverlay
+	 */
+	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) = 0;
+
+	/**
+	 * Return the height of the overlay.
+	 * @see getHeight
+	 */
+	virtual int16 getOverlayHeight() = 0;
+
+	/**
+	 * Return the width of the overlay.
+	 * @see getWidth
+	 */
+	virtual int16 getOverlayWidth() = 0;
 
 	//@}
 
