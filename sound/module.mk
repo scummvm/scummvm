@@ -2,8 +2,7 @@ MODULE := sound
 
 MODULE_OBJS := \
 	audiostream.o \
-	mixer.o \
-	rate.o
+	mixer.o
 
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \
