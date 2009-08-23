@@ -177,7 +177,7 @@ int ScriptManager::processActionList() {
                     if(currentCommand->param4) { // RECHECK THIS
                         int newBarriedIndex = 213 * barrierIndex;
                         barrier->flags &= 0xFFFEF1C7;
-                        Shared.getScene()->getResources()->getBarrierByIndex(2*newBarriedIndex)->flags = barrier->flags | 0x20;
+                        Shared.getScene()->getResources()->getBarrierByIndex(newBarriedIndex)->flags = barrier->flags | 0x20;
                     } else if(currentCommand->param3) {
                         barrier->flags &= 0xFFFEF1C7;
                         barrier->flags |= 0x10000;
@@ -208,7 +208,72 @@ int ScriptManager::processActionList() {
 			}
 				break;
 
-/* 0x08 */  //case kMoveScenePosition:
+/* 0x08 */  case kMoveScenePosition: {
+                WorldStats *worldStats = Shared.getScene()->getResources()->getWorldStats();
+                if (currentCommand->param3 < 1) {
+                    worldStats->xLeft = currentCommand->param1;
+                    worldStats->yTop = currentCommand->param2;
+                    worldStats->motionStatus = 3;
+                } else if (!currentCommand->param4) {
+                    worldStats->motionStatus = 5;
+                    worldStats->targetX = currentCommand->param1;
+                    worldStats->targetY = currentCommand->param2;
+                    worldStats->field_A0 = currentCommand->param3;
+
+                    if (worldStats->targetX < worldStats->sceneRects[worldStats->sceneRectIdx].left) {
+                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].left;
+                    }
+
+                    if (worldStats->targetY < worldStats->sceneRects[worldStats->sceneRectIdx].top) {
+                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].top;
+                    }
+
+                    if (worldStats->targetX + 640 > worldStats->sceneRects[worldStats->sceneRectIdx].right) {
+                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].right - 640;
+                    }
+
+                    if (worldStats->targetY + 480 > worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
+                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].bottom - 480;
+                    }
+
+                    // TODO: reverse asm block
+
+                } else if (currentCommand->param5) {
+                    if (worldStats->motionStatus == 2)
+                        lineIncrement = 1;
+                    else
+                        currentCommand->param5 = 0;
+                } else {
+                    currentCommand->param5 = 1;
+                    worldStats->motionStatus = 2;
+                    worldStats->targetX = currentCommand->param1;
+                    worldStats->targetY = currentCommand->param2;
+                    worldStats->field_A0 = currentCommand->param3;
+
+                    if (worldStats->targetX + 640 > worldStats->width) {
+                        worldStats->targetX = worldStats->width - 640;
+                    }
+
+                    if (worldStats->targetX < worldStats->sceneRects[worldStats->sceneRectIdx].left) {
+                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].left;
+                    }
+
+                    if (worldStats->targetY < worldStats->sceneRects[worldStats->sceneRectIdx].top) {
+                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].top;
+                    }
+
+                    if (worldStats->targetX + 640 > worldStats->sceneRects[worldStats->sceneRectIdx].right) {
+                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].right - 640;
+                    }
+
+                    if (worldStats->targetY + 480 > worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
+                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].bottom - 480;
+                    }
+
+                    // TODO: reverse asm block
+                }
+            }
+                break;
 /* 0x09 */  case kHideActor: {
 				uint32 actorIndex = 0;
 				if (currentCommand->param1 == -1)
@@ -265,10 +330,16 @@ int ScriptManager::processActionList() {
 			}
 				break;
 
-/* 0x0C */  //case kSetSceneMotionStat:
+/* 0x0C */  case kSetSceneMotionStat:
+                Shared.getScene()->getResources()->getWorldStats()->motionStatus = currentCommand->param1;
+                break;
 /* 0x0D */  case kDisableActor: {
-				// TODO handle character index != 0
-				Shared.getScene()->getResources()->getMainActor()->disable(5);
+				int actorIndex = 0;
+				if (currentCommand->param1 == -1)
+					;//actorIndex = Shared.getScene()->getWorldStats()->playerActor;
+				else
+					actorIndex = currentCommand->param1;
+				Shared.getScene()->getResources()->getMainActor()->disable(actorIndex);
 			}
 				break;
 /* 0x0E */  case kEnableActor: {
@@ -328,9 +399,10 @@ int ScriptManager::processActionList() {
 /* 0x11 */  case kDestroyBarrier: {
 				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
                 if (barrierIndex >= 0) {
-					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags &= 0xFFFFFFFE;
-                    Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].flags |= 0x20000;
-                    // TODO: delete graphic from draw queue
+					BarrierItem *barrier = &Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex];
+                    barrier->flags &= 0xFFFFFFFE;
+                    barrier->flags |= 0x20000;
+                    Shared.getScreen()->deleteGraphicFromQueue(barrier->resId);
                 } else
 					debugC(kDebugLevelScripts,
 							"Requested invalid object ID:0x%02X in Scene %d Line %d.",
@@ -344,8 +416,22 @@ int ScriptManager::processActionList() {
 /* 0x13 */  //case k_unk13_JMP_WALK_ACTOR:
 /* 0x14 */  //case k_unk14_JMP_WALK_ACTOR:
 /* 0x15 */  //case k_unk15:
-/* 0x16 */  //case kResetAnimation:
-/* 0x17 */  //case kClearFlag1Bit0:
+/* 0x16 */  case kResetAnimation: {
+                int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
+                BarrierItem *barrier = &Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex];
+                if ((barrier->flags & 0x10000) == 0) {
+                    barrier->frameIdx = 0;
+                } else {
+                    barrier->frameIdx = barrier->frameCount - 1;
+                }
+            }
+                break;
+/* 0x17 */  case kClearFlag1Bit0: {
+                int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
+                BarrierItem *barrier = &Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex];
+                barrier->flags &= 0xFFFFFFFE;
+            }
+                break;
 /* 0x18 */  //case k_unk18_PLAY_SND:
 /* 0x19 */  //case kJumpIfFlag2Bit0:
 /* 0x1A */  case kSetFlag2Bit0: {
@@ -388,6 +474,7 @@ int ScriptManager::processActionList() {
 
 /* 0x2C */  //case k_unk2C_ActorSub:
 /* 0x2D */  case kPlayMovie:
+                // TODO: add missing code here
 				_delayedVideoIndex = currentCommand->param1;
 				break;
 
@@ -404,7 +491,14 @@ int ScriptManager::processActionList() {
                 Shared.getSound()->stopMusic();
                 break;
 
-/* 0x34 */  //case k_unk34_Status:
+/* 0x34 */  case k_unk34_Status:
+                if (currentCommand->param1 >= 2) {
+                    currentCommand->param1 = 0;
+                } else {
+                    currentCommand->param1++;
+                    lineIncrement = 1;
+                }
+                break;
 /* 0x35 */  //case k_unk35:
 /* 0x36 */  //case k_unk36:
 /* 0x37 */  case kRunBlowUpPuzzle: {
@@ -420,11 +514,12 @@ int ScriptManager::processActionList() {
 /* 0x3B */  //case k_unk3B_PALETTE_MOD:
 /* 0x3C */  case k_unk3C_CMP_VAL: {
 				if (currentCommand->param1) {
-					if (currentCommand->param2 >= currentCommand->param1)
+                    if (currentCommand->param2 >= currentCommand->param1) {
 						currentCommand->param2 = 0;
-					else
-						currentCommand->param2 = currentCommand->param1 + 1;
-						// XXX done = true; ???
+                    } else {
+						currentCommand->param2++;
+						lineIncrement = 1;
+                    }
 				}
 			}
 				break;

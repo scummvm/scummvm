@@ -172,4 +172,13 @@ void Screen::swapGraphicItem(int item1, int item2) {
    _queueItems[item2] = temp;
 }
 
+void Screen::deleteGraphicFromQueue(uint32 resId) {
+    for(uint i = 0; i < _queueItems.size(); i++) {
+        if(_queueItems[i].resId == resId) {
+            _queueItems.remove_at(i);
+            break;
+        }
+    }
+}
+
 } // end of namespace Asylum
