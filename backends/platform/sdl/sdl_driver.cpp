@@ -516,6 +516,8 @@ OSystem_SDL::OSystem_SDL() {
 #endif
 	_samplesPerSec = 0;
 	_cdrom = 0;
+	_overlayVisible = false;
+	_overlayscreen = NULL;
 
 	memset(&_km, 0, sizeof(_km));
 
