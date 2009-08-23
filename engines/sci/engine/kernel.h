@@ -67,10 +67,8 @@ class Kernel {
 public:
 	/**
 	 * Initializes the SCI kernel
-	 * @param minimalLoad If true, only the selector names are loaded, to detect game features.
-	 * It's set to true by the advanced game detector to speed it up
 	 */
-	Kernel(ResourceManager *resmgr, bool minimalLoad = false);
+	Kernel(ResourceManager *resmgr);
 	~Kernel();
 
 	uint getOpcodesSize() const { return _opcodes.size(); }

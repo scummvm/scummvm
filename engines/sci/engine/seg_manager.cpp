@@ -52,7 +52,7 @@ namespace Sci {
 
 #define INVALID_SCRIPT_ID -1
 
-SegManager::SegManager(ResourceManager *resMgr, SciVersion version, bool oldScriptHeader) {
+SegManager::SegManager(ResourceManager *resMgr, SciVersion version) {
 	id_seg_map = new IntMapper();
 	reserved_id = INVALID_SCRIPT_ID;
 	id_seg_map->checkKey(reserved_id, true);	// reserve entry 0 for INVALID_SCRIPT_ID
@@ -68,7 +68,6 @@ SegManager::SegManager(ResourceManager *resMgr, SciVersion version, bool oldScri
 	exports_wide = 0;
 	_version = version;
 	_resMgr = resMgr;
-	_oldScriptHeader = oldScriptHeader;
 
 	int result = 0;
 
@@ -150,7 +149,7 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 	if (!script || (_version >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
-	if (_oldScriptHeader) {
+	if (_version == SCI_VERSION_0_EARLY) {	// check if we got an old script header
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (_version < SCI_VERSION_1_1) {
@@ -445,7 +444,7 @@ SegmentId SegManager::getSegment(int script_nr, SCRIPT_GET load) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
-		script_instantiate(_resMgr, this, _version, _oldScriptHeader, script_nr);
+		script_instantiate(_resMgr, this, _version, script_nr);
 
 	segment = segGet(script_nr);
 
@@ -987,7 +986,7 @@ int SegManager::createSci0ClassTable() {
 		Resource *script = _resMgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
 
 		if (script) {
-			if (_oldScriptHeader)
+			if (version == SCI_VERSION_0_EARLY)	// check if we got an old script header
 				magic_offset = seeker = 2;
 			else
 				magic_offset = seeker = 0;

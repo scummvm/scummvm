@@ -499,10 +499,12 @@ static const SelectorRemap lsl5_demo_selectors[] = {
 	} while (0)
 
 Common::StringList Kernel::checkStaticSelectorNames() {
-	Common::String gameID = ((SciEngine*)g_engine)->getGameID();
-	
 	Common::StringList names;
-	
+	if (!g_engine)
+		return names;
+
+	Common::String gameID = ((SciEngine*)g_engine)->getGameID();
+
 	if (gameID == "kq4sci")
 		USE_SELECTOR_TABLE(kq4_demo_selectors);
 	else if (gameID == "lsl3" || gameID == "iceman") // identical, except iceman has "flags" 

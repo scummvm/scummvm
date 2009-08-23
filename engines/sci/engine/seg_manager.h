@@ -58,7 +58,7 @@ public:
 	/**
 	 * Initialize the segment manager
 	 */
-	SegManager(ResourceManager *resMgr, SciVersion version, bool oldScriptHeader);
+	SegManager(ResourceManager *resMgr, SciVersion version);
 
 	/**
 	 * Deallocate all memory associated with the segment manager
@@ -342,7 +342,6 @@ public:
 
 private:
 	IntMapper *id_seg_map; ///< id - script id; seg - index of heap
-	bool _oldScriptHeader;
 public: // TODO: make private
 	Common::Array<MemObject *> _heap;
 	int reserved_id;

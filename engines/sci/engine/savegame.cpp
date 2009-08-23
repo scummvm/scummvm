@@ -219,7 +219,7 @@ static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
 	if (s.isLoading()) {
 		// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 		delete obj;
-		obj = new SegManager(resMgr, version, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader());
+		obj = new SegManager(resMgr, version);
 	}
 
 	obj->saveLoadWithSerializer(s);

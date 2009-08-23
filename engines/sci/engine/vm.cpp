@@ -208,7 +208,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	Script *scr = s->seg_manager->getScriptIfLoaded(seg);
 
 	if (!scr)  // Script not present yet?
-		seg = script_instantiate(s->resmgr, s->seg_manager, s->_version, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader(), script);
+		seg = script_instantiate(s->resmgr, s->seg_manager, s->_version, script);
 	else
 		scr->unmarkDeleted();
 
@@ -1761,11 +1761,11 @@ int script_instantiate_sci11(ResourceManager *resMgr, SegManager *segManager, Sc
 	return seg_id;
 }
 
-int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersion version, bool oldScriptHeader, int script_nr) {
+int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersion version, int script_nr) {
 	if (version >= SCI_VERSION_1_1)
 		return script_instantiate_sci11(resMgr, segManager, version, script_nr);
 	else
-		return script_instantiate_sci0(resMgr, segManager, version, oldScriptHeader, script_nr);
+		return script_instantiate_sci0(resMgr, segManager, version, (version == SCI_VERSION_0_EARLY), script_nr);
 }
 
 void script_uninstantiate_sci0(SegManager *segManager, SciVersion version, int script_nr, SegmentId seg) {

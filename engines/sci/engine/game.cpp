@@ -191,7 +191,7 @@ int game_init_sound(EngineState *s, int sound_flags) {
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
 	s->kernel_opt_flags = 0;
-	s->seg_manager = new SegManager(s->resmgr, s->_version, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader());
+	s->seg_manager = new SegManager(s->resmgr, s->_version);
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	SegmentId script_000_segment = s->seg_manager->getSegment(0, SCRIPT_GET_LOCK);
@@ -294,7 +294,7 @@ int game_init(EngineState *s) {
 	s->stack_base = stack->entries;
 	s->stack_top = s->stack_base + VM_STACK_SIZE;
 
-	if (!script_instantiate(s->resmgr, s->seg_manager, s->_version, ((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader(), 0)) {
+	if (!script_instantiate(s->resmgr, s->seg_manager, s->_version, 0)) {
 		warning("game_init(): Could not instantiate script 0");
 		return 1;
 	}

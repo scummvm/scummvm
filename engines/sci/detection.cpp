@@ -2412,7 +2412,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0
 	},
+#endif
 
+	// Slater & Charlie go camping
+	{{"slater", "", {
+		{"resource.000", 0, "1846b57fe84774be72f7c50ab3c90df0", 2256126},
+		{"resource.map", 0, "21f85414124dc23e54544a5536dc35cd", 4044},
+		{"resource.msg", 0, "c44f51fb955eae266fecf360ebcd5ad2", 1132},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH},
+		0
+	},
+
+#ifdef ENABLE_SCI32
 	// RAMA - English DOS/Windows Demo
 	// Executable scanning reports "2.100.002", VERSION file reports "000.000.008"
 	{{"rama", "Demo", {
@@ -3045,15 +3056,20 @@ public:
 Common::String convertSierraGameId(Common::String sierraId) {
 	// TODO: SCI32 IDs
 
-	// TODO: astrochicken
-	// TODO: The internal id of christmas1998 is "demo"
-	if (sierraId == "card")
-		return "christmas1990";
-	// TODO: christmas1992
+	// TODO: The internal id of christmas1988 is "demo"
+	if (sierraId == "card") {
+		// This could either be christmas1990 or christmas1992
+		// christmas1990 has a "resource.001" file, whereas 
+		// christmas1992 has a "resource.000" file
+		return (Common::File::exists("resource.001")) ? "christmas1990" : "christmas1992";
+	}
 	if (sierraId == "arthur")
 		return "camelot";
-	if (sierraId == "brain")
-		return "castlebrain";
+	if (sierraId == "brain") {
+		// This could either be The Castle of Dr. Brain, or The Island of Dr. Brain
+		// castlebrain has resource.001, whereas islandbrain doesn't
+		return (Common::File::exists("resource.001")) ? "castlebrain" : "islandbrain";
+	}
 	// iceman is the same
 	// longbow is the same
 	if (sierraId == "eco")
@@ -3068,8 +3084,8 @@ Common::String convertSierraGameId(Common::String sierraId) {
 		return "hoyle1";
 	if (sierraId == "solitare")
 		return "hoyle2";
-	// TODO: hoyle3
-	// TODO: hoyle4
+	// hoyle3 is the same
+	// hoyle4 is the same
 	if (sierraId == "kq1")
 		return "kq1sci";
 	if (sierraId == "kq4")
@@ -3081,9 +3097,10 @@ Common::String convertSierraGameId(Common::String sierraId) {
 	// lsl5 is the same
 	// lsl6 is the same
 	// TODO: lslcasino
-	// TODO: fairytales
-	// TODO: mothergoose
-	// TODO: msastrochicken
+	if (sierraId == "tales")
+		return "fairytales";
+	if (sierraId == "mg")
+		return "mothergoose";
 	if (sierraId == "cb1")
 		return "laurabow";
 	if (sierraId == "lb2")
@@ -3102,13 +3119,27 @@ Common::String convertSierraGameId(Common::String sierraId) {
 		return "qfg2";
 	if (sierraId == "qfg1")
 		return "qfg3";
-	// TODO: slater
+	if (sierraId == "thegame")
+		return "slater";
 	if (sierraId == "sq1")
 		return "sq1sci";
-	// sq3 is the same
+	if (sierraId == "sq3") {
+		// Both SQ3 and the separately released subgame, Astro Chicken,
+		// have internal ID "sq3", but Astro Chicken only has "resource.map"
+		// and "resource.001". Detect if it's SQ3 by the existence of
+		// "resource.002"
+		return (Common::File::exists("resource.002")) ? "sq3" : "astrochicken";
+	}
+	if (sierraId == "sq4") {
+		// Both SQ4 and the separately released subgame, Ms. Astro Chicken,
+		// have internal ID "sq4", but Astro Chicken only has "resource.map"
+		// and "resource.001". Detect if it's SQ4 by the existence of
+		// "resource.000" (which exists in both SQ4 floppy and CD, but not in
+		// the subgame)
+		return (Common::File::exists("resource.000")) ? "sq4" : "msastrochicken";
+	}
 	// sq4 is the same
 	// sq5 is the same
-	// TODO: islandbrain
 
 	return sierraId;
 }
@@ -3185,12 +3216,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Determine the game id
 	ResourceManager *resMgr = new ResourceManager(fslist);
 	SciVersion version = resMgr->sciVersion();
-	Kernel *kernel = new Kernel(resMgr, true);
-	bool hasOldScriptHeader = kernel->hasOldScriptHeader();
-	delete kernel;
-
-	SegManager *segManager = new SegManager(resMgr, version, hasOldScriptHeader);
-	if (!script_instantiate(resMgr, segManager, version, hasOldScriptHeader, 0)) {
+	SegManager *segManager = new SegManager(resMgr, version);
+	if (!script_instantiate(resMgr, segManager, version, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		SearchMan.remove("SCI_detection");
 		return 0;
