@@ -525,7 +525,10 @@ bool ResourceReader::loadResource(ResourceSlot *slot, byte *&buffer, uint32 &siz
 
 ResourceSlot *ResourceReader::getResourceSlot(uint32 resType, uint index) {
 	ResourceSlots *slots = _resSlots[resType];
-	assert(slots);
+
+	if (!slots)
+		return NULL;
+
 	if (index >= 1 && index < slots->size()) {
 		return &(*slots)[index];
 	} else {
