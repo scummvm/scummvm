@@ -641,7 +641,6 @@ EOF
 done # for parm in ...
 
 DEBFLAGS="-g"
-DEBFLAGS_AS="-g"
 
 for ac_option in $@; do
 	case "$ac_option" in
@@ -735,7 +734,6 @@ for ac_option in $@; do
 		;;
 	--disable-debug)
 		DEBFLAGS=""
-		DEBFLAGS_AS=""
 		;;
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
@@ -795,7 +793,6 @@ for ac_option in $@; do
 done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
-ASFLAGS="$ASFLAGS $DEBFLAGS_AS"
 
 guessed_host=`$_srcdir/config.guess`
 get_system_exe_extension $guessed_host
