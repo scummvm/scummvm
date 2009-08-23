@@ -101,6 +101,9 @@ else
 	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
 endif
 
+%.o: %.s
+	$(AS) $(ASFLAGS) $(<) -o $*.o
+
 ifdef HAVE_NASM
 %.o: %.asm
 	$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)

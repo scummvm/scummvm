@@ -29,6 +29,7 @@ SAVED_LDFLAGS=$LDFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
+SAVED_ASFLAGS=$ASFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -130,6 +131,7 @@ _nasm=auto
 _ranlib=ranlib
 _strip=strip
 _ar="ar cru"
+_as="as"
 _windres=windres
 _win32path="C:/scummvm"
 _aos4path="Games:ScummVM"
@@ -621,6 +623,7 @@ Some influential environment variables:
   CXXFLAGS  C++ compiler flags
   CPPFLAGS  C++ preprocessor flags, e.g. -I<include dir> if you have
             headers in a nonstandard directory <include dir>
+  ASFLAGS   assembler flags
 
 EOF
 		exit 0
@@ -628,6 +631,7 @@ EOF
 done # for parm in ...
 
 DEBFLAGS="-g"
+DEBFLAGS_AS="-g"
 
 for ac_option in $@; do
 	case "$ac_option" in
@@ -710,6 +714,7 @@ for ac_option in $@; do
 		;;
 	--disable-debug)
 		DEBFLAGS=""
+		DEBFLAGS_AS=""
 		;;
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
@@ -769,6 +774,7 @@ for ac_option in $@; do
 done;
 
 CXXFLAGS="$CXXFLAGS $DEBFLAGS"
+ASFLAGS="$ASFLAGS $DEBFLAGS_AS"
 
 guessed_host=`$_srcdir/config.guess`
 get_system_exe_extension $guessed_host
@@ -860,6 +866,13 @@ esac
 
 if test -z "$_host_alias"; then
 	_host_alias="$_host_cpu-$_host_os"
+else
+	# if _host_alias was set, default to the standard GNU tools
+	_ranlib=$_host_alias-ranlib
+	_strip=$_host_alias-strip
+	_ar="$_host_alias-ar cru"
+	_as="$_host_alias-as"
+	_windres=$_host_alias-windres
 fi
 
 #
@@ -1207,6 +1220,7 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1214,16 +1228,13 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			_ar="$_host_alias-ar cru"
-			_as="$_host_alias-as -mfpu=vfp"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="linuxmoto"
 			;;
 		motomagx)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOMAGX -DUSE_ARM_SMUSH_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1231,10 +1242,6 @@ if test -n "$_host"; then
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
-			_ar="$_host_alias-ar cru"
-			_as="$_host_alias-as -mfpu=vfp"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="linuxmoto"
 			;;
 		bfin*)
@@ -1254,8 +1261,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1269,14 +1274,13 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM -DDISABLE_DOSBOX_OPL"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1341,9 +1345,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
 			_build_hq_scalers="no"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			;;
 		wince)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1360,10 +1361,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="wince"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
-			_windres=$_host_alias-windres
 			_mt32emu="no"
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/wince/wince.mk'
 			;;
@@ -1381,8 +1378,6 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mad="yes"
 			_zlib="yes"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
 			;;
 		wii)
@@ -1392,9 +1387,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="wii"
 			_build_hq_scalers="no"
 			add_line_to_config_mk 'GAMECUBE = 0'
@@ -1412,9 +1404,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="wii"
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1432,9 +1421,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="psp"
 			_build_scalers="no"
 			_build_hq_scalers="no"
@@ -2208,6 +2194,7 @@ RANLIB := $_ranlib
 STRIP := $_strip
 AR := $_ar
 AS := $_as
+ASFLAGS := $ASFLAGS
 WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
@@ -2240,6 +2227,7 @@ SAVED_LDFLAGS     := $SAVED_LDFLAGS
 SAVED_CXX         := $SAVED_CXX
 SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
 SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
+SAVED_ASFLAGS     := $SAVED_ASFLAGS
 EOF
 
 #
