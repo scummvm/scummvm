@@ -1398,11 +1398,6 @@ void ScummEngine_v72he::o72_openFile() {
 	copyScriptString(buffer, sizeof(buffer));
 	debug(1, "Original filename %s", buffer);
 
-	// HACK: INI filename seems to get reset, corruption elsewhere?
-	if (_game.id == GID_MOONBASE && buffer[0] == 0) {
-		strcpy((char *)buffer, "moonbase.ini");
-	}
-
 	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 	debug(1, "Final filename to %s", filename);
 
@@ -1823,7 +1818,12 @@ void ScummEngine_v72he::o72_readINI() {
 	case 77: // HE 100
 	case 7: // string
 		writeVar(0, 0);
-		if (!strcmp((char *)option, "SaveGamePath")) {
+		if (!strcmp((char *)option, "HE3File")) {
+			Common::String fileName = generateFilename(-3);
+			int len = resStrLen((const byte *)fileName.c_str());
+			data = defineArray(0, kStringArray, 0, 0, 0, len);
+			memcpy(data, fileName.c_str(), len);
+		} else if (!strcmp((char *)option, "SaveGamePath")) {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
 			// path in Macintosh verisons.

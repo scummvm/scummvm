@@ -629,6 +629,7 @@ void ScummEngine_v100he::o100_arrayOps() {
 		}
 		break;
 	case 132:
+		debug(0, "o100_arrayOps: case 132");
 		// TODO: Used by Moonbase Commander
 		fetchScriptWord();
 		fetchScriptWord();
