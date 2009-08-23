@@ -118,6 +118,7 @@ uint16 VDXPlayer::loadInternal() {
 
 bool VDXPlayer::playFrameInternal() {
 	byte currRes = 0x80;
+	Common::ReadStream *vdxData = 0;
 	while (!_file->eos() && currRes == 0x80) {
 		currRes = _file->readByte();
 
@@ -130,7 +131,9 @@ bool VDXPlayer::playFrameInternal() {
 		uint8 lengthbits = _file->readByte();
 
 		// Read the chunk data and decompress if needed
-		Common::ReadStream *vdxData = new Common::SubReadStream(_file, compSize);
+		if (compSize)
+			vdxData = _file->readStream(compSize);
+
 		if (lengthmask && lengthbits) {
 			Common::ReadStream *decompData = new LzssReadStream(vdxData, lengthmask, lengthbits);
 			delete vdxData;
@@ -157,7 +160,9 @@ bool VDXPlayer::playFrameInternal() {
 			default:
 				error("Groovie::VDX: Invalid resource type: %d", currRes);
 		}
-		delete vdxData;
+		if (vdxData)
+			delete vdxData;
+		vdxData = 0;
 	}
 
 	// Wait until the current frame can be shown
