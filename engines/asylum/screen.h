@@ -76,6 +76,7 @@ public:
     void clearGraphicsInQueue();
     void graphicsSelectionSort();
     void swapGraphicItem(int item1, int item2);
+    void deleteGraphicFromQueue(uint32 resId);
 
 private:
 	Graphics::Surface _backBuffer;
