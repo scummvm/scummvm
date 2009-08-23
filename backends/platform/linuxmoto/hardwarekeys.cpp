@@ -42,23 +42,23 @@ struct Key {
 };
 
 static const Key keys[] = {
-	{"FIRE", KEYCODE_RETURN, ASCII_RETURN, "Fire", kActionKeyType, false},
-	{"CAMERA", KEYCODE_PAUSE, 0, "Camera", kActionKeyType, false},
-	{"HANGUP", KEYCODE_ESCAPE, ASCII_ESCAPE, "Hangup", kStartKeyType, false},
-	{"CALL", KEYCODE_SPACE, ASCII_SPACE, "Call", kActionKeyType, false},
-	{"PLUS", KEYCODE_PLUS, '+', "+", kActionKeyType, false},
-	{"MINUS", KEYCODE_MINUS, '-', "-", kActionKeyType, false},
+	{ "FIRE", KEYCODE_RETURN, ASCII_RETURN, "Fire", kActionKeyType, false },
+	{ "CAMERA", KEYCODE_PAUSE, 0, "Camera", kActionKeyType, false },
+	{ "HANGUP", KEYCODE_ESCAPE, ASCII_ESCAPE, "Hangup", kStartKeyType, false },
+	{ "CALL", KEYCODE_SPACE, ASCII_SPACE, "Call", kActionKeyType, false },
+	{ "PLUS", KEYCODE_PLUS, '+', "+", kActionKeyType, false },
+	{ "MINUS", KEYCODE_MINUS, '-', "-", kActionKeyType, false },
 
-	{"a", KEYCODE_a, 'a', "a", kActionKeyType, true},
-	{"b", KEYCODE_b, 'b', "b", kActionKeyType, true},
-	{"c", KEYCODE_c, 'c', "c", kActionKeyType, true},
-	{"d", KEYCODE_d, 'd', "d", kActionKeyType, true},
-	{"e", KEYCODE_e, 'e', "e", kActionKeyType, true},
-	{"f", KEYCODE_f, 'f', "f", kActionKeyType, true},
-	{"g", KEYCODE_g, 'g', "g", kActionKeyType, true},
-	{"h", KEYCODE_h, 'h', "h", kActionKeyType, true},
-	{"i", KEYCODE_i, 'i', "i", kActionKeyType, true},
-	{"j", KEYCODE_j, 'j', "j", kActionKeyType, true},
+	{ "a", KEYCODE_a, 'a', "a", kActionKeyType, true },
+	{ "b", KEYCODE_b, 'b', "b", kActionKeyType, true },
+	{ "c", KEYCODE_c, 'c', "c", kActionKeyType, true },
+	{ "d", KEYCODE_d, 'd', "d", kActionKeyType, true },
+	{ "e", KEYCODE_e, 'e', "e", kActionKeyType, true },
+	{ "f", KEYCODE_f, 'f', "f", kActionKeyType, true },
+	{ "g", KEYCODE_g, 'g', "g", kActionKeyType, true },
+	{ "h", KEYCODE_h, 'h', "h", kActionKeyType, true },
+	{ "i", KEYCODE_i, 'i', "i", kActionKeyType, true },
+	{ "j", KEYCODE_j, 'j', "j", kActionKeyType, true },
 
 	// Numeric keypad
 
