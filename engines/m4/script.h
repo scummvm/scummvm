@@ -119,6 +119,15 @@ public:
 	~ScriptDataCache() {
 		clear();
 	}
+
+	// WORKAROUND: The old prototype for this function was:
+	// template<class T> T *load(Common::File *fd, uint32 ofs);
+	// that caused a parser error in g++ 3.3.6 used by our
+	// "motoezx" target of our buildbot. The actual parser
+	// error happended, when calling the function like this:
+	// "T *result = _dataCache->load<T>(_scriptFile, _data[value.value]->offset);"
+	// in ScriptInterpreter::toData. To work around this
+	// we moved the return value as parameter instead.
 	template<class T>
 	void load(Common::File *fd, uint32 ofs, T *&item) {
 		if (_cache.contains(ofs)) {
