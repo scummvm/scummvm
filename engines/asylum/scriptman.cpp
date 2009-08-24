@@ -209,66 +209,52 @@ int ScriptManager::processActionList() {
 				break;
 
 /* 0x08 */  case kMoveScenePosition: {
-                WorldStats *worldStats = Shared.getScene()->getResources()->getWorldStats();
+                WorldStats   *ws = Shared.getScene()->getResources()->getWorldStats();
+                Common::Rect *sr = &ws->sceneRects[ws->sceneRectIdx];
+
                 if (currentCommand->param3 < 1) {
-                    worldStats->xLeft = currentCommand->param1;
-                    worldStats->yTop = currentCommand->param2;
-                    worldStats->motionStatus = 3;
+                    ws->xLeft = currentCommand->param1;
+                    ws->yTop  = currentCommand->param2;
+                    ws->motionStatus = 3;
                 } else if (!currentCommand->param4) {
-                    worldStats->motionStatus = 5;
-                    worldStats->targetX = currentCommand->param1;
-                    worldStats->targetY = currentCommand->param2;
-                    worldStats->field_A0 = currentCommand->param3;
+                    ws->motionStatus = 5;
+                    ws->targetX  = currentCommand->param1;
+                    ws->targetY  = currentCommand->param2;
+                    ws->field_A0 = currentCommand->param3;
 
-                    if (worldStats->targetX < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].left) {
-                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].left;
-                    }
-
-                    if (worldStats->targetY < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].top) {
-                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].top;
-                    }
-
-                    if (worldStats->targetX + 640 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].right) {
-                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].right - 640;
-                    }
-
-                    if (worldStats->targetY + 480 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
-                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].bottom - 480;
-                    }
+                    if (ws->targetX < (uint32)sr->left)
+                        ws->targetX = sr->left;
+                    if (ws->targetY < (uint32)sr->top)
+                        ws->targetY = sr->top;
+                    if (ws->targetX + 640 > (uint32)sr->right)
+                        ws->targetX = sr->right - 640;
+                    if (ws->targetY + 480 > (uint32)sr->bottom)
+                        ws->targetY = sr->bottom - 480;
 
                     // TODO: reverse asm block
 
                 } else if (currentCommand->param5) {
-                    if (worldStats->motionStatus == 2)
+                    if (ws->motionStatus == 2)
                         lineIncrement = 1;
                     else
                         currentCommand->param5 = 0;
                 } else {
                     currentCommand->param5 = 1;
-                    worldStats->motionStatus = 2;
-                    worldStats->targetX = currentCommand->param1;
-                    worldStats->targetY = currentCommand->param2;
-                    worldStats->field_A0 = currentCommand->param3;
+                    ws->motionStatus = 2;
+                    ws->targetX  = currentCommand->param1;
+                    ws->targetY  = currentCommand->param2;
+                    ws->field_A0 = currentCommand->param3;
 
-                    if (worldStats->targetX + 640 > worldStats->width) {
-                        worldStats->targetX = worldStats->width - 640;
-                    }
-
-                    if (worldStats->targetX < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].left) {
-                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].left;
-                    }
-
-                    if (worldStats->targetY < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].top) {
-                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].top;
-                    }
-
-                    if (worldStats->targetX + 640 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].right) {
-                        worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].right - 640;
-                    }
-
-                    if (worldStats->targetY + 480 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
-                        worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].bottom - 480;
-                    }
+                    if (ws->targetX + 640 > ws->width)
+                        ws->targetX = ws->width - 640;
+                    if (ws->targetX < (uint32)sr->left)
+                        ws->targetX = sr->left;
+                    if (ws->targetY < (uint32)sr->top)
+                        ws->targetY = sr->top;
+                    if (ws->targetX + 640 > (uint32)sr->right)
+                        ws->targetX = sr->right - 640;
+                    if (ws->targetY + 480 > (uint32)sr->bottom)
+                        ws->targetY = sr->bottom - 480;
 
                     // TODO: reverse asm block
                 }
@@ -443,7 +429,6 @@ int ScriptManager::processActionList() {
 						// int actionIdx = getActionIndex(currentCommand->param1);
 						//scene.actionAreas[actionIdx].flags |= 1;
 						debugC(kDebugLevelScripts, "ActionArea Flag Set not implemented");
-
 					} else {
 						Shared.getScene()->getResources()->getBarrierById(currentCommand->param1)->flags2 |= 1;
 					}
