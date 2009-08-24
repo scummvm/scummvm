@@ -38,7 +38,7 @@
 
 namespace Gob {
 
-const char *VideoPlayer::_extensions[] = { "IMD", "VMD", "RMD" };
+const char *VideoPlayer::_extensions[] = { "IMD", "VMD", "RMD", "SMD" };
 
 VideoPlayer::Video::Video(GobEngine *vm) : _vm(vm), _stream(0), _video(0) {
 }
