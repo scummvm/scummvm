@@ -92,7 +92,7 @@ void AGOSEngine::changeDoorState(SubRoom *r, uint16 d, uint16 n) {
 	mask <<= d;
 	n <<= d;
 	r->roomExitStates &= ~mask;
-	r->roomExitStates|= n;
+	r->roomExitStates |= n;
 }
 
 void AGOSEngine::setDoorState(Item *i, uint16 d, uint16 n) {
