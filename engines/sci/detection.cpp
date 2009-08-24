@@ -359,6 +359,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	}
 #endif
 
+	// EGA views
+	if (gameViews == kViewEga)
+		s_fallbackDesc.desc.extra = "EGA";
+
 	SegManager *segManager = new SegManager(resMgr, version);
 
 	if (exePlatform == Common::kPlatformUnknown) {
