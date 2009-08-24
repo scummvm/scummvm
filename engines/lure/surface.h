@@ -140,7 +140,6 @@ public:
 
 class CopyProtectionDialog {
 private:
-	Common::RandomSource _rnd;
 	typedef Common::List<Common::SharedPtr<Hotspot> > HotspotsList;
 	HotspotsList _hotspots;
 	int _charIndex;

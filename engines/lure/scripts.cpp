@@ -739,9 +739,7 @@ void Script::addActions(uint16 hotspotId, uint16 actions, uint16 v3) {
 // Generates a random number and stores it in the general field
 
 void Script::randomToGeneral(uint16 maxVal, uint16 minVal, uint16 v3) {
-	Common::RandomSource rnd;
-	g_eventRec.registerRandomSource(rnd, "lureScripts");
-	uint16 v = minVal + rnd.getRandomNumber(maxVal - minVal);
+	uint16 v = minVal + LureEngine::getReference().rnd().getRandomNumber(maxVal - minVal);
 	Resources::getReference().fieldList().setField(GENERAL, v);
 }
 

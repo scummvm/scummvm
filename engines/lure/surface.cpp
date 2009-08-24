@@ -1299,7 +1299,6 @@ CopyProtectionDialog::CopyProtectionDialog() {
 bool CopyProtectionDialog::show() {
 	Screen &screen = Screen::getReference();
 	Events &events = Events::getReference();
-	Common::RandomSource rnd;
 	LureEngine &engine = LureEngine::getReference();
 
 	screen.setPaletteEmpty();
@@ -1403,8 +1402,9 @@ bool CopyProtectionDialog::show() {
 
 void CopyProtectionDialog::chooseCharacters() {
 	Screen &screen = Screen::getReference();
-	int char1 = _rnd.getRandomNumber(19);
-	int char2 = _rnd.getRandomNumber(19);
+	Common::RandomSource &rnd = LureEngine::getReference().rnd();
+	int char1 = rnd.getRandomNumber(19);
+	int char2 = rnd.getRandomNumber(19);
 
 	HotspotsList::iterator curHotspot = _hotspots.begin();
 	(curHotspot->get())->setFrameNumber(char1);

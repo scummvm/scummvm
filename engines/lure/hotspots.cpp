@@ -38,7 +38,6 @@
 #include "lure/sound.h"
 #include "lure/lure.h"
 #include "common/endian.h"
-#include "common/EventRecorder.h"
 
 namespace Lure {
 
@@ -598,10 +597,8 @@ void Hotspot::setRandomDest() {
 	Resources &res = Resources::getReference();
 	RoomData *roomData = res.getRoom(roomNumber());
 	Common::Rect &rect = roomData->walkBounds;
-	Common::RandomSource rnd;
+	Common::RandomSource &rnd = LureEngine::getReference().rnd();
 	int16 xp, yp;
-
-	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	if (currentActions().isEmpty())
 		currentActions().addFront(START_WALKING, roomNumber());
@@ -3145,10 +3142,9 @@ void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
 		return;
 	}
 
-	Common::RandomSource rnd;
+	Common::RandomSource &rnd = LureEngine::getReference().rnd();
 	RandomActionType actionType;
 	uint16 scheduleId;
-	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	int actionIndex = rnd.getRandomNumber(set->numActions() - 1);
 	set->getEntry(actionIndex, actionType, scheduleId);
@@ -3336,9 +3332,7 @@ void HotspotTickHandlers::goewinCaptiveAnimHandler(Hotspot &h) {
 
 void HotspotTickHandlers::prisonerAnimHandler(Hotspot &h) {
 	ValueTableData &fields = Resources::getReference().fieldList();
-	Common::RandomSource rnd;
-
-	g_eventRec.registerRandomSource(rnd, "lureHotspots");
+	Common::RandomSource &rnd = LureEngine::getReference().rnd();
 
 	h.handleTalkDialog();
 	if (h.frameCtr() > 0) {
@@ -3380,8 +3374,7 @@ void HotspotTickHandlers::morkusAnimHandler(Hotspot &h) {
 
 	if (h.executeScript()) {
 		// Script is done - set new script to one of two alternates randomly
-		Common::RandomSource rnd;
-		g_eventRec.registerRandomSource(rnd, "lureHotspots");
+		Common::RandomSource &rnd = LureEngine::getReference().rnd();
 
 		h.setHotspotScript(rnd.getRandomNumber(100) >= 50 ? 0x54 : 0);
 		h.setFrameCtr(20 + rnd.getRandomNumber(63));
@@ -3678,10 +3671,8 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 	Resources &res = Resources::getReference();
 	Room &room = Room::getReference();
 	BarEntry &barEntry = res.barmanLists().getDetails(h.roomNumber());
-	Common::RandomSource rnd;
+	Common::RandomSource &rnd = LureEngine::getReference().rnd();
 	static bool ewanXOffset = false;
-
-	g_eventRec.registerRandomSource(rnd, "lureHotspots");
 
 	h.handleTalkDialog();
 	if (h.delayCtr() > 0) {

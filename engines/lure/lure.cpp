@@ -26,6 +26,7 @@
 #include "common/config-manager.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/EventRecorder.h"
 
 #include "lure/luredefs.h"
 #include "lure/surface.h"
@@ -39,6 +40,7 @@ namespace Lure {
 static LureEngine *int_engine = NULL;
 
 LureEngine::LureEngine(OSystem *system, const LureGameDescription *gameDesc): Engine(system), _gameDescription(gameDesc) {
+	g_eventRec.registerRandomSource(_rnd, "lure");
 
 	Common::addDebugChannel(kLureDebugScripts, "scripts", "Scripts debugging");
 	Common::addDebugChannel(kLureDebugAnimations, "animations", "Animations debugging");

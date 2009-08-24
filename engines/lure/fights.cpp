@@ -40,7 +40,7 @@ const FighterRecord initialFighterList[3] = {
 
 FightsManager *int_fights = NULL;
 
-FightsManager::FightsManager() {
+FightsManager::FightsManager() : _rnd(LureEngine::getReference().rnd()) {
 	int_fights = this;
 	_fightData = NULL;
 	_mouseFlags = 0;

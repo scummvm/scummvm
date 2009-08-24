@@ -51,7 +51,7 @@ struct TalkDialogDetails {
 
 class Resources {
 private:
-	Common::RandomSource _rnd;
+	Common::RandomSource &_rnd;
 	Palette *_paletteSubset;
 	MemoryBlock *_cursors;
 	RoomDataList _roomData;

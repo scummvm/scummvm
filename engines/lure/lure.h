@@ -31,6 +31,7 @@
 #include "sound/mixer.h"
 #include "common/file.h"
 #include "common/savefile.h"
+#include "common/util.h"
 
 #include "lure/disk.h"
 #include "lure/res.h"
@@ -42,6 +43,8 @@
 #include "lure/fights.h"
 
 namespace Lure {
+
+#define RandomNumberGen LureEngine::getReference().rnd()
 
 struct LureGameDescription;
 
@@ -59,6 +62,7 @@ private:
 	StringData *_strings;
 	Room *_room;
 	FightsManager *_fights;
+	Common::RandomSource _rnd;
 
 	const char *generateSaveName(int slotNumber);
 
@@ -86,6 +90,7 @@ public:
 
 	Disk &disk() { return *_disk; }
 
+	Common::RandomSource &rnd() { return _rnd; }
 	int gameToLoad() { return _gameToLoad; }
 	bool loadGame(uint8 slotNumber);
 	bool saveGame(uint8 slotNumber, Common::String &caption);
