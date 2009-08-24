@@ -41,6 +41,10 @@ struct CRUISEGameDescription {
 	uint32 features;
 };
 
+const char *CruiseEngine::getGameId() const {
+	return _gameDescription->desc.gameid;
+}
+
 int CruiseEngine::getGameType() const {
 	return _gameDescription->gameType;
 }
