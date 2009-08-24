@@ -164,18 +164,19 @@ enum opcodes {
 	k_unk54_SET_ACTIONLIST_6EC,
 	k_unk55,
 	k_unk56,
-	k_unk57,
-	k_unk58,
+	kSetResourcePalette,
+	kSetBarrierFrameIdxFlaged,
 	k_unk59,
 	k_unk5A,
 	k_unk5B,
 	k_unk5C,
 	k_unk5D,
 	k_unk5E,
-	k_unk5F,
+	kSetBarrierLastFrameIdx,
 	k_unk60_SET_OR_CLR_ACTIONAREA_FLAG,		// 0x60
 	k_unk61,
-	k_unk62_SHOW_OPTIONS_SCREEN
+	k_unk62_SHOW_OPTIONS_SCREEN,
+    k_unk63
 };
 
 #define ScriptMan	(::Asylum::ScriptManager::instance())

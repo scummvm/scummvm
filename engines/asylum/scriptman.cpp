@@ -383,9 +383,8 @@ int ScriptManager::processActionList() {
 				break;
 
 /* 0x11 */  case kDestroyBarrier: {
-				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
-                if (barrierIndex >= 0) {
-					BarrierItem *barrier = &Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex];
+				BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
+                if (barrier) {
                     barrier->flags &= 0xFFFFFFFE;
                     barrier->flags |= 0x20000;
                     Shared.getScreen()->deleteGraphicFromQueue(barrier->resId);
@@ -403,8 +402,7 @@ int ScriptManager::processActionList() {
 /* 0x14 */  //case k_unk14_JMP_WALK_ACTOR:
 /* 0x15 */  //case k_unk15:
 /* 0x16 */  case kResetAnimation: {
-                int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
-                BarrierItem *barrier = &Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex];
+                BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
                 if ((barrier->flags & 0x10000) == 0) {
                     barrier->frameIdx = 0;
                 } else {
@@ -413,8 +411,7 @@ int ScriptManager::processActionList() {
             }
                 break;
 /* 0x17 */  case kClearFlag1Bit0: {
-                int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
-                BarrierItem *barrier = &Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex];
+                BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
                 barrier->flags &= 0xFFFFFFFE;
             }
                 break;
@@ -486,7 +483,7 @@ int ScriptManager::processActionList() {
                 break;
 /* 0x35 */  //case k_unk35:
 /* 0x36 */  //case k_unk36:
-/* 0x37 */  case kRunBlowUpPuzzle: {
+/* 0x37 */  case kRunBlowUpPuzzle: { // FIXME: improve this to call other blowUpPuzzles than VCR
 				int blowUpPuzzleIdx = currentCommand->param1;
                 Shared.getScene()->setBlowUpPuzzle(new BlowUpPuzzleVCR());
                 Shared.getScene()->getBlowUpPuzzle()->openBlowUp();
@@ -509,15 +506,15 @@ int ScriptManager::processActionList() {
 			}
 				break;
 /* 0x3D */  case kWaitUntilFramePlayed: {
-				int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(currentCommand->param1);
-				if (barrierIndex >= 0) {
+				BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
+				if (barrier) {
 					uint32 frameNum = 0;
 					if (currentCommand->param2 == -1)
-						frameNum = Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].frameCount - 1;
+						frameNum = barrier->frameCount - 1;
 					else
 						frameNum = currentCommand->param2;
 
-					if (Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIndex].frameIdx < frameNum) {
+					if (barrier->frameIdx < frameNum) {
 						lineIncrement = 0;
 						waitCycle = true;
 					}
@@ -622,21 +619,86 @@ int ScriptManager::processActionList() {
 				break;
 /* 0x52 */  //case k_unk52:
 /* 0x53 */  //case k_unk53:
-/* 0x54 */  //case k_unk54_SET_ACTIONLIST_6EC:
-/* 0x55 */  //case k_unk55:
+/* 0x54 */  case k_unk54_SET_ACTIONLIST_6EC:
+                if (currentCommand->param2) {
+                    _currentScript->field_1BB0 = rand() % currentCommand->param1;
+                } else {
+                    _currentScript->field_1BB0 = currentCommand->param1;
+                }
+                break;
+/* 0x55 */  case k_unk55: {
+                if (!currentCommand->param2) {
+                    if (currentCommand->param3 && _currentScript->field_1BB0 < currentCommand->param1)
+                        break;                       
+                    else if (currentCommand->param4 && _currentScript->field_1BB0 > currentCommand->param1)
+                        break;
+                    else if (currentCommand->param5 && _currentScript->field_1BB0 <= currentCommand->param1)
+                        break;
+                    else if (currentCommand->param6 && _currentScript->field_1BB0 >= currentCommand->param1)
+                        break;
+                    else if (currentCommand->param7 && _currentScript->field_1BB0 != currentCommand->param1)
+                        break;
+                } else if(_currentScript->field_1BB0 == currentCommand->param1)
+                    break;
+                
+                ActionCommand *cmd = &_currentScript->commands[currentCommand->param8];
+				if (cmd->opcode != kReturn && cmd->opcode) {
+					done = true;
+                } else {
+                    lineIncrement = currentCommand->param8;
+                }
+            }
+                break;
 /* 0x56 */  //case k_unk56:
-/* 0x57 */  //case k_unk57:
-/* 0x58 */  //case k_unk58:
+/* 0x57 */  case kSetResourcePalette: {
+                if (currentCommand->param1 > 0) {
+                    Shared.getScreen()->setPalette(Shared.getScene()->getResourcePack(), Shared.getScene()->getResources()->getWorldStats()->grResId[currentCommand->param1]);
+                }
+            }    
+                break;
+/* 0x58 */  case kSetBarrierFrameIdxFlaged: {
+                BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
+                if (currentCommand->param3) {
+                    barrier->flags = 1 | barrier->flags;
+                } else {
+                    barrier->flags = barrier->flags & 0xFFFFFFFE;
+                }
+                barrier->frameIdx = currentCommand->param2;
+            }    
+                break;           
 /* 0x59 */  //case k_unk59:
 /* 0x5A */  //case k_unk5A:
 /* 0x5B */  //case k_unk5B:
 /* 0x5C */  //case k_unk5C:
 /* 0x5D */  //case k_unk5D:
 /* 0x5E */  //case k_unk5E:
-/* 0x5F */  //case k_unk5F:
+/* 0x5F */  case kSetBarrierLastFrameIdx: {
+                BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
+                if (barrier->frameIdx == barrier->frameCount - 1) {
+                    lineIncrement = 0;
+                    barrier->flags &= 0xFFFEF1C7;
+                } else {
+                    lineIncrement = 1;
+                }
+            }
+                break;
 /* 0x60 */  //case k_unk60_SET_OR_CLR_ACTIONAREA_FLAG:
-/* 0x61 */  //case k_unk61:
+/* 0x61 */  case k_unk61:
+                if (currentCommand->param2) {
+                    if (Shared.getScene()->getResources()->getWorldStats()->field_E860C == -1) {
+                        lineIncrement = 0;
+                        currentCommand->param2 = 0;
+                    } else {
+                        lineIncrement = 1;
+                    }
+                } else {
+                    // TODO: do something for scene number 9
+                    currentCommand->param2 = 1;
+                    lineIncrement = 1;
+                }
+                break;
 /* 0x62 */  //case k_unk62_SHOW_OPTIONS_SCREEN:
+/* 0x63 */  //case k_unk61:
 
 			default:
 				debugC(kDebugLevelScripts,
