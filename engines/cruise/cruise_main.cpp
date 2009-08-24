@@ -1330,6 +1330,8 @@ bool checkInput(int16 *buttonPtr) {
 	return false;
 }
 
+extern bool manageEvents();
+
 int CruiseEngine::processInput(void) {
 	int16 mouseX = 0;
 	int16 mouseY = 0;
@@ -1367,6 +1369,7 @@ int CruiseEngine::processInput(void) {
 
 		bool pausedButtonDown = false;
 		while (!_vm->shouldQuit()) {
+			manageEvents();
 			getMouseStatus(&main10, &mouseX, &button, &mouseY);
 
 			if (button) pausedButtonDown = true;

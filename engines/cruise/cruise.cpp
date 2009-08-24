@@ -201,6 +201,8 @@ void CruiseEngine::pauseEngine(bool pause) {
 		flipScreen();
 		changeCursor(_savedCursor);
 	}
+
+	gfxModuleData_addDirtyRect(Common::Rect(64, 100, 256, 117));
 }
 
 Common::Error CruiseEngine::loadGameState(int slot) {
