@@ -98,6 +98,13 @@ int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 
 	int len = resStrLen(dst);
 	if (_game.platform == Common::kPlatformMacintosh) {
+		// Remove : prefix in HE71 games
+		if (dst[0] == ':') {
+			len -= 1;
+			memmove(dst, dst + 1, len);
+			dst[len] = 0;
+		}
+
 		// Switch all : to / for portablity
 		for (int i = 0; i < len; i++) {
 			if (dst[i] == ':')
