@@ -15,6 +15,10 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the Amiga version of The Legend of Kyrandia.
    - Adapted KYRA to support the custom SJIS font.
 
+ SCUMM:
+   - Added support for music and sound effects in the the Amiga version of
+     The Secret of Monkey Island.
+
 1.0.0rc1 (2009-08-31)
  New Games:
    - Added support for Discworld.
