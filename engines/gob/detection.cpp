@@ -3690,6 +3690,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
+			"Adi 2.6",
+			AD_ENTRY1s("adi2.stk", "2fb940eb8105b12871f6b88c8c4d1615", 16780058),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibou4,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
 			"Adi 2.7.1",
 			AD_ENTRY1s("adi2.stk", "6fa5dffebf5c7243c6af6b8c188ee00a", 19278008),
 			FR_FRA,
