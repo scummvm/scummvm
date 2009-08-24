@@ -108,7 +108,7 @@ bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
 
 bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	int16 handle;
-	int16 varOff;
+	uint16 varOff;
 	int32 size;
 	SaveLoad::SaveMode mode;
 
@@ -155,7 +155,7 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 	int32 retSize;
 	int32 size;
 	int32 offset;
-	int16 dataVar;
+	uint16 dataVar;
 	int16 handle;
 	byte *buf;
 	SaveLoad::SaveMode mode;

@@ -119,8 +119,8 @@ public:
 	int16 _cursorWidth;
 	int16 _cursorHeight;
 
-	int16 _cursorHotspotXVar;
-	int16 _cursorHotspotYVar;
+	int32 _cursorHotspotXVar;
+	int32 _cursorHotspotYVar;
 
 	SurfaceDescPtr _cursorSprites;
 	SurfaceDescPtr _cursorSpritesBack;

@@ -655,7 +655,7 @@ int16 Expression::parseValExpr(byte stopToken) {
 // Load a value according to the operation
 void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &stackFrame) {
 	int16 dimCount;
-	int16 temp;
+	uint16 temp;
 	int16 temp2;
 	int16 offset;
 	int16 dim;

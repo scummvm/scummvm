@@ -306,8 +306,8 @@ void Inter_v1::o1_initCursor() {
 	int16 height;
 	int16 count;
 
-	_vm->_draw->_cursorHotspotXVar = _vm->_game->_script->readVarIndex() / 4;
-	_vm->_draw->_cursorHotspotYVar = _vm->_game->_script->readVarIndex() / 4;
+	_vm->_draw->_cursorHotspotXVar = ((uint16) _vm->_game->_script->readVarIndex()) / 4;
+	_vm->_draw->_cursorHotspotYVar = ((uint16) _vm->_game->_script->readVarIndex()) / 4;
 
 	width = _vm->_game->_script->readInt16();
 	if (width < 16)
@@ -561,18 +561,32 @@ void Inter_v1::o1_getObjAnimSize() {
 
 	_vm->_game->_script->evalExpr(&objIndex);
 
-	Mult::Mult_AnimData &animData = *(_vm->_mult->_objects[objIndex].pAnimData);
-	if (animData.isStatic == 0)
-		_vm->_scenery->updateAnim(animData.layer, animData.frame,
-		    animData.animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
-		    *(_vm->_mult->_objects[objIndex].pPosY), 0);
+	uint16 varLeft   = _vm->_game->_script->readVarIndex();
+	uint16 varTop    = _vm->_game->_script->readVarIndex();
+	uint16 varRight  = _vm->_game->_script->readVarIndex();
+	uint16 varBottom = _vm->_game->_script->readVarIndex();
 
-	_vm->_scenery->_toRedrawLeft = MAX(_vm->_scenery->_toRedrawLeft, (int16) 0);
-	_vm->_scenery->_toRedrawTop = MAX(_vm->_scenery->_toRedrawTop, (int16) 0);
-	WRITE_VAR_OFFSET(_vm->_game->_script->readVarIndex(), _vm->_scenery->_toRedrawLeft);
-	WRITE_VAR_OFFSET(_vm->_game->_script->readVarIndex(), _vm->_scenery->_toRedrawTop);
-	WRITE_VAR_OFFSET(_vm->_game->_script->readVarIndex(), _vm->_scenery->_toRedrawRight);
-	WRITE_VAR_OFFSET(_vm->_game->_script->readVarIndex(), _vm->_scenery->_toRedrawBottom);
+	if ((objIndex < 0) || (objIndex >= _vm->_mult->_objCount)) {
+		warning("o1_getObjAnimSize(): objIndex = %d (%d)", objIndex, _vm->_mult->_objCount);
+		_vm->_scenery->_toRedrawLeft   = 0;
+		_vm->_scenery->_toRedrawTop    = 0;
+		_vm->_scenery->_toRedrawRight  = 0;
+		_vm->_scenery->_toRedrawBottom = 0;
+	} else {
+		Mult::Mult_AnimData &animData = *(_vm->_mult->_objects[objIndex].pAnimData);
+		if (animData.isStatic == 0)
+			_vm->_scenery->updateAnim(animData.layer, animData.frame,
+					animData.animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
+					*(_vm->_mult->_objects[objIndex].pPosY), 0);
+
+		_vm->_scenery->_toRedrawLeft = MAX<int16>(_vm->_scenery->_toRedrawLeft, 0);
+		_vm->_scenery->_toRedrawTop  = MAX<int16>(_vm->_scenery->_toRedrawTop , 0);
+	}
+
+	WRITE_VAR_OFFSET(varLeft  , _vm->_scenery->_toRedrawLeft);
+	WRITE_VAR_OFFSET(varTop   , _vm->_scenery->_toRedrawTop);
+	WRITE_VAR_OFFSET(varRight , _vm->_scenery->_toRedrawRight);
+	WRITE_VAR_OFFSET(varBottom, _vm->_scenery->_toRedrawBottom);
 }
 
 void Inter_v1::o1_loadStatic() {

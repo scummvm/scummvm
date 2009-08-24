@@ -274,7 +274,7 @@ bool Inter_v6::o6_loadCursor(OpFuncParams &params) {
 
 bool Inter_v6::o6_assign(OpFuncParams &params) {
 	uint16 size, destType;
-	int16 dest = _vm->_game->_script->readVarIndex(&size, &destType);
+	uint16 dest = _vm->_game->_script->readVarIndex(&size, &destType);
 
 	if (size != 0) {
 		int16 src;
@@ -284,7 +284,7 @@ bool Inter_v6::o6_assign(OpFuncParams &params) {
 		src = _vm->_game->_script->readVarIndex(&size, 0);
 
 		memcpy(_vm->_inter->_variables->getAddressOff8(dest),
-				_vm->_inter->_variables->getAddressOff8(src), size * 4);
+				_vm->_inter->_variables->getAddressOff8((uint16) src), size * 4);
 
 		_vm->_game->_script->pop();
 

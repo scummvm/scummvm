@@ -163,7 +163,7 @@ void Inter_v2::checkSwitchTable(uint32 &offset) {
 
 	type = _vm->_game->_script->peekByte();
 
-	value = _vm->_game->_script->readVarIndex();
+	value = (uint16) _vm->_game->_script->readVarIndex();
 
 	switch (type) {
 	case TYPE_VAR_INT8:
@@ -284,9 +284,9 @@ void Inter_v2::o2_initMult() {
 	int16 oldAnimHeight;
 	int16 oldAnimWidth;
 	int16 oldObjCount;
-	int16 posXVar;
-	int16 posYVar;
-	int16 animDataVar;
+	uint16 posXVar;
+	uint16 posYVar;
+	uint16 animDataVar;
 
 	oldAnimWidth = _vm->_mult->_animWidth;
 	oldAnimHeight = _vm->_mult->_animHeight;
@@ -1278,14 +1278,14 @@ bool Inter_v2::o2_loadSound(OpFuncParams &params) {
 }
 
 bool Inter_v2::o2_getFreeMem(OpFuncParams &params) {
-	int16 freeVar;
-	int16 maxFreeVar;
+	uint16 freeVar;
+	uint16 maxFreeVar;
 
-	freeVar = _vm->_game->_script->readVarIndex();
+	freeVar    = _vm->_game->_script->readVarIndex();
 	maxFreeVar = _vm->_game->_script->readVarIndex();
 
 	// HACK
-	WRITE_VAR_OFFSET(freeVar, 1000000);
+	WRITE_VAR_OFFSET(freeVar   , 1000000);
 	WRITE_VAR_OFFSET(maxFreeVar, 1000000);
 	WRITE_VAR(16, _vm->_game->_script->getVariablesCount() * 4);
 	return false;

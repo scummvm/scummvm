@@ -55,8 +55,8 @@ public:
 
 private:
 	struct Environment {
-		int16      cursorHotspotX;
-		int16      cursorHotspotY;
+		int32      cursorHotspotX;
+		int32      cursorHotspotY;
 		char       curTotFile[14];
 		Variables *variables;
 		Script    *script;
