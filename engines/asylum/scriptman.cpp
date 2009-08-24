@@ -220,19 +220,19 @@ int ScriptManager::processActionList() {
                     worldStats->targetY = currentCommand->param2;
                     worldStats->field_A0 = currentCommand->param3;
 
-                    if (worldStats->targetX < worldStats->sceneRects[worldStats->sceneRectIdx].left) {
+                    if (worldStats->targetX < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].left) {
                         worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].left;
                     }
 
-                    if (worldStats->targetY < worldStats->sceneRects[worldStats->sceneRectIdx].top) {
+                    if (worldStats->targetY < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].top) {
                         worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].top;
                     }
 
-                    if (worldStats->targetX + 640 > worldStats->sceneRects[worldStats->sceneRectIdx].right) {
+                    if (worldStats->targetX + 640 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].right) {
                         worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].right - 640;
                     }
 
-                    if (worldStats->targetY + 480 > worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
+                    if (worldStats->targetY + 480 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
                         worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].bottom - 480;
                     }
 
@@ -254,19 +254,19 @@ int ScriptManager::processActionList() {
                         worldStats->targetX = worldStats->width - 640;
                     }
 
-                    if (worldStats->targetX < worldStats->sceneRects[worldStats->sceneRectIdx].left) {
+                    if (worldStats->targetX < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].left) {
                         worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].left;
                     }
 
-                    if (worldStats->targetY < worldStats->sceneRects[worldStats->sceneRectIdx].top) {
+                    if (worldStats->targetY < (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].top) {
                         worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].top;
                     }
 
-                    if (worldStats->targetX + 640 > worldStats->sceneRects[worldStats->sceneRectIdx].right) {
+                    if (worldStats->targetX + 640 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].right) {
                         worldStats->targetX = worldStats->sceneRects[worldStats->sceneRectIdx].right - 640;
                     }
 
-                    if (worldStats->targetY + 480 > worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
+                    if (worldStats->targetY + 480 > (uint32)worldStats->sceneRects[worldStats->sceneRectIdx].bottom) {
                         worldStats->targetY = worldStats->sceneRects[worldStats->sceneRectIdx].bottom - 480;
                     }
 
@@ -609,7 +609,32 @@ int ScriptManager::processActionList() {
                 break;
 
 /* 0x50 */  //case kQuit:
-/* 0x51 */  //case kJumpObjectFrame:
+/* 0x51 */  case kJumpBarrierFrame: {
+				BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
+				if (currentCommand->param2 == -1) {
+					currentCommand->param2 = barrier->frameCount - 1;
+				}
+
+				if (currentCommand->param3 && currentCommand->param2 == barrier->frameIdx) {
+					break;
+				} else if (currentCommand->param4 && currentCommand->param2 < barrier->frameIdx) {
+					break;
+				} else if (currentCommand->param5 && currentCommand->param2 > barrier->frameIdx) {
+					break;
+				} else if (currentCommand->param6 && currentCommand->param2 <= barrier->frameIdx) {
+					break;
+				} else if (currentCommand->param7 && currentCommand->param2 >= barrier->frameIdx) {
+					break;
+				} else if (currentCommand->param8 && currentCommand->param2 != barrier->frameIdx) {
+					break;
+				}
+
+				ActionCommand *cmd = &_currentScript->commands[currentCommand->param9];
+				if (cmd->opcode != kReturn && cmd->opcode) {
+					done = true;
+				}
+			}
+				break;
 /* 0x52 */  //case k_unk52:
 /* 0x53 */  //case k_unk53:
 /* 0x54 */  //case k_unk54_SET_ACTIONLIST_6EC:
