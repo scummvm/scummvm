@@ -158,7 +158,7 @@ enum opcodes {
 	k_unk4E_RANDOM_COMMAND,
 	kClearScreen,
 	kQuit,					// 0x50
-	kJumpObjectFrame,
+	kJumpBarrierFrame,
 	k_unk52,
 	k_unk53,
 	k_unk54_SET_ACTIONLIST_6EC,
