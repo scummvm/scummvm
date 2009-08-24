@@ -27,7 +27,6 @@
 #define COMMON_STREAM_H
 
 #include "common/scummsys.h"
-#include "common/endian.h"
 
 namespace Common {
 
@@ -107,38 +106,38 @@ public:
 	}
 
 	void writeUint16LE(uint16 value) {
-		value = TO_LE_16(value);
-		write(&value, 2);
+		writeByte((byte)(value & 0xff));
+		writeByte((byte)(value >> 8));
 	}
 
 	void writeUint32LE(uint32 value) {
-		value = TO_LE_32(value);
-		write(&value, 4);
+		writeUint16LE((uint16)(value & 0xffff));
+		writeUint16LE((uint16)(value >> 16));
 	}
 
 	void writeUint16BE(uint16 value) {
-		value = TO_BE_16(value);
-		write(&value, 2);
+		writeByte((byte)(value >> 8));
+		writeByte((byte)(value & 0xff));
 	}
 
 	void writeUint32BE(uint32 value) {
-		value = TO_BE_32(value);
-		write(&value, 4);
+		writeUint16BE((uint16)(value >> 16));
+		writeUint16BE((uint16)(value & 0xffff));
 	}
 
-	FORCEINLINE void writeSint16LE(int16 value) {
+	void writeSint16LE(int16 value) {
 		writeUint16LE((uint16)value);
 	}
 
-	FORCEINLINE void writeSint32LE(int32 value) {
+	void writeSint32LE(int32 value) {
 		writeUint32LE((uint32)value);
 	}
 
-	FORCEINLINE void writeSint16BE(int16 value) {
+	void writeSint16BE(int16 value) {
 		writeUint16BE((uint16)value);
 	}
 
-	FORCEINLINE void writeSint32BE(int32 value) {
+	void writeSint32BE(int32 value) {
 		writeUint32BE((uint32)value);
 	}
 
@@ -189,7 +188,7 @@ public:
 	 * calling err() and eos() ).
 	 */
 	byte readByte() {
-		byte b = 0; // FIXME: remove initialisation
+		byte b = 0;
 		read(&b, 1);
 		return b;
 	}
@@ -201,7 +200,7 @@ public:
 	 * calling err() and eos() ).
 	 */
 	int8 readSByte() {
-		int8 b = 0; // FIXME: remove initialisation
+		int8 b = 0;
 		read(&b, 1);
 		return b;
 	}
@@ -214,9 +213,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	uint16 readUint16LE() {
-		uint16 val;
-		read(&val, 2);
-		return FROM_LE_16(val);
+		uint16 a = readByte();
+		uint16 b = readByte();
+		return a | (b << 8);
 	}
 
 	/**
@@ -227,9 +226,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	uint32 readUint32LE() {
-		uint32 val;
-		read(&val, 4);
-		return FROM_LE_32(val);
+		uint32 a = readUint16LE();
+		uint32 b = readUint16LE();
+		return (b << 16) | a;
 	}
 
 	/**
@@ -240,9 +239,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	uint16 readUint16BE() {
-		uint16 val;
-		read(&val, 2);
-		return FROM_BE_16(val);
+		uint16 b = readByte();
+		uint16 a = readByte();
+		return a | (b << 8);
 	}
 
 	/**
@@ -253,9 +252,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	uint32 readUint32BE() {
-		uint32 val;
-		read(&val, 4);
-		return FROM_BE_32(val);
+		uint32 b = readUint16BE();
+		uint32 a = readUint16BE();
+		return (b << 16) | a;
 	}
 
 	/**
@@ -265,7 +264,7 @@ public:
 	 * if a read error occurred (for which client code can check by
 	 * calling err() and eos() ).
 	 */
-	FORCEINLINE int16 readSint16LE() {
+	int16 readSint16LE() {
 		return (int16)readUint16LE();
 	}
 
@@ -276,7 +275,7 @@ public:
 	 * if a read error occurred (for which client code can check by
 	 * calling err() and eos() ).
 	 */
-	FORCEINLINE int32 readSint32LE() {
+	int32 readSint32LE() {
 		return (int32)readUint32LE();
 	}
 
@@ -287,7 +286,7 @@ public:
 	 * if a read error occurred (for which client code can check by
 	 * calling err() and eos() ).
 	 */
-	FORCEINLINE int16 readSint16BE() {
+	int16 readSint16BE() {
 		return (int16)readUint16BE();
 	}
 
@@ -298,7 +297,7 @@ public:
 	 * if a read error occurred (for which client code can check by
 	 * calling err() and eos() ).
 	 */
-	FORCEINLINE int32 readSint32BE() {
+	int32 readSint32BE() {
 		return (int32)readUint32BE();
 	}
 
@@ -461,31 +460,26 @@ public:
  * @see SubReadStream
  */
 class SeekableSubReadStreamEndian : public SeekableSubReadStream {
-private:
-	const bool _bigEndian;
-
 public:
+	bool _bigEndian;
+
 	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian = false, bool disposeParentStream = false)
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream), _bigEndian(bigEndian) {
 	}
 
-	uint16 readUint16() {
-		uint16 val;
-		read(&val, 2);
-		return (_bigEndian) ? TO_BE_16(val) : TO_LE_16(val);
+	inline uint16 readUint16() {
+		return (_bigEndian) ? readUint16BE() : readUint16LE();
 	}
 
-	uint32 readUint32() {
-		uint32 val;
-		read(&val, 4);
-		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
+	inline uint32 readUint32() {
+		return (_bigEndian) ? readUint32BE() : readUint32LE();
 	}
 
-	FORCEINLINE int16 readSint16() {
+	inline int16 readSint16() {
 		return (int16)readUint16();
 	}
 
-	FORCEINLINE int32 readSint32() {
+	inline int32 readSint32() {
 		return (int32)readUint32();
 	}
 };
@@ -588,28 +582,23 @@ public:
  */
 class MemoryReadStreamEndian : public Common::MemoryReadStream {
 private:
-	const bool _bigEndian;
-
 public:
+	bool _bigEndian;
 	MemoryReadStreamEndian(const byte *buf, uint32 len, bool bigEndian = false) : MemoryReadStream(buf, len), _bigEndian(bigEndian) {}
 
-	uint16 readUint16() {
-		uint16 val;
-		read(&val, 2);
-		return (_bigEndian) ? TO_BE_16(val) : TO_LE_16(val);
+	inline uint16 readUint16() {
+		return (_bigEndian) ? readUint16BE() : readUint16LE();
 	}
 
-	uint32 readUint32() {
-		uint32 val;
-		read(&val, 4);
-		return (_bigEndian) ? TO_BE_32(val) : TO_LE_32(val);
+	inline uint32 readUint32() {
+		return (_bigEndian) ? readUint32BE() : readUint32LE();
 	}
 
-	FORCEINLINE int16 readSint16() {
+	inline int16 readSint16() {
 		return (int16)readUint16();
 	}
 
-	FORCEINLINE int32 readSint32() {
+	inline int32 readSint32() {
 		return (int32)readUint32();
 	}
 };
