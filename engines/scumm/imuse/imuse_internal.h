@@ -445,6 +445,8 @@ protected:
 
 protected:
 	IMuseInternal();
+	virtual ~IMuseInternal();
+
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
 
 	static void midiTimerCallback(void *data);
@@ -526,7 +528,6 @@ public:
 	void stopAllSounds();
 	int getSoundStatus(int sound) const;
 	int getMusicTimer() const;
-	void terminate();
 
 public:
 	// Factory function

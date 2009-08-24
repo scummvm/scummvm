@@ -73,6 +73,36 @@ _snm_trigger_index(0) {
 	memset(_volchan_table,0,sizeof(_volchan_table));
 }
 
+IMuseInternal::~IMuseInternal() {
+	// Do just enough stuff inside the mutex to
+	// make sure any MIDI timing threads won't
+	// interrupt us, and then do the rest outside
+	// the mutex.
+	{
+		Common::StackLock lock(_mutex, "IMuseInternal::~IMuseInternal()");
+		_initialized = false;
+		stopAllSounds_internal();
+	}
+
+	if (_midi_adlib) {
+		_midi_adlib->close();
+		delete _midi_adlib;
+		_midi_adlib = 0;
+	}
+
+	if (_midi_native) {
+		if (_native_mt32) {
+			// Reset the MT-32
+			_midi_native->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
+			_system->delayMillis(250);
+		}
+
+		_midi_native->close();
+		delete _midi_native;
+		_midi_native = 0;
+	}
+}
+
 byte *IMuseInternal::findStartOfSound(int sound) {
 	byte *ptr = NULL;
 	int32 size, pos;
@@ -516,36 +546,6 @@ int IMuseInternal::getMusicTimer() const {
 		}
 	}
 	return best_time;
-}
-
-void IMuseInternal::terminate() {
-	// Do just enough stuff inside the mutex to
-	// make sure any MIDI timing threads won't
-	// interrupt us, and then do the rest outside
-	// the mutex.
-	{
-		Common::StackLock lock(_mutex, "IMuseInternal::terminate()");
-		_initialized = false;
-		stopAllSounds_internal();
-	}
-
-	if (_midi_adlib) {
-		_midi_adlib->close();
-		delete _midi_adlib;
-		_midi_adlib = 0;
-	}
-
-	if (_midi_native) {
-		if (_native_mt32) {
-			// Reset the MT-32
-			_midi_native->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
-			_system->delayMillis(250);
-		}
-
-		_midi_native->close();
-		delete _midi_native;
-		_midi_native = 0;
-	}
 }
 
 ////////////////////////////////////////
