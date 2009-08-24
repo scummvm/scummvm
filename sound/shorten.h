@@ -23,13 +23,15 @@
  *
  */
 
-// The code in this file is currently only used in SAGA2 (in the
-// SAGA engine), so if that engine isn't enabled, we will skip
-// compiling it. If you plan to use this code in another engine,
-// you will have to add the proper define check here.
-// Also please add the define check at the comment after the
-// matching #endif further down this file.
-#if defined(ENABLE_SAGA2)
+// The code in this file is currently only used in SAGA2.
+// So when it is disabled, we will skip compiling it.
+// We also enable this code for ScummVM builds including support
+// for dynamic engine plugins.
+// If you plan to use this code in another engine, you will have
+// to add the proper define check here.
+#if !(defined(ENABLE_SAGA2) || defined(DYNAMIC_MODULES))
+
+#else
 
 #ifndef SOUND_SHORTEN_H
 #define SOUND_SHORTEN_H
@@ -48,7 +50,7 @@ class AudioStream;
  * start of the audio data, and size, rate and flags contain information
  * necessary for playback.
  */
-extern byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, byte &flags);
+byte *loadShortenFromStream(Common::ReadStream &stream, int &size, int &rate, byte &flags);
 
 /**
  * Try to load a Shorten file from the given stream and create an AudioStream
@@ -62,6 +64,5 @@ AudioStream *makeShortenStream(Common::ReadStream &stream);
 
 #endif
 
-#endif // defined(ENABLE_SAGA2)
-
+#endif // engine and dynamic plugins guard
 

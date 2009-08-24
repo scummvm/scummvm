@@ -37,7 +37,7 @@
 #include "SymbianOs.h"
 #endif
 
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)
+#if !defined(__MAEMO__) && !defined(_WIN32_WCE) && !defined(GP2XWIZ)&& !defined(LINUXMOTO)
 
 #if defined (WIN32)
 int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {

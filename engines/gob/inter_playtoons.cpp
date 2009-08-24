@@ -25,6 +25,8 @@
 
 #include "common/endian.h"
 
+#include "gui/message.h"
+
 #include "gob/gob.h"
 #include "gob/inter.h"
 #include "gob/helper.h"
@@ -77,10 +79,31 @@ void Inter_Playtoons::setupOpcodesDraw() {
 void Inter_Playtoons::setupOpcodesFunc() {
 	Inter_v6::setupOpcodesFunc();
 
+	OPCODEFUNC(0x1B, oPlaytoons_F_1B); 
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
+	OPCODEFUNC(0x4D, oPlaytoons_readData);
 }
 
 void Inter_Playtoons::setupOpcodesGob() {
+}
+
+bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
+	int16 var1;
+	int16 var2;
+	int16 var3;
+	int16 var4;
+
+	var1 = _vm->_game->_script->readValExpr();
+	var2 = _vm->_game->_script->readValExpr();
+
+	_vm->_game->_script->evalExpr(0);
+
+	var3 = _vm->_game->_script->readValExpr();
+	var4 = _vm->_game->_script->readValExpr();
+
+	warning("oPlaytoons_F_1B not handled");
+
+	return false;
 }
 
 bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
@@ -101,18 +124,16 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	// In this case, "@:\" is replaced by the CD drive letter.
 	// As the files are copied on the HDD, those characters are skipped. 
 	if (strncmp(file, "@:\\", 3) == 0) {
-		debugC(2, kDebugFileIO, "File check: \"%s\" instead of \"%s\"", file + 3, file);
+		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 3, file);
 		file += 3;
 	}
 
 	mode = _vm->_saveLoad->getSaveMode(file);
 	if (mode == SaveLoad::kSaveModeNone) {
-
 		if (_vm->_dataIO->existData(file))
 			size = _vm->_dataIO->getDataSize(file);
 		else
 			warning("File \"%s\" not found", file);
-
 	} else if (mode == SaveLoad::kSaveModeSave)
 		size = _vm->_saveLoad->getSize(file);
 	else if (mode == SaveLoad::kSaveModeExists)
@@ -127,6 +148,97 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	WRITE_VAR_OFFSET(varOff, handle);
 	WRITE_VAR(16, (uint32) size);
 
+	return false;
+}
+
+bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
+	int32 retSize;
+	int32 size;
+	int32 offset;
+	int16 dataVar;
+	int16 handle;
+	byte *buf;
+	SaveLoad::SaveMode mode;
+
+	_vm->_game->_script->evalExpr(0);
+	dataVar = _vm->_game->_script->readVarIndex();
+	size = _vm->_game->_script->readValExpr();
+	_vm->_game->_script->evalExpr(0);
+	offset = _vm->_game->_script->getResultInt();
+	retSize = 0;
+
+	char *file = _vm->_game->_script->getResultStr();
+
+	// WORKAROUND: In Playtoons games, some files are read on CD (and only on CD). 
+	// In this case, "@:\" is replaced by the CD drive letter.
+	// As the files are copied on the HDD, those characters are skipped. 
+	if (strncmp(file, "@:\\", 3) == 0) {
+		debugC(2, kDebugFileIO, "oPlaytoons_readData: \"%s\" instead of \"%s\"", file + 3, file);
+		file += 3;
+	}
+
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
+			file, dataVar, size, offset);
+
+	mode = _vm->_saveLoad->getSaveMode(file);
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		WRITE_VAR(1, 1);
+
+		if (!_vm->_saveLoad->load(file, dataVar, size, offset)) {
+			GUI::MessageDialog dialog("Failed to load game state from file.");
+			dialog.runModal();
+		} else
+			WRITE_VAR(1, 0);
+
+		return false;
+
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return false;
+
+	if (size < 0) {
+		warning("Attempted to read a raw sprite from file \"%s\"",
+				file);
+		return false ;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = _vm->_game->_script->getVariablesCount() * 4;
+	}
+
+	buf = _variables->getAddressOff8(dataVar);
+
+	if (file[0] == 0) {
+		WRITE_VAR(1, size);
+		return false;
+	}
+
+	WRITE_VAR(1, 1);
+	handle = _vm->_dataIO->openData(file);
+
+	if (handle < 0)
+		return false;
+
+	DataStream *stream = _vm->_dataIO->openAsStream(handle, true);
+
+	_vm->_draw->animateCursor(4);
+	if (offset < 0)
+		stream->seek(offset + 1, SEEK_END);
+	else
+		stream->seek(offset);
+
+	if (((dataVar >> 2) == 59) && (size == 4)) {
+		WRITE_VAR(59, stream->readUint32LE());
+		// The scripts in some versions divide through 256^3 then,
+		// effectively doing a LE->BE conversion
+		if ((_vm->getPlatform() != Common::kPlatformPC) && (VAR(59) < 256))
+			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
+	} else
+		retSize = stream->read(buf, size);
+
+	if (retSize == size)
+		WRITE_VAR(1, 0);
+
+	delete stream;
 	return false;
 }
 

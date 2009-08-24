@@ -70,19 +70,19 @@
 		/>
 
 		<text_color	id = 'color_alternative'
-				color = 'green'
+				color = 'lightgrey'
 		/>
 
 		<text_color	id = 'color_alternative_inverted'
-				color = 'black'
+				color = '255, 255, 255'
 		/>
 
 		<text_color	id = 'color_alternative_hover'
-				color = 'green2'
+				color = '176, 176, 176'
 		/>
 
 		<text_color	id = 'color_alternative_disabled'
-				color = 'lightgrey'
+				color = 'darkgrey'
 		/>
 
 		<text_color	id = 'color_button'

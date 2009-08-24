@@ -213,8 +213,6 @@ ScummDialog::ScummDialog(String name) : GUI::Dialog(name) {
 
 #pragma mark -
 
-Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode);
-
 enum {
 	kSaveCmd = 'SAVE',
 	kLoadCmd = 'LOAD',
@@ -225,213 +223,6 @@ enum {
 	kQuitCmd = 'QUIT',
 	kChooseCmd = 'CHOS'
 };
-
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel, bool saveMode, ScummEngine *engine)
-	: Dialog("ScummSaveLoad"), _saveMode(saveMode), _list(0), _chooseButton(0), _gfxWidget(0), _vm(engine) {
-
-	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
-
-	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
-
-	// Add choice list
-	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
-	_list->setEditable(saveMode);
-	_list->setNumberingMode(saveMode ? GUI::kListNumberingOne : GUI::kListNumberingZero);
-
-// Tanoku: SVNMerge removed this. Unconvinient. ///////////////
-//	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-///////////////////////////////////////////////////////////////
-
-	_gfxWidget = new GUI::GraphicsWidget(this, 0, 0, 10, 10);
-
-	_date = new StaticTextWidget(this, 0, 0, 10, 10, "No date saved", kTextAlignCenter);
-	_time = new StaticTextWidget(this, 0, 0, 10, 10, "No time saved", kTextAlignCenter);
-	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", kTextAlignCenter);
-
-	// Buttons
-	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
-	_chooseButton->setEnabled(false);
-
-	_container = new GUI::ContainerWidget(this, 0, 0, 10, 10);
-//	_container->setHints(GUI::THEME_HINT_USE_SHADOW);
-}
-
-SaveLoadChooser::~SaveLoadChooser() {
-}
-
-const Common::String &SaveLoadChooser::getResultString() const {
-	return _list->getSelectedString();
-}
-
-void SaveLoadChooser::setList(const StringList& list) {
-	_list->setList(list);
-}
-
-int SaveLoadChooser::runModal() {
-	if (_gfxWidget)
-		_gfxWidget->setGfx(0);
-	int ret = Dialog::runModal();
-	return ret;
-}
-
-void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 data) {
-	int selItem = _list->getSelected();
-	switch (cmd) {
-	case GUI::kListItemActivatedCmd:
-	case GUI::kListItemDoubleClickedCmd:
-		if (selItem >= 0) {
-			if (_saveMode || !getResultString().empty()) {
-				_list->endEditMode();
-				setResult(selItem);
-				close();
-			}
-		}
-		break;
-	case kChooseCmd:
-		_list->endEditMode();
-		setResult(selItem);
-		close();
-		break;
-	case GUI::kListSelectionChangedCmd: {
-		if (_gfxWidget) {
-			updateInfos(true);
-		}
-
-		if (_saveMode) {
-			_list->startEditMode();
-		}
-		// Disable button if nothing is selected, or (in load mode) if an empty
-		// list item is selected. We allow choosing an empty item in save mode
-		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (_saveMode || !getResultString().empty()));
-		_chooseButton->draw();
-	} break;
-	case kCloseCmd:
-		setResult(-1);
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
-void SaveLoadChooser::reflowLayout() {
-	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1) {
-		int16 x, y;
-		uint16 w, h;
-
-		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
-			error("Error when loading position data for Save/Load Thumbnails.");
-
-		int thumbW = kThumbnailWidth;
-		int thumbH = ((g_system->getHeight() % 200 && g_system->getHeight() != 350) ? kThumbnailHeight2 : kThumbnailHeight1);
-		int thumbX = x + (w >> 1) - (thumbW >> 1);
-		int thumbY = y + kLineHeight;
-
-		_container->resize(x, y, w, h);
-		_gfxWidget->resize(thumbX, thumbY, thumbW, thumbH);
-
-		int height = thumbY + thumbH + kLineHeight;
-
-		_date->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-
-		height += kLineHeight;
-
-		_time->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-
-		height += kLineHeight;
-
-		_playtime->resize(thumbX, height, kThumbnailWidth, kLineHeight);
-
-		_container->setVisible(true);
-		_gfxWidget->setVisible(true);
-		_date->setVisible(true);
-		_time->setVisible(true);
-		_playtime->setVisible(true);
-
-		_fillR = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillR");
-		_fillG = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillG");
-		_fillB = 0; //g_gui.evaluator()->getVar("scummsaveload_thumbnail.fillB");
-	} else {
-		_container->setVisible(false);
-		_gfxWidget->setVisible(false);
-		_date->setVisible(false);
-		_time->setVisible(false);
-		_playtime->setVisible(false);
-	}
-
-	Dialog::reflowLayout();
-
-	if (_container->isVisible())
-		updateInfos(false);
-}
-
-void SaveLoadChooser::updateInfos(bool redraw) {
-	int selItem = _list->getSelected();
-	Graphics::Surface *thumb = 0;
-	if (selItem >= 0 && !_list->getSelectedString().empty())
-		thumb = _vm->loadThumbnailFromSlot(_saveMode ? selItem + 1 : selItem);
-
-	if (thumb) {
-		_gfxWidget->setGfx(thumb);
-		_gfxWidget->useAlpha(256);
-		thumb->free();
-		delete thumb;
-	} else {
-		_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
-	}
-
-	InfoStuff infos;
-	memset(&infos, 0, sizeof(InfoStuff));
-	if (selItem >= 0 && !_list->getSelectedString().empty()
-		   && _vm->loadInfosFromSlot(_saveMode ? selItem + 1 : selItem, &infos)) {
-		char buffer[32];
-		snprintf(buffer, 32, "Date: %.2d.%.2d.%.4d",
-			(infos.date >> 24) & 0xFF, (infos.date >> 16) & 0xFF,
-			infos.date & 0xFFFF);
-		_date->setLabel(buffer);
-
-		snprintf(buffer, 32, "Time: %.2d:%.2d",
-			(infos.time >> 8) & 0xFF, infos.time & 0xFF);
-		_time->setLabel(buffer);
-
-		int minutes = infos.playtime / 60;
-		int hours = minutes / 60;
-		minutes %= 60;
-
-		snprintf(buffer, 32, "Playtime: %.2d:%.2d", hours, minutes);
-		_playtime->setLabel(buffer);
-	} else {
-		_date->setLabel("No date saved");
-		_time->setLabel("No time saved");
-		_playtime->setLabel("No playtime saved");
-	}
-
-	if (redraw) {
-		_gfxWidget->draw();
-		_date->draw();
-		_time->draw();
-		_playtime->draw();
-	}
-}
-
-#pragma mark -
-
-Common::StringList generateSavegameList(ScummEngine *scumm, bool saveMode) {
-	// Get savegame descriptions
-	Common::StringList descriptions;
-	uint i = saveMode ? 1 : 0;		//the autosave is on slot #0
-	bool avail_saves[81];
-
-	scumm->listSavegames(avail_saves, ARRAYSIZE(avail_saves));
-	for (; i < ARRAYSIZE(avail_saves); i++) {
-		Common::String name;
-		if (avail_saves[i])
-			scumm->getSavegameName(i, name);
-		descriptions.push_back(name);
-	}
-
-	return descriptions;
-}
 
 ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 	: ScummDialog("ScummMain"), _vm(scumm) {
@@ -457,8 +248,10 @@ ScummMenuDialog::ScummMenuDialog(ScummEngine *scumm)
 #ifndef DISABLE_HELP
 	_helpDialog = new HelpDialog(scumm->_game);
 #endif
-	_saveDialog = new SaveLoadChooser("Save game:", "Save", true, scumm);
-	_loadDialog = new SaveLoadChooser("Load game:", "Load", false, scumm);
+	_saveDialog = new GUI::SaveLoadChooser("Save game:", "Save");
+	_saveDialog->setSaveMode(true);
+	_loadDialog = new GUI::SaveLoadChooser("Load game:", "Load");
+	_loadDialog->setSaveMode(false);
 }
 
 ScummMenuDialog::~ScummMenuDialog() {
@@ -513,28 +306,34 @@ void ScummMenuDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void ScummMenuDialog::save() {
-	int idx;
-	_saveDialog->setList(generateSavegameList(_vm, true));
-	idx = _saveDialog->runModal();
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int idx = _saveDialog->runModal(plugin, ConfMan.getActiveDomainName());
 	if (idx >= 0) {
 		String result(_saveDialog->getResultString());
 		char buffer[20];
 		const char *str;
 		if (result.empty()) {
 			// If the user was lazy and entered no save name, come up with a default name.
-			sprintf(buffer, "Save %d", idx + 1);
+			sprintf(buffer, "Save %d", idx);
 			str = buffer;
 		} else
 			str = result.c_str();
-		_vm->requestSave(idx + 1, str);
+		_vm->requestSave(idx, str);
 		close();
 	}
 }
 
 void ScummMenuDialog::load() {
-	int idx;
-	_loadDialog->setList(generateSavegameList(_vm, false));
-	idx = _loadDialog->runModal();
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int idx = _loadDialog->runModal(plugin, ConfMan.getActiveDomainName());
 	if (idx >= 0) {
 		_vm->requestLoad(idx);
 		close();

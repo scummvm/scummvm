@@ -41,190 +41,6 @@ namespace Saga {
 #define BUFFER_SIZE 4096
 #define MUSIC_SUNSPOT 26
 
-class DigitalMusicInputStream : public Audio::AudioStream {
-private:
-	Audio::AudioStream *_compressedStream;
-	ResourceContext *_context;
-	ResourceData * resourceData;
-	GameSoundTypes soundType;
-	Common::File *_file;
-	uint32 _filePos;
-	uint32 _startPos;
-	uint32 _endPos;
-	bool _finished;
-	bool _looping;
-	int16 _buf[BUFFER_SIZE];
-	const int16 *_bufferEnd;
-	const int16 *_pos;
-	MemoryReadStream *_memoryStream;
-	SagaEngine *_vm;
-
-	void refill();
-	bool eosIntern() const {
-		return _pos >= _bufferEnd;
-	}
-
-public:
-	DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart);
-	~DigitalMusicInputStream();
-
-	void createCompressedStream();
-
-	int readBuffer(int16 *buffer, const int numSamples);
-
-	bool endOfData() const	{ return eosIntern(); }
-	bool isStereo() const	{
-		// The digital music in the ITE Mac demo version is not stereo
-		return _vm->getFeatures() & GF_MONO_MUSIC ? false : true;
-	}
-	int getRate() const	{ return 11025; }
-};
-
-DigitalMusicInputStream::DigitalMusicInputStream(SagaEngine *vm, ResourceContext *context, uint32 resourceId, bool looping, uint32 loopStart)
-	: _vm(vm), _context(context), _finished(false), _looping(looping), _bufferEnd(_buf + BUFFER_SIZE) {
-
-	byte compressedHeader[10];
-
-	resourceData = context->getResourceData(resourceId);
-	_file = context->getFile(resourceData);
-
-	_compressedStream = NULL;
-
-	if (context->isCompressed) {
-		// Read compressed header to determine compression type
-		_file->seek((long)resourceData->offset, SEEK_SET);
-		_file->read(compressedHeader, 9);
-
-		if (compressedHeader[0] == char(0)) {
-			soundType = kSoundMP3;
-		} else if (compressedHeader[0] == char(1)) {
-			soundType = kSoundOGG;
-		} else if (compressedHeader[0] == char(2)) {
-			soundType = kSoundFLAC;
-		}
-
-		createCompressedStream();
-	}
-
-	// Determine the end position
-	_filePos = resourceData->offset;
-	_endPos = _filePos + resourceData->size;
-
-	if (_compressedStream != NULL) {
-		_filePos += 9;	// skip compressed header
-		_endPos -= 9;	// decrease size by the size of the compressed header
-	}
-
-	_startPos = _filePos + loopStart;
-	if (_startPos >= _endPos)
-		_startPos = _filePos;
-
-	// Read in initial data
-	refill();
-}
-
-DigitalMusicInputStream::~DigitalMusicInputStream() {
-	delete _compressedStream;
-}
-
-void DigitalMusicInputStream::createCompressedStream() {
-#if defined(USE_MAD) || defined(USE_VORBIS) || defined(USE_FLAC)
-	uint numLoops = _looping ? 0 : 1;
-#endif
-	_memoryStream = _file->readStream(resourceData->size - 9);
-
-	switch (soundType) {
-#ifdef USE_MAD
-		case kSoundMP3:
-			debug(1, "Playing MP3 compressed digital music");
-			_compressedStream = Audio::makeMP3Stream(_memoryStream, true, 0, 0, numLoops);
-			break;
-#endif
-#ifdef USE_VORBIS
-		case kSoundOGG:
-			debug(1, "Playing OGG compressed digital music");
-			_compressedStream = Audio::makeVorbisStream(_memoryStream, true, 0, 0, numLoops);
-			break;
-#endif
-#ifdef USE_FLAC
-		case kSoundFLAC:
-			debug(1, "Playing FLAC compressed digital music");
-			_compressedStream = Audio::makeFlacStream(_memoryStream, true, 0, 0, numLoops);
-			break;
-#endif
-		default:
-			// Unknown compression
-			error("Trying to play compressed digital music, but the compression is not known");
-			break;
-	}
-}
-
-int DigitalMusicInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	if (_compressedStream != NULL)
-		return _compressedStream->readBuffer(buffer, numSamples);
-
-	int samples = 0;
-	int len = 0;
-
-	while (samples < numSamples && !eosIntern()) {
-		len = MIN(numSamples - samples, (int) (_bufferEnd - _pos));
-		memcpy(buffer, _pos, len * 2);
-		buffer += len;
-		_pos += len;
-		samples += len;
-		if (_pos >= _bufferEnd)
-			refill();
-	}
-	return samples;
-}
-
-void DigitalMusicInputStream::refill() {
-	if (_finished)
-		return;
-
-	uint32 lengthLeft;
-	byte *ptr = (byte *) _buf;
-
-	_file->seek(_filePos, SEEK_SET);
-
-	if (_looping)
-		lengthLeft = 2 * BUFFER_SIZE;
-	else
-		lengthLeft = MIN((uint32) (2 * BUFFER_SIZE), _endPos - _filePos);
-
-	while (lengthLeft > 0) {
-		uint32 len = _file->read(ptr, MIN(lengthLeft, _endPos - _file->pos()));
-
-		if (len & 1)
-			len--;
-
-#ifdef SCUMM_BIG_ENDIAN
-		if (!_context->isBigEndian) {
-#else
-		if (_context->isBigEndian) {
-#endif
-			uint16 *ptr16 = (uint16 *)ptr;
-			for (uint32 i = 0; i < (len / 2); i++)
-				ptr16[i] = SWAP_BYTES_16(ptr16[i]);
-		}
-
-		lengthLeft -= len;
-		ptr += len;
-
-		if (lengthLeft > 0)
-			_file->seek(_startPos);
-	}
-
-	_filePos = _file->pos();
-	_pos = _buf;
-	_bufferEnd = (int16 *)ptr;
-
-	if (!_looping && _filePos >= _endPos) {
-		_finished = true;
-	}
-}
-
-
 MusicPlayer::MusicPlayer(MidiDriver *driver) : _parser(0), _driver(driver), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false) {
 	memset(_channel, 0, sizeof(_channel));
 	_masterVolume = 0;
@@ -461,9 +277,7 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	sprintf(trackName[1], "track%02d", realTrackNumber);
 	Audio::AudioStream *stream = 0;
 	for (int i = 0; i < 2; ++i) {
-		// We multiply by 40 / 3 = 1000 / 75 to convert frames to milliseconds
-		// FIXME: Do we really want a duration of 10000 frames = 133 seconds, or is that just a random value?
-		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 10000 * 40 / 3, (flags == MUSIC_LOOP) ? 0 : 1);
+		stream = Audio::AudioStream::openStreamFile(trackName[i], 0, 0, (flags == MUSIC_LOOP) ? 0 : 1);
 		if (stream) {
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
 			_digitalMusic = true;
@@ -474,15 +288,48 @@ void Music::play(uint32 resourceId, MusicFlags flags) {
 	if (_vm->getGameId() == GID_ITE) {
 		if (resourceId >= 9 && resourceId <= 34) {
 			if (_digitalMusicContext != NULL) {
-				//TODO: check resource size
 				loopStart = 0;
-				// fix ITE sunstatm/sunspot score
-				if ((_vm->getGameId() == GID_ITE) && (resourceId == MUSIC_SUNSPOT)) {
+				// Fix ITE sunstatm/sunspot score
+				if (resourceId == MUSIC_SUNSPOT)
 					loopStart = 4 * 18727;
-				}
 
-				// digital music
-				audioStream = new DigitalMusicInputStream(_vm, _digitalMusicContext, resourceId - 9, flags == MUSIC_LOOP, loopStart);
+				// Digital music
+				ResourceData *resData = _digitalMusicContext->getResourceData(resourceId - 9);
+				Common::File *musicFile = _digitalMusicContext->getFile(resData);
+				int offs = (_digitalMusicContext->isCompressed) ? 9 : 0;
+
+				Common::SeekableSubReadStream *musicStream = new Common::SeekableSubReadStream(musicFile, 
+							(uint32)resData->offset + offs, (uint32)resData->offset + resData->size - offs);
+
+				if (!_digitalMusicContext->isCompressed) {
+					byte musicFlags = Audio::Mixer::FLAG_AUTOFREE | Audio::Mixer::FLAG_STEREO | 
+										Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+					if (flags == MUSIC_LOOP)
+						musicFlags |= Audio::Mixer::FLAG_LOOP;
+
+					Audio::LinearDiskStreamAudioBlock audioBlocks[1];
+					audioBlocks[0].pos = 0;
+					audioBlocks[0].len = resData->size / 2;	// 16-bit sound
+					audioStream = Audio::makeLinearDiskStream(musicStream, audioBlocks, 1, 11025, musicFlags, false, loopStart, 0);
+				} else {
+					// Read compressed header to determine compression type
+					musicFile->seek((uint32)resData->offset, SEEK_SET);
+					byte identifier = musicFile->readByte();
+
+					if (identifier == 0) {		// MP3
+#ifdef USE_MAD
+						audioStream = Audio::makeMP3Stream(musicStream, false, 0, 0, (flags == MUSIC_LOOP ? 0 : 1));
+#endif
+					} else if (identifier == 1) {	// OGG
+#ifdef USE_VORBIS
+						audioStream = Audio::makeVorbisStream(musicStream, false, 0, 0, (flags == MUSIC_LOOP ? 0 : 1));
+#endif
+					} else if (identifier == 2) {	// FLAC
+#ifdef USE_FLAC
+						audioStream = Audio::makeFlacStream(musicStream, false, 0, 0, (flags == MUSIC_LOOP ? 0 : 1));
+#endif
+					}
+				}
 			}
 		}
 	}

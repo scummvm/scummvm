@@ -49,7 +49,7 @@ STRIP   = psp-strip
 MKDIR	= mkdir -p
 RM	= rm -f
 RM_REC	= rm -rf
-MKSFO	= mksfo
+MKSFO	= mksfoex -d MEMSIZE=1
 PACK_PBP = pack-pbp
 FIXUP	= psp-fixup-imports
 
@@ -62,7 +62,7 @@ endif
 INCDIR   := $(srcdir) . $(srcdir)/engines/ . $(PSPSDK)/include
 LIBDIR   := $(LIBDIR) . $(PSPSDK)/lib
 
-CXXFLAGS = -O2 -Wall -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -Wno-multichar `$(PSPBIN)/sdl-config --cflags`
+CXXFLAGS = -O3 -Wall -D__PSP__ -DNONSTANDARD_PORT -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_ZLIB -DDISABLE_DOSBOX_OPL -Wno-multichar `$(PSPBIN)/sdl-config --cflags`
 CXXFLAGS:= $(addprefix -I,$(INCDIR)) $(CXXFLAGS)
 LDFLAGS := $(addprefix -L,$(LIBDIR)) $(LDFLAGS)
 LIBS     =
@@ -75,14 +75,14 @@ LIBS	+= -lmad
 CXXFLAGS+= -DUSE_VORBIS -DUSE_TREMOR
 LIBS	+= -lvorbisidec
 
-LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspsdk -lpspuser
+LIBS    += `$(PSPBIN)/sdl-config --libs` -lz -lstdc++ -lc -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet -lpspnet_inet -lpsputility -lpspuser -lpsppower
 
 CXXFLAGS := $(CXXFLAGS) -fno-exceptions -fno-rtti
 
 TARGET = scummvm-psp
-OBJS := psp_main.o \
+OBJS := powerman.o \
+	psp_main.o \
 	osys_psp.o \
-	osys_psp_gu.o \
 	kbd_ss_c.o \
 	kbd_s_c.o \
 	kbd_ls_c.o \

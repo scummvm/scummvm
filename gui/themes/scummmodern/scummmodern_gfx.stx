@@ -130,15 +130,15 @@
 		/>
 
 		<text_color	id = 'color_alternative'
-				color = 'black'
+				color = '128, 128, 128'
 		/>
 
 		<text_color	id = 'color_alternative_inverted'
-				color = 'black'
+				color = 'white'
 		/>
 
 		<text_color	id = 'color_alternative_hover'
-				color = 'bgreen'
+				color = 'darkgray'
 		/>
 
 		<text_color	id = 'color_alternative_disabled'

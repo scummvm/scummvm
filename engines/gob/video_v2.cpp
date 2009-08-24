@@ -64,12 +64,15 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		memBuffer = new byte[4370];
 		assert(memBuffer);
 
+		memset(memBuffer, 0, 4370);
+
 		srcPtr = sprBuf + 3;
+
 		sourceLeft = READ_LE_UINT32(srcPtr);
 
 		destPtr = destDesc.getVidMem() + destDesc.getWidth() * y + x;
 
-		curWidth = 0;
+		curWidth  = 0;
 		curHeight = 0;
 
 		linePtr = destPtr;
@@ -89,58 +92,64 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		cmdVar = 0;
 		while (1) {
 			cmdVar >>= 1;
-			if ((cmdVar & 0x100) == 0) {
-				cmdVar = *srcPtr | 0xFF00;
-				srcPtr++;
-			}
+			if ((cmdVar & 0x100) == 0)
+				cmdVar = *srcPtr++ | 0xFF00;
+
 			if ((cmdVar & 1) != 0) {
 				temp = *srcPtr++;
+
 				if ((temp != 0) || (transp == 0))
 					*destPtr = temp;
+
 				destPtr++;
 				curWidth++;
+
 				if (curWidth >= srcWidth) {
 					curWidth = 0;
 					linePtr += destDesc.getWidth();
 					destPtr = linePtr;
-					curHeight++;
-					if (curHeight >= srcHeight)
+					if (++curHeight >= srcHeight)
 						break;
 				}
-				sourceLeft--;
+
 				memBuffer[bufPos] = temp;
-				bufPos++;
-				bufPos %= 4096;
-				if (sourceLeft == 0)
+
+				bufPos = (bufPos + 1) % 4096;
+
+				if (--sourceLeft == 0)
 					break;
+
 			} else {
 				offset = *srcPtr++;
-				offset |= (*srcPtr & 0xF0) << 4;
-				strLen = (*srcPtr & 0x0F) + 3;
-				*srcPtr++;
+				temp   = *srcPtr++;
+
+				offset |= (temp & 0xF0) << 4;
+				strLen  = (temp & 0x0F)  + 3;
+
 				if (strLen == lenCmd)
 					strLen = *srcPtr++ + 18;
 
 				for (counter2 = 0; counter2 < strLen; counter2++) {
 					temp = memBuffer[(offset + counter2) % 4096];
+
 					if ((temp != 0) || (transp == 0))
 						*destPtr = temp;
-					destPtr++;
 
+					destPtr++;
 					curWidth++;
+
 					if (curWidth >= srcWidth) {
 						curWidth = 0;
 						linePtr += destDesc.getWidth();
 						destPtr = linePtr;
-						curHeight++;
-						if (curHeight >= srcHeight) {
+						if (++curHeight >= srcHeight) {
 							delete[] memBuffer;
 							return 1;
 						}
 					}
+
 					memBuffer[bufPos] = temp;
-					bufPos++;
-					bufPos %= 4096;
+					bufPos = (bufPos + 1) % 4096;
 				}
 
 				if (strLen >= ((int32) sourceLeft)) {
@@ -148,7 +157,9 @@ char Video_v2::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 					return 1;
 				} else
 					sourceLeft--;
+
 			}
+
 		}
 	} else
 		return 0;

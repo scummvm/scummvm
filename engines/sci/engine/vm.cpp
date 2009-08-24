@@ -79,7 +79,7 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 	if (sp >= s->stack_base && sp < s->stack_top)
 		return sp;
 
-	error("[VM] Stack index %d out of valid range [%d..%d]\n", 
+	error("[VM] Stack index %d out of valid range [%d..%d]", 
 		(int)(sp - s->stack_base), 0, (int)(s->stack_top - s->stack_base - 1));
 	return 0;
 }
@@ -87,9 +87,9 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (g_debug_weak_validations)
-			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		else
-			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		return 0;
 	}
 
@@ -99,9 +99,9 @@ static int validate_arithmetic(reg_t reg) {
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
 		if (g_debug_weak_validations)
-			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		else
-			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]\n", reg.segment);
+			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		return 0;
 	}
 
@@ -214,7 +214,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 
 	int temp = s->seg_manager->validateExportFunc(pubfunct, seg);
 	if (!temp) {
-		error("Request for invalid exported function 0x%x of script 0x%x\n", pubfunct, script);
+		error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
 		return NULL;
 	}
 
@@ -312,14 +312,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		ObjVarRef varp;
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
-			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
-			// FIXME: Find out if this is a game bug.
-			if ((s->_gameName == "LSL6") && (selector == 0x18c)) {
-				debug("LSL6 detected, continuing...");
-				break;
-			}
-
-			error("Send to invalid selector 0x%x of object at %04x:%04x\n", 0xffff & selector, PRINT_REG(send_obj));
+			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 
 			break;
 
@@ -930,7 +923,7 @@ void run_vm(EngineState *s, int restoring) {
 			}
 
 			if (opparams[0] >= (int)((SciEngine*)g_engine)->getKernel()->_kernelFuncs.size()) {
-				error("Invalid kernel function 0x%x requested\n", opparams[0]);
+				error("Invalid kernel function 0x%x requested", opparams[0]);
 			} else {
 				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
 
@@ -941,7 +934,7 @@ void run_vm(EngineState *s, int restoring) {
 						&& !kernel_matches_signature(s,
 						((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature, argc,
 						scriptState.xs->sp + 1)) {
-					error("[VM] Invalid arguments to kernel call %x\n", opparams[0]);
+					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
 				} else {
 					s->r_acc = ((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].fun(s, opparams[0],
 														argc, scriptState.xs->sp + 1);
@@ -1195,7 +1188,7 @@ void run_vm(EngineState *s, int restoring) {
 #ifndef DISABLE_VALIDATIONS
 			if (r_temp.offset >= code_buf_size) {
 				error("VM: lofss operation overflowed: %04x:%04x beyond end"
-				          " of script (at %04x)\n", PRINT_REG(r_temp), code_buf_size);
+				          " of script (at %04x)", PRINT_REG(r_temp), code_buf_size);
 			}
 #endif
 			PUSH32(r_temp);
@@ -1492,7 +1485,7 @@ SelectorType lookup_selector(EngineState *s, reg_t obj_location, Selector select
 
 
 	if (!obj) {
-		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x\n", 
+		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x", 
 			PRINT_REG(obj_location), PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
 		return kSelectorNone;
 	}
@@ -1573,7 +1566,7 @@ int script_instantiate_common(ResourceManager *resMgr, SegManager *segManager, S
 	return seg_id;
 }
 
-int script_instantiate_sci0(ResourceManager *resMgr, SegManager *segManager, SciVersion version, int script_nr) {
+int script_instantiate_sci0(ResourceManager *resMgr, SegManager *segManager, SciVersion version, bool oldScriptHeader, int script_nr) {
 	int objtype;
 	unsigned int objlength;
 	reg_t reg;
@@ -1593,7 +1586,7 @@ int script_instantiate_sci0(ResourceManager *resMgr, SegManager *segManager, Sci
 
 	Script *scr = segManager->getScript(seg_id);
 
-	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
+	if (oldScriptHeader) {
 		//
 		int locals_nr = READ_LE_UINT16(script->data);
 
@@ -1660,7 +1653,6 @@ int script_instantiate_sci0(ResourceManager *resMgr, SegManager *segManager, Sci
 				return 1;
 			}
 
-			segManager->_classtable[species].script = script_nr;
 			segManager->_classtable[species].reg = addr;
 			segManager->_classtable[species].reg.offset = classpos;
 			// Set technical class position-- into the block allocated for it
@@ -1765,7 +1757,7 @@ int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersi
 	if (version >= SCI_VERSION_1_1)
 		return script_instantiate_sci11(resMgr, segManager, version, script_nr);
 	else
-		return script_instantiate_sci0(resMgr, segManager, version, script_nr);
+		return script_instantiate_sci0(resMgr, segManager, version, (version == SCI_VERSION_0_EARLY), script_nr);
 }
 
 void script_uninstantiate_sci0(SegManager *segManager, SciVersion version, int script_nr, SegmentId seg) {

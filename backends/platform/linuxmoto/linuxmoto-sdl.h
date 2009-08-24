@@ -18,42 +18,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
+ * $URL$
+ * $Id$
  *
  */
 
-#include <pspgu.h>
-#include "common/scummsys.h"
 
-#include "common/rect.h"
-#include "osys_psp.h"
+#ifndef LINUXMOTO_SDL
+#define LINUXMOTO_SDL
 
-class OSystem_PSP_GU : public OSystem_PSP
-{
+#include "backends/platform/sdl/sdl.h"
+
+#include <SDL.h>
+
+class OSystem_LINUXMOTO : public OSystem_SDL {
+private:
+	bool _audioSuspended;
 public:
-	struct Vertex
-	{
-		float u,v;
-		float x,y,z;
-	};
-
-	OSystem_PSP_GU();
-	~OSystem_PSP_GU();
-	void updateScreen();
-	void initSize(uint width, uint height);
-	int getDefaultGraphicsMode() const;
-	bool setGraphicsMode(int mode);
-	bool setGraphicsMode(const char *name);
-	int getGraphicsMode() const;
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int cursorTargetScale);
-	void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) ;
-	void setPalette(const byte *colors, uint start, uint num);
-	bool pollEvent(Common::Event &event);
-	int _graphicMode;
-	struct Vertex *_vertices;
-	unsigned short* _clut;
-	unsigned short* _kbdClut;
-	bool _keyboardVisible;
-	int _keySelected;
-	int _keyboardMode;
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual void preprocessEvents(SDL_Event *event);
+	virtual void setupMixer();
+	virtual Common::HardwareKeySet *getHardwareKeySet();
+	void suspendAudio();
+	int resumeAudio();
 };
 
+#endif

@@ -429,22 +429,13 @@ int KyraEngine_LoK::o1_runWSAFromBeginningToEnd(EMCState *script) {
 	int wsaFrame = 0;
 
 	while (running) {
+		const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
+
 		_movieObjects[wsaIndex]->displayFrame(wsaFrame++, 0, xpos, ypos, 0, 0, 0);
-		_animator->_updateScreen = true;
 		if (wsaFrame >= _movieObjects[wsaIndex]->frames())
 			running = false;
 
-		uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-		while (_system->getMillis() < continueTime) {
-			if (worldUpdate) {
-				_sprites->updateSceneAnims();
-				_animator->updateAllObjectShapes();
-			} else {
-				_screen->updateScreen();
-			}
-			if (continueTime - _system->getMillis() >= 10)
-				delay(10);
-		}
+		delayUntil(continueTime, false, worldUpdate != 0);
 	}
 
 	_screen->showMouse();
@@ -460,18 +451,9 @@ int KyraEngine_LoK::o1_displayWSAFrame(EMCState *script) {
 	int waitTime = stackPos(3);
 	int wsaIndex = stackPos(4);
 	_screen->hideMouse();
+	const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
-	_animator->_updateScreen = true;
-	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
-	while (_system->getMillis() < continueTime) {
-		_sprites->updateSceneAnims();
-		_animator->updateAllObjectShapes();
-		if (skipFlag())
-			break;
-
-		if (continueTime - _system->getMillis() >= 10)
-			delay(10);
-	}
+	delayUntil(continueTime, false, true);
 	_screen->showMouse();
 	return 0;
 }
@@ -501,15 +483,9 @@ int KyraEngine_LoK::o1_runWSAFrames(EMCState *script) {
 	int wsaIndex = stackPos(5);
 	_screen->hideMouse();
 	for (; startFrame <= endFrame; ++startFrame) {
-		uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
+		const uint32 nextRun = _system->getMillis() + delayTime * _tickLength;
 		_movieObjects[wsaIndex]->displayFrame(startFrame, 0, xpos, ypos, 0, 0, 0);
-		_animator->_updateScreen = true;
-		while (_system->getMillis() < nextRun) {
-			_sprites->updateSceneAnims();
-			_animator->updateAllObjectShapes();
-			if (nextRun - _system->getMillis() >= 10)
-				delay(10);
-		}
+		delayUntil(nextRun, false, true);
 	}
 	_screen->showMouse();
 	return 0;
@@ -597,7 +573,6 @@ int KyraEngine_LoK::o1_setCustomPaletteRange(EMCState *script) {
 int KyraEngine_LoK::o1_loadPageFromDisk(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_LoK::o1_loadPageFromDisk(%p) ('%s', %d)", (const void *)script, stackPosString(0), stackPos(1));
 	_screen->loadPageFromDisk(stackPosString(0), stackPos(1));
-	_animator->_updateScreen = true;
 	return 0;
 }
 
@@ -665,7 +640,6 @@ int KyraEngine_LoK::o1_copyWSARegion(EMCState *script) {
 	int srcPage = stackPos(4);
 	int dstPage = stackPos(5);
 	_screen->copyRegion(xpos, ypos, xpos, ypos, width, height, srcPage, dstPage);
-	_animator->_updateScreen = true;
 	return 0;
 }
 
@@ -693,18 +667,9 @@ int KyraEngine_LoK::o1_displayWSAFrameOnHidPage(EMCState *script) {
 	int wsaIndex = stackPos(4);
 
 	_screen->hideMouse();
-	uint32 continueTime = waitTime * _tickLength + _system->getMillis();
+	const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 	_movieObjects[wsaIndex]->displayFrame(frame, 2, xpos, ypos, 0, 0, 0);
-	_animator->_updateScreen = true;
-	while (_system->getMillis() < continueTime) {
-		_sprites->updateSceneAnims();
-		_animator->updateAllObjectShapes();
-		if (skipFlag())
-			break;
-
-		if (continueTime - _system->getMillis() >= 10)
-			delay(10);
-	}
+	delayUntil(continueTime, false, true);
 	_screen->showMouse();
 
 	return 0;
@@ -776,37 +741,17 @@ int KyraEngine_LoK::o1_displayWSASequentialFrames(EMCState *script) {
 		if (endFrame >= startFrame) {
 			int frame = startFrame;
 			while (endFrame >= frame) {
-				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
+				const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
-				if (waitTime)
-					_animator->_updateScreen = true;
-				while (_system->getMillis() < continueTime) {
-					_sprites->updateSceneAnims();
-					_animator->updateAllObjectShapes();
-					if (skipFlag())
-						break;
-
-					if (continueTime - _system->getMillis() >= 10)
-						delay(10);
-				}
+				delayUntil(continueTime, false, true);
 				++frame;
 			}
 		} else {
 			int frame = startFrame;
 			while (endFrame <= frame) {
-				uint32 continueTime = waitTime * _tickLength + _system->getMillis();
+				const uint32 continueTime = waitTime * _tickLength + _system->getMillis();
 				_movieObjects[wsaIndex]->displayFrame(frame, 0, xpos, ypos, 0, 0, 0);
-				if (waitTime)
-					_animator->_updateScreen = true;
-				while (_system->getMillis() < continueTime) {
-					_sprites->updateSceneAnims();
-					_animator->updateAllObjectShapes();
-					if (skipFlag())
-						break;
-
-					if (continueTime - _system->getMillis() >= 10)
-						delay(10);
-				}
+				delayUntil(continueTime, false, true);
 				--frame;
 			}
 		}
@@ -1060,16 +1005,7 @@ int KyraEngine_LoK::o1_walkCharacterToPoint(EMCState *script) {
 		setCharacterPosition(character, 0);
 		++curPos;
 
-		nextFrame = _timer->getDelay(5 + character) * _tickLength + _system->getMillis();
-		while (_system->getMillis() < nextFrame) {
-			_sprites->updateSceneAnims();
-			updateMousePointer();
-			_timer->update();
-			_animator->updateAllObjectShapes();
-			updateTextFade();
-			if ((nextFrame - _system->getMillis()) >= 10)
-				delay(10);
-		}
+		delayUntil(nextFrame = _timer->getDelay(5 + character) * _tickLength + _system->getMillis(), true, true);
 	}
 	return 0;
 }
@@ -1318,9 +1254,8 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 		assert(_amuleteAnim);
 		_screen->hideMouse();
 		snd_playSoundEffect(0x70);
-		uint32 nextTime = 0;
 		for (int i = 0; _amuleteAnim[i] != 0xFF; ++i) {
-			nextTime = _system->getMillis() + 5 * _tickLength;
+			const uint32 nextTime = _system->getMillis() + 5 * _tickLength;
 
 			uint8 code = _amuleteAnim[i];
 			if (code == 3 || code == 7)
@@ -1333,14 +1268,7 @@ int KyraEngine_LoK::o1_makeAmuletAppear(EMCState *script) {
 				snd_playSoundEffect(0x73);
 
 			amulet->displayFrame(code, 0, 224, 152, 0, 0, 0);
-			_animator->_updateScreen = true;
-
-			while (_system->getMillis() < nextTime) {
-				_sprites->updateSceneAnims();
-				_animator->updateAllObjectShapes();
-				if (nextTime - _system->getMillis() >= 10)
-					delay(10);
-			}
+			delayUntil(nextTime, false, true);
 		}
 		_screen->showMouse();
 	}

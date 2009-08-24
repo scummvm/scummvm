@@ -67,6 +67,14 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 	AudioCDManager();
 
+	// FIXME: It might make sense to stop CD playback, when the AudioCDManager singleton
+	// is destroyed. Currently we can not do this, since in worst case the OSystem and
+	// along with it the Mixer will be destroyed before the AudioCDManager, thus
+	// leading to invalid memory access. If we can fix up the code to destroy the
+	// AudioCDManager before OSystem in *all* cases, that is including calling
+	// OSystem::quit, we might be able to implement it via a simple "stop()"
+	// call in a custom destructor of AudioCDManager.
+
 	/* used for emulated CD music */
 	SoundHandle _handle;
 	bool _emulating;

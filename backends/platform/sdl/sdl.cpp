@@ -222,6 +222,10 @@ OSystem_SDL::OSystem_SDL()
 	_osdSurface(0), _osdAlpha(SDL_ALPHA_TRANSPARENT), _osdFadeStartTime(0),
 #endif
 	_hwscreen(0), _screen(0), _tmpscreen(0),
+#ifdef USE_RGB_COLOR
+	_screenFormat(Graphics::PixelFormat::createFormatCLUT8()),
+	_cursorFormat(Graphics::PixelFormat::createFormatCLUT8()),
+#endif
 	_overlayVisible(false),
 	_overlayscreen(0), _tmpscreen2(0),
 	_samplesPerSec(0),
@@ -691,7 +695,6 @@ void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
 
 void OSystem_SDL::setupMixer() {
 	SDL_AudioSpec desired;
-	SDL_AudioSpec obtained;
 
 	// Determine the desired output sampling frequency.
 	_samplesPerSec = 0;
@@ -721,7 +724,7 @@ void OSystem_SDL::setupMixer() {
 	_mixer = new Audio::MixerImpl(this);
 	assert(_mixer);
 
-	if (SDL_OpenAudio(&desired, &obtained) != 0) {
+	if (SDL_OpenAudio(&desired, &_obtainedRate) != 0) {
 		warning("Could not open audio device: %s", SDL_GetError());
 		_samplesPerSec = 0;
 		_mixer->setReady(false);
@@ -729,7 +732,7 @@ void OSystem_SDL::setupMixer() {
 		// Note: This should be the obtained output rate, but it seems that at
 		// least on some platforms SDL will lie and claim it did get the rate
 		// even if it didn't. Probably only happens for "weird" rates, though.
-		_samplesPerSec = obtained.freq;
+		_samplesPerSec = _obtainedRate.freq;
 		debug(1, "Output sample rate: %d Hz", _samplesPerSec);
 
 		// Tell the mixer that we are ready and start the sound processing
@@ -737,7 +740,7 @@ void OSystem_SDL::setupMixer() {
 		_mixer->setReady(true);
 
 #ifdef MIXER_DOUBLE_BUFFERING
-		initThreadedMixer(_mixer, obtained.samples * 4);
+		initThreadedMixer(_mixer, _obtainedRate.samples * 4);
 #endif
 
 		// start the sound system

@@ -204,7 +204,21 @@ ifneq ($(DIST_FILES_ENGINEDATA),)
 endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
 
-.PHONY: deb bundle osxsnap win32dist wiidist install uninstall
+#
+# Linuxmoto/motoezx specific
+#
+
+# Special target to create a motoezx snapshot
+motoezx: $(EXECUTABLE)
+	$(MKDIR) motoezx/scummvm
+	$(CP) $(EXECUTABLE) motoezx/scummvm/
+	$(STRIP) motoezx/scummvm/$(EXECUTABLE)
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motoezx/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motoezx/scummvm/
+	$(CP) $(srcdir)/dists/motoezx/* motoezx/scummvm/
+	tar -C motoezx -cvzf motoezx/ScummVM.pkg scummvm
+
+.PHONY: deb bundle osxsnap win32dist wiidist motoezx install uninstall
 
 #
 # ARM specific

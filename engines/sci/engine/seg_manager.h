@@ -360,6 +360,7 @@ private:
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	MemObject *memObjAllocate(SegmentId segid, int hash_id, MemObjectType type);
 	int deallocate(SegmentId seg, bool recursive);
+	int createClassTable();
 
 	Hunk *alloc_Hunk(reg_t *);
 

@@ -29,6 +29,7 @@ SAVED_LDFLAGS=$LDFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
+SAVED_ASFLAGS=$ASFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -110,6 +111,7 @@ _alsa=auto
 _zlib=auto
 _mpeg2=no
 _fluidsynth=auto
+_16bit=auto
 _readline=auto
 # Default option behaviour yes/no
 _text_console=no
@@ -124,6 +126,7 @@ _backend=sdl
 _endian=unknown
 _need_memalign=no
 _have_x86=no
+_verbose_build=no
 _dynamic_modules=no
 _plugins_default=static
 _nasm=auto
@@ -131,6 +134,7 @@ _nasm=auto
 _ranlib=ranlib
 _strip=strip
 _ar="ar cru"
+_as="as"
 _windres=windres
 _win32path="C:/scummvm"
 _aos4path="Games:ScummVM"
@@ -553,7 +557,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, wii, wince, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, wii, wince, linuxmoto, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -582,9 +586,11 @@ $engines_help
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
+  --disable-16bit          don't enable 16bit color support
   --disable-hq-scalers     exclude HQ2x and HQ3x scalers
   --disable-scalers        exclude scalers
   --enable-text-console    use text console instead of graphical console
+  --enable-verbose-build   enable regular echoing of commands during build process
 
 Optional Libraries:
   --with-alsa-prefix=DIR   Prefix where alsa is installed (optional)
@@ -627,6 +633,7 @@ Some influential environment variables:
   CXXFLAGS  C++ compiler flags
   CPPFLAGS  C++ preprocessor flags, e.g. -I<include dir> if you have
             headers in a nonstandard directory <include dir>
+  ASFLAGS   assembler flags
 
 EOF
 		exit 0
@@ -637,6 +644,7 @@ DEBFLAGS="-g"
 
 for ac_option in $@; do
 	case "$ac_option" in
+	--disable-16bit)          _16bit=no       ;;
 	--disable-hq-scalers)     _build_hq_scalers=no ;;
 	--disable-scalers)        _build_scalers=no ;;
 	--enable-alsa)            _alsa=yes       ;;
@@ -657,6 +665,7 @@ for ac_option in $@; do
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
+	--enable-verbose-build)   _verbose_build=yes ;;
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-mt32emu)         _mt32emu=yes    ;;
@@ -794,6 +803,16 @@ linupy)
 	_host_os=linux
 	_host_cpu=arm
 	;;
+motoezx)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnu
+	;;
+motomagx)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnueabi
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -870,6 +889,13 @@ esac
 
 if test -z "$_host_alias"; then
 	_host_alias="$_host_cpu-$_host_os"
+else
+	# if _host_alias was set, default to the standard GNU tools
+	_ranlib=$_host_alias-ranlib
+	_strip=$_host_alias-strip
+	_ar="$_host_alias-ar cru"
+	_as="$_host_alias-as"
+	_windres=$_host_alias-windres
 fi
 
 #
@@ -1178,7 +1204,7 @@ case $_host_os in
 		# TODO nds
 		;;
 	psp)
-		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
@@ -1216,6 +1242,34 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
+		motoezx)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DMOTOEZX -DUSE_ARM_SMUSH_ASM"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_backend="linuxmoto"
+			;;
+		motomagx)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DMOTOMAGX -DUSE_ARM_SMUSH_ASM"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_backend="linuxmoto"
+			;;
 		bfin*)
 			_need_memalign=yes
 			;;
@@ -1233,8 +1287,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1248,14 +1300,13 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1320,9 +1371,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
 			_build_hq_scalers="no"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			;;
 		wince)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1339,10 +1387,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="wince"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
-			_windres=$_host_alias-windres
 			_mt32emu="no"
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/wince/wince.mk'
 			;;
@@ -1360,8 +1404,6 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mad="yes"
 			_zlib="yes"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
 			;;
 		wii)
@@ -1371,9 +1413,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="wii"
 			_build_hq_scalers="no"
 			add_line_to_config_mk 'GAMECUBE = 0'
@@ -1391,9 +1430,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="wii"
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1429,9 +1465,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="psp"
 			_build_scalers="no"
 			_build_hq_scalers="no"
@@ -1492,6 +1525,23 @@ EOF
 fi
 
 #
+# Enable 16bit support only for backends which support it
+#
+case $_backend in
+	sdl | wii)
+		if test "$_16bit" = auto ; then
+			_16bit=yes
+		else
+			_16bit=no
+		fi
+		;;
+	*)
+		_16bit=no
+		;;
+esac
+
+
+#
 # Add the results of the above checks to config.h
 #
 case $_endian in
@@ -1512,6 +1562,12 @@ add_to_config_h_if_yes $_have_x86 '#define HAVE_X86'
 
 add_to_config_h_if_yes $_need_memalign '#define SCUMM_NEED_ALIGNMENT'
 
+#
+# Check whether to enable a verbose build
+#
+echo_n "Checking whether to have a verbose build... "
+echo "$_verbose_build"
+add_to_config_mk_if_yes "$_verbose_build" 'VERBOSE_BUILD = 1'
 
 #
 # Check whether plugin support is requested and possible
@@ -1645,6 +1701,16 @@ else
 	_def_mt32emu='#define USE_MT32EMU'
 fi
 add_to_config_mk_if_yes "$_mt32emu" 'USE_MT32EMU = 1'
+
+#
+# Check whether 16bit color support is requested
+#
+if test "$_16bit" = no ; then
+	_def_16bit='#undef USE_RGB_COLOR'
+else
+	_def_16bit='#define USE_RGB_COLOR'
+fi
+add_to_config_mk_if_yes "$_16bit" 'USE_RGB_COLOR = 1'
 
 #
 # Check whether to enable the (hq) scalers
@@ -1996,6 +2062,10 @@ if test "$_nasm" = yes ; then
 	echo_n ", assembly routines"
 fi
 
+if test "$_16bit" = yes ; then
+	echo_n ", 16bit color"
+fi
+
 if test "$_build_hq_scalers" = yes ; then
 	echo_n ", HQ scalers"
 fi
@@ -2030,6 +2100,12 @@ case $_backend in
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
+		;;
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
 		;;
 	gp2x)
 		find_sdlconfig
@@ -2073,7 +2149,7 @@ case $_backend in
 		# TODO nds
 		;;
 	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
 		LIBS="$LIBS -lSDL"
 		;;
@@ -2231,6 +2307,7 @@ $_def_readline
 /* Options */
 $_def_text_console
 $_def_mt32emu
+$_def_16bit
 
 /* Plugin settings */
 $_def_plugin
@@ -2248,6 +2325,8 @@ LIBS += $LIBS
 RANLIB := $_ranlib
 STRIP := $_strip
 AR := $_ar
+AS := $_as
+ASFLAGS := $ASFLAGS
 WINDRES := $_windres
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
@@ -2280,6 +2359,7 @@ SAVED_LDFLAGS     := $SAVED_LDFLAGS
 SAVED_CXX         := $SAVED_CXX
 SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
 SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
+SAVED_ASFLAGS     := $SAVED_ASFLAGS
 EOF
 
 #

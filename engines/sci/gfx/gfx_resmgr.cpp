@@ -100,7 +100,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 		if (_version == SCI_VERSION_1_1)
 			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
-			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resManager->isVGA(), _staticPalette, _portBounds);
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
@@ -109,9 +109,9 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 	if (_version == SCI_VERSION_1_1)
 		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
-		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->isVGA(), _staticPalette, _portBounds);
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
 
-	if (!_resManager->isVGA()) {
+	if (_version <= SCI_VERSION_1_EGA) {
 		if (need_unscaled)
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
@@ -269,7 +269,8 @@ void GfxResManager::setStaticPalette(Palette *newPalette)
 	_staticPalette = newPalette;
 	_staticPalette->name = "static palette";
 
-	_staticPalette->mergeInto(_driver->getMode()->palette);
+	if (_driver->getMode()->palette)
+		_staticPalette->mergeInto(_driver->getMode()->palette);
 }
 
 #if 0
@@ -320,7 +321,8 @@ gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 	/* palette */ NULL,
 
 	/* color masks */ 0, 0, 0, 0,
-	/* color shifts */ 0, 0, 0, 0
+	/* color shifts */ 0, 0, 0, 0,
+	Graphics::PixelFormat()
 };
 
 gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_palette, bool scaled) {
@@ -530,28 +532,25 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			return NULL;
 
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
-		
-		if (!_resManager->isVGA()) {
+		ViewType viewType = _resManager->getViewType();
+
+		if (viewType == kViewEga) {
 			int pal = (_version <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
-			if (_version < SCI_VERSION_1_1)
-				view = getVGAView(resid, viewRes->data, viewRes->size, _staticPalette, false);
-			else
-				view = getVGAView(resid, viewRes->data, viewRes->size, 0, true);
+			view = getVGAView(resid, viewRes->data, viewRes->size, viewType);
 
-			if (!view->palette) {
-				view->palette = new Palette(_staticPalette->size());
-				view->palette->name = "interpreter_get_view";
-			}
-
-			// Palettize view
-			for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
-				const PaletteEntry& vc = view->palette->getColor(i);
-				if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
-					const PaletteEntry& sc = _staticPalette->getColor(i);
-					view->palette->setColor(i, sc.r, sc.g, sc.b);
+			if (view->palette) {
+				// Palettize view
+				for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
+					const PaletteEntry& vc = view->palette->getColor(i);
+					if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
+						const PaletteEntry& sc = _staticPalette->getColor(i);
+						view->palette->setColor(i, sc.r, sc.g, sc.b);
+					}
 				}
+			} else {
+				view->palette = _staticPalette->getref();
 			}
 		}
 

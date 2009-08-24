@@ -646,6 +646,10 @@ begin_credits("Credits");
 		  add_person("Oystein Eftevaag", "vinterstum", "");
 	  end_section();
 
+	  begin_section("LinuxMoto");
+		  add_person("Lubomyr Lisen", "", "");
+	  end_section();
+
 	  begin_section("Maemo");
 		  add_person("Frantisek Dufka", "fanoush", "");
 	  end_section();
@@ -832,6 +836,7 @@ begin_credits("Credits");
 		  add_person("Andreas Karlsson", "Sprawl", "Initial port for SymbianOS");
 		  add_person("Claudio Matsuoka", "", "Daily Linux builds");
 		  add_person("Thomas Mayer", "", "PSP port contributions");
+		  add_person("Yotam Barnoy", "bluddy", "PSP port suspend/resume support");
 		  add_person("Sean Murray", "lightcast", "ScummVM tools GUI application (GSoC 2007 task)");
 		  add_person("", "n0p", "Windows CE port aspect ratio correction scaler and right click input method");
 		  add_person("Mikesch Nepomuk", "mnepomuk", "MI1 VGA floppy patches");

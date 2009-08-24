@@ -54,6 +54,7 @@ public:
 	int getImageNum();
 	int load(const char *filename, int flags, int image = 0);
 
+	void copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch);
 	void handleNextFrame();
 
 protected:

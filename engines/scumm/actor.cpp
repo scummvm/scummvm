@@ -2451,7 +2451,7 @@ void ScummEngine_v71he::postProcessAuxQueue() {
 					uint8 *dst2 = pvs->getBackPixels(0, pvs->topline);
 					switch (comp) {
 					case 1:
-						Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->w, pvs->h, x, y, w, h);
+						Wiz::copyAuxImage(dst1, dst2, axfd + 10, pvs->pitch, pvs->h, x, y, w, h, _bitDepth);
 						break;
 					default:
 						error("unimplemented compression type %d", comp);
@@ -2551,9 +2551,10 @@ void Actor::saveLoadWithSerializer(Serializer *ser) {
 		MKLINE(Actor, _flip, sleByte, VER(32)),
 		MKLINE(Actor, _heSkipLimbs, sleByte, VER(32)),
 
-		// Actor palette grew from 64 to 256 bytes
+		// Actor palette grew from 64 to 256 bytes and switched to uint16 in HE games
 		MKARRAY_OLD(Actor, _palette[0], sleByte, 64, VER(8), VER(9)),
-		MKARRAY(Actor, _palette[0], sleByte, 256, VER(10)),
+		MKARRAY_OLD(Actor, _palette[0], sleByte, 256, VER(10), VER(79)),
+		MKARRAY(Actor, _palette[0], sleUint16, 256, VER(80)),
 
 		MK_OBSOLETE(Actor, _mask, sleByte, VER(8), VER(9)),
 		MKLINE(Actor, _shadowMode, sleByte, VER(8)),

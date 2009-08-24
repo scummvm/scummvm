@@ -40,6 +40,7 @@ Wiz::Wiz(ScummEngine_v71he *vm) : _vm(vm) {
 	_imagesNum = 0;
 	memset(&_images, 0, sizeof(_images));
 	memset(&_polygons, 0, sizeof(_polygons));
+	_cursorImage = false;
 	_rectOverrideEnabled = false;
 }
 
@@ -254,7 +255,9 @@ bool Wiz::polygonContains(const WizPolygon &pol, int x, int y) {
 	return r;
 }
 
-void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch) {
+void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, uint8 bitDepth) {
+	assert(bitDepth == 1);
+
 	Common::Rect dstRect(srcx, srcy, srcx + srcw, srcy + srch);
 	dstRect.clip(dstw, dsth);
 
@@ -263,8 +266,8 @@ void Wiz::copyAuxImage(uint8 *dst1, uint8 *dst2, const uint8 *src, int dstw, int
 	if (rh <= 0 || rw <= 0)
 		return;
 
-	uint8 *dst1Ptr = dst1 + dstRect.left + dstRect.top * dstw;
-	uint8 *dst2Ptr = dst2 + dstRect.left + dstRect.top * dstw;
+	uint8 *dst1Ptr = dst1 + dstRect.top * dstw + dstRect.left;
+	uint8 *dst2Ptr = dst2 + dstRect.top * dstw + dstRect.left;
 	const uint8 *dataPtr = src;
 
 	while (rh--) {
@@ -353,32 +356,25 @@ static bool calcClipRects(int dst_w, int dst_h, int src_x, int src_y, int src_w,
 	return srcRect.isValidRect() && dstRect.isValidRect();
 }
 
-void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
-	// TODO: Compressed 16 bits in 555 format
-
-	Common::Rect r1, r2;
-	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		dst += r2.top * dstw + r2.left;
-		if (flags & kWIFFlipY) {
-			const int dy = (srcy < 0) ? srcy : (srch - r1.height());
-			r1.translate(0, dy);
-		}
-		if (flags & kWIFFlipX) {
-			const int dx = (srcx < 0) ? srcx : (srcw - r1.width());
-			r1.translate(dx, 0);
-		}
-		if (xmapPtr) {
-			decompress16BitWizImage<kWizXMap>(dst, dstw, src, r1, flags, palPtr, xmapPtr);
-		} else {
-			decompress16BitWizImage<kWizCopy>(dst, dstw, src, r1, flags);
-		}
+void Wiz::writeColor(uint8 *dstPtr, int dstType, uint16 color) {
+	switch (dstType) {
+	case kDstScreen:
+		WRITE_UINT16(dstPtr, color);
+		break;
+	case kDstMemory:
+	case kDstResource:
+		WRITE_LE_UINT16(dstPtr, color);
+		break;
+	default:
+		error("writeColor: Unknown dstType %d", dstType);
 	}
 }
 
-void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
+#ifdef USE_RGB_COLOR
+void Wiz::copy16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *xmapPtr) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		dst += r2.left + r2.top * dstw;
+		dst += r2.top * dstPitch + r2.left * 2;
 		if (flags & kWIFFlipY) {
 			const int dy = (srcy < 0) ? srcy : (srch - r1.height());
 			r1.translate(0, dy);
@@ -388,11 +384,32 @@ void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int src
 			r1.translate(dx, 0);
 		}
 		if (xmapPtr) {
-			decompressWizImage<kWizXMap>(dst, dstw, src, r1, flags, palPtr, xmapPtr);
-		} else if (palPtr) {
-			decompressWizImage<kWizRMap>(dst, dstw, src, r1, flags, palPtr);
+			decompress16BitWizImage<kWizXMap>(dst, dstPitch, dstType, src, r1, flags, xmapPtr);
 		} else {
-			decompressWizImage<kWizCopy>(dst, dstw, src, r1, flags);
+			decompress16BitWizImage<kWizCopy>(dst, dstPitch, dstType, src, r1, flags);
+		}
+	}
+}
+#endif
+
+void Wiz::copyWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
+	Common::Rect r1, r2;
+	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
+		dst += r2.top * dstPitch + r2.left * bitDepth;
+		if (flags & kWIFFlipY) {
+			const int dy = (srcy < 0) ? srcy : (srch - r1.height());
+			r1.translate(0, dy);
+		}
+		if (flags & kWIFFlipX) {
+			const int dx = (srcx < 0) ? srcx : (srcw - r1.width());
+			r1.translate(dx, 0);
+		}
+		if (xmapPtr) {
+			decompressWizImage<kWizXMap>(dst, dstPitch, dstType, src, r1, flags, palPtr, xmapPtr, bitDepth);
+		} else if (palPtr) {
+			decompressWizImage<kWizRMap>(dst, dstPitch, dstType, src, r1, flags, palPtr, NULL, bitDepth);
+		} else {
+			decompressWizImage<kWizCopy>(dst, dstPitch, dstType, src, r1, flags, NULL, NULL, bitDepth);
 		}
 	}
 }
@@ -431,13 +448,102 @@ static void decodeWizMask(uint8 *&dst, uint8 &mask, int w, int maskType) {
 	}
 }
 
-void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP) {
+#ifdef USE_RGB_COLOR
+void Wiz::copyMaskWizImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr) {
 	Common::Rect srcRect, dstRect;
 	if (!calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, srcRect, dstRect)) {
 		return;
 	}
-	dstw = dstw / 8;
-	dst += dstRect.top * dstw + dstRect.left / 8;
+	dst += dstRect.top * dstPitch + dstRect.left * 2;
+	if (flags & kWIFFlipY) {
+		const int dy = (srcy < 0) ? srcy : (srch - srcRect.height());
+		srcRect.translate(0, dy);
+	}
+	if (flags & kWIFFlipX) {
+		const int dx = (srcx < 0) ? srcx : (srcw - srcRect.width());
+		srcRect.translate(dx, 0);
+	}
+
+	const uint8 *dataPtr, *dataPtrNext;
+	const uint8 *maskPtr, *maskPtrNext;
+	uint8 code, *dstPtr, *dstPtrNext;
+	int h, w, dstInc;
+
+	dataPtr = src;
+	dstPtr = dst;
+	maskPtr = mask;
+
+	// Skip over the first 'srcRect->top' lines in the data
+	dataPtr += dstRect.top * dstPitch + dstRect.left * 2;
+
+	h = dstRect.height();
+	w = dstRect.width();
+	if (h <= 0 || w <= 0)
+		return;
+
+	dstInc = 2;
+	if (flags & kWIFFlipX) {
+		dstPtr += (w - 1) * 2;
+		dstInc = -2;
+	}
+
+	while (h--) {
+		w = dstRect.width();
+		uint16 lineSize = READ_LE_UINT16(maskPtr); maskPtr += 2;
+		dataPtrNext = dataPtr + dstPitch;
+		dstPtrNext = dstPtr + dstPitch;
+		maskPtrNext = maskPtr + lineSize;
+		if (lineSize != 0) {
+			while (w > 0) {
+				code = *maskPtr++;
+				if (code & 1) {
+					code >>= 1;
+					dataPtr += dstInc * code;
+					dstPtr += dstInc * code;
+					w -= code;
+				} else if (code & 2) {
+					code = (code >> 2) + 1;
+					w -= code;
+					if (w < 0) {
+						code += w;
+					}
+					while (code--) {
+						if (*maskPtr != 5)
+							write16BitColor<kWizCopy>(dstPtr, dataPtr, dstType, palPtr);
+						dataPtr += 2;
+						dstPtr += dstInc;
+					}
+					maskPtr++;
+				} else {
+					code = (code >> 2) + 1;
+					w -= code;
+					if (w < 0) {
+						code += w;
+					}
+					while (code--) {
+						if (*maskPtr != 5)
+							write16BitColor<kWizCopy>(dstPtr, dataPtr, dstType, palPtr);
+						dataPtr += 2;
+						dstPtr += dstInc;
+						maskPtr++;
+					}
+				}
+			}
+		}
+		dataPtr = dataPtrNext;
+		dstPtr = dstPtrNext;
+		maskPtr = maskPtrNext;
+	}
+}
+#endif
+
+void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstPitch, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int maskT, int maskP) {
+	Common::Rect srcRect, dstRect;
+	if (!calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, srcRect, dstRect)) {
+		return;
+	}
+	dstPitch /= 8;
+	dst += dstRect.top * dstPitch + dstRect.left / 8;
 
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code, mask, *dstPtr, *dstPtrNext;
@@ -462,7 +568,7 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 		w = srcRect.width();
 		mask = revBitMask(dstRect.left & 7);
 		off = READ_LE_UINT16(dataPtr); dataPtr += 2;
-		dstPtrNext = dstPtr + dstw;
+		dstPtrNext = dstPtr + dstPitch;
 		dataPtrNext = dataPtr + off;
 		if (off != 0) {
 			while (w > 0) {
@@ -520,36 +626,8 @@ void Wiz::copyWizImageWithMask(uint8 *dst, const uint8 *src, int dstw, int dsth,
 	}
 }
 
-void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
-	Common::Rect r1, r2;
-	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
-		if (flags & kWIFFlipX) {
-			int l = r1.left;
-			int r = r1.right;
-			r1.left = srcw - r;
-			r1.right = srcw - l;
-		}
-		if (flags & kWIFFlipY) {
-			int t = r1.top;
-			int b = r1.bottom;
-			r1.top = srch - b;
-			r1.bottom = srch - t;
-		}
-		int h = r1.height();
-		int w = r1.width();
-		src += r1.left + r1.top * srcw;
-		dst += r2.left + r2.top * dstw;
-		if (palPtr) {
-			decompressRawWizImage<kWizRMap>(dst, dstw, src, srcw, w, h, transColor, palPtr);
-		} else {
-			decompressRawWizImage<kWizCopy>(dst, dstw, src, srcw, w, h, transColor);
-		}
-	}
-}
-
-void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor) {
-	// TODO: RAW 16 bits in 555 format
-
+#ifdef USE_RGB_COLOR
+void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, int transColor) {
 	Common::Rect r1, r2;
 	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
 		if (flags & kWIFFlipX) {
@@ -567,36 +645,72 @@ void Wiz::copyRaw16BitWizImage(uint8 *dst, const uint8 *src, int dstw, int dsth,
 		int h = r1.height();
 		int w = r1.width();
 		src += (r1.top * srcw + r1.left) * 2;
-		dst += r2.top * dstw + r2.left;
+		dst += r2.top * dstPitch + r2.left * 2;
 		while (h--) {
-			for (int i = 0; i < w; ++i) {
+			for (int i = 0; i < w; ++ i) {
 				uint16 col = READ_LE_UINT16(src + 2 * i);
-				uint8 r = ((col >> 10) & 0x1F) << 3;
-				uint8 g = ((col >>  5) & 0x1F) << 3;
-				uint8 b = ((col >>  0) & 0x1F) << 3;
-				uint8 color = _vm->convert16BitColor(col, r, g, b);
-
 				if (transColor == -1 || transColor != col) {
-					dst[i] = color;
+					writeColor(dst + i * 2, dstType, col);
 				}
 			}
 			src += srcw * 2;
-			dst += dstw;
+			dst += dstPitch;
+		}
+	}
+}
+#endif
+
+void Wiz::copyRawWizImage(uint8 *dst, const uint8 *src, int dstPitch, int dstType, int dstw, int dsth, int srcx, int srcy, int srcw, int srch, const Common::Rect *rect, int flags, const uint8 *palPtr, int transColor, uint8 bitDepth) {
+	Common::Rect r1, r2;
+	if (calcClipRects(dstw, dsth, srcx, srcy, srcw, srch, rect, r1, r2)) {
+		if (flags & kWIFFlipX) {
+			int l = r1.left;
+			int r = r1.right;
+			r1.left = srcw - r;
+			r1.right = srcw - l;
+		}
+		if (flags & kWIFFlipY) {
+			int t = r1.top;
+			int b = r1.bottom;
+			r1.top = srch - b;
+			r1.bottom = srch - t;
+		}
+		int h = r1.height();
+		int w = r1.width();
+		src += r1.top * srcw + r1.left;
+		dst += r2.top * dstPitch + r2.left * bitDepth;
+		if (palPtr) {
+			decompressRawWizImage<kWizRMap>(dst, dstPitch, dstType, src, srcw, w, h, transColor, palPtr, bitDepth);
+		} else {
+			decompressRawWizImage<kWizCopy>(dst, dstPitch, dstType, src, srcw, w, h, transColor, NULL, bitDepth);
 		}
 	}
 }
 
+#ifdef USE_RGB_COLOR
 template <int type>
-void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
+void Wiz::write16BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const uint8 *xmapPtr) {
+	uint16 col = READ_LE_UINT16(dataPtr);
+	if (type == kWizXMap) {
+		uint16 srcColor = (col >> 1) & 0x7DEF;
+		uint16 dstColor = (READ_UINT16(dstPtr) >> 1) & 0x7DEF;
+		uint16 newColor = srcColor + dstColor;
+		writeColor(dstPtr, dstType, newColor);
+	}
+	if (type == kWizCopy) {
+		writeColor(dstPtr, dstType, col);
+	}
+}
+
+template <int type>
+void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *xmapPtr) {
 	const uint8 *dataPtr, *dataPtrNext;
-	uint8 code, *dstPtr, *dstPtrNext;
+	uint8 code;
+	uint8 *dstPtr, *dstPtrNext;
 	int h, w, xoff, dstInc;
 
 	if (type == kWizXMap) {
 		assert(xmapPtr != 0);
-	}
-	if (type == kWizRMap) {
-		assert(palPtr != 0);
 	}
 
 	dstPtr = dst;
@@ -616,10 +730,10 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, co
 		dstPtr += (h - 1) * dstPitch;
 		dstPitch = -dstPitch;
 	}
-	dstInc = 1;
+	dstInc = 2;
 	if (flags & kWIFFlipX) {
-		dstPtr += w - 1;
-		dstInc = -1;
+		dstPtr += (w - 1) * 2;
+		dstInc = -2;
 	}
 
 	while (h--) {
@@ -658,21 +772,10 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, co
 						code += w;
 					}
 					while (code--) {
-						uint16 col = READ_LE_UINT16(dataPtr);
-						uint8 r = ((col >> 10) & 0x1F) << 3;
-						uint8 g = ((col >>  5) & 0x1F) << 3;
-						uint8 b = ((col >>  0) & 0x1F) << 3;
-						col = _vm->convert16BitColor(col, r, g, b);
-
-						if (type == kWizXMap) {
-							*dstPtr = xmapPtr[col * 256 + *dstPtr];
-						}
-						if (type == kWizCopy) {
-							*dstPtr = col;
-						}
+						write16BitColor<type>(dstPtr, dataPtr, dstType, xmapPtr);
 						dstPtr += dstInc;
 					}
-					dataPtr+= 2;
+					dataPtr += 2;
 				} else {
 					code = (code >> 2) + 1;
 					if (xoff > 0) {
@@ -689,18 +792,7 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, co
 						code += w;
 					}
 					while (code--) {
-						uint16 col = READ_LE_UINT16(dataPtr);
-						uint8 r = ((col >> 10) & 0x1F) << 3;
-						uint8 g = ((col >>  5) & 0x1F) << 3;
-						uint8 b = ((col >>  0) & 0x1F) << 3;
-						col = _vm->convert16BitColor(col, r, g, b);
-
-						if (type == kWizXMap) {
-							*dstPtr = xmapPtr[col * 256 + *dstPtr];
-						}
-						if (type == kWizCopy) {
-							*dstPtr = col;
-						}
+						write16BitColor<type>(dstPtr, dataPtr, dstType, xmapPtr);
 						dataPtr += 2;
 						dstPtr += dstInc;
 					}
@@ -711,9 +803,39 @@ void Wiz::decompress16BitWizImage(uint8 *dst, int dstPitch, const uint8 *src, co
 		dstPtr = dstPtrNext;
 	}
 }
+#endif
 
 template <int type>
-void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr) {
+void Wiz::write8BitColor(uint8 *dstPtr, const uint8 *dataPtr, int dstType, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
+	if (bitDepth == 2) {
+		if (type == kWizXMap) {
+			uint16 color = READ_LE_UINT16(palPtr + *dataPtr * 2);
+			uint16 srcColor = (color >> 1) & 0x7DEF;
+			uint16 dstColor = (READ_UINT16(dstPtr) >> 1) & 0x7DEF;
+			uint16 newColor = srcColor + dstColor;
+			writeColor(dstPtr, dstType, newColor);
+		}
+		if (type == kWizRMap) {
+			writeColor(dstPtr, dstType, READ_LE_UINT16(palPtr + *dataPtr * 2));
+		}
+		if (type == kWizCopy) {
+			writeColor(dstPtr, dstType, *dataPtr);
+		}
+	} else {
+		if (type == kWizXMap) {
+			*dstPtr = xmapPtr[*dataPtr * 256 + *dstPtr];
+		}
+		if (type == kWizRMap) {
+			*dstPtr = palPtr[*dataPtr];
+		}
+		if (type == kWizCopy) {
+			*dstPtr = *dataPtr;
+		}
+	}
+}
+
+template <int type>
+void Wiz::decompressWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth) {
 	const uint8 *dataPtr, *dataPtrNext;
 	uint8 code, *dstPtr, *dstPtrNext;
 	int h, w, xoff, dstInc;
@@ -742,10 +864,10 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 		dstPtr += (h - 1) * dstPitch;
 		dstPitch = -dstPitch;
 	}
-	dstInc = 1;
+	dstInc = bitDepth;
 	if (flags & kWIFFlipX) {
-		dstPtr += w - 1;
-		dstInc = -1;
+		dstPtr += (w - 1) * bitDepth;
+		dstInc = -bitDepth;
 	}
 
 	while (h--) {
@@ -784,15 +906,7 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 						code += w;
 					}
 					while (code--) {
-						if (type == kWizXMap) {
-							*dstPtr = xmapPtr[*dataPtr * 256 + *dstPtr];
-						}
-						if (type == kWizRMap) {
-							*dstPtr = palPtr[*dataPtr];
-						}
-						if (type == kWizCopy) {
-							*dstPtr = *dataPtr;
-						}
+						write8BitColor<type>(dstPtr, dataPtr, dstType, palPtr, xmapPtr, bitDepth);
 						dstPtr += dstInc;
 					}
 					dataPtr++;
@@ -812,15 +926,8 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 						code += w;
 					}
 					while (code--) {
-						if (type == kWizXMap) {
-							*dstPtr = xmapPtr[*dataPtr++ * 256 + *dstPtr];
-						}
-						if (type == kWizRMap) {
-							*dstPtr = palPtr[*dataPtr++];
-						}
-						if (type == kWizCopy) {
-							*dstPtr = *dataPtr++;
-						}
+						write8BitColor<type>(dstPtr, dataPtr, dstType, palPtr, xmapPtr, bitDepth);
+						dataPtr++;
 						dstPtr += dstInc;
 					}
 				}
@@ -832,12 +939,12 @@ void Wiz::decompressWizImage(uint8 *dst, int dstPitch, const uint8 *src, const C
 }
 
 // NOTE: These templates are used outside this file. We don't want the compiler to optimize them away, so we need to explicitely instantiate them.
-template void Wiz::decompressWizImage<kWizXMap>(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr);
-template void Wiz::decompressWizImage<kWizRMap>(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr);
-template void Wiz::decompressWizImage<kWizCopy>(uint8 *dst, int dstPitch, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr);
+template void Wiz::decompressWizImage<kWizXMap>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
+template void Wiz::decompressWizImage<kWizRMap>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
+template void Wiz::decompressWizImage<kWizCopy>(uint8 *dst, int dstPitch, int dstType, const uint8 *src, const Common::Rect &srcRect, int flags, const uint8 *palPtr, const uint8 *xmapPtr, uint8 bitDepth);
 
 template <int type>
-void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr) {
+void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, int dstType, const uint8 *src, int srcPitch, int w, int h, int transColor, const uint8 *palPtr, uint8 bitDepth) {
 	if (type == kWizRMap) {
 		assert(palPtr != 0);
 	}
@@ -850,10 +957,18 @@ void Wiz::decompressRawWizImage(uint8 *dst, int dstPitch, const uint8 *src, int 
 			uint8 col = src[i];
 			if (transColor == -1 || transColor != col) {
 				if (type == kWizRMap) {
-					dst[i] = palPtr[col];
+					if (bitDepth == 2) {
+						writeColor(dst + i * 2, dstType, READ_LE_UINT16(palPtr + col * 2));
+					} else {
+						dst[i] = palPtr[col];
+					}
 				}
 				if (type == kWizCopy) {
-					dst[i] = col;
+					if (bitDepth == 2) {
+						writeColor(dst + i * 2, dstType, col);
+					} else {
+						dst[i] = col;
+					}
 				}
 			}
 		}
@@ -943,7 +1058,7 @@ uint16 Wiz::getWizPixelColor(const uint8 *data, int x, int y, int w, int h, uint
 	}
 
 	if (bitDepth == 2)
-		return (READ_LE_UINT16(data) & 1) ? color : READ_LE_UINT16(data + 1);
+		return (READ_LE_UINT16(data) & 1) ? color : READ_LE_UINT16(data + 2);
 	else
 		return (data[0] & 1) ? color : data[1];
 
@@ -954,7 +1069,7 @@ uint16 Wiz::getRawWizPixelColor(const uint8 *data, int x, int y, int w, int h, u
 		return color;
 	}
 	if (bitDepth == 2)
-		return READ_LE_UINT16(data + y * w + x * 2);
+		return READ_LE_UINT16(data + (y * w + x) * 2);
 	else
 		return data[y * w + x];
 }
@@ -1042,6 +1157,25 @@ void Wiz::computeRawWizHistogram(uint32 *histogram, const uint8 *data, int srcPi
 		data += srcPitch;
 	}
 }
+
+#ifdef USE_RGB_COLOR
+static int wizPackType2(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt) {
+	debug(9, "wizPackType2([%d,%d,%d,%d])", rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
+	int w = rCapt.width();
+	int h = rCapt.height();
+	int size = w * h * 2;
+	if (dst) {
+		src += rCapt.top * srcPitch + rCapt.left * 2;
+		while (h--) {
+			for (int i = 0; i < w; i++)
+				WRITE_LE_UINT16(dst + i * 2, READ_UINT16(src + i * 2));
+			dst += w * 2;
+			src += srcPitch;
+		}
+	}
+	return size;
+}
+#endif
 
 static int wizPackType1(uint8 *dst, const uint8 *src, int srcPitch, const Common::Rect& rCapt, uint8 transColor) {
 	debug(9, "wizPackType1(%d, [%d,%d,%d,%d])", transColor, rCapt.left, rCapt.top, rCapt.right, rCapt.bottom);
@@ -1179,7 +1313,6 @@ static int wizPackType0(uint8 *dst, const uint8 *src, int srcPitch, const Common
 }
 
 void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, int compType) {
-	debug(5, "ScummEngine_v72he::captureWizImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
 	uint8 *src = NULL;
 	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 	if (backBuffer) {
@@ -1187,12 +1320,17 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 	} else {
 		src = pvs->getPixels(0, 0);
 	}
-	Common::Rect rCapt(pvs->w, pvs->h);
+	captureImage(src, pvs->pitch, pvs->w, pvs->h, resNum, r, compType);
+}
+
+void Wiz::captureImage(uint8 *src, int srcPitch, int srcw, int srch, int resNum, const Common::Rect& r, int compType) {
+	debug(0, "captureImage(%d, %d, [%d,%d,%d,%d])", resNum, compType, r.left, r.top, r.right, r.bottom);
+	Common::Rect rCapt(srcw, srch);
 	if (rCapt.intersects(r)) {
 		rCapt.clip(r);
 		const uint8 *palPtr;
 		if (_vm->_game.heversion >= 99) {
-			palPtr = _vm->_hePalettes + 1024;
+			palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
 		} else {
 			palPtr = _vm->_currentPalette;
 		}
@@ -1201,16 +1339,24 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		int h = rCapt.height();
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
 
+		if (_vm->_game.features & GF_16BIT_COLOR)
+			compType = 2;
+
 		// compute compressed size
 		int dataSize = 0;
 		int headerSize = palPtr ? 1080 : 36;
 		switch (compType) {
 		case 0:
-			dataSize = wizPackType0(0, src, pvs->pitch, rCapt);
+			dataSize = wizPackType0(0, src, srcPitch, rCapt);
 			break;
 		case 1:
-			dataSize = wizPackType1(0, src, pvs->pitch, rCapt, transColor);
+			dataSize = wizPackType1(0, src, srcPitch, rCapt, transColor);
 			break;
+#ifdef USE_RGB_COLOR
+		case 2:
+			dataSize = wizPackType2(0, src, srcPitch, rCapt);
+			break;
+#endif
 		default:
 			error("unhandled compression type %d", compType);
 			break;
@@ -1249,11 +1395,16 @@ void Wiz::captureWizImage(int resNum, const Common::Rect& r, bool backBuffer, in
 		// write compressed data
 		switch (compType) {
 		case 0:
-			wizPackType0(wizImg + headerSize, src, pvs->pitch, rCapt);
+			wizPackType0(wizImg + headerSize, src, srcPitch, rCapt);
 			break;
 		case 1:
-			wizPackType1(wizImg + headerSize, src, pvs->pitch, rCapt, transColor);
+			wizPackType1(wizImg + headerSize, src, srcPitch, rCapt, transColor);
 			break;
+#ifdef USE_RGB_COLOR
+		case 2:
+			wizPackType2(wizImg + headerSize, src, srcPitch, rCapt);
+			break;
+#endif
 		default:
 			break;
 		}
@@ -1279,23 +1430,14 @@ void Wiz::displayWizImage(WizImage *pwi) {
 		drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, 0, 0, 0);
 	} else {
 		const Common::Rect *r = NULL;
-		drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, 0, 0, 0, r, pwi->flags, 0, 0);
+		drawWizImage(pwi->resNum, pwi->state, 0, 0, pwi->x1, pwi->y1, 0, 0, 0, r, pwi->flags, 0, _vm->getHEPaletteSlot(0));
 	}
 }
 
-uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, int palette) {
-	debug(3, "drawWizImage(resNum %d, x1 %d y1 %d flags 0x%X zorder %d shadow %d field_390 %d dstResNum %d palette %d)", resNum, x1, y1, flags, zorder, shadow, field_390, dstResNum, palette);
+uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int x1, int y1, int zorder, int shadow, int field_390, const Common::Rect *clipBox, int flags, int dstResNum, const uint8 *palPtr) {
+	debug(3, "drawWizImage(resNum %d, state %d maskNum %d maskState %d x1 %d y1 %d flags 0x%X zorder %d shadow %d field_390 %d dstResNum %d)", resNum, state, maskNum, maskState, x1, y1, flags, zorder, shadow, field_390, dstResNum);
 	uint8 *dataPtr;
 	uint8 *dst = NULL;
-
-	const uint8 *palPtr = NULL;
-	if (_vm->_game.heversion >= 99) {
-		if (palette) {
-			palPtr = _vm->_hePalettes + palette * 1024 + 768;
-		} else {
-			palPtr = _vm->_hePalettes + 1792;
-		}
-	}
 
 	const uint8 *xmapPtr = NULL;
 	if (shadow) {
@@ -1318,6 +1460,21 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 	uint8 *wizd = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
 	assert(wizd);
 
+	uint8 *mask = NULL;
+	if (maskNum) {
+		uint8 *maskPtr = _vm->getResourceAddress(rtImage, maskNum);
+		assert(maskPtr);
+
+		wizh = _vm->findWrappedBlock(MKID_BE('WIZH'), maskPtr, maskState, 0);
+		assert(wizh);
+		assert(comp == 2 && READ_LE_UINT32(wizh + 0x0) == 1);
+		width  = READ_LE_UINT32(wizh + 0x4);
+		height = READ_LE_UINT32(wizh + 0x8);
+
+		mask = _vm->findWrappedBlock(MKID_BE('WIZD'), maskPtr, maskState, 0);
+		assert(mask);
+	}		
+
 	if (flags & kWIFHasPalette) {
 		uint8 *pal = _vm->findWrappedBlock(MKID_BE('RGBS'), dataPtr, state, 0);
 		assert(pal);
@@ -1339,13 +1496,30 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		error("WizImage printing is unimplemented");
 	}
 
-	int32 cw, ch;
+	int32 dstPitch, dstType, cw, ch;
 	if (flags & kWIFBlitToMemBuffer) {
-		dst = (uint8 *)malloc(width * height);
+		dst = (uint8 *)malloc(width * height * _vm->_bitDepth);
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? (_vm->VAR(_vm->VAR_WIZ_TCOLOR)) : 5;
-		memset(dst, transColor, width * height);
+
+		if (_vm->_bitDepth == 2) {
+			uint8 *tmpPtr = dst;
+			for (uint i = 0; i < height; i++) {
+				for (uint j = 0; j < width; j++) {
+					if (_cursorImage) {
+						WRITE_UINT16(tmpPtr + j * 2, transColor);
+					} else {
+						WRITE_LE_UINT16(tmpPtr + j * 2, transColor);
+					}
+				}
+				tmpPtr += width * 2;
+			}
+		} else {
+			memset(dst, transColor, width * height);
+		}
 		cw = width;
 		ch = height;
+		dstPitch = cw * _vm->_bitDepth;
+		dstType = kDstMemory;
 	} else {
 		if (dstResNum) {
 			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
@@ -1353,6 +1527,8 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 			dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 			getWizImageDim(dstResNum, 0, cw, ch);
+			dstPitch = cw * _vm->_bitDepth;
+			dstType = kDstResource;
 		} else {
 			VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 			if (flags & kWIFMarkBufferDirty) {
@@ -1362,6 +1538,8 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 			}
 			cw = pvs->w;
 			ch = pvs->h;
+			dstPitch = pvs->pitch;
+			dstType = kDstScreen;
 		}
 	}
 
@@ -1381,7 +1559,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 		}
 	}
 
-	if (flags & kWIFRemapPalette) {
+	if (flags & kWIFRemapPalette && _vm->_bitDepth == 1) {
 		palPtr = rmap + 4;
 	}
 
@@ -1393,29 +1571,36 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int x1, int y1, int zorder, int 
 
 	switch (comp) {
 	case 0:
-		copyRawWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor);
+		copyRawWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor, _vm->_bitDepth);
 		break;
 	case 1:
 		if (flags & 0x80) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
-			copyWizImageWithMask(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
+			dstPitch /= _vm->_bitDepth;
+			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 		} else if (flags & 0x100) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
-			copyWizImageWithMask(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, 0, 1);
+			dstPitch /= _vm->_bitDepth;
+			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 1);
 		} else {
-			copyWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr);
+			copyWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr, _vm->_bitDepth);
 		}
 		break;
+#ifdef USE_RGB_COLOR
 	case 2:
-		copyRaw16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor);
+		if (maskNum) {
+			copyMaskWizImage(dst, wizd, mask, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr);
+		} else {
+			copyRaw16BitWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, transColor);
+		}
 		break;
 	case 4:
 		// TODO: Unknown image type
 		break;
 	case 5:
-		// TODO: 16bit color compressed image
-		copy16BitWizImage(dst, wizd, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr);
+		copy16BitWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, xmapPtr);
 		break;
+#endif
 	default:
 		error("drawWizImage: Unhandled wiz compression type %d", comp);
 	}
@@ -1517,6 +1702,74 @@ struct PolygonDrawData {
 	}
 };
 
+void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int id2, int compType) {
+	debug(0, "captureWizPolygon: resNum %d, maskNum %d maskState %d, id1 %d id2 %d compType %d", resNum, maskNum, maskState, id1, id2, compType);
+
+	int i, j;
+	WizPolygon *wp;
+
+	wp = NULL;
+	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+		if (_polygons[i].id == id1) {
+			wp = &_polygons[i];
+			break;
+		}
+	}
+	if (!wp) {
+		error("Polygon1 %d is not defined", id1);
+	}
+	if (wp->numVerts != 5) {
+		error("Invalid point count %d for Polygon1 %d", wp->numVerts, id1);
+	}
+
+	wp = NULL;
+	for (i = 0; i < ARRAYSIZE(_polygons); ++i) {
+		if (_polygons[i].id == id2) {
+			wp = &_polygons[i];
+			break;
+		}
+	}
+	if (!wp) {
+		error("Polygon2 %d is not defined", id2);
+	}
+	if (wp->numVerts != 5) {
+		error("Invalid point count %d for Polygon2 %d", wp->numVerts, id2);
+	}
+
+	int32 dstw, dsth, dstpitch;
+	int32 srcw, srch;
+	uint8 *imageBuffer;
+
+	assert(maskNum);
+	const Common::Rect *r = NULL;
+	const uint8 *src = drawWizImage(maskNum, maskState, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
+	getWizImageDim(maskNum, maskState, srcw, srch);
+
+	dstw = wp->bound.width();
+	dsth = wp->bound.height();
+	dstpitch = dstw * _vm->_bitDepth;
+	imageBuffer = (uint8 *)malloc(dstw * dsth * _vm->_bitDepth);
+	assert(imageBuffer);
+
+	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+	if (_vm->_bitDepth == 2) {
+		uint8 *tmpPtr = imageBuffer;
+		for (i = 0; i < dsth; i++) {
+			for (j = 0; j < dstw; j++)
+				WRITE_UINT16(tmpPtr + j * 2, transColor);
+			tmpPtr += dstpitch;
+		}
+	} else {
+		memset(imageBuffer, transColor, dstw * dsth);
+	}
+
+	Common::Rect bound;
+	drawWizPolygonImage(imageBuffer, src, NULL, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp->vert, _vm->_bitDepth);
+
+	captureImage(imageBuffer, dstpitch, dstw, dsth, resNum, wp->bound, compType);
+	free(imageBuffer);
+}
+
 void Wiz::drawWizComplexPolygon(int resNum, int state, int po_x, int po_y, int shadow, int angle, int scale, const Common::Rect *r, int flags, int dstResNum, int palette) {
 	Common::Point pts[4];
 
@@ -1544,11 +1797,10 @@ void Wiz::drawWizPolygon(int resNum, int state, int id, int flags, int shadow, i
 }
 
 void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int flags, int shadow, int dstResNum, int palette) {
-	debug(3, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
+	debug(0, "drawWizPolygonTransform(resNum %d, flags 0x%X, shadow %d dstResNum %d palette %d)", resNum, flags, shadow, dstResNum, palette);
 	const Common::Rect *r = NULL;
 	uint8 *srcWizBuf = NULL;
 	bool freeBuffer = true;
-	int i;
 
 	if (_vm->_game.heversion >= 99) {
 		if (getWizImageData(resNum, state, 0) != 0 || (flags & (kWIFRemapPalette | kWIFFlipX | kWIFFlipY)) || palette != 0) {
@@ -1557,8 +1809,10 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 			if (flags & 0x800000) {
 				debug(0, "drawWizPolygonTransform() unhandled flag 0x800000");
 			}
-			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, flags, 0, palette);
+
+			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, flags, 0, _vm->getHEPaletteSlot(palette));
 		} else {
+			assert(_vm->_bitDepth == 1);
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
 			srcWizBuf = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
@@ -1567,7 +1821,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		}
 	} else {
 		if (getWizImageData(resNum, state, 0) != 0) {
-			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, palette);
+			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette));
 		} else {
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
@@ -1577,146 +1831,162 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		}
 	}
 
-	if (srcWizBuf) {
-		uint8 *dst;
-		int32 dstw, dsth, dstpitch, wizW, wizH;
-		VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
-		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+	assert(srcWizBuf);
 
-		if (dstResNum) {
-			uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
-			assert(dstPtr);
-			dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
-			assert(dst);
-			getWizImageDim(dstResNum, 0, dstw, dsth);
-			dstpitch = dstw;
-		} else {
-			if (flags & kWIFMarkBufferDirty) {
-				dst = pvs->getPixels(0, 0);
-			} else {
-				dst = pvs->getBackPixels(0, 0);
-			}
-			dstw = pvs->w;
-			dsth = pvs->h;
-			dstpitch = pvs->pitch;
-		}
+	uint8 *dst;
+	int32 dstw, dsth, dstpitch, dstType, wizW, wizH;
+	VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
 
-		getWizImageDim(resNum, state, wizW, wizH);
-
-		Common::Point bbox[4];
-		bbox[0].x = 0;
-		bbox[0].y = 0;
-		bbox[1].x = wizW - 1;
-		bbox[1].y = 0;
-		bbox[2].x = wizW - 1;
-		bbox[2].y = wizH - 1;
-		bbox[3].x = 0;
-		bbox[3].y = wizH - 1;
-
-		int16 xmin_p, xmax_p, ymin_p, ymax_p;
-		xmin_p = ymin_p = (int16)0x7FFF;
-		xmax_p = ymax_p = (int16)0x8000;
-
-		for (i = 0; i < 4; ++i) {
-			xmin_p = MIN(wp[i].x, xmin_p);
-			xmax_p = MAX(wp[i].x, xmax_p);
-			ymin_p = MIN(wp[i].y, ymin_p);
-			ymax_p = MAX(wp[i].y, ymax_p);
-		}
-
-		int16 xmin_b, xmax_b, ymin_b, ymax_b;
-		xmin_b = ymin_b = (int16)0x7FFF;
-		xmax_b = ymax_b = (int16)0x8000;
-
-		for (i = 0; i < 4; ++i) {
-			xmin_b = MIN(bbox[i].x, xmin_b);
-			xmax_b = MAX(bbox[i].x, xmax_b);
-			ymin_b = MIN(bbox[i].y, ymin_b);
-			ymax_b = MAX(bbox[i].y, ymax_b);
-		}
-
-		PolygonDrawData pdd(ymax_p - ymin_p + 1);
-		pdd.mat[0].x = xmin_p;
-		pdd.mat[0].y = ymin_p;
-		pdd.mat[1].x = xmax_p;
-		pdd.mat[1].y = ymax_p;
-		pdd.mat[2].x = xmin_b;
-		pdd.mat[2].y = ymin_b;
-		pdd.mat[3].x = xmax_b;
-		pdd.mat[3].y = ymax_b;
-
-		// precompute the transformation which remaps 'bbox' pixels to 'wp'
-		for (i = 0; i < 3; ++i) {
-			pdd.transform(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
-		}
-		pdd.transform(&wp[3], &wp[0], &bbox[3], &bbox[0]);
-
-		pdd.rAreasNum = 0;
-		PolygonDrawData::ResultArea *pra = &pdd.ra[0];
-		int32 yoff = pdd.mat[0].y * dstpitch;
-		int16 y_start = pdd.mat[0].y;
-		for (i = 0; i < pdd.pAreasNum; ++i) {
-			PolygonDrawData::PolygonArea *ppa = &pdd.pa[i];
-			if (y_start >= 0 && y_start < dsth) {
-				int16 x1 = ppa->xmin;
-				if (x1 < 0) {
-					x1 = 0;
-				}
-				int16 x2 = ppa->xmax;
-				if (x2 >= dstw) {
-					x2 = dstw - 1;
-				}
-				int16 w = x2 - x1 + 1;
-				if (w > 0) {
-					int16 width = ppa->xmax - ppa->xmin + 1;
-					pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
-					pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
-					pra->dst_offs = yoff + x1;
-					pra->w = w;
-					pra->x_s = ppa->x1 << 16;
-					pra->y_s = ppa->y1 << 16;
-					int16 tmp = x1 - ppa->xmin;
-					if (tmp != 0) {
-						pra->x_s += pra->x_step * tmp;
-						pra->y_s += pra->y_step * tmp;
-					}
-					++pra;
-					++pdd.rAreasNum;
-				}
-			}
-			++ppa;
-			yoff += dstpitch;
-			++y_start;
-		}
-
-		pra = &pdd.ra[0];
-		for (i = 0; i < pdd.rAreasNum; ++i, ++pra) {
-			uint8 *dstPtr = dst + pra->dst_offs;
-			int32 w = pra->w;
-			int32 x_acc = pra->x_s;
-			int32 y_acc = pra->y_s;
-			while (--w) {
-				int32 src_offs = (y_acc >> 16) * wizW + (x_acc >> 16);
-				assert(src_offs < wizW * wizH);
-				x_acc += pra->x_step;
-				y_acc += pra->y_step;
-				if (transColor == -1 || transColor != srcWizBuf[src_offs]) {
-					*dstPtr = srcWizBuf[src_offs];
-				}
-				dstPtr++;
-			}
-		}
-
-		Common::Rect bound(xmin_p, ymin_p, xmax_p + 1, ymax_p + 1);
+	if (dstResNum) {
+		uint8 *dstPtr = _vm->getResourceAddress(rtImage, dstResNum);
+		assert(dstPtr);
+		dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
+		assert(dst);
+		getWizImageDim(dstResNum, 0, dstw, dsth);
+		dstpitch = dstw * _vm->_bitDepth;
+		dstType = kDstResource;
+	} else {
 		if (flags & kWIFMarkBufferDirty) {
-			_vm->markRectAsDirty(kMainVirtScreen, bound);
+			dst = pvs->getPixels(0, 0);
 		} else {
-			_vm->restoreBackgroundHE(bound);
+			dst = pvs->getBackPixels(0, 0);
 		}
-
-		if (freeBuffer)
-			free(srcWizBuf);
+		dstw = pvs->w;
+		dsth = pvs->h;
+		dstpitch = pvs->pitch;
+		dstType = kDstScreen;
 	}
+
+	Common::Rect bound;
+	getWizImageDim(resNum, state, wizW, wizH);
+	drawWizPolygonImage(dst, srcWizBuf, 0, dstpitch, dstType, dstw, dsth, wizW, wizH, bound, wp, _vm->_bitDepth);
+
+	if (flags & kWIFMarkBufferDirty) {
+		_vm->markRectAsDirty(kMainVirtScreen, bound);
+	} else {
+		_vm->restoreBackgroundHE(bound);
+	}
+
+	if (freeBuffer)
+		free(srcWizBuf);
+}
+
+void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, int dstpitch, int dstType, int dstw, int dsth, int wizW, int wizH, Common::Rect &bound, Common::Point *wp, uint8 bitDepth) {
+	int i, transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
+
+	Common::Point bbox[4];
+	bbox[0].x = 0;
+	bbox[0].y = 0;
+	bbox[1].x = wizW - 1;
+	bbox[1].y = 0;
+	bbox[2].x = wizW - 1;
+	bbox[2].y = wizH - 1;
+	bbox[3].x = 0;
+	bbox[3].y = wizH - 1;
+
+	int16 xmin_p, xmax_p, ymin_p, ymax_p;
+	xmin_p = ymin_p = (int16)0x7FFF;
+	xmax_p = ymax_p = (int16)0x8000;
+
+	for (i = 0; i < 4; ++i) {
+		xmin_p = MIN(wp[i].x, xmin_p);
+		xmax_p = MAX(wp[i].x, xmax_p);
+		ymin_p = MIN(wp[i].y, ymin_p);
+		ymax_p = MAX(wp[i].y, ymax_p);
+	}
+
+	int16 xmin_b, xmax_b, ymin_b, ymax_b;
+	xmin_b = ymin_b = (int16)0x7FFF;
+	xmax_b = ymax_b = (int16)0x8000;
+
+	for (i = 0; i < 4; ++i) {
+		xmin_b = MIN(bbox[i].x, xmin_b);
+		xmax_b = MAX(bbox[i].x, xmax_b);
+		ymin_b = MIN(bbox[i].y, ymin_b);
+		ymax_b = MAX(bbox[i].y, ymax_b);
+	}
+
+	PolygonDrawData pdd(ymax_p - ymin_p + 1);
+	pdd.mat[0].x = xmin_p;
+	pdd.mat[0].y = ymin_p;
+	pdd.mat[1].x = xmax_p;
+	pdd.mat[1].y = ymax_p;
+	pdd.mat[2].x = xmin_b;
+	pdd.mat[2].y = ymin_b;
+	pdd.mat[3].x = xmax_b;
+	pdd.mat[3].y = ymax_b;
+
+	// precompute the transformation which remaps 'bbox' pixels to 'wp'
+	for (i = 0; i < 3; ++i) {
+		pdd.transform(&wp[i], &wp[i + 1], &bbox[i], &bbox[i + 1]);
+	}
+	pdd.transform(&wp[3], &wp[0], &bbox[3], &bbox[0]);
+
+	pdd.rAreasNum = 0;
+	PolygonDrawData::ResultArea *pra = &pdd.ra[0];
+	int32 yoff = pdd.mat[0].y * dstpitch;
+	int16 y_start = pdd.mat[0].y;
+	for (i = 0; i < pdd.pAreasNum; ++i) {
+		PolygonDrawData::PolygonArea *ppa = &pdd.pa[i];
+		if (y_start >= 0 && y_start < dsth) {
+			int16 x1 = ppa->xmin;
+			if (x1 < 0) {
+				x1 = 0;
+			}
+			int16 x2 = ppa->xmax;
+			if (x2 >= dstw) {
+				x2 = dstw - 1;
+			}
+			int16 w = x2 - x1 + 1;
+			if (w > 0) {
+				int16 width = ppa->xmax - ppa->xmin + 1;
+				pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
+				pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
+				pra->dst_offs = yoff + x1 * _vm->_bitDepth;
+				pra->w = w;
+				pra->x_s = ppa->x1 << 16;
+				pra->y_s = ppa->y1 << 16;
+				int16 tmp = x1 - ppa->xmin;
+				if (tmp != 0) {
+					pra->x_s += pra->x_step * tmp;
+					pra->y_s += pra->y_step * tmp;
+				}
+				++pra;
+				++pdd.rAreasNum;
+			}
+		}
+		++ppa;
+		yoff += dstpitch;
+		++y_start;
+	}
+
+	pra = &pdd.ra[0];
+	for (i = 0; i < pdd.rAreasNum; ++i, ++pra) {
+		uint8 *dstPtr = dst + pra->dst_offs;
+		int32 w = pra->w;
+		int32 x_acc = pra->x_s;
+		int32 y_acc = pra->y_s;
+		while (--w) {
+			int32 src_offs = (y_acc >> 16) * wizW + (x_acc >> 16);
+			assert(src_offs < wizW * wizH);
+			x_acc += pra->x_step;
+			y_acc += pra->y_step;
+			if (bitDepth == 2) {
+				if (transColor == -1 || transColor != READ_LE_UINT16(src + src_offs * 2)) {
+					writeColor(dstPtr, dstType, READ_LE_UINT16(src + src_offs * 2));
+				}
+			} else {
+				if (transColor == -1 || transColor != src[src_offs])
+					*dstPtr = src[src_offs];
+			}
+			dstPtr += bitDepth;
+		}
+	}
+
+	bound.left = xmin_p;
+	bound.top = ymin_p;
+	bound.right = xmax_p + 1;
+	bound.bottom = ymax_p + 1;
 }
 
 void Wiz::flushWizBuffer() {
@@ -1726,13 +1996,13 @@ void Wiz::flushWizBuffer() {
 			drawWizPolygon(pwi->resNum, pwi->state, pwi->x1, pwi->flags, pwi->shadow, 0, pwi->palette);
 		} else {
 			const Common::Rect *r = NULL;
-			drawWizImage(pwi->resNum, pwi->state, pwi->x1, pwi->y1, pwi->zorder, pwi->shadow, pwi->field_390, r, pwi->flags, 0, pwi->palette);
+			drawWizImage(pwi->resNum, pwi->state, 0, 0, pwi->x1, pwi->y1, pwi->zorder, pwi->shadow, pwi->field_390, r, pwi->flags, 0, _vm->getHEPaletteSlot(pwi->palette));
 		}
 	}
 	_imagesNum = 0;
 }
 
-void Wiz::loadWizCursor(int resId) {
+void Wiz::loadWizCursor(int resId, int palette) {
 	int32 x, y;
 	getWizImageSpot(resId, 0, x, y);
 	if (x < 0) {
@@ -1747,11 +2017,14 @@ void Wiz::loadWizCursor(int resId) {
 	}
 
 	const Common::Rect *r = NULL;
-	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, 0);
+	_cursorImage = true;
+	uint8 *cursor = drawWizImage(resId, 0, 0, 0, 0, 0, 0, 0, 0, r, kWIFBlitToMemBuffer, 0, _vm->getHEPaletteSlot(palette));
+	_cursorImage = false;
+
 	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);
 	_vm->setCursorHotspot(x, y);
-	_vm->setCursorFromBuffer(cursor, cw, ch, cw);
+	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bitDepth);
 
 	// Since we set up cursor palette for default cursor, disable it now
 	CursorMan.disableCursorPalette(true);
@@ -1763,7 +2036,7 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 	int sourceImage = 0;
 	if (params->processFlags & kWPFMaskImg) {
 		sourceImage = params->sourceImage;
-		debug(0, "displayWizComplexImage() unhandled flag kWPFMaskImg");
+		debug(0, "displayWizComplexImage() flag kWPFMaskImg");
 	}
 	int palette = 0;
 	if (params->processFlags & kWPFPaletteNum) {
@@ -1831,15 +2104,14 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 		++_imagesNum;
 	} else {
 		if (sourceImage != 0) {
-			// TODO: Add support for kWPFMaskImg
-			drawWizImage(params->sourceImage, state, po_x, po_y, params->img.zorder, shadow, field_390, r, flags, dstResNum, palette);
+			drawWizImage(params->sourceImage, 0, params->img.resNum, state, po_x, po_y, params->img.zorder, shadow, field_390, r, flags, dstResNum, _vm->getHEPaletteSlot(palette));
 		} else if (params->processFlags & (kWPFScaled | kWPFRotate)) {
 			drawWizComplexPolygon(params->img.resNum, state, po_x, po_y, shadow, rotationAngle, scale, r, flags, dstResNum, palette);
 		} else {
 			if (flags & kWIFIsPolygon) {
 				drawWizPolygon(params->img.resNum, state, po_x, flags, shadow, dstResNum, palette);
 			} else {
-				drawWizImage(params->img.resNum, state, po_x, po_y, params->img.zorder, shadow, field_390, r, flags, dstResNum, palette);
+				drawWizImage(params->img.resNum, state, 0, 0, po_x, po_y, params->img.zorder, shadow, field_390, r, flags, dstResNum, _vm->getHEPaletteSlot(palette));
 			}
 		}
 	}
@@ -1847,6 +2119,8 @@ void Wiz::displayWizComplexImage(const WizParameters *params) {
 
 void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int img_h) {
 	const uint16 flags = 0xB;
+	const uint8 compType = (_vm->_game.features & GF_16BIT_COLOR) ? 2 : 0;
+	const uint8 bitDepth = (_vm->_game.features & GF_16BIT_COLOR) ? 2 : 1;
 	int res_size = 0x1C;
 	if (flags & 1) {
 		res_size += 0x308;
@@ -1857,11 +2131,11 @@ void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int i
 	if (flags & 8) {
 		res_size += 0x10C;
 	}
-	res_size += 8 + img_w * img_h;
+	res_size += 8 + img_w * img_h * bitDepth;
 
 	const uint8 *palPtr;
 	if (_vm->_game.heversion >= 99) {
-		palPtr = _vm->_hePalettes + 1024;
+		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot;
 	} else {
 		palPtr = _vm->_currentPalette;
 	}
@@ -1874,7 +2148,7 @@ void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int i
 		WRITE_BE_UINT32(res_data, res_size); res_data += 4;
 		WRITE_BE_UINT32(res_data, 'WIZH'); res_data += 4;
 		WRITE_BE_UINT32(res_data, 0x14); res_data += 4;
-		WRITE_LE_UINT32(res_data, 0); res_data += 4;
+		WRITE_LE_UINT32(res_data, compType); res_data += 4;
 		WRITE_LE_UINT32(res_data, img_w); res_data += 4;
 		WRITE_LE_UINT32(res_data, img_h); res_data += 4;
 		if (flags & 1) {
@@ -1897,7 +2171,7 @@ void Wiz::createWizEmptyImage(int resNum, int img_x, int img_y, int img_w, int i
 			}
 		}
 		WRITE_BE_UINT32(res_data, 'WIZD'); res_data += 4;
-		WRITE_BE_UINT32(res_data, 8 + img_w * img_h); res_data += 4;
+		WRITE_BE_UINT32(res_data, 8 + img_w * img_h * bitDepth); res_data += 4;
 	}
 	_vm->_res->setModified(rtImage, resNum);
 }
@@ -1914,7 +2188,8 @@ void Wiz::fillWizRect(const WizParameters *params) {
 		int c = READ_LE_UINT32(wizh + 0x0);
 		int w = READ_LE_UINT32(wizh + 0x4);
 		int h = READ_LE_UINT32(wizh + 0x8);
-		assert(c == 0);
+		assert(c == 0 || c == 2);
+		uint8 bitDepth = (c == 2) ? 2 : 1;
 		Common::Rect areaRect, imageRect(w, h);
 		if (params->processFlags & kWPFClipBox) {
 			if (!imageRect.intersects(params->box)) {
@@ -1937,10 +2212,15 @@ void Wiz::fillWizRect(const WizParameters *params) {
 			assert(wizd);
 			int dx = areaRect.width();
 			int dy = areaRect.height();
-			wizd += areaRect.top * w + areaRect.left;
+			wizd += (areaRect.top * w + areaRect.left) * bitDepth;
 			while (dy--) {
-				memset(wizd, color, dx);
-				wizd += w;
+				if (bitDepth == 2) {
+					for (int i = 0; i < dx; i++)
+						WRITE_LE_UINT16(wizd + i * 2, color);
+				} else {
+					memset(wizd, color, dx);
+				}
+				wizd += w * bitDepth;
 			}
 		}
 	}
@@ -1950,14 +2230,19 @@ void Wiz::fillWizRect(const WizParameters *params) {
 struct drawProcP {
 	Common::Rect *imageRect;
 	uint8 *wizd;
-	int width;
+	int pitch;
+	int depth;
 };
 
 static void drawProc(int x, int y, int c, void *data) {
 	drawProcP *param = (drawProcP *)data;
 
 	if (param->imageRect->contains(x, y)) {
-		*(param->wizd + y * param->width + x) = c;
+		uint32 offs = y * param->pitch + x * param->depth;
+		if (param->depth == 2)
+			WRITE_LE_UINT16(param->wizd + offs, c);
+		else
+			*(param->wizd + offs) = c;
 	}
 }
 
@@ -1974,7 +2259,8 @@ void Wiz::fillWizLine(const WizParameters *params) {
 			int c = READ_LE_UINT32(wizh + 0x0);
 			int w = READ_LE_UINT32(wizh + 0x4);
 			int h = READ_LE_UINT32(wizh + 0x8);
-			assert(c == 0);
+			assert(c == 0 || c == 2);
+			uint8 bitDepth = (c == 2) ? 2 : 1;
 			Common::Rect imageRect(w, h);
 			if (params->processFlags & kWPFClipBox) {
 				if (!imageRect.intersects(params->box)) {
@@ -1997,13 +2283,13 @@ void Wiz::fillWizLine(const WizParameters *params) {
 
 			lineP.imageRect = &imageRect;
 			lineP.wizd = wizd;
-			lineP.width = w;
+			lineP.pitch = w * bitDepth;
+			lineP.depth = bitDepth;
 
 			if (params->processFlags & kWPFParams) {
 				assert (params->params2 == 1); // Catch untested usage
 				Graphics::drawThickLine(x1, y1, x2, y2, params->params1, color, drawProc, &lineP);
 			} else {
-
 				Graphics::drawLine(x1, y1, x2, y2, color, drawProc, &lineP);
 			}
 		}
@@ -2065,7 +2351,7 @@ void Wiz::remapWizImagePal(const WizParameters *params) {
 }
 
 void Wiz::processWizImage(const WizParameters *params) {
-	byte filename[260];
+	byte buffer[260];
 
 	debug(3, "processWizImage: processMode %d", params->processMode);
 	switch (params->processMode) {
@@ -2080,18 +2366,28 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 3:
 		if (params->processFlags & kWPFUseFile) {
-			Common::File f;
+			Common::SeekableReadStream *f = NULL;
+			memcpy(buffer, params->filename, 260);
+			const char *filename = (char *)buffer + _vm->convertFilePath(buffer, sizeof(buffer));
 
-			memcpy(filename, params->filename, 260);
-			_vm->convertFilePath(filename, sizeof(filename));
+			if (!_vm->_saveFileMan->listSavefiles(filename).empty()) {
+				f = _vm->_saveFileMan->openForLoading(filename);
+			} else {
+				Common::File *nf = new Common::File();
+				nf->open(filename);
+				if (!nf->isOpen())
+					delete nf;
+				else
+					f = nf;
+			}
 
-			if (f.open((const char *)filename)) {
-				uint32 id = f.readUint32BE();
+			if (f) {
+				uint32 id = f->readUint32BE();
 				if (id == MKID_BE('AWIZ') || id == MKID_BE('MULT')) {
-					uint32 size = f.readUint32BE();
-					f.seek(0, SEEK_SET);
+					uint32 size = f->readUint32BE();
+					f->seek(0, SEEK_SET);
 					byte *p = _vm->_res->createResource(rtImage, params->img.resNum, size);
-					if (f.read(p, size) != size) {
+					if (f->read(p, size) != size) {
 						_vm->_res->nukeResource(rtImage, params->img.resNum);
 						error("i/o error when reading '%s'", filename);
 						_vm->VAR(_vm->VAR_GAME_LOADED) = -2;
@@ -2105,7 +2401,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 					_vm->VAR(_vm->VAR_GAME_LOADED) = -1;
 					_vm->VAR(119) = -1;
 				}
-				f.close();
+				delete f;
 			} else {
 				_vm->VAR(_vm->VAR_GAME_LOADED) = -3;
 				_vm->VAR(119) = -3;
@@ -2115,7 +2411,9 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	case 4:
 		if (params->processFlags & kWPFUseFile) {
-			Common::DumpFile f;
+			Common::OutSaveFile *f;
+			memcpy(buffer, params->filename, 260);
+			const char *filename = (char *)buffer + _vm->convertFilePath(buffer, sizeof(buffer));
 
 			switch (params->fileWriteMode) {
 			case 2:
@@ -2125,22 +2423,20 @@ void Wiz::processWizImage(const WizParameters *params) {
 				// TODO Write image to file
 				break;
 			case 0:
-				memcpy(filename, params->filename, 260);
-				_vm->convertFilePath(filename, sizeof(filename));
-
-				if (!f.open((const char *)filename)) {
+				if (!(f = _vm->_saveFileMan->openForSaving(filename))) {
 					debug(0, "Unable to open for write '%s'", filename);
 					_vm->VAR(119) = -3;
 				} else {
 					byte *p = _vm->getResourceAddress(rtImage, params->img.resNum);
 					uint32 size = READ_BE_UINT32(p + 4);
-					if (f.write(p, size) != size) {
-						error("i/o error when writing '%s'", params->filename);
+					if (f->write(p, size) != size) {
+						error("i/o error when writing '%s'", filename);
 						_vm->VAR(119) = -2;
 					} else {
 						_vm->VAR(119) = 0;
 					}
-					f.close();
+					f->finalize();
+					delete f;
 				}
 				break;
 			default:
@@ -2153,9 +2449,7 @@ void Wiz::processWizImage(const WizParameters *params) {
 		break;
 	// HE 99+
 	case 7:
-		// Used in PuttsFunShop/SamsFunShop/soccer2004
-		// TODO: Capture polygon
-		_vm->_res->setModified(rtImage, params->img.resNum);
+		captureWizPolygon(params->img.resNum, params->sourceImage, (params->processFlags & kWPFNewState) ? params->img.state : 0, params->polygonId1, params->polygonId2, params->compType);
 		break;
 	case 8: {
 			int img_w = 640;
@@ -2171,6 +2465,9 @@ void Wiz::processWizImage(const WizParameters *params) {
 			if (params->processFlags & 1) {
 				img_x = params->img.x1;
 				img_y = params->img.y1;
+			}
+			if (params->processFlags & kWPFParams) {
+				debug(0, "Compression %d Color Depth %d", params->params1, params->params2);
 			}
 			createWizEmptyImage(params->img.resNum, img_x, img_y, img_w, img_h);
 		}
@@ -2308,8 +2605,9 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 		case 1:
 			ret = isWizPixelNonTransparent(wizd, x, y, w, h, 1);
 			break;
+#ifdef USE_RGB_COLOR
 		case 2:
-				ret = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
+			ret = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR)) != _vm->VAR(_vm->VAR_WIZ_TCOLOR) ? 1 : 0;
 			break;
 		case 4:
 			// TODO: Unknown image type
@@ -2319,6 +2617,7 @@ int Wiz::isWizPixelNonTransparent(int resNum, int state, int x, int y, int flags
 		case 5:
 			ret = isWizPixelNonTransparent(wizd, x, y, w, h, 2);
 			break;
+#endif
 		default:
 			error("isWizPixelNonTransparent: Unhandled wiz compression type %d", c);
 			break;
@@ -2349,6 +2648,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	case 1:
 		color = getWizPixelColor(wizd, x, y, w, h, 1, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
+#ifdef USE_RGB_COLOR
 	case 2:
 		color = getRawWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
@@ -2359,6 +2659,7 @@ uint16 Wiz::getWizPixelColor(int resNum, int state, int x, int y) {
 	case 5:
 		color = getWizPixelColor(wizd, x, y, w, h, 2, _vm->VAR(_vm->VAR_WIZ_TCOLOR));
 		break;
+#endif
 	default:
 		error("getWizPixelColor: Unhandled wiz compression type %d", c);
 		break;

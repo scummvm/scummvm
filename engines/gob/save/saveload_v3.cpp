@@ -33,8 +33,8 @@ namespace Gob {
 SaveLoad_v3::SaveFile SaveLoad_v3::_saveFiles[] = {
 	{    "cat.inf", kSaveModeSave  , 0, "savegame"},
 	{    "ima.inf", kSaveModeSave  , 0, "screenshot"},
+	{  "intro.$$$", kSaveModeSave  , 0, "temporary sprite"},
 	{   "bloc.inf", kSaveModeSave  , 0, "notes"},
-	{  "intro.$$$", kSaveModeIgnore, 0, "temporary sprite"},
 	{   "prot",     kSaveModeIgnore, 0, 0},
 	{ "config",     kSaveModeIgnore, 0, 0}
 };
@@ -57,7 +57,7 @@ int SaveLoad_v3::GameHandler::File::getSlot(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 1700) / varSize);
+	return ((offset - (kPropsSize + kIndexSize)) / varSize);
 }
 
 int SaveLoad_v3::GameHandler::File::getSlotRemainder(int32 offset) const {
@@ -66,7 +66,7 @@ int SaveLoad_v3::GameHandler::File::getSlotRemainder(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 1700) % varSize);
+	return ((offset - (kPropsSize + kIndexSize)) % varSize);
 }
 
 
@@ -78,8 +78,8 @@ SaveLoad_v3::GameHandler::GameHandler(GobEngine *vm, const char *target,
 	_usesScreenshots = usesScreenshots;
 
 	_firstSize = true;
-	memset(_props, 0, 500);
-	memset(_index, 0, 1200);
+	memset(_props, 0, kPropsSize);
+	memset(_index, 0, kIndexSize);
 	_hasIndex = false;
 
 	_writer = 0;
@@ -104,7 +104,7 @@ int32 SaveLoad_v3::GameHandler::getSize() {
 	if (varSize == 0)
 		return -1;
 
-	return _slotFile->tallyUpFiles(varSize, 1700);
+	return _slotFile->tallyUpFiles(varSize, kPropsSize + kIndexSize);
 }
 
 bool SaveLoad_v3::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
@@ -119,22 +119,22 @@ bool SaveLoad_v3::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (((uint32) offset) < kPropsSize) {
 		// Global properties, like joker usage
 
 		debugC(3, kDebugSaveLoad, "Loading global properties");
 
-		if ((size + offset) > 500) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (offset == 500) {
+	} else if (((uint32) offset) == kPropsSize) {
 		// Save index
 
-		if (size != 1200) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
@@ -193,28 +193,28 @@ bool SaveLoad_v3::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (((uint32) offset) < kPropsSize) {
 		// Global properties, like joker usage
 
 		debugC(3, kDebugSaveLoad, "Saving global properties");
 
-		if ((size + offset) > 500) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong global properties list size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyTo(dataVar, _props + offset, size);
 
-	} else if (offset == 500) {
+	} else if (((uint32) offset) == kPropsSize) {
 		// Save index
 
-		if (size != 1200) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Requested index has wrong size (%d)", size);
 			return false;
 		}
 
 		// Just copy the index into our buffer
-		_vm->_inter->_variables->copyTo(dataVar, _index, 1200);
+		_vm->_inter->_variables->copyTo(dataVar, _index, kIndexSize);
 		_hasIndex = true;
 
 	} else {
@@ -496,17 +496,20 @@ SaveLoad_v3::SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType s
 		_screenshotHandler = new ScreenshotHandler(vm, _gameHandler, sShotType);
 	}
 
+	_tempSpriteHandler = new TempSpriteHandler(vm);
 	_notesHandler = new NotesHandler(2560, vm, targetName);
 
 	_saveFiles[0].handler = _gameHandler;
 	_saveFiles[1].handler = _screenshotHandler;
-	_saveFiles[2].handler = _notesHandler;
+	_saveFiles[2].handler = _tempSpriteHandler;
+	_saveFiles[3].handler = _notesHandler;
 }
 
 SaveLoad_v3::~SaveLoad_v3() {
 	delete _screenshotHandler;
 	delete _gameHandler;
 	delete _notesHandler;
+	delete _tempSpriteHandler;
 }
 
 const SaveLoad_v3::SaveFile *SaveLoad_v3::getSaveFile(const char *fileName) const {

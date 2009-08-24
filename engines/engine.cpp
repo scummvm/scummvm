@@ -125,11 +125,21 @@ void initCommonGFX(bool defaultTo1XScaler) {
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen"));
 }
 
-void initGraphics(int width, int height, bool defaultTo1xScaler) {
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics::PixelFormat *format) {
+
 	g_system->beginGFXTransaction();
 
 		initCommonGFX(defaultTo1xScaler);
+#ifdef USE_RGB_COLOR
+		if (format)
+			g_system->initSize(width, height, format);
+		else { 
+			Graphics::PixelFormat Format = g_system->getSupportedFormats().front();
+			g_system->initSize(width, height, &Format);
+		}
+#else
 		g_system->initSize(width, height);
+#endif
 
 	OSystem::TransactionError gfxError = g_system->endGFXTransaction();
 
@@ -150,6 +160,15 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 	}
 
 	// Just show warnings then these occur:
+#ifdef USE_RGB_COLOR
+	if (gfxError & OSystem::kTransactionFormatNotSupported) {
+		Common::String message = "Could not initialize color format.";
+
+		GUI::MessageDialog dialog(message);
+		dialog.runModal();
+	}
+#endif
+
 	if (gfxError & OSystem::kTransactionModeSwitchFailed) {
 		Common::String message = "Could not switch to video mode: '";
 		message += ConfMan.get("gfx_mode");
@@ -168,6 +187,14 @@ void initGraphics(int width, int height, bool defaultTo1xScaler) {
 		GUI::MessageDialog dialog("Could not apply fullscreen setting.");
 		dialog.runModal();
 	}
+}
+void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
+	Graphics::PixelFormat format = Graphics::findCompatibleFormat(g_system->getSupportedFormats(),formatList);
+	initGraphics(width,height,defaultTo1xScaler,&format);
+}
+void initGraphics(int width, int height, bool defaultTo1xScaler) {
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	initGraphics(width,height,defaultTo1xScaler,&format);
 }
 
 void GUIErrorMessage(const Common::String msg) {

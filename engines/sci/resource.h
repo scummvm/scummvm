@@ -28,10 +28,13 @@
 
 #include "common/str.h"
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/archive.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"			// for SoundHandle
+
+#include "gfx/gfx_resource.h"		// for ViewType
 
 #include "sci/decompressor.h"
 
@@ -52,7 +55,8 @@ enum SciVersion {
 	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
 	SCI_VERSION_1_EGA, // EGA with parser, QFG2
 	SCI_VERSION_1_EARLY, // KQ5. (EGA/VGA)
-	SCI_VERSION_1_LATE, // ECO1, LSL1, LSL5. (EGA/VGA)
+	SCI_VERSION_1_MIDDLE, // LSL1, JONESCD. (EGA?/VGA)
+	SCI_VERSION_1_LATE, // ECO1, LSL5. (EGA/VGA)
 	SCI_VERSION_1_1, // KQ6, ECO2
 	SCI_VERSION_32 // GK
 };
@@ -135,6 +139,7 @@ struct ResourceSource {
 	ResSourceType source_type;
 	bool scanned;
 	Common::String location_name;	// FIXME: Replace by FSNode ?
+	const Common::FSNode *resourceFile;
 	int volume_number;
 	ResourceSource *associated_map;
 };
@@ -227,14 +232,9 @@ public:
 		kResVersionSci32
 	};
 
-	// TODO: Amiga
-	enum ViewType {
-		kViewEga,
-		kViewVga,
-		kViewVga11
-	};
-
 	bool isVGA() const { return (_viewType == kViewVga) || (_viewType == kViewVga11); }
+
+	ViewType getViewType() const { return _viewType; }
 
 	/**
 	 * Returns the SCI version as detected by the resource manager
@@ -244,15 +244,9 @@ public:
 
 	/**
 	 * Creates a new SCI resource manager.
-	 * @param version		The SCI version to look for; use SCI_VERSION_AUTODETECT
-	 *						in the default case.
-	 * @param maxMemory		Maximum number of bytes to allow allocated for resources
-	 *
-	 * @note maxMemory will not be interpreted as a hard limit, only as a restriction
-	 *    for resources which are not explicitly locked. However, a warning will be
-	 *    issued whenever this limit is exceeded.
 	 */
-	ResourceManager(int maxMemory);
+	ResourceManager();
+	ResourceManager(const Common::FSList &fslist);
 	~ResourceManager();
 
 	/**
@@ -293,8 +287,13 @@ public:
 	void setAudioLanguage(int language);
 
 protected:
+	// Maximum number of bytes to allow being allocated for resources
+	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
+	// for resources which are not explicitly locked. However, a warning will be
+	// issued whenever this limit is exceeded.
+	#define MAX_MEMORY 256 * 1024	// 256KB
+
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
-	int _maxMemory; //!< Config option: Maximum total byte number allocated
 	Common::List<ResourceSource *> _sources;
 	int _memoryLocked;	//!< Amount of resource bytes in locked memory
 	int _memoryLRU;		//!< Amount of resource bytes under LRU control
@@ -305,6 +304,11 @@ protected:
 	ResVersion _volVersion; //!< RESOURCE.0xx version
 	ResVersion _mapVersion; //!< RESOURCE.MAP version
 	SciVersion _sciVersion; //!< Detected SCI version */
+
+	/**
+	 * Initializes the resource manager
+	 */
+	void init();
 
 	/**
 	 * Add a path to the resource manager's list of sources.
@@ -323,12 +327,19 @@ protected:
 	 */
 	ResourceSource *addSource(ResourceSource *map, ResSourceType type, const char *filename,
 	                          int number);
+
+	ResourceSource *addSource(ResourceSource *map, ResSourceType type, 
+								const Common::FSNode *resFile, int number);
+
 	/**
 	 * Add an external (i.e., separate file) map resource to the resource manager's list of sources.
 	 * @param file_name	 The name of the volume to add
 	 * @return		A pointer to the added source structure, or NULL if an error occurred.
 	 */
 	ResourceSource *addExternalMap(const char *file_name);
+
+	ResourceSource *addExternalMap(const Common::FSNode *mapFile);
+
 	/**
 	 * Add an internal (i.e., resource) map to the resource manager's list of sources.
 	 * @param name		The name of the resource to add
@@ -345,6 +356,7 @@ protected:
 	 */
 	void scanNewSources();
 	int addAppropriateSources();
+	int addAppropriateSources(const Common::FSList &fslist);
 	int addInternalSources();
 	void freeResourceSources();
 

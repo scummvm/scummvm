@@ -64,6 +64,7 @@ ListWidget::ListWidget(GuiObject *boss, const String &name, uint32 cmd)
 	_editable = true;
 
 	_quickSelect = true;
+	_editColor = ThemeEngine::kFontColorNormal;
 }
 
 ListWidget::ListWidget(GuiObject *boss, int x, int y, int w, int h, uint32 cmd)
@@ -141,7 +142,17 @@ void ListWidget::setSelected(int item) {
 	}
 }
 
-void ListWidget::setList(const StringList &list) {
+ThemeEngine::FontColor ListWidget::getSelectionColor() const {
+	if (_listColors.empty())
+		return ThemeEngine::kFontColorNormal;
+
+	if (_filter.empty())
+		return _listColors[_selectedItem];
+	else
+		return _listColors[_listIndex[_selectedItem]];
+}
+
+void ListWidget::setList(const StringList &list, const ColorList *colors) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
@@ -150,6 +161,12 @@ void ListWidget::setList(const StringList &list) {
 	_list = list;
 	_filter.clear();
 	_listIndex.clear();
+	_listColors.clear();
+
+	if (colors) {
+		_listColors = *colors;
+		assert(_listColors.size() == _dataList.size());
+	}
 
 	int size = list.size();
 	if (_currentPos >= size)
@@ -162,7 +179,19 @@ void ListWidget::setList(const StringList &list) {
 	scrollBarRecalc();
 }
 
-void ListWidget::append(const String &s) {
+void ListWidget::append(const String &s, ThemeEngine::FontColor color) {
+	if (_dataList.size() == _listColors.size()) {
+		// If the color list has the size of the data list, we append the color.
+		_listColors.push_back(color);
+	} else if (!_listColors.size() && color != ThemeEngine::kFontColorNormal) {
+		// If it's the first entry to use a non default color, we will fill
+		// up all other entries of the color list with the default color and
+		// add the requested color for the new entry.
+		for (uint i = 0; i < _dataList.size(); ++i)
+			_listColors.push_back(ThemeEngine::kFontColorNormal);
+		_listColors.push_back(color);
+	}
+
 	_dataList.push_back(s);
 	_list.push_back(s);
 
@@ -431,17 +460,27 @@ void ListWidget::drawWidget() {
 
 		int width;
 
+		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
+
+		if (!_listColors.empty()) {
+			if (_filter.empty() || _selectedItem == -1)
+				color = _listColors[pos];
+			else
+				color = _listColors[_listIndex[pos]];
+		}
+
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
+			color = _editColor;
 			adjustOffset();
 			width = _w - r.left - _hlRightPadding - _leftPadding - scrollbarW;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2),
-									buffer, _state, Graphics::kTextAlignLeft, inverted, pad, true);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2), buffer, _state,
+									Graphics::kTextAlignLeft, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		} else {
 			buffer = _list[pos];
 			width = _w - r.left - scrollbarW;
-			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2),
-									buffer, _state, Graphics::kTextAlignLeft, inverted, pad, true);
+			g_gui.theme()->drawText(Common::Rect(_x + r.left, y, _x + r.left + width, y + fontHeight - 2), buffer, _state,
+									Graphics::kTextAlignLeft, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
 		}
 
 		_textWidth[i] = width;
@@ -499,6 +538,14 @@ void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
 		setEditString(_list[_selectedItem]);
+		if (_listColors.empty()) {
+			_editColor = ThemeEngine::kFontColorNormal;
+		} else {
+			if (_filter.empty())
+				_editColor = _listColors[_selectedItem];
+			else
+				_editColor = _listColors[_listIndex[_selectedItem]];
+		}
 		draw();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	}

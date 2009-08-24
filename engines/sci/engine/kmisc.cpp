@@ -63,14 +63,27 @@ reg_t kHaveMouse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, -1);
 }
 
+enum kMemoryInfoFunc {
+	K_MEMORYINFO_LARGEST_HEAP_BLOCK = 0, // Largest heap block available
+	K_MEMORYINFO_FREE_HEAP = 1, // Total free heap memory
+	K_MEMORYINFO_LARGEST_HUNK_BLOCK = 2, // Largest available hunk memory block
+	K_MEMORYINFO_FREE_HUNK = 3, // Amount of free DOS paragraphs
+	K_MEMORYINFO_TOTAL_HUNK = 4 // Total amount of hunk memory (SCI01)
+};
+
 reg_t kMemoryInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	uint16 size = 0x7fff;  // Must not be 0xffff, or some memory calculations will overflow
+
 	switch (argv[0].offset) {
-	case 0: // Total free heap memory
-	case 1: // Largest heap block available
-	case 2: // Largest available hunk memory block
-	case 3: // Total amount of hunk memory
-	case 4: // Amount of free DOS paragraphs- SCI01
-		return make_reg(0, 0x7fff); // Must not be 0xffff, or some memory calculations will overflow
+	case K_MEMORYINFO_LARGEST_HEAP_BLOCK:
+		// In order to prevent "Memory fragmented" dialogs from
+		// popping up in some games, we must return FREE_HEAP - 2 here.
+		return make_reg(0, size - 2);
+	case K_MEMORYINFO_FREE_HEAP:
+	case K_MEMORYINFO_LARGEST_HUNK_BLOCK:
+	case K_MEMORYINFO_FREE_HUNK:
+	case K_MEMORYINFO_TOTAL_HUNK:
+		return make_reg(0, size);
 
 	default:
 		warning("Unknown MemoryInfo operation: %04x", argv[0].offset);

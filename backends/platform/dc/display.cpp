@@ -193,7 +193,7 @@ void OSystem_Dreamcast::setScaling()
   }
 }
 
-void OSystem_Dreamcast::initSize(uint w, uint h)
+void OSystem_Dreamcast::initSize(uint w, uint h, const Graphics::PixelFormat *format)
 {
   assert(w <= SCREEN_W && h <= SCREEN_H);
 
@@ -263,7 +263,7 @@ void OSystem_Dreamcast::warpMouse(int x, int y)
 
 void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
 				       int hotspot_x, int hotspot_y,
-				       byte keycolor, int cursorTargetScale)
+				       uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format)
 {
   _ms_cur_w = w;
   _ms_cur_h = h;
@@ -271,7 +271,7 @@ void OSystem_Dreamcast::setMouseCursor(const byte *buf, uint w, uint h,
   _ms_hotspot_x = hotspot_x;
   _ms_hotspot_y = hotspot_y;
 
-  _ms_keycolor = keycolor;
+  _ms_keycolor = (byte)keycolor;
 
   if (_ms_buf)
     free(_ms_buf);

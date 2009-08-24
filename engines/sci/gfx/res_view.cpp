@@ -326,19 +326,19 @@ static int decompress_sci_view_amiga(int id, int loop, int cel, byte *resource, 
 	return 0;
 }
 
-gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, bool isAmiga, bool isSci11) {
+gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, ViewType viewType) {
 	int xl = READ_LE_UINT16(cel_base);
 	int yl = READ_LE_UINT16(cel_base + 2);
 	int pixmap_size = xl * yl;
-	int xdisplace = isSci11 ? READ_LE_UINT16(cel_base + 4) : (int8) cel_base[4];
-	int ydisplace = isSci11 ? READ_LE_UINT16(cel_base + 6) : cel_base[5];
-	int runlength_offset = isSci11 ? READ_LE_UINT16(cel_base + 24) : 8;
-	int literal_offset = isSci11 ? READ_LE_UINT16(cel_base + 28) : 8;
+	int xdisplace = (viewType == kViewVga11) ? READ_LE_UINT16(cel_base + 4) : (int8) cel_base[4];
+	int ydisplace = (viewType == kViewVga11) ? READ_LE_UINT16(cel_base + 6) : cel_base[5];
+	int runlength_offset = (viewType == kViewVga11) ? READ_LE_UINT16(cel_base + 24) : 8;
+	int literal_offset = (viewType == kViewVga11) ? READ_LE_UINT16(cel_base + 28) : 8;
 	gfx_pixmap_t *retval = gfx_pixmap_alloc_index_data(gfx_new_pixmap(xl, yl, id, loop, cel));
 	byte *dest = retval->index_data;
 	int decompress_failed;
 
-	retval->color_key = cel_base[isSci11 ? 8 : 6];
+	retval->color_key = cel_base[(viewType == kViewVga11) ? 8 : 6];
 	retval->xoffset = mirrored ? xdisplace : -xdisplace;
 	retval->yoffset = -ydisplace;
 	// FIXME: In LSL5, it seems that the inventory has views without palettes (or we don't load palettes properly)
@@ -350,12 +350,12 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 		return NULL;
 	}
 
-	if (!isAmiga)
-		decompress_failed = decompress_sci_view(id, loop, cel, resource, dest, mirrored, pixmap_size, size, runlength_offset,
-		                                        literal_offset, xl, yl, retval->color_key);
-	else
+	if (viewType == kViewAmiga)
 		decompress_failed = decompress_sci_view_amiga(id, loop, cel, resource, dest, mirrored, pixmap_size, size, runlength_offset,
 		                    xl, yl, retval->color_key);
+	else
+		decompress_failed = decompress_sci_view(id, loop, cel, resource, dest, mirrored, pixmap_size, size, runlength_offset,
+		                                        literal_offset, xl, yl, retval->color_key);
 
 	if (decompress_failed) {
 		gfx_free_pixmap(retval);
@@ -365,27 +365,22 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	return retval;
 }
 
-gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, bool isSci11) {
-	uint16 palOffset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET + (isSci11 ? 2 : 0));
-	uint16 headerSize = isSci11 ? READ_LE_UINT16(resource + V2_HEADER_SIZE) : 0;
+gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType) {
+	uint16 palOffset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET + ((viewType == kViewVga11) ? 2 : 0));
+	uint16 headerSize = (viewType == kViewVga11) ? READ_LE_UINT16(resource + V2_HEADER_SIZE) : 0;
 	byte* seeker = resource + headerSize;
 	uint16 loopOffset = 0;
-	int amiga_game = 0;
 	gfxr_view_t *view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
 
 	view->ID = id;
 	view->flags = 0;
-	view->loops_nr = READ_LE_UINT16(resource + V1_LOOPS_NR_OFFSET + (isSci11 ? 2 : 0)) & 0xFF;
+	view->loops_nr = READ_LE_UINT16(resource + V1_LOOPS_NR_OFFSET + ((viewType == kViewVga11) ? 2 : 0)) & 0xFF;
 
 	if (palOffset > 0) {
-		if (!isSci11)
-			view->palette = gfxr_read_pal1(id, resource + palOffset, size - palOffset);
-		else
+		if (viewType == kViewVga11)
 			view->palette = gfxr_read_pal11(id, resource + palOffset, size - palOffset);
-	} else if (static_pal && static_pal->size() == GFX_SCI1_AMIGA_COLORS_NR) {
-		// Assume we're running an amiga game.
-		amiga_game = 1;
-		view->palette = static_pal->getref();
+		else
+			view->palette = gfxr_read_pal1(id, resource + palOffset, size - palOffset);
 	} else {
 		view->palette = NULL;
 	}
@@ -393,7 +388,7 @@ gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, b
 	view->loops = (gfxr_loop_t *)calloc(view->loops_nr, sizeof(gfxr_loop_t));
 
 	for (int i = 0; i < view->loops_nr; i++) {
-		if (!isSci11) {
+		if (viewType != kViewVga11) {
 			bool mirrored = READ_LE_UINT16(resource + V1_MIRROR_MASK) & (1 << i);
 			loopOffset = READ_LE_UINT16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
 			view->loops[i].cels_nr = READ_LE_UINT16(resource + loopOffset);
@@ -405,7 +400,7 @@ gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, b
 														resource + cel_offset, 
 														resource + cel_offset, 
 														size - cel_offset, 
-														view, amiga_game, false);
+														view, viewType);
 			}
 		} else {
 			byte copy_entry = seeker[V2_COPY_OF_LOOP];
@@ -417,7 +412,7 @@ gfxr_view_t *getVGAView(int id, byte *resource, int size, Palette *static_pal, b
 
 			byte* cellSeeker = resource + loopOffset;
 			for (int j = 0; j < view->loops[i].cels_nr; j++) {
-				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, resource, cellSeeker, size, view, 0, true);
+				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, resource, cellSeeker, size, view, viewType);
 				cellSeeker += resource[V2_BYTES_PER_CEL];
 			}
 

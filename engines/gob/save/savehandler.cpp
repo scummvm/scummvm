@@ -229,6 +229,9 @@ int32 TempSpriteHandler::getSize() {
 }
 
 bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
+	if (isDummy(size))
+		return true;
+
 	// Sprite available?
 	if (!_sprite)
 		return false;
@@ -274,6 +277,9 @@ bool TempSpriteHandler::load(int16 dataVar, int32 size, int32 offset) {
 bool TempSpriteHandler::save(int16 dataVar, int32 size, int32 offset) {
 	SurfaceDescPtr sprite;
 
+	if (isDummy(size))
+		return true;
+
 	if (!createSprite(dataVar, size, offset, &sprite))
 		return false;
 
@@ -318,6 +324,12 @@ bool TempSpriteHandler::createSprite(int16 dataVar, int32 size,
 		*sprite = sprt;
 
 	return true;
+}
+
+// A size of 0 means no proper sprite should be saved/loaded,
+// but no error should be thrown either.
+bool TempSpriteHandler::isDummy(int32 size) {
+	return (size == 0);
 }
 
 // A negative size is the flag for using a sprite

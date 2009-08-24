@@ -31,6 +31,9 @@
 #include "common/rect.h"
 
 #include "graphics/pixelformat.h"
+#ifdef USE_RGB_COLOR
+#include "graphics/conversion.h"
+#endif
 
 namespace Audio {
 	class Mixer;
@@ -347,8 +350,52 @@ public:
 	 */
 	virtual int getGraphicsMode() const = 0;
 
+#ifdef USE_RGB_COLOR
 	/**
-	 * Set the size of the virtual screen. Typical sizes include:
+	 * Determine the pixel format currently in use for screen rendering.
+	 * @return the active screen pixel format.
+	 * @see Graphics::PixelFormat
+	 */
+	virtual Graphics::PixelFormat getScreenFormat() const = 0;
+
+	/**
+	 * Returns a list of all pixel formats supported by the backend. 
+	 * The first item in the list must be directly supported by hardware, 
+	 * and provide the largest color space of those formats with direct 
+	 * hardware support. It is also strongly recommended that remaining 
+	 * formats should be placed in order of descending preference for the 
+	 * backend to use.
+	 *
+	 * EG: a backend that supports 32-bit ABGR and 16-bit 555 BGR in hardware
+	 * and provides conversion from equivalent RGB(A) modes should order its list
+	 *    1) Graphics::PixelFormat(4, 0, 0, 0, 0, 0, 8, 16, 24)
+	 *    2) Graphics::PixelFormat(2, 3, 3, 3, 8, 0, 5, 10, 0)
+	 *    3) Graphics::PixelFormat(4, 0, 0, 0, 0, 24, 16, 8, 0)
+	 *    4) Graphics::PixelFormat(2, 3, 3, 3, 8, 10, 5, 0, 0)
+	 *    5) Graphics::PixelFormat::createFormatCLUT8()
+	 *
+	 * @see Graphics::PixelFormat
+	 *
+	 * @note Backends supporting RGB color should accept game data in RGB color 
+	 *       order, even if hardware uses BGR or some other color order.
+	 *
+	 * @see convertScreenRect
+	 */
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
+#else
+	inline Graphics::PixelFormat getScreenFormat() const {
+		return Graphics::PixelFormat::createFormatCLUT8();
+	};
+
+	inline Common::List<Graphics::PixelFormat> getSupportedFormats() const {
+		Common::List<Graphics::PixelFormat> list;
+		list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+		return list;
+	};
+#endif
+
+	/**
+	 * Set the size and color format of the virtual screen. Typical sizes include:
 	 *  - 320x200 (e.g. for most SCUMM games, and Simon)
 	 *  - 320x240 (e.g. for FM-TOWN SCUMM games)
 	 *  - 640x480 (e.g. for Curse of Monkey Island)
@@ -359,10 +406,21 @@ public:
 	 * GraphicsMode); stretch the data to perform aspect ratio correction;
 	 * or shrink it to fit on small screens (in cell phones).
 	 *
+	 * Typical formats include:
+	 *  CLUT8 (e.g. 256 color, for most games)
+	 *  RGB555 (e.g. 16-bit color, for later SCUMM HE games)
+	 *  RGB565 (e.g. 16-bit color, for Urban Runner)
+	 *
+	 * This is the pixel format for which the client code generates data;
+	 * this is not necessarily equal to the hardware pixel format. For example,
+	 * a backend may perform color lookup of 8-bit graphics before pushing
+	 * a screen to hardware, or correct the ARGB color order via convertScreenRect.
+	 *
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
+	 * @param format	the new virtual screen pixel format
 	 */
-	virtual void initSize(uint width, uint height) = 0;
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Return an int value which is changed whenever any screen
@@ -411,7 +469,8 @@ public:
 		kTransactionAspectRatioFailed = (1 << 0),	/**< Failed switching aspect ratio correction mode */
 		kTransactionFullscreenFailed = (1 << 1),	/**< Failed switching fullscreen mode */
 		kTransactionModeSwitchFailed = (1 << 2),	/**< Failed switching the GFX graphics mode (setGraphicsMode) */
-		kTransactionSizeChangeFailed = (1 << 3)		/**< Failed switching the screen dimensions (initSize) */
+		kTransactionSizeChangeFailed = (1 << 3),	/**< Failed switching the screen dimensions (initSize) */
+		kTransactionFormatNotSupported = (1 << 4)	/**< Failed setting the color format */
 	};
 
 	/**
@@ -705,8 +764,9 @@ public:
 	 * @param hotspotY			vertical offset from the top side to the hotspot
 	 * @param keycolor			transparency color index
 	 * @param cursorTargetScale	scale factor which cursor is designed for
+	 * @param format			pointer to the pixel format which cursor graphic uses
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
 
 	/**
 	 * Replace the specified range of cursor the palette with new colors.

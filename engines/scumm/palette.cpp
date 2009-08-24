@@ -33,6 +33,27 @@
 
 namespace Scumm {
 
+uint8 *ScummEngine::getHEPaletteSlot(uint16 palSlot) {
+	assertRange(0, palSlot, _numPalettes, "palette");
+
+	if (_game.heversion >= 99) {
+		if (palSlot)
+			return _hePalettes + palSlot * _hePaletteSlot + 768;
+		else
+			return _hePalettes + _hePaletteSlot + 768;
+	}
+
+	return NULL;
+}
+
+uint16 ScummEngine::get16BitColor(uint8 r, uint8 g, uint8 b) {
+	uint16 ar = (r >> 3) << 10;
+	uint16 ag = (g >> 3) <<  5;
+	uint16 ab = (b >> 3) <<  0;
+	uint16 col = ar | ag | ab;
+	return col;
+}
+
 void ScummEngine::resetPalette() {
 	static const byte tableC64Palette[] = {
 		0x00, 0x00, 0x00, 	0xFD, 0xFE, 0xFC, 	0xBE, 0x1A, 0x24, 	0x30, 0xE6, 0xC6,
@@ -201,6 +222,8 @@ void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	assertRange(0, numcolor, 256, "setPaletteFromPtr: numcolor");
 
 	dest = _currentPalette;
+
+	// Test for Amiga Monkey Island and EGA Mode unset, if true then skip the first 16 colors.
 	if ((_game.platform == Common::kPlatformAmiga) && _game.version == 4 && _renderMode != Common::kRenderEGA) {
 		firstIndex = 16;
 		dest += 3 * 16;
@@ -240,9 +263,6 @@ void ScummEngine::setDirtyColors(int min, int max) {
 		_palDirtyMin = min;
 	if (_palDirtyMax < max)
 		_palDirtyMax = max;
-
-	if (_hePaletteCache)
-		memset(_hePaletteCache, -1, 65536);
 }
 
 void ScummEngine::initCycl(const byte *ptr) {
@@ -728,16 +748,6 @@ void ScummEngine_v8::desaturatePalette(int hueScale, int satScale, int lightScal
 }
 #endif
 
-
-int ScummEngine::convert16BitColor(uint16 color, uint8 r, uint8 g, uint8 b) {
-	// HACK: Find the closest matching color, and store in
-	// cache for faster access.
-	if (_hePaletteCache[color] == -1) {
-		_hePaletteCache[color] = remapPaletteColor(r, g, b, -1);
-	}
-
-	return _hePaletteCache[color];
-}
 
 int ScummEngine::remapPaletteColor(int r, int g, int b, int threshold) {
 	byte *pal;

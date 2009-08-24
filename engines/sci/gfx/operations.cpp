@@ -404,8 +404,9 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-int gfxop_init(int version, GfxState *state, gfx_options_t *options, ResourceManager *resManager,
-			   int xfact, int yfact, gfx_color_mode_t bpp) {
+int gfxop_init(int version, GfxState *state,
+				gfx_options_t *options, ResourceManager *resManager,
+				Graphics::PixelFormat mode, int xfact, int yfact) {
 	//int color_depth = bpp ? bpp : 1;
 	//int initialized = 0;
 
@@ -421,7 +422,7 @@ int gfxop_init(int version, GfxState *state, gfx_options_t *options, ResourceMan
 	state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	state->_dirtyRects.clear();
 
-	state->driver = new GfxDriver(xfact, yfact, bpp);
+	state->driver = new GfxDriver(xfact, yfact, mode);
 
 	state->gfxResMan = new GfxResManager(state->options, state->driver, resManager);
 	
@@ -1131,8 +1132,10 @@ static int _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point 
 	// may change when a new PIC is loaded. The cursor has to be regenerated
 	// from this pxm at that point. (An alternative might be to ensure the
 	// cursor only uses colours in the static part of the palette?)
-	if (pxm && pxm->palette)
+	if (pxm && state->driver->getMode()->palette) {
+		assert(pxm->palette);
 		pxm->palette->mergeInto(state->driver->getMode()->palette);
+	}
 	state->driver->setPointer(pxm, hotspot);
 
 	return GFX_OK;
@@ -1736,7 +1739,7 @@ int gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
 	if (state->driver->getMode()->xfact == 1 && state->driver->getMode()->yfact == 1) {
 		state->pic_unscaled = state->pic;
 	} else {
-		state->pic = state->gfxResMan->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
+		state->pic_unscaled = state->gfxResMan->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
 	}
 
 	if (!state->pic || !state->pic_unscaled) {

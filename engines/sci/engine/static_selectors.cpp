@@ -26,9 +26,6 @@
 // We place selector vocab name tables here for any game that doesn't have
 // them. This includes the King's Quest IV Demo and LSL3 Demo.
 
-#ifndef SCI_STATIC_SELECTORS_H
-#define SCI_STATIC_SELECTORS_H
-
 #include "sci/engine/kernel.h"
 
 namespace Sci {
@@ -397,6 +394,100 @@ static const SelectorRemap iceman_demo_selectors[] = {
 	{ "setTarget", 171 }
 };
 
+// Taken from Space Quest 1 VGA (Demo)
+static const SelectorRemap lsl5_demo_selectors[] = {
+	{ "init", 103 },
+	{ "play", 42 },
+	{ "replay", 65 },
+	{ "x", 4 },
+	{ "y", 3 },
+	{ "z", 85 },
+	{ "priority", 63 },
+	{ "view", 5 },
+	{ "loop", 6 },
+	{ "cel", 7 },
+	{ "brLeft", 20 },
+	{ "brRight", 22 },
+	{ "brTop", 19 },
+	{ "brBottom", 21 },
+	{ "xStep", 54 },
+	{ "yStep", 55 },
+	{ "nsBottom", 11 },
+	{ "nsTop", 9 },
+	{ "nsLeft", 10 },
+	{ "nsRight", 12 },
+	{ "font", 33 },
+	{ "text", 26 },
+	{ "type", 34 },
+	{ "state", 32 },
+	{ "doit", 60 },
+	{ "delete", 84 },
+	{ "signal", 17 },
+	{ "underBits", 8 },
+	{ "canBeHere", 57 },
+	{ "client", 45 },
+	{ "dx", 46 },
+	{ "dy", 47 },
+	{ "xStep", 54 },
+	{ "yStep", 55 },
+	{ "b-moveCnt", 48 },
+	{ "b-i1", 49 },
+	{ "b-i2", 50 },
+	{ "b-di", 51 },
+	{ "b-xAxis", 52 },
+	{ "b-incr", 53 },
+	{ "completed", 207 },
+	{ "illegalBits", 18 },
+	{ "dispose", 104 },
+	{ "prevSignal", 148 },
+	{ "message", 40 },
+	{ "modifiers", 64 },
+	{ "cue", 135 },
+	{ "owner", 149 },
+	{ "handle", 93 },
+	{ "number", 43 },
+	{ "max", 37 },
+	{ "cursor", 36 },
+	{ "claimed", 76 },
+	{ "edgeHit", 308 },
+	{ "wordFail", 71 },
+	{ "syntaxFail", 72 },
+	{ "semanticFail", 73 },
+	{ "cycler", 212 },
+	{ "elements", 27 },
+	{ "lsTop", 13 },
+	{ "lsBottom", 15 },
+	{ "lsLeft", 14 },
+	{ "lsRight", 16 },
+	{ "baseSetter", 277 },
+	{ "who", 39 },
+	{ "distance", 221 },
+	{ "mover", 59 },
+	{ "looper", 62 },
+	{ "isBlocked", 61 },
+	{ "heading", 58 },
+	{ "mode", 30 },
+	{ "caller", 133 },
+	{ "moveDone", 100 },
+	{ "vol", 97 },
+	{ "pri", 98 },
+	{ "min", 94 },
+	{ "sec", 95 },
+	{ "frame", 96 },
+	{ "dataInc", 92 },
+	{ "size", 89 },
+	{ "palette", 91 },
+	{ "moveSpeed", 56 },
+	{ "nodePtr", 44 },
+	{ "flags", 150 },
+	{ "points", 90 },
+	{ "printLang", 87 },
+	{ "subtitleLang", 88 },
+	{ "parseLang", 86 },
+	{ "motionCue", 210 },
+	{ "egoMoveSpeed", 357 }
+};
+
 // A macro for loading one of the above tables in the function below
 #define USE_SELECTOR_TABLE(x) \
 	do { \
@@ -408,10 +499,12 @@ static const SelectorRemap iceman_demo_selectors[] = {
 	} while (0)
 
 Common::StringList Kernel::checkStaticSelectorNames() {
-	Common::String gameID = ((SciEngine*)g_engine)->getGameID();
-	
 	Common::StringList names;
-	
+	if (!g_engine)
+		return names;
+
+	Common::String gameID = ((SciEngine*)g_engine)->getGameID();
+
 	if (gameID == "kq4sci")
 		USE_SELECTOR_TABLE(kq4_demo_selectors);
 	else if (gameID == "lsl3" || gameID == "iceman") // identical, except iceman has "flags" 
@@ -420,10 +513,10 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 		USE_SELECTOR_TABLE(christmas1992_selectors);
 	else if (gameID == "lsl1sci")
 		USE_SELECTOR_TABLE(lsl1_demo_selectors);
+	else if (gameID == "lsl5")
+		USE_SELECTOR_TABLE(lsl5_demo_selectors);
 	
 	return names;
 }
 	
 } // End of namespace Sci
-
-#endif // SCI_STATIC_SELECTORS_H

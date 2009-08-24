@@ -29,6 +29,12 @@
 #include "groovie/groovie.h"
 #include "groovie/roq.h"
 
+#include "graphics/jpeg.h"
+
+#ifdef USE_RGB_COLOR
+// Required for the YUV to RGB conversion
+#include "graphics/conversion.h"
+#endif
 #include "sound/mixer.h"
 
 namespace Groovie {
@@ -43,50 +49,52 @@ ROQPlayer::ROQPlayer(GroovieEngine *vm) :
 	_currBuf = new Graphics::Surface();
 	_prevBuf = new Graphics::Surface();
 
-	byte pal[256 * 4];
+	if (_vm->_mode8bit) {
+		byte pal[256 * 4];
 #ifdef DITHER
-	byte pal3[256 * 3];
-	// Initialize to a black palette
-	for (int i = 0; i < 256 * 3; i++) {
-		pal3[i] = 0;
-	}
+		byte pal3[256 * 3];
+		// Initialize to a black palette
+		for (int i = 0; i < 256 * 3; i++) {
+			pal3[i] = 0;
+		}
 
-	// Build a basic color palette
-	for (int r = 0; r < 4; r++) {
-		for (int g = 0; g < 4; g++) {
-			for (int b = 0; b < 4; b++) {
-				byte col = (r << 4) | (g << 2) | (b << 0);
-				pal3[3 * col + 0] = r << 6;
-				pal3[3 * col + 1] = g << 6;
-				pal3[3 * col + 2] = b << 6;
+		// Build a basic color palette
+		for (int r = 0; r < 4; r++) {
+			for (int g = 0; g < 4; g++) {
+				for (int b = 0; b < 4; b++) {
+					byte col = (r << 4) | (g << 2) | (b << 0);
+					pal3[3 * col + 0] = r << 6;
+					pal3[3 * col + 1] = g << 6;
+					pal3[3 * col + 2] = b << 6;
+				}
 			}
 		}
-	}
 
-	// Initialize the dithering algorithm
-	_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
-	_paletteLookup->setPalette(pal3, Graphics::PaletteLUT::kPaletteRGB, 8);
-	for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
-		debug("Groovie::ROQ: Building palette table: %02d/63", i);
-		_paletteLookup->buildNext();
-	}
+		// Initialize the dithering algorithm
+		_paletteLookup = new Graphics::PaletteLUT(8, Graphics::PaletteLUT::kPaletteYUV);
+		_paletteLookup->setPalette(pal3, Graphics::PaletteLUT::kPaletteRGB, 8);
+		for (int i = 0; (i < 64) && !_vm->shouldQuit(); i++) {
+			debug("Groovie::ROQ: Building palette table: %02d/63", i);
+			_paletteLookup->buildNext();
+		}
 
-	// Prepare the palette to show
-	for (int i = 0; i < 256; i++) {
-		pal[(i * 4) + 0] = pal3[(i * 3) + 0];
-		pal[(i * 4) + 1] = pal3[(i * 3) + 1];
-		pal[(i * 4) + 2] = pal3[(i * 3) + 2];
-	}
-#else
-	// Set a grayscale palette
-	for (int i = 0; i < 256; i++) {
-		pal[(i * 4) + 0] = i;
-		pal[(i * 4) + 1] = i;
-		pal[(i * 4) + 2] = i;
-	}
-#endif
+		// Prepare the palette to show
+		for (int i = 0; i < 256; i++) {
+			pal[(i * 4) + 0] = pal3[(i * 3) + 0];
+			pal[(i * 4) + 1] = pal3[(i * 3) + 1];
+			pal[(i * 4) + 2] = pal3[(i * 3) + 2];
+		}
+#else // !DITHER
+		// Set a grayscale palette
+		for (int i = 0; i < 256; i++) {
+			pal[(i * 4) + 0] = i;
+			pal[(i * 4) + 1] = i;
+			pal[(i * 4) + 2] = i;
+		}
+#endif // DITHER
 
-	_syst->setPalette(pal, 0, 256);
+		_syst->setPalette(pal, 0, 256);
+	}
 }
 
 ROQPlayer::~ROQPlayer() {
@@ -152,22 +160,39 @@ void ROQPlayer::buildShowBuf() {
 
 	for (int line = 0; line < _showBuf.h; line++) {
 		byte *out = (byte *)_showBuf.getBasePtr(0, line);
-		byte *in = (byte *)_prevBuf->getBasePtr(0, line / _scaleY);
+		byte *in = (byte *)_currBuf->getBasePtr(0, line / _scaleY);
 		for (int x = 0; x < _showBuf.w; x++) {
+			if (_vm->_mode8bit) {
 #ifdef DITHER
-			*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
+				*out = _dither->dither(*in, *(in + 1), *(in + 2), x);
 #else
-			// Just use the luminancy component
-			*out = *in;
-#endif
-			out++;
+				// Just use the luminancy component
+				*out = *in;
+#endif // DITHER
+#ifdef USE_RGB_COLOR
+			} else {
+				// Do the format conversion (YUV -> RGB -> Screen format)
+				byte r, g, b;
+				Graphics::YUV2RGB(*in, *(in + 1), *(in + 2), r, g, b);
+				// FIXME: this is fixed to 16bit
+				*(uint16 *)out = (uint16)_vm->_pixelFormat.RGBToColor(r, g, b);
+#endif // USE_RGB_COLOR
+			}
+
+			// Skip to the next pixel
+			out += _vm->_pixelFormat.bytesPerPixel;
 			if (!(x % _scaleX))
-				in += _prevBuf->bytesPerPixel;
+				in += _currBuf->bytesPerPixel;
 		}
 #ifdef DITHER
 		_dither->nextLine();
 #endif
 	}
+
+	// Swap buffers
+	Graphics::Surface *tmp = _prevBuf;
+	_prevBuf = _currBuf;
+	_currBuf = tmp;
 }
 
 bool ROQPlayer::playFrameInternal() {
@@ -180,7 +205,7 @@ bool ROQPlayer::playFrameInternal() {
 	}
 
 	if (_dirty) {
-		// Build the show buffer from the previous (back) buffer
+		// Build the show buffer from the current buffer
 		buildShowBuf();
 	}
 
@@ -189,7 +214,7 @@ bool ROQPlayer::playFrameInternal() {
 
 	if (_dirty) {
 		// Update the screen
-		_syst->copyRectToScreen((byte *)_showBuf.getBasePtr(0, 0), _showBuf.w, 0, (_syst->getHeight() - _showBuf.h) / 2, _showBuf.pitch, _showBuf.h);
+		_syst->copyRectToScreen((byte *)_showBuf.getBasePtr(0, 0), _showBuf.pitch, 0, (_syst->getHeight() - _showBuf.h) / 2, _showBuf.w, _showBuf.h);
 		_syst->updateScreen();
 
 		// Clear the dirty flag
@@ -240,19 +265,15 @@ bool ROQPlayer::processBlock() {
 	case 0x1002: // Quad codebook definition
 		ok = processBlockQuadCodebook(blockHeader);
 		break;
-	case 0x1011: { // Quad vector quantised video frame
+	case 0x1011: // Quad vector quantised video frame
 		ok = processBlockQuadVector(blockHeader);
 		_dirty = true;
 		endframe = true;
-
-		// Swap buffers
-		Graphics::Surface *tmp = _prevBuf;
-		_prevBuf = _currBuf;
-		_currBuf = tmp;
 		break;
-	}
 	case 0x1012: // Still image (JPEG)
 		ok = processBlockStill(blockHeader);
+		_dirty = true;
+		endframe = true;
 		break;
 	case 0x1013: // Hang
 		assert(blockHeader.size == 0 && blockHeader.param == 0);
@@ -317,7 +338,19 @@ bool ROQPlayer::processBlockInfo(ROQBlockHeader &blockHeader) {
 		// Allocate new buffers
 		_currBuf->create(width, height, 3);
 		_prevBuf->create(width, height, 3);
-		_showBuf.create(width * _scaleX, height * _scaleY, 1);
+		_showBuf.create(width * _scaleX, height * _scaleY, _vm->_pixelFormat.bytesPerPixel);
+
+		// Clear the buffers with black YUV values
+		byte *ptr1 = (byte *)_currBuf->getBasePtr(0, 0);
+		byte *ptr2 = (byte *)_prevBuf->getBasePtr(0, 0);
+		for (int i = 0; i < width * height; i++) {
+			*ptr1++ = 0;
+			*ptr1++ = 128;
+			*ptr1++ = 128;
+			*ptr2++ = 0;
+			*ptr2++ = 128;
+			*ptr2++ = 128;
+		}
 
 #ifdef DITHER
 		// Reset the dithering algorithm with the new width
@@ -456,10 +489,23 @@ void ROQPlayer::processBlockQuadVectorBlockSub(int baseX, int baseY, int8 Mx, in
 bool ROQPlayer::processBlockStill(ROQBlockHeader &blockHeader) {
 	debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Groovie::ROQ: Processing still (JPEG) block");
 
-	warning("Groovie::ROQ: JPEG frame (unimplemented)");
-	memset(_prevBuf->getBasePtr(0, 0), 0, _prevBuf->w * _prevBuf->h * _prevBuf->bytesPerPixel);
+	warning("Groovie::ROQ: JPEG frame (unfinshed)");
 
-	_file->skip(blockHeader.size);
+	Graphics::JPEG *jpg = new Graphics::JPEG();
+	jpg->read(_file);
+	byte *y = (byte *)jpg->getComponent(1)->getBasePtr(0, 0);
+	byte *u = (byte *)jpg->getComponent(2)->getBasePtr(0, 0);
+	byte *v = (byte *)jpg->getComponent(3)->getBasePtr(0, 0);
+
+	byte *ptr = (byte *)_currBuf->getBasePtr(0, 0);
+	for (int i = 0; i < _currBuf->w * _currBuf->h; i++) {
+		*ptr++ = *y++;
+		*ptr++ = *u++;
+		*ptr++ = *v++;
+	}
+	memcpy(_prevBuf->getBasePtr(0, 0), _currBuf->getBasePtr(0, 0), _prevBuf->w * _prevBuf->h * 3);
+
+	delete jpg;
 	return true;
 }
 

@@ -66,6 +66,41 @@ int MoviePlayer::load(const char *filename, int flags, int image) {
 	return 0;
 }
 
+void MoviePlayer::copyFrameToBuffer(byte *dst, int dstType, uint x, uint y, uint pitch) {
+	uint h = getHeight();
+	uint w = getWidth();
+
+	byte *src = _videoFrameBuffer;
+
+	if (_vm->_game.features & GF_16BIT_COLOR) {
+		dst += y * pitch + x * 2;
+		do {
+			for (uint i = 0; i < w; i++) {
+				uint16 color = READ_LE_UINT16(_vm->_hePalettes + _vm->_hePaletteSlot + 768 + src[i] * 2);
+				switch (dstType) {
+				case kDstScreen:
+					WRITE_UINT16(dst + i * 2, color);
+					break;
+				case kDstResource:
+					WRITE_LE_UINT16(dst + i * 2, color);
+					break;
+				default:
+					error("copyFrameToBuffer: Unknown dstType %d", dstType);
+				}
+			}
+			dst += pitch;
+			src += w;
+		} while (--h);
+	} else {
+		dst += y * pitch + x;
+		do {
+			memcpy(dst, src, w);
+			dst += pitch;
+			src += w;
+		} while (--h);
+	}
+}
+
 void MoviePlayer::handleNextFrame() {
 	if (!isVideoLoaded()) {
 		return;
@@ -80,14 +115,14 @@ void MoviePlayer::handleNextFrame() {
 		assert(dstPtr);
 		uint8 *dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
 		assert(dst);
-		copyFrameToBuffer(dst, 0, 0, _vm->_screenWidth);
+		copyFrameToBuffer(dst, kDstResource, 0, 0, _vm->_screenWidth * _vm->_bitDepth);
 	} else if (_flags & 1) {
-		copyFrameToBuffer(pvs->getBackPixels(0, 0), 0, 0, _vm->_screenWidth);
+		copyFrameToBuffer(pvs->getBackPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
 		Common::Rect imageRect(getWidth(), getHeight());
 		_vm->restoreBackgroundHE(imageRect);
 	} else {
-		copyFrameToBuffer(pvs->getPixels(0, 0), 0, 0, _vm->_screenWidth);
+		copyFrameToBuffer(pvs->getPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
 		Common::Rect imageRect(getWidth(), getHeight());
 		_vm->markRectAsDirty(kMainVirtScreen, imageRect);

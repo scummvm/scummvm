@@ -1,9 +1,9 @@
 MODULE := backends/platform/psp
 
 MODULE_OBJS := \
+	powerman.o \
 	psp_main.o \
 	osys_psp.o \
-	osys_psp_gu.o \
 	kbd_ss_c.o \
 	kbd_s_c.o \
 	kbd_ls_c.o \

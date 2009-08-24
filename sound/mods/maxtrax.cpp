@@ -983,7 +983,7 @@ allocError:
 	if (!errorMsg)
 		errorMsg = "Maxtrax: Could not allocate Memory";
 
-	warning(errorMsg);
+	warning("%s", errorMsg);
 	if (loadSamples)
 		freePatches();
 	if (loadScores)

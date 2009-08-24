@@ -84,8 +84,23 @@ char Video_v6::spriteUncompressor(byte *sprBuf, int16 srcWidth, int16 srcHeight,
 		return 1;
 	}
 
-	warning("Urban Stub: spriteUncompressor(), sprBuf[0,1] = %d,%d",
-			sprBuf[0], sprBuf[1]);
+	if (srcWidth & 0xC000) {
+		warning("Playtoons Stub: srcWidth & 0xC000 == %04X", srcWidth & 0xC000);
+		srcWidth &= 0x3FFF;
+	}
+
+	if ((sprBuf[0] == 1) && (sprBuf[1] == 2)) {
+		if (Video_v2::spriteUncompressor(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc))
+			return 1;
+
+		_vm->validateVideoMode(destDesc._vidMode);
+
+		_videoDriver->drawPackedSprite(sprBuf, srcWidth, srcHeight, x, y, transp, destDesc);
+		return 1;
+	}
+
+	warning("Urban Stub: spriteUncompressor(), sprBuf[0,1,2] = %d,%d,%d",
+			sprBuf[0], sprBuf[1], sprBuf[2]);
 	return 1;
 }
 

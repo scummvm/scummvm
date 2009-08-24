@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef OSYS_PSP_H
+#define OSYS_PSP_H
+
 #include "common/scummsys.h"
 #include "graphics/surface.h"
 #include "graphics/colormasks.h"
@@ -47,6 +50,11 @@ public:
 	static OSystem *instance();
 
 protected:
+	struct Vertex {
+		float u,v;
+		float x,y,z;
+	};
+
 	uint16	_screenWidth;
 	uint16	_screenHeight;
 	uint16  _overlayWidth;
@@ -56,6 +64,7 @@ protected:
 	uint16  _palette[256];
 	bool	_overlayVisible;
 	uint32	_shakePos;
+	uint32	_lastScreenUpdate;
 
 	Graphics::Surface _framebuffer;
 
@@ -65,6 +74,15 @@ protected:
 	int	_mouseHotspotX, _mouseHotspotY;
 	byte	_mouseKeyColour;
 	byte	*_mouseBuf;
+	bool	_cursorPaletteDisabled;
+
+	int _graphicMode;
+	Vertex *_vertices;
+	unsigned short* _clut;
+	unsigned short* _kbdClut;
+	bool _keyboardVisible;
+	int _keySelected;
+	int _keyboardMode;
 
 	uint32	_prevButtons;
 	uint32	_lastPadCheck;
@@ -78,7 +96,6 @@ protected:
 	Common::TimerManager *_timer;
 
 public:
-
 	OSystem_PSP();
 	virtual ~OSystem_PSP();
 
@@ -87,15 +104,21 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
 	bool setGraphicsMode(const char *name);
 	virtual int getGraphicsMode() const;
-	virtual void initSize(uint width, uint height);
+
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 	virtual int16 getWidth();
 	virtual int16 getHeight();
+
 	virtual void setPalette(const byte *colors, uint start, uint num);
+	virtual void grabPalette(byte *colors, uint start, uint num);
+	virtual void setCursorPalette(const byte *colors, uint start, uint num);
+	virtual void disableCursorPalette(bool disable);
 	virtual void copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h);
 	virtual Graphics::Surface *lockScreen();
 	virtual void unlockScreen();
@@ -109,15 +132,15 @@ public:
 	virtual void copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h);
 	virtual int16 getOverlayHeight();
 	virtual int16 getOverlayWidth();
-	virtual void grabPalette(byte *colors, uint start, uint num);
 	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<4444>(); }
 
 	virtual bool showMouse(bool visible);
-
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format);
 
 	virtual bool pollEvent(Common::Event &event);
+	virtual bool processInput(Common::Event &event);
+
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
@@ -144,3 +167,5 @@ public:
 	virtual Common::WriteStream *createConfigWriteStream();
 };
 
+
+#endif /* OSYS_PSP_H */

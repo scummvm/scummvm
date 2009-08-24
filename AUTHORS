@@ -159,6 +159,9 @@ ScummVM Team
     iPhone:
        Oystein Eftevaag     
 
+    LinuxMoto:
+       Lubomyr Lisen        
+
     Maemo:
        Frantisek Dufka      
 
@@ -314,6 +317,7 @@ Other contributions
      Andreas Karlsson      - Initial port for SymbianOS
      Claudio Matsuoka      - Daily Linux builds
      Thomas Mayer          - PSP port contributions
+     Yotam Barnoy          - PSP port suspend/resume support
      Sean Murray           - ScummVM tools GUI application (GSoC 2007 task)
      n0p                   - Windows CE port aspect ratio correction scaler
                              and right click input method

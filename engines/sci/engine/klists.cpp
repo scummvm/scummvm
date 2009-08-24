@@ -36,7 +36,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	if (!mobj) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
-		//error("%s, L%d: Attempt to use non-node %04x:%04x as list node\n", __FILE__, __LINE__, PRINT_REG(addr));
+		//error("%s, L%d: Attempt to use non-node %04x:%04x as list node", __FILE__, __LINE__, PRINT_REG(addr));
 		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
@@ -44,7 +44,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	NodeTable *nt = (NodeTable *)mobj;
 
 	if (!nt->isValidEntry(addr.offset)) {
-		error("Attempt to use non-node %04x:%04x as list node\n", PRINT_REG(addr));
+		error("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
 		return NULL;
 	}
 
@@ -55,14 +55,14 @@ List *lookup_list(EngineState *s, reg_t addr) {
 	MemObject *mobj = GET_SEGMENT(*s->seg_manager, addr.segment, MEM_OBJ_LISTS);
 
 	if (!mobj) {
-		error("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
+		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
 		return NULL;
 	}
 
 	ListTable *lt = (ListTable *)mobj;
 
 	if (!lt->isValidEntry(addr.offset)) {
-		error("Attempt to use non-list %04x:%04x as list\n", PRINT_REG(addr));
+		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
 		return NULL;
 	}
 

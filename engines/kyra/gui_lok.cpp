@@ -522,7 +522,6 @@ int GUI_LoK::buttonMenuCallback(Button *caller) {
 	if (_menuRestoreScreen) {
 		restorePalette();
 		_screen->loadPageFromDisk("SEENPAGE.TMP", 0);
-		_vm->_animator->_updateScreen = true;
 	} else {
 		_screen->deletePageFromDisk(0);
 	}

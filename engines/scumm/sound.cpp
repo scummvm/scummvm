@@ -86,7 +86,7 @@ Sound::Sound(ScummEngine *parent, Audio::Mixer *mixer)
 
 Sound::~Sound() {
 	stopCDTimer();
-	AudioCD.destroy();
+	AudioCD.stop();
 	delete _sfxFile;
 }
 

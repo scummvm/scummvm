@@ -1312,6 +1312,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\conversion.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\conversion.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\cursorman.cpp"
 				>
 			</File>
@@ -1357,6 +1365,14 @@
 			</File>
 			<File
 				RelativePath="..\..\graphics\imagedec.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\jpeg.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\jpeg.h"
 				>
 			</File>
 			<File

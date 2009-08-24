@@ -1060,7 +1060,7 @@ static void deDPCM16(byte *soundBuf, Common::SeekableReadStream &audioStream, ui
 			s += tableDPCM16[b];
 
 		s = CLIP<int32>(s, -32768, 32767);
-		*out++ = TO_BE_16(s);
+		*out++ = s;
 	}
 }
 
@@ -1070,7 +1070,7 @@ static void deDPCM8Nibble(byte *soundBuf, int32 &s, byte b) {
 	else
 		s += tableDPCM8[b & 7];
 	s = CLIP<int32>(s, 0, 255);
-	*soundBuf = s;
+	*soundBuf = TO_LE_16(s);
 }
 
 static void deDPCM8(byte *soundBuf, Common::SeekableReadStream &audioStream, uint32 n) {
@@ -1106,7 +1106,8 @@ static byte* readSOLAudio(Common::SeekableReadStream *audioStream, uint32 &size,
 	// Convert the SOL stream flags to our own format
 	flags = 0;
 	if (audioFlags & kSolFlag16Bit)
-		flags |= Audio::Mixer::FLAG_16BITS;
+		flags |= Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN;
+
 	if (!(audioFlags & kSolFlagIsSigned))
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 

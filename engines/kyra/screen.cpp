@@ -51,6 +51,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	memset(_fonts, 0, sizeof(_fonts));
 
 	_currentFont = FID_8_FNT;
+	_paletteChanged = true;
 }
 
 Screen::~Screen() {
@@ -206,6 +207,9 @@ void Screen::setResolution() {
 }
 
 void Screen::updateScreen() {
+	bool needRealUpdate = _forceFullUpdate || !_dirtyRects.empty() || _paletteChanged;
+	_paletteChanged = false;
+
 	if (_useOverlays)
 		updateDirtyRectsOvl();
 	else if (_isAmiga && _interfacePaletteEnabled)
@@ -214,13 +218,16 @@ void Screen::updateScreen() {
 		updateDirtyRects();
 
 	if (_debugEnabled) {
+		needRealUpdate = true;
+
 		if (!_useOverlays)
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 320, 0, SCREEN_W, SCREEN_H);
 		else
 			_system->copyRectToScreen(getPagePtr(2), SCREEN_W, 640, 0, SCREEN_W, SCREEN_H);
 	}
 
-	_system->updateScreen();
+	if (needRealUpdate)
+		_system->updateScreen();
 }
 
 void Screen::updateDirtyRects() {
@@ -330,6 +337,7 @@ void Screen::updateDirtyRectsOvl() {
 			_system->copyRectToScreen(dst, 640, it->left<<1, it->top<<1, it->width()<<1, it->height()<<1);
 		}
 	}
+
 	_forceFullUpdate = false;
 	_dirtyRects.clear();
 }
@@ -562,6 +570,12 @@ void Screen::setPagePixel(int pageNum, int x, int y, uint8 color) {
 	assert(x >= 0 && x < SCREEN_W && y >= 0 && y < SCREEN_H);
 	if (pageNum == 0 || pageNum == 1)
 		addDirtyRect(x, y, 1, 1);
+
+	if (_use16ColorMode) {
+		color &= 0x0F;
+		color |= (color << 4);
+	}
+
 	_pagePtrs[pageNum][y * SCREEN_W + x] = color;
 }
 
@@ -703,6 +717,7 @@ void Screen::setScreenPalette(const Palette &pal) {
 		screenPal[4 * i + 3] = 0;
 	}
 
+	_paletteChanged = true;
 	_system->setPalette(screenPal, 0, pal.getNumColors());
 }
 
@@ -738,6 +753,7 @@ void Screen::setInterfacePalette(const Palette &pal, uint8 r, uint8 g, uint8 b) 
 		screenPal[4 * i + 3] = 0;
 	}
 
+	_paletteChanged = true;
 	_system->setPalette(screenPal, 32, pal.getNumColors());
 }
 
@@ -954,6 +970,11 @@ void Screen::fillRect(int x1, int y1, int x2, int y2, uint8 color, int pageNum, 
 
 	clearOverlayRect(pageNum, x1, y1, x2-x1+1, y2-y1+1);
 
+	if (_use16ColorMode) {
+		color &= 0x0F;
+		color |= (color << 4);
+	}
+
 	if (xored) {
 		for (; y1 <= y2; ++y1) {
 			for (int x = x1; x <= x2; ++x)
@@ -1034,6 +1055,11 @@ void Screen::drawClippedLine(int x1, int y1, int x2, int y2, int color) {
 
 void Screen::drawLine(bool vertical, int x, int y, int length, int color) {
 	uint8 *ptr = getPagePtr(_curPage) + y * SCREEN_W + x;
+
+	if (_use16ColorMode) {
+		color &= 0x0F;
+		color |= (color << 4);
+	}
 
 	if (vertical) {
 		assert((y + length) <= SCREEN_H);
@@ -2973,6 +2999,9 @@ byte *Screen::getOverlayPtr(int page) {
 
 	if (_vm->gameFlags().gameID == GI_KYRA2) {
 		if (page == 12 || page == 13)
+			return _sjisOverlayPtrs[3];
+	} else if (_vm->gameFlags().gameID == GI_LOL) {
+		if (page == 4 || page == 5)
 			return _sjisOverlayPtrs[3];
 	}
 

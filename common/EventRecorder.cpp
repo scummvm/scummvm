@@ -100,6 +100,7 @@ EventRecorder::EventRecorder() {
 	_lastEventCount = 0;
 	_lastMillis = 0;
 
+	_recordMode = kPassthrough;
 }
 
 EventRecorder::~EventRecorder() {

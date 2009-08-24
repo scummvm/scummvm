@@ -1952,7 +1952,6 @@ void KyraEngine_LoK::updateKyragemFading() {
 	}
 
 	_screen->setScreenPalette(_screen->getPalette(0));
-	_animator->_updateScreen = true;
 
 	switch (_kyragemFadingState.nextOperation) {
 	case 0:

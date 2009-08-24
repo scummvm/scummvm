@@ -289,7 +289,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	} while ((uint16)mask);
 }
 
-void AkosRenderer::setPalette(byte *new_palette) {
+void AkosRenderer::setPalette(uint16 *new_palette) {
 	uint size, i;
 
 	size = _vm->getResourceDataSize(akpl);
@@ -299,22 +299,23 @@ void AkosRenderer::setPalette(byte *new_palette) {
 	if (size > 256)
 		error("akos_setPalette: %d is too many colors", size);
 
-	if (_vm->_game.heversion >= 99 && _paletteNum) {
-		for (i = 0; i < size; i++)
-			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * 1024 + 768 + akpl[i]];
-	} else if ((_vm->_game.features & GF_16BIT_COLOR) && rgbs) {
-		for (i = 0; i < size; i++) {
-			if (new_palette[i] == 0xFF) {
-				uint8 col = akpl[i];
-				uint8 r = rgbs[col * 3 + 0];
-				uint8 g = rgbs[col * 3 + 1];
-				uint8 b = rgbs[col * 3 + 2];
-
-				_palette[i] = _vm->remapPaletteColor(r, g, b, -1);
-			} else {
-				_palette[i] = new_palette[i];
+	if (_vm->_game.features & GF_16BIT_COLOR) {
+		if (_paletteNum) {
+			for (i = 0; i < size; i++)
+				_palette[i] = READ_LE_UINT16(_vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768 + akpl[i] * 2);
+		} else if (rgbs) {
+			for (i = 0; i < size; i++) {
+				if (new_palette[i] == 0xFF) {
+					uint8 col = akpl[i];
+					_palette[i] = _vm->get16BitColor(rgbs[col * 3 + 0], rgbs[col * 3 + 1], rgbs[col * 3 + 2]);
+				} else {
+					_palette[i] = new_palette[i];
+				}
 			}
 		}
+	} else if (_vm->_game.heversion >= 99 && _paletteNum) {
+		for (i = 0; i < size; i++)
+			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * _vm->_hePaletteSlot + 768 + akpl[i]];
 	} else {
 		for (i = 0; i < size; i++) {
 			_palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
@@ -545,7 +546,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	byte *dst;
 	byte len, maskbit;
 	int y;
-	uint color, height, pcolor;
+	uint16 color, height, pcolor;
 	const byte *scaleytab;
 	bool masked;
 	bool skip_column = false;
@@ -589,7 +590,11 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 						} else if (_shadow_mode == 2) {
 							error("codec1_spec2"); // TODO
 						} else if (_shadow_mode == 3) {
-							if (_vm->_game.heversion >= 90) {
+							if (_vm->_game.features & GF_16BIT_COLOR) {
+								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
+								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
+								pcolor = srcColor + dstColor;
+							} else if (_vm->_game.heversion >= 90) {
 								pcolor = (pcolor << 8) + *dst;
 								pcolor = xmap[pcolor];
 							} else if (pcolor < 8) {
@@ -597,7 +602,11 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 								pcolor = _shadow_table[pcolor];
 							}
 						}
-						*dst = pcolor;
+						if (_vm->_bitDepth == 2) {
+							WRITE_UINT16(dst, pcolor);
+						} else {
+							*dst = pcolor;
+						}
 					}
 				}
 				dst += _out.pitch;
@@ -617,7 +626,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					if (v1.x < 0 || v1.x >= v1.boundsRect.right)
 						return;
 					maskbit = revBitMask(v1.x & 7);
-					v1.destptr += v1.scaleXstep;
+					v1.destptr += v1.scaleXstep * _vm->_bitDepth;
 					skip_column = false;
 				} else
 					skip_column = true;
@@ -987,7 +996,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (_draw_bottom < rect.bottom)
 		_draw_bottom = rect.bottom;
 
-	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x;
+	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x * _vm->_bitDepth;
 
 	codec1_genericDecode(v1);
 
@@ -1056,7 +1065,12 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.shadowMode = _shadow_mode;
 	bdd.shadowPalette = _vm->_shadowPalette;
 
-	bdd.actorPalette = _useBompPalette ? _palette : 0;
+	bdd.actorPalette = 0;
+	if (_useBompPalette) {
+		for (uint i = 0; i < 256; i++)
+			bdd.actorPalette[i] = _palette[i];
+ 	}
+
 	bdd.mirror = !_mirror;
 
 	drawBomp(bdd);
@@ -1176,6 +1190,8 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 }
 
 byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
+	assert(_vm->_bitDepth == 1);
+
 	Common::Rect clip;
 	int32 minx, miny, maxw, maxh;
 	int32 skip_x, skip_y, cur_x, cur_y;
@@ -1278,7 +1294,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 numskip_before = skip_x + (skip_y * _width);
 	int32 numskip_after = _width - cur_x;
 
-	byte *dst = (byte *)_out.pixels + width_unk + height_unk * _out.pitch;
+	byte *dst = (byte *)_out.pixels + height_unk * _out.pitch + width_unk * _vm->_bitDepth;
 
 	akos16Decompress(dst, _out.pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, clip.left, clip.top, _zbuf);
 	return 0;
@@ -1335,18 +1351,27 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		_draw_bottom = dst.bottom;
 
 	const uint8 *palPtr = NULL;
-	if (_vm->_game.heversion >= 99) {
-		palPtr = _vm->_hePalettes + 1792;
+	if (_vm->_game.features & GF_16BIT_COLOR) {
+		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
+		if (_paletteNum) {
+			palPtr = _vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768;
+		} else if (rgbs) {
+			for (uint i = 0; i < 256; i++)
+				WRITE_LE_UINT16(_palette + i, _vm->get16BitColor(rgbs[i * 3 + 0], rgbs[i * 3 + 1], rgbs[i * 3 + 2]));
+			palPtr = (uint8 *)_palette;
+		}
+	} else if (_vm->_game.heversion >= 99) {
+		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
 	}
 
-	byte *dstPtr = (byte *)_out.pixels + dst.left + dst.top * _out.pitch;
+	byte *dstPtr = (byte *)_out.pixels + dst.top * _out.pitch + dst.left * _vm->_bitDepth;
 	if (_shadow_mode == 3) {
-		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, _srcptr, src, 0, palPtr, xmap);
+		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, xmap, _vm->_bitDepth);
 	} else {
 		if (palPtr != NULL) {
-			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, _srcptr, src, 0, palPtr);
+			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, NULL, _vm->_bitDepth);
 		} else {
-			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, _srcptr, src, 0);
+			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, NULL, NULL, _vm->_bitDepth);
 		}
 	}
 #endif

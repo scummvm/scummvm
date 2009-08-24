@@ -93,9 +93,17 @@ public:
 	void beginGFXTransaction(void);
 	TransactionError endGFXTransaction(void);
 
-	// Set the size of the video bitmap.
-	// Typically, 320x200
-	virtual void initSize(uint w, uint h); // overloaded by CE backend
+#ifdef USE_RGB_COLOR
+	// Game screen
+	virtual Graphics::PixelFormat getScreenFormat() const { return _screenFormat; }
+
+	// Highest supported
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+#endif
+
+	// Set the size and format of the video bitmap.
+	// Typically, 320x200 CLUT8
+	virtual void initSize(uint w, uint h, const Graphics::PixelFormat *format); // overloaded by CE backend
 
 	virtual int getScreenChangeID() const { return _screenChangeCount; }
 
@@ -124,7 +132,7 @@ public:
 	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format); // overloaded by CE backend (FIXME)
 
 	// Set colors of cursor palette
 	void setCursorPalette(const byte *colors, uint start, uint num);
@@ -186,6 +194,7 @@ public:
 
 	// Overlay
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
+
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
@@ -207,6 +216,7 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+	virtual void preprocessEvents(SDL_Event *event) {};
 
 #ifdef USE_OSD
 	void displayMessageOnOSD(const char *msg);
@@ -221,6 +231,7 @@ public:
 
 protected:
 	bool _inited;
+	SDL_AudioSpec _obtainedRate;
 
 #ifdef USE_OSD
 	SDL_Surface *_osdSurface;
@@ -239,6 +250,10 @@ protected:
 
 	// unseen game screen
 	SDL_Surface *_screen;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _screenFormat;
+	Graphics::PixelFormat _cursorFormat;
+#endif
 
 	// temporary screen (for scalers)
 	SDL_Surface *_tmpscreen;
@@ -272,6 +287,9 @@ protected:
 		bool needHotswap;
 		bool needUpdatescreen;
 		bool normal1xScaler;
+#ifdef USE_RGB_COLOR
+		bool formatChanged;
+#endif
 	};
 	TransactionDetails _transactionDetails;
 
@@ -288,6 +306,9 @@ protected:
 		int screenWidth, screenHeight;
 		int overlayWidth, overlayHeight;
 		int hardwareWidth, hardwareHeight;
+#ifdef USE_RGB_COLOR
+		Graphics::PixelFormat format;
+#endif
 	};
 	VideoState _videoMode, _oldVideoMode;
 

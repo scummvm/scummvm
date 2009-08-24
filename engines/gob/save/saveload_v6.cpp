@@ -50,7 +50,7 @@ int SaveLoad_v6::GameHandler::File::getSlot(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 2900) / varSize);
+	return ((offset - (kPropsSize + kIndexSize)) / varSize);
 }
 
 int SaveLoad_v6::GameHandler::File::getSlotRemainder(int32 offset) const {
@@ -59,13 +59,13 @@ int SaveLoad_v6::GameHandler::File::getSlotRemainder(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 2900) % varSize);
+	return ((offset - (kPropsSize + kIndexSize)) % varSize);
 }
 
 
 SaveLoad_v6::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
-	memset(_props, 0,  500);
-	memset(_index, 0, 2400);
+	memset(_props, 0, kPropsSize);
+	memset(_index, 0, kIndexSize);
 
 	_slotFile = new File(vm, target);
 }
@@ -80,7 +80,7 @@ int32 SaveLoad_v6::GameHandler::getSize() {
 	if (varSize == 0)
 		return -1;
 
-	return _slotFile->tallyUpFiles(varSize, 2900);
+	return _slotFile->tallyUpFiles(varSize, kPropsSize + kIndexSize);
 }
 
 bool SaveLoad_v6::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
@@ -95,22 +95,22 @@ bool SaveLoad_v6::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (((uint32) offset) < kPropsSize) {
 		// Properties
 
 		refreshProps();
 
-		if ((offset + size) > 500) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (offset < 2900) {
+	} else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
-		if (size != 2400) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
@@ -191,10 +191,10 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (((uint32) offset) < kPropsSize) {
 		// Properties
 
-		if ((offset + size) > 500) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
@@ -203,16 +203,16 @@ bool SaveLoad_v6::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
 
 		refreshProps();
 
-	}  else if (offset < 2900) {
+	}  else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
-		if (size != 2400) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
 
 		// Just copy the index into our buffer
-		_vm->_inter->_variables->copyTo(dataVar, _index, 2400);
+		_vm->_inter->_variables->copyTo(dataVar, _index, kIndexSize);
 
 	} else {
 		// Save slot, whole variable block

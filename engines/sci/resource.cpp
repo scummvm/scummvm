@@ -112,6 +112,20 @@ ResourceSource *ResourceManager::addExternalMap(const char *file_name) {
 
 	newsrc->source_type = kSourceExtMap;
 	newsrc->location_name = file_name;
+	newsrc->resourceFile = 0;
+	newsrc->scanned = false;
+	newsrc->associated_map = NULL;
+
+	_sources.push_back(newsrc);
+	return newsrc;
+}
+
+ResourceSource *ResourceManager::addExternalMap(const Common::FSNode *mapFile) {
+	ResourceSource *newsrc = new ResourceSource();
+
+	newsrc->source_type = kSourceExtMap;
+	newsrc->location_name = mapFile->getName();
+	newsrc->resourceFile = mapFile;
 	newsrc->scanned = false;
 	newsrc->associated_map = NULL;
 
@@ -125,6 +139,21 @@ ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType ty
 	newsrc->source_type = type;
 	newsrc->scanned = false;
 	newsrc->location_name = filename;
+	newsrc->resourceFile = 0;
+	newsrc->volume_number = number;
+	newsrc->associated_map = map;
+
+	_sources.push_back(newsrc);
+	return newsrc;
+}
+
+ResourceSource *ResourceManager::addSource(ResourceSource *map, ResSourceType type, const Common::FSNode *resFile, int number) {
+	ResourceSource *newsrc = new ResourceSource();
+
+	newsrc->source_type = type;
+	newsrc->scanned = false;
+	newsrc->location_name = resFile->getName();
+	newsrc->resourceFile = resFile;
 	newsrc->volume_number = number;
 	newsrc->associated_map = map;
 
@@ -322,12 +351,24 @@ int sci0_get_compression_method(Common::ReadStream &stream) {
 int ResourceManager::addAppropriateSources() {
 	ResourceSource *map;
 
-	if (!Common::File::exists("RESOURCE.MAP"))
+	if (Common::File::exists("RESOURCE.MAP"))
+		map = addExternalMap("RESOURCE.MAP");
+#ifdef ENABLE_SCI32
+	else if (Common::File::exists("RESMAP.000"))
+		map = addExternalMap("RESMAP.000");
+	else if (Common::File::exists("RESMAP.001"))
+		map = addExternalMap("RESMAP.001");
+#endif
+	else
 		return 0;
-	map = addExternalMap("RESOURCE.MAP");
+	
 
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, "RESOURCE.0??");
+	
+#ifdef ENABLE_SCI32
+	SearchMan.listMatchingMembers(files, "RESSCI.0??");
+#endif
 
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		const Common::String name = (*x)->getName();
@@ -339,6 +380,48 @@ int ResourceManager::addAppropriateSources() {
 	addPatchDir(".");
 	if (Common::File::exists("MESSAGE.MAP"))
 		addSource(addExternalMap("MESSAGE.MAP"), kSourceVolume, "RESOURCE.MSG", 0);
+	return 1;
+}
+
+int ResourceManager::addAppropriateSources(const Common::FSList &fslist) {
+	ResourceSource *map = 0;
+
+	// First, find resource.map
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory())
+			continue;
+
+		Common::String filename = file->getName();
+		filename.toLowercase();
+
+		if (filename.contains("resource.map") || filename.contains("resmap.000")) {
+			map = addExternalMap(file);
+			break;
+		}
+	}
+
+	if (!map)
+		return 0;
+
+	// Now find all the resource.0?? files
+	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
+		if (file->isDirectory())
+			continue;
+
+		Common::String filename = file->getName();
+		filename.toLowercase();
+
+		if (filename.contains("resource.0")	|| filename.contains("ressci.0")) {
+			const char *dot = strrchr(filename.c_str(), '.');
+			int number = atoi(dot + 1);
+
+			addSource(map, kSourceVolume, file, number);
+		}
+	}
+
+	// This function is only called by the advanced detector, and we don't really need
+	// to add a patch directory or message.map here
+
 	return 1;
 }
 
@@ -396,15 +479,22 @@ void ResourceManager::freeResourceSources() {
 	_sources.clear();
 }
 
-ResourceManager::ResourceManager(int maxMemory) {
-	_maxMemory = maxMemory;
+ResourceManager::ResourceManager() {
+	addAppropriateSources();
+	init();
+}
+
+ResourceManager::ResourceManager(const Common::FSList &fslist) {
+	addAppropriateSources(fslist);
+	init();
+}
+
+void ResourceManager::init() {
 	_memoryLocked = 0;
 	_memoryLRU = 0;
 	_LRU.clear();
 	_resMap.clear();
 	_audioMapSCI1 = NULL;
-
-	addAppropriateSources();
 
 	// FIXME: put this in an Init() function, so that we can error out if detection fails completely
 
@@ -432,7 +522,7 @@ ResourceManager::ResourceManager(int maxMemory) {
 	if (_sciVersion != SCI_VERSION_AUTODETECT)
 		debug("Resmgr: Detected %s", versionNames[_sciVersion]);
 	else
-		debug("Resmgr: Couldn't determine SCI version");
+		warning("Resmgr: Couldn't determine SCI version");
 
 	switch (_viewType) {
 	case kViewEga:
@@ -443,6 +533,12 @@ ResourceManager::ResourceManager(int maxMemory) {
 		break;
 	case kViewVga11:
 		debug("Resmgr: Detected SCI1.1 VGA graphic resources");
+		break;
+	case kViewAmiga:
+		debug("Resmgr: Detected Amiga graphic resources");
+		break;
+	default:
+		warning("Resmgr: Couldn't determine view type");
 	}
 }
 
@@ -506,7 +602,7 @@ void ResourceManager::printLRU() {
 }
 
 void ResourceManager::freeOldResources() {
-	while (_maxMemory < _memoryLRU) {
+	while (MAX_MEMORY < _memoryLRU) {
 		assert(!_LRU.empty());
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
@@ -602,7 +698,8 @@ const char *ResourceManager::versionDescription(ResVersion version) const {
 }
 
 ResourceManager::ResVersion ResourceManager::detectMapVersion() {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
+	Common::File *file = 0;
 	byte buff[6];
 	ResourceSource *rsrc= 0;
 
@@ -610,22 +707,29 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 		rsrc = *it;
 
 		if (rsrc->source_type == kSourceExtMap) {
-			file.open(rsrc->location_name);
+			if (rsrc->resourceFile) {
+				fileStream = rsrc->resourceFile->createReadStream();
+			} else {
+				file = new Common::File();
+				file->open(rsrc->location_name);
+				if (file->isOpen())
+					fileStream = file;
+			}
 			break;
 		}
 	}
-	if (file.isOpen() == false) {
+
+	if (!fileStream)
 		error("Failed to open resource map file");
-		return kResVersionUnknown;
-	}
+
 	// detection
 	// SCI0 and SCI01 maps have last 6 bytes set to FF
-	file.seek(-4, SEEK_END);
-	uint32 uEnd = file.readUint32LE();
+	fileStream->seek(-4, SEEK_END);
+	uint32 uEnd = fileStream->readUint32LE();
 	if (uEnd == 0xFFFFFFFF) {
 		// check if 0 or 01 - try to read resources in SCI0 format and see if exists
-		file.seek(0, SEEK_SET);
-		while (file.read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
+		fileStream->seek(0, SEEK_SET);
+		while (fileStream->read(buff, 6) == 6 && !(buff[0] == 0xFF && buff[1] == 0xFF && buff[2] == 0xFF)) {
 			if (getVolume(rsrc, (buff[5] & 0xFC) >> 2) == NULL)
 				return kResVersionSci1Middle;
 		}
@@ -639,15 +743,22 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 	uint16 lastDirectoryOffset = 0;
 	uint16 directorySize = 0;
 	ResVersion mapDetected = kResVersionUnknown;
-	file.seek(0, SEEK_SET);
-	while (!file.eos()) {
-		directoryType = file.readByte();
-		directoryOffset = file.readUint16LE();
-		if ((directoryType < 0x80) || ((directoryType > 0xA0) && (directoryType != 0xFF)))
+	fileStream->seek(0, SEEK_SET);
+
+	while (!fileStream->eos()) {
+		directoryType = fileStream->readByte();
+		directoryOffset = fileStream->readUint16LE();
+
+		// Only SCI32 has directory type < 0x80
+		if (directoryType < 0x80 && (mapDetected == kResVersionUnknown || mapDetected == kResVersionSci32))
+			mapDetected = kResVersionSci32;
+		else if ((directoryType < 0x80) || (directoryType > 0xA0 && directoryType != 0xFF))
 			break;
+		
 		// Offset is above file size? -> definitely not SCI1/SCI1.1
-		if (directoryOffset > file.size())
+		if (directoryOffset > fileStream->size())
 			break;
+
 		if (lastDirectoryOffset) {
 			directorySize = directoryOffset - lastDirectoryOffset;
 			if ((directorySize % 5) && (directorySize % 6 == 0))
@@ -655,49 +766,52 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 			if ((directorySize % 5 == 0) && (directorySize % 6))
 				mapDetected = kResVersionSci11;
 		}
-		if (directoryType==0xFF) {
+		
+		if (directoryType == 0xFF) {
 			// FFh entry needs to point to EOF
-			if (directoryOffset != file.size())
+			if (directoryOffset != fileStream->size())
 				break;
-			if (mapDetected) 
+
+			delete fileStream;
+
+			if (mapDetected)
 				return mapDetected;
 			return kResVersionSci1Late;
 		}
+
 		lastDirectoryOffset = directoryOffset;
 	}
 
-#ifdef ENABLE_SCI32
-	// late SCI1.1 and SCI32 maps have last directory entry set to 0xFF
-	// offset set to filesize and 4 more bytes
-
-	// TODO/FIXME: This code was not updated in r42300, which changed the behavior of this
-	// function a lot. To make it compile again "off" was changed to the newly introduced
-	// "lastDirectoryOffset". This is probably not the correct fix, since before r43000
-	// the loop above could not prematurely terminate and thus this would always check the
-	// last directory entry instead of the last checked directory entry.
-	file.seek(lastDirectoryOffset - 7, SEEK_SET);
-	if (file.readByte() == 0xFF && file.readUint16LE() == file.size())
-		return kResVersionSci32; // TODO : check if there is a difference between these maps
-#endif
+	delete fileStream;
 
 	return kResVersionUnknown;
 }
 
 ResourceManager::ResVersion ResourceManager::detectVolVersion() {
-	Common::File file;
+	Common::SeekableReadStream *fileStream = 0;
+	Common::File *file = 0;
 	ResourceSource *rsrc;
+
 	for (Common::List<ResourceSource *>::iterator it = _sources.begin(); it != _sources.end(); ++it) {
 		rsrc = *it;
 
 		if (rsrc->source_type == kSourceVolume) {
-			file.open(rsrc->location_name);
+			if (rsrc->resourceFile) {
+				fileStream = rsrc->resourceFile->createReadStream();
+			} else {
+				file = new Common::File();
+				file->open(rsrc->location_name);
+				if (file->isOpen())
+					fileStream = file;
+			}
 			break;
 		}
 	}
-	if (file.isOpen() == false) {
+	if (!fileStream) {
 		error("Failed to open volume file");
 		return kResVersionUnknown;
 	}
+
 	// SCI0 volume format:  {wResId wPacked+4 wUnpacked wCompression} = 8 bytes
 	// SCI1 volume format:  {bResType wResNumber wPacked+4 wUnpacked wCompression} = 9 bytes
 	// SCI1.1 volume format:  {bResType wResNumber wPacked wUnpacked wCompression} = 9 bytes
@@ -710,15 +824,17 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	bool failed = false;
 
 	// Check for SCI0, SCI1, SCI1.1 and SCI32 v2 (Gabriel Knight 1 CD) formats
-	while (!file.eos() && file.pos() < 0x100000) {
+	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
 		if (curVersion > kResVersionSci0Sci1Early)
-			file.readByte();
-		resId = file.readUint16LE();
-		dwPacked = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
-		dwUnpacked = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
-		wCompression = (curVersion < kResVersionSci32) ? file.readUint16LE() : file.readUint32LE();
-		if (file.eos())
+			fileStream->readByte();
+		resId = fileStream->readUint16LE();
+		dwPacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		dwUnpacked = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		wCompression = (curVersion < kResVersionSci32) ? fileStream->readUint16LE() : fileStream->readUint32LE();
+		if (fileStream->eos()) {
+			delete fileStream;
 			return curVersion;
+		}
 
 		int chk = (curVersion == kResVersionSci0Sci1Early) ? 4 : 20;
 		int offs = curVersion < kResVersionSci11 ? 4 : 0;
@@ -740,17 +856,19 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 				break;
 			}
 
-			file.seek(0, SEEK_SET);
+			fileStream->seek(0);
 			continue;
 		}
 
 		if (curVersion < kResVersionSci11)
-			file.seek(dwPacked - 4, SEEK_CUR);
+			fileStream->seek(dwPacked - 4, SEEK_CUR);
 		else if (curVersion == kResVersionSci11)
-			file.seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
+			fileStream->seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
 		else if (curVersion == kResVersionSci32)
-			file.seek(dwPacked, SEEK_CUR);//(9 + wPacked) % 2 ? wPacked + 1 : wPacked, SEEK_CUR);
+			fileStream->seek(dwPacked - 2, SEEK_CUR);
 	}
+
+	delete fileStream;
 
 	if (!failed)
 		return curVersion;
@@ -797,7 +915,7 @@ void ResourceManager::processPatch(ResourceSource *source, ResourceType restype,
 				patch_data_offset = 2;
 				break;
 			default:
-				warning("Resource patch unsupported special case %X\n", patch_data_offset);
+				warning("Resource patch unsupported special case %X", patch_data_offset);
 		}
 	}
 
@@ -909,7 +1027,7 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
 			if (!res->source) {
-				warning("Could not get volume for resource %d, VolumeID %d\n", id, offset >> bShift);
+				warning("Could not get volume for resource %d, VolumeID %d", id, offset >> bShift);
 			}
 			_resMap.setVal(resId, res);
 		}
@@ -1393,22 +1511,64 @@ ResourceCompression ResourceManager::getViewCompression() {
 	return kCompNone;
 }
 
-ResourceManager::ViewType ResourceManager::detectViewType() {
+ViewType ResourceManager::detectViewType() {
 	for (int i = 0; i < 1000; i++) {
 		Resource *res = findResource(ResourceId(kResourceTypeView, i), 0);
+
 		if (res) {
-			//FIXME: Amiga
 			switch(res->data[1]) {
-			case 0:
-				return kViewEga;
-			default:
+			case 128:
+				// If the 2nd byte is 128, it's a VGA game
 				return kViewVga;
+			case 0:
+				// EGA or Amiga, try to read as Amiga view
+
+				if (res->size < 10)
+					return kViewUnknown;
+
+				// Read offset of first loop
+				uint16 offset = READ_LE_UINT16(res->data + 8);
+
+				if (offset + 6U >= res->size)
+					return kViewUnknown;
+
+				// Read offset of first cel
+				offset = READ_LE_UINT16(res->data + offset + 4);
+
+				if (offset + 4U >= res->size)
+					return kViewUnknown;
+
+				// Check palette offset, amiga views have no palette
+				if (READ_LE_UINT16(res->data + 6) != 0)
+					return kViewEga;
+
+				uint16 width = READ_LE_UINT16(res->data + offset);
+				offset += 2;
+				uint16 height = READ_LE_UINT16(res->data + offset);
+				offset += 6;
+
+				// Check that the RLE data stays within bounds
+				int y;
+				for (y = 0; y < height; y++) {
+					int x = 0;
+
+					while ((x < width) && (offset < res->size)) {
+						byte op = res->data[offset++];
+						x += (op & 0x07) ? op & 0x07 : op >> 3;
+					}
+
+					// Make sure we got exactly the right number of pixels for this row
+					if (x != width)
+						return kViewEga;
+				}
+
+				return kViewAmiga;
 			}
 		}
 	}
 
 	warning("Resmgr: Couldn't find any views");
-	return kViewVga;
+	return kViewUnknown;
 }
 
 SciVersion ResourceManager::detectSciVersion() {
@@ -1480,7 +1640,7 @@ SciVersion ResourceManager::detectSciVersion() {
 		// If this turns out to be unreliable, we could do some pic resource checks instead.
 		return SCI_VERSION_1_EARLY;
 	case kResVersionSci1Middle:
-		return SCI_VERSION_1_LATE;
+		return SCI_VERSION_1_MIDDLE;
 	case kResVersionSci1Late:
 		if (_viewType == kViewVga11) {
 			// SCI1.1 resources, assume SCI1.1

@@ -75,6 +75,11 @@ private:
 	u16 _currentWidth, _currentHeight;
 
 	s32 _activeGraphicsMode;
+#ifdef USE_RGB_COLOR
+	const Graphics::PixelFormat _texturePF;
+	Graphics::PixelFormat _screenPF;
+	Graphics::PixelFormat _cursorPF;
+#endif
 
 	bool _fullscreen;
 
@@ -82,7 +87,7 @@ private:
 	s32 _mouseX, _mouseY;
 	u32 _mouseWidth, _mouseHeight;
 	s32 _mouseHotspotX, _mouseHotspotY;
-	u8 _mouseKeyColor;
+	u16 _mouseKeyColor;
 	u8 *_mouseCursor;
 
 	bool _kbd_active;
@@ -119,8 +124,13 @@ public:
 	virtual const GraphicsMode *getSupportedGraphicsModes() const;
 	virtual int getDefaultGraphicsMode() const;
 	virtual bool setGraphicsMode(int mode);
+#ifdef USE_RGB_COLOR
+	virtual Graphics::PixelFormat getScreenFormat() const;
+	virtual Common::List<Graphics::PixelFormat> getSupportedFormats();
+#endif
 	virtual int getGraphicsMode() const;
-	virtual void initSize(uint width, uint height);
+	virtual void initSize(uint width, uint height,
+							const Graphics::PixelFormat *format);
 	virtual int16 getWidth();
 	virtual int16 getHeight();
 	virtual void setPalette(const byte *colors, uint start, uint num);
@@ -142,14 +152,15 @@ public:
 									int x, int y, int w, int h);
 	virtual int16 getOverlayWidth();
 	virtual int16 getOverlayHeight();
-	virtual Graphics::PixelFormat getOverlayFormat() const { return Graphics::createPixelFormat<565>(); }
+	virtual Graphics::PixelFormat getOverlayFormat() const;
 
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
-								int hotspotY, byte keycolor = 255,
-								int cursorTargetScale = 1);
+								int hotspotY, uint32 keycolor,
+								int cursorTargetScale,
+								const Graphics::PixelFormat *format);
 
 	virtual bool pollEvent(Common::Event &event);
 	virtual uint32 getMillis();

@@ -26,6 +26,9 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/mutex.h"
 #include "common/util.h"
+#ifdef USE_RGB_COLOR
+#include "common/list.h"
+#endif
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/scaler.h"
@@ -97,6 +100,9 @@ void OSystem_SDL::beginGFXTransaction(void) {
 	_transactionDetails.needUpdatescreen = false;
 
 	_transactionDetails.normal1xScaler = false;
+#ifdef USE_RGB_COLOR
+	_transactionDetails.formatChanged = false;
+#endif
 
 	_oldVideoMode = _videoMode;
 }
@@ -120,6 +126,13 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 
 			_videoMode.mode = _oldVideoMode.mode;
 			_videoMode.scaleFactor = _oldVideoMode.scaleFactor;
+#ifdef USE_RGB_COLOR
+		} else if (_videoMode.format != _oldVideoMode.format) {
+			errors |= kTransactionFormatNotSupported;
+
+			_videoMode.format = _oldVideoMode.format;
+			_screenFormat = _videoMode.format;
+#endif
 		} else if (_videoMode.screenWidth != _oldVideoMode.screenWidth || _videoMode.screenHeight != _oldVideoMode.screenHeight) {
 			errors |= kTransactionSizeChangeFailed;
 
@@ -143,7 +156,11 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 		}
 	}
 
+#ifdef USE_RGB_COLOR
+	if (_transactionDetails.sizeChanged || _transactionDetails.formatChanged) {
+#else
 	if (_transactionDetails.sizeChanged) {
+#endif
 		unloadGFXMode();
 		if (!loadGFXMode()) {
 			if (_oldVideoMode.setup) {
@@ -186,11 +203,93 @@ OSystem::TransactionError OSystem_SDL::endGFXTransaction(void) {
 	} else if (_transactionDetails.needUpdatescreen) {
 		setGraphicsModeIntern();
 		internUpdateScreen();
-	}
+	} 
 
 	_transactionMode = kTransactionNone;
 	return (TransactionError)errors;
 }
+
+#ifdef USE_RGB_COLOR
+const Graphics::PixelFormat RGBList[] = {
+#ifdef ENABLE_32BIT
+	// RGBA8888, ARGB8888, RGB888
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 16, 8, 0, 24),
+	Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
+#endif
+	// RGB565, XRGB1555, RGB555, RGBA4444, ARGB4444
+	Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+	Graphics::PixelFormat(2, 5, 5, 5, 1, 10, 5, 0, 15),
+	Graphics::PixelFormat(2, 5, 5, 5, 0, 10, 5, 0, 0),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 12, 8, 4, 0),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 8, 4, 0, 12)
+};
+const Graphics::PixelFormat BGRList[] = {
+#ifdef ENABLE_32BIT
+	// ABGR8888, BGRA8888, BGR888
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
+	Graphics::PixelFormat(4, 8, 8, 8, 8, 8, 16, 24, 0),
+	Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
+#endif
+	// BGR565, XBGR1555, BGR555, ABGR4444, BGRA4444
+	Graphics::PixelFormat(2, 5, 6, 5, 0, 0, 5, 11, 0),
+	Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15),
+	Graphics::PixelFormat(2, 5, 5, 5, 0, 0, 5, 10, 0),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 0, 4, 8, 12),
+	Graphics::PixelFormat(2, 4, 4, 4, 4, 4, 8, 12, 0)
+};
+
+// TODO: prioritize matching alpha masks
+Common::List<Graphics::PixelFormat> OSystem_SDL::getSupportedFormats() {
+	static Common::List<Graphics::PixelFormat> list;
+	static bool inited = false;
+
+	if (inited)
+		return list;
+
+	bool BGR = false;
+	int listLength = ARRAYSIZE(RGBList);
+
+	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
+	if (_hwscreen) {
+		// Get our currently set hardware format
+		format = Graphics::PixelFormat(_hwscreen->format->BytesPerPixel, 
+			8 - _hwscreen->format->Rloss, 8 - _hwscreen->format->Gloss, 
+			8 - _hwscreen->format->Bloss, 8 - _hwscreen->format->Aloss, 
+			_hwscreen->format->Rshift, _hwscreen->format->Gshift, 
+			_hwscreen->format->Bshift, _hwscreen->format->Ashift);
+
+		// Workaround to MacOSX SDL not providing an accurate Aloss value.
+		if (_hwscreen->format->Amask == 0)
+			format.aLoss = 8;
+
+		// Push it first, as the prefered format.
+		list.push_back(format);
+
+		if (format.bShift > format.rShift)
+			BGR = true;
+
+		// Mark that we don't need to do this any more.
+		inited = true;
+	}
+
+	for (int i = 0; i < listLength; i++) {
+		if (inited && (RGBList[i].bytesPerPixel > format.bytesPerPixel))
+			continue;
+		if (BGR) {
+			if (BGRList[i] != format)
+				list.push_back(BGRList[i]);
+			list.push_back(RGBList[i]);
+		} else {
+			if (RGBList[i] != format)
+				list.push_back(RGBList[i]);
+			list.push_back(BGRList[i]);
+		}
+	}
+	list.push_back(Graphics::PixelFormat::createFormatCLUT8());
+	return list;
+}
+#endif
 
 bool OSystem_SDL::setGraphicsMode(int mode) {
 	Common::StackLock lock(_graphicsMutex);
@@ -340,8 +439,26 @@ int OSystem_SDL::getGraphicsMode() const {
 	return _videoMode.mode;
 }
 
-void OSystem_SDL::initSize(uint w, uint h) {
+void OSystem_SDL::initSize(uint w, uint h, const Graphics::PixelFormat *format) {
 	assert(_transactionMode == kTransactionActive);
+
+#ifdef USE_RGB_COLOR
+	//avoid redundant format changes
+	Graphics::PixelFormat newFormat;
+	if (!format)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		newFormat = *format;
+
+	assert(newFormat.bytesPerPixel > 0);
+
+	if (newFormat != _videoMode.format)
+	{
+		_videoMode.format = newFormat;
+		_transactionDetails.formatChanged = true;
+		_screenFormat = newFormat;
+	}
+#endif
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
@@ -426,9 +543,21 @@ bool OSystem_SDL::loadGFXMode() {
 	//
 	// Create the surface that contains the 8 bit game data
 	//
+#ifdef USE_RGB_COLOR
+	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 
+						_screenFormat.bytesPerPixel << 3, 
+						((1 << _screenFormat.rBits()) - 1) << _screenFormat.rShift ,
+						((1 << _screenFormat.gBits()) - 1) << _screenFormat.gShift ,
+						((1 << _screenFormat.bBits()) - 1) << _screenFormat.bShift ,
+						((1 << _screenFormat.aBits()) - 1) << _screenFormat.aShift );
+	if (_screen == NULL)
+		error("allocating _screen failed");
+
+#else
 	_screen = SDL_CreateRGBSurface(SDL_SWSURFACE, _videoMode.screenWidth, _videoMode.screenHeight, 8, 0, 0, 0, 0);
 	if (_screen == NULL)
 		error("allocating _screen failed");
+#endif
 
 	//
 	// Create the surface that contains the scaled graphics in 16 bit mode
@@ -571,8 +700,8 @@ bool OSystem_SDL::hotswapGFXMode() {
 	// Keep around the old _screen & _overlayscreen so we can restore the screen data
 	// after the mode switch.
 	SDL_Surface *old_screen = _screen;
-	SDL_Surface *old_overlayscreen = _overlayscreen;
 	_screen = NULL;
+	SDL_Surface *old_overlayscreen = _overlayscreen;
 	_overlayscreen = NULL;
 
 	// Release the HW screen surface
@@ -846,30 +975,6 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 		 * and just updates those, on the actual display. */
 		addDirtyRgnAuto(src);
 	} else {
-		/* Clip the coordinates */
-		if (x < 0) {
-			w += x;
-			src -= x;
-			x = 0;
-		}
-
-		if (y < 0) {
-			h += y;
-			src -= y * pitch;
-			y = 0;
-		}
-
-		if (w > _videoMode.screenWidth - x) {
-			w = _videoMode.screenWidth - x;
-		}
-
-		if (h > _videoMode.screenHeight - y) {
-			h = _videoMode.screenHeight - y;
-		}
-
-		if (w <= 0 || h <= 0)
-			return;
-
 		_cksumValid = false;
 		addDirtyRect(x, y, w, h);
 	}
@@ -878,8 +983,19 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 	if (SDL_LockSurface(_screen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
 
+#ifdef USE_RGB_COLOR
+	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth * _screenFormat.bytesPerPixel + x * _screenFormat.bytesPerPixel;
+	if (_videoMode.screenWidth == w && pitch == w * _screenFormat.bytesPerPixel) {
+		memcpy(dst, src, h*w*_screenFormat.bytesPerPixel);
+	} else {
+		do {
+			memcpy(dst, src, w * _screenFormat.bytesPerPixel);
+			src += pitch;
+			dst += _videoMode.screenWidth * _screenFormat.bytesPerPixel;
+		} while (--h);
+	}
+#else
 	byte *dst = (byte *)_screen->pixels + y * _videoMode.screenWidth + x;
-
 	if (_videoMode.screenWidth == pitch && pitch == w) {
 		memcpy(dst, src, h*w);
 	} else {
@@ -889,6 +1005,7 @@ void OSystem_SDL::copyRectToScreen(const byte *src, int pitch, int x, int y, int
 			dst += _videoMode.screenWidth;
 		} while (--h);
 	}
+#endif
 
 	// Unlock the screen surface
 	SDL_UnlockSurface(_screen);
@@ -912,7 +1029,11 @@ Graphics::Surface *OSystem_SDL::lockScreen() {
 	_framebuffer.w = _screen->w;
 	_framebuffer.h = _screen->h;
 	_framebuffer.pitch = _screen->pitch;
+#ifdef USE_RGB_COLOR
+	_framebuffer.bytesPerPixel = _screenFormat.bytesPerPixel;
+#else
 	_framebuffer.bytesPerPixel = 1;
+#endif
 
 	return &_framebuffer;
 }
@@ -1096,6 +1217,11 @@ int16 OSystem_SDL::getWidth() {
 void OSystem_SDL::setPalette(const byte *colors, uint start, uint num) {
 	assert(colors);
 
+#ifdef USE_RGB_COLOR
+	if (_screenFormat.bytesPerPixel > 1)
+		return; //not using a paletted pixel format
+#endif
+
 	// Setting the palette before _screen is created is allowed - for now -
 	// since we don't actually set the palette until the screen is updated.
 	// But it could indicate a programming error, so let's warn about it.
@@ -1149,9 +1275,9 @@ void OSystem_SDL::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_cursorPaletteDisabled = false;
-
 	blitCursor();
 }
+
 
 void OSystem_SDL::setShakePos(int shake_pos) {
 	assert (_transactionMode == kTransactionNone);
@@ -1357,7 +1483,17 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}
 }
 
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+#ifdef USE_RGB_COLOR
+	if (!format)
+		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
+		_cursorFormat = *format;
+	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+#else
+	keycolor &= 0xFF;
+#endif
+
 	if (w == 0 || h == 0)
 		return;
 
@@ -1391,16 +1527,26 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	}
 
 	free(_mouseData);
-
+#ifdef USE_RGB_COLOR
+	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
+	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
+#else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+#endif
+
 	blitCursor();
 }
 
 void OSystem_SDL::blitCursor() {
 	byte *dstPtr;
 	const byte *srcPtr = _mouseData;
+#ifdef USE_RGB_COLOR
+	uint32 color;
+	uint32 colormask = (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+#else
 	byte color;
+#endif
 	int w, h, i, j;
 
 	if (!_mouseOrigSurface || !_mouseData)
@@ -1434,13 +1580,29 @@ void OSystem_SDL::blitCursor() {
 
 	for (i = 0; i < h; i++) {
 		for (j = 0; j < w; j++) {
-			color = *srcPtr;
-			if (color != _mouseKeyColor) {	// transparent, don't draw
-				*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
-					palette[color].r, palette[color].g, palette[color].b);
+#ifdef USE_RGB_COLOR
+			if (_cursorFormat.bytesPerPixel > 1) {
+				color = (*(uint32 *) srcPtr) & colormask;
+				if (color != _mouseKeyColor) {	// transparent, don't draw
+					uint8 r,g,b;
+					_cursorFormat.colorToRGB(color,r,g,b);
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+						r, g, b);
+				}
+				dstPtr += 2;
+				srcPtr += _cursorFormat.bytesPerPixel;
+			} else {
+#endif
+				color = *srcPtr;
+				if (color != _mouseKeyColor) {	// transparent, don't draw
+					*(uint16 *)dstPtr = SDL_MapRGB(_mouseOrigSurface->format,
+						palette[color].r, palette[color].g, palette[color].b);
+				}
+				dstPtr += 2;
+				srcPtr++;
+#ifdef USE_RGB_COLOR
 			}
-			dstPtr += 2;
-			srcPtr++;
+#endif
 		}
 		dstPtr += _mouseOrigSurface->pitch - w * 2;
 	}

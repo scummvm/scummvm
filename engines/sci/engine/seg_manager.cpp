@@ -68,6 +68,13 @@ SegManager::SegManager(ResourceManager *resMgr, SciVersion version) {
 	exports_wide = 0;
 	_version = version;
 	_resMgr = resMgr;
+
+	int result = 0;
+
+	result = createClassTable();
+
+	if (result)
+		error("SegManager: Failed to initialize class table");
 }
 
 // Destroy the object, free the memorys if allocated before
@@ -139,7 +146,7 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 	if (!script || (_version >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
-	if (((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader()) {
+	if (_version == SCI_VERSION_0_EARLY) {	// check if we got an old script header
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (_version < SCI_VERSION_1_1) {
@@ -155,7 +162,7 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 		}
 
 		if (scr.buf_size > 65535) {
-			error("Script and heap sizes combined exceed 64K.\n"
+			error("Script and heap sizes combined exceed 64K."
 			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
 			          "fixed in the next major version");
@@ -677,12 +684,11 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 			int species = READ_LE_UINT16(seeker + 10);
 
 			if (species < 0 || species >= (int)_classtable.size()) {
-				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d\n",
+				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
 				          species, species, _classtable.size(), scr->nr);
 				return;
 			}
 
-			_classtable[species].script = scr->nr;
 			_classtable[species].reg.segment = seg;
 			_classtable[species].reg.offset = classpos;
 		}
@@ -906,5 +912,25 @@ int SegManager::freeDynmem(reg_t addr) {
 	return 0; // OK
 }
 
+int SegManager::createClassTable() {
+	Resource *vocab996 = _resMgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
+
+	if (!vocab996)
+		error("SegManager: failed to open vocab 996");
+
+	int totalClasses = vocab996->size >> 2;
+	_classtable.resize(totalClasses);
+
+	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
+		uint16 scriptNr = READ_LE_UINT16(vocab996->data + classNr * 4 + 2);
+
+		_classtable[classNr].reg = NULL_REG;
+		_classtable[classNr].script = scriptNr;
+	}
+
+	_resMgr->unlockResource(vocab996);
+
+	return 0;
+}
 
 } // End of namespace Sci

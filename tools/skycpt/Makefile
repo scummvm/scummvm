@@ -9,10 +9,10 @@ OBJS=AsciiCptCompile.o cptcompiler.o cpthelp.o idFinder.o KmpSearch.o stdafx.o T
 all: $(TARGET)
 
 clean:
-	rm -f $(TARGET) $(OBJS)
+	$(QUIET)$(RM) $(TARGET) $(OBJS)
 
 $(TARGET): $(OBJS)
-	$(CC) $(OBJS) $(LDFLAGS) -o $(TARGET)
+	$(QUIET_CXX)$(CXX) $(OBJS) $(LDFLAGS) -o $(TARGET)
 
 %.o: %.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(QUIET_CXX)$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@

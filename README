@@ -260,6 +260,8 @@ SCUMM Games by Humongous Entertainment:
      Big Thinkers Kindergarten                   [thinkerk]
      Blue's 123 Time Activities                  [Blues123Time]
      Blue's ABC Time Activities                  [BluesABCTime]
+     Blue's Art Time Activities                  [arttime]
+     Blue's Reading Time Activities              [readtime]
      Fatty Bear's Birthday Surprise              [fbear]
      Fatty Bear's Fun Pack                       [fbpack]
      Freddi Fish 1: The Case of the Missing
@@ -270,6 +272,8 @@ SCUMM Games by Humongous Entertainment:
          Conch Shell                             [freddi3]
      Freddi Fish 4: The Case of the Hogfish
          Rustlers of Briny Gulch                 [freddi4]
+     Freddi Fish 5: The Case of the Creature
+          of Coral Cave                          [freddicove]
      Freddi Fish and Luther's Maze Madness       [maze]
      Freddi Fish and Luther's Water Worries      [water]
      Let's Explore the Airport with Buzzy        [airport]
@@ -295,6 +299,7 @@ SCUMM Games by Humongous Entertainment:
      Putt-Putt's Fun Pack                        [funpack]
      SPY Fox 1: Dry Cereal                       [spyfox]
      SPY Fox 2: Some Assembly Required           [spyfox2]
+     SPY Fox 3: Operation Ozone                  [spyozon]
      SPY Fox in Cheese Chase                     [chase]
      SPY Fox in Hold the Mustard                 [mustard]
 
@@ -304,10 +309,15 @@ If you want the latest updates on game compatibility, visit our web site
 and view the compatibility chart.
 
      Backyard Baseball                           [baseball]
+     Backyard Baseball 2001                      [baseball2001]
+     Backyard Baseball 2003                      [baseball2003]
+     Backyard Football 2002                      [football2002]
      Backyard Soccer                             [soccer]
+     Backyard Soccer MLS                         [soccermls]
+     Backyard Soccer 2004                        [soccer2004]
      Blue's Birthday Adventure                   [BluesBirthday]
      Blue's Treasure Hunt                        [BluesTreasureHunt]
-     SPY Fox 3: Operation Ozone                  [spyozon]
+     Pajama Sam: Games to Play on Any Day        [pjgames]
 
 The following games are based on the SCUMM engine, but NOT supported
 by ScummVM (yet):

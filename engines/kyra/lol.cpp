@@ -65,6 +65,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	case Common::JA_JPN:
 		_lang = 0;
+		break;
 
 	default:
 		warning("unsupported language, switching back to English");

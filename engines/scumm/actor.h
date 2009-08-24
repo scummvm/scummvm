@@ -157,7 +157,7 @@ protected:
 	};
 
 
-	byte _palette[256];
+	uint16 _palette[256];
 	int _elevation;
 	uint16 _facing;
 	uint16 _targetFacing;

@@ -1,6 +1,7 @@
 MODULE := graphics
 
 MODULE_OBJS := \
+	conversion.o \
 	cursorman.o \
 	dither.o \
 	font.o \
@@ -11,6 +12,7 @@ MODULE_OBJS := \
 	fonts/scummfont.o \
 	iff.o \
 	imagedec.o \
+	jpeg.o \
 	primitives.o \
 	scaler.o \
 	scaler/thumbnail_intern.o \

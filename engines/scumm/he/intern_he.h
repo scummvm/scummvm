@@ -458,6 +458,7 @@ protected:
 	uint8 *getHEPaletteIndex(int palSlot);
 	int getHEPaletteColor(int palSlot, int color);
 	int getHEPaletteSimilarColor(int palSlot, int red, int green, int start, int end);
+	int getHEPalette16BitColorComponent(int component, int type);
 	int getHEPaletteColorComponent(int palSlot, int color, int component);
 	void setHEPaletteColor(int palSlot, uint8 color, uint8 r, uint8 g, uint8 b);
 	void setHEPaletteFromPtr(int palSlot, const uint8 *palData);
@@ -466,7 +467,7 @@ protected:
 	void setHEPaletteFromRoom(int palSlot, int resId, int state);
 	void restoreHEPalette(int palSlot);
 	void copyHEPalette(int dstPalSlot, int srcPalSlot);
-	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint8 srcColor);
+	void copyHEPaletteColor(int palSlot, uint8 dstColor, uint16 srcColor);
 
 protected:
 	/* HE version 90 script opcodes */

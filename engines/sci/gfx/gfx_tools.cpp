@@ -49,6 +49,7 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 	mode->xfact = xfact;
 	mode->yfact = yfact;
 	mode->bytespp = format.bytesPerPixel;
+	mode->format = format;
 
 	// FIXME: I am not sure whether the following assignments are quite right.
 	// The only code using these are the built-in scalers of the SCI engine.
@@ -60,10 +61,10 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 		mode->green_mask = format.ARGBToColor(0, 0, 0xFF, 0);
 		mode->blue_mask = format.ARGBToColor(0, 0, 0, 0xFF);
 		mode->alpha_mask = format.ARGBToColor(0xFF, 0, 0, 0);
-		mode->red_shift = format.rLoss;
-		mode->green_shift = format.gLoss;
-		mode->blue_shift = format.bLoss;
-		mode->alpha_shift = format.aLoss;
+		mode->red_shift = format.rShift;
+		mode->green_shift = format.gShift;
+		mode->blue_shift = format.bShift;
+		mode->alpha_shift = format.aShift;
 	} else {
 		mode->red_mask = mode->green_mask = mode->blue_mask = 0;
 		mode->alpha_mask = 0;

@@ -44,13 +44,14 @@ namespace Sci {
 class GfxDriver;
 
 // FIXME: error-prone
-const char *versionNames[9] = {
+const char *versionNames[10] = {
 	"Autodetect",
 	"SCI0 Early",
 	"SCI0 Late",
 	"SCI01",
 	"SCI1 EGA",
 	"SCI1 Early",
+	"SCI1 Middle",
 	"SCI1 Late",
 	"SCI1.1",
 	"SCI32"
@@ -110,7 +111,13 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::run() {
+	Graphics::PixelFormat gfxmode;
+#if 0 && defined(USE_RGB_COLOR)
+	initGraphics(320, 200, false, NULL);
+#else
 	initGraphics(320, 200, false);
+#endif
+	gfxmode = _system->getScreenFormat();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -134,7 +141,7 @@ Common::Error SciEngine::run() {
 
 	const uint32 flags = getFlags();
 
-	_resmgr = new ResourceManager(256 * 1024);
+	_resmgr = new ResourceManager();
 	_version = _resmgr->sciVersion();
 
 	if (!_resmgr) {
@@ -189,7 +196,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	if (gfxop_init(_resmgr->sciVersion(), &gfx_state, &gfx_options, _resmgr)) {
+	if (gfxop_init(_resmgr->sciVersion(), &gfx_state, &gfx_options, _resmgr, gfxmode, 1, 1)) {
 		warning("Graphics initialization failed. Aborting...");
 		return Common::kUnknownError;
 	}

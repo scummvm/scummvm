@@ -144,6 +144,8 @@ public:
 protected:
 	SavePartSprite *_sprite;
 
+	/** Determine whether it's a dummy sprite save/load. */
+	static bool isDummy(int32 size);
 	/** Determine whether using a sprite was requested. */
 	static bool isSprite(int32 size);
 	/** Determine which sprite is meant. */

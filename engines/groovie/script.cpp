@@ -102,6 +102,7 @@ Script::Script(GroovieEngine *vm, EngineVersion version) :
 	_hotspotSlot = (uint16)-1;
 
 	_oldInstruction = (uint16)-1;
+	_videoSkipAddress = 0;
 }
 
 Script::~Script() {
@@ -235,8 +236,8 @@ void Script::step() {
 	(this->*op)();
 }
 
-void Script::setMouseClick() {
-	_eventMouseClicked = true;
+void Script::setMouseClick(uint8 button) {
+	_eventMouseClicked = button;
 }
 
 void Script::setKbdChar(uint8 c) {
@@ -359,7 +360,7 @@ bool Script::hotspot(Common::Rect rect, uint16 address, uint8 cursor) {
 	    Common::isDebugChannelEnabled(kGroovieDebugAll)) {
 		rect.translate(0, -80);
 		_vm->_graphicsMan->_foreground.frameRect(rect, 250);
-		_vm->_system->copyRectToScreen((byte*)_vm->_graphicsMan->_foreground.getBasePtr(0, 0), 640, 0, 80, 640, 320);
+		_vm->_system->copyRectToScreen((byte*)_vm->_graphicsMan->_foreground.getBasePtr(0, 0), _vm->_graphicsMan->_foreground.pitch, 0, 80, 640, 320);
 		_vm->_system->updateScreen();
 	}
 
@@ -559,6 +560,21 @@ bool Script::playvideofromref(uint32 fileref) {
 		}
 
 		_bitflags = 0;
+
+		// Reset the clicked mouse events
+		_eventMouseClicked = 0;
+	}
+
+	// Check if the user wants to skip the video
+	if ((_eventMouseClicked == 2) && (_videoSkipAddress != 0)) {
+		// Jump to the given address
+		_currentInstruction = _videoSkipAddress;
+
+		// Reset the skip address
+		_videoSkipAddress = 0;
+
+		// End the playback
+		return true;
 	}
 
 	// Video available, play one frame
@@ -573,7 +589,7 @@ bool Script::playvideofromref(uint32 fileref) {
 			_videoRef = 0;
 
 			// Clear the input events while playing the video
-			_eventMouseClicked = false;
+			_eventMouseClicked = 0;
 			_eventKbdChar = 0;
 
 			// Newline
@@ -604,8 +620,8 @@ void Script::o_inputloopstart() {	//0x0B
 	_inputLoopAddress = _currentInstruction - 1;
 
 	// Save the current mouse state for the whole loop
-	_mouseClicked = _eventMouseClicked;
-	_eventMouseClicked = false;
+	_mouseClicked = (_eventMouseClicked == 1);
+	_eventMouseClicked = 0;
 
 	// Save the current pressed character for the whole loop
 	_kbdChar = _eventKbdChar;
@@ -1535,20 +1551,19 @@ void Script::o_stub59() {
 	debugScript(1, true, "STUB59: 0x%04X 0x%02X", val1, val2);
 }
 
-void Script::o2_playsong(){
+void Script::o2_playsong() {
 	uint32 fileref = readScript32bits();
 	debugScript(1, true, "PlaySong(0x%08X): Play xmidi file", fileref);
 	_vm->_musicPlayer->playSong(fileref);
-
 }
 
-void Script::o2_setbackgroundsong(){
+void Script::o2_setbackgroundsong() {
 	uint32 fileref = readScript32bits();
 	debugScript(1, true, "SetBackgroundSong(0x%08X)", fileref);
 	_vm->_musicPlayer->setBackgroundSong(fileref);
 }
 
-void Script::o2_videofromref(){
+void Script::o2_videofromref() {
 	uint32 fileref = readScript32bits();
 
 	// Show the debug information just when starting the playback
@@ -1556,6 +1571,7 @@ void Script::o2_videofromref(){
 		debugScript(1, true, "VIDEOFROMREF(0x%08X) (Not fully imp): Play video file from ref", fileref);
 		debugC(5, kGroovieDebugVideo | kGroovieDebugAll, "Playing video 0x%08X via 0x09", fileref);
 	}
+
 	// Play the video
 	if (!playvideofromref(fileref)) {
 		// Move _currentInstruction back
@@ -1563,7 +1579,7 @@ void Script::o2_videofromref(){
 	}
 }
 
-void Script::o2_vdxtransition(){
+void Script::o2_vdxtransition() {
 	uint32 fileref = readScript32bits();
 
 	// Show the debug information just when starting the playback
@@ -1587,9 +1603,19 @@ void Script::o2_vdxtransition(){
 	}
 }
 
-void Script::o2_stub52(){
+void Script::o2_setvideoskip() {
+	_videoSkipAddress = readScript16bits();
+	debugScript(1, true, "SetVideoSkip (0x%04X)", _videoSkipAddress);
+}
+
+void Script::o2_stub52() {
 	uint8 arg = readScript8bits();
 	debugScript(1, true, "STUB52 (0x%02X)", arg);
+}
+
+void Script::o2_setscriptend() {
+	uint16 arg = readScript16bits();
+	debugScript(1, true, "SetScriptEnd (0x%04X)", arg);
 }
 
 Script::OpcodeFunc Script::_opcodesT7G[NUM_OPCODES] = {
@@ -1692,11 +1718,11 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_invalid, // 0x00
 	&Script::o_nop,
 	&Script::o2_playsong,
-	&Script::o_bf9on,
-	&Script::o_palfadeout, // 0x04
-	&Script::o_bf8on,
-	&Script::o_bf6on,
-	&Script::o_bf7on,
+	&Script::o_nop,
+	&Script::o_nop, // 0x04
+	&Script::o_nop,
+	&Script::o_nop,
+	&Script::o_nop,
 	&Script::o2_setbackgroundsong, // 0x08
 	&Script::o2_videofromref,
 	&Script::o_bf5on,
@@ -1719,7 +1745,7 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_xor_obfuscate,
 	&Script::o2_vdxtransition, // 0x1C
 	&Script::o_swap,
-	&Script::o_nop8,
+	&Script::o_invalid,
 	&Script::o_inc,
 	&Script::o_dec, // 0x20
 	&Script::o_strcmpnejmp_var,
@@ -1729,10 +1755,10 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_add,
 	&Script::o_videofromstring1,
 	&Script::o_videofromstring2,
-	&Script::o_nop16, // 0x28
-	&Script::o_stopmidi,
-	&Script::o_endscript,
+	&Script::o_invalid, // 0x28
 	&Script::o_nop,
+	&Script::o_endscript,
+	&Script::o_invalid,
 	&Script::o_sethotspottop, // 0x2C
 	&Script::o_sethotspotbottom,
 	&Script::o_loadgame,
@@ -1759,22 +1785,22 @@ Script::OpcodeFunc Script::_opcodesV2[NUM_OPCODES] = {
 	&Script::o_returnscript,
 	&Script::o_sethotspotright, // 0x44
 	&Script::o_sethotspotleft,
-	&Script::o_nop,
-	&Script::o_nop,
-	&Script::o_nop8, // 0x48
-	&Script::o_nop,
+	&Script::o_invalid,
+	&Script::o_invalid,
+	&Script::o_invalid, // 0x48
+	&Script::o_invalid,
 	&Script::o_nop16,
-	&Script::o_nop8,
-	&Script::o_getcd, // 0x4C
-	&Script::o_playcd,
-	&Script::o_nop16,
+	&Script::o_invalid,
+	&Script::o_invalid, // 0x4C
+	&Script::o_invalid,
+	&Script::o_invalid,
 	&Script::o_nop16,
 	&Script::o_nop16, // 0x50
-	&Script::o_nop16,
+	&Script::o2_setvideoskip,
 	&Script::o2_stub52,
 	&Script::o_hotspot_outrect,
-	&Script::o_nop, // 0x54
-	&Script::o_nop16,
+	&Script::o_invalid, // 0x54
+	&Script::o2_setscriptend,
 	&Script::o_stub56,
 	&Script::o_invalid,
 	&Script::o_invalid, // 0x58

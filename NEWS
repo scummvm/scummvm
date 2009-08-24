@@ -2,6 +2,12 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
 1.1.0 (????-??-??)
+ New Games:
+   - Added support for Blue's Art Time Activities.
+   - Added support for Blue's Reading Time Activities.
+   - Added support for Freddi Fish 5: The Case of the Creature of Coral Cave.
+   - Added support for Pajama Sam: Games to Play on Any Day.
+
  General:
    - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
 
@@ -9,7 +15,7 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for the Amiga version of The Legend of Kyrandia.
    - Adapted KYRA to support the custom SJIS font.
 
-1.0.0 (2009-??-??)
+1.0.0rc1 (2009-08-31)
  New Games:
    - Added support for Discworld.
    - Added support for Discworld 2 - Missing Presumed ...!?.
@@ -58,6 +64,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  KYRA:
    - Added support for PC Speaker based music and sound effects.
    - Added support for 16 color dithering in Kyrandia PC-9801.
+
+ PSP port:
+   - Added support for sleep mode (suspend/resume).
 
  WinCE port:
     - Speed optimized versions of low-res Smartphone and 2x scalers.

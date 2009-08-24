@@ -31,12 +31,16 @@
 #include <pspdebug.h>
 #endif
 
+#include <psppower.h>
+
 #include <common/system.h>
 #include <engines/engine.h>
 #include <base/main.h>
 #include <base/plugins.h>
+#include "backends/platform/psp/powerman.h"
 
-#include "osys_psp_gu.h"
+
+#include "osys_psp.h"
 #include "./trace.h"
 
 
@@ -58,9 +62,8 @@ PSP_MODULE_INFO("SCUMMVM-PSP", 0, 1, 1);
  * code (crt0.c) starts this program in to be in usermode
  * even though the module was started in kernelmode
  */
-#ifndef USERSPACE_ONLY
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
-#endif
+PSP_HEAP_SIZE_KB(-128);	//Leave 128kb for thread stacks, etc.
 
 
 #ifndef USERSPACE_ONLY
@@ -91,9 +94,18 @@ void loaderInit() {
 #endif
 
 /* Exit callback */
-SceKernelCallbackFunction exit_callback(int /*arg1*/, int /*arg2*/, void * /*common*/) {
+int exit_callback(void) {
 	sceKernelExitGame();
 	return 0;
+}
+
+/* Function for handling suspend/resume */
+void power_callback(int , int powerinfo) {
+	if (powerinfo & PSP_POWER_CB_POWER_SWITCH || powerinfo & PSP_POWER_CB_SUSPENDING) {
+		PowerMan.suspend();
+	} else if (powerinfo & PSP_POWER_CB_RESUME_COMPLETE) {
+		PowerMan.resume();
+	}
 }
 
 /* Callback thread */
@@ -102,6 +114,16 @@ int CallbackThread(SceSize /*size*/, void *arg) {
 
 	cbid = sceKernelCreateCallback("Exit Callback", (SceKernelCallbackFunction)exit_callback, NULL);
 	sceKernelRegisterExitCallback(cbid);
+	/* Set up callbacks for PSPIoStream */
+
+	cbid = sceKernelCreateCallback("Power Callback", (SceKernelCallbackFunction)power_callback, 0);
+	if (cbid >= 0) {
+		if(scePowerRegisterCallback(-1, cbid) < 0) {
+			PSPDebugTrace("SetupCallbacks(): Couldn't register callback for power_callback\n");
+		}
+	} else {
+		PSPDebugTrace("SetupCallbacks(): Couldn't create a callback for power_callback\n");
+	}
 
 	sceKernelSleepThreadCB();
 	return 0;
@@ -119,17 +141,24 @@ int SetupCallbacks(void) {
 
 #undef main
 int main(void) {
+	//change clock rate to 333mhz
+	scePowerSetClockFrequency(333, 333, 166);
+
+	PowerManager::instance();	// Setup power manager
+
 	SetupCallbacks();
 
 	static const char *argv[] = { "scummvm", NULL };
 	static int argc = sizeof(argv)/sizeof(char *)-1;
 
-	g_system = new OSystem_PSP_GU();
+	g_system = new OSystem_PSP();
 	assert(g_system);
 
 	int res = scummvm_main(argc, argv);
 
 	g_system->quit();	// TODO: Consider removing / replacing this!
+
+	PowerManager::destroy();	// get rid of PowerManager
 
 	sceKernelSleepThread();
 

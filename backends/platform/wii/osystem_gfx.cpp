@@ -21,6 +21,8 @@
 
 #include <malloc.h>
 
+#include "graphics/conversion.h"
+
 #include "osystem.h"
 #include "gx_supp.h"
 
@@ -143,21 +145,70 @@ int OSystem_Wii::getGraphicsMode() const {
 	return _activeGraphicsMode;
 }
 
-void OSystem_Wii::initSize(uint width, uint height) {
-	if (_gameWidth != width || _gameHeight != height) {
-		printf("initSize %u %u\n", width, height);
+#ifdef USE_RGB_COLOR
+Graphics::PixelFormat OSystem_Wii::getScreenFormat() const {
+	return _screenPF;
+}
 
+Common::List<Graphics::PixelFormat> OSystem_Wii::getSupportedFormats() {
+	Common::List<Graphics::PixelFormat> res;
+	res.push_back(_texturePF);
+	res.push_back(Graphics::PixelFormat::createFormatCLUT8());
+
+	return res;
+}
+#endif
+
+void OSystem_Wii::initSize(uint width, uint height,
+							const Graphics::PixelFormat *format) {
+	bool update = false;
+
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat newFormat;
+	if (format)
+		newFormat = *format;
+	else
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+
+	if (newFormat.bytesPerPixel > 2)
+		newFormat = Graphics::PixelFormat::createFormatCLUT8();
+
+	if (_screenPF != newFormat) {
+		_screenPF = newFormat;
+		update = true;
+	}
+#endif
+
+	if (_gameWidth != width || _gameHeight != height) {
 		assert((width <= 640) && (height <= 480));
 
 		_gameWidth = width;
 		_gameHeight = height;
+		update = true;
+	}
+
+	if (update) {
+#ifdef USE_RGB_COLOR
+		printf("initSize %u*%u*%u (%u,%u,%u)\n",
+				_gameWidth, _gameHeight,
+				_screenPF.bytesPerPixel * 8,
+				_screenPF.rShift, _screenPF.gShift, _screenPF.bShift);
+#else
+		printf("initSize %u*%u\n", _gameWidth, _gameHeight);
+#endif
 
 		if(_gamePixels)
 			free(_gamePixels);
 
+#ifdef USE_RGB_COLOR
+		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight *
+										_screenPF.bytesPerPixel);
+		memset(_gamePixels, 0, _gameWidth * _gameHeight *
+				_screenPF.bytesPerPixel);
+#else
 		_gamePixels = (u8 *) memalign(32, _gameWidth * _gameHeight);
 		memset(_gamePixels, 0, _gameWidth * _gameHeight);
-
+#endif
 		if (!_overlayVisible) {
 			_currentWidth = _gameWidth;
 			_currentHeight = _gameHeight;
@@ -177,6 +228,10 @@ int16 OSystem_Wii::getHeight() {
 }
 
 void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
+#ifdef USE_RGB_COLOR
+	assert(_screenPF.bytesPerPixel == 1);
+#endif
+
 	const byte *p = colors;
 	for (uint i = 0; i < num; ++i) {
 		_palette[start + i] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(p[0], p[1], p[2]);
@@ -213,37 +268,36 @@ void OSystem_Wii::disableCursorPalette(bool disable) {
 
 void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 									int w, int h) {
-	if (x < 0) {
-		w += x;
-		buf -= x;
-		x = 0;
-	}
+	assert(x >= 0 && x < _gameWidth);
+	assert(y >= 0 && y < _gameHeight);
+	assert(w > 0 && x + w <= _gameWidth);
+	assert(h > 0 && y + h <= _gameHeight);
 
-	if (y < 0) {
-		h += y;
-		buf -= y * pitch;
-		y = 0;
-	}
-
-	if (w > _gameWidth - x)
-		w = _gameWidth - x;
-
-	if (h > _gameHeight - y)
-		h = _gameHeight - y;
-
-	if (w <= 0 || h <= 0)
-		return;
-
-	byte *dst = _gamePixels + y * _gameWidth + x;
-	if (_gameWidth == pitch && pitch == w) {
-		memcpy(dst, buf, h * w);
+#ifdef USE_RGB_COLOR
+	if (_screenPF.bytesPerPixel > 1) {
+		if (!Graphics::crossBlit(_gamePixels +
+									y * _gameWidth * _screenPF.bytesPerPixel +
+									x * _screenPF.bytesPerPixel,
+									buf, _gameWidth * _screenPF.bytesPerPixel,
+									pitch, w, h, _texturePF, _screenPF)) {
+			printf("crossBlit failed\n");
+			::abort();
+		}
 	} else {
-		do {
-			memcpy(dst, buf, w);
-			buf += pitch;
-			dst += _gameWidth;
-		} while (--h);
+#endif
+		byte *dst = _gamePixels + y * _gameWidth + x;
+		if (_gameWidth == pitch && pitch == w) {
+			memcpy(dst, buf, h * w);
+		} else {
+			do {
+				memcpy(dst, buf, w);
+				buf += pitch;
+				dst += _gameWidth;
+			} while (--h);
+		}
+#ifdef USE_RGB_COLOR
 	}
+#endif
 }
 
 void OSystem_Wii::updateScreen() {
@@ -251,6 +305,9 @@ void OSystem_Wii::updateScreen() {
 	static s16 msx, msy, mox, moy, mskip;
 	static u16 mpx, mpy;
 	static u8 *s;
+#ifdef USE_RGB_COLOR
+	static u16 *s2;
+#endif
 	static u16 *d, *p;
 
 	u32 now = getMillis();
@@ -267,12 +324,21 @@ void OSystem_Wii::updateScreen() {
 	if (_overlayVisible) {
 		memcpy(_texture, _overlayPixels, _overlaySize);
 	} else {
-		for (y = 0; y < _gameHeight; ++y) {
-			for (x = 0; x < _gameWidth; ++x)
-				_texture[h + x] = _palette[_gamePixels[h + x]];
+#ifdef USE_RGB_COLOR
+		if (_screenPF.bytesPerPixel > 1) {
+			memcpy(_texture, _gamePixels,
+					_gameWidth * _gameHeight * _screenPF.bytesPerPixel);
+		} else {
+#endif
+			for (y = 0; y < _gameHeight; ++y) {
+				for (x = 0; x < _gameWidth; ++x)
+					_texture[h + x] = _palette[_gamePixels[h + x]];
 
-			h += _gameWidth;
+				h += _gameWidth;
+			}
+#ifdef USE_RGB_COLOR
 		}
+#endif
 	}
 
 	if (_mouseVisible) {
@@ -308,25 +374,51 @@ void OSystem_Wii::updateScreen() {
 		skip = _currentWidth - mpx;
 		mskip = _mouseWidth - mpx;
 
-		s = _mouseCursor + moy * _mouseWidth + mox;
-		d = _texture + (msy * _currentWidth + msx);
+#ifdef USE_RGB_COLOR
+		if (_cursorPF.bytesPerPixel > 1) {
+			s2 = (u16 *) _mouseCursor + moy * _mouseWidth + mox;
+			d = _texture + (msy * _currentWidth + msx);
 
-		for (y = 0; y < mpy; ++y) {
-			for (x = 0; x < mpx; ++x) {
-				if (*s == _mouseKeyColor) {
-					s++;
-					d++;
+			for (y = 0; y < mpy; ++y) {
+				for (x = 0; x < mpx; ++x) {
+					if (*s2 == _mouseKeyColor) {
+						s2++;
+						d++;
 
-					continue;
+						continue;
+					}
+
+					*d++ = *s2;
+					s2++;
 				}
 
-				*d++ = p[*s];
-				s++;
+				d += skip;
+				s2 += mskip;
 			}
+		} else {
+#endif
+			s = _mouseCursor + moy * _mouseWidth + mox;
+			d = _texture + (msy * _currentWidth + msx);
 
-			d += skip;
-			s += mskip;
+			for (y = 0; y < mpy; ++y) {
+				for (x = 0; x < mpx; ++x) {
+					if (*s == _mouseKeyColor) {
+						s++;
+						d++;
+
+						continue;
+					}
+
+					*d++ = p[*s];
+					s++;
+				}
+
+				d += skip;
+				s += mskip;
+			}
+#ifdef USE_RGB_COLOR
 		}
+#endif
 	}
 
 	GX_Render(_currentWidth, _currentHeight, (u8 *) _texture,
@@ -338,7 +430,11 @@ Graphics::Surface *OSystem_Wii::lockScreen() {
 	_surface.w = _gameWidth;
 	_surface.h = _gameHeight;
 	_surface.pitch = _gameWidth;
+#ifdef USE_RGB_COLOR
+	_surface.bytesPerPixel = _screenPF.bytesPerPixel;
+#else
 	_surface.bytesPerPixel = 1;
+#endif
 
 	return &_surface;
 }
@@ -429,6 +525,10 @@ int16 OSystem_Wii::getOverlayHeight() {
 	return _overlayHeight;
 }
 
+Graphics::PixelFormat OSystem_Wii::getOverlayFormat() const {
+	return Graphics::createPixelFormat<565>();
+}
+
 bool OSystem_Wii::showMouse(bool visible) {
 	bool last = _mouseVisible;
 	_mouseVisible = visible;
@@ -442,20 +542,37 @@ void OSystem_Wii::warpMouse(int x, int y) {
 }
 
 void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
-									int hotspotY, byte keycolor,
-									int cursorTargetScale) {
+									int hotspotY, uint32 keycolor,
+									int cursorTargetScale,
+									const Graphics::PixelFormat *format) {
 	(void) cursorTargetScale; // TODO
+
+#ifdef USE_RGB_COLOR
+	if (!format)
+		_cursorPF = Graphics::PixelFormat::createFormatCLUT8();
+	else
+		_cursorPF = *format;
+
+	if (_cursorPF.bytesPerPixel > 1)
+		_mouseKeyColor = keycolor & 0xffff;
+	else
+#endif
+		_mouseKeyColor = keycolor & 0xff;
 
 	_mouseWidth = w;
 	_mouseHeight = h;
 	_mouseHotspotX = hotspotX;
 	_mouseHotspotY = hotspotY;
-	_mouseKeyColor = keycolor;
 
 	if (_mouseCursor)
 		free(_mouseCursor);
 
+#ifdef USE_RGB_COLOR
+	_mouseCursor = (u8 *) memalign(32, w * h * _cursorPF.bytesPerPixel);
+	memcpy(_mouseCursor, buf, w * h * _cursorPF.bytesPerPixel);
+#else
 	_mouseCursor = (u8 *) memalign(32, w * h);
 	memcpy(_mouseCursor, buf, w * h);
+#endif
 }
 

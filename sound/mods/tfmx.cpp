@@ -1097,7 +1097,7 @@ int Tfmx::doSfx(uint16 sfxIndex, bool unlockChannel) {
 
 // some debugging functions
 namespace {
-#ifndef NDEBUG
+#if !defined(NDEBUG) && 0
 void displayMacroStep(const void *const vptr) {
 	const char *tableMacros[] = {
 		"DMAoff+Resetxx/xx/xx flag/addset/vol   ",

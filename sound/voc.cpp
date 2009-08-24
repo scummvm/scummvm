@@ -292,7 +292,7 @@ AudioStream *makeVOCDiskStream(Common::SeekableReadStream &stream, byte flags, b
 
 	int numBlocks = parseVOCFormat(stream, block, rate, loops, begin_loop, end_loop);
 
-	AudioStream* audioStream = makeLinearDiskStream(stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
+	AudioStream *audioStream = makeLinearDiskStream(&stream, block, numBlocks, rate, flags, takeOwnership, begin_loop, end_loop);
 
 	delete[] block;
 

@@ -791,7 +791,7 @@ byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 
 }
 
-void NESCostumeRenderer::setPalette(byte *palette) {
+void NESCostumeRenderer::setPalette(uint16 *palette) {
 	// TODO
 }
 
@@ -874,17 +874,20 @@ void ClassicCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) 
 	} while (mask&0xFFFF);
 }
 
-void ClassicCostumeRenderer::setPalette(byte *palette) {
+void ClassicCostumeRenderer::setPalette(uint16 *palette) {
 	int i;
 	byte color;
 
 	if (_loaded._format == 0x57) {
-		memcpy(_palette, palette, 13);
+		for (i = 0; i < 13; i++)
+			_palette[i] = palette[i];
 	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
 		if (_vm->getCurrentLights() & LIGHTMODE_actor_use_colors) {
-			memcpy(_palette, palette, 16);
+			for (i = 0; i < 16; i++)
+				_palette[i] = palette[i];
 		} else {
-			memset(_palette, 8, 16);
+			for (i = 0; i < 16; i++)
+				_palette[i] = 8;
 			_palette[12] = 0;
 		}
 		_palette[_loaded._palette[0]] = _palette[0];

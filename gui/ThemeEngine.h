@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.7"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.8"
 
 namespace Graphics {
 	struct DrawStep;
@@ -612,6 +612,9 @@ protected:
 
 	ImagesMap _bitmaps;
 	Graphics::PixelFormat _overlayFormat;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _cursorFormat;
+#endif
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;

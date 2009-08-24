@@ -1398,11 +1398,6 @@ void ScummEngine_v72he::o72_openFile() {
 	copyScriptString(buffer, sizeof(buffer));
 	debug(1, "Original filename %s", buffer);
 
-	// HACK: INI filename seems to get reset, corruption elsewhere?
-	if (_game.id == GID_MOONBASE && buffer[0] == 0) {
-		strcpy((char *)buffer, "moonbase.ini");
-	}
-
 	const char *filename = (char *)buffer + convertFilePath(buffer, sizeof(buffer));
 	debug(1, "Final filename to %s", filename);
 
@@ -1484,6 +1479,7 @@ void ScummEngine_v72he::o72_readFile() {
 		fetchScriptByte();
 		size = pop();
 		slot = pop();
+		assert(_hInFileTable[slot]);
 		val = readFileToArray(slot, size);
 		push(val);
 		break;
@@ -1573,7 +1569,7 @@ void ScummEngine_v72he::o72_rename() {
 }
 
 void ScummEngine_v72he::o72_getPixel() {
-	byte area;
+	uint16 area;
 
 	int y = pop();
 	int x = pop();
@@ -1588,11 +1584,17 @@ void ScummEngine_v72he::o72_getPixel() {
 	switch (subOp) {
 	case 9: // HE 100
 	case 218:
-		area = *vs->getBackPixels(x, y - vs->topline);
+		if (_game.features & GF_16BIT_COLOR)
+			area = READ_UINT16(vs->getBackPixels(x, y - vs->topline));
+		else
+			area = *vs->getBackPixels(x, y - vs->topline);
 		break;
 	case 8: // HE 100
 	case 219:
-		area = *vs->getPixels(x, y - vs->topline);
+		if (_game.features & GF_16BIT_COLOR)
+			area = READ_UINT16(vs->getPixels(x, y - vs->topline));
+		else
+			area = *vs->getPixels(x, y - vs->topline);
 		break;
 	default:
 		error("o72_getPixel: default case %d", subOp);
@@ -1805,9 +1807,7 @@ void ScummEngine_v72he::o72_readINI() {
 	switch (subOp) {
 	case 43: // HE 100
 	case 6: // number
-		if (!strcmp((char *)option, "NoFontsInstalled")) {
-			push(1);
-		} else if (!strcmp((char *)option, "NoPrinting")) {
+		if (!strcmp((char *)option, "NoPrinting")) {
 			push(1);
 		} else if (!strcmp((char *)option, "TextOn")) {
 			push(ConfMan.getBool("subtitles"));
@@ -1818,7 +1818,12 @@ void ScummEngine_v72he::o72_readINI() {
 	case 77: // HE 100
 	case 7: // string
 		writeVar(0, 0);
-		if (!strcmp((char *)option, "SaveGamePath")) {
+		if (!strcmp((char *)option, "HE3File")) {
+			Common::String fileName = generateFilename(-3);
+			int len = resStrLen((const byte *)fileName.c_str());
+			data = defineArray(0, kStringArray, 0, 0, 0, len);
+			memcpy(data, fileName.c_str(), len);
+		} else if (!strcmp((char *)option, "SaveGamePath")) {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
 			// path in Macintosh verisons.

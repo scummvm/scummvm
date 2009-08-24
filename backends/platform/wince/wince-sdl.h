@@ -66,7 +66,7 @@ public:
 	void internUpdateScreen();
 
 	void setGraphicsModeIntern();
-	void initSize(uint w, uint h);
+	void initSize(uint w, uint h, const Graphics::PixelFormat *format);
 	void initBackend();
 
 	// Overloaded from SDL backend (toolbar handling)

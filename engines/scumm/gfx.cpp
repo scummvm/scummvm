@@ -38,17 +38,17 @@
 #ifdef USE_ARM_GFX_ASM
 extern "C" void asmDrawStripToScreen(int height, int width, void const* text, void const* src, byte* dst,
 	int vsPitch, int vmScreenWidth, int textSurfacePitch);
-extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height);
+extern "C" void asmCopy8Col(byte* dst, int dstPitch, const byte* src, int height, uint8 bitDepth);
 #endif /* USE_ARM_GFX_ASM */
 
 namespace Scumm {
 
-static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
-static void fill(byte *dst, int dstPitch, byte color, int w, int h);
+static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, uint8 bitDepth);
+static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitDepth);
 #ifndef USE_ARM_GFX_ASM
-static void copy8Col(byte *dst, int dstPitch, const byte *src, int height);
+static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8 bitDepth);
 #endif
-static void clear8Col(byte *dst, int dstPitch, int height);
+static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth);
 
 static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
 static void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h);
@@ -231,6 +231,9 @@ GdiV2::~GdiV2() {
 	free(_roomStrips);
 }
 
+Gdi16Bit::Gdi16Bit(ScummEngine *vm) : Gdi(vm) {
+}
+
 void Gdi::init() {
 	_numStrips = _vm->_screenWidth / 8;
 
@@ -341,8 +344,8 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	vs->hasTwoBuffers = twobufs;
 	vs->xstart = 0;
 	vs->backBuf = NULL;
-	vs->bytesPerPixel = 1;
-	vs->pitch = width;
+	vs->bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	vs->pitch = width * vs->bytesPerPixel;
 
 	if (_game.version >= 7) {
 		// Increase the pitch by one; needed to accomodate the extra screen
@@ -586,7 +589,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		vsPitch = _screenWidth * m - width * m;
 
 	} else {
-		vsPitch = vs->pitch - width;
+		vsPitch = vs->pitch - width * vs->bytesPerPixel;
 	}
 
 
@@ -612,36 +615,49 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 #else
 		// We blit four pixels at a time, for improved performance.
 		const uint32 *src32 = (const uint32 *)src;
-		const uint32 *text32 = (const uint32 *)text;
 		uint32 *dst32 = (uint32 *)_compositeBuf;
 
 		vsPitch >>= 2;
-		const int textPitch = (_textSurface.pitch - width * m) >> 2;
-		for (int h = height * m; h > 0; --h) {
-			for (int w = width*m; w > 0; w-=4) {
-				uint32 temp = *text32++;
 
-				// Generate a byte mask for those text pixels (bytes) with
-				// value CHARSET_MASK_TRANSPARENCY. In the end, each byte
-				// in mask will be either equal to 0x00 or 0xFF.
-				// Doing it this way avoids branches and bytewise operations,
-				// at the cost of readability ;).
-				uint32 mask = temp ^ CHARSET_MASK_TRANSPARENCY_32;
-				mask = (((mask & 0x7f7f7f7f) + 0x7f7f7f7f) | mask) & 0x80808080;
-				mask = ((mask >> 7) + 0x7f7f7f7f) ^ 0x80808080;
-
-				// The following line is equivalent to this code:
-				//   *dst32++ = (*src32++ & mask) | (temp & ~mask);
-				// However, some compilers can generate somewhat better
-				// machine code for this equivalent statement:
-				*dst32++ = ((temp ^ *src32++) & mask) ^ temp;
+		if (_bitDepth == 2) {
+			// Sprites always seem to be used for subtitles in 16Bit color HE games, and not
+			// the charset renderer, so charset masking isn't required.
+			for (int h = height * m; h > 0; --h) {
+				for (int w = width * m; w > 0; w -= 4) {
+					*dst32++ = *src32++;
+					*dst32++ = *src32++;
+				}
+				src32 += vsPitch;
 			}
-			src32 += vsPitch;
-			text32 += textPitch;
+		} else {
+			const uint32 *text32 = (const uint32 *)text;
+			const int textPitch = (_textSurface.pitch - width * m) >> 2;
+			for (int h = height * m; h > 0; --h) {
+				for (int w = width * m; w > 0; w -= 4) {
+					uint32 temp = *text32++;
+
+					// Generate a byte mask for those text pixels (bytes) with
+					// value CHARSET_MASK_TRANSPARENCY. In the end, each byte
+					// in mask will be either equal to 0x00 or 0xFF.
+					// Doing it this way avoids branches and bytewise operations,
+					// at the cost of readability ;).
+					uint32 mask = temp ^ CHARSET_MASK_TRANSPARENCY_32;
+					mask = (((mask & 0x7f7f7f7f) + 0x7f7f7f7f) | mask) & 0x80808080;
+					mask = ((mask >> 7) + 0x7f7f7f7f) ^ 0x80808080;
+
+					// The following line is equivalent to this code:
+					//   *dst32++ = (*src32++ & mask) | (temp & ~mask);
+					// However, some compilers can generate somewhat better
+					// machine code for this equivalent statement:
+					*dst32++ = ((temp ^ *src32++) & mask) ^ temp;
+				}
+				src32 += vsPitch;
+				text32 += textPitch;
+			}
 		}
 #endif
 		src = _compositeBuf;
-		pitch = width;
+		pitch = width * vs->bytesPerPixel;
 
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			ditherHerc(_compositeBuf, _herculesBuf, width, &x, &y, &width, &height);
@@ -768,8 +784,10 @@ void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *wid
 }
 
 void scale2x(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
-	uint16 *dstL1 = (uint16 *)dst;
-	uint16 *dstL2 = (uint16 *)(dst + dstPitch);
+	/* dst and dstPitch should both be even. So the use of (void *) in
+	 * the following casts to avoid the unnecessary warning is valid. */
+	uint16 *dstL1 = (uint16 *)(void *)dst;
+	uint16 *dstL2 = (uint16 *)(void *)(dst + dstPitch);
 
 	const int dstAdd = dstPitch - w;
 	const int srcAdd = srcPitch - w;
@@ -986,13 +1004,13 @@ void ScummEngine::restoreBackground(Common::Rect rect, byte backColor) {
 		return;
 
 	if (vs->hasTwoBuffers && _currentRoom != 0 && isLightOn()) {
-		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height);
+		blit(screenBuf, vs->pitch, vs->getBackPixels(rect.left, rect.top), vs->pitch, width, height, vs->bytesPerPixel);
 		if (vs->number == kMainVirtScreen && _charset->_hasMask) {
 			byte *mask = (byte *)_textSurface.getBasePtr(rect.left, rect.top - _screenTop);
-			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height);
+			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width, height, _textSurface.bytesPerPixel);
 		}
 	} else {
-		fill(screenBuf, vs->pitch, backColor, width, height);
+		fill(screenBuf, vs->pitch, backColor, width, height, vs->bytesPerPixel);
 	}
 }
 
@@ -1021,7 +1039,7 @@ void ScummEngine::restoreCharsetBg() {
 			if (vs->number != kMainVirtScreen) {
 				// Restore from back buffer
 				const byte *backBuf = vs->getBackPixels(0, 0);
-				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h);
+				blit(screenBuf, vs->pitch, backBuf, vs->pitch, vs->w, vs->h, vs->bytesPerPixel);
 			}
 		} else {
 			// Clear area
@@ -1057,51 +1075,63 @@ byte *Gdi::getMaskBuffer(int x, int y, int z) {
 #pragma mark --- Misc ---
 #pragma mark -
 
-static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h) {
+static void blit(byte *dst, int dstPitch, const byte *src, int srcPitch, int w, int h, uint8 bitDepth) {
 	assert(w > 0);
 	assert(h > 0);
 	assert(src != NULL);
 	assert(dst != NULL);
 
-	if (w == srcPitch && w == dstPitch) {
-		memcpy(dst, src, w*h);
+	if ((w * bitDepth == srcPitch) && (w * bitDepth == dstPitch)) {
+		memcpy(dst, src, w * h * bitDepth);
 	} else {
 		do {
-			memcpy(dst, src, w);
+			memcpy(dst, src, w * bitDepth);
 			dst += dstPitch;
 			src += srcPitch;
 		} while (--h);
 	}
 }
 
-static void fill(byte *dst, int dstPitch, byte color, int w, int h) {
+static void fill(byte *dst, int dstPitch, uint16 color, int w, int h, uint8 bitDepth) {
 	assert(h > 0);
 	assert(dst != NULL);
 
-	if (w == dstPitch) {
-		memset(dst, color, w*h);
-	} else {
+	if (bitDepth == 2) {
 		do {
-			memset(dst, color, w);
+			for (int i = 0; i < w; i++)
+				WRITE_UINT16(dst + i * 2, color);
 			dst += dstPitch;
 		} while (--h);
+	} else {
+		if (w == dstPitch) {
+			memset(dst, color, w * h);
+		} else {
+			do {
+				memset(dst, color, w);
+				dst += dstPitch;
+			} while (--h);
+		}
 	}
 }
 
 #ifdef USE_ARM_GFX_ASM
 
-#define copy8Col(A,B,C,D) asmCopy8Col(A,B,C,D)
+#define copy8Col(A,B,C,D,E) asmCopy8Col(A,B,C,D,E)
 
 #else
 
-static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
+static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8 bitDepth) {
 
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memcpy(dst, src, 8);
+		memcpy(dst, src, 8 * bitDepth);
 #else
 		((uint32 *)dst)[0] = ((const uint32 *)src)[0];
 		((uint32 *)dst)[1] = ((const uint32 *)src)[1];
+		if (bitDepth == 2) {
+			((uint32 *)dst)[2] = ((const uint32 *)src)[2];
+			((uint32 *)dst)[3] = ((const uint32 *)src)[3];
+		}
 #endif
 		dst += dstPitch;
 		src += dstPitch;
@@ -1110,13 +1140,17 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height) {
 
 #endif /* USE_ARM_GFX_ASM */
 
-static void clear8Col(byte *dst, int dstPitch, int height) {
+static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memset(dst, 0, 8);
+		memset(dst, 0, 8 * bitDepth);
 #else
 		((uint32 *)dst)[0] = 0;
 		((uint32 *)dst)[1] = 0;
+		if (bitDepth == 2) {
+			((uint32 *)dst)[2] = 0;
+			((uint32 *)dst)[3] = 0;
+		}
 #endif
 		dst += dstPitch;
 	} while (--height);
@@ -1181,41 +1215,41 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 	if (color == -1) {
 		if (vs->number != kMainVirtScreen)
 			error("can only copy bg to main window");
-		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
+		blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height, vs->bytesPerPixel);
 		if (_charset->_hasMask) {
 			byte *mask = (byte *)_textSurface.getBasePtr(x * _textSurfaceMultiplier, (y - _screenTop) * _textSurfaceMultiplier);
-			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier);
+			fill(mask, _textSurface.pitch, CHARSET_MASK_TRANSPARENCY, width * _textSurfaceMultiplier, height * _textSurfaceMultiplier, _textSurface.bytesPerPixel);
 		}
 	} else if (_game.heversion >= 72) {
 		// Flags are used for different methods in HE games
 		uint32 flags = color;
 		if ((flags & 0x2000) || (flags & 0x4000000)) {
-			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
+			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height, vs->bytesPerPixel);
 		} else if ((flags & 0x4000) || (flags & 0x2000000)) {
-			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height);
+			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height, vs->bytesPerPixel);
 		} else if ((flags & 0x8000) || (flags & 0x1000000)) {
 			flags &= (flags & 0x1000000) ? 0xFFFFFF : 0x7FFF;
-			fill(backbuff, vs->pitch, flags, width, height);
-			fill(bgbuff, vs->pitch, flags, width, height);
+			fill(backbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
+			fill(bgbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
 		} else {
-			fill(backbuff, vs->pitch, flags, width, height);
+			fill(backbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
 		}
 	} else if (_game.heversion >= 60) {
 		// Flags are used for different methods in HE games
 		uint16 flags = color;
 		if (flags & 0x2000) {
-			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height);
+			blit(backbuff, vs->pitch, bgbuff, vs->pitch, width, height, vs->bytesPerPixel);
 		} else if (flags & 0x4000) {
-			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height);
+			blit(bgbuff, vs->pitch, backbuff, vs->pitch, width, height, vs->bytesPerPixel);
 		} else if (flags & 0x8000) {
 			flags &= 0x7FFF;
-			fill(backbuff, vs->pitch, flags, width, height);
-			fill(bgbuff, vs->pitch, flags, width, height);
+			fill(backbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
+			fill(bgbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
 		} else {
-			fill(backbuff, vs->pitch, flags, width, height);
+			fill(backbuff, vs->pitch, flags, width, height, vs->bytesPerPixel);
 		}
 	} else {
-		fill(backbuff, vs->pitch, color, width, height);
+		fill(backbuff, vs->pitch, color, width, height, vs->bytesPerPixel);
 	}
 }
 
@@ -1253,7 +1287,7 @@ void ScummEngine_v5::drawFlashlight() {
 										_flashlight.y, _flashlight.y + _flashlight.h, USAGE_BIT_DIRTY);
 
 		if (_flashlight.buffer) {
-			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h);
+			fill(_flashlight.buffer, vs->pitch, 0, _flashlight.w, _flashlight.h, vs->bytesPerPixel);
 		}
 		_flashlight.isDrawn = false;
 	}
@@ -1300,7 +1334,7 @@ void ScummEngine_v5::drawFlashlight() {
 	_flashlight.buffer = vs->getPixels(_flashlight.x, _flashlight.y);
 	bgbak = vs->getBackPixels(_flashlight.x, _flashlight.y);
 
-	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h);
+	blit(_flashlight.buffer, vs->pitch, bgbak, vs->pitch, _flashlight.w, _flashlight.h, vs->bytesPerPixel);
 
 	// Round the corners. To do so, we simply hard-code a set of nicely
 	// rounded corners.
@@ -1609,7 +1643,7 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		warning("Gdi::drawBitmap, strip drawn to %d below window bottom %d", y + height, vs->h);
 	}
 
-	_vertStripNextInc = height * vs->pitch - 1;
+	_vertStripNextInc = height * vs->pitch - 1 * vs->bytesPerPixel;
 
 	_objectMode = (flag & dbObjectMode) == dbObjectMode;
 	prepareDrawBitmap(ptr, vs, x, y, width, height, stripnr, numstrip);
@@ -1642,9 +1676,9 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 		// In the case of a double buffered virtual screen, we draw to
 		// the backbuffer, otherwise to the primary surface memory.
 		if (vs->hasTwoBuffers)
-			dstPtr = vs->backBuf + y * vs->pitch + x * 8;
+			dstPtr = vs->backBuf + y * vs->pitch + (x * 8 * vs->bytesPerPixel);
 		else
-			dstPtr = (byte *)vs->pixels + y * vs->pitch + x * 8;
+			dstPtr = (byte *)vs->pixels + y * vs->pitch + (x * 8 * vs->bytesPerPixel);
 
 		transpStrip = drawStrip(dstPtr, vs, x, y, width, height, stripnr, smap_ptr);
 
@@ -1653,11 +1687,11 @@ void Gdi::drawBitmap(const byte *ptr, VirtScreen *vs, int x, const int y, const 
 			transpStrip = true;
 
 		if (vs->hasTwoBuffers) {
-			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + x * 8;
+			byte *frontBuf = (byte *)vs->pixels + y * vs->pitch + (x * 8 * vs->bytesPerPixel);
 			if (lightsOn)
-				copy8Col(frontBuf, vs->pitch, dstPtr, height);
+				copy8Col(frontBuf, vs->pitch, dstPtr, height, vs->bytesPerPixel);
 			else
-				clear8Col(frontBuf, vs->pitch, height);
+				clear8Col(frontBuf, vs->pitch, height, vs->bytesPerPixel);
 		}
 
 		decodeMask(x, y, width, height, stripnr, numzbuf, zplane_list, transpStrip, flag, tmsk_ptr);
@@ -1885,7 +1919,7 @@ void Gdi::drawBMAPBg(const byte *ptr, VirtScreen *vs) {
 		drawStripHE(dst, vs->pitch, bmap_ptr, vs->w, vs->h, true);
 		break;
 	case 150:
-		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h);
+		fill(dst, vs->pitch, *bmap_ptr, vs->w, vs->h, vs->bytesPerPixel);
 		break;
 	default:
 		// Alternative russian freddi3 uses badly formatted bitmaps
@@ -1941,12 +1975,12 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
-	int scrX = _vm->_screenStartStrip * 8;
+	int scrX = _vm->_screenStartStrip * 8 * _vm->_bitDepth;
 
 	if (code == 8 || code == 9) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
 		byte *dst = (byte *)_vm->_virtscr[kMainVirtScreen].backBuf + scrX;
-		Wiz::copyWizImage(dst, bmap_ptr, vs->w, vs->h, x - scrX, y, w, h, &rScreen);
+		Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bitDepth);
 	}
 
 	Common::Rect rect1(x, y, x + w, y + h);
@@ -1996,7 +2030,7 @@ void ScummEngine_v70he::restoreBackgroundHE(Common::Rect rect, int dirtybit) {
 
 	assert(rw <= _screenWidth && rw > 0);
 	assert(rh <= _screenHeight && rh > 0);
-	blit(dst, _virtscr[kMainVirtScreen].pitch, src, _virtscr[kMainVirtScreen].pitch, rw, rh);
+	blit(dst, _virtscr[kMainVirtScreen].pitch, src, _virtscr[kMainVirtScreen].pitch, rw, rh, vs->bytesPerPixel);
 	markRectAsDirty(kMainVirtScreen, rect, dirtybit);
 }
 #endif
@@ -2026,15 +2060,15 @@ void Gdi::resetBackground(int top, int bottom, int strip) {
 	if (bottom > vs->bdirty[strip])
 		vs->bdirty[strip] = bottom;
 
-	bgbak_ptr = (byte *)vs->backBuf + top * vs->pitch + (strip + vs->xstart/8) * 8;
-	backbuff_ptr = (byte *)vs->pixels + top * vs->pitch + (strip + vs->xstart/8) * 8;
+	bgbak_ptr = (byte *)vs->backBuf + top * vs->pitch + (strip + vs->xstart/8) * 8 * vs->bytesPerPixel;
+	backbuff_ptr = (byte *)vs->pixels + top * vs->pitch + (strip + vs->xstart/8) * 8 * vs->bytesPerPixel;
 
 	numLinesToProcess = bottom - top;
 	if (numLinesToProcess) {
 		if (_vm->isLightOn()) {
-			copy8Col(backbuff_ptr, vs->pitch, bgbak_ptr, numLinesToProcess);
+			copy8Col(backbuff_ptr, vs->pitch, bgbak_ptr, numLinesToProcess, vs->bytesPerPixel);
 		} else {
-			clear8Col(backbuff_ptr, vs->pitch, numLinesToProcess);
+			clear8Col(backbuff_ptr, vs->pitch, numLinesToProcess, vs->bytesPerPixel);
 		}
 	}
 }
@@ -2785,12 +2819,12 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 	int x = width;
 	while (1) {
 		if (!transpCheck || color != _transparentColor)
-			*dst = _roomPalette[color];
-		dst++;
+			writeRoomColor(dst, color);
+		dst += _vm->_bitDepth;
 		--x;
 		if (x == 0) {
 			x = width;
-			dst += dstPitch - width;
+			dst += dstPitch - width * _vm->_bitDepth;
 			--height;
 			if (height == 0)
 				return;
@@ -2874,8 +2908,8 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color] + _paletteMod;
-			dst++;
+				writeRoomColor(dst, color);
+			dst += _vm->_bitDepth;
 
 		againPos:
 			if (!READ_BIT) {
@@ -2896,13 +2930,13 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 					do {
 						if (!--x) {
 							x = 8;
-							dst += dstPitch - 8;
+							dst += dstPitch - 8 * _vm->_bitDepth;
 							if (!--height)
 								return;
 						}
 						if (!transpCheck || color != _transparentColor)
-							*dst = _roomPalette[color] + _paletteMod;
-						dst++;
+							writeRoomColor(dst, color);
+						dst += _vm->_bitDepth;
 					} while (--reps);
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
@@ -2910,7 +2944,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 				}
 			}
 		} while (--x);
-		dst += dstPitch - 8;
+		dst += dstPitch - 8 * _vm->_bitDepth;
 	} while (--height);
 }
 
@@ -2926,8 +2960,8 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color] + _paletteMod;
-			dst++;
+				writeRoomColor(dst, color);
+			dst += _vm->_bitDepth;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS;
@@ -2942,7 +2976,7 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 				color += inc;
 			}
 		} while (--x);
-		dst += dstPitch - 8;
+		dst += dstPitch - 8 * _vm->_bitDepth;
 	} while (--height);
 }
 
@@ -2959,7 +2993,7 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color] + _paletteMod;
+				writeRoomColor(dst, color);
 			dst += dstPitch;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -3027,7 +3061,7 @@ void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, con
 			for (x = 0; x < 8; x ++) {
 				byte color = *src++;
 				if (!transpCheck || color != _transparentColor)
-					dst[x] = _roomPalette[color] + _paletteMod;
+					writeRoomColor(dst + x * _vm->_bitDepth, color);
 			}
 			dst += dstPitch;
 		} while (--height);
@@ -3149,6 +3183,14 @@ void Gdi::unkDecode11(byte *dst, int dstPitch, const byte *src, int height) cons
 
 #undef NEXT_ROW
 #undef READ_BIT_256
+
+void Gdi16Bit::writeRoomColor(byte *dst, byte color) const {
+	WRITE_UINT16(dst, READ_LE_UINT16(_vm->_hePalettes + 2048 + color * 2));
+}
+
+void Gdi::writeRoomColor(byte *dst, byte color) const {
+	*dst = _roomPalette[color] + _paletteMod;
+}
 
 
 #pragma mark -

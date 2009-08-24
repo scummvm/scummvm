@@ -98,7 +98,7 @@ protected:
 public:
 	ClassicCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
-	void setPalette(byte *palette);
+	void setPalette(uint16 *palette);
 	void setFacing(const Actor *a);
 	void setCostume(int costume, int shadow);
 
@@ -120,7 +120,7 @@ protected:
 public:
 	NESCostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
-	void setPalette(byte *palette);
+	void setPalette(uint16 *palette);
 	void setFacing(const Actor *a);
 	void setCostume(int costume, int shadow);
 
@@ -135,7 +135,7 @@ protected:
 public:
 	C64CostumeRenderer(ScummEngine *vm) : BaseCostumeRenderer(vm), _loaded(vm) {}
 
-	void setPalette(byte *palette) {}
+	void setPalette(uint16 *palette) {}
 	void setFacing(const Actor *a) {}
 	void setCostume(int costume, int shadow);
 

@@ -29,6 +29,8 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/uinput.h"
 
+#include "graphics/pixelformat.h"
+
 namespace Sci {
 
 enum gfx_buffer_t {
@@ -85,7 +87,7 @@ public:
 	 * 						not be set, or GFX_FATAL if the graphics target
 	 * 						is unuseable.
 	 */
-	GfxDriver(int xfact, int yfact, int bytespp);
+	GfxDriver(int xfact, int yfact, Graphics::PixelFormat mode);
 
 	/**
 	 * Uninitializes the current graphics mode.

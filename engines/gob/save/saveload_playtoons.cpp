@@ -30,27 +30,39 @@
 namespace Gob {
 
 SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
-	{    "did.inf", kSaveModeSave,   0, 0}, // 
-	{    "dan.itk", kSaveModeNone,   0, 0}, // Playtoons CK initial detection file
-	{   "disk.001", kSaveModeExists, 0, 0}, // Playtoons 1 identification file
-	{   "disk.002", kSaveModeExists, 0, 0}, // Playtoons 2 identification file
-	{   "disk.003", kSaveModeExists, 0, 0}, // Playtoons 3 identification file
-	{   "disk.004", kSaveModeExists, 0, 0}, // Playtoons 4 identification file
-	{   "disk.005", kSaveModeExists, 0, 0}, // Playtoons 5 identification file
-	{   "disk.006", kSaveModeExists, 0, 0}, // Playtoons CK 1 identification file
-	{   "disk.007", kSaveModeExists, 0, 0}, // Playtoons CK 2 identification file
-	{   "disk.008", kSaveModeExists, 0, 0}, // Playtoons CK 3 identification file
-/*
-	{  "titre.001", kSaveModeExists, 0, 0}, // Playtoons 1 titles
-	{  "titre.002", kSaveModeExists, 0, 0}, // Playtoons 2 titles
-	{  "titre.003", kSaveModeExists, 0, 0}, // Playtoons 3 titles
-	{  "titre.004", kSaveModeExists, 0, 0}, // Playtoons 4 titles
-	{  "titre.005", kSaveModeExists, 0, 0}, // Playtoons 5 titles
-	{  "titre.006", kSaveModeExists, 0, 0}, // Playtoons CK 1 empty title (???)
-	{  "titre.007", kSaveModeExists, 0, 0}, // Playtoons CK 2 empty title (???)
-	{  "titre.008", kSaveModeExists, 0, 0}, // Playtoons CK 3 empty title (???)
-	{    "mdo.def", kSaveModeExists, 0, 0}, // 
-*/
+	{   "did.inf", kSaveModeSave,   0, 0}, // Purpose ignored at the moment, intensively used to save things.
+	{   "dan.itk", kSaveModeNone,   0, 0}, // Playtoons CK detection file
+	{ "titre.009", kSaveModeIgnore, 0, 0}, // Playtoons theoritical title files that are checked for nothing
+	{ "titre.010", kSaveModeIgnore, 0, 0},
+	{ "titre.011", kSaveModeIgnore, 0, 0},
+	{ "titre.012", kSaveModeIgnore, 0, 0},
+	{ "titre.013", kSaveModeIgnore, 0, 0},
+	{ "titre.014", kSaveModeIgnore, 0, 0},
+	{ "titre.015", kSaveModeIgnore, 0, 0},
+	{ "titre.016", kSaveModeIgnore, 0, 0},
+	{ "titre.017", kSaveModeIgnore, 0, 0},
+	{ "titre.018", kSaveModeIgnore, 0, 0},
+	{ "titre.019", kSaveModeIgnore, 0, 0},
+	{ "titre.020", kSaveModeIgnore, 0, 0},
+	{ "titre.021", kSaveModeIgnore, 0, 0},
+	{ "titre.022", kSaveModeIgnore, 0, 0},
+	{ "titre.023", kSaveModeIgnore, 0, 0},
+	{ "titre.024", kSaveModeIgnore, 0, 0},
+	{ "titre.025", kSaveModeIgnore, 0, 0},
+	{ "titre.026", kSaveModeIgnore, 0, 0},
+	{ "titre.027", kSaveModeIgnore, 0, 0},
+	{ "titre.028", kSaveModeIgnore, 0, 0},
+	{ "titre.029", kSaveModeIgnore, 0, 0},
+	{ "titre.030", kSaveModeIgnore, 0, 0},
+	{ "titre.031", kSaveModeIgnore, 0, 0},
+	{ "titre.032", kSaveModeIgnore, 0, 0},
+	{ "titre.033", kSaveModeIgnore, 0, 0},
+	{ "titre.034", kSaveModeIgnore, 0, 0},
+	{ "titre.035", kSaveModeIgnore, 0, 0},
+	{ "titre.036", kSaveModeIgnore, 0, 0},
+	{ "titre.037", kSaveModeIgnore, 0, 0},
+	{ "titre.038", kSaveModeIgnore, 0, 0},
+	{ "titre.039", kSaveModeIgnore, 0, 0},
 };
 
 SaveLoad_Playtoons::GameHandler::File::File(GobEngine *vm, const char *base) :
@@ -66,7 +78,7 @@ int SaveLoad_Playtoons::GameHandler::File::getSlot(int32 offset) const {
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 2900) / varSize);
+	return ((offset - (kPropsSize + kIndexSize)) / varSize);
 }
 
 int SaveLoad_Playtoons::GameHandler::File::getSlotRemainder(int32 offset) const {
@@ -75,13 +87,13 @@ int SaveLoad_Playtoons::GameHandler::File::getSlotRemainder(int32 offset) const 
 	if (varSize == 0)
 		return -1;
 
-	return ((offset - 2900) % varSize);
+	return ((offset - (kPropsSize + kIndexSize)) % varSize);
 }
 
 
 SaveLoad_Playtoons::GameHandler::GameHandler(GobEngine *vm, const char *target) : SaveHandler(vm) {
-	memset(_props, 0,  500);
-	memset(_index, 0, 2400);
+	memset(_props, 0, kPropsSize);
+	memset(_index, 0, kIndexSize);
 
 	_slotFile = new File(vm, target);
 }
@@ -96,7 +108,7 @@ int32 SaveLoad_Playtoons::GameHandler::getSize() {
 	if (varSize == 0)
 		return -1;
 
-	return _slotFile->tallyUpFiles(varSize, 2900);
+	return _slotFile->tallyUpFiles(varSize, kPropsSize + kIndexSize);
 }
 
 bool SaveLoad_Playtoons::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
@@ -111,20 +123,20 @@ bool SaveLoad_Playtoons::GameHandler::load(int16 dataVar, int32 size, int32 offs
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (((uint32) offset) < kPropsSize) {
 		// Properties
 
-		if ((offset + size) > 500) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyFrom(dataVar, _props + offset, size);
 
-	} else if (offset < 2900) {
+	} else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
-		if (size != 2400) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
@@ -198,26 +210,26 @@ bool SaveLoad_Playtoons::GameHandler::save(int16 dataVar, int32 size, int32 offs
 		size = varSize;
 	}
 
-	if (offset < 500) {
+	if (((uint32) offset) < kPropsSize) {
 		// Properties
 
-		if ((offset + size) > 500) {
+		if (((uint32) (offset + size)) > kPropsSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
 
 		_vm->_inter->_variables->copyTo(dataVar, _props + offset, size);
 
-	}  else if (offset < 2900) {
+	}  else if (((uint32) offset) < kPropsSize + kIndexSize) {
 		// Save index
 
-		if (size != 2400) {
+		if (((uint32) size) != kIndexSize) {
 			warning("Wrong index size (%d, %d)", size, offset);
 			return false;
 		}
 
 		// Just copy the index into our buffer
-		_vm->_inter->_variables->copyTo(dataVar, _index, 2400);
+		_vm->_inter->_variables->copyTo(dataVar, _index, kIndexSize);
 
 	} else {
 		// Save slot, whole variable block

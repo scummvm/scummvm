@@ -56,6 +56,7 @@ DemoPlayer::Script DemoPlayer::_scripts[] = {
 };
 
 DemoPlayer::DemoPlayer(GobEngine *vm) : _vm(vm) {
+	_autoDouble = false;
 	_doubleMode = false;
 	_rebase0 = false;
 }
