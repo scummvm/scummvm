@@ -71,10 +71,7 @@ SegManager::SegManager(ResourceManager *resMgr, SciVersion version) {
 
 	int result = 0;
 
-	if (version >= SCI_VERSION_1_1)
-		result = createSci11ClassTable();
-	else
-		result = createSci0ClassTable();
+	result = createClassTable();
 
 	if (result)
 		error("SegManager: Failed to initialize class table");
@@ -692,7 +689,6 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 				return;
 			}
 
-			_classtable[species].script = scr->nr;
 			_classtable[species].reg.segment = seg;
 			_classtable[species].reg.offset = classpos;
 		}
@@ -916,137 +912,24 @@ int SegManager::freeDynmem(reg_t addr) {
 	return 0; // OK
 }
 
-int SegManager::createSci11ClassTable() {
-	int scriptnr;
-	unsigned int seeker_offset;
-	char *seeker_ptr;
-	int classnr;
-
+int SegManager::createClassTable() {
 	Resource *vocab996 = _resMgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
 	if (!vocab996)
-		_classtable.resize(20);
-	else
-		_classtable.resize(vocab996->size >> 2);
+		error("SegManager: failed to open vocab 996");
 
-	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		Resource *heap = _resMgr->findResource(ResourceId(kResourceTypeHeap, scriptnr), 0);
+	int totalClasses = vocab996->size >> 2;
+	_classtable.resize(totalClasses);
 
-		if (heap) {
-			int global_vars = READ_LE_UINT16(heap->data + 2);
+	for (uint16 classNr = 0; classNr < totalClasses; classNr++) {
+		uint16 scriptNr = READ_LE_UINT16(vocab996->data + classNr * 4 + 2);
 
-			seeker_ptr = (char*)heap->data + 4 + global_vars * 2;
-			seeker_offset = 4 + global_vars * 2;
-
-			while (READ_LE_UINT16((byte*)seeker_ptr) == SCRIPT_OBJECT_MAGIC_NUMBER) {
-				if (READ_LE_UINT16((byte*)seeker_ptr + 14) & SCRIPT_INFO_CLASS) {
-					classnr = READ_LE_UINT16((byte*)seeker_ptr + 10);
-					if (classnr >= (int)_classtable.size()) {
-						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
-							        classnr, scriptnr, scriptnr, seeker_offset);
-							return 1;
-						}
-
-						_classtable.resize(classnr + 1); // Adjust maximum number of entries
-					}
-
-					_classtable[classnr].reg.offset = seeker_offset;
-					_classtable[classnr].reg.segment = 0;
-					_classtable[classnr].script = scriptnr;
-				}
-
-				seeker_ptr += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
-				seeker_offset += READ_LE_UINT16((byte*)seeker_ptr + 2) * 2;
-			}
-		}
+		_classtable[classNr].reg = NULL_REG;
+		_classtable[classNr].script = scriptNr;
 	}
 
 	_resMgr->unlockResource(vocab996);
-	vocab996 = NULL;
-	return 0;
-}
 
-int SegManager::createSci0ClassTable() {
-	int scriptnr;
-	unsigned int seeker;
-	int classnr;
-	int magic_offset; // For strange scripts in older SCI versions
-
-	Resource *vocab996 = _resMgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
-	SciVersion version = _version;	// for the offset defines
-
-	if (!vocab996)
-		_classtable.resize(20);
-	else
-		_classtable.resize(vocab996->size >> 2);
-
-	for (scriptnr = 0; scriptnr < 1000; scriptnr++) {
-		int objtype = 0;
-		Resource *script = _resMgr->findResource(ResourceId(kResourceTypeScript, scriptnr), 0);
-
-		if (script) {
-			if (version == SCI_VERSION_0_EARLY)	// check if we got an old script header
-				magic_offset = seeker = 2;
-			else
-				magic_offset = seeker = 0;
-
-			do {
-				while (seeker < script->size)	{
-					unsigned int lastseeker = seeker;
-					objtype = (int16)READ_LE_UINT16(script->data + seeker);
-					if (objtype == SCI_OBJ_CLASS || objtype == SCI_OBJ_TERMINATOR)
-						break;
-					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2);
-					if (seeker <= lastseeker) {
-						_classtable.clear();
-						error("Script version is invalid");
-					}
-				}
-
-				if (objtype == SCI_OBJ_CLASS) {
-					int sugg_script;
-
-					seeker -= SCRIPT_OBJECT_MAGIC_OFFSET; // Adjust position; script home is base +8 bytes
-
-					classnr = (int16)READ_LE_UINT16(script->data + seeker + 4 + SCRIPT_SPECIES_OFFSET);
-					if (classnr >= (int)_classtable.size()) {
-
-						if (classnr >= SCRIPT_MAX_CLASSTABLE_SIZE) {
-							warning("Invalid class number 0x%x in script.%d(0x%x), offset %04x",
-							        classnr, scriptnr, scriptnr, seeker);
-							return 1;
-						}
-
-						_classtable.resize(classnr + 1); // Adjust maximum number of entries
-					}
-
-					// Map the class ID to the script the corresponding class is contained in
-					// The script number is found in vocab.996, if it exists
-					if (!vocab996 || (uint32)classnr >= vocab996->size >> 2)
-						sugg_script = -1;
-					else
-						sugg_script = (int16)READ_LE_UINT16(vocab996->data + 2 + (classnr << 2));
-
-					// First, test whether the script hasn't been claimed, or if it's been claimed by the wrong script
-
-					if (sugg_script == -1 || scriptnr == sugg_script /*|| !s->_classtable[classnr].reg.segment*/)  {
-						// Now set the home script of the class
-						_classtable[classnr].reg.offset = seeker + 4 - magic_offset;
-						_classtable[classnr].reg.segment = 0;
-						_classtable[classnr].script = scriptnr;
-					}
-
-					seeker += SCRIPT_OBJECT_MAGIC_OFFSET; // Re-adjust position
-					seeker += (int16)READ_LE_UINT16(script->data + seeker + 2); // Move to next
-				}
-
-			} while (objtype != SCI_OBJ_TERMINATOR && seeker <= script->size);
-
-		}
-	}
-	_resMgr->unlockResource(vocab996);
-	vocab996 = NULL;
 	return 0;
 }
 

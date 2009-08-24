@@ -312,13 +312,6 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		ObjVarRef varp;
 		switch (lookup_selector(s, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
-			// WORKAROUND: LSL6 tries to access the invalid 'keep' selector of the game object.
-			// FIXME: Find out if this is a game bug.
-			if ((s->_gameName == "LSL6") && (selector == 0x18c)) {
-				debug("LSL6 detected, continuing...");
-				break;
-			}
-
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 
 			break;
@@ -1660,7 +1653,6 @@ int script_instantiate_sci0(ResourceManager *resMgr, SegManager *segManager, Sci
 				return 1;
 			}
 
-			segManager->_classtable[species].script = script_nr;
 			segManager->_classtable[species].reg = addr;
 			segManager->_classtable[species].reg.offset = classpos;
 			// Set technical class position-- into the block allocated for it
