@@ -260,7 +260,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	bool foundResMap = false;
 	bool foundRes000 = false;
 	Common::Platform exePlatform = Common::kPlatformUnknown;
-	Common::String exeVersionString;
 
 	// First grab all filenames
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -293,22 +292,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 		// Check if it's a known executable name
 		// Note: "sier" matches "sier.exe", "sierra.exe", "sierw.exe" and "sierw5.exe"
+		// TODO: Try to remove this code, and base platform detection on game resources
+		// instead of the executable itself
 		if (filename.contains("scidhuv") || filename.contains("sciduv") ||
 			filename.contains("sciv") || filename.contains("sciw") ||
 			filename.contains("prog") || filename.contains("sier")) {
 
-			// We already found a valid exe, no need to check this one.
-			if (!exeVersionString.empty())
-				continue;
-
 			// Is it really an executable file?
 			Common::SeekableReadStream *fileStream = file->createReadStream();
 			exePlatform = getGameExePlatform(fileStream);
-
-			// It's a valid exe, read the interpreter version string
-			if (exePlatform != Common::kPlatformUnknown)
-				exeVersionString = readSciVersionFromExe(fileStream, exePlatform);
-
 			delete fileStream;
 		}
 	}
@@ -319,19 +311,40 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 
+	ResourceManager *resMgr = new ResourceManager(fslist);
+	SciVersion version = resMgr->sciVersion();
+	SegManager *segManager = new SegManager(resMgr, version);
+
 	// Set some defaults
 	s_fallbackDesc.desc.extra = "";
 	s_fallbackDesc.desc.language = Common::UNK_LANG;
+	if (exePlatform == Common::kPlatformUnknown) {
+		// Try to determine the platform from game resources
+		ViewType gameViews = resMgr->getViewType();
+		if (gameViews == kViewEga || gameViews == kViewVga ||
+			gameViews == kViewVga11) {
+			// Must be PC or Mac, set to PC for now
+			// TODO: Is there a reliable way to determine the game
+			// platform from the resources? So far, I've noticed
+			// that Mac versions have a different signature for
+			// kGetEvent and kNewWindow. I'm unsure about Atari ST
+			// versions. Could we base detection on this?
+			exePlatform = Common::kPlatformPC;
+		} else if (gameViews == kViewAmiga) {
+			exePlatform = Common::kPlatformAmiga;
+		}
+		// TODO: detection for Mac and Atari ST
+	}
+
 	s_fallbackDesc.desc.platform = exePlatform;
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
 	// Determine the game id
-	ResourceManager *resMgr = new ResourceManager(fslist);
-	SciVersion version = resMgr->sciVersion();
-	SegManager *segManager = new SegManager(resMgr, version);
 	if (!script_instantiate(resMgr, segManager, version, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		SearchMan.remove("SCI_detection");
+		delete segManager;
+		delete resMgr;
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
@@ -345,7 +358,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
 	printf("translation), please, report the data above, including the following\n");
 	printf("version number, from the game's executable:\n");
-	printf("Version: %s\n\n", exeVersionString.empty() ? "not found" : exeVersionString.c_str());
 
 	SearchMan.remove("SCI_detection");
 
