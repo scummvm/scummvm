@@ -261,6 +261,13 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	bool foundRes000 = false;
 	Common::Platform exePlatform = Common::kPlatformUnknown;
 
+	// Set some defaults
+	s_fallbackDesc.desc.extra = "";
+	s_fallbackDesc.desc.language = Common::UNK_LANG;
+	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
+	s_fallbackDesc.desc.platform = Common::kPlatformUnknown;
+	s_fallbackDesc.desc.gameid = "sci";
+
 	// First grab all filenames
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
 		if (file->isDirectory())
@@ -284,6 +291,28 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			assert(!SearchMan.hasArchive("SCI_detection"));
 			SearchMan.addDirectory("SCI_detection", file->getParent());
 			foundResMap = true;
+		}
+
+		// Determine if we got a CD version and set the CD flag accordingly, by checking for
+		// resource.aud. We assume that the file should be over 10MB, as it contains all the
+		// game speech and is usually around 450MB+. The size check is for some floppy game
+		// versions like KQ6 floppy, which also have a small resource.aud file
+		if (filename.contains("resource.aud")) {
+			Common::SeekableReadStream *tmpStream = file->createReadStream();
+			if (tmpStream->size() > 10 * 1024 * 1024) {
+				// We got a CD version, so set the CD flag accordingly
+				s_fallbackDesc.desc.flags |= ADGF_CD;
+				s_fallbackDesc.desc.extra = "CD";
+			}
+			delete tmpStream;
+		}
+
+		// Check if we got a map file for older SCI1 CD versions (like KQ5CD)
+		// It's named like "audioXXX.map"
+		if (filename.contains("audio") && filename.contains(".map")) {
+			// We got a CD version, so set the CD flag accordingly
+			s_fallbackDesc.desc.flags |= ADGF_CD;
+			s_fallbackDesc.desc.extra = "CD";
 		}
 
 		if (filename.contains("resource.000") || filename.contains("resource.001")
@@ -313,14 +342,27 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	ResourceManager *resMgr = new ResourceManager(fslist);
 	SciVersion version = resMgr->sciVersion();
+	ViewType gameViews = resMgr->getViewType();
+
+	// Have we identified the game views? If not, stop here
+	if (gameViews == kViewUnknown) {
+		SearchMan.remove("SCI_detection");
+		return (const ADGameDescription *)&s_fallbackDesc;
+	}
+
+#ifndef ENABLE_SCI32
+	// Is SCI32 compiled in? If not, and this is a SCI32 game,
+	// stop here
+	if (resMgr->sciVersion() == SCI_VERSION_32) {
+		SearchMan.remove("SCI_detection");
+		return (const ADGameDescription *)&s_fallbackDesc;
+	}
+#endif
+
 	SegManager *segManager = new SegManager(resMgr, version);
 
-	// Set some defaults
-	s_fallbackDesc.desc.extra = "";
-	s_fallbackDesc.desc.language = Common::UNK_LANG;
 	if (exePlatform == Common::kPlatformUnknown) {
 		// Try to determine the platform from game resources
-		ViewType gameViews = resMgr->getViewType();
 		if (gameViews == kViewEga || gameViews == kViewVga ||
 			gameViews == kViewVga11) {
 			// Must be PC or Mac, set to PC for now
@@ -337,7 +379,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	}
 
 	s_fallbackDesc.desc.platform = exePlatform;
-	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
 
 	// Determine the game id
 	if (!script_instantiate(resMgr, segManager, version, 0)) {
@@ -354,10 +395,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName).c_str());
 	delete segManager;
 	delete resMgr;
-
-	printf("If this is *NOT* a fan-modified version (in particular, not a fan-made\n");
-	printf("translation), please, report the data above, including the following\n");
-	printf("version number, from the game's executable:\n");
 
 	SearchMan.remove("SCI_detection");
 
