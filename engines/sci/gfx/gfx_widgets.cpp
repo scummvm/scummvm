@@ -1753,8 +1753,8 @@ int gfxw_widget_matches_snapshot(gfxw_snapshot_t *snapshot, GfxWidget *widget) {
 	// (this one includes equality too)
 	return ((widget->_serial >= free_above_eq || widget->_serial < free_below) &&
 			(snapshot->area.x <= bounds.x && snapshot->area.y <= bounds.y &&
-			 snapshot->area.width >= bounds.width &&
-			 snapshot->area.height >= bounds.height));
+			 snapshot->area.x + snapshot->area.width >= bounds.x + bounds.width &&
+			 snapshot->area.y + snapshot->area.height >= bounds.y + bounds.height));
 }
 
 #define MAGIC_FREE_NUMBER -42

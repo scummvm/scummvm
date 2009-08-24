@@ -2541,7 +2541,7 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
 	if (argextra)
-		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16() - argv[5].toSint16(), argv[6].toSint16() - argv[4].toSint16()));
+		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(argv[5].toSint16(), argv[4].toSint16() + s->wm_port->_bounds.y, argv[7].toSint16() - argv[5].toSint16(), argv[6].toSint16() - argv[4].toSint16()));
 
 	ADD_TO_WINDOW_PORT(window);
 	FULL_REDRAW();
