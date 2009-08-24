@@ -133,23 +133,36 @@ void Inter_v6::o6_playVmdOrMusic() {
 	if (lastFrame == -1) {
 		close = true;
 	} else if (lastFrame == -5) {
+//		warning("Urban/Playtoons Stub: Stop without delay");
 		_vm->_sound->bgStop();
 		return;
-	} else if (lastFrame == -9) {
+	} else if (lastFrame == -6) {
+//		warning("Urban/Playtoons Stub: Video/Music command -6 (cache video)");
+		return;
+	} else if (lastFrame == -7) {
+//		warning("Urban/Playtoons Stub: Video/Music command -6 (flush cache)");
+		return;
+	} else if ((lastFrame == -8) || (lastFrame == -9)) {
 		if (!strchr(fileName, '.'))
 			strcat(fileName, ".WA8");
 
 		probe16bitMusic(fileName);
 
+		warning("Urban/Playtoons Stub: Video/Music command %d (NOT IMPLEMENTED delayed stop + start), %s", lastFrame, fileName);
 		_vm->_sound->bgStop();
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
-	} else if (lastFrame == -10) {
+	} else if (lastFrame <= -10) {
 		_vm->_vidPlayer->primaryClose();
-		warning("Urban Stub: Video/Music command -10 (close video?)");
-		return;
+		warning("Urban/Playtoons Stub: Video/Music command %d (close video?), %s", lastFrame, fileName);
+		if (lastFrame <= -100)
+			lastFrame += 100;
+
+		palEnd=(-lastFrame)%10;
+		if (palEnd==3 && lastFrame<=-20)
+			_vm->_sound->bgPlay(fileName, SOUND_WAV);
 	} else if (lastFrame < 0) {
-		warning("Unknown Video/Music command: %d, %s", lastFrame, fileName);
+		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", lastFrame, fileName);
 		return;
 	}
 
