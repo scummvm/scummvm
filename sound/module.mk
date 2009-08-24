@@ -24,11 +24,13 @@ MODULE_OBJS := \
 	vorbis.o \
 	wave.o \
 	mods/infogrames.o \
+	mods/maxtrax.o \
 	mods/module.o \
 	mods/protracker.o \
 	mods/paula.o \
 	mods/rjp1.o \
 	mods/soundfx.o \
+	mods/tfmx.o \
 	softsynth/adlib.o \
 	softsynth/opl/dosbox.o \
 	softsynth/opl/mame.o \

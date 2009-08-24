@@ -50,7 +50,10 @@ KyraEngine_v1::KyraEngine_v1(OSystem *system, const GameFlags &flags)
 	_emc = 0;
 	_debugger = 0;
 
-	_gameSpeed = 60;
+	if (_flags.platform == Common::kPlatformAmiga)
+		_gameSpeed = 50;
+	else
+		_gameSpeed = 60;
 	_tickLength = (uint8)(1000.0 / _gameSpeed);
 
 	_trackMap = 0;
@@ -114,6 +117,8 @@ Common::Error KyraEngine_v1::init() {
 				_sound = new SoundPC98(this, _mixer);
 			else
 				_sound = new SoundTownsPC98_v2(this, _mixer);
+		} else if (_flags.platform == Common::kPlatformAmiga) {
+			_sound = new SoundAmiga(this, _mixer);
 		} else if (midiDriver == MD_ADLIB) {
 			_sound = new SoundAdlibPC(this, _mixer);
 		} else {

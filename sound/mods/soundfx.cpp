@@ -46,8 +46,7 @@ public:
 
 	enum {
 		NUM_CHANNELS = 4,
-		NUM_INSTRUMENTS = 15,
-		CIA_FREQ = 715909
+		NUM_INSTRUMENTS = 15
 	};
 
 	SoundFx(int rate, bool stereo);
@@ -75,12 +74,12 @@ protected:
 	uint16 _curPos;
 	uint8 _ordersTable[128];
 	uint8 *_patternData;
-	int _eventsFreq;
 	uint16 _effects[NUM_CHANNELS];
 };
 
 SoundFx::SoundFx(int rate, bool stereo)
 	: Paula(stereo, rate) {
+	setTimerBaseValue(kPalCiaClock);
 	_ticks = 0;
 	_delay = 0;
 	memset(_instruments, 0, sizeof(_instruments));
@@ -89,7 +88,6 @@ SoundFx::SoundFx(int rate, bool stereo)
 	_curPos = 0;
 	memset(_ordersTable, 0, sizeof(_ordersTable));
 	_patternData = 0;
-	_eventsFreq = 0;
 	memset(_effects, 0, sizeof(_effects));
 }
 
@@ -167,8 +165,7 @@ void SoundFx::play() {
 	_curPos = 0;
 	_curOrder = 0;
 	_ticks = 0;
-	_eventsFreq = CIA_FREQ / _delay;
-	setInterruptFreq(getRate() / _eventsFreq);
+	setInterruptFreqUnscaled(_delay);
 	startPaula();
 }
 
@@ -252,7 +249,7 @@ void SoundFx::handleTick() {
 }
 
 void SoundFx::disablePaulaChannel(uint8 channel) {
-	setChannelPeriod(channel, 0);
+	disableChannel(channel);
 }
 
 void SoundFx::setupPaulaChannel(uint8 channel, const int8 *data, uint16 len, uint16 repeatPos, uint16 repeatLen) {

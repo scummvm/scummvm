@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	sequences_hof.o \
 	sequences_mr.o \
 	sound_adlib.o \
+	sound_amiga.o \
 	sound_digital.o \
 	sound_midi.o \
 	sound_pcspk.o \

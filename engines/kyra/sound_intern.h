@@ -37,6 +37,7 @@
 
 namespace Audio {
 class PCSpeaker;
+class MaxTrax;
 } // end of namespace Audio
 
 namespace Kyra {
@@ -284,7 +285,34 @@ private:
 	static const uint8 _noteTable2[];
 };
 
+class SoundAmiga : public Sound {
+public:
+	SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer);
+	~SoundAmiga();
+
+	virtual kType getMusicType() const { return kAmiga; } //FIXME
+
+	bool init();
+
+	void process() {}
+	void loadSoundFile(uint file);
+	void loadSoundFile(Common::String) {}
+
+	void playTrack(uint8 track);
+	void haltTrack();
+	void beginFadeOut();
+
+	int32 voicePlay(const char *file, Audio::SoundHandle *handle, uint8 volume, bool isSfx) { return -1; }
+	void playSoundEffect(uint8);
+
+protected:
+	Audio::MaxTrax *_driver;
+	Audio::SoundHandle _musicHandle;
+	enum FileType { kFileNone = -1, kFileIntro = 0, kFileGame = 1, kFileFinal = 2 } _fileLoaded;
+	const byte *_tableSfxIntro;
+	const byte *_tableSfxGame;
+};
+
 } // end of namespace Kyra
 
 #endif
-

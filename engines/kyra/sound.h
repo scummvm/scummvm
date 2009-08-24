@@ -55,7 +55,8 @@ public:
 		kMidiGM,
 		kTowns,
 		kPC98,
-		kPCSpkr
+		kPCSpkr,
+		kAmiga
 	};
 
 	virtual kType getMusicType() const = 0;

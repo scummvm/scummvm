@@ -81,12 +81,6 @@ public:
 	 * @return the music timer
 	 */
 	virtual int  getMusicTimer() const { return 0; }
-
-	/**
-	 * Terminate the music engine. Called just before the music engine
-	 * is deleted.
-	 */
-	virtual void terminate() {}
 };
 
 } // End of namespace Scumm

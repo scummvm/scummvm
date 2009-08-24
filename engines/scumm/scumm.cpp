@@ -56,6 +56,7 @@
 #include "scumm/player_v2.h"
 #include "scumm/player_v2a.h"
 #include "scumm/player_v3a.h"
+#include "scumm/player_v4a.h"
 #include "scumm/he/resource_he.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
@@ -284,7 +285,6 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_useTalkAnims = false;
 	_defaultTalkDelay = 0;
 	_musicType = MDT_NONE;
-	_tempMusic = 0;
 	_saveSound = 0;
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
@@ -554,10 +554,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 ScummEngine::~ScummEngine() {
 	Common::clearAllDebugChannels();
 
-	if (_musicEngine) {
-		_musicEngine->terminate();
-		delete _musicEngine;
-	}
+	delete _musicEngine;
 
 	_mixer->stopAll();
 
@@ -1296,7 +1293,6 @@ void ScummEngine::setupCostumeRenderer() {
 void ScummEngine::resetScumm() {
 	int i;
 
-	_tempMusic = 0;
 	debug(9, "resetScumm");
 
 	if (_game.version == 0) {
@@ -1698,7 +1694,7 @@ void ScummEngine::setupMusic(int midi) {
 	} else if (_game.platform == Common::kPlatformPCEngine && _game.version == 3) {
 		// TODO: Add support for music format
 	} else if (_game.platform == Common::kPlatformAmiga && _game.version <= 4) {
-		// TODO: Add support for music format
+		_musicEngine = new Player_V4A(this, _mixer);
 	} else if (_game.id == GID_MANIAC && _game.version == 1) {
 		_musicEngine = new Player_V1(this, _mixer, midiDriver != MD_PCSPK);
 	} else if (_game.version <= 2) {
@@ -1909,17 +1905,6 @@ void ScummEngine::scummLoop(int delta) {
 		if (_musicEngine) {
 			// The music engine generates the timer data for us.
 			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
-		} else {
-			// Used for Money Island 1 (Amiga)
-			// TODO: The music delay (given in milliseconds) might have to be tuned a little
-			// to get it correct for all games. Without the ability to watch/listen to the
-			// original games, I can't do that myself.
-			const int MUSIC_DELAY = 350;
-			_tempMusic += delta * 1000 / 60;	// Convert delta to milliseconds
-			if (_tempMusic >= MUSIC_DELAY) {
-				_tempMusic -= MUSIC_DELAY;
-				VAR(VAR_MUSIC_TIMER) += 1;
-			}
 		}
 	}
 
