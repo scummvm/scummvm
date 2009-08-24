@@ -106,7 +106,7 @@ enum GameType {
 	kGameTypeBambou,
 	kGameTypeFascination,
 	kGameTypeGeisha,
-	kGameTypeMagicStones,
+	kGameTypeAdi2,
 	kGameTypeAdibou4,
 	kGameTypeAdibouUnknown
 };
@@ -119,7 +119,7 @@ enum Features {
 	kFeatures640     = 1 << 3,
 	kFeaturesSCNDemo = 1 << 4,
 	kFeaturesBATDemo = 1 << 5,
-	kFeatures800x600     = 1 << 6
+	kFeatures800x600 = 1 << 6
 };
 
 enum {

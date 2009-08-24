@@ -72,7 +72,7 @@ static const PlainGameDescriptor gobGames[] = {
 	{"bambou", "Playtoons Limited Edition - Bambou le sauveur de la jungle"},
 	{"fascination", "Fascination"},
 	{"geisha", "Geisha"},
-	{"magicstones", "The Land of the Magic Stones"},
+	{"adi2", "ADI v2"},
 	{"adibou4", "Adibou v4"},
 	{"adibouunknown", "Adibou (not yet supported)"},
 	{0, 0}
@@ -3689,21 +3689,31 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
-			"magicstones",
-			"",
-			{
-				{"ed4.stk", 0, "98721a7cfdc5a358d7ac56b7c6d3ba3d", 541882},
-				{"ed4cd.itk", 0, "0627a91d9a6f4772c33747ce752024c2", 606993908},
-				{0, 0, 0, 0}
-			},
+			"adi2",
+			"Adi 2.7.1",
+			AD_ENTRY1s("adi2.stk", "6fa5dffebf5c7243c6af6b8c188ee00a", 19278008),
 			FR_FRA,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+			GUIO_NONE
 		},
-		kGameTypeMagicStones,
-		kFeatures800x600,
-		"ed4.stk", "main.obc", 0
+		kGameTypeAdibou4,
+		kFeatures640,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
+			"ADI 2 Spanish",
+			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
+			ES_ESP,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdibouUnknown,
+		kFeaturesNone,
+		"adi2.stk", "ediintro.tot", 0
 	},
 	{
 		{
@@ -3791,20 +3801,6 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adibouunknown",
-			"ADI 2 Spanish",
-			AD_ENTRY1s("adi2.stk", "2a40bb48ccbd4e6fb3f7f0fc2f069d80", 17720132),
-			ES_ESP,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		"adi2.stk", "ediintro.tot", 0
-	},
-	{
-		{
-			"adibouunknown",
 			"ADIBOU 2 French",
 			AD_ENTRY1s("intro.stk", "94ae7004348dc8bf99c23a9a6ef81827", 956162),
 			FR_FRA,
@@ -3875,78 +3871,6 @@ static const GOBGameDescription gameDescriptions[] = {
 		kGameTypeAdibouUnknown,
 		kFeaturesNone,
 		"adibou.stk", "intro.tot", 0
-	},
-	{
-		{
-			"adibouunknown",
-			"ADIBOU pr\xE9sente La Magie (STK2.1/OBC)",
-			{
-				{"adibou.stk", 0, "977d2449d398f3df23238d718fca35b5", 61097},
-				{"magic.stk", 0, "9776765dead3e338a32c43bf344b5819", 302664},
-				{0, 0, 0, 0}
-			},
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		"adibou.stk", "main.obc", 0
-	},
-	{
-		{
-			"adibouunknown",
-			"Dis-moi Adi : Français-Maths CE2 (PAK/??\?)",
-			{
-				{"adi_exerciser.pak", 0, "585db904fe745ab560886a13500ed5f2", 73207668},
-				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
-				{0, 0, 0, 0}
-			},
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		"", "", 0
-	},
-	{
-		{
-			"adibouunknown",
-			"Dis-moi Adi : Français-Maths CM2 (PAK/??\?)",
-			{
-				{"adi_exerciser.pak", 0, "7e4574ea8a8e77585fb17f5c8d7a7831", 65789907},
-				{"adi_texts.pak", 0, "79c73034e0a098d2a45a70ba95f6eace", 10656},
-				{0, 0, 0, 0}
-			},
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		"", "", 0
-	},
-	{
-		{
-			"adibouunknown",
-			"Dis-moi Adi : Anglais primaire 7-11 ans (PAK/??\?)",
-			{
-				{"adi_exerciser.pak", 0, "a2d7dec00cd5a6e2f2b8bfc225df490e", 136669275},
-				{"adi_texts.pak", 0, "eb09da3d13770c34bf77e4f94744d5f5", 10616},
-				{0, 0, 0, 0}
-			},
-			FR_FRA,
-			kPlatformPC,
-			ADGF_NO_FLAGS,
-			GUIO_NONE
-		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
-		"", "", 0
 	},
 	{ AD_TABLE_END_MARKER, kGameTypeNone, kFeaturesNone, 0, 0, 0}
 };
@@ -4262,17 +4186,17 @@ static const GOBGameDescription fallbackDescs[] = {
 	},
 	{
 		{
-			"magicstones",
-			"unknown",
+			"adi2",
+			"",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
 			kPlatformPC,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypeMagicStones,
-		kFeatures800x600,
-		"ed4.stk", "main.obc", 0
+		kGameTypeAdi2,
+		kFeatures640,
+		"adi2.stk", 0, 0
 	},
 	{
 		{
@@ -4328,7 +4252,7 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[19], { "intro.stk", "bambou.itk", 0 } },
 	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
-	{ &fallbackDescs[22], { "ed4.stk", 0 } },
+	{ &fallbackDescs[22], { "adi2.stk", 0 } },
 	{ &fallbackDescs[23], { "adif41.stk", "adim41.stk", 0 } },
 	{ &fallbackDescs[24], { "coktelplayer.scn", 0 } },
 	{ 0, { 0 } }
