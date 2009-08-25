@@ -116,6 +116,10 @@
 				<File RelativePath="..\..\engines\sci\sfx\softseq\pcjr.h" />
 			</Filter>
 			<Filter	Name="seq">
+				<File RelativePath="..\..\engines\sci\sfx\seq\gm.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\seq\instrument-map.cpp" />
+				<File RelativePath="..\..\engines\sci\sfx\seq\instrument-map.h" />
+				<File RelativePath="..\..\engines\sci\sfx\seq\map-mt32-to-gm.cpp" />
 				<File RelativePath="..\..\engines\sci\sfx\seq\sequencers.cpp" />
 			</Filter>
 		</Filter>
