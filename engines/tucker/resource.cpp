@@ -252,6 +252,9 @@ Audio::AudioStream *CompressedSound::load(CompressedSoundType type, int num, boo
 		}
 		break;
 	}
+	if (offset == 0) {
+		return 0;
+	}
 	Audio::AudioStream *stream = 0;
 	_fCompressedSound.seek(offset);
 	int dirOffset = _fCompressedSound.readUint32LE();
