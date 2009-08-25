@@ -3330,7 +3330,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	const char *filename = kernel_dereference_char_pointer(s, argv[0], 0);
-	int framerate = argv[1].toUint16(); // FIXME: verify
+	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
 	SeqDecoder seq;
 
@@ -3341,6 +3341,8 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	bool play = true;
 	while (play) {
+		uint32 startTime = g_system->getMillis();
+
 		gfx_pixmap_t *pixmap = seq.getFrame(play);
 
 		if (frameNr++ == 0)
@@ -3351,10 +3353,8 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 		gfx_free_pixmap(pixmap);
 
-		uint32 startTime = g_system->getMillis();
-
 		// Wait before showing the next frame
-		while (play && (g_system->getMillis() < startTime + 1000 / framerate)) {
+		while (play && (g_system->getMillis() < startTime + (delay * 1000 / 60))) {
 			// FIXME: we should probably make a function that handles quitting in these kinds of situations
 			Common::Event curEvent;
 			Common::EventManager *eventMan = g_system->getEventManager();
