@@ -3690,6 +3690,20 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"adi2",
+			"Adi 2.0 for Teachers",
+			AD_ENTRY1s("adi2.stk", "da6f1fb68bff32260c5eecdf9286a2f5", 1533168),
+			FR_FRA,
+			kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		kGameTypeAdi2,
+		kFeaturesNone,
+		"adi2.stk", "ediintro.tot", 0
+	},
+	{
+		{
+			"adi2",
 			"Adi 2.6",
 			AD_ENTRY1s("adi2.stk", "2fb940eb8105b12871f6b88c8c4d1615", 16780058),
 			FR_FRA,
