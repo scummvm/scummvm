@@ -952,12 +952,8 @@ void run_vm(EngineState *s, int restoring) {
 				xs_new = &(s->_executionStack.back());
 				s->_executionStackPosChanged = true;
 
-				{
-					bool oldScriptHeader = (s->segmentManager->sciVersion() == SCI_VERSION_0_EARLY);
-					if (!oldScriptHeader)
-						scriptState.restAdjust = s->restAdjust;
-				}
-
+				if (!oldScriptHeader)
+					scriptState.restAdjust = s->restAdjust;
 			}
 			break;
 

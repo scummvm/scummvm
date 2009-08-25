@@ -341,7 +341,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	}
 
 	ResourceManager *resourceManager = new ResourceManager(fslist);
-	SciVersion version = resourceManager->sciVersion();
 	ViewType gameViews = resourceManager->getViewType();
 
 	// Have we identified the game views? If not, stop here
