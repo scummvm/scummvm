@@ -134,6 +134,18 @@ private:
 	 * Sets the default kernel function names, based on the SCI version used
 	 */
 	void setDefaultKernelNames();
+	
+#ifdef ENABLE_SCI32
+	/**
+	 * Sets the default kernel function names to the SCI2 kernel functions
+	 */
+	void setKernelNamesSci2();
+	
+	/**
+	 * Sets the default kernel function names to the SCI2.1 kernel functions
+	 */
+	void setKernelNamesSci21();
+#endif
 
 	/**
 	 * Loads the kernel selector names.

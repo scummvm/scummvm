@@ -58,7 +58,9 @@ enum SciVersion {
 	SCI_VERSION_1_MIDDLE, // LSL1, JONESCD. (EGA?/VGA)
 	SCI_VERSION_1_LATE, // ECO1, LSL5. (EGA/VGA)
 	SCI_VERSION_1_1, // KQ6, ECO2
-	SCI_VERSION_32 // GK
+	SCI_VERSION_2, // GK1, PQ4 (Floppy), QFG4 (Floppy)
+	SCI_VERSION_2_1, // GK2, KQ7, SQ6, Torin
+	SCI_VERSION_3 // LSL7, RAMA, Lighthouse
 };
 
 /** Resource status types */

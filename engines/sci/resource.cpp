@@ -752,14 +752,14 @@ ResourceManager::ResVersion ResourceManager::detectMapVersion() {
 		// Only SCI32 has directory type < 0x80
 		if (directoryType < 0x80 && (mapDetected == kResVersionUnknown || mapDetected == kResVersionSci32))
 			mapDetected = kResVersionSci32;
-		else if ((directoryType < 0x80) || (directoryType > 0xA0 && directoryType != 0xFF))
+		else if (directoryType < 0x80 || ((directoryType & 0x7f) > 0x20 && directoryType != 0xFF))
 			break;
 		
 		// Offset is above file size? -> definitely not SCI1/SCI1.1
 		if (directoryOffset > fileStream->size())
 			break;
 
-		if (lastDirectoryOffset) {
+		if (lastDirectoryOffset && mapDetected == kResVersionUnknown) {
 			directorySize = directoryOffset - lastDirectoryOffset;
 			if ((directorySize % 5) && (directorySize % 6 == 0))
 				mapDetected = kResVersionSci1Late;
@@ -1380,7 +1380,7 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		break;
 #ifdef ENABLE_SCI32
 	case kResVersionSci32:
-		type = (ResourceType)(file->readByte() &0x7F);
+		type = (ResourceType)(file->readByte() & 0x7F);
 		number = file->readUint16LE();
 		szPacked = file->readUint32LE();
 		szUnpacked = file->readUint32LE();
@@ -1587,12 +1587,24 @@ SciVersion ResourceManager::detectSciVersion() {
 	}
 
 	// Set view type
-	if (viewCompression == kCompDCL) {
+	if (viewCompression == kCompDCL || viewCompression == kCompSTACpack) {
 		// SCI1.1 VGA views
 		_viewType = kViewVga11;
 	} else {
 		// Otherwise we detect it from a view
 		_viewType = detectViewType();
+	}
+	
+	// Handle SCI32 versions here
+	if (_volVersion == kResVersionSci32) {
+		// SCI2.1/3 and SCI1 Late resource maps are the same, except that
+		// SCI1 Late resource maps have the resource types or'd with
+		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
+		// TODO: Differentiate between SCI2.1 and SCI3
+		if (_mapVersion == kResVersionSci1Late)
+			return SCI_VERSION_2;
+		else
+			return SCI_VERSION_2_1;
 	}
 
 	switch (_mapVersion) {
@@ -1649,8 +1661,6 @@ SciVersion ResourceManager::detectSciVersion() {
 		return SCI_VERSION_1_LATE;
 	case kResVersionSci11:
 		return SCI_VERSION_1_1;
-	case kResVersionSci32:
-		return SCI_VERSION_32;
 	default:
 		return SCI_VERSION_AUTODETECT;
 	}

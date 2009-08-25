@@ -327,7 +327,7 @@ int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, S
 		return 0;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (_resourceManager->sciVersion() == SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() >= SCI_VERSION_1_1)
 		block[idx].offset += getScript(segment)->script_size;
 
 	return 1;
@@ -589,7 +589,7 @@ Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 }
 
 Object *SegManager::scriptObjInit(reg_t obj_pos) {
-	if (_resourceManager->sciVersion() != SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() < SCI_VERSION_1_1)
 		return scriptObjInit0(obj_pos);
 	else
 		return scriptObjInit11(obj_pos);
@@ -633,7 +633,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
-	if (_resourceManager->sciVersion() == SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() >= SCI_VERSION_1_1)
 		count = READ_LE_UINT16(scr->buf + location.offset - 2);
 	else
 		count = (READ_LE_UINT16(scr->buf + location.offset - 2) - 4) >> 1;

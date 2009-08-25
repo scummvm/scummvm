@@ -353,7 +353,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 #ifndef ENABLE_SCI32
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
-	if (resourceManager->sciVersion() == SCI_VERSION_32) {
+	if (resourceManager->sciVersion() >= SCI_VERSION_2) {
 		SearchMan.remove("SCI_detection");
 		delete resourceManager;
 		return (const ADGameDescription *)&s_fallbackDesc;

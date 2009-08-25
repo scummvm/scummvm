@@ -61,7 +61,7 @@ GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, Resource
 	} else if (_resourceManager->sciVersion() == SCI_VERSION_1_1) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #ifdef ENABLE_SCI32
-	} else if (_resourceManager->sciVersion() == SCI_VERSION_32) {
+	} else if (_resourceManager->sciVersion() >= SCI_VERSION_2) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {

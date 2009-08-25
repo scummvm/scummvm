@@ -66,6 +66,11 @@ MODULE_OBJS = \
 	sfx/softseq/adlib.o \
 	sfx/softseq/amiga.o \
 	sfx/softseq/pcjr.o
+	
+ifdef ENABLE_SCI32
+MODULE_OBJS += \
+	engine/kernel32.o 
+endif
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_SCI), DYNAMIC_PLUGIN)

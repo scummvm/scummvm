@@ -335,6 +335,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
 
 	// Special and NOP stuff
+	DEFUN("Dummy", kStub, ".*"),
 	{NULL, k_Unknown, NULL},
 
 	// Stub functions
@@ -817,36 +818,17 @@ void Kernel::setDefaultKernelNames() {
 	}
 }
 
-#ifdef ENABLE_SCI32
-//static void vocab_get_knames11(ResourceManager *resourceManager, Common::StringList &names) {
-/*
- 999.voc format for SCI1.1 games:
-	[b] # of kernel functions
-	[w] unknown
-	[offset to function name info]
-		...
-    {[w name-len][function name]}
-		...
-*/
-/*	//unsigned int size = 64, pos = 3;
-	int len;
-	Resource *r = resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
-	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
-		return; // FIXME: should return a default table for this engine
-	const byte nCnt = *r->data;
-
-	names.resize(nCnt);
-	for (int i = 0; i < nCnt; i++) {
-		int off = READ_LE_UINT16(r->data + 2 * i + 2);
-		len = READ_LE_UINT16(r->data + off);
-		names[i] = Common::String((char *)r->data + off + 2, len);
-	}
-}*/
-#endif
-
 bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
-	setDefaultKernelNames();
+	
+#ifdef ENABLE_SCI32
+	if (_resourceManager->sciVersion() == SCI_VERSION_2)
+		setKernelNamesSci2();
+	else if (_resourceManager->sciVersion() == SCI_VERSION_2_1)
+		setKernelNamesSci21();
+	else
+#endif
+		setDefaultKernelNames();
 	return true;
 }
 

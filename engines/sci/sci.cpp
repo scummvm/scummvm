@@ -44,7 +44,7 @@ namespace Sci {
 class GfxDriver;
 
 // FIXME: error-prone
-const char *versionNames[10] = {
+const char *versionNames[] = {
 	"Autodetect",
 	"SCI0 Early",
 	"SCI0 Late",
@@ -54,7 +54,9 @@ const char *versionNames[10] = {
 	"SCI1 Middle",
 	"SCI1 Late",
 	"SCI1.1",
-	"SCI32"
+	"SCI2",
+	"SCI2.1",
+	"SCI3"
 };
 
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
