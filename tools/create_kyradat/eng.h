@@ -188,9 +188,25 @@ const ExtractEntry kyra1EngDemo[] = {
 	{ -1, 0, 0 }
 };
 
+const ExtractEntry kyra1EngDemoCD[] = {
+	{ kKallakWritingSeq, 0x0002FF3F, 0x00030744 },
+	{ kMalcolmTreeSeq, 0x00030744, 0x00030974 },
+	{ kWestwoodLogoSeq, 0x00030974, 0x000309BF },
+	{ kKyrandiaLogoSeq, 0x000309BF, 0x00030A65 },
+	{ kKallakMalcolmSeq, 0x00030A65, 0x00030D1D },
+	{ kForestSeq, 0x00030D1D, 0x00030F90 },
+	{ kIntroCPSStrings, 0x00030F90, 0x00030FA5 },
+	{ kIntroWSAStrings, 0x00030FA5, 0x00031025 },
+	{ kIntroCOLStrings, 0x00031025, 0x00031050 },
+	{ kIntroStrings, 0x00031050, 0x00031546 },
+	{ kAudioTracksIntro, 0x0002FD4A, 0x0002FD5C },
+	{ -1, 0, 0 }
+};
+
 const Game kyra1EngGames[] = {
 	{ kKyra1, EN_ANY, -1, "76a4fc84e173cadb6369785787e1546e", kyra1EngFloppy },
 	{ kKyra1, EN_ANY, kTalkieVersion, "1ebc18f3e7fbb72474a55cb0fa089ed4", kyra1EngCD },
 	{ kKyra1, EN_ANY, kDemoVersion, "7b7504c8560ffc914d34c44c71b3094c", kyra1EngDemo },
+	{ kKyra1, EN_ANY, kDemoCDVersion, "226fdba99cb11ef1047131d9a50e6292", kyra1EngDemoCD },
 	GAME_DUMMY_ENTRY
 };

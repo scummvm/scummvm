@@ -304,7 +304,10 @@ enum kSpecial {
 	k2DemoVersionTlkG = 21,
 	k2DemoLol = 22,
 
-	kLolCD = 23
+	kLolCD = 23,
+
+	// special case for Kyrandia 1 CD demo
+	kDemoCDVersion = 24
 };
 
 struct SpecialExtension {

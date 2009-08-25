@@ -187,6 +187,21 @@ const int kyra1DemoNeed[] = {
 	-1
 };
 
+const int kyra1DemoCDNeed[] = {
+	kKallakWritingSeq,
+	kMalcolmTreeSeq,
+	kWestwoodLogoSeq,
+	kKyrandiaLogoSeq,
+	kKallakMalcolmSeq,
+	kForestSeq,
+	kIntroCPSStrings,
+	kIntroCOLStrings,
+	kIntroWSAStrings,
+	kIntroStrings,
+	kAudioTracksIntro,
+	-1
+};
+
 const int kyra1TownsEngNeed[] = {
 	kKallakWritingSeq,
 	kMalcolmTreeSeq,
@@ -587,6 +602,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra1, kFMTownsVersionJ, kyra1TownsJapNeed },
 	{ kKyra1, kAmigaVersion, kyra1AmigaNeed },
 	{ kKyra1, kDemoVersion, kyra1DemoNeed },
+	{ kKyra1, kDemoCDVersion, kyra1DemoCDNeed },
 
 	{ kKyra2, k2FloppyFile1, kyra2FloppyFile1Need },
 	{ kKyra2, k2FloppyFile2, kyra2FloppyFile2Need },
@@ -618,6 +634,7 @@ const GameNeed gameNeedTable[] = {
 const SpecialExtension specialTable[] = {
 	{ kTalkieVersion, "CD" },
 	{ kDemoVersion, "DEM" },
+	{ kDemoCDVersion, "CD.DEM" },
 	{ kFMTownsVersionE , "TNS" },
 	{ kFMTownsVersionJ, "TNS" },
 	{ kAmigaVersion, "AMG" },

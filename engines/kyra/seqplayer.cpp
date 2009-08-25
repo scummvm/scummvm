@@ -432,7 +432,7 @@ void SeqPlayer::s1_playTrack() {
 }
 
 void SeqPlayer::s1_allocTempBuffer() {
-	if (_vm->gameFlags().isDemo) {
+	if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie) {
 		_seqQuitFlag = true;
 	} else {
 		if (!_specialBuffer && !_copyViewOffs) {
@@ -637,10 +637,10 @@ bool SeqPlayer::playSequence(const uint8 *seqData, bool skipSeq) {
 		uint8 seqCode = *_seqData++;
 		if (seqCode < numCommands) {
 			SeqProc currentProc = commands[seqCode].proc;
-			debugC(5, kDebugLevelSequence, "seqCode = %d (%s)", seqCode, commands[seqCode].desc);
+			debugC(5, kDebugLevelSequence, "0x%.4X seqCode = %d (%s)", (uint16)(_seqData - 1 - seqData), seqCode, commands[seqCode].desc);
 			(this->*currentProc)();
 		} else {
-			error("Invalid sequence opcode %d", seqCode);
+			error("Invalid sequence opcode %d called from 0x%.04X", seqCode, (uint16)(_seqData - 1 - seqData));
 		}
 
 		_screen->updateScreen();

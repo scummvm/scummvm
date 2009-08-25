@@ -53,6 +53,7 @@ namespace {
 #define KYRA1_TOWNS_SJIS_FLAGS FLAGS(false, true, false, true, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_CD_FLAGS FLAGS(false, true, true, false, false, false, false, Kyra::GI_KYRA1)
 #define KYRA1_DEMO_FLAGS FLAGS(true, false, false, false, false, false, false, Kyra::GI_KYRA1)
+#define KYRA1_DEMO_CD_FLAGS FLAGS(true, true, true, false, false, false, false, Kyra::GI_KYRA1)
 
 #define KYRA2_FLOPPY_FLAGS FLAGS(false, false, false, false, false, false, false, Kyra::GI_KYRA2)
 #define KYRA2_FLOPPY_CMP_FLAGS FLAGS(false, false, false, false, false, false, true, Kyra::GI_KYRA2)
@@ -392,6 +393,19 @@ const KYRAGameDescription adGameDescs[] = {
 			Common::GUIO_NOSPEECH
 		},
 		KYRA1_DEMO_FLAGS
+	},
+
+	{	// Special Kyrandia 1 CD demo
+		{
+			"kyra1",
+			"Demo/CD",
+			AD_ENTRY1("INTRO.VRM", "e3045fb69b8c29db84b8fda3ccbdac54"),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_DEMO | ADGF_CD,
+			Common::GUIO_NONE
+		},
+		KYRA1_DEMO_CD_FLAGS
 	},
 
 	{ // Floppy version

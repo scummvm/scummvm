@@ -297,7 +297,7 @@ Common::Error KyraEngine_LoK::go() {
 
 	_abortIntroFlag = false;
 
-	if (_flags.isDemo) {
+	if (_flags.isDemo && !_flags.isTalkie) {
 		_seqPlayerFlag = true;
 		seq_demo();
 		_seqPlayerFlag = false;
@@ -308,7 +308,7 @@ Common::Error KyraEngine_LoK::go() {
 			setGameFlag(0xEF);
 			_seqPlayerFlag = true;
 			seq_intro();
-			if (shouldQuit())
+			if (shouldQuit() || _flags.isDemo)
 				return Common::kNoError;
 			if (_skipIntroFlag && _abortIntroFlag)
 				resetGameFlag(0xEF);

@@ -63,10 +63,10 @@ bool Resource::reset() {
 
 	if (_vm->game() == GI_KYRA1) {
 		// We only need kyra.dat for the demo.
-		if (_vm->gameFlags().isDemo)
+		if (_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
 			return true;
 
-		if (_vm->gameFlags().isTalkie) {
+		if (!_vm->gameFlags().isDemo && _vm->gameFlags().isTalkie) {
 			// List of files in the talkie version, which can never be unload.
 			static const char * const list[] = {
 				"ADL.PAK", "CHAPTER1.VRM", "COL.PAK", "FINALE.PAK", "INTRO1.PAK", "INTRO2.PAK",

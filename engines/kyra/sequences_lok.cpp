@@ -105,7 +105,7 @@ void KyraEngine_LoK::seq_intro() {
 		delete in;
 		_skipIntroFlag = true;
 	} else {
-		_skipIntroFlag = false;
+		_skipIntroFlag = !_flags.isDemo;
 	}
 
 	_seq->setCopyViewOffs(true);
