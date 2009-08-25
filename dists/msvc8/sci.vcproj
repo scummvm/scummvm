@@ -22,6 +22,7 @@
 			<File RelativePath="..\..\engines\sci\engine\grammar.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\intmap.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\intmap.h" />
+			<File RelativePath="..\..\engines\sci\engine\kernel32.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kernel.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kernel.h" />
 			<File RelativePath="..\..\engines\sci\engine\kernel_types.h" />
@@ -129,8 +130,6 @@
 		<File RelativePath="..\..\engines\sci\decompressor.h" />
 		<File RelativePath="..\..\engines\sci\detection.cpp" />
 		<File RelativePath="..\..\engines\sci\detection_tables.h" />
-		<File RelativePath="..\..\engines\sci\exereader.cpp" />
-		<File RelativePath="..\..\engines\sci\exereader.h" />
 		<File RelativePath="..\..\engines\sci\resource.cpp" />
 		<File RelativePath="..\..\engines\sci\resource.h" />
 		<File RelativePath="..\..\engines\sci\sci.cpp" />
