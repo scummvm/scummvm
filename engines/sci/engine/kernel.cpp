@@ -205,7 +205,9 @@ SciKernelFunction kfunct_mappers[] = {
 	/*10*/	DEFUN("CelHigh", kCelHigh, "iOiOi"),
 	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiii*"),
 	/*12*/	DEFUN("AddToPic", kAddToPic, "Il*"),
-	/*13*/	DEFUN("NewWindow", kNewWindow, "iiiiZRi*"),
+	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
+	/*13*/	DEFUN("NewWindow", kNewWindow, "*."),
+	///*13*/	DEFUN("NewWindow", kNewWindow, "iiiiZRi*"),
 	/*14*/	DEFUN("GetPort", kGetPort, ""),
 	/*15*/	DEFUN("SetPort", kSetPort, "ii*"),
 	/*16*/	DEFUN("DisposeWindow", kDisposeWindow, "ii*"),
@@ -214,7 +216,9 @@ SciKernelFunction kfunct_mappers[] = {
 	/*19*/	DEFUN("EditControl", kEditControl, "ZoZo"),
 	/*1a*/	DEFUN("TextSize", kTextSize, "rZrii*r*"),
 	/*1b*/	DEFUN("Display", kDisplay, ".*"),
-	/*1c*/	DEFUN("GetEvent", kGetEvent, "io"),
+	// FIXME: signature check removed (set to .*) as kGetEvent is different in Mac versions
+	/*1c*/	DEFUN("GetEvent", kGetEvent, ".*"),
+	///*1c*/	DEFUN("GetEvent", kGetEvent, "io"),
 	/*1d*/	DEFUN("GlobalToLocal", kGlobalToLocal, "o"),
 	/*1e*/	DEFUN("LocalToGlobal", kLocalToGlobal, "o"),
 	/*1f*/	DEFUN("MapKeyToDir", kMapKeyToDir, "o"),
