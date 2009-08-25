@@ -1587,7 +1587,11 @@ SciVersion ResourceManager::detectSciVersion() {
 	}
 
 	// Set view type
-	if (viewCompression == kCompDCL || viewCompression == kCompSTACpack) {
+	if (viewCompression == kCompDCL 
+#ifdef ENABLE_SCI32
+		|| viewCompression == kCompSTACpack
+#endif
+		) {
 		// SCI1.1 VGA views
 		_viewType = kViewVga11;
 	} else {

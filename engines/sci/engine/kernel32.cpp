@@ -27,6 +27,8 @@
 
 namespace Sci {
 
+#ifdef ENABLE_SCI32
+
 static const char *sci2_default_knames[] = {
 	/*0x00*/ "Load",
 	/*0x01*/ "UnLoad",
@@ -355,5 +357,7 @@ void Kernel::setKernelNamesSci2() {
 void Kernel::setKernelNamesSci21() {
 	_kernelNames = Common::StringList(sci21_default_knames, ARRAYSIZE(sci21_default_knames));
 }
+
+#endif	// ENABLE_SCI32
 
 } // End of namespace Sci
