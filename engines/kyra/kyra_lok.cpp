@@ -80,6 +80,7 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_animator = 0;
 	_seq = 0;
 	_characterList = 0;
+	_roomTable = 0;
 	_movFacingTable = 0;
 	_buttonData = 0;
 	_buttonDataListPtr = 0;
@@ -308,7 +309,7 @@ Common::Error KyraEngine_LoK::go() {
 			setGameFlag(0xEF);
 			_seqPlayerFlag = true;
 			seq_intro();
-			if (shouldQuit() || _flags.isDemo)
+			if (shouldQuit())
 				return Common::kNoError;
 			if (_skipIntroFlag && _abortIntroFlag)
 				resetGameFlag(0xEF);
