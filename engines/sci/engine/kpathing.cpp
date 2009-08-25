@@ -284,7 +284,7 @@ static Common::Point read_point(const byte *list, int is_reg_t, int offset) {
 /**
  * Checks whether two polygons are equal
  */
-static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2) {
+static bool polygons_equal(SegManager *segManager, reg_t p1, reg_t p2) {
 	// Check for same type
 	if (GET_SEL32(p1, type).toUint16() != GET_SEL32(p2, type).toUint16())
 		return false;
@@ -295,8 +295,8 @@ static bool polygons_equal(EngineState *s, reg_t p1, reg_t p2) {
 	if (size != GET_SEL32(p2, size).toUint16())
 		return false;
 
-	const byte *p1_points = kernel_dereference_bulk_pointer(s, GET_SEL32(p1, points), size * POLY_POINT_SIZE);
-	const byte *p2_points = kernel_dereference_bulk_pointer(s, GET_SEL32(p2, points), size * POLY_POINT_SIZE);
+	const byte *p1_points = kernel_dereference_bulk_pointer(segManager, GET_SEL32(p1, points), size * POLY_POINT_SIZE);
+	const byte *p2_points = kernel_dereference_bulk_pointer(segManager, GET_SEL32(p2, points), size * POLY_POINT_SIZE);
 	bool p1_is_reg_t = polygon_is_reg_t(p1_points, size);
 	bool p2_is_reg_t = polygon_is_reg_t(p2_points, size);
 
@@ -359,7 +359,7 @@ static void draw_polygon(EngineState *s, reg_t polygon) {
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
 	Common::Point first, prev;
-	const byte *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
+	const byte *list = kernel_dereference_bulk_pointer(s->segmentManager, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(list, size);
 	int i;
 
@@ -401,12 +401,12 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 
 #endif	// DEBUG_AVOIDPATH
 
-static void print_polygon(EngineState *s, reg_t polygon) {
+static void print_polygon(SegManager *segManager, reg_t polygon) {
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
 	int i;
-	const byte *point_array = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
+	const byte *point_array = kernel_dereference_bulk_pointer(segManager, points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(point_array, size);
 	Common::Point point;
 
@@ -443,7 +443,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	node = lookup_node(s, list->first);
 
 	while (node) {
-		print_polygon(s, node->value);
+		print_polygon(s->segmentManager, node->value);
 		node = lookup_node(s, node->succ);
 	}
 }
@@ -1226,10 +1226,11 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) polygon: The SCI polygon to convert
 	// Returns   : (Polygon *) The converted polygon
+	SegManager *segManager = s->segmentManager;
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
-	const byte *list = kernel_dereference_bulk_pointer(s, points, size * POLY_POINT_SIZE);
+	const byte *list = kernel_dereference_bulk_pointer(s->segmentManager, points, size * POLY_POINT_SIZE);
 	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
 	int is_reg_t = polygon_is_reg_t(list, size);
 
@@ -1362,6 +1363,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	//             (int) opt: Optimization level (0, 1 or 2)
 	// Returns   : (PathfindingState *) On success a newly allocated pathfinding state,
 	//                            NULL otherwise
+	SegManager *segManager = s->segmentManager;
 	Polygon *polygon;
 	int err;
 	int count = 0;
@@ -1377,7 +1379,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 			// Workaround for game bugs that put a polygon in the list more than once
 			while (dup != node) {
-				if (polygons_equal(s, node->value, dup->value)) {
+				if (polygons_equal(s->segmentManager, node->value, dup->value)) {
 					warning("[avoidpath] Ignoring duplicate polygon");
 					break;
 				}

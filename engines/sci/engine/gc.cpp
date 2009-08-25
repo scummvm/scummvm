@@ -102,7 +102,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			wm.push(es.objp);
 			wm.push(es.sendp);
 			if (es.type == EXEC_STACK_TYPE_VARSELECTOR)
-				wm.push(*(es.getVarPointer(s)));
+				wm.push(*(es.getVarPointer(s->segmentManager)));
 		}
 	}
 

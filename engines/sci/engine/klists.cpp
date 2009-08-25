@@ -425,11 +425,12 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 }
 
 reg_t kSort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t source = argv[0];
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];
 
-	int input_size = GET_SEL32SV(source, size);
+	int input_size = (int16)GET_SEL32V(source, size);
 	int i;
 
 	sort_temp_t *temp_array = (sort_temp_t *)malloc(sizeof(sort_temp_t) * input_size);

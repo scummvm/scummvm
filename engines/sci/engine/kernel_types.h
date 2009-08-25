@@ -75,7 +75,7 @@ namespace Sci {
  * @param argv	argument list
  * @return true if the signature was matched, false otherwise
  */
-bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const reg_t *argv);
+bool kernel_matches_signature(SegManager *segManager, const char *sig, int argc, const reg_t *argv);
 
 /**
  * Determines the type of the object indicated by reg.

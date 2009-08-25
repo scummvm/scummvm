@@ -248,10 +248,10 @@ static void _exec_varselectors(EngineState *s) {
 		ExecStack &xs = s->_executionStack.back();
 		// varselector access?
 		if (xs.argc) { // write?
-			*(xs.getVarPointer(s)) = xs.variables_argp[1];
+			*(xs.getVarPointer(s->segmentManager)) = xs.variables_argp[1];
 
 		} else // No, read
-			s->r_acc = *(xs.getVarPointer(s));
+			s->r_acc = *(xs.getVarPointer(s->segmentManager));
 
 		s->_executionStack.pop_back();
 	}
@@ -338,7 +338,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif
 				{ // Argument is supplied -> Selector should be set
 					if (print_send_action) {
-						reg_t oldReg = *varp.getPointer(s);
+						reg_t oldReg = *varp.getPointer(s->segmentManager);
 						reg_t newReg = argp[1];
 
 						printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
@@ -936,7 +936,7 @@ void run_vm(EngineState *s, int restoring) {
 					argc += scriptState.restAdjust;
 
 				if (((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature
-						&& !kernel_matches_signature(s,
+						&& !kernel_matches_signature(s->segmentManager,
 						((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature, argc,
 						scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
@@ -1003,9 +1003,9 @@ void run_vm(EngineState *s, int restoring) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					if (old_xs->argc) // write?
-						*(old_xs->getVarPointer(s)) = old_xs->variables_argp[1];
+						*(old_xs->getVarPointer(s->segmentManager)) = old_xs->variables_argp[1];
 					else // No, read
-						s->r_acc = *(old_xs->getVarPointer(s));
+						s->r_acc = *(old_xs->getVarPointer(s->segmentManager));
 				}
 
 				// Not reached the base, so let's do a soft return
@@ -1984,15 +1984,15 @@ void shrink_execution_stack(EngineState *s, uint size) {
 	s->_executionStack.erase(iter, s->_executionStack.end());
 }
 
-reg_t* ObjVarRef::getPointer(EngineState *s) const {
-	Object *o = obj_get(s->segmentManager, obj);
+reg_t* ObjVarRef::getPointer(SegManager *segManager) const {
+	Object *o = obj_get(segManager, obj);
 	if (!o) return 0;
 	return &(o->_variables[varindex]);
 }
 
-reg_t* ExecStack::getVarPointer(EngineState *s) const {
+reg_t* ExecStack::getVarPointer(SegManager *segManager) const {
 	assert(type == EXEC_STACK_TYPE_VARSELECTOR);
-	return addr.varp.getPointer(s);
+	return addr.varp.getPointer(segManager);
 }
 
 } // End of namespace Sci

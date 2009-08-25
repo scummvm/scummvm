@@ -183,11 +183,11 @@ kLanguage EngineState::getLanguage() {
 	kLanguage lang = K_LANG_ENGLISH;
 
 	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.printLang != -1) {
-		EngineState *s = this;
+		SegManager *segManager = this->segmentManager;
 
-		lang = (kLanguage)GET_SEL32V(s->game_obj, printLang);
+		lang = (kLanguage)GET_SEL32V(this->game_obj, printLang);
 
-		if ((s->resourceManager->sciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
+		if ((segManager->sciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
 			// SSCI reads this from resource.cfg (early games do not have a language
 			// setting in resource.cfg, but instead have the secondary language number
@@ -220,7 +220,7 @@ kLanguage EngineState::getLanguage() {
 			}
 
 			// Store language in printLang selector
-			PUT_SEL32V(s->game_obj, printLang, lang);
+			PUT_SEL32V(this->game_obj, printLang, lang);
 		}
 	}
 
@@ -228,13 +228,13 @@ kLanguage EngineState::getLanguage() {
 }
 
 Common::String EngineState::strSplit(const char *str, const char *sep) {
-	EngineState *s = this;
+	SegManager *segManager = this->segmentManager;
 
 	kLanguage lang = getLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
 	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.subtitleLang != -1)
-		subLang = (kLanguage)GET_SEL32V(s->game_obj, subtitleLang);
+		subLang = (kLanguage)GET_SEL32V(this->game_obj, subtitleLang);
 
 	Common::String retval = getLanguageString(str, lang);
 

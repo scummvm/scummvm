@@ -34,8 +34,8 @@
 namespace Sci {
 
 reg_t kAddMenu(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *name = kernel_dereference_char_pointer(s, argv[0], 0);
-	char *contents = kernel_dereference_char_pointer(s, argv[1], 0);
+	char *name = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
+	char *contents = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 
 	s->_menubar->addMenu(s->gfx_state, name,
 	                 contents, s->titlebar_port->_font, argv[1]);
@@ -78,7 +78,7 @@ reg_t kDrawStatus(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->status_bar_background = bgcolor;
 
 	if (text.segment) {
-		const char *tmp = strdup(kernel_dereference_char_pointer(s, text, 0));
+		const char *tmp = strdup(kernel_dereference_char_pointer(s->segmentManager, text, 0));
 		s->_statusBarText = tmp ? tmp : "";
 	}
 
@@ -124,6 +124,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 
 
 reg_t kMenuSelect(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t event = argv[0];
 	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */
 	bool claimed = false;

@@ -68,6 +68,7 @@ Still, what we compute in the end is of course not a real velocity anymore, but 
 used in an iterative stepping algorithm
 */
 reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	// Input data
 	reg_t object = argv[0];
 	int dx = argv[1].toSint16();
@@ -164,10 +165,10 @@ reg_t kSetJump(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define _K_BRESEN_AXIS_X 0
 #define _K_BRESEN_AXIS_Y 1
 
-static void initialize_bresen(EngineState *s, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
+static void initialize_bresen(SegManager *segManager, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
 	reg_t client = GET_SEL32(mover, client);
-	int stepx = GET_SEL32SV(client, xStep) * step_factor;
-	int stepy = GET_SEL32SV(client, yStep) * step_factor;
+	int stepx = (int16)GET_SEL32V(client, xStep) * step_factor;
+	int stepy = (int16)GET_SEL32V(client, yStep) * step_factor;
 	int numsteps_x = stepx ? (abs(deltax) + stepx - 1) / stepx : 0;
 	int numsteps_y = stepy ? (abs(deltay) + stepy - 1) / stepy : 0;
 	int bdi, i1;
@@ -218,14 +219,15 @@ static void initialize_bresen(EngineState *s, int argc, reg_t *argv, reg_t mover
 }
 
 reg_t kInitBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
-	int deltax = GET_SEL32SV(mover, x) - GET_SEL32SV(client, x);
-	int deltay = GET_SEL32SV(mover, y) - GET_SEL32SV(client, y);
+	int deltax = (int16)GET_SEL32V(mover, x) - (int16)GET_SEL32V(client, x);
+	int deltay = (int16)GET_SEL32V(mover, y) - (int16)GET_SEL32V(client, y);
 	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
 
-	initialize_bresen(s, argc, argv, mover, step_factor, deltax, deltay);
+	initialize_bresen(s->segmentManager, argc, argv, mover, step_factor, deltax, deltay);
 
 	return s->r_acc;
 }
@@ -283,11 +285,12 @@ static void bresenham_autodetect(EngineState *s) {
 }
 
 reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
-	int x = GET_SEL32SV(client, x);
-	int y = GET_SEL32SV(client, y);
+	int x = (int16)GET_SEL32V(client, x);
+	int y = (int16)GET_SEL32V(client, y);
 	int oldx, oldy, destx, desty, dx, dy, bdi, bi1, bi2, movcnt, bdelta, axis;
 	uint16 signal = GET_SEL32V(client, signal);
 	int completed = 0;
@@ -302,16 +305,16 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	PUT_SEL32(client, signal, make_reg(0, signal)); // This is a NOP for SCI0
 	oldx = x;
 	oldy = y;
-	destx = GET_SEL32SV(mover, x);
-	desty = GET_SEL32SV(mover, y);
-	dx = GET_SEL32SV(mover, dx);
-	dy = GET_SEL32SV(mover, dy);
-	bdi = GET_SEL32SV(mover, b_di);
-	bi1 = GET_SEL32SV(mover, b_i1);
-	bi2 = GET_SEL32SV(mover, b_i2);
+	destx = (int16)GET_SEL32V(mover, x);
+	desty = (int16)GET_SEL32V(mover, y);
+	dx = (int16)GET_SEL32V(mover, dx);
+	dy = (int16)GET_SEL32V(mover, dy);
+	bdi = (int16)GET_SEL32V(mover, b_di);
+	bi1 = (int16)GET_SEL32V(mover, b_i1);
+	bi2 = (int16)GET_SEL32V(mover, b_i2);
 	movcnt = GET_SEL32V(mover, b_movCnt);
-	bdelta = GET_SEL32SV(mover, b_incr);
-	axis = GET_SEL32SV(mover, b_xAxis);
+	bdelta = (int16)GET_SEL32V(mover, b_incr);
+	axis = (int16)GET_SEL32V(mover, b_xAxis);
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
@@ -392,6 +395,7 @@ int is_heap_object(EngineState *s, reg_t pos);
 extern int get_angle(int xrel, int yrel);
 
 reg_t kDoAvoider(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t avoider = argv[0];
 	reg_t client, looper, mover;
 	int angle;

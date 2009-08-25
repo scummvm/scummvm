@@ -212,7 +212,7 @@ struct ObjVarRef {
 	reg_t obj;
 	int varindex;
 
-	reg_t* getPointer(EngineState *s) const;
+	reg_t* getPointer(SegManager *segManager) const;
 };
 
 
@@ -263,7 +263,7 @@ struct ExecStack {
 	int origin;             // The stack frame position the call was made from, or -1 if it was the initial call
 	ExecStackType type;
 
-	reg_t* getVarPointer(EngineState *s) const;
+	reg_t* getVarPointer(SegManager *segManager) const;
 };
 
 

@@ -138,6 +138,7 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 void SegManager::setScriptSize(Script &scr, int script_nr) {
 	Resource *script = _resourceManager->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	Resource *heap = _resourceManager->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+	bool oldScriptHeader = (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY);
 
 	scr.script_size = script->size;
 	scr.heap_size = 0; // Set later
@@ -145,7 +146,7 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 	if (!script || (_resourceManager->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
-	if (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY) {	// check if we got an old script header
+	if (oldScriptHeader) {
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (_resourceManager->sciVersion() < SCI_VERSION_1_1) {
@@ -390,7 +391,6 @@ void SegManager::scriptRelocate(reg_t block) {
 				for (k = 0; k < scr->_objects.size(); k++)
 					printf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
 				// SQ3 script 71 has broken relocation entries.
-				// Since this is mainstream, we can't break out as we used to do.
 				printf("Trying to continue anyway...\n");
 			}
 		}

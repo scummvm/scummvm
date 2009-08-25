@@ -31,16 +31,16 @@
 
 namespace Sci {
 
-reg_t read_selector(EngineState *s, reg_t object, Selector selector_id, const char *file, int line) {
+reg_t read_selector(SegManager *segManager, reg_t object, Selector selector_id, const char *file, int line) {
 	ObjVarRef address;
 
-	if (lookup_selector(s->segmentManager, object, selector_id, &address, NULL) != kSelectorVariable)
+	if (lookup_selector(segManager, object, selector_id, &address, NULL) != kSelectorVariable)
 		return NULL_REG;
 	else
-		return *address.getPointer(s);
+		return *address.getPointer(segManager);
 }
 
-void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
+void write_selector(SegManager *segManager, reg_t object, Selector selector_id, reg_t value, const char *fname, int line) {
 	ObjVarRef address;
 
 	if ((selector_id < 0) || (selector_id > (int)((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize())) {
@@ -49,11 +49,11 @@ void write_selector(EngineState *s, reg_t object, Selector selector_id, reg_t va
 		return;
 	}
 
-	if (lookup_selector(s->segmentManager, object, selector_id, &address, NULL) != kSelectorVariable)
+	if (lookup_selector(segManager, object, selector_id, &address, NULL) != kSelectorVariable)
 		warning("Selector '%s' of object at %04x:%04x could not be"
 		         " written to (%s L%d)", ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
 	else
-		*address.getPointer(s) = value;
+		*address.getPointer(segManager) = value;
 }
 
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,
@@ -221,6 +221,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t victim_addr = argv[0];
 	Clone *victim_obj = obj_get(s->segmentManager, victim_addr);
 	uint16 underBits;

@@ -44,7 +44,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	Resource *textres;
 
 	if (address.segment)
-		return (char *)kernel_dereference_bulk_pointer(s, address, 0);
+		return (char *)kernel_dereference_bulk_pointer(s->segmentManager, address, 0);
 	else {
 		int textlen;
 		int _index = index;
@@ -79,6 +79,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 
 
 reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
@@ -86,7 +87,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	if (!heap_said_block.segment)
 		return NULL_REG;
 
-	said_block = (byte *) kernel_dereference_bulk_pointer(s, heap_said_block, 0);
+	said_block = (byte *) kernel_dereference_bulk_pointer(s->segmentManager, heap_said_block, 0);
 
 	if (!said_block) {
 		warning("Said on non-string, pointer %04x:%04x", PRINT_REG(heap_said_block));
@@ -128,6 +129,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t object = argv[0];
 	List *list;
 	Node *node;
@@ -185,8 +187,9 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	SegManager *segManager = s->segmentManager;
 	reg_t stringpos = argv[0];
-	char *string = kernel_dereference_char_pointer(s, stringpos, 0);
+	char *string = kernel_dereference_char_pointer(s->segmentManager, stringpos, 0);
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
@@ -239,7 +242,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 0);
 		PUT_SEL32V(event, claimed, 1);
 		if (error) {
-			char *pbase_str = kernel_dereference_char_pointer(s, s->parser_base, 0);
+			char *pbase_str = kernel_dereference_char_pointer(s->segmentManager, s->parser_base, 0);
 			strcpy(pbase_str, error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s\n", error);
 			/* Issue warning: */
@@ -256,7 +259,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 reg_t kStrEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t address = argv[0];
-	char *seeker = kernel_dereference_char_pointer(s, address, 0);
+	char *seeker = kernel_dereference_char_pointer(s->segmentManager, address, 0);
 
 	while (*seeker++)
 		++address.offset;
@@ -265,16 +268,16 @@ reg_t kStrEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kStrCat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *s1 = kernel_dereference_char_pointer(s, argv[0], 0);
-	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
+	char *s1 = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
+	char *s2 = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 
 	strcat(s1, s2);
 	return argv[0];
 }
 
 reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *s1 = kernel_dereference_char_pointer(s, argv[0], 0);
-	char *s2 = kernel_dereference_char_pointer(s, argv[1], 0);
+	char *s1 = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
+	char *s2 = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 
 	if (argc > 2)
 		return make_reg(0, strncmp(s1, s2, argv[2].toUint16()));
@@ -284,8 +287,8 @@ reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *dest = (char *) kernel_dereference_bulk_pointer(s, argv[0], 0);
-	char *src = (char *) kernel_dereference_bulk_pointer(s, argv[1], 0);
+	char *dest = (char *) kernel_dereference_bulk_pointer(s->segmentManager, argv[0], 0);
+	char *src = (char *) kernel_dereference_bulk_pointer(s->segmentManager, argv[1], 0);
 
 	if (!dest) {
 		warning("Attempt to strcpy TO invalid pointer %04x:%04x",
@@ -349,7 +352,7 @@ static int is_print_str(const char *str) {
 
 
 reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	byte *dest = (byte *)kernel_dereference_bulk_pointer(s, argv[0], 0);
+	byte *dest = (byte *)kernel_dereference_bulk_pointer(s->segmentManager, argv[0], 0);
 	reg_t *dest2;
 
 	if (!dest) {
@@ -391,7 +394,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *source = kernel_dereference_char_pointer(s, argv[0], 0);
+	char *source = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	while (isspace(*source))
 		source++; /* Skip whitespace */
@@ -417,7 +420,7 @@ reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
-	char *target = (char *) kernel_dereference_bulk_pointer(s, dest, 0);
+	char *target = (char *) kernel_dereference_bulk_pointer(s->segmentManager, dest, 0);
 	reg_t position = argv[1]; /* source */
 	int index = argv[2].toUint16();
 	char *source;
@@ -630,7 +633,7 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char *str = kernel_dereference_char_pointer(s, argv[0], 0);
+	char *str = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	if (!str) {
 		warning("StrLen: invalid pointer %04x:%04x", PRINT_REG(argv[0]));
@@ -662,7 +665,7 @@ reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	** resource.
 	*/
 
-	strcpy(kernel_dereference_char_pointer(s, argv[2], 0), seeker); /* Copy the string and get return value */
+	strcpy(kernel_dereference_char_pointer(s->segmentManager, argv[2], 0), seeker); /* Copy the string and get return value */
 	return argv[2];
 }
 
@@ -737,7 +740,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 		if (!bufferReg.isNull()) {
 			int len = str.size() + 1;
-			buffer = kernel_dereference_char_pointer(s, bufferReg, len);
+			buffer = kernel_dereference_char_pointer(s->segmentManager, bufferReg, len);
 
 			if (buffer) {
 				strcpy(buffer, str.c_str());
@@ -745,7 +748,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str.c_str());
 
 				// Set buffer to empty string if possible
-				buffer = kernel_dereference_char_pointer(s, bufferReg, 1);
+				buffer = kernel_dereference_char_pointer(s->segmentManager, bufferReg, 1);
 				if (buffer)
 					*buffer = 0;
 			}
@@ -785,7 +788,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MESSAGE_LASTMESSAGE: {
 		MessageTuple msg = s->_msgState.getLastTuple();
 		int module = s->_msgState.getLastModule();
-		byte *buffer = kernel_dereference_bulk_pointer(s, argv[1], 10);
+		byte *buffer = kernel_dereference_bulk_pointer(s->segmentManager, argv[1], 10);
 
 		if (buffer) {
 			WRITE_LE_UINT16(buffer, module);
@@ -807,18 +810,18 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kSetQuitStr(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-        char *quitStr = kernel_dereference_char_pointer(s, argv[0], 0);
+        char *quitStr = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
         debug("Setting quit string to '%s'", quitStr);
         return s->r_acc;
 }
 
 reg_t kStrSplit(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	const char *format = kernel_dereference_char_pointer(s, argv[1], 0);
-	const char *sep = !argv[2].isNull() ? kernel_dereference_char_pointer(s, argv[2], 0) : NULL;
+	const char *format = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
+	const char *sep = !argv[2].isNull() ? kernel_dereference_char_pointer(s->segmentManager, argv[2], 0) : NULL;
 	Common::String str = s->strSplit(format, sep);
 
 	// Make sure target buffer is large enough
-	char *buf = kernel_dereference_char_pointer(s, argv[0], str.size() + 1);
+	char *buf = kernel_dereference_char_pointer(s->segmentManager, argv[0], str.size() + 1);
 
 	if (buf) {
 		strcpy(buf, str.c_str());

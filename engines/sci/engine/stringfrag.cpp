@@ -103,7 +103,7 @@ static int internal_is_valid_stringfrag(EngineState *s, reg_t *buffer) {
 }
 
 int is_valid_stringfrag(EngineState *s, reg_t pos) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	return internal_is_valid_stringfrag(s, buffer);
 }
@@ -138,7 +138,7 @@ static int internal_stringfrag_length(EngineState *s, reg_t *buffer) {
 }
 
 int stringfrag_length(EngineState *s, reg_t pos) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	return internal_stringfrag_length(s, buffer);
 }
@@ -169,7 +169,7 @@ static void internal_stringfrag_to_ascii(EngineState *s, reg_t *buffer) {
 }
 
 void stringfrag_to_ascii(EngineState *s, reg_t pos) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	internal_stringfrag_to_ascii(s, buffer);
 }
@@ -191,7 +191,7 @@ static void internal_ascii_to_stringfrag(EngineState *s, reg_t *buffer) {
 }
 
 void ascii_to_stringfrag(EngineState *s, reg_t pos) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	internal_ascii_to_stringfrag(s, buffer);
 }
@@ -214,7 +214,7 @@ static void internal_stringfrag_append_char(EngineState *s, reg_t *buffer, unsig
 }
 
 void stringfrag_append_char(EngineState *s, reg_t pos, unsigned char c) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	internal_stringfrag_append_char(s, buffer, c);
 }
@@ -311,7 +311,7 @@ static void internal_stringfrag_insert_char(EngineState *s, reg_t *buffer, int p
 }
 
 void stringfrag_insert_char(EngineState *s, reg_t pos, int p, unsigned char c) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	internal_stringfrag_insert_char(s, buffer, p, c);
 }
@@ -343,7 +343,7 @@ static void internal_stringfrag_delete_char(EngineState *s, reg_t *buffer, int p
 }
 
 void stringfrag_delete_char(EngineState *s, reg_t pos, int p) {
-	reg_t *buffer = kernel_dereference_reg_pointer(s, pos, 1);
+	reg_t *buffer = kernel_dereference_reg_pointer(s->segmentManager, pos, 1);
 
 	internal_stringfrag_delete_char(s, buffer, p);
 }
@@ -360,8 +360,8 @@ void internal_stringfrag_strcpy(EngineState *s, reg_t *dest, reg_t *src) {
 }
 
 void stringfrag_strcpy(EngineState *s, reg_t dest, reg_t src) {
-	reg_t *destbuf = kernel_dereference_reg_pointer(s, dest, 1);
-	reg_t *srcbuf = kernel_dereference_reg_pointer(s, src, 1);
+	reg_t *destbuf = kernel_dereference_reg_pointer(s->segmentManager, dest, 1);
+	reg_t *srcbuf = kernel_dereference_reg_pointer(s->segmentManager, src, 1);
 
 	internal_stringfrag_strcpy(s, destbuf, srcbuf);
 }
@@ -388,8 +388,8 @@ void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int le
 }
 
 void stringfrag_strncpy(EngineState *s, reg_t dest, reg_t src, int len) {
-	reg_t *destbuf = kernel_dereference_reg_pointer(s, dest, 1);
-	reg_t *srcbuf = kernel_dereference_reg_pointer(s, src, 1);
+	reg_t *destbuf = kernel_dereference_reg_pointer(s->segmentManager, dest, 1);
+	reg_t *srcbuf = kernel_dereference_reg_pointer(s->segmentManager, src, 1);
 
 	internal_stringfrag_strncpy(s, destbuf, srcbuf, len);
 }
@@ -416,8 +416,8 @@ int internal_stringfrag_strcmp(EngineState *s, reg_t *s1, reg_t *s2) {
 }
 
 void stringfrag_strcmp(EngineState *s, reg_t s1, reg_t s2) {
-	reg_t *s1buf = kernel_dereference_reg_pointer(s, s1, 1);
-	reg_t *s2buf = kernel_dereference_reg_pointer(s, s2, 1);
+	reg_t *s1buf = kernel_dereference_reg_pointer(s->segmentManager, s1, 1);
+	reg_t *s2buf = kernel_dereference_reg_pointer(s->segmentManager, s2, 1);
 
 	internal_stringfrag_strcmp(s, s1buf, s2buf);
 }
@@ -449,8 +449,8 @@ int internal_stringfrag_strncmp(EngineState *s, reg_t *s1, reg_t *s2, int len) {
 }
 
 void stringfrag_strncmp(EngineState *s, reg_t s1, reg_t s2, int len) {
-	reg_t *s1buf = kernel_dereference_reg_pointer(s, s1, 1);
-	reg_t *s2buf = kernel_dereference_reg_pointer(s, s2, 1);
+	reg_t *s1buf = kernel_dereference_reg_pointer(s->segmentManager, s1, 1);
+	reg_t *s2buf = kernel_dereference_reg_pointer(s->segmentManager, s2, 1);
 
 	internal_stringfrag_strncmp(s, s1buf, s2buf, len);
 }

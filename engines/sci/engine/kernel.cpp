@@ -422,6 +422,7 @@ void Kernel::detectSciFeatures() {
 
 void Kernel::loadSelectorNames() {
 	Resource *r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
+	bool oldScriptHeader = (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY);
 
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
@@ -433,7 +434,7 @@ void Kernel::loadSelectorNames() {
 		
 		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
 			_selectorNames.push_back(staticSelectorTable[i]);
-			if (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY)
+			if (oldScriptHeader)
 				_selectorNames.push_back(staticSelectorTable[i]);
 		}
 			
@@ -452,7 +453,7 @@ void Kernel::loadSelectorNames() {
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY)
+		if (oldScriptHeader)
 			_selectorNames.push_back(tmp);
 	}
 }
@@ -714,14 +715,14 @@ const char *kernel_argtype_description(int type) {
 	return argtype_description[sci_ffs(type)];
 }
 
-bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const reg_t *argv) {
+bool kernel_matches_signature(SegManager *segManager, const char *sig, int argc, const reg_t *argv) {
 	// Always "match" if no signature is given
 	if (!sig)
 		return true;
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = determine_reg_type(s->segmentManager, *argv, *sig & KSIG_ALLOW_INV);
+			int type = determine_reg_type(segManager, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
 				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
@@ -750,9 +751,9 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
 
-static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
+static void *_kernel_dereference_pointer(SegManager *segManager, reg_t pointer, int entries, int align) {
 	int maxsize;
-	void *retval = s->segmentManager->dereference(pointer, &maxsize);
+	void *retval = segManager->dereference(pointer, &maxsize);
 
 	if (!retval)
 		return NULL;
@@ -770,12 +771,12 @@ static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entr
 
 }
 
-byte *kernel_dereference_bulk_pointer(EngineState *s, reg_t pointer, int entries) {
-	return (byte*)_kernel_dereference_pointer(s, pointer, entries, 1);
+byte *kernel_dereference_bulk_pointer(SegManager *segManager, reg_t pointer, int entries) {
+	return (byte*)_kernel_dereference_pointer(segManager, pointer, entries, 1);
 }
 
-reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries) {
-	return (reg_t*)_kernel_dereference_pointer(s, pointer, entries, sizeof(reg_t));
+reg_t *kernel_dereference_reg_pointer(SegManager *segManager, reg_t pointer, int entries) {
+	return (reg_t*)_kernel_dereference_pointer(segManager, pointer, entries, sizeof(reg_t));
 }
 
 void Kernel::setDefaultKernelNames() {
