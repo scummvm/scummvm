@@ -309,8 +309,15 @@ Common::Error KyraEngine_LoK::go() {
 			setGameFlag(0xEF);
 			_seqPlayerFlag = true;
 			seq_intro();
+
+			if (_flags.isDemo) {
+				_screen->fadeToBlack();
+				return Common::kNoError;
+			}
+
 			if (shouldQuit())
 				return Common::kNoError;
+
 			if (_skipIntroFlag && _abortIntroFlag)
 				resetGameFlag(0xEF);
 			_seqPlayerFlag = false;
