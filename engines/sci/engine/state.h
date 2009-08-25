@@ -313,10 +313,10 @@ public:
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
+	Common::String getLanguageString(const char *str, kLanguage lang) const;
 private:
 	DoSoundType _doSoundType;
 	kLanguage charToLanguage(const char c) const;
-	Common::String getLanguageString(const char *str, kLanguage lang) const;
 };
 
 /**

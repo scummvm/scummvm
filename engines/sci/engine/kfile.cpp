@@ -109,7 +109,8 @@ enum {
 
 
 void file_open(EngineState *s, const char *filename, int mode) {
-	const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(filename);
+	Common::String englishName = s->getLanguageString(filename, K_LANG_ENGLISH);
+	const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(englishName);
 	Common::SeekableReadStream *inFile = 0;
 	Common::WriteStream *outFile = 0;
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
@@ -119,14 +120,14 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		inFile = saveFileMan->openForLoading(wrappedName);
 		// If no matching savestate exists: fall back to reading from a regular file
 		if (!inFile)
-			inFile = SearchMan.createReadStreamForMember(filename);
+			inFile = SearchMan.createReadStreamForMember(englishName);
 		if (!inFile)
-			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", filename);
+			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
 		// Create the file, destroying any content it might have had
 		outFile = saveFileMan->openForSaving(wrappedName);
 		if (!outFile)
-			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", filename);
+			warning("file_open(_K_FILE_MODE_CREATE) failed to create file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_OPEN_OR_CREATE) {
 		// Try to open file, create it if it doesn't exist
 
@@ -152,13 +153,13 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	// FIXME: The old FreeSCI code for opening a file. Left as a reference, as apparently
 	// the implementation below used to work well enough.
 
-	debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", filename, mode);
+	debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", englishName.c_str(), mode);
 	if ((mode == _K_FILE_MODE_OPEN_OR_FAIL) || (mode == _K_FILE_MODE_OPEN_OR_CREATE)) {
-		file = sci_fopen(filename, "r" FO_BINARY "+"); // Attempt to open existing file
-		debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", filename, mode);
+		file = sci_fopen(englishName.c_str(), "r" FO_BINARY "+"); // Attempt to open existing file
+		debugC(2, kDebugLevelFile, "Opening file %s with mode %d\n", englishName.c_str(), mode);
 		if (!file) {
 			debugC(2, kDebugLevelFile, "Failed. Attempting to copy from resource dir...\n");
-			file = f_open_mirrored(s, filename);
+			file = f_open_mirrored(s, englishName.c_str());
 			if (file)
 				debugC(2, kDebugLevelFile, "Success!\n");
 			else
@@ -167,8 +168,8 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	}
 
 	if ((!file) && ((mode == _K_FILE_MODE_OPEN_OR_CREATE) || (mode == _K_FILE_MODE_CREATE))) {
-		file = sci_fopen(filename, "w" FO_BINARY "+"); /* Attempt to create file */
-		debugC(2, kDebugLevelFile, "Creating file %s with mode %d\n", filename, mode);
+		file = sci_fopen(englishName.c_str(), "w" FO_BINARY "+"); /* Attempt to create file */
+		debugC(2, kDebugLevelFile, "Creating file %s with mode %d\n", englishName.c_str(), mode);
 	}
 	if (!file) { // Failed
 		debugC(2, kDebugLevelFile, "file_open() failed\n");
@@ -188,11 +189,11 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 	s->_fileHandles[handle]._in = inFile;
 	s->_fileHandles[handle]._out = outFile;
-	s->_fileHandles[handle]._name = filename;
+	s->_fileHandles[handle]._name = englishName;
 
 	s->r_acc = make_reg(0, handle);
 
-	debug(3, " -> opened file '%s' with handle %d", filename, handle);
+	debug(3, " -> opened file '%s' with handle %d", englishName.c_str(), handle);
 }
 
 reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
