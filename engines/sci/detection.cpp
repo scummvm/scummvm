@@ -28,7 +28,6 @@
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
-#include "sci/exereader.h"
 #include "sci/engine/seg_manager.h"
 
 namespace Sci {
@@ -194,6 +193,8 @@ Common::String convertSierraGameId(Common::String sierraId) {
 		return "funseeker";
 	if (sierraId == "cardgames")
 		return "hoyle1";
+	if (sierraId == "gk")
+		return "gk1";
 	if (sierraId == "solitare")
 		return "hoyle2";
 	// hoyle3 is the same
@@ -259,7 +260,6 @@ Common::String convertSierraGameId(Common::String sierraId) {
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
-	Common::Platform exePlatform = Common::kPlatformUnknown;
 
 	// Set some defaults
 	s_fallbackDesc.desc.extra = "";
@@ -318,20 +318,6 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		if (filename.contains("resource.000") || filename.contains("resource.001")
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
 			foundRes000 = true;
-
-		// Check if it's a known executable name
-		// Note: "sier" matches "sier.exe", "sierra.exe", "sierw.exe" and "sierw5.exe"
-		// TODO: Try to remove this code, and base platform detection on game resources
-		// instead of the executable itself
-		if (filename.contains("scidhuv") || filename.contains("sciduv") ||
-			filename.contains("sciv") || filename.contains("sciw") ||
-			filename.contains("prog") || filename.contains("sier")) {
-
-			// Is it really an executable file?
-			Common::SeekableReadStream *fileStream = file->createReadStream();
-			exePlatform = getGameExePlatform(fileStream);
-			delete fileStream;
-		}
 	}
 
 	// If these files aren't found, it can't be SCI
@@ -365,25 +351,29 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.desc.extra = "EGA";
 
 	SegManager *segManager = new SegManager(resourceManager);
+	Common::Platform gamePlatform = Common::kPlatformUnknown;
 
-	if (exePlatform == Common::kPlatformUnknown) {
-		// Try to determine the platform from game resources
-		if (gameViews == kViewEga || gameViews == kViewVga ||
-			gameViews == kViewVga11) {
-			// Must be PC or Mac, set to PC for now
-			// TODO: Is there a reliable way to determine the game
-			// platform from the resources? So far, I've noticed
-			// that Mac versions have a different signature for
-			// kGetEvent and kNewWindow. I'm unsure about Atari ST
-			// versions. Could we base detection on this?
-			exePlatform = Common::kPlatformPC;
-		} else if (gameViews == kViewAmiga) {
-			exePlatform = Common::kPlatformAmiga;
-		}
-		// TODO: detection for Mac and Atari ST
+	// Try to determine the platform from game resources
+	if (gameViews == kViewEga || gameViews == kViewVga ||
+		gameViews == kViewVga11) {
+		// Must be PC or Mac, set to PC for now
+		gamePlatform = Common::kPlatformPC;
+	} else if (gameViews == kViewAmiga) {
+		gamePlatform = Common::kPlatformAmiga;
 	}
 
-	s_fallbackDesc.desc.platform = exePlatform;
+	// The existence of any of these files indicates an Amiga game
+	if (Common::File::exists("9.pat") || Common::File::exists("spal") ||
+		Common::File::exists("patch.005") || Common::File::exists("bank.001"))
+		gamePlatform = Common::kPlatformAmiga;
+
+	// The existence of 7.pat indicates a Mac game
+	if (Common::File::exists("7.pat"))
+		gamePlatform = Common::kPlatformMacintosh;
+	
+	// The data files for Atari ST versions are the same as their DOS counterparts
+
+	s_fallbackDesc.desc.platform = gamePlatform;
 
 	// Determine the game id
 	if (!script_instantiate(resourceManager, segManager, 0)) {

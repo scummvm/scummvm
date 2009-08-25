@@ -4,7 +4,6 @@ MODULE_OBJS = \
 	console.o \
 	decompressor.o \
 	detection.o \
-	exereader.o \
 	resource.o \
 	sci.o \
 	tools.o \
