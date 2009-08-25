@@ -109,6 +109,8 @@ public:
 	FWRenderer();
 	virtual ~FWRenderer();
 
+	virtual bool initialize();
+
 	/*! \brief Test if renderer is ready to draw */
 	virtual bool ready() { return _background != NULL; }
 
@@ -166,6 +168,8 @@ protected:
 public:
 	OSRenderer();
 	~OSRenderer();
+
+	bool initialize();
 
 	/*! \brief Test if renderer is ready to draw */
 	bool ready() { return _bgTable[_currentBg].bg != NULL; }

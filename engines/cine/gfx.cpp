@@ -107,6 +107,11 @@ FWRenderer::~FWRenderer() {
 	delete[] _backBuffer;
 }
 
+bool FWRenderer::initialize() {
+	_activePal = Palette(kLowPalFormat, kLowPalNumColors);
+	return true;
+}
+
 /* \brief Reset renderer state
  */
 void FWRenderer::clear() {
@@ -886,6 +891,11 @@ OSRenderer::~OSRenderer() {
 	for (uint i = 0; i < _bgTable.size(); i++) {
 		_bgTable[i].clear();
 	}
+}
+
+bool OSRenderer::initialize() {
+	_activePal = Palette(kHighPalFormat, kHighPalNumColors);
+	return true;
 }
 
 /*! \brief Reset Operation Stealth renderer state

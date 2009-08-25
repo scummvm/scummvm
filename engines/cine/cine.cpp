@@ -144,6 +144,8 @@ void CineEngine::initialize() {
 		renderer = new FWRenderer;
 	}
 
+	renderer->initialize();
+
 	collisionPage = new byte[320 * 200];
 
 	// Clear part buffer as there's nothing loaded into it yet.
