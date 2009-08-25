@@ -210,6 +210,29 @@ enum GameFlag {
 	kGameFlagIntroOnly = 1 << 3
 };
 
+enum CompressedSoundType {
+	kSoundTypeFx,
+	kSoundTypeMusic,
+	kSoundTypeSpeech,
+	kSoundTypeIntro
+};
+
+class CompressedSound {
+public:
+
+	CompressedSound() : _compressedSoundType(-1) {}
+
+	void openFile();
+	void closeFile();
+	Audio::AudioStream *load(CompressedSoundType type, int num, bool loop);
+
+private:
+
+	int _compressedSoundType;
+	int _compressedSoundFlags;
+	Common::File _fCompressedSound;
+};
+
 inline int scaleMixerVolume(int volume, int max = 100) {
 	return volume * Audio::Mixer::kMaxChannelVolume / max;
 }
@@ -542,8 +565,6 @@ protected:
 	void copyMapRect(int x, int y, int w, int h);
 	int handleSpecialObjectSelectionSequence();
 
-	void openCompressedSoundFile();
-	void closeCompressedSoundFile();
 	uint8 *loadFile(const char *filename, uint8 *p);
 	void loadImage(const char *filename, uint8 *dst, int a);
 	void loadCursor();
@@ -574,6 +595,7 @@ protected:
 
 	Common::RandomSource _rnd;
 	AnimationSequencePlayer *_player;
+	CompressedSound _compressedSound;
 	Common::Language _gameLang;
 	uint32 _gameFlags;
 
@@ -603,8 +625,6 @@ protected:
 	int _gameHintsStringNum;
 
 	int _fileLoadSize;
-	int _compressedSoundType;
-	Common::File _fCompressedSound;
 	uint8 *_loadTempBuf;
 	uint8 *_cursorGfxBuf;
 	uint8 *_charsetGfxBuf;
@@ -890,7 +910,7 @@ public:
 		void (AnimationSequencePlayer::*play)();
 	};
 
-	AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num);
+	AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, CompressedSound *sound, int num);
 	~AnimationSequencePlayer();
 
 	void mainLoop();
@@ -899,7 +919,7 @@ private:
 
 	void syncTime();
 	void loadSounds(int num);
-	Audio::AudioStream *loadSoundFileAsStream(int index, AnimationSoundType type);
+	Audio::AudioStream *loadSound(int index, AnimationSoundType type);
 	void updateSounds();
 	void fadeInPalette();
 	void fadeOutPalette();
@@ -933,6 +953,7 @@ private:
 	OSystem *_system;
 	Audio::Mixer *_mixer;
 	Common::EventManager *_event;
+	CompressedSound *_compressedSound;
 
 	int _seqNum;
 	bool _changeToNextSequence;

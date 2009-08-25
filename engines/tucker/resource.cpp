@@ -211,13 +211,14 @@ uint8 *TuckerEngine::loadFile(const char *fname, uint8 *p) {
 	return p;
 }
 
-void TuckerEngine::openCompressedSoundFile() {
+void CompressedSound::openFile() {
 	_compressedSoundType = -1;
 	for (int i = 0; compressedSoundFilesTable[i].filename; ++i) {
 		if (_fCompressedSound.open(compressedSoundFilesTable[i].filename)) {
 			int version = _fCompressedSound.readUint16LE();
 			if (version == kCurrentCompressedSoundDataVersion) {
 				_compressedSoundType = i;
+				_compressedSoundFlags = _fCompressedSound.readUint16LE();
 				debug(1, "Using compressed sound file '%s'", compressedSoundFilesTable[i].filename);
 				return;
 			}
@@ -226,8 +227,50 @@ void TuckerEngine::openCompressedSoundFile() {
 	}
 }
 
-void TuckerEngine::closeCompressedSoundFile() {
+void CompressedSound::closeFile() {
 	_fCompressedSound.close();
+}
+
+Audio::AudioStream *CompressedSound::load(CompressedSoundType type, int num, bool loop) {
+	if (_compressedSoundType < 0) {
+		return 0;
+	}
+	int offset = 0;
+	switch (type) {
+	case kSoundTypeFx:
+		offset = kCompressedSoundDataFileHeaderSize;
+		break;
+	case kSoundTypeMusic:
+		offset = kCompressedSoundDataFileHeaderSize + 8;
+		break;
+	case kSoundTypeSpeech:
+		offset = kCompressedSoundDataFileHeaderSize + 16;
+		break;
+	case kSoundTypeIntro:
+		if (_compressedSoundFlags & 1) {
+			offset = kCompressedSoundDataFileHeaderSize + 24;
+		}
+		break;
+	}
+	Audio::AudioStream *stream = 0;
+	_fCompressedSound.seek(offset);
+	int dirOffset = _fCompressedSound.readUint32LE();
+	int dirSize = _fCompressedSound.readUint32LE();
+	if (num < dirSize) {
+		const int dirHeaderSize = (_compressedSoundFlags & 1) ? 4 * 8 : 3 * 8;
+		dirOffset += kCompressedSoundDataFileHeaderSize + dirHeaderSize;
+		_fCompressedSound.seek(dirOffset + num * 8);
+		int soundOffset = _fCompressedSound.readUint32LE();
+		int soundSize = _fCompressedSound.readUint32LE();
+		if (soundSize != 0) {
+			_fCompressedSound.seek(dirOffset + dirSize * 8 + soundOffset);
+			Common::MemoryReadStream *tmp = _fCompressedSound.readStream(soundSize);
+			if (tmp) {
+				stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true, 0, 0, loop ? 0 : 1);
+			}
+		}
+	}
+	return stream;
 }
 
 void TuckerEngine::loadImage(const char *fname, uint8 *dst, int type) {
@@ -866,7 +909,20 @@ void TuckerEngine::loadFx() {
 
 void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, bool loop, Audio::SoundHandle *handle) {
 	Audio::AudioStream *stream = 0;
-	if (_compressedSoundType < 0) {
+	switch (type) {
+	case Audio::Mixer::kSFXSoundType:
+		stream = _compressedSound.load(kSoundTypeFx, num, loop);
+		break;
+	case Audio::Mixer::kMusicSoundType:
+		stream = _compressedSound.load(kSoundTypeMusic, num, loop);
+		break;
+	case Audio::Mixer::kSpeechSoundType:
+		stream = _compressedSound.load(kSoundTypeSpeech, num, loop);
+		break;
+	default:
+		return;
+	}
+	if (!stream) {
 		const char *fmt = 0;
 		switch (type) {
 		case Audio::Mixer::kSFXSoundType:
@@ -896,37 +952,6 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 						flags |= Audio::Mixer::FLAG_LOOP;
 					}
 					stream = Audio::makeLinearInputStream(data, size, rate, flags, 0, 0);
-				}
-			}
-		}
-	} else {
-		int offset = 0;
-		switch (type) {
-		case Audio::Mixer::kSFXSoundType:
-			offset = kCompressedSoundDataFileHeaderSize;
-			break;
-		case Audio::Mixer::kMusicSoundType:
-			offset = kCompressedSoundDataFileHeaderSize + 8;
-			break;
-		case Audio::Mixer::kSpeechSoundType:
-			offset = kCompressedSoundDataFileHeaderSize + 16;
-			break;
-		default:
-			return;
-		}
-		_fCompressedSound.seek(offset);
-		int dirOffset = _fCompressedSound.readUint32LE();
-		int dirSize = _fCompressedSound.readUint32LE();
-		if (num < dirSize) {
-			dirOffset += kCompressedSoundDataFileHeaderSize + 3 * 8;
-			_fCompressedSound.seek(dirOffset + num * 8);
-			int soundOffset = _fCompressedSound.readUint32LE();
-			int soundSize = _fCompressedSound.readUint32LE();
-			if (soundSize != 0) {
-				_fCompressedSound.seek(dirOffset + dirSize * 8 + soundOffset);
-				Common::MemoryReadStream *tmp = _fCompressedSound.readStream(soundSize);
-				if (tmp) {
-					stream = (compressedSoundFilesTable[_compressedSoundType].makeStream)(tmp, true, 0, 0, loop ? 0 : 1);
 				}
 			}
 		}

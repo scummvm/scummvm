@@ -55,11 +55,12 @@ bool TuckerEngine::hasFeature(EngineFeature f) const {
 Common::Error TuckerEngine::run() {
 	initGraphics(kScreenWidth, kScreenHeight, false);
 	syncSoundSettings();
-
+	_compressedSound.openFile();
 	handleIntroSequence();
 	if ((_gameFlags & kGameFlagIntroOnly) == 0 && !shouldQuit()) {
 		mainLoop();
 	}
+	_compressedSound.closeFile();
 	return Common::kNoError;
 }
 
@@ -332,7 +333,6 @@ void TuckerEngine::mainLoop() {
 	allocateBuffers();
 	restart();
 
-	openCompressedSoundFile();
 	loadCharSizeDta();
 	if ((_gameFlags & kGameFlagDemo) != 0) {
 		addObjectToInventory(30);
@@ -586,7 +586,6 @@ void TuckerEngine::mainLoop() {
 	if (_flagsTable[100] == 1) {
 		handleCongratulationsSequence();
 	}
-	closeCompressedSoundFile();
 	unloadSprA02_01();
 	unloadSprC02_01();
 	freeBuffers();

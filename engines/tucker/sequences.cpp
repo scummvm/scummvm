@@ -35,7 +35,7 @@ namespace Tucker {
 
 void TuckerEngine::handleIntroSequence() {
 	const int firstSequence = (_gameFlags & kGameFlagDemo) != 0 ? kFirstAnimationSequenceDemo : kFirstAnimationSequenceGame;
-	_player = new AnimationSequencePlayer(_system, _mixer, _eventMan, firstSequence);
+	_player = new AnimationSequencePlayer(_system, _mixer, _eventMan, &_compressedSound, firstSequence);
 	_player->mainLoop();
 	delete _player;
 	_player = 0;
@@ -492,8 +492,8 @@ int TuckerEngine::handleSpecialObjectSelectionSequence() {
 	return 1;
 }
 
-AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, int num)
-	: _system(system), _mixer(mixer), _event(event), _seqNum(num) {
+AnimationSequencePlayer::AnimationSequencePlayer(OSystem *system, Audio::Mixer *mixer, Common::EventManager *event, CompressedSound *sound, int num)
+	: _system(system), _mixer(mixer), _event(event), _compressedSound(sound), _seqNum(num) {
 	memset(_animationPalette, 0, sizeof(_animationPalette));
 	_soundSeqDataCount = 0;
 	_soundSeqDataIndex = 0;
@@ -585,8 +585,11 @@ void AnimationSequencePlayer::syncTime() {
 	} while (_lastFrameTime <= end);
 }
 
-Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(int index, AnimationSoundType type) {
-	Audio::AudioStream *stream = 0;
+Audio::AudioStream *AnimationSequencePlayer::loadSound(int index, AnimationSoundType type) {
+	Audio::AudioStream *stream = _compressedSound->load(kSoundTypeIntro, index, type == kAnimationSoundTypeLoopingWAV);
+	if (stream) {
+		return stream;
+	}
 	char fileName[64];
 	snprintf(fileName, sizeof(fileName), "audio/%s", _audioFileNamesTable[index]);
 	Common::File f;
@@ -626,7 +629,7 @@ Audio::AudioStream *AnimationSequencePlayer::loadSoundFileAsStream(int index, An
 void AnimationSequencePlayer::loadSounds(int num) {
 	if (_soundSeqDataList[num].musicVolume != 0) {
 		Audio::AudioStream *s;
-		if ((s = loadSoundFileAsStream(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
+		if ((s = loadSound(_soundSeqDataList[num].musicIndex, kAnimationSoundType8BitsRAW)) != 0) {
 			_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(_soundSeqDataList[num].musicVolume));
 		}
 	}
@@ -641,12 +644,12 @@ void AnimationSequencePlayer::updateSounds() {
 	while (_soundSeqDataIndex < _soundSeqDataCount && p->timestamp <= _frameCounter) {
 		switch (p->opcode) {
 		case 0:
-			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 1:
-			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundTypeLoopingWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeLoopingWAV)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_soundsHandle[p->index], s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
@@ -658,18 +661,18 @@ void AnimationSequencePlayer::updateSounds() {
 			break;
 		case 4:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundType8BitsRAW)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundType8BitsRAW)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 5:
-			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundTypeWAV)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundTypeWAV)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kSFXSoundType, &_sfxHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
 		case 6:
 			_mixer->stopHandle(_musicHandle);
-			if ((s = loadSoundFileAsStream(p->num, kAnimationSoundType16BitsRAW)) != 0) {
+			if ((s = loadSound(p->num, kAnimationSoundType16BitsRAW)) != 0) {
 				_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, s, -1, scaleMixerVolume(p->volume));
 			}
 			break;
