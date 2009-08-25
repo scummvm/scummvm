@@ -69,6 +69,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
 	{"lslcasino",       "Crazy Nick's Software Picks: Leisure Suit Larry's Casino"},
 	{"fairytales",      "Mixed-up Fairy Tales"},
+	{"gk1",             "Gabriel Knight: Sins of the Fathers"},	// demo is SCI11, full version SCI32
 	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	{"pepper",          "Pepper's Adventure in Time"},
@@ -85,7 +86,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
 #ifdef ENABLE_SCI32
-	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
