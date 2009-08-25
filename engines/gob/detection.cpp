@@ -3697,7 +3697,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi2,
 		kFeatures640,
 		"adi2.stk", "ediintro.tot", 0
 	},
@@ -3711,7 +3711,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibou4,
+		kGameTypeAdi2,
 		kFeatures640,
 		"adi2.stk", "ediintro.tot", 0
 	},
@@ -3725,8 +3725,8 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},
-		kGameTypeAdibouUnknown,
-		kFeaturesNone,
+		kGameTypeAdi2,
+		kFeatures640,
 		"adi2.stk", "ediintro.tot", 0
 	},
 	{
