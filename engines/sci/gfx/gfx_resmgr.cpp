@@ -50,19 +50,18 @@ struct param_struct {
 };
 
 GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
-				_options(options), _driver(driver), _resManager(resManager),
+				_options(options), _driver(driver), _resourceManager(resManager),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
 	_portBounds = Common::Rect(0, 10, 320, 200);	// default value, with a titlebar of 10px
-	_version = resManager->sciVersion();
 
-	if (!_resManager->isVGA()) {
+	if (!_resourceManager->isVGA()) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
-	} else if (_version == SCI_VERSION_1_1) {
+	} else if (_resourceManager->sciVersion() == SCI_VERSION_1_1) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #ifdef ENABLE_SCI32
-	} else if (_version == SCI_VERSION_32) {
+	} else if (_resourceManager->sciVersion() == SCI_VERSION_32) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {
@@ -78,7 +77,7 @@ GfxResManager::~GfxResManager() {
 }
 
 int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
-	Resource *res = _resManager->findResource(ResourceId(kResourceTypePic, nr), 0);
+	Resource *res = _resourceManager->findResource(ResourceId(kResourceTypePic, nr), 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
 
@@ -97,21 +96,21 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 		return GFX_ERROR;
 
 	if (need_unscaled) {
-		if (_version == SCI_VERSION_1_1)
+		if (_resourceManager->sciVersion() == SCI_VERSION_1_1)
 			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
-			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
+			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resourceManager->getViewType(), _staticPalette, _portBounds);
 	}
 
 	if (scaled_pic && scaled_pic->undithered_buffer)
 		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
 
-	if (_version == SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() == SCI_VERSION_1_1)
 		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
-		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resManager->getViewType(), _staticPalette, _portBounds);
+		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resourceManager->getViewType(), _staticPalette, _portBounds);
 
-	if (_version <= SCI_VERSION_1_EGA) {
+	if (_resourceManager->sciVersion() <= SCI_VERSION_1_EGA) {
 		if (need_unscaled)
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
@@ -145,7 +144,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 
 	case GFX_RESOURCE_TYPE_PIC:
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-		if (_resManager->isVGA())
+		if (_resourceManager->isVGA())
 			// NOTE: here, it is assumed that the upper port bound is always 10, but this doesn't seem to matter for the
 			// generated options hash anyway
 			return 10;
@@ -154,7 +153,7 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4)
 				   | (_options->pic0_line_mode);
 #else
-		if (_resManager->isVGA())
+		if (_resourceManager->isVGA())
 			return 10;
 		else
 			return 0x10000 | (GFXR_DITHER_PATTERN_SCALED << 8) | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
@@ -343,12 +342,12 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		if (_options->pic0_unscaled) {
 			need_unscaled = 0;
-			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
+			pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resourceManager->isVGA());
 		} else
-			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
+			pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resourceManager->isVGA());
 #else
 		need_unscaled = 0;
-		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
+		pic = gfxr_init_pic(_driver->getMode(), GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resourceManager->isVGA());
 #endif
 
 		if (!pic) {
@@ -359,7 +358,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 
 		if (need_unscaled) {
-			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resManager->isVGA());
+			unscaled_pic = gfxr_init_pic(&mode_1x1_color_index, GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num), _resourceManager->isVGA());
 			if (!unscaled_pic) {
 				error("Failed to allocate unscaled pic");
 				return NULL;
@@ -527,15 +526,15 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	res = resMap.contains(nr) ? resMap[nr] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *viewRes = _resManager->findResource(ResourceId(kResourceTypeView, nr), 0);
+		Resource *viewRes = _resourceManager->findResource(ResourceId(kResourceTypeView, nr), 0);
 		if (!viewRes || !viewRes->data)
 			return NULL;
 
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
-		ViewType viewType = _resManager->getViewType();
+		ViewType viewType = _resourceManager->getViewType();
 
 		if (viewType == kViewEga) {
-			int pal = (_version <= SCI_VERSION_01) ? -1 : palette;
+			int pal = (_resourceManager->sciVersion() <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
 			view = getVGAView(resid, viewRes->data, viewRes->size, viewType);
@@ -620,13 +619,13 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 
 	// Workaround: LSL1VGA mixes its own internal fonts with the global
 	// SCI ones, so we translate them here, by removing their extra bits
-	if (!resMap.contains(num) && !_resManager->testResource(ResourceId(kResourceTypeFont, num)))
+	if (!resMap.contains(num) && !_resourceManager->testResource(ResourceId(kResourceTypeFont, num)))
 		num = num & 0x7ff;
 
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *fontRes = _resManager->findResource(ResourceId(kResourceTypeFont, num), 0);
+		Resource *fontRes = _resourceManager->findResource(ResourceId(kResourceTypeFont, num), 0);
 		if (!fontRes || !fontRes->data)
 			return NULL;
 
@@ -663,17 +662,17 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 	res = resMap.contains(num) ? resMap[num] : NULL;
 
 	if (!res || res->mode != hash) {
-		Resource *cursorRes = _resManager->findResource(ResourceId(kResourceTypeCursor, num), 0);
+		Resource *cursorRes = _resourceManager->findResource(ResourceId(kResourceTypeCursor, num), 0);
 		if (!cursorRes || !cursorRes->data)
 			return NULL;
 
-		if (_version >= SCI_VERSION_1_1) {
+		if (_resourceManager->sciVersion() >= SCI_VERSION_1_1) {
 			warning("[GFX] Attempt to retrieve cursor in SCI1.1 or later");
 			return NULL;
 		}
 
 		gfx_pixmap_t *cursor = gfxr_draw_cursor(GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num),
-										cursorRes->data, cursorRes->size, _version > SCI_VERSION_01);
+										cursorRes->data, cursorRes->size, _resourceManager->sciVersion() > SCI_VERSION_01);
 
 		if (!cursor)
 			return NULL;

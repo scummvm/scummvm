@@ -48,7 +48,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	else {
 		int textlen;
 		int _index = index;
-		textres = s->resmgr->findResource(ResourceId(kResourceTypeText, address.offset), 0);
+		textres = s->resourceManager->findResource(ResourceId(kResourceTypeText, address.offset), 0);
 
 		if (!textres) {
 			error("text.%03d not found", address.offset);
@@ -144,15 +144,15 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		int synonyms_nr = 0;
 
 		script = GET_SEL32V(objpos, number);
-		seg = s->seg_manager->segGet(script);
+		seg = s->segmentManager->segGet(script);
 
 		if (seg >= 0)
-			synonyms_nr = s->seg_manager->getScript(seg)->getSynonymsNr();
+			synonyms_nr = s->segmentManager->getScript(seg)->getSynonymsNr();
 
 		if (synonyms_nr) {
 			byte *synonyms;
 
-			synonyms = s->seg_manager->getScript(seg)->getSynonyms();
+			synonyms = s->segmentManager->getScript(seg)->getSynonyms();
 			if (synonyms) {
 				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
 				          synonyms_nr, script);
@@ -305,7 +305,7 @@ reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (length >= 0)
 			strncpy(dest, src, length);
 		else {
-			if (s->seg_manager->_heap[argv[0].segment]->getType() == MEM_OBJ_DYNMEM) {
+			if (s->segmentManager->_heap[argv[0].segment]->getType() == MEM_OBJ_DYNMEM) {
 				reg_t *srcp = (reg_t *) src;
 
 				int i;
@@ -368,7 +368,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if ((argc == 2) &&
 	        /* Our pathfinder already works around the issue we're trying to fix */
-	        (strcmp(s->seg_manager->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0) &&
+	        (strcmp(s->segmentManager->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0) &&
 	        ((strlen(dst) < 2) || (!lsl5PasswordWorkaround && !is_print_str(dst)))) {
 		// SQ4 array handling detected
 #ifndef SCUMM_BIG_ENDIAN
@@ -642,7 +642,7 @@ reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	Resource *textres = s->resmgr->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
+	Resource *textres = s->resourceManager->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
 	char *seeker;
 	int counter = argv[1].toUint16();
 
@@ -713,7 +713,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		reg_t retval;
 
 		if (func == K_MESSAGE_GET) {
-			s->_msgState.loadRes(s->resmgr, argv[1].toUint16(), true);
+			s->_msgState.loadRes(s->resourceManager, argv[1].toUint16(), true);
 			s->_msgState.findTuple(tuple);
 
 			if (isGetMessage)
@@ -758,7 +758,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MESSAGE_SIZE: {
 		MessageState tempState;
 
-		if (tempState.loadRes(s->resmgr, argv[1].toUint16(), false) && tempState.findTuple(tuple) && tempState.getMessage())
+		if (tempState.loadRes(s->resourceManager, argv[1].toUint16(), false) && tempState.findTuple(tuple) && tempState.getMessage())
 			return make_reg(0, tempState.getText().size() + 1);
 		else
 			return NULL_REG;
@@ -768,7 +768,7 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	case K_MESSAGE_REFNOUN: {
 		MessageState tempState;
 
-		if (tempState.loadRes(s->resmgr, argv[1].toUint16(), false) && tempState.findTuple(tuple)) {
+		if (tempState.loadRes(s->resourceManager, argv[1].toUint16(), false) && tempState.findTuple(tuple)) {
 			MessageTuple t = tempState.getRefTuple();
 			switch (func) {
 			case K_MESSAGE_REFCOND:

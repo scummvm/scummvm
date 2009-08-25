@@ -257,7 +257,7 @@ static void bresenham_autodetect(EngineState *s) {
 	reg_t motion_class;
 
 	if (!parse_reg_t(s, "?Motion", &motion_class)) {
-		Object *obj = obj_get(s->seg_manager, s->_version, motion_class);
+		Object *obj = obj_get(s->segmentManager, motion_class);
 		reg_t fptr;
 		byte *buf;
 
@@ -267,14 +267,14 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s, motion_class, ((SciEngine*)g_engine)->getKernel()->_selectorMap.doit, NULL, &fptr) != kSelectorMethod) {
+		if (lookup_selector(s->segmentManager, motion_class, ((SciEngine*)g_engine)->getKernel()->_selectorMap.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
 		}
 
-		buf = s->seg_manager->getScript(fptr.segment)->buf + fptr.offset;
-		handle_movecnt = (s->_version <= SCI_VERSION_01 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
+		buf = s->segmentManager->getScript(fptr.segment)->buf + fptr.offset;
+		handle_movecnt = (s->segmentManager->sciVersion() <= SCI_VERSION_01 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
 		printf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
 		warning("bresenham_autodetect failed");
@@ -293,7 +293,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	int completed = 0;
 	int max_movcnt = GET_SEL32V(client, moveSpeed);
 
-	if (s->_version > SCI_VERSION_01)
+	if (s->resourceManager->sciVersion() > SCI_VERSION_01)
 		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
 
 	if (handle_movecnt == UNINITIALIZED)
@@ -380,7 +380,7 @@ reg_t kDoBresen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		completed = 1;
 	}
 
-	if (s->_version > SCI_VERSION_01)
+	if (s->resourceManager->sciVersion() > SCI_VERSION_01)
 		if (completed)
 			invoke_selector(INV_SEL(mover, moveDone, kStopOnInvalidSelector), 0);
 

@@ -37,7 +37,6 @@ namespace Sci {
 
 class SegManager;
 struct EngineState;
-typedef int sci_version_t;
 struct IntMapper;
 struct Object;
 class ResourceManager;
@@ -448,7 +447,7 @@ void script_free_vm_memory(EngineState *s);
 /**
  * Looks up a selector and returns its type and value
  * varindex is written to iff it is non-NULL and the selector indicates a property of the object.
- * @param[in] s				The EngineState to use
+ * @param[in] segManager		The Segment Manager
  * @param[in] obj			Address of the object to look the selector up in
  * @param[in] selectorid	The selector to look up
  * @param[out] varp			A reference to the selector, if it is a
@@ -465,7 +464,7 @@ void script_free_vm_memory(EngineState *s);
  * 							kSelectorMethod if the selector represents a
  * 							method
  */
-SelectorType lookup_selector(EngineState *s, reg_t obj, Selector selectorid,
+SelectorType lookup_selector(SegManager *segManager, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
 
 /**
@@ -483,13 +482,12 @@ reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_ind
  * increased. All scripts containing superclasses of this script are loaded
  * recursively as well, unless 'recursive' is set to zero. The 
  * complementary function is "script_uninstantiate()" below.
- * @param[in] resMgr		The resource manager
+ * @param[in] resourceManager		The resource manager
  * @param[in] segManager	The segment manager
- * @param[in] version		The SCI version to use
  * @param[in] script_nr		The script number to load
  * @return					The script's segment ID or 0 if out of heap
  */
-int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersion version, int script_nr);
+int script_instantiate(ResourceManager *resourceManager, SegManager *segManager, int script_nr);
 
 /**
  * Decreases the numer of lockers of a script and unloads it if that number
@@ -500,7 +498,7 @@ int script_instantiate(ResourceManager *resMgr, SegManager *segManager, SciVersi
  * @param[in] version		The SCI version to use
  * @param[in] script_nr	The script number that is requestet to be unloaded
  */
-void script_uninstantiate(SegManager *segManager, SciVersion version, int script_nr);
+void script_uninstantiate(SegManager *segManager, int script_nr);
 
 /**
  * Initializes an SCI game
@@ -568,28 +566,28 @@ void quit_vm();
 /**
  * Allocates "kernel" memory and returns a handle suitable to be passed on
  * to SCI scripts
- * @param[in] s		Pointer to the EngineState to operate on
- * @param[in] type	A free-form type description string (static)
- * @param[in] space	The space to allocate
- * @return			The handle
+ * @param[in] segManager	The Segment Manager
+ * @param[in] type			A free-form type description string (static)
+ * @param[in] space			The space to allocate
+ * @return					The handle
  */
-reg_t kalloc(EngineState *s, const char *type, int space);
+reg_t kalloc(SegManager *segManager, const char *type, int space);
 
 /**
  * Returns a pointer to "kernel" memory based on the handle
- * @param[in] s			Pointer to the EngineState to operate on
- * @param[in] handle	The handle to use
- * @return				A pointer to the allocated memory
+ * @param[in] segManager	The Segment Manager
+ * @param[in] handle		The handle to use
+ * @return					A pointer to the allocated memory
  */
-byte *kmem(EngineState *s, reg_t handle);
+byte *kmem(SegManager *segManager, reg_t handle);
 
 /**
  * Frees all "kernel" memory associated with a handle
- * @param[in] s			Pointer to the EngineState to operate on
- * @param[in] handle	The handle to free
- * @return				0 on success, 1 otherwise
+ * @param[in] segManager	The Segment Manager
+ * @param[in] handle		The handle to free
+ * @return					0 on success, 1 otherwise
  */
-int kfree(EngineState *s, reg_t handle);
+int kfree(SegManager *segManager, reg_t handle);
 
 /**
  * Determines the name of an object
@@ -600,7 +598,7 @@ int kfree(EngineState *s, reg_t handle);
  * 					in a static buffer and need not be freed (neither may
  * 					it be modified).
  */
-const char *obj_get_name(SegManager *segManager, SciVersion version, reg_t pos);
+const char *obj_get_name(SegManager *segManager, reg_t pos);
 
 /**
  * Retrieves an object from the specified location
@@ -608,7 +606,7 @@ const char *obj_get_name(SegManager *segManager, SciVersion version, reg_t pos);
  * @param[in] offset	The object's offset
  * @return				The object in question, or NULL if there is none
  */
-Object *obj_get(SegManager *segManager, SciVersion version, reg_t offset);
+Object *obj_get(SegManager *segManager, reg_t offset);
 
 /**
  * Shrink execution stack to size.

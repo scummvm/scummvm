@@ -224,12 +224,12 @@ byte *SystemStrings::dereference(reg_t pointer, int *size) {
 
 
 //-------------------- script --------------------
-reg_t Script::findCanonicAddress(SegManager *segmgr, reg_t addr) {
+reg_t Script::findCanonicAddress(SegManager *segManager, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }
 
-void Script::freeAtAddress(SegManager *segmgr, reg_t addr) {
+void Script::freeAtAddress(SegManager *segManager, reg_t addr) {
 	/*
 		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
 		if (locals_segment)
@@ -237,16 +237,15 @@ void Script::freeAtAddress(SegManager *segmgr, reg_t addr) {
 	*/
 
 	if (_markedAsDeleted)
-		segmgr->deallocateScript(nr);
+		segManager->deallocateScript(nr);
 }
 
 void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
 	(*note)(param, make_reg(segId, 0));
 }
 
-void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 	Script *script = this;
-	SciVersion version = s->_version;	// for the offset defines
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
 		int idx = RAW_GET_CLASS_INDEX(script, addr);
@@ -270,7 +269,7 @@ void Script::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, 
 
 //-------------------- clones --------------------
 
-void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 	CloneTable *clone_table = this;
 	Clone *clone;
 
@@ -293,7 +292,7 @@ void CloneTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *par
 	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
 }
 
-void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
+void CloneTable::freeAtAddress(SegManager *segManager, reg_t addr) {
 	CloneTable *clone_table = this;
 	Object *victim_obj;
 
@@ -318,16 +317,16 @@ void CloneTable::freeAtAddress(SegManager *segmgr, reg_t addr) {
 
 
 //-------------------- locals --------------------
-reg_t LocalVariables::findCanonicAddress(SegManager *segmgr, reg_t addr) {
+reg_t LocalVariables::findCanonicAddress(SegManager *segManager, reg_t addr) {
 	// Reference the owning script
-	SegmentId owner_seg = segmgr->segGet(script_id);
+	SegmentId owner_seg = segManager->segGet(script_id);
 
 	assert(owner_seg >= 0);
 
 	return make_reg(owner_seg, 0);
 }
 
-void LocalVariables::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 //	assert(addr.segment == _segId);
 
 	for (uint i = 0; i < _locals.size(); i++)
@@ -336,12 +335,12 @@ void LocalVariables::listAllOutgoingReferences(EngineState *s, reg_t addr, void 
 
 
 //-------------------- stack --------------------
-reg_t DataStack::findCanonicAddress(SegManager *segmgr, reg_t addr) {
+reg_t DataStack::findCanonicAddress(SegManager *segManager, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }
 
-void DataStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 	fprintf(stderr, "Emitting %d stack entries\n", nr);
 	for (int i = 0; i < nr; i++)
 		(*note)(param, entries[i]);
@@ -350,11 +349,11 @@ void DataStack::listAllOutgoingReferences(EngineState *s, reg_t addr, void *para
 
 
 //-------------------- lists --------------------
-void ListTable::freeAtAddress(SegManager *segmgr, reg_t sub_addr) {
+void ListTable::freeAtAddress(SegManager *segManager, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ListTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
@@ -370,11 +369,11 @@ void ListTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *para
 
 
 //-------------------- nodes --------------------
-void NodeTable::freeAtAddress(SegManager *segmgr, reg_t sub_addr) {
+void NodeTable::freeAtAddress(SegManager *segManager, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void NodeTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *param, NoteCallback note) {
+void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
@@ -394,7 +393,7 @@ void NodeTable::listAllOutgoingReferences(EngineState *s, reg_t addr, void *para
 
 //-------------------- dynamic memory --------------------
 
-reg_t DynMem::findCanonicAddress(SegManager *segmgr, reg_t addr) {
+reg_t DynMem::findCanonicAddress(SegManager *segManager, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }

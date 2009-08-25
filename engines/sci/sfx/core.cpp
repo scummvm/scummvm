@@ -87,12 +87,12 @@ public:
 	~SfxPlayer();
 
 	/* Initializes the player
-	** Parameters: (ResourceManager *) resmgr: A resource manager for driver initialization
+	** Parameters: (ResourceManager *) resourceManager: A resource manager for driver initialization
 	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
 	**                   (in microseconds)
 	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
 	*/
-	Common::Error init(ResourceManager *resmgr, int expected_latency);
+	Common::Error init(ResourceManager *resourceManager, int expected_latency);
 
 	/* Adds an iterator to the song player
 	** Parameters: (songx_iterator_t *) it: The iterator to play
@@ -223,7 +223,7 @@ void SfxPlayer::player_timer_callback(void *refCon) {
 
 /* API implementation */
 
-Common::Error SfxPlayer::init(ResourceManager *resmgr, int expected_latency) {
+Common::Error SfxPlayer::init(ResourceManager *resourceManager, int expected_latency) {
 	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
 
 	switch(musicDriver) {
@@ -252,7 +252,7 @@ Common::Error SfxPlayer::init(ResourceManager *resmgr, int expected_latency) {
 	_mutex = new Common::Mutex();
 
 	_mididrv->setTimerCallback(this, player_timer_callback);
-	_mididrv->open(resmgr);
+	_mididrv->open(resourceManager);
 	_mididrv->setVolume(_volume);
 
 	return Common::kNoError;
@@ -354,7 +354,7 @@ SfxState::SfxState() {
 
 SfxState::~SfxState() {
 	if (_syncResource)
-		_resMgr->unlockResource(_syncResource);
+		_resourceManager->unlockResource(_syncResource);
 }
 
 
@@ -639,7 +639,7 @@ static int sfx_play_iterator_pcm(SongIterator *it, SongHandle handle) {
 
 #define DELAY (1000000 / SFX_TICKS_PER_SEC)
 
-void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
+void SfxState::sfx_init(ResourceManager *resourceManager, int flags) {
 	_songlib._lib = 0;
 	_song = NULL;
 	_flags = flags;
@@ -661,7 +661,7 @@ void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
 	/* Initialise player */
 	/*-------------------*/
 
-	if (!resmgr) {
+	if (!resourceManager) {
 		warning("[SFX] Warning: No resource manager present, cannot initialise player");
 		return;
 	}
@@ -673,13 +673,13 @@ void SfxState::sfx_init(ResourceManager *resmgr, int flags) {
 		return;
 	}
 
-	if (player->init(resmgr, DELAY / 1000)) {
+	if (player->init(resourceManager, DELAY / 1000)) {
 		warning("[SFX] Song player reported error, disabled");
 		delete player;
 		player = NULL;
 	}
 
-	_resMgr = resmgr;
+	_resourceManager = resourceManager;
 }
 
 void SfxState::sfx_exit() {
@@ -1137,13 +1137,13 @@ Audio::AudioStream* SfxState::getAudioStream(uint32 number, uint32 volume, int *
 	Sci::Resource* audioRes;
 
 	if (volume == 65535) {
-		audioRes = _resMgr->findResource(ResourceId(kResourceTypeAudio, number), false);
+		audioRes = _resourceManager->findResource(ResourceId(kResourceTypeAudio, number), false);
 		if (!audioRes) {
 			warning("Failed to find audio entry %i", number);
 			return NULL;
 		}
 	} else {
-		audioRes = _resMgr->findResource(ResourceId(kResourceTypeAudio36, volume, number), false);
+		audioRes = _resourceManager->findResource(ResourceId(kResourceTypeAudio36, volume, number), false);
 		if (!audioRes) {
 			warning("Failed to find audio entry (%i, %i, %i, %i, %i)", volume, (number >> 24) & 0xff,
 					(number >> 16) & 0xff, (number >> 8) & 0xff, number & 0xff);

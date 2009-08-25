@@ -97,7 +97,7 @@ public:
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
-	ResourceManager *getResMgr() const { return _resmgr; }
+	ResourceManager *getresourceManager() const { return _resourceManager; }
 	Kernel *getKernel() const { return _kernel; }
 	Vocabulary *getVocabulary() const { return _vocabulary; }
 
@@ -112,8 +112,7 @@ public:
 
 private:
 	const SciGameDescription *_gameDescription;
-	SciVersion _version;
-	ResourceManager *_resmgr;
+	ResourceManager *_resourceManager;
 	EngineState *_gamestate;
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;

@@ -363,7 +363,7 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resmgr) : _resmgr(resmgr) {
+Kernel::Kernel(ResourceManager *resourceManager) : _resourceManager(resourceManager) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
 	loadSelectorNames();
@@ -379,7 +379,7 @@ Kernel::~Kernel() {
 }
 
 void Kernel::detectSciFeatures() {
-	SciVersion version = _resmgr->sciVersion();
+	SciVersion version = _resourceManager->sciVersion();
 
 	features = 0;
 
@@ -421,7 +421,7 @@ void Kernel::detectSciFeatures() {
 }
 
 void Kernel::loadSelectorNames() {
-	Resource *r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
+	Resource *r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
 
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
@@ -433,7 +433,7 @@ void Kernel::loadSelectorNames() {
 		
 		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
 			_selectorNames.push_back(staticSelectorTable[i]);
-			if (_resmgr->sciVersion() == SCI_VERSION_0_EARLY)
+			if (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY)
 				_selectorNames.push_back(staticSelectorTable[i]);
 		}
 			
@@ -452,14 +452,14 @@ void Kernel::loadSelectorNames() {
 
 		// Early SCI versions used the LSB in the selector ID as a read/write
 		// toggle. To compensate for that, we add every selector name twice.
-		if (_resmgr->sciVersion() == SCI_VERSION_0_EARLY)
+		if (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY)
 			_selectorNames.push_back(tmp);
 	}
 }
 
 bool Kernel::loadOpcodes() {
 	int count, i = 0;
-	Resource* r = _resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES), 0);
+	Resource* r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES), 0);
 
 	_opcodes.clear();
 
@@ -484,18 +484,18 @@ bool Kernel::loadOpcodes() {
 }
 
 // Allocates a set amount of memory for a specified use and returns a handle to it.
-reg_t kalloc(EngineState *s, const char *type, int space) {
+reg_t kalloc(SegManager *segManager, const char *type, int space) {
 	reg_t reg;
 
-	s->seg_manager->alloc_hunk_entry(type, space, &reg);
+	segManager->alloc_hunk_entry(type, space, &reg);
 	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
 
 	return reg;
 }
 
 // Returns a pointer to the memory indicated by the specified handle
-byte *kmem(EngineState *s, reg_t handle) {
-	HunkTable *ht = (HunkTable *)GET_SEGMENT(*s->seg_manager, handle.segment, MEM_OBJ_HUNK);
+byte *kmem(SegManager *segManager, reg_t handle) {
+	HunkTable *ht = (HunkTable *)GET_SEGMENT(*segManager, handle.segment, MEM_OBJ_HUNK);
 
 	if (!ht || !ht->isValidEntry(handle.offset)) {
 		warning("Error: kmem() with invalid handle");
@@ -506,8 +506,8 @@ byte *kmem(EngineState *s, reg_t handle) {
 }
 
 // Frees the specified handle. Returns 0 on success, 1 otherwise.
-int kfree(EngineState *s, reg_t handle) {
-	s->seg_manager->free_hunk_entry(handle);
+int kfree(SegManager *segManager, reg_t handle) {
+	segManager->free_hunk_entry(handle);
 
 	return 0;
 }
@@ -649,7 +649,7 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
+int determine_reg_type(SegManager *segManager, reg_t reg, bool allow_invalid) {
 	MemObject *mobj;
 	int type = 0;
 
@@ -661,12 +661,12 @@ int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid) {
 		return type;
 	}
 
-	if ((reg.segment >= s->seg_manager->_heap.size()) || !s->seg_manager->_heap[reg.segment])
+	if ((reg.segment >= segManager->_heap.size()) || !segManager->_heap[reg.segment])
 		return 0; // Invalid
 
-	mobj = s->seg_manager->_heap[reg.segment];
+	mobj = segManager->_heap[reg.segment];
 
-	SciVersion version = s->_version;	// for the offset defines
+	SciVersion version = segManager->sciVersion();	// for the offset defines
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
@@ -721,7 +721,7 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = determine_reg_type(s, *argv, *sig & KSIG_ALLOW_INV);
+			int type = determine_reg_type(s->segmentManager, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
 				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
@@ -752,7 +752,7 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 
 static void *_kernel_dereference_pointer(EngineState *s, reg_t pointer, int entries, int align) {
 	int maxsize;
-	void *retval = s->seg_manager->dereference(pointer, &maxsize);
+	void *retval = s->segmentManager->dereference(pointer, &maxsize);
 
 	if (!retval)
 		return NULL;
@@ -781,7 +781,7 @@ reg_t *kernel_dereference_reg_pointer(EngineState *s, reg_t pointer, int entries
 void Kernel::setDefaultKernelNames() {
 	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
-	switch (_resmgr->sciVersion()) {
+	switch (_resourceManager->sciVersion()) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
 		// Insert SCI0 file functions after SetCursor (0x28)
@@ -817,7 +817,7 @@ void Kernel::setDefaultKernelNames() {
 }
 
 #ifdef ENABLE_SCI32
-//static void vocab_get_knames11(ResourceManager *resmgr, Common::StringList &names) {
+//static void vocab_get_knames11(ResourceManager *resourceManager, Common::StringList &names) {
 /*
  999.voc format for SCI1.1 games:
 	[b] # of kernel functions
@@ -829,7 +829,7 @@ void Kernel::setDefaultKernelNames() {
 */
 /*	//unsigned int size = 64, pos = 3;
 	int len;
-	Resource *r = resmgr->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
+	Resource *r = resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_KNAMES), 0);
 	if(r == NULL) // failed to open vocab.999 (happens with SCI1 demos)
 		return; // FIXME: should return a default table for this engine
 	const byte nCnt = *r->data;

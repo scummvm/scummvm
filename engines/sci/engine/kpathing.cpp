@@ -1588,7 +1588,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 
 	if (unreachable) {
 		// If pathfinding failed we only return the path up to vertex_start
-		oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
+		oref = s->segmentManager->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
 
 		if (p->_prependPoint)
 			POLY_SET_POINT(oref, 0, *p->_prependPoint);
@@ -1608,7 +1608,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	}
 
 	// Allocate memory for path, plus 3 extra for appended point, prepended point and sentinel
-	oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * (path_len + 3), AVOIDPATH_DYNMEM_STRING, &output);
+	oref = s->segmentManager->allocDynmem(POLY_POINT_SIZE * (path_len + 3), AVOIDPATH_DYNMEM_STRING, &output);
 
 	int offset = 0;
 
@@ -1700,7 +1700,7 @@ reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			printf("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
 			printf("[avoidpath] Returning direct path from start point to end point\n");
-			oref = s->seg_manager->allocDynmem(POLY_POINT_SIZE * 3,
+			oref = s->segmentManager->allocDynmem(POLY_POINT_SIZE * 3,
 			                                   AVOIDPATH_DYNMEM_STRING, &output);
 
 			POLY_SET_POINT(oref, 0, start);

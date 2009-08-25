@@ -48,11 +48,11 @@ namespace Sci {
 //#define GC_DEBUG // Debug garbage collection
 //#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
-#undef DEBUG_SEG_MANAGER // Define to turn on debugging
+#undef DEBUG_segmentManager // Define to turn on debugging
 
 #define INVALID_SCRIPT_ID -1
 
-SegManager::SegManager(ResourceManager *resMgr, SciVersion version) {
+SegManager::SegManager(ResourceManager *resourceManager) {
 	id_seg_map = new IntMapper();
 	reserved_id = INVALID_SCRIPT_ID;
 	id_seg_map->checkKey(reserved_id, true);	// reserve entry 0 for INVALID_SCRIPT_ID
@@ -66,8 +66,7 @@ SegManager::SegManager(ResourceManager *resMgr, SciVersion version) {
 	Hunks_seg_id = 0;
 
 	exports_wide = 0;
-	_version = version;
-	_resMgr = resMgr;
+	_resourceManager = resourceManager;
 
 	int result = 0;
 
@@ -137,19 +136,19 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 }
 
 void SegManager::setScriptSize(Script &scr, int script_nr) {
-	Resource *script = _resMgr->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	Resource *heap = _resMgr->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+	Resource *script = _resourceManager->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *heap = _resourceManager->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
 	scr.script_size = script->size;
 	scr.heap_size = 0; // Set later
 
-	if (!script || (_version >= SCI_VERSION_1_1 && !heap)) {
+	if (!script || (_resourceManager->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
-	if (_version == SCI_VERSION_0_EARLY) {	// check if we got an old script header
+	if (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY) {	// check if we got an old script header
 		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (_version < SCI_VERSION_1_1) {
+	} else if (_resourceManager->sciVersion() < SCI_VERSION_1_1) {
 		scr.buf_size = script->size;
 	} else {
 		scr.buf_size = script->size + heap->size;
@@ -177,7 +176,7 @@ int SegManager::initialiseScript(Script &scr, int script_nr) {
 	setScriptSize(scr, script_nr);
 	scr.buf = (byte *)malloc(scr.buf_size);
 
-#ifdef DEBUG_SEG_MANAGER
+#ifdef DEBUG_segmentManager
 	printf("scr.buf = %p ", scr.buf);
 #endif
 	if (!scr.buf) {
@@ -199,7 +198,7 @@ int SegManager::initialiseScript(Script &scr, int script_nr) {
 
 	scr.obj_indices = new IntMapper();
 
-	if (_version >= SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() >= SCI_VERSION_1_1)
 		scr.heap_start = scr.buf + scr.script_size;
 	else
 		scr.heap_start = scr.buf;
@@ -212,7 +211,7 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 	VERIFY(check(seg), "invalid seg id");
 
 	mobj = _heap[seg];
-	id_seg_map->removeKey(mobj->getSegMgrId());
+	id_seg_map->removeKey(mobj->getSegmentManagerId());
 
 	if (mobj->getType() == MEM_OBJ_SCRIPT) {
 		Script *scr = (Script *)mobj;
@@ -254,7 +253,7 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectTyp
 		_heap.push_back(0);
 	}
 
-	mem->_segmgrId = hash_id;
+	mem->_segManagerId = hash_id;
 
 	// hook it to the heap
 	_heap[segid] = mem;
@@ -327,7 +326,7 @@ int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, S
 		return 0;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (_version == SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() == SCI_VERSION_1_1)
 		block[idx].offset += getScript(segment)->script_size;
 
 	return 1;
@@ -441,7 +440,7 @@ SegmentId SegManager::getSegment(int script_nr, SCRIPT_GET load) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
-		script_instantiate(_resMgr, this, _version, script_nr);
+		script_instantiate(_resourceManager, this, script_nr);
 
 	segment = segGet(script_nr);
 
@@ -481,7 +480,7 @@ reg_t SegManager::get_class_address(int classnr, SCRIPT_GET lock, reg_t caller) 
 Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 	Object *obj;
 	int id;
-	SciVersion version = _version;	// for the offset defines
+	SciVersion version = _resourceManager->sciVersion();	// for the offset defines
 	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 	reg_t temp;
 
@@ -590,7 +589,7 @@ Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 }
 
 Object *SegManager::scriptObjInit(reg_t obj_pos) {
-	if (_version != SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() != SCI_VERSION_1_1)
 		return scriptObjInit0(obj_pos);
 	else
 		return scriptObjInit11(obj_pos);
@@ -634,7 +633,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
 
-	if (_version == SCI_VERSION_1_1)
+	if (_resourceManager->sciVersion() == SCI_VERSION_1_1)
 		count = READ_LE_UINT16(scr->buf + location.offset - 2);
 	else
 		count = (READ_LE_UINT16(scr->buf + location.offset - 2) - 4) >> 1;
@@ -676,7 +675,7 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
 	byte *seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
-	SciVersion version = _version;	// for the selector defines
+	SciVersion version = _resourceManager->sciVersion();	// for the selector defines
 
 	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
@@ -707,7 +706,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
 			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			base_obj = obj_get(s->seg_manager, s->_version, obj->_variables[5]);
+			base_obj = obj_get(s->segmentManager, obj->_variables[5]);
 			obj->variable_names_nr = base_obj->variables_nr;
 			obj->base_obj = base_obj->base_obj;
 		}
@@ -913,7 +912,7 @@ int SegManager::freeDynmem(reg_t addr) {
 }
 
 int SegManager::createClassTable() {
-	Resource *vocab996 = _resMgr->findResource(ResourceId(kResourceTypeVocab, 996), 1);
+	Resource *vocab996 = _resourceManager->findResource(ResourceId(kResourceTypeVocab, 996), 1);
 
 	if (!vocab996)
 		error("SegManager: failed to open vocab 996");
@@ -928,7 +927,7 @@ int SegManager::createClassTable() {
 		_classtable[classNr].script = scriptNr;
 	}
 
-	_resMgr->unlockResource(vocab996);
+	_resourceManager->unlockResource(vocab996);
 
 	return 0;
 }

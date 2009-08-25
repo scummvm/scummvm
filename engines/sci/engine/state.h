@@ -161,7 +161,7 @@ private:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, SciVersion version, uint32 flags);
+	EngineState(ResourceManager *res, uint32 flags);
 	virtual ~EngineState();
 
 	enum DoSoundType {
@@ -177,9 +177,8 @@ public:
 public:
 	int widget_serial_counter; /**< Used for savegames */
 
-	ResourceManager *resmgr; /**< The resource manager */
+	ResourceManager *resourceManager; /**< The resource manager */
 
-	const SciVersion _version; /**< The approximated patchlevel of the version to emulate */
 	const uint32 _flags;			/**< Specific game flags */
 
 	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */
@@ -305,7 +304,7 @@ public:
 
 	reg_t game_obj; /**< Pointer to the game object */
 
-	SegManager *seg_manager;
+	SegManager *segmentManager;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
 	MessageState _msgState;

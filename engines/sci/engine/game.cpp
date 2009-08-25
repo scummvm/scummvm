@@ -43,7 +43,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
 	debug(2, "Initializing graphics");
 
-	if (s->resmgr->getViewType() == kViewEga) {
+	if (s->resourceManager->getViewType() == kViewEga) {
 		for (int i = 0; i < 16; i++) {
 			if (gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
 					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1)) {
@@ -62,13 +62,13 @@ int _reset_graphics_input(EngineState *s) {
 			s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1_amiga(file));
 			file.close();
 		} else {
-			resource = s->resmgr->findResource(ResourceId(kResourceTypePalette, 999), 1);
+			resource = s->resourceManager->findResource(ResourceId(kResourceTypePalette, 999), 1);
 			if (resource) {
-				if (s->_version < SCI_VERSION_1_1)
+				if (s->resourceManager->sciVersion() < SCI_VERSION_1_1)
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
-				s->resmgr->unlockResource(resource);
+				s->resourceManager->unlockResource(resource);
 			} else {
 				debug(2, "Couldn't find the default palette!");
 			}
@@ -94,7 +94,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	font_nr = -1;
 	do {
-		resource = s->resmgr->testResource(ResourceId(kResourceTypeFont, ++font_nr));
+		resource = s->resourceManager->testResource(ResourceId(kResourceTypeFont, ++font_nr));
 	} while ((!resource) && (font_nr < 65536));
 
 	if (!resource) {
@@ -109,7 +109,7 @@ int _reset_graphics_input(EngineState *s) {
 	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
 	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
 
-	if (s->resmgr->isVGA()) {
+	if (s->resourceManager->isVGA()) {
 		// This bit sets the foreground and background colors in VGA SCI games
 		gfx_color_t fgcolor;
 		gfx_color_t bgcolor;
@@ -179,11 +179,11 @@ static void _free_graphics_input(EngineState *s) {
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
-	if (s->resmgr->sciVersion() > SCI_VERSION_0_LATE)
+	if (s->resourceManager->sciVersion() > SCI_VERSION_0_LATE)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;
-	s->_sound.sfx_init(s->resmgr, sound_flags);
+	s->_sound.sfx_init(s->resourceManager, sound_flags);
 
 	return 0;
 }
@@ -191,20 +191,20 @@ int game_init_sound(EngineState *s, int sound_flags) {
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
 	s->kernel_opt_flags = 0;
-	s->seg_manager = new SegManager(s->resmgr, s->_version);
+	s->segmentManager = new SegManager(s->resourceManager);
 	s->gc_countdown = GC_INTERVAL - 1;
 
-	SegmentId script_000_segment = s->seg_manager->getSegment(0, SCRIPT_GET_LOCK);
+	SegmentId script_000_segment = s->segmentManager->getSegment(0, SCRIPT_GET_LOCK);
 
 	if (script_000_segment <= 0) {
 		debug(2, "Failed to instantiate script.000");
 		return 1;
 	}
 
-	s->script_000 = s->seg_manager->getScript(script_000_segment);
+	s->script_000 = s->segmentManager->getScript(script_000_segment);
 
-	s->sys_strings = s->seg_manager->allocateSysStrings(&s->sys_strings_segment);
-	s->string_frag_segment = s->seg_manager->allocateStringFrags();
+	s->sys_strings = s->segmentManager->allocateSysStrings(&s->sys_strings_segment);
+	s->string_frag_segment = s->segmentManager->allocateStringFrags();
 
 	// Allocate static buffer for savegame and CWD directories
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
@@ -227,9 +227,9 @@ int script_init_engine(EngineState *s) {
 	s->have_bp = 0;
 
 	if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
-		s->seg_manager->setExportWidth(1);
+		s->segmentManager->setExportWidth(1);
 	else
-		s->seg_manager->setExportWidth(0);
+		s->segmentManager->setExportWidth(0);
 
 	debug(2, "Engine initialized");
 
@@ -252,8 +252,8 @@ void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int le
 void script_free_vm_memory(EngineState *s) {
 	debug(2, "Freeing VM memory");
 
-	if (s->seg_manager)
-		s->seg_manager->_classtable.clear();
+	if (s->segmentManager)
+		s->segmentManager->_classtable.clear();
 
 	// Close all opened file handles
 	s->_fileHandles.clear();
@@ -290,11 +290,11 @@ int game_init(EngineState *s) {
 	// FIXME Use new VM instantiation code all over the place"
 	DataStack *stack;
 
-	stack = s->seg_manager->allocateStack(VM_STACK_SIZE, &s->stack_segment);
+	stack = s->segmentManager->allocateStack(VM_STACK_SIZE, &s->stack_segment);
 	s->stack_base = stack->entries;
 	s->stack_top = s->stack_base + VM_STACK_SIZE;
 
-	if (!script_instantiate(s->resmgr, s->seg_manager, s->_version, 0)) {
+	if (!script_instantiate(s->resourceManager, s->segmentManager, 0)) {
 		warning("game_init(): Could not instantiate script 0");
 		return 1;
 	}
@@ -310,7 +310,7 @@ int game_init(EngineState *s) {
 	s->successor = NULL; // No successor
 	s->_statusBarText.clear(); // Status bar is blank
 	s->status_bar_foreground = 0;
-	s->status_bar_background = !s->resmgr->isVGA() ? 15 : 255;
+	s->status_bar_background = !s->resourceManager->isVGA() ? 15 : 255;
 
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
 	str->name = strdup("parser-base");
@@ -328,8 +328,8 @@ int game_init(EngineState *s) {
 
 //	script_dissect(0, s->_selectorNames);
 	// The first entry in the export table of script 0 points to the game object
-	s->game_obj = script_lookup_export(s->seg_manager, 0, 0);
-	s->_gameName = obj_get_name(s->seg_manager, s->_version, s->game_obj);
+	s->game_obj = script_lookup_export(s->segmentManager, 0, 0);
+	s->_gameName = obj_get_name(s->segmentManager, s->game_obj);
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->game_obj));
 
@@ -357,9 +357,9 @@ int game_exit(EngineState *s) {
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
 
-	s->seg_manager->_classtable.clear();
-	delete s->seg_manager;
-	s->seg_manager = 0;
+	s->segmentManager->_classtable.clear();
+	delete s->segmentManager;
+	s->segmentManager = 0;
 
 	s->_synonyms.clear();
 

@@ -180,16 +180,16 @@ enum {
 reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!s->seg_manager->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
+		if (!s->segmentManager->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		return s->r_acc;
 		break;
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
-		s->seg_manager->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
+		s->segmentManager->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
-		if (s->seg_manager->freeDynmem(argv[1])) {
+		if (s->segmentManager->freeDynmem(argv[1])) {
 			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
 		}
 		break;
@@ -219,7 +219,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->segmentManager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, (int16)READ_LE_UINT16(ref));
@@ -233,7 +233,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		if (s->seg_manager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->segmentManager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {

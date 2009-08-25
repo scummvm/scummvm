@@ -623,11 +623,11 @@ void MidiDriver_Adlib::loadResource(Resource *res) {
 	}
 }
 
-int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
-	assert(resmgr != NULL);
+int MidiPlayer_Adlib::open(ResourceManager *resourceManager) {
+	assert(resourceManager != NULL);
 
 	// Load up the patch.003 file, parse out the instruments
-	Resource *res = resmgr->findResource(ResourceId(kResourceTypePatch, 3), 0);
+	Resource *res = resourceManager->findResource(ResourceId(kResourceTypePatch, 3), 0);
 
 	if (!res) {
 		warning("ADLIB: Failed to load patch.003");
@@ -641,7 +641,7 @@ int MidiPlayer_Adlib::open(ResourceManager *resmgr) {
 
 	static_cast<MidiDriver_Adlib *>(_driver)->loadResource(res);
 
-	return static_cast<MidiDriver_Adlib *>(_driver)->open(resmgr->sciVersion() <= SCI_VERSION_0_LATE);
+	return static_cast<MidiDriver_Adlib *>(_driver)->open(resourceManager->sciVersion() <= SCI_VERSION_0_LATE);
 }
 
 } // End of namespace Sci

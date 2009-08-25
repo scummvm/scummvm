@@ -40,7 +40,6 @@ struct SavegameMetadata {
 	Common::String savegame_name;
 	int savegame_version;
 	Common::String game_version;
-	sci_version_t version;
 	int savegame_date;
 	int savegame_time;
 };

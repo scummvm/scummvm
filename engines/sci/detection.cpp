@@ -340,21 +340,23 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 
-	ResourceManager *resMgr = new ResourceManager(fslist);
-	SciVersion version = resMgr->sciVersion();
-	ViewType gameViews = resMgr->getViewType();
+	ResourceManager *resourceManager = new ResourceManager(fslist);
+	SciVersion version = resourceManager->sciVersion();
+	ViewType gameViews = resourceManager->getViewType();
 
 	// Have we identified the game views? If not, stop here
 	if (gameViews == kViewUnknown) {
 		SearchMan.remove("SCI_detection");
+		delete resourceManager;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 
 #ifndef ENABLE_SCI32
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
-	if (resMgr->sciVersion() == SCI_VERSION_32) {
+	if (resourceManager->sciVersion() == SCI_VERSION_32) {
 		SearchMan.remove("SCI_detection");
+		delete resourceManager;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 #endif
@@ -363,7 +365,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	if (gameViews == kViewEga)
 		s_fallbackDesc.desc.extra = "EGA";
 
-	SegManager *segManager = new SegManager(resMgr, version);
+	SegManager *segManager = new SegManager(resourceManager);
 
 	if (exePlatform == Common::kPlatformUnknown) {
 		// Try to determine the platform from game resources
@@ -385,20 +387,20 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	s_fallbackDesc.desc.platform = exePlatform;
 
 	// Determine the game id
-	if (!script_instantiate(resMgr, segManager, version, 0)) {
+	if (!script_instantiate(resourceManager, segManager, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		SearchMan.remove("SCI_detection");
 		delete segManager;
-		delete resMgr;
+		delete resourceManager;
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
-	Common::String gameName = obj_get_name(segManager, version, game_obj);
+	Common::String gameName = obj_get_name(segManager, game_obj);
 	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
 	gameName.toLowercase();
 	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName).c_str());
 	delete segManager;
-	delete resMgr;
+	delete resourceManager;
 
 	SearchMan.remove("SCI_detection");
 

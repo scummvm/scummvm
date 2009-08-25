@@ -40,7 +40,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	reg_t obj = argv[1];
 	sci_event_t e;
 	int oldx, oldy;
-	int modifier_mask = s->_version <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
+	int modifier_mask = s->resourceManager->sciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event

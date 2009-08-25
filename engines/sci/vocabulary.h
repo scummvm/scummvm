@@ -180,7 +180,7 @@ enum VocabularyVersions {
 
 class Vocabulary {
 public:
-	Vocabulary(ResourceManager *resmgr);
+	Vocabulary(ResourceManager *resourceManager);
 	~Vocabulary();
 
 	/**
@@ -286,7 +286,7 @@ private:
 	*/
 	void freeRuleList(parse_rule_list_t *rule_list);
 
-	ResourceManager *_resmgr;
+	ResourceManager *_resourceManager;
 	VocabularyVersions _vocabVersion;
 
 	// Parser-related lists

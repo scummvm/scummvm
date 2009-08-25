@@ -29,8 +29,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, SciVersion version, uint32 flags)
-: resmgr(res), _version(version), _flags(flags), _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, uint32 flags)
+: resourceManager(res), _flags(flags), _dirseeker(this) {
 	widget_serial_counter = 0;
 
 	game_version = 0;
@@ -112,12 +112,12 @@ EngineState::EngineState(ResourceManager *res, SciVersion version, uint32 flags)
 
 	game_obj = NULL_REG;
 
-	seg_manager = 0;
+	segmentManager = 0;
 	gc_countdown = 0;
 
 	successor = 0;
 
-	speedThrottler = new SpeedThrottler(version);
+	speedThrottler = new SpeedThrottler(res->sciVersion());
 
 	_doSoundType = kDoSoundTypeUnknown;
 }
@@ -187,7 +187,7 @@ kLanguage EngineState::getLanguage() {
 
 		lang = (kLanguage)GET_SEL32V(s->game_obj, printLang);
 
-		if ((_version == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
+		if ((s->resourceManager->sciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
 			// SSCI reads this from resource.cfg (early games do not have a language
 			// setting in resource.cfg, but instead have the secondary language number
@@ -254,11 +254,11 @@ EngineState::DoSoundType EngineState::detectDoSoundType() {
 		if (!parse_reg_t(this, "?Sound", &soundClass)) {
 			reg_t fptr;
 
-			Object *obj = obj_get(seg_manager, _version, soundClass);
-			SelectorType sel = lookup_selector(this, soundClass, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play, NULL, &fptr);
+			Object *obj = obj_get(segmentManager, soundClass);
+			SelectorType sel = lookup_selector(this->segmentManager, soundClass, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play, NULL, &fptr);
 
 			if (obj && (sel == kSelectorMethod)) {
-				Script *script = seg_manager->getScript(fptr.segment);
+				Script *script = segmentManager->getScript(fptr.segment);
 
 				if (fptr.offset > checkBytes) {
 					// Go to the last portion of Sound::init, should be right before the play function
@@ -289,9 +289,9 @@ EngineState::DoSoundType EngineState::detectDoSoundType() {
 		if (_doSoundType == kDoSoundTypeUnknown) {
 			warning("DoSound detection failed, taking an educated guess");
 
-			if (_version >= SCI_VERSION_1_MIDDLE)
+			if (resourceManager->sciVersion() >= SCI_VERSION_1_MIDDLE)
 				_doSoundType = kDoSoundTypeSci1Late;
-			else if (_version > SCI_VERSION_01)
+			else if (resourceManager->sciVersion() > SCI_VERSION_01)
 				_doSoundType = kDoSoundTypeSci1Early;
 			else
 				_doSoundType = kDoSoundTypeSci0;

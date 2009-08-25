@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GFX_GFX_RESMGR_H
-#define SCI_GFX_GFX_RESMGR_H
+#ifndef SCI_GFX_GFX_resourceManager_H
+#define SCI_GFX_GFX_resourceManager_H
 
 // FIXME/TODO: The name "(Graphics) resource manager", and the associated
 // filenames, are misleading. This should be renamed to "Graphics manager"
@@ -303,13 +303,7 @@ public:
 		return _staticPalette ? _staticPalette->size() : 0;
 	}
 
-	/**
-	 * Returns the resource version that the resource manager is using
-	 */
-	int getVersion() { return _version; }
-
 private:
-	int _version;
 	gfx_options_t *_options;
 	GfxDriver *_driver;
 	Palette *_staticPalette;
@@ -321,7 +315,7 @@ private:
 	Common::Rect _portBounds;
 
 	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
-	ResourceManager *_resManager;
+	ResourceManager *_resourceManager;
 };
 
 } // End of namespace Sci

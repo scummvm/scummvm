@@ -68,7 +68,7 @@ public:
 	/**
 	 * Initializes the SCI kernel
 	 */
-	Kernel(ResourceManager *resmgr);
+	Kernel(ResourceManager *resourceManager);
 	~Kernel();
 
 	uint getOpcodesSize() const { return _opcodes.size(); }
@@ -93,16 +93,6 @@ public:
 	 * @return True if the kernel function is listed in the kernel table, false otherwise
 	*/
 	bool hasKernelFunction(const char *functionName) const;
-
-	/**
-	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
-	 * Old SCI versions used two word header for script blocks (first word equal
-	 * to 0x82, meaning of the second one unknown). New SCI versions used one
-	 * word header.
-	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
-	 * and down. Later versions use an even 90 degree distribution.
-	 */
-	bool hasOldScriptHeader() const { return (features & kFeatureOldScriptHeader); }
 
 	/**
 	 * Applies to all versions before 0.000.502
@@ -177,7 +167,7 @@ private:
 	 */
 	bool loadOpcodes();
 
-	ResourceManager *_resmgr;
+	ResourceManager *_resourceManager;
 	uint32 features;
 
 	// Kernel-related lists
@@ -256,7 +246,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
  * @parm obj The address to check
  * @return True if it is an object, false otherwise
  */
-bool is_object(EngineState *s, reg_t obj);
+bool is_object(SegManager *segManager, reg_t obj);
 
 /******************** Kernel function parameter macros ********************/
 

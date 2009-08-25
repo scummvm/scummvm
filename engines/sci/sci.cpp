@@ -107,7 +107,7 @@ SciEngine::~SciEngine() {
 	delete _kernel;
 	delete _vocabulary;
 	delete _console;
-	delete _resmgr;
+	delete _resourceManager;
 }
 
 Common::Error SciEngine::run() {
@@ -141,19 +141,18 @@ Common::Error SciEngine::run() {
 
 	const uint32 flags = getFlags();
 
-	_resmgr = new ResourceManager();
-	_version = _resmgr->sciVersion();
+	_resourceManager = new ResourceManager();
 
-	if (!_resmgr) {
+	if (!_resourceManager) {
 		printf("No resources found, aborting...\n");
 		return Common::kNoGameDataFoundError;
 	}
 
-	_kernel = new Kernel(_resmgr);
-	_vocabulary = new Vocabulary(_resmgr);
-	script_adjust_opcode_formats(_version);
+	_kernel = new Kernel(_resourceManager);
+	_vocabulary = new Vocabulary(_resourceManager);
+	script_adjust_opcode_formats(_resourceManager->sciVersion());
 
-	_gamestate = new EngineState(_resmgr, _version, flags);
+	_gamestate = new EngineState(_resourceManager, flags);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -196,7 +195,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	if (gfxop_init(_resmgr->sciVersion(), &gfx_state, &gfx_options, _resmgr, gfxmode, 1, 1)) {
+	if (gfxop_init(_resourceManager->sciVersion(), &gfx_state, &gfx_options, _resourceManager, gfxmode, 1, 1)) {
 		warning("Graphics initialization failed. Aborting...");
 		return Common::kUnknownError;
 	}
@@ -211,7 +210,7 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	printf("Emulating SCI version %s\n", versionNames[_version]);
+	printf("Emulating SCI version %s\n", versionNames[_resourceManager->sciVersion()]);
 
 	game_run(&_gamestate); // Run the game
 
@@ -250,7 +249,7 @@ const char* SciEngine::getGameID() const {
 }
 
 SciVersion SciEngine::getVersion() const {
-	return _version;
+	return _resourceManager->sciVersion();
 }
 
 Common::Language SciEngine::getLanguage() const {

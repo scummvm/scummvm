@@ -79,14 +79,14 @@ bool kernel_matches_signature(EngineState *s, const char *sig, int argc, const r
 
 /**
  * Determines the type of the object indicated by reg.
- * @param s					state to operate on
+ * @param segManager			the Segment manager
  * @param reg				register to check
  * @param allow_invalid		determines whether invalid pointer (=offset) values are allowed
  * @return one of KSIG_* below KSIG_NULL.
  *	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
  *	       0 on error.
  */
-int determine_reg_type(EngineState *s, reg_t reg, bool allow_invalid);
+int determine_reg_type(SegManager *segManager, reg_t reg, bool allow_invalid);
 
 /**
  * Returns a textual description of the type of an object.

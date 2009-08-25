@@ -71,7 +71,7 @@ void add_outgoing_refs(void *refcon, reg_t addr) {
 }
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
-	SegManager *sm = s->seg_manager;
+	SegManager *sm = s->segmentManager;
 	reg_t_hash_map *normal_map = NULL;
 	WorklistManager wm;
 	uint i;
@@ -134,7 +134,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		if (reg.segment != s->stack_segment) { // No need to repeat this one
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x\n", PRINT_REG(reg));
 			if (reg.segment < sm->_heap.size() && sm->_heap[reg.segment])
-				sm->_heap[reg.segment]->listAllOutgoingReferences(s, reg, &wm, add_outgoing_refs);
+				sm->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs, s->resourceManager->sciVersion());
 		}
 	}
 
@@ -145,7 +145,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 }
 
 struct deallocator_t {
-	SegManager *segmgr;
+	SegManager *segManager;
 	MemObject *mobj;
 #ifdef DEBUG_GC
 	char *segnames[MEM_OBJ_MAX + 1];
@@ -160,7 +160,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 
 	if (!use_map->contains(addr)) {
 		// Not found -> we can free it
-		deallocator->mobj->freeAtAddress(deallocator->segmgr, addr);
+		deallocator->mobj->freeAtAddress(deallocator->segManager, addr);
 #ifdef DEBUG_GC
 		debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x\n", PRINT_REG(addr));
 		deallocator->segcount[deallocator->mobj->getType()]++;
@@ -172,14 +172,14 @@ void free_unless_used(void *refcon, reg_t addr) {
 void run_gc(EngineState *s) {
 	uint seg_nr;
 	deallocator_t deallocator;
-	SegManager *sm = s->seg_manager;
+	SegManager *sm = s->segmentManager;
 
 #ifdef DEBUG_GC
 	debugC(2, kDebugLevelGC, "[GC] Running...\n");
 	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
 #endif
 
-	deallocator.segmgr = sm;
+	deallocator.segManager = sm;
 	deallocator.use_map = find_all_used_references(s);
 
 	for (seg_nr = 1; seg_nr < sm->_heap.size(); seg_nr++) {

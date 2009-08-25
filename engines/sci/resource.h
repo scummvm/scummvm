@@ -420,13 +420,22 @@ protected:
 	void readResourcePatches(ResourceSource *source);
 	void processPatch(ResourceSource *source, ResourceType restype, int resnumber);
 
+ 	/**
+	 * Applies to all versions before 0.000.395 (i.e. KQ4 old, XMAS 1988 and LSL2).
+	 * Old SCI versions used two word header for script blocks (first word equal
+	 * to 0x82, meaning of the second one unknown). New SCI versions used one
+	 * word header.
+	 * Also, old SCI versions assign 120 degrees to left & right, and 60 to up
+	 * and down. Later versions use an even 90 degree distribution.
+	 */
+	bool hasOldScriptHeader();
+
 	void printLRU();
 	void addToLRU(Resource *res);
 	void removeFromLRU(Resource *res);
 
 	ResourceCompression getViewCompression();
 	ViewType detectViewType();
-	bool hasOldScriptHeader();
 	bool hasSci0Voc999();
 	bool hasSci1Voc900();
 	SciVersion detectSciVersion();

@@ -52,7 +52,7 @@ enum MemObjectType {
 
 struct MemObject : public Common::Serializable {
 	MemObjectType _type;
-	int _segmgrId; /**< Internal value used by the seg_manager's hash map */
+	int _segManagerId; /**< Internal value used by the segmentManager's hash map */
 
 	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
 
@@ -63,7 +63,7 @@ public:
 	virtual ~MemObject() {}
 
 	inline MemObjectType getType() const { return _type; }
-	inline int getSegMgrId() const { return _segmgrId; }
+	inline int getSegmentManagerId() const { return _segManagerId; }
 
 	/**
 	 * Check whether the given offset into this memory object is valid,
@@ -87,13 +87,13 @@ public:
 	 *
 	 * @param sub_addr		base address whose canonic address is to be found
 	 */
-	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr) { return sub_addr; }
+	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr) { return sub_addr; }
 
 	/**
 	 * Deallocates all memory associated with the specified address.
 	 * @param sub_addr		address (within the given segment) to deallocate
 	 */
-	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr) {}
+	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr) {}
 
 	/**
 	 * Iterates over and reports all addresses within the current segment.
@@ -109,7 +109,7 @@ public:
 	 * @param note		Invoked for each outgoing reference within the object
 	 * Note: This function may also choose to report numbers (segment 0) as adresses
 	 */
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note) {}
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version) {}
 };
 
 
@@ -191,8 +191,8 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -218,16 +218,16 @@ struct CodeBlock {
 };
 
 #define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
-	(s->_version < SCI_VERSION_1_1 ? \
+	(version < SCI_VERSION_1_1 ? \
 	 READ_LE_UINT16(obj->base_obj + obj->_variables.size() * 2 + i*2) : \
 	 *(obj->base_vars + i))
 #define VM_OBJECT_READ_PROPERTY(obj, i) (obj->_variables[i])
 #define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
-	(s->_version < SCI_VERSION_1_1 ? \
+	(version < SCI_VERSION_1_1 ? \
 	 READ_LE_UINT16((byte *) (obj->base_method + i)) : \
 	 READ_LE_UINT16((byte *) (obj->base_method + i*2 + 1)))
 #define VM_OBJECT_READ_FUNCTION(obj, i) \
-	(s->_version < SCI_VERSION_1_1 ? \
+	(version < SCI_VERSION_1_1 ? \
 	 make_reg(obj->pos.segment, \
 		 READ_LE_UINT16((byte *) (obj->base_method \
 				 + obj->methods_nr + 1 \
@@ -301,10 +301,10 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
-	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
@@ -416,8 +416,8 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -513,8 +513,8 @@ public:
 
 /* CloneTable */
 struct CloneTable : public Table<Clone> {
-	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -522,8 +522,8 @@ struct CloneTable : public Table<Clone> {
 
 /* NodeTable */
 struct NodeTable : public Table<Node> {
-	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -531,8 +531,8 @@ struct NodeTable : public Table<Node> {
 
 /* ListTable */
 struct ListTable : public Table<List> {
-	virtual void freeAtAddress(SegManager *segmgr, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(EngineState *s, reg_t object, void *param, NoteCallback note);
+	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -567,7 +567,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segmgr, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

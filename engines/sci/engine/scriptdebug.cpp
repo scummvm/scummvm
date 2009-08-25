@@ -36,11 +36,11 @@ extern const char *selector_name(EngineState *s, int selector);
 
 ScriptState scriptState;
 
-int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
-	Object *obj = obj_get(s->seg_manager, s->_version, objp);
+int propertyOffsetToId(SegManager *segManager, int prop_ofs, reg_t objp) {
+	Object *obj = obj_get(segManager, objp);
 	byte *selectoroffset;
 	int selectors;
-	SciVersion version = s->_version;	// for the selector defines
+	SciVersion version = segManager->sciVersion();	// for the selector defines
 
 	if (!obj) {
 		warning("Applied propertyOffsetToId on non-object at %04x:%04x", PRINT_REG(objp));
@@ -49,11 +49,11 @@ int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 
 	selectors = obj->_variables.size();
 
-	if (s->_version < SCI_VERSION_1_1)
+	if (segManager->sciVersion() < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
-			obj = obj_get(s->seg_manager, s->_version, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = obj_get(segManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;
@@ -70,7 +70,7 @@ int propertyOffsetToId(EngineState *s, int prop_ofs, reg_t objp) {
 
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
-	MemObject *mobj = GET_SEGMENT(*s->seg_manager, pos.segment, MEM_OBJ_SCRIPT);
+	MemObject *mobj = GET_SEGMENT(*s->segmentManager, pos.segment, MEM_OBJ_SCRIPT);
 	Script *script_entity = NULL;
 	byte *scr;
 	int scr_size;
@@ -226,7 +226,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
-			int prop_id = propertyOffsetToId(s, prop_ofs, scriptState.xs->objp);
+			int prop_id = propertyOffsetToId(s->segmentManager, prop_ofs, scriptState.xs->objp);
 
 			printf("	(%s)", selector_name(s, prop_id));
 		}
@@ -238,8 +238,9 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		if (opcode == op_callk) {
 			int stackframe = (scr[pos.offset + 2] >> 1) + (scriptState.restAdjust);
 			int argc = ((scriptState.xs->sp)[- stackframe - 1]).offset;
+			bool oldScriptHeader = (s->segmentManager->sciVersion() == SCI_VERSION_0_EARLY);
 
-			if (!((SciEngine*)g_engine)->getKernel()->hasOldScriptHeader())
+			if (!oldScriptHeader)
 				argc += (scriptState.restAdjust);
 
 			printf(" Kernel params: (");
@@ -269,14 +270,14 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 				selector = sb[- stackframe].offset;
 
-				name = obj_get_name(s->seg_manager, s->_version, called_obj_addr);
+				name = obj_get_name(s->segmentManager, called_obj_addr);
 
 				if (!name)
 					name = "<invalid>";
 
 				printf("  %s::%s[", name, (selector > ((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
-				switch (lookup_selector(s, called_obj_addr, selector, 0, &fun_ref)) {
+				switch (lookup_selector(s->segmentManager, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
 					printf("FUNCT");
 					argc += restmod;
@@ -328,7 +329,7 @@ void script_debug(EngineState *s, bool bp) {
 #endif
 
 	if (scriptState.seeking && !bp) { // Are we looking for something special?
-		MemObject *mobj = GET_SEGMENT(*s->seg_manager, scriptState.xs->addr.pc.segment, MEM_OBJ_SCRIPT);
+		MemObject *mobj = GET_SEGMENT(*s->segmentManager, scriptState.xs->addr.pc.segment, MEM_OBJ_SCRIPT);
 
 		if (mobj) {
 			Script *scr = (Script *)mobj;
