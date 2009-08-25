@@ -99,6 +99,7 @@
 		<File RelativePath="..\..\engines\kyra\sound.cpp" />
 		<File RelativePath="..\..\engines\kyra\sound.h" />
 		<File RelativePath="..\..\engines\kyra\sound_adlib.cpp" />
+		<File RelativePath="..\..\engines\kyra\sound_amiga.cpp" />
 		<File RelativePath="..\..\engines\kyra\sound_digital.cpp" />
 		<File RelativePath="..\..\engines\kyra\sound_intern.h" />
 		<File RelativePath="..\..\engines\kyra\sound_lok.cpp" />

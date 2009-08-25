@@ -151,6 +151,8 @@
 		<File RelativePath="..\..\engines\scumm\player_v2cms.cpp" />
 		<File RelativePath="..\..\engines\scumm\player_v3a.cpp" />
 		<File RelativePath="..\..\engines\scumm\player_v3a.h" />
+		<File RelativePath="..\..\engines\scumm\player_v4a.cpp" />
+		<File RelativePath="..\..\engines\scumm\player_v4a.h" />
 		<File RelativePath="..\..\engines\scumm\resource.cpp" />
 		<File RelativePath="..\..\engines\scumm\resource.h" />
 		<File RelativePath="..\..\engines\scumm\resource_v2.cpp" />

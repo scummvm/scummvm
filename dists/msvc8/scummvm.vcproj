@@ -185,6 +185,8 @@
 			<Filter Name="mods">
 				<File RelativePath="..\..\sound\mods\infogrames.cpp" />
 				<File RelativePath="..\..\sound\mods\infogrames.h" />
+				<File RelativePath="..\..\sound\mods\maxtrax.cpp" />
+				<File RelativePath="..\..\sound\mods\maxtrax.h" />
 				<File RelativePath="..\..\sound\mods\module.cpp" />
 				<File RelativePath="..\..\sound\mods\module.h" />
 				<File RelativePath="..\..\sound\mods\paula.cpp" />
@@ -195,6 +197,8 @@
 				<File RelativePath="..\..\sound\mods\rjp1.h" />
 				<File RelativePath="..\..\sound\mods\soundfx.cpp" />
 				<File RelativePath="..\..\sound\mods\soundfx.h" />
+				<File RelativePath="..\..\sound\mods\tfmx.cpp" />
+				<File RelativePath="..\..\sound\mods\tfmx.h" />
 			</Filter>
 		</Filter>
 		<Filter Name="txt">
