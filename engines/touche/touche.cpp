@@ -314,10 +314,7 @@ void ToucheEngine::processEvents(bool handleKeyEvents) {
 				_fastWalkMode = false;
 			}
 			if (event.kbd.flags == Common::KBD_CTRL) {
-				if (event.kbd.keycode == Common::KEYCODE_d) {
-					// enable debugging stuff ?
-					_flagsTable[777] = 1;
-				} else if (event.kbd.keycode == Common::KEYCODE_f) {
+				if (event.kbd.keycode == Common::KEYCODE_f) {
 					_fastMode = !_fastMode;
 				}
 			} else {
