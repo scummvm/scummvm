@@ -2,8 +2,6 @@ ScummVM README
 Last updated:    $Date$
 ------------------------------------------------------------------------
 
-TODO: Resolve all the TODOs scattered through this file before release.
-
 For more information, compatibility lists, details on donating, the latest
 release, progress reports and more, please visit the ScummVM home page
 at: http://www.scummvm.org/
@@ -1084,14 +1082,6 @@ Engines which currently support returning to the Launcher are:
 
 5.5) Hot Keys:
 ---- ---------
-TODO
-TODO: Rework this section to clearly state which hotkeys are implemented in *all*
-TODO  games (and for which backends).
-TODO: It would also be nice to add information about control on devices w/o a keyboard;
-TODO  I.e. document how input on DC, DS, PSP, PS2, PalmOS, WinCE, ... works for each game
-TODO  Or at the very least give points as to were one can read up on these.
-TODO
-
 ScummVM supports various in-game hotkeys. They differ between SCUMM games and
 other games.
 
