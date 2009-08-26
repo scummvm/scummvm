@@ -1629,6 +1629,14 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 
 		objlength = scr->getHeap(reg.offset + 2);
 
+		// This happens in some demos (e.g. the EcoQuest 1 demo). Not sure what is the
+		// actual cause of it, but the scripts of these demos can't be loaded properly
+		// and we're stuck forever in this loop, as objlength never changes
+		if (!objlength) {
+			warning("script_instantiate_sci0: objlength is 0, unable to parse script");
+			return 0;
+		}
+
 		data_base = reg;
 		data_base.offset += 4;
 
@@ -1654,11 +1662,11 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 			int species;
 			species = scr->getHeap(addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
 			if (species < 0 || species >= (int)segManager->_classtable.size()) {
-				error("Invalid species %d(0x%x) not in interval "
+				warning("Invalid species %d(0x%x) not in interval "
 				          "[0,%d) while instantiating script %d\n",
 				          species, species, segManager->_classtable.size(),
 				          script_nr);
-				return 1;
+				return 0;
 			}
 
 			segManager->_classtable[species].reg = addr;
