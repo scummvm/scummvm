@@ -257,15 +257,35 @@ Common::String convertSierraGameId(Common::String sierraId) {
 	return sierraId;
 }
 
+Common::Language charToScummVMLanguage(const char c) {
+	switch (c) {
+	case 'F':
+		return Common::FR_FRA;
+	case 'S':
+		return Common::ES_ESP;
+	case 'I':
+		return Common::IT_ITA;
+	case 'G':
+		return Common::DE_DEU;
+	case 'J':
+	case 'j':
+		return Common::JA_JPN;
+	case 'P':
+		return Common::PT_BRA;
+	default:
+		return Common::UNK_LANG;
+	}
+}
+
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
 
 	// Set some defaults
 	s_fallbackDesc.desc.extra = "";
-	s_fallbackDesc.desc.language = Common::UNK_LANG;
+	s_fallbackDesc.desc.language = Common::EN_ANY;
 	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-	s_fallbackDesc.desc.platform = Common::kPlatformUnknown;
+	s_fallbackDesc.desc.platform = Common::kPlatformPC;	// default to PC platform
 	s_fallbackDesc.desc.gameid = "sci";
 
 	// First grab all filenames
@@ -318,6 +338,18 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		if (filename.contains("resource.000") || filename.contains("resource.001")
 			|| filename.contains("ressci.000") || filename.contains("ressci.001"))
 			foundRes000 = true;
+
+		// Determine the game platform
+		// The existence of any of these files indicates an Amiga game
+		if (filename.contains("9.pat") || filename.contains("spal") ||
+			filename.contains("patch.005") || filename.contains("bank.001"))
+				s_fallbackDesc.desc.platform = Common::kPlatformAmiga;
+
+		// The existence of 7.pat indicates a Mac game
+		if (filename.contains("7.pat"))
+			s_fallbackDesc.desc.platform = Common::kPlatformMacintosh;
+	
+		// The data files for Atari ST versions are the same as their DOS counterparts
 	}
 
 	// If these files aren't found, it can't be SCI
@@ -350,32 +382,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	if (gameViews == kViewEga)
 		s_fallbackDesc.desc.extra = "EGA";
 
-	SegManager *segManager = new SegManager(resourceManager);
-	Common::Platform gamePlatform = Common::kPlatformUnknown;
-
-	// Try to determine the platform from game resources
-	if (gameViews == kViewEga || gameViews == kViewVga ||
-		gameViews == kViewVga11) {
-		// Must be PC or Mac, set to PC for now
-		gamePlatform = Common::kPlatformPC;
-	} else if (gameViews == kViewAmiga) {
-		gamePlatform = Common::kPlatformAmiga;
-	}
-
-	// The existence of any of these files indicates an Amiga game
-	if (Common::File::exists("9.pat") || Common::File::exists("spal") ||
-		Common::File::exists("patch.005") || Common::File::exists("bank.001"))
-		gamePlatform = Common::kPlatformAmiga;
-
-	// The existence of 7.pat indicates a Mac game
-	if (Common::File::exists("7.pat"))
-		gamePlatform = Common::kPlatformMacintosh;
-	
-	// The data files for Atari ST versions are the same as their DOS counterparts
-
-	s_fallbackDesc.desc.platform = gamePlatform;
+	// Set the platform to Amiga if the game is using Amiga views
+	if (gameViews == kViewAmiga)
+		s_fallbackDesc.desc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
+	SegManager *segManager = new SegManager(resourceManager);
 	if (!script_instantiate(resourceManager, segManager, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		SearchMan.remove("SCI_detection");
@@ -389,6 +401,24 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	gameName.toLowercase();
 	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName).c_str());
 	delete segManager;
+
+	// Try to determine the game language
+	// Load up text 0 and start looking for "#" characters
+	// Non-English versions contain strings like XXXX#YZZZZ
+	// Where XXXX is the English string, #Y a separator indicating the language
+	// (e.g. #G for German) and the translated text
+	Resource *text = resourceManager->findResource(ResourceId(kResourceTypeText, 0), 0);
+	uint seeker = 0;
+	if (text) {
+		while (seeker < text->size) {
+			if (text->data[seeker] == '#') {
+				s_fallbackDesc.desc.language = charToScummVMLanguage(text->data[seeker + 1]);
+				break;
+			}
+			seeker++;
+		}
+	}
+
 	delete resourceManager;
 
 	SearchMan.remove("SCI_detection");
