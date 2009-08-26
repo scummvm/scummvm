@@ -439,6 +439,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	if (!strcmp(s_fallbackDesc.desc.gameid, "ecoquest2") && !Common::File::exists("resource.aud"))
 		s_fallbackDesc.desc.flags |= ADGF_DEMO;
 
+	if (!strcmp(s_fallbackDesc.desc.gameid, "fairytales") && !Common::File::exists("resource.002"))
+		s_fallbackDesc.desc.flags |= ADGF_DEMO;
+
 	SearchMan.remove("SCI_detection");
 
 	return (const ADGameDescription *)&s_fallbackDesc;
