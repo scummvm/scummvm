@@ -406,7 +406,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Load up text 0 and start looking for "#" characters
 	// Non-English versions contain strings like XXXX#YZZZZ
 	// Where XXXX is the English string, #Y a separator indicating the language
-	// (e.g. #G for German) and the translated text
+	// (e.g. #G for German) and ZZZZ is the translated text
 	Resource *text = resourceManager->findResource(ResourceId(kResourceTypeText, 0), 0);
 	uint seeker = 0;
 	if (text) {
