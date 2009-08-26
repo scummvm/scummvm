@@ -185,11 +185,11 @@ private:
 			 else 
 				_format = *format;
 			_size = w * h * _format.bytesPerPixel;
-			_keycolor &= ((1 << (_format.bytesPerPixel << 3)) - 1);
+			_keycolor = keycolor & ((1 << (_format.bytesPerPixel << 3)) - 1);
 #else
 			_format = Graphics::PixelFormat::createFormatCLUT8();
 			_size = w * h;
-			_keycolor &= 0xFF;
+			_keycolor = keycolor & 0xFF;
 #endif
 			_data = new byte[_size];
 			if (data && _data)
