@@ -68,7 +68,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"lsl6",            "Leisure Suit Larry 6: Shape Up or Slip Out!"},
 	{"lslcasino",       "Crazy Nick's Software Picks: Leisure Suit Larry's Casino"},
 	{"fairytales",      "Mixed-up Fairy Tales"},
-	{"gk1",             "Gabriel Knight: Sins of the Fathers"},	// demo is SCI11, full version SCI32
 	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	{"pepper",          "Pepper's Adventure in Time"},
@@ -84,7 +83,8 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
 	{"islandbrain",     "The Island of Dr. Brain"},
-#ifdef ENABLE_SCI32
+	// SCI32 games
+	{"gk1",             "Gabriel Knight: Sins of the Fathers"},	// demo is SCI11, full version SCI32
 	{"gk2",             "The Beast Within: A Gabriel Knight Mystery"},
 	{"kq7",             "King's Quest VII: The Princeless Bride"},
 	{"lsl7",            "Leisure Suit Larry 7: Love for Sail!"},
@@ -99,7 +99,6 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"shivers2",        "Shivers II: Harvest of Souls"},
 	{"sq6",             "Space Quest 6: The Spinal Frontier"},
 	{"torin",           "Torin's Passage"},
-#endif // ENABLE_SCI32
 	{0, 0}
 };
 
@@ -164,7 +163,7 @@ public:
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
-Common::String convertSierraGameId(Common::String sierraId) {
+Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags) {
 	// TODO: SCI32 IDs
 
 	if (sierraId == "demo")
@@ -175,68 +174,125 @@ Common::String convertSierraGameId(Common::String sierraId) {
 		// christmas1992 has a "resource.000" file
 		return (Common::File::exists("resource.001")) ? "christmas1990" : "christmas1992";
 	}
-	if (sierraId == "arthur")
+	if (sierraId == "arthur") {
+		if (!Common::File::exists("resource.002"))
+			*gameFlags |= ADGF_DEMO;
 		return "camelot";
+	}
 	if (sierraId == "brain") {
 		// This could either be The Castle of Dr. Brain, or The Island of Dr. Brain
 		// castlebrain has resource.001, whereas islandbrain doesn't
 		return (Common::File::exists("resource.001")) ? "castlebrain" : "islandbrain";
 	}
 	// iceman is the same
+	if (sierraId == "icedemo") {
+		*gameFlags |= ADGF_DEMO;
+		return "iceman";
+	}
 	// longbow is the same
+	if (sierraId == "rh") {	// Longbow demo
+		*gameFlags |= ADGF_DEMO;
+		return "longbow";
+	}
 	if (sierraId == "eco")
 		return "ecoquest";
-	if (sierraId == "eco2")	// EcoQuest 2 demo
+	if (sierraId == "eco2")	{ // EcoQuest 2 demo
+		*gameFlags |= ADGF_DEMO;
 		return "ecoquest2";
+	}
 	if (sierraId == "rain")	// EcoQuest 2 full
 		return "ecoquest2";
 	if (sierraId == "fp")
 		return "freddypharkas";
 	if (sierraId == "emc")
 		return "funseeker";
-	if (sierraId == "cardgames")
-		return "hoyle1";
 	if (sierraId == "gk")
 		return "gk1";
+	if (sierraId == "hoyledemo") {
+		*gameFlags |= ADGF_DEMO;
+		return "hoyle1";
+	}
+	if (sierraId == "cardgames")
+		return "hoyle1";
 	if (sierraId == "solitare")
 		return "hoyle2";
 	// hoyle3 is the same
 	// hoyle4 is the same
+	if (sierraId == "demo000") {
+		*gameFlags |= ADGF_DEMO;
+		return "kq1sci";
+	}
 	if (sierraId == "kq1")
 		return "kq1sci";
 	if (sierraId == "kq4")
 		return "kq4sci";
+	if (sierraId == "ll1") {
+		*gameFlags |= ADGF_DEMO;
+		return "lsl1sci";
+	}
 	if (sierraId == "lsl1")
 		return "lsl1sci";
 	// lsl2 is the same
-	// lsl3 is the same
+	if (sierraId == "lsl3") {
+		if (!Common::File::exists("resource.003"))
+			*gameFlags |= ADGF_DEMO;
+		return "lsl3";
+	}
+	if (sierraId == "ll5") {
+		*gameFlags |= ADGF_DEMO;
+		return "lsl5";
+	}
 	// lsl5 is the same
 	// lsl6 is the same
 	// TODO: lslcasino
-	if (sierraId == "tales")
+	if (sierraId == "tales") {
+		if (!Common::File::exists("resource.002"))
+			*gameFlags |= ADGF_DEMO;
 		return "fairytales";
+	}
 	if (sierraId == "mg")
 		return "mothergoose";
 	if (sierraId == "cb1")
 		return "laurabow";
 	if (sierraId == "lb2")
 		return "laurabow2";
-	// TODO: lb2 floppy (its resources can't be read)
 	if (sierraId == "twisty")
 		return "pepper";
 	// TODO: pq1sci (its resources can't be read)
 	if (sierraId == "pq")
 		return "pq2";
-	// pq3 is the same
-	if (sierraId == "glory")
-		return "qfg1";
+	if (sierraId == "pq3") {
+		// The pq3 demo comes with resource.000 and resource.001
+		// The full version was released with several resource.* files,
+		// or one big resource.000 file
+		if (Common::File::exists("resource.000") && Common::File::exists("resource.001") &&
+			!Common::File::exists("resource.002"))
+			*gameFlags |= ADGF_DEMO;
+		return "pq3";
+	}
+	if (sierraId == "glory" || sierraId == "hq") {
+		// This could either be qfg1 or qfg3 or qfg4
+		// qfg3 has resource.aud, qfg4 has resource.sfx
+		if (Common::File::exists("resource.aud"))
+			return "qfg3";
+		else if (Common::File::exists("resource.sfx"))
+			return "qfg4";
+		else
+			return "qfg1";
+	}
 	// TODO: qfg1 VGA (its resources can't be read)
 	if (sierraId == "trial")
 		return "qfg2";
-	if (sierraId == "qfg1")
-		return "qfg3";
+	if (sierraId == "hq2demo") {
+		*gameFlags |= ADGF_DEMO;
+		return "qfg2";
+	}
 	if (sierraId == "thegame")
 		return "slater";
+	if (sierraId == "sq1demo") {
+		*gameFlags |= ADGF_DEMO;
+		return "sq1sci";
+	}
 	if (sierraId == "sq1")
 		return "sq1sci";
 	if (sierraId == "sq3") {
@@ -254,7 +310,6 @@ Common::String convertSierraGameId(Common::String sierraId) {
 		// the subgame)
 		return (Common::File::exists("resource.000")) ? "sq4" : "msastrochicken";
 	}
-	// sq4 is the same
 	// sq5 is the same
 
 	return sierraId;
@@ -283,6 +338,9 @@ Common::Language charToScummVMLanguage(const char c) {
 const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fslist) const {
 	bool foundResMap = false;
 	bool foundRes000 = false;
+	// This flag is used to determine if the size of resource.000 is less than 1MB, to distinguish
+	// between full and demo versions
+	bool smallResource000Size = false;
 
 	// Set some defaults
 	s_fallbackDesc.desc.extra = "";
@@ -317,10 +375,11 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		}
 
 		// Determine if we got a CD version and set the CD flag accordingly, by checking for
-		// resource.aud. We assume that the file should be over 10MB, as it contains all the
-		// game speech and is usually around 450MB+. The size check is for some floppy game
-		// versions like KQ6 floppy, which also have a small resource.aud file
-		if (filename.contains("resource.aud")) {
+		// resource.aud for SCI1.1 CD games, or audio001.002 for SCI1 CD games. We assume that
+		// the file should be over 10MB, as it contains all the game speech and is usually
+		// around 450MB+. The size check is for some floppy game versions like KQ6 floppy, which
+		// also have a small resource.aud file
+		if (filename.contains("resource.aud") || filename.contains("audio001.002")) {
 			Common::SeekableReadStream *tmpStream = file->createReadStream();
 			if (tmpStream->size() > 10 * 1024 * 1024) {
 				// We got a CD version, so set the CD flag accordingly
@@ -330,12 +389,11 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			delete tmpStream;
 		}
 
-		// Check if we got a map file for older SCI1 CD versions (like KQ5CD)
-		// It's named like "audioXXX.map"
-		if (filename.contains("audio") && filename.contains(".map")) {
-			// We got a CD version, so set the CD flag accordingly
-			s_fallbackDesc.desc.flags |= ADGF_CD;
-			s_fallbackDesc.desc.extra = "CD";
+		if (filename.contains("resource.000")) {
+			Common::SeekableReadStream *tmpStream = file->createReadStream();
+			if (tmpStream->size() < 1 * 1024 * 1024)
+				smallResource000Size = true;
+			delete tmpStream;
 		}
 
 		if (filename.contains("resource.000") || filename.contains("resource.001")
@@ -382,7 +440,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 #endif
 
 	// EGA views
-	if (gameViews == kViewEga)
+	if (gameViews == kViewEga && s_fallbackDesc.desc.platform != Common::kPlatformAmiga)
 		s_fallbackDesc.desc.extra = "EGA";
 
 	// Set the platform to Amiga if the game is using Amiga views
@@ -402,7 +460,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	Common::String gameName = obj_get_name(segManager, game_obj);
 	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
 	gameName.toLowercase();
-	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName).c_str());
+	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName, &s_fallbackDesc.desc.flags).c_str());
 	delete segManager;
 
 	// Try to determine the game language
@@ -411,8 +469,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Where XXXX is the English string, #Y a separator indicating the language
 	// (e.g. #G for German) and ZZZZ is the translated text
 	// NOTE: This doesn't work for games which use message instead of text resources
-	// (like, for example, Eco Quest 1). As far as we know, these games store the messages
-	// of each language in separate resources, and it's not possible to detect that easily
+	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas). 
+	// As far as we know, these games store the messages of each language in separate
+	// resources, and it's not possible to detect that easily
 	Resource *text = resourceManager->findResource(ResourceId(kResourceTypeText, 0), 0);
 	uint seeker = 0;
 	if (text) {
@@ -428,18 +487,17 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	delete resourceManager;
 
 	// Distinguish demos from full versions
-	if (!strcmp(s_fallbackDesc.desc.gameid, "camelot") && !Common::File::exists("resource.002"))
-		s_fallbackDesc.desc.flags |= ADGF_DEMO;
-
 	if (!strcmp(s_fallbackDesc.desc.gameid, "castlebrain") && !Common::File::exists("resource.002")) {
-		if (s_fallbackDesc.desc.language != Common::ES_ESP)	// the Spanish version doesn't have resource.002
+		// The Spanish full version doesn't have resource.002, but we can distinguish it from the
+		// demo from the size of resource.000
+		if (smallResource000Size)
 			s_fallbackDesc.desc.flags |= ADGF_DEMO;
 	}
 
-	if (!strcmp(s_fallbackDesc.desc.gameid, "ecoquest2") && !Common::File::exists("resource.aud"))
+	if (!strcmp(s_fallbackDesc.desc.gameid, "islandbrain") && smallResource000Size)
 		s_fallbackDesc.desc.flags |= ADGF_DEMO;
 
-	if (!strcmp(s_fallbackDesc.desc.gameid, "fairytales") && !Common::File::exists("resource.002"))
+	if (!strcmp(s_fallbackDesc.desc.gameid, "kq6") && smallResource000Size)
 		s_fallbackDesc.desc.flags |= ADGF_DEMO;
 
 	SearchMan.remove("SCI_detection");
