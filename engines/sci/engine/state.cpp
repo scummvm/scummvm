@@ -280,6 +280,9 @@ EngineState::DoSoundType EngineState::detectDoSoundType() {
 						_doSoundType = kDoSoundTypeSci1Early;
 						break;
 					case 0x13E:
+#ifdef ENABLE_SCI32
+					case 0x14B:
+#endif
 						_doSoundType = kDoSoundTypeSci1Late;
 					}
 				}

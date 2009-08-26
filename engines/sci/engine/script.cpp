@@ -94,6 +94,19 @@ void script_adjust_opcode_formats(SciVersion version) {
 		g_opcode_formats[op_lofsa][0] = Script_Offset;
 		g_opcode_formats[op_lofss][0] = Script_Offset;
 	}
+	
+#ifdef ENABLE_SCI32
+	// In SCI32, some arguments are now words instead of bytes
+	if (version >= SCI_VERSION_2) {
+		g_opcode_formats[op_calle][2] = Script_Word;
+		g_opcode_formats[op_callk][1] = Script_Word;
+		g_opcode_formats[op_super][1] = Script_Word;
+		g_opcode_formats[op_send][0] = Script_Word;
+		g_opcode_formats[op_self][0] = Script_Word;
+		g_opcode_formats[op_call][1] = Script_Word;
+		g_opcode_formats[op_callb][1] = Script_Word;
+	}
+#endif
 }
 
 #if 1
