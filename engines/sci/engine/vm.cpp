@@ -1624,7 +1624,8 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 		reg_t addr;
 		reg.offset += objlength; // Step over the last checked object
 		objtype = scr->getHeap(reg.offset);
-		if (!objtype) break;
+		if (!objtype)
+			break;
 
 		objlength = scr->getHeap(reg.offset + 2);
 
@@ -1670,6 +1671,7 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 			break;
 		}
 	} while (objtype != 0);
+
 	// And now a second pass to adjust objects and class pointers, and the general pointers
 
 	objlength = 0;
@@ -1679,7 +1681,9 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 		reg_t addr;
 		reg.offset += objlength; // Step over the last checked object
 		objtype = scr->getHeap(reg.offset);
-		if (!objtype) break;
+		if (!objtype)
+			break;
+
 		objlength = scr->getHeap(reg.offset + 2);
 		reg.offset += 4; // Step over header
 
@@ -1715,7 +1719,7 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 
 		reg.offset -= 4; // Step back on header
 
-	} while ((objtype != 0) && (((unsigned)reg.offset) < script->size - 2));
+	} while (objtype != 0 && reg.offset < script->size - 2);
 
 	if (relocation >= 0)
 		segManager->scriptRelocate(make_reg(reg.segment, relocation));
