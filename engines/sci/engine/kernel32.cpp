@@ -166,7 +166,7 @@ static const char *sci2_default_knames[] = {
 	/*0x85*/ "Dummy",
 	/*0x86*/ "Dummy",
 	/*0x87*/ "ObjectIntersect",
-	/*0x88*/ "Dummy"
+	/*0x88*/ "Dummy",
 	/*0x89*/ "TextWidth",
 	/*0x8a*/ "PointSize"
 };
