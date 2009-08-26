@@ -1023,12 +1023,20 @@ int ResourceManager::readResourceMapSCI0(ResourceSource *map) {
 		// adding a new resource
 		if (_resMap.contains(resId) == false) {
 			res = new Resource;
-			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
-			res->id = resId;
 			res->source = getVolume(map, offset >> bShift);
 			if (!res->source) {
 				warning("Could not get volume for resource %d, VolumeID %d", id, offset >> bShift);
+				if (_mapVersion != _volVersion) {
+					warning("Retrying with the detected volume version instead");
+					warning("Map version was: %d, retrying with: %d", _mapVersion, _volVersion);
+					_mapVersion = _volVersion;
+					bMask = (_mapVersion == kResVersionSci1Middle) ? 0xF0 : 0xFC;
+					bShift = (_mapVersion == kResVersionSci1Middle) ? 28 : 26;
+					res->source = getVolume(map, offset >> bShift);
+				}
 			}
+			res->file_offset = offset & (((~bMask) << 24) | 0xFFFFFF);
+			res->id = resId;
 			_resMap.setVal(resId, res);
 		}
 	} while (!file.eos());
