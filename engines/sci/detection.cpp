@@ -167,7 +167,8 @@ public:
 Common::String convertSierraGameId(Common::String sierraId) {
 	// TODO: SCI32 IDs
 
-	// TODO: The internal id of christmas1988 is "demo"
+	if (sierraId == "demo")
+		return "christmas1988";
 	if (sierraId == "card") {
 		// This could either be christmas1990 or christmas1992
 		// christmas1990 has a "resource.001" file, whereas 
@@ -185,7 +186,9 @@ Common::String convertSierraGameId(Common::String sierraId) {
 	// longbow is the same
 	if (sierraId == "eco")
 		return "ecoquest";
-	if (sierraId == "rain")
+	if (sierraId == "eco2")	// EcoQuest 2 demo
+		return "ecoquest2";
+	if (sierraId == "rain")	// EcoQuest 2 full
 		return "ecoquest2";
 	if (sierraId == "fp")
 		return "freddypharkas";
@@ -407,6 +410,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// Non-English versions contain strings like XXXX#YZZZZ
 	// Where XXXX is the English string, #Y a separator indicating the language
 	// (e.g. #G for German) and ZZZZ is the translated text
+	// NOTE: This doesn't work for games which use message instead of text resources
+	// (like, for example, Eco Quest 1). As far as we know, these games store the messages
+	// of each language in separate resources, and it's not possible to detect that easily
 	Resource *text = resourceManager->findResource(ResourceId(kResourceTypeText, 0), 0);
 	uint seeker = 0;
 	if (text) {
@@ -420,6 +426,18 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	}
 
 	delete resourceManager;
+
+	// Distinguish demos from full versions
+	if (!strcmp(s_fallbackDesc.desc.gameid, "camelot") && !Common::File::exists("resource.002"))
+		s_fallbackDesc.desc.flags |= ADGF_DEMO;
+
+	if (!strcmp(s_fallbackDesc.desc.gameid, "castlebrain") && !Common::File::exists("resource.002")) {
+		if (s_fallbackDesc.desc.language != Common::ES_ESP)	// the Spanish version doesn't have resource.002
+			s_fallbackDesc.desc.flags |= ADGF_DEMO;
+	}
+
+	if (!strcmp(s_fallbackDesc.desc.gameid, "ecoquest2") && !Common::File::exists("resource.aud"))
+		s_fallbackDesc.desc.flags |= ADGF_DEMO;
 
 	SearchMan.remove("SCI_detection");
 
