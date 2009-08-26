@@ -222,7 +222,7 @@ static const char *sci21_default_knames[] = {
 	/*0x2f*/ "AddMagnify",
 	/*0x30*/ "DeleteMagnify",
 	/*0x31*/ "CelRect",
-	/*0x32*/ "BaseLineSpan"
+	/*0x32*/ "BaseLineSpan",
 	/*0x33*/ "CelWide",
 	/*0x34*/ "CelHigh",
 	/*0x35*/ "AddScreenItem",
