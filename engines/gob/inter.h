@@ -35,7 +35,7 @@
 namespace Gob {
 
 // This is to help devices with small memory (PDA, smartphones, ...)
-// to save abit of memory used by opcode names in the Scumm engine.
+// to save a bit of memory used by opcode names in the Gob engine.
 #ifndef REDUCE_MEMORY_USAGE
 	#define _OPCODEDRAW(ver, x)  setProc(new Common::Functor0Mem<void, ver>(this, &ver::x), #x)
 	#define _OPCODEFUNC(ver, x)  setProc(new Common::Functor1Mem<OpFuncParams &, bool, ver>(this, &ver::x), #x)
