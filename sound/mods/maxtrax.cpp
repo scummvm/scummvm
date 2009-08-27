@@ -176,7 +176,7 @@ void MaxTrax::interrupt() {
 			if (cmd < 0x80) {	// Note
 				const int8 voiceIndex = noteOn(channel, cmd, (curEvent->parameter & 0xF0) >> 1, kPriorityScore);
 				if (voiceIndex >= 0)
-					_voiceCtx[voiceIndex].stopEventTime = MAX(0, (eventDelta + curEvent->stopTime) << 8);
+					_voiceCtx[voiceIndex].stopEventTime = MAX<int32>(0, (eventDelta + curEvent->stopTime) << 8);
 
 			} else {
 				switch (cmd) {
@@ -336,7 +336,7 @@ endOfEventLoop:
 		const uint16 envUnit = _playerCtx.frameUnit;
 		if (voice.envelope) {
 			if (voice.ticksLeft > envUnit) {	// envelope still active
-				voice.baseVolume = (uint16)MIN(MAX(0, voice.baseVolume + voice.incrVolume), 0x8000);
+				voice.baseVolume = (uint16) MIN<int32>(MAX<int32>(0, voice.baseVolume + voice.incrVolume), 0x8000);
 				voice.ticksLeft -= envUnit;
 				// Update Volume and Period
 
