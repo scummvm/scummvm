@@ -258,7 +258,7 @@ static const char *sci21_default_knames[] = {
 	/*0x53*/ "MapKeyToDir",
 	/*0x54*/ "HaveMouse",
 	/*0x55*/ "SetCursor",
-	/*0x56*/ "VibrateMouse",
+	/*0x56*/ "VibrateMouse", // NOTE: Not in SCI3, instead replaced by Dummy.
 	/*0x57*/ "Dummy",
 	/*0x58*/ "Dummy",
 	/*0x59*/ "Dummy",
@@ -325,7 +325,12 @@ static const char *sci21_default_knames[] = {
 	/*0x96*/ "Dummy",
 	/*0x97*/ "Dummy",
 	/*0x98*/ "Dummy",
-	/*0x99*/ "Dummy"
+	/*0x99*/ "Dummy",
+
+	// SCI3
+	/*0x9a*/ "Dummy",
+	/*0x9b*/ "Dummy",
+	/*0x9c*/ "DeletePic"
 };
 
 void Kernel::setKernelNamesSci2() {

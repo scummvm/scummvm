@@ -826,10 +826,10 @@ bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
 	
 #ifdef ENABLE_SCI32
-	if (_resourceManager->sciVersion() == SCI_VERSION_2)
-		setKernelNamesSci2();
-	else if (_resourceManager->sciVersion() == SCI_VERSION_2_1)
+	if (_resourceManager->sciVersion() >= SCI_VERSION_2_1)
 		setKernelNamesSci21();
+	else if (_resourceManager->sciVersion() == SCI_VERSION_2)
+		setKernelNamesSci2();
 	else
 #endif
 		setDefaultKernelNames();
