@@ -79,7 +79,7 @@ public:
 
 //private:
 	struct Face {
-		int loadBinary(const char *&data, Material *materials);
+		int loadBinary(const char *&data, Material *materials[]);
 		void draw(float *vertices, float *vertNormals, float *textureVerts) const;
 		void changeMaterial(Material *material);
 		~Face();
@@ -93,9 +93,9 @@ public:
 	};
 
 	struct Mesh {
-		void loadBinary(const char *&data, Material *materials);
-		void loadText(TextSplitter *ts, Material *materials);
-		void changeMaterials(Material *materials);
+		void loadBinary(const char *&data, Material *materials[]);
+		void loadText(TextSplitter *ts, Material *materials[]);
+		void changeMaterials(Material *materials[]);
 		void draw() const;
 		void update();
 		Mesh() : _numFaces(0) { }
@@ -120,9 +120,9 @@ public:
 	};
 
 	struct Geoset {
-		void loadBinary(const char *&data, Material *materials);
-		void loadText(TextSplitter *ts, Material *materials);
-		void changeMaterials(Material *materials);
+		void loadBinary(const char *&data, Material *materials[]);
+		void loadText(TextSplitter *ts, Material *materials[]);
+		void changeMaterials(Material *materials[]);
 		Geoset() : _numMeshes(0) { }
 		~Geoset();
 
@@ -132,7 +132,7 @@ public:
 
 	int _numMaterials;
 	char (*_materialNames)[32];
-	Material *_materials;
+	Material **_materials;
 	Graphics::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;

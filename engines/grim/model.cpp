@@ -49,7 +49,7 @@ Model::Model(const char *filename, const char *data, int len, const CMap *cmap) 
 void Model::reload(const CMap *cmap) {
 	// Load the new colormap
 	for (int i = 0; i < _numMaterials; i++)
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap)[0];
+		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
 	for (int i = 0; i < _numGeosets; i++)
 		_geosets[i].changeMaterials(_materials);
 }
@@ -57,11 +57,11 @@ void Model::reload(const CMap *cmap) {
 void Model::loadBinary(const char *&data, const CMap *cmap) {
 	_numMaterials = READ_LE_UINT32(data + 4);
 	data += 8;
-	_materials = new Material[_numMaterials];
+	_materials = new Material*[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		strcpy(_materialNames[i], data);
-		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap)[0];
+		_materials[i] = g_resourceloader->loadMaterial(_materialNames[i], cmap);
 		data += 32;
 	}
 	data += 32; // skip name
@@ -86,7 +86,7 @@ Model::~Model() {
 	delete[] _rootHierNode;
 }
 
-void Model::Geoset::loadBinary(const char *&data, Material *materials) {
+void Model::Geoset::loadBinary(const char *&data, Material *materials[]) {
 	_numMeshes = READ_LE_UINT32(data);
 	data += 4;
 	_meshes = new Mesh[_numMeshes];
@@ -98,7 +98,7 @@ Model::Geoset::~Geoset() {
 	delete[] _meshes;
 }
 
-void Model::Mesh::loadBinary(const char *&data, Material *materials) {
+void Model::Mesh::loadBinary(const char *&data, Material *materials[]) {
 	memcpy(_name, data, 32);
 	_geometryMode = READ_LE_UINT32(data + 36);
 	_lightingMode = READ_LE_UINT32(data + 40);
@@ -153,7 +153,7 @@ void Model::Face::changeMaterial(Material *material) {
 	_material = material;
 }
 
-int Model::Face::loadBinary(const char *&data, Material *materials) {
+int Model::Face::loadBinary(const char *&data, Material *materials[]) {
 	_type = READ_LE_UINT32(data + 4);
 	_geo = READ_LE_UINT32(data + 8);
 	_light = READ_LE_UINT32(data + 12);
@@ -182,7 +182,7 @@ int Model::Face::loadBinary(const char *&data, Material *materials) {
 	if (materialPtr == 0)
 		_material = 0;
 	else {
-		_material = &materials[READ_LE_UINT32(data)];
+		_material = materials[READ_LE_UINT32(data)];
 		materialPtr = READ_LE_UINT32(data);
 		data += 4;
 	}
@@ -268,14 +268,14 @@ void Model::loadText(TextSplitter *ts, const CMap *cmap) {
 	ts->scanString("3do %d.%d", 2, &major, &minor);
 	ts->expectString("section: modelresource");
 	ts->scanString("materials %d", 1, &_numMaterials);
-	_materials = new Material[_numMaterials];
+	_materials = new Material*[_numMaterials];
 	_materialNames = new char[_numMaterials][32];
 	for (int i = 0; i < _numMaterials; i++) {
 		char materialName[32];
 		int num;
 
 		ts->scanString("%d: %32s", 2, &num, materialName);
-		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap)[0];
+		_materials[num] = g_resourceloader->loadMaterial(materialName, cmap);
 		strcpy(_materialNames[num], materialName);
 	}
 
@@ -338,12 +338,12 @@ void Model::loadText(TextSplitter *ts, const CMap *cmap) {
 		warning("Unexpected junk at end of model text");
 }
 
-void Model::Geoset::changeMaterials(Material *materials) {
+void Model::Geoset::changeMaterials(Material *materials[]) {
 	for (int i = 0; i < _numMeshes; i++)
 		_meshes[i].changeMaterials(materials);
 }
 
-void Model::Geoset::loadText(TextSplitter *ts, Material *materials) {
+void Model::Geoset::loadText(TextSplitter *ts, Material *materials[]) {
 	ts->scanString("meshes %d", 1, &_numMeshes);
 	_meshes = new Mesh[_numMeshes];
 	for (int i = 0; i < _numMeshes; i++) {
@@ -353,12 +353,12 @@ void Model::Geoset::loadText(TextSplitter *ts, Material *materials) {
 	}
 }
 
-void Model::Mesh::changeMaterials(Material *materials) {
+void Model::Mesh::changeMaterials(Material *materials[]) {
 	for (int i = 0; i < _numFaces; i++)
-		_faces[i].changeMaterial(&materials[_materialid[i]]);
+		_faces[i].changeMaterial(materials[_materialid[i]]);
 }
 
-void Model::Mesh::loadText(TextSplitter *ts, Material *materials) {
+void Model::Mesh::loadText(TextSplitter *ts, Material *materials[]) {
 	ts->scanString("name %32s", 1, _name);
 	ts->scanString("radius %f", 1, &_radius);
 
@@ -423,7 +423,7 @@ void Model::Mesh::loadText(TextSplitter *ts, Material *materials) {
 
 		assert(materialid != -1);
 		_materialid[num] = materialid;
-		_faces[num]._material = &materials[materialid];
+		_faces[num]._material = materials[materialid];
 		_faces[num]._type = (int)type;
 		_faces[num]._geo = geo;
 		_faces[num]._light = light;
