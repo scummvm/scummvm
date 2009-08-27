@@ -36,6 +36,7 @@
 #include "gob/draw.h"
 #include "gob/game.h"
 #include "gob/script.h"
+#include "gob/hotspots.h"
 #include "gob/palanim.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
@@ -79,6 +80,8 @@ void Inter_Playtoons::setupOpcodesDraw() {
 void Inter_Playtoons::setupOpcodesFunc() {
 	Inter_v6::setupOpcodesFunc();
 
+	CLEAROPCODEFUNC(0x3D);
+
 	OPCODEFUNC(0x1B, oPlaytoons_F_1B); 
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
 	OPCODEFUNC(0x4D, oPlaytoons_readData);
@@ -88,12 +91,12 @@ void Inter_Playtoons::setupOpcodesGob() {
 }
 
 bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
-	int16 var1;
+	int16 shortId;
 	int16 var2;
 	int16 var3;
 	int16 var4;
 
-	var1 = _vm->_game->_script->readValExpr();
+	shortId = _vm->_game->_script->readValExpr();
 	var2 = _vm->_game->_script->readValExpr();
 
 	_vm->_game->_script->evalExpr(0);
@@ -101,8 +104,11 @@ bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
 	var3 = _vm->_game->_script->readValExpr();
 	var4 = _vm->_game->_script->readValExpr();
 
-	warning("oPlaytoons_F_1B not handled");
-
+	if (_vm->_game->_hotspots->searchHotspot(shortId))
+		warning("oPlaytoons_F_1B not fully handled");
+		warning("shortId %d, var2 %d var3 %d var4 %d", id, var2, var3, var4);
+//	else
+//		warning("id not found %d", id);;
 	return false;
 }
 
