@@ -102,7 +102,7 @@ public:
 	int16 findCursor(uint16 x, uint16 y) const;
 
 	/** Check the existance of a hotspot based on its short Id */
-	bool searchHotspot (int16 shortId);
+	bool searchHotspot(int16 shortId) const;
 
 private:
 	struct Hotspot {

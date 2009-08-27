@@ -1564,7 +1564,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	return cursor;
 }
 
-bool Hotspots::searchHotspot(int16 shortId) {
+bool Hotspots::searchHotspot(int16 shortId) const {
 	for (int i = 0; i < kHotspotCount; i++) {
 		if (_hotspots[i].isDisabled())
 			return false;
