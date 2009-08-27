@@ -388,11 +388,27 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 }
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
+	// Load the opcode table from vocab.998 if it exists, to obtain the opcode names
+	Resource* r = _vm->getresourceManager()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
+
+	// If the resource couldn't be loaded, leave
+	if (!r) {
+		DebugPrintf("unable to load vocab.998");
+		return true;
+	}
+
+	int count = READ_LE_UINT16(r->data);
+
 	DebugPrintf("Opcode names in numeric order [index: type name]:\n");
-	for (uint seeker = 0; seeker < _vm->getKernel()->getOpcodesSize(); seeker++) {
-		opcode op = _vm->getKernel()->getOpcode(seeker);
-		DebugPrintf("%03x: %03x %20s | ", seeker, op.type, op.name.c_str());
-		if ((seeker % 3) == 2)
+
+	for (int i = 0; i < count; i++) {
+		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
+		int len = READ_LE_UINT16(r->data + offset) - 2;
+		int type = READ_LE_UINT16(r->data + offset + 2);
+		// QFG3 has empty opcodes
+		Common::String name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
+		DebugPrintf("%03x: %03x %20s | ", i, type, name.c_str());
+		if ((i % 3) == 2)
 			DebugPrintf("\n");
 	}
 

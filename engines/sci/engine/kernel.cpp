@@ -379,7 +379,6 @@ Kernel::Kernel(ResourceManager *resourceManager) : _resourceManager(resourceMana
 	detectSciFeatures();
 
 	mapSelectors();      // Map a few special selectors for later use
-	loadOpcodes();
 	loadKernelNames();
 	mapFunctions();      // Map the kernel functions
 }
@@ -430,7 +429,7 @@ void Kernel::detectSciFeatures() {
 }
 
 void Kernel::loadSelectorNames() {
-	Resource *r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SNAMES), 0);
+	Resource *r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
 	bool oldScriptHeader = (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY);
 
 	if (!r) { // No such resource?
@@ -465,32 +464,6 @@ void Kernel::loadSelectorNames() {
 		if (oldScriptHeader)
 			_selectorNames.push_back(tmp);
 	}
-}
-
-bool Kernel::loadOpcodes() {
-	int count, i = 0;
-	Resource* r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_OPCODES), 0);
-
-	_opcodes.clear();
-
-	// if the resource couldn't be loaded, leave
-	if (r == NULL) {
-		warning("unable to load vocab.%03d", VOCAB_RESOURCE_OPCODES);
-		return false;
-	}
-
-	count = READ_LE_UINT16(r->data);
-
-	_opcodes.resize(count);
-	for (i = 0; i < count; i++) {
-		int offset = READ_LE_UINT16(r->data + 2 + i * 2);
-		int len = READ_LE_UINT16(r->data + offset) - 2;
-		_opcodes[i].type = READ_LE_UINT16(r->data + offset + 2);
-		// QFG3 has empty opcodes
-		_opcodes[i].name = len > 0 ? Common::String((char *)r->data + offset + 4, len) : "Dummy";
-	}
-
-	return true;
 }
 
 // Allocates a set amount of memory for a specified use and returns a handle to it.

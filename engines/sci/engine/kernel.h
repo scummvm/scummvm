@@ -43,11 +43,6 @@ struct List;	// from vm.h
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 //#define DEBUG_PARSER	// enable for parser debugging
 
-struct opcode {
-	int type;
-	Common::String name;
-};
-
 /* Generic description: */
 typedef reg_t KernelFunc(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
@@ -70,9 +65,6 @@ public:
 	 */
 	Kernel(ResourceManager *resourceManager);
 	~Kernel();
-
-	uint getOpcodesSize() const { return _opcodes.size(); }
-	const opcode &getOpcode(uint opcode) const { return _opcodes[opcode]; }
 
 	uint getSelectorNamesSize() const { return _selectorNames.size(); }
 	const Common::String &getSelectorName(uint selector) const { return _selectorNames[selector]; }
@@ -173,21 +165,10 @@ private:
 	 */
 	void mapFunctions();
 
-	/**
-	 * Loads the opcode names (only used for debugging).
-	 * @return true on success, false on failure
-	 */
-	bool loadOpcodes();
-
 	ResourceManager *_resourceManager;
 	uint32 features;
 
 	// Kernel-related lists
-	/**
-	 * List of opcodes, loaded from vocab.998. This list is only used for debugging
-	 * purposes, as we hardcode the list of opcodes in the sci_opcodes enum (script.h)
-	 */
-	Common::Array<opcode> _opcodes;
 	Common::StringList _selectorNames;
 	Common::StringList _kernelNames;
 };

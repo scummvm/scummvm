@@ -35,6 +35,7 @@ namespace Sci {
 
 #if 0
 
+#define VOCAB_RESOURCE_CLASSES 996
 /**
  * Vocabulary class names.
  * These strange names were taken from an SCI01 interpreter.

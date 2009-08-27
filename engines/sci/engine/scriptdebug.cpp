@@ -32,6 +32,35 @@
 
 namespace Sci {
 
+const char *opcodeNames[] = {
+	   "op_bnot",       "op_add",      "op_sub",      "op_mul",      "op_div",
+		"op_mod",       "op_shr",      "op_shl",      "op_xor",      "op_and",
+		 "op_or",       "op_neg",      "op_not",       "op_eq",       "op_ne",
+		"op_gt_",       "op_ge_",      "op_lt_",      "op_le_",     "op_ugt_",
+	   "op_uge_",      "op_ult_",     "op_ule_",       "op_bt",      "op_bnt",
+		"op_jmp",       "op_ldi",     "op_push",    "op_pushi",     "op_toss",
+		"op_dup",      "op_link",     "op_call",    "op_callk",    "op_callb",
+	  "op_calle",       "op_ret",     "op_send",       "dummy",       "dummy",
+	  "op_class",        "dummy",     "op_self",    "op_super",     "op_rest",
+		"op_lea",    "op_selfID",       "dummy",    "op_pprev",     "op_pToa",
+	   "op_aTop",      "op_pTos",     "op_sTop",    "op_ipToa",    "op_dpToa",
+	  "op_ipTos",     "op_dpTos",    "op_lofsa",    "op_lofss",    "op_push0",
+	  "op_push1",     "op_push2", "op_pushSelf",       "dummy",      "op_lag",
+		"op_lal",       "op_lat",      "op_lap",     "op_lagi",     "op_lali",
+	   "op_lati",      "op_lapi",      "op_lsg",      "op_lsl",      "op_lst",
+		"op_lsp",      "op_lsgi",     "op_lsli",     "op_lsti",     "op_lspi",
+		"op_sag",       "op_sal",      "op_sat",      "op_sap",     "op_sagi",
+	   "op_sali",      "op_sati",     "op_sapi",      "op_ssg",      "op_ssl",
+		"op_sst",       "op_ssp",     "op_ssgi",     "op_ssli",     "op_ssti",
+	   "op_sspi",    "op_plusag",   "op_plusal",   "op_plusat",   "op_plusap",
+	"op_plusagi",   "op_plusali",  "op_plusati",  "op_plusapi",   "op_plussg",
+	 "op_plussl",    "op_plusst",   "op_plussp",  "op_plussgi",  "op_plussli",
+	"op_plussti",   "op_plusspi",  "op_minusag",  "op_minusal",  "op_minusat",
+	"op_minusap",  "op_minusagi", "op_minusali", "op_minusati", "op_minusapi",
+	"op_minussg",   "op_minussl",  "op_minusst",  "op_minussp", "op_minussgi",
+	"op_minussli", "op_minussti", "op_minusspi"
+};
+
 extern const char *selector_name(EngineState *s, int selector);
 
 ScriptState scriptState;
@@ -68,8 +97,8 @@ int propertyOffsetToId(SegManager *segManager, int prop_ofs, reg_t objp) {
 	return READ_LE_UINT16(selectoroffset + prop_ofs);
 }
 
-reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
+reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
 	MemObject *mobj = GET_SEGMENT(*s->segmentManager, pos.segment, MEM_OBJ_SCRIPT);
 	Script *script_entity = NULL;
 	byte *scr;
@@ -80,6 +109,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	uint opcode;
 	int bytecount = 1;
 	int i = 0;
+	Kernel *kernel = ((SciEngine*)g_engine)->getKernel();
 
 	if (!mobj) {
 		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.segment);
@@ -149,7 +179,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 	if (print_bw_tag)
 		printf("[%c] ", opsize ? 'B' : 'W');
-	printf("%s", ((SciEngine*)g_engine)->getKernel()->getOpcode(opcode).name.c_str());
+
+	printf("%s", opcodeNames[opcode]);
 
 	i = 0;
 	while (g_opcode_formats[opcode][i]) {
@@ -184,8 +215,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 			}
 
 			if (opcode == op_callk)
-				printf(" %s[%x]", (param_value < ((SciEngine*)g_engine)->getKernel()->_kernelFuncs.size()) ?
-							((param_value < ((SciEngine*)g_engine)->getKernel()->getKernelNamesSize()) ? ((SciEngine*)g_engine)->getKernel()->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
+				printf(" %s[%x]", (param_value < kernel->_kernelFuncs.size()) ?
+							((param_value < kernel->getKernelNamesSize()) ? kernel->getKernelName(param_value).c_str() : "[Unknown(postulated)]")
 							: "<invalid>", param_value);
 			else
 				printf(opsize ? " %02x" : " %04x", param_value);
@@ -275,7 +306,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 				if (!name)
 					name = "<invalid>";
 
-				printf("  %s::%s[", name, (selector > ((SciEngine*)g_engine)->getKernel()->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
+				printf("  %s::%s[", name, (selector > kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
 				switch (lookup_selector(s->segmentManager, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
