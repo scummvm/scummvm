@@ -418,6 +418,12 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+#ifdef ENABLE_SCI32
+	// TODO: SCI32 uses a parameter here.
+	if (argc > 0)
+		warning("kGetSaveDir called with a parameter");
+#endif
+
 	return make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 }
 
