@@ -104,9 +104,10 @@ bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
 	var3 = _vm->_game->_script->readValExpr();
 	var4 = _vm->_game->_script->readValExpr();
 
-	if (_vm->_game->_hotspots->searchHotspot(shortId))
+	if (_vm->_game->_hotspots->searchHotspot(shortId)) {
 		warning("oPlaytoons_F_1B not fully handled");
-		warning("shortId %d, var2 %d var3 %d var4 %d", id, var2, var3, var4);
+		warning("shortId %d, var2 %d var3 %d var4 %d", shortId, var2, var3, var4);
+	}
 //	else
 //		warning("id not found %d", id);;
 	return false;
