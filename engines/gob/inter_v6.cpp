@@ -148,8 +148,9 @@ void Inter_v6::o6_playVmdOrMusic() {
 
 		probe16bitMusic(fileName);
 
-		warning("Urban/Playtoons Stub: Video/Music command %d (NOT IMPLEMENTED delayed stop + start), %s", lastFrame, fileName);
 		_vm->_sound->bgStop();
+		if (lastFrame == -9) 
+			warning("Urban/Playtoons Stub: delayed stop not implemented");
 		_vm->_sound->bgPlay(fileName, SOUND_WAV);
 		return;
 	} else if (lastFrame <= -10) {
@@ -158,8 +159,7 @@ void Inter_v6::o6_playVmdOrMusic() {
 		if (lastFrame <= -100)
 			lastFrame += 100;
 
-		palEnd=(-lastFrame)%10;
-		if (palEnd==3 && lastFrame<=-20)
+		if (((-lastFrame)%10 == 3) && (lastFrame <= -20))
 			_vm->_sound->bgPlay(fileName, SOUND_WAV);
 	} else if (lastFrame < 0) {
 		warning("Urban/Playtoons Stub: Unknown Video/Music command: %d, %s", lastFrame, fileName);
