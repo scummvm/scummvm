@@ -101,6 +101,9 @@ public:
 	/** Return the cursor found in the hotspot to the coordinates. */
 	int16 findCursor(uint16 x, uint16 y) const;
 
+	/** Check the existance of a hotspot based on its short Id */
+	bool searchHotspot (int16 shortId);
+
 private:
 	struct Hotspot {
 		uint16  id;
