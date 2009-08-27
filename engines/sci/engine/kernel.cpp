@@ -299,7 +299,9 @@ SciKernelFunction kfunct_mappers[] = {
 	/*65*/	DEFUN("CoordPri", kCoordPri, "i"),
 	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),
 	/*67*/	DEFUN("DeviceInfo", kDeviceInfo, "i.*"),
-	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ""),
+	// FIXME: signature check removed (set to .*), as this function accepts a parameter in SCI32 games
+	/*68*/	DEFUN("GetSaveDir", kGetSaveDir, ".*"),
+	///*68*/	DEFUN("GetSaveDir", kGetSaveDir, ""),
 	/*69*/	DEFUN("CheckSaveGame", kCheckSaveGame, ".*"),
 	/*6a*/	DEFUN("ShakeScreen", kShakeScreen, "ii*"),
 	/*6b*/	DEFUN("FlushResources", kFlushResources, "i"),
@@ -322,9 +324,11 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("IsItSkip", kIsItSkip, "iiiii"),
 	/*7b*/	DEFUN("StrSplit", kStrSplit, "rrZr"),
 
-	// Non-experimental Functions without a fixed ID
+	// Non-experimental functions without a fixed ID
 	DEFUN("CosMult", kTimesCos, "ii"),
 	DEFUN("SinMult", kTimesSin, "ii"),
+
+	// Misc functions
 	/*(?)*/	DEFUN("CosDiv", kCosDiv, "ii"),
 	/*(?)*/	DEFUN("PriCoord", kPriCoord, "i"),
 	/*(?)*/	DEFUN("SinDiv", kSinDiv, "ii"),
