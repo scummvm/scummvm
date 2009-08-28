@@ -127,75 +127,101 @@ void script_adjust_opcode_formats(SciVersion version) {
 #endif
 
 void Kernel::mapSelectors() {
-	FIND_SELECTOR(init);
-	FIND_SELECTOR(play);
-	FIND_SELECTOR(replay);
-	FIND_SELECTOR(x);
+	// species
+	// superClass
+	// -info-
 	FIND_SELECTOR(y);
-	FIND_SELECTOR(z);
-	FIND_SELECTOR(priority);
+	FIND_SELECTOR(x);
 	FIND_SELECTOR(view);
 	FIND_SELECTOR(loop);
 	FIND_SELECTOR(cel);
-	FIND_SELECTOR(brLeft);
-	FIND_SELECTOR(brRight);
-	FIND_SELECTOR(brTop);
-	FIND_SELECTOR(brBottom);
-	FIND_SELECTOR(xStep);
-	FIND_SELECTOR(yStep);
-	FIND_SELECTOR(nsBottom);
+	FIND_SELECTOR(underBits);
 	FIND_SELECTOR(nsTop);
 	FIND_SELECTOR(nsLeft);
+	FIND_SELECTOR(nsBottom);
+	FIND_SELECTOR(lsTop);
+	FIND_SELECTOR(lsLeft);
+	FIND_SELECTOR(lsBottom);
+	FIND_SELECTOR(lsRight);
 	FIND_SELECTOR(nsRight);
-	FIND_SELECTOR(font);
-	FIND_SELECTOR(text);
-	FIND_SELECTOR(type);
-	FIND_SELECTOR(state);
-	FIND_SELECTOR(doit);
-	FIND_SELECTOR2(delete_, "delete");
 	FIND_SELECTOR(signal);
-	FIND_SELECTOR(underBits);
-	FIND_SELECTOR(canBeHere);
+	FIND_SELECTOR(illegalBits);
+	FIND_SELECTOR(brTop);
+	FIND_SELECTOR(brLeft);
+	FIND_SELECTOR(brBottom);
+	FIND_SELECTOR(brRight);
+	// name
+	// key
+	// time
+	FIND_SELECTOR(text);
+	FIND_SELECTOR(elements);
+	// color
+	// back
+	FIND_SELECTOR(mode);
+	// style
+	FIND_SELECTOR(state);
+	FIND_SELECTOR(font);
+	FIND_SELECTOR(type);
+	// window
+	FIND_SELECTOR(cursor);
+	FIND_SELECTOR(max);
+	// mark
+	// who
+	FIND_SELECTOR(message);
+	// edit
+	FIND_SELECTOR(play);
+	FIND_SELECTOR(number);
+	FIND_SELECTOR(handle);	// nodePtr
 	FIND_SELECTOR(client);
 	FIND_SELECTOR(dx);
 	FIND_SELECTOR(dy);
-	FIND_SELECTOR(xStep);
-	FIND_SELECTOR(yStep);
 	FIND_SELECTOR2(b_movCnt, "b-moveCnt");
 	FIND_SELECTOR2(b_i1, "b-i1");
 	FIND_SELECTOR2(b_i2, "b-i2");
 	FIND_SELECTOR2(b_di, "b-di");
 	FIND_SELECTOR2(b_xAxis, "b-xAxis");
 	FIND_SELECTOR2(b_incr, "b-incr");
-	FIND_SELECTOR(completed);
-	FIND_SELECTOR(illegalBits);
-	FIND_SELECTOR(dispose);
-	FIND_SELECTOR(prevSignal);
-	FIND_SELECTOR(message);
+	FIND_SELECTOR(xStep);
+	FIND_SELECTOR(yStep);
+	FIND_SELECTOR(moveSpeed);
+	FIND_SELECTOR(canBeHere);	// cantBeHere
+	FIND_SELECTOR(heading);
+	FIND_SELECTOR(mover);
+	FIND_SELECTOR(doit);
+	FIND_SELECTOR(isBlocked);
+	FIND_SELECTOR(looper);
+	FIND_SELECTOR(priority);
 	FIND_SELECTOR(modifiers);
-	FIND_SELECTOR(cue);
-	FIND_SELECTOR(owner);
-	FIND_SELECTOR(handle);
-	FIND_SELECTOR(number);
-	FIND_SELECTOR(max);
-	FIND_SELECTOR(cursor);
-	FIND_SELECTOR(claimed);
+	FIND_SELECTOR(replay);
+	// setPri
+	// at
+	// next
+	// done
+	// width
 	FIND_SELECTOR(wordFail);
 	FIND_SELECTOR(syntaxFail);
-	FIND_SELECTOR(cycler);
-	FIND_SELECTOR(elements);
-	FIND_SELECTOR(lsTop);
-	FIND_SELECTOR(lsBottom);
-	FIND_SELECTOR(lsLeft);
-	FIND_SELECTOR(lsRight);
-	FIND_SELECTOR(who);
-	FIND_SELECTOR(distance);
-	FIND_SELECTOR(mover);
-	FIND_SELECTOR(looper);
-	FIND_SELECTOR(isBlocked);
-	FIND_SELECTOR(heading);
-	FIND_SELECTOR(mode);
+	// semanticFail
+	// pragmaFail
+	// said
+	FIND_SELECTOR(claimed);
+	// value
+	// save
+	// restore
+	// title
+	// button
+	// icon
+	// draw
+	FIND_SELECTOR2(delete_, "delete");
+	FIND_SELECTOR(z);
+	// -----------------------------
+	FIND_SELECTOR(init);
+	FIND_SELECTOR(dispose);
+	FIND_SELECTOR(size);
 	FIND_SELECTOR(caller);
+	FIND_SELECTOR(cue);
+	FIND_SELECTOR(owner);
+	FIND_SELECTOR(completed);
+	FIND_SELECTOR(cycler);
 	FIND_SELECTOR(moveDone);
 	FIND_SELECTOR(vol);
 	FIND_SELECTOR(pri);
@@ -203,9 +229,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(sec);
 	FIND_SELECTOR(frame);
 	FIND_SELECTOR(dataInc);
-	FIND_SELECTOR(size);
 	FIND_SELECTOR(palette);
-	FIND_SELECTOR(moveSpeed);
 	FIND_SELECTOR(cantBeHere);
 	FIND_SELECTOR(nodePtr);
 	FIND_SELECTOR(flags);
@@ -215,6 +239,8 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(printLang);
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
+	FIND_SELECTOR(motionCue);
+	FIND_SELECTOR(egoMoveSpeed);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

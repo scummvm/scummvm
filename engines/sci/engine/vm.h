@@ -152,8 +152,6 @@ struct selector_map_t {
 	Selector illegalBits; /**< Used by CanBeHere */
 	Selector dispose;
 
-	Selector prevSignal; /**< Used by DoSound */
-
 	Selector message, modifiers; /**< Used by GetEvent */
 
 	Selector owner, handle;
@@ -170,8 +168,6 @@ struct selector_map_t {
 	Selector elements; /**< Used by SetSynonyms() */
 
 	Selector lsTop, lsBottom, lsRight, lsLeft; /**< Used by Animate() subfunctions and scroll list controls */
-
-	Selector who, distance; /**< Used for 'chasing' movers */
 
 	Selector looper, mover, isBlocked, heading; /**< Used in DoAvoider */
 
@@ -192,6 +188,9 @@ struct selector_map_t {
 	Selector cantBeHere;
 	Selector nodePtr;
 	Selector flags;
+
+	Selector motionCue;	/**< Used to determine if a game is using old gfx functions or not */
+	Selector egoMoveSpeed;	/**< Used to determine if a game is using absolute lofs parameters */
 
 	Selector points; /**< Used by AvoidPath() */
 

@@ -397,7 +397,7 @@ void Kernel::detectSciFeatures() {
 	if (version == SCI_VERSION_0_EARLY) {
 		features |= kFeatureOldScriptHeader | kFeatureOldGfxFunctions;
 	} else if (version == SCI_VERSION_0_LATE) {
-		if (findSelector("motionCue") == -1)
+		if (_selectorMap.motionCue == -1)
 			features |= kFeatureOldGfxFunctions;
 	}
 
@@ -407,7 +407,7 @@ void Kernel::detectSciFeatures() {
 		features |= kFeatureLofsAbsolute;
 	} else if (version == SCI_VERSION_1_EARLY) {
 		// Use heuristic
-		if (findSelector("egoMoveSpeed") != -1)
+		if (_selectorMap.egoMoveSpeed != -1)
 			features |= kFeatureLofsAbsolute;
 	}
 
