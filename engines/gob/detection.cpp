@@ -3311,7 +3311,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3329,7 +3329,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3347,7 +3347,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3370,7 +3370,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 3
 	},
@@ -3388,7 +3388,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 4
 	},
@@ -3410,7 +3410,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 5
 	},
@@ -3431,7 +3431,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640 | kFeaturesSCNDemo,
 		0, 0, 6
 	},
@@ -3449,7 +3449,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3467,7 +3467,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3485,7 +3485,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3503,7 +3503,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3521,7 +3521,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3539,7 +3539,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3557,7 +3557,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3575,7 +3575,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3593,7 +3593,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3611,7 +3611,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3647,7 +3647,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytnCk,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3665,7 +3665,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytnCk,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -3683,7 +3683,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytnCk,
+		kGameTypePlaytoons,
 		kFeatures640,
 		"intro2.stk", 0, 0
 	},
@@ -4096,7 +4096,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		0, 0, 0
 	},
@@ -4110,7 +4110,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		0, 0, 0
 	},
@@ -4124,7 +4124,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		0, 0, 0
 	},
@@ -4138,7 +4138,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		0, 0, 0
 	},
@@ -4152,13 +4152,13 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytoon,
+		kGameTypePlaytoons,
 		kFeatures640,
 		0, 0, 0
 	},
 	{
 		{
-			"playtnck2",
+			"playtoons construction kit",
 			"unknown",
 			AD_ENTRY1(0, 0),
 			UNK_LANG,
@@ -4166,7 +4166,7 @@ static const GOBGameDescription fallbackDescs[] = {
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
-		kGameTypePlaytnCk,
+		kGameTypePlaytoons,
 		kFeatures640,
 		0, 0, 0
 	},
@@ -4276,7 +4276,7 @@ static const ADFileBasedFallback fileBased[] = {
 	{ &fallbackDescs[15], { "playtoon.stk", "chato.stk", 0 } },
 	{ &fallbackDescs[16], { "playtoon.stk", "manda.stk", 0 } },
 	{ &fallbackDescs[17], { "playtoon.stk", "wakan.stk", 0 } },
-	{ &fallbackDescs[18], { "playtoon.stk", 0 } },
+	{ &fallbackDescs[18], { "playtoon.stk", "dan.itk" } },
 	{ &fallbackDescs[19], { "intro.stk", "bambou.itk", 0 } },
 	{ &fallbackDescs[20], { "disk0.stk", "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
 	{ &fallbackDescs[21], { "disk1.stk", "disk2.stk", "disk3.stk", 0 } },
