@@ -34,454 +34,115 @@ struct SelectorRemap {
 	const char *name;
 	uint32 slot;
 };
-	
-// Taken from King's Quest IV (Full Game)
-static const SelectorRemap kq4_demo_selectors[] = {
-	{ "init", 87 },
-	{ "play", 42 },
-	{ "replay", 65 },
-	{ "x", 4 },
-	{ "y", 3 },
-	{ "z", 85 },
-	{ "priority", 63 },
-	{ "view", 5 },
-	{ "loop", 6 },
-	{ "cel", 7 },
-	{ "brLeft", 20 },
-	{ "brRight", 22 },
-	{ "brTop", 19 },
-	{ "brBottom", 21 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "nsBottom", 11 },
-	{ "nsTop", 9 },
-	{ "nsLeft", 10 },
-	{ "nsRight", 12 },
-	{ "font", 33 },
-	{ "text", 26 },
-	{ "type", 34 },
-	{ "state", 32 },
-	{ "doit", 60 },
-	{ "delete", 84 },
-	{ "signal", 17 },
-	{ "underBits", 8 },
-	{ "canBeHere", 57 },
-	{ "client", 45 },
-	{ "dx", 46 },
-	{ "dy", 47 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "b-moveCnt", 48 },
-	{ "b-i1", 49 },
-	{ "b-i2", 50 },
-	{ "b-di", 51 },
-	{ "b-xAxis", 52 },
-	{ "b-incr", 53 },
-	{ "completed", 158 },
-	{ "illegalBits", 18 },
-	{ "dispose", 88 },
-	{ "prevSignal", 129 },
-	{ "message", 40 },
-	{ "modifiers", 64 },
-	{ "cue", 121 },
-	{ "owner", 130 },
-	{ "handle", 44 },
-	{ "number", 43 },
-	{ "max", 37 },
-	{ "cursor", 36 },
-	{ "claimed", 76 },
-	{ "wordFail", 71 },
-	{ "syntaxFail", 72 },
-	{ "cycler", 165 },
-	{ "elements", 27 },
-	{ "lsTop", 13 },
-	{ "lsBottom", 15 },
-	{ "lsLeft", 14 },
-	{ "lsRight", 16 },
-	{ "who", 39 },
-	{ "distance", 173 },
-	{ "mover", 59 },
-	{ "looper", 62 },
-	{ "isBlocked", 61 },
-	{ "heading", 58 },
-	{ "mode", 30 },
-	{ "caller", 119 },
-	{ "moveDone", 169 },
-	{ "size", 96 },
-	{ "moveSpeed", 56 },
-	{ "motionCue", 161 },
-	{ "setTarget", 171 }
+
+const int handleIndex = 41;
+const int canBeHereIndex = 54;
+
+const char *selectorNamesFirstPart[] = {
+	        "y",            "x",     "view",      "loop",        "cel",	//  0 -  4
+	  "underBits",      "nsTop",   "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
+	      "lsTop",     "lsLeft", "lsBottom",   "lsRight",     "signal", // 10 - 14
+	"illegalBits",      "brTop",   "brLeft",  "brBottom",    "brRight", // 15 - 19
+	       "name",        "key",     "time",      "text",   "elements", // 20 - 24
+		  "color",       "back",     "mode",     "style",      "state", // 25 - 29
+		   "font",       "type",   "window",    "cursor",        "max", // 30 - 34
+           "mark",        "who",  "message",      "edit",       "play", // 35 - 39
+         "number",    "nodePtr",   "client",        "dx",         "dy", // 40 - 44
+      "b-moveCnt",       "b-i1",     "b-i2",      "b-di",    "b-xAxis", // 45 - 49
+         "b-incr",      "xStep",    "yStep", "moveSpeed",  "canBeHere", // 50 - 54
+        "heading",      "mover",     "doit", "isBlocked",     "looper", // 55 - 59
+       "priority",  "modifiers",   "replay",    "setPri",         "at", // 60 - 64
+           "next",       "done",    "width",  "wordFail", "syntaxFail", // 65 - 69
+   "semanticFail", "pragmaFail",     "said",   "claimed",      "value", // 70 - 74
+           "save",    "restore",    "title",    "button",       "icon", // 75 - 79
+           "draw",     "delete",        "z"                             // 80 - 82
 };
-	
+
+void createFirstPart(Common::StringList &names, int offset, bool hasCantBeHere, bool hasNodePtr) {
+	int count = ARRAYSIZE(selectorNamesFirstPart) + offset;
+	int i;
+	names.resize(count);
+
+	for (i = 0; i < offset; i++)
+		names[i] = "";
+
+	for (i = offset; i < count; i++) {
+		names[i] = selectorNamesFirstPart[i - offset];
+		if (hasNodePtr && i == handleIndex + offset)
+			names[i] = "nodePtr";
+		if (hasCantBeHere && i == canBeHereIndex + offset)
+			names[i] = "cantBeHere";
+	}	
+}
+
+// Taken from King's Quest IV (Full Game)
+// offset: 3, hascantbehere: false, hasNodePtr: false
+static const SelectorRemap kq4_demo_selectors[] = {
+	{      "init",  87 }, {   "dispose",  88 }, {      "size",  96 },
+	{    "caller", 119 }, {       "cue", 121 }, {     "owner", 130 },
+	{ "completed", 158 }, { "motionCue", 161 }, {    "cycler", 165 },
+	{  "moveDone", 169 }, { "setTarget", 171 }
+};
+
+// Taken from Codename: Iceman (Full Game)
+// offset: 3, hascantbehere: false, hasNodePtr: false
+static const SelectorRemap iceman_demo_selectors[] = {
+	{      "init",  87 }, {   "dispose",  88 }, {      "size",  96 },
+	{    "caller", 119 }, {       "cue", 121 }, {     "owner", 130 },
+	{ "completed", 159 }, { "motionCue", 162 }, {    "cycler", 164 },
+	{  "moveDone", 170 }, { "setTarget", 171 }, {  "distance", 173 },
+	{   "points",  316 }, {     "flags", 368 }
+};
+
 // Taken from EcoQuest 2 (Demo)
+// offset: 0, hascantbehere: true, hasNodePtr: true
 static const SelectorRemap christmas1992_selectors[] = {
-	{ "init", 110 },
-	{ "play", 39 },
-	{ "replay", 62 },
-	{ "x", 1 },
-	{ "y", 0 },
-	{ "z", 82 },
-	{ "priority", 60 },
-	{ "view", 2 },
-	{ "loop", 3 },
-	{ "cel", 4 },
-	{ "brLeft", 17 },
-	{ "brRight", 19 },
-	{ "brTop", 16 },
-	{ "brBottom", 18 },
-	{ "xStep", 51 },
-	{ "yStep", 52 },
-	{ "nsBottom", 8 },
-	{ "nsTop", 6 },
-	{ "nsLeft", 7 },
-	{ "nsRight", 9 },
-	{ "font", 30 },
-	{ "text", 23 },
-	{ "type", 31 },
-	{ "state", 29 },
-	{ "doit", 57 },
-	{ "delete", 81 },
-	{ "signal", 14 },
-	{ "underBits", 5 },
-	{ "canBeHere", 450 },
-	{ "client", 42 },
-	{ "dx", 43 },
-	{ "dy", 44 },
-	{ "xStep", 51 },
-	{ "yStep", 52 },
-	{ "b-moveCnt", 45 },
-	{ "b-i1", 46 },
-	{ "b-i2", 47 },
-	{ "b-di", 48 },
-	{ "b-xAxis", 49 },
-	{ "b-incr", 50 },
-	{ "completed", 250 },
-	{ "illegalBits", 15 },
-	{ "dispose", 111 },
-	{ "prevSignal", 171 },
-	{ "message", 37 },
-	{ "modifiers", 61 },
-	{ "cue", 145 },
-	{ "owner", 172 },
-	{ "handle", 90 },
-	{ "number", 40 },
-	{ "max", 34 },
-	{ "cursor", 33 },
-	{ "claimed", 73 },
-	{ "wordFail", 68 },
-	{ "syntaxFail", 69 },
-	{ "cycler", 255 },
-	{ "elements", 24 },
-	{ "lsTop", 10 },
-	{ "lsBottom", 12 },
-	{ "lsLeft", 11 },
-	{ "lsRight", 13 },
-	{ "who", 36 },
-	{ "distance", 264 },
-	{ "mover", 56 },
-	{ "looper", 59 },
-	{ "isBlocked", 58 },
-	{ "heading", 55 },
-	{ "mode", 27 },
-	{ "caller", 143 },
-	{ "moveDone", 97 },
-	{ "vol", 94 },
-	{ "pri", 95 },
-	{ "min", 91 },
-	{ "sec", 92 },
-	{ "frame", 93 },
-	{ "dataInc", 89 },
-	{ "size", 86 },
-	{ "palette", 88 },
-	{ "moveSpeed", 53 },
-	{ "cantBeHere", 54 },
-	{ "nodePtr", 41 },
-	{ "flags", 99 },
-	{ "points", 87 },
-	{ "syncCue", 271 },
-	{ "syncTime", 270 },
-	{ "printLang", 84 },
-	{ "subtitleLang", 85 },
-	{ "parseLang", 83 },
-	{ "setVol", 178 }
+	{    "parseLang",  83 }, {    "printLang",  84 }, { "subtitleLang",  85 },
+	{         "size",  86 }, {       "points",  87 }, {      "palette",  88 },
+	{      "dataInc",  89 }, {       "handle",  90 }, {          "min",  91 },
+	{          "sec",  92 }, {        "frame",  93 }, {          "vol",  94 },
+	{          "pri",  95 }, {     "moveDone",  97 }, {        "flags",  99 },
+	{         "init", 110 }, {      "dispose", 111 }, {          "cue", 145 },
+	{        "owner", 172 }, {    "completed", 250 }, {    "canBeHere", 450 },
+	{       "cycler", 255 }, {     "distance", 264 }, {       "caller", 143 },
+	{      "syncCue", 271 }, {     "syncTime", 270 }, {       "setVol", 178 }
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
+// offset: 3, hascantbehere: true, hasNodePtr: true
 static const SelectorRemap lsl1_demo_selectors[] = {
-	{ "init", 104 },
-	{ "play", 42 },
-	{ "replay", 65 },
-	{ "x", 4 },
-	{ "y", 3 },
-	{ "z", 85 },
-	{ "priority", 63 },
-	{ "view", 5 },
-	{ "loop", 6 },
-	{ "cel", 7 },
-	{ "brLeft", 20 },
-	{ "brRight", 22 },
-	{ "brTop", 19 },
-	{ "brBottom", 21 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "nsBottom", 11 },
-	{ "nsTop", 9 },
-	{ "nsLeft", 10 },
-	{ "nsRight", 12 },
-	{ "font", 33 },
-	{ "text", 26 },
-	{ "type", 34 },
-	{ "state", 32 },
-	{ "doit", 60 },
-	{ "delete", 84 },
-	{ "signal", 17 },
-	{ "underBits", 8 },
-	{ "canBeHere", 232 },
-	{ "client", 45 },
-	{ "dx", 46 },
-	{ "dy", 47 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "b-moveCnt", 48 },
-	{ "b-i1", 49 },
-	{ "b-i2", 50 },
-	{ "b-di", 51 },
-	{ "b-xAxis", 52 },
-	{ "b-incr", 53 },
-	{ "completed", 210 },
-	{ "illegalBits", 18 },
-	{ "dispose", 105 },
-	{ "prevSignal", 149 },
-	{ "message", 40 },
-	{ "modifiers", 64 },
-	{ "cue", 136 },
-	{ "owner", 150 },
-	{ "handle", 93 },
-	{ "number", 43 },
-	{ "max", 37 },
-	{ "cursor", 36 },
-	{ "claimed", 76 },
-	{ "wordFail", 71 },
-	{ "syntaxFail", 72 },
-	{ "cycler", 215 },
-	{ "elements", 27 },
-	{ "lsTop", 13 },
-	{ "lsBottom", 15 },
-	{ "lsLeft", 14 },
-	{ "lsRight", 16 },
-	{ "who", 39 },
-	{ "distance", 224 },
-	{ "mover", 59 },
-	{ "looper", 62 },
-	{ "isBlocked", 61 },
-	{ "heading", 58 },
-	{ "mode", 30 },
-	{ "caller", 134 },
-	{ "moveDone", 100 },
-	{ "vol", 97 },
-	{ "pri", 98 },
-	{ "min", 94 },
-	{ "sec", 95 },
-	{ "frame", 96 },
-	{ "dataInc", 92 },
-	{ "size", 89 },
-	{ "palette", 91 },
-	{ "moveSpeed", 56 },
-	{ "cantBeHere", 57 },
-	{ "nodePtr", 44 },
-	{ "flags", 102 },
-	{ "points", 90 },
-	{ "syncCue", 248 },
-	{ "syncTime", 247 },
-	{ "printLang", 87 },
-	{ "subtitleLang", 88 },
-	{ "parseLang", 86 },
-	{ "setVol", 156 },
-	{ "motionCue", 213 },
-	{ "setTarget", 221 },
-	{ "egoMoveSpeed", 370 }
-};
-	
-// Taken from Codename: Iceman (Full Game)
-static const SelectorRemap iceman_demo_selectors[] = {
-	{ "init", 87 },
-	{ "play", 42 },
-	{ "replay", 65 },
-	{ "x", 4 },
-	{ "y", 3 },
-	{ "z", 85 },
-	{ "priority", 63 },
-	{ "view", 5 },
-	{ "loop", 6 },
-	{ "cel", 7 },
-	{ "brLeft", 20 },
-	{ "brRight", 22 },
-	{ "brTop", 19 },
-	{ "brBottom", 21 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "nsBottom", 11 },
-	{ "nsTop", 9 },
-	{ "nsLeft", 10 },
-	{ "nsRight", 12 },
-	{ "font", 33 },
-	{ "text", 26 },
-	{ "type", 34 },
-	{ "state", 32 },
-	{ "doit", 60 },
-	{ "delete", 84 },
-	{ "signal", 17 },
-	{ "underBits", 8 },
-	{ "canBeHere", 57 },
-	{ "client", 45 },
-	{ "dx", 46 },
-	{ "dy", 47 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "b-moveCnt", 48 },
-	{ "b-i1", 49 },
-	{ "b-i2", 50 },
-	{ "b-di", 51 },
-	{ "b-xAxis", 52 },
-	{ "b-incr", 53 },
-	{ "completed", 159 },
-	{ "illegalBits", 18 },
-	{ "dispose", 88 },
-	{ "prevSignal", 129 },
-	{ "message", 40 },
-	{ "modifiers", 64 },
-	{ "cue", 121 },
-	{ "owner", 130 },
-	{ "handle", 44 },
-	{ "number", 43 },
-	{ "max", 37 },
-	{ "cursor", 36 },
-	{ "claimed", 76 },
-	{ "wordFail", 71 },
-	{ "syntaxFail", 72 },
-	{ "cycler", 164 },
-	{ "elements", 27 },
-	{ "lsTop", 13 },
-	{ "lsBottom", 15 },
-	{ "lsLeft", 14 },
-	{ "lsRight", 16 },
-	{ "who", 39 },
-	{ "distance", 173 },
-	{ "mover", 59 },
-	{ "looper", 62 },
-	{ "isBlocked", 61 },
-	{ "heading", 58 },
-	{ "mode", 30 },
-	{ "caller", 119 },
-	{ "moveDone", 170 },
-	{ "size", 96 },
-	{ "moveSpeed", 56 },
-	{ "flags", 368 },
-	{ "points", 316 },
-	{ "motionCue", 162 },
-	{ "setTarget", 171 }
+	{    "parseLang",  86 }, {    "printLang",  87 }, { "subtitleLang",  88 },
+	{         "size",  89 }, {       "points",  90 }, {      "palette",  91 },
+	{      "dataInc",  92 }, {       "handle",  93 }, {          "min",  94 },
+	{          "sec",  95 }, {        "frame",  96 }, {          "vol",  97 },
+	{          "pri",  98 }, {     "moveDone", 100 }, {        "flags", 102 },
+	{         "init", 104 }, {      "dispose", 105 }, {       "caller", 134 },
+	{          "cue", 136 }, {        "owner", 150 }, {       "setVol", 156 },
+	{    "completed", 210 }, {    "motionCue", 213 }, {       "cycler", 215 },
+	{    "setTarget", 221 }, {     "distance", 224 }, {    "canBeHere", 232 },
+	{     "syncTime", 247 }, {      "syncCue", 248 }, { "egoMoveSpeed", 370 }
 };
 
 // Taken from Space Quest 1 VGA (Demo)
+// offset: 3, hascantbehere: false, hasNodePtr: true
 static const SelectorRemap lsl5_demo_selectors[] = {
-	{ "init", 103 },
-	{ "play", 42 },
-	{ "replay", 65 },
-	{ "x", 4 },
-	{ "y", 3 },
-	{ "z", 85 },
-	{ "priority", 63 },
-	{ "view", 5 },
-	{ "loop", 6 },
-	{ "cel", 7 },
-	{ "brLeft", 20 },
-	{ "brRight", 22 },
-	{ "brTop", 19 },
-	{ "brBottom", 21 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "nsBottom", 11 },
-	{ "nsTop", 9 },
-	{ "nsLeft", 10 },
-	{ "nsRight", 12 },
-	{ "font", 33 },
-	{ "text", 26 },
-	{ "type", 34 },
-	{ "state", 32 },
-	{ "doit", 60 },
-	{ "delete", 84 },
-	{ "signal", 17 },
-	{ "underBits", 8 },
-	{ "canBeHere", 57 },
-	{ "client", 45 },
-	{ "dx", 46 },
-	{ "dy", 47 },
-	{ "xStep", 54 },
-	{ "yStep", 55 },
-	{ "b-moveCnt", 48 },
-	{ "b-i1", 49 },
-	{ "b-i2", 50 },
-	{ "b-di", 51 },
-	{ "b-xAxis", 52 },
-	{ "b-incr", 53 },
-	{ "completed", 207 },
-	{ "illegalBits", 18 },
-	{ "dispose", 104 },
-	{ "prevSignal", 148 },
-	{ "message", 40 },
-	{ "modifiers", 64 },
-	{ "cue", 135 },
-	{ "owner", 149 },
-	{ "handle", 93 },
-	{ "number", 43 },
-	{ "max", 37 },
-	{ "cursor", 36 },
-	{ "claimed", 76 },
-	{ "wordFail", 71 },
-	{ "syntaxFail", 72 },
-	{ "cycler", 212 },
-	{ "elements", 27 },
-	{ "lsTop", 13 },
-	{ "lsBottom", 15 },
-	{ "lsLeft", 14 },
-	{ "lsRight", 16 },
-	{ "who", 39 },
-	{ "distance", 221 },
-	{ "mover", 59 },
-	{ "looper", 62 },
-	{ "isBlocked", 61 },
-	{ "heading", 58 },
-	{ "mode", 30 },
-	{ "caller", 133 },
-	{ "moveDone", 100 },
-	{ "vol", 97 },
-	{ "pri", 98 },
-	{ "min", 94 },
-	{ "sec", 95 },
-	{ "frame", 96 },
-	{ "dataInc", 92 },
-	{ "size", 89 },
-	{ "palette", 91 },
-	{ "moveSpeed", 56 },
-	{ "nodePtr", 44 },
-	{ "flags", 150 },
-	{ "points", 90 },
-	{ "printLang", 87 },
-	{ "subtitleLang", 88 },
-	{ "parseLang", 86 },
-	{ "motionCue", 210 },
-	{ "egoMoveSpeed", 357 }
+	{    "parseLang",  86 }, {    "printLang",  87 }, { "subtitleLang",  88 },
+	{         "size",  89 }, {       "points",  90 }, {      "palette",  91 },
+	{      "dataInc",  92 }, {          "min",  94 }, {          "sec",  95 },
+	{        "frame",  96 }, {          "vol",  97 }, {          "pri",  98 },
+	{     "moveDone", 100 }, {         "init", 103 }, {      "dispose", 104 },
+	{       "caller", 133 }, {          "cue", 135 }, {        "owner", 149 },
+	{        "flags", 150 }, {    "completed", 207 }, {    "motionCue", 210 },
+	{       "cycler", 212 }, {     "distance", 221 }, { "egoMoveSpeed", 357 }
 };
 
 // A macro for loading one of the above tables in the function below
 #define USE_SELECTOR_TABLE(x) \
-	do { \
-		for (uint32 i = 0; i < ARRAYSIZE(x); i++) { \
-			if (x[i].slot >= names.size()) \
-				names.resize(x[i].slot + 1); \
-			names[x[i].slot] = x[i].name; \
-		} \
-	} while (0)
+	for (uint32 i = 0; i < ARRAYSIZE(x); i++) { \
+		if (x[i].slot >= names.size()) \
+			names.resize(x[i].slot + 1); \
+		names[x[i].slot] = x[i].name; \
+	}
 
 Common::StringList Kernel::checkStaticSelectorNames() {
 	Common::StringList names;
@@ -490,17 +151,23 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 
 	Common::String gameID = ((SciEngine*)g_engine)->getGameID();
 
-	if (gameID == "kq4sci")
+	if (gameID == "kq4sci") {
+		createFirstPart(names, 3, false, false);
 		USE_SELECTOR_TABLE(kq4_demo_selectors);
-	else if (gameID == "lsl3" || gameID == "iceman") // identical, except iceman has "flags" 
+	} else if (gameID == "lsl3" || gameID == "iceman") { // identical, except iceman has "flags" 
+		createFirstPart(names, 3, false, false);
 		USE_SELECTOR_TABLE(iceman_demo_selectors);
-	else if (gameID == "christmas1992")
+	} else if (gameID == "christmas1992") {
+		createFirstPart(names, 0, true, true);
 		USE_SELECTOR_TABLE(christmas1992_selectors);
-	else if (gameID == "lsl1sci")
+	} else if (gameID == "lsl1sci") {
+		createFirstPart(names, 3, true, true);
 		USE_SELECTOR_TABLE(lsl1_demo_selectors);
-	else if (gameID == "lsl5")
+	} else if (gameID == "lsl5") {
+		createFirstPart(names, 3, false, true);
 		USE_SELECTOR_TABLE(lsl5_demo_selectors);
-	
+	}
+
 	return names;
 }
 	
