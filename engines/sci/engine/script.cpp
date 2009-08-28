@@ -180,17 +180,14 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(max);
 	FIND_SELECTOR(cursor);
 	FIND_SELECTOR(claimed);
-	FIND_SELECTOR(edgeHit);
 	FIND_SELECTOR(wordFail);
 	FIND_SELECTOR(syntaxFail);
-	FIND_SELECTOR(semanticFail);
 	FIND_SELECTOR(cycler);
 	FIND_SELECTOR(elements);
 	FIND_SELECTOR(lsTop);
 	FIND_SELECTOR(lsBottom);
 	FIND_SELECTOR(lsLeft);
 	FIND_SELECTOR(lsRight);
-	FIND_SELECTOR(baseSetter);
 	FIND_SELECTOR(who);
 	FIND_SELECTOR(distance);
 	FIND_SELECTOR(mover);

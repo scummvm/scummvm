@@ -146,7 +146,6 @@ struct selector_map_t {
 	Selector client; /**< The object that wants to be moved */
 	Selector cycler; /**< The cycler of the client */
 	Selector dx, dy; /**< Deltas */
-	Selector edgeHit;
 	Selector b_movCnt, b_i1, b_i2, b_di, b_xAxis, b_incr; /**< Various Bresenham vars */
 	Selector completed;
 
@@ -164,15 +163,13 @@ struct selector_map_t {
 	Selector max, cursor; /**< Used by EditControl */
 	Selector mode; /**< Used by text controls (-> DrawControl()) */
 
-	Selector wordFail, syntaxFail, semanticFail; /**< Used by Parse() */
+	Selector wordFail, syntaxFail; /**< Used by Parse() */
 
 	Selector claimed; /**< Used generally by the event mechanism */
 
 	Selector elements; /**< Used by SetSynonyms() */
 
 	Selector lsTop, lsBottom, lsRight, lsLeft; /**< Used by Animate() subfunctions and scroll list controls */
-
-	Selector baseSetter; /**< Alternative baseSetter */
 
 	Selector who, distance; /**< Used for 'chasing' movers */
 
