@@ -32,6 +32,7 @@ namespace Gob {
 SaveLoad_Playtoons::SaveFile SaveLoad_Playtoons::_saveFiles[] = {
 	{   "did.inf", kSaveModeSave,   0, 0}, // Purpose ignored at the moment, intensively used to save things.
 	{   "dan.itk", kSaveModeNone,   0, 0}, // Playtoons CK detection file
+	{   "cat.inf", kSaveModeNone,   0, 0},
 	{ "titre.009", kSaveModeIgnore, 0, 0}, // Playtoons theoritical title files that are checked for nothing
 	{ "titre.010", kSaveModeIgnore, 0, 0},
 	{ "titre.011", kSaveModeIgnore, 0, 0},
@@ -95,11 +96,13 @@ SaveLoad_Playtoons::GameHandler::GameHandler(GobEngine *vm, const char *target) 
 	memset(_props, 0, kPropsSize);
 	memset(_index, 0, kIndexSize);
 
+	_tempSpriteHandler = new TempSpriteHandler(vm);
 	_slotFile = new File(vm, target);
 }
 
 SaveLoad_Playtoons::GameHandler::~GameHandler() {
 	delete _slotFile;
+	delete _tempSpriteHandler;
 }
 
 int32 SaveLoad_Playtoons::GameHandler::getSize() {
@@ -112,8 +115,16 @@ int32 SaveLoad_Playtoons::GameHandler::getSize() {
 }
 
 bool SaveLoad_Playtoons::GameHandler::load(int16 dataVar, int32 size, int32 offset) {
-	uint32 varSize = SaveHandler::getVarSize(_vm);
+	uint32 varSize;
 
+	if (size < 0) {
+		// Load a temporary sprite
+		debugC(2, kDebugSaveLoad, "Loading temporary sprite %d at pos %d", size, offset);
+		_tempSpriteHandler->load(dataVar, size, offset);
+		return true;
+	}
+
+	varSize = SaveHandler::getVarSize(_vm);
 	if (varSize == 0)
 		return false;
 
@@ -197,9 +208,16 @@ bool SaveLoad_Playtoons::GameHandler::load(int16 dataVar, int32 size, int32 offs
 }
 
 bool SaveLoad_Playtoons::GameHandler::save(int16 dataVar, int32 size, int32 offset) {
-	uint32 varSize = SaveHandler::getVarSize(_vm);
+	uint32 varSize;
 
-	warning("Saving %d %d %d", dataVar, size, offset);
+	if (size < 0) {
+		// Save a temporary sprite
+		debugC(2, kDebugSaveLoad, "Saving temporary sprite %d at pos %d", size, offset);
+		_tempSpriteHandler->save(dataVar, size, offset);
+		return true;
+	}
+
+	varSize = SaveHandler::getVarSize(_vm);
 
 	if (varSize == 0)
 		return false;

@@ -466,7 +466,7 @@ public:
 	static const uint32 kSlotCount = 60;
 	static const uint32 kSlotNameLength = 40;
 
-	static const uint32 kPropsSize = 1642;
+	static const uint32 kPropsSize = 3921;
 	/** Index. kSlotCount * kSlotNameLength bytes. */
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 	
@@ -508,6 +508,7 @@ protected:
 		byte _index[kIndexSize];
 
 		File *_slotFile;
+		TempSpriteHandler *_tempSpriteHandler;
 
 		void buildIndex(byte *buffer) const;
 	};
