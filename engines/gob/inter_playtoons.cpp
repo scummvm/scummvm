@@ -82,7 +82,8 @@ void Inter_Playtoons::setupOpcodesFunc() {
 
 	CLEAROPCODEFUNC(0x3D);
 
-	OPCODEFUNC(0x1B, oPlaytoons_F_1B); 
+	OPCODEFUNC(0x1B, oPlaytoons_F_1B);
+	OPCODEFUNC(0x27, oPlaytoons_freeSprite);
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
 	OPCODEFUNC(0x4D, oPlaytoons_readData);
 }
@@ -110,6 +111,16 @@ bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
 	}
 //	else
 //		warning("id not found %d", id);;
+	return false;
+}
+
+bool Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
+	int16 index;
+	if (_vm->_game->_script->peekByte(1) == 0)
+		index = _vm->_game->_script->readInt16();
+	else
+		index = _vm->_game->_script->readValExpr();
+	_vm->_draw->freeSprite(index);
 	return false;
 }
 

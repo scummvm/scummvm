@@ -558,6 +558,7 @@ protected:
 	virtual void setupOpcodesGob();
 
 	bool oPlaytoons_F_1B(OpFuncParams &params);
+	bool oPlaytoons_freeSprite(OpFuncParams &params);
 	bool oPlaytoons_checkData(OpFuncParams &params);
 	bool oPlaytoons_readData(OpFuncParams &params);
 	void oPlaytoons_CD_20_23();
