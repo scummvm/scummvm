@@ -48,7 +48,25 @@ static const Key keys[] = {
 	{ "CALL", KEYCODE_SPACE, ASCII_SPACE, "Call", kActionKeyType, false },
 	{ "PLUS", KEYCODE_PLUS, '+', "+", kActionKeyType, false },
 	{ "MINUS", KEYCODE_MINUS, '-', "-", kActionKeyType, false },
-
+#ifdef MOTOMAGX
+	{"BACKSPACE", KEYCODE_BACKSPACE, ASCII_BACKSPACE, "Backspace", kActionKeyType, false},
+	{"TAB", KEYCODE_TAB, ASCII_TAB, "Tab", kActionKeyType, false},
+	{"HASH", KEYCODE_HASH, '#', "#", kActionKeyType, false},
+	{"ASTERISK", KEYCODE_ASTERISK, '*', "*", kActionKeyType, false},
+	{"LEFTSOFT", KEYCODE_F9, ASCII_F9, "LeftSoft", kActionKeyType, false},
+	{"RIGHTSOFT", KEYCODE_F11, ASCII_F11, "RightSoft", kActionKeyType, false},
+	{"0", KEYCODE_0, '0', "0", kActionKeyType, false},
+	{"1", KEYCODE_1, '1', "1", kActionKeyType, false},
+	{"2", KEYCODE_2, '2', "2", kActionKeyType, false},
+	{"3", KEYCODE_3, '3', "3", kActionKeyType, false},
+	{"4", KEYCODE_4, '4', "4", kActionKeyType, false},
+	{"5", KEYCODE_5, '5', "5", kActionKeyType, false},
+	{"6", KEYCODE_6, '6', "6", kActionKeyType, false},
+	{"7", KEYCODE_7, '7', "7", kActionKeyType, false},
+	{"8", KEYCODE_8, '8', "8", kActionKeyType, false},
+	{"9", KEYCODE_9, '9', "9", kActionKeyType, false},
+#endif
+#ifdef MOTOEZX
 	{ "a", KEYCODE_a, 'a', "a", kActionKeyType, true },
 	{ "b", KEYCODE_b, 'b', "b", kActionKeyType, true },
 	{ "c", KEYCODE_c, 'c', "c", kActionKeyType, true },
@@ -59,7 +77,7 @@ static const Key keys[] = {
 	{ "h", KEYCODE_h, 'h', "h", kActionKeyType, true },
 	{ "i", KEYCODE_i, 'i', "i", kActionKeyType, true },
 	{ "j", KEYCODE_j, 'j', "j", kActionKeyType, true },
-
+#endif
 	// Numeric keypad
 
 	// Arrows + Home/End pad

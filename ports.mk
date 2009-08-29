@@ -205,7 +205,7 @@ endif
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip wiidist/scummvm/
 
 #
-# Linuxmoto/motoezx specific
+# Linuxmoto specific
 #
 
 # Special target to create a motoezx snapshot
@@ -218,7 +218,26 @@ motoezx: $(EXECUTABLE)
 	$(CP) $(srcdir)/dists/motoezx/* motoezx/scummvm/
 	tar -C motoezx -cvzf motoezx/ScummVM.pkg scummvm
 
-.PHONY: deb bundle osxsnap win32dist wiidist motoezx install uninstall
+# Special target to create a motomagx snapshot
+motomagx-mpkg: $(EXECUTABLE)
+	$(MKDIR) motomagx/scummvm
+	$(CP) $(EXECUTABLE) motomagx/scummvm/
+	$(STRIP) motomagx/scummvm/$(EXECUTABLE)
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motomagx/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/scummvm/
+	$(CP) $(srcdir)/dists/motomagx/mpkg/* motomagx/scummvm/
+	tar -C motomagx -cvzf motomagx/ScummVM.mpkg scummvm
+
+motomagx-pep: $(EXECUTABLE)
+	$(MKDIR) motomagx/pep
+	$(CP) -r $(srcdir)/dists/motomagx/pep/* motomagx/pep
+	$(CP) $(EXECUTABLE) motomagx/pep/app
+	$(STRIP) motomagx/pep/app/$(EXECUTABLE)
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motomagx/pep/app
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/pep/app
+	tar -C motomagx/pep -czvf motomagx/ScummVM.pep app description.ini  scummvm_big_usr.png  scummvm_small_usr.png
+
+.PHONY: deb bundle osxsnap win32dist wiidist motoezx motomagx-mpkg motomagx-pep install uninstall
 
 #
 # ARM specific
