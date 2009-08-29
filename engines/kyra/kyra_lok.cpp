@@ -407,8 +407,9 @@ void KyraEngine_LoK::startup() {
 			_screen->showMouse();
 			_gui->buttonMenuCallback(0);
 			_menuDirectlyToLoad = false;
-		} else
+		} else if (!shouldQuit()) {
 			saveGameState(0, "New game", 0);
+		}
 	} else {
 		_screen->setFont(Screen::FID_8_FNT);
 		loadGameStateCheck(_gameToLoad);
