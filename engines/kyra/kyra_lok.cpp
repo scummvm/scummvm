@@ -469,7 +469,7 @@ void KyraEngine_LoK::mainLoop() {
 }
 
 void KyraEngine_LoK::delayUntil(uint32 timestamp, bool updateTimers, bool update, bool isMainLoop) {
-	while (_system->getMillis() < timestamp && !shouldQuit()) {
+	while (_system->getMillis() < timestamp && !shouldQuit() && !skipFlag()) {
 		if (updateTimers)
 			_timer->update();
 
