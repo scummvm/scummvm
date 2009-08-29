@@ -271,7 +271,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 	}
 
 	// need to jump all unused barriers data to where actors data start
-	stream->seek(0xA6D7A);
+    stream->seek(0xA6D7A);
 
 	for (uint32 a = 0; a < _worldStats->numActors; a++) {
 		int i;

@@ -47,6 +47,8 @@ struct ActionDefinitions;
 struct PolyDefinitions;
 struct BarrierItem;
 
+//uint32 playerTypeTable[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
+
 class Scene {
 public:
 	Scene(uint8 sceneIdx);
@@ -78,9 +80,6 @@ public:
     void             setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
 
 private:
-#if 0
-	void copyToSceneBackground(GraphicFrame *frame, int x, int y);
-#endif
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 	uint8	        _sceneIdx;
@@ -106,16 +105,19 @@ private:
 	int32	_cursorStep;
 	bool	_isActive;
     bool	_skipDrawScene;
+    uint32  _playerActorIdx;
 
 	void   update();
     int    updateScene();
-    void   updateActor(uint32 actor);
+    void   updateActor(uint32 actorIdx);
     void   updateBarriers(WorldStats *worldStats);
     void   updateAmbientSounds();
     void   updateMusic();
     void   updateAdjustScreen();
     int    drawScene();
     int    drawBarriers();
+
+    int   isActorVisible(ActorItem *actor);
 
     bool   isBarrierVisible(BarrierItem *barrier);
     bool   isBarrierOnScreen(BarrierItem *barrier);
