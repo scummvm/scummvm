@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/endian.h"
 #include "common/scummsys.h"
 #include "common/system.h"
 
@@ -98,7 +99,8 @@ static bool grabScreen565(Graphics::Surface *surf) {
 	if (!screen)
 		return false;
 
-	assert(screen->bytesPerPixel == 1 && screen->pixels != 0);
+	assert(screen->bytesPerPixel == 1 || screen->bytesPerPixel == 2); 
+	assert(screen->pixels != 0);
 
 	byte palette[256 * 4];
 	g_system->grabPalette(&palette[0], 0, 256);
@@ -107,11 +109,17 @@ static bool grabScreen565(Graphics::Surface *surf) {
 
 	for (uint y = 0; y < screen->h; ++y) {
 		for (uint x = 0; x < screen->w; ++x) {
-			byte r, g, b;
-			r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4];
-			g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
-			b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
-
+				byte r, g, b;
+			if (screen->bytesPerPixel == 2) {
+				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
+				r = ((col >> 10) & 0x1F) << 3;
+				g = ((col >>  5) & 0x1F) << 3;
+				b = ((col >>  0) & 0x1F) << 3;
+			} else {
+				r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4];
+				g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
+				b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
+			}
 			((uint16*)surf->pixels)[y * surf->w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
