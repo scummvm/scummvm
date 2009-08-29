@@ -444,6 +444,9 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	// On Alt-F5 prepare savegame for the original save/load dialog.
 	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.flags == Common::KBD_ALT) {
 		prepareSavegame();
+		if (_game.id == GID_MANIAC && _game.version == 0) {
+			runScript(2, 0, 0, 0);
+		}
 	}
 
 	if (VAR_KEYPRESS != 0xFF && _mouseAndKeyboardStat) {		// Key Input

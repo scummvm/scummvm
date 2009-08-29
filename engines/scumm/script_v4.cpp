@@ -393,16 +393,12 @@ void ScummEngine_v4::loadIQPoints(byte *ptr, int size) {
 
 void ScummEngine_v4::o4_saveLoadGame() {
 	getResultPos();
+	byte slot;
 	byte a = getVarOrDirectByte(PARAM_1);
-	byte slot = a & 0x1F;
 	byte result = 0;
 
-	// Slot numbers in older games start with 0, in newer games with 1
-	if (_game.version <= 2)
-		slot++;
-
-	if ((_game.id == GID_MANIAC) && (_game.version <= 1)) {
-		// Convert older load/save screen
+	if (_game.version <= 1) {
+		// Convert V0/V1 load/save screen (they support only one savegame per disk)
 		// 1 Load
 		// 2 Save
 		slot = 1;
@@ -411,6 +407,10 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		else if ((a == 2) || (_game.platform == Common::kPlatformNES))
 			_opcode = 0x80;
 	} else {
+		slot = a & 0x1F;
+		// Slot numbers in older games start with 0, in newer games with 1
+		if (_game.version <= 2)
+			slot++;
 		_opcode = a & 0xE0;
 	}
 
