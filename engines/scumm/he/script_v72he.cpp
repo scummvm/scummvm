@@ -1818,7 +1818,7 @@ void ScummEngine_v72he::o72_readINI() {
 	case 77: // HE 100
 	case 7: // string
 		writeVar(0, 0);
-		if (!strcmp((char *)option, "SaveGamePath")) {
+		if (!strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath")) {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
 			// path in Macintosh verisons.
