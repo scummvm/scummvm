@@ -849,8 +849,10 @@ int MaxTrax::playNote(byte note, byte patch, uint16 duration, uint16 volume, boo
 	channel.isAltered = false;
 	channel.patch = &_patch[patch];
 	const int8 voiceIndex = noteOn(channel, note, (byte)volume, kPriorityNote);
-	if (voiceIndex >= 0)
+	if (voiceIndex >= 0) {
 		_voiceCtx[voiceIndex].stopEventTime = duration << 8;
+		Paula::startPaula();
+	}
 	return voiceIndex;
 }
 
