@@ -68,34 +68,43 @@ static const VerbSettings v0VerbTable_English[] = {
 
 // FIXME: Replace * with the correct character
 static const VerbSettings v0VerbTable_German[] = {
-	{ 1,  0, 1,   0, "Ziehe"},
-	{ 2,  0, 0,   0, "Dr<cke"},
-	{ 3,  7, 2,   4, "Lese"},
-	{ 4, 23, 0,   0, "Schlie*e auf"},
-	{ 5, 37, 1,   0, "Ein"},
-	{ 6, 37, 0,   0, "Aus"},
+	{ 1,  7, 0,   0, "$ffne"},
+	{ 2, 13, 1,   0, "Schlie*e"},
+	{ 3,  0, 2,   4, "Gebe"},
+	{ 4, 37, 1,   0, "Ein"},
+	{ 5, 37, 0,   0, "Aus"},
+	{ 6, 23, 1,   2, "Repariere"},
 	{ 7, 34, 2,   0, "Person"},
-	{ 8, 13, 1,   2, "Schlie*e"},
-	{ 9,  7, 1,   0, "Nimm"},
-	{10,  0, 2,   0, "Gebe"},
-	{11, 23, 1, 255, "Repariere"},
-	{12,  7, 0,   0, "$ffne"},
+	{ 8, 23, 0,   2, "Schlie*e auf"},
+	{ 9,  0, 0,   0, "Dr<cke"},
+	{10,  0, 1,   0, "Ziehe"},
+	{11, 23, 2, 255, "Benutz"},
+	{12,  7, 2,   0, "Lese"},
 	{13, 13, 0,   0, "Gehe zu"},
-	{14, 13, 2,   0, "Was ist"},
-	{15, 23, 2,   0, "Benutz"}
+	{14,  7, 1,   0, "Nimm"},
+	{15, 13, 2,   0, "Was ist"}
 };
 
 void ScummEngine_v0::resetVerbs() {
 	VirtScreen *virt = &_virtscr[kVerbVirtScreen];
 	VerbSlot *vs;
+	const VerbSettings *vtable;
 	int i;
+
+	switch (_language) {
+	case Common::DE_DEU:
+		vtable = (const VerbSettings*)v0VerbTable_German;
+		break;
+	default:
+		vtable = (const VerbSettings*)v0VerbTable_English;
+	}
 
 	for (i = 1; i < 16; i++)
 		killVerb(i);
 
 	for (i = 1; i < 16; i++) {
 		vs = &_verbs[i];
-		vs->verbid = v0VerbTable_English[i - 1].id;
+		vs->verbid = vtable[i - 1].id;
 		vs->color = 5;
 		vs->hicolor = 7;
 		vs->dimcolor = 11;
@@ -106,17 +115,10 @@ void ScummEngine_v0::resetVerbs() {
 		vs->key = 0;
 		vs->center = 0;
 		vs->imgindex = 0;
-		vs->prep = v0VerbTable_English[i - 1].prep;
-
-		if (_language == Common::DE_DEU) {
-			vs->curRect.left = v0VerbTable_German[i - 1].x_pos * 8;
-			vs->curRect.top = v0VerbTable_German[i - 1].y_pos * 8 + virt->topline + 8;
-			loadPtrToResource(rtVerb, i, (const byte*)v0VerbTable_German[i - 1].name);
-		} else {
-			vs->curRect.left = v0VerbTable_English[i - 1].x_pos * 8;
-			vs->curRect.top = v0VerbTable_English[i - 1].y_pos * 8 + virt->topline + 8;
-			loadPtrToResource(rtVerb, i, (const byte*)v0VerbTable_English[i - 1].name);
-		}
+		vs->prep = vtable[i - 1].prep;
+		vs->curRect.left = vtable[i - 1].x_pos * 8;
+		vs->curRect.top = vtable[i - 1].y_pos * 8 + virt->topline + 8;
+		loadPtrToResource(rtVerb, i, (const byte*)vtable[i - 1].name);
 	}
 }
 
