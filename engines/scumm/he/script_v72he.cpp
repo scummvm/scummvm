@@ -1823,7 +1823,7 @@ void ScummEngine_v72he::o72_readINI() {
 			int len = resStrLen((const byte *)fileName.c_str());
 			data = defineArray(0, kStringArray, 0, 0, 0, len);
 			memcpy(data, fileName.c_str(), len);
-		} else if (!strcmp((char *)option, "SaveGamePath")) {
+		} else if (!strcmp((char *)option, "GameResourcePath") || !strcmp((char *)option, "SaveGamePath")) {
 			// We set SaveGamePath in order to detect where it used
 			// in convertFilePath and to avoid warning about invalid
 			// path in Macintosh verisons.
