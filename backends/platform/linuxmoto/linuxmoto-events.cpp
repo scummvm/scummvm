@@ -53,20 +53,44 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 		return true;
 	}
 	// '1' Bypass security protection - MOD+Call key
-	if (ev.key.keysym.sym ==  SDLK_f) {
-		ev.key.keysym.sym=SDLK_1;
+	if (ev.key.keysym.sym == SDLK_f) {
+		ev.key.keysym.sym = SDLK_1;
 	}
 	// F5 Game Menu - Call key
 	else if (ev.key.keysym.sym == SDLK_SPACE) {
-		ev.key.keysym.sym=SDLK_F5;
+		ev.key.keysym.sym = SDLK_F5;
 	}
-	// Camera to VirtualKeyboard
+	// VirtualKeyboard - Camera key
  	else if (ev.key.keysym.sym == SDLK_PAUSE) {
-		ev.key.keysym.sym=SDLK_F7;
+		ev.key.keysym.sym = SDLK_F7;
 	}
-	// mod+fire to enter
+	// Enter - mod+fire key
 	else if (ev.key.keysym.sym == SDLK_b) {
-		ev.key.keysym.sym=SDLK_RETURN;
+		ev.key.keysym.sym = SDLK_RETURN;
+	}
+	// '3' - mod+up key
+	else if (ev.key.keysym.sym == SDLK_j) {
+		ev.key.keysym.sym = SDLK_3;
+	}
+	// '6' - mod+up key
+	else if (ev.key.keysym.sym == SDLK_i) {
+		ev.key.keysym.sym = SDLK_6;
+	}
+	// 'y' - mod+right key
+	else if (ev.key.keysym.sym == SDLK_g) {
+		ev.key.keysym.sym = SDLK_y;
+	}
+	// 'n' - mod+right key
+	else if (ev.key.keysym.sym == SDLK_h) {
+		ev.key.keysym.sym = SDLK_n;
+	}
+	//  mod+vol'+' -> volume'+'
+	else if (ev.key.keysym.sym == SDLK_c) {
+		ev.key.keysym.sym = SDLK_RIGHTBRACKET;
+	}
+	//  mod+vol'-' -> volume'-'
+	else if (ev.key.keysym.sym == SDLK_d) {	
+		ev.key.keysym.sym = SDLK_LEFTBRACKET;
 	}
 #endif
 	// Motorola Z6/V8 remapkey by Ant-On
@@ -75,20 +99,34 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 	if (ev.key.keysym.sym == SDLK_ESCAPE) {
 		event.type = Common::EVENT_QUIT;
 		return true;
-	} else
-	// F5 Game Menu - Call key
-	if (ev.key.keysym.sym == SDLK_SPACE) {
-		ev.key.keysym.sym=SDLK_F5;
 	}
-	// 'y' - Mod+Right key
+	// F5 Game Menu - Slide Select 
+	if (ev.key.keysym.sym == SDLK_SPACE) {
+		ev.key.keysym.sym = SDLK_F5;
+	}
+	// Escape - Dial key 
+	else if (ev.key.keysym.sym == SDLK_TAB) {
+		ev.key.keysym.sym = SDLK_ESCAPE;
+	}
+	// Space - Virtual keyboard 
+	else if (ev.key.keysym.sym == SDLK_PAUSE) {
+		ev.key.keysym.sym = SDLK_F7;
+	}
 	// 'y' - Left soft
 	else if (ev.key.keysym.sym == SDLK_F9) {	
-		ev.key.keysym.sym=SDLK_y;	
+		ev.key.keysym.sym = SDLK_y;	
 	}
-	// 'n' - Mod+Left key
-	// 'n' - rigth soft
+	// 'n' - Rigth soft
 	else if (ev.key.keysym.sym == SDLK_F11) {	
-		ev.key.keysym.sym=SDLK_n;	
+		ev.key.keysym.sym = SDLK_n;	
+	}
+	//  # -> volume'+' 
+	else if (ev.key.keysym.sym == SDLK_HASH) {	
+		ev.key.keysym.sym = SDLK_RIGHTBRACKET;
+	}
+	//  * -> volume'-' 
+	else if (ev.key.keysym.sym == SDLK_WORLD_55) {	
+		ev.key.keysym.sym = SDLK_LEFTBRACKET;
 	}
 #endif
 
@@ -116,6 +154,7 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 
 		event.type = Common::EVENT_MOUSEMOVE;
 		fillMouseEvent(event, _km.x, _km.y);
+
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_DOWN) {
 		if (ev.type == SDL_KEYDOWN) {
@@ -128,6 +167,7 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 
 		event.type = Common::EVENT_MOUSEMOVE;
 		fillMouseEvent(event, _km.x, _km.y);
+
 		return true;
 	} else if (ev.key.keysym.sym == SDLK_UP) {
 		if (ev.type == SDL_KEYDOWN) {
@@ -140,47 +180,44 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 
 		event.type = Common::EVENT_MOUSEMOVE;
 		fillMouseEvent(event, _km.x, _km.y);
+
 		return true;
-	}
-	// Joystick center to pressing Left Mouse	
-	else if (ev.key.keysym.sym == SDLK_RETURN) {
-		//	_km.y_vel = 0;
-		//	_km.y_down_count = 0;
+	} else if (ev.key.keysym.sym == SDLK_RETURN) { 
+		// Joystick center to pressing Left Mouse	
 		if (ev.key.type == SDL_KEYDOWN) {
 			event.type = Common::EVENT_LBUTTONDOWN;
 		} else {
-			event.type =  Common::EVENT_LBUTTONUP;			
+			event.type = Common::EVENT_LBUTTONUP;			
 		}
+
 		fillMouseEvent(event, _km.x, _km.y);
+
 		return true;
-	}
-	// Volume Up to pressing Right Mouse
-	else if (ev.key.keysym.sym == SDLK_PLUS) {
-		//	_km.y_vel = 0;
-		//	_km.y_down_count = 0;
+	} else if (ev.key.keysym.sym == SDLK_PLUS) { 
+		// Volume Up to pressing Right Mouse
 		if (ev.key.type == SDL_KEYDOWN ) {
 			event.type = Common::EVENT_RBUTTONDOWN;
 		} else {
-			event.type =  Common::EVENT_RBUTTONUP;			
+			event.type = Common::EVENT_RBUTTONUP;			
 		}
 		fillMouseEvent(event, _km.x, _km.y);
+
 		return true;
-	}
-	// Volume Down to pressing Left Mouse	
-	else if (ev.key.keysym.sym == SDLK_MINUS) {
-		//_km.y_vel = 0;
-		//_km.y_down_count = 0;
+	} else if (ev.key.keysym.sym == SDLK_MINUS) { 
+		// Volume Down to pressing Left Mouse	
 		if (ev.key.type == SDL_KEYDOWN) {
 			event.type = Common::EVENT_LBUTTONDOWN;
 		} else {
-			event.type =  Common::EVENT_LBUTTONUP;		
+			event.type = Common::EVENT_LBUTTONUP;		
 		}
+
 		fillMouseEvent(event, _km.x, _km.y);
+
 		return true;
 	} else {
-	// Let the events fall through if we didn't change them, this may not be the best way to
-	// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-	// and yes i have an huge terminal size so i dont wrap soon enough.
+		// Let the events fall through if we didn't change them, this may not be the best way to
+		// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
+		// and yes i have an huge terminal size so i dont wrap soon enough.
 		event.type = Common::EVENT_KEYDOWN;
 		event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
 		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
