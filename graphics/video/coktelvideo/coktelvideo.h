@@ -23,9 +23,17 @@
  *
  */
 
+// Currently, only GOB plays IMDs and VMDs, so skip compiling if GOB is disabled.
+#if !(defined(ENABLE_GOB) || defined(DYNAMIC_MODULES))
+
+// Do not compile the CoktelVideo code
+
+#else
+
 #ifndef GRAPHICS_VIDEO_COKTELVIDEO_H
 #define GRAPHICS_VIDEO_COKTELVIDEO_H
 
+#include "common/scummsys.h"
 #include "common/stream.h"
 #include "common/array.h"
 #include "graphics/dither.h"
@@ -34,7 +42,9 @@
 
 namespace Graphics {
 
+#ifdef USE_INDEO3
 class Indeo3;
+#endif
 
 /** Common interface for handling Coktel Vision videos and derivated formats. */
 class CoktelVideo {
@@ -388,7 +398,10 @@ protected:
 	bool _doubleMode;
 
 	Graphics::PaletteLUT *_palLUT;
+
+#ifdef USE_INDEO3
 	Indeo3 *_codecIndeo3;
+#endif
 
 	void clear(bool del = true);
 
@@ -415,3 +428,5 @@ protected:
 } // End of namespace Graphics
 
 #endif // GRAPHICS_VIDEO_COKTELVIDEO_H
+
+#endif // Engine and dynamic plugins guard

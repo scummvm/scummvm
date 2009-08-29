@@ -23,6 +23,10 @@
  *
  */
 
+#include "common/scummsys.h"
+
+#ifdef USE_INDEO3
+
 /* Intel Indeo 3 decompressor, derived from ffmpeg.
  *
  * Original copyright note:
@@ -118,3 +122,5 @@ private:
 } // End of namespace Graphics
 
 #endif // GRAPHICS_VIDEO_INDEO3_H
+
+#endif // USE_INDEO3
