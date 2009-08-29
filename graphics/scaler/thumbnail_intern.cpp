@@ -107,20 +107,22 @@ static bool grabScreen565(Graphics::Surface *surf) {
 
 	surf->create(screen->w, screen->h, 2);
 
+	Graphics::PixelFormat screenFormat = g_system->getScreenFormat();
+
 	for (uint y = 0; y < screen->h; ++y) {
 		for (uint x = 0; x < screen->w; ++x) {
-				byte r, g, b;
-			if (screen->bytesPerPixel == 2) {
-				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
-				r = ((col >> 10) & 0x1F) << 3;
-				g = ((col >>  5) & 0x1F) << 3;
-				b = ((col >>  0) & 0x1F) << 3;
-			} else {
+			byte r, g, b;
+
+			if (screenFormat.bytesPerPixel == 1) {
 				r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4];
 				g = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 1];
 				b = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4 + 2];
+			} else if (screenFormat.bytesPerPixel == 2) {
+				uint16 col = READ_UINT16(screen->getBasePtr(x, y));
+				screenFormat.colorToRGB(col, r, g, b);
 			}
-			((uint16*)surf->pixels)[y * surf->w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
+
+			((uint16 *)surf->pixels)[y * surf->w + x] = Graphics::RGBToColor<Graphics::ColorMasks<565> >(r, g, b);
 		}
 	}
 
