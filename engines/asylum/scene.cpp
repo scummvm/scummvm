@@ -70,8 +70,26 @@ Scene::Scene(uint8 sceneIdx) {
 	g_debugPolygons = 0;
 	g_debugBarriers = 0;
 
-	// TODO Not sure why this is done ... yet
     Shared.setGameFlag(183);
+
+    // TODO: do all the rest stuffs in sub at address 40E460
+    WorldStats   *worldStats = _sceneResource->getWorldStats();
+    _playerActorIdx = 0;
+
+    if (worldStats->numBarriers > 0) {
+        uint32 priority = 0x0FFB;
+        for (int b=0; b < worldStats->numBarriers; b++) {
+            BarrierItem *barrier = &worldStats->barriers[b];
+            barrier->priority = priority;
+            barrier->flags &= 0xFFFF3FFF;
+            priority -= 4;
+        }
+    }
+    worldStats->sceneRectIdx = 0;
+    Shared.getScreen()->clearGraphicsInQueue();
+    worldStats->motionStatus = 1;
+    // TODO: do some rect stuffs from player actor
+    // TODO: reset actors flags
 }
 
 Scene::~Scene() {
@@ -325,7 +343,104 @@ int Scene::updateScene() {
     return 0;
 }
 
-void Scene::updateActor(uint32 actor) {
+int Scene::isActorVisible(ActorItem *actor) {
+    return actor->flags & 1;
+}
+
+void Scene::updateActor(uint32 actorIdx) {
+    WorldStats   *worldStats = _sceneResource->getWorldStats();
+    ActorItem *actor = &worldStats->actors[actorIdx];
+    
+    if (isActorVisible(actor)) {
+        switch (actor->field_40) {
+        
+        case 0x10:
+            if (worldStats->numChapter == 2) {
+                // TODO: updateCharacterSub14()
+            } else if (worldStats->numChapter == 1) {
+                if (_playerActorIdx == actorIdx) {
+                    // TODO: updateActorSub21();
+                }
+            }
+            break;
+        case 0x11:
+            if (worldStats->numChapter == 2) {
+                // TODO: put code here
+            } else if (worldStats->numChapter == 11) {
+                if (_playerActorIdx == actorIdx) {
+                    // TODO: put code here
+                }
+            }
+            break;
+        case 0xF:
+            if (worldStats->numChapter == 2) {
+                // TODO: put code here
+            } else if (worldStats->numChapter == 11) {
+                // TODO: put code here
+            }
+            break;
+        case 0x12:
+            if (worldStats->numChapter == 2) {
+                // TODO: put code here
+            }
+            break;
+        case 0x5: {
+            uint32 frameNum = actor->frameNum + 1;
+            actor->frameNum = frameNum % actor->frameCount;
+
+            if (Shared.getMillis() - actor->tickValue1 > 300) {
+                if (rand() % 100 < 50) {
+                    // TODO: check sound playing
+                }
+                actor->tickValue1 = Shared.getMillis();
+            }
+        }        
+            break;
+        case 0xC:
+            if (worldStats->numChapter == 2) {
+                // TODO: put code here
+            } else if (worldStats->numChapter == 11) {
+                // TODO: put code here
+            }
+        case 0x1:
+            // TODO: do actor direction
+            break;
+        case 0x2:
+        case 0xD:
+            // TODO: do actor direction
+            break;
+        case 0x3:
+        case 0x13:
+            // TODO: updateCharacterSub05();
+            break;
+        case 0x7:
+            // TODO: something
+            break;
+        case 0x4:
+            if (actor->field_944 != 5) {
+                // TODO: updateCharacterSub01_sw(1, actorIdx);
+            }
+            break;
+        case 0xE:
+            // TODO: updateCharacterSub02(1, actorIdx);
+            break;
+        case 0x15:
+            // TODO: updateCharacterSub06(1, actorIdx);
+            break;
+        case 0x9:
+            // TODO: updateCharacterSub03(1, actorIdx);
+            break;
+        case 0x6:
+        case 0xA:
+            actor->frameNum = (actor->frameNum + 1) % actor->frameCount;
+            break;
+        case 0x8:
+            // TODO: actor sound
+            break;
+        default:
+            break;
+        }
+    }
 }
 
 bool Scene::isBarrierVisible(BarrierItem *barrier) {

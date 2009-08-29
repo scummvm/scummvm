@@ -46,19 +46,6 @@ class GamePolygons;
 class ActionList;
 struct BarrierItem;
 
-#if 0
-// TODO/FIXME: Are there REALLY any points which go beyond 32768???
-// ScummVM common Point uses int16 and we need int32
-typedef struct Point { 
-	int32 x, y;
-} Point;
-
-// ScummVM common Rect uses int16 and we need int32
-typedef struct Rect { 
-	int32 top, left, bottom, right;
-} Rect;
-#endif
-
 class SceneResource {
 public:
 	SceneResource();
@@ -236,8 +223,10 @@ typedef struct ActorItem {
 	uint32		 flags2;
 	uint32		 field_934;
 	uint32		 field_938;
-	uint32		 soundResId;
-	// TODO field_940 till field_978
+	uint32		 soundResId; // field_93C
+    uint32       field_940;
+    uint32       field_944;
+	// TODO field_948 till field_978
 	uint32		 actionIdx1;
 	// TODO field_980 till field_9A0
 
