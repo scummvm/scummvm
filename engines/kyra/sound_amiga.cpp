@@ -201,7 +201,7 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 		if (track >= _tableSfxGame_Size)
 			return;
 
-		if (_tableSfxGame[track].note) { 
+		if (_tableSfxGame[track].note) {
 			sfx = &_tableSfxGame[track];
 			pan = (sfx->pan != 0) && (sfx->pan != 2);
 		}
