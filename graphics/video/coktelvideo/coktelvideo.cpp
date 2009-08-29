@@ -23,11 +23,14 @@
  *
  */
 
+#include "graphics/video/coktelvideo/coktelvideo.h"
+
+#ifdef GRAPHICS_VIDEO_COKTELVIDEO_H
+
 #include "common/endian.h"
 #include "common/system.h"
 
 #include "graphics/dither.h"
-#include "graphics/video/coktelvideo/coktelvideo.h"
 #include "graphics/video/coktelvideo/indeo3.h"
 
 namespace Graphics {
@@ -1131,9 +1134,13 @@ bool Vmd::assessVideoProperties() {
 
 	if (_externalCodec) {
 		if (_videoCodec == MKID_BE('iv32')) {
+#ifdef USE_INDEO3
 			_features &= ~kFeaturesPalette;
 			_features |=  kFeaturesFullColor;
 			_codecIndeo3 = new Indeo3(_width, _height, _palLUT);
+#else
+			warning("Vmd::assessVideoProperties(): Indeo3 decoder not compiled in");
+#endif
 		} else {
 			char *fourcc = (char *) &_videoCodec;
 
@@ -1190,8 +1197,10 @@ bool Vmd::assessVideoProperties() {
 		}
 	}
 
+#ifdef USE_INDEO3
 	if (_externalCodec && _codecIndeo3)
 		_features |= kFeaturesSupportsDouble;
+#endif
 
 	return true;
 }
@@ -1506,12 +1515,14 @@ void Vmd::setDoubleMode(bool doubleMode) {
 
 	}
 
+#ifdef USE_INDEO3
 	if (_codecIndeo3) {
 		delete _codecIndeo3;
 
 		_codecIndeo3 = new Indeo3(_width * (doubleMode ? 2 : 1),
 				_height * (doubleMode ? 2 : 1), _palLUT);
 	}
+#endif
 
 	_doubleMode = doubleMode;
 }
@@ -1557,7 +1568,9 @@ void Vmd::clear(bool del) {
 	Imd::clear(del);
 
 	if (del) {
+#ifdef USE_INDEO3
 		delete _codecIndeo3;
+#endif
 		delete[] _frames;
 		delete[] _vidMemBuffer;
 	}
@@ -1565,7 +1578,9 @@ void Vmd::clear(bool del) {
 	_hasVideo   = true;
 	_videoCodec = 0;
 
+#ifdef USE_INDEO3
 	_codecIndeo3 = 0;
+#endif
 
 	_partsPerFrame = 0;
 	_frames = 0;
@@ -1802,7 +1817,6 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 	int16 height = bottom - top  + 1;
 	int16 sW     = _vidMemWidth;
 	int16 sH     = _vidMemHeight;
-	uint32 dataLen = _frameDataLen;
 
 	byte *dataPtr   = _frameData;
 	byte *imdVidMem = _vidMem + sW * top + left;
@@ -1815,6 +1829,9 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 
 	uint8 type;
 	byte *dest = imdVidMem;
+
+#ifdef USE_INDEO3
+	uint32 dataLen = _frameDataLen;
 
 	if (Indeo3::isIndeo3(dataPtr, dataLen)) {
 		if (!_codecIndeo3)
@@ -1837,6 +1854,14 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 			warning("Unknown external codec");
 			return 0;
 		}
+
+#else
+
+	if (_externalCodec) {
+		return 0;
+	} else {
+
+#endif
 
 		type   = *dataPtr++;
 		srcPtr =  dataPtr;
@@ -2284,3 +2309,5 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 }
 
 } // End of namespace Graphics
+
+#endif // GRAPHICS_VIDEO_COKTELVIDEO_H

@@ -118,6 +118,7 @@ _text_console=no
 _mt32emu=yes
 _build_hq_scalers=yes
 _build_scalers=yes
+_indeo3=auto
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -615,6 +616,8 @@ Optional Libraries:
   --with-mpeg2-prefix=DIR  Prefix where libmpeg2 is installed (optional)
   --enable-mpeg2           enable mpeg2 codec for cutscenes [no]
 
+  --disable-indeo3         disable Indeo3 decoder [autodetect]
+
   --with-fluidsynth-prefix=DIR  Prefix where libfluidsynth is installed (optional)
   --disable-fluidsynth     disable fluidsynth MIDI driver [autodetect]
 
@@ -662,6 +665,8 @@ for ac_option in $@; do
 	--enable-nasm)            _nasm=yes       ;;
 	--disable-nasm)           _nasm=no        ;;
 	--enable-mpeg2)           _mpeg2=yes      ;;
+	--disable-indeo3)         _indeo3=no      ;;
+	--enable-indeo3)          _indeo3=yes     ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -1719,6 +1724,24 @@ add_to_config_mk_if_no $_build_hq_scalers   'DISABLE_HQ_SCALERS = 1'
 add_to_config_mk_if_no $_build_scalers      'DISABLE_SCALERS = 1'
 
 #
+# Check whether to compile the Indeo3 decoder
+#
+if test "$_indeo3" = auto ; then
+	# Autodetect. Build if either the gob engine or plugins are enabled
+	if test `get_engine_build gob` = yes || test "$_dynamic_modules" = yes ; then
+		_indeo3="yes"
+	else
+		_indeo3="no"
+	fi
+fi
+if test "$_indeo3" = no ; then
+	_def_indeo3='#undef USE_INDEO3'
+else
+	_def_indeo3='#define USE_INDEO3'
+fi
+add_to_config_mk_if_yes "$_indeo3" 'USE_INDEO3 = 1'
+
+#
 # Check for math lib
 #
 cat > $TMPC << EOF
@@ -2074,6 +2097,10 @@ if test "$_mt32emu" = yes ; then
 	echo_n ", MT-32 emu"
 fi
 
+if test "$_indeo3" = yes ; then
+	echo_n ", Indeo3 decoder"
+fi
+
 if test "$_text_console" = yes ; then
 	echo_n ", text console"
 fi
@@ -2307,6 +2334,7 @@ $_def_readline
 /* Options */
 $_def_text_console
 $_def_mt32emu
+$_def_indeo3
 $_def_16bit
 
 /* Plugin settings */
