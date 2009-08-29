@@ -357,8 +357,6 @@ void ScummEngine_v0::setupOpcodes() {
 	OPCODE(0xff, o2_ifState02);
 }
 
-#define SENTENCE_SCRIPT 2
-
 int ScummEngine_v0::getVarOrDirectWord(byte mask) {
 	return getVarOrDirectByte(mask);
 }
@@ -919,7 +917,6 @@ void ScummEngine_v0::o_cutscene() {
 	setUserState(15);
 
 	_sentenceNum = 0;
-	stopScript(SENTENCE_SCRIPT);
 	resetSentence();
 
 	vm.cutScenePtr[0] = 0;
