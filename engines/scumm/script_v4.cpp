@@ -397,7 +397,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 	byte a = getVarOrDirectByte(PARAM_1);
 	byte result = 0;
 
-	if (_game.version <= 1) {
+	if ((_game.id == GID_MANIAC && _game.version <= 1) || (_game.id == GID_ZAK && _game.platform == Common::kPlatformC64)) {
 		// Convert V0/V1 load/save screen (they support only one savegame per disk)
 		// 1 Load
 		// 2 Save
