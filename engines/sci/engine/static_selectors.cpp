@@ -38,14 +38,14 @@ struct SelectorRemap {
 const int handleIndex = 41;
 const int canBeHereIndex = 54;
 
-const char *selectorNamesFirstPart[] = {
-	        "y",            "x",     "view",      "loop",        "cel",	//  0 -  4
-	  "underBits",      "nsTop",   "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
-	      "lsTop",     "lsLeft", "lsBottom",   "lsRight",     "signal", // 10 - 14
-	"illegalBits",      "brTop",   "brLeft",  "brBottom",    "brRight", // 15 - 19
-	       "name",        "key",     "time",      "text",   "elements", // 20 - 24
-		  "color",       "back",     "mode",     "style",      "state", // 25 - 29
-		   "font",       "type",   "window",    "cursor",        "max", // 30 - 34
+static const char * const selectorNamesFirstPart[] = {
+              "y",          "x",     "view",      "loop",        "cel", //  0 -  4
+      "underBits",      "nsTop",   "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
+          "lsTop",     "lsLeft", "lsBottom",   "lsRight",     "signal", // 10 - 14
+    "illegalBits",      "brTop",   "brLeft",  "brBottom",    "brRight", // 15 - 19
+           "name",        "key",     "time",      "text",   "elements", // 20 - 25
+          "color",       "back",     "mode",     "style",      "state", // 25 - 29
+           "font",       "type",   "window",    "cursor",        "max", // 30 - 34
            "mark",        "who",  "message",      "edit",       "play", // 35 - 39
          "number",    "nodePtr",   "client",        "dx",         "dy", // 40 - 44
       "b-moveCnt",       "b-i1",     "b-i2",      "b-di",    "b-xAxis", // 45 - 49
