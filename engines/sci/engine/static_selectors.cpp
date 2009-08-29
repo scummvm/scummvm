@@ -64,7 +64,7 @@ void createFirstPart(Common::StringList &names, int offset, bool hasCantBeHere, 
 	names.resize(count);
 
 	for (i = 0; i < offset; i++)
-		names[i] = "";
+		names[i].clear();
 
 	for (i = offset; i < count; i++) {
 		names[i] = selectorNamesFirstPart[i - offset];
