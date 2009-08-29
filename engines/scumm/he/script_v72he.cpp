@@ -1823,7 +1823,10 @@ void ScummEngine_v72he::o72_readINI() {
 			// in convertFilePath and to avoid warning about invalid
 			// path in Macintosh verisons.
 			data = defineArray(0, kStringArray, 0, 0, 0, 2);
-			memcpy(data, (const char *)"*\\", 2);
+			if (_game.platform == Common::kPlatformMacintosh)
+				memcpy(data, (const char *)"*:", 2);
+			else
+				memcpy(data, (const char *)"*\\", 2);
 		} else {
 			const char *entry = (ConfMan.get((char *)option).c_str());
 			int len = resStrLen((const byte *)entry);

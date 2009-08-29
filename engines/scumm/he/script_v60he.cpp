@@ -129,9 +129,12 @@ int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 	} else if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
 		// The default game data path is set to './' by ScummVM
 		r = 2;
-	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (HE72 - HE100)
+ 	} else if (dst[0] == '*' && dst[1] == '/') { // Save Game Path (Windows HE72 - HE100)
 		// The default save game path is set to '*/' by ScummVM
 		r = 2;
+ 	} else if (dst[0] == '*' && dst[1] == ':') { // Save Game Path (Macintosh HE72 - HE100)
+		// The default save game path is set to ':/' by ScummVM
+ 		r = 2;
 	} else if (dst[0] == 'c' && dst[1] == ':') { // Save Game Path (HE60 - HE71)
 		// The default save path is game path (DOS) or 'c:/hegames/' (Windows)
 		for (r = len; r != 0; r--) {
