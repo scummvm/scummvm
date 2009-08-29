@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 51,
+	kKyraDatVersion = 52,
 	kIndexSize = 12
 };
 
@@ -61,21 +61,22 @@ const Game kyra1FanTranslations[] = {
 	GAME_DUMMY_ENTRY
 };
 
-bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 
-bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
-bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch = 0);
+bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 
 int extractHofSeqData_checkString(const void *ptr, uint8 checkSize);
 int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheckSize);
@@ -90,6 +91,7 @@ const ExtractType extractTypeTable[] = {
 	{ kTypeRoomList, extractRooms, createFilename },
 	{ kTypeShapeList, extractShapes, createFilename },
 	{ kTypeRawData, extractRaw, createFilename },
+	{ kTypeAmigaSfxTable, extractAmigaSfx, createFilename },
 
 	{ k2TypeSeqData, extractHofSeqData, createFilename },
 	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
@@ -214,13 +216,16 @@ const ExtractFilename extractFilenames[] = {
 	{ kPaletteList31, kTypeRawData, "PALTABLE31.PAL" },
 	{ kPaletteList32, kTypeRawData, "PALTABLE32.PAL" },
 	{ kPaletteList33, kTypeRawData, "PALTABLE33.PAL" },
+	{ kCreditsStrings, kTypeRawData, "CREDITS" },
 
 	// FM-TOWNS specific
 	{ kKyra1TownsSFXwdTable, kTypeRawData, "SFXWDTABLE" },
 	{ kKyra1TownsSFXbtTable, kTypeRawData, "SFXBTTABLE" },
 	{ kKyra1TownsCDATable, kTypeRawData, "CDATABLE" },
-	{ kCreditsStrings, kTypeRawData, "CREDITS" },
 
+	// AMIGA specific
+	{ kAmigaIntroSFXTable, kTypeAmigaSfxTable, "SFXINTRO" },
+	{ kAmigaGameSFXTable, kTypeAmigaSfxTable, "SFXGAME" },
 
 	// HAND OF FATE
 
@@ -690,6 +695,25 @@ bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 s
 	memcpy(output, data, size);
 
 	return out.addFile(filename, buffer, size + 1 * 4);
+}
+
+bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	const uint32 entries = size / 8;
+	byte *buffer = new byte[entries * 6 + 1 * 4];
+
+	byte *output = buffer;
+	WRITE_BE_UINT32(output, entries); output += 4;
+
+	for (uint32 i = 0; i < entries; ++i) {
+		*output++ = *data++;	// Note
+		*output++ = *data++;	// Patch
+		data += 2;				// Unused
+		WRITE_BE_UINT16(output, READ_BE_UINT16(data)); output += 2; data += 2; // Duration
+		*output++ = *data++;	// Volume
+		*output++ = *data++;	// Pan
+	}
+
+	return out.addFile(filename, buffer, entries * 6 + 1 * 4);
 }
 
 bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {

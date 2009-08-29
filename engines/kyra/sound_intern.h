@@ -285,6 +285,15 @@ private:
 	static const uint8 _noteTable2[];
 };
 
+// for StaticResource (maybe we can find a nicer way to handle it)
+struct AmigaSfxTable {
+	uint8 note;
+	uint8 patch;
+	uint16 duration;
+	uint8 volume;
+	uint8 pan;
+};
+
 class SoundAmiga : public Sound {
 public:
 	SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer);
@@ -309,8 +318,12 @@ protected:
 	Audio::MaxTrax *_driver;
 	Audio::SoundHandle _musicHandle;
 	enum FileType { kFileNone = -1, kFileIntro = 0, kFileGame = 1, kFileFinal = 2 } _fileLoaded;
-	const byte *_tableSfxIntro;
-	const byte *_tableSfxGame;
+
+	const AmigaSfxTable *_tableSfxIntro;
+	int _tableSfxIntro_Size;
+
+	const AmigaSfxTable *_tableSfxGame;
+	int _tableSfxGame_Size;
 };
 
 } // end of namespace Kyra

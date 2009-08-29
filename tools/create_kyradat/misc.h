@@ -369,6 +369,8 @@ const int kyra1AmigaNeed[] = {
 	kNewGameString,
 	kConfigStrings,
 	kCreditsStrings,
+	kAmigaIntroSFXTable,
+	kAmigaGameSFXTable,
 	-1
 };
 

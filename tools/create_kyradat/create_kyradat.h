@@ -141,6 +141,9 @@ enum kExtractID {
 	kKyra1TownsCDATable,
 	kCreditsStrings,
 
+	kAmigaIntroSFXTable,
+	kAmigaGameSFXTable,
+
 	k2SeqplayPakFiles,
 	k2SeqplayStrings,
 	k2SeqplaySfxFiles,
@@ -346,6 +349,7 @@ enum kExtractType {
 	kTypeRoomList,
 	kTypeShapeList,
 	kTypeRawData,
+	kTypeAmigaSfxTable,
 
 	k2TypeSeqData,
 	k2TypeShpDataV1,

@@ -32,26 +32,6 @@
 #include "sound/mods/maxtrax.h"
 #include "sound/audiostream.h"
 
-namespace {
-
-FORCEINLINE uint8 sfxTableGetNote(const byte* address) {
-	return (uint8)address[0];
-}
-FORCEINLINE uint8 sfxTableGetPatch(const byte* address) {
-	return (uint8)address[1];
-}
-FORCEINLINE uint16 sfxTableGetDuration(const byte* address) {
-	return READ_BE_UINT16(&address[4]);
-}
-FORCEINLINE int8 sfxTableGetVolume(const byte* address) {
-	return (int8)address[6];
-}
-FORCEINLINE int8 sfxTableGetPan(const byte* address) {
-	return (int8)address[7];
-}
-
-} // end of namespace
-
 namespace Kyra {
 
 SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
@@ -59,8 +39,10 @@ SoundAmiga::SoundAmiga(KyraEngine_v1 *vm, Audio::Mixer *mixer)
 	  _driver(0),
 	  _musicHandle(),
 	  _fileLoaded(kFileNone),
-	  _tableSfxIntro(),
-	  _tableSfxGame() {
+	  _tableSfxIntro(0),
+	  _tableSfxGame(0),
+	  _tableSfxIntro_Size(0),
+	  _tableSfxGame_Size(0) {
 }
 
 SoundAmiga::~SoundAmiga() {
@@ -68,13 +50,11 @@ SoundAmiga::~SoundAmiga() {
 	delete _driver;
 }
 
-extern const byte LoKAmigaSfxIntro[];
-extern const byte LoKAmigaSfxGame[];
-
 bool SoundAmiga::init() {
 	_driver = new Audio::MaxTrax(_mixer->getOutputRate(), true);
-	_tableSfxIntro = LoKAmigaSfxIntro;
-	_tableSfxGame = LoKAmigaSfxGame;
+
+	_tableSfxIntro = _vm->staticres()->loadAmigaSfxTable(k1AmigaIntroSFXTable, _tableSfxIntro_Size);
+	_tableSfxGame = _vm->staticres()->loadAmigaSfxTable(k1AmigaGameSFXTable, _tableSfxGame_Size);
 
 	return _driver != 0 && _tableSfxIntro && _tableSfxGame;
 }
@@ -201,16 +181,16 @@ void SoundAmiga::beginFadeOut() {
 
 void SoundAmiga::playSoundEffect(uint8 track) {
 	debugC(5, kDebugLevelSound, "SoundAmiga::playSoundEffect(%d)", track);
-	const byte* tableEntry = 0;
+	const AmigaSfxTable *sfx = 0;
 	bool pan = false;
 
 	switch (_fileLoaded) {
 	case kFileFinal:
 	case kFileIntro:
 		// We only allow playing of sound effects, which are included in the table.
-		if (track < 40) {
-			tableEntry = &_tableSfxIntro[track * 8];
-			pan = (sfxTableGetPan(tableEntry) != 0);
+		if (track < _tableSfxIntro_Size) {
+			sfx = &_tableSfxIntro[track];
+			pan = (sfx->pan != 0);
 		}
 		break;
 
@@ -218,18 +198,22 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 		if (0x61 <= track && track <= 0x63)
 			playTrack(track - 0x4F);
 
-		assert(track < 120);
-		if (sfxTableGetNote(&_tableSfxGame[track * 8])) { 
-			tableEntry = &_tableSfxGame[track * 8];
-			pan = (sfxTableGetPan(tableEntry) != 0) && (sfxTableGetPan(tableEntry) != 2);
+		if (track >= _tableSfxGame_Size)
+			return;
+
+		if (_tableSfxGame[track].note) { 
+			sfx = &_tableSfxGame[track];
+			pan = (sfx->pan != 0) && (sfx->pan != 2);
 		}
+
 		break;
+
 	default:
-		;
+		return;
 	}
 
-	if (_sfxEnabled && tableEntry) {
-		const bool success = _driver->playNote(sfxTableGetNote(tableEntry), sfxTableGetPatch(tableEntry), sfxTableGetDuration(tableEntry), sfxTableGetVolume(tableEntry), pan);
+	if (_sfxEnabled && sfx) {
+		const bool success = _driver->playNote(sfx->note, sfx->patch, sfx->duration, sfx->volume, pan);
 		if (success && !_mixer->isSoundHandleActive(_musicHandle))
 			_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_musicHandle, _driver, -1, Audio::Mixer::kMaxChannelVolume, 0, false);
 	}

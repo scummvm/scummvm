@@ -174,10 +174,14 @@ enum kKyraResources {
 	k1AudioTracks,
 	k1AudioTracksIntro,
 
+	k1CreditsStrings,
+
 	k1TownsSFXwdTable,
 	k1TownsSFXbtTable,
 	k1TownsCDATable,
-	k1CreditsStrings,
+
+	k1AmigaIntroSFXTable,
+	k1AmigaGameSFXTable,
 
 	k2SeqplayPakFiles,
 	k2SeqplayCredits,
@@ -301,6 +305,7 @@ enum kKyraResources {
 
 struct Shape;
 struct Room;
+struct AmigaSfxTable;
 
 class StaticResource {
 public:
@@ -317,6 +322,7 @@ public:
 	const char * const *loadStrings(int id, int &strings);
 	const uint8 *loadRawData(int id, int &size);
 	const Shape *loadShapeTable(int id, int &entries);
+	const AmigaSfxTable *loadAmigaSfxTable(int id, int &entries);
 	const Room *loadRoomTable(int id, int &entries);
 	const uint8 * const *loadPaletteTable(int id, int &entries);
 	const HofSeqData *loadHofSequenceData(int id, int &entries);
@@ -357,6 +363,7 @@ private:
 	bool loadStringTable(const char *filename, void *&ptr, int &size);
 	bool loadRawData(const char *filename, void *&ptr, int &size);
 	bool loadShapeTable(const char *filename, void *&ptr, int &size);
+	bool loadAmigaSfxTable(const char *filename, void *&ptr, int &size);
 	bool loadRoomTable(const char *filename, void *&ptr, int &size);
 	bool loadPaletteTable(const char *filename, void *&ptr, int &size);
 	bool loadHofSequenceData(const char *filename, void *&ptr, int &size);
@@ -375,6 +382,7 @@ private:
 	void freeRawData(void *&ptr, int &size);
 	void freeStringTable(void *&ptr, int &size);
 	void freeShapeTable(void *&ptr, int &size);
+	void freeAmigaSfxTable(void *&ptr, int &size);
 	void freeRoomTable(void *&ptr, int &size);
 	void freePaletteTable(void *&ptr, int &size);
 	void freeHofSequenceData(void *&ptr, int &size);
@@ -400,6 +408,7 @@ private:
 		kShapeList,
 		kRawData,
 		kPaletteTable,
+		kAmigaSfxTable,
 
 		k2SeqData,
 		k2ShpAnimDataV1,

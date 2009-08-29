@@ -48,6 +48,8 @@ const ExtractEntry kyra1AmigaEng[] = {
 	{ kNewGameString, 0x00031164, 0x0003117A },
 	{ kConfigStrings, 0x00015ACA, 0x00015AF8 },
 	{ kCreditsStrings, 0x0000777C, 0x00007C48 },
+	{ kAmigaIntroSFXTable, 0x00032D5C, 0x00032E9C },
+	{ kAmigaGameSFXTable, 0x0002C55E, 0x0002C91E },
 	{ -1, 0, 0 }
 };
 
