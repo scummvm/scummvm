@@ -1576,13 +1576,27 @@ static const GOBGameDescription gameDescriptions[] = {
 			"littlered",
 			"",
 			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib | kFeaturesEGA,
+		0, 0, 0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
 			FR_FRA,
 			kPlatformWindows,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
-		kFeaturesAdlib,
+		kFeaturesAdlib | kFeaturesEGA,
 		0, 0, 0
 	},
 	{
@@ -1596,21 +1610,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
-		kFeaturesAdlib,
-		0, 0, 0
-	},
-	{
-		{
-			"littlered",
-			"",
-			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
-			EN_GRB,
-			kPlatformWindows,
-			ADGF_NO_FLAGS,
-			GUIO_NOSUBTITLES | GUIO_NOSPEECH
-		},
-		kGameTypeGob2,
-		kFeaturesAdlib,
+		kFeaturesAdlib | kFeaturesEGA,
 		0, 0, 0
 	},
 	{
@@ -1624,7 +1624,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
-		kFeaturesAdlib,
+		kFeaturesAdlib | kFeaturesEGA,
 		0, 0, 0
 	},
 	{
@@ -1638,7 +1638,7 @@ static const GOBGameDescription gameDescriptions[] = {
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},
 		kGameTypeGob2,
-		kFeaturesAdlib,
+		kFeaturesAdlib | kFeaturesEGA,
 		0, 0, 0
 	},
 	{
