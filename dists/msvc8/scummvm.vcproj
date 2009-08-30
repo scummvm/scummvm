@@ -452,12 +452,16 @@
 				<File RelativePath="..\..\graphics\fonts\scummfont.cpp" />
 			</Filter>
 			<Filter Name="video">
+				<File RelativePath="..\..\graphics\video\avi_player.cpp" />
+				<File RelativePath="..\..\graphics\video\avi_player.h" />			
 				<File RelativePath="..\..\graphics\video\dxa_decoder.cpp" />
 				<File RelativePath="..\..\graphics\video\dxa_decoder.h" />
 				<File RelativePath="..\..\graphics\video\flic_decoder.cpp" />
 				<File RelativePath="..\..\graphics\video\flic_decoder.h" />
 				<File RelativePath="..\..\graphics\video\mpeg_player.cpp" />
 				<File RelativePath="..\..\graphics\video\mpeg_player.h" />
+				<File RelativePath="..\..\graphics\video\msvideo1.cpp" />
+				<File RelativePath="..\..\graphics\video\msvideo1.h" />				
 				<File RelativePath="..\..\graphics\video\smk_decoder.cpp" />
 				<File RelativePath="..\..\graphics\video\smk_decoder.h" />
 				<File RelativePath="..\..\graphics\video\video_player.cpp" />
