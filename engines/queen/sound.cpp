@@ -575,7 +575,7 @@ void AmigaSound::playSong(int16 song) {
 		// song not available in the amiga version
 		return;
 	}
-    _lastOverride = song;
+	_lastOverride = song;
 }
 
 void AmigaSound::stopSfx() {

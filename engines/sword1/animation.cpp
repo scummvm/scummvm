@@ -43,26 +43,26 @@
 namespace Sword1 {
 
 static const char *sequenceList[20] = {
-    "ferrari",  // 0  CD2   ferrari running down fitz in sc19
-    "ladder",   // 1  CD2   george walking down ladder to dig sc24->sc$
-    "steps",    // 2  CD2   george walking down steps sc23->sc24
-    "sewer",    // 3  CD1   george entering sewer sc2->sc6
-    "intro",    // 4  CD1   intro sequence ->sc1
-    "river",    // 5  CD1   george being thrown into river by flap & g$
-    "truck",    // 6  CD2   truck arriving at bull's head sc45->sc53/4
-    "grave",    // 7  BOTH  george's grave in scotland, from sc73 + from sc38 $
-    "montfcon", // 8  CD2   monfaucon clue in ireland dig, sc25
-    "tapestry", // 9  CD2   tapestry room beyond spain well, sc61
-    "ireland",  // 10 CD2   ireland establishing shot europe_map->sc19
-    "finale",   // 11 CD2   grand finale at very end, from sc73
-    "history",  // 12 CD1   George's history lesson from Nico, in sc10
-    "spanish",  // 13 CD2   establishing shot for 1st visit to Spain, europe_m$
-    "well",     // 14 CD2   first time being lowered down well in Spai$
-    "candle",   // 15 CD2   Candle burning down in Spain mausoleum sc59
-    "geodrop",  // 16 CD2   from sc54, George jumping down onto truck
-    "vulture",  // 17 CD2   from sc54, vultures circling George's dead body
-    "enddemo",  // 18 ---   for end of single CD demo
-    "credits",  // 19 CD2   credits, to follow "finale" sequence
+	"ferrari",  // 0  CD2   ferrari running down fitz in sc19
+	"ladder",   // 1  CD2   george walking down ladder to dig sc24->sc$
+	"steps",    // 2  CD2   george walking down steps sc23->sc24
+	"sewer",    // 3  CD1   george entering sewer sc2->sc6
+	"intro",    // 4  CD1   intro sequence ->sc1
+	"river",    // 5  CD1   george being thrown into river by flap & g$
+	"truck",    // 6  CD2   truck arriving at bull's head sc45->sc53/4
+	"grave",    // 7  BOTH  george's grave in scotland, from sc73 + from sc38 $
+	"montfcon", // 8  CD2   monfaucon clue in ireland dig, sc25
+	"tapestry", // 9  CD2   tapestry room beyond spain well, sc61
+	"ireland",  // 10 CD2   ireland establishing shot europe_map->sc19
+	"finale",   // 11 CD2   grand finale at very end, from sc73
+	"history",  // 12 CD1   George's history lesson from Nico, in sc10
+	"spanish",  // 13 CD2   establishing shot for 1st visit to Spain, europe_m$
+	"well",     // 14 CD2   first time being lowered down well in Spai$
+	"candle",   // 15 CD2   Candle burning down in Spain mausoleum sc59
+	"geodrop",  // 16 CD2   from sc54, George jumping down onto truck
+	"vulture",  // 17 CD2   from sc54, vultures circling George's dead body
+	"enddemo",  // 18 ---   for end of single CD demo
+	"credits",  // 19 CD2   credits, to follow "finale" sequence
 };
 
 ///////////////////////////////////////////////////////////////////////////////

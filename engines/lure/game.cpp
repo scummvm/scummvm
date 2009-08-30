@@ -687,7 +687,7 @@ bool Game::GetTellActions() {
 
 			switch (paramIndex) {
 			case 0:
-                // Prompt for selection of action to perform
+				// Prompt for selection of action to perform
 				action = PopupMenu::Show(0x6A07FD);
 				if (action == NONE) {
 					// Move backwards to prior specified action

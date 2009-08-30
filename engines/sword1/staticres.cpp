@@ -6582,7 +6582,7 @@ const uint16 Sound::_roomsFixedFx[TOTAL_ROOMS][TOTAL_FX_PER_ROOM] =
 #define LOGIC_CALL_FN(FN_ID, PARAM) \
 	opcCallFn,     ENCODE8(FN_ID), ENCODE8(PARAM)
 #define LOGIC_CALL_FN_LONG(FN_ID, PARAM1, PARAM2, PARAM3) \
-    opcCallFnLong, ENCODE8(FN_ID), ENCODE32(PARAM1), ENCODE32(PARAM2), ENCODE32(PARAM3)
+	opcCallFnLong, ENCODE8(FN_ID), ENCODE32(PARAM1), ENCODE32(PARAM2), ENCODE32(PARAM3)
 #define LOGIC_SET_VAR8(VAR_ID, VAL) \
 	opcSetVar8,  ENCODE16(VAR_ID), ENCODE8(VAL)
 #define LOGIC_SET_VAR16(VAR_ID, VAL) \
@@ -6682,7 +6682,7 @@ const uint8 g_startPos17[] = {				// hotel assassin
 };
 
 const uint8 g_startPos18[] = {				// gendarmerie
-    GEORGE_POS(446, 408, DOWN_LEFT, FLOOR_18),
+	GEORGE_POS(446, 408, DOWN_LEFT, FLOOR_18),
 	LOGIC_SET_VAR8(PARIS_FLAG, 5),
 	INIT_SEQ_END
 };
@@ -6857,7 +6857,7 @@ const uint8 g_startPos54[] = {				// bull's head
 };
 
 const uint8 g_startPos55[] = {				// bull secret
-    GEORGE_POS(825, 373, DOWN_LEFT, FLOOR_55),
+	GEORGE_POS(825, 373, DOWN_LEFT, FLOOR_55),
 	RUN_HELPER_SCRIPT(HELP_SYRIA)
 };
 
