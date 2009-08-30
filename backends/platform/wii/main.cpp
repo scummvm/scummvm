@@ -37,6 +37,8 @@
 #include <debug.h>
 #endif
 
+#include "gfx.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -152,6 +154,8 @@ int main(int argc, char *argv[]) {
 	}
 
 	printf("reloading\n");
+
+	gfx_video_deinit();
 
 	return res;
 }

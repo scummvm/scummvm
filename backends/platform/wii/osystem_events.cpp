@@ -43,6 +43,7 @@
 #define PADS_B (PAD_BUTTON_B | (WPAD_BUTTON_B << 16))
 #define PADS_X (PAD_BUTTON_X | (WPAD_BUTTON_MINUS << 16))
 #define PADS_Y (PAD_BUTTON_Y | (WPAD_BUTTON_PLUS << 16))
+#define PADS_R (PAD_TRIGGER_R | (WPAD_BUTTON_1 << 16))
 #define PADS_Z (PAD_TRIGGER_Z | (WPAD_BUTTON_2 << 16))
 #define PADS_START (PAD_BUTTON_START | (WPAD_BUTTON_HOME << 16))
 #define PADS_UP (PAD_BUTTON_UP | (WPAD_BUTTON_UP << 16))
@@ -54,6 +55,7 @@
 #define PADS_B PAD_BUTTON_B
 #define PADS_X PAD_BUTTON_X
 #define PADS_Y PAD_BUTTON_Y
+#define PADS_R PAD_TRIGGER_R
 #define PADS_Z PAD_TRIGGER_Z
 #define PADS_START PAD_BUTTON_START
 #define PADS_UP PAD_BUTTON_UP
@@ -308,7 +310,6 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 	s32 res = WPAD_Probe(0, NULL);
 
 	if (res == WPAD_ERR_NONE) {
-
 		bd |= WPAD_ButtonsDown(0) << 16;
 		bh |= WPAD_ButtonsHeld(0) << 16;
 		bu |= WPAD_ButtonsUp(0) << 16;
@@ -317,6 +318,27 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 
 	if (bd || bu) {
 		byte flags = 0;
+
+		// TODO: add this to an option dialog
+		if (bh & PADS_R) {
+			static u16 vpo_x = 0;
+			static u16 vpo_y = 0;
+
+			if (bd & PADS_LEFT)
+				vpo_x = (vpo_x - 1) % 32;
+
+			if (bd & PADS_RIGHT)
+				vpo_x = (vpo_x + 1) % 32;
+
+			if (bd & PADS_UP)
+				vpo_y = (vpo_y - 1) % 32;
+
+			if (bd & PADS_DOWN)
+				vpo_y = (vpo_y + 1) % 32;
+
+			gfx_set_underscan(vpo_x, vpo_y);
+			return false;
+		}
 
 		if (bh & PADS_UP) {
 			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);

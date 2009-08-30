@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
-#include "backends/fs/wii/wii-fs-factory.h"
 #include "common/config-manager.h"
+#include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
 
@@ -32,47 +32,55 @@
 OSystem_Wii::OSystem_Wii() :
 	_startup_time(0),
 
-	_palette(NULL),
-	_cursorPalette(NULL),
+	_cursorScale(1),
 	_cursorPaletteDisabled(true),
+	_cursorPalette(NULL),
+	_cursorPaletteDirty(false),
 
+	_gameRunning(false),
 	_gameWidth(0),
 	_gameHeight(0),
 	_gamePixels(NULL),
+	_gameDirty(false),
 
-	_overlayVisible(false),
+	_overlayVisible(true),
 	_overlayWidth(0),
 	_overlayHeight(0),
 	_overlaySize(0),
 	_overlayPixels(NULL),
+	_overlayDirty(false),
 
 	_lastScreenUpdate(0),
-	_texture(NULL),
 	_currentWidth(0),
 	_currentHeight(0),
+	_currentXScale(1),
+	_currentYScale(1),
 
-	_activeGraphicsMode(0),
+	_configGraphicsMode(0),
+	_actualGraphicsMode(0),
 #ifdef USE_RGB_COLOR
-	_texturePF(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
-	_screenPF(Graphics::PixelFormat::createFormatCLUT8()),
-	_cursorPF(Graphics::PixelFormat::createFormatCLUT8()),
+	_pfRGB565(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
+	_pfRGB3444(Graphics::PixelFormat(2, 4, 4, 4, 3, 8, 4, 0, 12)),
+	_pfGame(Graphics::PixelFormat::createFormatCLUT8()),
+	_pfGameTexture(Graphics::PixelFormat::createFormatCLUT8()),
+	_pfCursor(Graphics::PixelFormat::createFormatCLUT8()),
 #endif
 
 	_fullscreen(false),
+	_arCorrection(false),
 
 	_mouseVisible(false),
 	_mouseX(0),
 	_mouseY(0),
-	_mouseWidth(0),
-	_mouseHeight(0),
 	_mouseHotspotX(0),
 	_mouseHotspotY(0),
 	_mouseKeyColor(0),
-	_mouseCursor(NULL),
 
 	_kbd_active(false),
 
 	_event_quit(false),
+
+	_lastPadCheck(0),
 
 	_savefile(NULL),
 	_mixer(NULL),
@@ -80,20 +88,14 @@ OSystem_Wii::OSystem_Wii() :
 }
 
 OSystem_Wii::~OSystem_Wii() {
-	if (_savefile) {
-		delete _savefile;
-		_savefile = NULL;
-	}
+	delete _savefile;
+	_savefile = NULL;
 
-	if (_mixer) {
-		delete _mixer;
-		_mixer = NULL;
-	}
+	delete _mixer;
+	_mixer = NULL;
 
-	if (_timer) {
-		delete _timer;
-		_timer = NULL;
-	}
+	delete _timer;
+	_timer = NULL;
 }
 
 void OSystem_Wii::initBackend() {
@@ -107,11 +109,12 @@ void OSystem_Wii::initBackend() {
 	_mixer = new Audio::MixerImpl(this);
 	_timer = new DefaultTimerManager();
 
-	_fullscreen = ConfMan.getBool("fullscreen");
-
 	initGfx();
 	initSfx();
 	initEvents();
+
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", true);
 
 	OSystem::initBackend();
 }
@@ -125,16 +128,33 @@ void OSystem_Wii::quit() {
 	WiiFilesystemFactory::asyncHandler(false, NULL);
 }
 
+void OSystem_Wii::engineInit() {
+	_gameRunning = true;
+	// umount not required filesystems for this game
+	WiiFilesystemFactory::asyncHandler(false, &ConfMan.get("path"));
+}
+
+void OSystem_Wii::engineDone() {
+	_gameRunning = false;
+	switchVideoMode(GFX_SETUP_STANDARD);
+	gfx_set_ar(4.0 / 3.0);
+}
+
 bool OSystem_Wii::hasFeature(Feature f) {
 	return (f == kFeatureFullscreenMode) ||
-			(f == kFeatureCursorHasPalette);
+			(f == kFeatureAspectRatioCorrection) ||
+			(f == kFeatureCursorHasPalette) ||
+			(f == kFeatureOverlaySupportsAlpha);
 }
 
 void OSystem_Wii::setFeatureState(Feature f, bool enable) {
 	switch (f) {
 	case kFeatureFullscreenMode:
 		_fullscreen = enable;
-		setGraphicsMode(_activeGraphicsMode);
+		gfx_set_pillarboxing(!enable);
+		break;
+	case kFeatureAspectRatioCorrection:
+		_arCorrection = enable;
 		break;
 	default:
 		break;
@@ -145,6 +165,8 @@ bool OSystem_Wii::getFeatureState(Feature f) {
 	switch (f) {
 	case kFeatureFullscreenMode:
 		return _fullscreen;
+	case kFeatureAspectRatioCorrection:
+		return _arCorrection;
 	default:
 		return false;
 	}
@@ -218,10 +240,5 @@ FilesystemFactory *OSystem_Wii::getFilesystemFactory() {
 void OSystem_Wii::getTimeAndDate(struct tm &t) const {
 	time_t curTime = time(0);
 	t = *localtime(&curTime);
-}
-
-void OSystem_Wii::engineInit() {
-	// umount not required filesystems for this game
-	WiiFilesystemFactory::asyncHandler(false, &ConfMan.get("path"));
 }
 

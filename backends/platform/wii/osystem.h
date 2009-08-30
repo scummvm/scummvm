@@ -26,13 +26,14 @@
 #include "common/fs.h"
 #include "common/rect.h"
 #include "common/events.h"
-
 #include "backends/base-backend.h"
 #include "backends/saves/default/default-saves.h"
 #include "backends/timer/default/default-timer.h"
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "sound/mixer_intern.h"
+
+#include "gfx.h"
 
 #include <gctypes.h>
 #include <gccore.h>
@@ -57,38 +58,49 @@ class OSystem_Wii : public BaseBackend {
 private:
 	s64 _startup_time;
 
-	u16 *_palette;
-	u16 *_cursorPalette;
+	int _cursorScale;
 	bool _cursorPaletteDisabled;
+	u16 *_cursorPalette;
+	bool _cursorPaletteDirty;
 
+	bool _gameRunning;
 	u16 _gameWidth, _gameHeight;
 	u8 *_gamePixels;
 	Graphics::Surface _surface;
+	gfx_coords_t _coordsGame;
+	gfx_tex_t _texGame;
+	bool _gameDirty;
 
 	bool _overlayVisible;
 	u16 _overlayWidth, _overlayHeight;
 	u32 _overlaySize;
 	OverlayColor *_overlayPixels;
+	gfx_coords_t _coordsOverlay;
+	gfx_tex_t _texOverlay;
+	bool _overlayDirty;
 
 	u32 _lastScreenUpdate;
-	u16 *_texture;
 	u16 _currentWidth, _currentHeight;
+	f32 _currentXScale, _currentYScale;
 
-	s32 _activeGraphicsMode;
+	s32 _configGraphicsMode;
+	s32 _actualGraphicsMode;
 #ifdef USE_RGB_COLOR
-	const Graphics::PixelFormat _texturePF;
-	Graphics::PixelFormat _screenPF;
-	Graphics::PixelFormat _cursorPF;
+	const Graphics::PixelFormat _pfRGB565;
+	const Graphics::PixelFormat _pfRGB3444;
+	Graphics::PixelFormat _pfGame;
+	Graphics::PixelFormat _pfGameTexture;
+	Graphics::PixelFormat _pfCursor;
 #endif
 
 	bool _fullscreen;
+	bool _arCorrection;
 
 	bool _mouseVisible;
 	s32 _mouseX, _mouseY;
-	u32 _mouseWidth, _mouseHeight;
 	s32 _mouseHotspotX, _mouseHotspotY;
 	u16 _mouseKeyColor;
-	u8 *_mouseCursor;
+	gfx_tex_t _texMouse;
 
 	bool _kbd_active;
 
@@ -98,6 +110,8 @@ private:
 
 	void initGfx();
 	void deinitGfx();
+	void updateScreenResolution();
+	void switchVideoMode(int mode);
 
 	void initSfx();
 	void deinitSfx();
@@ -117,6 +131,8 @@ public:
 	virtual ~OSystem_Wii();
 
 	virtual void initBackend();
+	virtual void engineInit();
+	virtual void engineDone();
 
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
@@ -182,8 +198,6 @@ public:
 	virtual Common::TimerManager *getTimerManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void getTimeAndDate(struct tm &t) const;
-
-	virtual void engineInit();
 };
 
 #endif
