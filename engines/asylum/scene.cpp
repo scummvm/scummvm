@@ -78,7 +78,7 @@ Scene::Scene(uint8 sceneIdx) {
 
     if (worldStats->numBarriers > 0) {
         uint32 priority = 0x0FFB;
-        for (int b=0; b < worldStats->numBarriers; b++) {
+        for (uint32 b=0; b < worldStats->numBarriers; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
             barrier->priority = priority;
             barrier->flags &= 0xFFFF3FFF;
@@ -475,15 +475,19 @@ bool Scene::isBarrierOnScreen(BarrierItem *barrier) {
 }
 
 uint32 Scene::getRandomResId(BarrierItem *barrier) {
-    int numRes = 1;
+    int numRes = 0;
     uint32 rndResId[5];
+    memset(&rndResId, 0, sizeof(rndResId));
     for (int i = 0; i < 5; i++) {
         if (barrier->field_68C[i]) {
             rndResId[numRes] = barrier->field_68C[i];
             numRes++;
         }
     }
-    return rndResId[rand() % numRes];
+    if(numRes > 0)
+        return rndResId[rand() % numRes];
+
+    return barrier->resId;
 }
 
 void Scene::updateBarriers(WorldStats *worldStats) {
@@ -497,11 +501,14 @@ void Scene::updateBarriers(WorldStats *worldStats) {
         for (uint32 b = 0; b < barriersCount; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
 
+            if(b==61)
+                printf("%d: \n",b);
+
             if (barrier->field_3C == 4) {
                 if (isBarrierVisible(barrier)) {
                     uint32 flag = barrier->flags;
                     if (flag & 0x20) {
-                        if (Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                        if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
                             barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
                             barrier->tickCount = Shared.getMillis();
                             canPlaySound = true;
@@ -513,14 +520,14 @@ void Scene::updateBarriers(WorldStats *worldStats) {
                         if (!frameIdx) {
                             if (Shared.getMillis() - barrier->tickCount >= 1000 * barrier->tickCount2) {
                                 if (rand() % barrier->field_C0 == 1) {
-                                    if (barrier->field_68C) {
+                                    if (barrier->field_68C[0]) {
                                         // TODO: fix this, and find a better way to get frame count
                                         // Sometimes we get wrong random resource id
 
-                                        /*barrier->resId = getRandomResId(barrier);
+                                        barrier->resId = getRandomResId(barrier);
                                         GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
                                         barrier->frameCount = gra->getFrameCount();
-                                        delete gra; */
+                                        delete gra;
                                     }
                                     barrier->frameIdx++;
                                 }
@@ -534,7 +541,7 @@ void Scene::updateBarriers(WorldStats *worldStats) {
 
                         if (!(lessZero ^ 0 | equalZero)) {
                             // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-                            if (Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                            if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
                                 barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
                                 barrier->tickCount = Shared.getMillis();
                                 canPlaySound = true;
@@ -542,7 +549,7 @@ void Scene::updateBarriers(WorldStats *worldStats) {
                         }
                     } else if (flag & 8) {
                         // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-						if (Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+						if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
 							uint32 frameIdx = barrier->frameIdx + 1;
                             if (frameIdx < barrier->frameCount - 1) {
                                 if (barrier->field_688 == 1) {
@@ -566,7 +573,7 @@ void Scene::updateBarriers(WorldStats *worldStats) {
 					    }
 					} else if (!((flag & 0xFFFF) & 6)) {
                         // FIXME: we shouldn't increment field_B4 (check why this value came zero sometimes)
-                        if ((Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) && (flag & 0x10000)) {
+                        if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4) && (flag & 0x10000)) {
                             uint32 frameIdx = barrier->frameIdx - 1;
                             if (frameIdx <= 0) {
                                 barrier->flags &= 0xFFFEFFFF;
@@ -580,7 +587,7 @@ void Scene::updateBarriers(WorldStats *worldStats) {
                                 // TODO: get global x, y positions
                             }
                             barrier->frameIdx = frameIdx;
-                        } else if (Shared.getMillis() - barrier->tickCount >= 0x3E8 / (barrier->field_B4+1)) {
+                        } else if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
                             if ((flag & 0xFF) & 2) {
                                 if (barrier->frameIdx == barrier->frameCount - 1) {
                                     barrier->frameIdx--;
@@ -640,10 +647,6 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	int32 curHotspot = -1;
 	int32 curBarrier = -1;
    	MainActor *mainActor = _sceneResource->getMainActor();
-
-	// DEBUG
-	// Force the screen to scroll if the mouse approaches the edges
-	//debugScreenScrolling(bg);
 
 	// DEBUGGING
 	// Check current walk region
@@ -762,6 +765,10 @@ int Scene::drawScene() {
         WorldStats *worldStats = _sceneResource->getWorldStats();    
         GraphicFrame *bg = _bgResource->getFrame(0);
         Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, worldStats->xLeft, worldStats->yTop, 640, 480);
+
+        // DEBUG
+	    // Force the screen to scroll if the mouse approaches the edges
+	    //debugScreenScrolling(bg);
 
         // TODO: prepare Actors and Barriers draw
         // TODO: draw actors

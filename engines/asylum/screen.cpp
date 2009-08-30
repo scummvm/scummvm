@@ -153,7 +153,7 @@ void Screen::clearGraphicsInQueue() {
 void Screen::graphicsSelectionSort() {
     uint minIdx;
 
-    for (uint i = 0; i < _queueItems.size() - 1; i++) {
+    for (uint i = 0; i < _queueItems.size(); i++) {
         minIdx = i;
 
         for (uint j = i + 1; j < _queueItems.size(); j++)
