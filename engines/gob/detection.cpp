@@ -1573,6 +1573,76 @@ static const GOBGameDescription gameDescriptions[] = {
 	},
 	{
 		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+			DE_DEU,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+			EN_GRB,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+			IT_ITA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
+			"littlered",
+			"",
+			AD_ENTRY1s("intro.stk", "113a16877e4f72037d9714be1c2b0221", 1187522),
+			ES_ESP,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob2,
+		kFeaturesAdlib,
+		0, 0, 0
+	},
+	{
+		{
 			"ajworld",
 			"",
 			AD_ENTRY1s("intro.stk", "e453bea7b28a67c930764d945f64d898", 3913628),
@@ -3904,7 +3974,7 @@ static const GOBGameDescription gameDescriptions[] = {
 };
 
 static const GOBGameDescription fallbackDescs[] = {
-	{
+	{ //0
 		{
 			"gob1",
 			"unknown",
@@ -3918,7 +3988,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesNone,
 		0, 0, 0
 	},
-	{
+	{ //1
 		{
 			"gob1cd",
 			"unknown",
@@ -3932,7 +4002,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
-	{
+	{ //2
 		{
 			"gob2",
 			"unknown",
@@ -3946,7 +4016,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{
+	{ //3
 		{
 			"gob2mac",
 			"unknown",
@@ -3960,7 +4030,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{
+	{ //4
 		{
 			"gob2cd",
 			"unknown",
@@ -3974,7 +4044,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
-	{
+	{ //5
 		{
 			"bargon",
 			"",
@@ -3988,7 +4058,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesNone,
 		0, 0, 0
 	},
-	{
+	{ //6
 		{
 			"gob3",
 			"unknown",
@@ -4002,7 +4072,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{
+	{ //7
 		{
 			"gob3cd",
 			"unknown",
@@ -4016,7 +4086,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
-	{
+	{ //8
 		{
 			"woodruff",
 			"unknown",
@@ -4030,7 +4100,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //9
 		{
 			"lostintime",
 			"unknown",
@@ -4044,7 +4114,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{
+	{ //10
 		{
 			"lostintime",
 			"unknown",
@@ -4058,7 +4128,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
-	{
+	{ //11
 		{
 			"lostintime",
 			"unknown",
@@ -4072,7 +4142,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
-	{
+	{ //12
 		{
 			"urban",
 			"unknown",
@@ -4086,7 +4156,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesCD,
 		0, 0, 0
 	},
-	{
+	{ //13
 		{
 			"playtoons1",
 			"unknown",
@@ -4100,7 +4170,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //14
 		{
 			"playtoons2",
 			"unknown",
@@ -4114,7 +4184,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //15
 		{
 			"playtoons3",
 			"unknown",
@@ -4128,7 +4198,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //16
 		{
 			"playtoons4",
 			"unknown",
@@ -4142,7 +4212,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //17
 		{
 			"playtoons5",
 			"unknown",
@@ -4156,7 +4226,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //18
 		{
 			"playtoons construction kit",
 			"unknown",
@@ -4170,7 +4240,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //19
 		{
 			"bambou",
 			"unknown",
@@ -4184,7 +4254,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		0, 0, 0
 	},
-	{
+	{ //20
 		{
 			"fascination",
 			"unknown",
@@ -4198,7 +4268,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesNone,
 		"disk0.stk", 0, 0
 	},
-	{
+	{ //21
 		{
 			"geisha",
 			"unknown",
@@ -4212,7 +4282,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeaturesNone,
 		"disk1.stk", "intro.tot", 0
 	},
-	{
+	{ //22
 		{
 			"adi2",
 			"",
@@ -4226,7 +4296,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		"adi2.stk", 0, 0
 	},
-	{
+	{ //23
 		{
 			"adibou4",
 			"",
@@ -4240,7 +4310,7 @@ static const GOBGameDescription fallbackDescs[] = {
 		kFeatures640,
 		"adif41.stk", 0, 0
 	},
-	{
+	{ //24
 		{
 			"coktelplayer",
 			"unknown",
