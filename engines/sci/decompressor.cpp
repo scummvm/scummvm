@@ -31,6 +31,7 @@
 
 #include "sci/decompressor.h"
 #include "sci/sci.h"
+#include "sci/resource.h"
 
 namespace Sci {
 int Decompressor::unpack(Common::ReadStream *src, byte *dest, uint32 nPacked, uint32 nUnpacked) {

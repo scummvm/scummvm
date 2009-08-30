@@ -37,6 +37,7 @@
 #include "gfx/gfx_resource.h"		// for ViewType
 
 #include "sci/decompressor.h"
+#include "sci/sci.h"
 
 namespace Common {
 class ReadStream;
@@ -46,22 +47,6 @@ namespace Sci {
 
 /** The maximum allowed size for a compressed or decompressed resource */
 #define SCI_MAX_RESOURCE_SIZE 0x0400000
-
-/** SCI versions */
-enum SciVersion {
-	SCI_VERSION_AUTODETECT,
-	SCI_VERSION_0_EARLY, // Early KQ4, 1988 xmas card
-	SCI_VERSION_0_LATE, // KQ4, LSL2, LSL3, SQ3 etc
-	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
-	SCI_VERSION_1_EGA, // EGA with parser, QFG2
-	SCI_VERSION_1_EARLY, // KQ5. (EGA/VGA)
-	SCI_VERSION_1_MIDDLE, // LSL1, JONESCD. (EGA?/VGA)
-	SCI_VERSION_1_LATE, // ECO1, LSL5. (EGA/VGA)
-	SCI_VERSION_1_1, // KQ6, ECO2
-	SCI_VERSION_2, // GK1, PQ4 (Floppy), QFG4 (Floppy)
-	SCI_VERSION_2_1, // GK2, KQ7, SQ6, Torin
-	SCI_VERSION_3 // LSL7, RAMA, Lighthouse
-};
 
 /** Resource status types */
 enum ResourceStatus {

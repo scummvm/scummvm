@@ -43,22 +43,6 @@ namespace Sci {
 
 class GfxDriver;
 
-// FIXME: error-prone
-const char *versionNames[] = {
-	"Autodetect",
-	"SCI0 Early",
-	"SCI0 Late",
-	"SCI01",
-	"SCI1 EGA",
-	"SCI1 Early",
-	"SCI1 Middle",
-	"SCI1 Late",
-	"SCI1.1",
-	"SCI2",
-	"SCI2.1",
-	"SCI3"
-};
-
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 		: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -212,7 +196,7 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	printf("Emulating SCI version %s\n", versionNames[_resourceManager->sciVersion()]);
+	printf("Emulating SCI version %s\n", getSciVersionDesc(_resourceManager->sciVersion()).c_str());
 
 	game_run(&_gamestate); // Run the game
 
@@ -288,6 +272,37 @@ Common::String SciEngine::unwrapFilename(const Common::String &name) const {
 void SciEngine::pauseEngineIntern(bool pause) {
 	_gamestate->_sound.sfx_suspend(pause);
 	_mixer->pauseAll(pause);
+}
+
+Common::String SciEngine::getSciVersionDesc(SciVersion version) const {
+	switch (version) {
+	case SCI_VERSION_AUTODETECT:
+		return "Autodetect";
+	case SCI_VERSION_0_EARLY:
+		return "Early SCI0";
+	case SCI_VERSION_0_LATE:
+		return "Late SCI0";
+	case SCI_VERSION_01:
+		return "SCI01";
+	case SCI_VERSION_1_EGA:
+		return "SCI1 EGA";
+	case SCI_VERSION_1_EARLY:
+		return "Early SCI1";
+	case SCI_VERSION_1_MIDDLE:
+		return "Middle SCI1";
+	case SCI_VERSION_1_LATE:
+		return "Late SCI1";
+	case SCI_VERSION_1_1:
+		return "SCI1.1";
+	case SCI_VERSION_2:
+		return "SCI2";
+	case SCI_VERSION_2_1:
+		return "SCI2.1";
+	case SCI_VERSION_3:
+		return "SCI3";
+	default:
+		return "Unknown";
+	}
 }
 
 } // End of namespace Sci

@@ -29,14 +29,13 @@
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
 
-#include "sci/resource.h"
-
 namespace Sci {
 
 class Console;
 struct EngineState;
 class Kernel;
 class Vocabulary;
+class ResourceManager;
 
 // our engine debug levels
 enum kDebugLevels {
@@ -79,6 +78,22 @@ enum SciGameFlags {
 	GF_SCI0_OLDGETTIME		= (1 << 0)
 };
 
+/** SCI versions */
+enum SciVersion {
+	SCI_VERSION_AUTODETECT,
+	SCI_VERSION_0_EARLY, // Early KQ4, 1988 xmas card
+	SCI_VERSION_0_LATE, // KQ4, LSL2, LSL3, SQ3 etc
+	SCI_VERSION_01, // KQ1 and multilingual games (S.old.*)
+	SCI_VERSION_1_EGA, // EGA with parser, QFG2
+	SCI_VERSION_1_EARLY, // KQ5. (EGA/VGA)
+	SCI_VERSION_1_MIDDLE, // LSL1, JONESCD. (EGA?/VGA)
+	SCI_VERSION_1_LATE, // ECO1, LSL5. (EGA/VGA)
+	SCI_VERSION_1_1, // KQ6, ECO2
+	SCI_VERSION_2, // GK1, PQ4 (Floppy), QFG4 (Floppy)
+	SCI_VERSION_2_1, // GK2, KQ7, SQ6, Torin
+	SCI_VERSION_3 // LSL7, RAMA, Lighthouse
+};
+
 class SciEngine : public Engine {
 	friend class Console;
 public:
@@ -109,6 +124,8 @@ public:
 
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
+
+	Common::String getSciVersionDesc(SciVersion version) const;
 
 private:
 	const SciGameDescription *_gameDescription;

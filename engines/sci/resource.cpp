@@ -520,7 +520,7 @@ void ResourceManager::init() {
 	_sciVersion = detectSciVersion();
 
 	if (_sciVersion != SCI_VERSION_AUTODETECT)
-		debug("resourceManager: Detected %s", versionNames[_sciVersion]);
+		debug("resourceManager: Detected %s", ((SciEngine *)g_engine)->getSciVersionDesc(_sciVersion).c_str());
 	else
 		warning("resourceManager: Couldn't determine SCI version");
 
