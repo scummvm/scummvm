@@ -302,7 +302,7 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	uint16 cursor = argv[0].toSint16();
+	int16 cursor = argv[0].toSint16();
 
 	if ((argc >= 2) && (argv[1].toSint16() == 0))
 		cursor = GFXOP_NO_POINTER;
