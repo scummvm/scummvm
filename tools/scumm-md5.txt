@@ -551,7 +551,7 @@ freddi4	Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch
 	d54622d31255619d207dd245d3f92327	-1	fr	Windows	HE 99	Demo	-	Mevi
 	dcf0119a90451a7d6e0f1920931ba130	-1	fr	Windows	HE 99	Demo	-	Mevi
 
-freddicove	Freddi Fish 5: The Case of the Creature of Coral Cave
+freddicove	Freddi Fish 5: The Case of the Creature of Coral Cove
 	590e6546aacd0d374b7f3a4f53013ab1	-1	All	All	-	-	-	cyx
 	21abe302e1b1e2b66d6f5c12e241ebfd	-1	ru	Windows	unenc	Unencrypted	-	sev
 	b8955d7d23b4972229060d1592489fef	-1	nl	All	HE 100	-	-	adutchguy, daniel9

@@ -101,7 +101,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "freddi2", "Freddi Fish 2: The Case of the Haunted Schoolhouse" },
 	{ "freddi3", "Freddi Fish 3: The Case of the Stolen Conch Shell" },
 	{ "freddi4", "Freddi Fish 4: The Case of the Hogfish Rustlers of Briny Gulch" },
-	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
+	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cove" },
 	{ "FreddisFunShop", "Freddi Fish's One-Stop Fun Shop" },
 	{ "jungle", "Let's Explore the Jungle with Buzzy" },
 	{ "lost", "Pajama Sam's Lost & Found" },
