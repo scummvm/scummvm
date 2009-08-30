@@ -55,6 +55,7 @@ public:
 	//SoundMgr *_sound;
 	PictureMgr *_picture;
 	PreAGI_Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	void clearImageStack() {}
 	void recordImageStackCall(uint8 type, int16 p1, int16 p2, int16 p3,

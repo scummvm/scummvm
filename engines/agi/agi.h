@@ -843,6 +843,7 @@ public:
 	void pause(uint32 msec);
 
 	Console *_console;
+	GUI::Debugger *getDebugger() { return _console; }
 
 	int agiInit();
 	int agiDeinit();
