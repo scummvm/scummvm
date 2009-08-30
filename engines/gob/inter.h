@@ -563,6 +563,7 @@ protected:
 	bool oPlaytoons_readData(OpFuncParams &params);
 	void oPlaytoons_CD_20_23();
 	void oPlaytoons_CD_25();
+	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
 };
 

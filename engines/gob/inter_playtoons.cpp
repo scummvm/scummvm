@@ -74,6 +74,7 @@ void Inter_Playtoons::setupOpcodesDraw() {
 	OPCODEDRAW(0x20, oPlaytoons_CD_20_23);
 	OPCODEDRAW(0x23, oPlaytoons_CD_20_23);
 	OPCODEDRAW(0x25, oPlaytoons_CD_25);
+	OPCODEDRAW(0x60, oPlaytoons_copyFile);
 	OPCODEDRAW(0x85, oPlaytoons_openItk);
 }
 
@@ -267,6 +268,18 @@ void Inter_Playtoons::oPlaytoons_CD_20_23() {
 void Inter_Playtoons::oPlaytoons_CD_25() {
 	_vm->_game->_script->readVarIndex();
 	_vm->_game->_script->readVarIndex();
+}
+
+void Inter_Playtoons::oPlaytoons_copyFile() {
+	char fileName1[128];
+	char fileName2[128];
+
+	_vm->_game->_script->evalExpr(0);
+	strncpy0(fileName1, _vm->_game->_script->getResultStr(), 127);
+	_vm->_game->_script->evalExpr(0);
+	strncpy0(fileName2, _vm->_game->_script->getResultStr(), 127);
+
+	warning("Playtoons Stub: copy file from \"%s\" to \"%s\"", fileName1, fileName2);
 }
 
 void Inter_Playtoons::oPlaytoons_openItk() {

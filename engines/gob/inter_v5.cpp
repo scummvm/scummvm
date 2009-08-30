@@ -96,7 +96,7 @@ void Inter_v5::setupOpcodesGob() {
 void Inter_v5::o5_deleteFile() {
 	_vm->_game->_script->evalExpr(0);
 
-	warning("Dynasty Stub: deleteFile \"%s\"", _vm->_game->_script->getResultStr());
+	warning("deleteFile: \"%s\"", _vm->_game->_script->getResultStr());
 }
 
 void Inter_v5::o5_initScreen() {
