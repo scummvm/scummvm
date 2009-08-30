@@ -31,9 +31,6 @@
 #include "common/rect.h"
 
 #include "graphics/pixelformat.h"
-#ifdef USE_RGB_COLOR
-#include "graphics/conversion.h"
-#endif
 
 namespace Audio {
 	class Mixer;
