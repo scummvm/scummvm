@@ -111,11 +111,11 @@ struct AVIOLDINDEX {
 };
 	
 // Index Flags
-enum {
+enum IndexFlags {
 	AVIIF_INDEX = 0x10
 };
 
-enum {
+enum WaveFormats {
 	WAVE_INVALIDFORMAT = 0,
 	WAVE_FORMAT_PCM = 1,
 	WAVE_FORMAT_1M08 = 1,
@@ -147,7 +147,7 @@ struct AVIHeader {
 };
 	
 // Flags from the AVIHeader
-enum {
+enum AviFlags {
 	AVIF_HASINDEX = 0x00000010,
 	AVIF_MUSTUSEINDEX = 0x00000020,
 	AVIF_ISINTERLEAVED = 0x00000100,
