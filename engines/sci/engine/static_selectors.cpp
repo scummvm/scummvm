@@ -47,7 +47,7 @@ static const char * const selectorNamesFirstPart[] = {
           "color",       "back",     "mode",     "style",      "state", // 25 - 29
            "font",       "type",   "window",    "cursor",        "max", // 30 - 34
            "mark",        "who",  "message",      "edit",       "play", // 35 - 39
-         "number",    "nodePtr",   "client",        "dx",         "dy", // 40 - 44
+         "number",     "handle",   "client",        "dx",         "dy", // 40 - 44
       "b-moveCnt",       "b-i1",     "b-i2",      "b-di",    "b-xAxis", // 45 - 49
          "b-incr",      "xStep",    "yStep", "moveSpeed",  "canBeHere", // 50 - 54
         "heading",      "mover",     "doit", "isBlocked",     "looper", // 55 - 59
