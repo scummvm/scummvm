@@ -205,9 +205,7 @@ void Script::directGameLoad(int slot) {
 
 void Script::step() {
 	// Prepare the base debug string
-	char debugstring[10];
-	sprintf(debugstring, "@0x%04X: ", _currentInstruction);
-	_debugString = _scriptFile + debugstring;
+	_debugString = _scriptFile + Common::String::printf("@0x%04X: ", _currentInstruction);
 
 	// Get the current opcode
 	byte opcode = readScript8bits();
@@ -215,8 +213,7 @@ void Script::step() {
 	opcode = opcode & 0x7F;
 
 	// Show the opcode debug string
-	sprintf(debugstring, "op 0x%02X: ", opcode);
-	_debugString += debugstring;
+	_debugString += Common::String::printf("op 0x%02X: ", opcode);
 
 	// Only output if we're not re-doing the previous instruction
 	if (_currentInstruction != _oldInstruction) {
