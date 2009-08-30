@@ -822,6 +822,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 	uint32 dwPacked, dwUnpacked;
 	ResVersion curVersion = kResVersionSci0Sci1Early;
 	bool failed = false;
+	bool sci11Align = false;
 
 	// Check for SCI0, SCI1, SCI1.1 and SCI32 v2 (Gabriel Knight 1 CD) formats
 	while (!fileStream->eos() && fileStream->pos() < 0x100000) {
@@ -848,6 +849,9 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 				curVersion = kResVersionSci1Late;
 			} else if (curVersion == kResVersionSci1Late) {
 				curVersion = kResVersionSci11;
+			} else if (curVersion == kResVersionSci11 && !sci11Align) {
+				// Later versions have resources word-aligned
+				sci11Align = true;
 			} else if (curVersion == kResVersionSci11) {
 				curVersion = kResVersionSci32;
 			} else {
@@ -863,7 +867,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 		if (curVersion < kResVersionSci11)
 			fileStream->seek(dwPacked - 4, SEEK_CUR);
 		else if (curVersion == kResVersionSci11)
-			fileStream->seek((9 + dwPacked) % 2 ? dwPacked + 1 : dwPacked, SEEK_CUR);
+			fileStream->seek(sci11Align && ((9 + dwPacked) % 2) ? dwPacked + 1 : dwPacked, SEEK_CUR);
 		else if (curVersion == kResVersionSci32)
 			fileStream->seek(dwPacked - 2, SEEK_CUR);
 	}
@@ -1666,10 +1670,8 @@ SciVersion ResourceManager::detectSciVersion() {
 	case kResVersionSci1Middle:
 		return SCI_VERSION_1_MIDDLE;
 	case kResVersionSci1Late:
-		if (_viewType == kViewVga11) {
-			// SCI1.1 resources, assume SCI1.1
+		if (_volVersion == kResVersionSci11)
 			return SCI_VERSION_1_1;
-		} 
 		return SCI_VERSION_1_LATE;
 	case kResVersionSci11:
 		return SCI_VERSION_1_1;
