@@ -451,8 +451,8 @@ SciVersion EngineState::detectLofsType() {
 
 			if (version >= SCI_VERSION_1_MIDDLE)
 				_lofsType = SCI_VERSION_1_MIDDLE;
-
-			_lofsType = SCI_VERSION_0_EARLY;
+			else
+				_lofsType = SCI_VERSION_0_EARLY;
 		} else if (couldBeAbs) {
 			_lofsType = SCI_VERSION_1_MIDDLE;
 		} else {
