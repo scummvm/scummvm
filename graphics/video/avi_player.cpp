@@ -359,7 +359,7 @@ Codec *AVIPlayer::createCodec() {
 }
 
 Audio::AppendableAudioStream *AVIPlayer::createAudioStream() {
-	if (_wvInfo.tag == WAVE_FORMAT_PCM)
+	if (_wvInfo.tag == AVI_WAVE_FORMAT_PCM)
 		return Audio::makeAppendableAudioStream(AUDIO_RATE, Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE);
 	
 	if (_wvInfo.tag != 0) // No sound
