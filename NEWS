@@ -1,6 +1,38 @@
 For a more comprehensive changelog for the latest experimental SVN code, see:
         http://scummvm.svn.sourceforge.net/viewvc/scummvm/?view=log
 
+1.0.0 (2009-10-XX)
+ New Ports:
+   - Added MotoEZX and MotoMAGX ports.
+
+ AGI:
+   - Fixed crash on game exit.
+
+ AGOS:
+   - Fixed load/save code for PC version of Waxworks.
+
+ CinE:
+   - Fixed crashes with Future Wars and Operation Stealth demos.
+
+ Cruise:
+   - Fix freeze on game pause.
+
+ Groovie:
+   - Fixed performance on PSP.
+   - Fixed crash in demo.
+
+ Kyra:
+   - Fix possible corruption of restart game save in Kyrandia 1.
+
+ SCUMM:
+   - Fixed crash on Macintosh versions of Putt-Putt Joins the Parade and Fatty
+     Bear's Birthday Surprise.
+   - Fixed game save in Macintosh versions of HE games.
+   - Fixed default save game path in latter HE games.
+
+ Tinsel:
+   - Fixed crash in palace.
+
 1.0.0rc1 (2009-08-31)
  New Games:
    - Added support for Discworld.
