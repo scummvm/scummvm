@@ -238,6 +238,33 @@ struct ColorMasks<8888> {
 	};
 };
 
+#ifdef __WII__
+/* Gamecube/Wii specific ColorMask ARGB3444 */
+template<>
+struct ColorMasks<3444> {
+	enum {
+		kBytesPerPixel = 2,
+
+		kAlphaBits  = 3,
+		kRedBits    = 4,
+		kGreenBits  = 4,
+		kBlueBits   = 4,
+
+		kBlueShift  = 0,
+		kGreenShift = kBlueBits,
+		kRedShift   = kGreenBits+kBlueBits,
+		kAlphaShift = kGreenBits+kBlueBits+kRedBits,
+
+		kAlphaMask = ((1 << kAlphaBits) - 1) << kAlphaShift,
+		kRedMask   = ((1 << kRedBits) - 1) << kRedShift,
+		kGreenMask = ((1 << kGreenBits) - 1) << kGreenShift,
+		kBlueMask  = ((1 << kBlueBits) - 1) << kBlueShift,
+
+		kRedBlueMask = kRedMask | kBlueMask
+	};
+};
+#endif
+
 template<class T>
 uint32 RGBToColor(uint8 r, uint8 g, uint8 b) {
 	return T::kAlphaMask |
