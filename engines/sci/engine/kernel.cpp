@@ -339,8 +339,9 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("DoSync", kDoSync, ".*"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
 	DEFUN("SetQuitStr", kSetQuitStr, "r"),
-	DEFUN("ShowMovie", kShowMovie, "ri"),
+	DEFUN("ShowMovie", kShowMovie, "..*"),
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
+	DEFUN("Platform", kPlatform, "i*"),
 
 	// Special and NOP stuff
 	DEFUN("Dummy", kStub, ".*"),

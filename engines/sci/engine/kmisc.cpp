@@ -250,6 +250,24 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kPlatform(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	if (argc == 1) {
+		if (argv[0].toUint16() == 4)
+			if (((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows)
+				return make_reg(0, 2);
+			else
+				return make_reg(0, 1);
+		else if (argv[0].toUint16() == 5)
+			warning("kPlatform(5)"); // TODO: return 1 based on some variable
+		else if (argv[0].toUint16() == 6)
+			warning("kPlatform(6)"); // TODO: return some variable
+		else if (argv[0].toUint16() == 7 && ((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows)
+			return make_reg(0, 1);
+	}
+	
+	return NULL_REG;
+}
+
 reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char tmpbuf[200];
 	sprintf(tmpbuf, "Unimplemented syscall: %s[%x] (", 

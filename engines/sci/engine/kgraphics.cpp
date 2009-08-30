@@ -26,6 +26,8 @@
 #include "common/system.h"
 #include "common/events.h"
 #include "graphics/cursorman.h"
+#include "graphics/video/avi_player.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
@@ -3341,7 +3343,85 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+static reg_t kShowMovie_Windows(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	const char *filename = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
+	
+	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
+	
+	if (!player->open(filename)) {
+		warning("Failed to open movie file %s", filename);
+		return s->r_acc;
+	}
+	
+	uint32 startTime = g_system->getMillis();
+	bool play = true;
+	
+	while (play && player->getCurFrame() < player->getFrameCount()) {
+		uint32 elapsed = g_system->getMillis() - startTime;
+		
+		if (elapsed >= player->getCurFrame() * 1000 / player->getFrameRate()) {
+			Graphics::Surface *surface = player->getNextFrame();
+
+			Palette *palette = NULL;
+			
+			if (player->dirtyPalette()) {
+				byte *rawPalette = player->getPalette();
+				gfx_pixmap_color_t *colors = new gfx_pixmap_color_t[256];
+
+				for (uint16 i = 0; i < 256; i++) {
+					colors[i].r = rawPalette[i * 4];
+					colors[i].g = rawPalette[i * 4 + 1];
+					colors[i].b = rawPalette[i * 4 + 2];
+					colors[i].global_index = i;
+				}
+
+				palette = new Palette(colors, 256);
+				palette->forceInto(s->gfx_state->driver->getMode()->palette);
+			}
+				
+			if (surface) {
+				// Allocate a pixmap
+				gfx_pixmap_t *pixmap = gfx_new_pixmap(surface->w, surface->h, 0, 0, 0);
+				assert(pixmap);
+				gfx_pixmap_alloc_index_data(pixmap);
+	
+				// Copy data from the surface
+				memcpy(pixmap->index_data, surface->pixels, surface->w * surface->h);
+				pixmap->xoffset = (g_system->getWidth() - surface->w) / 2;
+				pixmap->yoffset = (g_system->getHeight() - surface->h) / 2;
+				pixmap->palette = palette;
+				
+				// Copy the frame to the screen
+				gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+				GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset)));
+				gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
+				gfx_free_pixmap(pixmap);
+				
+				// Surface is freed when the codec in the video is deleted
+			}
+		}
+		
+		Common::Event event;
+		while (g_system->getEventManager()->pollEvent(event)) {
+			switch (event.type) {
+				case Common::EVENT_QUIT:
+					play = false;
+					quit_vm();
+					break;
+				default:
+					break;
+			}
+		}
+		
+		g_system->delayMillis(10);
+	}
+
+	delete player;
+
+	return s->r_acc;
+}
+
+static reg_t kShowMovie_DOS(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	const char *filename = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
@@ -3385,6 +3465,20 @@ reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	}
 
 	return s->r_acc;
+}
+
+reg_t kShowMovie(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	// KQ6 Windows calls this with one argument. It doesn't seem
+	// to have a purpose...
+	if (argc == 1)
+		return NULL_REG;
+
+	// The Windows and DOS versions use different video format as well
+	// as a different argument set.
+	if (argv[0].toUint16() == 0)
+		return kShowMovie_Windows(s, funct_nr, argc, argv);
+
+	return kShowMovie_DOS(s, funct_nr, argc, argv);
 }
 
 reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv) {

@@ -1019,13 +1019,23 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
-	// King's Quest 6 - English Windows CD (from the King's Quest Collection)
+	// King's Quest 6 - English DOS CD (from the King's Quest Collection)
 	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
 	// SCI interpreter version 1.001.054
 	{{"kq6", "CD", {
 		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
 		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE},
+		0
+	},
+	
+	// King's Quest 6 - English Windows CD (from the King's Quest Collection)
+	// Executable scanning reports "1.cfs.158", VERSION file reports "1.034 9/11/94 - KQ6 version 1.000.00G"
+	// SCI interpreter version 1.001.054
+	{{"kq6", "CD", {
+		{"resource.map", 0, "7a550ebfeae2575ca00d47703a6a774c", 9215},
+		{"resource.000", 0, "233394a5f33b475ae5975e7e9a420865", 8376352},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE},
 		0
 	},
 
