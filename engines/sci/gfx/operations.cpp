@@ -258,9 +258,32 @@ static int _gfxop_draw_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm, int priority
 }
 
 static void _gfxop_full_pointer_refresh(GfxState *state) {
+	bool clipped = false;
 	Common::Point mousePoint = g_system->getEventManager()->getMousePos();
+
 	state->pointer_pos.x = mousePoint.x / state->driver->getMode()->xfact;
 	state->pointer_pos.y = mousePoint.y / state->driver->getMode()->yfact;
+
+	if (state->pointer_pos.x < state->pointerZone.left) {
+		state->pointer_pos.x = state->pointerZone.left;
+		clipped = true;
+	} else if (state->pointer_pos.x >= state->pointerZone.right) {
+		state->pointer_pos.x = state->pointerZone.right - 1;
+		clipped = true;
+	}
+
+	if (state->pointer_pos.y < state->pointerZone.top) {
+		state->pointer_pos.y = state->pointerZone.top;
+		clipped = true;
+	} else if (state->pointer_pos.y >= state->pointerZone.bottom) {
+		state->pointer_pos.y = state->pointerZone.bottom - 1;
+		clipped = true;
+	}
+
+	// FIXME: Do this only when mouse is grabbed?
+	if (clipped)
+		g_system->warpMouse(state->pointer_pos.x * state->driver->getMode()->xfact,
+							state->pointer_pos.y * state->driver->getMode()->yfact);
 }
 
 static int _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer);
@@ -427,6 +450,7 @@ int gfxop_init(int version, GfxState *state,
 	state->gfxResMan = new GfxResManager(state->options, state->driver, resManager);
 	
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
+	state->pointerZone = Common::Rect(0, 0, 320, 200);
 
 	init_aux_pixmap(&(state->control_map));
 	init_aux_pixmap(&(state->priority_map));
@@ -1194,8 +1218,16 @@ int gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
 
 	g_system->warpMouse(pos.x * state->driver->getMode()->xfact, pos.y * state->driver->getMode()->yfact);
 
-	_gfxop_full_pointer_refresh(state);
+	// Trigger event reading to make sure the mouse coordinates will
+	// actually have changed the next time we read them.
+	gfxop_get_event(state, SCI_EVT_PEEK);
+
 	return 0;
+}
+
+int gfxop_set_pointer_zone(GfxState *state, Common::Rect rect) {
+	state->pointerZone = rect;
+	return GFX_OK;
 }
 
 #define SCANCODE_ROWS_NR 3

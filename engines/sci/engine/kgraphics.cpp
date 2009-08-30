@@ -326,9 +326,23 @@ static reg_t kSetCursorSci11(EngineState *s, int funct_nr, int argc, reg_t *argv
 		CursorMan.showMouse(argv[0].toSint16() != 0);
 		break;
 	case 2:
-		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
-				   Common::Point(argv[0].toUint16(), argv[1].toUint16())));
+		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state,
+				   Common::Point(argv[0].toUint16() + s->port->_bounds.x, argv[1].toUint16() + s->port->_bounds.y)));
 		break;
+	case 4: {
+		int16 top = argv[0].toSint16();
+		int16 left = argv[1].toSint16();
+		int16 bottom = argv[2].toSint16();
+		int16 right = argv[3].toSint16();
+
+		if ((right >= left) && (bottom >= top)) {
+			Common::Rect rect = Common::Rect(left, top, right + 1, bottom + 1);
+			GFX_ASSERT(gfxop_set_pointer_zone(s->gfx_state, rect));
+		} else {
+			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
+		}
+		break;
+	}
 	case 5:
 	case 9:
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());

@@ -94,6 +94,7 @@ struct GfxState {
 	gfx_options_t *options;
 
 	Common::Point pointer_pos; /**< Mouse pointer coordinates */
+	Common::Rect pointerZone; /**< Rectangle in which the pointer can move */
 
 	rect_t clip_zone_unscaled; /**< The current UNSCALED clipping zone */
 	rect_t clip_zone; /**< The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
@@ -422,6 +423,15 @@ int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::P
  * @return			Any error code or GFX_OK
  */
 int gfxop_set_pointer_position(GfxState *state, Common::Point pos);
+
+/**
+ * Limits the mouse movement to a given rectangle.
+ *
+ * @param[in] state	The affected state
+ * @param[in] rect	The rectangle
+ * @return			Any error code or GFX_OK
+ */
+int gfxop_set_pointer_zone(GfxState *state, Common::Rect rect);
 
 /**
  * Retrieves the next input event from the driver.
