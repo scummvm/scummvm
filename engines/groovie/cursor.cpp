@@ -239,13 +239,24 @@ public:
 	void showFrame(uint16 frame);
 
 private:
-	//byte *_data;
+	// Currently locked to 16bit
+	byte *_img;
+
+	Graphics::PixelFormat _format;
+
+	void decodeFrame(byte *pal, byte *data, byte *dest);
 };
 
 Cursor_v2::Cursor_v2(Common::File &file) {
+	byte *pal = new byte[0x20 * 3];
+
+	_format = g_system->getScreenFormat();
+
 	_numFrames = file.readUint16LE();
 	_width = file.readUint16LE();
 	_height = file.readUint16LE();
+
+	_img = new byte[_width * _height * _numFrames * 2];
 
 	debugC(1, kGroovieDebugCursor | kGroovieDebugAll, "Groovie::Cursor: width: %d, height: %d, frames:%d", _width, _height, _numFrames);
 
@@ -257,29 +268,118 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2count?: %d\n", loop2count);
 	for (int l = 0; l < loop2count; l++) {
 		tmp16 = file.readUint16LE();
-		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2a: %d\n", tmp16);
+		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2a: %d\n", tmp16);	// Index frame can merge to/from?
 		tmp16 = file.readUint16LE();
-		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2b: %d\n", tmp16);
+		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop2b: %d\n", tmp16);	// Number of frames?
 	}
 
-	file.seek(0x20 * 3, SEEK_CUR);
+	file.read(pal, 0x20 * 3);
 
 	for (int f = 0; f < _numFrames; f++) {
 		uint32 tmp32 = file.readUint32LE();
 		debugC(5, kGroovieDebugCursor | kGroovieDebugAll, "loop3: %d\n", tmp32);
 
-		//file.seek(tmp32, SEEK_CUR);
 		byte *data = new byte[tmp32];
 		file.read(data, tmp32);
-		//Common::hexdump(data, tmp32);
+		decodeFrame(pal, data, _img + (f * _width * _height * 2));
+
 		delete[] data;
 	}
+
+	delete[] pal;
+}
+
+void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
+	// Scratch memory
+	byte *tmp = new byte[_width * _height * 4];
+	byte *ptr = tmp;
+	memset(tmp, 0, _width * _height * 4);
+
+	byte ctrA = 0, ctrB = 0;
+
+	byte alpha, palIdx;
+
+	byte r, g, b;
+
+	// Start frame decoding
+	for (int y = 0; y < _height; y++) {
+		for (int x = 0; x < _width; x++) {
+			// If both counters are empty
+			if (ctrA == 0 && ctrB == 0) {
+				if (*data & 0x80) {
+					ctrA = (*data++ & 0x7F) + 1;
+				} else {
+					ctrB = *data++ + 1;
+					alpha = *data & 0xE0;
+					palIdx = *data++ & 0x1F;
+				}
+			}
+
+			if (ctrA) {
+				// Block type A - chunk of non-continuous pixels
+				palIdx = *data & 0x1F;
+				alpha = *data++ & 0xE0;
+
+				r = *(pal + palIdx);
+				g = *(pal + palIdx + 0x20);
+				b = *(pal + palIdx + 0x40);
+
+				ctrA--;
+			} else {
+				// Block type B - chunk of continuous pixels
+				r = *(pal + palIdx);
+				g = *(pal + palIdx + 0x20);
+				b = *(pal + palIdx + 0x40);
+
+				ctrB--;
+			}
+
+			// Decode pixel
+			if (alpha) {
+				if (alpha != 0xE0) {
+					alpha = ((alpha << 8) / 224);
+
+					// TODO: The * 0 to be replaced by the component value of each pixel
+					//       below, respectively - does blending
+					r = (byte)((alpha * r + (256 - alpha) * 0) >> 8);
+					g = (byte)((alpha * g + (256 - alpha) * 0) >> 8);
+					b = (byte)((alpha * b + (256 - alpha) * 0) >> 8);
+				}
+
+				*ptr = 1;
+				*(ptr + 1) = r;
+				*(ptr + 2) = g;
+				*(ptr + 3) = b;
+			}
+			ptr += 4;
+		}
+	}
+
+	// Convert to screen format
+	// NOTE: Currently locked to 16bit
+	ptr = tmp;
+	for (int y = 0; y < _height; y++) {
+		for (int x = 0; x < _width; x++) {
+			if (*ptr == 1) {
+				*(uint16 *)dest = (uint16)_format.RGBToColor(*(ptr + 1), *(ptr + 2), *(ptr + 3));
+			} else {
+				*(uint16 *)dest = 0;
+			}
+			dest += 2;
+			ptr += 4;
+		}
+	}
+	
+	
+	
 }
 
 void Cursor_v2::enable() {
 }
 
 void Cursor_v2::showFrame(uint16 frame) {
+	int offset = _width * _height * frame * 2;
+	CursorMan.replaceCursor((const byte *)(_img + offset), _width, _height, _width >> 1, _height >> 1, 0, 1, &_format);
 }
 
 
