@@ -200,6 +200,8 @@ struct selector_map_t {
 	Selector printLang; /**< Used for i18n */
 	Selector subtitleLang;
 	Selector parseLang;
+
+	Selector setCursor; /** For autodetection */
 };
 
 // A reference to an object's variable.

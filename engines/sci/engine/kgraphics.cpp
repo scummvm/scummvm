@@ -301,80 +301,60 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 	return retval;
 }
 
-reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	SciVersion version = s->resourceManager->sciVersion();
+static reg_t kSetCursorSci0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	uint16 cursor = argv[0].toSint16();
+
+	if ((argc >= 2) && (argv[1].toSint16() == 0))
+		cursor = GFXOP_NO_POINTER;
+
+	GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, cursor));
+
+	// Set pointer position, if requested
+	if (argc >= 4) {
+		Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
+		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
+	}
+
+	return s->r_acc;
+}
+
+static reg_t kSetCursorSci11(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	Common::Point *hotspot = NULL;
 
 	switch (argc) {
-	case 1 :
-		if (version < SCI_VERSION_1_LATE) {
-			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
-		} else if (version < SCI_VERSION_1_1) {
-			if (argv[0].toSint16() <= 1) {
-				// Newer (SCI1.1) semantics: show/hide cursor
-				CursorMan.showMouse(argv[0].toSint16() != 0);
-			} else {
-				// Pre-SCI1.1: set cursor according to the first parameter
-				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, argv[0].toSint16()));
-			}
-		} else  {
-			// SCI1.1: Show/hide cursor
-			CursorMan.showMouse(argv[0].toSint16() != 0);
-		}
+	case 1:
+		CursorMan.showMouse(argv[0].toSint16() != 0);
 		break;
-	case 2 :
-		if (version < SCI_VERSION_1_LATE) {
-			GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
-						argv[1].toSint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
-		} else if (version < SCI_VERSION_1_1) {
-			// Pre-SCI1.1: set cursor according to the first parameter, and toggle its
-			// visibility based on the second parameter
-			// Some late SCI1 games actually use the SCI1.1 version of this call (EcoQuest 1
-			// and KQ5 CD, but I haven't seen this case happen), but we can determine the
-			// semantics from the second parameter passed.
-			// Rationale: with the older behavior, the second parameter can either be 0 
-			// (hide cursor) or 1/-1 (show cursor). This could be problematic if the engine
-			// tries to place the cursor at (x, 0) or (x, 1), but no SCI1 game does that, as
-			// this would open the menu on top. LSL5 is an exception, as the game can open
-			// the menu when the player presses a button during the intro, but the cursor is
-			// not placed on (x, 0) or (x, 1)
-			if (argv[1].toSint16() <= 1) {
-				GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
-							argv[1].toSint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
-			} else {	// newer (SCI1.1) semantics: set pointer position
-				GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
-							Common::Point(argv[0].toUint16(), argv[1].toUint16())));
-			}
-		} else {
-			// SCI1.1 and newer: set pointer position
-			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
-						Common::Point(argv[0].toUint16(), argv[1].toUint16())));
-		}
+	case 2:
+		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, 
+				   Common::Point(argv[0].toUint16(), argv[1].toUint16())));
 		break;
-	case 4 :
-		GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, 
-					argv[0].toUint16() == 0 ? GFXOP_NO_POINTER : argv[0].toSint16()));
-
-		// Set pointer position, if requested
-		if (argc > 2) {
-			Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
-			GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
-		}
-		break;
-	case 3 :
-	case 5 :
-	case 9 :
-		if (argc > 3) {
-			Common::Point hotspot = Common::Point(argv[3].toSint16(), argv[4].toSint16());
-			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), &hotspot));
-		} else {
-			GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), NULL));
-		}
+	case 5:
+	case 9:
+		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
+		// Fallthrough
+	case 3:
+		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot));
+		if (hotspot)
+			delete hotspot;
 		break;
 	default :
-		error("kSetCursor: Unhandled case: %d arguments given", argc);
+		warning("kSetCursor: Unhandled case: %d arguments given", argc);
 		break;
 	}
 	return s->r_acc;
+}
+
+reg_t kSetCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	switch (s->detectSetCursorType()) {
+	case SCI_VERSION_0_EARLY:
+		return kSetCursorSci0(s, funct_nr, argc, argv);
+	case SCI_VERSION_1_1:
+		return kSetCursorSci11(s, funct_nr, argc, argv);
+	default:
+		warning("Unknown SetCursor type");
+		return NULL_REG;
+	}
 }
 
 reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {

@@ -119,7 +119,8 @@ EngineState::EngineState(ResourceManager *res, uint32 flags)
 
 	speedThrottler = new SpeedThrottler(res->sciVersion());
 
-	_doSoundType = kDoSoundTypeUnknown;
+	_setCursorType = SCI_VERSION_AUTODETECT;
+	_doSoundType = SCI_VERSION_AUTODETECT;
 }
 
 EngineState::~EngineState() {
@@ -246,78 +247,97 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	return retval;
 }
 
-EngineState::DoSoundType EngineState::detectDoSoundType() {
-	if (_doSoundType == kDoSoundTypeUnknown) {
+int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const {
+	reg_t fptr;
+
+	Object *obj = obj_get(segmentManager, objAddress);
+	SelectorType selType = lookup_selector(this->segmentManager, objAddress, sel, NULL, &fptr);
+
+	if (!obj || (selType != kSelectorMethod))
+		return -1;
+
+	Script *script = segmentManager->getScript(fptr.segment);
+
+	if (!script->buf || (fptr.offset + offset < 0))
+		return -1;
+
+	fptr.offset += offset;
+
+	if (fptr.offset + size > script->buf_size)
+		return -1;
+
+	byte *buf = script->buf + fptr.offset;
+
+	uint sum = 0;
+	for (uint i = 0; i < size; i++)
+		sum += buf[i];
+
+	return sum;
+}
+
+SciVersion EngineState::detectDoSoundType() {
+	if (_doSoundType == SCI_VERSION_AUTODETECT) {
 		reg_t soundClass;
-		const uint checkBytes = 6; // Number of bytes to check
 
 		if (!parse_reg_t(this, "?Sound", &soundClass)) {
-			reg_t fptr;
+			int sum = methodChecksum(soundClass, ((SciEngine *)g_engine)->getKernel()->_selectorMap.play, -6, 6);
 
-			Object *obj = obj_get(segmentManager, soundClass);
-			SelectorType sel = lookup_selector(this->segmentManager, soundClass, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play, NULL, &fptr);
-
-			if (obj && (sel == kSelectorMethod)) {
-				Script *script = segmentManager->getScript(fptr.segment);
-
-				if (fptr.offset > checkBytes) {
-					// Go to the last portion of Sound::init, should be right before the play function
-					fptr.offset -= checkBytes;
-					byte *buf = script->buf + fptr.offset;
-
-					// Check the call to DoSound's INIT_HANDLE function.
-					// It's either subfunction 0, 5 or 6, depending on the version of DoSound.
-					uint sum = 0;
-					for (uint i = 0; i < checkBytes; i++)
-						sum += buf[i];
-
-					switch(sum) {
-					case 0x1B2: // SCI0
-					case 0x1AE: // SCI01
-						_doSoundType = kDoSoundTypeSci0;
-						break;
-					case 0x13D:
-						_doSoundType = kDoSoundTypeSci1Early;
-						break;
-					case 0x13E:
+			switch(sum) {
+			case 0x1B2: // SCI0
+			case 0x1AE: // SCI01
+				_doSoundType = SCI_VERSION_0_EARLY;
+				break;
+			case 0x13D:
+				_doSoundType = SCI_VERSION_1_EARLY;
+				break;
+			case 0x13E:
 #ifdef ENABLE_SCI32
-					case 0x14B:
+			case 0x14B:
 #endif
-						_doSoundType = kDoSoundTypeSci1Late;
-					}
-				}
+				_doSoundType = SCI_VERSION_1_LATE;
 			}
 		}
 
-		if (_doSoundType == kDoSoundTypeUnknown) {
+		if (_doSoundType == SCI_VERSION_AUTODETECT) {
 			warning("DoSound detection failed, taking an educated guess");
 
 			if (resourceManager->sciVersion() >= SCI_VERSION_1_MIDDLE)
-				_doSoundType = kDoSoundTypeSci1Late;
+				_doSoundType = SCI_VERSION_1_LATE;
 			else if (resourceManager->sciVersion() > SCI_VERSION_01)
-				_doSoundType = kDoSoundTypeSci1Early;
+				_doSoundType = SCI_VERSION_1_EARLY;
 			else
-				_doSoundType = kDoSoundTypeSci0;
+				_doSoundType = SCI_VERSION_0_EARLY;
 		}
 
-		debugCN(1, kDebugLevelSound, "Detected DoSound type: ");
-
-		switch(_doSoundType) {
-		case kDoSoundTypeSci0:
-			debugC(1, kDebugLevelSound, "SCI0");
-			break;
-		case kDoSoundTypeSci1Early:
-			debugC(1, kDebugLevelSound, "SCI1 Early");
-			break;
-		case kDoSoundTypeSci1Late:
-			debugC(1, kDebugLevelSound, "SCI1 Late");
-			break;
-		default:
-			break;
-		}
+		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_doSoundType).c_str());
 	}
 
 	return _doSoundType;
+}
+
+SciVersion EngineState::detectSetCursorType() {
+	if (_setCursorType == SCI_VERSION_AUTODETECT) {
+		int sum = methodChecksum(game_obj, ((SciEngine *)g_engine)->getKernel()->_selectorMap.setCursor, 0, 21);
+
+		if ((sum == 0x4D5) || (sum == 0x552)) {
+			// Standard setCursor
+			_setCursorType = SCI_VERSION_0_EARLY;
+		} else if (sum != -1) {
+			// Assume that others use fancy cursors
+			_setCursorType = SCI_VERSION_1_1;
+		} else {
+			warning("SetCursor detection failed, taking an educated guess");
+
+			if (resourceManager->sciVersion() >= SCI_VERSION_1_1)
+				_setCursorType = SCI_VERSION_1_1;
+			else
+				_setCursorType = SCI_VERSION_0_EARLY;
+		}
+
+		debugC(0, kDebugLevelGraphics, "Detected SetCursor type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_setCursorType).c_str());
+	}
+
+	return _setCursorType;
 }
 
 } // End of namespace Sci

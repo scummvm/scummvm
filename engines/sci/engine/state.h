@@ -164,13 +164,6 @@ public:
 	EngineState(ResourceManager *res, uint32 flags);
 	virtual ~EngineState();
 
-	enum DoSoundType {
-		kDoSoundTypeUnknown,
-		kDoSoundTypeSci0,
-		kDoSoundTypeSci1Early,
-		kDoSoundTypeSci1Late
-	};
-
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
 	kLanguage getLanguage();
@@ -283,7 +276,13 @@ public:
 	 * Autodetects the DoSound type
 	 * @return DoSound type
 	 */
-	DoSoundType detectDoSoundType();
+	SciVersion detectDoSoundType();
+
+	/**
+	 * Autodetects the SetCursor type
+	 * @return SetCursor type
+	 */
+	SciVersion detectSetCursorType();
 
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
@@ -315,8 +314,9 @@ public:
 
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 private:
-	DoSoundType _doSoundType;
+	SciVersion _doSoundType, _setCursorType;
 	kLanguage charToLanguage(const char c) const;
+	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
 };
 
 /**
