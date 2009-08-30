@@ -86,7 +86,7 @@ static const PlainGameDescriptor gameDescriptions[] = {
 	{ "Baseball2003", "Backyard Baseball 2003" },
 	{ "basketball", "Backyard Basketball" },
 	{ "football2002", "Backyard Football 2002" },
-	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cave" },
+	{ "freddicove", "Freddi Fish 5: The Case of the Creature of Coral Cove" },
 	{ "moonbase", "Moonbase Commander" },
 	{ "pjgames", "Pajama Sam: Games to Play on Any Day" },
 	{ "readtime", "Blue's Reading Time Activities" },
