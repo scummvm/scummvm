@@ -1254,6 +1254,9 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	assert(_cursor);
 	memset(_cursor, 0xFF, sizeof(byte) * _cursorWidth * _cursorHeight);
 
+	// the transparent color is 0xFF00FF
+	const int colTransparent = _overlayFormat.RGBToColor(0xFF, 0, 0xFF);
+
 	// Now, scan the bitmap. We have to convert it from 16 bit color mode
 	// to 8 bit mode, and have to create a suitable palette on the fly.
 	uint colorsFound = 0;
@@ -1262,13 +1265,13 @@ bool ThemeEngine::createCursor(const Common::String &filename, int hotspotX, int
 	for (uint y = 0; y < _cursorHeight; ++y) {
 		for (uint x = 0; x < _cursorWidth; ++x) {
 			byte r, g, b;
+
+			// Skip transparency
+			if (src[x] == colTransparent)
+				continue;
+
 			_overlayFormat.colorToRGB(src[x], r, g, b);
 			const int col = (r << 16) | (g << 8) | b;
-
-			// Skip transparency (the transparent color actually is 0xFF00FF,
-			// but the RGB conversion chops of the lower bits).
-			if ((r > 0xF1) && (g < 0x03) && (b > 0xF1))
-				continue;
 
 			// If there is no entry yet for this color in the palette: Add one
 			if (!colorToIndex.contains(col)) {
