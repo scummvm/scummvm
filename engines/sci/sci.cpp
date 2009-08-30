@@ -136,7 +136,6 @@ Common::Error SciEngine::run() {
 
 	_kernel = new Kernel(_resourceManager);
 	_vocabulary = new Vocabulary(_resourceManager);
-	script_adjust_opcode_formats(_resourceManager->sciVersion());
 
 	_gamestate = new EngineState(_resourceManager, flags);
 
@@ -148,6 +147,8 @@ Common::Error SciEngine::run() {
 		// TODO: Add an "init failed" error?
 		return Common::kUnknownError;
 	}
+
+	script_adjust_opcode_formats(_gamestate);
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)

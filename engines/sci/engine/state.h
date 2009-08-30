@@ -274,15 +274,21 @@ public:
 
 	/**
 	 * Autodetects the DoSound type
-	 * @return DoSound type
+	 * @return DoSound type, SCI_VERSION_0_EARLY / SCI_VERSION_1_EARLY / SCI_VERSION_1_LATE
 	 */
 	SciVersion detectDoSoundType();
 
 	/**
 	 * Autodetects the SetCursor type
-	 * @return SetCursor type
+	 * @return SetCursor type, SCI_VERSION_0_EARLY / SCI_VERSION_1_1
 	 */
 	SciVersion detectSetCursorType();
+
+	/**
+	 * Autodetects the Lofs type
+	 * @return Lofs type, SCI_VERSION_0_EARLY / SCI_VERSION_1_MIDDLE / SCI_VERSION_1_1
+	 */
+	SciVersion detectLofsType();
 
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
@@ -314,7 +320,7 @@ public:
 
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 private:
-	SciVersion _doSoundType, _setCursorType;
+	SciVersion _doSoundType, _setCursorType, _lofsType;
 	kLanguage charToLanguage(const char c) const;
 	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
 };

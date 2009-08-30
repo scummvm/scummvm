@@ -190,7 +190,6 @@ struct selector_map_t {
 	Selector flags;
 
 	Selector motionCue;	/**< Used to determine if a game is using old gfx functions or not */
-	Selector egoMoveSpeed;	/**< Used to determine if a game is using absolute lofs parameters */
 
 	Selector points; /**< Used by AvoidPath() */
 

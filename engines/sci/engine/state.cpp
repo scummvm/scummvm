@@ -25,6 +25,7 @@
 
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
+#include "sci/engine/script.h"
 #include "sci/console.h" // For parse_reg_t
 
 namespace Sci {
@@ -121,6 +122,7 @@ EngineState::EngineState(ResourceManager *res, uint32 flags)
 
 	_setCursorType = SCI_VERSION_AUTODETECT;
 	_doSoundType = SCI_VERSION_AUTODETECT;
+	_lofsType = SCI_VERSION_AUTODETECT;
 }
 
 EngineState::~EngineState() {
@@ -334,10 +336,133 @@ SciVersion EngineState::detectSetCursorType() {
 				_setCursorType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(0, kDebugLevelGraphics, "Detected SetCursor type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_setCursorType).c_str());
+		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_setCursorType).c_str());
 	}
 
 	return _setCursorType;
+}
+
+SciVersion EngineState::detectLofsType() {
+	if (_lofsType == SCI_VERSION_AUTODETECT) {
+		SciVersion version = segmentManager->sciVersion(); // FIXME: for VM_OBJECT_READ_FUNCTION
+
+		// This detection only works (and is only needed) pre-SCI1.1
+		if (version >= SCI_VERSION_1_1) {
+			_lofsType = SCI_VERSION_1_1;
+			return _lofsType;
+		}
+
+		reg_t gameClass;
+		Object *obj = NULL;
+
+		if (!parse_reg_t(this, "?Game", &gameClass))
+			obj = obj_get(segmentManager, gameClass);
+
+		bool couldBeAbs = true;
+		bool couldBeRel = true;
+
+		// Check methods of the Game class for lofs operations
+		if (obj) {
+			for (int m = 0; m < obj->methods_nr; m++) {
+				reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, m);
+
+				Script *script = segmentManager->getScript(fptr.segment);
+
+				if ((script == NULL) || (script->buf == NULL))
+					continue;
+
+				uint offset = fptr.offset;
+				bool done = false;
+
+				while (!done) {
+					// Read opcode
+					if (offset >= script->buf_size)
+						break;
+
+					byte opcode = script->buf[offset++];
+					byte opnumber = opcode >> 1;
+
+					if ((opnumber == 0x39) || (opnumber == 0x3a)) {
+						uint16 lofs;
+
+						// Load lofs operand
+						if (opcode & 1) {
+							if (offset >= script->buf_size)
+								break;
+							lofs = script->buf[offset++];
+						} else {
+							if (offset + 1 >= script->buf_size)
+								break;
+							lofs = READ_LE_UINT16(script->buf + offset);
+							offset += 2;
+						}
+
+						// Check for going out of bounds when interpreting as abs/rel
+						if (lofs >= script->buf_size)
+							couldBeAbs = false;
+
+						if ((signed)offset + (int16)lofs < 0)
+							couldBeRel = false;
+
+						if ((signed)offset + (int16)lofs >= (signed)script->buf_size)
+							couldBeRel = false;
+
+						continue;
+					}
+
+					// Skip operands for non-lofs opcodes
+					for (int i = 0; g_opcode_formats[opnumber][i]; i++) {
+						switch (g_opcode_formats[opnumber][i]) {
+						case Script_Byte:
+						case Script_SByte:
+							offset++;
+							break;
+						case Script_Word:
+						case Script_SWord:
+							offset += 2;
+							break;
+						case Script_Variable:
+						case Script_Property:
+						case Script_Local:
+						case Script_Temp:
+						case Script_Global:
+						case Script_Param:
+						case Script_SVariable:
+						case Script_SRelative:
+						case Script_Offset:
+							offset++;
+							if (!(opcode & 1))
+								offset++;
+							break;
+						case Script_End:
+							done = true;
+							break;
+						case Script_Invalid:
+						default:
+							warning("opcode %02x: Invalid", opcode);
+						}
+					}
+				}
+			}
+		}
+
+		if (couldBeRel == couldBeAbs) {
+			warning("Lofs detection failed, taking an educated guess");
+
+			if (version >= SCI_VERSION_1_MIDDLE)
+				_lofsType = SCI_VERSION_1_MIDDLE;
+
+			_lofsType = SCI_VERSION_0_EARLY;
+		} else if (couldBeAbs) {
+			_lofsType = SCI_VERSION_1_MIDDLE;
+		} else {
+			_lofsType = SCI_VERSION_0_EARLY;
+		}
+
+		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_lofsType).c_str());
+	}
+
+	return _lofsType;
 }
 
 } // End of namespace Sci

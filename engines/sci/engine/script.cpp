@@ -88,14 +88,16 @@ opcode_format g_opcode_formats[128][4] = {
 };
 #undef END
 
-void script_adjust_opcode_formats(SciVersion version) {
+void script_adjust_opcode_formats(EngineState *s) {
 	// TODO: Check that this is correct
-	if ((version >= SCI_VERSION_1_1) || ((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute()) {
+	if (s->detectLofsType() != SCI_VERSION_0_EARLY) {
 		g_opcode_formats[op_lofsa][0] = Script_Offset;
 		g_opcode_formats[op_lofss][0] = Script_Offset;
 	}
-	
+
 #ifdef ENABLE_SCI32
+	SciVersion version = s->resourceManager->sciVersion();
+
 	// In SCI32, some arguments are now words instead of bytes
 	if (version >= SCI_VERSION_2) {
 		g_opcode_formats[op_calle][2] = Script_Word;
@@ -240,7 +242,6 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
 	FIND_SELECTOR(motionCue);
-	FIND_SELECTOR(egoMoveSpeed);
 	FIND_SELECTOR(setCursor);
 }
 

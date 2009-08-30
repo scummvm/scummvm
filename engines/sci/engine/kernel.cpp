@@ -401,16 +401,6 @@ void Kernel::detectSciFeatures() {
 			features |= kFeatureOldGfxFunctions;
 	}
 
-	// Lofs absolute/relative
-	if (version >= SCI_VERSION_1_MIDDLE && version < SCI_VERSION_1_1) {
-		// Assume all games use absolute lofs
-		features |= kFeatureLofsAbsolute;
-	} else if (version == SCI_VERSION_1_EARLY) {
-		// Use heuristic
-		if (_selectorMap.egoMoveSpeed != -1)
-			features |= kFeatureLofsAbsolute;
-	}
-
 	printf("Kernel auto-detected features:\n");
 
 	printf("Graphics functions: ");
@@ -418,14 +408,6 @@ void Kernel::detectSciFeatures() {
 		printf("old\n");
 	else
 		printf("new\n");
-
-	if (version < SCI_VERSION_1_1) {
-		printf("lofs parameters: ");
-		if (features & kFeatureLofsAbsolute)
-			printf("absolute\n");
-		else
-			printf("relative\n");
-	}
 }
 
 void Kernel::loadSelectorNames() {

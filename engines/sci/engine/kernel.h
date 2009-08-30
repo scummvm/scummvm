@@ -54,8 +54,7 @@ struct KernelFuncWithSignature {
 
 enum AutoDetectedFeatures {
 	kFeatureOldScriptHeader = 1 << 0,
-	kFeatureOldGfxFunctions = 1 << 1,
-	kFeatureLofsAbsolute    = 1 << 2
+	kFeatureOldGfxFunctions = 1 << 1
 };
 
 class Kernel {
@@ -94,13 +93,6 @@ public:
 	 * zones from 42 to 190.
 	 */
 	bool usesOldGfxFunctions() const { return (features & kFeatureOldGfxFunctions); }
-
-	/**
-	 * Applies to all SCI1 versions after 1.000.200
-	 * In late SCI1 versions, the argument of lofs[as] instructions
-	 * is absolute rather than relative.
-	 */
-	bool hasLofsAbsolute() const { return (features & kFeatureLofsAbsolute); }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);

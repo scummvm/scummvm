@@ -226,7 +226,7 @@ int script_init_engine(EngineState *s) {
 	s->bp_list = NULL; // No breakpoints defined
 	s->have_bp = 0;
 
-	if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
+	if (s->detectLofsType() == SCI_VERSION_1_MIDDLE)
 		s->segmentManager->setExportWidth(1);
 	else
 		s->segmentManager->setExportWidth(0);

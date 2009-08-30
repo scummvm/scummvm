@@ -1160,13 +1160,15 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x39: // lofsa
 			s->r_acc.segment = scriptState.xs->addr.pc.segment;
 
-			if (s->resourceManager->sciVersion() >= SCI_VERSION_1_1) {
+			switch (s->detectLofsType()) {
+			case SCI_VERSION_1_1:
 				s->r_acc.offset = opparams[0] + local_script->script_size;
-			} else {
-				if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
-					s->r_acc.offset = opparams[0];
-				else
-					s->r_acc.offset = scriptState.xs->addr.pc.offset + opparams[0];
+				break;
+			case SCI_VERSION_1_MIDDLE:
+				s->r_acc.offset = opparams[0];
+				break;
+			default:
+				s->r_acc.offset = scriptState.xs->addr.pc.offset + opparams[0];
 			}
 
 #ifndef DISABLE_VALIDATIONS
@@ -1180,13 +1182,15 @@ void run_vm(EngineState *s, int restoring) {
 		case 0x3a: // lofss
 			r_temp.segment = scriptState.xs->addr.pc.segment;
 
-			if (s->resourceManager->sciVersion() >= SCI_VERSION_1_1) {
+			switch (s->detectLofsType()) {
+			case SCI_VERSION_1_1:
 				r_temp.offset = opparams[0] + local_script->script_size;
-			} else {
-				if (((SciEngine*)g_engine)->getKernel()->hasLofsAbsolute())
-					r_temp.offset = opparams[0];
-				else
-					r_temp.offset = scriptState.xs->addr.pc.offset + opparams[0];
+				break;
+			case SCI_VERSION_1_MIDDLE:
+				r_temp.offset = opparams[0];
+				break;
+			default:
+				r_temp.offset = scriptState.xs->addr.pc.offset + opparams[0];
 			}
 
 #ifndef DISABLE_VALIDATIONS

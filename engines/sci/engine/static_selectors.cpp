@@ -120,7 +120,7 @@ static const SelectorRemap lsl1_demo_selectors[] = {
 	{          "cue", 136 }, {        "owner", 150 }, {       "setVol", 156 },
 	{    "completed", 210 }, {    "motionCue", 213 }, {       "cycler", 215 },
 	{    "setTarget", 221 }, {     "distance", 224 }, {    "canBeHere", 232 },
-	{     "syncTime", 247 }, {      "syncCue", 248 }, { "egoMoveSpeed", 370 }
+	{     "syncTime", 247 }, {      "syncCue", 248 }
 };
 
 // Taken from Space Quest 1 VGA (Demo)
@@ -133,7 +133,7 @@ static const SelectorRemap lsl5_demo_selectors[] = {
 	{     "moveDone", 100 }, {         "init", 103 }, {      "dispose", 104 },
 	{       "caller", 133 }, {          "cue", 135 }, {        "owner", 149 },
 	{        "flags", 150 }, {    "completed", 207 }, {    "motionCue", 210 },
-	{       "cycler", 212 }, {     "distance", 221 }, { "egoMoveSpeed", 357 }
+	{       "cycler", 212 }, {     "distance", 221 }
 };
 
 // A macro for loading one of the above tables in the function below
