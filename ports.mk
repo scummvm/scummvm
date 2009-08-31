@@ -230,7 +230,6 @@ motomagx-pep: $(EXECUTABLE)
 	$(MKDIR) motomagx/pep
 	$(CP) -r $(srcdir)/dists/motomagx/pep/* motomagx/pep
 	$(STRIP) $(EXECUTABLE) -o motomagx/pep/app/$(EXECUTABLE)
-	$(STRIP) motomagx/pep/app/$(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motomagx/pep/app
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/pep/app
 	tar -C motomagx/pep -czvf motomagx/ScummVM.pep app description.ini  scummvm_big_usr.png  scummvm_small_usr.png
