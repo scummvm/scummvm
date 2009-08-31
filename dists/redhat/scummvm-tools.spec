@@ -7,7 +7,7 @@
 #   Prologue information
 #------------------------------------------------------------------------------
 Name		: scummvm-tools
-Version		: 0.14.0svn
+Version		: 1.0.0rc1
 Release		: 1
 Summary		: ScummVM-related tools
 Group		: Interpreters
@@ -38,10 +38,10 @@ echo -e "                This script is installed as\n                "%{_datadi
 
 %install
 install -m755 -d %{buildroot}%{_bindir}
-install -m755 -D compress_{agos,kyra,queen,saga,scumm_bun,scumm_san,scumm_sou,sword1,sword2,touche,tucker} %{buildroot}%{_bindir}
-install -m755 -D de{cine,kyra,scumm,sword2,gob} %{buildroot}%{_bindir}
+install -m755 -D compress_{agos,gob,kyra,queen,saga,scumm_bun,scumm_san,scumm_sou,sword1,sword2,tinsel,touche,tucker} %{buildroot}%{_bindir}
+install -m755 -D de{cine,gob,kyra,scumm,sword2} %{buildroot}%{_bindir}
 install -m755 -D encode_dxa %{buildroot}%{_bindir}/encode_dxa
-install -m755 -D extract_{agos,cine,kyra,loom_tg16,mm_apple,mm_c64,mm_nes,parallaction,scumm_mac,t7g_mac,zak_c64,gob_stk} %{buildroot}%{_bindir}
+install -m755 -D extract_{agos,cine,gob_stk,kyra,loom_tg16,mm_apple,mm_c64,mm_nes,parallaction,scumm_mac,t7g_mac,zak_c64} %{buildroot}%{_bindir}
 install -m644 -D convert_dxa.sh %{buildroot}%{_datadir}/scummvm-tools/convert_dxa.sh.sample
 
 %clean
