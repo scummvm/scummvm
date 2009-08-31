@@ -220,10 +220,7 @@ GfxPort *sciw_new_window(EngineState *s,
 		// Draw backdrop shadow
 
 		if (!(flags & kWindowNoDropShadow)) {
-			if (gfxop_set_color(state, &black, 0, 0, 0, 0x80, bgcolor.priority, -1)) {
-				error("Could not get black/semitrans color entry");
-				return NULL;
-			}
+			gfxop_set_color(state, &black, 0, 0, 0, 0x80, bgcolor.priority, -1);
 
 			decorations->add((GfxContainer *)decorations, (GfxWidget *)
 			                 gfxw_new_box(state, gfx_rect(shadow_offset + 1, frame.height - 1,
@@ -236,10 +233,7 @@ GfxPort *sciw_new_window(EngineState *s,
 
 		// Draw frame
 
-		if (gfxop_set_color(state, &black, 0, 0, 0, 0, bgcolor.priority, -1)) {
-			error("Could not get black color entry");
-			return NULL;
-		}
+		gfxop_set_color(state, &black, 0, 0, 0, 0, bgcolor.priority, -1);
 
 		if (!(flags & kWindowNoDropShadow)) {
 

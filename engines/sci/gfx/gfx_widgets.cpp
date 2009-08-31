@@ -165,17 +165,6 @@ static int verify_widget(GfxWidget *widget) {
 #define VERIFY_WIDGET(w) \
 	if (verify_widget((GfxWidget *)(w))) { error("Error occured while validating widget"); }
 
-#define GFX_ASSERT(_x) \
-{ \
-	int retval = (_x); \
-	if (retval == GFX_ERROR) { \
-		warning("Error occured while drawing widget"); \
-		return 1; \
-	} else if (retval == GFX_FATAL) { \
-		error("Fatal error occured while drawing widget!\nGraphics state invalid; aborting program..."); \
-	} \
-}
-
 //********** Widgets *************
 
 // Base class operations and common stuff
@@ -334,7 +323,7 @@ static Common::Point _move_point(rect_t rect, Common::Point point) {
 
 int GfxBox::draw(const Common::Point &pos) {
 	DRAW_ASSERT(this, GFXW_BOX);
-	GFX_ASSERT(gfxop_draw_box(_visual->_gfxState, _move_rect(_bounds, pos), _color1, _color2, _shadeType));
+	gfxop_draw_box(_visual->_gfxState, _move_rect(_bounds, pos), _color1, _color2, _shadeType);
 	return 0;
 }
 
@@ -464,8 +453,8 @@ static int _gfxwop_primitive_equals(GfxWidget *widget, GfxWidget *other) {
 int GfxRect::draw(const Common::Point &pos) {
 	DRAW_ASSERT(this, GFXW_RECT);
 
-	GFX_ASSERT(gfxop_draw_rectangle(_visual->_gfxState, gfx_rect(_bounds.x + pos.x, _bounds.y + pos.y,
-	                                         _bounds.width - 1, _bounds.height - 1), _color, _lineMode, _lineStyle));
+	gfxop_draw_rectangle(_visual->_gfxState, gfx_rect(_bounds.x + pos.x, _bounds.y + pos.y,
+	                                         _bounds.width - 1, _bounds.height - 1), _color, _lineMode, _lineStyle);
 	return 0;
 }
 
@@ -511,7 +500,7 @@ int GfxLine::draw(const Common::Point &pos) {
 	DRAW_ASSERT(this, GFXW_LINE);
 
 	_split_rect(_move_rect(linepos, pos), &p1, &p2);
-	GFX_ASSERT(gfxop_draw_line(_visual->_gfxState, p1, p2, _color, _lineMode, _lineStyle));
+	gfxop_draw_line(_visual->_gfxState, p1, p2, _color, _lineMode, _lineStyle);
 	return 0;
 }
 
@@ -581,14 +570,14 @@ GfxView::GfxView(GfxState *state, Common::Point pos_, int view_, int loop_, int 
 int GfxView::draw(const Common::Point &pos) {
 	if (_type == GFXW_VIEW) {
 		DRAW_ASSERT(this, GFXW_VIEW);
-		GFX_ASSERT(gfxop_draw_cel(_visual->_gfxState, _view, _loop, _cel,
-					Common::Point(_pos.x + pos.x, _pos.y + pos.y), _color, _palette));
+		gfxop_draw_cel(_visual->_gfxState, _view, _loop, _cel,
+					Common::Point(_pos.x + pos.x, _pos.y + pos.y), _color, _palette);
 	} else {
 		// FIXME: _gfxwop_static_view_draw checked for GFXW_VIEW here, instead of GFXW_STATIC_VIEW.
 		//DRAW_ASSERT(this, GFXW_VIEW);
 		DRAW_ASSERT(this, GFXW_STATIC_VIEW);
-		GFX_ASSERT(gfxop_draw_cel_static(_visual->_gfxState, _view, _loop, _cel,
-	                _move_point(_bounds, pos), _color, _palette));
+		gfxop_draw_cel_static(_visual->_gfxState, _view, _loop, _cel,
+	                _move_point(_bounds, pos), _color, _palette);
 	}
 	return 0;
 }
@@ -638,16 +627,16 @@ int GfxDynView::draw(const Common::Point &pos) {
 	if (_type == GFXW_DYN_VIEW) {
 		DRAW_ASSERT(this, GFXW_DYN_VIEW);
 
-		GFX_ASSERT(gfxop_draw_cel(_visual->_gfxState, _view, _loop,  _cel,
-		                         _move_point(draw_bounds, pos), _color, _palette));
+		gfxop_draw_cel(_visual->_gfxState, _view, _loop,  _cel,
+		                         _move_point(draw_bounds, pos), _color, _palette);
 
 		/*
 		  gfx_color_t red;
 		  red.visual.r = 0xff;
 		  red.visual.g = red.visual.b = 0;
 		  red.mask = GFX_MASK_VISUAL;
-		  GFX_ASSERT(gfxop_draw_rectangle(view->visual->_gfxState,
-		  gfx_rect(view->_bounds.x + pos.x, view->_bounds.y + pos.y, view->_bounds.width - 1, view->_bounds.height - 1), red, 0, 0));
+		  gfxop_draw_rectangle(view->visual->_gfxState,
+		  gfx_rect(view->_bounds.x + pos.x, view->_bounds.y + pos.y, view->_bounds.width - 1, view->_bounds.height - 1), red, 0, 0);
 		*/
 	} else {
 		DRAW_ASSERT(this, GFXW_PIC_VIEW);
@@ -655,13 +644,13 @@ int GfxDynView::draw(const Common::Point &pos) {
 		if (_isDrawn)
 			return 0;
 
-		GFX_ASSERT(gfxop_set_clip_zone(_visual->_gfxState, _parent->zone));
-		GFX_ASSERT(gfxop_draw_cel_static_clipped(_visual->_gfxState, _view, _loop,
-				   _cel, _move_point(draw_bounds, pos), _color, _palette));
+		gfxop_set_clip_zone(_visual->_gfxState, _parent->zone);
+		gfxop_draw_cel_static_clipped(_visual->_gfxState, _view, _loop,
+				   _cel, _move_point(draw_bounds, pos), _color, _palette);
 
 		// Draw again on the back buffer
-		GFX_ASSERT(gfxop_draw_cel(_visual->_gfxState, _view, _loop, _cel,
-								  _move_point(draw_bounds, pos), _color, _palette));
+		gfxop_draw_cel(_visual->_gfxState, _view, _loop, _cel,
+					  _move_point(draw_bounds, pos), _color, _palette);
 
 
 		_isDrawn = true; // No more drawing needs to be done
@@ -830,7 +819,7 @@ int GfxText::draw(const Common::Point &pos) {
 	                   halign, valign, _color1, _color2, _bgcolor, _textFlags);
 	}
 
-	GFX_ASSERT(gfxop_draw_text(_visual->_gfxState, _textHandle, _move_rect(_bounds, pos)));
+	gfxop_draw_text(_visual->_gfxState, _textHandle, _move_rect(_bounds, pos));
 	return 0;
 }
 
@@ -1060,7 +1049,7 @@ static int _gfxwop_container_draw_contents(GfxWidget *widget, GfxWidget *content
 				if (seeker->_flags & GFXW_FLAG_DIRTY) {
 
 					if (!GFXW_IS_CONTAINER(seeker) && draw_noncontainers) {
-						GFX_ASSERT(gfxop_set_clip_zone(gfx_state, small_rect));
+						gfxop_set_clip_zone(gfx_state, small_rect);
 					}
 					/* Clip zone must be reset after each element, because we might
 					** descend into containers.
@@ -1383,14 +1372,7 @@ int GfxVisual::draw(const Common::Point &pos) {
 	DRAW_ASSERT(this, GFXW_VISUAL);
 
 	for (DirtyRectList::iterator dirty = _dirtyRects.begin(); dirty != _dirtyRects.end(); ++dirty) {
-		int err = gfxop_clear_box(_gfxState, *dirty);
-
-		if (err) {
-			error("Error while clearing dirty rect (%d,%d,(%dx%d))", dirty->x,
-			         dirty->y, dirty->width, dirty->height);
-			if (err == GFX_FATAL)
-				return err;
-		}
+		gfxop_clear_box(_gfxState, *dirty);
 	}
 
 	_gfxwop_container_draw_contents(this, _contents);

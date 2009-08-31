@@ -45,10 +45,8 @@ int _reset_graphics_input(EngineState *s) {
 
 	if (s->resourceManager->getViewType() == kViewEga) {
 		for (int i = 0; i < 16; i++) {
-			if (gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
-					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1)) {
-				return 1;
-			}
+			gfxop_set_color(s->gfx_state, &(s->ega_colors[i]), gfx_sci0_image_colors[sci0_palette][i].r,
+					gfx_sci0_image_colors[sci0_palette][i].g, gfx_sci0_image_colors[sci0_palette][i].b, 0, -1, -1);
 			gfxop_set_system_color(s->gfx_state, i, &(s->ega_colors[i]));
 		}
 	} else {

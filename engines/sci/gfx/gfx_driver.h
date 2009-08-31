@@ -119,9 +119,8 @@ public:
 	 * @param[in] color			The color to draw with
 	 * @param[in] line_mode		Any of the line modes
 	 * @param[in] line_style	Any of the line styles
-	 * @return					GFX_OK or GFX_FATAL
 	 */
-	int drawLine(Common::Point start, Common::Point end, gfx_color_t color,
+	void drawLine(Common::Point start, Common::Point end, gfx_color_t color,
 	             gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 
 	/**
@@ -137,9 +136,8 @@ public:
 	 * @param[in] color1		The first color to draw with
 	 * @param[in] color2		The second color to draw with
 	 * @param[in] shade_mode	Any of GFX_SHADE_*.
-	 * @return					GFX_OK or GFX_FATAL
 	 */
-	int drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color2,
+	void drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color2,
 	                   gfx_rectangle_fill_t shade_mode);
 	/** @} */
 
@@ -156,10 +154,8 @@ public:
 	 * @param[in] src		The pixmap-relative source rectangle
 	 * @param[in] dest		The destination rectangle
 	 * @param[in] buffer	One of GFX_BUFFER_STATIC and GFX_BUFFER_BACK
-	 * @return				GFX_OK or GFX_FATAL, or GFX_ERROR if pxm was
-	 * 						not (but should have been) registered.
 	 */
-	int drawPixmap(gfx_pixmap_t *pxm, int priority,
+	void drawPixmap(gfx_pixmap_t *pxm, int priority,
 	               rect_t src, rect_t dest, gfx_buffer_t buffer);
 
 	/**
@@ -170,11 +166,8 @@ public:
 	 * @param[in] src	The rectangle to grab
 	 * @param[in] pxm	The pixmap structure the data is to be written to
 	 * @param[in] map	GFX_MASK_VISUAL or GFX_MASK_PRIORITY
-	 * @return			GFX_OK, GFX_FATAL, or GFX_ERROR for invalid map
-	 * 					values pxm may be assumed to be empty and
-	 * 					pre-allocated with an appropriate memory size.
 	 */
-	int grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map);
+	void grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map);
 	/** @} */
 
 	/** @name Buffer operations */
@@ -193,9 +186,8 @@ public:
 	 * @param[in] src:		Source rectangle
 	 * @param[in] dest:		Destination point
 	 * @param[in] buffer:	One of GFX_BUFFER_FRONT or GFX_BUFFER_BACK
-	 * @return				GFX_OK, GFX_ERROR or GFX_FATAL
 	 */
-	int update(rect_t src, Common::Point dest, gfx_buffer_t buffer);
+	void update(rect_t src, Common::Point dest, gfx_buffer_t buffer);
 
 	/**
 	 * Sets the contents of the static visual and priority buffers.
@@ -212,9 +204,8 @@ public:
 	 * 						visual back buffer
 	 * @param[in] priority	The priority map containing the new content of
 	 * 						the priority back buffer in the index buffer
-	 * @return				GFX_OK or GFX_FATAL
 	 */
-	int setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority);
+	void setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority);
 	/** @} */
 
 	/** @name Mouse pointer operations */
@@ -232,9 +223,8 @@ public:
 	 * @param[in] pointer	The pointer to set, or NULL to set no pointer.
 	 * @param[in] hotspot	The coordinates of the hotspot, or NULL to set
 	 * 						no pointer.
-	 * @return				GFX_OK or GFX_FATAL
 	 */
-	int setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot);
+	void setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot);
 	/** @} */
 
 	gfx_mode_t *getMode() { return _mode; }

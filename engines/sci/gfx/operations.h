@@ -142,11 +142,8 @@ struct GfxState {
  * @param[in] mode			Graphics mode to use
  * @param[in] options		Rendering options
  * @param[in] resManager	Resource manager to use
- * @return					GFX_OK on success, GFX_ERROR if that particular mode
- * 							is unavailable, or GFX_FATAL if the graphics driver
- * 							is unable to provide any useful graphics support
  */
-int gfxop_init(int version, GfxState *state, 
+void gfxop_init(int version, GfxState *state, 
 		gfx_options_t *options, ResourceManager *resManager,
 		Graphics::PixelFormat mode, int xfact = 1, int yfact = 1);
 
@@ -154,9 +151,8 @@ int gfxop_init(int version, GfxState *state,
  * Deinitializes a currently active driver.
  *
  * @param[in] state	The state encapsulating the driver in question
- * @return			GFX_OK
  */
-int gfxop_exit(GfxState *state);
+void gfxop_exit(GfxState *state);
 
 /**
  * Calculates a bit mask calculated from some pixels on the specified
@@ -186,18 +182,16 @@ int gfxop_scan_bitmask(GfxState *state, rect_t area, gfx_map_mask_t map);
  *
  * @param[in] state	The state to modify
  * @param[in] map	The GFX_MASK to set
- * @return			GFX_OK, or GFX_ERROR if map was invalid
  */
-int gfxop_set_visible_map(GfxState *state, gfx_map_mask_t map);
+void gfxop_set_visible_map(GfxState *state, gfx_map_mask_t map);
 
 /**
  * Sets a new clipping zone.
  *
  * @param[in] state	The affected state
  * @param[in] zone	The new clipping zone
- * @return			GFX_OK
  */
-int gfxop_set_clip_zone(GfxState *state, rect_t zone);
+void gfxop_set_clip_zone(GfxState *state, rect_t zone);
 /** @} */
 
 
@@ -213,9 +207,8 @@ int gfxop_set_clip_zone(GfxState *state, rect_t zone);
  * @param[in] color			The color to use for drawing
  * @param[in] line_mode		Any valid line mode to use
  * @param[in] line_style	The line style to use
- * @return					GFX_OK or GFX_FATAL
  */
-int gfxop_draw_line(GfxState *state,
+void gfxop_draw_line(GfxState *state,
 	Common::Point start, Common::Point end, gfx_color_t color,
 	gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 
@@ -229,9 +222,8 @@ int gfxop_draw_line(GfxState *state,
  * @param[in] color			The color the box is to be drawn in
  * @param[in] line_mode		The line mode to use
  * @param[in] line_style	The line style to use for the box
- * @return					GFX_OK or GFX_FATAL
  */
-int gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color,
+void gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color,
 	gfx_line_mode_t line_mode, gfx_line_style_t line_style);
 
 /**
@@ -244,9 +236,8 @@ int gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color,
  * @param[in] color1		The primary color to use for drawing
  * @param[in] color2		The secondary color to draw in
  * @param[in] shade_type	The shading system to use (e.g. GFX_BOX_SHADE_FLAT)
- * @return					GFX_OK or GFX_FATAL
  */
-int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1,
+void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1,
 	gfx_color_t color2, gfx_box_shade_t shade_type);
 
 /**
@@ -257,18 +248,16 @@ int gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1,
  * @param[in] state	The state to draw to
  * @param[in] box	The box to fill
  * @param[in] color	The color to use for filling
- * @return			GFX_OK or GFX_FATAL
  */
-int gfxop_fill_box(GfxState *state, rect_t box, gfx_color_t color);
+void gfxop_fill_box(GfxState *state, rect_t box, gfx_color_t color);
 
 /**
  * Copies a box from the static buffer to the back buffer.
  *
  * @param[in] state	The affected state
  * @param[in] box	The box to propagate from the static buffer
- * @return			GFX_OK or GFX_FATAL
  */
-int gfxop_clear_box(GfxState *state, rect_t box);
+void gfxop_clear_box(GfxState *state, rect_t box);
 
 
 /**
@@ -279,9 +268,8 @@ int gfxop_clear_box(GfxState *state, rect_t box);
  * occasions (see gfxop_new_pic).
  *
  * @param[in] state	The relevant state
- * @return			GFX_OK or GFX_FATAL if reported by the driver
  */
-int gfxop_update(GfxState *state);
+void gfxop_update(GfxState *state);
 
 
 /**
@@ -294,9 +282,8 @@ int gfxop_update(GfxState *state);
  *
  * @param[in] state	The affected state
  * @param[in] box	The box to propagate to the front buffer
- * @return			GFX_OK or GFX_FATAL
  */
-int gfxop_update_box(GfxState *state, rect_t box);
+void gfxop_update_box(GfxState *state, rect_t box);
 
 /**
  * Enables dirty frame accounting.
@@ -304,17 +291,15 @@ int gfxop_update_box(GfxState *state, rect_t box);
  * Dirty frame accounting is enabled by default.
  *
  * @param[in] state	The state dirty frame accounting is to be enabled in
- * @return			GFX_OK or GFX_ERROR if state was invalid
  */
-int gfxop_enable_dirty_frames(GfxState *state);
+void gfxop_enable_dirty_frames(GfxState *state);
 
 /**
  * Disables dirty frame accounting.
  *
  * @param[in] state	The state dirty frame accounting is to be disabled in
- * @return			GFX_OK or GFX_ERROR if state was invalid
  */
-int gfxop_disable_dirty_frames(GfxState *state);
+void gfxop_disable_dirty_frames(GfxState *state);
 /** @} */
 
 
@@ -344,9 +329,8 @@ int gfxop_disable_dirty_frames(GfxState *state);
  * @param[in] priority	The priority to use for drawing, or -1 for none
  * @param[in] control	The control to use for drawing, or -1 to disable drawing
  * 						to the control map
- * @return				GFX_OK or GFX_ERROR if state is invalid
  */
-int gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b,
+void gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b,
 	int a, int priority, int control);
 
 /**
@@ -357,9 +341,8 @@ int gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b,
  * @param[in] state	The affected state
  * @param[in] index	The index for the new system color
  * @param[in] color	The color to designate as a system color
- * @return			GFX_OK or GFX_ERROR if state is invalid
  */
-int gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color);
+void gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color);
 
 /**
  * Frees a color allocated by gfxop_set_color().
@@ -368,9 +351,8 @@ int gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *col
  *
  * @param[in] state	The state affected
  * @param[in] color	The color to de-allocate
- * @return			GFX_OK or GFX_ERROR if state is invalid
  */
-int gfxop_free_color(GfxState *state, gfx_color_t *color);
+void gfxop_free_color(GfxState *state, gfx_color_t *color);
 /** @} */
 
 /** @name Pointer and IO ops */
@@ -383,21 +365,16 @@ int gfxop_free_color(GfxState *state, gfx_color_t *color);
  *
  * @param[in] state	The state affected
  * @param[in] msecs	The amount of milliseconds to wait
- * @return			GFX_OK or GFX_ERROR
  */
-int gfxop_sleep(GfxState *state, uint32 msecs);
+void gfxop_sleep(GfxState *state, uint32 msecs);
 
 /**
  * Sets the mouse pointer to a cursor resource.
  *
  * @param[in] state	The affected state
  * @param[in] nr	Number of the cursor resource to use
- * @return			GFX_OK, GFX_ERROR if the resource did not exist and was not
- * 					GFXOP_NO_POINTER, or GFX_FATAL on fatal error conditions.
- * 					Use nr = GFX_NO_POINTER to disable the mouse pointer
- * 					(default).
  */
-int gfxop_set_pointer_cursor(GfxState *state, int nr);
+void gfxop_set_pointer_cursor(GfxState *state, int nr);
 
 /**
  * Sets the mouse pointer to a view resource.
@@ -409,9 +386,8 @@ int gfxop_set_pointer_cursor(GfxState *state, int nr);
  * @param[in] loop		View loop to use
  * @param[in] cel		View cel to use
  * @param[in] hotspot	Manually set hotspot to use, or NULL for default.
- * @return				GFX_OK or GFX_FATAL
  */
-int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot);
+void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot);
 
 /**
  * Teleports the mouse pointer to a specific position.
@@ -420,18 +396,16 @@ int gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::P
  *
  * @param[in] state	The state the pointer is in
  * @param[in] pos	The position to teleport it to
- * @return			Any error code or GFX_OK
  */
-int gfxop_set_pointer_position(GfxState *state, Common::Point pos);
+void gfxop_set_pointer_position(GfxState *state, Common::Point pos);
 
 /**
  * Limits the mouse movement to a given rectangle.
  *
  * @param[in] state	The affected state
  * @param[in] rect	The rectangle
- * @return			Any error code or GFX_OK
  */
-int gfxop_set_pointer_zone(GfxState *state, Common::Rect rect);
+void gfxop_set_pointer_zone(GfxState *state, Common::Rect rect);
 
 /**
  * Retrieves the next input event from the driver.
@@ -521,9 +495,8 @@ int gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel,
  * @param[in] pos		The positino the cel is to be drawn to
  * @param[in] color		The priority and control values to use for drawing
  * @param[in] palette	The palette to use
- * @return				GFX_OK or GFX_FATAL
  */
-int gfxop_draw_cel(GfxState *state, int nr, int loop, int cel,
+void gfxop_draw_cel(GfxState *state, int nr, int loop, int cel,
 	Common::Point pos, gfx_color_t color, int palette);
 
 
@@ -539,9 +512,8 @@ int gfxop_draw_cel(GfxState *state, int nr, int loop, int cel,
  * @param[in] pos		The positino the cel is to be drawn to
  * @param[in] color		The priority and control values to use for drawing
  * @param[in] palette	The palette to use
- * @return				GFX_OK or GFX_FATAL
  */
-int gfxop_draw_cel_static(GfxState *state, int nr, int loop, int cel,
+void gfxop_draw_cel_static(GfxState *state, int nr, int loop, int cel,
 	Common::Point pos, gfx_color_t color, int palette);
 
 
@@ -557,9 +529,8 @@ int gfxop_draw_cel_static(GfxState *state, int nr, int loop, int cel,
  * @param[in] pos		The positino the cel is to be drawn to
  * @param[in] color		The priority and control values to use for drawing
  * @param[in] palette	The palette to use
- * @return				GFX_OK or GFX_FATAL
  */
-int gfxop_draw_cel_static_clipped(GfxState *state, int nr, int loop, int cel,
+void gfxop_draw_cel_static_clipped(GfxState *state, int nr, int loop, int cel,
 	Common::Point pos, gfx_color_t color, int palette);
 /** @} */
 
@@ -578,9 +549,8 @@ int gfxop_draw_cel_static_clipped(GfxState *state, int nr, int loop, int cel,
  * @param[in] nr				Number of the pic to draw
  * @param[in] flags				Interpreter-dependant flags to use for drawing
  * @param[in] default_palette	The default palette for drawing
- * @return						GFX_OK or GFX_FATAL
  */
-int gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette);
+void gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette);
 
 /**
  * Retrieves all meta-information assigned to the current pic.
@@ -599,9 +569,8 @@ int *gfxop_get_pic_metainfo(GfxState *state);
  * @param[in] nr				Number of the pic to add
  * @param[in] flags				Interpreter-dependant flags to use for drawing
  * @param[in] default_palette	The default palette for drawing
- * @return						GFX_OK or GFX_FATAL
  */
-int gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette);
+void gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette);
 /** @} */
 
 
@@ -670,9 +639,8 @@ TextHandle *gfxop_new_text(GfxState *state, int font_nr,
  *
  * @param[in] state		The state to use
  * @param[in] handle	The handle to free
- * @return				GFX_OK
  */
-int gfxop_free_text(GfxState *state, TextHandle *handle);
+void gfxop_free_text(GfxState *state, TextHandle *handle);
 
 /**
  * Draws text stored in a text handle.
@@ -682,9 +650,8 @@ int gfxop_free_text(GfxState *state, TextHandle *handle);
  * @param[in] zone		The rectangular box to draw to. In combination with
  * 						halign and valign, this defines where the text is drawn
  * 						to.
- * @return				GFX_OK or GFX_FATAL
  */
-int gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone);
+void gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone);
 /** @} */
 
 
@@ -709,9 +676,8 @@ gfx_pixmap_t *gfxop_grab_pixmap(GfxState *state, rect_t area);
  * @param[in] pxm	The pixmap to draw
  * @param[in] zone	The segment of the pixmap to draw
  * @param[in] pos	The position the pixmap should be drawn to
- * @return			GFX_OK or any error code
  */
-int gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone,
+void gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone,
 	Common::Point pos);
 
 /**
@@ -719,9 +685,8 @@ int gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone,
  *
  * @param[in] state	The affected state
  * @param[in] pxm	The pixmap to free
- * @return			GFX_OK, or GFX_ERROR if the state was invalid
  */
-int gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm);
+void gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm);
 /** @} */
 
 

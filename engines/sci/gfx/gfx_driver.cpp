@@ -87,7 +87,7 @@ static void drawProc(int x, int y, int c, void *data) {
 	memcpy(p + (y * 320* drv->getMode()->xfact + x) * COPY_BYTES, &col, COPY_BYTES);
 }
 
-int GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color, 
+void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color, 
 						gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.parent_index;
 	int xfact = (line_mode == GFX_LINE_MODE_FINE)? 1: _mode->xfact;
@@ -136,11 +136,9 @@ int GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t colo
 			}
 		}
 	}
-
-	return GFX_OK;
 }
 
-int GfxDriver::drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color2,
+void GfxDriver::drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color2,
 	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.height; i++) {
@@ -151,38 +149,30 @@ int GfxDriver::drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t color
 
 	if (color1.mask & GFX_MASK_PRIORITY)
 		gfx_draw_box_pixmap_i(_priority[0], rect, color1.priority);
-
-	return GFX_OK;
 }
 
 // Pixmap operations
 
-int GfxDriver::drawPixmap(gfx_pixmap_t *pxm, int priority, rect_t src, rect_t dest, gfx_buffer_t buffer) {
+void GfxDriver::drawPixmap(gfx_pixmap_t *pxm, int priority, rect_t src, rect_t dest, gfx_buffer_t buffer) {
 	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 1 : 0;
 
 	if (dest.width != src.width || dest.height != src.height) {
-		printf("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.width, src.height, dest.width, dest.height);
-		return GFX_ERROR;
+		warning("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.width, src.height, dest.width, dest.height);
+		return;
 	}
 
 	gfx_crossblit_pixmap(_mode, pxm, priority, src, dest, _visual[bufnr],
 	                     _mode->xsize * _mode->bytespp,
 	                     _priority[bufnr]->index_data,
 	                     _priority[bufnr]->index_width, 1, 0);
-
-	return GFX_OK;
 }
 
-int GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
-	if (src.x < 0 || src.y < 0) {
-		printf("Attempt to grab pixmap from invalid coordinates (%d,%d)\n", src.x, src.y);
-		return GFX_ERROR;
-	}
+void GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
+	if (src.x < 0 || src.y < 0)
+		error("Attempt to grab pixmap from invalid coordinates (%d,%d)", src.x, src.y);
 
-	if (!pxm->data) {
-		printf("Attempt to grab pixmap to unallocated memory\n");
-		return GFX_ERROR;
-	}
+	if (!pxm->data)
+		error("Attempt to grab pixmap to unallocated memory");
 
 	switch (map) {
 
@@ -197,20 +187,17 @@ int GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
 		break;
 
 	case GFX_MASK_PRIORITY:
-		printf("FIXME: priority map grab not implemented yet!\n");
+		warning("FIXME: priority map grab not implemented yet");
 		break;
 
 	default:
-		printf("Attempt to grab pixmap from invalid map 0x%02x\n", map);
-		return GFX_ERROR;
+		error("Attempt to grab pixmap from invalid map 0x%02x", map);
 	}
-
-	return GFX_OK;
 }
 
 // Buffer operations
 
-int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
+void GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 	//TODO
 
 	/*
@@ -238,17 +225,12 @@ int GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 	}
 	default:
 		error("Invalid buffer %d in update", buffer);
-		return GFX_ERROR;
 	}
-
-	return GFX_OK;
 }
 
-int GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
+void GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
 	memcpy(_visual[1], pic->data, _mode->xsize * _mode->ysize * _mode->bytespp);
 	gfx_copy_pixmap_box_i(_priority[1], priority, gfx_rect(0, 0, _mode->xsize, _mode->ysize));
-
-	return GFX_OK;
 }
 
 // Mouse pointer operations
@@ -283,7 +265,7 @@ byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
 }
 
 
-int GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
+void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 	if ((pointer == NULL) || (hotspot == NULL)) {
 		CursorMan.showMouse(false);
 	} else {
@@ -304,8 +286,6 @@ int GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 		delete[] cursorData;
 		cursorData = 0;
 	}
-
-	return GFX_OK;
 }
 
 } // End of namespace Sci

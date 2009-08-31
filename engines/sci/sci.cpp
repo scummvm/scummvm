@@ -182,10 +182,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	if (gfxop_init(_resourceManager->sciVersion(), &gfx_state, &gfx_options, _resourceManager, gfxmode, 1, 1)) {
-		warning("Graphics initialization failed. Aborting...");
-		return Common::kUnknownError;
-	}
+	gfxop_init(_resourceManager->sciVersion(), &gfx_state, &gfx_options, _resourceManager, gfxmode, 1, 1);
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");

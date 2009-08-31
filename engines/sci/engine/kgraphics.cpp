@@ -98,18 +98,6 @@ enum {
 		s->visual->print(s->visual, 0);
 #endif
 
-#define GFX_ASSERT(x) { \
-	int val = !!(x); \
-	if (val) { \
-		if (val == GFX_ERROR) \
-			warning("GFX subsystem returned error on \"" #x "\""); \
-		else {\
-			error("GFX subsystem fatal error condition on \"" #x "\""); \
-			vm_handle_fatal_error(s, __LINE__, __FILE__); \
-		} \
-	}\
-}
-
 #define ASSERT(x) { \
 	int val = !!(x); \
 	if (!val) { \
@@ -309,12 +297,12 @@ static reg_t kSetCursorSci0(EngineState *s, int funct_nr, int argc, reg_t *argv)
 	if ((argc >= 2) && (argv[1].toSint16() == 0))
 		cursor = GFXOP_NO_POINTER;
 
-	GFX_ASSERT(gfxop_set_pointer_cursor(s->gfx_state, cursor));
+	gfxop_set_pointer_cursor(s->gfx_state, cursor);
 
 	// Set pointer position, if requested
 	if (argc >= 4) {
 		Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
-		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
+		gfxop_set_pointer_position(s->gfx_state, newPos);
 	}
 
 	return s->r_acc;
@@ -328,8 +316,8 @@ static reg_t kSetCursorSci11(EngineState *s, int funct_nr, int argc, reg_t *argv
 		CursorMan.showMouse(argv[0].toSint16() != 0);
 		break;
 	case 2:
-		GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state,
-				   Common::Point(argv[0].toUint16() + s->port->_bounds.x, argv[1].toUint16() + s->port->_bounds.y)));
+		gfxop_set_pointer_position(s->gfx_state,
+				   Common::Point(argv[0].toUint16() + s->port->_bounds.x, argv[1].toUint16() + s->port->_bounds.y));
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();
@@ -339,7 +327,7 @@ static reg_t kSetCursorSci11(EngineState *s, int funct_nr, int argc, reg_t *argv
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right + 1, bottom + 1);
-			GFX_ASSERT(gfxop_set_pointer_zone(s->gfx_state, rect));
+			gfxop_set_pointer_zone(s->gfx_state, rect);
 		} else {
 			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
 		}
@@ -350,7 +338,7 @@ static reg_t kSetCursorSci11(EngineState *s, int funct_nr, int argc, reg_t *argv
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		GFX_ASSERT(gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot));
+		gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		if (hotspot)
 			delete hotspot;
 		break;
@@ -393,7 +381,7 @@ reg_t kMoveCursor(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		if (newPos.y < 0) newPos.y = 0;
 	}
 
-	GFX_ASSERT(gfxop_set_pointer_position(s->gfx_state, newPos));
+	gfxop_set_pointer_position(s->gfx_state, newPos);
 
 	return s->r_acc;
 }
@@ -643,8 +631,8 @@ reg_t kTextSize(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, s->strSplit(text, sep).c_str(), maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
-	                                 &width, &height, 0, NULL, NULL, NULL));
+	gfxop_get_text_params(s->gfx_state, font_nr, s->strSplit(text, sep).c_str(), maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
+	                                 &width, &height, 0, NULL, NULL, NULL);
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text, width, height);
 
 	dest[2] = make_reg(0, height);
@@ -663,7 +651,7 @@ reg_t kWait(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	s->last_wait_time = time;
 
 	sleep_time *= g_debug_sleeptime_factor;
-	GFX_ASSERT(gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60));
+	gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60);
 
 	// Reset speed throttler: Game is playing along nicely anyway
 	if (sleep_time > 0)
@@ -1027,11 +1015,11 @@ reg_t kDrawPic(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (add_to_pic) {
 		s->_pics.push_back(dp);
-		GFX_ASSERT(gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette));
+		gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
 	} else {
 		s->_pics.clear();
 		s->_pics.push_back(dp);
-		GFX_ASSERT(gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette));
+		gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
 	}
 
 	delete s->wm_port;
@@ -2018,7 +2006,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 
 		tempWidget = _k_make_dynview_obj(s, obj, options, sequence_nr--, funct_nr, argc, argv);
 		if (tempWidget)
-			GFX_ASSERT((*widget_list)->add((GfxContainer *)(*widget_list), tempWidget));
+			(*widget_list)->add((GfxContainer *)(*widget_list), tempWidget);
 
 		node = lookup_node(s, next_node); // Next node
 	}
@@ -2595,11 +2583,11 @@ reg_t kNewWindow(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 #define K_ANIMATE_SCROLL_DOWN                  0x2a
 #define K_ANIMATE_SCROLL_UP                    0x2b
 
-#define GRAPH_BLANK_BOX(s, x, y, xl, yl, color) GFX_ASSERT(gfxop_fill_box(s->gfx_state, \
-	gfx_rect(x, (((y) < 10)? 10 : (y)), xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), s->ega_colors[color]));
+#define GRAPH_BLANK_BOX(s, x, y, xl, yl, color) gfxop_fill_box(s->gfx_state, \
+	gfx_rect(x, (((y) < 10)? 10 : (y)), xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), s->ega_colors[color]);
 
-#define GRAPH_UPDATE_BOX(s, x, y, xl, yl) GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, \
-	gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) )));
+#define GRAPH_UPDATE_BOX(s, x, y, xl, yl) gfxop_draw_pixmap(s->gfx_state, newscreen, \
+	gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) ));
 
 static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	long animation_delay = 5;
@@ -2624,7 +2612,7 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 		return;
 	}
 
-	GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190), Common::Point(0, 10)));
+	gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190), Common::Point(0, 10));
 	gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 
 	//debugC(2, kDebugLevelGraphics, "Animating pic opening type %x\n", s->pic_animate);
@@ -2933,8 +2921,8 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 	case K_ANIMATE_SCROLL_LEFT :
 
 		for (i = 0; i < 319; i += granularity0) {
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(320 - i, 0, i, 190), Common::Point(0, 10)));
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320 - i, 190), Common::Point(i, 10)));
+			gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(320 - i, 0, i, 190), Common::Point(0, 10));
+			gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320 - i, 190), Common::Point(i, 10));
 			gfxop_update(s->gfx_state);
 			gfxop_sleep(s->gfx_state, (animation_delay >> 3) / 1000);
 		}
@@ -2944,8 +2932,8 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 	case K_ANIMATE_SCROLL_RIGHT :
 
 		for (i = 0; i < 319; i += granularity0) {
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 0, i, 190), Common::Point(319 - i, 10)));
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(i, 0, 320 - i, 190), Common::Point(0, 10)));
+			gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 0, i, 190), Common::Point(319 - i, 10));
+			gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(i, 0, 320 - i, 190), Common::Point(0, 10));
 			gfxop_update(s->gfx_state);
 			gfxop_sleep(s->gfx_state, (animation_delay >> 3) / 1000);
 		}
@@ -2955,8 +2943,8 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 	case K_ANIMATE_SCROLL_UP :
 
 		for (i = 0; i < 189; i += granularity0) {
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 190 - i, 320, i), Common::Point(0, 10)));
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190 - i), Common::Point(0, 10 + i)));
+			gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 190 - i, 320, i), Common::Point(0, 10));
+			gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, 0, 320, 190 - i), Common::Point(0, 10 + i));
 			gfxop_update(s->gfx_state);
 			gfxop_sleep(s->gfx_state, (animation_delay >> 3) / 1000);
 		}
@@ -2966,8 +2954,8 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 	case K_ANIMATE_SCROLL_DOWN :
 
 		for (i = 0; i < 189; i += granularity0) {
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 0, 320, i), Common::Point(0, 200 - i)));
-			GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, i, 320, 190 - i), Common::Point(0, 10)));
+			gfxop_draw_pixmap(s->gfx_state, newscreen, gfx_rect(0, 0, 320, i), Common::Point(0, 200 - i));
+			gfxop_draw_pixmap(s->gfx_state, s->old_screen, gfx_rect(0, i, 320, 190 - i), Common::Point(0, 10));
 			gfxop_update(s->gfx_state);
 			gfxop_sleep(s->gfx_state, (animation_delay >> 3) / 1000);
 		}
@@ -2980,8 +2968,8 @@ static void animate_do_animation(EngineState *s, int funct_nr, int argc, reg_t *
 
 	}
 
-	GFX_ASSERT(gfxop_free_pixmap(s->gfx_state, s->old_screen));
-	GFX_ASSERT(gfxop_free_pixmap(s->gfx_state, newscreen));
+	gfxop_free_pixmap(s->gfx_state, s->old_screen);
+	gfxop_free_pixmap(s->gfx_state, newscreen);
 	s->old_screen = NULL;
 }
 
@@ -3288,7 +3276,7 @@ reg_t kDisplay(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	if (halign == ALIGN_LEFT) {
 		// If the text does not fit on the screen, move it to the left and upwards until it does
-		GFX_ASSERT(gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL));
+		gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL);
 
 		// Make the text fit on the screen
 		if (area.x + area.width > 320)
@@ -3393,7 +3381,7 @@ static reg_t kShowMovie_Windows(EngineState *s, int funct_nr, int argc, reg_t *a
 				
 				// Copy the frame to the screen
 				gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
-				GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset)));
+				gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset));
 				gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 				gfx_free_pixmap(pixmap);
 				
@@ -3442,7 +3430,7 @@ static reg_t kShowMovie_DOS(EngineState *s, int funct_nr, int argc, reg_t *argv)
 			pixmap->palette->forceInto(s->gfx_state->driver->getMode()->palette);
 
 		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
-		GFX_ASSERT(gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset)));
+		gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset));
 		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 		gfx_free_pixmap(pixmap);
 
