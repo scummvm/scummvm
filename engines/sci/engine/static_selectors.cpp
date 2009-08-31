@@ -58,35 +58,8 @@ static const char * const selectorNamesFirstPart[] = {
            "draw",     "delete",        "z"                             // 80 - 82
 };
 
-void createFirstPart(Common::StringList &names, int offset, bool hasCantBeHere, bool hasNodePtr) {
-	int count = ARRAYSIZE(selectorNamesFirstPart) + offset;
-	int i;
-	names.resize(count);
-
-	for (i = 0; i < offset; i++)
-		names[i].clear();
-
-	for (i = offset; i < count; i++) {
-		names[i] = selectorNamesFirstPart[i - offset];
-		if (hasNodePtr && i == handleIndex + offset)
-			names[i] = "nodePtr";
-		if (hasCantBeHere && i == canBeHereIndex + offset)
-			names[i] = "cantBeHere";
-	}	
-}
-
-// Taken from King's Quest IV (Full Game)
-// offset: 3, hascantbehere: false, hasNodePtr: false
-static const SelectorRemap kq4_demo_selectors[] = {
-	{      "init",  87 }, {   "dispose",  88 }, {      "size",  96 },
-	{    "caller", 119 }, {       "cue", 121 }, {     "owner", 130 },
-	{ "completed", 158 }, { "motionCue", 161 }, {    "cycler", 165 },
-	{  "moveDone", 169 }, { "setCursor", 253 }
-};
-
 // Taken from Codename: Iceman (Full Game)
-// offset: 3, hascantbehere: false, hasNodePtr: false
-static const SelectorRemap iceman_demo_selectors[] = {
+static const SelectorRemap sci0_selectors[] = {
 	{      "init",  87 }, {   "dispose",  88 }, {      "size",  96 },
 	{    "caller", 119 }, {       "cue", 121 }, {     "owner", 130 },
 	{ "completed", 159 }, { "motionCue", 162 }, {    "cycler", 164 },
@@ -95,8 +68,7 @@ static const SelectorRemap iceman_demo_selectors[] = {
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
-// offset: 3, hascantbehere: true, hasNodePtr: true
-static const SelectorRemap lsl1_demo_selectors[] = {
+static const SelectorRemap sci1_selectors[] = {
 	{    "parseLang",  86 }, {    "printLang",  87 }, { "subtitleLang",  88 },
 	{         "size",  89 }, {       "points",  90 }, {      "palette",  91 },
 	{      "dataInc",  92 }, {       "handle",  93 }, {          "min",  94 },
@@ -109,9 +81,8 @@ static const SelectorRemap lsl1_demo_selectors[] = {
 	{      "syncCue", 248 }
 };
 
-// Taken from KQ6 floppy
-// offset: 0, hascantbehere: true, hasNodePtr: true
-static const SelectorRemap christmas1992_selectors[] = {
+// Taken from KQ6 floppy (Full Game)
+static const SelectorRemap sci11_selectors[] = {
 	{    "parseLang",  83 }, {    "printLang",  84 }, { "subtitleLang",  85 },
 	{         "size",  86 }, {       "points",  87 }, {      "palette",  88 },
 	{      "dataInc",  89 }, {       "handle",  90 }, {          "min",  91 },
@@ -126,31 +97,37 @@ static const SelectorRemap christmas1992_selectors[] = {
 
 // A macro for loading one of the above tables in the function below
 #define USE_SELECTOR_TABLE(x) \
-	for (uint32 i = 0; i < ARRAYSIZE(x); i++) { \
-		if (x[i].slot >= names.size()) \
-			names.resize(x[i].slot + 1); \
-		names[x[i].slot] = x[i].name; \
-	}
 
-Common::StringList Kernel::checkStaticSelectorNames() {
+
+Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 	Common::StringList names;
-	if (!g_engine)
-		return names;
+	int offset = (version < SCI_VERSION_1_1) ? 3 : 0;
+	int count = ARRAYSIZE(selectorNamesFirstPart) + offset;
+	names.resize(count);
+	const SelectorRemap *selectors = sci0_selectors;
 
-	Common::String gameID = ((SciEngine*)g_engine)->getGameID();
+	for (int j = 0; j < offset; j++)
+		names[j].clear();
 
-	if (gameID == "kq4sci") {
-		createFirstPart(names, 3, false, false);
-		USE_SELECTOR_TABLE(kq4_demo_selectors);
-	} else if (gameID == "lsl3" || gameID == "iceman") { // identical, except iceman has "flags" 
-		createFirstPart(names, 3, false, false);
-		USE_SELECTOR_TABLE(iceman_demo_selectors);
-	} else if (gameID == "christmas1992" || gameID == "laurabow2") {
-		createFirstPart(names, 0, true, true);
-		USE_SELECTOR_TABLE(christmas1992_selectors);
-	} else if (gameID == "lsl1sci" || gameID == "lsl5") {
-		createFirstPart(names, 3, true, true);
-		USE_SELECTOR_TABLE(lsl1_demo_selectors);
+	for (int i = offset; i < count; i++) {
+		names[i] = selectorNamesFirstPart[i - offset];
+		if (version >= SCI_VERSION_1_EGA && i == handleIndex + offset)
+			names[i] = "nodePtr";
+		if (version >= SCI_VERSION_1_EGA && i == canBeHereIndex + offset)
+			names[i] = "cantBeHere";
+	}	
+
+	if (version <= SCI_VERSION_01)
+		selectors = sci0_selectors;
+	else if (version >= SCI_VERSION_1_EGA && version <= SCI_VERSION_1_LATE)
+		selectors = sci1_selectors;
+	else
+		selectors = sci11_selectors;
+
+	for (uint32 k = 0; k < ARRAYSIZE(selectors); k++) {
+		if (selectors[k].slot >= names.size()) \
+			names.resize(selectors[k].slot + 1); \
+		names[selectors[k].slot] = selectors[k].name; \
 	}
 
 	return names;

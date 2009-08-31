@@ -418,7 +418,7 @@ void Kernel::loadSelectorNames() {
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
 		// Some demos do not have a selector table
-		Common::StringList staticSelectorTable = checkStaticSelectorNames();
+		Common::StringList staticSelectorTable = checkStaticSelectorNames(_resourceManager->sciVersion());
 		
 		if (staticSelectorTable.empty())
 			error("Kernel: Could not retrieve selector names");

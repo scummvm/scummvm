@@ -140,7 +140,7 @@ private:
 	 * Check for any hardcoded selector table we might have that can be used
 	 * if a game is missing the selector names.
 	 */
-	Common::StringList checkStaticSelectorNames();
+	Common::StringList checkStaticSelectorNames(SciVersion version);
 
 	/**
 	 * Maps special selectors
