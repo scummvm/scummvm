@@ -425,7 +425,7 @@ bool Console::cmdSelector(int argc, const char **argv) {
 
 	for (uint seeker = 0; seeker < _vm->getKernel()->getSelectorNamesSize(); seeker++) {
 		if (!scumm_stricmp(_vm->getKernel()->getSelectorName(seeker).c_str(), argv[1])) {
-			DebugPrintf("Selector %s found at %03x\n", _vm->getKernel()->getSelectorName(seeker).c_str(), seeker);
+			DebugPrintf("Selector %s found at %03x (%d)\n", _vm->getKernel()->getSelectorName(seeker).c_str(), seeker, seeker);
 			return true;
 		}
 	}
@@ -437,8 +437,13 @@ bool Console::cmdSelector(int argc, const char **argv) {
 
 bool Console::cmdSelectors(int argc, const char **argv) {
 	DebugPrintf("Selector names in numeric order:\n");
+	Common::String selectorName;
 	for (uint seeker = 0; seeker < _vm->getKernel()->getSelectorNamesSize(); seeker++) {
-		DebugPrintf("%03x: %20s | ", seeker, _vm->getKernel()->getSelectorName(seeker).c_str());
+		selectorName = _vm->getKernel()->getSelectorName(seeker);
+		if (selectorName != "BAD SELECTOR")
+			DebugPrintf("%03x: %20s | ", seeker, selectorName.c_str());
+		else
+			continue;
 		if ((seeker % 3) == 2)
 			DebugPrintf("\n");
 	}
