@@ -90,10 +90,6 @@ static const SelectorRemap sci11SelectorRemap[] = {
 	{     "syncTime", 279 }, {      "syncCue", 280 }
 };
 
-// A macro for loading one of the above tables in the function below
-#define USE_SELECTOR_TABLE(x) \
-
-
 Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 	Common::StringList names;
 	int offset = (version < SCI_VERSION_1_1) ? 3 : 0;
@@ -108,7 +104,9 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 	for (i = offset; i < count; i++)
 		names[i] = sci0Selectors[i - offset];
 
-	if (version >= SCI_VERSION_1_EGA) {
+	if (version <= SCI_VERSION_01) {
+		selectorRemap = sci0SelectorRemap;
+	} else {
 		int count2 = ARRAYSIZE(sci1Selectors);
 		names[handleIndex + offset] = "nodePtr";
 		names[canBeHereIndex + offset] = "cantBeHere";
@@ -116,19 +114,14 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 
 		for (i = count; i < count + count2; i++)
 			names[i] = sci1Selectors[i - count];
+
+		selectorRemap = (version < SCI_VERSION_1_1) ? sci1SelectorRemap : sci11SelectorRemap;
 	}
 
-	if (version <= SCI_VERSION_01)
-		selectorRemap = sci0SelectorRemap;
-	else if (version >= SCI_VERSION_1_EGA && version <= SCI_VERSION_1_LATE)
-		selectorRemap = sci1SelectorRemap;
-	else
-		selectorRemap = sci11SelectorRemap;
-
 	for (uint32 k = 0; k < ARRAYSIZE(selectorRemap); k++) {
-		if (selectorRemap[k].slot >= names.size()) \
-			names.resize(selectorRemap[k].slot + 1); \
-		names[selectorRemap[k].slot] = selectorRemap[k].name; \
+		if (selectorRemap[k].slot >= names.size())
+			names.resize(selectorRemap[k].slot + 1);
+		names[selectorRemap[k].slot] = selectorRemap[k].name;
 	}
 
 	return names;
