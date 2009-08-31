@@ -46,6 +46,7 @@ struct IndexRecordCursor {
 
 typedef Common::Stack<IndexRecordCursor> CursorStack;
 
+// FIXME: Documentation
 class MessageState {
 public:
 	MessageState() : _module(-1), _locked(false) { }
@@ -74,7 +75,11 @@ private:
 	IndexRecordCursor _engineCursor;
 	MessageTuple _lastReturned;
 	int _lastReturnedModule;
-	int _version;
+	int _offsetCondSeq;
+	int _offsetRef;
+	int _offsetTalker;
+	int _offsetText;
+	int _recordSize;
 };
 
 } // End of namespace Sci

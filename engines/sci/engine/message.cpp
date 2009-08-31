@@ -31,14 +31,14 @@ namespace Sci {
 MessageTuple MessageState::getTuple() {
 	MessageTuple t;
 
-	t.noun = *(_engineCursor.index_record + 0);
-	t.verb = *(_engineCursor.index_record + 1);
-	if (_version == 2) {
+	t.noun = _engineCursor.index_record[0];
+	t.verb = _engineCursor.index_record[1];
+	if (_offsetCondSeq == -1) {
 		t.cond = 0;
 		t.seq = 1;
 	} else {
-		t.cond = *(_engineCursor.index_record + 2);
-		t.seq = *(_engineCursor.index_record + 3);
+		t.cond = _engineCursor.index_record[_offsetCondSeq];
+		t.seq = _engineCursor.index_record[_offsetCondSeq + 1];
 	}
 
 	return t;
@@ -47,14 +47,14 @@ MessageTuple MessageState::getTuple() {
 MessageTuple MessageState::getRefTuple() {
 	MessageTuple t;
 
-	if (_version == 2) {
+	if (_offsetRef == -1) {
 		t.noun = 0;
 		t.verb = 0;
 		t.cond = 0;
 	} else {
-		t.noun = *(_engineCursor.index_record + 7);
-		t.verb = *(_engineCursor.index_record + 8);
-		t.cond = *(_engineCursor.index_record + 9);
+		t.noun = _engineCursor.index_record[_offsetRef];
+		t.verb = _engineCursor.index_record[_offsetRef + 1];
+		t.cond = _engineCursor.index_record[_offsetRef + 2];
 	}
 	t.seq = 1;
 
@@ -68,7 +68,7 @@ void MessageState::initCursor() {
 }
 
 void MessageState::advanceCursor(bool increaseSeq) {
-	_engineCursor.index_record += ((_version == 2) ? 4 : 11);
+	_engineCursor.index_record += _recordSize;
 	_engineCursor.index++;
 
 	if (increaseSeq)
@@ -118,6 +118,8 @@ int MessageState::getMessage() {
 				// Recursion, advance the current cursor and load the reference
 				advanceCursor(true);
 
+				_cursorStack.push(_engineCursor);
+
 				if (findTuple(ref))
 					return getMessage();
 				else {
@@ -142,7 +144,7 @@ int MessageState::getMessage() {
 }
 
 int MessageState::getTalker() {
-	return (_version == 2) ? -1 : *(_engineCursor.index_record + 4);
+	return (_offsetTalker == -1) ? -1 : _engineCursor.index_record[_offsetTalker];
 }
 
 MessageTuple &MessageState::getLastTuple() {
@@ -154,7 +156,7 @@ int MessageState::getLastModule() {
 }
 
 Common::String MessageState::getText() {
-	char *str = (char *)_currentResource->data + READ_LE_UINT16(_engineCursor.index_record + ((_version == 2) ? 2 : 5));
+	char *str = (char *)_currentResource->data + READ_LE_UINT16(_engineCursor.index_record + _offsetText);
 
 	Common::String strippedStr;
 	Common::String skippedSubstr;
@@ -215,12 +217,14 @@ void MessageState::gotoNext() {
 }
 
 int MessageState::getLength() {
-	int offset = READ_LE_UINT16(_engineCursor.index_record + ((_version == 2) ? 2 : 5));
+	int offset = READ_LE_UINT16(_engineCursor.index_record + _offsetText);
 	char *stringptr = (char *)_currentResource->data + offset;
 	return strlen(stringptr);
 }
 
 int MessageState::loadRes(ResourceManager *resourceManager, int module, bool lock) {
+	_cursorStack.clear();
+
 	if (_locked) {
 		// We already have a locked resource
 		if (_module == module) {
@@ -243,17 +247,38 @@ int MessageState::loadRes(ResourceManager *resourceManager, int module, bool loc
 	_module = module;
 	_locked = lock;
 
-	_version = READ_LE_UINT16(_currentResource->data);
-	debug(5, "Message: reading resource %d.msg, version %d.%03d", _module, _version / 1000, _version % 1000);
+	int version = READ_LE_UINT16(_currentResource->data);
+	debug(5, "Message: reading resource %d.msg, version %d.%03d", _module, version / 1000, version % 1000);
 
-	// We assume for now that storing the major version is sufficient
-	_version /= 1000;
+	int offsetCount;
 
-	int offs = (_version == 2) ? 0 : 4;
-	_recordCount = READ_LE_UINT16(_currentResource->data + 4 + offs);
-	_indexRecords = _currentResource->data + 6 + offs;
+	// FIXME: Correct/extend this data by examining more games
+	if (version < 3000) {
+		_offsetCondSeq = -1;
+		_offsetTalker = -1;
+		_offsetRef = -1;
+		_offsetText = 2;
+		_recordSize = 4;
+		offsetCount = 4;
+	} else if (version < 4000) {
+		_offsetCondSeq = 2;
+		_offsetTalker = 4;
+		_offsetRef = -1;
+		_offsetText = 5;
+		_recordSize = 10;
+		offsetCount = 6;
+	} else {
+		_offsetCondSeq = 2;
+		_offsetTalker = 4;
+		_offsetRef = 7;
+		_offsetText = 5;
+		_recordSize = 11;
+		offsetCount = 8;
+	}
 
-	_cursorStack.clear();
+	_recordCount = READ_LE_UINT16(_currentResource->data + offsetCount);
+	_indexRecords = _currentResource->data + offsetCount + 2;
+
 	initCursor();
 
 	return 1;
