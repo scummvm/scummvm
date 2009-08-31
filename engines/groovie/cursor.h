@@ -90,6 +90,8 @@ class GrvCursorMan_v2 : public GrvCursorMan {
 public:
 	GrvCursorMan_v2(OSystem *system);
 	~GrvCursorMan_v2();
+
+	void setStyle(uint8 newStyle);
 };
 
 } // End of Groovie namespace

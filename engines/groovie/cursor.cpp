@@ -418,4 +418,10 @@ GrvCursorMan_v2::GrvCursorMan_v2(OSystem *system) :
 GrvCursorMan_v2::~GrvCursorMan_v2() {
 }
 
+void GrvCursorMan_v2::setStyle(uint8 newStyle) {
+	// Cursor 4 is actually cursor 3, but with some changes to alpha blending
+	// (which is currently not handled)
+	GrvCursorMan::setStyle(newStyle == 4 ? 3 : newStyle);
+}
+
 } // End of Groovie namespace
