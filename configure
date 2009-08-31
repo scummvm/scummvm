@@ -77,7 +77,8 @@ add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
-add_engine groovie "Groovie" yes
+add_engine groovie "Groovie" yes "groovie2"
+add_engine groovie2 "Groovie 2 games" no
 add_engine igor "Igor: Objective Uikokahonia" no
 add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" no
