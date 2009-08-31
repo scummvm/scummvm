@@ -55,15 +55,22 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
 	unset ac_TEMP_PATH
 fi
 
+set_var() {
+	eval ${1}='${2}'
+}
+
+get_var() {
+	eval echo \$${1}
+}
 
 # Add an engine: id name build subengines
 add_engine() {
 	_engines="${_engines} ${1}"
-	eval _engine_${1}_name='${2}'
-	eval _engine_${1}_build='${3}'
-	eval _engine_${1}_subengines='${4}'
+	set_var _engine_${1}_name "${2}"
+	set_var _engine_${1}_build "${3}"
+	set_var _engine_${1}_subengines "${4}"
 	for sub in ${4}; do
-		eval _engine_${sub}_sub=yes
+		set_var _engine_${sub}_sub "yes"
 	done
 }
 
@@ -319,22 +326,22 @@ Try \`$0 --help' for more information." >&2
 
 # Get the name of the engine
 get_engine_name() {
-	eval echo \$_engine_$1_name
+	get_var _engine_$1_name
 }
 
 # Will this engine be built?
 get_engine_build() {
-	eval echo \$_engine_$1_build
+	get_var _engine_$1_build
 }
 
 # Get the subengines
 get_engine_subengines() {
-	eval echo \$_engine_$1_subengines
+	get_var _engine_$1_subengines
 }
 
 # Ask if this is a subengine
 get_engine_sub() {
-	sub=`eval echo \\$_engine_$1_sub`
+	sub=`get_var _engine_$1_sub`
 	if test -z "$sub" ; then
 		sub=no
 	fi
@@ -344,14 +351,14 @@ get_engine_sub() {
 # Enable *all* engines
 engine_enable_all() {
 	for engine in $_engines; do
-		eval _engine_${engine}_build=yes
+		set_var _engine_${engine}_build "yes"
 	done
 }
 
 # Disable *all* engines
 engine_disable_all() {
 	for engine in $_engines; do
-		eval _engine_${engine}_build=no
+		set_var _engine_${engine}_build "no"
 	done
 }
 
@@ -375,7 +382,7 @@ engine_enable() {
 
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
 		if test "`get_engine_name ${engine}`" != "" ; then
-			eval _engine_${engine}_build=$opt
+			set_var _engine_${engine}_build "$opt"
 		else
 			option_error
 		fi
@@ -394,7 +401,7 @@ engine_disable() {
 
 	engine=`echo $1 | sed 's/-/_/g'`
 	if test "`get_engine_name ${engine}`" != "" ; then
-		eval _engine_${engine}_build=no
+		set_var _engine_${engine}_build "no"
 	else
 		option_error
 	fi
@@ -2242,12 +2249,12 @@ for engine in $_engines; do
 			# If dynamic plugins aren't supported, mark
 			# all the engines as static
 			if test $_dynamic_modules = no ; then
-				eval _engine_${engine}_build=static
+				set_var _engine_${engine}_build "static"
 			else
 				# If it wasn't explicitly marked as static or
 				# dynamic, use the configured default
 				if test `get_engine_build $engine` = yes ; then
-					eval _engine_${engine}_build=${_plugins_default}
+					set_var _engine_${engine}_build "${_plugins_default}"
 				fi
 			fi
 
@@ -2255,7 +2262,7 @@ for engine in $_engines; do
 			if test `get_engine_build $engine` = dynamic ; then
 				isbuilt=DYNAMIC_PLUGIN
 			else
-				eval _engine_${engine}_build=static
+				set_var _engine_${engine}_build "static"
 				isbuilt=STATIC_PLUGIN
 			fi
 		fi
