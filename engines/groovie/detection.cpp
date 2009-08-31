@@ -34,7 +34,7 @@ static const PlainGameDescriptor groovieGames[] = {
 	// Games
 	{"t7g", "The 7th Guest"},
 
-#ifdef ENABLE_GROOVIE2
+#ifdef ENABLE_UNSUPPORTED_GAMES
 	{"11h", "The 11th Hour: The sequel to The 7th Guest"},
 	{"clandestiny", "Clandestiny"},
 	{"unclehenry", "Uncle Henry's Playhouse"},
@@ -82,7 +82,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
-#ifdef ENABLE_GROOVIE2
+#ifdef ENABLE_UNSUPPORTED_GAMES
 	// The 11th Hour DOS English
 	{
 		{

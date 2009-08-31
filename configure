@@ -84,8 +84,7 @@ add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" yes
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
-add_engine groovie "Groovie" yes "groovie2"
-add_engine groovie2 "Groovie 2 games" no
+add_engine groovie "Groovie" yes
 add_engine igor "Igor: Objective Uikokahonia" no
 add_engine kyra "Legend of Kyrandia" yes "lol"
 add_engine lol "Lands of Lore" no
@@ -127,6 +126,7 @@ _mt32emu=yes
 _build_hq_scalers=yes
 _build_scalers=yes
 _indeo3=auto
+_unsupported=no
 # Default vkeybd/keymapper options
 _vkeybd=no
 _keymapper=no
@@ -586,12 +586,14 @@ Special configuration feature:
                                           wince for Windows CE
                                           psp for PlayStation Portable 
 
+Game engines:
+  --enable-all-engines     enable all engines
+  --disable-all-engines    disable all engines
+  --enable-unsupported     enable unsupported games (still in development)
+$engines_help
 Optional Features:
   --disable-debug          disable building with debugging symbols
   --enable-Werror          treat warnings as errors
-  --enable-all-engines     enable all engines
-  --disable-all-engines    disable all engines
-$engines_help
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
   --disable-mt32emu        don't enable the integrated MT-32 emulator
@@ -675,6 +677,8 @@ for ac_option in $@; do
 	--enable-mpeg2)           _mpeg2=yes      ;;
 	--disable-indeo3)         _indeo3=no      ;;
 	--enable-indeo3)          _indeo3=yes     ;;
+	--disable-unsupported)    _unsupported=no ;;
+	--enable-unsupported)     _unsupported=yes ;;
 	--disable-fluidsynth)     _fluidsynth=no  ;;
 	--enable-readline)        _readline=yes   ;;
 	--disable-readline)       _readline=no    ;;
@@ -1756,6 +1760,15 @@ fi
 add_to_config_mk_if_yes "$_indeo3" 'USE_INDEO3 = 1'
 
 #
+# Check whether to enable the unsupported games
+#
+if test "$_unsupported" = no ; then
+	_def_unsupported='#undef ENABLE_UNSUPPORTED_GAMES'
+else
+	_def_unsupported='#define ENABLE_UNSUPPORTED_GAMES'
+fi
+
+#
 # Check for math lib
 #
 cat > $TMPC << EOF
@@ -2115,6 +2128,10 @@ if test "$_indeo3" = yes ; then
 	echo_n ", Indeo3 decoder"
 fi
 
+if test "$_unsupported" = yes ; then
+	echo_n ", unsupported games"
+fi
+
 if test "$_text_console" = yes ; then
 	echo_n ", text console"
 fi
@@ -2350,6 +2367,7 @@ $_def_text_console
 $_def_mt32emu
 $_def_indeo3
 $_def_16bit
+$_def_unsupported
 
 /* Plugin settings */
 $_def_plugin
