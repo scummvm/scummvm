@@ -1320,6 +1320,11 @@ reg_t kPalette(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+reg_t kPalVary(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	warning("STUB: kPalVary()");
+	return NULL_REG;
+}
+
 static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
 static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {

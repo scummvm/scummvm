@@ -503,6 +503,7 @@ reg_t kSetVideoMode(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kStrSplit(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv);
 reg_t kPlatform(EngineState *s, int funct_nr, int argc, reg_t *argv);
+reg_t kPalVary(EngineState *s, int funct_nr, int argc, reg_t *argv);
 
 // The Unknown/Unnamed kernel function
 reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv);

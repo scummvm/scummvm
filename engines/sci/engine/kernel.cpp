@@ -232,7 +232,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*27*/	DEFUN("HaveMouse", kHaveMouse, ""),
 	/*28*/	DEFUN("SetCursor", kSetCursor, "i*"),
 	// FIXME: The number 0x28 occurs twice :-)
-	/*28*/	DEFUN("MoveCursor", kMoveCursor, "ii*"),
+	/*28*/	DEFUN("MoveCursor", kMoveCursor, "ii"),
 	/*29*/	DEFUN("FOpen", kFOpen, "ri"),
 	/*2a*/	DEFUN("FPuts", kFPuts, "ir"),
 	/*2b*/	DEFUN("FGets", kFGets, "rii"),
@@ -342,6 +342,7 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ShowMovie", kShowMovie, "..*"),
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
 	DEFUN("Platform", kPlatform, "i*"),
+	DEFUN("PalVary", kPalVary, "ii*"),
 
 	// Special and NOP stuff
 	DEFUN("Dummy", kStub, ".*"),
@@ -359,7 +360,6 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Record", kStub, ".*"),
 	DEFUN("PlayBack", kStub, ".*"),
 	DEFUN("DbugStr", kStub, ".*"),
-	DEFUN("Platform", kStub, ".*"),    // SCI1
 
 	{NULL, NULL, NULL} // Terminator
 };
@@ -774,6 +774,7 @@ void Kernel::setDefaultKernelNames() {
 	case SCI_VERSION_1_1:
 		// KQ6CD calls unimplemented function 0x26
 		_kernelNames[0x26] = "Dummy";
+		_kernelNames[0x71] = "PalVary";
 		break;
 
 	default:
