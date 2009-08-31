@@ -31,6 +31,7 @@
 #include "asylum/respack.h"
 
 #include "common/system.h"  // for OSystem
+#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
 namespace Asylum {
@@ -61,9 +62,9 @@ public:
     void drawWideScreen(int16 barSize);
     void clearScreen();
 
-	void showCursor() { _sys->showMouse(true); }
-	void hideCursor() { _sys->showMouse(false); }
-	void setCursor(byte *data, byte width, byte height) { _sys->setMouseCursor(data, width, height, 0, 0, 0); }
+	void showCursor() { CursorMan.showMouse(true); }
+	void hideCursor() { CursorMan.showMouse(false); }
+	void setCursor(byte *data, byte width, byte height) { CursorMan.replaceCursor(data, width, height, 0, 0, 0); }
 	void setCursor(GraphicResource *cursorRes, int frame) {
 		GraphicFrame *mouseCursor = cursorRes->getFrame(frame);
 		setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
