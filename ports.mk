@@ -211,8 +211,7 @@ endif
 # Special target to create a motoezx snapshot
 motoezx: $(EXECUTABLE)
 	$(MKDIR) motoezx/scummvm
-	$(CP) $(EXECUTABLE) motoezx/scummvm/
-	$(STRIP) motoezx/scummvm/$(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE) -o motoezx/scummvm/$(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motoezx/scummvm/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motoezx/scummvm/
 	$(CP) $(srcdir)/dists/motoezx/* motoezx/scummvm/
@@ -221,8 +220,7 @@ motoezx: $(EXECUTABLE)
 # Special target to create a motomagx snapshot
 motomagx-mpkg: $(EXECUTABLE)
 	$(MKDIR) motomagx/scummvm
-	$(CP) $(EXECUTABLE) motomagx/scummvm/
-	$(STRIP) motomagx/scummvm/$(EXECUTABLE)
+	$(STRIP) $(EXECUTABLE) -o motomagx/scummvm/$(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motomagx/scummvm/
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/scummvm/
 	$(CP) $(srcdir)/dists/motomagx/mpkg/* motomagx/scummvm/
@@ -231,7 +229,7 @@ motomagx-mpkg: $(EXECUTABLE)
 motomagx-pep: $(EXECUTABLE)
 	$(MKDIR) motomagx/pep
 	$(CP) -r $(srcdir)/dists/motomagx/pep/* motomagx/pep
-	$(CP) $(EXECUTABLE) motomagx/pep/app
+	$(STRIP) $(EXECUTABLE) -o motomagx/pep/app/$(EXECUTABLE)
 	$(STRIP) motomagx/pep/app/$(EXECUTABLE)
 	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motomagx/pep/app
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/pep/app
