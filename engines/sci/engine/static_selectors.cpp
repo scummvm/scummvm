@@ -81,7 +81,7 @@ static const SelectorRemap kq4_demo_selectors[] = {
 	{      "init",  87 }, {   "dispose",  88 }, {      "size",  96 },
 	{    "caller", 119 }, {       "cue", 121 }, {     "owner", 130 },
 	{ "completed", 158 }, { "motionCue", 161 }, {    "cycler", 165 },
-	{  "moveDone", 169 }, { "setTarget", 171 }
+	{  "moveDone", 169 }, { "setCursor", 253 }
 };
 
 // Taken from Codename: Iceman (Full Game)
@@ -90,22 +90,8 @@ static const SelectorRemap iceman_demo_selectors[] = {
 	{      "init",  87 }, {   "dispose",  88 }, {      "size",  96 },
 	{    "caller", 119 }, {       "cue", 121 }, {     "owner", 130 },
 	{ "completed", 159 }, { "motionCue", 162 }, {    "cycler", 164 },
-	{  "moveDone", 170 }, { "setTarget", 171 }, {  "distance", 173 },
+	{  "moveDone", 170 }, {  "distance", 173 },	{ "setCursor", 254 },
 	{   "points",  316 }, {     "flags", 368 }
-};
-
-// Taken from EcoQuest 2 (Demo)
-// offset: 0, hascantbehere: true, hasNodePtr: true
-static const SelectorRemap christmas1992_selectors[] = {
-	{    "parseLang",  83 }, {    "printLang",  84 }, { "subtitleLang",  85 },
-	{         "size",  86 }, {       "points",  87 }, {      "palette",  88 },
-	{      "dataInc",  89 }, {       "handle",  90 }, {          "min",  91 },
-	{          "sec",  92 }, {        "frame",  93 }, {          "vol",  94 },
-	{          "pri",  95 }, {     "moveDone",  97 }, {        "flags",  99 },
-	{         "init", 110 }, {      "dispose", 111 }, {          "cue", 145 },
-	{        "owner", 172 }, {    "completed", 250 }, {    "canBeHere", 450 },
-	{       "cycler", 255 }, {     "distance", 264 }, {       "caller", 143 },
-	{      "syncCue", 271 }, {     "syncTime", 270 }, {       "setVol", 178 }
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
@@ -118,22 +104,24 @@ static const SelectorRemap lsl1_demo_selectors[] = {
 	{          "pri",  98 }, {     "moveDone", 100 }, {        "flags", 102 },
 	{         "init", 104 }, {      "dispose", 105 }, {       "caller", 134 },
 	{          "cue", 136 }, {        "owner", 150 }, {       "setVol", 156 },
-	{    "completed", 210 }, {    "motionCue", 213 }, {       "cycler", 215 },
-	{    "setTarget", 221 }, {     "distance", 224 }, {    "canBeHere", 232 },
-	{     "syncTime", 247 }, {      "syncCue", 248 }
+	{    "setCursor", 183 }, {    "completed", 210 }, {       "cycler", 215 },
+	{     "distance", 224 }, {    "canBeHere", 232 }, {     "syncTime", 247 },
+	{      "syncCue", 248 }
 };
 
-// Taken from Space Quest 1 VGA (Demo)
-// offset: 3, hascantbehere: false, hasNodePtr: true
-static const SelectorRemap lsl5_demo_selectors[] = {
-	{    "parseLang",  86 }, {    "printLang",  87 }, { "subtitleLang",  88 },
-	{         "size",  89 }, {       "points",  90 }, {      "palette",  91 },
-	{      "dataInc",  92 }, {          "min",  94 }, {          "sec",  95 },
-	{        "frame",  96 }, {          "vol",  97 }, {          "pri",  98 },
-	{     "moveDone", 100 }, {         "init", 103 }, {      "dispose", 104 },
-	{       "caller", 133 }, {          "cue", 135 }, {        "owner", 149 },
-	{        "flags", 150 }, {    "completed", 207 }, {    "motionCue", 210 },
-	{       "cycler", 212 }, {     "distance", 221 }
+// Taken from KQ6 floppy
+// offset: 0, hascantbehere: true, hasNodePtr: true
+static const SelectorRemap christmas1992_selectors[] = {
+	{    "parseLang",  83 }, {    "printLang",  84 }, { "subtitleLang",  85 },
+	{         "size",  86 }, {       "points",  87 }, {      "palette",  88 },
+	{      "dataInc",  89 }, {       "handle",  90 }, {          "min",  91 },
+	{          "sec",  92 }, {        "frame",  93 }, {          "vol",  94 },
+	{          "pri",  95 }, {     "moveDone",  97 }, {        "flags",  99 },
+	{         "init", 110 }, {      "dispose", 111 }, {       "caller", 143 },
+	{          "cue", 145 }, {        "owner", 166 }, {       "setVol", 172 },
+	{    "setCursor", 197 }, {    "completed", 242 }, {       "cycler", 247 },
+	{     "distance", 256 }, {    "canBeHere", 264 }, {     "syncTime", 279 },
+	{      "syncCue", 280 }
 };
 
 // A macro for loading one of the above tables in the function below
@@ -157,15 +145,12 @@ Common::StringList Kernel::checkStaticSelectorNames() {
 	} else if (gameID == "lsl3" || gameID == "iceman") { // identical, except iceman has "flags" 
 		createFirstPart(names, 3, false, false);
 		USE_SELECTOR_TABLE(iceman_demo_selectors);
-	} else if (gameID == "christmas1992") {
+	} else if (gameID == "christmas1992" || gameID == "laurabow2") {
 		createFirstPart(names, 0, true, true);
 		USE_SELECTOR_TABLE(christmas1992_selectors);
-	} else if (gameID == "lsl1sci") {
+	} else if (gameID == "lsl1sci" || gameID == "lsl5") {
 		createFirstPart(names, 3, true, true);
 		USE_SELECTOR_TABLE(lsl1_demo_selectors);
-	} else if (gameID == "lsl5") {
-		createFirstPart(names, 3, false, true);
-		USE_SELECTOR_TABLE(lsl5_demo_selectors);
 	}
 
 	return names;
