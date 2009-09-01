@@ -33,10 +33,12 @@
 #include "asylum/scene.h"
 #include "asylum/graphics.h"
 #include "asylum/text.h"
+#include "asylum/cursor.h"
 
 namespace Asylum {
 
 class Text;
+class Cursor;
 
 class MainMenu {
 public:
@@ -81,17 +83,16 @@ private:
 
 	Common::Event *_ev;
 
-	uint32	_mouseX;
-	uint32	_mouseY;
-	int32	_activeIcon;
-	int32	_previousActiveIcon;
-	uint32	_curIconFrame;
-	uint32	_curMouseCursor;
-	int32	_cursorStep;
-	uint32	_creditsBgFrame;
-	uint32	_creditsTextScroll;
-	bool _leftClick;
-	bool _active;
+	Cursor *_cursor;
+	int32  _activeIcon;
+	int32  _previousActiveIcon;
+	uint32 _curIconFrame;
+	uint32 _curMouseCursor;
+	int32  _cursorStep;
+	uint32 _creditsBgFrame;
+	uint32 _creditsTextScroll;
+	bool   _leftClick;
+	bool   _active;
 
 	// FIXME this shouldnt be here. Need a proper config place
 	uint32 _confGammaLevel;
@@ -100,14 +101,12 @@ private:
 	MenuScreen		_activeMenuScreen;
 	ResourcePack	*_resPack;
 	GraphicResource *_bgResource;
-	GraphicResource *_cursorResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;
 	GraphicResource *_creditsResource;
 	GraphicResource *_creditsFadeResource;
 	Text *_text;
 
-	void updateCursor();
 	void updateEyesAnimation();
 	void updateMainMenu();
 

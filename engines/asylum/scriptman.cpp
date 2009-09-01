@@ -152,12 +152,12 @@ int ScriptManager::processActionList() {
 				break;
 
 /* 0x05 */  case kHideCursor:
-				Shared.getScreen()->hideCursor();
+				Shared.getScene()->getCursor()->hide();
 				_allowInput = false;
 				break;
 
 /* 0x06 */  case kShowCursor:
-				Shared.getScreen()->showCursor();
+				Shared.getScene()->getCursor()->show();
 				_allowInput = true;
                 // TODO: clear_flag_01()
 				break;
