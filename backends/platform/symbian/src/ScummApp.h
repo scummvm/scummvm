@@ -45,6 +45,7 @@ public:
 	TInt ViewResourceId();
 #endif
 	TUid AppDllUid() const;
+	void GetDataFolder(TDes& aDataFolder);
 #if defined (EPOC_AS_APP) && !defined (UIQ3) && !defined (S60V3)
 	TECompXL    iECompXL;
 #endif

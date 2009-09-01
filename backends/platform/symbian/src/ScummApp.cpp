@@ -114,6 +114,10 @@ TUid CScummApp::AppDllUid() const {
 	return TUid::Uid(ScummUid);
 }
 
+void CScummApp::GetDataFolder(TDes& aDataFolder)
+{
+	aDataFolder = _L("ScummVM");
+}
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
