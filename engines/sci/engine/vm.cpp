@@ -1402,34 +1402,26 @@ static int _obj_locate_varselector(SegManager *segManager, Object *obj, Selector
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
 	SciVersion version = segManager->sciVersion();	// for the selector defines
+	byte *buf;
+	uint varnum;
 
 	if (version < SCI_VERSION_1_1) {
-		int varnum = obj->variable_names_nr;
+		varnum = obj->variable_names_nr;
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
-		int i;
-		byte *buf = obj->base_obj + selector_name_offset;
-
-		obj->base_vars = (uint16 *) buf;
-
-		for (i = 0; i < varnum; i++)
-			if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
-				return i; // report success
-
-		return -1; // Failed
+		buf = obj->base_obj + selector_name_offset;
 	} else {
-		byte *buf = (byte *) obj->base_vars;
-		int i;
-		int varnum = obj->_variables[1].offset;
-
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-			buf = ((byte *) obj_get(segManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR])->base_vars);
+			obj = obj_get(segManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 
-		for (i = 0; i < varnum; i++)
-			if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
-				return i; // report success
-
-		return -1; // Failed
+		buf = (byte *)obj->base_vars;
+		varnum = obj->_variables[1].toUint16();
 	}
+
+	for (uint i = 0; i < varnum; i++)
+		if (READ_LE_UINT16(buf + (i << 1)) == slc) // Found it?
+			return i; // report success
+
+	return -1; // Failed
 }
 
 static int _class_locate_funcselector(Object *obj, Selector slc, SciVersion version) {
