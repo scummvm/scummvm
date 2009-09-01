@@ -47,7 +47,7 @@ Map_v2::~Map_v2() {
 
 void Map_v2::loadMapObjects(const char *avjFile) {
 	uint8 wayPointsCount;
-	int16 var;
+	uint16 var;
 	int16 id;
 	int16 mapWidth, mapHeight;
 	int16 tmp;
