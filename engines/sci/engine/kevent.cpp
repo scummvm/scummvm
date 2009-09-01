@@ -112,7 +112,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 			}
 
 			PUT_SEL32V(obj, type, e.type);
-			PUT_SEL32V(obj, message, 1);
+			PUT_SEL32V(obj, message, 0);
 			PUT_SEL32V(obj, modifiers, (e.buckybits | extra_bits)&modifier_mask);
 			s->r_acc = make_reg(0, 1);
 		}
