@@ -31,7 +31,6 @@
 #include "asylum/respack.h"
 
 #include "common/system.h"  // for OSystem
-#include "graphics/cursorman.h"
 #include "graphics/surface.h"
 
 namespace Asylum {
@@ -61,14 +60,6 @@ public:
 	void setPalette(ResourcePack *resPack, int entry) { setPalette(resPack->getResource(entry)->data + 32); }
     void drawWideScreen(int16 barSize);
     void clearScreen();
-
-	void showCursor() { CursorMan.showMouse(true); }
-	void hideCursor() { CursorMan.showMouse(false); }
-	void setCursor(byte *data, byte width, byte height) { CursorMan.replaceCursor(data, width, height, 0, 0, 0); }
-	void setCursor(GraphicResource *cursorRes, int frame) {
-		GraphicFrame *mouseCursor = cursorRes->getFrame(frame);
-		setCursor((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
-	}
 
     void addGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority);
     void addCrossFadeGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority);

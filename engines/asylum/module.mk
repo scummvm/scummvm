@@ -17,7 +17,8 @@ MODULE_OBJS := \
 	encounters.o \
 	scriptman.o \
 	blowuppuzzle.o \
-	shared.o
+	shared.o \
+	cursor.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)

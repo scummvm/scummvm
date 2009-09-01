@@ -57,7 +57,7 @@ Scene::Scene(uint8 sceneIdx) {
         _blowUp = 0;
 	}
 
-	_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
+	_cursor = new Cursor(_resPack);
 
 	_background    = 0;
 	_startX        = 0;
@@ -78,22 +78,24 @@ Scene::Scene(uint8 sceneIdx) {
 
     if (worldStats->numBarriers > 0) {
         uint32 priority = 0x0FFB;
-        for (uint32 b=0; b < worldStats->numBarriers; b++) {
+        for (uint32 b = 0; b < worldStats->numBarriers; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
             barrier->priority = priority;
             barrier->flags &= 0xFFFF3FFF;
             priority -= 4;
         }
     }
+
     worldStats->sceneRectIdx = 0;
     Shared.getScreen()->clearGraphicsInQueue();
     worldStats->motionStatus = 1;
+
     // TODO: do some rect stuffs from player actor
     // TODO: reset actors flags
 }
 
 Scene::~Scene() {
-	delete _cursorResource;
+	delete _cursor;
 	delete _bgResource;
 	delete _musPack;
 	delete _speechPack;
@@ -110,10 +112,8 @@ void Scene::enterScene() {
 			((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w,
 			0, 0, 640, 480);
 
-	_cursorStep		= 1;
-	_curMouseCursor	= 0;
-	Shared.getScreen()->setCursor(_cursorResource, 0);
-	Shared.getScreen()->showCursor();
+	_cursor->load(_sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
+	_cursor->show();
 
 	// Music testing: play the first music track
 	Shared.getSound()->playMusic(_musPack, 0);
@@ -213,8 +213,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 	switch (_ev->type) {
 
 	case Common::EVENT_MOUSEMOVE:
-		_mouseX = _ev->mouse.x;
-		_mouseY = _ev->mouse.y;
+		_cursor->setCoords(_ev->mouse.x, _ev->mouse.y);
 		break;
 
 	case Common::EVENT_LBUTTONUP:
@@ -224,11 +223,10 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 
 	case Common::EVENT_RBUTTONUP:
 		if (ScriptMan.isInputAllowed()) {
-			delete _cursorResource;
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
-			_cursorResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
+			_cursor->load(_sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
 			_rightButton    = false;
 		}
 		break;
@@ -241,55 +239,6 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 
 	if (doUpdate || _leftClick)
 		update();
-}
-
-void Scene::updateCursor() {
-	int             action    = _sceneResource->getMainActor()->getCurrentAction();
-	CommonResources *cr       = &_sceneResource->getWorldStats()->commonRes;
-	uint32          newCursor = 0;
-
-	// Change cursor
-	switch (action) {
-	case kWalkN:
-		newCursor = cr->curScrollUp;
-		break;
-	case kWalkNE:
-		newCursor = cr->curScrollUpRight;
-		break;
-	case kWalkNW:
-		newCursor = cr->curScrollUpLeft;
-		break;
-	case kWalkS:
-		newCursor = cr->curScrollDown;
-		break;
-	case kWalkSE:
-		newCursor = cr->curScrollDownRight;
-		break;
-	case kWalkSW:
-		newCursor = cr->curScrollDownLeft;
-		break;
-	case kWalkW:
-		newCursor = cr->curScrollLeft;
-		break;
-	case kWalkE:
-		newCursor = cr->curScrollRight;
-		break;
-	}
-
-	if (_cursorResource->getEntryNum() != newCursor) {
-		delete _cursorResource;
-		_cursorResource = new GraphicResource(_resPack, newCursor);
-	}
-}
-
-void Scene::animateCursor() {
-	_curMouseCursor += _cursorStep;
-	if (_curMouseCursor == 0)
-		_cursorStep = 1;
-	if (_curMouseCursor == _cursorResource->getFrameCount() - 1)
-		_cursorStep = -1;
-
-	Shared.getScreen()->setCursor(_cursorResource, _curMouseCursor);
 }
 
 // -------------------------------------------
@@ -348,8 +297,8 @@ int Scene::isActorVisible(ActorItem *actor) {
 }
 
 void Scene::updateActor(uint32 actorIdx) {
-    WorldStats   *worldStats = _sceneResource->getWorldStats();
-    ActorItem *actor = &worldStats->actors[actorIdx];
+    WorldStats *worldStats = _sceneResource->getWorldStats();
+    ActorItem  *actor      = &worldStats->actors[actorIdx];
     
     if (isActorVisible(actor)) {
         switch (actor->field_40) {
@@ -465,10 +414,9 @@ bool Scene::isBarrierVisible(BarrierItem *barrier) {
     return false;
 }
 
-
 bool Scene::isBarrierOnScreen(BarrierItem *barrier) {
-    WorldStats *worldStats = _sceneResource->getWorldStats();
-    Common::Rect screenRect = Common::Rect(worldStats->xLeft, worldStats->yTop, worldStats->xLeft + 640, worldStats->yTop + 480);
+    WorldStats   *worldStats = _sceneResource->getWorldStats();
+    Common::Rect screenRect  = Common::Rect(worldStats->xLeft, worldStats->yTop, worldStats->xLeft + 640, worldStats->yTop + 480);
     Common::Rect barrierRect = barrier->boundingRect;
     barrierRect.translate(barrier->x, barrier->y);
     return isBarrierVisible(barrier) && (barrier->flags & 1) && screenRect.intersects(barrierRect);
@@ -501,17 +449,14 @@ void Scene::updateBarriers(WorldStats *worldStats) {
         for (uint32 b = 0; b < barriersCount; b++) {
             BarrierItem *barrier = &worldStats->barriers[b];
 
-            if(b==61)
-                printf("%d: \n",b);
-
             if (barrier->field_3C == 4) {
                 if (isBarrierVisible(barrier)) {
                     uint32 flag = barrier->flags;
                     if (flag & 0x20) {
                         if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
-                            barrier->frameIdx = (barrier->frameIdx + 1) % barrier->frameCount;
+                            barrier->frameIdx  = (barrier->frameIdx + 1) % barrier->frameCount;
                             barrier->tickCount = Shared.getMillis();
-                            canPlaySound = true;
+                            canPlaySound       = true;
                         }
                     } else if (flag & 0x10) {
                         uint32 frameIdx  = barrier->frameIdx;
@@ -526,13 +471,13 @@ void Scene::updateBarriers(WorldStats *worldStats) {
 
                                         barrier->resId = getRandomResId(barrier);
                                         GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
-                                        barrier->frameCount = gra->getFrameCount();
+                                        barrier->frameCount  = gra->getFrameCount();
                                         delete gra;
                                     }
                                     barrier->frameIdx++;
                                 }
                                 barrier->tickCount = Shared.getMillis();
-                                canPlaySound = true;
+                                canPlaySound       = true;
                             }
                             frameIdx  = barrier->frameIdx;
                             equalZero = frameIdx == 0;
@@ -677,8 +622,9 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	} else {
 		_walking = true;
 
-		mainActor->walkTo(_mouseX, _mouseY);
-		updateCursor();
+		mainActor->walkTo(_cursor->x(), _cursor->y());
+		_cursor->update(&_sceneResource->getWorldStats()->commonRes,
+				        _sceneResource->getMainActor()->getCurrentAction());
 	}
 
 	if (g_debugPolygons)
@@ -690,11 +636,11 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
 		BarrierItem b = worldStats->barriers[p];
 		if (b.flags & 0x20) {
-			if ((b.boundingRect.left + b.x <= _mouseX + _startX) &&
-				(_mouseX + _startX < b.boundingRect.right + b.x) &&
-				(b.boundingRect.top + b.y <= _mouseY + _startY) &&
-				(_mouseY + _startY < b.boundingRect.bottom + b.y)) {
-				animateCursor();
+			if ((b.boundingRect.left + b.x <= _cursor->x() + _startX) &&
+				(_cursor->x() + _startX < b.boundingRect.right + b.x) &&
+				(b.boundingRect.top + b.y <= _cursor->y() + _startY) &&
+				(_cursor->y() + _startY < b.boundingRect.bottom + b.y)) {
+				_cursor->animate();
 				curBarrier = (int32)p;
 				break;
 			}
@@ -710,10 +656,10 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		// Update cursor if it's in a polygon hotspot
 		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
-			if (poly.boundingRect.contains(_mouseX + _startX, _mouseY + _startY)) {
-				if (Shared.pointInPoly(&poly, _mouseX + _startX, _mouseY + _startY)) {
+			if (poly.boundingRect.contains(_cursor->x() + _startX, _cursor->y() + _startY)) {
+				if (Shared.pointInPoly(&poly, _cursor->x() + _startX, _cursor->y() + _startY)) {
 					curHotspot = (int32)p;
-					animateCursor();
+					_cursor->animate();
 					break;
 				}
 			}
@@ -851,15 +797,15 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
 	// Horizontal scrolling
-	if (_mouseX < SCREEN_EDGES && _startX >= SCROLL_STEP)
+	if (_cursor->x() < SCREEN_EDGES && _startX >= SCROLL_STEP)
 		_startX -= SCROLL_STEP;
-	else if (_mouseX > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP)
+	else if (_cursor->x() > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP)
 		_startX += SCROLL_STEP;
 
 	// Vertical scrolling
-	if (_mouseY < SCREEN_EDGES && _startY >= SCROLL_STEP)
+	if (_cursor->y() < SCREEN_EDGES && _startY >= SCROLL_STEP)
 		_startY -= SCROLL_STEP;
-	else if (_mouseY > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP)
+	else if (_cursor->y() > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP)
 		_startY += SCROLL_STEP;
 }
 

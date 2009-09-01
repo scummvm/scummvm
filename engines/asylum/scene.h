@@ -33,12 +33,14 @@
 #include "asylum/graphics.h"
 #include "asylum/text.h"
 #include "asylum/sceneres.h"
+#include "asylum/cursor.h"
 
 namespace Asylum {
 
 class Screen;
 class Sound;
 class Video;
+class Cursor;
 class Text;
 class SceneResource;
 class WorldStats;
@@ -70,7 +72,7 @@ public:
 	void actorVisible(int actorIndex, bool visible);
 	bool actorVisible(int actorIndex);
 	void setScenePosition(int x, int y);
-
+	Cursor* getCursor() { return _cursor; }
 	SceneResource*   getResources() { return _sceneResource; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
     ResourcePack*	 getMusicPack() { return _musPack; }
@@ -81,7 +83,7 @@ public:
 
 private:
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
-
+	Cursor			*_cursor;
 	uint8	        _sceneIdx;
 	SceneResource	*_sceneResource;
     ResourcePack	*_resPack;
@@ -91,18 +93,13 @@ private:
 	Common::Event   *_ev;
 	Text			*_text;
 	GraphicResource *_bgResource;
-	GraphicResource *_cursorResource;
 	GraphicFrame	*_background;
 
 	bool	_walking;
-	uint32	_mouseX;
-	uint32	_mouseY;
 	int32	_startX;
 	int32	_startY;
 	bool	_leftClick;
 	bool	_rightButton;
-	uint32	_curMouseCursor;
-	int32	_cursorStep;
 	bool	_isActive;
     bool	_skipDrawScene;
     uint32  _playerActorIdx;
@@ -122,18 +119,6 @@ private:
     bool   isBarrierVisible(BarrierItem *barrier);
     bool   isBarrierOnScreen(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
-
-	/**
-	 * Check whether the cursor resource needs to be changed, and
-	 * if so, make that change
-	 */
-	void updateCursor();
-
-	/**
-	 * Update the cursor to visually indicate that it is over a
-	 * clickable region (by running its associated animation)
-	 */
-	void animateCursor();
 
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();

@@ -32,6 +32,7 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
+#include "asylum/cursor.h"
 
 namespace Asylum {
 
@@ -39,6 +40,7 @@ class Scene;
 class Screen;
 class Sound;
 class Video;
+class Cursor;
 struct GraphicQueueItem;
 
 class BlowUpPuzzle {
@@ -54,19 +56,14 @@ public:
 protected:
 	Common::Event *_ev;
 
-	uint32	_mouseX;
-	uint32	_mouseY;
-	uint32	_curMouseCursor;
-	int32	_cursorStep;
+	Cursor *_cursor;
 	bool    _leftClickUp;
     bool    _leftClickDown;
     bool    _rightClickDown;
 	bool    _active;
 
     GraphicResource *_bgResource;
-	GraphicResource *_cursorResource;
 
-	void updateCursor(); 
     virtual void update() {};
 
 }; // end of class BlowUpPuzzle
