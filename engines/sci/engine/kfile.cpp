@@ -51,7 +51,7 @@ enum {
  *
  * To handle opening a file called "foobar", what we do is this: First, we
  * create an 'augmented file name', by prepending the game target and a dash,
- * so if we running game target sq1vga, the name becomes "sq1vga-foobar".
+ * so if we running game target sq1sci, the name becomes "sq1sci-foobar".
  * Next, we check if such a file is known to the SaveFileManager. If so, we
  * we use that for reading/writing, delete it, whatever.
  *

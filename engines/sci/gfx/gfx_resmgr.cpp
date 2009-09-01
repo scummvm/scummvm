@@ -617,7 +617,7 @@ gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_FONT);
 
-	// Workaround: LSL1VGA mixes its own internal fonts with the global
+	// Workaround: lsl1sci mixes its own internal fonts with the global
 	// SCI ones, so we translate them here, by removing their extra bits
 	if (!resMap.contains(num) && !_resourceManager->testResource(ResourceId(kResourceTypeFont, num)))
 		num = num & 0x7ff;

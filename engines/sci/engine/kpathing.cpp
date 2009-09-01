@@ -1234,12 +1234,12 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
 	int is_reg_t = polygon_is_reg_t(list, size);
 
-	// WORKAROUND: broken polygon in LSL1VGA, room 350, after opening elevator
+	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
-	if ((size == 19) && (s->_gameName == "lsl1vga")) {
+	if ((size == 19) && (s->_gameName == "lsl1sci")) {
 		if ((s->currentRoomNumber() == 350)
 		&& (read_point(list, is_reg_t, 18) == Common::Point(108, 137))) {
-			debug(1, "Applying fix for broken polygon in LSL1VGA, room 350");
+			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
 			size = 17;
 		}
 	}

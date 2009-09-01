@@ -67,7 +67,7 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
 	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
 	{"laurabow2",       "Laura Bow 2: The Dagger of Amon Ra"},
-	{"lsl1vga",         "Leisure Suit Larry in the Land of the Lounge Lizards, VGA Remake"},
+	{"lsl1sci",         "Leisure Suit Larry in the Land of the Lounge Lizards"},
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
 	{"lsl5",            "Leisure Suit Larry 5: Passionate Patti Does a Little Undercover Work"},
@@ -76,15 +76,14 @@ static const PlainGameDescriptor SciGameTitles[] = {
 	{"mothergoose",     "Mixed-Up Mother Goose"},
 	{"msastrochicken",  "Ms. Astro Chicken"},
 	{"pepper",          "Pepper's Adventure in Time"},
-	{"pq1vga",          "Police Quest: In Pursuit of the Death Angel, VGA Remake"},
+	{"pq1sci",          "Police Quest: In Pursuit of the Death Angel"},
 	{"pq2",             "Police Quest II: The Vengeance"},
 	{"pq3",             "Police Quest III: The Kindred"},
 	{"qfg1",            "Quest for Glory I: So You Want to Be a Hero"},
-	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero, VGA Remake"},
 	{"qfg2",            "Quest for Glory II: Trial by Fire"},
 	{"qfg3",            "Quest for Glory III: Wages of War"},
 	{"slater",          "Slater & Charlie Go Camping"},
-	{"sq1vga",          "Space Quest I: The Sarien Encounter, VGA Remake"},
+	{"sq1sci",          "Space Quest I: The Sarien Encounter"},
 	{"sq3",             "Space Quest III: The Pirates of Pestulon"},
 	{"sq4",             "Space Quest IV: Roger Wilco and the Time Rippers"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
@@ -352,6 +351,15 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 
 	if (!strcmp(s_fallbackDesc.desc.gameid, "kq6") && smallResource000Size)
 		s_fallbackDesc.desc.flags |= ADGF_DEMO;
+
+	// Fill in extras field
+	if (!strcmp(s_fallbackDesc.desc.gameid, "lsl1sci") ||
+		!strcmp(s_fallbackDesc.desc.gameid, "pq1sci") ||
+		!strcmp(s_fallbackDesc.desc.gameid, "sq1sci"))
+		s_fallbackDesc.desc.extra = "VGA Remake";
+
+	if (!strcmp(s_fallbackDesc.desc.gameid, "qfg1") && !Common::File::exists("resource.001"))
+		s_fallbackDesc.desc.extra = "VGA Remake";
 
 	SearchMan.remove("SCI_detection");
 
