@@ -165,10 +165,15 @@ static void _update_viewport(void) {
 	f32 ar;
 	u16 correction;
 
+	u16 usy = _underscan_y;
+
+	if (!_dualstrike)
+		usy *= 2;
+
 	u16 x1 = _underscan_x * 2;
-	u16 y1 = _underscan_y * 2;
+	u16 y1 = usy;
 	u16 x2 = _vm->fbWidth - _underscan_x * 4;
-	u16 y2 = _vm->efbHeight - _underscan_y * 4;
+	u16 y2 = _vm->efbHeight - usy * 2;
 
 	if (_pillarboxing)
 		ar = 16.0 / 9.0;

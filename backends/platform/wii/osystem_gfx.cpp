@@ -26,6 +26,7 @@
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
+#include "options.h"
 #include "gfx.h"
 
 #define ROUNDUP(x,n) (-(-(x) & -(n)))
@@ -33,7 +34,7 @@
 #define TLUT_GAME GX_TLUT0
 #define TLUT_MOUSE GX_TLUT1
 
-static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
+static const OSystem::GraphicsMode _supportedGraphicsModes[] = {
 	{ "standard", "Standard", GFX_SETUP_STANDARD },
 	{ "standardaa", "Standard antialiased", GFX_SETUP_STANDARD_AA },
 	{ "ds", "Double-strike", GFX_SETUP_DS },
@@ -42,8 +43,24 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 void OSystem_Wii::initGfx() {
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", true);
+
+	int i = 0;
+	while (_supportedGraphicsModes[i].name) {
+		Common::String s("wii_video_");
+		s += _supportedGraphicsModes[i].name;
+
+		ConfMan.registerDefault(s + "_underscan_x", 16);
+		ConfMan.registerDefault(s + "_underscan_y", 16);
+
+		i++;
+	}
+
 	gfx_video_init(GFX_MODE_AUTO, GFX_SETUP_STANDARD);
 	gfx_init();
+	gfx_set_underscan(ConfMan.getInt("wii_video_standard_underscan_x"),
+						ConfMan.getInt("wii_video_standard_underscan_y"));
 
 	_overlayWidth = gfx_video_get_width();
 	_overlayHeight = gfx_video_get_height();
@@ -134,6 +151,13 @@ void OSystem_Wii::switchVideoMode(int mode) {
 	gfx_video_init(GFX_MODE_AUTO, setup);
 	gfx_init();
 
+	Common::String s("wii_video_");
+	s += _supportedGraphicsModes[mode].name;
+	gfx_set_underscan(ConfMan.getInt(s + "_underscan_x",
+									Common::ConfigManager::kApplicationDomain),
+						ConfMan.getInt(s + "_underscan_y",
+									Common::ConfigManager::kApplicationDomain));
+
 	_actualGraphicsMode = mode;
 
 	gfx_coords(&_coordsOverlay, &_texOverlay, GFX_COORD_FULLSCREEN);
@@ -142,7 +166,7 @@ void OSystem_Wii::switchVideoMode(int mode) {
 }
 
 const OSystem::GraphicsMode* OSystem_Wii::getSupportedGraphicsModes() const {
-	return s_supportedGraphicsModes;
+	return _supportedGraphicsModes;
 }
 
 int OSystem_Wii::getDefaultGraphicsMode() const {
@@ -658,4 +682,15 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 	if ((_texMouse.palette) && (oldKeycolor != _mouseKeyColor))
 		_cursorPaletteDirty = true;
 }
+
+void OSystem_Wii::showOptionsDialog() {
+	if (_optionsDlgActive)
+		return;
+
+	_optionsDlgActive = true;
+	WiiOptionsDialog dlg(_supportedGraphicsModes[_actualGraphicsMode]);
+	dlg.runModal();
+	_optionsDlgActive = false;
+}
+
 

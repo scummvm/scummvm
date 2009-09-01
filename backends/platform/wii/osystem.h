@@ -93,6 +93,7 @@ private:
 	Graphics::PixelFormat _pfCursor;
 #endif
 
+	bool _optionsDlgActive;
 	bool _fullscreen;
 	bool _arCorrection;
 
@@ -120,6 +121,8 @@ private:
 	void deinitEvents();
 	void updateEventScreenResolution();
 	bool pollKeyboard(Common::Event &event);
+
+	void showOptionsDialog();
 
 protected:
 	Common::SaveFileManager *_savefile;

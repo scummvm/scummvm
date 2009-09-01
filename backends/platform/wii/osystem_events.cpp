@@ -319,36 +319,19 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 	if (bd || bu) {
 		byte flags = 0;
 
-		// TODO: add this to an option dialog
-		if (bh & PADS_R) {
-			static u16 vpo_x = 0;
-			static u16 vpo_y = 0;
-
-			if (bd & PADS_LEFT)
-				vpo_x = (vpo_x - 1) % 32;
-
-			if (bd & PADS_RIGHT)
-				vpo_x = (vpo_x + 1) % 32;
-
-			if (bd & PADS_UP)
-				vpo_y = (vpo_y - 1) % 32;
-
-			if (bd & PADS_DOWN)
-				vpo_y = (vpo_y + 1) % 32;
-
-			gfx_set_underscan(vpo_x, vpo_y);
-			return false;
+		if (bh & PADS_UP) {
+			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5,
+						Common::KBD_CTRL);
+			flags = Common::KBD_SHIFT;
 		}
 
-		if (bh & PADS_UP) {
-			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5, Common::KBD_CTRL);
-
-			flags = Common::KBD_SHIFT;
+		if (bd & PADS_R) {
+			showOptionsDialog();
+			return false;
 		}
 
 		if (bd & PADS_RIGHT) {
 			event.type = Common::EVENT_PREDICTIVE_DIALOG;
-
 			return true;
 		}
 

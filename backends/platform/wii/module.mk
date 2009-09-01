@@ -3,6 +3,7 @@ MODULE := backends/platform/wii
 MODULE_OBJS := \
 	main.o \
 	gfx.o \
+	options.o \
 	osystem.o \
 	osystem_gfx.o \
 	osystem_sfx.o \

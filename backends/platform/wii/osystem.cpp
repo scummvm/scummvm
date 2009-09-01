@@ -66,6 +66,7 @@ OSystem_Wii::OSystem_Wii() :
 	_pfCursor(Graphics::PixelFormat::createFormatCLUT8()),
 #endif
 
+	_optionsDlgActive(false),
 	_fullscreen(false),
 	_arCorrection(false),
 
@@ -112,9 +113,6 @@ void OSystem_Wii::initBackend() {
 	initGfx();
 	initSfx();
 	initEvents();
-
-	ConfMan.registerDefault("fullscreen", true);
-	ConfMan.registerDefault("aspect_ratio", true);
 
 	OSystem::initBackend();
 }
