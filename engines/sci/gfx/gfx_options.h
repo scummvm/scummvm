@@ -31,10 +31,7 @@
 #include "sci/gfx/gfx_tools.h"
 
 // Define this to enable user-defined custom graphics options
-// TODO: Most of these options don't work in 256-color mode, plus there
-// is currently no way to actually set/change them somehow (other than
-// modifying the code)
-//#define CUSTOM_GRAPHICS_OPTIONS
+#define CUSTOM_GRAPHICS_OPTIONS
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 #include "sci/gfx/gfx_res_options.h"
@@ -56,13 +53,13 @@ enum {
  */
 struct gfx_options_t {
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	int buffer_pics_nr; /* Number of unused pics to buffer */
+	int buffer_pics_nr; /* Number of unused pics to buffer in LRU storage */
 
 	/* SCI0 pic resource options */
 	int pic0_unscaled; /* Don't draw scaled SCI0 pics */
 
-	int pic0_dither_mode; /* Defined in gfx_resource.h */
-	int pic0_dither_pattern; /* Defined in gfx_resource.h */
+	int pic0_dither_mode; /* Mode to use for pic0 dithering, defined in gfx_resource.h */
+	int pic0_dither_pattern; /* Pattern to use for pic0 dithering, defined in gfx_resource.h */
 
 	gfx_brush_mode_t pic0_brush_mode;
 	gfx_line_mode_t pic0_line_mode;
@@ -73,7 +70,7 @@ struct gfx_options_t {
 	gfx_xlate_filter_t text_xlate_filter;
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
 
-	int dirty_frames;
+	int dirty_frames;	// Dirty frames management
 
 	int workarounds;	// Workaround flags - see below
 #endif

@@ -159,6 +159,12 @@ Common::Error SciEngine::run() {
 
 	_gamestate->animation_granularity = 4;
 
+	// Assign default values to the config manager, in case settings are missing
+	ConfMan.registerDefault("cursor_filter", "0");
+	ConfMan.registerDefault("view_filter", "0");
+	ConfMan.registerDefault("pic_filter", "0");
+	ConfMan.registerDefault("text_filter", "0");
+
 	// Default config:
 	gfx_options_t gfx_options;
 
@@ -169,10 +175,10 @@ Common::Error SciEngine::run() {
 	gfx_options.pic0_dither_pattern = GFXR_DITHER_PATTERN_SCALED;
 	gfx_options.pic0_brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
 	gfx_options.pic0_line_mode = GFX_LINE_MODE_CORRECT;
-	gfx_options.cursor_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.view_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.pic_xlate_filter = GFX_XLATE_FILTER_NONE;
-	gfx_options.text_xlate_filter = GFX_XLATE_FILTER_NONE;
+	gfx_options.cursor_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("cursor_filter");
+	gfx_options.view_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("view_filter");
+	gfx_options.pic_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("pic_filter");
+	gfx_options.text_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("text_filter");
 	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
 	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
 		gfx_options.res_conf.assign[i] = NULL;

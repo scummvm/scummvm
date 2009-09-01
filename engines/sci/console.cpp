@@ -183,20 +183,6 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
-	// These were in sci.cpp
-	/*
-	con_hook_int(&(gfx_options.buffer_pics_nr), "buffer_pics_nr",
-		"Number of pics to buffer in LRU storage\n");
-	con_hook_int(&(gfx_options.pic0_dither_mode), "pic0_dither_mode",
-		"Mode to use for pic0 dithering\n");
-	con_hook_int(&(gfx_options.pic0_dither_pattern), "pic0_dither_pattern",
-		"Pattern to use for pic0 dithering\n");
-	con_hook_int(&(gfx_options.pic0_unscaled), "pic0_unscaled",
-		"Whether pic0 should be drawn unscaled\n");
-	con_hook_int(&(gfx_options.dirty_frames), "dirty_frames",
-		"Dirty frames management\n");
-	*/
-
 	scriptState.seeking = kDebugSeekNothing;
 	scriptState.seekLevel = 0;
 	scriptState.runningStep = 0;
