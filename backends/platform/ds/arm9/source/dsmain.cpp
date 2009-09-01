@@ -157,7 +157,7 @@ extern "C" void* __wrap_malloc(size_t size) {
 
 	void* res = __real_malloc(size);
 	if (res) {
-		if (size > 100 * 1024)  {
+		if (size > 100 * 1024) {
 			consolePrintf("Allocated %d (%d)\n", size, poo);
 		}
 		return res;
@@ -481,18 +481,18 @@ int getGameHeight() {
 
 void initSprites() {
 	for (int i = 0; i < 128; i++) {
-	   sprites[i].attribute[0] = ATTR0_DISABLED;
-	   sprites[i].attribute[1] = 0;
-	   sprites[i].attribute[2] = 0;
-	   sprites[i].filler = 0;
-    }
+		sprites[i].attribute[0] = ATTR0_DISABLED;
+		sprites[i].attribute[1] = 0;
+		sprites[i].attribute[2] = 0;
+		sprites[i].filler = 0;
+	}
 
 	for (int i = 0; i < 128; i++) {
-	   spritesMain[i].attribute[0] = ATTR0_DISABLED;
-	   spritesMain[i].attribute[1] = 0;
-	   spritesMain[i].attribute[2] = 0;
-	   spritesMain[i].filler = 0;
-    }
+		spritesMain[i].attribute[0] = ATTR0_DISABLED;
+		spritesMain[i].attribute[1] = 0;
+		spritesMain[i].attribute[2] = 0;
+		spritesMain[i].filler = 0;
+	}
 
 	updateOAM();
 }
@@ -646,9 +646,9 @@ void displayMode8Bit() {
 		BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = 256;
-	    BG3_XDY = 0;
-	    BG3_YDX = 0;
-	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		BG3_XDY = 0;
+		BG3_YDX = 0;
+		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	} else {
 		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
@@ -665,9 +665,9 @@ void displayMode8Bit() {
 		BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
-	    BG3_XDY = 0;
-	    BG3_YDX = 0;
-	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		BG3_XDY = 0;
+		BG3_YDX = 0;
+		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 	}
 
 	SUB_BG3_CR = BG_BMP8_512x256;
@@ -970,12 +970,12 @@ void displayMode16BitFlipBuffer() {
 			}
 		}
 	} else if (isCpuScalerEnabled()) {
-        //#define SCALER_PROFILE
+		//#define SCALER_PROFILE
 
-        #ifdef SCALER_PROFILE
-	    TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
-        u16 t0 = TIMER1_DATA;
-        #endif
+		#ifdef SCALER_PROFILE
+		TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
+		u16 t0 = TIMER1_DATA;
+		#endif
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
 		Rescale_320x256xPAL8_To_256x256x1555(
@@ -986,19 +986,19 @@ void displayMode16BitFlipBuffer() {
 			BG_PALETTE,
 			getGameHeight() );
 
-        #ifdef SCALER_PROFILE
-        // 10 pixels : 1ms
-        u16 t1 = TIMER1_DATA;
-	    TIMER1_CR &= ~TIMER_ENABLE;
-        u32 dt = t1 - t0;
-        u32 dt_us = (dt * 10240) / 334;
-        u32 dt_10ms = dt_us / 100;
-        int i;
-        for(i=0; i<dt_10ms; ++i)
-            base[i] = ((i/10)&1) ? 0xFFFF : 0x801F;
-        for(; i<256; ++i)
-            base[i] = 0x8000;
-        #endif
+		#ifdef SCALER_PROFILE
+		// 10 pixels : 1ms
+		u16 t1 = TIMER1_DATA;
+		TIMER1_CR &= ~TIMER_ENABLE;
+		u32 dt = t1 - t0;
+		u32 dt_us = (dt * 10240) / 334;
+		u32 dt_10ms = dt_us / 100;
+		int i;
+		for(i=0; i<dt_10ms; ++i)
+			base[i] = ((i/10)&1) ? 0xFFFF : 0x801F;
+		for(; i<256; ++i)
+			base[i] = 0x8000;
+		#endif
 	}
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
@@ -1267,9 +1267,9 @@ void setKeyboardEnable(bool en) {
 				}
 			}
 /*
-            for (int r = 0; r < (512 * 256) >> 1; r++)
-                BG_GFX_SUB[r] = buffer[r];
-  */
+			for (int r = 0; r < (512 * 256) >> 1; r++)
+				BG_GFX_SUB[r] = buffer[r];
+*/
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
@@ -1655,7 +1655,7 @@ void addEventsToQueue() {
 				doButtonSelectMode(system);
 			}
 
-			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState))  && (displayModeIs8Bit)) {
+			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState)) && (displayModeIs8Bit)) {
 				// Controls specific to the control method
 
 
@@ -2089,9 +2089,9 @@ void VBlankHandler(void) {
 	SUB_BG3_CY = subScY + (shakePos << 8);*/
 
 	/*SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
-    SUB_BG3_XDY = 0;
-    SUB_BG3_YDX = 0;
-    SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
+	SUB_BG3_XDY = 0;
+	SUB_BG3_YDX = 0;
+	SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
 
 	static int ratio = (320 << 8) / SCUMM_GAME_WIDTH;
 
@@ -2975,7 +2975,7 @@ void dsExceptionHandler() {
 
 	int i;
 	for ( i=0; i < 8; i++ ) {
-		consolePrintf(	"  %s: %08X   %s: %08X\n",
+		consolePrintf("  %s: %08X   %s: %08X\n",
 					registerNames[i], exceptionRegisters[i],
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
@@ -3278,11 +3278,10 @@ int cygprofile_getHBlanks() {
 #endif
 
 
-extern "C" void consolePrintf(char * format, ...)
-{
-  char buffer[256];
-  va_list args;
-  va_start (args, format);
-  viprintf(format, args);
-  va_end (args);
+extern "C" void consolePrintf(char * format, ...) {
+	char buffer[256];
+	va_list args;
+	va_start (args, format);
+	viprintf(format, args);
+	va_end (args);
 }
