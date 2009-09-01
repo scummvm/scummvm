@@ -58,8 +58,10 @@ struct gfx_options_t {
 	/* SCI0 pic resource options */
 	int pic0_unscaled; /* Don't draw scaled SCI0 pics */
 
+#if 0
 	int pic0_dither_mode; /* Mode to use for pic0 dithering, defined in gfx_resource.h */
 	int pic0_dither_pattern; /* Pattern to use for pic0 dithering, defined in gfx_resource.h */
+#endif
 
 	gfx_brush_mode_t pic0_brush_mode;
 	gfx_line_mode_t pic0_line_mode;

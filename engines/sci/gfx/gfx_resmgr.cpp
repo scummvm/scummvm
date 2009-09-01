@@ -119,10 +119,12 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 		memcpy(scaled_pic->undithered_buffer, scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer_size);
 
+#if 0
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 		gfxr_dither_pic0(scaled_pic, _options->pic0_dither_mode, _options->pic0_dither_pattern);
 #else
 		gfxr_dither_pic0(scaled_pic, GFXR_DITHER_MODE_D256, GFXR_DITHER_PATTERN_SCALED);
+#endif
 #endif
 	}
 
@@ -149,14 +151,22 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 			// generated options hash anyway
 			return 10;
 		else
-			return (_options->pic0_unscaled) ? 0x10000 : (_options->pic0_dither_mode << 12)
-			       | (_options->pic0_dither_pattern << 8) | (_options->pic0_brush_mode << 4)
-				   | (_options->pic0_line_mode);
+			return (_options->pic0_unscaled) ? 0x10000 : 
+#if 0
+					 (_options->pic0_dither_mode << 12) |
+			         (_options->pic0_dither_pattern << 8) |
+#endif
+					 (_options->pic0_brush_mode << 4) |
+				     (_options->pic0_line_mode);
 #else
 		if (_resourceManager->isVGA())
 			return 10;
 		else
+#if 0
 			return 0x10000 | (GFXR_DITHER_PATTERN_SCALED << 8) | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
+#else
+			return 0x10000 | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
+#endif
 #endif
 
 	case GFX_RESOURCE_TYPE_FONT:

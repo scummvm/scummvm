@@ -1684,6 +1684,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, kViewVga11, static_pal, portBounds);
 }
 
+#if 0
 void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 	int xl = pic->visual_map->index_width;
 	int yl = pic->visual_map->index_height;
@@ -1736,5 +1737,6 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 		}
 	}
 }
+#endif
 
 } // End of namespace Sci
