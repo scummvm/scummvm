@@ -943,6 +943,22 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
+	// King's Quest 5 EGA (supplied by markcoolio in bug report #2829470)
+	// SCI interpreter version 1.000.060
+	{{"kq5", "EGA", {
+		{"resource.map", 0, "baf888a4e4797ce0de0b19d4e183583c", 7662},
+		{"resource.000", 0, "a591bd4b879fc832b8095c0b3befe9e2", 394242},
+		{"resource.001", 0, "c1eef048fa9fe76298c2d4705ef9549f", 558362},
+		{"resource.002", 0, "076aa0bf1d8d2c147d64aeffbe2928e5", 597593},
+		{"resource.003", 0, "ecb47cd04d06b2ab2f9f883667db6e81", 487608},
+		{"resource.004", 0, "4d74e8094ff57cea6ee92faf63dbd0af", 621513},
+		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669919},
+		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666527},
+		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541743},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
 	// King's Quest 5 - German DOS Floppy (supplied by markcoolio in bug report #2727101)
 	// SCI interpreter version 1.000.060
 	{{"kq5", "", {
