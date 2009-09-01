@@ -2366,7 +2366,7 @@ reg_t kSetPort(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 		new_port = s->visual->getPort(port_nr);
 
 		if (!new_port) {
-			error("Invalid port %04x requested", port_nr);
+			warning("Invalid port %04x requested", port_nr);
 			return NULL_REG;
 		}
 
