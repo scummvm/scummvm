@@ -1891,19 +1891,22 @@ uint32 Vmd::renderFrame(int16 &left, int16 &top, int16 &right, int16 &bottom) {
 
 	width = postScaleX(width);
 
+	uint16 drawWidth  = MIN<uint16>(width , sW - left);
+	uint16 drawHeight = MIN<uint16>(height, sH - top );
+
 	// Evaluate the block type
 	if      (type == 0x01)
-		renderBlockSparse  (dest, srcPtr, width, height, sW, sH);
+		renderBlockSparse  (dest, srcPtr, drawWidth, drawHeight, sW, sH);
 	else if (type == 0x02)
-		renderBlockWhole   (dest, srcPtr, width, height, sW, sH);
+		renderBlockWhole   (dest, srcPtr, drawWidth, drawHeight, sW, sH);
 	else if (type == 0x03)
-		renderBlockRLE     (dest, srcPtr, width, height, sW, sH);
+		renderBlockRLE     (dest, srcPtr, drawWidth, drawHeight, sW, sH);
 	else if (type == 0x42)
-		renderBlockWhole4X (dest, srcPtr, width, height, sW, sH);
+		renderBlockWhole4X (dest, srcPtr, drawWidth, drawHeight, sW, sH);
 	else if ((type & 0x0F) == 0x02)
-		renderBlockWhole2Y (dest, srcPtr, width, height, sW, sH);
+		renderBlockWhole2Y (dest, srcPtr, drawWidth, drawHeight, sW, sH);
 	else
-		renderBlockSparse2Y(dest, srcPtr, width, height, sW, sH);
+		renderBlockSparse2Y(dest, srcPtr, drawWidth, drawHeight, sW, sH);
 
 
 	dest = _vidMemBuffer + postScaleX(_width) * (top - _y) + postScaleX(left - _x);
