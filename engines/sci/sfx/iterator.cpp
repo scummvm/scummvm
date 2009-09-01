@@ -1091,7 +1091,7 @@ void Sci1SongIterator::init() {
 	_loops = 0;
 	priority = 0;
 
-	_ccc = 127;
+	_ccc = 0;
 	_deviceId = 0x00; // Default to Sound Blaster/Adlib for purposes of cue computation
 	_numChannels = 0;
 	_initialised = false;
