@@ -163,11 +163,68 @@ public:
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
-static Common::String convertSierraGameId(const Common::String &sierraId, uint32 *gameFlags) {
+struct OldNewIdTableEntry {
+	const char *oldId;
+	const char *newId;
+	bool demo;
+};
+
+static const OldNewIdTableEntry s_oldNewTable[] = {
+	{ "demo",		"christmas1988",	false },
+	// iceman is the same
+	{ "icedemo",	"iceman",			true },
+	// longbow is the same
+	{ "rh",			"longbow",			true },
+	{ "eco",		"ecoquest",			false },
+	{ "eco2",		"ecoquest2",		true },		// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		false },	// EcoQuest 2 full
+	{ "fp",			"freddypharkas",	false },
+	{ "emc",		"funseeker",		false },
+	{ "gk",			"gk1",				false },
+	{ "hoyledemo",	"hoyle1",			true },
+	{ "cardgames",	"hoyle1",			false },
+	{ "solitare",	"hoyle2",			false },
+	// hoyle3 is the same
+	// hoyle4 is the same
+	{ "demo000",	"kq1sci",			true },
+	{ "kq1",		"kq1sci",			false },
+	{ "kq4",		"kq4sci",			false },
+	{ "ll1",		"lsl1sci",			true },
+	{ "lsl1",		"lsl1sci",			false },
+	// lsl2 is the same
+	{ "ll5",		"lsl5",				true },
+	// lsl5 is the same
+	// lsl6 is the same
+	{ "mg",			"mothergoose",		false },
+	{ "cb1",		"laurabow",			false },
+	{ "lb2",		"laurabow2",		false },
+	{ "twisty",		"pepper",			false },
+	{ "pq",			"pq2",				false },
+	{ "trial",		"qfg2",				false },
+	{ "hq2demo",	"qfg2",				true },
+	{ "thegame",	"slater",			false },
+	{ "sq1demo",	"sq1sci",			true },
+	{ "sq1",		"sq1sci",			false },
+	// sq5 is the same
+
+	{ 0, 0, 0 }
+};
+
+static const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
+	// Convert the id to lower case, so that we match all upper/lower case variants.
+	Common::String sierraId = gameName;
+	sierraId.toLowercase();
+
 	// TODO: SCI32 IDs
 
-	if (sierraId == "demo")
-		return "christmas1988";
+	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId != 0; ++cur) {
+		if (sierraId == cur->oldId) {
+			if (cur->demo)
+				*gameFlags |= ADGF_DEMO;
+			return cur->newId;
+		}
+	}
+
 	if (sierraId == "card") {
 		// This could either be christmas1990 or christmas1992
 		// christmas1990 has a "resource.001" file, whereas 
@@ -184,83 +241,18 @@ static Common::String convertSierraGameId(const Common::String &sierraId, uint32
 		// castlebrain has resource.001, whereas islandbrain doesn't
 		return (Common::File::exists("resource.001")) ? "castlebrain" : "islandbrain";
 	}
-	// iceman is the same
-	if (sierraId == "icedemo") {
-		*gameFlags |= ADGF_DEMO;
-		return "iceman";
-	}
-	// longbow is the same
-	if (sierraId == "rh") {	// Longbow demo
-		*gameFlags |= ADGF_DEMO;
-		return "longbow";
-	}
-	if (sierraId == "eco")
-		return "ecoquest";
-	if (sierraId == "eco2")	{ // EcoQuest 2 demo
-		*gameFlags |= ADGF_DEMO;
-		return "ecoquest2";
-	}
-	if (sierraId == "rain")	// EcoQuest 2 full
-		return "ecoquest2";
-	if (sierraId == "fp")
-		return "freddypharkas";
-	if (sierraId == "emc")
-		return "funseeker";
-	if (sierraId == "gk")
-		return "gk1";
-	if (sierraId == "hoyledemo") {
-		*gameFlags |= ADGF_DEMO;
-		return "hoyle1";
-	}
-	if (sierraId == "cardgames")
-		return "hoyle1";
-	if (sierraId == "solitare")
-		return "hoyle2";
-	// hoyle3 is the same
-	// hoyle4 is the same
-	if (sierraId == "demo000") {
-		*gameFlags |= ADGF_DEMO;
-		return "kq1sci";
-	}
-	if (sierraId == "kq1")
-		return "kq1sci";
-	if (sierraId == "kq4")
-		return "kq4sci";
-	if (sierraId == "ll1") {
-		*gameFlags |= ADGF_DEMO;
-		return "lsl1sci";
-	}
-	if (sierraId == "lsl1")
-		return "lsl1sci";
-	// lsl2 is the same
 	if (sierraId == "lsl3") {
 		if (!Common::File::exists("resource.003"))
 			*gameFlags |= ADGF_DEMO;
 		return "lsl3";
 	}
-	if (sierraId == "ll5") {
-		*gameFlags |= ADGF_DEMO;
-		return "lsl5";
-	}
-	// lsl5 is the same
-	// lsl6 is the same
 	// TODO: lslcasino
 	if (sierraId == "tales") {
 		if (!Common::File::exists("resource.002"))
 			*gameFlags |= ADGF_DEMO;
 		return "fairytales";
 	}
-	if (sierraId == "mg")
-		return "mothergoose";
-	if (sierraId == "cb1")
-		return "laurabow";
-	if (sierraId == "lb2")
-		return "laurabow2";
-	if (sierraId == "twisty")
-		return "pepper";
 	// TODO: pq1sci (its resources can't be read)
-	if (sierraId == "pq")
-		return "pq2";
 	if (sierraId == "pq3") {
 		// The pq3 demo comes with resource.000 and resource.001
 		// The full version was released with several resource.* files,
@@ -281,20 +273,6 @@ static Common::String convertSierraGameId(const Common::String &sierraId, uint32
 			return "qfg1";
 	}
 	// TODO: qfg1 VGA (its resources can't be read)
-	if (sierraId == "trial")
-		return "qfg2";
-	if (sierraId == "hq2demo") {
-		*gameFlags |= ADGF_DEMO;
-		return "qfg2";
-	}
-	if (sierraId == "thegame")
-		return "slater";
-	if (sierraId == "sq1demo") {
-		*gameFlags |= ADGF_DEMO;
-		return "sq1sci";
-	}
-	if (sierraId == "sq1")
-		return "sq1sci";
 	if (sierraId == "sq3") {
 		// Both SQ3 and the separately released subgame, Astro Chicken,
 		// have internal ID "sq3", but Astro Chicken only has "resource.map"
@@ -310,9 +288,9 @@ static Common::String convertSierraGameId(const Common::String &sierraId, uint32
 		// the subgame)
 		return (Common::File::exists("resource.000")) ? "sq4" : "msastrochicken";
 	}
-	// sq5 is the same
 
-	return sierraId;
+	// FIXME: Evil use of strdup here (we are leaking that memory, too)
+	return strdup(sierraId.c_str());
 }
 
 Common::Language charToScummVMLanguage(const char c) {
@@ -457,10 +435,9 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
-	Common::String gameName = obj_get_name(segManager, game_obj);
-	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName.c_str(), PRINT_REG(game_obj));
-	gameName.toLowercase();
-	s_fallbackDesc.desc.gameid = strdup(convertSierraGameId(gameName, &s_fallbackDesc.desc.flags).c_str());
+	const char *gameName = obj_get_name(segManager, game_obj);
+	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName, PRINT_REG(game_obj));
+	s_fallbackDesc.desc.gameid = convertSierraGameId(gameName, &s_fallbackDesc.desc.flags);
 	delete segManager;
 
 	// Try to determine the game language
