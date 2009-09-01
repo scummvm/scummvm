@@ -301,7 +301,9 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Script *scr = s->segmentManager->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)
-			scr->setLockers(1);
+			// Lockers must be > 1, otherwise it won't have any effect on script_uninstantiate() below,
+			// because it decreases the lockers by 1. This occurs for example at the beginning of EcoQuest CD
+			scr->setLockers(2);
 	}
 
 	script_uninstantiate(s->segmentManager, script);
