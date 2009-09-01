@@ -3,78 +3,101 @@ Wii/Gamecube port of ScummVM README
 
 REQUIREMENTS
 
-  wii:
-    - sd card
-    - wiimote or gamecube controller in port 1
+  Wii:
+    - Supported SD card or USB mass storage device
+    - Wiimote or Gamecube controller in port 1
 
-  gamecube:
-    - sd card
-    - sd gecko adapter
-    - gamecube controller in port 1
+  Gamecube:
+    - Supported SD card
+    - SD Gecko adapter
+    - Gamecube controller in port 1
 
 INSTALL
 
-  - copy the "scummvm" folder into the "/apps" folder of your sd card
-  - copy your demos and/or games onto the same sd card
-    each game goes into its own subdirectory, do not place those under
-    "/apps/scummvm", and do not set the "theme" or "extra" path to that folder
-    freeware versions: http://scummvm.org/downloads.php#extras
-    demos: http://scummvm.org/demos.php
+  - Copy the "scummvm" folder to the "/apps" folder of your chosen storage
+    media
+  - Copy your demos and/or games to the SD card, USB mass storage device or
+    burn them on a DVD-R using the ISO9660 standard.
+    (A DVDX install is required for DVD support)
+
+    Freeware versions: http://scummvm.org/downloads.php#extras
+    Demos: http://scummvm.org/demos.php
 
 RUN
 
-  wii:
-    either use the homebrew channel, available at
-
+  Wii:
+    Either use The Homebrew Channel, available at
     http://hbc.hackmii.com/
+    or load "/apps/scummvm/boot.dol" with your favorite loader.
 
-    or load "/apps/scummvm/boot.dol" with your favorite loader
-
-  gamecube:
-    load "/apps/scummvm/scummvm-gc.dol" with your favorite loader
+  Gamecube:
+    Load "/apps/scummvm/scummvm-gc.dol" with your favorite loader.
 
 CONTROLS
 
-  wiimote
+  Wiimote
 
-    IR: mouse movement
-    a: left mouse button
-    b: right mouse button
-    minus: escape
-    plus: "." (skip current line of text)
-    2: enter
-    home: f5 (scummvm menu)
-    dpad up: shift (mass add for the gui, combined with home: GMM)
-    dpad down: virtual keyboard
-    dpad right: predictive dialog (only in AGI games)
+    IR: Mouse movement
+    A: Left mouse button
+    B: Right mouse button
+    Minus: Escape
+    Plus: "." (Skip current line of text)
+    2: Enter
+    1: Port specific options dialog
+    Home: F5 (ScummVM menu)
+    DPad up: Shift (Mass add for the gui, combined with home: GMM)
+    DPad down: Virtual keyboard
+    DPad right: Predictive dialog (only in AGI games)
 
-  gamecube pad
+  Gamecube pad
 
-    analog stick: mouse movement
-    a: left mouse button
-    b: right mouse button
-    x: escape
-    y: "." (skip current line of text)
-    z: enter
-    start: f5 (scummvm menu)
-    dpad up: shift (mass add for the gui, combined with start: GMM)
-    dpad down: virtual keyboard
-    dpad right: predictive dialog (only in AGI games)
+    Analog stick: Mouse movement
+    A: Left mouse button
+    B: Right mouse button
+    X: Escape
+    Y: "." (Skip current line of text)
+    Z: Enter
+    R: Port specific options dialog
+    Start: F5 (ScummVM menu)
+    DPad up: Shift (Mass add for the gui, combined with start: GMM)
+    DPad down: Virtual keyboard
+    DPad right: Predictive dialog (only in AGI games)
 
 DISPLAY SETUP
 
   "Graphics mode"
-    you can choose between multiple overscan options to adjust the screen size
-    used for drawing. select a higher overscan mode to get rid of black
-    borders or choose a lower overscan mode if parts of the picture get cropped
+    There are 4 modes to choose from:
+    1) Standard
+    2) Standard antialiased
+    3) Dual-strike
+    4) Dual-strike antialiased
+
+    Dual-strike modes render at half the vertical resolution. On interlaced
+    modes this means that only one field is used for rendering, effectively
+    using progressive frames (240p) with no "combing" effect. These modes
+    improve the picture quality for low-res games, especially on CRTs.
+    Not all display devices support these modes. Only available for games with
+    a vertical resolution of 240 pixels or less.
+
+    Antialiased modes soften the picture to some degree. This is a feature of
+    the GPU (no game performance loss).
+
+  "Aspect ratio correction"
+    Some games run at a native resolution of 320x200 pixels using non-square
+    pixels for a 4:3 display. This video mode is not available on the Wii or
+    Gamecube, and this feature stretches the picture to 320x240 pixels to the
+    original 4:3 aspect ratio.
 
   "Fullscreen mode"
-    If your wii is set to 16:9, this will stretch the picture to fullscreen.
-    Turning this option off results in black borders on the left and right
-    sides, but the aspect ratio will be kept. This option has no effect on 4:3
-    displays
+    If your Wii is set to 16:9, this will stretch the picture to fullscreen.
+    Turning this option off results in pillarboxing (black borders on the left
+    and right sides), but the aspect ratio will be kept. This option has no
+    effect on 4:3 displays.
 
-  you have to restart scummvm after changing one of these options
+  If the picture gets cropped or black bars are visible, use the Wii options
+  dialog to adjust it. Pressing 1 on the Wiimote or R on the Gamecube pad
+  opens this dialog. The available video options are specific to each of the
+  graphics modes mentioned above. Settings will be saved for each.
 
 THANKS
 
