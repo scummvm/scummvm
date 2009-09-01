@@ -69,7 +69,9 @@ enum {
 	/* the first critical error number */
 };
 
-#define MAX_OPENED_VOLUMES 5 // Max number of simultaneously opened volumes
+enum {
+	MAX_OPENED_VOLUMES = 5 // Max number of simultaneously opened volumes
+};
 
 enum ResSourceType {
 	kSourceDirectory = 0,
@@ -81,9 +83,11 @@ enum ResSourceType {
 	kSourceExtAudioMap
 };
 
-#define SCI0_RESMAP_ENTRIES_SIZE 6
-#define SCI1_RESMAP_ENTRIES_SIZE 6
-#define SCI11_RESMAP_ENTRIES_SIZE 5
+enum {
+	SCI0_RESMAP_ENTRIES_SIZE = 6,
+	SCI1_RESMAP_ENTRIES_SIZE = 6,
+	SCI11_RESMAP_ENTRIES_SIZE = 5
+};
 
 enum ResourceType {
 	kResourceTypeView = 0,
@@ -278,7 +282,9 @@ protected:
 	// Note: maxMemory will not be interpreted as a hard limit, only as a restriction
 	// for resources which are not explicitly locked. However, a warning will be
 	// issued whenever this limit is exceeded.
-	#define MAX_MEMORY 256 * 1024	// 256KB
+	enum {
+		MAX_MEMORY = 256 * 1024	// 256KB
+	};
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	Common::List<ResourceSource *> _sources;

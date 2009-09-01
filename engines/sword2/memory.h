@@ -28,7 +28,9 @@
 #ifndef	SWORD2_MEMORY_H
 #define	SWORD2_MEMORY_H
 
-#define MAX_MEMORY_BLOCKS 999
+enum {
+	MAX_MEMORY_BLOCKS = 999
+};
 
 namespace Sword2 {
 
