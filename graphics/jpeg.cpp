@@ -31,7 +31,7 @@
 namespace Graphics {
 
 // Order used to traverse the quantization tables
-uint8 JPEG::_zigZagOrder[64] = {
+static const uint8 _zigZagOrder[64] = {
 	0,   1,  8, 16,  9,  2,  3, 10,
 	17, 24, 32, 25, 18, 11,  4,  5,
 	12, 19, 26, 33, 40, 48, 41, 34,

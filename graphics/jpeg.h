@@ -75,9 +75,6 @@ private:
 	uint8 _maxFactorV;
 	uint8 _maxFactorH;
 
-	// Zig-Zag order
-	static uint8 _zigZagOrder[64];
-
 	// Quantization tables
 	uint16 *_quant[JPEG_MAX_QUANT_TABLES];
 

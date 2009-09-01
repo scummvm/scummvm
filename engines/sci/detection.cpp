@@ -163,7 +163,7 @@ public:
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
 };
 
-Common::String convertSierraGameId(Common::String sierraId, uint32 *gameFlags) {
+static Common::String convertSierraGameId(const Common::String &sierraId, uint32 *gameFlags) {
 	// TODO: SCI32 IDs
 
 	if (sierraId == "demo")
