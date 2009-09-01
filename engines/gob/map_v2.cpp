@@ -54,6 +54,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	byte *variables;
 	uint32 tmpPos;
 	uint32 passPos;
+	uint16 i;
 
 	var = _vm->_game->_script->readVarIndex();
 	variables = _vm->_inter->_variables->getAddressOff8(var);
@@ -61,10 +62,33 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 	id = _vm->_game->_script->readInt16();
 
 	if (((uint16) id) >= 65520) {
-		warning("Map_v2::loadMapObjects(): ID >= 65520");
-		return;
-	} else if (id == -1) {
-		_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var);
+		switch ((uint16) id) {
+			case 65530:
+				for (i = 0; i < _mapWidth * _mapHeight; i++)
+					_passMap[i] -= READ_VARO_UINT8(var + i);
+				break;
+			case 65531:
+				for (i = 0; i < _mapWidth * _mapHeight; i++)
+					_passMap[i] += READ_VARO_UINT8(var + i);
+				break;
+			case 65532:
+				for (i = 0; i < _mapWidth * _mapHeight; i++) 
+					WRITE_VARO_UINT8(var + i, 0x00);
+				break;
+			case 65533:
+				warning("Map_v2::loadMapObjects(): ID == 65533");
+				break;
+			case 65534:
+				_tilesWidth = READ_VARO_UINT8(var);
+				_tilesHeight = READ_VARO_UINT8(var + 1);
+				_mapWidth = READ_VARO_UINT8(var + 2);
+				_mapHeight = READ_VARO_UINT8(var + 3);
+				_mapUnknownBool = READ_VARO_UINT8(var + 4) ? true : false;
+				break;
+			case 65535:
+				_passMap = (int8 *) _vm->_inter->_variables->getAddressOff8(var);
+				break;
+		}
 		return;
 	}
 

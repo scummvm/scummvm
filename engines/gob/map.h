@@ -72,6 +72,7 @@ public:
 	int16 _tilesHeight;
 	int16 _passWidth;
 	bool _bigTiles;
+	bool _mapUnknownBool;
 
 	int8 *_passMap; // [y * _mapWidth + x], getPass(x, y);
 	int16 **_itemsMap;	// [y][x]
