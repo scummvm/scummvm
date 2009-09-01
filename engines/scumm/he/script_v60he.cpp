@@ -122,10 +122,8 @@ int ScummEngine_v60he::convertFilePath(byte *dst, int dstSize) {
 	int r = 0;
 	if (dst[len - 3] == 's' && dst[len - 2] == 'g') { // Save Game File
 		// Change filename prefix to target name, for save game files.
-		char saveName[40];
-		memset(saveName, 0, sizeof(saveName));
-		sprintf(saveName, "%s.sg%c", _targetName.c_str(), dst[len - 1]);
-		memcpy(dst, saveName, 40);
+		const char c = dst[len - 1];
+		snprintf((char *)dst, dstSize, "%s.sg%c", _targetName.c_str(), c);
 	} else if (dst[0] == '.' && dst[1] == '/') { // Game Data Path
 		// The default game data path is set to './' by ScummVM
 		r = 2;
