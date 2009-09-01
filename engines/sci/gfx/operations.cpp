@@ -1114,8 +1114,10 @@ void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::
 	}
 
 	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this.
-	if (new_pointer->width < 2 || new_pointer->height < 2)
+	if (new_pointer->width < 2 || new_pointer->height < 2) {
 		_gfxop_set_pointer(state, NULL, NULL);
+		return;
+	}
 
 	if (hotspot)
 		_gfxop_set_pointer(state, new_pointer, hotspot);
