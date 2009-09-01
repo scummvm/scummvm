@@ -301,14 +301,25 @@ reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	Script *scr = s->segmentManager->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)
-			// Lockers must be > 1, otherwise it won't have any effect on script_uninstantiate() below,
-			// because it decreases the lockers by 1. This occurs for example at the beginning of EcoQuest CD
+			scr->setLockers(1);
+
+		// HACK for EcoQuest CD
+		if (s->_gameName == "ecoquest" && script == 821) {
+			warning("kDisposeScript hack for EcoQuest 1 CD: not disposing script 821");
 			scr->setLockers(2);
+		}
 	}
 
 	script_uninstantiate(s->segmentManager, script);
 	s->_executionStackPosChanged = true;
-	return s->r_acc;
+
+	if (argc != 2) {
+		return s->r_acc;
+	} else {
+		// This exists in the KQ5CD interpreter, but a test case hasn't been found yet
+		warning("kDisposeScript called with 2 parameters, still untested");
+		return argv[1];
+	}
 }
 
 int is_heap_object(EngineState *s, reg_t pos) {

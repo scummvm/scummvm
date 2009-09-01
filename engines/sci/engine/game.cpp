@@ -37,6 +37,140 @@
 
 namespace Sci {
 
+struct OldNewIdTableEntry {
+	const char *oldId;
+	const char *newId;
+	bool demo;
+};
+
+static const OldNewIdTableEntry s_oldNewTable[] = {
+	{ "demo",		"christmas1988",	false },
+	// iceman is the same
+	{ "icedemo",	"iceman",			true },
+	// longbow is the same
+	{ "rh",			"longbow",			true },
+	{ "eco2",		"ecoquest2",		true },		// EcoQuest 2 demo
+	{ "rain",		"ecoquest2",		false },	// EcoQuest 2 full
+	{ "fp",			"freddypharkas",	false },
+	{ "emc",		"funseeker",		false },
+	{ "gk",			"gk1",				false },
+	{ "hoyledemo",	"hoyle1",			true },
+	{ "cardgames",	"hoyle1",			false },
+	{ "solitare",	"hoyle2",			false },
+	// hoyle3 is the same
+	// hoyle4 is the same
+	{ "demo000",	"kq1sci",			true },
+	{ "kq1",		"kq1sci",			false },
+	{ "kq4",		"kq4sci",			false },
+	{ "ll1",		"lsl1sci",			true },
+	{ "lsl1",		"lsl1sci",			false },
+	// lsl2 is the same
+	{ "ll5",		"lsl5",				true },
+	// lsl5 is the same
+	// lsl6 is the same
+	{ "mg",			"mothergoose",		false },
+	{ "cb1",		"laurabow",			false },
+	{ "lb2",		"laurabow2",		false },
+	{ "twisty",		"pepper",			false },
+	{ "pq",			"pq2",				false },
+	{ "trial",		"qfg2",				false },
+	{ "hq2demo",	"qfg2",				true },
+	{ "thegame",	"slater",			false },
+	{ "sq1demo",	"sq1sci",			true },
+	{ "sq1",		"sq1sci",			false },
+	// sq5 is the same
+
+	{ 0, 0, 0 }
+};
+
+const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
+	// Convert the id to lower case, so that we match all upper/lower case variants.
+	Common::String sierraId = gameName;
+	sierraId.toLowercase();
+
+	// TODO: SCI32 IDs
+
+	for (const OldNewIdTableEntry *cur = s_oldNewTable; cur->oldId != 0; ++cur) {
+		if (sierraId == cur->oldId) {
+			if (cur->demo)
+				*gameFlags |= ADGF_DEMO;
+			return cur->newId;
+		}
+	}
+
+	if (sierraId == "card") {
+		// This could either be christmas1990 or christmas1992
+		// christmas1990 has a "resource.001" file, whereas 
+		// christmas1992 has a "resource.000" file
+		return (Common::File::exists("resource.001")) ? "christmas1990" : "christmas1992";
+	}
+	if (sierraId == "arthur") {
+		if (!Common::File::exists("resource.002"))
+			*gameFlags |= ADGF_DEMO;
+		return "camelot";
+	}
+	if (sierraId == "brain") {
+		// This could either be The Castle of Dr. Brain, or The Island of Dr. Brain
+		// castlebrain has resource.001, whereas islandbrain doesn't
+		return (Common::File::exists("resource.001")) ? "castlebrain" : "islandbrain";
+	}
+	if (sierraId == "eco") {
+		if (!Common::File::exists("resource.000"))
+			*gameFlags |= ADGF_DEMO;
+		return "ecoquest";
+	}
+	if (sierraId == "lsl3") {
+		if (!Common::File::exists("resource.003"))
+			*gameFlags |= ADGF_DEMO;
+		return "lsl3";
+	}
+	// TODO: lslcasino
+	if (sierraId == "tales") {
+		if (!Common::File::exists("resource.002"))
+			*gameFlags |= ADGF_DEMO;
+		return "fairytales";
+	}
+	// TODO: pq1sci (its resources can't be read)
+	if (sierraId == "pq3") {
+		// The pq3 demo comes with resource.000 and resource.001
+		// The full version was released with several resource.* files,
+		// or one big resource.000 file
+		if (Common::File::exists("resource.000") && Common::File::exists("resource.001") &&
+			!Common::File::exists("resource.002"))
+			*gameFlags |= ADGF_DEMO;
+		return "pq3";
+	}
+	if (sierraId == "glory" || sierraId == "hq") {
+		// This could either be qfg1 or qfg3 or qfg4
+		// qfg3 has resource.aud, qfg4 has resource.sfx
+		if (Common::File::exists("resource.aud"))
+			return "qfg3";
+		else if (Common::File::exists("resource.sfx"))
+			return "qfg4";
+		else
+			return "qfg1";
+	}
+	// TODO: qfg1 VGA (its resources can't be read)
+	if (sierraId == "sq3") {
+		// Both SQ3 and the separately released subgame, Astro Chicken,
+		// have internal ID "sq3", but Astro Chicken only has "resource.map"
+		// and "resource.001". Detect if it's SQ3 by the existence of
+		// "resource.002"
+		return (Common::File::exists("resource.002")) ? "sq3" : "astrochicken";
+	}
+	if (sierraId == "sq4") {
+		// Both SQ4 and the separately released subgame, Ms. Astro Chicken,
+		// have internal ID "sq4", but Astro Chicken only has "resource.map"
+		// and "resource.001". Detect if it's SQ4 by the existence of
+		// "resource.000" (which exists in both SQ4 floppy and CD, but not in
+		// the subgame)
+		return (Common::File::exists("resource.000")) ? "sq4" : "msastrochicken";
+	}
+
+	// FIXME: Evil use of strdup here (we are leaking that memory, too)
+	return strdup(sierraId.c_str());
+}
+
 int _reset_graphics_input(EngineState *s) {
 	Resource *resource;
 	int font_nr;
@@ -285,7 +419,7 @@ void script_free_breakpoints(EngineState *s) {
 /*************************************************************/
 
 int game_init(EngineState *s) {
-	// FIXME Use new VM instantiation code all over the place"
+	// FIXME Use new VM instantiation code all over the place
 	DataStack *stack;
 
 	stack = s->segmentManager->allocateStack(VM_STACK_SIZE, &s->stack_segment);
@@ -327,7 +461,8 @@ int game_init(EngineState *s) {
 //	script_dissect(0, s->_selectorNames);
 	// The first entry in the export table of script 0 points to the game object
 	s->game_obj = script_lookup_export(s->segmentManager, 0, 0);
-	s->_gameName = obj_get_name(s->segmentManager, s->game_obj);
+	uint32 gameFlags = 0;	// unused
+	s->_gameName = convertSierraGameId(obj_get_name(s->segmentManager, s->game_obj), &gameFlags);
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->game_obj));
 

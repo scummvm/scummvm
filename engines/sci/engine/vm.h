@@ -498,6 +498,14 @@ int script_instantiate(ResourceManager *resourceManager, SegManager *segManager,
 void script_uninstantiate(SegManager *segManager, int script_nr);
 
 /**
+ * Converts the builtin Sierra game IDs to the ones we use in ScummVM
+ * @param[in] gameName		The internal game name
+ * @param[in] gameFlags     The game's flags, which are adjusted accordingly for demos
+ * @return					The equivalent ScummVM game id
+ */
+const char *convertSierraGameId(const char *gameName, uint32 *gameFlags);
+
+/**
  * Initializes an SCI game
  * This function must be run before script_run() is executed. Graphics data
  * is initialized iff s->gfx_state != NULL.

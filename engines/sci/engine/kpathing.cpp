@@ -1236,7 +1236,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 
 	// WORKAROUND: broken polygon in LSL1VGA, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
-	if ((size == 19) && (s->_gameName == "LSL1")) {
+	if ((size == 19) && (s->_gameName == "lsl1sci")) {
 		if ((s->currentRoomNumber() == 350)
 		&& (read_point(list, is_reg_t, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in LSL1VGA, room 350");
@@ -1245,21 +1245,21 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	}
 
 	// WORKAROUND: self-intersecting polygons in ECO, rooms 221, 280 and 300
-	if ((size == 11) && (s->_gameName == "eco")) {
+	if ((size == 11) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 300)
 		&& (read_point(list, is_reg_t, 10) == Common::Point(221, 0))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 300");
 			size = 10;
 		}
 	}
-	if ((size == 12) && (s->_gameName == "eco")) {
+	if ((size == 12) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 280)
 		&& (read_point(list, is_reg_t, 11) == Common::Point(238, 189))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 280");
 			size = 10;
 		}
 	}
-	if ((size == 16) && (s->_gameName == "eco")) {
+	if ((size == 16) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 221)
 		&& (read_point(list, is_reg_t, 1) == Common::Point(419, 175))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 221");
@@ -1441,7 +1441,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			return NULL;
 		}
 
-		if (s->_gameName == "Longbow" && s->currentRoomNumber() == 210)
+		if (s->_gameName == "longbow" && s->currentRoomNumber() == 210)
 				fixLongbowRoom210(pf_s, *new_start, *new_end);
 
 		// Merge start and end points into polygon set
