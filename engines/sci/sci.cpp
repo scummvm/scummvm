@@ -171,7 +171,7 @@ Common::Error SciEngine::run() {
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 	gfx_options.buffer_pics_nr = 0;
 	gfx_options.pic0_unscaled = 1;
-	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_D256;
+	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_F256;
 	gfx_options.pic0_dither_pattern = GFXR_DITHER_PATTERN_SCALED;
 	gfx_options.pic0_brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
 	gfx_options.pic0_line_mode = GFX_LINE_MODE_CORRECT;
