@@ -32,30 +32,68 @@ namespace Asylum {
 
 struct CommonResources;
 
+/**
+ * Asylum cursors are GraphicResources, and are stored in
+ * ResourcePacks, as are all game assets.
+ */
 class Cursor {
 public:
 	Cursor(ResourcePack *res);
 	virtual ~Cursor();
-
+	/**
+	 * Show the current cursor
+	 */
 	void show();
+	/**
+	 * Hide the current cursor
+	 */
 	void hide();
 	/**
 	 * Load a GraphicResource at the position specified by
-	 * index from the _resPack ResourcePack
+	 * index from the buffered ResourcePack
 	 */
 	void load(uint32 index);
-	void set(byte *data, byte width, byte height);
+	/**
+	 * Set the current cursor to a specific frame
+	 * within the loaded cursorResource
+	 */
 	void set(int frame);
+	/**
+	 * Set the x/y coordinates of the cursor
+	 */
 	void setCoords(uint32 mouseX, uint32 mouseY);
-	void update();
+	/**
+	 * Scene-based update to the current cursor. This
+	 * checks whether the cursor should be updated depending
+	 * on the MainActor's current action.
+	 *
+	 * TODO this probably doesn't belong here, but on the
+	 * scene, where it originally was
+	 */
 	void update(CommonResources *cr, int currentAction);
+	/**
+	 * Get the next logical frame from the currently loaded
+	 * cursorResource and draw it
+	 */
 	void animate();
 
+	/**
+	 * Get the X position of the cursor
+	 */
 	uint32 x() { return _mouseX; }
+	/**
+	 * get the Y position of the cursor
+	 */
 	uint32 y() { return _mouseY; }
+	/**
+	 * Get the current frame number of the
+	 * loaded cursorResource
+	 */
 	uint32 currentFrame() { return _curFrame; }
 
 private:
+	void set(byte *data, byte width, byte height);
+
 	ResourcePack	*_resPack;
 	GraphicResource *_cursorResource;
 	bool   cursorLoaded;
