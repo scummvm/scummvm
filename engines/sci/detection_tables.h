@@ -636,6 +636,26 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0
 	},
+
+	// Gabriel Knight 2 - French DOS (6-CDs Sierra Originals reedition)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	{{"gk2", "", {
+		{"resmap.001", 0, "5752eb78e0dffd6ad1d6ada75fe1222e", 2800},
+		{"ressci.001", 0, "37d2df0e1ec0603b605d0c87f1c09ce5", 50810410},
+		{"resmap.002", 0, "1ca433e4bc26383ff134a817386b723e", 1987},
+		{"ressci.002", 0, "5d07e6b51afaa3a5850b17a3dbd800a0", 41367424},
+		{"resmap.003", 0, "27b15dea1f9c73e1f5b57467c2d98b80", 1699},
+		{"ressci.003", 0, "93c561e5d49a804deed4ea4c2eda7386", 35200452},
+		{"resmap.004", 0, "9e5aaa053785d1ea61b1448df930db1a", 2743},
+		{"ressci.004", 0, "5d07e6b51afaa3a5850b17a3dbd800a0", 58988750},
+		{"resmap.005", 0, "6b1f4b59a7af58e1aff21259cc457851", 2077},
+		{"ressci.005", 0, "1eb5a72744799f5a5518543f5b4c3c79", 37882126},
+		{"resmap.006", 0, "11b2e722170b8c93fdaa5428e2c7676f", 3001},
+		{"ressci.006", 0, "4037d941aec39d2e654e20960429aefc", 60568486},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0,
+		GUIO_NOSPEECH},
+		0
+	},
 #endif // ENABLE_SCI32
 
 	// Hoyle 1 - English DOS (supplied by wibble92 in bug report #2644547)
@@ -1228,7 +1248,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 EGA Remake - English DOS (from spookypeanut)
 	// SCI interpreter version 0.000.510 (or 0.000.577?)
-	{{"lsl1sci", "EGA Remake", {
+	{{"lsl1vga", "EGA Remake", {
 		{"resource.map", 0, "abc0dc50c55de5b9723bb6de193f8756", 3282},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 451366},
 		{"resource.001", 0, "38936d3c68b6f79d3ffb13955713fed7", 591352},
@@ -1241,7 +1261,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	// Larry 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.004.024"
 	// SCI interpreter version 1.000.784
-	{{"lsl1sci", "VGA Remake", {
+	{{"lsl1vga", "", {
 		{"resource.map", 0, "7d115a9e27dc8ac71e8d5ef33d589bd5", 3366},
 		{"resource.000", 0, "e67fd129d5810fc7ad8ea509d891cc00", 363073},
 		{"resource.001", 0, "24ed6dc01b1e7fbc66c3d63a5994549a", 750465},
@@ -1253,7 +1273,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - English DOS (from spookypeanut)
 	// Executable scanning reports "1.000.577", VERSION file reports "2.1"
-	{{"lsl1sci", "VGA Remake", {
+	{{"lsl1vga", "", {
 		{"resource.map", 0, "6d04d26466337a1a64b8c6c0eb65c9a9", 3222},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 922406},
 		{"resource.001", 0, "ec20246209d7b19f38989261e5c8f5b8", 1111226},
@@ -1264,7 +1284,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - English DOS (from FRG)
 	// SCI interpreter version 1.000.510
-	{{"lsl1sci", "VGA Remake", {
+	{{"lsl1vga", "", {
 		{"resource.map", 0, "8606b083b011a0cc4a1fbfc2198a0a77", 3198},
 		{"resource.000", 0, "d3bceaebef3f7be941c2038b3565161e", 918242},
 		{"resource.001", 0, "d34cadb11e1aefbb497cf91bc1d3baa7", 1114688},
@@ -1275,7 +1295,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Larry 1 VGA Remake - English DOS Non-Interactive Demo
 	// SCI interpreter version 1.000.084
-	{{"lsl1sci", "VGA Remake Demo", {
+	{{"lsl1vga", "Demo", {
 		{"resource.map", 0, "434e1f6c39d71647b34f0ee57b2bbd68", 444},
 		{"resource.001", 0, "0c0768215c562d9dace4a5ca53696cf3", 359913},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
@@ -1286,7 +1306,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
 	// This version is known to be corrupted
 	// SCI interpreter version 1.000.510
-	{{"lsl1sci", "VGA Remake", {
+	{{"lsl1vga", "", {
 		{"resource.map", 0, "4fbe5c25878d51d7b2a68b710de4491b", 3327},
 		{"resource.000", 0, "5e501a9bf8c753bf4c96158042422f00", 839172},
 		{"resource.001", 0, "112648995dbc194037f1e4ed2e195910", 1063341},
@@ -1299,7 +1319,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	// Larry 1 VGA Remake - Russian DOS
 	// Executable scanning reports "1.000.510", VERSION file reports "2.0"
 	// SCI interpreter version 1.000.510
-	{{"lsl1sci", "VGA Remake", {
+	{{"lsl1vga", "", {
 		{"resource.map", 0, "b54413d35e206d21ae2b2bdb092bd13a", 3198},
 		{"resource.000", 0, "0d7b2afa666bd36d9535a15d3a837a66", 928566},
 		{"resource.001", 0, "bc8ca10c807515d959cbd91f9ba47735", 1123759},
@@ -1599,11 +1619,43 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
-	// Leisure Suit Larry's Casino - English DOS (from the Leisure Suit Larry Collection)
+	// Crazy Nick's Software Picks: Leisure Suit Larry's Casino - English DOS (from the Leisure Suit Larry Collection)
 	// Executable scanning reports "1.001.029", VERSION file reports "1.000"
-	{{"lslcasino", "", {
+	{{"cnick-lsl", "", {
 		{"resource.map", 0, "194f1578f2624db813c9072359ad1639", 783},
 		{"resource.001", 0, "3733433b517ec3d14a3331d9ab3842ae", 344830},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
+	// Crazy Nick's Software Picks: King Graham's Board Game Challenge
+	{{"cnick-kq", "", {
+		{"resource.map", 0, "44bc538a5cd24b39ffccc967c0ebf84d", 1137},
+		{"resource.001", 0, "470e7a4a3504635e70b623c44461e1ac", 451272},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
+	// Crazy Nick's Software Picks: Parlor Games with Laura Bow
+	{{"cnick-laurabow", "", {
+		{"resource.map", 0, "3b826bfe64f8ff1ccf30eef93cd2f727", 999},
+		{"resource.001", 0, "985ac8db6f636f2b4334c04b0fbb44fb", 336698},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
+	// Crazy Nick's Software Picks: Robin Hood's Game of Skill and Chance
+	{{"cnick-longbow", "", {
+		{"resource.map", 0, "4a5c81f485a2416bde12978506f2fb5f", 897},
+		{"resource.001", 0, "ef16dc9e867eb8eeb5b13e110b90bd4b", 571466},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
+	// Crazy Nick's Software Picks: Roger Wilco's Spaced Out Game Pack
+	{{"cnick-sq", "", {
+		{"resource.map", 0, "b4d95b02d84e297441bd999d34eaa6b1", 879},
+		{"resource.001", 0, "82ff2b64a60117886fbcd6a3a8c977c6", 364921},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0
 	},
@@ -1902,7 +1954,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Police Quest 1 VGA Remake - English DOS (from the Police Quest Collection)
 	// Executable scanning reports "1.001.029", VERSION file reports "2.000"
-	{{"pq1sci", "VGA Remake", {
+	{{"pq1vga", "", {
 		{"resource.map", 0, "35efa814fb994b1cbdac9611e401da67", 5013},
 		{"resource.000", 0, "e0d5ddf34eda903a38f0837e2aa7145b", 6401433},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
@@ -2177,7 +2229,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS
 	// Executable scanning reports "2.000.411"
-	{{"qfg1", "VGA Remake", {
+	{{"qfg1vga", "", {
 		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
 		{"resource.000", 0, "ecace1a2771846b1a8aa1afdd44111a0", 6570147},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
@@ -2186,7 +2238,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Quest for Glory 1 VGA Remake - English DOS Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.001.029
-	{{"qfg1", "VGA Remake Demo", {
+	{{"qfg1vga", "Demo", {
 		{"resource.map", 0, "ac0257051c95a59c0cdc0be24d9b11fa", 729},
 		{"resource.000", 0, "ec6f5cf369054dd3e5392995e9975b9e", 768218},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
@@ -2434,7 +2486,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 1 VGA Remake - English Amiga (from www.back2roots.org)
 	// SCI interpreter version 1.000.510 (just a guess)
-	{{"sq1sci", "VGA Remake", {
+	{{"sq1vga", "", {
 		{"resource.map", 0, "106484b372af1d4cbf866472cc2813dc", 6396},
 		{"resource.000", 0, "cc9d6ace343661ae51ec8bd6e6b00a8c", 340944},
 		{"resource.001", 0, "59efcfa2268d2f8608f544e2674d8151", 761721},
@@ -2449,7 +2501,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	// Space Quest 1 VGA Remake - English DOS (from the Space Quest Collection)
 	// Executable scanning reports "T.A00.081", VERSION file reports "2.000"
 	// SCI interpreter version 1.000.510 (just a guess)
-	{{"sq1sci", "VGA Remake", {
+	{{"sq1vga", "", {
 		{"resource.map", 0, "38a74d8f555a2da9ca4f21d14e3c1d33", 5913},
 		{"resource.000", 0, "e9d866534f8c84de82e25f2631ff258c", 1016436},
 		{"resource.001", 0, "a89b7b52064c75b1985b289edc2f5c69", 1038757},
@@ -2462,7 +2514,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 
 	// Space Quest 1 VGA Remake - English Non-Interactive Demo (from FRG)
 	// SCI interpreter version 1.000.181
-	{{"sq1sci", "VGA Remake Demo", {
+	{{"sq1vga", "Demo", {
 		{"resource.map", 0, "5af709ac5e0e923e0b8174f49978c30e", 636},
 		{"resource.001", 0, "fd99ea43f57576ded7c86036996346cf", 507642},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
@@ -2472,7 +2524,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	// Space Quest 1 VGA Remake - Spanish DOS Floppy (from jvprat)
 	// Executable scanning reports "T.A00.081", VERSION file reports "2.000"
 	// SCI interpreter version 1.000.510 (just a guess)
-	{{"sq1sci", "VGA Remake", {
+	{{"sq1vga", "", {
 		{"resource.map", 0, "cee2a67fa7f8f1f520f398110ca1c37e", 6111},
 		{"resource.000", 0, "945081a73211e0c40e62f709edcd8d1d", 970657},
 		{"resource.001", 0, "94692dc84c85c93bb8850f58aebf3cfc", 1085687},
@@ -2793,12 +2845,12 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
-	// Space Quest 6 - English DOS/Win3.11 Interactive Demo (from FRG)
-	// SCI interpreter version 2.100.002 (just a guess)
-	{{"sq6", "Demo", {
-		{"resource.map", 0, "368f07b07433db3f819fa3fa0e5efee5", 2572},
-		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2272050},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
+	// Space Quest 6 - French DOS/Win3.11 CD (from French magazine Joystick - September 1997)
+	// Executable scanning reports "2.100.002", VERSION file reports "1.0"
+	{{"sq6", "", {
+		{"resource.map", 0, "3c831625931d5079b73ae8c275f52c95", 10534},
+		{"resource.000", 0, "4195ca940f759424f62b90e262cc1737", 40932397},
+		{NULL, 0, NULL, 0}}, Common::FR_FRA, Common::kPlatformPC, 0, GUIO_NONE},
 		0
 	},
 
@@ -2807,7 +2859,16 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{{"sq6", "", {
 		{"resource.map", 0, "664d797415484f85c90b1b45aedc7686", 10534},
 		{"resource.000", 0, "ba87ba91e5bdabb4169dd0df75777722", 40933685},
-		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformPC, 0, GUIO_NONE},
+		0
+	},
+
+	// Space Quest 6 - English DOS/Win3.11 Interactive Demo (from FRG)
+	// SCI interpreter version 2.100.002 (just a guess)
+	{{"sq6", "Demo", {
+		{"resource.map", 0, "368f07b07433db3f819fa3fa0e5efee5", 2572},
+		{"resource.000", 0, "ab12724e078dea34b624e0d2a38dcd7c", 2272050},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, ADGF_DEMO, GUIO_NOSPEECH},
 		0
 	},
 #endif // ENABLE_SCI32

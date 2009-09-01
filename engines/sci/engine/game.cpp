@@ -62,8 +62,8 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "demo000",	"kq1sci",			true },
 	{ "kq1",		"kq1sci",			false },
 	{ "kq4",		"kq4sci",			false },
-	{ "ll1",		"lsl1sci",			true },
-	{ "lsl1",		"lsl1sci",			false },
+	{ "ll1",		"lsl1vga",			true },
+	{ "lsl1",		"lsl1vga",			false },
 	// lsl2 is the same
 	{ "ll5",		"lsl5",				true },
 	// lsl5 is the same
@@ -76,8 +76,8 @@ static const OldNewIdTableEntry s_oldNewTable[] = {
 	{ "trial",		"qfg2",				false },
 	{ "hq2demo",	"qfg2",				true },
 	{ "thegame",	"slater",			false },
-	{ "sq1demo",	"sq1sci",			true },
-	{ "sq1",		"sq1sci",			false },
+	{ "sq1demo",	"sq1vga",			true },
+	{ "sq1",		"sq1vga",			false },
 	// sq5 is the same
 
 	{ 0, 0, 0 }
@@ -124,13 +124,14 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 			*gameFlags |= ADGF_DEMO;
 		return "lsl3";
 	}
-	// TODO: lslcasino
+	// TODO: cnick-lsl, cnick-kq, cnick-laurabow, cnick-longbow and cnick-sq
+	// (their resources can't be read)
 	if (sierraId == "tales") {
 		if (!Common::File::exists("resource.002"))
 			*gameFlags |= ADGF_DEMO;
 		return "fairytales";
 	}
-	// TODO: pq1sci (its resources can't be read)
+	// TODO: pq1vga (its resources can't be read)
 	if (sierraId == "pq3") {
 		// The pq3 demo comes with resource.000 and resource.001
 		// The full version was released with several resource.* files,
@@ -148,9 +149,8 @@ const char *convertSierraGameId(const char *gameName, uint32 *gameFlags) {
 		else if (Common::File::exists("resource.sfx"))
 			return "qfg4";
 		else
-			return "qfg1";
+			return (Common::File::exists("resource.001")) ? "qfg1" : "qfg1vga";
 	}
-	// TODO: qfg1 VGA (its resources can't be read)
 	if (sierraId == "sq3") {
 		// Both SQ3 and the separately released subgame, Astro Chicken,
 		// have internal ID "sq3", but Astro Chicken only has "resource.map"
