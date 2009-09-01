@@ -96,6 +96,7 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 	int count = ARRAYSIZE(sci0Selectors) + offset;
 	names.resize(count);
 	const SelectorRemap *selectorRemap = sci0SelectorRemap;
+	uint32 selectorRemapSize = 0;
 	int i;
 
 	for (i = 0; i < offset; i++)
@@ -106,6 +107,7 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 
 	if (version <= SCI_VERSION_01) {
 		selectorRemap = sci0SelectorRemap;
+		selectorRemapSize = ARRAYSIZE(sci0SelectorRemap);
 	} else {
 		int count2 = ARRAYSIZE(sci1Selectors);
 		names[handleIndex + offset] = "nodePtr";
@@ -115,10 +117,16 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 		for (i = count; i < count + count2; i++)
 			names[i] = sci1Selectors[i - count];
 
-		selectorRemap = (version < SCI_VERSION_1_1) ? sci1SelectorRemap : sci11SelectorRemap;
+		if (version < SCI_VERSION_1_1) {
+			selectorRemap = sci1SelectorRemap;
+			selectorRemapSize = ARRAYSIZE(sci1SelectorRemap);
+		} else {
+			selectorRemap = sci11SelectorRemap;
+			selectorRemapSize = ARRAYSIZE(sci11SelectorRemap);
+		}
 	}
 
-	for (uint32 k = 0; k < ARRAYSIZE(selectorRemap); k++) {
+	for (uint32 k = 0; k < selectorRemapSize; k++) {
 		if (selectorRemap[k].slot >= names.size())
 			names.resize(selectorRemap[k].slot + 1);
 		names[selectorRemap[k].slot] = selectorRemap[k].name;
