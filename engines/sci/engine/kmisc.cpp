@@ -187,8 +187,8 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 		break;
 	case K_MEMORY_MEMCPY : {
 		int size = argv[3].toUint16();
-		byte *dest = kernel_dereference_bulk_pointer(s->segmentManager, argv[1], size);
-		byte *src = kernel_dereference_bulk_pointer(s->segmentManager, argv[2], size);
+		byte *dest = kernelDerefBulkPtr(s->segmentManager, argv[1], size);
+		byte *src = kernelDerefBulkPtr(s->segmentManager, argv[2], size);
 
 		if (dest && src)
 			memcpy(dest, src, size);
@@ -204,7 +204,7 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_PEEK : {
-		byte *ref = kernel_dereference_bulk_pointer(s->segmentManager, argv[1], 2);
+		byte *ref = kernelDerefBulkPtr(s->segmentManager, argv[1], 2);
 
 		if (!ref) {
 			// This occurs in KQ5CD when interacting with certain objects
@@ -218,7 +218,7 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_POKE : {
-		byte *ref = kernel_dereference_bulk_pointer(s->segmentManager, argv[1], 2);
+		byte *ref = kernelDerefBulkPtr(s->segmentManager, argv[1], 2);
 
 		if (!ref) {
 			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));

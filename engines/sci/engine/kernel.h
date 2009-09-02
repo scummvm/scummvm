@@ -246,9 +246,10 @@ bool is_object(SegManager *segManager, reg_t obj);
  * if not enugh entries were available.
  * reg_t dereferenciation also assures alignedness of data.
  */
-reg_t *kernel_dereference_reg_pointer(SegManager *segManager, reg_t pointer, int entries);
-byte *kernel_dereference_bulk_pointer(SegManager *segManager, reg_t pointer, int entries);
-#define kernel_dereference_char_pointer(state, pointer, entries) (char*)kernel_dereference_bulk_pointer(state, pointer, entries)
+reg_t *kernelDerefRegPtr(SegManager *segManager, reg_t pointer, int entries);
+byte *kernelDerefBulkPtr(SegManager *segManager, reg_t pointer, int entries);
+#define kernelDerefCharPtr(state, pointer, entries) ((char*)kernelDerefBulkPtr(state, pointer, entries))
+#define kernelDerefString(state, pointer) ((char*)kernelDerefBulkPtr(state, pointer, 0))
 
 /******************** Priority macros/functions ********************/
 /**

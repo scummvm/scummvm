@@ -741,11 +741,11 @@ static void *_kernel_dereference_pointer(SegManager *segManager, reg_t pointer, 
 
 }
 
-byte *kernel_dereference_bulk_pointer(SegManager *segManager, reg_t pointer, int entries) {
+byte *kernelDerefBulkPtr(SegManager *segManager, reg_t pointer, int entries) {
 	return (byte*)_kernel_dereference_pointer(segManager, pointer, entries, 1);
 }
 
-reg_t *kernel_dereference_reg_pointer(SegManager *segManager, reg_t pointer, int entries) {
+reg_t *kernelDerefRegPtr(SegManager *segManager, reg_t pointer, int entries) {
 	return (reg_t*)_kernel_dereference_pointer(segManager, pointer, entries, sizeof(reg_t));
 }
 

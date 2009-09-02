@@ -611,14 +611,14 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
 	int width, height;
-	char *text = argv[1].segment ? (char *) kernel_dereference_bulk_pointer(s->segmentManager, argv[1], 0) : NULL;
+	char *text = argv[1].segment ? (char *) kernelDerefBulkPtr(s->segmentManager, argv[1], 0) : NULL;
 	const char *sep = NULL; 
-	reg_t *dest = kernel_dereference_reg_pointer(s->segmentManager, argv[0], 4);
+	reg_t *dest = kernelDerefRegPtr(s->segmentManager, argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	if ((argc > 4) && (argv[4].segment))
-		sep = (const char *)kernel_dereference_bulk_pointer(s->segmentManager, argv[4], 0);	
+		sep = (const char *)kernelDerefBulkPtr(s->segmentManager, argv[4], 0);
 
 	if (maxwidth < 0)
 		maxwidth = 0;
@@ -2542,7 +2542,7 @@ reg_t kNewWindow(EngineState *s, int, int argc, reg_t *argv) {
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
 	lWhite.control = -1;
-	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s->segmentManager, argv[4 + argextra], 0) : NULL;
+	const char *title = argv[4 + argextra].segment ? kernelDerefString(s->segmentManager, argv[4 + argextra]) : NULL;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
 							s->titlebar_port->_font, lWhite, black, title ? s->strSplit(title, NULL).c_str() : NULL, flags);
@@ -3169,7 +3169,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	if (textp.segment) {
 		argpt = 1;
-		text = (char *)kernel_dereference_bulk_pointer(s->segmentManager, textp, 0);
+		text = (char *)kernelDerefBulkPtr(s->segmentManager, textp, 0);
 	} else {
 		argpt = 2;
 		text = kernel_lookup_text(s, textp, index);
@@ -3337,7 +3337,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
+	const char *filename = kernelDerefString(s->segmentManager, argv[1]);
 	
 	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
 	
@@ -3415,7 +3415,7 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
+	const char *filename = kernelDerefString(s->segmentManager, argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
 	SeqDecoder seq;
