@@ -35,7 +35,7 @@ namespace Sci {
 
 #define SCI_VARIABLE_GAME_SPEED 3
 
-reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetEvent(EngineState *s, int, int argc, reg_t *argv) {
 	int mask = argv[0].toUint16();
 	reg_t obj = argv[1];
 	sci_event_t e;
@@ -151,7 +151,7 @@ reg_t kGetEvent(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kMapKeyToDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMapKeyToDir(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segManager = s->segmentManager;
 
@@ -201,7 +201,7 @@ reg_t kMapKeyToDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGlobalToLocal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGlobalToLocal(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
 	SegManager *segManager = s->segmentManager;
 
@@ -217,7 +217,7 @@ reg_t kGlobalToLocal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 }
 
-reg_t kLocalToGlobal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLocalToGlobal(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
 	SegManager *segManager = s->segmentManager;
 
@@ -232,7 +232,7 @@ reg_t kLocalToGlobal(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kJoystick(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kJoystick(EngineState *s, int, int argc, reg_t *argv) {
 	// Subfunction 12 sets/gets joystick repeat rate
 	debug(5, "Unimplemented syscall 'Joystick()'");
 	return NULL_REG;

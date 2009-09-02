@@ -78,7 +78,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 /**********/
 
 
-reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSaid(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
@@ -128,7 +128,7 @@ reg_t kSaid(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	reg_t object = argv[0];
 	List *list;
@@ -186,7 +186,7 @@ reg_t kSetSynonyms(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 
 
-reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	reg_t stringpos = argv[0];
 	char *string = kernel_dereference_char_pointer(s->segmentManager, stringpos, 0);
@@ -257,7 +257,7 @@ reg_t kParse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kStrEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrEnd(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t address = argv[0];
 	char *seeker = kernel_dereference_char_pointer(s->segmentManager, address, 0);
 
@@ -267,7 +267,7 @@ reg_t kStrEnd(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return address;
 }
 
-reg_t kStrCat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrCat(EngineState *s, int, int argc, reg_t *argv) {
 	char *s1 = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	char *s2 = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 
@@ -275,7 +275,7 @@ reg_t kStrCat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return argv[0];
 }
 
-reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrCmp(EngineState *s, int, int argc, reg_t *argv) {
 	char *s1 = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	char *s2 = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 
@@ -286,7 +286,7 @@ reg_t kStrCmp(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kStrCpy(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrCpy(EngineState *s, int, int argc, reg_t *argv) {
 	char *dest = (char *) kernel_dereference_bulk_pointer(s->segmentManager, argv[0], 0);
 	char *src = (char *) kernel_dereference_bulk_pointer(s->segmentManager, argv[1], 0);
 
@@ -351,7 +351,7 @@ static int is_print_str(const char *str) {
 }
 
 
-reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 	byte *dest = (byte *)kernel_dereference_bulk_pointer(s->segmentManager, argv[0], 0);
 	reg_t *dest2;
 
@@ -393,7 +393,7 @@ reg_t kStrAt(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
 	char *source = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	while (isspace(*source))
@@ -417,7 +417,7 @@ reg_t kReadNumber(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 ** Formats the text from text.textresnr (offset index_inside_res) or heap_text_addr according to
 ** the supplied parameters and writes it to the targ_address.
 */
-reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
 	char *target = (char *) kernel_dereference_bulk_pointer(s->segmentManager, dest, 0);
@@ -632,7 +632,7 @@ reg_t kFormat(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrLen(EngineState *s, int, int argc, reg_t *argv) {
 	char *str = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	if (!str) {
@@ -644,7 +644,7 @@ reg_t kStrLen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-reg_t kGetFarText(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetFarText(EngineState *s, int, int argc, reg_t *argv) {
 	Resource *textres = s->resourceManager->findResource(ResourceId(kResourceTypeText, argv[0].toUint16()), 0);
 	char *seeker;
 	int counter = argv[1].toUint16();
@@ -683,7 +683,7 @@ enum kMessageFunc {
 	K_MESSAGE_LASTMESSAGE
 };
 
-reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 	MessageTuple tuple;
 	int func;
 	// For earlier version of of this function (GetMessage)
@@ -809,13 +809,13 @@ reg_t kMessage(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kSetQuitStr(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetQuitStr(EngineState *s, int, int argc, reg_t *argv) {
         char *quitStr = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
         debug("Setting quit string to '%s'", quitStr);
         return s->r_acc;
 }
 
-reg_t kStrSplit(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kStrSplit(EngineState *s, int, int argc, reg_t *argv) {
 	const char *format = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 	const char *sep = !argv[2].isNull() ? kernel_dereference_char_pointer(s->segmentManager, argv[2], 0) : NULL;
 	Common::String str = s->strSplit(format, sep);

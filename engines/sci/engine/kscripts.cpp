@@ -113,7 +113,7 @@ bool is_object(SegManager *segManager, reg_t object) {
 
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
-reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLoad(EngineState *s, int, int argc, reg_t *argv) {
 	int restype = argv[0].toUint16();
 	int resnr = argv[1].toUint16();
 
@@ -124,7 +124,7 @@ reg_t kLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
 
-reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kLock(EngineState *s, int, int argc, reg_t *argv) {
 	int state = argc > 2 ? argv[2].toUint16() : 1;
 	ResourceType type = (ResourceType)(argv[0].toUint16() & 0x7f);
 	ResourceId id = ResourceId(type, argv[1].toUint16());
@@ -152,7 +152,7 @@ reg_t kLock(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 // Unloads an arbitrary resource of type 'restype' with resource numbber 'resnr'
-reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kUnLoad(EngineState *s, int, int argc, reg_t *argv) {
 	int restype = argv[0].toUint16();
 	reg_t resnr = argv[1];
 
@@ -162,7 +162,7 @@ reg_t kUnLoad(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kResCheck(EngineState *s, int, int argc, reg_t *argv) {
 	Resource *res = NULL;
 	ResourceType restype = (ResourceType)(argv[0].toUint16() & 0x7f);
 
@@ -182,7 +182,7 @@ reg_t kResCheck(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(0, res != NULL);
 }
 
-reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
 	Object *parent_obj = obj_get(s->segmentManager, parent_addr);
 	reg_t clone_addr;
@@ -220,7 +220,7 @@ reg_t kClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
-reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	reg_t victim_addr = argv[0];
 	Clone *victim_obj = obj_get(s->segmentManager, victim_addr);
@@ -261,7 +261,7 @@ reg_t kDisposeClone(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 // Returns script dispatch address index in the supplied script
-reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kScriptID(EngineState *s, int, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
 	int index = (argc > 1) ? argv[1].toUint16() : 0;
 
@@ -290,7 +290,7 @@ reg_t kScriptID(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(scriptid, s->segmentManager->validateExportFunc(index, scriptid));
 }
 
-reg_t kDisposeScript(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 	int script = argv[0].offset;
 
 	// Work around QfG1 graveyard bug
@@ -327,14 +327,14 @@ int is_heap_object(EngineState *s, reg_t pos) {
 	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->segmentManager->scriptIsMarkedAsDeleted(pos.segment)));
 }
 
-reg_t kIsObject(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kIsObject(EngineState *s, int, int argc, reg_t *argv) {
 	if (argv[0].offset == 0xffff) // Treated specially
 		return NULL_REG;
 	else
 		return make_reg(0, is_heap_object(s, argv[0]));
 }
 
-reg_t kRespondsTo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRespondsTo(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = argv[1].toUint16();
 

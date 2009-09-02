@@ -196,7 +196,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 	debug(3, " -> opened file '%s' with handle %d", englishName.c_str(), handle);
 }
 
-reg_t kFOpen(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFOpen(EngineState *s, int, int argc, reg_t *argv) {
 	char *name = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	int mode = argv[1].toUint16();
 
@@ -227,7 +227,7 @@ void file_close(EngineState *s, int handle) {
 		f->close();
 }
 
-reg_t kFClose(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFClose(EngineState *s, int, int argc, reg_t *argv) {
 	debug(3, "kFClose(%d)", argv[0].toUint16());
 	file_close(s, argv[0].toUint16());
 	return s->r_acc;
@@ -248,7 +248,7 @@ void fwrite_wrapper(EngineState *s, int handle, char *data, int length) {
 	f->_out->write(data, length);
 }
 
-reg_t kFPuts(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFPuts(EngineState *s, int, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
 	char *data = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 
@@ -306,7 +306,7 @@ static void fseek_wrapper(EngineState *s, int handle, int offset, int whence) {
 	s->r_acc = make_reg(0, f->_in->seek(offset, whence));
 }
 
-reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFGets(EngineState *s, int, int argc, reg_t *argv) {
 	char *dest = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	int maxsize = argv[1].toUint16();
 	int handle = argv[2].toUint16();
@@ -319,7 +319,7 @@ reg_t kFGets(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 /**
  * Writes the cwd to the supplied address and returns the address in acc.
  */
-reg_t kGetCWD(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetCWD(EngineState *s, int, int argc, reg_t *argv) {
 	char *targetaddr = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	// We do not let the scripts see the file system, instead pretending
@@ -350,7 +350,7 @@ enum {
 	K_DEVICE_INFO_GET_SAVEFILE_NAME = 8
 };
 
-reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDeviceInfo(EngineState *s, int, int argc, reg_t *argv) {
 	int mode = argv[0].toUint16();
 	char *game_prefix, *input_s, *output_s;
 
@@ -417,7 +417,7 @@ reg_t kDeviceInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetSaveDir(EngineState *s, int, int argc, reg_t *argv) {
 #ifdef ENABLE_SCI32
 	// TODO: SCI32 uses a parameter here.
 	if (argc > 0)
@@ -427,7 +427,7 @@ reg_t kGetSaveDir(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return make_reg(s->sys_strings_segment, SYS_STRING_SAVEDIR);
 }
 
-reg_t kCheckFreeSpace(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCheckFreeSpace(EngineState *s, int, int argc, reg_t *argv) {
 	char *path = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	debug(3, "kCheckFreeSpace(%s)", path);
@@ -485,7 +485,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 	qsort(saves.begin(), saves.size(), sizeof(SavegameDesc), _savegame_index_struct_compare);
 }
 
-reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kCheckSaveGame(EngineState *s, int, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	int savedir_nr = argv[1].toUint16();
 
@@ -521,7 +521,7 @@ reg_t kCheckSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetSaveFiles(EngineState *s, int, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	char *nametarget = kernel_dereference_char_pointer(s->segmentManager, argv[1], 0);
 	reg_t nametarget_base = argv[1];
@@ -571,7 +571,7 @@ reg_t kGetSaveFiles(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSaveGame(EngineState *s, int, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	int savedir_nr = argv[1].toUint16();
 	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
@@ -644,7 +644,7 @@ reg_t kSaveGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRestoreGame(EngineState *s, int, int argc, reg_t *argv) {
 	char *game_id = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 	int savedir_nr = argv[1].toUint16();
 
@@ -683,7 +683,7 @@ reg_t kRestoreGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kValidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kValidPath(EngineState *s, int, int argc, reg_t *argv) {
 	const char *path = kernel_dereference_char_pointer(s->segmentManager, argv[0], 0);
 
 	// FIXME: For now, we only accept the (fake) root dir "/" as a valid path.
@@ -751,7 +751,7 @@ void DirSeeker::nextFile() {
 
 
 
-reg_t kFileIO(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFileIO(EngineState *s, int, int argc, reg_t *argv) {
 	int func_nr = argv[0].toUint16();
 
 	switch (func_nr) {

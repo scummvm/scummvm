@@ -206,7 +206,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 }
 
 
-static reg_t kDoSoundSci0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
@@ -386,7 +386,7 @@ static reg_t kDoSoundSci0(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 
-static reg_t kDoSoundSci1Early(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
@@ -677,7 +677,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int funct_nr, int argc, reg_t *ar
 	return s->r_acc;
 }
 
-static reg_t kDoSoundSci1Late(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
@@ -992,14 +992,14 @@ static reg_t kDoSoundSci1Late(EngineState *s, int funct_nr, int argc, reg_t *arg
 /**
  * Used for synthesized music playback
  */
-reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoSound(EngineState *s, int, int argc, reg_t *argv) {
 	switch(s->detectDoSoundType()) {
 	case SCI_VERSION_0_EARLY:
-		return kDoSoundSci0(s, funct_nr, argc, argv);
+		return kDoSoundSci0(s, argc, argv);
 	case SCI_VERSION_1_EARLY:
-		return kDoSoundSci1Early(s, funct_nr, argc, argv);
+		return kDoSoundSci1Early(s, argc, argv);
 	case SCI_VERSION_1_LATE:
-		return kDoSoundSci1Late(s, funct_nr, argc, argv);
+		return kDoSoundSci1Late(s, argc, argv);
 	default:
 		warning("Unknown DoSound type");
 		return NULL_REG;
@@ -1009,7 +1009,7 @@ reg_t kDoSound(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 /**
  * Used for speech playback and digital soundtracks in CD games
  */
-reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoAudio(EngineState *s, int, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	switch (argv[0].toUint16()) {
@@ -1066,7 +1066,7 @@ reg_t kDoAudio(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kDoSync(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segManager = s->segmentManager;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {

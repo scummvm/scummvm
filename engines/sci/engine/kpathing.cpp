@@ -1643,7 +1643,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	return output;
 }
 
-reg_t kAvoidPath(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kAvoidPath(EngineState *s, int, int argc, reg_t *argv) {
 	Common::Point start = Common::Point(argv[0].toSint16(), argv[1].toSint16());
 
 #ifdef DEBUG_AVOIDPATH

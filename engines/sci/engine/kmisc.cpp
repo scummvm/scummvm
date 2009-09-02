@@ -35,7 +35,7 @@
 
 namespace Sci {
 
-reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kRestartGame(EngineState *s, int, int argc, reg_t *argv) {
 	s->restarting_flags |= SCI_GAME_IS_RESTARTING_NOW;
 	s->restarting_flags &= ~SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE; // This appears to help
 
@@ -48,7 +48,7 @@ reg_t kRestartGame(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 /* kGameIsRestarting():
 ** Returns the restarting_flag in acc
 */
-reg_t kGameIsRestarting(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGameIsRestarting(EngineState *s, int, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, (s->restarting_flags & SCI_GAME_WAS_RESTARTED));
 
 	if (argc) { // Only happens during replay
@@ -59,7 +59,7 @@ reg_t kGameIsRestarting(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kHaveMouse(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kHaveMouse(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, -1);
 }
 
@@ -71,7 +71,7 @@ enum kMemoryInfoFunc {
 	K_MEMORYINFO_TOTAL_HUNK = 4 // Total amount of hunk memory (SCI01)
 };
 
-reg_t kMemoryInfo(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMemoryInfo(EngineState *s, int, int argc, reg_t *argv) {
 	uint16 size = 0x7fff;  // Must not be 0xffff, or some memory calculations will overflow
 
 	switch (argv[0].offset) {
@@ -100,13 +100,13 @@ reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kFlushResources(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kFlushResources(EngineState *s, int, int argc, reg_t *argv) {
 	run_gc(s);
 	debugC(2, kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());
 	return s->r_acc;
 }
 
-reg_t kSetDebug(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kSetDebug(EngineState *s, int, int argc, reg_t *argv) {
 	printf("Debug mode activated\n");
 
 	scriptState.seeking = kDebugSeekNothing;
@@ -121,7 +121,7 @@ enum {
 	_K_NEW_GETTIME_DATE = 3
 };
 
-reg_t kGetTime(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kGetTime(EngineState *s, int, int argc, reg_t *argv) {
 	tm loc_time;
 	uint32 start_time;
 	int retval = 0; // Avoid spurious warning
@@ -177,7 +177,7 @@ enum {
 	K_MEMORY_POKE					= 6
 };
 
-reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
 		if (!s->segmentManager->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
@@ -250,7 +250,7 @@ reg_t kMemory(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPlatform(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+reg_t kPlatform(EngineState *s, int, int argc, reg_t *argv) {
 	if (argc == 1) {
 		if (argv[0].toUint16() == 4)
 			if (((SciEngine*)g_engine)->getPlatform() == Common::kPlatformWindows)
@@ -269,8 +269,8 @@ reg_t kPlatform(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 }
 
 reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	char tmpbuf[200];
-	sprintf(tmpbuf, "Unimplemented syscall: %s[%x] (", 
+	char tmpbuf[256];
+	snprintf(tmpbuf, sizeof(tmpbuf), "Unimplemented syscall: %s[%x] (", 
 					((SciEngine*)g_engine)->getKernel()->getKernelName(funct_nr).c_str(), funct_nr);
 
 	for (int i = 0; i < argc; i++) {
