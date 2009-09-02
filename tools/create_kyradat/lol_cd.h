@@ -88,7 +88,7 @@ const ExtractEntry lolCDFile2[] = {
 	{ -1, 0, 0 }
 };
 
-const Game lolGames[] = {
+const Game lolDosTalkieGames[] = {
 	{ kLol, EN_ANY, kLolCD, "9d1778314de80598c0b0d032e2a1a1cf", lolCDFile1E },
 	{ kLol, EN_ANY, kLolCD, "263998ec600afca1cc7b935c473df670", lolCDFile2 },
 	GAME_DUMMY_ENTRY

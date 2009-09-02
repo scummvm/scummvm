@@ -31,7 +31,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 52,
+	kKyraDatVersion = 53,
 	kIndexSize = 12
 };
 
@@ -54,6 +54,8 @@ enum {
 #include "malcolm.h"
 
 #include "lol_cd.h"
+#include "lol_floppy.h"
+//#include "lol_pc98.h"
 #include "lol_demo.h"
 
 const Game kyra1FanTranslations[] = {
@@ -272,6 +274,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kLolSeqplayIntroTracks, k2TypeSoundList, "S_INTRO.TRA" },
 
 	// Ingame
+	{ kLolIngamePakFiles, kTypeStringList, "PAKFILES.TXT" },
+
 	{ kLolCharacterDefs, kTypeRawData, "CHARACTER.DEF" },
 	{ kLolIngameSfxFiles, k2TypeSfxList, "SFXFILES.TRA" },
 	{ kLolIngameSfxIndex, kTypeRawData, "SFXINDEX.MAP" },
@@ -1538,7 +1542,9 @@ const Game *gameDescs[] = {
 	kyra3Games,
 
 	lolDemos,
-	lolGames,
+	lolDosTalkieGames,
+	lolDosFloppyGames,
+	//lolPC98Games,
 
 	0
 };

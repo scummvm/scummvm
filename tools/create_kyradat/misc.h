@@ -498,6 +498,89 @@ const int kyra3Need[] = {
 	-1
 };
 
+const int lolFloppyNeed[] = {
+	kLolIngamePakFiles,
+
+	kLolCharacterDefs,
+	kLolIngameSfxFiles,
+	kLolIngameSfxIndex,
+	kLolMusicTrackMap,
+	kLolGMSfxIndex,
+	kLolMT32SfxIndex,
+	kLolSpellProperties,
+	kLolGameShapeMap,
+	kLolSceneItemOffs,
+	kLolCharInvIndex,
+	kLolCharInvDefs,
+	kLolCharDefsMan,
+	kLolCharDefsWoman,
+	kLolCharDefsKieran,
+	kLolCharDefsAkshel,
+	kLolExpRequirements,
+	kLolMonsterModifiers,
+	kLolMonsterLevelOffsets,
+	kLolMonsterDirFlags,
+	kLolMonsterScaleY,
+	kLolMonsterScaleX,
+	kLolMonsterScaleWH,
+	kLolFlyingItemShp,
+	kLolInventoryDesc,
+
+	kLolLevelShpList,
+	kLolLevelDatList,
+	kLolCompassDefs,
+	kLolStashSetup,
+	kLolDscUnk1,
+	kLolDscShapeIndex1,
+	kLolDscShapeIndex2,
+	kLolDscScaleWidthData,
+	kLolDscScaleHeightData,
+	kLolDscX,
+	kLolDscY,
+	kLolDscTileIndex,
+	kLolDscUnk2,
+	kLolDscDoorShapeIndex,
+	kLolDscDimData1,
+	kLolDscDimData2,
+	kLolDscBlockMap,
+	kLolDscDimMap,
+	kLolDscShapeOvlIndex,
+	kLolDscBlockIndex,
+	kLolDscDoor1,
+	kLolDscDoorScale,
+	kLolDscDoor4,
+	kLolDscDoorX,
+	kLolDscDoorY,
+
+	kLolScrollXTop,
+	kLolScrollYTop,
+	kLolScrollXBottom,
+	kLolScrollYBottom,
+
+	kLolButtonDefs,
+	kLolButtonList1,
+	kLolButtonList1,
+	kLolButtonList2,
+	kLolButtonList3,
+	kLolButtonList4,
+	kLolButtonList5,
+	kLolButtonList6,
+	kLolButtonList7,
+	kLolButtonList8,
+
+	kLolLegendData,
+	kLolMapCursorOvl,
+	kLolMapStringId,
+
+	kLolSpellbookAnim,
+	kLolSpellbookCoords,
+	kLolHealShapeFrames,
+	kLolLightningDefs,
+	kLolFireballCoords,
+
+	-1
+};
+
 const int lolCDFile1ENeed[] = {
 	kLolHistory,
 	-1
@@ -510,7 +593,6 @@ const int lolCDFile2Need[] = {
 	kLolMusicTrackMap,
 	kLolGMSfxIndex,
 	kLolMT32SfxIndex,
-	//lolADLSfxIndex,
 	kLolSpellProperties,
 	kLolGameShapeMap,
 	kLolSceneItemOffs,
@@ -519,7 +601,6 @@ const int lolCDFile2Need[] = {
 	kLolCharDefsMan,
 	kLolCharDefsWoman,
 	kLolCharDefsKieran,
-	//lolCharDefsUnk,
 	kLolCharDefsAkshel,
 	kLolExpRequirements,
 	kLolMonsterModifiers,
@@ -577,7 +658,6 @@ const int lolCDFile2Need[] = {
 	kLolLegendData,
 	kLolMapCursorOvl,
 	kLolMapStringId,
-	//lolMapPal,
 
 	kLolSpellbookAnim,
 	kLolSpellbookCoords,
@@ -627,6 +707,7 @@ const GameNeed gameNeedTable[] = {
 
 	{ kKyra3, -1, kyra3Need },
 
+	{ kLol, -1, lolFloppyNeed },
 	{ kLol, kLolCD, lolCDFile1ENeed },
 	{ kLol, kLolCD, lolCDFile2Need },
 

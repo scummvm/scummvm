@@ -179,6 +179,8 @@ enum kExtractID {
 
 	kLolSeqplayIntroTracks,
 
+	kLolIngamePakFiles,
+
 	kLolCharacterDefs,
 	kLolIngameSfxFiles,
 	kLolIngameSfxIndex,

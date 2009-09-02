@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 52
+#define RESFILE_VERSION 53
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -387,6 +387,8 @@ bool StaticResource::init() {
 		{ k2SeqplayIntroTracks, kStringList, "S_INTRO.TRA" },
 
 		// Ingame
+		{ kLolIngamePakFiles, kStringList, "PAKFILES.TXT" },
+
 		{ kLolCharacterDefs, kLolCharData, "CHARACTER.DEF" },
 		{ kLolIngameSfxFiles, kStringList, "SFXFILES.TRA" },
 		{ kLolIngameSfxIndex, kRawData, "SFXINDEX.MAP" },
@@ -484,8 +486,6 @@ bool StaticResource::init() {
 		_filenameTable = kyra3StaticRes;
 #ifdef ENABLE_LOL
 	} else if (_vm->game() == GI_LOL) {
-		if (!_vm->gameFlags().isDemo && !_vm->gameFlags().isTalkie)
-			return true;
 		_builtIn = 0;
 		_filenameTable = kLolStaticRes;
 #endif // ENABLE_LOL
@@ -1852,6 +1852,7 @@ void LoLEngine::initStaticResource() {
 	if (_flags.isDemo)
 		return;
 
+	_pakFileList = _staticres->loadStrings(kLolIngamePakFiles, _pakFileListSize);
 	_charDefaults = _staticres->loadCharData(kLolCharacterDefs, _charDefaultsSize);
 	_ingameSoundIndex = (const uint16 *)_staticres->loadRawData(kLolIngameSfxIndex, _ingameSoundIndexSize);
 	_musicTrackMap = _staticres->loadRawData(kLolMusicTrackMap, _musicTrackMapSize);

@@ -2257,6 +2257,10 @@ int LoLEngine::olol_setMouseCursor(EMCState *script) {
 
 int LoLEngine::olol_characterSays(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSays(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
+	
+	if (!_flags.isTalkie)
+		return 0;
+
 	if (stackPos(0) == -1) {
 		snd_stopSpeech(true);
 		return 1;
@@ -2305,7 +2309,7 @@ int LoLEngine::olol_getLanguage(EMCState *script) {
 #pragma mark -
 
 int LoLEngine::tlol_setupPaletteFade(const TIM *tim, const uint16 *param) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::t2_playSoundEffect(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::tlol_setupPaletteFade(%p, %p) (%d)", (const void *)tim, (const void *)param, param[0]);
 	_screen->getFadeParams(_screen->getPalette(0), param[0], _tim->_palDelayInc, _tim->_palDiff);
 	_tim->_palDelayAcc = 0;
 	return 1;

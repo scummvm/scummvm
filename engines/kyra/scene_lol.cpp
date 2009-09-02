@@ -443,9 +443,14 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	char tname[13];
 	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
 	Common::SeekableReadStream *s = _res->createReadStream(tname);
-	s->read(_trueLightTable1, 256);
-	s->read(_trueLightTable2, 5120);
-	delete s;
+	if (s) {
+		s->read(_trueLightTable1, 256);
+		s->read(_trueLightTable2, 5120);
+		delete s;
+	} else {
+		memset(_trueLightTable1, 0, 256);
+		memset(_trueLightTable2, 0, 5120);
+	}
 
 	_loadSuppFilesFlag = 1;
 }

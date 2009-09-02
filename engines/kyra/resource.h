@@ -216,6 +216,7 @@ enum kKyraResources {
 	k3ItemStringMap,
 
 #ifdef ENABLE_LOL
+	kLolIngamePakFiles,
 	kLolCharacterDefs,
 	kLolIngameSfxFiles,
 	kLolIngameSfxIndex,

@@ -332,6 +332,9 @@ private:
 	void writeSettings();
 	void readSettings();
 
+	const char *const *_pakFileList;
+	int _pakFileListSize;
+
 	// options
 	int _monsterDifficulty;
 	bool _smoothScrollingEnabled;

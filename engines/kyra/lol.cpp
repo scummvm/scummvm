@@ -550,8 +550,12 @@ Common::Error LoLEngine::go() {
 			return Common::kNoError;
 	}
 
-	if (!_flags.isDemo && !_res->loadFileList("FILEDATA.FDT"))
-		error("Couldn't load file list: 'FILEDATA.FDT'");
+	if (_flags.isTalkie && !_flags.isDemo) {
+		if (!_res->loadFileList("FILEDATA.FDT"))
+			error("Couldn't load file list: 'FILEDATA.FDT'");
+	} else if (_pakFileList) {
+		_res->loadFileList(_pakFileList, _pakFileListSize);
+	}
 
 	// Usually fonts etc. would be setup by the prologue code, if we skip
 	// the prologue code we need to setup them manually here.

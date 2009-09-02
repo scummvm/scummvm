@@ -908,7 +908,7 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w,
 	_shpDmY = _dscDoorMonsterY[t] + 120;
 
 	if (flags & 1) {
-		//TODO
+		// TODO / UNUSED
 		flags |=1;
 	}
 

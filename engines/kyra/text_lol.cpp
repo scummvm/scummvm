@@ -138,22 +138,6 @@ void TextDisplayer_LoL::resetDimTextPositions(int dim) {
 	_textDimData[dim].line = 0;
 }
 
-/*void TextDisplayer_LoL::setAnimParameters(const char *str, int x, uint8 col1, uint8 col2) {
-	static const char defaultStr[] = "<MORE>";
-
-	if (str) {
-		_animString = str;
-		_animWidth = x;
-		_animColor1 = col1;
-		_animColor2 = col2;
-	} else {
-		_animString = defaultStr;
-		_animWidth = 7;
-		_animColor1 = 0;
-		_animColor2 = 0;
-	}
-}*/
-
 void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int oldDim = 0;
 
@@ -403,7 +387,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			break;
 
 		case 11:
-			//TODO
+			// TODO (UNUSED)
 			break;
 
 		case 12:
@@ -414,23 +398,23 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			break;
 
 		case 18:
-			//TODO
+			// TODO (UNUSED)
 			break;
 
 		case 23:
-			//TODO
+			// TODO (UNUSED)
 			break;
 
 		case 24:
-			//TODO
+			// TODO (UNUSED)
 			break;
 
 		case 26:
-			//TODO
+			// TODO (UNUSED)
 			break;
 
 		case 28:
-			//TODO
+			// TODO (UNUSED)
 			break;
 
 		default:
