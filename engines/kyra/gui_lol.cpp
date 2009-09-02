@@ -587,8 +587,16 @@ void LoLEngine::gui_drawCompass() {
 int LoLEngine::gui_enableControls() {
 	_floatingCursorControl = 0;
 
+	int start = 74;
+	int end = 83;
+	
+	if (_flags.isTalkie) {
+		start = 76;
+		end = 85;
+	}
+
 	if (!_currentControlMode) {
-		for (int i = 76; i < 85; i++)
+		for (int i = start; i < end; i++)
 			gui_toggleButtonDisplayMode(i, 2);
 	}
 
@@ -604,8 +612,18 @@ int LoLEngine::gui_disableControls(int controlMode) {
 
 	gui_toggleFightButtons(true);
 
-	for (int i = 76; i < 85; i++)
-		gui_toggleButtonDisplayMode(i, ((controlMode & 2) && (i > 78)) ? 2 : 3);
+	int start = 74;
+	int end = 83;
+	int swtch = 76;
+	
+	if (_flags.isTalkie) {
+		start = 76;
+		end = 85;
+		swtch = 78;
+	}
+
+	for (int i = start; i < end; i++)
+		gui_toggleButtonDisplayMode(i, ((controlMode & 2) && (i > swtch)) ? 2 : 3);
 
 	return 1;
 }
@@ -614,7 +632,15 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 	static const int16 buttonX[] = { 0x0056, 0x0128, 0x000C, 0x0021, 0x0122, 0x000C, 0x0021, 0x0036, 0x000C, 0x0021, 0x0036 };
 	static const int16 buttonY[] = { 0x00B4, 0x00B4, 0x00B4, 0x00B4, 0x0020, 0x0084, 0x0084, 0x0084, 0x0096, 0x0096, 0x0096 };
 
-	if (shapeIndex == 78 && !(_flagsTable[31] & 0x10))
+	int swtch = 76;
+	int subst = 72;
+
+	if (_flags.isTalkie) {
+		swtch = 78;
+		subst = 74;
+	}
+
+	if (shapeIndex == swtch && !(_flagsTable[31] & 0x10))
 		return;
 
 	if (_currentControlMode && _needSceneRestore)
@@ -625,8 +651,8 @@ void LoLEngine::gui_toggleButtonDisplayMode(int shapeIndex, int mode) {
 
 	int pageNum = 0;
 
-	int16 x1 = buttonX[shapeIndex - 74];
-	int16 y1 = buttonY[shapeIndex - 74];
+	int16 x1 = buttonX[shapeIndex - subst];
+	int16 y1 = buttonY[shapeIndex - subst];
 	int16 x2 = 0;
 	int16 y2 = 0;
 	uint32 t = 0;
@@ -1565,6 +1591,9 @@ int LoLEngine::clickedOptions(Button *button) {
 	gui_toggleButtonDisplayMode(76, 0);
 
 	bool speechWasEnabled = speechEnabled();
+	if (_flags.isTalkie && getVolume(kVolumeSpeech) == 2)
+		_configVoice |= (textEnabled() ? 2 : 1);
+
 	_gui->runMenu(_gui->_mainMenu);
 
 	_updateFlags &= 0xfffb;
@@ -1576,7 +1605,10 @@ int LoLEngine::clickedOptions(Button *button) {
 
 	gui_drawPlayField();
 
-	if (speechWasEnabled && !textEnabled() && (!speechEnabled() || getVolume(kVolumeSpeech) == 2))
+	if (getVolume(kVolumeSpeech) == 2)
+		_configVoice &= (textEnabled() ? ~2 : ~1);
+
+	if (speechWasEnabled && !textEnabled() && !speechEnabled())
 		_configVoice = 0;
 
 	writeSettings();
@@ -2642,7 +2674,7 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 		_vm->_lang = ++_vm->_lang % 3;
 		break;
 	case 0xfff3:
-		_vm->_configVoice ^= 1;
+		_vm->_configVoice ^= 3;
 		break;
 	case 0x4072:
 		char filename[13];
