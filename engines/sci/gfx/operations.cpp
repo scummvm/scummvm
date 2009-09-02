@@ -308,7 +308,7 @@ static void _gfxop_update_box(GfxState *state, rect_t box) {
 	_gfxop_buffer_propagate_box(state, box, GFX_BUFFER_FRONT);
 }
 
-void gfxdr_add_dirty(DirtyRectList &list, rect_t box, int strategy) {
+void gfxdr_add_dirty(DirtyRectList &list, rect_t box) {
 	if (box.width < 0) {
 		box.x += box.width;
 		box.width = - box.width;
@@ -325,50 +325,25 @@ void gfxdr_add_dirty(DirtyRectList &list, rect_t box, int strategy) {
 	if (_gfxop_clip(&box, gfx_rect(0, 0, 320, 200)))
 		return;
 
-	switch (strategy) {
+	DirtyRectList::iterator dirty = list.begin();
+	while (dirty != list.end()) {
+		if (gfx_rects_overlap(*dirty, box)) {
+			Common::Rect tmp = toCommonRect(box);
+			tmp.extend(toCommonRect(*dirty));
+			box = toSCIRect(tmp);
 
-	case GFXOP_DIRTY_FRAMES_ONE:
-		if (!list.empty()) {
-			Common::Rect tmp = toCommonRect(list.front());
-			tmp.extend(toCommonRect(box));
-			list.front() = toSCIRect(tmp);
-		} else {
-			list.push_back(box);
-		}
-		break;
-
-	case GFXOP_DIRTY_FRAMES_CLUSTERS: {
-		DirtyRectList::iterator dirty = list.begin();
-		while (dirty != list.end()) {
-			if (gfx_rects_overlap(*dirty, box)) {
-				Common::Rect tmp = toCommonRect(box);
-				tmp.extend(toCommonRect(*dirty));
-				box = toSCIRect(tmp);
-
-				dirty = list.erase(dirty);
-			} else
-				++dirty;
-		}
-		list.push_back(box);
-
-		}
-		break;
-
-	default:
-		error("Attempt to use invalid dirty frame mode %d!\nPlease refer to gfx_options.h", strategy);
-
+			dirty = list.erase(dirty);
+		} else
+			++dirty;
 	}
+	list.push_back(box);
 }
 
 static void _gfxop_add_dirty(GfxState *state, rect_t box) {
 	if (state->disable_dirty)
 		return;
 
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	gfxdr_add_dirty(state->_dirtyRects, box, state->options->dirty_frames);
-#else
-	gfxdr_add_dirty(state->_dirtyRects, box, GFXOP_DIRTY_FRAMES_CLUSTERS);
-#endif
+	gfxdr_add_dirty(state->_dirtyRects, box);
 }
 
 static void _gfxop_add_dirty_x(GfxState *state, rect_t box) {

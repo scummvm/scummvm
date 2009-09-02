@@ -55,9 +55,6 @@ struct GfxWidget;
 ** of members (/SLOW/) */
 //#define GFXW_DEBUG_WIDGETS 2048
 
-/* Our strategy for dirty rectangle management */
-#define GFXW_DIRTY_STRATEGY GFXOP_DIRTY_FRAMES_CLUSTERS
-
 /* Terminology
 **
 ** Two special terms are used in here: /equivalent/ and /clear/. Their meanings
@@ -123,8 +120,6 @@ extern Common::Point gfxw_point_zero;
 ** Returns   : (int) 0
 ** Transparent containers will usually pass this value to their next ancestor,
 ** because areas below them might have to be redrawn.
-** The dirty rectangle management strategy is defined in this file in
-** GFXW_DIRTY_STRATEGY.
 **
 **
 ** -- add_dirty_rel(GfxContainer *self, rect_t dirty, int propagate)
@@ -137,8 +132,6 @@ extern Common::Point gfxw_point_zero;
 ** Returns   : (int) 0
 ** Transparent containers will usually pass this value to their next ancestor,
 ** because areas below them might have to be redrawn.
-** The dirty rectangle management strategy is defined in this file in
-** GFXW_DIRTY_STRATEGY.
 **
 **
 ** -- add(GfxContainer *self, GfxWidget *widget)

@@ -1195,7 +1195,7 @@ static int _gfxwop_container_add_dirty(GfxContainer *container, rect_t dirty, in
 #endif
 
 	DDIRTY(stderr, "Effectively adding dirty %d,%d,%d,%d %d to ID %d\n", GFX_PRINT_RECT(dirty), propagate, container->_ID);
-	gfxdr_add_dirty(container->_dirtyRects, dirty, GFXW_DIRTY_STRATEGY);
+	gfxdr_add_dirty(container->_dirtyRects, dirty);
 	return 0;
 }
 
@@ -1463,7 +1463,7 @@ int GfxPort::draw(const Common::Point &pos) {
 
 		DDIRTY(stderr, "Adding multiple dirty to #%d\n", _decorations->_ID);
 		for (DirtyRectList::iterator dirty = _dirtyRects.begin(); dirty != _dirtyRects.end(); ++dirty) {
-			gfxdr_add_dirty(_decorations->_dirtyRects, *dirty, GFXW_DIRTY_STRATEGY);
+			gfxdr_add_dirty(_decorations->_dirtyRects, *dirty);
 		}
 
 		if (_decorations->draw(gfxw_point_zero)) {

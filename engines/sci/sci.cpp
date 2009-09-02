@@ -181,7 +181,6 @@ Common::Error SciEngine::run() {
 	gfx_options.view_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("view_filter");
 	gfx_options.pic_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("pic_filter");
 	gfx_options.text_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("text_filter");
-	gfx_options.dirty_frames = GFXOP_DIRTY_FRAMES_CLUSTERS;
 	for (int i = 0; i < GFX_RESOURCE_TYPES_NR; i++) {
 		gfx_options.res_conf.assign[i] = NULL;
 		gfx_options.res_conf.mod[i] = NULL;

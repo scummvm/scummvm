@@ -39,12 +39,6 @@
 
 namespace Sci {
 
-/** Dirty rectangle heuristics. */
-enum {
-	GFXOP_DIRTY_FRAMES_ONE = 1, /**< One: Redraw one rectangle surrounding the dirty area (insert is O(1)) */
-	GFXOP_DIRTY_FRAMES_CLUSTERS = 2 /**< Clusters: Accumulate dirty rects, merging those that overlap (insert is O(n))  */
-};
-
 /**
  * All user options to the rendering pipeline
  *
@@ -71,8 +65,6 @@ struct gfx_options_t {
 	gfx_xlate_filter_t pic_xlate_filter; /* Only relevant if (pic0_unscaled) */
 	gfx_xlate_filter_t text_xlate_filter;
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
-
-	int dirty_frames;	// Dirty frames management
 
 	int workarounds;	// Workaround flags - see below
 #endif

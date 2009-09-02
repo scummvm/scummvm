@@ -698,9 +698,8 @@ void gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm);
  *
  * @param[in] list		the list to add to
  * @param[in] box		the dirty frame to addable
- * @param[in] strategy	the dirty frame heuristic to use (see gfx_options.h)
  */
-void gfxdr_add_dirty(DirtyRectList &list, rect_t box, int strategy);
+void gfxdr_add_dirty(DirtyRectList &list, rect_t box);
 
 /**
  * Clips a rectangle against another one.
