@@ -204,14 +204,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(Nodes_seg_id);
 }
 
-static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
-	ResourceManager *resMan = 0;
-
-	if (s.isSaving()) {
-		assert(obj);
-		resMan = obj->_resMan;
-	}
-
+static void sync_SegManagerPtr(Common::Serializer &s, ResourceManager *&resMan, SegManager *&obj) {
 	s.skip(1);	// obsolete: used to be a flag indicating if we got sci11 or not
 
 	if (s.isLoading()) {
@@ -264,7 +257,7 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(status_bar_foreground);
 	s.syncAsSint32LE(status_bar_background);
 
-	sync_SegManagerPtr(s, segMan);
+	sync_SegManagerPtr(s, resMan, segMan);
 
 	syncArray<Class>(s, segMan->_classtable);
 
