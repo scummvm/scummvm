@@ -374,7 +374,7 @@ bool Console::cmdGetVersion(int argc, const char **argv) {
 
 bool Console::cmdOpcodes(int argc, const char **argv) {
 	// Load the opcode table from vocab.998 if it exists, to obtain the opcode names
-	Resource* r = _vm->getresourceManager()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
+	Resource* r = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeVocab, 998), 0);
 
 	// If the resource couldn't be loaded, leave
 	if (!r) {
@@ -586,7 +586,7 @@ bool Console::cmdHexDump(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _vm->getresourceManager()->findResource(ResourceId(res, resNum), 0);
+		Resource *resource = _vm->getResourceManager()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			Common::hexdump(resource->data, resource->size, 16, 0);
 			DebugPrintf("Resource %s.%03d has been dumped to standard output\n", argv[1], resNum);
@@ -642,7 +642,7 @@ bool Console::cmdResourceSize(int argc, const char **argv) {
 	if (res == kResourceTypeInvalid)
 		DebugPrintf("Resource type '%s' is not valid\n", argv[1]);
 	else {
-		Resource *resource = _vm->getresourceManager()->findResource(ResourceId(res, resNum), 0);
+		Resource *resource = _vm->getResourceManager()->findResource(ResourceId(res, resNum), 0);
 		if (resource) {
 			DebugPrintf("Resource size: %d\n", resource->size);
 		} else {
@@ -712,7 +712,7 @@ bool Console::cmdHexgrep(int argc, const char **argv) {
 	}
 
 	for (; resNumber <= resMax; resNumber++) {
-		if ((script = _vm->getresourceManager()->findResource(ResourceId(restype, resNumber), 0))) {
+		if ((script = _vm->getResourceManager()->findResource(ResourceId(restype, resNumber), 0))) {
 			unsigned int seeker = 0, seekerold = 0;
 			uint32 comppos = 0;
 			int output_script_name = 0;
@@ -767,7 +767,7 @@ bool Console::cmdList(int argc, const char **argv) {
 			number = atoi(argv[2]);
 		}
 
-		Common::List<ResourceId> *resources = _vm->getresourceManager()->listResources(res, number);
+		Common::List<ResourceId> *resources = _vm->getResourceManager()->listResources(res, number);
 		sort(resources->begin(), resources->end(), ResourceIdLess());
 		Common::List<ResourceId>::iterator itr = resources->begin();
 
@@ -895,11 +895,11 @@ bool Console::cmdRestartGame(int argc, const char **argv) {
 
 bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
-	for (uint i = 0; i < _vm->_gamestate->segmentManager->_classtable.size(); i++) {
-		if (_vm->_gamestate->segmentManager->_classtable[i].reg.segment) {
+	for (uint i = 0; i < _vm->_gamestate->segMan->_classtable.size(); i++) {
+		if (_vm->_gamestate->segMan->_classtable[i].reg.segment) {
 			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, 
-					PRINT_REG(_vm->_gamestate->segmentManager->_classtable[i].reg), 
-					_vm->_gamestate->segmentManager->_classtable[i].script);
+					PRINT_REG(_vm->_gamestate->segMan->_classtable[i].reg), 
+					_vm->_gamestate->segMan->_classtable[i].script);
 		}
 	}
 
@@ -1313,8 +1313,8 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 	DebugPrintf("Segment table:\n");
 
-	for (uint i = 0; i < _vm->_gamestate->segmentManager->_heap.size(); i++) {
-		MemObject *mobj = _vm->_gamestate->segmentManager->_heap[i];
+	for (uint i = 0; i < _vm->_gamestate->segMan->_heap.size(); i++) {
+		MemObject *mobj = _vm->_gamestate->segMan->_heap[i];
 		if (mobj && mobj->getType()) {
 			DebugPrintf(" [%04x] ", i);
 
@@ -1375,10 +1375,10 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 bool Console::segmentInfo(int nr) {
 	DebugPrintf("[%04x] ", nr);
 
-	if ((nr < 0) || ((uint)nr >= _vm->_gamestate->segmentManager->_heap.size()) || !_vm->_gamestate->segmentManager->_heap[nr])
+	if ((nr < 0) || ((uint)nr >= _vm->_gamestate->segMan->_heap.size()) || !_vm->_gamestate->segMan->_heap[nr])
 		return false;
 
-	MemObject *mobj = _vm->_gamestate->segmentManager->_heap[nr];
+	MemObject *mobj = _vm->_gamestate->segMan->_heap[nr];
 
 	switch (mobj->getType()) {
 
@@ -1401,10 +1401,10 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < scr->_objects.size(); i++) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = obj_get(_vm->_gamestate->segmentManager, scr->_objects[i].pos);
+			Object *obj = obj_get(_vm->_gamestate->segMan, scr->_objects[i].pos);
 			if (obj)
 				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i].pos), 
-							obj_get_name(_vm->_gamestate->segmentManager,
+							obj_get_name(_vm->_gamestate->segMan,
 							scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
 		}
 	}
@@ -1446,12 +1446,12 @@ bool Console::segmentInfo(int nr) {
 				reg_t objpos;
 				objpos.offset = i;
 				objpos.segment = nr;
-				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(_vm->_gamestate->segmentManager, objpos));
+				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(_vm->_gamestate->segMan, objpos));
 				// Object header
-				Object *obj = obj_get(_vm->_gamestate->segmentManager, ct->_table[i].pos);
+				Object *obj = obj_get(_vm->_gamestate->segMan, ct->_table[i].pos);
 				if (obj)
 					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].pos), 
-								obj_get_name(_vm->_gamestate->segmentManager, ct->_table[i].pos), 
+								obj_get_name(_vm->_gamestate->segMan, ct->_table[i].pos), 
 								obj->_variables.size(), obj->methods_nr);
 			}
 	}
@@ -1518,7 +1518,7 @@ bool Console::cmdSegmentInfo(int argc, const char **argv) {
 	}
 
 	if (!scumm_stricmp(argv[1], "all")) {
-		for (uint i = 0; i < _vm->_gamestate->segmentManager->_heap.size(); i++)
+		for (uint i = 0; i < _vm->_gamestate->segMan->_heap.size(); i++)
 			segmentInfo(i);
 	} else {
 		int nr = atoi(argv[1]);
@@ -1537,7 +1537,7 @@ bool Console::cmdKillSegment(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gamestate->segmentManager->getScript(atoi(argv[1]))->setLockers(0);
+	_vm->_gamestate->segMan->getScript(atoi(argv[1]))->setLockers(0);
 
 	return true;
 }
@@ -1642,14 +1642,14 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segmentManager, addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segMan, addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return 1;
 	}
 
 	DebugPrintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
-	mobj->listAllOutgoingReferences(addr, NULL, _print_address, _vm->_gamestate->resourceManager->sciVersion());
+	mobj->listAllOutgoingReferences(addr, NULL, _print_address, _vm->_gamestate->resMan->sciVersion());
 
 	return true;
 }
@@ -1671,7 +1671,7 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segmentManager, addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segMan, addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
@@ -1701,13 +1701,13 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segmentManager, addr.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segMan, addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
 	}
 
-	addr = mobj->findCanonicAddress(_vm->_gamestate->segmentManager, addr);
+	addr = mobj->findCanonicAddress(_vm->_gamestate->segMan, addr);
 	DebugPrintf(" %04x:%04x\n", PRINT_REG(addr));
 
 	return true;
@@ -1823,7 +1823,7 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		return true;
 	}
 
-	int t = determine_reg_type(_vm->_gamestate->segmentManager, val, true);
+	int t = determine_reg_type(_vm->_gamestate->segMan, val, true);
 	int invalid = t & KSIG_INVALID;
 
 	switch (t & ~KSIG_INVALID) {
@@ -1898,7 +1898,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = determine_reg_type(_vm->_gamestate->segmentManager, reg, 1);
+	int type_mask = determine_reg_type(_vm->_gamestate->segMan, reg, 1);
 	int filter;
 	int found = 0;
 
@@ -1948,7 +1948,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_REF: {
 			int size;
-			unsigned char *block = _vm->_gamestate->segmentManager->dereference(reg, &size);
+			unsigned char *block = _vm->_gamestate->segMan->dereference(reg, &size);
 
 			DebugPrintf("raw data\n");
 
@@ -2054,7 +2054,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	for (iter = _vm->_gamestate->_executionStack.begin();
 	     iter != _vm->_gamestate->_executionStack.end(); ++iter, ++i) {
 		ExecStack &call = *iter;
-		const char *objname = obj_get_name(_vm->_gamestate->segmentManager, call.sendp);
+		const char *objname = obj_get_name(_vm->_gamestate->segMan, call.sendp);
 		int paramc, totalparamc;
 
 		switch (call.type) {
@@ -2104,7 +2104,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 
 		printf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			printf(" script: %d", (*(Script *)_vm->_gamestate->segmentManager->_heap[call.addr.pc.segment]).nr);
+			printf(" script: %d", (*(Script *)_vm->_gamestate->segMan->_heap[call.addr.pc.segment]).nr);
 		printf("\n");
 	}
 
@@ -2196,7 +2196,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	Object *obj = obj_get(_vm->_gamestate->segmentManager, objAddr);
+	Object *obj = obj_get(_vm->_gamestate->segMan, objAddr);
 	int selector_id = _vm->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
@@ -2210,7 +2210,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	if (lookup_selector(_vm->_gamestate->segmentManager, objAddr, selector_id, NULL, &addr) != kSelectorMethod) {
+	if (lookup_selector(_vm->_gamestate->segMan, objAddr, selector_id, NULL, &addr) != kSelectorMethod) {
 		DebugPrintf("Not a method.");
 		return true;
 	}
@@ -2245,7 +2245,7 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gamestate->segmentManager->dereference(vpc, &size);
+	_vm->_gamestate->segMan->dereference(vpc, &size);
 	size += vpc.offset; // total segment size
 
 	for (int i = 2; i < argc; i++) {
@@ -2304,13 +2304,13 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	o = obj_get(_vm->_gamestate->segmentManager, object);
+	o = obj_get(_vm->_gamestate->segMan, object);
 	if (o == NULL) {
 		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
 	}
 
-	SelectorType selector_type = lookup_selector(_vm->_gamestate->segmentManager, object, selector_id, 0, &fptr);
+	SelectorType selector_type = lookup_selector(_vm->_gamestate->segMan, object, selector_id, 0, &fptr);
 
 	if (selector_type == kSelectorNone) {
 		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
@@ -2506,7 +2506,7 @@ bool Console::cmdIsSample(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getresourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 	SongIterator *songit;
 	Audio::AudioStream *data;
 
@@ -2544,7 +2544,7 @@ bool Console::cmdSfx01Header(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getresourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	if (!song) {
 		DebugPrintf("Doesn't exist\n");
@@ -2709,7 +2709,7 @@ bool Console::cmdSfx01Track(int argc, const char **argv) {
 		return true;
 	}
 
-	Resource *song = _vm->getresourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
+	Resource *song = _vm->getResourceManager()->findResource(ResourceId(kResourceTypeSound, atoi(argv[1])), 0);
 
 	int offset = atoi(argv[2]);
 
@@ -2741,7 +2741,7 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 	}
 
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
-	SegManager *segManager = _vm->_gamestate->segmentManager;	// for PUT_SEL32V
+	SegManager *segManager = _vm->_gamestate->segMan;	// for PUT_SEL32V
 
 	if (id.segment) {
 		_vm->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
@@ -2844,7 +2844,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		if (*endptr)
 			return 1;
 
-		dest->segment = s->segmentManager->segGet(script_nr);
+		dest->segment = s->segMan->segGet(script_nr);
 
 		if (!dest->segment) {
 			return 1;
@@ -2880,8 +2880,8 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		str_objname = str + 1;
 
 		// Now all values are available; iterate over all objects.
-		for (i = 0; i < s->segmentManager->_heap.size(); i++) {
-			MemObject *mobj = s->segmentManager->_heap[i];
+		for (i = 0; i < s->segMan->_heap.size(); i++) {
+			MemObject *mobj = s->segMan->_heap[i];
 			int idx = 0;
 			int max_index = 0;
 
@@ -2909,7 +2909,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				}
 
 				if (valid) {
-					const char *objname = obj_get_name(s->segmentManager, objpos);
+					const char *objname = obj_get_name(s->segMan, objpos);
 					if (!strcmp(objname, str_objname)) {
 						// Found a match!
 						if ((index < 0) && (times_found > 0)) {
@@ -2983,7 +2983,7 @@ void Console::printList(List *l) {
 
 	while (!pos.isNull()) {
 		Node *node;
-		NodeTable *nt = (NodeTable *)GET_SEGMENT(*_vm->_gamestate->segmentManager, pos.segment, MEM_OBJ_NODES);
+		NodeTable *nt = (NodeTable *)GET_SEGMENT(*_vm->_gamestate->segMan, pos.segment, MEM_OBJ_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.offset)) {
 			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
@@ -3010,7 +3010,7 @@ void Console::printList(List *l) {
 }
 
 int Console::printNode(reg_t addr) {
-	MemObject *mobj = GET_SEGMENT(*_vm->_gamestate->segmentManager, addr.segment, MEM_OBJ_LISTS);
+	MemObject *mobj = GET_SEGMENT(*_vm->_gamestate->segMan, addr.segment, MEM_OBJ_LISTS);
 
 	if (mobj) {
 		ListTable *lt = (ListTable *)mobj;
@@ -3027,7 +3027,7 @@ int Console::printNode(reg_t addr) {
 	} else {
 		NodeTable *nt;
 		Node *node;
-		mobj = GET_SEGMENT(*_vm->_gamestate->segmentManager, addr.segment, MEM_OBJ_NODES);
+		mobj = GET_SEGMENT(*_vm->_gamestate->segMan, addr.segment, MEM_OBJ_NODES);
 
 		if (!mobj) {
 			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.segment);
@@ -3051,10 +3051,10 @@ int Console::printNode(reg_t addr) {
 
 int Console::printObject(reg_t pos) {
 	EngineState *s = _vm->_gamestate;	// for the several defines in this function
-	Object *obj = obj_get(s->segmentManager, pos);
+	Object *obj = obj_get(s->segMan, pos);
 	Object *var_container = obj;
 	int i;
-	SciVersion version = s->resourceManager->sciVersion();	// for the selector defines
+	SciVersion version = s->resMan->sciVersion();	// for the selector defines
 
 	if (!obj) {
 		DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
@@ -3062,11 +3062,11 @@ int Console::printObject(reg_t pos) {
 	}
 
 	// Object header
-	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s->segmentManager, pos),
+	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s->segMan, pos),
 				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-		var_container = obj_get(s->segmentManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+		var_container = obj_get(s->segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		printf("    ");
@@ -3078,9 +3078,9 @@ int Console::printObject(reg_t pos) {
 		reg_t val = obj->_variables[i];
 		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
-		Object *ref = obj_get(s->segmentManager, val);
+		Object *ref = obj_get(s->segMan, val);
 		if (ref)
-			DebugPrintf(" (%s)", obj_get_name(s->segmentManager, val));
+			DebugPrintf(" (%s)", obj_get_name(s->segMan, val));
 
 		DebugPrintf("\n");
 	}
@@ -3089,8 +3089,8 @@ int Console::printObject(reg_t pos) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
-	if (s->segmentManager->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		DebugPrintf("\nOwner script:\t%d\n", s->segmentManager->getScript(pos.segment)->nr);
+	if (s->segMan->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
+		DebugPrintf("\nOwner script:\t%d\n", s->segMan->getScript(pos.segment)->nr);
 
 	return 0;
 }
@@ -3132,7 +3132,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int have_rects = 0;
 	Common::Rect nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s->segmentManager, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
+	if (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -3210,10 +3210,10 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	}
 
 
-	is_view = (lookup_selector(s->segmentManager, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->segmentManager, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->segmentManager, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->segmentManager, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL) == kSelectorVariable);
+	is_view = (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
 		printf("Not a dynamic View object.\n");

@@ -379,7 +379,7 @@ static const char *argtype_description[] = {
 	"Arithmetic"
 };
 
-Kernel::Kernel(ResourceManager *resourceManager) : _resourceManager(resourceManager) {
+Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
 	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
 
 	loadSelectorNames();
@@ -394,7 +394,7 @@ Kernel::~Kernel() {
 }
 
 void Kernel::detectSciFeatures() {
-	SciVersion version = _resourceManager->sciVersion();
+	SciVersion version = _resMan->sciVersion();
 
 	features = 0;
 
@@ -418,13 +418,13 @@ void Kernel::detectSciFeatures() {
 }
 
 void Kernel::loadSelectorNames() {
-	Resource *r = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
-	bool oldScriptHeader = (_resourceManager->sciVersion() == SCI_VERSION_0_EARLY);
+	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
+	bool oldScriptHeader = (_resMan->sciVersion() == SCI_VERSION_0_EARLY);
 
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
 		// Some demos do not have a selector table
-		Common::StringList staticSelectorTable = checkStaticSelectorNames(_resourceManager->sciVersion());
+		Common::StringList staticSelectorTable = checkStaticSelectorNames(_resMan->sciVersion());
 		
 		if (staticSelectorTable.empty())
 			error("Kernel: Could not retrieve selector names");
@@ -752,7 +752,7 @@ reg_t *kernelDerefRegPtr(SegManager *segManager, reg_t pointer, int entries) {
 void Kernel::setDefaultKernelNames() {
 	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 
-	switch (_resourceManager->sciVersion()) {
+	switch (_resMan->sciVersion()) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
 		// Insert SCI0 file functions after SetCursor (0x28)
@@ -792,9 +792,9 @@ bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
 	
 #ifdef ENABLE_SCI32
-	if (_resourceManager->sciVersion() >= SCI_VERSION_2_1)
+	if (_resMan->sciVersion() >= SCI_VERSION_2_1)
 		setKernelNamesSci21();
-	else if (_resourceManager->sciVersion() == SCI_VERSION_2)
+	else if (_resMan->sciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else
 #endif

@@ -193,8 +193,8 @@ int _find_priority_band(EngineState *s, int nr) {
 }
 
 reg_t graph_save_box(EngineState *s, rect_t area) {
-	reg_t handle = kalloc(s->segmentManager, "graph_save_box()", sizeof(gfxw_snapshot_t *));
-	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **)kmem(s->segmentManager, handle);
+	reg_t handle = kalloc(s->segMan, "graph_save_box()", sizeof(gfxw_snapshot_t *));
+	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **)kmem(s->segMan, handle);
 
 	// FIXME: gfxw_make_snapshot returns a pointer. Now why do we store a
 	// pointer to real memory inside the SCI heap?
@@ -215,7 +215,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 		return;
 	}
 
-	ptr = (gfxw_snapshot_t **)kmem(s->segmentManager, handle);
+	ptr = (gfxw_snapshot_t **)kmem(s->segMan, handle);
 
 	if (!ptr) {
 		warning("Attempt to restore invalid handle %04x:%04x", PRINT_REG(handle));
@@ -255,11 +255,11 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 	free(*ptr);
 	*ptr = NULL;
 
-	kfree(s->segmentManager, handle);
+	kfree(s->segMan, handle);
 }
 
 PaletteEntry get_pic_color(EngineState *s, int color) {
-	if (!s->resourceManager->isVGA())
+	if (!s->resMan->isVGA())
 		return s->ega_colors[color].visual;
 
 	if (color == -1 || color == 255)     // -1 occurs in Eco Quest 1. Not sure if this is the best approach, but it seems to work
@@ -276,7 +276,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
 	gfx_color_t retval;
 
-	if (!s->resourceManager->isVGA()) {
+	if (!s->resMan->isVGA()) {
 		retval = s->ega_colors[(color >=0 && color < 16)? color : 0];
 		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
 		                (color == -1) ? 255 : 0, priority, control);
@@ -488,7 +488,7 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 
 	case K_GRAPH_GET_COLORS_NR:
 
-		return make_reg(0, !s->resourceManager->isVGA() ? 0x10 : 0x100);
+		return make_reg(0, !s->resMan->isVGA() ? 0x10 : 0x100);
 		break;
 
 	case K_GRAPH_DRAW_LINE: {
@@ -611,14 +611,14 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
 	int width, height;
-	char *text = argv[1].segment ? (char *) kernelDerefBulkPtr(s->segmentManager, argv[1], 0) : NULL;
+	char *text = argv[1].segment ? (char *) kernelDerefBulkPtr(s->segMan, argv[1], 0) : NULL;
 	const char *sep = NULL; 
-	reg_t *dest = kernelDerefRegPtr(s->segmentManager, argv[0], 4);
+	reg_t *dest = kernelDerefRegPtr(s->segMan, argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	if ((argc > 4) && (argv[4].segment))
-		sep = (const char *)kernelDerefBulkPtr(s->segmentManager, argv[4], 0);
+		sep = (const char *)kernelDerefBulkPtr(s->segMan, argv[4], 0);
 
 	if (maxwidth < 0)
 		maxwidth = 0;
@@ -673,12 +673,12 @@ reg_t kPriCoord(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	int view = GET_SEL32V(obj, view);
 	int signal = GET_SEL32V(obj, signal);
 	int loop;
 	int maxloops;
-	bool oldScriptHeader = (s->resourceManager->sciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (s->resMan->sciVersion() == SCI_VERSION_0_EARLY);
 
 	if (signal & _K_VIEW_SIG_FLAG_DOESNT_TURN)
 		return;
@@ -731,7 +731,7 @@ reg_t kDirLoop(EngineState *s, int, int argc, reg_t *argv) {
 static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority);
 
 static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int use_nsrect, int view_mask, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	int other_signal = GET_SEL32V(other_obj, signal);
 	int other_priority = GET_SEL32V(other_obj, priority);
 	int y = (int16)GET_SEL32V(other_obj, y);
@@ -771,7 +771,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 }
 
 reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = (argc > 1) ? argv[1] : NULL_REG;
 	List *cliplist = NULL;
@@ -817,7 +817,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 		while (widget) {
 			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
 			        && ((widget->_ID != obj.segment) || (widget->_subID != obj.offset))
-			        && is_object(s->segmentManager, make_reg(widget->_ID, widget->_subID)))
+			        && is_object(s->segMan, make_reg(widget->_ID, widget->_subID)))
 				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, argc, argv))
 					return not_register(s, NULL_REG);
 
@@ -843,7 +843,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 			reg_t other_obj = node->value;
 			debugC(2, kDebugLevelBresen, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
 
-			if (!is_object(s->segmentManager, other_obj)) {
+			if (!is_object(s->segMan, other_obj)) {
 				warning("CanBeHere() cliplist contains non-object %04x:%04x", PRINT_REG(other_obj));
 			} else if (other_obj != obj) { // Clipping against yourself is not recommended
 
@@ -926,7 +926,7 @@ reg_t kCelWide(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kNumLoops(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(obj, view);
 	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
@@ -942,7 +942,7 @@ reg_t kNumLoops(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kNumCels(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t obj = argv[0];
 	int loop = GET_SEL32V(obj, loop);
 	int view = GET_SEL32V(obj, view);
@@ -1061,7 +1061,7 @@ reg_t kDrawPic(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 Common::Rect set_base(EngineState *s, reg_t object) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	int x, y, original_y, z, ystep, xsize, ysize;
 	int xbase, ybase, xend, yend;
 	int view, loop, cel;
@@ -1124,10 +1124,10 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 }
 
 void _k_base_setter(EngineState *s, reg_t object) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	Common::Rect absrect = set_base(s, object);
 
-	if (lookup_selector(s->segmentManager, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
+	if (lookup_selector(s->segMan, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	// Note: there was a check here for a very old version of SCI, which supposedly needed
@@ -1135,7 +1135,7 @@ void _k_base_setter(EngineState *s, reg_t object) {
 	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
 	// for reference only
 #if 0
-	if (s->resourceManager->sciVersion() <= SCI_VERSION_0)
+	if (s->resMan->sciVersion() <= SCI_VERSION_0)
 		--absrect.top; // Compensate for early SCI OB1 'bug'
 #endif
 
@@ -1201,7 +1201,7 @@ static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int
 }
 
 Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	int x, y, z;
 	int view, loop, cel;
 	Common::Rect retval;
@@ -1231,10 +1231,10 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 }
 
 static void _k_set_now_seen(EngineState *s, reg_t object) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	Common::Rect absrect = get_nsrect(s, object, 0);
 
-	if (lookup_selector(s->segmentManager, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
+	if (lookup_selector(s->segMan, object, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
@@ -1328,9 +1328,9 @@ reg_t kPalVary(EngineState *s, int, int argc, reg_t *argv) {
 static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
 static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = text_pos.isNull() ? NULL : (char *)s->segmentManager->dereference(text_pos, NULL);
+	char *text = text_pos.isNull() ? NULL : (char *)s->segMan->dereference(text_pos, NULL);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
@@ -1354,7 +1354,7 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
 	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
-			s->resourceManager->sciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
+			s->resMan->sciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
@@ -1399,7 +1399,7 @@ void update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
 	}
 
 reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t obj = argv[0];
 	reg_t event = argv[1];
 
@@ -1420,7 +1420,7 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 				reg_t text_pos = GET_SEL32(obj, text);
 				int display_offset = 0;
 
-				char *text = (char *)s->segmentManager->dereference(text_pos, NULL);
+				char *text = (char *)s->segMan->dereference(text_pos, NULL);
 				int textlen;
 
 				if (!text) {
@@ -1574,7 +1574,7 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	int x = (int16)GET_SEL32V(obj, nsLeft);
 	int y = (int16)GET_SEL32V(obj, nsTop);
 	int xl = (int16)GET_SEL32V(obj, nsRight) - x;
@@ -1583,7 +1583,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	const char *text = text_pos.isNull() ? NULL : (char *)s->segmentManager->dereference(text_pos, NULL);
+	const char *text = text_pos.isNull() ? NULL : (char *)s->segMan->dereference(text_pos, NULL);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -1705,10 +1705,10 @@ static void draw_rect_to_control_map(EngineState *s, Common::Rect abs_zone) {
 static void draw_obj_to_control_map(EngineState *s, GfxDynView *view) {
 	reg_t obj = make_reg(view->_ID, view->_subID);
 
-	if (!is_object(s->segmentManager, obj))
+	if (!is_object(s->segMan, obj))
 		warning("View %d does not contain valid object reference %04x:%04x", view->_ID, PRINT_REG(obj));
 
-	reg_t* sp = view->signalp.getPointer(s->segmentManager);
+	reg_t* sp = view->signalp.getPointer(s->segMan);
 	if (!(sp && (sp->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
 		Common::Rect abs_zone = get_nsrect(s, make_reg(view->_ID, view->_subID), 1);
 		draw_rect_to_control_map(s, abs_zone);
@@ -1716,7 +1716,7 @@ static void draw_obj_to_control_map(EngineState *s, GfxDynView *view) {
 }
 
 static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	GfxDynView *widget = (GfxDynView *) list->_contents;
 
 	while (widget) {
@@ -1729,7 +1729,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
-			int has_nsrect = lookup_selector(s->segmentManager, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
+			int has_nsrect = lookup_selector(s->segMan, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
 				int temp;
@@ -1751,7 +1751,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 			}
 #ifdef DEBUG_LSRECT
 			else
-				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s->segmentManager, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL));
+				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s->segMan, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -1761,7 +1761,7 @@ static void _k_view_list_do_postdraw(EngineState *s, GfxList *list) {
 		fprintf(stderr, "obj %04x:%04x has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
 #endif
 
-		reg_t* sp = widget->signalp.getPointer(s->segmentManager);
+		reg_t* sp = widget->signalp.getPointer(s->segMan);
 		if (sp) {
 			*sp = make_reg(0, widget->signal & 0xffff); /* Write back signal */
 		}
@@ -1793,7 +1793,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 // returns non-zero IFF views were dropped
 	int signal;
 	int dropped = 0;
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 
 	_k_animate_ran = false;
 
@@ -1811,7 +1811,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 				reg_t obj = make_reg(widget->_ID, widget->_subID);
 				reg_t under_bits = NULL_REG;
 
-				if (!is_object(s->segmentManager, obj)) {
+				if (!is_object(s->segMan, obj)) {
 					error("Non-object %04x:%04x present in view list during delete time", PRINT_REG(obj));
 					obj = NULL_REG;
 				} else {
@@ -1820,7 +1820,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						reg_t mem_handle = *ubp;
 
 						if (mem_handle.segment) {
-							if (!kfree(s->segmentManager, mem_handle)) {
+							if (!kfree(s->segMan, mem_handle)) {
 								*ubp = make_reg(0, widget->under_bits = 0);
 							} else {
 								warning("Treating viewobj %04x:%04x as no longer present", PRINT_REG(obj));
@@ -1882,7 +1882,7 @@ enum {
 };
 
 static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, int nr, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	short oldloop, oldcel;
 	int cel, loop, view_nr = (int16)GET_SEL32V(obj, view);
 	int palette;
@@ -1930,20 +1930,20 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 	}
 
 	ObjVarRef under_bitsp;
-	if (lookup_selector(s->segmentManager, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s->segMan, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp.obj = NULL_REG;
 		under_bits = NULL_REG;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
 	} else
-		under_bits = *under_bitsp.getPointer(s->segmentManager);
+		under_bits = *under_bitsp.getPointer(s->segMan);
 
 	ObjVarRef signalp;
-	if (lookup_selector(s->segmentManager, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s->segMan, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp.obj = NULL_REG;
 		signal = 0;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
 	} else {
-		signal = signalp.getPointer(s->segmentManager)->offset;
+		signal = signalp.getPointer(s->segMan)->offset;
 		debugC(2, kDebugLevelGraphics, "    with signal = %04x\n", signal);
 	}
 
@@ -1966,7 +1966,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 ** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
 ** argc, argv should be the same as in the calling kernel function.
 */
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	Node *node;
 	int sequence_nr = 0;
 	GfxDynView *widget;
@@ -2019,7 +2019,7 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 	widget = (GfxDynView *)(*widget_list)->_contents;
 
 	while (widget) { // Read back widget values
-		reg_t *sp = widget->signalp.getPointer(s->segmentManager);
+		reg_t *sp = widget->signalp.getPointer(s->segMan);
 		if (sp)
 			widget->signal = sp->offset;
 
@@ -2028,12 +2028,12 @@ static void _k_make_view_list(EngineState *s, GfxList **widget_list, List *list,
 }
 
 static void _k_prepare_view_list(EngineState *s, GfxList *list, int options) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
-		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s->segmentManager, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
+		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s->segMan, obj, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(s, obj);
@@ -2248,7 +2248,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 			widget = gfxw_picviewize_dynview(widget);
 
 		if (GFXW_IS_DYN_VIEW(widget) && widget->_ID) {
-			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? widget->signalp.getPointer(s->segmentManager)->offset : 0;
+			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? widget->signalp.getPointer(s->segMan)->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				gfxw_hide_widget(widget);
@@ -2268,7 +2268,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 					else
 						gfxw_show_widget(widget);
 
-					*widget->signalp.getPointer(s->segmentManager) = make_reg(0, signal); // Write the changes back
+					*widget->signalp.getPointer(s->segMan) = make_reg(0, signal); // Write the changes back
 				};
 
 			} // ...if we're drawing disposeables and this one is disposeable, or if we're drawing non-
@@ -2511,7 +2511,7 @@ reg_t kNewWindow(EngineState *s, int, int argc, reg_t *argv) {
 	int16 bgColor = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
 	if (bgColor >= 0) {
-		if (!s->resourceManager->isVGA())
+		if (!s->resMan->isVGA())
 			bgcolor.visual = get_pic_color(s, MIN<int>(bgColor, 15));
 		else
 			bgcolor.visual = get_pic_color(s, bgColor);
@@ -2537,12 +2537,12 @@ reg_t kNewWindow(EngineState *s, int, int argc, reg_t *argv) {
 	black.alpha = 0;
 	black.control = -1;
 	black.priority = -1;
-	lWhite.visual = get_pic_color(s, !s->resourceManager->isVGA() ? 15 : 255);
+	lWhite.visual = get_pic_color(s, !s->resMan->isVGA() ? 15 : 255);
 	lWhite.mask = GFX_MASK_VISUAL;
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
 	lWhite.control = -1;
-	const char *title = argv[4 + argextra].segment ? kernelDerefString(s->segmentManager, argv[4 + argextra]) : NULL;
+	const char *title = argv[4 + argextra].segment ? kernelDerefString(s->segMan, argv[4 + argextra]) : NULL;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
 							s->titlebar_port->_font, lWhite, black, title ? s->strSplit(title, NULL).c_str() : NULL, flags);
@@ -3158,7 +3158,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 	bg_color = port->_bgcolor;
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
 	// SCI0 case should be checked
-	if (s->resourceManager->isVGA()) {
+	if (s->resMan->isVGA()) {
 		// This priority check fixes the colors in the menus in KQ5
 		// TODO/FIXME: Is this correct?
 		if (color0.priority >= 0)
@@ -3169,7 +3169,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	if (textp.segment) {
 		argpt = 1;
-		text = (char *)kernelDerefBulkPtr(s->segmentManager, textp, 0);
+		text = (char *)kernelDerefBulkPtr(s->segMan, textp, 0);
 	} else {
 		argpt = 2;
 		text = kernel_lookup_text(s, textp, index);
@@ -3200,10 +3200,10 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_color(%d)\n", temp);
-			if (!s->resourceManager->isVGA() && temp >= 0 && temp <= 15)
+			if (!s->resMan->isVGA() && temp >= 0 && temp <= 15)
 				color0 = (s->ega_colors[temp]);
 			else
-				if (s->resourceManager->isVGA() && temp >= 0 && temp < 256) {
+				if (s->resMan->isVGA() && temp >= 0 && temp < 256) {
 					color0.visual = get_pic_color(s, temp);
 					color0.mask = GFX_MASK_VISUAL;
 				} else
@@ -3217,10 +3217,10 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 			temp = argv[argpt++].toSint16();
 			debugC(2, kDebugLevelGraphics, "Display: set_bg_color(%d)\n", temp);
-			if (!s->resourceManager->isVGA() && temp >= 0 && temp <= 15)
+			if (!s->resMan->isVGA() && temp >= 0 && temp <= 15)
 				bg_color = s->ega_colors[temp];
 			else
-				if (s->resourceManager->isVGA() && temp >= 0 && temp <= 256) {
+				if (s->resMan->isVGA() && temp >= 0 && temp <= 256) {
 					bg_color.visual = get_pic_color(s, temp);
 					bg_color.mask = GFX_MASK_VISUAL;
 				} else
@@ -3337,7 +3337,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = kernelDerefString(s->segmentManager, argv[1]);
+	const char *filename = kernelDerefString(s->segMan, argv[1]);
 	
 	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
 	
@@ -3415,7 +3415,7 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = kernelDerefString(s->segmentManager, argv[0]);
+	const char *filename = kernelDerefString(s->segMan, argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
 	SeqDecoder seq;

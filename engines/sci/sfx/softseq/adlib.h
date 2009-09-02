@@ -146,7 +146,7 @@ private:
 class MidiPlayer_Adlib : public MidiPlayer {
 public:
 	MidiPlayer_Adlib() { _driver = new MidiDriver_Adlib(g_system->getMixer()); }
-	int open(ResourceManager *resourceManager);
+	int open(ResourceManager *resMan);
 	int getPlayMask() const { return 0x04; }
 	int getPolyphony() const { return MidiDriver_Adlib::kVoices; }
 	bool hasRhythmChannel() const { return false; }

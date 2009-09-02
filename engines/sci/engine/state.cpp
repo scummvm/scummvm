@@ -31,7 +31,7 @@
 namespace Sci {
 
 EngineState::EngineState(ResourceManager *res, uint32 flags)
-: resourceManager(res), _flags(flags), _dirseeker(this) {
+: resMan(res), _flags(flags), _dirseeker(this) {
 	widget_serial_counter = 0;
 
 	game_version = 0;
@@ -113,7 +113,7 @@ EngineState::EngineState(ResourceManager *res, uint32 flags)
 
 	game_obj = NULL_REG;
 
-	segmentManager = 0;
+	segMan = 0;
 	gc_countdown = 0;
 
 	successor = 0;
@@ -186,7 +186,7 @@ kLanguage EngineState::getLanguage() {
 	kLanguage lang = K_LANG_ENGLISH;
 
 	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.printLang != -1) {
-		SegManager *segManager = this->segmentManager;
+		SegManager *segManager = this->segMan;
 
 		lang = (kLanguage)GET_SEL32V(this->game_obj, printLang);
 
@@ -231,7 +231,7 @@ kLanguage EngineState::getLanguage() {
 }
 
 Common::String EngineState::strSplit(const char *str, const char *sep) {
-	SegManager *segManager = this->segmentManager;
+	SegManager *segManager = this->segMan;
 
 	kLanguage lang = getLanguage();
 	kLanguage subLang = K_LANG_NONE;
@@ -252,13 +252,13 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const {
 	reg_t fptr;
 
-	Object *obj = obj_get(segmentManager, objAddress);
-	SelectorType selType = lookup_selector(this->segmentManager, objAddress, sel, NULL, &fptr);
+	Object *obj = obj_get(segMan, objAddress);
+	SelectorType selType = lookup_selector(this->segMan, objAddress, sel, NULL, &fptr);
 
 	if (!obj || (selType != kSelectorMethod))
 		return -1;
 
-	Script *script = segmentManager->getScript(fptr.segment);
+	Script *script = segMan->getScript(fptr.segment);
 
 	if (!script->buf || (fptr.offset + offset < 0))
 		return -1;
@@ -303,9 +303,9 @@ SciVersion EngineState::detectDoSoundType() {
 		if (_doSoundType == SCI_VERSION_AUTODETECT) {
 			warning("DoSound detection failed, taking an educated guess");
 
-			if (resourceManager->sciVersion() >= SCI_VERSION_1_MIDDLE)
+			if (resMan->sciVersion() >= SCI_VERSION_1_MIDDLE)
 				_doSoundType = SCI_VERSION_1_LATE;
-			else if (resourceManager->sciVersion() > SCI_VERSION_01)
+			else if (resMan->sciVersion() > SCI_VERSION_01)
 				_doSoundType = SCI_VERSION_1_EARLY;
 			else
 				_doSoundType = SCI_VERSION_0_EARLY;
@@ -330,7 +330,7 @@ SciVersion EngineState::detectSetCursorType() {
 		} else {
 			warning("SetCursor detection failed, taking an educated guess");
 
-			if (resourceManager->sciVersion() >= SCI_VERSION_1_1)
+			if (resMan->sciVersion() >= SCI_VERSION_1_1)
 				_setCursorType = SCI_VERSION_1_1;
 			else
 				_setCursorType = SCI_VERSION_0_EARLY;
@@ -344,7 +344,7 @@ SciVersion EngineState::detectSetCursorType() {
 
 SciVersion EngineState::detectLofsType() {
 	if (_lofsType == SCI_VERSION_AUTODETECT) {
-		SciVersion version = segmentManager->sciVersion(); // FIXME: for VM_OBJECT_READ_FUNCTION
+		SciVersion version = segMan->sciVersion(); // FIXME: for VM_OBJECT_READ_FUNCTION
 
 		// This detection only works (and is only needed) pre-SCI1.1
 		if (version >= SCI_VERSION_1_1) {
@@ -356,7 +356,7 @@ SciVersion EngineState::detectLofsType() {
 		Object *obj = NULL;
 
 		if (!parse_reg_t(this, "?Game", &gameClass))
-			obj = obj_get(segmentManager, gameClass);
+			obj = obj_get(segMan, gameClass);
 
 		bool couldBeAbs = true;
 		bool couldBeRel = true;
@@ -366,7 +366,7 @@ SciVersion EngineState::detectLofsType() {
 			for (int m = 0; m < obj->methods_nr; m++) {
 				reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, m);
 
-				Script *script = segmentManager->getScript(fptr.segment);
+				Script *script = segMan->getScript(fptr.segment);
 
 				if ((script == NULL) || (script->buf == NULL))
 					continue;

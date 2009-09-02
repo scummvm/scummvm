@@ -62,7 +62,7 @@ public:
 	/**
 	 * Initializes the SCI kernel
 	 */
-	Kernel(ResourceManager *resourceManager);
+	Kernel(ResourceManager *resMan);
 	~Kernel();
 
 	uint getSelectorNamesSize() const { return _selectorNames.size(); }
@@ -157,7 +157,7 @@ private:
 	 */
 	void mapFunctions();
 
-	ResourceManager *_resourceManager;
+	ResourceManager *_resMan;
 	uint32 features;
 
 	// Kernel-related lists

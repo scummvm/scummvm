@@ -40,7 +40,7 @@ namespace Sci {
 
 #undef SCI_REQUIRE_RESOURCE_FILES
 
-//#define SCI_VERBOSE_resourceManager 1
+//#define SCI_VERBOSE_resMan 1
 
 static const char *sci_error_types[] = {
 	"No error",
@@ -103,7 +103,7 @@ void Resource::unalloc() {
 	status = kResStatusNoMalloc;
 }
 
-//-- resourceManager helper functions --
+//-- resMan helper functions --
 
 // Resource source list management
 
@@ -510,8 +510,8 @@ void ResourceManager::init() {
 		_mapVersion = _volVersion;
 	}
 
-	debug("resourceManager: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
-	debug("resourceManager: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
+	debug("resMan: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
+	debug("resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
 	scanNewSources();
 	addInternalSources();
@@ -520,25 +520,25 @@ void ResourceManager::init() {
 	_sciVersion = detectSciVersion();
 
 	if (_sciVersion != SCI_VERSION_AUTODETECT)
-		debug("resourceManager: Detected %s", ((SciEngine *)g_engine)->getSciVersionDesc(_sciVersion).c_str());
+		debug("resMan: Detected %s", ((SciEngine *)g_engine)->getSciVersionDesc(_sciVersion).c_str());
 	else
-		warning("resourceManager: Couldn't determine SCI version");
+		warning("resMan: Couldn't determine SCI version");
 
 	switch (_viewType) {
 	case kViewEga:
-		debug("resourceManager: Detected EGA graphic resources");
+		debug("resMan: Detected EGA graphic resources");
 		break;
 	case kViewVga:
-		debug("resourceManager: Detected VGA graphic resources");
+		debug("resMan: Detected VGA graphic resources");
 		break;
 	case kViewVga11:
-		debug("resourceManager: Detected SCI1.1 VGA graphic resources");
+		debug("resMan: Detected SCI1.1 VGA graphic resources");
 		break;
 	case kViewAmiga:
-		debug("resourceManager: Detected Amiga graphic resources");
+		debug("resMan: Detected Amiga graphic resources");
 		break;
 	default:
-		warning("resourceManager: Couldn't determine view type");
+		warning("resMan: Couldn't determine view type");
 	}
 }
 
@@ -561,7 +561,7 @@ ResourceManager::~ResourceManager() {
 
 void ResourceManager::removeFromLRU(Resource *res) {
 	if (res->status != kResStatusEnqueued) {
-		warning("resourceManager: trying to remove resource that isn't enqueued");
+		warning("resMan: trying to remove resource that isn't enqueued");
 		return;
 	}
 	_LRU.remove(res);
@@ -571,12 +571,12 @@ void ResourceManager::removeFromLRU(Resource *res) {
 
 void ResourceManager::addToLRU(Resource *res) {
 	if (res->status != kResStatusAllocated) {
-		warning("resourceManager: trying to enqueue resource with state %d", res->status);
+		warning("resMan: trying to enqueue resource with state %d", res->status);
 		return;
 	}
 	_LRU.push_front(res);
 	_memoryLRU += res->size;
-#if SCI_VERBOSE_resourceManager
+#if SCI_VERBOSE_resMan
 	debug("Adding %s.%03d (%d bytes) to lru control: %d bytes total",
 	      getResourceTypeName(res->type), res->number, res->size,
 	      mgr->_memoryLRU);
@@ -607,8 +607,8 @@ void ResourceManager::freeOldResources() {
 		Resource *goner = *_LRU.reverse_begin();
 		removeFromLRU(goner);
 		goner->unalloc();
-#ifdef SCI_VERBOSE_resourceManager
-		printf("resourceManager-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
+#ifdef SCI_VERBOSE_resMan
+		printf("resMan-debug: LRU: Freeing %s.%03d (%d bytes)\n", getResourceTypeName(goner->type), goner->number, goner->size);
 #endif
 	}
 }
@@ -656,7 +656,7 @@ Resource *ResourceManager::findResource(ResourceId id, bool lock) {
 	if (retval->data)
 		return retval;
 	else {
-		warning("resourceManager: Failed to read %s", retval->id.toString().c_str());
+		warning("resMan: Failed to read %s", retval->id.toString().c_str());
 		return NULL;
 	}
 }
@@ -665,7 +665,7 @@ void ResourceManager::unlockResource(Resource *res) {
 	assert(res);
 
 	if (res->status != kResStatusLocked) {
-		warning("[resourceManager] Attempt to unlock unlocked resource %s", res->id.toString().c_str());
+		warning("[resMan] Attempt to unlock unlocked resource %s", res->id.toString().c_str());
 		return;
 	}
 
@@ -1579,7 +1579,7 @@ ViewType ResourceManager::detectViewType() {
 		}
 	}
 
-	warning("resourceManager: Couldn't find any views");
+	warning("resMan: Couldn't find any views");
 	return kViewUnknown;
 }
 
@@ -1685,7 +1685,7 @@ bool ResourceManager::hasOldScriptHeader() {
 	Resource *res = findResource(ResourceId(kResourceTypeScript, 0), 0);
 
 	if (!res) {
-		warning("resourceManager: Failed to find script.000");
+		warning("resMan: Failed to find script.000");
 		return false;
 	}
 

@@ -205,11 +205,11 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
-	ResourceManager *resourceManager = 0;
+	ResourceManager *resMan = 0;
 
 	if (s.isSaving()) {
 		assert(obj);
-		resourceManager = obj->_resourceManager;
+		resMan = obj->_resMan;
 	}
 
 	s.skip(1);	// obsolete: used to be a flag indicating if we got sci11 or not
@@ -217,7 +217,7 @@ static void sync_SegManagerPtr(Common::Serializer &s, SegManager *&obj) {
 	if (s.isLoading()) {
 		// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 		delete obj;
-		obj = new SegManager(resourceManager);
+		obj = new SegManager(resMan);
 	}
 
 	obj->saveLoadWithSerializer(s);
@@ -264,9 +264,9 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(status_bar_foreground);
 	s.syncAsSint32LE(status_bar_background);
 
-	sync_SegManagerPtr(s, segmentManager);
+	sync_SegManagerPtr(s, segMan);
 
-	syncArray<Class>(s, segmentManager->_classtable);
+	syncArray<Class>(s, segMan->_classtable);
 
 	sync_sfx_state_t(s, _sound);
 }
@@ -496,7 +496,7 @@ static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	bool oldScriptHeader = (s->resourceManager->sciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (s->resMan->sciVersion() == SCI_VERSION_0_EARLY);
 
 	if (oldScriptHeader)
 		buf += 2;
@@ -517,8 +517,8 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
-	SegmentId stack_seg = find_unique_seg_by_type(retval->segmentManager, MEM_OBJ_STACK);
-	DataStack *stack = (DataStack *)(retval->segmentManager->_heap[stack_seg]);
+	SegmentId stack_seg = find_unique_seg_by_type(retval->segMan, MEM_OBJ_STACK);
+	DataStack *stack = (DataStack *)(retval->segMan->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->entries;
@@ -539,18 +539,18 @@ static bool clone_entry_used(CloneTable *table, int n) {
 
 static void load_script(EngineState *s, SegmentId seg) {
 	Resource *script, *heap = NULL;
-	Script *scr = (Script *)(s->segmentManager->_heap[seg]);
+	Script *scr = (Script *)(s->segMan->_heap[seg]);
 	assert(scr);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
 	assert(scr->buf);
 
-	script = s->resourceManager->findResource(ResourceId(kResourceTypeScript, scr->nr), 0);
-	if (s->resourceManager->sciVersion() >= SCI_VERSION_1_1)
-		heap = s->resourceManager->findResource(ResourceId(kResourceTypeHeap, scr->nr), 0);
+	script = s->resMan->findResource(ResourceId(kResourceTypeScript, scr->nr), 0);
+	if (s->resMan->sciVersion() >= SCI_VERSION_1_1)
+		heap = s->resMan->findResource(ResourceId(kResourceTypeHeap, scr->nr), 0);
 
 	memcpy(scr->buf, script->data, script->size);
-	if (s->resourceManager->sciVersion() == SCI_VERSION_1_1)
+	if (s->resMan->sciVersion() == SCI_VERSION_1_1)
 		memcpy(scr->buf + scr->script_size, heap->data, heap->size);
 }
 
@@ -569,8 +569,8 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 				// FIXME: Unify this code with script_instantiate_*
 				load_script(s, i);
-				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->segmentManager->_heap[scr->locals_segment]);
-				if (s->resourceManager->sciVersion() == SCI_VERSION_1_1) {
+				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->locals_segment]);
+				if (s->resMan->sciVersion() == SCI_VERSION_1_1) {
 					scr->export_table = 0;
 					scr->synonyms = 0;
 					if (READ_LE_UINT16(scr->buf + 6) > 0) {
@@ -606,7 +606,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				for (j = 0; j < scr->_objects.size(); j++) {
 					byte *data = scr->buf + scr->_objects[j].pos.offset;
 
-					if (s->resourceManager->sciVersion() == SCI_VERSION_1_1) {
+					if (s->resMan->sciVersion() == SCI_VERSION_1_1) {
 						uint16 *funct_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 6 ));
 						uint16 *prop_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 4 ));
 
@@ -616,7 +616,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = obj_get(s->segmentManager, scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
+						base_obj = obj_get(s->segMan, scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
@@ -700,7 +700,7 @@ static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
 	SongIteratorType it_type;
 
-	if (s->resourceManager->sciVersion() > SCI_VERSION_01)
+	if (s->resMan->sciVersion() > SCI_VERSION_01)
 		it_type = SCI_SONG_ITERATOR_TYPE_SCI1;
 	else
 		it_type = SCI_SONG_ITERATOR_TYPE_SCI0;
@@ -764,7 +764,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-	retval = new EngineState(s->resourceManager, s->_flags);
+	retval = new EngineState(s->resMan, s->_flags);
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;
@@ -785,20 +785,20 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->old_screen = 0;
 
 	temp = retval->_sound._songlib;
-	retval->_sound.sfx_init(retval->resourceManager, s->sfx_init_flags);
+	retval->_sound.sfx_init(retval->resMan, s->sfx_init_flags);
 	retval->sfx_init_flags = s->sfx_init_flags;
 	retval->_sound._songlib.freeSounds();
 	retval->_sound._songlib = temp;
 
 	_reset_graphics_input(retval);
 	reconstruct_stack(retval);
-	reconstruct_scripts(retval, retval->segmentManager);
-	reconstruct_clones(retval->segmentManager);
+	reconstruct_scripts(retval, retval->segMan);
+	reconstruct_clones(retval->segMan);
 	retval->game_obj = s->game_obj;
-	retval->script_000 = retval->segmentManager->getScript(retval->segmentManager->getSegment(0, SCRIPT_GET_DONT_LOAD));
+	retval->script_000 = retval->segMan->getScript(retval->segMan->getSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->sys_strings_segment = find_unique_seg_by_type(retval->segmentManager, MEM_OBJ_SYS_STRINGS);
-	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segmentManager, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);
+	retval->sys_strings_segment = find_unique_seg_by_type(retval->segMan, MEM_OBJ_SYS_STRINGS);
+	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);
 
 	// Restore system strings
 	SystemString *str;
@@ -835,7 +835,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->successor = NULL;
 	retval->pic_priority_table = (int *)gfxop_get_pic_metainfo(retval->gfx_state);
-	retval->_gameName = obj_get_name(retval->segmentManager, retval->game_obj);
+	retval->_gameName = obj_get_name(retval->segMan, retval->game_obj);
 
 	retval->_sound._it = NULL;
 	retval->_sound._flags = s->_sound._flags;

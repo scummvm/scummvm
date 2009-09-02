@@ -204,15 +204,15 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
-	int seg = s->segmentManager->segGet(script);
-	Script *scr = s->segmentManager->getScriptIfLoaded(seg);
+	int seg = s->segMan->segGet(script);
+	Script *scr = s->segMan->getScriptIfLoaded(seg);
 
 	if (!scr)  // Script not present yet?
-		seg = script_instantiate(s->resourceManager, s->segmentManager, script);
+		seg = script_instantiate(s->resMan, s->segMan, script);
 	else
 		scr->unmarkDeleted();
 
-	int temp = s->segmentManager->validateExportFunc(pubfunct, seg);
+	int temp = s->segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {
 		error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
 		return NULL;
@@ -248,10 +248,10 @@ static void _exec_varselectors(EngineState *s) {
 		ExecStack &xs = s->_executionStack.back();
 		// varselector access?
 		if (xs.argc) { // write?
-			*(xs.getVarPointer(s->segmentManager)) = xs.variables_argp[1];
+			*(xs.getVarPointer(s->segMan)) = xs.variables_argp[1];
 
 		} else // No, read
-			s->r_acc = *(xs.getVarPointer(s->segmentManager));
+			s->r_acc = *(xs.getVarPointer(s->segMan));
 
 		s->_executionStack.pop_back();
 	}
@@ -285,7 +285,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s->segmentManager, send_obj), ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", obj_get_name(s->segMan, send_obj), ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -310,7 +310,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
-		switch (lookup_selector(s->segmentManager, send_obj, selector, &varp, &funcp)) {
+		switch (lookup_selector(s->segMan, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 
@@ -338,7 +338,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif
 				{ // Argument is supplied -> Selector should be set
 					if (print_send_action) {
-						reg_t oldReg = *varp.getPointer(s->segmentManager);
+						reg_t oldReg = *varp.getPointer(s->segMan);
 						reg_t newReg = argp[1];
 
 						printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
@@ -467,7 +467,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	MemObject *mobj = GET_SEGMENT_ANY(*s->segmentManager, base.segment);
+	MemObject *mobj = GET_SEGMENT_ANY(*s->segMan, base.segment);
 
 	if (!mobj) {
 		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x", offset, PRINT_REG(base));
@@ -520,8 +520,8 @@ void run_vm(EngineState *s, int restoring) {
 	// Current execution data:
 	scriptState.xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
-	Object *obj = obj_get(s->segmentManager, scriptState.xs->objp);
-	Script *local_script = s->segmentManager->getScriptIfLoaded(scriptState.xs->local_segment);
+	Object *obj = obj_get(s->segMan, scriptState.xs->objp);
+	Script *local_script = s->segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 	int old_execution_stack_base = s->execution_stack_base;
 	// Used to detect the stack bottom, for "physical" returns
 	const byte *code_buf = NULL; // (Avoid spurious warning)
@@ -567,7 +567,7 @@ void run_vm(EngineState *s, int restoring) {
 			scriptState.xs = &(s->_executionStack.back());
 			s->_executionStackPosChanged = false;
 
-			scr = s->segmentManager->getScriptIfLoaded(scriptState.xs->addr.pc.segment);
+			scr = s->segMan->getScriptIfLoaded(scriptState.xs->addr.pc.segment);
 			if (!scr) {
 				// No script? Implicit return via fake instruction buffer
 				warning("Running on non-existant script in segment %x", scriptState.xs->addr.pc.segment);
@@ -580,12 +580,12 @@ void run_vm(EngineState *s, int restoring) {
 				scr = NULL;
 				obj = NULL;
 			} else {
-				obj = obj_get(s->segmentManager, scriptState.xs->objp);
+				obj = obj_get(s->segMan, scriptState.xs->objp);
 				code_buf = scr->buf;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = scr->buf_size;
 #endif
-				local_script = s->segmentManager->getScriptIfLoaded(scriptState.xs->local_segment);
+				local_script = s->segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 				if (!local_script) {
 					warning("Could not find local script from segment %x", scriptState.xs->local_segment);
 					local_script = NULL;
@@ -919,7 +919,7 @@ void run_vm(EngineState *s, int restoring) {
 			scriptState.xs->sp -= (opparams[1] >> 1) + 1;
 
 			{
-				bool oldScriptHeader = (s->segmentManager->sciVersion() == SCI_VERSION_0_EARLY);
+				bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
 				if (!oldScriptHeader) {
 					scriptState.xs->sp -= scriptState.restAdjust;
 					s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
@@ -930,13 +930,13 @@ void run_vm(EngineState *s, int restoring) {
 				error("Invalid kernel function 0x%x requested", opparams[0]);
 			} else {
 				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
-				bool oldScriptHeader = (s->segmentManager->sciVersion() == SCI_VERSION_0_EARLY);
+				bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
 
 				if (!oldScriptHeader)
 					argc += scriptState.restAdjust;
 
 				if (((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature
-						&& !kernel_matches_signature(s->segmentManager,
+						&& !kernel_matches_signature(s->segMan,
 						((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature, argc,
 						scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
@@ -1003,9 +1003,9 @@ void run_vm(EngineState *s, int restoring) {
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
 					if (old_xs->argc) // write?
-						*(old_xs->getVarPointer(s->segmentManager)) = old_xs->variables_argp[1];
+						*(old_xs->getVarPointer(s->segMan)) = old_xs->variables_argp[1];
 					else // No, read
-						s->r_acc = *(old_xs->getVarPointer(s->segmentManager));
+						s->r_acc = *(old_xs->getVarPointer(s->segMan));
 				}
 
 				// Not reached the base, so let's do a soft return
@@ -1042,7 +1042,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x28: // class
-			s->r_acc = s->segmentManager->get_class_address((unsigned)opparams[0], SCRIPT_GET_LOCK,
+			s->r_acc = s->segMan->get_class_address((unsigned)opparams[0], SCRIPT_GET_LOCK,
 											scriptState.xs->addr.pc);
 			break;
 
@@ -1062,7 +1062,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x2b: // super
-			r_temp = s->segmentManager->get_class_address(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
+			r_temp = s->segMan->get_class_address(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
 
 			if (!r_temp.segment)
 				error("[VM]: Invalid superclass in object");
@@ -1513,19 +1513,19 @@ reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_ind
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segManager->get_class_address(id, SCRIPT_GET_LOCK, reg))
 
-int script_instantiate_common(ResourceManager *resourceManager, SegManager *segManager, int script_nr, Resource **script, Resource **heap, int *was_new) {
+int script_instantiate_common(ResourceManager *resMan, SegManager *segManager, int script_nr, Resource **script, Resource **heap, int *was_new) {
 	int seg_id;
 	reg_t reg;
 
 	*was_new = 1;
 
-	*script = resourceManager->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	if (resourceManager->sciVersion() >= SCI_VERSION_1_1)
-		*heap = resourceManager->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+	*script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	if (resMan->sciVersion() >= SCI_VERSION_1_1)
+		*heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
-	if (!*script || (resourceManager->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
+	if (!*script || (resMan->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		warning("Script 0x%x requested but not found", script_nr);
-		if (resourceManager->sciVersion() >= SCI_VERSION_1_1) {
+		if (resMan->sciVersion() >= SCI_VERSION_1_1) {
 			if (*heap)
 				warning("Inconsistency: heap resource WAS found");
 			else if (*script)
@@ -1567,7 +1567,7 @@ int script_instantiate_common(ResourceManager *resourceManager, SegManager *segM
 	return seg_id;
 }
 
-int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segManager, int script_nr) {
+int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int script_nr) {
 	int objtype;
 	unsigned int objlength;
 	reg_t reg;
@@ -1576,10 +1576,10 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 	int magic_pos_adder; // Usually 0; 2 for older SCI versions
 	Resource *script;
 	int was_new;
-	SciVersion version = resourceManager->sciVersion();
+	SciVersion version = resMan->sciVersion();
 	bool oldScriptHeader = (version == SCI_VERSION_0_EARLY);
 
-	seg_id = script_instantiate_common(resourceManager, segManager, script_nr, &script, NULL, &was_new);
+	seg_id = script_instantiate_common(resMan, segManager, script_nr, &script, NULL, &was_new);
 
 	if (was_new)
 		return seg_id;
@@ -1731,14 +1731,14 @@ int script_instantiate_sci0(ResourceManager *resourceManager, SegManager *segMan
 	return reg.segment;		// instantiation successful
 }
 
-int script_instantiate_sci11(ResourceManager *resourceManager, SegManager *segManager, int script_nr) {
+int script_instantiate_sci11(ResourceManager *resMan, SegManager *segManager, int script_nr) {
 	Resource *script, *heap;
 	int seg_id;
 	int heap_start;
 	reg_t reg;
 	int was_new;
 
-	seg_id = script_instantiate_common(resourceManager, segManager, script_nr, &script, &heap, &was_new);
+	seg_id = script_instantiate_common(resMan, segManager, script_nr, &script, &heap, &was_new);
 
 	if (was_new)
 		return seg_id;
@@ -1768,11 +1768,11 @@ int script_instantiate_sci11(ResourceManager *resourceManager, SegManager *segMa
 	return seg_id;
 }
 
-int script_instantiate(ResourceManager *resourceManager, SegManager *segManager, int script_nr) {
-	if (resourceManager->sciVersion() >= SCI_VERSION_1_1)
-		return script_instantiate_sci11(resourceManager, segManager, script_nr);
+int script_instantiate(ResourceManager *resMan, SegManager *segManager, int script_nr) {
+	if (resMan->sciVersion() >= SCI_VERSION_1_1)
+		return script_instantiate_sci11(resMan, segManager, script_nr);
 	else
-		return script_instantiate_sci0(resourceManager, segManager, script_nr);
+		return script_instantiate_sci0(resMan, segManager, script_nr);
 }
 
 void script_uninstantiate_sci0(SegManager *segManager, int script_nr, SegmentId seg) {

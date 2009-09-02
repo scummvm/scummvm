@@ -52,7 +52,7 @@ public:	// FIXME, make private
 	bool _suspended; /**< Whether we are suspended */
 	Resource *_syncResource; /**< Used by kDoSync for speech syncing in CD talkie games */
 	uint _syncOffset;
-	ResourceManager *_resourceManager;
+	ResourceManager *_resMan;
 
 public:
 	SfxState();
@@ -63,10 +63,10 @@ public:
 	/***********/
 
 	/* Initializes the sound engine
-	** Parameters: (ResourceManager *) resourceManager: Resource manager for initialization
+	** Parameters: (ResourceManager *) resMan: Resource manager for initialization
 	**             (int) flags: SFX_STATE_FLAG_*
 	*/
-	void sfx_init(ResourceManager *resourceManager, int flags);
+	void sfx_init(ResourceManager *resMan, int flags);
 
 	/** Deinitializes the sound subsystem. */
 	void sfx_exit();

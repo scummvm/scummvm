@@ -222,7 +222,7 @@ int MessageState::getLength() {
 	return strlen(stringptr);
 }
 
-int MessageState::loadRes(ResourceManager *resourceManager, int module, bool lock) {
+int MessageState::loadRes(ResourceManager *resMan, int module, bool lock) {
 	_cursorStack.clear();
 
 	if (_locked) {
@@ -233,11 +233,11 @@ int MessageState::loadRes(ResourceManager *resourceManager, int module, bool loc
 		}
 
 		// Otherwise, free the old resource
-		resourceManager->unlockResource(_currentResource);
+		resMan->unlockResource(_currentResource);
 		_locked = false;
 	}
 
-	_currentResource = resourceManager->findResource(ResourceId(kResourceTypeMessage, module), lock);
+	_currentResource = resMan->findResource(ResourceId(kResourceTypeMessage, module), lock);
 
 	if (_currentResource == NULL || _currentResource->data == NULL) {
 		warning("Message: failed to load %d.msg", module);

@@ -170,7 +170,7 @@ public:
 public:
 	int widget_serial_counter; /**< Used for savegames */
 
-	ResourceManager *resourceManager; /**< The resource manager */
+	ResourceManager *resMan; /**< The resource manager */
 
 	const uint32 _flags;			/**< Specific game flags */
 
@@ -309,7 +309,7 @@ public:
 
 	reg_t game_obj; /**< Pointer to the game object */
 
-	SegManager *segmentManager;
+	SegManager *segMan;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
 	MessageState _msgState;

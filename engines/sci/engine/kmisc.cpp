@@ -172,23 +172,23 @@ enum {
 reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!s->segmentManager->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
+		if (!s->segMan->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		return s->r_acc;
 		break;
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
-		s->segmentManager->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
+		s->segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
-		if (s->segmentManager->freeDynmem(argv[1])) {
+		if (s->segMan->freeDynmem(argv[1])) {
 			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
 		int size = argv[3].toUint16();
-		byte *dest = kernelDerefBulkPtr(s->segmentManager, argv[1], size);
-		byte *src = kernelDerefBulkPtr(s->segmentManager, argv[2], size);
+		byte *dest = kernelDerefBulkPtr(s->segMan, argv[1], size);
+		byte *src = kernelDerefBulkPtr(s->segMan, argv[2], size);
 
 		if (dest && src)
 			memcpy(dest, src, size);
@@ -204,28 +204,28 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_PEEK : {
-		byte *ref = kernelDerefBulkPtr(s->segmentManager, argv[1], 2);
+		byte *ref = kernelDerefBulkPtr(s->segMan, argv[1], 2);
 
 		if (!ref) {
 			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->segmentManager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->segMan->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, (int16)READ_LE_UINT16(ref));
 		break;
 	}
 	case K_MEMORY_POKE : {
-		byte *ref = kernelDerefBulkPtr(s->segmentManager, argv[1], 2);
+		byte *ref = kernelDerefBulkPtr(s->segMan, argv[1], 2);
 
 		if (!ref) {
 			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
-		if (s->segmentManager->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->segMan->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {

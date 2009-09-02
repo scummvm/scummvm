@@ -93,7 +93,7 @@ SciEngine::~SciEngine() {
 	delete _kernel;
 	delete _vocabulary;
 	delete _console;
-	delete _resourceManager;
+	delete _resMan;
 }
 
 Common::Error SciEngine::run() {
@@ -127,17 +127,17 @@ Common::Error SciEngine::run() {
 
 	const uint32 flags = getFlags();
 
-	_resourceManager = new ResourceManager();
+	_resMan = new ResourceManager();
 
-	if (!_resourceManager) {
+	if (!_resMan) {
 		printf("No resources found, aborting...\n");
 		return Common::kNoGameDataFoundError;
 	}
 
-	_kernel = new Kernel(_resourceManager);
-	_vocabulary = new Vocabulary(_resourceManager);
+	_kernel = new Kernel(_resMan);
+	_vocabulary = new Vocabulary(_resMan);
 
-	_gamestate = new EngineState(_resourceManager, flags);
+	_gamestate = new EngineState(_resMan, flags);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -190,7 +190,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	gfxop_init(_resourceManager->sciVersion(), &gfx_state, &gfx_options, _resourceManager, gfxmode, 1, 1);
+	gfxop_init(_resMan->sciVersion(), &gfx_state, &gfx_options, _resMan, gfxmode, 1, 1);
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
@@ -202,7 +202,7 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	printf("Emulating SCI version %s\n", getSciVersionDesc(_resourceManager->sciVersion()).c_str());
+	printf("Emulating SCI version %s\n", getSciVersionDesc(_resMan->sciVersion()).c_str());
 
 	game_run(&_gamestate); // Run the game
 
@@ -241,7 +241,7 @@ const char* SciEngine::getGameID() const {
 }
 
 SciVersion SciEngine::getVersion() const {
-	return _resourceManager->sciVersion();
+	return _resMan->sciVersion();
 }
 
 Common::Language SciEngine::getLanguage() const {

@@ -122,9 +122,9 @@ enum AudioSyncCommands {
 
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	int song_nr = GET_SEL32V(obj, number);
-	Resource *song = s->resourceManager->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
+	Resource *song = s->resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 	int flags = GET_SEL32V(obj, flags);
 
 	if (priority == -1) {
@@ -141,7 +141,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 }
 
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id) {
-	Resource *song = s->resourceManager->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
+	Resource *song = s->resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 
 	if (!song)
 		return NULL;
@@ -157,15 +157,15 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	int result;
 	SongHandle handle;
 	int cue;
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 
-	if (s->resourceManager->sciVersion() > SCI_VERSION_01)
+	if (s->resMan->sciVersion() > SCI_VERSION_01)
 		return;
 	/* SCI1 and later explicitly poll for everything */
 
 	while ((result = s->_sound.sfx_poll(&handle, &cue))) {
 		reg_t obj = DEFROBNICATE_HANDLE(handle);
-		if (!is_object(s->segmentManager, obj)) {
+		if (!is_object(s->segMan, obj)) {
 			warning("Non-object %04x:%04x received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
 			return;
 		}
@@ -207,7 +207,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 
 static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -387,7 +387,7 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 
 
 static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -510,7 +510,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		//int vol = GET_SEL32V(obj, vol);
 		//int pri = GET_SEL32V(obj, pri);
 
-		if (obj.segment && (s->resourceManager->testResource(ResourceId(kResourceTypeSound, number)))) {
+		if (obj.segment && (s->resMan->testResource(ResourceId(kResourceTypeSound, number)))) {
 			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                      handle), 0, handle, number);
@@ -678,7 +678,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -820,8 +820,8 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			// a relevant audio resource, play it, otherwise switch to synthesized
 			// effects. If the resource exists, play it using map 65535 (sound
 			// effects map)
-			if (s->resourceManager->testResource(ResourceId(kResourceTypeAudio, number)) &&
-				s->resourceManager->sciVersion() >= SCI_VERSION_1_1) {
+			if (s->resMan->testResource(ResourceId(kResourceTypeAudio, number)) &&
+				s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 				// Found a relevant audio resource, play it
 				s->_sound.stopAudio();
 				warning("Initializing audio resource instead of requested sound resource %d\n", number);
@@ -829,7 +829,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 				// Also create iterator, that will fire SI_FINISHED event, when the sound is done playing
 				s->_sound.sfx_add_song(build_timeriterator(s, sampleLen), 0, handle, number);
 			} else {
-				if (!s->resourceManager->testResource(ResourceId(kResourceTypeSound, number))) {
+				if (!s->resMan->testResource(ResourceId(kResourceTypeSound, number))) {
 					warning("Could not open song number %d", number);
 					// Send a "stop handle" event so that the engine won't wait forever here
 					s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
@@ -863,7 +863,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			s->_sound.sfx_remove_song(handle);
 		}
 
-		if (obj.segment && (s->resourceManager->testResource(ResourceId(kResourceTypeSound, number)))) {
+		if (obj.segment && (s->resMan->testResource(ResourceId(kResourceTypeSound, number)))) {
 			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                    handle), 0, handle, number);
@@ -1056,7 +1056,7 @@ reg_t kDoAudio(EngineState *s, int, int argc, reg_t *argv) {
 			// In SCI1.1: tests for digital audio support
 			return make_reg(0, 1);
 		} else {
-			s->resourceManager->setAudioLanguage(argv[1].toSint16());
+			s->resMan->setAudioLanguage(argv[1].toSint16());
 		}
 		break;
 	default:
@@ -1067,13 +1067,13 @@ reg_t kDoAudio(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
 
 		if (s->_sound._syncResource) {
-			s->resourceManager->unlockResource(s->_sound._syncResource);
+			s->resMan->unlockResource(s->_sound._syncResource);
 			s->_sound._syncResource = NULL;
 		}
 
@@ -1088,7 +1088,7 @@ reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		s->_sound._syncResource = s->resourceManager->findResource(id, 1);
+		s->_sound._syncResource = s->resMan->findResource(id, 1);
 
 		if (s->_sound._syncResource) {
 			PUT_SEL32V(argv[1], syncCue, 0);
@@ -1120,7 +1120,7 @@ reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
 	}
 	case kSciAudioSyncStop:
 		if (s->_sound._syncResource) {
-			s->resourceManager->unlockResource(s->_sound._syncResource);
+			s->resMan->unlockResource(s->_sound._syncResource);
 			s->_sound._syncResource = NULL;
 		}
 		break;

@@ -272,22 +272,22 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 
-	ResourceManager *resourceManager = new ResourceManager(fslist);
-	ViewType gameViews = resourceManager->getViewType();
+	ResourceManager *resMan = new ResourceManager(fslist);
+	ViewType gameViews = resMan->getViewType();
 
 	// Have we identified the game views? If not, stop here
 	if (gameViews == kViewUnknown) {
 		SearchMan.remove("SCI_detection");
-		delete resourceManager;
+		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 
 #ifndef ENABLE_SCI32
 	// Is SCI32 compiled in? If not, and this is a SCI32 game,
 	// stop here
-	if (resourceManager->sciVersion() >= SCI_VERSION_2) {
+	if (resMan->sciVersion() >= SCI_VERSION_2) {
 		SearchMan.remove("SCI_detection");
-		delete resourceManager;
+		delete resMan;
 		return (const ADGameDescription *)&s_fallbackDesc;
 	}
 #endif
@@ -301,12 +301,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.desc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	SegManager *segManager = new SegManager(resourceManager);
-	if (!script_instantiate(resourceManager, segManager, 0)) {
+	SegManager *segManager = new SegManager(resMan);
+	if (!script_instantiate(resMan, segManager, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		SearchMan.remove("SCI_detection");
 		delete segManager;
-		delete resourceManager;
+		delete resMan;
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segManager, 0, 0);
@@ -324,7 +324,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	// (like, for example, Eco Quest 1 and all SCI1.1 games and newer, e.g. Freddy Pharkas). 
 	// As far as we know, these games store the messages of each language in separate
 	// resources, and it's not possible to detect that easily
-	Resource *text = resourceManager->findResource(ResourceId(kResourceTypeText, 0), 0);
+	Resource *text = resMan->findResource(ResourceId(kResourceTypeText, 0), 0);
 	uint seeker = 0;
 	if (text) {
 		while (seeker < text->size) {
@@ -336,7 +336,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		}
 	}
 
-	delete resourceManager;
+	delete resMan;
 
 	// Distinguish demos from full versions
 	if (!strcmp(s_fallbackDesc.desc.gameid, "castlebrain") && !Common::File::exists("resource.002")) {

@@ -68,7 +68,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	stackframe[0] = make_reg(0, selector_id);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
-	slc_type = lookup_selector(s->segmentManager, object, selector_id, NULL, &address);
+	slc_type = lookup_selector(s->segMan, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
 		warning("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
@@ -119,7 +119,7 @@ reg_t kLoad(EngineState *s, int, int argc, reg_t *argv) {
 
 	// Request to dynamically allocate hunk memory for later use
 	if (restype == kResourceTypeMemory)
-		return kalloc(s->segmentManager, "kLoad()", resnr);
+		return kalloc(s->segMan, "kLoad()", resnr);
 
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
@@ -133,18 +133,18 @@ reg_t kLock(EngineState *s, int, int argc, reg_t *argv) {
 
 	switch (state) {
 	case 1 :
-		s->resourceManager->findResource(id, 1);
+		s->resMan->findResource(id, 1);
 		break;
 	case 0 :
-		which = s->resourceManager->findResource(id, 0);
+		which = s->resMan->findResource(id, 0);
 
 		if (which)
-			s->resourceManager->unlockResource(which);
+			s->resMan->unlockResource(which);
 		else {
 			if (id.type == kResourceTypeInvalid)
-				warning("[resourceManager] Attempt to unlock resource %i of invalid type %i", id.number, type);
+				warning("[resMan] Attempt to unlock resource %i of invalid type %i", id.number, type);
 			else
-				warning("[resourceManager] Attempt to unlock non-existant resource %s", id.toString().c_str());
+				warning("[resMan] Attempt to unlock non-existant resource %s", id.toString().c_str());
 		}
 		break;
 	}
@@ -157,7 +157,7 @@ reg_t kUnLoad(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t resnr = argv[1];
 
 	if (restype == kResourceTypeMemory)
-		kfree(s->segmentManager, resnr);
+		kfree(s->segMan, resnr);
 
 	return s->r_acc;
 }
@@ -173,10 +173,10 @@ reg_t kResCheck(EngineState *s, int, int argc, reg_t *argv) {
 			uint cond = argv[4].toUint16() & 0xff;
 			uint seq = argv[5].toUint16() & 0xff;
 
-			res = s->resourceManager->testResource(ResourceId(restype, argv[1].toUint16(), noun, verb, cond, seq));
+			res = s->resMan->testResource(ResourceId(restype, argv[1].toUint16(), noun, verb, cond, seq));
 		}
 	} else {
-		res = s->resourceManager->testResource(ResourceId(restype, argv[1].toUint16()));
+		res = s->resMan->testResource(ResourceId(restype, argv[1].toUint16()));
 	}
 
 	return make_reg(0, res != NULL);
@@ -184,7 +184,7 @@ reg_t kResCheck(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	Object *parent_obj = obj_get(s->segmentManager, parent_addr);
+	Object *parent_obj = obj_get(s->segMan, parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -195,7 +195,7 @@ reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
 
-	clone_obj = s->segmentManager->alloc_Clone(&clone_addr);
+	clone_obj = s->segMan->alloc_Clone(&clone_addr);
 
 	if (!clone_obj) {
 		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parent_addr));
@@ -205,15 +205,15 @@ reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 	clone_obj->flags = 0;
 
-	SciVersion version = s->resourceManager->sciVersion();	// for the selector defines
+	SciVersion version = s->resMan->sciVersion();	// for the selector defines
 
 	// Mark as clone
 	clone_obj->_variables[SCRIPT_INFO_SELECTOR].offset = SCRIPT_INFO_CLONE;
 	clone_obj->_variables[SCRIPT_SPECIES_SELECTOR] = clone_obj->pos;
 	if (IS_CLASS(parent_obj))
 		clone_obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = parent_obj->pos;
-	s->segmentManager->getScript(parent_obj->pos.segment)->incrementLockers();
-	s->segmentManager->getScript(clone_obj->pos.segment)->incrementLockers();
+	s->segMan->getScript(parent_obj->pos.segment)->incrementLockers();
+	s->segMan->getScript(clone_obj->pos.segment)->incrementLockers();
 
 	return clone_addr;
 }
@@ -221,9 +221,9 @@ reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segmentManager;
+	SegManager *segManager = s->segMan;
 	reg_t victim_addr = argv[0];
-	Clone *victim_obj = obj_get(s->segmentManager, victim_addr);
+	Clone *victim_obj = obj_get(s->segMan, victim_addr);
 	uint16 underBits;
 
 	if (!victim_obj) {
@@ -232,7 +232,7 @@ reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	SciVersion version = s->resourceManager->sciVersion();	// for the selector defines
+	SciVersion version = s->resMan->sciVersion();	// for the selector defines
 
 	if (victim_obj->_variables[SCRIPT_INFO_SELECTOR].offset != SCRIPT_INFO_CLONE) {
 		//warning("Attempt to dispose something other than a clone at %04x", offset);
@@ -265,7 +265,7 @@ reg_t kScriptID(EngineState *s, int, int argc, reg_t *argv) {
 	int script = argv[0].toUint16();
 	int index = (argc > 1) ? argv[1].toUint16() : 0;
 
-	SegmentId scriptid = s->segmentManager->getSegment(script, SCRIPT_GET_LOAD);
+	SegmentId scriptid = s->segMan->getSegment(script, SCRIPT_GET_LOAD);
 	Script *scr;
 
 	if (argv[0].segment)
@@ -274,7 +274,7 @@ reg_t kScriptID(EngineState *s, int, int argc, reg_t *argv) {
 	if (!scriptid)
 		return NULL_REG;
 
-	scr = s->segmentManager->getScript(scriptid);
+	scr = s->segMan->getScript(scriptid);
 
 	if (!scr->exports_nr) {
 		// FIXME: Is this fatal? This occurs in SQ4CD
@@ -287,7 +287,7 @@ reg_t kScriptID(EngineState *s, int, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	return make_reg(scriptid, s->segmentManager->validateExportFunc(index, scriptid));
+	return make_reg(scriptid, s->segMan->validateExportFunc(index, scriptid));
 }
 
 reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
@@ -297,8 +297,8 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return s->r_acc;
 
-	int id = s->segmentManager->segGet(script);
-	Script *scr = s->segmentManager->getScriptIfLoaded(id);
+	int id = s->segMan->segGet(script);
+	Script *scr = s->segMan->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)
 			scr->setLockers(1);
@@ -310,7 +310,7 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 		}
 	}
 
-	script_uninstantiate(s->segmentManager, script);
+	script_uninstantiate(s->segMan, script);
 	s->_executionStackPosChanged = true;
 
 	if (argc != 2) {
@@ -323,8 +323,8 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 int is_heap_object(EngineState *s, reg_t pos) {
-	Object *obj = obj_get(s->segmentManager, pos);
-	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->segmentManager->scriptIsMarkedAsDeleted(pos.segment)));
+	Object *obj = obj_get(s->segMan, pos);
+	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->segMan->scriptIsMarkedAsDeleted(pos.segment)));
 }
 
 reg_t kIsObject(EngineState *s, int, int argc, reg_t *argv) {
@@ -338,7 +338,7 @@ reg_t kRespondsTo(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = argv[1].toUint16();
 
-	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s->segmentManager, obj, selector, NULL, NULL) != kSelectorNone);
+	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s->segMan, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
 } // End of namespace Sci

@@ -479,12 +479,12 @@ reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_ind
  * increased. All scripts containing superclasses of this script are loaded
  * recursively as well, unless 'recursive' is set to zero. The 
  * complementary function is "script_uninstantiate()" below.
- * @param[in] resourceManager		The resource manager
+ * @param[in] resMan		The resource manager
  * @param[in] segManager	The segment manager
  * @param[in] script_nr		The script number to load
  * @return					The script's segment ID or 0 if out of heap
  */
-int script_instantiate(ResourceManager *resourceManager, SegManager *segManager, int script_nr);
+int script_instantiate(ResourceManager *resMan, SegManager *segManager, int script_nr);
 
 /**
  * Decreases the numer of lockers of a script and unloads it if that number

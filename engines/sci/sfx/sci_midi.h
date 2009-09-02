@@ -67,7 +67,7 @@ protected:
 	MidiDriver *_driver;
 public:
 	int open() { return open(NULL); }
-	virtual int open(ResourceManager *resourceManager) { return _driver->open(); }
+	virtual int open(ResourceManager *resMan) { return _driver->open(); }
 	virtual void close() { _driver->close(); }
 	virtual void send(uint32 b) { _driver->send(b); }
 	uint32 getBaseTempo() { return _driver->getBaseTempo(); }

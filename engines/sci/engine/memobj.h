@@ -52,7 +52,7 @@ enum MemObjectType {
 
 struct MemObject : public Common::Serializable {
 	MemObjectType _type;
-	int _segManagerId; /**< Internal value used by the segmentManager's hash map */
+	int _segManagerId; /**< Internal value used by the segMan's hash map */
 
 	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
 

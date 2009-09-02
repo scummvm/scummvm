@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GFX_GFX_resourceManager_H
-#define SCI_GFX_GFX_resourceManager_H
+#ifndef SCI_GFX_GFX_resMan_H
+#define SCI_GFX_GFX_resMan_H
 
 // FIXME/TODO: The name "(Graphics) resource manager", and the associated
 // filenames, are misleading. This should be renamed to "Graphics manager"
@@ -315,7 +315,7 @@ private:
 	Common::Rect _portBounds;
 
 	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
-	ResourceManager *_resourceManager;
+	ResourceManager *_resMan;
 };
 
 } // End of namespace Sci

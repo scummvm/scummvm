@@ -58,12 +58,12 @@ const char *class_names[] = {"",
                              ""
                             };
 
-int *vocab_get_classes(ResourceManager *resourceManager, int* count) {
+int *vocab_get_classes(ResourceManager *resMan, int* count) {
 	Resource* r;
 	int *c;
 	unsigned int i;
 
-	if ((r = resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == NULL)
+	if ((r = resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == NULL)
 		return 0;
 
 	c = (int *)malloc(sizeof(int) * r->size / 2);
@@ -75,10 +75,10 @@ int *vocab_get_classes(ResourceManager *resourceManager, int* count) {
 	return c;
 }
 
-int vocab_get_class_count(ResourceManager *resourceManager) {
+int vocab_get_class_count(ResourceManager *resMan) {
 	Resource* r;
 
-	if ((r = resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == 0)
+	if ((r = resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_CLASSES), 0)) == 0)
 		return 0;
 
 	return r->size / 4;
@@ -86,13 +86,13 @@ int vocab_get_class_count(ResourceManager *resourceManager) {
 
 #endif
 
-Vocabulary::Vocabulary(ResourceManager *resourceManager) : _resourceManager(resourceManager) {
+Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 	_parserRules = NULL;
 	_vocabVersion = kVocabularySCI0;
 
 	debug(2, "Initializing vocabulary");
 
-	if (_resourceManager->sciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
+	if (_resMan->sciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
 		loadSuffixes();
 		if (loadBranches())
 			// Now build a GNF grammar out of this
@@ -116,11 +116,11 @@ bool Vocabulary::loadParserWords() {
 	int currentwordpos = 0;
 
 	// First try to load the SCI0 vocab resource.
-	Resource *resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB), 0);
+	Resource *resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_MAIN_VOCAB), 0);
  
 	if (!resource) {
 		warning("SCI0: Could not find a main vocabulary, trying SCI01");
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB), 0);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_MAIN_VOCAB), 0);
 		_vocabVersion = kVocabularySCI1;
 	}
 
@@ -199,9 +199,9 @@ bool Vocabulary::loadSuffixes() {
 	Resource* resource = NULL;
 	
 	if (_vocabVersion == kVocabularySCI0)
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 1);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 1);
 	else
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 1);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 1);
 
 	if (!resource)
 		return false; // No vocabulary found
@@ -238,12 +238,12 @@ void Vocabulary::freeSuffixes() {
 	Resource* resource = NULL;
 	
 	if (_vocabVersion == kVocabularySCI0)
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 0);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_SUFFIX_VOCAB), 0);
 	else
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 0);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_SUFFIX_VOCAB), 0);
 	
 	if (resource)
-		_resourceManager->unlockResource(resource);
+		_resMan->unlockResource(resource);
 
 	_parserSuffixes.clear();
 }
@@ -252,9 +252,9 @@ bool Vocabulary::loadBranches() {
 	Resource *resource = NULL;
 
 	if (_vocabVersion == kVocabularySCI0)
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES), 0);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI0_PARSE_TREE_BRANCHES), 0);
 	else
-		resource = _resourceManager->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES), 0);
+		resource = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SCI1_PARSE_TREE_BRANCHES), 0);
 
 	_parserBranches.clear();
 

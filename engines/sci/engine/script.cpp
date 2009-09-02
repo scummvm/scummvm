@@ -96,7 +96,7 @@ void script_adjust_opcode_formats(EngineState *s) {
 	}
 
 #ifdef ENABLE_SCI32
-	SciVersion version = s->resourceManager->sciVersion();
+	SciVersion version = s->resMan->sciVersion();
 
 	// In SCI32, some arguments are now words instead of bytes
 	if (version >= SCI_VERSION_2) {
@@ -337,7 +337,7 @@ void Kernel::dumpScriptClass(char *data, int seeker, int objsize) {
 void Kernel::dissectScript(int scriptNumber, Vocabulary *vocab) {
 	int objectctr[11] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	unsigned int _seeker = 0;
-	Resource *script = _resourceManager->findResource(ResourceId(kResourceTypeScript, scriptNumber), 0);
+	Resource *script = _resMan->findResource(ResourceId(kResourceTypeScript, scriptNumber), 0);
 
 	if (!script) {
 		warning("dissectScript(): Script not found!\n");

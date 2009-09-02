@@ -67,7 +67,7 @@ private:
 class MidiPlayer_PCJr : public MidiPlayer {
 public:
 	MidiPlayer_PCJr() { _driver = new MidiDriver_PCJr(g_system->getMixer()); }
-	int open(ResourceManager *resourceManager) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
+	int open(ResourceManager *resMan) { return static_cast<MidiDriver_PCJr *>(_driver)->open(getPolyphony()); }
 	int getPlayMask() const { return 0x10; }
 	int getPolyphony() const { return 3; }
 	bool hasRhythmChannel() const { return false; }

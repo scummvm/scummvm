@@ -60,7 +60,7 @@ public:
 	int getLength();
 	MessageTuple &getLastTuple();
 	int getLastModule();
-	int loadRes(ResourceManager *resourceManager, int module, bool lock);
+	int loadRes(ResourceManager *resMan, int module, bool lock);
 
 private:
 	void initCursor();

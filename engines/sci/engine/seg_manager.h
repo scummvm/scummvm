@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_ENGINE_segmentManager_H
-#define SCI_ENGINE_segmentManager_H
+#ifndef SCI_ENGINE_segMan_H
+#define SCI_ENGINE_segMan_H
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
@@ -58,7 +58,7 @@ public:
 	/**
 	 * Initialize the segment manager
 	 */
-	SegManager(ResourceManager *resourceManager);
+	SegManager(ResourceManager *resMan);
 
 	/**
 	 * Deallocate all memory associated with the segment manager
@@ -340,7 +340,7 @@ public:
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 	int initialiseScript(Script &scr, int script_nr);
 
-	SciVersion sciVersion() { return _resourceManager->sciVersion(); }
+	SciVersion sciVersion() { return _resMan->sciVersion(); }
 
 private:
 	IntMapper *id_seg_map; ///< id - script id; seg - index of heap
@@ -349,7 +349,7 @@ public: // TODO: make private
 	int reserved_id;
 	int exports_wide;
 	Common::Array<Class> _classtable; /**< Table of all classes */
-	ResourceManager *_resourceManager;
+	ResourceManager *_resMan;
 
 	SegmentId Clones_seg_id; ///< ID of the (a) clones segment
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment
@@ -385,4 +385,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_segmentManager
+#endif // SCI_ENGINE_segMan
