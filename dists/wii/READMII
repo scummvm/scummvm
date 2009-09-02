@@ -1,5 +1,5 @@
-Wii/Gamecube port of ScummVM README
------------------------------------
+README for the Wii/Gamecube port of ScummVM 
+-------------------------------------------
 
 REQUIREMENTS
 
@@ -17,17 +17,18 @@ INSTALL
   - Copy the "scummvm" folder to the "/apps" folder of your chosen storage
     media
   - Copy your demos and/or games to the SD card, USB mass storage device or
-    burn them on a DVD-R using the ISO9660 standard.
-    (A DVDX install is required for DVD support)
+    burn them on a DVD-R using the ISO9660 standard. A DVDX install is
+    required for DVD support. DVDX can be installed through the HackMii
+    installer, available at http://bootmii.org/download/
 
-    Freeware versions: http://scummvm.org/downloads.php#extras
-    Demos: http://scummvm.org/demos.php
+    Supported freeware games: http://scummvm.org/downloads.php#extras
+    Supported demo versions: http://scummvm.org/demos.php
 
 RUN
 
   Wii:
     Either use The Homebrew Channel, available at
-    http://hbc.hackmii.com/
+    http://hbc.hackmii.com/ and http://bootmii.org/download/
     or load "/apps/scummvm/boot.dol" with your favorite loader.
 
   Gamecube:
@@ -45,7 +46,7 @@ CONTROLS
     2: Enter
     1: Port specific options dialog
     Home: F5 (ScummVM menu)
-    DPad up: Shift (Mass add for the gui, combined with home: GMM)
+    DPad up: Shift (Mass-add for the launcher, combined with home: GMM)
     DPad down: Virtual keyboard
     DPad right: Predictive dialog (only in AGI games)
 
@@ -59,7 +60,7 @@ CONTROLS
     Z: Enter
     R: Port specific options dialog
     Start: F5 (ScummVM menu)
-    DPad up: Shift (Mass add for the gui, combined with start: GMM)
+    DPad up: Shift (Mass-add for the launcher, combined with start: GMM)
     DPad down: Virtual keyboard
     DPad right: Predictive dialog (only in AGI games)
 
@@ -92,12 +93,13 @@ DISPLAY SETUP
     If your Wii is set to 16:9, this will stretch the picture to fullscreen.
     Turning this option off results in pillarboxing (black borders on the left
     and right sides), but the aspect ratio will be kept. This option has no
-    effect on 4:3 displays.
+    effect on 4:3 setups.
 
   If the picture gets cropped or black bars are visible, use the Wii options
-  dialog to adjust it. Pressing 1 on the Wiimote or R on the Gamecube pad
-  opens this dialog. The available video options are specific to each of the
-  graphics modes mentioned above. Settings will be saved for each.
+  dialog to adjust the video output to your display device. Pressing 1 on the
+  Wiimote or R on the Gamecube pad opens this dialog. The presented video
+  options are specific to each of the graphics modes mentioned above. Settings
+  will be saved for each.
 
 THANKS
 
