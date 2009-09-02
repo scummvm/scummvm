@@ -503,15 +503,14 @@ reg_t kSetQuitStr(EngineState *s, int, int argc, reg_t *argv);
 reg_t kShowMovie(EngineState *s, int, int argc, reg_t *argv);
 reg_t kSetVideoMode(EngineState *s, int, int argc, reg_t *argv);
 reg_t kStrSplit(EngineState *s, int, int argc, reg_t *argv);
-reg_t k_Unknown(EngineState *s, int, int argc, reg_t *argv);
 reg_t kPlatform(EngineState *s, int, int argc, reg_t *argv);
 reg_t kPalVary(EngineState *s, int, int argc, reg_t *argv);
 
-// The Unknown/Unnamed kernel function
+// for unknown/unnamed kernel function
+reg_t kUnknown(EngineState *s, int, int argc, reg_t *argv);
+
+// for named but unimplemented kernel functions
 reg_t kStub(EngineState *s, int, int argc, reg_t *argv);
-// for unimplemented kernel functions
-reg_t kNOP(EngineState *s, int, int argc, reg_t *argv);
-// for kernel functions that don't do anything
 
 
 } // End of namespace Sci

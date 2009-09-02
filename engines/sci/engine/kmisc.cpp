@@ -92,14 +92,6 @@ reg_t kMemoryInfo(EngineState *s, int, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-#define SCI_MAPPED_UNKNOWN_KFUNCTIONS_NR 0x75
-// kfunct_mappers below doubles for unknown kfunctions
-
-reg_t k_Unknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Unhandled Unknown function %04x", funct_nr);
-	return NULL_REG;
-}
-
 reg_t kFlushResources(EngineState *s, int, int argc, reg_t *argv) {
 	run_gc(s);
 	debugC(2, kDebugLevelRoom, "Entering room number %d", argv[0].toUint16());
@@ -268,10 +260,15 @@ reg_t kPlatform(EngineState *s, int, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
+reg_t kUnknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
+	warning("Unknown kernel function 0x%02x", funct_nr);
+	return NULL_REG;
+}
+
 reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char tmpbuf[256];
-	snprintf(tmpbuf, sizeof(tmpbuf), "Unimplemented syscall: %s[%x] (", 
-					((SciEngine*)g_engine)->getKernel()->getKernelName(funct_nr).c_str(), funct_nr);
+	snprintf(tmpbuf, sizeof(tmpbuf), "Unimplemented kernel function: 0x%02x (%s) (",
+					funct_nr, ((SciEngine*)g_engine)->getKernel()->getKernelName(funct_nr).c_str());
 
 	for (int i = 0; i < argc; i++) {
 		char tmpbuf2[20];
@@ -284,11 +281,6 @@ reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 
 	warning("%s", tmpbuf);
 
-	return NULL_REG;
-}
-
-reg_t kNOP(EngineState *s, int funct_nr, int argc, reg_t *argv) {
-	warning("Kernel function 0x%02x (%s) invoked: unmapped", funct_nr, ((SciEngine*)g_engine)->getKernel()->_kernelFuncs[funct_nr].orig_name.c_str());
 	return NULL_REG;
 }
 

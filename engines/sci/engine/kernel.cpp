@@ -273,8 +273,8 @@ SciKernelFunction kfunct_mappers[] = {
 	/*4e*/	DEFUN("ReadNumber", kReadNumber, "r"),
 	/*4f*/	DEFUN("BaseSetter", kBaseSetter, "o"),
 	/*50*/	DEFUN("DirLoop", kDirLoop, "oi"),
-	// Opcode 51 is defined twice for a reason. Older SCI versions
-	// call CanBeHere, whereas newer ones its inverse, CantBeHere
+	// Opcode 51 is defined twice for a reason: In older SCI versions
+	// it is CanBeHere, whereas in newer version it is CantBeHere
 	/*51*/	DEFUN("CanBeHere", kCanBeHere, "ol*"),
 	/*51*/	DEFUN("CantBeHere", kCanBeHere, "ol*"),
 	/*52*/	DEFUN("OnControl", kOnControl, "i*"),
@@ -346,7 +346,13 @@ SciKernelFunction kfunct_mappers[] = {
 
 	// Special and NOP stuff
 	DEFUN("Dummy", kStub, ".*"),
-	{NULL, k_Unknown, NULL},
+	{NULL, kUnknown, NULL},
+
+	// FIXME: The stub functions below are ignored since the entry
+	// above ( {NULL, kUnknown, NULL} ) terminates this array effectively.
+	// Seems like a bug to me; maybe the line above should just be removed?
+	// If this is on purpose, then whoever knows the reason should replace
+	// this FIXME by a comment explaining it.
 
 	// Stub functions
 	DEFUN("ShiftScreen", kStub, ".*"),
@@ -572,29 +578,28 @@ void Kernel::mapFunctions() {
 		if (functnr < getKernelNamesSize())
 			sought_name = getKernelName(functnr);
 
-		// If the name is known, look it up in kfunct_mappers. This table
-		// maps kernel func names to actual function (pointers).
-		if (!sought_name.empty()) {
-			for (uint seeker = 0; (found == -1) && kfunct_mappers[seeker].name; seeker++)
-				if (sought_name == kfunct_mappers[seeker].name)
-					found = seeker; // Found a kernel function with the correct name!
-		}
-
 		// Reset the table entry
 		_kernelFuncs[functnr].fun = NULL;
 		_kernelFuncs[functnr].signature = NULL;
 		_kernelFuncs[functnr].orig_name = sought_name;
 
+		if (sought_name.empty()) {
+			// No name was given -> must be an unknown opcode
+			warning("Flagging kernel function %x as unknown", functnr);
+			_kernelFuncs[functnr].fun = kUnknown;
+			continue;
+		}
+
+		// If the name is known, look it up in kfunct_mappers. This table
+		// maps kernel func names to actual function (pointers).
+		for (uint seeker = 0; (found == -1) && kfunct_mappers[seeker].name; seeker++)
+			if (sought_name == kfunct_mappers[seeker].name)
+				found = seeker; // Found a kernel function with the correct name!
+
 		if (found == -1) {
-			if (!sought_name.empty()) {
-				// No match but a name was given -> NOP
-				warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
-				_kernelFuncs[functnr].fun = kNOP;
-			} else {
-				// No match and no name was given -> must be an unknown opcode
-				warning("Flagging kernel function %x as unknown", functnr);
-				_kernelFuncs[functnr].fun = k_Unknown;
-			}
+			// No match but a name was given -> stub
+			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
+			_kernelFuncs[functnr].fun = kStub;
 		} else {
 			// A match in kfunct_mappers was found
 			if (kfunct_mappers[found].fun) {
