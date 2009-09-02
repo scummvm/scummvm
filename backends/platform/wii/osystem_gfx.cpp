@@ -277,11 +277,11 @@ void OSystem_Wii::initSize(uint width, uint height,
 }
 
 int16 OSystem_Wii::getWidth() {
-	return _currentWidth;
+	return _gameWidth;
 }
 
 int16 OSystem_Wii::getHeight() {
-	return _currentHeight;
+	return _gameHeight;
 }
 
 void OSystem_Wii::setPalette(const byte *colors, uint start, uint num) {
