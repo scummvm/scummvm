@@ -19,7 +19,7 @@ MODULE_OBJS := \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TEENAGENT), DYNAMIC_PLUGIN)
-	PLUGIN := 1
+PLUGIN := 1
 endif
 
 # Include common rules
