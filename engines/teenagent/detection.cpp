@@ -41,7 +41,7 @@ static const TeenAgent::GameDescription teenAgentGameDescriptions[] = {
 		{
 			"teenagent",
 			"",
-			AD_ENTRY1s("teenagnt.exe", "b886cae8f875ea5eaefed04a8cc3c8a1", 152690),
+			AD_ENTRY1s("teenagnt.exe", "5679fba82a1fa008f0d3ab9382588eb3", 152690),
 			Common::EN_ANY,
 			Common::kPlatformPC,
 			ADGF_NO_FLAGS,
