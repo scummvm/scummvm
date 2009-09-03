@@ -1,0 +1,166 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL: https://www.switchlink.se/svn/teen/scene.h $
+ * $Id: scene.h 296 2009-09-01 19:55:58Z megath $
+ */
+
+
+#ifndef TEENAGENT_SCENE_H__
+#define TEENAGENT_SCENE_H__
+
+#include "surface.h"
+#include "actor.h"
+#include "common/system.h"
+#include "common/list.h"
+
+namespace TeenAgent {
+
+struct Walkbox;
+struct Object;
+
+class TeenAgentEngine;
+class Dialog;
+
+struct SceneEvent {
+	enum Type { 
+		None, Message, Walk, PlayAnimation, 
+		LoadScene, SetOn, SetLan, PlayMusic, 
+		PlaySound, EnableObject, WaitForAnimation 
+	} type;
+
+	Common::String message;
+	byte color;
+	uint16 animation;
+	byte orientation;
+	Common::Point dst;
+	byte scene; //fixme: put some of these to the union?
+	byte ons;
+	byte lan;
+	byte music;
+	byte sound;
+	byte object;
+
+	SceneEvent(Type type_) : 
+		type(type_), message(), color(0xd1), animation(0), orientation(0), dst(), 
+		scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
+
+	void clear() {
+		type = None;
+		message.clear();
+		color = 0xd1;
+		orientation = 0;
+		animation = 0;
+		dst.x = dst.y = 0;
+		scene = 0;
+		ons = 0;
+		lan = 0;
+		music = 0;
+		sound = 0;
+		object = 0;
+	}
+	
+	inline bool empty() const {
+		return type == None;
+	}
+	
+	void dump() const {
+		debug(0, "event[%d]: %s[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u", 
+			(int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
+		);
+	}
+};
+
+class Scene {
+public: 
+	Scene();
+	
+	void init(TeenAgentEngine *engine, OSystem * system);
+	void init(int id, const Common::Point &pos);
+	bool render(OSystem * system);
+	int getId() const { return _id; }
+	
+	void warp(const Common::Point & point, byte orientation = 0);
+	
+	void moveTo(const Common::Point & point, byte orientation = 0, bool validate = 0);
+	Common::Point getPosition() const { return position; }
+	
+	void displayMessage(const Common::String &str);
+	void setOrientation(uint8 o) { orientation = o; }
+	void playAnimation(byte idx, uint id);
+	void push(const SceneEvent &event);
+
+	bool processEvent(const Common::Event &event);
+	
+	void clear();
+	
+	byte * getOns(int id);
+	byte * getLans(int id);
+	
+	bool eventRunning() const { return !current_event.empty(); }
+	
+	Walkbox *getWalkbox(byte id) { return walkbox[id]; }
+	Object * getObject(int id, int scene_id = 0);
+
+private:
+	void loadOns();
+	void loadLans();
+	
+	byte palette[768];
+	void setPalette(OSystem *system, const byte * palette, unsigned mul = 1);
+	static Common::Point messagePosition(const Common::String &str, const Common::Point & position);
+
+	bool processEventQueue();
+	inline void nextEvent() {
+		current_event.clear();
+		processEventQueue();
+	}
+	
+	TeenAgentEngine *_engine;
+	OSystem * _system;
+	
+	int _id;
+	Graphics::Surface background;
+	Surface on;
+	Surface *ons;
+	uint32 ons_count;
+	Animation animations[4], custom_animations[4];
+
+	Actor teenagent, teenagent_idle;
+	Common::Point position0, position, destination;
+	int progress, progress_total;
+	uint8 orientation;
+	
+	byte walkboxes;
+	Walkbox * walkbox[255];
+
+	Common::String message;
+	Common::Point message_pos;
+	
+	typedef Common::List<SceneEvent> EventList;
+	EventList events;
+	SceneEvent current_event;
+	
+	byte sound_id, sound_delay;
+};
+}
+
+#endif
+

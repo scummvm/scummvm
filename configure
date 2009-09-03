@@ -105,6 +105,7 @@ add_engine sword2 "Broken Sword 2" yes
 add_engine tinsel "Tinsel" yes
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
+add_engine teenagent "Teen Agent" no
 
 
 #
