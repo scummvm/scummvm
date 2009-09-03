@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://www.switchlink.se/svn/teen/font.h $
- * $Id: font.h 173 2009-08-11 08:10:22Z megath $
+ * $URL$
+ * $Id$
  */
 
 #ifndef TEENAGENT_FONT_H__

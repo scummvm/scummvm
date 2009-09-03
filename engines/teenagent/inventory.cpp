@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://www.switchlink.se/svn/teen/objects.h $
- * $Id: objects.h 172 2009-08-11 08:06:58Z megath $
+ * $URL$
+ * $Id$
  */
 
 #include "inventory.h"

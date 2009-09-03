@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://www.switchlink.se/svn/teen/segment.h $
- * $Id: segment.h 188 2009-08-12 07:22:11Z megath $
+ * $URL$
+ * $Id$
  */
 
 

@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL: https://www.switchlink.se/svn/teen/resources.h $
- * $Id: resources.h 260 2009-08-19 07:29:19Z megath $
+ * $URL$
+ * $Id$
  */
 
 
