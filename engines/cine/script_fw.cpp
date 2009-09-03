@@ -1841,6 +1841,20 @@ int16 getZoneFromPosition(byte *page, int16 x, int16 y, int16 width) {
 }
 
 int16 getZoneFromPositionRaw(byte *page, int16 x, int16 y, int16 width) {
+	// WORKAROUND for bug #2848940 ("ScummVM crashes with Future wars"):
+	// Vertical positions outside the 320x200 screen (e.g. in range 200-232)
+	// are accessed after teleporting Lo'Ann to the future using the pendant
+	// and walking down the slope and out of the screen (This causes a crash
+	// at least on Mac OS X). The original PC version of Future Wars doesn't
+	// clip its coordinates in this function or in checkCollision-function
+	// according to reverse engineering but instead just happily reads outside
+	// the 320x200 buffer. Not really knowing how to properly fix this I simply
+	// hope that the area outside the 320x200 part is full of zero and not of
+	// some random values and thus I return zero here and hope nothing breaks.
+	if (g_cine->getGameType() == Cine::GType_FW && !Common::Rect(320, 200).contains(x, y)) {
+		return 0;
+	}
+
 	byte *ptr = page + (y * width) + x;
 	byte zoneVar;
 
