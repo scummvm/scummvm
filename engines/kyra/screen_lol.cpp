@@ -216,6 +216,47 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	return ovl;
 }
 
+void Screen_LoL::generateTruelightTables(const uint8 *shp, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b) {
+	memset(outTable1, 0xff, 256);
+
+	for (int i = 0; i < a; i++)
+		outTable1[shp[i]] = i;
+
+	for (int i = 0; i < a; i++) {
+		if (shp[i]) {
+			uint8 tcol[3];
+			uint16 fcol[3];
+			uint16 scol[3];
+
+			int t1 = (b << 6) / 100;
+			int t2 = 64 - t1;
+
+			uint8 c = shp[i];
+			fcol[0] = fxPal[3 * c];
+			fcol[1] = fxPal[3 * c + 1];
+			fcol[2] = fxPal[3 * c + 2];
+
+			uint8 *o = &outTable2[i << 8];
+
+			for (int ii = 0; ii < 256; ii++) {
+				scol[0] = screenPal[3 * ii];
+				scol[1] = screenPal[3 * ii + 1];
+				scol[2] = screenPal[3 * ii + 2];
+
+				tcol[0] = CLIP(((fcol[0] * t2) >> 6) + ((scol[0] * t1) >> 6), 0, 63);
+				tcol[1] = CLIP(((fcol[1] * t2) >> 6) + ((scol[1] * t1) >> 6), 0, 63);
+				tcol[2] = CLIP(((fcol[2] * t2) >> 6) + ((scol[2] * t1) >> 6), 0, 63);
+
+				o[ii] = findLeastDifferentColor(tcol, screenPal, 0, 255);
+			}			
+
+		} else {
+			for (int ii = 0; ii < 256; ii++)
+				outTable2[(i << 8) + ii] = 0;
+		}
+	}
+}
+
 void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 	if (w <= 0 || x >= 320 || h <= 0 || y >= 200)
 		return;

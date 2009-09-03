@@ -982,6 +982,7 @@ private:
 	void loadCmzFile(const char *file);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
+	void loadFxTables();
 
 	void resetItems(int flag);
 	void disableMonsters();

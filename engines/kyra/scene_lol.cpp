@@ -440,17 +440,30 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	_loadSuppFilesFlag = 0;
 	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);
 
-	char tname[13];
-	snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
-	Common::SeekableReadStream *s = _res->createReadStream(tname);
-	if (s) {
+	if (_flags.isTalkie) {
+		char tname[13];
+		snprintf(tname, sizeof(tname), "LEVEL%.02d.TLC", _currentLevel);
+		Common::SeekableReadStream *s = _res->createReadStream(tname);
 		s->read(_trueLightTable1, 256);
 		s->read(_trueLightTable2, 5120);
 		delete s;
 	} else {
-		memset(_trueLightTable1, 0, 256);
-		memset(_trueLightTable2, 0, 5120);
+		loadFxTables();
 	}
+
+	_loadSuppFilesFlag = 1;
+}
+
+void LoLEngine::loadFxTables() {
+	if (_flags.isTalkie || _loadSuppFilesFlag)
+		return;
+
+	Palette tpal(768);
+	_screen->loadPalette("fxpal.col", tpal);
+	_screen->loadBitmap("fxpal.shp", 3, 3, 0);
+	const uint8 *v = _screen->getCPagePtr(2) + 11;
+
+	_screen->generateTruelightTables(v, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
 
 	_loadSuppFilesFlag = 1;
 }

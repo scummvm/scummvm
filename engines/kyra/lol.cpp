@@ -2676,6 +2676,8 @@ int LoLEngine::processMagicFog() {
 }
 
 int LoLEngine::processMagicSwarm(int charNum, int damage) {
+	loadFxTables();
+
 	int cp = _screen->setCurPage(2);
 	_screen->copyPage(0, 12);
 	snd_playSoundEffect(74, -1);
@@ -2876,6 +2878,8 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 }
 
 void LoLEngine::drinkBezelCup(int numUses, int charNum) {
+	loadFxTables();
+
 	int cp = _screen->setCurPage(2);
 	snd_playSoundEffect(73, -1);
 
