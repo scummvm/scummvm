@@ -119,12 +119,10 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 		memcpy(scaled_pic->undithered_buffer, scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer_size);
 
-#if 0
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-		gfxr_dither_pic0(scaled_pic, _options->pic0_dither_mode, _options->pic0_dither_pattern);
+		gfxr_dither_pic0(scaled_pic, _options->pic0_dither_mode);
 #else
-		gfxr_dither_pic0(scaled_pic, GFXR_DITHER_MODE_D256, GFXR_DITHER_PATTERN_SCALED);
-#endif
+		gfxr_dither_pic0(scaled_pic, kDitherNone);
 #endif
 	}
 
@@ -152,21 +150,14 @@ int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
 			return 10;
 		else
 			return (_options->pic0_unscaled) ? 0x10000 : 
-#if 0
 					 (_options->pic0_dither_mode << 12) |
-			         (_options->pic0_dither_pattern << 8) |
-#endif
 					 (_options->pic0_brush_mode << 4) |
 				     (_options->pic0_line_mode);
 #else
 		if (_resMan->isVGA())
 			return 10;
 		else
-#if 0
-			return 0x10000 | (GFXR_DITHER_PATTERN_SCALED << 8) | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
-#else
 			return 0x10000 | (GFX_BRUSH_MODE_RANDOM_ELLIPSES << 4) | GFX_LINE_MODE_CORRECT;
-#endif
 #endif
 
 	case GFX_RESOURCE_TYPE_FONT:
@@ -384,11 +375,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num);
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-			res->lock_sequence_nr = _options->buffer_pics_nr;
-#else
 			res->lock_sequence_nr = 0;
-#endif
 			resMap[num] = res;
 		} else {
 			gfxr_free_pic(res->scaled_data.pic);
@@ -400,11 +387,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 		res->scaled_data.pic = pic;
 		res->unscaled_data.pic = unscaled_pic;
 	} else {
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-		res->lock_sequence_nr = _options->buffer_pics_nr; // Update lock counter
-#else
 		res->lock_sequence_nr = 0;
-#endif
 	}
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
@@ -496,11 +479,7 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 		_gfxr_unscale_pixmap_index_data(res->scaled_data.pic->priority_map, _driver->getMode());
 
 	// The following two operations are needed when returning scaled maps (which is always the case here)
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-	res->lock_sequence_nr = _options->buffer_pics_nr;
-#else
 	res->lock_sequence_nr = 0;
-#endif
 	calculatePic(res->scaled_data.pic, need_unscaled ? res->unscaled_data.pic : NULL,
 		                               flags | DRAWPIC01_FLAG_OVERLAID_PIC, default_palette, new_nr);
 

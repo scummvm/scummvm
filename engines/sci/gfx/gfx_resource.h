@@ -42,17 +42,12 @@ namespace Common {
 namespace Sci {
 
 /*** Styles for pic0 drawing ***/
-// These are used for the now-disabled dithering code. Is it even used anywhere?
-#if 0
-/* Dithering modes */
-#define GFXR_DITHER_MODE_D16 0  /* Sierra SCI style */
-#define GFXR_DITHER_MODE_F256 1 /* Flat color interpolation */
-#define GFXR_DITHER_MODE_D256 2 /* 256 color dithering */
-
-/* Dithering patterns */
-#define GFXR_DITHER_PATTERN_SCALED 0 /* Dither per pixel on the 320x200 grid */
-#define GFXR_DITHER_PATTERN_1 1      /* Dither per pixel on the target */
-#endif
+/* Dithering modes for SCI0 games */
+enum DitherMode {
+	kDitherNone = 0,         // No dithering
+	kDither16Colors = 1,     // Sierra SCI style
+	kDither256Colors = 2     // Enhanced style
+};
 
 #define SCI_TITLEBAR_SIZE 10
 
@@ -247,16 +242,13 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int fill_normally,
  */
 void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
 
-#if 0
 /**
  * Dithers a gfxr_visual_map.
  *
- * @param[in] pic		The pic to dither
- * @param[in] mode		One of GFXR_DITHER_MODE
- * @param[in] pattern	One of GFXR_DITHER_PATTERN
+ * @param[in] pic		        The pic to dither
+ * @param[DitherMode] mode		The dithering mode to use
  */
-void gfxr_dither_pic0(gfxr_pic_t *pic, int mode, int pattern);
-#endif
+void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode mode);
 
 /**
  * Calculates an EGA view.

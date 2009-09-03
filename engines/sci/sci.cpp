@@ -164,17 +164,14 @@ Common::Error SciEngine::run() {
 	ConfMan.registerDefault("view_filter", "0");
 	ConfMan.registerDefault("pic_filter", "0");
 	ConfMan.registerDefault("text_filter", "0");
+	ConfMan.registerDefault("dither_mode", "0");
 
 	// Default config:
 	gfx_options_t gfx_options;
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	gfx_options.buffer_pics_nr = 0;
 	gfx_options.pic0_unscaled = 1;
-#if 0
-	gfx_options.pic0_dither_mode = GFXR_DITHER_MODE_F256;
-	gfx_options.pic0_dither_pattern = GFXR_DITHER_PATTERN_SCALED;
-#endif
+	gfx_options.pic0_dither_mode = (DitherMode)ConfMan.getInt("dither_mode");
 	gfx_options.pic0_brush_mode = GFX_BRUSH_MODE_RANDOM_ELLIPSES;
 	gfx_options.pic0_line_mode = GFX_LINE_MODE_CORRECT;
 	gfx_options.cursor_xlate_filter = (gfx_xlate_filter_t)ConfMan.getInt("cursor_filter");

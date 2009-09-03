@@ -1684,36 +1684,34 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	gfxr_draw_pic01(pic, flags, default_palette, size - vector_data_ptr, resource + vector_data_ptr, style, resid, kViewVga11, static_pal, portBounds);
 }
 
-#if 0
-void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
+void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode dmode) {
 	int xl = pic->visual_map->index_width;
 	int yl = pic->visual_map->index_height;
-	int xfrob_max = (pattern == GFXR_DITHER_PATTERN_1) ? 1 : pic->mode->xfact;
-	int yfrob_max = (pattern == GFXR_DITHER_PATTERN_1) ? 1 : pic->mode->yfact;
+	int xfrob_max = pic->mode->xfact;
+	int yfrob_max = pic->mode->yfact;
 	int xfrobc = 0, yfrobc = 0;
 	int selection = 0;
 	int x, y;
 	byte *data = pic->visual_map->index_data;
 
-	if (dmode == GFXR_DITHER_MODE_F256)
+	if (dmode == kDitherNone)
 		return; // Nothing to do
 
-	if (dmode == GFXR_DITHER_MODE_D16) { // Limit to 16 colors
+	if (dmode == kDither16Colors)
 		pic->visual_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
-	}
 
 	for (y = 0; y < yl; y++) {
 		for (x = 0; x < xl; x++) {
 
 			switch (dmode) {
-			case GFXR_DITHER_MODE_D16:
+			case kDither16Colors:
 				if (selection)
 					*data = (*data & 0xf0) >> 4;
 				else
 					*data = (*data & 0xf);
 				break;
 
-			case GFXR_DITHER_MODE_D256:
+			case kDither256Colors:
 				if (selection)
 					*data = ((*data & 0xf) << 4) | ((*data & 0xf0) >> 4);
 				break;
@@ -1737,6 +1735,5 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, int dmode, int pattern) {
 		}
 	}
 }
-#endif
 
 } // End of namespace Sci
