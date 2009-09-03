@@ -68,19 +68,19 @@ DISPLAY SETUP
 
   "Graphics mode"
     There are 4 modes to choose from:
-    1) Standard
-    2) Standard antialiased
-    3) Dual-strike
-    4) Dual-strike antialiased
+    1) Default
+    2) Default, bilinear filtering
+    3) Double-strike
+    4) Double-strike, bilinear filtering
 
-    Dual-strike modes render at half the vertical resolution. On interlaced
+    Double-strike modes render at half the vertical resolution. On interlaced
     modes this means that only one field is used for rendering, effectively
     using progressive frames (240p) with no "combing" effect. These modes
     improve the picture quality for low-res games, especially on CRTs.
     Not all display devices support these modes. Only available for games with
     a vertical resolution of 240 pixels or less.
 
-    Antialiased modes soften the picture to some degree. This is a feature of
+    Bilinear filtering softens the picture to some degree. This is a feature of
     the GPU (no game performance loss).
 
   "Aspect ratio correction"
@@ -98,8 +98,8 @@ DISPLAY SETUP
   If the picture gets cropped or black bars are visible, use the Wii options
   dialog to adjust the video output to your display device. Pressing 1 on the
   Wiimote or R on the Gamecube pad opens this dialog. The presented video
-  options are specific to each of the graphics modes mentioned above. Settings
-  will be saved for each.
+  options have to be set for the default and the double-strike modes
+  independently.
 
 THANKS
 

@@ -58,6 +58,7 @@ OSystem_Wii::OSystem_Wii() :
 
 	_configGraphicsMode(0),
 	_actualGraphicsMode(0),
+	_bilinearFilter(false),
 #ifdef USE_RGB_COLOR
 	_pfRGB565(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0)),
 	_pfRGB3444(Graphics::PixelFormat(2, 4, 4, 4, 3, 8, 4, 0, 12)),
@@ -134,7 +135,7 @@ void OSystem_Wii::engineInit() {
 
 void OSystem_Wii::engineDone() {
 	_gameRunning = false;
-	switchVideoMode(GFX_SETUP_STANDARD);
+	switchVideoMode(gmStandard);
 	gfx_set_ar(4.0 / 3.0);
 }
 

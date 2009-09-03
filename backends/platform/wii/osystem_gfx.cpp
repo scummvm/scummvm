@@ -35,32 +35,41 @@
 #define TLUT_MOUSE GX_TLUT1
 
 static const OSystem::GraphicsMode _supportedGraphicsModes[] = {
-	{ "standard", "Standard", GFX_SETUP_STANDARD },
-	{ "standardaa", "Standard antialiased", GFX_SETUP_STANDARD_AA },
-	{ "ds", "Double-strike", GFX_SETUP_DS },
-	{ "dsaa", "Double-strike antialiased", GFX_SETUP_DS_AA },
+	{
+		"default",
+		"Default",
+		OSystem_Wii::gmStandard
+	},
+	{
+		"defaultbilinear",
+		"Default, bilinear filtering",
+		OSystem_Wii::gmStandardFiltered
+	},
+	{
+		"ds",
+		"Double-strike",
+		OSystem_Wii::gmDoubleStrike
+	},
+	{
+		"dsbilinear",
+		"Double-strike, bilinear filtering",
+		OSystem_Wii::gmDoubleStrikeFiltered
+	},
 	{ 0, 0, 0 }
 };
 
 void OSystem_Wii::initGfx() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("wii_video_default_underscan_x", 16);
+	ConfMan.registerDefault("wii_video_default_underscan_y", 16);
+	ConfMan.registerDefault("wii_video_ds_underscan_x", 16);
+	ConfMan.registerDefault("wii_video_ds_underscan_y", 16);
 
-	int i = 0;
-	while (_supportedGraphicsModes[i].name) {
-		Common::String s("wii_video_");
-		s += _supportedGraphicsModes[i].name;
-
-		ConfMan.registerDefault(s + "_underscan_x", 16);
-		ConfMan.registerDefault(s + "_underscan_y", 16);
-
-		i++;
-	}
-
-	gfx_video_init(GFX_MODE_AUTO, GFX_SETUP_STANDARD);
+	gfx_video_init(GFX_STANDARD_AUTO, GFX_MODE_DEFAULT);
 	gfx_init();
-	gfx_set_underscan(ConfMan.getInt("wii_video_standard_underscan_x"),
-						ConfMan.getInt("wii_video_standard_underscan_y"));
+	gfx_set_underscan(ConfMan.getInt("wii_video_default_underscan_x"),
+						ConfMan.getInt("wii_video_default_underscan_y"));
 
 	_overlayWidth = gfx_video_get_width();
 	_overlayHeight = gfx_video_get_height();
@@ -134,32 +143,51 @@ void OSystem_Wii::updateScreenResolution() {
 }
 
 void OSystem_Wii::switchVideoMode(int mode) {
-	if (_gameHeight > 240) {
-		if (mode == GFX_SETUP_DS)
-			mode = GFX_SETUP_STANDARD;
-		else if (mode == GFX_SETUP_DS_AA)
-			mode = GFX_SETUP_STANDARD_AA;
-	}
+	static const struct {
+		gfx_video_mode_t mode;
+		bool filter;
+	} map[] = {
+		{ GFX_MODE_DEFAULT, false },
+		{ GFX_MODE_DEFAULT, true },
+		{ GFX_MODE_DS, false },
+		{ GFX_MODE_DS, true }
+	};
 
-	if (_actualGraphicsMode == mode)
-		return;
+	if (_gameHeight > 240) {
+		if (mode == gmDoubleStrike)
+			mode = gmStandard;
+		else if (mode == gmDoubleStrikeFiltered)
+			mode = gmStandardFiltered;
+	}
 
 	printf("switchVideoMode %d\n", mode);
 
-	gfx_video_setup_t setup = static_cast<gfx_video_setup_t> (mode);
-	gfx_video_deinit();
-	gfx_video_init(GFX_MODE_AUTO, setup);
-	gfx_init();
-
-	Common::String s("wii_video_");
-	s += _supportedGraphicsModes[mode].name;
-	gfx_set_underscan(ConfMan.getInt(s + "_underscan_x",
-									Common::ConfigManager::kApplicationDomain),
-						ConfMan.getInt(s + "_underscan_y",
-									Common::ConfigManager::kApplicationDomain));
+	if (map[_actualGraphicsMode].mode != map[mode].mode) {
+		gfx_video_deinit();
+		gfx_video_init(GFX_STANDARD_AUTO, map[mode].mode);
+		gfx_init();
+	}
 
 	_actualGraphicsMode = mode;
 
+	_bilinearFilter = map[mode].filter;
+	gfx_tex_set_bilinear_filter(&_texGame, _bilinearFilter);
+	gfx_tex_set_bilinear_filter(&_texMouse, _bilinearFilter);
+
+	u16 usx, usy;
+	if (map[mode].mode == GFX_MODE_DS) {
+		usx = ConfMan.getInt("wii_video_ds_underscan_x",
+								Common::ConfigManager::kApplicationDomain);
+		usy = ConfMan.getInt("wii_video_ds_underscan_y",
+								Common::ConfigManager::kApplicationDomain);
+	} else {
+		usx = ConfMan.getInt("wii_video_default_underscan_x",
+								Common::ConfigManager::kApplicationDomain);
+		usy = ConfMan.getInt("wii_video_default_underscan_y",
+								Common::ConfigManager::kApplicationDomain);
+	}
+
+	gfx_set_underscan(usx, usy);
 	gfx_coords(&_coordsOverlay, &_texOverlay, GFX_COORD_FULLSCREEN);
 	gfx_coords(&_coordsGame, &_texGame, GFX_COORD_FULLSCREEN);
 	updateScreenResolution();
@@ -170,7 +198,7 @@ const OSystem::GraphicsMode* OSystem_Wii::getSupportedGraphicsModes() const {
 }
 
 int OSystem_Wii::getDefaultGraphicsMode() const {
-	return GFX_SETUP_STANDARD;
+	return gmStandard;
 }
 
 bool OSystem_Wii::setGraphicsMode(int mode) {
@@ -270,6 +298,7 @@ void OSystem_Wii::initSize(uint width, uint height,
 			::abort();
 		}
 
+		gfx_tex_set_bilinear_filter(&_texGame, _bilinearFilter);
 		gfx_coords(&_coordsGame, &_texGame, GFX_COORD_FULLSCREEN);
 
 		updateScreenResolution();
@@ -342,6 +371,8 @@ void OSystem_Wii::setCursorPalette(const byte *colors, uint start, uint num) {
 			printf("could not init the mouse texture\n");
 			::abort();
 		}
+	
+		gfx_tex_set_bilinear_filter(&_texMouse, _bilinearFilter);
 	}
 
 	if (_cursorPaletteDisabled) {
@@ -493,6 +524,7 @@ void OSystem_Wii::showOverlay() {
 	_mouseY = _overlayHeight / 2;
 	_overlayVisible = true;
 	updateScreenResolution();
+	gfx_tex_set_bilinear_filter(&_texMouse, true);
 }
 
 void OSystem_Wii::hideOverlay() {
@@ -500,6 +532,7 @@ void OSystem_Wii::hideOverlay() {
 	_mouseY = _gameHeight / 2;
 	_overlayVisible = false;
 	updateScreenResolution();
+	gfx_tex_set_bilinear_filter(&_texMouse, _bilinearFilter);
 }
 
 void OSystem_Wii::clearOverlay() {
@@ -616,6 +649,8 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 		::abort();
 	}
 
+	gfx_tex_set_bilinear_filter(&_texMouse, _bilinearFilter);
+
 	if ((tw != w) || (th != h))
 		tmpBuf = true;
 
@@ -687,8 +722,11 @@ void OSystem_Wii::showOptionsDialog() {
 	if (_optionsDlgActive)
 		return;
 
+	bool ds = (_actualGraphicsMode == gmDoubleStrike) ||
+				(_actualGraphicsMode == gmDoubleStrikeFiltered);
+
 	_optionsDlgActive = true;
-	WiiOptionsDialog dlg(_supportedGraphicsModes[_actualGraphicsMode]);
+	WiiOptionsDialog dlg(ds);
 	dlg.runModal();
 	_optionsDlgActive = false;
 }

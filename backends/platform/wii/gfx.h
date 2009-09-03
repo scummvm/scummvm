@@ -18,20 +18,18 @@ extern "C" {
 #endif
 
 typedef enum {
-	GFX_MODE_AUTO = -1,
-	GFX_MODE_PROGRESSIVE = 0,
-	GFX_MODE_NTSC,
-	GFX_MODE_PAL,
-	GFX_MODE_EURGB60,
-	GFX_MODE_MPAL
-} gfx_video_mode_t;
+	GFX_STANDARD_AUTO = -1,
+	GFX_STANDARD_PROGRESSIVE = 0,
+	GFX_STANDARD_NTSC,
+	GFX_STANDARD_PAL,
+	GFX_STANDARD_EURGB60,
+	GFX_STANDARD_MPAL
+} gfx_video_standard_t;
 
 typedef enum {
-	GFX_SETUP_STANDARD = 0,
-	GFX_SETUP_STANDARD_AA,
-	GFX_SETUP_DS,
-	GFX_SETUP_DS_AA
-} gfx_video_setup_t;
+	GFX_MODE_DEFAULT = 0,
+	GFX_MODE_DS,
+} gfx_video_mode_t;
 
 typedef enum {
 	GFX_TF_RGB565 = 0,
@@ -63,7 +61,9 @@ typedef struct {
 	f32 w, h;
 } gfx_coords_t;
 
-void gfx_video_init(gfx_video_mode_t mode, gfx_video_setup_t setup);
+gfx_video_standard_t gfx_video_get_standard(void);
+
+void gfx_video_init(gfx_video_standard_t standard, gfx_video_mode_t mode);
 void gfx_video_deinit(void);
 
 u16 gfx_video_get_width(void);
@@ -82,6 +82,7 @@ void gfx_tex_deinit(gfx_tex_t *tex);
 
 void gfx_coords(gfx_coords_t *coords, gfx_tex_t *tex, gfx_coord_t type);
 
+bool gfx_tex_set_bilinear_filter(gfx_tex_t *tex, bool enable);
 bool gfx_tex_flush_texture(gfx_tex_t *tex);
 bool gfx_tex_flush_palette(gfx_tex_t *tex);
 bool gfx_tex_clear_palette(gfx_tex_t *tex);

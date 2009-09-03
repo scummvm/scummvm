@@ -27,10 +27,17 @@
 #include "options.h"
 #include "gfx.h"
 
-WiiOptionsDialog::WiiOptionsDialog(const OSystem::GraphicsMode &gfxMode) :
-	Dialog(180, 120, 304, 200) {
+WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
+	Dialog(180, 120, 304, 200),
+	_doubleStrike(doubleStrike) {
 
-	_videoModePrefix = String("wii_video_") + gfxMode.name;
+	if (_doubleStrike) {
+		_strUnderscanX = "wii_video_ds_underscan_x";
+		_strUnderscanY = "wii_video_ds_underscan_y";
+	} else {
+		_strUnderscanX = "wii_video_default_underscan_x";
+		_strUnderscanY = "wii_video_default_underscan_y";
+	}
 
 	new ButtonWidget(this, 56, 160, 108, 24, "Cancel", 'c');
 	new ButtonWidget(this, 180, 160, 108, 24, "Ok", 'k');
@@ -42,7 +49,8 @@ WiiOptionsDialog::WiiOptionsDialog(const OSystem::GraphicsMode &gfxMode) :
 	new StaticTextWidget(tab, 16, 16, 128, 16,
 							"Current video mode:", Graphics::kTextAlignRight);
 	new StaticTextWidget(tab, 160, 16, 128, 16,
-							gfxMode.description, Graphics::kTextAlignLeft);
+							_doubleStrike ? "Double-strike" : "Default",
+							Graphics::kTextAlignLeft);
 
 	new StaticTextWidget(tab, 16, 48, 128, 16,
 							"Horizontal underscan:", Graphics::kTextAlignRight);
@@ -88,16 +96,16 @@ void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
 }
 
 void WiiOptionsDialog::revert() {
-	gfx_set_underscan(ConfMan.getInt(_videoModePrefix + "_underscan_x",
+	gfx_set_underscan(ConfMan.getInt(_strUnderscanX,
 									Common::ConfigManager::kApplicationDomain),
-						ConfMan.getInt(_videoModePrefix + "_underscan_y",
+						ConfMan.getInt(_strUnderscanY,
 									Common::ConfigManager::kApplicationDomain));
 }
 
 void WiiOptionsDialog::load() {
-	int x = ConfMan.getInt(_videoModePrefix + "_underscan_x",
+	int x = ConfMan.getInt(_strUnderscanX,
 							Common::ConfigManager::kApplicationDomain);
-	int y = ConfMan.getInt(_videoModePrefix + "_underscan_y",
+	int y = ConfMan.getInt(_strUnderscanY,
 							Common::ConfigManager::kApplicationDomain);
 
 	_sliderUnderscanX->setValue(x);
@@ -105,10 +113,10 @@ void WiiOptionsDialog::load() {
 }
 
 void WiiOptionsDialog::save() {
-	ConfMan.setInt(_videoModePrefix + "_underscan_x",
+	ConfMan.setInt(_strUnderscanX,
 					_sliderUnderscanX->getValue(),
 					Common::ConfigManager::kApplicationDomain);
-	ConfMan.setInt(_videoModePrefix + "_underscan_y",
+	ConfMan.setInt(_strUnderscanY,
 					_sliderUnderscanY->getValue(),
 					Common::ConfigManager::kApplicationDomain);
 	ConfMan.flushToDisk();

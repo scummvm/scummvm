@@ -32,13 +32,15 @@ class WiiOptionsDialog: public GUI::Dialog {
 	typedef Common::String String;
 
 public:
-	WiiOptionsDialog(const OSystem::GraphicsMode &gfxMode);
+	WiiOptionsDialog(bool doubleStrike);
 	virtual ~WiiOptionsDialog();
 
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 private:
-	String _videoModePrefix;
+	bool _doubleStrike;
+	String _strUnderscanX;
+	String _strUnderscanY;
 
 	SliderWidget *_sliderUnderscanX;
 	SliderWidget *_sliderUnderscanY;

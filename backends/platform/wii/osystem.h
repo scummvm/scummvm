@@ -85,6 +85,7 @@ private:
 
 	s32 _configGraphicsMode;
 	s32 _actualGraphicsMode;
+	bool _bilinearFilter;
 #ifdef USE_RGB_COLOR
 	const Graphics::PixelFormat _pfRGB565;
 	const Graphics::PixelFormat _pfRGB3444;
@@ -130,6 +131,13 @@ protected:
 	DefaultTimerManager *_timer;
 
 public:
+	enum {
+		gmStandard = 0,
+		gmStandardFiltered,
+		gmDoubleStrike,
+		gmDoubleStrikeFiltered
+	};
+
 	OSystem_Wii();
 	virtual ~OSystem_Wii();
 

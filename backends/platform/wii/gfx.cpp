@@ -23,7 +23,7 @@ extern "C" {
 #define ORIGIN_Z (-500)
 
 static GXRModeObj *_vm = NULL;
-static bool _dualstrike = false;
+static bool _doublestrike = false;
 
 static u32 *_fb[2] = { NULL, NULL };
 static u8 _fb_active = 0;
@@ -46,63 +46,63 @@ static struct {
 	{ 0.0f, 0.0f, -0.5f }
 };
 
-// Standard, StandardAa, Ds, DsAa
-static GXRModeObj *mode_table[5][4] = {
-	{ &TVNtsc480Prog, &TVNtsc480ProgAa, &TVNtsc240Ds, &TVNtsc240DsAa },
-	{ &TVNtsc480IntDf, &TVNtsc480IntAa, &TVNtsc240Ds, &TVNtsc240DsAa },
-	{ &TVPal528IntDf, &TVPal524IntAa, &TVPal264Ds, &TVPal264DsAa },
-	{ &TVEurgb60Hz480IntDf, &TVEurgb60Hz480IntAa, &TVEurgb60Hz240Ds, &TVEurgb60Hz240DsAa },
-	{ &TVMpal480IntDf, &TVMpal480IntAa, &TVMpal240Ds, &TVMpal240DsAa }
+// Standard, DS
+static GXRModeObj *mode_table[5][2] = {
+	{ &TVNtsc480Prog, &TVNtsc240Ds },
+	{ &TVNtsc480IntDf, &TVNtsc240Ds },
+	{ &TVPal574IntDfScale, &TVPal264Ds },
+	{ &TVEurgb60Hz480IntDf, &TVEurgb60Hz240Ds },
+	{ &TVMpal480IntDf, &TVMpal240Ds }
 };
 
-static gfx_video_mode_t _gfx_video_get_mode(void) {
-	gfx_video_mode_t mode;
+gfx_video_standard_t gfx_video_get_standard(void) {
+	gfx_video_standard_t standard;
 
 #ifdef HW_RVL
 	if ((CONF_GetProgressiveScan() > 0) && VIDEO_HaveComponentCable()) {
-		mode = GFX_MODE_PROGRESSIVE;
+		standard = GFX_STANDARD_PROGRESSIVE;
 	} else {
 		switch (CONF_GetVideo()) {
 		case CONF_VIDEO_PAL:
 			if (CONF_GetEuRGB60() > 0)
-				mode = GFX_MODE_EURGB60;
+				standard = GFX_STANDARD_EURGB60;
 			else
-				mode = GFX_MODE_PAL;
+				standard = GFX_STANDARD_PAL;
 			break;
 
 		case CONF_VIDEO_MPAL:
-			mode = GFX_MODE_MPAL;
+			standard = GFX_STANDARD_MPAL;
 			break;
 
 		default:
-			mode = GFX_MODE_NTSC;
+			standard = GFX_STANDARD_NTSC;
 			break;
 		}
 	}
 #else
 	switch (VIDEO_GetCurrentTvMode()) {
 	case VI_PAL:
-		mode = GFX_MODE_PAL;
+		standard = GFX_STANDARD_PAL;
 		break;
 	case VI_MPAL:
-		mode = GFX_MODE_MPAL;
+		standard = GFX_STANDARD_MPAL;
 		break;
 	default:
-		mode = GFX_MODE_NTSC;
+		standard = GFX_STANDARD_NTSC;
 		break;
 	}
 #endif
 
-	return mode;
+	return standard;
 }
 
-void gfx_video_init(gfx_video_mode_t mode, gfx_video_setup_t setup) {
+void gfx_video_init(gfx_video_standard_t standard, gfx_video_mode_t mode) {
 	u8 i;
 
-	if (mode == GFX_MODE_AUTO)
-		mode = _gfx_video_get_mode();
+	if (standard == GFX_STANDARD_AUTO)
+		standard = gfx_video_get_standard();
 
-	_vm = mode_table[mode][setup];
+	_vm = mode_table[standard][mode];
 
 	_vm->viWidth = 672;
 	_vm->viXOrigin = (VI_MAX_WIDTH_NTSC - _vm->viWidth) / 2;
@@ -111,6 +111,7 @@ void gfx_video_init(gfx_video_mode_t mode, gfx_video_setup_t setup) {
 		VIDEO_WaitVSync();
 
 	VIDEO_Configure(_vm);
+	VIDEO_Flush();
 
 	if (_fb[0])
 		free(MEM_K1_TO_K0(_fb[0]));
@@ -167,7 +168,7 @@ static void _update_viewport(void) {
 
 	u16 usy = _underscan_y;
 
-	if (!_dualstrike)
+	if (!_doublestrike)
 		usy *= 2;
 
 	u16 x1 = _underscan_x * 2;
@@ -191,7 +192,7 @@ static void _update_viewport(void) {
 			correction = _vm->efbHeight - 
 						(u16) round((f32) _vm->efbHeight * ar / _ar);
 
-			if (_dualstrike)
+			if (_doublestrike)
 				correction /= 2;
 
 			y1 += correction / 2;
@@ -221,13 +222,13 @@ void gfx_init(void) {
 
 	_update_viewport();
 
-	_dualstrike = _vm->viHeight == 2 * _vm->xfbHeight;
+	_doublestrike = _vm->viHeight == 2 * _vm->xfbHeight;
 	yscale = GX_GetYScaleFactor(_vm->efbHeight, _vm->xfbHeight);
 	xfbHeight = GX_SetDispCopyYScale(yscale);
 	GX_SetDispCopySrc(0, 0, _vm->fbWidth, _vm->efbHeight);
 	GX_SetDispCopyDst(_vm->fbWidth, xfbHeight);
 	GX_SetCopyFilter(_vm->aa, _vm->sample_pattern, GX_TRUE, _vm->vfilter);
-	GX_SetFieldMode(_vm->field_rendering, _dualstrike ? GX_ENABLE : GX_DISABLE);
+	GX_SetFieldMode(_vm->field_rendering, _doublestrike ? GX_ENABLE : GX_DISABLE);
 
 	if (_vm->aa)
 		GX_SetPixelFmt(GX_PF_RGB565_Z16, GX_ZC_LINEAR);
@@ -442,6 +443,22 @@ void gfx_coords(gfx_coords_t *coords, gfx_tex_t *tex, gfx_coord_t type) {
 	default:
 		break;
 	}
+}
+
+bool gfx_tex_set_bilinear_filter(gfx_tex_t *tex, bool enable) {
+	if (!tex)
+		return false;
+
+	if (enable) {
+		if (tex->palette)
+			GX_InitTexObjFilterMode(&tex->obj, GX_LIN_MIP_NEAR, GX_LINEAR);
+		else
+			GX_InitTexObjFilterMode(&tex->obj, GX_LIN_MIP_LIN, GX_LINEAR);
+	} else {
+		GX_InitTexObjFilterMode(&tex->obj, GX_NEAR, GX_NEAR);
+	}
+
+	return true;
 }
 
 bool gfx_tex_flush_texture(gfx_tex_t *tex) {
