@@ -543,8 +543,10 @@ static void load_script(EngineState *s, SegmentId seg) {
 		heap = s->resMan->findResource(ResourceId(kResourceTypeHeap, scr->nr), 0);
 
 	memcpy(scr->buf, script->data, script->size);
-	if (s->resMan->sciVersion() == SCI_VERSION_1_1)
-		memcpy(scr->buf + scr->script_size, heap->data, heap->size);
+	if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
+		scr->heap_start = scr->buf + scr->script_size;
+		memcpy(scr->heap_start, heap->data, heap->size);
+	}
 }
 
 // FIXME: The following should likely become a SegManager method
@@ -563,11 +565,12 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				// FIXME: Unify this code with script_instantiate_*
 				load_script(s, i);
 				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->locals_segment]);
-				if (s->resMan->sciVersion() == SCI_VERSION_1_1) {
+				if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 					scr->export_table = 0;
 					scr->synonyms = 0;
 					if (READ_LE_UINT16(scr->buf + 6) > 0) {
 						scr->setExportTableOffset(6);
+						s->segMan->scriptRelocateExportsSci11(i);
 					}
 				} else {
 					scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, SCI_OBJ_EXPORTS);
@@ -599,7 +602,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				for (j = 0; j < scr->_objects.size(); j++) {
 					byte *data = scr->buf + scr->_objects[j].pos.offset;
 
-					if (s->resMan->sciVersion() == SCI_VERSION_1_1) {
+					if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 						uint16 *funct_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 6 ));
 						uint16 *prop_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 4 ));
 
