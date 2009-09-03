@@ -1434,6 +1434,7 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			_backend="wii"
+			_build_scalers="no"
 			_build_hq_scalers="no"
 			add_line_to_config_mk 'GAMECUBE = 0'
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
@@ -1451,6 +1452,7 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			_backend="wii"
+			_build_scalers="no"
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			add_line_to_config_mk 'GAMECUBE = 1'
