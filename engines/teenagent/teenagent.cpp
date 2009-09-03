@@ -36,7 +36,7 @@
 
 using namespace TeenAgent;
 
-TeenAgentEngine::TeenAgentEngine(OSystem * system) : Engine(system), action(ActionNone) {
+TeenAgentEngine::TeenAgentEngine(OSystem * system, const GameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
 	music = new MusicPlayer();
 }
 
@@ -202,7 +202,7 @@ Common::Error TeenAgentEngine::run() {
 	inventory = new Inventory;
 	
 	Resources * res = Resources::instance();
-	res->loadArchives();
+	res->loadArchives(_gameDescription);
 	
 	
 	scene->init(this, _system);

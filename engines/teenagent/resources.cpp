@@ -23,6 +23,7 @@
  */
 
 #include "resources.h"
+#include "teenagent.h"
 
 using namespace TeenAgent;
 
@@ -45,7 +46,7 @@ void Resources::deinit() {
 	sam_sam.close();
 }
 
-void Resources::loadArchives() {
+void Resources::loadArchives(const GameDescription * gd) {
 	off.open("off.res");
 	varia.open("varia.res");
 	on.open("on.res");
@@ -63,13 +64,13 @@ void Resources::loadArchives() {
 		error("cannot open exe file");
 		return;
 	}
-	exe.seek(0x0200);
+	exe.seek(gd->offsets.cseg_offset);
 	cseg.read(&exe, 0xb3b0); //code
 	
-	exe.seek(0xb5b0);
+	exe.seek(gd->offsets.dseg_offset);
 	dseg.read(&exe, 0xe790); //data
 
-	exe.seek(0x1c890);
+	exe.seek(gd->offsets.eseg_offset);
 	eseg.read(&exe, 0x8be2);
 
 	exe.close();

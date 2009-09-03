@@ -33,12 +33,14 @@
 
 namespace TeenAgent {
 
+class GameDescription;
+
 class Resources {
 protected:
 	Resources();
 public: 
 	static Resources * instance();
-	void loadArchives();
+	void loadArchives(const GameDescription * gd);
 	void deinit();
 	void loadOff(Graphics::Surface &surface, byte *palette, int id);
 	Common::SeekableReadStream * loadLan(uint32 id) const;

@@ -28,6 +28,7 @@
 #include "teenagent/teenagent.h"
 #include "common/system.h"
 #include "common/savefile.h"
+#include "teenagent.h"
 
 static const PlainGameDescriptor teenAgentGames[] = {
 	{ "teenagent", "Teen agent" },
@@ -35,23 +36,43 @@ static const PlainGameDescriptor teenAgentGames[] = {
 };
 
 
-static const ADGameDescription teenAgentGameDescriptions[] = {
+static const TeenAgent::GameDescription teenAgentGameDescriptions[] = {
 	{
-		"teenagent",
-		"",
-		AD_ENTRY1s("teenagnt.exe", "b886cae8f875ea5eaefed04a8cc3c8a1", 152690),
-		Common::EN_ANY,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
+		{
+			"teenagent",
+			"",
+			AD_ENTRY1s("teenagnt.exe", "b886cae8f875ea5eaefed04a8cc3c8a1", 152690),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		}, 
+		{0x0200, 0xb5b0, 0x1c890}
 	},
-	AD_TABLE_END_MARKER
+/*	
+	{
+		{
+			"teenagent",
+			"",
+			AD_ENTRY1s("teenagnt.exe", "7172e0c46cd11e4072ba486e3d220210", 152626),
+			Common::EN_ANY,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NONE
+		},
+		{0x00c0, 0xB5E0, 0x1c850}
+	}, 
+*/	
+	{
+		AD_TABLE_END_MARKER, 
+		{0, 0, 0}
+	}
 };
 
 static const ADParams detectionParams = {
 	(const byte *)teenAgentGameDescriptions,
-	sizeof(ADGameDescription),
-	512,
+	sizeof(TeenAgent::GameDescription),
+	5000,
 	teenAgentGames,
 	0,
 	"teenagent",
@@ -89,7 +110,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if (desc) {
-			*engine = new TeenAgent::TeenAgentEngine(syst);
+			*engine = new TeenAgent::TeenAgentEngine(syst, (TeenAgent::GameDescription*)desc);
 		}
 		return desc != 0;
 	}
