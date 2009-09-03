@@ -1170,7 +1170,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(28, 3);
 			playAnimation(596);
 			setOns(1, 30);
-			//loadScene(24, 100, 100);//TODO: Extend and fix the coords
 			SET_FLAG(0xDBA3, 1);
 			enableObject(8);
 		} else {
@@ -1272,6 +1271,22 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else {
 			Dialog::pop(scene, 0xDAFC);
 		}
+		return true;
+		
+	case 0x6176:
+		if (CHECK_FLAG(0xDBA4, 1)) {
+			displayMessage(0x3801);
+			return true;
+		}
+		playSound(71, 6);
+		playAnimation(598);
+		setOns(2, 0);
+		playAnimation(660, 1);
+		disableObject(1);
+		setLan(1, 0);
+		SET_FLAG(0xDBA4, 1);
+		loadScene(24, scene->getPosition());
+		
 		return true;
 		
 	case 0x6480: //flips
