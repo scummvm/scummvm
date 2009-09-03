@@ -47,7 +47,9 @@ MidiPlayer::~MidiPlayer() {
 	stopMusic();
 	close();
 	delete _parser;
-	delete _midiData;
+	
+	if (_midiData)
+		free(_midiData);
 }
 
 void MidiPlayer::setVolume(int volume) {
@@ -181,8 +183,11 @@ void MidiPlayer::stopMusic() {
 	if (_parser) {
 		_parser->unloadMusic();
 	}
-	delete[] _midiData;
-	_midiData = NULL;
+	
+	if (_midiData) {
+		free(_midiData);
+		_midiData = NULL;
+	}
 }
 
 // This function will convert HMP music into type 1 SMF, which our SMF parser

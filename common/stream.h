@@ -649,13 +649,13 @@ private:
 		byte *old_data = _data;
 
 		_capacity = new_len + 32;
-		_data = new byte[_capacity];
+		_data = (byte *)malloc(_capacity);
 		_ptr = _data + _pos;
 
 		if (old_data) {
 			// Copy old data
 			memcpy(_data, old_data, _size);
-			delete[] old_data;
+			free(old_data);
 		}
 
 		_size = new_len;
@@ -665,7 +665,7 @@ public:
 
 	~MemoryWriteStreamDynamic() {
 		if (_disposeMemory)
-			delete[] _data;
+			free(_data);
 	}
 
 	uint32 write(const void *dataPtr, uint32 dataSize) {
