@@ -138,7 +138,7 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 		frames_count = 0;
 		for(byte i = 0; i < data_size / 3; ++i) {
 			int idx = i * 3;
-			byte unk = s->readByte();
+			/* byte unk = */ s->readByte();
 			data[idx] = s->readByte();
 			if (data[idx] == 0)
 				data[idx] = 1; //fixme: investigate
