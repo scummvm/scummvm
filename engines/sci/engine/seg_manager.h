@@ -130,7 +130,12 @@ public:
 	 */
 	Script *getScriptIfLoaded(SegmentId seg);
 
-
+	/**
+	 * Finds a unique segment by type
+	 * @param type	The type of the segment to find
+	 * @return		The segment number, or -1 if the segment wasn't found
+	 */
+	SegmentId findSegmentByType(int type);
 
 
 	// 1b. Script Initialisation
@@ -203,8 +208,13 @@ public:
 	 * @param addr The offset of the freshly allocated clone
 	 * @return	Reference to the memory allocated for the clone
 	 */
-	Clone *alloc_Clone(reg_t *addr);
+	Clone *allocateClone(reg_t *addr);
 
+
+	/**
+	 * Reconstructs clones. Used when restoring saved games
+	 */
+	void reconstructClones();
 
 	// 3. Objects (static, from Scripts, and dynmic, from Clones)
 

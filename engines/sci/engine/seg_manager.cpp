@@ -287,6 +287,13 @@ Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
 	return (Script *)_heap[seg];
 }
 
+SegmentId SegManager::findSegmentByType(int type) {
+	for (uint i = 0; i < _heap.size(); i++)
+		if (_heap[i] && _heap[i]->getType() == type)
+			return i;
+	return -1;
+}
+
 // validate the seg
 // return:
 //	false - invalid seg
@@ -801,7 +808,7 @@ Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) 
 	return h;
 }
 
-Clone *SegManager::alloc_Clone(reg_t *addr) {
+Clone *SegManager::allocateClone(reg_t *addr) {
 	CloneTable *table;
 	int offset;
 
@@ -814,6 +821,52 @@ Clone *SegManager::alloc_Clone(reg_t *addr) {
 
 	*addr = make_reg(Clones_seg_id, offset);
 	return &(table->_table[offset]);
+}
+
+void SegManager::reconstructClones() {
+	SciVersion version = sciVersion();	// for the selector defines
+
+	for (uint i = 0; i < _heap.size(); i++) {
+		if (_heap[i]) {
+			MemObject *mobj = _heap[i];
+			if (mobj->getType() == MEM_OBJ_CLONES) {
+				CloneTable *ct = (CloneTable *)mobj;
+
+				for (uint j = 0; j < ct->_table.size(); j++) {
+					Object *base_obj;
+
+					// Check if the clone entry is used
+					uint entryNum = (uint)ct->first_free;
+					bool isUsed = true;
+					while (entryNum != CloneTable::HEAPENTRY_INVALID) {
+						if (entryNum == j) {
+							isUsed = false;
+							break;
+						}
+						entryNum = ct->_table[entryNum].next_free;
+					}
+
+					if (!isUsed)
+						continue;
+
+					CloneTable::Entry &seeker = ct->_table[j];
+					base_obj = obj_get(this, seeker._variables[SCRIPT_SPECIES_SELECTOR]);
+					if (!base_obj) {
+						warning("Clone entry without a base class: %d", j);
+						seeker.base = NULL;
+						seeker.base_obj = NULL;
+						seeker.base_vars = NULL;
+						seeker.base_method = NULL;
+					} else {
+						seeker.base = base_obj->base;
+						seeker.base_obj = base_obj->base_obj;
+						seeker.base_vars = base_obj->base_vars;
+						seeker.base_method = base_obj->base_method;
+					}
+				}	// end for
+			}	// end if
+		}	// end if
+	}	// end for
 }
 
 List *SegManager::alloc_List(reg_t *addr) {

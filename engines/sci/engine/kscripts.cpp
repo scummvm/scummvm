@@ -195,7 +195,7 @@ reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
 
-	clone_obj = s->segMan->alloc_Clone(&clone_addr);
+	clone_obj = s->segMan->allocateClone(&clone_addr);
 
 	if (!clone_obj) {
 		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parent_addr));

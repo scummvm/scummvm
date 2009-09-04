@@ -479,15 +479,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 	return 0;
 }
 
-// FIXME: This should probably be turned into a SegManager method
-static SegmentId find_unique_seg_by_type(SegManager *self, int type) {
-	for (uint i = 0; i < self->_heap.size(); i++)
-		if (self->_heap[i] &&
-		    self->_heap[i]->getType() == type)
-			return i;
-	return -1;
-}
-
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 	bool oldScriptHeader = (s->resMan->sciVersion() == SCI_VERSION_0_EARLY);
 
@@ -510,24 +501,12 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
-	SegmentId stack_seg = find_unique_seg_by_type(retval->segMan, MEM_OBJ_STACK);
+	SegmentId stack_seg = retval->segMan->findSegmentByType(MEM_OBJ_STACK);
 	DataStack *stack = (DataStack *)(retval->segMan->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->entries;
 	retval->stack_top = retval->stack_base + VM_STACK_SIZE;
-}
-
-static bool clone_entry_used(CloneTable *table, int n) {
-	int seeker = table->first_free;
-
-	while (seeker != CloneTable::HEAPENTRY_INVALID) {
-		if (seeker == n)
-			return false;
-		seeker = table->_table[seeker].next_free;
-	}
-
-	return true;
 }
 
 static void load_script(EngineState *s, SegmentId seg) {
@@ -626,61 +605,6 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						scr->_objects[j].base_vars = (uint16 *)(data + scr->_objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
 					}
 				}
-				break;
-			}
-			default:
-				break;
-			}
-		}
-	}
-}
-
-// FIXME: The following should likely become a SegManager method
-static void reconstruct_clones(SegManager *self) {
-	SciVersion version = self->sciVersion();	// for the selector defines
-
-	for (uint i = 0; i < self->_heap.size(); i++) {
-		if (self->_heap[i]) {
-			MemObject *mobj = self->_heap[i];
-			switch (mobj->getType()) {
-			case MEM_OBJ_CLONES: {
-				CloneTable *ct = (CloneTable *)mobj;
-
-				/*
-				printf("Free list: ");
-				for (uint j = ct->first_free; j != HEAPENTRY_INVALID; j = ct->_table[j].next_free) {
-					printf("%d ", j);
-				}
-				printf("\n");
-
-				printf("Entries w/zero vars: ");
-				for (uint j = 0; j < ct->_table.size(); j++) {
-					if (ct->_table[j].variables == NULL)
-						printf("%d ", j);
-				}
-				printf("\n");
-				*/
-
-				for (uint j = 0; j < ct->_table.size(); j++) {
-					Object *base_obj;
-
-					if (!clone_entry_used(ct, j)) {
-						continue;
-					}
-					CloneTable::Entry &seeker = ct->_table[j];
-					base_obj = obj_get(self, seeker._variables[SCRIPT_SPECIES_SELECTOR]);
-					if (!base_obj) {
-						printf("Clone entry without a base class: %d\n", j);
-						seeker.base = seeker.base_obj = NULL;
-						seeker.base_vars = seeker.base_method = NULL;
-					} else {
-						seeker.base = base_obj->base;
-						seeker.base_obj = base_obj->base_obj;
-						seeker.base_vars = base_obj->base_vars;
-						seeker.base_method = base_obj->base_method;
-					}
-				}
-
 				break;
 			}
 			default:
@@ -789,11 +713,11 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	_reset_graphics_input(retval);
 	reconstruct_stack(retval);
 	reconstruct_scripts(retval, retval->segMan);
-	reconstruct_clones(retval->segMan);
+	retval->segMan->reconstructClones();
 	retval->game_obj = s->game_obj;
 	retval->script_000 = retval->segMan->getScript(retval->segMan->getSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->sys_strings_segment = find_unique_seg_by_type(retval->segMan, MEM_OBJ_SYS_STRINGS);
+	retval->sys_strings_segment = retval->segMan->findSegmentByType(MEM_OBJ_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);
 
 	// Restore system strings
