@@ -501,6 +501,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 			s->_sound.sfx_song_set_loops(handle, looping);
 			s->_sound.sfx_song_renice(handle, pri);
 			s->_sound._songlib.setSongRestoreBehavior(handle, rb);
+			PUT_SEL32V(obj, signal, 0);
 		}
 
 		break;
@@ -849,6 +850,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 			s->_sound.sfx_song_set_loops(handle, looping);
 			s->_sound.sfx_song_renice(handle, pri);
+			PUT_SEL32V(obj, signal, 0);
 		}
 
 		break;
