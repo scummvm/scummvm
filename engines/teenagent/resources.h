@@ -33,7 +33,7 @@
 
 namespace TeenAgent {
 
-class GameDescription;
+struct GameDescription;
 
 class Resources {
 protected:
