@@ -22,8 +22,9 @@
  * $Id$
  */
 
+#include "teenagent/segment.h"
 
-#include "segment.h"
+namespace TeenAgent {
 
 void Segment::read(Common::ReadStream *stream, uint32 s) {
 	_size = s;
@@ -35,3 +36,4 @@ Segment::~Segment() {
 	delete[] _data;
 }
 
+} // End of namespace TeenAgent

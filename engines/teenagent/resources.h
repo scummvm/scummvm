@@ -22,13 +22,12 @@
  * $Id$
  */
 
-
 #ifndef TEENAGENT_RESOURCES_H
 #define TEENAGENT_RESOURCES_H
 
-#include "pack.h"
-#include "segment.h"
-#include "font.h"
+#include "teenagent/pack.h"
+#include "teenagent/segment.h"
+#include "teenagent/font.h"
 #include "graphics/surface.h"
 
 namespace TeenAgent {
@@ -53,6 +52,6 @@ public:
 	Font font7;
 };
 
-}
+} // End of namespace TeenAgent
 
 #endif

@@ -44,6 +44,6 @@ public:
 	Common::SeekableReadStream * getStream(uint32 id) const;
 };
 
-}
+} // End of namespace TeenAgent
 
 #endif

@@ -21,10 +21,11 @@
  * $URL$
  * $Id$
  */
-#include "actor.h"
-#include "objects.h"
 
-using namespace TeenAgent;
+#include "teenagent/actor.h"
+#include "teenagent/objects.h"
+
+namespace TeenAgent {
 
 void Actor::render(Graphics::Surface * surface, const Common::Point & position, uint8 orientation, int delta_frame) {
 	uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
@@ -68,3 +69,5 @@ void Actor::render(Graphics::Surface * surface, const Common::Point & position, 
 	if (s != NULL)
 		s->render(surface, position.x - dx, position.y - dy, orientation == Object::ActorLeft);
 }
+
+} // End of namespace TeenAgent

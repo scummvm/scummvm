@@ -22,17 +22,16 @@
  * $Id$
  */
 
-
-#include "scene.h"
-#include "resources.h"
-#include "surface.h"
+#include "teenagent/scene.h"
+#include "teenagent/resources.h"
+#include "teenagent/surface.h"
 #include "common/debug.h"
-#include "objects.h"
-#include "teenagent.h"
-#include "dialog.h"
-#include "music.h"
+#include "teenagent/objects.h"
+#include "teenagent/teenagent.h"
+#include "teenagent/dialog.h"
+#include "teenagent/music.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 Scene::Scene() : _engine(NULL), 
 	_system(NULL), 
@@ -509,3 +508,5 @@ void Scene::clear() {
 	events.clear();
 	current_event.clear();
 }
+
+} // End of namespace TeenAgent

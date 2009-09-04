@@ -25,10 +25,10 @@
 #ifndef TEENAGENT_INVENTORY_H
 #define TEENAGENT_INVENTORY_H
 
-#include "surface.h"
-#include "animation.h"
+#include "teenagent/surface.h"
+#include "teenagent/animation.h"
 #include "common/events.h"
-#include "objects.h"
+#include "teenagent/objects.h"
 
 namespace TeenAgent {
 
@@ -78,7 +78,7 @@ private:
 
 	InventoryObject *hovered_obj, *selected_obj;
 };
-}
+
+} // End of namespace TeenAgent
 
 #endif
-

@@ -22,12 +22,11 @@
  * $Id$
  */
 
-
-#include "pack.h"
+#include "teenagent/pack.h"
 #include "common/util.h"
 #include "common/debug.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 Pack::Pack() : count(0), offsets(0) {}
 
@@ -81,3 +80,5 @@ Common::SeekableReadStream * Pack::getStream(uint32 id) const {
 	debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
 	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id], false);
 }
+
+} // End of namespace TeenAgent

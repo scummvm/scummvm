@@ -22,11 +22,10 @@
  * $Id$
  */
 
+#include "teenagent/font.h"
+#include "teenagent/resources.h"
 
-#include "font.h"
-#include "resources.h"
-
-using namespace TeenAgent;
+namespace TeenAgent {
 
 Font::Font() : grid_color(0xd0), color(0xd1), data(0) {
 }
@@ -140,3 +139,5 @@ void Font::grid(Graphics::Surface *surface, int x, int y, int w, int h, byte col
 Font::~Font() {
 	delete[] data;
 }
+
+} // End of namespace TeenAgent

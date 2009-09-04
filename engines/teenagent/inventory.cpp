@@ -22,13 +22,14 @@
  * $Id$
  */
 
-#include "inventory.h"
-#include "resources.h"
 #include "common/stream.h"
-#include "objects.h"
-#include "teenagent.h"
 
-using namespace TeenAgent;
+#include "teenagent/inventory.h"
+#include "teenagent/resources.h"
+#include "teenagent/objects.h"
+#include "teenagent/teenagent.h"
+
+namespace TeenAgent {
 
 void Inventory::init(TeenAgentEngine * engine) {
 	_engine = engine;
@@ -283,3 +284,5 @@ void Inventory::render(Graphics::Surface * surface) {
 		}
 	}
 }
+
+} // End of namespace TeenAgent

@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#include "objects.h"
+#include "teenagent/objects.h"
 #include "common/debug.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 void Rect::render(Graphics::Surface *surface, uint8 color) const {
 	surface->hLine(left, bottom, right, color);
@@ -84,3 +84,5 @@ Common::String Object::description() const {
 Common::String InventoryObject::description() const {
 	return Object::description(name);
 }
+
+} // End of namespace TeenAgent

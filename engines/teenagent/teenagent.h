@@ -22,14 +22,13 @@
  * $Id$
  */
 
-
 #ifndef TEENAGENT_ENGINE_H
 #define TEENAGENT_ENGINE_H
 
 #include "engines/engine.h"
-#include "pack.h"
-#include "resources.h"
-#include "inventory.h"
+#include "teenagent/pack.h"
+#include "teenagent/resources.h"
+#include "teenagent/inventory.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 #include "engines/advancedDetector.h"
@@ -117,7 +116,6 @@ private:
 	const GameDescription *_gameDescription;
 };
 
-}
+} // End of namespace TeenAgent
 
 #endif
-

@@ -22,7 +22,6 @@
  * $Id$
  */
 
-
 #ifndef TAGET_SURFACE_H
 #define TAGET_SURFACE_H
 
@@ -46,7 +45,6 @@ public:
 	bool empty() const { return pixels == NULL; }
 };
 
-}
+} // End of namespace TeenAgent
 
 #endif
-

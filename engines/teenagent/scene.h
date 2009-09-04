@@ -22,12 +22,11 @@
  * $Id$
  */
 
-
 #ifndef TEENAGENT_SCENE_H
 #define TEENAGENT_SCENE_H
 
-#include "surface.h"
-#include "actor.h"
+#include "teenagent/surface.h"
+#include "teenagent/actor.h"
 #include "common/system.h"
 #include "common/list.h"
 
@@ -160,7 +159,7 @@ private:
 	
 	byte sound_id, sound_delay;
 };
-}
+
+} // End of namespace TeenAgent
 
 #endif
-

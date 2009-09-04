@@ -22,11 +22,11 @@
  * $Id$
  */
 
-#include "dialog.h"
-#include "resources.h"
-#include "scene.h"
+#include "teenagent/dialog.h"
+#include "teenagent/resources.h"
+#include "teenagent/scene.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 void Dialog::show(Scene * scene, uint16 addr, uint16 animation) {
 	debug(0, "Dialog::show(%04x, %u)", addr, animation);
@@ -104,3 +104,5 @@ uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation) {
 	show(scene, next, animation);
 	return next;
 }
+
+} // End of namespace TeenAgent

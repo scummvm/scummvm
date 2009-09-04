@@ -22,7 +22,6 @@
  * $Id$
  */
 
-
 #include "teenagent/teenagent.h"
 #include "common/system.h"
 #include "common/events.h"
@@ -30,11 +29,11 @@
 #include "common/savefile.h"
 #include "common/config-manager.h"
 #include "sound/mixer.h"
-#include "scene.h"
-#include "objects.h"
-#include "music.h"
+#include "teenagent/scene.h"
+#include "teenagent/objects.h"
+#include "teenagent/music.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 TeenAgentEngine::TeenAgentEngine(OSystem * system, const GameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
 	music = new MusicPlayer();
@@ -482,3 +481,5 @@ bool TeenAgentEngine::hasFeature(EngineFeature f) const {
 		return false;
 	}
 }
+
+} // End of namespace TeenAgent

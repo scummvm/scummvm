@@ -22,12 +22,13 @@
  * $Id$
  */
 
-
 #ifndef TEENAGENT_SEGMENT_H
 #define TEENAGENT_SEGMENT_H
 
 #include "common/stream.h"
 #include "common/endian.h"
+
+namespace TeenAgent {
 
 class Segment {
 	uint32 _size;
@@ -76,5 +77,6 @@ public:
 	uint size() const { return _size; }
 };
 
-#endif
+} // End of namespace TeenAgent
 
+#endif

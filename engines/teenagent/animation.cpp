@@ -22,11 +22,10 @@
  * $Id$
  */
 
-
-#include "animation.h"
+#include "teenagent/animation.h"
 #include "common/endian.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 Animation::Animation() : id(0), x(0), y(0), loop(true), data(0), data_size(0), frames_count(0), frames(0), index(0) {
 }
@@ -183,3 +182,5 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 Animation::~Animation() {
 	free();
 }
+
+} // End of namespace TeenAgent

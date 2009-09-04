@@ -99,6 +99,6 @@ struct Walkbox {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-}
+} // End of namespace TeenAgent
 
 #endif

@@ -23,10 +23,10 @@
  *
  */
 
-#include "music.h"
-#include "resources.h"
+#include "teenagent/music.h"
+#include "teenagent/resources.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 static uint32 noteToPeriod[3][12] = {
 	{855, 807, 761, 720, 678, 640, 604, 569, 537, 508, 480, 453},
@@ -160,3 +160,5 @@ void MusicPlayer::interrupt() {
 
 	++_currRow;
 }
+
+} // End of namespace TeenAgent

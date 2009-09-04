@@ -22,13 +22,12 @@
  * $Id$
  */
 
-
-#include "surface.h"
-#include "pack.h"
+#include "teenagent/surface.h"
+#include "teenagent/pack.h"
 #include "common/stream.h"
 #include "common/debug.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 Surface::Surface() : x(0), y(0) {
 	memset(flags, 0, sizeof(flags));
@@ -46,7 +45,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 		if (stream->eos())
 			return;
 		
-		for(byte i = 0; i < fn; ++i) {
+		for (byte i = 0; i < fn; ++i) {
 			flags[i] = stream->readUint16LE();
 			debug(0, "flags[%u] = %u (0x%04x)", i, flags[i], flags[i]);
 		}
@@ -83,8 +82,8 @@ void Surface::render(Graphics::Surface * surface, int dx, int dy, bool mirror) {
 	byte *src = (byte *)pixels;
 	byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
 	
-	for(int i = 0; i < h; ++i) {
-		for(int j = 0; j < w; ++j) {
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
 			byte p = src[j];
 			if (p != 0xff)
 				dst[mirror? w - j - 1: j] = p;
@@ -93,3 +92,5 @@ void Surface::render(Graphics::Surface * surface, int dx, int dy, bool mirror) {
 		src += pitch;
 	}
 }
+
+} // End of namespace TeenAgent

@@ -28,6 +28,7 @@
 #include "graphics/surface.h"
 
 namespace TeenAgent {
+
 class Font {
 public: 
 	byte grid_color, color;
@@ -42,7 +43,8 @@ public:
 private: 
 	byte *data;
 };
-}
+
+} // End of namespace TeenAgent
 
 #endif
 

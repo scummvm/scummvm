@@ -22,13 +22,14 @@
  * $Id$
  */
 
-
-#include "engines/advancedDetector.h"
-#include "base/plugins.h"
-#include "teenagent/teenagent.h"
 #include "common/system.h"
 #include "common/savefile.h"
-#include "teenagent.h"
+
+#include "base/plugins.h"
+
+#include "engines/advancedDetector.h"
+
+#include "teenagent/teenagent.h"
 
 static const PlainGameDescriptor teenAgentGames[] = {
 	{ "teenagent", "Teen agent" },

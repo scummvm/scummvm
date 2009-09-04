@@ -22,12 +22,12 @@
  * $Id$
  */
 
-#include "scene.h"
-#include "teenagent.h"
-#include "resources.h"
-#include "dialog.h"
+#include "teenagent/scene.h"
+#include "teenagent/teenagent.h"
+#include "teenagent/resources.h"
+#include "teenagent/dialog.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 #define CHECK_FLAG(addr, v) (res->dseg.get_byte(addr) == (v))
 #define SET_FLAG(addr, v) (res->dseg.set_byte((addr), (v)))
@@ -1823,3 +1823,5 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	debug(0, "invalid callback %04x called", addr);
 	return true;
 }
+
+} // End of namespace TeenAgent

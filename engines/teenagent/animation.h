@@ -22,14 +22,14 @@
  * $Id$
  */
 
-
 #ifndef TEENAGENT_ANIMATION_H
 #define TEENAGENT_ANIMATION_H
 
 #include "common/stream.h"
-#include "surface.h"
+#include "teenagent/surface.h"
 
 namespace TeenAgent {
+
 class Animation  {
 public: 
 	uint16 id, x, y;
@@ -57,8 +57,7 @@ protected:
 	Surface * frames;
 	uint16 index;
 };
-}
 
+} // End of namespace TeenAgent
 
 #endif
-

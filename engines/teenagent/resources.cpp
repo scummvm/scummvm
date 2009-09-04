@@ -22,10 +22,10 @@
  * $Id$
  */
 
-#include "resources.h"
-#include "teenagent.h"
+#include "teenagent/resources.h"
+#include "teenagent/teenagent.h"
 
-using namespace TeenAgent;
+namespace TeenAgent {
 
 Resources::Resources() {}
 
@@ -143,3 +143,5 @@ Common::SeekableReadStream * Resources::loadLan000(uint32 id) const {
 	}
 	return lan000.getStream(id);
 }
+
+} // End of namespace TeenAgent

@@ -36,7 +36,7 @@ public:
 	static uint16 pop(Scene *scene, uint16 addr, uint16 animation = 0);
 	static void show(Scene *scene, uint16 addr, uint16 animation = 0);
 };
-}
+
+} // End of namespace TeenAgent
 
 #endif
-
