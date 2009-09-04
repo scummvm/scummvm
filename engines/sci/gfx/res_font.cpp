@@ -35,7 +35,7 @@ extern int font_counter;
 #define FONT_HEIGHT_OFFSET 4
 #define FONT_MAXCHAR_OFFSET 2
 
-static int calc_char(byte *dest, int total_width, int total_height, byte *src, int size) {
+static void calc_char(byte *dest, int total_width, int total_height, byte *src, int size) {
 	int width = src[0];
 	int height = src[1];
 	int byte_width = (width + 7) >> 3;
@@ -45,12 +45,10 @@ static int calc_char(byte *dest, int total_width, int total_height, byte *src, i
 
 	if ((width >> 3) > total_width || height > total_height) {
 		error("Weird character: width=%d/%d, height=%d/%d", width, total_width, height, total_height);
-		return GFX_ERROR;
 	}
 
 	if (byte_width * height + 2 > size) {
 		error("Character extends to %d of %d allowed bytes", byte_width * height + 2, size);
-		return GFX_ERROR;
 	}
 
 	for (y = 0; y < height; y++) {
@@ -58,8 +56,6 @@ static int calc_char(byte *dest, int total_width, int total_height, byte *src, i
 		src += byte_width;
 		dest += total_width;
 	}
-
-	return GFX_OK;
 }
 
 gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
@@ -129,11 +125,7 @@ gfx_bitmap_font_t *gfxr_read_font(int id, byte *resource, int size) {
 	for (i = 0; i < chars_nr; i++) {
 		int offset = READ_LE_UINT16(resource + (i << 1) + 6);
 
-		if (calc_char(font->data + (font->char_size * i), font->row_size, max_height, resource + offset, size - offset)) {
-			error("Problem occured in font %04x, char %d/%d", id, i, chars_nr);
-			gfxr_free_font(font);
-			return NULL;
-		}
+		calc_char(font->data + (font->char_size * i), font->row_size, max_height, resource + offset, size - offset);
 	}
 
 	return font;

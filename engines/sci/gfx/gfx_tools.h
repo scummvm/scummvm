@@ -200,10 +200,8 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode);
  * @param[in] priority_skip			Amount of bytes allocated by each priority
  * 									value
  * @param[in] flags					Any crossblit flags
- * @return							GFX_OK, or GFX_ERROR if the specified mode
- * 									was invalid or unsupported
  */
-int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
+void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority,
 	rect_t src_coords, rect_t dest_coords, byte *dest, int dest_line_width,
 	byte *priority_dest, int priority_line_width, int priority_skip, int flags);
 

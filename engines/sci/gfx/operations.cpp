@@ -1059,8 +1059,10 @@ static void _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point
 }
 
 void gfxop_set_pointer_cursor(GfxState *state, int nr) {
-	if (nr == GFXOP_NO_POINTER)
+	if (nr == GFXOP_NO_POINTER) {
 		_gfxop_set_pointer(state, NULL, NULL);
+		return;
+	}
 
 	gfx_pixmap_t *new_pointer = state->gfxResMan->getCursor(nr);
 
@@ -1502,8 +1504,7 @@ int gfxop_lookup_view_get_loops(GfxState *state, int nr) {
 	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
 
 	if (!view) {
-		warning("[GFX] Attempt to retrieve number of loops from invalid view %d", nr);
-		return 0;
+		error("[GFX] Attempt to retrieve number of loops from invalid view %d", nr);
 	}
 
 	return view->loops_nr;
@@ -1525,27 +1526,21 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
 	return view->loops[real_loop].cels_nr;
 }
 
-int gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
+void gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
 	gfxr_view_t *testView = state->gfxResMan->getView(nr, loop, cel, 0);
 
-	if (!testView) {
-		warning("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
-		return GFX_ERROR;
-	}
-
-	return GFX_OK;
+	if (!testView)
+		error("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
 }
 
-int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
+void gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
 	int loop_v = *loop;
 	int cel_v = *cel;
 
 	gfxr_view_t *testView = state->gfxResMan->getView(nr, &loop_v, &cel_v, 0);
 
-	if (!testView) {
-		warning("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
-		return GFX_ERROR;
-	}
+	if (!testView)
+		error("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
 
 	if (loop_v != *loop)
 		*loop = 0;
@@ -1553,28 +1548,22 @@ int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
 	if (loop_v != *loop
 	        || cel_v != *cel)
 		*cel = 0;
-
-	return GFX_OK;
 }
 
-int gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *width, int *height, Common::Point *offset) {
+void gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *width, int *height, Common::Point *offset) {
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;
 
 	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
 
-	if (!view) {
-		warning("[GFX] Attempt to get cel parameters for invalid view %d", nr);
-		return GFX_ERROR;
-	}
+	if (!view)
+		error("[GFX] Attempt to get cel parameters for invalid view %d", nr);
 
 	pxm = view->loops[loop].cels[cel];
 	*width = pxm->index_width;
 	*height = pxm->index_height;
 	offset->x = pxm->xoffset;
 	offset->y = pxm->yoffset;
-
-	return GFX_OK;
 }
 
 static void _gfxop_draw_cel_buffer(GfxState *state, int nr, int loop, int cel, Common::Point pos, gfx_color_t color, int static_buf, int palette) {
@@ -1706,12 +1695,12 @@ int gfxop_get_font_height(GfxState *state, int font_nr) {
 	font = state->gfxResMan->getFont(font_nr);
 
 	if (!font)
-		return GFX_ERROR;
+		error("gfxop_get_font_height(): Font number %d not found", font_nr);
 
 	return font->line_height;
 }
 
-int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int maxwidth, int *width, int *height, int text_flags,
+void gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int maxwidth, int *width, int *height, int text_flags,
 						  int *lines_nr, int *lineheight, int *lastline_width) {
 	Common::Array<TextFragment> fragments;
 	bool textsplits;
@@ -1719,11 +1708,8 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 
 	font = state->gfxResMan->getFont(font_nr);
 
-	if (!font) {
+	if (!font)
 		error("Attempt to calculate text size with invalid font #%d", font_nr);
-		*width = *height = 0;
-		return GFX_ERROR;
-	}
 
 #ifdef CUSTOM_GRAPHICS_OPTIONS
 	textsplits = gfxr_font_calculate_size(fragments, font, maxwidth, text, width, height, lineheight, lastline_width,
@@ -1732,16 +1718,11 @@ int gfxop_get_text_params(GfxState *state, int font_nr, const char *text, int ma
 	textsplits = gfxr_font_calculate_size(fragments, font, maxwidth, text, width, height, lineheight, lastline_width, text_flags);
 #endif
 
-	if (!textsplits) {
+	if (!textsplits)
 		error("Could not calculate text size");
-		*width = *height = 0;
-		return GFX_ERROR;
-	}
 
 	if (lines_nr)
 		*lines_nr = fragments.size();
-
-	return GFX_OK;
 }
 
 TextHandle *gfxop_new_text(GfxState *state, int font_nr, const Common::String &text, int maxwidth, gfx_alignment_t halign,

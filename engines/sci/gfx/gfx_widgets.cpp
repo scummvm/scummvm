@@ -537,10 +537,7 @@ GfxView::GfxView(GfxState *state, Common::Point pos_, int view_, int loop_, int 
 		error("Attempt to create view widget with NULL state");
 	}
 
-	if (gfxop_get_cel_parameters(state, view_, loop_, cel_, &width, &height, &offset)) {
-		error("Attempt to retrieve cel parameters for (%d/%d/%d) failed (Maybe the values weren't checked beforehand?)",
-		         view_, cel_, loop_);
-	}
+	gfxop_get_cel_parameters(state, view_, loop_, cel_, &width, &height, &offset);
 
 	_pos = pos_;
 	_color.mask = ((priority < 0) ? 0 : GFX_MASK_PRIORITY) | ((control < 0) ? 0 : GFX_MASK_CONTROL);
@@ -743,14 +740,10 @@ GfxDynView::GfxDynView(GfxState *state, Common::Point pos_, int z_, int view_, i
 
 	_type = GFXW_DYN_VIEW;
 
-	if (!state) {
+	if (!state)
 		error("Attempt to create view widget with NULL state");
-	}
 
-	if (gfxop_get_cel_parameters(state, view_, loop_, cel_, &width, &height, &offset)) {
-		error("Attempt to retrieve cel parameters for (%d/%d/%d) failed (Maybe the values weren't checked beforehand?)",
-		         view_, cel_, loop_);
-	}
+	gfxop_get_cel_parameters(state, view_, loop_, cel_, &width, &height, &offset);
 
 	_pos = pos_;
 	_color.mask = ((priority < 0) ? 0 : GFX_MASK_PRIORITY) | ((control < 0) ? 0 : GFX_MASK_CONTROL);

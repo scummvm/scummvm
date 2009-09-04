@@ -452,9 +452,8 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop);
  * @param[in] nr	Number of the view to use
  * @param[in] loop	Pointer to the variable storing the loop number to verify
  * @param[in] cel	Pointer to the variable storing the cel number to check
- * @return			GFX_OK or GFX_ERROR if the view didn't exist
  */
-int gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel);
+void gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel);
 
 /**
  * Resets loop/cel values to zero if they have become invalid.
@@ -463,11 +462,8 @@ int gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel);
  * @param[in] nr	Number of the view to use
  * @param[in] loop	Pointer to the variable storing the loop number to verify
  * @param[in] cel	Pointer to the variable storing the cel number to check
- * @return			GFX_OK or GFX_ERROR if the view didn't exist *loop is
- * 					clipped first, then *cel. The resulting setup will be a
- * 					valid view configuration.
  */
-int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel);
+void gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel);
 
 /**
  * Retrieves the width and height of a cel.
@@ -479,10 +475,8 @@ int gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel);
  * @param[in] width		The variable the width will be stored in
  * @param[in] height	The variable the height will be stored in
  * @param[in] offset	The variable the cel's x/y offset will be stored in
- * @return				GFX_OK if the lookup succeeded, GFX_ERROR if the
- * 						nr/loop/cel combination was invalid
  */
-int gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel,
+void gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel,
 	int *width, int *height, Common::Point *offset);
 
 /**
@@ -582,7 +576,7 @@ void gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette);
  *
  * @param[in] state		The state to work on
  * @param[in] font_nr	Number of the font to inspect
- * @return				GFX_ERROR, GFX_FATAL, or the font line height
+ * @return				The font line height
  */
 int gfxop_get_font_height(GfxState *state, int font_nr);
 
@@ -601,9 +595,8 @@ int gfxop_get_font_height(GfxState *state, int font_nr);
  * @param[out] lineheight		Pixel height (SCI scale) of each text line
  * @param[out] lastline_width	Pixel offset (SCI scale) of the space after
  * 								the last character in the last line
- * @return						GFX_OK or GFX_ERROR if the font didn't exist
  */
-int gfxop_get_text_params(GfxState *state, int font_nr, const char *text,
+void gfxop_get_text_params(GfxState *state, int font_nr, const char *text,
 	int maxwidth, int *width, int *height, int flags,
 	int *lines_nr, int *lineheight, int *lastline_width);
 

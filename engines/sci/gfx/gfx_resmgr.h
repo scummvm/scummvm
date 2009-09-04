@@ -225,10 +225,8 @@ public:
 	 * @param[in] default_palette	The default palette to use for pic
 	 * 								drawing (interpreter dependant)
 	 * @param[in] nr				pic resource number
-	 * @return						GFX_ERROR if the resource could not be
-	 * 								found, GFX_OK otherwise
 	 */
-	int calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
+	void calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic,
 			int flags, int default_palette, int nr);
 
 

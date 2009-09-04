@@ -194,7 +194,7 @@ void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_l
 	}
 }
 
-int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect_t src_coords, rect_t dest_coords,
+void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect_t src_coords, rect_t dest_coords,
 						 byte *dest, int dest_line_width, byte *priority_dest, int priority_line_width, int priority_skip, int flags) {
 	int maxx = 320 * mode->xfact;
 	int maxy = 200 * mode->yfact;
@@ -217,9 +217,9 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 
 	// --???--
 	if (src_coords.y > yl)
-		return GFX_OK;
+		return;
 	if (src_coords.x > xl)
-		return GFX_OK;
+		return;
 	// --???--
 
 	if (dest_coords.x + xl >= maxx)
@@ -231,10 +231,10 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 	yl -= yoffset;
 
 	if (!pxm->data)
-		return GFX_ERROR;
+		error("Attempted to crossblit an empty pixmap");
 
 	if (xl <= 0 || yl <= 0)
-		return GFX_OK;
+		return;
 
 	// Set destination offsets
 
@@ -275,10 +275,8 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 		int shift_nr = 0;
 
 		alpha_mask = 0;
-		if (!alpha_mask && pxm->alpha_map) {
+		if (!alpha_mask && pxm->alpha_map)
 			error("Invalid alpha mode: both pxm->alpha_map and alpha_mask are white");
-			return GFX_ERROR;
-		}
 
 		if (alpha_mask) {
 			while (!(alpha_mask & 0xff)) {
@@ -319,7 +317,6 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 					        0, 0, 0, 0);
 				else {
 					error("Invalid mode->bytespp: %d", mode->bytespp);
-					return GFX_ERROR;
 				}
 			} else { // priority
 				if (bpp > 0 && bpp < 5)
@@ -328,11 +325,8 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 					        priority_pos, priority_line_width, priority_skip, priority);
 				else {
 					error("Invalid mode->bytespp: %d", mode->bytespp);
-					return GFX_ERROR;
 				}
 			}
-
-	return GFX_OK;
 }
 
 } // End of namespace Sci

@@ -76,7 +76,7 @@ GfxResManager::~GfxResManager() {
 	_staticPalette = 0;
 }
 
-int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
+void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic, int flags, int default_palette, int nr) {
 	Resource *res = _resMan->findResource(ResourceId(kResourceTypePic, nr), 0);
 	int need_unscaled = unscaled_pic != NULL;
 	gfxr_pic0_params_t style, basic_style;
@@ -93,7 +93,7 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 #endif
 
 	if (!res || !res->data)
-		return GFX_ERROR;
+		error("calculatePic(): pic number %d not found", nr);
 
 	if (need_unscaled) {
 		if (_resMan->sciVersion() == SCI_VERSION_1_1)
@@ -132,8 +132,6 @@ int GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pic
 
 	if (unscaled_pic)
 		unscaled_pic->visual_map->loop = default_palette;
-
-	return GFX_OK;
 }
 
 int GfxResManager::getOptionsHash(gfx_resource_type_t type) {
@@ -363,12 +361,9 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 			}
 			gfxr_clear_pic0(pic, SCI_TITLEBAR_SIZE);
 		}
-		if (calculatePic(pic, unscaled_pic, flags, default_palette, num)) {
-			gfxr_free_pic(pic);
-			if (unscaled_pic)
-				gfxr_free_pic(unscaled_pic);
-			return NULL;
-		}
+
+		calculatePic(pic, unscaled_pic, flags, default_palette, num);
+
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
 			res->ID = GFXR_RES_ID(GFX_RESOURCE_TYPE_PIC, num);

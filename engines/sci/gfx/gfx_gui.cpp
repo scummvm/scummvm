@@ -455,12 +455,6 @@ GfxList *sciw_new_list_control(GfxPort *port, reg_t ID, rect_t zone, int font_nr
 	font_height = gfxop_get_font_height(port->_visual->_gfxState, font_nr);
 	columns = (zone.height - 20);
 
-	if (font_height <= 0) {
-		error("Attempt to create list control with invalid font %d", font_nr);
-		delete list;
-		return NULL;
-	}
-
 	columns /= font_height;
 
 	gfxw_set_id(list, ID.segment, ID.offset);

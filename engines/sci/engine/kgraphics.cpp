@@ -300,7 +300,7 @@ static reg_t kSetCursorSci0(EngineState *s, int, int argc, reg_t *argv) {
 	gfxop_set_pointer_cursor(s->gfx_state, cursor);
 
 	// Set pointer position, if requested
-	if (argc >= 4) {
+	if (argc >= 4 && cursor != GFXOP_NO_POINTER) {
 		Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
 		gfxop_set_pointer_position(s->gfx_state, newPos);
 	}
@@ -710,10 +710,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) 
 
 	maxloops = gfxop_lookup_view_get_loops(s->gfx_state, view);
 
-	if (maxloops == GFX_ERROR) {
-		error("Invalid view.%03d", view);
-		return;
-	} else if ((loop > 1) && (maxloops < 4))
+	if ((loop > 1) && (maxloops < 4))
 		return;
 
 	PUT_SEL32V(obj, loop, loop);
@@ -900,11 +897,8 @@ reg_t kCelHigh(EngineState *s, int, int argc, reg_t *argv) {
 		warning("CelHigh called with %d parameters", argc);
 	}
 
-	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
-		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid", loop, cel, view, view);
-		return NULL_REG;
-	} else
-		return make_reg(0, height);
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset);
+	return make_reg(0, height);
 }
 
 reg_t kCelWide(EngineState *s, int, int argc, reg_t *argv) {
@@ -918,11 +912,8 @@ reg_t kCelWide(EngineState *s, int, int argc, reg_t *argv) {
 		warning("CelHigh called with %d parameters", argc);
 	}
 
-	if (gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset)) {
-		error("Invalid loop (%d) or cel (%d) in view.%d (0x%x), or view invalid", loop, cel, view, view);
-		return NULL_REG;
-	} else
-		return make_reg(0, width);
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset);
+	return make_reg(0, width);
 }
 
 reg_t kNumLoops(EngineState *s, int, int argc, reg_t *argv) {
@@ -948,12 +939,7 @@ reg_t kNumCels(EngineState *s, int, int argc, reg_t *argv) {
 	int view = GET_SEL32V(obj, view);
 	int cel = 0xffff;
 
-	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
-		// OK, this is a hack and there's a
-		// real function to calculate cel numbers...
-		error("view.%d (0x%x) not found", view, view);
-		return NULL_REG;
-	}
+	gfxop_check_cel(s->gfx_state, view, &loop, &cel);
 
 	debugC(2, kDebugLevelGraphics, "NumCels(view.%d, %d) = %d\n", view, loop, cel + 1);
 
@@ -1085,27 +1071,23 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 	oldloop = loop = sign_extend_byte(GET_SEL32V(object, loop));
 	oldcel = cel = sign_extend_byte(GET_SEL32V(object, cel));
 
-	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
-		xsize = ysize = xmod = ymod = 0;
-	} else {
-		Common::Point offset = Common::Point(0, 0);
+	Common::Point offset = Common::Point(0, 0);
 
-		if (loop != oldloop) {
-			loop = 0;
-			PUT_SEL32V(object, loop, 0);
-			debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
-		}
-
-		if (cel != oldcel) {
-			cel = 0;
-			PUT_SEL32V(object, cel, 0);
-		}
-
-		gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
-
-		xmod = offset.x;
-		ymod = offset.y;
+	if (loop != oldloop) {
+		loop = 0;
+		PUT_SEL32V(object, loop, 0);
+		debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
 	}
+
+	if (cel != oldcel) {
+		cel = 0;
+		PUT_SEL32V(object, cel, 0);
+	}
+
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
+
+	xmod = offset.x;
+	ymod = offset.y;
 
 	xbase = x - xmod - (xsize >> 1);
 	xend = xbase + xsize;
@@ -1176,16 +1158,12 @@ static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int
 	int xmod = 0, ymod = 0;
 	Common::Rect retval(0, 0, 0, 0);
 
-	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
-		xsize = ysize = xmod = ymod = 0;
-	} else {
-		Common::Point offset = Common::Point(0, 0);
+	Common::Point offset = Common::Point(0, 0);
 
-		gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
 
-		xmod = offset.x;
-		ymod = offset.y;
-	}
+	xmod = offset.x;
+	ymod = offset.y;
 
 	xbase = x - xmod - (xsize >> 1);
 	xend = xbase + xsize;
@@ -1913,9 +1891,7 @@ static GfxDynView *_k_make_dynview_obj(EngineState *s, reg_t obj, int options, i
 		palette = 0;
 
 	// Clip loop and cel, write back if neccessary
-	if (gfxop_check_cel(s->gfx_state, view_nr, &loop, &cel)) {
-		return NULL;
-	}
+	gfxop_check_cel(s->gfx_state, view_nr, &loop, &cel);
 
 	if (loop != oldloop)
 		loop = 0;
@@ -2421,17 +2397,7 @@ reg_t kDrawCel(EngineState *s, int, int argc, reg_t *argv) {
 	int priority = (argc > 5) ? argv[5].toSint16() : -1;
 	GfxView *new_view;
 
-/*
-	if (!view) {
-		error("Attempt to draw non-existing view.%03d", view);
-		return;
-	}
-*/
-
-	if (gfxop_check_cel(s->gfx_state, view, &loop, &cel)) {
-		error("Attempt to draw non-existing view.%03d", view);
-		return s->r_acc;
-	}
+	gfxop_check_cel(s->gfx_state, view, &loop, &cel);
 
 	debugC(2, kDebugLevelGraphics, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", x, y, view, loop, cel, priority);
 

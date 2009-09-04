@@ -223,14 +223,6 @@ struct gfx_pixmap_t {
 /** @name Constant values
  * @{ */
 
-/** Return values */
-enum gfx_return_value_t {
-	GFX_OK = 0,		/**< Indicates "operation successful" */
-	GFX_ERROR = -1, /**< Indicates "operation failed" */
-	GFX_FATAL = -2	/**< Fatal error: Used by graphics drivers to indicate
-					that they were unable to do anything useful */
-};
-
 /** Map masks */
 enum gfx_map_mask_t {
 	GFX_MASK_NONE = 0,
