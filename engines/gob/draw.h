@@ -30,7 +30,7 @@
 
 namespace Gob {
 
-#define SPRITES_COUNT 50
+#define SPRITES_COUNT 100
 
 #define RENDERFLAG_NOINVALIDATE      0x0001
 #define RENDERFLAG_CAPTUREPUSH       0x0002
