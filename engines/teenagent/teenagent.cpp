@@ -65,7 +65,7 @@ void TeenAgentEngine::processObject() {
 			if (inv != NULL) {
 				byte * dcall = res->dseg.ptr(0xbb87);
 				dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-				for(UseObject * obj = (UseObject *)dcall; obj->inventory_id != 0; ++obj) {
+				for (UseObject * obj = (UseObject *)dcall; obj->inventory_id != 0; ++obj) {
 					if (obj->inventory_id == inv->id && dst_object->id == obj->object_id) {
 						debug(0, "combine! %u,%u", obj->x, obj->y);
 						//moveTo(Common::Point(obj->x, obj->y), NULL, Examine);
@@ -308,7 +308,7 @@ Common::Error TeenAgentEngine::run() {
 			_system->delayMillis(40 - dt);
 		
 		++frame;
-	} while(!_event->shouldQuit());
+	} while (!_event->shouldQuit());
 
 	deinit();
 	return Common::kNoError;
@@ -319,7 +319,7 @@ Object * TeenAgentEngine::findObject(int id, const Common::Point &point) {
 	uint16 addr = res->dseg.get_word(0x7254 + (id - 1) * 2);
 	//debug(0, "object base: %04x, x: %d, %d", addr, point.x, point.y);
 	uint16 object;
-	for(;(object = res->dseg.get_word(addr)) != 0; addr += 2) {
+	for (;(object = res->dseg.get_word(addr)) != 0; addr += 2) {
 		if (object == 0)
 			return NULL;
 		

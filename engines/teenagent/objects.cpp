@@ -55,9 +55,9 @@ Common::String Object::description(const char *name) {
 		
 	Common::String result;
 
-	while(*desc != 1 && *desc != 0) {
+	while (*desc != 1 && *desc != 0) {
 		Common::String line;
-		while(*desc != 1 && *desc != 0) {
+		while (*desc != 1 && *desc != 0) {
 			//debug(0, "%02x ", *desc);
 			line += *desc++;
 		}

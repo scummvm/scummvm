@@ -97,7 +97,7 @@ uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation) {
 	do {
 		next = res->dseg.get_word(addr);
 		addr += 2;
-	} while(next == 0);
+	} while (next == 0);
 	uint16 next2 = res->dseg.get_word(addr);
 	if (next2 != 0xffff)
 		res->dseg.set_word(addr - 2, 0);

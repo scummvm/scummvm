@@ -107,7 +107,7 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 		data_size -= 2;
 		data = new byte[data_size];
 		data_size = s->read(data, data_size);
-/*		for(int i = 0; i < data_size; ++i) {
+/*		for (int i = 0; i < data_size; ++i) {
 			debug(0, "%02x ", data[i]);
 		}
 		debug(0, ", %u frames", data_size / 3);
@@ -123,7 +123,7 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 		pos = s->readUint16LE();
 		//debug(0, "pos?: %04x", pos);
 			
-		for(uint16 i = 0; i < frames_count; ++i) {
+		for (uint16 i = 0; i < frames_count; ++i) {
 			frames[i].load(s, Surface::TypeLan);
 			frames[i].x = 0;
 			frames[i].y = 0;
@@ -135,7 +135,7 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 		data = new byte[data_size];
 
 		frames_count = 0;
-		for(byte i = 0; i < data_size / 3; ++i) {
+		for (byte i = 0; i < data_size / 3; ++i) {
 			int idx = i * 3;
 			/* byte unk = */ s->readByte();
 			data[idx] = s->readByte();
@@ -150,7 +150,7 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 		
 		frames = new Surface[frames_count];
 		
-		for(uint16 i = 0; i < frames_count; ++i) {
+		for (uint16 i = 0; i < frames_count; ++i) {
 			frames[i].load(s, Surface::TypeOns);
 		}
 	}
@@ -160,12 +160,12 @@ void Animation::load(Common::SeekableReadStream * s, Type type) {
 		frames_count = s->readByte();
 		debug(0, "loading varia resource, %u physical frames", frames_count);
 		uint16 offset[255];
-		for(byte i = 0; i < frames_count; ++i) {
+		for (byte i = 0; i < frames_count; ++i) {
 			offset[i] = s->readUint16LE();
 			debug(0, "%u: %04x", i, offset[i]);
 		}
 		frames = new Surface[frames_count];
-		for(uint16 i = 0; i < frames_count; ++i) {
+		for (uint16 i = 0; i < frames_count; ++i) {
 			debug(0, "%04x", offset[i]);
 			s->seek(offset[i] + off);
 			frames[i].load(s, Surface::TypeOns);

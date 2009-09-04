@@ -52,7 +52,7 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 	Common::Point point(_point);
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	if (validate) {
-		for(byte i = 0; i < walkboxes; ++i) {
+		for (byte i = 0; i < walkboxes; ++i) {
 			if (walkbox[i]->rect.in(point)) {
 				debug(0, "bumped into walkbox %u", i);
 				return;
@@ -111,7 +111,7 @@ void Scene::loadOns() {
 	ons_count = 0;
 	byte b;
 	byte on_id[16];
-	while((b = res->dseg.get_byte(addr)) != 0xff) {
+	while ((b = res->dseg.get_byte(addr)) != 0xff) {
 		debug(0, "on: %04x = %02x", addr, b);
 		++addr;
 		if (b == 0)
@@ -125,7 +125,7 @@ void Scene::loadOns() {
 	
 	if (ons_count > 0) {
 		ons = new Surface[ons_count];
-		for(uint32 i = 0; i < ons_count; ++i) {
+		for (uint32 i = 0; i < ons_count; ++i) {
 			Common::SeekableReadStream * s = res->ons.getStream(on_id[i]);
 			if (s != NULL)
 				ons[i].load(s, Surface::TypeOns);
@@ -178,10 +178,10 @@ void Scene::init(int id, const Common::Point &pos) {
 		if (res->dseg.get_byte(0xDBA4) != 1) {
 			//dim down palette
 			uint i;
-			for(i = 0; i < 624; ++i) {
+			for (i = 0; i < 624; ++i) {
 				palette[i] = palette[i] > 0x20? palette[i] - 0x20: 0;
 			}
-			for(i = 726; i < 768; ++i) {
+			for (i = 726; i < 768; ++i) {
 				palette[i] = palette[i] > 0x20? palette[i] - 0x20: 0;
 			}
 		}
@@ -258,14 +258,14 @@ bool Scene::render(OSystem * system) {
 	Graphics::Surface * surface = system->lockScreen();
 
 	if (ons != NULL) {
-		for(uint32 i = 0; i < ons_count; ++i) {
+		for (uint32 i = 0; i < ons_count; ++i) {
 			Surface* s = ons + i;
 			if (s != NULL)
 				s->render(surface);
 		}
 	}
 	
-	for(int i = 3; i >= 0; --i) {
+	for (int i = 3; i >= 0; --i) {
 		Animation &a = animations[i];
 		Surface *s = a.currentFrame();
 		if (s == NULL)
@@ -294,7 +294,7 @@ bool Scene::render(OSystem * system) {
 	bool hide_actor = false;
 	bool got_any_animation = false;
 	
-	for(int i = 3; i >= 0; --i) {
+	for (int i = 3; i >= 0; --i) {
 		Animation &a = custom_animations[i];
 		Surface *s = a.currentFrame();
 		if (s == NULL) {
@@ -463,8 +463,8 @@ void Scene::setPalette(OSystem *system, const byte * buf, unsigned mul) {
 	byte p[1024];
 
 	memset(p, 0, 1024);
-	for(int i = 0; i < 256; ++i) {
-		for(int c = 0; c < 3; ++c) 
+	for (int i = 0; i < 256; ++i) {
+		for (int c = 0; c < 3; ++c) 
 			p[i * 4 + c] = buf[i * 3 + c] * mul;
 	}
 

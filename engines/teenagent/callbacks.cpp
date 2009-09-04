@@ -1816,7 +1816,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	}
 
 	//unimplemented callback  :(
-	for(uint i = 0; i < 32; ++i) {
+	for (uint i = 0; i < 32; ++i) {
 		debug(0, "code[%u] = %02x ", i, code[i]);
 	}
 	//error("invalid callback %04x called", addr);

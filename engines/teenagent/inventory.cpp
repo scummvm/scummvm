@@ -46,14 +46,14 @@ void Inventory::init(TeenAgentEngine * engine) {
 	
 	byte offsets = items->readByte();
 	assert(offsets == 92);
-	for(byte i = 0; i < offsets; ++i) {
+	for (byte i = 0; i < offsets; ++i) {
 		offset[i] = items->readUint16LE();
 	}
 	objects = res->dseg.ptr(0xc4a4);
 	inventory = res->dseg.ptr(0xc48d);
 	
-	for(int y = 0; y < 4; ++y) 
-		for(int x = 0; x < 6; ++x) {
+	for (int y = 0; y < 4; ++y) 
+		for (int x = 0; x < 6; ++x) {
 			int i = y * 6 + x;
 			graphics[i].rect.left = 28 + 45 * x - 1;
 			graphics[i].rect.top = 23 + 31 * y - 1;
@@ -65,7 +65,7 @@ void Inventory::init(TeenAgentEngine * engine) {
 }
 
 bool Inventory::has(byte item) const {
-	for(int i = 0; i < 24; ++i) {
+	for (int i = 0; i < 24; ++i) {
 		if (inventory[i] == item) 
 			return true;
 	}
@@ -75,12 +75,12 @@ bool Inventory::has(byte item) const {
 void Inventory::remove(byte item) {
 	debug(0, "removing %02x from inventory", item);
 	int i;
-	for(i = 0; i < 24; ++i) {
+	for (i = 0; i < 24; ++i) {
 		if (inventory[i] == item) {
 			break;
 		}
 	}
-	for(; i < 23; ++i) {
+	for (; i < 23; ++i) {
 		inventory[i] = inventory[i + 1];
 		graphics[i].free();
 	}
@@ -90,7 +90,7 @@ void Inventory::remove(byte item) {
 
 void Inventory::clear() {
 	debug(0, "clearing inventory");
-	for(int i = 0; i < 24; ++i) {
+	for (int i = 0; i < 24; ++i) {
 		inventory[i] = 0;
 		graphics[i].free();
 	}
@@ -101,7 +101,7 @@ void Inventory::add(byte item) {
 	if (has(item))
 		return;
 	debug(0, "adding %02x to inventory", item);
-	for(int i = 0; i < 24; ++i) {
+	for (int i = 0; i < 24; ++i) {
 		if (inventory[i] == 0) {
 			inventory[i] = item;
 			return;
@@ -131,7 +131,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			
 		hovered_obj = NULL;
 		
-		for(int i = 0; i < 24; ++i) {
+		for (int i = 0; i < 24; ++i) {
 			byte item = inventory[i];
 			if (item == 0)
 				continue;
@@ -152,7 +152,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		debug(0, "combine(0x%02x, 0x%02x)!", id1, id2);
 		byte * table = res->dseg.ptr(0xC335);
-		while(table[0] != 0 && table[1] != 0) {
+		while (table[0] != 0 && table[1] != 0) {
 			if (
 				(id1 == table[0] && id2 == table[1]) ||
 				(id2 == table[0] && id1 == table[1])
@@ -183,7 +183,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 			byte id = hovered_obj->id;
 			debug(0, "rclick object %u", id);
 			uint i = 0;
-			for(byte * table = res->dseg.ptr(0xBB6F + 3); //original offset + 3 bytes.
+			for (byte * table = res->dseg.ptr(0xBB6F + 3); //original offset + 3 bytes.
 				table[0] != 0 && i < 7; table += 3, ++i) {
 				if (table[0] == id) {
 					resetSelectedObject();

@@ -59,8 +59,8 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 	//debug(0, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
 	byte * dst = (byte *)surface->getBasePtr(x, y);
-	for(uint i = 0; i < h; ++i) {
-		for(uint j = 0; j < w; ++j) {
+	for (uint i = 0; i < h; ++i) {
+		for (uint j = 0; j < w; ++j) {
 			byte v = *glyph++;
 			switch(v) {
 			case 1:
@@ -77,7 +77,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 }
 
 static uint find_in_str(const Common::String &str, char c, uint pos = 0) {
-	while(pos < str.size() && str[pos] != c) ++pos;
+	while (pos < str.size() && str[pos] != c) ++pos;
 	return pos;
 }
 
@@ -102,7 +102,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 			
 			y += height;
 			i = j + 1;
-		} while(i < str.size());
+		} while (i < str.size());
 		return max_w;
 	} else {
 		//surface == NULL;
@@ -127,8 +127,8 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 
 void Font::grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color) {
 	byte * dst = (byte *)surface->getBasePtr(x, y);
-	for(int i = 0; i < h; ++i) {
-		for(int j = 0; j < w; ++j) {
+	for (int i = 0; i < h; ++i) {
+		for (int j = 0; j < w; ++j) {
 			if (((i ^ j) & 1) == 0)
 				dst[j] = color;
 		}

@@ -47,11 +47,11 @@ void Pack::open(const Common::String &filename) {
 	count = file.readUint32LE();
 	debug(0, "opened %s, found %u entries", filename.c_str(), count);
 	offsets = new uint32[count + 1];
-	for(uint32 i = 0; i <= count; ++i) {
+	for (uint32 i = 0; i <= count; ++i) {
 		offsets[i] = file.readUint32LE();
 		//debug(0, "%d: %06x", i, offsets[i]);
 	}
-/*	for(uint32 i = 0; i < count; ++i) {
+/*	for (uint32 i = 0; i < count; ++i) {
 		debug(0, "%d: len = %d", i, offsets[i + 1] - offsets[i]);
 	}
 */
