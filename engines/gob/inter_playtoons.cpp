@@ -112,8 +112,8 @@ bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
 		warning("oPlaytoons_F_1B not fully handled");
 		warning("shortId %d, var2 %d var3 %d var4 %d", shortId, var2, var3, var4);
 	}
-//	else
-//		warning("id not found %d", id);;
+	else
+		warning("shortId not found %d", shortId);
 	return false;
 }
 
@@ -131,6 +131,7 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	int16 handle;
 	uint16 varOff;
 	int32 size;
+	char *backSlash;
 	SaveLoad::SaveMode mode;
 
 	_vm->_game->_script->evalExpr(0);
@@ -147,6 +148,12 @@ bool Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
 	if (strncmp(file, "@:\\", 3) == 0) {
 		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", file + 3, file);
 		file += 3;
+	}
+
+	// WORKAROUND: In the Playtoons stick files found in german Addy 4, some paths are hardcoded
+	if ((backSlash = strrchr(file, '\\'))) {
+		debugC(2, kDebugFileIO, "oPlaytoons_checkData: \"%s\" instead of \"%s\"", backSlash + 1, file);
+		file = backSlash + 1;
 	}
 
 	mode = _vm->_saveLoad->getSaveMode(file);
