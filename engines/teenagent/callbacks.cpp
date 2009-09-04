@@ -1154,7 +1154,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		loadScene(24, 230, 170, 1);
 		playSound(52, 3);
 		playAnimation(601);
-		moveTo(230, 179, 3);
+		// FIXME: the third parameter here is a number, but the function expects a boolean
+		// Changing it to "1" for now (i.e. true)
+		//moveTo(230, 179, 3);
+		moveTo(230, 179, 1);
 		if (!CHECK_FLAG(0xDBA4, 1))
 			displayMessage(0x37ea); //it's kinda dark here
 		return true;
