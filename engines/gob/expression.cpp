@@ -623,15 +623,15 @@ int16 Expression::parseVarIndex(uint16 *size, uint16 *type) {
 		return varBase + offset * _vm->_global->_inter_animDataSize + temp;
 
 	case OP_LOAD_VAR_INT16:
-		return varBase + _vm->_game->_script->readInt16() * 2;
+		return varBase + _vm->_game->_script->readUint16() * 2;
 
 	case OP_LOAD_VAR_INT8:
-		return varBase + _vm->_game->_script->readInt16();
+		return varBase + _vm->_game->_script->readUint16();
 
 	case OP_LOAD_VAR_INT32:
 	case OP_LOAD_VAR_INT32_AS_INT16:
 	case OP_LOAD_VAR_STR:
-		temp = _vm->_game->_script->readInt16() * 4;
+		temp = _vm->_game->_script->readUint16() * 4;
 		debugC(5, kDebugExpression, "oper = %d", _vm->_game->_script->peekInt16());
 		if ((operation == OP_LOAD_VAR_STR) && (_vm->_game->_script->peekByte() == 13)) {
 			_vm->_game->_script->skip(1);
@@ -701,12 +701,12 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 
 	case OP_LOAD_VAR_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readInt16() * 2);
+		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readUint16() * 2);
 		break;
 
 	case OP_LOAD_VAR_INT8:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int8) READ_VARO_UINT8(varBase + _vm->_game->_script->readInt16());
+		*stackFrame.values = (int8) READ_VARO_UINT8(varBase + _vm->_game->_script->readUint16());
 		break;
 
 	case OP_LOAD_IMM_INT32:
@@ -731,17 +731,17 @@ void Expression::loadValue(byte operation, uint32 varBase, const StackFrame &sta
 
 	case OP_LOAD_VAR_INT32:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = READ_VARO_UINT32(varBase + _vm->_game->_script->readInt16() * 4);
+		*stackFrame.values = READ_VARO_UINT32(varBase + _vm->_game->_script->readUint16() * 4);
 		break;
 
 	case OP_LOAD_VAR_INT32_AS_INT16:
 		*stackFrame.opers = OP_LOAD_IMM_INT16;
-		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readInt16() * 4);
+		*stackFrame.values = (int16) READ_VARO_UINT16(varBase + _vm->_game->_script->readUint16() * 4);
 		break;
 
 	case OP_LOAD_VAR_STR:
 		*stackFrame.opers = OP_LOAD_IMM_STR;
-		temp = _vm->_game->_script->readInt16() * 4;
+		temp = _vm->_game->_script->readUint16() * 4;
 		*stackFrame.values = encodePtr(_vm->_inter->_variables->getAddressOff8(varBase + temp), kInterVar);
 		if (_vm->_game->_script->peekByte() == 13) {
 			_vm->_game->_script->skip(1);
