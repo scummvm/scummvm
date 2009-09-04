@@ -157,8 +157,6 @@ Common::Error SciEngine::run() {
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
 
-	_gamestate->animation_granularity = 4;
-
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("cursor_filter", "0");
 	ConfMan.registerDefault("view_filter", "0");

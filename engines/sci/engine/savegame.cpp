@@ -700,7 +700,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Now copy all current state information
 	// Graphics and input state:
-	retval->animation_granularity = s->animation_granularity;
 	retval->gfx_state = s->gfx_state;
 	retval->old_screen = 0;
 

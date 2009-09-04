@@ -2598,10 +2598,12 @@ static void animate_do_animation(EngineState *s, int argc, reg_t *argv) {
 	long animation_delay = 5;
 	int i, remaining_checkers;
 	int update_counter;
-	int granularity0 = s->animation_granularity << 1;
-	int granularity1 = s->animation_granularity;
-	int granularity2 = s->animation_granularity >> 2;
-	int granularity3 = s->animation_granularity >> 4;
+	// Number of animation steps to perform betwen updates for transition animations
+	int animation_granularity = 4;
+	int granularity0 = animation_granularity << 1;
+	int granularity1 = animation_granularity;
+	int granularity2 = animation_granularity >> 2;
+	int granularity3 = animation_granularity >> 4;
 	char checkers[32 * 19];
 	gfx_pixmap_t *newscreen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 10, 320, 190));
 

@@ -218,8 +218,6 @@ public:
 	GfxList *dyn_views; /**< Pointers to pic and dynamic view lists */
 	GfxList *drop_views; /**< A list Animate() can dump dropped dynviews into */
 
-	int animation_granularity; /**< Number of animation steps to perform betwen updates for transition animations */
-
 	Menubar *_menubar; /**< The menu bar */
 
 	int priority_first; /**< The line where priority zone 0 ends */

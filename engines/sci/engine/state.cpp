@@ -73,8 +73,6 @@ EngineState::EngineState(ResourceManager *res, uint32 flags)
 
 	drop_views = 0;
 
-	animation_granularity = 0;
-
 	_menubar = 0;
 
 	priority_first = 0;
