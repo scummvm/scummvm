@@ -838,7 +838,7 @@ void SegManager::reconstructClones() {
 					// Check if the clone entry is used
 					uint entryNum = (uint)ct->first_free;
 					bool isUsed = true;
-					while (entryNum != CloneTable::HEAPENTRY_INVALID) {
+					while (entryNum != ((uint) CloneTable::HEAPENTRY_INVALID)) {
 						if (entryNum == j) {
 							isUsed = false;
 							break;
