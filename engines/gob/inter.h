@@ -561,6 +561,8 @@ protected:
 	bool oPlaytoons_freeSprite(OpFuncParams &params);
 	bool oPlaytoons_checkData(OpFuncParams &params);
 	bool oPlaytoons_readData(OpFuncParams &params);
+
+	void oPlaytoons_getObjAnimSize();
 	void oPlaytoons_CD_20_23();
 	void oPlaytoons_CD_25();
 	void oPlaytoons_copyFile();

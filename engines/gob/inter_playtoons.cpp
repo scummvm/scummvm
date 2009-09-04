@@ -38,6 +38,7 @@
 #include "gob/script.h"
 #include "gob/hotspots.h"
 #include "gob/palanim.h"
+#include "gob/scenery.h"
 #include "gob/video.h"
 #include "gob/videoplayer.h"
 #include "gob/save/saveload.h"
@@ -71,6 +72,7 @@ void Inter_Playtoons::setupOpcodesDraw() {
 	CLEAROPCODEDRAW(0x22);
 	CLEAROPCODEDRAW(0x24);
 
+	OPCODEDRAW(0x19, oPlaytoons_getObjAnimSize);
 	OPCODEDRAW(0x20, oPlaytoons_CD_20_23);
 	OPCODEDRAW(0x23, oPlaytoons_CD_20_23);
 	OPCODEDRAW(0x25, oPlaytoons_CD_25);
@@ -259,6 +261,50 @@ bool Inter_Playtoons::oPlaytoons_readData(OpFuncParams &params) {
 
 	delete stream;
 	return false;
+}
+
+void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
+	int16 objIndex;
+	uint16 readVar[4];
+	uint8 i;
+	bool break_fl;
+	Mult::Mult_AnimData animData;
+
+	_vm->_game->_script->evalExpr(&objIndex);
+
+	for (i = 0; i < 4; i++)
+		readVar[i] = _vm->_game->_script->readVarIndex();
+
+	if (objIndex == -1) {
+		warning("oPlaytoons_getObjAnimSize case -1 not implemented");
+		return;
+	}
+	if (objIndex == -2) {
+		break_fl = false;
+		warning("oPlaytoons_getObjAnimSize case -2 not implemented");
+		return;
+	}
+	if ((objIndex < 0) || (objIndex >= _vm->_mult->_objCount)) {
+		warning("oPlaytoons_getObjAnimSize(): objIndex = %d (%d)", objIndex, _vm->_mult->_objCount);
+		_vm->_scenery->_toRedrawLeft   = 0;
+		_vm->_scenery->_toRedrawTop    = 0;
+		_vm->_scenery->_toRedrawRight  = 0;
+		_vm->_scenery->_toRedrawBottom = 0;
+	} else {
+		animData = *(_vm->_mult->_objects[objIndex].pAnimData);
+		if (animData.isStatic == 0)
+			_vm->_scenery->updateAnim(animData.layer, animData.frame,
+					animData.animation, 0, *(_vm->_mult->_objects[objIndex].pPosX),
+					*(_vm->_mult->_objects[objIndex].pPosY), 0);
+
+		_vm->_scenery->_toRedrawLeft = MAX<int16>(_vm->_scenery->_toRedrawLeft, 0);
+		_vm->_scenery->_toRedrawTop  = MAX<int16>(_vm->_scenery->_toRedrawTop , 0);
+	}
+
+	WRITE_VAR_OFFSET(readVar[0], _vm->_scenery->_toRedrawLeft);
+	WRITE_VAR_OFFSET(readVar[1], _vm->_scenery->_toRedrawTop);
+	WRITE_VAR_OFFSET(readVar[2], _vm->_scenery->_toRedrawRight);
+	WRITE_VAR_OFFSET(readVar[3], _vm->_scenery->_toRedrawBottom);
 }
 
 void Inter_Playtoons::oPlaytoons_CD_20_23() {
