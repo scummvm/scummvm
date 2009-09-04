@@ -44,8 +44,8 @@ namespace Sci {
 template<int COPY_BYTES, typename SIZETYPE, int EXTRA_BYTE_OFFSET>
 void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	SIZETYPE result_colors[GFX_PIC_COLORS];
-	SIZETYPE alpha_color = 0xffffffff & 0;
-	SIZETYPE alpha_ormask = 0;
+	SIZETYPE alpha_color = 0;
+	SIZETYPE alpha_ormask = 0xffffffff & 0;
 	int xfact = (scale) ? mode->xfact : 1;
 	int yfact = (scale) ? mode->yfact : 1;
 	int widthc, heightc; // Width duplication counter
@@ -53,18 +53,13 @@ void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale
 	int bytespp = mode->bytespp;
 	int x, y;
 	int i;
-	byte byte_transparent = (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA) ?  0 : 255;
-	byte byte_opaque = (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA) ?  255 : 0;
+	byte byte_transparent = 0;
+	byte byte_opaque = 255;
 	byte *src = pxm->index_data;
 	byte *dest = pxm->data;
 	byte *alpha_dest = pxm->alpha_map;
 	int using_alpha = pxm->color_key != GFX_PIXMAP_COLOR_KEY_NONE;
 	int separate_alpha_map = using_alpha;
-
-	if (mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA) {
-		alpha_ormask = alpha_color;
-		alpha_color = 0;
-	}
 
 	assert(bytespp == COPY_BYTES);
 

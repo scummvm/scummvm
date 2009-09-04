@@ -317,7 +317,6 @@ gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 	/* xfact */ 1, /* yfact */ 1,
 	/* xsize */ 1, /* ysize */ 1,
 	/* bytespp */ 1,
-	/* flags */ 0,
 	/* palette */ NULL,
 
 	Graphics::PixelFormat()

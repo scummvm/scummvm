@@ -50,8 +50,6 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 	mode->yfact = yfact;
 	mode->bytespp = format.bytesPerPixel;
 	mode->format = format;
-
-	mode->flags = flags;
 	mode->palette = palette;
 
 	return mode;

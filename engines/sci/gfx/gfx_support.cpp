@@ -128,7 +128,7 @@ void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color) {
  * BYTESPP: Bytes per pixel
  * USE_PRIORITY: Whether to care about the priority buffer
  */
-template <int BYTESPP, bool USE_PRIORITY, bool REVERSE_ALPHA>
+template <int BYTESPP, bool USE_PRIORITY>
 void _gfx_crossblit(byte *dest, byte *src, int bytes_per_dest_line, int bytes_per_src_line,
 	int xl, int yl, byte *alpha, int bytes_per_alpha_line, int bytes_per_alpha_pixel,
 	unsigned int alpha_test_mask, unsigned int alpha_min,
@@ -143,7 +143,7 @@ void _gfx_crossblit(byte *dest, byte *src, int bytes_per_dest_line, int bytes_pe
 		int priority_offset = 0;
 
 		for (x = 0; x < alpha_end; x += bytes_per_alpha_pixel) {
-			if (((alpha_test_mask & alpha[x]) < alpha_min) ^ REVERSE_ALPHA) {
+			if (((alpha_test_mask & alpha[x]) < alpha_min) ^ 1) {
 
 				if (USE_PRIORITY) {
 					if (priority_buffer[priority_offset] <= priority) {
@@ -169,33 +169,18 @@ void _gfx_crossblit(byte *dest, byte *src, int bytes_per_dest_line, int bytes_pe
 	}
 }
 
-
 static void (*crossblit_fns[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-	_gfx_crossblit<1, false, false>,
-	_gfx_crossblit<2, false, false>,
-	_gfx_crossblit<3, false, false>,
-	_gfx_crossblit<4, false, false>
+	_gfx_crossblit<1, false>,
+	_gfx_crossblit<2, false>,
+	_gfx_crossblit<3, false>,
+	_gfx_crossblit<4, false>
 };
 
 static void (*crossblit_fns_P[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-	_gfx_crossblit<1, true, false>,
-	_gfx_crossblit<2, true, false>,
-	_gfx_crossblit<3, true, false>,
-	_gfx_crossblit<4, true, false>
-};
-
-static void (*crossblit_fns_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-	_gfx_crossblit<1, false, true>,
-	_gfx_crossblit<2, false, true>,
-	_gfx_crossblit<3, false, true>,
-	_gfx_crossblit<4, false, true>
-};
-
-static void (*crossblit_fns_P_RA[5])(byte *, byte *, int, int, int, int, byte *, int, int, unsigned int, unsigned int, byte *, int, int, int) = { NULL,
-	_gfx_crossblit<1, true, true>,
-	_gfx_crossblit<2, true, true>,
-	_gfx_crossblit<3, true, true>,
-	_gfx_crossblit<4, true, true>
+	_gfx_crossblit<1, true>,
+	_gfx_crossblit<2, true>,
+	_gfx_crossblit<3, true>,
+	_gfx_crossblit<4, true>
 };
 
 void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp) {
@@ -223,7 +208,6 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 	int xl = pxm->width, yl = pxm->height;
 	int xoffset = (dest_coords.x < 0) ? - dest_coords.x : 0;
 	int yoffset = (dest_coords.y < 0) ? - dest_coords.y : 0;
-	int revalpha = mode->flags & GFX_MODE_FLAG_REVERSE_ALPHA;
 
 	if (src_coords.x + src_coords.width > xl)
 		src_coords.width = xl - src_coords.x;
@@ -322,8 +306,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 		else
 			alpha_min = ((alpha_mask >> 8) * gfx_crossblit_alpha_threshold) & alpha_mask;
 
-		if (revalpha)
-			alpha_min = 255 - alpha_min; // Since we use it for the reverse effect
+		alpha_min = 255 - alpha_min; // Since we use it for the reverse effect
 
 		if (!alpha_mask)
 			_gfx_crossblit_simple(dest, src, dest_line_width, pxm->width * bpp, xl, yl, bpp);
@@ -331,7 +314,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 
 			if (priority == GFX_NO_PRIORITY) {
 				if (bpp > 0 && bpp < 5)
-					((revalpha) ? crossblit_fns_RA : crossblit_fns)[bpp](dest, src, dest_line_width, pxm->width * bpp,
+					crossblit_fns[bpp](dest, src, dest_line_width, pxm->width * bpp,
 					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
 					        0, 0, 0, 0);
 				else {
@@ -340,7 +323,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 				}
 			} else { // priority
 				if (bpp > 0 && bpp < 5)
-					((revalpha) ? crossblit_fns_P_RA : crossblit_fns_P)[bpp](dest, src, dest_line_width, pxm->width * bpp,
+					crossblit_fns_P[bpp](dest, src, dest_line_width, pxm->width * bpp,
 					        xl, yl, alpha, bytes_per_alpha_line, bytes_per_alpha_pixel, alpha_mask, alpha_min,
 					        priority_pos, priority_line_width, priority_skip, priority);
 				else {

@@ -44,10 +44,6 @@ namespace Sci {
 
 #define GFX_MODE_IS_UNSCALED(mode) (((mode)->xfact == 1) && ((mode)->yfact == 1))
 
-/* Reverse Alpha: Alpha values 0 mean "transparent" if this is
-** enabled  */
-#define GFX_MODE_FLAG_REVERSE_ALPHA  (1<<1)
-
 /** Graphics mode description
  *
  * Color masks:
@@ -66,8 +62,6 @@ struct gfx_mode_t {
 	int xfact, yfact; /**< Horizontal and vertical scaling factors */
 	int xsize, ysize; /**< Horizontal and vertical size */
 	int bytespp; /**< Bytes per pixel */
-
-	uint32 flags; /**< GFX_MODE_FLAG_* Flags- see above */
 
 	/**
 	 * Palette or NULL to indicate non-palette mode.
