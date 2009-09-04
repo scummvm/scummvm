@@ -300,7 +300,7 @@ static reg_t kSetCursorSci0(EngineState *s, int, int argc, reg_t *argv) {
 	gfxop_set_pointer_cursor(s->gfx_state, cursor);
 
 	// Set pointer position, if requested
-	if (argc >= 4 && cursor != GFXOP_NO_POINTER) {
+	if (argc >= 4) {
 		Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
 		gfxop_set_pointer_position(s->gfx_state, newPos);
 	}

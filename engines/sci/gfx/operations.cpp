@@ -1109,7 +1109,7 @@ void gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
 	state->pointer_pos = pos;
 
 	if (pos.x > 320 || pos.y > 200) {
-		warning("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)", pos.x, pos.y);
+		debugC("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)\n", pos.x, pos.y);
 		return; // Not fatal
 	}
 
