@@ -54,10 +54,6 @@ struct gfx_options_t {
 	gfx_brush_mode_t pic0_brush_mode;
 	gfx_line_mode_t pic0_line_mode;
 
-	gfx_xlate_filter_t cursor_xlate_filter;
-	gfx_xlate_filter_t view_xlate_filter;
-	gfx_xlate_filter_t pic_xlate_filter; /* Only relevant if (pic0_unscaled) */
-	gfx_xlate_filter_t text_xlate_filter;
 	gfx_res_fullconf_t res_conf; /* Resource customisation: Per-resource palettes etc. */
 
 	int workarounds;	// Workaround flags - see below

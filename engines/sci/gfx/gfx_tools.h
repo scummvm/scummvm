@@ -36,12 +36,6 @@ namespace Sci {
 /** @name SCI graphics subsystem helper functions */
 /** @{ */
 
-enum gfx_xlate_filter_t {
-	GFX_XLATE_FILTER_NONE,
-	GFX_XLATE_FILTER_LINEAR,
-	GFX_XLATE_FILTER_TRILINEAR
-};
-
 /**
  * Allocates a new gfx_mode_t structure with the specified parameters
  *
@@ -176,9 +170,8 @@ void gfx_copy_pixmap_box_i(gfx_pixmap_t *dest, gfx_pixmap_t *src, rect_t box);
  *
  * @param[in] pxm		The pixmap to translate
  * @param[in] mode		The mode according which to scale
- * @param[in] filter	How to filter the data
  */
-void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode, gfx_xlate_filter_t filter);
+void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode);
 
 #define GFX_CROSSBLIT_FLAG_DATA_IS_HOMED (1<<0) /**< Means that the first byte in the visual data refers to the point corresponding to (dest.x, dest.y) */
 

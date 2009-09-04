@@ -75,9 +75,6 @@ struct gfx_mode_t {
 	 */
 	Palette *palette;
 
-	// TODO: remove those
-	uint32 red_mask, green_mask, blue_mask, alpha_mask;
-	short red_shift, green_shift, blue_shift, alpha_shift;
 	Graphics::PixelFormat format;
 };
 

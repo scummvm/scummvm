@@ -1564,12 +1564,12 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		break;
 
 	case 1:
-		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->pic->priority_map, _vm->_gamestate->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->pic->priority_map, _vm->_gamestate->gfx_state->driver->getMode());
 		gfxop_draw_pixmap(_vm->_gamestate->gfx_state, _vm->_gamestate->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 
 	case 2:
-		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->control_map, _vm->_gamestate->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->control_map, _vm->_gamestate->gfx_state->driver->getMode());
 		gfxop_draw_pixmap(_vm->_gamestate->gfx_state, _vm->_gamestate->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
 		break;
 

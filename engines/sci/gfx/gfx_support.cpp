@@ -218,7 +218,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 	byte *priority_pos = priority_dest;
 	unsigned int alpha_mask, alpha_min;
 	int bpp = mode->bytespp;
-	int bytes_per_alpha_pixel = pxm->alpha_map ? 1 : bpp;
+	int bytes_per_alpha_pixel = bpp;
 	int bytes_per_alpha_line =  bytes_per_alpha_pixel * pxm->width;
 	int xl = pxm->width, yl = pxm->height;
 	int xoffset = (dest_coords.x < 0) ? - dest_coords.x : 0;
@@ -290,7 +290,7 @@ int gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect
 	else {
 		int shift_nr = 0;
 
-		alpha_mask = mode->alpha_mask;
+		alpha_mask = 0;
 		if (!alpha_mask && pxm->alpha_map) {
 			error("Invalid alpha mode: both pxm->alpha_map and alpha_mask are white");
 			return GFX_ERROR;

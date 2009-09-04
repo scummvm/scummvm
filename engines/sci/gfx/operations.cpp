@@ -195,7 +195,7 @@ static void _gfxop_install_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm) {
 	assert(pxm->palette->getParent() == driver->getMode()->palette);
 
 	if (pxm->palette_revision != pxm->palette->getRevision())
-		gfx_xlate_pixmap(pxm, driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(pxm, driver->getMode());
 
 	if (!driver->getMode()->palette->isDirty())
 		return;
@@ -995,7 +995,7 @@ void gfxop_update(GfxState *state) {
 	if (state->fullscreen_override) {
 		// We've been asked to re-draw the active full-screen image, essentially.
 		rect_t rect = gfx_rect(0, 0, 320, 200);
-		gfx_xlate_pixmap(state->fullscreen_override, state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(state->fullscreen_override, state->driver->getMode());
 		gfxop_draw_pixmap(state, state->fullscreen_override, rect, Common::Point(0, 0));
 		_gfxop_update_box(state, rect);
 	}
@@ -1875,11 +1875,7 @@ void gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 		gfx_pixmap_t *pxm = handle->text_pixmaps[i];
 
 		if (!pxm->data) {
-#ifdef CUSTOM_GRAPHICS_OPTIONS
-			gfx_xlate_pixmap(pxm, state->driver->getMode(), state->options->text_xlate_filter);
-#else
-			gfx_xlate_pixmap(pxm, state->driver->getMode(), GFX_XLATE_FILTER_NONE);
-#endif
+			gfx_xlate_pixmap(pxm, state->driver->getMode());
 		}
 		if (!pxm)
 			error("Could not find text pixmap %d/%d", i, handle->lines.size());

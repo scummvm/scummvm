@@ -1556,7 +1556,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320,
 				           pic->visual_map->index_height / 200, format, view->palette, 0);
 
-				gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
+				gfx_xlate_pixmap(view, mode);
 				gfx_free_mode(mode);
 				// When the mode is freed, the associated view
 				// palette is freed too, so set it to NULL
@@ -1661,7 +1661,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		Graphics::PixelFormat format(1, 0, 0, 0, 0, 0, 0, 0, 0); // 1 byte/p, which handles masks and the rest for us
 		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320, pic->visual_map->index_height / 200, format, view->palette, 0);
 
-		gfx_xlate_pixmap(view, mode, GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(view, mode);
 		gfx_free_mode(mode);
 
 		if (flags & DRAWPIC01_FLAG_OVERLAID_PIC)

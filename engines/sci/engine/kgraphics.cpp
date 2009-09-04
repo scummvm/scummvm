@@ -3387,7 +3387,7 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 				pixmap->palette = palette;
 				
 				// Copy the frame to the screen
-				gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+				gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode());
 				gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset));
 				gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 				gfx_free_pixmap(pixmap);
@@ -3436,7 +3436,7 @@ static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 		if (frameNr++ == 0)
 			pixmap->palette->forceInto(s->gfx_state->driver->getMode()->palette);
 
-		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode(), GFX_XLATE_FILTER_NONE);
+		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode());
 		gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset));
 		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
 		gfx_free_pixmap(pixmap);
