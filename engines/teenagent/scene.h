@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TEENAGENT_SCENE_H__
-#define TEENAGENT_SCENE_H__
+#ifndef TEENAGENT_SCENE_H
+#define TEENAGENT_SCENE_H
 
 #include "surface.h"
 #include "actor.h"

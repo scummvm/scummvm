@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_DIALOG_H__
-#define TEENAGENT_DIALOG_H__
+#ifndef TEENAGENT_DIALOG_H
+#define TEENAGENT_DIALOG_H
 
 #include "common/endian.h"
 #include "common/str.h"

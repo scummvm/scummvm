@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TEENAGENT_ANIMATION_H__
-#define TEENAGENT_ANIMATION_H__
+#ifndef TEENAGENT_ANIMATION_H
+#define TEENAGENT_ANIMATION_H
 
 #include "common/stream.h"
 #include "surface.h"

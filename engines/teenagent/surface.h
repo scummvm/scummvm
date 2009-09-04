@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TAGET_SURFACE_H__
-#define TAGET_SURFACE_H__
+#ifndef TAGET_SURFACE_H
+#define TAGET_SURFACE_H
 
 #include "graphics/surface.h"
 #include "common/stream.h"

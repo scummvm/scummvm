@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TEENAGENT_SEGMENT_H__
-#define TEENAGENT_SEGMENT_H__
+#ifndef TEENAGENT_SEGMENT_H
+#define TEENAGENT_SEGMENT_H
 
 #include "common/stream.h"
 #include "common/endian.h"

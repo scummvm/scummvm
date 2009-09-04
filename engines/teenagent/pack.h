@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TEENAGENT_PACK_H__
-#define TEENAGENT_PACK_H__
+#ifndef TEENAGENT_PACK_H
+#define TEENAGENT_PACK_H
 
 #include "common/file.h"
 

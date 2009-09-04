@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_INVENTORY_H__
-#define TEENAGENT_INVENTORY_H__
+#ifndef TEENAGENT_INVENTORY_H
+#define TEENAGENT_INVENTORY_H
 
 #include "surface.h"
 #include "animation.h"

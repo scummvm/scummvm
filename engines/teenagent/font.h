@@ -22,8 +22,8 @@
  * $Id$
  */
 
-#ifndef TEENAGENT_FONT_H__
-#define TEENAGENT_FONT_H__
+#ifndef TEENAGENT_FONT_H
+#define TEENAGENT_FONT_H
 
 #include "graphics/surface.h"
 

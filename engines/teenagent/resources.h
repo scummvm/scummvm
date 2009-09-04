@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TEENAGENT_RESOURCES_H__
-#define TEENAGENT_RESOURCES_H__
+#ifndef TEENAGENT_RESOURCES_H
+#define TEENAGENT_RESOURCES_H
 
 #include "pack.h"
 #include "segment.h"

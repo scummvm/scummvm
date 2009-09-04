@@ -23,8 +23,8 @@
  */
 
 
-#ifndef TEENAGENT_OBJECTS_H__
-#define TEENAGENT_OBJECTS_H__
+#ifndef TEENAGENT_OBJECTS_H
+#define TEENAGENT_OBJECTS_H
 
 #include "common/rect.h"
 #include "graphics/surface.h"
