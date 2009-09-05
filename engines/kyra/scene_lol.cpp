@@ -548,7 +548,7 @@ void LoLEngine::setLampMode(bool lampOn) {
 	if (!(_flagsTable[30] & 0x08) || !lampOn)
 		return;
 
-	_screen->drawShape(0, _gameShapes[43], 291, 56, 0, 0);
+	_screen->drawShape(0, _gameShapes[_flags.isTalkie ? 43 : 41], 291, 56, 0, 0);
 	_lampEffect = 8;
 }
 
@@ -591,7 +591,7 @@ void LoLEngine::updateLampStatus() {
 
 	_screen->hideMouse();
 
-	_screen->drawShape(_screen->_curPage, _gameShapes[35 + newLampEffect], 291, 56, 0, 0);
+	_screen->drawShape(_screen->_curPage, _gameShapes[(_flags.isTalkie ? 35 : 33) + newLampEffect], 291, 56, 0, 0);
 	_screen->showMouse();
 
 	_lampEffect = newLampEffect;

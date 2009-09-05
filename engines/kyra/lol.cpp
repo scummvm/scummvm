@@ -3847,7 +3847,7 @@ uint16 LoLEngine::getNearestPartyMemberFromPos(int x, int y) {
 
 void LoLEngine::displayAutomap() {
 	snd_playSoundEffect(105, -1);
-	gui_toggleButtonDisplayMode(78, 1);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 78 : 76, 1);
 
 	_currentMapLevel = _currentLevel;
 	uint8 *tmpWll = new uint8[80];

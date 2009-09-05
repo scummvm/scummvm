@@ -51,7 +51,7 @@ void LoLEngine::gui_drawPlayField() {
 
 	if (_flagsTable[31] & 0x10)
 		// draw automap book
-		_screen->drawShape(2, _gameShapes[78], 290, 32, 0, 0);
+		_screen->drawShape(2, _gameShapes[_flags.isTalkie ? 78 : 76], 290, 32, 0, 0);
 
 	int cp = _screen->setCurPage(2);
 
@@ -303,7 +303,7 @@ void LoLEngine::gui_drawCharInventoryItem(int itemIndex) {
 		x += 112;
 
 	int i = _characters[_selectedCharacter].items[itemIndex];
-	int shapeNum = i ? ((itemIndex < 9) ? 4 : 5) : slotShapes[itemIndex];
+	int shapeNum = i ? ((itemIndex < 9) ? 4 : 5) : (_flags.isTalkie ? slotShapes[itemIndex] : slotShapes[itemIndex] - 2);
 	_screen->drawShape(_screen->_curPage, _gameShapes[shapeNum], x, y, 0, 0);
 
 	if (itemIndex > 8) {
@@ -376,7 +376,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 
 	if (_characters[charNum].flags & 0x10) {
 		// magic submenu open
-		_screen->drawShape(_screen->_curPage, _gameShapes[73], 44, 0, 0, 0);
+		_screen->drawShape(_screen->_curPage, _gameShapes[_flags.isTalkie ? 73 : 71], 44, 0, 0, 0);
 		if (spellLevels < 4)
 			_screen->drawGridBox(44, (spellLevels << 3) + 1, 22, 32 - (spellLevels << 3), 1);
 	} else {
@@ -388,17 +388,17 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 		}
 
 		handIndex =  _gameShapeMap[(_itemProperties[handIndex].shpIndex << 1) + 1];
-		if (handIndex == 0x5a) { // draw raceClassSex specific hand shape
+		if (handIndex == _gameShapeMap[1]) { // draw raceClassSex specific hand shape
 			handIndex = _characters[charNum].raceClassSex - 1;
 			if (handIndex < 0)
 				handIndex = 0;
-			handIndex += 68;
+			handIndex += (_flags.isTalkie ? 68 : 66);
 		}
 
 		// draw hand/weapon
 		_screen->drawShape(_screen->_curPage, _gameShapes[handIndex], 44, 0, 0, 0);
 		// draw magic symbol
-		_screen->drawShape(_screen->_curPage, _gameShapes[72 + _characters[charNum].field_41], 44, 17, 0, 0);
+		_screen->drawShape(_screen->_curPage, _gameShapes[(_flags.isTalkie ? 72 : 70) + _characters[charNum].field_41], 44, 17, 0, 0);
 
 		if (spellLevels == 0)
 			_screen->drawGridBox(44, 17, 22, 16, 1);
@@ -409,7 +409,7 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 		_screen->drawGridBox(44, 0, 22, 34, 1);
 
 	if (_characters[charNum].weaponHit) {
-		_screen->drawShape(_screen->_curPage, _gameShapes[34], 44, 0, 0, 0);
+		_screen->drawShape(_screen->_curPage, _gameShapes[_flags.isTalkie ? 34 : 32], 44, 0, 0, 0);
 		_screen->fprintString("%d", 57, 7, 254, 0, 1, _characters[charNum].weaponHit);
 	}
 	if (_characters[charNum].damageSuffered)
@@ -577,8 +577,8 @@ void LoLEngine::gui_drawCompass() {
 	const CompassDef *c = &_compassDefs[t];
 
 	_screen->drawShape(_screen->_curPage, _gameShapes[22 + _lang], 294, 3, 0, 0);
-	_screen->drawShape(_screen->_curPage, _gameShapes[25 + c->shapeIndex], 298 + c->x, c->y + 9, 0, c->flags | 0x300, _screen->_paletteOverlay1, 1);
-	_screen->drawShape(_screen->_curPage, _gameShapes[25 + c->shapeIndex], 299 + c->x, c->y + 8, 0, c->flags);
+	_screen->drawShape(_screen->_curPage, _gameShapes[(_flags.isTalkie ? 25 : 23) + c->shapeIndex], 298 + c->x, c->y + 9, 0, c->flags | 0x300, _screen->_paletteOverlay1, 1);
+	_screen->drawShape(_screen->_curPage, _gameShapes[(_flags.isTalkie ? 25 : 23)  + c->shapeIndex], 299 + c->x, c->y + 8, 0, c->flags);
 
 	if (!_screen->_curPage)
 		_screen->showMouse();
@@ -1016,7 +1016,7 @@ int LoLEngine::clickedUpArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	moveParty(_currentDirection, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 0, 80);
+	moveParty(_currentDirection, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 0, _flags.isTalkie ? 80 : 78);
 
 	return 1;
 }
@@ -1025,7 +1025,7 @@ int LoLEngine::clickedDownArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	moveParty(_currentDirection ^ 2, 0, 1, 83);
+	moveParty(_currentDirection ^ 2, 0, 1, _flags.isTalkie ? 83 : 81);
 
 	return 1;
 }
@@ -1034,7 +1034,7 @@ int LoLEngine::clickedLeftArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	moveParty((_currentDirection - 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 2, 82);
+	moveParty((_currentDirection - 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 2, _flags.isTalkie ? 82 : 80);
 
 	return 1;
 }
@@ -1043,7 +1043,7 @@ int LoLEngine::clickedRightArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, 84);
+	moveParty((_currentDirection + 1) & 3, ((button->flags2 & 0x1080) == 0x1080) ? 1 : 0, 3, _flags.isTalkie ? 82 : 82);
 
 	return 1;
 }
@@ -1052,7 +1052,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	gui_toggleButtonDisplayMode(79, 1);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 79 : 77, 1);
 	_currentDirection = (--_currentDirection) & 3;
 
 	_sceneDefaultUpdate = 1;
@@ -1065,7 +1065,7 @@ int LoLEngine::clickedTurnLeftArrow(Button *button) {
 	else
 		movePartySmoothScrollTurnLeft(1);
 
-	gui_toggleButtonDisplayMode(79, 0);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 79 : 77, 0);
 	runLevelScript(_currentBlock, 0x10);
 	return 1;
 }
@@ -1074,7 +1074,7 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 	if (button->arg && !_floatingCursorsEnabled)
 		return 0;
 
-	gui_toggleButtonDisplayMode(81, 1);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 81 : 79, 1);
 	_currentDirection = (++_currentDirection) & 3;
 
 	_sceneDefaultUpdate = 1;
@@ -1087,7 +1087,7 @@ int LoLEngine::clickedTurnRightArrow(Button *button) {
 	else
 		movePartySmoothScrollTurnRight(1);
 
-	gui_toggleButtonDisplayMode(81, 0);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 81 : 79, 0);
 	runLevelScript(_currentBlock, 0x10);
 
 	return 1;
@@ -1440,6 +1440,9 @@ int LoLEngine::clickedInventorySlot(Button *button) {
 int LoLEngine::clickedInventoryScroll(Button *button) {
 	int8 inc = (int8)button->arg;
 	int shp = (inc == 1) ? 75 : 74;
+	if (!_flags.isTalkie)
+		shp -= 2;
+
 	if (button->flags2 & 0x1000)
 		inc *= 9;
 
@@ -1571,7 +1574,7 @@ int LoLEngine::clickedSceneThrowItem(Button *button) {
 
 int LoLEngine::clickedOptions(Button *button) {
 	removeInputTop();
-	gui_toggleButtonDisplayMode(76, 1);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 76 : 74, 1);
 
 	_updateFlags |= 4;
 
@@ -1588,7 +1591,7 @@ int LoLEngine::clickedOptions(Button *button) {
 	setMouseCursorToIcon(0);
 	disableSysTimer(2);
 
-	gui_toggleButtonDisplayMode(76, 0);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 76 : 74, 0);
 
 	bool speechWasEnabled = speechEnabled();
 	if (_flags.isTalkie && getVolume(kVolumeSpeech) == 2)
@@ -1617,7 +1620,7 @@ int LoLEngine::clickedOptions(Button *button) {
 }
 
 int LoLEngine::clickedRestParty(Button *button) {
-	gui_toggleButtonDisplayMode(77, 1);
+	gui_toggleButtonDisplayMode(_flags.isTalkie ? 77 : 75, 1);
 
 	Button b;
 	b.data0Val2 = b.data1Val2 = b.data2Val2 = 0xfe;
@@ -1666,7 +1669,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 		gui_drawAllCharPortraitsWithStats();
 
 		_txt->printMessage(0x8000, "%s", getLangString(0x4057));
-		gui_toggleButtonDisplayMode(77, 0);
+		gui_toggleButtonDisplayMode(_flags.isTalkie ? 77 : 75, 0);
 
 		int h = 600 / tHp;
 		if (h > 30)
@@ -1813,7 +1816,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 			setTemporaryFaceFrameForAllCharacters(2, 4, 1);
 			_txt->printMessage(0x8000, "%s", getLangString(0x4058));
 		}
-		gui_toggleButtonDisplayMode(77, 0);
+		gui_toggleButtonDisplayMode(_flags.isTalkie ? 77 : 75, 0);
 	}
 
 	return 1;
