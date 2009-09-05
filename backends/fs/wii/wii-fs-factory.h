@@ -23,8 +23,11 @@
 #ifndef _WII_FILESYSTEM_FACTORY_H_
 #define _WII_FILESYSTEM_FACTORY_H_
 
+#include "common/str.h"
 #include "common/singleton.h"
 #include "backends/fs/fs-factory.h"
+
+#include <gctypes.h>
 
 /**
  * Creates WiiFilesystemNode objects.
@@ -33,17 +36,49 @@
  */
 class WiiFilesystemFactory : public FilesystemFactory, public Common::Singleton<WiiFilesystemFactory> {
 public:
+	typedef Common::String String;
+
+	enum FileSystemType {
+		kDVD,
+		kSMB
+	};
+
 	virtual AbstractFSNode *makeRootFileNode() const;
 	virtual AbstractFSNode *makeCurrentDirectoryFileNode() const;
 	virtual AbstractFSNode *makeFileNodePath(const Common::String &path) const;
 
-	static void asyncHandler(bool mount, const Common::String *path);
+	void asyncInit();
+	void asyncDeinit();
+
+#ifdef USE_WII_SMB
+	void asyncInitNetwork();
+	void setSMBLoginData(const String &server, const String &share,
+							const String &username, const String &password);
+#endif
+
+	bool isMounted(FileSystemType type);
+
+	void mount(FileSystemType type);
+	void umount(FileSystemType type);
+
+	void mountByPath(const String &path);
+	void umountUnused(const String &path);
 
 protected:
-	WiiFilesystemFactory() {};
+	WiiFilesystemFactory();
 
 private:
 	friend class Common::Singleton<SingletonBaseType>;
+
+	bool _dvdMounted;
+	bool _smbMounted;
+
+#ifdef USE_WII_SMB
+	String _smbServer;
+	String _smbShare;
+	String _smbUsername;
+	String _smbPassword;
+#endif
 };
 
 #endif /*Wii_FILESYSTEM_FACTORY_H*/

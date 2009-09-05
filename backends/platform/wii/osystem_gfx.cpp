@@ -26,7 +26,6 @@
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
-#include "options.h"
 #include "gfx.h"
 
 #define ROUNDUP(x,n) (-(-(x) & -(n)))
@@ -59,13 +58,6 @@ static const OSystem::GraphicsMode _supportedGraphicsModes[] = {
 };
 
 void OSystem_Wii::initGfx() {
-	ConfMan.registerDefault("fullscreen", true);
-	ConfMan.registerDefault("aspect_ratio", true);
-	ConfMan.registerDefault("wii_video_default_underscan_x", 16);
-	ConfMan.registerDefault("wii_video_default_underscan_y", 16);
-	ConfMan.registerDefault("wii_video_ds_underscan_x", 16);
-	ConfMan.registerDefault("wii_video_ds_underscan_y", 16);
-
 	gfx_video_init(GFX_STANDARD_AUTO, GFX_MODE_DEFAULT);
 	gfx_init();
 	gfx_set_underscan(ConfMan.getInt("wii_video_default_underscan_x"),
@@ -717,18 +709,4 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 	if ((_texMouse.palette) && (oldKeycolor != _mouseKeyColor))
 		_cursorPaletteDirty = true;
 }
-
-void OSystem_Wii::showOptionsDialog() {
-	if (_optionsDlgActive)
-		return;
-
-	bool ds = (_actualGraphicsMode == gmDoubleStrike) ||
-				(_actualGraphicsMode == gmDoubleStrikeFiltered);
-
-	_optionsDlgActive = true;
-	WiiOptionsDialog dlg(ds);
-	dlg.runModal();
-	_optionsDlgActive = false;
-}
-
 

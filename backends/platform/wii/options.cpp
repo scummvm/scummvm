@@ -20,15 +20,18 @@
  *
  */
 
+#include <network.h>
+
 #include "common/config-manager.h"
 #include "gui/dialog.h"
 #include "gui/TabWidget.h"
+#include "backends/fs/wii/wii-fs-factory.h"
 
 #include "options.h"
 #include "gfx.h"
 
 WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
-	Dialog(180, 120, 304, 200),
+	Dialog((640 - 400) / 2, (480 - 340) / 2, 400, 340),
 	_doubleStrike(doubleStrike) {
 
 	if (_doubleStrike) {
@@ -39,12 +42,12 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 		_strUnderscanY = "wii_video_default_underscan_y";
 	}
 
-	new ButtonWidget(this, 56, 160, 108, 24, "Cancel", 'c');
-	new ButtonWidget(this, 180, 160, 108, 24, "Ok", 'k');
+	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, "Ok", 'k');
+	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, "Cancel", 'c');
 
-	TabWidget *tab = new TabWidget(this, 0, 0, 304, 146);
+	TabWidget *tab = new TabWidget(this, 0, 0, _w, _h - 54);
 
-	tab->addTab("Video");
+	int tabVideo = tab->addTab("Video");
 
 	new StaticTextWidget(tab, 16, 16, 128, 16,
 							"Current video mode:", Graphics::kTextAlignRight);
@@ -64,14 +67,86 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
 
+#ifdef USE_WII_DI
+	tab->addTab("DVD");
+
+	new StaticTextWidget(tab, 16, 16, 64, 16,
+							"Status:", Graphics::kTextAlignRight);
+	_textDVDStatus = new StaticTextWidget(tab, 96, 16, 192, 16, "Unknown",
+											Graphics::kTextAlignLeft);
+
+	new ButtonWidget(tab, 16, 48, 108, 24, "Mount DVD", 'mdvd');
+	new ButtonWidget(tab, 140, 48, 108, 24, "Unmount DVD", 'udvd');
+#endif
+
+#ifdef USE_WII_SMB
+	tab->addTab("SMB");
+
+	new StaticTextWidget(tab, 16, 16, 64, 16,
+							"Status:", Graphics::kTextAlignRight);
+	_textSMBStatus = new StaticTextWidget(tab, 96, 16, 192, 16, "Unknown",
+											Graphics::kTextAlignLeft);
+
+	new StaticTextWidget(tab, 16, 52, 64, 16,
+							"Server:", Graphics::kTextAlignRight);
+	_editSMBServer = new EditTextWidget(tab, 96, 48, _w - 96 - 32, 24, "");
+
+	new StaticTextWidget(tab, 16, 92, 64, 16,
+							"Share:", Graphics::kTextAlignRight);
+	_editSMBShare = new EditTextWidget(tab, 96, 88, _w - 96 - 32, 24, "");
+
+	new StaticTextWidget(tab, 16, 132, 64, 16,
+							"Username:", Graphics::kTextAlignRight);
+	_editSMBUsername = new EditTextWidget(tab, 96, 128, _w - 96 - 32, 24, "");
+
+	new StaticTextWidget(tab, 16, 172, 64, 16,
+							"Password:", Graphics::kTextAlignRight);
+	_editSMBPassword = new EditTextWidget(tab, 96, 168, _w - 96 - 32, 24, "");
+
+	new ButtonWidget(tab, 16, 208, 108, 24, "Init network", 'net');
+
+	new ButtonWidget(tab, 140, 208, 108, 24, "Mount SMB", 'msmb');
+	new ButtonWidget(tab, 264, 208, 108, 24, "Unmount SMB", 'usmb');
+#endif
+
+	tab->setActiveTab(tabVideo);
+
 	load();
 }
 
 WiiOptionsDialog::~WiiOptionsDialog() {
 }
 
+void WiiOptionsDialog::handleTickle() {
+#ifdef USE_WII_DI
+	if (WiiFilesystemFactory::instance().isMounted(WiiFilesystemFactory::kDVD))
+		_textDVDStatus->setLabel("Mounted");
+	else
+		_textDVDStatus->setLabel("Not mounted");
+#endif
+#ifdef USE_WII_SMB
+	s32 net = net_get_status();
+	String label;
+
+	if (net) {
+		label = String::printf("Network not initialsed (%d)\n", net);
+	} else {
+		if (WiiFilesystemFactory::instance().isMounted(WiiFilesystemFactory::kSMB))
+			label = "Mounted";
+		else
+			label = "Not mounted";
+	}
+
+	_textSMBStatus->setLabel(label);
+#endif
+
+	Dialog::handleTickle();
+}
+
 void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
 										uint32 data) {
+	WiiFilesystemFactory &fsf = WiiFilesystemFactory::instance();
+
 	switch (cmd) {
 	case 'x':
 	case 'y':
@@ -88,6 +163,34 @@ void WiiOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd,
 		revert();
 		close();
 		break;
+
+#ifdef USE_WII_DI
+	case 'mdvd':
+		fsf.mount(WiiFilesystemFactory::kDVD);
+		break;
+
+	case 'udvd':
+		fsf.umount(WiiFilesystemFactory::kDVD);
+		break;
+#endif
+
+#ifdef USE_WII_SMB
+	case 'net':
+		fsf.asyncInitNetwork();
+		break;
+
+	case 'msmb':
+		fsf.setSMBLoginData(_editSMBServer->getEditString(),
+							_editSMBShare->getEditString(),
+							_editSMBUsername->getEditString(),
+							_editSMBPassword->getEditString());
+		fsf.mount(WiiFilesystemFactory::kSMB);
+		break;
+
+	case 'usmb':
+		fsf.umount(WiiFilesystemFactory::kSMB);
+		break;
+#endif
 
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -110,6 +213,17 @@ void WiiOptionsDialog::load() {
 
 	_sliderUnderscanX->setValue(x);
 	_sliderUnderscanY->setValue(y);
+
+#ifdef USE_WII_SMB
+	_editSMBServer->setEditString(ConfMan.get("wii_smb_server",
+									Common::ConfigManager::kApplicationDomain));
+	_editSMBShare->setEditString(ConfMan.get("wii_smb_share",
+									Common::ConfigManager::kApplicationDomain));
+	_editSMBUsername->setEditString(ConfMan.get("wii_smb_username",
+									Common::ConfigManager::kApplicationDomain));
+	_editSMBPassword->setEditString(ConfMan.get("wii_smb_password",
+									Common::ConfigManager::kApplicationDomain));
+#endif
 }
 
 void WiiOptionsDialog::save() {
@@ -119,6 +233,18 @@ void WiiOptionsDialog::save() {
 	ConfMan.setInt(_strUnderscanY,
 					_sliderUnderscanY->getValue(),
 					Common::ConfigManager::kApplicationDomain);
+
+#ifdef USE_WII_SMB
+	ConfMan.set("wii_smb_server", _editSMBServer->getEditString(),
+				Common::ConfigManager::kApplicationDomain);
+	ConfMan.set("wii_smb_share", _editSMBShare->getEditString(),
+				Common::ConfigManager::kApplicationDomain);
+	ConfMan.set("wii_smb_username", _editSMBUsername->getEditString(),
+				Common::ConfigManager::kApplicationDomain);
+	ConfMan.set("wii_smb_password", _editSMBPassword->getEditString(),
+				Common::ConfigManager::kApplicationDomain);
+#endif
+
 	ConfMan.flushToDisk();
 }
 

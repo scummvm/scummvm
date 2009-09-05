@@ -112,11 +112,6 @@ int main(int argc, char *argv[]) {
 	SYS_SetPowerCallback(power_cb);
 #endif
 
-#ifdef USE_WII_DI
-	// initial async mount for the browser, see wii-fs.cpp
-	DI_Mount();
-#endif
-
 	if (!fatInitDefault()) {
 		printf("fatInitDefault failed\n");
 	} else {
@@ -143,10 +138,6 @@ int main(int argc, char *argv[]) {
 	printf("shutdown\n");
 
 	fatUnmountDefault();
-
-#ifdef USE_WII_DI
-	DI_Close();
-#endif
 
 	if (power_btn_pressed) {
 		printf("shutting down\n");

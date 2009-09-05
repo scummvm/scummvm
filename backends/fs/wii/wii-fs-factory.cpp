@@ -27,7 +27,21 @@
 #include "backends/fs/wii/wii-fs-factory.h"
 #include "backends/fs/wii/wii-fs.cpp"
 
+#ifdef USE_WII_DI
+#include <di/di.h>
+#endif
+
+#ifdef USE_WII_SMB
+#include <network.h>
+#include <smb.h>
+#endif
+
 DECLARE_SINGLETON(WiiFilesystemFactory);
+
+WiiFilesystemFactory::WiiFilesystemFactory() :
+	_dvdMounted(false),
+	_smbMounted(false) {
+}
 
 AbstractFSNode *WiiFilesystemFactory::makeRootFileNode() const {
 	return new WiiFilesystemNode();
@@ -46,8 +60,151 @@ AbstractFSNode *WiiFilesystemFactory::makeFileNodePath(const Common::String &pat
 	return new WiiFilesystemNode(path);
 }
 
-void WiiFilesystemFactory::asyncHandler(bool mount, const Common::String *path) {
-	WiiFilesystemNode::asyncHandler(mount, path);
+void WiiFilesystemFactory::asyncInit() {
+#ifdef USE_WII_SMB
+	asyncInitNetwork();
+#endif
+}
+
+void WiiFilesystemFactory::asyncDeinit() {
+#ifdef USE_WII_DI
+	umount(kDVD);
+	DI_Close();
+#endif
+#ifdef USE_WII_SMB
+	umount(kSMB);
+	net_deinit();
+#endif
+}
+
+#ifdef USE_WII_SMB
+void WiiFilesystemFactory::asyncInitNetwork() {
+	net_init_async(NULL, NULL);
+}
+
+void WiiFilesystemFactory::setSMBLoginData(const String &server,
+											const String &share,
+											const String &username,
+											const String &password) {
+	_smbServer = server;
+	_smbShare = share;
+	_smbUsername = username;
+	_smbPassword = password;
+}
+#endif
+
+bool WiiFilesystemFactory::isMounted(FileSystemType type) {
+	switch (type) {
+	case kDVD:
+		return _dvdMounted;
+	case kSMB:
+		return _smbMounted;
+	}
+
+	return false;
+}
+
+void WiiFilesystemFactory::mount(FileSystemType type) {
+	switch (type) {
+	case kDVD:
+#ifdef USE_WII_DI
+		if (_dvdMounted)
+			break;
+
+		printf("mount dvd\n");
+		DI_Mount();
+
+		while (DI_GetStatus() & DVD_INIT)
+			usleep(20 * 1000);
+
+		if (!(DI_GetStatus() & DVD_READY)) {
+			DI_StopMotor();
+			printf("error mounting dvd\n");
+			break;
+		}
+
+		printf("mount ISO9660\n");
+		if (ISO9660_Mount()) {
+			_dvdMounted = true;
+			printf("ISO9660 mounted\n");
+		} else {
+			DI_StopMotor();
+			printf("ISO9660 mount failed\n");
+		}
+#endif
+		break;
+
+	case kSMB:
+#ifdef USE_WII_SMB
+		if (_smbMounted)
+			break;
+
+		printf("mount smb\n");
+
+		if (net_get_status()) {
+			printf("network not inited\n");
+			break;
+		}
+
+		if (smbInit(_smbUsername.c_str(), _smbPassword.c_str(),
+					_smbShare.c_str(), _smbServer.c_str())) {
+			_smbMounted = true;
+			printf("smb mounted\n");
+		} else {
+			printf("error mounting smb\n");
+		}
+#endif
+		break;
+	}
+}
+
+void WiiFilesystemFactory::umount(FileSystemType type) {
+	switch (type) {
+	case kDVD:
+#ifdef USE_WII_DI
+		if (!_dvdMounted)
+			break;
+
+		printf("umount dvd\n");
+
+		ISO9660_Unmount();
+		DI_StopMotor();
+
+		_dvdMounted = false;
+#endif
+		break;
+
+	case kSMB:
+#ifdef USE_WII_SMB
+		if (!_smbMounted)
+			break;
+
+		printf("umount smb\n");
+
+		if (smbClose("smb:"))
+			printf("smb umounted\n");
+		else
+			printf("error umounting smb\n");
+
+		_smbMounted = false;
+#endif
+		break;
+	}
+}
+
+void WiiFilesystemFactory::mountByPath(const String &path) {
+	if (path.hasPrefix("dvd:/"))
+		mount(kDVD);
+	else if (path.hasPrefix("smb:/"))
+		mount(kSMB);
+}
+
+void WiiFilesystemFactory::umountUnused(const String &path) {
+	if (!path.hasPrefix("dvd:/"))
+		umount(kDVD);
+
+	if (!path.hasPrefix("smb:/"))
+		umount(kSMB);
 }
 
 #endif

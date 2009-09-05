@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
+#include "gui/EditTextWidget.h"
 
 using namespace GUI;
 
@@ -35,6 +36,8 @@ public:
 	WiiOptionsDialog(bool doubleStrike);
 	virtual ~WiiOptionsDialog();
 
+protected:
+	virtual void handleTickle();
 	virtual void handleCommand(CommandSender *sender, uint32 cmd, uint32 data);
 
 private:
@@ -44,6 +47,19 @@ private:
 
 	SliderWidget *_sliderUnderscanX;
 	SliderWidget *_sliderUnderscanY;
+
+#ifdef USE_WII_DI
+	StaticTextWidget *_textDVDStatus;
+#endif
+
+#ifdef USE_WII_SMB
+	StaticTextWidget *_textNetworkStatus;
+	StaticTextWidget *_textSMBStatus;
+	EditTextWidget *_editSMBServer;
+	EditTextWidget *_editSMBShare;
+	EditTextWidget *_editSMBUsername;
+	EditTextWidget *_editSMBPassword;
+#endif
 
 	void revert();
 	void load();

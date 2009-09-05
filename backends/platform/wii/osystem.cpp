@@ -23,6 +23,7 @@
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
+#include "options.h"
 
 #include <unistd.h>
 
@@ -103,6 +104,28 @@ OSystem_Wii::~OSystem_Wii() {
 void OSystem_Wii::initBackend() {
 	_startup_time = gettime();
 
+	ConfMan.registerDefault("fullscreen", true);
+	ConfMan.registerDefault("aspect_ratio", true);
+	ConfMan.registerDefault("wii_video_default_underscan_x", 16);
+	ConfMan.registerDefault("wii_video_default_underscan_y", 16);
+	ConfMan.registerDefault("wii_video_ds_underscan_x", 16);
+	ConfMan.registerDefault("wii_video_ds_underscan_y", 16);
+	ConfMan.registerDefault("wii_smb_server", "");
+	ConfMan.registerDefault("wii_smb_share", "");
+	ConfMan.registerDefault("wii_smb_username", "");
+	ConfMan.registerDefault("wii_smb_password", "");
+
+	WiiFilesystemFactory &fsf = WiiFilesystemFactory::instance();
+
+#ifdef USE_WII_SMB
+	fsf.setSMBLoginData(ConfMan.get("wii_smb_server"),
+						ConfMan.get("wii_smb_share"),
+						ConfMan.get("wii_smb_username"),
+						ConfMan.get("wii_smb_password"));
+#endif
+
+	fsf.asyncInit();
+
 	char buf[MAXPATHLEN];
 	if (!getcwd(buf, MAXPATHLEN))
 		strcpy(buf, "/");
@@ -123,14 +146,12 @@ void OSystem_Wii::quit() {
 	deinitSfx();
 	deinitGfx();
 
-	// umount all async filesystems
-	WiiFilesystemFactory::asyncHandler(false, NULL);
+	WiiFilesystemFactory::instance().asyncDeinit();
 }
 
 void OSystem_Wii::engineInit() {
 	_gameRunning = true;
-	// umount not required filesystems for this game
-	WiiFilesystemFactory::asyncHandler(false, &ConfMan.get("path"));
+	WiiFilesystemFactory::instance().umountUnused(ConfMan.get("path"));
 }
 
 void OSystem_Wii::engineDone() {
@@ -239,5 +260,18 @@ FilesystemFactory *OSystem_Wii::getFilesystemFactory() {
 void OSystem_Wii::getTimeAndDate(struct tm &t) const {
 	time_t curTime = time(0);
 	t = *localtime(&curTime);
+}
+
+void OSystem_Wii::showOptionsDialog() {
+	if (_optionsDlgActive)
+		return;
+
+	bool ds = (_actualGraphicsMode == gmDoubleStrike) ||
+				(_actualGraphicsMode == gmDoubleStrikeFiltered);
+
+	_optionsDlgActive = true;
+	WiiOptionsDialog dlg(ds);
+	dlg.runModal();
+	_optionsDlgActive = false;
 }
 

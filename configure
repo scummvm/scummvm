@@ -1443,6 +1443,7 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
+			add_line_to_config_h "#define USE_WII_SMB"
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
 		gamecube)
@@ -2186,7 +2187,7 @@ case $_backend in
 			LIBS="$LIBS -lfat -logc -ldb"
 			;;
 		*)
-			LIBS="$LIBS -ldi -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			LIBS="$LIBS -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
 			;;
 		esac
 		;;
