@@ -1608,9 +1608,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x66b5:
+		playSound(89, 5);
 		playAnimation(969);
-		playSound(89);
-		loadScene(33, 319, 181);
+		loadScene(33, 319, 181, 4);
 		return true;
 	
 	case 0x6519://Sickle
@@ -1652,6 +1652,209 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(0x4a7e);
 		disableObject(4);
 		return true;
+		
+	case 0x66e2:
+		playSound(88, 4);
+		playAnimation(970);
+		loadScene(35, 160, 199, 1);
+		return true;
+		
+	case 0x70bb:
+		Dialog::pop(scene, 0xdb24, 709);
+		return true;
+		
+	case 0x71ae:
+		if (CHECK_FLAG(0xDBCD, 1)) {
+			if (CHECK_FLAG(0xDBCE, 1)) {
+				displayMessage(0x4f9b);
+			} else {
+				displayMessage(0x4fb1);
+				playSound(32, 6);
+				playAnimation(717);
+				inventory->add(66);
+				SET_FLAG(0xDBCE, 1);
+			}
+		} else
+			Dialog::show(scene, 0x3c9d);
+		return true;
+		
+	case 0x70c8:
+		if (!processCallback(0x70e0))
+			return true;
+		moveTo(81, 160, 4);
+		displayMessage(0x5cac);
+		return true;
+		
+	case 0x70e0:
+		if (!CHECK_FLAG(0xDBCC, 1)) {
+			displayMessage(0x4ece);
+			return false;
+		}
+		return true;
+
+	case 0x70ef:
+		if (!processCallback(0x70e0))
+			return true;
+		displayMessage(0x5046);
+		return true;
+		
+	case 0x70f9:
+		if (inventory->has(68)) {
+			inventory->remove(68);
+			loadScene(29, 40, 176, 2);
+			displayMessage(0x500a);
+		} else 
+			loadScene(29, 40, 176, 2);
+		return true;
+		
+	case 0x712c:
+		if (!processCallback(0x70e0))
+			return true;
+		
+		if (CHECK_FLAG(0xDBCF, 1)) {
+			playSound(89, 4);
+			playAnimation(719);
+			setOns(4, 67);
+			++ *res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + (scene->getId() - 1) * 2)));
+			disableObject(5);
+			enableObject(12);
+		} else {
+			playSound(89, 4);
+			playSound(89, 4);
+			playSound(87, 45);
+			playAnimation(718);
+			displayMessage(0x4fcb); //fixme: move it to animation
+			displayMessage(0x4fe2);
+			SET_FLAG(0xDBCF, 1);
+		}
+		return true;
+		
+	case 0x71eb:
+		setOns(2, 0);
+		playSound(32, 7);
+		playAnimation(710);
+		inventory->add(62);
+		disableObject(7);
+		enableObject(8);
+		return true;
+		
+	case 0x7244:
+		if (!processCallback(0x70e0))
+			return true;
+		displayMessage(0x5c60);
+		return true;
+		
+	case 0x7255:
+		if (CHECK_FLAG(0xDBD0, 1)) {
+			setOns(4, 67);
+			playSound(32, 5);
+			playAnimation(725);
+			disableObject(12);
+			inventory->add(69);
+		} else {
+			playAnimation(721);
+			displayMessage(0x505e);
+		}
+		return true;
+		
+	case 0x721c:
+		setOns(3, 0);
+		playSound(32, 7);
+		playAnimation(715);
+		inventory->add(63);
+		disableObject(9);
+		return true;
+		
+	case 0x7336:
+		setOns(1, 0);
+		playSound(5, 42);
+		displayMessage(0x4d02);
+		playAnimation(697);
+		inventory->add(56);
+		disableObject(1);
+		return true;
+		
+	case 0x73a3:
+		if (CHECK_FLAG(0xdbc5, 1)) {
+			SET_FLAG(0xdbc5, 0);
+			
+			//call 73e6
+			playSound(71, 3);
+			playAnimation(700);
+
+		} else {
+			SET_FLAG(0xdbc5, 1);
+
+			//call 73e6
+			playSound(71, 3);
+			playAnimation(700);		
+
+			playAnimation(CHECK_FLAG(0xDBC6, 0)? 701:702, 1);
+			
+			if (CHECK_FLAG(0xDBC6, 1)) {
+				displayMessage(0x4da6);
+			}
+		}
+		return true;
+		
+	case 0x7381:
+		playSound(5, 12);
+		playAnimation(704);
+		disableObject(2);
+		inventory->add(58);
+		return true;
+		
+	case 0x7408:
+		if (CHECK_FLAG(0xDBC4, 1)) {
+			displayMessage(0x4d2a);
+		} else {
+			setOns(0, 0);
+			playSound(26, 17);
+			playSound(26, 23);
+			playSound(26, 30);
+			playSound(26, 37);
+			playSound(26, 43);
+			playSound(52, 34);
+			playAnimation(698);
+			setOns(0, 52);
+			setOns(2, 61);
+			Dialog::show(scene, 0x38b6);
+			enableObject(11);
+			SET_FLAG(0xDBC4, 1);
+		}
+		return true;
+		
+	case 0x7476:
+		if (CHECK_FLAG(0xDBC9, 1)) {
+			displayMessage(0x4dbb);
+		} else {
+			SET_FLAG(0xDBC9, 1);
+			Dialog::show(scene, 0x3aca);
+			playSound(61, 5);
+			playSound(5, 14);
+			playAnimation(705);
+			displayMessage(0x4dd3);
+			inventory->add(59);
+		}
+		return true;
+		
+	case 0x74d1:
+		setOns(2, 0);
+		playSound(5, 12);
+		playAnimation(699);
+		inventory->add(57);
+		disableObject(11);
+		return true;
+		
+	case 0x7ad0:
+	case 0x7ad7:
+		return !processCallback(0x70e0);
+
+	case 0x7ade:
+		if (CHECK_FLAG(0xdbcd, 1)) {
+			displayMessage(0x4f69);
+		} else
+			return false;
 
 	case 0x7f23://Use grenade on captains drawer
 		if (CHECK_FLAG(0xDBDF, 3)) {
@@ -1738,6 +1941,11 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xDBA4, 1))
 			return false;
 		return processCallback(0x61fe);
+		
+	case 0x7af0:
+		if (!processCallback(0x70e0))
+			return true;
+		return false;
 		
 	case 0x8117:
 		Dialog::show(scene, 0x0a41, 529);
@@ -2245,6 +2453,31 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			}
 		}
 		return true;
+		
+	case 0x933d:
+		if (!processCallback(0x70e0))
+			return true;
+
+		if (CHECK_FLAG(0xdbcd, 1)) {
+			displayMessage(0x4f3d);
+			return true;
+		}
+		
+		setOns(1, 0);
+		playSound(5, 3);
+		playSound(5, 33);
+		playSound(24, 13);
+		playSound(24, 19);
+		playSound(24, 23);
+		playSound(24, 26);
+		playSound(24, 29);
+		playSound(23, 21);
+		playSound(74, 25);
+		playAnimation(716);
+		setOns(1, 66);
+		SET_FLAG(0xDBCD, 1);
+	
+		return true;
 
 	case 0x98fa://Right click to open toolbox
 		inventory->remove(3);
@@ -2265,6 +2498,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 
 	//very last part of the game: 
+	case 0x671d:
+		moveTo(153, 163, 4);
+		playAnimation(973);
+		if (CHECK_FLAG(0xDBC1, 0)) {
+			SET_FLAG(0xDBC1, random.getRandomNumber(5) + 1);
+		}
+		loadScene(30, 18, 159, 2);
+		return true;
 
 
 	case 0x6be1: //handle to the bathroom
@@ -2278,8 +2519,95 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x6bad:
+		playSound(80, 4);
 		playAnimation(971);
-		loadScene(32, 139, 199);
+		loadScene(32, 139, 199, 1);
+		return true;
+		
+	case 0x6c45:
+		playSound(89, 6);
+		playAnimation(CHECK_FLAG(0xDBEF, 1)?985: 806);
+		loadScene(34, 40, 133, 2);
+		return true;
+		
+	case 0x6c83:
+		Dialog::pop(scene, 0xdb2e);
+		strcpy(scene->getObject(1)->name, (const char *)res->dseg.ptr(0xaa94));
+		SET_FLAG(0xDBD1, 1);
+		return true;
+		
+	case 0x6f20:
+		if (CHECK_FLAG(0xDBD5, 1)) {
+			displayMessage(0x51a7);
+		} else {
+			rejectMessage();
+		}
+		return true;
+
+	case 0x6f4d:
+		if (CHECK_FLAG(0xDBD5, 1)) {
+			displayMessage(0x51bb);
+		} else {
+			loadScene(31, 139, 172, 3);
+		}
+		return true;
+		
+	case 0x6f32:
+		if (CHECK_FLAG(0xDBD5, 1)) {
+			displayMessage(0x51a7);
+		} else {
+			playAnimation(977);
+			displayMessage(0x5511);
+		}
+		return true;
+		
+	case 0x7291:
+		playSound(89, 3);
+		playAnimation(975);
+		loadScene(31, 298, 177, 4);
+		return true;
+		
+	case 0x7309:
+		playSound(66, 5);
+		playSound(67, 11);
+		playAnimation(976);
+		displayMessage(0x5955);
+		return true;
+		
+	case 0x7b09:
+		{
+			byte v = GET_FLAG(0xDBD6);
+			switch(v) {
+			case 1:
+				displayMessage(0x51f8);
+				return true;
+			case 2:
+				displayMessage(0x538d);
+				return true;
+			default:
+				return false;
+			}
+		}
+		
+	case 0x94d4:
+		if (inventory->has(70)) {
+			setOns(0, 0);
+			playSound(5, 3);
+			playSound(5, 18);
+			playSound(13, 12);
+			playAnimation(803);
+			disableObject(7);
+			inventory->remove(70);
+			inventory->add(71);
+		} else 
+			displayMessage(0x53ad);
+		return true;
+		
+	case 0x951b:
+		playSound(5, 4);
+		playSound(5, 22);
+		playAnimation(804);
+		displayMessage(0x528b);
 		return true;
 
 	case 0x9921:
