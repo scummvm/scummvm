@@ -24,6 +24,7 @@
 
 #include "teenagent/resources.h"
 #include "teenagent/teenagent.h"
+#include "common/zlib.h"
 
 namespace TeenAgent {
 
@@ -46,7 +47,21 @@ void Resources::deinit() {
 	sam_sam.close();
 }
 
-void Resources::loadArchives(const GameDescription * gd) {
+bool Resources::loadArchives(const ADGameDescription * gd) {
+	Common::File dat_file;
+	if (!dat_file.open("teenagent.dat")) {
+		Common::String errorMessage = "You're missing the 'teenagent.dat' file. Get it from the ScummVM website";
+		GUIErrorMessage(errorMessage);
+		warning("%s", errorMessage.c_str());
+		return false;
+	}
+	Common::SeekableReadStream * dat = Common::wrapCompressedReadStream(&dat_file);
+	cseg.read(dat, 0xb3b0);
+	dseg.read(dat, 0xe790);
+	eseg.read(dat, 0x8be2);
+
+	dat_file.close();
+
 	off.open("off.res");
 	varia.open("varia.res");
 	on.open("on.res");
@@ -59,21 +74,7 @@ void Resources::loadArchives(const GameDescription * gd) {
 
 	font7.load(7);
 	
-	Common::File exe;
-	if (!exe.open("Teenagnt.exe")) {
-		error("cannot open exe file");
-		return;
-	}
-	exe.seek(gd->offsets.cseg_offset);
-	cseg.read(&exe, 0xb3b0); //code
-	
-	exe.seek(gd->offsets.dseg_offset);
-	dseg.read(&exe, 0xe790); //data
-
-	exe.seek(gd->offsets.eseg_offset);
-	eseg.read(&exe, 0x8be2);
-
-	exe.close();
+	return true;
 }
 
 void Resources::loadOff(Graphics::Surface &surface, byte * palette, int id) {

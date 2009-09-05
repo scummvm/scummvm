@@ -28,7 +28,6 @@
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
-
 #include "teenagent/teenagent.h"
 
 static const PlainGameDescriptor teenAgentGames[] = {
@@ -36,43 +35,33 @@ static const PlainGameDescriptor teenAgentGames[] = {
 	{ 0, 0 }
 };
 
-
-static const TeenAgent::GameDescription teenAgentGameDescriptions[] = {
+static const ADGameDescription teenAgentGameDescriptions[] = {
 	{
+		"teenagent",
+		"",
 		{
-			"teenagent",
-			"",
-			AD_ENTRY1s("teenagnt.exe", "5679fba82a1fa008f0d3ab9382588eb3", 152690),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
+			{"off.res", 0, NULL, -1},
+			{"on.res", 0, NULL, -1},
+			{"ons.res", 0, NULL, -1},
+			{"varia.res", 0, NULL, -1},
+			{"lan_000.res", 0, NULL, -1},
+			{"lan_500.res", 0, NULL, -1},
+			{"mmm.res", 0, NULL, -1},
+			{"sam_mmm.res", 0, NULL, -1},
+			{"sam_sam.res", 0, NULL, -1},
+			{NULL, 0, NULL, 0}
 		}, 
-		{0x0200, 0xb5b0, 0x1c890}
-	},
-/*	
-	{
-		{
-			"teenagent",
-			"",
-			AD_ENTRY1s("teenagnt.exe", "7172e0c46cd11e4072ba486e3d220210", 152626),
-			Common::EN_ANY,
-			Common::kPlatformPC,
-			ADGF_NO_FLAGS,
-			Common::GUIO_NONE
-		},
-		{0x00c0, 0xB5E0, 0x1c850}
+		Common::EN_ANY,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
 	}, 
-*/	
-	{
-		AD_TABLE_END_MARKER, 
-		{0, 0, 0}
-	}
+	AD_TABLE_END_MARKER, 
 };
 
 static const ADParams detectionParams = {
 	(const byte *)teenAgentGameDescriptions,
-	sizeof(TeenAgent::GameDescription),
+	sizeof(ADGameDescription),
 	5000,
 	teenAgentGames,
 	0,
@@ -111,7 +100,7 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
 		if (desc) {
-			*engine = new TeenAgent::TeenAgentEngine(syst, (TeenAgent::GameDescription*)desc);
+			*engine = new TeenAgent::TeenAgentEngine(syst, desc);
 		}
 		return desc != 0;
 	}

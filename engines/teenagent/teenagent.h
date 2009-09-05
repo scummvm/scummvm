@@ -31,7 +31,8 @@
 #include "teenagent/inventory.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-#include "engines/advancedDetector.h"
+
+struct ADGameDescription;
 
 namespace TeenAgent {
 
@@ -39,22 +40,11 @@ struct Object;
 class Scene;
 class MusicPlayer;
 
-struct ExeOffsets {
-	uint32 cseg_offset;
-	uint32 dseg_offset;
-	uint32 eseg_offset;
-};
-
-struct GameDescription {
-	ADGameDescription gd;
-	ExeOffsets offsets;
-};
-
 class TeenAgentEngine: public Engine {
 public: 
 	enum Action { ActionNone, ActionExamine, ActionUse };
 	
-	TeenAgentEngine(OSystem * system, const GameDescription *gd);
+	TeenAgentEngine(OSystem * system, const ADGameDescription *gd);
 
 	virtual Common::Error run();
 	virtual Common::Error loadGameState(int slot);
@@ -113,7 +103,7 @@ private:
 
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle _musicHandle, _soundHandle;
-	const GameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 };
 
 } // End of namespace TeenAgent

@@ -1276,6 +1276,25 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		return true;
 		
+	case 0x60b5:
+		if (CHECK_FLAG(0xDBAE, 1)) {
+			processCallback(0x60d9);
+			Dialog::show(scene, 0x2FDD);
+		} else {
+			Dialog::show(scene, 0x2E41);
+			processCallback(0x60d9);
+			Dialog::show(scene, 0x2E6d);
+		}
+		return true;
+		
+	case 0x60d9: {
+			Object *obj = scene->getObject(3);
+			moveTo(obj->actor_rect.right, obj->actor_rect.bottom, obj->actor_orientation);
+			processCallback(0x612b);
+			moveTo(48, 190, 3);
+		}
+		return true;
+		
 	case 0x6176:
 		if (CHECK_FLAG(0xDBA4, 1)) {
 			displayMessage(0x3801);

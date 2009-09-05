@@ -23,13 +23,15 @@
  */
 
 #include "teenagent/segment.h"
+#include "common/util.h"
 
 namespace TeenAgent {
 
 void Segment::read(Common::ReadStream *stream, uint32 s) {
 	_size = s;
 	_data = new byte[_size];
-	stream->read(_data, _size);
+	if (stream->read(_data, _size) != _size)
+		error("Segment::read: corrupted data");
 }
 
 Segment::~Segment() {

@@ -30,16 +30,16 @@
 #include "teenagent/font.h"
 #include "graphics/surface.h"
 
-namespace TeenAgent {
+struct ADGameDescription;
 
-struct GameDescription;
+namespace TeenAgent {
 
 class Resources {
 protected:
 	Resources();
 public: 
 	static Resources * instance();
-	void loadArchives(const GameDescription * gd);
+	bool loadArchives(const ADGameDescription * gd);
 	void deinit();
 	void loadOff(Graphics::Surface &surface, byte *palette, int id);
 	Common::SeekableReadStream * loadLan(uint32 id) const;

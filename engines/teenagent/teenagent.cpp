@@ -28,6 +28,7 @@
 #include "common/debug.h"
 #include "common/savefile.h"
 #include "common/config-manager.h"
+#include "engines/advancedDetector.h"
 #include "sound/mixer.h"
 #include "teenagent/scene.h"
 #include "teenagent/objects.h"
@@ -35,7 +36,7 @@
 
 namespace TeenAgent {
 
-TeenAgentEngine::TeenAgentEngine(OSystem * system, const GameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
+TeenAgentEngine::TeenAgentEngine(OSystem * system, const ADGameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
 	music = new MusicPlayer();
 }
 
@@ -193,6 +194,10 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 }
 
 Common::Error TeenAgentEngine::run() {
+	Resources * res = Resources::instance();
+	if (!res->loadArchives(_gameDescription))
+		return Common::kUnknownError;
+	
 	Common::EventManager * _event = _system->getEventManager();
 
 	initGraphics(320, 200, false);
@@ -200,8 +205,6 @@ Common::Error TeenAgentEngine::run() {
 	scene = new Scene;
 	inventory = new Inventory;
 	
-	Resources * res = Resources::instance();
-	res->loadArchives(_gameDescription);
 	
 	
 	scene->init(this, _system);
