@@ -51,13 +51,11 @@ void TeenAgentEngine::processObject() {
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
-		if (callback == 0) {
+		if (callback == 0 || !processCallback(callback)) {
 			Common::String desc = dst_object->description();
 			scene->displayMessage(desc);
 			//debug(0, "%s[%u]: description: %s", current_object->name, current_object->id, desc.c_str());
-			break;
 		}
-		processCallback(callback);
 		}
 		break;
 	case ActionUse:
@@ -70,8 +68,9 @@ void TeenAgentEngine::processObject() {
 					if (obj->inventory_id == inv->id && dst_object->id == obj->object_id) {
 						debug(0, "combine! %u,%u", obj->x, obj->y);
 						//moveTo(Common::Point(obj->x, obj->y), NULL, Examine);
-						processCallback(obj->callback);
 						inventory->resetSelectedObject();
+						if (!processCallback(obj->callback)) 
+							debug(0, "fixme! display proper description");
 						return;
 					}
 				}
@@ -86,7 +85,8 @@ void TeenAgentEngine::processObject() {
 				dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 				dcall += 2 * dst_object->id - 2;
 				uint16 callback = READ_LE_UINT16(dcall);
-				processCallback(callback);
+				if (!processCallback(callback)) 
+					scene->displayMessage(dst_object->description());
 			}
 		}
 		break;
@@ -104,8 +104,9 @@ void TeenAgentEngine::use(Object *object) {
 	dst_object = object;
 	object->rect.dump();
 	object->actor_rect.dump();
-	if (object->actor_rect.valid()) //some objects have 0xffff in left/right
-		scene->moveTo(object->actor_rect.center(), object->actor_orientation);
+	
+	if (object->actor_rect.valid())
+		scene->moveTo(Common::Point(object->actor_rect.right, object->actor_rect.bottom), object->actor_orientation);
 	if (object->actor_orientation > 0)
 		scene->setOrientation(object->actor_orientation);
 	action = ActionUse;
@@ -352,12 +353,25 @@ void TeenAgentEngine::moveTo(const Common::Point & dst, byte o, bool warp) {
 	moveTo(dst.x, dst.y, o, warp);
 }
 
+void TeenAgentEngine::moveTo(Object *obj) {
+	moveTo(obj->actor_rect.right, obj->actor_rect.bottom, obj->actor_orientation);
+}
+
 void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {
 	SceneEvent event(SceneEvent::Walk);
 	event.dst.x = x;
 	event.dst.y = y;
 	event.orientation = o;
 	event.color = warp? 1: 0;
+	scene->push(event);
+}
+
+void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
+	SceneEvent event(SceneEvent::Walk);
+	event.dst.x = x;
+	event.dst.y = y;
+	event.orientation = o;
+	event.color = (warp? 1: 0) | 2;
 	scene->push(event);
 }
 

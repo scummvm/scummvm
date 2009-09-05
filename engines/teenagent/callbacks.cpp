@@ -41,22 +41,6 @@ void TeenAgentEngine::rejectMessage() {
 	scene->displayMessage((const char *)res->dseg.ptr(res->dseg.get_word(0x339e + 2 * i)));
 }
 
-void TeenAgentEngine::anotherMansionTry() {
-	Resources * res = Resources::instance();
-	byte tries = ++ *(res->dseg.ptr(0xDBEA));
-	debug(0, "another mansion try: %u", tries);
-	if (tries >= 7)
-		return;
-	uint16 ptr = res->dseg.get_word(res->dseg.get_word((tries - 2) * 2 + 0x6035));
-	
-	playMusic(11);
-	debug(0, "FIXME: cutscene: meanwhile in a mansion #%u, %04x", tries, ptr);
-	processCallback(ptr);
-	playMusic(6);
-	if (scene->getId() == 11 && CHECK_FLAG(0xDBEC, 1))
-		return;
-	//call 0xac27
-}
 
 bool TeenAgentEngine::processCallback(uint16 addr) {
 	if (addr == 0)
@@ -534,17 +518,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x4cf1: { //talking with mansion guard 
-		playAnimation(529, 1);
 		SET_FLAG(0xda96, 1);
-		if (Dialog::pop(scene, 0xdaa6) != 0x1b4)
+		if (Dialog::pop(scene, 0xdaa6, 529) != 0x1b4)
 			return true;
+
 		Common::Point p = scene->getPosition();
 		moveTo(159, 189, 0);
-		
-		playAnimation(550);
-		playAnimation(551, 1);
 
-		moveTo(p, 0);
+		playSound(5, 2);
+		playSound(5, 19);
+		playAnimation(550, 0, true);
+		playAnimation(551, 1, true);
+		waitAnimation();
+
+		moveTo(p, 2);
 		inventory->add(0x13);
 		playAnimation(529, 1);
 		Dialog::pop(scene, 0xdaa6);
@@ -553,6 +540,24 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	
 	case 0x4e61:
 		loadScene(14, 280, 198);
+		return true;
+
+	case 0x4d56:
+		inventory->add(16);
+		disableObject(2);
+		setOns(0, 0);
+		playSound(5);
+		playAnimation(547);
+		return true;
+	
+	
+	case 0x4eb9://Pick up wrapper
+		playSound(5, 12);
+		playSound(5, 18);
+		inventory->add(0x12);
+		setOns(1, 0);
+		playAnimation(549);
+		disableObject(13);
 		return true;
 
 	case 0x4f25:
@@ -598,7 +603,14 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 16);
 		enableObject(2);
 		Dialog::show(scene, 0x0917);
+		return true;
 		
+	case 0x51f0:
+		setOns(0, 0);
+		playSound(5, 11);
+		playAnimation(637);
+		disableObject(7);
+		inventory->add(49);
 		return true;
 		
 	case 0x5217:
@@ -708,6 +720,27 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playAnimation(541);
 		}
 		return true;
+
+	case 0x6205:
+		if (CHECK_FLAG(0xDBA4, 1))
+			displayMessage(0x450e);
+		else 
+			processCallback(0x61fe);
+		return true;
+
+	case 0x6217:
+		if (CHECK_FLAG(0xDBA4, 1))
+			displayMessage(0x44d6);
+		else 
+			processCallback(0x61fe);
+		return true;
+		
+	case 0x62c1:
+		if (CHECK_FLAG(0xDBA4, 1))
+			return false;
+		
+		processCallback(0x61fe);
+		return true;
 		
 	case 0x646e:
 	case 0x6475:
@@ -798,6 +831,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		
 		Dialog::show(scene, 0x2193);
 		SET_FLAG(0xDBAF, 1);
+		return true;
+		
+	case 0x79c3:
+		if (CHECK_FLAG(0xDBA4, 1))
+			return false;
+		processCallback(0x61fe);
 		return true;
 
 	case 0x7b26: //cutting the fence
@@ -963,8 +1002,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			//alredy shown
 			displayMessage(0x53F2);
 		} else {
-			playSound(5);
 			displayMessage(0x53DD);
+			playSound(5, 2);
+			playSound(5, 18);
 			playAnimation(810, false);
 			Dialog::show(scene, 0x60BF);
 			SET_FLAG(0xDBDA, 1);
@@ -988,22 +1028,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	//Shore
 	
-	case 0x4d56:
-		inventory->add(16);
-		disableObject(2);
-		setOns(0, 0);
-		playSound(5);
-		playAnimation(547);
-		return true;
-	
-	
-	case 0x4eb9://Pick up wrapper
-		inventory->add(0x12);
-		setOns(1, 0);
-		playAnimation(549);
-		disableObject(13);
-		return true;
-
 	case 0x5348:
 		if (CHECK_FLAG(0xdb99, 1)) { //got broken paddle from boat
 			displayMessage(0x351f);
@@ -1285,23 +1309,50 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		return true;
 		
+	case 0x607f:
+		processCallback(0x60b5);
+		return true;
+
+	case 0x6083:
+		if (CHECK_FLAG(0xDBA4, 1)) {
+			setOns(0, 0);
+			playSound(56, 10);
+			playAnimation(599);
+			inventory->add(37);
+			disableObject(2);
+		} else
+			processCallback(0x60b5);
+		return true;
+		
 	case 0x60b5:
 		if (CHECK_FLAG(0xDBAE, 1)) {
 			processCallback(0x60d9);
-			Dialog::show(scene, 0x2FDD);
+			Dialog::show(scene, 0x2fdd);
 		} else {
-			Dialog::show(scene, 0x2E41);
+			Dialog::show(scene, 0x2e41);
 			processCallback(0x60d9);
-			Dialog::show(scene, 0x2E6d);
+			Dialog::show(scene, 0x2e6d);
 		}
 		return true;
 		
 	case 0x60d9: {
 			Object *obj = scene->getObject(3);
-			moveTo(obj->actor_rect.right, obj->actor_rect.bottom, obj->actor_orientation);
+			moveTo(obj);
 			processCallback(0x612b);
 			moveTo(48, 190, 3);
 		}
+		return true;
+	
+	case 0x612b:
+		playSound(52, 10);
+		playSound(52, 14);
+		playSound(52, 18);
+		playSound(52, 21);
+		playSound(52, 25);
+		playSound(52, 28);
+		playSound(52, 32);
+		playAnimation(600);
+		loadScene(21, 297, 178, 3);
 		return true;
 		
 	case 0x6176:
@@ -1311,12 +1362,52 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		playSound(71, 6);
 		playAnimation(598);
+		loadScene(24, scene->getPosition());
 		setOns(2, 0);
+		setLan(1, 0);
 		playAnimation(660, 1);
 		disableObject(1);
-		setLan(1, 0);
 		SET_FLAG(0xDBA4, 1);
 		loadScene(24, scene->getPosition());
+		
+		return true;
+		
+	case 0x61e9:
+		if (CHECK_FLAG(0xDBA4, 1)) {
+			Dialog::pop(scene, 0xdb1e);
+		} else
+			processCallback(0x61fe);
+		
+		return true;
+		
+	case 0x6229: //shelves in cellar
+		if (CHECK_FLAG(0xDBA4, 1)) {
+			Common::Point p = scene->getPosition();
+			byte v = GET_FLAG(0xDBB4);
+			switch(v) {
+			case 0:
+				displayMessage(0x4532);
+				moveRel(-34, 0, 1);
+				displayMessage(0x4555);
+				moveRel(20, 0, 1);
+				displayMessage(0x4568);
+				moveRel(20, 0, 1);
+				displayMessage(0x457b);
+				moveRel(20, 0, 1);
+				displayMessage(0x458e);
+				moveTo(p, 3);
+				SET_FLAG(0xDBB4, 1);
+				break;
+			case 1:
+				displayMessage(0x45b8);
+				displayMessage(0x45da);
+				SET_FLAG(0xDBB4, 2);
+				break;
+			default:
+				displayMessage(0x4603);
+			}
+		} else 
+			processCallback(0x61fe);
 		
 		return true;
 		
@@ -1350,36 +1441,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else 
 			return false;
 
-	case 0x612b://climb basement ladder(exit)
-		playSound(52, 10);
-		playSound(52, 14);
-		playSound(52, 18);
-		playSound(52, 21);
-		playSound(52, 25);
-		playSound(52, 28);
-		playAnimation(600);
-		loadScene(21, 297, 178, 3);
-		return true;
-	
-	case 0x6351:
-		if (CHECK_FLAG(0xdaca, 1)) { //cave bush is cut down
-			playMusic(8);
-			loadScene(26, 319, 169);
-			return true;
-		} else {
-			displayMessage(0x3bd2);			
-			return true;
-		}
-	
-	case 0x6592: //Rake
-		setOns(1, 0);
-		playSound(18, 10);
-		playAnimation(553);
-		inventory->add(0x15);
-		displayMessage(0x3605);	
-		disableObject(11);
-		return true;
-
 	case 0x62d0://Get bone from under rock
 		playSound(26, 6);
 		setOns(0, 0);
@@ -1392,6 +1453,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(595);
 		displayMessage(0x3790);
 		return true;
+
+	case 0x6351:
+		if (CHECK_FLAG(0xdaca, 1)) { //cave bush is cut down
+			playMusic(8);
+			loadScene(26, 319, 169);
+			return true;
+		} else {
+			displayMessage(0x3bd2);			
+			return true;
+		}
 
 	case 0x6411://Kick hen
 		if (CHECK_FLAG(0xdb93, 1)) { //already kicked hen
@@ -1409,6 +1480,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x3df4);
 			return true;
 		}
+	
+	case 0x6592: //Rake
+		setOns(1, 0);
+		playSound(18, 10);
+		playAnimation(553);
+		inventory->add(0x15);
+		displayMessage(0x3605);	
+		disableObject(11);
+		return true;
+
+	case 0x66b5:
+		playAnimation(969);
+		playSound(89);
+		loadScene(33, 319, 181);
+		return true;
 	
 	case 0x6519://Sickle
 		setOns(4, 0);
@@ -1510,6 +1596,20 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		displayMessage(0x3DAF);
 		return true;
+
+	case 0x7975:
+		if (CHECK_FLAG(0xDBA4, 1))
+			return false;
+		displayMessage(0x3832);
+		return true;
+
+	case 0x7987:
+	case 0x7996:
+	case 0x79a5:
+	case 0x79b4:
+		if (CHECK_FLAG(0xDBA4, 1))
+			return false;
+		return processCallback(0x61fe);
 		
 	case 0x8174:
 		setOns(0, 0);
@@ -1849,6 +1949,50 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(971);
 		loadScene(32, 139, 199);
 		return true;
+		
+	case 0x9002:
+		
+		return true;
+		
+	case 0x9aca:
+		if (scene->getId() == 13) {
+			moveTo(172, 181, 1);
+			playSound(26, 19);
+			for(uint i = 0; i < 8; ++i)
+				playSound(26, 30 + i * 11);
+			playAnimation(661);
+			//cutscene 3c80 at 30484
+			playSound(56, 10);
+			playSound(56, 21);
+
+			playSound(8, 48);
+			for(uint i = 0; i < 7; ++i)
+				playSound(26, 117 + i * 11);
+				
+			moveRel(-20, 0, 0, true);
+			playAnimation(662, 0, true);
+			playAnimation(663, 2, true);
+			waitAnimation();
+			setOns(1, 49);
+			
+			//cutscene 0x3c9a at 30453 
+			moveTo(162, 184, 0, true);
+			playSound(26, 6);
+			playSound(26, 17);
+			playSound(56, 10);
+			playSound(56, 21);
+			playSound(19, 27);
+			playSound(24, 38);
+			playSound(23, 44);
+			playAnimation(664);
+			playAnimation(665, 2);
+			displayMessage(0x3cbc);
+			displayMessage(0x3cea);
+			inventory->remove(37);
+			processCallback(0x9d45); //another mansion try
+		} else 
+			displayMessage(0x3c58);
+		return true;
 
 	case 0x9c79:
 		if (scene->getId() != 36) {
@@ -1884,13 +2028,35 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		return true;
 		
-	case 0x66b5:
-		playAnimation(969);
-		playSound(89);
-		loadScene(33, 319, 181);
-		return true;
+		case 0x9d45: {
+			byte tries = ++ *(res->dseg.ptr(0xDBEA));
+			debug(0, "another mansion try: %u", tries);
+			if (tries >= 7)
+				return false;
+		
+			uint16 ptr = res->dseg.get_word((tries - 2) * 2 + 0x6035);
+			byte id = scene->getId();
+	
+			playMusic(11);
+			debug(0, "FIXME: cutscene: meanwhile in a mansion #%u, %04x", tries, ptr);
+			processCallback(ptr);
+			playMusic(6);
+			if (scene->getId() == 11 && CHECK_FLAG(0xDBEC, 1))
+				return true;
+			//some effect
+			loadScene(id, scene->getPosition());
+			}
+			return true;
+		
+		case 0x9d90:
+			loadScene(34, scene->getPosition());
+			Dialog::show(scene, 0x6f60, 987, 986);
+			playAnimation(990, 0, true);
+			playAnimation(991, 1, true);
+			waitAnimation();
+			return true;
 	}
-
+		
 	//unimplemented callback  :(
 	for (uint i = 0; i < 32; ++i) {
 		debug(0, "code[%u] = %02x ", i, code[i]);

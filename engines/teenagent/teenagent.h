@@ -69,6 +69,8 @@ public:
 	void displayMessage(const Common::String &str, byte color = 0xd1);
 	void moveTo(const Common::Point & dst, byte o, bool warp = false);
 	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);
+	void moveTo(Object * obj);
+	void moveRel(int16 x, int16 y, byte o, bool warp = false);
 	void playAnimation(uint16 id, byte slot = 0, bool async = false);
 	void loadScene(byte id, const Common::Point &pos, byte o = 0);
 	void loadScene(byte id, uint16 x, uint16 y, byte o = 0);
@@ -94,7 +96,6 @@ public:
 
 private: 
 	void processObject();
-	void anotherMansionTry();
 
 	bool scene_busy;
 	Action action;

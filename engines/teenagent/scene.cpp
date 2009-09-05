@@ -402,15 +402,21 @@ bool Scene::processEventQueue() {
 		
 		case SceneEvent::LoadScene: {
 			init(current_event.scene, current_event.dst);
+			sounds.clear();
 			current_event.clear();
 		} break;
 		
 		case SceneEvent::Walk: {
-			if (current_event.color != 0) {
-				warp(current_event.dst, current_event.orientation);
+			Common::Point dst = current_event.dst;
+			if ((current_event.color & 2) != 0) { //relative move
+				dst.x += position.x;
+				dst.y += position.y;
+			}
+			if ((current_event.color & 1) != 0) {
+				warp(dst, current_event.orientation);
 				current_event.clear();
 			} else
-				moveTo(current_event.dst, current_event.orientation);
+				moveTo(dst, current_event.orientation);
 		} break;
 		
 		case SceneEvent::Message: {
