@@ -42,7 +42,7 @@ const ExtractEntry lolFloppyFile2G[] = {
 	{ kLolDscUnk2, 0x00037477, 0x0003748E },
 	{ kLolDscDoorShapeIndex, 0x0003748E, 0x000374A5 },
 	{ kLolDscDimData1, 0x00036F03, 0x00037047 },
-	{ kLolDscDimData2, 0x00037047, 0x000370D0 },
+	{ kLolDscDimData2, 0x00037047, 0x000372D0 },
 	{ kLolDscBlockMap, 0x00036E64, 0x00036E70 },
 	{ kLolDscDimMap, 0x00036E70, 0x00036E82 },
 	{ kLolDscDoorScale, 0x00036E82, 0x00036E92 },
