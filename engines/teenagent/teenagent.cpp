@@ -287,8 +287,8 @@ Common::Error TeenAgentEngine::run() {
 				uint w = res->font7.render(NULL, 0, 0, name);
 				res->font7.render(surface, (320 - w) / 2, 180, name, true);
 				if (current_object) {
-					current_object->rect.render(surface, 0x80);
-					current_object->actor_rect.render(surface, 0x81);
+					//current_object->rect.render(surface, 0x80);
+					//current_object->actor_rect.render(surface, 0x81);
 				}
 			}
 		}

@@ -346,11 +346,12 @@ bool Scene::render(OSystem * system) {
 	busy |= processEventQueue();
 	//if (!current_event.empty())
 	//	current_event.dump();
-
+    /*
 	for (byte i = 0; i < walkboxes; ++i) {
 		Walkbox * w = walkbox[i];
 		w->rect.render(surface, 0xd0 + i);
 	}
+	*/
 	
 	if (!message.empty()) {
 		Resources::instance()->font7.render(surface, message_pos.x, message_pos.y, message);
