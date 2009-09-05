@@ -45,7 +45,7 @@ void LoLEngine::gui_drawPlayField() {
 	if (_flagsTable[31] & 0x40) {
 		// copy compass shape
 		static const int cx[] = { 112, 152, 224 };
-		_screen->copyRegion(cx[_lang], 32, 288, 0, 32, 32, 2, 2, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(cx[_flags.isTalkie ? _lang : 0], 32, 288, 0, 32, 32, 2, 2, Screen::CR_NO_P_CHECK);
 		_compassDirection = -1;
 	}
 
@@ -576,9 +576,16 @@ void LoLEngine::gui_drawCompass() {
 
 	const CompassDef *c = &_compassDefs[t];
 
-	_screen->drawShape(_screen->_curPage, _gameShapes[22 + _lang], 294, 3, 0, 0);
-	_screen->drawShape(_screen->_curPage, _gameShapes[(_flags.isTalkie ? 25 : 23) + c->shapeIndex], 298 + c->x, c->y + 9, 0, c->flags | 0x300, _screen->_paletteOverlay1, 1);
-	_screen->drawShape(_screen->_curPage, _gameShapes[(_flags.isTalkie ? 25 : 23)  + c->shapeIndex], 299 + c->x, c->y + 8, 0, c->flags);
+	int compassShp = 22;
+	int compassPtr = 23;
+	if (_flags.isTalkie) {
+		compassShp += _lang;
+		compassPtr = 25;
+	}
+
+	_screen->drawShape(_screen->_curPage, _gameShapes[compassShp], 294, 3, 0, 0);
+	_screen->drawShape(_screen->_curPage, _gameShapes[compassPtr + c->shapeIndex], 298 + c->x, c->y + 9, 0, c->flags | 0x300, _screen->_paletteOverlay1, 1);
+	_screen->drawShape(_screen->_curPage, _gameShapes[compassPtr + c->shapeIndex], 299 + c->x, c->y + 8, 0, c->flags);
 
 	if (!_screen->_curPage)
 		_screen->showMouse();
