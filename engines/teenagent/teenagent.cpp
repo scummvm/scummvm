@@ -205,19 +205,12 @@ Common::Error TeenAgentEngine::run() {
 	scene = new Scene;
 	inventory = new Inventory;
 	
-	
-	
 	scene->init(this, _system);
 	inventory->init(this);
 
-	//res.varia.read(6, palette, sizeof(palette));
-	//14,15 - on type 2
-	//scene->init(_system, 2);
-	//scene->init(_system, 27);
-	//scene->init(_system, 28);
+	_system->setMouseCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
+
 	scene->init(10, Common::Point(136, 153));
-	//scene->init(_system, 1);
-	_system->disableCursorPalette(true);
 	
 	syncSoundSettings();
 	
