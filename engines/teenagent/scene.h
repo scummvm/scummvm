@@ -81,7 +81,7 @@ struct SceneEvent {
 	}
 	
 	void dump() const {
-		debug(0, "event[%d]: %s[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u", 
+		debug(0, "event[%d]: \"%s\"[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u", 
 			(int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
 		);
 	}
@@ -140,7 +140,7 @@ private:
 	Surface on;
 	Surface *ons;
 	uint32 ons_count;
-	Animation animations[4], custom_animations[4];
+	Animation animations[4], custom_animations[5];
 
 	Actor teenagent, teenagent_idle;
 	Common::Point position0, position, destination;

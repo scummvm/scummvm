@@ -65,9 +65,20 @@ void Actor::render(Graphics::Surface * surface, const Common::Point & position, 
 		return;
 	}
 	index += delta_frame;
+	
+	int xp = position.x - dx, yp = position.y - dy;
+	if (xp < 0)
+		xp = 0;
+	if (xp + s->w > 320)
+		xp = 320 - s->w;
 
+	if (yp < 0)
+		yp = 0;
+	if (yp + s->h > 200)
+		yp = 200 - s->h;
+	
 	if (s != NULL)
-		s->render(surface, position.x - dx, position.y - dy, orientation == Object::ActorLeft);
+		s->render(surface, xp, yp, orientation == Object::ActorLeft);
 }
 
 } // End of namespace TeenAgent

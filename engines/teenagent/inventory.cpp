@@ -144,8 +144,14 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 	case Common::EVENT_LBUTTONDOWN: {
 		//check combine
-		if (selected_obj == NULL || hovered_obj == NULL)
+		if (hovered_obj == NULL)
 			return _active;
+
+		if (selected_obj == NULL) {
+			activate(false);
+			_engine->displayMessage(hovered_obj->description());
+			return true;
+		}
 
 		int id1 = selected_obj->id;
 		int id2 = hovered_obj->id;
@@ -190,13 +196,6 @@ bool Inventory::processEvent(const Common::Event &event) {
 					activate(false);
 					if (_engine->processCallback(READ_LE_UINT16(table + 1)))
 						return true;
-					else {
-						//some callbacks returns false if they need to display default description
-						_engine->displayMessage(hovered_obj->description());
-						activate(false);
-						resetSelectedObject();
-						return true;
-					}
 				}
 			}
 		}

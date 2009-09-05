@@ -218,13 +218,13 @@ void Scene::init(int id, const Common::Point &pos) {
 }
 
 void Scene::playAnimation(byte idx, uint id) {
-	assert(idx < 4);
+	assert(idx < 5);
 	Common::SeekableReadStream * s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
 		error("playing animation %u failed", id);
 
 	custom_animations[idx].load(s);
-	custom_animations[idx].loop = idx == 3; //looping face animation.
+	custom_animations[idx].loop = idx == 4; //looping face animation.
 }
 
 void Scene::push(const SceneEvent &event) {
@@ -240,7 +240,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			event.type == Common::EVENT_RBUTTONDOWN
 		) {
 			message.clear();
-			custom_animations[3].free();
+			custom_animations[4].free();
 			nextEvent();
 			return true;
 		}

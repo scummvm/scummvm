@@ -77,7 +77,7 @@ void TeenAgentEngine::processObject() {
 				
 				//error
 				inventory->resetSelectedObject();
-				scene->displayMessage("That's no good.");
+				displayMessage(0x3457);
 				
 				break;
 			} else {
@@ -329,6 +329,8 @@ Object * TeenAgentEngine::findObject(int id, const Common::Point &point) {
 }
 
 void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
+	if (str.empty())
+		return;
 	SceneEvent event(SceneEvent::Message);
 	event.message = str;
 	event.color = color;

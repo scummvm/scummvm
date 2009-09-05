@@ -58,7 +58,7 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 					if (animation != 0) {
 						SceneEvent e(SceneEvent::PlayAnimation);
 						e.animation = animation;
-						e.color = 0x83; //4th slot, async animation
+						e.color = 0x84; //4th slot, async animation
 						scene->push(e);
 					}
 					if (actor_animation != 0) {
