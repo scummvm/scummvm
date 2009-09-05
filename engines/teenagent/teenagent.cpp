@@ -348,14 +348,15 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
 	displayMessage(message, color);
 }
 
-void TeenAgentEngine::moveTo(const Common::Point & dst, bool warp) {
-	moveTo(dst.x, dst.y);
+void TeenAgentEngine::moveTo(const Common::Point & dst, byte o, bool warp) {
+	moveTo(dst.x, dst.y, o, warp);
 }
 
-void TeenAgentEngine::moveTo(uint16 x, uint16 y, bool warp) {
+void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {
 	SceneEvent event(SceneEvent::Walk);
 	event.dst.x = x;
 	event.dst.y = y;
+	event.orientation = o;
 	event.color = warp? 1: 0;
 	scene->push(event);
 }
@@ -452,7 +453,7 @@ void TeenAgentEngine::playSoundNow(byte id) {
 	uint size = in->size();
 	char *data = new char[size];
 	in->read(data, size);
-	debug(0, "playing %u samples...", size);
+	//debug(0, "playing %u samples...", size);
 	
 	_mixer->playRaw(Audio::Mixer::kSFXSoundType, &_soundHandle, data, size, 11025, Audio::Mixer::FLAG_AUTOFREE);
 }

@@ -157,7 +157,12 @@ private:
 	EventList events;
 	SceneEvent current_event;
 	
-	byte sound_id, sound_delay;
+	struct Sound {
+		byte id, delay;
+		Sound(byte i, byte d): id(i), delay(d) {}
+	};
+	typedef Common::List<Sound> Sounds;
+	Sounds sounds;
 };
 
 } // End of namespace TeenAgent

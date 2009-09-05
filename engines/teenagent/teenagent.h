@@ -67,8 +67,8 @@ public:
 	//event driven:
 	void displayMessage(uint16 addr, byte color = 0xd1);
 	void displayMessage(const Common::String &str, byte color = 0xd1);
-	void moveTo(const Common::Point & dst, bool warp = false);
-	void moveTo(uint16 x, uint16 y, bool warp = false);
+	void moveTo(const Common::Point & dst, byte o, bool warp = false);
+	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);
 	void playAnimation(uint16 id, byte slot = 0, bool async = false);
 	void loadScene(byte id, const Common::Point &pos, byte o = 0);
 	void loadScene(byte id, uint16 x, uint16 y, byte o = 0);

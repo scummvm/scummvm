@@ -37,8 +37,7 @@ Scene::Scene() : _engine(NULL),
 	_system(NULL), 
 	_id(0), ons(0), walkboxes(0), 
 	orientation(Object::ActorRight), 
-	current_event(SceneEvent::None), 
-	sound_id(0), sound_delay(0) {}
+	current_event(SceneEvent::None) {}
 
 void Scene::warp(const Common::Point & _point, byte o) { 
 	Common::Point point(_point);
@@ -206,8 +205,8 @@ void Scene::init(int id, const Common::Point &pos) {
 	
 	if (id == 23 && res->dseg.get_byte(0xdbee) == 1) {
 		//talked to anne, lovers music
-		if (_engine->music->getId() != 6)
-			_engine->music->load(6);
+		if (_engine->music->getId() != 7)
+			_engine->music->load(7);
 	} else {
 		//check music
 		int now_playing = _engine->music->getId();
@@ -361,11 +360,15 @@ bool Scene::render(OSystem * system) {
 	system->unlockScreen();
 	
 	
-	if (sound_id != 0 && sound_delay != 0) {
-		if (--sound_delay == 0) {
-			debug(0, "delayed sound %u started", sound_id);
-			_engine->playSoundNow(sound_id);
-			sound_id = 0;
+	for(Sounds::iterator i = sounds.begin(); i != sounds.end(); ) {
+		Sound &sound = *i;
+		if (sound.delay == 0) {
+			debug(0, "sound %u started", sound.id);
+			_engine->playSoundNow(sound.id);
+			i = sounds.erase(i);
+		} else {
+			--sound.delay;
+			++i;
 		}
 	}
 	
@@ -435,8 +438,7 @@ bool Scene::processEventQueue() {
 			if (current_event.color == 0) {
 				_engine->playSoundNow(current_event.sound);
 			} else {
-				sound_id = current_event.sound;
-				sound_delay = current_event.color;
+				sounds.push_back(Sound(current_event.sound, current_event.color));
 			}
 			
 			current_event.clear();
