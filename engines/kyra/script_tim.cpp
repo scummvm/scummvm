@@ -1261,6 +1261,8 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	if (df != _dialogueHighlightedButton)
 		drawDialogueButtons();
 
+	_screen->updateScreen();
+
 	if (res == 0)
 		return 0;
 
