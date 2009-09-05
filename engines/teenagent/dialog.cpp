@@ -28,7 +28,7 @@
 
 namespace TeenAgent {
 
-void Dialog::show(Scene * scene, uint16 addr, uint16 animation) {
+void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_animation) {
 	debug(0, "Dialog::show(%04x, %u)", addr, animation);
 	Resources * res = Resources::instance();
 	int n = 0;
@@ -58,7 +58,13 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation) {
 					if (animation != 0) {
 						SceneEvent e(SceneEvent::PlayAnimation);
 						e.animation = animation;
-						e.color = 0x83; //3rd slot, async animation
+						e.color = 0x83; //4th slot, async animation
+						scene->push(e);
+					}
+					if (actor_animation != 0) {
+						SceneEvent e(SceneEvent::PlayAnimation);
+						e.animation = actor_animation;
+						e.color = 0x80; //1st slot, async animation
 						scene->push(e);
 					}
 					SceneEvent e(SceneEvent::Message);
@@ -90,7 +96,7 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation) {
 	}
 }
 
-uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation) {
+uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation, uint16 actor_animation) {
 	debug(0, "Dialog::pop(%04x, %u)", addr, animation);
 	Resources * res = Resources::instance();
 	uint16 next;
@@ -101,7 +107,7 @@ uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation) {
 	uint16 next2 = res->dseg.get_word(addr);
 	if (next2 != 0xffff)
 		res->dseg.set_word(addr - 2, 0);
-	show(scene, next, animation);
+	show(scene, next, animation, actor_animation);
 	return next;
 }
 
