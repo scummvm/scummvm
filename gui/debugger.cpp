@@ -243,7 +243,7 @@ bool Debugger::parseCommand(const char *inputOrig) {
 					break;
 				// Integer Array
 				case DVAR_INTARRAY: {
-					char *chr = (char *)strchr(param[0], '[');
+					const char *chr = strchr(param[0], '[');
 					if (!chr) {
 						DebugPrintf("You must access this array as %s[element]\n", param[0]);
 					} else {
