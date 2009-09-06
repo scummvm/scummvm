@@ -2351,7 +2351,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 			int slotOffs = (_currentMenu == &_saveMenu) ? 1 : 0;
 
-			if (((uint)_savegameOffset == _saveSlots.size() - (4 - slotOffs)) || _saveSlots.size() < (5 - slotOffs)) {
+			if (((uint)_savegameOffset == _saveSlots.size() - (4 - slotOffs)) || _saveSlots.size() < (uint)(5 - slotOffs)) {
 				_scrollDownButton.data0ShapePtr = _scrollDownButton.data1ShapePtr = _scrollDownButton.data2ShapePtr = 0;
 			} else {
 				_scrollDownButton.data0ShapePtr = _vm->_gameShapes[18];
