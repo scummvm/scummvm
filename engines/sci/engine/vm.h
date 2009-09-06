@@ -117,7 +117,6 @@ struct Class {
 	reg_t reg; /**< offset; script-relative offset, segment: 0 if not instantiated */
 };
 
-#define RAW_GET_CLASS_INDEX(scr, reg) ((scr)->obj_indices->checkKey(reg.offset, false))
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 #define IS_CLASS(obj) (obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)

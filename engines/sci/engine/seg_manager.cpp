@@ -186,16 +186,8 @@ int SegManager::initialiseScript(Script &scr, int script_nr) {
 	}
 
 	// Initialize objects
-	scr.locals_offset = 0;
-	scr.locals_block = NULL;
-
-	scr._codeBlocks.clear();
-
+	scr.init();
 	scr.nr = script_nr;
-	scr._markedAsDeleted = false;
-	scr.relocated = 0;
-
-	scr.obj_indices = new IntMapper();
 
 	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
 		scr.heap_start = scr.buf + scr.script_size;
@@ -463,22 +455,14 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 
 Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 	Object *obj;
-	int id;
 	SciVersion version = _resMan->sciVersion();	// for the offset defines
-	unsigned int base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
-	reg_t temp;
+	uint base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 
 	Script *scr = getScript(obj_pos.segment);
 
 	VERIFY(base < scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
-	temp = make_reg(obj_pos.segment, base);
-
-	id = scr->obj_indices->checkKey(base, true);
-	if ((uint)id == scr->_objects.size())
-		scr->_objects.push_back(Object());
-
-	obj = &scr->_objects[id];
+	obj = scr->allocateObject(base);
 
 	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < scr->buf_size, "Function area pointer stored beyond end of script\n");
 
@@ -491,7 +475,7 @@ Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 		int i;
 
 		obj->flags = 0;
-		obj->pos = temp;
+		obj->pos = make_reg(obj_pos.segment, base);
 
 		VERIFY(base + funct_area < scr->buf_size, "Function area pointer references beyond end of script");
 
@@ -520,20 +504,15 @@ Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 
 Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 	Object *obj;
-	int id;
-	int base = obj_pos.offset;
+	uint base = obj_pos.offset;
 
 	Script *scr = getScript(obj_pos.segment);
 
-	VERIFY(base < (uint16)scr->buf_size, "Attempt to initialize object beyond end of script\n");
+	VERIFY(base < scr->buf_size, "Attempt to initialize object beyond end of script\n");
 
-	id = scr->obj_indices->checkKey(obj_pos.offset, true);
-	if ((uint)id == scr->_objects.size())
-		scr->_objects.push_back(Object());
+	obj = scr->allocateObject(base);
 
-	obj = &scr->_objects[id];
-
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < (uint16)scr->buf_size, "Function area pointer stored beyond end of script\n");
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < scr->buf_size, "Function area pointer stored beyond end of script\n");
 
 	{
 		byte *data = (byte *)(scr->buf + base);

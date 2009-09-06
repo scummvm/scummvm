@@ -89,6 +89,34 @@ void Script::freeScript() {
 	_codeBlocks.clear();
 }
 
+void Script::init() {
+	locals_offset = 0;
+	locals_block = NULL;
+
+	_codeBlocks.clear();
+
+	_markedAsDeleted = false;
+	relocated = 0;
+
+	obj_indices = new IntMapper();
+}
+
+Object *Script::allocateObject(uint16 offset) {
+	int idx = obj_indices->checkKey(offset, true);
+	if ((uint)idx == _objects.size())
+		_objects.push_back(Object());
+
+	return &_objects[idx];
+}
+
+Object *Script::getObject(uint16 offset) {
+	int idx = obj_indices->checkKey(offset, false);
+	if (idx >= 0 && (uint)idx < _objects.size())
+		return &_objects[idx];
+	else
+		return 0;
+}
+
 void Script::incrementLockers() {
 	lockers++;
 }
@@ -248,17 +276,16 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 	Script *script = this;
 
 	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
-		int idx = RAW_GET_CLASS_INDEX(script, addr);
-		if (idx >= 0 && (uint)idx < script->_objects.size()) {
+		Object *obj = getObject(addr.offset);
+		if (obj) {
 			// Note all local variables, if we have a local variable environment
 			if (script->locals_segment)
 				(*note)(param, make_reg(script->locals_segment, 0));
 
-			Object &obj = script->_objects[idx];
-			for (uint i = 0; i < obj._variables.size(); i++)
-				(*note)(param, obj._variables[i]);
+			for (uint i = 0; i < obj->_variables.size(); i++)
+				(*note)(param, obj->_variables[i]);
 		} else {
-			warning("Request for outgoing script-object reference at %04x:%04x yielded invalid index %d", PRINT_REG(addr), idx);
+			warning("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
 		}
 	} else {
 		/*		warning("Unexpected request for outgoing script-object references at %04x:%04x", PRINT_REG(addr));*/

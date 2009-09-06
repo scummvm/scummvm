@@ -248,8 +248,10 @@ struct Script : public MemObject {
 	byte *heap_start; /**< Start of heap if SCI1.1, NULL otherwise */
 	uint16 *export_table; /**< Abs. offset of the export table or 0 if not present */
 
+protected:
 	IntMapper *obj_indices;
 
+public:
 	int exports_nr; /**< Number of entries in the exports table */
 	int synonyms_nr; /**< Number of entries in the synonyms block */
 	int lockers; /**< Number of classes and objects that require this script */
@@ -296,6 +298,7 @@ public:
 	}
 
 	void freeScript();
+	void init();
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
@@ -305,6 +308,9 @@ public:
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
+
+	Object *allocateObject(uint16 offset);
+	Object *getObject(uint16 offset);
 
 	// script lock operations
 

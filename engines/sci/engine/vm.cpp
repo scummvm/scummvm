@@ -1936,7 +1936,6 @@ Object *obj_get(SegManager *segMan, reg_t offset) {
 	MemObject *mobj = GET_OBJECT_SEGMENT(*segMan, offset.segment);
 	SciVersion version = segMan->sciVersion();
 	Object *obj = NULL;
-	int idx;
 
 	if (mobj != NULL) {
 		if (mobj->getType() == MEM_OBJ_CLONES) {
@@ -1947,9 +1946,7 @@ Object *obj_get(SegManager *segMan, reg_t offset) {
 			Script *scr = (Script *)mobj;
 			if (offset.offset <= scr->buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(scr->buf + offset.offset)) {
-				idx = RAW_GET_CLASS_INDEX(scr, offset);
-				if (idx >= 0 && (uint)idx < scr->_objects.size())
-					obj = &scr->_objects[idx];
+				obj = scr->getObject(offset.offset);
 			}
 		}
 	}
