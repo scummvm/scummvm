@@ -1507,8 +1507,7 @@ SelectorType lookup_selector(SegManager *segManager, reg_t obj_location, Selecto
 
 reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_index) {
 	SegmentId seg = segManager->getSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-	Script *script = segManager->getScriptIfLoaded(seg);
-	return make_reg(seg, READ_LE_UINT16((byte *)(script->export_table + export_index)));
+	return make_reg(seg, segManager->validateExportFunc(export_index, seg));
 }
 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segManager->get_class_address(id, SCRIPT_GET_LOCK, reg))
