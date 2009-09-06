@@ -43,6 +43,9 @@
 
 namespace Sci {
 
+
+#define VER(x) Common::Serializer::Version(x)
+
 // from ksound.cpp:
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id);
 
@@ -160,7 +163,7 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_type);
 	s.syncString(_keytext);
-	s.skip(4); 	// Obsolete: Used to be keytext_size
+	s.skip(4, VER(9), VER(9)); 	// Obsolete: Used to be keytext_size
 
 	s.syncAsSint32LE(_flags);
 	s.syncBytes(_said, MENU_SAID_SPEC_SIZE);
@@ -189,7 +192,7 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(reserved_id);
 	s.syncAsSint32LE(exports_wide);
-	s.skip(4);	// Obsolete: Used to be gc_mark_bits
+	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be gc_mark_bits
 
 	id_seg_map->saveLoadWithSerializer(s);
 
@@ -205,7 +208,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 static void sync_SegManagerPtr(Common::Serializer &s, ResourceManager *&resMan, SegManager *&obj) {
-	s.skip(1);	// obsolete: used to be a flag indicating if we got sci11 or not
+	s.skip(1, VER(9), VER(9));	// obsolete: used to be a flag indicating if we got sci11 or not
 
 	if (s.isLoading()) {
 		// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
@@ -233,18 +236,19 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 	// so that we can implement backward compatibility if the savegame format changes.
 
 	s.syncString(obj.savegame_name);
-	s.syncAsSint32LE(obj.savegame_version);
+	s.syncVersion(CURRENT_SAVEGAME_VERSION);
+	obj.savegame_version = s.getVersion();
 	s.syncString(obj.game_version);
-	s.skip(4);	// obsolete: used to be game version
+	s.skip(4, VER(9), VER(9));	// obsolete: used to be game version
 	s.syncAsSint32LE(obj.savegame_date);
 	s.syncAsSint32LE(obj.savegame_time);
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
-	s.skip(4);	// Obsolete: Used to be savegame_version
+	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be savegame_version
 
 	syncCStr(s, &game_version);
-	s.skip(4);	// Obsolete: Used to be version
+	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be version
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	if (s.isLoading()) {
