@@ -58,7 +58,7 @@ SegManager::SegManager(ResourceManager *resMan) {
 	Nodes_seg_id = 0;
 	Hunks_seg_id = 0;
 
-	exports_wide = 0;
+	_exportsAreWide = false;
 	_resMan = resMan;
 
 	int result = 0;
@@ -278,8 +278,8 @@ bool SegManager::scriptIsLoaded(SegmentId seg) {
 	return getScriptIfLoaded(seg) != 0;
 }
 
-void SegManager::setExportWidth(int flag) {
-	exports_wide = flag;
+void SegManager::setExportAreWide(bool flag) {
+	_exportsAreWide = flag;
 }
 
 int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
@@ -732,7 +732,7 @@ uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 		return 0;
 	}
 
-	if (exports_wide)
+	if (_exportsAreWide)
 		pubfunct *= 2;
 	uint16 offset = READ_LE_UINT16((byte *)(scr->export_table + pubfunct));
 	VERIFY(offset < scr->buf_size, "invalid export function pointer");

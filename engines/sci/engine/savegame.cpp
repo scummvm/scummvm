@@ -190,7 +190,7 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be reserved_id
-	s.syncAsSint32LE(exports_wide);
+	s.syncAsSint32LE(_exportsAreWide);
 	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be gc_mark_bits
 
 	if (s.isLoading()) {

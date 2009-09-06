@@ -188,9 +188,9 @@ public:
 
 	/**
 	 * Tells the segment manager whether exports are wide (32-bit) or not.
-	 * @param flag	1 if exports are wide, 0 otherwise
+	 * @param flag	true if exports are wide, false otherwise
 	 */
-	void setExportWidth(int flag);
+	void setExportAreWide(bool flag);
 
 	/**
 	 * Processes a relocation block witin a script
@@ -360,7 +360,7 @@ private:
 
 public: // TODO: make private
 	Common::Array<MemObject *> _heap;
-	int exports_wide;
+	bool _exportsAreWide;
 	Common::Array<Class> _classtable; /**< Table of all classes */
 	ResourceManager *_resMan;
 

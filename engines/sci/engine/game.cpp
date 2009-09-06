@@ -359,9 +359,9 @@ int script_init_engine(EngineState *s) {
 	s->have_bp = 0;
 
 	if (s->detectLofsType() == SCI_VERSION_1_MIDDLE)
-		s->segMan->setExportWidth(1);
+		s->segMan->setExportAreWide(true);
 	else
-		s->segMan->setExportWidth(0);
+		s->segMan->setExportAreWide(false);
 
 	debug(2, "Engine initialized");
 
