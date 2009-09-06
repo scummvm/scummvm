@@ -2305,28 +2305,40 @@ int GUI_LoL::runMenu(Menu &menu) {
 			char *s = (char *)_vm->_tempBuffer5120;
 			strncpy(s, _vm->getLangString(0x406f + _vm->_monsterDifficulty), 30);
 			s[29] = 0;
-			_currentMenu->item[0].itemString = s;
+			_currentMenu->item[_vm->gameFlags().isTalkie ? 0 : 2].itemString = s;
 			s += (strlen(s) + 1);
 
 			strncpy(s, _vm->getLangString(_vm->_smoothScrollingEnabled ? 0x4068 : 0x4069), 30);
 			s[29] = 0;
-			_currentMenu->item[1].itemString = s;
+			_currentMenu->item[_vm->gameFlags().isTalkie ? 1 : 3].itemString = s;
 			s += (strlen(s) + 1);
 
 			strncpy(s, _vm->getLangString(_vm->_floatingCursorsEnabled ? 0x4068 : 0x4069), 30);
 			s[29] = 0;
-			_currentMenu->item[2].itemString = s;
+			_currentMenu->item[_vm->gameFlags().isTalkie ? 2 : 4].itemString = s;
 			s += (strlen(s) + 1);
 
-			strncpy(s, _vm->getLangString(0x42d6 + _vm->_lang), 30);
-			s[29] = 0;
-			_currentMenu->item[3].itemString = s;
-			s += (strlen(s) + 1);
+			if (_vm->gameFlags().isTalkie) {
+				strncpy(s, _vm->getLangString(0x42d6 + _vm->_lang), 30);
+				s[29] = 0;
+				_currentMenu->item[3].itemString = s;
+				s += (strlen(s) + 1);
 
-			strncpy(s, _vm->getLangString(_vm->textEnabled() ? 0x4068 : 0x4069), 30);
-			s[29] = 0;
-			_currentMenu->item[4].itemString = s;
-			s += (strlen(s) + 1);
+				strncpy(s, _vm->getLangString(_vm->textEnabled() ? 0x4068 : 0x4069), 30);
+				s[29] = 0;
+				_currentMenu->item[4].itemString = s;
+				s += (strlen(s) + 1);
+			} else {
+				strncpy(s, _vm->getLangString(_vm->_configMusic ? 0x4068 : 0x4069), 30);
+				s[29] = 0;
+				_currentMenu->item[0].itemString = s;
+				s += (strlen(s) + 1);
+
+				strncpy(s, _vm->getLangString(_vm->_configSounds ? 0x4068 : 0x4069), 30);
+				s[29] = 0;
+				_currentMenu->item[1].itemString = s;
+				s += (strlen(s) + 1);
+			}
 		}
 
 		if (hasSpecialButtons == 1) {
@@ -2336,7 +2348,10 @@ int GUI_LoL::runMenu(Menu &menu) {
 				_scrollUpButton.data0ShapePtr = _vm->_gameShapes[17];
 				_scrollUpButton.data1ShapePtr = _scrollUpButton.data2ShapePtr = _vm->_gameShapes[19];
 			}
-			if ((uint)_savegameOffset == _saveSlots.size() - 4) {
+
+			int slotOffs = (_currentMenu == &_saveMenu) ? 1 : 0;
+
+			if (((uint)_savegameOffset == _saveSlots.size() - (4 - slotOffs)) || _saveSlots.size() < (5 - slotOffs)) {
 				_scrollDownButton.data0ShapePtr = _scrollDownButton.data1ShapePtr = _scrollDownButton.data2ShapePtr = 0;
 			} else {
 				_scrollDownButton.data0ShapePtr = _vm->_gameShapes[18];
@@ -2496,13 +2511,18 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 	}
 
 	int startSlot = 0;
-	if (&menu == &_saveMenu && _savegameOffset == 0)
-		startSlot = 1;
+	int slotOffs = 0;
+
+	if (&menu == &_saveMenu) {
+		if (_savegameOffset == 0)
+			startSlot = 1;
+		slotOffs = 1;
+	}
 
 	KyraEngine_v1::SaveHeader header;
 	Common::InSaveFile *in;
-	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
-		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset - startSlot]), header)) != 0) {
+	for (int i = startSlot; i < num && uint(_savegameOffset + i - slotOffs) < _saveSlots.size(); ++i) {
+		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset - slotOffs]), header)) != 0) {
 			strncpy(s, header.description.c_str(), 80);
 			s[79] = 0;
 
@@ -2510,7 +2530,7 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 
 			menu.item[i].itemString = s;
 			s += (strlen(s) + 1);
-			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset];
+			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];
 			menu.item[i].enabled = true;
 			delete in;
 		}
@@ -2642,7 +2662,7 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 
 	_newMenu = &_savenameMenu;
 	int16 s = (int16)button->arg;
-	_menuResult = _saveMenu.item[-s - 2].saveSlot + 1;
+	_menuResult = _saveMenu.item[-s - 2].saveSlot;
 	_saveDescription = (char*)_vm->_tempBuffer5120 + 1000;
 	_saveDescription[0] = 0;
 	if (_saveMenu.item[-s - 2].saveSlot != -3)
@@ -2662,7 +2682,7 @@ int GUI_LoL::clickedDeleteMenu(Button *button) {
 	_choiceMenu.menuNameId = 0x400b;
 	_newMenu = &_choiceMenu;
 	int16 s = (int16)button->arg;
-	_menuResult = _deleteMenu.item[-s - 2].saveSlot + 1;
+	_menuResult = _deleteMenu.item[-s - 2].saveSlot;
 
 	return 1;
 }
@@ -2671,6 +2691,19 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 	updateMenuButton(button);
 
 	switch (button->arg) {
+	case 0xfff9:
+		_vm->_configMusic ^= 1;
+		_vm->sound()->enableMusic(_vm->_configMusic);
+		
+		if (_vm->_configMusic)
+			_vm->snd_playTrack(_vm->_curMusicTheme);
+		else
+			_vm->_sound->beginFadeOut();
+		break;
+	case 0xfff8:
+		_vm->_configSounds ^= true;
+		_vm->sound()->enableSFX(_vm->_configSounds);
+		break;
 	case 0xfff7:
 		_vm->_monsterDifficulty = ++_vm->_monsterDifficulty % 3;
 		break;
@@ -2784,7 +2817,7 @@ int GUI_LoL::clickedSavenameMenu(Button *button) {
 
 		Util::convertDOSToISO(_saveDescription);
 
-		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult;
+		int slot = _menuResult == -3 ? getNextSavegameSlot() : _menuResult;
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
 		_vm->saveGameState(slot, _saveDescription, &thumb);
@@ -2805,7 +2838,7 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 		if (_lastMenu == &_mainMenu) {
 			_vm->quitGame();
 		} else if (_lastMenu == &_deleteMenu) {
-			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult - 1));
+			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult));
 			Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _menuResult);
 			while (i != _saveSlots.end()) {
 				++i;
@@ -2839,7 +2872,7 @@ int GUI_LoL::scrollUp(Button *button) {
 
 int GUI_LoL::scrollDown(Button *button) {
 	updateButton(button);
-	if ((uint)_savegameOffset < _saveSlots.size() - 4) {
+	if ((uint)_savegameOffset < _saveSlots.size() - (_currentMenu == &_saveMenu ? 3 : 4)) {
 		_savegameOffset++;
 		_newMenu = _currentMenu;
 		_menuResult = -1;
