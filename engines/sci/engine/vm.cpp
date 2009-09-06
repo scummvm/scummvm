@@ -204,7 +204,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
-	int seg = s->segMan->segGet(script);
+	int seg = s->segMan->getScriptSegment(script);
 	Script *scr = s->segMan->getScriptIfLoaded(seg);
 
 	if (!scr)  // Script not present yet?
@@ -212,7 +212,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	else
 		scr->unmarkDeleted();
 
-	int temp = s->segMan->validateExportFunc(pubfunct, seg);
+	const int temp = s->segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {
 		error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
 		return NULL;
@@ -1042,7 +1042,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x28: // class
-			s->r_acc = s->segMan->get_class_address((unsigned)opparams[0], SCRIPT_GET_LOCK,
+			s->r_acc = s->segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
 											scriptState.xs->addr.pc);
 			break;
 
@@ -1062,7 +1062,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x2b: // super
-			r_temp = s->segMan->get_class_address(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
+			r_temp = s->segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
 
 			if (!r_temp.segment)
 				error("[VM]: Invalid superclass in object");
@@ -1506,11 +1506,11 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 }
 
 reg_t script_lookup_export(SegManager *segMan, int script_nr, int export_index) {
-	SegmentId seg = segMan->getSegment(script_nr, SCRIPT_GET_DONT_LOAD);
+	SegmentId seg = segMan->getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
 	return make_reg(seg, segMan->validateExportFunc(export_index, seg));
 }
 
-#define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->get_class_address(id, SCRIPT_GET_LOCK, reg))
+#define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->getClassAddress(id, SCRIPT_GET_LOCK, reg))
 
 int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, Resource **script, Resource **heap, int *was_new) {
 	int seg_id;
@@ -1533,7 +1533,7 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 		return 0;
 	}
 
-	seg_id = segMan->segGet(script_nr);
+	seg_id = segMan->getScriptSegment(script_nr);
 	Script *scr = segMan->getScriptIfLoaded(seg_id);
 	if (scr) {
 		if (!scr->isMarkedAsDeleted()) {
@@ -1821,7 +1821,7 @@ void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg)
 }
 
 void script_uninstantiate(SegManager *segMan, int script_nr) {
-	SegmentId segment = segMan->segGet(script_nr);
+	SegmentId segment = segMan->getScriptSegment(script_nr);
 	Script *scr = segMan->getScriptIfLoaded(segment);
 
 	if (!scr) {   // Is it already loaded?

@@ -2844,7 +2844,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 		if (*endptr)
 			return 1;
 
-		dest->segment = s->segMan->segGet(script_nr);
+		dest->segment = s->segMan->getScriptSegment(script_nr);
 
 		if (!dest->segment) {
 			return 1;

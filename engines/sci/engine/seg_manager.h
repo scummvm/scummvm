@@ -44,24 +44,24 @@ namespace Sci {
 		: NULL): NULL)
 
 /**
- * Parameters for getSegment()
+ * Parameters for getScriptSegment().
  */
-typedef enum {
+enum ScriptLoadType {
 	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
 	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
 	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
-} SCRIPT_GET;
+};
 
 
 class SegManager : public Common::Serializable {
 public:
 	/**
-	 * Initialize the segment manager
+	 * Initialize the segment manager.
 	 */
 	SegManager(ResourceManager *resMan);
 
 	/**
-	 * Deallocate all memory associated with the segment manager
+	 * Deallocate all memory associated with the segment manager.
 	 */
 	~SegManager();
 
@@ -70,7 +70,7 @@ public:
 	// 1. Scripts
 
 	/**
-	 * Allocate a script into the segment manager
+	 * Allocate a script into the segment manager.
 	 * @param script_nr		The number of the script to load
 	 * @param seg_id		The segment ID of the newly allocated segment,
 	 * 						on success
@@ -81,7 +81,7 @@ public:
 	// The script must then be initialised; see section (1b.), below.
 
 	/**
-	 * Forcefully deallocate a previously allocated script
+	 * Forcefully deallocate a previously allocated script.
 	 * @param script_nr		number of the script to deallocate
 	 * @return				1 on success, 0 on failure
 	 */
@@ -95,7 +95,7 @@ public:
 
 	/**
 	 * Validate whether the specified public function is exported by 
-	 * the script in the specified segment
+	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
 	 * @param seg			Segment ID of the script the check is to 
 	 * 						be performed for
@@ -105,12 +105,23 @@ public:
 	uint16 validateExportFunc(int pubfunct, SegmentId seg);
 
 	/**
-	 * Get the segment ID associated with a script number
+	 * Determines the segment occupied by a certain script, if any.
 	 * @param script_nr		Number of the script to look up
-	 * @return				The associated segment ID, or -1 if no 
-	 * 						matching segment exists
+	 * @return				The script's segment ID, or -1 on failure
 	 */
-	SegmentId segGet(int script_nr) const;
+	SegmentId getScriptSegment(int script_nr) const;
+
+	/**
+	 * Determines the segment occupied by a certain script. Optionally
+	 * load it, or load & lock it.
+	 * @param[in] script_nr	Number of the script to look up
+	 * @param[in] load		flag determining whether to load/lock the script
+	 * @return				The script's segment ID, or -1 on failure
+	 */
+	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
+
+	// TODO: document this
+	reg_t getClassAddress(int classnr, ScriptLoadType lock, reg_t caller);
 
 	/**
 	 * Return a pointer to the specified script.
@@ -334,15 +345,6 @@ public:
 	 * @return			The data block referenced
 	 */
 	byte *dereference(reg_t reg, int *size);
-
-	/**
-	 * Determines the segment occupied by a certain script
-	 * @param[in] script_id	The script in question
-	 * @param[in] load		One of SCRIPT_GET_*
-	 * @return				The script's segment, or 0 on failure
-	 */
-	SegmentId getSegment(int script_nr, SCRIPT_GET load);
-	reg_t get_class_address(int classnr, SCRIPT_GET lock, reg_t caller);
 
 
 	void heapRelocate(reg_t block);

@@ -326,7 +326,7 @@ int script_init_engine(EngineState *s) {
 	s->segMan = new SegManager(s->resMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
-	SegmentId script_000_segment = s->segMan->getSegment(0, SCRIPT_GET_LOCK);
+	SegmentId script_000_segment = s->segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
 
 	if (script_000_segment <= 0) {
 		debug(2, "Failed to instantiate script.000");

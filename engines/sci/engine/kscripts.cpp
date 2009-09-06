@@ -268,7 +268,7 @@ reg_t kScriptID(EngineState *s, int, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return argv[0];
 
-	SegmentId scriptSeg = s->segMan->getSegment(script, SCRIPT_GET_LOAD);
+	SegmentId scriptSeg = s->segMan->getScriptSegment(script, SCRIPT_GET_LOAD);
 	Script *scr;
 
 	if (!scriptSeg)
@@ -297,7 +297,7 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return s->r_acc;
 
-	int id = s->segMan->segGet(script);
+	int id = s->segMan->getScriptSegment(script);
 	Script *scr = s->segMan->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)

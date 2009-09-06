@@ -714,7 +714,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	reconstruct_scripts(retval, retval->segMan);
 	retval->segMan->reconstructClones();
 	retval->game_obj = s->game_obj;
-	retval->script_000 = retval->segMan->getScript(retval->segMan->getSegment(0, SCRIPT_GET_DONT_LOAD));
+	retval->script_000 = retval->segMan->getScript(retval->segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->sys_strings_segment = retval->segMan->findSegmentByType(MEM_OBJ_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);

@@ -235,7 +235,7 @@ bool SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
 
 
 int SegManager::deallocateScript(int script_nr) {
-	SegmentId seg = segGet(script_nr);
+	SegmentId seg = getScriptSegment(script_nr);
 
 	deallocate(seg, true);
 
@@ -262,13 +262,12 @@ MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectTyp
 }
 
 // return the seg if script_id is valid and in the map, else -1
-SegmentId SegManager::segGet(int script_id) const {
+SegmentId SegManager::getScriptSegment(int script_id) const {
 	return id_seg_map->lookupKey(script_id);
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
-	// FIXME: We accept segment 0, but that is actually an invalid segment...
-	if (seg < 0 || (uint)seg >= _heap.size()) {
+	if (seg <= 0 || (uint)seg >= _heap.size()) {
 		error("SegManager::getScript(): seg id %x out of bounds", seg);
 	}
 	if (!_heap[seg]) {
@@ -282,7 +281,7 @@ Script *SegManager::getScript(const SegmentId seg) {
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
 	// FIXME: We accept segment 0, but that is actually an invalid segment...
-	if (seg < 0 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
+	if (seg <= 0 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
 }
@@ -299,8 +298,7 @@ SegmentId SegManager::findSegmentByType(int type) {
 //	false - invalid seg
 //	true  - valid seg
 bool SegManager::check(SegmentId seg) {
-	// FIXME: We accept segment 0, but that is actually an invalid segment...
-	if (seg < 0 || (uint)seg >= _heap.size()) {
+	if (seg <= 0 || (uint)seg >= _heap.size()) {
 		return false;
 	}
 	if (!_heap[seg]) {
@@ -443,13 +441,13 @@ void SegManager::heapRelocate(reg_t block) {
 	}
 }
 
-SegmentId SegManager::getSegment(int script_nr, SCRIPT_GET load) {
+SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 	SegmentId segment;
 
 	if ((load & SCRIPT_GET_LOAD) == SCRIPT_GET_LOAD)
 		script_instantiate(_resMan, this, script_nr);
 
-	segment = segGet(script_nr);
+	segment = getScriptSegment(script_nr);
 
 	if (segment > 0) {
 		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
@@ -457,19 +455,19 @@ SegmentId SegManager::getSegment(int script_nr, SCRIPT_GET load) {
 
 		return segment;
 	} else
-		return 0;
+		return -1;
 }
 
-#define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : get_class_address(id, SCRIPT_GET_LOCK, NULL_REG))
+#define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : getClassAddress(id, SCRIPT_GET_LOCK, NULL_REG))
 
-reg_t SegManager::get_class_address(int classnr, SCRIPT_GET lock, reg_t caller) {
+reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
 	if (classnr < 0 || (int)_classtable.size() <= classnr || _classtable[classnr].script < 0) {
 		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classtable.size());
 		return NULL_REG;
 	} else {
 		Class *the_class = &_classtable[classnr];
 		if (!the_class->reg.segment) {
-			getSegment(the_class->script, lock);
+			getScriptSegment(the_class->script, lock);
 
 			if (!the_class->reg.segment) {
 				error("[VM] Trying to instantiate class %x by instantiating script 0x%x (%03d) failed;"

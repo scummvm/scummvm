@@ -146,7 +146,7 @@ reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
 		int synonyms_nr = 0;
 
 		script = GET_SEL32V(objpos, number);
-		seg = s->segMan->segGet(script);
+		seg = s->segMan->getScriptSegment(script);
 
 		if (seg >= 0)
 			synonyms_nr = s->segMan->getScript(seg)->getSynonymsNr();

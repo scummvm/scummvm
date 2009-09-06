@@ -319,9 +319,9 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 //-------------------- locals --------------------
 reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	// Reference the owning script
-	SegmentId owner_seg = segMan->segGet(script_id);
+	SegmentId owner_seg = segMan->getScriptSegment(script_id);
 
-	assert(owner_seg >= 0);
+	assert(owner_seg > 0);
 
 	return make_reg(owner_seg, 0);
 }

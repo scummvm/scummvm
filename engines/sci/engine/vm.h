@@ -344,7 +344,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj,
 	StackPtr sp, int framesize, StackPtr argp);
 
 
-#define SCI_XS_CALLEE_LOCALS -1
+#define SCI_XS_CALLEE_LOCALS ((SegmentId)-1)
 
 /**
  * Adds an entry to the top of the execution stack.
