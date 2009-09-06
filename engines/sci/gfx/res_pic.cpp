@@ -26,11 +26,9 @@
 #include <time.h>	// for time() to seed rand() via srand()
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
+#include "sci/sci.h"	// for kDebugLevelSci0Pic
 
 namespace Sci {
-
-#undef GFXR_DEBUG_PIC0 // Enable to debug pic0 messages
-#undef FILL_RECURSIVE_DEBUG // Enable for verbose fill debugging
 
 #define GFXR_PIC0_PALETTE_SIZE 40
 #define GFXR_PIC0_NUM_PALETTES 4
@@ -103,13 +101,6 @@ Palette* gfx_sci0_image_pal[SCI0_MAX_PALETTE+1];
 Palette* embedded_view_pal = 0;
 
 #define SCI1_PALETTE_SIZE 1284
-
-#ifdef FILL_RECURSIVE_DEBUG
-/************************************/
-int fillc = 100000000;
-int fillmagc = 30000000;
-/************************************/
-#endif
 
 // Color mapping used while scaling embedded views.
 static const gfx_pixmap_color_t embedded_view_colors[16] = {
@@ -399,13 +390,6 @@ enum {
 };
 
 
-#ifdef GFXR_DEBUG_PIC0
-#define p0printf printf
-#else
-void do_nothing(...) { }
-#define p0printf do_nothing
-#endif
-
 enum {
 	ELLIPSE_SOLID, // Normal filled ellipse
 	ELLIPSE_OR     // color ORred to the buffer
@@ -676,7 +660,7 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 	rect_t boundaries;
 	int max_x = (pattern_code & PATTERN_FLAG_RECTANGLE) ? 318 : 319; // Rectangles' width is size+1
 
-	p0printf(stderr, "Pattern at (%d,%d) size %d, rand=%d, code=%02x\n", x, y, pattern_size, pattern_nr, pattern_code);
+	debugC(2, kDebugLevelSci0Pic, "Pattern at (%d,%d) size %d, rand=%d, code=%02x\n", x, y, pattern_size, pattern_nr, pattern_code);
 
 	y += titlebar_size;
 
@@ -806,7 +790,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 	ey += titlebar_size;
 
 	if (drawenable & GFX_MASK_CONTROL) {
-		p0printf(" ctl:%x", control);
+		debugC(2, kDebugLevelSci0Pic, " ctl:%x", control);
 		gfx_draw_line_pixmap_i(pic->control_map, Common::Point(x, y), Common::Point(x + line.width, y + line.height), control);
 	}
 
@@ -832,10 +816,10 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 	ey *= scale_y;
 
 	if (drawenable & GFX_MASK_VISUAL)
-		p0printf(" col:%02x", color);
+		debugC(2, kDebugLevelSci0Pic, " col:%02x", color);
 
 	if (drawenable & GFX_MASK_PRIORITY)
-		p0printf(" pri:%x", priority);
+		debugC(2, kDebugLevelSci0Pic, " pri:%x", priority);
 
 	if (line_mode == GFX_LINE_MODE_FINE) {  // Adjust lines to extend over the full visual
 		x = (x * ((320 + 1) * scale_x - 1)) / (320 * scale_x);
@@ -892,7 +876,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 		}
 	}
 
-	p0printf("\n");
+	debugC(2, kDebugLevelSci0Pic, "\n");
 }
 
 
@@ -1169,11 +1153,6 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 	int titlebar_size = portBounds.top;
 	byte op, opx;
 
-#ifdef FILL_RECURSIVE_DEBUG
-	fillmagc = atoi(getenv("FOO"));
-	fillc = atoi(getenv("FOO2"));
-#endif
-
 	// Initialize palette
 	for (int i = 0; i < GFXR_PIC0_NUM_PALETTES; i++)
 		memcpy(palette[i], default_palette_table, sizeof(int) * GFXR_PIC0_PALETTE_SIZE);
@@ -1187,7 +1166,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		switch (op) {
 
 		case PIC_OP_SET_COLOR:
-			p0printf("Set color @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Set color @%d\n", pos);
 
 			if (viewType == kViewEga) {
 				pal = *(resource + pos++);
@@ -1204,17 +1183,17 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				color = palette[pal][index];
 			} else
 				color = *(resource + pos++);
-			p0printf("  color <- %02x [%d/%d]\n", color, pal, index);
+			debugC(2, kDebugLevelSci0Pic, "  color <- %02x [%d/%d]\n", color, pal, index);
 			drawenable |= GFX_MASK_VISUAL;
 			goto end_op_loop;
 
 		case PIC_OP_DISABLE_VISUAL:
-			p0printf("Disable visual @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Disable visual @%d\n", pos);
 			drawenable &= ~GFX_MASK_VISUAL;
 			goto end_op_loop;
 
 		case PIC_OP_SET_PRIORITY:
-			p0printf("Set priority @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Set priority @%d\n", pos);
 
 			if (viewType == kViewEga) {
 				pal = *(resource + pos++);
@@ -1224,20 +1203,20 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				priority = priority_table[index];
 			} else priority = *(resource + pos++);
 
-			p0printf("  priority <- %d [%d/%d]\n", priority, pal, index);
+			debugC(2, kDebugLevelSci0Pic, "  priority <- %d [%d/%d]\n", priority, pal, index);
 			drawenable |= GFX_MASK_PRIORITY;
 			goto end_op_loop;
 
 		case PIC_OP_DISABLE_PRIORITY:
-			p0printf("Disable priority @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Disable priority @%d\n", pos);
 			drawenable &= ~GFX_MASK_PRIORITY;
 			goto end_op_loop;
 
 		case PIC_OP_SHORT_PATTERNS:
-			p0printf("Short patterns @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Short patterns @%d\n", pos);
 			if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 				pattern_nr = ((*(resource + pos++)) >> 1) & 0x7f;
-				p0printf("  pattern_nr <- %d\n", pattern_nr);
+				debugC(2, kDebugLevelSci0Pic, "  pattern_nr <- %d\n", pattern_nr);
 			}
 
 			GET_ABS_COORDS(x, y);
@@ -1248,7 +1227,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 					pattern_nr = ((*(resource + pos++)) >> 1) & 0x7f;
-					p0printf("  pattern_nr <- %d\n", pattern_nr);
+					debugC(2, kDebugLevelSci0Pic, "  pattern_nr <- %d\n", pattern_nr);
 				}
 
 				GET_REL_COORDS(x, y);
@@ -1259,7 +1238,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 		case PIC_OP_MEDIUM_LINES:
-			p0printf("Medium lines @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Medium lines @%d\n", pos);
 			GET_ABS_COORDS(oldx, oldy);
 			while (*(resource + pos) < PIC_OP_FIRST) {
 #if 0
@@ -1278,7 +1257,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 		case PIC_OP_LONG_LINES:
-			p0printf("Long lines @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Long lines @%d\n", pos);
 			GET_ABS_COORDS(oldx, oldy);
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				GET_ABS_COORDS(x, y);
@@ -1290,7 +1269,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 		case PIC_OP_SHORT_LINES:
-			p0printf("Short lines @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Short lines @%d\n", pos);
 			GET_ABS_COORDS(oldx, oldy);
 			x = oldx;
 			y = oldy;
@@ -1304,11 +1283,11 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 		case PIC_OP_FILL:
-			p0printf("Fill @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Fill @%d\n", pos);
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				//fprintf(stderr,"####################\n");
 				GET_ABS_COORDS(x, y);
-				p0printf("Abs coords %d,%d\n", x, y);
+				debugC(2, kDebugLevelSci0Pic, "Abs coords %d,%d\n", x, y);
 				//fprintf(stderr,"C=(%d,%d)\n", x, y + titlebar_size);
 #ifdef WITH_PIC_SCALING
 				if (pic->mode->xfact > 1 || pic->mode->yfact > 1)
@@ -1319,59 +1298,21 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 #endif
 					_gfxr_fill_1(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
 					             color : 0, priority, control, drawenable, titlebar_size);
-
-#ifdef FILL_RECURSIVE_DEBUG
-				if (!fillmagc) {
-					int x, y;
-					if (getenv("FOO1"))
-						for (x = 0; x < 320; x++)
-							for (y = 0; y < 200; y++) {
-								int aux = pic->aux_map[x + y*320];
-								int pix = (aux & 0xf);
-								int i;
-
-								if (aux & 0x40) {
-									if (x == 0 || !(pic->aux_map[x-1 + y * 320] & 0x40))
-										for (i = 0; i < pic->mode->yfact; i++)
-											pic->visual_map->index_data[(x + ((y*pic->mode->yfact)+i)*320) * pic->mode->xfact] ^= 0xff;
-
-									if (x == 319 || !(pic->aux_map[x+1 + y * 320] & 0x40))
-										for (i = 0; i < pic->mode->yfact; i++)
-											pic->visual_map->index_data[pic->mode->xfact - 1 +(x + ((y*pic->mode->yfact)+i)*320) * pic->mode->xfact] ^= 0xff;
-
-									if (y == 0 || !(pic->aux_map[x + (y-1) * 320] & 0x40))
-										for (i = 0; i < pic->mode->yfact; i++)
-											pic->visual_map->index_data[i+(x + ((y*pic->mode->yfact))*320) * pic->mode->xfact] ^= 0xff;
-
-									if (y == 199 || !(pic->aux_map[x + (y+1) * 320] & 0x40))
-										for (i = 0; i < pic->mode->yfact; i++)
-											pic->visual_map->index_data[i+(x + ((y*pic->mode->yfact)+pic->mode->yfact - 1)*320) * pic->mode->xfact] ^= 0xff;
-								}
-
-								pix |= (aux & 0x40) >> 4;
-								pix |= (pix << 4);
-
-								pic->visual_map->index_data[x + y*320*pic->mode->xfact] = pix;
-							}
-					return;
-				}
-				--fillmagc;
-#endif // GFXR_DEBUG_PIC0
 			}
 			goto end_op_loop;
 
 		case PIC_OP_SET_PATTERN:
-			p0printf("Set pattern @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Set pattern @%d\n", pos);
 			pattern_code = (*(resource + pos++));
 			pattern_size = pattern_code & 0x07;
 			goto end_op_loop;
 
 		case PIC_OP_ABSOLUTE_PATTERN:
-			p0printf("Absolute pattern @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Absolute pattern @%d\n", pos);
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 					pattern_nr = ((*(resource + pos++)) >> 1) & 0x7f;
-					p0printf("  pattern_nr <- %d\n", pattern_nr);
+					debugC(2, kDebugLevelSci0Pic, "  pattern_nr <- %d\n", pattern_nr);
 				}
 
 				GET_ABS_COORDS(x, y);
@@ -1382,23 +1323,23 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 		case PIC_OP_SET_CONTROL:
-			p0printf("Set control @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Set control @%d\n", pos);
 			control = (*(resource + pos++)) & 0xf;
 			drawenable |= GFX_MASK_CONTROL;
 			goto end_op_loop;
 
 
 		case PIC_OP_DISABLE_CONTROL:
-			p0printf("Disable control @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Disable control @%d\n", pos);
 			drawenable &= ~GFX_MASK_CONTROL;
 			goto end_op_loop;
 
 
 		case PIC_OP_MEDIUM_PATTERNS:
-			p0printf("Medium patterns @%d\n", pos);
+			debugC(2, kDebugLevelSci0Pic, "Medium patterns @%d\n", pos);
 			if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 				pattern_nr = ((*(resource + pos++)) >> 1) & 0x7f;
-				p0printf("  pattern_nr <- %d\n", pattern_nr);
+				debugC(2, kDebugLevelSci0Pic, "  pattern_nr <- %d\n", pattern_nr);
 			}
 
 			GET_ABS_COORDS(oldx, oldy);
@@ -1411,7 +1352,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			while (*(resource + pos) < PIC_OP_FIRST) {
 				if (pattern_code & PATTERN_FLAG_USE_PATTERN) {
 					pattern_nr = ((*(resource + pos++)) >> 1) & 0x7f;
-					p0printf("  pattern_nr <- %d\n", pattern_nr);
+					debugC(2, kDebugLevelSci0Pic, "  pattern_nr <- %d\n", pattern_nr);
 				}
 
 				GET_MEDREL_COORDS(x, y);
@@ -1423,7 +1364,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 		case PIC_OP_OPX:
 			opx = *(resource + pos++);
-			p0printf("OPX: ");
+			debugC(2, kDebugLevelSci0Pic, "OPX: ");
 
 			if (viewType != kViewEga)
 				opx += SCI1_OP_OFFSET; // See comment at the definition of SCI1_OP_OFFSET.
@@ -1435,7 +1376,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_SET_PALETTE_ENTRIES:
-				p0printf("Set palette entry @%d\n", pos);
+				debugC(2, kDebugLevelSci0Pic, "Set palette entry @%d\n", pos);
 				while (*(resource + pos) < PIC_OP_FIRST) {
 					index = *(resource + pos++);
 					pal = index / GFXR_PIC0_PALETTE_SIZE;
@@ -1450,27 +1391,27 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_SET_PALETTE:
-				p0printf("Set palette @%d\n", pos);
+				debugC(2, kDebugLevelSci0Pic, "Set palette @%d\n", pos);
 				pal = *(resource + pos++);
 				if (pal >= GFXR_PIC0_NUM_PALETTES) {
 					error("Attempt to write to invalid palette %d", pal);
 					return;
 				}
 
-				p0printf("  palette[%d] <- (", pal);
+				debugC(2, kDebugLevelSci0Pic, "  palette[%d] <- (", pal);
 				for (index = 0; index < GFXR_PIC0_PALETTE_SIZE; index++) {
 					palette[pal][index] = *(resource + pos++);
 					if (index > 0)
-						p0printf(",");
+						debugC(2, kDebugLevelSci0Pic, ",");
 					if (!(index & 0x7))
-						p0printf("[%d]=", index);
-					p0printf("%02x", palette[pal][index]);
+						debugC(2, kDebugLevelSci0Pic, "[%d]=", index);
+					debugC(2, kDebugLevelSci0Pic, "%02x", palette[pal][index]);
 				}
-				p0printf(")\n");
+				debugC(2, kDebugLevelSci0Pic, ")\n");
 				goto end_op_loop;
 
 			case PIC_SCI1_OPX_SET_PALETTE:
-				p0printf("Set palette @%d\n", pos);
+				debugC(2, kDebugLevelSci0Pic, "Set palette @%d\n", pos);
 				if (pic->visual_map->palette)
 					pic->visual_map->palette->free();
 				pic->visual_map->palette = gfxr_read_pal1(resid,
@@ -1479,19 +1420,19 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_MONO0:
-				p0printf("Monochrome opx 0 @%d\n", pos);
+				debugC(2, kDebugLevelSci0Pic, "Monochrome opx 0 @%d\n", pos);
 				pos += 41;
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_MONO1:
 			case PIC_SCI0_OPX_MONO3:
 				++pos;
-				p0printf("Monochrome opx %d @%d\n", opx, pos);
+				debugC(2, kDebugLevelSci0Pic, "Monochrome opx %d @%d\n", opx, pos);
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_MONO2:
 			case PIC_SCI0_OPX_MONO4: // Monochrome ops: Ignored by us
-				p0printf("Monochrome opx %d @%d\n", opx, pos);
+				debugC(2, kDebugLevelSci0Pic, "Monochrome opx %d @%d\n", opx, pos);
 				goto end_op_loop;
 
 			case PIC_SCI0_OPX_EMBEDDED_VIEW:
@@ -1503,11 +1444,11 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				gfx_pixmap_t *view;
 
-				p0printf("Embedded view @%d\n", pos);
+				debugC(2, kDebugLevelSci0Pic, "Embedded view @%d\n", pos);
 
 				GET_ABS_COORDS(posx, posy);
 				bytesize = (*(resource + pos)) + (*(resource + pos + 1) << 8);
-				p0printf("(%d, %d)\n", posx, posy);
+				debugC(2, kDebugLevelSci0Pic, "(%d, %d)\n", posx, posy);
 				pos += 2;
 				if (!nodraw) {
 					if (viewType == kViewEga)
@@ -1523,7 +1464,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				if (flags & DRAWPIC1_FLAG_MIRRORED)
 					posx -= view->index_width - 1;
 
-				p0printf("(%d, %d)-(%d, %d)\n", posx, posy, posx + view->index_width, posy + view->index_height);
+				debugC(2, kDebugLevelSci0Pic, "(%d, %d)-(%d, %d)\n", posx, posy, posx + view->index_width, posy + view->index_height);
 
 				// we can only safely replace the palette if it's static
 				// *if it's not for some reason, we should die
@@ -1579,7 +1520,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			case PIC_SCI1_OPX_PRIORITY_TABLE_EXPLICIT: {
 				int *pri_table;
 
-				p0printf("Explicit priority table @%d\n", pos);
+				debugC(2, kDebugLevelSci0Pic, "Explicit priority table @%d\n", pos);
 				if (!pic->priorityTable) {
 					pic->priorityTable = (int*)malloc(16 * sizeof(int));
 				} else {
@@ -1624,7 +1565,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 			goto end_op_loop;
 
 		case PIC_OP_TERMINATE:
-			p0printf("Terminator\n");
+			debugC(2, kDebugLevelSci0Pic, "Terminator\n");
 			//warning( "ARTIFACT REMOVAL CODE is commented out")
 			//_gfxr_vismap_remove_artifacts();
 			return;

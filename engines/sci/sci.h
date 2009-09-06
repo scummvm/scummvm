@@ -59,7 +59,8 @@ enum kDebugLevels {
 	kDebugLevelDclInflate = 1 << 17,
 	kDebugLevelVM         = 1 << 18,
 	kDebugLevelScripts    = 1 << 19,
-	kDebugLevelGC         = 1 << 20
+	kDebugLevelGC         = 1 << 20,
+	kDebugLevelSci0Pic    = 1 << 21
 };
 
 struct SciGameDescription {

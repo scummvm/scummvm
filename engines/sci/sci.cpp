@@ -77,6 +77,7 @@ SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelVM, "VM", "VM debugging");
 	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Notifies when scripts are unloaded");
 	Common::addDebugChannel(kDebugLevelGC, "GC", "Garbage Collector debugging");
+	Common::addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
 
 	_gamestate = 0;
 
