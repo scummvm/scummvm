@@ -86,6 +86,24 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(container[4], 96);
 	}
 
+	void test_lookup_with_default() {
+		Common::HashMap<int, int> container;
+		container[0] = 17;
+		container[1] = -1;
+		container[2] = 45;
+		container[3] = 12;
+		container[4] = 96;
+
+		// We take a const ref now to ensure that the map
+		// is not modified by getVal.
+		const Common::HashMap<int, int> &containerRef = container;
+
+		TS_ASSERT_EQUALS(containerRef.getVal(0), 17);
+		TS_ASSERT_EQUALS(containerRef.getVal(17), 0);
+		TS_ASSERT_EQUALS(containerRef.getVal(0, -10), 17);
+		TS_ASSERT_EQUALS(containerRef.getVal(17, -10), -10);
+	}
+
 	void test_iterator_begin_end() {
 		Common::HashMap<int, int> container;
 
