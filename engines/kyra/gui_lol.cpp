@@ -2369,6 +2369,12 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 		initMenu(*_currentMenu);
 
+		if (_currentMenu == &_loadMenu || _currentMenu == &_deleteMenu) {
+			if (_saveSlots.begin() == _saveSlots.end())
+				// "no savegames to load" message
+				_screen->fprintString(_vm->getLangString(0x4009), _currentMenu->x + _currentMenu->width / 2, _currentMenu->y + 42, 204, 0, 9);
+		}
+
 		if (hasSpecialButtons == 2) {
 			static const uint8 oX[] = { 0, 10, 124 };
 			static const uint8 oW[] = { 10, 114, 10 };
@@ -2842,9 +2848,8 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 			Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _menuResult - 1);
 			while (i != _saveSlots.begin()) {
 				--i;
-				// We are only renaming all savefiles until we get some slots missing
-				// Also not rename quicksave slot filenames
-				if (/**(i-1) != *i ||*/ *i >= 990)
+				// not rename quicksave slot filenames
+				if (*i >= 990)
 					break;
 				Common::String oldName = _vm->getSavegameFilename(*i);
 				Common::String newName = _vm->getSavegameFilename(*i-1);
@@ -2859,6 +2864,9 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 }
 
 int GUI_LoL::scrollUp(Button *button) {
+	if (!_scrollUpButton.data0ShapePtr)
+		return 0;
+
 	updateButton(button);
 	if (_savegameOffset > 0) {
 		_savegameOffset--;
@@ -2869,6 +2877,9 @@ int GUI_LoL::scrollUp(Button *button) {
 }
 
 int GUI_LoL::scrollDown(Button *button) {
+	if (!_scrollDownButton.data0ShapePtr)
+		return 0;
+
 	updateButton(button);
 	if ((uint)_savegameOffset < _saveSlots.size() - (_currentMenu == &_saveMenu ? 3 : 4)) {
 		_savegameOffset++;
