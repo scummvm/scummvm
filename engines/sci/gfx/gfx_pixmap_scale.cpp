@@ -40,8 +40,6 @@ namespace Sci {
 
 static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	byte result_colors[GFX_PIC_COLORS];
-	byte alpha_color = 0;
-	byte alpha_ormask = 0xffffffff & 0;
 	int xfact = (scale) ? mode->xfact : 1;
 	int yfact = (scale) ? mode->yfact : 1;
 	int widthc, heightc; // Width duplication counter
@@ -64,7 +62,7 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 		result_colors[i] = pxm->palette->getColor(i).parent_index;
 
 	if (!separate_alpha_map && pxm->color_key != GFX_PIXMAP_COLOR_KEY_NONE)
-		result_colors[pxm->color_key] = alpha_color;
+		result_colors[pxm->color_key] = 0;
 
 	src = pxm->index_data; // Workaround for gcc 4.2.3 bug on EMT64
 	for (y = 0; y < pxm->index_height; y++) {
