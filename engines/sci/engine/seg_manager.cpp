@@ -50,14 +50,7 @@ namespace Sci {
 
 #undef DEBUG_segMan // Define to turn on debugging
 
-#define INVALID_SCRIPT_ID -1
-
 SegManager::SegManager(ResourceManager *resMan) {
-	id_seg_map = new IntMapper();
-	reserved_id = INVALID_SCRIPT_ID;
-	id_seg_map->checkKey(reserved_id, true);	// reserve entry 0 for INVALID_SCRIPT_ID
-	reserved_id--; // reserved_id runs in the reversed direction to make sure no one will use it.
-
 	_heap.push_back(0);
 
 	Clones_seg_id = 0;
@@ -83,54 +76,59 @@ SegManager::~SegManager() {
 		if (_heap[i])
 			deallocate(i, false);
 	}
-
-	delete id_seg_map;
 }
 
-int SegManager::findFreeId(int *id) {
-	bool was_added = false;
-	int retval = 0;
-
-	while (!was_added) {
-		retval = id_seg_map->checkKey(reserved_id, true, &was_added);
-		*id = reserved_id--;
-		if (reserved_id < -1000000)
-			reserved_id = -10;
-		// Make sure we don't underflow
+SegmentId SegManager::findFreeSegment() const {
+	// FIXME: This is a very crude approach: We find a free segment id by scanning
+	// from the start. This can be slow if the number of segments becomes large.
+	// Optimizations are possible and easy, but I refrain from doing any until this
+	// refactoring is complete.
+	// One very simple yet probably effective approach would be to add
+	// "int firstFreeSegment", which is updated when allocating/freeing segments.
+	// There are some scenarios where it performs badly, but we should first check
+	// whether those occur at all. If so, there are easy refinements that deal
+	// with this. Finally, we could switch to a more elaborate scheme,
+	// such as keeping track of all free segments. But I doubt this is necessary.
+	uint seg = 1;
+	while (seg < _heap.size() && _heap[seg]) {
+		++seg;
 	}
-
-	return retval;
+	assert(seg < 65536);
+	return seg;
 }
 
-MemObject *SegManager::allocNonscriptSegment(MemObjectType type, SegmentId *segid) {
-	// Allocates a non-script segment
-	int id;
+MemObject *SegManager::allocSegment(MemObjectType type, SegmentId *segid) {
+	// Find a free segment
+	*segid = findFreeSegment();
 
-	*segid = findFreeId(&id);
-	return memObjAllocate(*segid, id, type);
+	// Now allocate an object of the appropriate type...
+	MemObject *mem = MemObject::createMemObject(type);
+	if (!mem)
+		error("SegManager: invalid mobj");
+
+	// ... and put it into the (formerly) free segment.
+	if (*segid >= (int)_heap.size()) {
+		assert(*segid == (int)_heap.size());
+		_heap.push_back(0);
+	}
+	_heap[*segid] = mem;
+
+	return mem;
 }
 
-// allocate a memory for script from heap
-// Parameters: (EngineState *) s: The state to operate on
-//             (int) script_nr: The script number to load
-// Returns   : 0 - allocation failure
-//             1 - allocated successfully
-//             seg_id - allocated segment id
 Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
-	bool was_added;
-	MemObject *mem;
-
-	*seg_id = id_seg_map->checkKey(script_nr, true, &was_added);
-	if (!was_added) {
+	// Check if the script already has an allocated segment. If it
+	// does have one, return it.
+	*seg_id = _scriptSegMap.getVal(script_nr, -1);
+	if (*seg_id > 0) {
 		return (Script *)_heap[*seg_id];
 	}
 
 	// allocate the MemObject
-	mem = memObjAllocate(*seg_id, script_nr, MEM_OBJ_SCRIPT);
-	if (!mem) {
-		error("allocateScript: Not enough memory");
-		return NULL;
-	}
+	MemObject *mem = allocSegment(MEM_OBJ_SCRIPT, seg_id);
+
+	// Add the script to the "script id -> segment id" hashmap
+	_scriptSegMap[script_nr] = *seg_id;
 
 	return (Script *)mem;
 }
@@ -212,10 +210,10 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 	VERIFY(check(seg), "invalid seg id");
 
 	mobj = _heap[seg];
-	id_seg_map->removeKey(mobj->getSegmentManagerId());
 
 	if (mobj->getType() == MEM_OBJ_SCRIPT) {
 		Script *scr = (Script *)mobj;
+		_scriptSegMap.erase(scr->nr);
 		if (recursive && scr->locals_segment)
 			deallocate(scr->locals_segment, recursive);
 	}
@@ -240,30 +238,6 @@ int SegManager::deallocateScript(int script_nr) {
 	deallocate(seg, true);
 
 	return 1;
-}
-
-MemObject *SegManager::memObjAllocate(SegmentId segid, int hash_id, MemObjectType type) {
-	MemObject *mem = MemObject::createMemObject(type);
-	if (!mem) {
-		warning("SegManager: invalid mobj");
-		return NULL;
-	}
-
-	if (segid >= (int)_heap.size()) {
-		assert(segid == (int)_heap.size());
-		_heap.push_back(0);
-	}
-
-	mem->_segManagerId = hash_id;
-
-	// hook it to the heap
-	_heap[segid] = mem;
-	return mem;
-}
-
-// return the seg if script_id is valid and in the map, else -1
-SegmentId SegManager::getScriptSegment(int script_id) const {
-	return id_seg_map->lookupKey(script_id);
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
@@ -441,6 +415,11 @@ void SegManager::heapRelocate(reg_t block) {
 	}
 }
 
+// return the seg if script_id is valid and in the map, else -1
+SegmentId SegManager::getScriptSegment(int script_id) const {
+	return _scriptSegMap.getVal(script_id, -1);
+}
+
 SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 	SegmentId segment;
 
@@ -614,7 +593,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 			VERIFY(locals->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
 			VERIFY(locals->script_id == scr->nr, "Re-used locals segment belonged to other script");
 		} else
-			locals = (LocalVariables *)allocNonscriptSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
+			locals = (LocalVariables *)allocSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
 
 		scr->locals_block = locals;
 		locals->script_id = scr->nr;
@@ -746,7 +725,7 @@ static char *SegManager::dynprintf(char *msg, ...) {
 */
 
 DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
-	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_STACK, segid);
+	MemObject *mobj = allocSegment(MEM_OBJ_STACK, segid);
 	DataStack *retval = (DataStack *)mobj;
 
 	retval->entries = (reg_t *)calloc(size, sizeof(reg_t));
@@ -756,13 +735,13 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 }
 
 SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	return (SystemStrings *)allocNonscriptSegment(MEM_OBJ_SYS_STRINGS, segid);
+	return (SystemStrings *)allocSegment(MEM_OBJ_SYS_STRINGS, segid);
 }
 
 SegmentId SegManager::allocateStringFrags() {
 	SegmentId segid;
 
-	allocNonscriptSegment(MEM_OBJ_STRING_FRAG, &segid);
+	allocSegment(MEM_OBJ_STRING_FRAG, &segid);
 
 	return segid;
 }
@@ -811,7 +790,7 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	int offset;
 
 	if (!Clones_seg_id) {
-		table = (CloneTable *)allocNonscriptSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
+		table = (CloneTable *)allocSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
 	} else
 		table = (CloneTable *)_heap[Clones_seg_id];
 
@@ -872,7 +851,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 	int offset;
 
 	if (!Lists_seg_id)
-		allocNonscriptSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
+		allocSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
 	table = (ListTable *)_heap[Lists_seg_id];
 
 	offset = table->allocEntry();
@@ -886,7 +865,7 @@ Node *SegManager::alloc_Node(reg_t *addr) {
 	int offset;
 
 	if (!Nodes_seg_id)
-		allocNonscriptSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
+		allocSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
 	table = (NodeTable *)_heap[Nodes_seg_id];
 
 	offset = table->allocEntry();
@@ -900,7 +879,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	int offset;
 
 	if (!Hunks_seg_id)
-		allocNonscriptSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
+		allocSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
 	table = (HunkTable *)_heap[Hunks_seg_id];
 
 	offset = table->allocEntry();
@@ -922,7 +901,7 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 
 byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	SegmentId seg;
-	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_DYNMEM, &seg);
+	MemObject *mobj = allocSegment(MEM_OBJ_DYNMEM, &seg);
 	*addr = make_reg(seg, 0);
 
 	DynMem &d = *(DynMem *)mobj;

@@ -1364,7 +1364,7 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				break;
 			}
 
-			DebugPrintf("  seg_ID = %d \n", mobj->getSegmentManagerId());
+			DebugPrintf("  \n");
 		}
 	}
 	DebugPrintf("\n");

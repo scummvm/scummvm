@@ -355,10 +355,11 @@ public:
 	SciVersion sciVersion() { return _resMan->sciVersion(); }
 
 private:
-	IntMapper *id_seg_map; ///< id - script id; seg - index of heap
+	/** Map script ids to segment ids. */
+	Common::HashMap<int, SegmentId> _scriptSegMap;
+
 public: // TODO: make private
 	Common::Array<MemObject *> _heap;
-	int reserved_id;
 	int exports_wide;
 	Common::Array<Class> _classtable; /**< Table of all classes */
 	ResourceManager *_resMan;
@@ -369,9 +370,8 @@ public: // TODO: make private
 	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
 
 private:
-	MemObject *allocNonscriptSegment(MemObjectType type, SegmentId *segid);
+	MemObject *allocSegment(MemObjectType type, SegmentId *segid);
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
-	MemObject *memObjAllocate(SegmentId segid, int hash_id, MemObjectType type);
 	int deallocate(SegmentId seg, bool recursive);
 	int createClassTable();
 
@@ -381,7 +381,7 @@ private:
 	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
 	int relocateObject(Object *obj, SegmentId segment, int location);
 
-	int findFreeId(int *id);
+	SegmentId findFreeSegment() const;
 	void setScriptSize(Script &scr, int script_nr);
 	Object *scriptObjInit0(reg_t obj_pos);
 	Object *scriptObjInit11(reg_t obj_pos);

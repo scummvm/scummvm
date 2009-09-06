@@ -52,7 +52,6 @@ enum MemObjectType {
 
 struct MemObject : public Common::Serializable {
 	MemObjectType _type;
-	int _segManagerId; /**< Internal value used by the segMan's hash map */
 
 	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
 
@@ -63,7 +62,6 @@ public:
 	virtual ~MemObject() {}
 
 	inline MemObjectType getType() const { return _type; }
-	inline int getSegmentManagerId() const { return _segManagerId; }
 
 	/**
 	 * Check whether the given offset into this memory object is valid,

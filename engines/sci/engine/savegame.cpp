@@ -54,7 +54,6 @@ SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type,
 // TODO: Many of the following sync_*() methods should be turned into member funcs
 // of the classes they are syncing.
 
-static void sync_MemObjPtr(Common::Serializer &s, MemObject *&obj);
 static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj);
 
 static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
@@ -190,17 +189,62 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsSint32LE(reserved_id);
+	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be reserved_id
 	s.syncAsSint32LE(exports_wide);
 	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be gc_mark_bits
 
-	id_seg_map->saveLoadWithSerializer(s);
+	if (s.isLoading()) {
+		// Reset _scriptSegMap, to be restored below
+		_scriptSegMap.clear();
+
+		if (s.getVersion() <= 9) {
+			// Skip over the old id_seg_map when loading (we now regenerate the
+			// equivalent data, in _scriptSegMap, from scratch).
+
+			s.skip(4);	// base_value
+			while (true) {
+				uint32 key;
+				s.syncAsSint32LE(key);
+				if (key == INTMAPPER_MAGIC_KEY)
+					break;
+				s.skip(4);	// idx
+			}
+		}
+	}
+
 
 	uint sync_heap_size = _heap.size();
 	s.syncAsUint32LE(sync_heap_size);
 	_heap.resize(sync_heap_size);
-	for (uint i = 0; i < sync_heap_size; ++i)
-		sync_MemObjPtr(s, _heap[i]);
+	for (uint i = 0; i < sync_heap_size; ++i) {
+		MemObject *&mobj = _heap[i];
+
+		// Sync the memobj type
+		MemObjectType type = (s.isSaving() && mobj) ? mobj->getType() : MEM_OBJ_INVALID;
+		s.syncAsUint32LE(type);
+
+		// If we were saving and mobj == 0, or if we are loading and this is an
+		// entry marked as empty -> skip to next
+		if (type == MEM_OBJ_INVALID) {
+			mobj = 0;
+			continue;
+		}
+
+		if (s.isLoading()) {
+			mobj = MemObject::createMemObject(type);
+		}
+		assert(mobj);
+
+		s.skip(4, VER(9), VER(9));	// Obsolete: Used to be _segManagerId
+
+		// Let the object sync custom data
+		mobj->saveLoadWithSerializer(s);
+
+		// If we are loading a script, hook it up in the script->segment map.
+		if (s.isLoading() && type == MEM_OBJ_SCRIPT) {
+			_scriptSegMap[((Script *)mobj)->nr] = i;
+		}
+	}
 
 	s.syncAsSint32LE(Clones_seg_id);
 	s.syncAsSint32LE(Lists_seg_id);
@@ -420,30 +464,6 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 		}
 	}
 }
-
-static void sync_MemObjPtr(Common::Serializer &s, MemObject *&mobj) {
-	// Sync the memobj type
-	MemObjectType type = (s.isSaving() && mobj) ? mobj->getType() : MEM_OBJ_INVALID;
-	s.syncAsUint32LE(type);
-
-	// If we were saving and mobj == 0, or if we are loading and this is an
-	// entry marked as empty -> we are done.
-	if (type == MEM_OBJ_INVALID) {
-		mobj = 0;
-		return;
-	}
-
-	if (s.isLoading()) {
-		//assert(!mobj);
-		mobj = MemObject::createMemObject(type);
-	} else {
-		assert(mobj);
-	}
-
-	s.syncAsSint32LE(mobj->_segManagerId);
-	mobj->saveLoadWithSerializer(s);
-}
-
 
 #pragma mark -
 
