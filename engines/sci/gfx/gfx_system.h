@@ -61,7 +61,6 @@ struct gfx_mode_t {
 
 	int xfact, yfact; /**< Horizontal and vertical scaling factors */
 	int xsize, ysize; /**< Horizontal and vertical size */
-	int bytespp; /**< Bytes per pixel */
 
 	/**
 	 * Palette or NULL to indicate non-palette mode.
@@ -272,13 +271,6 @@ enum gfx_rectangle_fill_t {
 	GFX_SHADE_HORIZONTALLY	/**< Shade horizontally */
 };
 
-
-enum gfx_color_mode_t {
-	GFX_COLOR_MODE_AUTO = 0,	/**< Auto-detect- handled by the gfxop library */
-	GFX_COLOR_MODE_INDEX = 1,	/**< Index mode */
-	GFX_COLOR_MODE_HIGH = 2,	/**< High color mode (15bpp or 16 bpp) */
-	GFX_COLOR_MODE_TRUE = 4		/**< True color mode (24 bpp padded to 32 bpp) */
-};
 /** @} */
 
 } // End of namespace Sci

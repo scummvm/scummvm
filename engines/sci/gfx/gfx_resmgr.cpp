@@ -314,7 +314,6 @@ static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scal
 gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
 	/* xfact */ 1, /* yfact */ 1,
 	/* xsize */ 1, /* ysize */ 1,
-	/* bytespp */ 1,
 	/* palette */ NULL,
 
 	Graphics::PixelFormat()

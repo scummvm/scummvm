@@ -48,7 +48,6 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 
 	mode->xfact = xfact;
 	mode->yfact = yfact;
-	mode->bytespp = format.bytesPerPixel;
 	mode->format = format;
 	mode->palette = palette;
 
@@ -56,8 +55,7 @@ gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &form
 }
 
 void gfx_free_mode(gfx_mode_t *mode) {
-	if (mode->palette)
-		mode->palette->free();
+	mode->palette->free();
 	free(mode);
 	mode = NULL;
 }
@@ -183,7 +181,7 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		pixmap->height = pixmap->index_height * mode->yfact;
 	}
 
-	size = pixmap->width * pixmap->height * mode->bytespp;
+	size = pixmap->width * pixmap->height;
 	if (!size)
 		size = 1;
 

@@ -1116,7 +1116,7 @@ static void view_transparentize(gfx_pixmap_t *view, gfx_pixmap_t *background, in
 }
 
 extern gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size, gfxr_view_t *view, int mirrored);
-extern void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl, int bpp);
+extern void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_line_width, int xl, int yl);
 
 void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, byte *resource,
 					 gfxr_pic0_params_t *style, int resid, ViewType viewType, Palette *static_pal, Common::Rect portBounds) {
@@ -1509,7 +1509,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 
 				_gfx_crossblit_simple(pic->visual_map->index_data + (titlebar_size * 320) + posy * 320 + posx,
 				                      view->index_data, pic->visual_map->index_width, view->index_width,
-				                      view->index_width, view->index_height, 1);
+				                      view->index_width, view->index_height);
 
 				gfx_free_pixmap(view);
 				view = NULL;
@@ -1616,8 +1616,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		                      view->index_data,
 		                      pic->visual_map->index_width, view->index_width,
 		                      view->index_width,
-		                      view->index_height,
-		                      1);
+		                      view->index_height);
 	} else {
 		warning("[GFX] No view was contained in SCI1.1 pic resource");
 	}
