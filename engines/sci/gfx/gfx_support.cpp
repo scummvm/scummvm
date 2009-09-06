@@ -265,7 +265,7 @@ void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rec
 		}
 
 #ifdef SCUMM_BIG_ENDIAN
-		alpha += (mode->bytespp) - (shift_nr + 1);
+		alpha += 1 - (shift_nr + 1);
 #else
 		alpha += shift_nr;
 #endif
