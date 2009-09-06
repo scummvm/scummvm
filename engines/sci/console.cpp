@@ -2741,7 +2741,7 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 	}
 
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
-	SegManager *segManager = _vm->_gamestate->segMan;	// for PUT_SEL32V
+	SegManager *segMan = _vm->_gamestate->segMan;	// for PUT_SEL32V
 
 	if (id.segment) {
 		_vm->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);

@@ -425,7 +425,7 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 }
 
 reg_t kSort(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t source = argv[0];
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];

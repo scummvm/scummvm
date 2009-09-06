@@ -172,7 +172,7 @@ enum SelectorInvocation {
 	kContinueOnInvalidSelector = 1
 };
 
-#define GET_SEL32(_o_, _slc_) read_selector(segManager, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, __FILE__, __LINE__)
+#define GET_SEL32(_o_, _slc_) read_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
 /* Retrieves a selector from an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be read from
@@ -182,8 +182,8 @@ enum SelectorInvocation {
 ** selector_map_t and mapped in script.c.
 */
 
-#define PUT_SEL32(_o_, _slc_, _val_) write_selector(segManager, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(segManager, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
+#define PUT_SEL32(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, _val_, __FILE__, __LINE__)
+#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read
@@ -203,8 +203,8 @@ enum { WAS_FUNCT_NR = -1 };
 */
 
 
-reg_t read_selector(SegManager *segManager, reg_t object, Selector selector_id, const char *fname, int line);
-void write_selector(SegManager *segManager, reg_t object, Selector selector_id, reg_t value, const char *fname, int line);
+reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id, const char *fname, int line);
+void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_t value, const char *fname, int line);
 int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,
 	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...);
 
@@ -232,7 +232,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
  * @parm obj The address to check
  * @return True if it is an object, false otherwise
  */
-bool is_object(SegManager *segManager, reg_t obj);
+bool is_object(SegManager *segMan, reg_t obj);
 
 /******************** Kernel function parameter macros ********************/
 
@@ -246,8 +246,8 @@ bool is_object(SegManager *segManager, reg_t obj);
  * if not enugh entries were available.
  * reg_t dereferenciation also assures alignedness of data.
  */
-reg_t *kernelDerefRegPtr(SegManager *segManager, reg_t pointer, int entries);
-byte *kernelDerefBulkPtr(SegManager *segManager, reg_t pointer, int entries);
+reg_t *kernelDerefRegPtr(SegManager *segMan, reg_t pointer, int entries);
+byte *kernelDerefBulkPtr(SegManager *segMan, reg_t pointer, int entries);
 #define kernelDerefCharPtr(state, pointer, entries) ((char*)kernelDerefBulkPtr(state, pointer, entries))
 #define kernelDerefString(state, pointer) ((char*)kernelDerefBulkPtr(state, pointer, 0))
 

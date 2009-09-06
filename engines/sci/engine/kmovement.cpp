@@ -68,7 +68,7 @@ Still, what we compute in the end is of course not a real velocity anymore, but 
 used in an iterative stepping algorithm
 */
 reg_t kSetJump(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	// Input data
 	reg_t object = argv[0];
 	int dx = argv[1].toSint16();
@@ -165,7 +165,7 @@ reg_t kSetJump(EngineState *s, int, int argc, reg_t *argv) {
 #define _K_BRESEN_AXIS_X 0
 #define _K_BRESEN_AXIS_Y 1
 
-static void initialize_bresen(SegManager *segManager, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
+static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
 	reg_t client = GET_SEL32(mover, client);
 	int stepx = (int16)GET_SEL32V(client, xStep) * step_factor;
 	int stepy = (int16)GET_SEL32V(client, yStep) * step_factor;
@@ -219,7 +219,7 @@ static void initialize_bresen(SegManager *segManager, int argc, reg_t *argv, reg
 }
 
 reg_t kInitBresen(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -285,7 +285,7 @@ static void bresenham_autodetect(EngineState *s) {
 }
 
 reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -395,7 +395,7 @@ int is_heap_object(EngineState *s, reg_t pos);
 extern int get_angle(int xrel, int yrel);
 
 reg_t kDoAvoider(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t avoider = argv[0];
 	reg_t client, looper, mover;
 	int angle;

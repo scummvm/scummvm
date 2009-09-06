@@ -141,10 +141,10 @@ struct GfxState {
  * @param[in] yfact			Vertical scale factors
  * @param[in] mode			Graphics mode to use
  * @param[in] options		Rendering options
- * @param[in] resManager	Resource manager to use
+ * @param[in] resMan		Resource manager to use
  */
 void gfxop_init(int version, GfxState *state, 
-		gfx_options_t *options, ResourceManager *resManager,
+		gfx_options_t *options, ResourceManager *resMan,
 		Graphics::PixelFormat mode, int xfact = 1, int yfact = 1);
 
 /**

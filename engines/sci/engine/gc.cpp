@@ -145,7 +145,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 }
 
 struct deallocator_t {
-	SegManager *segManager;
+	SegManager *segMan;
 	MemObject *mobj;
 #ifdef DEBUG_GC
 	char *segnames[MEM_OBJ_MAX + 1];
@@ -160,7 +160,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 
 	if (!use_map->contains(addr)) {
 		// Not found -> we can free it
-		deallocator->mobj->freeAtAddress(deallocator->segManager, addr);
+		deallocator->mobj->freeAtAddress(deallocator->segMan, addr);
 #ifdef DEBUG_GC
 		debugC(2, kDebugLevelGC, "[GC] Deallocating %04x:%04x\n", PRINT_REG(addr));
 		deallocator->segcount[deallocator->mobj->getType()]++;
@@ -179,7 +179,7 @@ void run_gc(EngineState *s) {
 	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
 #endif
 
-	deallocator.segManager = sm;
+	deallocator.segMan = sm;
 	deallocator.use_map = find_all_used_references(s);
 
 	for (seg_nr = 1; seg_nr < sm->_heap.size(); seg_nr++) {

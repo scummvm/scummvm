@@ -456,18 +456,18 @@ void Kernel::loadSelectorNames() {
 }
 
 // Allocates a set amount of memory for a specified use and returns a handle to it.
-reg_t kalloc(SegManager *segManager, const char *type, int space) {
+reg_t kalloc(SegManager *segMan, const char *type, int space) {
 	reg_t reg;
 
-	segManager->alloc_hunk_entry(type, space, &reg);
+	segMan->alloc_hunk_entry(type, space, &reg);
 	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
 
 	return reg;
 }
 
 // Returns a pointer to the memory indicated by the specified handle
-byte *kmem(SegManager *segManager, reg_t handle) {
-	HunkTable *ht = (HunkTable *)GET_SEGMENT(*segManager, handle.segment, MEM_OBJ_HUNK);
+byte *kmem(SegManager *segMan, reg_t handle) {
+	HunkTable *ht = (HunkTable *)GET_SEGMENT(*segMan, handle.segment, MEM_OBJ_HUNK);
 
 	if (!ht || !ht->isValidEntry(handle.offset)) {
 		warning("Error: kmem() with invalid handle");
@@ -478,8 +478,8 @@ byte *kmem(SegManager *segManager, reg_t handle) {
 }
 
 // Frees the specified handle. Returns 0 on success, 1 otherwise.
-int kfree(SegManager *segManager, reg_t handle) {
-	segManager->free_hunk_entry(handle);
+int kfree(SegManager *segMan, reg_t handle) {
+	segMan->free_hunk_entry(handle);
 
 	return 0;
 }
@@ -620,7 +620,7 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int determine_reg_type(SegManager *segManager, reg_t reg, bool allow_invalid) {
+int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
 	MemObject *mobj;
 	int type = 0;
 
@@ -632,12 +632,12 @@ int determine_reg_type(SegManager *segManager, reg_t reg, bool allow_invalid) {
 		return type;
 	}
 
-	if ((reg.segment >= segManager->_heap.size()) || !segManager->_heap[reg.segment])
+	if ((reg.segment >= segMan->_heap.size()) || !segMan->_heap[reg.segment])
 		return 0; // Invalid
 
-	mobj = segManager->_heap[reg.segment];
+	mobj = segMan->_heap[reg.segment];
 
-	SciVersion version = segManager->sciVersion();	// for the offset defines
+	SciVersion version = segMan->sciVersion();	// for the offset defines
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
@@ -685,14 +685,14 @@ const char *kernel_argtype_description(int type) {
 	return argtype_description[sci_ffs(type)];
 }
 
-bool kernel_matches_signature(SegManager *segManager, const char *sig, int argc, const reg_t *argv) {
+bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, const reg_t *argv) {
 	// Always "match" if no signature is given
 	if (!sig)
 		return true;
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = determine_reg_type(segManager, *argv, *sig & KSIG_ALLOW_INV);
+			int type = determine_reg_type(segMan, *argv, *sig & KSIG_ALLOW_INV);
 
 			if (!type) {
 				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
@@ -721,9 +721,9 @@ bool kernel_matches_signature(SegManager *segManager, const char *sig, int argc,
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
 
-static void *_kernel_dereference_pointer(SegManager *segManager, reg_t pointer, int entries, int align) {
+static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, int align) {
 	int maxsize;
-	void *retval = segManager->dereference(pointer, &maxsize);
+	void *retval = segMan->dereference(pointer, &maxsize);
 
 	if (!retval)
 		return NULL;
@@ -741,12 +741,12 @@ static void *_kernel_dereference_pointer(SegManager *segManager, reg_t pointer, 
 
 }
 
-byte *kernelDerefBulkPtr(SegManager *segManager, reg_t pointer, int entries) {
-	return (byte*)_kernel_dereference_pointer(segManager, pointer, entries, 1);
+byte *kernelDerefBulkPtr(SegManager *segMan, reg_t pointer, int entries) {
+	return (byte*)_kernel_dereference_pointer(segMan, pointer, entries, 1);
 }
 
-reg_t *kernelDerefRegPtr(SegManager *segManager, reg_t pointer, int entries) {
-	return (reg_t*)_kernel_dereference_pointer(segManager, pointer, entries, sizeof(reg_t));
+reg_t *kernelDerefRegPtr(SegManager *segMan, reg_t pointer, int entries) {
+	return (reg_t*)_kernel_dereference_pointer(segMan, pointer, entries, sizeof(reg_t));
 }
 
 void Kernel::setDefaultKernelNames() {

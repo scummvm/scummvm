@@ -79,7 +79,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 
 
 reg_t kSaid(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
@@ -129,7 +129,7 @@ reg_t kSaid(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t object = argv[0];
 	List *list;
 	Node *node;
@@ -187,7 +187,7 @@ reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t stringpos = argv[0];
 	char *string = kernelDerefString(s->segMan, stringpos);
 	char *error;

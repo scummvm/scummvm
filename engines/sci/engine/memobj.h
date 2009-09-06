@@ -87,13 +87,13 @@ public:
 	 *
 	 * @param sub_addr		base address whose canonic address is to be found
 	 */
-	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr) { return sub_addr; }
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr) { return sub_addr; }
 
 	/**
 	 * Deallocates all memory associated with the specified address.
 	 * @param sub_addr		address (within the given segment) to deallocate
 	 */
-	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr) {}
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr) {}
 
 	/**
 	 * Iterates over and reports all addresses within the current segment.
@@ -191,7 +191,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -301,8 +301,8 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
-	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
@@ -416,7 +416,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -513,7 +513,7 @@ public:
 
 /* CloneTable */
 struct CloneTable : public Table<Clone> {
-	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -522,7 +522,7 @@ struct CloneTable : public Table<Clone> {
 
 /* NodeTable */
 struct NodeTable : public Table<Node> {
-	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -531,7 +531,7 @@ struct NodeTable : public Table<Node> {
 
 /* ListTable */
 struct ListTable : public Table<List> {
-	virtual void freeAtAddress(SegManager *segManager, reg_t sub_addr);
+	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -567,7 +567,7 @@ public:
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
-	virtual reg_t findCanonicAddress(SegManager *segManager, reg_t sub_addr);
+	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);

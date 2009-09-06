@@ -209,7 +209,7 @@ struct ObjVarRef {
 	reg_t obj;
 	int varindex;
 
-	reg_t* getPointer(SegManager *segManager) const;
+	reg_t* getPointer(SegManager *segMan) const;
 };
 
 
@@ -260,7 +260,7 @@ struct ExecStack {
 	int origin;             // The stack frame position the call was made from, or -1 if it was the initial call
 	ExecStackType type;
 
-	reg_t* getVarPointer(SegManager *segManager) const;
+	reg_t* getVarPointer(SegManager *segMan) const;
 };
 
 
@@ -444,7 +444,7 @@ void script_free_vm_memory(EngineState *s);
 /**
  * Looks up a selector and returns its type and value
  * varindex is written to iff it is non-NULL and the selector indicates a property of the object.
- * @param[in] segManager		The Segment Manager
+ * @param[in] segMan		The Segment Manager
  * @param[in] obj			Address of the object to look the selector up in
  * @param[in] selectorid	The selector to look up
  * @param[out] varp			A reference to the selector, if it is a
@@ -461,17 +461,17 @@ void script_free_vm_memory(EngineState *s);
  * 							kSelectorMethod if the selector represents a
  * 							method
  */
-SelectorType lookup_selector(SegManager *segManager, reg_t obj, Selector selectorid,
+SelectorType lookup_selector(SegManager *segMan, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
 
 /**
  * Looks up an entry of the exports table of a script
- * @param[in] segManager	The segment manager
+ * @param[in] segMan	The segment manager
  * @param[in]  script_nr	The script to look up in
  * @param[out] export_index	The index of the export entry to look up
  * @return					The handle
  */
-reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_index);
+reg_t script_lookup_export(SegManager *segMan, int script_nr, int export_index);
 
 /**
  * Makes sure that a script and its superclasses get loaded to the heap.
@@ -480,22 +480,22 @@ reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_ind
  * recursively as well, unless 'recursive' is set to zero. The 
  * complementary function is "script_uninstantiate()" below.
  * @param[in] resMan		The resource manager
- * @param[in] segManager	The segment manager
+ * @param[in] segMan	The segment manager
  * @param[in] script_nr		The script number to load
  * @return					The script's segment ID or 0 if out of heap
  */
-int script_instantiate(ResourceManager *resMan, SegManager *segManager, int script_nr);
+int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_nr);
 
 /**
  * Decreases the numer of lockers of a script and unloads it if that number
  * reaches zero. 
  * This function will recursively unload scripts containing its 
  * superclasses, if those aren't locked by other scripts as well.
- * @param[in] segManager	The segment manager
+ * @param[in] segMan	The segment manager
  * @param[in] version		The SCI version to use
  * @param[in] script_nr	The script number that is requestet to be unloaded
  */
-void script_uninstantiate(SegManager *segManager, int script_nr);
+void script_uninstantiate(SegManager *segMan, int script_nr);
 
 /**
  * Converts the builtin Sierra game IDs to the ones we use in ScummVM
@@ -571,28 +571,28 @@ void quit_vm();
 /**
  * Allocates "kernel" memory and returns a handle suitable to be passed on
  * to SCI scripts
- * @param[in] segManager	The Segment Manager
+ * @param[in] segMan	The Segment Manager
  * @param[in] type			A free-form type description string (static)
  * @param[in] space			The space to allocate
  * @return					The handle
  */
-reg_t kalloc(SegManager *segManager, const char *type, int space);
+reg_t kalloc(SegManager *segMan, const char *type, int space);
 
 /**
  * Returns a pointer to "kernel" memory based on the handle
- * @param[in] segManager	The Segment Manager
+ * @param[in] segMan	The Segment Manager
  * @param[in] handle		The handle to use
  * @return					A pointer to the allocated memory
  */
-byte *kmem(SegManager *segManager, reg_t handle);
+byte *kmem(SegManager *segMan, reg_t handle);
 
 /**
  * Frees all "kernel" memory associated with a handle
- * @param[in] segManager	The Segment Manager
+ * @param[in] segMan	The Segment Manager
  * @param[in] handle		The handle to free
  * @return					0 on success, 1 otherwise
  */
-int kfree(SegManager *segManager, reg_t handle);
+int kfree(SegManager *segMan, reg_t handle);
 
 /**
  * Determines the name of an object
@@ -603,7 +603,7 @@ int kfree(SegManager *segManager, reg_t handle);
  * 					in a static buffer and need not be freed (neither may
  * 					it be modified).
  */
-const char *obj_get_name(SegManager *segManager, reg_t pos);
+const char *obj_get_name(SegManager *segMan, reg_t pos);
 
 /**
  * Retrieves an object from the specified location
@@ -611,7 +611,7 @@ const char *obj_get_name(SegManager *segManager, reg_t pos);
  * @param[in] offset	The object's offset
  * @return				The object in question, or NULL if there is none
  */
-Object *obj_get(SegManager *segManager, reg_t offset);
+Object *obj_get(SegManager *segMan, reg_t offset);
 
 /**
  * Shrink execution stack to size.

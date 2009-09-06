@@ -122,7 +122,7 @@ enum AudioSyncCommands {
 
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	int song_nr = GET_SEL32V(obj, number);
 	Resource *song = s->resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 	int flags = GET_SEL32V(obj, flags);
@@ -157,7 +157,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	int result;
 	SongHandle handle;
 	int cue;
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 
 	if (s->resMan->sciVersion() > SCI_VERSION_01)
 		return;
@@ -207,7 +207,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 
 static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -387,7 +387,7 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 
 
 static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -679,7 +679,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -1069,7 +1069,7 @@ reg_t kDoAudio(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {
 		ResourceId id;

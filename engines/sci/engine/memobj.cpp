@@ -224,12 +224,12 @@ byte *SystemStrings::dereference(reg_t pointer, int *size) {
 
 
 //-------------------- script --------------------
-reg_t Script::findCanonicAddress(SegManager *segManager, reg_t addr) {
+reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }
 
-void Script::freeAtAddress(SegManager *segManager, reg_t addr) {
+void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
 	/*
 		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
 		if (locals_segment)
@@ -237,7 +237,7 @@ void Script::freeAtAddress(SegManager *segManager, reg_t addr) {
 	*/
 
 	if (_markedAsDeleted)
-		segManager->deallocateScript(nr);
+		segMan->deallocateScript(nr);
 }
 
 void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
@@ -292,7 +292,7 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
 }
 
-void CloneTable::freeAtAddress(SegManager *segManager, reg_t addr) {
+void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 	CloneTable *clone_table = this;
 	Object *victim_obj;
 
@@ -317,9 +317,9 @@ void CloneTable::freeAtAddress(SegManager *segManager, reg_t addr) {
 
 
 //-------------------- locals --------------------
-reg_t LocalVariables::findCanonicAddress(SegManager *segManager, reg_t addr) {
+reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	// Reference the owning script
-	SegmentId owner_seg = segManager->segGet(script_id);
+	SegmentId owner_seg = segMan->segGet(script_id);
 
 	assert(owner_seg >= 0);
 
@@ -335,7 +335,7 @@ void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCall
 
 
 //-------------------- stack --------------------
-reg_t DataStack::findCanonicAddress(SegManager *segManager, reg_t addr) {
+reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }
@@ -349,7 +349,7 @@ void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 
 
 //-------------------- lists --------------------
-void ListTable::freeAtAddress(SegManager *segManager, reg_t sub_addr) {
+void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
@@ -369,7 +369,7 @@ void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 
 
 //-------------------- nodes --------------------
-void NodeTable::freeAtAddress(SegManager *segManager, reg_t sub_addr) {
+void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
@@ -393,7 +393,7 @@ void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback 
 
 //-------------------- dynamic memory --------------------
 
-reg_t DynMem::findCanonicAddress(SegManager *segManager, reg_t addr) {
+reg_t DynMem::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	addr.offset = 0;
 	return addr;
 }

@@ -1398,10 +1398,10 @@ void run_vm(EngineState *s, int restoring) {
 	}
 }
 
-static int _obj_locate_varselector(SegManager *segManager, Object *obj, Selector slc) {
+static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
-	SciVersion version = segManager->sciVersion();	// for the selector defines
+	SciVersion version = segMan->sciVersion();	// for the selector defines
 	byte *buf;
 	uint varnum;
 
@@ -1411,7 +1411,7 @@ static int _obj_locate_varselector(SegManager *segManager, Object *obj, Selector
 		buf = obj->base_obj + selector_name_offset;
 	} else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-			obj = obj_get(segManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = obj_get(segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 
 		buf = (byte *)obj->base_vars;
 		varnum = obj->_variables[1].toUint16();
@@ -1438,9 +1438,9 @@ static int _class_locate_funcselector(Object *obj, Selector slc, SciVersion vers
 	return -1; // Failed
 }
 
-static SelectorType _lookup_selector_function(SegManager *segManager, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
+static SelectorType _lookup_selector_function(SegManager *segMan, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
 	int index;
-	SciVersion version = segManager->sciVersion();	// for the selector defines
+	SciVersion version = segMan->sciVersion();	// for the selector defines
 
 	// "recursive" lookup
 
@@ -1455,18 +1455,18 @@ static SelectorType _lookup_selector_function(SegManager *segManager, int seg_id
 			return kSelectorMethod;
 		} else {
 			seg_id = obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].segment;
-			obj = obj_get(segManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = obj_get(segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 		}
 	}
 
 	return kSelectorNone;
 }
 
-SelectorType lookup_selector(SegManager *segManager, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
-	Object *obj = obj_get(segManager, obj_location);
+SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
+	Object *obj = obj_get(segMan, obj_location);
 	Object *species;
 	int index;
-	SciVersion version = segManager->sciVersion();	// for the selector defines
+	SciVersion version = segMan->sciVersion();	// for the selector defines
 	bool oldScriptHeader = (version == SCI_VERSION_0_EARLY);
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
@@ -1482,7 +1482,7 @@ SelectorType lookup_selector(SegManager *segManager, reg_t obj_location, Selecto
 	if (IS_CLASS(obj))
 		species = obj;
 	else
-		species = obj_get(segManager, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+		species = obj_get(segMan, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
 
 
 	if (!obj) {
@@ -1491,7 +1491,7 @@ SelectorType lookup_selector(SegManager *segManager, reg_t obj_location, Selecto
 		return kSelectorNone;
 	}
 
-	index = _obj_locate_varselector(segManager, obj, selector_id);
+	index = _obj_locate_varselector(segMan, obj, selector_id);
 
 	if (index >= 0) {
 		// Found it as a variable
@@ -1502,17 +1502,17 @@ SelectorType lookup_selector(SegManager *segManager, reg_t obj_location, Selecto
 		return kSelectorVariable;
 	}
 
-	return _lookup_selector_function(segManager, obj_location.segment, obj, selector_id, fptr);
+	return _lookup_selector_function(segMan, obj_location.segment, obj, selector_id, fptr);
 }
 
-reg_t script_lookup_export(SegManager *segManager, int script_nr, int export_index) {
-	SegmentId seg = segManager->getSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-	return make_reg(seg, segManager->validateExportFunc(export_index, seg));
+reg_t script_lookup_export(SegManager *segMan, int script_nr, int export_index) {
+	SegmentId seg = segMan->getSegment(script_nr, SCRIPT_GET_DONT_LOAD);
+	return make_reg(seg, segMan->validateExportFunc(export_index, seg));
 }
 
-#define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segManager->get_class_address(id, SCRIPT_GET_LOCK, reg))
+#define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->get_class_address(id, SCRIPT_GET_LOCK, reg))
 
-int script_instantiate_common(ResourceManager *resMan, SegManager *segManager, int script_nr, Resource **script, Resource **heap, int *was_new) {
+int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, Resource **script, Resource **heap, int *was_new) {
 	int seg_id;
 	reg_t reg;
 
@@ -1533,8 +1533,8 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segManager, i
 		return 0;
 	}
 
-	seg_id = segManager->segGet(script_nr);
-	Script *scr = segManager->getScriptIfLoaded(seg_id);
+	seg_id = segMan->segGet(script_nr);
+	Script *scr = segMan->getScriptIfLoaded(seg_id);
 	if (scr) {
 		if (!scr->isMarkedAsDeleted()) {
 			scr->incrementLockers();
@@ -1543,14 +1543,14 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segManager, i
 			scr->freeScript();
 		}
 	} else {
-		scr = segManager->allocateScript(script_nr, &seg_id);
+		scr = segMan->allocateScript(script_nr, &seg_id);
 		if (!scr) {  // ALL YOUR SCRIPT BASE ARE BELONG TO US
 			error("Not enough heap space for script size 0x%x of script 0x%x (Should this happen?)", (*script)->size, script_nr);
 			return 0;
 		}
 	}
 
-	segManager->initialiseScript(*scr, script_nr);
+	segMan->initialiseScript(*scr, script_nr);
 
 	reg.segment = seg_id;
 	reg.offset = 0;
@@ -1566,7 +1566,7 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segManager, i
 	return seg_id;
 }
 
-int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int script_nr) {
+int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	int objtype;
 	unsigned int objlength;
 	reg_t reg;
@@ -1578,7 +1578,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int
 	SciVersion version = resMan->sciVersion();
 	bool oldScriptHeader = (version == SCI_VERSION_0_EARLY);
 
-	seg_id = script_instantiate_common(resMan, segManager, script_nr, &script, NULL, &was_new);
+	seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
 
 	if (was_new)
 		return seg_id;
@@ -1586,7 +1586,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int
 	reg.segment = seg_id;
 	reg.offset = 0;
 
-	Script *scr = segManager->getScript(seg_id);
+	Script *scr = segMan->getScript(seg_id);
 
 	if (oldScriptHeader) {
 		//
@@ -1601,7 +1601,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int
 		magic_pos_adder = 2;  // Step over the funny prefix
 
 		if (locals_nr)
-			segManager->scriptInitialiseLocalsZero(reg.segment, locals_nr);
+			segMan->scriptInitialiseLocalsZero(reg.segment, locals_nr);
 
 	} else {
 		scr->mcpyInOut(0, script->data, script->size);
@@ -1649,23 +1649,23 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int
 			break;
 
 		case SCI_OBJ_LOCALVARS:
-			segManager->scriptInitialiseLocals(data_base);
+			segMan->scriptInitialiseLocals(data_base);
 			break;
 
 		case SCI_OBJ_CLASS: {
 			int classpos = addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 			int species;
 			species = scr->getHeap(addr.offset - SCRIPT_OBJECT_MAGIC_OFFSET + SCRIPT_SPECIES_OFFSET);
-			if (species < 0 || species >= (int)segManager->_classtable.size()) {
+			if (species < 0 || species >= (int)segMan->_classtable.size()) {
 				warning("Invalid species %d(0x%x) not in interval "
 				          "[0,%d) while instantiating script %d\n",
-				          species, species, segManager->_classtable.size(),
+				          species, species, segMan->_classtable.size(),
 				          script_nr);
 				return 0;
 			}
 
-			segManager->_classtable[species].reg = addr;
-			segManager->_classtable[species].reg.offset = classpos;
+			segMan->_classtable[species].reg = addr;
+			segMan->_classtable[species].reg.offset = classpos;
 			// Set technical class position-- into the block allocated for it
 		}
 		break;
@@ -1694,17 +1694,17 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int
 
 		switch (objtype) {
 		case SCI_OBJ_CODE:
-			segManager->scriptAddCodeBlock(addr);
+			segMan->scriptAddCodeBlock(addr);
 			break;
 		case SCI_OBJ_OBJECT:
 		case SCI_OBJ_CLASS: { // object or class?
-			Object *obj = segManager->scriptObjInit(addr);
+			Object *obj = segMan->scriptObjInit(addr);
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
 			obj->_variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SPECIES_SELECTOR].offset);
 
-			base_obj = obj_get(segManager, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+			base_obj = obj_get(segMan, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
 			obj->variable_names_nr = base_obj->_variables.size();
 			obj->base_obj = base_obj->base_obj;
 			// Copy base from species class, as we need its selector IDs
@@ -1725,24 +1725,24 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segManager, int
 	} while (objtype != 0 && reg.offset < script->size - 2);
 
 	if (relocation >= 0)
-		segManager->scriptRelocate(make_reg(reg.segment, relocation));
+		segMan->scriptRelocate(make_reg(reg.segment, relocation));
 
 	return reg.segment;		// instantiation successful
 }
 
-int script_instantiate_sci11(ResourceManager *resMan, SegManager *segManager, int script_nr) {
+int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	Resource *script, *heap;
 	int seg_id;
 	int heap_start;
 	reg_t reg;
 	int was_new;
 
-	seg_id = script_instantiate_common(resMan, segManager, script_nr, &script, &heap, &was_new);
+	seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, &heap, &was_new);
 
 	if (was_new)
 		return seg_id;
 
-	Script *scr = segManager->getScript(seg_id);
+	Script *scr = segMan->getScript(seg_id);
 
 	heap_start = script->size;
 	if (script->size & 2)
@@ -1756,30 +1756,30 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segManager, in
 
 	reg.segment = seg_id;
 	reg.offset = heap_start + 4;
-	segManager->scriptInitialiseLocals(reg);
+	segMan->scriptInitialiseLocals(reg);
 
-	segManager->scriptRelocateExportsSci11(seg_id);
-	segManager->scriptInitialiseObjectsSci11(seg_id);
+	segMan->scriptRelocateExportsSci11(seg_id);
+	segMan->scriptInitialiseObjectsSci11(seg_id);
 
 	reg.offset = READ_LE_UINT16(heap->data);
-	segManager->heapRelocate(reg);
+	segMan->heapRelocate(reg);
 
 	return seg_id;
 }
 
-int script_instantiate(ResourceManager *resMan, SegManager *segManager, int script_nr) {
+int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	if (resMan->sciVersion() >= SCI_VERSION_1_1)
-		return script_instantiate_sci11(resMan, segManager, script_nr);
+		return script_instantiate_sci11(resMan, segMan, script_nr);
 	else
-		return script_instantiate_sci0(resMan, segManager, script_nr);
+		return script_instantiate_sci0(resMan, segMan, script_nr);
 }
 
-void script_uninstantiate_sci0(SegManager *segManager, int script_nr, SegmentId seg) {
-	bool oldScriptHeader = (segManager->sciVersion() == SCI_VERSION_0_EARLY);
+void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg) {
+	bool oldScriptHeader = (segMan->sciVersion() == SCI_VERSION_0_EARLY);
 	reg_t reg = make_reg(seg, oldScriptHeader ? 2 : 0);
 	int objtype, objlength;
-	Script *scr = segManager->getScript(seg);
-	SciVersion version = segManager->sciVersion();
+	Script *scr = segMan->getScript(seg);
+	SciVersion version = segMan->sciVersion();
 
 	// Make a pass over the object in order uninstantiate all superclasses
 	objlength = 0;
@@ -1802,13 +1802,13 @@ void script_uninstantiate_sci0(SegManager *segManager, int script_nr, SegmentId 
 			superclass = scr->getHeap(reg.offset + SCRIPT_SUPERCLASS_OFFSET); // Get superclass...
 
 			if (superclass >= 0) {
-				int superclass_script = segManager->_classtable[superclass].script;
+				int superclass_script = segMan->_classtable[superclass].script;
 
 				if (superclass_script == script_nr) {
 					if (scr->getLockers())
 						scr->decrementLockers();  // Decrease lockers if this is us ourselves
 				} else
-					script_uninstantiate(segManager, superclass_script);
+					script_uninstantiate(segMan, superclass_script);
 				// Recurse to assure that the superclass lockers number gets decreased
 			}
 
@@ -1820,9 +1820,9 @@ void script_uninstantiate_sci0(SegManager *segManager, int script_nr, SegmentId 
 	} while (objtype != 0);
 }
 
-void script_uninstantiate(SegManager *segManager, int script_nr) {
-	SegmentId segment = segManager->segGet(script_nr);
-	Script *scr = segManager->getScriptIfLoaded(segment);
+void script_uninstantiate(SegManager *segMan, int script_nr) {
+	SegmentId segment = segMan->segGet(script_nr);
+	Script *scr = segMan->getScriptIfLoaded(segment);
 
 	if (!scr) {   // Is it already loaded?
 		//warning("unloading script 0x%x requested although not loaded", script_nr);
@@ -1836,12 +1836,12 @@ void script_uninstantiate(SegManager *segManager, int script_nr) {
 		return;
 
 	// Free all classtable references to this script
-	for (uint i = 0; i < segManager->_classtable.size(); i++)
-		if (segManager->_classtable[i].reg.segment == segment)
-			segManager->_classtable[i].reg = NULL_REG;
+	for (uint i = 0; i < segMan->_classtable.size(); i++)
+		if (segMan->_classtable[i].reg.segment == segment)
+			segMan->_classtable[i].reg = NULL_REG;
 
-	if (segManager->sciVersion() < SCI_VERSION_1_1)
-		script_uninstantiate_sci0(segManager, script_nr, segment);
+	if (segMan->sciVersion() < SCI_VERSION_1_1)
+		script_uninstantiate_sci0(segMan, script_nr, segment);
 	else
 		warning("FIXME: Add proper script uninstantiation for SCI 1.1");
 
@@ -1933,9 +1933,9 @@ int game_run(EngineState **_s) {
 	return 0;
 }
 
-Object *obj_get(SegManager *segManager, reg_t offset) {
-	MemObject *mobj = GET_OBJECT_SEGMENT(*segManager, offset.segment);
-	SciVersion version = segManager->sciVersion();
+Object *obj_get(SegManager *segMan, reg_t offset) {
+	MemObject *mobj = GET_OBJECT_SEGMENT(*segMan, offset.segment);
+	SciVersion version = segMan->sciVersion();
 	Object *obj = NULL;
 	int idx;
 
@@ -1958,9 +1958,9 @@ Object *obj_get(SegManager *segManager, reg_t offset) {
 	return obj;
 }
 
-const char *obj_get_name(SegManager *segManager, reg_t pos) {
-	Object *obj = obj_get(segManager, pos);
-	SciVersion version = segManager->sciVersion();
+const char *obj_get_name(SegManager *segMan, reg_t pos) {
+	Object *obj = obj_get(segMan, pos);
+	SciVersion version = segMan->sciVersion();
 	if (!obj)
 		return "<no such object>";
 
@@ -1968,7 +1968,7 @@ const char *obj_get_name(SegManager *segManager, reg_t pos) {
 	if (nameReg.isNull())
 		return "<no name>";
 
-	const char *name = (const char*)segManager->dereference(obj->_variables[SCRIPT_NAME_SELECTOR], NULL);
+	const char *name = (const char*)segMan->dereference(obj->_variables[SCRIPT_NAME_SELECTOR], NULL);
 	if (!name)
 		return "<invalid name>";
 
@@ -1991,15 +1991,15 @@ void shrink_execution_stack(EngineState *s, uint size) {
 	s->_executionStack.erase(iter, s->_executionStack.end());
 }
 
-reg_t* ObjVarRef::getPointer(SegManager *segManager) const {
-	Object *o = obj_get(segManager, obj);
+reg_t* ObjVarRef::getPointer(SegManager *segMan) const {
+	Object *o = obj_get(segMan, obj);
 	if (!o) return 0;
 	return &(o->_variables[varindex]);
 }
 
-reg_t* ExecStack::getVarPointer(SegManager *segManager) const {
+reg_t* ExecStack::getVarPointer(SegManager *segMan) const {
 	assert(type == EXEC_STACK_TYPE_VARSELECTOR);
-	return addr.varp.getPointer(segManager);
+	return addr.varp.getPointer(segMan);
 }
 
 } // End of namespace Sci

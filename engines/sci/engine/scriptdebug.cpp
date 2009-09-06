@@ -65,11 +65,11 @@ extern const char *selector_name(EngineState *s, int selector);
 
 ScriptState scriptState;
 
-int propertyOffsetToId(SegManager *segManager, int prop_ofs, reg_t objp) {
-	Object *obj = obj_get(segManager, objp);
+int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
+	Object *obj = obj_get(segMan, objp);
 	byte *selectoroffset;
 	int selectors;
-	SciVersion version = segManager->sciVersion();	// for the selector defines
+	SciVersion version = segMan->sciVersion();	// for the selector defines
 
 	if (!obj) {
 		warning("Applied propertyOffsetToId on non-object at %04x:%04x", PRINT_REG(objp));
@@ -78,11 +78,11 @@ int propertyOffsetToId(SegManager *segManager, int prop_ofs, reg_t objp) {
 
 	selectors = obj->_variables.size();
 
-	if (segManager->sciVersion() < SCI_VERSION_1_1)
+	if (segMan->sciVersion() < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
-			obj = obj_get(segManager, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = obj_get(segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;

@@ -49,8 +49,8 @@ struct param_struct {
 	GfxDriver *driver;
 };
 
-GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resManager) :
-				_options(options), _driver(driver), _resMan(resManager),
+GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resMan) :
+				_options(options), _driver(driver), _resMan(resMan),
 				_lockCounter(0), _tagLockCounter(0), _staticPalette(0) {
 	gfxr_init_static_palette();
 
@@ -65,7 +65,7 @@ GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, Resource
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {
-		Resource *res = resManager->findResource(ResourceId(kResourceTypePalette, 999), 0);
+		Resource *res = resMan->findResource(ResourceId(kResourceTypePalette, 999), 0);
 		if (res && res->data)
 			_staticPalette = gfxr_read_pal1(res->id.number, res->data, res->size);
 	}

@@ -41,7 +41,7 @@ reg_t kGetEvent(EngineState *s, int, int argc, reg_t *argv) {
 	sci_event_t e;
 	int oldx, oldy;
 	int modifier_mask = s->resMan->sciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -153,7 +153,7 @@ reg_t kGetEvent(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kMapKeyToDir(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 
 	if (GET_SEL32V(obj, type) == SCI_EVT_KEYBOARD) { // Keyboard
 		int mover = -1;
@@ -203,7 +203,7 @@ reg_t kMapKeyToDir(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kGlobalToLocal(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 
 	if (obj.segment) {
 		int x = GET_SEL32V(obj, x);
@@ -219,7 +219,7 @@ reg_t kGlobalToLocal(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kLocalToGlobal(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argc ? argv[0] : NULL_REG; // Can this really happen? Lars
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 
 	if (obj.segment) {
 		int x = GET_SEL32V(obj, x);

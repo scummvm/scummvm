@@ -384,7 +384,7 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 }
 
 void gfxop_init(int version, GfxState *state,
-				gfx_options_t *options, ResourceManager *resManager,
+				gfx_options_t *options, ResourceManager *resMan,
 				Graphics::PixelFormat mode, int xfact, int yfact) {
 	//int color_depth = bpp ? bpp : 1;
 	//int initialized = 0;
@@ -403,7 +403,7 @@ void gfxop_init(int version, GfxState *state,
 
 	state->driver = new GfxDriver(xfact, yfact, mode);
 
-	state->gfxResMan = new GfxResManager(state->options, state->driver, resManager);
+	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan);
 	
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 	state->pointerZone = Common::Rect(0, 0, 320, 200);

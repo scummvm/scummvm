@@ -124,7 +124,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 
 
 reg_t kMenuSelect(EngineState *s, int, int argc, reg_t *argv) {
-	SegManager *segManager = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t event = argv[0];
 	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */
 	bool claimed = false;

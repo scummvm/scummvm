@@ -301,19 +301,19 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		s_fallbackDesc.desc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
-	SegManager *segManager = new SegManager(resMan);
-	if (!script_instantiate(resMan, segManager, 0)) {
+	SegManager *segMan = new SegManager(resMan);
+	if (!script_instantiate(resMan, segMan, 0)) {
 		warning("fallbackDetect(): Could not instantiate script 0");
 		SearchMan.remove("SCI_detection");
-		delete segManager;
+		delete segMan;
 		delete resMan;
 		return 0;
 	}
-	reg_t game_obj = script_lookup_export(segManager, 0, 0);
-	const char *gameName = obj_get_name(segManager, game_obj);
+	reg_t game_obj = script_lookup_export(segMan, 0, 0);
+	const char *gameName = obj_get_name(segMan, game_obj);
 	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName, PRINT_REG(game_obj));
 	s_fallbackDesc.desc.gameid = convertSierraGameId(gameName, &s_fallbackDesc.desc.flags);
-	delete segManager;
+	delete segMan;
 
 	// Try to determine the game language
 	// Load up text 0 and start looking for "#" characters
