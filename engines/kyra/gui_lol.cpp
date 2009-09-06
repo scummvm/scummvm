@@ -2662,7 +2662,7 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 
 	_newMenu = &_savenameMenu;
 	int16 s = (int16)button->arg;
-	_menuResult = _saveMenu.item[-s - 2].saveSlot;
+	_menuResult = _saveMenu.item[-s - 2].saveSlot + 1;
 	_saveDescription = (char*)_vm->_tempBuffer5120 + 1000;
 	_saveDescription[0] = 0;
 	if (_saveMenu.item[-s - 2].saveSlot != -3)
@@ -2682,7 +2682,7 @@ int GUI_LoL::clickedDeleteMenu(Button *button) {
 	_choiceMenu.menuNameId = 0x400b;
 	_newMenu = &_choiceMenu;
 	int16 s = (int16)button->arg;
-	_menuResult = _deleteMenu.item[-s - 2].saveSlot;
+	_menuResult = _deleteMenu.item[-s - 2].saveSlot + 1;
 
 	return 1;
 }
@@ -2817,7 +2817,7 @@ int GUI_LoL::clickedSavenameMenu(Button *button) {
 
 		Util::convertDOSToISO(_saveDescription);
 
-		int slot = _menuResult == -3 ? getNextSavegameSlot() : _menuResult;
+		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult - 1;
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
 		_vm->saveGameState(slot, _saveDescription, &thumb);
@@ -2838,15 +2838,13 @@ int GUI_LoL::clickedChoiceMenu(Button *button) {
 		if (_lastMenu == &_mainMenu) {
 			_vm->quitGame();
 		} else if (_lastMenu == &_deleteMenu) {
-			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult));
-			Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _menuResult);
-			while (i != _saveSlots.end()) {
-				++i;
-				if (i == _saveSlots.end())
-					break;
+			_vm->_saveFileMan->removeSavefile(_vm->getSavegameFilename(_menuResult - 1));
+			Common::Array<int>::iterator i = Common::find(_saveSlots.begin(), _saveSlots.end(), _menuResult - 1);
+			while (i != _saveSlots.begin()) {
+				--i;
 				// We are only renaming all savefiles until we get some slots missing
 				// Also not rename quicksave slot filenames
-				if (*(i-1) != *i || *i >= 990)
+				if (/**(i-1) != *i ||*/ *i >= 990)
 					break;
 				Common::String oldName = _vm->getSavegameFilename(*i);
 				Common::String newName = _vm->getSavegameFilename(*i-1);

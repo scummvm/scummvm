@@ -385,7 +385,9 @@ void GUI::updateSaveList(bool excludeQuickSaves) {
 int GUI::getNextSavegameSlot() {
 	Common::InSaveFile *in;
 
-	for (int i = 1; i < 990; i++) {
+	int start = _vm->gameFlags().gameID == GI_LOL ? 0 : 1;
+
+	for (int i = start; i < 990; i++) {
 		if ((in = _vm->_saveFileMan->openForLoading(_vm->getSavegameFilename(i))))
 			delete in;
 		else
