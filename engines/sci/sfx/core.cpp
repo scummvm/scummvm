@@ -44,7 +44,7 @@
 namespace Sci {
 
 class SfxPlayer;
-SfxPlayer *player = NULL;	// FIXME: Avoid non-const global vars
+static SfxPlayer *s_player = NULL;	// FIXME: Avoid non-const global vars
 
 
 /* Plays a song iterator that found a PCM through a PCM device, if possible
@@ -327,18 +327,18 @@ int sfx_pcm_available() {
 }
 
 void sfx_reset_player() {
-	if (player)
-		player->stop();
+	if (s_player)
+		s_player->stop();
 }
 
 void sfx_player_tell_synth(int buf_nr, byte *buf) {
-	if (player)
-		player->tell_synth(buf_nr, buf);
+	if (s_player)
+		s_player->tell_synth(buf_nr, buf);
 }
 
 int sfx_get_player_polyphony() {
-	if (player)
-		return player->_polyphony;
+	if (s_player)
+		return s_player->_polyphony;
 	else
 		return 0;
 }
@@ -421,9 +421,9 @@ static void _dump_songs(SfxState *self) {
 		song = song->_next;
 	}
 
-	if (player) {
+	if (s_player) {
 		fprintf(stderr, "Audio iterator:\n");
-		player->iterator_message(SongIterator::Message(0, SIMSG_PRINT(1)));
+		s_player->iterator_message(SongIterator::Message(0, SIMSG_PRINT(1)));
 	}
 }
 #endif
@@ -491,8 +491,8 @@ void SfxState::updateSingleSong() {
 	if (newsong != _song) {
 		freezeTime(); /* Store song delay time */
 
-		if (player)
-			player->stop();
+		if (s_player)
+			s_player->stop();
 
 		if (newsong) {
 			if (!newsong->_it)
@@ -533,10 +533,10 @@ void SfxState::updateSingleSong() {
 		_song = newsong;
 		thawTime(); /* Recover song delay time */
 
-		if (newsong && player) {
+		if (newsong && s_player) {
 			SongIterator *clonesong = newsong->_it->clone(newsong->_delay);
 
-			player->add_iterator(clonesong, newsong->_wakeupTime.msecs());
+			s_player->add_iterator(clonesong, newsong->_wakeupTime.msecs());
 		}
 	}
 }
@@ -595,17 +595,17 @@ void SfxState::updateMultiSong() {
 			setSongStatus(oldseeker, SOUND_STATUS_SUSPENDED);
 			debugC(2, kDebugLevelSound, "[SFX] Stopping song %lx\n", oldseeker->_handle);
 
-			if (player && oldseeker->_it)
-				player->iterator_message(SongIterator::Message(oldseeker->_it->ID, SIMSG_STOP));
+			if (s_player && oldseeker->_it)
+				s_player->iterator_message(SongIterator::Message(oldseeker->_it->ID, SIMSG_STOP));
 			oldseeker->_nextPlaying = NULL; /* Clear this pointer; we don't need the tag anymore */
 		}
 
 	for (newseeker = newsong; newseeker; newseeker = newseeker->_nextPlaying) {
-		if (newseeker->_status != SOUND_STATUS_PLAYING && player) {
+		if (newseeker->_status != SOUND_STATUS_PLAYING && s_player) {
 			debugC(2, kDebugLevelSound, "[SFX] Adding song %lx\n", newseeker->_it->ID);
 
 			SongIterator *clonesong = newseeker->_it->clone(newseeker->_delay);
-			player->add_iterator(clonesong, g_system->getMillis());
+			s_player->add_iterator(clonesong, g_system->getMillis());
 		}
 		setSongStatus(newseeker, SOUND_STATUS_PLAYING);
 	}
@@ -646,7 +646,7 @@ void SfxState::sfx_init(ResourceManager *resMan, int flags) {
 	_syncResource = NULL;
 	_syncOffset = 0;
 
-	player = NULL;
+	s_player = NULL;
 
 	if (flags & SFX_STATE_FLAG_NOSOUND) {
 		warning("[SFX] Sound disabled");
@@ -666,17 +666,17 @@ void SfxState::sfx_init(ResourceManager *resMan, int flags) {
 		return;
 	}
 
-	player = new SfxPlayer();
+	s_player = new SfxPlayer();
 
-	if (!player) {
+	if (!s_player) {
 		warning("[SFX] No song player found");
 		return;
 	}
 
-	if (player->init(resMan, DELAY / 1000)) {
+	if (s_player->init(resMan, DELAY / 1000)) {
 		warning("[SFX] Song player reported error, disabled");
-		delete player;
-		player = NULL;
+		delete s_player;
+		s_player = NULL;
 	}
 
 	_resMan = resMan;
@@ -687,8 +687,8 @@ void SfxState::sfx_exit() {
 	fprintf(stderr, "[sfx-core] Uninitialising\n");
 #endif
 
-	delete player;
-	player = 0;
+	delete s_player;
+	s_player = 0;
 
 	g_system->getMixer()->stopAll();
 
@@ -703,16 +703,16 @@ void SfxState::sfx_suspend(bool suspend) {
 		/* suspend */
 
 		freezeTime();
-		if (player)
-			player->pause();
+		if (s_player)
+			s_player->pause();
 		/* Suspend song player */
 
 	} else if (!suspend && (_suspended)) {
 		/* unsuspend */
 
 		thawTime();
-		if (player)
-			player->resume();
+		if (s_player)
+			s_player->resume();
 
 		/* Unsuspend song player */
 	}
@@ -804,8 +804,8 @@ void SfxState::sfx_add_song(SongIterator *it, int priority, SongHandle handle, i
 	/* Tell player to shut up */
 //	_dump_songs(this);
 
-	if (player)
-		player->iterator_message(SongIterator::Message(handle, SIMSG_STOP));
+	if (s_player)
+		s_player->iterator_message(SongIterator::Message(handle, SIMSG_STOP));
 
 	if (song) {
 		setSongStatus( song, SOUND_STATUS_STOPPED);
@@ -911,9 +911,9 @@ void SfxState::sfx_song_set_loops(SongHandle handle, int loops) {
 #endif
 	songit_handle_message(&(song->_it), msg);
 
-	if (player/* && player->send_iterator_message*/)
+	if (s_player/* && s_player->send_iterator_message*/)
 		/* FIXME: The above should be optional! */
-		player->iterator_message(msg);
+		s_player->iterator_message(msg);
 }
 
 void SfxState::sfx_song_set_hold(SongHandle handle, int hold) {
@@ -928,9 +928,9 @@ void SfxState::sfx_song_set_hold(SongHandle handle, int hold) {
 #endif
 	songit_handle_message(&(song->_it), msg);
 
-	if (player/* && player->send_iterator_message*/)
+	if (s_player/* && s_player->send_iterator_message*/)
 		/* FIXME: The above should be optional! */
-		player->iterator_message(msg);
+		s_player->iterator_message(msg);
 }
 
 /* Different from the one in iterator.c */
@@ -979,8 +979,8 @@ Common::Error SfxState::sfx_send_midi(SongHandle handle, int channel,
 		return Common::kUnknownError;
 	}
 
-	if (player)
-		player->tell_synth(MIDI_cmdlen[command >> 4], buffer);
+	if (s_player)
+		s_player->tell_synth(MIDI_cmdlen[command >> 4], buffer);
 	return Common::kNoError;
 }
 
@@ -1155,16 +1155,12 @@ Audio::AudioStream* SfxState::getAudioStream(uint32 number, uint32 volume, int *
 
 	if (audioRes->headerSize > 0) {
 		// SCI1.1
-		Common::MemoryReadStream *headerStream = 
-			new Common::MemoryReadStream(audioRes->header, audioRes->headerSize, false);
+		Common::MemoryReadStream headerStream(audioRes->header, audioRes->headerSize, false);
 
-		if (readSOLHeader(headerStream, audioRes->headerSize, size, _audioRate, audioFlags)) {
-			Common::MemoryReadStream *dataStream = 
-				new Common::MemoryReadStream(audioRes->data, audioRes->size, false);
-			data = readSOLAudio(dataStream, size, audioFlags, flags);
-			delete dataStream;
+		if (readSOLHeader(&headerStream, audioRes->headerSize, size, _audioRate, audioFlags)) {
+			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, false);
+			data = readSOLAudio(&dataStream, size, audioFlags, flags);
 		}
-		delete headerStream;
 	} else {
 		// SCI1
 		size = audioRes->size;
