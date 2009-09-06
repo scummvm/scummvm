@@ -310,7 +310,7 @@ public:
 	 * @return					Raw pointer into the allocated dynamic 
 	 * 							memory
 	 */
-	unsigned char *allocDynmem(int size, const char *description, reg_t *addr);
+	byte *allocDynmem(int size, const char *description, reg_t *addr);
 
 	/**
 	 * Deallocates a piece of dynamic memory

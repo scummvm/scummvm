@@ -920,7 +920,7 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 	return mobj->dereference(pointer, size);
 }
 
-unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
+byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	SegmentId seg;
 	MemObject *mobj = allocNonscriptSegment(MEM_OBJ_DYNMEM, &seg);
 	*addr = make_reg(seg, 0);
@@ -936,7 +936,7 @@ unsigned char *SegManager::allocDynmem(int size, const char *descr, reg_t *addr)
 
 	d._description = strdup(descr);
 
-	return (unsigned char *)(d._buf);
+	return (byte *)(d._buf);
 }
 
 const char *SegManager::getDescription(reg_t addr) {

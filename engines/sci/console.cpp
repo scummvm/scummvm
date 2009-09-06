@@ -1948,7 +1948,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_REF: {
 			int size;
-			unsigned char *block = _vm->_gamestate->segMan->dereference(reg, &size);
+			byte *block = _vm->_gamestate->segMan->dereference(reg, &size);
 
 			DebugPrintf("raw data\n");
 

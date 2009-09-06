@@ -37,7 +37,6 @@ namespace Sci {
 
 class SegManager;
 struct EngineState;
-struct IntMapper;
 struct Object;
 class ResourceManager;
 
