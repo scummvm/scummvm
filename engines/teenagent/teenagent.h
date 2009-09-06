@@ -80,7 +80,7 @@ public:
 	void rejectMessage();
 
 	void playMusic(byte id); //schedules play
-	void playSound(byte id, byte skip_frames = 0);
+	void playSound(byte id, byte skip_frames = 1);
 	void playSoundNow(byte id);
 	void enableObject(byte id, byte scene_id = 0);
 	void disableObject(byte id, byte scene_id = 0);

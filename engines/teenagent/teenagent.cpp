@@ -431,6 +431,8 @@ void TeenAgentEngine::playMusic(byte id) {
 }
 
 void TeenAgentEngine::playSound(byte id, byte skip_frames) {
+	if (skip_frames > 0)
+		--skip_frames;
 	SceneEvent event(SceneEvent::PlaySound);
 	event.sound = id;
 	event.color = skip_frames;
