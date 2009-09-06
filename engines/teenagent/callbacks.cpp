@@ -2506,7 +2506,196 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		loadScene(30, 18, 159, 2);
 		return true;
+		
+	case 0x67a6:
+		loadScene(29, 149, 163, 1);
+		playAnimation(974);
+		moveTo(160, 188, 0);
+		return true;
+		
+	case 0x6805:
+		processCallback(0x6849);
+		playAnimation(694);
+		playSound(15, 8);
+		playAnimation(693, 1);
+		setOns(6, 0);
+		displayMessage(0x4cc7);
+		inventory->add(54);
+		disableObject(4);
+		return true;
+		
+	case 0x6849:
+		{
+			Common::Point p = scene->getPosition();
+			if (p.x == 208 && p.y == 151) {
+				moveRel(0, 0, 2);
+			} else 
+				moveTo(208, 151, 1);
+		}
+		return true;
+		
+	case 0x687a: //using the book
+		if (CHECK_FLAG(0xDBC2, 1)) {
+			displayMessage(0x4ca0);
+		} else {
+			playSound(49, 5);
+			playSound(49, 17);
+			playAnimation(691);
+			if (!processCallback(0x68e6)) {
+				if (!CHECK_FLAG(0xDBC0, 1)) {
+					displayMessage(0x4c61);
+					SET_FLAG(0xDBC0, 1);
+				}
+			} else {
+				playSound(15, 8); //secret compartment
+				playAnimation(692, 1);
+				setOns(6, 59);
+				enableObject(4);
+				displayMessage(0x4c84);
+				SET_FLAG(0xDBC2, 1);
+			}
+		}
+		return true;
+		
+	case 0x68e6: //checking drawers
+		{
+			uint16 v = GET_FLAG(0xDBC1) - 1;
+			uint bx = 0xDBB7;
+			if (GET_FLAG(bx + v) != 1)
+				return false;
 
+			uint16 sum = 0;
+			for(uint i = 0; i < 6; ++i) {
+				sum += GET_FLAG(bx + i);
+			}
+			return sum == 1;
+		}
+		
+	case 0x6918:
+		if (inventory->has(55)) {
+			displayMessage(0x4cd9);
+			return true;
+		}
+		if (!CHECK_FLAG(0xDBC3, 1)) {
+			playAnimation(695);
+			Dialog::show(scene, 0x386a);
+			SET_FLAG(0xDBC3, 1);
+		}
+		
+		playSound(5, 11);
+		playAnimation(696);
+		inventory->add(55);
+		return true;
+		
+	case 0x6962:
+		if (CHECK_FLAG(0xDBB7, 1)) {
+			setOns(0, 0);
+			playSound(67, 4);
+			playAnimation(678);
+			SET_FLAG(0xDBB7, 0);
+		} else if (CHECK_FLAG(0xDBB8, 1)) {
+			processCallback(0x6b86);
+		} else {
+			playSound(66, 4);
+			playAnimation(677);
+			setOns(0, 53);
+			SET_FLAG(0xDBB7, 1);
+		}
+		return true;
+		
+	case 0x69b8:
+		if (CHECK_FLAG(0xDBB8, 1)) {
+			setOns(1, 0);
+			playSound(67, 4);
+			playAnimation(680);
+			SET_FLAG(0xDBB8, 0);
+		} else if (CHECK_FLAG(0xDBB8, 1)) {
+			processCallback(0x6b86);
+		} else if (CHECK_FLAG(0xDBB9, 1)) {
+			processCallback(0x6b86);
+		} else {
+			playSound(66, 5);
+			playAnimation(679);
+			setOns(1, 54);
+			SET_FLAG(0xDBB8, 1);
+		}
+		return true;
+		
+	case 0x6a1b:
+		if (CHECK_FLAG(0xDBB9, 1)) {
+			setOns(2, 0);
+			playSound(67, 5);
+			playAnimation(682);
+			SET_FLAG(0xDBB9, 0);
+		} else if (CHECK_FLAG(0xDBB8, 1)) {
+			processCallback(0x6b86);
+		} else {
+			playSound(67, 5);
+			playAnimation(681);
+			setOns(2, 55);
+			SET_FLAG(0xDBB9, 1);
+		}
+		return true;
+		
+	case 0x6a73:
+		if (CHECK_FLAG(0xDBBA, 1)) {
+			setOns(3, 0);
+			playSound(67, 4);
+			playAnimation(684);
+			SET_FLAG(0xDBBA, 0);
+		} else if (!CHECK_FLAG(0xDBBB, 1)) {
+			playSound(66, 4);
+			playAnimation(683);
+			setOns(3, 56);
+			SET_FLAG(0xDBBA, 1);
+		} else
+			processCallback(0x6b86);
+		return true;
+
+	case 0x6acb:
+		if (CHECK_FLAG(0xDBBB, 1)) {
+			setOns(4, 0);
+			playSound(67, 4);
+			playAnimation(686);
+			SET_FLAG(0xDBBB, 0);
+		} else if (CHECK_FLAG(0xDBBA, 1)) {
+			processCallback(0x6b86);
+		} else if (CHECK_FLAG(0xDBBC, 1)) {
+			processCallback(0x6b86);
+		} else {
+			playSound(66, 5);
+			playAnimation(685);
+			setOns(4, 57);
+			SET_FLAG(0xDBBB, 1);
+		}
+		return true;
+	
+	case 0x6b2e:
+		if (CHECK_FLAG(0xdbbc, 1)) {
+			setOns(5, 0);
+			playSound(67, 5);
+			playAnimation(688);
+			SET_FLAG(0xdbbc, 0);
+		} else if (CHECK_FLAG(0xdbbc, 1)) {
+			processCallback(0x6b86);
+		} else {
+			playSound(66, 6);
+			playAnimation(687);
+			setOns(5, 58);
+			SET_FLAG(0xDBBC, 1);
+		}
+		return true;
+		
+		
+	case 0x6b86:
+		if (CHECK_FLAG(0xDBBD, 1)) {
+			displayMessage(0x4b39);
+		} else {
+			displayMessage(0x4acd);
+			displayMessage(0x4b0d);
+			SET_FLAG(0xDBBD, 1);
+		}
+		return true;
 
 	case 0x6be1: //handle to the bathroom
 		if (!CHECK_FLAG(0xDBD9, 1)) {
@@ -2567,6 +2756,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		loadScene(31, 298, 177, 4);
 		return true;
 		
+	case 0x72c2:
+		if (CHECK_FLAG(0xDBD6, 2)) {
+			displayMessage(0x522c);
+		} else {
+			playSound(79, 6);
+			playSound(84, 9);
+			playAnimation(801);
+			if (CHECK_FLAG(0xDBD6, 1)) {
+				displayMessage(0x538d);
+				SET_FLAG(0xDBD6, 2);
+			} else 
+				displayMessage(0x5372);
+		}
+		return true;
+		
 	case 0x7309:
 		playSound(66, 5);
 		playSound(67, 11);
@@ -2574,6 +2778,70 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		displayMessage(0x5955);
 		return true;
 		
+	case 0x79e4:
+		processCallback(0x6849);
+		return false;
+		
+	case 0x79eb: //color of the book
+		displayMessage(res->dseg.get_word(0x5f3c + GET_FLAG(0xDBC1) * 2 - 2));
+		return true;
+		
+	case 0x79fd:
+		if (CHECK_FLAG(0xDBB7, 1)) {
+			displayMessage(0x4b6c);
+			return true;
+		} else
+			return false;
+
+	case 0x7a0f:
+		if (CHECK_FLAG(0xDBB8, 1)) {
+			if (!CHECK_FLAG(0xDBBF, 1)) {
+				displayMessage(0x4c32);
+				playSound(5, 11);
+				playAnimation(690);
+				inventory->add(53);
+				SET_FLAG(0xDBBF, 1);
+			}
+			displayMessage(0x4b87);
+			return true;
+		} else
+			return false;
+
+	case 0x7a49:
+		if (CHECK_FLAG(0xDBB9, 1)) {
+			displayMessage(0x4ba1);
+			return true;
+		} else
+			return false;
+
+	case 0x7a5b:
+		if (CHECK_FLAG(0xDBBA, 1)) {
+			displayMessage(0x4bbc);
+			return true;
+		} else
+			return false;
+
+	case 0x7a6d:
+		if (CHECK_FLAG(0xDBBB, 1)) {
+			displayMessage(0x4bd8);
+			return true;
+		} else
+			return false;
+
+	case 0x7a7f:
+		if (CHECK_FLAG(0xDBBC, 1)) {
+			if (!CHECK_FLAG(0xDBBE, 1)) {
+				displayMessage(0x4c0f); //there's dictaphone inside!
+				playSound(5, 12);
+				playAnimation(689);
+				inventory->add(52);
+				SET_FLAG(0xDBBE, 1);
+			}
+			displayMessage(0x4bf4);
+			return true;
+		} else
+			return false;
+			
 	case 0x7b09:
 		{
 			byte v = GET_FLAG(0xDBD6);
@@ -2588,6 +2856,28 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				return false;
 			}
 		}
+		
+	case 0x9472:
+		playSound(5, 4);
+		playSound(19, 14);
+		playAnimation(793);
+		displayMessage(0x5218);
+		inventory->remove(60);
+		SET_FLAG(0xDBD6, 1);
+		return true;
+		
+	case 0x949b: 
+		if (CHECK_FLAG(0xDBD6, 2)) {
+			playSound(5, 4);
+			playSound(5, 25);
+			playAnimation(802);
+			displayMessage(0x5272);
+			inventory->remove(62);
+			inventory->add(74);
+			inventory->add(65);
+		} else 
+			displayMessage(0x524f);
+		return true;
 		
 	case 0x94d4:
 		if (inventory->has(70)) {
