@@ -762,6 +762,7 @@ private:
 	int olol_setNextFunc(EMCState *script);
 	int olol_dummy1(EMCState *script);
 	int olol_suspendMonster(EMCState *script);
+	int olol_setScriptTextParameter(EMCState *script);
 	int olol_triggerEventOnMouseButtonClick(EMCState *script);
 	int olol_printWindowText(EMCState *script);
 	int olol_countSpecificMonsters(EMCState *script);

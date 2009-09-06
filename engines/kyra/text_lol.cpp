@@ -33,7 +33,7 @@
 namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
-	_scriptParameter(0), _lineCount(0),	_printFlag(false), _lineWidth(0), _numCharsTotal(0),
+	_scriptTextParameter(0), _lineCount(0),	_printFlag(false), _lineWidth(0), _numCharsTotal(0),
 	_numCharsLeft(0), _numCharsPrinted(0) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
@@ -286,7 +286,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 
 		switch (para) {
 		case 'a':
-			snprintf(dst, 7, "%d", _scriptParameter);
+			snprintf(dst, 7, "%d", _scriptTextParameter);
 			dst += strlen(dst);
 			break;
 

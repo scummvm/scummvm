@@ -1625,6 +1625,12 @@ int LoLEngine::olol_suspendMonster(EMCState *script) {
 	return 1;
 }
 
+int LoLEngine::olol_setScriptTextParameter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_setScriptTextParameter(%p) (%d)", (const void *)script, stackPos(0));
+	_txt->_scriptTextParameter = stackPos(0);
+	return 1;
+}
+
 int LoLEngine::olol_triggerEventOnMouseButtonClick(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_triggerEventOnMouseButtonClick(%p) (%d)", (const void *)script, stackPos(0));
 	gui_notifyButtonListChanged();
@@ -2815,7 +2821,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_suspendMonster);
 
 	// 0x80
-	OpcodeUnImpl();
+	Opcode(olol_setScriptTextParameter);
 	Opcode(olol_triggerEventOnMouseButtonClick);
 	Opcode(olol_printWindowText);
 	Opcode(olol_countSpecificMonsters);
