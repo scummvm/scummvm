@@ -115,7 +115,7 @@ void IntMapper::saveLoadWithSerializer(Common::Serializer &s) {
 		clear();
 		while (true) {
 			s.syncAsSint32LE(key);
-			if (key == 0xDEADBEEF)
+			if (key == INTMAPPER_MAGIC_KEY)
 				break;
 			s.syncAsSint32LE(idx);
 			// Insert into the IntMapper
@@ -133,7 +133,7 @@ void IntMapper::saveLoadWithSerializer(Common::Serializer &s) {
 				node = node->next;
 			}
 		}
-		uint32 tmp = 0xDEADBEEF;
+		uint32 tmp = INTMAPPER_MAGIC_KEY;
 		s.syncAsSint32LE(tmp);
 	}
 }

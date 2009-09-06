@@ -1569,7 +1569,6 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	int objtype;
 	unsigned int objlength;
-	reg_t reg;
 	int seg_id;
 	int relocation = -1;
 	int magic_pos_adder; // Usually 0; 2 for older SCI versions
@@ -1582,9 +1581,6 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 
 	if (was_new)
 		return seg_id;
-
-	reg.segment = seg_id;
-	reg.offset = 0;
 
 	Script *scr = segMan->getScript(seg_id);
 
@@ -1601,7 +1597,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 		magic_pos_adder = 2;  // Step over the funny prefix
 
 		if (locals_nr)
-			segMan->scriptInitialiseLocalsZero(reg.segment, locals_nr);
+			segMan->scriptInitialiseLocalsZero(seg_id, locals_nr);
 
 	} else {
 		scr->mcpyInOut(0, script->data, script->size);
@@ -1611,8 +1607,11 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	// Now do a first pass through the script objects to find the
 	// export table and local variable block
 
-	objlength = 0;
+	reg_t reg;
+	reg.segment = seg_id;
 	reg.offset = magic_pos_adder;
+
+	objlength = 0;
 
 	do {
 		reg_t data_base;

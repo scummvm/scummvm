@@ -37,6 +37,8 @@ enum {
 	DCS_INT_HASH_MAX = 256
 };
 
+const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
+
 /**
  * Defines a map from arbitrary integers to "small" integers, useable as index
  * into small arrays. This class is somewhat like a hashmap, but not quite:

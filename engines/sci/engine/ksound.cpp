@@ -825,7 +825,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 				s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 				// Found a relevant audio resource, play it
 				s->_sound.stopAudio();
-				warning("Initializing audio resource instead of requested sound resource %d\n", number);
+				warning("Initializing audio resource instead of requested sound resource %d", number);
 				sampleLen = s->_sound.startAudio(65535, number);
 				// Also create iterator, that will fire SI_FINISHED event, when the sound is done playing
 				s->_sound.sfx_add_song(build_timeriterator(s, sampleLen), 0, handle, number);
