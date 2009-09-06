@@ -81,8 +81,6 @@ public:
 	 *
 	 * @param[in] xfact		Horizontal scaling factor
 	 * @param[in] yfact		Vertical scaling factor
-	 * @param[in] bytespp	Any of GFX_COLOR_MODE_*. GFX_COLOR_MODE_INDEX
-	 * 						implies color index mode.
 	 * @return				GFX_OK on success, GFX_ERROR if the mode could
 	 * 						not be set, or GFX_FATAL if the graphics target
 	 * 						is unuseable.

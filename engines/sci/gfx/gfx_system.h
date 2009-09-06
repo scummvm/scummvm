@@ -64,7 +64,6 @@ struct gfx_mode_t {
 
 	/**
 	 * Palette or NULL to indicate non-palette mode.
-	 * Palette mode is only supported for bytespp = 1
 	 */
 	Palette *palette;
 
