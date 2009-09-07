@@ -402,6 +402,21 @@ static const TinselGameDescription gameDescriptions[] = {
 		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
 		TINSEL_V1,
 	},
+	{	// Another German "Neon Edition" version
+		{
+			"dw",
+			"CD",
+			AD_ENTRY1s("dw.scn", "ce7c72f246d33bc17f6629ec08c27cd5", 774556),
+			Common::DE_DEU,
+			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
 
 	{	// European/Australian Discworld 2 release
 		{
