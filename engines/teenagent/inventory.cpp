@@ -237,9 +237,17 @@ void Inventory::Item::render(Inventory * inventory, InventoryObject *obj, Graphi
 			inventory->items->seek(inventory->offset[obj->id - 1]);
 			animation.load(inventory->items, Animation::TypeInventory);
 		}
-		Surface * s = animation.currentFrame();
-		if (s != NULL)
-			s->render(dst, rect.left + 1, rect.top + 1);
+		if (hovered) {
+			Surface * s = animation.currentFrame();
+			if (animation.currentIndex() == 0)
+				s = animation.currentFrame();
+			if (s != NULL)
+				s->render(dst, rect.left + 1, rect.top + 1);
+		} else {
+			Surface * s = animation.firstFrame();
+			if (s != NULL)
+				s->render(dst, rect.left + 1, rect.top + 1);
+		}
 	} else {
 		if (surface.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);

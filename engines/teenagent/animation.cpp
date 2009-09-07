@@ -30,6 +30,10 @@ namespace TeenAgent {
 Animation::Animation() : id(0), x(0), y(0), loop(true), data(0), data_size(0), frames_count(0), frames(0), index(0) {
 }
 
+Surface * Animation::firstFrame() const {
+	return frames != NULL? frames: NULL;
+}
+
 Surface * Animation::currentFrame(int dt) {
 	if (frames == NULL || frames_count == 0)
 		return NULL;

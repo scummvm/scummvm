@@ -41,7 +41,10 @@ public:
 	void load(Common::SeekableReadStream * s, Type type = TypeLan);
 	void free();
 	
+	Surface * firstFrame() const;
 	Surface * currentFrame(int dt = 1);
+	uint16 currentIndex() const { return index; }
+	
 	~Animation();
 	
 	bool empty() const { return frames == NULL; }
