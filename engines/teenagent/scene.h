@@ -42,7 +42,8 @@ struct SceneEvent {
 	enum Type { 
 		None, Message, Walk, PlayAnimation, 
 		LoadScene, SetOn, SetLan, PlayMusic, 
-		PlaySound, EnableObject, WaitForAnimation 
+		PlaySound, EnableObject, WaitForAnimation,
+		Quit
 	} type;
 
 	Common::String message;

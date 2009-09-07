@@ -460,6 +460,11 @@ bool Scene::processEventQueue() {
 		case SceneEvent::WaitForAnimation:
 			debug(0, "waiting for the animation");
 			break;
+			
+		case SceneEvent::Quit:
+			debug(0, "quit!");
+			_engine->quitGame();
+			break;
 		
 		default: 
 			error("empty/unhandler event[%d]", (int)current_event.type);
