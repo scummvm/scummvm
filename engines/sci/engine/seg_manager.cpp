@@ -233,7 +233,7 @@ int SegManager::deallocateScript(int script_nr) {
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
-	if (seg <= 0 || (uint)seg >= _heap.size()) {
+	if (seg < 1 || (uint)seg >= _heap.size()) {
 		error("SegManager::getScript(): seg id %x out of bounds", seg);
 	}
 	if (!_heap[seg]) {
@@ -246,7 +246,7 @@ Script *SegManager::getScript(const SegmentId seg) {
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
-	if (seg <= 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
+	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
 }
@@ -259,13 +259,13 @@ SegmentId SegManager::findSegmentByType(int type) {
 }
 
 MemObject *SegManager::getMemObject(SegmentId seg) {
-	if (seg <= 1 || (uint)seg >= _heap.size() || !_heap[seg])
+	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
 		return 0;
 	return _heap[seg];
 }
 
 MemObjectType SegManager::getMemObjectType(SegmentId seg) {
-	if (seg <= 1 || (uint)seg >= _heap.size() || !_heap[seg])
+	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
 		return MEM_OBJ_INVALID;
 	return _heap[seg]->getType();
 }
@@ -275,7 +275,7 @@ MemObjectType SegManager::getMemObjectType(SegmentId seg) {
 //	false - invalid seg
 //	true  - valid seg
 bool SegManager::check(SegmentId seg) {
-	if (seg <= 0 || (uint)seg >= _heap.size()) {
+	if (seg < 1 || (uint)seg >= _heap.size()) {
 		return false;
 	}
 	if (!_heap[seg]) {
@@ -909,7 +909,7 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 }
 
 const char *SegManager::getDescription(reg_t addr) {
-	if (addr.segment >= _heap.size())
+	if (addr.segment < 1 || addr.segment >= _heap.size())
 		return "";
 
 	MemObject *mobj = _heap[addr.segment];
@@ -923,7 +923,7 @@ const char *SegManager::getDescription(reg_t addr) {
 }
 
 int SegManager::freeDynmem(reg_t addr) {
-	if (addr.segment <= 0 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != MEM_OBJ_DYNMEM)
+	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != MEM_OBJ_DYNMEM)
 		return 1; // error
 
 	deallocate(addr.segment, true);
