@@ -467,7 +467,7 @@ void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
 }
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	MemObject *mobj = GET_SEGMENT_ANY(*s->segMan, base.segment);
+	MemObject *mobj = s->segMan->getMemObject(base.segment);
 
 	if (!mobj) {
 		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x", offset, PRINT_REG(base));
@@ -1933,7 +1933,7 @@ int game_run(EngineState **_s) {
 }
 
 Object *obj_get(SegManager *segMan, reg_t offset) {
-	MemObject *mobj = GET_OBJECT_SEGMENT(*segMan, offset.segment);
+	MemObject *mobj = segMan->getMemObject(offset.segment);
 	SciVersion version = segMan->sciVersion();
 	Object *obj = NULL;
 

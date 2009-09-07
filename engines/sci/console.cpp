@@ -1642,7 +1642,7 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segMan, addr.segment);
+	MemObject *mobj = _vm->_gamestate->segMan->getMemObject(addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return 1;
@@ -1671,7 +1671,7 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segMan, addr.segment);
+	MemObject *mobj = _vm->_gamestate->segMan->getMemObject(addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
@@ -1701,7 +1701,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = GET_SEGMENT_ANY(*_vm->_gamestate->segMan, addr.segment);
+	MemObject *mobj = _vm->_gamestate->segMan->getMemObject(addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;

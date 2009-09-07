@@ -246,8 +246,7 @@ Script *SegManager::getScript(const SegmentId seg) {
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
-	// FIXME: We accept segment 0, but that is actually an invalid segment...
-	if (seg <= 0 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
+	if (seg <= 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
 }
@@ -257,6 +256,18 @@ SegmentId SegManager::findSegmentByType(int type) {
 		if (_heap[i] && _heap[i]->getType() == type)
 			return i;
 	return -1;
+}
+
+MemObject *SegManager::getMemObject(SegmentId seg) {
+	if (seg <= 1 || (uint)seg >= _heap.size() || !_heap[seg])
+		return 0;
+	return _heap[seg];
+}
+
+MemObjectType SegManager::getMemObjectType(SegmentId seg) {
+	if (seg <= 1 || (uint)seg >= _heap.size() || !_heap[seg])
+		return MEM_OBJ_INVALID;
+	return _heap[seg]->getType();
 }
 
 // validate the seg

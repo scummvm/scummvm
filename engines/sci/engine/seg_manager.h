@@ -33,15 +33,7 @@
 
 namespace Sci {
 
-#define GET_SEGMENT(mgr, index, rtype) (((index) > 0 && (int)(mgr)._heap.size() > index) ?		\
-		(((mgr)._heap[index] && (mgr)._heap[index]->getType() == rtype)? (mgr)._heap[index]	: NULL) : NULL)
-
-#define GET_SEGMENT_ANY(mgr, index) (((index) > 0 && (int)(mgr)._heap.size() > index) ?			\
-		(((mgr)._heap[index])? (mgr)._heap[index]	: NULL) : NULL)
-
-#define GET_OBJECT_SEGMENT(mgr, index) (((index) > 0 && (int)(mgr)._heap.size() > index) ?		\
-		(((mgr)._heap[index]	&& ((mgr)._heap[index]->getType() == MEM_OBJ_SCRIPT || (mgr)._heap[index]->getType() == MEM_OBJ_CLONES))? (mgr)._heap[index]	\
-		: NULL): NULL)
+#define GET_SEGMENT(mgr, index, rtype) (((mgr).getMemObjectType(index) == (rtype))? (mgr)._heap[index] : NULL)
 
 /**
  * Parameters for getScriptSegment().
@@ -132,6 +124,7 @@ public:
 	 */
 	Script *getScript(SegmentId seg);
 
+
 	/**
 	 * Return a pointer to the specified script.
 	 * If the id is invalid, does not refer to a script, or 
@@ -140,13 +133,6 @@ public:
 	 * @return		A pointer to the Script object, or NULL
 	 */
 	Script *getScriptIfLoaded(SegmentId seg);
-
-	/**
-	 * Finds a unique segment by type
-	 * @param type	The type of the segment to find
-	 * @return		The segment number, or -1 if the segment wasn't found
-	 */
-	SegmentId findSegmentByType(int type);
 
 
 	// 1b. Script Initialisation
@@ -345,6 +331,19 @@ public:
 	 * @return			The data block referenced
 	 */
 	byte *dereference(reg_t reg, int *size);
+
+	/**
+	 * Finds a unique segment by type
+	 * @param type	The type of the segment to find
+	 * @return		The segment number, or -1 if the segment wasn't found
+	 */
+	SegmentId findSegmentByType(int type);
+
+	// TODO: document this
+	MemObject *getMemObject(SegmentId seg);
+
+	// TODO: document this
+	MemObjectType getMemObjectType(SegmentId seg);
 
 
 	void heapRelocate(reg_t block);

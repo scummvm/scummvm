@@ -533,10 +533,8 @@ static void reconstruct_stack(EngineState *retval) {
 	retval->stack_top = retval->stack_base + VM_STACK_SIZE;
 }
 
-static void load_script(EngineState *s, SegmentId seg) {
+static void load_script(EngineState *s, Script *scr) {
 	Resource *script, *heap = NULL;
-	Script *scr = (Script *)(s->segMan->_heap[seg]);
-	assert(scr);
 
 	scr->buf = (byte *)malloc(scr->buf_size);
 	assert(scr->buf);
@@ -566,7 +564,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				Script *scr = (Script *)mobj;
 
 				// FIXME: Unify this code with script_instantiate_*
-				load_script(s, i);
+				load_script(s, scr);
 				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->locals_segment]);
 				if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 					scr->export_table = 0;
