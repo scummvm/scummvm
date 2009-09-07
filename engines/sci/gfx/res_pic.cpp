@@ -150,12 +150,12 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, bool sci1) {
 
 	pic->control_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320, 200, ID, 2, 0));
 
-	pic->priority_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(mode->xfact * 320, mode->yfact * 200,
+	pic->priority_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(mode->scaleFactor * 320, mode->scaleFactor * 200,
 	                    ID, 1, 0));
 
 
-	pic->visual_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320 * mode->xfact,
-	                  200 * mode->yfact, ID, 0, 0));
+	pic->visual_map = gfx_pixmap_alloc_index_data(gfx_new_pixmap(320 * mode->scaleFactor,
+	                  200 * mode->scaleFactor, ID, 0, 0));
 
 	// Initialize colors
 	if (!sci1) {
@@ -169,7 +169,7 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, bool sci1) {
 	pic->visual_map->flags = 0;
 	pic->priority_map->flags = 0;
 	pic->control_map->flags = 0;
-	if (mode->xfact > 1 || mode->yfact > 1) {
+	if (mode->scaleFactor > 1) {
 		pic->visual_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
 		pic->priority_map->flags |= GFX_PIXMAP_FLAG_SCALED_INDEX;
 	}
@@ -187,12 +187,12 @@ gfxr_pic_t *gfxr_init_pic(gfx_mode_t *mode, int ID, bool sci1) {
 // Pic rendering operations
 
 void gfxr_clear_pic0(gfxr_pic_t *pic, int titlebar_size) {
-	memset(pic->visual_map->index_data, 0x00, (320 * pic->mode->xfact * titlebar_size * pic->mode->yfact));
-	memset(pic->visual_map->index_data + (320 * pic->mode->xfact * titlebar_size * pic->mode->yfact),
-	       0xff, pic->mode->xfact * 320 * pic->mode->yfact * (200 - titlebar_size)); // white
-	memset(pic->priority_map->index_data + (320 * pic->mode->xfact * titlebar_size * pic->mode->yfact),
-	       0x0, pic->mode->xfact * 320 * pic->mode->yfact * (200 - titlebar_size));
-	memset(pic->priority_map->index_data, 0x0a, titlebar_size * (pic->mode->yfact * 320 * pic->mode->xfact));
+	memset(pic->visual_map->index_data, 0x00, (320 * pic->mode->scaleFactor * titlebar_size * pic->mode->scaleFactor));
+	memset(pic->visual_map->index_data + (320 * pic->mode->scaleFactor * titlebar_size * pic->mode->scaleFactor),
+	       0xff, pic->mode->scaleFactor * 320 * pic->mode->scaleFactor * (200 - titlebar_size)); // white
+	memset(pic->priority_map->index_data + (320 * pic->mode->scaleFactor * titlebar_size * pic->mode->scaleFactor),
+	       0x0, pic->mode->scaleFactor * 320 * pic->mode->scaleFactor * (200 - titlebar_size));
+	memset(pic->priority_map->index_data, 0x0a, titlebar_size * (pic->mode->scaleFactor * 320 * pic->mode->scaleFactor));
 	memset(pic->control_map->index_data, 0, GFXR_AUX_MAP_SIZE);
 	memset(pic->aux_map, 0, GFXR_AUX_MAP_SIZE);
 }
@@ -465,8 +465,8 @@ static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int 
 	// yoffset 63680, offset 320, plot 1, color 34, brush_mode 0, randseed 432)*/
 	// Auxplot: Used by plot_aux_pattern to plot to visual and priority
 	int xc, yc;
-	int line_width = 320 * pic->mode->xfact;
-	int full_offset = (yoffset * pic->mode->yfact + offset) * pic->mode->xfact;
+	int line_width = 320 * pic->mode->scaleFactor;
+	int full_offset = (yoffset * pic->mode->scaleFactor + offset) * pic->mode->scaleFactor;
 
 	if (yoffset + offset >= 64000) {
 		error("_gfxr_auxplot_brush() failed. Breakpoint in %s, line %d", __FILE__, __LINE__);
@@ -475,27 +475,27 @@ static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int 
 	switch (brush_mode) {
 	case GFX_BRUSH_MODE_SCALED:
 		if (plot)
-			for (yc = 0; yc < pic->mode->yfact; yc++) {
-				memset(buffer + full_offset, color, pic->mode->xfact);
+			for (yc = 0; yc < pic->mode->scaleFactor; yc++) {
+				memset(buffer + full_offset, color, pic->mode->scaleFactor);
 				full_offset += line_width;
 			}
 		break;
 
 	case GFX_BRUSH_MODE_ELLIPSES:
 		if (plot) {
-			int x = offset * pic->mode->xfact + ((pic->mode->xfact - 1) >> 1);
-			int y = (yoffset / 320) * pic->mode->yfact + ((pic->mode->yfact - 1) >> 1);
+			int x = offset * pic->mode->scaleFactor + ((pic->mode->scaleFactor - 1) >> 1);
+			int y = (yoffset / 320) * pic->mode->scaleFactor + ((pic->mode->scaleFactor - 1) >> 1);
 
-			_gfxr_fill_ellipse(pic, buffer, line_width, x, y, pic->mode->xfact >> 1, pic->mode->yfact >> 1, color, ELLIPSE_SOLID);
+			_gfxr_fill_ellipse(pic, buffer, line_width, x, y, pic->mode->scaleFactor >> 1, pic->mode->scaleFactor >> 1, color, ELLIPSE_SOLID);
 		}
 		break;
 
 	case GFX_BRUSH_MODE_RANDOM_ELLIPSES:
 		if (plot) {
-			int x = offset * pic->mode->xfact + ((pic->mode->xfact - 1) >> 1);
-			int y = (yoffset / 320) * pic->mode->yfact + ((pic->mode->yfact - 1) >> 1);
-			int sizex = pic->mode->xfact >> 1;
-			int sizey = pic->mode->yfact >> 1;
+			int x = offset * pic->mode->scaleFactor + ((pic->mode->scaleFactor - 1) >> 1);
+			int y = (yoffset / 320) * pic->mode->scaleFactor + ((pic->mode->scaleFactor - 1) >> 1);
+			int sizex = pic->mode->scaleFactor >> 1;
+			int sizey = pic->mode->scaleFactor >> 1;
 
 			srand(randseed);
 
@@ -506,7 +506,7 @@ static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int 
 			sizex = (int)((sizex * rand() * 1.0) / (RAND_MAX + 1.0));
 			sizey = (int)((sizey * rand() * 1.0) / (RAND_MAX + 1.0));
 
-			_gfxr_fill_ellipse(pic, buffer, line_width, x, y, pic->mode->xfact >> 1, pic->mode->yfact >> 1,
+			_gfxr_fill_ellipse(pic, buffer, line_width, x, y, pic->mode->scaleFactor >> 1, pic->mode->scaleFactor >> 1,
 			                   color, ELLIPSE_SOLID);
 			srand(time(NULL)); // Make sure we don't accidently forget to re-init the random number generator
 		}
@@ -515,8 +515,8 @@ static void _gfxr_auxplot_brush(gfxr_pic_t *pic, byte *buffer, int yoffset, int 
 	case GFX_BRUSH_MODE_MORERANDOM: {
 		int mask = plot ? 7 : 1;
 		srand(randseed);
-		for (yc = 0; yc < pic->mode->yfact; yc++) {
-			for (xc = 0; xc < pic->mode->xfact; xc++)
+		for (yc = 0; yc < pic->mode->scaleFactor; yc++) {
+			for (xc = 0; xc < pic->mode->scaleFactor; xc++)
 				if ((rand() & 7) < mask)
 					buffer[full_offset + xc] = color;
 			full_offset += line_width;
@@ -654,8 +654,8 @@ static void _gfxr_plot_aux_pattern(gfxr_pic_t *pic, int x, int y, int size, int 
 
 static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int priority, int control, int drawenable,
 	int pattern_code, int pattern_size, int pattern_nr, gfx_brush_mode_t brush_mode, int titlebar_size) {
-	int xsize = (pattern_size + 1) * pic->mode->xfact - 1;
-	int ysize = (pattern_size + 1) * pic->mode->yfact - 1;
+	int xsize = (pattern_size + 1) * pic->mode->scaleFactor - 1;
+	int ysize = (pattern_size + 1) * pic->mode->scaleFactor - 1;
 	int scaled_x, scaled_y;
 	rect_t boundaries;
 	int max_x = (pattern_code & PATTERN_FLAG_RECTANGLE) ? 318 : 319; // Rectangles' width is size+1
@@ -676,20 +676,20 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 	if (y + pattern_size > 199)
 		y = 199 - pattern_size;
 
-	scaled_x = x * pic->mode->xfact + ((pic->mode->xfact - 1) >> 1);
-	scaled_y = y * pic->mode->yfact + ((pic->mode->yfact - 1) >> 1);
+	scaled_x = x * pic->mode->scaleFactor + ((pic->mode->scaleFactor - 1) >> 1);
+	scaled_y = y * pic->mode->scaleFactor + ((pic->mode->scaleFactor - 1) >> 1);
 
 	if (scaled_x < xsize)
 		scaled_x = xsize;
 
-	if (scaled_y < ysize + titlebar_size * pic->mode->yfact)
-		scaled_y = ysize + titlebar_size * pic->mode->yfact;
+	if (scaled_y < ysize + titlebar_size * pic->mode->scaleFactor)
+		scaled_y = ysize + titlebar_size * pic->mode->scaleFactor;
 
-	if (scaled_x > (320 * pic->mode->xfact) - 1 - xsize)
-		scaled_x = (320 * pic->mode->xfact) - 1 - xsize;
+	if (scaled_x > (320 * pic->mode->scaleFactor) - 1 - xsize)
+		scaled_x = (320 * pic->mode->scaleFactor) - 1 - xsize;
 
-	if (scaled_y > (200 * pic->mode->yfact) - 1 - ysize)
-		scaled_y = (200 * pic->mode->yfact) - 1 - ysize;
+	if (scaled_y > (200 * pic->mode->scaleFactor) - 1 - ysize)
+		scaled_y = (200 * pic->mode->scaleFactor) - 1 - ysize;
 
 	if (pattern_code & PATTERN_FLAG_RECTANGLE) {
 		// Rectangle
@@ -723,7 +723,7 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 			_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 1, PLOT_AUX_PATTERN_NO_RANDOM,
 			                       drawenable, 0, 0, control, GFX_BRUSH_MODE_SCALED, GFX_MASK_CONTROL);
 
-			if (pic->mode->xfact == 1 && pic->mode->yfact == 1) {
+			if (pic->mode->scaleFactor == 1 && pic->mode->scaleFactor == 1) {
 				if (drawenable & GFX_MASK_VISUAL)
 					_gfxr_plot_aux_pattern(pic, x, y, pattern_size, 1, PLOT_AUX_PATTERN_NO_RANDOM,
 					                       drawenable, 0, 0, color, GFX_BRUSH_MODE_SCALED, GFX_MASK_VISUAL);
@@ -733,11 +733,11 @@ static void _gfxr_draw_pattern(gfxr_pic_t *pic, int x, int y, int color, int pri
 					                       drawenable, 0, 0, priority, GFX_BRUSH_MODE_SCALED, GFX_MASK_PRIORITY);
 			} else {
 				if (drawenable & GFX_MASK_VISUAL)
-					_gfxr_fill_ellipse(pic, pic->visual_map->index_data, 320 * pic->mode->xfact,
+					_gfxr_fill_ellipse(pic, pic->visual_map->index_data, 320 * pic->mode->scaleFactor,
 					                   scaled_x, scaled_y, xsize, ysize, color, ELLIPSE_SOLID);
 
 				if (drawenable & GFX_MASK_PRIORITY)
-					_gfxr_fill_ellipse(pic, pic->priority_map->index_data, 320 * pic->mode->xfact,
+					_gfxr_fill_ellipse(pic, pic->priority_map->index_data, 320 * pic->mode->scaleFactor,
 					                   scaled_x, scaled_y, xsize, ysize, priority, ELLIPSE_SOLID);
 			}
 		}
@@ -769,8 +769,8 @@ static void _gfxr_draw_subline(gfxr_pic_t *pic, int x, int y, int ex, int ey, in
 
 static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int color,
 	int priority, int control, int drawenable, int line_mode, int cmd, int titlebar_size) {
-	int scale_x = pic->mode->xfact;
-	int scale_y = pic->mode->yfact;
+	int scale_x = pic->mode->scaleFactor;
+	int scale_y = pic->mode->scaleFactor;
 	int xc, yc;
 	rect_t line;
 	int mask;
@@ -886,12 +886,12 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 
 #define TEST_POINT(xx, yy) \
 	if (pic->aux_map[(yy) * 320 + (xx)] & FRESH_PAINT) { \
-		mpos = (((yy) * 320 * pic->mode->yfact) + (xx)) * pic->mode->xfact; \
-		for (iy = 0; iy < pic->mode->yfact; iy++) { \
-			for (ix = 0; ix < pic->mode->xfact; ix++) { \
+		mpos = (((yy) * 320 * pic->mode->scaleFactor) + (xx)) * pic->mode->scaleFactor; \
+		for (iy = 0; iy < pic->mode->scaleFactor; iy++) { \
+			for (ix = 0; ix < pic->mode->scaleFactor; ix++) { \
 				if (!IS_FILL_BOUNDARY(test_map[mpos + ix])) { \
-					*x = ix + (xx) * pic->mode->xfact; \
-					*y = iy + (yy) * pic->mode->yfact; \
+					*x = ix + (xx) * pic->mode->scaleFactor; \
+					*y = iy + (yy) * pic->mode->scaleFactor; \
 					return 0; \
 				} \
 				mpos += linewidth; \
@@ -902,7 +902,7 @@ static void _gfxr_draw_line(gfxr_pic_t *pic, int x, int y, int ex, int ey, int c
 static int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_x, int max_y, int x_320,
 	int y_200, int color, int drawenable, int *x, int *y) {
 	// returns -1 on failure, 0 on success
-	int linewidth = pic->mode->xfact * 320;
+	int linewidth = pic->mode->scaleFactor * 320;
 	int mpos, ix, iy;
 	int size_x = (max_x - min_x + 1) >> 1;
 	int size_y = (max_y - min_y + 1) >> 1;
@@ -913,8 +913,8 @@ static int _gfxr_find_fill_point(gfxr_pic_t *pic, int min_x, int min_y, int max_
 	int legalcolor;
 	int legalmask;
 	byte *test_map;
-	*x = x_320 * pic->mode->xfact;
-	*y = y_200 * pic->mode->yfact;
+	*x = x_320 * pic->mode->scaleFactor;
+	*y = y_200 * pic->mode->scaleFactor;
 
 	if (size_x < 0 || size_y < 0)
 		return 0;
@@ -1063,35 +1063,32 @@ static void check_and_remove_artifact(byte *dest, byte* srcp, int legalcolor, by
 
 void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src) {
 	int x_320, y_200;
-	int bound_x = dest->mode->xfact;
-	int bound_y = dest->mode->yfact;
-	int scaled_line_size = bound_x * 320;
+	int scaled_line_size = dest->mode->scaleFactor * 320;
 	int read_offset = 0;
 
-	assert(src->mode->xfact == 1);
-	assert(src->mode->yfact == 1);
+	assert(src->mode->scaleFactor == 1);
 
-	if (bound_x == 1 && bound_y == 1) {
+	if (dest->mode->scaleFactor == 1) {
 		warning("[GFX] attempt to remove artifacts from unscaled pic");
 		return;
 	}
 
 	for (y_200 = 0; y_200 < 200; y_200++) {
 		for (x_320 = 0; x_320 < 320; x_320++) {
-			int write_offset = (y_200 * bound_y * scaled_line_size) + (x_320 * bound_x);
+			int write_offset = (y_200 * dest->mode->scaleFactor * scaled_line_size) + (x_320 * dest->mode->scaleFactor);
 			int sub_x, sub_y;
 			byte *src_visualp = &(src->visual_map->index_data[read_offset]);
 			byte *src_priorityp = &(src->priority_map->index_data[read_offset]);
 
-			for (sub_y = 0; sub_y < bound_y; sub_y++) {
-				for (sub_x = 0; sub_x < bound_x; sub_x++) {
+			for (sub_y = 0; sub_y < dest->mode->scaleFactor; sub_y++) {
+				for (sub_x = 0; sub_x < dest->mode->scaleFactor; sub_x++) {
 					check_and_remove_artifact(dest->visual_map->index_data + write_offset, src_visualp, (int)0xff,
 					                          (byte)x_320, (byte)(x_320 < 319), (byte)(y_200 > 10), (byte)(y_200 < 199));
 					check_and_remove_artifact(dest->priority_map->index_data + write_offset, src_priorityp, 0,
 					                          (byte)x_320, (byte)(x_320 < 319), (byte)(y_200 > 10), (byte)(y_200 < 199));
 					++write_offset;
 				}
-				write_offset += scaled_line_size - bound_x;
+				write_offset += scaled_line_size - dest->mode->scaleFactor;
 			}
 			++read_offset;
 		}
@@ -1290,7 +1287,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				debugC(2, kDebugLevelSci0Pic, "Abs coords %d,%d\n", x, y);
 				//fprintf(stderr,"C=(%d,%d)\n", x, y + titlebar_size);
 #ifdef WITH_PIC_SCALING
-				if (pic->mode->xfact > 1 || pic->mode->yfact > 1)
+				if (pic->mode->scaleFactor > 1)
 					_gfxr_fill_any(pic, x, y + titlebar_size, (flags & DRAWPIC01_FLAG_FILL_NORMALLY) ?
 					               color : 0, priority, control, drawenable, titlebar_size);
 
@@ -1627,8 +1624,6 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode dmode) {
 	int xl = pic->visual_map->index_width;
 	int yl = pic->visual_map->index_height;
-	int xfrob_max = pic->mode->xfact;
-	int yfrob_max = pic->mode->yfact;
 	int xfrobc = 0, yfrobc = 0;
 	int selection = 0;
 	int x, y;
@@ -1663,13 +1658,13 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode dmode) {
 
 			++data;
 
-			if (++xfrobc == xfrob_max) {
+			if (++xfrobc == pic->mode->scaleFactor) {
 				selection = !selection;
 				xfrobc = 0;
 			}
 		}
 
-		if (++yfrobc == yfrob_max) {
+		if (++yfrobc == pic->mode->scaleFactor) {
 			selection = !selection;
 			yfrobc = 0;
 		}

@@ -46,9 +46,8 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags) {
 	gfx_mode_t *mode = (gfx_mode_t *)malloc(sizeof(gfx_mode_t));
 
-	mode->xfact = xfact;
-	mode->yfact = yfact;
-	mode->format = format;
+	mode->scaleFactor = xfact;
+	mode->scaleFactor = yfact;
 	mode->palette = palette;
 
 	return mode;
@@ -177,8 +176,8 @@ gfx_pixmap_t *gfx_pixmap_alloc_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode) {
 		pixmap->width = pixmap->index_width;
 		pixmap->height = pixmap->index_height;
 	} else {
-		pixmap->width = pixmap->index_width * mode->xfact;
-		pixmap->height = pixmap->index_height * mode->yfact;
+		pixmap->width = pixmap->index_width * mode->scaleFactor;
+		pixmap->height = pixmap->index_height * mode->scaleFactor;
 	}
 
 	size = pixmap->width * pixmap->height;
@@ -207,8 +206,8 @@ gfx_pixmap_t *gfx_pixmap_scale_index_data(gfx_pixmap_t *pixmap, gfx_mode_t *mode
 	int linewidth;
 	int xl, yl;
 	int i, yc;
-	int xfact = mode->xfact;
-	int yfact = mode->yfact;
+	int xfact = mode->scaleFactor;
+	int yfact = mode->scaleFactor;
 
 	if (xfact == 1 && yfact == 1)
 		return pixmap;

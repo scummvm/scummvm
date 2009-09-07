@@ -177,8 +177,8 @@ void _gfx_crossblit_simple(byte *dest, byte *src, int dest_line_width, int src_l
 
 void gfx_crossblit_pixmap(gfx_mode_t *mode, gfx_pixmap_t *pxm, int priority, rect_t src_coords, rect_t dest_coords,
 						 byte *dest, int dest_line_width, byte *priority_dest, int priority_line_width, int priority_skip, int flags) {
-	int maxx = 320 * mode->xfact;
-	int maxy = 200 * mode->yfact;
+	int maxx = 320 * mode->scaleFactor;
+	int maxy = 200 * mode->scaleFactor;
 	byte *src = pxm->data;
 	byte *alpha = pxm->alpha_map ? pxm->alpha_map : pxm->data;
 	byte *priority_pos = priority_dest;

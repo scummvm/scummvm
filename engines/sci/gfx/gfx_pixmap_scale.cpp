@@ -40,10 +40,9 @@ namespace Sci {
 
 static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, int scale) {
 	byte result_colors[GFX_PIC_COLORS];
-	int xfact = (scale) ? mode->xfact : 1;
-	int yfact = (scale) ? mode->yfact : 1;
+	int scaleFactor = (scale) ? mode->scaleFactor : 1;
 	int widthc, heightc; // Width duplication counter
-	int line_width = xfact * pxm->index_width;
+	int line_width = scaleFactor * pxm->index_width;
 	int x, y;
 	int i;
 	byte byte_transparent = 0;
@@ -55,7 +54,7 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 	int separate_alpha_map = using_alpha;
 
 	if (separate_alpha_map && !alpha_dest)
-		alpha_dest = pxm->alpha_map = (byte *)malloc(pxm->index_width * xfact * pxm->index_height * yfact);
+		alpha_dest = pxm->alpha_map = (byte *)malloc(pxm->index_width * scaleFactor * pxm->index_height * scaleFactor);
 
 	// Calculate all colors
 	for (i = 0; i < pxm->colors_nr(); i++)
@@ -77,20 +76,20 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 			// O(n) loops. There is an O(ln(n)) algorithm for this, but its slower for small n (which we're optimizing for here).
 			// And, anyway, most of the time is spent in memcpy() anyway.
 
-			for (widthc = 0; widthc < xfact; widthc++) {
+			for (widthc = 0; widthc < scaleFactor; widthc++) {
 				memcpy(dest, &col, 1);
 				dest++;
 			}
 
 			if (separate_alpha_map) { // Set separate alpha map
-				memset(alpha_dest, (isalpha) ? byte_transparent : byte_opaque, xfact);
-				alpha_dest += xfact;
+				memset(alpha_dest, (isalpha) ? byte_transparent : byte_opaque, scaleFactor);
+				alpha_dest += scaleFactor;
 			}
 		}
 
 		// Copies each line. O(n) iterations; again, this could be optimized to O(ln(n)) for very high resolutions,
 		// but that wouldn't really help that much, as the same amount of data still would have to be transferred.
-		for (heightc = 1; heightc < yfact; heightc++) {
+		for (heightc = 1; heightc < scaleFactor; heightc++) {
 			memcpy(dest, prev_dest, line_width);
 			dest += line_width;
 			if (separate_alpha_map) {
@@ -104,8 +103,8 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 		pxm->width = pxm->index_width;
 		pxm->height = pxm->index_height;
 	} else {
-		pxm->width = pxm->index_width * mode->xfact;
-		pxm->height = pxm->index_height * mode->yfact;
+		pxm->width = pxm->index_width * mode->scaleFactor;
+		pxm->height = pxm->index_height * mode->scaleFactor;
 	}
 }
 
@@ -115,13 +114,13 @@ void gfx_xlate_pixmap(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
 		pxm->palette->mergeInto(mode->palette);
 
 	if (!pxm->data) {
-		pxm->data = (byte*)malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height + 1);
+		pxm->data = (byte*)malloc(mode->scaleFactor * mode->scaleFactor * pxm->index_width * pxm->index_height + 1);
 		// +1: Eases coying on BE machines in 24 bpp packed mode
 		// Assume that memory, if allocated already, will be sufficient
 
 		// Allocate alpha map
 		if (pxm->colors_nr() < GFX_PIC_COLORS)
-			pxm->alpha_map = (byte*)malloc(mode->xfact * mode->yfact * pxm->index_width * pxm->index_height + 1);
+			pxm->alpha_map = (byte*)malloc(mode->scaleFactor * mode->scaleFactor * pxm->index_width * pxm->index_height + 1);
 	}
 
 	_gfx_xlate_pixmap_unfiltered(mode, pxm, !(pxm->flags & GFX_PIXMAP_FLAG_SCALED_INDEX));

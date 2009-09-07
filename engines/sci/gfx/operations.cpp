@@ -69,15 +69,15 @@ gfx_pixmap_color_t default_colors[DEFAULT_COLORS_NR] = {{GFX_COLOR_SYSTEM, 0x00,
 // Internal operations
 
 static void _gfxop_scale_rect(rect_t *rect, gfx_mode_t *mode) {
-	rect->x *= mode->xfact;
-	rect->y *= mode->yfact;
-	rect->width *= mode->xfact;
-	rect->height *= mode->yfact;
+	rect->x *= mode->scaleFactor;
+	rect->y *= mode->scaleFactor;
+	rect->width *= mode->scaleFactor;
+	rect->height *= mode->scaleFactor;
 }
 
 static void _gfxop_scale_point(Common::Point *point, gfx_mode_t *mode) {
-	point->x *= mode->xfact;
-	point->y *= mode->yfact;
+	point->x *= mode->scaleFactor;
+	point->y *= mode->scaleFactor;
 }
 
 int _gfxop_clip(rect_t *rect, rect_t clipzone) {
@@ -117,13 +117,13 @@ int _gfxop_clip(rect_t *rect, rect_t clipzone) {
 static void _gfxop_grab_pixmap(GfxState *state, gfx_pixmap_t **pxmp, int x, int y,
 							  int xl, int yl, int priority, rect_t *zone) {
 	// Returns 1 if the resulting data size was zero, GFX_OK or an error code otherwise */
-	int xfact = state->driver->getMode()->xfact;
-	int yfact = state->driver->getMode()->yfact;
+	int xfact = state->driver->getMode()->scaleFactor;
+	int yfact = state->driver->getMode()->scaleFactor;
 	int unscaled_xl = (xl + xfact - 1) / xfact;
 	int unscaled_yl = (yl + yfact - 1) / yfact;
 	*zone = gfx_rect(x, y, xl, yl);
 
-	if (_gfxop_clip(zone, gfx_rect(0, 0, 320 * state->driver->getMode()->xfact, 200 * state->driver->getMode()->yfact)))
+	if (_gfxop_clip(zone, gfx_rect(0, 0, 320 * state->driver->getMode()->scaleFactor, 200 * state->driver->getMode()->scaleFactor)))
 		error("_gfxop_grab_pixmap: zone was empty");
 
 	if (!*pxmp)
@@ -221,7 +221,7 @@ static void _gfxop_draw_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm, int priorit
 	rect_t clipped_dest = gfx_rect(dest.x, dest.y, dest.width, dest.height);
 
 	if (control >= 0 || priority >= 0) {
-		Common::Point original_pos = Common::Point(dest.x / driver->getMode()->xfact, dest.y / driver->getMode()->yfact);
+		Common::Point original_pos = Common::Point(dest.x / driver->getMode()->scaleFactor, dest.y / driver->getMode()->scaleFactor);
 
 		if (control >= 0)
 			_gfxop_draw_control(control_map, pxm, control, original_pos);
@@ -242,8 +242,8 @@ static void _gfxop_draw_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm, int priorit
 
 	_gfxop_install_pixmap(driver, pxm);
 
-	DDIRTY(stderr, "\\-> Drawing to actual %d %d %d %d\n", clipped_dest.x / driver->getMode()->xfact,
-	       clipped_dest.y / driver->getMode()->yfact, clipped_dest.width / driver->getMode()->xfact, clipped_dest.height / driver->getMode()->yfact);
+	DDIRTY(stderr, "\\-> Drawing to actual %d %d %d %d\n", clipped_dest.x / driver->getMode()->scaleFactor,
+	       clipped_dest.y / driver->getMode()->scaleFactor, clipped_dest.width / driver->getMode()->scaleFactor, clipped_dest.height / driver->getMode()->scaleFactor);
 
 	driver->drawPixmap(pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 }
@@ -252,8 +252,8 @@ static void _gfxop_full_pointer_refresh(GfxState *state) {
 	bool clipped = false;
 	Common::Point mousePoint = g_system->getEventManager()->getMousePos();
 
-	state->pointer_pos.x = mousePoint.x / state->driver->getMode()->xfact;
-	state->pointer_pos.y = mousePoint.y / state->driver->getMode()->yfact;
+	state->pointer_pos.x = mousePoint.x / state->driver->getMode()->scaleFactor;
+	state->pointer_pos.y = mousePoint.y / state->driver->getMode()->scaleFactor;
 
 	if (state->pointer_pos.x < state->pointerZone.left) {
 		state->pointer_pos.x = state->pointerZone.left;
@@ -273,8 +273,8 @@ static void _gfxop_full_pointer_refresh(GfxState *state) {
 
 	// FIXME: Do this only when mouse is grabbed?
 	if (clipped)
-		g_system->warpMouse(state->pointer_pos.x * state->driver->getMode()->xfact,
-							state->pointer_pos.y * state->driver->getMode()->yfact);
+		g_system->warpMouse(state->pointer_pos.x * state->driver->getMode()->scaleFactor,
+							state->pointer_pos.y * state->driver->getMode()->scaleFactor);
 }
 
 static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer);
@@ -489,8 +489,8 @@ void gfxop_set_clip_zone(GfxState *state, rect_t zone) {
 
 	DDIRTY(stderr, "-- Setting clip zone %d %d %d %d\n", GFX_PRINT_RECT(zone));
 
-	xfact = state->driver->getMode()->xfact;
-	yfact = state->driver->getMode()->yfact;
+	xfact = state->driver->getMode()->scaleFactor;
+	yfact = state->driver->getMode()->scaleFactor;
 
 	if (zone.x < MIN_X) {
 		zone.width -= (zone.x - MIN_X);
@@ -665,7 +665,7 @@ static void simulate_stippled_line_draw(GfxDriver *driver, int skipone, Common::
 	// Draws a stippled line if this isn't supported by the driver (skipone is ignored ATM)
 	int xl = end.x - start.x;
 	int yl = end.y - start.y;
-	int stepwidth = (xl) ? driver->getMode()->xfact : driver->getMode()->yfact;
+	int stepwidth = (xl) ? driver->getMode()->scaleFactor : driver->getMode()->scaleFactor;
 	int dbl_stepwidth = 2 * stepwidth;
 	int linelength = (line_mode == GFX_LINE_MODE_FINE) ? stepwidth - 1 : 0;
 	int16 *posvar;
@@ -741,7 +741,7 @@ static void _gfxop_draw_line_clipped(GfxState *state, Common::Point start, Commo
 	        || start.y < state->clip_zone.y
 	        || end.x >= (state->clip_zone.x + state->clip_zone.width)
 	        || end.y >= (state->clip_zone.y + state->clip_zone.height))
-		if (point_clip(&start, &end, state->clip_zone, state->driver->getMode()->xfact - 1, state->driver->getMode()->yfact - 1))
+		if (point_clip(&start, &end, state->clip_zone, state->driver->getMode()->scaleFactor - 1, state->driver->getMode()->scaleFactor - 1))
 			return; // Clipped off
 
 	if (line_style == GFX_LINE_STYLE_STIPPLED) {
@@ -759,8 +759,8 @@ void gfxop_draw_line(GfxState *state, Common::Point start, Common::Point end,
 
 	_gfxop_add_dirty_x(state, gfx_rect(start.x, start.y, end.x - start.x, end.y - start.y));
 
-	xfact = state->driver->getMode()->xfact;
-	yfact = state->driver->getMode()->yfact;
+	xfact = state->driver->getMode()->scaleFactor;
+	yfact = state->driver->getMode()->scaleFactor;
 
 	draw_line_to_control_map(state, start, end, color);
 
@@ -788,8 +788,8 @@ void gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_l
 
 	_gfxop_full_pointer_refresh(state);
 
-	xfact = state->driver->getMode()->xfact;
-	yfact = state->driver->getMode()->yfact;
+	xfact = state->driver->getMode()->scaleFactor;
+	yfact = state->driver->getMode()->scaleFactor;
 
 	int offset = line_mode == GFX_LINE_MODE_FINE ? 1 : 0;
 	x = rect.x * xfact + (xfact - 1) * offset;
@@ -937,7 +937,7 @@ void gfxop_fill_box(GfxState *state, rect_t box, gfx_color_t color) {
 }
 
 static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer) {
-	if (_gfxop_clip(&box, gfx_rect(0, 0, 320 * state->driver->getMode()->xfact, 200 * state->driver->getMode()->yfact)))
+	if (_gfxop_clip(&box, gfx_rect(0, 0, 320 * state->driver->getMode()->scaleFactor, 200 * state->driver->getMode()->scaleFactor)))
 		return;
 
 	state->driver->update(box, Common::Point(box.x, box.y), buffer);
@@ -1113,7 +1113,7 @@ void gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
 		return; // Not fatal
 	}
 
-	g_system->warpMouse(pos.x * state->driver->getMode()->xfact, pos.y * state->driver->getMode()->yfact);
+	g_system->warpMouse(pos.x * state->driver->getMode()->scaleFactor, pos.y * state->driver->getMode()->scaleFactor);
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
@@ -1584,8 +1584,8 @@ static void _gfxop_draw_cel_buffer(GfxState *state, int nr, int loop, int cel, C
 	old_x = pos.x -= pxm->xoffset;
 	old_y = pos.y -= pxm->yoffset;
 
-	pos.x *= state->driver->getMode()->xfact;
-	pos.y *= state->driver->getMode()->yfact;
+	pos.x *= state->driver->getMode()->scaleFactor;
+	pos.y *= state->driver->getMode()->scaleFactor;
 
 	if (!static_buf)
 		_gfxop_add_dirty(state, gfx_rect(old_x, old_y, pxm->index_width, pxm->index_height));
@@ -1646,7 +1646,7 @@ void gfxop_new_pic(GfxState *state, int nr, int flags, int default_palette) {
 	state->palette_nr = default_palette;
 	state->pic = state->gfxResMan->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, true);
 
-	if (state->driver->getMode()->xfact == 1 && state->driver->getMode()->yfact == 1) {
+	if (state->driver->getMode()->scaleFactor == 1 && state->driver->getMode()->scaleFactor == 1) {
 		state->pic_unscaled = state->pic;
 	} else {
 		state->pic_unscaled = state->gfxResMan->getPic(nr, GFX_MASK_VISUAL, flags, default_palette, false);
@@ -1830,7 +1830,7 @@ void gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 
 	_gfxop_scale_rect(&zone, state->driver->getMode());
 
-	line_height = handle->line_height * state->driver->getMode()->yfact;
+	line_height = handle->line_height * state->driver->getMode()->scaleFactor;
 
 	pos.y = zone.y;
 
@@ -1914,8 +1914,8 @@ void gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone, Common::
 	_gfxop_scale_rect(&zone, state->driver->getMode());
 	_gfxop_scale_rect(&target, state->driver->getMode());
 
-	return _gfxop_draw_pixmap(state->driver, pxm, -1, -1, zone, target, gfx_rect(0, 0, 320*state->driver->getMode()->xfact,
-	                                   200*state->driver->getMode()->yfact), 0, NULL, NULL);
+	return _gfxop_draw_pixmap(state->driver, pxm, -1, -1, zone, target, gfx_rect(0, 0, 320*state->driver->getMode()->scaleFactor,
+	                                   200*state->driver->getMode()->scaleFactor), 0, NULL, NULL);
 }
 
 void gfxop_free_pixmap(GfxState *state, gfx_pixmap_t *pxm) {

@@ -83,22 +83,21 @@ static void drawProc(int x, int y, int c, void *data) {
 	GfxDriver *drv = (GfxDriver *)data;
 	byte *p = drv->getVisual0();
 	uint8 col = c;
-	memcpy(p + (y * 320* drv->getMode()->xfact + x), &col, 1);
+	memcpy(p + (y * 320* drv->getMode()->scaleFactor + x), &col, 1);
 }
 
 void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color, 
 						gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.parent_index;
-	int xfact = (line_mode == GFX_LINE_MODE_FINE)? 1: _mode->xfact;
-	int yfact = (line_mode == GFX_LINE_MODE_FINE)? 1: _mode->yfact;
+	int scaleFactor = (line_mode == GFX_LINE_MODE_FINE)? 1: _mode->scaleFactor;
 	int xsize = _mode->xsize;
 	int ysize = _mode->ysize;
 
 	if (color.mask & GFX_MASK_VISUAL) {
 		Common::Point nstart, nend;
 
-		for (int xc = 0; xc < xfact; xc++) {
-			for (int yc = 0; yc < yfact; yc++) {
+		for (int xc = 0; xc < scaleFactor; xc++) {
+			for (int yc = 0; yc < scaleFactor; yc++) {
 
 				nstart.x = CLIP<int16>(start.x + xc, 0, xsize);
 				nstart.y = CLIP<int16>(start.y + yc, 0, ysize);
@@ -229,14 +228,14 @@ byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
 			// Note that some cursors don't have a palette in SQ5
 			if (pointer->palette && color < pointer->palette->size())
 				color = pointer->palette->getColor(color).parent_index;
-			for (int scalectr = 0; scalectr < _mode->xfact; scalectr++) {
+			for (int scalectr = 0; scalectr < _mode->scaleFactor; scalectr++) {
 				*pos++ = color;
 			}
 			src++;
 		}
-		for (int scalectr = 1; scalectr < _mode->yfact; scalectr++)
+		for (int scalectr = 1; scalectr < _mode->scaleFactor; scalectr++)
 			memcpy(linebase + linewidth * scalectr, linebase, linewidth);
-		linebase += linewidth * _mode->yfact;
+		linebase += linewidth * _mode->scaleFactor;
 	}
 	return data;
 }

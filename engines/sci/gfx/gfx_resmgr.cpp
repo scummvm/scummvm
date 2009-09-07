@@ -312,11 +312,9 @@ static gfxr_pic_t *gfxr_pic_xlate_common(gfx_resource_t *res, int maps, int scal
 */
 // FIXME: this is an ugly hack. Perhaps we could do it some other way?
 gfx_mode_t mode_1x1_color_index = { /* Fake 1x1 mode */
-	/* xfact */ 1, /* yfact */ 1,
+	/* scaleFactor */ 1,
 	/* xsize */ 1, /* ysize */ 1,
-	/* palette */ NULL,
-
-	Graphics::PixelFormat()
+	/* palette */ NULL
 };
 
 gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_palette, bool scaled) {
@@ -324,7 +322,7 @@ gfxr_pic_t *GfxResManager::getPic(int num, int maps, int flags, int default_pale
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_PIC];
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
-	int need_unscaled = (_driver->getMode()->xfact != 1 || _driver->getMode()->yfact != 1);
+	int need_unscaled = (_driver->getMode()->scaleFactor != 1);
 
 	hash |= (flags << 20) | ((default_palette & 0x7) << 28);
 
@@ -417,8 +415,8 @@ static int get_pic_id(gfx_resource_t *res) {
 }
 
 static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode) {
-	int xmod = mode->xfact; // Step size horizontally
-	int ymod = pxm->index_width * mode->yfact; // Vertical step size
+	int xmod = mode->scaleFactor; // Step size horizontally
+	int ymod = pxm->index_width * mode->scaleFactor; // Vertical step size
 	int maxpos = pxm->index_width * pxm->index_height;
 	int pos;
 	byte *dest = pxm->index_data;
@@ -435,8 +433,8 @@ static void _gfxr_unscale_pixmap_index_data(gfx_pixmap_t *pxm, gfx_mode_t *mode)
 			// and left to the reader)
 	}
 
-	pxm->index_width /= mode->xfact;
-	pxm->index_height /= mode->yfact;
+	pxm->index_width /= mode->scaleFactor;
+	pxm->index_height /= mode->scaleFactor;
 	pxm->flags &= ~GFX_PIXMAP_FLAG_SCALED_INDEX;
 }
 
@@ -446,7 +444,7 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 	gfx_resource_t *res = NULL;
 	int hash = getOptionsHash(GFX_RESOURCE_TYPE_PIC);
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-	int need_unscaled = !(_options->pic0_unscaled) && (_driver->getMode()->xfact != 1 || _driver->getMode()->yfact != 1);
+	int need_unscaled = !(_options->pic0_unscaled) && (_driver->getMode()->scaleFactor != 1 || _driver->getMode()->scaleFactor != 1);
 #else
 	int need_unscaled = 1;
 #endif

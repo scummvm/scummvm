@@ -30,7 +30,6 @@
 #include "common/rect.h"
 #include "sci/tools.h"
 #include "sci/gfx/palette.h"
-#include "graphics/pixelformat.h"
 
 namespace Sci {
 
@@ -42,7 +41,7 @@ namespace Sci {
 
 #define GFX_COLOR_SYSTEM -1
 
-#define GFX_MODE_IS_UNSCALED(mode) (((mode)->xfact == 1) && ((mode)->yfact == 1))
+#define GFX_MODE_IS_UNSCALED(mode) (((mode)->scaleFactor == 1) && ((mode)->scaleFactor == 1))
 
 /** Graphics mode description
  *
@@ -59,15 +58,13 @@ namespace Sci {
 
 struct gfx_mode_t {
 
-	int xfact, yfact; /**< Horizontal and vertical scaling factors */
+	int scaleFactor; /**< Horizontal and vertical scaling factor */
 	int xsize, ysize; /**< Horizontal and vertical size */
 
 	/**
 	 * Palette or NULL to indicate non-palette mode.
 	 */
 	Palette *palette;
-
-	Graphics::PixelFormat format;
 };
 
 
