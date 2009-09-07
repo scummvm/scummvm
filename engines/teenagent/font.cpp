@@ -54,7 +54,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 
 	uint h = glyph[0], w = glyph[1];
 	if (surface == NULL || surface->pixels == NULL)
-		return w;
+		return w - 1;
 
 	//debug(0, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
