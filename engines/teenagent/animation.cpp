@@ -31,7 +31,7 @@ Animation::Animation() : id(0), x(0), y(0), loop(true), data(0), data_size(0), f
 }
 
 Surface * Animation::firstFrame() const {
-	return frames != NULL? frames: NULL;
+	return frames;
 }
 
 Surface * Animation::currentFrame(int dt) {
