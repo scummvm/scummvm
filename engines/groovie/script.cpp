@@ -1448,7 +1448,7 @@ void Script::o_returnscript() {
 	// Restore the filename of the script
 	_scriptFile = _savedScriptFile;
 
-	//TODO: reset script flags and previous video's flag1?
+	_vm->_videoPlayer->resetFlags();
 	_vm->_videoPlayer->setOrigin(0, 0);
 }
 

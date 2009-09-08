@@ -43,6 +43,10 @@ VDXPlayer::~VDXPlayer() {
 	//delete _audioStream;
 }
 
+void VDXPlayer::resetFlags() {
+	_flagOnePrev = false;
+}
+
 void VDXPlayer::setOrigin(int16 x, int16 y) {
 	_origX = x;
 	_origY = y;

@@ -34,6 +34,7 @@ class VDXPlayer : public VideoPlayer {
 public:
 	VDXPlayer(GroovieEngine *vm);
 	~VDXPlayer();
+	void resetFlags();
 	void setOrigin(int16 x, int16 y);
 
 protected:

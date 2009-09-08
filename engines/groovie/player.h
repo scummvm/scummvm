@@ -40,6 +40,7 @@ public:
 
 	bool load(Common::SeekableReadStream *file, uint16 flags);
 	bool playFrame();
+	virtual void resetFlags() {};
 	virtual void setOrigin(int16 x, int16 y) {};
 
 protected:
