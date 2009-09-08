@@ -196,7 +196,7 @@ public:
 	void close();
 	
 	uint32 getFrameRate() { return _vidsHeader.rate / _vidsHeader.scale; }
-	byte *getPalette() { return _palette; _dirtyPalette = false; }
+	byte *getPalette() { _dirtyPalette = false; return _palette; }
 	Surface *getNextFrame();
 	bool dirtyPalette() { return _dirtyPalette; }
 	uint32 getCurFrame() { return _curFrame; }
