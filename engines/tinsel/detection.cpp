@@ -386,6 +386,29 @@ static const TinselGameDescription gameDescriptions[] = {
 	},
 #endif
 
+#if 0
+	{	// Mac multilanguage CD
+		{
+			"dw",
+			"CD",
+			{
+				{"dw.scn", 0, "8be477c6fc0dc449531081fa2064c21d", 2011175},
+				{"english.smp", 0, NULL, -1},
+				{NULL, 0, NULL, 0}
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GID_DW1,
+		0,
+		GF_CD | GF_SCNFILES | GF_ENHANCED_AUDIO_SUPPORT,
+		TINSEL_V1,
+	},
+
+#endif
+
 	{	// German CD re-release "Neon Edition"
 		// Note: This release has ENGLISH.TXT (with german content) instead of GERMAN.TXT
 		{
