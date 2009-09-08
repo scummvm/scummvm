@@ -203,18 +203,11 @@ void Scene::init(int id, const Common::Point &pos) {
 		walkbox[i]->dump();
 	}
 	
-	if (id == 23 && res->dseg.get_byte(0xdbee) == 1) {
-		//talked to anne, lovers music
-		if (_engine->music->getId() != 7)
-			_engine->music->load(7);
-	} else {
-		//check music
-		int now_playing = _engine->music->getId();
-		
-		if (now_playing != res->dseg.get_byte(0xDB90)) 
-			_engine->music->load(res->dseg.get_byte(0xDB90));
-	}
+	//check music
+	int now_playing = _engine->music->getId();
 	
+	if (now_playing != res->dseg.get_byte(0xDB90)) 
+		_engine->music->load(res->dseg.get_byte(0xDB90));
 }
 
 void Scene::playAnimation(byte idx, uint id) {
@@ -345,7 +338,7 @@ bool Scene::render(OSystem * system) {
 	busy |= processEventQueue();
 	//if (!current_event.empty())
 	//	current_event.dump();
-    /*
+	/*
 	for (byte i = 0; i < walkboxes; ++i) {
 		Walkbox * w = walkbox[i];
 		w->rect.render(surface, 0xd0 + i);

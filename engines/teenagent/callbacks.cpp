@@ -193,7 +193,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			Dialog::show(scene, 0x62dc);
 
 			SET_FLAG(0xDBDF, 1);
-			SET_FLAG(0xDB90, 5);
+			playMusic(5);
 		}
 		return true;
 
@@ -1254,7 +1254,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	
 	case 0x593e://Enter annes house
 		playSound(89, 4);
+		playAnimation(980);
 		loadScene(23, 76, 199, 1);
+		if (CHECK_FLAG(0xDBEE, 1)) 
+			playMusic(7);
 		return true;
 		
 	case 0x5994:
@@ -1403,9 +1406,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		}
 		return true;
 
-	case 0x5f73://Exit annes house
-		//Need to fully understand what this does, there is a compare in the asm
-		//I assume it is probably to do with the music
+	case 0x5f73: //exiting ann's house
+		if (CHECK_FLAG(0xDBEE, 1))
+			playMusic(6);
 		loadScene(21, 161, 165);
 
 		return true;
@@ -2407,7 +2410,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x4a6f);
 			inventory->clear();
 			inventory->add(29);
-			setMusic(10);
+			playMusic(10);
 		} else
 			displayMessage(0x4a29);
 		return true;
