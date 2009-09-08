@@ -624,7 +624,8 @@ void MDYPlayer::interpret() {
 			ctrlByte2 = *(_playPos++);
 			if (ctrlByte1 != 0x7F || ctrlByte2 != 0) {
 				_playPos -= 2;
-				while (*(_playPos++) != 0xF7);
+				while (*(_playPos++) != 0xF7)
+					;
 			} else {
 				tempoMult = *(_playPos++);
 				tempoFrac = *(_playPos++);

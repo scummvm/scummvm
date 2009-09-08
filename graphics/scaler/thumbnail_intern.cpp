@@ -111,7 +111,7 @@ static bool grabScreen565(Graphics::Surface *surf) {
 
 	for (uint y = 0; y < screen->h; ++y) {
 		for (uint x = 0; x < screen->w; ++x) {
-			byte r, g, b;
+			byte r = 0, g = 0, b = 0;
 
 			if (screenFormat.bytesPerPixel == 1) {
 				r = palette[((uint8*)screen->pixels)[y * screen->pitch + x] * 4];

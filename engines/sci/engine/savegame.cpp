@@ -203,7 +203,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 			s.skip(4);	// base_value
 			while (true) {
-				uint32 key;
+				uint32 key = 0;
 				s.syncAsSint32LE(key);
 				if (key == INTMAPPER_MAGIC_KEY)
 					break;

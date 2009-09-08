@@ -297,7 +297,7 @@ void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
 
 	byte ctrA = 0, ctrB = 0;
 
-	byte alpha, palIdx;
+	byte alpha = 0, palIdx = 0;
 
 	byte r, g, b;
 

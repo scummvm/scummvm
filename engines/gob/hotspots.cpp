@@ -986,7 +986,8 @@ uint16 Hotspots::updateInput(uint16 xPos, uint16 yPos, uint16 width, uint16 heig
 			    ((_vm->_global->_useMouse != 0) || (_vm->_game->_forceHandleMouse != 0)))
 				handleMouse = true;
 
-			while (_vm->_global->_pressedKeys[1] != 0);
+			while (_vm->_global->_pressedKeys[1] != 0)
+				;
 			continue;
 
 		default:
