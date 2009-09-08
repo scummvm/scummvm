@@ -35,7 +35,8 @@ void Rect::render(Graphics::Surface *surface, uint8 color) const {
 }
 
 void Walkbox::dump() {
-	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ", unk00, unk01, 
+	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ", 
+		unk00, orientation, 
 		rect.left, rect.right, rect.top, rect.bottom, 
 		unk0a, unk0b, unk0c, unk0d);
 }

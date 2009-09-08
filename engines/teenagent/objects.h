@@ -92,7 +92,7 @@ struct UseObject {
 
 struct Walkbox {
 	byte unk00;
-	byte unk01;
+	byte orientation;
 	Rect rect;
 	byte unk0a;
 	byte unk0b;

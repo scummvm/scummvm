@@ -52,9 +52,26 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	if (validate) {
 		for (byte i = 0; i < walkboxes; ++i) {
-			if (walkbox[i]->rect.in(point)) {
+			Walkbox * w = walkbox[i];
+			if (w->rect.in(point)) {
 				debug(0, "bumped into walkbox %u", i);
-				return;
+				byte o = w->orientation;
+				switch(o) {
+				case 1:
+					point.y = w->rect.top - 1;
+					break;
+				case 2: 
+					point.x = w->rect.right + 1;
+					break;
+				case 3:
+					point.y = w->rect.bottom + 1;
+					break;
+				case 4:
+					point.x = w->rect.left - 1;
+					break;
+				default:
+					return;
+				}
 			}
 		}
 	}
