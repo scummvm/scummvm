@@ -35,6 +35,7 @@
 #include "gob/dataio.h"
 #include "gob/draw.h"
 #include "gob/game.h"
+#include "gob/expression.h"
 #include "gob/script.h"
 #include "gob/hotspots.h"
 #include "gob/palanim.h"
@@ -84,7 +85,7 @@ void Inter_Playtoons::setupOpcodesFunc() {
 	Inter_v6::setupOpcodesFunc();
 
 	CLEAROPCODEFUNC(0x3D);
-
+	OPCODEFUNC(0x0B, oPlaytoons_printText);
 	OPCODEFUNC(0x1B, oPlaytoons_F_1B);
 	OPCODEFUNC(0x27, oPlaytoons_freeSprite);
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
@@ -92,6 +93,95 @@ void Inter_Playtoons::setupOpcodesFunc() {
 }
 
 void Inter_Playtoons::setupOpcodesGob() {
+}
+
+bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
+	char buf[60];
+	int i;
+	int16 oldTransparency;
+
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+
+	_vm->_draw->_backColor = _vm->_game->_script->readValExpr();
+	_vm->_draw->_frontColor = _vm->_game->_script->readValExpr();
+	_vm->_draw->_fontIndex = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSurface = 21;
+	_vm->_draw->_textToPrint = buf;
+	_vm->_draw->_transparency = 0;
+
+	if (_vm->_draw->_backColor == 16) {
+		_vm->_draw->_backColor = 0;
+		_vm->_draw->_transparency = 1;
+	}
+
+// colMod is read from conf file (_off_=xxx). 
+// in Playtoons, it's not present in the conf file, thus always equal to the default value (0). 
+// Maybe used in ADIs...
+//	if (!_vm->_draw->_transparency) 
+//		_vm->_draw->_backColor += colMod;
+//	_vm->_draw->_frontColor += colMod;
+
+	oldTransparency = _vm->_draw->_transparency;
+	do {
+		for (i = 0; (_vm->_game->_script->peekChar() != '.') &&
+				(_vm->_game->_script->peekByte() != 200); i++) {
+			buf[i] = _vm->_game->_script->readChar();
+		}
+
+		if (_vm->_game->_script->peekByte() != 200) {
+			_vm->_game->_script->skip(1);
+			switch (_vm->_game->_script->peekByte()) {
+			case TYPE_VAR_INT8:
+			case TYPE_ARRAY_INT8:
+				sprintf(buf + i, "%d",
+						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
+				break;
+
+			case TYPE_VAR_INT16:
+			case TYPE_VAR_INT32_AS_INT16:
+			case TYPE_ARRAY_INT16:
+				sprintf(buf + i, "%d",
+						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
+				break;
+
+			case TYPE_VAR_INT32:
+			case TYPE_ARRAY_INT32:
+				sprintf(buf + i, "%d",
+						VAR_OFFSET(_vm->_game->_script->readVarIndex()));
+				break;
+
+			case TYPE_VAR_STR:
+			case TYPE_ARRAY_STR:
+				sprintf(buf + i, "%s",
+						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
+				break;
+			}
+			_vm->_game->_script->skip(1);
+		} else
+			buf[i] = 0;
+
+		if (_vm->_game->_script->peekByte() == 200) {
+			_vm->_draw->_spriteBottom = _vm->_draw->_fonts[_vm->_draw->_fontIndex]->getCharHeight();
+			_vm->_draw->_spriteRight = _vm->_draw->stringLength(_vm->_draw->_textToPrint, _vm->_draw->_fontIndex);
+			_vm->_draw->adjustCoords(1, &_vm->_draw->_spriteBottom, &_vm->_draw->_spriteRight);
+			if (_vm->_draw->_transparency == 0) {
+				_vm->_draw->spriteOperation(DRAW_FILLRECT);
+				_vm->_draw->_transparency = 1;
+			}
+
+			warning("print %s", _vm->_draw->_textToPrint);
+
+			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
+			_vm->_draw->_transparency = oldTransparency;
+			i = 0;
+		} else 
+			i = strlen(buf);
+	} while (_vm->_game->_script->peekByte() != 200);
+
+	_vm->_game->_script->skip(1);
+
+	return false;
 }
 
 bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
