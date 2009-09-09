@@ -106,6 +106,7 @@ private:
 
 	void   update();
     int    updateScene();
+    void   updateMouse();
     void   updateActor(uint32 actorIdx);
     void   updateBarriers(WorldStats *worldStats);
     void   updateAmbientSounds();
@@ -113,9 +114,7 @@ private:
     void   updateAdjustScreen();
     int    drawScene();
     int    drawBarriers();
-
-    int   isActorVisible(ActorItem *actor);
-
+    int    isActorVisible(ActorItem *actor);
     bool   isBarrierVisible(BarrierItem *barrier);
     bool   isBarrierOnScreen(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
