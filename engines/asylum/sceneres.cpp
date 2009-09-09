@@ -32,10 +32,11 @@ SceneResource::SceneResource() {
 
 SceneResource::~SceneResource() {
 	delete _worldStats;
-	delete _mainActor;
-	for (uint i=0; i < _gamePolygons->numEntries; i++) {
+
+	uint8 i;
+	for (i = 0; i < _gamePolygons->numEntries; i++)
 		delete[] _gamePolygons->polygons[i].points;
-	}
+
 	delete _gamePolygons;
 	delete _actionList;
 }
@@ -190,7 +191,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 		_worldStats->ambientSounds[s].field_0  = stream->readUint32LE();
 		_worldStats->ambientSounds[s].flags	   = stream->readUint32LE();
 		_worldStats->ambientSounds[s].resId	   = stream->readUint32LE();
-		_worldStats->ambientSounds[s].field_C = stream->readUint32LE();
+		_worldStats->ambientSounds[s].field_C  = stream->readUint32LE();
 		_worldStats->ambientSounds[s].field_10 = stream->readUint32LE();
 		_worldStats->ambientSounds[s].field_14 = stream->readUint32LE();
 
@@ -287,68 +288,62 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
 	for (uint32 a = 0; a < _worldStats->numActors; a++) {
 		int i;
-		ActorItem actor;
-		memset(&actor, 0, sizeof(ActorItem));
+		Actor actor;
 
-		actor.x0		 = stream->readUint32LE();
-		actor.y0		 = stream->readUint32LE();
-		actor.grResId	 = stream->readUint32LE();
-		actor.field_C	 = stream->readUint32LE();
-		actor.frameNum	 = stream->readUint32LE();
+		actor.x          = stream->readUint32LE();
+		actor.y          = stream->readUint32LE();
+		actor.grResId	  = stream->readUint32LE();
+		actor.field_C    = stream->readUint32LE();
+		actor.frameNum	  = stream->readUint32LE();
 		actor.frameCount = stream->readUint32LE();
-		actor.x1		 = stream->readUint32LE();
-		actor.y1		 = stream->readUint32LE();
-		actor.x2		 = stream->readUint32LE();
-		actor.y2		 = stream->readUint32LE();
+		actor.x1         = stream->readUint32LE();
+		actor.y1         = stream->readUint32LE();
+		actor.x2         = stream->readUint32LE();
+		actor.y2         = stream->readUint32LE();
 
-		actor.boundingRect.left	  = stream->readUint32LE() & 0xFFFF;
-		actor.boundingRect.top	  = stream->readUint32LE() & 0xFFFF;
+		actor.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
+		actor.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
 		actor.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
 		actor.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
 
-		actor.direction	 = stream->readUint32LE();
-		actor.field_3C	 = stream->readUint32LE();
-		actor.field_40	 = stream->readUint32LE();
-		actor.field_44	 = stream->readUint32LE();
-		actor.field_48	 = stream->readUint32LE();
-		actor.flags		 = stream->readUint32LE();
-		actor.field_50	 = stream->readUint32LE();
-		actor.field_54	 = stream->readUint32LE();
-		actor.field_58	 = stream->readUint32LE();
-		actor.field_5C	 = stream->readUint32LE();
-		actor.field_60	 = stream->readUint32LE();
+		actor.direction  = stream->readUint32LE();
+		actor.field_3C   = stream->readUint32LE();
+		actor.field_40   = stream->readUint32LE();
+		actor.field_44	  = stream->readUint32LE();
+		actor.field_48	  = stream->readUint32LE();
+		actor.flags      = stream->readUint32LE();
+		actor.field_50   = stream->readUint32LE();
+		actor.field_54	  = stream->readUint32LE();
+		actor.field_58	  = stream->readUint32LE();
+		actor.field_5C	  = stream->readUint32LE();
+		actor.field_60	  = stream->readUint32LE();
 		actor.actionIdx3 = stream->readUint32LE();
 
 		// TODO skip field_68 till field_617
 		stream->skip(0x5B0);
 
-		for (i = 0; i < 8; i++) {
+		for (i = 0; i < 8; i++)
 			actor.reaction[i] = stream->readUint32LE();
-		}
 
-		actor.field_638 	= stream->readUint32LE();
+		actor.field_638     = stream->readUint32LE();
 		actor.walkingSound1 = stream->readUint32LE();
 		actor.walkingSound2 = stream->readUint32LE();
 		actor.walkingSound3 = stream->readUint32LE();
 		actor.walkingSound4 = stream->readUint32LE();
-		actor.field_64C 	= stream->readUint32LE();
-		actor.field_650 	= stream->readUint32LE();
+		actor.field_64C     = stream->readUint32LE();
+		actor.field_650     = stream->readUint32LE();
 
-		for (i = 0; i < 55; i++) {
+		for (i = 0; i < 55; i++)
 			actor.grResTable[i] = stream->readUint32LE();
-		}
 
 		stream->read(actor.name, sizeof(actor.name));
 
-		for (i = 0; i < 20; i++) {
+		for (i = 0; i < 20; i++)
 			actor.field_830[i] = stream->readUint32LE();
-		}
-		for (i = 0; i < 20; i++) {
+		for (i = 0; i < 20; i++)
 			actor.field_880[i] = stream->readUint32LE();
-		}
-		for (i = 0; i < 20; i++) {
+		for (i = 0; i < 20; i++)
 			actor.field_8D0[i] = stream->readUint32LE();
-		}
 		
 		actor.actionIdx2 = stream->readUint32LE();
 		actor.field_924  = stream->readUint32LE();
@@ -372,9 +367,14 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
 	// TODO Take this out, it shouldn't be here (TEST ONLY)
 	stream->seek(0xA73B6);
+
 	uint8 mainActorData[500];
 	stream->read(mainActorData, 500);
-	_mainActor = new MainActor(mainActorData, &_worldStats->actors[0]);
+
+	// FIXME
+	// This is ONLY ever going to work for scenes where there's only
+	// one actor in the worldStats->actors[] collection
+	_worldStats->actors[0].setRawResources(mainActorData);
 
 	stream->seek(0xD6B5A); // where action items start
 

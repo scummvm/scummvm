@@ -33,7 +33,6 @@ namespace Asylum {
 
 class Screen;
 struct ActionArea;
-struct ActorItem;
 
 // TODO investigate other actor resources (from other
 // scenes) to see if the unused blocks in the actor
@@ -127,12 +126,29 @@ enum ActorResources {
 	// TODO: finish these
 };
 
-class MainActor {
+class Actor {
 public:
-	MainActor(uint8 *data, ActorItem *actorRef);
-	virtual ~MainActor();
+	Actor();
+	virtual ~Actor();
 
-	void setResourcePack(ResourcePack *resPack) { _resPack = resPack; }
+	/**
+	 * Initialize the 500 byte resource index from the scene
+	 * file (at offset 0xA73B6).
+	 *
+	 * TODO remove this or add it in the right place
+	 */
+	void setRawResources(uint8* data);
+
+	bool visible() { return flags & 0x01; }
+	void visible(bool value);
+	void setPostion(uint32 targetX, uint32 targetY);
+	void setDirection(int dir);
+
+	// FIXME
+	// I don't really like how this is used in the scene constructor
+	void setResourcePack(ResourcePack *res) { _resPack = res; }
+
+	// OLD METHODS
 	void setWalkArea(ActionArea *target); // TODO depreciate
 	void setAction(int action);
 	void setActionByIndex(int index);
@@ -140,29 +156,67 @@ public:
 	void drawActor();
 	void walkTo(uint16 curX, uint16 curY);
 	void disable(int param);
-	void setDirection(int direction);
+
 	int getCurrentAction() { return _currentAction; }
-	// XXX
-	// Setting the actorRef x/y values is just a hack
-	// while we fix the actor code. The mainactor class will
-	// likely be completely redone, so the screen coords of
-	// the actor should be updated on the ActorItem reference
-	// when updating the class
-	void x(uint16 pos);
-	void y(uint16 pos);
-	uint16 x() { return _actorX; }
-	uint16 y() { return _actorY; }
+
+	uint32		 x;
+	uint32		 y;
+	uint32		 grResId;
+	uint32		 field_C;
+	uint32		 frameNum;
+	uint32		 frameCount;
+	uint32		 x1;
+	uint32		 y1;
+	uint32		 x2;
+	uint32		 y2;
+	Common::Rect boundingRect;
+	uint32		 direction;
+	uint32		 field_3C;
+	uint32		 field_40;
+	uint32		 field_44;
+	uint32		 field_48;
+	uint32		 flags;
+	uint32		 field_50;
+	uint32		 field_54;
+	uint32		 field_58;
+	uint32		 field_5C;
+	uint32		 field_60;
+	uint32		 actionIdx3;
+	// TODO field_68 till field_617
+	uint32		 reaction[8];
+	uint32		 field_638;
+	uint32		 walkingSound1;
+	uint32		 walkingSound2;
+	uint32		 walkingSound3;
+	uint32		 walkingSound4;
+	uint32		 field_64C;
+	uint32		 field_650;
+	uint32		 grResTable[55];
+	char		 name[256];
+	uint32		 field_830[20];
+	uint32		 field_880[20];
+	uint32		 field_8D0[20];
+	uint32		 actionIdx2;
+	uint32		 field_924;
+	uint32		 tickValue1;
+	uint32		 field_92C;
+	uint32		 flags2;
+	uint32		 field_934;
+	uint32		 field_938;
+	uint32		 soundResId; // field_93C
+	uint32       field_940;
+	uint32       field_944;
+	// TODO field_948 till field_978
+	uint32		 actionIdx1;
+	// TODO field_980 till field_9A0
 
 private:
-	GraphicResource *_graphic;
 	ResourcePack    *_resPack;
-	uint32      _resources[61];
-	uint8       _currentFrame;
-	int         _currentAction;
-	uint16      _actorX;
-	uint16      _actorY;
-	ActionArea 	*_currentWalkArea;
-	ActorItem	*_actorRef;
+	GraphicResource *_graphic;
+	uint32          _resources[61];
+	uint8           _currentFrame;
+	int             _currentAction;
+	ActionArea 	    *_currentWalkArea;
 
 	GraphicFrame *getFrame();
 

@@ -57,7 +57,6 @@ public:
 	WorldStats*	  getWorldStats()	{ return _worldStats; }
 	GamePolygons* getGamePolygons() { return _gamePolygons; }
 	ActionList*	  getActionList()	{ return _actionList; }
-	MainActor*	  getMainActor()	{ return _mainActor; }
 	
 	int getBarrierIndexById(uint32 id);
 	int getActionAreaIndexById(uint32 id);
@@ -70,11 +69,11 @@ private:
 	WorldStats	 *_worldStats;
 	GamePolygons *_gamePolygons;
 	ActionList	 *_actionList;
-	MainActor	 *_mainActor;
 
 	void loadWorldStats(Common::SeekableReadStream *stream);
 	void loadGamePolygons(Common::SeekableReadStream *stream);
 	void loadActionList(Common::SeekableReadStream *stream);
+
 	Common::String parseFilename(uint8 sceneIdx);
 
 }; // end of class Scene
@@ -180,61 +179,6 @@ typedef struct CommonResources {
 
 } CommonResources;
 
-
-typedef struct ActorItem {
-	uint32		 x0;
-	uint32		 y0;
-	uint32		 grResId;
-	uint32		 field_C;
-	uint32		 frameNum;
-	uint32		 frameCount;
-	uint32		 x1;
-	uint32		 y1;
-	uint32		 x2;
-	uint32		 y2;
-	Common::Rect boundingRect;
-	uint32		 direction;
-	uint32		 field_3C;
-	uint32		 field_40;
-	uint32		 field_44;
-	uint32		 field_48;
-	uint32		 flags;
-	uint32		 field_50;
-	uint32		 field_54;
-	uint32		 field_58;
-	uint32		 field_5C;
-	uint32		 field_60;
-	uint32		 actionIdx3;
-	// TODO field_68 till field_617
-	uint32		 reaction[8];
-	uint32		 field_638;
-	uint32		 walkingSound1;
-	uint32		 walkingSound2;
-	uint32		 walkingSound3;
-	uint32		 walkingSound4;
-	uint32		 field_64C;
-	uint32		 field_650;
-	uint32		 grResTable[55];
-	char		 name[256];
-	uint32		 field_830[20];
-	uint32		 field_880[20];
-	uint32		 field_8D0[20];
-	uint32		 actionIdx2;
-	uint32		 field_924;
-	uint32		 tickValue1;
-	uint32		 field_92C;
-	uint32		 flags2;
-	uint32		 field_934;
-	uint32		 field_938;
-	uint32		 soundResId; // field_93C
-    uint32       field_940;
-    uint32       field_944;
-	// TODO field_948 till field_978
-	uint32		 actionIdx1;
-	// TODO field_980 till field_9A0
-
-} ActorItem;
-
 class WorldStats {
 public:
 	WorldStats() {};
@@ -288,7 +232,7 @@ public:
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays. 
 	// It always have that size under scene file and they are always save in savegames.
 	Common::Array<BarrierItem> barriers; // maxsize 400
-	Common::Array<ActorItem>   actors;	 // maxsize 50
+	Common::Array<Actor>       actors;	 // maxsize 50
 	// TODO add rest fields
 	Common::Array<ActionArea>  actions;	 // maxsize 400
     // TODO add rest fields

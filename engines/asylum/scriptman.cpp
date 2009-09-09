@@ -505,7 +505,7 @@ int kHideActor(ActionCommand *cmd) {
 		actorIndex = cmd->param1;
 
 	if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors))
-		Shared.getScene()->actorVisible(actorIndex, false);
+		Shared.getScene()->getActor()->visible(false);
 	else
 		debugC(kDebugLevelScripts,
 			"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
@@ -525,7 +525,7 @@ int kShowActor(ActionCommand *cmd) {
 		actorIndex = cmd->param1;
 
 	if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors))
-		Shared.getScene()->actorVisible(actorIndex, true);
+		Shared.getScene()->getActor()->visible(true);
 	else
 		debugC(kDebugLevelScripts,
 			"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
@@ -543,8 +543,8 @@ int kSetActorStats(ActionCommand *cmd) {
 		actorIndex = cmd->param1;
 
 	if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors)) {
-		Shared.getScene()->setActorPosition(actorIndex, cmd->param2, cmd->param3);
-		Shared.getScene()->setActorAction(actorIndex, cmd->param4);
+		Shared.getScene()->getActor()->setPostion(cmd->param2, cmd->param3);
+		Shared.getScene()->getActor()->setAction(cmd->param4);
 	} else
 		debugC(kDebugLevelScripts,
 			"Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.",
@@ -569,7 +569,8 @@ int kDisableActor(ActionCommand *cmd) {
 	else
 		actorIndex = cmd->param1;
 
-	Shared.getScene()->getResources()->getMainActor()->disable(actorIndex);
+	// TODO Finish implementing this function
+	Shared.getScene()->getActor()->disable(actorIndex);
 
 	return 0;
 }

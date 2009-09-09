@@ -31,28 +31,48 @@
 
 namespace Asylum {
 
-MainActor::MainActor(uint8 *data, ActorItem *actorRef) {
+Actor::Actor() {
+	_graphic         = 0;
+	_currentAction   = 0;
+	_currentWalkArea = 0;
+}
+
+Actor::~Actor() {
+	delete _graphic;
+
+	// free _resources?
+}
+
+void Actor::setPostion(uint32 targetX, uint32 targetY) {
+	boundingRect.left = targetX;
+	boundingRect.top  = targetY;
+
+	x = targetX;
+	y = targetY;
+}
+
+void Actor::visible(bool value) {
+	if (value) //	TODO - enums for flags (0x01 is visible)
+		flags |= 0x01;
+	else
+		flags &= 0xFFFFFFFE;
+}
+
+void Actor::setDirection(int dir) {
+	direction = dir;
+	setActionByIndex(dir);
+}
+
+void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
 
 	for (uint32 i = 0; i < 60; i++){
 		_resources[i] = READ_UINT32(dataPtr);
 		dataPtr += 4;
 	}
-
-	_resPack         = 0;
-	_graphic         = 0;
-	_actorX          = 0;
-	_actorY          = 0;
-	_currentAction   = 0;
-	_currentWalkArea = 0;
-	_actorRef		 = actorRef;
 }
 
-MainActor::~MainActor() {
-	delete _graphic;
-}
-
-void MainActor::setAction(int action) {
+void Actor::setAction(int action) {
 	assert(_resPack);
 
 	if (action == _currentAction)
@@ -84,11 +104,11 @@ void MainActor::setAction(int action) {
 	_currentFrame = 0;
 }
 
-void MainActor::setActionByIndex(int index) {
+void Actor::setActionByIndex(int index) {
     setAction(_resources[index] & 0xFFFF);
 }
 
-GraphicFrame *MainActor::getFrame() {
+GraphicFrame *Actor::getFrame() {
 	assert(_graphic);
 
 	GraphicFrame *frame = _graphic->getFrame(_currentFrame);
@@ -106,7 +126,7 @@ GraphicFrame *MainActor::getFrame() {
 	return frame;
 }
 
-void MainActor::drawActorAt(uint16 curX, uint16 curY) {
+void Actor::drawActorAt(uint16 curX, uint16 curY) {
 	GraphicFrame *frame = getFrame();
 
 	Shared.getScreen()->copyRectToScreenWithTransparency(
@@ -116,23 +136,23 @@ void MainActor::drawActorAt(uint16 curX, uint16 curY) {
 			curY,
 			frame->surface.w,
 			frame->surface.h );
-	x(curX);
-	y(curY);
+	x = curX;
+	y = curY;
 }
 
-void MainActor::drawActor() {
+void Actor::drawActor() {
 	GraphicFrame *frame = getFrame();
 
 	Shared.getScreen()->copyToBackBufferWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
-			_actorX,
-			_actorY - frame->surface.h,
+			x,
+			y - frame->surface.h,
 			frame->surface.w,
 			frame->surface.h );
 }
 
-void MainActor::setWalkArea(ActionArea *target) {
+void Actor::setWalkArea(ActionArea *target) {
 	if (_currentWalkArea != target) {
 		ScriptMan.setScriptIndex(target->actionListIdx1);
 		_currentWalkArea = target;
@@ -140,38 +160,38 @@ void MainActor::setWalkArea(ActionArea *target) {
 	}
 }
 
-void MainActor::walkTo(uint16 curX, uint16 curY) {
+void Actor::walkTo(uint16 curX, uint16 curY) {
 	int newAction = _currentAction;
 
 	// step is the increment by which to move the
 	// actor in a given direction
 	int step = 2;
 
-	uint16 newX = _actorX;
-	uint16 newY = _actorY;
+	uint16 newX = x;
+	uint16 newY = y;
 	bool   done = false;
 
 	// Walking left...
-	if (curX < _actorX) {
+	if (curX < x) {
 		newAction = kWalkW;
 		newX -= step;
-		if (ABS(curY - _actorY) <= 30)
+		if (ABS(curY - y) <= 30)
 			done = true;
 	}
 
 	// Walking right...
-	if (curX > _actorX) {
+	if (curX > x) {
 		newAction = kWalkE;
 		newX += step;
-		if (ABS(curY - _actorY) <= 30)
+		if (ABS(curY - y) <= 30)
 			done = true;
 	}
 
 	// Walking up...
-	if (curY < _actorY && !done) {
-		if (newAction != _currentAction && newAction == kWalkW && _actorX - curX > 30)
+	if (curY < y && !done) {
+		if (newAction != _currentAction && newAction == kWalkW && x - curX > 30)
 			newAction = kWalkNW;	// up left
-		else if (newAction != _currentAction && newAction == kWalkE && curX - _actorX > 30)
+		else if (newAction != _currentAction && newAction == kWalkE && curX - x > 30)
 			newAction = kWalkNE;	// up right
 		else
 			newAction = kWalkN;
@@ -180,10 +200,10 @@ void MainActor::walkTo(uint16 curX, uint16 curY) {
 	}
 
 	// Walking down...
-	if (curY > _actorY && !done) {
-		if (newAction != _currentAction && newAction == kWalkW && _actorX - curX > 30)
+	if (curY > y && !done) {
+		if (newAction != _currentAction && newAction == kWalkW && x - curX > 30)
 			newAction = kWalkSW;	// down left
-		else if (newAction != _currentAction && newAction == kWalkE && curX - _actorX > 30)
+		else if (newAction != _currentAction && newAction == kWalkE && curX - x > 30)
 			newAction = kWalkSE;	// down right
 		else
 			newAction = kWalkS;
@@ -222,7 +242,7 @@ void MainActor::walkTo(uint16 curX, uint16 curY) {
 		if (Shared.getScene()->getResources()->getWorldStats()->actions[a].actionType == 0) {
 			area = &Shared.getScene()->getResources()->getWorldStats()->actions[a];
 			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
-			if (Shared.pointInPoly(&poly, _actorX, _actorY)) {
+			if (Shared.pointInPoly(&poly, x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
 
@@ -241,8 +261,8 @@ void MainActor::walkTo(uint16 curX, uint16 curY) {
 		area = &Shared.getScene()->getResources()->getWorldStats()->actions[availableAreas[i]];
 		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
 		if (Shared.pointInPoly(region, newX, newY)) {
-			x(newX);
-			y(newY);
+			x = newX;
+			y = newY;
 			break;
 		}
 	}
@@ -251,23 +271,13 @@ void MainActor::walkTo(uint16 curX, uint16 curY) {
 	drawActor();
 }
 
-void MainActor::x(uint16 pos) {
-	 _actorX = pos;
-	 _actorRef->x0 = pos;
-}
-
-void MainActor::y(uint16 pos) {
-	 _actorY = pos;
-	 _actorRef->y0 = pos;
-}
-
-void MainActor::disable(int param) {
+void Actor::disable(int param) {
 	switch (param) {
 
 	case 5:
-		int dir = _actorRef->direction;
+		int dir = direction;
 		if (dir > 4)
-			_actorRef->direction = 8 - dir;
+			direction = 8 - dir;
 
 		setAction(dir + 5);
 		break;
@@ -276,8 +286,5 @@ void MainActor::disable(int param) {
 
 }
 
-void MainActor::setDirection(int direction) {
-
-}
 
 } // end of namespace Asylum
