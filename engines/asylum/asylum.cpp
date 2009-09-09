@@ -260,12 +260,12 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 
 void AsylumEngine::processDelayedEvents() {
 	// check for a delayed video
-	int videoIdx = ScriptMan.getDelayedVideoIndex();
+	int videoIdx = ScriptMan.delayedVideoIndex;
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopSfx();
 		_video->playVideo(videoIdx, kSubtitlesOn);
-		ScriptMan.setDelayedVideoIndex(-1);
+		ScriptMan.delayedVideoIndex = -1;
 
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
@@ -274,8 +274,8 @@ void AsylumEngine::processDelayedEvents() {
 	}
 
 	// check for a delayed scene change
-	int sceneIdx = ScriptMan.getDelayedSceneIndex();
-	if (sceneIdx >=0 && !ScriptMan.isProcessing()) {
+	int sceneIdx = ScriptMan.delayedSceneIndex;
+	if (sceneIdx >=0 && !ScriptMan.processing) {
 		_sound->stopMusic();
 		_sound->stopSfx();
 		
@@ -286,7 +286,7 @@ void AsylumEngine::processDelayedEvents() {
 		Shared.setScene(_scene);
 		_scene->enterScene();
 
-		ScriptMan.setDelayedSceneIndex(-1);
+		ScriptMan.delayedSceneIndex = -1;
 		ScriptMan.setScript(_scene->getDefaultActionList());
 	}
 }

@@ -217,12 +217,12 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		if (ScriptMan.isInputAllowed())
+		if (ScriptMan.allowInput)
 			_leftClick = true;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		if (ScriptMan.isInputAllowed()) {
+		if (ScriptMan.allowInput) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
@@ -232,7 +232,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		if (ScriptMan.isInputAllowed())
+		if (ScriptMan.allowInput)
 			_rightButton = true;
 		break;
 	}

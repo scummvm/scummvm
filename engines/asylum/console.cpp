@@ -118,7 +118,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		return true;
 	}
 	
-	ScriptMan.setDelayedVideoIndex(atoi(argv[1]));
+	ScriptMan.delayedVideoIndex = atoi(argv[1]);
 
 	return false;
 }
@@ -145,7 +145,7 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 		return true;
 	}
 
-	ScriptMan.setDelayedSceneIndex(atoi(argv[1]));
+	ScriptMan.delayedSceneIndex = atoi(argv[1]);
 	ScriptMan.setScript(0);
 
 	return false;
