@@ -24,9 +24,9 @@
  */
 
 #include "asylum/scene.h"
-#include "asylum/sceneres.h"
 #include "asylum/shared.h"
 #include "asylum/scriptman.h"
+#include "asylum/actor.h"
 
 namespace Asylum {
 
@@ -45,8 +45,13 @@ Scene::Scene(uint8 sceneIdx) {
 		_resPack 	= new ResourcePack(sceneIdx);
 		_speechPack = new ResourcePack(3);
 
-		_sceneResource->getMainActor()->setResourcePack(_resPack);
-		
+		// FIXME
+		// Is there EVER more than one actor enabled for a scene? I can't
+		// remember, so I guess a playthrough is in order :P
+		// Either way, this is kinda dumb
+		for (uint8 i = 0; i < _sceneResource->getWorldStats()->numActors; i++)
+			_sceneResource->getWorldStats()->actors[i].setResourcePack(_resPack);
+
 		_text->loadFont(_resPack, _sceneResource->getWorldStats()->commonRes.font1);
 
 		char musPackFileName[10];
@@ -105,6 +110,10 @@ Scene::~Scene() {
     delete _blowUp;
  }
 
+Actor* Scene::getActor() {
+	return &_sceneResource->getWorldStats()->actors[_playerActorIdx];
+}
+
 void Scene::enterScene() {
 	Shared.getScreen()->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
 	_background = _bgResource->getFrame(0);
@@ -134,59 +143,6 @@ ActionDefinitions* Scene::getActionList(int actionListIndex) {
 		return &_sceneResource->getActionList()->actions[actionListIndex];
 	else
 		return 0;
-}
-
-void Scene::setActorPosition(int actorIndex, int x, int y) {
-	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.left = x;
-		_sceneResource->getWorldStats()->actors[actorIndex].boundingRect.top  = y;
-	}
-	
-	// FIXME - Remove this once mainActor uses proper actor info
-	if (actorIndex == 0) {
-		_sceneResource->getMainActor()->x(x);
-		_sceneResource->getMainActor()->y(y);
-	}
-}
-
-void Scene::setActorAction(int actorIndex, int action) {
-	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-		_sceneResource->getWorldStats()->actors[actorIndex].direction = action;
-	}
-	
-	// FIXME - Remove this once mainActor uses proper actor info
-	if (actorIndex == 0) {
-		if(_sceneResource->getMainActor())
-		_sceneResource->getMainActor()->setActionByIndex(action);  // The action appears to be an index rather than a direct resId
-	}
-}
-
-void Scene::actorVisible(int actorIndex, bool visible) {
-	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors)) {
-		if(visible) //	TODO - enums for flags (0x01 is visible)
-			_sceneResource->getWorldStats()->actors[actorIndex].flags |= 0x01;
-		else
-			_sceneResource->getWorldStats()->actors[actorIndex].flags &= 0xFFFFFFFE;
-	}
-
-	// FIXME - Remove this once mainActor uses proper actor info
-	if (actorIndex == 0) {
-		//if(_sceneResource->getMainActor())
-		//_sceneResource->getMainActor()->setAction(action);
-	}
-}
-
-bool Scene::actorVisible(int actorIndex) {
-	if ((actorIndex >= 0) && (actorIndex < (int)_sceneResource->getWorldStats()->numActors))
-		return _sceneResource->getWorldStats()->actors[actorIndex].flags & 0x01;	//	TODO - enums for flags (0x01 is visible)
-	
-	// FIXME - Remove this once mainActor uses proper actor info
-	if (actorIndex == 0) {
-		//if(_sceneResource->getMainActor())
-		//_sceneResource->getMainActor()->setAction(action);
-	}
-	
-	return false;
 }
 
 void Scene::setScenePosition(int x, int y)
@@ -297,24 +253,19 @@ int Scene::updateScene() {
     return 0;
 }
 
-int Scene::isActorVisible(ActorItem *actor) {
-    return actor->flags & 1;
-}
-
 void Scene::updateMouse() {
 	Common::Rect actorPos;
-	ActorItem *actor = &_sceneResource->getWorldStats()->actors[_playerActorIdx];
 
 	if (_sceneIdx != 2 || _playerActorIdx != 10) {
-		actorPos.top    = actor->y0;
-		actorPos.left   = actor->x0 + 20;
-		actorPos.right  = actor->x0 + 2 + actor->x2;
-		actorPos.bottom = actor->y0 + actor->y2;
+		actorPos.top    = getActor()->y;
+		actorPos.left   = getActor()->x + 20;
+		actorPos.right  = getActor()->x + 2 + getActor()->x2;
+		actorPos.bottom = getActor()->y + getActor()->y2;
 	} else {
-		actorPos.top    = actor->y0 + 60;
-		actorPos.left   = actor->x0 + 50;
-		actorPos.right  = actor->x0 + actor->x2 + 10;
-		actorPos.bottom = actor->y0 + actor->y2 - 20;
+		actorPos.top    = getActor()->y + 60;
+		actorPos.left   = getActor()->x + 50;
+		actorPos.right  = getActor()->x + getActor()->x2 + 10;
+		actorPos.bottom = getActor()->y + getActor()->y2 - 20;
 	}
 
 	int  dir = -1;
@@ -323,11 +274,11 @@ void Scene::updateMouse() {
 	if (_cursor->x() < actorPos.left) {
 		if (_cursor->y() >= actorPos.top) {
 			if (_cursor->y() > actorPos.bottom) {
-				if (actor->direction == 2) {
+				if (getActor()->direction == 2) {
 					if (_cursor->y() - actorPos.bottom > 10)
 						dir = 3;
 				} else {
-					if (actor->direction == 4) {
+					if (getActor()->direction == 4) {
 						if (actorPos.left - _cursor->x() > 10)
 							dir = 3;
 					} else {
@@ -335,11 +286,11 @@ void Scene::updateMouse() {
 					}
 				}
 			} else {
-				if (actor->direction == 1) {
+				if (getActor()->direction == 1) {
 					if (_cursor->y() - actorPos.top > 10)
 						dir = 2;
 				} else {
-					if (actor->direction == 3) {
+					if (getActor()->direction == 3) {
 						if (actorPos.bottom - _cursor->y() > 10)
 							dir = 2;
 					} else {
@@ -348,8 +299,8 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (actor->direction) {
-				if (actor->direction == 2) {
+			if (getActor()->direction) {
+				if (getActor()->direction == 2) {
 					if (actorPos.top - _cursor->y() > 10)
 						dir = 1;
 				} else {
@@ -366,11 +317,11 @@ void Scene::updateMouse() {
 	if (!done && _cursor->x() <= actorPos.right) {
 		if (_cursor->y() >= actorPos.top) {
 			if (_cursor->y() > actorPos.bottom) {
-				if (actor->direction == 3) {
+				if (getActor()->direction == 3) {
 					if (_cursor->x() - actorPos.left > 10)
 						dir = 4;
 				} else {
-					if (actor->direction == 5) {
+					if (getActor()->direction == 5) {
 						if (actorPos.right - _cursor->x() > 10)
 							dir = 4;
 					} else {
@@ -379,11 +330,11 @@ void Scene::updateMouse() {
 				}
 			}
 		} else {
-			if (actor->direction == 1) {
+			if (getActor()->direction == 1) {
 				if (_cursor->x() - actorPos.left > 10)
 					dir = 0;
 			} else {
-				if (actor->direction == 7) {
+				if (getActor()->direction == 7) {
 					if (actorPos.right - _cursor->x() > 10)
 						dir = 0;
 				} else {
@@ -395,8 +346,8 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && _cursor->y() < actorPos.top) {
-		if (actor->direction) {
-			if (actor->direction == 6) {
+		if (getActor()->direction) {
+			if (getActor()->direction == 6) {
 				if (actorPos.top - _cursor->y() > 10)
 					dir = 7;
 			} else {
@@ -410,11 +361,11 @@ void Scene::updateMouse() {
 	}
 
 	if (!done && _cursor->y() <= actorPos.bottom) {
-		if (actor->direction == 5) {
+		if (getActor()->direction == 5) {
 			if (actorPos.bottom - _cursor->y() > 10)
 				dir = 6;
 		} else {
-			if (actor->direction == 7) {
+			if (getActor()->direction == 7) {
 				if (_cursor->y() - actorPos.top > 10)
 					dir = 6;
 			} else {
@@ -424,14 +375,14 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && actor->direction == 4) {
+	if (!done && getActor()->direction == 4) {
 		if (_cursor->x() - actorPos.right <= 10)
 			done = true;
 		if (!done)
 			dir = 5;
 	}
 
-	if (!done && (actor->direction != 6 || _cursor->y() - actorPos.bottom > 10)) {
+	if (!done && (getActor()->direction != 6 || _cursor->y() - actorPos.bottom > 10)) {
 		dir = 5;
 	}
 
@@ -440,9 +391,9 @@ void Scene::updateMouse() {
 
 void Scene::updateActor(uint32 actorIdx) {
     WorldStats *worldStats = _sceneResource->getWorldStats();
-    ActorItem  *actor      = &worldStats->actors[actorIdx];
+    Actor      *actor      = getActor();
     
-    if (isActorVisible(actor)) {
+    if (actor->visible()) {
         switch (actor->field_40) {
         
         case 0x10:
@@ -733,7 +684,6 @@ void Scene::updateAdjustScreen() {
 void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	int32 curHotspot = -1;
 	int32 curBarrier = -1;
-   	MainActor *mainActor = _sceneResource->getMainActor();
 
 	// DEBUGGING
 	// Check current walk region
@@ -741,32 +691,31 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		if (worldStats->actions[a].actionType == 0) {
 			ActionArea *area = &worldStats->actions[a];
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[area->polyIdx];
-			if (Shared.pointInPoly(&poly, mainActor->x(), mainActor->y())) {
+			if (Shared.pointInPoly(&poly, getActor()->x, getActor()->y)) {
 				debugShowWalkRegion(&poly);
 				//break;
 			}
 		}
 	}
-	uint32 newCursor = 0;
+
 	if (!_rightButton) {
 		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01) {	// TESTING - only draw if visible flag
 			// Check if the character was walking before the right-button
 			// was released. If so, change the resource to one where he/she
 			// is standing still, facing the last active direction
 			if (_walking) {
-				int currentAction = mainActor->getCurrentAction();
+				int currentAction = getActor()->getCurrentAction();
 				if (currentAction > 0)
-					mainActor->setAction(currentAction + 5);
+					getActor()->setAction(currentAction + 5);
 				_walking = false;
 			}
-			mainActor->drawActor();
+			getActor()->drawActor();
 		}
 	} else {
 		_walking = true;
 
-		mainActor->walkTo(_cursor->x(), _cursor->y());
-		_cursor->update(&_sceneResource->getWorldStats()->commonRes,
-				        _sceneResource->getMainActor()->getCurrentAction());
+		getActor()->walkTo(_cursor->x(), _cursor->y());
+		_cursor->update(&_sceneResource->getWorldStats()->commonRes, getActor()->direction);
 	}
 
 	if (g_debugPolygons)
@@ -852,7 +801,9 @@ int Scene::drawScene() {
         // Draw scene background
         WorldStats *worldStats = _sceneResource->getWorldStats();    
         GraphicFrame *bg = _bgResource->getFrame(0);
-        Shared.getScreen()->copyToBackBuffer(((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, worldStats->xLeft, worldStats->yTop, 640, 480);
+        Shared.getScreen()->copyToBackBuffer(
+        		((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, worldStats->xLeft,
+        		worldStats->yTop, 640, 480);
 
         // DEBUG
 	    // Force the screen to scroll if the mouse approaches the edges

@@ -115,7 +115,9 @@ void Cursor::update(CommonResources *cr, int currentAction) {
 		break;
 	}
 
-	if (_cursorResource->getEntryNum() != newCursor)
+	// FIXME Added the newCursor > 0 check because cursors
+	// aren't working properly with the new actor code
+	if (_cursorResource->getEntryNum() != newCursor && newCursor > 0)
 		load(newCursor);
 }
 

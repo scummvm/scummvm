@@ -35,6 +35,7 @@
 #include "asylum/sceneres.h"
 #include "asylum/cursor.h"
 
+
 namespace Asylum {
 
 class Screen;
@@ -59,27 +60,27 @@ public:
 	void handleEvent(Common::Event *event, bool doUpdate);
 
 	void enterScene();
-	void activate() { _isActive = true; }
-	void deactivate() { _isActive = false; }
-	bool isActive() { return _isActive; }
+	void activate()      { _isActive = true; }
+	void deactivate()    { _isActive = false; }
+	bool isActive()      { return _isActive; }
 	int  getSceneIndex() { return _sceneIdx; }
 	
 	ActionDefinitions* getDefaultActionList();
 	ActionDefinitions* getActionList(int actionListIndex);
 
-	void setActorPosition(int actorIndex, int x, int y);
-	void setActorAction(int actorIndex, int action);
-	void actorVisible(int actorIndex, bool visible);
-	bool actorVisible(int actorIndex);
-	void setScenePosition(int x, int y);
-	Cursor* getCursor() { return _cursor; }
-	SceneResource*   getResources() { return _sceneResource; }
+
+	Actor* getActor();
+
+	Cursor*          getCursor()       { return _cursor; }
+	SceneResource*   getResources()    { return _sceneResource; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
-    ResourcePack*	 getMusicPack() { return _musPack; }
-    ResourcePack*	 getSpeechPack() { return _speechPack; }
+    ResourcePack*	 getMusicPack()    { return _musPack; }
+    ResourcePack*	 getSpeechPack()   { return _speechPack; }
 	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
     BlowUpPuzzle*    getBlowUpPuzzle() { return _blowUp; }
-    void             setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
+
+    void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
+    void setScenePosition(int x, int y);
 
 private:
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
@@ -114,7 +115,6 @@ private:
     void   updateAdjustScreen();
     int    drawScene();
     int    drawBarriers();
-    int    isActorVisible(ActorItem *actor);
     bool   isBarrierVisible(BarrierItem *barrier);
     bool   isBarrierOnScreen(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
