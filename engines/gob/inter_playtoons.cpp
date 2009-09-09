@@ -169,9 +169,6 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 				_vm->_draw->spriteOperation(DRAW_FILLRECT);
 				_vm->_draw->_transparency = 1;
 			}
-
-			warning("print %s", _vm->_draw->_textToPrint);
-
 			_vm->_draw->spriteOperation(DRAW_PRINTTEXT);
 			_vm->_draw->_transparency = oldTransparency;
 			i = 0;

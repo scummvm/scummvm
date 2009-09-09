@@ -1567,7 +1567,7 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 
 bool Hotspots::searchHotspot(int16 shortId) const {
 	for (int i = 0; i < kHotspotCount; i++) {
-		if (_hotspots[i].isDisabled())
+		if (_hotspots[i].left == -1)
 			return false;
 		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) || (_hotspots[i].id == 0x4000 + shortId))
 			return true;
