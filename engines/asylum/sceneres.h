@@ -45,6 +45,7 @@ class WorldStats;
 class GamePolygons;
 class ActionList;
 struct BarrierItem;
+struct ActionArea;
 
 class SceneResource {
 public:
@@ -59,6 +60,8 @@ public:
 	MainActor*	  getMainActor()	{ return _mainActor; }
 	
 	int getBarrierIndexById(uint32 id);
+	int getActionAreaIndexById(uint32 id);
+	ActionArea* getActionAreaById(uint32 id);
 	BarrierItem* getBarrierById(uint32 id);
     BarrierItem* getBarrierByIndex(uint32 idx);
 

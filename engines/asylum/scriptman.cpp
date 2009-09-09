@@ -410,25 +410,35 @@ int ScriptManager::processActionList() {
                 }
             }
                 break;
+
 /* 0x17 */  case kClearFlag1Bit0: {
                 BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1);
                 barrier->flags &= 0xFFFFFFFE;
             }
                 break;
+
 /* 0x18 */  //case k_unk18_PLAY_SND:
-/* 0x19 */  //case kJumpIfFlag2Bit0:
+/* 0x19 */  case kJumpIfFlag2Bit0: {
+				int targetType = currentCommand->param2;
+				if (targetType <= 0)
+					done = Shared.getScene()->getResources()->getBarrierById(currentCommand->param1)->flags2 & 1 == 0;
+				else
+					if (targetType == 1) // v4 == 1, so 1
+						done = Shared.getScene()->getResources()->getActionAreaById(currentCommand->param1)->actionType & 1 == 0;
+					else
+						done = Shared.getScene()->getResources()->getWorldStats()->actors[currentCommand->param1].flags2 & 1 == 0;
+			}
+				break;
+
 /* 0x1A */  case kSetFlag2Bit0: {
 				int targetType = currentCommand->param2;
 				if (targetType == 2)
 					Shared.getScene()->getResources()->getWorldStats()->actors[currentCommand->param1].flags2 |= 1;
 				else
-					if (targetType == 1) {
-						// int actionIdx = getActionIndex(currentCommand->param1);
-						//scene.actionAreas[actionIdx].flags |= 1;
-						debugC(kDebugLevelScripts, "ActionArea Flag Set not implemented");
-					} else {
+					if (targetType == 1)
+						Shared.getScene()->getResources()->getActionAreaById(currentCommand->param1)->actionType |= 1;
+					else
 						Shared.getScene()->getResources()->getBarrierById(currentCommand->param1)->flags2 |= 1;
-					}
 			}
 				break;
 /* 0x1B */  //case kClearFlag2Bit0:
@@ -701,8 +711,7 @@ int ScriptManager::processActionList() {
 /* 0x63 */  //case k_unk61:
 
 			default:
-				debugC(kDebugLevelScripts,
-						"Unhandled opcode 0x%02X in Scene %d Line %d.",
+				warning("Unhandled opcode 0x%02X in Scene %d Line %d.",
 						currentCommand->opcode,
 						Shared.getScene()->getSceneIndex(),
 						_currentLine);
