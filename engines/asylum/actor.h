@@ -136,22 +136,31 @@ public:
 	void setWalkArea(ActionArea *target); // TODO depreciate
 	void setAction(int action);
 	void setActionByIndex(int index);
-	void drawActorAt(uint16 x, uint16 y);
+	void drawActorAt(uint16 curX, uint16 curY);
 	void drawActor();
-	void walkTo(uint16 x, uint16 y);
+	void walkTo(uint16 curX, uint16 curY);
 	void disable(int param);
 	void setDirection(int direction);
 	int getCurrentAction() { return _currentAction; }
-
-	uint16 _actorX, _actorY;
+	// XXX
+	// Setting the actorRef x/y values is just a hack
+	// while we fix the actor code. The mainactor class will
+	// likely be completely redone, so the screen coords of
+	// the actor should be updated on the ActorItem reference
+	// when updating the class
+	void x(uint16 pos);
+	void y(uint16 pos);
+	uint16 x() { return _actorX; }
+	uint16 y() { return _actorY; }
 
 private:
 	GraphicResource *_graphic;
 	ResourcePack    *_resPack;
-	uint32          _resources[61];
-	uint8           _currentFrame;
-	int             _currentAction;
-
+	uint32      _resources[61];
+	uint8       _currentFrame;
+	int         _currentAction;
+	uint16      _actorX;
+	uint16      _actorY;
 	ActionArea 	*_currentWalkArea;
 	ActorItem	*_actorRef;
 

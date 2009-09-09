@@ -70,6 +70,92 @@ bool SharedResources::pointInPoly(PolyDefinitions *poly, int x, int y) {
 	return inside_flag;
 }
 
+int SharedResources::getAngle(int x1, int y1, int x2, int y2) {
+	uint32 v5 = (x2 << 16) - (x1 << 16);
+	int v6 = 0;
+	int v4 = (y1 << 16) - (y2 << 16);
+
+	if (v5 < 0) {
+		v6 = 2;
+		v5 = -v5;
+	}
+
+	if (v4 < 0) {
+		v6 |= 1;
+		v4 = -v4;
+	}
+
+	int v7;
+	int v8 = -1;
+
+	if (v5) {
+		v7 = (v4 << 8) / v5;
+
+		if (v7 < 0x100)
+			v8 = angleTable01[v7];
+		if (v7 < 0x1000 && v8 < 0)
+			v8 = angleTable02[v7 >> 4];
+		if (v7 < 0x10000 && v8 < 0)
+			v8 = angleTable03[v7 >> 8];
+	} else {
+		v8 = 90;
+	}
+
+	switch (v6) {
+	case 1:
+		v8 = 360 - v8;
+		break;
+	case 2:
+		v8 = 180 - v8;
+		break;
+	case 3:
+		v8 += 180;
+		break;
+	}
+
+	if (v8 >= 360)
+		v8 -= 360;
+
+	int result;
+
+	if (v8 < 157 || v8 >= 202) {
+		if (v8 < 112 || v8 >= 157) {
+			if (v8 < 67 || v8 >= 112) {
+				if (v8 < 22 || v8 >= 67) {
+					if ((v8 < 0 || v8 >= 22) && (v8 < 337 || v8 > 359)) {
+						if (v8 < 292 || v8 >= 337) {
+							if (v8 < 247 || v8 >= 292) {
+								if (v8 < 202 || v8 >= 247) {
+									error("getAngle returned a bad angle: %d.", v8);
+									result = x1;
+								} else {
+									result = 3;
+								}
+							} else {
+								result = 4;
+							}
+						} else {
+							result = 5;
+						}
+					} else {
+						result = 6;
+					}
+				} else {
+					result = 7;
+				}
+			} else {
+				result = 0;
+			}
+		} else {
+			result = 1;
+		}
+	} else {
+		result = 2;
+	}
+
+	return result;
+}
+
 void SharedResources::setGameFlag(int flag) {
 	_gameFlags[flag / 32] |= 1 << flag % -32;
 }

@@ -106,19 +106,18 @@ GraphicFrame *MainActor::getFrame() {
 	return frame;
 }
 
-void MainActor::drawActorAt(uint16 x, uint16 y) {
+void MainActor::drawActorAt(uint16 curX, uint16 curY) {
 	GraphicFrame *frame = getFrame();
 
 	Shared.getScreen()->copyRectToScreenWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
-			x,
-			y,
+			curX,
+			curY,
 			frame->surface.w,
 			frame->surface.h );
-
-	_actorX = x;
-	_actorY = y;
+	x(curX);
+	y(curY);
 }
 
 void MainActor::drawActor() {
@@ -141,7 +140,7 @@ void MainActor::setWalkArea(ActionArea *target) {
 	}
 }
 
-void MainActor::walkTo(uint16 x, uint16 y) {
+void MainActor::walkTo(uint16 curX, uint16 curY) {
 	int newAction = _currentAction;
 
 	// step is the increment by which to move the
@@ -153,26 +152,26 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 	bool   done = false;
 
 	// Walking left...
-	if (x < _actorX) {
+	if (curX < _actorX) {
 		newAction = kWalkW;
 		newX -= step;
-		if (ABS(y - _actorY) <= 30)
+		if (ABS(curY - _actorY) <= 30)
 			done = true;
 	}
 
 	// Walking right...
-	if (x > _actorX) {
+	if (curX > _actorX) {
 		newAction = kWalkE;
 		newX += step;
-		if (ABS(y - _actorY) <= 30)
+		if (ABS(curY - _actorY) <= 30)
 			done = true;
 	}
 
 	// Walking up...
-	if (y < _actorY && !done) {
-		if (newAction != _currentAction && newAction == kWalkW && _actorX - x > 30)
+	if (curY < _actorY && !done) {
+		if (newAction != _currentAction && newAction == kWalkW && _actorX - curX > 30)
 			newAction = kWalkNW;	// up left
-		else if (newAction != _currentAction && newAction == kWalkE && x - _actorX > 30)
+		else if (newAction != _currentAction && newAction == kWalkE && curX - _actorX > 30)
 			newAction = kWalkNE;	// up right
 		else
 			newAction = kWalkN;
@@ -181,10 +180,10 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 	}
 
 	// Walking down...
-	if (y > _actorY && !done) {
-		if (newAction != _currentAction && newAction == kWalkW && _actorX - x > 30)
+	if (curY > _actorY && !done) {
+		if (newAction != _currentAction && newAction == kWalkW && _actorX - curX > 30)
 			newAction = kWalkSW;	// down left
-		else if (newAction != _currentAction && newAction == kWalkE && x - _actorX > 30)
+		else if (newAction != _currentAction && newAction == kWalkE && curX - _actorX > 30)
 			newAction = kWalkSE;	// down right
 		else
 			newAction = kWalkS;
@@ -210,7 +209,7 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 	surface.free();
 
 	// TODO Basic pathfinding implementation is done. Now it needs to be refined to
-	// actually make it playable. The logic is currently VERY rigid, so you have to have
+	// actuallcurY make it playable. The logic is currently VERY rigid, so you have to have
 	// the actor at the PERFECT spot to be able to intersect a walk region and move to
 	// the next one.
 
@@ -242,14 +241,24 @@ void MainActor::walkTo(uint16 x, uint16 y) {
 		area = &Shared.getScene()->getResources()->getWorldStats()->actions[availableAreas[i]];
 		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
 		if (Shared.pointInPoly(region, newX, newY)) {
-			_actorX = newX;
-			_actorY = newY;
+			x(newX);
+			y(newY);
 			break;
 		}
 	}
 
 	setAction(newAction);
 	drawActor();
+}
+
+void MainActor::x(uint16 pos) {
+	 _actorX = pos;
+	 _actorRef->x0 = pos;
+}
+
+void MainActor::y(uint16 pos) {
+	 _actorY = pos;
+	 _actorRef->y0 = pos;
 }
 
 void MainActor::disable(int param) {
