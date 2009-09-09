@@ -144,8 +144,8 @@ void Scene::setActorPosition(int actorIndex, int x, int y) {
 	
 	// FIXME - Remove this once mainActor uses proper actor info
 	if (actorIndex == 0) {
-		_sceneResource->getMainActor()->_actorX = x;
-		_sceneResource->getMainActor()->_actorY = y;
+		_sceneResource->getMainActor()->x(x);
+		_sceneResource->getMainActor()->y(y);
 	}
 }
 
@@ -256,9 +256,14 @@ void Scene::update() {
 }
 
 int Scene::updateScene() {
-    uint32       startTick   = 0;
-    WorldStats   *worldStats = _sceneResource->getWorldStats();
+	uint32     startTick   = 0;
+    WorldStats *worldStats = _sceneResource->getWorldStats();
     
+    // Mouse
+    //startTick = Shared.getMillis();
+    //updateMouse();
+    //debugC(kDebugLevelScene, "UpdateMouse Time: %d", Shared.getMillis() - startTick);
+
     // Actors
     startTick = Shared.getMillis();
     for (uint32 a = 0; a < worldStats->numActors; a++) {
@@ -294,6 +299,143 @@ int Scene::updateScene() {
 
 int Scene::isActorVisible(ActorItem *actor) {
     return actor->flags & 1;
+}
+
+void Scene::updateMouse() {
+	Common::Rect actorPos;
+	ActorItem *actor = &_sceneResource->getWorldStats()->actors[_playerActorIdx];
+
+	if (_sceneIdx != 2 || _playerActorIdx != 10) {
+		actorPos.top    = actor->y0;
+		actorPos.left   = actor->x0 + 20;
+		actorPos.right  = actor->x0 + 2 + actor->x2;
+		actorPos.bottom = actor->y0 + actor->y2;
+	} else {
+		actorPos.top    = actor->y0 + 60;
+		actorPos.left   = actor->x0 + 50;
+		actorPos.right  = actor->x0 + actor->x2 + 10;
+		actorPos.bottom = actor->y0 + actor->y2 - 20;
+	}
+
+	int  dir = -1;
+	bool done = false;
+
+	if (_cursor->x() < actorPos.left) {
+		if (_cursor->y() >= actorPos.top) {
+			if (_cursor->y() > actorPos.bottom) {
+				if (actor->direction == 2) {
+					if (_cursor->y() - actorPos.bottom > 10)
+						dir = 3;
+				} else {
+					if (actor->direction == 4) {
+						if (actorPos.left - _cursor->x() > 10)
+							dir = 3;
+					} else {
+						dir = 3;
+					}
+				}
+			} else {
+				if (actor->direction == 1) {
+					if (_cursor->y() - actorPos.top > 10)
+						dir = 2;
+				} else {
+					if (actor->direction == 3) {
+						if (actorPos.bottom - _cursor->y() > 10)
+							dir = 2;
+					} else {
+						dir = 2;
+					}
+				}
+			}
+		} else {
+			if (actor->direction) {
+				if (actor->direction == 2) {
+					if (actorPos.top - _cursor->y() > 10)
+						dir = 1;
+				} else {
+					dir = 1;
+				}
+			} else {
+				if (actorPos.left - _cursor->x() > 10)
+					dir = 1;
+			}
+		}
+		done = true;
+	}
+
+	if (!done && _cursor->x() <= actorPos.right) {
+		if (_cursor->y() >= actorPos.top) {
+			if (_cursor->y() > actorPos.bottom) {
+				if (actor->direction == 3) {
+					if (_cursor->x() - actorPos.left > 10)
+						dir = 4;
+				} else {
+					if (actor->direction == 5) {
+						if (actorPos.right - _cursor->x() > 10)
+							dir = 4;
+					} else {
+						dir = 4;
+					}
+				}
+			}
+		} else {
+			if (actor->direction == 1) {
+				if (_cursor->x() - actorPos.left > 10)
+					dir = 0;
+			} else {
+				if (actor->direction == 7) {
+					if (actorPos.right - _cursor->x() > 10)
+						dir = 0;
+				} else {
+					dir = 0;
+				}
+			}
+		}
+		done = true;
+	}
+
+	if (!done && _cursor->y() < actorPos.top) {
+		if (actor->direction) {
+			if (actor->direction == 6) {
+				if (actorPos.top - _cursor->y() > 10)
+					dir = 7;
+			} else {
+				dir = 7;
+			}
+		} else {
+			if (_cursor->x() - actorPos.right > 10)
+				dir = 7;
+		}
+		done = true;
+	}
+
+	if (!done && _cursor->y() <= actorPos.bottom) {
+		if (actor->direction == 5) {
+			if (actorPos.bottom - _cursor->y() > 10)
+				dir = 6;
+		} else {
+			if (actor->direction == 7) {
+				if (_cursor->y() - actorPos.top > 10)
+					dir = 6;
+			} else {
+				dir = 6;
+			}
+		}
+		done = true;
+	}
+
+	if (!done && actor->direction == 4) {
+		if (_cursor->x() - actorPos.right <= 10)
+			done = true;
+		if (!done)
+			dir = 5;
+	}
+
+	if (!done && (actor->direction != 6 || _cursor->y() - actorPos.bottom > 10)) {
+		dir = 5;
+	}
+
+	//printf("Current Dir %d -- New Dir %d\n", actor->direction, dir);
 }
 
 void Scene::updateActor(uint32 actorIdx) {
@@ -599,7 +741,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		if (worldStats->actions[a].actionType == 0) {
 			ActionArea *area = &worldStats->actions[a];
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[area->polyIdx];
-			if (Shared.pointInPoly(&poly, mainActor->_actorX, mainActor->_actorY)) {
+			if (Shared.pointInPoly(&poly, mainActor->x(), mainActor->y())) {
 				debugShowWalkRegion(&poly);
 				//break;
 			}
