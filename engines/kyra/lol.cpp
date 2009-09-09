@@ -2993,7 +2993,10 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 	int vY = _updateSpellBookCoords[(slot << 1) + 1] + 5;
 
 	char wsaFile[13];
-	snprintf(wsaFile, 13, "write%0d%c.wsa", spell, (_lang == 1) ? 'f' : (_lang == 0 ? 'e' : 'g'));
+	if (_flags.isTalkie)
+		snprintf(wsaFile, 13, "write%0d%c.wsa", spell, (_lang == 1) ? 'f' : (_lang == 0 ? 'e' : 'g'));
+	else
+		snprintf(wsaFile, 13, "write%0d.wsa", spell);
 	snd_playSoundEffect(_updateSpellBookAnimData[(spell << 2) + 3], -1);
 	snd_playSoundEffect(95, -1);
 
