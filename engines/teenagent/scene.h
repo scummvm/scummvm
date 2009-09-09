@@ -40,7 +40,7 @@ class Dialog;
 
 struct SceneEvent {
 	enum Type { 
-		None, Message, Walk, PlayAnimation, 
+		None, Message, Walk, PlayAnimation, PlayActorAnimation, 
 		LoadScene, SetOn, SetLan, PlayMusic, 
 		PlaySound, EnableObject, WaitForAnimation,
 		Quit
@@ -104,7 +104,6 @@ public:
 	
 	void displayMessage(const Common::String &str);
 	void setOrientation(uint8 o) { orientation = o; }
-	void playAnimation(byte idx, uint id);
 	void push(const SceneEvent &event);
 
 	bool processEvent(const Common::Event &event);
@@ -122,6 +121,9 @@ public:
 private:
 	void loadOns();
 	void loadLans();
+
+	void playAnimation(byte idx, uint id, bool loop);
+	void playActorAnimation(uint id, bool loop);
 	
 	byte palette[768];
 	void setPalette(OSystem *system, const byte * palette, unsigned mul = 1);
@@ -141,7 +143,7 @@ private:
 	Surface on;
 	Surface *ons;
 	uint32 ons_count;
-	Animation animations[4], custom_animations[5];
+	Animation actor_animation, animations[4], custom_animations[4];
 
 	Actor teenagent, teenagent_idle;
 	Common::Point position0, position, destination;

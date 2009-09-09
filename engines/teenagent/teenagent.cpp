@@ -381,10 +381,20 @@ void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
 	SceneEvent event(SceneEvent::PlayAnimation);
 	event.animation = id;
 	event.color = slot;
-	if (async)
-		event.color |= 0x80;
 	scene->push(event);
+	if (!async)
+		waitAnimation();
 }
+
+void TeenAgentEngine::playActorAnimation(uint16 id, bool async) {
+	SceneEvent event(SceneEvent::PlayActorAnimation);
+	event.animation = id;
+	event.color = 0;
+	scene->push(event);
+	if (!async)
+		waitAnimation();
+}
+
 
 void TeenAgentEngine::loadScene(byte id, const Common::Point &pos, byte o) {
 	loadScene(id, pos.x, pos.y, o);

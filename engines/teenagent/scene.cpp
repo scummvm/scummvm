@@ -99,12 +99,16 @@ void Scene::init(TeenAgentEngine *engine, OSystem * system) {
 		error("invalid resource data");
 
 	teenagent.load(s, Animation::TypeVaria);
+	if (teenagent.empty())
+		error("invalid mark animation");
 	
 	s = res->varia.getStream(2);
 	if (s == NULL)
 		error("invalid resource data");
 	
 	teenagent_idle.load(s, Animation::TypeVaria);
+	if (teenagent_idle.empty())
+		error("invalid mark animation");
 }
 
 byte *Scene::getOns(int id) {
@@ -227,14 +231,23 @@ void Scene::init(int id, const Common::Point &pos) {
 		_engine->music->load(res->dseg.get_byte(0xDB90));
 }
 
-void Scene::playAnimation(byte idx, uint id) {
-	assert(idx < 5);
+void Scene::playAnimation(byte idx, uint id, bool loop) {
+	assert(idx < 4);
 	Common::SeekableReadStream * s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
 		error("playing animation %u failed", id);
 
 	custom_animations[idx].load(s);
-	custom_animations[idx].loop = idx == 4; //looping face animation.
+	custom_animations[idx].loop = loop;
+}
+
+void Scene::playActorAnimation(uint id, bool loop) {
+	Common::SeekableReadStream * s = Resources::instance()->loadLan(id + 1);
+	if (s == NULL)
+		error("playing animation %u failed", id);
+
+	actor_animation.load(s);
+	actor_animation.loop = loop;
 }
 
 void Scene::push(const SceneEvent &event) {
@@ -250,7 +263,10 @@ bool Scene::processEvent(const Common::Event &event) {
 			event.type == Common::EVENT_RBUTTONDOWN
 		) {
 			message.clear();
-			custom_animations[4].free();
+			for(int i = 0; i < 4; ++i) {
+				if (custom_animations[i].loop)
+					custom_animations[i].free();
+			}
 			nextEvent();
 			return true;
 		}
@@ -274,18 +290,34 @@ bool Scene::render(OSystem * system) {
 		}
 	}
 	
+	//render on
+	if (on.pixels != NULL) {
+		on.render(surface);
+	}
+
+	bool got_any_animation = false;
+
 	for (int i = 3; i >= 0; --i) {
-		Animation &a = animations[i];
-		Surface *s = a.currentFrame();
+		Animation *a = custom_animations + i;
+		Surface *s = a->currentFrame();
+		if (s != NULL) {
+			s->render(surface);
+			busy = true;
+			got_any_animation = true;
+			continue;
+		}
+
+		a = animations + i;
+		s = a->currentFrame();
 		if (s == NULL)
 			continue;
 
 		s->render(surface);
 
-		if (a.id == 0)
+		if (a->id == 0)
 			continue;
 
-		Object * obj = getObject(a.id);
+		Object * obj = getObject(a->id);
 		if (obj != NULL) {
 			obj->rect.left = s->x;
 			obj->rect.top = s->y;
@@ -294,62 +326,40 @@ bool Scene::render(OSystem * system) {
 			//obj->dump();
 		}
 	}
-
-	//render on
-	if (on.pixels != NULL) {
-		on.render(surface);
-	}
-
-	bool hide_actor = false;
-	bool got_any_animation = false;
 	
-	for (int i = 3; i >= 0; --i) {
-		Animation &a = custom_animations[i];
-		Surface *s = a.currentFrame();
-		if (s == NULL) {
-			if (!a.empty() && current_event.type == SceneEvent::PlayAnimation) {
-				debug(0, "animation %u stopped", current_event.animation);
-				a.free();
-				nextEvent();
-				i = -1;
-			}
-			continue;
-		}
+	Surface * mark = actor_animation.currentFrame();
+	if (mark == NULL) {
+		actor_animation.free();
 
-		s->render(surface);
-		if (i == 0) {
-			//debug(0, "animation active @%u,%u, hiding actor", s->x, s->y);
-			hide_actor = true;
-		}
+		if (destination != position) {
+			Common::Point dp(destination.x - position0.x, destination.y - position0.y);
+			int o;
+			if (ABS(dp.x) > ABS(dp.y))
+				o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
+			else
+				o = dp.y > 0? Object::ActorDown: Object::ActorUp;
+			
+			position.x = position0.x + dp.x * progress / progress_total;
+			position.y = position0.y + dp.y * progress / progress_total;
+			teenagent.render(surface, position, o, 1);
+			++progress;
+			if (progress >= progress_total) {
+				position = destination;
+				if (orientation == 0)
+					orientation = o; //save last orientation
+				nextEvent();
+			} else 
+				busy = true;
+		} else 
+			teenagent.render(surface, position, orientation, 0);
+	} else {
+		mark->render(surface);
 		busy = true;
 		got_any_animation = true;
 	}
 
 	if (current_event.type == SceneEvent::WaitForAnimation && !got_any_animation) {
 		nextEvent();
-	}
-
-	if (destination != position) {
-		Common::Point dp(destination.x - position0.x, destination.y - position0.y);
-		int o;
-		if (ABS(dp.x) > ABS(dp.y))
-			o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
-		else
-			o = dp.y > 0? Object::ActorDown: Object::ActorUp;
-			
-		position.x = position0.x + dp.x * progress / progress_total;
-		position.y = position0.y + dp.y * progress / progress_total;
-		teenagent.render(surface, position, o, 1);
-		++progress;
-		if (progress >= progress_total) {
-			position = destination;
-			if (orientation == 0)
-				orientation = o; //save last orientation
-			nextEvent();
-		} else 
-			busy = true;
-	} else if (!hide_actor) {
-		teenagent.render(surface, position, orientation, 0);
 	}
 		
 	busy |= processEventQueue();
@@ -437,9 +447,14 @@ bool Scene::processEventQueue() {
 		
 		case SceneEvent::PlayAnimation: {
 			debug(0, "playing animation %u", current_event.animation);
-			playAnimation(current_event.color & 0x7f /*slot actually :)*/, current_event.animation);
-			if (current_event.color & 0x80)
-				nextEvent();
+			playAnimation(current_event.color & 0x3 /*slot actually :)*/, current_event.animation, (current_event.color & 0x40) != 0);
+			current_event.clear();
+		} break;
+
+		case SceneEvent::PlayActorAnimation: {
+			debug(0, "playing actor animation %u", current_event.animation);
+			playActorAnimation(current_event.animation, (current_event.color & 0x40) != 0);
+			current_event.clear();
 		} break;
 		
 		case SceneEvent::PlayMusic: {

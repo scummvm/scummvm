@@ -71,7 +71,8 @@ public:
 	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);
 	void moveTo(Object * obj);
 	void moveRel(int16 x, int16 y, byte o, bool warp = false);
-	void playAnimation(uint16 id, byte slot = 0, bool async = false);
+	void playActorAnimation(uint16 id, bool async = false);
+	void playAnimation(uint16 id, byte slot, bool async = false);
 	void loadScene(byte id, const Common::Point &pos, byte o = 0);
 	void loadScene(byte id, uint16 x, uint16 y, byte o = 0);
 	void setOns(byte id, byte value, byte scene_id = 0);
