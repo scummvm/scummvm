@@ -67,7 +67,7 @@ extern int sci0_palette;
 
 /** The 16 EGA base colors */
 extern Palette* gfx_sci0_image_pal[];
-extern gfx_pixmap_color_t gfx_sci0_image_colors[][16];
+extern PaletteEntry gfx_sci0_image_colors[][16];
 
 /**
  * The 256 interpolated colors (initialized when gfxr_init_pic() is called

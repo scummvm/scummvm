@@ -47,7 +47,7 @@ struct gfx_res_assign_t {
 	union {
 		struct {
 			int colors_nr;
-			gfx_pixmap_color_t *colors;
+			PaletteEntry *colors;
 		} palette;
 	} assign;
 };

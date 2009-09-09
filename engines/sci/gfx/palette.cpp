@@ -39,7 +39,7 @@ Palette::Palette(uint s) {
 	_revision = 0;
 }
 
-Palette::Palette(const gfx_pixmap_color_t *colors, uint s) {
+Palette::Palette(const PaletteEntry *colors, uint s) {
 	_size = s;
 	_colors = new PaletteEntry[s];
 	_parent = 0;
@@ -131,7 +131,7 @@ void Palette::unmerge() {
 	_parent = 0;
 }
 
-void Palette::setColor(uint index, byte r, byte g, byte b) {
+void Palette::setColor(uint index, byte r, byte g, byte b, int parentIndex) {
 	assert(index < _size);
 	assert(!_parent);
 
@@ -146,7 +146,7 @@ void Palette::setColor(uint index, byte r, byte g, byte b) {
 	entry.r = r;
 	entry.g = g;
 	entry.b = b;
-	entry.parent_index = -1;
+	entry.parent_index = parentIndex;
 
 	_dirty = true;
 }

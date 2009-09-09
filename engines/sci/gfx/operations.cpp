@@ -49,14 +49,15 @@ namespace Sci {
 // Default color maps
 #define DEFAULT_COLORS_NR 16
 
-gfx_pixmap_color_t default_colors[DEFAULT_COLORS_NR] = {{GFX_COLOR_SYSTEM, 0x00, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0x00, 0xaa},
-	{GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
-	{GFX_COLOR_SYSTEM, 0xaa, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0x00, 0xaa},
-	{GFX_COLOR_SYSTEM, 0xaa, 0x55, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0xaa, 0xaa},
-	{GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0x55, 0xff},
-	{GFX_COLOR_SYSTEM, 0x55, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
-	{GFX_COLOR_SYSTEM, 0xff, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
-	{GFX_COLOR_SYSTEM, 0xff, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}
+PaletteEntry default_colors[DEFAULT_COLORS_NR] = {
+	PaletteEntry(0x00, 0x00, 0x00), PaletteEntry(0x00, 0x00, 0xaa),
+	PaletteEntry(0x00, 0xaa, 0x00), PaletteEntry(0x00, 0xaa, 0xaa),
+	PaletteEntry(0xaa, 0x00, 0x00), PaletteEntry(0xaa, 0x00, 0xaa),
+	PaletteEntry(0xaa, 0x55, 0x00), PaletteEntry(0xaa, 0xaa, 0xaa),
+	PaletteEntry(0x55, 0x55, 0x55), PaletteEntry(0x55, 0x55, 0xff),
+	PaletteEntry(0x55, 0xff, 0x55), PaletteEntry(0x55, 0xff, 0xff),
+	PaletteEntry(0xff, 0x55, 0x55), PaletteEntry(0xff, 0x55, 0xff),
+	PaletteEntry(0xff, 0xff, 0x55), PaletteEntry(0xff, 0xff, 0xff)
 }; // "Normal" EGA
 
 #define POINTER_VISIBLE_BUT_CLIPPED 2
@@ -775,7 +776,7 @@ void gfxop_draw_line(GfxState *state, Common::Point start, Common::Point end,
 		end.y += yfact >> 1;
 	}
 
-	if (color.visual.parent_index == GFX_COLOR_INDEX_UNMAPPED)
+	if (color.visual.parent_index == -1)
 		gfxop_set_color(state, &color, color);
 	_gfxop_draw_line_clipped(state, start, end, color, line_mode, line_style);
 }
@@ -893,7 +894,7 @@ void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
 		color1.priority = 0;
 		color1.control = 0;
-		if (color1.visual.parent_index == GFX_COLOR_INDEX_UNMAPPED)
+		if (color1.visual.parent_index == -1)
 			gfxop_set_color(state, &color1, color1);
 		drv->drawFilledRect(new_box, color1, color1, GFX_SHADE_FLAT);
 		return;

@@ -39,8 +39,6 @@ namespace Sci {
 /*** Data structures ***/
 /***********************/
 
-#define GFX_COLOR_SYSTEM -1
-
 #define GFX_MODE_IS_UNSCALED(mode) (((mode)->scaleFactor == 1) && ((mode)->scaleFactor == 1))
 
 /** Graphics mode description
@@ -68,14 +66,6 @@ struct gfx_mode_t {
 };
 
 
-
-#define GFX_COLOR_INDEX_UNMAPPED -1
-
-/** Pixmap-specific color entries */
-struct  gfx_pixmap_color_t{
-	int global_index; /**< Global index color or GFX_COLOR_INDEX_UNMAPPED. */
-	uint8 r, g, b; /**< Real color */
-};
 
 /** Full color */
 struct gfx_color_t {

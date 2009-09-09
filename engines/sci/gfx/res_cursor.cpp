@@ -37,10 +37,10 @@ namespace Sci {
 #define GFX_SCI01_CURSOR_COLORS_NR 3
 #define GFX_SCI0_CURSOR_COLORS_NR 2
 
-gfx_pixmap_color_t gfx_sci01_cursor_colors[GFX_SCI01_CURSOR_COLORS_NR] = {
-	{GFX_COLOR_INDEX_UNMAPPED, 0x00, 0x00, 0x00},
-	{GFX_COLOR_INDEX_UNMAPPED, 0xff, 0xff, 0xff},
-	{GFX_COLOR_INDEX_UNMAPPED, 0xaa, 0xaa, 0xaa}
+PaletteEntry gfx_sci01_cursor_colors[GFX_SCI01_CURSOR_COLORS_NR] = {
+	PaletteEntry(0x00, 0x00, 0x00),
+	PaletteEntry(0xff, 0xff, 0xff),
+	PaletteEntry(0xaa, 0xaa, 0xaa)
 };
 
 gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size, bool isSci01) {

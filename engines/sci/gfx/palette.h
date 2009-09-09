@@ -57,12 +57,10 @@ struct PaletteEntry {
 	int refcount;
 };
 
-struct gfx_pixmap_color_t;
-
 class Palette {
 public:
 	explicit Palette(uint size);
-	Palette(const gfx_pixmap_color_t *colors, uint size);
+	Palette(const PaletteEntry *colors, uint size);
 	~Palette();
 
 	Palette *getref();
@@ -70,7 +68,7 @@ public:
 	Palette *copy();
 
 	void resize(uint size);
-	void setColor(uint index, byte r, byte g, byte b);
+	void setColor(uint index, byte r, byte g, byte b, int parentIndex = -1);
 	void makeSystemColor(uint index, const PaletteEntry &color);
 	const PaletteEntry &getColor(uint index) const {
 		assert(index < _size);

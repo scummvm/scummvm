@@ -3327,16 +3327,17 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 			
 			if (player->dirtyPalette()) {
 				byte *rawPalette = player->getPalette();
-				gfx_pixmap_color_t *colors = new gfx_pixmap_color_t[256];
+				Palette *colors = new Palette(256);
+
+				byte r, g, b;
 
 				for (uint16 i = 0; i < 256; i++) {
-					colors[i].r = rawPalette[i * 4];
-					colors[i].g = rawPalette[i * 4 + 1];
-					colors[i].b = rawPalette[i * 4 + 2];
-					colors[i].global_index = i;
+					r = rawPalette[i * 4];
+					g = rawPalette[i * 4 + 1];
+					b = rawPalette[i * 4 + 2];
+					colors->setColor(i, r, g, b);
 				}
 
-				palette = new Palette(colors, 256);
 				palette->forceInto(s->gfx_state->driver->getMode()->palette);
 			}
 				

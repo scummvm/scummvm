@@ -45,25 +45,25 @@ int sci0_palette = 0;
 	((first) + (((nr)-1) * (last - first)) / 14)))
 
 // Default color maps
-gfx_pixmap_color_t gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLORS_NR] = {
-	{{GFX_COLOR_SYSTEM, 0x00, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0x00, 0xaa},
-		{GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
-		{GFX_COLOR_SYSTEM, 0xaa, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0x00, 0xaa},
-		{GFX_COLOR_SYSTEM, 0xaa, 0x55, 0x00}, {GFX_COLOR_SYSTEM, 0xaa, 0xaa, 0xaa},
-		{GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0x55, 0xff},
-		{GFX_COLOR_SYSTEM, 0x55, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
-		{GFX_COLOR_SYSTEM, 0xff, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
-		{GFX_COLOR_SYSTEM, 0xff, 0xff, 0x55}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}}, // "Normal" EGA
+PaletteEntry gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLORS_NR] = {
+	{PaletteEntry(0x00, 0x00, 0x00), PaletteEntry(0x00, 0x00, 0xaa),
+		PaletteEntry(0x00, 0xaa, 0x00), PaletteEntry(0x00, 0xaa, 0xaa),
+		PaletteEntry(0xaa, 0x00, 0x00), PaletteEntry(0xaa, 0x00, 0xaa),
+		PaletteEntry(0xaa, 0x55, 0x00), PaletteEntry(0xaa, 0xaa, 0xaa),
+		PaletteEntry(0x55, 0x55, 0x55), PaletteEntry(0x55, 0x55, 0xff),
+		PaletteEntry(0x55, 0xff, 0x55), PaletteEntry(0x55, 0xff, 0xff),
+		PaletteEntry(0xff, 0x55, 0x55), PaletteEntry(0xff, 0x55, 0xff),
+		PaletteEntry(0xff, 0xff, 0x55), PaletteEntry(0xff, 0xff, 0xff)}, // "Normal" EGA
 
 
-	{{GFX_COLOR_SYSTEM, 0x00, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0x00, 0xff},
-		{GFX_COLOR_SYSTEM, 0x00, 0xaa, 0x00}, {GFX_COLOR_SYSTEM, 0x00, 0xaa, 0xaa},
-		{GFX_COLOR_SYSTEM, 0xce, 0x00, 0x00}, {GFX_COLOR_SYSTEM, 0xbe, 0x71, 0xde},
-		{GFX_COLOR_SYSTEM, 0x8d, 0x50, 0x00}, {GFX_COLOR_SYSTEM, 0xbe, 0xbe, 0xbe},
-		{GFX_COLOR_SYSTEM, 0x55, 0x55, 0x55}, {GFX_COLOR_SYSTEM, 0x00, 0xbe, 0xff},
-		{GFX_COLOR_SYSTEM, 0x00, 0xce, 0x55}, {GFX_COLOR_SYSTEM, 0x55, 0xff, 0xff},
-		{GFX_COLOR_SYSTEM, 0xff, 0x9d, 0x8d}, {GFX_COLOR_SYSTEM, 0xff, 0x55, 0xff},
-		{GFX_COLOR_SYSTEM, 0xff, 0xff, 0x00}, {GFX_COLOR_SYSTEM, 0xff, 0xff, 0xff}}, // AGI Amiga-ish
+	{PaletteEntry(0x00, 0x00, 0x00), PaletteEntry(0x00, 0x00, 0xff),
+		PaletteEntry(0x00, 0xaa, 0x00), PaletteEntry(0x00, 0xaa, 0xaa),
+		PaletteEntry(0xce, 0x00, 0x00), PaletteEntry(0xbe, 0x71, 0xde),
+		PaletteEntry(0x8d, 0x50, 0x00), PaletteEntry(0xbe, 0xbe, 0xbe),
+		PaletteEntry(0x55, 0x55, 0x55), PaletteEntry(0x00, 0xbe, 0xff),
+		PaletteEntry(0x00, 0xce, 0x55), PaletteEntry(0x55, 0xff, 0xff),
+		PaletteEntry(0xff, 0x9d, 0x8d), PaletteEntry(0xff, 0x55, 0xff),
+		PaletteEntry(0xff, 0xff, 0x00), PaletteEntry(0xff, 0xff, 0xff)}, // AGI Amiga-ish
 
 // RGB and I intensities (former taken from the GIMP)
 #define GR 30
@@ -75,14 +75,14 @@ gfx_pixmap_color_t gfx_sci0_image_colors[SCI0_MAX_PALETTE+1][GFX_SCI0_IMAGE_COLO
 
 #define CC(x) (((x)*255)/FULL),(((x)*255)/FULL),(((x)*255)/FULL)         // Combines color intensities
 
-	{{GFX_COLOR_SYSTEM, CC(0)           }, {GFX_COLOR_SYSTEM, CC(GB)          },
-		{GFX_COLOR_SYSTEM, CC(GG)          }, {GFX_COLOR_SYSTEM, CC(GB + GG)       },
-		{GFX_COLOR_SYSTEM, CC(GR)          }, {GFX_COLOR_SYSTEM, CC(GB + GR)       },
-		{GFX_COLOR_SYSTEM, CC(GG + GR)       }, {GFX_COLOR_SYSTEM, CC(GB + GG + GR)    },
-		{GFX_COLOR_SYSTEM, CC(GI)          }, {GFX_COLOR_SYSTEM, CC(GB + GI)       },
-		{GFX_COLOR_SYSTEM, CC(GG + GI)       }, {GFX_COLOR_SYSTEM, CC(GB + GG + GI)    },
-		{GFX_COLOR_SYSTEM, CC(GR + GI)       }, {GFX_COLOR_SYSTEM, CC(GB + GR + GI)    },
-		{GFX_COLOR_SYSTEM, CC(GG + GR + GI)    }, {GFX_COLOR_SYSTEM, CC(GB + GG + GR + GI) }}
+	{PaletteEntry(CC(0)           ), PaletteEntry(CC(GB)          ),
+		PaletteEntry(CC(GG)          ), PaletteEntry(CC(GB + GG)       ),
+		PaletteEntry(CC(GR)          ), PaletteEntry(CC(GB + GR)       ),
+		PaletteEntry(CC(GG + GR)       ), PaletteEntry(CC(GB + GG + GR)    ),
+		PaletteEntry(CC(GI)          ), PaletteEntry(CC(GB + GI)       ),
+		PaletteEntry(CC(GG + GI)       ), PaletteEntry(CC(GB + GG + GI)    ),
+		PaletteEntry(CC(GR + GI)       ), PaletteEntry(CC(GB + GR + GI)    ),
+		PaletteEntry(CC(GG + GR + GI)    ), PaletteEntry(CC(GB + GG + GR + GI) )}
 }; // Grayscale
 
 #undef GR
@@ -102,25 +102,19 @@ Palette* embedded_view_pal = 0;
 
 #define SCI1_PALETTE_SIZE 1284
 
-// Color mapping used while scaling embedded views.
-static const gfx_pixmap_color_t embedded_view_colors[16] = {
-	{0x00, 0, 0, 0}, {0x11, 0, 0, 0}, {0x22, 0, 0, 0}, {0x33, 0, 0, 0},
-	{0x44, 0, 0, 0}, {0x55, 0, 0, 0}, {0x66, 0, 0, 0}, {0x77, 0, 0, 0},
-	{0x88, 0, 0, 0}, {0x99, 0, 0, 0}, {0xaa, 0, 0, 0}, {0xbb, 0, 0, 0},
-	{0xcc, 0, 0, 0}, {0xdd, 0, 0, 0}, {0xee, 0, 0, 0}, {0xff, 0, 0, 0}
-};
-
 void gfxr_init_static_palette() {
+	int i;
+
 	if (!gfx_sci0_pic_colors) {
 		gfx_sci0_pic_colors = new Palette(256);
 		gfx_sci0_pic_colors->name = "gfx_sci0_pic_colors";
 		// TODO: Discover the exact purpose of gfx_sci0_pic_colors
 		// For now, we set the first 16 colours to the standard EGA palette,
 		// and fill the remaining entries with slight variations
-		for (int i = 0; i < 16; i++) {
-			gfx_sci0_pic_colors->setColor(i,gfx_sci0_image_colors[0][i].r, gfx_sci0_image_colors[0][i].g, gfx_sci0_image_colors[0][i].b);
+		for (i = 0; i < 16; i++) {
+			gfx_sci0_pic_colors->setColor(i, gfx_sci0_image_colors[0][i].r, gfx_sci0_image_colors[0][i].g, gfx_sci0_image_colors[0][i].b);
 		}
-		for (int i = 16; i < 256; i++) {
+		for (i = 16; i < 256; i++) {
 			byte r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
 			                  gfx_sci0_image_colors[sci0_palette][i >> 4].r);
 			byte g = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].g,
@@ -132,12 +126,14 @@ void gfxr_init_static_palette() {
 		//warning("Uncomment me after fixing sci0_palette changes to reset me");
 		//_gfxr_pic0_colors_initialized = 1;
 
-		for (int i = 0; i <= SCI0_MAX_PALETTE; ++i) {
+		for (i = 0; i <= SCI0_MAX_PALETTE; ++i) {
 			gfx_sci0_image_pal[i] = new Palette(gfx_sci0_image_colors[i], GFX_SCI0_IMAGE_COLORS_NR);
 			gfx_sci0_image_pal[i]->name = "gfx_sci0_image_pal[i]";
 		}
 
-		embedded_view_pal = new Palette(embedded_view_colors, 16);
+		embedded_view_pal = new Palette(16);
+		for (i = 0; i < 16; i++)
+			embedded_view_pal->setColor(i, 0, 0, i * 0x11);
 		embedded_view_pal->name = "embedded_view_pal";
 	}
 }
