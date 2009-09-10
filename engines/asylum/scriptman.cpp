@@ -202,7 +202,7 @@ int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
     int newFlag = barrierFlags | 1 | barrier->flags;
     barrier->flags |= barrierFlags | 1;
 
-    if(newFlag & 0x10000) {
+    if (newFlag & 0x10000) {
         barrier->frameIdx = barrier->frameCount - 1;
     } else {
         barrier->frameIdx = 0;
@@ -228,9 +228,19 @@ int ScriptManager::processActionList() {
 			ActionCommand *currentCommand = &_currentScript->commands[currentLine];
 
 			uint32 opcode = currentCommand->opcode;
+
+			// Execute command from function mapping
 			int cmdRet = function_map[opcode].function(currentCommand);
+
+			// Check function return
+			if (cmdRet == -1)
+				warning("Incomplete opcode %s (0x%02X) in Scene %d Line %d",
+					function_map[opcode].name,
+					currentCommand->opcode,
+					Shared.getScene()->getSceneIndex(),
+					currentLine);
 			if (cmdRet == -2)
-				warning("Unhandled opcode %s (0x%02X) in Scene %d Line %d.",
+				warning("Unhandled opcode %s (0x%02X) in Scene %d Line %d",
 					function_map[opcode].name,
 					currentCommand->opcode,
 					Shared.getScene()->getSceneIndex(),
@@ -239,13 +249,16 @@ int ScriptManager::processActionList() {
 			currentLine += lineIncrement;
 			currentLoops++;
 
-		}       // end while
+		} // end while
 
 		if (done) {
 			currentLine    = 0;
 			currentLoops   = 0;
 			_currentScript = 0;
 
+			// XXX
+			// gameFlag 183 is the same as the
+			// processing flag, but is not being used
 			Shared.clearGameFlag(183);
 		}
 	}
@@ -390,7 +403,7 @@ int kShowCursor(ActionCommand *cmd) {
 	ScriptMan.allowInput = true;
 
 	// TODO clear_flag_01()
-	return 0;
+	return -1;
 }
 
 int kPlayAnimation(ActionCommand *cmd) {
@@ -439,7 +452,7 @@ int kPlayAnimation(ActionCommand *cmd) {
 		}
 	}
 
-	return 0;
+	return -1;
 }
 
 int kMoveScenePosition(ActionCommand *cmd) {
@@ -493,7 +506,7 @@ int kMoveScenePosition(ActionCommand *cmd) {
 		// TODO: reverse asm block
 	}
 
-	return 0;
+	return -1;
 }
 
 int kHideActor(ActionCommand *cmd) {
@@ -572,7 +585,7 @@ int kDisableActor(ActionCommand *cmd) {
 	// TODO Finish implementing this function
 	Shared.getScene()->getActor()->disable(actorIndex);
 
-	return 0;
+	return -1;
 }
 
 int kEnableActor(ActionCommand *cmd) {
@@ -622,7 +635,7 @@ int kEnableBarriers(ActionCommand *cmd) {
 		ScriptMan.processActionListSub02(ScriptMan.getScript(), cmd, v64);
 	}
 
-	return 0;
+	return -1;
 }
 
 int kReturn(ActionCommand *cmd) {
@@ -701,7 +714,7 @@ int kJumpIfFlag2Bit0(ActionCommand *cmd) {
 		else
 			ScriptMan.done = (Shared.getScene()->getResources()->getWorldStats()->actors[cmd->param1].flags2 & 1) == 0;
 
-	return 0;
+	return -1;
 }
 
 int kSetFlag2Bit0(ActionCommand *cmd) {
@@ -784,14 +797,14 @@ int kPlayMovie(ActionCommand *cmd) {
 	// TODO: add missing code here
 	ScriptMan.delayedVideoIndex = cmd->param1;
 
-	return 0;
+	return -1;
 }
 
 int kStopAllBarriersSounds(ActionCommand *cmd) {
 	// TODO: do this for all barriers that have sfx playing
 	Shared.getSound()->stopSfx();
 
-	return 0;
+	return -1;
 }
 
 int kSetActionFlag01(ActionCommand *cmd) {
@@ -838,7 +851,7 @@ int kRunBlowUpPuzzle(ActionCommand *cmd) {
 	Shared.getScene()->setBlowUpPuzzle(new BlowUpPuzzleVCR());
 	Shared.getScene()->getBlowUpPuzzle()->openBlowUp();
 
-	return 0;
+	return -1;
 }
 
 int kJumpIfFlag2Bit3(ActionCommand *cmd) {
@@ -929,7 +942,7 @@ int kPlaySpeech(ActionCommand *cmd) {
 				Shared.getScene()->getSceneIndex(),
 				ScriptMan.currentLine);
 
-	return 0;
+	return -1;
 }
 
 int k_unk42(ActionCommand *cmd) {
@@ -947,9 +960,17 @@ int kStartPaletteFadeThread(ActionCommand *cmd) {
 int k_unk46(ActionCommand *cmd) {
 	return -2;
 }
+
 int kActorFaceObject(ActionCommand *cmd) {
-	return -2;
+	// XXX
+	// Dropping param1, since it's the character index
+	// Investigate further if/when we have a scene with
+	// multiple characters in the actor[] array
+	Shared.getScene()->getActor()->faceTarget(cmd->param2, cmd->param3);
+
+	return -1;
 }
+
 int k_unk48_MATTE_01(ActionCommand *cmd) {
 	return -2;
 }
@@ -975,7 +996,7 @@ int kChangeActorField40(ActionCommand *cmd) {
 		Shared.getScene()->getResources()->getWorldStats()->actors[actorIdx].field_40 = 4;
 	}
 
-	return 0;
+	return -1;
 }
 
 int kStopSound(ActionCommand *cmd) {
@@ -1067,7 +1088,7 @@ int k_unk55(ActionCommand *cmd) {
 	else
 		ScriptMan.lineIncrement = cmd->param8;
 
-	return 0;
+	return -1;
 }
 
 int k_unk56(ActionCommand *cmd) {
@@ -1144,7 +1165,7 @@ int k_unk61(ActionCommand *cmd) {
 		ScriptMan.lineIncrement = 1;
 	}
 
-	return 0;
+	return -1;
 }
 
 int k_unk62_SHOW_OPTIONS_SCREEN(ActionCommand *cmd) {

@@ -144,6 +144,8 @@ public:
 	void setPostion(uint32 targetX, uint32 targetY);
 	void setDirection(int dir);
 
+	void faceTarget(int targetId, int targetType);
+
 	// FIXME
 	// I don't really like how this is used in the scene constructor
 	void setResourcePack(ResourcePack *res) { _resPack = res; }
