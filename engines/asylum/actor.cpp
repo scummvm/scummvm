@@ -28,6 +28,7 @@
 #include "asylum/actor.h"
 #include "asylum/screen.h"
 #include "asylum/shared.h"
+#include "asylum/sceneres.h"
 
 namespace Asylum {
 
@@ -286,5 +287,67 @@ void Actor::disable(int param) {
 
 }
 
+void Actor::faceTarget(int targetId, int targetType) {
+	int newX2, newY2;
+
+	printf("faceTarget: id %d type %d\n", targetId, targetType);
+
+	if (targetType) {
+		if (targetType == 1) {
+			int actionIdx = Shared.getScene()->getResources()->getActionAreaIndexById(targetId);
+			if (actionIdx == -1) {
+				warning("No ActionArea found for id %d", targetId);
+				return;
+			}
+
+			uint32 polyIdx = Shared.getScene()->getResources()->getWorldStats()->actions[actionIdx].polyIdx;
+			PolyDefinitions *poly = &Shared.getScene()->getResources()->getGamePolygons()->polygons[polyIdx];
+
+			newX2= poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
+			newY2 = poly->boundingRect.top + (poly->boundingRect.bottom - poly->boundingRect.top) / 2;
+		} else {
+			if (targetType == 2) {
+				newX2 = x2 + x1;
+				newY2 = y2 + y1;
+			} else {
+				newX2 = newY2 = targetId;
+			}
+		}
+	} else {
+		int barrierIdx = Shared.getScene()->getResources()->getBarrierIndexById(targetId);
+		if (barrierIdx == -1) {
+			warning("No Barrier found for id %d", targetId);
+			return;
+		}
+
+		BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIdx);
+		GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
+
+		// FIXME
+		// The original actually grabs the current frame of the target
+		// barrier. I'm wondering if that's unnecessary since I'm assuming
+		// the dimensions of each frame should be the same.
+		// Investigate, though I don't think it'll be necessary since
+		// what we're trying to accomplish is a character rotation calclulation,
+		// and a size difference of a few pixels "shouldn't" affect this
+		// too much
+		GraphicFrame *fra = gra->getFrame(0);
+		delete gra;
+
+		newX2 = (fra->surface.w >> 1) + barrier->x; // TODO (x/y + 1704 * barrier) (not sure what this is pointing to)
+		newY2 = (fra->surface.h >> 1) + barrier->y; // Check .text:004088A2 for more details
+	}
+
+	printf("Calculating angle using x1(%d) x2(%d) y1(%d) y2(%d) newX(%d) newY(%d)\n", x1, x2, y1, y2, newX2, newY2);
+
+	// FIXME
+	// This just doesn't work. x1/y1 are ALWAYS -100, so I'm not sure where they're supposed
+	// to be updated.
+	int newAngle = Shared.getAngle(x2 + x1, y2 + y1, newX2, newY2);
+
+	printf("Angle calculated as %d\n", newAngle);
+
+	setDirection(newAngle);
+}
 
 } // end of namespace Asylum

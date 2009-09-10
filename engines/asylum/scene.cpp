@@ -216,9 +216,9 @@ int Scene::updateScene() {
     WorldStats *worldStats = _sceneResource->getWorldStats();
     
     // Mouse
-    //startTick = Shared.getMillis();
-    //updateMouse();
-    //debugC(kDebugLevelScene, "UpdateMouse Time: %d", Shared.getMillis() - startTick);
+    startTick = Shared.getMillis();
+    updateMouse();
+    debugC(kDebugLevelScene, "UpdateMouse Time: %d", Shared.getMillis() - startTick);
 
     // Actors
     startTick = Shared.getMillis();
