@@ -125,7 +125,7 @@ bool ScummEngine::canSaveGameStateCurrently() {
 	if (_game.id == GID_CMI)
 		return true;
 
-	// SCUMM v4+ doesn't allow saving in room 0 or if  
+	// SCUMM v4+ doesn't allow saving in room 0 or if
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
 	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0));
 }
@@ -137,7 +137,7 @@ void ScummEngine::requestSave(int slot, const char *name) {
 	_saveLoadFlag = 1;		// 1 for save
 	assert(name);
 	strncpy(_saveLoadName, name, sizeof(_saveLoadName));
-	_saveLoadName[sizeof(_saveLoadName) -  1] = 0;
+	_saveLoadName[sizeof(_saveLoadName) - 1] = 0;
 }
 
 void ScummEngine::requestLoad(int slot) {
@@ -453,7 +453,7 @@ bool ScummEngine::loadState(int slot, bool compat) {
 	// WORKAROUND bug #795214: For unknown reasons, object 819 sometimes is in
 	// state 1 in old save games, implying it should be drawn. This in turn
 	// results in a crash when entering the church, as object 819 is part of the
-	//  exitof the church and there are no graphics assigned to it.
+	// exitof the church and there are no graphics assigned to it.
 	if (_game.id == GID_MONKEY_VGA) {
 		putState(819, 0);
 	}
@@ -651,7 +651,7 @@ Graphics::Surface *ScummEngine::loadThumbnailFromSlot(const char *target, int sl
 	SaveGameHeader hdr;
 
 	if (slot < 0)
-		return  0;
+		return 0;
 
 	Common::String filename = ScummEngine::makeSavegameName(target, slot, false);
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {
@@ -689,7 +689,7 @@ bool ScummEngine::loadInfosFromSlot(const char *target, int slot, InfoStuff *stu
 	SaveGameHeader hdr;
 
 	if (slot < 0)
-		return  0;
+		return 0;
 
 	Common::String filename = makeSavegameName(target, slot, false);
 	if (!(in = g_system->getSavefileManager()->openForLoading(filename))) {

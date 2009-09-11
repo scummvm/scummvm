@@ -300,7 +300,7 @@ void ImuseDigiSndMgr::prepareSound(byte *ptr, SoundDesc *sound) {
 				error("ImuseDigiSndMgr::prepareSound(%d/%s) Unknown sfx header '%s'", sound->soundId, sound->name, tag2str(tag));
 			}
 		} while (tag != MKID_BE('DATA'));
-		sound->offsetData =  ptr - s_ptr;
+		sound->offsetData = ptr - s_ptr;
 	} else {
 		error("ImuseDigiSndMgr::prepareSound(): Unknown sound format");
 	}

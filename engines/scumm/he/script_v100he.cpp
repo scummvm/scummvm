@@ -1684,7 +1684,7 @@ void ScummEngine_v100he::o100_setSystemMessage() {
 		//   one still would have to convert 'name' to the correct encoding.
 		//_system->setWindowCaption((const char *)name);
 		break;
-	case 131:  // Set Version
+	case 131: // Set Version
 		debug(1,"o100_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	default:

@@ -182,9 +182,9 @@ void ImuseChannel::decode() {
 	unsigned char * source = _sbuffer;
 
 	while (loop_size--) {
-		byte v1 =  *source++;
-		byte v2 =  *source++;
-		byte v3 =  *source++;
+		byte v1 = *source++;
+		byte v2 = *source++;
+		byte v3 = *source++;
 		value = ((((v2 & 0x0f) << 8) | v1) << 4) - 0x8000;
 		WRITE_BE_UINT16(decoded, value); decoded += 2;
 		value = ((((v2 & 0xf0) << 4) | v3) << 4) - 0x8000;

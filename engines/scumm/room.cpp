@@ -52,7 +52,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
-	ScriptSlot *ss =  &vm.slot[_currentScript];
+	ScriptSlot *ss = &vm.slot[_currentScript];
 
 	if (_currentScript != 0xFF) {
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
@@ -84,7 +84,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 		// Added sound queue processing between execution of exit
 		// script and entry script. In the case of this bug, the
 		// entry script required that the iMuse state be fully up
-		// to  date, including last-moment changes from the previous
+		// to date, including last-moment changes from the previous
 		// exit script.
 		_sound->processSound();
 	}

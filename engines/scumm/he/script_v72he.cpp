@@ -1944,7 +1944,7 @@ void ScummEngine_v72he::o72_setSystemMessage() {
 	case 240:
 		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
 		break;
-	case 241:  // Set Version
+	case 241: // Set Version
 		debug(1,"o72_setSystemMessage: (%d) %s", subOp, name);
 		break;
 	case 242:
