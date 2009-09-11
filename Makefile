@@ -68,8 +68,10 @@ config.h config.mk: $(srcdir)/configure
 ifeq "$(findstring config.mk,$(MAKEFILE_LIST))" "config.mk"
 	@echo "Running $(srcdir)/configure with the last specified parameters"
 	@sleep 2
-	LDFLAGS="$(SAVED_LDFLAGS)" CXX="$(SAVED_CXX)" CXXFLAGS="$(SAVED_CXXFLAGS)" CPPFLAGS="$(SAVED_CPPFLAGS)" ASFLAGS="$(SAVED_ASFLAGS)" \
-		$(srcdir)/configure $(SAVED_CONFIGFLAGS)
+	LDFLAGS="$(SAVED_LDFLAGS)" CXX="$(SAVED_CXX)" \
+			CXXFLAGS="$(SAVED_CXXFLAGS)" CPPFLAGS="$(SAVED_CPPFLAGS)" \
+			ASFLAGS="$(SAVED_ASFLAGS)" WINDRESFLAGS="$(SAVED_WINDRESFLAGS)" \
+			$(srcdir)/configure $(SAVED_CONFIGFLAGS)
 else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
 endif

@@ -30,6 +30,7 @@ SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
 SAVED_ASFLAGS=$ASFLAGS
+SAVED_WINDRESFLAGS=$WINDRESFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -640,13 +641,14 @@ Optional Libraries:
   --disable-readline       disable readline support in text console [autodetect]
 
 Some influential environment variables:
-  LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
-            nonstandard directory <lib dir>
-  CXX       C++ compiler command
-  CXXFLAGS  C++ compiler flags
-  CPPFLAGS  C++ preprocessor flags, e.g. -I<include dir> if you have
-            headers in a nonstandard directory <include dir>
-  ASFLAGS   assembler flags
+  LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
+                 nonstandard directory <lib dir>
+  CXX            C++ compiler command
+  CXXFLAGS       C++ compiler flags
+  CPPFLAGS       C++ preprocessor flags, e.g. -I<include dir> if you have
+                 headers in a nonstandard directory <include dir>
+  ASFLAGS        assembler flags
+  WINDRESFLAGS   Windows resource compiler flags
 
 EOF
 		exit 0
@@ -2375,6 +2377,7 @@ AR := $_ar
 AS := $_as
 ASFLAGS := $ASFLAGS
 WINDRES := $_windres
+WINDRESFLAGS := $WINDRESFLAGS
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
@@ -2401,12 +2404,13 @@ LDFLAGS += $LDFLAGS
 
 $_mak_plugins
 
-SAVED_CONFIGFLAGS := $SAVED_CONFIGFLAGS
-SAVED_LDFLAGS     := $SAVED_LDFLAGS
-SAVED_CXX         := $SAVED_CXX
-SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
-SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
-SAVED_ASFLAGS     := $SAVED_ASFLAGS
+SAVED_CONFIGFLAGS  := $SAVED_CONFIGFLAGS
+SAVED_LDFLAGS      := $SAVED_LDFLAGS
+SAVED_CXX          := $SAVED_CXX
+SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
+SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
+SAVED_ASFLAGS      := $SAVED_ASFLAGS
+SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
 EOF
 
 #
