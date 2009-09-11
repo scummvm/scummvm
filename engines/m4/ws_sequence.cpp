@@ -27,7 +27,7 @@
 
 namespace M4 {
 
-long sinCosTable[320] = {
+static const long sinCosTable[320] = {
 	0,		1608,	3215,	4821,	6423,	8022,	9616,	11204,
 	12785,	14359,	15923,	17479,	19024,	20557,	22078,	23586,
 	25079,	26557,	28020,	29465,	30893,	32302,	33692,	35061,
@@ -408,6 +408,9 @@ bool Sequence::s1_sin(Instruction &instruction) {
 	else
 		tempAngle &= 0xff;
 
+	// FIXME: Why use the cosTable in s1_sin() ?
+	// Note that sin(0) 0 and sinTable[0] = 0 but cos(0)=1, and indeed
+	// cosTable[0] = 65536, which is 1 considered as a fixed point.
 	*instruction.argp[0] = -cosTable[tempAngle];
 
 	return true;
@@ -422,6 +425,9 @@ bool Sequence::s1_cos(Instruction &instruction) {
 	else
 		tempAngle &= 0xff;
 
+	// FIXME: Why use the sinTable in s1_cos() ?
+	// Note that sin(0) 0 and sinTable[0] = 0 but cos(0)=1, and indeed
+	// cosTable[0] = 65536, which is 1 considered as a fixed point.
 	*instruction.argp[0] = sinTable[tempAngle];
 
 	return true;
