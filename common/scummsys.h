@@ -383,7 +383,7 @@
 	#define PACKED_STRUCT __attribute__((__packed__))
 	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
 
-	#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+	#if !defined(FORCEINLINE) && (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
 		#define FORCEINLINE __attribute__((__always_inline__)) inline
 	#endif
 #else
