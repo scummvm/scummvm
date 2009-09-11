@@ -330,4 +330,46 @@ void resetBitmap(uint8 *dataPtr, int32 dataSize) {
 	memset(dataPtr, 0, dataSize);
 }
 
+/**
+ * This method compares a new background being switched in against the current background,
+ * to figure out rectangles of changed areas for dirty rectangles
+ */
+void switchBackground(const byte *newBg) {
+	const byte *bg = gfxModuleData.pPage00;
+	int sliceXStart, sliceXEnd;
+
+	// If both the upper corners are different, presume it's a full screen change
+	if ((*newBg != *bg) && (*(newBg + 319) != *(bg + 319))) {
+		gfxModuleData_addDirtyRect(Common::Rect(0, 0, 320, 200));
+		return;
+	}
+
+	/* For an optimisation, any changes are stored as a series of slices than have a height of a single
+	 * line each. It is left up to the screen redraw code to automatically merge these together 
+	 */
+
+	for (int yp = 0; yp < 200; ++yp) {
+		sliceXStart = -1; sliceXEnd = -1;
+		for (int xp = 0; xp < 320; ++xp, ++bg, ++newBg) {
+			if (*bg != *newBg) {
+				if (sliceXStart == -1) {
+					// Start of a new slice
+					sliceXStart = xp;
+					sliceXEnd = MIN(xp + 7, 320);
+				} else
+					// Carry on of changed area
+					sliceXEnd = MAX(xp + 7, sliceXEnd);
+
+			} else if ((sliceXEnd != -1) && (xp >= (sliceXEnd + 10))) {
+				// If more than 10 pixels have gone by without any changes, then end the slice
+				gfxModuleData_addDirtyRect(Common::Rect(sliceXStart, yp, sliceXEnd, yp + 1));
+				sliceXStart = sliceXEnd = -1;
+			}
+		}
+
+		if (sliceXStart != -1)
+			gfxModuleData_addDirtyRect(Common::Rect(sliceXStart, yp, 320, yp + 1));
+	}
+}
+
 } // End of namespace Cruise

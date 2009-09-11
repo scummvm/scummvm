@@ -1415,7 +1415,7 @@ void mainDraw(int16 param) {
 		gfxModuleData_gfxCopyScreen(bgPtr, gfxModuleData.pPage10);
 		if (backgroundChanged[masterScreen]) {
 			backgroundChanged[masterScreen] = false;
-			gfxModuleData_addDirtyRect(Common::Rect(0, 0, 320, 200));
+			switchBackground(bgPtr);
 		}
 	}
 

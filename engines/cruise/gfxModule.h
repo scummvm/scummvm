@@ -67,6 +67,8 @@ void flip(void);
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour);
 void resetBitmap(uint8 *dataPtr, int32 dataSize);
 
+void switchBackground(const byte *newBg);
+
 } // End of namespace Cruise
 
 #endif
