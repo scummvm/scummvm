@@ -70,8 +70,8 @@ static const long sinCosTable[320] = {
 	64276,	64571,	64826,	65043,	65220,	65358,	65457,	65516
 };
 
-long *sinTable = &(sinCosTable[0]);
-long *cosTable = &(sinCosTable[64]);
+const long *sinTable = &(sinCosTable[0]);
+const long *cosTable = &(sinCosTable[64]);
 
 // FIXME: Tables
 
