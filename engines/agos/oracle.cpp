@@ -253,7 +253,7 @@ void AGOSEngine_Feeble::scrollOracleUp() {
 
 	for (h = 0; h < 21; h++) {
 		for (w = 0; w < 360; w++) {
-			if (dst[w] == 0 || dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
+			if (dst[w] == 0 || dst[w] == 113 || dst[w] == 116 || dst[w] == 252)
 				dst[w] = src[w];
 		}
 		dst += _backGroundBuf->pitch;
@@ -291,7 +291,7 @@ void AGOSEngine_Feeble::scrollOracleDown() {
 			if (src[w] == 0)
 				dst[w] = src[w];
 
-			if (src[w] == 113  || src[w] == 116 || src[w] == 252) {
+			if (src[w] == 113 || src[w] == 116 || src[w] == 252) {
 				dst[w] = src[w];
 				src[w] = 0;
 			}
@@ -512,7 +512,7 @@ void AGOSEngine_Feeble::windowBackSpace(WindowBlock *window) {
 
 	for (h = 0; h < 13; h++) {
 		for (w = 0; w < 8; w++) {
-			if (dst[w] == 113  || dst[w] == 116 || dst[w] == 252)
+			if (dst[w] == 113 || dst[w] == 116 || dst[w] == 252)
 				dst[w] = 0;
 		}
 		dst += _backGroundBuf->pitch;

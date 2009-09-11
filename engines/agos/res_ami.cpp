@@ -119,7 +119,7 @@ static void convertCompressedImage(const byte *src, byte *dst, uint8 colorDepth,
 
 	uncbfroutptr = uncbfrout;
 	const int chunkSize = colorDepth > 4 ? 16 : 8;
-	if (horizontal)  {
+	if (horizontal) {
 		for (j = 0; j < height; ++j) {
 			for (i = 0; i < width / 16; ++i) {
 				memcpy(dst + width * chunkSize / 16 * j + chunkSize * i, uncbfroutptr, chunkSize);

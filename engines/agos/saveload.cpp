@@ -354,7 +354,7 @@ restart:
 				goto restart;
 
 			if (slot < 0)
-				slot =  numSaveGames;
+				slot = numSaveGames;
 
 			if (!saveGame(slot, name))
 				fileError(_windowArray[4], true);

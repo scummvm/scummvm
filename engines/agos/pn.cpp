@@ -209,7 +209,7 @@ void AGOSEngine_PN::setupBoxes() {
 	uint8 num = 5;
 	for (uint8 r = 0; r < 5; r++) {
 		for (uint8 i = 0; i < 7; i++) {
-			defineBox(num,  96 + i * 24,  12 + r * 24, 24,  24, 0, 3, kOBFObject | kOBFDraggable);
+			defineBox(num, 96 + i * 24, 12 + r * 24, 24, 24, 0, 3, kOBFObject | kOBFDraggable);
 			num++;
 		}
 	}

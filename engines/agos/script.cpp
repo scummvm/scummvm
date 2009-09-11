@@ -787,7 +787,7 @@ void AGOSEngine::o_doClassIcons() {
 }
 
 void AGOSEngine::o_playTune() {
-	// 127:  play tune
+	// 127: play tune
 	uint16 music = getVarOrWord();
 	uint16 track = getVarOrWord();
 
@@ -1031,7 +1031,7 @@ int AGOSEngine::runScript() {
 			error("Invalid opcode '%d' encountered", _opcode);
 
 		executeOpcode(_opcode);
-	} while  (getScriptCondition() != flag && !getScriptReturn() && !shouldQuit());
+	} while (getScriptCondition() != flag && !getScriptReturn() && !shouldQuit());
 
 	return (shouldQuit()) ? 1 : getScriptReturn();
 }
