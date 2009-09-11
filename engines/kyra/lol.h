@@ -797,6 +797,7 @@ private:
 	int olol_findInventoryItem(EMCState *script);
 	int olol_restoreFadePalette(EMCState *script);
 	int olol_getSelectedCharacter(EMCState *script);
+	int olol_setHandItem(EMCState *script);
 	int olol_drinkBezelCup(EMCState *script);
 	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
