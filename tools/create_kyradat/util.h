@@ -156,22 +156,20 @@ static inline uint16 SWAP_16(uint16 a) {
 	return ((a >> 8) & 0xFF) | ((a << 8) & 0xFF00);
 }
 
-#define FORCEINLINE static inline
-
-FORCEINLINE uint16 READ_LE_UINT16(const void *ptr) {
+static inline uint16 READ_LE_UINT16(const void *ptr) {
 	const byte *b = (const byte *)ptr;
 	return (b[1] << 8) + b[0];
 }
-FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
+static inline uint32 READ_LE_UINT32(const void *ptr) {
 	const byte *b = (const byte *)ptr;
 	return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
 }
-FORCEINLINE void WRITE_LE_UINT16(void *ptr, uint16 value) {
+static inline void WRITE_LE_UINT16(void *ptr, uint16 value) {
 	byte *b = (byte *)ptr;
 	b[0] = (byte)(value >> 0);
 	b[1] = (byte)(value >> 8);
 }
-FORCEINLINE void WRITE_LE_UINT32(void *ptr, uint32 value) {
+static inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
 	byte *b = (byte *)ptr;
 	b[0] = (byte)(value >>  0);
 	b[1] = (byte)(value >>  8);
@@ -179,20 +177,20 @@ FORCEINLINE void WRITE_LE_UINT32(void *ptr, uint32 value) {
 	b[3] = (byte)(value >> 24);
 }
 
-FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
+static inline uint16 READ_BE_UINT16(const void *ptr) {
 	const byte *b = (const byte *)ptr;
 	return (b[0] << 8) + b[1];
 }
-FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
+static inline uint32 READ_BE_UINT32(const void *ptr) {
 	const byte *b = (const byte*)ptr;
 	return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
 }
-FORCEINLINE void WRITE_BE_UINT16(void *ptr, uint16 value) {
+static inline void WRITE_BE_UINT16(void *ptr, uint16 value) {
 	byte *b = (byte *)ptr;
 	b[0] = (byte)(value >> 8);
 	b[1] = (byte)(value >> 0);
 }
-FORCEINLINE void WRITE_BE_UINT32(void *ptr, uint32 value) {
+static inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
 	byte *b = (byte *)ptr;
 	b[0] = (byte)(value >> 24);
 	b[1] = (byte)(value >> 16);

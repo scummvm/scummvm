@@ -99,11 +99,11 @@ struct M4GameDescription;
 
 #define GAME_FRAME_DELAY 50
 
-FORCEINLINE void str_lower(char *s) { while (*s) { *s = tolower(*s); s++; } }
-FORCEINLINE void str_upper(char *s) { while (*s) { *s = toupper(*s); s++; } }
+inline void str_lower(char *s) { while (*s) { *s = tolower(*s); s++; } }
+inline void str_upper(char *s) { while (*s) { *s = toupper(*s); s++; } }
 
-FORCEINLINE long FixedMul(long a, long b) { return (long)(((float)a * (float)b) / 65536.0); }
-FORCEINLINE long FixedDiv(long a, long b) { return (long)(((float)a / (float)b) * 65536.0); }
+inline long FixedMul(long a, long b) { return (long)(((float)a * (float)b) / 65536.0); }
+inline long FixedDiv(long a, long b) { return (long)(((float)a / (float)b) * 65536.0); }
 
 class M4Engine : public Engine {
 private:
