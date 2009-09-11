@@ -216,14 +216,14 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	return ovl;
 }
 
-void Screen_LoL::generateTruelightTables(const uint8 *shp, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b) {
+void Screen_LoL::generateTruelightTables(const uint8 *ovl, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b) {
 	memset(outTable1, 0xff, 256);
 
 	for (int i = 0; i < a; i++)
-		outTable1[shp[i]] = i;
+		outTable1[ovl[i]] = i;
 
 	for (int i = 0; i < a; i++) {
-		if (shp[i]) {
+		if (ovl[i]) {
 			uint8 tcol[3];
 			uint16 fcol[3];
 			uint16 scol[3];
@@ -231,7 +231,7 @@ void Screen_LoL::generateTruelightTables(const uint8 *shp, int a, const Palette 
 			int t1 = (b << 6) / 100;
 			int t2 = 64 - t1;
 
-			uint8 c = shp[i];
+			uint8 c = ovl[i];
 			fcol[0] = fxPal[3 * c];
 			fcol[1] = fxPal[3 * c + 1];
 			fcol[2] = fxPal[3 * c + 2];

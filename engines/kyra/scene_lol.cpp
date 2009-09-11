@@ -385,10 +385,6 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	}
 
 	v += 384;
-	/*uint8 tmpPal = new uint8[384];
-	memcpy(tmpPal, _screen->getPalette(0) + 384, 384);
-	memset(_screen->getPalette(0) + 384, 0xff, 384);
-	memcpy(_screen->getPalette(0) + 384, tmpPal, 384);*/
 
 	if (_currentLevel == 11) {
 		_screen->loadPalette("SWAMPICE.COL", _screen->getPalette(2));
@@ -448,22 +444,22 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		s->read(_trueLightTable2, 5120);
 		delete s;
 	} else {
-		loadFxTables();
+		createGfxTables();
 	}
 
 	_loadSuppFilesFlag = 1;
 }
 
-void LoLEngine::loadFxTables() {
+void LoLEngine::createGfxTables() {
 	if (_flags.isTalkie || _loadSuppFilesFlag)
 		return;
 
 	Palette tpal(768);
 	_screen->loadPalette("fxpal.col", tpal);
 	_screen->loadBitmap("fxpal.shp", 3, 3, 0);
-	const uint8 *v = _screen->getCPagePtr(2) + 11;
+	const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
 
-	_screen->generateTruelightTables(v, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
+	_screen->generateTruelightTables(shpPal, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
 
 	_loadSuppFilesFlag = 1;
 }

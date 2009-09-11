@@ -80,7 +80,7 @@ public:
 	uint8 *generateLevelOverlay(const Palette &Pal, uint8 *ovl, int opColor, int weight);
 	uint8 *getLevelOverlay(int index) { return _levelOverlays[index]; }
 
-	void generateTruelightTables(const uint8 *shp, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b);
+	void generateTruelightTables(const uint8 *ovl, int a, const Palette &fxPal, const Palette &screenPal, uint8 *outTable1, uint8 *outTable2, int b);
 
 	void copyBlockAndApplyOverlay(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, uint8 *ovl);
 	void applyOverlaySpecial(int page1, int x1, int y1, int page2, int x2, int y2, int w, int h, int dim, int flag, uint8 *ovl);
