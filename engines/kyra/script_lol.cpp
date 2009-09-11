@@ -2005,17 +2005,22 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 	return -1;
 }
 
-int LoLEngine::olol_drinkBezelCup(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drinkBezelCup(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
-	drinkBezelCup(3 - stackPos(0), stackPos(1));
-	return 1;
-}
-
 int LoLEngine::olol_restoreFadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
 	_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
 	_screen->fadePalette(_screen->getPalette(0), 10);
 	_screen->_fadeFlag = 0;
+	return 1;
+}
+
+int LoLEngine::olol_getSelectedCharacter(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_getSelectedCharacter(%p)", (const void *)script);
+	return _selectedCharacter;
+}
+
+int LoLEngine::olol_drinkBezelCup(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_drinkBezelCup(%p) (%d, %d)", (const void *)script, stackPos(0), stackPos(1));
+	drinkBezelCup(3 - stackPos(0), stackPos(1));
 	return 1;
 }
 
@@ -2881,7 +2886,7 @@ void LoLEngine::setupOpcodeTable() {
 	Opcode(olol_calcNewBlockPosition);
 
 	// 0xA8
-	OpcodeUnImpl();
+	Opcode(olol_getSelectedCharacter);
 	OpcodeUnImpl();
 	Opcode(olol_drinkBezelCup);
 	Opcode(olol_changeItemTypeOrFlag);

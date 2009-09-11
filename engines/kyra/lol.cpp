@@ -1718,6 +1718,20 @@ void LoLEngine::generateFlashPalette(const Palette &src, Palette &dst, int color
 	dst.copy(src, 128);
 }
 
+void LoLEngine::createGfxTables() {
+	if (_flags.isTalkie || _loadSuppFilesFlag)
+		return;
+
+	Palette tpal(768);
+	_screen->loadPalette("fxpal.col", tpal);
+	_screen->loadBitmap("fxpal.shp", 3, 3, 0);
+	const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
+
+	_screen->generateTruelightTables(shpPal, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
+
+	_loadSuppFilesFlag = 1;
+}
+
 void LoLEngine::updateSequenceBackgroundAnimations() {
 	if (_updateFlags & 8)
 		return;

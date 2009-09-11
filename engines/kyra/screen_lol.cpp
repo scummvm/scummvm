@@ -251,8 +251,7 @@ void Screen_LoL::generateTruelightTables(const uint8 *ovl, int a, const Palette 
 			}			
 
 		} else {
-			for (int ii = 0; ii < 256; ii++)
-				outTable2[(i << 8) + ii] = 0;
+			memset(&outTable2[i << 8], 0, 256);
 		}
 	}
 }

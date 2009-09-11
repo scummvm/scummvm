@@ -796,6 +796,7 @@ private:
 	int olol_assignSpecialGuiShape(EMCState *script);
 	int olol_findInventoryItem(EMCState *script);
 	int olol_restoreFadePalette(EMCState *script);
+	int olol_getSelectedCharacter(EMCState *script);
 	int olol_drinkBezelCup(EMCState *script);
 	int olol_changeItemTypeOrFlag(EMCState *script);
 	int olol_placeInventoryItemInHand(EMCState *script);
@@ -885,6 +886,7 @@ private:
 	void setPaletteBrightness(const Palette &srcPal, int brightness, int modifier);
 	void generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier);
 	void generateFlashPalette(const Palette &src, Palette &dst, int colorFlags);
+	void createGfxTables();
 	void updateSequenceBackgroundAnimations();
 
 	bool _dialogueField;
@@ -983,7 +985,6 @@ private:
 	void loadCmzFile(const char *file);
 	void loadLevelShpDat(const char *shpFile, const char *datFile, bool flag);
 	void loadLevelGraphics(const char *file, int specialColor, int weight, int vcnLen, int vmpLen, const char *palFile);
-	void createGfxTables();
 
 	void resetItems(int flag);
 	void disableMonsters();
