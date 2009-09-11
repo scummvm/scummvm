@@ -826,11 +826,9 @@ int Anim::fillFrameOffsets(AnimationData *anim, bool reallyFill) {
 	int i;
 	bool longData = isLongData();
 
-	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, _vm->isBigEndian());
+	MemoryReadStreamEndian readS(anim->resourceData, anim->resourceLength, !_vm->isBigEndian()); // RLE has inversion BE<>LE
 
 	readS.seek(12);
-
-	readS._bigEndian = !_vm->isBigEndian(); // RLE has inversion BE<>LE
 
 	while (readS.pos() != readS.size()) {
 		if (reallyFill) {

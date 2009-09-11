@@ -202,7 +202,7 @@
 
 	#ifndef __GNUC__
 		#define FORCEINLINE __forceinline
-		#define NORETURN _declspec(noreturn)
+		#define NORETURN __declspec(noreturn)
 	#endif
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
@@ -224,7 +224,7 @@
 	#define SCUMM_LITTLE_ENDIAN
 
 	#define FORCEINLINE __forceinline
-	#define NORETURN _declspec(noreturn)
+	#define NORETURN __declspec(noreturn)
 	#define PLUGIN_EXPORT __declspec(dllexport)
 
 	typedef signed char int8_t;
@@ -380,8 +380,12 @@
 //
 #if defined(__GNUC__)
 	#define NORETURN __attribute__((__noreturn__))
-	#define PACKED_STRUCT __attribute__((packed))
-	#define GCC_PRINTF(x,y) __attribute__((format(printf, x, y)))
+	#define PACKED_STRUCT __attribute__((__packed__))
+	#define GCC_PRINTF(x,y) __attribute__((__format__(printf, x, y)))
+
+	#if (__GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 1))
+		#define FORCEINLINE __attribute__((__always_inline__)) inline
+	#endif
 #else
 	#define PACKED_STRUCT
 	#define GCC_PRINTF(x,y)
