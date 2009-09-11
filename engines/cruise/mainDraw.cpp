@@ -1211,7 +1211,7 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 	int y = 0;
 
 	// Flag the given area as having been changed
-	gfxModuleData_addDirtyRect(Common::Rect(xs, ys, xs + width - 1, ys + height - 1));
+	gfxModuleData_addDirtyRect(Common::Rect(xs, ys, xs + width, ys + height));
 
 	cellStruct* plWork = currentObjPtr;
 	int workBufferSize = height * (width / 8);
