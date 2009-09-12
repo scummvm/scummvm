@@ -165,7 +165,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 	while ((result = s->_sound.sfx_poll(&handle, &cue))) {
 		reg_t obj = DEFROBNICATE_HANDLE(handle);
-		if (!is_object(s->segMan, obj)) {
+		if (!s->segMan->isObject(obj)) {
 			warning("Non-object %04x:%04x received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
 			return;
 		}

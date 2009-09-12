@@ -353,6 +353,13 @@ public:
 	Object *getObject(reg_t pos);
 
 	/**
+	 * Checks whether a heap address contains an object
+	 * @parm obj The address to check
+	 * @return True if it is an object, false otherwise
+	 */
+	bool isObject(reg_t obj) { return getObject(obj) != NULL; }
+
+	/**
 	 * Determines the name of an object
 	 * @param[in] pos	Location (segment, offset) of the object
 	 * @return			A name for that object, or a string describing an error

@@ -805,7 +805,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 		while (widget) {
 			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
 			        && ((widget->_ID != obj.segment) || (widget->_subID != obj.offset))
-			        && is_object(s->segMan, make_reg(widget->_ID, widget->_subID)))
+			        && s->segMan->isObject(make_reg(widget->_ID, widget->_subID)))
 				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, argc, argv))
 					return not_register(s, NULL_REG);
 
@@ -831,7 +831,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 			reg_t other_obj = node->value;
 			debugC(2, kDebugLevelBresen, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
 
-			if (!is_object(s->segMan, other_obj)) {
+			if (!s->segMan->isObject(other_obj)) {
 				warning("CanBeHere() cliplist contains non-object %04x:%04x", PRINT_REG(other_obj));
 			} else if (other_obj != obj) { // Clipping against yourself is not recommended
 
@@ -1674,7 +1674,7 @@ static void draw_rect_to_control_map(EngineState *s, Common::Rect abs_zone) {
 static void draw_obj_to_control_map(EngineState *s, GfxDynView *view) {
 	reg_t obj = make_reg(view->_ID, view->_subID);
 
-	if (!is_object(s->segMan, obj))
+	if (!s->segMan->isObject(obj))
 		warning("View %d does not contain valid object reference %04x:%04x", view->_ID, PRINT_REG(obj));
 
 	reg_t* sp = view->signalp.getPointer(s->segMan);
@@ -1780,7 +1780,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 				reg_t obj = make_reg(widget->_ID, widget->_subID);
 				reg_t under_bits = NULL_REG;
 
-				if (!is_object(s->segMan, obj)) {
+				if (!s->segMan->isObject(obj)) {
 					error("Non-object %04x:%04x present in view list during delete time", PRINT_REG(obj));
 					obj = NULL_REG;
 				} else {
@@ -1798,7 +1798,7 @@ int _k_view_list_dispose_loop(EngineState *s, List *list, GfxDynView *widget, in
 						}
 					}
 				}
-				if (is_object(segMan, obj)) {
+				if (segMan->isObject(obj)) {
 					if (invoke_selector(INV_SEL(obj, delete_, kContinueOnInvalidSelector), 0))
 						warning("Object at %04x:%04x requested deletion, but does not have a delete funcselector", PRINT_REG(obj));
 					if (_k_animate_ran) {

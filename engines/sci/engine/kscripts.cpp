@@ -107,10 +107,6 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	return 0;
 }
 
-bool is_object(SegManager *segMan, reg_t object) {
-	return segMan->getObject(object) != NULL;
-}
-
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
 // This implementation ignores all resource numbers except the first one.
 reg_t kLoad(EngineState *s, int, int argc, reg_t *argv) {

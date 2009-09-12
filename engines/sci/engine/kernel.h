@@ -224,16 +224,6 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
  */
 char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 
-
-/******************** Debug functionality ********************/
-/**
- * Checks whether a heap address contains an object
- * @param s The current state
- * @parm obj The address to check
- * @return True if it is an object, false otherwise
- */
-bool is_object(SegManager *segMan, reg_t obj);
-
 /******************** Kernel function parameter macros ********************/
 
 /* Returns the parameter value or (alt) if not enough parameters were supplied */
