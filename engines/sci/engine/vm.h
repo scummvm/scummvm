@@ -395,15 +395,6 @@ ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc,
 void run_vm(EngineState *s, int restoring);
 
 /**
- * Handles a fatal error condition
- * @param[in] s		The state to recover from
- * @param[in] line	Source code line number the error occured in
- * @param[in] file	File the error occured in
- */
-void vm_handle_fatal_error(EngineState *s, int line, const char *file);
-
-
-/**
  * Debugger functionality
  * @param[in] s					The state at which debugging should take place
  * @param[in] bp				Flag, set to true when a breakpoint is triggered

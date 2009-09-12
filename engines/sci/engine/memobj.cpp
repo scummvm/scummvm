@@ -303,9 +303,7 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 //	assert(addr.segment == _segId);
 
 	if (!clone_table->isValidEntry(addr.offset)) {
-		warning("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
-//		BREAKPOINT();
-		return;
+		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
 	}
 
 	clone = &(clone_table->_table[addr.offset]);

@@ -98,15 +98,6 @@ enum {
 		s->visual->print(s->visual, 0);
 #endif
 
-#define ASSERT(x) { \
-	int val = !!(x); \
-	if (!val) { \
-		error("Fatal error condition on \"" #x "\""); \
-		BREAKPOINT(); \
-		vm_handle_fatal_error(s, __LINE__, __FILE__); \
-	} \
-}
-
 static inline int sign_extend_byte(int value) {
 	if (value & 0x80)
 		return value - 256;

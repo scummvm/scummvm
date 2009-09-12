@@ -462,10 +462,6 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 #  define kernel_matches_signature(a, b, c, d) 1
 #endif
 
-void vm_handle_fatal_error(EngineState *s, int line, const char *file) {
-	error("Fatal VM error in %s, L%d; aborting...", file, line);
-}
-
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	MemObject *mobj = s->segMan->getMemObject(base.segment);
 
