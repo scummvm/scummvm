@@ -2339,9 +2339,9 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	if (breakWall)
 		breakIceWall(tpal.getData(), swampCol.getData());
 
-	static const uint8 freezeTime[] = { 20, 28, 40, 60 };
-	if (_currentLevel == 11)
-		setCharacterUpdateEvent(charNum, 8, freezeTime[spellLevel], 1);
+	//static const uint8 freezeTime[] = { 20, 28, 40, 60 };
+	//if (spellLevel == 11)
+	//	setCharacterUpdateEvent(charNum, 8, freezeTime[spellLevel], 1);
 
 	_screen->setCurPage(cp);
 	return 1;
