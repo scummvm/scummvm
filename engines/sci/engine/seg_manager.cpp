@@ -479,9 +479,10 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 		return -1;
 }
 
-#define INST_LOOKUP_CLASS(id) ((id == 0xffff) ? NULL_REG : getClassAddress(id, SCRIPT_GET_LOCK, NULL_REG))
-
 reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {
+	if (classnr == 0xffff)
+		return NULL_REG;
+
 	if (classnr < 0 || (int)_classtable.size() <= classnr || _classtable[classnr].script < 0) {
 		error("[VM] Attempt to dereference class %x, which doesn't exist (max %x)", classnr, _classtable.size());
 		return NULL_REG;
@@ -726,7 +727,8 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #endif
 
 		// Copy base from species class, as we need its selector IDs
-		obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
+		obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = 
+			getClassAddress(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset, SCRIPT_GET_LOCK, NULL_REG);
 
 		// Set the -classScript- selector to the script number.
 		// FIXME: As this selector is filled in at run-time, it is likely
