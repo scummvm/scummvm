@@ -310,7 +310,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		return 0;
 	}
 	reg_t game_obj = script_lookup_export(segMan, 0, 0);
-	const char *gameName = obj_get_name(segMan, game_obj);
+	const char *gameName = segMan->getObjectName(game_obj);
 	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName, PRINT_REG(game_obj));
 	s_fallbackDesc.desc.gameid = convertSierraGameId(gameName, &s_fallbackDesc.desc.flags);
 	delete segMan;

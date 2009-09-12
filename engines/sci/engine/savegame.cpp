@@ -613,7 +613,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = obj_get(s->segMan, scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
+						base_obj = s->segMan->getObject(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
@@ -776,7 +776,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	retval->successor = NULL;
 	retval->pic_priority_table = (int *)gfxop_get_pic_metainfo(retval->gfx_state);
-	retval->_gameName = obj_get_name(retval->segMan, retval->game_obj);
+	retval->_gameName = retval->segMan->getObjectName(retval->game_obj);
 
 	retval->_sound._it = NULL;
 	retval->_sound._flags = s->_sound._flags;

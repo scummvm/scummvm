@@ -593,25 +593,6 @@ byte *kmem(SegManager *segMan, reg_t handle);
 int kfree(SegManager *segMan, reg_t handle);
 
 /**
- * Determines the name of an object
- * @param[in] s		Pointer to the EngineState to operate on
- * @param[in] pos	Location of the object whose name we want to inspect
- * @return			A name for that object, or a string describing an error
- * 					that occured while looking it up. The string is stored
- * 					in a static buffer and need not be freed (neither may
- * 					it be modified).
- */
-const char *obj_get_name(SegManager *segMan, reg_t pos);
-
-/**
- * Retrieves an object from the specified location
- * @param[in] s			Pointer to the EngineState to operate on
- * @param[in] offset	The object's offset
- * @return				The object in question, or NULL if there is none
- */
-Object *obj_get(SegManager *segMan, reg_t offset);
-
-/**
  * Shrink execution stack to size.
  * Contains an assert it is not already smaller.
  */

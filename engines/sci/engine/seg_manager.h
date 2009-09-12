@@ -256,14 +256,14 @@ public:
 	 * @param[in] addr	The offset of the freshly allocated list
 	 * @return			Reference to the memory allocated for the list
 	 */
-	List *alloc_List(reg_t *addr);
+	List *allocateList(reg_t *addr);
 
 	/**
 	 * Allocate a fresh node
 	 * @param[in] addr	The offset of the freshly allocated node
 	 * @return			Reference to the memory allocated for the node
 	 */
-	Node *alloc_Node(reg_t *addr);
+	Node *allocateNode(reg_t *addr);
 
 
 	// 8. Hunk Memory
@@ -277,13 +277,13 @@ public:
 	 * @return				Reference to the memory allocated for the hunk
 	 * 						piece
 	 */
-	Hunk *alloc_hunk_entry(const char *hunk_type, int size, reg_t *addr);
+	Hunk *allocateHunkEntry(const char *hunk_type, int size, reg_t *addr);
 
 	/**
 	 * Deallocates a hunk entry
 	 * @param[in] addr	Offset of the hunk entry to delete
 	 */
-	void free_hunk_entry(reg_t addr);
+	void freeHunkEntry(reg_t addr);
 
 
 	// 9. Dynamic Memory
@@ -345,6 +345,22 @@ public:
 	// TODO: document this
 	MemObjectType getMemObjectType(SegmentId seg);
 
+	/**
+	 * Retrieves an object from the specified location
+	 * @param[in] offset	Location (segment, offset) of the object
+	 * @return				The object in question, or NULL if there is none
+	 */
+	Object *getObject(reg_t pos);
+
+	/**
+	 * Determines the name of an object
+	 * @param[in] pos	Location (segment, offset) of the object
+	 * @return			A name for that object, or a string describing an error
+	 * 					that occured while looking it up. The string is stored
+	 * 					in a static buffer and need not be freed (neither may
+	 * 					it be modified).
+	 */
+	const char *getObjectName(reg_t pos);
 
 	void heapRelocate(reg_t block);
 	void scriptRelocateExportsSci11(SegmentId seg);

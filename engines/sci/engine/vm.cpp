@@ -285,7 +285,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", obj_get_name(s->segMan, send_obj), ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", s->segMan->getObjectName(send_obj), ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -520,7 +520,7 @@ void run_vm(EngineState *s, int restoring) {
 	// Current execution data:
 	scriptState.xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
-	Object *obj = obj_get(s->segMan, scriptState.xs->objp);
+	Object *obj = s->segMan->getObject(scriptState.xs->objp);
 	Script *local_script = s->segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 	int old_execution_stack_base = s->execution_stack_base;
 	// Used to detect the stack bottom, for "physical" returns
@@ -580,7 +580,7 @@ void run_vm(EngineState *s, int restoring) {
 				scr = NULL;
 				obj = NULL;
 			} else {
-				obj = obj_get(s->segMan, scriptState.xs->objp);
+				obj = s->segMan->getObject(scriptState.xs->objp);
 				code_buf = scr->buf;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = scr->buf_size;
@@ -1411,7 +1411,7 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 		buf = obj->base_obj + selector_name_offset;
 	} else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-			obj = obj_get(segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 
 		buf = (byte *)obj->base_vars;
 		varnum = obj->_variables[1].toUint16();
@@ -1455,7 +1455,7 @@ static SelectorType _lookup_selector_function(SegManager *segMan, int seg_id, Ob
 			return kSelectorMethod;
 		} else {
 			seg_id = obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].segment;
-			obj = obj_get(segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 		}
 	}
 
@@ -1463,7 +1463,7 @@ static SelectorType _lookup_selector_function(SegManager *segMan, int seg_id, Ob
 }
 
 SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
-	Object *obj = obj_get(segMan, obj_location);
+	Object *obj = segMan->getObject(obj_location);
 	Object *species;
 	int index;
 	SciVersion version = segMan->sciVersion();	// for the selector defines
@@ -1482,7 +1482,7 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 	if (IS_CLASS(obj))
 		species = obj;
 	else
-		species = obj_get(segMan, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+		species = segMan->getObject(obj->_variables[SCRIPT_SPECIES_SELECTOR]);
 
 
 	if (!obj) {
@@ -1703,7 +1703,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			// Instantiate the superclass, if neccessary
 			obj->_variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SPECIES_SELECTOR].offset);
 
-			base_obj = obj_get(segMan, obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+			base_obj = segMan->getObject(obj->_variables[SCRIPT_SPECIES_SELECTOR]);
 			obj->variable_names_nr = base_obj->_variables.size();
 			obj->base_obj = base_obj->base_obj;
 			// Copy base from species class, as we need its selector IDs
@@ -1932,46 +1932,6 @@ int game_run(EngineState **_s) {
 	return 0;
 }
 
-Object *obj_get(SegManager *segMan, reg_t offset) {
-	MemObject *mobj = segMan->getMemObject(offset.segment);
-	SciVersion version = segMan->sciVersion();
-	Object *obj = NULL;
-
-	if (mobj != NULL) {
-		if (mobj->getType() == MEM_OBJ_CLONES) {
-			CloneTable *ct = (CloneTable *)mobj;
-			if (ct->isValidEntry(offset.offset))
-				obj = &(ct->_table[offset.offset]);
-		} else if (mobj->getType() == MEM_OBJ_SCRIPT) {
-			Script *scr = (Script *)mobj;
-			if (offset.offset <= scr->buf_size && offset.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT(scr->buf + offset.offset)) {
-				obj = scr->getObject(offset.offset);
-			}
-		}
-	}
-
-	return obj;
-}
-
-const char *obj_get_name(SegManager *segMan, reg_t pos) {
-	Object *obj = obj_get(segMan, pos);
-	SciVersion version = segMan->sciVersion();
-	if (!obj)
-		return "<no such object>";
-
-	reg_t nameReg = obj->_variables[SCRIPT_NAME_SELECTOR];
-	if (nameReg.isNull())
-		return "<no name>";
-
-	const char *name = (const char*)segMan->dereference(obj->_variables[SCRIPT_NAME_SELECTOR], NULL);
-	if (!name)
-		return "<invalid name>";
-
-	return name;
-}
-
-
 void quit_vm() {
 	script_abort_flag = 1; // Terminate VM
 	scriptState.seeking = kDebugSeekNothing;
@@ -1988,7 +1948,7 @@ void shrink_execution_stack(EngineState *s, uint size) {
 }
 
 reg_t* ObjVarRef::getPointer(SegManager *segMan) const {
-	Object *o = obj_get(segMan, obj);
+	Object *o = segMan->getObject(obj);
 	if (!o) return 0;
 	return &(o->_variables[varindex]);
 }

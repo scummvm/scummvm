@@ -459,7 +459,7 @@ void Kernel::loadSelectorNames() {
 reg_t kalloc(SegManager *segMan, const char *type, int space) {
 	reg_t reg;
 
-	segMan->alloc_hunk_entry(type, space, &reg);
+	segMan->allocateHunkEntry(type, space, &reg);
 	debugC(2, kDebugLevelMemory, "Allocated %d at hunk %04x:%04x (%s)\n", space, PRINT_REG(reg), type);
 
 	return reg;
@@ -479,7 +479,7 @@ byte *kmem(SegManager *segMan, reg_t handle) {
 
 // Frees the specified handle. Returns 0 on success, 1 otherwise.
 int kfree(SegManager *segMan, reg_t handle) {
-	segMan->free_hunk_entry(handle);
+	segMan->freeHunkEntry(handle);
 
 	return 0;
 }

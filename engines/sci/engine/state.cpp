@@ -246,7 +246,7 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const {
 	reg_t fptr;
 
-	Object *obj = obj_get(segMan, objAddress);
+	Object *obj = segMan->getObject(objAddress);
 	SelectorType selType = lookup_selector(segMan, objAddress, sel, NULL, &fptr);
 
 	if (!obj || (selType != kSelectorMethod))
@@ -350,7 +350,7 @@ SciVersion EngineState::detectLofsType() {
 		Object *obj = NULL;
 
 		if (!parse_reg_t(this, "?Game", &gameClass))
-			obj = obj_get(segMan, gameClass);
+			obj = segMan->getObject(gameClass);
 
 		bool couldBeAbs = true;
 		bool couldBeRel = true;

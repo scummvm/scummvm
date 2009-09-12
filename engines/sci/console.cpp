@@ -1401,11 +1401,11 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < scr->_objects.size(); i++) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = obj_get(_vm->_gamestate->segMan, scr->_objects[i].pos);
+			Object *obj = _vm->_gamestate->segMan->getObject(scr->_objects[i].pos);
 			if (obj)
 				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i].pos), 
-							obj_get_name(_vm->_gamestate->segMan,
-							scr->_objects[i].pos), obj->_variables.size(), obj->methods_nr);
+							_vm->_gamestate->segMan->getObjectName(scr->_objects[i].pos),
+							obj->_variables.size(), obj->methods_nr);
 		}
 	}
 	break;
@@ -1446,12 +1446,12 @@ bool Console::segmentInfo(int nr) {
 				reg_t objpos;
 				objpos.offset = i;
 				objpos.segment = nr;
-				DebugPrintf("  [%04x] %s; copy of ", i, obj_get_name(_vm->_gamestate->segMan, objpos));
+				DebugPrintf("  [%04x] %s; copy of ", i, _vm->_gamestate->segMan->getObjectName(objpos));
 				// Object header
-				Object *obj = obj_get(_vm->_gamestate->segMan, ct->_table[i].pos);
+				Object *obj = _vm->_gamestate->segMan->getObject(ct->_table[i].pos);
 				if (obj)
 					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].pos), 
-								obj_get_name(_vm->_gamestate->segMan, ct->_table[i].pos), 
+								_vm->_gamestate->segMan->getObjectName(ct->_table[i].pos), 
 								obj->_variables.size(), obj->methods_nr);
 			}
 	}
@@ -2054,7 +2054,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 	for (iter = _vm->_gamestate->_executionStack.begin();
 	     iter != _vm->_gamestate->_executionStack.end(); ++iter, ++i) {
 		ExecStack &call = *iter;
-		const char *objname = obj_get_name(_vm->_gamestate->segMan, call.sendp);
+		const char *objname = _vm->_gamestate->segMan->getObjectName(call.sendp);
 		int paramc, totalparamc;
 
 		switch (call.type) {
@@ -2196,7 +2196,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 		return true;
 	}
 
-	Object *obj = obj_get(_vm->_gamestate->segMan, objAddr);
+	Object *obj = _vm->_gamestate->segMan->getObject(objAddr);
 	int selector_id = _vm->getKernel()->findSelector(argv[2]);
 	reg_t addr;
 
@@ -2304,7 +2304,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	o = obj_get(_vm->_gamestate->segMan, object);
+	o = _vm->_gamestate->segMan->getObject(object);
 	if (o == NULL) {
 		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
@@ -2909,7 +2909,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				}
 
 				if (valid) {
-					const char *objname = obj_get_name(s->segMan, objpos);
+					const char *objname = s->segMan->getObjectName(objpos);
 					if (!strcmp(objname, str_objname)) {
 						// Found a match!
 						if ((index < 0) && (times_found > 0)) {
@@ -3051,7 +3051,7 @@ int Console::printNode(reg_t addr) {
 
 int Console::printObject(reg_t pos) {
 	EngineState *s = _vm->_gamestate;	// for the several defines in this function
-	Object *obj = obj_get(s->segMan, pos);
+	Object *obj = s->segMan->getObject(pos);
 	Object *var_container = obj;
 	int i;
 	SciVersion version = s->resMan->sciVersion();	// for the selector defines
@@ -3062,11 +3062,11 @@ int Console::printObject(reg_t pos) {
 	}
 
 	// Object header
-	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), obj_get_name(s->segMan, pos),
+	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->segMan->getObjectName(pos),
 				obj->_variables.size(), obj->methods_nr);
 
 	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-		var_container = obj_get(s->segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+		var_container = s->segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		printf("    ");
@@ -3078,9 +3078,9 @@ int Console::printObject(reg_t pos) {
 		reg_t val = obj->_variables[i];
 		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
-		Object *ref = obj_get(s->segMan, val);
+		Object *ref = s->segMan->getObject(val);
 		if (ref)
-			DebugPrintf(" (%s)", obj_get_name(s->segMan, val));
+			DebugPrintf(" (%s)", s->segMan->getObjectName(val));
 
 		DebugPrintf("\n");
 	}

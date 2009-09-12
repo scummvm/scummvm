@@ -270,6 +270,45 @@ MemObjectType SegManager::getMemObjectType(SegmentId seg) {
 	return _heap[seg]->getType();
 }
 
+Object *SegManager::getObject(reg_t pos) {
+	MemObject *mobj = getMemObject(pos.segment);
+	SciVersion version = _resMan->sciVersion();
+	Object *obj = NULL;
+
+	if (mobj != NULL) {
+		if (mobj->getType() == MEM_OBJ_CLONES) {
+			CloneTable *ct = (CloneTable *)mobj;
+			if (ct->isValidEntry(pos.offset))
+				obj = &(ct->_table[pos.offset]);
+		} else if (mobj->getType() == MEM_OBJ_SCRIPT) {
+			Script *scr = (Script *)mobj;
+			if (pos.offset <= scr->buf_size && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+			        && RAW_IS_OBJECT(scr->buf + pos.offset)) {
+				obj = scr->getObject(pos.offset);
+			}
+		}
+	}
+
+	return obj;
+}
+
+const char *SegManager::getObjectName(reg_t pos) {
+	Object *obj = getObject(pos);
+	SciVersion version = _resMan->sciVersion();
+	if (!obj)
+		return "<no such object>";
+
+	reg_t nameReg = obj->_variables[SCRIPT_NAME_SELECTOR];
+	if (nameReg.isNull())
+		return "<no name>";
+
+	const char *name = (const char*)dereference(obj->_variables[SCRIPT_NAME_SELECTOR], NULL);
+	if (!name)
+		return "<invalid name>";
+
+	return name;
+}
+
 // validate the seg
 // return:
 //	false - invalid seg
@@ -680,7 +719,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
 			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			base_obj = obj_get(s->segMan, obj->_variables[5]);
+			base_obj = s->segMan->getObject(obj->_variables[5]);
 			obj->variable_names_nr = base_obj->variables_nr;
 			obj->base_obj = base_obj->base_obj;
 		}
@@ -751,7 +790,7 @@ uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 	return offset;
 }
 
-void SegManager::free_hunk_entry(reg_t addr) {
+void SegManager::freeHunkEntry(reg_t addr) {
 	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
 
 	if (!ht) {
@@ -762,7 +801,7 @@ void SegManager::free_hunk_entry(reg_t addr) {
 	ht->freeEntry(addr.offset);
 }
 
-Hunk *SegManager::alloc_hunk_entry(const char *hunk_type, int size, reg_t *reg) {
+Hunk *SegManager::allocateHunkEntry(const char *hunk_type, int size, reg_t *reg) {
 	Hunk *h = alloc_Hunk(reg);
 
 	if (!h)
@@ -817,7 +856,7 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					base_obj = obj_get(this, seeker._variables[SCRIPT_SPECIES_SELECTOR]);
+					base_obj = getObject(seeker._variables[SCRIPT_SPECIES_SELECTOR]);
 					if (!base_obj) {
 						warning("Clone entry without a base class: %d", j);
 						seeker.base = NULL;
@@ -836,7 +875,7 @@ void SegManager::reconstructClones() {
 	}	// end for
 }
 
-List *SegManager::alloc_List(reg_t *addr) {
+List *SegManager::allocateList(reg_t *addr) {
 	ListTable *table;
 	int offset;
 
@@ -850,7 +889,7 @@ List *SegManager::alloc_List(reg_t *addr) {
 	return &(table->_table[offset]);
 }
 
-Node *SegManager::alloc_Node(reg_t *addr) {
+Node *SegManager::allocateNode(reg_t *addr) {
 	NodeTable *table;
 	int offset;
 

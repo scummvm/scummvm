@@ -135,7 +135,7 @@ int sane_listp(EngineState *s, reg_t addr) {
 reg_t kNewList(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t listbase;
 	List *l;
-	l = s->segMan->alloc_List(&listbase);
+	l = s->segMan->allocateList(&listbase);
 	l->first = l->last = NULL_REG;
 	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x\n", PRINT_REG(listbase));
 
@@ -171,7 +171,7 @@ reg_t kDisposeList(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	reg_t nodebase;
-	Node *n = s->segMan->alloc_Node(&nodebase);
+	Node *n = s->segMan->allocateNode(&nodebase);
 
 	if (!n) {
 		error("[Kernel] Out of memory while creating a node");
@@ -445,7 +445,7 @@ reg_t kSort(EngineState *s, int, int argc, reg_t *argv) {
 		return s->r_acc;
 
 	if (output_data.isNull()) {
-		list = s->segMan->alloc_List(&output_data);
+		list = s->segMan->allocateList(&output_data);
 		list->first = list->last = NULL_REG;
 		PUT_SEL32(dest, elements, output_data);
 	}

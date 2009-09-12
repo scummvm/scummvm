@@ -66,7 +66,7 @@ extern const char *selector_name(EngineState *s, int selector);
 ScriptState scriptState;
 
 int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
-	Object *obj = obj_get(segMan, objp);
+	Object *obj = segMan->getObject(objp);
 	byte *selectoroffset;
 	int selectors;
 	SciVersion version = segMan->sciVersion();	// for the selector defines
@@ -82,7 +82,7 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
-			obj = obj_get(segMan, obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			obj = segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;
@@ -301,7 +301,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 				selector = sb[- stackframe].offset;
 
-				name = obj_get_name(s->segMan, called_obj_addr);
+				name = s->segMan->getObjectName(called_obj_addr);
 
 				if (!name)
 					name = "<invalid>";

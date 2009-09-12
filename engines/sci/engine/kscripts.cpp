@@ -108,7 +108,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 }
 
 bool is_object(SegManager *segMan, reg_t object) {
-	return obj_get(segMan, object) != NULL;
+	return segMan->getObject(object) != NULL;
 }
 
 // Loads arbitrary resources of type 'restype' with resource numbers 'resnrs'
@@ -184,7 +184,7 @@ reg_t kResCheck(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	Object *parent_obj = obj_get(s->segMan, parent_addr);
+	Object *parent_obj = s->segMan->getObject(parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -223,7 +223,7 @@ extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t victim_addr = argv[0];
-	Clone *victim_obj = obj_get(s->segMan, victim_addr);
+	Clone *victim_obj = s->segMan->getObject(victim_addr);
 	uint16 underBits;
 
 	if (!victim_obj) {
@@ -323,7 +323,7 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 int is_heap_object(EngineState *s, reg_t pos) {
-	Object *obj = obj_get(s->segMan, pos);
+	Object *obj = s->segMan->getObject(pos);
 	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->segMan->scriptIsMarkedAsDeleted(pos.segment)));
 }
 
