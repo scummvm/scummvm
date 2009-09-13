@@ -497,7 +497,7 @@ int LoLEngine::checkBlockForWallsAndSufficientSpace(int block, int x, int y, int
 		if (testWallFlag(block, -1, wallFlag))
 			return 1;
 		_monsterCurBlock = 0;
-	}	
+	}
 
 	if (!(testFlag & 2))
 		return 0;
@@ -667,7 +667,7 @@ void LoLEngine::drawMonster(uint16 id) {
 		uint8 *ovl2 = drawItemOrMonster(shp, ovl1, m->x + _monsterShiftOffs[m->shiftStep << 1], m->y + _monsterShiftOffs[(m->shiftStep << 1) + 1], 0, 0, flg | 1, -1, flip);
 
 		for (int i = 0; i <	4; i++) {
-			int v = m->field_2A[i] - 1;
+			int v = m->equipmentShapes[i] - 1;
 			if (v == -1)
 				break;
 

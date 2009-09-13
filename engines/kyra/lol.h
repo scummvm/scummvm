@@ -147,7 +147,7 @@ struct MonsterInPlay {
 	uint8 curDistWeapon;
 	int8 distAttackTick;
 	uint16 assignedItems;
-	uint8 field_2A[4];
+	uint8 equipmentShapes[4];
 };
 
 struct ItemInPlay {
@@ -1335,7 +1335,7 @@ private:
 
 	uint8 *_pageBuffer1;
 	uint8 *_pageBuffer2;
-	
+
 	// spells
 	typedef Common::Functor1Mem<ActiveSpell*, int, LoLEngine> SpellProc;
 	Common::Array<const SpellProc*> _spellProcs;

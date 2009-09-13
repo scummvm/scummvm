@@ -852,7 +852,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->destDirection = l->direction;
 
 		for (int ii = 0; ii < 4; ii++)
-			l->field_2A[ii] = stackPos(7 + ii);
+			l->equipmentShapes[ii] = stackPos(7 + ii);
 
 		checkSceneUpdateNeed(l->block);
 		return i;
@@ -2280,7 +2280,7 @@ int LoLEngine::olol_setMouseCursor(EMCState *script) {
 
 int LoLEngine::olol_characterSays(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_characterSays(%p)  (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	
+
 	if (!_flags.isTalkie)
 		return 0;
 

@@ -233,7 +233,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 			m->distAttackTick = in.readSByte();
 			m->assignedItems = in.readUint16BE();
 			m->properties = &_monsterProperties[m->type];
-			in.read(m->field_2A, 4);
+			in.read(m->equipmentShapes, 4);
 		}
 
 		for (int ii = 0; ii < 8; ii++) {
@@ -413,7 +413,7 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 			out->writeByte(m->curDistWeapon);
 			out->writeSByte(m->distAttackTick);
 			out->writeUint16BE(m->assignedItems);
-			out->write(m->field_2A, 4);
+			out->write(m->equipmentShapes, 4);
 		}
 
 		for (int ii = 0; ii < 8; ii++) {
