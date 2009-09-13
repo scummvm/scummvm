@@ -130,6 +130,8 @@ const byte fragment7[] = {OP_IMM | OPSIZE16, 908 % 256, 908 / 256, OP_JUMP | OPS
 const int fragment7_size = 6;
 const byte fragment8[] = {OP_IMM | OPSIZE16, 910 % 256, 910 / 256, OP_JUMP | OPSIZE16, 644 % 256, 644 / 256};
 const int fragment8_size = 6;
+const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
+const int fragment9_size = 2;
 
 const WorkaroundEntry workaroundList[] = {
 	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
@@ -152,6 +154,10 @@ const WorkaroundEntry workaroundList[] = {
 	{TINSEL_V1, false, 310506872, 513, fragment6_size, fragment6},
 	{TINSEL_V1, false, 310506872, 613, fragment7_size, fragment7},
 	{TINSEL_V1, false, 310506872, 641, fragment8_size, fragment8},
+
+	// DW1-SCN: The script for the lovable street-Starfish does a 'StopSample' after flicking the coin to ensure it's
+	// sound is stopped, but which also accidentally can stop any active conversation with the Amazon
+	{TINSEL_V1, true, 394640351, 121, fragment9_size, fragment9},
 
 	// DW2: In the garden, global #490 is set when the bees begin their 'out of hive' animation, and reset when done.
 	// But if the game is saved/restored during it, the animation sequence is reset without the global being cleared.
