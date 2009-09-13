@@ -27,7 +27,7 @@
 
 namespace TeenAgent {
 
-Font::Font() : grid_color(0xd0), color(0xd1), data(0) {
+Font::Font() : grid_color(0xd0), color(0xd1), shadow_color(0), height(0), width_pack(0), data(0) {
 }
 
 void Font::load(int id) {
@@ -54,7 +54,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 
 	uint h = glyph[0], w = glyph[1];
 	if (surface == NULL || surface->pixels == NULL)
-		return w - 1;
+		return w - width_pack;
 
 	//debug(0, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
@@ -64,7 +64,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 			byte v = *glyph++;
 			switch(v) {
 			case 1:
-				dst[j] = 0;
+				dst[j] = shadow_color;
 				break;
 			case 2: 
 				dst[j] = color;
@@ -73,7 +73,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 		}
 		dst += surface->pitch;
 	}
-	return w - 1;
+	return w - width_pack;
 }
 
 static uint find_in_str(const Common::String &str, char c, uint pos = 0) {
@@ -82,7 +82,6 @@ static uint find_in_str(const Common::String &str, char c, uint pos = 0) {
 }
 
 uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String &str, bool show_grid) {
-	const int height = 10;
 	if (surface != NULL) {
 		uint max_w = render(NULL, 0, 0, str, false);
 		if (show_grid)

@@ -31,7 +31,8 @@ namespace TeenAgent {
 
 class Font {
 public: 
-	byte grid_color, color;
+	byte grid_color, color, shadow_color;
+	byte height, width_pack;
 	
 	Font();
 	void load(int id);
