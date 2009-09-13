@@ -670,7 +670,7 @@ uint8 SwordEngine::mainLoop(void) {
 			else if (((_keyPressed.keycode == Common::KEYCODE_F5 || _keyPressed.keycode == Common::KEYCODE_ESCAPE)
 			         && (Logic::_scriptVars[MOUSE_STATUS] & 1)) || (_systemVars.controlPanelMode)) {
 				retCode = _control->runPanel();
-				if (!retCode)
+				if (retCode == CONTROL_NOTHING_DONE)
 					_screen->fullRefresh();
 			}
 			_mouseState = 0;
