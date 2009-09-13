@@ -205,7 +205,11 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			0,
-			AD_ENTRY1("GEMCUT.PAK", "2bd1da653eaefd691e050e4a9eb68a64"),
+			{
+				{ "GEMCUT.PAK", 0, "2bd1da653eaefd691e050e4a9eb68a64", -1 },
+				{ "GEMCUT.EMC", 0, "2a3f44e179f1e9f7643e90083c747571", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
