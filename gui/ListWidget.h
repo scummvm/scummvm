@@ -130,6 +130,7 @@ protected:
 
 	Common::Rect getEditRect() const;
 
+	void receivedFocusWidget();
 	void lostFocusWidget();
 	void scrollToCurrent();
 
