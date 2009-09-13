@@ -123,16 +123,20 @@ uint16 VDXPlayer::loadInternal() {
 bool VDXPlayer::playFrameInternal() {
 	byte currRes = 0x80;
 	Common::ReadStream *vdxData = 0;
-	while (!_file->eos() && currRes == 0x80) {
+	while (currRes == 0x80) {
 		currRes = _file->readByte();
 
 		// Skip unknown data: 1 byte, ref Edward
 		byte tmp = _file->readByte();
-		debugC(5, kGroovieDebugVideo | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::VDX: Edward = 0x%04X", tmp);
 
 		uint32 compSize = _file->readUint32LE();
 		uint8 lengthmask = _file->readByte();
 		uint8 lengthbits = _file->readByte();
+
+		if (_file->eos())
+			break;
+
+		debugC(5, kGroovieDebugVideo | kGroovieDebugUnknown | kGroovieDebugAll, "Groovie::VDX: Edward = 0x%04X", tmp);
 
 		// Read the chunk data and decompress if needed
 		if (compSize)
