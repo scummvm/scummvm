@@ -31,6 +31,7 @@
 #include "common/rect.h"
 
 #include "asylum/actor.h"
+#include "asylum/barrier.h"
 #include "asylum/screen.h"
 #include "asylum/respack.h"
 
@@ -44,7 +45,6 @@ class AsylumEngine;
 class WorldStats;
 class GamePolygons;
 class ActionList;
-struct BarrierItem;
 struct ActionArea;
 
 class SceneResource {
@@ -61,8 +61,8 @@ public:
 	int getBarrierIndexById(uint32 id);
 	int getActionAreaIndexById(uint32 id);
 	ActionArea* getActionAreaById(uint32 id);
-	BarrierItem* getBarrierById(uint32 id);
-    BarrierItem* getBarrierByIndex(uint32 idx);
+	Barrier* getBarrierById(uint32 id);
+    Barrier* getBarrierByIndex(uint32 idx);
 
 private:
 
@@ -77,78 +77,6 @@ private:
 	Common::String parseFilename(uint8 sceneIdx);
 
 }; // end of class Scene
-
-typedef struct SoundItem {
-	uint32 resId;
-	uint32 field_4;
-	uint32 field_8;
-	uint32 field_C;
-
-} SoundItem;
-
-typedef struct FrameSoundItem {
-	uint32 resId;
-	uint32 frameIdx;
-	uint32 index;
-	uint32 field_C;
-	uint32 field_10;
-	uint32 field_14;
-
-} FrameSoundItem;
-
-typedef struct AmbientSoundItem {
-	uint32 field_0;
-	uint32 flags;
-	uint32 resId;
-	uint32 field_C;
-	uint32 field_10;
-	uint32 field_14;
-	uint32 flagNum[6];
-	uint32 x;
-	uint32 y;
-
-} AmbientSoundItem;
-
-// FIXME figure out unknown fields
-typedef struct BarrierItem {
-	uint32		   id;
-	uint32		   resId;
-	uint32		   x;
-	uint32		   y;
-	Common::Rect   boundingRect;
-	uint32		   field_20;
-	uint32		   frameIdx;
-	uint32		   frameCount;
-	uint32		   field_2C;
-	uint32		   field_30;
-	uint32		   field_34;
-	uint32		   flags;
-	uint32		   field_3C;
-	uint8		   name[52]; // field_40 till field_70;
-	uint32		   field_74;
-	uint32		   field_78;
-	uint32		   field_7C;
-	uint32		   field_80;
-	uint32		   polyIdx;
-	uint32		   flags2;
-	uint32		   gameFlags[10];
-	uint32		   field_B4;
-	uint32		   tickCount;
-	uint32		   tickCount2;
-	uint32		   field_C0;
-	uint32		   priority;
-	uint32		   actionListIdx;
-	SoundItem	   soundItems[16];
-	FrameSoundItem frameSoundItems[50];
-	uint32		   field_67C;
-	uint32		   soundX;
-	uint32		   soundY;
-	uint32		   field_688;
-	uint32		   field_68C[5];
-	uint32		   soundResId;
-	uint32		   field_6A4;
-
-} BarrierItem;
 
 typedef struct CommonResources {
 	uint32 backgroundImage;
@@ -231,10 +159,10 @@ public:
 	
 	// FIXME: Investigate if we need to actually reserve maxsize for this arrays. 
 	// It always have that size under scene file and they are always save in savegames.
-	Common::Array<BarrierItem> barriers; // maxsize 400
-	Common::Array<Actor>       actors;	 // maxsize 50
+	Common::Array<Barrier>    barriers; // maxsize 400
+	Common::Array<Actor>      actors;   // maxsize 50
 	// TODO add rest fields
-	Common::Array<ActionArea>  actions;	 // maxsize 400
+	Common::Array<ActionArea> actions;  // maxsize 400
     // TODO add rest fields
     uint32 field_E860C;
     // TODO add rest fields

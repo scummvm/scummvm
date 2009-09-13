@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	menu.o \
 	respack.o \
 	scene.o \
+	barrier.o \
 	sceneres.o \
 	screen.o \
 	sound.o \

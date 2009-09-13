@@ -198,7 +198,7 @@ int ScriptManager::checkBarrierFlags(int barrierId) {
 int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
     int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
 
-    BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
+    Barrier *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
     int newFlag = barrierFlags | 1 | barrier->flags;
     barrier->flags |= barrierFlags | 1;
 
@@ -422,7 +422,7 @@ int kPlayAnimation(ActionCommand *cmd) {
 		ScriptMan.lineIncrement = 1;
 	} else {
 		int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
-		BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
+		Barrier *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
 
 		if (cmd->param4) { // RECHECK THIS
 			int newBarriedIndex = 213 * barrierIndex;
@@ -644,7 +644,7 @@ int kReturn(ActionCommand *cmd) {
 }
 
 int kDestroyBarrier(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	if (barrier) {
 		barrier->flags &= 0xFFFFFFFE;
@@ -674,7 +674,7 @@ int k_unk15(ActionCommand *cmd) {
 }
 
 int kResetAnimation(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	if ((barrier->flags & 0x10000) == 0)
 		barrier->frameIdx = 0;
@@ -685,7 +685,7 @@ int kResetAnimation(ActionCommand *cmd) {
 }
 
 int kClearFlag1Bit0(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	barrier->flags &= 0xFFFFFFFE;
 
@@ -879,7 +879,7 @@ int k_unk3C_CMP_VAL(ActionCommand *cmd) {
 }
 
 int kWaitUntilFramePlayed(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	if (barrier) {
 			uint32 frameNum = 0;
@@ -1016,7 +1016,7 @@ int kQuit(ActionCommand *cmd) {
 }
 
 int kJumpBarrierFrame(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	if (cmd->param2 == -1)
 		cmd->param2 = barrier->frameCount - 1;
@@ -1101,7 +1101,7 @@ int kSetResourcePalette(ActionCommand *cmd) {
 }
 
 int kSetBarrierFrameIdxFlaged(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	if (cmd->param3)
 		barrier->flags = 1 | barrier->flags;
@@ -1133,7 +1133,7 @@ int k_unk5E(ActionCommand *cmd) {
 }
 
 int kSetBarrierLastFrameIdx(ActionCommand *cmd) {
-	BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
 
 	if (barrier->frameIdx == barrier->frameCount - 1) {
 		ScriptMan.lineIncrement = 0;

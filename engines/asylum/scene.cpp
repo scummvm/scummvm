@@ -84,7 +84,7 @@ Scene::Scene(uint8 sceneIdx) {
     if (worldStats->numBarriers > 0) {
         uint32 priority = 0x0FFB;
         for (uint32 b = 0; b < worldStats->numBarriers; b++) {
-            BarrierItem *barrier = &worldStats->barriers[b];
+            Barrier *barrier = &worldStats->barriers[b];
             barrier->priority = priority;
             barrier->flags &= 0xFFFF3FFF;
             priority -= 4;
@@ -490,52 +490,6 @@ void Scene::updateActor(uint32 actorIdx) {
     }
 }
 
-bool Scene::isBarrierVisible(BarrierItem *barrier) {
-    if ((barrier->flags & 0xFF) & 1) {
-        for (uint32 f = 0; f < 10; f++) {
-            bool   isSet = false;
-            uint32 flag  = barrier->gameFlags[f];
-
-            if (flag <= 0) {
-                isSet = Shared.isGameFlagNotSet(flag); // -flag
-            } else {
-                isSet = Shared.isGameFlagSet(flag);
-            }
-
-            if(!isSet) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-    return false;
-}
-
-bool Scene::isBarrierOnScreen(BarrierItem *barrier) {
-    WorldStats   *worldStats = _sceneResource->getWorldStats();
-    Common::Rect screenRect  = Common::Rect(worldStats->xLeft, worldStats->yTop, worldStats->xLeft + 640, worldStats->yTop + 480);
-    Common::Rect barrierRect = barrier->boundingRect;
-    barrierRect.translate(barrier->x, barrier->y);
-    return isBarrierVisible(barrier) && (barrier->flags & 1) && screenRect.intersects(barrierRect);
-}
-
-uint32 Scene::getRandomResId(BarrierItem *barrier) {
-    int numRes = 0;
-    uint32 rndResId[5];
-    memset(&rndResId, 0, sizeof(rndResId));
-    for (int i = 0; i < 5; i++) {
-        if (barrier->field_68C[i]) {
-            rndResId[numRes] = barrier->field_68C[i];
-            numRes++;
-        }
-    }
-    if(numRes > 0)
-        return rndResId[rand() % numRes];
-
-    return barrier->resId;
-}
-
 void Scene::updateBarriers(WorldStats *worldStats) {
     Screen *screen = Shared.getScreen();
 
@@ -545,10 +499,10 @@ void Scene::updateBarriers(WorldStats *worldStats) {
 
     if (barriersCount > 0) {
         for (uint32 b = 0; b < barriersCount; b++) {
-            BarrierItem *barrier = &worldStats->barriers[b];
+            Barrier *barrier = &worldStats->barriers[b];
 
             if (barrier->field_3C == 4) {
-                if (isBarrierVisible(barrier)) {
+                if (barrier->visible()) {
                     uint32 flag = barrier->flags;
                     if (flag & 0x20) {
                         if (barrier->field_B4 && (Shared.getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
@@ -567,7 +521,7 @@ void Scene::updateBarriers(WorldStats *worldStats) {
                                         // TODO: fix this, and find a better way to get frame count
                                         // Sometimes we get wrong random resource id
 
-                                        barrier->resId = getRandomResId(barrier);
+                                        barrier->resId = barrier->getRandomId();
                                         GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
                                         barrier->frameCount  = gra->getFrameCount();
                                         delete gra;
@@ -852,7 +806,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 
 	// Check if we're within a barrier
 	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
-		BarrierItem b = worldStats->barriers[p];
+		Barrier b = worldStats->barriers[p];
 		if (b.flags & 0x20) {
 			if ((b.boundingRect.left + b.x <= _cursor->x() + _startX) &&
 				(_cursor->x() + _startX < b.boundingRect.right + b.x) &&
@@ -902,7 +856,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 				}
 			}
 		} else if (curBarrier >= 0) {
-			BarrierItem b = worldStats->barriers[curBarrier];
+			Barrier b = worldStats->barriers[curBarrier];
 			debugC(kDebugLevelScripts, "%s: action(%d) sound(%d) flags(%d/%d)\n",
 				b.name,
 				b.actionListIdx,
@@ -959,10 +913,10 @@ int Scene::drawBarriers() {
 
     if (barriersCount > 0) {
         for (uint32 b = 0; b < barriersCount; b++) {
-            BarrierItem *barrier = &worldStats->barriers[b];
+            Barrier *barrier = &worldStats->barriers[b];
 
             if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-                if (isBarrierOnScreen(barrier)) {
+                if (barrier->onscreen()) {
                     //TODO: need to do something here yet
 
                     if (barrier->field_67C <= 0 || barrier->field_67C >= 4) { // TODO: still missing a condition for game quality config
@@ -1081,7 +1035,7 @@ void Scene::debugShowPolygons() {
 void Scene::debugShowBarriers() {
 	for (uint32 p = 0; p < _sceneResource->getWorldStats()->numBarriers; p++) {
 		Graphics::Surface surface;
-		BarrierItem b = _sceneResource->getWorldStats()->barriers[p];
+		Barrier b = _sceneResource->getWorldStats()->barriers[p];
 
 		if (b.flags & 0x20) {
 			surface.create(b.boundingRect.right - b.boundingRect.left + 1,
