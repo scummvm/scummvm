@@ -329,8 +329,9 @@ Object * TeenAgentEngine::findObject(int id, const Common::Point &point) {
 }
 
 void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
-	if (str.empty())
+	if (str.empty()) {
 		return;
+	}
 	SceneEvent event(SceneEvent::Message);
 	event.message = str;
 	event.color = color;
@@ -338,7 +339,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
 }
 
 
-void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
+Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
 		const char * str = (const char *)Resources::instance()->dseg.ptr(addr);
@@ -348,7 +349,37 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
 		char c = str[0];
 		message += c != 0 && c != -1? c: '\n';
 	}
-	displayMessage(message, color);
+	if (message.empty()) {
+		warning("empty message parsed for %04x", addr);
+	}
+	return message;
+}
+
+
+void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
+	displayMessage(parseMessage(addr), color);
+}
+
+void TeenAgentEngine::displayCredits(uint16 addr) {
+	SceneEvent event(SceneEvent::CreditsMessage);
+
+	const byte * src = Resources::instance()->dseg.ptr(addr);
+	event.orientation = *src++;
+	event.color = *src++;
+
+	event.dst.y = *src;
+	while(true) {
+		++src; //skip y position
+		Common::String line((const char *)src);
+		event.message += line;
+		src += line.size() + 1;
+		if (*src == 0)
+			break;
+		event.message += "\n";
+	}
+	int w = Resources::instance()->font8.render(NULL, 0, 0, event.message);
+	event.dst.x = (320 - w) / 2;
+	scene->push(event);
 }
 
 void TeenAgentEngine::moveTo(const Common::Point & dst, byte o, bool warp) {

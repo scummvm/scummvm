@@ -276,6 +276,17 @@ bool Scene::processEvent(const Common::Event &event) {
 
 bool Scene::render(OSystem * system) {
 	//render background
+	Resources * res = Resources::instance();
+	if (current_event.type == SceneEvent::CreditsMessage) {
+		system->fillScreen(0);
+		Graphics::Surface * surface = system->lockScreen();
+		res->font8.color = current_event.color;
+		res->font8.shadow_color = current_event.orientation;
+		res->font8.render(surface, current_event.dst.x, current_event.dst.y, message);
+		system->unlockScreen();
+		return true;
+	}
+	
 	bool busy = false;
 	
 	system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
@@ -373,7 +384,7 @@ bool Scene::render(OSystem * system) {
 	*/
 	
 	if (!message.empty()) {
-		Resources::instance()->font7.render(surface, message_pos.x, message_pos.y, message);
+		res->font7.render(surface, message_pos.x, message_pos.y, message);
 		busy = true;
 	}
 	
@@ -439,11 +450,12 @@ bool Scene::processEventQueue() {
 				moveTo(dst, current_event.orientation);
 		} break;
 		
-		case SceneEvent::Message: {
+		case SceneEvent::CreditsMessage: 
+		case SceneEvent::Message: 
 			//debug(0, "pop(%04x)", current_event.message);
 			message = current_event.message;
 			message_pos = messagePosition(message, position);
-		} break;
+		break;
 		
 		case SceneEvent::PlayAnimation: {
 			debug(0, "playing animation %u", current_event.animation);

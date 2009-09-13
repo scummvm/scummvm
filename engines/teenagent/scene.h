@@ -43,7 +43,7 @@ struct SceneEvent {
 		None, Message, Walk, PlayAnimation, PlayActorAnimation, 
 		LoadScene, SetOn, SetLan, PlayMusic, 
 		PlaySound, EnableObject, WaitForAnimation,
-		Quit
+		CreditsMessage, Quit
 	} type;
 
 	Common::String message;

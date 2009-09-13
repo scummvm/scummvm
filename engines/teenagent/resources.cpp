@@ -73,6 +73,10 @@ bool Resources::loadArchives(const ADGameDescription * gd) {
 	sam_sam.open("sam_sam.res");
 
 	font7.load(7);
+	font7.width_pack = 1;
+	font7.height = 10;
+	font8.load(8);
+	font8.height = 31;
 	
 	return true;
 }

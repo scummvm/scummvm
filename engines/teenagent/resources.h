@@ -49,7 +49,7 @@ public:
 
 	Pack varia, off, on, ons, lan000, lan500, mmm, sam_mmm, sam_sam;
 	Segment cseg, dseg, eseg;
-	Font font7;
+	Font font7, font8;
 };
 
 } // End of namespace TeenAgent
