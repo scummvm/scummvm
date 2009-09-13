@@ -303,110 +303,118 @@ bool Scene::render(OSystem * system) {
 		return true;
 	}
 	
-	bool busy = processEventQueue();
-	
-	system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
-	
-	Graphics::Surface * surface = system->lockScreen();
+	bool busy;
+	bool restart;
 
-	if (ons != NULL) {
-		for (uint32 i = 0; i < ons_count; ++i) {
-			Surface* s = ons + i;
-			if (s != NULL)
+	do {
+		restart = false;
+		busy = processEventQueue();
+		system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
+
+		Graphics::Surface * surface = system->lockScreen();
+
+		if (ons != NULL) {
+			for (uint32 i = 0; i < ons_count; ++i) {
+				Surface* s = ons + i;
+				if (s != NULL)
+					s->render(surface);
+			}
+		}
+
+		//render on
+		if (on.pixels != NULL) {
+			on.render(surface);
+		}
+
+		bool got_any_animation = false;
+
+		for (int i = 0; i < 4; ++i) {
+			Animation *a = custom_animations + i;
+			Surface *s = a->currentFrame();
+			if (s != NULL) {
 				s->render(surface);
-		}
-	}
-	
-	//render on
-	if (on.pixels != NULL) {
-		on.render(surface);
-	}
+				busy = true;
+				got_any_animation = true;
+				continue;
+			}
 
-	bool got_any_animation = false;
+			a = animations + i;
+			s = a->currentFrame();
+			if (s == NULL)
+				continue;
 
-	for (int i = 0; i < 4; ++i) {
-		Animation *a = custom_animations + i;
-		Surface *s = a->currentFrame();
-		if (s != NULL) {
 			s->render(surface);
+
+			if (a->id == 0)
+				continue;
+
+			Object * obj = getObject(a->id);
+			if (obj != NULL) {
+				obj->rect.left = s->x;
+				obj->rect.top = s->y;
+				obj->rect.right = s->w + s->x;
+				obj->rect.bottom = s->h + s->y;
+				//obj->dump();
+			}
+		}
+
+		if (!hide_actor) {
+			Surface * mark = actor_animation.currentFrame();
+			if (mark == NULL) {
+				actor_animation.free();
+
+				if (destination != position) {
+					Common::Point dp(destination.x - position0.x, destination.y - position0.y);
+					int o;
+					if (ABS(dp.x) > ABS(dp.y))
+						o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
+					else
+						o = dp.y > 0? Object::ActorDown: Object::ActorUp;
+
+					position.x = position0.x + dp.x * progress / progress_total;
+					position.y = position0.y + dp.y * progress / progress_total;
+					teenagent.render(surface, position, o, 1);
+					++progress;
+					if (progress >= progress_total) {
+						position = destination;
+						if (orientation == 0)
+							orientation = o; //save last orientation
+						nextEvent();
+						restart = true;
+					} else
+						busy = true;
+				} else
+					teenagent.render(surface, position, orientation, 0);
+			} else {
+				mark->render(surface);
+				busy = true;
+				got_any_animation = true;
+			}
+		}
+
+		if (!message.empty()) {
+			res->font7.render(surface, message_pos.x, message_pos.y, message);
 			busy = true;
-			got_any_animation = true;
-			continue;
 		}
 
-		a = animations + i;
-		s = a->currentFrame();
-		if (s == NULL)
-			continue;
+		system->unlockScreen();
 
-		s->render(surface);
-
-		if (a->id == 0)
-			continue;
-
-		Object * obj = getObject(a->id);
-		if (obj != NULL) {
-			obj->rect.left = s->x;
-			obj->rect.top = s->y;
-			obj->rect.right = s->w + s->x;
-			obj->rect.bottom = s->h + s->y;
-			//obj->dump();
+		if (current_event.type == SceneEvent::WaitForAnimation && !got_any_animation) {
+			debug(0, "no animations, nextevent");
+			nextEvent();
+			restart = true;
 		}
-	}
-	
-	if (!hide_actor) {
-		Surface * mark = actor_animation.currentFrame();
-		if (mark == NULL) {
-			actor_animation.free();
 
-			if (destination != position) {
-				Common::Point dp(destination.x - position0.x, destination.y - position0.y);
-				int o;
-				if (ABS(dp.x) > ABS(dp.y))
-					o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
-				else
-					o = dp.y > 0? Object::ActorDown: Object::ActorUp;
-			
-				position.x = position0.x + dp.x * progress / progress_total;
-				position.y = position0.y + dp.y * progress / progress_total;
-				teenagent.render(surface, position, o, 1);
-				++progress;
-				if (progress >= progress_total) {
-					position = destination;
-					if (orientation == 0)
-						orientation = o; //save last orientation
-					nextEvent();
-				} else 
-					busy = true;
-			} else 
-				teenagent.render(surface, position, orientation, 0);
-		} else {
-			mark->render(surface);
-			busy = true;
-			got_any_animation = true;
+		//if (!current_event.empty())
+		//	current_event.dump();
+		/*
+		for (byte i = 0; i < walkboxes; ++i) {
+			Walkbox * w = walkbox[i];
+			w->rect.render(surface, 0xd0 + i);
 		}
-	}
+		*/
 
-	if (current_event.type == SceneEvent::WaitForAnimation && !got_any_animation) {
-		nextEvent();
-	}
-		
-	//if (!current_event.empty())
-	//	current_event.dump();
-	/*
-	for (byte i = 0; i < walkboxes; ++i) {
-		Walkbox * w = walkbox[i];
-		w->rect.render(surface, 0xd0 + i);
-	}
-	*/
-	
-	if (!message.empty()) {
-		res->font7.render(surface, message_pos.x, message_pos.y, message);
-		busy = true;
-	}
-	
-	system->unlockScreen();
-	
+	} while(restart);
 	
 	for(Sounds::iterator i = sounds.begin(); i != sounds.end(); ) {
 		Sound &sound = *i;
