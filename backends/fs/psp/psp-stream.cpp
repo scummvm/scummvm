@@ -218,7 +218,7 @@ int PSPIoStream::resume() {
 	_handle = fopen(_path.c_str(), _writeMode ? "wb" : "rb");
 	if (_handle <= 0) {
 		PSPDebugTrace("PSPIoStream::resume(): Couldn't reopen file %s\n", _path.c_str());
-		ret = -1;;
+		ret = -1;
 	}
 
 	// Resume our previous position

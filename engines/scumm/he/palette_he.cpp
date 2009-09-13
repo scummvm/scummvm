@@ -110,7 +110,7 @@ int ScummEngine_v90he::getHEPaletteSimilarColor(int palSlot, int red, int green,
 int ScummEngine_v90he::getHEPalette16BitColorComponent(int component, int type) {
 	uint16 col;
 	if (type == 2) {
-		col = (((component & 0xFFFF) >>  0) & 0x1F) << 3;;
+		col = (((component & 0xFFFF) >>  0) & 0x1F) << 3;
 	} else if (type == 1) {
 		col = (((component & 0xFFFF) >>  5) & 0x1F) << 3;
 	} else {

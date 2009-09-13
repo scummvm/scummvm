@@ -182,7 +182,7 @@ uint getSizeNextPOT(uint size) {
 		_visibleWidth - _heightOffset,  _visibleHeight - _widthOffset
 	};
 
-	float texWidth = _width / (float)_textureWidth;;
+	float texWidth = _width / (float)_textureWidth;
 	float texHeight = _height / (float)_textureHeight;
 
 	const GLfloat texCoords[] = {

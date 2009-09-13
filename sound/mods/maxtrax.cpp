@@ -554,7 +554,7 @@ bool MaxTrax::playSong(int songIndex, bool loop) {
 	_playerCtx.scoreIndex = songIndex;
 	_playerCtx.ticks = 0;
 
-	_playerCtx.nextEvent = _scores[songIndex].events;;
+	_playerCtx.nextEvent = _scores[songIndex].events;
 	_playerCtx.nextEventTime = _playerCtx.nextEvent->startTime;
 
 	Paula::startPaula();
