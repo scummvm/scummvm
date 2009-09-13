@@ -223,6 +223,23 @@ const KYRAGameDescription adGameDescs[] = {
 			"kyra1",
 			0,
 			{
+				{ "GEMCUT.PAK", 0, "2bd1da653eaefd691e050e4a9eb68a64", -1 },
+				{ "GEMCUT.EMC", 0, "74f99e9ed99abf8d0429826d78485a2a", -1 },
+				{ NULL, 0, NULL, 0 }
+			},
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			Common::GUIO_NOSPEECH
+		},
+		KYRA1_AMIGA_FLAGS
+	},
+
+	{
+		{
+			"kyra1",
+			0,
+			{
 				{ "GEMCUT.EMC", 0, "796e44863dd22fa635b042df1bf16673", -1 },
 				{ "BEAD.CPS", 0, "3038466f65b7751451844707187aa401", -1 },
 				{ NULL, 0, NULL, 0 }
