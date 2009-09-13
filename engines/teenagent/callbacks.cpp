@@ -319,8 +319,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(71, 4);
 			playActorAnimation(823);
 
-			//skipped one 826 animation for this scene!
-			playSound(74, 4); //delay 10 in code
+			playSound(74, 1); 
+			playSound(74, 3); 
+			playSound(74, 6); 
 			loadScene(5, scene->getPosition());
 			playActorAnimation(826);
 			loadScene(6, scene->getPosition());
@@ -344,11 +345,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		
 	case 0x4662:
 		if (CHECK_FLAG(0xDBDD, 3)) {
-			moveTo(280, 179, 2);
-			playSound(49, 7);
-			playActorAnimation(827);
-			inventory->add(0x4d);
-			SET_FLAG(0xDBDE, 1);
+			if (CHECK_FLAG(0xDBDE, 1)) {
+				displayMessage(0x5608);
+			} else {
+				moveTo(280, 179, 2);
+				playSound(49, 7);
+				playSound(5, 17);
+				playActorAnimation(827);
+				inventory->add(0x4d);
+				SET_FLAG(0xDBDE, 1);
+			}
 		} else 
 			displayMessage(0x5905);
 		return true;
