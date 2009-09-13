@@ -182,12 +182,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			moveTo(134, 167, 2);
 			displayMessage(0x54f7);
 			setLan(1, 0);
-			playAnimation(812, 1, true);
+			playAnimation(812, 0, true);
 			playActorAnimation(811);
 			Dialog::show(scene, 0x6117, 813);
 			loadScene(6, Common::Point(230, 184));
 			Dialog::show(scene, 0x626a, 814);
-			playAnimation(815, 1);
+			playAnimation(815, 0);
 			setOns(1, 0);
 
 			Dialog::show(scene, 0x62dc);
