@@ -243,9 +243,13 @@ int Scene::updateScene() {
     debugC(kDebugLevelScene, "UpdateMusic Time: %d", Shared.getMillis() - startTick);
 
     // Adjust Screen
-    startTick = Shared.getMillis();
-    updateAdjustScreen();
-    debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", Shared.getMillis() - startTick);
+    //startTick = Shared.getMillis();
+    // FIXME
+    // Commented out the (incomplete) update screen code because once the
+    // actor's x1/y1 values are properly set, the temp code causes a crash
+    // Have to finish implementing the method I guess :P
+    //updateAdjustScreen();
+    //debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", Shared.getMillis() - startTick);
 
     if(ScriptMan.processActionList())
         return 1;
@@ -390,39 +394,41 @@ void Scene::updateMouse() {
 }
 
 void Scene::updateActor(uint32 actorIdx) {
-    WorldStats *worldStats = _sceneResource->getWorldStats();
-    Actor      *actor      = getActor();
+    WorldStats *ws    = _sceneResource->getWorldStats();
+    Actor      *actor = getActor();
     
     if (actor->visible()) {
+    	//printf("Actor field_40 = 0x%02X\n", actor->field_40);
+
         switch (actor->field_40) {
         
         case 0x10:
-            if (worldStats->numChapter == 2) {
+            if (ws->numChapter == 2) {
                 // TODO: updateCharacterSub14()
-            } else if (worldStats->numChapter == 1) {
+            } else if (ws->numChapter == 1) {
                 if (_playerActorIdx == actorIdx) {
                     // TODO: updateActorSub21();
                 }
             }
             break;
         case 0x11:
-            if (worldStats->numChapter == 2) {
+            if (ws->numChapter == 2) {
                 // TODO: put code here
-            } else if (worldStats->numChapter == 11) {
+            } else if (ws->numChapter == 11) {
                 if (_playerActorIdx == actorIdx) {
                     // TODO: put code here
                 }
             }
             break;
         case 0xF:
-            if (worldStats->numChapter == 2) {
+            if (ws->numChapter == 2) {
                 // TODO: put code here
-            } else if (worldStats->numChapter == 11) {
+            } else if (ws->numChapter == 11) {
                 // TODO: put code here
             }
             break;
         case 0x12:
-            if (worldStats->numChapter == 2) {
+            if (ws->numChapter == 2) {
                 // TODO: put code here
             }
             break;
@@ -439,9 +445,9 @@ void Scene::updateActor(uint32 actorIdx) {
         }        
             break;
         case 0xC:
-            if (worldStats->numChapter == 2) {
+            if (ws->numChapter == 2) {
                 // TODO: put code here
-            } else if (worldStats->numChapter == 11) {
+            } else if (ws->numChapter == 11) {
                 // TODO: put code here
             }
         case 0x1:
@@ -678,6 +684,129 @@ void Scene::updateMusic() {
 }
 
 void Scene::updateAdjustScreen() {
+	WorldStats *ws = _sceneResource->getWorldStats();
+
+	int v5, v6, v7, v15, v16;
+	int v1 = -1;
+	int v0 = -1;
+
+	if (ws->motionStatus == 1) {
+		v5 = getActor()->x1 - ws->xLeft;
+		v7 = getActor()->y1 - ws->yTop;
+		if (v5 < ws->boundingRect.left || v5 > ws->boundingRect.right) {
+			v15 = ws->boundingRect.left - ws->boundingRect.right;
+			v1 = v15 + ws->xLeft;
+			ws->xLeft += v15;
+		}
+		if (v7 < ws->boundingRect.top || v7 > ws->boundingRect.bottom) {
+			v16 = v7 - ws->boundingRect.bottom;
+			v0 = v16 + ws->yTop;
+			ws->yTop += v16;
+		}
+		if (v1 < 0)
+			v1 = ws->xLeft = 0;
+		if (v1 > ws->width - 640) {
+			v1 = ws->width - 640;
+			ws->xLeft = v1;
+		}
+		if (v0 < 0)
+			v0 = ws->yTop = 0;
+		if (v0 > ws->height - 480) {
+			v0 = ws->height - 480;
+			ws->yTop = v0;
+		}
+	} else {
+		if (ws->motionStatus == 2 || ws->motionStatus == 5) {
+			if (ws->motionStatus != 3) {
+				// TODO
+				/*
+				 __asm
+				{
+				  fld     flt_543514
+				  fadd    flt_543518
+				  fstp    flt_543514
+				  fild    scene.field_98
+				  fsubr   flt_54350C
+				  fild    scene.field_9C
+				  fsubr   flt_543510
+				}
+				v12 = abs(_ftol());
+				if ( v12 <= abs(_ftol()) )
+				{
+				  v2 = scene.field_9C;
+				  if ( scene.field_9C != scene.yTop )
+				  {
+					__asm
+					{
+					  fld     flt_543514
+					  fadd    flt_54350C
+					}
+					v14 = _ftol();
+					v1 = v14;
+					scene.xLeft = v14;
+				  }
+				  v4 = scene.field_A0;
+				  v0 += scene.field_A0;
+				  scene.yTop = v0;
+				  v3 = v0;
+				}
+				else
+				{
+				  v2 = scene.field_98;
+				  if ( scene.field_98 != scene.xLeft )
+				  {
+					__asm
+					{
+					  fld     flt_543514
+					  fadd    flt_543510
+					}
+					v13 = _ftol();
+					v0 = v13;
+					scene.yTop = v13;
+				  }
+				  v4 = scene.field_A0;
+				  v1 += scene.field_A0;
+				  scene.xLeft = v1;
+				  v3 = v1;
+				}
+				if ( abs(v3 - v2) <= abs(v4) )
+				{
+				  scene.field_88 = 3;
+				  scene.field_98 = -1;
+				}
+			  }
+			*/
+			}
+		}
+	}
+	/*
+	v9 = 16 * scene.sceneRectIndex;
+	if ( v1 < *(LONG *)((char *)&scene.sceneRects[0].left + v9) )
+	{
+	v1 = *(LONG *)((char *)&scene.sceneRects[0].left + v9);
+	scene.xLeft = *(LONG *)((char *)&scene.sceneRects[0].left + v9);
+	}
+	if ( v0 < *(LONG *)((char *)&scene.sceneRects[0].top + v9) )
+	{
+	v0 = *(LONG *)((char *)&scene.sceneRects[0].top + v9);
+	scene.yTop = *(LONG *)((char *)&scene.sceneRects[0].top + v9);
+	}
+	v10 = *(LONG *)((char *)&scene.sceneRects[0].right + v9);
+	if ( v1 + 639 > v10 )
+	{
+	v1 = v10 - 639;
+	scene.xLeft = v10 - 639;
+	}
+	result = *(LONG *)((char *)&scene.sceneRects[0].bottom + v9);
+	if ( v0 + 479 > result )
+	{
+	v0 = result - 479;
+	scene.yTop = result - 479;
+	}
+	if ( v17 != v1 || v18 != v0 )
+	dword_44E1EC = 2
+
+	 */
 }
 
 
@@ -704,9 +833,8 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 			// was released. If so, change the resource to one where he/she
 			// is standing still, facing the last active direction
 			if (_walking) {
-				int currentAction = getActor()->getCurrentAction();
-				if (currentAction > 0)
-					getActor()->setAction(currentAction + 5);
+				if (getActor()->currentAction > 0)
+					getActor()->setAction(getActor()->currentAction + 5);
 				_walking = false;
 			}
 			getActor()->drawActor();
@@ -799,11 +927,14 @@ int Scene::drawScene() {
         Shared.getScreen()->clearScreen();
     } else {
         // Draw scene background
-        WorldStats *worldStats = _sceneResource->getWorldStats();    
+        WorldStats   *ws = _sceneResource->getWorldStats();
         GraphicFrame *bg = _bgResource->getFrame(0);
         Shared.getScreen()->copyToBackBuffer(
-        		((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w, worldStats->xLeft,
-        		worldStats->yTop, 640, 480);
+        		((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w,
+        		ws->xLeft,
+        		ws->yTop,
+        		640,
+        		480);
 
         // DEBUG
 	    // Force the screen to scroll if the mouse approaches the edges
@@ -817,7 +948,7 @@ int Scene::drawScene() {
         Shared.getScreen()->drawGraphicsInQueue();
         
         // TODO: we must get rid of this
-        OLD_UPDATE(worldStats);
+        OLD_UPDATE(ws);
     }
 
     return 1;

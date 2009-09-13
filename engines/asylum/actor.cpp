@@ -34,7 +34,7 @@ namespace Asylum {
 
 Actor::Actor() {
 	_graphic         = 0;
-	_currentAction   = 0;
+	currentAction   = 0;
 	_currentWalkArea = 0;
 }
 
@@ -44,7 +44,7 @@ Actor::~Actor() {
 	// free _resources?
 }
 
-void Actor::setPostion(uint32 targetX, uint32 targetY) {
+void Actor::setPosition(uint32 targetX, uint32 targetY) {
 	boundingRect.left = targetX;
 	boundingRect.top  = targetY;
 
@@ -76,10 +76,10 @@ void Actor::setRawResources(uint8 *data) {
 void Actor::setAction(int action) {
 	assert(_resPack);
 
-	if (action == _currentAction)
+	if (action == currentAction)
 		return;
 
-	_currentAction = action;
+	currentAction = action;
 
 	delete _graphic;
 	int act = (action < 100) ? action : action - 100;
@@ -87,22 +87,22 @@ void Actor::setAction(int action) {
 	_graphic = new GraphicResource(_resPack, _resources[act]);
 
 	// Flip horizontally if necessary
-	if (_currentAction > 100) {
+	if (currentAction > 100) {
 		for (uint32 i = 0; i < _graphic->getFrameCount(); i++) {
 			GraphicFrame *frame = _graphic->getFrame(i);
 			byte *buffer = (byte *)frame->surface.pixels;
 
-			for (int y = 0; y < frame->surface.h; y++) {
+			for (int tmpY = 0; tmpY < frame->surface.h; tmpY++) {
 				int w = frame->surface.w / 2;
-				for (int x = 0; x < w; x++) {
-					SWAP(buffer[y * frame->surface.pitch + x], 
-						 buffer[y * frame->surface.pitch + frame->surface.w - 1 - x]);
+				for (int tmpX = 0; tmpX < w; tmpX++) {
+					SWAP(buffer[tmpY * frame->surface.pitch + tmpX],
+						 buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
 				}
 			}
 		}
 	}
 
-	_currentFrame = 0;
+	frameNum = 0;
 }
 
 void Actor::setActionByIndex(int index) {
@@ -112,17 +112,17 @@ void Actor::setActionByIndex(int index) {
 GraphicFrame *Actor::getFrame() {
 	assert(_graphic);
 
-	GraphicFrame *frame = _graphic->getFrame(_currentFrame);
+	GraphicFrame *frame = _graphic->getFrame(frameNum);
 
-	if (_currentFrame < _graphic->getFrameCount() - 1) {
-		_currentFrame++;
+	if (frameNum < _graphic->getFrameCount() - 1) {
+		frameNum++;
 	}else{
-		_currentFrame = 0;
+		frameNum = 0;
 	}
 
 	// HACK: frame 1 of the "walk west" animation is misplaced
-	if ((_currentAction == kWalkW || _currentAction == kWalkE) && _currentFrame == 1)
-		_currentFrame++;
+	if ((currentAction == kWalkW || currentAction == kWalkE) && frameNum == 1)
+		frameNum++;
 
 	return frame;
 }
@@ -162,7 +162,7 @@ void Actor::setWalkArea(ActionArea *target) {
 }
 
 void Actor::walkTo(uint16 curX, uint16 curY) {
-	int newAction = _currentAction;
+	int newAction = currentAction;
 
 	// step is the increment by which to move the
 	// actor in a given direction
@@ -190,9 +190,9 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 
 	// Walking up...
 	if (curY < y && !done) {
-		if (newAction != _currentAction && newAction == kWalkW && x - curX > 30)
+		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
 			newAction = kWalkNW;	// up left
-		else if (newAction != _currentAction && newAction == kWalkE && curX - x > 30)
+		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
 			newAction = kWalkNE;	// up right
 		else
 			newAction = kWalkN;
@@ -202,9 +202,9 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 
 	// Walking down...
 	if (curY > y && !done) {
-		if (newAction != _currentAction && newAction == kWalkW && x - curX > 30)
+		if (newAction != currentAction && newAction == kWalkW && x - curX > 30)
 			newAction = kWalkSW;	// down left
-		else if (newAction != _currentAction && newAction == kWalkE && curX - x > 30)
+		else if (newAction != currentAction && newAction == kWalkE && curX - x > 30)
 			newAction = kWalkSE;	// down right
 		else
 			newAction = kWalkS;
@@ -287,6 +287,18 @@ void Actor::disable(int param) {
 
 }
 
+void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame) {
+	x1 = newX - x2;
+	y1 = newY - y2;
+
+	if (direction != 8) {
+		// TODO implement the propert character_setDirection() functionality
+		setAction(newDirection);
+	}
+	if (frame > 0)
+		frameNum = frame;
+}
+
 void Actor::faceTarget(int targetId, int targetType) {
 	int newX2, newY2;
 
@@ -338,11 +350,6 @@ void Actor::faceTarget(int targetId, int targetType) {
 		newY2 = (fra->surface.h >> 1) + barrier->y; // Check .text:004088A2 for more details
 	}
 
-	printf("Calculating angle using x1(%d) x2(%d) y1(%d) y2(%d) newX(%d) newY(%d)\n", x1, x2, y1, y2, newX2, newY2);
-
-	// FIXME
-	// This just doesn't work. x1/y1 are ALWAYS -100, so I'm not sure where they're supposed
-	// to be updated.
 	int newAngle = Shared.getAngle(x2 + x1, y2 + y1, newX2, newY2);
 
 	printf("Angle calculated as %d\n", newAngle);
