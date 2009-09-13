@@ -141,8 +141,14 @@ public:
 
 	bool visible() { return flags & 0x01; }
 	void visible(bool value);
-	void setPostion(uint32 targetX, uint32 targetY);
+	void setPosition(uint32 targetX, uint32 targetY);
 	void setDirection(int dir);
+
+	/**
+	 * Initialize the x1/y1 values of the actor, update the active animation frame
+	 * and, if the current direction isn't 8, update the actor's direction
+	 */
+	void setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame);
 
 	void faceTarget(int targetId, int targetType);
 
@@ -151,7 +157,9 @@ public:
 	void setResourcePack(ResourcePack *res) { _resPack = res; }
 
 	// OLD METHODS
-	void setWalkArea(ActionArea *target); // TODO depreciate
+	// TODO ALL of these need to be depreciated in favour
+	// of the proper functions from the original
+	void setWalkArea(ActionArea *target);
 	void setAction(int action);
 	void setActionByIndex(int index);
 	void drawActorAt(uint16 curX, uint16 curY);
@@ -159,7 +167,7 @@ public:
 	void walkTo(uint16 curX, uint16 curY);
 	void disable(int param);
 
-	int getCurrentAction() { return _currentAction; }
+	int currentAction; // TODO depreciate
 
 	uint32		 x;
 	uint32		 y;
@@ -174,7 +182,7 @@ public:
 	Common::Rect boundingRect;
 	uint32		 direction;
 	uint32		 field_3C;
-	uint32		 field_40;
+	uint32		 field_40; // XXX Character Id???
 	uint32		 field_44;
 	uint32		 field_48;
 	uint32		 flags;
@@ -216,8 +224,6 @@ private:
 	ResourcePack    *_resPack;
 	GraphicResource *_graphic;
 	uint32          _resources[61];
-	uint8           _currentFrame;
-	int             _currentAction;
 	ActionArea 	    *_currentWalkArea;
 
 	GraphicFrame *getFrame();

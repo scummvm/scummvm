@@ -229,6 +229,10 @@ int ScriptManager::processActionList() {
 
 			uint32 opcode = currentCommand->opcode;
 
+			warning("Processing opcode %s (0x%02X)",
+				function_map[opcode].name,
+				currentCommand->opcode);
+
 			// Execute command from function mapping
 			int cmdRet = function_map[opcode].function(currentCommand);
 
@@ -548,24 +552,18 @@ int kShowActor(ActionCommand *cmd) {
 }
 
 int kSetActorStats(ActionCommand *cmd) {
-	uint32 actorIndex = 0;
+	// TODO
+	// param1 == actorIndex. Implement when we've got more than one actor
 
-	if (cmd->param1 == -1)
-		;//actorIndex = Shared.getScene()->getWorldStats()->playerActor;
-	else
-		actorIndex = cmd->param1;
+	// TODO This needs to be depreciated, but it's setting the actor's x/y
+	// and bounding rect top/left.
+	// This needs to be rolled into the proper place
+	Shared.getScene()->getActor()->setPosition(cmd->param2, cmd->param3);
 
-	if ((actorIndex >= 0) && (actorIndex < Shared.getScene()->getResources()->getWorldStats()->numActors)) {
-		Shared.getScene()->getActor()->setPostion(cmd->param2, cmd->param3);
-		Shared.getScene()->getActor()->setAction(cmd->param4);
-	} else
-		debugC(kDebugLevelScripts,
-			"Requested invalid actor ID:0x%02X in Scene %d Script %d Line %d.",
-			cmd->param1,
-			Shared.getScene()->getSceneIndex(),
-			ScriptMan.currentLine);
+	Shared.getScene()->getActor()->setPosition_40A260(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
 
-	return 0;
+	// XXX Returning -1 since the setPosition logic isn't fully implemented
+	return -1;
 }
 
 int kSetSceneMotionStat(ActionCommand *cmd) {
