@@ -19,6 +19,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
    - Added support for music and sound effects in the the Amiga version of
      The Secret of Monkey Island.
 
+ Broken Sword 1:
+   - Fixed missing background sound effects in some rooms.
+
 1.0.0 (2009-10-XX)
  New Ports:
    - Added MotoEZX and MotoMAGX ports.
