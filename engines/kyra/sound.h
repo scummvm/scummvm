@@ -110,14 +110,14 @@ public:
 	/**
 	 * Load hard coded data for playing music
 	 * (and somtimes sound effects) from.
-	 */	
-	virtual void loadSoundFile(const uint8 *data, int len) { }
+	 */
+	virtual void loadSoundFile(const uint8 *data, int len) {}
 
 	/**
 	 * Load a sound file for playing sound
 	 * effects from.
 	 */
-	virtual void loadSfxFile(Common::String file) { }
+	virtual void loadSfxFile(Common::String file) {}
 
 	/**
 	 * Plays the specified track.

@@ -72,7 +72,6 @@ public:
 
 	void loadSoundFile(uint file);
 	void loadSoundFile(Common::String file);
-	void loadSoundFile(const uint8 *data, int len) {}
 
 	void playTrack(uint8 track);
 	void haltTrack();

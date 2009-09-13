@@ -4075,14 +4075,14 @@ bool SoundPC98::init() {
 
 void SoundPC98::loadSoundFile(Common::String file) {
 	if (_sfxTrackData)
-		delete _sfxTrackData;
+		delete[] _sfxTrackData;
 	
 	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 
 void SoundPC98::loadSoundFile(const uint8 *data, int len) {
 	if (_sfxTrackData)
-		delete _sfxTrackData;
+		delete[] _sfxTrackData;
 
 	_sfxTrackData = new uint8[len];
 	memcpy(_sfxTrackData, data, len);
