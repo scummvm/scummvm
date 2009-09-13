@@ -1296,10 +1296,9 @@ reg_t kPalVary(EngineState *s, int, int argc, reg_t *argv) {
 
 static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
-static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
-	SegManager *segMan = s->segMan;
+static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = text_pos.isNull() ? NULL : (char *)s->segMan->dereference(text_pos, NULL);
+	char *text = text_pos.isNull() ? NULL : (char *)segMan->dereference(text_pos, NULL);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
@@ -1322,8 +1321,16 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 	 * effort (see above), and to simply disable the delete functionality for
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
-	if (type == K_CONTROL_BUTTON && text && (s->_gameName == "sq4") &&
-			s->resMan->sciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
+	// NOTE: This _only_ works with the English version
+	if (type == K_CONTROL_BUTTON && text && (gameName == "sq4") &&
+			segMan->sciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
+		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
+	}
+
+	// Disable the "Change Directory" button, as we don't allow the game engine to
+	// change the directory where saved games are placed
+	// NOTE: This _only_ works with the English version
+	if (type == K_CONTROL_BUTTON && text && !strcmp(text, "Change\r\nDirectory")) {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
@@ -1331,7 +1338,7 @@ static void _k_disable_delete_for_now(EngineState *s, reg_t obj) {
 reg_t kDrawControl(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
-	_k_disable_delete_for_now(s, obj);
+	disableCertainButtons(s->segMan, s->_gameName, obj);
 	_k_draw_control(s, obj, 0);
 	FULL_REDRAW();
 	return NULL_REG;
