@@ -272,7 +272,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	drawActor();
 }
 
-void Actor::disable(int param) {
+void Actor::update_4072A0(int param) {
 	switch (param) {
 
 	case 5:
@@ -285,6 +285,7 @@ void Actor::disable(int param) {
 
 	}
 
+	field_40 = param;
 }
 
 void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame) {
@@ -315,7 +316,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 			uint32 polyIdx = Shared.getScene()->getResources()->getWorldStats()->actions[actionIdx].polyIdx;
 			PolyDefinitions *poly = &Shared.getScene()->getResources()->getGamePolygons()->polygons[polyIdx];
 
-			newX2= poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
+			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
 			newY2 = poly->boundingRect.top + (poly->boundingRect.bottom - poly->boundingRect.top) / 2;
 		} else {
 			if (targetType == 2) {

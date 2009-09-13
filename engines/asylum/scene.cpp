@@ -222,9 +222,8 @@ int Scene::updateScene() {
 
     // Actors
     startTick = Shared.getMillis();
-    for (uint32 a = 0; a < worldStats->numActors; a++) {
+    for (uint32 a = 0; a < worldStats->numActors; a++)
         updateActor(a);
-    }
     debugC(kDebugLevelScene, "UpdateActors Time: %d", Shared.getMillis() - startTick);
 
     // Barriers
@@ -398,7 +397,7 @@ void Scene::updateActor(uint32 actorIdx) {
     Actor      *actor = getActor();
     
     if (actor->visible()) {
-    	//printf("Actor field_40 = 0x%02X\n", actor->field_40);
+    	// printf("Actor field_40 = 0x%02X\n", actor->field_40);
 
         switch (actor->field_40) {
         

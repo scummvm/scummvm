@@ -149,6 +149,7 @@ public:
 	 * and, if the current direction isn't 8, update the actor's direction
 	 */
 	void setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame);
+	void update_4072A0(int param);
 
 	void faceTarget(int targetId, int targetType);
 
@@ -165,7 +166,7 @@ public:
 	void drawActorAt(uint16 curX, uint16 curY);
 	void drawActor();
 	void walkTo(uint16 curX, uint16 curY);
-	void disable(int param);
+
 
 	int currentAction; // TODO depreciate
 
