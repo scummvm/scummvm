@@ -739,6 +739,7 @@ private:
 	int olol_drawExitButton(EMCState *script);
 	int olol_loadSoundFile(EMCState *script);
 	int olol_playMusicTrack(EMCState *script);
+	int olol_deleteMonstersFromBlock(EMCState *script);
 	int olol_countBlockItems(EMCState *script);
 	int olol_characterSkillTest(EMCState *script);
 	int olol_countAllMonsters(EMCState *script);

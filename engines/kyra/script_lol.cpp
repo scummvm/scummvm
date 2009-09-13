@@ -1353,6 +1353,12 @@ int LoLEngine::olol_playMusicTrack(EMCState *script) {
 	return snd_playTrack(stackPos(0));
 }
 
+int LoLEngine::olol_deleteMonstersFromBlock(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_deleteMonstersFromBlock(%p) (%d)", (const void *)script, stackPos(0));
+	deleteMonstersFromBlock(stackPos(0));
+	return 1;
+}
+
 int LoLEngine::olol_countBlockItems(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_countBlockItems(%p) (%d)", (const void *)script, stackPos(0));
 	uint16 o = _levelBlockProperties[stackPos(0)].assignedObjects;
@@ -2791,7 +2797,7 @@ void LoLEngine::setupOpcodeTable() {
 
 	// 0x64
 	Opcode(olol_playMusicTrack);
-	OpcodeUnImpl();
+	Opcode(olol_deleteMonstersFromBlock);
 	Opcode(olol_countBlockItems);
 	Opcode(olol_characterSkillTest);
 
