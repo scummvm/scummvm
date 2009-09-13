@@ -47,10 +47,8 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 			continue;
 		case 0xff:
 			{
-				SceneEvent e(SceneEvent::WaitForAnimation);
-				scene->push(e);
+				//fixme : wait for the next cycle of the animation
 			}
-			++n;
 			continue;
 		default:
 			if (n > 1) {
