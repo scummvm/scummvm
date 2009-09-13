@@ -133,9 +133,9 @@ private:
 	static Common::Point messagePosition(const Common::String &str, const Common::Point & position);
 
 	bool processEventQueue();
-	inline void nextEvent() {
+	inline bool nextEvent() {
 		current_event.clear();
-		processEventQueue();
+		return processEventQueue();
 	}
 	
 	TeenAgentEngine *_engine;
