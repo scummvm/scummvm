@@ -2372,7 +2372,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 		if (_currentMenu == &_loadMenu || _currentMenu == &_deleteMenu) {
 			if (_saveSlots.begin() == _saveSlots.end())
 				// "no savegames to load" message
-				_screen->fprintString(_vm->getLangString(0x4009), _currentMenu->x + _currentMenu->width / 2, _currentMenu->y + 42, 204, 0, 9);
+				_screen->fprintString("%s", _currentMenu->x + _currentMenu->width / 2, _currentMenu->y + 42, 204, 0, 9, _vm->getLangString(0x4009));
 		}
 
 		if (hasSpecialButtons == 2) {
