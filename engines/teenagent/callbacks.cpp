@@ -289,6 +289,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x44fc:  //pull out spring from bed
 		playSound(53, 25);
+		playSound(24, 27);
+		playSound(5, 36);
 		playActorAnimation(839);
 		moveTo(278, scene->getPosition().y, 0, true);
 		inventory->add(0x50);
@@ -299,7 +301,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xDBE5, 1)) {
 			scene->displayMessage((const char *)res->dseg.ptr(0x57c0));
 		} else {
-			playSound(49);
+			playSound(49, 14);
+			playSound(5, 21);
 			playActorAnimation(869);
 			inventory->add(0x58);
 			SET_FLAG(0xDBE5, 1);
@@ -366,7 +369,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x5528);
 		return true;
 	
-	case 0x4705: { //prison: getting lamp bulb
+	case 0x4705:  //prison: getting lamp bulb
 		moveTo(144, 185, 4);
 		playSound(56, 15);
 		setOns(0, 86); //hiding lamp
@@ -376,7 +379,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 87);
 		
 		playSound(34, 1);
-		playActorAnimation(818);
+		playSound(5, 15);
+		playActorAnimation(818, true);
 		playAnimation(819, 1, true);
 		waitAnimation();
 		
@@ -386,7 +390,6 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		disableObject(6);
 		enableObject(5);
 		inventory->add(0x4c);
-		}
 		return true;
 	
 	case 0x4794: //prison cell door
@@ -398,7 +401,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 	
 	case 0x47bc: //prison: examining trash can
-		playSound(49, 5);
+		playSound(79, 5);
+		playSound(1, 14);
 		playActorAnimation(966);
 		displayMessage(0x5955);
 		return true;
