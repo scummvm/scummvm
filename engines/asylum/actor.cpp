@@ -333,7 +333,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 			return;
 		}
 
-		BarrierItem *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIdx);
+		Barrier *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIdx);
 		GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
 
 		// FIXME

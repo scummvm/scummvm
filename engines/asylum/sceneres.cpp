@@ -61,11 +61,11 @@ int SceneResource::getBarrierIndexById(uint32 id) {
 	return -1;
 }
 
-BarrierItem* SceneResource::getBarrierById(uint32 id) {
+Barrier* SceneResource::getBarrierById(uint32 id) {
 	return &_worldStats->barriers[getBarrierIndexById(id)];
 }
 
-BarrierItem* SceneResource::getBarrierByIndex(uint32 idx) {
+Barrier* SceneResource::getBarrierByIndex(uint32 idx) {
 	return &_worldStats->barriers[idx];
 }
 
@@ -211,7 +211,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 
 	for (uint32 a = 0; a < _worldStats->numBarriers; a++) {
 		int i;
-		BarrierItem barrier;
+		Barrier barrier;
 
 		barrier.id	  = stream->readUint32LE();
 		barrier.resId = stream->readUint32LE();

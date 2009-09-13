@@ -31,6 +31,37 @@
 
 namespace Asylum {
 
+typedef struct SoundItem {
+	uint32 resId;
+	uint32 field_4;
+	uint32 field_8;
+	uint32 field_C;
+
+} SoundItem;
+
+typedef struct FrameSoundItem {
+	uint32 resId;
+	uint32 frameIdx;
+	uint32 index;
+	uint32 field_C;
+	uint32 field_10;
+	uint32 field_14;
+
+} FrameSoundItem;
+
+typedef struct AmbientSoundItem {
+	uint32 field_0;
+	uint32 flags;
+	uint32 resId;
+	uint32 field_C;
+	uint32 field_10;
+	uint32 field_14;
+	uint32 flagNum[6];
+	uint32 x;
+	uint32 y;
+
+} AmbientSoundItem;
+
 class Sound {
 public:
 	Sound(Audio::Mixer *mixer);
