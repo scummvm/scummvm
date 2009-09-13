@@ -53,7 +53,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	snd_playSoundEffect(0x0A);
 	snd_playWanderScoreViaMap(0, 1);
 
-	// unload the current voice file should fix some problems with voices
+	// unloading the current voice file should fix some problems with voices
 	if (_currentRoom != 0xFFFF && _flags.isTalkie) {
 		char file[32];
 		assert(_currentRoom < _roomTableSize);
@@ -64,7 +64,6 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 		_res->unloadPakFile(file);
 	}
 
-	int brandonX = 0, brandonY = 0;
 	for (int i = 0; i < 11; i++) {
 		_characterList[i].sceneId = in->readUint16BE();
 		_characterList[i].height = in->readByte();
@@ -76,10 +75,6 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 		_characterList[i].y1 = in->readSint16BE();
 		_characterList[i].x2 = in->readSint16BE();
 		_characterList[i].y2 = in->readSint16BE();
-		if (i == 0) {
-			brandonX = _characterList[i].x1;
-			brandonY = _characterList[i].y1;
-		}
 		//_characterList[i].field_20 = in->readUint16BE();
 		//_characterList[i].field_23 = in->readUint16BE();
 	}
@@ -193,15 +188,25 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 		_animator->setBrandonAnimSeqSize(3, 48);
 
 	redrawInventory(0);
-	
-	_brandonPosX = _brandonPosY = -1;
-	
-	// Unlike the original we did restore Brandon's position in the scene screen on load.
-	// This appereantly caused graphics gliches in some scenes. For example bug #2835715
-	// ("KYRA: GFX glitch in Amiga version at the bridge") is caused by this feature.
-	// Thus we disable that for now.
-	//_brandonPosX = brandonX;
-	//_brandonPosY = brandonY;
+
+	// Original hardcoded Brandon position for certain scenes:
+	// - SceneId 7 ("A ruined bridge") and flag 0x39 set, which seems
+	//  to indicate that Herman is still in the scene.
+	// - SceneId 2 ("Inside the temple") and flag 0x2D not set, which
+	//  indicates that the amulet is not obtained yet and thus Brynn
+	//  is still inside the temple
+	if (_currentCharacter->sceneId == 7 && queryGameFlag(0x39)) {
+		_currentCharacter->x1 = 282;
+		_currentCharacter->y1 = 108;
+		_currentCharacter->facing = 5;
+	} else if (_currentCharacter->sceneId == 2 && !queryGameFlag(0x2D)) {
+		_currentCharacter->x1 = 294;
+		_currentCharacter->y1 = 132;
+		_currentCharacter->facing = 5;
+	}
+
+	_brandonPosX = _currentCharacter->x2 = _currentCharacter->x1;
+	_brandonPosY = _currentCharacter->y2 = _currentCharacter->y1;
 
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 
@@ -213,7 +218,7 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	_screen->copyRegion(8, 8, 8, 8, 304, 128, 2, 0);
 	_screen->updateScreen();
 
-	setMousePos(brandonX, brandonY);
+	setMousePos(_currentCharacter->x1, _currentCharacter->y1);
 
 	if (in->err() || in->eos()) {
 		warning("Load failed ('%s', '%s').", fileName, header.description.c_str());
