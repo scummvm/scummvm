@@ -489,6 +489,8 @@ void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
 			_animator->updateAllObjectShapes();
 			updateTextFade();
 			updateMousePointer();
+		} else {
+			_screen->updateScreen();
 		}
 
 		_isSaveAllowed = isMainLoop;
