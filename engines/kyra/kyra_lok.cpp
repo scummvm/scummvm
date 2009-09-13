@@ -304,11 +304,13 @@ Common::Error KyraEngine_LoK::go() {
 			setGameFlag(0xEF);
 			_seqPlayerFlag = true;
 			seq_intro();
+			_seqPlayerFlag = false;
+
 			if (shouldQuit())
 				return Common::kNoError;
-			if (_skipIntroFlag && _abortIntroFlag)
+
+			if (_skipIntroFlag && _abortIntroFlag && saveFileLoadable(0))
 				resetGameFlag(0xEF);
-			_seqPlayerFlag = false;
 		}
 		_eventList.clear();
 		startup();
@@ -386,7 +388,7 @@ void KyraEngine_LoK::startup() {
 	snd_playTheme(1, -1);
 	if (_gameToLoad == -1) {
 		enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
-		if (_abortIntroFlag && _skipIntroFlag) {
+		if (_abortIntroFlag && _skipIntroFlag && saveFileLoadable(0)) {
 			_menuDirectlyToLoad = true;
 			_screen->setMouseCursor(1, 1, _shapes[0]);
 			_screen->showMouse();
