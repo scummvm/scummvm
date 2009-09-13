@@ -404,8 +404,13 @@ bool ListWidget::handleKeyUp(Common::KeyState state) {
 	return true;
 }
 
+void ListWidget::receivedFocusWidget() {
+	// Redraw the widget so the selection color will change
+	draw();
+}
+
 void ListWidget::lostFocusWidget() {
-	// If we loose focus, we simply forget the user changes
+	// If we lose focus, we simply forget the user changes
 	_editMode = false;
 	g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 	drawCaret(true);
