@@ -581,7 +581,7 @@ int kDisableActor(ActionCommand *cmd) {
 		actorIndex = cmd->param1;
 
 	// TODO Finish implementing this function
-	Shared.getScene()->getActor()->disable(actorIndex);
+	Shared.getScene()->getActor()->update_4072A0(actorIndex);
 
 	return -1;
 }
