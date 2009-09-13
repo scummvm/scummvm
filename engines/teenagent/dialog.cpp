@@ -28,12 +28,12 @@
 
 namespace TeenAgent {
 
-void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_animation) {
+void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_animation, byte color1, byte color2) {
 	debug(0, "Dialog::show(%04x, %u)", addr, animation);
 	Resources * res = Resources::instance();
 	int n = 0;
 	Common::String message;
-	byte color = 0xd1;
+	byte color = color1;
 	
 	while (n < 4) {
 		byte c = res->eseg.get_byte(addr++);
@@ -41,7 +41,7 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 		case 0:
 			++n;
 			if (n == 3) {
-				color = color == 0xd1? 0xd0: 0xd1;
+				color = color == color1? color2: color1;
 				//debug(0, "changing color", message);
 			}
 			continue;
@@ -86,7 +86,7 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 		if (animation != 0) {
 			SceneEvent e(SceneEvent::PlayAnimation);
 			e.animation = animation;
-			e.color = 0x83; //3rd slot, async animation
+			e.color = 0x41;
 			scene->push(e);
 		} //copy paste ninja was here
 		SceneEvent e(SceneEvent::Message);
@@ -96,7 +96,7 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 	}
 }
 
-uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation, uint16 actor_animation) {
+uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation, uint16 actor_animation, byte color1, byte color2) {
 	debug(0, "Dialog::pop(%04x, %u)", addr, animation);
 	Resources * res = Resources::instance();
 	uint16 next;
@@ -107,7 +107,7 @@ uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation, uint16 actor_ani
 	uint16 next2 = res->dseg.get_word(addr);
 	if (next2 != 0xffff)
 		res->dseg.set_word(addr - 2, 0);
-	show(scene, next, animation, actor_animation);
+	show(scene, next, animation, actor_animation, color1, color2);
 	return next;
 }
 

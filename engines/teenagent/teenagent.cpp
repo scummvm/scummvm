@@ -211,19 +211,22 @@ Common::Error TeenAgentEngine::run() {
 
 	_system->setMouseCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
 
-	scene->init(10, Common::Point(136, 153));
-	
 	syncSoundSettings();
 	
-	music->load(4);
+	music->load(1);
 	_mixer->playInputStream(Audio::Mixer::kMusicSoundType, &_musicHandle, music, -1, 255, 0, true, false);
 	music->start();
 	
 	{
 		int load_slot = Common::ConfigManager::instance().getInt("save_slot");
 		debug(0, "slot: %d", load_slot);
-		if (load_slot >= 0)
+		if (load_slot >= 0) {
 			loadGameState(load_slot);
+		} else {
+			scene->intro = true;
+			scene_busy = true;
+			processCallback(0x24c);
+		}
 	}
 
 	uint32 frame = 0;

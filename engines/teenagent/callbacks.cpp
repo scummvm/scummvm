@@ -88,6 +88,83 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	
 	switch(addr) {
 	
+	case 0x024c: //intro
+		loadScene(41, 139, 156, 3);
+		playSound(41, 12);
+		playAnimation(912, 1);
+		setOns(0, 108);
+		playSound(62, 8);
+		playSound(58, 40);
+		playAnimation(913, 1);
+		setOns(1, 109);
+		Dialog::show(scene, 0x748e, 914, 915, 0xe7, 0xd7);
+		displayCredits(0xe3c2);
+		loadScene(42, 139, 156, 3);
+		playSound(15, 20);
+		playAnimation(916, 1);
+		playSound(40, 18);
+		playSound(40, 22);
+		for(byte i = 27; i < 37; i += 2)
+			playSound(40, i);
+		playSound(29, 44);
+		playAnimation(918, 0, true);
+		playAnimation(917, 1, true);
+		waitAnimation();
+		displayCredits(0xe3e6);
+
+		loadScene(40, 139, 156, 3);
+		playMusic(3);
+		Dialog::show(scene, 0x750d, 920, 924, 0xe7, 0xeb); //as i told you, our organization...
+		playSound(26, 50);
+		playAnimation(925, 0, true);
+		playAnimation(926, 1, true);
+		waitAnimation();
+		Dialog::show(scene, 0x78a6, 927, 920, 0xeb, 0xeb); 
+		displayCredits(0xe3ff);
+		
+		loadScene(39, 139, 156, 3);
+		playMusic(11);
+		playSound(81, 2);
+		playSound(81, 8);
+		playSound(81, 11);
+		playSound(81, 14);
+		playSound(81, 16);
+		playSound(81, 18);
+		playSound(81, 20);
+		playSound(81, 21);
+		playAnimation(928, 1);
+		setOns(0, 112);
+		Dialog::show(scene, 0x78e1, 929, 0, 0xd1); //he's coming
+		moveTo(319, 150, 1, true);
+		moveTo(63, 150, 1);
+		displayMessage(0x5da8); //fixme: with delay!
+		playAnimation(851, 0);
+		playSound(24, 11);
+		playActorAnimation(931);
+		displayCredits(0xe42f);
+
+		playMusic(3);
+		loadScene(40, 50, 186, 1);
+		setOns(0, 113);
+		Dialog::show(scene, 0x78f1, 919, 0, 0xe7);
+		moveTo(196, 186, 1);
+		Dialog::show(scene, 0x7958, 919, 0, 0xe7);
+		playActorAnimation(932);
+		Dialog::show(scene, 0x7e07, 919, 0, 0xe7);
+		playActorAnimation(932);
+		Dialog::show(scene, 0x7e1a, 919, 0, 0xe7);
+		playActorAnimation(932);
+		Dialog::show(scene, 0x7e2c, 919, 0, 0xe7);
+		playActorAnimation(933);
+		Dialog::show(scene, 0x7e70, 919, 0, 0xe7);
+		moveTo(174, 186, 1);
+		playAnimation(851, 0, true);
+		playActorAnimation(934, true);
+		waitAnimation();
+		loadScene(10, 136, 153);
+		
+		return true;
+	
 	case 0x4021:
 		//pulling out mysterious object
 		if (CHECK_FLAG(0xdbe1, 1)) {

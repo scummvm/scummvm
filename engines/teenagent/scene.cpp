@@ -33,7 +33,7 @@
 
 namespace TeenAgent {
 
-Scene::Scene() : _engine(NULL), 
+Scene::Scene() : intro(false), _engine(NULL), 
 	_system(NULL), 
 	_id(0), ons(0), walkboxes(0), 
 	orientation(Object::ActorRight), 
@@ -257,11 +257,10 @@ void Scene::push(const SceneEvent &event) {
 }
 
 bool Scene::processEvent(const Common::Event &event) {
-	if (!message.empty()) {
-		if (
-			event.type == Common::EVENT_LBUTTONDOWN ||
-			event.type == Common::EVENT_RBUTTONDOWN
-		) {
+	switch(event.type) {
+	case Common::EVENT_LBUTTONDOWN:
+	case Common::EVENT_RBUTTONDOWN: 
+		if (!message.empty()) {
 			message.clear();
 			for(int i = 0; i < 4; ++i) {
 				if (custom_animations[i].loop)
@@ -270,8 +269,23 @@ bool Scene::processEvent(const Common::Event &event) {
 			nextEvent();
 			return true;
 		}
+		return false;
+
+	case Common::EVENT_KEYUP:
+		if (intro && event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			intro = false;
+			message.clear();
+			events.clear();
+			sounds.clear();
+			current_event.clear();
+			_engine->playMusic(4);
+			init(10, Common::Point(136, 153));
+		}
+		return false;
+
+	default:
+		return false;
 	}
-	return false;
 }
 
 bool Scene::render(OSystem * system) {
@@ -287,7 +301,7 @@ bool Scene::render(OSystem * system) {
 		return true;
 	}
 	
-	bool busy = false;
+	bool busy = processEventQueue();
 	
 	system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
 	
@@ -373,7 +387,6 @@ bool Scene::render(OSystem * system) {
 		nextEvent();
 	}
 		
-	busy |= processEventQueue();
 	//if (!current_event.empty())
 	//	current_event.dump();
 	/*

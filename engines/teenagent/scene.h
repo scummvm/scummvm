@@ -90,6 +90,8 @@ struct SceneEvent {
 
 class Scene {
 public: 
+	bool intro; 
+	
 	Scene();
 	
 	void init(TeenAgentEngine *engine, OSystem * system);
