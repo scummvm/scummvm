@@ -17,9 +17,11 @@
 	</Configurations>
 	<Files>
 		<File RelativePath="..\..\engines\asylum\actor.cpp" />
-		<File	RelativePath="..\..\engines\asylum\actor.h"	/>
+		<File RelativePath="..\..\engines\asylum\actor.h"	/>
 		<File RelativePath="..\..\engines\asylum\asylum.cpp" />
 		<File RelativePath="..\..\engines\asylum\asylum.h" />
+		<File RelativePath="..\..\engines\asylum\barrier.cpp" />
+		<File RelativePath="..\..\engines\asylum\barrier.h" />
 		<File RelativePath="..\..\engines\asylum\blowuppuzzle.cpp" />
 		<File RelativePath="..\..\engines\asylum\blowuppuzzle.h" />
 		<File RelativePath="..\..\engines\asylum\console.cpp" />
