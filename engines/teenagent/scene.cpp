@@ -37,7 +37,7 @@ Scene::Scene() : intro(false), _engine(NULL),
 	_system(NULL), 
 	_id(0), ons(0), walkboxes(0), 
 	orientation(Object::ActorRight), 
-	current_event(SceneEvent::None) {}
+	current_event(SceneEvent::None), hide_actor(false) {}
 
 void Scene::warp(const Common::Point & _point, byte o) { 
 	Common::Point point(_point);
@@ -278,6 +278,8 @@ bool Scene::processEvent(const Common::Event &event) {
 			events.clear();
 			sounds.clear();
 			current_event.clear();
+			for(int i = 0; i < 4; ++i)
+				custom_animations[i].free();
 			_engine->playMusic(4);
 			init(10, Common::Point(136, 153));
 		}
@@ -322,7 +324,7 @@ bool Scene::render(OSystem * system) {
 
 	bool got_any_animation = false;
 
-	for (int i = 3; i >= 0; --i) {
+	for (int i = 0; i < 4; ++i) {
 		Animation *a = custom_animations + i;
 		Surface *s = a->currentFrame();
 		if (s != NULL) {
@@ -352,35 +354,37 @@ bool Scene::render(OSystem * system) {
 		}
 	}
 	
-	Surface * mark = actor_animation.currentFrame();
-	if (mark == NULL) {
-		actor_animation.free();
+	if (!hide_actor) {
+		Surface * mark = actor_animation.currentFrame();
+		if (mark == NULL) {
+			actor_animation.free();
 
-		if (destination != position) {
-			Common::Point dp(destination.x - position0.x, destination.y - position0.y);
-			int o;
-			if (ABS(dp.x) > ABS(dp.y))
-				o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
-			else
-				o = dp.y > 0? Object::ActorDown: Object::ActorUp;
+			if (destination != position) {
+				Common::Point dp(destination.x - position0.x, destination.y - position0.y);
+				int o;
+				if (ABS(dp.x) > ABS(dp.y))
+					o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
+				else
+					o = dp.y > 0? Object::ActorDown: Object::ActorUp;
 			
-			position.x = position0.x + dp.x * progress / progress_total;
-			position.y = position0.y + dp.y * progress / progress_total;
-			teenagent.render(surface, position, o, 1);
-			++progress;
-			if (progress >= progress_total) {
-				position = destination;
-				if (orientation == 0)
-					orientation = o; //save last orientation
-				nextEvent();
+				position.x = position0.x + dp.x * progress / progress_total;
+				position.y = position0.y + dp.y * progress / progress_total;
+				teenagent.render(surface, position, o, 1);
+				++progress;
+				if (progress >= progress_total) {
+					position = destination;
+					if (orientation == 0)
+						orientation = o; //save last orientation
+					nextEvent();
+				} else 
+					busy = true;
 			} else 
-				busy = true;
-		} else 
-			teenagent.render(surface, position, orientation, 0);
-	} else {
-		mark->render(surface);
-		busy = true;
-		got_any_animation = true;
+				teenagent.render(surface, position, orientation, 0);
+		} else {
+			mark->render(surface);
+			busy = true;
+			got_any_animation = true;
+		}
 	}
 
 	if (current_event.type == SceneEvent::WaitForAnimation && !got_any_animation) {
@@ -507,6 +511,11 @@ bool Scene::processEventQueue() {
 			current_event.clear();
 		} break;
 		
+		case SceneEvent::HideActor: {
+			hide_actor = current_event.color != 0;
+			current_event.clear();
+		} break;
+		
 		case SceneEvent::WaitForAnimation:
 			debug(0, "waiting for the animation");
 			break;
@@ -519,6 +528,9 @@ bool Scene::processEventQueue() {
 		default: 
 			error("empty/unhandler event[%d]", (int)current_event.type);
 		}
+	}
+	if (events.empty()) {
+		hide_actor = false;
 	}
 	return !current_event.empty();
 }

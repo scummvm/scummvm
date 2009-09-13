@@ -42,8 +42,9 @@ struct SceneEvent {
 	enum Type { 
 		None, Message, Walk, PlayAnimation, PlayActorAnimation, 
 		LoadScene, SetOn, SetLan, PlayMusic, 
-		PlaySound, EnableObject, WaitForAnimation,
-		CreditsMessage, Quit
+		PlaySound, EnableObject, HideActor, 
+		WaitForAnimation, CreditsMessage, 
+		Quit
 	} type;
 
 	Common::String message;
@@ -161,6 +162,7 @@ private:
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;
 	SceneEvent current_event;
+	bool hide_actor;
 	
 	struct Sound {
 		byte id, delay;

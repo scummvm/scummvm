@@ -88,6 +88,8 @@ public:
 	void playSoundNow(byte id);
 	void enableObject(byte id, byte scene_id = 0);
 	void disableObject(byte id, byte scene_id = 0);
+	void hideActor();
+	void showActor();
 	void waitAnimation();
 
 	Common::RandomSource random;

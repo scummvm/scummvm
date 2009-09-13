@@ -89,6 +89,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	switch(addr) {
 	
 	case 0x024c: //intro
+		hideActor();
 		loadScene(41, 139, 156, 3);
 		playSound(41, 12);
 		playAnimation(912, 1);
@@ -135,6 +136,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(928, 1);
 		setOns(0, 112);
 		Dialog::show(scene, 0x78e1, 929, 0, 0xd1); //he's coming
+		showActor();
 		moveTo(319, 150, 1, true);
 		moveTo(63, 150, 1);
 		displayMessage(0x5da8); //fixme: with delay!

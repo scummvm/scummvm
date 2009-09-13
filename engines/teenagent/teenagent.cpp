@@ -499,6 +499,18 @@ void TeenAgentEngine::disableObject(byte id, byte scene_id) {
 	scene->push(event);
 }
 
+void TeenAgentEngine::hideActor() {
+	SceneEvent event(SceneEvent::HideActor);
+	event.color = 1;
+	scene->push(event);
+}
+
+void TeenAgentEngine::showActor() {
+	SceneEvent event(SceneEvent::HideActor);
+	event.color = 0;
+	scene->push(event);
+}
+
 void TeenAgentEngine::waitAnimation() {
 	SceneEvent event(SceneEvent::WaitForAnimation);
 	scene->push(event);
