@@ -195,7 +195,10 @@ Common::Error KyraEngine_LoK::init() {
 	if (!_sound->init())
 		error("Couldn't init sound");
 
-	_sound->loadSoundFile(0);
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSoundFile(_introSfxDataPC98, _introSfxDataPC98Size);
+	else
+		_sound->loadSoundFile(0);
 
 	setupButtonData();
 
@@ -334,8 +337,13 @@ Common::Error KyraEngine_LoK::go() {
 void KyraEngine_LoK::startup() {
 	static const uint8 colorMap[] = { 0, 0, 0, 0, 12, 12, 12, 0, 0, 0, 0, 0 };
 	_screen->setTextColorMap(colorMap);
+	
 	_sound->setSoundList(&_soundData[kMusicIngame]);
-	_sound->loadSoundFile(0);
+	if (_flags.platform == Common::kPlatformPC98)
+		_sound->loadSoundFile("se.dat");
+	else
+		_sound->loadSoundFile(0);
+
 //	_screen->setFont(Screen::FID_6_FNT);
 	_screen->setAnimBlockPtr(3750);
 	memset(_sceneAnimTable, 0, sizeof(_sceneAnimTable));

@@ -415,6 +415,14 @@ void SeqPlayer::s1_fillRect() {
 void SeqPlayer::s1_playEffect() {
 	uint8 track = *_seqData++;
 	_vm->delay(3 * _vm->tickLength());
+
+	if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		if (track > 21 && track < 38)
+			track -= 22;
+		else
+			return;
+	}
+
 	_sound->playSoundEffect(track);
 }
 

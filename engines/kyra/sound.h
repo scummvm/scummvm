@@ -108,6 +108,12 @@ public:
 	virtual void loadSoundFile(Common::String file) = 0;
 
 	/**
+	 * Load hard coded data for playing music
+	 * (and somtimes sound effects) from.
+	 */	
+	virtual void loadSoundFile(const uint8 *data, int len) { }
+
+	/**
 	 * Load a sound file for playing sound
 	 * effects from.
 	 */
@@ -268,7 +274,8 @@ public:
 	bool hasSoundFile(uint file) const { return _music->hasSoundFile(file) && _sfx->hasSoundFile(file); }
 	void loadSoundFile(uint file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
 	void loadSoundFile(Common::String file) { _music->loadSoundFile(file); _sfx->loadSoundFile(file); }
-
+	
+	void loadSoundFile(const uint8 *data, int len) { _sfx->loadSoundFile(data, len); }
 	void loadSfxFile(Common::String file) { _sfx->loadSoundFile(file); }
 
 	void playTrack(uint8 track) { _music->playTrack(track); }

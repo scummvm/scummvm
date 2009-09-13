@@ -29,6 +29,13 @@
 namespace Kyra {
 
 void KyraEngine_LoK::snd_playSoundEffect(int track, int volume) {
+	if (_flags.platform == Common::kPlatformPC98) {
+		if (track < 16 || track > 119)
+			track = 58;
+		else
+			track -= 16;
+	}
+
 	if ((_flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98) && track == 49) {
 		snd_playWanderScoreViaMap(56, 1);
 		return;

@@ -4069,10 +4069,23 @@ SoundPC98::~SoundPC98() {
 
 bool SoundPC98::init() {
 	_driver = new TownsPC98_OpnDriver(_mixer, TownsPC98_OpnDriver::OD_TYPE26);
-	_sfxTrackData = _vm->resource()->fileData("se.dat", 0);
-	if (!_sfxTrackData)
-		return false;
+
 	return _driver->init();
+}
+
+void SoundPC98::loadSoundFile(Common::String file) {
+	if (_sfxTrackData)
+		delete _sfxTrackData;
+	
+	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
+}
+
+void SoundPC98::loadSoundFile(const uint8 *data, int len) {
+	if (_sfxTrackData)
+		delete _sfxTrackData;
+
+	_sfxTrackData = new uint8[len];
+	memcpy(_sfxTrackData, data, len);
 }
 
 void SoundPC98::playTrack(uint8 track) {
@@ -4119,9 +4132,6 @@ void SoundPC98::playSoundEffect(uint8 track) {
 	if (!_sfxTrackData)
 		return;
 
-	//	This has been disabled for now since I don't know
-	//	how to make up the correct track number. It probably
-	//	needs a map.
 	_driver->loadSoundEffectData(_sfxTrackData, track);
 }
 
