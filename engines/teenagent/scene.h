@@ -105,7 +105,7 @@ public:
 	void moveTo(const Common::Point & point, byte orientation = 0, bool validate = 0);
 	Common::Point getPosition() const { return position; }
 	
-	void displayMessage(const Common::String &str);
+	void displayMessage(const Common::String &str, byte color = 0xd1);
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
 
@@ -158,6 +158,7 @@ private:
 
 	Common::String message;
 	Common::Point message_pos;
+	byte message_color;
 	
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;

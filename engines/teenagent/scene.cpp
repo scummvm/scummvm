@@ -157,19 +157,18 @@ void Scene::loadLans() {
 	debug(0, "loading lans animation");
 	Resources * res = Resources::instance();
 	//load lan000
-	byte * table_27 = res->dseg.ptr(0x32C7);
-	memset(table_27, 0, 27 * 4);
 	
 	for (int i = 0; i < 4; ++i) {
 		animations[i].free();
 		
 		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
 		byte bxv = res->dseg.get_byte(bx);
-		debug(0, "lan: [%04x] = %02x", bx, bxv);
+		uint16 res_id = 4 * (_id - 1) + i + 1;
+		debug(0, "lan: [%04x] = %02x, resource id: %u", bx, bxv, res_id);
 		if (bxv == 0)
 			continue;
 
-		Common::SeekableReadStream * s = res->loadLan000(4 * (_id - 1) + i + 1);
+		Common::SeekableReadStream * s = res->loadLan000(res_id);
 		if (s != NULL) {
 			animations[i].load(s, Animation::TypeLan);
 			if (bxv != 0 && bxv != 0xff) 
@@ -278,6 +277,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			events.clear();
 			sounds.clear();
 			current_event.clear();
+			message_color = 0xd1;
 			for(int i = 0; i < 4; ++i)
 				custom_animations[i].free();
 			_engine->playMusic(4);
@@ -393,6 +393,7 @@ bool Scene::render(OSystem * system) {
 		}
 
 		if (!message.empty()) {
+			res->font7.color = message_color;
 			res->font7.render(surface, message_pos.x, message_pos.y, message);
 			busy = true;
 		}
@@ -480,6 +481,7 @@ bool Scene::processEventQueue() {
 			//debug(0, "pop(%04x)", current_event.message);
 			message = current_event.message;
 			message_pos = messagePosition(message, position);
+			message_color = current_event.color;
 		break;
 		
 		case SceneEvent::PlayAnimation: {
@@ -538,6 +540,7 @@ bool Scene::processEventQueue() {
 		}
 	}
 	if (events.empty()) {
+		message_color = 0xd1;
 		hide_actor = false;
 	}
 	return !current_event.empty();
@@ -582,10 +585,11 @@ Common::Point Scene::messagePosition(const Common::String &str, const Common::Po
 	return message_pos;
 }
 
-void Scene::displayMessage(const Common::String &str) {
+void Scene::displayMessage(const Common::String &str, byte color) {
 	debug(0, "displayMessage: %s", str.c_str());
 	message = str;
 	message_pos = messagePosition(str, position);
+	message_color = color;
 }
 
 void Scene::clear() {
