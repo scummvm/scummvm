@@ -28,8 +28,8 @@
 
 namespace TeenAgent {
 
-void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_animation, byte color1, byte color2) {
-	debug(0, "Dialog::show(%04x, %u)", addr, animation);
+void Dialog::show(Scene * scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2) {
+	debug(0, "Dialog::show(%04x, %u, %u)", addr, animation1, animation2);
 	Resources * res = Resources::instance();
 	int n = 0;
 	Common::String message;
@@ -37,49 +37,59 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 	
 	while (n < 4) {
 		byte c = res->eseg.get_byte(addr++);
+		//debug(0, "%02x: %c", c, c > 0x20? c: '.');
+		
 		switch(c) {
 		case 0:
 			++n;
-			if (n == 3) {
-				color = color == color1? color2: color1;
-				//debug(0, "changing color", message);
-			}
-			continue;
-		case 0xff:
-			{
-				//fixme : wait for the next cycle of the animation
-			}
-			continue;
-		default:
-			if (n > 1) {
-				if (!message.empty()) {
-					if (animation != 0) {
-						SceneEvent e(SceneEvent::PlayAnimation);
-						e.animation = animation;
-						e.color = 0x41;
-						scene->push(e);
-					}
-					if (actor_animation != 0) {
-						SceneEvent e(SceneEvent::PlayAnimation);
-						e.animation = actor_animation;
-						e.color = 0x40;
-						scene->push(e);
-					}
+			switch(n) {
+			case 1: 
+				//debug(0, "new line\n");
+				message += '\n';
+				break;
+			case 2: 
+				//debug(0, "displaymessage\n");
+				
+				if (color == color2 && animation2 != 0) {
+					SceneEvent e(SceneEvent::PlayAnimation);
+					e.animation = animation2;
+					e.color = 0x41;
+					scene->push(e);
+				} else if (color == color1 && animation1 != 0) {
+					SceneEvent e(SceneEvent::PlayAnimation);
+					e.animation = animation1;
+					e.color = 0x41;
+					scene->push(e);
+				}
+				
+				{
 					SceneEvent e(SceneEvent::Message);
 					e.message = message;
 					e.color = color;
 					scene->push(e);
+					message.clear();
 				}
-				message = (const char *)Resources::instance()->eseg.ptr(addr - 1);
-			} else if (n == 1) {
-				message += '\n';
-				message += (const char *)Resources::instance()->eseg.ptr(addr - 1);
-			} else if (n == 0 && message.empty()) {
-				message = (const char *)Resources::instance()->eseg.ptr(addr - 1);
+				break;
+
+			case 3: 
+				color = color == color1? color2: color1;
+				//debug(0, "changing color to %02x", color);
+				break;
 			}
+			break;
+		
+		case 0xff:
+			{
+				//fixme : wait for the next cycle of the animation
+			}
+			break;
+		
+		default:
+			message += c;
 			n = 0;
 		}
 	}
+	/*
 	if (!message.empty()) {
 		if (animation != 0) {
 			SceneEvent e(SceneEvent::PlayAnimation);
@@ -92,6 +102,7 @@ void Dialog::show(Scene * scene, uint16 addr, uint16 animation, uint16 actor_ani
 		e.color = color;
 		scene->push(e);
 	}
+	*/
 }
 
 uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation, uint16 actor_animation, byte color1, byte color2) {
