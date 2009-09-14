@@ -744,7 +744,7 @@ private:
 	int olol_characterSkillTest(EMCState *script);
 	int olol_countAllMonsters(EMCState *script);
 	int olol_playEndSequence(EMCState *script);
-	int olol_stopCharacterSpeech(EMCState *script);
+	int olol_updatePortraits(EMCState *script);
 	int olol_setPaletteBrightness(EMCState *script);
 	int olol_calcInflictableDamage(EMCState *script);
 	int olol_getInflictedDamage(EMCState *script);

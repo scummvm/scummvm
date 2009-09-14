@@ -2941,7 +2941,6 @@ TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
 }
 
 TownsPC98_OpnCore::~TownsPC98_OpnCore() {
-	_mixer->stopHandle(_soundHandle);
 	delete _ssg;
 	delete _prc;
 	delete[] _chanInternal;

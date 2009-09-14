@@ -1722,7 +1722,7 @@ void LoLEngine::createGfxTables() {
 	if (_flags.isTalkie || _loadSuppFilesFlag)
 		return;
 
-	Palette tpal(768);
+	Palette tpal(256);
 	_screen->loadPalette("fxpal.col", tpal);
 	_screen->loadBitmap("fxpal.shp", 3, 3, 0);
 	const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
@@ -2209,7 +2209,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	gui_drawScene(0);
 	_screen->copyPage(0, 12);
 
-	Palette tpal(768), swampCol(768);
+	Palette tpal(256), swampCol(256);
 
 	if (_currentLevel == 11 && !(_flagsTable[52] & 0x04)) {
 		uint8 *sc = _screen->getPalette(0).getData();

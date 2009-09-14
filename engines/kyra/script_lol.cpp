@@ -1287,8 +1287,10 @@ int LoLEngine::olol_releaseMonsterShapes(EMCState *script) {
 
 int LoLEngine::olol_playCharacterScriptChat(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_playCharacterScriptChat(%p) (%d, %d, %d)", (const void *)script, stackPos(0), stackPos(1), stackPos(2));
-	snd_stopSpeech(1);
-	updatePortraits();
+	if (_flags.isTalkie) {
+		snd_stopSpeech(1);
+		updatePortraits();
+	}
 	return playCharacterScriptChat(stackPos(0), stackPos(1), 1, getLangString(stackPos(2)), script, 0, 3);
 }
 
@@ -1427,9 +1429,10 @@ int LoLEngine::olol_playEndSequence(EMCState *script){
 	return 0;
 }
 
-int LoLEngine::olol_stopCharacterSpeech(EMCState *script) {
-	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_stopCharacterSpeech(%p)", (const void *)script);
-	snd_stopSpeech(1);
+int LoLEngine::olol_updatePortraits(EMCState *script) {
+	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updatePortraits(%p)", (const void *)script);
+	if (_flags.isTalkie)
+		snd_stopSpeech(1);
 	updatePortraits();
 	return 1;
 }
@@ -2184,7 +2187,7 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	_res->loadFileToBuf("LITEPAL3.COL", tpal1, 768);
 	_screen->generateFadeTable(tpal2, tpal4, tpal1, 4);
 
-	Palette pal(768);
+	Palette pal(256);
 
 	for (int i = 0; i < 21; i++) {
 		uint32 etime = _system->getMillis() + 20 * _tickLength;
@@ -2804,7 +2807,7 @@ void LoLEngine::setupOpcodeTable() {
 	// 0x68
 	Opcode(olol_countAllMonsters);
 	Opcode(olol_playEndSequence);
-	Opcode(olol_stopCharacterSpeech);
+	Opcode(olol_updatePortraits);
 	Opcode(olol_setPaletteBrightness);
 
 	// 0x6C
