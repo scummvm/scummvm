@@ -32,7 +32,7 @@
 namespace Asylum {
 
 struct ResourceEntry {
-	byte *data;
+	byte   *data;
 	uint32 size;
 	uint32 offset;
 };

@@ -80,4 +80,4 @@ public:
 
 } // end of namespace Asylum
 
-#endif /* ASYLUM_BARRIER_H_ */
+#endif

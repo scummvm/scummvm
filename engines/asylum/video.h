@@ -100,10 +100,9 @@ private:
 
 	GraphicResource *_fontResource;
 	ResourcePack	*_textPack;
-	uint8  _curFontFlags;
+	uint8           _curFontFlags;
 
 }; // end of class VideoText
-
 
 } // end of namespace Asylum
 

@@ -229,10 +229,6 @@ int ScriptManager::processActionList() {
 
 			uint32 opcode = currentCommand->opcode;
 
-			warning("Processing opcode %s (0x%02X)",
-				function_map[opcode].name,
-				currentCommand->opcode);
-
 			// Execute command from function mapping
 			int cmdRet = function_map[opcode].function(currentCommand);
 
