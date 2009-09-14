@@ -295,8 +295,8 @@ static bool polygons_equal(SegManager *segMan, reg_t p1, reg_t p2) {
 	if (size != GET_SEL32(p2, size).toUint16())
 		return false;
 
-	const byte *p1_points = segMan->kernelDerefBulkPtr(GET_SEL32(p1, points), size * POLY_POINT_SIZE);
-	const byte *p2_points = segMan->kernelDerefBulkPtr(GET_SEL32(p2, points), size * POLY_POINT_SIZE);
+	const byte *p1_points = segMan->derefBulkPtr(GET_SEL32(p1, points), size * POLY_POINT_SIZE);
+	const byte *p2_points = segMan->derefBulkPtr(GET_SEL32(p2, points), size * POLY_POINT_SIZE);
 	bool p1_is_reg_t = polygon_is_reg_t(p1_points, size);
 	bool p2_is_reg_t = polygon_is_reg_t(p2_points, size);
 
@@ -359,7 +359,7 @@ static void draw_polygon(EngineState *s, reg_t polygon) {
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
 	Common::Point first, prev;
-	const byte *list = s->segMan->kernelDerefBulkPtr(points, size * POLY_POINT_SIZE);
+	const byte *list = s->segMan->derefBulkPtr(points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(list, size);
 	int i;
 
@@ -406,7 +406,7 @@ static void print_polygon(SegManager *segMan, reg_t polygon) {
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
 	int i;
-	const byte *point_array = segMan->kernelDerefBulkPtr(points, size * POLY_POINT_SIZE);
+	const byte *point_array = segMan->derefBulkPtr(points, size * POLY_POINT_SIZE);
 	int is_reg_t = polygon_is_reg_t(point_array, size);
 	Common::Point point;
 
@@ -1230,7 +1230,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
-	const byte *list = s->segMan->kernelDerefBulkPtr(points, size * POLY_POINT_SIZE);
+	const byte *list = s->segMan->derefBulkPtr(points, size * POLY_POINT_SIZE);
 	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
 	int is_reg_t = polygon_is_reg_t(list, size);
 

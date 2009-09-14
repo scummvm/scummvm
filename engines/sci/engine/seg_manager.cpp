@@ -950,15 +950,15 @@ static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int 
 
 }
 
-byte *SegManager::kernelDerefBulkPtr(reg_t pointer, int entries) {
+byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
 	return (byte *)_kernel_dereference_pointer(this, pointer, entries, 1);
 }
 
-reg_t *SegManager::kernelDerefRegPtr(reg_t pointer, int entries) {
+reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
 	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries, sizeof(reg_t));
 }
 
-char *SegManager::kernelDerefString(reg_t pointer, int entries) {
+char *SegManager::derefString(reg_t pointer, int entries) {
 	return (char *)_kernel_dereference_pointer(this, pointer, entries, 1);
 }
 

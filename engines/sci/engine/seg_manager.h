@@ -339,7 +339,7 @@ public:
 	 * @return A physical reference to the address pointed to, or NULL on error or
 	 * if not enough entries were available.
 	 */
-	byte *kernelDerefBulkPtr(reg_t pointer, int entries);
+	byte *derefBulkPtr(reg_t pointer, int entries);
 
 	/**
 	 * Dereferences a heap pointer pointing to a (list of) register(s).
@@ -349,7 +349,7 @@ public:
 	 * @return A physical reference to the address pointed to, or NULL on error or
 	 * if not enough entries were available.
 	 */
-	reg_t *kernelDerefRegPtr(reg_t pointer, int entries);
+	reg_t *derefRegPtr(reg_t pointer, int entries);
 
 	/**
 	 * Dereferences a heap pointer pointing to raw memory.
@@ -358,7 +358,7 @@ public:
 	 * @return A physical reference to the address pointed to, or NULL on error or
 	 * if not enough entries were available.
 	 */
-	char *kernelDerefString(reg_t pointer, int entries = 0);
+	char *derefString(reg_t pointer, int entries = 0);
 
 	/**
 	 * Finds a unique segment by type
