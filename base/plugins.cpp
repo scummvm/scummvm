@@ -88,6 +88,9 @@ public:
 		#if PLUGIN_ENABLED_STATIC(GRIM)
 		LINK_PLUGIN(GRIM)
 		#endif
+		#if PLUGIN_ENABLED_STATIC(MYST3)
+		LINK_PLUGIN(MYST3)
+		#endif
 
 		// Music plugins
 		// TODO: Use defines to disable or enable each MIDI driver as a
