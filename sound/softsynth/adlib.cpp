@@ -35,9 +35,18 @@ static int tick;
 class MidiDriver_ADLIB;
 struct AdlibVoice;
 
+// We use packing for the following two structs, because the code
+// does simply copy them over from byte streams, without any
+// serialization. Check AdlibPart::sysEx_customInstrument for an
+// example of this.
+//
+// It might be very well possible, that none of the compilers we support
+// add any padding bytes at all, since all used variables are only of the
+// type 'byte'. But better safe than sorry.
+#include "common/pack-start.h"
 struct InstrumentExtra {
 	byte a, b, c, d, e, f, g, h;
-};
+} PACKED_STRUCT;
 
 struct AdlibInstrument {
 	byte mod_characteristic;
@@ -58,7 +67,8 @@ struct AdlibInstrument {
 	byte duration;
 
 	AdlibInstrument() { memset(this, 0, sizeof(AdlibInstrument)); }
-};
+} PACKED_STRUCT;
+#include "common/pack-end.h"
 
 class AdlibPart : public MidiChannel {
 	friend class MidiDriver_ADLIB;
