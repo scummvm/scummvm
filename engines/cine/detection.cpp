@@ -177,7 +177,7 @@ static const CINEGameDescription gameDescriptions[] = {
 			"fw",
 			"",
 			AD_ENTRY1("part01", "a17a5eb15200c63276d486a88263ccd0"),
-			Common::EN_ANY,
+			Common::EN_USA,
 			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
