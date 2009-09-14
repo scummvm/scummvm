@@ -45,6 +45,8 @@ public:
 
 private:
 
+	void dumpArchive(const char *fileName);
+
 };
 
 } // end of namespace Myst3
