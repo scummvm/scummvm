@@ -98,6 +98,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(58, 40);
 		playAnimation(913, 1);
 		setOns(1, 109);
+		setLan(2, 1);
 		Dialog::show(scene, 0x748e, 914, 915, 0xe7, 0xd7);
 		displayCredits(0xe3c2);
 		loadScene(42, 139, 156, 3);
@@ -150,15 +151,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 113);
 		Dialog::show(scene, 0x78f1, 919, 0, 0xe7);
 		moveTo(196, 186, 1);
-		Dialog::show(scene, 0x7958, 919, 0, 0xe7);
+		Dialog::show(scene, 0x7958, 920, 0, 0xe7);
 		playActorAnimation(932);
-		Dialog::show(scene, 0x7e07, 919, 0, 0xe7);
+		Dialog::show(scene, 0x7e07, 920, 0, 0xe7);
 		playActorAnimation(932);
-		Dialog::show(scene, 0x7e1a, 919, 0, 0xe7);
+		Dialog::show(scene, 0x7e1a, 920, 0, 0xe7);
 		playActorAnimation(932);
-		Dialog::show(scene, 0x7e2c, 919, 0, 0xe7);
+		Dialog::show(scene, 0x7e2c, 922, 0, 0xe7);
 		playActorAnimation(933);
-		Dialog::show(scene, 0x7e70, 919, 0, 0xe7);
+		Dialog::show(scene, 0x7e70, 920, 0, 0xe7);
 		moveTo(174, 186, 1);
 		playAnimation(851, 0, true);
 		playActorAnimation(934, true);
@@ -578,9 +579,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4c70:
 		if (CHECK_FLAG(0xDBE2, 0)) {
 			if (CHECK_FLAG(0xDBDA, 1)) { //papers are shown
-				Dialog::pop(scene, 0xDB4C);
+				Dialog::pop(scene, 0xDB4C, 809, 0, 0xd1, 0xd0);
 			} else {
-				Dialog::pop(scene, 0xDB40);
+				Dialog::pop(scene, 0xDB40, 809, 0, 0xd1, 0xd0);
 			}
 			return true;
 		} else {
