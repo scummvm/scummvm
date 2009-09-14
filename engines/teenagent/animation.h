@@ -33,7 +33,7 @@ namespace TeenAgent {
 class Animation  {
 public: 
 	uint16 id, x, y;
-	bool loop;
+	bool loop, paused;
 	
 	enum Type {TypeLan, TypeVaria, TypeInventory};
 	
@@ -41,7 +41,7 @@ public:
 	void load(Common::SeekableReadStream * s, Type type = TypeLan);
 	void free();
 	
-	Surface * firstFrame() const;
+	Surface * firstFrame();
 	Surface * currentFrame(int dt = 1);
 	uint16 currentIndex() const { return index; }
 	

@@ -40,7 +40,7 @@ class Dialog;
 
 struct SceneEvent {
 	enum Type { 
-		None, Message, Walk, PlayAnimation, PlayActorAnimation, 
+		None, Message, Walk, PlayAnimation, PlayActorAnimation, PauseAnimation, ClearAnimations, 
 		LoadScene, SetOn, SetLan, PlayMusic, 
 		PlaySound, EnableObject, HideActor, 
 		WaitForAnimation, CreditsMessage, 
@@ -125,7 +125,7 @@ private:
 	void loadOns();
 	void loadLans();
 
-	void playAnimation(byte idx, uint id, bool loop);
+	void playAnimation(byte idx, uint id, bool loop, bool paused);
 	void playActorAnimation(uint id, bool loop);
 	
 	byte palette[768];

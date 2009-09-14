@@ -27,14 +27,26 @@
 
 namespace TeenAgent {
 
-Animation::Animation() : id(0), x(0), y(0), loop(true), data(0), data_size(0), frames_count(0), frames(0), index(0) {
+Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), data(0), data_size(0), frames_count(0), frames(0), index(0) {
 }
 
-Surface * Animation::firstFrame() const {
-	return frames;
+Surface * Animation::firstFrame(){
+	if (frames == NULL || frames_count == 0)
+		return NULL;
+	
+	Surface * r = frames;
+	uint16 pos = READ_LE_UINT16(data + 1);
+	if (pos != 0) {
+		r->x = pos % 320;
+		r->y = pos / 320;
+	}
+	return r;
 }
 
 Surface * Animation::currentFrame(int dt) {
+	if (paused)
+		return firstFrame();
+	
 	if (frames == NULL || frames_count == 0)
 		return NULL;
 	
@@ -77,6 +89,7 @@ void Animation::free() {
 	id = 0;
 	x = y = 0;
 	loop = true;
+	paused = false;
 	
 	delete[] data;
 	data = NULL;

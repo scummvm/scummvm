@@ -90,6 +90,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	
 	case 0x024c: //intro
 		hideActor();
+
 		loadScene(41, 139, 156, 3);
 		playSound(41, 12);
 		playAnimation(912, 1);
@@ -99,7 +100,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(913, 1);
 		setOns(1, 109);
 		setLan(2, 1);
-		Dialog::show(scene, 0x748e, 914, 915, 0xe7, 0xd7);
+		Dialog::show(scene, 0x748e, 914, 915, 0xe7, 0xd7, 2, 1);
 		displayCredits(0xe3c2);
 		loadScene(42, 139, 156, 3);
 		playSound(15, 20);
@@ -113,7 +114,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(917, 1, true);
 		waitAnimation();
 		displayCredits(0xe3e6);
-
+		
 		loadScene(40, 139, 156, 3);
 		playMusic(3);
 		Dialog::show(scene, 0x750d, 920, 924, 0xe7, 0xeb); //as i told you, our organization...
@@ -121,7 +122,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(925, 0, true);
 		playAnimation(926, 1, true);
 		waitAnimation();
-		Dialog::show(scene, 0x78a6, 927, 920, 0xeb, 0xeb); 
+		Dialog::show(scene, 0x78a6, 920, 927, 0xeb, 0xeb); 
 		displayCredits(0xe3ff);
 		
 		loadScene(39, 139, 156, 3);

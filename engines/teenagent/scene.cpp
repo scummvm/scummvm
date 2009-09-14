@@ -230,7 +230,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		_engine->music->load(res->dseg.get_byte(0xDB90));
 }
 
-void Scene::playAnimation(byte idx, uint id, bool loop) {
+void Scene::playAnimation(byte idx, uint id, bool loop, bool paused) {
 	assert(idx < 4);
 	Common::SeekableReadStream * s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
@@ -238,6 +238,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop) {
 
 	custom_animations[idx].load(s);
 	custom_animations[idx].loop = loop;
+	custom_animations[idx].paused = paused;
 }
 
 void Scene::playActorAnimation(uint id, bool loop) {
@@ -261,10 +262,6 @@ bool Scene::processEvent(const Common::Event &event) {
 	case Common::EVENT_RBUTTONDOWN: 
 		if (!message.empty()) {
 			message.clear();
-			for(int i = 0; i < 4; ++i) {
-				if (custom_animations[i].loop)
-					custom_animations[i].free();
-			}
 			nextEvent();
 			return true;
 		}
@@ -482,49 +479,61 @@ bool Scene::processEventQueue() {
 			message = current_event.message;
 			message_pos = messagePosition(message, position);
 			message_color = current_event.color;
-		break;
+			break;
 		
-		case SceneEvent::PlayAnimation: {
+		case SceneEvent::PlayAnimation: 
 			debug(0, "playing animation %u", current_event.animation);
-			playAnimation(current_event.color & 0x3 /*slot actually :)*/, current_event.animation, (current_event.color & 0x40) != 0);
+			playAnimation(current_event.color & 0x3 /*slot actually :)*/, current_event.animation, (current_event.color & 0x80) != 0, (current_event.color & 0x40) != 0);
 			current_event.clear();
-		} break;
+			break;
 
-		case SceneEvent::PlayActorAnimation: {
-			debug(0, "playing actor animation %u", current_event.animation);
-			playActorAnimation(current_event.animation, (current_event.color & 0x40) != 0);
+		case SceneEvent::PauseAnimation:
+			debug(0, "pause animation in slot %u", current_event.color & 3);
+			custom_animations[current_event.color & 3].paused = (current_event.color & 0x80) != 0;
 			current_event.clear();
-		} break;
+			break;
+
+		case SceneEvent::ClearAnimations:
+			for(byte i = 0; i < 4; ++i) 
+				custom_animations[i].free();
+			current_event.clear();
+			break;
 		
-		case SceneEvent::PlayMusic: {
+		case SceneEvent::PlayActorAnimation: 
+			debug(0, "playing actor animation %u", current_event.animation);
+			playActorAnimation(current_event.animation, (current_event.color & 0x80) != 0);
+			current_event.clear();
+			break;
+			
+		case SceneEvent::PlayMusic:
 			debug(0, "setting music %u", current_event.music);
 			_engine->setMusic(current_event.music);
 			Resources::instance()->dseg.set_byte(0xDB90, current_event.music);
 			current_event.clear();
-		} break;
+			break;
 
-		case SceneEvent::PlaySound: {
+		case SceneEvent::PlaySound:
 			debug(0, "playing sound %u, delay: %u", current_event.sound, current_event.color);
 			if (current_event.color == 0) {
 				_engine->playSoundNow(current_event.sound);
 			} else {
 				sounds.push_back(Sound(current_event.sound, current_event.color));
 			}
-			
 			current_event.clear();
-		} break;
+			break;
 		
 		case SceneEvent::EnableObject: {
-			debug(0, "%s object #%u", current_event.color?"enabling":"disabling", current_event.object - 1);
-			Object * obj = getObject(current_event.object - 1, current_event.scene == 0? _id: current_event.scene);
-			obj->enabled = current_event.color;
-			current_event.clear();
-		} break;
+				debug(0, "%s object #%u", current_event.color?"enabling":"disabling", current_event.object - 1);
+				Object * obj = getObject(current_event.object - 1, current_event.scene == 0? _id: current_event.scene);
+				obj->enabled = current_event.color;
+				current_event.clear();
+			}
+			break;
 		
-		case SceneEvent::HideActor: {
+		case SceneEvent::HideActor:
 			hide_actor = current_event.color != 0;
 			current_event.clear();
-		} break;
+			break;
 		
 		case SceneEvent::WaitForAnimation:
 			debug(0, "waiting for the animation");
