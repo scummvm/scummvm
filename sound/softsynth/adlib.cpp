@@ -41,8 +41,8 @@ struct AdlibVoice;
 // example of this.
 //
 // It might be very well possible, that none of the compilers we support
-// add any padding bytes at all, since all used variables are only of the
-// type 'byte'. But better safe than sorry.
+// add any padding bytes at all, since the structs contain only variables
+// of the type 'byte'. But better safe than sorry.
 #include "common/pack-start.h"
 struct InstrumentExtra {
 	byte a, b, c, d, e, f, g, h;
