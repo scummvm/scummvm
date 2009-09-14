@@ -602,14 +602,14 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
 	int width, height;
-	char *text = argv[1].segment ? kernelDerefString(s->segMan, argv[1]) : NULL;
+	char *text = argv[1].segment ? s->segMan->kernelDerefString(argv[1]) : NULL;
 	const char *sep = NULL; 
-	reg_t *dest = kernelDerefRegPtr(s->segMan, argv[0], 4);
+	reg_t *dest = s->segMan->kernelDerefRegPtr(argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	if ((argc > 4) && (argv[4].segment))
-		sep = kernelDerefString(s->segMan, argv[4]);
+		sep = s->segMan->kernelDerefString(argv[4]);
 
 	if (maxwidth < 0)
 		maxwidth = 0;
@@ -1298,7 +1298,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = text_pos.isNull() ? NULL : (char *)segMan->dereference(text_pos, NULL);
+	char *text = text_pos.isNull() ? NULL : segMan->kernelDerefString(text_pos);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
@@ -1396,7 +1396,7 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 				reg_t text_pos = GET_SEL32(obj, text);
 				int display_offset = 0;
 
-				char *text = (char *)s->segMan->dereference(text_pos, NULL);
+				char *text = s->segMan->kernelDerefString(text_pos);
 				int textlen;
 
 				if (!text) {
@@ -1559,7 +1559,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	const char *text = text_pos.isNull() ? NULL : (char *)s->segMan->dereference(text_pos, NULL);
+	const char *text = text_pos.isNull() ? NULL : s->segMan->kernelDerefString(text_pos);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -2506,7 +2506,7 @@ reg_t kNewWindow(EngineState *s, int, int argc, reg_t *argv) {
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
 	lWhite.control = -1;
-	const char *title = argv[4 + argextra].segment ? kernelDerefString(s->segMan, argv[4 + argextra]) : NULL;
+	const char *title = argv[4 + argextra].segment ? s->segMan->kernelDerefString(argv[4 + argextra]) : NULL;
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
 							s->titlebar_port->_font, lWhite, black, title ? s->strSplit(title, NULL).c_str() : NULL, flags);
@@ -3135,7 +3135,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	if (textp.segment) {
 		argpt = 1;
-		text = kernelDerefString(s->segMan, textp);
+		text = s->segMan->kernelDerefString(textp);
 	} else {
 		argpt = 2;
 		text = kernel_lookup_text(s, textp, index);
@@ -3303,7 +3303,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = kernelDerefString(s->segMan, argv[1]);
+	const char *filename = s->segMan->kernelDerefString(argv[1]);
 	
 	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
 	
@@ -3382,7 +3382,7 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = kernelDerefString(s->segMan, argv[0]);
+	const char *filename = s->segMan->kernelDerefString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
 	SeqDecoder seq;

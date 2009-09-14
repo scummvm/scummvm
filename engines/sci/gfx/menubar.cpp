@@ -294,7 +294,7 @@ int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribut
 	case MENU_ATTRIBUTE_SAID:
 		if (value.segment) {
 			item->_saidPos = value;
-			memcpy(item->_said, kernelDerefBulkPtr(s->segMan, value, 0), MENU_SAID_SPEC_SIZE); // Copy Said spec
+			memcpy(item->_said, s->segMan->kernelDerefBulkPtr(value, 0), MENU_SAID_SPEC_SIZE); // Copy Said spec
 			item->_flags |= MENU_ATTRIBUTE_FLAGS_SAID;
 
 		} else
@@ -304,7 +304,7 @@ int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribut
 
 	case MENU_ATTRIBUTE_TEXT:
 		assert(value.segment);
-		item->_text = kernelDerefString(s->segMan, value);
+		item->_text = s->segMan->kernelDerefString(value);
 		item->_textPos = value;
 		break;
 

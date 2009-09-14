@@ -930,6 +930,39 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 	return mobj->dereference(pointer, size);
 }
 
+static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, int align) {
+	int maxsize;
+	void *retval = segMan->dereference(pointer, &maxsize);
+
+	if (!retval)
+		return NULL;
+
+	if (pointer.offset & (align - 1)) {
+		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
+		return NULL;
+	}
+
+	if (entries > maxsize) {
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
+		return NULL;
+	}
+	return retval;
+
+}
+
+byte *SegManager::kernelDerefBulkPtr(reg_t pointer, int entries) {
+	return (byte *)_kernel_dereference_pointer(this, pointer, entries, 1);
+}
+
+reg_t *SegManager::kernelDerefRegPtr(reg_t pointer, int entries) {
+	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries, sizeof(reg_t));
+}
+
+char *SegManager::kernelDerefString(reg_t pointer, int entries) {
+	return (char *)_kernel_dereference_pointer(this, pointer, entries, 1);
+}
+
+
 byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	SegmentId seg;
 	MemObject *mobj = allocSegment(MEM_OBJ_DYNMEM, &seg);

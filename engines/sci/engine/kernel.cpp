@@ -721,38 +721,6 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 		return (*sig == 0 || (*sig & KSIG_ELLIPSIS));
 }
 
-static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, int align) {
-	int maxsize;
-	void *retval = segMan->dereference(pointer, &maxsize);
-
-	if (!retval)
-		return NULL;
-
-	if (pointer.offset & (align - 1)) {
-		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
-		return NULL;
-	}
-
-	if (entries > maxsize) {
-		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
-		return NULL;
-	}
-	return retval;
-
-}
-
-byte *kernelDerefBulkPtr(SegManager *segMan, reg_t pointer, int entries) {
-	return (byte *)_kernel_dereference_pointer(segMan, pointer, entries, 1);
-}
-
-reg_t *kernelDerefRegPtr(SegManager *segMan, reg_t pointer, int entries) {
-	return (reg_t *)_kernel_dereference_pointer(segMan, pointer, entries, sizeof(reg_t));
-}
-
-char *kernelDerefString(SegManager *segMan, reg_t pointer, int entries) {
-	return (char *)_kernel_dereference_pointer(segMan, pointer, entries, 1);
-}
-
 void Kernel::setDefaultKernelNames() {
 	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
 

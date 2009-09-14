@@ -44,7 +44,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	Resource *textres;
 
 	if (address.segment)
-		return kernelDerefString(s->segMan, address);
+		return s->segMan->kernelDerefString(address);
 	else {
 		int textlen;
 		int _index = index;
@@ -87,7 +87,7 @@ reg_t kSaid(EngineState *s, int, int argc, reg_t *argv) {
 	if (!heap_said_block.segment)
 		return NULL_REG;
 
-	said_block = (byte *)kernelDerefBulkPtr(s->segMan, heap_said_block, 0);
+	said_block = (byte *)s->segMan->kernelDerefBulkPtr(heap_said_block, 0);
 
 	if (!said_block) {
 		warning("Said on non-string, pointer %04x:%04x", PRINT_REG(heap_said_block));
@@ -189,7 +189,7 @@ reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t stringpos = argv[0];
-	char *string = kernelDerefString(s->segMan, stringpos);
+	char *string = s->segMan->kernelDerefString(stringpos);
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
@@ -242,7 +242,7 @@ reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 0);
 		PUT_SEL32V(event, claimed, 1);
 		if (error) {
-			char *pbase_str = kernelDerefString(s->segMan, s->parser_base);
+			char *pbase_str = s->segMan->kernelDerefString(s->parser_base);
 			strcpy(pbase_str, error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s\n", error);
 			/* Issue warning: */
@@ -259,7 +259,7 @@ reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kStrEnd(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t address = argv[0];
-	char *seeker = kernelDerefString(s->segMan, address);
+	char *seeker = s->segMan->kernelDerefString(address);
 
 	while (*seeker++)
 		++address.offset;
@@ -268,16 +268,16 @@ reg_t kStrEnd(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kStrCat(EngineState *s, int, int argc, reg_t *argv) {
-	char *s1 = kernelDerefString(s->segMan, argv[0]);
-	char *s2 = kernelDerefString(s->segMan, argv[1]);
+	char *s1 = s->segMan->kernelDerefString(argv[0]);
+	char *s2 = s->segMan->kernelDerefString(argv[1]);
 
 	strcat(s1, s2);
 	return argv[0];
 }
 
 reg_t kStrCmp(EngineState *s, int, int argc, reg_t *argv) {
-	char *s1 = kernelDerefString(s->segMan, argv[0]);
-	char *s2 = kernelDerefString(s->segMan, argv[1]);
+	char *s1 = s->segMan->kernelDerefString(argv[0]);
+	char *s2 = s->segMan->kernelDerefString(argv[1]);
 
 	if (argc > 2)
 		return make_reg(0, strncmp(s1, s2, argv[2].toUint16()));
@@ -287,8 +287,8 @@ reg_t kStrCmp(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kStrCpy(EngineState *s, int, int argc, reg_t *argv) {
-	char *dest = kernelDerefString(s->segMan, argv[0]);
-	char *src = kernelDerefString(s->segMan, argv[1]);
+	char *dest = s->segMan->kernelDerefString(argv[0]);
+	char *src = s->segMan->kernelDerefString(argv[1]);
 
 	if (!dest) {
 		warning("Attempt to strcpy TO invalid pointer %04x:%04x",
@@ -352,7 +352,7 @@ static int is_print_str(const char *str) {
 
 
 reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
-	char *dest = kernelDerefString(s->segMan, argv[0]);
+	char *dest = s->segMan->kernelDerefString(argv[0]);
 	reg_t *dest2;
 
 	if (!dest) {
@@ -394,7 +394,7 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
-	char *source = kernelDerefString(s->segMan, argv[0]);
+	char *source = s->segMan->kernelDerefString(argv[0]);
 
 	while (isspace(*source))
 		source++; /* Skip whitespace */
@@ -420,7 +420,7 @@ reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
-	char *target = kernelDerefString(s->segMan, dest);
+	char *target = s->segMan->kernelDerefString(dest);
 	reg_t position = argv[1]; /* source */
 	int index = argv[2].toUint16();
 	char *source;
@@ -633,7 +633,7 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kStrLen(EngineState *s, int, int argc, reg_t *argv) {
-	char *str = kernelDerefString(s->segMan, argv[0]);
+	char *str = s->segMan->kernelDerefString(argv[0]);
 
 	if (!str) {
 		warning("StrLen: invalid pointer %04x:%04x", PRINT_REG(argv[0]));
@@ -665,7 +665,7 @@ reg_t kGetFarText(EngineState *s, int, int argc, reg_t *argv) {
 	** resource.
 	*/
 
-	strcpy(kernelDerefString(s->segMan, argv[2]), seeker); /* Copy the string and get return value */
+	strcpy(s->segMan->kernelDerefString(argv[2]), seeker); /* Copy the string and get return value */
 	return argv[2];
 }
 
@@ -740,7 +740,7 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 
 		if (!bufferReg.isNull()) {
 			int len = str.size() + 1;
-			buffer = kernelDerefString(s->segMan, bufferReg, len);
+			buffer = s->segMan->kernelDerefString(bufferReg, len);
 
 			if (buffer) {
 				strcpy(buffer, str.c_str());
@@ -748,7 +748,7 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str.c_str());
 
 				// Set buffer to empty string if possible
-				buffer = kernelDerefString(s->segMan, bufferReg, 1);
+				buffer = s->segMan->kernelDerefString(bufferReg, 1);
 				if (buffer)
 					*buffer = 0;
 			}
@@ -788,7 +788,7 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 	case K_MESSAGE_LASTMESSAGE: {
 		MessageTuple msg = s->_msgState.getLastTuple();
 		int module = s->_msgState.getLastModule();
-		byte *buffer = kernelDerefBulkPtr(s->segMan, argv[1], 10);
+		byte *buffer = s->segMan->kernelDerefBulkPtr(argv[1], 10);
 
 		if (buffer) {
 			WRITE_LE_UINT16(buffer, module);
@@ -810,18 +810,18 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kSetQuitStr(EngineState *s, int, int argc, reg_t *argv) {
-        char *quitStr = kernelDerefString(s->segMan, argv[0]);
+        char *quitStr = s->segMan->kernelDerefString(argv[0]);
         debug("Setting quit string to '%s'", quitStr);
         return s->r_acc;
 }
 
 reg_t kStrSplit(EngineState *s, int, int argc, reg_t *argv) {
-	const char *format = kernelDerefString(s->segMan, argv[1]);
-	const char *sep = !argv[2].isNull() ? kernelDerefString(s->segMan, argv[2]) : NULL;
+	const char *format = s->segMan->kernelDerefString(argv[1]);
+	const char *sep = !argv[2].isNull() ? s->segMan->kernelDerefString(argv[2]) : NULL;
 	Common::String str = s->strSplit(format, sep);
 
 	// Make sure target buffer is large enough
-	char *buf = kernelDerefString(s->segMan, argv[0], str.size() + 1);
+	char *buf = s->segMan->kernelDerefString(argv[0], str.size() + 1);
 
 	if (buf) {
 		strcpy(buf, str.c_str());

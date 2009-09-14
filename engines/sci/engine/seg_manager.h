@@ -333,6 +333,34 @@ public:
 	byte *dereference(reg_t reg, int *size);
 
 	/**
+	 * Dereferences a heap pointer pointing to raw memory.
+	 * @param pointer The pointer to dereference
+	 * @parm entries The number of values expected (for checkingO
+	 * @return A physical reference to the address pointed to, or NULL on error or
+	 * if not enough entries were available.
+	 */
+	byte *kernelDerefBulkPtr(reg_t pointer, int entries);
+
+	/**
+	 * Dereferences a heap pointer pointing to a (list of) register(s).
+	 * Ensures alignedness of data.
+	 * @param pointer The pointer to dereference
+	 * @parm entries The number of values expected (for checking)
+	 * @return A physical reference to the address pointed to, or NULL on error or
+	 * if not enough entries were available.
+	 */
+	reg_t *kernelDerefRegPtr(reg_t pointer, int entries);
+
+	/**
+	 * Dereferences a heap pointer pointing to raw memory.
+	 * @param pointer The pointer to dereference
+	 * @parm entries The number of values expected (for checking)
+	 * @return A physical reference to the address pointed to, or NULL on error or
+	 * if not enough entries were available.
+	 */
+	char *kernelDerefString(reg_t pointer, int entries = 0);
+
+	/**
 	 * Finds a unique segment by type
 	 * @param type	The type of the segment to find
 	 * @return		The segment number, or -1 if the segment wasn't found

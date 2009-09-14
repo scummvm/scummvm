@@ -224,22 +224,6 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
  */
 char *kernel_lookup_text(EngineState *s, reg_t address, int index);
 
-/******************** Kernel function parameter macros ********************/
-
-/* Returns the parameter value or (alt) if not enough parameters were supplied */
-/**
- * Dereferences a heap pointer
- * @param s The state to operate on
- * @param pointer The pointer to dereference
- * @parm entries The number of values expected (for checking; use 0 for strings)
- * @return A physical reference to the address pointed to, or NULL on error or
- * if not enugh entries were available.
- * reg_t dereferenciation also assures alignedness of data.
- */
-reg_t *kernelDerefRegPtr(SegManager *segMan, reg_t pointer, int entries);
-byte *kernelDerefBulkPtr(SegManager *segMan, reg_t pointer, int entries);
-char *kernelDerefString(SegManager *segMan, reg_t pointer, int entries = 0);
-
 /******************** Priority macros/functions ********************/
 /**
  * Finds the position of the priority band specified
