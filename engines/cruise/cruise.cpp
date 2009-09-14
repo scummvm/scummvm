@@ -87,8 +87,10 @@ Common::Error CruiseEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
-	if (!loadLanguageStrings())
+	if (!loadLanguageStrings()) {
+		error("Could not setup language data for your version");
 		return Common::kUnknownError;
+	}
 
 	initialize();
 
@@ -167,14 +169,17 @@ bool CruiseEngine::loadLanguageStrings() {
 		// Try and use one of the pre-defined language lists
 		const char **p = NULL;
 		switch (getLanguage()) {
-			case Common::EN_ANY:
-				p = englishLanguageStrings;
-				break;
-			case Common::FR_FRA:
-				p = frenchLanguageStrings;
-				break;
-			default:
-				return false;
+		case Common::EN_ANY:
+			p = englishLanguageStrings;
+			break;
+		case Common::FR_FRA:
+			p = frenchLanguageStrings;
+			break;
+		case Common::DE_DEU:
+			p = germanLanguageStrings;
+			break;
+		default:
+			return false;
 		}
 
 		// Load in the located language set

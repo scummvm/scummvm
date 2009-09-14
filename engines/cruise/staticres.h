@@ -59,6 +59,7 @@ extern const byte mouseCursorMagnifyingGlass[];
 // Language strings
 extern const char *englishLanguageStrings[13];
 extern const char *frenchLanguageStrings[13];
+extern const char *germanLanguageStrings[13];
 
 } // End of namespace Cruise
 

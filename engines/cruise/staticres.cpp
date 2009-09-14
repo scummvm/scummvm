@@ -317,5 +317,11 @@ const char *frenchLanguageStrings[13] = {
 	"", NULL, NULL, NULL, NULL, "Inventaire", "Parler de...", "Menu Joueur", NULL,
 	"Sauvegarde", "Chargement", "Recommencer le jeu", "Quitter"
 };
+// The original Amiga version does use "Speilermen\xFC" instead of "Spielermen\xFC", if we want to correct
+// this typo, we can easily do so.
+const char *germanLanguageStrings[13] = {
+	" ", NULL, NULL, NULL, NULL, "Inventar", "Sprechen ""\xFC""ber", "Speilermen\xFC", "Speicherlaufwerk",
+	"Speichern", "Laden", "Neu beginnen", "Ende"
+};
 
 } // End of namespace Cruise
