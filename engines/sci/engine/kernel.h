@@ -238,8 +238,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index);
  */
 reg_t *kernelDerefRegPtr(SegManager *segMan, reg_t pointer, int entries);
 byte *kernelDerefBulkPtr(SegManager *segMan, reg_t pointer, int entries);
-#define kernelDerefCharPtr(state, pointer, entries) ((char*)kernelDerefBulkPtr(state, pointer, entries))
-#define kernelDerefString(state, pointer) ((char*)kernelDerefBulkPtr(state, pointer, 0))
+char *kernelDerefString(SegManager *segMan, reg_t pointer, int entries = 0);
 
 /******************** Priority macros/functions ********************/
 /**

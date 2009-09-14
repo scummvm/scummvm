@@ -44,7 +44,7 @@ char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	Resource *textres;
 
 	if (address.segment)
-		return (char *)kernelDerefBulkPtr(s->segMan, address, 0);
+		return kernelDerefString(s->segMan, address);
 	else {
 		int textlen;
 		int _index = index;
@@ -87,7 +87,7 @@ reg_t kSaid(EngineState *s, int, int argc, reg_t *argv) {
 	if (!heap_said_block.segment)
 		return NULL_REG;
 
-	said_block = (byte *) kernelDerefBulkPtr(s->segMan, heap_said_block, 0);
+	said_block = (byte *)kernelDerefBulkPtr(s->segMan, heap_said_block, 0);
 
 	if (!said_block) {
 		warning("Said on non-string, pointer %04x:%04x", PRINT_REG(heap_said_block));
@@ -287,8 +287,8 @@ reg_t kStrCmp(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kStrCpy(EngineState *s, int, int argc, reg_t *argv) {
-	char *dest = (char *) kernelDerefBulkPtr(s->segMan, argv[0], 0);
-	char *src = (char *) kernelDerefBulkPtr(s->segMan, argv[1], 0);
+	char *dest = kernelDerefString(s->segMan, argv[0]);
+	char *src = kernelDerefString(s->segMan, argv[1]);
 
 	if (!dest) {
 		warning("Attempt to strcpy TO invalid pointer %04x:%04x",
@@ -352,7 +352,7 @@ static int is_print_str(const char *str) {
 
 
 reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
-	byte *dest = (byte *)kernelDerefBulkPtr(s->segMan, argv[0], 0);
+	char *dest = kernelDerefString(s->segMan, argv[0]);
 	reg_t *dest2;
 
 	if (!dest) {
@@ -380,7 +380,7 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 		int odd = !(argv[1].toUint16() & 1);
 #endif
 		dest2 = ((reg_t *) dest) + (argv[1].toUint16() / 2);
-		dest = ((byte *)(&dest2->offset)) + odd;
+		dest = ((char *)(&dest2->offset)) + odd;
 	} else
 		dest += argv[1].toUint16();
 
@@ -420,7 +420,7 @@ reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
-	char *target = (char *) kernelDerefBulkPtr(s->segMan, dest, 0);
+	char *target = kernelDerefString(s->segMan, dest);
 	reg_t position = argv[1]; /* source */
 	int index = argv[2].toUint16();
 	char *source;
@@ -740,7 +740,7 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 
 		if (!bufferReg.isNull()) {
 			int len = str.size() + 1;
-			buffer = kernelDerefCharPtr(s->segMan, bufferReg, len);
+			buffer = kernelDerefString(s->segMan, bufferReg, len);
 
 			if (buffer) {
 				strcpy(buffer, str.c_str());
@@ -748,7 +748,7 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str.c_str());
 
 				// Set buffer to empty string if possible
-				buffer = kernelDerefCharPtr(s->segMan, bufferReg, 1);
+				buffer = kernelDerefString(s->segMan, bufferReg, 1);
 				if (buffer)
 					*buffer = 0;
 			}
@@ -821,7 +821,7 @@ reg_t kStrSplit(EngineState *s, int, int argc, reg_t *argv) {
 	Common::String str = s->strSplit(format, sep);
 
 	// Make sure target buffer is large enough
-	char *buf = kernelDerefCharPtr(s->segMan, argv[0], str.size() + 1);
+	char *buf = kernelDerefString(s->segMan, argv[0], str.size() + 1);
 
 	if (buf) {
 		strcpy(buf, str.c_str());

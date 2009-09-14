@@ -811,7 +811,7 @@ reg_t kFileIO(EngineState *s, int, int argc, reg_t *argv) {
 	case K_FILEIO_WRITE_STRING : {
 		int handle = argv[1].toUint16();
 		int size = argv[3].toUint16();
-		char *buf = kernelDerefCharPtr(s->segMan, argv[2], size);
+		char *buf = kernelDerefString(s->segMan, argv[2], size);
 		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
 
 		// FIXME: What is the difference between K_FILEIO_WRITE_STRING and

@@ -602,14 +602,14 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
 	int width, height;
-	char *text = argv[1].segment ? (char *) kernelDerefBulkPtr(s->segMan, argv[1], 0) : NULL;
+	char *text = argv[1].segment ? kernelDerefString(s->segMan, argv[1]) : NULL;
 	const char *sep = NULL; 
 	reg_t *dest = kernelDerefRegPtr(s->segMan, argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	if ((argc > 4) && (argv[4].segment))
-		sep = (const char *)kernelDerefBulkPtr(s->segMan, argv[4], 0);
+		sep = kernelDerefString(s->segMan, argv[4]);
 
 	if (maxwidth < 0)
 		maxwidth = 0;
@@ -3135,7 +3135,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	if (textp.segment) {
 		argpt = 1;
-		text = (char *)kernelDerefBulkPtr(s->segMan, textp, 0);
+		text = kernelDerefString(s->segMan, textp);
 	} else {
 		argpt = 2;
 		text = kernel_lookup_text(s, textp, index);

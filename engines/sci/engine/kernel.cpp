@@ -742,11 +742,15 @@ static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int 
 }
 
 byte *kernelDerefBulkPtr(SegManager *segMan, reg_t pointer, int entries) {
-	return (byte*)_kernel_dereference_pointer(segMan, pointer, entries, 1);
+	return (byte *)_kernel_dereference_pointer(segMan, pointer, entries, 1);
 }
 
 reg_t *kernelDerefRegPtr(SegManager *segMan, reg_t pointer, int entries) {
-	return (reg_t*)_kernel_dereference_pointer(segMan, pointer, entries, sizeof(reg_t));
+	return (reg_t *)_kernel_dereference_pointer(segMan, pointer, entries, sizeof(reg_t));
+}
+
+char *kernelDerefString(SegManager *segMan, reg_t pointer, int entries) {
+	return (char *)_kernel_dereference_pointer(segMan, pointer, entries, 1);
 }
 
 void Kernel::setDefaultKernelNames() {
