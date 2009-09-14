@@ -420,7 +420,7 @@ void SystemStrings::saveLoadWithSerializer(Common::Serializer &s) {
 
 void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_size);
-	syncCStr(s, &_description);
+	s.syncString(_description);
 	if (!_buf && _size) {
 		_buf = (byte *)calloc(_size, 1);
 	}

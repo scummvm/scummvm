@@ -1488,7 +1488,7 @@ bool Console::segmentInfo(int nr) {
 
 	case MEM_OBJ_DYNMEM: {
 		DebugPrintf("dynmem (%s): %d bytes\n",
-		          (*(DynMem *)mobj)._description ? (*(DynMem *)mobj)._description : "no description", (*(DynMem *)mobj)._size);
+		          (*(DynMem *)mobj)._description.c_str(), (*(DynMem *)mobj)._size);
 
 		Common::hexdump((*(DynMem *)mobj)._buf, (*(DynMem *)mobj)._size, 16, 0);
 	}

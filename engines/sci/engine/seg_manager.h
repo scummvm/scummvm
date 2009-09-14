@@ -312,16 +312,6 @@ public:
 	const char *getDescription(reg_t addr);
 
 
-	// 10. Reserved segments
-
-	// Reserves a special-purpose segment
-	// Parameters: (char *) name: A string name identifying the segment (the string is cloned and retained)
-	// Returns   : A fresh segment ID for the segment in question
-	// Reserved segments are never used by the segment manager.  They can be used to tag special-purpose addresses.
-	// Segment 0 is implicitly reserved for numbers.
-	//SegmentId sm_allocate_reserved_segment(char *name);
-
-
 	// Generic Operations on Segments and Addresses
 
 	/**

@@ -175,7 +175,6 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 		if (!s->segMan->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
-		return s->r_acc;
 		break;
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
 		s->segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
@@ -234,7 +233,6 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 				WRITE_LE_UINT16(ref, argv[2].offset); // ?
 			}
 		}
-		return s->r_acc;
 		break;
 	}
 	}

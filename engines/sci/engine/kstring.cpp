@@ -367,12 +367,10 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 	if (s->_gameName.equalsIgnoreCase("lsl5") && s->currentRoomNumber() == 155)
 		lsl5PasswordWorkaround = true;
 
-	const char* dst = (const char *)dest; // used just for code beautification purposes
-
 	if ((argc == 2) &&
 	        /* Our pathfinder already works around the issue we're trying to fix */
 	        (strcmp(s->segMan->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0) &&
-	        ((strlen(dst) < 2) || (!lsl5PasswordWorkaround && !is_print_str(dst)))) {
+	        ((strlen(dest) < 2) || (!lsl5PasswordWorkaround && !is_print_str(dest)))) {
 		// SQ4 array handling detected
 #ifndef SCUMM_BIG_ENDIAN
 		int odd = argv[1].toUint16() & 1;

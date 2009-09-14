@@ -302,7 +302,7 @@ const char *SegManager::getObjectName(reg_t pos) {
 	if (nameReg.isNull())
 		return "<no name>";
 
-	const char *name = (const char*)dereference(obj->_variables[SCRIPT_NAME_SELECTOR], NULL);
+	const char *name = derefString(obj->_variables[SCRIPT_NAME_SELECTOR]);
 	if (!name)
 		return "<invalid name>";
 
@@ -930,17 +930,12 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 	return mobj->dereference(pointer, size);
 }
 
-static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, int align) {
+static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries) {
 	int maxsize;
 	void *retval = segMan->dereference(pointer, &maxsize);
 
 	if (!retval)
 		return NULL;
-
-	if (pointer.offset & (align - 1)) {
-		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
-		return NULL;
-	}
 
 	if (entries > maxsize) {
 		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
@@ -951,15 +946,21 @@ static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int 
 }
 
 byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
-	return (byte *)_kernel_dereference_pointer(this, pointer, entries, 1);
+	return (byte *)_kernel_dereference_pointer(this, pointer, entries);
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
-	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries, sizeof(reg_t));
+	const int align = sizeof(reg_t);
+	if (pointer.offset & (align - 1)) {
+		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
+		return NULL;
+	}
+
+	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries);
 }
 
 char *SegManager::derefString(reg_t pointer, int entries) {
-	return (char *)_kernel_dereference_pointer(this, pointer, entries, 1);
+	return (char *)_kernel_dereference_pointer(this, pointer, entries);
 }
 
 
@@ -977,7 +978,7 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	else
 		d._buf = (byte *)malloc(size);
 
-	d._description = strdup(descr);
+	d._description = descr;
 
 	return (byte *)(d._buf);
 }
@@ -990,7 +991,7 @@ const char *SegManager::getDescription(reg_t addr) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_DYNMEM:
-		return (*(DynMem *)mobj)._description;
+		return (*(DynMem *)mobj)._description.c_str();
 	default:
 		return "";
 	}

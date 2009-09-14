@@ -557,14 +557,12 @@ struct HunkTable : public Table<Hunk> {
 // Free-style memory
 struct DynMem : public MemObject {
 	int _size;
-	char *_description;
+	Common::String _description;
 	byte *_buf;
 
 public:
-	DynMem() : _size(0), _description(0), _buf(0) {}
+	DynMem() : _size(0), _buf(0) {}
 	~DynMem() {
-		free(_description);
-		_description = NULL;
 		free(_buf);
 		_buf = NULL;
 	}
