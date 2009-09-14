@@ -40,12 +40,10 @@ ResourcePack::ResourcePack(int resourceIndex) {
 }
 
 ResourcePack::~ResourcePack() {
-	for (uint32 i = 0; i < _resources.size(); i++) {
+	for (uint32 i = 0; i < _resources.size(); i++)
 		delete [] _resources[i].data;
-	}
 
 	_resources.clear();
-
 	_packFile.close();
 }
 
