@@ -545,6 +545,8 @@ int kShowActor(ActionCommand *cmd) {
 			cmd->param1,
 			Shared.getScene()->getSceneIndex(),
 			ScriptMan.currentLine);
+
+    return 0;
 }
 
 int kSetActorStats(ActionCommand *cmd) {
@@ -1110,7 +1112,7 @@ int kSetBarrierFrameIdxFlaged(ActionCommand *cmd) {
 }
 
 int k_unk59(ActionCommand *cmd) {
-
+    return -2;
 }
 int k_unk5A(ActionCommand *cmd) {
 	return -2;
