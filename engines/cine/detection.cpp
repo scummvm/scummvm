@@ -172,6 +172,20 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{ // Amiga "Interplay" labeled version
+		{
+			"fw",
+			"",
+			AD_ENTRY1("part01", "a17a5eb15200c63276d486a88263ccd0"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_FW,
+		0,
+	},
+
 	{
 		{
 			"fw",
