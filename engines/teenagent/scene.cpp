@@ -159,13 +159,13 @@ void Scene::loadLans() {
 	Resources *res = Resources::instance();
 	//load lan000
 
-	for (int i = 0; i < 4; ++i) {
+	for (byte i = 0; i < 4; ++i) {
 		animation[i].free();
 
 		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
 		byte bxv = res->dseg.get_byte(bx);
 		uint16 res_id = 4 * (_id - 1) + i + 1;
-		debug(0, "lan: [%04x] = %02x, resource id: %u", bx, bxv, res_id);
+		debug(0, "lan[%u]@%04x = %02x, resource id: %u", i, bx, bxv, res_id);
 		if (bxv == 0)
 			continue;
 
@@ -326,7 +326,7 @@ bool Scene::render(OSystem *system) {
 
 		bool got_any_animation = false;
 
-		for (int i = 0; i < 4; ++i) {
+		for (byte i = 0; i < 4; ++i) {
 			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame();
 			if (s != NULL) {
@@ -356,9 +356,13 @@ bool Scene::render(OSystem *system) {
 			}
 		}
 
-		if (!hide_actor) {
+		{
 			Surface *mark = actor_animation.currentFrame();
-			if (mark == NULL) {
+			if (mark != NULL) {
+				actor_animation_position = mark->render(surface);
+				busy = true;
+				got_any_animation = true;
+			} else if (!hide_actor) {
 				actor_animation.free();
 
 				if (destination != position) {
@@ -384,13 +388,8 @@ bool Scene::render(OSystem *system) {
 						busy = true;
 				} else
 					actor_animation_position = teenagent.render(surface, position, orientation, 0);
-			} else {
-				actor_animation_position = mark->render(surface);
-				busy = true;
-				got_any_animation = true;
 			}
-		} else 
-			actor_animation_position = Common::Rect();
+		}
 
 		if (!message.empty()) {
 			res->font7.color = message_color;
@@ -505,7 +504,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::kPlayAnimation:
 			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.lan & 3);
-			playAnimation(current_event.lan & 0x3, current_event.animation, (current_event.lan & 0x80) != 0, (current_event.lan & 0x40) != 0);
+			playAnimation(current_event.lan & 3, current_event.animation, (current_event.lan & 0x80) != 0, (current_event.lan & 0x40) != 0);
 			current_event.clear();
 			break;
 
