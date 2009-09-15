@@ -2,6 +2,7 @@
 #include "common/str.h"
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/stream.h"
 
 void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_offset = inStream.readUint32LE();

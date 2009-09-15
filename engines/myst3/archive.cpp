@@ -1,5 +1,6 @@
 #include "engines/myst3/archive.h"
 #include "common/debug.h"
+#include "common/memstream.h"
 
 void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::WriteStream &outStream) {
 	static const uint32 addKey = 0x3C6EF35F;
@@ -20,7 +21,7 @@ void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::Write
 }
 
 void Archive::readFromStream(Common::SeekableReadStream &inStream) {
-	Common::MemoryWriteStreamDynamic buf(true);
+	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
 	_decryptHeader(inStream, buf);
 	
 	Common::MemoryReadStream directory(buf.getData(), buf.size());

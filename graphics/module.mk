@@ -15,6 +15,7 @@ MODULE_OBJS := \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
 	yuv_to_rgb.o \
+	jpeg.o \
 	matrix3.o \
 	matrix4.o \
 	line3d.o \
