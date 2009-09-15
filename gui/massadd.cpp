@@ -149,8 +149,10 @@ void MassAddDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		ConfMan.flushToDisk();
 
 		// And scroll to first detected game
-		sort(_games.begin(), _games.end(), GameDescLess());
-		ConfMan.set("temp_selection", _games.front().gameid());
+		if (!_games.empty()) {
+			sort(_games.begin(), _games.end(), GameDescLess());
+			ConfMan.set("temp_selection", _games.front().gameid());
+		}
 
 		close();
 	} else if (cmd == kCancelCmd) {
