@@ -223,8 +223,11 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 		// even though the struct is only 3 bytes, resulting in an invalid read, when accessing indices
 		// 14 and 15 of 16 color palettes.
 		//
-		// To work around this issue, we added an temporary variable, which will have padding so
+		// To work around this issue, we added an temporary variable, which will have padding, so
 		// the 8 byte read (which is done when passing src) is assured to be in a valid memory area.
+		//
+		// For more information about this gcc specific problem, you can read up on the following bug
+		// report: http://gcc.gnu.org/bugzilla/show_bug.cgi?id=36043
 		const Color src = _colors[i];
 		output._colors[i] = saturatedAddColor(src, r, g, b);
 	}
