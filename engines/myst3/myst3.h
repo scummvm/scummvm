@@ -28,7 +28,7 @@
 
 #include "engines/engine.h"
 
-#include "engines/grim/textobject.h"
+#include "common/system.h"
 
 namespace Myst3 {
 
@@ -44,9 +44,9 @@ public:
 	virtual ~Myst3Engine();
 
 private:
+	OSystem *_system;
 
 	void dumpArchive(const char *fileName);
-
 };
 
 } // end of namespace Myst3
