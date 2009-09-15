@@ -41,7 +41,6 @@
 			<File RelativePath="..\..\engines\gob\save\saveload_v3.cpp" />
 			<File RelativePath="..\..\engines\gob\save\saveload_v4.cpp" />
 			<File RelativePath="..\..\engines\gob\save\saveload_v6.cpp" />
-			<File RelativePath="..\..\engines\gob\save\saveload_fascination.cpp" />
 			<File RelativePath="..\..\engines\gob\save\saveload_playtoons.cpp" />
 		</Filter>
 		<Filter Name="sound">
