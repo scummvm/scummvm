@@ -98,6 +98,10 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 					SceneEvent e(SceneEvent::Message);
 					e.message = message;
 					e.color = color;
+					if (animation1 != 0 && color == color1)
+						e.lan = slot1;
+					if (animation2 != 0 && color == color2)
+						e.lan = slot2;
 					scene->push(e);
 					message.clear();
 				}

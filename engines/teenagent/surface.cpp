@@ -76,8 +76,8 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 }
 
 Common::Rect Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror) {
-	assert(x + w <= surface->w);
-	assert(y + h <= surface->h);
+	assert(x + dx + w <= surface->w);
+	assert(y + dy + h <= surface->h);
 
 	byte *src = (byte *)pixels;
 	byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);

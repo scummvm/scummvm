@@ -382,7 +382,7 @@ bool Scene::render(OSystem *system) {
 					} else
 						busy = true;
 				} else
-					teenagent.render(surface, position, orientation, 0);
+					actor_animation_position = teenagent.render(surface, position, orientation, 0);
 			} else {
 				actor_animation_position = mark->render(surface);
 				busy = true;
@@ -480,21 +480,36 @@ bool Scene::processEventQueue() {
 		break;
 
 		case SceneEvent::CreditsMessage:
-		case SceneEvent::Message:
-			//debug(0, "pop(%04x)", current_event.message);
-			message = current_event.message;
-			message_pos = messagePosition(message, position);
-			message_color = current_event.color;
+		case SceneEvent::Message: {
+				message = current_event.message;
+				Common::Point p(
+					(actor_animation_position.left + actor_animation_position.right) / 2, 
+					actor_animation_position.top 
+				);
+				//FIXME: rewrite it:
+				if (current_event.lan < 4) {
+					const Surface * s = custom_animation[current_event.lan].currentFrame(0);
+					if (s == NULL)
+						s = animation[current_event.lan].currentFrame(0);
+					if (s != NULL) {
+						p.x = s->x + s->w / 2;
+						p.y = s->y;
+					} else 
+						warning("no animation in slot %u", current_event.lan);
+				}
+				message_pos = messagePosition(message, p);
+				message_color = current_event.color;
+			}
 			break;
 
 		case SceneEvent::PlayAnimation:
-			debug(0, "playing animation %u", current_event.animation);
+			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.lan & 3);
 			playAnimation(current_event.lan & 0x3, current_event.animation, (current_event.lan & 0x80) != 0, (current_event.lan & 0x40) != 0);
 			current_event.clear();
 			break;
 
 		case SceneEvent::PauseAnimation:
-			debug(0, "pause animation in slot %u", current_event.color & 3);
+			debug(0, "pause animation in slot %u", current_event.lan & 3);
 			custom_animation[current_event.lan & 3].paused = (current_event.lan & 0x80) != 0;
 			current_event.clear();
 			break;
@@ -582,18 +597,17 @@ Object *Scene::getObject(int id, int scene_id) {
 	return obj;
 }
 
-Common::Point Scene::messagePosition(const Common::String &str, const Common::Point &position) {
+Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {
 	Resources *res = Resources::instance();
 	uint w = res->font7.render(NULL, 0, 0, str);
-	Common::Point message_pos = position;
-	message_pos.x -= w / 2;
-	message_pos.y -= 62;
-	if (message_pos.x + w > 320)
-		message_pos.x = 320 - w;
-	if (message_pos.x < 0)
-		message_pos.x = 0;
+	position.x -= w / 2;
+	position.y -= res->font7.height + 3;
+	if (position.x + w > 320)
+		position.x = 320 - w;
+	if (position.x < 0)
+		position.x = 0;
 
-	return message_pos;
+	return position;
 }
 
 void Scene::displayMessage(const Common::String &str, byte color) {

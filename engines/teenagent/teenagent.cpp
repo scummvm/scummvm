@@ -338,6 +338,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
 	SceneEvent event(SceneEvent::Message);
 	event.message = str;
 	event.color = color;
+	event.lan = 4;
 	scene->push(event);
 }
 

@@ -130,7 +130,7 @@ private:
 
 	byte palette[768];
 	void setPalette(OSystem *system, const byte *palette, unsigned mul = 1);
-	static Common::Point messagePosition(const Common::String &str, const Common::Point &position);
+	static Common::Point messagePosition(const Common::String &str, Common::Point position);
 
 	bool processEventQueue();
 	inline bool nextEvent() {
