@@ -36,3 +36,14 @@ void DirectoryEntry::dumpToFiles(Common::SeekableReadStream &inStream) {
 		_subentries[i].dumpToFile(inStream, _index);
 	}
 }
+
+Common::MemoryReadStream *DirectoryEntry::dumpToMemory(Common::SeekableReadStream &inStream, uint16 face, uint16 type) {
+	for (uint i = 0; i < _subentries.size(); i++) {
+		if (_subentries[i].getFace() == face
+				&& _subentries[i].getType() == type) {
+			return _subentries[i].dumpToMemory(inStream);
+		}
+	}
+	
+	return 0;
+}

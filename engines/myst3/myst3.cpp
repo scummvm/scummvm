@@ -24,9 +24,11 @@
  */
 
 #include "common/events.h"
+#include "common/error.h"
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/util.h"
+#include "common/textconsole.h"
 
 #include "engines/engine.h"
 
@@ -51,25 +53,16 @@ Room room;
 float CAMERA_Pitch = 0.0f;
 float CAMERA_Yaw = 0.0f;
 
-void sbInit() {
+void sbInit(const char *fileName, int index) {
 
-		for (int i = 0; i < 6; i++) {
-			char fileName[250];
-			sprintf(fileName, "1-%d.jpg", i + 1);
+	Archive archive;
+	if (!archive.open(fileName)) {
+		error("Unable to open archive");
+	}
 
-			Common::File jpegFile;
-			if (!jpegFile.open(fileName)) {
-				error("Unable to open cube face %d", i);
-			}
-					
-			Graphics::JPEG jpeg;
-			jpeg.read(&jpegFile);
-
-			room.setFaceTextureJPEG(i, &jpeg);
-
-			jpegFile.close();
-
-		}
+	room.load(archive, index);
+		
+	archive.close();
 }
 
 void DrawSkyBox(float camera_yaw, float camera_pitch)
@@ -109,17 +102,14 @@ void Render(float camera_yaw, float camera_pitch)
 }
 
 void Myst3Engine::dumpArchive(const char *fileName) {
-	Common::File archiveFile;
-	if (!archiveFile.open(fileName)) {
+	Archive archive;
+	if (!archive.open(fileName)) {
 		error("Unable to open archive");
 	}
 	
-	Archive archive;
-	archive.readFromStream(archiveFile);
 	archive.dumpDirectory();
-	archive.dumpToFiles(archiveFile);
-	
-	archiveFile.close();
+	archive.dumpToFiles();
+	archive.close();
 }
 
 Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
@@ -132,8 +122,6 @@ Myst3Engine::~Myst3Engine() {
 }
 
 Common::Error Myst3Engine::run() {
-	//dumpArchive("MAISnodes.m3a");
-	
 	int w = 800;
 	int h = 600;
 	
@@ -148,7 +136,7 @@ Common::Error Myst3Engine::run() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	
-	sbInit();
+	sbInit("MAISnodes.m3a", 2);
 	
 	
 	

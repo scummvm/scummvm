@@ -20,9 +20,9 @@ void Archive::_decryptHeader(Common::SeekableReadStream &inStream, Common::Write
 	}
 }
 
-void Archive::readFromStream(Common::SeekableReadStream &inStream) {
+void Archive::_readDirectory() {
 	Common::MemoryWriteStreamDynamic buf(DisposeAfterUse::YES);
-	_decryptHeader(inStream, buf);
+	_decryptHeader(_file, buf);
 	
 	Common::MemoryReadStream directory(buf.getData(), buf.size());
 	directory.skip(sizeof(uint32));
@@ -42,8 +42,31 @@ void Archive::dumpDirectory() {
 	}
 }
 
-void Archive::dumpToFiles(Common::SeekableReadStream &inStream) {
+void Archive::dumpToFiles() {
 	for (uint i = 0; i < _directory.size(); i++) {
-		_directory[i].dumpToFiles(inStream);
+		_directory[i].dumpToFiles(_file);
 	}
+}
+
+Common::MemoryReadStream *Archive::dumpToMemory(uint16 index, uint16 face, uint16 type) {
+	for (uint i = 0; i < _directory.size(); i++) {
+		if (_directory[i].getIndex() == index) {
+			return _directory[i].dumpToMemory(_file, face, type);
+		}
+	}
+	
+	return 0;
+}
+
+bool Archive::open(const char *fileName) {
+	if (_file.open(fileName)) {
+		_readDirectory();
+		return true;
+	}
+	
+	return false;
+}
+
+void Archive::close() {
+	_file.close();
 }

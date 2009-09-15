@@ -33,6 +33,8 @@
 #include <GL/glu.h>
 #endif
 
+#include "engines/myst3/archive.h"
+
 #include "graphics/surface.h"
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -48,6 +50,7 @@ class Room {
 		void setFaceTextureRGB(int face, Graphics::Surface *texture);
 		void setFaceTextureJPEG(int face, Graphics::JPEG *jpeg);
 		void draw();
+		void load(Archive &archive, uint16 index);
 };
 
 } // end of namespace Myst3

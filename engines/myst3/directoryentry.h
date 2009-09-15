@@ -12,5 +12,7 @@ class DirectoryEntry {
 		void readFromStream(Common::SeekableReadStream &inStream);
 		void dump();
 		void dumpToFiles(Common::SeekableReadStream &inStream);
+		Common::MemoryReadStream *dumpToMemory(Common::SeekableReadStream &inStream, uint16 face, uint16 type);
 		bool hasSubEntries();
+		uint16 getIndex() { return _index; }
 };

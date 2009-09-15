@@ -28,15 +28,15 @@
 namespace Myst3 {
 
 void Room::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {	
-	Graphics::Surface *texture = new Graphics::Surface();
-	texture->create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, 3);
+	Graphics::Surface texture;
+	texture.create(jpeg->getComponent(1)->w, jpeg->getComponent(1)->h, Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0));
 
 	byte *y = (byte *)jpeg->getComponent(1)->getBasePtr(0, 0);
 	byte *u = (byte *)jpeg->getComponent(2)->getBasePtr(0, 0);
 	byte *v = (byte *)jpeg->getComponent(3)->getBasePtr(0, 0);
 	
-	byte *ptr = (byte *)texture->getBasePtr(0, 0);
-	for (int i = 0; i < texture->w * texture->h; i++) {
+	byte *ptr = (byte *)texture.getBasePtr(0, 0);
+	for (int i = 0; i < texture.w * texture.h; i++) {
 		byte r, g, b;
 		Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
 		*ptr++ = r;
@@ -44,9 +44,9 @@ void Room::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {
 		*ptr++ = b;
 	}
 	
-	setFaceTextureRGB(face, texture);
+	setFaceTextureRGB(face, &texture);
 	
-	delete texture;
+	texture.free();
 }
 
 void Room::setFaceTextureRGB(int face, Graphics::Surface *texture) {
@@ -59,6 +59,19 @@ void Room::setFaceTextureRGB(int face, Graphics::Surface *texture) {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void Room::load(Archive &archive, uint16 index) {
+	for (int i = 0; i < 6; i++) {
+		Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, i + 1, 0);
+
+		if (jpegStream) {
+			Graphics::JPEG jpeg;
+			jpeg.read(jpegStream);
+
+			setFaceTextureJPEG(i, &jpeg);
+		}
+	}
 }
 
 void Room::draw() {

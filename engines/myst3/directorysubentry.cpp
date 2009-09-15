@@ -2,7 +2,7 @@
 #include "common/str.h"
 #include "common/debug.h"
 #include "common/file.h"
-#include "common/stream.h"
+#include "common/memstream.h"
 
 void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_offset = inStream.readUint32LE();
@@ -13,7 +13,18 @@ void DirectorySubEntry::readFromStream(Common::SeekableReadStream &inStream) {
 
 	dump();
 
-	inStream.skip(_padding * sizeof(uint32));
+	if (_padding == 2) {
+		uint32 _padding2 = inStream.readUint32LE();
+		uint32 _padding3 = inStream.readUint32LE();
+		debug("position x %d y %d", _padding2, _padding3);
+	} /*else if (_padding == 10) {
+		uint32 _padding2 = inStream.readUint32LE();
+		uint32 _padding3 = inStream.readUint32LE();
+		inStream.skip(8 * sizeof(uint32));
+		debug("position x %d y %d", _padding2, _padding3);
+	}*/ else {
+		inStream.skip(_padding * sizeof(uint32));
+	}
 }
 
 void DirectorySubEntry::dump() {
@@ -55,4 +66,9 @@ void DirectorySubEntry::dumpToFile(Common::SeekableReadStream &inStream, uint16 
 	delete[] buf;
 	
 	outFile.close();
+}
+
+Common::MemoryReadStream *DirectorySubEntry::dumpToMemory(Common::SeekableReadStream &inStream) {
+	inStream.seek(_offset);
+	return static_cast<Common::MemoryReadStream *>(inStream.readStream(_size));
 }
