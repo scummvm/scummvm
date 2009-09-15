@@ -35,10 +35,10 @@ public:
 	uint16 id, x, y;
 	bool loop, paused;
 
-	enum Type {TypeLan, TypeVaria, TypeInventory};
+	enum Type {kTypeLan, kTypeVaria, kTypeInventory};
 
 	Animation();
-	void load(Common::SeekableReadStream *s, Type type = TypeLan);
+	void load(Common::SeekableReadStream *s, Type type = kTypeLan);
 	void free();
 
 	Surface *firstFrame();

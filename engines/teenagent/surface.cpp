@@ -40,7 +40,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	x = y = 0;
 	memset(flags, 0, sizeof(flags));
 
-	if (type == TypeOn) {
+	if (type == kTypeOn) {
 		byte fn = stream->readByte();
 		if (stream->eos())
 			return;
@@ -54,7 +54,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	uint16 w_ = stream->readUint16LE();
 	uint16 h_ = stream->readUint16LE();
 
-	if (type != TypeLan) {
+	if (type != kTypeLan) {
 		uint16 pos = stream->readUint16LE();
 		x = pos % 320;
 		y = pos / 320;

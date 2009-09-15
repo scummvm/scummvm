@@ -40,11 +40,23 @@ class Dialog;
 
 struct SceneEvent {
 	enum Type {
-		None, Message, Walk, PlayAnimation, PlayActorAnimation, PauseAnimation, ClearAnimations,
-		LoadScene, SetOn, SetLan, PlayMusic,
-		PlaySound, EnableObject, HideActor,
-		WaitForAnimation, CreditsMessage,
-		Quit
+		kNone,
+		kMessage,
+		kWalk,
+		kPlayAnimation,
+		kPlayActorAnimation,
+		kPauseAnimation,
+		kClearAnimations,
+		kLoadScene,
+		kSetOn,
+		kSetLan,
+		kPlayMusic,
+		kPlaySound,
+		kEnableObject,
+		kHideActor,
+		kWaitForAnimation,
+		kCreditsMessage,
+		kQuit
 	} type;
 
 	Common::String message;
@@ -64,7 +76,7 @@ struct SceneEvent {
 			scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
 
 	void clear() {
-		type = None;
+		type = kNone;
 		message.clear();
 		color = 0xd1;
 		orientation = 0;
@@ -79,7 +91,7 @@ struct SceneEvent {
 	}
 
 	inline bool empty() const {
-		return type == None;
+		return type == kNone;
 	}
 
 	void dump() const {

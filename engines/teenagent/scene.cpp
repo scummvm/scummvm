@@ -36,8 +36,8 @@ namespace TeenAgent {
 Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
 		_id(0), ons(0), walkboxes(0),
-		orientation(Object::ActorRight),
-		current_event(SceneEvent::None), hide_actor(false) {}
+		orientation(Object::kActorRight),
+		current_event(SceneEvent::kNone), hide_actor(false) {}
 
 void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
@@ -99,7 +99,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	if (s == NULL)
 		error("invalid resource data");
 
-	teenagent.load(s, Animation::TypeVaria);
+	teenagent.load(s, Animation::kTypeVaria);
 	if (teenagent.empty())
 		error("invalid mark animation");
 
@@ -107,7 +107,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	if (s == NULL)
 		error("invalid resource data");
 
-	teenagent_idle.load(s, Animation::TypeVaria);
+	teenagent_idle.load(s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
 }
@@ -149,7 +149,7 @@ void Scene::loadOns() {
 		for (uint32 i = 0; i < ons_count; ++i) {
 			Common::SeekableReadStream *s = res->ons.getStream(on_id[i]);
 			if (s != NULL)
-				ons[i].load(s, Surface::TypeOns);
+				ons[i].load(s, Surface::kTypeOns);
 		}
 	}
 }
@@ -171,7 +171,7 @@ void Scene::loadLans() {
 
 		Common::SeekableReadStream *s = res->loadLan000(res_id);
 		if (s != NULL) {
-			animation[i].load(s, Animation::TypeLan);
+			animation[i].load(s, Animation::kTypeLan);
 			if (bxv != 0 && bxv != 0xff)
 				animation[i].id = bxv;
 			delete s;
@@ -209,7 +209,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	setPalette(_system, palette, 4);
 
 	Common::SeekableReadStream *stream = res->on.getStream(id);
-	on.load(stream, Surface::TypeOn);
+	on.load(stream, Surface::kTypeOn);
 	delete stream;
 
 	loadOns();
@@ -291,7 +291,7 @@ bool Scene::processEvent(const Common::Event &event) {
 bool Scene::render(OSystem *system) {
 	//render background
 	Resources *res = Resources::instance();
-	if (current_event.type == SceneEvent::CreditsMessage) {
+	if (current_event.type == SceneEvent::kCreditsMessage) {
 		system->fillScreen(0);
 		Graphics::Surface *surface = system->lockScreen();
 		res->font8.color = current_event.color;
@@ -365,9 +365,9 @@ bool Scene::render(OSystem *system) {
 					Common::Point dp(destination.x - position0.x, destination.y - position0.y);
 					int o;
 					if (ABS(dp.x) > ABS(dp.y))
-						o = dp.x > 0 ? Object::ActorRight : Object::ActorLeft;
+						o = dp.x > 0 ? Object::kActorRight : Object::kActorLeft;
 					else
-						o = dp.y > 0 ? Object::ActorDown : Object::ActorUp;
+						o = dp.y > 0 ? Object::kActorDown : Object::kActorUp;
 
 					position.x = position0.x + dp.x * progress / progress_total;
 					position.y = position0.y + dp.y * progress / progress_total;
@@ -399,7 +399,7 @@ bool Scene::render(OSystem *system) {
 
 		system->unlockScreen();
 
-		if (current_event.type == SceneEvent::WaitForAnimation && !got_any_animation) {
+		if (current_event.type == SceneEvent::kWaitForAnimation && !got_any_animation) {
 			debug(0, "no animations, nextevent");
 			nextEvent();
 			restart = true;
@@ -438,7 +438,7 @@ bool Scene::processEventQueue() {
 		events.pop_front();
 		switch (current_event.type) {
 
-		case SceneEvent::SetOn: {
+		case SceneEvent::kSetOn: {
 			byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
 			debug(0, "on[%u] = %02x", current_event.ons - 1, current_event.color);
 			ptr[current_event.ons - 1] = current_event.color;
@@ -447,7 +447,7 @@ bool Scene::processEventQueue() {
 		}
 		break;
 
-		case SceneEvent::SetLan: {
+		case SceneEvent::kSetLan: {
 			if (current_event.lan != 0) {
 				debug(0, "lan[%u] = %02x", current_event.lan - 1, current_event.color);
 				byte *ptr = getLans(current_event.scene == 0 ? _id : current_event.scene);
@@ -458,14 +458,14 @@ bool Scene::processEventQueue() {
 		}
 		break;
 
-		case SceneEvent::LoadScene: {
+		case SceneEvent::kLoadScene: {
 			init(current_event.scene, current_event.dst);
 			sounds.clear();
 			current_event.clear();
 		}
 		break;
 
-		case SceneEvent::Walk: {
+		case SceneEvent::kWalk: {
 			Common::Point dst = current_event.dst;
 			if ((current_event.color & 2) != 0) { //relative move
 				dst.x += position.x;
@@ -479,8 +479,8 @@ bool Scene::processEventQueue() {
 		}
 		break;
 
-		case SceneEvent::CreditsMessage:
-		case SceneEvent::Message: {
+		case SceneEvent::kCreditsMessage:
+		case SceneEvent::kMessage: {
 				message = current_event.message;
 				Common::Point p(
 					(actor_animation_position.left + actor_animation_position.right) / 2, 
@@ -488,7 +488,7 @@ bool Scene::processEventQueue() {
 				);
 				//FIXME: rewrite it:
 				if (current_event.lan < 4) {
-					const Surface * s = custom_animation[current_event.lan].currentFrame(0);
+					const Surface *s = custom_animation[current_event.lan].currentFrame(0);
 					if (s == NULL)
 						s = animation[current_event.lan].currentFrame(0);
 					if (s != NULL) {
@@ -502,44 +502,44 @@ bool Scene::processEventQueue() {
 			}
 			break;
 
-		case SceneEvent::PlayAnimation:
+		case SceneEvent::kPlayAnimation:
 			debug(0, "playing animation %u in slot %u", current_event.animation, current_event.lan & 3);
 			playAnimation(current_event.lan & 0x3, current_event.animation, (current_event.lan & 0x80) != 0, (current_event.lan & 0x40) != 0);
 			current_event.clear();
 			break;
 
-		case SceneEvent::PauseAnimation:
+		case SceneEvent::kPauseAnimation:
 			debug(0, "pause animation in slot %u", current_event.lan & 3);
 			custom_animation[current_event.lan & 3].paused = (current_event.lan & 0x80) != 0;
 			current_event.clear();
 			break;
 
-		case SceneEvent::ClearAnimations:
+		case SceneEvent::kClearAnimations:
 			for (byte i = 0; i < 4; ++i)
 				custom_animation[i].free();
 			current_event.clear();
 			break;
 
-		case SceneEvent::PlayActorAnimation:
+		case SceneEvent::kPlayActorAnimation:
 			debug(0, "playing actor animation %u", current_event.animation);
 			playActorAnimation(current_event.animation, (current_event.lan & 0x80) != 0);
 			current_event.clear();
 			break;
 
-		case SceneEvent::PlayMusic:
+		case SceneEvent::kPlayMusic:
 			debug(0, "setting music %u", current_event.music);
 			_engine->setMusic(current_event.music);
 			Resources::instance()->dseg.set_byte(0xDB90, current_event.music);
 			current_event.clear();
 			break;
 
-		case SceneEvent::PlaySound:
+		case SceneEvent::kPlaySound:
 			debug(0, "playing sound %u, delay: %u", current_event.sound, current_event.color);
 			sounds.push_back(Sound(current_event.sound, current_event.color));
 			current_event.clear();
 			break;
 
-		case SceneEvent::EnableObject: {
+		case SceneEvent::kEnableObject: {
 			debug(0, "%s object #%u", current_event.color ? "enabling" : "disabling", current_event.object - 1);
 			Object *obj = getObject(current_event.object - 1, current_event.scene == 0 ? _id : current_event.scene);
 			obj->enabled = current_event.color;
@@ -547,16 +547,16 @@ bool Scene::processEventQueue() {
 		}
 		break;
 
-		case SceneEvent::HideActor:
+		case SceneEvent::kHideActor:
 			hide_actor = current_event.color != 0;
 			current_event.clear();
 			break;
 
-		case SceneEvent::WaitForAnimation:
+		case SceneEvent::kWaitForAnimation:
 			debug(0, "waiting for the animation");
 			break;
 
-		case SceneEvent::Quit:
+		case SceneEvent::kQuit:
 			debug(0, "quit!");
 			_engine->quitGame();
 			break;

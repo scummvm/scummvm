@@ -34,7 +34,7 @@ void Font::load(int id) {
 	delete[] data;
 	data = NULL;
 
-	Common::SeekableReadStream * s = Resources::instance()->varia.getStream(id);
+	Common::SeekableReadStream *s = Resources::instance()->varia.getStream(id);
 	if (s == NULL)
 		error("loading font %d failed", id);
 
@@ -50,7 +50,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 		return 0;
 	}
 	idx -= 0x20;
-	byte * glyph = data + READ_LE_UINT16(data + idx * 2);
+	byte *glyph = data + READ_LE_UINT16(data + idx * 2);
 
 	uint h = glyph[0], w = glyph[1];
 	if (surface == NULL || surface->pixels == NULL)
@@ -58,7 +58,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 
 	//debug(0, "char %c, width: %dx%d", c, w, h);
 	glyph += 2;
-	byte * dst = (byte *)surface->getBasePtr(x, y);
+	byte *dst = (byte *)surface->getBasePtr(x, y);
 	for (uint i = 0; i < h; ++i) {
 		for (uint j = 0; j < w; ++j) {
 			byte v = *glyph++;
@@ -125,7 +125,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 }
 
 void Font::grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color) {
-	byte * dst = (byte *)surface->getBasePtr(x, y);
+	byte *dst = (byte *)surface->getBasePtr(x, y);
 	for (int i = 0; i < h; ++i) {
 		for (int j = 0; j < w; ++j) {
 			if (((i ^ j) & 1) == 0)

@@ -3512,7 +3512,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 		displayMessage("THE END");
 		debug(0, "FIXME: THE END + CREDITS");
-		scene->push(SceneEvent(SceneEvent::Quit));
+		scene->push(SceneEvent(SceneEvent::kQuit));
 
 		return true;
 

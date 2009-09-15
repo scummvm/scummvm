@@ -33,7 +33,7 @@ namespace TeenAgent {
 class Pack;
 class Surface : public Graphics::Surface {
 public:
-	enum Type {TypeOn, TypeOns, TypeLan};
+	enum Type {kTypeOn, kTypeOns, kTypeLan};
 
 	uint16 flags[255];
 	uint16 x, y;

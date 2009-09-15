@@ -36,7 +36,7 @@
 
 namespace TeenAgent {
 
-TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
+TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), action(kActionNone), _gameDescription(gd) {
 	music = new MusicPlayer();
 }
 
@@ -46,7 +46,7 @@ void TeenAgentEngine::processObject() {
 
 	Resources *res = Resources::instance();
 	switch (action) {
-	case ActionExamine: {
+	case kActionExamine: {
 		byte *dcall = res->dseg.ptr(0xb5ce);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
@@ -58,7 +58,7 @@ void TeenAgentEngine::processObject() {
 		}
 	}
 	break;
-	case ActionUse: {
+	case kActionUse: {
 		InventoryObject *inv = inventory->selectedObject();
 		if (inv != NULL) {
 			byte *dcall = res->dseg.ptr(0xbb87);
@@ -90,7 +90,7 @@ void TeenAgentEngine::processObject() {
 	}
 	break;
 
-	case ActionNone:
+	case kActionNone:
 		break;
 	}
 }
@@ -108,7 +108,7 @@ void TeenAgentEngine::use(Object *object) {
 		scene->moveTo(Common::Point(object->actor_rect.right, object->actor_rect.bottom), object->actor_orientation);
 	if (object->actor_orientation > 0)
 		scene->setOrientation(object->actor_orientation);
-	action = ActionUse;
+	action = kActionUse;
 }
 
 void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
@@ -120,13 +120,13 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 		debug(0, "click %d, %d, object %d, %d", point.x, point.y, dst.x, dst.y);
 		if (object->actor_rect.valid())
 			scene->moveTo(dst, object->actor_orientation);
-		action = ActionExamine;
+		action = kActionExamine;
 		dst_object = object;
 	} else {
 		debug(0, "click %d, %d", point.x, point.y);
 		scene->moveTo(point, 0, true);
 		dst_object = NULL;
-		action = ActionNone;
+		action = kActionNone;
 	}
 }
 
@@ -267,9 +267,9 @@ Common::Error TeenAgentEngine::run() {
 		if (f0 != f1) {
 			bool b = scene->render(_system);
 			scene_busy = b;
-			if (!inventory->active() && !scene_busy && action != ActionNone) {
+			if (!inventory->active() && !scene_busy && action != kActionNone) {
 				processObject();
-				action = ActionNone;
+				action = kActionNone;
 				dst_object = NULL;
 			}
 		}
@@ -335,7 +335,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
 	if (str.empty()) {
 		return;
 	}
-	SceneEvent event(SceneEvent::Message);
+	SceneEvent event(SceneEvent::kMessage);
 	event.message = str;
 	event.color = color;
 	event.lan = 4;
@@ -364,7 +364,7 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
 }
 
 void TeenAgentEngine::displayCredits(uint16 addr) {
-	SceneEvent event(SceneEvent::CreditsMessage);
+	SceneEvent event(SceneEvent::kCreditsMessage);
 
 	const byte *src = Resources::instance()->dseg.ptr(addr);
 	event.orientation = *src++;
@@ -394,7 +394,7 @@ void TeenAgentEngine::moveTo(Object *obj) {
 }
 
 void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {
-	SceneEvent event(SceneEvent::Walk);
+	SceneEvent event(SceneEvent::kWalk);
 	event.dst.x = x;
 	event.dst.y = y;
 	event.orientation = o;
@@ -403,7 +403,7 @@ void TeenAgentEngine::moveTo(uint16 x, uint16 y, byte o, bool warp) {
 }
 
 void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
-	SceneEvent event(SceneEvent::Walk);
+	SceneEvent event(SceneEvent::kWalk);
 	event.dst.x = x;
 	event.dst.y = y;
 	event.orientation = o;
@@ -412,7 +412,7 @@ void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
 }
 
 void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
-	SceneEvent event(SceneEvent::PlayAnimation);
+	SceneEvent event(SceneEvent::kPlayAnimation);
 	event.animation = id;
 	event.lan = slot;
 	scene->push(event);
@@ -421,7 +421,7 @@ void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
 }
 
 void TeenAgentEngine::playActorAnimation(uint16 id, bool async) {
-	SceneEvent event(SceneEvent::PlayActorAnimation);
+	SceneEvent event(SceneEvent::kPlayActorAnimation);
 	event.animation = id;
 	scene->push(event);
 	if (!async)
@@ -434,7 +434,7 @@ void TeenAgentEngine::loadScene(byte id, const Common::Point &pos, byte o) {
 }
 
 void TeenAgentEngine::loadScene(byte id, uint16 x, uint16 y, byte o) {
-	SceneEvent event(SceneEvent::LoadScene);
+	SceneEvent event(SceneEvent::kLoadScene);
 	event.scene = id;
 	event.dst.x = x;
 	event.dst.y = y;
@@ -443,7 +443,7 @@ void TeenAgentEngine::loadScene(byte id, uint16 x, uint16 y, byte o) {
 }
 
 void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
-	SceneEvent event(SceneEvent::SetOn);
+	SceneEvent event(SceneEvent::kSetOn);
 	event.ons = id + 1;
 	event.color = value;
 	event.scene = scene_id;
@@ -453,7 +453,7 @@ void TeenAgentEngine::setOns(byte id, byte value, byte scene_id) {
 void TeenAgentEngine::setLan(byte id, byte value, byte scene_id) {
 	if (id == 0)
 		error("setting lan 0 is invalid");
-	SceneEvent event(SceneEvent::SetLan);
+	SceneEvent event(SceneEvent::kSetLan);
 	event.lan = id;
 	event.color = value;
 	event.scene = scene_id;
@@ -461,14 +461,14 @@ void TeenAgentEngine::setLan(byte id, byte value, byte scene_id) {
 }
 
 void TeenAgentEngine::reloadLan() {
-	SceneEvent event(SceneEvent::SetLan);
+	SceneEvent event(SceneEvent::kSetLan);
 	event.lan = 0;
 	scene->push(event);
 }
 
 
 void TeenAgentEngine::playMusic(byte id) {
-	SceneEvent event(SceneEvent::PlayMusic);
+	SceneEvent event(SceneEvent::kPlayMusic);
 	event.music = id;
 	scene->push(event);
 }
@@ -476,14 +476,14 @@ void TeenAgentEngine::playMusic(byte id) {
 void TeenAgentEngine::playSound(byte id, byte skip_frames) {
 	if (skip_frames > 0)
 		--skip_frames;
-	SceneEvent event(SceneEvent::PlaySound);
+	SceneEvent event(SceneEvent::kPlaySound);
 	event.sound = id;
 	event.color = skip_frames;
 	scene->push(event);
 }
 
 void TeenAgentEngine::enableObject(byte id, byte scene_id) {
-	SceneEvent event(SceneEvent::EnableObject);
+	SceneEvent event(SceneEvent::kEnableObject);
 	event.object = id + 1;
 	event.color = 1;
 	event.scene = scene_id;
@@ -491,7 +491,7 @@ void TeenAgentEngine::enableObject(byte id, byte scene_id) {
 }
 
 void TeenAgentEngine::disableObject(byte id, byte scene_id) {
-	SceneEvent event(SceneEvent::EnableObject);
+	SceneEvent event(SceneEvent::kEnableObject);
 	event.object = id + 1;
 	event.color = 0;
 	event.scene = scene_id;
@@ -499,19 +499,19 @@ void TeenAgentEngine::disableObject(byte id, byte scene_id) {
 }
 
 void TeenAgentEngine::hideActor() {
-	SceneEvent event(SceneEvent::HideActor);
+	SceneEvent event(SceneEvent::kHideActor);
 	event.color = 1;
 	scene->push(event);
 }
 
 void TeenAgentEngine::showActor() {
-	SceneEvent event(SceneEvent::HideActor);
+	SceneEvent event(SceneEvent::kHideActor);
 	event.color = 0;
 	scene->push(event);
 }
 
 void TeenAgentEngine::waitAnimation() {
-	SceneEvent event(SceneEvent::WaitForAnimation);
+	SceneEvent event(SceneEvent::kWaitForAnimation);
 	scene->push(event);
 }
 

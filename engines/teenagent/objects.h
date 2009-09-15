@@ -68,7 +68,7 @@ struct Object {
 	byte enabled;
 	char name[1];
 
-	enum {ActorUp = 1, ActorRight = 2, ActorDown = 3, ActorLeft = 4 };
+	enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
 
 	void dump();
 	static Common::String description(const char *name);

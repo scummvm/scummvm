@@ -114,7 +114,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 	uint16 pos = 0;
 	int off = 0;
 	switch (type) {
-	case TypeLan:
+	case kTypeLan:
 		data_size = s->readUint16LE();
 		if (s->eos()) {
 			debug(0, "empty animation");
@@ -141,13 +141,13 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		//debug(0, "pos?: %04x", pos);
 
 		for (uint16 i = 0; i < frames_count; ++i) {
-			frames[i].load(s, Surface::TypeLan);
+			frames[i].load(s, Surface::kTypeLan);
 			frames[i].x = 0;
 			frames[i].y = 0;
 		}
 		break;
 
-	case TypeInventory: {
+	case kTypeInventory: {
 		data_size = 3 * s->readByte();
 		data = new byte[data_size];
 
@@ -169,12 +169,12 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		frames = new Surface[frames_count];
 
 		for (uint16 i = 0; i < frames_count; ++i) {
-			frames[i].load(s, Surface::TypeOns);
+			frames[i].load(s, Surface::kTypeOns);
 		}
 	}
 	break;
 
-	case TypeVaria:
+	case kTypeVaria:
 		frames_count = s->readByte();
 		debug(0, "loading varia resource, %u physical frames", frames_count);
 		uint16 offset[255];
@@ -186,7 +186,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		for (uint16 i = 0; i < frames_count; ++i) {
 			debug(0, "%04x", offset[i]);
 			s->seek(offset[i] + off);
-			frames[i].load(s, Surface::TypeOns);
+			frames[i].load(s, Surface::kTypeOns);
 			frames[i].x = 0;
 			frames[i].y = 0;
 		}

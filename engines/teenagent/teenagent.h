@@ -42,7 +42,7 @@ class MusicPlayer;
 
 class TeenAgentEngine: public Engine {
 public:
-	enum Action { ActionNone, ActionExamine, ActionUse };
+	enum Action { kActionNone, kActionExamine, kActionUse };
 
 	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
 

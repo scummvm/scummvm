@@ -39,7 +39,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 	Common::SeekableReadStream *s = res->varia.getStream(3);
 	assert(s != NULL);
 	debug(0, "loading inventory background...");
-	background.load(s, Surface::TypeOns);
+	background.load(s, Surface::kTypeOns);
 
 	items = res->varia.getStream(4);
 	assert(items != NULL);
@@ -235,7 +235,7 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 		if (animation.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
 			inventory->items->seek(inventory->offset[obj->id - 1]);
-			animation.load(inventory->items, Animation::TypeInventory);
+			animation.load(inventory->items, Animation::kTypeInventory);
 		}
 		if (hovered) {
 			Surface *s = animation.currentFrame();
@@ -252,7 +252,7 @@ void Inventory::Item::render(Inventory *inventory, InventoryObject *obj, Graphic
 		if (surface.empty()) {
 			debug(0, "loading item %d from offset %x", obj->id, inventory->offset[obj->id - 1]);
 			inventory->items->seek(inventory->offset[obj->id - 1]);
-			surface.load(inventory->items, Surface::TypeOns);
+			surface.load(inventory->items, Surface::kTypeOns);
 		}
 		surface.render(dst, rect.left + 1, rect.top + 1);
 	}

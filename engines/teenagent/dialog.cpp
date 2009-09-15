@@ -32,20 +32,20 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	--slot1;
 	--slot2;
 	debug(0, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	int n = 0;
 	Common::String message;
 	byte color = color1;
 
 	if (animation1 != 0) {
-		SceneEvent e(SceneEvent::PlayAnimation);
+		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = animation1;
 		e.lan = 0xc0 | slot1; //looped, paused
 		scene->push(e);
 	}
 
 	if (animation2 != 0) {
-		SceneEvent e(SceneEvent::PlayAnimation);
+		SceneEvent e(SceneEvent::kPlayAnimation);
 		e.animation = animation2;
 		e.lan = 0xc0 | slot2; //looped, paused
 		scene->push(e);
@@ -69,12 +69,12 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				if (color == color2 && animation2 != 0) {
 					//pause animation in other slot
 					{
-						SceneEvent e(SceneEvent::PauseAnimation);
+						SceneEvent e(SceneEvent::kPauseAnimation);
 						e.lan = 0x80 | slot1;
 						scene->push(e);
 					}
 					{
-						SceneEvent e(SceneEvent::PlayAnimation);
+						SceneEvent e(SceneEvent::kPlayAnimation);
 						e.animation = animation2;
 						e.lan = 0x80 | slot2;
 						scene->push(e);
@@ -82,12 +82,12 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				} else if (color == color1 && animation1 != 0) {
 					//pause animation in other slot
 					{
-						SceneEvent e(SceneEvent::PauseAnimation);
+						SceneEvent e(SceneEvent::kPauseAnimation);
 						e.lan = 0x80 | slot2;
 						scene->push(e);
 					}
 					{
-						SceneEvent e(SceneEvent::PlayAnimation);
+						SceneEvent e(SceneEvent::kPlayAnimation);
 						e.animation = animation1;
 						e.lan = 0x80 | slot1;
 						scene->push(e);
@@ -95,7 +95,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				}
 
 				{
-					SceneEvent e(SceneEvent::Message);
+					SceneEvent e(SceneEvent::kMessage);
 					e.message = message;
 					e.color = color;
 					if (animation1 != 0 && color == color1)
@@ -125,13 +125,13 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 		}
 	}
 
-	SceneEvent e(SceneEvent::ClearAnimations);
+	SceneEvent e(SceneEvent::kClearAnimations);
 	scene->push(e);
 }
 
 uint16 Dialog::pop(Scene *scene, uint16 addr, uint16 animation1, uint16 animation2, byte color1, byte color2, byte slot1, byte slot2) {
 	debug(0, "Dialog::pop(%04x, %u:%u, %u:%u)", addr, slot1, animation1, slot2, animation2);
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	uint16 next;
 	do {
 		next = res->dseg.get_word(addr);
