@@ -152,7 +152,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		setOns(0, 113);
 		Dialog::show(scene, 0x78f1, 919, 0, 0xe7);
 		moveTo(196, 186, 1);
-		Dialog::show(scene, 0x7958, 920, 0, 0xe7);
+		Dialog::show(scene, 0x7958, 0, 920, 0xd1, 0xe7);
 		playActorAnimation(932);
 		Dialog::show(scene, 0x7e07, 920, 0, 0xe7);
 		playActorAnimation(932);
@@ -186,8 +186,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x57b2);
 			return true;
 		} else {
-			playSound(76);
+			for(byte i = 11; i <= 27; i += 4)
+				playSound(76, i);
+			
+			playSound(56, 35);
+			playSound(19, 59);
 			playActorAnimation(864);
+			playAnimation(865, 1);
 			playActorAnimation(866);
 			//InventoryObject *obj = inventory->selectedObject();
 			//if (obj != NULL && obj->id == 0x55) {
@@ -195,6 +200,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			//implement pause and using real object:
 			if (inventory->has(0x55)) {
 				playSound(5, 4);
+				playSound(5, 19);
+				playSound(64, 11);
 				playActorAnimation(867);
 				inventory->remove(0x55);
 				inventory->add(0x56);
@@ -202,13 +209,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				playActorAnimation(868);
 				SET_FLAG(0xDBE4, 1);
 			} else {
-				//fail!
-				moveTo(86, 195, 1, true);
-				playActorAnimation(868);
+				processCallback(0x4173);
 				Dialog::pop(scene, 0xDB72);
 			}
 			return true;
 		}
+	case 0x4173:
+		//fail!
+		moveTo(86, 195, 1, true);
+		playActorAnimation(868);
+		return true;
 
 	case 0x419c: //getting the bird
 		setOns(0, 0);
@@ -231,17 +241,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x4267:
 		playSound(23, 8);
+		playSound(24, 13);
 		setOns(1, 0);
 		playActorAnimation(841);
 		setOns(1, 0x61);
 		setOns(2, 0);
 		playSound(63, 12);
+		playSound(5, 26);
 		playActorAnimation(842);
+		hideActor();
 		//shown in different positions
 		displayMessage(0x5656);
 		displayMessage(0x567a);
 		displayMessage(0x5682);
 		playActorAnimation(843);
+		showActor();
 		moveTo(223, 149, 0, true);
 		disableObject(7);
 		disableObject(1);
@@ -250,9 +264,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		return true;
 
 	case 0x4388:
-		playSound(80);
-		loadScene(8, 155, 199);
-		scene->setOrientation(1);
+		playSound(80, 4);
+		playActorAnimation(961);
+		loadScene(8, 155, 199, 1);
 		return true;
 
 	case 0x43b5: //HQ, first trial - prison
@@ -265,9 +279,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setLan(1, 0);
 			playAnimation(812, 0, true);
 			playActorAnimation(811);
-			Dialog::show(scene, 0x6117, 813);
+			Dialog::show(scene, 0x6117, 0, 813, 0xd1, 0xec, 0, 1);
 			loadScene(6, Common::Point(230, 184));
-			Dialog::show(scene, 0x626a, 814);
+			Dialog::show(scene, 0x626a, 0, 814, 0xd1, 0xec, 0, 1);
 			playAnimation(815, 0);
 			setOns(1, 0);
 
@@ -321,10 +335,10 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(71, 4);
 			playActorAnimation(823);
 
+			loadScene(5, scene->getPosition());
 			playSound(74, 1);
 			playSound(74, 3);
 			playSound(74, 6);
-			loadScene(5, scene->getPosition());
 			playActorAnimation(826);
 			loadScene(6, scene->getPosition());
 			setOns(3, 0x5b);
@@ -461,10 +475,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 				displayMessage(0x5883, 0xef);
 				//reloadLan();
 				setLan(1, 0);
-				playAnimation(882, 1);
+				playAnimation(882, 0);
 				playSound(75, 10);
 				setOns(2, 0);
-				playAnimation(883, 1);
+				playSound(75, 10);
+				playSound(24, 15);
+				playAnimation(883, 0);
 				disableObject(1);
 				disableObject(2);
 				SET_FLAG(0xDBE9, 1);
@@ -473,21 +489,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else {
 			if (CHECK_FLAG(0xDBDF, 3)) {
 				if (CHECK_FLAG(0xDBE3, 1)) {
-					Dialog::show(scene, 0x6BD6, 857);
+					Dialog::show(scene, 0x6BD6, 0, 857, 0xd1, 0xef, 0, 1);
 				} else {
-					Dialog::show(scene, 0x69B5, 857); //taking mug
+					Dialog::show(scene, 0x69B5, 0, 857, 0xd1, 0xef, 0, 1); //taking mug
 					playActorAnimation(859, true);
-					playAnimation(858, 1, true);
+					playAnimation(858, 0, true);
 					waitAnimation();
 					playSound(75, 6);
 					playActorAnimation(860);
-					Dialog::show(scene, 0x69C2, 857);
+					Dialog::show(scene, 0x69C2, 0, 857, 0xd1, 0xef, 0, 1);
 					inventory->add(0x55);
 					SET_FLAG(0xDBE3, 1);
 					SET_FLAG(0xDBF0, 0);
 				}
 			} else {
-				Dialog::pop(scene, 0xDB68, 857);
+				Dialog::pop(scene, 0xDB68, 0, 857, 0xd1, 0xef, 0, 1);
 			}
 		}
 		return true;
@@ -535,7 +551,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		} else if (CHECK_FLAG(0xDBE9, 1)) {
 			displayMessage(0x5894);
 		} else {
-			Dialog::pop(scene, 0xDB8A, 857);
+			Dialog::pop(scene, 0xDB8A, 0, 857, 0xd1, 0xef, 0, 1);
 		}
 		return true;
 
@@ -551,15 +567,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(15, 7);
 		playActorAnimation(884);
 		playSound(55, 1);
-		playAnimation(885, 1);
-		Dialog::show(scene, 0x67e5, 886);
+		playSound(24, 12);
+		playAnimation(885, 0);
+		Dialog::show(scene, 0x67e5, 886, 0, 0xd0, 0xd1, 1, 0);
 		playMusic(3);
 		loadScene(40, 198, 186, 1);
-		Dialog::show(scene, 0x7f20);
+		Dialog::show(scene, 0x7f20, 0, 920, 0xd1, 0xe7);
 		inventory->clear();
 		inventory->add(0x1d);
-		//showFullscreenMessage(0xe45c);
+		displayCredits(0xe45c);
 		loadScene(1, 198, 186);
+		hideActor();
 		playActorAnimation(956, true);
 		Dialog::show(scene, 0x8bc4);
 		waitAnimation();
@@ -580,15 +598,13 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x4c70:
 		if (CHECK_FLAG(0xDBE2, 0)) {
 			if (CHECK_FLAG(0xDBDA, 1)) { //papers are shown
-				Dialog::pop(scene, 0xDB4C, 809, 0, 0xd1, 0xd0);
+				Dialog::pop(scene, 0xDB4C, 0, 809, 0xd1, 0xd0, 0, 1);
 			} else {
-				Dialog::pop(scene, 0xDB40, 809, 0, 0xd1, 0xd0);
+				Dialog::pop(scene, 0xDB40, 0, 809, 0xd1, 0xd0, 0, 1);
 			}
-			return true;
 		} else {
 			displayMessage(0x5722);
-
-			scene->displayMessage("He's totally addicted.");
+			displayMessage(0x572a);
 		}
 		return true;
 
@@ -1009,8 +1025,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 	case 0x7b26: //cutting the fence
 		setOns(0, 0);
 		playSound(5, 2);
+		playSound(51, 11);
+		playSound(51, 23);
 		playActorAnimation(837);
 		playSound(51, 3);
+		playSound(51, 19);
+		playSound(23, 26);
 		playActorAnimation(838);
 		setOns(0, 0x60);
 		moveTo(281, scene->getPosition().y, 0, true);
@@ -1023,6 +1043,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playActorAnimation(844);
 			setOns(1, 0);
 			playSound(5, 5);
+			playSound(26, 19);
+			playSound(24, 25);
 			playActorAnimation(847);
 			playSound(5, 11);
 			playActorAnimation(848);
@@ -1050,6 +1072,15 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		moveTo(240, 163, 4);
 		displayMessage(0x5837);
 		playSound(77, 2);
+		playSound(77, 12);
+		playSound(77, 16);
+		playSound(77, 20);
+		playSound(77, 34);
+		playSound(78, 41);
+		playSound(78, 51);
+		playSound(56, 63);
+		playSound(24, 67);
+		playSound(23, 76);
 		setLan(1, 0);
 		playAnimation(874, 1);
 		setOns(0, 0x68);
@@ -1060,6 +1091,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x7ce5: //put spring on the solid ground
 		playSound(5, 2);
+		playSound(19, 11);
 		playActorAnimation(840);
 		setOns(1, 0x61);
 		inventory->remove(0x50);
@@ -1084,12 +1116,12 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(0, 92);
 			playAnimation(829, 1);
 			setOns(0, 0);
-			Dialog::show(scene, 0x63a5, 830);
+			Dialog::show(scene, 0x63a5, 830, 0, 0xec, 0xd1, 1, 0);
 			loadScene(7, 130, 195);
 			playMusic(4);
 			setLan(1, 1);
 
-			Dialog::show(scene, 0x6406, 832);
+			Dialog::show(scene, 0x6406, 0, 832, 0xd1, 0xec, 0, 1);
 
 			//playAnimation(831, 1);
 
@@ -1104,20 +1136,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x5632);
 		} else {
 			playSound(5, 6);
+			playSound(27, 49);
 			playActorAnimation(834, true);
 			playAnimation(835, 1, true);
 			waitAnimation();
 
 			setOns(0, 94);
-			Dialog::show(scene, 0x65e9, 832);
+			Dialog::show(scene, 0x65e9, 0, 832, 0xd1, 0xec, 0, 1);
 			enableObject(12);
 			SET_FLAG(0xdbe0, 1);
 		}
 		return true;
 
 	case 0x7e4f: //giving magazine to captain
+		Dialog::show(scene, 0x66c0, 0, 856, 0xd1, 0xec, 0, 1);
 		playSound(5, 3);
-		Dialog::show(scene, 0x66c0);
 		playActorAnimation(852, true);
 		playActorAnimation(853, true);
 		displayMessage(0x5742);
@@ -1128,7 +1161,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(856, 1);
 		playSound(5, 3);
 		//playActorAnimation(854);
-		Dialog::show(scene, 0x66fe);
+		Dialog::show(scene, 0x66fe, 0, 856, 0xd1, 0xec, 0, 1);
 		playAnimation(855, 1);
 		moveTo(30, 181, 0);
 		disableObject(1);
@@ -1142,14 +1175,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playSound(5, 3);
 		playActorAnimation(876);
 		setOns(1, 0);
-		playAnimation(877, 2);
-		playAnimation(880, 2, true);
+		playSound(26, 7);
+		playSound(79, 15);
+		playAnimation(877, 1);
+		playAnimation(880, 1, true);
 
 		Dialog::show(scene, 0x6f0e, 857);
 		setOns(2, 0x6a);
 		reloadLan();
-		playAnimation(878, 1);
-		playAnimation(879, 1);
+		playAnimation(878, 0);
+		playAnimation(879, 0);
 		inventory->remove(0x5c);
 		enableObject(1);
 		SET_FLAG(0xDBE7, 1);
@@ -1157,6 +1192,8 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x8047:
 		playSound(32, 5);
+		playSound(5, 17);
+		playSound(52, 23);
 		playActorAnimation(881);
 		setOns(2, 0x6b);
 		inventory->remove(0x56);
@@ -1173,19 +1210,21 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(5, 2);
 			playSound(5, 18);
 			playActorAnimation(810);
-			Dialog::show(scene, 0x60BF);
+			Dialog::show(scene, 0x60BF, 0, 809, 0xd1, 0xd0);
 			SET_FLAG(0xDBDA, 1);
 		}
 		return true;
 
 	case 0x80c3: //show kaleydoscope to the guard
-		Dialog::show(scene, 0x6811, 809);
+		Dialog::show(scene, 0x6811, 0, 809, 0xd1, 0xd0, 0, 1);
 		playSound(5, 3);
-		playActorAnimation(849, true);
-		playAnimation(851, 1, true);
-		waitAnimation();
-
-		playAnimation(850, 1);
+		playSound(5, 30);
+		playSound(26, 14);
+		hideActor();
+		playAnimation(849, 0);
+		showActor();
+		playAnimation(851, 0);
+		playAnimation(850, 0);
 		reloadLan();
 		inventory->add(0x53);
 		inventory->remove(0x52);
