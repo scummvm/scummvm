@@ -277,11 +277,11 @@ void GfxResManager::setStaticPalette(Palette *newPalette)
 	if (maps & key) { \
 		if (res->unscaled_data.pic&& (force || !res->unscaled_data.pic->entry->data)) { \
 				if (key == GFX_MASK_VISUAL) \
-					gfx_get_res_config(options, res->unscaled_data.pic->entry); \
+					gfx_get_res_config(options->res_conf, res->unscaled_data.pic->entry); \
 			        gfx_xlate_pixmap(res->unscaled_data.pic->entry, mode, filter); \
 		} if (scaled && res->scaled_data.pic && (force || !res->scaled_data.pic->entry->data)) { \
 				if (key == GFX_MASK_VISUAL) \
-					gfx_get_res_config(options, res->scaled_data.pic->entry); \
+					gfx_get_res_config(options->res_conf, res->scaled_data.pic->entry); \
 				gfx_xlate_pixmap(res->scaled_data.pic->entry, mode, filter); \
 		} \
 	}
@@ -579,7 +579,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	if (!cel_data->data) {
 		if (!cel_data->palette)
 			cel_data->palette = view->palette->getref();
-		gfx_get_res_config(_options, cel_data);
+		gfx_get_res_config(_options->res_conf, cel_data);
 		gfx_xlate_pixmap(cel_data, _driver->getMode());
 	}
 
@@ -662,7 +662,7 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 			gfx_free_pixmap(res->unscaled_data.pointer);
 		}
 #ifdef CUSTOM_GRAPHICS_OPTIONS
-		gfx_get_res_config(_options, cursor);
+		gfx_get_res_config(_options->res_conf, cursor);
 		gfx_xlate_pixmap(cursor, _driver->getMode());
 #else
 		gfx_xlate_pixmap(cursor, _driver->getMode());

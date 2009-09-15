@@ -41,19 +41,6 @@ struct gfx_res_pattern_t {
 };
 
 /**
- * GFX resource assignments.
- */
-struct gfx_res_assign_t {
-	union {
-		struct {
-			int colors_nr;
-			PaletteEntry *colors;
-		} palette;
-	} assign;
-};
-
-
-/**
  * GFX resource modifications/
  */
 struct gfx_res_conf_t {
@@ -67,20 +54,17 @@ struct gfx_res_conf_t {
 
 	gfx_res_pattern_t *patterns;
 
-	union {
-		gfx_res_assign_t assign;
-		byte factor[3]; /**< divide by 16 to retrieve factor */
-	} conf; /**< The actual configuration */
+	int colors_nr;
+	PaletteEntry *colors;
+	byte rFactor, gFactor, bFactor;
 
 	gfx_res_conf_t *next;
 };
 
 
-typedef gfx_res_conf_t *gfx_res_conf_p_t;
-
 struct gfx_res_fullconf_t {
-	gfx_res_conf_p_t assign[GFX_RESOURCE_TYPES_NR];
-	gfx_res_conf_p_t mod[GFX_RESOURCE_TYPES_NR];
+	gfx_res_conf_t *assign[GFX_RESOURCE_TYPES_NR];
+	gfx_res_conf_t *mod[GFX_RESOURCE_TYPES_NR];
 };
 
 
@@ -92,12 +76,12 @@ struct gfx_options_t;
  * Modifies pxm as considered appropriate by configuration options. Does
  * not do anything in colour index mode.
  *
- * @param[in] options	The options according to which configuration
+ * @param[in] res_conf	The resource options according to which modifications
  * 						should be performed
  * @param[in] pxm		The pixmap to configure
  * @return				0 on success, non-zero otherwise
  */
-int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm);
+int gfx_get_res_config(gfx_res_fullconf_t res_conf, gfx_pixmap_t *pxm);
 
 /** @} */
 } // End of namespace Sci

@@ -32,53 +32,21 @@
 
 namespace Sci {
 
-//#define DEBUG
-
-static int matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val) {
+static bool matches_patternlist(gfx_res_pattern_t *patterns, int nr, int val) {
 	for (int i = 0; i < nr; i++)
-		if (patterns[i].min <= val
-		        && patterns[i].max >= val)
-			return 1;
+		if (patterns[i].min <= val && patterns[i].max >= val)
+			return true;
 
-	return 0;
+	return false;
 }
 
-#ifdef DEBUG
-static void print_pattern(gfx_res_pattern_t *pat) {
-	fprintf(stderr, "[%d..%d]",
-	        pat->min, pat->max);
-}
-#endif
-
-static int resource_matches_patternlists(gfx_res_conf_t *conf, int type, int nr, int loop, int cel) {
+static bool resource_matches_patternlists(gfx_res_conf_t *conf, int type, int nr, int loop, int cel) {
 	int loc;
-#ifdef DEBUG
-	int i;
-	fprintf(stderr, "[DEBUG:gfx-res] Trying to match against %d/%d/%d choices\n",
-	        conf->patterns_nr, conf->loops_nr, conf->cels_nr);
-	for (i = 0; i < conf->patterns_nr; i++) {
-		fprintf(stderr, "[DEBUG:gfx-res] Pat #%d: ", i);
-		print_pattern(conf->patterns + i);
-		fprintf(stderr, "\n");
-	}
-	loc = conf->patterns_nr;
-	for (i = 0; i < conf->loops_nr; i++) {
-		fprintf(stderr, "[DEBUG:gfx-res] Loop #%d: ", i);
-		print_pattern(conf->patterns + i + loc);
-		fprintf(stderr, "\n");
-	}
-	loc += conf->loops_nr;
-	for (i = 0; i < conf->cels_nr; i++) {
-		fprintf(stderr, "[DEBUG:gfx-res] Cel #%d: ", i);
-		print_pattern(conf->patterns + i + loc);
-		fprintf(stderr, "\n");
-	}
-#endif
 	if (conf->patterns_nr && !matches_patternlist(conf->patterns, conf->patterns_nr, nr))
-		return 0;
+		return false;
 
 	if (type == GFX_RESOURCE_TYPE_CURSOR)
-		return 1;
+		return true;
 
 	/* Otherwise, we must match at least the loop (pic)
 	** and, for views, the cel as well  */
@@ -87,27 +55,23 @@ static int resource_matches_patternlists(gfx_res_conf_t *conf, int type, int nr,
 	        !matches_patternlist(conf->patterns + loc,
 	                             conf->loops_nr,
 	                             loop))
-		return 0;
+		return false;
 
 	if (type != GFX_RESOURCE_TYPE_VIEW)
-		return 1;
+		return true;
 
 	loc += conf->loops_nr;
 
 	if (!conf->cels_nr)
-		return 1;
+		return true;
 
 	return matches_patternlist(conf->patterns + loc, conf->cels_nr, cel);
 }
 
 static gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int nr, int loop, int cel) {
 	while (conflist) {
-		if (resource_matches_patternlists(conflist, type, nr, loop, cel)) {
-#ifdef DEBUG
-			fprintf(stderr, "[DEBUG:gfx-res] Found match!\n");
-#endif
+		if (resource_matches_patternlists(conflist, type, nr, loop, cel))
 			return conflist;
-		}
 
 		conflist = conflist->next;
 	}
@@ -115,11 +79,11 @@ static gfx_res_conf_t *find_match(gfx_res_conf_t *conflist, int type, int nr, in
 	return NULL;
 }
 
-void apply_mod(byte *factor, gfx_pixmap_t *pxm) {
+void apply_mod(byte rFactor, byte gFactor, byte bFactor, gfx_pixmap_t *pxm) {
 	Palette *pal = pxm->palette;
 	int i, pal_size = pal ? pal->size() : 0;
 
-	// Does not have a dynamically allocated palette? Must dup current one
+	// Id the pixmap's palette is shared, duplicate it
 	if (pal && pal->isShared()) {
 		pal = pxm->palette->copy();
 		pxm->palette->free();
@@ -127,25 +91,15 @@ void apply_mod(byte *factor, gfx_pixmap_t *pxm) {
 	}
 
 	for (i = 0; i < pal_size; i++) {
-		int v;
-
-#define UPDATE_COL(nm, idx)                        \
-		v = nm;             \
-		v *= factor[idx]; \
-		v >>= 4;                   \
-		nm = (v > 255)? 255 : v;
-
 		PaletteEntry c = pal->getColor(i);
-		UPDATE_COL(c.r, 0);
-		UPDATE_COL(c.g, 1);
-		UPDATE_COL(c.b, 2);
+		c.r = CLIP<int>((c.r * rFactor) >> 4, 0, 255);
+		c.g = CLIP<int>((c.g * gFactor) >> 4, 0, 255);
+		c.b = CLIP<int>((c.b * bFactor) >> 4, 0, 255);
 		pal->setColor(i, c.r, c.g, c.b);
-
-#undef UPDATE_COL
 	}
 }
 
-int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
+int gfx_get_res_config(gfx_res_fullconf_t res_conf, gfx_pixmap_t *pxm) {
 	int restype = GFXR_RES_TYPE(pxm->ID);
 	int nr = GFXR_RES_NR(pxm->ID);
 	int loop = pxm->loop;
@@ -153,35 +107,30 @@ int gfx_get_res_config(gfx_options_t *options, gfx_pixmap_t *pxm) {
 
 	gfx_res_conf_t *conf;
 
-#ifdef DEBUG
-	fprintf(stderr, "[DEBUG:gfx-res] Trying to conf %d/%d/%d/%d (ID=%d)\n",
-	        restype, nr, loop, cel, pxm->ID);
-#endif
-
 	if (pxm->ID < 0 || restype < 0 || restype >= GFX_RESOURCE_TYPES_NR)
 		return 1; // Not appropriate
 
-	conf = find_match(options->res_conf.assign[restype], restype, nr, loop, cel);
-
+	// Find assignment config, if available
+	conf = find_match(res_conf.assign[restype], restype, nr, loop, cel);
 	if (conf) {
 		// Assign palette
 		if (pxm->palette)
 			pxm->palette->free();
 
-		pxm->palette = new Palette(conf->conf.assign.assign.palette.colors,
-								   conf->conf.assign.assign.palette.colors_nr);
+		pxm->palette = new Palette(conf->colors,
+								   conf->colors_nr);
 		pxm->palette->name = "res";
 	}
 
-	conf = options->res_conf.mod[restype];
+	// Find mod config, if available
+	conf = res_conf.mod[restype];
 	while (conf) {
 		conf = find_match(conf, restype, nr, loop, cel);
 		if (conf) {
-			apply_mod(conf->conf.factor, pxm);
+			apply_mod(conf->rFactor, conf->gFactor, conf->bFactor, pxm);
 			conf = conf->next;
 		}
 	}
-	fflush(NULL);
 
 	return 0;
 }
