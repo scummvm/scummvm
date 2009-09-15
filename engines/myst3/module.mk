@@ -5,7 +5,8 @@ MODULE_OBJS := \
 	detection.o \
 	directoryentry.o \
 	directorysubentry.o \
-	myst3.o
+	myst3.o \
+	room.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_MYST3), DYNAMIC_PLUGIN)

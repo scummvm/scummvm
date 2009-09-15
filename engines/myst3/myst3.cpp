@@ -32,6 +32,7 @@
 
 #include "engines/myst3/myst3.h"
 #include "engines/myst3/archive.h"
+#include "engines/myst3/room.h"
 
 #include "graphics/jpeg.h"
 #include "graphics/conversion.h"
@@ -45,16 +46,13 @@
 
 namespace Myst3 {
 
-GLuint cubeTextures[6];
+Room room;
+
 float CAMERA_Pitch = 0.0f;
 float CAMERA_Yaw = 0.0f;
-static const int textureSize = 1024;
 
 void sbInit() {
 
-		// Chargement des six textures
-		Graphics::Surface *texture_image[6];	
-		
 		for (int i = 0; i < 6; i++) {
 			char fileName[250];
 			sprintf(fileName, "1-%d.jpg", i + 1);
@@ -63,115 +61,26 @@ void sbInit() {
 			if (!jpegFile.open(fileName)) {
 				error("Unable to open cube face %d", i);
 			}
-			
+					
 			Graphics::JPEG jpeg;
 			jpeg.read(&jpegFile);
-			
-			byte *y = (byte *)jpeg.getComponent(1)->getBasePtr(0, 0);
-			byte *u = (byte *)jpeg.getComponent(2)->getBasePtr(0, 0);
-			byte *v = (byte *)jpeg.getComponent(3)->getBasePtr(0, 0);
-			
-			texture_image[i] = new Graphics::Surface();
-			texture_image[i]->create(jpeg.getComponent(1)->w, jpeg.getComponent(1)->h, 3);
-			
-			byte *ptr = (byte *)texture_image[i]->getBasePtr(0, 0);
-			for (int j = 0; j < texture_image[i]->w * texture_image[i]->h; j++) {
-				byte r, g, b;
-				Graphics::YUV2RGB(*y++, *u++, *v++, r, g, b);
-				*ptr++ = r;
-				*ptr++ = g;
-				*ptr++ = b;
-			}
-			
+
+			room.setFaceTextureJPEG(i, &jpeg);
+
 			jpegFile.close();
-		}
 
-
-		for (int i = 0; i < 6; i++)
-		{
-			// Génération d'une texture
-			glGenTextures(1, &cubeTextures[i]);
-
-			// Configuration de la texture courante
-			glBindTexture(GL_TEXTURE_2D, cubeTextures[i]);
-
-			if (texture_image[i])				
-			{
-				glTexImage2D(GL_TEXTURE_2D, 0, 3, textureSize, textureSize, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
-				glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, texture_image[i]->w, texture_image[i]->h, GL_RGB, GL_UNSIGNED_BYTE, texture_image[i]->pixels);
-				//glTexImage2D(GL_TEXTURE_2D, 0, 3, texture_image[i]->w, texture_image[i]->h, 0, GL_RGB, GL_UNSIGNED_BYTE, texture_image[i]->pixels);
-								
-				delete texture_image[i];
-			}
-			
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		}
 }
 
 void DrawSkyBox(float camera_yaw, float camera_pitch)
 {
-	// Taille du cube
-	float t = 1.0f;
-
-	// Portion de texture utilisée
-	float s = 640 / (float)textureSize;
-
 	// Réglage de l'orientation
 	glPushMatrix();
 	glLoadIdentity();
 	glRotatef( camera_pitch, 1.0f, 0.0f, 0.0f );
 	glRotatef( camera_yaw, 0.0f, 1.0f, 0.0f );	
 	
-
-
-	glBindTexture(GL_TEXTURE_2D, cubeTextures[4]);
-	glBegin(GL_TRIANGLE_STRIP);			// X-
-		glTexCoord2f(0, s); glVertex3f(-t,-t, t); 	
-		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f(-t, t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t,-t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, cubeTextures[3]);
-	glBegin(GL_TRIANGLE_STRIP);			// X+
-		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f( t,-t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t,-t); 
-		glTexCoord2f(s, 0); glVertex3f( t, t, t); 	
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, cubeTextures[1]);
-	glBegin(GL_TRIANGLE_STRIP);			// Y-
-		glTexCoord2f(0, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f( t,-t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t,-t, t);
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, cubeTextures[5]);
-	glBegin(GL_TRIANGLE_STRIP);			// Y+
-		glTexCoord2f(0, s); glVertex3f( t, t, t);
-		glTexCoord2f(s, s); glVertex3f(-t, t, t); 
-		glTexCoord2f(0, 0); glVertex3f( t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t,-t); 	
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, cubeTextures[0]);
-	glBegin(GL_TRIANGLE_STRIP);			// Z-
-		glTexCoord2f(0, s); glVertex3f(-t,-t,-t);
-		glTexCoord2f(s, s); glVertex3f( t,-t,-t);
-		glTexCoord2f(0, 0); glVertex3f(-t, t,-t);
-		glTexCoord2f(s, 0); glVertex3f( t, t,-t); 
-	glEnd();
-
-	glBindTexture(GL_TEXTURE_2D, cubeTextures[2]);
-	glBegin(GL_TRIANGLE_STRIP);			// Z+
-		glTexCoord2f(0, s); glVertex3f( t,-t, t);
-		glTexCoord2f(s, s); glVertex3f(-t,-t, t);
-		glTexCoord2f(0, 0); glVertex3f( t, t, t);
-		glTexCoord2f(s, 0); glVertex3f(-t, t, t);
-	glEnd();
+	room.draw();
 
 	// Réinitialisation de la matrice ModelView
 	glPopMatrix();
