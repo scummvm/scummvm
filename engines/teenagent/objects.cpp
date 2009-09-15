@@ -50,7 +50,7 @@ void Object::dump() {
 }
 
 Common::String Object::description(const char *name) {
-	const char * desc = name + strlen(name) + 1;
+	const char *desc = name + strlen(name) + 1;
 	if (*desc == 0)
 		return Common::String();
 		

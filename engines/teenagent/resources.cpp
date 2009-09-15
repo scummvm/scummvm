@@ -30,7 +30,7 @@ namespace TeenAgent {
 
 Resources::Resources() {}
 
-Resources * Resources::instance() {
+Resources *Resources::instance() {
 	static Resources i;
 	return &i;
 }
@@ -47,7 +47,7 @@ void Resources::deinit() {
 	sam_sam.close();
 }
 
-bool Resources::loadArchives(const ADGameDescription * gd) {
+bool Resources::loadArchives(const ADGameDescription *gd) {
 	Common::File dat_file;
 	if (!dat_file.open("teenagent.dat")) {
 		Common::String errorMessage = "You're missing the 'teenagent.dat' file. Get it from the ScummVM website";
@@ -55,7 +55,7 @@ bool Resources::loadArchives(const ADGameDescription * gd) {
 		warning("%s", errorMessage.c_str());
 		return false;
 	}
-	Common::SeekableReadStream * dat = Common::wrapCompressedReadStream(&dat_file);
+	Common::SeekableReadStream *dat = Common::wrapCompressedReadStream(&dat_file);
 	cseg.read(dat, 0xb3b0);
 	dseg.read(dat, 0xe790);
 	eseg.read(dat, 0x8be2);
@@ -81,7 +81,7 @@ bool Resources::loadArchives(const ADGameDescription * gd) {
 	return true;
 }
 
-void Resources::loadOff(Graphics::Surface &surface, byte * palette, int id) {
+void Resources::loadOff(Graphics::Surface &surface, byte *palette, int id) {
 	uint32 size = off.get_size(id);
 	if (size == 0) {
 		error("invalid background %d", id);
@@ -90,17 +90,17 @@ void Resources::loadOff(Graphics::Surface &surface, byte * palette, int id) {
 	byte buf[64768];
 	off.read(id, buf, sizeof(buf));
 
-	byte * src = buf;
-	byte * dst = (byte *)surface.pixels;
+	byte *src = buf;
+	byte *dst = (byte *)surface.pixels;
 	memcpy(dst, src, 64000);
 	memcpy(palette, buf + 64000, 768);
 }
 
-Common::SeekableReadStream * Resources::loadLan(uint32 id) const {
+Common::SeekableReadStream *Resources::loadLan(uint32 id) const {
 	return id <= 500? loadLan000(id): lan500.getStream(id - 500);
 }
 
-Common::SeekableReadStream * Resources::loadLan000(uint32 id) const {
+Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 	switch(id) {
 
 	case 81:

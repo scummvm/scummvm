@@ -75,7 +75,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	stream->read(pixels, w_ * h_);
 }
 
-void Surface::render(Graphics::Surface * surface, int dx, int dy, bool mirror) {
+void Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror) {
 	assert(x + w <= surface->w);
 	assert(y + h <= surface->h);
 

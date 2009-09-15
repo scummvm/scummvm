@@ -32,7 +32,7 @@ namespace TeenAgent {
 
 class Segment {
 	uint32 _size;
-	byte * _data;
+	byte *_data;
 
 public: 
 	Segment() : _size(0), _data(0) {}
@@ -65,12 +65,12 @@ public:
 		return WRITE_LE_UINT32(_data + offset, v);
 	}
 	
-	const byte * ptr(uint32 addr) const {
+	const byte *ptr(uint32 addr) const {
 		assert(addr < _size);
 		return _data + addr;
 	}
 
-	byte * ptr(uint32 addr) {
+	byte *ptr(uint32 addr) {
 		assert(addr < _size);
 		return _data + addr;
 	}

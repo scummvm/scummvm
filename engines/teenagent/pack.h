@@ -41,7 +41,7 @@ public:
 	void close();
 	uint32 get_size(uint32 id) const;
 	uint32 read(uint32 id, byte *dst, uint32 size) const;
-	Common::SeekableReadStream * getStream(uint32 id) const;
+	Common::SeekableReadStream *getStream(uint32 id) const;
 };
 
 } // End of namespace TeenAgent

@@ -27,12 +27,12 @@
 
 namespace TeenAgent {
 
-void Actor::render(Graphics::Surface * surface, const Common::Point & position, uint8 orientation, int delta_frame) {
+void Actor::render(Graphics::Surface *surface, const Common::Point & position, uint8 orientation, int delta_frame) {
 	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
 	
-	Surface * s = NULL;
+	Surface *s = NULL;
 	
 	if (delta_frame == 0) {
 		index = 0; //static animation

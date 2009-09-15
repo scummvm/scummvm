@@ -41,7 +41,7 @@ MusicPlayer::~MusicPlayer() {
 }
 
 bool MusicPlayer::load(int id) {
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 
 	Common::SeekableReadStream *stream	= res->mmm.getStream(id);
 	if (stream == NULL)

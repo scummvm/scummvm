@@ -44,7 +44,7 @@ class TeenAgentEngine: public Engine {
 public: 
 	enum Action { ActionNone, ActionExamine, ActionUse };
 	
-	TeenAgentEngine(OSystem * system, const ADGameDescription *gd);
+	TeenAgentEngine(OSystem *system, const ADGameDescription *gd);
 
 	virtual Common::Error run();
 	virtual Common::Error loadGameState(int slot);
@@ -56,13 +56,13 @@ public:
 
 	void deinit();
 	
-	Object * findObject(int id, const Common::Point &point);
+	Object *findObject(int id, const Common::Point &point);
 	
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);
 
 	bool processCallback(uint16 addr);
-	inline Scene * getScene() { return scene; }
+	inline Scene *getScene() { return scene; }
 
 	static Common::String parseMessage(uint16 addr);
 
@@ -72,7 +72,7 @@ public:
 	void displayCredits(uint16 addr);
 	void moveTo(const Common::Point & dst, byte o, bool warp = false);
 	void moveTo(uint16 x, uint16 y, byte o, bool warp = false);
-	void moveTo(Object * obj);
+	void moveTo(Object *obj);
 	void moveRel(int16 x, int16 y, byte o, bool warp = false);
 	void playActorAnimation(uint16 id, bool async = false);
 	void playAnimation(uint16 id, byte slot, bool async = false);
@@ -105,7 +105,7 @@ private:
 
 	bool scene_busy;
 	Action action;
-	Object * dst_object;
+	Object *dst_object;
 
 
 	Audio::AudioStream *_musicStream;

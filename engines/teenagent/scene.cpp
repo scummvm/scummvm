@@ -52,7 +52,7 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	if (validate) {
 		for (byte i = 0; i < walkboxes; ++i) {
-			Walkbox * w = walkbox[i];
+			Walkbox *w = walkbox[i];
 			if (w->rect.in(point)) {
 				debug(0, "bumped into walkbox %u", i);
 				byte o = w->orientation;
@@ -89,12 +89,12 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 }
 
 
-void Scene::init(TeenAgentEngine *engine, OSystem * system) {
+void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_engine = engine;
 	_system = system;
 	
-	Resources * res = Resources::instance();
-	Common::SeekableReadStream * s = res->varia.getStream(1);
+	Resources *res = Resources::instance();
+	Common::SeekableReadStream *s = res->varia.getStream(1);
 	if (s == NULL)
 		error("invalid resource data");
 
@@ -112,18 +112,18 @@ void Scene::init(TeenAgentEngine *engine, OSystem * system) {
 }
 
 byte *Scene::getOns(int id) {
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	return res->dseg.ptr(res->dseg.get_word(0xb4f5 + (id - 1) * 2));
 }
 
-byte * Scene::getLans(int id) {
-	Resources * res = Resources::instance();
+byte *Scene::getLans(int id) {
+	Resources *res = Resources::instance();
 	return res->dseg.ptr(0xd89e + (id - 1) * 4);
 }
 
 void Scene::loadOns() {
 	debug(0, "loading ons animation");
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 
 	uint16 addr = res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
 	//debug(0, "ons index: %04x", addr);
@@ -146,7 +146,7 @@ void Scene::loadOns() {
 	if (ons_count > 0) {
 		ons = new Surface[ons_count];
 		for (uint32 i = 0; i < ons_count; ++i) {
-			Common::SeekableReadStream * s = res->ons.getStream(on_id[i]);
+			Common::SeekableReadStream *s = res->ons.getStream(on_id[i]);
 			if (s != NULL)
 				ons[i].load(s, Surface::TypeOns);
 		}
@@ -155,7 +155,7 @@ void Scene::loadOns() {
 
 void Scene::loadLans() {
 	debug(0, "loading lans animation");
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	//load lan000
 	
 	for (int i = 0; i < 4; ++i) {
@@ -168,7 +168,7 @@ void Scene::loadLans() {
 		if (bxv == 0)
 			continue;
 
-		Common::SeekableReadStream * s = res->loadLan000(res_id);
+		Common::SeekableReadStream *s = res->loadLan000(res_id);
 		if (s != NULL) {
 			animations[i].load(s, Animation::TypeLan);
 			if (bxv != 0 && bxv != 0xff) 
@@ -190,7 +190,7 @@ void Scene::init(int id, const Common::Point &pos) {
 		
 	warp(pos);
 
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	res->loadOff(background, palette, id);
 	if (id == 24) {
 		//dark scene
@@ -214,7 +214,7 @@ void Scene::init(int id, const Common::Point &pos) {
 	loadOns();
 	loadLans();
 	
-	byte * walkboxes_base = res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + (id - 1) * 2)));
+	byte *walkboxes_base = res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + (id - 1) * 2)));
 	walkboxes = *walkboxes_base++;
 
 	debug(0, "found %d walkboxes", walkboxes);
@@ -232,7 +232,7 @@ void Scene::init(int id, const Common::Point &pos) {
 
 void Scene::playAnimation(byte idx, uint id, bool loop, bool paused) {
 	assert(idx < 4);
-	Common::SeekableReadStream * s = Resources::instance()->loadLan(id + 1);
+	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
 		error("playing animation %u failed", id);
 
@@ -242,7 +242,7 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused) {
 }
 
 void Scene::playActorAnimation(uint id, bool loop) {
-	Common::SeekableReadStream * s = Resources::instance()->loadLan(id + 1);
+	Common::SeekableReadStream *s = Resources::instance()->loadLan(id + 1);
 	if (s == NULL)
 		error("playing animation %u failed", id);
 
@@ -287,12 +287,12 @@ bool Scene::processEvent(const Common::Event &event) {
 	}
 }
 
-bool Scene::render(OSystem * system) {
+bool Scene::render(OSystem *system) {
 	//render background
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	if (current_event.type == SceneEvent::CreditsMessage) {
 		system->fillScreen(0);
-		Graphics::Surface * surface = system->lockScreen();
+		Graphics::Surface *surface = system->lockScreen();
 		res->font8.color = current_event.color;
 		res->font8.shadow_color = current_event.orientation;
 		res->font8.render(surface, current_event.dst.x, current_event.dst.y, message);
@@ -308,11 +308,11 @@ bool Scene::render(OSystem * system) {
 		busy = processEventQueue();
 		system->copyRectToScreen((const byte *)background.pixels, background.pitch, 0, 0, background.w, background.h);
 
-		Graphics::Surface * surface = system->lockScreen();
+		Graphics::Surface *surface = system->lockScreen();
 
 		if (ons != NULL) {
 			for (uint32 i = 0; i < ons_count; ++i) {
-				Surface* s = ons + i;
+				Surface *s = ons + i;
 				if (s != NULL)
 					s->render(surface);
 			}
@@ -345,7 +345,7 @@ bool Scene::render(OSystem * system) {
 			if (a->id == 0)
 				continue;
 
-			Object * obj = getObject(a->id);
+			Object *obj = getObject(a->id);
 			if (obj != NULL) {
 				obj->rect.left = s->x;
 				obj->rect.top = s->y;
@@ -356,7 +356,7 @@ bool Scene::render(OSystem * system) {
 		}
 
 		if (!hide_actor) {
-			Surface * mark = actor_animation.currentFrame();
+			Surface *mark = actor_animation.currentFrame();
 			if (mark == NULL) {
 				actor_animation.free();
 
@@ -407,7 +407,7 @@ bool Scene::render(OSystem * system) {
 		//	current_event.dump();
 		/*
 		for (byte i = 0; i < walkboxes; ++i) {
-			Walkbox * w = walkbox[i];
+			Walkbox *w = walkbox[i];
 			w->rect.render(surface, 0xd0 + i);
 		}
 		*/
@@ -437,7 +437,7 @@ bool Scene::processEventQueue() {
 		switch(current_event.type) {
 		
 		case SceneEvent::SetOn: {
-			byte * ptr = getOns(current_event.scene == 0? _id: current_event.scene);
+			byte *ptr = getOns(current_event.scene == 0? _id: current_event.scene);
 			debug(0, "on[%u] = %02x", current_event.ons - 1, current_event.color);
 			ptr[current_event.ons - 1] = current_event.color;
 			loadOns();
@@ -447,7 +447,7 @@ bool Scene::processEventQueue() {
 		case SceneEvent::SetLan: {
 			if (current_event.lan != 0) {
 				debug(0, "lan[%u] = %02x", current_event.lan - 1, current_event.color);
-				byte * ptr = getLans(current_event.scene == 0? _id: current_event.scene);
+				byte *ptr = getLans(current_event.scene == 0? _id: current_event.scene);
 				ptr[current_event.lan - 1] = current_event.color;
 			}
 			loadLans();
@@ -524,7 +524,7 @@ bool Scene::processEventQueue() {
 		
 		case SceneEvent::EnableObject: {
 				debug(0, "%s object #%u", current_event.color?"enabling":"disabling", current_event.object - 1);
-				Object * obj = getObject(current_event.object - 1, current_event.scene == 0? _id: current_event.scene);
+				Object *obj = getObject(current_event.object - 1, current_event.scene == 0? _id: current_event.scene);
 				obj->enabled = current_event.color;
 				current_event.clear();
 			}
@@ -555,7 +555,7 @@ bool Scene::processEventQueue() {
 	return !current_event.empty();
 }
 
-void Scene::setPalette(OSystem *system, const byte * buf, unsigned mul) {
+void Scene::setPalette(OSystem *system, const byte *buf, unsigned mul) {
 	byte p[1024];
 
 	memset(p, 0, 1024);
@@ -567,11 +567,11 @@ void Scene::setPalette(OSystem *system, const byte * buf, unsigned mul) {
 	system->setPalette(p, 0, 256);
 }
 
-Object * Scene::getObject(int id, int scene_id) {
+Object *Scene::getObject(int id, int scene_id) {
 	if (scene_id == 0)
 		scene_id = _id;
 	
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	uint16 addr = res->dseg.get_word(0x7254 + (scene_id - 1) * 2);
 	//debug(0, "object base: %04x, x: %d, %d", addr, point.x, point.y);
 	uint16 object = res->dseg.get_word(addr + 2 * id - 2);
@@ -581,7 +581,7 @@ Object * Scene::getObject(int id, int scene_id) {
 }
 
 Common::Point Scene::messagePosition(const Common::String &str, const Common::Point & position) {
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	uint w = res->font7.render(NULL, 0, 0, str);
 	Common::Point message_pos = position;
 	message_pos.x -= w / 2;

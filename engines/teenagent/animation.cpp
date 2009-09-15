@@ -30,11 +30,11 @@ namespace TeenAgent {
 Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), data(0), data_size(0), frames_count(0), frames(0), index(0) {
 }
 
-Surface * Animation::firstFrame(){
+Surface *Animation::firstFrame(){
 	if (frames == NULL || frames_count == 0)
 		return NULL;
 	
-	Surface * r = frames;
+	Surface *r = frames;
 	uint16 pos = READ_LE_UINT16(data + 1);
 	if (pos != 0) {
 		r->x = pos % 320;
@@ -43,14 +43,14 @@ Surface * Animation::firstFrame(){
 	return r;
 }
 
-Surface * Animation::currentFrame(int dt) {
+Surface *Animation::currentFrame(int dt) {
 	if (paused)
 		return firstFrame();
 	
 	if (frames == NULL || frames_count == 0)
 		return NULL;
 	
-	Surface * r;
+	Surface *r;
 	
 	if (data != NULL) {
 		uint32 frame = 3 * index;
@@ -102,7 +102,7 @@ void Animation::free() {
 	index = 0;
 }
 
-void Animation::load(Common::SeekableReadStream * s, Type type) {
+void Animation::load(Common::SeekableReadStream *s, Type type) {
 	//fixme: do not reload the same animation each time
 	free();
 	

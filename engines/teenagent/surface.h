@@ -39,8 +39,8 @@ public:
 	uint16 x, y;
 	
 	Surface();
-	void load(Common::SeekableReadStream * stream, Type type);
-	void render(Graphics::Surface * surface, int dx = 0, int dy = 0, bool mirror = false);
+	void load(Common::SeekableReadStream *stream, Type type);
+	void render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false);
 
 	bool empty() const { return pixels == NULL; }
 };

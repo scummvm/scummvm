@@ -95,9 +95,9 @@ public:
 	
 	Scene();
 	
-	void init(TeenAgentEngine *engine, OSystem * system);
+	void init(TeenAgentEngine *engine, OSystem *system);
 	void init(int id, const Common::Point &pos);
-	bool render(OSystem * system);
+	bool render(OSystem *system);
 	int getId() const { return _id; }
 	
 	void warp(const Common::Point & point, byte orientation = 0);
@@ -113,13 +113,13 @@ public:
 	
 	void clear();
 	
-	byte * getOns(int id);
-	byte * getLans(int id);
+	byte *getOns(int id);
+	byte *getLans(int id);
 	
 	bool eventRunning() const { return !current_event.empty(); }
 	
 	Walkbox *getWalkbox(byte id) { return walkbox[id]; }
-	Object * getObject(int id, int scene_id = 0);
+	Object *getObject(int id, int scene_id = 0);
 
 private:
 	void loadOns();
@@ -129,7 +129,7 @@ private:
 	void playActorAnimation(uint id, bool loop);
 	
 	byte palette[768];
-	void setPalette(OSystem *system, const byte * palette, unsigned mul = 1);
+	void setPalette(OSystem *system, const byte *palette, unsigned mul = 1);
 	static Common::Point messagePosition(const Common::String &str, const Common::Point & position);
 
 	bool processEventQueue();
@@ -139,7 +139,7 @@ private:
 	}
 	
 	TeenAgentEngine *_engine;
-	OSystem * _system;
+	OSystem *_system;
 	
 	int _id;
 	Graphics::Surface background;
@@ -154,7 +154,7 @@ private:
 	uint8 orientation;
 	
 	byte walkboxes;
-	Walkbox * walkbox[255];
+	Walkbox *walkbox[255];
 
 	Common::String message;
 	Common::Point message_pos;

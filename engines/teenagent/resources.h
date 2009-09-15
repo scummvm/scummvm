@@ -38,13 +38,13 @@ class Resources {
 protected:
 	Resources();
 public: 
-	static Resources * instance();
-	bool loadArchives(const ADGameDescription * gd);
+	static Resources *instance();
+	bool loadArchives(const ADGameDescription *gd);
 	void deinit();
 	void loadOff(Graphics::Surface &surface, byte *palette, int id);
-	Common::SeekableReadStream * loadLan(uint32 id) const;
-	Common::SeekableReadStream * loadLan000(uint32 id) const;
-	//void loadOn(Graphics::Surface &surface, int id, uint16 &dst, uint16 * flags);
+	Common::SeekableReadStream *loadLan(uint32 id) const;
+	Common::SeekableReadStream *loadLan000(uint32 id) const;
+	//void loadOn(Graphics::Surface &surface, int id, uint16 &dst, uint16 *flags);
 	//void loadOns(Graphics::Surface &surface, int id, uint16 &dst);
 
 	Pack varia, off, on, ons, lan000, lan500, mmm, sam_mmm, sam_sam;

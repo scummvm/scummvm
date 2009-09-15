@@ -36,7 +36,7 @@
 
 namespace TeenAgent {
 
-TeenAgentEngine::TeenAgentEngine(OSystem * system, const ADGameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
+TeenAgentEngine::TeenAgentEngine(OSystem *system, const ADGameDescription *gd) : Engine(system), action(ActionNone), _gameDescription(gd) {
 	music = new MusicPlayer();
 }
 
@@ -44,10 +44,10 @@ void TeenAgentEngine::processObject() {
 	if (dst_object == NULL)
 		return;
 
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	switch (action) {
 	case ActionExamine: {
-		byte * dcall = res->dseg.ptr(0xb5ce);
+		byte *dcall = res->dseg.ptr(0xb5ce);
 		dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 		dcall += 2 * dst_object->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
@@ -62,9 +62,9 @@ void TeenAgentEngine::processObject() {
 		{
 			InventoryObject *inv = inventory->selectedObject();
 			if (inv != NULL) {
-				byte * dcall = res->dseg.ptr(0xbb87);
+				byte *dcall = res->dseg.ptr(0xbb87);
 				dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-				for (UseObject * obj = (UseObject *)dcall; obj->inventory_id != 0; ++obj) {
+				for (UseObject *obj = (UseObject *)dcall; obj->inventory_id != 0; ++obj) {
 					if (obj->inventory_id == inv->id && dst_object->id == obj->object_id) {
 						debug(0, "combine! %u,%u", obj->x, obj->y);
 						//moveTo(Common::Point(obj->x, obj->y), NULL, Examine);
@@ -81,7 +81,7 @@ void TeenAgentEngine::processObject() {
 				
 				break;
 			} else {
-				byte * dcall = res->dseg.ptr(0xb89c);
+				byte *dcall = res->dseg.ptr(0xb89c);
 				dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
 				dcall += 2 * dst_object->id - 2;
 				uint16 callback = READ_LE_UINT16(dcall);
@@ -150,7 +150,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 	if (in == NULL)
 		return Common::kReadPermissionDenied;
 
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 
 	assert(res->dseg.size() >= 0x6478 + 0x777a);
 	char data[0x777a];
@@ -181,7 +181,7 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	if (out == NULL)
 		return Common::kWritePermissionDenied;
 
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	res->dseg.set_byte(0xB4F3, scene->getId());
 	Common::Point pos = scene->getPosition();
 	res->dseg.set_word(0x64AF, pos.x);
@@ -195,11 +195,11 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 }
 
 Common::Error TeenAgentEngine::run() {
-	Resources * res = Resources::instance();
+	Resources *res = Resources::instance();
 	if (!res->loadArchives(_gameDescription))
 		return Common::kUnknownError;
 	
-	Common::EventManager * _event = _system->getEventManager();
+	Common::EventManager *_event = _system->getEventManager();
 
 	initGraphics(320, 200, false);
 	
@@ -237,7 +237,7 @@ Common::Error TeenAgentEngine::run() {
 	do {
 		_system->showMouse(true);
 		uint32 t0 = _system->getMillis();
-		Object * current_object = findObject(scene->getId(), mouse);
+		Object *current_object = findObject(scene->getId(), mouse);
 		
 		while (_event->pollEvent(event)) {
 			if (event.type == Common::EVENT_RTL) {
@@ -275,7 +275,7 @@ Common::Error TeenAgentEngine::run() {
 		}
 		bool busy = inventory->active() || scene_busy;
 		
-		Graphics::Surface * surface = _system->lockScreen();
+		Graphics::Surface *surface = _system->lockScreen();
 
 		if (!busy) {
 			InventoryObject *selected_object = inventory->selectedObject();
@@ -314,8 +314,8 @@ Common::Error TeenAgentEngine::run() {
 	return Common::kNoError;
 }
 
-Object * TeenAgentEngine::findObject(int id, const Common::Point &point) {
-	Resources * res = Resources::instance();
+Object *TeenAgentEngine::findObject(int id, const Common::Point &point) {
+	Resources *res = Resources::instance();
 	uint16 addr = res->dseg.get_word(0x7254 + (id - 1) * 2);
 	//debug(0, "object base: %04x, x: %d, %d", addr, point.x, point.y);
 	uint16 object;
@@ -345,7 +345,7 @@ void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {
 Common::String TeenAgentEngine::parseMessage(uint16 addr) {
 	Common::String message;
 	for (
-		const char * str = (const char *)Resources::instance()->dseg.ptr(addr);
+		const char *str = (const char *)Resources::instance()->dseg.ptr(addr);
 		str[0] != 0 || str[1] != 0; 
 		++str) 
 	{
@@ -366,7 +366,7 @@ void TeenAgentEngine::displayMessage(uint16 addr, byte color) {
 void TeenAgentEngine::displayCredits(uint16 addr) {
 	SceneEvent event(SceneEvent::CreditsMessage);
 
-	const byte * src = Resources::instance()->dseg.ptr(addr);
+	const byte *src = Resources::instance()->dseg.ptr(addr);
 	event.orientation = *src++;
 	event.color = *src++;
 
@@ -517,8 +517,8 @@ void TeenAgentEngine::waitAnimation() {
 }
 
 void TeenAgentEngine::playSoundNow(byte id) {
-	Resources * res = Resources::instance();
-	Common::SeekableReadStream * in = res->sam_sam.getStream(id);
+	Resources *res = Resources::instance();
+	Common::SeekableReadStream *in = res->sam_sam.getStream(id);
 	if (in == NULL) {
 		debug(0, "skipping invalid sound %u", id);
 		return;

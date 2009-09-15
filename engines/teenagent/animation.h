@@ -38,11 +38,11 @@ public:
 	enum Type {TypeLan, TypeVaria, TypeInventory};
 	
 	Animation();
-	void load(Common::SeekableReadStream * s, Type type = TypeLan);
+	void load(Common::SeekableReadStream *s, Type type = TypeLan);
 	void free();
 	
-	Surface * firstFrame();
-	Surface * currentFrame(int dt = 1);
+	Surface *firstFrame();
+	Surface *currentFrame(int dt = 1);
 	uint16 currentIndex() const { return index; }
 	
 	~Animation();
@@ -53,11 +53,11 @@ public:
 	//uint16 height() const { return frames? frames[0].h: 0; }
 
 protected:
-	byte * data;
+	byte *data;
 	uint16 data_size;
 	
 	uint16 frames_count;
-	Surface * frames;
+	Surface *frames;
 	uint16 index;
 };
 
