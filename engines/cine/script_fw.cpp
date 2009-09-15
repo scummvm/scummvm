@@ -1405,14 +1405,14 @@ int FWScript::o1_fadeToBlack() {
 
 int FWScript::o1_transformPaletteRange() {
 	byte startColor = getNextByte();
-	byte numColor = getNextByte();
+	byte endColor = getNextByte();
 	int16 r = getNextWord();
 	int16 g = getNextWord();
 	int16 b = getNextWord();
 
-	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,numIdx:%d,r:%d,g:%d,b:%d)", _line, startColor, numColor, r, g, b);
+	debugC(5, kCineDebugScript, "Line: %d: transformPaletteRange(from:%d,to:%d,r:%d,g:%d,b:%d)", _line, startColor, endColor, r, g, b);
 
-	renderer->transformPalette(startColor, numColor, r, g, b);
+	renderer->transformPalette(startColor, endColor, r, g, b);
 	return 0;
 }
 
