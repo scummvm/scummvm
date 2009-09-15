@@ -180,11 +180,11 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		uint16 offset[255];
 		for (byte i = 0; i < frames_count; ++i) {
 			offset[i] = s->readUint16LE();
-			debug(0, "%u: %04x", i, offset[i]);
+			//debug(0, "%u: %04x", i, offset[i]);
 		}
 		frames = new Surface[frames_count];
 		for (uint16 i = 0; i < frames_count; ++i) {
-			debug(0, "%04x", offset[i]);
+			//debug(0, "%04x", offset[i]);
 			s->seek(offset[i] + off);
 			frames[i].load(s, Surface::kTypeOns);
 			frames[i].x = 0;
