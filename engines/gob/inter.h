@@ -559,6 +559,7 @@ protected:
 
 	bool oPlaytoons_printText(OpFuncParams &params);
 	bool oPlaytoons_F_1B(OpFuncParams &params);
+	bool oPlaytoons_putPixel(OpFuncParams &params);
 	bool oPlaytoons_freeSprite(OpFuncParams &params);
 	bool oPlaytoons_checkData(OpFuncParams &params);
 	bool oPlaytoons_readData(OpFuncParams &params);

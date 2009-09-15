@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	draw_v2.o \
 	draw_bargon.o \
 	draw_fascin.o \
+	draw_playtoons.o \
 	driver_vga.o \
 	expression.o \
 	game.o \

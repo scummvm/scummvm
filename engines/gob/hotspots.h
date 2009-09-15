@@ -101,8 +101,9 @@ public:
 	/** Return the cursor found in the hotspot to the coordinates. */
 	int16 findCursor(uint16 x, uint16 y) const;
 
-	/** Check the existance of a hotspot based on its short Id */
-	bool searchHotspot(int16 shortId) const;
+	/** implementation of oPlaytoons_F_1B code*/
+	void oPlaytoons_F_1B();
+
 
 private:
 	struct Hotspot {
@@ -268,6 +269,8 @@ private:
 
 	/** Go through all inputs we manage and redraw their texts. */
 	void updateAllTexts(const InputDesc *inputs) const;
+
+	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *str, int16 var3, int16 var4, int16 shortId);
 };
 
 } // End of namespace Gob

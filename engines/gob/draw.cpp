@@ -126,6 +126,8 @@ Draw::Draw(GobEngine *vm) : _vm(vm) {
 	_needAdjust = 2;
 	_scrollOffsetX = 0;
 	_scrollOffsetY = 0;
+
+	_pattern = 0;
 }
 
 Draw::~Draw() {

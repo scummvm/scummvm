@@ -1565,14 +1565,60 @@ int16 Hotspots::findCursor(uint16 x, uint16 y) const {
 	return cursor;
 }
 
-bool Hotspots::searchHotspot(int16 shortId) const {
+void Hotspots::oPlaytoons_F_1B(void) {
+	int16 shortId;
+	int16 longId;
+	int16 var2;
+	int16 var3;
+	int16 var4;
+
+	uint16 left;
+	uint16 top;
+	uint16 right;
+	uint16 bottom;
+
+	shortId = _vm->_game->_script->readValExpr();
+	var2 = _vm->_game->_script->readValExpr();
+
+	_vm->_game->_script->evalExpr(0);
+
+	var3 = _vm->_game->_script->readValExpr();
+	var4 = _vm->_game->_script->readValExpr();
+
+//  this variable is always set to 0 in Playtoons
+//	var_4 += unk_var; 
+
 	for (int i = 0; i < kHotspotCount; i++) {
-		if (_hotspots[i].isEnd())
-			return false;
-		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) || (_hotspots[i].id == 0x4000 + shortId))
-			return true;
+		if (_hotspots[i].isEnd()) {
+			return;
+		}
+		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) || 
+			(_hotspots[i].id == 0x4000 + shortId)) {
+			longId = _hotspots[i].id;
+			warning("oPlaytoons_F_1B not fully handled");
+			warning("shortId %d, var2 %d var3 %d var4 %d", shortId, var2, var3, var4);
+			
+			left = _hotspots[i].left;
+			top = _hotspots[i].top;
+			right = _hotspots[i].right;
+			bottom = _hotspots[i].bottom;
+
+			left += 2;
+			top += 2;
+			right -= 2;
+			bottom -= 2;
+			if ((_vm->_draw->_needAdjust != 2) && (_vm->_draw->_needAdjust != 10)) {
+				left += 2;
+				top += 2;
+				right -= 2;
+				bottom -= 2;
+			}
+			oPlaytoons_sub_F_1B(0x8000 + var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), var3, var4, shortId);
+			return;
+		}
 	}
-	return false;
+	warning("shortId not found %d", shortId);
+	return;
 }
 
 uint16 Hotspots::inputToHotspot(uint16 input) const {
@@ -1983,6 +2029,18 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 
 		input++;
 	}
+}
+
+void Hotspots::oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId)
+{
+	char tmpStr[128];
+
+	strcpy( tmpStr, paramStr);
+	_vm->_draw->adjustCoords(1, &left, &right);
+	_vm->_draw->adjustCoords(1, &top,  &bottom);
+
+	warning("oPlaytoons_sub_F_1B display string %s", paramStr);
+	return;
 }
 
 } // End of namespace Gob

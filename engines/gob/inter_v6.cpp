@@ -410,10 +410,11 @@ bool Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_game->_script->evalExpr(0);
 
 	_vm->_draw->_backColor = _vm->_game->_script->getResultInt() & 0xFFFF;
-	uint16 extraVar = _vm->_game->_script->getResultInt() >> 16;
+	
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt() >> 16;
 
-	if (extraVar != 0)
-		warning("Urban Stub: o6_fillRect(), extraVar = %d", extraVar);
+	if (_vm->_draw->_pattern != 0)
+		warning("Urban Stub: o6_fillRect(), _pattern = %d", _vm->_draw->_pattern);
 
 	if (_vm->_draw->_spriteRight < 0) {
 		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;

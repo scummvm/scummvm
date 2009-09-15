@@ -87,6 +87,7 @@ void Inter_Playtoons::setupOpcodesFunc() {
 	CLEAROPCODEFUNC(0x3D);
 	OPCODEFUNC(0x0B, oPlaytoons_printText);
 	OPCODEFUNC(0x1B, oPlaytoons_F_1B);
+	OPCODEFUNC(0x24, oPlaytoons_putPixel);
 	OPCODEFUNC(0x27, oPlaytoons_freeSprite);
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
 	OPCODEFUNC(0x4D, oPlaytoons_readData);
@@ -182,25 +183,26 @@ bool Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 }
 
 bool Inter_Playtoons::oPlaytoons_F_1B(OpFuncParams &params) {
-	int16 shortId;
-	int16 var2;
-	int16 var3;
-	int16 var4;
+	_vm->_game->_hotspots->oPlaytoons_F_1B();
+	return false;
+}
 
-	shortId = _vm->_game->_script->readValExpr();
-	var2 = _vm->_game->_script->readValExpr();
+bool Inter_Playtoons::oPlaytoons_putPixel(OpFuncParams &params) {
+	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 
-	_vm->_game->_script->evalExpr(0);
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
 
-	var3 = _vm->_game->_script->readValExpr();
-	var4 = _vm->_game->_script->readValExpr();
+//	_expression->printExpr(99);
+	_vm->_game->_script->readExpr(99, false);
 
-	if (_vm->_game->_hotspots->searchHotspot(shortId)) {
-		warning("oPlaytoons_F_1B not fully handled");
-		warning("shortId %d, var2 %d var3 %d var4 %d", shortId, var2, var3, var4);
-	}
-	else
-		warning("shortId not found %d", shortId);
+	//unk_var is always set to 0 in Playtoons
+	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
+
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
+
+	_vm->_draw->spriteOperation(DRAW_PUTPIXEL);
+
 	return false;
 }
 

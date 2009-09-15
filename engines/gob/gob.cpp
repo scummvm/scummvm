@@ -463,7 +463,7 @@ bool GobEngine::initGameParts() {
 		_video    = new Video_v6(this);
 		_inter    = new Inter_Playtoons(this);
 		_mult     = new Mult_v2(this);
-		_draw     = new Draw_v2(this);
+		_draw     = new Draw_Playtoons(this);
 		_map      = new Map_v2(this);
 		_goblin   = new Goblin_v4(this);
 		_scenery  = new Scenery_v2(this);

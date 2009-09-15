@@ -71,6 +71,7 @@
 		<File RelativePath="..\..\engines\gob\draw.h" />
 		<File RelativePath="..\..\engines\gob\draw_bargon.cpp" />
 		<File RelativePath="..\..\engines\gob\draw_fascin.cpp" />
+		<File RelativePath="..\..\engines\gob\draw_playtoons.cpp" />
 		<File RelativePath="..\..\engines\gob\draw_v1.cpp" />
 		<File RelativePath="..\..\engines\gob\draw_v2.cpp" />
 		<File RelativePath="..\..\engines\gob\driver_vga.cpp" />

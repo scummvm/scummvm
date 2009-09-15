@@ -217,6 +217,7 @@ void Draw_v2::printTotText(int16 id) {
 	size    = textItem->getSize();
 	dataPtr = textItem->getData();
 	ptr     = dataPtr;
+	_pattern = 0;
 
 	bool isSubtitle = (ptr[1] & 0x80) != 0;
 

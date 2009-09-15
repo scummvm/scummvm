@@ -138,6 +138,8 @@ public:
 	int16 _scrollOffsetY;
 	int16 _scrollOffsetX;
 
+	int16 _pattern;
+
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated();
 	void setPalette();
@@ -228,6 +230,13 @@ public:
 	virtual ~Draw_Fascin() {}
 };
 
+class Draw_Playtoons: public Draw_v2 {
+public:
+	Draw_Playtoons(GobEngine *vm);
+	virtual ~Draw_Playtoons() {}
+	virtual void spriteOperation(int16 operation);
+};
+	
 // Draw operations
 
 #define DRAW_BLITSURF	0
