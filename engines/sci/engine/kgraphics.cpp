@@ -991,11 +991,8 @@ reg_t kDrawPic(EngineState *s, int, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", argv[0].toSint16());
 
 	if (add_to_pic) {
-		s->_pics.push_back(dp);
 		gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
 	} else {
-		s->_pics.clear();
-		s->_pics.push_back(dp);
 		gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
 	}
 

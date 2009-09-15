@@ -32,7 +32,6 @@ namespace Sci {
 
 EngineState::EngineState(ResourceManager *res, uint32 flags)
 : resMan(res), _flags(flags), _dirseeker(this) {
-	widget_serial_counter = 0;
 
 	game_version = 0;
 
@@ -79,8 +78,6 @@ EngineState::EngineState(ResourceManager *res, uint32 flags)
 	priority_last = 0;
 
 	last_wait_time = 0;
-
-	kernel_opt_flags = 0;
 
 	_fileHandles.resize(5);
 

@@ -118,12 +118,6 @@ reg_t kGetTime(EngineState *s, int, int argc, reg_t *argv) {
 	uint32 start_time;
 	int retval = 0; // Avoid spurious warning
 
-#if 0
-	// Reset optimization flags: If this function is called,
-	// the game may be waiting for a timeout
-	s->kernel_opt_flags &= ~(KERNEL_OPT_FLAG_GOT_EVENT | KERNEL_OPT_FLAG_GOT_2NDEVENT);
-#endif
-
 	g_system->getTimeAndDate(loc_time);
 	start_time = g_system->getMillis() - s->game_start_time;
 

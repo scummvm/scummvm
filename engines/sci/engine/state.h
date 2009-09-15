@@ -165,8 +165,6 @@ public:
 
 	kLanguage getLanguage();
 public:
-	int widget_serial_counter; /**< Used for savegames */
-
 	ResourceManager *resMan; /**< The resource manager */
 
 	const uint32 _flags;			/**< Specific game flags */
@@ -220,12 +218,8 @@ public:
 	int priority_first; /**< The line where priority zone 0 ends */
 	int priority_last; /**< The line where the highest priority zone starts */
 
-	Common::Array<drawn_pic_t> _pics;
-
 	uint32 game_start_time; /**< The time at which the interpreter was started */
 	uint32 last_wait_time; /**< The last time the game invoked Wait() */
-
-	unsigned int kernel_opt_flags; /**< Kernel optimization flags- used for performance tweaking */
 
 	/* Kernel File IO stuff */
 

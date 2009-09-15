@@ -772,8 +772,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->have_bp = s->have_bp;
 	retval->bp_list = s->bp_list;
 
-	retval->kernel_opt_flags = 0;
-
 	retval->successor = NULL;
 	retval->pic_priority_table = (int *)gfxop_get_pic_metainfo(retval->gfx_state);
 	retval->_gameName = retval->segMan->getObjectName(retval->game_obj);

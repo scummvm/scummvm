@@ -267,8 +267,6 @@ int _reset_graphics_input(EngineState *s) {
 	// but this is correct
 	s->picture_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
 
-	s->_pics.clear();
-
 	s->visual->add((GfxContainer *)s->visual, s->wm_port);
 	s->visual->add((GfxContainer *)s->visual, s->titlebar_port);
 	s->visual->add((GfxContainer *)s->visual, s->picture_port);
@@ -306,8 +304,6 @@ static void _free_graphics_input(EngineState *s) {
 	s->visual = NULL;
 	s->dyn_views = NULL;
 	s->port = NULL;
-
-	s->_pics.clear();
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
@@ -322,7 +318,6 @@ int game_init_sound(EngineState *s, int sound_flags) {
 
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
-	s->kernel_opt_flags = 0;
 	s->segMan = new SegManager(s->resMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
@@ -366,7 +361,6 @@ int script_init_engine(EngineState *s) {
 	debug(2, "Engine initialized");
 
 	s->pic_priority_table = NULL;
-	s->_pics.clear();
 
 	return 0;
 }
