@@ -40,7 +40,7 @@ struct Rect {
 
 	inline Rect() : left(0), top(0), right(0), bottom(0) {}
 	inline Rect(uint16 l, uint16 t, uint16 r, uint16 b) : left(l), top(t), right(r), bottom(b) {}
-	
+
 	inline bool in(const Common::Point &point) const {
 		return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
 	}
@@ -54,7 +54,7 @@ struct Rect {
 	void dump() {
 		debug(0, "rect[%u, %u, %u, %u]", left, top, right, bottom);
 	}
-	
+
 	void clear() {
 		left = top = right = bottom = 0;
 	}

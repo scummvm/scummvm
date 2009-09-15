@@ -50,13 +50,13 @@ static const ADGameDescription teenAgentGameDescriptions[] = {
 			{"sam_mmm.res", 0, NULL, -1},
 			{"sam_sam.res", 0, NULL, -1},
 			{NULL, 0, NULL, 0}
-		}, 
+		},
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
 		Common::GUIO_NONE
-	}, 
-	AD_TABLE_END_MARKER, 
+	},
+	AD_TABLE_END_MARKER,
 };
 
 static const ADParams detectionParams = {
@@ -91,7 +91,7 @@ public:
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:
 		case kSupportsLoadingDuringStartup:
-		//case kSavesSupportThumbnail:
+			//case kSavesSupportThumbnail:
 			return true;
 		default:
 			return false;
@@ -118,7 +118,7 @@ public:
 	virtual SaveStateList listSaves(const char *target) const {
 		Common::String pattern = target;
 		pattern += ".*";
-		
+
 		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
 		bool slotsTable[MAX_SAVES];
 		memset(slotsTable, 0, sizeof(slotsTable));
@@ -155,7 +155,7 @@ public:
 };
 
 #if PLUGIN_ENABLED_DYNAMIC(TEENAGENT)
-	REGISTER_PLUGIN_DYNAMIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
+REGISTER_PLUGIN_DYNAMIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
 #else
-	REGISTER_PLUGIN_STATIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
+REGISTER_PLUGIN_STATIC(TEENAGENT, PLUGIN_TYPE_ENGINE, TeenAgentMetaEngine);
 #endif

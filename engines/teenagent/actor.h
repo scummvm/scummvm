@@ -28,8 +28,8 @@
 namespace TeenAgent {
 
 class Actor : public Animation {
-public: 
-	void render(Graphics::Surface *surface, const Common::Point & position, uint8 orientation, int delta_frame);
+public:
+	void render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame);
 };
 
 } // End of namespace TeenAgent

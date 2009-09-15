@@ -37,7 +37,7 @@ public:
 
 	uint16 flags[255];
 	uint16 x, y;
-	
+
 	Surface();
 	void load(Common::SeekableReadStream *stream, Type type);
 	void render(Graphics::Surface *surface, int dx = 0, int dy = 0, bool mirror = false);

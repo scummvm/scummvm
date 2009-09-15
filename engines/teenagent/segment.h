@@ -34,12 +34,12 @@ class Segment {
 	uint32 _size;
 	byte *_data;
 
-public: 
+public:
 	Segment() : _size(0), _data(0) {}
 	~Segment();
-	
+
 	void read(Common::ReadStream *s, uint32 _size);
-	
+
 	inline byte get_byte(uint32 offset) const {
 		assert(offset < _size);
 		return _data[offset];
@@ -64,7 +64,7 @@ public:
 		assert(offset + 3 < _size);
 		return WRITE_LE_UINT32(_data + offset, v);
 	}
-	
+
 	const byte *ptr(uint32 addr) const {
 		assert(addr < _size);
 		return _data + addr;

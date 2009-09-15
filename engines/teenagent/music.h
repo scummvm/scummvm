@@ -46,7 +46,7 @@ protected:
 	int _id;
 
 	struct Row {
-		struct Channel{
+		struct Channel {
 			byte sample;
 			byte volume;
 			byte note;

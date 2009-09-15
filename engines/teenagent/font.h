@@ -30,18 +30,18 @@
 namespace TeenAgent {
 
 class Font {
-public: 
+public:
 	byte grid_color, color, shadow_color;
 	byte height, width_pack;
-	
+
 	Font();
 	void load(int id);
 	uint render(Graphics::Surface *surface, int x, int y, const Common::String &str, bool grid = false);
 	uint render(Graphics::Surface *surface, int x, int y, char c);
 	static void grid(Graphics::Surface *surface, int x, int y, int w, int h, byte color);
-	
+
 	~Font();
-private: 
+private:
 	byte *data;
 };
 

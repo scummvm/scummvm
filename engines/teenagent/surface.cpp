@@ -36,24 +36,24 @@ Surface::Surface() : x(0), y(0) {
 void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	//debug(0, "load()");
 	free();
-	
+
 	x = y = 0;
 	memset(flags, 0, sizeof(flags));
-	
+
 	if (type == TypeOn) {
 		byte fn = stream->readByte();
 		if (stream->eos())
 			return;
-		
+
 		for (byte i = 0; i < fn; ++i) {
 			flags[i] = stream->readUint16LE();
 			debug(0, "flags[%u] = %u (0x%04x)", i, flags[i], flags[i]);
 		}
 	}
-	
+
 	uint16 w_ = stream->readUint16LE();
 	uint16 h_ = stream->readUint16LE();
-	
+
 	if (type != TypeLan) {
 		uint16 pos = stream->readUint16LE();
 		x = pos % 320;
@@ -63,7 +63,7 @@ void Surface::load(Common::SeekableReadStream *stream, Type type) {
 	//debug(0, "declared info: %ux%u (%04xx%04x) -> %u,%u", w_, h_, w_, h_, x, y);
 	if (stream->eos() || w_ == 0)
 		return;
-		
+
 	if (w_ * h_ > stream->size()) {//rough but working
 		debug(0, "invalid surface %ux%u -> %u,%u", w_, h_, x, y);
 		return;
@@ -81,7 +81,7 @@ void Surface::render(Graphics::Surface *surface, int dx, int dy, bool mirror) {
 
 	byte *src = (byte *)pixels;
 	byte *dst = (byte *)surface->getBasePtr(dx + x, dy + y);
-	
+
 	for (int i = 0; i < h; ++i) {
 		for (int j = 0; j < w; ++j) {
 			byte p = src[j];

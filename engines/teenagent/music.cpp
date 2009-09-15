@@ -46,11 +46,11 @@ bool MusicPlayer::load(int id) {
 	Common::SeekableReadStream *stream	= res->mmm.getStream(id);
 	if (stream == NULL)
 		return false;
-	
+
 	char header[4];
 	stream->read(header, 4);
-	//check header? 
-	
+	//check header?
+
 	memset(_samples, 0, sizeof(_samples));
 
 	// Load the samples
@@ -67,14 +67,14 @@ bool MusicPlayer::load(int id) {
 		debug(0, "currSample = %d, sample = 0x%02x, resource: %d", currSample, sample, sampleResource);
 		uint32 sampleSize = res->sam_mmm.get_size(sampleResource);
 		Common::SeekableReadStream *in = res->sam_mmm.getStream(sampleResource);
-		
+
 		if (in == 0) {
 			warning("load: invalid sample %d (0x%02x)", sample, sample);
 			_samples[sample].data = NULL;
 			_samples[sample].size = 0;
 			continue;
 		}
-		
+
 		byte *sampleData = new byte[sampleSize];
 		in->read(sampleData, sampleSize);
 
@@ -90,7 +90,7 @@ bool MusicPlayer::load(int id) {
 	// Load the music data
 
 	_rows.clear();
-	
+
 	Row row;
 	row.channels[0].sample = 0;
 	row.channels[1].sample = 0;
@@ -132,7 +132,7 @@ void MusicPlayer::stop() {
 
 void MusicPlayer::interrupt() {
 	_currRow %= _rows.size();
-	
+
 	Row *row = &_rows[_currRow];
 	for (int chn = 0; chn < 3; ++chn) {
 		setChannelVolume(chn, row->channels[chn].volume);

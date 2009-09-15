@@ -27,45 +27,45 @@
 
 namespace TeenAgent {
 
-void Actor::render(Graphics::Surface *surface, const Common::Point & position, uint8 orientation, int delta_frame) {
+void Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame) {
 	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
-	
+
 	Surface *s = NULL;
-	
+
 	if (delta_frame == 0) {
 		index = 0; //static animation
 	}
 	int dx, dy;
-	switch(orientation) {
+	switch (orientation) {
 	case Object::ActorLeft:
 	case Object::ActorRight:
-		if (index >= sizeof(frames_left_right)) 
+		if (index >= sizeof(frames_left_right))
 			index = 1;
 		s = frames + frames_left_right[index];
 		dx = 11;
 		dy = 62;
 		break;
 	case Object::ActorUp:
-		if (index >= sizeof(frames_up)) 
+		if (index >= sizeof(frames_up))
 			index = 1;
 		s = frames + frames_up[index];
 		dx = 29;
 		dy = 67;
 		break;
 	case Object::ActorDown:
-		if (index >= sizeof(frames_down)) 
+		if (index >= sizeof(frames_down))
 			index = 1;
 		s = frames + frames_down[index];
 		dx = 29;
 		dy = 67;
 		break;
-	default: 
+	default:
 		return;
 	}
 	index += delta_frame;
-	
+
 	int xp = position.x - dx, yp = position.y - dy;
 	if (xp < 0)
 		xp = 0;
@@ -76,7 +76,7 @@ void Actor::render(Graphics::Surface *surface, const Common::Point & position, u
 		yp = 0;
 	if (yp + s->h > 200)
 		yp = 200 - s->h;
-	
+
 	if (s != NULL)
 		s->render(surface, xp, yp, orientation == Object::ActorLeft);
 }

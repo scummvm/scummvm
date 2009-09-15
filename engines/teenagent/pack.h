@@ -34,7 +34,7 @@ class Pack {
 	uint32 count;
 	uint32 *offsets;
 
-public: 
+public:
 	Pack();
 	~Pack();
 	void open(const Common::String &filename);

@@ -77,7 +77,7 @@ bool Resources::loadArchives(const ADGameDescription *gd) {
 	font7.height = 10;
 	font8.load(8);
 	font8.height = 31;
-	
+
 	return true;
 }
 
@@ -97,14 +97,14 @@ void Resources::loadOff(Graphics::Surface &surface, byte *palette, int id) {
 }
 
 Common::SeekableReadStream *Resources::loadLan(uint32 id) const {
-	return id <= 500? loadLan000(id): lan500.getStream(id - 500);
+	return id <= 500 ? loadLan000(id) : lan500.getStream(id - 500);
 }
 
 Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
-	switch(id) {
+	switch (id) {
 
 	case 81:
-		if (dseg.get_byte(0xDBAD)) 
+		if (dseg.get_byte(0xDBAD))
 			return lan500.getStream(160);
 		break;
 
@@ -112,25 +112,25 @@ Common::SeekableReadStream *Resources::loadLan000(uint32 id) const {
 		if (dseg.get_byte(0xDBC5) == 1) {
 			if (dseg.get_byte(0xDBC6) == 1)
 				return lan500.getStream(203);
-			else 
+			else
 				return lan500.getStream(202);
 		}
 		break;
 
-	case 25: 
+	case 25:
 		if (dseg.get_byte(0xDBDF) == 2) {
 			return lan500.getStream(332);
 		}
 		break;
 
-	case 37: 
+	case 37:
 		if (dseg.get_byte(0xdbe2) == 1) {
 			return lan500.getStream(351);
 		} else if (dseg.get_byte(0xdbe2) == 2) {
 			return lan500.getStream(364);
 		}
 		break;
-	
+
 	case 29:
 		if (dseg.get_byte(0xDBE7) == 1) {
 			return lan500.getStream(380);

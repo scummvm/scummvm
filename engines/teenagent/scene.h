@@ -39,11 +39,11 @@ class TeenAgentEngine;
 class Dialog;
 
 struct SceneEvent {
-	enum Type { 
-		None, Message, Walk, PlayAnimation, PlayActorAnimation, PauseAnimation, ClearAnimations, 
-		LoadScene, SetOn, SetLan, PlayMusic, 
-		PlaySound, EnableObject, HideActor, 
-		WaitForAnimation, CreditsMessage, 
+	enum Type {
+		None, Message, Walk, PlayAnimation, PlayActorAnimation, PauseAnimation, ClearAnimations,
+		LoadScene, SetOn, SetLan, PlayMusic,
+		PlaySound, EnableObject, HideActor,
+		WaitForAnimation, CreditsMessage,
 		Quit
 	} type;
 
@@ -59,9 +59,9 @@ struct SceneEvent {
 	byte sound;
 	byte object;
 
-	SceneEvent(Type type_) : 
-		type(type_), message(), color(0xd1), animation(0), orientation(0), dst(), 
-		scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
+	SceneEvent(Type type_) :
+			type(type_), message(), color(0xd1), animation(0), orientation(0), dst(),
+			scene(0), ons(0), lan(0), music(0), sound(0), object(0) {}
 
 	void clear() {
 		type = None;
@@ -77,47 +77,47 @@ struct SceneEvent {
 		sound = 0;
 		object = 0;
 	}
-	
+
 	inline bool empty() const {
 		return type == None;
 	}
-	
+
 	void dump() const {
-		debug(0, "event[%d]: \"%s\"[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u", 
-			(int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
-		);
+		debug(0, "event[%d]: \"%s\"[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
+		      (int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
+		     );
 	}
 };
 
 class Scene {
-public: 
-	bool intro; 
-	
+public:
+	bool intro;
+
 	Scene();
-	
+
 	void init(TeenAgentEngine *engine, OSystem *system);
 	void init(int id, const Common::Point &pos);
 	bool render(OSystem *system);
 	int getId() const { return _id; }
-	
-	void warp(const Common::Point & point, byte orientation = 0);
-	
-	void moveTo(const Common::Point & point, byte orientation = 0, bool validate = 0);
+
+	void warp(const Common::Point &point, byte orientation = 0);
+
+	void moveTo(const Common::Point &point, byte orientation = 0, bool validate = 0);
 	Common::Point getPosition() const { return position; }
-	
+
 	void displayMessage(const Common::String &str, byte color = 0xd1);
 	void setOrientation(uint8 o) { orientation = o; }
 	void push(const SceneEvent &event);
 
 	bool processEvent(const Common::Event &event);
-	
+
 	void clear();
-	
+
 	byte *getOns(int id);
 	byte *getLans(int id);
-	
+
 	bool eventRunning() const { return !current_event.empty(); }
-	
+
 	Walkbox *getWalkbox(byte id) { return walkbox[id]; }
 	Object *getObject(int id, int scene_id = 0);
 
@@ -127,20 +127,20 @@ private:
 
 	void playAnimation(byte idx, uint id, bool loop, bool paused);
 	void playActorAnimation(uint id, bool loop);
-	
+
 	byte palette[768];
 	void setPalette(OSystem *system, const byte *palette, unsigned mul = 1);
-	static Common::Point messagePosition(const Common::String &str, const Common::Point & position);
+	static Common::Point messagePosition(const Common::String &str, const Common::Point &position);
 
 	bool processEventQueue();
 	inline bool nextEvent() {
 		current_event.clear();
 		return processEventQueue();
 	}
-	
+
 	TeenAgentEngine *_engine;
 	OSystem *_system;
-	
+
 	int _id;
 	Graphics::Surface background;
 	Surface on;
@@ -152,19 +152,19 @@ private:
 	Common::Point position0, position, destination;
 	int progress, progress_total;
 	uint8 orientation;
-	
+
 	byte walkboxes;
 	Walkbox *walkbox[255];
 
 	Common::String message;
 	Common::Point message_pos;
 	byte message_color;
-	
+
 	typedef Common::List<SceneEvent> EventList;
 	EventList events;
 	SceneEvent current_event;
 	bool hide_actor;
-	
+
 	struct Sound {
 		byte id, delay;
 		Sound(byte i, byte d): id(i), delay(d) {}

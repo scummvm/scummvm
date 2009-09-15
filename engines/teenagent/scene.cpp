@@ -33,21 +33,22 @@
 
 namespace TeenAgent {
 
-Scene::Scene() : intro(false), _engine(NULL), 
-	_system(NULL), 
-	_id(0), ons(0), walkboxes(0), 
-	orientation(Object::ActorRight), 
-	current_event(SceneEvent::None), hide_actor(false) {}
+Scene::Scene() : intro(false), _engine(NULL),
+		_system(NULL),
+		_id(0), ons(0), walkboxes(0),
+		orientation(Object::ActorRight),
+		current_event(SceneEvent::None), hide_actor(false) {}
 
-void Scene::warp(const Common::Point & _point, byte o) { 
+void Scene::warp(const Common::Point &_point, byte o) {
 	Common::Point point(_point);
-	destination = position = position0 = point; 
-	progress = 0; progress_total = 1; 
+	destination = position = position0 = point;
+	progress = 0;
+	progress_total = 1;
 	if (o)
 		orientation = o;
 }
 
-void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
+void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	Common::Point point(_point);
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	if (validate) {
@@ -56,11 +57,11 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 			if (w->rect.in(point)) {
 				debug(0, "bumped into walkbox %u", i);
 				byte o = w->orientation;
-				switch(o) {
+				switch (o) {
 				case 1:
 					point.y = w->rect.top - 1;
 					break;
-				case 2: 
+				case 2:
 					point.x = w->rect.right + 1;
 					break;
 				case 3:
@@ -83,8 +84,8 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 	}
 	destination = point;
 	orientation = orient;
-	position0 = position; 
-	progress_total = 1 + (int)(sqrt((float)position.sqrDist(destination)) / 10); 
+	position0 = position;
+	progress_total = 1 + (int)(sqrt((float)position.sqrDist(destination)) / 10);
 	progress = 0;
 }
 
@@ -92,7 +93,7 @@ void Scene::moveTo(const Common::Point & _point, byte orient, bool validate) {
 void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	_engine = engine;
 	_system = system;
-	
+
 	Resources *res = Resources::instance();
 	Common::SeekableReadStream *s = res->varia.getStream(1);
 	if (s == NULL)
@@ -101,11 +102,11 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	teenagent.load(s, Animation::TypeVaria);
 	if (teenagent.empty())
 		error("invalid mark animation");
-	
+
 	s = res->varia.getStream(2);
 	if (s == NULL)
 		error("invalid resource data");
-	
+
 	teenagent_idle.load(s, Animation::TypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
@@ -127,7 +128,7 @@ void Scene::loadOns() {
 
 	uint16 addr = res->dseg.get_word(0xb4f5 + (_id - 1) * 2);
 	//debug(0, "ons index: %04x", addr);
-	
+
 	ons_count = 0;
 	byte b;
 	byte on_id[16];
@@ -142,7 +143,7 @@ void Scene::loadOns() {
 
 	delete[] ons;
 	ons = NULL;
-	
+
 	if (ons_count > 0) {
 		ons = new Surface[ons_count];
 		for (uint32 i = 0; i < ons_count; ++i) {
@@ -157,10 +158,10 @@ void Scene::loadLans() {
 	debug(0, "loading lans animation");
 	Resources *res = Resources::instance();
 	//load lan000
-	
+
 	for (int i = 0; i < 4; ++i) {
 		animations[i].free();
-		
+
 		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
 		byte bxv = res->dseg.get_byte(bx);
 		uint16 res_id = 4 * (_id - 1) + i + 1;
@@ -171,11 +172,11 @@ void Scene::loadLans() {
 		Common::SeekableReadStream *s = res->loadLan000(res_id);
 		if (s != NULL) {
 			animations[i].load(s, Animation::TypeLan);
-			if (bxv != 0 && bxv != 0xff) 
+			if (bxv != 0 && bxv != 0xff)
 				animations[i].id = bxv;
 			delete s;
 		}
-		
+
 		//uint16 bp = res->dseg.get_word();
 	}
 
@@ -184,10 +185,10 @@ void Scene::loadLans() {
 void Scene::init(int id, const Common::Point &pos) {
 	debug(0, "init(%d)", id);
 	_id = id;
-	
+
 	if (background.pixels == NULL)
 		background.create(320, 200, 1);
-		
+
 	warp(pos);
 
 	Resources *res = Resources::instance();
@@ -198,10 +199,10 @@ void Scene::init(int id, const Common::Point &pos) {
 			//dim down palette
 			uint i;
 			for (i = 0; i < 624; ++i) {
-				palette[i] = palette[i] > 0x20? palette[i] - 0x20: 0;
+				palette[i] = palette[i] > 0x20 ? palette[i] - 0x20 : 0;
 			}
 			for (i = 726; i < 768; ++i) {
-				palette[i] = palette[i] > 0x20? palette[i] - 0x20: 0;
+				palette[i] = palette[i] > 0x20 ? palette[i] - 0x20 : 0;
 			}
 		}
 	}
@@ -213,7 +214,7 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	loadOns();
 	loadLans();
-	
+
 	byte *walkboxes_base = res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + (id - 1) * 2)));
 	walkboxes = *walkboxes_base++;
 
@@ -222,11 +223,11 @@ void Scene::init(int id, const Common::Point &pos) {
 		walkbox[i] = (Walkbox *)(walkboxes_base + 14 * i);
 		walkbox[i]->dump();
 	}
-	
+
 	//check music
 	int now_playing = _engine->music->getId();
-	
-	if (now_playing != res->dseg.get_byte(0xDB90)) 
+
+	if (now_playing != res->dseg.get_byte(0xDB90))
 		_engine->music->load(res->dseg.get_byte(0xDB90));
 }
 
@@ -257,9 +258,9 @@ void Scene::push(const SceneEvent &event) {
 }
 
 bool Scene::processEvent(const Common::Event &event) {
-	switch(event.type) {
+	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_RBUTTONDOWN: 
+	case Common::EVENT_RBUTTONDOWN:
 		if (!message.empty()) {
 			message.clear();
 			nextEvent();
@@ -275,7 +276,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			sounds.clear();
 			current_event.clear();
 			message_color = 0xd1;
-			for(int i = 0; i < 4; ++i)
+			for (int i = 0; i < 4; ++i)
 				custom_animations[i].free();
 			_engine->playMusic(4);
 			init(10, Common::Point(136, 153));
@@ -299,7 +300,7 @@ bool Scene::render(OSystem *system) {
 		system->unlockScreen();
 		return true;
 	}
-	
+
 	bool busy;
 	bool restart;
 
@@ -364,9 +365,9 @@ bool Scene::render(OSystem *system) {
 					Common::Point dp(destination.x - position0.x, destination.y - position0.y);
 					int o;
 					if (ABS(dp.x) > ABS(dp.y))
-						o = dp.x > 0? Object::ActorRight: Object::ActorLeft;
+						o = dp.x > 0 ? Object::ActorRight : Object::ActorLeft;
 					else
-						o = dp.y > 0? Object::ActorDown: Object::ActorUp;
+						o = dp.y > 0 ? Object::ActorDown : Object::ActorUp;
 
 					position.x = position0.x + dp.x * progress / progress_total;
 					position.y = position0.y + dp.y * progress / progress_total;
@@ -412,9 +413,9 @@ bool Scene::render(OSystem *system) {
 		}
 		*/
 
-	} while(restart);
-	
-	for(Sounds::iterator i = sounds.begin(); i != sounds.end(); ) {
+	} while (restart);
+
+	for (Sounds::iterator i = sounds.begin(); i != sounds.end();) {
 		Sound &sound = *i;
 		if (sound.delay == 0) {
 			debug(0, "sound %u started", sound.id);
@@ -425,7 +426,7 @@ bool Scene::render(OSystem *system) {
 			++i;
 		}
 	}
-	
+
 	return busy;
 }
 
@@ -434,32 +435,35 @@ bool Scene::processEventQueue() {
 		//debug(0, "processing next event");
 		current_event = events.front();
 		events.pop_front();
-		switch(current_event.type) {
-		
+		switch (current_event.type) {
+
 		case SceneEvent::SetOn: {
-			byte *ptr = getOns(current_event.scene == 0? _id: current_event.scene);
+			byte *ptr = getOns(current_event.scene == 0 ? _id : current_event.scene);
 			debug(0, "on[%u] = %02x", current_event.ons - 1, current_event.color);
 			ptr[current_event.ons - 1] = current_event.color;
 			loadOns();
 			current_event.clear();
-		} break;
-		
+		}
+		break;
+
 		case SceneEvent::SetLan: {
 			if (current_event.lan != 0) {
 				debug(0, "lan[%u] = %02x", current_event.lan - 1, current_event.color);
-				byte *ptr = getLans(current_event.scene == 0? _id: current_event.scene);
+				byte *ptr = getLans(current_event.scene == 0 ? _id : current_event.scene);
 				ptr[current_event.lan - 1] = current_event.color;
 			}
 			loadLans();
 			current_event.clear();
-		} break;
-		
+		}
+		break;
+
 		case SceneEvent::LoadScene: {
 			init(current_event.scene, current_event.dst);
 			sounds.clear();
 			current_event.clear();
-		} break;
-		
+		}
+		break;
+
 		case SceneEvent::Walk: {
 			Common::Point dst = current_event.dst;
 			if ((current_event.color & 2) != 0) { //relative move
@@ -471,17 +475,18 @@ bool Scene::processEventQueue() {
 				current_event.clear();
 			} else
 				moveTo(dst, current_event.orientation);
-		} break;
-		
-		case SceneEvent::CreditsMessage: 
-		case SceneEvent::Message: 
+		}
+		break;
+
+		case SceneEvent::CreditsMessage:
+		case SceneEvent::Message:
 			//debug(0, "pop(%04x)", current_event.message);
 			message = current_event.message;
 			message_pos = messagePosition(message, position);
 			message_color = current_event.color;
 			break;
-		
-		case SceneEvent::PlayAnimation: 
+
+		case SceneEvent::PlayAnimation:
 			debug(0, "playing animation %u", current_event.animation);
 			playAnimation(current_event.color & 0x3 /*slot actually :)*/, current_event.animation, (current_event.color & 0x80) != 0, (current_event.color & 0x40) != 0);
 			current_event.clear();
@@ -494,17 +499,17 @@ bool Scene::processEventQueue() {
 			break;
 
 		case SceneEvent::ClearAnimations:
-			for(byte i = 0; i < 4; ++i) 
+			for (byte i = 0; i < 4; ++i)
 				custom_animations[i].free();
 			current_event.clear();
 			break;
-		
-		case SceneEvent::PlayActorAnimation: 
+
+		case SceneEvent::PlayActorAnimation:
 			debug(0, "playing actor animation %u", current_event.animation);
 			playActorAnimation(current_event.animation, (current_event.color & 0x80) != 0);
 			current_event.clear();
 			break;
-			
+
 		case SceneEvent::PlayMusic:
 			debug(0, "setting music %u", current_event.music);
 			_engine->setMusic(current_event.music);
@@ -521,30 +526,30 @@ bool Scene::processEventQueue() {
 			}
 			current_event.clear();
 			break;
-		
+
 		case SceneEvent::EnableObject: {
-				debug(0, "%s object #%u", current_event.color?"enabling":"disabling", current_event.object - 1);
-				Object *obj = getObject(current_event.object - 1, current_event.scene == 0? _id: current_event.scene);
-				obj->enabled = current_event.color;
-				current_event.clear();
-			}
-			break;
-		
+			debug(0, "%s object #%u", current_event.color ? "enabling" : "disabling", current_event.object - 1);
+			Object *obj = getObject(current_event.object - 1, current_event.scene == 0 ? _id : current_event.scene);
+			obj->enabled = current_event.color;
+			current_event.clear();
+		}
+		break;
+
 		case SceneEvent::HideActor:
 			hide_actor = current_event.color != 0;
 			current_event.clear();
 			break;
-		
+
 		case SceneEvent::WaitForAnimation:
 			debug(0, "waiting for the animation");
 			break;
-			
+
 		case SceneEvent::Quit:
 			debug(0, "quit!");
 			_engine->quitGame();
 			break;
-		
-		default: 
+
+		default:
 			error("empty/unhandler event[%d]", (int)current_event.type);
 		}
 	}
@@ -560,7 +565,7 @@ void Scene::setPalette(OSystem *system, const byte *buf, unsigned mul) {
 
 	memset(p, 0, 1024);
 	for (int i = 0; i < 256; ++i) {
-		for (int c = 0; c < 3; ++c) 
+		for (int c = 0; c < 3; ++c)
 			p[i * 4 + c] = buf[i * 3 + c] * mul;
 	}
 
@@ -570,7 +575,7 @@ void Scene::setPalette(OSystem *system, const byte *buf, unsigned mul) {
 Object *Scene::getObject(int id, int scene_id) {
 	if (scene_id == 0)
 		scene_id = _id;
-	
+
 	Resources *res = Resources::instance();
 	uint16 addr = res->dseg.get_word(0x7254 + (scene_id - 1) * 2);
 	//debug(0, "object base: %04x, x: %d, %d", addr, point.x, point.y);
@@ -580,7 +585,7 @@ Object *Scene::getObject(int id, int scene_id) {
 	return obj;
 }
 
-Common::Point Scene::messagePosition(const Common::String &str, const Common::Point & position) {
+Common::Point Scene::messagePosition(const Common::String &str, const Common::Point &position) {
 	Resources *res = Resources::instance();
 	uint w = res->font7.render(NULL, 0, 0, str);
 	Common::Point message_pos = position;

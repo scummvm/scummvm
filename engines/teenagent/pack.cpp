@@ -51,10 +51,10 @@ void Pack::open(const Common::String &filename) {
 		offsets[i] = file.readUint32LE();
 		//debug(0, "%d: %06x", i, offsets[i]);
 	}
-/*	for (uint32 i = 0; i < count; ++i) {
-		debug(0, "%d: len = %d", i, offsets[i + 1] - offsets[i]);
-	}
-*/
+	/*	for (uint32 i = 0; i < count; ++i) {
+			debug(0, "%d: len = %d", i, offsets[i + 1] - offsets[i]);
+		}
+	*/
 }
 
 uint32 Pack::get_size(uint32 id) const {

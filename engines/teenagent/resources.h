@@ -37,7 +37,7 @@ namespace TeenAgent {
 class Resources {
 protected:
 	Resources();
-public: 
+public:
 	static Resources *instance();
 	bool loadArchives(const ADGameDescription *gd);
 	void deinit();

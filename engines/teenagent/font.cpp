@@ -33,7 +33,7 @@ Font::Font() : grid_color(0xd0), color(0xd1), shadow_color(0), height(0), width_
 void Font::load(int id) {
 	delete[] data;
 	data = NULL;
-	
+
 	Common::SeekableReadStream * s = Resources::instance()->varia.getStream(id);
 	if (s == NULL)
 		error("loading font %d failed", id);
@@ -62,11 +62,11 @@ uint Font::render(Graphics::Surface *surface, int x, int y, char c) {
 	for (uint i = 0; i < h; ++i) {
 		for (uint j = 0; j < w; ++j) {
 			byte v = *glyph++;
-			switch(v) {
+			switch (v) {
 			case 1:
 				dst[j] = shadow_color;
 				break;
-			case 2: 
+			case 2:
 				dst[j] = color;
 				break;
 			}
@@ -86,19 +86,19 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 		uint max_w = render(NULL, 0, 0, str, false);
 		if (show_grid)
 			grid(surface, x - 4, y - 2, max_w + 8, 8 + 6, grid_color);
-			
+
 		uint i = 0, j;
 		do {
 			j = find_in_str(str, '\n', i);
 			Common::String line(str.c_str() + i, j - i);
 			//debug(0, "line: %s", line.c_str());
-			
+
 			uint w = render(NULL, 0, 0, line, false);
 			int xp = x + (max_w - w) / 2;
 			for (uint k = 0; k < line.size(); ++k) {
 				xp += render(surface, xp, y, line[k]);
 			}
-			
+
 			y += height;
 			i = j + 1;
 		} while (i < str.size());
@@ -119,7 +119,7 @@ uint Font::render(Graphics::Surface *surface, int x, int y, const Common::String
 		}
 		if (w > max_w)
 			max_w = w;
-	
+
 		return max_w;
 	}
 }

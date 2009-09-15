@@ -31,31 +31,31 @@
 namespace TeenAgent {
 
 class Animation  {
-public: 
+public:
 	uint16 id, x, y;
 	bool loop, paused;
-	
+
 	enum Type {TypeLan, TypeVaria, TypeInventory};
-	
+
 	Animation();
 	void load(Common::SeekableReadStream *s, Type type = TypeLan);
 	void free();
-	
+
 	Surface *firstFrame();
 	Surface *currentFrame(int dt = 1);
 	uint16 currentIndex() const { return index; }
-	
+
 	~Animation();
-	
+
 	bool empty() const { return frames == NULL; }
-	
+
 	//uint16 width() const { return frames? frames[0].w: 0; }
 	//uint16 height() const { return frames? frames[0].h: 0; }
 
 protected:
 	byte *data;
 	uint16 data_size;
-	
+
 	uint16 frames_count;
 	Surface *frames;
 	uint16 index;

@@ -30,10 +30,10 @@ namespace TeenAgent {
 Animation::Animation() : id(0), x(0), y(0), loop(true), paused(false), data(0), data_size(0), frames_count(0), frames(0), index(0) {
 }
 
-Surface *Animation::firstFrame(){
+Surface *Animation::firstFrame() {
 	if (frames == NULL || frames_count == 0)
 		return NULL;
-	
+
 	Surface *r = frames;
 	uint16 pos = READ_LE_UINT16(data + 1);
 	if (pos != 0) {
@@ -46,26 +46,26 @@ Surface *Animation::firstFrame(){
 Surface *Animation::currentFrame(int dt) {
 	if (paused)
 		return firstFrame();
-	
+
 	if (frames == NULL || frames_count == 0)
 		return NULL;
-	
+
 	Surface *r;
-	
+
 	if (data != NULL) {
 		uint32 frame = 3 * index;
 		//debug(0, "%u/%u", index, data_size / 3);
 		index += dt;
-		
+
 		if (!loop && index >= data_size / 3) {
 			return NULL;
 		}
-		
+
 		if (data[frame] - 1 >= frames_count) {
 			warning("invalid frame %u(0x%x) (max %u) index %u, mod %u", frame, frame, frames_count, index - 1, data_size / 3);
 			return NULL;
 		}
-	
+
 		r = frames + data[frame] - 1;
 		uint16 pos = READ_LE_UINT16(data + frame + 1);
 		index %= (data_size / 3);
@@ -90,22 +90,22 @@ void Animation::free() {
 	x = y = 0;
 	loop = true;
 	paused = false;
-	
+
 	delete[] data;
 	data = NULL;
-	data_size = 0;	
+	data_size = 0;
 
 	frames_count = 0;
 	delete[] frames;
 	frames = NULL;
-	
+
 	index = 0;
 }
 
 void Animation::load(Common::SeekableReadStream *s, Type type) {
 	//fixme: do not reload the same animation each time
 	free();
-	
+
 	if (s == NULL && s->size() <= 1) {
 		debug(0, "empty animation");
 		return;
@@ -113,7 +113,7 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 
 	uint16 pos = 0;
 	int off = 0;
-	switch(type) {
+	switch (type) {
 	case TypeLan:
 		data_size = s->readUint16LE();
 		if (s->eos()) {
@@ -124,22 +124,22 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		data_size -= 2;
 		data = new byte[data_size];
 		data_size = s->read(data, data_size);
-/*		for (int i = 0; i < data_size; ++i) {
-			debug(0, "%02x ", data[i]);
-		}
-		debug(0, ", %u frames", data_size / 3);
-*/	
+		/*		for (int i = 0; i < data_size; ++i) {
+					debug(0, "%02x ", data[i]);
+				}
+				debug(0, ", %u frames", data_size / 3);
+		*/
 		frames_count = s->readByte();
 		debug(0, "%u physical frames", frames_count);
 		if (frames_count == 0)
 			return;
 
 		frames = new Surface[frames_count];
-	
+
 		s->skip(frames_count * 2 - 2); //sizes
 		pos = s->readUint16LE();
 		//debug(0, "pos?: %04x", pos);
-			
+
 		for (uint16 i = 0; i < frames_count; ++i) {
 			frames[i].load(s, Surface::TypeLan);
 			frames[i].x = 0;
@@ -154,7 +154,8 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 		frames_count = 0;
 		for (byte i = 0; i < data_size / 3; ++i) {
 			int idx = i * 3;
-			/* byte unk = */ s->readByte();
+			/* byte unk = */
+			s->readByte();
 			data[idx] = s->readByte();
 			if (data[idx] == 0)
 				data[idx] = 1; //fixme: investigate
@@ -164,15 +165,15 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 			data[idx + 2] = 0;
 			//debug(0, "frame #%u", data[idx]);
 		}
-		
+
 		frames = new Surface[frames_count];
-		
+
 		for (uint16 i = 0; i < frames_count; ++i) {
 			frames[i].load(s, Surface::TypeOns);
 		}
 	}
 	break;
-	
+
 	case TypeVaria:
 		frames_count = s->readByte();
 		debug(0, "loading varia resource, %u physical frames", frames_count);
@@ -189,10 +190,10 @@ void Animation::load(Common::SeekableReadStream *s, Type type) {
 			frames[i].x = 0;
 			frames[i].y = 0;
 		}
-		
+
 		break;
 	}
-	
+
 	debug(0, "%u frames", data_size / 3);
 }
 

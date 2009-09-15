@@ -35,25 +35,25 @@ void Rect::render(Graphics::Surface *surface, uint8 color) const {
 }
 
 void Walkbox::dump() {
-	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ", 
-		unk00, orientation, 
-		rect.left, rect.right, rect.top, rect.bottom, 
-		unk0a, unk0b, unk0c, unk0d);
+	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ",
+	      unk00, orientation,
+	      rect.left, rect.right, rect.top, rect.bottom,
+	      unk0a, unk0b, unk0c, unk0d);
 }
 
 void Object::dump() {
-	debug(0, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled, 
-		rect.left, rect.top, rect.right, rect.bottom, 
-		actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom, 
-		actor_orientation, name
-	); 
+	debug(0, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
+	      rect.left, rect.top, rect.right, rect.bottom,
+	      actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom,
+	      actor_orientation, name
+	     );
 }
 
 Common::String Object::description(const char *name) {
 	const char *desc = name + strlen(name) + 1;
 	if (*desc == 0)
 		return Common::String();
-		
+
 	Common::String result;
 
 	while (*desc != 1 && *desc != 0) {
@@ -62,17 +62,17 @@ Common::String Object::description(const char *name) {
 			//debug(0, "%02x ", *desc);
 			line += *desc++;
 		}
-		
+
 		if (line.empty())
 			break;
-		
+
 		++desc;
 		result += line;
 		result += '\n';
 	}
 	if (!result.empty())
 		result.deleteLastChar();
-	else 
+	else
 		result = "Cool.";
 	return result;
 }

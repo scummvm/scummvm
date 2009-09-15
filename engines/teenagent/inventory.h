@@ -47,7 +47,7 @@ public:
 
 	void activate(bool a) { _active = a; }
 	bool active() const { return _active; }
-	
+
 	bool processEvent(const Common::Event &event);
 
 	InventoryObject *selectedObject() { return selected_obj; }
@@ -58,7 +58,7 @@ private:
 	Surface background;
 	Common::SeekableReadStream *items;
 	uint16 offset[92];
-	
+
 	byte *objects;
 	byte *inventory;
 	struct Item {
@@ -66,12 +66,12 @@ private:
 		Surface surface;
 		Rect rect;
 		bool hovered;
-		
+
 		Item() : hovered(false) {}
 		void free();
 		void render(Inventory *inventory, InventoryObject *obj, Graphics::Surface *surface);
 	} graphics[24];
-	
+
 	bool _active;
 	Common::Point mouse;
 	int hovered;

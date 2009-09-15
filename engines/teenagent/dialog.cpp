@@ -36,7 +36,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	int n = 0;
 	Common::String message;
 	byte color = color1;
-	
+
 	if (animation1 != 0) {
 		SceneEvent e(SceneEvent::PlayAnimation);
 		e.animation = animation1;
@@ -50,22 +50,22 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 		e.color = 0xc0 | slot2; //looped, paused
 		scene->push(e);
 	}
-	
+
 	while (n < 4) {
 		byte c = res->eseg.get_byte(addr++);
 		//debug(0, "%02x: %c", c, c > 0x20? c: '.');
-		
-		switch(c) {
+
+		switch (c) {
 		case 0:
 			++n;
-			switch(n) {
-			case 1: 
+			switch (n) {
+			case 1:
 				//debug(0, "new line\n");
 				message += '\n';
 				break;
-			case 2: 
+			case 2:
 				//debug(0, "displaymessage\n");
-				
+
 				if (color == color2 && animation2 != 0) {
 					//pause animation in other slot
 					{
@@ -93,7 +93,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 						scene->push(e);
 					}
 				}
-				
+
 				{
 					SceneEvent e(SceneEvent::Message);
 					e.message = message;
@@ -103,19 +103,18 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				}
 				break;
 
-			case 3: 
-				color = color == color1? color2: color1;
+			case 3:
+				color = color == color1 ? color2 : color1;
 				//debug(0, "changing color to %02x", color);
 				break;
 			}
 			break;
-		
-		case 0xff:
-			{
-				//fixme : wait for the next cycle of the animation
-			}
-			break;
-		
+
+		case 0xff: {
+			//fixme : wait for the next cycle of the animation
+		}
+		break;
+
 		default:
 			message += c;
 			n = 0;
