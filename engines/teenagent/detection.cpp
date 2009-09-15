@@ -31,7 +31,7 @@
 #include "teenagent/teenagent.h"
 
 static const PlainGameDescriptor teenAgentGames[] = {
-	{ "teenagent", "Teen agent" },
+	{ "teenagent", "Teen Agent" },
 	{ 0, 0 }
 };
 
