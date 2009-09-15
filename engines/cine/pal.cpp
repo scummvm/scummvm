@@ -214,8 +214,20 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 	assert(firstIndex < output.colorCount() && lastIndex < output.colorCount());
 	assert(output.colorFormat() == colorFormat());
 
-	for (uint i = firstIndex; i <= lastIndex; i++)
-		output._colors[i] = saturatedAddColor(_colors[i], r, g, b);
+	for (uint i = firstIndex; i <= lastIndex; i++) {
+		// WORKAROUND for a valgrind warning on AMD64:
+		//
+		// The old code read: "output._colors[i] = saturatedAddColor(_colors[i], r, g, b);".
+		//
+		// It seems g++ 4.1.2, 4.3.4 and 4.4.1 do a 8 byte read when passing _colors[i] as parameter,
+		// even though the struct is only 3 bytes, resulting in an invalid read, when accessing indices
+		// 14 and 15 of 16 color palettes.
+		//
+		// To work around this issue, we added an temporary variable, which will have padding so
+		// the 8 byte read (which is done when passing src) is assured to be in a valid memory area.
+		const Color src = _colors[i];
+		output._colors[i] = saturatedAddColor(src, r, g, b);
+	}
 
 	return output;
 }
