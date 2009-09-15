@@ -209,7 +209,7 @@ void Palette::setColorFormat(const Graphics::PixelFormat format) {
 }
 
 // a.k.a. transformPaletteRange
-Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b) {
+Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed r, signed g, signed b) const {
 	assert(firstIndex < colorCount() && lastIndex < colorCount());
 	assert(firstIndex < output.colorCount() && lastIndex < output.colorCount());
 	assert(output.colorFormat() == colorFormat());
@@ -232,7 +232,7 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 	return output;
 }
 
-Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) {
+Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastIndex, signed rSource, signed gSource, signed bSource, const Graphics::PixelFormat &sourceFormat) const {
 	// Convert the source color to the internal color format ensuring that no divide by zero will happen
 	const signed r = ((signed) _format.rMax()) * rSource / MAX<int>(sourceFormat.rMax(), 1);
 	const signed g = ((signed) _format.gMax()) * gSource / MAX<int>(sourceFormat.gMax(), 1);
@@ -241,7 +241,7 @@ Palette &Palette::saturatedAddColor(Palette& output, byte firstIndex, byte lastI
 	return saturatedAddColor(output, firstIndex, lastIndex, r, g, b);
 }
 
-Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) {
+Palette &Palette::saturatedAddNormalizedGray(Palette& output, byte firstIndex, byte lastIndex, int grayDividend, int grayDenominator) const {
 	assert(grayDenominator != 0);
 	const signed r = ((signed) _format.rMax()) * grayDividend / grayDenominator;
 	const signed g = ((signed) _format.gMax()) * grayDividend / grayDenominator;
