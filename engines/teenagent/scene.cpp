@@ -378,6 +378,7 @@ bool Scene::render(OSystem *system) {
 						if (orientation == 0)
 							orientation = o; //save last orientation
 						nextEvent();
+						got_any_animation = true;
 						restart = true;
 					} else
 						busy = true;
