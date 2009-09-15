@@ -146,7 +146,8 @@ private:
 	Surface on;
 	Surface *ons;
 	uint32 ons_count;
-	Animation actor_animation, animations[4], custom_animations[4];
+	Animation actor_animation, animation[4], custom_animation[4];
+	Common::Rect actor_animation_position, animation_position[4];
 
 	Actor teenagent, teenagent_idle;
 	Common::Point position0, position, destination;

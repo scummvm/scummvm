@@ -27,7 +27,7 @@
 
 namespace TeenAgent {
 
-void Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame) {
+Common::Rect Actor::render(Graphics::Surface *surface, const Common::Point &position, uint8 orientation, int delta_frame) {
 	const uint8 frames_left_right[] = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	const uint8 frames_up[] = {18, 19, 20, 21, 22, 23, 24, 25, };
 	const uint8 frames_down[] = {10, 11, 12, 13, 14, 15, 16, 17, };
@@ -62,7 +62,7 @@ void Actor::render(Graphics::Surface *surface, const Common::Point &position, ui
 		dy = 67;
 		break;
 	default:
-		return;
+		return Common::Rect();
 	}
 	index += delta_frame;
 
@@ -76,9 +76,8 @@ void Actor::render(Graphics::Surface *surface, const Common::Point &position, ui
 		yp = 0;
 	if (yp + s->h > 200)
 		yp = 200 - s->h;
-
-	if (s != NULL)
-		s->render(surface, xp, yp, orientation == Object::ActorLeft);
+	
+	return s != NULL? s->render(surface, xp, yp, orientation == Object::ActorLeft): Common::Rect();
 }
 
 } // End of namespace TeenAgent

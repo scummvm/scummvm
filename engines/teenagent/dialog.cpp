@@ -40,14 +40,14 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 	if (animation1 != 0) {
 		SceneEvent e(SceneEvent::PlayAnimation);
 		e.animation = animation1;
-		e.color = 0xc0 | slot1; //looped, paused
+		e.lan = 0xc0 | slot1; //looped, paused
 		scene->push(e);
 	}
 
 	if (animation2 != 0) {
 		SceneEvent e(SceneEvent::PlayAnimation);
 		e.animation = animation2;
-		e.color = 0xc0 | slot2; //looped, paused
+		e.lan = 0xc0 | slot2; //looped, paused
 		scene->push(e);
 	}
 
@@ -70,26 +70,26 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 					//pause animation in other slot
 					{
 						SceneEvent e(SceneEvent::PauseAnimation);
-						e.color = 0x80 | slot1;
+						e.lan = 0x80 | slot1;
 						scene->push(e);
 					}
 					{
 						SceneEvent e(SceneEvent::PlayAnimation);
 						e.animation = animation2;
-						e.color = 0x80 | slot2;
+						e.lan = 0x80 | slot2;
 						scene->push(e);
 					}
 				} else if (color == color1 && animation1 != 0) {
 					//pause animation in other slot
 					{
 						SceneEvent e(SceneEvent::PauseAnimation);
-						e.color = 0x80 | slot2;
+						e.lan = 0x80 | slot2;
 						scene->push(e);
 					}
 					{
 						SceneEvent e(SceneEvent::PlayAnimation);
 						e.animation = animation1;
-						e.color = 0x80 | slot1;
+						e.lan = 0x80 | slot1;
 						scene->push(e);
 					}
 				}
@@ -120,20 +120,7 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 			n = 0;
 		}
 	}
-	/*
-	if (!message.empty()) {
-		if (animation != 0) {
-			SceneEvent e(SceneEvent::PlayAnimation);
-			e.animation = animation;
-			e.color = 0x41;
-			scene->push(e);
-		} //copy paste ninja was here
-		SceneEvent e(SceneEvent::Message);
-		e.message = message;
-		e.color = color;
-		scene->push(e);
-	}
-	*/
+
 	SceneEvent e(SceneEvent::ClearAnimations);
 	scene->push(e);
 }

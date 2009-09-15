@@ -160,7 +160,7 @@ void Scene::loadLans() {
 	//load lan000
 
 	for (int i = 0; i < 4; ++i) {
-		animations[i].free();
+		animation[i].free();
 
 		uint16 bx = 0xd89e + (_id - 1) * 4 + i;
 		byte bxv = res->dseg.get_byte(bx);
@@ -171,9 +171,9 @@ void Scene::loadLans() {
 
 		Common::SeekableReadStream *s = res->loadLan000(res_id);
 		if (s != NULL) {
-			animations[i].load(s, Animation::TypeLan);
+			animation[i].load(s, Animation::TypeLan);
 			if (bxv != 0 && bxv != 0xff)
-				animations[i].id = bxv;
+				animation[i].id = bxv;
 			delete s;
 		}
 
@@ -237,9 +237,9 @@ void Scene::playAnimation(byte idx, uint id, bool loop, bool paused) {
 	if (s == NULL)
 		error("playing animation %u failed", id);
 
-	custom_animations[idx].load(s);
-	custom_animations[idx].loop = loop;
-	custom_animations[idx].paused = paused;
+	custom_animation[idx].load(s);
+	custom_animation[idx].loop = loop;
+	custom_animation[idx].paused = paused;
 }
 
 void Scene::playActorAnimation(uint id, bool loop) {
@@ -277,7 +277,7 @@ bool Scene::processEvent(const Common::Event &event) {
 			current_event.clear();
 			message_color = 0xd1;
 			for (int i = 0; i < 4; ++i)
-				custom_animations[i].free();
+				custom_animation[i].free();
 			_engine->playMusic(4);
 			init(10, Common::Point(136, 153));
 		}
@@ -327,21 +327,21 @@ bool Scene::render(OSystem *system) {
 		bool got_any_animation = false;
 
 		for (int i = 0; i < 4; ++i) {
-			Animation *a = custom_animations + i;
+			Animation *a = custom_animation + i;
 			Surface *s = a->currentFrame();
 			if (s != NULL) {
-				s->render(surface);
+				animation_position[i] = s->render(surface);
 				busy = true;
 				got_any_animation = true;
 				continue;
 			}
 
-			a = animations + i;
+			a = animation + i;
 			s = a->currentFrame();
 			if (s == NULL)
 				continue;
 
-			s->render(surface);
+			animation_position[i] = s->render(surface);
 
 			if (a->id == 0)
 				continue;
@@ -371,7 +371,7 @@ bool Scene::render(OSystem *system) {
 
 					position.x = position0.x + dp.x * progress / progress_total;
 					position.y = position0.y + dp.y * progress / progress_total;
-					teenagent.render(surface, position, o, 1);
+					actor_animation_position = teenagent.render(surface, position, o, 1);
 					++progress;
 					if (progress >= progress_total) {
 						position = destination;
@@ -384,11 +384,12 @@ bool Scene::render(OSystem *system) {
 				} else
 					teenagent.render(surface, position, orientation, 0);
 			} else {
-				mark->render(surface);
+				actor_animation_position = mark->render(surface);
 				busy = true;
 				got_any_animation = true;
 			}
-		}
+		} else 
+			actor_animation_position = Common::Rect();
 
 		if (!message.empty()) {
 			res->font7.color = message_color;
@@ -488,25 +489,25 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::PlayAnimation:
 			debug(0, "playing animation %u", current_event.animation);
-			playAnimation(current_event.color & 0x3 /*slot actually :)*/, current_event.animation, (current_event.color & 0x80) != 0, (current_event.color & 0x40) != 0);
+			playAnimation(current_event.lan & 0x3, current_event.animation, (current_event.lan & 0x80) != 0, (current_event.lan & 0x40) != 0);
 			current_event.clear();
 			break;
 
 		case SceneEvent::PauseAnimation:
 			debug(0, "pause animation in slot %u", current_event.color & 3);
-			custom_animations[current_event.color & 3].paused = (current_event.color & 0x80) != 0;
+			custom_animation[current_event.lan & 3].paused = (current_event.lan & 0x80) != 0;
 			current_event.clear();
 			break;
 
 		case SceneEvent::ClearAnimations:
 			for (byte i = 0; i < 4; ++i)
-				custom_animations[i].free();
+				custom_animation[i].free();
 			current_event.clear();
 			break;
 
 		case SceneEvent::PlayActorAnimation:
 			debug(0, "playing actor animation %u", current_event.animation);
-			playActorAnimation(current_event.animation, (current_event.color & 0x80) != 0);
+			playActorAnimation(current_event.animation, (current_event.lan & 0x80) != 0);
 			current_event.clear();
 			break;
 
@@ -519,11 +520,7 @@ bool Scene::processEventQueue() {
 
 		case SceneEvent::PlaySound:
 			debug(0, "playing sound %u, delay: %u", current_event.sound, current_event.color);
-			if (current_event.color == 0) {
-				_engine->playSoundNow(current_event.sound);
-			} else {
-				sounds.push_back(Sound(current_event.sound, current_event.color));
-			}
+			sounds.push_back(Sound(current_event.sound, current_event.color));
 			current_event.clear();
 			break;
 

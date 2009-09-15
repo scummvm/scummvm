@@ -413,7 +413,7 @@ void TeenAgentEngine::moveRel(int16 x, int16 y, byte o, bool warp) {
 void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
 	SceneEvent event(SceneEvent::PlayAnimation);
 	event.animation = id;
-	event.color = slot;
+	event.lan = slot;
 	scene->push(event);
 	if (!async)
 		waitAnimation();
@@ -422,7 +422,6 @@ void TeenAgentEngine::playAnimation(uint16 id, byte slot, bool async) {
 void TeenAgentEngine::playActorAnimation(uint16 id, bool async) {
 	SceneEvent event(SceneEvent::PlayActorAnimation);
 	event.animation = id;
-	event.color = 0;
 	scene->push(event);
 	if (!async)
 		waitAnimation();
