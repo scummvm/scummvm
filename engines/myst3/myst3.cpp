@@ -66,6 +66,7 @@ Common::Error Myst3Engine::run() {
 	}
 	
 	_system->setupScreen(w, h, false, true);
+	_system->showMouse(false);
 	
 	_scene.init(w, h);
 
@@ -76,8 +77,11 @@ Common::Error Myst3Engine::run() {
 		Common::Event event;
 		while (_system->getEventManager()->pollEvent(event)) {
 			// Check for "Hard" quit"
-			if (event.type == Common::EVENT_QUIT)
+			if (event.type == Common::EVENT_QUIT) {
 				return Common::kNoError;
+			} else if (event.type == Common::EVENT_MOUSEMOVE) {
+				_scene.updateCamera(event.relMouse);
+			}
 		}
 		
 		_scene.clear();

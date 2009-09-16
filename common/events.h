@@ -99,6 +99,11 @@ struct Event {
 	 */
 	Common::Point mouse;
 
+	/**
+	 * Mouse movement since the last mouse movement event.
+	 */
+	Common::Point relMouse;
+
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 

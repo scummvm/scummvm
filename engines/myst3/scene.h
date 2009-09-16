@@ -33,17 +33,21 @@
 #include <GL/glu.h>
 #endif
 
+#include "common/rect.h"
+
 namespace Myst3 {
 
 class Scene {
 	private:
 		float _cameraPitch;
 		float _cameraYaw;
+		Common::Point _mouseOld;
 
 	public:
 		void init(int width, int height);
 		void clear();
 		void setupCamera();
+		void updateCamera(Common::Point &mouse);
 };
 
 } // end of namespace Myst3

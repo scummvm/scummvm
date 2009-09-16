@@ -53,8 +53,13 @@ void Scene::setupCamera() {
 	glLoadIdentity();
 	glRotatef(_cameraPitch, 1.0f, 0.0f, 0.0f);
 	glRotatef(_cameraYaw, 0.0f, 1.0f, 0.0f);
-	
-	_cameraYaw += 0.1f;
+}
+
+void Scene::updateCamera(Common::Point &mouse) {
+	_cameraYaw += mouse.x / 3.0f;
+	_cameraPitch += mouse.y / 3.0f;
+
+	_cameraPitch = CLIP(_cameraPitch, -90.0f, 90.0f);
 }
 
 } // end of namespace Myst3

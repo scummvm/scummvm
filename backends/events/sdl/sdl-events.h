@@ -110,7 +110,7 @@ protected:
 	/**
 	 * Assigns the mouse coords to the mouse event
 	 */
-	virtual void fillMouseEvent(Common::Event &event, int x, int y);
+	virtual void fillMouseEvent(Common::Event &event, int x, int y, int relx, int rely);
 
 	/**
 	 * Remaps key events. This allows platforms to configure
