@@ -1320,7 +1320,7 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 
 			switch (mobj->getType()) {
 			case MEM_OBJ_SCRIPT:
-				DebugPrintf("S  script.%03d l:%d ", (*(Script *)mobj).nr, (*(Script *)mobj).lockers);
+				DebugPrintf("S  script.%03d l:%d ", (*(Script *)mobj)._nr, (*(Script *)mobj).getLockers());
 				break;
 
 			case MEM_OBJ_CLONES:
@@ -1384,16 +1384,16 @@ bool Console::segmentInfo(int nr) {
 
 	case MEM_OBJ_SCRIPT: {
 		Script *scr = (Script *)mobj;
-		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->nr, scr->lockers, (uint)scr->buf_size, (uint)scr->buf_size);
-		if (scr->export_table)
-			DebugPrintf("  Exports: %4d at %d\n", scr->exports_nr, (int)(((byte *)scr->export_table) - ((byte *)scr->buf)));
+		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->_bufSize, (uint)scr->_bufSize);
+		if (scr->_exportTable)
+			DebugPrintf("  Exports: %4d at %d\n", scr->_numExports, (int)(((byte *)scr->_exportTable) - ((byte *)scr->_buf)));
 		else
 			DebugPrintf("  Exports: none\n");
 
-		DebugPrintf("  Synonyms: %4d\n", scr->synonyms_nr);
+		DebugPrintf("  Synonyms: %4d\n", scr->_numSynonyms);
 
-		if (scr->locals_block)
-			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->locals_block->_locals.size(), scr->locals_segment);
+		if (scr->_localsBlock)
+			DebugPrintf("  Locals : %4d in segment 0x%x\n", scr->_localsBlock->_locals.size(), scr->_localsSegment);
 		else
 			DebugPrintf("  Locals : none\n");
 
@@ -2104,7 +2104,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 
 		printf(" argp:ST:%04x", (unsigned)(call.variables_argp - _vm->_gamestate->stack_base));
 		if (call.type == EXEC_STACK_TYPE_CALL)
-			printf(" script: %d", (*(Script *)_vm->_gamestate->segMan->_heap[call.addr.pc.segment]).nr);
+			printf(" script: %d", (*(Script *)_vm->_gamestate->segMan->_heap[call.addr.pc.segment])._nr);
 		printf("\n");
 	}
 
@@ -3090,7 +3090,7 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
 	if (s->segMan->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
-		DebugPrintf("\nOwner script:\t%d\n", s->segMan->getScript(pos.segment)->nr);
+		DebugPrintf("\nOwner script:\t%d\n", s->segMan->getScript(pos.segment)->_nr);
 
 	return 0;
 }

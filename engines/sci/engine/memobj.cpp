@@ -77,32 +77,57 @@ MemObject *MemObject::createMemObject(MemObjectType type) {
 	return mem;
 }
 
+Script::Script() {
+	_nr = 0;
+	_buf = NULL;
+	_bufSize = 0;
+	_scriptSize = 0;
+	_heapSize = 0;
+
+	_synonyms = NULL;
+	_heapStart = NULL;
+	_exportTable = NULL;
+
+	_objIndices = NULL;
+
+	_localsOffset = 0;
+	_localsSegment = 0;
+	_localsBlock = NULL;
+
+	_relocated = false;
+	_markedAsDeleted = 0;
+}
+
+Script::~Script() {
+	freeScript();
+}
+
 void Script::freeScript() {
-	free(buf);
-	buf = NULL;
-	buf_size = 0;
+	free(_buf);
+	_buf = NULL;
+	_bufSize = 0;
 
 	_objects.clear();
 
-	delete obj_indices;
-	obj_indices = 0;
+	delete _objIndices;
+	_objIndices = 0;
 	_codeBlocks.clear();
 }
 
 void Script::init() {
-	locals_offset = 0;
-	locals_block = NULL;
+	_localsOffset = 0;
+	_localsBlock = NULL;
 
 	_codeBlocks.clear();
 
+	_relocated = false;
 	_markedAsDeleted = false;
-	relocated = 0;
 
-	obj_indices = new IntMapper();
+	_objIndices = new IntMapper();
 }
 
 Object *Script::allocateObject(uint16 offset) {
-	int idx = obj_indices->checkKey(offset, true);
+	int idx = _objIndices->checkKey(offset, true);
 	if ((uint)idx == _objects.size())
 		_objects.push_back(Object());
 
@@ -110,7 +135,7 @@ Object *Script::allocateObject(uint16 offset) {
 }
 
 Object *Script::getObject(uint16 offset) {
-	int idx = obj_indices->checkKey(offset, false);
+	int idx = _objIndices->checkKey(offset, false);
 	if (idx >= 0 && (uint)idx < _objects.size())
 		return &_objects[idx];
 	else
@@ -118,61 +143,61 @@ Object *Script::getObject(uint16 offset) {
 }
 
 void Script::incrementLockers() {
-	lockers++;
+	_lockers++;
 }
 
 void Script::decrementLockers() {
-	if (lockers > 0)
-		lockers--;
+	if (_lockers > 0)
+		_lockers--;
 }
 
 int Script::getLockers() const {
-	return lockers;
+	return _lockers;
 }
 
-void Script::setLockers(int lockers_) {
-	lockers = lockers_;
+void Script::setLockers(int lockers) {
+	_lockers = lockers;
 }
 
 void Script::setExportTableOffset(int offset) {
 	if (offset) {
-		export_table = (uint16 *)(buf + offset + 2);
-		exports_nr = READ_LE_UINT16((byte *)(export_table - 1));
+		_exportTable = (uint16 *)(_buf + offset + 2);
+		_numExports = READ_LE_UINT16((byte *)(_exportTable - 1));
 	} else {
-		export_table = NULL;
-		exports_nr = 0;
+		_exportTable = NULL;
+		_numExports = 0;
 	}
 }
 
 void Script::setSynonymsOffset(int offset) {
-	synonyms = buf + offset;
+	_synonyms = _buf + offset;
 }
 
 byte *Script::getSynonyms() const {
-	return synonyms;
+	return _synonyms;
 }
 
 void Script::setSynonymsNr(int n) {
-	synonyms_nr = n;
+	_numSynonyms = n;
 }
 
 int Script::getSynonymsNr() const {
-	return synonyms_nr;
+	return _numSynonyms;
 }
 
 // memory operations
 
 void Script::mcpyInOut(int dst, const void *src, size_t n) {
-	if (buf) {
-		assert(dst + n <= buf_size);
-		memcpy(buf + dst, src, n);
+	if (_buf) {
+		assert(dst + n <= _bufSize);
+		memcpy(_buf + dst, src, n);
 	}
 }
 
 int16 Script::getHeap(uint16 offset) const {
-	assert(offset + 1 < (int)buf_size);
-	return READ_LE_UINT16(buf + offset);
-//	return (buf[offset] | (buf[offset+1]) << 8);
+	assert(offset + 1 < (int)_bufSize);
+	return READ_LE_UINT16(_buf + offset);
+//	return (_buf[offset] | (_buf[offset+1]) << 8);
 }
 
 byte *MemObject::dereference(reg_t pointer, int *size) {
@@ -182,18 +207,18 @@ byte *MemObject::dereference(reg_t pointer, int *size) {
 }
 
 bool Script::isValidOffset(uint16 offset) const {
-	return offset < buf_size;
+	return offset < _bufSize;
 }
 
 byte *Script::dereference(reg_t pointer, int *size) {
-	if (pointer.offset > buf_size) {
+	if (pointer.offset > _bufSize) {
 		warning("Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)\n",
-				  PRINT_REG(pointer), (uint)buf_size);
+				  PRINT_REG(pointer), (uint)_bufSize);
 		return NULL;
 	}
 	if (size)
-		*size = buf_size - pointer.offset;
-	return buf + pointer.offset;
+		*size = _bufSize - pointer.offset;
+	return _buf + pointer.offset;
 }
 
 bool LocalVariables::isValidOffset(uint16 offset) const {
@@ -260,12 +285,12 @@ reg_t Script::findCanonicAddress(SegManager *segMan, reg_t addr) {
 void Script::freeAtAddress(SegManager *segMan, reg_t addr) {
 	/*
 		debugC(2, kDebugLevelGC, "[GC] Freeing script %04x:%04x\n", PRINT_REG(addr));
-		if (locals_segment)
-			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000\n", locals_segment);
+		if (_localsSegment)
+			debugC(2, kDebugLevelGC, "[GC] Freeing locals %04x:0000\n", _localsSegment);
 	*/
 
 	if (_markedAsDeleted)
-		segMan->deallocateScript(nr);
+		segMan->deallocateScript(_nr);
 }
 
 void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback note) {
@@ -275,12 +300,12 @@ void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback not
 void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
 	Script *script = this;
 
-	if (addr.offset <= script->buf_size && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->buf + addr.offset)) {
+	if (addr.offset <= script->_bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->_buf + addr.offset)) {
 		Object *obj = getObject(addr.offset);
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
-			if (script->locals_segment)
-				(*note)(param, make_reg(script->locals_segment, 0));
+			if (script->_localsSegment)
+				(*note)(param, make_reg(script->_localsSegment, 0));
 
 			for (uint i = 0; i < obj->_variables.size(); i++)
 				(*note)(param, obj->_variables[i]);

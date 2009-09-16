@@ -48,15 +48,15 @@ struct WorklistManager {
 	}
 };
 
-static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *sm, reg_t_hash_map &nonnormal_map) {
+static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *segMan, reg_t_hash_map &nonnormal_map) {
 	reg_t_hash_map *normal_map = new reg_t_hash_map();
 
 	for (reg_t_hash_map::iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
 		reg_t reg = i->_key;
-		MemObject *mobj = (reg.segment < sm->_heap.size()) ? sm->_heap[reg.segment] : NULL;
+		MemObject *mobj = (reg.segment < segMan->_heap.size()) ? segMan->_heap[reg.segment] : NULL;
 
 		if (mobj) {
-			reg = mobj->findCanonicAddress(sm, reg);
+			reg = mobj->findCanonicAddress(segMan, reg);
 			normal_map->setVal(reg, true);
 		}
 	}
@@ -71,7 +71,7 @@ void add_outgoing_refs(void *refcon, reg_t addr) {
 }
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
-	SegManager *sm = s->segMan;
+	SegManager *segMan = s->segMan;
 	reg_t_hash_map *normal_map = NULL;
 	WorklistManager wm;
 	uint i;
@@ -109,14 +109,14 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	debugC(2, kDebugLevelGC, "[GC] -- Finished adding execution stack");
 
 	// Init: Explicitly loaded scripts
-	for (i = 1; i < sm->_heap.size(); i++)
-		if (sm->_heap[i]
-		        && sm->_heap[i]->getType() == MEM_OBJ_SCRIPT) {
-			Script *script = (Script *)sm->_heap[i];
+	for (i = 1; i < segMan->_heap.size(); i++)
+		if (segMan->_heap[i]
+		        && segMan->_heap[i]->getType() == MEM_OBJ_SCRIPT) {
+			Script *script = (Script *)segMan->_heap[i];
 
-			if (script->lockers) { // Explicitly loaded?
+			if (script->getLockers()) { // Explicitly loaded?
 				// Locals, if present
-				wm.push(make_reg(script->locals_segment, 0));
+				wm.push(make_reg(script->_localsSegment, 0));
 
 				// All objects (may be classes, may be indirectly reachable)
 				for (uint obj_nr = 0; obj_nr < script->_objects.size(); obj_nr++) {
@@ -133,13 +133,13 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		wm._worklist.pop_back();
 		if (reg.segment != s->stack_segment) { // No need to repeat this one
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x\n", PRINT_REG(reg));
-			if (reg.segment < sm->_heap.size() && sm->_heap[reg.segment])
-				sm->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs, s->resMan->sciVersion());
+			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment])
+				segMan->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs, s->resMan->sciVersion());
 		}
 	}
 
 	// Normalise
-	normal_map = normalise_hashmap_ptrs(sm, wm._map);
+	normal_map = normalise_hashmap_ptrs(segMan, wm._map);
 
 	return normal_map;
 }
@@ -172,19 +172,19 @@ void free_unless_used(void *refcon, reg_t addr) {
 void run_gc(EngineState *s) {
 	uint seg_nr;
 	deallocator_t deallocator;
-	SegManager *sm = s->segMan;
+	SegManager *segMan = s->segMan;
 
 #ifdef DEBUG_GC
 	debugC(2, kDebugLevelGC, "[GC] Running...\n");
 	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
 #endif
 
-	deallocator.segMan = sm;
+	deallocator.segMan = segMan;
 	deallocator.use_map = find_all_used_references(s);
 
-	for (seg_nr = 1; seg_nr < sm->_heap.size(); seg_nr++) {
-		if (sm->_heap[seg_nr] != NULL) {
-			deallocator.mobj = sm->_heap[seg_nr];
+	for (seg_nr = 1; seg_nr < segMan->_heap.size(); seg_nr++) {
+		if (segMan->_heap[seg_nr] != NULL) {
+			deallocator.mobj = segMan->_heap[seg_nr];
 #ifdef DEBUG_GC
 			deallocator.segnames[deallocator.mobj->getType()] = deallocator.mobj->type;	// FIXME: add a segment "name"
 #endif

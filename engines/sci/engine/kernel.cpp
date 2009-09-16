@@ -641,8 +641,8 @@ int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
 
 	switch (mobj->getType()) {
 	case MEM_OBJ_SCRIPT:
-		if (reg.offset <= (*(Script *)mobj).buf_size && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-		        && RAW_IS_OBJECT((*(Script *)mobj).buf + reg.offset)) {
+		if (reg.offset <= (*(Script *)mobj)._bufSize && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+		        && RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
 			Object *obj = ((Script *)mobj)->getObject(reg.offset);
 			if (obj)
 				return KSIG_OBJECT;

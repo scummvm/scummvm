@@ -242,7 +242,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// If we are loading a script, hook it up in the script->segment map.
 		if (s.isLoading() && type == MEM_OBJ_SCRIPT) {
-			_scriptSegMap[((Script *)mobj)->nr] = i;
+			_scriptSegMap[((Script *)mobj)->_nr] = i;
 		}
 	}
 
@@ -379,27 +379,27 @@ void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Script::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsSint32LE(nr);
-	s.syncAsUint32LE(buf_size);
-	s.syncAsUint32LE(script_size);
-	s.syncAsUint32LE(heap_size);
+	s.syncAsSint32LE(_nr);
+	s.syncAsUint32LE(_bufSize);
+	s.syncAsUint32LE(_scriptSize);
+	s.syncAsUint32LE(_heapSize);
 
-	// FIXME: revamp obj_indices handling
-	if (!obj_indices) {
+	// FIXME: revamp _objIndices handling
+	if (!_objIndices) {
 		assert(s.isLoading());
-		obj_indices = new IntMapper();
+		_objIndices = new IntMapper();
 	}
 
-	obj_indices->saveLoadWithSerializer(s);
+	_objIndices->saveLoadWithSerializer(s);
 
-	s.syncAsSint32LE(exports_nr);
-	s.syncAsSint32LE(synonyms_nr);
-	s.syncAsSint32LE(lockers);
+	s.syncAsSint32LE(_numExports);
+	s.syncAsSint32LE(_numSynonyms);
+	s.syncAsSint32LE(_lockers);
 
 	syncArray<Object>(s, _objects);
 
-	s.syncAsSint32LE(locals_offset);
-	s.syncAsSint32LE(locals_segment);
+	s.syncAsSint32LE(_localsOffset);
+	s.syncAsSint32LE(_localsSegment);
 
 	s.syncAsSint32LE(_markedAsDeleted);
 }
@@ -536,17 +536,17 @@ static void reconstruct_stack(EngineState *retval) {
 static void load_script(EngineState *s, Script *scr) {
 	Resource *script, *heap = NULL;
 
-	scr->buf = (byte *)malloc(scr->buf_size);
-	assert(scr->buf);
+	scr->_buf = (byte *)malloc(scr->_bufSize);
+	assert(scr->_buf);
 
-	script = s->resMan->findResource(ResourceId(kResourceTypeScript, scr->nr), 0);
+	script = s->resMan->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
 	if (s->resMan->sciVersion() >= SCI_VERSION_1_1)
-		heap = s->resMan->findResource(ResourceId(kResourceTypeHeap, scr->nr), 0);
+		heap = s->resMan->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
 
-	memcpy(scr->buf, script->data, script->size);
+	memcpy(scr->_buf, script->data, script->size);
 	if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
-		scr->heap_start = scr->buf + scr->script_size;
-		memcpy(scr->heap_start, heap->data, heap->size);
+		scr->_heapStart = scr->_buf + scr->_scriptSize;
+		memcpy(scr->_heapStart, heap->data, heap->size);
 	}
 }
 
@@ -565,24 +565,24 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 				// FIXME: Unify this code with script_instantiate_*
 				load_script(s, scr);
-				scr->locals_block = (scr->locals_segment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->locals_segment]);
+				scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->_localsSegment]);
 				if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
-					scr->export_table = 0;
-					scr->synonyms = 0;
-					if (READ_LE_UINT16(scr->buf + 6) > 0) {
+					scr->_exportTable = 0;
+					scr->_synonyms = 0;
+					if (READ_LE_UINT16(scr->_buf + 6) > 0) {
 						scr->setExportTableOffset(6);
 						s->segMan->scriptRelocateExportsSci11(i);
 					}
 				} else {
-					scr->export_table = (uint16 *) find_unique_script_block(s, scr->buf, SCI_OBJ_EXPORTS);
-					scr->synonyms = find_unique_script_block(s, scr->buf, SCI_OBJ_SYNONYMS);
-					scr->export_table += 3;
+					scr->_exportTable = (uint16 *) find_unique_script_block(s, scr->_buf, SCI_OBJ_EXPORTS);
+					scr->_synonyms = find_unique_script_block(s, scr->_buf, SCI_OBJ_SYNONYMS);
+					scr->_exportTable += 3;
 				}
 				scr->_codeBlocks.clear();
 
 				for (j = 0; j < scr->_objects.size(); j++) {
-					byte *data = scr->buf + scr->_objects[j].pos.offset;
-					scr->_objects[j].base = scr->buf;
+					byte *data = scr->_buf + scr->_objects[j].pos.offset;
+					scr->_objects[j].base = scr->_buf;
 					scr->_objects[j].base_obj = data;
 				}
 				break;
@@ -601,11 +601,11 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				Script *scr = (Script *)mobj;
 
 				for (j = 0; j < scr->_objects.size(); j++) {
-					byte *data = scr->buf + scr->_objects[j].pos.offset;
+					byte *data = scr->_buf + scr->_objects[j].pos.offset;
 
 					if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
-						uint16 *funct_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 6 ));
-						uint16 *prop_area = (uint16 *) (scr->buf + READ_LE_UINT16( data + 4 ));
+						uint16 *funct_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 6 ));
+						uint16 *prop_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 4 ));
 
 						scr->_objects[j].base_method = funct_area;
 						scr->_objects[j].base_vars = prop_area;
@@ -617,7 +617,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-								  scr->nr, j, PRINT_REG(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]));
+								  scr->_nr, j, PRINT_REG(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]));
 							continue;
 						}
 						scr->_objects[j].variable_names_nr = base_obj->_variables.size();

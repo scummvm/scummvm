@@ -138,28 +138,28 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 	Resource *heap = _resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 	bool oldScriptHeader = (_resMan->sciVersion() == SCI_VERSION_0_EARLY);
 
-	scr.script_size = script->size;
-	scr.heap_size = 0; // Set later
+	scr._scriptSize = script->size;
+	scr._heapSize = 0; // Set later
 
 	if (!script || (_resMan->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
 	if (oldScriptHeader) {
-		scr.buf_size = script->size + READ_LE_UINT16(script->data) * 2;
+		scr._bufSize = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
 	} else if (_resMan->sciVersion() < SCI_VERSION_1_1) {
-		scr.buf_size = script->size;
+		scr._bufSize = script->size;
 	} else {
-		scr.buf_size = script->size + heap->size;
-		scr.heap_size = heap->size;
+		scr._bufSize = script->size + heap->size;
+		scr._heapSize = heap->size;
 
 		// Ensure that the start of the heap resource can be word-aligned.
 		if (script->size & 2) {
-			scr.buf_size++;
-			scr.script_size++;
+			scr._bufSize++;
+			scr._scriptSize++;
 		}
 
-		if (scr.buf_size > 65535) {
+		if (scr._bufSize > 65535) {
 			error("Script and heap sizes combined exceed 64K."
 			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
@@ -170,29 +170,29 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 }
 
 int SegManager::initialiseScript(Script &scr, int script_nr) {
-	// allocate the script.buf
+	// allocate the script._buf
 
 	setScriptSize(scr, script_nr);
-	scr.buf = (byte *)malloc(scr.buf_size);
+	scr._buf = (byte *)malloc(scr._bufSize);
 
 #ifdef DEBUG_segMan
-	printf("scr.buf = %p ", scr.buf);
+	printf("scr._buf = %p ", scr._buf);
 #endif
-	if (!scr.buf) {
+	if (!scr._buf) {
 		scr.freeScript();
 		warning("SegManager: Not enough memory space for script size");
-		scr.buf_size = 0;
+		scr._bufSize = 0;
 		return 0;
 	}
 
 	// Initialize objects
 	scr.init();
-	scr.nr = script_nr;
+	scr._nr = script_nr;
 
 	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
-		scr.heap_start = scr.buf + scr.script_size;
+		scr._heapStart = scr._buf + scr._scriptSize;
 	else
-		scr.heap_start = scr.buf;
+		scr._heapStart = scr._buf;
 
 	return 1;
 }
@@ -205,9 +205,9 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 
 	if (mobj->getType() == MEM_OBJ_SCRIPT) {
 		Script *scr = (Script *)mobj;
-		_scriptSegMap.erase(scr->nr);
-		if (recursive && scr->locals_segment)
-			deallocate(scr->locals_segment, recursive);
+		_scriptSegMap.erase(scr->_nr);
+		if (recursive && scr->_localsSegment)
+			deallocate(scr->_localsSegment, recursive);
 	}
 
 	delete mobj;
@@ -282,8 +282,8 @@ Object *SegManager::getObject(reg_t pos) {
 				obj = &(ct->_table[pos.offset]);
 		} else if (mobj->getType() == MEM_OBJ_SCRIPT) {
 			Script *scr = (Script *)mobj;
-			if (pos.offset <= scr->buf_size && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-			        && RAW_IS_OBJECT(scr->buf + pos.offset)) {
+			if (pos.offset <= scr->_bufSize && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
+			        && RAW_IS_OBJECT(scr->_buf + pos.offset)) {
 				obj = scr->getObject(pos.offset);
 			}
 		}
@@ -349,14 +349,14 @@ int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, S
 	}
 	block[idx].segment = segment; // Perform relocation
 	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
-		block[idx].offset += getScript(segment)->script_size;
+		block[idx].offset += getScript(segment)->_scriptSize;
 
 	return 1;
 }
 
 int SegManager::relocateLocal(Script *scr, SegmentId segment, int location) {
-	if (scr->locals_block)
-		return relocateBlock(scr->locals_block->_locals, scr->locals_offset, segment, location);
+	if (scr->_localsBlock)
+		return relocateBlock(scr->_localsBlock->_locals, scr->_localsOffset, segment, location);
 	else
 		return 0; // No hands, no cookies
 }
@@ -370,20 +370,20 @@ void SegManager::scriptAddCodeBlock(reg_t location) {
 
 	CodeBlock cb;
 	cb.pos = location;
-	cb.size = READ_LE_UINT16(scr->buf + location.offset - 2);
+	cb.size = READ_LE_UINT16(scr->_buf + location.offset - 2);
 	scr->_codeBlocks.push_back(cb);
 }
 
 void SegManager::scriptRelocate(reg_t block) {
 	Script *scr = getScript(block.segment);
 
-	VERIFY(block.offset < (uint16)scr->buf_size && READ_LE_UINT16(scr->buf + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
+	VERIFY(block.offset < (uint16)scr->_bufSize && READ_LE_UINT16(scr->_buf + block.offset) * 2 + block.offset < (uint16)scr->_bufSize,
 	       "Relocation block outside of script\n");
 
-	int count = READ_LE_UINT16(scr->buf + block.offset);
+	int count = READ_LE_UINT16(scr->_buf + block.offset);
 
 	for (int i = 0; i <= count; i++) {
-		int pos = READ_LE_UINT16(scr->buf + block.offset + 2 + (i * 2));
+		int pos = READ_LE_UINT16(scr->_buf + block.offset + 2 + (i * 2));
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
 
@@ -405,8 +405,8 @@ void SegManager::scriptRelocate(reg_t block) {
 			if (!done) {
 				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
 				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (scr->locals_block)
-					printf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
+				if (scr->_localsBlock)
+					printf("- locals: %d at %04x\n", scr->_localsBlock->_locals.size(), scr->_localsOffset);
 				else
 					printf("- No locals\n");
 				for (k = 0; k < scr->_objects.size(); k++)
@@ -421,16 +421,16 @@ void SegManager::scriptRelocate(reg_t block) {
 void SegManager::heapRelocate(reg_t block) {
 	Script *scr = getScript(block.segment);
 
-	VERIFY(block.offset < (uint16)scr->heap_size && READ_LE_UINT16(scr->heap_start + block.offset) * 2 + block.offset < (uint16)scr->buf_size,
+	VERIFY(block.offset < (uint16)scr->_heapSize && READ_LE_UINT16(scr->_heapStart + block.offset) * 2 + block.offset < (uint16)scr->_bufSize,
 	       "Relocation block outside of script\n");
 
-	if (scr->relocated)
+	if (scr->_relocated)
 		return;
-	scr->relocated = 1;
-	int count = READ_LE_UINT16(scr->heap_start + block.offset);
+	scr->_relocated = true;
+	int count = READ_LE_UINT16(scr->_heapStart + block.offset);
 
 	for (int i = 0; i < count; i++) {
-		int pos = READ_LE_UINT16(scr->heap_start + block.offset + 2 + (i * 2)) + scr->script_size;
+		int pos = READ_LE_UINT16(scr->_heapStart + block.offset + 2 + (i * 2)) + scr->_scriptSize;
 
 		if (!relocateLocal(scr, block.segment, pos)) {
 			bool done = false;
@@ -444,8 +444,8 @@ void SegManager::heapRelocate(reg_t block) {
 			if (!done) {
 				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
 				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (scr->locals_block)
-					printf("- locals: %d at %04x\n", scr->locals_block->_locals.size(), scr->locals_offset);
+				if (scr->_localsBlock)
+					printf("- locals: %d at %04x\n", scr->_localsBlock->_locals.size(), scr->_localsOffset);
 				else
 					printf("- No locals\n");
 				for (k = 0; k < scr->_objects.size(); k++)
@@ -511,14 +511,14 @@ Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 
 	Script *scr = getScript(obj_pos.segment);
 
-	VERIFY(base < scr->buf_size, "Attempt to initialize object beyond end of script\n");
+	VERIFY(base < scr->_bufSize, "Attempt to initialize object beyond end of script\n");
 
 	obj = scr->allocateObject(base);
 
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < scr->buf_size, "Function area pointer stored beyond end of script\n");
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < scr->_bufSize, "Function area pointer stored beyond end of script\n");
 
 	{
-		byte *data = (byte *)(scr->buf + base);
+		byte *data = (byte *)(scr->_buf + base);
 		int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
 		int variables_nr;
 		int functions_nr;
@@ -528,7 +528,7 @@ Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 		obj->flags = 0;
 		obj->pos = make_reg(obj_pos.segment, base);
 
-		VERIFY(base + funct_area < scr->buf_size, "Function area pointer references beyond end of script");
+		VERIFY(base + funct_area < scr->_bufSize, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
 		functions_nr = READ_LE_UINT16(data + funct_area - 2);
@@ -536,12 +536,12 @@ Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 
 		VERIFY(base + funct_area + functions_nr * 2
 		       // add again for classes, since those also store selectors
-		       + (is_class ? functions_nr * 2 : 0) < scr->buf_size, "Function area extends beyond end of script");
+		       + (is_class ? functions_nr * 2 : 0) < scr->_bufSize, "Function area extends beyond end of script");
 
 		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
-		obj->base = scr->buf;
+		obj->base = scr->_buf;
 		obj->base_obj = data;
 		obj->base_method = (uint16 *)(data + funct_area);
 		obj->base_vars = NULL;
@@ -559,16 +559,16 @@ Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 
 	Script *scr = getScript(obj_pos.segment);
 
-	VERIFY(base < scr->buf_size, "Attempt to initialize object beyond end of script\n");
+	VERIFY(base < scr->_bufSize, "Attempt to initialize object beyond end of script\n");
 
 	obj = scr->allocateObject(base);
 
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < scr->buf_size, "Function area pointer stored beyond end of script\n");
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < scr->_bufSize, "Function area pointer stored beyond end of script\n");
 
 	{
-		byte *data = (byte *)(scr->buf + base);
-		uint16 *funct_area = (uint16 *)(scr->buf + READ_LE_UINT16(data + 6));
-		uint16 *prop_area = (uint16 *)(scr->buf + READ_LE_UINT16(data + 4));
+		byte *data = (byte *)(scr->_buf + base);
+		uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16(data + 6));
+		uint16 *prop_area = (uint16 *)(scr->_buf + READ_LE_UINT16(data + 4));
 		int variables_nr;
 		int functions_nr;
 		int is_class;
@@ -577,7 +577,7 @@ Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 		obj->flags = 0;
 		obj->pos = obj_pos;
 
-		VERIFY((byte *) funct_area < scr->buf + scr->buf_size, "Function area pointer references beyond end of script");
+		VERIFY((byte *) funct_area < scr->_buf + scr->_bufSize, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + 2);
 		functions_nr = READ_LE_UINT16(funct_area);
@@ -586,13 +586,13 @@ Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 		obj->base_method = funct_area;
 		obj->base_vars = prop_area;
 
-		VERIFY(((byte *) funct_area + functions_nr) < scr->buf + scr->buf_size, "Function area extends beyond end of script");
+		VERIFY(((byte *) funct_area + functions_nr) < scr->_buf + scr->_bufSize, "Function area extends beyond end of script");
 
 		obj->variable_names_nr = variables_nr;
 		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
-		obj->base = scr->buf;
+		obj->base = scr->_buf;
 		obj->base_obj = data;
 
 		for (i = 0; i < variables_nr; i++)
@@ -611,22 +611,22 @@ Object *SegManager::scriptObjInit(reg_t obj_pos) {
 
 LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 	if (!count) { // No locals
-		scr->locals_segment = 0;
-		scr->locals_block = NULL;
+		scr->_localsSegment = 0;
+		scr->_localsBlock = NULL;
 		return NULL;
 	} else {
 		LocalVariables *locals;
 
-		if (scr->locals_segment) {
-			locals = (LocalVariables *)_heap[scr->locals_segment];
+		if (scr->_localsSegment) {
+			locals = (LocalVariables *)_heap[scr->_localsSegment];
 			VERIFY(locals != NULL, "Re-used locals segment was NULL'd out");
 			VERIFY(locals->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
-			VERIFY(locals->script_id == scr->nr, "Re-used locals segment belonged to other script");
+			VERIFY(locals->script_id == scr->_nr, "Re-used locals segment belonged to other script");
 		} else
-			locals = (LocalVariables *)allocSegment(MEM_OBJ_LOCALS, &scr->locals_segment);
+			locals = (LocalVariables *)allocSegment(MEM_OBJ_LOCALS, &scr->_localsSegment);
 
-		scr->locals_block = locals;
-		locals->script_id = scr->nr;
+		scr->_localsBlock = locals;
+		locals->script_id = scr->_nr;
 		locals->_locals.resize(count);
 
 		return locals;
@@ -636,7 +636,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 void SegManager::scriptInitialiseLocalsZero(SegmentId seg, int count) {
 	Script *scr = getScript(seg);
 
-	scr->locals_offset = -count * 2; // Make sure it's invalid
+	scr->_localsOffset = -count * 2; // Make sure it's invalid
 
 	allocLocalsSegment(scr, count);
 }
@@ -645,25 +645,25 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 	Script *scr = getScript(location.segment);
 	unsigned int count;
 
-	VERIFY(location.offset + 1 < (uint16)scr->buf_size, "Locals beyond end of script\n");
+	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
 
 	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
-		count = READ_LE_UINT16(scr->buf + location.offset - 2);
+		count = READ_LE_UINT16(scr->_buf + location.offset - 2);
 	else
-		count = (READ_LE_UINT16(scr->buf + location.offset - 2) - 4) >> 1;
+		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
 	// half block size
 
-	scr->locals_offset = location.offset;
+	scr->_localsOffset = location.offset;
 
-	if (!(location.offset + count * 2 + 1 < scr->buf_size)) {
-		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->buf_size);
-		count = (scr->buf_size - location.offset) >> 1;
+	if (!(location.offset + count * 2 + 1 < scr->_bufSize)) {
+		warning("Locals extend beyond end of script: offset %04x, count %x vs size %x", location.offset, count, (uint)scr->_bufSize);
+		count = (scr->_bufSize - location.offset) >> 1;
 	}
 
 	LocalVariables *locals = allocLocalsSegment(scr, count);
 	if (locals) {
 		uint i;
-		byte *base = (byte *)(scr->buf + location.offset);
+		byte *base = (byte *)(scr->_buf + location.offset);
 
 		for (i = 0; i < count; i++)
 			locals->_locals[i].offset = READ_LE_UINT16(base + i * 2);
@@ -672,13 +672,13 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	for (int i = 0; i < scr->exports_nr; i++) {
+	for (int i = 0; i < scr->_numExports; i++) {
 		/* We are forced to use an ugly heuristic here to distinguish function
 		   exports from object/class exports. The former kind points into the
 		   script resource, the latter into the heap resource.  */
-		uint16 location = READ_LE_UINT16((byte *)(scr->export_table + i));
-		if ((location < scr->heap_size - 1) && (READ_LE_UINT16(scr->heap_start + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
-			WRITE_LE_UINT16((byte *)(scr->export_table + i), location + scr->heap_start - scr->buf);
+		uint16 location = READ_LE_UINT16((byte *)(scr->_exportTable + i));
+		if ((location < scr->_heapSize - 1) && (READ_LE_UINT16(scr->_heapStart + location) == SCRIPT_OBJECT_MAGIC_NUMBER)) {
+			WRITE_LE_UINT16((byte *)(scr->_exportTable + i), location + scr->_heapStart - scr->_buf);
 		} else {
 			// Otherwise it's probably a function export,
 			// and we don't need to do anything.
@@ -688,17 +688,17 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
-	byte *seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
+	byte *seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
 	SciVersion version = _resMan->sciVersion();	// for the selector defines
 
 	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
-			int classpos = seeker - scr->buf;
+			int classpos = seeker - scr->_buf;
 			int species = READ_LE_UINT16(seeker + 10);
 
 			if (species < 0 || species >= (int)_classtable.size()) {
 				error("Invalid species %d(0x%x) not in interval [0,%d) while instantiating script %d",
-				          species, species, _classtable.size(), scr->nr);
+				          species, species, _classtable.size(), scr->_nr);
 				return;
 			}
 
@@ -708,13 +708,13 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
 
-	seeker = scr->heap_start + 4 + READ_LE_UINT16(scr->heap_start + 2) * 2;
+	seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
 	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		reg_t reg;
 		Object *obj;
 
 		reg.segment = seg;
-		reg.offset = seeker - scr->buf;
+		reg.offset = seeker - scr->_buf;
 		obj = scriptObjInit(reg);
 
 #if 0
@@ -736,7 +736,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		// uses this selector together with -propDict- to compare classes.
 		// For the purpose of Obj::isKindOf, using the script number appears
 		// to be sufficient.
-		obj->_variables[SCRIPT_CLASSSCRIPT_SELECTOR] = make_reg(0, scr->nr);
+		obj->_variables[SCRIPT_CLASSSCRIPT_SELECTOR] = make_reg(0, scr->_nr);
 
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
@@ -779,15 +779,15 @@ SegmentId SegManager::allocateStringFrags() {
 
 uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 	Script *scr = getScript(seg);
-	if (scr->exports_nr <= pubfunct) {
+	if (scr->_numExports <= pubfunct) {
 		warning("validateExportFunc(): pubfunct is invalid");
 		return 0;
 	}
 
 	if (_exportsAreWide)
 		pubfunct *= 2;
-	uint16 offset = READ_LE_UINT16((byte *)(scr->export_table + pubfunct));
-	VERIFY(offset < scr->buf_size, "invalid export function pointer");
+	uint16 offset = READ_LE_UINT16((byte *)(scr->_exportTable + pubfunct));
+	VERIFY(offset < scr->_bufSize, "invalid export function pointer");
 
 	return offset;
 }

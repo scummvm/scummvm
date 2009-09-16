@@ -425,17 +425,17 @@ ExecStack *add_exec_stack_varselector(EngineState *s, reg_t objp, int argc, Stac
 }
 
 ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t objp, int argc,
-								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId locals_segment) {
+								   StackPtr argp, Selector selector, reg_t sendp, int origin, SegmentId _localsSegment) {
 	// Returns new TOS element for the execution stack
-	// locals_segment may be -1 if derived from the called object
+	// _localsSegment may be -1 if derived from the called object
 
 	//printf("Exec stack: [%d/%d], origin %d, at %p\n", s->execution_stack_pos, s->_executionStack.size(), origin, s->execution_stack);
 
 	ExecStack xstack;
 
 	xstack.objp = objp;
-	if (locals_segment != SCI_XS_CALLEE_LOCALS)
-		xstack.local_segment = locals_segment;
+	if (_localsSegment != SCI_XS_CALLEE_LOCALS)
+		xstack.local_segment = _localsSegment;
 	else
 		xstack.local_segment = pc.segment;
 
@@ -531,19 +531,19 @@ void run_vm(EngineState *s, int restoring) {
 
 #ifndef DISABLE_VALIDATIONS
 	// Initialize maximum variable count
-	if (s->script_000->locals_block)
-		scriptState.variables_max[VAR_GLOBAL] = s->script_000->locals_block->_locals.size();
+	if (s->script_000->_localsBlock)
+		scriptState.variables_max[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.size();
 	else
 		scriptState.variables_max[VAR_GLOBAL] = 0;
 #endif
 
-	scriptState.variables_seg[VAR_GLOBAL] = s->script_000->locals_segment;
+	scriptState.variables_seg[VAR_GLOBAL] = s->script_000->_localsSegment;
 	scriptState.variables_seg[VAR_TEMP] = scriptState.variables_seg[VAR_PARAM] = s->stack_segment;
 	scriptState.variables_base[VAR_TEMP] = scriptState.variables_base[VAR_PARAM] = s->stack_base;
 
 	// SCI code reads the zeroeth argument to determine argc
-	if (s->script_000->locals_block)
-		scriptState.variables_base[VAR_GLOBAL] = scriptState.variables[VAR_GLOBAL] = s->script_000->locals_block->_locals.begin();
+	if (s->script_000->_localsBlock)
+		scriptState.variables_base[VAR_GLOBAL] = scriptState.variables[VAR_GLOBAL] = s->script_000->_localsBlock->_locals.begin();
 	else
 		scriptState.variables_base[VAR_GLOBAL] = scriptState.variables[VAR_GLOBAL] = NULL;
 
@@ -577,9 +577,9 @@ void run_vm(EngineState *s, int restoring) {
 				obj = NULL;
 			} else {
 				obj = s->segMan->getObject(scriptState.xs->objp);
-				code_buf = scr->buf;
+				code_buf = scr->_buf;
 #ifndef DISABLE_VALIDATIONS
-				code_buf_size = scr->buf_size;
+				code_buf_size = scr->_bufSize;
 #endif
 				local_script = s->segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 				if (!local_script) {
@@ -591,14 +591,14 @@ void run_vm(EngineState *s, int restoring) {
 #endif
 				} else {
 
-					scriptState.variables_seg[VAR_LOCAL] = local_script->locals_segment;
-					if (local_script->locals_block)
-						scriptState.variables_base[VAR_LOCAL] = scriptState.variables[VAR_LOCAL] = local_script->locals_block->_locals.begin();
+					scriptState.variables_seg[VAR_LOCAL] = local_script->_localsSegment;
+					if (local_script->_localsBlock)
+						scriptState.variables_base[VAR_LOCAL] = scriptState.variables[VAR_LOCAL] = local_script->_localsBlock->_locals.begin();
 					else
 						scriptState.variables_base[VAR_LOCAL] = scriptState.variables[VAR_LOCAL] = NULL;
 #ifndef DISABLE_VALIDATIONS
-					if (local_script->locals_block)
-						scriptState.variables_max[VAR_LOCAL] = local_script->locals_block->_locals.size();
+					if (local_script->_localsBlock)
+						scriptState.variables_max[VAR_LOCAL] = local_script->_localsBlock->_locals.size();
 					else
 						scriptState.variables_max[VAR_LOCAL] = 0;
 					scriptState.variables_max[VAR_TEMP] = scriptState.xs->sp - scriptState.xs->fp;
@@ -1158,7 +1158,7 @@ void run_vm(EngineState *s, int restoring) {
 
 			switch (s->detectLofsType()) {
 			case SCI_VERSION_1_1:
-				s->r_acc.offset = opparams[0] + local_script->script_size;
+				s->r_acc.offset = opparams[0] + local_script->_scriptSize;
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				s->r_acc.offset = opparams[0];
@@ -1180,7 +1180,7 @@ void run_vm(EngineState *s, int restoring) {
 
 			switch (s->detectLofsType()) {
 			case SCI_VERSION_1_1:
-				r_temp.offset = opparams[0] + local_script->script_size;
+				r_temp.offset = opparams[0] + local_script->_scriptSize;
 				break;
 			case SCI_VERSION_1_MIDDLE:
 				r_temp.offset = opparams[0];
@@ -1565,7 +1565,6 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	int objtype;
 	unsigned int objlength;
-	int seg_id;
 	int relocation = -1;
 	int magic_pos_adder; // Usually 0; 2 for older SCI versions
 	Resource *script;
@@ -1573,7 +1572,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	SciVersion version = resMan->sciVersion();
 	bool oldScriptHeader = (version == SCI_VERSION_0_EARLY);
 
-	seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
+	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
 
 	if (was_new)
 		return seg_id;
@@ -1683,9 +1682,9 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			break;
 
 		objlength = scr->getHeap(reg.offset + 2);
-		reg.offset += 4; // Step over header
 
 		addr = reg;
+		addr.offset += 4; // Step over header
 
 		switch (objtype) {
 		case SCI_OBJ_CODE:
@@ -1715,42 +1714,39 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			break;
 		}
 
-		reg.offset -= 4; // Step back on header
-
 	} while (objtype != 0 && reg.offset < script->size - 2);
 
 	if (relocation >= 0)
-		segMan->scriptRelocate(make_reg(reg.segment, relocation));
+		segMan->scriptRelocate(make_reg(seg_id, relocation));
 
 	return reg.segment;		// instantiation successful
 }
 
 int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int script_nr) {
 	Resource *script, *heap;
-	int seg_id;
-	int heap_start;
+	int _heapStart;
 	reg_t reg;
 	int was_new;
 
-	seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, &heap, &was_new);
+	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, &heap, &was_new);
 
 	if (was_new)
 		return seg_id;
 
 	Script *scr = segMan->getScript(seg_id);
 
-	heap_start = script->size;
+	_heapStart = script->size;
 	if (script->size & 2)
-		heap_start ++;
+		_heapStart ++;
 
 	scr->mcpyInOut(0, script->data, script->size);
-	scr->mcpyInOut(heap_start, heap->data, heap->size);
+	scr->mcpyInOut(_heapStart, heap->data, heap->size);
 
 	if (READ_LE_UINT16(script->data + 6) > 0)
 		scr->setExportTableOffset(6);
 
 	reg.segment = seg_id;
-	reg.offset = heap_start + 4;
+	reg.offset = _heapStart + 4;
 	segMan->scriptInitialiseLocals(reg);
 
 	segMan->scriptRelocateExportsSci11(seg_id);

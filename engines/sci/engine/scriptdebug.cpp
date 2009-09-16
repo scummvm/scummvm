@@ -117,8 +117,8 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	} else
 		script_entity = (Script *)mobj;
 
-	scr = script_entity->buf;
-	scr_size = script_entity->buf_size;
+	scr = script_entity->_buf;
+	scr_size = script_entity->_bufSize;
 
 	if (pos.offset >= scr_size) {
 		warning("Trying to disassemble beyond end of script");
@@ -350,7 +350,7 @@ void script_debug(EngineState *s, bool bp) {
 		disassemble(s, scriptState.xs->addr.pc, 0, 1);
 		if (scriptState.seeking == kDebugSeekGlobal)
 			printf("Global %d (0x%x) = %04x:%04x\n", scriptState.seekSpecial,
-			          scriptState.seekSpecial, PRINT_REG(s->script_000->locals_block->_locals[scriptState.seekSpecial]));
+			          scriptState.seekSpecial, PRINT_REG(s->script_000->_localsBlock->_locals[scriptState.seekSpecial]));
 	}
 #endif
 
@@ -364,8 +364,8 @@ void script_debug(EngineState *s, bool bp) {
 
 		if (mobj) {
 			Script *scr = (Script *)mobj;
-			byte *code_buf = scr->buf;
-			int code_buf_size = scr->buf_size;
+			byte *code_buf = scr->_buf;
+			int code_buf_size = scr->_bufSize;
 			int opcode = scriptState.xs->addr.pc.offset >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset];
 			int op = opcode >> 1;
 			int paramb1 = scriptState.xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset + 1];

@@ -125,7 +125,7 @@ EngineState::~EngineState() {
 }
 
 uint16 EngineState::currentRoomNumber() const {
-	return script_000->locals_block->_locals[13].toUint16();
+	return script_000->_localsBlock->_locals[13].toUint16();
 }
 
 kLanguage EngineState::charToLanguage(const char c) const {
@@ -251,15 +251,15 @@ int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint
 
 	Script *script = segMan->getScript(fptr.segment);
 
-	if (!script->buf || (fptr.offset + offset < 0))
+	if (!script->_buf || (fptr.offset + offset < 0))
 		return -1;
 
 	fptr.offset += offset;
 
-	if (fptr.offset + size > script->buf_size)
+	if (fptr.offset + size > script->_bufSize)
 		return -1;
 
-	byte *buf = script->buf + fptr.offset;
+	byte *buf = script->_buf + fptr.offset;
 
 	uint sum = 0;
 	for (uint i = 0; i < size; i++)
@@ -359,7 +359,7 @@ SciVersion EngineState::detectLofsType() {
 
 				Script *script = segMan->getScript(fptr.segment);
 
-				if ((script == NULL) || (script->buf == NULL))
+				if ((script == NULL) || (script->_buf == NULL))
 					continue;
 
 				uint offset = fptr.offset;
@@ -367,10 +367,10 @@ SciVersion EngineState::detectLofsType() {
 
 				while (!done) {
 					// Read opcode
-					if (offset >= script->buf_size)
+					if (offset >= script->_bufSize)
 						break;
 
-					byte opcode = script->buf[offset++];
+					byte opcode = script->_buf[offset++];
 					byte opnumber = opcode >> 1;
 
 					if ((opnumber == 0x39) || (opnumber == 0x3a)) {
@@ -378,24 +378,24 @@ SciVersion EngineState::detectLofsType() {
 
 						// Load lofs operand
 						if (opcode & 1) {
-							if (offset >= script->buf_size)
+							if (offset >= script->_bufSize)
 								break;
-							lofs = script->buf[offset++];
+							lofs = script->_buf[offset++];
 						} else {
-							if (offset + 1 >= script->buf_size)
+							if (offset + 1 >= script->_bufSize)
 								break;
-							lofs = READ_LE_UINT16(script->buf + offset);
+							lofs = READ_LE_UINT16(script->_buf + offset);
 							offset += 2;
 						}
 
 						// Check for going out of bounds when interpreting as abs/rel
-						if (lofs >= script->buf_size)
+						if (lofs >= script->_bufSize)
 							couldBeAbs = false;
 
 						if ((signed)offset + (int16)lofs < 0)
 							couldBeRel = false;
 
-						if ((signed)offset + (int16)lofs >= (signed)script->buf_size)
+						if ((signed)offset + (int16)lofs >= (signed)script->_bufSize)
 							couldBeRel = false;
 
 						continue;

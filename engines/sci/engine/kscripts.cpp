@@ -272,14 +272,14 @@ reg_t kScriptID(EngineState *s, int, int argc, reg_t *argv) {
 
 	scr = s->segMan->getScript(scriptSeg);
 
-	if (!scr->exports_nr) {
+	if (!scr->_numExports) {
 		// FIXME: Is this fatal? This occurs in SQ4CD
 		warning("Script 0x%x does not have a dispatch table", script);
 		return NULL_REG;
 	}
 
-	if (index > scr->exports_nr) {
-		error("Dispatch index too big: %d > %d", index, scr->exports_nr);
+	if (index > scr->_numExports) {
+		error("Dispatch index too big: %d > %d", index, scr->_numExports);
 		return NULL_REG;
 	}
 

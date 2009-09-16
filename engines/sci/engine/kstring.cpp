@@ -143,29 +143,29 @@ reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
 	while (node) {
 		reg_t objpos = node->value;
 		int seg;
-		int synonyms_nr = 0;
+		int _numSynonyms = 0;
 
 		script = GET_SEL32V(objpos, number);
 		seg = s->segMan->getScriptSegment(script);
 
 		if (seg >= 0)
-			synonyms_nr = s->segMan->getScript(seg)->getSynonymsNr();
+			_numSynonyms = s->segMan->getScript(seg)->getSynonymsNr();
 
-		if (synonyms_nr) {
+		if (_numSynonyms) {
 			byte *synonyms;
 
 			synonyms = s->segMan->getScript(seg)->getSynonyms();
 			if (synonyms) {
 				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
-				          synonyms_nr, script);
+				          _numSynonyms, script);
 
-				if (synonyms_nr > 16384) {
+				if (_numSynonyms > 16384) {
 					error("Segtable corruption: script.%03d has %d synonyms",
-					         script, synonyms_nr);
+					         script, _numSynonyms);
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */
 				} else
-					for (int i = 0; i < synonyms_nr; i++) {
+					for (int i = 0; i < _numSynonyms; i++) {
 						synonym_t tmp;
 						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
 						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);

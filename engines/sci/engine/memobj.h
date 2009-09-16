@@ -237,25 +237,28 @@ struct CodeBlock {
 
 
 
-struct Script : public MemObject {
-	int nr; /**< Script number */
-	byte *buf; /**< Static data buffer, or NULL if not used */
-	size_t buf_size;
-	size_t script_size;
-	size_t heap_size;
+class Script : public MemObject {
+public:
+	int _nr; /**< Script number */
+	byte *_buf; /**< Static data buffer, or NULL if not used */
+	size_t _bufSize;
+	size_t _scriptSize;
+	size_t _heapSize;
 
-	byte *synonyms; /**< Synonyms block or 0 if not present*/
-	byte *heap_start; /**< Start of heap if SCI1.1, NULL otherwise */
-	uint16 *export_table; /**< Abs. offset of the export table or 0 if not present */
+	byte *_heapStart; /**< Start of heap if SCI1.1, NULL otherwise */
+
+	uint16 *_exportTable; /**< Abs. offset of the export table or 0 if not present */
+	int _numExports; /**< Number of entries in the exports table */
+
+	byte *_synonyms; /**< Synonyms block or 0 if not present*/
+	int _numSynonyms; /**< Number of entries in the synonyms block */
 
 protected:
-	IntMapper *obj_indices;
+	int _lockers; /**< Number of classes and objects that require this script */
+
+	IntMapper *_objIndices;
 
 public:
-	int exports_nr; /**< Number of entries in the exports table */
-	int synonyms_nr; /**< Number of entries in the synonyms block */
-	int lockers; /**< Number of classes and objects that require this script */
-
 	/**
 	 * Table for objects, contains property variables.
 	 * Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
@@ -263,39 +266,17 @@ public:
 	 */
 	Common::Array<Object> _objects;
 
-	int locals_offset;
-	int locals_segment; /**< The local variable segment */
-	LocalVariables *locals_block;
+	int _localsOffset;
+	int _localsSegment; /**< The local variable segment */
+	LocalVariables *_localsBlock;
 
 	Common::Array<CodeBlock> _codeBlocks;
-	int relocated;
+	bool _relocated;
 	bool _markedAsDeleted;
 
 public:
-	Script() {
-		nr = 0;
-		buf = NULL;
-		buf_size = 0;
-		script_size = 0;
-		heap_size = 0;
-
-		synonyms = NULL;
-		heap_start = NULL;
-		export_table = NULL;
-
-		obj_indices = NULL;
-
-		locals_offset = 0;
-		locals_segment = 0;
-		locals_block = NULL;
-
-		relocated = 0;
-		_markedAsDeleted = 0;
-	}
-
-	~Script() {
-		freeScript();
-	}
+	Script();
+	~Script();
 
 	void freeScript();
 	void init();
