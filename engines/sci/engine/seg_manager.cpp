@@ -133,7 +133,8 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 	return (Script *)mem;
 }
 
-void SegManager::setScriptSize(Script &scr, int script_nr) {
+void Script::setScriptSize(int script_nr, ResourceManager *_resMan) {
+	Script &scr = *this;	// FIXME: Hack
 	Resource *script = _resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	Resource *heap = _resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 	bool oldScriptHeader = (_resMan->sciVersion() == SCI_VERSION_0_EARLY);
@@ -167,34 +168,6 @@ void SegManager::setScriptSize(Script &scr, int script_nr) {
 			return;
 		}
 	}
-}
-
-int SegManager::initialiseScript(Script &scr, int script_nr) {
-	// allocate the script._buf
-
-	setScriptSize(scr, script_nr);
-	scr._buf = (byte *)malloc(scr._bufSize);
-
-#ifdef DEBUG_segMan
-	printf("scr._buf = %p ", scr._buf);
-#endif
-	if (!scr._buf) {
-		scr.freeScript();
-		warning("SegManager: Not enough memory space for script size");
-		scr._bufSize = 0;
-		return 0;
-	}
-
-	// Initialize objects
-	scr.init();
-	scr._nr = script_nr;
-
-	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
-		scr._heapStart = scr._buf + scr._scriptSize;
-	else
-		scr._heapStart = scr._buf;
-
-	return 1;
 }
 
 int SegManager::deallocate(SegmentId seg, bool recursive) {
@@ -332,7 +305,7 @@ void SegManager::setExportAreWide(bool flag) {
 	_exportsAreWide = flag;
 }
 
-int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
+int Script::relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location) {
 	int rel = location - block_location;
 
 	if (rel < 0)
@@ -348,34 +321,32 @@ int SegManager::relocateBlock(Common::Array<reg_t> &block, int block_location, S
 		return 0;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
-		block[idx].offset += getScript(segment)->_scriptSize;
+	if (_sciVersion >= SCI_VERSION_1_1)
+		block[idx].offset += _scriptSize;
 
 	return 1;
 }
 
-int SegManager::relocateLocal(Script *scr, SegmentId segment, int location) {
-	if (scr->_localsBlock)
-		return relocateBlock(scr->_localsBlock->_locals, scr->_localsOffset, segment, location);
+int Script::relocateLocal(SegmentId segment, int location) {
+	if (_localsBlock)
+		return relocateBlock(_localsBlock->_locals, _localsOffset, segment, location);
 	else
 		return 0; // No hands, no cookies
 }
 
-int SegManager::relocateObject(Object *obj, SegmentId segment, int location) {
+int Script::relocateObject(Object *obj, SegmentId segment, int location) {
 	return relocateBlock(obj->_variables, obj->pos.offset, segment, location);
 }
 
-void SegManager::scriptAddCodeBlock(reg_t location) {
-	Script *scr = getScript(location.segment);
-
+void Script::scriptAddCodeBlock(reg_t location) {
 	CodeBlock cb;
 	cb.pos = location;
-	cb.size = READ_LE_UINT16(scr->_buf + location.offset - 2);
-	scr->_codeBlocks.push_back(cb);
+	cb.size = READ_LE_UINT16(_buf + location.offset - 2);
+	_codeBlocks.push_back(cb);
 }
 
-void SegManager::scriptRelocate(reg_t block) {
-	Script *scr = getScript(block.segment);
+void Script::scriptRelocate(reg_t block) {
+	Script *scr = this;	// FIXME: Hack
 
 	VERIFY(block.offset < (uint16)scr->_bufSize && READ_LE_UINT16(scr->_buf + block.offset) * 2 + block.offset < (uint16)scr->_bufSize,
 	       "Relocation block outside of script\n");
@@ -387,7 +358,7 @@ void SegManager::scriptRelocate(reg_t block) {
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
 
-		if (!relocateLocal(scr, block.segment, pos)) {
+		if (!relocateLocal(block.segment, pos)) {
 			bool done = false;
 			uint k;
 
@@ -418,8 +389,8 @@ void SegManager::scriptRelocate(reg_t block) {
 	}
 }
 
-void SegManager::heapRelocate(reg_t block) {
-	Script *scr = getScript(block.segment);
+void Script::heapRelocate(reg_t block) {
+	Script *scr = this;	// FIXME: Hack
 
 	VERIFY(block.offset < (uint16)scr->_heapSize && READ_LE_UINT16(scr->_heapStart + block.offset) * 2 + block.offset < (uint16)scr->_bufSize,
 	       "Relocation block outside of script\n");
@@ -432,7 +403,7 @@ void SegManager::heapRelocate(reg_t block) {
 	for (int i = 0; i < count; i++) {
 		int pos = READ_LE_UINT16(scr->_heapStart + block.offset + 2 + (i * 2)) + scr->_scriptSize;
 
-		if (!relocateLocal(scr, block.segment, pos)) {
+		if (!relocateLocal(block.segment, pos)) {
 			bool done = false;
 			uint k;
 
@@ -504,12 +475,12 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 	}
 }
 
-Object *SegManager::scriptObjInit0(reg_t obj_pos) {
+Object *Script::scriptObjInit0(reg_t obj_pos) {
 	Object *obj;
-	SciVersion version = _resMan->sciVersion();	// for the offset defines
+	SciVersion version = _sciVersion;	// for the offset defines
 	uint base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 
-	Script *scr = getScript(obj_pos.segment);
+	Script *scr = this;	// FIXME: Hack
 
 	VERIFY(base < scr->_bufSize, "Attempt to initialize object beyond end of script\n");
 
@@ -553,11 +524,11 @@ Object *SegManager::scriptObjInit0(reg_t obj_pos) {
 	return obj;
 }
 
-Object *SegManager::scriptObjInit11(reg_t obj_pos) {
+Object *Script::scriptObjInit11(reg_t obj_pos) {
 	Object *obj;
 	uint base = obj_pos.offset;
 
-	Script *scr = getScript(obj_pos.segment);
+	Script *scr = this;	// FIXME: Hack
 
 	VERIFY(base < scr->_bufSize, "Attempt to initialize object beyond end of script\n");
 
@@ -602,8 +573,8 @@ Object *SegManager::scriptObjInit11(reg_t obj_pos) {
 	return obj;
 }
 
-Object *SegManager::scriptObjInit(reg_t obj_pos) {
-	if (_resMan->sciVersion() < SCI_VERSION_1_1)
+Object *Script::scriptObjInit(reg_t obj_pos) {
+	if (_sciVersion < SCI_VERSION_1_1)
 		return scriptObjInit0(obj_pos);
 	else
 		return scriptObjInit11(obj_pos);
@@ -715,7 +686,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 
 		reg.segment = seg;
 		reg.offset = seeker - scr->_buf;
-		obj = scriptObjInit(reg);
+		obj = scr->scriptObjInit(reg);
 
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {

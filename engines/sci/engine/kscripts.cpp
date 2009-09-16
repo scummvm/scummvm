@@ -318,9 +318,13 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 	}
 }
 
-int is_heap_object(EngineState *s, reg_t pos) {
+bool is_heap_object(EngineState *s, reg_t pos) {
 	Object *obj = s->segMan->getObject(pos);
-	return (obj != NULL && (!(obj->flags & OBJECT_FLAG_FREED)) && (!s->segMan->scriptIsMarkedAsDeleted(pos.segment)));
+	if (obj == NULL)
+		return false;
+	if (obj->flags & OBJECT_FLAG_FREED)
+		return false;
+	return !s->segMan->scriptIsMarkedAsDeleted(pos.segment);
 }
 
 reg_t kIsObject(EngineState *s, int, int argc, reg_t *argv) {

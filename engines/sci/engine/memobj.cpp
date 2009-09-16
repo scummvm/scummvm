@@ -114,7 +114,21 @@ void Script::freeScript() {
 	_codeBlocks.clear();
 }
 
-void Script::init() {
+bool Script::init(int script_nr, ResourceManager *resMan) {
+	setScriptSize(script_nr, resMan);
+
+	_buf = (byte *)malloc(_bufSize);
+
+#ifdef DEBUG_segMan
+	printf("_buf = %p ", _buf);
+#endif
+	if (!_buf) {
+		freeScript();
+		warning("Not enough memory space for script size");
+		_bufSize = 0;
+		return false;
+	}
+
 	_localsOffset = 0;
 	_localsBlock = NULL;
 
@@ -124,6 +138,16 @@ void Script::init() {
 	_markedAsDeleted = false;
 
 	_objIndices = new IntMapper();
+
+	_nr = script_nr;
+
+	_sciVersion = resMan->sciVersion();
+	if (_sciVersion >= SCI_VERSION_1_1)
+		_heapStart = _buf + _scriptSize;
+	else
+		_heapStart = _buf;
+
+	return true;
 }
 
 Object *Script::allocateObject(uint16 offset) {

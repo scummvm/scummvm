@@ -156,36 +156,10 @@ public:
 	void scriptInitialiseLocals(reg_t location);
 
 	/**
-	 * Initializes an object within the segment manager
-	 * @param obj_pos	Location (segment, offset) of the object. It must
-	 * 					point to the beginning of the script/class block 
-	 * 					(as opposed to what the VM considers to be the 
-	 * 					object location)
-	 * @returns			A newly created Object describing the object,
-	 * 					stored within the relevant script
-	 */
-	Object *scriptObjInit(reg_t obj_pos);
-
-	/**
-	 * Informs the segment manager that a code block must be relocated
-	 * @param location	Start of block to relocate
-	 */
-	void scriptAddCodeBlock(reg_t location);
-
-	/**
 	 * Tells the segment manager whether exports are wide (32-bit) or not.
 	 * @param flag	true if exports are wide, false otherwise
 	 */
 	void setExportAreWide(bool flag);
-
-	/**
-	 * Processes a relocation block witin a script
-	 *  This function is idempotent, but it must only be called after all
-	 *  objects have been instantiated, or a run-time error will occur.
-	 * @param obj_pos	Location (segment, offset) of the block
-	 * @return			Location of the relocation block
-	 */
-	void scriptRelocate(reg_t block);
 
 	/**
 	 * Determines whether the script referenced by the indicated segment 
@@ -387,10 +361,8 @@ public:
 	 */
 	const char *getObjectName(reg_t pos);
 
-	void heapRelocate(reg_t block);
 	void scriptRelocateExportsSci11(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
-	int initialiseScript(Script &scr, int script_nr);
 
 	SciVersion sciVersion() { return _resMan->sciVersion(); }
 
@@ -417,12 +389,7 @@ private:
 
 	Hunk *alloc_Hunk(reg_t *);
 
-	int relocateLocal(Script *scr, SegmentId segment, int location);
-	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
-	int relocateObject(Object *obj, SegmentId segment, int location);
-
 	SegmentId findFreeSegment() const;
-	void setScriptSize(Script &scr, int script_nr);
 	Object *scriptObjInit0(reg_t obj_pos);
 	Object *scriptObjInit11(reg_t obj_pos);
 

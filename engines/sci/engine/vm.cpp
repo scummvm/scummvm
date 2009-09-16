@@ -1546,7 +1546,7 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 		}
 	}
 
-	segMan->initialiseScript(*scr, script_nr);
+	scr->init(script_nr, resMan);
 
 	reg.segment = seg_id;
 	reg.offset = 0;
@@ -1688,11 +1688,11 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 
 		switch (objtype) {
 		case SCI_OBJ_CODE:
-			segMan->scriptAddCodeBlock(addr);
+			scr->scriptAddCodeBlock(addr);
 			break;
 		case SCI_OBJ_OBJECT:
 		case SCI_OBJ_CLASS: { // object or class?
-			Object *obj = segMan->scriptObjInit(addr);
+			Object *obj = scr->scriptObjInit(addr);
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
@@ -1717,7 +1717,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	} while (objtype != 0 && reg.offset < script->size - 2);
 
 	if (relocation >= 0)
-		segMan->scriptRelocate(make_reg(seg_id, relocation));
+		scr->scriptRelocate(make_reg(seg_id, relocation));
 
 	return reg.segment;		// instantiation successful
 }
@@ -1753,7 +1753,7 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 	segMan->scriptInitialiseObjectsSci11(seg_id);
 
 	reg.offset = READ_LE_UINT16(heap->data);
-	segMan->heapRelocate(reg);
+	scr->heapRelocate(reg);
 
 	return seg_id;
 }

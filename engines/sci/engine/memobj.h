@@ -258,6 +258,8 @@ protected:
 
 	IntMapper *_objIndices;
 
+	SciVersion _sciVersion;
+
 public:
 	/**
 	 * Table for objects, contains property variables.
@@ -279,7 +281,7 @@ public:
 	~Script();
 
 	void freeScript();
-	void init();
+	bool init(int script_nr, ResourceManager *resMan);
 
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
@@ -293,6 +295,43 @@ public:
 	Object *allocateObject(uint16 offset);
 	Object *getObject(uint16 offset);
 
+	/**
+	 * Informs the segment manager that a code block must be relocated
+	 * @param location	Start of block to relocate
+	 */
+	void scriptAddCodeBlock(reg_t location);
+
+	/**
+	 * Initializes an object within the segment manager
+	 * @param obj_pos	Location (segment, offset) of the object. It must
+	 * 					point to the beginning of the script/class block
+	 * 					(as opposed to what the VM considers to be the
+	 * 					object location)
+	 * @returns			A newly created Object describing the object,
+	 * 					stored within the relevant script
+	 */
+	Object *scriptObjInit(reg_t obj_pos);
+
+	/**
+	 * Processes a relocation block witin a script
+	 *  This function is idempotent, but it must only be called after all
+	 *  objects have been instantiated, or a run-time error will occur.
+	 * @param obj_pos	Location (segment, offset) of the block
+	 * @return			Location of the relocation block
+	 */
+	void scriptRelocate(reg_t block);
+
+	void heapRelocate(reg_t block);
+
+private:
+	int relocateLocal(SegmentId segment, int location);
+	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
+	int relocateObject(Object *obj, SegmentId segment, int location);
+
+	Object *scriptObjInit0(reg_t obj_pos);
+	Object *scriptObjInit11(reg_t obj_pos);
+
+public:
 	// script lock operations
 
 	/** Increments the number of lockers of this script by one. */
@@ -382,6 +421,9 @@ public:
 	 * @return the value read from the specified location
 	 */
 	int16 getHeap(uint16 offset) const;
+
+private:
+	void setScriptSize(int script_nr, ResourceManager *resMan);
 };
 
 /** Data stack */
