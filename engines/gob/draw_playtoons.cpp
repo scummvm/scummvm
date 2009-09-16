@@ -153,10 +153,22 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	case DRAW_PUTPIXEL:
 		switch(_pattern & 0xFF) {
 		case -1:
+			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIXEL, pattern -1");
+			break;
 		case 1:
+			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX,
+					_destSpriteY, _destSpriteX + 1,
+					_destSpriteY + 1, _frontColor);
+			break;
 		case 2:
+			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX - 1,
+					_destSpriteY - 1, _destSpriteX + 1,
+					_destSpriteY + 1, _frontColor);
+			break;
 		case 3:
-			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIWEL, pattern %d", _pattern & 0xFF);
+			_vm->_video->fillRect(*_spritesArray[_destSurface], destSpriteX - 1,
+					_destSpriteY - 1, _destSpriteX + 2,
+					_destSpriteY + 2, _frontColor);
 			break;
 		default: 
 			_vm->_video->putPixel(_destSpriteX, _destSpriteY, _frontColor, *_spritesArray[_destSurface]);
@@ -190,7 +202,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWLINE:
-		if ((_needAdjust != 2) || (_needAdjust < 10)) {
+		if ((_needAdjust != 2) && (_needAdjust < 10)) {
 			warning ("oPlaytoons_spriteOperation: operation DRAW_DRAWLINE, draw multiple lines");
 				_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,
@@ -266,7 +278,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		if ((_fontIndex >= 4) || (_fontToSprite[_fontIndex].sprite == -1)) {
 			Font *font = _fonts[_fontIndex];
 			if (!font) {
-				warning("Trying to print \"%s\" with undefined font %d", _textToPrint, _fontIndex);
+				warning("oPlaytoons_spriteOperation: Trying to print \"%s\" with undefined font %d", _textToPrint, _fontIndex);
 				break;
 			}
 
@@ -319,7 +331,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_DRAWBAR:
-		if (_needAdjust != 2) {
+		if ((_needAdjust != 2) && (_needAdjust < 10)){
 			_vm->_video->fillRect(*_spritesArray[_destSurface],
 					_destSpriteX, _spriteBottom - 1,
 					_spriteRight, _spriteBottom, _frontColor);
@@ -357,7 +369,8 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_CLEARRECT:
-		if ((_backColor != 16) && (_backColor != 144)) {
+		warning ("oPlaytoons_spriteOperation: DRAW_CLEARRECT uses _backColor %d", _backColor);
+		if (_backColor != -1) {
 			_vm->_video->fillRect(*_spritesArray[_destSurface],
 			    _destSpriteX, _destSpriteY,
 			    _spriteRight, _spriteBottom,
@@ -373,6 +386,10 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		    _spriteRight, _spriteBottom, _backColor);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY, _spriteRight, _spriteBottom);
+		break;
+
+	default: 
+		warning ("oPlaytoons_spriteOperation: Unhandled operation %d", operation);
 		break;
 	}
 
