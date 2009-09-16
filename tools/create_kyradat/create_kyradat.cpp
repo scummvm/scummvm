@@ -28,6 +28,9 @@
 
 #include "create_kyradat.h"
 
+#include "tables.h"
+#include "providers.h"
+
 #include "md5.h"
 
 enum {
@@ -38,30 +41,6 @@ enum {
 // tables
 
 #include "misc.h"
-#include "eng.h"
-#include "esp.h"
-#include "fre.h"
-#include "ger.h"
-#include "ita.h"
-#include "towns.h"
-#include "amiga.h"
-
-#include "hof_floppy.h"
-#include "hof_towns.h"
-#include "hof_cd.h"
-#include "hof_demo.h"
-
-#include "malcolm.h"
-
-#include "lol_cd.h"
-#include "lol_floppy.h"
-//#include "lol_pc98.h"
-#include "lol_demo.h"
-
-const Game kyra1FanTranslations[] = {
-	{ kKyra1, IT_ITA, kTalkieVersion, "d0f1752098236083d81b9497bd2b6989", kyra1FreCD },
-	GAME_DUMMY_ENTRY
-};
 
 bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
@@ -430,59 +409,6 @@ void createLangFilename(char *dstFilename, const int gid, const int lang, const 
 	}
 }
 
-// entry checking
-
-int hashEntries(const int *entries) {
-	int hash = 0;
-	for (const int *i = entries; *i != -1; ++i) {
-		hash += *i;
-	}
-	return hash;
-}
-
-bool hasEntry(const ExtractEntry *entries, const int id) {
-	for (const ExtractEntry *i = entries; i->id != -1; ++i) {
-		if (i->id == id)
-			return true;
-	}
-	return false;
-}
-
-int hashEntries(const Game *game, const GameNeed *need, const PAKFile *file) {
-	int hash = 0;
-	char filename[128];
-	for (const int *i = need->entries; *i != -1; ++i) {
-		if (hasEntry(game->entries, *i)) {
-			hash += *i;
-			continue;
-		}
-
-		if (file) {
-			filename[0] = 0;
-
-			if (!getFilename(filename, game, *i))
-				error("couldn't find filename for id %d", *i);
-
-			PAKFile::cFileList *list = file->getFileList();
-			if (list && list->findEntry(filename) != 0)
-				hash += *i;
-		}
-	}
-
-	return hash;
-}
-
-bool hasNeededEntries(const Game *game, const PAKFile *file) {
-	for (const GameNeed *need = gameNeedTable; need->game != -1; ++need) {
-		if (need->game == game->game && need->special == game->special) {
-			if (hashEntries(need->entries) == hashEntries(game, need, file))
-				return true;
-		}
-	}
-
-	return false;
-}
-
 // extraction
 
 bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
@@ -494,13 +420,15 @@ bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size
 		memcpy(buffer, data, 0x7EE5);
 		memcpy(buffer + 0x7EE5, data + 0x7EE7, 0x7FFF);
 		memcpy(buffer + 0xFEE4, data + 0xFEE8, 0x271E);
+
+		return out.addFile(filename, buffer, 0x12602);
 	} else {
 		buffer = new uint8[size];
 		assert(buffer);
 		memcpy(buffer, data, size);
-	}
 
-	return out.addFile(filename, buffer, size);
+		return out.addFile(filename, buffer, size);
+	}
 }
 
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
@@ -1258,7 +1186,12 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion || g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I || g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G || g->special == kLolCD || g->game == kKyra3)
+	if (g->special == kTalkieVersion
+			|| g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I
+			|| g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G
+			|| g->special == k2CDDemoE || g->special == k2CDDemoF || g->special == k2CDDemoG
+			|| g->special == kLolCD1 || g->special == kLolCD2
+			|| g->game == kKyra3)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion || g->special == k2DemoVersion || g->special == k2DemoLol)
 		features |= GF_DEMO;
@@ -1397,39 +1330,23 @@ int main(int argc, char *argv[]) {
 			continue;
 		}
 
-		if (!hasNeededEntries(g, &out)) {
-			warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
-			delete[] buffer;
-			continue;
-		}
-
 		if (!process(out, g, buffer, size))
-			fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
+			fprintf(stderr, "ERROR: couldn't process file '%s'\n", argv[i]);
 
 		if (g->special == kFMTownsVersionE || g->special == k2TownsFile1E || g->special == k2TownsFile2E ||
-			g->special == k2CDFile1E || g->special == k2CDFile2E) {
+			g->special == k2CDFile1E || g->special == k2CDFile2E || g->special == k2CDDemoE) {
 			// This is for executables which contain support for at least 2 languages
 			// The English and non language specific data has now been extracted.
 			// We switch to the second language and continue extraction.
-			if (!hasNeededEntries(++g, &out)) {
-				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
-				delete[] buffer;
-				continue;
-			}
-			if (!process(out, g, buffer, size))
-				fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
+			if (!process(out, ++g, buffer, size))
+				fprintf(stderr, "ERROR: couldn't process file '%s'\n", argv[i]);
 		}
 
-		if (g->special == k2CDFile1F || g->special == k2CDFile2F) {
+		if (g->special == k2CDFile1F || g->special == k2CDFile2F || g->special == k2CDDemoF) {
 			// This is for executables which contain support for 3 languages.
 			// We switch to the third language and continue extraction.
-			if (!hasNeededEntries(++g, &out)) {
-				warning("file '%s' is missing offset entries and thus can't be processed", argv[i]);
-				delete[] buffer;
-				continue;
-			}
-			if (!process(out, g, buffer, size))
-				fprintf(stderr, "ERROR: couldn't process file '%s'", argv[i]);
+			if (!process(out, ++g, buffer, size))
+				fprintf(stderr, "ERROR: couldn't process file '%s'\n", argv[i]);
 		}
 
 		delete[] buffer;
@@ -1451,6 +1368,426 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
+const int *getNeedList(const Game *g) {
+	for (const GameNeed *need = gameNeedTable; need->game != -1; ++need) {
+		if (need->game == g->game && need->special == g->special)
+			return need->entries;
+	}
+
+	return 0;
+}
+
+const char *getIdString(const int id) {
+	switch (id) {
+	case kForestSeq:
+		return "kForestSeq";
+	case kKallakWritingSeq:
+		return "kKallakWritingSeq";
+	case kKyrandiaLogoSeq:
+		return "kKyrandiaLogoSeq";
+	case kKallakMalcolmSeq:
+		return "kKallakMalcolmSeq";
+	case kMalcolmTreeSeq:
+		return "kMalcolmTreeSeq";
+	case kWestwoodLogoSeq:
+		return "kWestwoodLogoSeq";
+	case kDemo1Seq:
+		return "kDemo1Seq";
+	case kDemo2Seq:
+		return "kDemo2Seq";
+	case kDemo3Seq:
+		return "kDemo3Seq";
+	case kDemo4Seq:
+		return "kDemo4Seq";
+	case kAmuleteAnimSeq:
+		return "kAmuleteAnimSeq";
+	case kOutroReunionSeq:
+		return "kOutroReunionSeq";
+	case kIntroCPSStrings:
+		return "kIntroCPSStrings";
+	case kIntroCOLStrings:
+		return "kIntroCOLStrings";
+	case kIntroWSAStrings:
+		return "kIntroWSAStrings";
+	case kIntroStrings:
+		return "kIntroStrings";
+	case kOutroHomeString:
+		return "kOutroHomeString";
+	case kRoomFilenames:
+		return "kRoomFilenames";
+	case kRoomList:
+		return "kRoomList";
+	case kCharacterImageFilenames:
+		return "kCharacterImageFilenames";
+	case kAudioTracks:
+		return "kAudioTracks";
+	case kAudioTracksIntro:
+		return "kAudioTracksIntro";
+	case kItemNames:
+		return "kItemNames";
+	case kTakenStrings:
+		return "kTakenStrings";
+	case kPlacedStrings:
+		return "kPlacedStrings";
+	case kDroppedStrings:
+		return "kDroppedStrings";
+	case kNoDropStrings:
+		return "kNoDropStrings";
+	case kPutDownString:
+		return "kPutDownString";
+	case kWaitAmuletString:
+		return "kWaitAmuletString";
+	case kBlackJewelString:
+		return "kBlackJewelString";
+	case kPoisonGoneString:
+		return "kPoisonGoneString";
+	case kHealingTipString:
+		return "kHealingTipString";
+	case kWispJewelStrings:
+		return "kWispJewelStrings";
+	case kMagicJewelStrings:
+		return "kMagicJewelStrings";
+	case kThePoisonStrings:
+		return "kThePoisonStrings";
+	case kFluteStrings:
+		return "kFluteStrings";
+	case kFlaskFullString:
+		return "kFlaskFullString";
+	case kFullFlaskString:
+		return "kFullFlaskString";
+	case kVeryCleverString:
+		return "kVeryCleverString";
+	case kNewGameString:
+		return "kNewGameString";
+	case kDefaultShapes:
+		return "kDefaultShapes";
+	case kHealing1Shapes:
+		return "kHealing1Shapes";
+	case kHealing2Shapes:
+		return "kHealing2Shapes";
+	case kPoisonDeathShapes:
+		return "kPoisonDeathShapes";
+	case kFluteShapes:
+		return "kFluteShapes";
+	case kWinter1Shapes:
+		return "kWinter1Shapes";
+	case kWinter2Shapes:
+		return "kWinter2Shapes";
+	case kWinter3Shapes:
+		return "kWinter3Shapes";
+	case kDrinkShapes:
+		return "kDrinkShapes";
+	case kWispShapes:
+		return "kWispShapes";
+	case kMagicAnimShapes:
+		return "kMagicAnimShapes";
+	case kBranStoneShapes:
+		return "kBranStoneShapes";
+	case kPaletteList1:
+		return "kPaletteList1";
+	case kPaletteList2:
+		return "kPaletteList2";
+	case kPaletteList3:
+		return "kPaletteList3";
+	case kPaletteList4:
+		return "kPaletteList4";
+	case kPaletteList5:
+		return "kPaletteList5";
+	case kPaletteList6:
+		return "kPaletteList6";
+	case kPaletteList7:
+		return "kPaletteList7";
+	case kPaletteList8:
+		return "kPaletteList8";
+	case kPaletteList9:
+		return "kPaletteList9";
+	case kPaletteList10:
+		return "kPaletteList10";
+	case kPaletteList11:
+		return "kPaletteList11";
+	case kPaletteList12:
+		return "kPaletteList12";
+	case kPaletteList13:
+		return "kPaletteList13";
+	case kPaletteList14:
+		return "kPaletteList14";
+	case kPaletteList15:
+		return "kPaletteList15";
+	case kPaletteList16:
+		return "kPaletteList16";
+	case kPaletteList17:
+		return "kPaletteList17";
+	case kPaletteList18:
+		return "kPaletteList18";
+	case kPaletteList19:
+		return "kPaletteList19";
+	case kPaletteList20:
+		return "kPaletteList20";
+	case kPaletteList21:
+		return "kPaletteList21";
+	case kPaletteList22:
+		return "kPaletteList22";
+	case kPaletteList23:
+		return "kPaletteList23";
+	case kPaletteList24:
+		return "kPaletteList24";
+	case kPaletteList25:
+		return "kPaletteList25";
+	case kPaletteList26:
+		return "kPaletteList26";
+	case kPaletteList27:
+		return "kPaletteList27";
+	case kPaletteList28:
+		return "kPaletteList28";
+	case kPaletteList29:
+		return "kPaletteList29";
+	case kPaletteList30:
+		return "kPaletteList30";
+	case kPaletteList31:
+		return "kPaletteList31";
+	case kPaletteList32:
+		return "kPaletteList32";
+	case kPaletteList33:
+		return "kPaletteList33";
+	case kGUIStrings:
+		return "kGUIStrings";
+	case kConfigStrings:
+		return "kConfigStrings";
+	case kKyra1TownsSFXwdTable:
+		return "kKyra1TownsSFXwdTable";
+	case kKyra1TownsSFXbtTable:
+		return "kKyra1TownsSFXbtTable";
+	case kKyra1TownsCDATable:
+		return "kKyra1TownsCDATable";
+	case kCreditsStrings:
+		return "kCreditsStrings";
+	case kAmigaIntroSFXTable:
+		return "kAmigaIntroSFXTable";
+	case kAmigaGameSFXTable:
+		return "kAmigaGameSFXTable";
+	case k2SeqplayPakFiles:
+		return "k2SeqplayPakFiles";
+	case k2SeqplayStrings:
+		return "k2SeqplayStrings";
+	case k2SeqplaySfxFiles:
+		return "k2SeqplaySfxFiles";
+	case k2SeqplayTlkFiles:
+		return "k2SeqplayTlkFiles";
+	case k2SeqplaySeqData:
+		return "k2SeqplaySeqData";
+	case k2SeqplayCredits:
+		return "k2SeqplayCredits";
+	case k2SeqplayCreditsSpecial:
+		return "k2SeqplayCreditsSpecial";
+	case k2SeqplayIntroTracks:
+		return "k2SeqplayIntroTracks";
+	case k2SeqplayFinaleTracks:
+		return "k2SeqplayFinaleTracks";
+	case k2SeqplayIntroCDA:
+		return "k2SeqplayIntroCDA";
+	case k2SeqplayFinaleCDA:
+		return "k2SeqplayFinaleCDA";
+	case k2SeqplayShapeAnimData:
+		return "k2SeqplayShapeAnimData";
+	case k2IngamePakFiles:
+		return "k2IngamePakFiles";
+	case k2IngameSfxFiles:
+		return "k2IngameSfxFiles";
+	case k2IngameSfxFilesTns:
+		return "k2IngameSfxFilesTns";
+	case k2IngameSfxIndex:
+		return "k2IngameSfxIndex";
+	case k2IngameTracks:
+		return "k2IngameTracks";
+	case k2IngameCDA:
+		return "k2IngameCDA";
+	case k2IngameTalkObjIndex:
+		return "k2IngameTalkObjIndex";
+	case k2IngameTimJpStrings:
+		return "k2IngameTimJpStrings";
+	case k2IngameItemAnimData:
+		return "k2IngameItemAnimData";
+	case k2IngameTlkDemoStrings:
+		return "k2IngameTlkDemoStrings";
+	case k3MainMenuStrings:
+		return "k3MainMenuStrings";
+	case k3MusicFiles:
+		return "k3MusicFiles";
+	case k3ScoreTable:
+		return "k3ScoreTable";
+	case k3SfxFiles:
+		return "k3SfxFiles";
+	case k3SfxMap:
+		return "k3SfxMap";
+	case k3ItemAnimData:
+		return "k3ItemAnimData";
+	case k3ItemMagicTable:
+		return "k3ItemMagicTable";
+	case k3ItemStringMap:
+		return "k3ItemStringMap";
+	case kLolSeqplayIntroTracks:
+		return "kLolSeqplayIntroTracks";
+	case kLolIngamePakFiles:
+		return "kLolIngamePakFiles";
+	case kLolCharacterDefs:
+		return "kLolCharacterDefs";
+	case kLolIngameSfxFiles:
+		return "kLolIngameSfxFiles";
+	case kLolIngameSfxIndex:
+		return "kLolIngameSfxIndex";
+	case kLolMusicTrackMap:
+		return "kLolMusicTrackMap";
+	case kLolGMSfxIndex:
+		return "kLolGMSfxIndex";
+	case kLolMT32SfxIndex:
+		return "kLolMT32SfxIndex";
+	case kLolSpellProperties:
+		return "kLolSpellProperties";
+	case kLolGameShapeMap:
+		return "kLolGameShapeMap";
+	case kLolSceneItemOffs:
+		return "kLolSceneItemOffs";
+	case kLolCharInvIndex:
+		return "kLolCharInvIndex";
+	case kLolCharInvDefs:
+		return "kLolCharInvDefs";
+	case kLolCharDefsMan:
+		return "kLolCharDefsMan";
+	case kLolCharDefsWoman:
+		return "kLolCharDefsWoman";
+	case kLolCharDefsKieran:
+		return "kLolCharDefsKieran";
+	case kLolCharDefsAkshel:
+		return "kLolCharDefsAkshel";
+	case kLolExpRequirements:
+		return "kLolExpRequirements";
+	case kLolMonsterModifiers:
+		return "kLolMonsterModifiers";
+	case kLolMonsterLevelOffsets:
+		return "kLolMonsterLevelOffsets";
+	case kLolMonsterDirFlags:
+		return "kLolMonsterDirFlags";
+	case kLolMonsterScaleY:
+		return "kLolMonsterScaleY";
+	case kLolMonsterScaleX:
+		return "kLolMonsterScaleX";
+	case kLolMonsterScaleWH:
+		return "kLolMonsterScaleWH";
+	case kLolFlyingItemShp:
+		return "kLolFlyingItemShp";
+	case kLolInventoryDesc:
+		return "kLolInventoryDesc";
+	case kLolLevelShpList:
+		return "kLolLevelShpList";
+	case kLolLevelDatList:
+		return "kLolLevelDatList";
+	case kLolCompassDefs:
+		return "kLolCompassDefs";
+	case kLolItemPrices:
+		return "kLolItemPrices";
+	case kLolStashSetup:
+		return "kLolStashSetup";
+	case kLolDscUnk1:
+		return "kLolDscUnk1";
+	case kLolDscShapeIndex1:
+		return "kLolDscShapeIndex1";
+	case kLolDscShapeIndex2:
+		return "kLolDscShapeIndex2";
+	case kLolDscScaleWidthData:
+		return "kLolDscScaleWidthData";
+	case kLolDscScaleHeightData:
+		return "kLolDscScaleHeightData";
+	case kLolDscX:
+		return "kLolDscX";
+	case kLolDscY:
+		return "kLolDscY";
+	case kLolDscTileIndex:
+		return "kLolDscTileIndex";
+	case kLolDscUnk2:
+		return "kLolDscUnk2";
+	case kLolDscDoorShapeIndex:
+		return "kLolDscDoorShapeIndex";
+	case kLolDscDimData1:
+		return "kLolDscDimData1";
+	case kLolDscDimData2:
+		return "kLolDscDimData2";
+	case kLolDscBlockMap:
+		return "kLolDscBlockMap";
+	case kLolDscDimMap:
+		return "kLolDscDimMap";
+	case kLolDscShapeOvlIndex:
+		return "kLolDscShapeOvlIndex";
+	case kLolDscBlockIndex:
+		return "kLolDscBlockIndex";
+	case kLolDscDoor1:
+		return "kLolDscDoor1";
+	case kLolDscDoorScale:
+		return "kLolDscDoorScale";
+	case kLolDscDoor4:
+		return "kLolDscDoor4";
+	case kLolDscDoorX:
+		return "kLolDscDoorX";
+	case kLolDscDoorY:
+		return "kLolDscDoorY";
+	case kLolScrollXTop:
+		return "kLolScrollXTop";
+	case kLolScrollYTop:
+		return "kLolScrollYTop";
+	case kLolScrollXBottom:
+		return "kLolScrollXBottom";
+	case kLolScrollYBottom:
+		return "kLolScrollYBottom";
+	case kLolButtonDefs:
+		return "kLolButtonDefs";
+	case kLolButtonList1:
+		return "kLolButtonList1";
+	case kLolButtonList2:
+		return "kLolButtonList2";
+	case kLolButtonList3:
+		return "kLolButtonList3";
+	case kLolButtonList4:
+		return "kLolButtonList4";
+	case kLolButtonList5:
+		return "kLolButtonList5";
+	case kLolButtonList6:
+		return "kLolButtonList6";
+	case kLolButtonList7:
+		return "kLolButtonList7";
+	case kLolButtonList8:
+		return "kLolButtonList8";
+	case kLolLegendData:
+		return "kLolLegendData";
+	case kLolMapCursorOvl:
+		return "kLolMapCursorOvl";
+	case kLolMapStringId:
+		return "kLolMapStringId";
+	case kLolSpellbookAnim:
+		return "kLolSpellbookAnim";
+	case kLolSpellbookCoords:
+		return "kLolSpellbookCoords";
+	case kLolHealShapeFrames:
+		return "kLolHealShapeFrames";
+	case kLolLightningDefs:
+		return "kLolLightningDefs";
+	case kLolFireballCoords:
+		return "kLolFireballCoords";
+	case kLolHistory:
+		return "kLolHistory";
+	default:
+		return "Unknown";
+	}
+}
+
+struct DataIdEntry {
+	DataIdEntry() : data(), id(-1) {}
+	DataIdEntry(SearchData d, int i) : data(d), id(i) {}
+
+	SearchData data;
+	int id;
+};
+
+typedef std::list<DataIdEntry> DataIdList;
+
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	char filename[128];
 
@@ -1459,23 +1796,164 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		return false;
 	}
 
-	for (const ExtractEntry *i = g->entries; i->id != -1; ++i) {
-		if (!getFilename(filename, g, i->id)) {
-			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", i->id);
+	const int *needList = getNeedList(g);
+	if (!needList) {
+		fprintf(stderr, "ERROR: No entry need list available\n");
+		return false;
+	}
+
+	DataIdList dataIdList;
+	Search search(data, size);
+
+	bool allDataPresentAlready = true;
+
+	for (const int *entry = needList; *entry != -1; ++entry) {
+		bool found = false;
+
+		// Try whether the data is present in the kyra.dat file already
+		filename[0] = 0;
+		if (!getFilename(filename, g, *entry))
+			error("couldn't find filename for id %d", *entry);
+
+		// Do not add the entry to the search list, when it's already present
+		// in kyra.dat, that will speed up the creation.
+		PAKFile::cFileList *list = out.getFileList();
+		if (list && list->findEntry(filename) != 0)
+			continue;
+
+		allDataPresentAlready = false;
+
+		for (const ExtractEntry *p = extractProviders; p->id != -1; ++p) {
+			if (p->id == *entry) {
+				// First check for special search ids
+				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
+					if (d->specialId == g->special) {
+						found = true;
+
+						search.addData(d->hint);
+						dataIdList.push_back(DataIdEntry(d->hint, *entry));
+					}
+				}
+
+				// When a special variant was found, we will break.
+				if (found)
+					break;
+
+				// Add non special variants
+				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
+					if (d->specialId == -1) {
+						found = true;
+
+						search.addData(d->hint);
+						dataIdList.push_back(DataIdEntry(d->hint, *entry));
+					}
+				}
+
+				break;
+			}
+		}
+
+		if (!found) {
+			fprintf(stderr, "ERROR: No provider for id %d/\"%s\"\n", *entry, getIdString(*entry));
+			return false;
+		}
+	}
+
+	if (allDataPresentAlready)
+		return true;
+
+	// Process the data search
+	Search::ResultList results;
+	search.search(results);
+
+	if (results.empty()) {
+		fprintf(stderr, "ERROR: Couldn't find any required data\n");
+		return false;
+	}
+
+	typedef std::map<int, Search::ResultData> IdMap;
+
+	IdMap ids;
+	for (const int *entry = needList; *entry != -1; ++entry) {
+		Search::ResultList idResults;
+
+		// Fill in all id entries found
+		for (Search::ResultList::const_iterator i = results.begin(); i != results.end(); ++i) {
+			for (DataIdList::const_iterator j = dataIdList.begin(); j != dataIdList.end(); ++j) {
+				if (j->id == *entry && i->data == j->data)
+					idResults.push_back(*i);
+			}
+		}
+
+		if (idResults.size() > 1)
+			warning("Multiple entries found for id %d/\"%s\"", *entry, getIdString(*entry));
+
+		Search::ResultData result;
+		result.data.size = 0;
+		result.offset = 0xFFFFFFFF;
+
+		// Reduce all entries to one single entry.
+		//
+		// We use the following rules for this (in this order):
+		// - Prefer the entry with the higest size
+		// - Prefer the entry, which starts at the smallest offest
+		//
+		// TODO: These rules might not be safe for all games, but hopefully
+		// they will work fine. If there are any problems it should be rather
+		// easy to identify them, since we print out a warning for multiple
+		// entries found.
+		for (Search::ResultList::iterator i = idResults.begin(); i != idResults.end(); ++i) {
+			if (result.data.size <= i->data.size) {
+				if (result.offset >= i->offset)
+					result = *i;
+			}
+		}
+
+		ids[*entry] = result;
+	}
+
+	// Free up some memory
+	results.clear();
+	dataIdList.clear();
+
+	// Compare against need list
+	for (const int *entry = needList; *entry != -1; ++entry) {
+		if (ids.find(*entry) != ids.end())
+			continue;
+
+		// Try whether the data is present in the kyra.dat file already
+		filename[0] = 0;
+		if (!getFilename(filename, g, *entry))
+			error("couldn't find filename for id %d", *entry);
+
+		PAKFile::cFileList *list = out.getFileList();
+		// If the data wasn't found already, we need to break the extraction here
+		if (!list || !list->findEntry(filename)) {
+			fprintf(stderr, "Couldn't find id %d/\"%s\" in executable file", *entry, getIdString(*entry));
+			return false;
+		}
+	}
+
+	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
+		const int id = i->first;
+	
+		filename[0] = 0;
+		if (!getFilename(filename, g, id)) {
+			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
 			return false;
 		}
 
-		const ExtractFilename *fDesc = getFilenameDesc(i->id);
+		const ExtractFilename *fDesc = getFilenameDesc(id);
 
 		if (!fDesc) {
-			fprintf(stderr, "ERROR: couldn't find file description for id %d\n", i->id);
+			fprintf(stderr, "ERROR: couldn't find file description for id %d\n", id);
 			return false;
 		}
 
 		const ExtractType *tDesc = findExtractType(fDesc->type);
 
 		if (!tDesc) {
-			fprintf(stderr, "ERROR: couldn't find type description for id %d\n", i->id);
+			fprintf(stderr, "ERROR: couldn't find type description for id %d\n", id);
 			return false;
 		}
 
@@ -1486,30 +1964,30 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		int patch = 0;
 		if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
 			// FM Towns files that need addional patches
-			if (i->id == kTakenStrings || i->id == kNoDropStrings || i->id == kPoisonGoneString ||
-				i->id == kThePoisonStrings || i->id == kFluteStrings || i->id == kWispJewelStrings)
+			if (id == kTakenStrings || id == kNoDropStrings || id == kPoisonGoneString ||
+				id == kThePoisonStrings || id == kFluteStrings || id == kWispJewelStrings)
 				patch = 1;
-			else if (i->id == kIntroStrings || i->id == kKyra1TownsSFXwdTable)
+			else if (id == kIntroStrings || id == kKyra1TownsSFXwdTable)
 				patch = 2;
 		}
 
 		if (g->special == k2TownsFile1E || g->special == k2TownsFile1J) {
-			if (i->id == k2SeqplayStrings)
+			if (id == k2SeqplayStrings)
 				patch = 3;
 		}
 
 		if (g->special == k2FloppyFile2) {
-			if (i->id == k2IngamePakFiles)
+			if (id == k2IngamePakFiles)
 				patch = 4;
 		}
 
 		if (g->special == k2FloppyFile2 || g->special == k2CDFile2E) {
-			if (i->id == k2IngameSfxFiles)
+			if (id == k2IngameSfxFiles)
 				patch = 5;
 		}
 
-		if (!tDesc->extract(out, g, data + i->startOff, i->endOff - i->startOff, filename, patch)) {
-			fprintf(stderr, "ERROR: couldn't extract id %d\n", i->id);
+		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, patch)) {
+			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
 			return false;
 		}
 	}
@@ -1525,27 +2003,10 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 // game data detection
 
 const Game *gameDescs[] = {
-	kyra1EngGames,
-	kyra1EspGames,
-	kyra1FreGames,
-	kyra1GerGames,
-	kyra1ItaGames,
-	kyra1TownsGames,
-	kyra1AmigaGames,
-	kyra1FanTranslations,
-
-	kyra2FloppyGames,
-	kyra2TalkieGames,
-	kyra2TownsGames,
-	kyra2Demos,
-
+	kyra1Games,
+	kyra2Games,
 	kyra3Games,
-
-	lolDemos,
-	lolDosTalkieGames,
-	lolDosFloppyGames,
-	//lolPC98Games,
-
+	lolGames,
 	0
 };
 

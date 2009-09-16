@@ -7,7 +7,8 @@ MODULE_OBJS := \
 	create_kyradat.o \
 	pak.o \
 	md5.o \
-	util.o
+	util.o \
+	search.o
 
 # Set the name of the executable
 TOOL_EXECUTABLE := create_kyradat

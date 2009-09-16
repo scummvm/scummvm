@@ -25,6 +25,7 @@
 
 #include "util.h"
 #include "pak.h"
+#include "search.h"
 
 struct Language {
 	int lang;
@@ -267,10 +268,14 @@ enum kExtractID {
 	kMaxResIDs
 };
 
+struct ExtractEntrySearchData {
+	int specialId;
+	SearchData hint;
+};
+
 struct ExtractEntry {
 	int id;
-	uint32 startOff;
-	uint32 endOff;
+	const ExtractEntrySearchData *providers;
 };
 
 struct ExtractFilename {
@@ -281,38 +286,42 @@ struct ExtractFilename {
 
 enum kSpecial {
 	kTalkieVersion = 0,
-	kDemoVersion = 1,
-	kFMTownsVersionE = 2,
-	kFMTownsVersionJ = 3,
-	kAmigaVersion = 4,
+	kDemoVersion,
+	kFMTownsVersionE,
+	kFMTownsVersionJ,
+	kAmigaVersion,
 
-	k2CDFile1E = 5,
-	k2CDFile1F = 6,
-	k2CDFile1G = 7,
-	k2CDFile2E = 8,
-	k2CDFile2F = 9,
-	k2CDFile2G = 10,
+	k2CDFile1E,
+	k2CDFile1F,
+	k2CDFile1G,
+	k2CDFile2E,
+	k2CDFile2F,
+	k2CDFile2G,
+	k2CDDemoE,
+	k2CDDemoF,
+	k2CDDemoG,
 	// Italian fan translation
-	k2CDFile1I = 11,
+	k2CDFile1I,
 
-	k2TownsFile1E = 12,
-	k2TownsFile1J = 13,
-	k2TownsFile2E = 14,
-	k2TownsFile2J = 15,
+	k2TownsFile1E,
+	k2TownsFile1J,
+	k2TownsFile2E,
+	k2TownsFile2J,
 
-	k2FloppyFile1 = 16,
-	k2FloppyFile2 = 17,
+	k2FloppyFile1,
+	k2FloppyFile2,
 
-	k2DemoVersion = 18,
-	k2DemoVersionTlkE = 19,
-	k2DemoVersionTlkF = 20,
-	k2DemoVersionTlkG = 21,
-	k2DemoLol = 22,
+	k2DemoVersion,
+	k2DemoVersionTlkE,
+	k2DemoVersionTlkF,
+	k2DemoVersionTlkG,
+	k2DemoLol,
 
-	kLolCD = 23,
+	kLolCD1,
+	kLolCD2,
 
 	// special case for Kyrandia 1 CD demo
-	kDemoCDVersion = 24
+	kDemoCDVersion
 };
 
 struct SpecialExtension {
@@ -333,10 +342,9 @@ struct Game {
 	int special;
 
 	const char *md5;
-	const ExtractEntry *entries;
 };
 
-#define GAME_DUMMY_ENTRY { -1, -1, -1, 0, 0 }
+#define GAME_DUMMY_ENTRY { -1, -1, -1, 0 }
 
 struct GameNeed {
 	int game;
