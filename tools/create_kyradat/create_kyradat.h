@@ -360,6 +360,7 @@ enum kExtractType {
 	kTypeShapeList,
 	kTypeRawData,
 	kTypeAmigaSfxTable,
+	kTypeTownsWDSfxTable,
 
 	k2TypeSeqData,
 	k2TypeShpDataV1,
