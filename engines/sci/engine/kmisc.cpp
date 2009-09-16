@@ -204,7 +204,7 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->segMan->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->segMan->getMemObjectType(argv[1].segment) == MEM_OBJ_LOCALS)
 			return *((reg_t *) ref);
 		else
 			return make_reg(0, (int16)READ_LE_UINT16(ref));
@@ -218,7 +218,7 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 			return s->r_acc;
 		}
 
-		if (s->segMan->_heap[argv[1].segment]->getType() == MEM_OBJ_LOCALS)
+		if (s->segMan->getMemObjectType(argv[1].segment) == MEM_OBJ_LOCALS)
 			*((reg_t *) ref) = argv[2];
 		else {
 			if (argv[2].segment) {

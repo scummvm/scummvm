@@ -632,10 +632,9 @@ int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
 		return type;
 	}
 
-	if ((reg.segment >= segMan->_heap.size()) || !segMan->_heap[reg.segment])
+	mobj = segMan->getMemObject(reg.segment);
+	if (!mobj)
 		return 0; // Invalid
-
-	mobj = segMan->_heap[reg.segment];
 
 	SciVersion version = segMan->sciVersion();	// for the offset defines
 

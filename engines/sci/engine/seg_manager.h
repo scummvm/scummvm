@@ -46,6 +46,7 @@ enum ScriptLoadType {
 
 
 class SegManager : public Common::Serializable {
+	friend class Console;
 public:
 	/**
 	 * Initialize the segment manager.
@@ -366,15 +367,17 @@ public:
 
 	SciVersion sciVersion() { return _resMan->sciVersion(); }
 
+public: // TODO: make private
+	Common::Array<MemObject *> _heap;
+	Common::Array<Class> _classtable; /**< Table of all classes */
+
 private:
 	/** Map script ids to segment ids. */
 	Common::HashMap<int, SegmentId> _scriptSegMap;
 
-public: // TODO: make private
-	Common::Array<MemObject *> _heap;
-	bool _exportsAreWide;
-	Common::Array<Class> _classtable; /**< Table of all classes */
 	ResourceManager *_resMan;
+
+	bool _exportsAreWide;
 
 	SegmentId Clones_seg_id; ///< ID of the (a) clones segment
 	SegmentId Lists_seg_id; ///< ID of the (a) list segment
