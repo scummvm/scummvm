@@ -44,6 +44,7 @@ enum {
 
 bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
 bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
@@ -79,6 +80,7 @@ const ExtractType extractTypeTable[] = {
 	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
 	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
 	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },
+	{ k2TypeSize10StringList, extractStrings10, createFilename },
 	{ k2TypeSfxList, extractPaddedStrings, createFilename },
 	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
 	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
@@ -226,7 +228,7 @@ const ExtractFilename extractFilenames[] = {
 
 	// Ingame
 	{ k2IngamePakFiles, kTypeStringList, "I_PAKFILES.TXT" },
-	{ k2IngameSfxFiles, kTypeStringList, "I_SFXFILES.TRA" },
+	{ k2IngameSfxFiles, k2TypeSize10StringList, "I_SFXFILES.TRA" },
 	{ k2IngameSfxFilesTns, k2TypeSoundList, "I_SFXFILES.TRA" },
 	{ k2IngameSfxIndex, kTypeRawData, "I_SFXINDEX.MAP" },
 	{ k2IngameTracks, kTypeStringList, "I_TRACKS.TRA" },
@@ -449,7 +451,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 
 			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 				g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-				g->special == k2TownsFile2E || g->special == k2TownsFile2J || fmtPatch == 5) {
+				g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
 				// prevents creation of empty entries (which we have mostly between all strings in the FM-TOWNS version)
 				while (!data[++i]) {
 					if (i == size)
@@ -506,7 +508,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	WRITE_BE_UINT32(output, entries); output += 4;
 	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
 		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-		g->special == k2TownsFile2E || g->special == k2TownsFile2J || fmtPatch == 5) {
+		g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
 		const byte *c = data + size;
 		do {
 			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
@@ -585,6 +587,27 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	}
 
 	return out.addFile(filename, buffer, targetsize);
+}
+
+bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
+	const int strSize = 10;
+	uint32 entries = (size + (strSize - 1)) / strSize;
+	uint32 targetSize = 4;
+
+	uint8 *buffer = new uint8[size + 4];
+	assert(buffer);
+	uint8 *output = buffer;
+	WRITE_BE_UINT32(output, entries); output += 4;
+
+	for (uint32 i = 0; i < entries; ++i) {
+		const byte *src = data + i * strSize;
+
+		while (*src)
+			*output++ = *src++;
+		*output++ = '\0';
+	}
+
+	return out.addFile(filename, buffer, output - buffer);
 }
 
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch) {
@@ -1983,11 +2006,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		if (g->special == k2FloppyFile2) {
 			if (id == k2IngamePakFiles)
 				patch = 4;
-		}
-
-		if (g->special == k2FloppyFile2 || g->special == k2CDFile2E) {
-			if (id == k2IngameSfxFiles)
-				patch = 5;
 		}
 
 		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, patch)) {

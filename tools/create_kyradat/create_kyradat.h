@@ -366,6 +366,7 @@ enum kExtractType {
 	k2TypeShpDataV2,
 	k2TypeSoundList,
 	k2TypeLangSoundList,
+	k2TypeSize10StringList,
 	k2TypeSfxList,
 
 	k3TypeRaw16to8,
