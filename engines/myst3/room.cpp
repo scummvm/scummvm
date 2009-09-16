@@ -75,11 +75,13 @@ void Room::load(Archive &archive, uint16 index) {
 }
 
 void Room::draw() {
-	// Taille du cube
+	// Size of the cube
 	float t = 1.0f;
 
-	// Portion de texture utilisée
+	// Used fragment of the textures
 	float s = 640 / (float)_cubeTextureSize;
+
+	glDepthMask(GL_FALSE);
 
 	glBindTexture(GL_TEXTURE_2D, _cubeTextures[4]);
 	glBegin(GL_TRIANGLE_STRIP);			// X-
@@ -128,6 +130,8 @@ void Room::draw() {
 		glTexCoord2f(0, 0); glVertex3f( t, t, t);
 		glTexCoord2f(s, 0); glVertex3f(-t, t, t);
 	glEnd();
+	
+	glDepthMask(GL_TRUE);
 }
 
 } // end of namespace Myst3

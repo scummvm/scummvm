@@ -65,40 +65,29 @@ void sbInit(const char *fileName, int index) {
 	archive.close();
 }
 
-void DrawSkyBox(float camera_yaw, float camera_pitch)
-{
-	// Réglage de l'orientation
-	glPushMatrix();
+void setupCamera(float camera_yaw, float camera_pitch) {
+	// Rotate the model to simulate the rotation of the camera
 	glLoadIdentity();
 	glRotatef( camera_pitch, 1.0f, 0.0f, 0.0f );
 	glRotatef( camera_yaw, 0.0f, 1.0f, 0.0f );	
-	
-	room.draw();
-
-	// Réinitialisation de la matrice ModelView
-	glPopMatrix();
 }
 
+void init() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective (45.0, (GLfloat)w/(GLfloat)h, 0.1, 100.0);
 
-void Render(float camera_yaw, float camera_pitch)
-{
-	// Configuration des états OpenGL
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_TEXTURE_2D); 
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	
 	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+}
 
-	// Désactivation de l'écriture dans le DepthBuffer
-	glDepthMask(GL_FALSE);
-
-	// Rendu de la SkyBox
-	DrawSkyBox(camera_yaw, camera_pitch);
-
-	// Réactivation de l'écriture dans le DepthBuffer
-	glDepthMask(GL_TRUE);
-
-	// Réinitialisation des états OpenGL
-	glDisable(GL_TEXTURE_2D); 
-	glEnable(GL_LIGHTING);
+void clear() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	glColor3f(1.0f, 1.0f, 1.0f);
 }
 
 void Myst3Engine::dumpArchive(const char *fileName) {
@@ -127,18 +116,9 @@ Common::Error Myst3Engine::run() {
 	
 	_system->setupScreen(w, h, false, true);
 	
-	//glViewport(0, 0, (GLsizei)w, (GLsizei)h);
+	init();
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	gluPerspective (45.0, (GLfloat)w/(GLfloat)h, 0.1, 100.0);
-
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	
 	sbInit("MAISnodes.m3a", 2);
-	
-	
 	
 	for(;;) {
 		// Process events
@@ -149,39 +129,17 @@ Common::Error Myst3Engine::run() {
 				return Common::kNoError;
 		}
 		
-		// Initialisation des etats OpenGL
-		glEnable( GL_COLOR_MATERIAL );
-		glEnable( GL_LIGHTING );
-		glEnable( GL_LIGHT0 );
-		glEnable( GL_DEPTH_TEST );
+		clear();
 
-		// Initialisation de la scene
-		glClear (GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
-		glLoadIdentity();
-		glColor3f( 1.0f, 1.0f, 1.0f );
+		CAMERA_Yaw += 0.1f;
+		//CAMERA_Pitch += 0.2f;
 
-		// Placement de la camera	
-		//glTranslatef( 0.0f, 0.0f, -8.0f );
-		glRotatef( CAMERA_Pitch, 1.0f, 0.0f, 0.0f );
-		glRotatef( CAMERA_Yaw, 0.0f, 1.0f, 0.0f );	
+		setupCamera(CAMERA_Yaw, CAMERA_Pitch);
 
-CAMERA_Yaw += 0.1f;
-//CAMERA_Pitch += 0.2f;
+		room.draw();
 
-		// Rendu de la skybox
-		Render( CAMERA_Yaw, CAMERA_Pitch );
-
-		// Reinitialisation des etats OpenGL
-		glDisable( GL_DEPTH_TEST );
-		glDisable( GL_LIGHT0 );
-		glDisable( GL_LIGHTING );
-		glDisable( GL_COLOR_MATERIAL );
-
-		// Dession de l'image
 		_system->updateScreen();
 		_system->delayMillis(10);
-		//glutSwapBuffers();
-		//glutPostRedisplay();
 	}
 
 	return Common::kNoError;
