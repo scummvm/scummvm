@@ -1622,6 +1622,9 @@ protected:
 	virtual void timerCallbackA() = 0;
 	virtual void timerCallbackB() = 0;
 
+	void lock() { _mutex.lock(); }
+	void unlock() { _mutex.unlock(); }
+
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
@@ -1629,6 +1632,8 @@ protected:
 private:
 	void nextTick(int32 *buffer, uint32 bufferSize);
 	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
+
+	Common::Mutex _mutex;
 
 	struct ChanInternal {
 		uint16 frqTemp;
@@ -1715,15 +1720,10 @@ protected:
 	void setMusicTempo(uint8 tempo);
 	void setSfxTempo(uint16 tempo);
 
-	void lock() { _mutex.lock(); }
-	void unlock() { _mutex.unlock(); }
-
 	TownsPC98_OpnChannel **_channels;
 	TownsPC98_OpnChannelSSG **_ssgChannels;
 	TownsPC98_OpnSfxChannel **_sfxChannels;
 	TownsPC98_OpnChannelPCM *_rhythmChannel;
-
-	Common::Mutex _mutex;
 
 	const uint8 *_opnCarrier;
 	const uint8 *_opnFreqTable;
@@ -2941,6 +2941,7 @@ TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
 }
 
 TownsPC98_OpnCore::~TownsPC98_OpnCore() {
+	_mixer->stopHandle(_soundHandle);
 	delete _ssg;
 	delete _prc;
 	delete[] _chanInternal;
