@@ -1010,7 +1010,11 @@ void LoLEngine::setupEpilogueData(bool load) {
 		"FINALE.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
 	};
 
-	const char * const *fileList = _flags.isTalkie ? fileListCD : 0;
+	static const char * const fileListFloppy[] = {
+		"GENERAL.PAK", "INTRO.PAK", "FINALE1.PAK", "FINALE2.PAK", 0
+	};
+
+	const char * const *fileList = _flags.isTalkie ? fileListCD : fileListFloppy;
 	assert(fileList);
 
 	char filename[32];
