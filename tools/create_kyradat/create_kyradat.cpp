@@ -479,11 +479,13 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	}
 
 	if (fmtPatch == 2) {
-		if (g->special == kFMTownsVersionE)
+		if (g->special == kFMTownsVersionE) {
 			targetsize--;
-		if (g->special == kFMTownsVersionJ)
+			entries += 1;
+		} else if (g->special == kFMTownsVersionJ) {
 			targetsize += 2;
-		entries += (g->special - 1);
+			entries += 2;
+		}
 	}
 
 	if (fmtPatch == 3) {
