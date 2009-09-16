@@ -367,11 +367,15 @@ void Video::drawCircle(SurfaceDesc &dest, int16 x0, int16 y0,
 	int16 ddFy = -2 * radius;
 	int16 x = 0;
 	int16 y = radius;
+	int16 tmpPattern = (_vm->_draw->_pattern & 0xFF);
 
-	putPixel(x0, y0 + radius, color, dest);
-	putPixel(x0, y0 - radius, color, dest);
-	putPixel(x0 + radius, y0, color, dest);
-	putPixel(x0 - radius, y0, color, dest);
+	if (tmpPattern == 0) {
+		putPixel(x0, y0 + radius, color, dest);
+		putPixel(x0, y0 - radius, color, dest);
+		putPixel(x0 + radius, y0, color, dest);
+		putPixel(x0 - radius, y0, color, dest);
+	} else
+		warning ("Video::drawCircle - pattern %d", _vm->_draw->_pattern);
 
 	while (x < y) {
 		if (f >= 0) {
@@ -382,14 +386,35 @@ void Video::drawCircle(SurfaceDesc &dest, int16 x0, int16 y0,
 		x++;
 		ddFx += 2;
 		f += ddFx + 1;
-		putPixel(x0 + x, y0 + y, color, dest);
-		putPixel(x0 - x, y0 + y, color, dest);
-		putPixel(x0 + x, y0 - y, color, dest);
-		putPixel(x0 - x, y0 - y, color, dest);
-		putPixel(x0 + y, y0 + x, color, dest);
-		putPixel(x0 - y, y0 + x, color, dest);
-		putPixel(x0 + y, y0 - x, color, dest);
-		putPixel(x0 - y, y0 - x, color, dest);
+
+		switch (tmpPattern) {
+		case -1:
+			fillRect(dest, x0 - y, y0 + x, x0 + y, y0 + x, color);
+			fillRect(dest, x0 - x, y0 + y, x0 + x, y0 + y, color);
+			fillRect(dest, x0 - y, y0 - x, x0 + y, y0 - x, color);
+			fillRect(dest, x0 - x, y0 - y, x0 + x, y0 - y, color);
+			break;
+		case 0:
+			putPixel(x0 + x, y0 + y, color, dest);
+			putPixel(x0 - x, y0 + y, color, dest);
+			putPixel(x0 + x, y0 - y, color, dest);
+			putPixel(x0 - x, y0 - y, color, dest);
+			putPixel(x0 + y, y0 + x, color, dest);
+			putPixel(x0 - y, y0 + x, color, dest);
+			putPixel(x0 + y, y0 - x, color, dest);
+			putPixel(x0 - y, y0 - x, color, dest);
+			break;
+		default:
+			fillRect(dest, x0 + y - tmpPattern, y0 + x - tmpPattern, x0 + y, y0 + x, color);
+			fillRect(dest, x0 + x - tmpPattern, y0 + y - tmpPattern, x0 + x, y0 + y, color);
+			fillRect(dest, x0 - y, y0 + x - tmpPattern, x0 - y + tmpPattern, y0 + x, color);
+			fillRect(dest, x0 - x, y0 + y - tmpPattern, x0 - x + tmpPattern, y0 + y, color);
+			fillRect(dest, x0 + y - tmpPattern, y0 - x, x0 + y, y0 - x + tmpPattern, color);
+			fillRect(dest, x0 + x - tmpPattern, y0 - y, x0 + x, y0 - y + tmpPattern, color);
+			fillRect(dest, x0 - y, y0 - x, x0 - y + tmpPattern, y0 - x + tmpPattern, color);
+			fillRect(dest, x0 - x, y0 - y, x0 - x + tmpPattern, y0 - y + tmpPattern, color);
+			break;
+		}
 	}
 }
 
