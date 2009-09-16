@@ -1332,8 +1332,10 @@ int main(int argc, char *argv[]) {
 			continue;
 		}
 
+		printf("Processing file '%s'...\n", argv[i]);
+
 		if (!process(out, g, buffer, size))
-			fprintf(stderr, "ERROR: couldn't process file '%s'\n", argv[i]);
+			fprintf(stderr, "ERROR: couldn't process file\n");
 
 		if (g->special == kFMTownsVersionE || g->special == k2TownsFile1E || g->special == k2TownsFile2E ||
 			g->special == k2CDFile1E || g->special == k2CDFile2E || g->special == k2CDDemoE) {
@@ -1341,14 +1343,14 @@ int main(int argc, char *argv[]) {
 			// The English and non language specific data has now been extracted.
 			// We switch to the second language and continue extraction.
 			if (!process(out, ++g, buffer, size))
-				fprintf(stderr, "ERROR: couldn't process file '%s'\n", argv[i]);
+				fprintf(stderr, "ERROR: couldn't process file\n");
 		}
 
 		if (g->special == k2CDFile1F || g->special == k2CDFile2F || g->special == k2CDDemoF) {
 			// This is for executables which contain support for 3 languages.
 			// We switch to the third language and continue extraction.
 			if (!process(out, ++g, buffer, size))
-				fprintf(stderr, "ERROR: couldn't process file '%s'\n", argv[i]);
+				fprintf(stderr, "ERROR: couldn't process file\n");
 		}
 
 		delete[] buffer;
