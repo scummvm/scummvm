@@ -23,19 +23,8 @@
  *
  */
 
-#include "common/events.h"
-#include "common/error.h"
-#include "common/config-manager.h"
-#include "common/file.h"
-#include "common/util.h"
-#include "common/textconsole.h"
-
-#include "engines/engine.h"
-
-#include "engines/myst3/myst3.h"
-
-#include "graphics/jpeg.h"
-#include "graphics/conversion.h"
+#ifndef MYST3_SCENE_H
+#define MYST3_SCENE_H
 
 #ifdef SDL_BACKEND
 #include <SDL_opengl.h>
@@ -46,52 +35,17 @@
 
 namespace Myst3 {
 
-Myst3Engine::Myst3Engine(OSystem *syst, int gameFlags) :
-		Engine(syst), _system(syst) {
+class Scene {
+	private:
+		float _cameraPitch;
+		float _cameraYaw;
 
-}
-
-Myst3Engine::~Myst3Engine() {
-
-}
-
-Common::Error Myst3Engine::run() {
-	const int w = 800;
-	const int h = 600;
-	const char archiveFileName[] = "MAISnodes.m3a";
-	const int roomID = 2;
-	
-	if (!_archive.open(archiveFileName)) {
-		error("Unable to open archive");
-	}
-	
-	_system->setupScreen(w, h, false, true);
-	
-	_scene.init(w, h);
-
-	_room.load(_archive, roomID);
-	
-	for(;;) {
-		// Process events
-		Common::Event event;
-		while (_system->getEventManager()->pollEvent(event)) {
-			// Check for "Hard" quit"
-			if (event.type == Common::EVENT_QUIT)
-				return Common::kNoError;
-		}
-		
-		_scene.clear();
-		_scene.setupCamera();
-
-		_room.draw();
-
-		_system->updateScreen();
-		_system->delayMillis(10);
-	}
-
-	_archive.close();
-
-	return Common::kNoError;
-}
+	public:
+		void init(int width, int height);
+		void clear();
+		void setupCamera();
+};
 
 } // end of namespace Myst3
+
+#endif

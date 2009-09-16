@@ -23,38 +23,38 @@
  *
  */
 
-#ifndef MYST3_ENGINE_H
-#define MYST3_ENGINE_H
-
-#include "engines/engine.h"
-
-#include "common/system.h"
-
-#include "engines/myst3/archive.h"
-#include "engines/myst3/room.h"
 #include "engines/myst3/scene.h"
 
 namespace Myst3 {
 
-class Myst3Engine : public Engine {
+void Scene::init(int width, int height) {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluPerspective(45.0, (GLfloat)width/(GLfloat)height, 0.1, 100.0);
 
-protected:
-	// Engine APIs
-	virtual Common::Error run();
-
-public:
-
-	Myst3Engine(OSystem *syst, int gameFlags);
-	virtual ~Myst3Engine();
-
-private:
-	OSystem *_system;
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	
-	Room _room;
-	Scene _scene;
-	Archive _archive;
-};
+	glDisable(GL_LIGHTING);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_DEPTH_TEST);
+	
+	_cameraPitch = 0.0f;
+	_cameraYaw = 0.0f;
+}
+
+void Scene::clear() {
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);	
+	glColor3f(1.0f, 1.0f, 1.0f);
+}
+
+void Scene::setupCamera() {
+	// Rotate the model to simulate the rotation of the camera
+	glLoadIdentity();
+	glRotatef(_cameraPitch, 1.0f, 0.0f, 0.0f);
+	glRotatef(_cameraYaw, 0.0f, 1.0f, 0.0f);
+	
+	_cameraYaw += 0.1f;
+}
 
 } // end of namespace Myst3
-
-#endif
