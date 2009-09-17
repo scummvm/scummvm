@@ -69,7 +69,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 
 	if (slc_type == kSelectorNone) {
 		warning("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",
-		         ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
+		         s->_kernel->getSelectorName(selector_id).c_str(), PRINT_REG(object), fname, line);
 		if (noinvalid == kStopOnInvalidSelector)
 			error("[Kernel] Not recoverable: VM was halted");
 		return 1;

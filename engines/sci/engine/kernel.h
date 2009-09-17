@@ -193,7 +193,7 @@ enum {
 };
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  ((SciEngine*)g_engine)->getKernel()->_selectorCache._selector_, _noinvalid_, FAKE_FUNCT_NR, argv, argc, __FILE__, __LINE__
+	s, _object_,  s->_kernel->_selectorCache._selector_, _noinvalid_, FAKE_FUNCT_NR, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */

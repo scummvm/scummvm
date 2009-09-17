@@ -301,7 +301,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", s->segMan->getObjectName(send_obj), ((SciEngine *)g_engine)->getKernel()->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", s->segMan->getObjectName(send_obj), s->_kernel->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -936,12 +936,10 @@ void run_vm(EngineState *s, int restoring) {
 				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
 			}
 
-			Kernel *kernel = ((SciEngine *)g_engine)->getKernel();
-
-			if (opparams[0] >= (int)kernel->_kernelFuncs.size()) {
+			if (opparams[0] >= (int)s->_kernel->_kernelFuncs.size()) {
 				error("Invalid kernel function 0x%x requested", opparams[0]);
 			} else {
-				const KernelFuncWithSignature &kfun = kernel->_kernelFuncs[opparams[0]];
+				const KernelFuncWithSignature &kfun = s->_kernel->_kernelFuncs[opparams[0]];
 				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
 
 				if (!oldScriptHeader)
@@ -1768,7 +1766,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			script_init_engine(s);
 			game_init(s);
 			sfx_reset_player();
-			_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorCache.play);
+			_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play);
 
 			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 
@@ -1787,7 +1785,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 					debugC(2, kDebugLevelVM, "Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
-					_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorCache.replay);
+					_init_stack_base_with_selector(s, s->_kernel->_selectorCache.replay);
 
 					send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 				}
@@ -1806,7 +1804,7 @@ int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
 	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameName.c_str());
-	_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorCache.play); // Call the play selector
+	_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {

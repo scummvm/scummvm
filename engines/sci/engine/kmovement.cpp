@@ -269,7 +269,7 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s->segMan, motion_class, ((SciEngine*)g_engine)->getKernel()->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
+		if (lookup_selector(s->segMan, motion_class, s->_kernel->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
@@ -365,7 +365,7 @@ reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
-	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.cantBeHere != -1) {
+	if (s->_kernel->_selectorCache.cantBeHere != -1) {
 		invoke_selector(INV_SEL(client, cantBeHere, kStopOnInvalidSelector), 0);
 		s->r_acc = make_reg(0, !s->r_acc.offset);
 	} else {

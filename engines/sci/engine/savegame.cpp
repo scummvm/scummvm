@@ -705,7 +705,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	}
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
-	retval = new EngineState(s->resMan, s->_flags);
+	retval = new EngineState(s->resMan, s->_kernel, s->_flags);
 
 	// Copy some old data
 	retval->gfx_state = s->gfx_state;

@@ -108,7 +108,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 	uint opcode;
 	int bytecount = 1;
 	int i = 0;
-	Kernel *kernel = ((SciEngine*)g_engine)->getKernel();
+	Kernel *kernel = s->_kernel;
 
 	if (!mobj) {
 		warning("Disassembly failed: Segment %04x non-existant or not a script", pos.segment);

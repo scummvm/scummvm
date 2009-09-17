@@ -219,7 +219,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->priority_first = 42; // Priority zone 0 ends here
 
-	if (((SciEngine*)g_engine)->getKernel()->usesOldGfxFunctions())
+	if (s->_kernel->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;

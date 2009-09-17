@@ -158,7 +158,7 @@ private:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, uint32 flags);
+	EngineState(ResourceManager *res, Kernel *kernel, uint32 flags);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -166,6 +166,7 @@ public:
 	kLanguage getLanguage();
 public:
 	ResourceManager *resMan; /**< The resource manager */
+	Kernel *_kernel;
 
 	const uint32 _flags;			/**< Specific game flags */
 

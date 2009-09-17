@@ -260,7 +260,7 @@ reg_t kUnknown(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 reg_t kStub(EngineState *s, int funct_nr, int argc, reg_t *argv) {
 	char tmpbuf[256];
 	snprintf(tmpbuf, sizeof(tmpbuf), "Unimplemented kernel function: 0x%02x (%s) (",
-					funct_nr, ((SciEngine*)g_engine)->getKernel()->getKernelName(funct_nr).c_str());
+					funct_nr, s->_kernel->getKernelName(funct_nr).c_str());
 
 	for (int i = 0; i < argc; i++) {
 		char tmpbuf2[20];
