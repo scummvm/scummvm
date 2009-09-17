@@ -35,9 +35,6 @@ struct SelectorRemap {
 	uint32 slot;
 };
 
-const int handleIndex = 41;
-const int canBeHereIndex = 54;
-
 static const char * const sci0Selectors[] = {
               "y",          "x",         "view",      "loop",        "cel", //  0 -  4
       "underBits",      "nsTop",       "nsLeft",  "nsBottom",    "nsRight", //  5 -  9
@@ -69,67 +66,63 @@ static const SelectorRemap sci0SelectorRemap[] = {
     {       "caller", 119 }, {          "cue", 121 }, {        "owner", 130 },
 	{    "completed", 159 }, {    "motionCue", 162 }, {       "cycler", 164 },
 	{     "moveDone", 170 }, {     "distance", 173 }, {    "setCursor", 254 },
-	{      "points",  316 }, {        "flags", 368 }
+	{      "points",  316 }, {        "flags", 368 }, {              0,   0 }
 };
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
 static const SelectorRemap sci1SelectorRemap[] = {
+	{      "nodePtr",  44 }, {   "cantBeHere",  57 },
 	{        "flags", 102 }, {         "init", 104 }, {      "dispose", 105 },
 	{       "caller", 134 }, {          "cue", 136 }, {        "owner", 150 },
 	{       "setVol", 156 }, {    "setCursor", 183 }, {    "completed", 210 },
 	{       "cycler", 215 }, {     "distance", 224 }, {    "canBeHere", 232 },
-	{     "syncTime", 247 }, {      "syncCue", 248 }
+	{     "syncTime", 247 }, {      "syncCue", 248 }, {              0,   0 }
 };
 
 // Taken from KQ6 floppy (Full Game)
 static const SelectorRemap sci11SelectorRemap[] = {
+	{      "nodePtr",  41 }, {   "cantBeHere",  54 },
 	{        "flags",  99 }, {         "init", 110 }, {      "dispose", 111 },
 	{       "caller", 143 }, {          "cue", 145 }, {        "owner", 166 },
 	{       "setVol", 172 }, {    "setCursor", 197 }, {    "completed", 242 },
 	{       "cycler", 247 }, {     "distance", 256 }, {    "canBeHere", 264 },
-	{     "syncTime", 279 }, {      "syncCue", 280 }
+	{     "syncTime", 279 }, {      "syncCue", 280 }, {              0,   0 }
 };
 
 Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 	Common::StringList names;
-	int offset = (version < SCI_VERSION_1_1) ? 3 : 0;
-	int count = ARRAYSIZE(sci0Selectors) + offset;
-	names.resize(count);
+	const int offset = (version < SCI_VERSION_1_1) ? 3 : 0;
+	const int count = ARRAYSIZE(sci0Selectors) + offset;
 	const SelectorRemap *selectorRemap = sci0SelectorRemap;
-	uint32 selectorRemapSize = 0;
 	int i;
 
+	// Resize the list of selector names and fill in the SCI 0 names.
+	names.resize(count);
 	for (i = 0; i < offset; i++)
 		names[i].clear();
-
 	for (i = offset; i < count; i++)
 		names[i] = sci0Selectors[i - offset];
 
 	if (version <= SCI_VERSION_01) {
 		selectorRemap = sci0SelectorRemap;
-		selectorRemapSize = ARRAYSIZE(sci0SelectorRemap);
 	} else {
+		// Several new selectors were added in SCI 1 and later.
 		int count2 = ARRAYSIZE(sci1Selectors);
-		names[handleIndex + offset] = "nodePtr";
-		names[canBeHereIndex + offset] = "cantBeHere";
 		names.resize(count + count2);
-
 		for (i = count; i < count + count2; i++)
 			names[i] = sci1Selectors[i - count];
 
 		if (version < SCI_VERSION_1_1) {
 			selectorRemap = sci1SelectorRemap;
-			selectorRemapSize = ARRAYSIZE(sci1SelectorRemap);
 		} else {
 			selectorRemap = sci11SelectorRemap;
-			selectorRemapSize = ARRAYSIZE(sci11SelectorRemap);
 		}
 	}
 
-	for (uint32 k = 0; k < selectorRemapSize; k++) {
-		if (selectorRemap[k].slot >= names.size())
-			names.resize(selectorRemap[k].slot + 1);
-		names[selectorRemap[k].slot] = selectorRemap[k].name;
+	for (; selectorRemap->slot; ++selectorRemap) {
+		if (selectorRemap->slot >= names.size())
+			names.resize(selectorRemap->slot + 1);
+		names[selectorRemap->slot] = selectorRemap->name;
 	}
 
 	return names;
