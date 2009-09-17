@@ -22,6 +22,123 @@
 
 
 #include "create_kyradat.h"
+#include "extract.h"
+
+// Filename creation
+
+void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
+
+namespace {
+
+void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
+
+// Extraction function prototypes 
+
+bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractWdSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+
+bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+
+bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+
+// Extraction type table
+
+const ExtractType extractTypeTable[] = {
+	{ kTypeLanguageList, extractStrings, createLangFilename },
+	{ kTypeStringList, extractStrings, createFilename },
+	{ kTypeRoomList, extractRooms, createFilename },
+	{ kTypeShapeList, extractShapes, createFilename },
+	{ kTypeRawData, extractRaw, createFilename },
+	{ kTypeAmigaSfxTable, extractAmigaSfx, createFilename },
+	{ kTypeTownsWDSfxTable, extractWdSfx, createFilename },
+
+	{ k2TypeSeqData, extractHofSeqData, createFilename },
+	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
+	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
+	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
+	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },
+	{ k2TypeSize10StringList, extractStrings10, createFilename },
+	{ k2TypeSfxList, extractPaddedStrings, createFilename },
+	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
+	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
+
+	{ kLolTypeRaw16, extractRaw16, createFilename },
+	{ kLolTypeRaw32, extractRaw32, createFilename },
+	{ kLolTypeButtonDef, extractLolButtonDefs, createFilename },
+
+	{ -1, 0, 0}
+};
+
+} // end of anonymous namespace
+
+void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
+	strcpy(dstFilename, filename);
+
+	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
+	strcat(dstFilename, gidExtensions[gid]);
+
+	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
+		if (specialE->special == special) {
+			strcat(dstFilename, ".");
+			strcat(dstFilename, specialE->ext);
+			break;
+		}
+	}
+}
+
+namespace {
+
+void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
+	strcpy(dstFilename, filename);
+
+	for (const Language *langE = languageTable; langE->lang != -1; ++langE) {
+		if (langE->lang == lang) {
+			strcat(dstFilename, ".");
+			strcat(dstFilename, langE->ext);
+			break;
+		}
+	}
+
+	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
+	strcat(dstFilename, gidExtensions[gid]);
+
+	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
+		if (specialE->special == special) {
+			strcat(dstFilename, ".");
+			strcat(dstFilename, specialE->ext);
+			break;
+		}
+	}
+}
+
+} // end of anonymous namespace
+
+// misc
+
+const ExtractType *findExtractType(const int type) {
+	for (const ExtractType *i = extractTypeTable; i->type != -1; ++i) {
+		if (i->type == type)
+			return i;
+	}
+	return 0;
+}
+
+// Extractor implementation
+
+namespace {
 
 bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang) {
 	uint8 *buffer = new uint8[size];
@@ -822,4 +939,6 @@ bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const
 
 	return out.addFile(filename, buffer, outsize);
 }
+
+} // end of anonymous namespace
 

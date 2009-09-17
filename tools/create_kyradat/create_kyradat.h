@@ -32,6 +32,8 @@ struct Language {
 	const char *ext;
 };
 
+extern const Language languageTable[];
+
 enum kExtractID {
 	kForestSeq = 1,
 	kKallakWritingSeq,
@@ -268,20 +270,6 @@ enum kExtractID {
 	kMaxResIDs
 };
 
-struct ExtractEntrySearchData {
-	int lang;
-	int platform;
-
-	SearchData hint;
-};
-
-#define EXTRACT_END_ENTRY { UNK_LANG, kPlatformUnknown, { 0, 0, { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } } } }
-
-struct ExtractEntry {
-	int id;
-	const ExtractEntrySearchData *providers;
-};
-
 struct ExtractFilename {
 	int id;
 	int type;
@@ -333,6 +321,8 @@ struct SpecialExtension {
 	const char *ext;
 };
 
+extern const SpecialExtension specialTable[];
+
 enum kGame {
 	kKyra1 = 0,
 	kKyra2 = 1,
@@ -351,42 +341,8 @@ struct Game {
 
 #define GAME_DUMMY_ENTRY { -1, -1, -1, -1, 0 }
 
-struct GameNeed {
-	int game;
-	int special;
+extern const Game *gameDescs[];
 
-	const int *entries;
-};
-
-enum kExtractType {
-	kTypeLanguageList = 0,
-	kTypeStringList,
-	kTypeRoomList,
-	kTypeShapeList,
-	kTypeRawData,
-	kTypeAmigaSfxTable,
-	kTypeTownsWDSfxTable,
-
-	k2TypeSeqData,
-	k2TypeShpDataV1,
-	k2TypeShpDataV2,
-	k2TypeSoundList,
-	k2TypeLangSoundList,
-	k2TypeSize10StringList,
-	k2TypeSfxList,
-
-	k3TypeRaw16to8,
-	k3TypeShpData,
-
-	kLolTypeRaw16,
-	kLolTypeRaw32,
-	kLolTypeButtonDef
-};
-
-struct ExtractType {
-	int type;
-	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-	void (*createFilename)(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
-};
+const int *getNeedList(const Game *g);
 
 #endif

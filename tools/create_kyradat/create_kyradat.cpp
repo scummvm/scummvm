@@ -29,66 +29,13 @@
 #include "create_kyradat.h"
 
 #include "tables.h"
-#include "providers.h"
+#include "extract.h"
 
 #include "md5.h"
 
 enum {
 	kKyraDatVersion = 55,
 	kIndexSize = 12
-};
-
-// tables
-
-#include "misc.h"
-
-bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractWdSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-
-bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-
-bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
-
-void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
-void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
-
-const ExtractType extractTypeTable[] = {
-	{ kTypeLanguageList, extractStrings, createLangFilename },
-	{ kTypeStringList, extractStrings, createFilename },
-	{ kTypeRoomList, extractRooms, createFilename },
-	{ kTypeShapeList, extractShapes, createFilename },
-	{ kTypeRawData, extractRaw, createFilename },
-	{ kTypeAmigaSfxTable, extractAmigaSfx, createFilename },
-	{ kTypeTownsWDSfxTable, extractWdSfx, createFilename },
-
-	{ k2TypeSeqData, extractHofSeqData, createFilename },
-	{ k2TypeShpDataV1, extractHofShapeAnimDataV1, createFilename },
-	{ k2TypeShpDataV2, extractHofShapeAnimDataV2, createFilename },
-	{ k2TypeSoundList, extractStringsWoSuffix, createFilename },
-	{ k2TypeLangSoundList, extractStringsWoSuffix, createLangFilename },
-	{ k2TypeSize10StringList, extractStrings10, createFilename },
-	{ k2TypeSfxList, extractPaddedStrings, createFilename },
-	{ k3TypeRaw16to8, extractRaw16to8, createFilename },
-	{ k3TypeShpData, extractMrShapeAnimData, createFilename },
-
-	{ kLolTypeRaw16, extractRaw16, createFilename },
-	{ kLolTypeRaw32, extractRaw32, createFilename },
-	{ kLolTypeButtonDef, extractLolButtonDefs, createFilename },
-
-	{ -1, 0, 0}
 };
 
 const ExtractFilename extractFilenames[] = {
@@ -349,16 +296,6 @@ const ExtractFilename *getFilenameDesc(const int id) {
 	return 0;
 }
 
-// type processing
-
-const ExtractType *findExtractType(const int type) {
-	for (const ExtractType *i = extractTypeTable; i->type != -1; ++i) {
-		if (i->type == type)
-			return i;
-	}
-	return 0;
-}
-
 // filename processing
 
 bool getFilename(char *dstFilename, const Game *g, const int id) {
@@ -372,43 +309,49 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 	return true;
 }
 
-void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
-	strcpy(dstFilename, filename);
+// misc tables
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
-	strcat(dstFilename, gidExtensions[gid]);
+const SpecialExtension specialTable[] = {
+	{ kTalkieVersion, "CD" },
+	{ kDemoVersion, "DEM" },
+	{ kDemoCDVersion, "CD.DEM" },
+	{ kFMTownsVersionE , "TNS" },
+	{ kFMTownsVersionJ, "TNS" },
+	{ kAmigaVersion, "AMG" },
 
-	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
-		if (specialE->special == special) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, specialE->ext);
-			break;
-		}
-	}
-}
+	{ k2CDFile1E, "CD" },
+	{ k2CDFile1F, "CD" },
+	{ k2CDFile1G, "CD" },
+	{ k2CDFile1I, "CD" },
+	{ k2CDFile2E, "CD" },
+	{ k2CDFile2F, "CD" },
+	{ k2CDFile2G, "CD" },
+	{ k2CDDemoE, "CD" },
+	{ k2CDDemoF, "CD" },
+	{ k2CDDemoG, "CD" },
 
-void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
-	strcpy(dstFilename, filename);
+	{ k2TownsFile1E, "TNS" },
+	{ k2TownsFile1J, "TNS" },
+	{ k2TownsFile2E, "TNS" },
+	{ k2TownsFile2J, "TNS" },
+	{ k2DemoVersion, "DEM" },
+	{ k2DemoLol, "DEM" },
 
-	for (const Language *langE = languageTable; langE->lang != -1; ++langE) {
-		if (langE->lang == lang) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, langE->ext);
-			break;
-		}
-	}
+	{ kLolCD1, "CD" },
+	{ kLolCD2, "CD" },
 
-	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
-	strcat(dstFilename, gidExtensions[gid]);
+	{ -1, 0 }
+};
 
-	for (const SpecialExtension *specialE = specialTable; specialE->special != -1; ++specialE) {
-		if (specialE->special == special) {
-			strcat(dstFilename, ".");
-			strcat(dstFilename, specialE->ext);
-			break;
-		}
-	}
-}
+const Language languageTable[] = {
+	{ EN_ANY, "ENG" },
+	{ DE_DEU, "GER" },
+	{ FR_FRA, "FRE" },
+	{ IT_ITA, "ITA" },
+	{ ES_ESP, "SPA" },
+	{ JA_JPN, "JPN" },
+	{ -1, 0 }
+};
 
 // index generation
 
@@ -568,34 +511,40 @@ int main(int argc, char *argv[]) {
 		}
 		fclose(input);
 
-		const Game *g = findGame(buffer, size);
-		if (!g) {
-			warning("skipping unknown file '%s'", argv[i]);
-			delete[] buffer;
-			continue;
-		}
+		md5_context ctx;
+		uint8 digest[16];
+		char md5Str[33];
+
+		md5_starts(&ctx);
+		md5_update(&ctx, buffer, size);
+		md5_finish(&ctx, digest);
+
+		for (int j = 0; j < 16; ++j)
+			sprintf(md5Str + j*2, "%02x", (int)digest[j]);
 
 		printf("Processing file '%s'...\n", argv[i]);
 
-		if (!process(out, g, buffer, size))
-			fprintf(stderr, "ERROR: couldn't process file\n");
+		bool variantProcessed = false;
 
-		if (g->special == kFMTownsVersionE || g->special == k2TownsFile1E || g->special == k2TownsFile2E ||
-			g->special == k2CDFile1E || g->special == k2CDFile2E || g->special == k2CDDemoE) {
-			// This is for executables which contain support for at least 2 languages
-			// The English and non language specific data has now been extracted.
-			// We switch to the second language and continue extraction.
-			if (!process(out, ++g, buffer, size))
-				fprintf(stderr, "ERROR: couldn't process file\n");
+		for (const Game **game = gameDescs; *game != 0; ++game) {
+			for (const Game *variant = *game; variant->md5 != 0; ++variant) {
+				if (!std::strcmp(variant->md5, md5Str)) {
+					variantProcessed = true;
+
+					if (!process(out, variant, buffer, size))
+						fprintf(stderr, "ERROR: couldn't process file\n");
+
+					// We do not break the loop here, so all registered game
+					// variants will be processed. Like it is for example
+					// required for multi language executables.
+				}
+			}
 		}
 
-		if (g->special == k2CDFile1F || g->special == k2CDFile2F || g->special == k2CDDemoF) {
-			// This is for executables which contain support for 3 languages.
-			// We switch to the third language and continue extraction.
-			if (!process(out, ++g, buffer, size))
-				fprintf(stderr, "ERROR: couldn't process file\n");
-		}
+		if (!variantProcessed)
+			fprintf(stderr, "ERROR: File '%s' with md5 sum \"%s\" has no variant registered\n", argv[i], md5Str);
 
+		// delete the current entry
 		delete[] buffer;
 	}
 
@@ -611,15 +560,6 @@ int main(int argc, char *argv[]) {
 	if (fwrite(digest, 1, 16, f) != 16)
 		error("couldn't write md5sum to file '%s'", argv[1]);
 	fclose(f);
-
-	return 0;
-}
-
-const int *getNeedList(const Game *g) {
-	for (const GameNeed *need = gameNeedTable; need->game != -1; ++need) {
-		if (need->game == g->game && need->special == g->special)
-			return need->entries;
-	}
 
 	return 0;
 }
@@ -1252,36 +1192,3 @@ bool getExtractionData(const Game *g, Search &search, IdMap &ids) {
 	return true;
 }
 
-// game data detection
-
-const Game *gameDescs[] = {
-	kyra1Games,
-	kyra2Games,
-	kyra3Games,
-	lolGames,
-	0
-};
-
-const Game *findGame(const byte *buffer, const uint32 size) {
-	md5_context ctx;
-	uint8 digest[16];
-	char md5str[33];
-
-	md5_starts(&ctx);
-	md5_update(&ctx, buffer, size);
-	md5_finish(&ctx, digest);
-
-	for (int j = 0; j < 16; ++j) {
-		sprintf(md5str + j*2, "%02x", (int)digest[j]);
-	}
-
-	for (const Game **i = gameDescs; *i != 0; ++i) {
-		for (const Game *p = *i; p->game != -1; ++p) {
-			if (strcmp(md5str, p->md5) == 0)
-				return p;
-		}
-	}
-
-	printf("file is not supported (unknown md5 \"%s\")\n", md5str);
-	return 0;
-}
