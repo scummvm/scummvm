@@ -752,47 +752,63 @@ const int lolDemoNeed[] = {
 
 struct GameNeed {
 	int game;
+	int platform;
 	int special;
 
 	const int *entries;
 };
 
 const GameNeed gameNeedTable[] = {
-	{ kKyra1, -1, kyra1FloppyNeed },
-	{ kKyra1, kTalkieVersion, kyra1CDNeed },
-	{ kKyra1, kFMTownsVersionE , kyra1TownsNeed },
-	{ kKyra1, kFMTownsVersionJ, kyra1TownsNeed },
-	{ kKyra1, kAmigaVersion, kyra1AmigaNeed },
-	{ kKyra1, kDemoVersion, kyra1DemoNeed },
-	{ kKyra1, kDemoCDVersion, kyra1DemoCDNeed },
+	{ kKyra1, kPlatformPC, -1, kyra1FloppyNeed },
+	{ kKyra1, kPlatformAmiga, kAmigaVersion, kyra1AmigaNeed },
 
-	{ kKyra2, k2FloppyFile1, kyra2FloppyFile1Need },
-	{ kKyra2, k2FloppyFile2, kyra2FloppyFile2Need },
-	{ kKyra2, k2CDFile1E, kyra2CDFile1Need },
-	{ kKyra2, k2CDFile1F, kyra2CDFile1Need },
-	{ kKyra2, k2CDFile1G, kyra2CDFile1Need },
-	{ kKyra2, k2CDFile1I, kyra2CDFile1Need }, // Italian fan translation
-	{ kKyra2, k2CDFile2E, kyra2CDFile2Need },
-	{ kKyra2, k2CDFile2F, kyra2CDFile2Need },
-	{ kKyra2, k2CDFile2G, kyra2CDFile2Need },
-	{ kKyra2, k2CDDemoE, kyra2CDDemoNeed },
-	{ kKyra2, k2CDDemoF, kyra2CDDemoNeed },
-	{ kKyra2, k2CDDemoG, kyra2CDDemoNeed },
-	{ kKyra2, k2TownsFile1E , kyra2TownsFile1Need },
-	{ kKyra2, k2TownsFile1J, kyra2TownsFile1Need },
-	{ kKyra2, k2TownsFile2E , kyra2TownsFile2Need },
-	{ kKyra2, k2TownsFile2J, kyra2TownsFile2Need },
-	{ kKyra2, k2DemoVersion, kyra2DemoNeed },
-	{ kKyra2, k2DemoVersionTlkE, kyra2TlkDemoNeed },
-	{ kKyra2, k2DemoVersionTlkF, kyra2TlkDemoNeed },
-	{ kKyra2, k2DemoVersionTlkG, kyra2TlkDemoNeed },
-	{ kLol, k2DemoLol, lolDemoNeed },
+	{ kKyra1, kPlatformPC, kTalkieVersion, kyra1CDNeed },
 
-	{ kKyra3, -1, kyra3Need },
+	{ kKyra1, kPlatformFMTowns, kFMTownsVersionE , kyra1TownsNeed },
+	{ kKyra1, kPlatformFMTowns, kFMTownsVersionJ, kyra1TownsNeed },
 
-	{ kLol, -1, lolFloppyNeed },
-	{ kLol, kLolCD1, lolCDFile1Need },
-	{ kLol, kLolCD2, lolCDFile2Need },
+	{ kKyra1, kPlatformPC, kDemoVersion, kyra1DemoNeed },
+
+	{ kKyra1, kPlatformPC, kDemoCDVersion, kyra1DemoCDNeed },
+
+	{ kKyra2, kPlatformPC, k2FloppyFile1, kyra2FloppyFile1Need },
+	{ kKyra2, kPlatformPC, k2FloppyFile2, kyra2FloppyFile2Need },
+
+	{ kKyra2, kPlatformPC, k2CDFile1E, kyra2CDFile1Need },
+	{ kKyra2, kPlatformPC, k2CDFile2E, kyra2CDFile2Need },
+
+	{ kKyra2, kPlatformPC, k2CDFile1F, kyra2CDFile1Need },
+	{ kKyra2, kPlatformPC, k2CDFile2F, kyra2CDFile2Need },
+
+	{ kKyra2, kPlatformPC, k2CDFile1G, kyra2CDFile1Need },
+	{ kKyra2, kPlatformPC, k2CDFile2G, kyra2CDFile2Need },
+
+	{ kKyra2, kPlatformPC, k2CDFile1I, kyra2CDFile1Need }, // Italian fan translation
+
+	{ kKyra2, kPlatformPC, k2CDDemoE, kyra2CDDemoNeed },
+	{ kKyra2, kPlatformPC, k2CDDemoF, kyra2CDDemoNeed },
+	{ kKyra2, kPlatformPC, k2CDDemoG, kyra2CDDemoNeed },
+
+	{ kKyra2, kPlatformFMTowns, k2TownsFile1E , kyra2TownsFile1Need },
+	{ kKyra2, kPlatformFMTowns, k2TownsFile2E , kyra2TownsFile2Need },
+
+	{ kKyra2, kPlatformFMTowns, k2TownsFile1J, kyra2TownsFile1Need },
+	{ kKyra2, kPlatformFMTowns, k2TownsFile2J, kyra2TownsFile2Need },
+
+	{ kKyra2, kPlatformPC, k2DemoVersion, kyra2DemoNeed },
+
+	{ kKyra2, kPlatformPC, k2DemoVersionTlkE, kyra2TlkDemoNeed },
+	{ kKyra2, kPlatformPC, k2DemoVersionTlkF, kyra2TlkDemoNeed },
+	{ kKyra2, kPlatformPC, k2DemoVersionTlkG, kyra2TlkDemoNeed },
+
+	{ kLol, kPlatformPC, k2DemoLol, lolDemoNeed },
+
+	{ kKyra3, kPlatformPC, -1, kyra3Need },
+
+	{ kLol, kPlatformPC, -1, lolFloppyNeed },
+
+	{ kLol, kPlatformPC, kLolCD1, lolCDFile1Need },
+	{ kLol, kPlatformPC, kLolCD2, lolCDFile2Need },
 
 	{ -1, -1, 0 }
 };
