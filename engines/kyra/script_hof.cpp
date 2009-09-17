@@ -745,6 +745,22 @@ int KyraEngine_HoF::o2_showItemString(EMCState *script) {
 
 int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_isAnySoundPlaying(%p) ()", (const void *)script);
+
+	// WORKAROUND
+	//
+	// The input script function in the skull scene does busy wait
+	// for the sound effect, which is played after completing the
+	// song, to finish. To avoid too much CPU use, we add some slight
+	// delay here.
+	//
+	// Also the Nintendo DS backend seems only to update the sound, when
+	// either OSystem::updateScreen or OSystem::delayMillis is called.
+	// So we have to call delay here, since otherwise the game would hang.
+#ifndef __DS__
+	if (_currentScene == 16 && _currentChapter == 1)
+#endif
+		delay(_tickLength);
+
 	return _sound->voiceIsPlaying() ? 1 : 0;
 }
 
