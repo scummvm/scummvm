@@ -32,7 +32,7 @@ const Game kyra1Games[] = {
 	{ kKyra1, EN_ANY, kPlatformPC, kDemoCDVersion, "226fdba99cb11ef1047131d9a50e6292" },
 
 	// Amiga
-	{ kKyra1, EN_ANY, kPlatformAmiga, kAmigaVersion, "b620564b6b7e0787b053ca9e35bd9f52" },
+	{ kKyra1, EN_ANY, kPlatformAmiga, -1, "b620564b6b7e0787b053ca9e35bd9f52" },
 
 	// Floppy
 	{ kKyra1, EN_ANY, kPlatformPC, -1, "76a4fc84e173cadb6369785787e1546e" },
@@ -760,7 +760,7 @@ struct GameNeed {
 
 const GameNeed gameNeedTable[] = {
 	{ kKyra1, kPlatformPC, -1, kyra1FloppyNeed },
-	{ kKyra1, kPlatformAmiga, kAmigaVersion, kyra1AmigaNeed },
+	{ kKyra1, kPlatformAmiga, -1, kyra1AmigaNeed },
 
 	{ kKyra1, kPlatformPC, kTalkieVersion, kyra1CDNeed },
 
@@ -817,7 +817,7 @@ const GameNeed gameNeedTable[] = {
 
 const int *getNeedList(const Game *g) {
 	for (const GameNeed *need = gameNeedTable; need->game != -1; ++need) {
-		if (need->game == g->game && need->special == g->special)
+		if (need->game == g->game && g->platform == need->platform && need->special == g->special)
 			return need->entries;
 	}
 

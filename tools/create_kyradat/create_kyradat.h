@@ -32,6 +32,13 @@ struct Language {
 
 extern const Language languageTable[];
 
+struct PlatformExtension {
+	int platform;
+	const char *ext;
+};
+
+extern const PlatformExtension platformTable[];
+
 enum kExtractID {
 	kForestSeq = 1,
 	kKallakWritingSeq,
@@ -279,7 +286,6 @@ enum kSpecial {
 	kDemoVersion,
 	kFMTownsVersionE,
 	kFMTownsVersionJ,
-	kAmigaVersion,
 
 	k2CDFile1E,
 	k2CDFile1F,

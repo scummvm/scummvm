@@ -25,11 +25,11 @@
 
 // Filename creation
 
-void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
+void createFilename(char *dstFilename, const int gid, const int lang, const int platform, const int special, const char *filename);
 
 namespace {
 
-void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
+void createLangFilename(char *dstFilename, const int gid, const int lang, const int platform, const int special, const char *filename);
 
 // Extraction function prototypes 
 
@@ -83,7 +83,7 @@ const ExtractType extractTypeTable[] = {
 
 } // end of anonymous namespace
 
-void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
+void createFilename(char *dstFilename, const int gid, const int lang, const int platform, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
 
 	static const char *gidExtensions[] = { "", ".K2", ".K3", 0, ".LOL" };
@@ -96,11 +96,18 @@ void createFilename(char *dstFilename, const int gid, const int lang, const int 
 			break;
 		}
 	}
+
+	for (const PlatformExtension *platformE = platformTable; platformE->platform != -1; ++platformE) {
+		if (platformE->platform == platform) {
+			strcat(dstFilename, ".");
+			strcat(dstFilename, platformE->ext);
+		}
+	}
 }
 
 namespace {
 
-void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename) {
+void createLangFilename(char *dstFilename, const int gid, const int lang, const int platform, const int special, const char *filename) {
 	strcpy(dstFilename, filename);
 
 	for (const Language *langE = languageTable; langE->lang != -1; ++langE) {
@@ -119,6 +126,13 @@ void createLangFilename(char *dstFilename, const int gid, const int lang, const 
 			strcat(dstFilename, ".");
 			strcat(dstFilename, specialE->ext);
 			break;
+		}
+	}
+
+	for (const PlatformExtension *platformE = platformTable; platformE->platform != -1; ++platformE) {
+		if (platformE->platform == platform) {
+			strcat(dstFilename, ".");
+			strcat(dstFilename, platformE->ext);
 		}
 	}
 }
@@ -172,7 +186,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	uint32 targetsize = size + 4;
 	for (uint32 i = 0; i < size; ++i) {
 		if (!data[i]) {
-			if (g->special == kAmigaVersion) {
+			if (g->platform == kPlatformAmiga) {
 				if (i + 1 >= size)
 					++entries;
 				else if (!data[i+1] && !(i & 1))
@@ -289,7 +303,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			}
 
 		} while (input < c);
-	} else if (g->special == kAmigaVersion) {
+	} else if (g->platform == kPlatformAmiga) {
 		// we need to strip some aligment zeros out here
 		int dstPos = 0;
 		for (uint32 i = 0; i < size; ++i) {
@@ -345,7 +359,7 @@ bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint3
 
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang) {
 	// different entry size for the FM-TOWNS version
-	const int roomEntrySize = (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) ? (0x69) : ((g->special == kAmigaVersion) ? 0x52 : 0x51);
+	const int roomEntrySize = (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) ? (0x69) : ((g->platform == kPlatformAmiga) ? 0x52 : 0x51);
 	const int countRooms = size / roomEntrySize;
 
 	uint8 *buffer = new uint8[countRooms * 9 + 4];
@@ -355,7 +369,7 @@ bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 si
 	WRITE_BE_UINT32(output, countRooms); output += 4;
 
 	const byte *src = data;
-	if (g->special == kAmigaVersion) {
+	if (g->platform == kPlatformAmiga) {
 		for (int i = 0; i < countRooms; ++i) {
 			*output++ = *src++; assert(*src == 0); ++src;
 			memcpy(output, src, 8); output += 0x8;

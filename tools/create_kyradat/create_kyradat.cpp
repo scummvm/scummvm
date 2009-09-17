@@ -308,7 +308,7 @@ bool getFilename(char *dstFilename, const Game *g, const int id) {
 		return false;
 
 	const ExtractType *type = findExtractType(i->type);
-	type->createFilename(dstFilename, g->game, g->lang, g->special, i->filename);
+	type->createFilename(dstFilename, g->game, g->lang, g->platform, g->special, i->filename);
 	return true;
 }
 
@@ -318,9 +318,6 @@ const SpecialExtension specialTable[] = {
 	{ kTalkieVersion, "CD" },
 	{ kDemoVersion, "DEM" },
 	{ kDemoCDVersion, "CD.DEM" },
-	{ kFMTownsVersionE , "TNS" },
-	{ kFMTownsVersionJ, "TNS" },
-	{ kAmigaVersion, "AMG" },
 
 	{ k2CDFile1E, "CD" },
 	{ k2CDFile1F, "CD" },
@@ -333,10 +330,6 @@ const SpecialExtension specialTable[] = {
 	{ k2CDDemoF, "CD" },
 	{ k2CDDemoG, "CD" },
 
-	{ k2TownsFile1E, "TNS" },
-	{ k2TownsFile1J, "TNS" },
-	{ k2TownsFile2E, "TNS" },
-	{ k2TownsFile2J, "TNS" },
 	{ k2DemoVersion, "DEM" },
 	{ k2DemoLol, "DEM" },
 
@@ -353,6 +346,13 @@ const Language languageTable[] = {
 	{ IT_ITA, "ITA" },
 	{ ES_ESP, "SPA" },
 	{ JA_JPN, "JPN" },
+	{ -1, 0 }
+};
+
+const PlatformExtension platformTable[] = {
+	{ kPlatformAmiga, "AMG" },
+	{ kPlatformFMTowns, "TNS" },
+
 	{ -1, 0 }
 };
 
@@ -388,11 +388,9 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_DEMO;
 	else if (g->special == kDemoCDVersion)
 		features |= (GF_DEMO | GF_TALKIE);
-	else if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
-		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-		g->special == k2TownsFile2E || g->special == k2TownsFile2J)
+	else if (g->platform == kPlatformFMTowns)
 		features |= GF_FMTOWNS;
-	else if (g->special == kAmigaVersion)
+	else if (g->platform == kPlatformAmiga)
 		features |= GF_AMIGA;
 	else
 		features |= GF_FLOPPY;
@@ -435,7 +433,7 @@ bool checkIndex(const byte *s, const int srcSize) {
 
 bool updateIndex(PAKFile &out, const Game *g) {
 	char filename[32];
-	createFilename(filename, g->game, -1, g->special, "INDEX");
+	createFilename(filename, g->game, -1, g->platform, g->special, "INDEX");
 
 	byte *index = new byte[kIndexSize];
 	assert(index);
@@ -463,7 +461,7 @@ bool updateIndex(PAKFile &out, const Game *g) {
 
 bool checkIndex(PAKFile &out, const Game *g) {
 	char filename[32];
-	createFilename(filename, g->game, -1, g->special, "INDEX");
+	createFilename(filename, g->game, -1, g->platform, g->special, "INDEX");
 
 	uint32 size = 0;
 	const uint8 *data = out.getFileData(filename, &size);
