@@ -22,9 +22,9 @@
 			<File RelativePath="..\..\engines\sci\engine\grammar.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\intmap.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\intmap.h" />
-			<File RelativePath="..\..\engines\sci\engine\kernel32.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kernel.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kernel.h" />
+			<File RelativePath="..\..\engines\sci\engine\kernel32.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kernel_types.h" />
 			<File RelativePath="..\..\engines\sci\engine\kevent.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kfile.cpp" />
@@ -49,6 +49,7 @@
 			<File RelativePath="..\..\engines\sci\engine\scriptdebug.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\seg_manager.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\seg_manager.h" />
+			<File RelativePath="..\..\engines\sci\engine\selector.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\state.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\state.h" />
 			<File RelativePath="..\..\engines\sci\engine\static_selectors.cpp" />
