@@ -478,11 +478,6 @@ int Kernel::findSelector(const char *selectorName) const {
 	return -1;
 }
 
-bool Kernel::hasKernelFunction(const char *functionName) const {
-	Common::StringList::const_iterator it = Common::find(_kernelNames.begin(), _kernelNames.end(), functionName);
-	return (it != _kernelNames.end());
-}
-
 void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {
 	if ((nr > VOCAB_TREE_NODES)/* || (nr < prevnr)*/) {
 		printf("Error(%04x)", nr);

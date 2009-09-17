@@ -79,13 +79,6 @@ public:
 	int findSelector(const char *selectorName) const;
 
 	/**
-	 * Detects whether a particular kernel function is required in the game
-	 * @param functionName The name of the desired kernel function
-	 * @return True if the kernel function is listed in the kernel table, false otherwise
-	*/
-	bool hasKernelFunction(const char *functionName) const;
-
-	/**
 	 * Applies to all versions before 0.000.502
 	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
 	 * with the opposite default value (obviously).
