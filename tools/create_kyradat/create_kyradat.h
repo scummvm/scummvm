@@ -284,25 +284,15 @@ struct ExtractFilename {
 enum kSpecial {
 	kTalkieVersion = 0,
 	kDemoVersion,
-	kFMTownsVersionE,
-	kFMTownsVersionJ,
 
-	k2CDFile1E,
-	k2CDFile1F,
-	k2CDFile1G,
-	k2CDFile2E,
-	k2CDFile2F,
-	k2CDFile2G,
 	k2CDDemoE,
 	k2CDDemoF,
 	k2CDDemoG,
-	// Italian fan translation
-	k2CDFile1I,
 
-	k2TownsFile1E,
-	k2TownsFile1J,
-	k2TownsFile2E,
-	k2TownsFile2J,
+	kFile1,
+	kFile2,
+	kTalkieFile1,
+	kTalkieFile2,
 
 	k2FloppyFile1,
 	k2FloppyFile2,
@@ -312,9 +302,6 @@ enum kSpecial {
 	k2DemoVersionTlkF,
 	k2DemoVersionTlkG,
 	k2DemoLol,
-
-	kLolCD1,
-	kLolCD2,
 
 	// special case for Kyrandia 1 CD demo
 	kDemoCDVersion

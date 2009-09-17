@@ -224,10 +224,10 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	}
 
 	if (fmtPatch == 2) {
-		if (g->special == kFMTownsVersionE) {
+		if (g->lang == EN_ANY) {
 			targetsize--;
 			entries += 1;
-		} else if (g->special == kFMTownsVersionJ) {
+		} else if (g->lang == JA_JPN) {
 			targetsize += 2;
 			entries += 2;
 		}
@@ -264,16 +264,15 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			while (!*input) {
 				// Write one empty string into intro strings file
 				if (fmtPatch == 2) {
-					if ((g->special == kFMTownsVersionE && input - data == 0x260) ||
-						(g->special == kFMTownsVersionJ && input - data == 0x2BD) ||
-						(g->special == kFMTownsVersionJ && input - data == 0x2BE))
+					if ((g->lang == EN_ANY && input - data == 0x260) ||
+						(g->lang == JA_JPN && (input - data == 0x2BD || input - data == 0x2BE)))
 							*output++ = *input;
 				}
 
 				// insert one dummy string at hof sequence strings position 59
 				if (fmtPatch == 3) {
-					if ((g->special == k2TownsFile1E && input - data == 0x695) ||
-						(g->special == k2TownsFile1J && input - data == 0x598))
+					if ((g->lang == EN_ANY && input - data == 0x695) ||
+						(g->lang == JA_JPN && input - data == 0x598))
 							*output++ = *input;
 				}
 
@@ -480,7 +479,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 				ptr += 28;
 				output += 28;
 
-				if (g->special == k2TownsFile1E) { // startupCommand + finalCommand
+				if (g->platform == kPlatformFMTowns) { // startupCommand + finalCommand
 					memcpy(output , ptr, 2);
 					ptr += 2;
 					output += 2;
@@ -583,7 +582,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					output += 4;
 				}
 
-				if (g->special == k2TownsFile1E)
+				if (g->platform == kPlatformFMTowns)
 					ptr += 2;
 
 			} else if (cycle == 0) {
@@ -679,7 +678,7 @@ int extractHofSeqData_isSequence(const void *ptr, const Game *g, uint32 maxCheck
 		if (maxCheckSize < 41)
 			return -2;
 
-		if (g->special == k2TownsFile1E) {
+		if (g->platform == kPlatformFMTowns) {
 			if (!(s[37] | s[39]) && s[38] > s[36])
 				return 1;
 		} else {

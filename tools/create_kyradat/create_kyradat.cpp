@@ -319,22 +319,15 @@ const SpecialExtension specialTable[] = {
 	{ kDemoVersion, "DEM" },
 	{ kDemoCDVersion, "CD.DEM" },
 
-	{ k2CDFile1E, "CD" },
-	{ k2CDFile1F, "CD" },
-	{ k2CDFile1G, "CD" },
-	{ k2CDFile1I, "CD" },
-	{ k2CDFile2E, "CD" },
-	{ k2CDFile2F, "CD" },
-	{ k2CDFile2G, "CD" },
+	{ kTalkieFile1, "CD" },
+	{ kTalkieFile2, "CD" },
+
 	{ k2CDDemoE, "CD" },
 	{ k2CDDemoF, "CD" },
 	{ k2CDDemoG, "CD" },
 
 	{ k2DemoVersion, "DEM" },
 	{ k2DemoLol, "DEM" },
-
-	{ kLolCD1, "CD" },
-	{ kLolCD2, "CD" },
 
 	{ -1, 0 }
 };
@@ -377,11 +370,8 @@ enum {
 uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
-	if (g->special == kTalkieVersion
-			|| g->special == k2CDFile1E || g->special == k2CDFile1F || g->special == k2CDFile1G || g->special == k2CDFile1I
-			|| g->special == k2CDFile2E || g->special == k2CDFile2F || g->special == k2CDFile2G
+	if (g->special == kTalkieVersion || g->special == kTalkieFile1 || g->special == kTalkieFile2
 			|| g->special == k2CDDemoE || g->special == k2CDDemoF || g->special == k2CDDemoG
-			|| g->special == kLolCD1 || g->special == kLolCD2
 			|| g->game == kKyra3)
 		features |= GF_TALKIE;
 	else if (g->special == kDemoVersion || g->special == k2DemoVersion || g->special == k2DemoLol)
