@@ -30,6 +30,7 @@ MODULE_OBJS = \
 	engine/savegame.o \
 	engine/script.o \
 	engine/scriptdebug.o \
+	engine/selector.o \
 	engine/seg_manager.o \
 	engine/segment.o \
 	engine/static_selectors.o \
