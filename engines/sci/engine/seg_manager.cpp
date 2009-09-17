@@ -94,12 +94,12 @@ SegmentId SegManager::findFreeSegment() const {
 	return seg;
 }
 
-MemObject *SegManager::allocSegment(MemObjectType type, SegmentId *segid) {
+SegmentObj *SegManager::allocSegment(SegmentType type, SegmentId *segid) {
 	// Find a free segment
 	*segid = findFreeSegment();
 
 	// Now allocate an object of the appropriate type...
-	MemObject *mem = MemObject::createMemObject(type);
+	SegmentObj *mem = SegmentObj::createSegmentObj(type);
 	if (!mem)
 		error("SegManager: invalid mobj");
 
@@ -121,8 +121,8 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 		return (Script *)_heap[*seg_id];
 	}
 
-	// allocate the MemObject
-	MemObject *mem = allocSegment(MEM_OBJ_SCRIPT, seg_id);
+	// allocate the SegmentObj
+	SegmentObj *mem = allocSegment(SEG_TYPE_SCRIPT, seg_id);
 
 	// Add the script to the "script id -> segment id" hashmap
 	_scriptSegMap[script_nr] = *seg_id;
@@ -167,12 +167,12 @@ void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
 }
 
 int SegManager::deallocate(SegmentId seg, bool recursive) {
-	MemObject *mobj;
+	SegmentObj *mobj;
 	VERIFY(check(seg), "invalid seg id");
 
 	mobj = _heap[seg];
 
-	if (mobj->getType() == MEM_OBJ_SCRIPT) {
+	if (mobj->getType() == SEG_TYPE_SCRIPT) {
 		Script *scr = (Script *)mobj;
 		_scriptSegMap.erase(scr->_nr);
 		if (recursive && scr->_localsSegment)
@@ -207,14 +207,14 @@ Script *SegManager::getScript(const SegmentId seg) {
 	if (!_heap[seg]) {
 		error("SegManager::getScript(): seg id %x is not in memory", seg);
 	}
-	if (_heap[seg]->getType() != MEM_OBJ_SCRIPT) {
-		error("SegManager::getScript(): seg id %x refers to type %d != MEM_OBJ_SCRIPT", seg, _heap[seg]->getType());
+	if (_heap[seg]->getType() != SEG_TYPE_SCRIPT) {
+		error("SegManager::getScript(): seg id %x refers to type %d != SEG_TYPE_SCRIPT", seg, _heap[seg]->getType());
 	}
 	return (Script *)_heap[seg];
 }
 
 Script *SegManager::getScriptIfLoaded(const SegmentId seg) {
-	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != MEM_OBJ_SCRIPT)
+	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg] || _heap[seg]->getType() != SEG_TYPE_SCRIPT)
 		return 0;
 	return (Script *)_heap[seg];
 }
@@ -226,29 +226,29 @@ SegmentId SegManager::findSegmentByType(int type) {
 	return -1;
 }
 
-MemObject *SegManager::getMemObject(SegmentId seg) {
+SegmentObj *SegManager::getSegmentObj(SegmentId seg) {
 	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
 		return 0;
 	return _heap[seg];
 }
 
-MemObjectType SegManager::getMemObjectType(SegmentId seg) {
+SegmentType SegManager::getSegmentType(SegmentId seg) {
 	if (seg < 1 || (uint)seg >= _heap.size() || !_heap[seg])
-		return MEM_OBJ_INVALID;
+		return SEG_TYPE_INVALID;
 	return _heap[seg]->getType();
 }
 
 Object *SegManager::getObject(reg_t pos) {
-	MemObject *mobj = getMemObject(pos.segment);
+	SegmentObj *mobj = getSegmentObj(pos.segment);
 	SciVersion version = _resMan->sciVersion();
 	Object *obj = NULL;
 
 	if (mobj != NULL) {
-		if (mobj->getType() == MEM_OBJ_CLONES) {
+		if (mobj->getType() == SEG_TYPE_CLONES) {
 			CloneTable *ct = (CloneTable *)mobj;
 			if (ct->isValidEntry(pos.offset))
 				obj = &(ct->_table[pos.offset]);
-		} else if (mobj->getType() == MEM_OBJ_SCRIPT) {
+		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 			if (pos.offset <= scr->_bufSize && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 			        && RAW_IS_OBJECT(scr->_buf + pos.offset)) {
@@ -573,10 +573,10 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 		if (scr->_localsSegment) {
 			locals = (LocalVariables *)_heap[scr->_localsSegment];
 			VERIFY(locals != NULL, "Re-used locals segment was NULL'd out");
-			VERIFY(locals->getType() == MEM_OBJ_LOCALS, "Re-used locals segment did not consist of local variables");
+			VERIFY(locals->getType() == SEG_TYPE_LOCALS, "Re-used locals segment did not consist of local variables");
 			VERIFY(locals->script_id == scr->_nr, "Re-used locals segment belonged to other script");
 		} else
-			locals = (LocalVariables *)allocSegment(MEM_OBJ_LOCALS, &scr->_localsSegment);
+			locals = (LocalVariables *)allocSegment(SEG_TYPE_LOCALS, &scr->_localsSegment);
 
 		scr->_localsBlock = locals;
 		locals->script_id = scr->_nr;
@@ -709,7 +709,7 @@ static char *SegManager::dynprintf(char *msg, ...) {
 */
 
 DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
-	MemObject *mobj = allocSegment(MEM_OBJ_STACK, segid);
+	SegmentObj *mobj = allocSegment(SEG_TYPE_STACK, segid);
 	DataStack *retval = (DataStack *)mobj;
 
 	retval->entries = (reg_t *)calloc(size, sizeof(reg_t));
@@ -719,13 +719,13 @@ DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
 }
 
 SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	return (SystemStrings *)allocSegment(MEM_OBJ_SYS_STRINGS, segid);
+	return (SystemStrings *)allocSegment(SEG_TYPE_SYS_STRINGS, segid);
 }
 
 SegmentId SegManager::allocateStringFrags() {
 	SegmentId segid;
 
-	allocSegment(MEM_OBJ_STRING_FRAG, &segid);
+	allocSegment(SEG_TYPE_STRING_FRAG, &segid);
 
 	return segid;
 }
@@ -746,7 +746,7 @@ uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 }
 
 void SegManager::freeHunkEntry(reg_t addr) {
-	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, MEM_OBJ_HUNK);
+	HunkTable *ht = (HunkTable *)GET_SEGMENT(*this, addr.segment, SEG_TYPE_HUNK);
 
 	if (!ht) {
 		warning("Attempt to free Hunk from address %04x:%04x: Invalid segment type", PRINT_REG(addr));
@@ -774,7 +774,7 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	int offset;
 
 	if (!Clones_seg_id) {
-		table = (CloneTable *)allocSegment(MEM_OBJ_CLONES, &(Clones_seg_id));
+		table = (CloneTable *)allocSegment(SEG_TYPE_CLONES, &(Clones_seg_id));
 	} else
 		table = (CloneTable *)_heap[Clones_seg_id];
 
@@ -789,8 +789,8 @@ void SegManager::reconstructClones() {
 
 	for (uint i = 0; i < _heap.size(); i++) {
 		if (_heap[i]) {
-			MemObject *mobj = _heap[i];
-			if (mobj->getType() == MEM_OBJ_CLONES) {
+			SegmentObj *mobj = _heap[i];
+			if (mobj->getType() == SEG_TYPE_CLONES) {
 				CloneTable *ct = (CloneTable *)mobj;
 
 				for (uint j = 0; j < ct->_table.size(); j++) {
@@ -835,7 +835,7 @@ List *SegManager::allocateList(reg_t *addr) {
 	int offset;
 
 	if (!Lists_seg_id)
-		allocSegment(MEM_OBJ_LISTS, &(Lists_seg_id));
+		allocSegment(SEG_TYPE_LISTS, &(Lists_seg_id));
 	table = (ListTable *)_heap[Lists_seg_id];
 
 	offset = table->allocEntry();
@@ -849,7 +849,7 @@ Node *SegManager::allocateNode(reg_t *addr) {
 	int offset;
 
 	if (!Nodes_seg_id)
-		allocSegment(MEM_OBJ_NODES, &(Nodes_seg_id));
+		allocSegment(SEG_TYPE_NODES, &(Nodes_seg_id));
 	table = (NodeTable *)_heap[Nodes_seg_id];
 
 	offset = table->allocEntry();
@@ -863,7 +863,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	int offset;
 
 	if (!Hunks_seg_id)
-		allocSegment(MEM_OBJ_HUNK, &(Hunks_seg_id));
+		allocSegment(SEG_TYPE_HUNK, &(Hunks_seg_id));
 	table = (HunkTable *)_heap[Hunks_seg_id];
 
 	offset = table->allocEntry();
@@ -879,7 +879,7 @@ byte *SegManager::dereference(reg_t pointer, int *size) {
 		return NULL; /* Invalid */
 	}
 
-	MemObject *mobj = _heap[pointer.segment];
+	SegmentObj *mobj = _heap[pointer.segment];
 	return mobj->dereference(pointer, size);
 }
 
@@ -919,7 +919,7 @@ char *SegManager::derefString(reg_t pointer, int entries) {
 
 byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	SegmentId seg;
-	MemObject *mobj = allocSegment(MEM_OBJ_DYNMEM, &seg);
+	SegmentObj *mobj = allocSegment(SEG_TYPE_DYNMEM, &seg);
 	*addr = make_reg(seg, 0);
 
 	DynMem &d = *(DynMem *)mobj;
@@ -940,10 +940,10 @@ const char *SegManager::getDescription(reg_t addr) {
 	if (addr.segment < 1 || addr.segment >= _heap.size())
 		return "";
 
-	MemObject *mobj = _heap[addr.segment];
+	SegmentObj *mobj = _heap[addr.segment];
 
 	switch (mobj->getType()) {
-	case MEM_OBJ_DYNMEM:
+	case SEG_TYPE_DYNMEM:
 		return (*(DynMem *)mobj)._description.c_str();
 	default:
 		return "";
@@ -951,7 +951,7 @@ const char *SegManager::getDescription(reg_t addr) {
 }
 
 int SegManager::freeDynmem(reg_t addr) {
-	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != MEM_OBJ_DYNMEM)
+	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != SEG_TYPE_DYNMEM)
 		return 1; // error
 
 	deallocate(addr.segment, true);

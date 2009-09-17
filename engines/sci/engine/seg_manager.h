@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-#define GET_SEGMENT(mgr, index, rtype) (((mgr).getMemObjectType(index) == (rtype))? (mgr)._heap[index] : NULL)
+#define GET_SEGMENT(mgr, index, rtype) (((mgr).getSegmentType(index) == (rtype))? (mgr)._heap[index] : NULL)
 
 /**
  * Parameters for getScriptSegment().
@@ -315,10 +315,10 @@ public:
 	SegmentId findSegmentByType(int type);
 
 	// TODO: document this
-	MemObject *getMemObject(SegmentId seg);
+	SegmentObj *getSegmentObj(SegmentId seg);
 
 	// TODO: document this
-	MemObjectType getMemObjectType(SegmentId seg);
+	SegmentType getSegmentType(SegmentId seg);
 
 	/**
 	 * Retrieves an object from the specified location
@@ -353,7 +353,7 @@ public:
 	SciVersion sciVersion() { return _resMan->sciVersion(); }
 
 public: // TODO: make private
-	Common::Array<MemObject *> _heap;
+	Common::Array<SegmentObj *> _heap;
 	Common::Array<Class> _classtable; /**< Table of all classes */
 
 private:
@@ -370,7 +370,7 @@ private:
 	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
 
 private:
-	MemObject *allocSegment(MemObjectType type, SegmentId *segid);
+	SegmentObj *allocSegment(SegmentType type, SegmentId *segid);
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	int deallocate(SegmentId seg, bool recursive);
 	int createClassTable();

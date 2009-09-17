@@ -32,7 +32,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	if (!addr.offset && !addr.segment)
 		return NULL; // Non-error null
 
-	MemObject *mobj = GET_SEGMENT(*s->segMan, addr.segment, MEM_OBJ_NODES);
+	SegmentObj *mobj = GET_SEGMENT(*s->segMan, addr.segment, SEG_TYPE_NODES);
 	if (!mobj) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
@@ -52,7 +52,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 }
 
 List *lookup_list(EngineState *s, reg_t addr) {
-	MemObject *mobj = GET_SEGMENT(*s->segMan, addr.segment, MEM_OBJ_LISTS);
+	SegmentObj *mobj = GET_SEGMENT(*s->segMan, addr.segment, SEG_TYPE_LISTS);
 
 	if (!mobj) {
 		error("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));

@@ -38,41 +38,41 @@ namespace Sci {
 //#define GC_DEBUG_VERBOSE // Debug garbage verbosely
 
 
-MemObject *MemObject::createMemObject(MemObjectType type) {
-	MemObject *mem = 0;
+SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
+	SegmentObj *mem = 0;
 	switch (type) {
-	case MEM_OBJ_SCRIPT:
+	case SEG_TYPE_SCRIPT:
 		mem = new Script();
 		break;
-	case MEM_OBJ_CLONES:
+	case SEG_TYPE_CLONES:
 		mem = new CloneTable();
 		break;
-	case MEM_OBJ_LOCALS:
+	case SEG_TYPE_LOCALS:
 		mem = new LocalVariables();
 		break;
-	case MEM_OBJ_SYS_STRINGS:
+	case SEG_TYPE_SYS_STRINGS:
 		mem = new SystemStrings();
 		break;
-	case MEM_OBJ_STACK:
+	case SEG_TYPE_STACK:
 		mem = new DataStack();
 		break;
-	case MEM_OBJ_HUNK:
+	case SEG_TYPE_HUNK:
 		mem = new HunkTable();
 		break;
-	case MEM_OBJ_STRING_FRAG:
+	case SEG_TYPE_STRING_FRAG:
 		mem = new StringFrag();
 		break;
-	case MEM_OBJ_LISTS:
+	case SEG_TYPE_LISTS:
 		mem = new ListTable();
 		break;
-	case MEM_OBJ_NODES:
+	case SEG_TYPE_NODES:
 		mem = new NodeTable();
 		break;
-	case MEM_OBJ_DYNMEM:
+	case SEG_TYPE_DYNMEM:
 		mem = new DynMem();
 		break;
 	default:
-		error("Unknown MemObject type %d", type);
+		error("Unknown SegmentObj type %d", type);
 		break;
 	}
 
@@ -229,7 +229,7 @@ int16 Script::getHeap(uint16 offset) const {
 //	return (_buf[offset] | (_buf[offset+1]) << 8);
 }
 
-byte *MemObject::dereference(reg_t pointer, int *size) {
+byte *SegmentObj::dereference(reg_t pointer, int *size) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));
 	return NULL;

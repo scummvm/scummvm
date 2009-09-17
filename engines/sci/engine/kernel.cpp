@@ -467,7 +467,7 @@ reg_t kalloc(SegManager *segMan, const char *type, int space) {
 
 // Returns a pointer to the memory indicated by the specified handle
 byte *kmem(SegManager *segMan, reg_t handle) {
-	HunkTable *ht = (HunkTable *)GET_SEGMENT(*segMan, handle.segment, MEM_OBJ_HUNK);
+	HunkTable *ht = (HunkTable *)GET_SEGMENT(*segMan, handle.segment, SEG_TYPE_HUNK);
 
 	if (!ht || !ht->isValidEntry(handle.offset)) {
 		warning("Error: kmem() with invalid handle");
@@ -621,7 +621,7 @@ void Kernel::mapFunctions() {
 }
 
 int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
-	MemObject *mobj;
+	SegmentObj *mobj;
 	int type = 0;
 
 	if (!reg.segment) {
@@ -632,14 +632,14 @@ int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
 		return type;
 	}
 
-	mobj = segMan->getMemObject(reg.segment);
+	mobj = segMan->getSegmentObj(reg.segment);
 	if (!mobj)
 		return 0; // Invalid
 
 	SciVersion version = segMan->sciVersion();	// for the offset defines
 
 	switch (mobj->getType()) {
-	case MEM_OBJ_SCRIPT:
+	case SEG_TYPE_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj)._bufSize && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
 		        && RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
 			Object *obj = ((Script *)mobj)->getObject(reg.offset);
@@ -650,22 +650,22 @@ int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
 		} else
 			return KSIG_REF;
 
-	case MEM_OBJ_CLONES:
+	case SEG_TYPE_CLONES:
 		type = KSIG_OBJECT;
 		break;
 
-	case MEM_OBJ_LOCALS:
-	case MEM_OBJ_STACK:
-	case MEM_OBJ_SYS_STRINGS:
-	case MEM_OBJ_DYNMEM:
+	case SEG_TYPE_LOCALS:
+	case SEG_TYPE_STACK:
+	case SEG_TYPE_SYS_STRINGS:
+	case SEG_TYPE_DYNMEM:
 		type = KSIG_REF;
 		break;
 
-	case MEM_OBJ_LISTS:
+	case SEG_TYPE_LISTS:
 		type = KSIG_LIST;
 		break;
 
-	case MEM_OBJ_NODES:
+	case SEG_TYPE_NODES:
 		type = KSIG_NODE;
 		break;
 

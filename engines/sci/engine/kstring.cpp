@@ -308,7 +308,7 @@ reg_t kStrCpy(EngineState *s, int, int argc, reg_t *argv) {
 		if (length >= 0)
 			strncpy(dest, src, length);
 		else {
-			if (s->segMan->_heap[argv[0].segment]->getType() == MEM_OBJ_DYNMEM) {
+			if (s->segMan->_heap[argv[0].segment]->getType() == SEG_TYPE_DYNMEM) {
 				reg_t *srcp = (reg_t *) src;
 
 				int i;

@@ -34,34 +34,34 @@
 
 namespace Sci {
 
-enum MemObjectType {
-	MEM_OBJ_INVALID = 0,
-	MEM_OBJ_SCRIPT = 1,
-	MEM_OBJ_CLONES = 2,
-	MEM_OBJ_LOCALS = 3,
-	MEM_OBJ_STACK = 4,
-	MEM_OBJ_SYS_STRINGS = 5,
-	MEM_OBJ_LISTS = 6,
-	MEM_OBJ_NODES = 7,
-	MEM_OBJ_HUNK = 8,
-	MEM_OBJ_DYNMEM = 9,
-	MEM_OBJ_STRING_FRAG = 10,
+enum SegmentType {
+	SEG_TYPE_INVALID = 0,
+	SEG_TYPE_SCRIPT = 1,
+	SEG_TYPE_CLONES = 2,
+	SEG_TYPE_LOCALS = 3,
+	SEG_TYPE_STACK = 4,
+	SEG_TYPE_SYS_STRINGS = 5,
+	SEG_TYPE_LISTS = 6,
+	SEG_TYPE_NODES = 7,
+	SEG_TYPE_HUNK = 8,
+	SEG_TYPE_DYNMEM = 9,
+	SEG_TYPE_STRING_FRAG = 10,
 
-	MEM_OBJ_MAX // For sanity checking
+	SEG_TYPE_MAX // For sanity checking
 };
 
-struct MemObject : public Common::Serializable {
-	MemObjectType _type;
+struct SegmentObj : public Common::Serializable {
+	SegmentType _type;
 
 	typedef void (*NoteCallback)(void *param, reg_t addr);	// FIXME: Bad choice of name
 
 public:
-	static MemObject *createMemObject(MemObjectType type);
+	static SegmentObj *createSegmentObj(SegmentType type);
 
 public:
-	virtual ~MemObject() {}
+	virtual ~SegmentObj() {}
 
-	inline MemObjectType getType() const { return _type; }
+	inline SegmentType getType() const { return _type; }
 
 	/**
 	 * Check whether the given offset into this memory object is valid,
@@ -112,7 +112,7 @@ public:
 
 
 // TODO: Implement the following class
-struct StringFrag : public MemObject {
+struct StringFrag : public SegmentObj {
 	virtual bool isValidOffset(uint16 offset) const { return false; }
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -135,7 +135,7 @@ struct SystemString {
 	reg_t *value;
 };
 
-struct SystemStrings : public MemObject {
+struct SystemStrings : public SegmentObj {
 	SystemString strings[SYS_STRINGS_MAX];
 
 public:
@@ -178,7 +178,7 @@ struct CallsStruct {
 	int type; /**< Same as ExecStack.type */
 };
 
-struct LocalVariables : public MemObject {
+struct LocalVariables : public SegmentObj {
 	int script_id; /**< Script ID this local variable block belongs to */
 	Common::Array<reg_t> _locals;
 
@@ -237,7 +237,7 @@ struct CodeBlock {
 
 
 
-class Script : public MemObject {
+class Script : public SegmentObj {
 public:
 	int _nr; /**< Script number */
 	byte *_buf; /**< Static data buffer, or NULL if not used */
@@ -427,7 +427,7 @@ private:
 };
 
 /** Data stack */
-struct DataStack : MemObject {
+struct DataStack : SegmentObj {
 	int nr; /**< Number of stack entries */
 	reg_t *entries;
 
@@ -473,7 +473,7 @@ struct Hunk {
 };
 
 template<typename T>
-struct Table : public MemObject {
+struct Table : public SegmentObj {
 	typedef T value_type;
 	struct Entry : public T {
 		int next_free; /* Only used for free entries */
@@ -578,7 +578,7 @@ struct HunkTable : public Table<Hunk> {
 
 
 // Free-style memory
-struct DynMem : public MemObject {
+struct DynMem : public SegmentObj {
 	int _size;
 	Common::String _description;
 	byte *_buf;

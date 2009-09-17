@@ -1314,48 +1314,48 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 	DebugPrintf("Segment table:\n");
 
 	for (uint i = 0; i < _vm->_gamestate->segMan->_heap.size(); i++) {
-		MemObject *mobj = _vm->_gamestate->segMan->_heap[i];
+		SegmentObj *mobj = _vm->_gamestate->segMan->_heap[i];
 		if (mobj && mobj->getType()) {
 			DebugPrintf(" [%04x] ", i);
 
 			switch (mobj->getType()) {
-			case MEM_OBJ_SCRIPT:
+			case SEG_TYPE_SCRIPT:
 				DebugPrintf("S  script.%03d l:%d ", (*(Script *)mobj)._nr, (*(Script *)mobj).getLockers());
 				break;
 
-			case MEM_OBJ_CLONES:
+			case SEG_TYPE_CLONES:
 				DebugPrintf("C  clones (%d allocd)", (*(CloneTable *)mobj).entries_used);
 				break;
 
-			case MEM_OBJ_LOCALS:
+			case SEG_TYPE_LOCALS:
 				DebugPrintf("V  locals %03d", (*(LocalVariables *)mobj).script_id);
 				break;
 
-			case MEM_OBJ_STACK:
+			case SEG_TYPE_STACK:
 				DebugPrintf("D  data stack (%d)", (*(DataStack *)mobj).nr);
 				break;
 
-			case MEM_OBJ_SYS_STRINGS:
+			case SEG_TYPE_SYS_STRINGS:
 				DebugPrintf("Y  system string table");
 				break;
 
-			case MEM_OBJ_LISTS:
+			case SEG_TYPE_LISTS:
 				DebugPrintf("L  lists (%d)", (*(ListTable *)mobj).entries_used);
 				break;
 
-			case MEM_OBJ_NODES:
+			case SEG_TYPE_NODES:
 				DebugPrintf("N  nodes (%d)", (*(NodeTable *)mobj).entries_used);
 				break;
 
-			case MEM_OBJ_HUNK:
+			case SEG_TYPE_HUNK:
 				DebugPrintf("H  hunk (%d)", (*(HunkTable *)mobj).entries_used);
 				break;
 
-			case MEM_OBJ_DYNMEM:
+			case SEG_TYPE_DYNMEM:
 				DebugPrintf("M  dynmem: %d bytes", (*(DynMem *)mobj)._size);
 				break;
 
-			case MEM_OBJ_STRING_FRAG:
+			case SEG_TYPE_STRING_FRAG:
 				DebugPrintf("F  string fragments");
 				break;
 
@@ -1378,11 +1378,11 @@ bool Console::segmentInfo(int nr) {
 	if ((nr < 0) || ((uint)nr >= _vm->_gamestate->segMan->_heap.size()) || !_vm->_gamestate->segMan->_heap[nr])
 		return false;
 
-	MemObject *mobj = _vm->_gamestate->segMan->_heap[nr];
+	SegmentObj *mobj = _vm->_gamestate->segMan->_heap[nr];
 
 	switch (mobj->getType()) {
 
-	case MEM_OBJ_SCRIPT: {
+	case SEG_TYPE_SCRIPT: {
 		Script *scr = (Script *)mobj;
 		DebugPrintf("script.%03d locked by %d, bufsize=%d (%x)\n", scr->_nr, scr->getLockers(), (uint)scr->_bufSize, (uint)scr->_bufSize);
 		if (scr->_exportTable)
@@ -1410,21 +1410,21 @@ bool Console::segmentInfo(int nr) {
 	}
 	break;
 
-	case MEM_OBJ_LOCALS: {
+	case SEG_TYPE_LOCALS: {
 		LocalVariables *locals = (LocalVariables *)mobj;
 		DebugPrintf("locals for script.%03d\n", locals->script_id);
 		DebugPrintf("  %d (0x%x) locals\n", locals->_locals.size(), locals->_locals.size());
 	}
 	break;
 
-	case MEM_OBJ_STACK: {
+	case SEG_TYPE_STACK: {
 		DataStack *stack = (DataStack *)mobj;
 		DebugPrintf("stack\n");
 		DebugPrintf("  %d (0x%x) entries\n", stack->nr, stack->nr);
 	}
 	break;
 
-	case MEM_OBJ_SYS_STRINGS: {
+	case SEG_TYPE_SYS_STRINGS: {
 		DebugPrintf("system string table - viewing currently disabled\n");
 #if 0
 		SystemStrings *strings = &(mobj->data.sys_strings);
@@ -1436,7 +1436,7 @@ bool Console::segmentInfo(int nr) {
 	}
 	break;
 
-	case MEM_OBJ_CLONES: {
+	case SEG_TYPE_CLONES: {
 		CloneTable *ct = (CloneTable *)mobj;
 
 		DebugPrintf("clones\n");
@@ -1457,7 +1457,7 @@ bool Console::segmentInfo(int nr) {
 	}
 	break;
 
-	case MEM_OBJ_LISTS: {
+	case SEG_TYPE_LISTS: {
 		ListTable *lt = (ListTable *)mobj;
 
 		DebugPrintf("lists\n");
@@ -1469,12 +1469,12 @@ bool Console::segmentInfo(int nr) {
 	}
 	break;
 
-	case MEM_OBJ_NODES: {
+	case SEG_TYPE_NODES: {
 		DebugPrintf("nodes (total %d)\n", (*(NodeTable *)mobj).entries_used);
 		break;
 	}
 
-	case MEM_OBJ_HUNK: {
+	case SEG_TYPE_HUNK: {
 		HunkTable *ht = (HunkTable *)mobj;
 
 		DebugPrintf("hunk  (total %d)\n", ht->entries_used);
@@ -1486,7 +1486,7 @@ bool Console::segmentInfo(int nr) {
 	}
 	break;
 
-	case MEM_OBJ_DYNMEM: {
+	case SEG_TYPE_DYNMEM: {
 		DebugPrintf("dynmem (%s): %d bytes\n",
 		          (*(DynMem *)mobj)._description.c_str(), (*(DynMem *)mobj)._size);
 
@@ -1494,7 +1494,7 @@ bool Console::segmentInfo(int nr) {
 	}
 	break;
 
-	case MEM_OBJ_STRING_FRAG: {
+	case SEG_TYPE_STRING_FRAG: {
 		DebugPrintf("string frags\n");
 		break;
 	}
@@ -1642,7 +1642,7 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = _vm->_gamestate->segMan->getMemObject(addr.segment);
+	SegmentObj *mobj = _vm->_gamestate->segMan->getSegmentObj(addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return 1;
@@ -1671,7 +1671,7 @@ bool Console::cmdGCShowFreeable(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = _vm->_gamestate->segMan->getMemObject(addr.segment);
+	SegmentObj *mobj = _vm->_gamestate->segMan->getSegmentObj(addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
@@ -1701,7 +1701,7 @@ bool Console::cmdGCNormalize(int argc, const char **argv) {
 		return true;
 	}
 
-	MemObject *mobj = _vm->_gamestate->segMan->getMemObject(addr.segment);
+	SegmentObj *mobj = _vm->_gamestate->segMan->getSegmentObj(addr.segment);
 	if (!mobj) {
 		DebugPrintf("Unknown segment : %x\n", addr.segment);
 		return true;
@@ -2881,14 +2881,14 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 
 		// Now all values are available; iterate over all objects.
 		for (i = 0; i < s->segMan->_heap.size(); i++) {
-			MemObject *mobj = s->segMan->_heap[i];
+			SegmentObj *mobj = s->segMan->_heap[i];
 			int idx = 0;
 			int max_index = 0;
 
 			if (mobj) {
-				if (mobj->getType() == MEM_OBJ_SCRIPT)
+				if (mobj->getType() == SEG_TYPE_SCRIPT)
 					max_index = (*(Script *)mobj)._objects.size();
-				else if (mobj->getType() == MEM_OBJ_CLONES)
+				else if (mobj->getType() == SEG_TYPE_CLONES)
 					max_index = (*(CloneTable *)mobj)._table.size();
 			}
 
@@ -2899,10 +2899,10 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 				objpos.offset = 0;
 				objpos.segment = i;
 
-				if (mobj->getType() == MEM_OBJ_SCRIPT) {
+				if (mobj->getType() == SEG_TYPE_SCRIPT) {
 					obj = &(*(Script *)mobj)._objects[idx];
 					objpos.offset = obj->pos.offset;
-				} else if (mobj->getType() == MEM_OBJ_CLONES) {
+				} else if (mobj->getType() == SEG_TYPE_CLONES) {
 					obj = &((*(CloneTable *)mobj)._table[idx]);
 					objpos.offset = idx;
 					valid = ((CloneTable *)mobj)->isValidEntry(idx);
@@ -2983,7 +2983,7 @@ void Console::printList(List *l) {
 
 	while (!pos.isNull()) {
 		Node *node;
-		NodeTable *nt = (NodeTable *)GET_SEGMENT(*_vm->_gamestate->segMan, pos.segment, MEM_OBJ_NODES);
+		NodeTable *nt = (NodeTable *)GET_SEGMENT(*_vm->_gamestate->segMan, pos.segment, SEG_TYPE_NODES);
 
 		if (!nt || !nt->isValidEntry(pos.offset)) {
 			DebugPrintf("   WARNING: %04x:%04x: Doesn't contain list node!\n",
@@ -3010,7 +3010,7 @@ void Console::printList(List *l) {
 }
 
 int Console::printNode(reg_t addr) {
-	MemObject *mobj = GET_SEGMENT(*_vm->_gamestate->segMan, addr.segment, MEM_OBJ_LISTS);
+	SegmentObj *mobj = GET_SEGMENT(*_vm->_gamestate->segMan, addr.segment, SEG_TYPE_LISTS);
 
 	if (mobj) {
 		ListTable *lt = (ListTable *)mobj;
@@ -3027,7 +3027,7 @@ int Console::printNode(reg_t addr) {
 	} else {
 		NodeTable *nt;
 		Node *node;
-		mobj = GET_SEGMENT(*_vm->_gamestate->segMan, addr.segment, MEM_OBJ_NODES);
+		mobj = GET_SEGMENT(*_vm->_gamestate->segMan, addr.segment, SEG_TYPE_NODES);
 
 		if (!mobj) {
 			DebugPrintf("Segment #%04x is not a list or node segment\n", addr.segment);
@@ -3089,7 +3089,7 @@ int Console::printObject(reg_t pos) {
 		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
 	}
-	if (s->segMan->_heap[pos.segment]->getType() == MEM_OBJ_SCRIPT)
+	if (s->segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
 		DebugPrintf("\nOwner script:\t%d\n", s->segMan->getScript(pos.segment)->_nr);
 
 	return 0;

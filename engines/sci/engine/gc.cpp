@@ -53,7 +53,7 @@ static reg_t_hash_map *normalise_hashmap_ptrs(SegManager *segMan, reg_t_hash_map
 
 	for (reg_t_hash_map::iterator i = nonnormal_map.begin(); i != nonnormal_map.end(); ++i) {
 		reg_t reg = i->_key;
-		MemObject *mobj = (reg.segment < segMan->_heap.size()) ? segMan->_heap[reg.segment] : NULL;
+		SegmentObj *mobj = (reg.segment < segMan->_heap.size()) ? segMan->_heap[reg.segment] : NULL;
 
 		if (mobj) {
 			reg = mobj->findCanonicAddress(segMan, reg);
@@ -111,7 +111,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 	// Init: Explicitly loaded scripts
 	for (i = 1; i < segMan->_heap.size(); i++)
 		if (segMan->_heap[i]
-		        && segMan->_heap[i]->getType() == MEM_OBJ_SCRIPT) {
+		        && segMan->_heap[i]->getType() == SEG_TYPE_SCRIPT) {
 			Script *script = (Script *)segMan->_heap[i];
 
 			if (script->getLockers()) { // Explicitly loaded?
@@ -146,10 +146,10 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 struct deallocator_t {
 	SegManager *segMan;
-	MemObject *mobj;
+	SegmentObj *mobj;
 #ifdef DEBUG_GC
-	char *segnames[MEM_OBJ_MAX + 1];
-	int segcount[MEM_OBJ_MAX + 1];
+	char *segnames[SEG_TYPE_MAX + 1];
+	int segcount[SEG_TYPE_MAX + 1];
 #endif
 	reg_t_hash_map *use_map;
 };
@@ -176,7 +176,7 @@ void run_gc(EngineState *s) {
 
 #ifdef DEBUG_GC
 	debugC(2, kDebugLevelGC, "[GC] Running...\n");
-	memset(&(deallocator.segcount), 0, sizeof(int) * (MEM_OBJ_MAX + 1));
+	memset(&(deallocator.segcount), 0, sizeof(int) * (SEG_TYPE_MAX + 1));
 #endif
 
 	deallocator.segMan = segMan;
@@ -198,7 +198,7 @@ void run_gc(EngineState *s) {
 	{
 		int i;
 		debugC(2, kDebugLevelGC, "[GC] Summary:\n");
-		for (i = 0; i <= MEM_OBJ_MAX; i++)
+		for (i = 0; i <= SEG_TYPE_MAX; i++)
 			if (deallocator.segcount[i])
 				debugC(2, kDebugLevelGC, "\t%d\t* %s\n", deallocator.segcount[i], deallocator.segnames[i]);
 	}

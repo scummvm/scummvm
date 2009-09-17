@@ -217,21 +217,21 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(sync_heap_size);
 	_heap.resize(sync_heap_size);
 	for (uint i = 0; i < sync_heap_size; ++i) {
-		MemObject *&mobj = _heap[i];
+		SegmentObj *&mobj = _heap[i];
 
 		// Sync the memobj type
-		MemObjectType type = (s.isSaving() && mobj) ? mobj->getType() : MEM_OBJ_INVALID;
+		SegmentType type = (s.isSaving() && mobj) ? mobj->getType() : SEG_TYPE_INVALID;
 		s.syncAsUint32LE(type);
 
 		// If we were saving and mobj == 0, or if we are loading and this is an
 		// entry marked as empty -> skip to next
-		if (type == MEM_OBJ_INVALID) {
+		if (type == SEG_TYPE_INVALID) {
 			mobj = 0;
 			continue;
 		}
 
 		if (s.isLoading()) {
-			mobj = MemObject::createMemObject(type);
+			mobj = SegmentObj::createSegmentObj(type);
 		}
 		assert(mobj);
 
@@ -241,7 +241,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		mobj->saveLoadWithSerializer(s);
 
 		// If we are loading a script, hook it up in the script->segment map.
-		if (s.isLoading() && type == MEM_OBJ_SCRIPT) {
+		if (s.isLoading() && type == SEG_TYPE_SCRIPT) {
 			_scriptSegMap[((Script *)mobj)->_nr] = i;
 		}
 	}
@@ -525,7 +525,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
-	SegmentId stack_seg = retval->segMan->findSegmentByType(MEM_OBJ_STACK);
+	SegmentId stack_seg = retval->segMan->findSegmentByType(SEG_TYPE_STACK);
 	DataStack *stack = (DataStack *)(retval->segMan->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
@@ -553,14 +553,14 @@ static void load_script(EngineState *s, Script *scr) {
 // FIXME: The following should likely become a SegManager method
 static void reconstruct_scripts(EngineState *s, SegManager *self) {
 	uint i, j;
-	MemObject *mobj;
+	SegmentObj *mobj;
 	SciVersion version = self->sciVersion();	// for the selector defines
 
 	for (i = 0; i < self->_heap.size(); i++) {
 		if (self->_heap[i]) {
 			mobj = self->_heap[i];
 			switch (mobj->getType())  {
-			case MEM_OBJ_SCRIPT: {
+			case SEG_TYPE_SCRIPT: {
 				Script *scr = (Script *)mobj;
 
 				// FIXME: Unify this code with script_instantiate_*
@@ -597,7 +597,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 		if (self->_heap[i]) {
 			mobj = self->_heap[i];
 			switch (mobj->getType())  {
-			case MEM_OBJ_SCRIPT: {
+			case SEG_TYPE_SCRIPT: {
 				Script *scr = (Script *)mobj;
 
 				for (j = 0; j < scr->_objects.size(); j++) {
@@ -738,8 +738,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->game_obj = s->game_obj;
 	retval->script_000 = retval->segMan->getScript(retval->segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->sys_strings_segment = retval->segMan->findSegmentByType(MEM_OBJ_SYS_STRINGS);
-	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, MEM_OBJ_SYS_STRINGS);
+	retval->sys_strings_segment = retval->segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
+	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
 
 	// Restore system strings
 	SystemString *str;

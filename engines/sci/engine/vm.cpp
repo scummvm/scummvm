@@ -463,7 +463,7 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 #endif
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	MemObject *mobj = s->segMan->getMemObject(base.segment);
+	SegmentObj *mobj = s->segMan->getSegmentObj(base.segment);
 
 	if (!mobj) {
 		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x", offset, PRINT_REG(base));
@@ -472,13 +472,13 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 
 	switch (mobj->getType()) {
 
-	case MEM_OBJ_LOCALS:
+	case SEG_TYPE_LOCALS:
 		base.offset += 2 * offset;
 		return base;
 
-	case MEM_OBJ_SCRIPT:
-	case MEM_OBJ_STACK:
-	case MEM_OBJ_DYNMEM:
+	case SEG_TYPE_SCRIPT:
+	case SEG_TYPE_STACK:
+	case SEG_TYPE_DYNMEM:
 		base.offset += offset;
 		return base;
 		break;
