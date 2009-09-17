@@ -3133,7 +3133,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	int have_rects = 0;
 	Common::Rect nsrect, nsrect_clipped, brrect;
 
-	if (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsBottom, NULL) == kSelectorVariable) {
+	if (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorCache.nsBottom, NULL) == kSelectorVariable) {
 		GETRECT(nsLeft, nsRight, nsBottom, nsTop);
 		GETRECT(lsLeft, lsRight, lsBottom, lsTop);
 		GETRECT(brLeft, brRight, brBottom, brTop);
@@ -3147,7 +3147,7 @@ static void viewobjinfo(EngineState *s, HeapPtr pos) {
 	x = GET_SELECTOR(pos, x);
 	y = GET_SELECTOR(pos, y);
 	priority = GET_SELECTOR(pos, priority);
-	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.z > 0) {
+	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.z > 0) {
 		z = GET_SELECTOR(pos, z);
 		printf("(%d,%d,%d)\n", x, y, z);
 	} else
@@ -3211,10 +3211,10 @@ static int c_gfx_draw_viewobj(EngineState *s, const Common::Array<cmd_param_t> &
 	}
 
 
-	is_view = (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.x, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.brLeft, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.signal, NULL) == kSelectorVariable) &&
-	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorMap.nsTop, NULL) == kSelectorVariable);
+	is_view = (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorCache.x, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorCache.brLeft, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorCache.signal, NULL) == kSelectorVariable) &&
+	    (lookup_selector(s->segMan, pos, ((SciEngine*)g_engine)->getKernel()->_selectorCache.nsTop, NULL) == kSelectorVariable);
 
 	if (!is_view) {
 		printf("Not a dynamic View object.\n");

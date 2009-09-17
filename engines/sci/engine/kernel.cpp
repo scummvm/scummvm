@@ -380,8 +380,6 @@ static const char *argtype_description[] = {
 };
 
 Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
-	memset(&_selectorMap, 0, sizeof(_selectorMap));	// FIXME: Remove this once/if we C++ify selector_map_t
-
 	loadSelectorNames();
 	detectSciFeatures();
 
@@ -404,7 +402,7 @@ void Kernel::detectSciFeatures() {
 	if (version == SCI_VERSION_0_EARLY) {
 		features |= kFeatureOldScriptHeader | kFeatureOldGfxFunctions;
 	} else if (version == SCI_VERSION_0_LATE) {
-		if (_selectorMap.motionCue == -1)
+		if (_selectorCache.motionCue == -1)
 			features |= kFeatureOldGfxFunctions;
 	}
 

@@ -99,7 +99,7 @@ public:
 	void dumpScriptObject(char *data, int seeker, int objsize);
 	void dumpScriptClass(char *data, int seeker, int objsize);
 
-	selector_map_t _selectorMap; /**< Shortcut list for important selectors */
+	SelectorCache _selectorCache; /**< Shortcut list for important selectors */
 	Common::Array<KernelFuncWithSignature> _kernelFuncs; /**< Table of kernel functions */
 
 private:
@@ -172,32 +172,32 @@ enum SelectorInvocation {
 	kContinueOnInvalidSelector = 1
 };
 
-#define GET_SEL32(_o_, _slc_) read_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, __FILE__, __LINE__)
+#define GET_SEL32(_o_, _slc_) read_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, __FILE__, __LINE__)
 #define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
 /* Retrieves a selector from an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be read from
 **             (selector_name) selector: The selector to read
 ** Returns   : (int16/uint16/reg_t) The selector value
 ** This macro halts on error. 'selector' must be a selector name registered in vm.h's
-** selector_map_t and mapped in script.c.
+** SelectorCache and mapped in script.cpp.
 */
 
-#define PUT_SEL32(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorMap._slc_, make_reg(0, _val_), __FILE__, __LINE__)
+#define PUT_SEL32(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, _val_, __FILE__, __LINE__)
+#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, make_reg(0, _val_), __FILE__, __LINE__)
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read
 **             (int16) value: The value to write
 ** Returns   : (void)
 ** This macro halts on error. 'selector' must be a selector name registered in vm.h's
-** selector_map_t and mapped in script.c.
+** SelectorCache and mapped in script.cpp.
 */
 
 
 enum { WAS_FUNCT_NR = -1 };
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  ((SciEngine*)g_engine)->getKernel()->_selectorMap._selector_, _noinvalid_, WAS_FUNCT_NR, argv, argc, __FILE__, __LINE__
+	s, _object_,  ((SciEngine*)g_engine)->getKernel()->_selectorCache._selector_, _noinvalid_, WAS_FUNCT_NR, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */

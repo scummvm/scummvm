@@ -1861,7 +1861,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			script_init_engine(s);
 			game_init(s);
 			sfx_reset_player();
-			_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorMap.play);
+			_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorCache.play);
 
 			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 
@@ -1880,7 +1880,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 					debugC(2, kDebugLevelVM, "Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
-					_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorMap.replay);
+					_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorCache.replay);
 
 					send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 				}
@@ -1899,7 +1899,7 @@ int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
 	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameName.c_str());
-	_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorMap.play); // Call the play selector
+	_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorCache.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {

@@ -110,7 +110,11 @@ struct Class {
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
 
 /** Contains selector IDs for a few selected selectors */
-struct selector_map_t {
+struct SelectorCache {
+	SelectorCache() {
+		memset(this, 0, sizeof(*this));
+	}
+
 	Selector init; /**< Init function */
 	Selector play; /**< Play function (first function to be called) */
 	Selector replay; /**< Replay function */

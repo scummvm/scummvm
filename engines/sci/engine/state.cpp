@@ -180,7 +180,7 @@ Common::String EngineState::getLanguageString(const char *str, kLanguage lang) c
 kLanguage EngineState::getLanguage() {
 	kLanguage lang = K_LANG_ENGLISH;
 
-	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.printLang != -1) {
+	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.printLang != -1) {
 		lang = (kLanguage)GET_SEL32V(this->game_obj, printLang);
 
 		if ((segMan->sciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
@@ -227,7 +227,7 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	kLanguage lang = getLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (((SciEngine*)g_engine)->getKernel()->_selectorMap.subtitleLang != -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.subtitleLang != -1)
 		subLang = (kLanguage)GET_SEL32V(this->game_obj, subtitleLang);
 
 	Common::String retval = getLanguageString(str, lang);
@@ -273,7 +273,7 @@ SciVersion EngineState::detectDoSoundType() {
 		reg_t soundClass;
 
 		if (!parse_reg_t(this, "?Sound", &soundClass)) {
-			int sum = methodChecksum(soundClass, ((SciEngine *)g_engine)->getKernel()->_selectorMap.play, -6, 6);
+			int sum = methodChecksum(soundClass, ((SciEngine *)g_engine)->getKernel()->_selectorCache.play, -6, 6);
 
 			switch(sum) {
 			case 0x1B2: // SCI0
@@ -310,7 +310,7 @@ SciVersion EngineState::detectDoSoundType() {
 
 SciVersion EngineState::detectSetCursorType() {
 	if (_setCursorType == SCI_VERSION_AUTODETECT) {
-		int sum = methodChecksum(game_obj, ((SciEngine *)g_engine)->getKernel()->_selectorMap.setCursor, 0, 21);
+		int sum = methodChecksum(game_obj, ((SciEngine *)g_engine)->getKernel()->_selectorCache.setCursor, 0, 21);
 
 		if ((sum == 0x4D5) || (sum == 0x552)) {
 			// Standard setCursor
