@@ -204,7 +204,7 @@ int LoLEngine::olol_moveParty(EMCState *script) {
 
 int LoLEngine::olol_delay(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_delay(%p) (%d)", (const void *)script, stackPos(0));
-	delay(stackPos(0) * _tickLength);
+	delay(stackPos(0) * _tickLength, true);
 	return 1;
 }
 
