@@ -564,7 +564,7 @@ static void kernel_compile_signature(const char **s) {
 void Kernel::mapFunctions() {
 	int mapped = 0;
 	int ignored = 0;
-	uint functions_nr = getKernelNamesSize();
+	uint functions_nr = _kernelNames.size();
 
 	_kernelFuncs.resize(functions_nr);
 
@@ -572,9 +572,7 @@ void Kernel::mapFunctions() {
 		int found = -1;
 
 		// First, get the name, if known, of the kernel function with number functnr
-		Common::String sought_name;
-		if (functnr < getKernelNamesSize())
-			sought_name = getKernelName(functnr);
+		Common::String sought_name = _kernelNames[functnr];
 
 		// Reset the table entry
 		_kernelFuncs[functnr].fun = NULL;
@@ -613,7 +611,7 @@ void Kernel::mapFunctions() {
 	} // for all functions requesting to be mapped
 
 	debugC(2, kDebugLevelVM, "Handled %d/%d kernel functions, mapping %d and ignoring %d.\n", 
-				mapped + ignored, getKernelNamesSize(), mapped, ignored);
+				mapped + ignored, _kernelNames.size(), mapped, ignored);
 
 	return;
 }
@@ -720,6 +718,10 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 
 void Kernel::setDefaultKernelNames() {
 	_kernelNames = Common::StringList(sci_default_knames, SCI_KNAMES_DEFAULT_ENTRIES_NR);
+
+	// Some (later) SCI versions replaced CanBeHere by CantBeHere
+	if (_selectorCache.cantBeHere != -1)
+		_kernelNames[0x4d] = "CantBeHere";
 
 	switch (_resMan->sciVersion()) {
 	case SCI_VERSION_0_EARLY:
