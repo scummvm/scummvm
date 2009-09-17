@@ -269,7 +269,9 @@ enum kExtractID {
 };
 
 struct ExtractEntrySearchData {
-	int specialId;
+	int lang;
+	int platform;
+
 	SearchData hint;
 };
 
@@ -339,12 +341,13 @@ enum kGame {
 struct Game {
 	int game;
 	int lang;
+	int platform;
 	int special;
 
 	const char *md5;
 };
 
-#define GAME_DUMMY_ENTRY { -1, -1, -1, 0 }
+#define GAME_DUMMY_ENTRY { -1, -1, -1, -1, 0 }
 
 struct GameNeed {
 	int game;

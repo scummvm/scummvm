@@ -710,82 +710,82 @@ const Language languageTable[] = {
 
 const Game kyra1Games[] = {
 	// Demos
-	{ kKyra1, EN_ANY, kDemoVersion, "7b7504c8560ffc914d34c44c71b3094c" },
-	{ kKyra1, EN_ANY, kDemoCDVersion, "226fdba99cb11ef1047131d9a50e6292" },
+	{ kKyra1, EN_ANY, kPlatformPC, kDemoVersion, "7b7504c8560ffc914d34c44c71b3094c" },
+	{ kKyra1, EN_ANY, kPlatformPC, kDemoCDVersion, "226fdba99cb11ef1047131d9a50e6292" },
 
 	// Amiga
-	{ kKyra1, EN_ANY, kAmigaVersion, "b620564b6b7e0787b053ca9e35bd9f52" },
+	{ kKyra1, EN_ANY, kPlatformAmiga, kAmigaVersion, "b620564b6b7e0787b053ca9e35bd9f52" },
 
 	// Floppy
-	{ kKyra1, EN_ANY, -1, "76a4fc84e173cadb6369785787e1546e" },
-	{ kKyra1, DE_DEU, -1, "9442d6f7db6a41f3dd4aa4de5d36e107" },
-	{ kKyra1, FR_FRA, -1, "aa9d6d78d8b199deaf48efeca6d19af2" },
-	{ kKyra1, IT_ITA, -1, "5d7550306b369a3492f9f3402702477c" },
-	{ kKyra1, ES_ESP, -1, "9ff130d2558bcd674d4074849d93c362" },
+	{ kKyra1, EN_ANY, kPlatformPC, -1, "76a4fc84e173cadb6369785787e1546e" },
+	{ kKyra1, DE_DEU, kPlatformPC, -1, "9442d6f7db6a41f3dd4aa4de5d36e107" },
+	{ kKyra1, FR_FRA, kPlatformPC, -1, "aa9d6d78d8b199deaf48efeca6d19af2" },
+	{ kKyra1, IT_ITA, kPlatformPC, -1, "5d7550306b369a3492f9f3402702477c" },
+	{ kKyra1, ES_ESP, kPlatformPC, -1, "9ff130d2558bcd674d4074849d93c362" },
 
 	// Talkie
-	{ kKyra1, EN_ANY, kTalkieVersion, "1ebc18f3e7fbb72474a55cb0fa089ed4" },
-	{ kKyra1, DE_DEU, kTalkieVersion, "c65d381184f98ac26d9efd2d45baef51" },
-	{ kKyra1, FR_FRA, kTalkieVersion, "307c5d4a554d9068ac3d326e350ae4a6" },
-	{ kKyra1, IT_ITA, kTalkieVersion, "d0f1752098236083d81b9497bd2b6989" }, // Italian fan translation
+	{ kKyra1, EN_ANY, kPlatformPC, kTalkieVersion, "1ebc18f3e7fbb72474a55cb0fa089ed4" },
+	{ kKyra1, DE_DEU, kPlatformPC, kTalkieVersion, "c65d381184f98ac26d9efd2d45baef51" },
+	{ kKyra1, FR_FRA, kPlatformPC, kTalkieVersion, "307c5d4a554d9068ac3d326e350ae4a6" },
+	{ kKyra1, IT_ITA, kPlatformPC, kTalkieVersion, "d0f1752098236083d81b9497bd2b6989" }, // Italian fan translation
 
 	// FM-TOWNS
-	{ kKyra1, EN_ANY, kFMTownsVersionE, "5a3ad60ccd0f2e29463e0368cd14a60d" },
-	{ kKyra1, JA_JPN, kFMTownsVersionJ, "5a3ad60ccd0f2e29463e0368cd14a60d" },
+	{ kKyra1, EN_ANY, kPlatformFMTowns, kFMTownsVersionE, "5a3ad60ccd0f2e29463e0368cd14a60d" },
+	{ kKyra1, JA_JPN, kPlatformFMTowns, kFMTownsVersionJ, "5a3ad60ccd0f2e29463e0368cd14a60d" },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game kyra2Games[] = {
 	// demos
-	{ kKyra2, EN_ANY, k2DemoVersion, "a620a37579dd44ab0403482285e3897f" },
-	{ kKyra2, EN_ANY, k2CDDemoE, "fa54d8abfe05f9186c05f7de7eaf1480" },
-	{ kKyra2, FR_FRA, k2CDDemoF, "fa54d8abfe05f9186c05f7de7eaf1480" },
-	{ kKyra2, DE_DEU, k2CDDemoG, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, EN_ANY, kPlatformPC, k2DemoVersion, "a620a37579dd44ab0403482285e3897f" },
+	{ kKyra2, EN_ANY, kPlatformPC, k2CDDemoE, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, FR_FRA, kPlatformPC, k2CDDemoF, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, DE_DEU, kPlatformPC, k2CDDemoG, "fa54d8abfe05f9186c05f7de7eaf1480" },
 
 	// floppy games
-	{ kKyra2, EN_ANY, k2FloppyFile1, "9b0f5e57b5a2ed88b5b989cbb402b6c7" },
-	{ kKyra2, FR_FRA, k2FloppyFile1, "df31cc9e37e1cf68df2fdc75ddf2d87b" },
-	{ kKyra2, DE_DEU, k2FloppyFile1, "0ca4f9a1438264a4c63c3218e064ed3b" },
-	{ kKyra2, IT_ITA, k2FloppyFile1, "178d3ab913f61bfba21d2fb196405e8c" },
-	{ kKyra2, EN_ANY, k2FloppyFile2, "7c3eadbe5122722cf2e5e1611e19dfb9" },
-	{ kKyra2, FR_FRA, k2FloppyFile2, "fc2c6782778e6c6d5a553d1cb73c98ad" },
-	{ kKyra2, DE_DEU, k2FloppyFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf" },
-	{ kKyra2, IT_ITA, k2FloppyFile2, "3a61ed6b7c00ddae383a0361799e2ba6" },
+	{ kKyra2, EN_ANY, kPlatformPC, k2FloppyFile1, "9b0f5e57b5a2ed88b5b989cbb402b6c7" },
+	{ kKyra2, FR_FRA, kPlatformPC, k2FloppyFile1, "df31cc9e37e1cf68df2fdc75ddf2d87b" },
+	{ kKyra2, DE_DEU, kPlatformPC, k2FloppyFile1, "0ca4f9a1438264a4c63c3218e064ed3b" },
+	{ kKyra2, IT_ITA, kPlatformPC, k2FloppyFile1, "178d3ab913f61bfba21d2fb196405e8c" },
+	{ kKyra2, EN_ANY, kPlatformPC, k2FloppyFile2, "7c3eadbe5122722cf2e5e1611e19dfb9" },
+	{ kKyra2, FR_FRA, kPlatformPC, k2FloppyFile2, "fc2c6782778e6c6d5a553d1cb73c98ad" },
+	{ kKyra2, DE_DEU, kPlatformPC, k2FloppyFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf" },
+	{ kKyra2, IT_ITA, kPlatformPC, k2FloppyFile2, "3a61ed6b7c00ddae383a0361799e2ba6" },
 
 	// talkie games
-	{ kKyra2, EN_ANY, k2CDFile1E, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
-	{ kKyra2, FR_FRA, k2CDFile1F, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
-	{ kKyra2, DE_DEU, k2CDFile1G, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
-	{ kKyra2, EN_ANY, k2CDFile2E, "e20d0d2e500f01e399ec588247a7e213" },
-	{ kKyra2, FR_FRA, k2CDFile2F, "e20d0d2e500f01e399ec588247a7e213" },
-	{ kKyra2, DE_DEU, k2CDFile2G, "e20d0d2e500f01e399ec588247a7e213" },
-	{ kKyra2, IT_ITA, k2CDFile1I, "130795aa8f2333250c895dae9028b9bb" }, // Italian Fan Translation (using same offsets as English)
+	{ kKyra2, EN_ANY, kPlatformPC, k2CDFile1E, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
+	{ kKyra2, FR_FRA, kPlatformPC, k2CDFile1F, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
+	{ kKyra2, DE_DEU, kPlatformPC, k2CDFile1G, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
+	{ kKyra2, EN_ANY, kPlatformPC, k2CDFile2E, "e20d0d2e500f01e399ec588247a7e213" },
+	{ kKyra2, FR_FRA, kPlatformPC, k2CDFile2F, "e20d0d2e500f01e399ec588247a7e213" },
+	{ kKyra2, DE_DEU, kPlatformPC, k2CDFile2G, "e20d0d2e500f01e399ec588247a7e213" },
+	{ kKyra2, IT_ITA, kPlatformPC, k2CDFile1I, "130795aa8f2333250c895dae9028b9bb" }, // Italian Fan Translation (using same offsets as English)
 
 	// FM-TOWNS games
-	{ kKyra2, EN_ANY, k2TownsFile1E, "74f50d79c919cc8e7196c24942ce43d7" },
-	{ kKyra2, JA_JPN, k2TownsFile1J, "74f50d79c919cc8e7196c24942ce43d7" },
-	{ kKyra2, EN_ANY, k2TownsFile2E, "a9a7fd4f05d00090e9e8bda073e6d431" },
-	{ kKyra2, JA_JPN, k2TownsFile2J, "a9a7fd4f05d00090e9e8bda073e6d431" },
+	{ kKyra2, EN_ANY, kPlatformFMTowns, k2TownsFile1E, "74f50d79c919cc8e7196c24942ce43d7" },
+	{ kKyra2, JA_JPN, kPlatformFMTowns, k2TownsFile1J, "74f50d79c919cc8e7196c24942ce43d7" },
+	{ kKyra2, EN_ANY, kPlatformFMTowns, k2TownsFile2E, "a9a7fd4f05d00090e9e8bda073e6d431" },
+	{ kKyra2, JA_JPN, kPlatformFMTowns, k2TownsFile2J, "a9a7fd4f05d00090e9e8bda073e6d431" },
 
 	GAME_DUMMY_ENTRY
 };
 
 const Game kyra3Games[] = {
-	{ kKyra3, EN_ANY, -1, "bf68701eb591d0b72219f314c0d32688" },
+	{ kKyra3, EN_ANY, kPlatformPC, -1, "bf68701eb591d0b72219f314c0d32688" },
 	GAME_DUMMY_ENTRY
 };
 
 const Game lolGames[] = {
 	// DOS demo
-	{ kLol, EN_ANY, k2DemoLol, "30bb5af87d38adb47d3e6ce06b1cb042" },
+	{ kLol, EN_ANY, kPlatformPC, k2DemoLol, "30bb5af87d38adb47d3e6ce06b1cb042" },
 
 	// DOS floppy
-	{ kLol, EN_ANY, -1, "6b843869772c1b779e1386be868c15dd" },
+	{ kLol, EN_ANY, kPlatformPC, -1, "6b843869772c1b779e1386be868c15dd" },
 
 	// DOS CD
-	{ kLol, EN_ANY, kLolCD1, "9d1778314de80598c0b0d032e2a1a1cf" },
-	{ kLol, EN_ANY, kLolCD2, "263998ec600afca1cc7b935c473df670" },
+	{ kLol, EN_ANY, kPlatformPC, kLolCD1, "9d1778314de80598c0b0d032e2a1a1cf" },
+	{ kLol, EN_ANY, kPlatformPC, kLolCD2, "263998ec600afca1cc7b935c473df670" },
 
 	GAME_DUMMY_ENTRY
 };

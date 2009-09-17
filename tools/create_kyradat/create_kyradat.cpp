@@ -1055,8 +1055,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	bool allDataPresentAlready = true;
 
 	for (const int *entry = needList; *entry != -1; ++entry) {
-		bool found = false;
-
 		// Try whether the data is present in the kyra.dat file already
 		filename[0] = 0;
 		if (!getFilename(filename, g, *entry))
@@ -1070,11 +1068,13 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 		allDataPresentAlready = false;
 
+		bool found = false;
+
 		for (const ExtractEntry *p = extractProviders; p->id != -1; ++p) {
 			if (p->id == *entry) {
-				// First check for special search ids
+				// First check for language and platform specific search data
 				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
-					if (d->specialId == g->special) {
+					if (d->lang == g->lang && d->platform == g->platform) {
 						found = true;
 
 						search.addData(d->hint);
@@ -1088,7 +1088,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 				// Add non special variants
 				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
-					if (d->specialId == -1) {
+					if (d->lang == UNK_LANG || d->platform == kPlatformUnknown) {
 						found = true;
 
 						search.addData(d->hint);

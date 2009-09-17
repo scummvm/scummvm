@@ -232,6 +232,30 @@ void NORETURN_PRE error(const char *s, ...) NORETURN_POST;
 void warning(const char *s, ...);
 void debug(int level, const char *s, ...);
 
+enum Platform {
+	kPlatformPC,
+	kPlatformAmiga,
+	kPlatformAtariST,
+	kPlatformMacintosh,
+	kPlatformFMTowns,
+	kPlatformWindows,
+	kPlatformNES,
+	kPlatformC64,
+	kPlatformCoCo3,
+	kPlatformLinux,
+	kPlatformAcorn,
+	kPlatformSegaCD,
+	kPlatform3DO,
+	kPlatformPCEngine,
+
+	kPlatformApple2GS,
+	kPlatformPC98,
+	kPlatformWii,
+	kPlatformPSX,
+
+	kPlatformUnknown = -1
+};
+
 enum {
 	EN_ANY,     // Generic English (when only one game version exist)
 	EN_USA,
