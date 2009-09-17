@@ -738,7 +738,9 @@ int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	// Also the Ninteno DS backend seems only to update the sound, when
 	// either OSystem::updateScreen or OSystem::delayMillis is called.
 	// So we have to call delay here, since otherwise the game would hang.
+#ifndef __DS__
 	if (_currentScene == 16 && _currentChapter == 1)
+#endif
 		delay(_tickLength);
 
 	return _sound->voiceIsPlaying() ? 1 : 0;
