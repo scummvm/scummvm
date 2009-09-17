@@ -753,7 +753,6 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
-#if 0
 	// Jones in the Fast Lane - English DOS
 	// SCI interpreter version 1.000.172
 	{{"jones", "", {
@@ -763,7 +762,14 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0
 	},
-#endif
+
+	// Jones in the Fast Lane - English DOS CD
+	{{"jones", "", {
+		{"resource.map", 0, "459f5b04467bc2107aec02f5c4b71b37", 4878},
+		{"resource.001", 0, "3876da2ce16fb7dea2f5d943d946fa84", 1652150},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NONE},
+		0
+	},
 
 	// King's Quest 1 SCI Remake - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.003.007"
@@ -2428,7 +2434,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{{"rama", "Demo", {
 		{"resmap.001", 0, "775304e9b2a545156be4d94209550094", 1393},
 		{"ressci.001", 0, "259437fd75fdf51e8207fda8c01fa4fd", 2334384},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE},
 		0
 	},
 
@@ -2441,7 +2447,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"ressci.002", 0, "2a68edd064e5e4937b5e9c74b38f2082", 128562138},
 		{"resmap.003", 0, "31ef4c0621711585d031f0ae81707251", 1636},
 		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6860492},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE},
+		0
+	},
+
+	// RAMA - English Windows (from Quietust, in bug report #2850645)
+	{{"rama", "", {
+		{"resmap.001", 0, "4a2f3dd87f8033dc0deac43e820cc1ca", 8338},
+		{"ressci.001", 0, "2a68edd064e5e4937b5e9c74b38f2082", 70599164},
+		{"resmap.002", 0, "039d7a2191e3ab3d3ae9c12f208aab0e", 12082},
+		{"ressci.002", 0, "2a68edd064e5e4937b5e9c74b38f2082", 128572432},
+		{"resmap.003", 0, "48841e4b84ef1b98b48d43566fda9e13", 1636},
+		{"ressci.003", 0, "2a68edd064e5e4937b5e9c74b38f2082", 6870356},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE},
 		0
 	},
 
@@ -2459,7 +2477,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{{"shivers", "", {
 		{"resmap.000", 0, "f2ead37749ed8f6535a2445a7d05a0cc", 46525},
 		{"ressci.000", 0, "4294c6d7510935f2e0a52e302073c951", 262654836},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, 0, GUIO_NONE},
 		0
 	},
 
@@ -2467,7 +2485,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{{"shivers", "", {
 		{"resmap.000", 0, "f483d0a1f78334c18052e92785c3086e", 46537},
 		{"ressci.000", 0, "6751b144671e2deed919eb9d284b07eb", 262390692},
-		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::DE_DEU, Common::kPlatformWindows, 0, GUIO_NONE},
 		0
 	},
 
@@ -2476,7 +2494,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{{"shivers", "Demo", {
 		{"resmap.000", 0, "d9e0bc5eddefcbe47f528760085d8927", 1186},
 		{"ressci.000", 0, "3a93c6340b54e07e65d0e5583354d186", 10505469},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE},
 		0
 	},
 
@@ -2485,7 +2503,7 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 	{{"shivers2", "Demo", {
 		{"resmap.000", 0, "d8659188b84beaef076bd869837cd530", 634},
 		{"ressci.000", 0, "7fbac0807a044c9543e8ac376d200e59", 4925003},
-		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NOSPEECH},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_NONE},
 		0
 	},
 #endif // ENABLE_SCI32
