@@ -735,7 +735,7 @@ int KyraEngine_HoF::o2_isAnySoundPlaying(EMCState *script) {
 	// song, to finish. To avoid too much CPU use, we add some slight
 	// delay here.
 	//
-	// Also the Ninteno DS backend seems only to update the sound, when
+	// Also the Nintendo DS backend seems only to update the sound, when
 	// either OSystem::updateScreen or OSystem::delayMillis is called.
 	// So we have to call delay here, since otherwise the game would hang.
 #ifndef __DS__
