@@ -322,12 +322,7 @@ const SpecialExtension specialTable[] = {
 	{ kTalkieFile1, "CD" },
 	{ kTalkieFile2, "CD" },
 
-	{ k2CDDemoE, "CD" },
-	{ k2CDDemoF, "CD" },
-	{ k2CDDemoG, "CD" },
-
-	{ k2DemoVersion, "DEM" },
-	{ k2DemoLol, "DEM" },
+	{ k2CDDemo, "CD" },
 
 	{ -1, 0 }
 };
@@ -371,10 +366,9 @@ uint32 getFeatures(const Game *g) {
 	uint32 features = 0;
 
 	if (g->special == kTalkieVersion || g->special == kTalkieFile1 || g->special == kTalkieFile2
-			|| g->special == k2CDDemoE || g->special == k2CDDemoF || g->special == k2CDDemoG
-			|| g->game == kKyra3)
+			|| g->special == k2CDDemo || g->game == kKyra3)
 		features |= GF_TALKIE;
-	else if (g->special == kDemoVersion || g->special == k2DemoVersion || g->special == k2DemoLol)
+	else if (g->special == kDemoVersion)
 		features |= GF_DEMO;
 	else if (g->special == kDemoCDVersion)
 		features |= (GF_DEMO | GF_TALKIE);

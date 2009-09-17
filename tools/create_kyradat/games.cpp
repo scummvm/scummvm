@@ -56,20 +56,20 @@ const Game kyra1Games[] = {
 
 const Game kyra2Games[] = {
 	// demos
-	{ kKyra2, EN_ANY, kPlatformPC, k2DemoVersion, "a620a37579dd44ab0403482285e3897f" },
-	{ kKyra2, EN_ANY, kPlatformPC, k2CDDemoE, "fa54d8abfe05f9186c05f7de7eaf1480" },
-	{ kKyra2, FR_FRA, kPlatformPC, k2CDDemoF, "fa54d8abfe05f9186c05f7de7eaf1480" },
-	{ kKyra2, DE_DEU, kPlatformPC, k2CDDemoG, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, EN_ANY, kPlatformPC, kDemoVersion, "a620a37579dd44ab0403482285e3897f" },
+	{ kKyra2, EN_ANY, kPlatformPC, k2CDDemo, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, FR_FRA, kPlatformPC, k2CDDemo, "fa54d8abfe05f9186c05f7de7eaf1480" },
+	{ kKyra2, DE_DEU, kPlatformPC, k2CDDemo, "fa54d8abfe05f9186c05f7de7eaf1480" },
 
 	// floppy games
-	{ kKyra2, EN_ANY, kPlatformPC, k2FloppyFile1, "9b0f5e57b5a2ed88b5b989cbb402b6c7" },
-	{ kKyra2, FR_FRA, kPlatformPC, k2FloppyFile1, "df31cc9e37e1cf68df2fdc75ddf2d87b" },
-	{ kKyra2, DE_DEU, kPlatformPC, k2FloppyFile1, "0ca4f9a1438264a4c63c3218e064ed3b" },
-	{ kKyra2, IT_ITA, kPlatformPC, k2FloppyFile1, "178d3ab913f61bfba21d2fb196405e8c" },
-	{ kKyra2, EN_ANY, kPlatformPC, k2FloppyFile2, "7c3eadbe5122722cf2e5e1611e19dfb9" },
-	{ kKyra2, FR_FRA, kPlatformPC, k2FloppyFile2, "fc2c6782778e6c6d5a553d1cb73c98ad" },
-	{ kKyra2, DE_DEU, kPlatformPC, k2FloppyFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf" },
-	{ kKyra2, IT_ITA, kPlatformPC, k2FloppyFile2, "3a61ed6b7c00ddae383a0361799e2ba6" },
+	{ kKyra2, EN_ANY, kPlatformPC, kFile1, "9b0f5e57b5a2ed88b5b989cbb402b6c7" },
+	{ kKyra2, FR_FRA, kPlatformPC, kFile1, "df31cc9e37e1cf68df2fdc75ddf2d87b" },
+	{ kKyra2, DE_DEU, kPlatformPC, kFile1, "0ca4f9a1438264a4c63c3218e064ed3b" },
+	{ kKyra2, IT_ITA, kPlatformPC, kFile1, "178d3ab913f61bfba21d2fb196405e8c" },
+	{ kKyra2, EN_ANY, kPlatformPC, kFile2, "7c3eadbe5122722cf2e5e1611e19dfb9" },
+	{ kKyra2, FR_FRA, kPlatformPC, kFile2, "fc2c6782778e6c6d5a553d1cb73c98ad" },
+	{ kKyra2, DE_DEU, kPlatformPC, kFile2, "0d9b0eb7b0ad889ec942d74d80dde1bf" },
+	{ kKyra2, IT_ITA, kPlatformPC, kFile2, "3a61ed6b7c00ddae383a0361799e2ba6" },
 
 	// talkie games
 	{ kKyra2, EN_ANY, kPlatformPC, kTalkieFile1, "85bbc1cc6c4cef6ad31fc6ee79518efb" },
@@ -98,7 +98,7 @@ const Game kyra3Games[] = {
 
 const Game lolGames[] = {
 	// DOS demo
-	{ kLol, EN_ANY, kPlatformPC, k2DemoLol, "30bb5af87d38adb47d3e6ce06b1cb042" },
+	{ kLol, EN_ANY, kPlatformPC, kDemoVersion, "30bb5af87d38adb47d3e6ce06b1cb042" },
 
 	// DOS floppy (no language specifc strings)
 	{ kLol, DE_DEU, kPlatformPC, -1, "6b843869772c1b779e1386be868c15dd" },
@@ -772,26 +772,22 @@ const GameNeed gameNeedTable[] = {
 
 	{ kKyra1, kPlatformPC, kDemoCDVersion, kyra1DemoCDNeed },
 
-	{ kKyra2, kPlatformPC, k2FloppyFile1, kyra2FloppyFile1Need },
-	{ kKyra2, kPlatformPC, k2FloppyFile2, kyra2FloppyFile2Need },
+	{ kKyra2, kPlatformPC, kFile1, kyra2FloppyFile1Need },
+	{ kKyra2, kPlatformPC, kFile2, kyra2FloppyFile2Need },
 
 	{ kKyra2, kPlatformPC, kTalkieFile1, kyra2CDFile1Need },
 	{ kKyra2, kPlatformPC, kTalkieFile2, kyra2CDFile2Need },
 
-	{ kKyra2, kPlatformPC, k2CDDemoE, kyra2CDDemoNeed },
-	{ kKyra2, kPlatformPC, k2CDDemoF, kyra2CDDemoNeed },
-	{ kKyra2, kPlatformPC, k2CDDemoG, kyra2CDDemoNeed },
+	{ kKyra2, kPlatformPC, k2CDDemo, kyra2CDDemoNeed },
 
 	{ kKyra2, kPlatformFMTowns, kFile1, kyra2TownsFile1Need },
 	{ kKyra2, kPlatformFMTowns, kFile2, kyra2TownsFile2Need },
 
-	{ kKyra2, kPlatformPC, k2DemoVersion, kyra2DemoNeed },
+	{ kKyra2, kPlatformPC, kDemoVersion, kyra2DemoNeed },
 
-	{ kKyra2, kPlatformPC, k2DemoVersionTlkE, kyra2TlkDemoNeed },
-	{ kKyra2, kPlatformPC, k2DemoVersionTlkF, kyra2TlkDemoNeed },
-	{ kKyra2, kPlatformPC, k2DemoVersionTlkG, kyra2TlkDemoNeed },
+	{ kKyra2, kPlatformPC, k2DemoVersionTlk, kyra2TlkDemoNeed },
 
-	{ kLol, kPlatformPC, k2DemoLol, lolDemoNeed },
+	{ kLol, kPlatformPC, kDemoVersion, lolDemoNeed },
 
 	{ kKyra3, kPlatformPC, -1, kyra3Need },
 

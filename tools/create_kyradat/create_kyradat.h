@@ -285,23 +285,13 @@ enum kSpecial {
 	kTalkieVersion = 0,
 	kDemoVersion,
 
-	k2CDDemoE,
-	k2CDDemoF,
-	k2CDDemoG,
-
 	kFile1,
 	kFile2,
 	kTalkieFile1,
 	kTalkieFile2,
 
-	k2FloppyFile1,
-	k2FloppyFile2,
-
-	k2DemoVersion,
-	k2DemoVersionTlkE,
-	k2DemoVersionTlkF,
-	k2DemoVersionTlkG,
-	k2DemoLol,
+	k2DemoVersionTlk,
+	k2CDDemo,
 
 	// special case for Kyrandia 1 CD demo
 	kDemoCDVersion

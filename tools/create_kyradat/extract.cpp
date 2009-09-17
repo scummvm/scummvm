@@ -172,9 +172,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 			fmtPatch = 2;
 		else if (id == k2SeqplayStrings)
 			fmtPatch = 3;
-	}
-
-	if (g->special == k2FloppyFile2) {
+	} else if (g->platform == kPlatformPC && g->special == kFile2) {
 		if (id == k2IngamePakFiles)
 			fmtPatch = 4;
 	}
@@ -446,7 +444,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 		const byte *ptr = data;
 		hdout++;
 
-		const byte * endOffs = (const byte *)(data + size);
+		const byte *endOffs = (const byte *)(data + size);
 
 		// detect sequence structs
 		while (ptr < endOffs) {
@@ -459,7 +457,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 			int v = extractHofSeqData_isSequence(ptr, g, endOffs - ptr);
 
 			if (cycle == 0 && v == 1) {
-				if ((g->special == k2FloppyFile1 && *ptr == 5) || (g->special == k2DemoVersion && (ptr - data == 312))) {
+				if ((g->platform == kPlatformPC && g->special == kFile1 && *ptr == 5) || (g->special == kDemoVersion && (ptr - data == 312))) {
 					// patch for floppy version: skips invalid ferb sequence
 					// patch for demo: skips invalid title sequence
 					ptr += 54;
@@ -516,7 +514,7 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 
 					ctrSize = (uint16)(ptr - ctrStart);
 
-					if (g->special != k2DemoVersion &&
+					if (g->special != kDemoVersion &&
 						extractHofSeqData_isControl(ctrStart, ctrSize)) {
 						controlOffs = (uint16) (output - buffer);
 						*output++ = ctrSize >> 2;
@@ -567,11 +565,11 @@ bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint
 					controlOffs = 0;
 
 				WRITE_BE_UINT16(output, controlOffs);
-				if (g->special != k2DemoVersion && g->special != k2DemoLol)
+				if (g->special != kDemoVersion)
 					ptr += 4;
 				output += 2;
 
-				if (g->special != k2DemoVersion && g->special != k2DemoLol) {
+				if (g->special != kDemoVersion) {
 					for (int w = 0; w < 2; w++) { //startupCommand, finalCommand
 						WRITE_BE_UINT16(output, READ_LE_UINT16(ptr));
 						ptr += 2;
