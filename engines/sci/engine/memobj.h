@@ -269,7 +269,7 @@ public:
 	Common::Array<Object> _objects;
 
 	int _localsOffset;
-	int _localsSegment; /**< The local variable segment */
+	SegmentId _localsSegment; /**< The local variable segment */
 	LocalVariables *_localsBlock;
 
 	Common::Array<CodeBlock> _codeBlocks;

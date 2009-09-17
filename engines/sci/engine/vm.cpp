@@ -1509,9 +1509,6 @@ reg_t script_lookup_export(SegManager *segMan, int script_nr, int export_index) 
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->getClassAddress(id, SCRIPT_GET_LOCK, reg))
 
 int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, Resource **script, Resource **heap, int *was_new) {
-	int seg_id;
-	reg_t reg;
-
 	*was_new = 1;
 
 	*script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
@@ -1529,7 +1526,7 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 		return 0;
 	}
 
-	seg_id = segMan->getScriptSegment(script_nr);
+	SegmentId seg_id = segMan->getScriptSegment(script_nr);
 	Script *scr = segMan->getScriptIfLoaded(seg_id);
 	if (scr) {
 		if (!scr->isMarkedAsDeleted()) {
@@ -1548,6 +1545,7 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 
 	scr->init(script_nr, resMan);
 
+	reg_t reg;
 	reg.segment = seg_id;
 	reg.offset = 0;
 

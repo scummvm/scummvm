@@ -116,7 +116,7 @@ SegmentObj *SegManager::allocSegment(SegmentType type, SegmentId *segid) {
 Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 	// Check if the script already has an allocated segment. If it
 	// does have one, return it.
-	*seg_id = _scriptSegMap.getVal(script_nr, -1);
+	*seg_id = _scriptSegMap.getVal(script_nr, 0);
 	if (*seg_id > 0) {
 		return (Script *)_heap[*seg_id];
 	}
@@ -223,7 +223,7 @@ SegmentId SegManager::findSegmentByType(int type) {
 	for (uint i = 0; i < _heap.size(); i++)
 		if (_heap[i] && _heap[i]->getType() == type)
 			return i;
-	return -1;
+	return 0;
 }
 
 SegmentObj *SegManager::getSegmentObj(SegmentId seg) {
@@ -414,9 +414,9 @@ void Script::heapRelocate(reg_t block) {
 	}
 }
 
-// return the seg if script_id is valid and in the map, else -1
+// return the seg if script_id is valid and in the map, else 0
 SegmentId SegManager::getScriptSegment(int script_id) const {
-	return _scriptSegMap.getVal(script_id, -1);
+	return _scriptSegMap.getVal(script_id, 0);
 }
 
 SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
@@ -430,10 +430,8 @@ SegmentId SegManager::getScriptSegment(int script_nr, ScriptLoadType load) {
 	if (segment > 0) {
 		if ((load & SCRIPT_GET_LOCK) == SCRIPT_GET_LOCK)
 			getScript(segment)->incrementLockers();
-
-		return segment;
-	} else
-		return -1;
+	}
+	return segment;
 }
 
 reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller) {

@@ -31,10 +31,10 @@
 namespace Sci {
 
 // Segment ID type
-typedef int SegmentId;
+typedef uint16 SegmentId;
 
 struct reg_t {
-	uint16 segment;
+	SegmentId segment;
 	uint16 offset;
 
 	bool isNull() const {

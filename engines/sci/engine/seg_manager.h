@@ -93,7 +93,7 @@ public:
 	/**
 	 * Determines the segment occupied by a certain script, if any.
 	 * @param script_nr		Number of the script to look up
-	 * @return				The script's segment ID, or -1 on failure
+	 * @return				The script's segment ID, or 0 on failure
 	 */
 	SegmentId getScriptSegment(int script_nr) const;
 
@@ -102,7 +102,7 @@ public:
 	 * load it, or load & lock it.
 	 * @param[in] script_nr	Number of the script to look up
 	 * @param[in] load		flag determining whether to load/lock the script
-	 * @return				The script's segment ID, or -1 on failure
+	 * @return				The script's segment ID, or 0 on failure
 	 */
 	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
 
