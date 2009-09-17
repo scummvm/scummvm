@@ -42,25 +42,25 @@ enum {
 
 #include "misc.h"
 
-bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractWdSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractShapes(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractAmigaSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractWdSfx(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
 
-bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractHofSeqData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractHofShapeAnimDataV1(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractHofShapeAnimDataV2(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
 
-bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
-bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+bool extractStringsWoSuffix(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractPaddedStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw16to8(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractMrShapeAnimData(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw16(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractRaw32(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
+bool extractLolButtonDefs(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
 
 void createFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
 void createLangFilename(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
@@ -1208,27 +1208,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		if (list && list->findEntry(filename) != 0)
 			continue;
 
-		int patch = 0;
-		if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
-			// FM Towns files that need addional patches
-			if (id == kTakenStrings || id == kNoDropStrings || id == kPoisonGoneString ||
-				id == kThePoisonStrings || id == kFluteStrings || id == kWispJewelStrings)
-				patch = 1;
-			else if (id == kIntroStrings || id == kKyra1TownsSFXwdTable)
-				patch = 2;
-		}
-
-		if (g->special == k2TownsFile1E || g->special == k2TownsFile1J) {
-			if (id == k2SeqplayStrings)
-				patch = 3;
-		}
-
-		if (g->special == k2FloppyFile2) {
-			if (id == k2IngamePakFiles)
-				patch = 4;
-		}
-
-		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, patch)) {
+		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, id, UNK_LANG)) {
 			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
 			return false;
 		}

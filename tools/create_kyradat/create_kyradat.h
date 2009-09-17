@@ -380,7 +380,7 @@ enum kExtractType {
 
 struct ExtractType {
 	int type;
-	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int fmtPatch);
+	bool (*extract)(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang);
 	void (*createFilename)(char *dstFilename, const int gid, const int lang, const int special, const char *filename);
 };
 
