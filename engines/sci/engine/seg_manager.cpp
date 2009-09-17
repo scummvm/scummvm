@@ -266,11 +266,11 @@ const char *SegManager::getObjectName(reg_t pos) {
 	if (!obj)
 		return "<no such object>";
 
-	reg_t nameReg = obj->_variables[SCRIPT_NAME_SELECTOR];
+	reg_t nameReg = obj->getNameSelector(version);
 	if (nameReg.isNull())
 		return "<no name>";
 
-	const char *name = derefString(obj->_variables[SCRIPT_NAME_SELECTOR]);
+	const char *name = derefString(nameReg);
 	if (!name)
 		return "<invalid name>";
 
@@ -678,8 +678,8 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #endif
 
 		// Copy base from species class, as we need its selector IDs
-		obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = 
-			getClassAddress(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset, SCRIPT_GET_LOCK, NULL_REG);
+		obj->setSuperClassSelector(
+			getClassAddress(obj->getSuperClassSelector(version).offset, SCRIPT_GET_LOCK, NULL_REG), version);
 
 		// Set the -classScript- selector to the script number.
 		// FIXME: As this selector is filled in at run-time, it is likely
@@ -687,7 +687,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 		// uses this selector together with -propDict- to compare classes.
 		// For the purpose of Obj::isKindOf, using the script number appears
 		// to be sufficient.
-		obj->_variables[SCRIPT_CLASSSCRIPT_SELECTOR] = make_reg(0, scr->_nr);
+		obj->setClassScriptSelector(make_reg(0, scr->_nr));
 
 		seeker += READ_LE_UINT16(seeker + 2) * 2;
 	}
@@ -809,7 +809,7 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					base_obj = getObject(seeker._variables[SCRIPT_SPECIES_SELECTOR]);
+					base_obj = getObject(seeker.getSpeciesSelector(version));
 					if (!base_obj) {
 						warning("Clone entry without a base class: %d", j);
 						seeker.base = NULL;

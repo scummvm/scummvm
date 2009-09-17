@@ -81,8 +81,8 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 	if (segMan->sciVersion() < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
-		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)) {
-			obj = segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+		if (!(obj->getInfoSelector(version).offset & SCRIPT_INFO_CLASS)) {
+			obj = segMan->getObject(obj->getSuperClassSelector(version));
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;

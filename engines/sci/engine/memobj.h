@@ -198,6 +198,7 @@ public:
 /** Clone has been marked as 'freed' */
 #define OBJECT_FLAG_FREED (0x1 << 0)
 
+// TODO: convert to class, perhaps?
 struct Object {
 	int flags;
 	reg_t pos; /**< Object offset within its script; for clones, this is their base */
@@ -208,34 +209,73 @@ struct Object {
 	uint16 *base_method; /**< Pointer to the method selector area for this object */
 	uint16 *base_vars; /**< Pointer to the varselector area for this object */
 	Common::Array<reg_t> _variables;
+
+	uint16 getVarSelector(uint16 i, SciVersion version) {
+		if (version < SCI_VERSION_1_1)
+			return READ_LE_UINT16(base_obj + _variables.size() * 2 + i * 2);
+		else
+			return *(base_vars + i);
+	}
+
+	reg_t getSpeciesSelector(SciVersion version) {
+		return _variables[version < SCI_VERSION_1_1 ? 0 : 5];
+	}
+
+	void setSpeciesSelector(reg_t value, SciVersion version) {
+		_variables[version < SCI_VERSION_1_1 ? 0 : 5] = value;
+	}
+
+	reg_t getSuperClassSelector(SciVersion version) { 
+		return _variables[version < SCI_VERSION_1_1 ? 1 : 6];
+	}
+
+	void setSuperClassSelector(reg_t value, SciVersion version) {
+		_variables[version < SCI_VERSION_1_1 ? 1 : 6] = value;
+	}
+
+	reg_t getInfoSelector(SciVersion version) {
+		return _variables[version < SCI_VERSION_1_1 ? 2 : 7];
+	}
+
+	void setInfoSelector(reg_t value, SciVersion version) {
+		_variables[version < SCI_VERSION_1_1 ? 2 : 7] = value;
+	}
+
+	reg_t getNameSelector(SciVersion version) {
+		return _variables[version < SCI_VERSION_1_1 ? 3 : 8];
+	}
+
+	void setNameSelector(reg_t value, SciVersion version) {
+		_variables[version < SCI_VERSION_1_1 ? 3 : 8] = value;
+	}
+
+	reg_t getClassScriptSelector() {
+		return _variables[4];
+	}
+
+	void setClassScriptSelector(reg_t value) {
+		_variables[4] = value;
+	}
+
+	uint16 getFuncSelector(uint16 i, SciVersion version) {
+		uint16 offset = (version < SCI_VERSION_1_1) ? i : i * 2 + 1;
+		return READ_LE_UINT16((byte *) (base_method + offset));
+	}
+
+	reg_t getFunction(uint16 i, SciVersion version) {
+		uint16 offset = (version < SCI_VERSION_1_1) ? methods_nr + 1 + i : i * 2 + 2;
+		return make_reg(pos.segment, READ_LE_UINT16((byte *) (base_method + offset)));
+	}
+	
+	bool isClass(SciVersion version) {
+		return (getInfoSelector(version).offset & SCRIPT_INFO_CLASS);
+	}
 };
 
 struct CodeBlock {
 	reg_t pos;
 	int size;
 };
-
-#define VM_OBJECT_GET_VARSELECTOR(obj, i)  \
-	(version < SCI_VERSION_1_1 ? \
-	 READ_LE_UINT16(obj->base_obj + obj->_variables.size() * 2 + i*2) : \
-	 *(obj->base_vars + i))
-#define VM_OBJECT_READ_PROPERTY(obj, i) (obj->_variables[i])
-#define VM_OBJECT_GET_FUNCSELECTOR(obj, i) \
-	(version < SCI_VERSION_1_1 ? \
-	 READ_LE_UINT16((byte *) (obj->base_method + i)) : \
-	 READ_LE_UINT16((byte *) (obj->base_method + i*2 + 1)))
-#define VM_OBJECT_READ_FUNCTION(obj, i) \
-	(version < SCI_VERSION_1_1 ? \
-	 make_reg(obj->pos.segment, \
-		 READ_LE_UINT16((byte *) (obj->base_method \
-				 + obj->methods_nr + 1 \
-				 + i))) : \
-	 make_reg(obj->pos.segment, \
-		 READ_LE_UINT16((byte *) (obj->base_method \
-				 + i * 2 + 2))))
-
-
-
 
 class Script : public SegmentObj {
 public:

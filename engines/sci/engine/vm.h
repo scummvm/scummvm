@@ -68,11 +68,9 @@ class ResourceManager;
 
 /** Offset of the name pointer */
 #define SCRIPT_NAME_OFFSET (version < SCI_VERSION_1_1 ? 14 -8 : 16)
-#define SCRIPT_NAME_SELECTOR (version < SCI_VERSION_1_1 ? 3 : 8)
 
 /** Object-relative offset of the -info- selector */
 #define SCRIPT_INFO_OFFSET (version < SCI_VERSION_1_1 ? 12 -8 : 14)
-#define SCRIPT_INFO_SELECTOR (version < SCI_VERSION_1_1 ? 2 : 7)
 
 /** Flag fo the -info- selector */
 #define SCRIPT_INFO_CLONE 0x0001
@@ -91,16 +89,8 @@ class ResourceManager;
 
 #define SCRIPT_SUPERCLASS_OFFSET (version < SCI_VERSION_1_1 ? 10 -8 : 12)
 
-/*---------------------------------*/
-/* Script selector index variables */
-/*---------------------------------*/
-#define SCRIPT_SPECIES_SELECTOR (version < SCI_VERSION_1_1 ? 0 : 5)
-#define SCRIPT_SUPERCLASS_SELECTOR (version < SCI_VERSION_1_1 ? 1 : 6)
-#define SCRIPT_CLASSSCRIPT_SELECTOR 4
-
 /** Magic adjustment value for lofsa and lofss */
 #define SCRIPT_LOFS_MAGIC 3
-
 
 /** Stack pointer value: Use predecessor's value */
 #define CALL_SP_CARRY NULL
@@ -118,9 +108,6 @@ struct Class {
 };
 
 #define RAW_IS_OBJECT(datablock) (READ_LE_UINT16(((byte *) datablock) + SCRIPT_OBJECT_MAGIC_OFFSET) == SCRIPT_OBJECT_MAGIC_NUMBER)
-
-#define IS_CLASS(obj) (obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS)
-
 
 /** Contains selector IDs for a few selected selectors */
 struct selector_map_t {

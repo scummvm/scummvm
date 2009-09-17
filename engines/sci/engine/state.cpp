@@ -335,7 +335,7 @@ SciVersion EngineState::detectSetCursorType() {
 
 SciVersion EngineState::detectLofsType() {
 	if (_lofsType == SCI_VERSION_AUTODETECT) {
-		SciVersion version = segMan->sciVersion(); // FIXME: for VM_OBJECT_READ_FUNCTION
+		SciVersion version = segMan->sciVersion();
 
 		// This detection only works (and is only needed) pre-SCI1.1
 		if (version >= SCI_VERSION_1_1) {
@@ -355,7 +355,7 @@ SciVersion EngineState::detectLofsType() {
 		// Check methods of the Game class for lofs operations
 		if (obj) {
 			for (int m = 0; m < obj->methods_nr; m++) {
-				reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, m);
+				reg_t fptr = obj->getFunction(m, version);
 
 				Script *script = segMan->getScript(fptr.segment);
 

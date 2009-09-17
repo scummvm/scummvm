@@ -613,11 +613,11 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = s->segMan->getObject(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]);
+						base_obj = s->segMan->getObject(scr->_objects[j].getSpeciesSelector(version));
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-								  scr->_nr, j, PRINT_REG(scr->_objects[j]._variables[SCRIPT_SPECIES_SELECTOR]));
+								  scr->_nr, j, PRINT_REG(scr->_objects[j].getSpeciesSelector(version)));
 							continue;
 						}
 						scr->_objects[j].variable_names_nr = base_obj->_variables.size();

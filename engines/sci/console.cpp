@@ -3065,13 +3065,14 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->segMan->getObjectName(pos),
 				obj->_variables.size(), obj->methods_nr);
 
-	if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-		var_container = s->segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+	if (!(obj->getInfoSelector(version).offset & SCRIPT_INFO_CLASS))
+		var_container = s->segMan->getObject(obj->getSuperClassSelector(version));
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		printf("    ");
 		if (i < var_container->variable_names_nr) {
-			DebugPrintf("[%03x] %s = ", VM_OBJECT_GET_VARSELECTOR(var_container, i), selector_name(s, VM_OBJECT_GET_VARSELECTOR(var_container, i)));
+			uint16 varSelector = var_container->getVarSelector(i, version);
+			DebugPrintf("[%03x] %s = ", varSelector, selector_name(s, varSelector));
 		} else
 			DebugPrintf("p#%x = ", i);
 
@@ -3086,8 +3087,8 @@ int Console::printObject(reg_t pos) {
 	}
 	DebugPrintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
-		reg_t fptr = VM_OBJECT_READ_FUNCTION(obj, i);
-		DebugPrintf("    [%03x] %s = %04x:%04x\n", VM_OBJECT_GET_FUNCSELECTOR(obj, i), selector_name(s, VM_OBJECT_GET_FUNCSELECTOR(obj, i)), PRINT_REG(fptr));
+		reg_t fptr = obj->getFunction(i, version);
+		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i, version), selector_name(s, obj->getFuncSelector(i, version)), PRINT_REG(fptr));
 	}
 	if (s->segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
 		DebugPrintf("\nOwner script:\t%d\n", s->segMan->getScript(pos.segment)->_nr);

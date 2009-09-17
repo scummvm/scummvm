@@ -1406,8 +1406,8 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		buf = obj->base_obj + selector_name_offset;
 	} else {
-		if (!(obj->_variables[SCRIPT_INFO_SELECTOR].offset & SCRIPT_INFO_CLASS))
-			obj = segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+		if (!(obj->getInfoSelector(version).offset & SCRIPT_INFO_CLASS))
+			obj = segMan->getObject(obj->getSuperClassSelector(version));
 
 		buf = (byte *)obj->base_vars;
 		varnum = obj->_variables[1].toUint16();
@@ -1428,7 +1428,7 @@ static int _class_locate_funcselector(Object *obj, Selector slc, SciVersion vers
 	int i;
 
 	for (i = 0; i < funcnum; i++)
-		if (VM_OBJECT_GET_FUNCSELECTOR(obj, i) == slc) // Found it?
+		if (obj->getFuncSelector(i, version) == slc) // Found it?
 			return i; // report success
 
 	return -1; // Failed
@@ -1445,13 +1445,13 @@ static SelectorType _lookup_selector_function(SegManager *segMan, int seg_id, Ob
 
 		if (index >= 0) {
 			if (fptr) {
-				*fptr = VM_OBJECT_READ_FUNCTION(obj, index);
+				*fptr = obj->getFunction(index, version);
 			}
 
 			return kSelectorMethod;
 		} else {
-			seg_id = obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].segment;
-			obj = segMan->getObject(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR]);
+			seg_id = obj->getSuperClassSelector(version).segment;
+			obj = segMan->getObject(obj->getSuperClassSelector(version));
 		}
 	}
 
@@ -1475,15 +1475,15 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 				PRINT_REG(obj_location));
 	}
 
-	if (IS_CLASS(obj))
+	if (obj->isClass(version))
 		species = obj;
 	else
-		species = segMan->getObject(obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+		species = segMan->getObject(obj->getSpeciesSelector(version));
 
 
 	if (!obj) {
 		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x", 
-			PRINT_REG(obj_location), PRINT_REG(obj->_variables[SCRIPT_SPECIES_SELECTOR]));
+			PRINT_REG(obj_location), PRINT_REG(obj->getSpeciesSelector(version)));
 		return kSelectorNone;
 	}
 
@@ -1694,14 +1694,14 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
-			obj->_variables[SCRIPT_SPECIES_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SPECIES_SELECTOR].offset);
+			obj->setSpeciesSelector(INST_LOOKUP_CLASS(obj->getSpeciesSelector(version).offset), version);
 
-			base_obj = segMan->getObject(obj->_variables[SCRIPT_SPECIES_SELECTOR]);
+			base_obj = segMan->getObject(obj->getSpeciesSelector(version));
 			obj->variable_names_nr = base_obj->_variables.size();
 			obj->base_obj = base_obj->base_obj;
 			// Copy base from species class, as we need its selector IDs
 
-			obj->_variables[SCRIPT_SUPERCLASS_SELECTOR] = INST_LOOKUP_CLASS(obj->_variables[SCRIPT_SUPERCLASS_SELECTOR].offset);
+			obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector(version).offset), version);
 		} // if object or class
 		break;
 		case SCI_OBJ_POINTERS: // A relocation table
