@@ -467,17 +467,6 @@ void Vocabulary::printParserWords() const {
 	con->DebugPrintf("\n");
 }
 
-int Kernel::findSelector(const char *selectorName) const {
-	for (uint pos = 0; pos < _selectorNames.size(); ++pos) {
-		if (_selectorNames[pos] == selectorName)
-			return pos;
-	}
-
-	debugC(2, kDebugLevelVM, "Could not map '%s' to any selector\n", selectorName);
-
-	return -1;
-}
-
 void _vocab_recursive_ptree_dump_treelike(parse_tree_node_t *nodes, int nr, int prevnr) {
 	if ((nr > VOCAB_TREE_NODES)/* || (nr < prevnr)*/) {
 		printf("Error(%04x)", nr);

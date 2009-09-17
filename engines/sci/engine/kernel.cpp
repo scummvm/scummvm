@@ -415,6 +415,17 @@ void Kernel::detectSciFeatures() {
 		printf("new\n");
 }
 
+int Kernel::findSelector(const char *selectorName) const {
+	for (uint pos = 0; pos < _selectorNames.size(); ++pos) {
+		if (_selectorNames[pos] == selectorName)
+			return pos;
+	}
+
+	debugC(2, kDebugLevelVM, "Could not map '%s' to any selector\n", selectorName);
+
+	return -1;
+}
+
 void Kernel::loadSelectorNames() {
 	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
 	bool oldScriptHeader = (_resMan->sciVersion() == SCI_VERSION_0_EARLY);
