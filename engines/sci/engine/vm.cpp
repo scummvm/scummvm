@@ -285,7 +285,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", s->segMan->getObjectName(send_obj), ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", s->segMan->getObjectName(send_obj), ((SciEngine *)g_engine)->getKernel()->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -909,36 +909,33 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 		}
 
-		case 0x21: // callk
+		case 0x21: { // callk
 			gc_countdown(s);
 
 			scriptState.xs->sp -= (opparams[1] >> 1) + 1;
 
-			{
-				bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
-				if (!oldScriptHeader) {
-					scriptState.xs->sp -= scriptState.restAdjust;
-					s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
-				}
+			bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
+			if (!oldScriptHeader) {
+				scriptState.xs->sp -= scriptState.restAdjust;
+				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
 			}
 
-			if (opparams[0] >= (int)((SciEngine*)g_engine)->getKernel()->_kernelFuncs.size()) {
+			Kernel *kernel = ((SciEngine *)g_engine)->getKernel();
+
+			if (opparams[0] >= (int)kernel->_kernelFuncs.size()) {
 				error("Invalid kernel function 0x%x requested", opparams[0]);
 			} else {
+				const KernelFuncWithSignature &kfun = kernel->_kernelFuncs[opparams[0]];
 				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
-				bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
 
 				if (!oldScriptHeader)
 					argc += scriptState.restAdjust;
 
-				if (((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature
-						&& !kernel_matches_signature(s->segMan,
-						((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].signature, argc,
-						scriptState.xs->sp + 1)) {
+				if (kfun.signature
+						&& !kernel_matches_signature(s->segMan, kfun.signature, argc, scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
 				} else {
-					s->r_acc = ((SciEngine*)g_engine)->getKernel()->_kernelFuncs[opparams[0]].fun(s, opparams[0],
-														argc, scriptState.xs->sp + 1);
+					s->r_acc = kfun.fun(s, opparams[0], argc, scriptState.xs->sp + 1);
 				}
 				// Call kernel function
 
@@ -952,6 +949,7 @@ void run_vm(EngineState *s, int restoring) {
 					scriptState.restAdjust = s->restAdjust;
 			}
 			break;
+		}
 
 		case 0x22: // callb
 			temp = ((opparams[1] >> 1) + scriptState.restAdjust + 1);
@@ -1862,7 +1860,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			script_init_engine(s);
 			game_init(s);
 			sfx_reset_player();
-			_init_stack_base_with_selector(s, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play);
+			_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorMap.play);
 
 			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 
@@ -1881,7 +1879,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 					debugC(2, kDebugLevelVM, "Restarting with replay()\n");
 					s->_executionStack.clear(); // Restart with replay
 
-					_init_stack_base_with_selector(s, ((SciEngine*)g_engine)->getKernel()->_selectorMap.replay);
+					_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorMap.replay);
 
 					send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
 				}
@@ -1900,7 +1898,7 @@ int game_run(EngineState **_s) {
 	EngineState *s = *_s;
 
 	debugC(2, kDebugLevelVM, "Calling %s::play()\n", s->_gameName.c_str());
-	_init_stack_base_with_selector(s, ((SciEngine*)g_engine)->getKernel()->_selectorMap.play); // Call the play selector
+	_init_stack_base_with_selector(s, ((SciEngine *)g_engine)->getKernel()->_selectorMap.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
 	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {

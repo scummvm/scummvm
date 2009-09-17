@@ -274,18 +274,6 @@ Common::Rect set_base(EngineState *s, reg_t object);
  */
 extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
 
-/**
- * Removes all views in anticipation of a new window or text 
- */
-void _k_dyn_view_list_prepare_change(EngineState *s);
-
-/**
- * Redraws all views after a new window or text was added 
- */
-void _k_dyn_view_list_accept_change(EngineState *s);
-
-
-
 
 /******************** Misc functions ********************/
 
