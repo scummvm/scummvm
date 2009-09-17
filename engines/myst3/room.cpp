@@ -25,6 +25,8 @@
 
 #include "engines/myst3/room.h"
 
+#include "common/debug.h"
+
 namespace Myst3 {
 
 void Room::setFaceTextureJPEG(int face, Graphics::JPEG *jpeg) {	
@@ -59,6 +61,49 @@ void Room::setFaceTextureRGB(int face, Graphics::Surface *texture) {
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+}
+
+void Room::dumpFaceMask(Archive &archive, uint16 index, int face) {
+	byte *mask = new byte[640 * 640];
+	memset(mask, 0, sizeof(mask));
+	uint32 headerOffset = 0;
+	uint32 dataOffset = 0;
+
+	Common::MemoryReadStream *maskStream = archive.dumpToMemory(index, face, DirectorySubEntry::kFaceMask);
+
+	while (headerOffset < 400) {
+		int blockX = (headerOffset / sizeof(dataOffset)) % 10;
+		int blockY = (headerOffset / sizeof(dataOffset)) / 10;
+
+		maskStream->seek(headerOffset, SEEK_SET);
+		dataOffset = maskStream->readUint32LE();
+		headerOffset = maskStream->pos();
+
+		debug("%d %d %d %d", headerOffset, dataOffset, blockX, blockY);
+
+		if (dataOffset != 0) {
+			maskStream->seek(dataOffset, SEEK_SET);
+
+			for(int i = 63; i >= 0; i--) {
+				int x = 0;
+				byte numValues = maskStream->readByte();
+				for (int j = 0; j < numValues; j++) {
+					byte repeat = maskStream->readByte();
+					byte value = maskStream->readByte();
+					for (int k = 0; k < repeat; k++) {
+						mask[((blockY * 64) + i) * 640 + blockX * 64 + x] = value;
+						x++;
+					}
+				}
+			}
+		}
+	}
+
+	Common::DumpFile outFile;
+	outFile.open("dump/1-1.masku");
+	outFile.write(mask, sizeof(mask));
+	outFile.close();
+	delete[] mask;
 }
 
 void Room::load(Archive &archive, uint16 index) {

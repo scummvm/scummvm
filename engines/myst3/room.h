@@ -51,6 +51,7 @@ class Room {
 		void setFaceTextureJPEG(int face, Graphics::JPEG *jpeg);
 		void draw();
 		void load(Archive &archive, uint16 index);
+		void dumpFaceMask(Archive &archive, uint16 index, int face);
 };
 
 } // end of namespace Myst3

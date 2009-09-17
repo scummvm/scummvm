@@ -36,7 +36,7 @@ class DirectorySubEntry {
 		byte _type;
 
 	public:
-		enum ResourceType {kFaceTexture};
+		enum ResourceType {kFaceTexture, kFaceMask};
 
 		void readFromStream(Common::SeekableReadStream &inStream);
 		void dump();
