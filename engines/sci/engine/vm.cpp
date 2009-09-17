@@ -258,6 +258,21 @@ static void _exec_varselectors(EngineState *s) {
 	}
 }
 
+/** This struct is used to buffer the list of send calls in send_selector() */
+struct CallsStruct {
+	reg_t addr_func;
+	reg_t varp_objp;
+	union {
+		reg_t func;
+		ObjVarRef var;
+	} address;
+	StackPtr argp;
+	int argc;
+	Selector selector;
+	StackPtr sp; /**< Stack pointer */
+	int type; /**< Same as ExecStack.type */
+};
+
 ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPtr sp, int framesize, StackPtr argp) {
 // send_obj and work_obj are equal for anything but 'super'
 // Returns a pointer to the TOS exec_stack element
