@@ -40,7 +40,7 @@ enum DebugSeeking {
 	kDebugSeekGlobal = 5        // Step forward until one specified global variable is modified
 };
 
-struct ScriptState {
+struct DebugState {
 	bool debugging;
 	bool stopOnEvent;
 	DebugSeeking seeking;		// Stepping forward until some special condition is met
@@ -49,12 +49,6 @@ struct ScriptState {
 	int seekSpecial;			// Used for special seeks
 	int old_pc_offset;
 	StackPtr old_sp;
-	ExecStack *xs;
-	int16 restAdjust;
-	reg_t *variables[4];		// global, local, temp, param, as immediate pointers
-	reg_t *variables_base[4];	// Used for referencing VM ops
-	SegmentId variables_seg[4];	// Same as above, contains segment IDs
-	int variables_max[4];		// Max. values for all variables
 };
 
 // Various global variables used for debugging are declared here
@@ -62,7 +56,7 @@ extern int g_debug_sleeptime_factor;
 extern int g_debug_simulated_key;
 extern bool g_debug_track_mouse_clicks;
 extern bool g_debug_weak_validations;
-extern ScriptState scriptState;
+extern DebugState g_debugState;
 
 } // End of namespace Sci
 

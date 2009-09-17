@@ -46,6 +46,7 @@ reg_t NULL_REG = {0, 0};
 #undef STRICT_SEND // Disallows variable sends with more than one parameter
 #undef STRICT_READ // Disallows reading from out-of-bounds parameters and locals
 
+ScriptState scriptState;
 
 int script_abort_flag = 0; // Set to 1 to abort execution. Set to 2 to force a replay afterwards	// FIXME: Avoid non-const global vars
 int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Avoid non-const global vars
@@ -230,7 +231,7 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 			if (bp->type == BREAK_EXPORT && bp->data.address == bpaddress) {
 				Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 				con->DebugPrintf("Break on script %d, export %d\n", script, pubfunct);
-				scriptState.debugging = true;
+				g_debugState.debugging = true;
 				breakpointFlag = true;
 				break;
 			}
@@ -298,7 +299,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 					con->DebugPrintf("Break on %s (in [%04x:%04x])\n", method_name, PRINT_REG(send_obj));
 					print_send_action = 1;
 					breakpointFlag = true;
-					scriptState.debugging = true;
+					g_debugState.debugging = true;
 					break;
 				}
 				bp = bp->next;
@@ -355,7 +356,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				break;
 #ifdef STRICT_SEND
 			default:
-				scriptState.seeking = scriptState.runningStep = 0;
+				g_debugState.seeking = g_debugState.runningStep = 0;
 				error("Send error: Variable selector %04x in %04x:%04x called with %04x params", selector, PRINT_REG(send_obj), argc);
 #endif
 			}
@@ -555,8 +556,8 @@ void run_vm(EngineState *s, int restoring) {
 		int var_type; // See description below
 		int var_number;
 
-		scriptState.old_pc_offset = scriptState.xs->addr.pc.offset;
-		scriptState.old_sp = scriptState.xs->sp;
+		g_debugState.old_pc_offset = scriptState.xs->addr.pc.offset;
+		g_debugState.old_sp = scriptState.xs->sp;
 
 		if (s->_executionStackPosChanged) {
 			Script *scr;
@@ -616,7 +617,7 @@ void run_vm(EngineState *s, int restoring) {
 
 		// Debug if this has been requested:
 		// TODO: re-implement sci_debug_flags
-		if (scriptState.debugging /* sci_debug_flags*/) {
+		if (g_debugState.debugging /* sci_debug_flags*/) {
 			script_debug(s, breakpointFlag);
 			breakpointFlag = false;
 		}
@@ -1917,8 +1918,8 @@ int game_run(EngineState **_s) {
 
 void quit_vm() {
 	script_abort_flag = 1; // Terminate VM
-	scriptState.seeking = kDebugSeekNothing;
-	scriptState.runningStep = 0;
+	g_debugState.seeking = kDebugSeekNothing;
+	g_debugState.runningStep = 0;
 }
 
 void shrink_execution_stack(EngineState *s, uint size) {

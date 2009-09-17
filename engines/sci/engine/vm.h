@@ -212,13 +212,6 @@ struct ViewObject {
 	int real_y, z, index_nr; /* Used for sorting */
 };
 
-enum {
-	VAR_GLOBAL = 0,
-	VAR_LOCAL = 1,
-	VAR_TEMP = 2,
-	VAR_PARAM = 3
-};
-
 enum ExecStackType {
 	EXEC_STACK_TYPE_CALL = 0,
 	EXEC_STACK_TYPE_KERNEL = 1,
@@ -247,6 +240,30 @@ struct ExecStack {
 
 	reg_t* getVarPointer(SegManager *segMan) const;
 };
+
+enum {
+	VAR_GLOBAL = 0,
+	VAR_LOCAL = 1,
+	VAR_TEMP = 2,
+	VAR_PARAM = 3
+};
+
+/**
+ * Structure for storing the current internal state of the VM.
+ */
+struct ScriptState {
+	ExecStack *xs;
+	int16 restAdjust;
+	reg_t *variables[4];		// global, local, temp, param, as immediate pointers
+	reg_t *variables_base[4];	// Used for referencing VM ops
+	SegmentId variables_seg[4];	// Same as above, contains segment IDs
+	int variables_max[4];		// Max. values for all variables
+};
+
+/**
+ * The current internal state of the VM.
+ */
+extern ScriptState scriptState;
 
 
 // These types are used both as identifiers and as elements of bitfields

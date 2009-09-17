@@ -74,12 +74,12 @@ reg_t kGetEvent(EngineState *s, int, int argc, reg_t *argv) {
 	case SCI_EVT_KEYBOARD:
 		if ((e.buckybits & SCI_EVM_LSHIFT) && (e.buckybits & SCI_EVM_RSHIFT) && (e.data == '-')) {
 			printf("Debug mode activated\n");
-			scriptState.seeking = kDebugSeekNothing;
-			scriptState.runningStep = 0;
+			g_debugState.seeking = kDebugSeekNothing;
+			g_debugState.runningStep = 0;
 		} else if ((e.buckybits & SCI_EVM_CTRL) && (e.data == '`')) {
 			printf("Debug mode activated\n");
-			scriptState.seeking = kDebugSeekNothing;
-			scriptState.runningStep = 0;
+			g_debugState.seeking = kDebugSeekNothing;
+			g_debugState.runningStep = 0;
 		} else {
 			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
@@ -123,8 +123,8 @@ reg_t kGetEvent(EngineState *s, int, int argc, reg_t *argv) {
 		s->r_acc = NULL_REG; // Unknown or no event
 	}
 
-	if ((s->r_acc.offset) && (scriptState.stopOnEvent)) {
-		scriptState.stopOnEvent = false;
+	if ((s->r_acc.offset) && (g_debugState.stopOnEvent)) {
+		g_debugState.stopOnEvent = false;
 
 		// A SCI event occured, and we have been asked to stop, so open the debug console
 		Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();

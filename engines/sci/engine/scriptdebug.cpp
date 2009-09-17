@@ -63,7 +63,7 @@ const char *opcodeNames[] = {
 
 extern const char *selector_name(EngineState *s, int selector);
 
-ScriptState scriptState;
+DebugState g_debugState;
 
 int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 	Object *obj = segMan->getObject(objp);
@@ -355,11 +355,11 @@ void script_debug(EngineState *s, bool bp) {
 #endif
 
 #if 0
-	if (!scriptState.debugging)
+	if (!g_debugState.debugging)
 		return;
 #endif
 
-	if (scriptState.seeking && !bp) { // Are we looking for something special?
+	if (g_debugState.seeking && !bp) { // Are we looking for something special?
 		SegmentObj *mobj = GET_SEGMENT(*s->segMan, scriptState.xs->addr.pc.segment, SEG_TYPE_SCRIPT);
 
 		if (mobj) {
@@ -371,9 +371,9 @@ void script_debug(EngineState *s, bool bp) {
 			int paramb1 = scriptState.xs->addr.pc.offset + 1 >= code_buf_size ? 0 : code_buf[scriptState.xs->addr.pc.offset + 1];
 			int paramf1 = (opcode & 1) ? paramb1 : (scriptState.xs->addr.pc.offset + 2 >= code_buf_size ? 0 : (int16)READ_LE_UINT16(code_buf + scriptState.xs->addr.pc.offset + 1));
 
-			switch (scriptState.seeking) {
+			switch (g_debugState.seeking) {
 			case kDebugSeekSpecialCallk:
-				if (paramb1 != scriptState.seekSpecial)
+				if (paramb1 != g_debugState.seekSpecial)
 					return;
 
 			case kDebugSeekCallk: {
@@ -383,7 +383,7 @@ void script_debug(EngineState *s, bool bp) {
 			}
 
 			case kDebugSeekLevelRet: {
-				if ((op != op_ret) || (scriptState.seekLevel < (int)s->_executionStack.size()-1))
+				if ((op != op_ret) || (g_debugState.seekLevel < (int)s->_executionStack.size()-1))
 					return;
 				break;
 			}
@@ -395,7 +395,7 @@ void script_debug(EngineState *s, bool bp) {
 					return; // param or temp
 				if ((op & 0x3) && s->_executionStack.back().local_segment > 0)
 					return; // locals and not running in script.000
-				if (paramf1 != scriptState.seekSpecial)
+				if (paramf1 != g_debugState.seekSpecial)
 					return; // CORRECT global?
 				break;
 
@@ -408,7 +408,7 @@ void script_debug(EngineState *s, bool bp) {
 				break;
 			}
 
-			scriptState.seeking = kDebugSeekNothing;
+			g_debugState.seeking = kDebugSeekNothing;
 			// OK, found whatever we were looking for
 		}
 	}
@@ -416,12 +416,12 @@ void script_debug(EngineState *s, bool bp) {
 	printf("Step #%d\n", script_step_counter);
 	disassemble(s, scriptState.xs->addr.pc, 0, 1);
 
-	if (scriptState.runningStep) {
-		scriptState.runningStep--;
+	if (g_debugState.runningStep) {
+		g_debugState.runningStep--;
 		return;
 	}
 
-	scriptState.debugging = false;
+	g_debugState.debugging = false;
 
 	Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 	con->attach();

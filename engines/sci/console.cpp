@@ -183,11 +183,11 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("active_object",		WRAP_METHOD(Console, cmdViewActiveObject));
 	DCmd_Register("acc_object",			WRAP_METHOD(Console, cmdViewAccumulatorObject));
 
-	scriptState.seeking = kDebugSeekNothing;
-	scriptState.seekLevel = 0;
-	scriptState.runningStep = 0;
-	scriptState.stopOnEvent = false;
-	scriptState.debugging = false;
+	g_debugState.seeking = kDebugSeekNothing;
+	g_debugState.seekLevel = 0;
+	g_debugState.runningStep = 0;
+	g_debugState.stopOnEvent = false;
+	g_debugState.debugging = false;
 }
 
 Console::~Console() {
@@ -2113,23 +2113,23 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 
 bool Console::cmdStep(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0)
-		scriptState.runningStep = atoi(argv[1]) - 1;
-	scriptState.debugging = true;
+		g_debugState.runningStep = atoi(argv[1]) - 1;
+	g_debugState.debugging = true;
 
 	return false;
 }
 
 bool Console::cmdStepEvent(int argc, const char **argv) {
-	scriptState.stopOnEvent = true;
-	scriptState.debugging = true;
+	g_debugState.stopOnEvent = true;
+	g_debugState.debugging = true;
 
 	return false;
 }
 
 bool Console::cmdStepRet(int argc, const char **argv) {
-	scriptState.seeking = kDebugSeekLevelRet;
-	scriptState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
-	scriptState.debugging = true;
+	g_debugState.seeking = kDebugSeekLevelRet;
+	g_debugState.seekLevel = _vm->_gamestate->_executionStack.size() - 1;
+	g_debugState.debugging = true;
 
 	return false;
 }
@@ -2141,9 +2141,9 @@ bool Console::cmdStepGlobal(int argc, const char **argv) {
 		return true;
 	}
 
-	scriptState.seeking = kDebugSeekGlobal;
-	scriptState.seekSpecial = atoi(argv[1]);
-	scriptState.debugging = true;
+	g_debugState.seeking = kDebugSeekGlobal;
+	g_debugState.seekSpecial = atoi(argv[1]);
+	g_debugState.debugging = true;
 
 	return false;
 }
@@ -2171,12 +2171,12 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 			}
 		}
 
-		scriptState.seeking = kDebugSeekSpecialCallk;
-		scriptState.seekSpecial = callk_index;
+		g_debugState.seeking = kDebugSeekSpecialCallk;
+		g_debugState.seekSpecial = callk_index;
 	} else {
-		scriptState.seeking = kDebugSeekCallk;
+		g_debugState.seeking = kDebugSeekCallk;
 	}
-	scriptState.debugging = true;
+	g_debugState.debugging = true;
 
 	return false;
 }
@@ -2343,14 +2343,14 @@ bool Console::cmdSend(int argc, const char **argv) {
 	xstack->fp += argc;
 
 	_vm->_gamestate->_executionStackPosChanged = true;
-	scriptState.debugging = true;
+	g_debugState.debugging = true;
 
 	return false;
 }
 
 bool Console::cmdGo(int argc, const char **argv) {
 	// CHECKME: is this necessary?
-	scriptState.seeking = kDebugSeekNothing;
+	g_debugState.seeking = kDebugSeekNothing;
 
 	return Cmd_Exit(argc, argv);
 }
@@ -2764,8 +2764,8 @@ bool Console::cmdExit(int argc, const char **argv) {
 	if (!scumm_stricmp(argv[1], "game")) {
 		// Quit gracefully
 		script_abort_flag = 1; // Terminate VM
-		scriptState.seeking = kDebugSeekNothing;
-		scriptState.runningStep = 0;
+		g_debugState.seeking = kDebugSeekNothing;
+		g_debugState.runningStep = 0;
 
 	} else if (!scumm_stricmp(argv[1], "now")) {
 		// Quit ungracefully
@@ -3255,29 +3255,29 @@ int c_stepover(EngineState *s, const Common::Array<cmd_param_t> &cmdParams) {
 	opnumber = opcode >> 1;
 	if (opnumber == 0x22 /* callb */ || opnumber == 0x23 /* calle */ ||
 	        opnumber == 0x25 /* send */ || opnumber == 0x2a /* self */ || opnumber == 0x2b /* super */) {
-		scriptState.seeking = kDebugSeekSO;
-		scriptState.seekLevel = s->_executionStack.size()-1;
-		// Store in scriptState.seekSpecial the offset of the next command after send
+		g_debugState.seeking = kDebugSeekSO;
+		g_debugState.seekLevel = s->_executionStack.size()-1;
+		// Store in g_debugState.seekSpecial the offset of the next command after send
 		switch (opcode) {
 		case 0x46: // calle W
-			scriptState.seekSpecial = *p_pc + 5;
+			g_debugState.seekSpecial = *p_pc + 5;
 			break;
 
 		case 0x44: // callb W
 		case 0x47: // calle B
 		case 0x56: // super W
-			scriptState.seekSpecial = *p_pc + 4;
+			g_debugState.seekSpecial = *p_pc + 4;
 			break;
 
 		case 0x45: // callb B
 		case 0x57: // super B
 		case 0x4A: // send W
 		case 0x54: // self W
-			scriptState.seekSpecial = *p_pc + 3;
+			g_debugState.seekSpecial = *p_pc + 3;
 			break;
 
 		default:
-			scriptState.seekSpecial = *p_pc + 2;
+			g_debugState.seekSpecial = *p_pc + 2;
 		}
 	}
 

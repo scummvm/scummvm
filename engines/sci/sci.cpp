@@ -208,12 +208,12 @@ Common::Error SciEngine::run() {
 GUI::Debugger *SciEngine::getDebugger() {
 	if (_gamestate) {
 		ExecStack *xs = &(_gamestate->_executionStack.back());
-		xs->addr.pc.offset = scriptState.old_pc_offset;
-		xs->sp = scriptState.old_sp;
+		xs->addr.pc.offset = g_debugState.old_pc_offset;
+		xs->sp = g_debugState.old_sp;
 	}
 
-	scriptState.runningStep = 0; // Stop multiple execution
-	scriptState.seeking = kDebugSeekNothing; // Stop special seeks
+	g_debugState.runningStep = 0; // Stop multiple execution
+	g_debugState.seeking = kDebugSeekNothing; // Stop special seeks
 
 	return _console;
 }
