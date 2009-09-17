@@ -210,7 +210,6 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang) {
 	const int strSize = 10;
 	uint32 entries = (size + (strSize - 1)) / strSize;
-	uint32 targetSize = 4;
 
 	uint8 *buffer = new uint8[size + 4];
 	assert(buffer);

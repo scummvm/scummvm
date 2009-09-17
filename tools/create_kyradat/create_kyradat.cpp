@@ -1026,11 +1026,19 @@ const char *getIdString(const int id) {
 }
 
 struct DataIdEntry {
-	DataIdEntry() : data(), id(-1) {}
-	DataIdEntry(SearchData d, int i) : data(d), id(i) {}
+	DataIdEntry() : extractInfo(), id(-1) {}
+	DataIdEntry(ExtractEntrySearchData e, int i) : extractInfo(e), id(i) {}
 
-	SearchData data;
+	ExtractEntrySearchData extractInfo;
 	int id;
+};
+
+struct ExtractData {
+	ExtractData() : extractInfo(), result() {}
+	ExtractData(ExtractEntrySearchData e, Search::ResultData r) : extractInfo(e), result(r) {}
+
+	ExtractEntrySearchData extractInfo;
+	Search::ResultData result;
 };
 
 typedef std::list<DataIdEntry> DataIdList;
@@ -1072,28 +1080,11 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 		for (const ExtractEntry *p = extractProviders; p->id != -1; ++p) {
 			if (p->id == *entry) {
-				// First check for language and platform specific search data
 				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
-					if (d->lang == g->lang && d->platform == g->platform) {
-						found = true;
+					found = true;
 
-						search.addData(d->hint);
-						dataIdList.push_back(DataIdEntry(d->hint, *entry));
-					}
-				}
-
-				// When a special variant was found, we will break.
-				if (found)
-					break;
-
-				// Add non special variants
-				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
-					if (d->lang == UNK_LANG || d->platform == kPlatformUnknown) {
-						found = true;
-
-						search.addData(d->hint);
-						dataIdList.push_back(DataIdEntry(d->hint, *entry));
-					}
+					search.addData(d->hint);
+					dataIdList.push_back(DataIdEntry(*d, *entry));
 				}
 
 				break;
@@ -1122,18 +1113,50 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 	IdMap ids;
 	for (const int *entry = needList; *entry != -1; ++entry) {
-		Search::ResultList idResults;
+		typedef std::list<ExtractData> ExtractList;
+		ExtractList idResults;
 
 		// Fill in all id entries found
 		for (Search::ResultList::const_iterator i = results.begin(); i != results.end(); ++i) {
 			for (DataIdList::const_iterator j = dataIdList.begin(); j != dataIdList.end(); ++j) {
-				if (j->id == *entry && i->data == j->data)
-					idResults.push_back(*i);
+				if (j->id == *entry && i->data == j->extractInfo.hint)
+					idResults.push_back(ExtractData(j->extractInfo, *i));
 			}
 		}
 
+		// Sort out entries with mistmatching language settings
+		for (ExtractList::iterator i = idResults.begin(); i != idResults.end();) {
+			if (i->extractInfo.lang != UNK_LANG && i->extractInfo.lang != g->lang) {
+				i = idResults.erase(i);
+				continue;
+			}
+
+			++i;
+		}
+
+		// Determin whether we have a 100% platform match
+		bool hasPlatformMatch = false;
+		for (ExtractList::const_iterator i = idResults.begin(); i != idResults.end(); ++i) {
+			if (i->extractInfo.platform == g->platform)
+				hasPlatformMatch = true;
+		}
+
+		for (ExtractList::iterator i = idResults.begin(); i != idResults.end();) {
+			// Sort out entries with mistmatching platform settings, when we have a platform match
+			if (hasPlatformMatch && i->extractInfo.platform != g->platform) {
+				i = idResults.erase(i);
+				continue;
+			}
+
+			++i;
+		}
+
+		if (idResults.empty())
+			continue;
+
 		if (idResults.size() > 1)
 			warning("Multiple entries found for id %d/\"%s\"", *entry, getIdString(*entry));
+
 
 		Search::ResultData result;
 		result.data.size = 0;
@@ -1149,10 +1172,10 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		// they will work fine. If there are any problems it should be rather
 		// easy to identify them, since we print out a warning for multiple
 		// entries found.
-		for (Search::ResultList::iterator i = idResults.begin(); i != idResults.end(); ++i) {
-			if (result.data.size <= i->data.size) {
-				if (result.offset >= i->offset)
-					result = *i;
+		for (ExtractList::iterator i = idResults.begin(); i != idResults.end(); ++i) {
+			if (result.data.size <= i->result.data.size) {
+				if (result.offset >= i->result.offset)
+					result = i->result;
 			}
 		}
 

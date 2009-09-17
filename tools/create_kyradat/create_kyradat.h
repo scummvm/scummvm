@@ -275,6 +275,8 @@ struct ExtractEntrySearchData {
 	SearchData hint;
 };
 
+#define EXTRACT_END_ENTRY { UNK_LANG, kPlatformUnknown, { 0, 0, { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } } } }
+
 struct ExtractEntry {
 	int id;
 	const ExtractEntrySearchData *providers;
