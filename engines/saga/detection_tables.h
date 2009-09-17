@@ -459,7 +459,7 @@ static const SAGAGameDescription gameDescriptions[] = {
 			"ite",
 			"Windows/Linux/DOS CD Version",
 			{
-	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8929952},
+	{"ite.rsc",		GAME_RESOURCEFILE,	"8f4315a9bb10ec839253108a032c8b54", 8929956},
 	{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
 	{ NULL, 0, NULL, 0}
 			},
