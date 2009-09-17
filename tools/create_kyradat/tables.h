@@ -32,14 +32,8 @@ struct ExtractEntrySearchData {
 	SearchData hint;
 };
 
-#define EXTRACT_END_ENTRY { UNK_LANG, kPlatformUnknown, { 0, 0, { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } } } }
-
-struct ExtractEntry {
-	int id;
-	const ExtractEntrySearchData *providers;
-};
-
-extern const ExtractEntry extractProviders[];
+typedef std::list<ExtractEntrySearchData> ExtractEntryList;
+ExtractEntryList getProvidersForId(int id);
 
 #endif
 

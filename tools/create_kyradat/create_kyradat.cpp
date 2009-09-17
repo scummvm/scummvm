@@ -1072,23 +1072,17 @@ bool setupSearch(const int *needList, Search &search, DataIdList &dataIdList) {
 	for (const int *entry = needList; *entry != -1; ++entry) {
 		bool found = false;
 
-		for (const ExtractEntry *p = extractProviders; p->id != -1; ++p) {
-			if (p->id == *entry) {
-				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
-					found = true;
+		ExtractEntryList providers = getProvidersForId(*entry);
 
-					// We will add *all* providers here, regardless of the language and platform!
-					search.addData(d->hint);
-					dataIdList.push_back(DataIdEntry(*d, *entry));
-				}
-
-				break;
-			}
-		}
-
-		if (!found) {
+		if (providers.empty()) {
 			fprintf(stderr, "ERROR: No provider for id %d/%s\n", *entry, getIdString(*entry));
 			return false;
+		} else {
+			for (ExtractEntryList::const_iterator i = providers.begin(); i != providers.end(); ++i) {
+				// We will add *all* providers here, regardless of the language and platform!
+				search.addData(i->hint);
+				dataIdList.push_back(DataIdEntry(*i, *entry));
+			}
 		}
 	}
 

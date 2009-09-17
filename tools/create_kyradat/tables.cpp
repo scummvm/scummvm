@@ -22,6 +22,10 @@
 
 #include "tables.h"
 
+#define EXTRACT_END_ENTRY { UNK_LANG, kPlatformUnknown, { 0, 0, { { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 } } } }
+
+namespace {
+
 // Id provider tables 
 
 const ExtractEntrySearchData kForestSeqProvider[] = {
@@ -1641,6 +1645,11 @@ const ExtractEntrySearchData kLolHistoryProvider[] = {
 
 // Provider tables
 
+struct ExtractEntry {
+	int id;
+	const ExtractEntrySearchData *providers;
+};
+
 const ExtractEntry extractProviders[] = {
 	{ kForestSeq, kForestSeqProvider },
 	{ kKallakWritingSeq, kKallakWritingSeqProvider },
@@ -1841,4 +1850,19 @@ const ExtractEntry extractProviders[] = {
 	{ kLolHistory, kLolHistoryProvider },
 	{ -1, NULL }
 };
+
+} // end of anonymous namespace
+
+ExtractEntryList getProvidersForId(int id) {
+	ExtractEntryList list;
+
+	for (const ExtractEntry *p = extractProviders; p->id != -1; ++p) {
+		if (p->id == id) {
+			for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d)
+				list.push_back(*d);
+		}
+	}
+
+	return list;
+}
 
