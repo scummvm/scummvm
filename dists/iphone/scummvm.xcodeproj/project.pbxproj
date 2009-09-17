@@ -1017,11 +1017,11 @@
 		DF6118360FE3A7D20042AD3F /* res_view.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF61182F0FE3A7D20042AD3F /* res_view.cpp */; };
 		DF6118370FE3A7D20042AD3F /* seq_decoder.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118300FE3A7D20042AD3F /* seq_decoder.cpp */; };
 		DF61183C0FE3A8080042AD3F /* kmisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118380FE3A8080042AD3F /* kmisc.cpp */; };
-		DF61183D0FE3A8080042AD3F /* memobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118390FE3A8080042AD3F /* memobj.cpp */; };
+		DF61183D0FE3A8080042AD3F /* segment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118390FE3A8080042AD3F /* segment.cpp */; };
 		DF61183E0FE3A8080042AD3F /* kmisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118380FE3A8080042AD3F /* kmisc.cpp */; };
-		DF61183F0FE3A8080042AD3F /* memobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118390FE3A8080042AD3F /* memobj.cpp */; };
+		DF61183F0FE3A8080042AD3F /* segment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118390FE3A8080042AD3F /* segment.cpp */; };
 		DF6118400FE3A8080042AD3F /* kmisc.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118380FE3A8080042AD3F /* kmisc.cpp */; };
-		DF6118410FE3A8080042AD3F /* memobj.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118390FE3A8080042AD3F /* memobj.cpp */; };
+		DF6118410FE3A8080042AD3F /* segment.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118390FE3A8080042AD3F /* segment.cpp */; };
 		DF6118490FE3A8250042AD3F /* decompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118430FE3A8250042AD3F /* decompressor.cpp */; };
 		DF61184A0FE3A8250042AD3F /* resource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118450FE3A8250042AD3F /* resource.cpp */; };
 		DF61184B0FE3A8250042AD3F /* vocabulary.cpp in Sources */ = {isa = PBXBuildFile; fileRef = DF6118470FE3A8250042AD3F /* vocabulary.cpp */; };
@@ -3169,8 +3169,8 @@
 		DF6118300FE3A7D20042AD3F /* seq_decoder.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = seq_decoder.cpp; sourceTree = "<group>"; };
 		DF6118310FE3A7D20042AD3F /* seq_decoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = seq_decoder.h; sourceTree = "<group>"; };
 		DF6118380FE3A8080042AD3F /* kmisc.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = kmisc.cpp; sourceTree = "<group>"; };
-		DF6118390FE3A8080042AD3F /* memobj.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = memobj.cpp; sourceTree = "<group>"; };
-		DF61183A0FE3A8080042AD3F /* memobj.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = memobj.h; sourceTree = "<group>"; };
+		DF6118390FE3A8080042AD3F /* segment.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = segment.cpp; sourceTree = "<group>"; };
+		DF61183A0FE3A8080042AD3F /* segment.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = segment.h; sourceTree = "<group>"; };
 		DF61183B0FE3A8080042AD3F /* savegame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = savegame.h; sourceTree = "<group>"; };
 		DF6118420FE3A8250042AD3F /* debug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = debug.h; sourceTree = "<group>"; };
 		DF6118430FE3A8250042AD3F /* decompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = decompressor.cpp; sourceTree = "<group>"; };
@@ -6425,8 +6425,8 @@
 			children = (
 				DF7585F6100CB75800CC3324 /* static_selectors.cpp */,
 				DF6118380FE3A8080042AD3F /* kmisc.cpp */,
-				DF6118390FE3A8080042AD3F /* memobj.cpp */,
-				DF61183A0FE3A8080042AD3F /* memobj.h */,
+				DF6118390FE3A8080042AD3F /* segment.cpp */,
+				DF61183A0FE3A8080042AD3F /* segment.h */,
 				DF61183B0FE3A8080042AD3F /* savegame.h */,
 				DF5CEB3A0F75540700DEA624 /* stringfrag.cpp */,
 				DF89C2A30F62D79E00D756B6 /* script.cpp */,
@@ -8098,7 +8098,7 @@
 				DF6118340FE3A7D20042AD3F /* res_view.cpp in Sources */,
 				DF6118350FE3A7D20042AD3F /* seq_decoder.cpp in Sources */,
 				DF61183E0FE3A8080042AD3F /* kmisc.cpp in Sources */,
-				DF61183F0FE3A8080042AD3F /* memobj.cpp in Sources */,
+				DF61183F0FE3A8080042AD3F /* segment.cpp in Sources */,
 				DF61184C0FE3A8250042AD3F /* decompressor.cpp in Sources */,
 				DF61184D0FE3A8250042AD3F /* resource.cpp in Sources */,
 				DF61184E0FE3A8250042AD3F /* vocabulary.cpp in Sources */,
@@ -9059,7 +9059,7 @@
 				DF6118320FE3A7D20042AD3F /* res_view.cpp in Sources */,
 				DF6118330FE3A7D20042AD3F /* seq_decoder.cpp in Sources */,
 				DF61183C0FE3A8080042AD3F /* kmisc.cpp in Sources */,
-				DF61183D0FE3A8080042AD3F /* memobj.cpp in Sources */,
+				DF61183D0FE3A8080042AD3F /* segment.cpp in Sources */,
 				DF6118490FE3A8250042AD3F /* decompressor.cpp in Sources */,
 				DF61184A0FE3A8250042AD3F /* resource.cpp in Sources */,
 				DF61184B0FE3A8250042AD3F /* vocabulary.cpp in Sources */,
@@ -10014,7 +10014,7 @@
 				DF6118360FE3A7D20042AD3F /* res_view.cpp in Sources */,
 				DF6118370FE3A7D20042AD3F /* seq_decoder.cpp in Sources */,
 				DF6118400FE3A8080042AD3F /* kmisc.cpp in Sources */,
-				DF6118410FE3A8080042AD3F /* memobj.cpp in Sources */,
+				DF6118410FE3A8080042AD3F /* segment.cpp in Sources */,
 				DF61184F0FE3A8250042AD3F /* decompressor.cpp in Sources */,
 				DF6118500FE3A8250042AD3F /* resource.cpp in Sources */,
 				DF6118510FE3A8250042AD3F /* vocabulary.cpp in Sources */,

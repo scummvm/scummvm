@@ -23,13 +23,13 @@
  *
  */
 
-#ifndef SCI_ENGINE_segMan_H
-#define SCI_ENGINE_segMan_H
+#ifndef SCI_ENGINE_SEGMAN_H
+#define SCI_ENGINE_SEGMAN_H
 
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "sci/engine/vm.h"
-#include "sci/engine/memobj.h"
+#include "sci/engine/segment.h"
 
 namespace Sci {
 
@@ -397,4 +397,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_segMan
+#endif // SCI_ENGINE_SEGMAN

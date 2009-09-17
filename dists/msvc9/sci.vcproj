@@ -39,8 +39,8 @@
 			<File RelativePath="..\..\engines\sci\engine\kscripts.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\ksound.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kstring.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\memobj.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\memobj.h" />
+			<File RelativePath="..\..\engines\sci\engine\segment.cpp" />
+			<File RelativePath="..\..\engines\sci\engine\segment.h" />
 			<File RelativePath="..\..\engines\sci\engine\message.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\message.h" />
 			<File RelativePath="..\..\engines\sci\engine\said.cpp" />

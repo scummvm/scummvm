@@ -219,7 +219,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	for (uint i = 0; i < sync_heap_size; ++i) {
 		SegmentObj *&mobj = _heap[i];
 
-		// Sync the memobj type
+		// Sync the segment type
 		SegmentType type = (s.isSaving() && mobj) ? mobj->getType() : SEG_TYPE_INVALID;
 		s.syncAsUint32LE(type);
 

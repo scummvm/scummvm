@@ -26,12 +26,12 @@ MODULE_OBJS = \
 	engine/ksound.o \
 	engine/kstring.o \
 	engine/message.o \
-	engine/memobj.o \
 	engine/said.o \
 	engine/savegame.o \
 	engine/script.o \
 	engine/scriptdebug.o \
 	engine/seg_manager.o \
+	engine/segment.o \
 	engine/static_selectors.o \
 	engine/stringfrag.o \
 	engine/state.o \

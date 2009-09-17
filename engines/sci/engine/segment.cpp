@@ -26,7 +26,7 @@
 #include "common/endian.h"
 
 #include "sci/sci.h"
-#include "sci/engine/memobj.h"
+#include "sci/engine/segment.h"
 #include "sci/engine/intmap.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"

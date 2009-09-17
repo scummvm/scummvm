@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_ENGINE_MEMOBJ_H
-#define SCI_ENGINE_MEMOBJ_H
+#ifndef SCI_ENGINE_SEGMENT_H
+#define SCI_ENGINE_SEGMENT_H
 
 #include "common/serializer.h"
 #include "sci/engine/vm.h"
@@ -225,7 +225,7 @@ struct Object {
 		_variables[version < SCI_VERSION_1_1 ? 0 : 5] = value;
 	}
 
-	reg_t getSuperClassSelector(SciVersion version) { 
+	reg_t getSuperClassSelector(SciVersion version) {
 		return _variables[version < SCI_VERSION_1_1 ? 1 : 6];
 	}
 
@@ -266,7 +266,7 @@ struct Object {
 		uint16 offset = (version < SCI_VERSION_1_1) ? methods_nr + 1 + i : i * 2 + 2;
 		return make_reg(pos.segment, READ_LE_UINT16((byte *) (base_method + offset)));
 	}
-	
+
 	bool isClass(SciVersion version) {
 		return (getInfoSelector(version).offset & SCRIPT_INFO_CLASS);
 	}
@@ -641,4 +641,4 @@ public:
 
 } // End of namespace Sci
 
-#endif // SCI_ENGINE_VM_H
+#endif // SCI_ENGINE_SEGMENT_H
