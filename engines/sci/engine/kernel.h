@@ -187,10 +187,13 @@ enum SelectorInvocation {
 */
 
 
-enum { WAS_FUNCT_NR = -1 };
+enum {
+	// FIXME: FAKE_FUNCT_NR is a hack used to substitute for an opcode number in certain places
+	FAKE_FUNCT_NR = -1
+};
 
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
-	s, _object_,  ((SciEngine*)g_engine)->getKernel()->_selectorCache._selector_, _noinvalid_, WAS_FUNCT_NR, argv, argc, __FILE__, __LINE__
+	s, _object_,  ((SciEngine*)g_engine)->getKernel()->_selectorCache._selector_, _noinvalid_, FAKE_FUNCT_NR, argv, argc, __FILE__, __LINE__
 /* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
 ** handle vararg macros.
 */
@@ -298,31 +301,26 @@ List *lookup_list(EngineState *s, reg_t addr);
 #define SCI_MAX_SAVENAME_LENGTH 0x24
 
 /* Flags for the signal selector */
-#define _K_VIEW_SIG_FLAG_STOP_UPDATE    0x0001
-#define _K_VIEW_SIG_FLAG_UPDATED        0x0002
-#define _K_VIEW_SIG_FLAG_NO_UPDATE      0x0004
-#define _K_VIEW_SIG_FLAG_HIDDEN         0x0008
-#define _K_VIEW_SIG_FLAG_FIX_PRI_ON     0x0010
-#define _K_VIEW_SIG_FLAG_ALWAYS_UPDATE  0x0020
-#define _K_VIEW_SIG_FLAG_FORCE_UPDATE   0x0040
-#define _K_VIEW_SIG_FLAG_REMOVE         0x0080
-#define _K_VIEW_SIG_FLAG_FROZEN         0x0100
-#define _K_VIEW_SIG_FLAG_IS_EXTRA       0x0200
-#define _K_VIEW_SIG_FLAG_HIT_OBSTACLE   0x0400
-#define _K_VIEW_SIG_FLAG_DOESNT_TURN    0x0800
-#define _K_VIEW_SIG_FLAG_NO_CYCLER      0x1000
-#define _K_VIEW_SIG_FLAG_IGNORE_HORIZON 0x2000
-#define _K_VIEW_SIG_FLAG_IGNORE_ACTOR   0x4000
-#define _K_VIEW_SIG_FLAG_DISPOSE_ME     0x8000
+enum {
+	_K_VIEW_SIG_FLAG_STOP_UPDATE    = 0x0001,
+	_K_VIEW_SIG_FLAG_UPDATED        = 0x0002,
+	_K_VIEW_SIG_FLAG_NO_UPDATE      = 0x0004,
+	_K_VIEW_SIG_FLAG_HIDDEN         = 0x0008,
+	_K_VIEW_SIG_FLAG_FIX_PRI_ON     = 0x0010,
+	_K_VIEW_SIG_FLAG_ALWAYS_UPDATE  = 0x0020,
+	_K_VIEW_SIG_FLAG_FORCE_UPDATE   = 0x0040,
+	_K_VIEW_SIG_FLAG_REMOVE         = 0x0080,
+	_K_VIEW_SIG_FLAG_FROZEN         = 0x0100,
+	_K_VIEW_SIG_FLAG_IS_EXTRA       = 0x0200,
+	_K_VIEW_SIG_FLAG_HIT_OBSTACLE   = 0x0400,
+	_K_VIEW_SIG_FLAG_DOESNT_TURN    = 0x0800,
+	_K_VIEW_SIG_FLAG_NO_CYCLER      = 0x1000,
+	_K_VIEW_SIG_FLAG_IGNORE_HORIZON = 0x2000,
+	_K_VIEW_SIG_FLAG_IGNORE_ACTOR   = 0x4000,
+	_K_VIEW_SIG_FLAG_DISPOSE_ME     = 0x8000,
 
-#define _K_VIEW_SIG_FLAG_STOPUPD 0x20000000 /* View has been stop-updated */
-
-
-/* Sound status */
-#define _K_SOUND_STATUS_STOPPED 0
-#define _K_SOUND_STATUS_INITIALIZED 1
-#define _K_SOUND_STATUS_PAUSED 2
-#define _K_SOUND_STATUS_PLAYING 3
+	_K_VIEW_SIG_FLAG_STOPUPD        = 0x20000000 /* View has been stop-updated */
+};
 
 
 /******************** Kernel functions ********************/

@@ -36,6 +36,14 @@
 
 namespace Sci {
 
+/* Sound status */
+enum {
+	_K_SOUND_STATUS_STOPPED = 0,
+	_K_SOUND_STATUS_INITIALIZED = 1,
+	_K_SOUND_STATUS_PAUSED = 2,
+	_K_SOUND_STATUS_PLAYING = 3
+};
+
 enum {
 	_K_SCI0_SOUND_INIT_HANDLE = 0,
 	_K_SCI0_SOUND_PLAY_HANDLE = 1,

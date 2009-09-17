@@ -383,7 +383,7 @@ reg_t kFindKey(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kDeleteKey(EngineState *s, int, int argc, reg_t *argv) {
-	reg_t node_pos = kFindKey(s, WAS_FUNCT_NR, 2, argv);
+	reg_t node_pos = kFindKey(s, FAKE_FUNCT_NR, 2, argv);
 	Node *n;
 	List *l = lookup_list(s, argv[0]);
 

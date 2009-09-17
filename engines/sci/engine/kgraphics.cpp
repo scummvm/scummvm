@@ -343,9 +343,9 @@ static reg_t kSetCursorSci11(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kSetCursor(EngineState *s, int, int argc, reg_t *argv) {
 	switch (s->detectSetCursorType()) {
 	case SCI_VERSION_0_EARLY:
-		return kSetCursorSci0(s, WAS_FUNCT_NR, argc, argv);
+		return kSetCursorSci0(s, FAKE_FUNCT_NR, argc, argv);
 	case SCI_VERSION_1_1:
-		return kSetCursorSci11(s, WAS_FUNCT_NR, argc, argv);
+		return kSetCursorSci11(s, FAKE_FUNCT_NR, argc, argv);
 	default:
 		warning("Unknown SetCursor type");
 		return NULL_REG;
@@ -855,7 +855,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kCantBeHere(EngineState *s, int, int argc, reg_t *argv) {
 	// kCantBeHere does the same thing as kCanBeHere, except that
 	// it returns the opposite result.
-	reg_t result = kCanBeHere(s, 0, argc, argv);
+	reg_t result = kCanBeHere(s, FAKE_FUNCT_NR, argc, argv);
 	result.offset = !result.offset;
 	return result;
 }
@@ -2992,7 +2992,7 @@ reg_t kAnimate(EngineState *s, int, int argc, reg_t *argv) {
 		// End of doit() recovery code
 
 		if (s->pic_is_new) { // Happens if DrawPic() is executed by a dynview (yes, that happens)
-			kAnimate(s, WAS_FUNCT_NR, argc, argv); /* Tail-recurse */
+			kAnimate(s, FAKE_FUNCT_NR, argc, argv); /* Tail-recurse */
 			return s->r_acc;
 		}
 
