@@ -90,7 +90,9 @@ const Game kyra2Games[] = {
 };
 
 const Game kyra3Games[] = {
-	{ kKyra3, EN_ANY, kPlatformPC, -1, "bf68701eb591d0b72219f314c0d32688" },
+	// DOS CD (multi language version, with no language specific strings)
+	{ kKyra3, UNK_LANG, kPlatformPC, -1, "bf68701eb591d0b72219f314c0d32688" },
+
 	GAME_DUMMY_ENTRY
 };
 
@@ -98,12 +100,12 @@ const Game lolGames[] = {
 	// DOS demo
 	{ kLol, EN_ANY, kPlatformPC, k2DemoLol, "30bb5af87d38adb47d3e6ce06b1cb042" },
 
-	// DOS floppy
-	{ kLol, EN_ANY, kPlatformPC, -1, "6b843869772c1b779e1386be868c15dd" },
+	// DOS floppy (no language specifc strings)
+	{ kLol, DE_DEU, kPlatformPC, -1, "6b843869772c1b779e1386be868c15dd" },
 
-	// DOS CD
-	{ kLol, EN_ANY, kPlatformPC, kTalkieFile1, "9d1778314de80598c0b0d032e2a1a1cf" },
-	{ kLol, EN_ANY, kPlatformPC, kTalkieFile2, "263998ec600afca1cc7b935c473df670" },
+	// DOS CD (multi language version, with no language specific strings)
+	{ kLol, UNK_LANG, kPlatformPC, kTalkieFile1, "9d1778314de80598c0b0d032e2a1a1cf" },
+	{ kLol, UNK_LANG, kPlatformPC, kTalkieFile2, "263998ec600afca1cc7b935c473df670" },
 
 	GAME_DUMMY_ENTRY
 };

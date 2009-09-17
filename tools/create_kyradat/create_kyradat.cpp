@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 55,
+	kKyraDatVersion = 56,
 	kIndexSize = 12
 };
 
@@ -397,6 +397,8 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_ITALIAN;
 	else if (g->lang == JA_JPN)
 		features |= GF_JAPANESE;
+	else
+		features |= GF_LNGUNK;
 
 	return features;
 }
