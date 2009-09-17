@@ -391,7 +391,6 @@ reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
-int is_heap_object(EngineState *s, reg_t pos);
 extern int get_angle(int xrel, int yrel);
 
 reg_t kDoAvoider(EngineState *s, int, int argc, reg_t *argv) {
@@ -404,14 +403,14 @@ reg_t kDoAvoider(EngineState *s, int, int argc, reg_t *argv) {
 
 	s->r_acc = make_reg(0, -1);
 
-	if (!is_heap_object(s, avoider)) {
+	if (!s->segMan->isHeapObject(avoider)) {
 		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = GET_SEL32(avoider, client);
 
-	if (!is_heap_object(s, client)) {
+	if (!s->segMan->isHeapObject(client)) {
 		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
@@ -419,7 +418,7 @@ reg_t kDoAvoider(EngineState *s, int, int argc, reg_t *argv) {
 	looper = GET_SEL32(client, looper);
 	mover = GET_SEL32(client, mover);
 
-	if (!is_heap_object(s, mover)) {
+	if (!s->segMan->isHeapObject(mover)) {
 		if (mover.segment) {
 			warning("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
 		}

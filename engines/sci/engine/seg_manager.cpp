@@ -45,9 +45,6 @@ namespace Sci {
 #define DEFAULT_OBJECTS 8	    // default # of objects per script
 #define DEFAULT_OBJECTS_INCREMENT 4 // Number of additional objects to instantiate if we're running out of them
 
-//#define GC_DEBUG // Debug garbage collection
-//#define GC_DEBUG_VERBOSE // Debug garbage verbosely
-
 #undef DEBUG_segMan // Define to turn on debugging
 
 SegManager::SegManager(ResourceManager *resMan) {
@@ -133,34 +130,33 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 	return (Script *)mem;
 }
 
-void Script::setScriptSize(int script_nr, ResourceManager *_resMan) {
-	Script &scr = *this;	// FIXME: Hack
-	Resource *script = _resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	Resource *heap = _resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-	bool oldScriptHeader = (_resMan->sciVersion() == SCI_VERSION_0_EARLY);
+void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
+	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
+	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
+	bool oldScriptHeader = (_sciVersion == SCI_VERSION_0_EARLY);
 
-	scr._scriptSize = script->size;
-	scr._heapSize = 0; // Set later
+	_scriptSize = script->size;
+	_heapSize = 0; // Set later
 
-	if (!script || (_resMan->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
+	if (!script || (_sciVersion >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
 	if (oldScriptHeader) {
-		scr._bufSize = script->size + READ_LE_UINT16(script->data) * 2;
+		_bufSize = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (_resMan->sciVersion() < SCI_VERSION_1_1) {
-		scr._bufSize = script->size;
+	} else if (_sciVersion < SCI_VERSION_1_1) {
+		_bufSize = script->size;
 	} else {
-		scr._bufSize = script->size + heap->size;
-		scr._heapSize = heap->size;
+		_bufSize = script->size + heap->size;
+		_heapSize = heap->size;
 
 		// Ensure that the start of the heap resource can be word-aligned.
 		if (script->size & 2) {
-			scr._bufSize++;
-			scr._scriptSize++;
+			_bufSize++;
+			_scriptSize++;
 		}
 
-		if (scr._bufSize > 65535) {
+		if (_bufSize > 65535) {
 			error("Script and heap sizes combined exceed 64K."
 			          "This means a fundamental design bug was made in SCI\n"
 			          "regarding SCI1.1 games.\nPlease report this so it can be"
@@ -189,20 +185,19 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 	return 1;
 }
 
-bool SegManager::scriptIsMarkedAsDeleted(SegmentId seg) {
-	Script *scr = getScriptIfLoaded(seg);
-	if (!scr)
+bool SegManager::isHeapObject(reg_t pos) {
+	Object *obj = getObject(pos);
+	if (obj == NULL)
 		return false;
-	return scr->_markedAsDeleted;
+	if (obj->flags & OBJECT_FLAG_FREED)
+		return false;
+	Script *scr = getScriptIfLoaded(pos.segment);
+	return !(scr && scr->_markedAsDeleted);
 }
 
-
-int SegManager::deallocateScript(int script_nr) {
+void SegManager::deallocateScript(int script_nr) {
 	SegmentId seg = getScriptSegment(script_nr);
-
 	deallocate(seg, true);
-
-	return 1;
 }
 
 Script *SegManager::getScript(const SegmentId seg) {
@@ -297,10 +292,6 @@ bool SegManager::check(SegmentId seg) {
 	return true;
 }
 
-bool SegManager::scriptIsLoaded(SegmentId seg) {
-	return getScriptIfLoaded(seg) != 0;
-}
-
 void SegManager::setExportAreWide(bool flag) {
 	_exportsAreWide = flag;
 }
@@ -346,15 +337,13 @@ void Script::scriptAddCodeBlock(reg_t location) {
 }
 
 void Script::scriptRelocate(reg_t block) {
-	Script *scr = this;	// FIXME: Hack
-
-	VERIFY(block.offset < (uint16)scr->_bufSize && READ_LE_UINT16(scr->_buf + block.offset) * 2 + block.offset < (uint16)scr->_bufSize,
+	VERIFY(block.offset < (uint16)_bufSize && READ_LE_UINT16(_buf + block.offset) * 2 + block.offset < (uint16)_bufSize,
 	       "Relocation block outside of script\n");
 
-	int count = READ_LE_UINT16(scr->_buf + block.offset);
+	int count = READ_LE_UINT16(_buf + block.offset);
 
 	for (int i = 0; i <= count; i++) {
-		int pos = READ_LE_UINT16(scr->_buf + block.offset + 2 + (i * 2));
+		int pos = READ_LE_UINT16(_buf + block.offset + 2 + (i * 2));
 		if (!pos)
 			continue; // FIXME: A hack pending investigation
 
@@ -362,26 +351,26 @@ void Script::scriptRelocate(reg_t block) {
 			bool done = false;
 			uint k;
 
-			for (k = 0; !done && k < scr->_objects.size(); k++) {
-				if (relocateObject(&scr->_objects[k], block.segment, pos))
+			for (k = 0; !done && k < _objects.size(); k++) {
+				if (relocateObject(&_objects[k], block.segment, pos))
 					done = true;
 			}
 
-			for (k = 0; !done && k < scr->_codeBlocks.size(); k++) {
-				if (pos >= scr->_codeBlocks[k].pos.offset &&
-				        pos < scr->_codeBlocks[k].pos.offset + scr->_codeBlocks[k].size)
+			for (k = 0; !done && k < _codeBlocks.size(); k++) {
+				if (pos >= _codeBlocks[k].pos.offset &&
+				        pos < _codeBlocks[k].pos.offset + _codeBlocks[k].size)
 					done = true;
 			}
 
 			if (!done) {
 				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
 				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (scr->_localsBlock)
-					printf("- locals: %d at %04x\n", scr->_localsBlock->_locals.size(), scr->_localsOffset);
+				if (_localsBlock)
+					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
 				else
 					printf("- No locals\n");
-				for (k = 0; k < scr->_objects.size(); k++)
-					printf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
+				for (k = 0; k < _objects.size(); k++)
+					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k].pos.offset, _objects[k]._variables.size());
 				// SQ3 script 71 has broken relocation entries.
 				printf("Trying to continue anyway...\n");
 			}
@@ -390,38 +379,35 @@ void Script::scriptRelocate(reg_t block) {
 }
 
 void Script::heapRelocate(reg_t block) {
-	Script *scr = this;	// FIXME: Hack
-
-	VERIFY(block.offset < (uint16)scr->_heapSize && READ_LE_UINT16(scr->_heapStart + block.offset) * 2 + block.offset < (uint16)scr->_bufSize,
+	VERIFY(block.offset < (uint16)_heapSize && READ_LE_UINT16(_heapStart + block.offset) * 2 + block.offset < (uint16)_bufSize,
 	       "Relocation block outside of script\n");
 
-	if (scr->_relocated)
+	if (_relocated)
 		return;
-	scr->_relocated = true;
-	int count = READ_LE_UINT16(scr->_heapStart + block.offset);
+	_relocated = true;
+	int count = READ_LE_UINT16(_heapStart + block.offset);
 
 	for (int i = 0; i < count; i++) {
-		int pos = READ_LE_UINT16(scr->_heapStart + block.offset + 2 + (i * 2)) + scr->_scriptSize;
+		int pos = READ_LE_UINT16(_heapStart + block.offset + 2 + (i * 2)) + _scriptSize;
 
 		if (!relocateLocal(block.segment, pos)) {
 			bool done = false;
 			uint k;
 
-			for (k = 0; !done && k < scr->_objects.size(); k++) {
-				if (relocateObject(&scr->_objects[k], block.segment, pos))
+			for (k = 0; !done && k < _objects.size(); k++) {
+				if (relocateObject(&_objects[k], block.segment, pos))
 					done = true;
 			}
 
 			if (!done) {
 				printf("While processing relocation block %04x:%04x:\n", PRINT_REG(block));
 				printf("Relocation failed for index %04x (%d/%d)\n", pos, i + 1, count);
-				if (scr->_localsBlock)
-					printf("- locals: %d at %04x\n", scr->_localsBlock->_locals.size(), scr->_localsOffset);
+				if (_localsBlock)
+					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
 				else
 					printf("- No locals\n");
-				for (k = 0; k < scr->_objects.size(); k++)
-					printf("- obj#%d at %04x w/ %d vars\n", k, scr->_objects[k].pos.offset, scr->_objects[k]._variables.size());
-				printf("Triggering breakpoint...\n");
+				for (k = 0; k < _objects.size(); k++)
+					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k].pos.offset, _objects[k]._variables.size());
 				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 			}
 		}
@@ -480,16 +466,14 @@ Object *Script::scriptObjInit0(reg_t obj_pos) {
 	SciVersion version = _sciVersion;	// for the offset defines
 	uint base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 
-	Script *scr = this;	// FIXME: Hack
+	VERIFY(base < _bufSize, "Attempt to initialize object beyond end of script\n");
 
-	VERIFY(base < scr->_bufSize, "Attempt to initialize object beyond end of script\n");
+	obj = allocateObject(base);
 
-	obj = scr->allocateObject(base);
-
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < scr->_bufSize, "Function area pointer stored beyond end of script\n");
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < _bufSize, "Function area pointer stored beyond end of script\n");
 
 	{
-		byte *data = (byte *)(scr->_buf + base);
+		byte *data = (byte *)(_buf + base);
 		int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
 		int variables_nr;
 		int functions_nr;
@@ -499,7 +483,7 @@ Object *Script::scriptObjInit0(reg_t obj_pos) {
 		obj->flags = 0;
 		obj->pos = make_reg(obj_pos.segment, base);
 
-		VERIFY(base + funct_area < scr->_bufSize, "Function area pointer references beyond end of script");
+		VERIFY(base + funct_area < _bufSize, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
 		functions_nr = READ_LE_UINT16(data + funct_area - 2);
@@ -507,12 +491,12 @@ Object *Script::scriptObjInit0(reg_t obj_pos) {
 
 		VERIFY(base + funct_area + functions_nr * 2
 		       // add again for classes, since those also store selectors
-		       + (is_class ? functions_nr * 2 : 0) < scr->_bufSize, "Function area extends beyond end of script");
+		       + (is_class ? functions_nr * 2 : 0) < _bufSize, "Function area extends beyond end of script");
 
 		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
-		obj->base = scr->_buf;
+		obj->base = _buf;
 		obj->base_obj = data;
 		obj->base_method = (uint16 *)(data + funct_area);
 		obj->base_vars = NULL;
@@ -528,18 +512,16 @@ Object *Script::scriptObjInit11(reg_t obj_pos) {
 	Object *obj;
 	uint base = obj_pos.offset;
 
-	Script *scr = this;	// FIXME: Hack
+	VERIFY(base < _bufSize, "Attempt to initialize object beyond end of script\n");
 
-	VERIFY(base < scr->_bufSize, "Attempt to initialize object beyond end of script\n");
+	obj = allocateObject(base);
 
-	obj = scr->allocateObject(base);
-
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < scr->_bufSize, "Function area pointer stored beyond end of script\n");
+	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < _bufSize, "Function area pointer stored beyond end of script\n");
 
 	{
-		byte *data = (byte *)(scr->_buf + base);
-		uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16(data + 6));
-		uint16 *prop_area = (uint16 *)(scr->_buf + READ_LE_UINT16(data + 4));
+		byte *data = (byte *)(_buf + base);
+		uint16 *funct_area = (uint16 *)(_buf + READ_LE_UINT16(data + 6));
+		uint16 *prop_area = (uint16 *)(_buf + READ_LE_UINT16(data + 4));
 		int variables_nr;
 		int functions_nr;
 		int is_class;
@@ -548,7 +530,7 @@ Object *Script::scriptObjInit11(reg_t obj_pos) {
 		obj->flags = 0;
 		obj->pos = obj_pos;
 
-		VERIFY((byte *) funct_area < scr->_buf + scr->_bufSize, "Function area pointer references beyond end of script");
+		VERIFY((byte *) funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + 2);
 		functions_nr = READ_LE_UINT16(funct_area);
@@ -557,13 +539,13 @@ Object *Script::scriptObjInit11(reg_t obj_pos) {
 		obj->base_method = funct_area;
 		obj->base_vars = prop_area;
 
-		VERIFY(((byte *) funct_area + functions_nr) < scr->_buf + scr->_bufSize, "Function area extends beyond end of script");
+		VERIFY(((byte *) funct_area + functions_nr) < _buf + _bufSize, "Function area extends beyond end of script");
 
 		obj->variable_names_nr = variables_nr;
 		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
-		obj->base = scr->_buf;
+		obj->base = _buf;
 		obj->base_obj = data;
 
 		for (i = 0; i < variables_nr; i++)

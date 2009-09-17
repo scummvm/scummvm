@@ -34,6 +34,10 @@
 
 namespace Sci {
 
+//#define GC_DEBUG // Debug garbage collection
+//#define GC_DEBUG_VERBOSE // Debug garbage verbosely
+
+
 MemObject *MemObject::createMemObject(MemObjectType type) {
 	MemObject *mem = 0;
 	switch (type) {
@@ -115,6 +119,8 @@ void Script::freeScript() {
 }
 
 bool Script::init(int script_nr, ResourceManager *resMan) {
+	_sciVersion = resMan->sciVersion();
+
 	setScriptSize(script_nr, resMan);
 
 	_buf = (byte *)malloc(_bufSize);
@@ -141,7 +147,6 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 
 	_nr = script_nr;
 
-	_sciVersion = resMan->sciVersion();
 	if (_sciVersion >= SCI_VERSION_1_1)
 		_heapStart = _buf + _scriptSize;
 	else
@@ -322,14 +327,12 @@ void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback not
 }
 
 void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
-	Script *script = this;
-
-	if (addr.offset <= script->_bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(script->_buf + addr.offset)) {
+	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
 		Object *obj = getObject(addr.offset);
 		if (obj) {
 			// Note all local variables, if we have a local variable environment
-			if (script->_localsSegment)
-				(*note)(param, make_reg(script->_localsSegment, 0));
+			if (_localsSegment)
+				(*note)(param, make_reg(_localsSegment, 0));
 
 			for (uint i = 0; i < obj->_variables.size(); i++)
 				(*note)(param, obj->_variables[i]);
@@ -346,16 +349,15 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 //-------------------- clones --------------------
 
 void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
-	CloneTable *clone_table = this;
 	Clone *clone;
 
 //	assert(addr.segment == _segId);
 
-	if (!clone_table->isValidEntry(addr.offset)) {
+	if (!isValidEntry(addr.offset)) {
 		error("Unexpected request for outgoing references from clone at %04x:%04x", PRINT_REG(addr));
 	}
 
-	clone = &(clone_table->_table[addr.offset]);
+	clone = &(_table[addr.offset]);
 
 	// Emit all member variables (including references to the 'super' delegate)
 	for (uint i = 0; i < clone->_variables.size(); i++)
@@ -367,14 +369,13 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 }
 
 void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
-	CloneTable *clone_table = this;
+#ifdef GC_DEBUG
 	Object *victim_obj;
 
 //	assert(addr.segment == _segId);
 
-	victim_obj = &(clone_table->_table[addr.offset]);
+	victim_obj = &(_table[addr.offset]);
 
-#ifdef GC_DEBUG
 	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
 		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
 #ifdef GC_DEBUG_VERBOSE
@@ -386,7 +387,7 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 		warning("[GC] Clone %04x:%04x: Freeing", PRINT_REG(addr));
 		warning("[GC] Clone had pos %04x:%04x", PRINT_REG(victim_obj->pos));
 	*/
-	clone_table->freeEntry(addr.offset);
+	freeEntry(addr.offset);
 }
 
 

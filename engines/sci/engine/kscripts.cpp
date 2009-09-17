@@ -318,27 +318,18 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 	}
 }
 
-bool is_heap_object(EngineState *s, reg_t pos) {
-	Object *obj = s->segMan->getObject(pos);
-	if (obj == NULL)
-		return false;
-	if (obj->flags & OBJECT_FLAG_FREED)
-		return false;
-	return !s->segMan->scriptIsMarkedAsDeleted(pos.segment);
-}
-
 reg_t kIsObject(EngineState *s, int, int argc, reg_t *argv) {
 	if (argv[0].offset == 0xffff) // Treated specially
 		return NULL_REG;
 	else
-		return make_reg(0, is_heap_object(s, argv[0]));
+		return make_reg(0, s->segMan->isHeapObject(argv[0]));
 }
 
 reg_t kRespondsTo(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = argv[1].toUint16();
 
-	return make_reg(0, is_heap_object(s, obj) && lookup_selector(s->segMan, obj, selector, NULL, NULL) != kSelectorNone);
+	return make_reg(0, s->segMan->isHeapObject(obj) && lookup_selector(s->segMan, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
 } // End of namespace Sci

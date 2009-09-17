@@ -76,15 +76,8 @@ public:
 	/**
 	 * Forcefully deallocate a previously allocated script.
 	 * @param script_nr		number of the script to deallocate
-	 * @return				1 on success, 0 on failure
 	 */
-	int deallocateScript(int script_nr);
-
-	/**
-	 * Determines whether a script has been loaded yet.
-	 * @param seg	ID of the script segment to check for
-	 */
-	bool scriptIsLoaded(SegmentId seg);
+	void deallocateScript(int script_nr);
 
 	/**
 	 * Validate whether the specified public function is exported by 
@@ -161,17 +154,6 @@ public:
 	 * @param flag	true if exports are wide, false otherwise
 	 */
 	void setExportAreWide(bool flag);
-
-	/**
-	 * Determines whether the script referenced by the indicated segment 
-	 * is marked as being deleted.
-	 * Will return 0 when applied to an invalid or non-script seg.
-	 * @param seg	Segment ID of the script to investigate
-	 * @return		1 iff seg points to a script and the segment is 
-	 * 				deleted, 0 otherwise
-	 */
-	bool scriptIsMarkedAsDeleted(SegmentId seg);
-
 
 	// 2. Clones
 
@@ -351,6 +333,9 @@ public:
 	 * @return True if it is an object, false otherwise
 	 */
 	bool isObject(reg_t obj) { return getObject(obj) != NULL; }
+
+	// TODO: document this
+	bool isHeapObject(reg_t pos);
 
 	/**
 	 * Determines the name of an object
