@@ -67,10 +67,10 @@ class ResourceManager;
 #define SCRIPT_FUNCTAREAPTR_MAGIC 8 -8
 
 /** Offset of the name pointer */
-#define SCRIPT_NAME_OFFSET (version < SCI_VERSION_1_1 ? 14 -8 : 16)
+#define SCRIPT_NAME_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 14 -8 : 16)
 
 /** Object-relative offset of the -info- selector */
-#define SCRIPT_INFO_OFFSET (version < SCI_VERSION_1_1 ? 12 -8 : 14)
+#define SCRIPT_INFO_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 12 -8 : 14)
 
 /** Flag fo the -info- selector */
 #define SCRIPT_INFO_CLONE 0x0001
@@ -82,12 +82,12 @@ class ResourceManager;
 /** Magical object identifier */
 #define SCRIPT_OBJECT_MAGIC_NUMBER 0x1234
 /** Offset of this identifier */
-#define SCRIPT_OBJECT_MAGIC_OFFSET (version < SCI_VERSION_1_1 ? -8 : 0)
+#define SCRIPT_OBJECT_MAGIC_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? -8 : 0)
 
 /** Script-relative offset of the species ID */
 #define SCRIPT_SPECIES_OFFSET 8 -8
 
-#define SCRIPT_SUPERCLASS_OFFSET (version < SCI_VERSION_1_1 ? 10 -8 : 12)
+#define SCRIPT_SUPERCLASS_OFFSET (getSciVersion() < SCI_VERSION_1_1 ? 10 -8 : 12)
 
 /** Magic adjustment value for lofsa and lofss */
 #define SCRIPT_LOFS_MAGIC 3

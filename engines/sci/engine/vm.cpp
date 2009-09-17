@@ -915,7 +915,7 @@ void run_vm(EngineState *s, int restoring) {
 
 			scriptState.xs->sp -= (opparams[1] >> 1) + 1;
 
-			bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
+			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 			if (!oldScriptHeader) {
 				scriptState.xs->sp -= scriptState.restAdjust;
 				s->restAdjust = 0; // We just used up the scriptState.restAdjust, remember?
@@ -1396,17 +1396,16 @@ void run_vm(EngineState *s, int restoring) {
 static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc) {
 	// Determines if obj explicitly defines slc as a varselector
 	// Returns -1 if not found
-	SciVersion version = segMan->sciVersion();	// for the selector defines
 	byte *buf;
 	uint varnum;
 
-	if (version < SCI_VERSION_1_1) {
+	if (getSciVersion() < SCI_VERSION_1_1) {
 		varnum = obj->variable_names_nr;
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		buf = obj->base_obj + selector_name_offset;
 	} else {
-		if (!(obj->getInfoSelector(version).offset & SCRIPT_INFO_CLASS))
-			obj = segMan->getObject(obj->getSuperClassSelector(version));
+		if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
+			obj = segMan->getObject(obj->getSuperClassSelector());
 
 		buf = (byte *)obj->base_vars;
 		varnum = obj->_variables[1].toUint16();
@@ -1419,7 +1418,7 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 	return -1; // Failed
 }
 
-static int _class_locate_funcselector(Object *obj, Selector slc, SciVersion version) {
+static int _class_locate_funcselector(Object *obj, Selector slc) {
 	// Determines if obj is a class and explicitly defines slc as a funcselector
 	// Does NOT say anything about obj's superclasses, i.e. failure may be
 	// returned even if one of the superclasses defines the funcselector.
@@ -1427,7 +1426,7 @@ static int _class_locate_funcselector(Object *obj, Selector slc, SciVersion vers
 	int i;
 
 	for (i = 0; i < funcnum; i++)
-		if (obj->getFuncSelector(i, version) == slc) // Found it?
+		if (obj->getFuncSelector(i) == slc) // Found it?
 			return i; // report success
 
 	return -1; // Failed
@@ -1435,22 +1434,21 @@ static int _class_locate_funcselector(Object *obj, Selector slc, SciVersion vers
 
 static SelectorType _lookup_selector_function(SegManager *segMan, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
 	int index;
-	SciVersion version = segMan->sciVersion();	// for the selector defines
 
 	// "recursive" lookup
 
 	while (obj) {
-		index = _class_locate_funcselector(obj, selector_id, version);
+		index = _class_locate_funcselector(obj, selector_id);
 
 		if (index >= 0) {
 			if (fptr) {
-				*fptr = obj->getFunction(index, version);
+				*fptr = obj->getFunction(index);
 			}
 
 			return kSelectorMethod;
 		} else {
-			seg_id = obj->getSuperClassSelector(version).segment;
-			obj = segMan->getObject(obj->getSuperClassSelector(version));
+			seg_id = obj->getSuperClassSelector().segment;
+			obj = segMan->getObject(obj->getSuperClassSelector());
 		}
 	}
 
@@ -1461,8 +1459,7 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 	Object *obj = segMan->getObject(obj_location);
 	Object *species;
 	int index;
-	SciVersion version = segMan->sciVersion();	// for the selector defines
-	bool oldScriptHeader = (version == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	// Early SCI versions used the LSB in the selector ID as a read/write
 	// toggle, meaning that we must remove it for selector lookup.
@@ -1474,15 +1471,15 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 				PRINT_REG(obj_location));
 	}
 
-	if (obj->isClass(version))
+	if (obj->isClass())
 		species = obj;
 	else
-		species = segMan->getObject(obj->getSpeciesSelector(version));
+		species = segMan->getObject(obj->getSpeciesSelector());
 
 
 	if (!obj) {
 		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x", 
-			PRINT_REG(obj_location), PRINT_REG(obj->getSpeciesSelector(version)));
+			PRINT_REG(obj_location), PRINT_REG(obj->getSpeciesSelector()));
 		return kSelectorNone;
 	}
 
@@ -1688,14 +1685,14 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
-			obj->setSpeciesSelector(INST_LOOKUP_CLASS(obj->getSpeciesSelector(version).offset), version);
+			obj->setSpeciesSelector(INST_LOOKUP_CLASS(obj->getSpeciesSelector().offset));
 
-			base_obj = segMan->getObject(obj->getSpeciesSelector(version));
+			base_obj = segMan->getObject(obj->getSpeciesSelector());
 			obj->variable_names_nr = base_obj->_variables.size();
 			obj->base_obj = base_obj->base_obj;
 			// Copy base from species class, as we need its selector IDs
 
-			obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector(version).offset), version);
+			obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector().offset));
 		} // if object or class
 		break;
 		case SCI_OBJ_POINTERS: // A relocation table
@@ -1758,11 +1755,10 @@ int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_n
 }
 
 void script_uninstantiate_sci0(SegManager *segMan, int script_nr, SegmentId seg) {
-	bool oldScriptHeader = (segMan->sciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 	reg_t reg = make_reg(seg, oldScriptHeader ? 2 : 0);
 	int objtype, objlength;
 	Script *scr = segMan->getScript(seg);
-	SciVersion version = segMan->sciVersion();
 
 	// Make a pass over the object in order uninstantiate all superclasses
 	objlength = 0;
@@ -1823,7 +1819,7 @@ void script_uninstantiate(SegManager *segMan, int script_nr) {
 		if (segMan->_classtable[i].reg.segment == segment)
 			segMan->_classtable[i].reg = NULL_REG;
 
-	if (segMan->sciVersion() < SCI_VERSION_1_1)
+	if (getSciVersion() < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(segMan, script_nr, segment);
 	else
 		warning("FIXME: Add proper script uninstantiation for SCI 1.1");

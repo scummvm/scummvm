@@ -119,8 +119,6 @@ void Script::freeScript() {
 }
 
 bool Script::init(int script_nr, ResourceManager *resMan) {
-	_sciVersion = resMan->sciVersion();
-
 	setScriptSize(script_nr, resMan);
 
 	_buf = (byte *)malloc(_bufSize);
@@ -147,7 +145,7 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 
 	_nr = script_nr;
 
-	if (_sciVersion >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		_heapStart = _buf + _scriptSize;
 	else
 		_heapStart = _buf;
@@ -326,7 +324,7 @@ void Script::listAllDeallocatable(SegmentId segId, void *param, NoteCallback not
 	(*note)(param, make_reg(segId, 0));
 }
 
-void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
+void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
 	if (addr.offset <= _bufSize && addr.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET && RAW_IS_OBJECT(_buf + addr.offset)) {
 		Object *obj = getObject(addr.offset);
 		if (obj) {
@@ -348,7 +346,7 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 
 //-------------------- clones --------------------
 
-void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
+void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
 	Clone *clone;
 
 //	assert(addr.segment == _segId);
@@ -401,7 +399,7 @@ reg_t LocalVariables::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	return make_reg(owner_seg, 0);
 }
 
-void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
+void LocalVariables::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
 //	assert(addr.segment == _segId);
 
 	for (uint i = 0; i < _locals.size(); i++)
@@ -415,7 +413,7 @@ reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) {
 	return addr;
 }
 
-void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
+void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
 	fprintf(stderr, "Emitting %d stack entries\n", nr);
 	for (int i = 0; i < nr; i++)
 		(*note)(param, entries[i]);
@@ -428,7 +426,7 @@ void ListTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
+void ListTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid list referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;
@@ -448,7 +446,7 @@ void NodeTable::freeAtAddress(SegManager *segMan, reg_t sub_addr) {
 	freeEntry(sub_addr.offset);
 }
 
-void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note, SciVersion version) {
+void NodeTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
 	if (!isValidEntry(addr.offset)) {
 		warning("Invalid node referenced for outgoing references: %04x:%04x", PRINT_REG(addr));
 		return;

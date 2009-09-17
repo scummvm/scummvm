@@ -201,13 +201,11 @@ reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 	*clone_obj = *parent_obj;
 	clone_obj->flags = 0;
 
-	SciVersion version = s->resMan->sciVersion();	// for the selector defines
-
 	// Mark as clone
-	clone_obj->setInfoSelector(make_reg(0, SCRIPT_INFO_CLONE), version);
-	clone_obj->setSpeciesSelector(clone_obj->pos, version);
-	if (parent_obj->isClass(version))
-		clone_obj->setSuperClassSelector(parent_obj->pos, version);
+	clone_obj->setInfoSelector(make_reg(0, SCRIPT_INFO_CLONE));
+	clone_obj->setSpeciesSelector(clone_obj->pos);
+	if (parent_obj->isClass())
+		clone_obj->setSuperClassSelector(parent_obj->pos);
 	s->segMan->getScript(parent_obj->pos.segment)->incrementLockers();
 	s->segMan->getScript(clone_obj->pos.segment)->incrementLockers();
 
@@ -228,9 +226,7 @@ reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	SciVersion version = s->resMan->sciVersion();	// for the selector defines
-
-	if (victim_obj->getInfoSelector(version).offset != SCRIPT_INFO_CLONE) {
+	if (victim_obj->getInfoSelector().offset != SCRIPT_INFO_CLONE) {
 		//warning("Attempt to dispose something other than a clone at %04x", offset);
 		// SCI silently ignores this behaviour; some games actually depend on it
 		return s->r_acc;

@@ -69,7 +69,6 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 	Object *obj = segMan->getObject(objp);
 	byte *selectoroffset;
 	int selectors;
-	SciVersion version = segMan->sciVersion();	// for the selector defines
 
 	if (!obj) {
 		warning("Applied propertyOffsetToId on non-object at %04x:%04x", PRINT_REG(objp));
@@ -78,11 +77,11 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 
 	selectors = obj->_variables.size();
 
-	if (segMan->sciVersion() < SCI_VERSION_1_1)
+	if (getSciVersion() < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
-		if (!(obj->getInfoSelector(version).offset & SCRIPT_INFO_CLASS)) {
-			obj = segMan->getObject(obj->getSuperClassSelector(version));
+		if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS)) {
+			obj = segMan->getObject(obj->getSuperClassSelector());
 			selectoroffset = (byte *)obj->base_vars;
 		} else
 			selectoroffset = (byte *)obj->base_vars;
@@ -269,7 +268,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		if (opcode == op_callk) {
 			int stackframe = (scr[pos.offset + 2] >> 1) + (scriptState.restAdjust);
 			int argc = ((scriptState.xs->sp)[- stackframe - 1]).offset;
-			bool oldScriptHeader = (s->segMan->sciVersion() == SCI_VERSION_0_EARLY);
+			bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 			if (!oldScriptHeader)
 				argc += (scriptState.restAdjust);

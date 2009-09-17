@@ -276,7 +276,7 @@ static void bresenham_autodetect(EngineState *s) {
 		}
 
 		buf = s->segMan->getScript(fptr.segment)->_buf + fptr.offset;
-		handle_movecnt = (s->segMan->sciVersion() <= SCI_VERSION_01 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
+		handle_movecnt = (getSciVersion() <= SCI_VERSION_01 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
 		printf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
 		warning("bresenham_autodetect failed");

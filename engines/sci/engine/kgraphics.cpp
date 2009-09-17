@@ -669,7 +669,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) 
 	int signal = GET_SEL32V(obj, signal);
 	int loop;
 	int maxloops;
-	bool oldScriptHeader = (s->resMan->sciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (signal & _K_VIEW_SIG_FLAG_DOESNT_TURN)
 		return;
@@ -1113,7 +1113,7 @@ void _k_base_setter(EngineState *s, reg_t object) {
 	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
 	// for reference only
 #if 0
-	if (s->resMan->sciVersion() <= SCI_VERSION_0)
+	if (getSciVersion() <= SCI_VERSION_0)
 		--absrect.top; // Compensate for early SCI OB1 'bug'
 #endif
 
@@ -1328,7 +1328,7 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	 */
 	// NOTE: This _only_ works with the English version
 	if (type == K_CONTROL_BUTTON && text && (gameName == "sq4") &&
-			segMan->sciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
+			getSciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 

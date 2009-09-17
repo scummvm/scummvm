@@ -643,8 +643,6 @@ int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
 	if (!mobj)
 		return 0; // Invalid
 
-	SciVersion version = segMan->sciVersion();	// for the offset defines
-
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
 		if (reg.offset <= (*(Script *)mobj)._bufSize && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET

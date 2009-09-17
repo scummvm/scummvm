@@ -183,7 +183,7 @@ kLanguage EngineState::getLanguage() {
 	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.printLang != -1) {
 		lang = (kLanguage)GET_SEL32V(this->game_obj, printLang);
 
-		if ((segMan->sciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
+		if ((getSciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
 			// SSCI reads this from resource.cfg (early games do not have a language
 			// setting in resource.cfg, but instead have the secondary language number
@@ -335,10 +335,8 @@ SciVersion EngineState::detectSetCursorType() {
 
 SciVersion EngineState::detectLofsType() {
 	if (_lofsType == SCI_VERSION_AUTODETECT) {
-		SciVersion version = segMan->sciVersion();
-
 		// This detection only works (and is only needed) pre-SCI1.1
-		if (version >= SCI_VERSION_1_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1) {
 			_lofsType = SCI_VERSION_1_1;
 			return _lofsType;
 		}
@@ -355,7 +353,7 @@ SciVersion EngineState::detectLofsType() {
 		// Check methods of the Game class for lofs operations
 		if (obj) {
 			for (int m = 0; m < obj->methods_nr; m++) {
-				reg_t fptr = obj->getFunction(m, version);
+				reg_t fptr = obj->getFunction(m);
 
 				Script *script = segMan->getScript(fptr.segment);
 
@@ -440,7 +438,7 @@ SciVersion EngineState::detectLofsType() {
 		if (couldBeRel == couldBeAbs) {
 			warning("Lofs detection failed, taking an educated guess");
 
-			if (version >= SCI_VERSION_1_MIDDLE)
+			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
 				_lofsType = SCI_VERSION_1_MIDDLE;
 			else
 				_lofsType = SCI_VERSION_0_EARLY;

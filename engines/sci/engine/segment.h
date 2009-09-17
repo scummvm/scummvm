@@ -107,7 +107,7 @@ public:
 	 * @param note		Invoked for each outgoing reference within the object
 	 * Note: This function may also choose to report numbers (segment 0) as adresses
 	 */
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version) {}
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) {}
 };
 
 
@@ -190,7 +190,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -210,43 +210,43 @@ struct Object {
 	uint16 *base_vars; /**< Pointer to the varselector area for this object */
 	Common::Array<reg_t> _variables;
 
-	uint16 getVarSelector(uint16 i, SciVersion version) {
-		if (version < SCI_VERSION_1_1)
+	uint16 getVarSelector(uint16 i) {
+		if (getSciVersion() < SCI_VERSION_1_1)
 			return READ_LE_UINT16(base_obj + _variables.size() * 2 + i * 2);
 		else
 			return *(base_vars + i);
 	}
 
-	reg_t getSpeciesSelector(SciVersion version) {
-		return _variables[version < SCI_VERSION_1_1 ? 0 : 5];
+	reg_t getSpeciesSelector() {
+		return _variables[getSciVersion() < SCI_VERSION_1_1 ? 0 : 5];
 	}
 
-	void setSpeciesSelector(reg_t value, SciVersion version) {
-		_variables[version < SCI_VERSION_1_1 ? 0 : 5] = value;
+	void setSpeciesSelector(reg_t value) {
+		_variables[getSciVersion() < SCI_VERSION_1_1 ? 0 : 5] = value;
 	}
 
-	reg_t getSuperClassSelector(SciVersion version) {
-		return _variables[version < SCI_VERSION_1_1 ? 1 : 6];
+	reg_t getSuperClassSelector() {
+		return _variables[getSciVersion() < SCI_VERSION_1_1 ? 1 : 6];
 	}
 
-	void setSuperClassSelector(reg_t value, SciVersion version) {
-		_variables[version < SCI_VERSION_1_1 ? 1 : 6] = value;
+	void setSuperClassSelector(reg_t value) {
+		_variables[getSciVersion() < SCI_VERSION_1_1 ? 1 : 6] = value;
 	}
 
-	reg_t getInfoSelector(SciVersion version) {
-		return _variables[version < SCI_VERSION_1_1 ? 2 : 7];
+	reg_t getInfoSelector() {
+		return _variables[getSciVersion() < SCI_VERSION_1_1 ? 2 : 7];
 	}
 
-	void setInfoSelector(reg_t value, SciVersion version) {
-		_variables[version < SCI_VERSION_1_1 ? 2 : 7] = value;
+	void setInfoSelector(reg_t value) {
+		_variables[getSciVersion() < SCI_VERSION_1_1 ? 2 : 7] = value;
 	}
 
-	reg_t getNameSelector(SciVersion version) {
-		return _variables[version < SCI_VERSION_1_1 ? 3 : 8];
+	reg_t getNameSelector() {
+		return _variables[getSciVersion() < SCI_VERSION_1_1 ? 3 : 8];
 	}
 
-	void setNameSelector(reg_t value, SciVersion version) {
-		_variables[version < SCI_VERSION_1_1 ? 3 : 8] = value;
+	void setNameSelector(reg_t value) {
+		_variables[getSciVersion() < SCI_VERSION_1_1 ? 3 : 8] = value;
 	}
 
 	reg_t getClassScriptSelector() {
@@ -257,18 +257,18 @@ struct Object {
 		_variables[4] = value;
 	}
 
-	uint16 getFuncSelector(uint16 i, SciVersion version) {
-		uint16 offset = (version < SCI_VERSION_1_1) ? i : i * 2 + 1;
+	uint16 getFuncSelector(uint16 i) {
+		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? i : i * 2 + 1;
 		return READ_LE_UINT16((byte *) (base_method + offset));
 	}
 
-	reg_t getFunction(uint16 i, SciVersion version) {
-		uint16 offset = (version < SCI_VERSION_1_1) ? methods_nr + 1 + i : i * 2 + 2;
+	reg_t getFunction(uint16 i) {
+		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? methods_nr + 1 + i : i * 2 + 2;
 		return make_reg(pos.segment, READ_LE_UINT16((byte *) (base_method + offset)));
 	}
 
-	bool isClass(SciVersion version) {
-		return (getInfoSelector(version).offset & SCRIPT_INFO_CLASS);
+	bool isClass() {
+		return (getInfoSelector().offset & SCRIPT_INFO_CLASS);
 	}
 };
 
@@ -298,8 +298,6 @@ protected:
 
 	IntMapper *_objIndices;
 
-	SciVersion _sciVersion;
-
 public:
 	/**
 	 * Table for objects, contains property variables.
@@ -328,7 +326,7 @@ public:
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 
@@ -484,7 +482,7 @@ public:
 	virtual bool isValidOffset(uint16 offset) const;
 	virtual byte *dereference(reg_t pointer, int *size);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -581,7 +579,7 @@ public:
 /* CloneTable */
 struct CloneTable : public Table<Clone> {
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -590,7 +588,7 @@ struct CloneTable : public Table<Clone> {
 /* NodeTable */
 struct NodeTable : public Table<Node> {
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -599,7 +597,7 @@ struct NodeTable : public Table<Node> {
 /* ListTable */
 struct ListTable : public Table<List> {
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
-	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note, SciVersion version);
+	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };

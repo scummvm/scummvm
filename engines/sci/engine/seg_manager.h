@@ -355,8 +355,6 @@ public:
 	void scriptRelocateExportsSci11(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 
-	SciVersion sciVersion() { return _resMan->sciVersion(); }
-
 public: // TODO: make private
 	Common::Array<SegmentObj *> _heap;
 	Common::Array<Class> _classtable; /**< Table of all classes */

@@ -1649,7 +1649,7 @@ bool Console::cmdGCShowReachable(int argc, const char **argv) {
 	}
 
 	DebugPrintf("Reachable from %04x:%04x:\n", PRINT_REG(addr));
-	mobj->listAllOutgoingReferences(addr, NULL, _print_address, _vm->_gamestate->resMan->sciVersion());
+	mobj->listAllOutgoingReferences(addr, NULL, _print_address);
 
 	return true;
 }
@@ -3054,7 +3054,6 @@ int Console::printObject(reg_t pos) {
 	Object *obj = s->segMan->getObject(pos);
 	Object *var_container = obj;
 	int i;
-	SciVersion version = s->resMan->sciVersion();	// for the selector defines
 
 	if (!obj) {
 		DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
@@ -3065,13 +3064,13 @@ int Console::printObject(reg_t pos) {
 	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->segMan->getObjectName(pos),
 				obj->_variables.size(), obj->methods_nr);
 
-	if (!(obj->getInfoSelector(version).offset & SCRIPT_INFO_CLASS))
-		var_container = s->segMan->getObject(obj->getSuperClassSelector(version));
+	if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
+		var_container = s->segMan->getObject(obj->getSuperClassSelector());
 	DebugPrintf("  -- member variables:\n");
 	for (i = 0; (uint)i < obj->_variables.size(); i++) {
 		printf("    ");
 		if (i < var_container->variable_names_nr) {
-			uint16 varSelector = var_container->getVarSelector(i, version);
+			uint16 varSelector = var_container->getVarSelector(i);
 			DebugPrintf("[%03x] %s = ", varSelector, selector_name(s, varSelector));
 		} else
 			DebugPrintf("p#%x = ", i);
@@ -3087,8 +3086,8 @@ int Console::printObject(reg_t pos) {
 	}
 	DebugPrintf("  -- methods:\n");
 	for (i = 0; i < obj->methods_nr; i++) {
-		reg_t fptr = obj->getFunction(i, version);
-		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i, version), selector_name(s, obj->getFuncSelector(i, version)), PRINT_REG(fptr));
+		reg_t fptr = obj->getFunction(i);
+		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), selector_name(s, obj->getFuncSelector(i)), PRINT_REG(fptr));
 	}
 	if (s->segMan->_heap[pos.segment]->getType() == SEG_TYPE_SCRIPT)
 		DebugPrintf("\nOwner script:\t%d\n", s->segMan->getScript(pos.segment)->_nr);

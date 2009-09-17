@@ -137,6 +137,14 @@ private:
 	Console *_console;
 };
 
+/**
+ * Convenience function to obtain the active SCI version.
+ */
+inline static SciVersion getSciVersion() {
+	return ((SciEngine*)g_engine)->getVersion();
+}
+
+
 } // End of namespace Sci
 
 #endif // SCI_H

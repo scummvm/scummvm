@@ -133,18 +133,18 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-	bool oldScriptHeader = (_sciVersion == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	_scriptSize = script->size;
 	_heapSize = 0; // Set later
 
-	if (!script || (_sciVersion >= SCI_VERSION_1_1 && !heap)) {
+	if (!script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
 	if (oldScriptHeader) {
 		_bufSize = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (_sciVersion < SCI_VERSION_1_1) {
+	} else if (getSciVersion() < SCI_VERSION_1_1) {
 		_bufSize = script->size;
 	} else {
 		_bufSize = script->size + heap->size;
@@ -240,7 +240,6 @@ SegmentType SegManager::getSegmentType(SegmentId seg) {
 
 Object *SegManager::getObject(reg_t pos) {
 	SegmentObj *mobj = getSegmentObj(pos.segment);
-	SciVersion version = _resMan->sciVersion();
 	Object *obj = NULL;
 
 	if (mobj != NULL) {
@@ -262,11 +261,10 @@ Object *SegManager::getObject(reg_t pos) {
 
 const char *SegManager::getObjectName(reg_t pos) {
 	Object *obj = getObject(pos);
-	SciVersion version = _resMan->sciVersion();
 	if (!obj)
 		return "<no such object>";
 
-	reg_t nameReg = obj->getNameSelector(version);
+	reg_t nameReg = obj->getNameSelector();
 	if (nameReg.isNull())
 		return "<no name>";
 
@@ -312,7 +310,7 @@ int Script::relocateBlock(Common::Array<reg_t> &block, int block_location, Segme
 		return 0;
 	}
 	block[idx].segment = segment; // Perform relocation
-	if (_sciVersion >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		block[idx].offset += _scriptSize;
 
 	return 1;
@@ -461,7 +459,6 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 
 Object *Script::scriptObjInit0(reg_t obj_pos) {
 	Object *obj;
-	SciVersion version = _sciVersion;	// for the offset defines
 	uint base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 
 	VERIFY(base < _bufSize, "Attempt to initialize object beyond end of script\n");
@@ -554,7 +551,7 @@ Object *Script::scriptObjInit11(reg_t obj_pos) {
 }
 
 Object *Script::scriptObjInit(reg_t obj_pos) {
-	if (_sciVersion < SCI_VERSION_1_1)
+	if (getSciVersion() < SCI_VERSION_1_1)
 		return scriptObjInit0(obj_pos);
 	else
 		return scriptObjInit11(obj_pos);
@@ -598,7 +595,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
 
-	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		count = READ_LE_UINT16(scr->_buf + location.offset - 2);
 	else
 		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
@@ -640,7 +637,6 @@ void SegManager::scriptRelocateExportsSci11(SegmentId seg) {
 void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 	Script *scr = getScript(seg);
 	byte *seeker = scr->_heapStart + 4 + READ_LE_UINT16(scr->_heapStart + 2) * 2;
-	SciVersion version = _resMan->sciVersion();	// for the selector defines
 
 	while (READ_LE_UINT16(seeker) == SCRIPT_OBJECT_MAGIC_NUMBER) {
 		if (READ_LE_UINT16(seeker + 14) & SCRIPT_INFO_CLASS) {
@@ -679,7 +675,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 
 		// Copy base from species class, as we need its selector IDs
 		obj->setSuperClassSelector(
-			getClassAddress(obj->getSuperClassSelector(version).offset, SCRIPT_GET_LOCK, NULL_REG), version);
+			getClassAddress(obj->getSuperClassSelector().offset, SCRIPT_GET_LOCK, NULL_REG));
 
 		// Set the -classScript- selector to the script number.
 		// FIXME: As this selector is filled in at run-time, it is likely
@@ -783,8 +779,6 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 }
 
 void SegManager::reconstructClones() {
-	SciVersion version = sciVersion();	// for the selector defines
-
 	for (uint i = 0; i < _heap.size(); i++) {
 		if (_heap[i]) {
 			SegmentObj *mobj = _heap[i];
@@ -809,7 +803,7 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					base_obj = getObject(seeker.getSpeciesSelector(version));
+					base_obj = getObject(seeker.getSpeciesSelector());
 					if (!base_obj) {
 						warning("Clone entry without a base class: %d", j);
 						seeker.base = NULL;

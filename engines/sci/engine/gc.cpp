@@ -134,7 +134,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 		if (reg.segment != s->stack_segment) { // No need to repeat this one
 			debugC(2, kDebugLevelGC, "[GC] Checking %04x:%04x\n", PRINT_REG(reg));
 			if (reg.segment < segMan->_heap.size() && segMan->_heap[reg.segment])
-				segMan->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs, s->resMan->sciVersion());
+				segMan->_heap[reg.segment]->listAllOutgoingReferences(reg, &wm, add_outgoing_refs);
 		}
 	}
 
