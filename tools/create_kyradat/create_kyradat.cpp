@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 56,
+	kKyraDatVersion = 57,
 	kIndexSize = 12
 };
 
@@ -340,6 +340,7 @@ const Language languageTable[] = {
 const PlatformExtension platformTable[] = {
 	{ kPlatformAmiga, "AMG" },
 	{ kPlatformFMTowns, "TNS" },
+	{ kPlatformPC98, "TNS" },		// HACK
 
 	{ -1, 0 }
 };
@@ -372,7 +373,7 @@ uint32 getFeatures(const Game *g) {
 		features |= GF_DEMO;
 	else if (g->special == kDemoCDVersion)
 		features |= (GF_DEMO | GF_TALKIE);
-	else if (g->platform == kPlatformFMTowns)
+	else if (g->platform == kPlatformFMTowns || g->platform == kPlatformPC98)	// HACK
 		features |= GF_FMTOWNS;
 	else if (g->platform == kPlatformAmiga)
 		features |= GF_AMIGA;
@@ -994,6 +995,8 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		return false;
 	}
 
+	bool breakProcess = false;
+
 	// Compare against need list
 	for (const int *entry = needList; *entry != -1; ++entry) {
 		if (ids.find(*entry) != ids.end())
@@ -1008,11 +1011,14 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		// If the data wasn't found already, we need to break the extraction here
 		if (!list || !list->findEntry(filename)) {
 			fprintf(stderr, "Couldn't find id %d/%s in executable file\n", *entry, getIdString(*entry));
-			return false;
+			breakProcess = true;
 		} else {
 			warning("Id %d/%s is present in kyra.dat but could not be found in the executable", *entry, getIdString(*entry));
 		}
 	}
+
+	if (breakProcess)
+		return false;
 
 	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
 		const int id = i->first;

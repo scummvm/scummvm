@@ -103,6 +103,9 @@ const Game lolGames[] = {
 	// DOS floppy (no language specifc strings)
 	{ kLol, DE_DEU, kPlatformPC, -1, "6b843869772c1b779e1386be868c15dd" },
 
+	// PC98 (no language specifc strings)
+	{ kLol, JA_JPN, kPlatformPC98, -1, "6d5bd4a2f5ce433365734ca6b7a8d984" },
+
 	// DOS CD (multi language version, with no language specific strings)
 	{ kLol, UNK_LANG, kPlatformPC, kTalkieFile1, "9d1778314de80598c0b0d032e2a1a1cf" },
 	{ kLol, UNK_LANG, kPlatformPC, kTalkieFile2, "263998ec600afca1cc7b935c473df670" },
@@ -656,6 +659,85 @@ const int lolFloppyNeed[] = {
 	-1
 };
 
+const int lolPC98Need[] = {
+	kLolIngamePakFiles,
+
+	kLolCharacterDefs,
+	kLolIngameSfxFiles,
+	kLolIngameSfxIndex,
+	kLolSpellProperties,
+	kLolGameShapeMap,
+	kLolSceneItemOffs,
+	kLolCharInvIndex,
+	kLolCharInvDefs,
+	kLolCharDefsMan,
+	kLolCharDefsWoman,
+	kLolCharDefsKieran,
+	kLolCharDefsAkshel,
+	kLolExpRequirements,
+	kLolMonsterModifiers,
+	kLolMonsterLevelOffsets,
+	kLolMonsterDirFlags,
+	kLolMonsterScaleY,
+	kLolMonsterScaleX,
+	kLolMonsterScaleWH,
+	kLolFlyingItemShp,
+	kLolInventoryDesc,
+
+	kLolLevelShpList,
+	kLolLevelDatList,
+	kLolCompassDefs,
+	kLolStashSetup,
+	kLolDscUnk1,
+	kLolDscShapeIndex1,
+	kLolDscShapeIndex2,
+	kLolDscScaleWidthData,
+	kLolDscScaleHeightData,
+	kLolDscX,
+	kLolDscY,
+	kLolDscTileIndex,
+	kLolDscUnk2,
+	kLolDscDoorShapeIndex,
+	kLolDscDimData1,
+	kLolDscDimData2,
+	kLolDscBlockMap,
+	kLolDscDimMap,
+	kLolDscShapeOvlIndex,
+	kLolDscBlockIndex,
+	kLolDscDoor1,
+	kLolDscDoorScale,
+	kLolDscDoor4,
+	kLolDscDoorX,
+	kLolDscDoorY,
+
+	kLolScrollXTop,
+	kLolScrollYTop,
+	kLolScrollXBottom,
+	kLolScrollYBottom,
+
+	kLolButtonDefs,
+	kLolButtonList1,
+	kLolButtonList1,
+	kLolButtonList2,
+	kLolButtonList3,
+	kLolButtonList4,
+	kLolButtonList5,
+	kLolButtonList6,
+	kLolButtonList7,
+	kLolButtonList8,
+
+	kLolLegendData,
+	kLolMapStringId,
+
+	kLolSpellbookAnim,
+	kLolSpellbookCoords,
+	kLolHealShapeFrames,
+	kLolLightningDefs,
+	kLolFireballCoords,
+
+	-1
+};
+
 const int lolCDFile1Need[] = {
 	kLolHistory,
 	-1
@@ -792,6 +874,7 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra3, kPlatformPC, -1, kyra3Need },
 
 	{ kLol, kPlatformPC, -1, lolFloppyNeed },
+	{ kLol, kPlatformPC98, -1, lolPC98Need },
 
 	{ kLol, kPlatformPC, kTalkieFile1, lolCDFile1Need },
 	{ kLol, kPlatformPC, kTalkieFile2, lolCDFile2Need },
