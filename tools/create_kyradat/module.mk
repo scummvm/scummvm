@@ -5,6 +5,7 @@ MODULE := tools/create_kyradat
 
 MODULE_OBJS := \
 	create_kyradat.o \
+	extract.o \
 	pak.o \
 	md5.o \
 	util.o \
