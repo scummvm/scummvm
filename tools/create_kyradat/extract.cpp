@@ -163,17 +163,14 @@ bool extractRaw(PAKFile &out, const Game *g, const byte *data, const uint32 size
 
 bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang) {
 	int fmtPatch = 0;
-	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) {
-		// FM Towns files that need addional patches
+	// FM Towns files that need addional patches
+	if (g->platform == kPlatformFMTowns) {
 		if (id == kTakenStrings || id == kNoDropStrings || id == kPoisonGoneString ||
 			id == kThePoisonStrings || id == kFluteStrings || id == kWispJewelStrings)
 			fmtPatch = 1;
 		else if (id == kIntroStrings)
 			fmtPatch = 2;
-	}
-
-	if (g->special == k2TownsFile1E || g->special == k2TownsFile1J) {
-		if (id == k2SeqplayStrings)
+		else if (id == k2SeqplayStrings)
 			fmtPatch = 3;
 	}
 
@@ -197,9 +194,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 				++entries;
 			}
 
-			if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
-				g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-				g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
+			if (g->platform == kPlatformFMTowns) {
 				// prevents creation of empty entries (which we have mostly between all strings in the FM-TOWNS version)
 				while (!data[++i]) {
 					if (i == size)
@@ -254,9 +249,7 @@ bool extractStrings(PAKFile &out, const Game *g, const byte *data, const uint32 
 	const uint8 *input = (const uint8*) data;
 
 	WRITE_BE_UINT32(output, entries); output += 4;
-	if (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ ||
-		g->special == k2TownsFile1E || g->special == k2TownsFile1J ||
-		g->special == k2TownsFile2E || g->special == k2TownsFile2J) {
+	if (g->platform == kPlatformFMTowns) {
 		const byte *c = data + size;
 		do {
 			if (fmtPatch == 2 && input - data == 0x3C0 && input[0x10] == 0x32) {
@@ -359,7 +352,7 @@ bool extractStrings10(PAKFile &out, const Game *g, const byte *data, const uint3
 
 bool extractRooms(PAKFile &out, const Game *g, const byte *data, const uint32 size, const char *filename, int id, int lang) {
 	// different entry size for the FM-TOWNS version
-	const int roomEntrySize = (g->special == kFMTownsVersionE || g->special == kFMTownsVersionJ) ? (0x69) : ((g->platform == kPlatformAmiga) ? 0x52 : 0x51);
+	const int roomEntrySize = (g->platform == kPlatformFMTowns) ? (0x69) : ((g->platform == kPlatformAmiga) ? 0x52 : 0x51);
 	const int countRooms = size / roomEntrySize;
 
 	uint8 *buffer = new uint8[countRooms * 9 + 4];
