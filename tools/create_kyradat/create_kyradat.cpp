@@ -28,6 +28,9 @@
 
 #include "create_kyradat.h"
 
+#include "search.h"
+#include "pak.h"
+
 #include "tables.h"
 #include "extract.h"
 

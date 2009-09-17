@@ -23,7 +23,10 @@
 #ifndef CREATE_KYRADAT_TABLES_H
 #define CREATE_KYRADAT_TABLES_H
 
-#include "create_kyradat.h"
+#include "search.h"
+#include "util.h"
+
+#include <list>
 
 struct ExtractEntrySearchData {
 	int lang;

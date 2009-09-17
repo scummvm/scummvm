@@ -24,8 +24,6 @@
 #define CREATE_KYRADAT_H
 
 #include "util.h"
-#include "pak.h"
-#include "search.h"
 
 struct Language {
 	int lang;

@@ -21,7 +21,6 @@
  */
 
 
-#include "create_kyradat.h"
 #include "extract.h"
 
 // Filename creation
