@@ -1043,6 +1043,10 @@ struct ExtractData {
 
 typedef std::list<DataIdEntry> DataIdList;
 
+typedef std::map<int, Search::ResultData> IdMap;
+
+bool getExtractionData(const Game *g, Search &search, IdMap &map);
+
 bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	char filename[128];
 
@@ -1051,31 +1055,81 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		return false;
 	}
 
+	Search search(data, size);
+	IdMap ids;
+
+	if (!getExtractionData(g, search, ids))
+		return false;
+
 	const int *needList = getNeedList(g);
 	if (!needList) {
 		fprintf(stderr, "ERROR: No entry need list available\n");
 		return false;
 	}
 
-	DataIdList dataIdList;
-	Search search(data, size);
-
-	bool allDataPresentAlready = true;
-
+	// Compare against need list
 	for (const int *entry = needList; *entry != -1; ++entry) {
+		if (ids.find(*entry) != ids.end())
+			continue;
+
 		// Try whether the data is present in the kyra.dat file already
 		filename[0] = 0;
 		if (!getFilename(filename, g, *entry))
 			error("couldn't find filename for id %d", *entry);
 
-		// Do not add the entry to the search list, when it's already present
-		// in kyra.dat, that will speed up the creation.
+		PAKFile::cFileList *list = out.getFileList();
+		// If the data wasn't found already, we need to break the extraction here
+		if (!list || !list->findEntry(filename)) {
+			fprintf(stderr, "Couldn't find id %d/%s in executable file", *entry, getIdString(*entry));
+			return false;
+		} else {
+			warning("Id %d/%s is present in kyra.dat but could not be found in the executable", *entry, getIdString(*entry));
+		}
+	}
+
+	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
+		const int id = i->first;
+	
+		filename[0] = 0;
+		if (!getFilename(filename, g, id)) {
+			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
+			return false;
+		}
+
+		const ExtractFilename *fDesc = getFilenameDesc(id);
+
+		if (!fDesc) {
+			fprintf(stderr, "ERROR: couldn't find file description for id %d\n", id);
+			return false;
+		}
+
+		const ExtractType *tDesc = findExtractType(fDesc->type);
+
+		if (!tDesc) {
+			fprintf(stderr, "ERROR: couldn't find type description for id %d\n", id);
+			return false;
+		}
+
 		PAKFile::cFileList *list = out.getFileList();
 		if (list && list->findEntry(filename) != 0)
 			continue;
 
-		allDataPresentAlready = false;
+		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, id, UNK_LANG)) {
+			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
+			return false;
+		}
+	}
 
+	if (!updateIndex(out, g)) {
+		error("couldn't update INDEX file, stop processing of all files");
+		return false;
+	}
+
+	return true;
+}
+
+bool setupSearch(const int *needList, Search &search, DataIdList &dataIdList) {
+	for (const int *entry = needList; *entry != -1; ++entry) {
 		bool found = false;
 
 		for (const ExtractEntry *p = extractProviders; p->id != -1; ++p) {
@@ -1083,6 +1137,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 				for (const ExtractEntrySearchData *d = p->providers; d->hint.size != 0; ++d) {
 					found = true;
 
+					// We will add *all* providers here, regardless of the language and platform!
 					search.addData(d->hint);
 					dataIdList.push_back(DataIdEntry(*d, *entry));
 				}
@@ -1092,13 +1147,25 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		}
 
 		if (!found) {
-			fprintf(stderr, "ERROR: No provider for id %d/\"%s\"\n", *entry, getIdString(*entry));
+			fprintf(stderr, "ERROR: No provider for id %d/%s\n", *entry, getIdString(*entry));
 			return false;
 		}
 	}
 
-	if (allDataPresentAlready)
-		return true;
+	return true;
+}
+
+bool getExtractionData(const Game *g, Search &search, IdMap &ids) {
+	DataIdList dataIdList;
+
+	const int *needList = getNeedList(g);
+	if (!needList) {
+		fprintf(stderr, "ERROR: No entry need list available\n");
+		return false;
+	}
+
+	if (!setupSearch(needList, search, dataIdList))
+		return false;
 
 	// Process the data search
 	Search::ResultList results;
@@ -1109,9 +1176,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		return false;
 	}
 
-	typedef std::map<int, Search::ResultData> IdMap;
-
-	IdMap ids;
 	for (const int *entry = needList; *entry != -1; ++entry) {
 		typedef std::list<ExtractData> ExtractList;
 		ExtractList idResults;
@@ -1155,8 +1219,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 			continue;
 
 		if (idResults.size() > 1)
-			warning("Multiple entries found for id %d/\"%s\"", *entry, getIdString(*entry));
-
+			warning("Multiple entries found for id %d/%s", *entry, getIdString(*entry));
 
 		Search::ResultData result;
 		result.data.size = 0;
@@ -1185,62 +1248,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 	// Free up some memory
 	results.clear();
 	dataIdList.clear();
-
-	// Compare against need list
-	for (const int *entry = needList; *entry != -1; ++entry) {
-		if (ids.find(*entry) != ids.end())
-			continue;
-
-		// Try whether the data is present in the kyra.dat file already
-		filename[0] = 0;
-		if (!getFilename(filename, g, *entry))
-			error("couldn't find filename for id %d", *entry);
-
-		PAKFile::cFileList *list = out.getFileList();
-		// If the data wasn't found already, we need to break the extraction here
-		if (!list || !list->findEntry(filename)) {
-			fprintf(stderr, "Couldn't find id %d/\"%s\" in executable file", *entry, getIdString(*entry));
-			return false;
-		}
-	}
-
-	for (IdMap::const_iterator i = ids.begin(); i != ids.end(); ++i) {
-		const int id = i->first;
-	
-		filename[0] = 0;
-		if (!getFilename(filename, g, id)) {
-			fprintf(stderr, "ERROR: couldn't get filename for id %d\n", id);
-			return false;
-		}
-
-		const ExtractFilename *fDesc = getFilenameDesc(id);
-
-		if (!fDesc) {
-			fprintf(stderr, "ERROR: couldn't find file description for id %d\n", id);
-			return false;
-		}
-
-		const ExtractType *tDesc = findExtractType(fDesc->type);
-
-		if (!tDesc) {
-			fprintf(stderr, "ERROR: couldn't find type description for id %d\n", id);
-			return false;
-		}
-
-		PAKFile::cFileList *list = out.getFileList();
-		if (list && list->findEntry(filename) != 0)
-			continue;
-
-		if (!tDesc->extract(out, g, data + i->second.offset, i->second.data.size, filename, id, UNK_LANG)) {
-			fprintf(stderr, "ERROR: couldn't extract id %d\n", id);
-			return false;
-		}
-	}
-
-	if (!updateIndex(out, g)) {
-		error("couldn't update INDEX file, stop processing of all files");
-		return false;
-	}
 
 	return true;
 }
