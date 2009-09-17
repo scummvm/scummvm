@@ -31,6 +31,8 @@
 #include "common/array.h"
 #include "common/file.h"
 
+namespace Myst3 {
+
 class Archive {
 	private:
 		Common::File _file;
@@ -40,12 +42,14 @@ class Archive {
 		void _readDirectory();
 	public:
 
-		Common::MemoryReadStream *dumpToMemory(uint16 index, uint16 face, uint16 type);
+		Common::MemoryReadStream *dumpToMemory(uint16 index, uint16 face, DirectorySubEntry::ResourceType type);
 		void dumpDirectory();
 		void dumpToFiles();
 		
 		bool open(const char *fileName);
 		void close();
 };
+
+} // end of namespace Myst3
 
 #endif

@@ -1,5 +1,32 @@
+/* Residual - A 3D game interpreter
+ *
+ * Residual is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
+ * file distributed with this source distribution.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
 #include "engines/myst3/directoryentry.h"
 #include "common/debug.h"
+
+namespace Myst3 {
 
 void DirectoryEntry::readFromStream(Common::SeekableReadStream &inStream) {
 	_index = inStream.readUint16LE();
@@ -37,7 +64,7 @@ void DirectoryEntry::dumpToFiles(Common::SeekableReadStream &inStream) {
 	}
 }
 
-Common::MemoryReadStream *DirectoryEntry::dumpToMemory(Common::SeekableReadStream &inStream, uint16 face, uint16 type) {
+Common::MemoryReadStream *DirectoryEntry::dumpToMemory(Common::SeekableReadStream &inStream, uint16 face, DirectorySubEntry::ResourceType type) {
 	for (uint i = 0; i < _subentries.size(); i++) {
 		if (_subentries[i].getFace() == face
 				&& _subentries[i].getType() == type) {
@@ -47,3 +74,5 @@ Common::MemoryReadStream *DirectoryEntry::dumpToMemory(Common::SeekableReadStrea
 	
 	return 0;
 }
+
+} // end of namespace Myst3

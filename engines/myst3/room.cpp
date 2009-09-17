@@ -63,7 +63,7 @@ void Room::setFaceTextureRGB(int face, Graphics::Surface *texture) {
 
 void Room::load(Archive &archive, uint16 index) {
 	for (int i = 0; i < 6; i++) {
-		Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, i + 1, 0);
+		Common::MemoryReadStream *jpegStream = archive.dumpToMemory(index, i + 1, DirectorySubEntry::kFaceTexture);
 
 		if (jpegStream) {
 			Graphics::JPEG jpeg;
