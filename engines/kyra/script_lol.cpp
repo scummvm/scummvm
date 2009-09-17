@@ -2174,44 +2174,35 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 
 	_screen->hideMouse();
 
-	// TODO: This function could need some major cleanup to work with our
-	// new palette code without needless conversions.
-	uint8 *fadeTab = new uint8[21504];
-	assert(fadeTab);
-	memset(fadeTab, 0, sizeof(fadeTab));
+	Palette *fadeTab[28];
+	for (int i = 0; i < 28; i++)
+		fadeTab[i] = new Palette(256);
 
-	uint8 *tpal1 = fadeTab;
-	uint8 *tpal2 = tpal1 + 768;
-	uint8 *tpal3 = tpal2 + 768;
-	uint8 *tpal4 = 0;
-	_res->loadFileToBuf("LITEPAL1.COL", tpal1, 768);
-	tpal2 = _screen->generateFadeTable(tpal3, 0, tpal1, 21);
-	_res->loadFileToBuf("LITEPAL2.COL", tpal2, 768);
-	tpal4 = tpal2;
-	tpal2 += 768;
-	_res->loadFileToBuf("LITEPAL3.COL", tpal1, 768);
-	_screen->generateFadeTable(tpal2, tpal4, tpal1, 4);
-
-	Palette pal(256);
+	Palette **tpal1 = &fadeTab[0];
+	Palette **tpal2 = &fadeTab[1];
+	Palette **tpal3 = &fadeTab[2];
+	Palette **tpal4 = 0;
+	_screen->loadPalette("LITEPAL1.COL", **tpal1);
+	tpal2 = _screen->generateFadeTable(tpal3, 0, *tpal1, 21);
+	_screen->loadPalette("LITEPAL2.COL", **tpal2);
+	tpal4 = tpal2++;
+	_screen->loadPalette("LITEPAL3.COL", **tpal1);
+	_screen->generateFadeTable(tpal2, *tpal4, *tpal1, 4);
 
 	for (int i = 0; i < 21; i++) {
 		uint32 etime = _system->getMillis() + 20 * _tickLength;
 		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
 		_screen->updateScreen();
-
-		pal.copy(tpal3, 0, 256);
-		_screen->setScreenPalette(pal);
-		tpal3 += 768;
+		_screen->setScreenPalette(**tpal3++);
 
 		if (i == 2 || i == 5 || i == 8 || i == 11 || i == 13 || i == 15 || i == 17 || i == 19)
 			snd_playSoundEffect(95, -1);
+
 		delayUntil(etime);
 	}
 
-	pal.copy(tpal3, 0, 256);
 	snd_playSoundEffect(91, -1);
-	_screen->fadePalette(pal, 300);
-	tpal3 += 768;
+	_screen->fadePalette(**tpal3++, 300);
 
 	for (int i = 22; i < 38; i++) {
 		uint32 etime = _system->getMillis() + 12 * _tickLength;
@@ -2219,17 +2210,16 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 		_screen->updateScreen();
 		if (i == 22 || i == 24 || i == 28 || i == 32) {
 			snd_playSoundEffect(131, -1);
-
-			pal.copy(tpal3, 0, 256);
-			_screen->setScreenPalette(pal);
-			tpal3 += 768;
+			_screen->setScreenPalette(**tpal3++);
 		}
 		delayUntil(etime);
 	}
 
 	mov->close();
 	delete mov;
-	delete[] fadeTab;
+
+	for (int i = 0; i < 28; i++)
+		delete fadeTab[i];
 
 	_screen->showMouse();
 

@@ -898,38 +898,40 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 	return res;
 }
 
-uint8 *Screen_LoL::generateFadeTable(uint8 *dst, uint8 *src1, uint8 *src2, int numTabs) {
+Palette **Screen_LoL::generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs) {
 	if (!src1)
-		src1 = _screenPalette->getData();
+		src1 = _screenPalette;
 
-	uint8 *p1 = dst;
-	uint8 *p2 = src1;
-	uint8 *p3 = src2;
+	uint8 *p1 = (*dst++)->getData();
+	uint8 *p2 = src1->getData();
+	uint8 *p3 = src2->getData();
+	uint8 *p4 = p1;
+	uint8 *p5 = p2;
 
 	for (int i = 0; i < 768; i++) {
 		int8 val = (int8)*p3++ - (int8)*p2++;
-		*dst++ = (uint8)val;
+		*p4++ = (uint8)val;
 	}
 
 	int16 t = 0;
 	int16 d = 256 / numTabs;
 
 	for (int i = 1; i < numTabs - 1; i++) {
-		p2 = src1;
+		p2 = p5;
 		p3 = p1;
 		t += d;
+		p4 = (*dst++)->getData();
 
 		for (int ii = 0; ii < 768; ii++) {
 			int16 val = (((int8)*p3++ * t) >> 8) + (int8)*p2++;
-			*dst++ = (uint8)val;
+			*p4++ = (uint8)val;
 		}
 	}
 
-	memcpy(p1, src1, 768);
-	memcpy(dst, src2, 768);
+	memcpy(p1, p5, 768);
+	(*dst)->copy(*src2);
 
-	dst += 768;
-	return dst;
+	return ++dst;
 }
 
 uint8 Screen_LoL::getShapePaletteSize(const uint8 *shp) {
