@@ -791,7 +791,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "edgehit = %04x (illegalBits %04x)\n", edgehit, illegal_bits);
 	if (retval == 0) {
 		debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-		return not_register(s, NULL_REG); // Can't BeHere
+		return NULL_REG; // Can't BeHere
 	}
 
 	retval = 0;
@@ -807,7 +807,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 			        && ((widget->_ID != obj.segment) || (widget->_subID != obj.offset))
 			        && s->segMan->isObject(make_reg(widget->_ID, widget->_subID)))
 				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, argc, argv))
-					return not_register(s, NULL_REG);
+					return NULL_REG;
 
 			widget = (GfxDynView *)widget->_next;
 		}
@@ -816,7 +816,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 	if (signal & GASEOUS_VIEW_MASK_ACTIVE) {
 		retval = signal & GASEOUS_VIEW_MASK_ACTIVE; // CanBeHere- it's either being disposed, or it ignores actors anyway
 		debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-		return not_register(s, make_reg(0, retval)); // CanBeHere
+		return make_reg(0, retval); // CanBeHere
 	}
 
 	if (cliplist_ref.segment)
@@ -837,7 +837,7 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 
 				if (collides_with(s, abs_zone, other_obj, 0, GASEOUS_VIEW_MASK_PASSIVE, argc, argv)) {
 					debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-					return not_register(s, NULL_REG);
+					return NULL_REG;
 				}
 
 			} // if (other_obj != obj)
@@ -849,8 +849,16 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 		retval = 1;
 	debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
 
-	return not_register(s, make_reg(0, retval));
+	return make_reg(0, retval);
 }  // CanBeHere
+
+reg_t kCantBeHere(EngineState *s, int, int argc, reg_t *argv) {
+	// kCantBeHere does the same thing as kCanBeHere, except that
+	// it returns the opposite result.
+	reg_t result = kCanBeHere(s, 0, argc, argv);
+	result.offset = !result.offset;
+	return result;
+}
 
 reg_t kIsItSkip(EngineState *s, int, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();

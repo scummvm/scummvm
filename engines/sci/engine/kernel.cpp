@@ -276,7 +276,7 @@ SciKernelFunction kfunct_mappers[] = {
 	// Opcode 51 is defined twice for a reason: In older SCI versions
 	// it is CanBeHere, whereas in newer version it is CantBeHere
 	/*51*/	DEFUN("CanBeHere", kCanBeHere, "ol*"),
-	/*51*/	DEFUN("CantBeHere", kCanBeHere, "ol*"),
+	/*51*/	DEFUN("CantBeHere", kCantBeHere, "ol*"),
 	/*52*/	DEFUN("OnControl", kOnControl, "i*"),
 	/*53*/	DEFUN("InitBresen", kInitBresen, "oi*"),
 	/*54*/	DEFUN("DoBresen", kDoBresen, "o"),

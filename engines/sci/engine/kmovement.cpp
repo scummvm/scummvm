@@ -365,12 +365,12 @@ reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
-	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.cantBeHere != -1)
+	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.cantBeHere != -1) {
 		invoke_selector(INV_SEL(client, cantBeHere, kStopOnInvalidSelector), 0);
-	else
+		s->r_acc = make_reg(0, !s->r_acc.offset);
+	} else {
 		invoke_selector(INV_SEL(client, canBeHere, kStopOnInvalidSelector), 0);
-
-	s->r_acc = not_register(s, s->r_acc);
+	}
 
 	if (!s->r_acc.offset) { // Contains the return value
 		signal = GET_SEL32V(client, signal);

@@ -416,6 +416,7 @@ reg_t kHiliteControl(EngineState *s, int, int argc, reg_t *argv);
 reg_t kClone(EngineState *s, int, int argc, reg_t *argv);
 reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv);
 reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv);
+reg_t kCantBeHere(EngineState *s, int, int argc, reg_t *argv);
 reg_t kSetNowSeen(EngineState *s, int, int argc, reg_t *argv);
 reg_t kInitBresen(EngineState *s, int, int argc, reg_t *argv);
 reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv);

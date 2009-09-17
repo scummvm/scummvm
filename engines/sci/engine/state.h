@@ -322,20 +322,6 @@ private:
  */
 PaletteEntry get_pic_color(EngineState *s, int color);
 
-// FIXME: Document this strange function.
-// It seems to negate the given register but only if the "cantBeHere" exists.
-// My guess: Since some SCI versions have cantBeHere and some have canBeHere,
-// this function allows unifying the code, making it look identical for both
-// kinds of SCI games. That's fine, but the name not_register is rather
-// misleading. A different name (and a different place for declaring this)
-// would be highly welcome.
-static inline reg_t not_register(EngineState *s, reg_t r) {
-	if (((SciEngine*)g_engine)->getKernel()->_selectorCache.cantBeHere != -1)
-		return make_reg(0, !r.offset);
-	else
-		return r;
-}
-
 } // End of namespace Sci
 
 #endif // SCI_INCLUDE_ENGINE_H
