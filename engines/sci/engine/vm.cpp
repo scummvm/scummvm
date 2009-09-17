@@ -1501,11 +1501,6 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 	return _lookup_selector_function(segMan, obj_location.segment, obj, selector_id, fptr);
 }
 
-reg_t script_lookup_export(SegManager *segMan, int script_nr, int export_index) {
-	SegmentId seg = segMan->getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
-	return make_reg(seg, segMan->validateExportFunc(export_index, seg));
-}
-
 #define INST_LOOKUP_CLASS(id) ((id == 0xffff)? NULL_REG : segMan->getClassAddress(id, SCRIPT_GET_LOCK, reg))
 
 int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int script_nr, Resource **script, Resource **heap, int *was_new) {

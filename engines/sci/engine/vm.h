@@ -441,15 +441,6 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj, Selector selectorid,
 		ObjVarRef *varp, reg_t *fptr);
 
 /**
- * Looks up an entry of the exports table of a script
- * @param[in] segMan	The segment manager
- * @param[in]  script_nr	The script to look up in
- * @param[out] export_index	The index of the export entry to look up
- * @return					The handle
- */
-reg_t script_lookup_export(SegManager *segMan, int script_nr, int export_index);
-
-/**
  * Makes sure that a script and its superclasses get loaded to the heap.
  * If the script already has been loaded, only the number of lockers is 
  * increased. All scripts containing superclasses of this script are loaded

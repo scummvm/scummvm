@@ -454,7 +454,7 @@ int game_init(EngineState *s) {
 
 //	script_dissect(0, s->_selectorNames);
 	// The first entry in the export table of script 0 points to the game object
-	s->game_obj = script_lookup_export(s->segMan, 0, 0);
+	s->game_obj = s->segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
 	s->_gameName = convertSierraGameId(s->segMan->getObjectName(s->game_obj), &gameFlags);
 
