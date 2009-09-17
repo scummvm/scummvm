@@ -437,7 +437,7 @@ bool updateIndex(PAKFile &out, const Game *g) {
 
 	out.removeFile(filename);
 	if (!out.addFile(filename, index, kIndexSize)) {
-		fprintf(stderr, "ERROR: couldn't update %s file", filename);
+		fprintf(stderr, "ERROR: couldn't update %s file\n", filename);
 		delete[] index;
 		return false;
 	}
@@ -1007,7 +1007,7 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 		PAKFile::cFileList *list = out.getFileList();
 		// If the data wasn't found already, we need to break the extraction here
 		if (!list || !list->findEntry(filename)) {
-			fprintf(stderr, "Couldn't find id %d/%s in executable file", *entry, getIdString(*entry));
+			fprintf(stderr, "Couldn't find id %d/%s in executable file\n", *entry, getIdString(*entry));
 			return false;
 		} else {
 			warning("Id %d/%s is present in kyra.dat but could not be found in the executable", *entry, getIdString(*entry));
