@@ -2167,14 +2167,19 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 
 	WSAMovie_v2 *mov = new WSAMovie_v2(this);
 	mov->open("DARKLITE.WSA", 2, 0);
-	if (!mov->opened())
-		return 0;
+	if (!mov->opened()) {
+		warning("LoLEngine::olol_restoreMagicShroud: Could not open file: \"DARKLITE.WSA\"");
+		return 1;
+	}
 
 	_screen->hideMouse();
 
 	// TODO: This function could need some major cleanup to work with our
 	// new palette code without needless conversions.
 	uint8 *fadeTab = new uint8[21504];
+	assert(fadeTab);
+	memset(fadeTab, 0, sizeof(fadeTab));
+
 	uint8 *tpal1 = fadeTab;
 	uint8 *tpal2 = tpal1 + 768;
 	uint8 *tpal3 = tpal2 + 768;
