@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef CREATE_KYRADAT_H
-#define CREATE_KYRADAT_H
+#ifndef CREATE_KYRADAT_CREATE_KYRADAT_H
+#define CREATE_KYRADAT_CREATE_KYRADAT_H
 
 #include "util.h"
 
