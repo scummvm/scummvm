@@ -204,6 +204,21 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
+	// Codename: Iceman - English DOS 1.023 (from abevi, bug report #2612718)
+	{{"iceman", "", {
+			{"resource.map", 0, "da131654de1d6f640222c092313c6ca5", 6252},
+			{"resource.000", 0, "b1bccd827453d4cb834bfd5b45bef63c", 26974},
+			{"resource.001", 0, "005bd332d4b0f9d8e99d3b905223a332", 126833},
+			{"resource.002", 0, "250b859381ebf2bf8922bd99683b0cc1", 306891},
+			{"resource.003", 0, "7d7a840701d2f6eff57679bf7dced747", 317954},
+			{"resource.004", 0, "e0e72970bad9a956db13dcb63d898437", 322483},
+			{"resource.005", 0, "dc7c5280e7acfaffe6ef2a6c963c5f94", 330653},
+			{"resource.006", 0, "08050329aa113a9f14ed99cbfe3536ec", 232942},
+			{"resource.007", 0, "64f342463f6f35ba71b3509ef696ae3f", 267702},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
 	// Conquests of Camelot - English Amiga (from www.back2roots.org)
 	// Executable scanning reports "1.002.030"
 	// SCI interpreter version 0.000.685
@@ -1396,7 +1411,9 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "96033f57accfca903750413fd09193c8", 236676},
 		{"resource.004", 0, "96033f57accfca903750413fd09193c8", 204867},
 		{"resource.005", 0, "96033f57accfca903750413fd09193c8", 274953},
-		{"resource.006", 0, "96033f57accfca903750413fd09193c8", 345818},
+		// TODO/FIXME: is the version with size 208739 corrupted?
+		//{"resource.006", 0, "96033f57accfca903750413fd09193c8", 345818},
+		{"resource.006", 0, "96033f57accfca903750413fd09193c8", -1},	// 345818 or 208739
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		GF_FOR_SCI0_BEFORE_629
 	},
@@ -2236,6 +2253,18 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
+	// Quest for Glory 1 (from abevi, bug report #2612718)
+	{{"qfg1", "", {
+		{"resource.map", 0, "b162dbd4632250d4d83bed46d0783c10", 6396},
+		{"resource.000", 0, "40332d3ebfc70a4b6a6a0443c2763287", 78800},
+		{"resource.001", 0, "a270012fa74445d74c044d1b65a9ff8c", 459835},
+		{"resource.002", 0, "e64004e020fdf1813be52b639b08be89", 635561},
+		{"resource.003", 0, "f0af87c60ec869946da442833aa5afa8", 640502},
+		{"resource.004", 0, "f0af87c60ec869946da442833aa5afa8", 644575},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_NOSPEECH},
+		0
+	},
+
 	// Quest for Glory 1 - English DOS
 	// SCI interpreter version 0.000.629
 	{{"qfg1", "", {
@@ -2627,6 +2656,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		0
 	},
 
+	// Space Quest 3 - English DOS (from abevi, bug report #2612718)
+	{{"sq3", "", {
+		{"resource.map", 0, "eca165515c6b62b05fa86b7d8f727660", 5598},
+		{"resource.001", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 170494},
+		{"resource.002", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 312557},
+		{"resource.003", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 325581},
+		{"resource.004", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 321222},
+		{"resource.005", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 328278},
+		{"resource.006", 0, "ceeda7202b96e5c85ecaa88a40a540fc", 356702},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
 	// Space Quest 3 - German DOS (from Tobis87)
 	// SCI interpreter version 0.000.453 (?)
 	{{"sq3", "", {
@@ -2715,6 +2757,19 @@ static const struct SciGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "96fa33d89d838bc3f671c5b953e7a896", 1240130},
 		{"resource.004", 0, "ff9c87da3bc53473fdee8b9d3edbc93c", 1200631},
 		{"resource.005", 0, "e33019ac19f755ae33fbf49b4fc9066c", 1053294},
+		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
+		0
+	},
+
+	// Space Quest 4 1.000 - English DOS Floppy (from abevi, bug report #2612718)
+	{{"sq4", "", {
+		{"resource.map", 0, "8f08b97ca093f370c56d99715b015554", 6153},
+		{"resource.000", 0, "5f6a1fff40584ee807efd547899b1ba5", 206032},
+		{"resource.001", 0, "99a6df6d366b3f061271ff3450ac0d32", 1270577},
+		{"resource.002", 0, "a6a8d7a24dbb7a266a26b084e7275e89", 1242817},
+		{"resource.003", 0, "47ee647b5b12232d27e63cc627c25899", 1321146},
+		{"resource.004", 0, "c06350184a490c10eb4585fff0aa3192", 1254368},
+		{"resource.005", 0, "b8d6efbd3235329bfe844c794097b2c9", 1098717},
 		{NULL, 0, NULL, 0}}, Common::EN_ANY, Common::kPlatformPC, 0, GUIO_NOSPEECH},
 		0
 	},
