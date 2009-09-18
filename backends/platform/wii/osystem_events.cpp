@@ -24,14 +24,13 @@
 
 #include "osystem.h"
 
+#include <ogc/lwp_watchdog.h>
 #ifndef GAMECUBE
 #include <wiiuse/wpad.h>
 #endif
 #ifdef USE_WII_KBD
 #include <wiikeyboard/keyboard.h>
 #endif
-
-#include <ogc/lwp_watchdog.h>
 
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64
@@ -322,6 +321,12 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 		if (bh & PADS_UP) {
 			PAD_EVENT(PADS_START, Common::KEYCODE_F5, Common::ASCII_F5,
 						Common::KBD_CTRL);
+		
+			if (bd & PADS_R) {
+				_consoleVisible = !_consoleVisible;
+				return false;
+			}
+
 			flags = Common::KBD_SHIFT;
 		}
 

@@ -1208,14 +1208,14 @@ case $_host_os in
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
-		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/wii/include"
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib"
 		;;
 	gamecube)
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib"
 		;;
 	nds)
 		# TODO nds
@@ -2186,10 +2186,10 @@ case $_backend in
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
 		case $_host_os in
 		gamecube)
-			LIBS="$LIBS -lfat -logc -ldb"
+			LIBS="$LIBS -lgxflux -lfat -logc -ldb"
 			;;
 		*)
-			LIBS="$LIBS -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			LIBS="$LIBS -lgxflux -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
 			;;
 		esac
 		;;

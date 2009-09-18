@@ -22,6 +22,12 @@
 #ifndef _WII_OSYSTEM_H_
 #define _WII_OSYSTEM_H_
 
+#include <gctypes.h>
+#include <gccore.h>
+#include <ogcsys.h>
+
+#include <gfx/gfx.h>
+
 #include "base/main.h"
 #include "common/fs.h"
 #include "common/rect.h"
@@ -32,12 +38,6 @@
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 #include "sound/mixer_intern.h"
-
-#include "gfx.h"
-
-#include <gctypes.h>
-#include <gccore.h>
-#include <ogcsys.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -67,7 +67,7 @@ private:
 	u16 _gameWidth, _gameHeight;
 	u8 *_gamePixels;
 	Graphics::Surface _surface;
-	gfx_coords_t _coordsGame;
+	gfx_screen_coords_t _coordsGame;
 	gfx_tex_t _texGame;
 	bool _gameDirty;
 
@@ -75,7 +75,7 @@ private:
 	u16 _overlayWidth, _overlayHeight;
 	u32 _overlaySize;
 	OverlayColor *_overlayPixels;
-	gfx_coords_t _coordsOverlay;
+	gfx_screen_coords_t _coordsOverlay;
 	gfx_tex_t _texOverlay;
 	bool _overlayDirty;
 
@@ -94,6 +94,7 @@ private:
 	Graphics::PixelFormat _pfCursor;
 #endif
 
+	bool _consoleVisible;
 	bool _optionsDlgActive;
 	bool _fullscreen;
 	bool _arCorrection;

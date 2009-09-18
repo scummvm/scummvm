@@ -24,20 +24,18 @@
 #include <errno.h>
 #include <unistd.h>
 
-#include <ogc/machine/processor.h>
-#include <fat.h>
-
 #include "osystem.h"
 
+#include <ogc/machine/processor.h>
+#include <fat.h>
 #ifdef USE_WII_DI
 #include <di/di.h>
 #endif
-
 #ifdef DEBUG_WII_GDB
 #include <debug.h>
 #endif
-
-#include "gfx.h"
+#include <gfx/gfx.h>
+#include <gfx/gfx_con.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -93,9 +91,9 @@ int main(int argc, char *argv[]) {
 	PAD_Init();
 	AUDIO_Init(NULL);
 
-#ifdef DEBUG_WII_USBGECKO
-	CON_EnableGecko(1, false);
-#endif
+	gfx_video_init(GFX_STANDARD_AUTO, GFX_MODE_DEFAULT);
+	gfx_init();
+	gfx_con_init(NULL);
 
 #ifdef DEBUG_WII_GDB
 	DEBUG_Init(GDBSTUB_DEVICE_USB, 1);
@@ -146,6 +144,8 @@ int main(int argc, char *argv[]) {
 
 	printf("reloading\n");
 
+	gfx_con_deinit();
+	gfx_deinit();
 	gfx_video_deinit();
 
 	return res;

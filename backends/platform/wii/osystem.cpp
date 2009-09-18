@@ -19,16 +19,16 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  */
 
+#include <unistd.h>
+
+#include <ogc/mutex.h>
+#include <ogc/lwp_watchdog.h>
+
 #include "common/config-manager.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
 #include "options.h"
-
-#include <unistd.h>
-
-#include <ogc/mutex.h>
-#include <ogc/lwp_watchdog.h>
 
 OSystem_Wii::OSystem_Wii() :
 	_startup_time(0),
@@ -69,6 +69,7 @@ OSystem_Wii::OSystem_Wii() :
 #endif
 
 	_optionsDlgActive(false),
+	_consoleVisible(false),
 	_fullscreen(false),
 	_arCorrection(false),
 

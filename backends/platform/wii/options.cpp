@@ -21,6 +21,7 @@
  */
 
 #include <network.h>
+#include <gfx/gfx.h>
 
 #include "common/config-manager.h"
 #include "gui/dialog.h"
@@ -28,7 +29,6 @@
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "options.h"
-#include "gfx.h"
 
 WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	Dialog((640 - 400) / 2, (480 - 340) / 2, 400, 340),

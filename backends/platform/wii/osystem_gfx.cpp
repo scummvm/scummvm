@@ -21,12 +21,14 @@
 
 #include <malloc.h>
 
+#include <gfx/gfx.h>
+#include <gfx/gfx_con.h>
+
 #include "common/config-manager.h"
 #include "graphics/conversion.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "osystem.h"
-#include "gfx.h"
 
 #define ROUNDUP(x,n) (-(-(x) & -(n)))
 #define MAX_FPS 30
@@ -58,8 +60,6 @@ static const OSystem::GraphicsMode _supportedGraphicsModes[] = {
 };
 
 void OSystem_Wii::initGfx() {
-	gfx_video_init(GFX_STANDARD_AUTO, GFX_MODE_DEFAULT);
-	gfx_init();
 	gfx_set_underscan(ConfMan.getInt("wii_video_default_underscan_x"),
 						ConfMan.getInt("wii_video_default_underscan_y"));
 
@@ -96,8 +96,6 @@ void OSystem_Wii::initGfx() {
 }
 
 void OSystem_Wii::deinitGfx() {
-	gfx_deinit();
-
 	gfx_tex_deinit(&_texMouse);
 	gfx_tex_deinit(&_texGame);
 	gfx_tex_deinit(&_texOverlay);
@@ -429,12 +427,18 @@ void OSystem_Wii::copyRectToScreen(const byte *buf, int pitch, int x, int y,
 }
 
 void OSystem_Wii::updateScreen() {
-	static gfx_coords_t cc;
+	static f32 ar;
+	static gfx_screen_coords_t cc;
 	static int cs;
 
 	u32 now = getMillis();
 	if (now - _lastScreenUpdate < 1000 / MAX_FPS)
 		return;
+
+	if (!gfx_frame_start()) {
+		printf("last frame not done!\n");
+		return;
+	}
 
 #ifdef DEBUG_WII_MEMSTATS
 	wii_memstats();
@@ -443,8 +447,8 @@ void OSystem_Wii::updateScreen() {
 	cs = _cursorScale;
 	_lastScreenUpdate = now;
 
-	gfx_frame_start();
-
+	if (_overlayVisible || _consoleVisible)
+		gfx_set_colorop(COLOROP_SIMPLEFADE, gfx_color_none, gfx_color_none);
 
 	if (_gameRunning) {
 		if (_gameDirty) {
@@ -456,6 +460,12 @@ void OSystem_Wii::updateScreen() {
 	}
 
 	if (_overlayVisible) {
+		if (!_consoleVisible)
+			gfx_set_colorop(COLOROP_NONE, gfx_color_none, gfx_color_none);
+
+		if (_gameRunning)
+			ar = gfx_set_ar(4.0 / 3.0);
+
 		// ugly, but the modern theme sets a factor of 3, only god knows why
 		if (cs > 2)
 			cs = 1;
@@ -484,6 +494,12 @@ void OSystem_Wii::updateScreen() {
 
 		gfx_draw_tex(&_texMouse, &cc);
 	}
+
+	if (_consoleVisible)
+		gfx_con_draw();
+
+	if (_overlayVisible && _gameRunning)
+		gfx_set_ar(ar);
 
 	gfx_frame_end();
 }
@@ -649,7 +665,7 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 	if (!tmpBuf) {
 		gfx_tex_convert(&_texMouse, buf);
 	} else {
-		u8 bpp = _texMouse.bpp;
+		u8 bpp = _texMouse.bpp >> 3;
 		byte *tmp = (byte *) malloc(tw * th * bpp);
 
 		if (!tmp) {
@@ -668,7 +684,7 @@ void OSystem_Wii::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX,
 										tw * _pfRGB3444.bytesPerPixel,
 										w * _pfCursor.bytesPerPixel,
 										tw, th, _pfRGB3444, _pfCursor)) {
-				printf("crossBlit failed\n");
+				printf("crossBlit failed (cursor)\n");
 				::abort();
 			}
 
