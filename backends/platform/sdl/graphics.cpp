@@ -1927,7 +1927,7 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 				);
 		displayMessageOnOSD(buffer);
 #endif
-
+		internUpdateScreen();
 		return;
 	}
 
@@ -1983,7 +1983,7 @@ void OSystem_SDL::handleScalerHotkeys(const SDL_KeyboardEvent &key) {
 			}
 		}
 #endif
-
+		internUpdateScreen();
 	}
 
 }
