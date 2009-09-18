@@ -602,13 +602,15 @@ bool StaticResource::prefetchId(int id) {
 
 void StaticResource::unloadId(int id) {
 	Common::List<ResData>::iterator pos = _resList.begin();
-	for (; pos != _resList.end(); ++pos) {
+	for (; pos != _resList.end();) {
 		if (pos->id == id || id == -1) {
 			const FileType *filetype = getFiletype(pos->type);
 			(this->*(filetype->free))(pos->data, pos->size);
 			pos = _resList.erase(pos);
 			if (id != -1)
 				break;
+		} else {
+			++pos;
 		}
 	}
 }
