@@ -28,6 +28,9 @@
 
 #include <ogc/machine/processor.h>
 #include <fat.h>
+#ifndef GAMECUBE
+#include <wiiuse/wpad.h>
+#endif
 #ifdef USE_WII_DI
 #include <di/di.h>
 #endif
@@ -57,6 +60,53 @@ void reset_cb(void) {
 void power_cb(void) {
 	power_btn_pressed = true;
 }
+
+static void show_console(int code) {
+	u32 b;
+
+	printf("ScummVM exited abnormally (%d).\n", code);
+
+	if (!gfx_frame_start())
+		return;
+
+	gfx_con_draw();
+	gfx_frame_end();
+
+	while (true) {
+		b = 0;
+
+		if (PAD_ScanPads() & 1)
+			b = PAD_ButtonsDown(0);
+
+#ifndef GAMECUBE
+		WPAD_ScanPads();
+		if (WPAD_Probe(0, NULL) == WPAD_ERR_NONE)
+			b |= WPAD_ButtonsDown(0);
+#endif
+
+		if (b)
+			break;
+
+		VIDEO_WaitVSync();
+	}
+}
+
+s32 reset_func(s32 final) {
+	static bool done = false;
+
+	if (!done) {
+		show_console(-127);
+		done = true;
+	}
+
+	return 1;
+}
+
+static sys_resetinfo resetinfo = {
+	{ NULL, NULL },
+	reset_func,
+	1
+};
 
 #ifdef DEBUG_WII_MEMSTATS
 void wii_memstats(void) {
@@ -105,6 +155,8 @@ int main(int argc, char *argv[]) {
 	else
 		printf("<unknown>\n");
 
+	SYS_RegisterResetFunc(&resetinfo);
+
 	SYS_SetResetCallback(reset_cb);
 #ifndef GAMECUBE
 	SYS_SetPowerCallback(power_cb);
@@ -135,7 +187,11 @@ int main(int argc, char *argv[]) {
 
 	printf("shutdown\n");
 
+	SYS_UnregisterResetFunc(&resetinfo);
 	fatUnmountDefault();
+
+	if (res)
+		show_console(res);
 
 	if (power_btn_pressed) {
 		printf("shutting down\n");
