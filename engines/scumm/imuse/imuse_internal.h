@@ -361,7 +361,6 @@ struct Part : public Serializable {
 	void fix_after_load();
 
 	void sendAll();
-	void sendPitchBend();
 	bool clearToTransmit();
 
 	Part();
@@ -369,8 +368,9 @@ struct Part : public Serializable {
 	void saveLoadWithSerializer(Serializer *ser);
 
 private:
-	void setPanPosition(uint8 value);
-	void setEffectLevel(uint8 value);
+	void sendPitchBend();
+	void sendPanPosition(uint8 value);
+	void sendEffectLevel(uint8 value);
 };
 
 

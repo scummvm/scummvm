@@ -112,14 +112,12 @@ void Part::saveLoadWithSerializer(Serializer *ser) {
 
 void Part::set_detune(int8 detune) {
 	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-	if (_mc)
-		sendPitchBend();
+	sendPitchBend();
 }
 
 void Part::pitchBend(int16 value) {
 	_pitchbend = value;
-	if (_mc)
-		sendPitchBend();
+	sendPitchBend();
 }
 
 void Part::volume(byte value) {
@@ -136,13 +134,12 @@ void Part::set_pri(int8 pri) {
 
 void Part::set_pan(int8 pan) {
 	_pan_eff = clamp((_pan = pan) + _player->getPan(), -64, 63);
-	setPanPosition(_pan_eff + 0x40);
+	sendPanPosition(_pan_eff + 0x40);
 }
 
 void Part::set_transpose(int8 transpose) {
 	_transpose_eff = transpose_clamp((_transpose = transpose) + _player->getTranspose(), -24, 24);
-	if (_mc)
-		sendPitchBend();
+	sendPitchBend();
 }
 
 void Part::sustain(bool value) {
@@ -165,7 +162,7 @@ void Part::chorusLevel(byte value) {
 
 void Part::effectLevel(byte value) {
 	_effect_level = value;
-	setEffectLevel(value);
+	sendEffectLevel(value);
 }
 
 void Part::fix_after_load() {
@@ -328,20 +325,23 @@ void Part::sendAll() {
 	_mc->volume(_vol_eff);
 	_mc->sustain(_pedal);
 	_mc->modulationWheel(_modwheel);
-	setPanPosition(_pan_eff + 0x40);
+	sendPanPosition(_pan_eff + 0x40);
 
 	if (_instrument.isValid())
 		_instrument.send(_mc);
 
 	// We need to send the effect level after setting up the instrument
 	// otherwise the reverb setting for MT-32 will be overwritten.
-	setEffectLevel(_effect_level);
+	sendEffectLevel(_effect_level);
 
 	_mc->chorusLevel(_chorus);
 	_mc->priority(_pri_eff);
 }
 
 void Part::sendPitchBend() {
+	if (!_mc)
+		return;
+
 	int16 bend = _pitchbend;
 	// RPN-based pitchbend range doesn't work for the MT32,
 	// so we'll do the scaling ourselves.
@@ -372,7 +372,7 @@ void Part::allNotesOff() {
 	_mc->allNotesOff();
 }
 
-void Part::setPanPosition(uint8 value) {
+void Part::sendPanPosition(uint8 value) {
 	if (!_mc)
 		return;
 
@@ -385,7 +385,7 @@ void Part::setPanPosition(uint8 value) {
 	_mc->panPosition(value);
 }
 
-void Part::setEffectLevel(uint8 value) {
+void Part::sendEffectLevel(uint8 value) {
 	if (!_mc)
 		return;
 
