@@ -2192,8 +2192,8 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	for (int i = 0; i < 21; i++) {
 		uint32 etime = _system->getMillis() + 20 * _tickLength;
 		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
-		_screen->updateScreen();
 		_screen->setScreenPalette(**tpal3++);
+		_screen->updateScreen();
 
 		if (i == 2 || i == 5 || i == 8 || i == 11 || i == 13 || i == 15 || i == 17 || i == 19)
 			snd_playSoundEffect(95, -1);
@@ -2207,11 +2207,11 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	for (int i = 22; i < 38; i++) {
 		uint32 etime = _system->getMillis() + 12 * _tickLength;
 		mov->displayFrame(i, 0, 0, 0, 0, 0, 0);
-		_screen->updateScreen();
 		if (i == 22 || i == 24 || i == 28 || i == 32) {
 			snd_playSoundEffect(131, -1);
 			_screen->setScreenPalette(**tpal3++);
 		}
+		_screen->updateScreen();
 		delayUntil(etime);
 	}
 
