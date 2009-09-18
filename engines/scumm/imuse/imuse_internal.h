@@ -367,6 +367,9 @@ struct Part : public Serializable {
 	Part();
 
 	void saveLoadWithSerializer(Serializer *ser);
+
+private:
+	void setPanPosition(uint8 value);
 };
 
 

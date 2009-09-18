@@ -136,8 +136,7 @@ void Part::set_pri(int8 pri) {
 
 void Part::set_pan(int8 pan) {
 	_pan_eff = clamp((_pan = pan) + _player->getPan(), -64, 63);
-	if (_mc)
-		_mc->panPosition(_pan_eff + 0x40);
+	setPanPosition(_pan_eff + 0x40);
 }
 
 void Part::set_transpose(int8 transpose) {
@@ -164,8 +163,7 @@ void Part::chorusLevel(byte value) {
 		_mc->chorusLevel(value);
 }
 
-void Part::effectLevel(byte value)
-{
+void Part::effectLevel(byte value) {
 	_effect_level = value;
 	if (_mc)
 		_mc->effectLevel(value);
@@ -330,7 +328,7 @@ void Part::sendAll() {
 	_mc->volume(_vol_eff);
 	_mc->sustain(_pedal);
 	_mc->modulationWheel(_modwheel);
-	_mc->panPosition(_pan_eff + 0x40);
+	setPanPosition(_pan_eff + 0x40);
 	_mc->effectLevel(_effect_level);
 	if (_instrument.isValid())
 		_instrument.send(_mc);
@@ -367,6 +365,19 @@ void Part::allNotesOff() {
 	if (!_mc)
 		return;
 	_mc->allNotesOff();
+}
+
+void Part::setPanPosition(uint8 value) {
+	if (!_mc)
+		return;
+
+	// As described in bug report #1088045 "MI2: Minor problems in native MT-32 mode"
+	// the original iMuse MT-32 driver did revert the panning. So we do the same
+	// here in our code to have correctly panned sound output.
+	if (_player->_se->isNativeMT32())
+		value = 127 - value;
+
+	_mc->panPosition(value);
 }
 
 } // End of namespace Scumm
