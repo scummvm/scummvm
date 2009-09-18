@@ -370,6 +370,7 @@ struct Part : public Serializable {
 
 private:
 	void setPanPosition(uint8 value);
+	void setEffectLevel(uint8 value);
 };
 
 
