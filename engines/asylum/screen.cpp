@@ -136,12 +136,13 @@ void Screen::addGraphicToQueue(GraphicQueueItem item) {
 }
 
 void Screen::drawGraphicsInQueue() {
+    WorldStats   *ws = Shared.getScene()->getResources()->getWorldStats();
     // sort by priority first
     graphicsSelectionSort();
     for(uint i = 0; i < _queueItems.size(); i++) {
         GraphicResource *grRes = Shared.getScene()->getGraphicResource(_queueItems[i].resId);
         GraphicFrame *fra = grRes->getFrame(_queueItems[i].frameIdx);
-        copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x, _queueItems[i].y, fra->surface.w, fra->surface.h);
+        copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->targetX, _queueItems[i].y - ws->targetY, fra->surface.w, fra->surface.h);
         delete grRes;
     }
 }

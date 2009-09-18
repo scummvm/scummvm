@@ -33,6 +33,7 @@
 namespace Asylum {
 
 struct ActionCommand;
+class WorldStats;
 
 class ScriptManager: public Common::Singleton<ScriptManager> {
 public:

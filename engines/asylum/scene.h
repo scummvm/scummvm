@@ -97,8 +97,8 @@ private:
 	GraphicFrame	*_background;
 
 	bool	_walking;
-	int32	_startX;
-	int32	_startY;
+	//int32	_startX;
+	//int32	_startY;
 	bool	_leftClick;
 	bool	_rightButton;
 	bool	_isActive;

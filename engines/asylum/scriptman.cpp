@@ -550,13 +550,15 @@ int kShowActor(ActionCommand *cmd) {
 }
 
 int kSetActorStats(ActionCommand *cmd) {
+    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+
 	// TODO
 	// param1 == actorIndex. Implement when we've got more than one actor
 
 	// TODO This needs to be depreciated, but it's setting the actor's x/y
 	// and bounding rect top/left.
 	// This needs to be rolled into the proper place
-	Shared.getScene()->getActor()->setPosition(cmd->param2, cmd->param3);
+    Shared.getScene()->getActor()->setPosition(cmd->param2, cmd->param3);
 
 	Shared.getScene()->getActor()->setPosition_40A260(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
 
