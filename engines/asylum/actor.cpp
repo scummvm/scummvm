@@ -130,11 +130,13 @@ GraphicFrame *Actor::getFrame() {
 void Actor::drawActorAt(uint16 curX, uint16 curY) {
 	GraphicFrame *frame = getFrame();
 
+    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+
 	Shared.getScreen()->copyRectToScreenWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
-			curX,
-			curY,
+            curX - ws->targetX,
+			curY - ws->targetY,
 			frame->surface.w,
 			frame->surface.h );
 	x = curX;
@@ -143,12 +145,13 @@ void Actor::drawActorAt(uint16 curX, uint16 curY) {
 
 void Actor::drawActor() {
 	GraphicFrame *frame = getFrame();
+    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
 
 	Shared.getScreen()->copyToBackBufferWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
-			x,
-			y - frame->surface.h,
+            x - ws->targetX,
+			y - frame->surface.h - ws->targetY,
 			frame->surface.w,
 			frame->surface.h );
 }
@@ -163,6 +166,7 @@ void Actor::setWalkArea(ActionArea *target) {
 
 void Actor::walkTo(uint16 curX, uint16 curY) {
 	int newAction = currentAction;
+    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
 
 	// step is the increment by which to move the
 	// actor in a given direction
@@ -225,7 +229,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	rect.bottom = newY + 4;
 	surface.frameRect(rect, 0x33);
 
-	Shared.getScreen()->copyRectToScreen((byte*)surface.pixels, 5, newX, newY, 5, 5);
+    Shared.getScreen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
 
 	surface.free();
 
@@ -239,15 +243,15 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	ActionArea *area;
 
 	// Check what valid walk region(s) is/are currently available
-	for (uint32 a = 0; a < Shared.getScene()->getResources()->getWorldStats()->numActions; a++) {
-		if (Shared.getScene()->getResources()->getWorldStats()->actions[a].actionType == 0) {
-			area = &Shared.getScene()->getResources()->getWorldStats()->actions[a];
+	for (uint32 a = 0; a < ws->numActions; a++) {
+		if (ws->actions[a].actionType == 0) {
+			area = &ws->actions[a];
 			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
-			if (Shared.pointInPoly(&poly, x, y)) {
+            if (Shared.pointInPoly(&poly, x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
 
-				setWalkArea(&Shared.getScene()->getResources()->getWorldStats()->actions[a]);
+				setWalkArea(&ws->actions[a]);
 
 				if (areaPtr > 5)
 					error("More than 5 overlapping walk regions found. Increase buffer");
@@ -259,7 +263,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	// Check that we can walk in the current direction within any of the available
 	// walkable regions
 	for (int i = 0; i < areaPtr; i++) {
-		area = &Shared.getScene()->getResources()->getWorldStats()->actions[availableAreas[i]];
+		area = &ws->actions[availableAreas[i]];
 		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
 		if (Shared.pointInPoly(region, newX, newY)) {
 			x = newX;

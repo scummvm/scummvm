@@ -65,8 +65,8 @@ Scene::Scene(uint8 sceneIdx) {
 	_cursor = new Cursor(_resPack);
 
 	_background    = 0;
-	_startX        = 0;
-	_startY        = 0;
+	//_startX        = 0;
+	//_startY        = 0;
 	_leftClick     = false;
 	_rightButton   = false;
 	_isActive      = false;
@@ -115,10 +115,11 @@ Actor* Scene::getActor() {
 }
 
 void Scene::enterScene() {
-	Shared.getScreen()->setPalette(_resPack, _sceneResource->getWorldStats()->commonRes.palette);
+    WorldStats *ws = _sceneResource->getWorldStats();
+	Shared.getScreen()->setPalette(_resPack, ws->commonRes.palette);
 	_background = _bgResource->getFrame(0);
 	Shared.getScreen()->copyToBackBuffer(
-			((byte *)_background->surface.pixels) + _startY * _background->surface.w + _startX, _background->surface.w,
+            ((byte *)_background->surface.pixels) + ws->targetY * _background->surface.w + ws->targetX, _background->surface.w,
 			0, 0, 640, 480);
 
 	_cursor->load(_sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
@@ -147,20 +148,23 @@ ActionDefinitions* Scene::getActionList(int actionListIndex) {
 
 void Scene::setScenePosition(int x, int y)
 {
+    WorldStats *ws = _sceneResource->getWorldStats();
 	GraphicFrame *bg = _bgResource->getFrame(0);
-	_startX = x;
-	_startY = y;
+	//_startX = x;
+	//_startY = y;
+    ws->targetX = x;
+    ws->targetY = y;
 	
-	if (_startX < 0)
-		_startX = 0;
-	if (_startX > (bg->surface.w - 640))
-		_startX = bg->surface.w - 640;
+	if (ws->targetX < 0)
+		ws->targetX = 0;
+	if (ws->targetX > (bg->surface.w - 640))
+		ws->targetX = bg->surface.w - 640;
 		
 	
-	if (_startX < 0)
-		_startY = 0;
-	if (_startX > (bg->surface.h - 480))
-		_startY = bg->surface.h - 480;		
+	if (ws->targetY < 0)
+		ws->targetY = 0;
+	if (ws->targetY > (bg->surface.h - 480))
+		ws->targetY = bg->surface.h - 480;		
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -808,10 +812,10 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
 		Barrier b = worldStats->barriers[p];
 		if (b.flags & 0x20) {
-			if ((b.boundingRect.left + b.x <= _cursor->x() + _startX) &&
-				(_cursor->x() + _startX < b.boundingRect.right + b.x) &&
-				(b.boundingRect.top + b.y <= _cursor->y() + _startY) &&
-				(_cursor->y() + _startY < b.boundingRect.bottom + b.y)) {
+            if ((b.boundingRect.left + b.x <= _cursor->x() + worldStats->targetX) &&
+				(_cursor->x() + worldStats->targetX < b.boundingRect.right + b.x) &&
+				(b.boundingRect.top + b.y <= _cursor->y() + worldStats->targetY) &&
+				(_cursor->y() + worldStats->targetY < b.boundingRect.bottom + b.y)) {
 				_cursor->animate();
 				curBarrier = (int32)p;
 				break;
@@ -828,8 +832,8 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		// Update cursor if it's in a polygon hotspot
 		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
-			if (poly.boundingRect.contains(_cursor->x() + _startX, _cursor->y() + _startY)) {
-				if (Shared.pointInPoly(&poly, _cursor->x() + _startX, _cursor->y() + _startY)) {
+			if (poly.boundingRect.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
+				if (Shared.pointInPoly(&poly, _cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
 					curHotspot = (int32)p;
 					_cursor->animate();
 					break;
@@ -883,7 +887,7 @@ int Scene::drawScene() {
         WorldStats   *ws = _sceneResource->getWorldStats();
         GraphicFrame *bg = _bgResource->getFrame(0);
         Shared.getScreen()->copyToBackBuffer(
-        		((byte *)bg->surface.pixels) + _startY * bg->surface.w + _startX, bg->surface.w,
+        		((byte *)bg->surface.pixels) + ws->targetY * bg->surface.w + ws->targetX, bg->surface.w,
         		ws->xLeft,
         		ws->yTop,
         		640,
@@ -940,21 +944,23 @@ int Scene::drawBarriers() {
 // ----------------------------------
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-	Common::Rect screenRect(_startX, _startY, _startX + 640, _startY + 480);
+    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+
+    Common::Rect screenRect(ws->targetX, ws->targetY, ws->targetX + 640, ws->targetY + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
 	animRect.clip(screenRect);
 
 	if (!animRect.isEmpty()) {
 		// Translate anim rectangle
-		animRect.translate(-_startX, -_startY);
+		animRect.translate(-ws->targetX, -ws->targetY);
 
 		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
 
 		if (surface->w > 640)
-			startX = _startX;
+			startX = ws->targetX;
 		if (surface->h > 480)
-			startY = _startY;
+			startY = ws->targetY;
 
 		Shared.getScreen()->copyToBackBufferWithTransparency(
 				((byte*)surface->pixels) +
@@ -973,17 +979,19 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 // ----------------------------------
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
+    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+
 	// Horizontal scrolling
-	if (_cursor->x() < SCREEN_EDGES && _startX >= SCROLL_STEP)
-		_startX -= SCROLL_STEP;
-	else if (_cursor->x() > 640 - SCREEN_EDGES && _startX <= bg->surface.w - 640 - SCROLL_STEP)
-		_startX += SCROLL_STEP;
+	if (_cursor->x() < SCREEN_EDGES && ws->targetX >= SCROLL_STEP)
+		ws->targetX -= SCROLL_STEP;
+	else if (_cursor->x() > 640 - SCREEN_EDGES && ws->targetX <= bg->surface.w - 640 - SCROLL_STEP)
+		ws->targetX += SCROLL_STEP;
 
 	// Vertical scrolling
-	if (_cursor->y() < SCREEN_EDGES && _startY >= SCROLL_STEP)
-		_startY -= SCROLL_STEP;
-	else if (_cursor->y() > 480 - SCREEN_EDGES && _startY <= bg->surface.h - 480 - SCROLL_STEP)
-		_startY += SCROLL_STEP;
+	if (_cursor->y() < SCREEN_EDGES && ws->targetY >= SCROLL_STEP)
+		ws->targetY -= SCROLL_STEP;
+	else if (_cursor->y() > 480 - SCREEN_EDGES && ws->targetY <= bg->surface.h - 480 - SCROLL_STEP)
+		ws->targetY += SCROLL_STEP;
 }
 
 // WALK REGION DEBUG
