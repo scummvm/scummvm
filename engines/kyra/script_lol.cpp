@@ -2137,32 +2137,55 @@ int LoLEngine::olol_increaseSkill(EMCState *script) {
 int LoLEngine::olol_paletteFlash(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_paletteFlash(%p) (%d)", (const void *)script, stackPos(0));
 	Palette &p1 = _screen->getPalette(1);
-	Palette &p2 = _screen->getPalette(3);
 
-	uint8 ovl[256];
-	generateFlashPalette(p1, p2, stackPos(0));
-	_screen->loadSpecialColors(p1);
-	_screen->loadSpecialColors(p2);
+	if (_flags.use16ColorMode) {
+		Palette p2(16);
+		p2.copy(p1);
+		uint8 *d = p2.getData();
 
-	if (_smoothScrollModeNormal) {
-		for (int i = 0; i < 256; i++)
-			ovl[i] = i;
-		ovl[1] = 6;
+		for (int i = 0; i < 16; i++)
+			d[i * 3] = 0x3f;			
 
-		_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 2);
-		_screen->applyOverlay(112, 0, 176, 120, 0, ovl);
+		_screen->setScreenPalette(p2);
+		_screen->updateScreen();
+
+		delay(4 * _tickLength);
+
+		_screen->setScreenPalette(p1);
+		if (_smoothScrollModeNormal)
+			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
+
+		_screen->updateScreen();
+
+	} else {		
+		Palette &p2 = _screen->getPalette(3);
+
+		uint8 ovl[256];
+		generateFlashPalette(p1, p2, stackPos(0));
+		_screen->loadSpecialColors(p1);
+		_screen->loadSpecialColors(p2);
+
+		if (_smoothScrollModeNormal) {
+			for (int i = 0; i < 256; i++)
+				ovl[i] = i;
+			ovl[1] = 6;
+
+			_screen->copyRegion(112, 0, 112, 0, 176, 120, 0, 2);
+			_screen->applyOverlay(112, 0, 176, 120, 0, ovl);
+		}
+
+		_screen->setScreenPalette(p2);
+		_screen->updateScreen();
+
+		delay(2 * _tickLength);
+
+		_screen->setScreenPalette(p1);
+		if (_smoothScrollModeNormal)
+			_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
+
+		_screen->updateScreen();
 	}
 
-	_screen->setScreenPalette(p2);
-	_screen->updateScreen();
-
-	delay(2 * _tickLength);
-
-	_screen->setScreenPalette(p1);
-	if (_smoothScrollModeNormal)
-		_screen->copyRegion(112, 0, 112, 0, 176, 120, 2, 0);
-
-	_screen->updateScreen();
 	return 0;
 }
 

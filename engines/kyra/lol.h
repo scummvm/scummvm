@@ -974,6 +974,7 @@ private:
 	int _lampOilStatus;
 	uint32 _lampStatusTimer;
 	bool _lampStatusSuspended;
+	uint8 _blockBrightness;
 
 	// level
 	void loadLevel(int index);

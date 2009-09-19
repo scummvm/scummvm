@@ -400,13 +400,6 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		delete[] _vcnBlocks;
 	_vcnBlocks = new uint8[vcnLen];
 
-	if (_vcnShift)
-		delete[] _vcnShift;
-	_vcnShift = new uint8[tlen];
-
-	memcpy(_vcnShift, v, tlen);
-	v += tlen;	
-
 	if (_flags.use16ColorMode) {
 		_screen->getPalette(0).fill(0, 16, 0xff);
 		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
@@ -416,8 +409,14 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		for (int i = 15; i >= 0; i--)			
 			pl.copy(pl, i, 1, colTable[i]);*/
 
-		v += 128;
 	} else {
+		if (_vcnShift)
+			delete[] _vcnShift;
+		_vcnShift = new uint8[tlen];
+
+		memcpy(_vcnShift, v, tlen);
+		v += tlen;
+
 		memcpy(_vcnExpTable, v, 128);
 		v += 128;
 
@@ -426,9 +425,9 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		} else {
 			_screen->getPalette(0).copy(v, 0, 128);
 		}
-	}
 
-	v += 384;
+		v += 384;
+	}	
 
 	if (_currentLevel == 11) {
 		_screen->loadPalette("SWAMPICE.COL", _screen->getPalette(2));
@@ -488,12 +487,12 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		for (int i = 0; i < 7; i++)
 			memcpy(_screen->getLevelOverlay(i), _screen->getLevelOverlay(i + 1), 256);
 
-		//static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+		static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 		
 		for (int i = 0; i < 8; i++) {
 			uint8 *pl = _screen->getLevelOverlay(7 - i);
 			for (int ii = 15; ii >= 0; ii--)
-				_vcnExpTable[((7 - i) << 4) + ii] = pl[/*colTable[*/ii/*]*/];
+				_vcnExpTable[((7 - i) << 4) + ii] = pl[colTable[ii]];
 		}
 	}
 
@@ -1821,17 +1820,21 @@ void LoLEngine::drawVcnBlocks() {
 				vcnOffset &= 0x3fff;
 			}
 
-			if (!vcnOffset) {
+			uint8 *src = 0;
+			if (vcnOffset) {
+				src = &_vcnBlocks[vcnOffset << 5];
+			} else {
 				// floor/ceiling blocks
 				vcnOffset = bdb[329];
 				if (vcnOffset & 0x4000) {
 					horizontalFlip = true;
 					vcnOffset &= 0x3fff;
 				}
+
+				src = (_vcfBlocks ? _vcfBlocks : _vcnBlocks) + (vcnOffset << 5);
 			}
 
-			uint8 shift = _vcnShift[vcnOffset];
-			uint8 *src = &_vcnBlocks[vcnOffset << 5];
+			uint8 shift = _vcnShift ? _vcnShift[vcnOffset] : _blockBrightness;
 
 			if (horizontalFlip) {
 				for (int blockY = 0; blockY < 8; blockY++) {
@@ -1865,7 +1868,7 @@ void LoLEngine::drawVcnBlocks() {
 					horizontalFlip = true;
 				}
 
-				shift = _vcnShift[remainder];
+				shift = _vcnShift? _vcnShift[remainder] : _blockBrightness;
 				src = &_vcnBlocks[remainder << 5];
 
 				if (horizontalFlip) {

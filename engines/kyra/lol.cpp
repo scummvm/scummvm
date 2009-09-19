@@ -158,6 +158,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 
 	_lampEffect = _brightness = _lampOilStatus = 0;
 	_lampStatusSuspended = false;
+	_blockBrightness = 0;
 	_tempBuffer5120 = 0;
 	_flyingObjects = 0;
 	_monsters = 0;
@@ -799,8 +800,8 @@ void LoLEngine::startup() {
 		static const uint8 colTable3[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 
 		for (int i = 0; i < 16; i++) {
-			_screen->_paletteOverlay2[colTable3[i]] = colTable1[i];
-			_screen->_paletteOverlay1[colTable3[i]] = colTable2[i];
+			_screen->_paletteOverlay1[colTable3[i]] = colTable1[i];
+			_screen->_paletteOverlay2[colTable3[i]] = colTable2[i];
 		}
 
 	} else {
@@ -1709,7 +1710,7 @@ void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int 
 		modifier >>= 1;
 		if (modifier)
 			modifier--;
-		brightness = 16 * modifier;
+		_blockBrightness = 16 * modifier;
 
 	} else {
 		_screen->loadSpecialColors(dst);
