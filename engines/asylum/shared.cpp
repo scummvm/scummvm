@@ -37,7 +37,7 @@ SharedResources::SharedResources() {
 	if (!g_initialized) {
 		g_initialized = true;
 	}
-    memset(_gameFlags, 0, 1512);
+
 }
 
 SharedResources::~SharedResources() {
@@ -128,26 +128,6 @@ int SharedResources::getAngle(int x1, int y1, int x2, int y2) {
 	}
 
 	return result;
-}
-
-void SharedResources::setGameFlag(int flag) {
-	_gameFlags[flag / 32] |= 1 << flag % -32;
-}
-
-void SharedResources::clearGameFlag(int flag) {
-	_gameFlags[flag / 32] &= ~(1 << flag % -32);
-}
-
-void SharedResources::toggleGameFlag(int flag) {
-	_gameFlags[flag / 32] ^= 1 << flag % -32;
-}
-
-bool SharedResources::isGameFlagSet(int flag) {
-	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 != 0;
-}
-
-bool SharedResources::isGameFlagNotSet(int flag) {
-	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
 }
 
 } // end of namespace Asylum

@@ -303,7 +303,7 @@ int ActionList::process() {
 			// XXX
 			// gameFlag 183 is the same as the
 			// processing flag, but is not being used
-			Shared.clearGameFlag(183);
+			_scene->vm()->clearGameFlag(183);
 		}
 	}
 
@@ -359,7 +359,7 @@ int kSetGameFlag(ActionCommand *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum >= 0)
-		Shared.setGameFlag(flagNum);
+		scn->vm()->setGameFlag(flagNum);
 
 	return 0;
 }
@@ -368,7 +368,7 @@ int kClearGameFlag(ActionCommand *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum >= 0)
-		Shared.clearGameFlag(flagNum);
+		scn->vm()->clearGameFlag(flagNum);
 
 	return 0;
 }
@@ -377,7 +377,7 @@ int kToggleGameFlag(ActionCommand *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum >= 0)
-		Shared.toggleGameFlag(flagNum);
+		scn->vm()->toggleGameFlag(flagNum);
 
 	return 0;
 }
@@ -386,9 +386,9 @@ int kJumpIfGameFlag(ActionCommand *cmd, Scene *scn) {
 	int flagNum = cmd->param1;
 
 	if (flagNum) {
-		bool doJump = Shared.isGameFlagSet(flagNum);
+		bool doJump = scn->vm()->isGameFlagSet(flagNum);
 		if (cmd->param2)
-			doJump = Shared.isGameFlagNotSet(flagNum);
+			doJump = scn->vm()->isGameFlagNotSet(flagNum);
 		if (doJump)
 			scn->actions()->currentLine = cmd->param3;
 	}
