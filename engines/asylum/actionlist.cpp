@@ -52,7 +52,7 @@ struct AsylumFunction {
 
 #define MAPFUNC(name, func) {name, func}
 
-AsylumFunction function_map[] = {
+static const AsylumFunction function_map[] = {
 	/*0x00*/ MAPFUNC("kReturn0", kReturn0),
 	/*0x01*/ MAPFUNC("kSetGameFlag", kSetGameFlag),
 	/*0x02*/ MAPFUNC("kClearGameFlag", kClearGameFlag),
@@ -154,6 +154,8 @@ AsylumFunction function_map[] = {
 	/*0x62*/ MAPFUNC("k_unk62_SHOW_OPTIONS_SCREEN", k_unk62_SHOW_OPTIONS_SCREEN),
 	/*0x63*/ MAPFUNC("k_unk63", k_unk63)
 };
+
+#undef MAPFUNC
 
 void ActionList::setScriptByIndex(uint32 index) {
 	currentLine    = 0;
