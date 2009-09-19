@@ -63,10 +63,13 @@ void Cursor::set(byte *data, byte width, byte height) {
 }
 
 void Cursor::set(int frame) {
-	GraphicFrame *mouseCursor = _cursorResource->getFrame(frame);
-	set((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
-
-	_curFrame = frame;
+	if (frame >= 0) {
+		GraphicFrame *mouseCursor = _cursorResource->getFrame(frame);
+		set((byte *)mouseCursor->surface.pixels, mouseCursor->surface.w, mouseCursor->surface.h);
+		_curFrame = frame;
+	} else {
+		_cursorStep = 1;
+	}
 }
 
 void Cursor::setCoords(uint32 mouseX, uint32 mouseY) {

@@ -138,14 +138,19 @@ Actor* Scene::getActor() {
 }
 
 void Scene::enterScene() {
-    WorldStats *ws = _ws;
-	_vm->screen()->setPalette(_resPack, ws->commonRes.palette);
+	_vm->screen()->setPalette(_resPack, _ws->commonRes.palette);
 	_background = _bgResource->getFrame(0);
 	_vm->screen()->copyToBackBuffer(
-            ((byte *)_background->surface.pixels) + ws->targetY * _background->surface.w + ws->targetX, _background->surface.w,
+            ((byte *)_background->surface.pixels) + _ws->targetY * _background->surface.w + _ws->targetX, _background->surface.w,
 			0, 0, 640, 480);
 
+	// FIXME
+	// I don't know that this is the right way to initialize the cursor
+	// when the scene is started. Check against the original to see
+	// when the cursor is initalized, and then how it reacts to the
+	// show_cursor opcode
 	_cursor->load(_ws->commonRes.curMagnifyingGlass);
+	_cursor->set(0);
 	_cursor->show();
 
 	// Music testing: play the first music track
@@ -157,23 +162,22 @@ void Scene::enterScene() {
 
 void Scene::setScenePosition(int x, int y)
 {
-    WorldStats *ws = _ws;
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	//_startX = x;
 	//_startY = y;
-    ws->targetX = x;
-    ws->targetY = y;
+    _ws->targetX = x;
+    _ws->targetY = y;
 	
-	if (ws->targetX < 0)
-		ws->targetX = 0;
-	if (ws->targetX > (bg->surface.w - 640))
-		ws->targetX = bg->surface.w - 640;
+	if (_ws->targetX < 0)
+		_ws->targetX = 0;
+	if (_ws->targetX > (bg->surface.w - 640))
+		_ws->targetX = bg->surface.w - 640;
 		
 	
-	if (ws->targetY < 0)
-		ws->targetY = 0;
-	if (ws->targetY > (bg->surface.h - 480))
-		ws->targetY = bg->surface.h - 480;		
+	if (_ws->targetY < 0)
+		_ws->targetY = 0;
+	if (_ws->targetY > (bg->surface.h - 480))
+		_ws->targetY = bg->surface.h - 480;
 }
 
 void Scene::handleEvent(Common::Event *event, bool doUpdate) {
@@ -225,8 +229,7 @@ void Scene::update() {
 }
 
 int Scene::updateScene() {
-	uint32     startTick   = 0;
-    WorldStats *worldStats = _ws;
+	uint32 startTick   = 0;
     
     // Mouse
     startTick = _vm->_system->getMillis();
@@ -235,13 +238,13 @@ int Scene::updateScene() {
 
     // Actors
     startTick = _vm->_system->getMillis();
-    for (uint32 a = 0; a < worldStats->numActors; a++)
+    for (uint32 a = 0; a < _ws->numActors; a++)
         updateActor(a);
     debugC(kDebugLevelScene, "UpdateActors Time: %d", _vm->_system->getMillis() - startTick);
 
     // Barriers
     startTick = _vm->_system->getMillis();
-    updateBarriers(worldStats);
+    updateBarriers();
     debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->_system->getMillis() - startTick);
 
     // Ambient Sounds
@@ -406,8 +409,7 @@ void Scene::updateMouse() {
 }
 
 void Scene::updateActor(uint32 actorIdx) {
-    WorldStats *ws    = _ws;
-    Actor      *actor = getActor();
+    Actor *actor = getActor();
     
     if (actor->visible()) {
     	// printf("Actor field_40 = 0x%02X\n", actor->field_40);
@@ -415,32 +417,32 @@ void Scene::updateActor(uint32 actorIdx) {
         switch (actor->field_40) {
         
         case 0x10:
-            if (ws->numChapter == 2) {
+            if (_ws->numChapter == 2) {
                 // TODO: updateCharacterSub14()
-            } else if (ws->numChapter == 1) {
+            } else if (_ws->numChapter == 1) {
                 if (_playerActorIdx == actorIdx) {
                     // TODO: updateActorSub21();
                 }
             }
             break;
         case 0x11:
-            if (ws->numChapter == 2) {
+            if (_ws->numChapter == 2) {
                 // TODO: put code here
-            } else if (ws->numChapter == 11) {
+            } else if (_ws->numChapter == 11) {
                 if (_playerActorIdx == actorIdx) {
                     // TODO: put code here
                 }
             }
             break;
         case 0xF:
-            if (ws->numChapter == 2) {
+            if (_ws->numChapter == 2) {
                 // TODO: put code here
-            } else if (ws->numChapter == 11) {
+            } else if (_ws->numChapter == 11) {
                 // TODO: put code here
             }
             break;
         case 0x12:
-            if (ws->numChapter == 2) {
+            if (_ws->numChapter == 2) {
                 // TODO: put code here
             }
             break;
@@ -457,9 +459,9 @@ void Scene::updateActor(uint32 actorIdx) {
         }        
             break;
         case 0xC:
-            if (ws->numChapter == 2) {
+            if (_ws->numChapter == 2) {
                 // TODO: put code here
-            } else if (ws->numChapter == 11) {
+            } else if (_ws->numChapter == 11) {
                 // TODO: put code here
             }
         case 0x1:
@@ -503,16 +505,16 @@ void Scene::updateActor(uint32 actorIdx) {
     }
 }
 
-void Scene::updateBarriers(WorldStats *worldStats) {
+void Scene::updateBarriers() {
     Screen *screen = _vm->screen();
 
-    uint barriersCount  = worldStats->barriers.size();
+    uint barriersCount  = _ws->barriers.size();
     int  startTickCount = 0;
     bool canPlaySound   = false;
 
     if (barriersCount > 0) {
         for (uint32 b = 0; b < barriersCount; b++) {
-            Barrier *barrier = &worldStats->barriers[b];
+            Barrier *barrier = &_ws->barriers[b];
 
             if (barrier->field_3C == 4) {
             	if (_ws->isBarrierVisible(b)) {
@@ -650,40 +652,38 @@ void Scene::updateMusic() {
 }
 
 void Scene::updateAdjustScreen() {
-	WorldStats *ws = _ws;
-
 	int v5, v6, v7, v15, v16;
 	int v1 = -1;
 	int v0 = -1;
 
-	if (ws->motionStatus == 1) {
-		v5 = getActor()->x1 - ws->xLeft;
-		v7 = getActor()->y1 - ws->yTop;
-		if (v5 < ws->boundingRect.left || v5 > ws->boundingRect.right) {
-			v15 = ws->boundingRect.left - ws->boundingRect.right;
-			v1 = v15 + ws->xLeft;
-			ws->xLeft += v15;
+	if (_ws->motionStatus == 1) {
+		v5 = getActor()->x1 - _ws->xLeft;
+		v7 = getActor()->y1 - _ws->yTop;
+		if (v5 < _ws->boundingRect.left || v5 > _ws->boundingRect.right) {
+			v15 = _ws->boundingRect.left - _ws->boundingRect.right;
+			v1 = v15 + _ws->xLeft;
+			_ws->xLeft += v15;
 		}
-		if (v7 < ws->boundingRect.top || v7 > ws->boundingRect.bottom) {
-			v16 = v7 - ws->boundingRect.bottom;
-			v0 = v16 + ws->yTop;
-			ws->yTop += v16;
+		if (v7 < _ws->boundingRect.top || v7 > _ws->boundingRect.bottom) {
+			v16 = v7 - _ws->boundingRect.bottom;
+			v0 = v16 + _ws->yTop;
+			_ws->yTop += v16;
 		}
 		if (v1 < 0)
-			v1 = ws->xLeft = 0;
-		if (v1 > ws->width - 640) {
-			v1 = ws->width - 640;
-			ws->xLeft = v1;
+			v1 = _ws->xLeft = 0;
+		if (v1 > _ws->width - 640) {
+			v1 = _ws->width - 640;
+			_ws->xLeft = v1;
 		}
 		if (v0 < 0)
-			v0 = ws->yTop = 0;
-		if (v0 > ws->height - 480) {
-			v0 = ws->height - 480;
-			ws->yTop = v0;
+			v0 = _ws->yTop = 0;
+		if (v0 > _ws->height - 480) {
+			v0 = _ws->height - 480;
+			_ws->yTop = v0;
 		}
 	} else {
-		if (ws->motionStatus == 2 || ws->motionStatus == 5) {
-			if (ws->motionStatus != 3) {
+		if (_ws->motionStatus == 2 || _ws->motionStatus == 5) {
+			if (_ws->motionStatus != 3) {
 				// TODO
 				/*
 				 __asm
@@ -776,15 +776,15 @@ void Scene::updateAdjustScreen() {
 }
 
 
-void Scene::OLD_UPDATE(WorldStats *worldStats) {
+void Scene::OLD_UPDATE() {
 	int32 curHotspot = -1;
 	int32 curBarrier = -1;
 
 	// DEBUGGING
 	// Check current walk region
-	for (uint32 a = 0; a < worldStats->numActions; a++) {
-		if (worldStats->actions[a].actionType == 0) {
-			ActionArea *area = &worldStats->actions[a];
+	for (uint32 a = 0; a < _ws->numActions; a++) {
+		if (_ws->actions[a].actionType == 0) {
+			ActionArea *area = &_ws->actions[a];
 			PolyDefinitions poly = _polygons->entries[area->polyIdx];
 			if (poly.contains(getActor()->x, getActor()->y)) {
 				debugShowWalkRegion(&poly);
@@ -818,13 +818,13 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		debugShowBarriers();
 
 	// Check if we're within a barrier
-	for (uint32 p = 0; p < worldStats->numBarriers; p++) {
-		Barrier b = worldStats->barriers[p];
+	for (uint32 p = 0; p < _ws->numBarriers; p++) {
+		Barrier b = _ws->barriers[p];
 		if (b.flags & 0x20) {
-            if ((b.boundingRect.left + b.x <= _cursor->x() + worldStats->targetX) &&
-				(_cursor->x() + worldStats->targetX < b.boundingRect.right + b.x) &&
-				(b.boundingRect.top + b.y <= _cursor->y() + worldStats->targetY) &&
-				(_cursor->y() + worldStats->targetY < b.boundingRect.bottom + b.y)) {
+            if ((b.boundingRect.left + b.x <= _cursor->x() + _ws->targetX) &&
+				(_cursor->x() + _ws->targetX < b.boundingRect.right + b.x) &&
+				(b.boundingRect.top + b.y <= _cursor->y() + _ws->targetY) &&
+				(_cursor->y() + _ws->targetY < b.boundingRect.bottom + b.y)) {
 				_cursor->animate();
 				curBarrier = (int32)p;
 				break;
@@ -841,8 +841,8 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		// Update cursor if it's in a polygon hotspot
 		for (uint32 p = 0; p < _polygons->numEntries; p++) {
 			PolyDefinitions poly = _polygons->entries[p];
-			if (poly.boundingRect.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
-				if (poly.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
+			if (poly.boundingRect.contains(_cursor->x() + _ws->targetX, _cursor->y() + _ws->targetY)) {
+				if (poly.contains(_cursor->x() + _ws->targetX, _cursor->y() + _ws->targetY)) {
 					curHotspot = (int32)p;
 					_cursor->animate();
 					break;
@@ -855,21 +855,21 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		_leftClick = false;
 
 		if (curHotspot >= 0) {
-			for (uint32 a = 0; a < worldStats->numActions; a++) {
-				if (worldStats->actions[a].polyIdx == (uint32)curHotspot) {
+			for (uint32 a = 0; a < _ws->numActions; a++) {
+				if (_ws->actions[a].polyIdx == (uint32)curHotspot) {
 					debugC(kDebugLevelScripts, "Hotspot: 0x%X - \"%s\", poly %d, action lists %d/%d, action type %d, sound res %d\n",
-							worldStats->actions[a].id, 
-							worldStats->actions[a].name,
-							worldStats->actions[a].polyIdx,
-							worldStats->actions[a].actionListIdx1,
-							worldStats->actions[a].actionListIdx2,
-							worldStats->actions[a].actionType,
-							worldStats->actions[a].soundResId);
+							_ws->actions[a].id,
+							_ws->actions[a].name,
+							_ws->actions[a].polyIdx,
+							_ws->actions[a].actionListIdx1,
+							_ws->actions[a].actionListIdx2,
+							_ws->actions[a].actionType,
+							_ws->actions[a].soundResId);
 					_actions->setScriptByIndex(_ws->actions[a].actionListIdx1);
 				}
 			}
 		} else if (curBarrier >= 0) {
-			Barrier b = worldStats->barriers[curBarrier];
+			Barrier b = _ws->barriers[curBarrier];
 			debugC(kDebugLevelScripts, "%s: action(%d) sound(%d) flags(%d/%d)\n",
 				b.name,
 				b.actionListIdx,
@@ -893,12 +893,11 @@ int Scene::drawScene() {
         _vm->screen()->clearScreen();
     } else {
         // Draw scene background
-        WorldStats   *ws = _ws;
         GraphicFrame *bg = _bgResource->getFrame(0);
         _vm->screen()->copyToBackBuffer(
-        		((byte *)bg->surface.pixels) + ws->targetY * bg->surface.w + ws->targetX, bg->surface.w,
-        		ws->xLeft,
-        		ws->yTop,
+        		((byte *)bg->surface.pixels) + _ws->targetY * bg->surface.w + _ws->targetX, bg->surface.w,
+        		_ws->xLeft,
+        		_ws->yTop,
         		640,
         		480);
 
@@ -914,19 +913,18 @@ int Scene::drawScene() {
         _vm->screen()->drawGraphicsInQueue();
         
         // TODO: we must get rid of this
-        OLD_UPDATE(ws);
+        OLD_UPDATE();
     }
 
     return 1;
 }
 
 int Scene::drawBarriers() {
-    WorldStats *worldStats = _ws;
-    uint barriersCount = worldStats->barriers.size();
+    uint barriersCount = _ws->barriers.size();
 
     if (barriersCount > 0) {
         for (uint32 b = 0; b < barriersCount; b++) {
-            Barrier *barrier = &worldStats->barriers[b];
+            Barrier *barrier = &_ws->barriers[b];
 
             if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
                 if (_ws->isBarrierOnScreen(b)) {
@@ -936,7 +934,7 @@ int Scene::drawBarriers() {
                         _vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
                     } else {
                         // TODO: Do Cross Fade
-                        // parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, worldStats->commonRes.backgroundImage, worldStats->xLeft, worldStats->yTop, 0, 0, barrier->field_67C - 1
+                        // parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, _ws->commonRes.backgroundImage, _ws->xLeft, _ws->yTop, 0, 0, barrier->field_67C - 1
                         _vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
                     }
                 }
@@ -953,23 +951,21 @@ int Scene::drawBarriers() {
 // ----------------------------------
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-    WorldStats *ws = _ws;
-
-    Common::Rect screenRect(ws->targetX, ws->targetY, ws->targetX + 640, ws->targetY + 480);
+	Common::Rect screenRect(_ws->targetX, _ws->targetY, _ws->targetX + 640, _ws->targetY + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
 	animRect.clip(screenRect);
 
 	if (!animRect.isEmpty()) {
 		// Translate anim rectangle
-		animRect.translate(-ws->targetX, -ws->targetY);
+		animRect.translate(-_ws->targetX, -_ws->targetY);
 
 		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
 
 		if (surface->w > 640)
-			startX = ws->targetX;
+			startX = _ws->targetX;
 		if (surface->h > 480)
-			startY = ws->targetY;
+			startY = _ws->targetY;
 
 		_vm->screen()->copyToBackBufferWithTransparency(
 				((byte*)surface->pixels) +
@@ -988,19 +984,17 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 // ----------------------------------
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
-    WorldStats *ws = _ws;
-
-	// Horizontal scrolling
-	if (_cursor->x() < SCREEN_EDGES && ws->targetX >= SCROLL_STEP)
-		ws->targetX -= SCROLL_STEP;
-	else if (_cursor->x() > 640 - SCREEN_EDGES && ws->targetX <= bg->surface.w - 640 - SCROLL_STEP)
-		ws->targetX += SCROLL_STEP;
+    // Horizontal scrolling
+	if (_cursor->x() < SCREEN_EDGES && _ws->targetX >= SCROLL_STEP)
+		_ws->targetX -= SCROLL_STEP;
+	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->targetX <= bg->surface.w - 640 - SCROLL_STEP)
+		_ws->targetX += SCROLL_STEP;
 
 	// Vertical scrolling
-	if (_cursor->y() < SCREEN_EDGES && ws->targetY >= SCROLL_STEP)
-		ws->targetY -= SCROLL_STEP;
-	else if (_cursor->y() > 480 - SCREEN_EDGES && ws->targetY <= bg->surface.h - 480 - SCROLL_STEP)
-		ws->targetY += SCROLL_STEP;
+	if (_cursor->y() < SCREEN_EDGES && _ws->targetY >= SCROLL_STEP)
+		_ws->targetY -= SCROLL_STEP;
+	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->targetY <= bg->surface.h - 480 - SCROLL_STEP)
+		_ws->targetY += SCROLL_STEP;
 }
 
 // WALK REGION DEBUG
