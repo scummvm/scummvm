@@ -141,7 +141,7 @@ ActionDefinitions* Scene::getDefaultActionList() {
 
 ActionDefinitions* Scene::getActionList(int actionListIndex) {
 	if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions))
-		return &_sceneResource->getActionList()->actions[actionListIndex];
+		return &_sceneResource->getActionList()->entries[actionListIndex];
 	else
 		return 0;
 }
@@ -856,7 +856,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 							worldStats->actions[a].actionListIdx2,
 							worldStats->actions[a].actionType,
 							worldStats->actions[a].soundResId);
-					ScriptMan.setScript(&_sceneResource->getActionList()->actions[worldStats->actions[a].actionListIdx1]);
+					ScriptMan.setScript(&_sceneResource->getActionList()->entries[worldStats->actions[a].actionListIdx1]);
 				}
 			}
 		} else if (curBarrier >= 0) {

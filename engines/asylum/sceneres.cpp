@@ -452,7 +452,7 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
 		ActionDefinitions action;
 		memset(&action, 0, sizeof(ActionDefinitions));
 
-		for (uint32 c = 0; c < Commands_MAXSIZE; c++) {
+		for (uint32 c = 0; c < MAX_ACTION_COMMANDS; c++) {
 			ActionCommand command;
 			memset(&command, 0, sizeof(ActionCommand));
 
@@ -475,7 +475,7 @@ void SceneResource::loadActionList(Common::SeekableReadStream *stream) {
 		action.field_1BB0 = stream->readUint32LE();
 		action.counter	  = stream->readUint32LE();
 
-		_actionList->actions.push_back(action);
+		_actionList->entries.push_back(action);
 	}
 }
 
