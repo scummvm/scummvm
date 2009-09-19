@@ -35,7 +35,7 @@ SceneResource::~SceneResource() {
 
 	uint8 i;
 	for (i = 0; i < _gamePolygons->numEntries; i++)
-		delete[] _gamePolygons->polygons[i].points;
+		delete[] _gamePolygons->entries[i].points;
 
 	delete _gamePolygons;
 	delete _actionList;
@@ -411,7 +411,7 @@ void SceneResource::loadWorldStats(Common::SeekableReadStream *stream) {
 }
 
 void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
-	_gamePolygons = new GamePolygons;
+	_gamePolygons = new Polygons;
 
 	stream->seek(0xE8686); // jump to game Polygons data
 
@@ -429,14 +429,14 @@ void SceneResource::loadGamePolygons(Common::SeekableReadStream *stream) {
 			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
 			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
 		}
-		stream->skip((Polygons_MAXSIZE - poly.numPoints) * 8);
+		stream->skip((MAX_POLYGONS - poly.numPoints) * 8);
 
 		poly.boundingRect.left	 = stream->readUint32LE() & 0xFFFF;
 		poly.boundingRect.top	 = stream->readUint32LE() & 0xFFFF;
 		poly.boundingRect.right	 = stream->readUint32LE() & 0xFFFF;
 		poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
 
-		_gamePolygons->polygons.push_back(poly);
+		_gamePolygons->entries.push_back(poly);
 	}
 }
 

@@ -34,16 +34,15 @@
 #include "asylum/barrier.h"
 #include "asylum/screen.h"
 #include "asylum/respack.h"
+#include "asylum/polygons.h"
 
 #define SCENEMASK		  "scn.%03d"
-#define Polygons_MAXSIZE  200
 #define Commands_MAXSIZE  161
 
 namespace Asylum {
 
 class AsylumEngine;
 class WorldStats;
-class GamePolygons;
 class ActionList;
 struct ActionArea;
 
@@ -54,9 +53,9 @@ public:
 
 	bool load(uint8 sceneIdx);
 
-	WorldStats*	  getWorldStats()	{ return _worldStats; }
-	GamePolygons* getGamePolygons() { return _gamePolygons; }
-	ActionList*	  getActionList()	{ return _actionList; }
+	WorldStats*	getWorldStats()	  { return _worldStats; }
+	Polygons*   getGamePolygons() { return _gamePolygons; }
+	ActionList*	getActionList()	  { return _actionList; }
 	
 	int getBarrierIndexById(uint32 id);
 	int getActionAreaIndexById(uint32 id);
@@ -66,9 +65,9 @@ public:
 
 private:
 
-	WorldStats	 *_worldStats;
-	GamePolygons *_gamePolygons;
-	ActionList	 *_actionList;
+	WorldStats *_worldStats;
+	Polygons   *_gamePolygons;
+	ActionList *_actionList;
 
 	void loadWorldStats(Common::SeekableReadStream *stream);
 	void loadGamePolygons(Common::SeekableReadStream *stream);
@@ -167,27 +166,6 @@ public:
     uint32 field_E860C;
     // TODO add rest fields
 }; // end of class WorldStats
-
-typedef struct PolyDefinitions{
-	uint32		  numPoints;
-	Common::Point *points; //[Polygons_MAXSIZE];
-	Common::Rect  boundingRect;
-
-} PolyDefinitions;
-
-class GamePolygons {
-public:
-	GamePolygons() {};
-	virtual ~GamePolygons() {
-		polygons.clear();
-	};
-
-	uint32 size;
-	uint32 numEntries;
-
-	Common::Array<PolyDefinitions> polygons;
-
-}; // end of class GamePolygons
 
 typedef struct ActionArea {
 	char   name[52];
