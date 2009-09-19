@@ -118,7 +118,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		return true;
 	}
 	
-	ScriptMan.delayedVideoIndex = atoi(argv[1]);
+	Shared.getScene()->actions()->delayedVideoIndex = atoi(argv[1]);
 
 	return false;
 }
@@ -129,7 +129,7 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 		return true;
 	}
 
-	ScriptMan.setScriptIndex(atoi(argv[1]));
+	Shared.getScene()->actions()->setScriptByIndex(atoi(argv[1]));
 
 	return false;
 }
@@ -145,8 +145,9 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 		return true;
 	}
 
-	ScriptMan.delayedSceneIndex = atoi(argv[1]);
-	ScriptMan.setScript(0);
+	Shared.getScene()->actions()->delayedSceneIndex = atoi(argv[1]);
+	Shared.getScene()->actions()->setScriptByIndex(0); 	// XXX is this right or should it be
+														// ws->actionListIdx???
 
 	return false;
 }

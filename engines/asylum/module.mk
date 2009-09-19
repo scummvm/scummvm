@@ -1,26 +1,25 @@
 MODULE := engines/asylum
 
 MODULE_OBJS := \
+	actionlist.o \
+	actor.o \
 	asylum.o \
+	barrier.o \
+	blowuppuzzle.o \
 	console.o \
+	cursor.o \
 	detection.o \
+	encounters.o \
 	graphics.o \
 	menu.o \
+	polygons.o \
 	respack.o \
 	scene.o \
-	barrier.o \
 	screen.o \
+	shared.o \
 	sound.o \
 	text.o \
 	video.o \
-	actor.o \
-	encounters.o \
-	scriptman.o \
-	blowuppuzzle.o \
-	shared.o \
-	cursor.o \
-	polygons.o \
-	actionlist.o \
 	worldstats.o
 
 # This module can be built as a plugin

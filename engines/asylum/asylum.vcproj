@@ -42,9 +42,7 @@
 		<File RelativePath="..\..\engines\asylum\scene.cpp" />
 		<File RelativePath="..\..\engines\asylum\scene.h" />		
 		<File RelativePath="..\..\engines\asylum\screen.cpp" />
-		<File RelativePath="..\..\engines\asylum\screen.h" />
-		<File RelativePath="..\..\engines\asylum\scriptman.cpp" />
-		<File RelativePath="..\..\engines\asylum\scriptman.h" />
+		<File RelativePath="..\..\engines\asylum\screen.h" />		
 		<File RelativePath="..\..\engines\asylum\sound.cpp" />
 		<File RelativePath="..\..\engines\asylum\sound.h" />
 		<File RelativePath="..\..\engines\asylum\text.cpp" />

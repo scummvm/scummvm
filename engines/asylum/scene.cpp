@@ -25,7 +25,6 @@
 
 #include "asylum/scene.h"
 #include "asylum/shared.h"
-#include "asylum/scriptman.h"
 #include "asylum/actor.h"
 
 namespace Asylum {
@@ -64,7 +63,7 @@ Scene::Scene(uint8 sceneIdx) {
 	_polygons = new Polygons(fd);
 	// jump to action list data
 	fd->seek(0xE868E + _polygons->size * _polygons->numEntries);
-	_actions = new ActionList(fd);
+	_actions = new ActionList(fd, this);
 
 	fd->close();
 	delete fd;
@@ -157,17 +156,6 @@ void Scene::enterScene() {
 	_walking  = false;
 }
 
-ActionDefinitions* Scene::getDefaultActionList() {
-	getActionList(_ws->actionListIdx);
-}
-
-ActionDefinitions* Scene::getActionList(int actionListIndex) {
-	if ((actionListIndex >= 0) && (actionListIndex < (int)_ws->numActions))
-		return &actions()->entries[actionListIndex];
-	else
-		return 0;
-}
-
 void Scene::setScenePosition(int x, int y)
 {
     WorldStats *ws = _ws;
@@ -199,12 +187,12 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_LBUTTONUP:
-		if (ScriptMan.allowInput)
+		if (_actions->allowInput)
 			_leftClick = true;
 		break;
 
 	case Common::EVENT_RBUTTONUP:
-		if (ScriptMan.allowInput) {
+		if (_actions->allowInput) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
@@ -214,7 +202,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
-		if (ScriptMan.allowInput)
+		if (_actions->allowInput)
 			_rightButton = true;
 		break;
 	}
@@ -276,7 +264,7 @@ int Scene::updateScene() {
     //updateAdjustScreen();
     //debugC(kDebugLevelScene, "AdjustScreenStart Time: %d", Shared.getMillis() - startTick);
 
-    if(ScriptMan.processActionList())
+    if(_actions->process())
         return 1;
 
     return 0;
@@ -878,7 +866,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 							worldStats->actions[a].actionListIdx2,
 							worldStats->actions[a].actionType,
 							worldStats->actions[a].soundResId);
-					ScriptMan.setScript(&_actions->entries[worldStats->actions[a].actionListIdx1]);
+					_actions->setScriptByIndex(_ws->actions[a].actionListIdx1);
 				}
 			}
 		} else if (curBarrier >= 0) {
@@ -889,7 +877,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 				b.soundResId,
 				b.flags,
 				b.flags2);
-			ScriptMan.setScript(getActionList(b.actionListIdx));
+			_actions->setScriptByIndex(b.actionListIdx);
 		}
 	}
 }
