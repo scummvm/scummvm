@@ -38,4 +38,34 @@ WorldStats::~WorldStats() {
 	actions.clear();
 }
 
+int WorldStats::getActionAreaIndexById(uint32 id) {
+	for (uint32 i = 0; i < numActions; i++) {
+		if (actions[i].id == id)
+			return i;
+	}
+
+	return -1;
+}
+
+ActionArea* WorldStats::getActionAreaById(uint32 id) {
+	return &actions[getActionAreaIndexById(id)];
+}
+
+int WorldStats::getBarrierIndexById(uint32 id) {
+	for (uint32 i = 0; i < numBarriers; i++) {
+		if (barriers[i].id == id)
+			return i;
+	}
+
+	return -1;
+}
+
+Barrier* WorldStats::getBarrierById(uint32 id) {
+	return &barriers[getBarrierIndexById(id)];
+}
+
+Barrier* WorldStats::getBarrierByIndex(uint32 idx) {
+	return &barriers[idx];
+}
+
 } // end of namespace Asylum

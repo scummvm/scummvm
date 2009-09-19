@@ -144,6 +144,13 @@ public:
 	uint32 field_E860C;
 	// TODO add rest fields
 
+	int         getActionAreaIndexById(uint32 id);
+	ActionArea* getActionAreaById(uint32 id);
+
+	int      getBarrierIndexById(uint32 id);
+	Barrier* getBarrierById(uint32 id);
+	Barrier* getBarrierByIndex(uint32 idx);
+
 };
 
 } // end of namespace Asylum

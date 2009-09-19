@@ -191,14 +191,14 @@ void ScriptManager::setScriptIndex(uint32 index) {
 }
 
 int ScriptManager::checkBarrierFlags(int barrierId) {
-    int flags = Shared.getScene()->getResources()->getBarrierById(barrierId)->flags;
+    int flags = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(barrierId)->flags;
     return flags & 1 && (flags & 8 || flags & 0x10000);
 }
 
 int ScriptManager::setBarrierNextFrame(int barrierId, int barrierFlags) {
-    int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
+    int barrierIndex = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(barrierId);
 
-    Barrier *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
+    Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierByIndex(barrierIndex);
     int newFlag = barrierFlags | 1 | barrier->flags;
     barrier->flags |= barrierFlags | 1;
 
@@ -280,7 +280,7 @@ void ScriptManager::processActionListSub02(ActionDefinitions* script, ActionComm
 			int v8 = command->param4;
 
 			for (int i = 7; i > 0; i--) {
-				barrierIdx = Shared.getScene()->getResources()->getBarrierIndexById(v8);
+				barrierIdx = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(v8);
 				if (barrierIdx >= 0)
 					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIdx].field_67C = 0;
 				v8 += 4;
@@ -310,7 +310,7 @@ void ScriptManager::processActionListSub02(ActionDefinitions* script, ActionComm
 		int v13 = command->param4;
 		int v4 = script->counter / command->param2 + 4;
 		for (int i = 7; i > 0; i--) {
-				barrierIdx = Shared.getScene()->getResources()->getBarrierIndexById(v13);
+				barrierIdx = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(v13);
 				if (barrierIdx >= 0)
 					Shared.getScene()->getResources()->getWorldStats()->barriers[barrierIdx].field_67C = v4;
 				v13 += 4;
@@ -417,13 +417,13 @@ int kPlayAnimation(ActionCommand *cmd) {
 		}
 		ScriptMan.lineIncrement = 1;
 	} else {
-		int barrierIndex = Shared.getScene()->getResources()->getBarrierIndexById(barrierId);
-		Barrier *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIndex);
+		int barrierIndex = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(barrierId);
+		Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierByIndex(barrierIndex);
 
 		if (cmd->param4) { // RECHECK THIS
 			int newBarriedIndex = 213 * barrierIndex;
 			barrier->flags &= 0xFFFEF1C7;
-			Shared.getScene()->getResources()->getBarrierByIndex(newBarriedIndex)->flags = barrier->flags | 0x20;
+			Shared.getScene()->getResources()->getWorldStats()->getBarrierByIndex(newBarriedIndex)->flags = barrier->flags | 0x20;
 		} else if (cmd->param3) {
 			barrier->flags &= 0xFFFEF1C7;
 			barrier->flags |= 0x10000;
@@ -601,7 +601,7 @@ int kEnableActor(ActionCommand *cmd) {
 }
 
 int kEnableBarriers(ActionCommand *cmd) {
-	int    barIdx = Shared.getScene()->getResources()->getBarrierIndexById(cmd->param1);
+	int    barIdx = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(cmd->param1);
 	uint32 sndIdx = cmd->param3;
 	uint32 v59    = cmd->param2;
 
@@ -644,7 +644,7 @@ int kReturn(ActionCommand *cmd) {
 }
 
 int kDestroyBarrier(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
 		barrier->flags &= 0xFFFFFFFE;
@@ -674,7 +674,7 @@ int k_unk15(ActionCommand *cmd) {
 }
 
 int kResetAnimation(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	if ((barrier->flags & 0x10000) == 0)
 		barrier->frameIdx = 0;
@@ -685,7 +685,7 @@ int kResetAnimation(ActionCommand *cmd) {
 }
 
 int kClearFlag1Bit0(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	barrier->flags &= 0xFFFFFFFE;
 
@@ -705,10 +705,10 @@ int kJumpIfFlag2Bit0(ActionCommand *cmd) {
 	// look at the disassembly again
 
 	if (targetType <= 0)
-		ScriptMan.done = (Shared.getScene()->getResources()->getBarrierById(cmd->param1)->flags2 & 1) == 0;
+		ScriptMan.done = (Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1)->flags2 & 1) == 0;
 	else
 		if (targetType == 1) // v4 == 1, so 1
-			ScriptMan.done = (Shared.getScene()->getResources()->getActionAreaById(cmd->param1)->actionType & 1) == 0;
+			ScriptMan.done = (Shared.getScene()->getResources()->getWorldStats()->getActionAreaById(cmd->param1)->actionType & 1) == 0;
 		else
 			ScriptMan.done = (Shared.getScene()->getResources()->getWorldStats()->actors[cmd->param1].flags2 & 1) == 0;
 
@@ -722,9 +722,9 @@ int kSetFlag2Bit0(ActionCommand *cmd) {
 		Shared.getScene()->getResources()->getWorldStats()->actors[cmd->param1].flags2 |= 1;
 	else
 		if (targetType == 1)
-			Shared.getScene()->getResources()->getActionAreaById(cmd->param1)->actionType |= 1;
+			Shared.getScene()->getResources()->getWorldStats()->getActionAreaById(cmd->param1)->actionType |= 1;
 		else
-			Shared.getScene()->getResources()->getBarrierById(cmd->param1)->flags2 |= 1;
+			Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1)->flags2 |= 1;
 
 	return 0;
 }
@@ -879,7 +879,7 @@ int k_unk3C_CMP_VAL(ActionCommand *cmd) {
 }
 
 int kWaitUntilFramePlayed(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
 			uint32 frameNum = 0;
@@ -1016,7 +1016,7 @@ int kQuit(ActionCommand *cmd) {
 }
 
 int kJumpBarrierFrame(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	if (cmd->param2 == -1)
 		cmd->param2 = barrier->frameCount - 1;
@@ -1101,7 +1101,7 @@ int kSetResourcePalette(ActionCommand *cmd) {
 }
 
 int kSetBarrierFrameIdxFlaged(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	if (cmd->param3)
 		barrier->flags = 1 | barrier->flags;
@@ -1133,7 +1133,7 @@ int k_unk5E(ActionCommand *cmd) {
 }
 
 int kSetBarrierLastFrameIdx(ActionCommand *cmd) {
-	Barrier *barrier = Shared.getScene()->getResources()->getBarrierById(cmd->param1);
+	Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierById(cmd->param1);
 
 	if (barrier->frameIdx == barrier->frameCount - 1) {
 		ScriptMan.lineIncrement = 0;

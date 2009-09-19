@@ -53,12 +53,6 @@ public:
 	WorldStats*	getWorldStats()	  { return _worldStats; }
 	Polygons*   getGamePolygons() { return _gamePolygons; }
 	ActionList*	getActionList()	  { return _actionList; }
-	
-	int getBarrierIndexById(uint32 id);
-	int getActionAreaIndexById(uint32 id);
-	ActionArea* getActionAreaById(uint32 id);
-	Barrier* getBarrierById(uint32 id);
-    Barrier* getBarrierByIndex(uint32 idx);
 
 private:
 
