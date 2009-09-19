@@ -80,4 +80,18 @@ bool Barrier::onscreen() {
 	return visible() && (flags & 1) && screenRect.intersects(barrierRect);
 }
 
+int Barrier::checkFlags() {
+	return flags & 1 && (flags & 8 || flags & 0x10000);
+}
+
+void Barrier::setNextFrame(int targetFlags) {
+	int newFlag = targetFlags | 1 | flags;
+	flags |= targetFlags | 1;
+
+	if (newFlag & 0x10000)
+		frameIdx = frameCount - 1;
+	else
+		frameIdx = 0;
+}
+
 } // end of namespace Asylum
