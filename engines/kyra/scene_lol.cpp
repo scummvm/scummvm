@@ -360,7 +360,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	if (_flags.use16ColorMode) {
 		if (_lastSpecialColor == 0x66)
 			//_lastSpecialColor = stricmp(file, "YVEL2") ? 0xcc : 0x44;
-			_lastSpecialColor = stricmp(file, "YVEL2") ? 0xc : 0x4;
+			_lastSpecialColor = scumm_stricmp(file, "YVEL2") ? 0xc : 0x4;
 		else if (_lastSpecialColor == 0x6b)
 			//_lastSpecialColor = 0xcc;
 			_lastSpecialColor = 0xc;
