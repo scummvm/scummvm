@@ -24,7 +24,6 @@
  */
 
 #include "asylum/scene.h"
-#include "asylum/shared.h"
 #include "asylum/actor.h"
 
 namespace Asylum {
@@ -57,7 +56,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	if (Common::String(sceneTag,6) != "DFISCN")
 		error("The file isn't recognized as scene %s", filename);
 
-	_ws = new WorldStats(fd);
+	_ws = new WorldStats(fd, this);
 	// jump to game polygons data
 	fd->seek(0xE8686);
 	_polygons = new Polygons(fd);
@@ -68,7 +67,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	fd->close();
 	delete fd;
 
-	_text 		= new Text(Shared.getScreen());
+	_text 		= new Text(_vm->screen());
 	_resPack 	= new ResourcePack(sceneIdx);
 	_speechPack = new ResourcePack(3); // FIXME are all scene speech packs the same?
 
@@ -76,8 +75,10 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 	// Is there EVER more than one actor enabled for a scene? I can't
 	// remember, so I guess a playthrough is in order :P
 	// Either way, this is kinda dumb
-	for (uint8 i = 0; i < _ws->numActors; i++)
+	for (uint8 i = 0; i < _ws->numActors; i++) {
 		_ws->actors[i].setResourcePack(_resPack);
+		_ws->actors[i].setScene(this);
+	}
 
 	_text->loadFont(_resPack, _ws->commonRes.font1);
 
@@ -111,7 +112,7 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
     }
 
     _ws->sceneRectIdx = 0;
-    Shared.getScreen()->clearGraphicsInQueue();
+    _vm->screen()->clearGraphicsInQueue();
     _ws->motionStatus = 1;
 
     // TODO: do some rect stuffs from player actor
@@ -138,9 +139,9 @@ Actor* Scene::getActor() {
 
 void Scene::enterScene() {
     WorldStats *ws = _ws;
-	Shared.getScreen()->setPalette(_resPack, ws->commonRes.palette);
+	_vm->screen()->setPalette(_resPack, ws->commonRes.palette);
 	_background = _bgResource->getFrame(0);
-	Shared.getScreen()->copyToBackBuffer(
+	_vm->screen()->copyToBackBuffer(
             ((byte *)_background->surface.pixels) + ws->targetY * _background->surface.w + ws->targetX, _background->surface.w,
 			0, 0, 640, 480);
 
@@ -503,7 +504,7 @@ void Scene::updateActor(uint32 actorIdx) {
 }
 
 void Scene::updateBarriers(WorldStats *worldStats) {
-    Screen *screen = Shared.getScreen();
+    Screen *screen = _vm->screen();
 
     uint barriersCount  = worldStats->barriers.size();
     int  startTickCount = 0;
@@ -514,7 +515,7 @@ void Scene::updateBarriers(WorldStats *worldStats) {
             Barrier *barrier = &worldStats->barriers[b];
 
             if (barrier->field_3C == 4) {
-                if (barrier->visible()) {
+            	if (_ws->isBarrierVisible(b)) {
                     uint32 flag = barrier->flags;
                     if (flag & 0x20) {
                         if (barrier->field_B4 && (_vm->_system->getMillis() - barrier->tickCount >= 0x3E8 / barrier->field_B4)) {
@@ -886,15 +887,15 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 
 int Scene::drawScene() {
 
-    Shared.getScreen()->clearGraphicsInQueue();
+    _vm->screen()->clearGraphicsInQueue();
 
     if (_skipDrawScene) {
-        Shared.getScreen()->clearScreen();
+        _vm->screen()->clearScreen();
     } else {
         // Draw scene background
         WorldStats   *ws = _ws;
         GraphicFrame *bg = _bgResource->getFrame(0);
-        Shared.getScreen()->copyToBackBuffer(
+        _vm->screen()->copyToBackBuffer(
         		((byte *)bg->surface.pixels) + ws->targetY * bg->surface.w + ws->targetX, bg->surface.w,
         		ws->xLeft,
         		ws->yTop,
@@ -910,7 +911,7 @@ int Scene::drawScene() {
         drawBarriers();
         // TODO: draw main actor stuff
 
-        Shared.getScreen()->drawGraphicsInQueue();
+        _vm->screen()->drawGraphicsInQueue();
         
         // TODO: we must get rid of this
         OLD_UPDATE(ws);
@@ -928,15 +929,15 @@ int Scene::drawBarriers() {
             Barrier *barrier = &worldStats->barriers[b];
 
             if (!(barrier->flags & 4) && !((barrier->flags & 0xFF) & 0x40)) {
-                if (barrier->onscreen()) {
+                if (_ws->isBarrierOnScreen(b)) {
                     //TODO: need to do something here yet
 
                     if (barrier->field_67C <= 0 || barrier->field_67C >= 4) { // TODO: still missing a condition for game quality config
-                        Shared.getScreen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
+                        _vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, (barrier->flags >> 11) & 2, barrier->field_67C - 3, barrier->priority);
                     } else {
                         // TODO: Do Cross Fade
                         // parameters: barrier->resId, barrier->frameIdx, barrier->x, barrier->y, worldStats->commonRes.backgroundImage, worldStats->xLeft, worldStats->yTop, 0, 0, barrier->field_67C - 1
-                        Shared.getScreen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
+                        _vm->screen()->addGraphicToQueue(barrier->resId, barrier->frameIdx, barrier->x, barrier->y, 0, 0, 0);
                     }
                 }
             }
@@ -970,7 +971,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 		if (surface->h > 480)
 			startY = ws->targetY;
 
-		Shared.getScreen()->copyToBackBufferWithTransparency(
+		_vm->screen()->copyToBackBufferWithTransparency(
 				((byte*)surface->pixels) +
 				startY * surface->pitch +
 				startX * surface->bytesPerPixel,

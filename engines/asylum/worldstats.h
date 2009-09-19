@@ -31,6 +31,7 @@
 
 #include "asylum/actor.h"
 #include "asylum/barrier.h"
+#include "asylum/scene.h"
 #include "asylum/sound.h"
 
 namespace Asylum {
@@ -90,7 +91,7 @@ typedef struct ActionArea {
 
 class WorldStats {
 public:
-	WorldStats(Common::SeekableReadStream *stream);
+	WorldStats(Common::SeekableReadStream *stream, Scene *scene);
 	virtual ~WorldStats();
 
 	uint32			 size;
@@ -151,7 +152,11 @@ public:
 	Barrier* getBarrierById(uint32 id);
 	Barrier* getBarrierByIndex(uint32 idx);
 
+	bool isBarrierOnScreen(uint32 idx);
+	bool isBarrierVisible(uint32 idx);
+
 private:
+	Scene *_scene;
 
 	void load(Common::SeekableReadStream *stream);
 

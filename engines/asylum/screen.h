@@ -48,7 +48,7 @@ typedef struct GraphicQueueItem {
 
 class Screen {
 public:
-	Screen(OSystem *sys);
+	Screen(AsylumEngine *_vm);
 	~Screen();
 
 	void copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, int height);
@@ -72,7 +72,7 @@ public:
 
 private:
 	Graphics::Surface _backBuffer;
-	OSystem *_sys;
+	AsylumEngine *_vm;
 
     Common::Array<GraphicQueueItem> _queueItems;
 };

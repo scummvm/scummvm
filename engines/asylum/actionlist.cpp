@@ -24,7 +24,6 @@
  */
 
 #include "asylum/actionlist.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -653,7 +652,7 @@ int kDestroyBarrier(ActionCommand *cmd, Scene *scn) {
 	if (barrier) {
 		barrier->flags &= 0xFFFFFFFE;
 		barrier->flags |= 0x20000;
-		Shared.getScreen()->deleteGraphicFromQueue(barrier->resId);
+		scn->vm()->screen()->deleteGraphicFromQueue(barrier->resId);
 	} else
 		debugC(kDebugLevelScripts,
 			"Requested invalid object ID:0x%02X in Scene %d Line %d.",
@@ -912,7 +911,7 @@ int kUpdateWideScreen(ActionCommand *cmd, Scene *scn) {
 	if (barSize >= 22) {
 		cmd->param1 = 0;
 	} else {
-		Shared.getScreen()->drawWideScreen(4 * barSize);
+		scn->vm()->screen()->drawWideScreen(4 * barSize);
 		cmd->param1++;
 	}
 
@@ -1010,7 +1009,7 @@ int k_unk4E_RANDOM_COMMAND(ActionCommand *cmd, Scene *scn) {
 
 int kClearScreen(ActionCommand *cmd, Scene *scn) {
 	if (cmd->param1)
-		Shared.getScreen()->clearScreen();
+		scn->vm()->screen()->clearScreen();
 
 	return 0;
 }
@@ -1099,7 +1098,7 @@ int k_unk56(ActionCommand *cmd, Scene *scn) {
 
 int kSetResourcePalette(ActionCommand *cmd, Scene *scn) {
 	if (cmd->param1 > 0)
-		Shared.getScreen()->setPalette(scn->getResourcePack(), scn->worldstats()->grResId[cmd->param1]);
+		scn->vm()->screen()->setPalette(scn->getResourcePack(), scn->worldstats()->grResId[cmd->param1]);
 
 	return 0;
 }

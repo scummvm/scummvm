@@ -26,7 +26,6 @@
 #include "asylum/menu.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -57,7 +56,7 @@ MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_creditsResource	 = 0;
 	_creditsFadeResource = 0;
 
-	_text = new Text(Shared.getScreen());
+	_text = new Text(_vm->screen());
 	_text->loadFont(_resPack, 16);	// 0x80010010, yellow font
 }
 
@@ -74,16 +73,16 @@ MainMenu::~MainMenu() {
 
 void MainMenu::openMenu() {
 	_active = true;
-	Shared.getScene()->deactivate();
+	_vm->scene()->deactivate();
 
 	// yellow font
 	_text->loadFont(_resPack, 0x80010010);
 
 	// Load the graphics palette
-	Shared.getScreen()->setPalette(_resPack, 17);
+	_vm->screen()->setPalette(_resPack, 17);
 	// Copy the bright background to the back buffer
 	GraphicFrame *bg = _bgResource->getFrame(1);
-	Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set mouse cursor
 	_cursor->load(2);
@@ -103,7 +102,7 @@ void MainMenu::openMenu() {
 
 void MainMenu::closeMenu() {
 	_active = false;
-	Shared.getScene()->activate();
+	_vm->scene()->activate();
 
 	// Stop menu sounds and menu music
 	_vm->sound()->stopSfx();
@@ -144,7 +143,7 @@ void MainMenu::update() {
 		if (_activeIcon != -1) {
 			// Copy the dark background to the back buffer
 			GraphicFrame *bg = _bgResource->getFrame(0);
-			Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+			_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 			_activeMenuScreen = (MenuScreen) _activeIcon;
 
 			// Set the cursor
@@ -190,7 +189,7 @@ void MainMenu::update() {
 				_creditsFadeResource = new GraphicResource(_resPack, 23);
 			_creditsTextScroll = 0x1E0 - 30;
 			// Set credits palette
-			Shared.getScreen()->setPalette(_resPack, 26);
+			_vm->screen()->setPalette(_resPack, 26);
 			// Stop all sounds
 			_vm->sound()->stopMusic();
 			// Start playing music
@@ -198,7 +197,7 @@ void MainMenu::update() {
 			break;
 		case kReturnToGame:
 			closeMenu();
-			Shared.getScene()->enterScene();
+			_vm->scene()->enterScene();
 			break;
 		}
 	}
@@ -234,7 +233,7 @@ void MainMenu::updateEyesAnimation() {
 	// TODO: kEyesCrossed state
 
 	GraphicFrame *eyeFrame = _eyeResource->getFrame(eyeFrameNum);
-	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->surface.w, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
+	_vm->screen()->copyRectToScreenWithTransparency((byte *)eyeFrame->surface.pixels, eyeFrame->surface.w, eyeFrame->x, eyeFrame->y, eyeFrame->surface.w, eyeFrame->surface.h);
 }
 
 void MainMenu::updateMainMenu() {
@@ -274,7 +273,7 @@ void MainMenu::updateMainMenu() {
 			}
 
 			GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
-			Shared.getScreen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+			_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 			// Cycle icon frame
 			_curIconFrame++;
@@ -297,7 +296,7 @@ void MainMenu::updateMainMenu() {
 
 void MainMenu::updateSubMenu() {
 	GraphicFrame *iconFrame = _iconResource->getFrame(MIN<int>(_iconResource->getFrameCount() - 1, _curIconFrame));
-	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
+	_vm->screen()->copyRectToScreenWithTransparency((byte *)iconFrame->surface.pixels, iconFrame->surface.w, iconFrame->x, iconFrame->y, iconFrame->surface.w, iconFrame->surface.h);
 
 	// Cycle icon frame
 	_curIconFrame++;
@@ -565,10 +564,10 @@ void MainMenu::updateSubMenuShowCredits() {
 	int maxBound = 0;
 
 	GraphicFrame *creditsFadeFrame = _creditsFadeResource->getFrame(0);
-	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
+	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFadeFrame->surface.pixels, creditsFadeFrame->surface.w, creditsFadeFrame->x, creditsFadeFrame->y, creditsFadeFrame->surface.w, creditsFadeFrame->surface.h);
 
 	GraphicFrame *creditsFrame = _creditsResource->getFrame(MIN<int>(_creditsResource->getFrameCount() - 1, _creditsBgFrame));
-	Shared.getScreen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
+	_vm->screen()->copyRectToScreenWithTransparency((byte *)creditsFrame->surface.pixels, creditsFrame->surface.w, creditsFrame->x, creditsFrame->y, creditsFrame->surface.w, creditsFrame->surface.h);
 
 	_creditsBgFrame++;
 	if (_creditsBgFrame >= _creditsResource->getFrameCount())
@@ -609,7 +608,7 @@ void MainMenu::updateSubMenuShowCredits() {
 
 	if (_leftClick) {
 		// Restore palette
-		Shared.getScreen()->setPalette(_resPack, 17);
+		_vm->screen()->setPalette(_resPack, 17);
 		// Stop all sounds
 		_vm->sound()->stopMusic();
 		// Start playing music
@@ -624,7 +623,7 @@ void MainMenu::exitSubMenu() {
 
 	// Copy the bright background to the back buffer
 	GraphicFrame *bg = _bgResource->getFrame(1);
-	Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set the cursor
 	_cursor->load(2);

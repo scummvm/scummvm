@@ -27,7 +27,8 @@
 
 namespace Asylum {
 
-WorldStats::WorldStats(Common::SeekableReadStream *stream) {
+WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene)
+	: _scene(scene) {
 	load(stream);
 }
 
@@ -65,6 +66,36 @@ Barrier* WorldStats::getBarrierById(uint32 id) {
 
 Barrier* WorldStats::getBarrierByIndex(uint32 idx) {
 	return &barriers[idx];
+}
+
+bool WorldStats::isBarrierOnScreen(uint32 idx) {
+	Barrier *b = getBarrierByIndex(idx);
+
+	Common::Rect screenRect  = Common::Rect(xLeft, yTop, xLeft + 640, yTop + 480);
+	Common::Rect barrierRect = b->boundingRect;
+	barrierRect.translate(b->x, b->y);
+	return isBarrierVisible(idx) && (b->flags & 1) && screenRect.intersects(barrierRect);
+}
+
+bool WorldStats::isBarrierVisible(uint32 idx) {
+	Barrier *b = getBarrierByIndex(idx);
+
+	if ((b->flags & 0xFF) & 1) {
+		for (int f = 0; f < 10; f++) {
+			bool   isSet = false;
+			uint32 flag  = b->gameFlags[f];
+
+			if (flag <= 0)
+				isSet = _scene->vm()->isGameFlagNotSet(flag); // -flag
+			else
+				isSet = _scene->vm()->isGameFlagSet(flag);
+
+			if(!isSet)
+				return false;
+		}
+		return true;
+	}
+	return false;
 }
 
 // FIXME: load necessary World Stats content
