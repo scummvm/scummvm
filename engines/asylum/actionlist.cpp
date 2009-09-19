@@ -180,27 +180,6 @@ void ActionList::setScriptByIndex(uint32 index) {
 	}
 }
 
-int ActionList::checkBarrierFlags(int barrierId) {
-    int flags = _scene->worldstats()->getBarrierById(barrierId)->flags;
-    return flags & 1 && (flags & 8 || flags & 0x10000);
-}
-
-int ActionList::setBarrierNextFrame(int barrierId, int barrierFlags) {
-    int barrierIndex = _scene->worldstats()->getBarrierIndexById(barrierId);
-
-    Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIndex);
-    int newFlag = barrierFlags | 1 | barrier->flags;
-    barrier->flags |= barrierFlags | 1;
-
-    if (newFlag & 0x10000) {
-        barrier->frameIdx = barrier->frameCount - 1;
-    } else {
-        barrier->frameIdx = 0;
-    }
-
-    return barrierIndex;
-}
-
 void ActionList::processActionListSub02(ActionDefinitions* script, ActionCommand *command, int a4) {
 	int v4 = 0;
 	int result;
@@ -433,19 +412,18 @@ int kShowCursor(ActionCommand *cmd, Scene *scn) {
 }
 
 int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
-	int barrierId = cmd->param1;
+	int barrierId    = cmd->param1;
+	int barrierIndex = scn->worldstats()->getBarrierIndexById(barrierId);
+	Barrier *barrier = scn->worldstats()->getBarrierByIndex(barrierIndex);
 
 	if (cmd->param2 == 2) {
-		if (!scn->actions()->checkBarrierFlags(barrierId)) {
+		if (!barrier->checkFlags()) {
 			cmd->param2 = 1;
 			// FIXME Not sure why this break was here
 			// break;
 		}
 		scn->actions()->lineIncrement = 1;
 	} else {
-		int barrierIndex = scn->worldstats()->getBarrierIndexById(barrierId);
-		Barrier *barrier = scn->worldstats()->getBarrierByIndex(barrierIndex);
-
 		if (cmd->param4) { // RECHECK THIS
 			int newBarriedIndex = 213 * barrierIndex;
 			barrier->flags &= 0xFFFEF1C7;
@@ -466,7 +444,7 @@ int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
 			}
 		}
 
-		scn->actions()->setBarrierNextFrame(barrierId, barrier->flags);
+		barrier->setNextFrame(barrier->flags);
 
 		if(barrier->field_688 == 1) {
 			// TODO: get barrier position

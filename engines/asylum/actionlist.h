@@ -88,9 +88,6 @@ public:
 	ActionDefinitions* getScript() { return _currentScript; }
 	int  process();
 
-	int checkBarrierFlags(int barrierId);
-	int setBarrierNextFrame(int barrierId, int barrierFlags);
-
 	void processActionListSub02(ActionDefinitions* script, ActionCommand* command,  int a4);
 	void enableActorSub(int actorIndex, int condition);
 

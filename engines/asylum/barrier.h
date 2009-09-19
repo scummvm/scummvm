@@ -39,6 +39,11 @@ public:
 	uint32 getRandomId(); // TODO Give this a better name?
 	bool   onscreen();
 
+	// TODO document this function
+	int  checkFlags();
+	// TODO document this function
+	void setNextFrame(int flags);
+
 	uint32		   id;
 	uint32		   resId;
 	uint32		   x;
