@@ -247,7 +247,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 		if (ws->actions[a].actionType == 0) {
 			area = &ws->actions[a];
 			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->entries[area->polyIdx];
-            if (Shared.pointInPoly(&poly, x, y)) {
+            if (poly.contains(x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
 
@@ -265,7 +265,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	for (int i = 0; i < areaPtr; i++) {
 		area = &ws->actions[availableAreas[i]];
 		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->entries[area->polyIdx];
-		if (Shared.pointInPoly(region, newX, newY)) {
+		if (region->contains(newX, newY)) {
 			x = newX;
 			y = newY;
 			break;

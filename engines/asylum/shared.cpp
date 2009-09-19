@@ -44,32 +44,6 @@ SharedResources::~SharedResources() {
 	g_initialized = false;
 }
 
-bool SharedResources::pointInPoly(PolyDefinitions *poly, int x, int y) {
-	// Copied from backends/vkeybd/polygon.cpp
-	int  yflag0;
-	int  yflag1;
-	bool inside_flag = false;
-	unsigned int pt;
-
-	Common::Point *vtx0 = &poly->points[poly->numPoints - 1];
-	Common::Point *vtx1 = &poly->points[0];
-
-	yflag0 = (vtx0->y >= y);
-	for (pt = 0; pt < poly->numPoints; pt++, vtx1++) {
-		yflag1 = (vtx1->y >= y);
-		if (yflag0 != yflag1) {
-			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
-				inside_flag = !inside_flag;
-			}
-		}
-		yflag0 = yflag1;
-		vtx0   = vtx1;
-	}
-
-	return inside_flag;
-}
-
 int SharedResources::getAngle(int x1, int y1, int x2, int y2) {
 	uint32 v5 = (x2 << 16) - (x1 << 16);
 	int v6 = 0;

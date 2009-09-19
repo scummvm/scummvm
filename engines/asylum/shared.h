@@ -62,7 +62,6 @@ public:
 	void setScene(Scene* scene) { _scene = scene; }
 	Scene* getScene() { return _scene; }
 
-	bool pointInPoly(PolyDefinitions *poly, int x, int y);
 	int getAngle(int x1, int y1, int x2, int y2);
 
     void setGameFlag(int flag);

@@ -777,7 +777,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		if (worldStats->actions[a].actionType == 0) {
 			ActionArea *area = &worldStats->actions[a];
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[area->polyIdx];
-			if (Shared.pointInPoly(&poly, getActor()->x, getActor()->y)) {
+			if (poly.contains(getActor()->x, getActor()->y)) {
 				debugShowWalkRegion(&poly);
 				//break;
 			}
@@ -833,7 +833,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 			PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[p];
 			if (poly.boundingRect.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
-				if (Shared.pointInPoly(&poly, _cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
+				if (poly.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
 					curHotspot = (int32)p;
 					_cursor->animate();
 					break;
