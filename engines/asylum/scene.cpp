@@ -97,8 +97,6 @@ Scene::Scene(uint8 sceneIdx) {
 	g_debugPolygons = 0;
 	g_debugBarriers = 0;
 
-    Shared.setGameFlag(183);
-
     // TODO: do all the rest stuffs in sub at address 40E460
     _playerActorIdx = 0;
 
