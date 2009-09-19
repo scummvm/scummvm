@@ -11,9 +11,6 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
 
- Broken Sword 1:
-   - Fixed missing background sound effects in some rooms.
-
  KYRA:
    - Added support for the Amiga version of The Legend of Kyrandia.
    - Adapted KYRA to support the custom SJIS font.
@@ -31,6 +28,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
 
  AGOS:
    - Fixed load/save code for PC version of Waxworks.
+
+ Broken Sword 1:
+   - Fixed missing background sound effects in some rooms.
 
  CinE:
    - Fixed crashes with Future Wars and Operation Stealth demos.
