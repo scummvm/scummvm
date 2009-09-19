@@ -32,11 +32,6 @@ SceneResource::SceneResource() {
 
 SceneResource::~SceneResource() {
 	delete _worldStats;
-
-	uint8 i;
-	for (i = 0; i < _gamePolygons->numEntries; i++)
-		delete[] _gamePolygons->entries[i].points;
-
 	delete _gamePolygons;
 	delete _actionList;
 }

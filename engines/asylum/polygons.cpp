@@ -33,6 +33,9 @@ Polygons::Polygons() {
 }
 
 Polygons::~Polygons() {
+	for (int i = 0; i < numEntries; i++)
+			delete[] entries[i].points;
+
 	entries.clear();
 }
 
