@@ -11,6 +11,9 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  AGOS:
    - Fixed load/save code for PC version of Waxworks.
 
+ Broken Sword 1:
+   - Fixed missing background sound effects in some rooms.
+
  CinE:
    - Fixed crashes with Future Wars and Operation Stealth demos.
 

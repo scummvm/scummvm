@@ -225,6 +225,16 @@ void Sound::newScreen(uint32 screen) {
 			closeCowSystem();
 		initCowSystem();
 	}
+
+	// Start the room's looping sounds.
+	for (uint16 cnt = 0; cnt < TOTAL_FX_PER_ROOM; cnt++) {
+		uint16 fxNo = _roomsFixedFx[screen][cnt];
+		if (fxNo) {
+			if (_fxList[fxNo].type == FX_LOOP)
+				addToQueue(fxNo);
+		} else
+			break;
+	}
 }
 
 void Sound::quitScreen(void) {
