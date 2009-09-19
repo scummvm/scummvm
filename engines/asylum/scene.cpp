@@ -37,36 +37,59 @@ int g_debugPolygons;
 int g_debugBarriers;
 
 Scene::Scene(uint8 sceneIdx) {
-	_sceneIdx		= sceneIdx;
-	_sceneResource	= new SceneResource;
+	_sceneIdx = sceneIdx;
 
-	if (_sceneResource->load(_sceneIdx)) {
-		_text 		= new Text(Shared.getScreen());
-		_resPack 	= new ResourcePack(sceneIdx);
-		_speechPack = new ResourcePack(3);
+	char filename[10];
+	sprintf(filename, SCENE_FILE_MASK, sceneIdx);
 
-		// FIXME
-		// Is there EVER more than one actor enabled for a scene? I can't
-		// remember, so I guess a playthrough is in order :P
-		// Either way, this is kinda dumb
-		for (uint8 i = 0; i < _sceneResource->getWorldStats()->numActors; i++)
-			_sceneResource->getWorldStats()->actors[i].setResourcePack(_resPack);
+	char sceneTag[6];
+	Common::File* fd = new Common::File;
 
-		_text->loadFont(_resPack, _sceneResource->getWorldStats()->commonRes.font1);
+	if (!fd->exists(filename))
+		error("Scene file doesn't exist %s", filename);
 
-		char musPackFileName[10];
-		sprintf(musPackFileName, "mus.%03d", sceneIdx);
-		_musPack 	= new ResourcePack(musPackFileName);
-		_bgResource = new GraphicResource(_resPack, _sceneResource->getWorldStats()->commonRes.backgroundImage);
+	fd->open(filename);
 
-        _blowUp = 0;
-	}
+	if (!fd->isOpen())
+		error("Failed to load scene file %s", filename);
 
-	_cursor = new Cursor(_resPack);
+	fd->read(sceneTag, 6);
 
+	if (Common::String(sceneTag,6) != "DFISCN")
+		error("The file isn't recognized as scene %s", filename);
+
+	_ws = new WorldStats(fd);
+	// jump to game polygons data
+	fd->seek(0xE8686);
+	_polygons = new Polygons(fd);
+	// jump to action list data
+	fd->seek(0xE868E + _polygons->size * _polygons->numEntries);
+	_actions = new ActionList(fd);
+
+	fd->close();
+	delete fd;
+
+	_text 		= new Text(Shared.getScreen());
+	_resPack 	= new ResourcePack(sceneIdx);
+	_speechPack = new ResourcePack(3); // FIXME are all scene speech packs the same?
+
+	// FIXME
+	// Is there EVER more than one actor enabled for a scene? I can't
+	// remember, so I guess a playthrough is in order :P
+	// Either way, this is kinda dumb
+	for (uint8 i = 0; i < _ws->numActors; i++)
+		_ws->actors[i].setResourcePack(_resPack);
+
+	_text->loadFont(_resPack, _ws->commonRes.font1);
+
+	char musPackFileName[10];
+	sprintf(musPackFileName, "mus.%03d", sceneIdx);
+	_musPack = new ResourcePack(musPackFileName);
+
+	_bgResource    = new GraphicResource(_resPack, _ws->commonRes.backgroundImage);
+	_blowUp        = 0;
+	_cursor        = new Cursor(_resPack);
 	_background    = 0;
-	//_startX        = 0;
-	//_startY        = 0;
 	_leftClick     = false;
 	_rightButton   = false;
 	_isActive      = false;
@@ -78,51 +101,53 @@ Scene::Scene(uint8 sceneIdx) {
     Shared.setGameFlag(183);
 
     // TODO: do all the rest stuffs in sub at address 40E460
-    WorldStats   *worldStats = _sceneResource->getWorldStats();
     _playerActorIdx = 0;
 
-    if (worldStats->numBarriers > 0) {
+    if (_ws->numBarriers > 0) {
         uint32 priority = 0x0FFB;
-        for (uint32 b = 0; b < worldStats->numBarriers; b++) {
-            Barrier *barrier = &worldStats->barriers[b];
+        for (uint32 b = 0; b < _ws->numBarriers; b++) {
+            Barrier *barrier  = &_ws->barriers[b];
             barrier->priority = priority;
             barrier->flags &= 0xFFFF3FFF;
             priority -= 4;
         }
     }
 
-    worldStats->sceneRectIdx = 0;
+    _ws->sceneRectIdx = 0;
     Shared.getScreen()->clearGraphicsInQueue();
-    worldStats->motionStatus = 1;
+    _ws->motionStatus = 1;
 
     // TODO: do some rect stuffs from player actor
     // TODO: reset actors flags
 }
 
 Scene::~Scene() {
+	delete _ws;
+	delete _polygons;
+	delete _actions;
+
 	delete _cursor;
 	delete _bgResource;
 	delete _musPack;
 	delete _speechPack;
 	delete _resPack;
 	delete _text;
-	delete _sceneResource;
     delete _blowUp;
- }
+}
 
 Actor* Scene::getActor() {
-	return &_sceneResource->getWorldStats()->actors[_playerActorIdx];
+	return &_ws->actors[_playerActorIdx];
 }
 
 void Scene::enterScene() {
-    WorldStats *ws = _sceneResource->getWorldStats();
+    WorldStats *ws = _ws;
 	Shared.getScreen()->setPalette(_resPack, ws->commonRes.palette);
 	_background = _bgResource->getFrame(0);
 	Shared.getScreen()->copyToBackBuffer(
             ((byte *)_background->surface.pixels) + ws->targetY * _background->surface.w + ws->targetX, _background->surface.w,
 			0, 0, 640, 480);
 
-	_cursor->load(_sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
+	_cursor->load(_ws->commonRes.curMagnifyingGlass);
 	_cursor->show();
 
 	// Music testing: play the first music track
@@ -133,22 +158,19 @@ void Scene::enterScene() {
 }
 
 ActionDefinitions* Scene::getDefaultActionList() {
-	if (_sceneResource)
-		return getActionList(_sceneResource->getWorldStats()->actionListIdx);
-	else
-		return 0;
+	getActionList(_ws->actionListIdx);
 }
 
 ActionDefinitions* Scene::getActionList(int actionListIndex) {
-	if ((actionListIndex >= 0) && (actionListIndex < (int)_sceneResource->getWorldStats()->numActions))
-		return &_sceneResource->getActionList()->entries[actionListIndex];
+	if ((actionListIndex >= 0) && (actionListIndex < (int)_ws->numActions))
+		return &actions()->entries[actionListIndex];
 	else
 		return 0;
 }
 
 void Scene::setScenePosition(int x, int y)
 {
-    WorldStats *ws = _sceneResource->getWorldStats();
+    WorldStats *ws = _ws;
 	GraphicFrame *bg = _bgResource->getFrame(0);
 	//_startX = x;
 	//_startY = y;
@@ -186,7 +208,7 @@ void Scene::handleEvent(Common::Event *event, bool doUpdate) {
 			// TODO This isn't always going to be the magnifying glass
 			// Should check the current pointer region to identify the type
 			// of cursor to use
-			_cursor->load(_sceneResource->getWorldStats()->commonRes.curMagnifyingGlass);
+			_cursor->load(_ws->commonRes.curMagnifyingGlass);
 			_rightButton    = false;
 		}
 		break;
@@ -217,7 +239,7 @@ void Scene::update() {
 
 int Scene::updateScene() {
 	uint32     startTick   = 0;
-    WorldStats *worldStats = _sceneResource->getWorldStats();
+    WorldStats *worldStats = _ws;
     
     // Mouse
     startTick = Shared.getMillis();
@@ -397,7 +419,7 @@ void Scene::updateMouse() {
 }
 
 void Scene::updateActor(uint32 actorIdx) {
-    WorldStats *ws    = _sceneResource->getWorldStats();
+    WorldStats *ws    = _ws;
     Actor      *actor = getActor();
     
     if (actor->visible()) {
@@ -641,7 +663,7 @@ void Scene::updateMusic() {
 }
 
 void Scene::updateAdjustScreen() {
-	WorldStats *ws = _sceneResource->getWorldStats();
+	WorldStats *ws = _ws;
 
 	int v5, v6, v7, v15, v16;
 	int v1 = -1;
@@ -776,7 +798,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	for (uint32 a = 0; a < worldStats->numActions; a++) {
 		if (worldStats->actions[a].actionType == 0) {
 			ActionArea *area = &worldStats->actions[a];
-			PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[area->polyIdx];
+			PolyDefinitions poly = _polygons->entries[area->polyIdx];
 			if (poly.contains(getActor()->x, getActor()->y)) {
 				debugShowWalkRegion(&poly);
 				//break;
@@ -785,7 +807,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	}
 
 	if (!_rightButton) {
-		if (_sceneResource->getWorldStats()->actors[0].flags & 0x01) {	// TESTING - only draw if visible flag
+		if (_ws->actors[0].flags & 0x01) {	// TESTING - only draw if visible flag
 			// Check if the character was walking before the right-button
 			// was released. If so, change the resource to one where he/she
 			// is standing still, facing the last active direction
@@ -800,7 +822,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 		_walking = true;
 
 		getActor()->walkTo(_cursor->x(), _cursor->y());
-		_cursor->update(&_sceneResource->getWorldStats()->commonRes, getActor()->direction);
+		_cursor->update(&_ws->commonRes, getActor()->direction);
 	}
 
 	if (g_debugPolygons)
@@ -830,8 +852,8 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	// of the barrier/polygon action scripts should be processed first
 	if (curBarrier < 0) {
 		// Update cursor if it's in a polygon hotspot
-		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
-			PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[p];
+		for (uint32 p = 0; p < _polygons->numEntries; p++) {
+			PolyDefinitions poly = _polygons->entries[p];
 			if (poly.boundingRect.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
 				if (poly.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
 					curHotspot = (int32)p;
@@ -856,7 +878,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 							worldStats->actions[a].actionListIdx2,
 							worldStats->actions[a].actionType,
 							worldStats->actions[a].soundResId);
-					ScriptMan.setScript(&_sceneResource->getActionList()->entries[worldStats->actions[a].actionListIdx1]);
+					ScriptMan.setScript(&_actions->entries[worldStats->actions[a].actionListIdx1]);
 				}
 			}
 		} else if (curBarrier >= 0) {
@@ -884,7 +906,7 @@ int Scene::drawScene() {
         Shared.getScreen()->clearScreen();
     } else {
         // Draw scene background
-        WorldStats   *ws = _sceneResource->getWorldStats();
+        WorldStats   *ws = _ws;
         GraphicFrame *bg = _bgResource->getFrame(0);
         Shared.getScreen()->copyToBackBuffer(
         		((byte *)bg->surface.pixels) + ws->targetY * bg->surface.w + ws->targetX, bg->surface.w,
@@ -912,7 +934,7 @@ int Scene::drawScene() {
 }
 
 int Scene::drawBarriers() {
-    WorldStats *worldStats = _sceneResource->getWorldStats();
+    WorldStats *worldStats = _ws;
     uint barriersCount = worldStats->barriers.size();
 
     if (barriersCount > 0) {
@@ -944,7 +966,7 @@ int Scene::drawBarriers() {
 // ----------------------------------
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-    WorldStats *ws = _sceneResource->getWorldStats();
+    WorldStats *ws = _ws;
 
     Common::Rect screenRect(ws->targetX, ws->targetY, ws->targetX + 640, ws->targetY + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
@@ -979,7 +1001,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 // ----------------------------------
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
-    WorldStats *ws = _sceneResource->getWorldStats();
+    WorldStats *ws = _ws;
 
 	// Horizontal scrolling
 	if (_cursor->x() < SCREEN_EDGES && ws->targetX >= SCROLL_STEP)
@@ -1017,9 +1039,9 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 
 // POLYGONS DEBUG
 void Scene::debugShowPolygons() {
-	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
+	for (uint32 p = 0; p < _polygons->numEntries; p++) {
 		Graphics::Surface surface;
-		PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[p];
+		PolyDefinitions poly = _polygons->entries[p];
 		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
 				poly.boundingRect.bottom - poly.boundingRect.top + 1,
 				1);
@@ -1041,9 +1063,9 @@ void Scene::debugShowPolygons() {
 
 // BARRIER DEBUGGING
 void Scene::debugShowBarriers() {
-	for (uint32 p = 0; p < _sceneResource->getWorldStats()->numBarriers; p++) {
+	for (uint32 p = 0; p < _ws->numBarriers; p++) {
 		Graphics::Surface surface;
-		Barrier b = _sceneResource->getWorldStats()->barriers[p];
+		Barrier b = _ws->barriers[p];
 
 		if (b.flags & 0x20) {
 			surface.create(b.boundingRect.right - b.boundingRect.left + 1,

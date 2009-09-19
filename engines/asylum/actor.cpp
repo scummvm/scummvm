@@ -28,13 +28,12 @@
 #include "asylum/actor.h"
 #include "asylum/screen.h"
 #include "asylum/shared.h"
-#include "asylum/sceneres.h"
 
 namespace Asylum {
 
 Actor::Actor() {
 	_graphic         = 0;
-	currentAction   = 0;
+	currentAction    = 0;
 	_currentWalkArea = 0;
 }
 
@@ -130,7 +129,7 @@ GraphicFrame *Actor::getFrame() {
 void Actor::drawActorAt(uint16 curX, uint16 curY) {
 	GraphicFrame *frame = getFrame();
 
-    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+    WorldStats *ws = Shared.getScene()->worldstats();
 
 	Shared.getScreen()->copyRectToScreenWithTransparency(
 			((byte *)frame->surface.pixels),
@@ -145,7 +144,7 @@ void Actor::drawActorAt(uint16 curX, uint16 curY) {
 
 void Actor::drawActor() {
 	GraphicFrame *frame = getFrame();
-    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+    WorldStats *ws = Shared.getScene()->worldstats();
 
 	Shared.getScreen()->copyToBackBufferWithTransparency(
 			((byte *)frame->surface.pixels),
@@ -166,7 +165,7 @@ void Actor::setWalkArea(ActionArea *target) {
 
 void Actor::walkTo(uint16 curX, uint16 curY) {
 	int newAction = currentAction;
-    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+    WorldStats *ws = Shared.getScene()->worldstats();
 
 	// step is the increment by which to move the
 	// actor in a given direction
@@ -246,7 +245,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	for (uint32 a = 0; a < ws->numActions; a++) {
 		if (ws->actions[a].actionType == 0) {
 			area = &ws->actions[a];
-			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->entries[area->polyIdx];
+			PolyDefinitions poly = Shared.getScene()->polygons()->entries[area->polyIdx];
             if (poly.contains(x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
@@ -264,7 +263,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	// walkable regions
 	for (int i = 0; i < areaPtr; i++) {
 		area = &ws->actions[availableAreas[i]];
-		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->entries[area->polyIdx];
+		PolyDefinitions *region = &Shared.getScene()->polygons()->entries[area->polyIdx];
 		if (region->contains(newX, newY)) {
 			x = newX;
 			y = newY;
@@ -311,14 +310,14 @@ void Actor::faceTarget(int targetId, int targetType) {
 
 	if (targetType) {
 		if (targetType == 1) {
-			int actionIdx = Shared.getScene()->getResources()->getWorldStats()->getActionAreaIndexById(targetId);
+			int actionIdx = Shared.getScene()->worldstats()->getActionAreaIndexById(targetId);
 			if (actionIdx == -1) {
 				warning("No ActionArea found for id %d", targetId);
 				return;
 			}
 
-			uint32 polyIdx = Shared.getScene()->getResources()->getWorldStats()->actions[actionIdx].polyIdx;
-			PolyDefinitions *poly = &Shared.getScene()->getResources()->getGamePolygons()->entries[polyIdx];
+			uint32 polyIdx = Shared.getScene()->worldstats()->actions[actionIdx].polyIdx;
+			PolyDefinitions *poly = &Shared.getScene()->polygons()->entries[polyIdx];
 
 			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
 			newY2 = poly->boundingRect.top + (poly->boundingRect.bottom - poly->boundingRect.top) / 2;
@@ -331,13 +330,13 @@ void Actor::faceTarget(int targetId, int targetType) {
 			}
 		}
 	} else {
-		int barrierIdx = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(targetId);
+		int barrierIdx = Shared.getScene()->worldstats()->getBarrierIndexById(targetId);
 		if (barrierIdx == -1) {
 			warning("No Barrier found for id %d", targetId);
 			return;
 		}
 
-		Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierByIndex(barrierIdx);
+		Barrier *barrier = Shared.getScene()->worldstats()->getBarrierByIndex(barrierIdx);
 		GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
 
 		// FIXME

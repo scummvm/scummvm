@@ -28,10 +28,11 @@
 #include "common/singleton.h"
 
 #include "asylum/scene.h"
-#include "asylum/sceneres.h"
 
 namespace Asylum {
 
+class ActionList;
+struct ActionDefinitions;
 struct ActionCommand;
 class WorldStats;
 

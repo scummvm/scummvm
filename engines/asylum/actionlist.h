@@ -27,6 +27,7 @@
 #define ASYLUM_ACTIONLIST_H_
 
 #include "common/array.h"
+#include "common/stream.h"
 
 namespace Asylum {
 
@@ -57,13 +58,17 @@ typedef struct ActionDefinitions {
 
 class ActionList {
 public:
-	ActionList();
+	ActionList(Common::SeekableReadStream *stream);
 	virtual ~ActionList();
 
 	uint32 size;
 	uint32 numEntries;
 
 	Common::Array<ActionDefinitions> entries;
+
+private:
+
+	void load(Common::SeekableReadStream *stream);
 
 };
 

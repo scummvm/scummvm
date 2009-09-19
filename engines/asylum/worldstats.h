@@ -90,7 +90,7 @@ typedef struct ActionArea {
 
 class WorldStats {
 public:
-	WorldStats();
+	WorldStats(Common::SeekableReadStream *stream);
 	virtual ~WorldStats();
 
 	uint32			 size;
@@ -150,6 +150,10 @@ public:
 	int      getBarrierIndexById(uint32 id);
 	Barrier* getBarrierById(uint32 id);
 	Barrier* getBarrierByIndex(uint32 idx);
+
+private:
+
+	void load(Common::SeekableReadStream *stream);
 
 };
 

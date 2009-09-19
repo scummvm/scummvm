@@ -27,9 +27,8 @@
 
 namespace Asylum {
 
-Polygons::Polygons() {
-	// TODO Auto-generated constructor stub
-
+Polygons::Polygons(Common::SeekableReadStream *stream) {
+	load(stream);
 }
 
 Polygons::~Polygons() {
@@ -63,9 +62,34 @@ bool PolyDefinitions::contains(int x, int y) {
 	}
 
 	return inside_flag;
+}
 
+void Polygons::load(Common::SeekableReadStream *stream) {
+	size       = stream->readUint32LE();
+	numEntries = stream->readUint32LE();
 
+	for (uint32 g = 0; g < numEntries; g++) {
+		PolyDefinitions poly;
+		memset(&poly, 0, sizeof(PolyDefinitions));
 
+		poly.numPoints = stream->readUint32LE();
+		if (poly.numPoints > 0)
+			poly.points = new Common::Point[poly.numPoints];
+
+		for (uint32 i = 0; i < poly.numPoints; i++) {
+			poly.points[i].x = stream->readUint32LE() & 0xFFFF;
+			poly.points[i].y = stream->readUint32LE() & 0xFFFF;
+		}
+
+		stream->skip((MAX_POLYGONS - poly.numPoints) * 8);
+
+		poly.boundingRect.left   = stream->readUint32LE() & 0xFFFF;
+		poly.boundingRect.top    = stream->readUint32LE() & 0xFFFF;
+		poly.boundingRect.right  = stream->readUint32LE() & 0xFFFF;
+		poly.boundingRect.bottom = stream->readUint32LE() & 0xFFFF;
+
+		entries.push_back(poly);
+	}
 }
 
 } // end of namespace Asylum

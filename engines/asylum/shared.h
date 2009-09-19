@@ -28,9 +28,13 @@
 
 #include "common/singleton.h"
 
-#include "asylum/sceneres.h"
+#include "asylum/scene.h"
 
 namespace Asylum {
+
+class Video;
+class Screen;
+class Sound;
 
 /**
  * Shared Resources are classes that are instantiated at the engine level.

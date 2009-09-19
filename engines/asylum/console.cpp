@@ -56,8 +56,8 @@ bool Console::cmdDumpActionArea(int argc, const char **argv) {
 	if (argc == 2) {
 		// TODO Get an action area by index/id
 	} else {
-		for (uint32 i = 0; i < Shared.getScene()->getResources()->getWorldStats()->numActions; i++) {
-			ActionArea *a = &Shared.getScene()->getResources()->getWorldStats()->actions[i];
+		for (uint32 i = 0; i < Shared.getScene()->worldstats()->numActions; i++) {
+			ActionArea *a = &Shared.getScene()->worldstats()->actions[i];
 			printActionAreaStats(a);
 		}
 	}

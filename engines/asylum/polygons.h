@@ -28,6 +28,7 @@
 
 #include "common/array.h"
 #include "common/rect.h"
+#include "common/stream.h"
 
 #define MAX_POLYGONS 200
 
@@ -50,13 +51,17 @@ typedef struct PolyDefinitions {
 
 class Polygons {
 public:
-	Polygons();
+	Polygons(Common::SeekableReadStream *stream);
 	virtual ~Polygons();
 
 	uint32 size;
 	uint32 numEntries;
 
 	Common::Array<PolyDefinitions> entries;
+
+private:
+
+	void load(Common::SeekableReadStream *stream);
 
 }; // end of class Polygons
 
