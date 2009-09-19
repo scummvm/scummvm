@@ -35,15 +35,14 @@
 #include "asylum/screen.h"
 #include "asylum/respack.h"
 #include "asylum/polygons.h"
+#include "asylum/actionlist.h"
 
-#define SCENEMASK		  "scn.%03d"
-#define Commands_MAXSIZE  161
+#define SCENEMASK "scn.%03d"
 
 namespace Asylum {
 
 class AsylumEngine;
 class WorldStats;
-class ActionList;
 struct ActionArea;
 
 class SceneResource {
@@ -189,43 +188,6 @@ typedef struct ActionArea {
 	uint32 array[5];
 	uint32 volume;
 } ActionArea;
-
-typedef struct ActionCommand {
-	uint32 numLines;	//	Only set on the first line of each script
-	uint32 opcode;
-	uint32 param1;
-	uint32 param2;
-	uint32 param3;
-	uint32 param4;
-	uint32 param5;
-	uint32 param6;
-	uint32 param7;
-	uint32 param8;
-	uint32 param9;
-
-} ActionCommand;
-
-typedef struct ActionDefinitions {
-	ActionCommand commands[161];
-	uint32 field_1BAC;
-	uint32 field_1BB0;
-	uint32 counter;
-
-} ActionDefinitions;
-
-class ActionList {
-public:
-	ActionList() {};
-	virtual ~ActionList() {
-		actions.clear();
-	};
-
-	uint32 size;
-	uint32 numEntries;
-
-	Common::Array<ActionDefinitions> actions;
-
-}; // end of class ActionList
 
 } // end of namespace Asylum
 

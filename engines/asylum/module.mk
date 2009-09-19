@@ -20,7 +20,8 @@ MODULE_OBJS := \
 	blowuppuzzle.o \
 	shared.o \
 	cursor.o \
-	polygons.o
+	polygons.o \
+	actionlist.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
