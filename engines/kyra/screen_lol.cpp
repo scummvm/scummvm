@@ -835,6 +835,9 @@ void Screen_LoL::copyColor(int dstColorIndex, int srcColorIndex) {
 }
 
 bool Screen_LoL::fadeColor(int dstColorIndex, int srcColorIndex, uint32 elapsedTime, uint32 targetTime) {
+	if (_use16ColorMode)
+		return false;
+
 	const uint8 *dst = _screenPalette->getData() + 3 * dstColorIndex;
 	const uint8 *src = _screenPalette->getData() + 3 * srcColorIndex;
 	uint8 *p = getPalette(1).getData() + 3 * dstColorIndex;

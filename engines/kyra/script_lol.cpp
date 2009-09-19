@@ -869,9 +869,13 @@ int LoLEngine::olol_fadeClearSceneWindow(EMCState *script) {
 
 int LoLEngine::olol_fadeSequencePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadeSequencePalette(%p)", (const void *)script);
-	_screen->getPalette(3).copy(_screen->getPalette(0), 128);
-	_screen->loadSpecialColors(_screen->getPalette(3));
-	_screen->fadePalette(_screen->getPalette(3), 10);
+	if (_flags.use16ColorMode) {
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+	} else {
+		_screen->getPalette(3).copy(_screen->getPalette(0), 128);
+		_screen->loadSpecialColors(_screen->getPalette(3));
+		_screen->fadePalette(_screen->getPalette(3), 10);
+	}
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -2430,9 +2434,13 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 		break;
 
 	case 1:
-		_screen->getPalette(3).copy(_screen->getPalette(0), 128);
-		_screen->loadSpecialColors(_screen->getPalette(3));
-		_screen->fadePalette(_screen->getPalette(3), 10);
+		if (_flags.use16ColorMode) {
+			_screen->fadePalette(_screen->getPalette(1), 10);
+		} else {
+			_screen->getPalette(3).copy(_screen->getPalette(0), 128);
+			_screen->loadSpecialColors(_screen->getPalette(3));
+			_screen->fadePalette(_screen->getPalette(3), 10);
+		}
 		_screen->_fadeFlag = 0;
 		break;
 
@@ -2442,7 +2450,7 @@ int LoLEngine::tlol_fadeClearWindow(const TIM *tim, const uint16 *param) {
 
 	case 3:
 		_screen->loadSpecialColors(_screen->getPalette(3));
-		_screen->fadePalette(_screen->getPalette(3), 10);
+		_screen->fadePalette(_screen->getPalette(_flags.use16ColorMode ? 1 : 3), 10);
 		_screen->_fadeFlag = 0;
 		break;
 
