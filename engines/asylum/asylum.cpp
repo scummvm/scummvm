@@ -31,7 +31,6 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -81,14 +80,12 @@ Common::Error AsylumEngine::run() {
 Common::Error AsylumEngine::init() {
 	initGraphics(640, 480, true);
 
-	_screen		= new Screen(_system);
+	_screen		= new Screen(this);
 	_sound		= new Sound(_mixer);
 	_video		= new Video(_mixer);
 	_console	= new Console(this);
 	_mainMenu	= 0;
 	_scene		= 0;
-
-	Shared.setScreen(_screen);
 
 	_introPlaying = false;
 
@@ -103,7 +100,6 @@ Common::Error AsylumEngine::go() {
 
 	// Set up the game's main scene
 	_scene = new Scene(5, this);
-	Shared.setScene(_scene);
 
 	// XXX This is just here for testing purposes. It is also defined
 	// in the processActionList() method when the necessary action is fired.
@@ -282,7 +278,6 @@ void AsylumEngine::processDelayedEvents() {
 			delete _scene;
 
 		_scene = new Scene(sceneIdx, this);
-		Shared.setScene(_scene);
 		_scene->enterScene();
 
 		_scene->actions()->delayedSceneIndex = -1;

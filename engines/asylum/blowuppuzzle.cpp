@@ -26,7 +26,6 @@
 #include "asylum/blowuppuzzle.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -68,11 +67,11 @@ void BlowUpPuzzleVCR::openBlowUp() {
     //_scene->vm()->sound()->stopSfx();
 
 	// Load the graphics palette
-	Shared.getScreen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->grResId[29]);
+	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->grResId[29]);
     
     // show blow up puzzle BG
 	GraphicFrame *bg = _bgResource->getFrame(0);
-	Shared.getScreen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	_scene->vm()->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
 
 	// Set mouse cursor
 	_cursor->load(_scene->worldstats()->grResId[28]);
@@ -118,7 +117,7 @@ int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
 }
 
 void BlowUpPuzzleVCR::update() {
-    Shared.getScreen()->clearGraphicsInQueue();
+    _scene->vm()->screen()->clearGraphicsInQueue();
 
     if (_rightClickDown) { // quits BlowUp Puzzle
 		_rightClickDown = false;
@@ -149,17 +148,17 @@ void BlowUpPuzzleVCR::update() {
     updateStopButton();
 
     if(_buttonsState[kPower] == kON) {
-        Shared.getScreen()->addGraphicToQueue(_scene->worldstats()->grResId[22], _tvScreenAnimIdx, 0, 37, 0, 0, 1);
-        Shared.getScreen()->addGraphicToQueue(_scene->worldstats()->grResId[23], _tvScreenAnimIdx++, 238, 22, 0, 0, 1);
+        _scene->vm()->screen()->addGraphicToQueue(_scene->worldstats()->grResId[22], _tvScreenAnimIdx, 0, 37, 0, 0, 1);
+        _scene->vm()->screen()->addGraphicToQueue(_scene->worldstats()->grResId[23], _tvScreenAnimIdx++, 238, 22, 0, 0, 1);
         _tvScreenAnimIdx %= 6;
     }
 
     if(_isAccomplished) {
-        Shared.getScreen()->drawGraphicsInQueue();
+        _scene->vm()->screen()->drawGraphicsInQueue();
 
         int barSize = 0;
         do { 
-            Shared.getScreen()->drawWideScreen(barSize);
+            _scene->vm()->screen()->drawWideScreen(barSize);
             barSize += 4;
         } while(barSize < 84);
 
@@ -171,7 +170,7 @@ void BlowUpPuzzleVCR::update() {
         _active = false;
         _scene->enterScene();
     } else {
-        Shared.getScreen()->drawGraphicsInQueue();
+        _scene->vm()->screen()->drawGraphicsInQueue();
     } 
 }
 
@@ -242,7 +241,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
             break;
         case kOnHand: {
             GraphicQueueItem jackItemOnHand = getGraphicJackItem(resIdOnHand);
-            Shared.getScreen()->addGraphicToQueue(jackItemOnHand);
+            _scene->vm()->screen()->addGraphicToQueue(jackItemOnHand);
 
             item = getGraphicShadowItem();
         }
@@ -254,7 +253,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
 
     if(item.resId != 0)
     {
-        Shared.getScreen()->addGraphicToQueue(item);
+        _scene->vm()->screen()->addGraphicToQueue(item);
     }
 }
 
@@ -356,9 +355,8 @@ void BlowUpPuzzleVCR::updateButton(Button button, VCRDrawInfo btON, VCRDrawInfo 
     }
 
     if(item.resId != 0)
-    {
-        Shared.getScreen()->addGraphicToQueue(item);
-    }
+        _scene->vm()->screen()->addGraphicToQueue(item);
+
 }
 
 void BlowUpPuzzleVCR::updatePowerButton() {

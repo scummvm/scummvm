@@ -24,11 +24,10 @@
  */
 
 #include "asylum/screen.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
-Screen::Screen(OSystem *sys) : _sys(sys) {
+Screen::Screen(AsylumEngine *vm) : _vm(vm) {
 	_backBuffer.create(640, 480, 1);
 }
 
@@ -37,7 +36,7 @@ Screen::~Screen() {
 }
 
 void Screen::copyBackBufferToScreen() {
-	_sys->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
+	_vm->_system->copyRectToScreen((byte *)_backBuffer.pixels, _backBuffer.w, 0, 0, _backBuffer.w, _backBuffer.h);
 }
 
 void Screen::copyToBackBuffer(byte *buffer, int pitch, int x, int y, int width, int height) {
@@ -67,11 +66,11 @@ void Screen::copyToBackBufferWithTransparency(byte *buffer, int pitch, int x, in
 }
 
 void Screen::copyRectToScreen(byte *buffer, int pitch, int x, int y, int width, int height) {
-	_sys->copyRectToScreen(buffer, pitch, x, y, width, height);
+	_vm->_system->copyRectToScreen(buffer, pitch, x, y, width, height);
 }
 
 void Screen::copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, int y, int width, int height) {
-	byte *screenBuffer = (byte *)_sys->lockScreen()->pixels;
+	byte *screenBuffer = (byte *)_vm->_system->lockScreen()->pixels;
 
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
@@ -81,7 +80,7 @@ void Screen::copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, in
 		}
 	}
 
-	_sys->unlockScreen();
+	_vm->_system->unlockScreen();
 }
 
 void Screen::setPalette(byte *rgbPalette) {
@@ -98,21 +97,21 @@ void Screen::setPalette(byte *rgbPalette) {
 		palette[i * 4 + 3] = 0;
 	}
 
-	_sys->setPalette(palette, 0, 256);
+	_vm->_system->setPalette(palette, 0, 256);
 }
 
 void Screen::drawWideScreen(int16 barSize) {
     if(barSize > 0) {
         
-        _sys->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
-        _sys->unlockScreen();
-        _sys->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
-        _sys->unlockScreen();
+        _vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
+        _vm->_system->unlockScreen();
+        _vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
+        _vm->_system->unlockScreen();
     }
 }
 
 void Screen::clearScreen() {
-    _sys->fillScreen(0);
+    _vm->_system->fillScreen(0);
 }
 
 void Screen::addGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority) {
@@ -136,13 +135,13 @@ void Screen::addGraphicToQueue(GraphicQueueItem item) {
 }
 
 void Screen::drawGraphicsInQueue() {
-    WorldStats *ws = Shared.getScene()->worldstats();
+    WorldStats *ws = _vm->scene()->worldstats();
 
     // sort by priority first
     graphicsSelectionSort();
 
     for(uint i = 0; i < _queueItems.size(); i++) {
-        GraphicResource *grRes = Shared.getScene()->getGraphicResource(_queueItems[i].resId);
+        GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
         GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
         copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->targetX, _queueItems[i].y - ws->targetY, fra->surface.w, fra->surface.h);
         delete grRes;

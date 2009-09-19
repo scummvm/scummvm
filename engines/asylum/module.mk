@@ -16,7 +16,6 @@ MODULE_OBJS := \
 	respack.o \
 	scene.o \
 	screen.o \
-	shared.o \
 	sound.o \
 	text.o \
 	video.o \

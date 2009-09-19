@@ -49,6 +49,7 @@ class Cursor;
 class Text;
 class BlowUpPuzzle;
 struct BarrierItem;
+class WorldStats;
 
 class Scene {
 public:

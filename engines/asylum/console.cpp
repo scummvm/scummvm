@@ -27,7 +27,6 @@
 
 #include "asylum/asylum.h"
 #include "asylum/console.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -56,8 +55,8 @@ bool Console::cmdDumpActionArea(int argc, const char **argv) {
 	if (argc == 2) {
 		// TODO Get an action area by index/id
 	} else {
-		for (uint32 i = 0; i < Shared.getScene()->worldstats()->numActions; i++) {
-			ActionArea *a = &Shared.getScene()->worldstats()->actions[i];
+		for (uint32 i = 0; i < _vm->scene()->worldstats()->numActions; i++) {
+			ActionArea *a = &_vm->scene()->worldstats()->actions[i];
 			printActionAreaStats(a);
 		}
 	}
@@ -118,7 +117,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		return true;
 	}
 	
-	Shared.getScene()->actions()->delayedVideoIndex = atoi(argv[1]);
+	_vm->scene()->actions()->delayedVideoIndex = atoi(argv[1]);
 
 	return false;
 }
@@ -129,7 +128,7 @@ bool Console::cmdRunScript(int argc, const char **argv) {
 		return true;
 	}
 
-	Shared.getScene()->actions()->setScriptByIndex(atoi(argv[1]));
+	_vm->scene()->actions()->setScriptByIndex(atoi(argv[1]));
 
 	return false;
 }
@@ -145,9 +144,9 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 		return true;
 	}
 
-	Shared.getScene()->actions()->delayedSceneIndex = atoi(argv[1]);
-	Shared.getScene()->actions()->setScriptByIndex(0); 	// XXX is this right or should it be
-														// ws->actionListIdx???
+	_vm->scene()->actions()->delayedSceneIndex = atoi(argv[1]);
+	_vm->scene()->actions()->setScriptByIndex(0); 	// XXX is this right or should it be
+													// ws->actionListIdx???
 
 	return false;
 }

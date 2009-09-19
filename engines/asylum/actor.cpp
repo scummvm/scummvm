@@ -27,7 +27,6 @@
 
 #include "asylum/actor.h"
 #include "asylum/screen.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -129,9 +128,9 @@ GraphicFrame *Actor::getFrame() {
 void Actor::drawActorAt(uint16 curX, uint16 curY) {
 	GraphicFrame *frame = getFrame();
 
-    WorldStats *ws = Shared.getScene()->worldstats();
+    WorldStats *ws = _scene->worldstats();
 
-	Shared.getScreen()->copyRectToScreenWithTransparency(
+	_scene->vm()->screen()->copyRectToScreenWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
             curX - ws->targetX,
@@ -144,9 +143,9 @@ void Actor::drawActorAt(uint16 curX, uint16 curY) {
 
 void Actor::drawActor() {
 	GraphicFrame *frame = getFrame();
-    WorldStats *ws = Shared.getScene()->worldstats();
+    WorldStats *ws = _scene->worldstats();
 
-	Shared.getScreen()->copyToBackBufferWithTransparency(
+	_scene->vm()->screen()->copyToBackBufferWithTransparency(
 			((byte *)frame->surface.pixels),
 			frame->surface.w,
             x - ws->targetX,
@@ -157,7 +156,7 @@ void Actor::drawActor() {
 
 void Actor::setWalkArea(ActionArea *target) {
 	if (_currentWalkArea != target) {
-		Shared.getScene()->actions()->setScriptByIndex(target->actionListIdx1);
+		_scene->actions()->setScriptByIndex(target->actionListIdx1);
 		_currentWalkArea = target;
 		debugC(kDebugLevelScripts, "%s", target->name);
 	}
@@ -165,7 +164,7 @@ void Actor::setWalkArea(ActionArea *target) {
 
 void Actor::walkTo(uint16 curX, uint16 curY) {
 	int newAction = currentAction;
-    WorldStats *ws = Shared.getScene()->worldstats();
+    WorldStats *ws = _scene->worldstats();
 
 	// step is the increment by which to move the
 	// actor in a given direction
@@ -228,7 +227,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	rect.bottom = newY + 4;
 	surface.frameRect(rect, 0x33);
 
-    Shared.getScreen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
+    _scene->vm()->screen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
 
 	surface.free();
 
@@ -245,7 +244,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	for (uint32 a = 0; a < ws->numActions; a++) {
 		if (ws->actions[a].actionType == 0) {
 			area = &ws->actions[a];
-			PolyDefinitions poly = Shared.getScene()->polygons()->entries[area->polyIdx];
+			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
             if (poly.contains(x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
@@ -263,7 +262,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	// walkable regions
 	for (int i = 0; i < areaPtr; i++) {
 		area = &ws->actions[availableAreas[i]];
-		PolyDefinitions *region = &Shared.getScene()->polygons()->entries[area->polyIdx];
+		PolyDefinitions *region = &_scene->polygons()->entries[area->polyIdx];
 		if (region->contains(newX, newY)) {
 			x = newX;
 			y = newY;
@@ -310,14 +309,14 @@ void Actor::faceTarget(int targetId, int targetType) {
 
 	if (targetType) {
 		if (targetType == 1) {
-			int actionIdx = Shared.getScene()->worldstats()->getActionAreaIndexById(targetId);
+			int actionIdx = _scene->worldstats()->getActionAreaIndexById(targetId);
 			if (actionIdx == -1) {
 				warning("No ActionArea found for id %d", targetId);
 				return;
 			}
 
-			uint32 polyIdx = Shared.getScene()->worldstats()->actions[actionIdx].polyIdx;
-			PolyDefinitions *poly = &Shared.getScene()->polygons()->entries[polyIdx];
+			uint32 polyIdx = _scene->worldstats()->actions[actionIdx].polyIdx;
+			PolyDefinitions *poly = &_scene->polygons()->entries[polyIdx];
 
 			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
 			newY2 = poly->boundingRect.top + (poly->boundingRect.bottom - poly->boundingRect.top) / 2;
@@ -330,13 +329,13 @@ void Actor::faceTarget(int targetId, int targetType) {
 			}
 		}
 	} else {
-		int barrierIdx = Shared.getScene()->worldstats()->getBarrierIndexById(targetId);
+		int barrierIdx = _scene->worldstats()->getBarrierIndexById(targetId);
 		if (barrierIdx == -1) {
 			warning("No Barrier found for id %d", targetId);
 			return;
 		}
 
-		Barrier *barrier = Shared.getScene()->worldstats()->getBarrierByIndex(barrierIdx);
+		Barrier *barrier = _scene->worldstats()->getBarrierByIndex(barrierIdx);
 		GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
 
 		// FIXME
@@ -354,11 +353,97 @@ void Actor::faceTarget(int targetId, int targetType) {
 		newY2 = (fra->surface.h >> 1) + barrier->y; // Check .text:004088A2 for more details
 	}
 
-	int newAngle = Shared.getAngle(x2 + x1, y2 + y1, newX2, newY2);
+	int newAngle = getAngle(x2 + x1, y2 + y1, newX2, newY2);
 
 	printf("Angle calculated as %d\n", newAngle);
 
 	setDirection(newAngle);
+}
+
+int Actor::getAngle(int ax1, int ay1, int ax2, int ay2) {
+	uint32 v5 = (ax2 << 16) - (ax1 << 16);
+	int v6 = 0;
+	int v4 = (ay1 << 16) - (ay2 << 16);
+
+	if (v5 < 0) {
+		v6 = 2;
+		v5 = -v5;
+	}
+
+	if (v4 < 0) {
+		v6 |= 1;
+		v4 = -v4;
+	}
+
+	int v7;
+	int v8 = -1;
+
+	if (v5) {
+		v7 = (v4 << 8) / v5;
+
+		if (v7 < 0x100)
+			v8 = angleTable01[v7];
+		if (v7 < 0x1000 && v8 < 0)
+			v8 = angleTable02[v7 >> 4];
+		if (v7 < 0x10000 && v8 < 0)
+			v8 = angleTable03[v7 >> 8];
+	} else {
+		v8 = 90;
+	}
+
+	switch (v6) {
+	case 1:
+		v8 = 360 - v8;
+		break;
+	case 2:
+		v8 = 180 - v8;
+		break;
+	case 3:
+		v8 += 180;
+		break;
+	}
+
+	if (v8 >= 360)
+		v8 -= 360;
+
+	int result;
+
+	if (v8 < 157 || v8 >= 202) {
+		if (v8 < 112 || v8 >= 157) {
+			if (v8 < 67 || v8 >= 112) {
+				if (v8 < 22 || v8 >= 67) {
+					if ((v8 < 0 || v8 >= 22) && (v8 < 337 || v8 > 359)) {
+						if (v8 < 292 || v8 >= 337) {
+							if (v8 < 247 || v8 >= 292) {
+								if (v8 < 202 || v8 >= 247) {
+									error("getAngle returned a bad angle: %d.", v8);
+									result = ax1;
+								} else {
+									result = 3;
+								}
+							} else {
+								result = 4;
+							}
+						} else {
+							result = 5;
+						}
+					} else {
+						result = 6;
+					}
+				} else {
+					result = 7;
+				}
+			} else {
+				result = 0;
+			}
+		} else {
+			result = 1;
+		}
+	} else {
+		result = 2;
+	}
+
+	return result;
 }
 
 } // end of namespace Asylum

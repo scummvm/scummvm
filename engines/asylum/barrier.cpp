@@ -24,7 +24,6 @@
  */
 
 #include "asylum/barrier.h"
-#include "asylum/shared.h"
 
 namespace Asylum {
 
@@ -35,25 +34,6 @@ Barrier::Barrier() {
 
 Barrier::~Barrier() {
 	// TODO Auto-generated destructor stub
-}
-
-bool Barrier::visible() {
-	if ((flags & 0xFF) & 1) {
-		for (int f = 0; f < 10; f++) {
-			bool   isSet = false;
-			uint32 flag  = gameFlags[f];
-
-			if (flag <= 0)
-				isSet = Shared.getScene()->vm()->isGameFlagNotSet(flag); // -flag
-			else
-				isSet = Shared.getScene()->vm()->isGameFlagSet(flag);
-
-			if(!isSet)
-				return false;
-		}
-		return true;
-	}
-	return false;
 }
 
 uint32 Barrier::getRandomId() {
@@ -70,14 +50,6 @@ uint32 Barrier::getRandomId() {
 		return rndResId[rand() % numRes];
 
 	return resId;
-}
-
-bool Barrier::onscreen() {
-	WorldStats *ws = Shared.getScene()->worldstats();
-	Common::Rect screenRect  = Common::Rect(ws->xLeft, ws->yTop, ws->xLeft + 640, ws->yTop + 480);
-	Common::Rect barrierRect = boundingRect;
-	barrierRect.translate(x, y);
-	return visible() && (flags & 1) && screenRect.intersects(barrierRect);
 }
 
 int Barrier::checkFlags() {
