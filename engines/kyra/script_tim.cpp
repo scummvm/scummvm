@@ -964,20 +964,26 @@ TIMInterpreter::Animation *TIMInterpreter_LoL::initAnimStruct(int index, const c
 		anim->wsa->open(file, wsaOpenFlags, &_screen->getPalette(3));
 	}
 
-	if (wsaFlags & 1) {
-		if (_screen->_fadeFlag != 1)
-			_screen->fadeClearSceneWindow(10);
-		_screen->getPalette(3).copy(_screen->getPalette(0), 128, 128);
-	} else if (wsaFlags & 2) {
-		_screen->fadeToBlack(10);
+	if (!_vm->_flags.use16ColorMode) {
+		if (wsaFlags & 1) {
+			if (_screen->_fadeFlag != 1)
+				_screen->fadeClearSceneWindow(10);
+			_screen->getPalette(3).copy(_screen->getPalette(0), 128, 128);
+		} else if (wsaFlags & 2) {
+			_screen->fadeToBlack(10);
+		}
 	}
 
 	if (wsaFlags & 7)
 		anim->wsa->displayFrame(0, 0, x, y, 0, 0, 0);
 
 	if (wsaFlags & 3) {
-		_screen->loadSpecialColors(_screen->getPalette(3));
-		_screen->fadePalette(_screen->getPalette(3), 10);
+		if (_vm->_flags.use16ColorMode) {
+			_vm->setPaletteBrightness(_screen->getPalette(0), _vm->_brightness, _vm->_lampEffect);
+		} else {
+			_screen->loadSpecialColors(_screen->getPalette(3));
+			_screen->fadePalette(_screen->getPalette(3), 10);
+		}
 		_screen->_fadeFlag = 0;
 	}
 

@@ -259,20 +259,19 @@ void LoLEngine::snd_playQueuedEffects() {
 
 void LoLEngine::snd_loadSoundFile(int track) {
 	if (_sound->musicEnabled()) {
-		char filename[13];
-		int t = (track - 250) * 3;
-
-		if (_curMusicFileIndex != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
-			snd_stopMusic();
-			snprintf(filename, sizeof(filename), "LORE%02d%c", _musicTrackMap[t], (char)_musicTrackMap[t + 1]);
-			_sound->loadSoundFile(filename);
-			_curMusicFileIndex = _musicTrackMap[t];
-			_curMusicFileExt = (char)_musicTrackMap[t + 1];
-		} else {
-			snd_stopMusic();
+		if (_flags.platform != Common::kPlatformPC98) {
+			int t = (track - 250) * 3;
+			if (_curMusicFileIndex != _musicTrackMap[t] || _curMusicFileExt != (char)_musicTrackMap[t + 1]) {
+				snd_stopMusic();
+				char filename[13];
+				snprintf(filename, sizeof(filename), "LORE%02d%c", _musicTrackMap[t], (char)_musicTrackMap[t + 1]);
+				_sound->loadSoundFile(filename);
+				_curMusicFileIndex = _musicTrackMap[t];
+				_curMusicFileExt = (char)_musicTrackMap[t + 1];
+			} else {
+				snd_stopMusic();
+			}
 		}
-	} else {
-		//XXX
 	}
 }
 
@@ -284,9 +283,13 @@ int LoLEngine::snd_playTrack(int track) {
 	_lastMusicTrack = track;
 
 	if (_sound->musicEnabled()) {
-		snd_loadSoundFile(track);
-		int t = (track - 250) * 3;
-		_sound->playTrack(_musicTrackMap[t + 2]);
+		if (_flags.platform == Common::kPlatformPC98) {
+			_sound->playTrack(track - 249);
+		} else {
+			snd_loadSoundFile(track);
+			int t = (track - 250) * 3;
+			_sound->playTrack(_musicTrackMap[t + 2]);
+		}
 	}
 
 	return res;

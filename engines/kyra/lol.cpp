@@ -144,6 +144,7 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(sy
 	_vcnShift = 0;
 	_vcnExpTable = 0;
 	_vmpPtr = 0;
+	_vcfBlocks = 0;
 	_trueLightTable2 = 0;
 	_trueLightTable1 = 0;
 	_levelShapeProperties = 0;
@@ -354,6 +355,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _vcnBlocks;
 	delete[] _vcnShift;
 	delete[] _vmpPtr;
+	delete[] _vcfBlocks;
 	delete[] _trueLightTable2;
 	delete[] _trueLightTable1;
 	delete[] _levelShapeProperties;
@@ -788,13 +790,28 @@ void LoLEngine::startup() {
 	Palette &pal = _screen->getPalette(0);
 	_screen->loadBitmap("PLAYFLD.CPS", 3, 3, &pal);
 
-	_screen->copyPalette(1, 0);
-	pal.fill(0, 1, 0x3F);
-	pal.fill(2, 126, 0x3F);
-	pal.fill(192, 4, 0x3F);
-	_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96);
-	_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65);
-	_screen->copyPalette(0, 1);
+	if (_flags.use16ColorMode) {
+		memset(_screen->_paletteOverlay1, 0, 256);
+		memset(_screen->_paletteOverlay2, 0, 256);
+
+		static const uint8 colTable1[] = { 0x00, 0xEE, 0xCC, 0xFF, 0x44, 0x66, 0x44, 0x88, 0xEE, 0xAA, 0x11, 0xCC, 0xDD, 0xEE, 0x44, 0xCC };
+		static const uint8 colTable2[] = { 0x00, 0xCC, 0xFF, 0xBB, 0xEE, 0xBB, 0x55, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xFF, 0xCC, 0xDD, 0xBB };
+		static const uint8 colTable3[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+
+		for (int i = 0; i < 16; i++) {
+			_screen->_paletteOverlay2[colTable3[i]] = colTable1[i];
+			_screen->_paletteOverlay1[colTable3[i]] = colTable2[i];
+		}
+
+	} else {
+		_screen->copyPalette(1, 0);
+		pal.fill(0, 1, 0x3F);
+		pal.fill(2, 126, 0x3F);
+		pal.fill(192, 4, 0x3F);
+		_screen->generateOverlay(pal, _screen->_paletteOverlay1, 1, 96);
+		_screen->generateOverlay(pal, _screen->_paletteOverlay2, 144, 65);
+		_screen->copyPalette(0, 1);
+	}
 
 	_screen->getPalette(1).clear();
 	_screen->getPalette(2).clear();
@@ -1686,18 +1703,28 @@ void LoLEngine::setPaletteBrightness(const Palette &srcPal, int brightness, int 
 
 void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier) {
 	dst.copy(src);
-	_screen->loadSpecialColors(dst);
+	if (_flags.use16ColorMode) {
+		if (!(brightness && modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)))
+			modifier = 8;
+		modifier >>= 1;
+		if (modifier)
+			modifier--;
+		brightness = 16 * modifier;
 
-	brightness = (8 - brightness) << 5;
-	if (modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)) {
-		brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
-		if (brightness < 0)
-			brightness = 0;
-	}
+	} else {
+		_screen->loadSpecialColors(dst);
 
-	for (int i = 0; i < 384; i++) {
-		uint16 c = (dst[i] * brightness) >> 8;
-		dst[i] = c & 0xff;
+		brightness = (8 - brightness) << 5;
+		if (modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)) {
+			brightness = 256 - ((((modifier & 0xfffe) << 5) * (256 - brightness)) >> 8);
+			if (brightness < 0)
+				brightness = 0;
+		}
+
+		for (int i = 0; i < 384; i++) {
+			uint16 c = (dst[i] * brightness) >> 8;
+			dst[i] = c & 0xff;
+		}
 	}
 }
 
@@ -1722,12 +1749,17 @@ void LoLEngine::createGfxTables() {
 	if (_flags.isTalkie || _loadSuppFilesFlag)
 		return;
 
-	Palette tpal(256);
-	_screen->loadPalette("fxpal.col", tpal);
-	_screen->loadBitmap("fxpal.shp", 3, 3, 0);
-	const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
+	if (_flags.use16ColorMode) {
 
-	_screen->generateTruelightTables(shpPal, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
+		_screen->loadPalette("lol.nol", _screen->getPalette(0));
+	} else {
+		Palette tpal(256);
+		_screen->loadPalette("fxpal.col", tpal);
+		_screen->loadBitmap("fxpal.shp", 3, 3, 0);
+		const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;
+
+		_screen->generateTruelightTables(shpPal, 20, tpal, _screen->getPalette(1), _trueLightTable1, _trueLightTable2, 70);
+	}
 
 	_loadSuppFilesFlag = 1;
 }

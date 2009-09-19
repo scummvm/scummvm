@@ -1083,6 +1083,7 @@ private:
 	uint8 *_vcnShift;
 	uint8 *_vcnExpTable;
 	uint16 *_vmpPtr;
+	uint8 *_vcfBlocks;
 	uint16 *_blockDrawingBuffer;
 	uint8 *_sceneWindowBuffer;
 	LevelShapeProperty *_levelShapeProperties;

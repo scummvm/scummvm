@@ -86,7 +86,8 @@ void LoLEngine::loadLevel(int index) {
 	addLevelItems();
 	deleteMonstersFromBlock(_currentBlock);
 
-	_screen->generateGrayOverlay(_screen->getPalette(0), _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
+	if (!_flags.use16ColorMode)
+		_screen->generateGrayOverlay(_screen->getPalette(0), _screen->_grayOverlay, 32, 16, 0, 0, 128, true);
 
 	_sceneDefaultUpdate = 0;
 	if (_screen->_fadeFlag == 3)
@@ -96,6 +97,9 @@ void LoLEngine::loadLevel(int index) {
 
 	setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
 	setMouseCursorToItemInHand();
+
+	if (_flags.use16ColorMode)
+		_screen->fadeToPalette1(10);	
 
 	snd_playTrack(_curMusicTheme);
 }
@@ -353,12 +357,40 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		}
 	}
 
-	char fname[13];
-	snprintf(fname, sizeof(fname), "%s.VCN", _lastSuppFile);
+	if (_flags.use16ColorMode) {
+		if (_lastSpecialColor == 0x66)
+			//_lastSpecialColor = stricmp(file, "YVEL2") ? 0xcc : 0x44;
+			_lastSpecialColor = stricmp(file, "YVEL2") ? 0xc : 0x4;
+		else if (_lastSpecialColor == 0x6b)
+			//_lastSpecialColor = 0xcc;
+			_lastSpecialColor = 0xc;
+		else
+			//_lastSpecialColor = 0x44;
+			_lastSpecialColor = 0x4;
+	}
 
+	char fname[13];
+	const uint8 *v = 0;
+	int tlen = 0;
+
+	if (_flags.use16ColorMode) {
+		snprintf(fname, sizeof(fname), "%s.VCF", _lastSuppFile);
+		_screen->loadBitmap(fname, 3, 3, 0);
+		v = _screen->getCPagePtr(2);
+		tlen = READ_LE_UINT16(v) << 5;
+		v += 2;
+
+		if (_vcfBlocks)
+			delete[] _vcfBlocks;
+		_vcfBlocks = new uint8[tlen];
+
+		memcpy(_vcfBlocks, v, tlen);
+	}
+
+	snprintf(fname, sizeof(fname), "%s.VCN", _lastSuppFile);
 	_screen->loadBitmap(fname, 3, 3, 0);
-	const uint8 *v = _screen->getCPagePtr(2);
-	int tlen = READ_LE_UINT16(v);
+	v = _screen->getCPagePtr(2);
+	tlen = READ_LE_UINT16(v);
 	v += 2;
 
 	if (vcnLen == -1)
@@ -373,15 +405,27 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	_vcnShift = new uint8[tlen];
 
 	memcpy(_vcnShift, v, tlen);
-	v += tlen;
+	v += tlen;	
 
-	memcpy(_vcnExpTable, v, 128);
-	v += 128;
+	if (_flags.use16ColorMode) {
+		_screen->getPalette(0).fill(0, 16, 0xff);
+		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
-	if (_lastOverridePalFilePtr) {
-		_res->loadFileToBuf(_lastOverridePalFilePtr, _screen->getPalette(0).getData(), 384);
+		/*static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+		Palette &pl = _screen->getPalette(0);
+		for (int i = 15; i >= 0; i--)			
+			pl.copy(pl, i, 1, colTable[i]);*/
+
+		v += 128;
 	} else {
-		_screen->getPalette(0).copy(v, 0, 128);
+		memcpy(_vcnExpTable, v, 128);
+		v += 128;
+
+		if (_lastOverridePalFilePtr) {
+			_res->loadFileToBuf(_lastOverridePalFilePtr, _screen->getPalette(0).getData(), 384);
+		} else {
+			_screen->getPalette(0).copy(v, 0, 128);
+		}
 	}
 
 	v += 384;
@@ -432,6 +476,26 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 	for (int i = 0; i < 256; i++)
 		_screen->getLevelOverlay(7)[i] = i & 0xff;
+
+	if (_flags.use16ColorMode) {
+		//_screen->getLevelOverlay(6)[0xee] = 0xee;
+		//if (_lastSpecialColor == 0x44)			
+		//	_screen->getLevelOverlay(5)[0xee] = 0xee;
+		_screen->getLevelOverlay(6)[0xe] = 0xe;
+		if (_lastSpecialColor == 0x4)			
+			_screen->getLevelOverlay(5)[0xe] = 0xe;
+
+		for (int i = 0; i < 7; i++)
+			memcpy(_screen->getLevelOverlay(i), _screen->getLevelOverlay(i + 1), 256);
+
+		//static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
+		
+		for (int i = 0; i < 8; i++) {
+			uint8 *pl = _screen->getLevelOverlay(7 - i);
+			for (int ii = 15; ii >= 0; ii--)
+				_vcnExpTable[((7 - i) << 4) + ii] = pl[/*colTable[*/ii/*]*/];
+		}
+	}
 
 	_loadSuppFilesFlag = 0;
 	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);

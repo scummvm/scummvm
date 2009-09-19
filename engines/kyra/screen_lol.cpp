@@ -172,7 +172,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	uint8 *d = ovl;
 	*d++ = 0;
 
-	for (int i = 1; i != 255; i++) {
+	for (int i = 1; i != srcPal.getNumColors() - 1; i++) {
 		uint16 a = srcPal[i * 3];
 		uint8 dr = a - ((((a - r) * (weight >> 1)) << 1) >> 8);
 		a = srcPal[i * 3 + 1];
@@ -320,13 +320,18 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 	if (_fadeFlag == 1)
 		return;
 
-	Palette tpal(getPalette(0).getNumColors());
-	tpal.copy(getPalette(0), 128);
+	if (_use16ColorMode) {
+		fadeToBlack(delay);
+		fillRect(112, 0, 288, 120, 68);
+	} else {
+		Palette tpal(getPalette(0).getNumColors());
+		tpal.copy(getPalette(0), 128);
 
-	loadSpecialColors(tpal);
-	fadePalette(tpal, delay);
+		loadSpecialColors(tpal);
+		fadePalette(tpal, delay);
 
-	fillRect(112, 0, 288, 120, 0);
+		fillRect(112, 0, 288, 120, 0);
+	}
 
 	_fadeFlag = 1;
 }
@@ -809,6 +814,9 @@ void Screen_LoL::fadeToPalette1(int delay) {
 }
 
 void Screen_LoL::loadSpecialColors(Palette &dst) {
+	if (_use16ColorMode)
+		return;
+	
 	dst.copy(*_screenPalette, 192, 4);
 }
 
