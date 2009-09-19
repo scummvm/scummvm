@@ -34,7 +34,6 @@
 #include "asylum/screen.h"
 #include "asylum/sound.h"
 #include "asylum/video.h"
-#include "asylum/scriptman.h"
 #include "asylum/blowuppuzzle.h"
 #include "asylum/encounters.h"
 

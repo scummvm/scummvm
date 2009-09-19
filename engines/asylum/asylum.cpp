@@ -114,7 +114,7 @@ Common::Error AsylumEngine::go() {
 
 	// XXX This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P
-	ScriptMan.setScript(_scene->getDefaultActionList());
+	_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
 
 	// Set up main menu
 	_mainMenu = new MainMenu();
@@ -260,12 +260,12 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 
 void AsylumEngine::processDelayedEvents() {
 	// check for a delayed video
-	int videoIdx = ScriptMan.delayedVideoIndex;
+	int videoIdx = _scene->actions()->delayedVideoIndex;
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
 		_sound->stopSfx();
 		_video->playVideo(videoIdx, kSubtitlesOn);
-		ScriptMan.delayedVideoIndex = -1;
+		_scene->actions()->delayedVideoIndex = -1;
 
 		if (_mainMenu->isActive())
 			_mainMenu->openMenu();
@@ -274,8 +274,8 @@ void AsylumEngine::processDelayedEvents() {
 	}
 
 	// check for a delayed scene change
-	int sceneIdx = ScriptMan.delayedSceneIndex;
-	if (sceneIdx >=0 && !ScriptMan.processing) {
+	int sceneIdx = _scene->actions()->delayedSceneIndex;
+	if (sceneIdx >=0 && !_scene->actions()->processing) {
 		_sound->stopMusic();
 		_sound->stopSfx();
 		
@@ -286,8 +286,8 @@ void AsylumEngine::processDelayedEvents() {
 		Shared.setScene(_scene);
 		_scene->enterScene();
 
-		ScriptMan.delayedSceneIndex = -1;
-		ScriptMan.setScript(_scene->getDefaultActionList());
+		_scene->actions()->delayedSceneIndex = -1;
+		_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
 	}
 }
 

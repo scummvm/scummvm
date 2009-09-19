@@ -41,6 +41,7 @@
 
 namespace Asylum {
 
+class ActionList;
 class Screen;
 class Sound;
 class Video;
@@ -61,10 +62,6 @@ public:
 	void deactivate()    { _isActive = false; }
 	bool isActive()      { return _isActive; }
 	int  getSceneIndex() { return _sceneIdx; }
-	
-	// TODO roll into actionlist.cpp
-	ActionDefinitions* getDefaultActionList();
-	ActionDefinitions* getActionList(int actionListIndex);
 
 	Actor* getActor();
 

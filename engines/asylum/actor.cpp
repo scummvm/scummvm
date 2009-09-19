@@ -157,7 +157,7 @@ void Actor::drawActor() {
 
 void Actor::setWalkArea(ActionArea *target) {
 	if (_currentWalkArea != target) {
-		ScriptMan.setScriptIndex(target->actionListIdx1);
+		Shared.getScene()->actions()->setScriptByIndex(target->actionListIdx1);
 		_currentWalkArea = target;
 		debugC(kDebugLevelScripts, "%s", target->name);
 	}
