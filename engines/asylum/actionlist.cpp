@@ -611,9 +611,9 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 
 	if (!scn->actions()->getScript()->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
 		ResourcePack *sfx = new ResourcePack(18);
-		Shared.getSound()->playSfx(sfx, ((unsigned int)(sndIdx != 0) & 5) + 0x80120001);
+		scn->vm()->sound()->playSfx(sfx, ((unsigned int)(sndIdx != 0) & 5) + 0x80120001);
 		delete sfx;
-		//Shared.getSound()->playSfx(scn->getSpeechPack(),sndIdx + 86);
+		//scn->vm()->sound()->playSfx(scn->getSpeechPack(),sndIdx + 86);
 	}
 
 	if (scn->actions()->getScript()->counter >= 3 * v59 - 1) {
@@ -804,7 +804,7 @@ int kPlayMovie(ActionCommand *cmd, Scene *scn) {
 
 int kStopAllBarriersSounds(ActionCommand *cmd, Scene *scn) {
 	// TODO: do this for all barriers that have sfx playing
-	Shared.getSound()->stopSfx();
+	scn->vm()->sound()->stopSfx();
 
 	return -1;
 }
@@ -823,7 +823,7 @@ int kChangeMusicById(ActionCommand *cmd, Scene *scn) {
 }
 
 int kStopMusic(ActionCommand *cmd, Scene *scn) {
-	Shared.getSound()->stopMusic();
+	scn->vm()->sound()->stopMusic();
 
 	return 0;
 }
@@ -933,9 +933,9 @@ int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
 	if ((int)sndIdx >= 0) {
 		if (sndIdx >= 259) {
 			sndIdx -= 9;
-			Shared.getSound()->playSfx(scn->getSpeechPack(), sndIdx - 0x7FFD0000);
+			scn->vm()->sound()->playSfx(scn->getSpeechPack(), sndIdx - 0x7FFD0000);
 		} else {
-			Shared.getSound()->playSfx(scn->getSpeechPack(), sndIdx);
+			scn->vm()->sound()->playSfx(scn->getSpeechPack(), sndIdx);
 		}
 	} else
 		debugC(kDebugLevelScripts,

@@ -78,7 +78,8 @@ public:
     bool isGameFlagSet(int flag);
     bool isGameFlagNotSet(int flag);
 
-    Video* video(){ return _video; }
+    Video* video() { return _video; }
+    Sound* sound() { return _sound; }
 
 private:
 	void checkForEvent(bool doUpdate);

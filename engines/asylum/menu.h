@@ -42,7 +42,7 @@ class Cursor;
 
 class MainMenu {
 public:
-	MainMenu();
+	MainMenu(AsylumEngine *vm);
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -51,6 +51,7 @@ public:
 	void closeMenu();
 
 private:
+	AsylumEngine *_vm;
 
 	enum EyesAnimation {
 		kEyesFront		 = 0,
