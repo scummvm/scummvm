@@ -850,7 +850,7 @@ int kRunBlowUpPuzzle(ActionCommand *cmd, Scene *scn) {
 	// FIXME: improve this to call other blowUpPuzzles than VCR
 	//int puzzleIdx = cmd->param1;
 
-	scn->setBlowUpPuzzle(new BlowUpPuzzleVCR());
+	scn->setBlowUpPuzzle(new BlowUpPuzzleVCR(scn));
 	scn->getBlowUpPuzzle()->openBlowUp();
 
 	return -1;
