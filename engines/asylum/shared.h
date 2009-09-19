@@ -52,9 +52,6 @@ public:
 	void setScreen(Screen* screen) { _screen = screen; }
 	Screen* getScreen() { return _screen; }
 
-	void setSound(Sound* sound) { _sound = sound; }
-	Sound* getSound() { return _sound; }
-
 	void setScene(Scene* scene) { _scene = scene; }
 	Scene* getScene() { return _scene; }
 
@@ -66,7 +63,6 @@ private:
 	~SharedResources();
 
 	Screen  *_screen;
-	Sound   *_sound;
 	Scene   *_scene;
 
 }; // end of class SharedResources

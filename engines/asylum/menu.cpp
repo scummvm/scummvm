@@ -33,7 +33,7 @@ namespace Asylum {
 /** This fixes the menu icons text x position on screen */
 const int MenuIconFixedXpos[12] = { 28, 128, 225, 320, 410, 528, 16, 115, 237, 310, 508, 419 };
 
-MainMenu::MainMenu() {
+MainMenu::MainMenu(AsylumEngine *vm): _vm(vm) {
 	_leftClick			= false;
 	_activeIcon			= -1;
 	_previousActiveIcon = -1;
@@ -90,11 +90,11 @@ void MainMenu::openMenu() {
 	_cursor->show();
 
 	// Stop all sounds
-	Shared.getSound()->stopMusic();
-	Shared.getSound()->stopSfx();
+	_vm->sound()->stopMusic();
+	_vm->sound()->stopSfx();
 
 	// Start playing music
-	Shared.getSound()->playMusic(_resPack, 39);
+	_vm->sound()->playMusic(_resPack, 39);
 
 	_previousActiveIcon = _activeIcon = -1;
 	_leftClick = false;
@@ -106,8 +106,8 @@ void MainMenu::closeMenu() {
 	Shared.getScene()->activate();
 
 	// Stop menu sounds and menu music
-	Shared.getSound()->stopSfx();
-	Shared.getSound()->stopMusic();
+	_vm->sound()->stopSfx();
+	_vm->sound()->stopMusic();
 }
 
 void MainMenu::handleEvent(Common::Event *event, bool doUpdate) {
@@ -192,9 +192,9 @@ void MainMenu::update() {
 			// Set credits palette
 			Shared.getScreen()->setPalette(_resPack, 26);
 			// Stop all sounds
-			Shared.getSound()->stopMusic();
+			_vm->sound()->stopMusic();
 			// Start playing music
-			Shared.getSound()->playMusic(_resPack, 38);
+			_vm->sound()->playMusic(_resPack, 38);
 			break;
 		case kReturnToGame:
 			closeMenu();
@@ -285,8 +285,8 @@ void MainMenu::updateMainMenu() {
 			_text->drawResTextCentered(MenuIconFixedXpos[iconNum], iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
 
 			// Play creepy voice
-			if (!Shared.getSound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
-				Shared.getSound()->playSfx(_resPack, iconNum + 44);
+			if (!_vm->sound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
+				_vm->sound()->playSfx(_resPack, iconNum + 44);
 				_previousActiveIcon = _activeIcon;
 			}
 
@@ -611,9 +611,9 @@ void MainMenu::updateSubMenuShowCredits() {
 		// Restore palette
 		Shared.getScreen()->setPalette(_resPack, 17);
 		// Stop all sounds
-		Shared.getSound()->stopMusic();
+		_vm->sound()->stopMusic();
 		// Start playing music
-		Shared.getSound()->playMusic(_resPack, 39);
+		_vm->sound()->playMusic(_resPack, 39);
 		exitSubMenu();
 	}
 }

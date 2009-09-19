@@ -148,7 +148,7 @@ void Scene::enterScene() {
 	_cursor->show();
 
 	// Music testing: play the first music track
-	Shared.getSound()->playMusic(_musPack, 0);
+	_vm->sound()->playMusic(_musPack, 0);
 
 	_isActive = true;
 	_walking  = false;

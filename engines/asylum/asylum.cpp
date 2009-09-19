@@ -89,7 +89,6 @@ Common::Error AsylumEngine::init() {
 	_scene		= 0;
 
 	Shared.setScreen(_screen);
-	Shared.setSound(_sound);
 
 	_introPlaying = false;
 
@@ -117,7 +116,7 @@ Common::Error AsylumEngine::go() {
 	_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
 
 	// Set up main menu
-	_mainMenu = new MainMenu();
+	_mainMenu = new MainMenu(this);
 
 	// XXX Testing
 	_encounter = new Encounter(_scene);
