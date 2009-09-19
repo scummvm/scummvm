@@ -161,7 +161,7 @@ void ActionList::setScriptByIndex(uint32 index) {
 	currentLine    = 0;
 	_currentScript = &entries[index]; // TODO assert if out of bounds
 
-	if (kDebugLevelScripts) {
+	if (Common::isDebugChannelEnabled(kDebugLevelScripts)) {
 		for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
 			debugC(kDebugLevelScripts,
 				"Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
