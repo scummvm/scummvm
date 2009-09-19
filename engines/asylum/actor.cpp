@@ -311,7 +311,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 
 	if (targetType) {
 		if (targetType == 1) {
-			int actionIdx = Shared.getScene()->getResources()->getActionAreaIndexById(targetId);
+			int actionIdx = Shared.getScene()->getResources()->getWorldStats()->getActionAreaIndexById(targetId);
 			if (actionIdx == -1) {
 				warning("No ActionArea found for id %d", targetId);
 				return;
@@ -331,13 +331,13 @@ void Actor::faceTarget(int targetId, int targetType) {
 			}
 		}
 	} else {
-		int barrierIdx = Shared.getScene()->getResources()->getBarrierIndexById(targetId);
+		int barrierIdx = Shared.getScene()->getResources()->getWorldStats()->getBarrierIndexById(targetId);
 		if (barrierIdx == -1) {
 			warning("No Barrier found for id %d", targetId);
 			return;
 		}
 
-		Barrier *barrier = Shared.getScene()->getResources()->getBarrierByIndex(barrierIdx);
+		Barrier *barrier = Shared.getScene()->getResources()->getWorldStats()->getBarrierByIndex(barrierIdx);
 		GraphicResource *gra = new GraphicResource(_resPack, barrier->resId);
 
 		// FIXME
