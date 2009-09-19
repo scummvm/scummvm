@@ -944,7 +944,7 @@ int Scene::drawBarriers() {
 // ----------------------------------
 
 void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
-    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+    WorldStats *ws = _sceneResource->getWorldStats();
 
     Common::Rect screenRect(ws->targetX, ws->targetY, ws->targetX + 640, ws->targetY + 480);
 	Common::Rect animRect(x, y, x + surface->w, y + surface->h);
@@ -979,7 +979,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 // ----------------------------------
 
 void Scene::debugScreenScrolling(GraphicFrame *bg) {
-    WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+    WorldStats *ws = _sceneResource->getWorldStats();
 
 	// Horizontal scrolling
 	if (_cursor->x() < SCREEN_EDGES && ws->targetX >= SCROLL_STEP)
