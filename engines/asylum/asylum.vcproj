@@ -53,5 +53,7 @@
 		<File RelativePath="..\..\engines\asylum\text.h" />
 		<File RelativePath="..\..\engines\asylum\video.cpp" />
 		<File RelativePath="..\..\engines\asylum\video.h" />
+		<File RelativePath="..\..\engines\asylum\worldstats.cpp" />
+		<File RelativePath="..\..\engines\asylum\worldstats.h" />
 	</Files>
 </VisualStudioProject>
