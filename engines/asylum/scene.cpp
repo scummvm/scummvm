@@ -776,7 +776,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	for (uint32 a = 0; a < worldStats->numActions; a++) {
 		if (worldStats->actions[a].actionType == 0) {
 			ActionArea *area = &worldStats->actions[a];
-			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[area->polyIdx];
+			PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[area->polyIdx];
 			if (Shared.pointInPoly(&poly, getActor()->x, getActor()->y)) {
 				debugShowWalkRegion(&poly);
 				//break;
@@ -831,7 +831,7 @@ void Scene::OLD_UPDATE(WorldStats *worldStats) {
 	if (curBarrier < 0) {
 		// Update cursor if it's in a polygon hotspot
 		for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
-			PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
+			PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[p];
 			if (poly.boundingRect.contains(_cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
 				if (Shared.pointInPoly(&poly, _cursor->x() + worldStats->targetX, _cursor->y() + worldStats->targetY)) {
 					curHotspot = (int32)p;
@@ -1019,7 +1019,7 @@ void Scene::debugShowWalkRegion(PolyDefinitions *poly) {
 void Scene::debugShowPolygons() {
 	for (uint32 p = 0; p < _sceneResource->getGamePolygons()->numEntries; p++) {
 		Graphics::Surface surface;
-		PolyDefinitions poly = _sceneResource->getGamePolygons()->polygons[p];
+		PolyDefinitions poly = _sceneResource->getGamePolygons()->entries[p];
 		surface.create(poly.boundingRect.right - poly.boundingRect.left + 1,
 				poly.boundingRect.bottom - poly.boundingRect.top + 1,
 				1);

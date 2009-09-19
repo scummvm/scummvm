@@ -246,7 +246,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	for (uint32 a = 0; a < ws->numActions; a++) {
 		if (ws->actions[a].actionType == 0) {
 			area = &ws->actions[a];
-			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
+			PolyDefinitions poly = Shared.getScene()->getResources()->getGamePolygons()->entries[area->polyIdx];
             if (Shared.pointInPoly(&poly, x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
@@ -264,7 +264,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	// walkable regions
 	for (int i = 0; i < areaPtr; i++) {
 		area = &ws->actions[availableAreas[i]];
-		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->polygons[area->polyIdx];
+		PolyDefinitions *region = &Shared.getScene()->getResources()->getGamePolygons()->entries[area->polyIdx];
 		if (Shared.pointInPoly(region, newX, newY)) {
 			x = newX;
 			y = newY;
@@ -318,7 +318,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 			}
 
 			uint32 polyIdx = Shared.getScene()->getResources()->getWorldStats()->actions[actionIdx].polyIdx;
-			PolyDefinitions *poly = &Shared.getScene()->getResources()->getGamePolygons()->polygons[polyIdx];
+			PolyDefinitions *poly = &Shared.getScene()->getResources()->getGamePolygons()->entries[polyIdx];
 
 			newX2 = poly->boundingRect.left + (poly->boundingRect.right - poly->boundingRect.left) / 2;
 			newY2 = poly->boundingRect.top + (poly->boundingRect.bottom - poly->boundingRect.top) / 2;
