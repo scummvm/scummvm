@@ -154,9 +154,9 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 void AsylumEngine::playIntro() {
 	_video->playVideo(1, kSubtitlesOn);
-	if (_scene->getResources()->getWorldStats()->musicCurrentResId != 0xFFFFFD66)
+	if (_scene->worldstats()->musicCurrentResId != 0xFFFFFD66)
 		_sound->playMusic(_scene->getMusicPack(),
-						  _scene->getResources()->getWorldStats()->musicCurrentResId);
+						  _scene->worldstats()->musicCurrentResId);
 
 	_screen->clearScreen();
 

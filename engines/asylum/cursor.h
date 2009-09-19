@@ -26,7 +26,8 @@
 #ifndef ASYLUM_CURSOR_H_
 #define ASYLUM_CURSOR_H_
 
-#include "asylum/sceneres.h"
+#include "asylum/respack.h"
+#include "asylum/worldstats.h"
 
 namespace Asylum {
 

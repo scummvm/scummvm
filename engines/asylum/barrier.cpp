@@ -73,7 +73,7 @@ uint32 Barrier::getRandomId() {
 }
 
 bool Barrier::onscreen() {
-	WorldStats *ws = Shared.getScene()->getResources()->getWorldStats();
+	WorldStats *ws = Shared.getScene()->worldstats();
 	Common::Rect screenRect  = Common::Rect(ws->xLeft, ws->yTop, ws->xLeft + 640, ws->yTop + 480);
 	Common::Rect barrierRect = boundingRect;
 	barrierRect.translate(x, y);

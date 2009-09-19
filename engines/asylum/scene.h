@@ -31,10 +31,13 @@
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
+#include "asylum/worldstats.h"
+#include "asylum/polygons.h"
+#include "asylum/actionlist.h"
 #include "asylum/text.h"
-#include "asylum/sceneres.h"
 #include "asylum/cursor.h"
 
+#define SCENE_FILE_MASK "scn.%03d"
 
 namespace Asylum {
 
@@ -43,14 +46,8 @@ class Sound;
 class Video;
 class Cursor;
 class Text;
-class SceneResource;
-class WorldStats;
 class BlowUpPuzzle;
-struct ActionDefinitions;
-struct PolyDefinitions;
 struct BarrierItem;
-
-//uint32 playerTypeTable[16] = {0, 0, 0, 0, 1, 0, 2, 0, 3, 0, 1, 1, 3, 0, 0, 0};
 
 class Scene {
 public:
@@ -65,14 +62,13 @@ public:
 	bool isActive()      { return _isActive; }
 	int  getSceneIndex() { return _sceneIdx; }
 	
+	// TODO roll into actionlist.cpp
 	ActionDefinitions* getDefaultActionList();
 	ActionDefinitions* getActionList(int actionListIndex);
-
 
 	Actor* getActor();
 
 	Cursor*          getCursor()       { return _cursor; }
-	SceneResource*   getResources()    { return _sceneResource; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
     ResourcePack*	 getMusicPack()    { return _musPack; }
     ResourcePack*	 getSpeechPack()   { return _speechPack; }
@@ -82,11 +78,17 @@ public:
     void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
     void setScenePosition(int x, int y);
 
+    WorldStats* worldstats() { return _ws; }
+    Polygons*   polygons()   { return _polygons; }
+    ActionList* actions()    { return _actions; }
+
 private:
-	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
+    uint8	   _sceneIdx;
+	WorldStats *_ws;
+	Polygons   *_polygons;
+	ActionList *_actions;
+
 	Cursor			*_cursor;
-	uint8	        _sceneIdx;
-	SceneResource	*_sceneResource;
     ResourcePack	*_resPack;
 	ResourcePack	*_speechPack;
 	ResourcePack	*_musPack;
@@ -97,8 +99,6 @@ private:
 	GraphicFrame	*_background;
 
 	bool	_walking;
-	//int32	_startX;
-	//int32	_startY;
 	bool	_leftClick;
 	bool	_rightButton;
 	bool	_isActive;
@@ -118,6 +118,8 @@ private:
     bool   isBarrierVisible(BarrierItem *barrier);
     bool   isBarrierOnScreen(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
+
+	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();

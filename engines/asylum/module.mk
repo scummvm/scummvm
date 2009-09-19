@@ -9,7 +9,6 @@ MODULE_OBJS := \
 	respack.o \
 	scene.o \
 	barrier.o \
-	sceneres.o \
 	screen.o \
 	sound.o \
 	text.o \
