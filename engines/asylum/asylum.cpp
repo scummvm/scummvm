@@ -90,7 +90,6 @@ Common::Error AsylumEngine::init() {
 
 	Shared.setScreen(_screen);
 	Shared.setSound(_sound);
-	Shared.setVideo(_video);
 
 	_introPlaying = false;
 
@@ -111,7 +110,7 @@ Common::Error AsylumEngine::go() {
 	// in the processActionList() method when the necessary action is fired.
 	// Once the blowup puzzle testing is removed from checkForEvent(), this
 	// can be removed as well.
-    _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR()); // this will be done by a Script command
+    _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
 
 	// XXX This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P

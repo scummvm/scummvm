@@ -32,7 +32,6 @@
 
 namespace Asylum {
 
-class Video;
 class Screen;
 class Sound;
 
@@ -50,10 +49,6 @@ class Sound;
  */
 class SharedResources: public Common::Singleton<SharedResources> {
 public:
-
-	void setVideo(Video* video) { _video = video; }
-	Video* getVideo() { return _video; }
-
 	void setScreen(Screen* screen) { _screen = screen; }
 	Screen* getScreen() { return _screen; }
 
@@ -70,7 +65,6 @@ private:
 	SharedResources();
 	~SharedResources();
 
-	Video   *_video;
 	Screen  *_screen;
 	Sound   *_sound;
 	Scene   *_scene;

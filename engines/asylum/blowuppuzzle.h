@@ -45,7 +45,7 @@ struct GraphicQueueItem;
 
 class BlowUpPuzzle {
 public:
-	BlowUpPuzzle();
+	BlowUpPuzzle(Scene *scene);
 	virtual ~BlowUpPuzzle();
 
     virtual void handleEvent(Common::Event *event, bool doUpdate){};
@@ -56,6 +56,7 @@ public:
 protected:
 	Common::Event *_ev;
 
+	Scene  *_scene;
 	Cursor *_cursor;
 	bool    _leftClickUp;
     bool    _leftClickDown;
@@ -92,7 +93,7 @@ const Common::Rect BlowUpPuzzleVCRPolies[10] = {
 
 class BlowUpPuzzleVCR : public BlowUpPuzzle {
 public:
-    BlowUpPuzzleVCR();
+    BlowUpPuzzleVCR(Scene *scene);
 	~BlowUpPuzzleVCR();
 
 	void handleEvent(Common::Event *event, bool doUpdate);

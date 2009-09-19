@@ -30,7 +30,7 @@
 
 namespace Asylum {
 
-BlowUpPuzzle::BlowUpPuzzle() {
+BlowUpPuzzle::BlowUpPuzzle(Scene *scene): _scene(scene) {
 }
 
 BlowUpPuzzle::~BlowUpPuzzle() {
@@ -38,7 +38,7 @@ BlowUpPuzzle::~BlowUpPuzzle() {
 
 // BlowUp Puzzle VCR ---------------------------------------------------------------------------------------------
 
-BlowUpPuzzleVCR::BlowUpPuzzleVCR() {
+BlowUpPuzzleVCR::BlowUpPuzzleVCR(Scene *scene): BlowUpPuzzle(scene) {
 	_leftClickUp	 = false;
     _leftClickDown	 = false;
     _rightClickDown  = false;
@@ -165,7 +165,7 @@ void BlowUpPuzzleVCR::update() {
 
         // TODO: fade palette to grey
       
-        Shared.getVideo()->playVideo(2, kSubtitlesOn);
+        _scene->vm()->video()->playVideo(2, kSubtitlesOn);
 
         _isAccomplished = false;
         _active = false;

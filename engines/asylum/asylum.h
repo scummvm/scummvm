@@ -78,6 +78,8 @@ public:
     bool isGameFlagSet(int flag);
     bool isGameFlagNotSet(int flag);
 
+    Video* video(){ return _video; }
+
 private:
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
