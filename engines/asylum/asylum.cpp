@@ -67,8 +67,6 @@ AsylumEngine::~AsylumEngine() {
 	delete _sound;
 	delete _screen;
 	delete _encounter;
-
-	free(_gameFlags);
 }
 
 Common::Error AsylumEngine::run() {
