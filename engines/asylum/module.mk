@@ -21,7 +21,8 @@ MODULE_OBJS := \
 	shared.o \
 	cursor.o \
 	polygons.o \
-	actionlist.o
+	actionlist.o \
+	worldstats.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_ASYLUM), DYNAMIC_PLUGIN)
