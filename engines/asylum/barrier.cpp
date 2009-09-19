@@ -44,9 +44,9 @@ bool Barrier::visible() {
 			uint32 flag  = gameFlags[f];
 
 			if (flag <= 0)
-				isSet = Shared.isGameFlagNotSet(flag); // -flag
+				isSet = Shared.getScene()->vm()->isGameFlagNotSet(flag); // -flag
 			else
-				isSet = Shared.isGameFlagSet(flag);
+				isSet = Shared.getScene()->vm()->isGameFlagSet(flag);
 
 			if(!isSet)
 				return false;

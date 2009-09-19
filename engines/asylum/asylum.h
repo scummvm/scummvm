@@ -72,6 +72,12 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
+    void setGameFlag(int flag);
+    void clearGameFlag(int flag);
+    void toggleGameFlag(int flag);
+    bool isGameFlagSet(int flag);
+    bool isGameFlagNotSet(int flag);
+
 private:
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
@@ -91,6 +97,8 @@ private:
 	Sound     *_sound;
 	Video     *_video;
 	Encounter *_encounter;
+
+	int _gameFlags[1512];
 
 	friend class Console;
 };

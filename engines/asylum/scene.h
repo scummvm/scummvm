@@ -52,7 +52,7 @@ struct BarrierItem;
 
 class Scene {
 public:
-	Scene(uint8 sceneIdx);
+	Scene(uint8 sceneIdx, AsylumEngine *vm);
 	~Scene();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
@@ -75,15 +75,17 @@ public:
     void setBlowUpPuzzle(BlowUpPuzzle* puzzle) { _blowUp = puzzle; }
     void setScenePosition(int x, int y);
 
-    WorldStats* worldstats() { return _ws; }
-    Polygons*   polygons()   { return _polygons; }
-    ActionList* actions()    { return _actions; }
+    AsylumEngine* vm()         { return _vm; }
+    WorldStats*   worldstats() { return _ws; }
+    Polygons*     polygons()   { return _polygons; }
+    ActionList*   actions()    { return _actions; }
 
 private:
-    uint8	   _sceneIdx;
-	WorldStats *_ws;
-	Polygons   *_polygons;
-	ActionList *_actions;
+    AsylumEngine *_vm;
+    uint8	     _sceneIdx;
+	WorldStats   *_ws;
+	Polygons     *_polygons;
+	ActionList   *_actions;
 
 	Cursor			*_cursor;
     ResourcePack	*_resPack;

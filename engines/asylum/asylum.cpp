@@ -53,6 +53,8 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
 
 	g_eventRec.registerRandomSource(_rnd, "asylum");
+
+	memset(_gameFlags, 0, 1512);
 }
 
 AsylumEngine::~AsylumEngine() {
@@ -65,6 +67,8 @@ AsylumEngine::~AsylumEngine() {
 	delete _sound;
 	delete _screen;
 	delete _encounter;
+
+	free(_gameFlags);
 }
 
 Common::Error AsylumEngine::run() {
@@ -86,7 +90,6 @@ Common::Error AsylumEngine::init() {
 	_mainMenu	= 0;
 	_scene		= 0;
 
-    Shared.setOSystem(_system);
 	Shared.setScreen(_screen);
 	Shared.setSound(_sound);
 	Shared.setVideo(_video);
@@ -103,7 +106,7 @@ Common::Error AsylumEngine::go() {
 	// TODO: if savegame exists on folder, than start NewGame()
 
 	// Set up the game's main scene
-	_scene = new Scene(5);
+	_scene = new Scene(5, this);
 	Shared.setScene(_scene);
 
 	// XXX This is just here for testing purposes. It is also defined
@@ -130,8 +133,8 @@ Common::Error AsylumEngine::go() {
 	//playIntro();
 
 	// Enter first scene
-	Shared.setGameFlag(4);
-	Shared.setGameFlag(12);
+	setGameFlag(4);
+	setGameFlag(12);
 	_scene->enterScene();
 
 	while (!shouldQuit()) {
@@ -160,8 +163,8 @@ void AsylumEngine::playIntro() {
 
 	_screen->clearScreen();
 
-	Shared.setGameFlag(4);
-	Shared.setGameFlag(12);
+	setGameFlag(4);
+	setGameFlag(12);
 
 	ResourcePack *introRes = new ResourcePack(18);
 
@@ -282,7 +285,7 @@ void AsylumEngine::processDelayedEvents() {
 		if (_scene)
 			delete _scene;
 
-		_scene = new Scene(sceneIdx);
+		_scene = new Scene(sceneIdx, this);
 		Shared.setScene(_scene);
 		_scene->enterScene();
 
@@ -290,5 +293,26 @@ void AsylumEngine::processDelayedEvents() {
 		_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
 	}
 }
+
+void AsylumEngine::setGameFlag(int flag) {
+	_gameFlags[flag / 32] |= 1 << flag % -32;
+}
+
+void AsylumEngine::clearGameFlag(int flag) {
+	_gameFlags[flag / 32] &= ~(1 << flag % -32);
+}
+
+void AsylumEngine::toggleGameFlag(int flag) {
+	_gameFlags[flag / 32] ^= 1 << flag % -32;
+}
+
+bool AsylumEngine::isGameFlagSet(int flag) {
+	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 != 0;
+}
+
+bool AsylumEngine::isGameFlagNotSet(int flag) {
+	return ((1 << flag % -32) & (unsigned int)_gameFlags[flag / 32]) >> flag % -32 == 0;
+}
+
 
 } // namespace Asylum

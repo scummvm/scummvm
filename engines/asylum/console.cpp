@@ -93,7 +93,7 @@ void Console::printActionAreaStats(ActionArea *a) {
 
 bool Console::cmdShowFlags(int argc, const char **argv) {
 	for (int i = 0; i < 1512; i++) {
-		if (Shared.isGameFlagSet(i)) {
+		if (_vm->isGameFlagSet(i)) {
 			DebugPrintf("Game Flag %d is Active\n", i);
 		}
 	}
@@ -106,8 +106,8 @@ bool Console::cmdToggleFlag(int argc, const char **argv) {
 		DebugPrintf("Enter a value between 0 and 1512\n");
 		return true;
 	}
-	Shared.toggleGameFlag(atoi(argv[1]));
-	DebugPrintf("Flag %d == %d\n", atoi(argv[1]), Shared.isGameFlagSet(atoi(argv[1])));
+	_vm->toggleGameFlag(atoi(argv[1]));
+	DebugPrintf("Flag %d == %d\n", atoi(argv[1]), _vm->isGameFlagSet(atoi(argv[1])));
 
 	return true;
 }
