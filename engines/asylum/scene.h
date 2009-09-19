@@ -109,7 +109,7 @@ private:
     int    updateScene();
     void   updateMouse();
     void   updateActor(uint32 actorIdx);
-    void   updateBarriers(WorldStats *worldStats);
+    void   updateBarriers();
     void   updateAmbientSounds();
     void   updateMusic();
     void   updateAdjustScreen();
@@ -127,7 +127,7 @@ private:
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
     // TODO: get rid of this
-    void OLD_UPDATE(WorldStats *worldStats);
+    void OLD_UPDATE();
     
 }; // end of class Scene
 

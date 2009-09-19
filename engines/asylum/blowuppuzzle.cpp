@@ -443,14 +443,12 @@ void BlowUpPuzzleVCR::updateCursorInPolyRegion() {
                 if(_cursor->currentFrame() != 2) { // reset cursor
                     _cursor->show();
                     _cursor->set(2);
-                    //_cursorStep = 1;
                     _cursor->animate();
                 }
             } else {
                 if(_cursor->currentFrame() != 0) { // reset cursor
                     _cursor->show();
                     _cursor->set(0);
-                    //_cursorStep = 1;
                     _cursor->animate();
                 }
             }
