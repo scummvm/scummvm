@@ -286,7 +286,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 	ty += 9;
 	if (color >= 0) {
 		drawPlainBox(x, ty, width, 4, color);
-		drawDoubleBorder(x, y, width, ty - y + 4, 2);
+		drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 1 : 2);
 	}
 }
 
@@ -331,9 +331,30 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	boxRect.clip(screenRect);
 
 	// Draw the filled rectangle
-	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
-	for (int i = 0; i < boxRect.height(); i++) {
-		memset(dest + i * 320, color, boxRect.width());
+	//
+	// Since the Amiga version uses a transparent boxes we need to decide whether:
+	//  - we draw a box, that should be the case then both width and height is greater than 1
+	//  - we draw a line, that should be the case then either width or height is 1
+	// When we draw a box and we're running an Amiga version we do use the special code to make
+	// the boxes transparent.
+	// When on the other hand we are drawing a line or are not running an Amiga version, we will
+	// always use the code, which simply fills the rect.
+	//
+	// TODO: Think over whether this is the nicest / best solution we can find for handling
+	// the transparency for Amiga boxes.
+	if (g_cine->getPlatform() == Common::kPlatformAmiga && width > 1 && height > 1) {
+		byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+		const int lineAdd = 320 - boxRect.width();
+		for (int i = 0; i < boxRect.height(); ++i) {
+			for (int j = 0; j < boxRect.width(); ++j)
+				*dest++ += 16;
+			dest += lineAdd;
+		}
+	} else {
+		byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+		for (int i = 0; i < boxRect.height(); i++) {
+			memset(dest + i * 320, color, boxRect.width());
+		}
 	}
 }
 
@@ -783,7 +804,7 @@ void FWRenderer::drawMenu(const CommandeType *items, unsigned int height, int x,
 	}
 
 	drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 1 : 2);
 }
 
 /*! \brief Draw text input box
@@ -856,7 +877,7 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 
 	ty += 9;
 	drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, 2);
+	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 1 : 2);
 }
 
 /*! \brief Fade to black
