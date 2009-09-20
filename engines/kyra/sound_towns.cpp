@@ -1608,7 +1608,7 @@ public:
 	void writeReg(uint8 part, uint8 regAddress, uint8 value);
 
 	// AudioStream interface
-	int inline readBuffer(int16 *buffer, const int numSamples);
+	int readBuffer(int16 *buffer, const int numSamples);
 	bool isStereo() const { return true; }
 	bool endOfData() const { return false; }
 	int getRate() const { return _mixer->getOutputRate(); }
@@ -1622,18 +1622,14 @@ protected:
 	virtual void timerCallbackA() = 0;
 	virtual void timerCallbackB() = 0;
 
-	void lock() { _mutex.lock(); }
-	void unlock() { _mutex.unlock(); }
-
 	const int _numChan;
 	const int _numSSG;
 	const bool _hasPercussion;
 
+	Common::Mutex _mutex;
 private:
 	void nextTick(int32 *buffer, uint32 bufferSize);
 	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
-
-	Common::Mutex _mutex;
 
 	struct ChanInternal {
 		uint16 frqTemp;
@@ -2941,6 +2937,7 @@ TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
 }
 
 TownsPC98_OpnCore::~TownsPC98_OpnCore() {
+	Common::StackLock lock(_mutex);
 	_mixer->stopHandle(_soundHandle);
 	delete _ssg;
 	delete _prc;
@@ -3176,7 +3173,9 @@ void TownsPC98_OpnCore::writeReg(uint8 part, uint8 regAddress, uint8 value) {
 	}
 }
 
-int inline TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
+int TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
+	Common::StackLock lock(_mutex);
+
 	memset(buffer, 0, sizeof(int16) * numSamples);
 	int32 *tmp = new int32[numSamples];
 	int32 *tmpStart = tmp;
@@ -3184,7 +3183,6 @@ int inline TownsPC98_OpnCore::readBuffer(int16 *buffer, const int numSamples) {
 	int32 samplesLeft = numSamples >> 1;
 
 	while (samplesLeft) {
-
 		int32 render = samplesLeft;
 
 		for (int i = 0; i < 2; i++) {
@@ -3509,8 +3507,7 @@ void TownsPC98_OpnDriver::loadMusicData(uint8 *data, bool loadPaused) {
 
 	reset();
 
-	lock();
-
+	Common::StackLock lock(_mutex);
 	uint8 *src_a = _trackPtr = _musicBuffer = data;
 
 	for (uint8 i = 0; i < 3; i++) {
@@ -3539,8 +3536,6 @@ void TownsPC98_OpnDriver::loadMusicData(uint8 *data, bool loadPaused) {
 	_finishedChannelsFlag = _finishedSSGFlag = _finishedRhythmFlag = 0;
 
 	_musicPlaying = (loadPaused ? false : true);
-
-	unlock();
 }
 
 void TownsPC98_OpnDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
@@ -3559,18 +3554,16 @@ void TownsPC98_OpnDriver::loadSoundEffectData(uint8 *data, uint8 trackNum) {
 		return;
 	}
 
-	lock();
+	Common::StackLock lock(_mutex);
 	_sfxData = _sfxBuffer = data;
 	_sfxOffsets[0] = READ_LE_UINT16(&_sfxData[(trackNum << 2)]);
 	_sfxOffsets[1] = READ_LE_UINT16(&_sfxData[(trackNum << 2) + 2]);
 	_sfxPlaying = true;
 	_finishedSfxFlag = 0;
-	unlock();
 }
 
 void TownsPC98_OpnDriver::reset() {
-	lock();
-
+	Common::StackLock lock(_mutex);
 	TownsPC98_OpnCore::reset();
 
 	for (int i = 0; i < _numChan; i++)
@@ -3594,16 +3587,13 @@ void TownsPC98_OpnDriver::reset() {
 	_looping = 0;
 	_musicTickCounter = 0;
 	_sfxData = 0;
-
-	unlock();
 }
 
 void TownsPC98_OpnDriver::fadeStep() {
 	if (!_musicPlaying)
 		return;
 
-	lock();
-
+	Common::StackLock lock(_mutex);
 	for (int j = 0; j < _numChan; j++) {
 		if (_updateChannelsFlag & _channels[j]->_idFlag)
 			_channels[j]->fadeStep();
@@ -3624,13 +3614,9 @@ void TownsPC98_OpnDriver::fadeStep() {
 		if (!--_fading)
 			reset();
 	}
-
-	unlock();
 }
 
 void TownsPC98_OpnDriver::timerCallbackB() {
-	lock();
-
 	_sfxOffs = 0;
 
 	if (_musicPlaying) {
@@ -3659,13 +3645,9 @@ void TownsPC98_OpnDriver::timerCallbackB() {
 
 	if (_finishedChannelsFlag == _updateChannelsFlag && _finishedSSGFlag == _updateSSGFlag && _finishedRhythmFlag == _updateRhythmFlag)
 		_musicPlaying = false;
-
-	unlock();
 }
 
 void TownsPC98_OpnDriver::timerCallbackA() {
-	lock();
-
 	if (_sfxChannels && _sfxPlaying) {
 		if (_sfxData)
 			startSoundEffect();
@@ -3685,8 +3667,6 @@ void TownsPC98_OpnDriver::timerCallbackA() {
 
 	if (_finishedSfxFlag == _updateSfxFlag)
 		_sfxPlaying = false;
-
-	unlock();
 }
 
 void TownsPC98_OpnDriver::setMusicTempo(uint8 tempo) {
