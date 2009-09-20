@@ -96,6 +96,14 @@ public:
 	void playMusic(uint resId);
 	void stopMusic();
 
+	/**
+	 * Check if the buffered sound sample that matches the provided id currently
+	 * has an active handle.
+	 *
+	 * isPlaying() only manages sound samples, and not
+	 * music or speech, as those resources aren't managed beyond simple
+	 * start/stop requests.
+	 */
 	bool isPlaying(uint resId);
 
 private:
@@ -110,6 +118,10 @@ private:
 
 	Common::Array<SoundBufferItem> _soundBuffer;
 
+	/**
+	 * Find the index within the _soundBuffer array of the
+	 * sound sample with provided id.
+	 */
 	int  getBufferPosition(uint32 resId);
 	void playSoundData(Audio::SoundHandle *handle, byte *soundData, uint32 soundDataLength, bool loop = false, int vol = 0, int pan = 0);
 };
