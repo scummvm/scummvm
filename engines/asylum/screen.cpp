@@ -114,19 +114,20 @@ void Screen::clearScreen() {
     _vm->_system->fillScreen(0);
 }
 
-void Screen::addGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority) {
+void Screen::addGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority) {
     GraphicQueueItem item;
-    item.resId = redId;
+    item.resId = resId;
     item.x = x;
     item.y = y;
     item.frameIdx = frameIdx;
     item.flags = flags;
+    item.transTableNum = transTableNum;
     item.priority = priority;
 
     _queueItems.push_back(item);
 }
 
-void Screen::addCrossFadeGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority) {
+void Screen::addCrossFadeGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority) {
     
 }
 

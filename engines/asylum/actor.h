@@ -190,7 +190,7 @@ public:
 	uint32		 field_3C;
 	uint32		 updateType;
 	uint32		 field_44;
-	uint32		 field_48;
+	uint32		 priority;
 	uint32		 flags;
 	uint32		 field_50;
 	uint32		 field_54;
@@ -222,7 +222,19 @@ public:
 	uint32		 soundResId; // field_93C
 	uint32       field_940;
 	uint32       field_944;
-	// TODO field_948 till field_978
+    uint32       field_948;
+    uint32       field_94C;
+    uint32       field_950;
+    uint32       field_954;
+    uint32       field_958;
+    uint32       field_95C;
+    uint32       field_960;
+    uint32       field_964;
+    uint32       field_968;
+    uint32       field_96C;
+    uint32       field_970;
+    uint32       field_974;
+    uint32       field_978;
 	uint32		 actionIdx1;
 	// TODO field_980 till field_9A0
 

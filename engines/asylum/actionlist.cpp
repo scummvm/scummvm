@@ -586,7 +586,7 @@ int kDisableActor(ActionCommand *cmd, Scene *scn) {
 		actorIndex = cmd->param1;
 
 	// TODO Finish implementing this function
-	scn->getActor()->update_4072A0(actorIndex);
+	//scn->getActor()->update_4072A0(actorIndex);
 
 	return -1;
 }

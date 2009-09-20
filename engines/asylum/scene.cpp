@@ -929,7 +929,7 @@ int Scene::drawScene() {
 	    //debugScreenScrolling(bg);
 
         // TODO: prepare Actors and Barriers draw
-        // TODO: draw actors
+        drawActors();
         drawBarriers();
         // TODO: draw main actor stuff
 
@@ -937,6 +937,45 @@ int Scene::drawScene() {
         
         // TODO: we must get rid of this
         OLD_UPDATE();
+    }
+
+    return 1;
+}
+
+void Scene::getActorPosition(Actor *actor, Common::Point *pt) { 
+    pt->x = actor->x1 - _ws->xLeft;
+    pt->y = actor->y1 - _ws->yTop;
+}
+
+int Scene::drawActors() {
+    
+    if (_ws->numActors > 0)
+    {
+        Common::Point pt;
+        for (uint32 a = 0; a < _ws->numActors; a++) {
+            Actor *actor = &_ws->actors[a];
+
+            if ((actor->flags & 0xFF) & 1) { // check this mask
+                getActorPosition(actor, &pt);
+                //pt.x += actor->x;
+                //pt.y += actor->y;
+
+                uint32 frameNum = actor->frameNum;
+                if (actor->frameNum >= actor->frameCount) {
+                    frameNum = 2 * actor->frameCount - actor->frameNum - 1;
+                }
+
+                if ((actor->flags & 0xFF) & 2) {
+                    // TODO: sub_40AC10
+                    
+                    
+
+                } else {
+                    // TODO: get flag value from character_DeadSarah_sub_40A140
+                    _vm->screen()->addGraphicToQueue(actor->grResId, frameNum, pt.x, pt.y, ((actor->direction < 5) - 1) & 2, actor->field_96C, actor->priority);
+                }
+            }
+        }
     }
 
     return 1;
@@ -1077,6 +1116,24 @@ void Scene::debugShowBarriers() {
 					1);
 			surface.frameRect(b.boundingRect, 0x22);
 			copyToBackBufferClipped(&surface, b.x, b.y);
+		}
+
+		surface.free();
+	}
+}
+
+// BARRIER DEBUGGING
+void Scene::debugShowActors() {
+	for (uint32 p = 0; p < _ws->numActors; p++) {
+		Graphics::Surface surface;
+		Actor a = _ws->actors[p];
+
+		if (a.flags & 2) {
+			surface.create(a.boundingRect.right - a.boundingRect.left + 1,
+					a.boundingRect.bottom - a.boundingRect.top + 1,
+					1);
+			surface.frameRect(a.boundingRect, 0x22);
+			copyToBackBufferClipped(&surface, a.x, a.y);
 		}
 
 		surface.free();
