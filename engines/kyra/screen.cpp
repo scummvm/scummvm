@@ -1203,15 +1203,23 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 					break;
 			}
 
-			if (c <= 0x7F || !_useSJIS) {
+			if (!_useSJIS) {
 				drawCharANSI(c, x, y);
 				charHeight = charHeightFnt;
 			} else {
-				c = READ_LE_UINT16(str - 1);
-				++str;
-				charWidth = getCharWidth(c);
-				charHeight = _sjisFont->getFontHeight() >> 1;
-				drawCharSJIS(c, x, y);
+				if (c <= 0x7F) {
+					// draw ANSI chars through the setup font
+					drawCharANSI(c, x, y);
+					charHeight = charHeightFnt;
+				} else if (c >= 0xA1 && c <= 0xDF) {
+					warning("Use of unsupported half-width katakana %.2X", c);
+				} else {
+					c = READ_LE_UINT16(str - 1);
+					++str;
+					charWidth = getCharWidth(c);
+					charHeight = _sjisFont->getFontHeight() >> 1;
+					drawCharSJIS(c, x, y);
+				}
 			}
 
 			x += charWidth;
