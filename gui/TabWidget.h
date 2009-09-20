@@ -76,6 +76,10 @@ public:
 	 */
 	void removeTab(int tabID);
 
+	int getActiveTab() {
+		return _activeTab;
+	}
+
 	/**
 	 * Set the active tab by specifying a valid tab ID.
 	 * setActiveTab changes the value of _firstWidget. This means new
