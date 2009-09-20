@@ -20,12 +20,12 @@
  *
  */
 
+#include <errno.h>
 #include <network.h>
 #include <gfx/gfx.h>
 
 #include "common/config-manager.h"
 #include "gui/dialog.h"
-#include "gui/TabWidget.h"
 #include "backends/fs/wii/wii-fs-factory.h"
 
 #include "options.h"
@@ -45,71 +45,71 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, "Ok", 'k');
 	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, "Cancel", 'c');
 
-	TabWidget *tab = new TabWidget(this, 0, 0, _w, _h - 54);
+	_tab = new TabWidget(this, 0, 0, _w, _h - 54);
 
-	int tabVideo = tab->addTab("Video");
+	_tabVideo = _tab->addTab("Video");
 
-	new StaticTextWidget(tab, 16, 16, 128, 16,
+	new StaticTextWidget(_tab, 16, 16, 128, 16,
 							"Current video mode:", Graphics::kTextAlignRight);
-	new StaticTextWidget(tab, 160, 16, 128, 16,
+	new StaticTextWidget(_tab, 160, 16, 128, 16,
 							_doubleStrike ? "Double-strike" : "Default",
 							Graphics::kTextAlignLeft);
 
-	new StaticTextWidget(tab, 16, 48, 128, 16,
+	new StaticTextWidget(_tab, 16, 48, 128, 16,
 							"Horizontal underscan:", Graphics::kTextAlignRight);
-	_sliderUnderscanX = new SliderWidget(tab, 160, 47, 128, 18, 'x');
+	_sliderUnderscanX = new SliderWidget(_tab, 160, 47, 128, 18, 'x');
 	_sliderUnderscanX->setMinValue(0);
 	_sliderUnderscanX->setMaxValue(32);
 
-	new StaticTextWidget(tab, 16, 80, 128, 16,
+	new StaticTextWidget(_tab, 16, 80, 128, 16,
 							"Vertical underscan:", Graphics::kTextAlignRight);
-	_sliderUnderscanY = new SliderWidget(tab, 160, 79, 128, 18, 'y');
+	_sliderUnderscanY = new SliderWidget(_tab, 160, 79, 128, 18, 'y');
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
 
 #ifdef USE_WII_DI
-	tab->addTab("DVD");
+	_tabDVD = _tab->addTab("DVD");
 
-	new StaticTextWidget(tab, 16, 16, 64, 16,
+	new StaticTextWidget(_tab, 16, 16, 64, 16,
 							"Status:", Graphics::kTextAlignRight);
-	_textDVDStatus = new StaticTextWidget(tab, 96, 16, 192, 16, "Unknown",
+	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 192, 16, "Unknown",
 											Graphics::kTextAlignLeft);
 
-	new ButtonWidget(tab, 16, 48, 108, 24, "Mount DVD", 'mdvd');
-	new ButtonWidget(tab, 140, 48, 108, 24, "Unmount DVD", 'udvd');
+	new ButtonWidget(_tab, 16, 48, 108, 24, "Mount DVD", 'mdvd');
+	new ButtonWidget(_tab, 140, 48, 108, 24, "Unmount DVD", 'udvd');
 #endif
 
 #ifdef USE_WII_SMB
-	tab->addTab("SMB");
+	_tabSMB = _tab->addTab("SMB");
 
-	new StaticTextWidget(tab, 16, 16, 64, 16,
+	new StaticTextWidget(_tab, 16, 16, 64, 16,
 							"Status:", Graphics::kTextAlignRight);
-	_textSMBStatus = new StaticTextWidget(tab, 96, 16, 192, 16, "Unknown",
+	_textSMBStatus = new StaticTextWidget(_tab, 96, 16, 192, 16, "Unknown",
 											Graphics::kTextAlignLeft);
 
-	new StaticTextWidget(tab, 16, 52, 64, 16,
+	new StaticTextWidget(_tab, 16, 52, 64, 16,
 							"Server:", Graphics::kTextAlignRight);
-	_editSMBServer = new EditTextWidget(tab, 96, 48, _w - 96 - 32, 24, "");
+	_editSMBServer = new EditTextWidget(_tab, 96, 48, _w - 96 - 32, 24, "");
 
-	new StaticTextWidget(tab, 16, 92, 64, 16,
+	new StaticTextWidget(_tab, 16, 92, 64, 16,
 							"Share:", Graphics::kTextAlignRight);
-	_editSMBShare = new EditTextWidget(tab, 96, 88, _w - 96 - 32, 24, "");
+	_editSMBShare = new EditTextWidget(_tab, 96, 88, _w - 96 - 32, 24, "");
 
-	new StaticTextWidget(tab, 16, 132, 64, 16,
+	new StaticTextWidget(_tab, 16, 132, 64, 16,
 							"Username:", Graphics::kTextAlignRight);
-	_editSMBUsername = new EditTextWidget(tab, 96, 128, _w - 96 - 32, 24, "");
+	_editSMBUsername = new EditTextWidget(_tab, 96, 128, _w - 96 - 32, 24, "");
 
-	new StaticTextWidget(tab, 16, 172, 64, 16,
+	new StaticTextWidget(_tab, 16, 172, 64, 16,
 							"Password:", Graphics::kTextAlignRight);
-	_editSMBPassword = new EditTextWidget(tab, 96, 168, _w - 96 - 32, 24, "");
+	_editSMBPassword = new EditTextWidget(_tab, 96, 168, _w - 96 - 32, 24, "");
 
-	new ButtonWidget(tab, 16, 208, 108, 24, "Init network", 'net');
+	new ButtonWidget(_tab, 16, 208, 108, 24, "Init network", 'net');
 
-	new ButtonWidget(tab, 140, 208, 108, 24, "Mount SMB", 'msmb');
-	new ButtonWidget(tab, 264, 208, 108, 24, "Unmount SMB", 'usmb');
+	new ButtonWidget(_tab, 140, 208, 108, 24, "Mount SMB", 'msmb');
+	new ButtonWidget(_tab, 264, 208, 108, 24, "Unmount SMB", 'usmb');
 #endif
 
-	tab->setActiveTab(tabVideo);
+	_tab->setActiveTab(_tabVideo);
 
 	load();
 }
@@ -118,26 +118,52 @@ WiiOptionsDialog::~WiiOptionsDialog() {
 }
 
 void WiiOptionsDialog::handleTickle() {
+	WiiFilesystemFactory &fsf = WiiFilesystemFactory::instance();
+
+	int tab = _tab->getActiveTab();
+
 #ifdef USE_WII_DI
-	if (WiiFilesystemFactory::instance().isMounted(WiiFilesystemFactory::kDVD))
-		_textDVDStatus->setLabel("Mounted");
-	else
-		_textDVDStatus->setLabel("Not mounted");
-#endif
-#ifdef USE_WII_SMB
-	s32 net = net_get_status();
-	String label;
-
-	if (net) {
-		label = String::printf("Network not initialsed (%d)\n", net);
-	} else {
-		if (WiiFilesystemFactory::instance().isMounted(WiiFilesystemFactory::kSMB))
-			label = "Mounted";
+	if (tab == _tabDVD) {
+		if (fsf.isMounted(WiiFilesystemFactory::kDVD))
+			_textDVDStatus->setLabel("Mounted");
 		else
-			label = "Not mounted";
+			_textDVDStatus->setLabel("Not mounted");
 	}
+#endif
 
-	_textSMBStatus->setLabel(label);
+#ifdef USE_WII_SMB
+	if (tab == _tabSMB) {
+		s32 status = net_get_status();
+		String label;
+
+		switch (status) {
+		case 0:
+			if (fsf.isMounted(WiiFilesystemFactory::kSMB))
+				label = "Network up, share mounted";
+			else
+				label = "Network up, share not mounted";
+
+			break;
+
+		case -ENETDOWN:
+			label = "Network down";
+			break;
+
+		case -EBUSY:
+			label = "Initialising network";
+			break;
+
+		case -ETIMEDOUT:
+			label = "Timeout while initialising network";
+			break;
+
+		default:
+			label = String::printf("Network not initialsed (%d)", status);
+			break;
+		}
+
+		_textSMBStatus->setLabel(label);
+	}
 #endif
 
 	Dialog::handleTickle();

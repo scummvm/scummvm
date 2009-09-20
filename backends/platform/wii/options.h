@@ -25,6 +25,7 @@
 
 #include "common/str.h"
 #include "gui/dialog.h"
+#include "gui/TabWidget.h"
 #include "gui/EditTextWidget.h"
 
 using namespace GUI;
@@ -45,14 +46,19 @@ private:
 	String _strUnderscanX;
 	String _strUnderscanY;
 
+	TabWidget *_tab;
+
+	int _tabVideo;
 	SliderWidget *_sliderUnderscanX;
 	SliderWidget *_sliderUnderscanY;
 
 #ifdef USE_WII_DI
+	int _tabDVD;
 	StaticTextWidget *_textDVDStatus;
 #endif
 
 #ifdef USE_WII_SMB
+	int _tabSMB;
 	StaticTextWidget *_textNetworkStatus;
 	StaticTextWidget *_textSMBStatus;
 	EditTextWidget *_editSMBServer;
