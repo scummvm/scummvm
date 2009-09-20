@@ -971,13 +971,12 @@ void LoLEngine::writeSettings() {
 		_flags.lang = Common::DE_DEU;
 		break;
 
-	case 3:
-		_flags.lang = Common::JA_JPN;
-		break;
-
 	case 0:
 	default:
-		_flags.lang = Common::EN_ANY;
+		if (_flags.platform == Common::kPlatformPC98)
+			_flags.lang = Common::JA_JPN;
+		else
+			_flags.lang = Common::EN_ANY;
 	}
 
 	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
