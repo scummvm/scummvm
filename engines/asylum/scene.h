@@ -114,16 +114,19 @@ private:
     void   updateMusic();
     void   updateAdjustScreen();
     int    drawScene();
+    int    drawActors();
     int    drawBarriers();
     bool   isBarrierVisible(BarrierItem *barrier);
     bool   isBarrierOnScreen(BarrierItem *barrier);
     uint32 getRandomResId(BarrierItem *barrier);
+    void   getActorPosition(Actor *actor, Common::Point *pt);
 
 	void copyToBackBufferClipped(Graphics::Surface *surface, int x, int y);
 
 	void debugScreenScrolling(GraphicFrame *bg);
 	void debugShowPolygons();
 	void debugShowBarriers();
+    void debugShowActors();
 	void debugShowWalkRegion(PolyDefinitions *poly);
 
     // TODO: get rid of this

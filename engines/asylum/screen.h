@@ -61,8 +61,8 @@ public:
     void drawWideScreen(int16 barSize);
     void clearScreen();
 
-    void addGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority);
-    void addCrossFadeGraphicToQueue(uint32 redId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority);
+    void addGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority);
+    void addCrossFadeGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority);
     void addGraphicToQueue(GraphicQueueItem item);
     void drawGraphicsInQueue();
     void clearGraphicsInQueue();

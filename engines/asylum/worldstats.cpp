@@ -281,7 +281,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	for (uint32 a = 0; a < numActors; a++) {
 		int i;
 		Actor actor;
-
+        
 		actor.x          = stream->readUint32LE();
 		actor.y          = stream->readUint32LE();
 		actor.grResId    = stream->readUint32LE();
@@ -302,7 +302,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		actor.field_3C   = stream->readUint32LE();
 		actor.updateType = stream->readUint32LE();
 		actor.field_44	 = stream->readUint32LE();
-		actor.field_48	 = stream->readUint32LE();
+		actor.priority	 = stream->readUint32LE();
 		actor.flags      = stream->readUint32LE();
 		actor.field_50   = stream->readUint32LE();
 		actor.field_54	 = stream->readUint32LE();
@@ -347,10 +347,21 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		actor.field_934  = stream->readUint32LE();
 		actor.field_938  = stream->readUint32LE();
 		actor.soundResId = stream->readUint32LE();
-
-		// TODO skip field_940 till field_978
-		stream->skip(0x3C);
-
+        actor.field_940  = stream->readUint32LE();
+        actor.field_944  = stream->readUint32LE();
+        actor.field_948  = stream->readUint32LE();
+        actor.field_94C  = stream->readUint32LE();
+        actor.field_950  = stream->readUint32LE();
+        actor.field_954  = stream->readUint32LE();
+        actor.field_958  = stream->readUint32LE();
+        actor.field_95C  = stream->readUint32LE();
+        actor.field_960  = stream->readUint32LE();
+        actor.field_964  = stream->readUint32LE();
+        actor.field_968  = stream->readUint32LE();
+        actor.field_96C  = stream->readUint32LE();
+        actor.field_970  = stream->readUint32LE();
+        actor.field_974  = stream->readUint32LE();
+        actor.field_978  = stream->readUint32LE();
 		actor.actionIdx1 = stream->readUint32LE();
 
 		// TODO skip field_980 till field_9A0

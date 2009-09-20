@@ -43,8 +43,8 @@ Actor::~Actor() {
 }
 
 void Actor::setPosition(uint32 targetX, uint32 targetY) {
-	boundingRect.left = targetX;
-	boundingRect.top  = targetY;
+	//boundingRect.left = targetX;
+	//boundingRect.top  = targetY;
 
 	x = targetX;
 	y = targetY;
