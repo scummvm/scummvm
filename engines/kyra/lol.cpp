@@ -1697,12 +1697,18 @@ void LoLEngine::setPaletteBrightness(const Palette &srcPal, int brightness, int 
 void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int brightness, int modifier) {
 	dst.copy(src);
 	if (_flags.use16ColorMode) {
-		if (!(brightness && modifier >= 0 && modifier < 8 && (_flagsTable[31] & 0x08)))
+		if (!brightness)
+			modifier = 0;
+		else if (modifier < 0 || modifier > 7 || (_flagsTable[31] & 0x08))
 			modifier = 8;
+		
 		modifier >>= 1;
 		if (modifier)
 			modifier--;
-		_blockBrightness = 16 * modifier;
+		if (modifier > 3)
+			modifier = 3;
+		_blockBrightness = modifier << 4;
+		_sceneUpdateRequired = true;
 
 	} else {
 		_screen->loadSpecialColors(dst);
@@ -1743,7 +1749,6 @@ void LoLEngine::createGfxTables() {
 		return;
 
 	if (_flags.use16ColorMode) {
-
 		_screen->loadPalette("lol.nol", _screen->getPalette(0));
 	} else {
 		Palette tpal(256);
@@ -3902,7 +3907,8 @@ void LoLEngine::displayAutomap() {
 	for (int i = 0; i < 109; i++)
 		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
 
-	_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
+	if (!_flags.use16ColorMode)
+		_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6PN.FNT");

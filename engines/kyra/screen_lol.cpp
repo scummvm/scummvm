@@ -165,29 +165,33 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	if (weight > 255)
 		weight = 255;
 
-	uint16 r = srcPal[opColor * 3];
-	uint16 g = srcPal[opColor * 3 + 1];
-	uint16 b = srcPal[opColor * 3 + 2];
+	uint8 *srt = new uint8[768];
+	memset(srt, 0x3f, 768);
+	memcpy(srt, srcPal.getData(), srcPal.getNumColors() * 3);
+	
+	uint16 r = srt[opColor * 3];
+	uint16 g = srt[opColor * 3 + 1];
+	uint16 b = srt[opColor * 3 + 2];
 
 	uint8 *d = ovl;
 	*d++ = 0;
 
-	for (int i = 1; i != srcPal.getNumColors() - 1; i++) {
-		uint16 a = srcPal[i * 3];
+	for (int i = 1; i != 255; i++) {
+		uint16 a = srt[i * 3];
 		uint8 dr = a - ((((a - r) * (weight >> 1)) << 1) >> 8);
-		a = srcPal[i * 3 + 1];
+		a = srt[i * 3 + 1];
 		uint8 dg = a - ((((a - g) * (weight >> 1)) << 1) >> 8);
-		a = srcPal[i * 3 + 2];
+		a = srt[i * 3 + 2];
 		uint8 db = a - ((((a - b) * (weight >> 1)) << 1) >> 8);
 
 		int l = opColor;
-		int m = 0x7fff;
-		int ii = 127;
+		int m = _use16ColorMode ? 0xffff : 0x7fff;
+		int ii = _use16ColorMode ? 255 : 127;
 		int x = 1;
-		const uint8 *s = srcPal.getData() + 3;
+		const uint8 *s = srt + 3;
 
 		do {
-			if (i == x) {
+			if (!_use16ColorMode && i == x) {
 				s += 3;
 			} else {
 				int t = *s++ - dr;
@@ -203,8 +207,10 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 				}
 
 				if (c <= m) {
-					m = c;
-					l = x;
+					if (!_use16ColorMode || x != opColor && i != x) {
+						m = c;
+						l = x;
+					}
 				}
 			}
 			x++;
@@ -213,6 +219,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 		*d++ = l & 0xff;
 	}
 
+	delete []srt;
 	return ovl;
 }
 

@@ -940,6 +940,14 @@ void LoLEngine::drawDoor(uint8 *shape, uint8 *table, int index, int unk2, int w,
 	if (d > 7)
 		d = 7;
 
+	if (_flags.use16ColorMode) {
+		uint8 bb = _blockBrightness >> 4;
+		if (d > bb)
+			d -= bb;
+		else
+			d = 0;
+	}
+
 	uint8 *ovl = _screen->getLevelOverlay(d);
 	int doorScaledWitdh = _screen->getShapeScaledWidth(shape, _dmScaleW);
 
@@ -992,6 +1000,13 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 	if (tblValue == -1) {
 		r = 7 - ((r / 3) - 1);
 		r = CLIP(r, 0, 7);
+		if (_flags.use16ColorMode) {
+			uint8 bb = _blockBrightness >> 4;
+			if (r > bb)
+				r -= bb;
+			else
+				r = 0;
+		}
 		ovl = _screen->getLevelOverlay(r);
 	} else {
 		memset(tmpOvl + 1, tblValue, 15);

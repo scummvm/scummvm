@@ -348,7 +348,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	if (file) {
 		_lastSpecialColor = specialColor;
 		_lastSpecialColorWeight = weight;
-		strcpy(_lastSuppFile, file);
+		strcpy(_lastBlockDataFile, file);
 		if (palFile) {
 			strcpy(_lastOverridePalFile, palFile);
 			_lastOverridePalFilePtr = _lastOverridePalFile;
@@ -359,14 +359,11 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 	if (_flags.use16ColorMode) {
 		if (_lastSpecialColor == 0x66)
-			//_lastSpecialColor = stricmp(file, "YVEL2") ? 0xcc : 0x44;
-			_lastSpecialColor = scumm_stricmp(file, "YVEL2") ? 0xc : 0x4;
+			_lastSpecialColor = stricmp(file, "YVEL2") ? 0xcc : 0x44;
 		else if (_lastSpecialColor == 0x6b)
-			//_lastSpecialColor = 0xcc;
-			_lastSpecialColor = 0xc;
+			_lastSpecialColor = 0xcc;
 		else
-			//_lastSpecialColor = 0x44;
-			_lastSpecialColor = 0x4;
+			_lastSpecialColor = 0x44;
 	}
 
 	char fname[13];
@@ -374,7 +371,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	int tlen = 0;
 
 	if (_flags.use16ColorMode) {
-		snprintf(fname, sizeof(fname), "%s.VCF", _lastSuppFile);
+		snprintf(fname, sizeof(fname), "%s.VCF", _lastBlockDataFile);
 		_screen->loadBitmap(fname, 3, 3, 0);
 		v = _screen->getCPagePtr(2);
 		tlen = READ_LE_UINT16(v) << 5;
@@ -387,7 +384,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		memcpy(_vcfBlocks, v, tlen);
 	}
 
-	snprintf(fname, sizeof(fname), "%s.VCN", _lastSuppFile);
+	snprintf(fname, sizeof(fname), "%s.VCN", _lastBlockDataFile);
 	_screen->loadBitmap(fname, 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 	tlen = READ_LE_UINT16(v);
@@ -401,13 +398,12 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	_vcnBlocks = new uint8[vcnLen];
 
 	if (_flags.use16ColorMode) {
-		_screen->getPalette(0).fill(0, 16, 0xff);
 		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
 		/*static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 		Palette &pl = _screen->getPalette(0);
 		for (int i = 15; i >= 0; i--)			
-			pl.copy(pl, i, 1, colTable[i]);*/
+			pl.copy(pl, i, 1, i);*/
 
 	} else {
 		if (_vcnShift)
@@ -444,7 +440,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	memcpy(_vcnBlocks, v, vcnLen);
 	v += vcnLen;
 
-	snprintf(fname, sizeof(fname), "%s.VMP", _lastSuppFile);
+	snprintf(fname, sizeof(fname), "%s.VMP", _lastBlockDataFile);
 	_screen->loadBitmap(fname, 3, 3, 0);
 	v = _screen->getCPagePtr(2);
 
@@ -464,12 +460,13 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		weight = (weight > 0) ? (weight * 255) / 100 : 0;
 		_screen->generateLevelOverlay(_screen->getPalette(0), _screen->getLevelOverlay(i), _lastSpecialColor, weight);
 
-		for (int ii = 0; ii < 128; ii++) {
+		int l = _flags.use16ColorMode ? 256 : 128;
+		for (int ii = 0; ii < l; ii++) {
 			if (_screen->getLevelOverlay(i)[ii] == 255)
 				_screen->getLevelOverlay(i)[ii] = 0;
 		}
 
-		for (int ii = 128; ii < 256; ii++)
+		for (int ii = l; ii < 256; ii++)
 			_screen->getLevelOverlay(i)[ii] = ii & 0xff;
 	}
 
@@ -477,22 +474,21 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		_screen->getLevelOverlay(7)[i] = i & 0xff;
 
 	if (_flags.use16ColorMode) {
-		//_screen->getLevelOverlay(6)[0xee] = 0xee;
-		//if (_lastSpecialColor == 0x44)			
-		//	_screen->getLevelOverlay(5)[0xee] = 0xee;
-		_screen->getLevelOverlay(6)[0xe] = 0xe;
-		if (_lastSpecialColor == 0x4)			
-			_screen->getLevelOverlay(5)[0xe] = 0xe;
+		_screen->getLevelOverlay(6)[0xee] = 0xee;
+		if (_lastSpecialColor == 0x44)			
+			_screen->getLevelOverlay(5)[0xee] = 0xee;
 
 		for (int i = 0; i < 7; i++)
 			memcpy(_screen->getLevelOverlay(i), _screen->getLevelOverlay(i + 1), 256);
+
+		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
 		static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
 		
 		for (int i = 0; i < 8; i++) {
 			uint8 *pl = _screen->getLevelOverlay(7 - i);
-			for (int ii = 15; ii >= 0; ii--)
-				_vcnExpTable[((7 - i) << 4) + ii] = pl[colTable[ii]];
+			for (int ii = 0; ii < 16; ii++)
+				_vcnExpTable[(i << 4) + ii] = pl[colTable[ii]];
 		}
 	}
 
@@ -1496,9 +1492,13 @@ void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendG
 		gui_disableControls(controlMode);
 
 		if (fadeFlag) {
-			_screen->getPalette(3).copy(_screen->getPalette(0), 128);
-			_screen->loadSpecialColors(_screen->getPalette(3));
-			_screen->fadePalette(_screen->getPalette(3), 10);
+			if (_flags.use16ColorMode) {
+				setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+			} else {
+				_screen->getPalette(3).copy(_screen->getPalette(0), 128);
+				_screen->loadSpecialColors(_screen->getPalette(3));
+				_screen->fadePalette(_screen->getPalette(3), 10);
+			}
 			_screen->_fadeFlag = 0;
 		}
 
@@ -2086,10 +2086,26 @@ void LoLEngine::drawDecorations(int index) {
 				xOffs = _levelShapeProperties[l].shapeX[shpIx];
 				yOffs = _levelShapeProperties[l].shapeY[shpIx];
 				shpIx = _dscOvlMap[shpIx];
-				ovl = _screen->getLevelOverlay(ovlIndex);
+				int ov = ovlIndex;
+				if (_flags.use16ColorMode) {
+					uint8 bb = _blockBrightness >> 4;
+					if (ov > bb)
+						ov -= bb;
+						else
+						ov = 0;
+				}
+				ovl = _screen->getLevelOverlay(ov);
 			} else if (_levelShapeProperties[l].shapeIndex[shpIx] != 0xffff) {
 				scaleW = scaleH = 0x100;
-				ovl = _screen->getLevelOverlay(7);
+				int ov = 7;
+				if (_flags.use16ColorMode) {
+					uint8 bb = _blockBrightness >> 4;
+					if (ov > bb)
+						ov -= bb;
+						else
+						ov = 0;
+				}
+				ovl = _screen->getLevelOverlay(ov);
 			}
 
 			if (_levelShapeProperties[l].shapeIndex[shpIx] != 0xffff) {

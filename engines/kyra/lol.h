@@ -1095,7 +1095,7 @@ private:
 	uint16 _specialGuiShapeY;
 	uint16 _specialGuiShapeMirrorFlag;
 
-	char _lastSuppFile[12];
+	char _lastBlockDataFile[12];
 	char _lastOverridePalFile[12];
 	char *_lastOverridePalFilePtr;
 	int _lastSpecialColor;
