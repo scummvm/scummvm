@@ -168,9 +168,9 @@ public:
 	void setWalkArea(ActionArea *target);
 	void setAction(int action);
 	void setActionByIndex(int index);
-	void drawActorAt(uint16 curX, uint16 curY);
+	void drawActorAt(uint32 curX, uint32 curY);
 	void drawActor();
-	void walkTo(uint16 curX, uint16 curY);
+	void walkTo(uint32 curX, uint32 curY);
 
 
 	int currentAction; // TODO depreciate

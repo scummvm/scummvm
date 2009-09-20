@@ -170,13 +170,13 @@ void Scene::setScenePosition(int x, int y)
 	
 	if (_ws->targetX < 0)
 		_ws->targetX = 0;
-	if (_ws->targetX > (bg->surface.w - 640))
+	if (_ws->targetX > (uint32)(bg->surface.w - 640))
 		_ws->targetX = bg->surface.w - 640;
 		
 	
 	if (_ws->targetY < 0)
 		_ws->targetY = 0;
-	if (_ws->targetY > (bg->surface.h - 480))
+	if (_ws->targetY > (uint32)(bg->surface.h - 480))
 		_ws->targetY = bg->surface.h - 480;
 }
 
@@ -290,9 +290,9 @@ void Scene::updateMouse() {
 	int  dir = -1;
 	bool done = false;
 
-	if (_cursor->x() < actorPos.left) {
-		if (_cursor->y() >= actorPos.top) {
-			if (_cursor->y() > actorPos.bottom) {
+	if (_cursor->x() < (uint32)actorPos.left) {
+		if (_cursor->y() >= (uint32)actorPos.top) {
+			if (_cursor->y() > (uint32)actorPos.bottom) {
 				if (getActor()->direction == 2) {
 					if (_cursor->y() - actorPos.bottom > 10)
 						dir = 3;
@@ -333,9 +333,9 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->x() <= actorPos.right) {
-		if (_cursor->y() >= actorPos.top) {
-			if (_cursor->y() > actorPos.bottom) {
+	if (!done && _cursor->x() <= (uint32)actorPos.right) {
+		if (_cursor->y() >= (uint32)actorPos.top) {
+			if (_cursor->y() > (uint32)actorPos.bottom) {
 				if (getActor()->direction == 3) {
 					if (_cursor->x() - actorPos.left > 10)
 						dir = 4;
@@ -364,7 +364,7 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->y() < actorPos.top) {
+	if (!done && _cursor->y() < (uint32)actorPos.top) {
 		if (getActor()->direction) {
 			if (getActor()->direction == 6) {
 				if (actorPos.top - _cursor->y() > 10)
@@ -379,7 +379,7 @@ void Scene::updateMouse() {
 		done = true;
 	}
 
-	if (!done && _cursor->y() <= actorPos.bottom) {
+	if (!done && _cursor->y() <= (uint32)actorPos.bottom) {
 		if (getActor()->direction == 5) {
 			if (actorPos.bottom - _cursor->y() > 10)
 				dir = 6;
@@ -652,7 +652,7 @@ void Scene::updateMusic() {
 }
 
 void Scene::updateAdjustScreen() {
-	int v5, v6, v7, v15, v16;
+	int v5, v7, v15, v16; //, v6
 	int v1 = -1;
 	int v0 = -1;
 
@@ -671,13 +671,13 @@ void Scene::updateAdjustScreen() {
 		}
 		if (v1 < 0)
 			v1 = _ws->xLeft = 0;
-		if (v1 > _ws->width - 640) {
+		if ((uint32)v1 > _ws->width - 640) {
 			v1 = _ws->width - 640;
 			_ws->xLeft = v1;
 		}
 		if (v0 < 0)
 			v0 = _ws->yTop = 0;
-		if (v0 > _ws->height - 480) {
+		if ((uint32)v0 > _ws->height - 480) {
 			v0 = _ws->height - 480;
 			_ws->yTop = v0;
 		}
@@ -957,7 +957,7 @@ void Scene::copyToBackBufferClipped(Graphics::Surface *surface, int x, int y) {
 
 	if (!animRect.isEmpty()) {
 		// Translate anim rectangle
-		animRect.translate(-_ws->targetX, -_ws->targetY);
+		animRect.translate(-(int16)_ws->targetX, -(int16)_ws->targetY);
 
 		int startX = animRect.right  == 640 ? 0 : surface->w - animRect.width();
 		int startY = animRect.bottom == 480 ? 0 : surface->h - animRect.height();
@@ -987,13 +987,13 @@ void Scene::debugScreenScrolling(GraphicFrame *bg) {
     // Horizontal scrolling
 	if (_cursor->x() < SCREEN_EDGES && _ws->targetX >= SCROLL_STEP)
 		_ws->targetX -= SCROLL_STEP;
-	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->targetX <= bg->surface.w - 640 - SCROLL_STEP)
+	else if (_cursor->x() > 640 - SCREEN_EDGES && _ws->targetX <= (uint32)bg->surface.w - 640 - SCROLL_STEP)
 		_ws->targetX += SCROLL_STEP;
 
 	// Vertical scrolling
 	if (_cursor->y() < SCREEN_EDGES && _ws->targetY >= SCROLL_STEP)
 		_ws->targetY -= SCROLL_STEP;
-	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->targetY <= bg->surface.h - 480 - SCROLL_STEP)
+	else if (_cursor->y() > 480 - SCREEN_EDGES && _ws->targetY <= (uint32)bg->surface.h - 480 - SCROLL_STEP)
 		_ws->targetY += SCROLL_STEP;
 }
 
