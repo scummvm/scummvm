@@ -394,9 +394,9 @@ void Part::sendEffectLevel(uint8 value) {
 	// the reverb setting).
 	if (_player->_se->isNativeMT32()) {
 		if (value != 127 && value != 0) {
-			warning("Trying to use unsupported effect level value %d in native MT-32 mode. Please report this!", value);
+			warning("Trying to use unsupported effect level value %d in native MT-32 mode.", value);
 
-			if (value > 64)
+			if (value >= 64)
 				value = 127;
 			else
 				value = 0;
