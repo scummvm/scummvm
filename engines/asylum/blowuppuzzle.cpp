@@ -63,8 +63,7 @@ BlowUpPuzzleVCR::~BlowUpPuzzleVCR() {
 void BlowUpPuzzleVCR::openBlowUp() {
 	_active = true;
 	_scene->deactivate();
-    // FIXME: decomment this line when stopSfx works properly (it nows stop together SFX and Music
-    //_scene->vm()->sound()->stopSfx();
+    _scene->vm()->sound()->stopAllSounds();
 
 	// Load the graphics palette
 	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->grResId[29]);
@@ -112,9 +111,13 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 }
 
 void BlowUpPuzzle::playSound(uint resourceId) {
+	playSound(resourceId, false);
+}
+
+void BlowUpPuzzle::playSound(uint resourceId, bool looping) {
 	ResourceEntry *resource = _scene->getResourcePack()->getResource(resourceId);
 	int volume = _scene->vm()->soundVolume();
-	_scene->vm()->sound()->playSound(resource, false, volume, 0);
+	_scene->vm()->sound()->playSound(resource, looping, volume, 0);
 }
 
 int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
@@ -128,7 +131,7 @@ void BlowUpPuzzleVCR::update() {
     if (_rightClickDown) { // quits BlowUp Puzzle
 		_rightClickDown = false;
         closeBlowUp();
-        // TODO: stop sound fx grResId[47] (TV On sfx)
+        _scene->vm()->sound()->stopSound(_scene->worldstats()->grResId[47]);
         _scene->enterScene();
     }
 
@@ -491,7 +494,7 @@ void BlowUpPuzzleVCR::handleMouseDown() {
     }
     if(inPolyRegion(_cursor->x(), _cursor->y(), kBlackHole)) {
         if(!setJackOnHole(jackType, kPluggedOnBlack)) {
-            if(_holesState[kBlackHole] != kPluggedOnYellow && _buttonsState[kPower] == 1) { // TODO: check this better
+            if(_holesState[kBlackHole] != kPluggedOnYellow && _buttonsState[kPower] == 1) {
                 _buttonsState[kPower]  = kOFF;
                 _buttonsState[kStop]   = kOFF;
                 _buttonsState[kPlay]   = kOFF;
@@ -521,7 +524,7 @@ void BlowUpPuzzleVCR::handleMouseDown() {
         _jacksState[kYellow] = kOnHand;
     }
 
-    // TODO: VCR button regions
+    // VCR button regions
     if (inPolyRegion(_cursor->x(), _cursor->y(), kRewindButton)) {
     	playSound(_scene->worldstats()->grResId[39]);
         if(!_buttonsState[kRewind]) {
@@ -569,8 +572,8 @@ void BlowUpPuzzleVCR::handleMouseUp() {
         return;
 
     if(_buttonsState[kPower] == kDownON) {
-        // TODO: check if next sound is already playing
-    	playSound(_scene->worldstats()->grResId[47]);
+        if(!_scene->vm()->sound()->isPlaying(_scene->worldstats()->grResId[47]))
+    	    playSound(_scene->worldstats()->grResId[47], true);
         _buttonsState[kPower]  = kON;
         _buttonsState[kStop]   = kON;
         _buttonsState[kPlay]   = kON;
@@ -580,7 +583,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
         _buttonsState[kStop]   = kOFF;
         _buttonsState[kPlay]   = kOFF;
         _buttonsState[kRewind] = kOFF;
-        // TODO: stop sound grResId[47]
+        _scene->vm()->sound()->stopSound(_scene->worldstats()->grResId[47]);
     }
 
     if(_buttonsState[kRewind] == kDownOFF) {
@@ -593,7 +596,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
     if(_buttonsState[kPlay] == kDownOFF) {
         _buttonsState[kPlay] = kON;
         if(_holesState[kPluggedOnRed-1] == kRed+1 && _holesState[kPluggedOnYellow-1] == kYellow+1 && _holesState[kPluggedOnBlack-1] == kBlack+1) {
-            // TODO: set game flag 220
+            _scene->vm()->setGameFlag(220);
             _isAccomplished = true;
         }
     } else if(_buttonsState[kPlay] == kDownON) {
