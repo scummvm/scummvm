@@ -156,7 +156,7 @@ void Sound::playSound(ResourcePack *pack, uint resId, bool looping, int volume, 
 	int pos = getBufferPosition(resId);
 
 	if (pos < 0) {
-		warning("isPlaying: resId %d not currently bufferred", resId);
+		warning("playSound: resId %d not currently bufferred", resId);
 	} else {
 		SoundBufferItem snd = _soundBuffer[pos];
 		if (_mixer->isSoundHandleActive(snd.handle)) {
@@ -191,7 +191,7 @@ void Sound::stopSound(uint resId) {
 	int pos = getBufferPosition(resId);
 
 	if (pos < 0) {
-		warning("isPlaying: resId %d not currently bufferred", resId);
+		warning("stopSound: resId %d not currently bufferred", resId);
 	} else {
 		_mixer->stopHandle(_soundBuffer[pos].handle);
 	}
@@ -238,7 +238,7 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 	int size = soundDataLength;
 	Common::MemoryReadStream stream(soundData, size);
 	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
-		error("playSound: Not valid WAV data");
+		error("playSoundData: Not valid WAV data");
 
 	convertVolume(vol);
 	convertPan(pan);
@@ -257,6 +257,12 @@ void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint soun
 		memcpy(buffer, soundData + stream.pos(), size);
 	}
 
+	// TODO
+	// All asylum audio data is being filtered through the playSoundData()
+	// method. As such, they're all using kSFXSoundType. There are also
+	// enums for kMusicSoundType and kSpeechSoundType.
+	//
+	// Investigate how this can effect ... anything :P
 	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, -1, vol, pan);
 }
 
