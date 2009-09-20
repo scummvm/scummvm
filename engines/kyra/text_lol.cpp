@@ -141,16 +141,19 @@ void TextDisplayer_LoL::resetDimTextPositions(int dim) {
 void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int oldDim = 0;
 
+	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
+
 	if (dim == 3) {
 		if (_vm->_updateFlags & 2) {
 			oldDim = clearDim(4);
-			_textDimData[4].color1 = 254;
+			_textDimData[4].color1 = isPc98 ? 0x33 : 254;
 			_textDimData[4].color2 = _screen->_curDim->unkA;
 		} else {
 			oldDim = clearDim(3);
-			_textDimData[3].color1 = 192;
+			_textDimData[3].color1 = isPc98 ? 0x33 : 192;
 			_textDimData[3].color2 = _screen->_curDim->unkA;
-			_screen->copyColor(192, 254);
+			if (!isPc98)
+				_screen->copyColor(192, 254);
 			_vm->enableTimer(11);
 			_vm->_textColorFlag = 0;
 			_vm->_fadeText = false;
@@ -158,7 +161,7 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	} else {
 		oldDim = _screen->curDimIndex();
 		_screen->setScreenDim(dim);
-		_textDimData[dim].color1 = 254;
+		_textDimData[dim].color1 = isPc98 ? 0x33 : 254;
 		_textDimData[dim].color2 = _screen->_curDim->unkA;
 	}
 
@@ -220,8 +223,18 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 
 void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	char *dst = _dialogueBuffer;
+	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
 
 	for (char *s = str; *s;) {
+		if (isPc98) {
+			uint8 c = *s;
+			if (c >= 0xE0 || (c > 0x80 && c <= 0xA0)) {
+				*dst++ = *s++;
+				*dst++ = *s++;
+				continue;
+			}
+		}
+
 		if (*s != '%') {
 			*dst++ = *s++;
 			continue;
@@ -274,7 +287,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 			++s;
 			break;
 		default:
-			while(para && para > 47 && para < 58)
+			while (para && para > 47 && para < 58)
 				para = *++s;
 			break;
 		}
@@ -343,7 +356,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 	while (c) {
 		char a = tolower(_ctrl[1]);
 
-		if (!_tempString2 && c == '%' ) {
+		if (!_tempString2 && c == '%') {
 			if (a == 'd') {
 				snprintf(_scriptParaString, 11, "%d", va_arg(args, int));
 				_tempString2 = _scriptParaString;
