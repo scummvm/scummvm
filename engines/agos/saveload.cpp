@@ -1265,10 +1265,10 @@ bool AGOSEngine_Elvira2::loadGame(const char *filename, bool restartMode) {
 						Item *item = derefItem(itemNum);
 
 						num = (itemNum - _itemArrayInited);
-						_roomStates[num].state = item->state;
-						_roomStates[num].classFlags = item->classFlags;
+						item->state = _roomStates[num].state;
+						item->classFlags = _roomStates[num].classFlags;
 						SubRoom *subRoom = (SubRoom *)findChildOfType(item, kRoomType);
-						_roomStates[num].roomExitStates = subRoom->roomExitStates;
+						subRoom->roomExitStates = _roomStates[num].roomExitStates;
 					}
 				}
 			} else {
