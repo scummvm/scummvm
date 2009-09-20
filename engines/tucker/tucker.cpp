@@ -2881,9 +2881,7 @@ void TuckerEngine::updateCharSpeechSound(bool displayText) {
 	}
 	if (_charSpeechSoundCounter == 0 && !_csDataHandled) {
 		setCursorType(0);
-		return;
-	}
-	if (displayText) {
+	} else if (displayText) {
 		drawSpeechText(_actionPosX, _actionPosY, _characterSpeechDataPtr, _speechSoundNum, _actionTextColor);
 	}
 }
@@ -3788,13 +3786,12 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 
 void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int x, int y, uint8 color) {
 	int xStart = x;
-	int i = 0;
-	for (; i < count && dataPtr[pos] != '\n'; ++i) {
+	for (int i = 0; i < count && dataPtr[pos] != '\n'; ++i) {
 		Graphics::drawStringChar(_locationBackgroundGfxBuf + y * 640 + x, dataPtr[pos], 640, color, _charsetGfxBuf);
 		x += _charWidthTable[dataPtr[pos]];
 		++pos;
 	}
-	addDirtyRect(xStart, y, Graphics::_charset.charW * i, Graphics::_charset.charH);
+	addDirtyRect(xStart, y, x - xStart, Graphics::_charset.charH);
 }
 
 void TuckerEngine::redrawScreen(int offset) {
@@ -3803,21 +3800,22 @@ void TuckerEngine::redrawScreen(int offset) {
 	if (_fullRedraw) {
 		_fullRedraw = false;
 		_system->copyRectToScreen(_locationBackgroundGfxBuf + offset, kScreenPitch, 0, 0, kScreenWidth, kScreenHeight);
-		_dirtyRectsPrevCount = _dirtyRectsCount = 0;
 	} else {
-		const int xClip = offset % kScreenPitch;
-		const int yClip = offset / kScreenPitch;
-		Common::Rect clipRect(xClip, yClip, xClip + kScreenWidth, yClip + kScreenHeight);
-		for (int i = 0; i < _dirtyRectsPrevCount; ++i) {
-			redrawScreenRect(clipRect, _dirtyRectsTable[1][i]);
+		Common::Rect clipRect(offset, 0, offset + kScreenWidth, kScreenHeight);
+		for (int i = 0; i < _dirtyRectsPrevCount + _dirtyRectsCount; ++i) {
+			redrawScreenRect(clipRect, _dirtyRectsTable[i]);
 		}
+	}
+	if (_dirtyRectsPrevCount + _dirtyRectsCount < kMaxDirtyRects) {
 		for (int i = 0; i < _dirtyRectsCount; ++i) {
-			redrawScreenRect(clipRect, _dirtyRectsTable[0][i]);
-			_dirtyRectsTable[1][i] = _dirtyRectsTable[0][i];
+			_dirtyRectsTable[i] = _dirtyRectsTable[_dirtyRectsPrevCount + i];
 		}
 		_dirtyRectsPrevCount = _dirtyRectsCount;
-		_dirtyRectsCount = 0;
+	} else {
+		_dirtyRectsPrevCount = 0;
+		_fullRedraw = true;
 	}
+	_dirtyRectsCount = 0;
 	_system->updateScreen();
 }
 
@@ -3846,19 +3844,17 @@ void TuckerEngine::redrawScreenRect(const Common::Rect &clip, const Common::Rect
 }
 
 void TuckerEngine::addDirtyRect(int x, int y, int w, int h) {
-	if (!_fullRedraw) {
+	if (_dirtyRectsPrevCount + _dirtyRectsCount < kMaxDirtyRects) {
 		Common::Rect r(x, y, x + w, y + h);
 		for (int i = 0; i < _dirtyRectsCount; ++i) {
-			if (_dirtyRectsTable[0][i].contains(r)) {
+			if (_dirtyRectsTable[_dirtyRectsPrevCount + i].contains(r)) {
 				return;
 			}
 		}
-		if (_dirtyRectsCount < kMaxDirtyRects) {
-			_dirtyRectsTable[0][_dirtyRectsCount] = r;
-			++_dirtyRectsCount;
-		} else {
-			_fullRedraw = true;
-		}
+		_dirtyRectsTable[_dirtyRectsPrevCount + _dirtyRectsCount] = r;
+		++_dirtyRectsCount;
+	} else {
+		_fullRedraw = true;
 	}
 }
 

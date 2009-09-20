@@ -234,7 +234,7 @@ public:
 		kDataTableSize = 500,
 		kSpeechHistoryTableSize = 5,
 		kMaxCharacters = 8,
-		kMaxDirtyRects = 16
+		kMaxDirtyRects = 32
 	};
 
 	TuckerEngine(OSystem *system, Common::Language language, uint32 flags);
@@ -803,7 +803,7 @@ protected:
 	uint8 _currentPalette[768];
 	bool _fullRedraw;
 	int _dirtyRectsPrevCount, _dirtyRectsCount;
-	Common::Rect _dirtyRectsTable[2][kMaxDirtyRects];
+	Common::Rect _dirtyRectsTable[kMaxDirtyRects];
 
 	int _updateLocationFadePaletteCounter;
 	int _updateLocationCounter;
