@@ -69,7 +69,6 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
 
 	_text 		= new Text(_vm->screen());
 	_resPack 	= new ResourcePack(sceneIdx);
-	_speechPack = new ResourcePack(3); // FIXME are all scene speech packs the same?
 
 	// FIXME
 	// Is there EVER more than one actor enabled for a scene? I can't
@@ -139,6 +138,12 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
         }
     }
 
+    // XXX
+    // This is a hack for the moment to test out
+    // the new sound queuing functionality
+    for (uint i = 0; i < _ws->numAmbientSound; i++)
+    	_vm->sound()->addToSoundBuffer(_ws->ambientSounds[i].resId);
+
     // TODO: init action list
 }
 
@@ -150,7 +155,6 @@ Scene::~Scene() {
 	delete _cursor;
 	delete _bgResource;
 	delete _musPack;
-	delete _speechPack;
 	delete _resPack;
 	delete _text;
     delete _blowUp;
@@ -267,7 +271,7 @@ int Scene::updateScene() {
 
     // Barriers
     startTick = _vm->_system->getMillis();
-    updateBarriers();
+    updateBarriers2();
     debugC(kDebugLevelScene, "UpdateBarriers Time: %d", _vm->_system->getMillis() - startTick);
 
     // Ambient Sounds
@@ -528,7 +532,38 @@ void Scene::updateActor(uint32 actorIdx) {
     }
 }
 
+// XXX WIP
 void Scene::updateBarriers() {
+	int v1, v0, v32, v33, v34, tickVal, tickVal05, tickVal06;
+	v1 = v0 = v32 = v33 = v34 = tickVal = tickVal05 = tickVal06 = 0;
+
+	uint32 start, v2, v31;
+	bool done = false;
+	//if (_ws->barriers.size() > 0);
+
+	v2 = _ws->barriers[0].tickCount2;
+	for (uint32 idx = 0; idx < _ws->numBarriers; idx++) {
+		Barrier *b = &_ws->barriers[idx];
+		start = _vm->_system->getMillis();
+
+		if (v2 - 32 != 4)
+			done = true;
+
+		if (!done && !_ws->checkBarrierFlagsCondition(idx)) {
+			v31 = _vm->_system->getMillis();
+		}
+
+		/*
+		 * TODO
+		 */
+
+		v2  += 426;
+		v1   = 0;
+		done = false;
+	}
+}
+
+void Scene::updateBarriers2() {
     Screen *screen = _vm->screen();
 
     uint barriersCount  = _ws->barriers.size();
@@ -669,6 +704,95 @@ void Scene::updateBarriers() {
 }
 
 void Scene::updateAmbientSounds() {
+	// if (cfgGameQualityValue > 3)
+
+	int v2 = 1;
+	int v15, v11, v10, v16;
+
+	int panning, volume;
+
+	for (uint32 i = 0; i < _ws->numAmbientSound; i++) {
+		AmbientSoundItem *snd = &_ws->ambientSounds[i];
+		for (uint32 f = 0; f < 6; f++) {
+			uint gameFlag = snd->flagNum[f];
+			if (gameFlag >= 0) {
+				if (_vm->isGameFlagNotSet(gameFlag)) {
+					v2 = 0;
+					break;
+				}
+			} else {
+				if (_vm->isGameFlagSet(-gameFlag)) {
+					// XXX Looks like this just jumps back to
+					// the top of the loop, so not sure if this
+					// is somehow important
+				}
+			}
+		}
+		if (v2) {
+			if (_vm->sound()->isPlaying(snd->resId)) {
+				if (snd->field_0) {
+					; // TODO volume calculation
+				}
+			} else {
+				if (snd->field_0) {
+					; // TODO calculate panning at point
+				} else {
+					panning = 0;
+				}
+
+				if (snd->field_0 == 0) {
+					volume = -(snd->field_C ^ 2);
+				} else {
+					; // TODO calculate volume increase
+				}
+
+				if (LOBYTE(snd->flags) & 2) {
+					if (rand() % 10000 < 10) {
+						if (snd->field_0) {
+							_vm->sound()->playSound(_resPack, snd->resId, false, _vm->ambientVolume() + volume, panning);
+						} else {
+							v15 = rand() % 500;
+							v11 = v15 * ((((rand() % 100 >= 50) - 1) & 2) - 1) + volume;
+							v10 = v11;
+							if ( v11 <= -10000 )
+							  v10 = -10000;
+							if ( v10 >= 0 )
+							  v11 = 0;
+							else
+							  if ( v11 <= -10000 )
+								v11 = -10000;
+							v16 = rand();
+							_vm->sound()->playSound(_resPack, snd->resId, false, v11, v16 % 20001 - 10000);
+						}
+					} else {
+						if (LOBYTE(snd->flags) & 4) {
+						  /*
+							if ( (unsigned int)*ambientPanningArray < getTickCount() )
+						  {
+							if ( v1->field_14 >= 0 )
+							  v12 = 60000 * v1->field_14 + getTickCount();
+							else
+							  v12 = getTickCount() - 1000 * v1->field_14;
+							*ambientPanningArray = v12;
+							playSound(v7, 0, v9, panning);
+						  }
+						  */
+						} else {
+						  if (LOBYTE(snd->flags) & 8) {
+							 /*
+							if ( !*(ambientPanningArray - 15) )
+							{
+							  playSound(v7, 0, v9, panning);
+							  *(ambientPanningArray - 15) = 1;
+							}
+							*/
+						  }
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void Scene::updateMusic() {

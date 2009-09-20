@@ -98,6 +98,24 @@ bool WorldStats::isBarrierVisible(uint32 idx) {
 	return false;
 }
 
+bool WorldStats::checkBarrierFlagsCondition(uint32 idx) {
+	Barrier *b = getBarrierByIndex(idx);
+	bool result;
+
+	if (LOBYTE(b->flags) & 1) {
+		for (int i = 0; i < 10; i++) {
+			result = _scene->vm()->isGameFlagSet(b->gameFlags[i]);
+			if (result)
+				return result;
+		}
+		result = true;
+	} else {
+		result = false;
+	}
+
+	return result;
+}
+
 // FIXME: load necessary World Stats content
 void WorldStats::load(Common::SeekableReadStream *stream) {
 	size       = stream->readUint32LE();

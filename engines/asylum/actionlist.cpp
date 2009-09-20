@@ -611,10 +611,8 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 	uint32 v59    = cmd->param2;
 
 	if (!scn->actions()->getScript()->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
-		ResourcePack *sfx = new ResourcePack(18);
-		scn->vm()->sound()->playSfx(sfx, ((unsigned int)(sndIdx != 0) & 5) + 0x80120001);
-		delete sfx;
-		//scn->vm()->sound()->playSfx(scn->getSpeechPack(),sndIdx + 86);
+		scn->vm()->sound()->playSound(((sndIdx != 0) & 5) + 0x80120001,
+				false, scn->vm()->soundVolume(), 0);
 	}
 
 	if (scn->actions()->getScript()->counter >= 3 * v59 - 1) {
@@ -805,7 +803,7 @@ int kPlayMovie(ActionCommand *cmd, Scene *scn) {
 
 int kStopAllBarriersSounds(ActionCommand *cmd, Scene *scn) {
 	// TODO: do this for all barriers that have sfx playing
-	scn->vm()->sound()->stopSfx();
+	scn->vm()->sound()->stopAllSounds();
 
 	return -1;
 }
@@ -934,9 +932,9 @@ int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
 	if ((int)sndIdx >= 0) {
 		if (sndIdx >= 259) {
 			sndIdx -= 9;
-			scn->vm()->sound()->playSfx(scn->getSpeechPack(), sndIdx - 0x7FFD0000);
+			scn->vm()->sound()->playSpeech(sndIdx - 0x7FFD0000);
 		} else {
-			scn->vm()->sound()->playSfx(scn->getSpeechPack(), sndIdx);
+			scn->vm()->sound()->playSpeech(sndIdx);
 		}
 	} else
 		debugC(kDebugLevelScripts,

@@ -27,6 +27,7 @@
 #define ASYLUM_SOUND_H_
 
 #include "sound/mixer.h"
+
 #include "asylum/respack.h"
 
 namespace Asylum {
@@ -62,35 +63,55 @@ typedef struct AmbientSoundItem {
 
 } AmbientSoundItem;
 
+typedef struct SoundBufferItem {
+	uint32 resId;
+	Audio::SoundHandle handle;
+	uint32 unknown;
+} SoundBufferItem;
+
 class Sound {
 public:
 	Sound(Audio::Mixer *mixer);
 	~Sound();
 
-	void playSfx(byte *data, uint32 size);
-	void playSfx(ResourcePack *resPack, uint32 resourceId) {
-		ResourceEntry *resEntry = resPack->getResource(resourceId);
-		playSfx(resEntry->data, resEntry->size);
-	}
-	bool isSfxActive() { return _mixer->isSoundHandleActive(_sfxHandle); }
-	void pauseSfx() { _mixer->pauseHandle(_sfxHandle, true); }
-	void resumeSfx() { _mixer->pauseHandle(_sfxHandle, false); }
-	void stopSfx() { _mixer->stopHandle(_sfxHandle); }
+	bool addToSoundBuffer(uint resId);
+	void clearSoundBuffer();
 
-	void playMusic(byte *data, uint32 size);
-	void playMusic(ResourcePack *resPack, uint32 resourceId) {
-		ResourceEntry *resEntry = resPack->getResource(resourceId);
-		playMusic(resEntry->data, resEntry->size);
-	}
-	bool isMusicActive() { return _mixer->isSoundHandleActive(_musicHandle); }
-	void pauseMusic() { _mixer->pauseHandle(_musicHandle, true); }
-	void resumeMusic() { _mixer->pauseHandle(_musicHandle, false); }
-	void stopMusic() { _mixer->stopHandle(_musicHandle); }
+	/**
+	 * Play a sound resource from the supplied resource pack.
+	 *
+	 * @param overwrite determine if _soundHandle should be overwritten if still active
+	 */
+	void playSound(ResourcePack *pack, uint resId, int volume, bool looping = false, int panning = 0, bool overwrite = false);
+	void playSound(ResourcePack *pack, uint resId, bool looping, int volume, int panning);
+	void playSound(ResourceEntry *resource, bool looping, int volume, int panning);
+	void playSound(uint resId, bool looping, int volume, int panning, bool fromBuffer = false);
+	void stopSound(uint resId);
+	void stopSound();
+	void stopAllSounds();
+
+	void playSpeech(uint resId);
+
+	void playMusic(ResourcePack *pack, uint resId);
+	void playMusic(uint resId);
+	void stopMusic();
+
+	bool isPlaying(uint resId);
 
 private:
-	Audio::SoundHandle _sfxHandle;
-	Audio::SoundHandle _musicHandle;
 	Audio::Mixer       *_mixer;
+
+	Audio::SoundHandle _speechHandle;
+	Audio::SoundHandle _musicHandle;
+	Audio::SoundHandle _soundHandle;
+
+	ResourcePack       *_speechPack;
+	ResourcePack       *_soundPack;
+
+	Common::Array<SoundBufferItem> _soundBuffer;
+
+	int  getBufferPosition(uint32 resId);
+	void playSoundData(Audio::SoundHandle *handle, byte *soundData, uint32 soundDataLength, bool loop = false, int vol = 0, int pan = 0);
 };
 
 } // end of namespace Asylum

@@ -39,6 +39,17 @@
 
 namespace Asylum {
 
+// XXX
+// I'm not sure if system endian-ness would have any
+// effect byte order of the data files, but I guess
+// it won't hurt to keep this here until we can test
+// on a big-endian system
+#ifndef SCUMM_BIG_ENDIAN
+#define LOBYTE(word) (word & 0xFF)
+#else
+#define LOBYTE(word) ((word >> 24) & 0xFF)
+#endif
+
 class Console;
 class Scene;
 class MainMenu;
@@ -83,6 +94,9 @@ public:
     Screen* screen() { return _screen; }
     Scene*  scene()  { return _scene; }
 
+    int ambientVolume() { return _ambientVolume; }
+    int soundVolume()   { return _soundVolume; }
+
 private:
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
@@ -92,6 +106,9 @@ private:
 
 	Common::Language	 _language;
 	Common::RandomSource _rnd;
+
+	int _ambientVolume;
+	int _soundVolume;
 
 	bool _introPlaying;
 

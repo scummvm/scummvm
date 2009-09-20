@@ -66,6 +66,7 @@ protected:
     GraphicResource *_bgResource;
 
     virtual void update() {};
+    void playSound(uint resourceId);
 
 }; // end of class BlowUpPuzzle
 
