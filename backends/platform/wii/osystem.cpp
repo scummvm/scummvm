@@ -85,6 +85,8 @@ OSystem_Wii::OSystem_Wii() :
 	_event_quit(false),
 
 	_lastPadCheck(0),
+	_padSensitivity(16),
+	_padAcceleration(4),
 
 	_savefile(NULL),
 	_mixer(NULL),
@@ -111,6 +113,8 @@ void OSystem_Wii::initBackend() {
 	ConfMan.registerDefault("wii_video_default_underscan_y", 16);
 	ConfMan.registerDefault("wii_video_ds_underscan_x", 16);
 	ConfMan.registerDefault("wii_video_ds_underscan_y", 16);
+	ConfMan.registerDefault("wii_pad_sensitivity", 48);
+	ConfMan.registerDefault("wii_pad_acceleration", 5);
 	ConfMan.registerDefault("wii_smb_server", "");
 	ConfMan.registerDefault("wii_smb_share", "");
 	ConfMan.registerDefault("wii_smb_username", "");
@@ -274,5 +278,8 @@ void OSystem_Wii::showOptionsDialog() {
 	WiiOptionsDialog dlg(ds);
 	dlg.runModal();
 	_optionsDlgActive = false;
+
+	_padSensitivity = 64 - ConfMan.getInt("wii_pad_sensitivity");
+	_padAcceleration = 9 - ConfMan.getInt("wii_pad_acceleration");
 }
 

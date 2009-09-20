@@ -67,6 +67,20 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 	_sliderUnderscanY->setMinValue(0);
 	_sliderUnderscanY->setMaxValue(32);
 
+	_tabInput = _tab->addTab("Input");
+
+	new StaticTextWidget(_tab, 16, 16, 128, 16,
+							"GC Pad sensitivity:", Graphics::kTextAlignRight);
+	_sliderPadSensitivity = new SliderWidget(_tab, 160, 15, 128, 18, 'x');
+	_sliderPadSensitivity->setMinValue(0);
+	_sliderPadSensitivity->setMaxValue(64);
+
+	new StaticTextWidget(_tab, 16, 44, 128, 16,
+							"GC Pad acceleration:", Graphics::kTextAlignRight);
+	_sliderPadAcceleration = new SliderWidget(_tab, 160, 43, 128, 18, 'y');
+	_sliderPadAcceleration->setMinValue(0);
+	_sliderPadAcceleration->setMaxValue(8);
+
 #ifdef USE_WII_DI
 	_tabDVD = _tab->addTab("DVD");
 
@@ -242,13 +256,23 @@ void WiiOptionsDialog::revert() {
 }
 
 void WiiOptionsDialog::load() {
-	int x = ConfMan.getInt(_strUnderscanX,
+	int i;
+	
+	i = ConfMan.getInt(_strUnderscanX,
 							Common::ConfigManager::kApplicationDomain);
-	int y = ConfMan.getInt(_strUnderscanY,
-							Common::ConfigManager::kApplicationDomain);
+	_sliderUnderscanX->setValue(i);
 
-	_sliderUnderscanX->setValue(x);
-	_sliderUnderscanY->setValue(y);
+	i = ConfMan.getInt(_strUnderscanY,
+							Common::ConfigManager::kApplicationDomain);
+	_sliderUnderscanY->setValue(i);
+
+	i = ConfMan.getInt("wii_pad_sensitivity",
+							Common::ConfigManager::kApplicationDomain);
+	_sliderPadSensitivity->setValue(i);
+
+	i = ConfMan.getInt("wii_pad_acceleration",
+							Common::ConfigManager::kApplicationDomain);
+	_sliderPadAcceleration->setValue(i);
 
 #ifdef USE_WII_SMB
 	_editSMBServer->setEditString(ConfMan.get("wii_smb_server",
@@ -268,6 +292,13 @@ void WiiOptionsDialog::save() {
 					Common::ConfigManager::kApplicationDomain);
 	ConfMan.setInt(_strUnderscanY,
 					_sliderUnderscanY->getValue(),
+					Common::ConfigManager::kApplicationDomain);
+
+	ConfMan.setInt("wii_pad_sensitivity",
+					_sliderPadSensitivity->getValue(),
+					Common::ConfigManager::kApplicationDomain);
+	ConfMan.setInt("wii_pad_acceleration",
+					_sliderPadAcceleration->getValue(),
 					Common::ConfigManager::kApplicationDomain);
 
 #ifdef USE_WII_SMB

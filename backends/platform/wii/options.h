@@ -52,6 +52,10 @@ private:
 	SliderWidget *_sliderUnderscanX;
 	SliderWidget *_sliderUnderscanY;
 
+	int _tabInput;
+	SliderWidget *_sliderPadSensitivity;
+	SliderWidget *_sliderPadAcceleration;
+
 #ifdef USE_WII_DI
 	int _tabDVD;
 	StaticTextWidget *_textDVDStatus;

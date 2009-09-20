@@ -32,6 +32,8 @@
 #include <wiikeyboard/keyboard.h>
 #endif
 
+#include "common/config-manager.h"
+
 #define TIMER_THREAD_STACKSIZE (1024 * 32)
 #define TIMER_THREAD_PRIO 64
 
@@ -178,6 +180,9 @@ void OSystem_Wii::initEvents() {
 	WPAD_SetDataFormat(WPAD_CHAN_0, WPAD_FMT_BTNS_ACC_IR);
 	WPAD_SetIdleTimeout(120);
 #endif
+
+	_padSensitivity = 64 - ConfMan.getInt("wii_pad_sensitivity");
+	_padAcceleration = 9 - ConfMan.getInt("wii_pad_acceleration");
 
 #ifdef USE_WII_KBD
 	_kbd_active = KEYBOARD_Init() >= 0;
@@ -405,10 +410,12 @@ bool OSystem_Wii::pollEvent(Common::Event &event) {
 	if (time - _lastPadCheck > PAD_CHECK_TIME) {
 		_lastPadCheck = time;
 
-		if (abs (PAD_StickX(0)) > 16)
-			mx += PAD_StickX(0) / (4 * _overlayWidth / _currentWidth);
-		if (abs (PAD_StickY(0)) > 16)
-			my -= PAD_StickY(0) / (4 * _overlayHeight / _currentHeight);
+		if (abs (PAD_StickX(0)) > _padSensitivity)
+			mx += PAD_StickX(0) /
+					(_padAcceleration * _overlayWidth / _currentWidth);
+		if (abs (PAD_StickY(0)) > _padSensitivity)
+			my -= PAD_StickY(0) /
+					(_padAcceleration * _overlayHeight / _currentHeight);
 
 		if (mx < 0)
 			mx = 0;

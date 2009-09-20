@@ -110,6 +110,8 @@ private:
 	bool _event_quit;
 
 	u32 _lastPadCheck;
+	u8 _padSensitivity;
+	u8 _padAcceleration;
 
 	void initGfx();
 	void deinitGfx();
