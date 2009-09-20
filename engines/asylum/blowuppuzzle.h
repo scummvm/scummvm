@@ -67,6 +67,7 @@ protected:
 
     virtual void update() {};
     void playSound(uint resourceId);
+    void playSound(uint resourceId, bool looping);
 
 }; // end of class BlowUpPuzzle
 
