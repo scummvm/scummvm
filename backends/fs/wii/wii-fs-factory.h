@@ -57,6 +57,7 @@ public:
 #endif
 
 	bool isMounted(FileSystemType type);
+	bool failedToMount(FileSystemType type);
 
 	void mount(FileSystemType type);
 	void umount(FileSystemType type);
@@ -72,6 +73,8 @@ private:
 
 	bool _dvdMounted;
 	bool _smbMounted;
+	bool _dvdError;
+	bool _smbError;
 
 #ifdef USE_WII_SMB
 	String _smbServer;

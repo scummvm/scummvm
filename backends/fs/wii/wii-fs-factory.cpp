@@ -40,7 +40,9 @@ DECLARE_SINGLETON(WiiFilesystemFactory);
 
 WiiFilesystemFactory::WiiFilesystemFactory() :
 	_dvdMounted(false),
-	_smbMounted(false) {
+	_smbMounted(false),
+	_dvdError(false),
+	_smbError(false) {
 }
 
 AbstractFSNode *WiiFilesystemFactory::makeRootFileNode() const {
@@ -104,6 +106,17 @@ bool WiiFilesystemFactory::isMounted(FileSystemType type) {
 	return false;
 }
 
+bool WiiFilesystemFactory::failedToMount(FileSystemType type) {
+	switch (type) {
+	case kDVD:
+		return _dvdError;
+	case kSMB:
+		return _smbError;
+	}
+
+	return false;
+}
+
 void WiiFilesystemFactory::mount(FileSystemType type) {
 	switch (type) {
 	case kDVD:
@@ -126,9 +139,11 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 		printf("mount ISO9660\n");
 		if (ISO9660_Mount()) {
 			_dvdMounted = true;
+			_dvdError = false;
 			printf("ISO9660 mounted\n");
 		} else {
 			DI_StopMotor();
+			_dvdError = true;
 			printf("ISO9660 mount failed\n");
 		}
 #endif
@@ -149,8 +164,10 @@ void WiiFilesystemFactory::mount(FileSystemType type) {
 		if (smbInit(_smbUsername.c_str(), _smbPassword.c_str(),
 					_smbShare.c_str(), _smbServer.c_str())) {
 			_smbMounted = true;
+			_smbError = false;
 			printf("smb mounted\n");
 		} else {
+			_smbError = true;
 			printf("error mounting smb\n");
 		}
 #endif
@@ -171,6 +188,7 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 		DI_StopMotor();
 
 		_dvdMounted = false;
+		_dvdError = false;
 #endif
 		break;
 
@@ -187,6 +205,7 @@ void WiiFilesystemFactory::umount(FileSystemType type) {
 			printf("error umounting smb\n");
 
 		_smbMounted = false;
+		_smbError = false;
 #endif
 		break;
 	}

@@ -72,7 +72,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
 							"Status:", Graphics::kTextAlignRight);
-	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 192, 16, "Unknown",
+	_textDVDStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, "Unknown",
 											Graphics::kTextAlignLeft);
 
 	new ButtonWidget(_tab, 16, 48, 108, 24, "Mount DVD", 'mdvd');
@@ -84,7 +84,7 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 
 	new StaticTextWidget(_tab, 16, 16, 64, 16,
 							"Status:", Graphics::kTextAlignRight);
-	_textSMBStatus = new StaticTextWidget(_tab, 96, 16, 192, 16, "Unknown",
+	_textSMBStatus = new StaticTextWidget(_tab, 96, 16, 272, 16, "Unknown",
 											Graphics::kTextAlignLeft);
 
 	new StaticTextWidget(_tab, 16, 52, 64, 16,
@@ -124,10 +124,14 @@ void WiiOptionsDialog::handleTickle() {
 
 #ifdef USE_WII_DI
 	if (tab == _tabDVD) {
-		if (fsf.isMounted(WiiFilesystemFactory::kDVD))
-			_textDVDStatus->setLabel("Mounted");
-		else
-			_textDVDStatus->setLabel("Not mounted");
+		if (fsf.isMounted(WiiFilesystemFactory::kDVD)) {
+			_textDVDStatus->setLabel("DVD Mounted successfully");
+		} else {
+			if (fsf.failedToMount(kDVD))
+				_textDVDStatus->setLabel("Error while mounting the DVD");
+			else
+				_textDVDStatus->setLabel("DVD not mounted");
+		}
 	}
 #endif
 
@@ -138,10 +142,16 @@ void WiiOptionsDialog::handleTickle() {
 
 		switch (status) {
 		case 0:
-			if (fsf.isMounted(WiiFilesystemFactory::kSMB))
+			if (fsf.isMounted(WiiFilesystemFactory::kSMB)) {
 				label = "Network up, share mounted";
-			else
-				label = "Network up, share not mounted";
+			} else {
+				label = "Network up";
+
+				if (fsf.failedToMount(WiiFilesystemFactory::kSMB))
+					label += ", error while mounting the share";
+				else
+					label += ", share not mounted";
+			}
 
 			break;
 
