@@ -35,12 +35,12 @@
 
 namespace Cine {
 
-Common::Array<objectStruct> objectTable;
+Common::Array<ObjectStruct> objectTable;
 Common::List<overlay> overlayList;
 
 /*! \brief Resets all elements in the object table. */
 void resetObjectTable() {
-	for (Common::Array<objectStruct>::iterator it = objectTable.begin(); it != objectTable.end(); it++) {
+	for (Common::Array<ObjectStruct>::iterator it = objectTable.begin(); it != objectTable.end(); it++) {
 		it->clear();
 	}
 }
@@ -259,8 +259,8 @@ bool compareRanges(uint16 aStart, uint16 aEnd, uint16 bStart, uint16 bEnd) {
 
 uint16 compareObjectParamRanges(uint16 objIdx1, uint16 xAdd1, uint16 yAdd1, uint16 maskAdd1, uint16 objIdx2, uint16 xAdd2, uint16 yAdd2, uint16 maskAdd2) {
 	assert(objIdx1 < NUM_MAX_OBJECT && objIdx2 < NUM_MAX_OBJECT);
-	const objectStruct &obj1 = objectTable[objIdx1];
-	const objectStruct &obj2 = objectTable[objIdx2];
+	const ObjectStruct &obj1 = objectTable[objIdx1];
+	const ObjectStruct &obj2 = objectTable[objIdx2];
 
 	if (compareRanges(obj1.x,    obj1.x    + xAdd1,    obj2.x,    obj2.x    + xAdd2) &&
 		compareRanges(obj1.y,    obj1.y    + yAdd1,    obj2.y,    obj2.y    + yAdd2) &&

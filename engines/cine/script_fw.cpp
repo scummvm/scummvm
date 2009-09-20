@@ -672,7 +672,7 @@ int FWScript::execute() {
 	while (!ret) {
 		_line = _pos;
 		byte opcode = getNextByte();
-		opFunc handler = _info->opcodeHandler(opcode);
+		OpFunc handler = _info->opcodeHandler(opcode);
 
 		if (handler) {
 			ret = (this->*handler)();
@@ -713,7 +713,7 @@ const char *FWScriptInfo::opcodeInfo(byte opcode) const {
 /*! \brief Get opcode handler pointer
  * \param opcode Opcode to look for in opcode table
  */
-opFunc FWScriptInfo::opcodeHandler(byte opcode) const {
+OpFunc FWScriptInfo::opcodeHandler(byte opcode) const {
 	if (opcode == 0 || opcode > FWScript::_numOpcodes) {
 		return NULL;
 	}

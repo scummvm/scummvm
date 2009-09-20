@@ -134,7 +134,7 @@ void FWRenderer::clear() {
  * \param obj Object info
  * \param fillColor Sprite color
  */
-void FWRenderer::fillSprite(const objectStruct &obj, uint8 color) {
+void FWRenderer::fillSprite(const ObjectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
 	int x, y, width, height;
 
@@ -150,7 +150,7 @@ void FWRenderer::fillSprite(const objectStruct &obj, uint8 color) {
  * \param obj Object info
  * \param fillColor Sprite color
  */
-void FWRenderer::incrustMask(const objectStruct &obj, uint8 color) {
+void FWRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
 	int x, y, width, height;
 
@@ -166,7 +166,7 @@ void FWRenderer::incrustMask(const objectStruct &obj, uint8 color) {
  * \param obj Object info
  * \param mask External mask
  */
-void FWRenderer::drawMaskedSprite(const objectStruct &obj, const byte *mask) {
+void FWRenderer::drawMaskedSprite(const ObjectStruct &obj, const byte *mask) {
 	const byte *data = animDataTable[obj.frame].data();
 	int x, y, width, height;
 
@@ -183,7 +183,7 @@ void FWRenderer::drawMaskedSprite(const objectStruct &obj, const byte *mask) {
 /*! \brief Draw color sprite
  * \param obj Object info
  */
-void FWRenderer::drawSprite(const objectStruct &obj) {
+void FWRenderer::drawSprite(const ObjectStruct &obj) {
 	const byte *mask = animDataTable[obj.frame].mask();
 	drawMaskedSprite(obj, mask);
 }
@@ -191,7 +191,7 @@ void FWRenderer::drawSprite(const objectStruct &obj) {
 /*! \brief Draw color sprite on background
  * \param obj Object info
  */
-void FWRenderer::incrustSprite(const objectStruct &obj) {
+void FWRenderer::incrustSprite(const ObjectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
 	const byte *mask = animDataTable[obj.frame].mask();
 	int x, y, width, height;
@@ -333,9 +333,9 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	// Draw the filled rectangle
 	//
 	// Since the Amiga version uses a transparent boxes we need to decide whether:
-	//  - we draw a box, that should be the case then both width and height is greater than 1
-	//  - we draw a line, that should be the case then either width or height is 1
-	// When we draw a box and we're running an Amiga version we do use the special code to make
+	//  - we draw a box, that should be the case when both width and height is greater than 1
+	//  - we draw a line, that should be the case when either width or height is 1
+	// When we draw a box and we're running an Amiga version we do use special code to make
 	// the boxes transparent.
 	// When on the other hand we are drawing a line or are not running an Amiga version, we will
 	// always use the code, which simply fills the rect.
@@ -457,7 +457,7 @@ void FWRenderer::drawBackground() {
  */
 void FWRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int idx, len, width;
-	objectStruct *obj;
+	ObjectStruct *obj;
 	AnimData *sprite;
 	byte *mask;
 
@@ -937,7 +937,7 @@ void OSRenderer::clear() {
  * \param obj Object info
  * \param fillColor Sprite color
  */
-void OSRenderer::incrustMask(const objectStruct &obj, uint8 color) {
+void OSRenderer::incrustMask(const ObjectStruct &obj, uint8 color) {
 	const byte *data = animDataTable[obj.frame].data();
 	int x, y, width, height;
 
@@ -954,7 +954,7 @@ void OSRenderer::incrustMask(const objectStruct &obj, uint8 color) {
 /*! \brief Draw color sprite
  * \param obj Object info
  */
-void OSRenderer::drawSprite(const objectStruct &obj) {
+void OSRenderer::drawSprite(const ObjectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
 	int x, y, width, height, transColor;
 
@@ -970,7 +970,7 @@ void OSRenderer::drawSprite(const objectStruct &obj) {
 /*! \brief Draw color sprite
  * \param obj Object info
  */
-void OSRenderer::incrustSprite(const objectStruct &obj) {
+void OSRenderer::incrustSprite(const ObjectStruct &obj) {
 	const byte *data = animDataTable[obj.frame].data();
 	int x, y, width, height, transColor;
 
@@ -1036,7 +1036,7 @@ void OSRenderer::drawBackground() {
  */
 void OSRenderer::renderOverlay(const Common::List<overlay>::iterator &it) {
 	int len, idx, width, height;
-	objectStruct *obj;
+	ObjectStruct *obj;
 	AnimData *sprite;
 	byte *mask;
 	byte color;

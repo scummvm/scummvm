@@ -44,10 +44,10 @@ namespace Cine {
 
 class FWScript;
 
-typedef int (FWScript::*opFunc)();
+typedef int (FWScript::*OpFunc)();
 
 struct Opcode {
-	const opFunc proc;
+	const OpFunc proc;
 	const char *args;
 };
 
@@ -320,7 +320,7 @@ public:
  */
 class FWScriptInfo {
 protected:
-	virtual opFunc opcodeHandler(byte opcode) const;
+	virtual OpFunc opcodeHandler(byte opcode) const;
 
 public:
 	virtual ~FWScriptInfo() {}
@@ -338,7 +338,7 @@ public:
  */
 class OSScriptInfo : public FWScriptInfo {
 protected:
-	virtual opFunc opcodeHandler(byte opcode) const;
+	virtual OpFunc opcodeHandler(byte opcode) const;
 
 public:
 	virtual ~OSScriptInfo() {}

@@ -308,7 +308,7 @@ const char *OSScriptInfo::opcodeInfo(byte opcode) const {
 /*! \brief Get opcode handler pointer
  * \param opcode Opcode to look for in opcode table
  */
-opFunc OSScriptInfo::opcodeHandler(byte opcode) const {
+OpFunc OSScriptInfo::opcodeHandler(byte opcode) const {
 	if (opcode == 0 || opcode > OSScript::_numOpcodes) {
 		return NULL;
 	}

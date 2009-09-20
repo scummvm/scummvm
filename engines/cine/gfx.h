@@ -85,9 +85,9 @@ protected:
 	int _changePal; ///< Load active palette to video backend on next frame
 	bool _showCollisionPage; ///< Should we show the collision page instead of the back buffer? Used for debugging.
 
-	void fillSprite(const objectStruct &obj, uint8 color = 0);
-	void drawMaskedSprite(const objectStruct &obj, const byte *mask);
-	virtual void drawSprite(const objectStruct &obj);
+	void fillSprite(const ObjectStruct &obj, uint8 color = 0);
+	void drawMaskedSprite(const ObjectStruct &obj, const byte *mask);
+	virtual void drawSprite(const ObjectStruct &obj);
 
 	void drawCommand();
 	void drawMessage(const char *str, int x, int y, int width, int color);
@@ -120,8 +120,8 @@ public:
 	void blit();
 	void setCommand(Common::String cmd);
 
-	virtual void incrustMask(const objectStruct &obj, uint8 color = 0);
-	virtual void incrustSprite(const objectStruct &obj);
+	virtual void incrustMask(const ObjectStruct &obj, uint8 color = 0);
+	virtual void incrustSprite(const ObjectStruct &obj);
 
 	virtual void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	virtual void loadCt16(const byte *ct, const char *name);
@@ -160,7 +160,7 @@ private:
 
 protected:
 
-	void drawSprite(const objectStruct &obj);
+	void drawSprite(const ObjectStruct &obj);
 	int drawChar(char character, int x, int y);
 	void drawBackground();
 	void renderOverlay(const Common::List<overlay>::iterator &it);
@@ -176,8 +176,8 @@ public:
 
 	void clear();
 
-	void incrustMask(const objectStruct &obj, uint8 color = 0);
-	void incrustSprite(const objectStruct &obj);
+	void incrustMask(const ObjectStruct &obj, uint8 color = 0);
+	void incrustSprite(const ObjectStruct &obj);
 
 	void loadBg16(const byte *bg, const char *name, unsigned int idx = 0);
 	void loadCt16(const byte *ct, const char *name);

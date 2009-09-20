@@ -30,7 +30,7 @@
 
 namespace Cine {
 
-struct objectStruct {
+struct ObjectStruct {
 	int16 x;
 	int16 y;
 	uint16 mask;
@@ -63,7 +63,7 @@ struct overlay {
 #define NUM_MAX_OBJECT 255
 #define NUM_MAX_VAR 255
 
-extern Common::Array<objectStruct> objectTable;
+extern Common::Array<ObjectStruct> objectTable;
 extern Common::List<overlay> overlayList;
 
 void resetObjectTable();
