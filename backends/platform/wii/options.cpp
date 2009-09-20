@@ -127,7 +127,7 @@ void WiiOptionsDialog::handleTickle() {
 		if (fsf.isMounted(WiiFilesystemFactory::kDVD)) {
 			_textDVDStatus->setLabel("DVD Mounted successfully");
 		} else {
-			if (fsf.failedToMount(kDVD))
+			if (fsf.failedToMount(WiiFilesystemFactory::kDVD))
 				_textDVDStatus->setLabel("Error while mounting the DVD");
 			else
 				_textDVDStatus->setLabel("DVD not mounted");
