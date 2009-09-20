@@ -252,7 +252,11 @@ void KyraEngine_LoK::seq_introStory() {
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));
 	else
 		warning("no story graphics file found");
-	_screen->setScreenPalette(_screen->getPalette(0));
+
+	if (_flags.platform == Common::kPlatformAmiga)
+		_screen->setScreenPalette(_screen->getPalette(4));
+	else
+		_screen->setScreenPalette(_screen->getPalette(0));
 	_screen->copyPage(3, 0);
 
 	if (_flags.lang == Common::JA_JPN) {
