@@ -461,21 +461,23 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		_screen->generateLevelOverlay(_screen->getPalette(0), _screen->getLevelOverlay(i), _lastSpecialColor, weight);
 
 		int l = _flags.use16ColorMode ? 256 : 128;
+		uint8 *levelOverlay = _screen->getLevelOverlay(i);
 		for (int ii = 0; ii < l; ii++) {
-			if (_screen->getLevelOverlay(i)[ii] == 255)
-				_screen->getLevelOverlay(i)[ii] = 0;
+			if (levelOverlay[ii] == 255)
+				levelOverlay[ii] = 0;
 		}
 
 		for (int ii = l; ii < 256; ii++)
-			_screen->getLevelOverlay(i)[ii] = ii & 0xff;
+			levelOverlay[ii] = ii & 0xff;
 	}
 
+	uint8 *levelOverlay = _screen->getLevelOverlay(7);
 	for (int i = 0; i < 256; i++)
-		_screen->getLevelOverlay(7)[i] = i & 0xff;
+		levelOverlay[i] = i & 0xff;
 
 	if (_flags.use16ColorMode) {
 		_screen->getLevelOverlay(6)[0xee] = 0xee;
-		if (_lastSpecialColor == 0x44)			
+		if (_lastSpecialColor == 0x44)
 			_screen->getLevelOverlay(5)[0xee] = 0xee;
 
 		for (int i = 0; i < 7; i++)
