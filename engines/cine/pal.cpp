@@ -103,14 +103,7 @@ void loadRelatedPalette(const char *fileName) {
 	}
 }
 
-/*! \brief Shift byte to the left by given amount (Handles negative shifting amounts too, otherwise this would be trivial). */
-byte shiftByteLeft(const byte value, const signed shiftLeft) {
-	if (shiftLeft >= 0)
-		return value << shiftLeft;
-	else // right shift with negative shiftLeft values
-		return value >> abs(shiftLeft);
-}
-
+namespace {
 /*! \brief Is given endian type big endian? (Handles native endian type too, otherwise this would be trivial). */
 bool isBigEndian(const EndianType endian) {
 	assert(endian == CINE_NATIVE_ENDIAN || endian == CINE_LITTLE_ENDIAN || endian == CINE_BIG_ENDIAN);
@@ -137,6 +130,15 @@ int bytePos(const int bitPos, const int numBytes, const bool bigEndian) {
 	else // little endian
 		return bitPos / 8;
 }
+
+/*! \brief Calculate the value of "base" to the power of "power". */
+int power(int base, int power) {
+	int result = 1;
+	while (power--)
+		result *= base;
+	return result;
+}
+} // end of anonymous namespace
 
 // a.k.a. palRotate
 Palette &Palette::rotateRight(byte firstIndex, byte lastIndex, signed rotationAmount) {
@@ -317,25 +319,30 @@ byte *Palette::save(byte *buf, const uint size, const Graphics::PixelFormat form
 	// Clear the part of the output palette we're going to be writing to with all black
 	memset(buf, 0, format.bytesPerPixel * numColors);
 
-	// Calculate how much bit shifting the color components need (for positioning them correctly)
-	const signed rShiftLeft = (colorFormat().rLoss - (signed) format.rLoss) + (format.rShift % 8);
-	const signed gShiftLeft = (colorFormat().gLoss - (signed) format.gLoss) + (format.gShift % 8);
-	const signed bShiftLeft = (colorFormat().bLoss - (signed) format.bLoss) + (format.bShift % 8);
+	// Calculate original R/G/B max values
+	const int rOrigMax = power(2, 8 - colorFormat().rLoss) - 1;
+	const int gOrigMax = power(2, 8 - colorFormat().gLoss) - 1;
+	const int bOrigMax = power(2, 8 - colorFormat().bLoss) - 1;
 
-	// Calculate the byte masks for each color component (for masking away excess bits)
-	const byte rMask = format.rMax() << (format.rShift % 8);
-	const byte gMask = format.gMax() << (format.gShift % 8);
-	const byte bMask = format.bMax() << (format.bShift % 8);
+	// Calculate new R/G/B max values
+	const int rNewMax = power(2, 8 - format.rLoss) - 1;
+	const int gNewMax = power(2, 8 - format.gLoss) - 1;
+	const int bNewMax = power(2, 8 - format.bLoss) - 1;
 
+	// Calculate the byte position
 	const int rBytePos = bytePos(format.rShift, format.bytesPerPixel, isBigEndian(endian));
 	const int gBytePos = bytePos(format.gShift, format.bytesPerPixel, isBigEndian(endian));
 	const int bBytePos = bytePos(format.bShift, format.bytesPerPixel, isBigEndian(endian));
 
 	// Save the palette to the output in the specified format
 	for (uint i = firstIndex; i < firstIndex + numColors; i++) {
-		buf[i * format.bytesPerPixel + rBytePos] |= (shiftByteLeft(_colors[i].r, rShiftLeft) & rMask);
-		buf[i * format.bytesPerPixel + gBytePos] |= (shiftByteLeft(_colors[i].g, gShiftLeft) & gMask);
-		buf[i * format.bytesPerPixel + bBytePos] |= (shiftByteLeft(_colors[i].b, bShiftLeft) & bMask);
+		const uint r = (_colors[i].r * rNewMax) / rOrigMax;
+		const uint g = (_colors[i].g * gNewMax) / gOrigMax;
+		const uint b = (_colors[i].b * bNewMax) / bOrigMax;
+	
+		buf[i * format.bytesPerPixel + rBytePos] |= r << (format.rShift % 8);
+		buf[i * format.bytesPerPixel + gBytePos] |= g << (format.gShift % 8);
+		buf[i * format.bytesPerPixel + bBytePos] |= b << (format.bShift % 8);
 	}
 
 	// Return the pointer to the output palette
