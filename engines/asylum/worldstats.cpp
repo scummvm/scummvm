@@ -300,7 +300,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 		actor.direction  = stream->readUint32LE();
 		actor.field_3C   = stream->readUint32LE();
-		actor.field_40   = stream->readUint32LE();
+		actor.updateType = stream->readUint32LE();
 		actor.field_44	 = stream->readUint32LE();
 		actor.field_48	 = stream->readUint32LE();
 		actor.flags      = stream->readUint32LE();

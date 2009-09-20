@@ -188,7 +188,7 @@ public:
 	Common::Rect boundingRect;
 	uint32		 direction;
 	uint32		 field_3C;
-	uint32		 field_40; // XXX Character Id???
+	uint32		 updateType;
 	uint32		 field_44;
 	uint32		 field_48;
 	uint32		 flags;

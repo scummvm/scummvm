@@ -599,7 +599,7 @@ int kEnableActor(ActionCommand *cmd, Scene *scn) {
 	else
 		actorIndex = cmd->param1;
 
-	if (scn->worldstats()->actors[actorIndex].field_40 == 5)
+	if (scn->worldstats()->actors[actorIndex].updateType == 5)
 		scn->actions()->enableActorSub(actorIndex, 4);
 
 	return 0;
@@ -993,10 +993,10 @@ int kChangeActorField40(ActionCommand *cmd, Scene *scn) {
 	int fieldType = cmd->param2;
 
 	if (fieldType) {
-		if (scn->worldstats()->actors[actorIdx].field_40 < 11)
-			scn->worldstats()->actors[actorIdx].field_40 = 14;
+		if (scn->worldstats()->actors[actorIdx].updateType < 11)
+			scn->worldstats()->actors[actorIdx].updateType = 14;
 	} else {
-		scn->worldstats()->actors[actorIdx].field_40 = 4;
+		scn->worldstats()->actors[actorIdx].updateType = 4;
 	}
 
 	return -1;

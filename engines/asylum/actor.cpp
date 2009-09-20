@@ -275,19 +275,39 @@ void Actor::walkTo(uint32 curX, uint32 curY) {
 }
 
 void Actor::update_4072A0(int param) {
+    int newGrId = 0;
+    int newDir = 0;
+
 	switch (param) {
 
-	case 5:
-		int dir = direction;
-		if (dir > 4)
-			direction = 8 - dir;
+    case 4:
+    case 6:
+    case 14:   
+        if(this->direction > 4)
+            newDir = 8 - this->direction;
+        else
+            newDir = this->direction;
+        newGrId = this->grResTable[newDir + 5];
+        break;
 
-		setAction(dir + 5);
+	case 5:
+		newDir = this->direction;
+		if (newDir > 4)
+			this->direction = 8 - newDir;
+
+		setAction(newDir + 5);
 		break;
 
 	}
 
-	field_40 = param;
+    this->grResId = newGrId;
+
+    GraphicResource *gra = new GraphicResource(_resPack, this->grResId);
+    this->frameCount = gra->getFrameCount();
+    this->frameNum   = 0;
+    delete gra;
+
+	this->updateType = param;
 }
 
 void Actor::setPosition_40A260(uint32 newX, uint32 newY, int newDirection, int frame) {

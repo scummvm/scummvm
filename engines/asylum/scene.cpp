@@ -115,8 +115,31 @@ Scene::Scene(uint8 sceneIdx, AsylumEngine *vm): _vm(vm) {
     _vm->screen()->clearGraphicsInQueue();
     _ws->motionStatus = 1;
 
-    // TODO: do some rect stuffs from player actor
-    // TODO: reset actors flags
+    _ws->actors[_playerActorIdx].boundingRect.bottom = _ws->actors[_playerActorIdx].y2;
+    _ws->actors[_playerActorIdx].boundingRect.right = 2 * _ws->actors[_playerActorIdx].x2;
+    _ws->boundingRect = Common::Rect(195, 115, 445 - _ws->actors[_playerActorIdx].boundingRect.right, 345 - _ws->actors[_playerActorIdx].boundingRect.bottom);
+
+    _ws->actors[_playerActorIdx].flags |= 1;
+    _ws->actors[_playerActorIdx].update_4072A0(4);
+
+    _ws->actors[_playerActorIdx].x1 -= _ws->actors[_playerActorIdx].x2;
+    _ws->actors[_playerActorIdx].y1 -= _ws->actors[_playerActorIdx].y2;
+
+    if(_ws->numActors > 1)
+    {
+        for (uint32 a = 1; a < _ws->numActors; a++) {
+            Actor *actor= &_ws->actors[a];
+            actor->flags |= 1;
+            actor->direction = 1;
+            actor->update_4072A0(4);
+            actor->x1 -= actor->x2;
+            actor->y1 -= actor->y2;
+            actor->boundingRect.bottom = actor->y2;
+            actor->boundingRect.right = 2 * actor->x2;
+        }
+    }
+
+    // TODO: init action list
 }
 
 Scene::~Scene() {
@@ -412,9 +435,9 @@ void Scene::updateActor(uint32 actorIdx) {
     Actor *actor = getActor();
     
     if (actor->visible()) {
-    	// printf("Actor field_40 = 0x%02X\n", actor->field_40);
+    	// printf("Actor updateType = 0x%02X\n", actor->updateType);
 
-        switch (actor->field_40) {
+        switch (actor->updateType) {
         
         case 0x10:
             if (_ws->numChapter == 2) {
