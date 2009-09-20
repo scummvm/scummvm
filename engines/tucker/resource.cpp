@@ -216,12 +216,14 @@ void TuckerEngine::openCompressedSoundFile() {
 	for (int i = 0; compressedSoundFilesTable[i].filename; ++i) {
 		if (_fCompressedSound.open(compressedSoundFilesTable[i].filename)) {
 			int version = _fCompressedSound.readUint16LE();
-			if (version == kCurrentCompressedSoundDataVersion) {
+			int flags = _fCompressedSound.readUint16LE();
+			if (version == kCurrentCompressedSoundDataVersion && flags == 0) {
 				_compressedSoundType = i;
 				debug(1, "Using compressed sound file '%s'", compressedSoundFilesTable[i].filename);
 				return;
 			}
-			warning("Unhandled version %d for compressed sound file '%s'", version, compressedSoundFilesTable[i].filename);
+			warning("Unhandled version %d (flags 0x%X) for compressed sound file '%s'", version, flags, compressedSoundFilesTable[i].filename);
+			_fCompressedSound.close();
 		}
 	}
 }
