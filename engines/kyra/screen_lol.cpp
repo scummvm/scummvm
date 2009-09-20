@@ -176,7 +176,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	uint8 *d = ovl;
 	*d++ = 0;
 
-	for (int i = 1; i != 255; i++) {
+	for (int i = 1; i != 256; i++) {
 		uint16 a = srt[i * 3];
 		uint8 dr = a - ((((a - r) * (weight >> 1)) << 1) >> 8);
 		a = srt[i * 3 + 1];
