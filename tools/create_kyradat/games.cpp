@@ -33,6 +33,7 @@ const Game kyra1Games[] = {
 
 	// Amiga
 	{ kKyra1, EN_ANY, kPlatformAmiga, -1, "b620564b6b7e0787b053ca9e35bd9f52" },
+	{ kKyra1, DE_DEU, kPlatformAmiga, -1, "ceddb4bd4df51698e3851e75106d117a" },
 
 	// Floppy
 	{ kKyra1, EN_ANY, kPlatformPC, -1, "76a4fc84e173cadb6369785787e1546e" },

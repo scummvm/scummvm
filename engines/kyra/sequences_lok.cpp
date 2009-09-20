@@ -236,7 +236,7 @@ void KyraEngine_LoK::seq_introStory() {
 	if (!textEnabled() && speechEnabled() && _flags.lang != Common::IT_ITA)
 		return;
 
-	if (_flags.lang == Common::EN_ANY && !_flags.isTalkie && (_flags.platform == Common::kPlatformPC || _flags.platform == Common::kPlatformAmiga))
+	if ((_flags.lang == Common::EN_ANY && !_flags.isTalkie && _flags.platform == Common::kPlatformPC) || _flags.platform == Common::kPlatformAmiga)
 		_screen->loadBitmap("TEXT.CPS", 3, 3, &_screen->getPalette(0));
 	else if (_flags.lang == Common::EN_ANY || _flags.lang == Common::JA_JPN)
 		_screen->loadBitmap("TEXT_ENG.CPS", 3, 3, &_screen->getPalette(0));
@@ -253,7 +253,7 @@ void KyraEngine_LoK::seq_introStory() {
 	else
 		warning("no story graphics file found");
 	_screen->setScreenPalette(_screen->getPalette(0));
-	_screen->copyRegion(0, 0, 0, 0, 320, 200, 3, 0);
+	_screen->copyPage(3, 0);
 
 	if (_flags.lang == Common::JA_JPN) {
 		const int x1 = (Screen::SCREEN_W - _screen->getTextWidth(_seq_textsTable[18])) / 2;

@@ -377,6 +377,18 @@ void GUI_LoK::setGUILabels() {
 			offset = 6;
 		offsetOn = offsetMainMenu = offsetOptions = offset;
 		walkspeedGarbageOffset = 48;
+	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
+		if (_vm->gameFlags().lang == Common::EN_ANY) {
+			offset = offsetOn = 23;
+			offsetOptions = 32;
+			walkspeedGarbageOffset = 2;
+			offsetMainMenu = 23;
+		} else if (_vm->gameFlags().lang == Common::DE_DEU) {
+			offset = offsetOn = 12;
+			offsetOptions = 21;
+			walkspeedGarbageOffset = 3;
+			offsetMainMenu = 12;
+		}
 	} else if (_vm->gameFlags().lang == Common::ES_ESP) {
 		offsetOn = offsetMainMenu = offsetOptions = offset = -4;
 		menuLabelGarbageOffset = 72;
@@ -389,16 +401,9 @@ void GUI_LoK::setGUILabels() {
 		offsetOptions = 10;
 		offsetOn = 0;
 		walkspeedGarbageOffset = 0;
-	} else if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		// English Amiga version
-		offset = 23;
-		offsetOn = 23;
-		offsetOptions = 32;
-		walkspeedGarbageOffset = 2;
-		offsetMainMenu = 23;
 	}
 
-	assert(offset + 27 < _vm->_guiStringsSize);
+	assert(offset + (_vm->gameFlags().isTalkie ? 28 : 23) < _vm->_guiStringsSize);
 
 	// The Legend of Kyrandia
 	_menu[0].menuNameString = _vm->_guiStrings[0];
