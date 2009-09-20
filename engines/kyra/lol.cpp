@@ -1060,29 +1060,22 @@ void LoLEngine::decodeSjis(const char *src, char *dst) {
 	char d[3];
 	s[1] = 0;
 
-	uint8 cmd = *src++;
-
-	while (cmd) {
+	uint8 cmd = 0;
+	while ((cmd = *src++) != 0) {
 		if (cmd == 27) {
-			cmd = *src & 0x7f;
-			src++;
-
-			for (int i = 0; i < cmd; i ++) {
-				*dst++ = *src++;
-				*dst++ = *src++;
-			}
-			cmd = *src++;
-
+			cmd = *src++ & 0x7f;
+			memcpy(dst, src, cmd * 2);
+			dst += cmd * 2;
+			src += cmd * 2;
 		} else {
-			s[0] = *src++;
-			Util::decodeString1(s, d);
-			*dst++ = d[0];
-			cmd = *src++;
+			s[0] = cmd;
+			int size = Util::decodeString1(s, d);
+			memcpy(dst, d, size);
+			dst += size;
 		}
 	}
 
-	if (!cmd)
-		*dst = 0;
+	*dst = 0;
 }
 
 bool LoLEngine::addCharacter(int id) {
