@@ -68,7 +68,7 @@ void TeenAgentEngine::processObject() {
 					debug(0, "combine! %u,%u", obj->x, obj->y);
 					//moveTo(Common::Point(obj->x, obj->y), NULL, Examine);
 					inventory->resetSelectedObject();
-					if (!processCallback(obj->callback))
+					if (!processCallback(TO_LE_16(obj->callback)))
 						debug(0, "fixme! display proper description");
 					return;
 				}
