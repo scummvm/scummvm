@@ -32,7 +32,7 @@ Polygons::Polygons(Common::SeekableReadStream *stream) {
 }
 
 Polygons::~Polygons() {
-	for (int i = 0; i < numEntries; i++)
+	for (uint32 i = 0; i < numEntries; i++)
 		delete[] entries[i].points;
 
 	entries.clear();

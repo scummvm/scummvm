@@ -125,7 +125,7 @@ GraphicFrame *Actor::getFrame() {
 	return frame;
 }
 
-void Actor::drawActorAt(uint16 curX, uint16 curY) {
+void Actor::drawActorAt(uint32 curX, uint32 curY) {
 	GraphicFrame *frame = getFrame();
 
     WorldStats *ws = _scene->worldstats();
@@ -162,7 +162,7 @@ void Actor::setWalkArea(ActionArea *target) {
 	}
 }
 
-void Actor::walkTo(uint16 curX, uint16 curY) {
+void Actor::walkTo(uint32 curX, uint32 curY) {
 	int newAction = currentAction;
     WorldStats *ws = _scene->worldstats();
 
@@ -170,15 +170,15 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	// actor in a given direction
 	int step = 2;
 
-	uint16 newX = x;
-	uint16 newY = y;
+	uint32 newX = x;
+	uint32 newY = y;
 	bool   done = false;
 
 	// Walking left...
 	if (curX < x) {
 		newAction = kWalkW;
 		newX -= step;
-		if (ABS(curY - y) <= 30)
+		if (ABS((int32)curY - (int32)y) <= 30)
 			done = true;
 	}
 
@@ -186,7 +186,7 @@ void Actor::walkTo(uint16 curX, uint16 curY) {
 	if (curX > x) {
 		newAction = kWalkE;
 		newX += step;
-		if (ABS(curY - y) <= 30)
+		if (ABS((int32)curY - (int32)y) <= 30)
 			done = true;
 	}
 
@@ -361,7 +361,7 @@ void Actor::faceTarget(int targetId, int targetType) {
 }
 
 int Actor::getAngle(int ax1, int ay1, int ax2, int ay2) {
-	uint32 v5 = (ax2 << 16) - (ax1 << 16);
+	int32 v5 = (ax2 << 16) - (ax1 << 16);
 	int v6 = 0;
 	int v4 = (ay1 << 16) - (ay2 << 16);
 
