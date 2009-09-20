@@ -3011,6 +3011,8 @@ byte *Screen::getOverlayPtr(int page) {
 	} else if (_vm->gameFlags().gameID == GI_LOL) {
 		if (page == 4 || page == 5)
 			return _sjisOverlayPtrs[3];
+		if (page == 6 || page == 7)
+			return _sjisOverlayPtrs[4];
 	}
 
 	return 0;
