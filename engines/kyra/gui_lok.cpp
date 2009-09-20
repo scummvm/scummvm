@@ -404,6 +404,8 @@ void GUI_LoK::setGUILabels() {
 	}
 
 	assert(offset + (_vm->gameFlags().isTalkie ? 28 : 23) < _vm->_guiStringsSize);
+	assert(offsetOptions + 27 < _vm->_guiStringsSize);
+	assert(offsetMainMenu + 19 < _vm->_guiStringsSize);
 
 	// The Legend of Kyrandia
 	_menu[0].menuNameString = _vm->_guiStrings[0];
