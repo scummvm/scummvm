@@ -82,7 +82,12 @@ void MainMenu::openMenu() {
 	_vm->screen()->setPalette(_resPack, 17);
 	// Copy the bright background to the back buffer
 	GraphicFrame *bg = _bgResource->getFrame(1);
-	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels, bg->surface.w, 0, 0, bg->surface.w, bg->surface.h);
+	_vm->screen()->copyToBackBuffer((byte *)bg->surface.pixels,
+			bg->surface.w,
+			0,
+			0,
+			bg->surface.w,
+			bg->surface.h);
 
 	// Set mouse cursor
 	_cursor->load(2);
@@ -90,7 +95,7 @@ void MainMenu::openMenu() {
 
 	// Stop all sounds
 	_vm->sound()->stopMusic();
-	_vm->sound()->stopSfx();
+	_vm->sound()->stopSound();
 
 	// Start playing music
 	_vm->sound()->playMusic(_resPack, 39);
@@ -105,7 +110,7 @@ void MainMenu::closeMenu() {
 	_vm->scene()->activate();
 
 	// Stop menu sounds and menu music
-	_vm->sound()->stopSfx();
+	_vm->sound()->stopSound();
 	_vm->sound()->stopMusic();
 }
 
@@ -284,8 +289,8 @@ void MainMenu::updateMainMenu() {
 			_text->drawResTextCentered(MenuIconFixedXpos[iconNum], iconFrame->y + 50, _text->getResTextWidth(iconNum + 1309), iconNum + 1309);
 
 			// Play creepy voice
-			if (!_vm->sound()->isSfxActive() && _activeIcon != _previousActiveIcon) {
-				_vm->sound()->playSfx(_resPack, iconNum + 44);
+			if (_activeIcon != _previousActiveIcon) {
+				_vm->sound()->playSound(_resPack, iconNum + 44, _vm->soundVolume());
 				_previousActiveIcon = _activeIcon;
 			}
 

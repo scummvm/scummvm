@@ -31,6 +31,9 @@
 
 namespace Asylum {
 
+#define RESID(id)  ((id >> 16) & 0x7FFF)
+#define RESIDX(id) (id & 0XFFFF)
+
 struct ResourceEntry {
 	byte   *data;
 	uint32 size;

@@ -54,6 +54,10 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 
 	memset(_gameFlags, 0, 1512);
+
+	// initialize default configuration
+	_ambientVolume = 0;
+	_soundVolume   = 0;
 }
 
 AsylumEngine::~AsylumEngine() {
@@ -149,22 +153,18 @@ void AsylumEngine::waitForTimer(int msec_delay) {
 
 void AsylumEngine::playIntro() {
 	_video->playVideo(1, kSubtitlesOn);
+
 	if (_scene->worldstats()->musicCurrentResId != 0xFFFFFD66)
-		_sound->playMusic(_scene->getMusicPack(),
-						  _scene->worldstats()->musicCurrentResId);
+		_sound->playMusic(_scene->worldstats()->musicCurrentResId);
 
 	_screen->clearScreen();
 
 	setGameFlag(4);
 	setGameFlag(12);
 
-	ResourcePack *introRes = new ResourcePack(18);
-
-	_sound->playSfx(introRes, 7);
-
-	_introPlaying = true;
-
-	delete introRes;
+	// Play the intro sound sample (the screen is blacked out, you hear
+	// an alarm sounding and men talking about.
+	_sound->playSound(0x8012007, false, _soundVolume, 0);
 }
 
 void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
@@ -178,7 +178,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	// by moving the logic to the event loop and checking whether a flag is
 	// set to determine if control should be returned to the engine.
 	if (_introPlaying) {
-		if (!_sound->isSfxActive()) {
+		if (!_sound->isPlaying(0x8012007)) {
 			_introPlaying = false;
 
 			// TODO Since we've currently only got one sfx handle to play with in
@@ -258,7 +258,7 @@ void AsylumEngine::processDelayedEvents() {
 	int videoIdx = _scene->actions()->delayedVideoIndex;
 	if (videoIdx >= 0) {
 		_sound->stopMusic();
-		_sound->stopSfx();
+		_sound->stopAllSounds();
 		_video->playVideo(videoIdx, kSubtitlesOn);
 		_scene->actions()->delayedVideoIndex = -1;
 
@@ -272,7 +272,7 @@ void AsylumEngine::processDelayedEvents() {
 	int sceneIdx = _scene->actions()->delayedSceneIndex;
 	if (sceneIdx >=0 && !_scene->actions()->processing) {
 		_sound->stopMusic();
-		_sound->stopSfx();
+		_sound->stopAllSounds();
 		
 		if (_scene)
 			delete _scene;

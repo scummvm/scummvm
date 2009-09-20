@@ -69,7 +69,6 @@ public:
 	Cursor*          getCursor()       { return _cursor; }
 	ResourcePack*	 getResourcePack() { return _resPack; }
     ResourcePack*	 getMusicPack()    { return _musPack; }
-    ResourcePack*	 getSpeechPack()   { return _speechPack; }
 	GraphicResource* getGraphicResource(uint32 entry) { return new GraphicResource(_resPack, entry); }
     BlowUpPuzzle*    getBlowUpPuzzle() { return _blowUp; }
 
@@ -110,6 +109,7 @@ private:
     void   updateMouse();
     void   updateActor(uint32 actorIdx);
     void   updateBarriers();
+    void   updateBarriers2(); // XXX Alexandre's version
     void   updateAmbientSounds();
     void   updateMusic();
     void   updateAdjustScreen();

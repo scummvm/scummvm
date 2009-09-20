@@ -154,7 +154,8 @@ public:
 
 	bool isBarrierOnScreen(uint32 idx);
 	bool isBarrierVisible(uint32 idx);
-
+	// TODO this needs a better name
+	bool checkBarrierFlagsCondition(uint32 idx);
 private:
 	Scene *_scene;
 
