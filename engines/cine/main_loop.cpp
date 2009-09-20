@@ -382,7 +382,7 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 			do {
 				manageEvents();
 				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-			} while (mouseButton != 0);
+			} while (mouseButton != 0 && !shouldQuit());
 
 			menuVar = 0;
 
@@ -391,14 +391,14 @@ void CineEngine::mainLoop(int bootScriptIdx) {
 				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
 				playerAction = (mouseButton != 0) || processKeyboard(menuVar);
 				mainLoopSub6();
-			} while (!playerAction);
+			} while (!playerAction && !shouldQuit());
 
 			menuVar = 0;
 
 			do {
 				manageEvents();
 				getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-			} while (mouseButton != 0);
+			} while (mouseButton != 0 && !shouldQuit());
 
 			waitForPlayerClick = 0;
 		}
