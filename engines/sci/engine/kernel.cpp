@@ -391,6 +391,26 @@ Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
 Kernel::~Kernel() {
 }
 
+uint Kernel::getSelectorNamesSize() const {
+	return _selectorNames.size();
+}
+const Common::String &Kernel::getSelectorName(uint selector) const {
+	return _selectorNames[selector];
+}
+
+uint Kernel::getKernelNamesSize() const {
+	return _kernelNames.size();
+}
+const Common::String &Kernel::getKernelName(uint number) const {
+	// FIXME: The following check is a temporary workaround for
+	// an issue leading to crashes when using the debugger's backtrace
+	// command.
+	static const Common::String invalid = "(invalid)";
+	if (number >= _kernelNames.size())
+		return invalid;
+	return _kernelNames[number];
+}
+
 void Kernel::detectSciFeatures() {
 	SciVersion version = _resMan->sciVersion();
 

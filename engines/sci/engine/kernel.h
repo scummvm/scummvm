@@ -65,11 +65,11 @@ public:
 	Kernel(ResourceManager *resMan);
 	~Kernel();
 
-	uint getSelectorNamesSize() const { return _selectorNames.size(); }
-	const Common::String &getSelectorName(uint selector) const { return _selectorNames[selector]; }
+	uint getSelectorNamesSize() const;
+	const Common::String &getSelectorName(uint selector) const;
 
-	uint getKernelNamesSize() const { return _kernelNames.size(); }
-	const Common::String &getKernelName(uint number) const { return _kernelNames[number]; }
+	uint getKernelNamesSize() const;
+	const Common::String &getKernelName(uint number) const;
 
 	/**
 	 * Determines the selector ID of a selector by its name
