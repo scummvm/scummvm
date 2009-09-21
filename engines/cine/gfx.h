@@ -80,6 +80,7 @@ protected:
 	static const int _screenHeight = 200; ///< Screen height
 
 	byte *_backBuffer; ///< Screen backbuffer
+	byte *_screenBackUp; ///< Screen backbuffer's backup for the transparent menu code in the Amiga version
 	Cine::Palette _backupPal; ///< The backup color palette
 	Cine::Palette _activePal; ///< The active color palette
 	int _changePal; ///< Load active palette to video backend on next frame
@@ -92,6 +93,7 @@ protected:
 	void drawCommand();
 	void drawMessage(const char *str, int x, int y, int width, int color);
 	void drawPlainBox(int x, int y, int width, int height, byte color);
+	void drawTransparentBox(int x, int y, int width, int height);
 	void drawBorder(int x, int y, int width, int height, byte color);
 	void drawDoubleBorder(int x, int y, int width, int height, byte color);
 	virtual int drawChar(char character, int x, int y);
@@ -141,6 +143,9 @@ public:
 	virtual void savePalette(Common::OutSaveFile &fHandle);
 	virtual void rotatePalette(int a, int b, int c);
 	virtual void transformPalette(int first, int last, int r, int g, int b);
+
+	void prepareMenu();
+	void discardMenu();
 
 	void drawMenu(const CommandeType *items, unsigned int height, int x, int y, int width, int selected);
 	void drawInputBox(const char *info, const char *input, int cursor, int x, int y, int width);

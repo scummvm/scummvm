@@ -492,8 +492,10 @@ void processInventory(int16 x, int16 y) {
 	if (!listSize)
 		return;
 
+	renderer->prepareMenu();
 	renderer->drawMenu(objectListCommand, listSize, x, y, menuWidth, -1);
 	renderer->blit();
+	renderer->discardMenu();
 
 	do {
 		manageEvents();
@@ -688,6 +690,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 		Y = 199 - paramY;
 	}
 
+	renderer->prepareMenu();
 	renderer->drawMenu(commandList, height, X, Y, width, -1);
 	renderer->blit();
 
@@ -765,6 +768,8 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 		}
 
 	} while (!var_A && !g_cine->shouldQuit());
+
+	renderer->discardMenu();
 
 	assert(!needMouseSave);
 
@@ -1602,6 +1607,8 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	int inputLength = strlen(inputString);
 	int inputPos = inputLength + 1;
 
+	renderer->prepareMenu();
+
 	while (!quit) {
 		if (redraw) {
 			renderer->drawInputBox(messagePtr, inputString, inputPos, x - 16, y, width + 32);
@@ -1683,6 +1690,8 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 			break;
 		}
 	}
+
+	renderer->discardMenu();
 
 	if (quit == 2)
 		return false;

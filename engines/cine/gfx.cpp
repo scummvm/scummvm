@@ -92,7 +92,7 @@ static const byte cursorPalette[] = {
  */
 FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_activePal(), _changePal(0), _showCollisionPage(false) {
+	_screenBackUp(0), _activePal(), _changePal(0), _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
@@ -105,6 +105,7 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 FWRenderer::~FWRenderer() {
 	delete[] _background;
 	delete[] _backBuffer;
+	delete[] _screenBackUp;
 }
 
 bool FWRenderer::initialize() {
@@ -243,8 +244,13 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
+	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
+
 	if (color >= 0) {
-		drawPlainBox(x, y, width, 4, color);
+		if (isAmiga)
+			drawTransparentBox(x, y, width, 4);
+		else
+			drawPlainBox(x, y, width, 4, color);
 	}
 	tx = x + 4;
 	ty = str[0] ? y - 5 : y + 4;
@@ -266,7 +272,10 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 
 			ty += 9;
 			if (color >= 0) {
-				drawPlainBox(x, ty, width, 9, color);
+				if (isAmiga)
+					drawTransparentBox(x, ty, width, 4);
+				else
+					drawPlainBox(x, ty, width, 9, color);
 			}
 			tx = x + 4;
 		}
@@ -285,8 +294,11 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 
 	ty += 9;
 	if (color >= 0) {
-		drawPlainBox(x, ty, width, 4, color);
-		drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 18 : 2);
+		if (isAmiga)
+			drawTransparentBox(x, ty, width, 4);
+		else
+			drawPlainBox(x, ty, width, 4, color);
+		drawDoubleBorder(x, y, width, ty - y + 4, isAmiga ? 18 : 2);
 	}
 }
 
@@ -330,31 +342,42 @@ void FWRenderer::drawPlainBox(int x, int y, int width, int height, byte color) {
 	Common::Rect screenRect(320, 200);
 	boxRect.clip(screenRect);
 
-	// Draw the filled rectangle
-	//
-	// Since the Amiga version uses a transparent boxes we need to decide whether:
-	//  - we draw a box, that should be the case when both width and height is greater than 1
-	//  - we draw a line, that should be the case when either width or height is 1
-	// When we draw a box and we're running an Amiga version we do use special code to make
-	// the boxes transparent.
-	// When on the other hand we are drawing a line or are not running an Amiga version, we will
-	// always use the code, which simply fills the rect.
-	//
-	// TODO: Think over whether this is the nicest / best solution we can find for handling
-	// the transparency for Amiga boxes.
-	if (g_cine->getPlatform() == Common::kPlatformAmiga && width > 1 && height > 1) {
-		byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
-		const int lineAdd = 320 - boxRect.width();
-		for (int i = 0; i < boxRect.height(); ++i) {
-			for (int j = 0; j < boxRect.width(); ++j)
-				*dest++ += 16;
-			dest += lineAdd;
+	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+	for (int i = 0; i < boxRect.height(); i++) {
+		memset(dest + i * 320, color, boxRect.width());
+	}
+}
+
+void FWRenderer::drawTransparentBox(int x, int y, int width, int height) {
+	// Handle horizontally flipped boxes
+	if (width < 0) {
+		width = ABS(width);
+		x -= width;
+	}
+
+	// Handle vertically flipped boxes
+	if (height < 0) {
+		height = ABS(height);
+		y -= height;
+	}
+
+	// Clip the rectangle to screen dimensions
+	Common::Rect boxRect(x, y, x + width, y + height);
+	Common::Rect screenRect(320, 200);
+	boxRect.clip(screenRect);
+
+	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
+	const byte *src = _screenBackUp + boxRect.top * 320 + boxRect.left;
+	const int lineAdd = 320 - boxRect.width();
+	for (int i = 0; i < boxRect.height(); ++i) {
+		for (int j = 0; j < boxRect.width(); ++j) {
+			if (*src < 16)
+				*dest++ = *src++ + 16;
+			else
+				*dest++ = *src++;
 		}
-	} else {
-		byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
-		for (int i = 0; i < boxRect.height(); i++) {
-			memset(dest + i * 320, color, boxRect.width());
-		}
+		dest += lineAdd;
+		src += lineAdd;
 	}
 }
 
@@ -770,6 +793,22 @@ void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	refreshPalette();
 }
 
+void FWRenderer::prepareMenu() {
+	if (g_cine->getPlatform() != Common::kPlatformAmiga)
+		return;
+
+	if (!_screenBackUp) {
+		_screenBackUp = new uint8[_screenSize];
+		assert(_screenBackUp);
+	}
+	memcpy(_screenBackUp, _backBuffer, _screenSize);
+}
+
+void FWRenderer::discardMenu() {
+	delete[] _screenBackUp;
+	_screenBackUp = 0;
+}
+
 /*! \brief Draw menu box, one item per line with possible highlight
  * \param items Menu items
  * \param height Item count
@@ -790,12 +829,28 @@ void FWRenderer::drawMenu(const CommandeType *items, unsigned int height, int x,
 		y = 199 - th;
 	}
 
-	drawPlainBox(x, y, width, 4, _messageBg);
+	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
+
+	if (isAmiga)
+		drawTransparentBox(x, y, width, 4);
+	else
+		drawPlainBox(x, y, width, 4, _messageBg);
 
 	ty = y + 4;
 
 	for (i = 0; i < height; i++, ty += 9) {
-		drawPlainBox(x, ty, width, 9, (int)i == selected ? 0 : _messageBg);
+		if (isAmiga) {
+			// The original Amiga version is using a different highlight color here,
+			// but with our current code it is not possible to change the text color
+			// thus we can not use it, since otherwise the text wouldn't be visible
+			// anymore.
+			if ((int)i == selected)
+				drawPlainBox(x, ty, width, 9, 0/*2*/);
+			else
+				drawTransparentBox(x, ty, width, 9);
+		} else {
+			drawPlainBox(x, ty, width, 9, (int)i == selected ? 0 : _messageBg);
+		}
 		tx = x + 4;
 
 		for (j = 0; items[i][j]; j++) {
@@ -803,8 +858,11 @@ void FWRenderer::drawMenu(const CommandeType *items, unsigned int height, int x,
 		}
 	}
 
-	drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 18 : 2);
+	if (isAmiga)
+		drawTransparentBox(x, ty, width, 4);
+	else
+		drawPlainBox(x, ty, width, 4, _messageBg);
+	drawDoubleBorder(x, y, width, ty - y + 4, isAmiga ? 18 : 2);
 }
 
 /*! \brief Draw text input box
@@ -820,7 +878,12 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 	int line = 0, words = 0, cw = 0;
 	int space = 0, extraSpace = 0;
 
-	drawPlainBox(x, y, width, 4, _messageBg);
+	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
+
+	if (isAmiga)
+		drawTransparentBox(x, y, width, 4);
+	else
+		drawPlainBox(x, y, width, 4, _messageBg);
 	tx = x + 4;
 	ty = info[0] ? y - 5 : y + 4;
 	tw = width - 8;
@@ -840,7 +903,10 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 			}
 
 			ty += 9;
-			drawPlainBox(x, ty, width, 9, _messageBg);
+			if (isAmiga)
+				drawTransparentBox(x, ty, width, 9);
+			else
+				drawPlainBox(x, ty, width, 9, _messageBg);
 			tx = x + 4;
 		}
 
@@ -858,7 +924,10 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 
 	// input area background
 	ty += 9;
-	drawPlainBox(x, ty, width, 9, _messageBg);
+	if (isAmiga)
+		drawTransparentBox(x, ty, width, 9);
+	else
+		drawPlainBox(x, ty, width, 9, _messageBg);
 	drawPlainBox(x + 16, ty - 1, width - 32, 9, 0);
 	tx = x + 20;
 
@@ -876,8 +945,11 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 	}
 
 	ty += 9;
-	drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 18 : 2);
+	if (isAmiga)
+		drawTransparentBox(x, ty, width, 4);
+	else
+		drawPlainBox(x, ty, width, 4, _messageBg);
+	drawDoubleBorder(x, y, width, ty - y + 4, isAmiga ? 18 : 2);
 }
 
 /*! \brief Fade to black
