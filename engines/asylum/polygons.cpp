@@ -53,7 +53,7 @@ bool PolyDefinitions::contains(int x, int y) {
 		yflag1 = (vtx1->y >= y);
 		if (yflag0 != yflag1) {
 			if (((vtx1->y - y) * (vtx0->x - vtx1->x) >=
-				(vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
+			        (vtx1->x - x) * (vtx0->y - vtx1->y)) == yflag1) {
 				inside_flag = !inside_flag;
 			}
 		}

@@ -85,7 +85,9 @@ public:
 	bool waitCycle;
 
 	void setScriptByIndex(uint32 index);
-	ActionDefinitions* getScript() { return _currentScript; }
+	ActionDefinitions* getScript() {
+		return _currentScript;
+	}
 	int  process();
 
 	void processActionListSub02(ActionDefinitions* script, ActionCommand* command,  int a4);

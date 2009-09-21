@@ -28,7 +28,7 @@
 namespace Asylum {
 
 ActionList::ActionList(Common::SeekableReadStream *stream, Scene *scene)
-	: _scene(scene) {
+		: _scene(scene) {
 	load(stream);
 
 	currentLine       = 0;
@@ -164,19 +164,19 @@ void ActionList::setScriptByIndex(uint32 index) {
 	if (Common::isDebugChannelEnabled(kDebugLevelScripts)) {
 		for (uint8 i = 0; i < _currentScript->commands[0].numLines; i++) {
 			debugC(kDebugLevelScripts,
-				"Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
-				i,
-				_currentScript->commands[0].numLines - 1,
-				_currentScript->commands[i].opcode,
-				_currentScript->commands[i].param1,
-				_currentScript->commands[i].param2,
-				_currentScript->commands[i].param3,
-				_currentScript->commands[i].param4,
-				_currentScript->commands[i].param5,
-				_currentScript->commands[i].param6,
-				_currentScript->commands[i].param7,
-				_currentScript->commands[i].param8,
-				_currentScript->commands[i].param9);
+			       "Line: %02d/%02d :: 0x%02X (%d, %d, %d, %d, %d, %d, %d, %d, %d)",
+			       i,
+			       _currentScript->commands[0].numLines - 1,
+			       _currentScript->commands[i].opcode,
+			       _currentScript->commands[i].param1,
+			       _currentScript->commands[i].param2,
+			       _currentScript->commands[i].param3,
+			       _currentScript->commands[i].param4,
+			       _currentScript->commands[i].param5,
+			       _currentScript->commands[i].param6,
+			       _currentScript->commands[i].param7,
+			       _currentScript->commands[i].param8,
+			       _currentScript->commands[i].param9);
 		}
 	}
 }
@@ -223,10 +223,10 @@ void ActionList::processActionListSub02(ActionDefinitions* script, ActionCommand
 		int v13 = command->param4;
 		int v4 = script->counter / command->param2 + 4;
 		for (int i = 7; i > 0; i--) {
-				barrierIdx = _scene->worldstats()->getBarrierIndexById(v13);
-				if (barrierIdx >= 0)
-					_scene->worldstats()->barriers[barrierIdx].field_67C = v4;
-				v13 += 4;
+			barrierIdx = _scene->worldstats()->getBarrierIndexById(v13);
+			if (barrierIdx >= 0)
+				_scene->worldstats()->barriers[barrierIdx].field_67C = v4;
+			v13 += 4;
 		}
 		// TODO
 		switch (_scene->getSceneIndex()) {
@@ -246,7 +246,7 @@ void ActionList::processActionListSub02(ActionDefinitions* script, ActionCommand
 			warning("Scene 4 / v4 = 0 Not Implemented");
 			break;
 		default:
-				return;
+			return;
 		}
 	}
 }
@@ -280,16 +280,16 @@ int ActionList::process() {
 			// Check function return
 			if (cmdRet == -1)
 				warning("Incomplete opcode %s (0x%02X) in Scene %d Line %d",
-					function_map[opcode].name,
-					currentCommand->opcode,
-					_scene->getSceneIndex(),
-					currentLine);
+				        function_map[opcode].name,
+				        currentCommand->opcode,
+				        _scene->getSceneIndex(),
+				        currentLine);
 			if (cmdRet == -2)
 				warning("Unhandled opcode %s (0x%02X) in Scene %d Line %d",
-					function_map[opcode].name,
-					currentCommand->opcode,
-					_scene->getSceneIndex(),
-					currentLine);
+				        function_map[opcode].name,
+				        currentCommand->opcode,
+				        _scene->getSceneIndex(),
+				        currentLine);
 
 			currentLine += lineIncrement;
 			currentLoops++;
@@ -434,9 +434,9 @@ int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
 			barrier->flags |= 0x10000;
 		} else {
 			barrier->flags &= 0x10000;
-			if(barrier->flags == 0) {
+			if (barrier->flags == 0) {
 				barrier->flags &= 0x10E38;
-				if(barrier->flags == 0) {
+				if (barrier->flags == 0) {
 					barrier->flags |= 8;
 				}
 			} else {
@@ -447,11 +447,11 @@ int kPlayAnimation(ActionCommand *cmd, Scene *scn) {
 
 		barrier->setNextFrame(barrier->flags);
 
-		if(barrier->field_688 == 1) {
+		if (barrier->field_688 == 1) {
 			// TODO: get barrier position
 		}
 
-		if(cmd->param2) {
+		if (cmd->param2) {
 			cmd->param2 = 2;
 			scn->actions()->lineIncrement = 1;
 		}
@@ -526,10 +526,10 @@ int kHideActor(ActionCommand *cmd, Scene *scn) {
 		scn->getActor()->visible(false);
 	else
 		debugC(kDebugLevelScripts,
-			"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
-			cmd->param1,
-			scn->getSceneIndex(),
-			scn->actions()->currentLine);
+		       "Requested invalid actor ID:0x%02X in Scene %d Line %d.",
+		       cmd->param1,
+		       scn->getSceneIndex(),
+		       scn->actions()->currentLine);
 
 	return 0;
 }
@@ -546,16 +546,16 @@ int kShowActor(ActionCommand *cmd, Scene *scn) {
 		scn->getActor()->visible(true);
 	else
 		debugC(kDebugLevelScripts,
-			"Requested invalid actor ID:0x%02X in Scene %d Line %d.",
-			cmd->param1,
-			scn->getSceneIndex(),
-			scn->actions()->currentLine);
+		       "Requested invalid actor ID:0x%02X in Scene %d Line %d.",
+		       cmd->param1,
+		       scn->getSceneIndex(),
+		       scn->actions()->currentLine);
 
-    return 0;
+	return 0;
 }
 
 int kSetActorStats(ActionCommand *cmd, Scene *scn) {
-    WorldStats *ws = scn->worldstats();
+	WorldStats *ws = scn->worldstats();
 
 	// TODO
 	// param1 == actorIndex. Implement when we've got more than one actor
@@ -563,7 +563,7 @@ int kSetActorStats(ActionCommand *cmd, Scene *scn) {
 	// TODO This needs to be depreciated, but it's setting the actor's x/y
 	// and bounding rect top/left.
 	// This needs to be rolled into the proper place
-    scn->getActor()->setPosition(cmd->param2, cmd->param3);
+	scn->getActor()->setPosition(cmd->param2, cmd->param3);
 
 	scn->getActor()->setPosition_40A260(cmd->param2, cmd->param3, cmd->param4, cmd->param5);
 
@@ -612,7 +612,7 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 
 	if (!scn->actions()->getScript()->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
 		scn->vm()->sound()->playSound(((sndIdx != 0) & 5) + 0x80120001,
-				false, scn->vm()->soundVolume(), 0);
+		                              false, scn->vm()->soundVolume(), 0);
 	}
 
 	if (scn->actions()->getScript()->counter >= 3 * v59 - 1) {
@@ -625,12 +625,12 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 		int v62 = scn->actions()->getScript()->counter + 1;
 		scn->actions()->getScript()->counter = v62;
 		if (sndIdx) {
-				v64 = 1;
-				int v170 = 3 - v62 / v59;
-				scn->worldstats()->barriers[barIdx].field_67C = v170;
+			v64 = 1;
+			int v170 = 3 - v62 / v59;
+			scn->worldstats()->barriers[barIdx].field_67C = v170;
 		} else {
-				v64 = 0;
-				scn->worldstats()->barriers[barIdx].field_67C = v62 / v59 + 1;
+			v64 = 0;
+			scn->worldstats()->barriers[barIdx].field_67C = v62 / v59 + 1;
 		}
 
 		scn->actions()->processActionListSub02(scn->actions()->getScript(), cmd, v64);
@@ -655,10 +655,10 @@ int kDestroyBarrier(ActionCommand *cmd, Scene *scn) {
 		scn->vm()->screen()->deleteGraphicFromQueue(barrier->resId);
 	} else
 		debugC(kDebugLevelScripts,
-			"Requested invalid object ID:0x%02X in Scene %d Line %d.",
-			cmd->param1,
-			scn->getSceneIndex(),
-			scn->actions()->currentLine);
+		       "Requested invalid object ID:0x%02X in Scene %d Line %d.",
+		       cmd->param1,
+		       scn->getSceneIndex(),
+		       scn->actions()->currentLine);
 
 	return 0;
 }
@@ -784,8 +784,8 @@ int kJumpIfActorField638(ActionCommand *cmd, Scene *scn) {
 int kChangeScene(ActionCommand *cmd, Scene *scn) {
 	scn->actions()->delayedSceneIndex = cmd->param1 + 4;
 	debug(kDebugLevelScripts,
-		"Queueing Scene Change to scene %d...",
-		scn->actions()->delayedSceneIndex);
+	      "Queueing Scene Change to scene %d...",
+	      scn->actions()->delayedSceneIndex);
 
 	return 0;
 }
@@ -885,22 +885,22 @@ int kWaitUntilFramePlayed(ActionCommand *cmd, Scene *scn) {
 	Barrier *barrier = scn->worldstats()->getBarrierById(cmd->param1);
 
 	if (barrier) {
-			uint32 frameNum = 0;
-			if (cmd->param2 == -1)
-				frameNum = barrier->frameCount - 1;
-			else
-				frameNum = cmd->param2;
+		uint32 frameNum = 0;
+		if (cmd->param2 == -1)
+			frameNum = barrier->frameCount - 1;
+		else
+			frameNum = cmd->param2;
 
-			if (barrier->frameIdx < frameNum) {
-				scn->actions()->lineIncrement = 0;
-				scn->actions()->waitCycle     = true;
-			}
+		if (barrier->frameIdx < frameNum) {
+			scn->actions()->lineIncrement = 0;
+			scn->actions()->waitCycle     = true;
+		}
 	} else
 		debugC(kDebugLevelScripts,
-			"Requested invalid object ID:0x%02X in Scene %d Line %d.",
-			cmd->param1,
-			scn->getSceneIndex(),
-			scn->actions()->currentLine);
+		       "Requested invalid object ID:0x%02X in Scene %d Line %d.",
+		       cmd->param1,
+		       scn->getSceneIndex(),
+		       scn->actions()->currentLine);
 
 	return 0;
 }
@@ -926,7 +926,7 @@ int k_unk40_SOUND(ActionCommand *cmd, Scene *scn) {
 }
 
 int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
-	 //TODO - Add support for other param options
+	//TODO - Add support for other param options
 	uint32 sndIdx = cmd->param1;
 
 	if ((int)sndIdx >= 0) {
@@ -938,10 +938,10 @@ int kPlaySpeech(ActionCommand *cmd, Scene *scn) {
 		}
 	} else
 		debugC(kDebugLevelScripts,
-				"Requested invalid sound ID:0x%02X in Scene %d Line %d.",
-				cmd->param1,
-				scn->getSceneIndex(),
-				scn->actions()->currentLine);
+		       "Requested invalid sound ID:0x%02X in Scene %d Line %d.",
+		       cmd->param1,
+		       scn->getSceneIndex(),
+		       scn->actions()->currentLine);
 
 	return -1;
 }
@@ -1117,7 +1117,7 @@ int kSetBarrierFrameIdxFlaged(ActionCommand *cmd, Scene *scn) {
 }
 
 int k_unk59(ActionCommand *cmd, Scene *scn) {
-    return -2;
+	return -2;
 }
 int k_unk5A(ActionCommand *cmd, Scene *scn) {
 	return -2;

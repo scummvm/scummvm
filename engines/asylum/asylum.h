@@ -68,7 +68,7 @@ enum kDebugLevels {
 	kDebugLevelScripts =   1 << 5,
 	kDebugLevelSound =	   1 << 6,
 	kDebugLevelSavegame =  1 << 7,
-    kDebugLevelScene =     1 << 8
+	kDebugLevelScene =     1 << 8
 };
 
 class AsylumEngine: public Engine {
@@ -83,19 +83,31 @@ public:
 	virtual Common::Error run();
 	virtual bool hasFeature(EngineFeature f) const;
 
-    void setGameFlag(int flag);
-    void clearGameFlag(int flag);
-    void toggleGameFlag(int flag);
-    bool isGameFlagSet(int flag);
-    bool isGameFlagNotSet(int flag);
+	void setGameFlag(int flag);
+	void clearGameFlag(int flag);
+	void toggleGameFlag(int flag);
+	bool isGameFlagSet(int flag);
+	bool isGameFlagNotSet(int flag);
 
-    Video*  video()  { return _video; }
-    Sound*  sound()  { return _sound; }
-    Screen* screen() { return _screen; }
-    Scene*  scene()  { return _scene; }
+	Video*  video()  {
+		return _video;
+	}
+	Sound*  sound()  {
+		return _sound;
+	}
+	Screen* screen() {
+		return _screen;
+	}
+	Scene*  scene()  {
+		return _scene;
+	}
 
-    int ambientVolume() { return _ambientVolume; }
-    int soundVolume()   { return _soundVolume; }
+	int ambientVolume() {
+		return _ambientVolume;
+	}
+	int soundVolume()   {
+		return _soundVolume;
+	}
 
 private:
 	void checkForEvent(bool doUpdate);

@@ -75,7 +75,7 @@ void Screen::copyRectToScreenWithTransparency(byte *buffer, int pitch, int x, in
 	for (int curY = 0; curY < height; curY++) {
 		for (int curX = 0; curX < width; curX++) {
 			if (buffer[curX + curY * pitch] != 0 && (x + curX + (y + curY) * 640 <= 640*480)) {
-                screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
+				screenBuffer[x + curX + (y + curY) * 640] = buffer[curX + curY * pitch];
 			}
 		}
 	}
@@ -87,8 +87,9 @@ void Screen::setPalette(byte *rgbPalette) {
 	byte palette[256 * 4];
 	byte *p = rgbPalette;
 
-    // skip first color and set it to black always.
-    memset(palette, 0, 4); p+=3;
+	// skip first color and set it to black always.
+	memset(palette, 0, 4);
+	p += 3;
 
 	for (int i = 1; i < 256; i++) {
 		palette[i * 4 + 0] = *p++ << 2;
@@ -101,87 +102,87 @@ void Screen::setPalette(byte *rgbPalette) {
 }
 
 void Screen::drawWideScreen(int16 barSize) {
-    if(barSize > 0) {
-        
-        _vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
-        _vm->_system->unlockScreen();
-        _vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
-        _vm->_system->unlockScreen();
-    }
+	if (barSize > 0) {
+
+		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 0, 640, barSize), 0);
+		_vm->_system->unlockScreen();
+		_vm->_system->lockScreen()->fillRect(Common::Rect(0, 480 - barSize, 640, 480), 0);
+		_vm->_system->unlockScreen();
+	}
 }
 
 void Screen::clearScreen() {
-    _vm->_system->fillScreen(0);
+	_vm->_system->fillScreen(0);
 }
 
 void Screen::addGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 flags, uint32 transTableNum, uint32 priority) {
-    GraphicQueueItem item;
-    item.resId = resId;
-    item.x = x;
-    item.y = y;
-    item.frameIdx = frameIdx;
-    item.flags = flags;
-    item.transTableNum = transTableNum;
-    item.priority = priority;
+	GraphicQueueItem item;
+	item.resId = resId;
+	item.x = x;
+	item.y = y;
+	item.frameIdx = frameIdx;
+	item.flags = flags;
+	item.transTableNum = transTableNum;
+	item.priority = priority;
 
-    _queueItems.push_back(item);
+	_queueItems.push_back(item);
 }
 
 void Screen::addCrossFadeGraphicToQueue(uint32 resId, uint32 frameIdx, uint32 x, uint32 y, uint32 redId2, uint32 x2, uint32 y2, uint32 flags, uint32 priority) {
-    
+
 }
 
 void Screen::addGraphicToQueue(GraphicQueueItem item) {
-    _queueItems.push_back(item);
+	_queueItems.push_back(item);
 }
 
 void Screen::drawGraphicsInQueue() {
-    WorldStats *ws = _vm->scene()->worldstats();
+	WorldStats *ws = _vm->scene()->worldstats();
 
-    // sort by priority first
-    graphicsSelectionSort();
+	// sort by priority first
+	graphicsSelectionSort();
 
-    for(uint i = 0; i < _queueItems.size(); i++) {
-        GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
-        GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
-        copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->targetX, _queueItems[i].y - ws->targetY, fra->surface.w, fra->surface.h);
-        delete grRes;
-    }
+	for (uint i = 0; i < _queueItems.size(); i++) {
+		GraphicResource *grRes = _vm->scene()->getGraphicResource(_queueItems[i].resId);
+		GraphicFrame    *fra   = grRes->getFrame(_queueItems[i].frameIdx);
+		copyRectToScreenWithTransparency((byte *)fra->surface.pixels, fra->surface.w, _queueItems[i].x - ws->targetX, _queueItems[i].y - ws->targetY, fra->surface.w, fra->surface.h);
+		delete grRes;
+	}
 }
 
 void Screen::clearGraphicsInQueue() {
-    _queueItems.clear();
+	_queueItems.clear();
 }
 
 void Screen::graphicsSelectionSort() {
-    uint minIdx;
+	uint minIdx;
 
-    for (uint i = 0; i < _queueItems.size(); i++) {
-        minIdx = i;
+	for (uint i = 0; i < _queueItems.size(); i++) {
+		minIdx = i;
 
-        for (uint j = i + 1; j < _queueItems.size(); j++)
-            if (_queueItems[j].priority > _queueItems[i].priority)
-                minIdx = j;
+		for (uint j = i + 1; j < _queueItems.size(); j++)
+			if (_queueItems[j].priority > _queueItems[i].priority)
+				minIdx = j;
 
-        if(i != minIdx)
-            swapGraphicItem(i, minIdx);
-   }
+		if (i != minIdx)
+			swapGraphicItem(i, minIdx);
+	}
 }
 
 void Screen::swapGraphicItem(int item1, int item2) {
-   GraphicQueueItem temp;
-   temp = _queueItems[item1];
-   _queueItems[item1] = _queueItems[item2];
-   _queueItems[item2] = temp;
+	GraphicQueueItem temp;
+	temp = _queueItems[item1];
+	_queueItems[item1] = _queueItems[item2];
+	_queueItems[item2] = temp;
 }
 
 void Screen::deleteGraphicFromQueue(uint32 resId) {
-    for(uint i = 0; i < _queueItems.size(); i++) {
-        if(_queueItems[i].resId == resId) {
-            _queueItems.remove_at(i);
-            break;
-        }
-    }
+	for (uint i = 0; i < _queueItems.size(); i++) {
+		if (_queueItems[i].resId == resId) {
+			_queueItems.remove_at(i);
+			break;
+		}
+	}
 }
 
 } // end of namespace Asylum

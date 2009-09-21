@@ -112,7 +112,9 @@ public:
 	 * This is useful for checking the active state of a sound
 	 * in a blowuppuzzle
 	 */
-	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle); }
+	bool isPlaying() {
+		return _mixer->isSoundHandleActive(_soundHandle);
+	}
 
 private:
 	Audio::Mixer       *_mixer;

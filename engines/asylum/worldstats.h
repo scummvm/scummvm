@@ -115,7 +115,7 @@ public:
 	uint32			 field_AC;
 	uint32			 field_B0;
 	uint32			 numActors;		 // Max and all other characters that have
-									 // own interactions
+	// own interactions
 	uint32			 stereoReversedFlag;
 	Common::Rect	 sceneRects[6];	 // including scene size rect
 	uint8			 sceneRectIdx;
