@@ -2992,8 +2992,7 @@ reg_t kAnimate(EngineState *s, int, int argc, reg_t *argv) {
 		// End of doit() recovery code
 
 		if (s->pic_is_new) { // Happens if DrawPic() is executed by a dynview (yes, that happens)
-			kAnimate(s, FAKE_FUNCT_NR, argc, argv); /* Tail-recurse */
-			return s->r_acc;
+			return kAnimate(s, FAKE_FUNCT_NR, argc, argv); /* Tail-recurse */
 		}
 
 		debugC(2, kDebugLevelGraphics, "Handling Dynviews (..step 9 inclusive):\n");
