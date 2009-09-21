@@ -81,16 +81,22 @@ public:
 	/**
 	 * Get the X position of the cursor
 	 */
-	uint32 x() { return _mouseX; }
+	uint32 x() {
+		return _mouseX;
+	}
 	/**
 	 * get the Y position of the cursor
 	 */
-	uint32 y() { return _mouseY; }
+	uint32 y() {
+		return _mouseY;
+	}
 	/**
 	 * Get the current frame number of the
 	 * loaded cursorResource
 	 */
-	uint32 currentFrame() { return _curFrame; }
+	uint32 currentFrame() {
+		return _curFrame;
+	}
 
 private:
 	void set(byte *data, byte width, byte height);

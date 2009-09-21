@@ -55,7 +55,9 @@ public:
 	Encounter(Scene *scene);
 	virtual ~Encounter();
 
-	void setVariable(int idx, int value) { _variables[idx] = value; }
+	void setVariable(int idx, int value) {
+		_variables[idx] = value;
+	}
 	void run(int encounterIdx, int barrierId1, int barrierId2, int characterIdx);
 
 private:

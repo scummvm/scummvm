@@ -23,7 +23,7 @@
  *
  */
 
- // Console module header file
+// Console module header file
 
 #ifndef ASYLUM_CONSOLE_H
 #define ASYLUM_CONSOLE_H

@@ -65,7 +65,7 @@ void Actor::setDirection(int dir) {
 void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
 
-	for (uint32 i = 0; i < 60; i++){
+	for (uint32 i = 0; i < 60; i++) {
 		_resources[i] = READ_UINT32(dataPtr);
 		dataPtr += 4;
 	}
@@ -94,7 +94,7 @@ void Actor::setAction(int action) {
 				int w = frame->surface.w / 2;
 				for (int tmpX = 0; tmpX < w; tmpX++) {
 					SWAP(buffer[tmpY * frame->surface.pitch + tmpX],
-						 buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
+					     buffer[tmpY * frame->surface.pitch + frame->surface.w - 1 - tmpX]);
 				}
 			}
 		}
@@ -104,7 +104,7 @@ void Actor::setAction(int action) {
 }
 
 void Actor::setActionByIndex(int index) {
-    setAction(_resources[index] & 0xFFFF);
+	setAction(_resources[index] & 0xFFFF);
 }
 
 GraphicFrame *Actor::getFrame() {
@@ -114,7 +114,7 @@ GraphicFrame *Actor::getFrame() {
 
 	if (frameNum < _graphic->getFrameCount() - 1) {
 		frameNum++;
-	}else{
+	} else {
 		frameNum = 0;
 	}
 
@@ -128,30 +128,30 @@ GraphicFrame *Actor::getFrame() {
 void Actor::drawActorAt(uint32 curX, uint32 curY) {
 	GraphicFrame *frame = getFrame();
 
-    WorldStats *ws = _scene->worldstats();
+	WorldStats *ws = _scene->worldstats();
 
 	_scene->vm()->screen()->copyRectToScreenWithTransparency(
-			((byte *)frame->surface.pixels),
-			frame->surface.w,
-            curX - ws->targetX,
-			curY - ws->targetY,
-			frame->surface.w,
-			frame->surface.h );
+	    ((byte *)frame->surface.pixels),
+	    frame->surface.w,
+	    curX - ws->targetX,
+	    curY - ws->targetY,
+	    frame->surface.w,
+	    frame->surface.h);
 	x = curX;
 	y = curY;
 }
 
 void Actor::drawActor() {
 	GraphicFrame *frame = getFrame();
-    WorldStats *ws = _scene->worldstats();
+	WorldStats *ws = _scene->worldstats();
 
 	_scene->vm()->screen()->copyToBackBufferWithTransparency(
-			((byte *)frame->surface.pixels),
-			frame->surface.w,
-            x - ws->targetX,
-			y - frame->surface.h - ws->targetY,
-			frame->surface.w,
-			frame->surface.h );
+	    ((byte *)frame->surface.pixels),
+	    frame->surface.w,
+	    x - ws->targetX,
+	    y - frame->surface.h - ws->targetY,
+	    frame->surface.w,
+	    frame->surface.h);
 }
 
 void Actor::setWalkArea(ActionArea *target) {
@@ -164,7 +164,7 @@ void Actor::setWalkArea(ActionArea *target) {
 
 void Actor::walkTo(uint32 curX, uint32 curY) {
 	int newAction = currentAction;
-    WorldStats *ws = _scene->worldstats();
+	WorldStats *ws = _scene->worldstats();
 
 	// step is the increment by which to move the
 	// actor in a given direction
@@ -227,7 +227,7 @@ void Actor::walkTo(uint32 curX, uint32 curY) {
 	rect.bottom = newY + 4;
 	surface.frameRect(rect, 0x33);
 
-    _scene->vm()->screen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
+	_scene->vm()->screen()->copyRectToScreen((byte*)surface.pixels, 5, newX - ws->targetX, newY - ws->targetY, 5, 5);
 
 	surface.free();
 
@@ -245,7 +245,7 @@ void Actor::walkTo(uint32 curX, uint32 curY) {
 		if (ws->actions[a].actionType == 0) {
 			area = &ws->actions[a];
 			PolyDefinitions poly = _scene->polygons()->entries[area->polyIdx];
-            if (poly.contains(x, y)) {
+			if (poly.contains(x, y)) {
 				availableAreas[areaPtr] = a;
 				areaPtr++;
 
@@ -275,20 +275,20 @@ void Actor::walkTo(uint32 curX, uint32 curY) {
 }
 
 void Actor::update_4072A0(int param) {
-    int newGrId = 0;
-    int newDir = 0;
+	int newGrId = 0;
+	int newDir = 0;
 
 	switch (param) {
 
-    case 4:
-    case 6:
-    case 14:   
-        if(this->direction > 4)
-            newDir = 8 - this->direction;
-        else
-            newDir = this->direction;
-        newGrId = this->grResTable[newDir + 5];
-        break;
+	case 4:
+	case 6:
+	case 14:
+		if (this->direction > 4)
+			newDir = 8 - this->direction;
+		else
+			newDir = this->direction;
+		newGrId = this->grResTable[newDir + 5];
+		break;
 
 	case 5:
 		newDir = this->direction;
@@ -300,12 +300,12 @@ void Actor::update_4072A0(int param) {
 
 	}
 
-    this->grResId = newGrId;
+	this->grResId = newGrId;
 
-    GraphicResource *gra = new GraphicResource(_resPack, this->grResId);
-    this->frameCount = gra->getFrameCount();
-    this->frameNum   = 0;
-    delete gra;
+	GraphicResource *gra = new GraphicResource(_resPack, this->grResId);
+	this->frameCount = gra->getFrameCount();
+	this->frameNum   = 0;
+	delete gra;
 
 	this->updateType = param;
 }

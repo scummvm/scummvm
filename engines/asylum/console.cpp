@@ -66,28 +66,28 @@ bool Console::cmdDumpActionArea(int argc, const char **argv) {
 
 void Console::printActionAreaStats(ActionArea *a) {
 	DebugPrintf("id[%d] name[%s] field01[%d] field02[%d] field40[%d] field44[%d] flags[%d] \n"
-				"actionListIdx1[%d] actionListIdx2[%d] actionType[%d] field_7C[%d] polyIdx[%d]\n"
-				"field_84[%d] field_88[%d] soundResId[%d] field_90[%d] palette[%d] volume[%d]\n\n",
-			a->id,
-			a->name,
-			a->field01,
-			a->field02,
-			a->field_40,
-			a->field_44,
-			a->flags,
-			a->actionListIdx1,
-			a->actionListIdx2,
-			a->actionType,
-			//a->flagNums[10],
-			a->field_7C,
-			a->polyIdx,
-			a->field_84,
-			a->field_88,
-			a->soundResId,
-			a->field_90,
-			a->paletteValue,
-			//a->array[5],
-			a->volume);
+	            "actionListIdx1[%d] actionListIdx2[%d] actionType[%d] field_7C[%d] polyIdx[%d]\n"
+	            "field_84[%d] field_88[%d] soundResId[%d] field_90[%d] palette[%d] volume[%d]\n\n",
+	            a->id,
+	            a->name,
+	            a->field01,
+	            a->field02,
+	            a->field_40,
+	            a->field_44,
+	            a->flags,
+	            a->actionListIdx1,
+	            a->actionListIdx2,
+	            a->actionType,
+	            //a->flagNums[10],
+	            a->field_7C,
+	            a->polyIdx,
+	            a->field_84,
+	            a->field_88,
+	            a->soundResId,
+	            a->field_90,
+	            a->paletteValue,
+	            //a->array[5],
+	            a->volume);
 }
 
 bool Console::cmdShowFlags(int argc, const char **argv) {
@@ -116,7 +116,7 @@ bool Console::cmdPlayVideo(int argc, const char **argv) {
 		DebugPrintf("Usage %s <video number>\n", argv[0]);
 		return true;
 	}
-	
+
 	_vm->scene()->actions()->delayedVideoIndex = atoi(argv[1]);
 
 	return false;
@@ -138,7 +138,7 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 		DebugPrintf("Usage %s <scene number>\n", argv[0]);
 		return true;
 	}
-	
+
 	if (atoi(argv[1]) - 4 < 1 || atoi(argv[1]) - 4 >= 15) {
 		DebugPrintf("Attempt to SetupStartingInfo(%d); Invalid world\n", atoi(argv[1]));
 		return true;
@@ -146,7 +146,7 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 
 	_vm->scene()->actions()->delayedSceneIndex = atoi(argv[1]);
 	_vm->scene()->actions()->setScriptByIndex(0); 	// XXX is this right or should it be
-													// ws->actionListIdx???
+	// ws->actionListIdx???
 
 	return false;
 }

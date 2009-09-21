@@ -46,7 +46,7 @@ uint32 Barrier::getRandomId() {
 			numRes++;
 		}
 	}
-	if(numRes > 0)
+	if (numRes > 0)
 		return rndResId[rand() % numRes];
 
 	return resId;

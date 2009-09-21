@@ -35,8 +35,8 @@
 namespace Asylum {
 
 AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
-	: Engine(system) {
-	
+		: Engine(system) {
+
 	Common::addDebugChannel(kDebugLevelMain, "Main", "Generic debug level");
 	Common::addDebugChannel(kDebugLevelResources, "Resources", "Resources debugging");
 	Common::addDebugChannel(kDebugLevelSprites, "Sprites", "Sprites debugging");
@@ -45,8 +45,8 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::addDebugChannel(kDebugLevelScripts, "Scripts", "Scripts debugging");
 	Common::addDebugChannel(kDebugLevelSound, "Sound", "Sound debugging");
 	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
-    Common::addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
-    	
+	Common::addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
+
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
 	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
@@ -76,7 +76,7 @@ Common::Error AsylumEngine::run() {
 	Common::Error err;
 	err = init();
 	if (err != Common::kNoError)
-			return err;
+		return err;
 	return go();
 }
 
@@ -109,7 +109,7 @@ Common::Error AsylumEngine::go() {
 	// in the processActionList() method when the necessary action is fired.
 	// Once the blowup puzzle testing is removed from checkForEvent(), this
 	// can be removed as well.
-    _scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
+	_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
 
 	// XXX This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P
@@ -207,19 +207,19 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 					_scene->enterScene();
 				} else if (_scene->isActive()) {
 					_mainMenu->openMenu();
-                } else if (_scene->getBlowUpPuzzle()->isActive()) {
-                    _scene->getBlowUpPuzzle()->closeBlowUp();
-                    _scene->enterScene();
+				} else if (_scene->getBlowUpPuzzle()->isActive()) {
+					_scene->getBlowUpPuzzle()->closeBlowUp();
+					_scene->enterScene();
 				}
 
 				return;
 			}
 
-            // XXX: TEST ONLY
-            if (ev.kbd.keycode == Common::KEYCODE_b) {
-                //_mainMenu->closeMenu();
-                _scene->getBlowUpPuzzle()->openBlowUp();
-            }
+			// XXX: TEST ONLY
+			if (ev.kbd.keycode == Common::KEYCODE_b) {
+				//_mainMenu->closeMenu();
+				_scene->getBlowUpPuzzle()->openBlowUp();
+			}
 
 			if (ev.kbd.flags == Common::KBD_CTRL) {
 				if (ev.kbd.keycode == Common::KEYCODE_d)
@@ -244,7 +244,7 @@ void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)
 	else if (_scene->isActive())
 		// Pass events to the game
 		_scene->handleEvent(&ev, doUpdate);
-    else if (_scene->getBlowUpPuzzle()->isActive())
+	else if (_scene->getBlowUpPuzzle()->isActive())
 		// Pass events to BlowUp Puzzles
 		_scene->getBlowUpPuzzle()->handleEvent(&ev, doUpdate);
 
@@ -270,10 +270,10 @@ void AsylumEngine::processDelayedEvents() {
 
 	// check for a delayed scene change
 	int sceneIdx = _scene->actions()->delayedSceneIndex;
-	if (sceneIdx >=0 && !_scene->actions()->processing) {
+	if (sceneIdx >= 0 && !_scene->actions()->processing) {
 		_sound->stopMusic();
 		_sound->stopAllSounds();
-		
+
 		if (_scene)
 			delete _scene;
 

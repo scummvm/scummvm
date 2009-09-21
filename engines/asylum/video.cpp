@@ -27,8 +27,8 @@
 
 namespace Asylum {
 
-VideoPlayer::VideoPlayer(Graphics::VideoDecoder *decoder) : 
-							Graphics::VideoPlayer(decoder) {
+VideoPlayer::VideoPlayer(Graphics::VideoDecoder *decoder) :
+		Graphics::VideoPlayer(decoder) {
 	_text = new VideoText();
 	ResourcePack *resPack = new ResourcePack(1);
 	_text->loadFont(resPack, 57);	// video font
@@ -60,10 +60,11 @@ bool VideoPlayer::playVideoWithSubtitles(Common::List<Common::Event> &stopEvents
 	// The negative values aren't used in the code, they just make the table easier to
 	// understand.
 	int textRes[49] = {	  -1, 1088, 1279, 1122, 1286, 1132, 1133, 1134, 1135, 1136,	//	0 - 9
-						  -1,	-2, 1140, 1141,	  -2,	-1, 1142,	-1,	  -2, 1155,	// 10 - 19
-						1157, 1159, 1162, 1164,	  -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
-						  -2,	-2,	  -2, 1207, 1213, 1217, 1223, 1227,	  -2, 1228,	// 30 - 39
-						  -2, 1244, 1247, 1250, 1256, 1120, 1127,	-1,	  -1};		// 40 - 48
+	                      -1,	-2, 1140, 1141,	  -2,	-1, 1142,	-1,	  -2, 1155,	// 10 - 19
+	                      1157, 1159, 1162, 1164,	  -2, 1171, 1177, 1184, 1190, 1201,	// 20 - 29
+	                      -2,	-2,	  -2, 1207, 1213, 1217, 1223, 1227,	  -2, 1228,	// 30 - 39
+	                      -2, 1244, 1247, 1250, 1256, 1120, 1127,	-1,	  -1
+	                  };		// 40 - 48
 
 	if (start) {
 		start += 20;	// skip token, newline and "CAPTION = "
@@ -104,13 +105,13 @@ void VideoPlayer::performPostProcessing(byte *screen) {
 
 	for (uint32 i = 0; i < _subtitles.size(); i++) {
 		VideoSubtitle curSubtitle = _subtitles[i];
-		if (curFrame >= curSubtitle.frameStart && 
-			curFrame <= curSubtitle.frameEnd) {
+		if (curFrame >= curSubtitle.frameStart &&
+		        curFrame <= curSubtitle.frameEnd) {
 			_text->drawMovieSubtitle(screen, curSubtitle.textRes);
 			break;
 		}
 	}
-	
+
 }
 
 Video::Video(Audio::Mixer *mixer) {
@@ -167,7 +168,7 @@ void VideoText::loadFont(ResourcePack *resPack, uint32 resId) {
 
 	if (resId > 0) {
 		// load font flag data
-		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
+		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
 	}
 }
 
@@ -210,7 +211,7 @@ void VideoText::drawMovieSubtitle(byte *screenBuffer, uint32 resId) {
 }
 
 uint32 VideoText::getTextWidth(const char *text) {
-	assert (_fontResource);
+	assert(_fontResource);
 
 	int width = 0;
 	uint8 character = *text;
@@ -226,7 +227,7 @@ uint32 VideoText::getTextWidth(const char *text) {
 }
 
 void VideoText::drawText(byte *screenBuffer, int x, int y, const char *text) {
-	assert (_fontResource);
+	assert(_fontResource);
 	const byte *curChar = (byte *)text;
 	int curX = x;
 

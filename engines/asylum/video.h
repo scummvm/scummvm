@@ -80,7 +80,7 @@ private:
 	VideoPlayer					*_player;
 }; // end of class Video
 
-// The VideoText class has some methods from the Text class, 
+// The VideoText class has some methods from the Text class,
 // but it differs from the text class: this class draws text
 // to a predefined screen buffer, whereas the Text class draws
 // text directly to the screen

@@ -28,7 +28,7 @@
 namespace Asylum {
 
 WorldStats::WorldStats(Common::SeekableReadStream *stream, Scene *scene)
-	: _scene(scene) {
+		: _scene(scene) {
 	load(stream);
 }
 
@@ -90,7 +90,7 @@ bool WorldStats::isBarrierVisible(uint32 idx) {
 			else
 				isSet = _scene->vm()->isGameFlagSet(flag);
 
-			if(!isSet)
+			if (!isSet)
 				return false;
 		}
 		return true;
@@ -174,7 +174,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 
 	stereoReversedFlag = stream->readUint32LE();
 
-	for (int r=0; r < 6; r++) {
+	for (int r = 0; r < 6; r++) {
 		sceneRects[r].left   = stream->readUint32LE() & 0xFFFF;
 		sceneRects[r].top    = stream->readUint32LE() & 0xFFFF;
 		sceneRects[r].right  = stream->readUint32LE() & 0xFFFF;
@@ -195,10 +195,10 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	sceneTitlePalResId = stream->readUint32LE();
 	actorType          = stream->readUint32LE();
 
-	for(int s = 0; s < 50; s++)
+	for (int s = 0; s < 50; s++)
 		soundResId[s] = stream->readUint32LE();
 
-	for(int s=0; s < 15; s++) {
+	for (int s = 0; s < 15; s++) {
 		ambientSounds[s].field_0  = stream->readUint32LE();
 		ambientSounds[s].flags    = stream->readUint32LE();
 		ambientSounds[s].resId    = stream->readUint32LE();
@@ -206,7 +206,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ambientSounds[s].field_10 = stream->readUint32LE();
 		ambientSounds[s].field_14 = stream->readUint32LE();
 
-		for(int i = 0; i < 6; i++)
+		for (int i = 0; i < 6; i++)
 			ambientSounds[s].flagNum[i] = stream->readUint32LE();
 
 		ambientSounds[s].x = stream->readUint32LE();
@@ -294,12 +294,12 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 	}
 
 	// need to jump all unused barriers data to where actors data start
-    stream->seek(0xA6D7A);
+	stream->seek(0xA6D7A);
 
 	for (uint32 a = 0; a < numActors; a++) {
 		int i;
 		Actor actor;
-        
+
 		actor.x          = stream->readUint32LE();
 		actor.y          = stream->readUint32LE();
 		actor.grResId    = stream->readUint32LE();
@@ -365,21 +365,21 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		actor.field_934  = stream->readUint32LE();
 		actor.field_938  = stream->readUint32LE();
 		actor.soundResId = stream->readUint32LE();
-        actor.field_940  = stream->readUint32LE();
-        actor.field_944  = stream->readUint32LE();
-        actor.field_948  = stream->readUint32LE();
-        actor.field_94C  = stream->readUint32LE();
-        actor.field_950  = stream->readUint32LE();
-        actor.field_954  = stream->readUint32LE();
-        actor.field_958  = stream->readUint32LE();
-        actor.field_95C  = stream->readUint32LE();
-        actor.field_960  = stream->readUint32LE();
-        actor.field_964  = stream->readUint32LE();
-        actor.field_968  = stream->readUint32LE();
-        actor.field_96C  = stream->readUint32LE();
-        actor.field_970  = stream->readUint32LE();
-        actor.field_974  = stream->readUint32LE();
-        actor.field_978  = stream->readUint32LE();
+		actor.field_940  = stream->readUint32LE();
+		actor.field_944  = stream->readUint32LE();
+		actor.field_948  = stream->readUint32LE();
+		actor.field_94C  = stream->readUint32LE();
+		actor.field_950  = stream->readUint32LE();
+		actor.field_954  = stream->readUint32LE();
+		actor.field_958  = stream->readUint32LE();
+		actor.field_95C  = stream->readUint32LE();
+		actor.field_960  = stream->readUint32LE();
+		actor.field_964  = stream->readUint32LE();
+		actor.field_968  = stream->readUint32LE();
+		actor.field_96C  = stream->readUint32LE();
+		actor.field_970  = stream->readUint32LE();
+		actor.field_974  = stream->readUint32LE();
+		actor.field_978  = stream->readUint32LE();
 		actor.actionIdx1 = stream->readUint32LE();
 
 		// TODO skip field_980 till field_9A0
@@ -406,7 +406,7 @@ void WorldStats::load(Common::SeekableReadStream *stream) {
 		ActionArea action;
 		memset(&action, 0, sizeof(ActionArea));
 
-		stream->read(action.name,52);
+		stream->read(action.name, 52);
 		action.id             = stream->readUint32LE();
 		action.field01        = stream->readUint32LE();
 		action.field02        = stream->readUint32LE();

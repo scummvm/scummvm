@@ -46,7 +46,9 @@ public:
 	~MainMenu();
 
 	void handleEvent(Common::Event *event, bool doUpdate);
-	bool isActive() { return _active; }
+	bool isActive() {
+		return _active;
+	}
 	void openMenu();
 	void closeMenu();
 

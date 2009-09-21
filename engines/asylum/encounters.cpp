@@ -77,53 +77,53 @@ void Encounter::run(int encounterIdx, int barrierId1, int barrierId2, int charac
 	setVariable(2, _currentEncounter->value);
 
 	Barrier *b1 = _scene->worldstats()->getBarrierById(barrierId1);
-/*
- int __cdecl runEncounter(int newMessageHandler, int encounterIndex, int objectId1, int objectId2, int characterIndex)
-{
-  int result; // eax@7
-  EncounterItem *v6; // eax@2
-  int v7; // ST04_4@4
-  int v8; // eax@4
+	/*
+	 int __cdecl runEncounter(int newMessageHandler, int encounterIndex, int objectId1, int objectId2, int characterIndex)
+	{
+	  int result; // eax@7
+	  EncounterItem *v6; // eax@2
+	  int v7; // ST04_4@4
+	  int v8; // eax@4
 
-  if ( !encounterKeywordIndex )
-  {
-    v6 = getEncounterItem(0);
-    encounterItem = v6;
-    encounterKeywordIndex = *(_DWORD *)&v6->keywordIndex;
-  }
-  if ( encounterIndex < 0 )
-  {
-    result = 0;
-  }
-  else
-  {
-    encounter_newMessageHandler = newMessageHandler;
-    encounterIndex = encounterIndex;
-    encounterItem = getEncounterItem(encounterIndex);
-    encounter_objectId01 = objectId1;
-    v7 = characterIndex;
-    encounter_objectId02 = objectId2;
-    characterIndex2 = characterIndex;
-    v8 = getObjectIndexById(objectId2);
-    object_sound_sub_414C30(v8, v7);
-    setEncounterVariable(1, 0);
-    setEncounterVariable(2, encounterItem->value);
-    if ( scene.characters[playerCharacterIndex].field_40 == 5 )
-    {
-      encounter_flag02 = 1;
-    }
-    else
-    {
-      encounter_flag02 = 0;
-      character_sub_4072A0(playerCharacterIndex, 5);
-    }
-    flag04 = 0;
-    switchMessageHandler((int (__cdecl *)(_DWORD, _DWORD, _DWORD))handleMessageEncounter);
-    result = 1;
-  }
-  return result;
-}
- */
+	  if ( !encounterKeywordIndex )
+	  {
+	    v6 = getEncounterItem(0);
+	    encounterItem = v6;
+	    encounterKeywordIndex = *(_DWORD *)&v6->keywordIndex;
+	  }
+	  if ( encounterIndex < 0 )
+	  {
+	    result = 0;
+	  }
+	  else
+	  {
+	    encounter_newMessageHandler = newMessageHandler;
+	    encounterIndex = encounterIndex;
+	    encounterItem = getEncounterItem(encounterIndex);
+	    encounter_objectId01 = objectId1;
+	    v7 = characterIndex;
+	    encounter_objectId02 = objectId2;
+	    characterIndex2 = characterIndex;
+	    v8 = getObjectIndexById(objectId2);
+	    object_sound_sub_414C30(v8, v7);
+	    setEncounterVariable(1, 0);
+	    setEncounterVariable(2, encounterItem->value);
+	    if ( scene.characters[playerCharacterIndex].field_40 == 5 )
+	    {
+	      encounter_flag02 = 1;
+	    }
+	    else
+	    {
+	      encounter_flag02 = 0;
+	      character_sub_4072A0(playerCharacterIndex, 5);
+	    }
+	    flag04 = 0;
+	    switchMessageHandler((int (__cdecl *)(_DWORD, _DWORD, _DWORD))handleMessageEncounter);
+	    result = 1;
+	  }
+	  return result;
+	}
+	 */
 }
 
 Encounter::~Encounter() {

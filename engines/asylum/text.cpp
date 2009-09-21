@@ -53,10 +53,10 @@ void Text::loadFont(ResourcePack *resPack, uint32 resId) {
 
 	if (resId > 0) {
 		// load font flag data
-		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F; 
+		_curFontFlags = (_fontResource->getFlags() >> 4) & 0x0F;
 	}
 }
-	
+
 void Text::setTextPos(uint32 x, uint32 y) {
 	_posX = x;
 	_posY = y;
@@ -64,7 +64,7 @@ void Text::setTextPos(uint32 x, uint32 y) {
 
 // getTextWidth at address 004357C0
 uint32 Text::getTextWidth(char *text) {
-	assert (_fontResource);
+	assert(_fontResource);
 
 	int width = 0;
 	uint8 character = *text;
@@ -84,7 +84,7 @@ uint32 Text::getResTextWidth(uint32 resId) {
 }
 
 void Text::drawChar(char character) {
-	assert (_fontResource);
+	assert(_fontResource);
 
 	GraphicFrame *fontLetter = _fontResource->getFrame(character);
 	_screen->copyRectToScreenWithTransparency((byte *)fontLetter->surface.pixels, fontLetter->surface.w, _posX, _posY + fontLetter->y, fontLetter->surface.w, fontLetter->surface.h);

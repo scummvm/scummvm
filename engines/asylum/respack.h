@@ -47,8 +47,10 @@ public:
 	~ResourcePack();
 
 	ResourceEntry *getResource(uint32 resourceId);
-	uint32 getResourceCount() { return _resources.size(); }
-	
+	uint32 getResourceCount() {
+		return _resources.size();
+	}
+
 private:
 	Common::Array <ResourceEntry> _resources;
 	Common::File _packFile;
