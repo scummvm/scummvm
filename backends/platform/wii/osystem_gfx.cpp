@@ -153,9 +153,13 @@ void OSystem_Wii::switchVideoMode(int mode) {
 	printf("switchVideoMode %d\n", mode);
 
 	if (map[_actualGraphicsMode].mode != map[mode].mode) {
+		GXRModeObj obj;
+
 		gfx_video_deinit();
-		gfx_video_init(GFX_STANDARD_AUTO, map[mode].mode);
+		gfx_video_get_modeobj(&obj, GFX_STANDARD_AUTO, map[mode].mode);
+		gfx_video_init(&obj);
 		gfx_init();
+		gfx_con_init(NULL);
 	}
 
 	_actualGraphicsMode = mode;

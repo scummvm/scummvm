@@ -66,6 +66,7 @@ static void show_console(int code) {
 
 	printf("ScummVM exited abnormally (%d).\n", code);
 
+	gfx_frame_abort();
 	if (!gfx_frame_start())
 		return;
 
@@ -141,7 +142,7 @@ int main(int argc, char *argv[]) {
 	PAD_Init();
 	AUDIO_Init(NULL);
 
-	gfx_video_init(GFX_STANDARD_AUTO, GFX_MODE_DEFAULT);
+	gfx_video_init(NULL);
 	gfx_init();
 	gfx_con_init(NULL);
 
