@@ -44,7 +44,6 @@ WiiOptionsDialog::WiiOptionsDialog(bool doubleStrike) :
 
 	new ButtonWidget(this, _w - 108 - 16, _h - 24 - 16, 108, 24, "Ok", 'k');
 	new ButtonWidget(this, _w - 216 - 32, _h - 24 - 16, 108, 24, "Cancel", 'c');
-
 	_tab = new TabWidget(this, 0, 0, _w, _h - 54);
 
 	_tabVideo = _tab->addTab("Video");
