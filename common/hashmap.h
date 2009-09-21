@@ -100,32 +100,32 @@ public:
 
 	ObjectPool<Node, HASHMAP_MEMORYPOOL_SIZE> _nodePool;
 
-	Node *allocNode(const Key &key) {
-		return new (_nodePool) Node(key);
-	}
-
-	void freeNode(Node *node) {
-		if (node && node != &_dummyNode)
-			_nodePool.deleteChunk(node);
-	}
-
-	Node **_storage;	// hashtable of size arrsize.
-	uint _mask;		/**< Capacity of the HashMap minus one; must be a power of two of minus one */
+	Node **_storage;	///< hashtable of size arrsize.
+	uint _mask;		///< Capacity of the HashMap minus one; must be a power of two of minus one
 	uint _size;
 	uint _deleted; ///< Number of deleted elements (_dummyNodes)
 
 	HashFunc _hash;
 	EqualFunc _equal;
 
-	// Default value, returned by the const getVal.
+	/** Default value, returned by the const getVal. */
 	const Val _defaultVal;
 
-	// Dummy node, used as marker for erased objects.
-	Node _dummyNode;
+	/** Dummy node, used as marker for erased objects. */
+	#define HASHMAP_DUMMY_NODE	((Node *)1)
 
 #ifdef DEBUG_HASH_COLLISIONS
 	mutable int _collisions, _lookups, _dummyHits;
 #endif
+
+	Node *allocNode(const Key &key) {
+		return new (_nodePool) Node(key);
+	}
+
+	void freeNode(Node *node) {
+		if (node && node != HASHMAP_DUMMY_NODE)
+			_nodePool.deleteChunk(node);
+	}
 
 	void assign(const HM_t &map);
 	int lookup(const Key &key) const;
@@ -288,7 +288,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
 #ifdef __PLAYSTATION2__
 	{
 #else
-	: _defaultVal(), _dummyNode() {
+	: _defaultVal() {
 #endif
 	_mask = HASHMAP_MIN_CAPACITY - 1;
 	_storage = new Node *[HASHMAP_MIN_CAPACITY];
@@ -312,7 +312,7 @@ HashMap<Key, Val, HashFunc, EqualFunc>::HashMap()
  */
 template<class Key, class Val, class HashFunc, class EqualFunc>
 HashMap<Key, Val, HashFunc, EqualFunc>::HashMap(const HM_t &map) :
-	_defaultVal(), _dummyNode() {
+	_defaultVal() {
 #ifdef DEBUG_HASH_COLLISIONS
 	_collisions = 0;
 	_lookups = 0;
@@ -354,8 +354,8 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::assign(const HM_t &map) {
 	_size = 0;
 	_deleted = 0;
 	for (uint ctr = 0; ctr <= _mask; ++ctr) {
-		if (map._storage[ctr] == &map._dummyNode) {
-			_storage[ctr] = &_dummyNode;
+		if (map._storage[ctr] == HASHMAP_DUMMY_NODE) {
+			_storage[ctr] = HASHMAP_DUMMY_NODE;
 			_deleted++;
 		} else if (map._storage[ctr] != NULL) {
 			_storage[ctr] = allocNode(map._storage[ctr]->_key);
@@ -413,7 +413,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(uint newCapacity) {
 
 	// rehash all the old elements
 	for (uint ctr = 0; ctr <= old_mask; ++ctr) {
-		if (old_storage[ctr] == NULL || old_storage[ctr] == &_dummyNode)
+		if (old_storage[ctr] == NULL || old_storage[ctr] == HASHMAP_DUMMY_NODE)
 			continue;
 
 		// Insert the element from the old table into the new table.
@@ -422,7 +422,7 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::expandStorage(uint newCapacity) {
 		// don't have to call _equal().
 		const uint hash = _hash(old_storage[ctr]->_key);
 		uint idx = hash & _mask;
-		for (uint perturb = hash; _storage[idx] != NULL && _storage[idx] != &_dummyNode; perturb >>= HASHMAP_PERTURB_SHIFT) {
+		for (uint perturb = hash; _storage[idx] != NULL && _storage[idx] != HASHMAP_DUMMY_NODE; perturb >>= HASHMAP_PERTURB_SHIFT) {
 			idx = (5 * idx + perturb + 1) & _mask;
 		}
 
@@ -446,7 +446,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookup(const Key &key) const {
 	for (uint perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
 		if (_storage[ctr] == NULL)
 			break;
-		if (_storage[ctr] == &_dummyNode) {
+		if (_storage[ctr] == HASHMAP_DUMMY_NODE) {
 #ifdef DEBUG_HASH_COLLISIONS
 			_dummyHits++;
 #endif
@@ -480,7 +480,7 @@ int HashMap<Key, Val, HashFunc, EqualFunc>::lookupAndCreateIfMissing(const Key &
 	for (uint perturb = hash; ; perturb >>= HASHMAP_PERTURB_SHIFT) {
 		if (_storage[ctr] == NULL)
 			break;
-		if (_storage[ctr] == &_dummyNode) {
+		if (_storage[ctr] == HASHMAP_DUMMY_NODE) {
 #ifdef DEBUG_HASH_COLLISIONS
 			_dummyHits++;
 #endif
@@ -584,11 +584,13 @@ void HashMap<Key, Val, HashFunc, EqualFunc>::erase(const Key &key) {
 
 	// If we remove a key, we replace it with a dummy node.
 	freeNode(_storage[ctr]);
-	_storage[ctr] = &_dummyNode;
+	_storage[ctr] = HASHMAP_DUMMY_NODE;
 	_size--;
 	_deleted++;
 	return;
 }
+
+#undef HASHMAP_DUMMY_NODE
 
 }	// End of namespace Common
 
