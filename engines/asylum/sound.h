@@ -88,7 +88,7 @@ public:
 	void playSound(uint resId, bool looping, int volume, int panning, bool fromBuffer = false);
 	void stopSound(uint resId);
 	void stopSound();
-	void stopAllSounds();
+	void stopAllSounds(bool stopSpeechAndMusic = false);
 
 	void playSpeech(uint resId);
 
@@ -105,6 +105,14 @@ public:
 	 * start/stop requests.
 	 */
 	bool isPlaying(uint resId);
+
+	/**
+	 * Check if the unmanaged sound handle is in use
+	 *
+	 * This is useful for checking the active state of a sound
+	 * in a blowuppuzzle
+	 */
+	bool isPlaying() { return _mixer->isSoundHandleActive(_soundHandle); }
 
 private:
 	Audio::Mixer       *_mixer;

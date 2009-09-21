@@ -63,7 +63,8 @@ BlowUpPuzzleVCR::~BlowUpPuzzleVCR() {
 void BlowUpPuzzleVCR::openBlowUp() {
 	_active = true;
 	_scene->deactivate();
-    _scene->vm()->sound()->stopAllSounds();
+
+	_scene->vm()->sound()->stopAllSounds(true);
 
 	// Load the graphics palette
 	_scene->vm()->screen()->setPalette(_scene->getResourcePack(), _scene->worldstats()->grResId[29]);
@@ -110,14 +111,9 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 		update();
 }
 
-void BlowUpPuzzle::playSound(uint resourceId) {
-	playSound(resourceId, false);
-}
-
-void BlowUpPuzzle::playSound(uint resourceId, bool looping) {
-	ResourceEntry *resource = _scene->getResourcePack()->getResource(resourceId);
+void BlowUpPuzzle::playSound(uint resourceId, bool loop) {
 	int volume = _scene->vm()->soundVolume();
-	_scene->vm()->sound()->playSound(resource, looping, volume, 0);
+	_scene->vm()->sound()->playSound(_scene->getResourcePack(), resourceId, volume, loop, 0, true);
 }
 
 int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
@@ -131,7 +127,7 @@ void BlowUpPuzzleVCR::update() {
     if (_rightClickDown) { // quits BlowUp Puzzle
 		_rightClickDown = false;
         closeBlowUp();
-        _scene->vm()->sound()->stopSound(_scene->worldstats()->grResId[47]);
+        _scene->vm()->sound()->stopSound();
         _scene->enterScene();
     }
 
@@ -261,9 +257,7 @@ void BlowUpPuzzleVCR::updateJack(Jack jack, VCRDrawInfo onTable, VCRDrawInfo plu
     }
 
     if(item.resId != 0)
-    {
         _scene->vm()->screen()->addGraphicToQueue(item);
-    }
 }
 
 void BlowUpPuzzleVCR::updateBlackJack() {
@@ -572,8 +566,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
         return;
 
     if(_buttonsState[kPower] == kDownON) {
-        if(!_scene->vm()->sound()->isPlaying(_scene->worldstats()->grResId[47]))
-    	    playSound(_scene->worldstats()->grResId[47], true);
+    	playSound(_scene->worldstats()->grResId[47], true);
         _buttonsState[kPower]  = kON;
         _buttonsState[kStop]   = kON;
         _buttonsState[kPlay]   = kON;
@@ -583,7 +576,7 @@ void BlowUpPuzzleVCR::handleMouseUp() {
         _buttonsState[kStop]   = kOFF;
         _buttonsState[kPlay]   = kOFF;
         _buttonsState[kRewind] = kOFF;
-        _scene->vm()->sound()->stopSound(_scene->worldstats()->grResId[47]);
+        _scene->vm()->sound()->stopSound();
     }
 
     if(_buttonsState[kRewind] == kDownOFF) {

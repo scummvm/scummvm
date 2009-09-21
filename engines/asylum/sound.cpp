@@ -142,10 +142,10 @@ void Sound::playSound(ResourcePack *pack, uint resId, int volume, bool looping, 
 			_mixer->stopHandle(_soundHandle);
 			playSound(resource, looping, volume, panning);
 		}
+	} else {
 		// if the current handle isn't active, play the sound
 		playSound(resource, looping, volume, panning);
 	}
-
 }
 
 void Sound::playSound(ResourceEntry *resource, bool looping, int volume, int panning) {
@@ -197,8 +197,13 @@ void Sound::stopSound(uint resId) {
 	}
 }
 
-void Sound::stopAllSounds() {
+void Sound::stopAllSounds(bool stopSpeechAndMusic) {
 	_mixer->stopHandle(_soundHandle);
+
+	if (stopSpeechAndMusic) {
+		_mixer->stopHandle(_speechHandle);
+		_mixer->stopHandle(_musicHandle);
+	}
 
 	for (uint i = 0; i < _soundBuffer.size(); i++)
 		_mixer->stopHandle(_soundBuffer[i].handle);
