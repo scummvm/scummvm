@@ -26,7 +26,6 @@
 #include "sci/sci.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
-#include "sci/engine/intmap.h"
 
 namespace Sci {
 
@@ -323,8 +322,8 @@ int Script::relocateLocal(SegmentId segment, int location) {
 		return 0; // No hands, no cookies
 }
 
-int Script::relocateObject(Object *obj, SegmentId segment, int location) {
-	return relocateBlock(obj->_variables, obj->_pos.offset, segment, location);
+int Script::relocateObject(Object &obj, SegmentId segment, int location) {
+	return relocateBlock(obj._variables, obj._pos.offset, segment, location);
 }
 
 void Script::scriptAddCodeBlock(reg_t location) {
@@ -349,8 +348,10 @@ void Script::scriptRelocate(reg_t block) {
 			bool done = false;
 			uint k;
 
-			for (k = 0; !done && k < _objects.size(); k++) {
-				if (relocateObject(&_objects[k], block.segment, pos))
+			ObjMap::iterator it;
+			const ObjMap::iterator end = _objects.end();
+			for (it = _objects.begin(); !done && it != end; ++it) {
+				if (relocateObject(it->_value, block.segment, pos))
 					done = true;
 			}
 
@@ -367,8 +368,8 @@ void Script::scriptRelocate(reg_t block) {
 					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
 				else
 					printf("- No locals\n");
-				for (k = 0; k < _objects.size(); k++)
-					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k]._pos.offset, _objects[k]._variables.size());
+				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
+					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value._pos.offset, it->_value._variables.size());
 				// SQ3 script 71 has broken relocation entries.
 				printf("Trying to continue anyway...\n");
 			}
@@ -392,8 +393,10 @@ void Script::heapRelocate(reg_t block) {
 			bool done = false;
 			uint k;
 
-			for (k = 0; !done && k < _objects.size(); k++) {
-				if (relocateObject(&_objects[k], block.segment, pos))
+			ObjMap::iterator it;
+			const ObjMap::iterator end = _objects.end();
+			for (it = _objects.begin(); !done && it != end; ++it) {
+				if (relocateObject(it->_value, block.segment, pos))
 					done = true;
 			}
 
@@ -404,8 +407,8 @@ void Script::heapRelocate(reg_t block) {
 					printf("- locals: %d at %04x\n", _localsBlock->_locals.size(), _localsOffset);
 				else
 					printf("- No locals\n");
-				for (k = 0; k < _objects.size(); k++)
-					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k]._pos.offset, _objects[k]._variables.size());
+				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
+					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value._pos.offset, it->_value._variables.size());
 				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 			}
 		}

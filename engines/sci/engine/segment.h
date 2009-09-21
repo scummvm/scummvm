@@ -262,6 +262,8 @@ struct CodeBlock {
 	int size;
 };
 
+typedef Common::HashMap<uint16, Object> ObjMap;
+
 class Script : public SegmentObj {
 public:
 	int _nr; /**< Script number */
@@ -281,15 +283,12 @@ public:
 protected:
 	int _lockers; /**< Number of classes and objects that require this script */
 
-	IntMapper *_objIndices;
-
 public:
 	/**
 	 * Table for objects, contains property variables.
-	 * Indexed by the value stored at SCRIPT_LOCALVARPTR_OFFSET,
-	 * see VM_OBJECT_[GS]ET_INDEX()
+	 * Indexed by the TODO offset.
 	 */
-	Common::Array<Object> _objects;
+	ObjMap _objects;
 
 	int _localsOffset;
 	SegmentId _localsSegment; /**< The local variable segment */
@@ -349,7 +348,7 @@ public:
 private:
 	int relocateLocal(SegmentId segment, int location);
 	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
-	int relocateObject(Object *obj, SegmentId segment, int location);
+	int relocateObject(Object &obj, SegmentId segment, int location);
 
 	Object *scriptObjInit0(reg_t obj_pos);
 	Object *scriptObjInit11(reg_t obj_pos);

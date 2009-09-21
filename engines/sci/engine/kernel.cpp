@@ -24,7 +24,6 @@
  */
 
 #include "sci/sci.h"
-#include "sci/engine/intmap.h"
 #include "sci/engine/kernel.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"

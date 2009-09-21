@@ -38,13 +38,17 @@
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
-#include "sci/engine/intmap.h"
 #include "sci/engine/savegame.h"
 
 namespace Sci {
 
 
 #define VER(x) Common::Serializer::Version(x)
+
+
+// OBSOLETE: This const is used for backward compatibility only.
+const uint32 INTMAPPER_MAGIC_KEY = 0xDEADBEEF;
+
 
 // from ksound.cpp:
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id);
@@ -162,7 +166,7 @@ void syncWithSerializer(Common::Serializer &s, reg_t &obj) {
 void MenuItem::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_type);
 	s.syncString(_keytext);
-	s.skip(4, VER(9), VER(9)); 	// Obsolete: Used to be keytext_size
+	s.skip(4, VER(9), VER(9)); 	// OBSOLETE: Used to be keytext_size
 
 	s.syncAsSint32LE(_flags);
 	s.syncBytes(_said, MENU_SAID_SPEC_SIZE);
@@ -189,17 +193,17 @@ void Menubar::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
-	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be reserved_id
+	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be reserved_id
 	s.syncAsSint32LE(_exportsAreWide);
-	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be gc_mark_bits
+	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be gc_mark_bits
 
 	if (s.isLoading()) {
 		// Reset _scriptSegMap, to be restored below
 		_scriptSegMap.clear();
 
 		if (s.getVersion() <= 9) {
-			// Skip over the old id_seg_map when loading (we now regenerate the
-			// equivalent data, in _scriptSegMap, from scratch).
+			// OBSOLETE: Skip over the old id_seg_map when loading (we now
+			// regenerate the equivalent data, in _scriptSegMap, from scratch).
 
 			s.skip(4);	// base_value
 			while (true) {
@@ -235,7 +239,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 		assert(mobj);
 
-		s.skip(4, VER(9), VER(9));	// Obsolete: Used to be _segManagerId
+		s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
 
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
@@ -289,10 +293,10 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 }
 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
-	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be savegame_version
+	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be savegame_version
 
 	syncCStr(s, &game_version);
-	s.skip(4, VER(9), VER(9));	// Obsolete: Used to be version
+	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
 	if (s.isLoading()) {
@@ -384,19 +388,47 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint32LE(_scriptSize);
 	s.syncAsUint32LE(_heapSize);
 
-	// FIXME: revamp _objIndices handling
-	if (!_objIndices) {
-		assert(s.isLoading());
-		_objIndices = new IntMapper();
+	if (s.getVersion() <= 10) {
+		assert((s.isLoading()));
+		// OBSOLETE: Skip over the old _objIndices data when loading
+		s.skip(4);	// base_value
+		while (true) {
+			uint32 key = 0;
+			s.syncAsSint32LE(key);
+			if (key == INTMAPPER_MAGIC_KEY)
+				break;
+			s.skip(4);	// idx
+		}
 	}
-
-	_objIndices->saveLoadWithSerializer(s);
 
 	s.syncAsSint32LE(_numExports);
 	s.syncAsSint32LE(_numSynonyms);
 	s.syncAsSint32LE(_lockers);
 
-	syncArray<Object>(s, _objects);
+	// Sync _objects. This is a hashmap, and we use the following on disk format:
+	// First we store the number of items in the hashmap, then we store each
+	// object (which is an 'Object' instance). For loading, we take advantage
+	// of the fact that the key of each Object obj is just obj._pos.offset !
+	// By "chance" this format is identical to the format used to sync Common::Array<>,
+	// hence we can still old savegames with identical code :).
+
+	uint numObjs = _objects.size();
+	s.syncAsUint32LE(numObjs);
+
+	if (s.isLoading()) {
+		_objects.clear();
+		Object tmp;
+		for (uint i = 0; i < numObjs; ++i) {
+			syncWithSerializer<Object>(s, tmp);
+			_objects[tmp._pos.offset] = tmp;
+		}
+	} else {
+		ObjMap::iterator it;
+		const ObjMap::iterator end = _objects.end();
+		for (it = _objects.begin(); it != end; ++it) {
+			syncWithSerializer<Object>(s, it->_value);
+		}
+	}
 
 	s.syncAsSint32LE(_localsOffset);
 	s.syncAsSint32LE(_localsSegment);
@@ -579,10 +611,12 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				}
 				scr->_codeBlocks.clear();
 
-				for (j = 0; j < scr->_objects.size(); j++) {
-					byte *data = scr->_buf + scr->_objects[j]._pos.offset;
-					scr->_objects[j].base = scr->_buf;
-					scr->_objects[j].base_obj = data;
+				ObjMap::iterator it;
+				const ObjMap::iterator end = scr->_objects.end();
+				for (it = scr->_objects.begin(); it != end; ++it) {
+					byte *data = scr->_buf + it->_value._pos.offset;
+					it->_value.base = scr->_buf;
+					it->_value.base_obj = data;
 				}
 				break;
 			}
@@ -599,31 +633,33 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 			case SEG_TYPE_SCRIPT: {
 				Script *scr = (Script *)mobj;
 
-				for (j = 0; j < scr->_objects.size(); j++) {
-					byte *data = scr->_buf + scr->_objects[j]._pos.offset;
+				ObjMap::iterator it;
+				const ObjMap::iterator end = scr->_objects.end();
+				for (it = scr->_objects.begin(); it != end; ++it) {
+					byte *data = scr->_buf + it->_value._pos.offset;
 
 					if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 						uint16 *funct_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 6 ));
 						uint16 *prop_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 4 ));
 
-						scr->_objects[j].base_method = funct_area;
-						scr->_objects[j].base_vars = prop_area;
+						it->_value.base_method = funct_area;
+						it->_value.base_vars = prop_area;
 					} else {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = s->segMan->getObject(scr->_objects[j].getSpeciesSelector());
+						base_obj = s->segMan->getObject(it->_value.getSpeciesSelector());
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-								  scr->_nr, j, PRINT_REG(scr->_objects[j].getSpeciesSelector()));
+								  scr->_nr, j, PRINT_REG(it->_value.getSpeciesSelector()));
 							continue;
 						}
-						scr->_objects[j].variable_names_nr = base_obj->_variables.size();
-						scr->_objects[j].base_obj = base_obj->base_obj;
+						it->_value.variable_names_nr = base_obj->_variables.size();
+						it->_value.base_obj = base_obj->base_obj;
 
-						scr->_objects[j].base_method = (uint16 *)(data + funct_area);
-						scr->_objects[j].base_vars = (uint16 *)(data + scr->_objects[j].variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
+						it->_value.base_method = (uint16 *)(data + funct_area);
+						it->_value.base_vars = (uint16 *)(data + it->_value.variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
 					}
 				}
 				break;

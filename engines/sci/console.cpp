@@ -1398,13 +1398,16 @@ bool Console::segmentInfo(int nr) {
 			DebugPrintf("  Locals : none\n");
 
 		DebugPrintf("  Objects: %4d\n", scr->_objects.size());
-		for (uint i = 0; i < scr->_objects.size(); i++) {
+
+		ObjMap::iterator it;
+		const ObjMap::iterator end = scr->_objects.end();
+		for (it = scr->_objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = _vm->_gamestate->segMan->getObject(scr->_objects[i]._pos);
+			Object *obj = _vm->_gamestate->segMan->getObject(it->_value._pos);
 			if (obj)
-				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i]._pos),
-							_vm->_gamestate->segMan->getObjectName(scr->_objects[i]._pos),
+				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(it->_value._pos),
+							_vm->_gamestate->segMan->getObjectName(it->_value._pos),
 							obj->_variables.size(), obj->methods_nr);
 		}
 	}
@@ -2884,48 +2887,53 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 			SegmentObj *mobj = s->segMan->_heap[i];
 			int idx = 0;
 			int max_index = 0;
+			ObjMap::iterator it;
+			Script *scr = 0;
+			CloneTable *ct = 0;
 
 			if (mobj) {
-				if (mobj->getType() == SEG_TYPE_SCRIPT)
-					max_index = (*(Script *)mobj)._objects.size();
-				else if (mobj->getType() == SEG_TYPE_CLONES)
-					max_index = (*(CloneTable *)mobj)._table.size();
+				if (mobj->getType() == SEG_TYPE_SCRIPT) {
+					scr = (Script *)mobj;
+					max_index = scr->_objects.size();
+					it = scr->_objects.begin();
+				} else if (mobj->getType() == SEG_TYPE_CLONES) {
+					ct = (CloneTable *)mobj;
+					max_index = ct->_table.size();
+				}
 			}
 
-			while (idx < max_index) {
-				int valid = 1;
+			for (; idx < max_index; ++idx) {
 				Object *obj = NULL;
 				reg_t objpos;
 				objpos.offset = 0;
 				objpos.segment = i;
 
 				if (mobj->getType() == SEG_TYPE_SCRIPT) {
-					obj = &(*(Script *)mobj)._objects[idx];
+					obj = &(it->_value);
 					objpos.offset = obj->_pos.offset;
+					++it;
 				} else if (mobj->getType() == SEG_TYPE_CLONES) {
-					obj = &((*(CloneTable *)mobj)._table[idx]);
+					if (!ct->isValidEntry(idx))
+						continue;
+					obj = &(ct->_table[idx]);
 					objpos.offset = idx;
-					valid = ((CloneTable *)mobj)->isValidEntry(idx);
 				}
 
-				if (valid) {
-					const char *objname = s->segMan->getObjectName(objpos);
-					if (!strcmp(objname, str_objname)) {
-						// Found a match!
-						if ((index < 0) && (times_found > 0)) {
-							if (times_found == 1) {
-								// First time we realized the ambiguity
-								printf("Ambiguous:\n");
-								printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
-							}
-							printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
+				const char *objname = s->segMan->getObjectName(objpos);
+				if (!strcmp(objname, str_objname)) {
+					// Found a match!
+					if ((index < 0) && (times_found > 0)) {
+						if (times_found == 1) {
+							// First time we realized the ambiguity
+							printf("Ambiguous:\n");
+							printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
 						}
-						if (index < 0 || times_found == index)
-							*dest = objpos;
-						++times_found;
+						printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
 					}
+					if (index < 0 || times_found == index)
+						*dest = objpos;
+					++times_found;
 				}
-				++idx;
 			}
 
 		}

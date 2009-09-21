@@ -27,7 +27,6 @@
 
 #include "sci/sci.h"
 #include "sci/engine/segment.h"
-#include "sci/engine/intmap.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
 #include "sci/tools.h"
@@ -92,8 +91,6 @@ Script::Script() {
 	_heapStart = NULL;
 	_exportTable = NULL;
 
-	_objIndices = NULL;
-
 	_localsOffset = 0;
 	_localsSegment = 0;
 	_localsBlock = NULL;
@@ -112,9 +109,6 @@ void Script::freeScript() {
 	_bufSize = 0;
 
 	_objects.clear();
-
-	delete _objIndices;
-	_objIndices = 0;
 	_codeBlocks.clear();
 }
 
@@ -141,8 +135,6 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 	_relocated = false;
 	_markedAsDeleted = false;
 
-	_objIndices = new IntMapper();
-
 	_nr = script_nr;
 
 	if (getSciVersion() >= SCI_VERSION_1_1)
@@ -154,17 +146,12 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 }
 
 Object *Script::allocateObject(uint16 offset) {
-	int idx = _objIndices->checkKey(offset, true);
-	if ((uint)idx == _objects.size())
-		_objects.push_back(Object());
-
-	return &_objects[idx];
+	return &_objects[offset];
 }
 
 Object *Script::getObject(uint16 offset) {
-	int idx = _objIndices->checkKey(offset, false);
-	if (idx >= 0 && (uint)idx < _objects.size())
-		return &_objects[idx];
+	if (_objects.contains(offset))
+		return &_objects[offset];
 	else
 		return 0;
 }

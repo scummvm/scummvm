@@ -31,7 +31,6 @@
 #include "sci/debug.h"	// for g_debug_weak_validations
 #include "sci/resource.h"
 #include "sci/engine/state.h"
-#include "sci/engine/intmap.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/engine/seg_manager.h"

@@ -11,7 +11,6 @@ MODULE_OBJS = \
 	engine/game.o \
 	engine/gc.o \
 	engine/grammar.o \
-	engine/intmap.o \
 	engine/kernel.o \
 	engine/kevent.o \
 	engine/kfile.o \

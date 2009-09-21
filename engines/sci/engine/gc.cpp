@@ -119,8 +119,10 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 				wm.push(make_reg(script->_localsSegment, 0));
 
 				// All objects (may be classes, may be indirectly reachable)
-				for (uint obj_nr = 0; obj_nr < script->_objects.size(); obj_nr++) {
-					wm.push(script->_objects[obj_nr]._pos);
+				ObjMap::iterator it;
+				const ObjMap::iterator end = script->_objects.end();
+				for (it = script->_objects.begin(); it != end; ++it) {
+					wm.push(it->_value._pos);
 				}
 			}
 		}
