@@ -694,7 +694,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	do {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
-	} while (button);
+	} while (button && !g_cine->shouldQuit());
 
 	var_A = 0;
 
@@ -764,7 +764,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 //			}
 		}
 
-	} while (!var_A);
+	} while (!var_A && !g_cine->shouldQuit());
 
 	assert(!needMouseSave);
 
@@ -775,7 +775,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	do {
 		manageEvents();
 		getMouseData(mouseUpdateStatus, &button, &dummyU16, &dummyU16);
-	} while (button);
+	} while (button && !g_cine->shouldQuit());
 
 	if (var_4 == 2)	{	// recheck
 		if (!recheckValue)
@@ -860,7 +860,7 @@ uint16 executePlayerInput(void) {
 					do {
 						manageEvents();
 						getMouseData(mouseUpdateStatus, &mouseButton, &dummyU16, &dummyU16);
-					} while (mouseButton);
+					} while (mouseButton && !g_cine->shouldQuit());
 
 					si = getObjectUnderCursor(mouseX,
 					    mouseY);
@@ -976,7 +976,7 @@ uint16 executePlayerInput(void) {
 		di = 0;
 		getMouseData(mouseUpdateStatus, &mouseButton, &mouseX, &mouseY);
 
-		while (mouseButton) {
+		while (mouseButton && !g_cine->shouldQuit()) {
 			if (mouseButton & 1) {
 				di |= 1;
 			}
@@ -1619,7 +1619,7 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 
 		getMouseData(0, &mouseButton, &mouseX, &mouseY);
 
-		if (mouseButton & 2)
+		if ((mouseButton & 2) || g_cine->shouldQuit())
 			quit = 2;
 		else if (mouseButton & 1)
 			quit = 1;
