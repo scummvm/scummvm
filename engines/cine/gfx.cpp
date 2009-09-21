@@ -286,7 +286,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 	ty += 9;
 	if (color >= 0) {
 		drawPlainBox(x, ty, width, 4, color);
-		drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 1 : 2);
+		drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 18 : 2);
 	}
 }
 
@@ -804,7 +804,7 @@ void FWRenderer::drawMenu(const CommandeType *items, unsigned int height, int x,
 	}
 
 	drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 1 : 2);
+	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 18 : 2);
 }
 
 /*! \brief Draw text input box
@@ -877,7 +877,7 @@ void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, i
 
 	ty += 9;
 	drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 1 : 2);
+	drawDoubleBorder(x, y, width, ty - y + 4, g_cine->getPlatform() == Common::kPlatformAmiga ? 18 : 2);
 }
 
 /*! \brief Fade to black
