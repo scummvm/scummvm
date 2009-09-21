@@ -52,13 +52,14 @@ int script_step_counter = 0; // Counts the number of steps executed	// FIXME: Av
 int script_gc_interval = GC_INTERVAL; // Number of steps in between gcs	// FIXME: Avoid non-const global vars
 
 static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
-static reg_t _dummy_register;		// FIXME: Avoid non-const global vars
 
 // validation functionality
 
 #ifndef DISABLE_VALIDATIONS
 
 static reg_t &validate_property(Object *obj, int index) {
+	static reg_t _dummy_register;
+
 	if (!obj) {
 		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!\n");
 		_dummy_register = NULL_REG;
@@ -246,12 +247,13 @@ static void _exec_varselectors(EngineState *s) {
 	// Executes all varselector read/write ops on the TOS
 	while (!s->_executionStack.empty() && s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
 		ExecStack &xs = s->_executionStack.back();
+		reg_t *var = xs.getVarPointer(s->segMan);
 		// varselector access?
 		if (xs.argc) { // write?
-			*(xs.getVarPointer(s->segMan)) = xs.variables_argp[1];
+			*var = xs.variables_argp[1];
 
 		} else // No, read
-			s->r_acc = *(xs.getVarPointer(s->segMan));
+			s->r_acc = *var;
 
 		s->_executionStack.pop_back();
 	}
@@ -699,8 +701,6 @@ void run_vm(EngineState *s, int restoring) {
 				error("opcode %02x: Invalid", opcode);
 			}
 
-		// TODO: Replace the following by an opcode table, and several methods for
-		// each opcode.
 		switch (opnumber) {
 
 		case 0x00: // bnot
@@ -1009,10 +1009,11 @@ void run_vm(EngineState *s, int restoring) {
 
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
+					reg_t *var = old_xs->getVarPointer(s->segMan);
 					if (old_xs->argc) // write?
-						*(old_xs->getVarPointer(s->segMan)) = old_xs->variables_argp[1];
+						*var = old_xs->variables_argp[1];
 					else // No, read
-						s->r_acc = *(old_xs->getVarPointer(s->segMan));
+						s->r_acc = *var;
 				}
 
 				// Not reached the base, so let's do a soft return
