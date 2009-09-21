@@ -362,7 +362,7 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 		(*note)(param, clone->_variables[i]);
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
-	(*note)(param, clone->pos);
+	(*note)(param, clone->_pos);
 	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
 }
 
@@ -374,7 +374,7 @@ void CloneTable::freeAtAddress(SegManager *segMan, reg_t addr) {
 
 	victim_obj = &(_table[addr.offset]);
 
-	if (!(victim_obj->flags & OBJECT_FLAG_FREED))
+	if (!(victim_obj->_flags & OBJECT_FLAG_FREED))
 		warning("[GC] Clone %04x:%04x not reachable and not freed (freeing now)", PRINT_REG(addr));
 #ifdef GC_DEBUG_VERBOSE
 	else

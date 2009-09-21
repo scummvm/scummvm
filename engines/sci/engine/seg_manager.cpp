@@ -189,7 +189,7 @@ bool SegManager::isHeapObject(reg_t pos) {
 	Object *obj = getObject(pos);
 	if (obj == NULL)
 		return false;
-	if (obj->flags & OBJECT_FLAG_FREED)
+	if (obj->_flags & OBJECT_FLAG_FREED)
 		return false;
 	Script *scr = getScriptIfLoaded(pos.segment);
 	return !(scr && scr->_markedAsDeleted);
@@ -324,7 +324,7 @@ int Script::relocateLocal(SegmentId segment, int location) {
 }
 
 int Script::relocateObject(Object *obj, SegmentId segment, int location) {
-	return relocateBlock(obj->_variables, obj->pos.offset, segment, location);
+	return relocateBlock(obj->_variables, obj->_pos.offset, segment, location);
 }
 
 void Script::scriptAddCodeBlock(reg_t location) {
@@ -368,7 +368,7 @@ void Script::scriptRelocate(reg_t block) {
 				else
 					printf("- No locals\n");
 				for (k = 0; k < _objects.size(); k++)
-					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k].pos.offset, _objects[k]._variables.size());
+					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k]._pos.offset, _objects[k]._variables.size());
 				// SQ3 script 71 has broken relocation entries.
 				printf("Trying to continue anyway...\n");
 			}
@@ -405,7 +405,7 @@ void Script::heapRelocate(reg_t block) {
 				else
 					printf("- No locals\n");
 				for (k = 0; k < _objects.size(); k++)
-					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k].pos.offset, _objects[k]._variables.size());
+					printf("- obj#%d at %04x w/ %d vars\n", k, _objects[k]._pos.offset, _objects[k]._variables.size());
 				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 			}
 		}
@@ -459,44 +459,44 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 
 Object *Script::scriptObjInit0(reg_t obj_pos) {
 	Object *obj;
-	uint base = obj_pos.offset - SCRIPT_OBJECT_MAGIC_OFFSET;
 
-	VERIFY(base < _bufSize, "Attempt to initialize object beyond end of script\n");
+	obj_pos.offset -= SCRIPT_OBJECT_MAGIC_OFFSET;
+	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
 
-	obj = allocateObject(base);
+	obj = allocateObject(obj_pos.offset);
 
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET  < _bufSize, "Function area pointer stored beyond end of script\n");
+	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
 	{
-		byte *data = (byte *)(_buf + base);
-		int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
+		byte *data = (byte *)(_buf + obj_pos.offset);
+		uint16 *funct_area = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
 		int variables_nr;
 		int functions_nr;
 		int is_class;
-		int i;
 
-		obj->flags = 0;
-		obj->pos = make_reg(obj_pos.segment, base);
+		obj->_flags = 0;
+		obj->_pos = obj_pos;
 
-		VERIFY(base + funct_area < _bufSize, "Function area pointer references beyond end of script");
+		VERIFY((byte *)funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
-		functions_nr = READ_LE_UINT16(data + funct_area - 2);
+		functions_nr = READ_LE_UINT16(funct_area - 1);
 		is_class = READ_LE_UINT16(data + SCRIPT_INFO_OFFSET) & SCRIPT_INFO_CLASS;
 
-		VERIFY(base + funct_area + functions_nr * 2
+		obj->base_method = funct_area;
+		obj->base_vars = NULL;
+
+		VERIFY((byte *)funct_area + functions_nr * 2
 		       // add again for classes, since those also store selectors
-		       + (is_class ? functions_nr * 2 : 0) < _bufSize, "Function area extends beyond end of script");
+		       + (is_class ? functions_nr * 2 : 0) < _buf + _bufSize, "Function area extends beyond end of script");
 
 		obj->_variables.resize(variables_nr);
 
 		obj->methods_nr = functions_nr;
 		obj->base = _buf;
 		obj->base_obj = data;
-		obj->base_method = (uint16 *)(data + funct_area);
-		obj->base_vars = NULL;
 
-		for (i = 0; i < variables_nr; i++)
+		for (int i = 0; i < variables_nr; i++)
 			obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 	}
 
@@ -505,27 +505,25 @@ Object *Script::scriptObjInit0(reg_t obj_pos) {
 
 Object *Script::scriptObjInit11(reg_t obj_pos) {
 	Object *obj;
-	uint base = obj_pos.offset;
 
-	VERIFY(base < _bufSize, "Attempt to initialize object beyond end of script\n");
+	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
 
-	obj = allocateObject(base);
+	obj = allocateObject(obj_pos.offset);
 
-	VERIFY(base + SCRIPT_FUNCTAREAPTR_OFFSET < _bufSize, "Function area pointer stored beyond end of script\n");
+	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
 	{
-		byte *data = (byte *)(_buf + base);
+		byte *data = (byte *)(_buf + obj_pos.offset);
 		uint16 *funct_area = (uint16 *)(_buf + READ_LE_UINT16(data + 6));
 		uint16 *prop_area = (uint16 *)(_buf + READ_LE_UINT16(data + 4));
 		int variables_nr;
 		int functions_nr;
 		int is_class;
-		int i;
 
-		obj->flags = 0;
-		obj->pos = obj_pos;
+		obj->_flags = 0;
+		obj->_pos = obj_pos;
 
-		VERIFY((byte *) funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
+		VERIFY((byte *)funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
 
 		variables_nr = READ_LE_UINT16(data + 2);
 		functions_nr = READ_LE_UINT16(funct_area);
@@ -534,7 +532,7 @@ Object *Script::scriptObjInit11(reg_t obj_pos) {
 		obj->base_method = funct_area;
 		obj->base_vars = prop_area;
 
-		VERIFY(((byte *) funct_area + functions_nr) < _buf + _bufSize, "Function area extends beyond end of script");
+		VERIFY(((byte *)funct_area + functions_nr) < _buf + _bufSize, "Function area extends beyond end of script");
 
 		obj->variable_names_nr = variables_nr;
 		obj->_variables.resize(variables_nr);
@@ -543,7 +541,7 @@ Object *Script::scriptObjInit11(reg_t obj_pos) {
 		obj->base = _buf;
 		obj->base_obj = data;
 
-		for (i = 0; i < variables_nr; i++)
+		for (int i = 0; i < variables_nr; i++)
 			obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 	}
 

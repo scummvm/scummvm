@@ -185,8 +185,8 @@ public:
 
 // TODO: convert to class, perhaps?
 struct Object {
-	int flags;
-	reg_t pos; /**< Object offset within its script; for clones, this is their base */
+	int _flags;
+	reg_t _pos; /**< Object offset within its script; for clones, this is their base */
 	int variable_names_nr; /**< Number of variable names, may be less than variables_nr */
 	int methods_nr;
 	byte *base; /**< Points to a buffer all relative references (code, strings) point to */
@@ -249,7 +249,7 @@ struct Object {
 
 	reg_t getFunction(uint16 i) {
 		uint16 offset = (getSciVersion() < SCI_VERSION_1_1) ? methods_nr + 1 + i : i * 2 + 2;
-		return make_reg(pos.segment, READ_LE_UINT16((byte *) (base_method + offset)));
+		return make_reg(_pos.segment, READ_LE_UINT16((byte *) (base_method + offset)));
 	}
 
 	bool isClass() {

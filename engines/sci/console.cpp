@@ -563,8 +563,8 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 
 	if (!_vm->_gamestate->_executionStack.empty()) {
 		EngineState *s = _vm->_gamestate;	// for PRINT_STK
-		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n", 
-					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp), 
+		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
+					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp),
 					PRINT_STK(scriptState.xs->fp), PRINT_STK(scriptState.xs->sp));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
@@ -897,8 +897,8 @@ bool Console::cmdClassTable(int argc, const char **argv) {
 	DebugPrintf("Available classes:\n");
 	for (uint i = 0; i < _vm->_gamestate->segMan->_classtable.size(); i++) {
 		if (_vm->_gamestate->segMan->_classtable[i].reg.segment) {
-			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i, 
-					PRINT_REG(_vm->_gamestate->segMan->_classtable[i].reg), 
+			DebugPrintf(" Class 0x%x at %04x:%04x (script 0x%x)\n", i,
+					PRINT_REG(_vm->_gamestate->segMan->_classtable[i].reg),
 					_vm->_gamestate->segMan->_classtable[i].script);
 		}
 	}
@@ -1053,7 +1053,7 @@ bool Console::cmdDrawRect(int argc, const char **argv) {
 	int col = CLIP<int>(atoi(argv[5]), 0, 15);
 
 	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
-	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]), 
+	gfxop_fill_box(_vm->_gamestate->gfx_state, gfx_rect(atoi(argv[1]), atoi(argv[2]),
 										atoi(argv[3]), atoi(argv[4])), _vm->_gamestate->ega_colors[col]);
 	gfxop_update(_vm->_gamestate->gfx_state);
 
@@ -1303,7 +1303,7 @@ bool Console::cmdStatusBarColors(int argc, const char **argv) {
 	_vm->_gamestate->status_bar_foreground = atoi(argv[1]);
 	_vm->_gamestate->status_bar_background = atoi(argv[2]);
 
-	sciw_set_status_bar(_vm->_gamestate, _vm->_gamestate->titlebar_port, _vm->_gamestate->_statusBarText, 
+	sciw_set_status_bar(_vm->_gamestate, _vm->_gamestate->titlebar_port, _vm->_gamestate->_statusBarText,
 							_vm->_gamestate->status_bar_foreground, _vm->_gamestate->status_bar_background);
 	gfxop_update(_vm->_gamestate->gfx_state);
 
@@ -1401,10 +1401,10 @@ bool Console::segmentInfo(int nr) {
 		for (uint i = 0; i < scr->_objects.size(); i++) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = _vm->_gamestate->segMan->getObject(scr->_objects[i].pos);
+			Object *obj = _vm->_gamestate->segMan->getObject(scr->_objects[i]._pos);
 			if (obj)
-				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i].pos), 
-							_vm->_gamestate->segMan->getObjectName(scr->_objects[i].pos),
+				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(scr->_objects[i]._pos),
+							_vm->_gamestate->segMan->getObjectName(scr->_objects[i]._pos),
 							obj->_variables.size(), obj->methods_nr);
 		}
 	}
@@ -1448,10 +1448,10 @@ bool Console::segmentInfo(int nr) {
 				objpos.segment = nr;
 				DebugPrintf("  [%04x] %s; copy of ", i, _vm->_gamestate->segMan->getObjectName(objpos));
 				// Object header
-				Object *obj = _vm->_gamestate->segMan->getObject(ct->_table[i].pos);
+				Object *obj = _vm->_gamestate->segMan->getObject(ct->_table[i]._pos);
 				if (obj)
-					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].pos), 
-								_vm->_gamestate->segMan->getObjectName(ct->_table[i].pos), 
+					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i]._pos),
+								_vm->_gamestate->segMan->getObjectName(ct->_table[i]._pos),
 								obj->_variables.size(), obj->methods_nr);
 			}
 	}
@@ -2901,7 +2901,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on 
 
 				if (mobj->getType() == SEG_TYPE_SCRIPT) {
 					obj = &(*(Script *)mobj)._objects[idx];
-					objpos.offset = obj->pos.offset;
+					objpos.offset = obj->_pos.offset;
 				} else if (mobj->getType() == SEG_TYPE_CLONES) {
 					obj = &((*(CloneTable *)mobj)._table[idx]);
 					objpos.offset = idx;

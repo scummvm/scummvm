@@ -123,15 +123,15 @@ reg_t kClone(EngineState *s, int, int argc, reg_t *argv) {
 	}
 
 	*clone_obj = *parent_obj;
-	clone_obj->flags = 0;
+	clone_obj->_flags = 0;
 
 	// Mark as clone
 	clone_obj->setInfoSelector(make_reg(0, SCRIPT_INFO_CLONE));
-	clone_obj->setSpeciesSelector(clone_obj->pos);
+	clone_obj->setSpeciesSelector(clone_obj->_pos);
 	if (parent_obj->isClass())
-		clone_obj->setSuperClassSelector(parent_obj->pos);
-	s->segMan->getScript(parent_obj->pos.segment)->incrementLockers();
-	s->segMan->getScript(clone_obj->pos.segment)->incrementLockers();
+		clone_obj->setSuperClassSelector(parent_obj->_pos);
+	s->segMan->getScript(parent_obj->_pos.segment)->incrementLockers();
+	s->segMan->getScript(clone_obj->_pos.segment)->incrementLockers();
 
 	return clone_addr;
 }
@@ -169,7 +169,7 @@ reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 	}
 #endif
 
-	victim_obj->flags |= OBJECT_FLAG_FREED;
+	victim_obj->_flags |= OBJECT_FLAG_FREED;
 
 	_k_view_list_mark_free(s, victim_addr); // Free on view list, if neccessary
 

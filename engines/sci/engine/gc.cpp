@@ -120,7 +120,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 
 				// All objects (may be classes, may be indirectly reachable)
 				for (uint obj_nr = 0; obj_nr < script->_objects.size(); obj_nr++) {
-					wm.push(script->_objects[obj_nr].pos);
+					wm.push(script->_objects[obj_nr]._pos);
 				}
 			}
 		}

@@ -319,8 +319,8 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 
 template <>
 void syncWithSerializer(Common::Serializer &s, Object &obj) {
-	s.syncAsSint32LE(obj.flags);
-	sync_reg_t(s, obj.pos);
+	s.syncAsSint32LE(obj._flags);
+	sync_reg_t(s, obj._pos);
 	s.syncAsSint32LE(obj.variable_names_nr);
 	s.syncAsSint32LE(obj.methods_nr);
 
@@ -580,7 +580,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				scr->_codeBlocks.clear();
 
 				for (j = 0; j < scr->_objects.size(); j++) {
-					byte *data = scr->_buf + scr->_objects[j].pos.offset;
+					byte *data = scr->_buf + scr->_objects[j]._pos.offset;
 					scr->_objects[j].base = scr->_buf;
 					scr->_objects[j].base_obj = data;
 				}
@@ -600,7 +600,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				Script *scr = (Script *)mobj;
 
 				for (j = 0; j < scr->_objects.size(); j++) {
-					byte *data = scr->_buf + scr->_objects[j].pos.offset;
+					byte *data = scr->_buf + scr->_objects[j]._pos.offset;
 
 					if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
 						uint16 *funct_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 6 ));
