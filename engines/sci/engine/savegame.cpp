@@ -592,7 +592,7 @@ static void load_script(EngineState *s, Script *scr) {
 
 // FIXME: The following should likely become a SegManager method
 static void reconstruct_scripts(EngineState *s, SegManager *self) {
-	uint i, j;
+	uint i;
 	SegmentObj *mobj;
 
 	for (i = 0; i < self->_heap.size(); i++) {
@@ -660,7 +660,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-								  scr->_nr, j, PRINT_REG(it->_value.getSpeciesSelector()));
+								  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
 							continue;
 						}
 						it->_value.variable_names_nr = base_obj->_variables.size();
