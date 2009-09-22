@@ -334,12 +334,10 @@ int script_init_engine(EngineState *s) {
 	s->string_frag_segment = s->segMan->allocateStringFrags();
 
 	// Allocate static buffer for savegame and CWD directories
-	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
+	SystemString *str = &s->sys_strings->_strings[SYS_STRING_SAVEDIR];
 	str->_name = "savedir";
-	str->max_size = MAX_SAVE_DIR_SIZE;
-	str->value = (reg_t *)calloc(MAX_SAVE_DIR_SIZE, sizeof(reg_t));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
-	str->value[0].segment = s->string_frag_segment; // Set to empty string
-	str->value[0].offset = 0;
+	str->_maxSize = MAX_SAVE_DIR_SIZE;
+	str->_value = (char *)calloc(MAX_SAVE_DIR_SIZE, sizeof(char));
 
 
 	s->r_acc = s->r_prev = NULL_REG;
@@ -364,16 +362,6 @@ int script_init_engine(EngineState *s) {
 
 	return 0;
 }
-
-void script_set_gamestate_save_dir(EngineState *s, const char *path) {
-	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
-
-	strncpy((char *)str->value, path, str->max_size);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
-	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
-	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate
-}
-
-void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
 
 void script_free_vm_memory(EngineState *s) {
 	debug(2, "Freeing VM memory");
@@ -438,12 +426,10 @@ int game_init(EngineState *s) {
 	s->status_bar_foreground = 0;
 	s->status_bar_background = !s->resMan->isVGA() ? 15 : 255;
 
-	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
+	SystemString *str = &s->sys_strings->_strings[SYS_STRING_PARSER_BASE];
 	str->_name = "parser-base";
-	str->max_size = MAX_PARSER_BASE;
-	str->value = (reg_t *)calloc(MAX_PARSER_BASE + 1, sizeof(char));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
-	str->value[0].segment = s->string_frag_segment; // Set to empty string
-	str->value[0].offset = 0; // Set to empty string
+	str->_maxSize = MAX_PARSER_BASE;
+	str->_value = (char *)calloc(MAX_PARSER_BASE, sizeof(char));
 
 	s->parser_base = make_reg(s->sys_strings_segment, SYS_STRING_PARSER_BASE);
 

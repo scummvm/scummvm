@@ -418,13 +418,6 @@ void script_debug(EngineState *s, bool bp);
 int script_init_engine(EngineState *);
 
 /**
- * Sets the gamestate's save_dir to the parameter path
- * @param[in] s		The state to set
- * @param[in] path	Path where save_dir will point to
- */
-void script_set_gamestate_save_dir(EngineState *s, const char *path);
-
-/**
  * Frees all additional memory associated with a EngineState block
  * @param[in] s	The EngineState whose elements should be cleared
  */

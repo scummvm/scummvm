@@ -153,7 +153,7 @@ Common::Error SciEngine::run() {
 
 	// Set the savegame dir (actually, we set it to a fake value,
 	// since we cannot let the game control where saves are stored)
-	script_set_gamestate_save_dir(_gamestate, "/");
+	strcpy(_gamestate->sys_strings->_strings[SYS_STRING_SAVEDIR]._value, "/");
 
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;

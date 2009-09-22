@@ -150,28 +150,28 @@ enum {
 
 struct SystemString {
 	Common::String _name;
-	int max_size;
-	reg_t *value;
+	int _maxSize;
+	char *_value;
 };
 
 struct SystemStrings : public SegmentObj {
-	SystemString strings[SYS_STRINGS_MAX];
+	SystemString _strings[SYS_STRINGS_MAX];
 
 public:
 	SystemStrings() : SegmentObj(SEG_TYPE_SYS_STRINGS) {
 		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
-			strings[i].max_size = 0;
-			strings[i].value = 0;
+			_strings[i]._maxSize = 0;
+			_strings[i]._value = 0;
 		}
 	}
 	~SystemStrings() {
 		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
-			SystemString *str = &strings[i];
+			SystemString *str = &_strings[i];
 			if (!str->_name.empty()) {
-				free(str->value);
-				str->value = NULL;
+				free(str->_value);
+				str->_value = NULL;
 
-				str->max_size = 0;
+				str->_maxSize = 0;
 			}
 		}
 	}

@@ -294,15 +294,15 @@ SegmentRef DynMem::dereference(reg_t pointer) {
 }
 
 bool SystemStrings::isValidOffset(uint16 offset) const {
-	return offset < SYS_STRINGS_MAX && !strings[offset]._name.empty();
+	return offset < SYS_STRINGS_MAX && !_strings[offset]._name.empty();
 }
 
 SegmentRef SystemStrings::dereference(reg_t pointer) {
 	SegmentRef ret;
-	ret.isRaw = false;	// FIXME: Raw or not raw? the sys strings code is totally incoherent in this regard
-	ret.maxSize = strings[pointer.offset].max_size;
+	ret.isRaw = true;	// FIXME: Raw or not raw? the sys strings code is totally incoherent in this regard
+	ret.maxSize = _strings[pointer.offset]._maxSize;
 	if (isValidOffset(pointer.offset))
-		ret.raw = (byte *)(strings[pointer.offset].value);
+		ret.raw = (byte *)(_strings[pointer.offset]._value);
 	else {
 		// This occurs in KQ5CD when interacting with certain objects
 		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));

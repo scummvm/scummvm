@@ -438,16 +438,24 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 
 static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
 	s.syncString(obj._name);
-	s.syncAsSint32LE(obj.max_size);
+	s.syncAsSint32LE(obj._maxSize);
 
-	// FIXME: This is a *WEIRD* hack: We sync a reg_t* as if it was a string.
-	// No idea why, but this mimicks what the old save/load code used to do.
-	syncCStr(s, (char **)&obj.value);
+	// Sync obj._value. We cannot use syncCStr as we must make sure that
+	// the allocated buffer has the correct size, i.e., obj._maxSize
+	Common::String tmp;
+	if (s.isSaving() && obj._value)
+		tmp = obj._value;
+	s.syncString(tmp);
+	if (s.isLoading()) {
+		//free(*str);
+		obj._value = (char *)calloc(obj._maxSize, sizeof(char));
+		strncpy(obj._value, tmp.c_str(), obj._maxSize);
+	}
 }
 
 void SystemStrings::saveLoadWithSerializer(Common::Serializer &s) {
 	for (int i = 0; i < SYS_STRINGS_MAX; ++i)
-		sync_SystemString(s, strings[i]);
+		sync_SystemString(s, _strings[i]);
 }
 
 void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
@@ -775,25 +783,6 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->sys_strings_segment = retval->segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
 	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
-
-	// Restore system strings
-	SystemString *str;
-
-	// First, pad memory
-	for (int i = 0; i < SYS_STRINGS_MAX; i++) {
-		str = &retval->sys_strings->strings[i];
-		char *data = (char *)str->value;
-		if (data) {
-			str->value = (reg_t *)calloc(str->max_size + 1, sizeof(reg_t));
-			strncpy((char *)str->value, data, str->max_size + 1);		// FIXME -- strncpy or internal_stringfrag_strncpy ?
-			free(data);
-		}
-	}
-
-	str = &retval->sys_strings->strings[SYS_STRING_SAVEDIR];
-	internal_stringfrag_strncpy(s, str->value, s->sys_strings->strings[SYS_STRING_SAVEDIR].value, str->max_size);
-	str->value[str->max_size - 1].segment = s->string_frag_segment; // Make sure to terminate
-	str->value[str->max_size - 1].offset &= 0xff00; // Make sure to terminate
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
