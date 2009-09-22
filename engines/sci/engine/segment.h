@@ -59,6 +59,7 @@ public:
 	static SegmentObj *createSegmentObj(SegmentType type);
 
 public:
+	SegmentObj(SegmentType type) : _type(type) {}
 	virtual ~SegmentObj() {}
 
 	inline SegmentType getType() const { return _type; }
@@ -113,6 +114,8 @@ public:
 
 // TODO: Implement the following class
 struct StringFrag : public SegmentObj {
+	StringFrag() : SegmentObj(SEG_TYPE_STRING_FRAG) {}
+
 	virtual bool isValidOffset(uint16 offset) const { return false; }
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -139,7 +142,7 @@ struct SystemStrings : public SegmentObj {
 	SystemString strings[SYS_STRINGS_MAX];
 
 public:
-	SystemStrings() {
+	SystemStrings() : SegmentObj(SEG_TYPE_SYS_STRINGS) {
 		memset(strings, 0, sizeof(strings));
 	}
 	~SystemStrings() {
@@ -168,7 +171,7 @@ struct LocalVariables : public SegmentObj {
 	Common::Array<reg_t> _locals;
 
 public:
-	LocalVariables() {
+	LocalVariables(): SegmentObj(SEG_TYPE_LOCALS) {
 		script_id = 0;
 	}
 
@@ -450,17 +453,17 @@ private:
 
 /** Data stack */
 struct DataStack : SegmentObj {
-	int nr; /**< Number of stack entries */
-	reg_t *entries;
+	int _capacity; /**< Number of stack entries */
+	reg_t *_entries;
 
 public:
-	DataStack() {
-		nr = 0;
-		entries = NULL;
+	DataStack() : SegmentObj(SEG_TYPE_STACK) {
+		_capacity = 0;
+		_entries = NULL;
 	}
 	~DataStack() {
-		free(entries);
-		entries = NULL;
+		free(_entries);
+		_entries = NULL;
 	}
 
 	virtual bool isValidOffset(uint16 offset) const;
@@ -509,7 +512,7 @@ struct Table : public SegmentObj {
 	Common::Array<Entry> _table;
 
 public:
-	Table() {
+	Table(SegmentType type) : SegmentObj(type) {
 		initTable();
 	}
 
@@ -562,6 +565,8 @@ public:
 
 /* CloneTable */
 struct CloneTable : public Table<Clone> {
+	CloneTable() : Table<Clone>(SEG_TYPE_CLONES) {}
+
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
@@ -571,6 +576,8 @@ struct CloneTable : public Table<Clone> {
 
 /* NodeTable */
 struct NodeTable : public Table<Node> {
+	NodeTable() : Table<Node>(SEG_TYPE_NODES) {}
+
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
@@ -580,6 +587,8 @@ struct NodeTable : public Table<Node> {
 
 /* ListTable */
 struct ListTable : public Table<List> {
+	ListTable() : Table<List>(SEG_TYPE_LISTS) {}
+
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
@@ -589,6 +598,8 @@ struct ListTable : public Table<List> {
 
 /* HunkTable */
 struct HunkTable : public Table<Hunk> {
+	HunkTable() : Table<Hunk>(SEG_TYPE_HUNK) {}
+
 	virtual void freeEntry(int idx) {
 		Table<Hunk>::freeEntry(idx);
 
@@ -606,7 +617,7 @@ struct DynMem : public SegmentObj {
 	byte *_buf;
 
 public:
-	DynMem() : _size(0), _buf(0) {}
+	DynMem() : SegmentObj(SEG_TYPE_DYNMEM), _size(0), _buf(0) {}
 	~DynMem() {
 		free(_buf);
 		_buf = NULL;

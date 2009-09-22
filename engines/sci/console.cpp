@@ -1332,7 +1332,7 @@ bool Console::cmdPrintSegmentTable(int argc, const char **argv) {
 				break;
 
 			case SEG_TYPE_STACK:
-				DebugPrintf("D  data stack (%d)", (*(DataStack *)mobj).nr);
+				DebugPrintf("D  data stack (%d)", (*(DataStack *)mobj)._capacity);
 				break;
 
 			case SEG_TYPE_SYS_STRINGS:
@@ -1423,7 +1423,7 @@ bool Console::segmentInfo(int nr) {
 	case SEG_TYPE_STACK: {
 		DataStack *stack = (DataStack *)mobj;
 		DebugPrintf("stack\n");
-		DebugPrintf("  %d (0x%x) entries\n", stack->nr, stack->nr);
+		DebugPrintf("  %d (0x%x) entries\n", stack->_capacity, stack->_capacity);
 	}
 	break;
 

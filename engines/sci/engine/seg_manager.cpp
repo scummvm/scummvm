@@ -93,12 +93,10 @@ SegmentId SegManager::findFreeSegment() const {
 	return seg;
 }
 
-SegmentObj *SegManager::allocSegment(SegmentType type, SegmentId *segid) {
+SegmentObj *SegManager::allocSegment(SegmentObj *mem, SegmentId *segid) {
 	// Find a free segment
 	*segid = findFreeSegment();
 
-	// Now allocate an object of the appropriate type...
-	SegmentObj *mem = SegmentObj::createSegmentObj(type);
 	if (!mem)
 		error("SegManager: invalid mobj");
 
@@ -114,14 +112,14 @@ SegmentObj *SegManager::allocSegment(SegmentType type, SegmentId *segid) {
 
 Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 	// Check if the script already has an allocated segment. If it
-	// does have one, return it.
+	// does, return that segment.
 	*seg_id = _scriptSegMap.getVal(script_nr, 0);
 	if (*seg_id > 0) {
 		return (Script *)_heap[*seg_id];
 	}
 
 	// allocate the SegmentObj
-	SegmentObj *mem = allocSegment(SEG_TYPE_SCRIPT, seg_id);
+	SegmentObj *mem = allocSegment(new Script(), seg_id);
 
 	// Add the script to the "script id -> segment id" hashmap
 	_scriptSegMap[script_nr] = *seg_id;
@@ -572,7 +570,7 @@ LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
 			VERIFY(locals->getType() == SEG_TYPE_LOCALS, "Re-used locals segment did not consist of local variables");
 			VERIFY(locals->script_id == scr->_nr, "Re-used locals segment belonged to other script");
 		} else
-			locals = (LocalVariables *)allocSegment(SEG_TYPE_LOCALS, &scr->_localsSegment);
+			locals = (LocalVariables *)allocSegment(new LocalVariables(), &scr->_localsSegment);
 
 		scr->_localsBlock = locals;
 		locals->script_id = scr->_nr;
@@ -704,23 +702,23 @@ static char *SegManager::dynprintf(char *msg, ...) {
 */
 
 DataStack *SegManager::allocateStack(int size, SegmentId *segid) {
-	SegmentObj *mobj = allocSegment(SEG_TYPE_STACK, segid);
+	SegmentObj *mobj = allocSegment(new DataStack(), segid);
 	DataStack *retval = (DataStack *)mobj;
 
-	retval->entries = (reg_t *)calloc(size, sizeof(reg_t));
-	retval->nr = size;
+	retval->_entries = (reg_t *)calloc(size, sizeof(reg_t));
+	retval->_capacity = size;
 
 	return retval;
 }
 
 SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
-	return (SystemStrings *)allocSegment(SEG_TYPE_SYS_STRINGS, segid);
+	return (SystemStrings *)allocSegment(new SystemStrings(), segid);
 }
 
 SegmentId SegManager::allocateStringFrags() {
 	SegmentId segid;
 
-	allocSegment(SEG_TYPE_STRING_FRAG, &segid);
+	allocSegment(new StringFrag(), &segid);
 
 	return segid;
 }
@@ -769,7 +767,7 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	int offset;
 
 	if (!Clones_seg_id) {
-		table = (CloneTable *)allocSegment(SEG_TYPE_CLONES, &(Clones_seg_id));
+		table = (CloneTable *)allocSegment(new CloneTable(), &(Clones_seg_id));
 	} else
 		table = (CloneTable *)_heap[Clones_seg_id];
 
@@ -828,7 +826,7 @@ List *SegManager::allocateList(reg_t *addr) {
 	int offset;
 
 	if (!Lists_seg_id)
-		allocSegment(SEG_TYPE_LISTS, &(Lists_seg_id));
+		allocSegment(new ListTable(), &(Lists_seg_id));
 	table = (ListTable *)_heap[Lists_seg_id];
 
 	offset = table->allocEntry();
@@ -842,7 +840,7 @@ Node *SegManager::allocateNode(reg_t *addr) {
 	int offset;
 
 	if (!Nodes_seg_id)
-		allocSegment(SEG_TYPE_NODES, &(Nodes_seg_id));
+		allocSegment(new NodeTable(), &(Nodes_seg_id));
 	table = (NodeTable *)_heap[Nodes_seg_id];
 
 	offset = table->allocEntry();
@@ -856,7 +854,7 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	int offset;
 
 	if (!Hunks_seg_id)
-		allocSegment(SEG_TYPE_HUNK, &(Hunks_seg_id));
+		allocSegment(new HunkTable(), &(Hunks_seg_id));
 	table = (HunkTable *)_heap[Hunks_seg_id];
 
 	offset = table->allocEntry();
@@ -912,7 +910,7 @@ char *SegManager::derefString(reg_t pointer, int entries) {
 
 byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	SegmentId seg;
-	SegmentObj *mobj = allocSegment(SEG_TYPE_DYNMEM, &seg);
+	SegmentObj *mobj = allocSegment(new DynMem(), &seg);
 	*addr = make_reg(seg, 0);
 
 	DynMem &d = *(DynMem *)mobj;

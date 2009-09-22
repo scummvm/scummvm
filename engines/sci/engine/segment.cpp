@@ -76,11 +76,11 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	}
 
 	assert(mem);
-	mem->_type = type;
+	assert(mem->_type == type);
 	return mem;
 }
 
-Script::Script() {
+Script::Script() : SegmentObj(SEG_TYPE_SCRIPT) {
 	_nr = 0;
 	_buf = NULL;
 	_bufSize = 0;
@@ -251,14 +251,14 @@ byte *LocalVariables::dereference(reg_t pointer, int *size) {
 }
 
 bool DataStack::isValidOffset(uint16 offset) const {
-	return offset < nr * sizeof(reg_t);
+	return offset < _capacity * sizeof(reg_t);
 }
 
 byte *DataStack::dereference(reg_t pointer, int *size) {
 	if (size)
-		*size = nr * sizeof(reg_t);
+		*size = _capacity * sizeof(reg_t);
 
-	byte *base = (byte *)entries;
+	byte *base = (byte *)_entries;
 	return base + pointer.offset;
 }
 
@@ -401,9 +401,9 @@ reg_t DataStack::findCanonicAddress(SegManager *segMan, reg_t addr) {
 }
 
 void DataStack::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback note) {
-	fprintf(stderr, "Emitting %d stack entries\n", nr);
-	for (int i = 0; i < nr; i++)
-		(*note)(param, entries[i]);
+	fprintf(stderr, "Emitting %d stack entries\n", _capacity);
+	for (int i = 0; i < _capacity; i++)
+		(*note)(param, _entries[i]);
 	fprintf(stderr, "DONE");
 }
 

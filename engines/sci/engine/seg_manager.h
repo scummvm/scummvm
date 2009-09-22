@@ -373,7 +373,7 @@ private:
 	SegmentId Hunks_seg_id; ///< ID of the (a) hunk segment
 
 private:
-	SegmentObj *allocSegment(SegmentType type, SegmentId *segid);
+	SegmentObj *allocSegment(SegmentObj *mem, SegmentId *segid);
 	LocalVariables *allocLocalsSegment(Script *scr, int count);
 	int deallocate(SegmentId seg, bool recursive);
 	int createClassTable();

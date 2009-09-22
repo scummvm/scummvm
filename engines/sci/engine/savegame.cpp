@@ -461,10 +461,10 @@ void DynMem::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
-	s.syncAsUint32LE(nr);
+	s.syncAsUint32LE(_capacity);
 	if (s.isLoading()) {
 		//free(entries);
-		entries = (reg_t *)calloc(nr, sizeof(reg_t));
+		_entries = (reg_t *)calloc(_capacity, sizeof(reg_t));
 	}
 }
 
@@ -561,8 +561,8 @@ static void reconstruct_stack(EngineState *retval) {
 	DataStack *stack = (DataStack *)(retval->segMan->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
-	retval->stack_base = stack->entries;
-	retval->stack_top = retval->stack_base + VM_STACK_SIZE;
+	retval->stack_base = stack->_entries;
+	retval->stack_top = stack->_entries + stack->_capacity;
 }
 
 static void load_script(EngineState *s, Script *scr) {

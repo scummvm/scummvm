@@ -417,8 +417,8 @@ int game_init(EngineState *s) {
 	DataStack *stack;
 
 	stack = s->segMan->allocateStack(VM_STACK_SIZE, &s->stack_segment);
-	s->stack_base = stack->entries;
-	s->stack_top = s->stack_base + VM_STACK_SIZE;
+	s->stack_base = stack->_entries;
+	s->stack_top = stack->_entries + stack->_capacity;
 
 	if (!script_instantiate(s->resMan, s->segMan, 0)) {
 		warning("game_init(): Could not instantiate script 0");
