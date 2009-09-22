@@ -255,14 +255,14 @@ public:
 
 	iterator	find(const Key &key) {
 		uint ctr = lookup(key);
-		if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
+		if (_storage[ctr])
 			return iterator(ctr, this);
 		return end();
 	}
 
 	const_iterator	find(const Key &key) const {
 		uint ctr = lookup(key);
-		if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
+		if (_storage[ctr])
 			return const_iterator(ctr, this);
 		return end();
 	}
