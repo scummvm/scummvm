@@ -105,6 +105,8 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 FWRenderer::~FWRenderer() {
 	delete[] _background;
 	delete[] _backBuffer;
+
+	clearMenuStack();
 }
 
 bool FWRenderer::initialize() {
