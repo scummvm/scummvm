@@ -275,13 +275,13 @@ byte *DynMem::dereference(reg_t pointer, int *size) {
 }
 
 bool SystemStrings::isValidOffset(uint16 offset) const {
-	return offset < SYS_STRINGS_MAX && strings[offset].name;
+	return offset < SYS_STRINGS_MAX && !strings[offset]._name.empty();
 }
 
 byte *SystemStrings::dereference(reg_t pointer, int *size) {
 	if (size)
 		*size = strings[pointer.offset].max_size;
-	if (pointer.offset < SYS_STRINGS_MAX && strings[pointer.offset].name)
+	if (isValidOffset(pointer.offset))
 		return (byte *)(strings[pointer.offset].value);
 
 	// This occurs in KQ5CD when interacting with certain objects

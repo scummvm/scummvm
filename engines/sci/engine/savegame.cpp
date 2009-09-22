@@ -437,7 +437,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 static void sync_SystemString(Common::Serializer &s, SystemString &obj) {
-	syncCStr(s, &obj.name);
+	s.syncString(obj._name);
 	s.syncAsSint32LE(obj.max_size);
 
 	// FIXME: This is a *WEIRD* hack: We sync a reg_t* as if it was a string.

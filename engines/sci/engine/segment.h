@@ -133,7 +133,7 @@ enum {
 };
 
 struct SystemString {
-	char *name;
+	Common::String _name;
 	int max_size;
 	reg_t *value;
 };
@@ -143,15 +143,15 @@ struct SystemStrings : public SegmentObj {
 
 public:
 	SystemStrings() : SegmentObj(SEG_TYPE_SYS_STRINGS) {
-		memset(strings, 0, sizeof(strings));
+		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
+			strings[i].max_size = 0;
+			strings[i].value = 0;
+		}
 	}
 	~SystemStrings() {
 		for (int i = 0; i < SYS_STRINGS_MAX; i++) {
 			SystemString *str = &strings[i];
-			if (str->name) {
-				free(str->name);
-				str->name = NULL;
-
+			if (!str->_name.empty()) {
 				free(str->value);
 				str->value = NULL;
 

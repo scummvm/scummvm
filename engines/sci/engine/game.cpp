@@ -335,7 +335,7 @@ int script_init_engine(EngineState *s) {
 
 	// Allocate static buffer for savegame and CWD directories
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_SAVEDIR];
-	str->name = strdup("savedir");
+	str->_name = "savedir";
 	str->max_size = MAX_SAVE_DIR_SIZE;
 	str->value = (reg_t *)calloc(MAX_SAVE_DIR_SIZE, sizeof(reg_t));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
 	str->value[0].segment = s->string_frag_segment; // Set to empty string
@@ -439,7 +439,7 @@ int game_init(EngineState *s) {
 	s->status_bar_background = !s->resMan->isVGA() ? 15 : 255;
 
 	SystemString *str = &s->sys_strings->strings[SYS_STRING_PARSER_BASE];
-	str->name = strdup("parser-base");
+	str->_name = "parser-base";
 	str->max_size = MAX_PARSER_BASE;
 	str->value = (reg_t *)calloc(MAX_PARSER_BASE + 1, sizeof(char));	// FIXME -- sizeof(char) or sizeof(reg_t) ??
 	str->value[0].segment = s->string_frag_segment; // Set to empty string
