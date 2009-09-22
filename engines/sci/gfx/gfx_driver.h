@@ -229,8 +229,6 @@ public:
 	byte *getVisual0() { return _visual[0]; }
 
 private:
-	byte *createCursor(gfx_pixmap_t *pointer);
-
 	gfx_pixmap_t *_priority[2];
 	byte *_visual[2];
 	gfx_mode_t *_mode; /**< Currently active mode, NULL if no mode is active */

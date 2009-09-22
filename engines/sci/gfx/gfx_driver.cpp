@@ -211,57 +211,43 @@ void GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
 
 // Mouse pointer operations
 
-// Scale cursor and map its colors to the global palette
-byte *GfxDriver::createCursor(gfx_pixmap_t *pointer) {
-	int linewidth = pointer->width;
-	int lines = pointer->height;
-	byte *data = new byte[linewidth*lines];
-	byte *linebase = data, *pos;
-	byte *src = pointer->index_data;
+void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
+	if (!pointer || !hotspot) {
+		CursorMan.showMouse(false);
+		return;
+	}
+
+	// Scale cursor and map its colors to the global palette
+	byte *cursorData = new byte[pointer->width * pointer->height];
 
 	for (int yc = 0; yc < pointer->index_height; yc++) {
-		pos = linebase;
+		byte *linebase = &cursorData[yc * (pointer->width * _mode->scaleFactor)];
 
 		for (int xc = 0; xc < pointer->index_width; xc++) {
-			byte color = *src;
+			byte color = pointer->index_data[yc * pointer->index_width + xc];
 			// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
 			// Note that some cursors don't have a palette in SQ5
 			if (pointer->palette && color < pointer->palette->size())
 				color = pointer->palette->getColor(color).parent_index;
-			for (int scalectr = 0; scalectr < _mode->scaleFactor; scalectr++) {
-				*pos++ = color;
-			}
-			src++;
+			memset(&linebase[xc], color, _mode->scaleFactor);
 		}
+
+		// Scale vertically
 		for (int scalectr = 1; scalectr < _mode->scaleFactor; scalectr++)
-			memcpy(linebase + linewidth * scalectr, linebase, linewidth);
-		linebase += linewidth * _mode->scaleFactor;
+			memcpy(&linebase[pointer->width * scalectr], linebase, pointer->width);
 	}
-	return data;
-}
 
+	// FIXME: The palette size check is a workaround for cursors using non-palette color GFX_CURSOR_TRANSPARENT
+	// Note that some cursors don't have a palette (e.g. in SQ5 and QFG3)
+	byte color_key = pointer->color_key;
+	if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (uint)pointer->color_key < pointer->palette->size()))
+		color_key = pointer->palette->getColor(pointer->color_key).parent_index;
 
-void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
-	if ((pointer == NULL) || (hotspot == NULL)) {
-		CursorMan.showMouse(false);
-	} else {
-		byte *cursorData = createCursor(pointer);
+	CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
+	CursorMan.showMouse(true);
 
-		// FIXME: The palette size check is a workaround for cursors using non-palette color GFX_CURSOR_TRANSPARENT
-		// Note that some cursors don't have a palette (e.g. in SQ5 and QFG3)
-		byte color_key = GFX_CURSOR_TRANSPARENT;
-		if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (unsigned int)pointer->color_key < pointer->palette->size()))
-			color_key = pointer->palette->getColor(pointer->color_key).parent_index;
-		// Some cursors don't have a palette, so we set the color key directly
-		if (!pointer->palette)
-			color_key = pointer->color_key;
-
-		CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
-		CursorMan.showMouse(true);
-
-		delete[] cursorData;
-		cursorData = 0;
-	}
+	delete[] cursorData;
+	cursorData = 0;
 }
 
 } // End of namespace Sci
