@@ -20,8 +20,6 @@
 			<File RelativePath="..\..\engines\sci\engine\gc.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\gc.h" />
 			<File RelativePath="..\..\engines\sci\engine\grammar.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\intmap.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\intmap.h" />
 			<File RelativePath="..\..\engines\sci\engine\kernel.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\kernel.h" />
 			<File RelativePath="..\..\engines\sci\engine\kernel32.cpp" />
