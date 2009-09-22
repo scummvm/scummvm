@@ -863,29 +863,30 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	return &(table->_table[offset]);
 }
 
-byte *SegManager::dereference(reg_t pointer, int *size) {
+SegmentRef SegManager::dereference(reg_t pointer) {
+	SegmentRef ret;
+
 	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
 		// This occurs in KQ5CD when interacting with certain objects
 		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
-		return NULL; /* Invalid */
+		return ret; /* Invalid */
 	}
 
 	SegmentObj *mobj = _heap[pointer.segment];
-	return mobj->dereference(pointer, size);
+	return mobj->dereference(pointer);
 }
 
 static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries) {
-	int maxsize;
-	void *retval = segMan->dereference(pointer, &maxsize);
+	SegmentRef ret = segMan->dereference(pointer);
 
-	if (!retval)
+	if (!ret.raw)
 		return NULL;
 
-	if (entries > maxsize) {
+	if (entries > ret.maxSize) {
 		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
 		return NULL;
 	}
-	return retval;
+	return ret.raw;
 
 }
 

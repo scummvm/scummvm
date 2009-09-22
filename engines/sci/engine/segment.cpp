@@ -214,79 +214,97 @@ int16 Script::getHeap(uint16 offset) const {
 //	return (_buf[offset] | (_buf[offset+1]) << 8);
 }
 
-byte *SegmentObj::dereference(reg_t pointer, int *size) {
+SegmentRef SegmentObj::dereference(reg_t pointer) {
 	error("Error: Trying to dereference pointer %04x:%04x to inappropriate segment",
 		          PRINT_REG(pointer));
-	return NULL;
+	return SegmentRef();
 }
 
 bool Script::isValidOffset(uint16 offset) const {
 	return offset < _bufSize;
 }
 
-byte *Script::dereference(reg_t pointer, int *size) {
+SegmentRef Script::dereference(reg_t pointer) {
 	if (pointer.offset > _bufSize) {
-		warning("Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)\n",
+		warning("Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
 				  PRINT_REG(pointer), (uint)_bufSize);
-		return NULL;
+		return SegmentRef();
 	}
-	if (size)
-		*size = _bufSize - pointer.offset;
-	return _buf + pointer.offset;
+
+	SegmentRef ret;
+	ret.isRaw = true;
+	ret.maxSize = _bufSize - pointer.offset;
+	ret.raw = _buf + pointer.offset;
+	return ret;
 }
 
 bool LocalVariables::isValidOffset(uint16 offset) const {
 	return offset < _locals.size() * sizeof(reg_t);
 }
 
-byte *LocalVariables::dereference(reg_t pointer, int *size) {
-	if (size)
-		*size = _locals.size() * sizeof(reg_t);
-
+SegmentRef LocalVariables::dereference(reg_t pointer) {
 	// FIXME: The following doesn't seem to be endian safe.
 	// To fix this, we'd have to always treat the reg_t
 	// values stored here as in the little endian format.
-	byte *base = (byte *)&_locals[0];
-	return base + pointer.offset;
+	// Anyway, generate a warning for now to see if this ever
+	// happens.
+	// One has to wonder whether we return the right value anyway.
+	// Here are three potential options:
+	//   1:  ((byte *)&_locals[0]) + pointer.offset
+	//   2:  ((byte *)&_locals[pointer.offset/2]) + (pointer.offset % 2)
+	//   3:  ((byte *)&_locals[pointer.offset])
+	// So which one is correct? :)
+	if (pointer.offset & 1)
+		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
+
+	SegmentRef ret;
+	ret.isRaw = false;	// reg_t based data!
+	ret.maxSize = _locals.size() * sizeof(reg_t);
+	ret.raw = (byte *)&_locals[0] + pointer.offset;
+	return ret;
 }
 
 bool DataStack::isValidOffset(uint16 offset) const {
 	return offset < _capacity * sizeof(reg_t);
 }
 
-byte *DataStack::dereference(reg_t pointer, int *size) {
-	if (size)
-		*size = _capacity * sizeof(reg_t);
-
-	byte *base = (byte *)_entries;
-	return base + pointer.offset;
+SegmentRef DataStack::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = false;	// reg_t based data!
+	ret.maxSize = _capacity * sizeof(reg_t);
+	// FIXME: Is this correct? See comment in LocalVariables::dereference
+	ret.raw = (byte *)_entries + pointer.offset;
+	return ret;
 }
 
 bool DynMem::isValidOffset(uint16 offset) const {
 	return offset < _size;
 }
 
-byte *DynMem::dereference(reg_t pointer, int *size) {
-	if (size)
-		*size = _size;
-
-	byte *base = (byte *)_buf;
-	return base + pointer.offset;
+SegmentRef DynMem::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = true;
+	ret.maxSize = _size;
+	ret.raw = _buf + pointer.offset;
+	return ret;
 }
 
 bool SystemStrings::isValidOffset(uint16 offset) const {
 	return offset < SYS_STRINGS_MAX && !strings[offset]._name.empty();
 }
 
-byte *SystemStrings::dereference(reg_t pointer, int *size) {
-	if (size)
-		*size = strings[pointer.offset].max_size;
+SegmentRef SystemStrings::dereference(reg_t pointer) {
+	SegmentRef ret;
+	ret.isRaw = false;	// FIXME: Raw or not raw? the sys strings code is totally incoherent in this regard
+	ret.maxSize = strings[pointer.offset].max_size;
 	if (isValidOffset(pointer.offset))
-		return (byte *)(strings[pointer.offset].value);
+		ret.raw = (byte *)(strings[pointer.offset].value);
+	else {
+		// This occurs in KQ5CD when interacting with certain objects
+		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+	}
 
-	// This occurs in KQ5CD when interacting with certain objects
-	warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
-	return NULL;
+	return ret;
 }
 
 

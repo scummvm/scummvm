@@ -279,10 +279,9 @@ public:
 	/**
 	 * Dereferences a raw memory pointer
 	 * @param[in]  reg	The reference to dereference
-	 * @param[out] size	(optional) The theoretical maximum size
 	 * @return			The data block referenced
 	 */
-	byte *dereference(reg_t reg, int *size);
+	SegmentRef dereference(reg_t pointer);
 
 	/**
 	 * Dereferences a heap pointer pointing to raw memory.

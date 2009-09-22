@@ -34,6 +34,23 @@
 
 namespace Sci {
 
+struct SegmentRef {
+	bool isRaw;	///! true if data is raw, false if it is a reg_t sequence
+	union {
+		byte *raw;
+		reg_t *reg;
+	};
+	int maxSize;	///! number of available bytes
+	// TODO: Add this?
+	//reg_t pointer;	// Original pointer
+
+	// TODO: Add this?
+	//SegmentType type;
+
+	SegmentRef() : isRaw(true), raw(0), maxSize(0) {}
+};
+
+
 enum SegmentType {
 	SEG_TYPE_INVALID = 0,
 	SEG_TYPE_SCRIPT = 1,
@@ -73,10 +90,9 @@ public:
 	/**
 	 * Dereferences a raw memory pointer.
 	 * @param reg	reference to dereference
-	 * @param size	if not NULL, set to the theoretical maximum size of the referenced data block
 	 * @return		the data block referenced
 	 */
-	virtual byte *dereference(reg_t pointer, int *size);
+	virtual SegmentRef dereference(reg_t pointer);
 
 	/**
 	 * Finds the canonic address associated with sub_reg.
@@ -161,7 +177,7 @@ public:
 	}
 
 	virtual bool isValidOffset(uint16 offset) const;
-	virtual byte *dereference(reg_t pointer, int *size);
+	virtual SegmentRef dereference(reg_t pointer);
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
 };
@@ -176,7 +192,7 @@ public:
 	}
 
 	virtual bool isValidOffset(uint16 offset) const;
-	virtual byte *dereference(reg_t pointer, int *size);
+	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
@@ -309,7 +325,7 @@ public:
 	bool init(int script_nr, ResourceManager *resMan);
 
 	virtual bool isValidOffset(uint16 offset) const;
-	virtual byte *dereference(reg_t pointer, int *size);
+	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void freeAtAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
@@ -467,7 +483,7 @@ public:
 	}
 
 	virtual bool isValidOffset(uint16 offset) const;
-	virtual byte *dereference(reg_t pointer, int *size);
+	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note);
 
@@ -624,7 +640,7 @@ public:
 	}
 
 	virtual bool isValidOffset(uint16 offset) const;
-	virtual byte *dereference(reg_t pointer, int *size);
+	virtual SegmentRef dereference(reg_t pointer);
 	virtual reg_t findCanonicAddress(SegManager *segMan, reg_t sub_addr);
 	virtual void listAllDeallocatable(SegmentId segId, void *param, NoteCallback note);
 

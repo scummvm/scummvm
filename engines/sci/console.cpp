@@ -1951,7 +1951,8 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			break;
 		case KSIG_REF: {
 			int size;
-			byte *block = _vm->_gamestate->segMan->dereference(reg, &size);
+			const SegmentRef block = _vm->_gamestate->segMan->dereference(reg);
+			size = block.maxSize;
 
 			DebugPrintf("raw data\n");
 
@@ -1966,7 +1967,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 			if (reg_end.segment != 0)
 				DebugPrintf("Block size less than or equal to %d\n", size);
 
-			Common::hexdump(block, size, 16, 0);
+			Common::hexdump(block.raw, size, 16, 0);
 			}
 			break;
 		case KSIG_ARITHMETIC:
@@ -2248,8 +2249,8 @@ bool Console::cmdDissassembleAddress(int argc, const char **argv) {
 		return true;
 	}
 
-	_vm->_gamestate->segMan->dereference(vpc, &size);
-	size += vpc.offset; // total segment size
+	SegmentRef ref = _vm->_gamestate->segMan->dereference(vpc);
+	size = ref.maxSize + vpc.offset; // total segment size
 
 	for (int i = 2; i < argc; i++) {
 		if (!scumm_stricmp(argv[i], "bwt"))
