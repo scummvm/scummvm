@@ -408,7 +408,7 @@ void OSystem_PSP::updateScreen() {
 	sceGuAmbientColor(0xFFFFFFFF);
 	sceGuColor(0xFFFFFFFF);
 
-	struct Vertex *vertices = (struct Vertex *)sceGuGetMemory(2 * sizeof(struct Vertex));
+	Vertex *vertices = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 	vertices[0].u = 0.5f;
 	vertices[0].v = 0.5f;
 	vertices[1].u = _screenWidth - 0.5f;
@@ -456,7 +456,7 @@ void OSystem_PSP::updateScreen() {
 	sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertices);
 	if (_screenWidth == 640) {
 		// 2nd draw
-		struct Vertex *vertices2 = (struct Vertex *)sceGuGetMemory(2 * sizeof(struct Vertex));
+		Vertex *vertices2 = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 		sceGuTexImage(0, 512, 512, _screenWidth, _offscreen+512);
 		vertices2[0].u = 512 + 0.5f;
 		vertices2[0].v = vertices[0].v;
@@ -474,7 +474,7 @@ void OSystem_PSP::updateScreen() {
 
 	// draw overlay
 	if (_overlayVisible) {
-		struct Vertex *vertOverlay = (struct Vertex *)sceGuGetMemory(2 * sizeof(struct Vertex));
+		Vertex *vertOverlay = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 		vertOverlay[0].x = 0; 
 		vertOverlay[0].y = 0; 
 		vertOverlay[0].z = 0;
@@ -501,7 +501,7 @@ void OSystem_PSP::updateScreen() {
 		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertOverlay);
 		// need to render twice for textures > 512
 		if ( _overlayWidth > 512) {
-			struct Vertex *vertOverlay2 = (struct Vertex *)sceGuGetMemory(2 * sizeof(struct Vertex));
+			Vertex *vertOverlay2 = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 			sceGuTexImage(0, 512, 512, _overlayWidth, _overlayBuffer + 512);
 			vertOverlay2[0].u = 512 + 0.5f;
 			vertOverlay2[0].v = vertOverlay[0].v;
@@ -528,7 +528,7 @@ void OSystem_PSP::updateScreen() {
 		sceGuTexImage(0, MOUSE_SIZE, MOUSE_SIZE, MOUSE_SIZE, _mouseBuf);
 		sceGuTexFunc(GU_TFX_MODULATE, GU_TCC_RGBA);
 
-		struct Vertex *vertMouse = (struct Vertex *)sceGuGetMemory(2 * sizeof(struct Vertex));
+		Vertex *vertMouse = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 		vertMouse[0].u = 0.5f;
 		vertMouse[0].v = 0.5f;
 		vertMouse[1].u = _mouseWidth - 0.5f;
@@ -632,7 +632,7 @@ void OSystem_PSP::updateScreen() {
 		}
 		sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
 
-		struct Vertex *vertKB = (struct Vertex *)sceGuGetMemory(2 * sizeof(struct Vertex));
+		Vertex *vertKB = (Vertex *)sceGuGetMemory(2 * sizeof(Vertex));
 		vertKB[0].u = 0.5f;
 		vertKB[0].v = 0.5f;
 		vertKB[1].u = PSP_SCREEN_WIDTH - 0.5f;
@@ -643,7 +643,7 @@ void OSystem_PSP::updateScreen() {
 		vertKB[1].x = PSP_SCREEN_WIDTH;
 		vertKB[1].y = PSP_SCREEN_HEIGHT;
 		vertKB[1].z = 0;
-		sceGuDrawArray(GU_SPRITES,GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D,2,0,vertKB);
+		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertKB);
 		sceGuDisable(GU_BLEND);
 	}
 	//sceKernelDcacheWritebackAll();
