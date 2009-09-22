@@ -876,11 +876,18 @@ SegmentRef SegManager::dereference(reg_t pointer) {
 	return mobj->dereference(pointer);
 }
 
-static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries) {
+static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, bool wantRaw) {
 	SegmentRef ret = segMan->dereference(pointer);
 
 	if (!ret.raw)
 		return NULL;
+
+	if (ret.isRaw != wantRaw) {
+		warning("Dereferencing pointer %04x:%04x (type %d) which is %s, but expected %s", PRINT_REG(pointer),
+			segMan->_heap[pointer.segment]->getType(),
+			ret.isRaw ? "raw" : "not raw",
+			wantRaw ? "raw" : "not raw");
+	}
 
 	if (entries > ret.maxSize) {
 		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
@@ -891,7 +898,7 @@ static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int 
 }
 
 byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
-	return (byte *)_kernel_dereference_pointer(this, pointer, entries);
+	return (byte *)_kernel_dereference_pointer(this, pointer, entries, true);
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
@@ -901,11 +908,11 @@ reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
 		return NULL;
 	}
 
-	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries);
+	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries, false);
 }
 
 char *SegManager::derefString(reg_t pointer, int entries) {
-	return (char *)_kernel_dereference_pointer(this, pointer, entries);
+	return (char *)_kernel_dereference_pointer(this, pointer, entries, true);
 }
 
 

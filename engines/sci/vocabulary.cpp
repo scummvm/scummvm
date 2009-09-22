@@ -345,7 +345,7 @@ ResultWord Vocabulary::lookupWord(const char *word, int word_len) {
 }
 
 void Vocabulary::decipherSaidBlock(byte *addr) {
-	int nextitem;
+	byte nextitem;
 
 	do {
 		nextitem = *addr++;

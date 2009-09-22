@@ -789,6 +789,8 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 		byte *buffer = s->segMan->derefBulkPtr(argv[1], 10);
 
 		if (buffer) {
+			// FIXME: Is this correct? I.e., do we really write into a "raw" segment
+			// here? Or maybe we want to write 4 reg_t instead?
 			WRITE_LE_UINT16(buffer, module);
 			WRITE_LE_UINT16(buffer + 2, msg.noun);
 			WRITE_LE_UINT16(buffer + 4, msg.verb);

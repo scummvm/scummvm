@@ -233,6 +233,10 @@ SegmentRef Script::dereference(reg_t pointer) {
 
 	SegmentRef ret;
 	ret.isRaw = true;
+	// FIXME: here we subtract pointer.offset from maxSize, elsewhere we don't -- huh?
+	// It's hard to say which is right, because it depends on how the various
+	// SegManager::deref*() methods are used. It's quite possible that this variant
+	// is "correct" and all the others aren't... we'll have to find out.
 	ret.maxSize = _bufSize - pointer.offset;
 	ret.raw = _buf + pointer.offset;
 	return ret;
