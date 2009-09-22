@@ -27,6 +27,8 @@
 #define CINE_GFX_H
 
 #include "common/noncopyable.h"
+#include "common/rect.h"
+#include "common/stack.h"
 #include "cine/object.h"
 
 namespace Cine {
@@ -61,13 +63,66 @@ struct palBg {
 	}
 };
 
+class FWRenderer;
+
+class Menu {
+public:
+	enum Type {
+		kSelectionMenu,
+		kTextInputMenu
+	};
+
+	Menu(Type t) : _type(t) {}
+	virtual ~Menu() {}
+
+	Type getType() const { return _type; }
+
+	virtual void drawMenu(FWRenderer &r, bool top) = 0;
+private:
+	const Type _type;
+};
+
+class SelectionMenu : public Menu {
+public:
+	SelectionMenu(Common::Point p, int width, Common::StringList elements);
+
+	int getElementCount() const { return _elements.size(); }
+
+	void setSelection(int selection);
+
+	void drawMenu(FWRenderer &r, bool top);
+private:
+	const Common::Point _pos;
+	const int _width;
+	const Common::StringList _elements;
+
+	int _selection;
+};
+
+class TextInputMenu : public Menu {
+public:
+	TextInputMenu(Common::Point p, int width, const char *info);
+
+	void setInput(const char *input, int cursor);
+
+	void drawMenu(FWRenderer &r, bool top);
+private:
+	const Common::Point _pos;
+	const int _width;
+	const Common::String _info;
+
+	Common::String _input;
+	int _cursor;
+};
+
 /*! \brief Future Wars renderer
  *
- * Screen backbuffer is not cleared between frames, you can draw menus etc.
- * without calling drawFrame() all the time
+ * Screen backbuffer is not cleared between frames.
  */
 class FWRenderer : public Common::NonCopyable {
-protected:
+	// TODO: Consider getting rid of this
+	friend class SelectionMenu;
+	friend class TextInputMenu;
 private:
 	byte *_background; ///< Current background
 	char _bgName[13]; ///< Background filename
@@ -80,9 +135,9 @@ protected:
 	static const int _screenHeight = 200; ///< Screen height
 
 	byte *_backBuffer; ///< Screen backbuffer
-	byte *_screenBackUp; ///< Screen backbuffer's backup for the transparent menu code in the Amiga version
 	Cine::Palette _backupPal; ///< The backup color palette
 	Cine::Palette _activePal; ///< The active color palette
+	Common::Stack<Menu *> _menuStack; ///< All displayed menus
 	int _changePal; ///< Load active palette to video backend on next frame
 	bool _showCollisionPage; ///< Should we show the collision page instead of the back buffer? Used for debugging.
 
@@ -104,6 +159,7 @@ protected:
 	virtual void renderOverlay(const Common::List<overlay>::iterator &it);
 	void drawOverlays();
 
+	void blit();
 public:
 	uint16 _messageBg; ///< Message box background color
 	uint16 _cmdY; ///< Player command string position on screen
@@ -119,7 +175,6 @@ public:
 	virtual void clear();
 
 	void drawFrame();
-	void blit();
 	void setCommand(Common::String cmd);
 
 	virtual void incrustMask(const ObjectStruct &obj, uint8 color = 0);
@@ -144,11 +199,9 @@ public:
 	virtual void rotatePalette(int a, int b, int c);
 	virtual void transformPalette(int first, int last, int r, int g, int b);
 
-	void prepareMenu();
-	void discardMenu();
-
-	void drawMenu(const CommandeType *items, unsigned int height, int x, int y, int width, int selected);
-	void drawInputBox(const char *info, const char *input, int cursor, int x, int y, int width);
+	void pushMenu(Menu *menu);
+	Menu *popMenu();
+	void clearMenuStack();
 
 	virtual void fadeToBlack();
 	void showCollisionPage(bool state);

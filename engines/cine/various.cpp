@@ -492,10 +492,15 @@ void processInventory(int16 x, int16 y) {
 	if (!listSize)
 		return;
 
-	renderer->prepareMenu();
-	renderer->drawMenu(objectListCommand, listSize, x, y, menuWidth, -1);
-	renderer->blit();
-	renderer->discardMenu();
+	Common::StringList list;
+	for (int i = 0; i < listSize; ++i)
+		list.push_back(objectListCommand[i]);
+	SelectionMenu *menu = new SelectionMenu(Common::Point(x, y), menuWidth, list);
+	renderer->pushMenu(menu);
+	renderer->drawFrame();
+	renderer->popMenu();
+	delete menu;
+	menu = 0;
 
 	do {
 		manageEvents();
@@ -676,6 +681,7 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 	int16 var_14;
 	int16 currentSelection, oldSelection;
 	int16 var_4;
+	SelectionMenu *menu;
 
 	if (disableSystemMenu)
 		return -1;
@@ -690,9 +696,12 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 		Y = 199 - paramY;
 	}
 
-	renderer->prepareMenu();
-	renderer->drawMenu(commandList, height, X, Y, width, -1);
-	renderer->blit();
+	Common::StringList list;
+	for (uint16 i = 0; i < height; ++i)
+		list.push_back(commandList[i]);
+	menu = new SelectionMenu(Common::Point(X, Y), width, list);
+	renderer->pushMenu(menu);
+	renderer->drawFrame();
 
 	do {
 		manageEvents();
@@ -705,8 +714,8 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 
 	di = currentSelection * 9 + Y + 4;
 
-	renderer->drawMenu(commandList, height, X, Y, width, currentSelection);
-	renderer->blit();
+	menu->setSelection(currentSelection);
+	renderer->drawFrame();
 
 	manageEvents();
 	getMouseData(mouseUpdateStatus, &button, (uint16 *)&mouseX, (uint16 *)&mouseY);
@@ -759,8 +768,8 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 
 			di = currentSelection * 9 + Y + 4;
 
-			renderer->drawMenu(commandList, height, X, Y, width, currentSelection);
-			renderer->blit();
+			menu->setSelection(currentSelection);
+			renderer->drawFrame();
 
 //			if (needMouseSave) {
 //				gfxRedrawMouseCursor();
@@ -768,8 +777,6 @@ int16 makeMenuChoice(const CommandeType commandList[], uint16 height, uint16 X, 
 		}
 
 	} while (!var_A && !g_cine->shouldQuit());
-
-	renderer->discardMenu();
 
 	assert(!needMouseSave);
 
@@ -1095,6 +1102,8 @@ uint16 executePlayerInput(void) {
 			break;
 		}
 	}
+
+	renderer->clearMenuStack();
 
 	// Update Operation Stealth specific global variables.
 	// This fixes swimming at the bottom of the ocean after
@@ -1607,12 +1616,13 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 	int inputLength = strlen(inputString);
 	int inputPos = inputLength + 1;
 
-	renderer->prepareMenu();
+	TextInputMenu *inputBox = new TextInputMenu(Common::Point(x - 16, y), width + 32, messagePtr);
+	renderer->pushMenu(inputBox);
 
 	while (!quit) {
 		if (redraw) {
-			renderer->drawInputBox(messagePtr, inputString, inputPos, x - 16, y, width + 32);
-			renderer->blit();
+			inputBox->setInput(inputString, inputPos);
+			renderer->drawFrame();
 			redraw = false;
 		}
 
@@ -1691,7 +1701,8 @@ bool makeTextEntryMenu(const char *messagePtr, char *inputString, int stringMaxL
 		}
 	}
 
-	renderer->discardMenu();
+	renderer->popMenu();
+	delete inputBox;
 
 	if (quit == 2)
 		return false;

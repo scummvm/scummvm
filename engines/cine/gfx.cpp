@@ -92,7 +92,7 @@ static const byte cursorPalette[] = {
  */
 FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 	_cmdY(0), _messageBg(0), _backBuffer(new byte[_screenSize]),
-	_screenBackUp(0), _activePal(), _changePal(0), _showCollisionPage(false) {
+	_activePal(), _changePal(0), _showCollisionPage(false) {
 
 	assert(_backBuffer);
 
@@ -105,7 +105,6 @@ FWRenderer::FWRenderer() : _background(NULL), _backupPal(), _cmd(""),
 FWRenderer::~FWRenderer() {
 	delete[] _background;
 	delete[] _backBuffer;
-	delete[] _screenBackUp;
 }
 
 bool FWRenderer::initialize() {
@@ -273,7 +272,7 @@ void FWRenderer::drawMessage(const char *str, int x, int y, int width, int color
 			ty += 9;
 			if (color >= 0) {
 				if (isAmiga)
-					drawTransparentBox(x, ty, width, 4);
+					drawTransparentBox(x, ty, width, 9);
 				else
 					drawPlainBox(x, ty, width, 9, color);
 			}
@@ -367,17 +366,13 @@ void FWRenderer::drawTransparentBox(int x, int y, int width, int height) {
 	boxRect.clip(screenRect);
 
 	byte *dest = _backBuffer + boxRect.top * 320 + boxRect.left;
-	const byte *src = _screenBackUp + boxRect.top * 320 + boxRect.left;
 	const int lineAdd = 320 - boxRect.width();
 	for (int i = 0; i < boxRect.height(); ++i) {
-		for (int j = 0; j < boxRect.width(); ++j) {
-			if (*src < 16)
-				*dest++ = *src++ + 16;
-			else
-				*dest++ = *src++;
+		for (int j = 0; j < boxRect.width(); ++j, ++dest) {
+			if (*dest < 16)
+				*dest += 16;
 		}
 		dest += lineAdd;
-		src += lineAdd;
 	}
 }
 
@@ -563,6 +558,10 @@ void FWRenderer::drawFrame() {
 	if (_changePal) {
 		refreshPalette();
 	}
+
+	const int menus = _menuStack.size();
+	for (int i = 0; i < menus; ++i)
+		_menuStack[i]->drawMenu(*this, (i == menus - 1));
 
 	blit();
 }
@@ -793,165 +792,6 @@ void FWRenderer::transformPalette(int first, int last, int r, int g, int b) {
 	refreshPalette();
 }
 
-void FWRenderer::prepareMenu() {
-	if (g_cine->getPlatform() != Common::kPlatformAmiga)
-		return;
-
-	if (!_screenBackUp) {
-		_screenBackUp = new uint8[_screenSize];
-		assert(_screenBackUp);
-	}
-	memcpy(_screenBackUp, _backBuffer, _screenSize);
-}
-
-void FWRenderer::discardMenu() {
-	delete[] _screenBackUp;
-	_screenBackUp = 0;
-}
-
-/*! \brief Draw menu box, one item per line with possible highlight
- * \param items Menu items
- * \param height Item count
- * \param x Top left menu corner coordinate
- * \param y Top left menu corner coordinate
- * \param width Menu box width
- * \param selected Index of highlighted item (no highlight if less than 0)
- */
-void FWRenderer::drawMenu(const CommandeType *items, unsigned int height, int x, int y, int width, int selected) {
-	int tx, ty, th = height * 9 + 10;
-	unsigned int i, j;
-
-	if (x + width > 319) {
-		x = 319 - width;
-	}
-
-	if (y + th > 199) {
-		y = 199 - th;
-	}
-
-	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
-
-	if (isAmiga)
-		drawTransparentBox(x, y, width, 4);
-	else
-		drawPlainBox(x, y, width, 4, _messageBg);
-
-	ty = y + 4;
-
-	for (i = 0; i < height; i++, ty += 9) {
-		if (isAmiga) {
-			// The original Amiga version is using a different highlight color here,
-			// but with our current code it is not possible to change the text color
-			// thus we can not use it, since otherwise the text wouldn't be visible
-			// anymore.
-			if ((int)i == selected)
-				drawPlainBox(x, ty, width, 9, 0/*2*/);
-			else
-				drawTransparentBox(x, ty, width, 9);
-		} else {
-			drawPlainBox(x, ty, width, 9, (int)i == selected ? 0 : _messageBg);
-		}
-		tx = x + 4;
-
-		for (j = 0; items[i][j]; j++) {
-			tx = drawChar(items[i][j], tx, ty);
-		}
-	}
-
-	if (isAmiga)
-		drawTransparentBox(x, ty, width, 4);
-	else
-		drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, isAmiga ? 18 : 2);
-}
-
-/*! \brief Draw text input box
- * \param info Input box message
- * \param input Text entered in the input area
- * \param cursor Cursor position in the input area
- * \param x Top left input box corner coordinate
- * \param y Top left input box corner coordinate
- * \param width Input box width
- */
-void FWRenderer::drawInputBox(const char *info, const char *input, int cursor, int x, int y, int width) {
-	int i, tx, ty, tw;
-	int line = 0, words = 0, cw = 0;
-	int space = 0, extraSpace = 0;
-
-	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
-
-	if (isAmiga)
-		drawTransparentBox(x, y, width, 4);
-	else
-		drawPlainBox(x, y, width, 4, _messageBg);
-	tx = x + 4;
-	ty = info[0] ? y - 5 : y + 4;
-	tw = width - 8;
-
-	// input box info message
-	for (i = 0; info[i]; i++, line--) {
-		// fit line of text
-		if (!line) {
-			line = fitLine(info + i, tw, words, cw);
-
-			if ( info[i + line] != '\0' && words) {
-				space = (tw - cw) / words;
-				extraSpace = (tw - cw) % words;
-			} else {
-				space = 5;
-				extraSpace = 0;
-			}
-
-			ty += 9;
-			if (isAmiga)
-				drawTransparentBox(x, ty, width, 9);
-			else
-				drawPlainBox(x, ty, width, 9, _messageBg);
-			tx = x + 4;
-		}
-
-		// draw characters
-		if (info[i] == ' ') {
-			tx += space + extraSpace;
-
-			if (extraSpace) {
-				extraSpace = 0;
-			}
-		} else {
-			tx = drawChar(info[i], tx, ty);
-		}
-	}
-
-	// input area background
-	ty += 9;
-	if (isAmiga)
-		drawTransparentBox(x, ty, width, 9);
-	else
-		drawPlainBox(x, ty, width, 9, _messageBg);
-	drawPlainBox(x + 16, ty - 1, width - 32, 9, 0);
-	tx = x + 20;
-
-	// text in input area
-	for (i = 0; input[i]; i++) {
-		tx = drawChar(input[i], tx, ty);
-
-		if (cursor == i + 2) {
-			drawLine(tx, ty - 1, 1, 9, 2);
-		}
-	}
-
-	if (!input[0] || cursor == 1) {
-		drawLine(x + 20, ty - 1, 1, 9, 2);
-	}
-
-	ty += 9;
-	if (isAmiga)
-		drawTransparentBox(x, ty, width, 4);
-	else
-		drawPlainBox(x, ty, width, 4, _messageBg);
-	drawDoubleBorder(x, y, width, ty - y + 4, isAmiga ? 18 : 2);
-}
-
 /*! \brief Fade to black
  * \bug Operation Stealth sometimes seems to fade to black using
  * transformPalette resulting in double fadeout
@@ -969,6 +809,182 @@ void FWRenderer::fadeToBlack() {
 		g_system->delayMillis(50);
 	}
 }
+
+// Menu implementation
+
+void FWRenderer::pushMenu(Menu *menu) {
+	_menuStack.push(menu);
+}
+
+Menu *FWRenderer::popMenu() {
+	if (_menuStack.empty())
+		return 0;
+
+	Menu *menu = _menuStack.top();
+	_menuStack.pop();
+	return menu;
+}
+
+void FWRenderer::clearMenuStack() {
+	Menu *menu = 0;
+	while ((menu = popMenu()) != 0)
+		delete menu;
+}
+
+SelectionMenu::SelectionMenu(Common::Point p, int width, Common::StringList elements)
+	: Menu(kSelectionMenu), _pos(p), _width(width), _elements(elements), _selection(-1) {
+}
+
+void SelectionMenu::setSelection(int selection) {
+	if (selection >= getElementCount() || selection < -1) {
+		warning("Invalid selection %d", selection);
+		selection = -1;
+	}
+
+	_selection = selection;
+}
+
+void SelectionMenu::drawMenu(FWRenderer &r, bool top) {
+	const int height = getElementCount() * 9 + 10;
+	int x = _pos.x;
+	int y = _pos.y;
+
+	if (x + _width > 319)
+		x = 319 - _width;
+
+	if (y + height > 199)
+		y = 199 - height;
+
+	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
+
+	if (isAmiga) {
+		r.drawTransparentBox(x, y, _width, height);
+		r.drawDoubleBorder(x, y, _width, height, 18);
+	} else {
+		r.drawPlainBox(x, y, _width, height, r._messageBg);
+		r.drawDoubleBorder(x, y, _width, height, 2);
+	}
+
+	int lineY = y + 4;
+	int charX;
+
+	const int elemCount = getElementCount();
+	for (int i = 0; i < elemCount; ++i, lineY += 9) {
+		charX = x + 4;
+
+		if (i == _selection) {
+			if (isAmiga) {
+				// The original Amiga version is using a different highlight color here,
+				// but with our current code it is not possible to change the text color,
+				// thus we can not use the Amiga's color, since otherwise the text
+				// wouldn't be visible anymore.
+				r.drawPlainBox(charX, lineY, _width - 8, FONT_HEIGHT, top ? r._messageBg/*2*/ : 18);
+			} else {
+				r.drawPlainBox(charX, lineY, _width - 8, 9, r._messageBg);
+			}
+		}
+
+		const int size = _elements[i].size();
+		for (int j = 0; j < size; ++j)
+			charX = r.drawChar(_elements[i][j], charX, lineY);
+	}
+}
+
+TextInputMenu::TextInputMenu(Common::Point p, int width, const char *info)
+	: Menu(kTextInputMenu), _pos(p), _width(width), _info(info), _input(), _cursor(0) {
+}
+
+void TextInputMenu::setInput(const char *input, int cursor) {
+	_input = input;
+	_cursor = cursor;
+}
+
+void TextInputMenu::drawMenu(FWRenderer &r, bool top) {
+	const int x = _pos.x;
+	const int y = _pos.y;
+
+	int i, tx, ty, tw;
+	int line = 0, words = 0, cw = 0;
+	int space = 0, extraSpace = 0;
+
+	const bool isAmiga = (g_cine->getPlatform() == Common::kPlatformAmiga);
+
+	if (isAmiga)
+		r.drawTransparentBox(x, y, _width, 4);
+	else
+		r.drawPlainBox(x, y, _width, 4, r._messageBg);
+	tx = x + 4;
+	ty = _info[0] ? y - 5 : y + 4;
+	tw = _width - 8;
+
+	const int infoSize = _info.size();
+
+	// input box info message
+	for (i = 0; i < infoSize; i++, line--) {
+		// fit line of text
+		if (!line) {
+			line = fitLine(_info.c_str() + i, tw, words, cw);
+
+			if (i + line < infoSize && words) {
+				space = (tw - cw) / words;
+				extraSpace = (tw - cw) % words;
+			} else {
+				space = 5;
+				extraSpace = 0;
+			}
+
+			ty += 9;
+			if (isAmiga)
+				r.drawTransparentBox(x, ty, _width, 9);
+			else
+				r.drawPlainBox(x, ty, _width, 9, r._messageBg);
+			tx = x + 4;
+		}
+
+		// draw characters
+		if (_info[i] == ' ') {
+			tx += space + extraSpace;
+
+			if (extraSpace) {
+				extraSpace = 0;
+			}
+		} else {
+			tx = r.drawChar(_info[i], tx, ty);
+		}
+	}
+
+	// input area background
+	ty += 9;
+	if (isAmiga)
+		r.drawTransparentBox(x, ty, _width, 9);
+	else
+		r.drawPlainBox(x, ty, _width, 9, r._messageBg);
+	r.drawPlainBox(x + 16, ty - 1, _width - 32, 9, 0);
+	tx = x + 20;
+
+	// text in input area
+	const int inputSize = _input.size();
+	for (i = 0; i < inputSize; i++) {
+		tx = r.drawChar(_input[i], tx, ty);
+
+		if (_cursor == i + 2) {
+			r.drawLine(tx, ty - 1, 1, 9, 2);
+		}
+	}
+
+	if (_input.empty() || _cursor == 1) {
+		r.drawLine(x + 20, ty - 1, 1, 9, 2);
+	}
+
+	ty += 9;
+	if (isAmiga)
+		r.drawTransparentBox(x, ty, _width, 4);
+	else
+		r.drawPlainBox(x, ty, _width, 4, r._messageBg);
+	r.drawDoubleBorder(x, y, _width, ty - y + 4, isAmiga ? 18 : 2);
+}
+
+// -------------------
 
 /*! \brief Initialize Operation Stealth renderer
  */
