@@ -1590,7 +1590,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			break;
 		case SCI_OBJ_OBJECT:
 		case SCI_OBJ_CLASS: { // object or class?
-			Object *obj = scr->scriptObjInit(addr);
+			Object *obj = scr->scriptObjInit(addr, resMan->sciVersion());
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary

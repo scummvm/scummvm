@@ -380,8 +380,6 @@ private:
 	Hunk *alloc_Hunk(reg_t *);
 
 	SegmentId findFreeSegment() const;
-	Object *scriptObjInit0(reg_t obj_pos);
-	Object *scriptObjInit11(reg_t obj_pos);
 
 	/**
 	 * Check segment validity

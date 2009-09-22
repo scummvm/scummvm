@@ -130,18 +130,18 @@ Script *SegManager::allocateScript(int script_nr, SegmentId *seg_id) {
 void Script::setScriptSize(int script_nr, ResourceManager *resMan) {
 	Resource *script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
 	Resource *heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (resMan->sciVersion() == SCI_VERSION_0_EARLY);
 
 	_scriptSize = script->size;
 	_heapSize = 0; // Set later
 
-	if (!script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
+	if (!script || (resMan->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		error("SegManager::setScriptSize: failed to load %s", !script ? "script" : "heap");
 	}
 	if (oldScriptHeader) {
 		_bufSize = script->size + READ_LE_UINT16(script->data) * 2;
 		//locals_size = READ_LE_UINT16(script->data) * 2;
-	} else if (getSciVersion() < SCI_VERSION_1_1) {
+	} else if (resMan->sciVersion() < SCI_VERSION_1_1) {
 		_bufSize = script->size;
 	} else {
 		_bufSize = script->size + heap->size;
@@ -458,102 +458,59 @@ reg_t SegManager::getClassAddress(int classnr, ScriptLoadType lock, reg_t caller
 	}
 }
 
-Object *Script::scriptObjInit0(reg_t obj_pos) {
+Object *Script::scriptObjInit(reg_t obj_pos, SciVersion version) {
 	Object *obj;
 
-	obj_pos.offset -= SCRIPT_OBJECT_MAGIC_OFFSET;
+	if (version < SCI_VERSION_1_1)
+		obj_pos.offset += 8;	// magic offset (SCRIPT_OBJECT_MAGIC_OFFSET)
+
 	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
 
 	obj = allocateObject(obj_pos.offset);
 
 	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
-	{
-		byte *data = (byte *)(_buf + obj_pos.offset);
-		uint16 *funct_area = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
-		int variables_nr;
-		int functions_nr;
-		int is_class;
+	byte *data = (byte *)(_buf + obj_pos.offset);
+	uint16 *funct_area = 0;
+	bool isClass;
 
-		obj->_flags = 0;
-		obj->_pos = obj_pos;
+	if (version < SCI_VERSION_1_1) {
+		obj->variable_names_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
+		obj->base_vars = 0;
+		funct_area = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
+		obj->methods_nr = READ_LE_UINT16(funct_area - 1);
+		isClass = READ_LE_UINT16(data + 4) & SCRIPT_INFO_CLASS;	// SCRIPT_INFO_OFFSET
+	} else {
+		obj->variable_names_nr = READ_LE_UINT16(data + 2);
+		obj->base_vars = (uint16 *)(_buf + READ_LE_UINT16(data + 4));
+		funct_area = (uint16 *)(_buf + READ_LE_UINT16(data + 6));
+		obj->methods_nr = READ_LE_UINT16(funct_area);
+		isClass = READ_LE_UINT16(data + 14) & SCRIPT_INFO_CLASS;
+	}
 
-		VERIFY((byte *)funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
+	obj->_flags = 0;
+	obj->_pos = obj_pos;
+	obj->base_method = funct_area;
 
-		variables_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
-		functions_nr = READ_LE_UINT16(funct_area - 1);
-		is_class = READ_LE_UINT16(data + SCRIPT_INFO_OFFSET) & SCRIPT_INFO_CLASS;
+	VERIFY((byte *)funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
 
-		obj->base_method = funct_area;
-		obj->base_vars = NULL;
-
-		VERIFY((byte *)funct_area + functions_nr * 2
+	if (version < SCI_VERSION_1_1) {
+		VERIFY((byte *)funct_area + obj->methods_nr * 2
 		       // add again for classes, since those also store selectors
-		       + (is_class ? functions_nr * 2 : 0) < _buf + _bufSize, "Function area extends beyond end of script");
-
-		obj->_variables.resize(variables_nr);
-
-		obj->methods_nr = functions_nr;
-		obj->base = _buf;
-		obj->base_obj = data;
-
-		for (int i = 0; i < variables_nr; i++)
-			obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
+		       + (isClass ? obj->methods_nr * 2 : 0) < _buf + _bufSize, "Function area extends beyond end of script");
+	} else {
+		VERIFY(((byte *)funct_area + obj->variable_names_nr) < _buf + _bufSize, "Function area extends beyond end of script");
 	}
 
-	return obj;
-}
+	obj->_variables.resize(obj->variable_names_nr);
 
-Object *Script::scriptObjInit11(reg_t obj_pos) {
-	Object *obj;
+	obj->base = _buf;
+	obj->base_obj = data;
 
-	VERIFY(obj_pos.offset < _bufSize, "Attempt to initialize object beyond end of script\n");
-
-	obj = allocateObject(obj_pos.offset);
-
-	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
-
-	{
-		byte *data = (byte *)(_buf + obj_pos.offset);
-		uint16 *funct_area = (uint16 *)(_buf + READ_LE_UINT16(data + 6));
-		uint16 *prop_area = (uint16 *)(_buf + READ_LE_UINT16(data + 4));
-		int variables_nr;
-		int functions_nr;
-		int is_class;
-
-		obj->_flags = 0;
-		obj->_pos = obj_pos;
-
-		VERIFY((byte *)funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
-
-		variables_nr = READ_LE_UINT16(data + 2);
-		functions_nr = READ_LE_UINT16(funct_area);
-		is_class = READ_LE_UINT16(data + 14) & SCRIPT_INFO_CLASS;
-
-		obj->base_method = funct_area;
-		obj->base_vars = prop_area;
-
-		VERIFY(((byte *)funct_area + functions_nr) < _buf + _bufSize, "Function area extends beyond end of script");
-
-		obj->variable_names_nr = variables_nr;
-		obj->_variables.resize(variables_nr);
-
-		obj->methods_nr = functions_nr;
-		obj->base = _buf;
-		obj->base_obj = data;
-
-		for (int i = 0; i < variables_nr; i++)
-			obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
-	}
+	for (int i = 0; i < obj->variable_names_nr; i++)
+		obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
 
 	return obj;
-}
-
-Object *Script::scriptObjInit(reg_t obj_pos) {
-	if (getSciVersion() < SCI_VERSION_1_1)
-		return scriptObjInit0(obj_pos);
-	else
-		return scriptObjInit11(obj_pos);
 }
 
 LocalVariables *SegManager::allocLocalsSegment(Script *scr, int count) {
@@ -594,7 +551,7 @@ void SegManager::scriptInitialiseLocals(reg_t location) {
 
 	VERIFY(location.offset + 1 < (uint16)scr->_bufSize, "Locals beyond end of script\n");
 
-	if (getSciVersion() >= SCI_VERSION_1_1)
+	if (_resMan->sciVersion() >= SCI_VERSION_1_1)
 		count = READ_LE_UINT16(scr->_buf + location.offset - 2);
 	else
 		count = (READ_LE_UINT16(scr->_buf + location.offset - 2) - 4) >> 1;
@@ -661,7 +618,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 
 		reg.segment = seg;
 		reg.offset = seeker - scr->_buf;
-		obj = scr->scriptObjInit(reg);
+		obj = scr->scriptObjInit(reg, _resMan->sciVersion());
 
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {

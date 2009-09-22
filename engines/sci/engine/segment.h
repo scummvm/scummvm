@@ -351,7 +351,7 @@ public:
 	 * @returns			A newly created Object describing the object,
 	 * 					stored within the relevant script
 	 */
-	Object *scriptObjInit(reg_t obj_pos);
+	Object *scriptObjInit(reg_t obj_pos, SciVersion version);
 
 	/**
 	 * Processes a relocation block witin a script
@@ -368,9 +368,6 @@ private:
 	int relocateLocal(SegmentId segment, int location);
 	int relocateBlock(Common::Array<reg_t> &block, int block_location, SegmentId segment, int location);
 	int relocateObject(Object &obj, SegmentId segment, int location);
-
-	Object *scriptObjInit0(reg_t obj_pos);
-	Object *scriptObjInit11(reg_t obj_pos);
 
 public:
 	// script lock operations
