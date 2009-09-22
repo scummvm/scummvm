@@ -160,6 +160,7 @@ public:
 			assert(_idx <= _hashmap->_mask);
 			Node *node = _hashmap->_storage[_idx];
 			assert(node != 0);
+			assert(node != HASHMAP_DUMMY_NODE);
 			return node;
 		}
 
@@ -178,7 +179,7 @@ public:
 			assert(_hashmap);
 			do {
 				_idx++;
-			} while (_idx <= _hashmap->_mask && _hashmap->_storage[_idx] == 0);
+			} while (_idx <= _hashmap->_mask && (_hashmap->_storage[_idx] == 0 || _hashmap->_storage[_idx] == HASHMAP_DUMMY_NODE));
 			if (_idx > _hashmap->_mask)
 				_idx = (uint)-1;
 
@@ -231,7 +232,7 @@ public:
 	iterator	begin() {
 		// Find and return the first non-empty entry
 		for (uint ctr = 0; ctr <= _mask; ++ctr) {
-			if (_storage[ctr])
+			if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
 				return iterator(ctr, this);
 		}
 		return end();
@@ -243,7 +244,7 @@ public:
 	const_iterator	begin() const {
 		// Find and return the first non-empty entry
 		for (uint ctr = 0; ctr <= _mask; ++ctr) {
-			if (_storage[ctr])
+			if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
 				return const_iterator(ctr, this);
 		}
 		return end();
@@ -254,14 +255,14 @@ public:
 
 	iterator	find(const Key &key) {
 		uint ctr = lookup(key);
-		if (_storage[ctr])
+		if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
 			return iterator(ctr, this);
 		return end();
 	}
 
 	const_iterator	find(const Key &key) const {
 		uint ctr = lookup(key);
-		if (_storage[ctr])
+		if (_storage[ctr] && _storage[ctr] != HASHMAP_DUMMY_NODE)
 			return const_iterator(ctr, this);
 		return end();
 	}
