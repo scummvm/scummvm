@@ -168,6 +168,38 @@ class HashMapTestSuite : public CxxTest::TestSuite
 		TS_ASSERT(h.empty());
     }
 
+	void test_iterator() {
+		Common::HashMap<int, int> container;
+		container[0] = 17;
+		container[1] = 33;
+		container[2] = 45;
+		container[3] = 12;
+		container[4] = 96;
+		container.erase(1);
+		container[1] = 42;
+		container.erase(0);
+		container.erase(1);
+
+		int found = 0;
+		Common::HashMap<int, int>::iterator i;
+		for (i = container.begin(); i != container.end(); ++i) {
+			int key = i->_key;
+			TS_ASSERT(key >= 0 && key <= 4);
+			TS_ASSERT(!(found & (1 << key)));
+			found |= 1 << key;
+		}
+		TS_ASSERT(found == 16+8+4);
+
+		found = 0;
+		Common::HashMap<int, int>::const_iterator j;
+		for (j = container.begin(); j != container.end(); ++j) {
+			int key = j->_key;
+			TS_ASSERT(key >= 0 && key <= 4);
+			TS_ASSERT(!(found & (1 << key)));
+			found |= 1 << key;
+		}
+		TS_ASSERT(found == 16+8+4);
+}
 
 	// TODO: Add test cases for iterators, find, ...
 };
