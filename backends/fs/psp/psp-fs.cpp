@@ -27,7 +27,6 @@
 #include "engines/engine.h"
 #include "backends/fs/abstract-fs.h"
 #include "backends/fs/psp/psp-stream.h"
-#include "backends/platform/psp/powerman.h"
 
 #include <sys/stat.h>
 #include <unistd.h>
@@ -37,7 +36,6 @@
 #define	ROOT_PATH	"ms0:/"
 
 #include "backends/platform/psp/trace.h"
-
 
 /**
  * Implementation of the ScummVM file system API based on PSPSDK API.
@@ -98,7 +96,8 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 
 	if (verify) {
 		struct stat st;
-		PowerMan.beginCriticalSection();
+		if(PowerMan.beginCriticalSection()==PowerManager::Blocked)
+			PSPDebugSuspend("Suspended in PSPFilesystemNode::PSPFilesystemNode\n");
 		_isValid = (0 == stat(_path.c_str(), &st));
 		PowerMan.endCriticalSection();
 		_isDirectory = S_ISDIR(st.st_mode);
@@ -108,7 +107,9 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 bool PSPFilesystemNode::exists() const {
 	int ret = 0;
 
-	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+		PSPDebugSuspend("Suspended in PSPFilesystemNode::exists()\n");	// Make sure to block in case of suspend
+
 	ret = access(_path.c_str(), F_OK);
 	PowerMan.endCriticalSection();
 	
@@ -118,7 +119,9 @@ bool PSPFilesystemNode::exists() const {
 bool PSPFilesystemNode::isReadable() const {
 	int ret = 0;
 
-	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+			PSPDebugSuspend("Suspended in PSPFilesystemNode::isReadable()\n");	// Make sure to block in case of suspend
+
 	ret = access(_path.c_str(), R_OK);
 	PowerMan.endCriticalSection();
 	
@@ -128,7 +131,9 @@ bool PSPFilesystemNode::isReadable() const {
 bool PSPFilesystemNode::isWritable() const {
 	int ret = 0;
 
-	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
+	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+		PSPDebugSuspend("Suspended in PSPFilesystemNode::isWritable()\n");	// Make sure to block in case of suspend
+
 	ret = access(_path.c_str(), W_OK);
 	PowerMan.endCriticalSection();
 	
@@ -156,8 +161,9 @@ bool PSPFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool 
 
 	bool ret = true;
 
-	PowerMan.beginCriticalSection();	// Make sure to block in case of suspend
-	
+	if (PowerMan.beginCriticalSection() == PowerManager::Blocked)
+		PSPDebugSuspend("Suspended in PSPFilesystemNode::getChildren\n");	// Make sure to block in case of suspend
+
 	int dfd  = sceIoDopen(_path.c_str());
 	if (dfd > 0) {
 		SceIoDirent dir;

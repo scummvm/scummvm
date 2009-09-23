@@ -35,6 +35,7 @@
 
 #include "osys_psp.h"
 #include "trace.h"
+#include "powerman.h"
 
 #include "backends/saves/psp/psp-saves.h"
 #include "backends/timer/default/default-timer.h"
@@ -927,6 +928,13 @@ bool OSystem_PSP::processInput(Common::Event &event) {
 bool OSystem_PSP::pollEvent(Common::Event &event) {
 	float nub_angle = -1;
 	int x, y;
+	
+	// If we're polling for events, we should check for pausing the engine 
+	// Pausing the engine is a necessary fix for games that use the timer for music synchronization
+	// 	recovering many hours later causes the game to crash. We're polling without mutexes since it's not critical to
+	//  get it right now.
+
+	PowerMan.pollPauseEngine();
 
 	sceCtrlSetSamplingCycle(0);
 	sceCtrlSetSamplingMode(1);

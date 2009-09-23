@@ -33,8 +33,21 @@
 #include <stdarg.h>
 #include <pspdebug.h>
 
+// Use these defines for debugging
+
+//#define __PSP_DEBUG__
+//#define __PSP_DEBUG_SUSPEND__
+
 void PSPDebugTrace (const char *filename, const char *format, ...);
 void PSPDebugTrace (const char *format, ...);
+
+#ifdef __PSP_DEBUG_SUSPEND__
+#define PSPDebugSuspend(format,...)		PSPDebugTrace(format, ## __VA_ARGS__)
+#else
+#define PSPDegbugSuspend(x)
+#define PSPDebugSuspend(format,...)
+#endif /* __PSP_DEBUG_SUSPEND__ */
+
 
 #endif // TRACE_H
 

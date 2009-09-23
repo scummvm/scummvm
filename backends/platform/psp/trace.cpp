@@ -27,10 +27,8 @@
 #include "./trace.h"
 
 
-//#define __DEBUG__
-
 void PSPDebugTrace (const char *format, ...) {
-#ifdef __DEBUG__
+#ifdef __PSP_DEBUG__
 	va_list	opt;
 	char		buff[2048];
 	int			bufsz, fd;
@@ -46,11 +44,11 @@ void PSPDebugTrace (const char *format, ...) {
 
 	sceIoWrite(fd, (const void*)buff, bufsz);
 	sceIoClose(fd);
-#endif
+#endif /* __PSP_DEBUG__ */
 }
 
 void PSPDebugTrace (const char * filename, const char *format, ...) {
-#ifdef __DEBUG__
+#ifdef __PSP_DEBUG__
 	va_list	opt;
 	char		buff[2048];
 	int			bufsz, fd;
@@ -66,5 +64,5 @@ void PSPDebugTrace (const char * filename, const char *format, ...) {
 
 	sceIoWrite(fd, (const void*)buff, bufsz);
 	sceIoClose(fd);
-#endif
+#endif /* __PSP_DEBUG__ */
 }

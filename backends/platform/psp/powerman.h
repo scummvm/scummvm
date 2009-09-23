@@ -50,19 +50,6 @@
  *
  *******************************************************************************************************/
  class PowerManager: public Common::Singleton<PowerManager> {
-private:
-	friend class Common::Singleton<PowerManager>;
-	PowerManager();
-	~PowerManager();
-
-	Common::List<Suspendable *> _suspendList;		/* list to register in */
-
-	bool _suspendFlag;								/* protected variable */
-	SDL_mutex *_flagMutex;							/* mutex to access access flag */
-	SDL_mutex *_listMutex;							/* mutex to access Suspendable list */
-	SDL_cond *_condSuspendable;						/* signal to synchronize accessing threads */
-	SDL_cond *_condPM;								/* signal to wake up the PM from a critical section */
-	int _criticalCounter;							/* Counter of how many threads are in a critical section */
 
 public:
 	int blockOnSuspend();								/* block if suspending */
@@ -72,13 +59,78 @@ public:
 	int unregisterSuspend(Suspendable *item);		/* remove from suspend/resume list */
 	int suspend();									/* callback to have all items in list suspend */
 	int resume();									/* callback to have all items in list resume */
+	// Functions for pausing the engine
+	void pollPauseEngine();							/* Poll whether the engine should be paused */
 	
 	enum {
 		Error = -1,
 		NotBlocked = 0,
-		Blocked = 1		
+		Blocked = 1
 	};
-		
+	
+	enum PauseState {
+		Unpaused = 0,
+		PauseEvent,
+		UnpauseEvent,
+		Pausing,
+		Paused
+	};
+	
+ private:
+	friend class Common::Singleton<PowerManager>;
+	PowerManager();
+	~PowerManager();
+
+	Common::List<Suspendable *> _suspendList;		/* list to register in */
+
+	volatile bool _pauseFlag;						/* For pausing, which is before suspending */
+	volatile bool _pauseFlagOld;					/* Save the last state of the flag while polling */
+	volatile int _pauseClientState;					/* Pause state of the target */
+
+	volatile bool _suspendFlag;						/* protected variable */
+	SDL_mutex *_flagMutex;							/* mutex to access access flag */
+	SDL_mutex *_listMutex;							/* mutex to access Suspendable list */
+	SDL_cond *_condSuspendable;						/* signal to synchronize accessing threads */
+	SDL_cond *_condPM;								/* signal to wake up the PM from a critical section */
+	volatile int _criticalCounter;					/* Counter of how many threads are in a critical section */
+	int _error;										/* error code - PM can't talk to us. For debugging */
+	
+	// States for PM to be in (used for debugging)
+	enum PMState {
+		kInitDone = 1 , 
+		kDestroyPM,
+		kWaitForClientPause,
+		kWaitForClientToFinishPausing,
+		kGettingFlagMutexSuspend,
+		kGotFlagMutexSuspend,
+		kWaitCritSectionSuspend,
+		kDoneWaitingCritSectionSuspend,
+		kGettingListMutexSuspend,
+		kIteratingListSuspend,
+		kDoneIteratingListSuspend,
+		kDoneSuspend,
+		kGettingListMutexResume,
+		kIteratingListResume,
+		kDoneIteratingListResume,
+		kGettingFlagMutexResume,
+		kGotFlagMutexResume,
+		kSignalSuspendedThreadsResume,
+		kDoneSignallingSuspendedThreadsResume,
+		kDoneResume
+	};	
+#ifdef __PSP_DEBUG_SUSPEND__
+
+	volatile int _listCounter;						/* How many people are in the list - just for debugging */
+	
+	void debugPM();									/* print info about the PM */
+	void PMStatusSet(PMState s) { _PMStatus = s; }
+	volatile int _PMStatus;							/* What the PM is doing */
+	
+ public:
+ 	int getPMStatus() { return _PMStatus; }
+ 
+#endif /* __PSP_DEBUG_SUSPEND__ */		
+			
  };
  
  // For easy access

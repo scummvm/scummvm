@@ -37,7 +37,23 @@ class PSPIoStream : public StdioStream, public Suspendable {
 protected:
 	Common::String _path;			/* Need to maintain for reopening after suspend */
 	bool _writeMode;				/* "" */
-	unsigned int _pos;				/* "" */
+	int _pos;						/* "" */
+	mutable int _ferror;			/* Save file ferror */
+	mutable bool _feof;						/* and eof */
+
+	enum {
+		SuspendError = 2,
+		ResumeError = 3
+	};
+
+	int _errorSuspend;
+	mutable int _errorSource;
+	
+#ifdef __PSP_DEBUG_SUSPEND__	
+	int _errorPos;
+	void * _errorHandle;			
+	int _suspendCount;
+#endif /* __PSP_DEBUG_SUSPEND__ */	
 
 public:
 	/**
