@@ -23,10 +23,25 @@
  *
  */
 
+#include <psppower.h>
+#include <pspthreadman.h>
+ 
 #include "./powerman.h"
 #include "./trace.h"
+#include "engine.h"
 
 DECLARE_SINGLETON(PowerManager);
+
+#ifdef __PSP_DEBUG_SUSPEND__
+void PowerManager::debugPM() {
+	PSPDebugTrace("PM status is %d. Listcount is %d. CriticalCount is %d. ThreadId is %x. Error = %d\n", _PMStatus, _listCounter,
+		_criticalCounter, sceKernelGetThreadId(), _error);
+}
+#else
+	#define debugPM()
+	#define PMStatusSet(x)
+#endif /* __PSP_DEBUG_SUSPEND__ */
+
 
  /*******************************************
 *
@@ -34,6 +49,7 @@ DECLARE_SINGLETON(PowerManager);
 *
 ********************************************/ 
 PowerManager::PowerManager() {
+	
 	_flagMutex = NULL;					/* Init mutex handle */
 	_listMutex = NULL;					/* Init mutex handle */
 	_condSuspendable = NULL;			/* Init condition variable */
@@ -41,26 +57,33 @@ PowerManager::PowerManager() {
 	
 	_condSuspendable = SDL_CreateCond();
 	if (_condSuspendable <= 0) {
-		PSPDebugTrace("PowerManager::PowerManager(): Couldn't create condSuspendable\n");
+		PSPDebugSuspend("PowerManager::PowerManager(): Couldn't create condSuspendable\n");
 	}
 	
 	_condPM = SDL_CreateCond();
 	if (_condPM <= 0) {
-		PSPDebugTrace("PowerManager::PowerManager(): Couldn't create condPM\n");
+		PSPDebugSuspend("PowerManager::PowerManager(): Couldn't create condPM\n");
 	}
 
 	_flagMutex = SDL_CreateMutex();
 	if (_flagMutex <= 0) {
-		PSPDebugTrace("PowerManager::PowerManager(): Couldn't create flagMutex\n");
+		PSPDebugSuspend("PowerManager::PowerManager(): Couldn't create flagMutex\n");
 	}
 
 	_listMutex = SDL_CreateMutex();
 	if (_listMutex <= 0) {
-		PSPDebugTrace("PowerManager::PowerManager(): Couldn't create listMutex\n");
+		PSPDebugSuspend("PowerManager::PowerManager(): Couldn't create listMutex\n");
 	}
 
 	_suspendFlag = false;
 	_criticalCounter = 0;
+	_pauseFlag = 0; _pauseFlagOld = 0; _pauseClientState = 0;
+
+#ifdef __PSP_DEBUG_SUSPEND__	
+	_listCounter = 0;
+	PMStatusSet(kInitDone);
+	_error = 0;	
+#endif
  }
  
 /*******************************************
@@ -70,20 +93,25 @@ PowerManager::PowerManager() {
 ********************************************/ 
 int PowerManager::registerSuspend(Suspendable *item) {
 	// Register in list
-	PSPDebugTrace("In registerSuspend\n");
+	PSPDebugSuspend("In registerSuspend\n");
+	debugPM();
 
 	if (SDL_mutexP(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::registerSuspend(): Couldn't lock _listMutex %d\n", _listMutex);
 	}
 
 	_suspendList.push_front(item);
+#ifdef __PSP_DEBUG_SUSPEND__
+	_listCounter++;
+#endif
 
 	if (SDL_mutexV(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::registerSuspend(): Couldn't unlock _listMutex %d\n", _listMutex);
 	}
 
-	PSPDebugTrace("Out of registerSuspend\n");
-
+	PSPDebugSuspend("Out of registerSuspend\n");
+	debugPM();
+	
 	return 0;
 }
 
@@ -94,7 +122,8 @@ int PowerManager::registerSuspend(Suspendable *item) {
 ********************************************/  
 int PowerManager::unregisterSuspend(Suspendable *item) {
 
-	PSPDebugTrace("In unregisterSuspend\n");
+	PSPDebugSuspend("In unregisterSuspend\n");
+	debugPM();
 
 	 // Unregister from stream list
 	if (SDL_mutexP(_listMutex) != 0) {
@@ -102,13 +131,17 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 	}
 
 	_suspendList.remove(item);
-
+#ifdef __PSP_DEBUG_SUSPEND__
+	_listCounter--;
+#endif	
+	
 	if (SDL_mutexV(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::unregisterSuspend(): Couldn't unlock _listMutex %d\n", _listMutex);
 	}
 
-	PSPDebugTrace("Out of unregisterSuspend\n");
-
+	PSPDebugSuspend("Out of unregisterSuspend\n");
+	debugPM();
+	
 	return 0;
  }
  
@@ -118,6 +151,11 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 *
 ********************************************/ 
  PowerManager::~PowerManager() {
+
+#ifdef __PSP_DEBUG_SUSPEND__
+	PMStatusSet(kDestroyPM);
+#endif
+ 
 	SDL_DestroyCond(_condSuspendable);
 	_condSuspendable = 0;
 	
@@ -130,48 +168,84 @@ int PowerManager::unregisterSuspend(Suspendable *item) {
 	SDL_DestroyMutex(_listMutex);
 	_listMutex = 0;
  }
+
+/*******************************************
+*
+*	Unsafe function to poll for a pause event (first stage of suspending)
+*   Only for pausing the engine, which doesn't need high synchronization ie. we don't care if it misreads
+*   the flag a couple of times since there is NO mutex protection (for performance reasons). 
+*   Polling the engine happens regularly.
+*	On the other hand, we don't know if there will be ANY polling which prevents us from using proper events.
+*
+********************************************/  
+void PowerManager::pollPauseEngine() {
+
+	bool pause = _pauseFlag;		// We copy so as not to have multiple values
+
+	if ((pause != _pauseFlagOld) && g_engine) { // Check to see if we have an engine
+		if (pause && _pauseClientState == PowerManager::Unpaused) {
+			_pauseClientState = PowerManager::Pausing;	// Tell PM we're in the middle of pausing
+			g_engine->pauseEngine(true);
+			PSPDebugSuspend("Pausing engine in PowerManager::pollPauseEngine()\n");
+			_pauseClientState = PowerManager::Paused;		// Tell PM we're done pausing
+		}
+		else if (!pause && _pauseClientState == PowerManager::Paused) {
+			g_engine->pauseEngine(false);
+			PSPDebugSuspend("Unpausing for resume in PowerManager::pollPauseEngine()\n");
+			_pauseClientState = PowerManager::Unpaused;	// Tell PM we're in the middle of pausing
+		}
+			
+		_pauseFlagOld = pause;
+	}
+} 
  
- 
- /*******************************************
+/*******************************************
 *
 *	Function to be called by threads wanting to block on the PSP entering suspend
+*   Use this for small critical sections where you can easily restore the previous state.
 *
 ********************************************/  
  int PowerManager::blockOnSuspend()  {
 	return beginCriticalSection(true);
 }
 
- /*
-  * Function to block on a suspend, then start a non-suspendable critical section
-  */
-int PowerManager::beginCriticalSection(bool justBlock) {
-	int ret = PowerManager::NotBlocked;
+/*******************************************
+*
+*	Function to block on a suspend, then start a non-suspendable critical section
+*   Use this for large or REALLY critical critical-sections.
+*	Make sure to call endCriticalSection or the PSP won't suspend.
+********************************************/  
+
+  int PowerManager::beginCriticalSection(bool justBlock) {
+	int ret = NotBlocked;
 
 	if (SDL_mutexP(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::blockOnSuspend(): Couldn't lock flagMutex %d\n", _flagMutex);
-		ret = PowerManager::Error;
+		ret = Error;
 	}
 
 	// Check the access flag
 	if (_suspendFlag == true) {
-		PSPDebugTrace("Blocking!!\n");
-		ret = PowerManager::Blocked;
+		PSPDebugSuspend("We're being blocked!\n");
+		debugPM();
+		ret = Blocked;
 
 		// If it's true, we wait for a signal to continue
-		if( SDL_CondWait(_condSuspendable, _flagMutex) != 0) {
+		if (SDL_CondWait(_condSuspendable, _flagMutex) != 0) {
 			PSPDebugTrace("PowerManager::blockOnSuspend(): Couldn't wait on cond %d\n", _condSuspendable);
 		}
 
-		PSPDebugTrace("We got blocked!!\n");
+		PSPDebugSuspend("We got blocked!!\n");
+		debugPM();
 	}
 	
-	// Now put the pm to sleep
+	// Now prevent the PM from suspending until we're done
 	if (justBlock == false)
 		_criticalCounter++;
 
 	if (SDL_mutexV(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::blockOnSuspend(): Couldn't unlock flagMutex %d\n", _flagMutex);
-		ret = PowerManager::Error;
+		ret = Error;
 	}
 
 	return ret;
@@ -182,25 +256,32 @@ int PowerManager::endCriticalSection() {
 
 	if (SDL_mutexP(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::endCriticalSection(): Couldn't lock flagMutex %d\n", _flagMutex);
-		ret = PowerManager::Error;
+		ret = Error;
 	}
 
 	// We're done with our critical section
 	_criticalCounter--;
 	
 	if (_criticalCounter <= 0) {
-		if(_suspendFlag == true) PSPDebugTrace("Waking up the PM and suspendFlag is true\n");
+		if (_suspendFlag == true) {	// If the PM is sleeping, this flag must be set
+			PSPDebugSuspend("Unblocked thread waking up the PM.\n");
+			debugPM();
 
-		SDL_CondBroadcast(_condPM);
+			SDL_CondBroadcast(_condPM);
+			
+			PSPDebugSuspend("Woke up the PM\n");
+			debugPM();
+		}
 
-		if (_criticalCounter < 0) {
+		if (_criticalCounter < 0) {	// Check for bad usage of critical sections
 			PSPDebugTrace("PowerManager::endCriticalSection(): Error! Critical counter is %d\n", _criticalCounter);
+			debugPM();
 		}
 	}
 
 	if (SDL_mutexV(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::endCriticalSection(): Couldn't unlock flagMutex %d\n", _flagMutex);
-		ret = PowerManager::Error;
+		ret = Error;
 	}
 
 	return ret;
@@ -213,40 +294,86 @@ int PowerManager::endCriticalSection() {
 ********************************************/  
 int PowerManager::suspend() {
 	int ret = 0;
+	
+	if (_pauseFlag) return ret;	// Very important - make sure we only suspend once
 
-	// First we set the suspend flag to true
-	if (SDL_mutexP(_flagMutex) != 0) {
-		PSPDebugTrace("PowerManager::suspend(): Couldn't lock flagMutex %d\n", _flagMutex);
-		ret = -1;
+	scePowerLock(0);			// Critical to make sure PSP doesn't suspend before we're done
+
+	// The first stage of suspend is pausing the engine if possible. We don't want to cause files
+	// to block, or we might not get the engine to pause. On the other hand, we might wait for polling
+	// and it'll never happen. We also want to do this w/o mutexes (for speed) which is ok in this case.
+	_pauseFlag = true;		
+
+	PMStatusSet(kWaitForClientPause);
+	
+	// Now we wait, giving the engine thread some time to find our flag.
+	for (int i = 0; i < 10 && _pauseClientState == Unpaused; i++)
+		sceKernelDelayThread(50000);	// We wait 50 msec x 10 times = 0.5 seconds
+	
+	if (_pauseClientState == Pausing) {	// Our event has been acknowledged. Let's wait until the client is done.
+		PMStatusSet(kWaitForClientToFinishPausing);
+
+		while (_pauseClientState != Paused)
+			sceKernelDelayThread(50000);	// We wait 50 msec at a time
 	}
 
+	// It's possible that the polling thread missed our pause event, but there's nothing we can do about that. 
+	// We can't know if there's polling going on or not. It's usually not a critical thing anyway.
+	
+	PMStatusSet(kGettingFlagMutexSuspend);
+	
+	// Now we set the suspend flag to true to cause reading threads to block
+	
+	if (SDL_mutexP(_flagMutex) != 0) {
+		PSPDebugTrace("PowerManager::suspend(): Couldn't lock flagMutex %d\n", _flagMutex);
+		_error = Error;
+		ret = Error;
+	}
+
+	PMStatusSet(kGotFlagMutexSuspend);
+	
 	_suspendFlag = true;
 	
-	if (_criticalCounter > 0)
+	// Check if anyone is in a critical section. If so, we'll wait for them
+	if (_criticalCounter > 0) {
+		PMStatusSet(kWaitCritSectionSuspend);
 		SDL_CondWait(_condPM, _flagMutex);
+		PMStatusSet(kDoneWaitingCritSectionSuspend);
+	}
 
 	if (SDL_mutexV(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::suspend(): Couldn't unlock flagMutex %d\n", _flagMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
 
+	PMStatusSet(kGettingListMutexSuspend);
+	
 	// Loop over list, calling suspend()
 	if (SDL_mutexP(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::suspend(): Couldn't lock listMutex %d\n", _listMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
-
+	PMStatusSet(kIteratingListSuspend);
+	// Iterate
 	Common::List<Suspendable *>::iterator i = _suspendList.begin();
 
 	for (; i != _suspendList.end(); i++) {
 		(*i)->suspend();
 	}
+	
+	PMStatusSet(kDoneIteratingListSuspend);
 
 	if (SDL_mutexV(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::suspend(): Couldn't unlock listMutex %d\n", _listMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
+	PMStatusSet(kDoneSuspend);
 
+	scePowerUnlock(0);				// Allow the PSP to go to sleep now
+	
 	return ret;
 }
 
@@ -258,40 +385,67 @@ int PowerManager::suspend() {
 int PowerManager::resume() {
 	int ret = 0;
 
+	// Make sure we can't get another suspend
+	scePowerLock(0);
+	
+	if (!_pauseFlag) return ret;				// Make sure we can only resume once
+	
+	PMStatusSet(kGettingListMutexResume);
+	
 	// First we notify our Suspendables. Loop over list, calling resume()
 	if (SDL_mutexP(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::resume(): Couldn't lock listMutex %d\n", _listMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
-
+	PMStatusSet(kIteratingListResume);
+	// Iterate
 	Common::List<Suspendable *>::iterator i = _suspendList.begin();
 
 	for (; i != _suspendList.end(); i++) {
 		(*i)->resume();
 	}
+	
+	PMStatusSet(kDoneIteratingListResume);
 
 	if (SDL_mutexV(_listMutex) != 0) {
 		PSPDebugTrace("PowerManager::resume(): Couldn't unlock listMutex %d\n", _listMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
+	
+	PMStatusSet(kGettingFlagMutexResume);
 
 	// Now we set the suspend flag to false
 	if (SDL_mutexP(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::resume(): Couldn't lock flagMutex %d\n", _flagMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
+	PMStatusSet(kGotFlagMutexResume);
+	
 	_suspendFlag = false;
 
+	PMStatusSet(kSignalSuspendedThreadsResume);
+	
 	// Signal the other threads to wake up
 	if (SDL_CondBroadcast(_condSuspendable) != 0) {
 		PSPDebugTrace("PowerManager::resume(): Couldn't broadcast condition %d\n", _condSuspendable);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
+	PMStatusSet(kDoneSignallingSuspendedThreadsResume);
 
 	if (SDL_mutexV(_flagMutex) != 0) {
 		PSPDebugTrace("PowerManager::resume(): Couldn't unlock flagMutex %d\n", _flagMutex);
-		ret = -1;
+		_error = Error;
+		ret = Error;
 	}
+	PMStatusSet(kDoneResume);
+	
+	_pauseFlag = false;	// Signal engine to unpause
 
+	scePowerUnlock(0);	// Allow new suspends
+	
 	return ret;
 }

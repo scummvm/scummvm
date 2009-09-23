@@ -46,17 +46,17 @@ public:
 	StdioStream(void *handle);
 	virtual ~StdioStream();
 
-	bool err() const;
-	void clearErr();
-	bool eos() const;
+	virtual bool err() const;
+	virtual void clearErr();
+	virtual bool eos() const;
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 	virtual bool flush();
 
 	virtual int32 pos() const;
 	virtual int32 size() const;
-	bool seek(int32 offs, int whence = SEEK_SET);
-	uint32 read(void *dataPtr, uint32 dataSize);
+	virtual bool seek(int32 offs, int whence = SEEK_SET);
+	virtual uint32 read(void *dataPtr, uint32 dataSize);
 };
 
 #endif

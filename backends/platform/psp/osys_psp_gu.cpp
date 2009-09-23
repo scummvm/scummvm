@@ -23,6 +23,7 @@
  */
 
 #include "osys_psp_gu.h"
+#include "powerman.h"
 #include "trace.h"
 #include "common/events.h"
 
@@ -574,6 +575,13 @@ void OSystem_PSP_GU::updateScreen() {
 bool OSystem_PSP_GU::pollEvent(Common::Event &event) {
 	float nub_angle = -1;
 	int x, y;
+
+	// If we're polling for events, we should check for pausing the engine
+	// Pausing the engine is a necessary fix for games that use the timer for music synchronization
+	//      recovering many hours later causes the game to crash. We're polling without mutexes since it's not critical to
+	//  get it right now.
+
+	PowerMan.pollPauseEngine();
 
 	sceCtrlSetSamplingCycle(0);
 	sceCtrlSetSamplingMode(1);
