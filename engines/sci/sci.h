@@ -134,15 +134,10 @@ private:
 	Console *_console;
 };
 
-extern SciVersion _sciVersion;
-
 /**
  * Convenience function to obtain the active SCI version.
  */
-inline static SciVersion getSciVersion() {
-	assert (_sciVersion != SCI_VERSION_AUTODETECT);
-	return _sciVersion;
-}
+SciVersion getSciVersion();
 
 inline static Common::String getSciVersionDesc(SciVersion version) {
 	switch (version) {

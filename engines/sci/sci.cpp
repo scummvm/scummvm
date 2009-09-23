@@ -43,8 +43,6 @@ namespace Sci {
 
 class GfxDriver;
 
-SciVersion _sciVersion;
-
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
 		: Engine(syst), _gameDescription(desc) {
 	// Put your engine in a sane state, but do nothing big yet;
