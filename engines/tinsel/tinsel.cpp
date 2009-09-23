@@ -844,7 +844,7 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, ConfMan.getInt("music_volume"));
 
 	// Add DW2 subfolder to search path in case user is running directly from the CDs
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("dw2"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "dw2");
 
 	// Add subfolders needed for psx versions of Discworld 1	
 	if (TinselV1PSX)

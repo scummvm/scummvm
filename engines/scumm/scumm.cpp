@@ -934,15 +934,14 @@ Common::Error ScummEngine::init() {
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
 		// This is for the Amiga version of Indy3/Loom/Maniac/Zak
-		File::addDefaultDirectory(_gameDataDir.getChild("ROOMS"));
-		File::addDefaultDirectory(_gameDataDir.getChild("rooms"));
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms");
 	}
 
 	if ((_game.platform == Common::kPlatformMacintosh) && (_game.version == 3)) {
 		// This is for the Mac version of Indy3/Loom
-		File::addDefaultDirectory(_gameDataDir.getChild("Rooms 1"));
-		File::addDefaultDirectory(_gameDataDir.getChild("Rooms 2"));
-		File::addDefaultDirectory(_gameDataDir.getChild("Rooms 3"));
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms 1");
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms 2");
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "rooms 3");
 	}
 
 #ifdef ENABLE_SCUMM_7_8
@@ -955,25 +954,19 @@ Common::Error ScummEngine::init() {
 		//
 		// This check for whether we play from CD is very crude, though.
 
-		File::addDefaultDirectory("/Volumes/MONKEY3_1/RESOURCE/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_1/resource/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_2/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_2/RESOURCE/");
-		File::addDefaultDirectory("/Volumes/MONKEY3_2/resource/");
+		SearchMan.addSubDirectoryMatching(Common::FSNode("/"), "Volumes/MONKEY3_1/RESOURCE");
+		SearchMan.addSubDirectoryMatching(Common::FSNode("/"), "Volumes/MONKEY3_2");
+		SearchMan.addSubDirectoryMatching(Common::FSNode("/"), "Volumes/MONKEY3_2/RESOURCE");
 	} else
 #endif
-	if (_game.version == 8) {
+	if (_game.version == 8)
 		// This is for COMI
-		File::addDefaultDirectory(_gameDataDir.getChild("RESOURCE"));
-		File::addDefaultDirectory(_gameDataDir.getChild("resource"));
-	}
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "resource");
 
 	if (_game.version == 7) {
 		// This is for Full Throttle & The Dig
-		File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
-		File::addDefaultDirectory(_gameDataDir.getChild("video"));
-		File::addDefaultDirectory(_gameDataDir.getChild("DATA"));
-		File::addDefaultDirectory(_gameDataDir.getChild("data"));
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "video");
+		SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
 	}
 #endif
 

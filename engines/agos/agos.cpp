@@ -512,24 +512,18 @@ AGOSEngine::AGOSEngine(OSystem *syst)
 
 	// Add default file directories for Acorn version of
 	// Simon the Sorcerer 1
-	File::addDefaultDirectory(_gameDataDir.getChild("execute"));
-	File::addDefaultDirectory(_gameDataDir.getChild("EXECUTE"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "execute");
 
 	// Add default file directories for Amiga/Macintosh
 	// verisons of Simon the Sorcerer 2
-	File::addDefaultDirectory(_gameDataDir.getChild("voices"));
-	File::addDefaultDirectory(_gameDataDir.getChild("VOICES"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "voices");
 
 	// Add default file directories for Amiga & Macintosh
 	// versions of The Feeble Files
-	File::addDefaultDirectory(_gameDataDir.getChild("gfx"));
-	File::addDefaultDirectory(_gameDataDir.getChild("GFX"));
-	File::addDefaultDirectory(_gameDataDir.getChild("movies"));
-	File::addDefaultDirectory(_gameDataDir.getChild("MOVIES"));
-	File::addDefaultDirectory(_gameDataDir.getChild("sfx"));
-	File::addDefaultDirectory(_gameDataDir.getChild("SFX"));
-	File::addDefaultDirectory(_gameDataDir.getChild("speech"));
-	File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "gfx");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "movies");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "sfx");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "speech");
 
 	g_eventRec.registerRandomSource(_rnd, "agos");
 }

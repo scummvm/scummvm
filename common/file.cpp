@@ -32,16 +32,6 @@
 
 namespace Common {
 
-void File::addDefaultDirectory(const String &directory) {
-	FSNode dir(directory);
-	addDefaultDirectory(dir);
-}
-
-void File::addDefaultDirectory(const FSNode &dir) {
-	if (dir.exists() && dir.isDirectory())
-		SearchMan.addDirectory(dir.getPath(), dir);
-}
-
 File::File()
 	: _handle(0) {
 }

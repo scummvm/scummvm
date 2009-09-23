@@ -93,26 +93,26 @@ SagaEngine::SagaEngine(OSystem *syst, const SAGAGameDescription *gameDesc)
 
 	// The Linux version of Inherit the Earth puts all data files in an
 	// 'itedata' sub-directory, except for voices.rsc
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("itedata"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "itedata");
 
 	// The Windows version of Inherit the Earth puts various data files in
 	// other subdirectories.
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("graphics"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("music"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("sound"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "graphics");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "sound");
 
 	// The Multi-OS version puts the voices file in the root directory of
 	// the CD. The rest of the data files are in game/itedata
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("game").getChild("itedata"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "game/itedata");
 
 	// Mac CD Wyrmkeep
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("patch"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "patch");
 
 	// Dinotopia
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("smack"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "smack");
 
 	// FTA2
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "video");
 
 	_displayClip.left = _displayClip.top = 0;
 	g_eventRec.registerRandomSource(_rnd, "saga");

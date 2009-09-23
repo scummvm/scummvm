@@ -38,6 +38,7 @@
 #include "common/file.h"
 #include "common/system.h"
 #include "common/util.h"
+#include "common/archive.h"
 
 #include "graphics/fontman.h"
 #include "graphics/surface.h"
@@ -514,7 +515,7 @@ Common::Error MT32EmuMusicPlugin::createInstance(Audio::Mixer *mixer, MidiDriver
 MidiDriver *MidiDriver_MT32_create(Audio::Mixer *mixer) {
 	// HACK: It will stay here until engine plugin loader overhaul
 	if (ConfMan.hasKey("extrapath"))
-		Common::File::addDefaultDirectory(ConfMan.get("extrapath"));
+		SearchMan.addDirectory("extrapath", ConfMan.get("extrapath"));
 
 	MidiDriver *mididriver;
 

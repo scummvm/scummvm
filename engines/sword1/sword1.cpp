@@ -56,19 +56,13 @@ SwordEngine::SwordEngine(OSystem *syst)
 		_features = 0;
 
 	// Add default file directories
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("CLUSTERS"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("MUSIC"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("SPEECH"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("VIDEO"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("SMACKSHI"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("ENGLISH"));//PSX Demo
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("ITALIAN"));//PSX Demo
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("clusters"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("music"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("speech"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("video"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("smackshi"));
-	
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "clusters");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "speech");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "video");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "smackshi");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "english");//PSX Demo
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "italian");//PSX Demo
 }
 
 SwordEngine::~SwordEngine() {

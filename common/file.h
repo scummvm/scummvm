@@ -48,10 +48,6 @@ protected:
 	String _name;
 
 public:
-
-	static void addDefaultDirectory(const String &directory);
-	static void addDefaultDirectory(const FSNode &directory);
-
 	File();
 	virtual ~File();
 

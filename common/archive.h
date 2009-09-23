@@ -169,6 +169,52 @@ public:
 	void addDirectory(const String &name, const FSNode &directory, int priority = 0, int depth = 1, bool flat = false);
 
 	/**
+	 * Create and add a sub directory by name (caseless).
+	 *
+	 * It is also possible to add sub directories of sub directories (of any depth) with this function.
+	 * The path seperator for this case is SLASH for *all* systems.
+	 *
+	 * An example would be:
+	 *
+	 *   "game/itedata"
+	 *
+	 * In this example the code would first try to search for all directories matching
+	 * "game" (case insensitive) in the path "directory" first and search through all
+	 * of the matches for "itedata" (case insensitive too).
+	 *
+	 * Note that it will add *all* matches found!
+	 *
+	 * Even though this method is currently implemented via addSubDirectoriesMatching it is not safe
+	 * to assume that this method is using anything other than a simple case insensitive compare.
+	 * Thus do not use any tokens like '*' or '?' in the "caselessName" parameter of this function!
+	 */
+	void addSubDirectoryMatching(const FSNode &directory, const String &caselessName, int priority = 0) {
+		addSubDirectoriesMatching(directory, caselessName, true, priority);
+	}
+
+	/**
+	 * Create and add sub directories by pattern.
+	 *
+	 * It is also possible to add sub directories of sub directories (of any depth) with this function.
+	 * The path seperator for this case is SLASH for *all* systems.
+	 *
+	 * An example would be:
+	 *
+	 *   "game/itedata"
+	 *
+	 * In this example the code would first try to search for all directories matching
+	 * "game" in the path "directory" first and search through all of the matches for
+	 * "itedata". If "ingoreCase" is set to true, the code would do a case insensitive
+	 * match, otherwise it is doing a case sensitive match.
+	 *
+	 * This method works of course also with tokens. For a list of available tokens
+	 * see the documentation for Common::matchString.
+	 *
+	 * @see Common::matchString
+	 */
+	void addSubDirectoriesMatching(const FSNode &directory, String pattern, bool ignoreCase, int priority = 0);
+
+	/**
 	 * Remove an archive from the searchable set.
 	 */
 	void remove(const String& name);
