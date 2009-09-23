@@ -56,7 +56,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 
 	ArchiveMemberList::iterator it = allNames.begin();
 	for ( ; it != allNames.end(); ++it) {
-		if ((*it)->getName().matchString(lowercasePattern, true)) {
+		if ((*it)->getName().matchString(lowercasePattern, false, true)) {
 			list.push_back(*it);
 			matches++;
 		}

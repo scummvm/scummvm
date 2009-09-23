@@ -376,7 +376,7 @@ reg_t kDeviceInfo(EngineState *s, int, int argc, reg_t *argv) {
 		char *path2_s = s->segMan->derefString(argv[2]);
 		debug(3, "K_DEVICE_INFO_PATHS_EQUAL(%s,%s)", path1_s, path2_s);
 
-		return make_reg(0, Common::matchString(path2_s, path1_s, true));
+		return make_reg(0, Common::matchString(path2_s, path1_s, false, true));
 		}
 		break;
 

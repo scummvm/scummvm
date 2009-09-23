@@ -320,7 +320,7 @@ int FSDirectory::listMatchingMembers(ArchiveMemberList &list, const String &patt
 	int matches = 0;
 	NodeCache::iterator it = _fileCache.begin();
 	for ( ; it != _fileCache.end(); ++it) {
-		if (it->_key.matchString(lowercasePattern, true)) {
+		if (it->_key.matchString(lowercasePattern, false, true)) {
 			list.push_back(ArchiveMemberPtr(new FSNode(it->_value)));
 			matches++;
 		}

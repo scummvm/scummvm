@@ -352,12 +352,12 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
-bool String::matchString(const char *pat, bool pathMode) const {
-	return Common::matchString(c_str(), pat, pathMode);
+bool String::matchString(const char *pat, bool ignoreCase, bool pathMode) const {
+	return Common::matchString(c_str(), pat, ignoreCase, pathMode);
 }
 
-bool String::matchString(const String &pat, bool pathMode) const {
-	return Common::matchString(c_str(), pat.c_str(), pathMode);
+bool String::matchString(const String &pat, bool ignoreCase, bool pathMode) const {
+	return Common::matchString(c_str(), pat.c_str(), ignoreCase, pathMode);
 }
 
 void String::deleteLastChar() {
@@ -664,7 +664,7 @@ Common::String normalizePath(const Common::String &path, const char sep) {
 	return result;
 }
 
-bool matchString(const char *str, const char *pat, bool pathMode) {
+bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMode) {
 	assert(str);
 	assert(pat);
 
@@ -681,7 +681,7 @@ bool matchString(const char *str, const char *pat, bool pathMode) {
 
 		switch (*pat) {
 		case '*':
-			// Record pattern / string possition for backtracking
+			// Record pattern / string position for backtracking
 			p = ++pat;
 			q = str;
 			// If pattern ended with * -> match
@@ -690,7 +690,8 @@ bool matchString(const char *str, const char *pat, bool pathMode) {
 			break;
 
 		default:
-			if (*pat != *str) {
+			if ((!ignoreCase && *pat != *str) ||
+				(ignoreCase && tolower(*pat) != tolower(*str))) {
 				if (p) {
 					// No match, oops -> try to backtrack
 					pat = p;
