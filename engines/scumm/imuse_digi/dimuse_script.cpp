@@ -216,6 +216,7 @@ void IMuseDigital::refreshScripts() {
 		Track *track = _track[l];
 		if (track->used && !track->toBeRemoved && (track->volGroupId == IMUSE_VOLGRP_MUSIC)) {
 			found = true;
+			break;
 		}
 	}
 
