@@ -99,8 +99,17 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	debugC(5, kDebugLevelMain | kDebugLevelSavegame, "Writing game id (%s, %s)", gameIDstring, _game.id);
 
 	const char *tmp = getGameMD5();
-	for (i = 0; i < 32; i++)
-		out->writeByte(tmp[i]);
+	// As reported in bug report #2849084 "AGI: Crash when saving fallback-matched game"
+	// getGameMD5 will return NULL for fallback matched games. Since there is also no
+	// filename available we can not compute any MD5 here either. Thus we will just set
+	// the MD5 sum in the savegame to all zero, when getGameMD5 returns NULL.
+	if (!tmp) {
+		for (i = 0; i < 32; ++i)
+			out->writeByte(0);
+	} else {
+		for (i = 0; i < 32; ++i)
+			out->writeByte(tmp[i]);
+	}
 
 	for (i = 0; i < MAX_FLAGS; i++)
 		out->writeByte(_game.flags[i]);
@@ -314,12 +323,24 @@ int AgiEngine::loadGame(const char *fileName, bool checkId) {
 		}
 		md5[i] = 0; // terminate
 
-		debug(0, "Saved game MD5: %s", md5);
+		// As noted above in AgiEngine::saveGame the MD5 sum field may be all zero
+		// when the save was made via a fallback matched game. In this case we will
+		// replace the MD5 sum with a nicer string, so that the user can easily see
+		// this fact in the debug output. The string saved in "md5" will never match
+		// any valid MD5 sum, thus it is safe to do that here.
+		if (md5[0] == 0)
+			strcpy(md5, "fallback matched");
 
-		if (strcmp(md5, getGameMD5())) {
+		debug(0, "Saved game MD5: \"%s\"", md5);
+
+		if (!getGameMD5()) {
+			warning("Since your game was only detected via the fallback detector, there is no possibility to assure the save is compatible with your game version.");
+
+			debug(0, "The game used for saving is \"%s\".", md5);
+		} else if (strcmp(md5, getGameMD5())) {
 			warning("Game was saved with different gamedata - you may encounter problems");
 
-			debug(0, "You have %s and save is %s.", getGameMD5(), md5);
+			debug(0, "Your game is \"%s\" and save is \"%s\".", getGameMD5(), md5);
 		}
 	}
 	
