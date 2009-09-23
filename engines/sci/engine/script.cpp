@@ -96,10 +96,8 @@ void script_adjust_opcode_formats(EngineState *s) {
 	}
 
 #ifdef ENABLE_SCI32
-	SciVersion version = s->resMan->sciVersion();
-
 	// In SCI32, some arguments are now words instead of bytes
-	if (version >= SCI_VERSION_2) {
+	if (getSciVersion() >= SCI_VERSION_2) {
 		g_opcode_formats[op_calle][2] = Script_Word;
 		g_opcode_formats[op_callk][1] = Script_Word;
 		g_opcode_formats[op_super][1] = Script_Word;

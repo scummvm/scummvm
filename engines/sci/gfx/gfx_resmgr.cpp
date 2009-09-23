@@ -58,10 +58,10 @@ GfxResManager::GfxResManager(gfx_options_t *options, GfxDriver *driver, Resource
 
 	if (!_resMan->isVGA()) {
 		_staticPalette = gfx_sci0_pic_colors->getref();
-	} else if (_resMan->sciVersion() == SCI_VERSION_1_1) {
+	} else if (getSciVersion() == SCI_VERSION_1_1) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #ifdef ENABLE_SCI32
-	} else if (_resMan->sciVersion() >= SCI_VERSION_2) {
+	} else if (getSciVersion() >= SCI_VERSION_2) {
 		debugC(2, kDebugLevelGraphics, "Palettes are not yet supported in this SCI version\n");
 #endif
 	} else {
@@ -96,7 +96,7 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 		error("calculatePic(): pic number %d not found", nr);
 
 	if (need_unscaled) {
-		if (_resMan->sciVersion() == SCI_VERSION_1_1)
+		if (getSciVersion() == SCI_VERSION_1_1)
 			gfxr_draw_pic11(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _staticPalette, _portBounds);
 		else
 			gfxr_draw_pic01(unscaled_pic, flags, default_palette, res->size, res->data, &basic_style, res->id.number, _resMan->getViewType(), _staticPalette, _portBounds);
@@ -105,12 +105,12 @@ void GfxResManager::calculatePic(gfxr_pic_t *scaled_pic, gfxr_pic_t *unscaled_pi
 	if (scaled_pic && scaled_pic->undithered_buffer)
 		memcpy(scaled_pic->visual_map->index_data, scaled_pic->undithered_buffer, scaled_pic->undithered_buffer_size);
 
-	if (_resMan->sciVersion() == SCI_VERSION_1_1)
+	if (getSciVersion() == SCI_VERSION_1_1)
 		gfxr_draw_pic11(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _staticPalette, _portBounds);
 	else
 		gfxr_draw_pic01(scaled_pic, flags, default_palette, res->size, res->data, &style, res->id.number, _resMan->getViewType(), _staticPalette, _portBounds);
 
-	if (_resMan->sciVersion() <= SCI_VERSION_1_EGA) {
+	if (getSciVersion() <= SCI_VERSION_1_EGA) {
 		if (need_unscaled)
 			gfxr_remove_artifacts_pic0(scaled_pic, unscaled_pic);
 
@@ -512,7 +512,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		ViewType viewType = _resMan->getViewType();
 
 		if (viewType == kViewEga) {
-			int pal = (_resMan->sciVersion() <= SCI_VERSION_01) ? -1 : palette;
+			int pal = (getSciVersion() <= SCI_VERSION_01) ? -1 : palette;
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
 			view = getVGAView(resid, viewRes->data, viewRes->size, viewType);
@@ -640,13 +640,13 @@ gfx_pixmap_t *GfxResManager::getCursor(int num) {
 		if (!cursorRes || !cursorRes->data)
 			return NULL;
 
-		if (_resMan->sciVersion() >= SCI_VERSION_1_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1) {
 			warning("[GFX] Attempt to retrieve cursor in SCI1.1 or later");
 			return NULL;
 		}
 
 		gfx_pixmap_t *cursor = gfxr_draw_cursor(GFXR_RES_ID(GFX_RESOURCE_TYPE_CURSOR, num),
-										cursorRes->data, cursorRes->size, _resMan->sciVersion() > SCI_VERSION_01);
+										cursorRes->data, cursorRes->size, getSciVersion() > SCI_VERSION_01);
 
 		if (!cursor)
 			return NULL;

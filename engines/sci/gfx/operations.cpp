@@ -384,7 +384,7 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 	(*pixmap)->palette = new Palette(default_colors, DEFAULT_COLORS_NR);
 }
 
-void gfxop_init(int version, GfxState *state,
+void gfxop_init(GfxState *state,
 				gfx_options_t *options, ResourceManager *resMan,
 				Graphics::PixelFormat mode, int xfact, int yfact) {
 	//int color_depth = bpp ? bpp : 1;

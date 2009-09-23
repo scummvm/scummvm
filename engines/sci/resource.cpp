@@ -315,7 +315,7 @@ void ResourceManager::loadResource(Resource *res) {
 	file->seek(res->file_offset, SEEK_SET);
 
 	if (res->source->source_type == kSourceAudioVolume) {
-		if (_sciVersion < SCI_VERSION_1_1)
+		if (getSciVersion() < SCI_VERSION_1_1)
 			loadFromAudioVolumeSCI1(res, *file);
 		else
 			loadFromAudioVolumeSCI11(res, *file);
@@ -517,12 +517,9 @@ void ResourceManager::init() {
 	addInternalSources();
 	scanNewSources();
 
-	_sciVersion = detectSciVersion();
+	detectSciVersion();
 
-	if (_sciVersion != SCI_VERSION_AUTODETECT)
-		debug("resMan: Detected %s", ((SciEngine *)g_engine)->getSciVersionDesc(_sciVersion).c_str());
-	else
-		warning("resMan: Couldn't determine SCI version");
+	debug("resMan: Detected %s", getSciVersionDesc(getSciVersion()).c_str());
 
 	switch (_viewType) {
 	case kViewEga:
@@ -1413,10 +1410,10 @@ int ResourceManager::readResourceInfo(Resource *res, Common::File *file,
 		compression = kCompNone;
 		break;
 	case 1:
-		compression = (_sciVersion <= SCI_VERSION_01) ? kCompLZW : kCompHuffman;
+		compression = (getSciVersion() <= SCI_VERSION_01) ? kCompLZW : kCompHuffman;
 		break;
 	case 2:
-		compression = (_sciVersion <= SCI_VERSION_01) ? kCompHuffman : kCompLZW1;
+		compression = (getSciVersion() <= SCI_VERSION_01) ? kCompHuffman : kCompLZW1;
 		break;
 	case 3:
 		compression = kCompLZW1View;
@@ -1583,7 +1580,7 @@ ViewType ResourceManager::detectViewType() {
 	return kViewUnknown;
 }
 
-SciVersion ResourceManager::detectSciVersion() {
+void ResourceManager::detectSciVersion() {
 	// We use the view compression to set a preliminary _sciVersion for the sake of getResourceInfo
 	// Pretend we have a SCI0 game
 	_sciVersion = SCI_VERSION_0_EARLY;
@@ -1617,22 +1614,28 @@ SciVersion ResourceManager::detectSciVersion() {
 		// SCI1 Late resource maps have the resource types or'd with
 		// 0x80. We differentiate between SCI2 and SCI2.1/3 based on that.
 		// TODO: Differentiate between SCI2.1 and SCI3
-		if (_mapVersion == kResVersionSci1Late)
-			return SCI_VERSION_2;
-		else
-			return SCI_VERSION_2_1;
+		if (_mapVersion == kResVersionSci1Late) {
+			_sciVersion = SCI_VERSION_2;
+			return;
+		} else {
+			_sciVersion = SCI_VERSION_2_1;
+			return;
+		}
 	}
 
 	switch (_mapVersion) {
 	case kResVersionSci0Sci1Early:
 		if (_viewType == kViewVga) {
 			// VGA
-			return SCI_VERSION_1_EARLY;
+			_sciVersion = SCI_VERSION_1_EARLY;
+			return;
 		}
 
 		// EGA
-		if (hasOldScriptHeader())
-			return SCI_VERSION_0_EARLY;
+		if (hasOldScriptHeader()) {
+			_sciVersion = SCI_VERSION_0_EARLY;
+			return;
+		}
 
 		if (oldDecompressors) {
 			// It's either SCI_VERSION_0_LATE or SCI_VERSION_01
@@ -1640,43 +1643,57 @@ SciVersion ResourceManager::detectSciVersion() {
 			// We first check for SCI1 vocab.999
 			if (testResource(ResourceId(kResourceTypeVocab, 999))) {
 				if (hasSci0Voc999()) {
-					return SCI_VERSION_0_LATE;
+					_sciVersion = SCI_VERSION_0_LATE;
+					return;
 				} else {
-					return SCI_VERSION_01;
+					_sciVersion = SCI_VERSION_01;
+					return;
 				}
 			}
 
 			// If vocab.999 is missing, we try vocab.900
 			if (testResource(ResourceId(kResourceTypeVocab, 900))) {
 				if (hasSci1Voc900()) {
-					return SCI_VERSION_01;
+					_sciVersion = SCI_VERSION_01;
+					return;
 				} else {
-					return SCI_VERSION_0_LATE;
+					_sciVersion = SCI_VERSION_0_LATE;
+					return;
 				}
 			}
 
 			warning("Failed to accurately determine SCI version");
 			// No parser, we assume SCI_VERSION_01.
-			return SCI_VERSION_01;
+			_sciVersion = SCI_VERSION_01;
+			return;
 		}
 
 		// New decompressors. It's either SCI_VERSION_1_EGA or SCI_VERSION_1_EARLY.
-		if (hasSci1Voc900())
-			return SCI_VERSION_1_EGA;
+		if (hasSci1Voc900()) {
+			_sciVersion = SCI_VERSION_1_EGA;
+			return;
+		}
 
 		// SCI_VERSION_1_EARLY EGA versions seem to be lacking a valid vocab.900.
 		// If this turns out to be unreliable, we could do some pic resource checks instead.
-		return SCI_VERSION_1_EARLY;
+		_sciVersion = SCI_VERSION_1_EARLY;
+		return;
 	case kResVersionSci1Middle:
-		return SCI_VERSION_1_MIDDLE;
+		_sciVersion = SCI_VERSION_1_MIDDLE;
+		return;
 	case kResVersionSci1Late:
-		if (_volVersion == kResVersionSci11)
-			return SCI_VERSION_1_1;
-		return SCI_VERSION_1_LATE;
+		if (_volVersion == kResVersionSci11) {
+			_sciVersion = SCI_VERSION_1_1;
+			return;
+		}
+		_sciVersion = SCI_VERSION_1_LATE;
+		return;
 	case kResVersionSci11:
-		return SCI_VERSION_1_1;
+		_sciVersion = SCI_VERSION_1_1;
+		return;
 	default:
-		return SCI_VERSION_AUTODETECT;
+		_sciVersion = SCI_VERSION_AUTODETECT;
+		error("detectSciVersion(): Unable to detect the game's SCI version");
 	}
 }
 

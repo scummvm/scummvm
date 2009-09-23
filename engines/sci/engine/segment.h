@@ -351,7 +351,7 @@ public:
 	 * @returns			A newly created Object describing the object,
 	 * 					stored within the relevant script
 	 */
-	Object *scriptObjInit(reg_t obj_pos, SciVersion version);
+	Object *scriptObjInit(reg_t obj_pos);
 
 	/**
 	 * Processes a relocation block witin a script

@@ -411,7 +411,7 @@ const Common::String &Kernel::getKernelName(uint number) const {
 }
 
 void Kernel::detectSciFeatures() {
-	SciVersion version = _resMan->sciVersion();
+	SciVersion version = getSciVersion();
 
 	features = 0;
 
@@ -447,12 +447,12 @@ int Kernel::findSelector(const char *selectorName) const {
 
 void Kernel::loadSelectorNames() {
 	Resource *r = _resMan->findResource(ResourceId(kResourceTypeVocab, VOCAB_RESOURCE_SELECTORS), 0);
-	bool oldScriptHeader = (_resMan->sciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (!r) { // No such resource?
 		// Check if we have a table for this game
 		// Some demos do not have a selector table
-		Common::StringList staticSelectorTable = checkStaticSelectorNames(_resMan->sciVersion());
+		Common::StringList staticSelectorTable = checkStaticSelectorNames();
 		
 		if (staticSelectorTable.empty())
 			error("Kernel: Could not retrieve selector names");
@@ -751,7 +751,7 @@ void Kernel::setDefaultKernelNames() {
 	if (_selectorCache.cantBeHere != -1)
 		_kernelNames[0x4d] = "CantBeHere";
 
-	switch (_resMan->sciVersion()) {
+	switch (getSciVersion()) {
 	case SCI_VERSION_0_EARLY:
 	case SCI_VERSION_0_LATE:
 		// Insert SCI0 file functions after SetCursor (0x28)
@@ -791,9 +791,9 @@ bool Kernel::loadKernelNames() {
 	_kernelNames.clear();
 	
 #ifdef ENABLE_SCI32
-	if (_resMan->sciVersion() >= SCI_VERSION_2_1)
+	if (getSciVersion() >= SCI_VERSION_2_1)
 		setKernelNamesSci21();
-	else if (_resMan->sciVersion() == SCI_VERSION_2)
+	else if (getSciVersion() == SCI_VERSION_2)
 		setKernelNamesSci2();
 	else
 #endif

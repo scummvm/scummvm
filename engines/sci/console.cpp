@@ -367,7 +367,7 @@ const char *selector_name(EngineState *s, int selector) {
 }
 
 bool Console::cmdGetVersion(int argc, const char **argv) {
-	DebugPrintf("Emulated interpreter version: %s\n", ((SciEngine *)g_engine)->getSciVersionDesc(_vm->getVersion()).c_str());
+	DebugPrintf("Emulated interpreter version: %s\n", getSciVersionDesc(getSciVersion()).c_str());
 
 	return true;
 }

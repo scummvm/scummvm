@@ -196,7 +196,7 @@ int _reset_graphics_input(EngineState *s) {
 		} else {
 			resource = s->resMan->findResource(ResourceId(kResourceTypePalette, 999), 1);
 			if (resource) {
-				if (s->resMan->sciVersion() < SCI_VERSION_1_1)
+				if (getSciVersion() < SCI_VERSION_1_1)
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal1(999, resource->data, resource->size));
 				else
 					s->gfx_state->gfxResMan->setStaticPalette(gfxr_read_pal11(999, resource->data, resource->size));
@@ -307,7 +307,7 @@ static void _free_graphics_input(EngineState *s) {
 }
 
 int game_init_sound(EngineState *s, int sound_flags) {
-	if (s->resMan->sciVersion() > SCI_VERSION_0_LATE)
+	if (getSciVersion() > SCI_VERSION_0_LATE)
 		sound_flags |= SFX_STATE_FLAG_MULTIPLAY;
 
 	s->sfx_init_flags = sound_flags;

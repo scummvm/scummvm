@@ -544,7 +544,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 }
 
 static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
-	bool oldScriptHeader = (s->resMan->sciVersion() == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	if (oldScriptHeader)
 		buf += 2;
@@ -580,11 +580,11 @@ static void load_script(EngineState *s, Script *scr) {
 	assert(scr->_buf);
 
 	script = s->resMan->findResource(ResourceId(kResourceTypeScript, scr->_nr), 0);
-	if (s->resMan->sciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		heap = s->resMan->findResource(ResourceId(kResourceTypeHeap, scr->_nr), 0);
 
 	memcpy(scr->_buf, script->data, script->size);
-	if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
+	if (getSciVersion() >= SCI_VERSION_1_1) {
 		scr->_heapStart = scr->_buf + scr->_scriptSize;
 		memcpy(scr->_heapStart, heap->data, heap->size);
 	}
@@ -605,7 +605,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				// FIXME: Unify this code with script_instantiate_*
 				load_script(s, scr);
 				scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->_localsSegment]);
-				if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
+				if (getSciVersion() >= SCI_VERSION_1_1) {
 					scr->_exportTable = 0;
 					scr->_synonyms = 0;
 					if (READ_LE_UINT16(scr->_buf + 6) > 0) {
@@ -646,7 +646,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 				for (it = scr->_objects.begin(); it != end; ++it) {
 					byte *data = scr->_buf + it->_value._pos.offset;
 
-					if (s->resMan->sciVersion() >= SCI_VERSION_1_1) {
+					if (getSciVersion() >= SCI_VERSION_1_1) {
 						uint16 *funct_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 6 ));
 						uint16 *prop_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 4 ));
 
@@ -685,7 +685,7 @@ static void reconstruct_sounds(EngineState *s) {
 	Song *seeker;
 	SongIteratorType it_type;
 
-	if (s->resMan->sciVersion() > SCI_VERSION_01)
+	if (getSciVersion() > SCI_VERSION_01)
 		it_type = SCI_SONG_ITERATOR_TYPE_SCI1;
 	else
 		it_type = SCI_SONG_ITERATOR_TYPE_SCI0;

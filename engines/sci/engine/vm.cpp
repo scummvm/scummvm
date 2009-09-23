@@ -1412,12 +1412,12 @@ int script_instantiate_common(ResourceManager *resMan, SegManager *segMan, int s
 	*was_new = 1;
 
 	*script = resMan->findResource(ResourceId(kResourceTypeScript, script_nr), 0);
-	if (resMan->sciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		*heap = resMan->findResource(ResourceId(kResourceTypeHeap, script_nr), 0);
 
-	if (!*script || (resMan->sciVersion() >= SCI_VERSION_1_1 && !heap)) {
+	if (!*script || (getSciVersion() >= SCI_VERSION_1_1 && !heap)) {
 		warning("Script 0x%x requested but not found", script_nr);
-		if (resMan->sciVersion() >= SCI_VERSION_1_1) {
+		if (getSciVersion() >= SCI_VERSION_1_1) {
 			if (*heap)
 				warning("Inconsistency: heap resource WAS found");
 			else if (*script)
@@ -1467,8 +1467,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 	int magic_pos_adder; // Usually 0; 2 for older SCI versions
 	Resource *script;
 	int was_new;
-	SciVersion version = resMan->sciVersion();
-	bool oldScriptHeader = (version == SCI_VERSION_0_EARLY);
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
 	const int seg_id = script_instantiate_common(resMan, segMan, script_nr, &script, NULL, &was_new);
 
@@ -1590,7 +1589,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			break;
 		case SCI_OBJ_OBJECT:
 		case SCI_OBJ_CLASS: { // object or class?
-			Object *obj = scr->scriptObjInit(addr, resMan->sciVersion());
+			Object *obj = scr->scriptObjInit(addr);
 			Object *base_obj;
 
 			// Instantiate the superclass, if neccessary
@@ -1657,7 +1656,7 @@ int script_instantiate_sci11(ResourceManager *resMan, SegManager *segMan, int sc
 }
 
 int script_instantiate(ResourceManager *resMan, SegManager *segMan, int script_nr) {
-	if (resMan->sciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		return script_instantiate_sci11(resMan, segMan, script_nr);
 	else
 		return script_instantiate_sci0(resMan, segMan, script_nr);

@@ -167,7 +167,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	int cue;
 	SegManager *segMan = s->segMan;
 
-	if (s->resMan->sciVersion() > SCI_VERSION_01)
+	if (getSciVersion() > SCI_VERSION_01)
 		return;
 	/* SCI1 and later explicitly poll for everything */
 
@@ -830,7 +830,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			// effects. If the resource exists, play it using map 65535 (sound
 			// effects map)
 			if (s->resMan->testResource(ResourceId(kResourceTypeAudio, number)) &&
-				s->resMan->sciVersion() >= SCI_VERSION_1_1) {
+				getSciVersion() >= SCI_VERSION_1_1) {
 				// Found a relevant audio resource, play it
 				s->_sound.stopAudio();
 				warning("Initializing audio resource instead of requested sound resource %d", number);

@@ -89,9 +89,9 @@ static const SelectorRemap sci11SelectorRemap[] = {
 	{     "syncTime", 279 }, {      "syncCue", 280 }, {              0,   0 }
 };
 
-Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
+Common::StringList Kernel::checkStaticSelectorNames() {
 	Common::StringList names;
-	const int offset = (version < SCI_VERSION_1_1) ? 3 : 0;
+	const int offset = (getSciVersion() < SCI_VERSION_1_1) ? 3 : 0;
 	const int count = ARRAYSIZE(sci0Selectors) + offset;
 	const SelectorRemap *selectorRemap = sci0SelectorRemap;
 	int i;
@@ -103,7 +103,7 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 	for (i = offset; i < count; i++)
 		names[i] = sci0Selectors[i - offset];
 
-	if (version <= SCI_VERSION_01) {
+	if (getSciVersion() <= SCI_VERSION_01) {
 		selectorRemap = sci0SelectorRemap;
 	} else {
 		// Several new selectors were added in SCI 1 and later.
@@ -112,7 +112,7 @@ Common::StringList Kernel::checkStaticSelectorNames(SciVersion version) {
 		for (i = count; i < count + count2; i++)
 			names[i] = sci1Selectors[i - count];
 
-		if (version < SCI_VERSION_1_1) {
+		if (getSciVersion() < SCI_VERSION_1_1) {
 			selectorRemap = sci1SelectorRemap;
 		} else {
 			selectorRemap = sci11SelectorRemap;

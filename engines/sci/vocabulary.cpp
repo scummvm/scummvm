@@ -92,7 +92,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 
 	debug(2, "Initializing vocabulary");
 
-	if (_resMan->sciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
+	if (getSciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
 		loadSuffixes();
 		if (loadBranches())
 			// Now build a GNF grammar out of this

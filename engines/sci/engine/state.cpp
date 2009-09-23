@@ -113,7 +113,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, uint32 flags)
 
 	successor = 0;
 
-	speedThrottler = new SpeedThrottler(res->sciVersion());
+	speedThrottler = new SpeedThrottler(getSciVersion());
 
 	_setCursorType = SCI_VERSION_AUTODETECT;
 	_doSoundType = SCI_VERSION_AUTODETECT;
@@ -294,15 +294,15 @@ SciVersion EngineState::detectDoSoundType() {
 		if (_doSoundType == SCI_VERSION_AUTODETECT) {
 			warning("DoSound detection failed, taking an educated guess");
 
-			if (resMan->sciVersion() >= SCI_VERSION_1_MIDDLE)
+			if (getSciVersion() >= SCI_VERSION_1_MIDDLE)
 				_doSoundType = SCI_VERSION_1_LATE;
-			else if (resMan->sciVersion() > SCI_VERSION_01)
+			else if (getSciVersion() > SCI_VERSION_01)
 				_doSoundType = SCI_VERSION_1_EARLY;
 			else
 				_doSoundType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_doSoundType).c_str());
+		debugC(1, kDebugLevelSound, "Detected DoSound type: %s", getSciVersionDesc(_doSoundType).c_str());
 	}
 
 	return _doSoundType;
@@ -321,13 +321,13 @@ SciVersion EngineState::detectSetCursorType() {
 		} else {
 			warning("SetCursor detection failed, taking an educated guess");
 
-			if (resMan->sciVersion() >= SCI_VERSION_1_1)
+			if (getSciVersion() >= SCI_VERSION_1_1)
 				_setCursorType = SCI_VERSION_1_1;
 			else
 				_setCursorType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_setCursorType).c_str());
+		debugC(1, kDebugLevelGraphics, "Detected SetCursor type: %s", getSciVersionDesc(_setCursorType).c_str());
 	}
 
 	return _setCursorType;
@@ -448,7 +448,7 @@ SciVersion EngineState::detectLofsType() {
 			_lofsType = SCI_VERSION_0_EARLY;
 		}
 
-		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", ((SciEngine *)g_engine)->getSciVersionDesc(_lofsType).c_str());
+		debugC(1, kDebugLevelVM, "Detected Lofs type: %s", getSciVersionDesc(_lofsType).c_str());
 	}
 
 	return _lofsType;

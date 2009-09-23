@@ -296,7 +296,7 @@ reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
 	int completed = 0;
 	int max_movcnt = GET_SEL32V(client, moveSpeed);
 
-	if (s->resMan->sciVersion() > SCI_VERSION_01)
+	if (getSciVersion() > SCI_VERSION_01)
 		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
 
 	if (handle_movecnt == UNINITIALIZED)
@@ -383,7 +383,7 @@ reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
 		completed = 1;
 	}
 
-	if (s->resMan->sciVersion() > SCI_VERSION_01)
+	if (getSciVersion() > SCI_VERSION_01)
 		if (completed)
 			invoke_selector(INV_SEL(mover, moveDone, kStopOnInvalidSelector), 0);
 

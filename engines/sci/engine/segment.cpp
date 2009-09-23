@@ -137,7 +137,7 @@ bool Script::init(int script_nr, ResourceManager *resMan) {
 
 	_nr = script_nr;
 
-	if (resMan->sciVersion() >= SCI_VERSION_1_1)
+	if (getSciVersion() >= SCI_VERSION_1_1)
 		_heapStart = _buf + _scriptSize;
 	else
 		_heapStart = _buf;

@@ -228,12 +228,6 @@ public:
 	ViewType getViewType() const { return _viewType; }
 
 	/**
-	 * Returns the SCI version as detected by the resource manager
-	 * @return SCI version
-	 */
-	SciVersion sciVersion() const { return _sciVersion; }
-
-	/**
 	 * Creates a new SCI resource manager.
 	 */
 	ResourceManager();
@@ -296,7 +290,6 @@ protected:
 	ResourceSource *_audioMapSCI1; //!< Currently loaded audio map for SCI1
 	ResVersion _volVersion; //!< RESOURCE.0xx version
 	ResVersion _mapVersion; //!< RESOURCE.MAP version
-	SciVersion _sciVersion; //!< Detected SCI version */
 
 	/**
 	 * Initializes the resource manager
@@ -431,7 +424,7 @@ protected:
 	ViewType detectViewType();
 	bool hasSci0Voc999();
 	bool hasSci1Voc900();
-	SciVersion detectSciVersion();
+	void detectSciVersion();
 };
 
 } // End of namespace Sci

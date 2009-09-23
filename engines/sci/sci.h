@@ -109,7 +109,6 @@ public:
 
 	const char* getGameID() const;
 	int getResourceVersion() const;
-	SciVersion getVersion() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;
 	uint32 getFlags() const;
@@ -126,8 +125,6 @@ public:
 	/** Remove the 'TARGET-' prefix of the given filename, if present. */
 	Common::String unwrapFilename(const Common::String &name) const;
 
-	Common::String getSciVersionDesc(SciVersion version) const;
-
 private:
 	const SciGameDescription *_gameDescription;
 	ResourceManager *_resMan;
@@ -137,13 +134,46 @@ private:
 	Console *_console;
 };
 
+extern SciVersion _sciVersion;
+
 /**
  * Convenience function to obtain the active SCI version.
  */
 inline static SciVersion getSciVersion() {
-	return ((SciEngine*)g_engine)->getVersion();
+	assert (_sciVersion != SCI_VERSION_AUTODETECT);
+	return _sciVersion;
 }
 
+inline static Common::String getSciVersionDesc(SciVersion version) {
+	switch (version) {
+	case SCI_VERSION_AUTODETECT:
+		return "Autodetect";
+	case SCI_VERSION_0_EARLY:
+		return "Early SCI0";
+	case SCI_VERSION_0_LATE:
+		return "Late SCI0";
+	case SCI_VERSION_01:
+		return "SCI01";
+	case SCI_VERSION_1_EGA:
+		return "SCI1 EGA";
+	case SCI_VERSION_1_EARLY:
+		return "Early SCI1";
+	case SCI_VERSION_1_MIDDLE:
+		return "Middle SCI1";
+	case SCI_VERSION_1_LATE:
+		return "Late SCI1";
+	case SCI_VERSION_1_1:
+		return "SCI1.1";
+	case SCI_VERSION_2:
+		return "SCI2";
+	case SCI_VERSION_2_1:
+		return "SCI2.1";
+	case SCI_VERSION_3:
+		return "SCI3";
+	default:
+		return "Unknown";
+	}
+}
 
 } // End of namespace Sci
 
