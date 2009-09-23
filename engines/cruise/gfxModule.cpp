@@ -358,7 +358,7 @@ void switchBackground(const byte *newBg) {
 					sliceXEnd = MIN(xp + 7, 320);
 				} else
 					// Carry on of changed area
-					sliceXEnd = MAX(xp + 7, sliceXEnd);
+					sliceXEnd = MAX(xp, sliceXEnd);
 
 			} else if ((sliceXEnd != -1) && (xp >= (sliceXEnd + 10))) {
 				// If more than 10 pixels have gone by without any changes, then end the slice
