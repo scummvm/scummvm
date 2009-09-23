@@ -391,7 +391,7 @@ void SmushPlayer::handleIACT(int32 subSize, Common::SeekableReadStream &b) {
 	int nbframes = b.readUint16LE();
 	int32 size = b.readUint32LE();
 	int32 bsize = subSize - 18;
-return;
+
 	if (_vm->_game.id != GID_CMI) {
 		int32 track = track_id;
 		if (track_flags == 1) {
