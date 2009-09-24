@@ -1092,8 +1092,6 @@ static bool DoSoundFrame(void) {
 		currentSoundFrame++;
 		return true;
 	}
-
-	return true;
 }
 
 /**

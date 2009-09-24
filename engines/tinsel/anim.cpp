@@ -169,11 +169,13 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 			error("ANI_CALL opcode encountered! Please report this error to the ScummVM team");
 			//(*pAni[pAnim->scriptIndex].pFunc)(pAnim);
 
+#if 0
 			// next opcode
 			pAnim->scriptIndex++;
 
 			// go fetch a real image
 			break;
+#endif
 
 		case ANI_HIDE:		// hide animated object
 

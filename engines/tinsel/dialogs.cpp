@@ -2115,8 +2115,8 @@ int InvItem(Common::Point &coOrds, bool update) {
 	int x = coOrds.x;
 	int y = coOrds.y;
 	return InvItem(&x, &y, update);
-	coOrds.x = x;
-	coOrds.y = y;
+	//coOrds.x = x;
+	//coOrds.y = y;
 }
 
 /**

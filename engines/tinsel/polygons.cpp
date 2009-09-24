@@ -1273,7 +1273,7 @@ HPOLYGON FirstPathPoly(void) {
 			return i;
 	}
 	error("FirstPathPoly() - no PATH polygons");
-	return NOPOLY;
+	//return NOPOLY;
 }
 
 HPOLYGON GetPolyHandle(int i) {
