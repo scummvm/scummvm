@@ -47,9 +47,9 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	Common::addDebugChannel(kDebugLevelSavegame, "Savegame", "Saving & restoring game debugging");
 	Common::addDebugChannel(kDebugLevelScene, "Scene", "Scene process and draw debugging");
 
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("Data"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("Vids"));
-	Common::File::addDefaultDirectory(_gameDataDir.getChild("Music"));
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "data");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "vids");
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "music");
 
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 
