@@ -134,8 +134,8 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 		if (format)
 			g_system->initSize(width, height, format);
 		else { 
-			Graphics::PixelFormat Format = g_system->getSupportedFormats().front();
-			g_system->initSize(width, height, &Format);
+			Graphics::PixelFormat bestFormat = g_system->getSupportedFormats().front();
+			g_system->initSize(width, height, &bestFormat);
 		}
 #else
 		g_system->initSize(width, height);
@@ -188,13 +188,15 @@ void initGraphics(int width, int height, bool defaultTo1xScaler, const Graphics:
 		dialog.runModal();
 	}
 }
+
 void initGraphics(int width, int height, bool defaultTo1xScaler, const Common::List<Graphics::PixelFormat> &formatList) {
-	Graphics::PixelFormat format = Graphics::findCompatibleFormat(g_system->getSupportedFormats(),formatList);
-	initGraphics(width,height,defaultTo1xScaler,&format);
+	Graphics::PixelFormat format = Graphics::findCompatibleFormat(g_system->getSupportedFormats(), formatList);
+	initGraphics(width, height, defaultTo1xScaler, &format);
 }
+
 void initGraphics(int width, int height, bool defaultTo1xScaler) {
 	Graphics::PixelFormat format = Graphics::PixelFormat::createFormatCLUT8();
-	initGraphics(width,height,defaultTo1xScaler,&format);
+	initGraphics(width, height, defaultTo1xScaler, &format);
 }
 
 void GUIErrorMessage(const Common::String msg) {
