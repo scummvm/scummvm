@@ -192,7 +192,6 @@ void Script::addSound(uint16 soundIndex, uint16 v2, uint16 v3) {
 }
 
 void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
-	LureEngine &engine = LureEngine::getReference();
 	Screen &screen = Screen::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
@@ -222,7 +221,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	anim->show();
 	if (!events.interruptableDelay(30000)) {
 		// No key yet pressed, so keep waiting
-		while (Sound.musicInterface_CheckPlaying(6) && !engine.shouldQuit()) {
+		while (Sound.musicInterface_CheckPlaying(6) && !g_engine->shouldQuit()) {
 			if (events.interruptableDelay(20))
 				break;
 		}
@@ -230,7 +229,7 @@ void Script::endgameSequence(uint16 v1, uint16 v2, uint16 v3) {
 	delete anim;
 
 	screen.paletteFadeOut();
-	engine.quitGame();
+	g_engine->quitGame();
 }
 
 // Setup the pig fight in the cave

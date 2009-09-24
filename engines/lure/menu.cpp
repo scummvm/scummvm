@@ -116,7 +116,6 @@ Menu &Menu::getReference() {
 
 uint8 Menu::execute() {
 	OSystem &system = *g_system;
-	LureEngine &engine = LureEngine::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -131,7 +130,7 @@ uint8 Menu::execute() {
 
 	while (mouse.lButton() || mouse.rButton()) {
 		while (events.pollEvent()) {
-			if (engine.shouldQuit()) return MENUITEM_NONE;
+			if (g_engine->shouldQuit()) return MENUITEM_NONE;
 
 			if (mouse.y() < MENUBAR_Y_SIZE) {
 				MenuRecord *p = getMenuAt(mouse.x());
@@ -468,7 +467,6 @@ Action PopupMenu::Show(int numEntries, Action *actions) {
 
 uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 	if (numEntries == 0) return 0xffff;
-	LureEngine &engine = LureEngine::getReference();
 	Events &e = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
 	OSystem &system = *g_system;
@@ -547,7 +545,7 @@ uint16 PopupMenu::Show(int numEntries, const char *actions[]) {
 		}
 
 		while (e.pollEvent()) {
-			if (engine.shouldQuit()) {
+			if (g_engine->shouldQuit()) {
 				selectedIndex = 0xffff;
 				goto bail_out;
 

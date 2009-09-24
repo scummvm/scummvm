@@ -151,7 +151,7 @@ void Game::execute() {
 
 	bool initialRestart = true;
 
-	while (!engine.shouldQuit()) {
+	while (!g_engine->shouldQuit()) {
 
 		if ((_state & GS_RESTART) != 0) {
 			res.reset();
@@ -171,7 +171,7 @@ void Game::execute() {
 		mouse.cursorOn();
 
 		// Main game loop
-		while (!engine.shouldQuit() && ((_state & GS_RESTART) == 0)) {
+		while (!g_engine->shouldQuit() && ((_state & GS_RESTART) == 0)) {
 			// If time for next frame, allow everything to update
 			if (system.getMillis() > timerVal + GAME_FRAME_DELAY) {
 				timerVal = system.getMillis();
@@ -898,7 +898,7 @@ void Game::doShowCredits() {
 void Game::doQuit() {
 	Sound.pause();
 	if (getYN())
-		LureEngine::getReference().quitGame();
+		g_engine->quitGame();
 	Sound.resume();
 }
 
@@ -983,7 +983,6 @@ bool Game::getYN() {
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
 	Resources &res = Resources::getReference();
-	LureEngine &engine = LureEngine::getReference();
 
 	Common::Language l = LureEngine::getReference().getLanguage();
 	Common::KeyCode y = Common::KEYCODE_y;
@@ -1025,7 +1024,7 @@ bool Game::getYN() {
 		}
 
 		g_system->delayMillis(10);
-	} while (!engine.shouldQuit() && !breakFlag);
+	} while (!g_engine->shouldQuit() && !breakFlag);
 
 	screen.update();
 	if (!vKbdFlag)

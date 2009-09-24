@@ -109,7 +109,6 @@ bool FightsManager::isFighting() {
 }
 
 void FightsManager::fightLoop() {
-	LureEngine &engine = LureEngine::getReference();
 	Resources &res = Resources::getReference();
 	Game &game = Game::getReference();
 	Room &room = Room::getReference();
@@ -117,7 +116,7 @@ void FightsManager::fightLoop() {
 	uint32 timerVal = g_system->getMillis();
 
 	// Loop for the duration of the battle
-	while (!engine.shouldQuit() && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
+	while (!g_engine->shouldQuit() && (playerFight.fwhits != GENERAL_MAGIC_ID)) {
 		checkEvents();
 
 		if (g_system->getMillis() > timerVal + GAME_FRAME_DELAY) {
@@ -185,7 +184,6 @@ const KeyMapping keyList[] = {
 	{Common::KEYCODE_INVALID, 0}};
 
 void FightsManager::checkEvents() {
-	LureEngine &engine = LureEngine::getReference();
 	Game &game = Game::getReference();
 	Events &events = Events::getReference();
 	Mouse &mouse = Mouse::getReference();
@@ -198,7 +196,7 @@ void FightsManager::checkEvents() {
 		if (events.type() == Common::EVENT_KEYDOWN) {
 			switch (events.event().kbd.keycode) {
 			case Common::KEYCODE_ESCAPE:
-				engine.quitGame();
+				g_engine->quitGame();
 				return;
 
 			case Common::KEYCODE_d:
