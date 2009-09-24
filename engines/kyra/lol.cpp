@@ -1309,7 +1309,7 @@ int LoLEngine::calculateCharacterStats(int charNum, int index) {
 		return _characters[charNum].skillLevels[index] + _characters[charNum].skillModifiers[index];
 	}
 
-	return 1;
+	//return 1;
 }
 
 int LoLEngine::calculateProtection(int index) {

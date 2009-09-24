@@ -204,13 +204,14 @@ void Expression::skipExpr(char stopToken) {
 
 void Expression::printExpr(char stopToken) {
 	// Expression printing disabled by default
-	return;
+#if 0
 
 	int32 savedPos = _vm->_game->_script->pos();
 	printExpr_internal(stopToken);
 
 	// restore IP to start of expression
 	_vm->_game->_script->seek(savedPos);
+#endif
 }
 
 void Expression::printExpr_internal(char stopToken) {

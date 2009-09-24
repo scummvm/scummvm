@@ -263,7 +263,7 @@ uint16 Hotspots::add(const Hotspot &hotspot) {
 	}
 
 	error("Hotspots::add(): Hotspot array full");
-	return 0xFFFF;
+	//return 0xFFFF;
 }
 
 void Hotspots::remove(uint16 id) {

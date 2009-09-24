@@ -103,8 +103,6 @@ bool DemoPlayer::play(uint32 index) {
 	default:
 		return false;
 	}
-
-	return false;
 }
 
 bool DemoPlayer::lineStartsWith(const Common::String &line, const char *start) {

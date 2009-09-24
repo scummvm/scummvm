@@ -36,10 +36,9 @@ int16 fileData2;
 char currentBaseName[15] = "";
 
 void loadPal(volumeDataStruct *entry) {
-	char name[20];
-
 	// This code isn't currently being used
 #if 0
+	char name[20];
 
 	if (PAL_file.isOpen())
 		PAL_file.close();
