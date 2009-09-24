@@ -541,7 +541,7 @@ void Scene::updateBarriers() {
 
 	v2 = _ws->barriers[0].tickCount2;
 	for (uint32 idx = 0; idx < _ws->numBarriers; idx++) {
-		Barrier *b = &_ws->barriers[idx];
+		//Barrier *b = &_ws->barriers[idx];
 		start = _vm->_system->getMillis();
 
 		if (v2 - 32 != 4)
@@ -562,10 +562,10 @@ void Scene::updateBarriers() {
 }
 
 void Scene::updateBarriers2() {
-	Screen *screen = _vm->screen();
+	//Screen *screen = _vm->screen();
 
 	uint barriersCount  = _ws->barriers.size();
-	int  startTickCount = 0;
+	//int  startTickCount = 0;
 	bool canPlaySound   = false;
 
 	if (barriersCount > 0) {

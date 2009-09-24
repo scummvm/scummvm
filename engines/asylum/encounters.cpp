@@ -76,7 +76,7 @@ void Encounter::run(int encounterIdx, int barrierId1, int barrierId2, int charac
 	setVariable(1, 0);
 	setVariable(2, _currentEncounter->value);
 
-	Barrier *b1 = _scene->worldstats()->getBarrierById(barrierId1);
+	//Barrier *b1 = _scene->worldstats()->getBarrierById(barrierId1);
 	/*
 	 int __cdecl runEncounter(int newMessageHandler, int encounterIndex, int objectId1, int objectId2, int characterIndex)
 	{
