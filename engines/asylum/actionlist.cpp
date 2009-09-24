@@ -182,7 +182,7 @@ void ActionList::setScriptByIndex(uint32 index) {
 }
 
 void ActionList::processActionListSub02(ActionDefinitions* script, ActionCommand *command, int a4) {
-	int v4 = 0;
+	//int v4 = 0;
 	int result;
 	int barrierIdx = 0;
 	if (a4) {
@@ -555,7 +555,7 @@ int kShowActor(ActionCommand *cmd, Scene *scn) {
 }
 
 int kSetActorStats(ActionCommand *cmd, Scene *scn) {
-	WorldStats *ws = scn->worldstats();
+	//WorldStats *ws = scn->worldstats();
 
 	// TODO
 	// param1 == actorIndex. Implement when we've got more than one actor
