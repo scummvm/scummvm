@@ -782,8 +782,6 @@ bool ScriptInterpreter::execOpcode(byte opcode) {
 
 	}
 
-	//return false;
-
 }
 
 // Kernel functions

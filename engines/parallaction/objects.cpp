@@ -303,8 +303,7 @@ int16 ScriptVar::getValue() {
 	}
 
 	error("Parameter is not an r-value");
-
-	//return 0;
+	return 0;	// for compilers that don't support NORETURN
 }
 
 void ScriptVar::setValue(int16 value) {

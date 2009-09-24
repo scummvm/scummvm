@@ -754,7 +754,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			break;
 		default:
 			error("Invalid script command %d", curCommand);
-			//return 3;
+			return 3;	// for compilers that don't support NORETURN
 		}
 	}
 

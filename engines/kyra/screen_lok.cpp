@@ -340,7 +340,7 @@ void Screen_LoK_16::getFadeParams(const Palette &pal, int delay, int &delayInc, 
 
 int Screen_LoK_16::fadePalStep(const Palette &pal, int diff) {
 	error("Screen_LoK_16::fadePalStep called");
-	//return 0;
+	return 0;	// for compilers that don't support NORETURN
 }
 
 void Screen_LoK_16::paletteMap(uint8 idx, int r, int g, int b) {

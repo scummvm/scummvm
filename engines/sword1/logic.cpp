@@ -690,7 +690,7 @@ int Logic::interpretScript(Object *compact, int id, Header *scriptModule, int sc
 			break;
 		default:
 			error("Invalid operator %d",scriptCode[pc-1]);
-			//return 0;
+			return 0;	// for compilers that don't support NORETURN
 		}
 	}
 }
@@ -1252,7 +1252,7 @@ int Logic::fnChangeSpeechText(Object *cpt, int32 id, int32 tar, int32 width, int
 //The game is halted for debugging. Maybe we'll remove this later.
 int Logic::fnTalkError(Object *cpt, int32 id, int32 c, int32 d, int32 e, int32 f, int32 z, int32 x) {
 	error("fnTalkError for id %d, instruction %d", id, cpt->o_down_flag);
-	//return SCRIPT_STOP;
+	return SCRIPT_STOP;	// for compilers that don't support NORETURN
 }
 
 int Logic::fnStartTalk(Object *cpt, int32 id, int32 target, int32 d, int32 e, int32 f, int32 z, int32 x) {
@@ -1607,7 +1607,7 @@ int Logic::fnStopMusic(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d
 
 int Logic::fnInnerSpace(Object *cpt, int32 id, int32 a, int32 b, int32 c, int32 d, int32 z, int32 x) {
 	error("fnInnerSpace() not working.");
-	//return SCRIPT_STOP;
+	return SCRIPT_STOP;	// for compilers that don't support NORETURN
 }
 
 int Logic::fnSetScreen(Object *cpt, int32 id, int32 target, int32 screen, int32 c, int32 d, int32 z, int32 x) {

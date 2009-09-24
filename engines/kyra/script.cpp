@@ -106,7 +106,7 @@ bool EMCInterpreter::load(const char *filename, EMCData *scriptData, const Commo
 	Common::SeekableReadStream *stream = _vm->resource()->createReadStream(filename);
 	if (!stream) {
 		error("Couldn't open script file '%s'", filename);
-		//return false;
+		return false;	// for compilers that don't support NORETURN
 	}
 
 	memset(scriptData, 0, sizeof(EMCData));

@@ -89,7 +89,7 @@ Common::Error CruiseEngine::run() {
 
 	if (!loadLanguageStrings()) {
 		error("Could not setup language data for your version");
-		//return Common::kUnknownError;
+		return Common::kUnknownError;	// for compilers that don't support NORETURN
 	}
 
 	initialize();

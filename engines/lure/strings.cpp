@@ -178,7 +178,7 @@ char StringData::readCharacter() {
 
 	error("Unknown bit sequence encountered when decoding string");
 
-	//return 0;
+	return 0;	// for compilers that don't support NORETURN
 }
 
 void StringData::getString(uint16 stringId, char *dest, const char *hotspotName,

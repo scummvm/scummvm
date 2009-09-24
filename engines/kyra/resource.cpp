@@ -132,7 +132,7 @@ bool Resource::reset() {
 		}
 	} else {
 		error("Unknown game id: %d", _vm->game());
-		//return false;
+		return false;	// for compilers that don't support NORETURN
 	}
 
 	return true;
@@ -191,7 +191,7 @@ bool Resource::loadFileList(const Common::String &filedata) {
 			} else if (!loadPakFile(filename)) {
 				delete f;
 				error("couldn't load file '%s'", filename.c_str());
-				//return false;
+				return false;	// for compilers that don't support NORETURN
 			}
 		}
 	}
@@ -207,7 +207,7 @@ bool Resource::loadFileList(const char * const *filelist, uint32 numFiles) {
 	while (numFiles--) {
 		if (!loadPakFile(filelist[numFiles])) {
 			error("couldn't load file '%s'", filelist[numFiles]);
-			//return false;
+			return false;	// for compilers that don't support NORETURN
 		}
 	}
 

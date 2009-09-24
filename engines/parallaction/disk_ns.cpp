@@ -620,7 +620,7 @@ private:
 
 	uint16 getCrunchType(uint32 signature) {
 
-		byte eff;
+		byte eff = 0;
 
 		switch (signature) {
 		case 0x50503230: /* PP20 */
