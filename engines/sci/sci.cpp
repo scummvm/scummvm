@@ -159,7 +159,7 @@ Common::Error SciEngine::run() {
 	_gamestate->gfx_state = &gfx_state;
 
 	// Assign default values to the config manager, in case settings are missing
-	ConfMan.registerDefault("dither_mode", "0");
+	ConfMan.registerDefault("dither_mode", "2");
 
 	// Default config:
 	gfx_options_t gfx_options;
