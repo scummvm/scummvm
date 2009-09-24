@@ -138,11 +138,12 @@ void Mouse::setPosition(int newX, int newY) {
 
 void Mouse::waitForRelease() {
 	Events &e = Events::getReference();
+	LureEngine &engine = LureEngine::getReference();
 
 	do {
-		while (e.pollEvent() && !g_engine->shouldQuit()) ;
+		while (e.pollEvent() && !engine.shouldQuit()) ;
 		g_system->delayMillis(20);
-	} while (!g_engine->shouldQuit() && (lButton() || rButton() || mButton()));
+	} while (!engine.shouldQuit() && (lButton() || rButton() || mButton()));
 }
 
 /*--------------------------------------------------------------------------*/
@@ -206,10 +207,11 @@ void Events::waitForPress() {
 
 bool Events::interruptableDelay(uint32 milliseconds) {
 	Events &events = Events::getReference();
+	LureEngine &engine = LureEngine::getReference();
 	uint32 delayCtr = g_system->getMillis() + milliseconds;
 
 	while (g_system->getMillis() < delayCtr) {
-		if (g_engine->shouldQuit()) return true;
+		if (engine.shouldQuit()) return true;
 
 		if (events.pollEvent()) {
 			if (((events.type() == Common::EVENT_KEYDOWN) && (events.event().kbd.ascii != 0)) ||

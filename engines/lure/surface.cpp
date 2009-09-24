@@ -506,6 +506,7 @@ Surface *Surface::getScreen(uint16 resourceId) {
 
 bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool varLength, int16 x, int16 y) {
 	OSystem &system = *g_system;
+	LureEngine &engine = LureEngine::getReference();
 	Mouse &mouse = Mouse::getReference();
 	Events &events = Events::getReference();
 	Screen &screen = Screen::getReference();
@@ -533,7 +534,7 @@ bool Surface::getString(Common::String &line, int maxSize, bool isNumeric, bool 
 		// Loop until the input string changes
 		refreshFlag = false;
 		while (!refreshFlag && !abortFlag) {
-			abortFlag = g_engine->shouldQuit();
+			abortFlag = engine.shouldQuit();
 			if (abortFlag) break;
 
 			while (events.pollEvent()) {
@@ -975,7 +976,7 @@ bool SaveRestoreDialog::show(bool saveDialog) {
 		// Provide highlighting of lines to select a save slot
 		while (!abortFlag && !(mouse.lButton() && (selectedLine != -1))
 				&& !mouse.rButton() && !mouse.mButton()) {
-			abortFlag = g_engine->shouldQuit();
+			abortFlag = engine.shouldQuit();
 			if (abortFlag) break;
 
 			while (events.pollEvent()) {
@@ -1178,7 +1179,7 @@ bool RestartRestoreDialog::show() {
 		// Event loop for making selection
 		bool buttonPressed = false;
 
-		while (!g_engine->shouldQuit()) {
+		while (!engine.shouldQuit()) {
 			// Handle events
 			while (events.pollEvent()) {
 				if ((events.type() == Common::EVENT_LBUTTONDOWN) && (highlightedButton != -1)) {
@@ -1230,7 +1231,7 @@ bool RestartRestoreDialog::show() {
 
 	Sound.killSounds();
 
-	if (!restartFlag && !g_engine->shouldQuit()) {
+	if (!restartFlag && !engine.shouldQuit()) {
 		// Need to show Restore game dialog
 		if (!SaveRestoreDialog::show(false))
 			// User cancelled, so fall back on Restart
@@ -1298,6 +1299,7 @@ CopyProtectionDialog::CopyProtectionDialog() {
 bool CopyProtectionDialog::show() {
 	Screen &screen = Screen::getReference();
 	Events &events = Events::getReference();
+	LureEngine &engine = LureEngine::getReference();
 
 	screen.setPaletteEmpty();
 	Palette p(COPY_PROTECTION_RESOURCE_ID - 1);
@@ -1348,7 +1350,7 @@ bool CopyProtectionDialog::show() {
 		// Clear any prior try
 		_charIndex = 0;
 
-		while (!g_engine->shouldQuit()) {
+		while (!engine.shouldQuit()) {
 			while (events.pollEvent() && (_charIndex < 4)) {
 				if (events.type() == Common::EVENT_KEYDOWN) {
 					if ((events.event().kbd.keycode == Common::KEYCODE_BACKSPACE) && (_charIndex > 0)) {
@@ -1382,7 +1384,7 @@ bool CopyProtectionDialog::show() {
 				break;
 		}
 
-		if (g_engine->shouldQuit())
+		if (engine.shouldQuit())
 			return false;
 
 		// At this point, two page numbers have been entered - validate them
