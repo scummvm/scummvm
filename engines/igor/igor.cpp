@@ -1532,7 +1532,7 @@ void IgorEngine::handleRoomInput() {
 		return;
 	}
 
-	Action previousAction = _currentAction;
+	//Action previousAction = _currentAction;
 	if (_inputVars[kInputCursorYPos] >= 170 && _inputVars[kInputCursorYPos] <= 199) {
 		int object = getObjectFromInventory(_inputVars[kInputCursorXPos]);
 		if (_currentAction.verbType == 0) {
