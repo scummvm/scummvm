@@ -218,8 +218,7 @@ uint8 *AgiLoader_v3::loadVolRes(AgiDir *agid) {
 			debugC(3, kDebugLevelResources, "offset = %d", agid->offset);
 			debugC(3, kDebugLevelResources, "x = %x %x", x[0], x[1]);
 			error("ACK! BAD RESOURCE");
-
-			//_vm->quitGame();
+			_vm->quitGame();	// for compilers that don't support NORETURN
 		}
 
 		agid->len = READ_LE_UINT16((uint8 *) x + 3);	// uncompressed size

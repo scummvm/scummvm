@@ -168,6 +168,7 @@ int updateResFileEntry(int height, int width, int size, int entryNumber, int res
 
 int createResFileEntry(int width, int height, int size, int resType) {
 	error("Executing untested createResFileEntry");
+	return 0;	// for compilers that don't support NORETURN
 
 #if 0
 	int i;

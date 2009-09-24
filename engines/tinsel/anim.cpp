@@ -168,6 +168,7 @@ SCRIPTSTATE DoNextFrame(ANIM *pAnim) {
 			// in case we missed something (highly unlikely though)
 			error("ANI_CALL opcode encountered! Please report this error to the ScummVM team");
 			//(*pAni[pAnim->scriptIndex].pFunc)(pAnim);
+			return;	// for compilers that don't support NORETURN
 
 #if 0
 			// next opcode

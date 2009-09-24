@@ -80,7 +80,7 @@ int16 Object::getVectorSize() {
 	} else {
 		// should never reach here
 		error("Unknown object class");
-		//return 0;
+		return 0;	// for compilers that don't support NORETURN
 	}
 }
 
@@ -94,7 +94,7 @@ int16 Object::getVectorItem(int16 index) {
 	} else {
 		// should never reach here
 		error("Unknown object class");
-		//return 0;
+		return 0;	// for compilers that don't support NORETURN
 	}
 }
 
