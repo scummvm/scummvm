@@ -611,7 +611,11 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 	uint32 v59    = cmd->param2;
 
 	if (!scn->actions()->getScript()->counter && scn->getSceneIndex() != 13 && sndIdx != 0) {
-		scn->vm()->sound()->playSound(((sndIdx != 0) & 5) + 0x80120001,
+		// FIXME: I really don't understand what (sndIdx != 0) & 5 is supposed to be doing here,
+		// but this is effectively trying to do a boolean AND operation on a boolean variable
+		// which is odd, and wrong. Changing it to (sndIdx & 5), for now
+		//scn->vm()->sound()->playSound(((sndIdx != 0) & 5) + 0x80120001,
+		scn->vm()->sound()->playSound((sndIdx & 5) + 0x80120001,
 		                              false, scn->vm()->soundVolume(), 0);
 	}
 
