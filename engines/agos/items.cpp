@@ -225,7 +225,7 @@ Item *AGOSEngine::actor() {
 	error("actor: is this code ever used?");
 	//if (_actorPlayer)
 	//	return _actorPlayer;
-	return _dummyItem1;
+	//return _dummyItem1;
 }
 
 Item *AGOSEngine::getNextItemPtr() {
@@ -455,7 +455,7 @@ uint AGOSEngine::itemPtrToID(Item *id) {
 		if (_itemArrayPtr[i] == id)
 			return i;
 	error("itemPtrToID: not found");
-	return 0;
+	//return 0;
 }
 
 } // End of namespace AGOS

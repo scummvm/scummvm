@@ -42,7 +42,7 @@ uint AGOSEngine::getWindowNum(WindowBlock *window) {
 			return i;
 
 	error("getWindowNum: not found");
-	return 0;
+	//return 0;
 }
 
 WindowBlock *AGOSEngine::openWindow(uint x, uint y, uint w, uint h, uint flags, uint fillColor, uint textColor) {

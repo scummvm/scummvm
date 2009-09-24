@@ -180,7 +180,7 @@ TextLocation *AGOSEngine::getTextLocation(uint a) {
 	default:
 		error("getTextLocation: Invalid text location %d", a);
 	}
-	return NULL;
+	//return NULL;
 }
 
 void AGOSEngine::allocateStringTable(int num) {

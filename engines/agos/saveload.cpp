@@ -1657,7 +1657,7 @@ int AGOSEngine_PN::saveFile(char *name) {
 		delete f;
 		restartAnimation();
 		error("Couldn't save ");
-		return 0;
+		//return 0;
 	}
 	f->finalize();
 	delete f;
