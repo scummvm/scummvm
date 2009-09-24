@@ -131,17 +131,6 @@ public:
 
 
 	/**
-	 * Retrieves the static palette from the interpreter-specific code.
-	 *
-	 * @param[in] colors_nr	Number of colors to use
-	 * @param[in] num		The palette to read
-	 * @return				Static palette if a static palette must be
-	 * 						used, NULL otherwise
-	 */
-	Palette *getPalette(int *colors_nr, int num = 999);
-
-
-	/**
 	 * Retrieves a font.
 	 *
 	 * @param[in] num		The font number
