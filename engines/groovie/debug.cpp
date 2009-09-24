@@ -30,7 +30,7 @@
 namespace Groovie {
 
 Debugger::Debugger(GroovieEngine *vm) :
-	_vm (vm), _script(&_vm->_script), _syst(_vm->_system) {
+	_vm (vm), _script(_vm->_script), _syst(_vm->_system) {
 
 	// Register the debugger comands
 	DCmd_Register("step", WRAP_METHOD(Debugger, cmd_step));

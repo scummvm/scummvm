@@ -35,7 +35,7 @@
 namespace Groovie {
 
 GroovieEngine::GroovieEngine(OSystem *syst, const GroovieGameDescription *gd) :
-	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(this, gd->version),
+	Engine(syst), _gameDescription(gd), _debugger(NULL), _script(NULL),
 	_resMan(NULL), _grvCursorMan(NULL), _videoPlayer(NULL), _musicPlayer(NULL),
 	_graphicsMan(NULL), _waitingForInput(false) {
 
@@ -66,9 +66,12 @@ GroovieEngine::~GroovieEngine() {
 	delete _videoPlayer;
 	delete _musicPlayer;
 	delete _graphicsMan;
+	delete _script;
 }
 
 Common::Error GroovieEngine::run() {
+	_script = new Script(this, _gameDescription->version);
+
 	// Initialize the graphics
 	switch (_gameDescription->version) {
 	case kGroovieV2:
@@ -87,7 +90,7 @@ Common::Error GroovieEngine::run() {
 
 	// Create debugger. It requires GFX to be initialized
 	_debugger = new Debugger(this);
-	_script.setDebugger(_debugger);
+	_script->setDebugger(_debugger);
 
 	// Create the graphics manager
 	_graphicsMan = new GraphicsMan(this);
@@ -161,7 +164,7 @@ Common::Error GroovieEngine::run() {
 	}
 
 	// Load the script
-	if (!_script.loadScript(filename)) {
+	if (!_script->loadScript(filename)) {
 		error("Couldn't load the script file %s", filename.c_str());
 		return Common::kUnknownError;
 	}
@@ -170,7 +173,7 @@ Common::Error GroovieEngine::run() {
 	if (ConfMan.hasKey("save_slot")) {
 		// Get the requested slot
 		int slot = ConfMan.getInt("save_slot");
-		_script.directGameLoad(slot);
+		_script->directGameLoad(slot);
 	}
 
 	// Check that the game files and the audio tracks aren't together run from
@@ -201,7 +204,7 @@ Common::Error GroovieEngine::run() {
 					_debugger->attach();
 
 				// Send the event to the scripts
-				_script.setKbdChar(ev.kbd.ascii);
+				_script->setKbdChar(ev.kbd.ascii);
 
 				// Continue the script execution to handle the key
 				_waitingForInput = false;
@@ -217,7 +220,7 @@ Common::Error GroovieEngine::run() {
 
 			case Common::EVENT_LBUTTONDOWN:
 				// Send the event to the scripts
-				_script.setMouseClick(1);
+				_script->setMouseClick(1);
 
 				// Continue the script execution to handle
 				// the click
@@ -226,7 +229,7 @@ Common::Error GroovieEngine::run() {
 
 			case Common::EVENT_RBUTTONDOWN:
 				// Send the event to the scripts (to skip the video)
-				_script.setMouseClick(2);
+				_script->setMouseClick(2);
 				break;
 
 			case Common::EVENT_QUIT:
@@ -252,7 +255,7 @@ Common::Error GroovieEngine::run() {
 			// Wait a little bit between increments.  While mouse is moving, this triggers
 			// only negligably slower.
 			if (tmr > 4) {
-				_script.timerTick();
+				_script->timerTick();
 				tmr = 0;
 			}
 
@@ -263,7 +266,7 @@ Common::Error GroovieEngine::run() {
 			_system->delayMillis(30);
 		} else {
 			// Everything's fine, execute another script step
-			_script.step();
+			_script->step();
 		}
 
 		// Update the screen if required
@@ -300,7 +303,7 @@ bool GroovieEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error GroovieEngine::loadGameState(int slot) {
-	_script.directGameLoad(slot);
+	_script->directGameLoad(slot);
 
 	// TODO: Use specific error codes
 	return Common::kNoError;

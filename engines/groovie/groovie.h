@@ -87,7 +87,7 @@ public:
 
 	Graphics::PixelFormat _pixelFormat;
 	bool _mode8bit;
-	Script _script;
+	Script *_script;
 	ResMan *_resMan;
 	GrvCursorMan *_grvCursorMan;
 	VideoPlayer *_videoPlayer;
