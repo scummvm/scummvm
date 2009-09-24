@@ -278,6 +278,7 @@ protected:
 
 };
 
+// FIXME: HACK for MidiEmu & error()
 extern Engine *g_engine;
 
 #endif
