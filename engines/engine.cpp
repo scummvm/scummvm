@@ -314,7 +314,10 @@ void Engine::syncSoundSettings() {
 }
 
 void Engine::flipMute() {
-	bool mute = false;
+	// Mute will be set to true by default here. This has two reasons:
+	// - if the game already has an "mute" config entry, it will be overwritten anyway.
+	// - if it does not have a "mute" config entry, the sound is unmuted currently and should be muted now.
+	bool mute = true;
 
 	if (ConfMan.hasKey("mute")) {
 		mute = !ConfMan.getBool("mute");
