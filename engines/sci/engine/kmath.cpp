@@ -128,7 +128,7 @@ reg_t kCosDiv(EngineState *s, int, int argc, reg_t *argv) {
 	int value = argv[1].toSint16();
 	double cosval = cos(angle * PI / 180.0);
 
-	if ((cosval < 0.0001) && (cosval > 0.0001)) {
+	if ((cosval < 0.0001) && (cosval > -0.0001)) {
 		warning("Attepted division by zero");
 		return make_reg(0, 0);
 	} else
@@ -140,7 +140,7 @@ reg_t kSinDiv(EngineState *s, int, int argc, reg_t *argv) {
 	int value = argv[1].toSint16();
 	double sinval = sin(angle * PI / 180.0);
 
-	if ((sinval < 0.0001) && (sinval > 0.0001)) {
+	if ((sinval < 0.0001) && (sinval > -0.0001)) {
 		warning("Attepted division by zero");
 		return make_reg(0, 0);
 	} else
