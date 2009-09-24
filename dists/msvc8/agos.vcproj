@@ -50,6 +50,7 @@
 		<File RelativePath="..\..\engines\agos\rooms.cpp" />
 		<File RelativePath="..\..\engines\agos\saveload.cpp" />
 		<File RelativePath="..\..\engines\agos\script.cpp" />
+		<File RelativePath="..\..\engines\agos\script_dp.cpp" />
 		<File RelativePath="..\..\engines\agos\script_e1.cpp" />
 		<File RelativePath="..\..\engines\agos\script_e2.cpp" />
 		<File RelativePath="..\..\engines\agos\script_ff.cpp" />

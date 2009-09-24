@@ -18,8 +18,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $$
+ * $$
  *
  */
 
@@ -33,10 +33,10 @@
 
 namespace AGOS {
 
-#define OPCODE(x)	_OPCODE(AGOSEngine_PuzzlePack, x)
+#define OPCODE(x)	_OPCODE(AGOSEngine_DIMP, x)
 
-void AGOSEngine_PuzzlePack::setupOpcodes() {
-	static const OpcodeEntryPuzzlePack opcodes[] = {
+void AGOSEngine_DIMP::setupOpcodes() {
+	static const OpcodeEntryDIMP opcodes[] = {
 		/* 00 */
 		OPCODE(o_invalid),
 		OPCODE(o_at),
@@ -75,17 +75,17 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		/* 28 */
 		OPCODE(o_oflag),
 		OPCODE(o_invalid),
-		OPCODE(opp_iconifyWindow),
+		OPCODE(o_invalid),
 		OPCODE(o_destroy),
 		/* 32 */
-		OPCODE(opp_restoreOopsPosition),
+		OPCODE(o_invalid),
 		OPCODE(o_place),
 		OPCODE(o_invalid),
 		OPCODE(o_invalid),
 		/* 36 */
 		OPCODE(o_copyff),
 		OPCODE(o_invalid),
-		OPCODE(opp_loadMouseImage),
+		OPCODE(o_invalid),
 		OPCODE(o_invalid),
 		/* 40 */
 		OPCODE(o_invalid),
@@ -116,7 +116,7 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_dec),
 		OPCODE(o_setState),
 		OPCODE(o_print),
-		OPCODE(opp_message),
+		OPCODE(o_message),
 		/* 64 */
 		OPCODE(o_msg),
 		OPCODE(off_addTextBox),
@@ -169,8 +169,8 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_cls),
 		/* 104 */
 		OPCODE(o_closeWindow),
-		OPCODE(opp_loadHiScores),
-		OPCODE(opp_checkHiScores),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
 		OPCODE(off_addBox),
 		/* 108 */
 		OPCODE(o_delBox),
@@ -188,10 +188,10 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_invalid),
 		OPCODE(o_waitSync),
 		/* 120 */
-		OPCODE(opp_sync),
+		OPCODE(o_sync),
 		OPCODE(o_defObj),
-		OPCODE(off_oracleTextDown),
-		OPCODE(off_oracleTextUp),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
 		/* 124 */
 		OPCODE(off_ifTime),
 		OPCODE(o_here),
@@ -203,8 +203,8 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_setAdjNoun),
 		OPCODE(off_setTime),
 		/* 132 */
-		OPCODE(opp_saveUserGame),
-		OPCODE(opp_loadUserGame),
+		OPCODE(odp_saveUserGame),
+		OPCODE(odp_loadUserGame),
 		OPCODE(off_listSaveGames),
 		OPCODE(o_invalid),
 		/* 136 */
@@ -251,10 +251,10 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(o_invalid),
 		OPCODE(o_invalid),
 		OPCODE(o_invalid),
-		OPCODE(off_hyperLinkOn),
+		OPCODE(o_invalid),
 		/* 172 */
-		OPCODE(off_hyperLinkOff),
-		OPCODE(opp_saveOopsPosition),
+		OPCODE(o_invalid),
+		OPCODE(o_invalid),
 		OPCODE(o_invalid),
 		OPCODE(oww_lockZones),
 		/* 176 */
@@ -271,7 +271,7 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(os1_unloadZone),
 		OPCODE(o_invalid),
 		OPCODE(os1_unfreezeZones),
-		OPCODE(opp_resetGameTime),
+		OPCODE(off_centreScroll),
 		/* 188 */
 		OPCODE(os2_isShortText),
 		OPCODE(os2_clearMarks),
@@ -279,180 +279,33 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(opp_resetPVCount),
 		/* 192 */
 		OPCODE(opp_setPathValues),
+		OPCODE(off_stopClock),
 		OPCODE(off_restartClock),
-		OPCODE(opp_pauseClock),
 		OPCODE(off_setColour),
 	};
 
-	_opcodesPuzzlePack = opcodes;
+	_opcodesDIMP = opcodes;
 	_numOpcodes = 196;
 }
 
-void AGOSEngine_PuzzlePack::executeOpcode(int opcode) {
-	OpcodeProcPuzzlePack op = _opcodesPuzzlePack[opcode].proc;
+void AGOSEngine_DIMP::executeOpcode(int opcode) {
+	OpcodeProcDIMP op = _opcodesDIMP[opcode].proc;
 	(this->*op) ();
 }
 
 // -----------------------------------------------------------------------
-// Puzzle Pack Opcodes
+// DIMP Opcodes
 // -----------------------------------------------------------------------
 
-void AGOSEngine_PuzzlePack::opp_iconifyWindow() {
-	// 30
-	getNextWord();
-	if (_clockStopped != 0)
-		_gameTime += getTime() - _clockStopped;
-	_clockStopped = 0;
-	_system->setFeatureState(OSystem::kFeatureIconifyWindow, true);
-}
 
-void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
-	// 32: restore oops position
-	uint i;
-
-	getNextWord();
-	getNextWord();
-
-	if (_oopsValid) {
-		for (i = 0; i < _numVars; i++) {
-			_variableArray[i] = _variableArray2[i];
-		}
-		i = _variableArray[999] * 100 + 11;
-		setWindowImage(4,i);
-		_gameTime += 10;
-		// Swampy adventures
-		if (!getBitFlag(110))
-			_gameTime += 20;
-		_oopsValid = false;
-	}
-}
-
-void AGOSEngine_PuzzlePack::opp_loadMouseImage() {
-	// 38: load mouse image
-	getNextWord();
-	getVarOrByte();
-	loadMouseImage();
-}
-
-void AGOSEngine_PuzzlePack::opp_message() {
-	// 63: show string nl
-
-	if (getBitFlag(105)) {
-		// Swampy adventures
-		getStringPtrByID(getNextStringID());
-//		printInfoText(getStringPtrByID(getNextStringID()));
-	} else {
-		showMessageFormat("%s\n", getStringPtrByID(getNextStringID()));
-	}
-}
-
-void AGOSEngine_PuzzlePack::opp_setShortText() {
-	// 66: set item name
-	uint var = getVarOrByte();
-	uint stringId = getNextStringID();
-	if (var < _numTextBoxes) {
-		_shortText[var] = stringId;
-		_shortTextX[var] = getVarOrWord();
-		_shortTextY[var] = getVarOrWord();
-	}
-}
-
-void AGOSEngine_PuzzlePack::opp_loadHiScores() {
-	// 105: load high scores
-	getVarOrByte();
-	//loadHiScores();
-}
-
-void AGOSEngine_PuzzlePack::opp_checkHiScores() {
-	// 106: check high scores
-	getVarOrByte();
-	getVarOrByte();
-	//checkHiScores();
-}
-
-void AGOSEngine_PuzzlePack::opp_sync() {
-	// 120: sync
-	uint a = getVarOrWord();
-	if (a == 8001 || a == 8101 || a == 8201 || a == 8301 || a == 8401) {
-		_marks &= ~(1 << 2);
-	}
-	sendSync(a);
-}
-
-void AGOSEngine_PuzzlePack::opp_saveUserGame() {
+void AGOSEngine_DIMP::odp_saveUserGame() {
 	// 132: save game
-	if (_clockStopped != 0)
-		_gameTime += getTime() - _clockStopped;
-	_clockStopped = 0;
-
-	if (!getBitFlag(110)) {
-		// Swampy adventures
-		saveGame(1, NULL);
-	}
-	//saveHiScores()
+	saveGame(1, NULL);
 }
 
-void AGOSEngine_PuzzlePack::opp_loadUserGame() {
+void AGOSEngine_DIMP::odp_loadUserGame() {
 	// 133: load usergame
-
-	// NoPatience or Jumble
-	if (getBitFlag(110)) {
-		//getHiScoreName();
-		return;
-	}
-
-	// XXX
 	loadGame(genSaveName(1));
-}
-
-void AGOSEngine_PuzzlePack::opp_playTune() {
-	// 162: play tune
-	getVarOrByte();
-	getVarOrByte();
-	getNextWord();
-
-	uint16 music = (uint16)getVarOrWord();
-	if (music != _lastMusicPlayed) {
-		_lastMusicPlayed = music;
-		playSpeech(music, 1);
-	}
-}
-
-void AGOSEngine_PuzzlePack::opp_saveOopsPosition() {
-	// 173: save oops position
-	if (!isVgaQueueEmpty()) {
-		_oopsValid = true;
-		for (uint i = 0; i < _numVars; i++) {
-			_variableArray2[i] = _variableArray[i];
-		}
-	} else {
-		_oopsValid = false;
-	}
-}
-
-void AGOSEngine_PuzzlePack::opp_resetGameTime() {
-	// 187: reset game time
-	_gameTime = 0;
-}
-
-void AGOSEngine_PuzzlePack::opp_resetPVCount() {
-	// 191
-	_PVCount = 0;
-	_GPVCount = 0;
-}
-
-void AGOSEngine_PuzzlePack::opp_setPathValues() {
-	// 192
-	_pathValues[_PVCount++] = getVarOrByte();
-	_pathValues[_PVCount++] = getVarOrByte();
-	_pathValues[_PVCount++] = getVarOrByte();
-	_pathValues[_PVCount++] = getVarOrByte();
-}
-
-void AGOSEngine_PuzzlePack::opp_pauseClock() {
-	// 194: pause clock
-	if (_clockStopped == 0)
-		_clockStopped = getTime();
 }
 
 } // End of namespace AGOS

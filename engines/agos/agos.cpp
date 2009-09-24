@@ -60,18 +60,22 @@ static const GameSpecificSettings puzzlepack_settings = {
 };
 
 #ifdef ENABLE_AGOS2
+AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system)
+	: AGOSEngine_PuzzlePack(system) {
+
+	_iconToggleCount = 0;
+	_voiceCount = 0;
+
+	_lastTickCount = 0;
+	_startSecondCount = 0;
+	_tSecondCount = 0;
+}
+
 AGOSEngine_PuzzlePack::AGOSEngine_PuzzlePack(OSystem *system)
 	: AGOSEngine_Feeble(system) {
 
 	_oopsValid = false;
-	_iconToggleCount = 0;
-	_voiceCount = 0;
-
 	_gameTime = 0;
-	_lastTickCount = 0;
-	_thisTickCount = 0;
-	_startSecondCount = 0;
-	_tSecondCount = 0;
 }
 #endif
 
