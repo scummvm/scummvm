@@ -144,7 +144,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 	if (!inFile && !outFile) { // Failed
 		debug(3, "file_open() failed");
-		s->r_acc = make_reg(0, 0xffff);
+		s->r_acc = make_reg(0, -1);
 		return;
 	}
 

@@ -622,7 +622,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
-			PUT_SEL32V(obj, signal, 0xffff);
+			PUT_SEL32V(obj, signal, -1);
 			break;
 
 		case SI_LOOP:
@@ -976,7 +976,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			break;
 
 		case SI_FINISHED:
-			PUT_SEL32V(obj, signal, 0xffff);
+			PUT_SEL32V(obj, signal, -1);
 			break;
 
 		case SI_LOOP:
