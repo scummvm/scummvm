@@ -918,8 +918,7 @@ const uint8 colorBCG[16][2] = {
 
 void Mickey::drawLogo() {
 	// TODO: clean this up and make it work properly, the logo is drawn way off to the right
-	return;	// remove this once the code below is done
-
+#if 0
 	char szFile[256] = {0};
 	uint8 *buffer = new uint8[16384];
 	const int w = 150;
@@ -964,6 +963,7 @@ void Mickey::drawLogo() {
 	_vm->_picture->showPic(10, 10, w, h);
 
 	delete[] buffer;
+#endif
 }
 
 void Mickey::animate() {
