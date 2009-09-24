@@ -285,6 +285,16 @@ void Palette::forceInto(Palette *parent) {
 				_parent->_colors[i].refcount = 1;
 		} else {
 			_parent->_colors[i].refcount = 0;
+			// Force all unused colours to index 0
+			_colors[i].parent_index = 0;
+			if (_parent->_colors[0].refcount != PALENTRY_LOCKED) {
+				if (i == 0)
+					_parent->_colors[0].refcount = 1;
+				else
+					_parent->_colors[0].refcount++;
+			}
+			if (_colors[i].r || _colors[i].g || _colors[i].b)
+				warning("Non-black unused colour in pic: index %d, %02X %02X %02X", i, _colors[i].r, _colors[i].g, _colors[i].b);
 		}
 	}
 	_parent->_dirty = true;
