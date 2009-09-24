@@ -908,12 +908,10 @@ void Towns_EuphonyParser::parseNextEvent(EventInfo &info) {
 			info.ext.data = pos;
 			loop = false;
 		} else {
-			error("Unknown Euphony music event 0x%02X", (int)cmd);
-#if 0
+			warning("Unknown Euphony music event 0x%02X", (int)cmd);
 			memset(&info, 0, sizeof(info));
 			pos = 0;
 			loop = false;
-#endif
 		}
 	}
 	_position._play_pos = pos;
