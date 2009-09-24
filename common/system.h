@@ -375,8 +375,6 @@ public:
 	 *
 	 * @note Backends supporting RGB color should accept game data in RGB color 
 	 *       order, even if hardware uses BGR or some other color order.
-	 *
-	 * @see convertScreenRect
 	 */
 	virtual Common::List<Graphics::PixelFormat> getSupportedFormats() = 0;
 #else
@@ -411,7 +409,7 @@ public:
 	 * This is the pixel format for which the client code generates data;
 	 * this is not necessarily equal to the hardware pixel format. For example,
 	 * a backend may perform color lookup of 8-bit graphics before pushing
-	 * a screen to hardware, or correct the ARGB color order via convertScreenRect.
+	 * a screen to hardware, or correct the ARGB color order.
 	 *
 	 * @param width		the new virtual screen width
 	 * @param height	the new virtual screen height
