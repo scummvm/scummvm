@@ -38,8 +38,8 @@ char currentBaseName[15] = "";
 void loadPal(volumeDataStruct *entry) {
 	char name[20];
 
-	// This code isn't currently being used, so return
-	return;
+	// This code isn't currently being used
+#if 0
 
 	if (PAL_file.isOpen())
 		PAL_file.close();
@@ -54,6 +54,7 @@ void loadPal(volumeDataStruct *entry) {
 	fileData2 = PAL_file.readSint16BE();
 
 	PAL_ptr = (uint8 *)malloc(numLoadedPal * fileData2);
+#endif
 }
 
 void closePal(void) {

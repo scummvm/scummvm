@@ -171,7 +171,7 @@ int createResFileEntry(int width, int height, int size, int resType) {
 	int entryNumber;
 	int div = 0;
 
-	error("Executing untested createResFileEntry");
+	warning("Executing untested createResFileEntry");
 
 	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!filesDatabase[i].subData.ptr)

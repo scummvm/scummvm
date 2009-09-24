@@ -97,15 +97,13 @@ int32 opcodeType0(void) {
 		if (size == 1) {
 			address += index;
 			pushVar((int16)READ_BE_UINT16(address));
-			return (0);
+			return 0;
 		} else if (size == 2) {
 			pushVar(*address);
-			return (0);
+			return 0;
 		} else {
 			error("Unsupported code in opcodeType0 case 1");
 		}
-
-		return (0);
 	}
 	case 2: {
 		int16 var_16;
@@ -122,15 +120,11 @@ int32 opcodeType0(void) {
 		}
 
 		pushVar(var_16);
-		return (0);
-
-		break;
+		return 0;
 	}
 	default:
 		error("Unsupported type %d in opcodeType0", currentScriptOpcodeType);
 	}
-
-	return 0;
 }
 
 // save opcode
