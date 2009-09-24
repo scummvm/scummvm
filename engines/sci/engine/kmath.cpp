@@ -130,7 +130,7 @@ reg_t kCosDiv(EngineState *s, int, int argc, reg_t *argv) {
 
 	if ((cosval < 0.0001) && (cosval > 0.0001)) {
 		warning("Attepted division by zero");
-		return make_reg(0, (int16)0x8000);
+		return make_reg(0, 0);
 	} else
 		return make_reg(0, (int16)(value / cosval));
 }
@@ -142,7 +142,7 @@ reg_t kSinDiv(EngineState *s, int, int argc, reg_t *argv) {
 
 	if ((sinval < 0.0001) && (sinval > 0.0001)) {
 		warning("Attepted division by zero");
-		return make_reg(0, (int16)0x8000);
+		return make_reg(0, 0);
 	} else
 		return make_reg(0, (int16)(value / sinval));
 }
@@ -154,7 +154,7 @@ reg_t kTimesTan(EngineState *s, int, int argc, reg_t *argv) {
 	param -= 90;
 	if ((param % 90) == 0) {
 		warning("Attempted tan(pi/2)");
-		return make_reg(0, (int16)0x8000);
+		return make_reg(0, 0);
 	} else
 		return make_reg(0, (int16) - (tan(param * PI / 180.0) * scale));
 }
@@ -165,7 +165,7 @@ reg_t kTimesCot(EngineState *s, int, int argc, reg_t *argv) {
 
 	if ((param % 90) == 0) {
 		warning("Attempted tan(pi/2)");
-		return make_reg(0, (int16)0x8000);
+		return make_reg(0, 0);
 	} else
 		return make_reg(0, (int16)(tan(param * PI / 180.0) * scale));
 }
