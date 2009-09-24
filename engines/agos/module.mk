@@ -53,6 +53,7 @@ MODULE_OBJS += \
 	animation.o \
 	feeble.o \
 	oracle.o \
+	script_dp.o \
 	script_ff.o \
 	script_pp.o \
 	vga_ff.o

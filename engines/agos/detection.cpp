@@ -170,7 +170,10 @@ bool AgosMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGame
 			*engine = new AGOS::AGOSEngine_Feeble(syst);
 		break;
 	case AGOS::GType_PP:
-		*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
+		if (gd->gameId == GID_DIMP)
+			*engine = new AGOS::AGOSEngine_DIMP(syst);
+		else
+			*engine = new AGOS::AGOSEngine_PuzzlePack(syst);
 		break;
 #endif
 	default:

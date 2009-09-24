@@ -552,7 +552,7 @@ void AGOSEngine::delay(uint amount) {
 }
 
 #ifdef ENABLE_AGOS2
-void AGOSEngine_PuzzlePack::timerProc() {
+void AGOSEngine_DIMP::timerProc() {
 	_lastTickCount = _system->getMillis();
 
 	AGOSEngine_Feeble::timerProc();
@@ -680,7 +680,7 @@ void AGOSEngine::timerProc() {
 }
 
 #ifdef ENABLE_AGOS2
-void AGOSEngine_PuzzlePack::dimpIdle() {
+void AGOSEngine_DIMP::dimpIdle() {
 	int z, n;
 
 	_iconToggleCount++;

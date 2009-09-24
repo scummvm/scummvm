@@ -2072,10 +2072,7 @@ protected:
 	const OpcodeEntryPuzzlePack *_opcodesPuzzlePack;
 
 	bool _oopsValid;
-	int16 _iconToggleCount, _voiceCount;
 	uint32 _gameTime;
-	uint32 _lastTickCount, _thisTickCount;
-	uint32 _startSecondCount, _tSecondCount;
 
 	virtual void initMouse();
 	virtual void handleMouseMoved();
@@ -2085,13 +2082,40 @@ protected:
 
 	void loadMouseImage();
 
-	void dimpIdle();
-	virtual void timerProc();
-
 	void startOverlayAnims();
 	void startAnOverlayAnim();
 
 	virtual char *genSaveName(int slot);
+};
+
+class AGOSEngine_DIMP : public AGOSEngine_PuzzlePack {
+public:
+	AGOSEngine_DIMP(OSystem *system);
+	//~AGOSEngine_DIMP();
+
+	virtual void setupOpcodes();
+
+	virtual void executeOpcode(int opcode);
+
+protected:
+	typedef void (AGOSEngine_DIMP::*OpcodeProcDIMP) ();
+	struct OpcodeEntryDIMP {
+		OpcodeProcDIMP proc;
+		const char *desc;
+	};
+
+	const OpcodeEntryDIMP *_opcodesDIMP;
+
+	int16 _iconToggleCount, _voiceCount;
+	uint32 _lastTickCount;
+	uint32 _startSecondCount, _tSecondCount;
+
+	void odp_saveUserGame();
+	void odp_loadUserGame();
+
+	void dimpIdle();
+	virtual void timerProc();
+
 };
 #endif
 
