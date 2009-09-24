@@ -778,7 +778,7 @@ int Actor::getFrameType(ActorFrameTypes frameType) {
 		case kFramePickUp:
 		case kFrameLook:
 			error("Actor::getFrameType() unknown frame type %d", frameType);
-			return kFrameIHNMStand;
+			//return kFrameIHNMStand;
 		}
 #endif
 	}

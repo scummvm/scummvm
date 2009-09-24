@@ -338,7 +338,7 @@ const GameDisplayInfo &SagaEngine::getDisplayInfo() {
 #endif
 		default:
 			error("getDisplayInfo: Unknown game ID");
-			return ITE_DisplayInfo;		// unreachable
+			//return ITE_DisplayInfo;		// unreachable
 	}
 }
 

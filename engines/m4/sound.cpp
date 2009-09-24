@@ -61,7 +61,7 @@ SndHandle *Sound::getHandle() {
 
 	error("Sound::getHandle(): Too many sound handles");
 
-	return NULL;
+	//return NULL;
 }
 
 bool Sound::isHandleActive(SndHandle *handle) {

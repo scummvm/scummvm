@@ -628,12 +628,16 @@ private:
 			break;
 		case 0x50504C53: /* PPLS */
 			error("PPLS crunched files are not supported");
+#if 0
 			eff = 8;
 			break;
+#endif
 		case 0x50583230: /* PX20 */
 			error("PX20 crunched files are not supported");
+#if 0
 			eff = 6;
 			break;
+#endif
 		default:
 			eff = 0;
 

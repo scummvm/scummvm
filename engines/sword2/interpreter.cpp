@@ -325,7 +325,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 
 	if (READ_LE_UINT32(checksumBlock) != 12345678) {
 		error("Invalid script in object %s", header.name);
-		return 0;
+		//return 0;
 	}
 
 	int32 codeLen = READ_LE_UINT32(checksumBlock + 4);
@@ -754,7 +754,7 @@ int Logic::runScript2(byte *scriptData, byte *objectData, byte *offsetPtr) {
 			break;
 		default:
 			error("Invalid script command %d", curCommand);
-			return 3;
+			//return 3;
 		}
 	}
 
