@@ -69,7 +69,7 @@ typedef int Selector;
 
 #define PRINT_STK(v) (unsigned) (v - s->stack_base)
 
-static inline reg_t make_reg(int segment, int offset) {
+static inline reg_t make_reg(SegmentId segment, int16 offset) {
 	reg_t r;
 	r.offset = offset;
 	r.segment = segment;
