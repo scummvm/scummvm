@@ -279,8 +279,8 @@ void AGOSEngine_PuzzlePack::setupOpcodes() {
 		OPCODE(opp_resetPVCount),
 		/* 192 */
 		OPCODE(opp_setPathValues),
-		OPCODE(off_stopClock),
-		OPCODE(opp_restartClock),
+		OPCODE(off_restartClock),
+		OPCODE(opp_pauseClock),
 		OPCODE(off_setColour),
 	};
 
@@ -311,6 +311,7 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 	uint i;
 
 	getNextWord();
+	getNextWord();
 
 	if (_oopsValid) {
 		for (i = 0; i < _numVars; i++) {
@@ -318,12 +319,10 @@ void AGOSEngine_PuzzlePack::opp_restoreOopsPosition() {
 		}
 		i = _variableArray[999] * 100 + 11;
 		setWindowImage(4,i);
-		if (getBitFlag(110)) {
-			_gameTime += 10;
-		} else {
-			// Swampy adventures
-			_gameTime += 30;
-		}
+		_gameTime += 10;
+		// Swampy adventures
+		if (!getBitFlag(110))
+			_gameTime += 20;
 		_oopsValid = false;
 	}
 }
@@ -361,12 +360,14 @@ void AGOSEngine_PuzzlePack::opp_setShortText() {
 void AGOSEngine_PuzzlePack::opp_loadHiScores() {
 	// 105: load high scores
 	getVarOrByte();
+	//loadHiScores();
 }
 
 void AGOSEngine_PuzzlePack::opp_checkHiScores() {
 	// 106: check high scores
 	getVarOrByte();
 	getVarOrByte();
+	//checkHiScores();
 }
 
 void AGOSEngine_PuzzlePack::opp_sync() {
@@ -390,7 +391,6 @@ void AGOSEngine_PuzzlePack::opp_saveUserGame() {
 		// Swampy adventures
 		saveGame(1, NULL);
 	}
-
 	//saveHiScores()
 }
 
@@ -451,11 +451,10 @@ void AGOSEngine_PuzzlePack::opp_setPathValues() {
 	_pathValues[_PVCount++] = getVarOrByte();
 }
 
-void AGOSEngine_PuzzlePack::opp_restartClock() {
-	// 194: resume clock
-	if (_clockStopped != 0)
-		_gameTime += getTime() - _clockStopped;
-	_clockStopped = 0;
+void AGOSEngine_PuzzlePack::opp_pauseClock() {
+	// 194: pause clock
+	if (_clockStopped == 0)
+		_clockStopped = getTime();
 }
 
 } // End of namespace AGOS

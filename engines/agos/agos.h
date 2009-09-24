@@ -2058,7 +2058,7 @@ public:
 	void opp_resetGameTime();
 	void opp_resetPVCount();
 	void opp_setPathValues();
-	void opp_restartClock();
+	void opp_pauseClock();
 
 protected:
 	typedef void (AGOSEngine_PuzzlePack::*OpcodeProcPuzzlePack) ();
