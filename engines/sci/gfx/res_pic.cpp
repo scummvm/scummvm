@@ -108,19 +108,18 @@ void gfxr_init_static_palette() {
 	if (!gfx_sci0_pic_colors) {
 		gfx_sci0_pic_colors = new Palette(256);
 		gfx_sci0_pic_colors->name = "gfx_sci0_pic_colors";
-		// TODO: Discover the exact purpose of gfx_sci0_pic_colors
-		// For now, we set the first 16 colours to the standard EGA palette,
-		// and fill the remaining entries with slight variations
-		for (i = 0; i < 16; i++) {
-			gfx_sci0_pic_colors->setColor(i, gfx_sci0_image_colors[0][i].r, gfx_sci0_image_colors[0][i].g, gfx_sci0_image_colors[0][i].b);
-		}
-		for (i = 16; i < 256; i++) {
+
+		// This 256 colour palette is used for the kDitherNone and kDither256Colors
+		// modes. We set index 0xXY to a blend of EGA colors X^Y and Y. We permute them
+		// in this somewhat strange way to ensure the regular EGA colours are at
+		// indices 0-15.
+		for (i = 0; i < 256; i++) {
 			byte r = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].r,
-			                  gfx_sci0_image_colors[sci0_palette][i >> 4].r);
+			                  gfx_sci0_image_colors[sci0_palette][(i >> 4) ^ (i & 0xf)].r);
 			byte g = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].g,
-			                  gfx_sci0_image_colors[sci0_palette][i >> 4].g);
+			                  gfx_sci0_image_colors[sci0_palette][(i >> 4) ^ (i & 0xf)].g);
 			byte b = INTERCOL(gfx_sci0_image_colors[sci0_palette][i & 0xf].b,
-			                  gfx_sci0_image_colors[sci0_palette][i >> 4].b);
+			                  gfx_sci0_image_colors[sci0_palette][(i >> 4) ^ (i & 0xf)].b);
 			gfx_sci0_pic_colors->setColor(i,r,g,b);
 		}
 		//warning("Uncomment me after fixing sci0_palette changes to reset me");
@@ -1625,9 +1624,6 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode dmode) {
 	int x, y;
 	byte *data = pic->visual_map->index_data;
 
-	if (dmode == kDitherNone)
-		return; // Nothing to do
-
 	if (dmode == kDither16Colors)
 		pic->visual_map->palette = gfx_sci0_image_pal[sci0_palette]->getref();
 
@@ -1647,9 +1643,19 @@ void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode dmode) {
 					*data = ((*data & 0xf) << 4) | ((*data & 0xf0) >> 4);
 				break;
 
+			case kDitherNone:
+				break;
+
 			default:
 				error("Invalid dither mode %d", dmode);
 				return;
+			}
+
+			if (dmode != kDither16Colors) {
+				// We permuted the 256 palette indices this way
+				// to make sure the first 16 colours in the palette
+				// are the regular EGA colours.
+				*data ^= *data << 4;
 			}
 
 			++data;
