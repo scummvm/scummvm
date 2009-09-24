@@ -28,6 +28,8 @@
 		<File RelativePath="..\..\engines\asylum\blowuppuzzle.h" />
 		<File RelativePath="..\..\engines\asylum\console.cpp" />
 		<File RelativePath="..\..\engines\asylum\console.h" />
+		<File RelativePath="..\..\engines\asylum\cursor.cpp" />
+		<File RelativePath="..\..\engines\asylum\cursor.h" />		
 		<File RelativePath="..\..\engines\asylum\detection.cpp" />
 		<File RelativePath="..\..\engines\asylum\encounters.cpp" />
 		<File RelativePath="..\..\engines\asylum\encounters.h" />
