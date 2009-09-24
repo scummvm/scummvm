@@ -167,11 +167,12 @@ int updateResFileEntry(int height, int width, int size, int entryNumber, int res
 }
 
 int createResFileEntry(int width, int height, int size, int resType) {
+	error("Executing untested createResFileEntry");
+
+#if 0
 	int i;
 	int entryNumber;
 	int div = 0;
-
-	warning("Executing untested createResFileEntry");
 
 	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!filesDatabase[i].subData.ptr)
@@ -206,6 +207,7 @@ int createResFileEntry(int width, int height, int size, int resType) {
 	filesDatabase[entryNumber].subData.index = -1;
 
 	return entryNumber;
+#endif
 }
 
 fileTypeEnum getFileType(const char *name) {
