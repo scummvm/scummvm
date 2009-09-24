@@ -361,6 +361,10 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	if (!strcmp(s_fallbackDesc.desc.gameid, "qfg1") && !Common::File::exists("resource.001"))
 		s_fallbackDesc.desc.extra = "VGA Remake";
 
+	// Add "demo" to the description for demos
+	if (s_fallbackDesc.desc.flags & ADGF_DEMO)
+		s_fallbackDesc.desc.extra = "demo";
+
 	SearchMan.remove("SCI_detection");
 
 	return (const ADGameDescription *)&s_fallbackDesc;
