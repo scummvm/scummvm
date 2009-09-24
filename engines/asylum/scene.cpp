@@ -719,7 +719,9 @@ void Scene::updateAmbientSounds() {
 					break;
 				}
 			} else {
-				if (_vm->isGameFlagSet(-gameFlag)) {
+				// FIXME: Applying the minus operator to an unsigned type results
+				// in an unsigned type again. Casting gameFlag to int for now
+				if (_vm->isGameFlagSet(-(int)gameFlag)) {
 					// XXX Looks like this just jumps back to
 					// the top of the loop, so not sure if this
 					// is somehow important
@@ -739,7 +741,9 @@ void Scene::updateAmbientSounds() {
 				}
 
 				if (snd->field_0 == 0) {
-					volume = -(snd->field_C ^ 2);
+					// FIXME: Applying the minus operator to an unsigned type results
+					// in an unsigned type again. Casting gameFlag to int32 for now
+					volume = -(int32)(snd->field_C ^ 2);
 				} else {
 					; // TODO calculate volume increase
 				}
