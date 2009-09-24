@@ -387,7 +387,7 @@ void AGOSEngine::centreScroll() {
 // Puzzle Pack specific code
 
 void AGOSEngine_PuzzlePack::vc3_loadSprite() {
-	if (getBitFlag(100)) {
+	if (getGameId() != GID_DIMP && getBitFlag(100)) {
 		startAnOverlayAnim();
 		return;
 	}
@@ -397,6 +397,11 @@ void AGOSEngine_PuzzlePack::vc3_loadSprite() {
 
 void AGOSEngine_PuzzlePack::vc63_fastFadeIn() {
 	_fastFadeInFlag = 256;
+	_fastFadeOutFlag = false;
+
+	if (getGameId() == GID_DIMP)
+		return;
+
 	if (getBitFlag(100)) {
 		startOverlayAnims();
 	} else if (getBitFlag(103)) {
@@ -404,7 +409,6 @@ void AGOSEngine_PuzzlePack::vc63_fastFadeIn() {
 	} else if (getBitFlag(104)) {
 		printf("HiScoreTable\n");
 	}
-	_fastFadeOutFlag = false;
 }
 
 void AGOSEngine_PuzzlePack::startOverlayAnims() {

@@ -556,8 +556,7 @@ void AGOSEngine_DIMP::timerProc() {
 	_lastTickCount = _system->getMillis();
 
 	AGOSEngine_Feeble::timerProc();
-	if (getGameId() == GID_DIMP)
-		dimpIdle();
+	dimpIdle();
 }
 
 void AGOSEngine_Feeble::timerProc() {
