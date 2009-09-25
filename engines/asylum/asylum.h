@@ -39,11 +39,16 @@
 
 namespace Asylum {
 
+// XXX
+// If defined, this will play the scene title loading
+// progress before the scene is entered. This is
+// just a convenience, as there's no need for the type
+// of pre-loading that was performed in the original
 #define SHOW_SCENE_LOADING
 
 // XXX
 // I'm not sure if system endian-ness would have any
-// effect byte order of the data files, but I guess
+// effect on the byte order of the data files, but I guess
 // it won't hurt to keep this here until we can test
 // on a big-endian system
 #ifndef SCUMM_BIG_ENDIAN
@@ -62,15 +67,15 @@ class Video;
 class Encounter;
 
 enum kDebugLevels {
-	kDebugLevelMain =	   1 << 0,
+	kDebugLevelMain      = 1 << 0,
 	kDebugLevelResources = 1 << 1,
-	kDebugLevelSprites =   1 << 2,
-	kDebugLevelInput =	   1 << 3,
-	kDebugLevelMenu =	   1 << 4,
-	kDebugLevelScripts =   1 << 5,
-	kDebugLevelSound =	   1 << 6,
-	kDebugLevelSavegame =  1 << 7,
-	kDebugLevelScene =     1 << 8
+	kDebugLevelSprites   = 1 << 2,
+	kDebugLevelInput     = 1 << 3,
+	kDebugLevelMenu      = 1 << 4,
+	kDebugLevelScripts   = 1 << 5,
+	kDebugLevelSound     = 1 << 6,
+	kDebugLevelSavegame  = 1 << 7,
+	kDebugLevelScene     = 1 << 8
 };
 
 class AsylumEngine: public Engine {
@@ -121,7 +126,7 @@ private:
 	void processDelayedEvents();
 	void playIntro();
 
-	Common::Language	 _language;
+	Common::Language     _language;
 	Common::RandomSource _rnd;
 
 	int _ambientVolume;

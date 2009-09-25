@@ -55,6 +55,7 @@ void Actor::visible(bool value) {
 		flags |= 0x01;
 	else
 		flags &= 0xFFFFFFFE;
+		// TODO object_sound_sub_414c30
 }
 
 void Actor::setDirection(int dir) {
