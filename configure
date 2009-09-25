@@ -1516,6 +1516,10 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
+			DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_endian=little
 			_need_memalign=yes
