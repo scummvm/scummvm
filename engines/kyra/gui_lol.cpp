@@ -117,7 +117,7 @@ void LoLEngine::gui_drawScroll() {
 	if (h) {
 		_screen->copyRegion(201, 1, 17, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(208, 1, 89, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
-		_screen->fillRect(21, 15, 89, h + 15, 206);
+		_screen->fillRect(21, 15, 89, h + 15, _flags.use16ColorMode ? 0xbb : 206);
 	}
 
 	_screen->copyRegion(112, 16, 12, h + 15, 87, 14, 2, 2, Screen::CR_NO_P_CHECK);
@@ -126,7 +126,7 @@ void LoLEngine::gui_drawScroll() {
 	for (int i = 0; i < 7; i++) {
 		if (_availableSpells[i] == -1)
 			continue;
-		uint8 col = (i == _selectedSpell) ? 132 : 1;
+		uint8 col = (i == _selectedSpell) ? (_flags.use16ColorMode ? 0x88 : 132) : (_flags.use16ColorMode ? 0x44 : 1);
 		_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[i]].spellNameCode));
 		y += 9;
 	}
@@ -137,7 +137,7 @@ void LoLEngine::gui_highlightSelectedSpell(bool mode) {
 	for (int i = 0; i < 7; i++) {
 		if (_availableSpells[i] == -1)
 			continue;
-		uint8 col = (mode && (i == _selectedSpell)) ? 132 : 1;
+		uint8 col = (mode && (i == _selectedSpell)) ? (_flags.use16ColorMode ? 0x88 : 132) : (_flags.use16ColorMode ? 0x44 : 1);
 		_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[i]].spellNameCode));
 		y += 9;
 	}
@@ -359,11 +359,17 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 	gui_drawBox(0, 0, 66, 34, 1, 1, -1);
 	gui_drawCharFaceShape(charNum, 0, 1, _screen->_curPage);
 
-	gui_drawLiveMagicBar(33, 32, _characters[charNum].magicPointsCur, 0, _characters[charNum].magicPointsMax, 5, 32, 162, 1, 0);
-	gui_drawLiveMagicBar(39, 32, _characters[charNum].hitPointsCur, 0, _characters[charNum].hitPointsMax, 5, 32, 154, 1, 1);
-
-	_screen->printText(getLangString(0x4253), 33, 1, 160, 0);
-	_screen->printText(getLangString(0x4254), 39, 1, 152, 0);
+	if (_flags.use16ColorMode) {
+		gui_drawLiveMagicBar(33, 32, _characters[charNum].magicPointsCur, 0, _characters[charNum].magicPointsMax, 5, 32, 0xaa, 0x44, 0);
+		gui_drawLiveMagicBar(39, 32, _characters[charNum].hitPointsCur, 0, _characters[charNum].hitPointsMax, 5, 32, 0x66, 0x44, 1);
+		_screen->printText(getLangString(0x4253), 33, 1, 0x99, 0);
+		_screen->printText(getLangString(0x4254), 39, 1, 0x55, 0);
+	} else {
+		gui_drawLiveMagicBar(33, 32, _characters[charNum].magicPointsCur, 0, _characters[charNum].magicPointsMax, 5, 32, 162, 1, 0);
+		gui_drawLiveMagicBar(39, 32, _characters[charNum].hitPointsCur, 0, _characters[charNum].hitPointsMax, 5, 32, 154, 1, 1);
+		_screen->printText(getLangString(0x4253), 33, 1, 160, 0);
+		_screen->printText(getLangString(0x4254), 39, 1, 152, 0);
+	}
 
 	int spellLevels = 0;
 	if (_availableSpells[_selectedSpell] != -1) {
@@ -410,10 +416,10 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 
 	if (_characters[charNum].weaponHit) {
 		_screen->drawShape(_screen->_curPage, _gameShapes[_flags.isTalkie ? 34 : 32], 44, 0, 0, 0);
-		_screen->fprintString("%d", 57, 7, 254, 0, 1, _characters[charNum].weaponHit);
+		_screen->fprintString("%d", 57, 7, _flags.use16ColorMode ? 0x33 : 254, 0, 1, _characters[charNum].weaponHit);
 	}
 	if (_characters[charNum].damageSuffered)
-		_screen->fprintString("%d", 17, 28, 254, 0, 1, _characters[charNum].damageSuffered);
+		_screen->fprintString("%d", 17, 28, _flags.use16ColorMode ? 0x33 : 254, 0, 1, _characters[charNum].damageSuffered);
 
 	uint8 col = (charNum != _selectedCharacter || countActiveCharacters() == 1) ? 1 : 212;
 	_screen->drawBox(0, 0, 65, 33, col);
@@ -535,11 +541,11 @@ void LoLEngine::gui_drawMoneyBox(int pageNum) {
 			continue;
 
 		uint8 h = _moneyColumnHeight[i] - 1;
-		_screen->drawClippedLine(moneyX[i], moneyY[i], moneyX[i], moneyY[i] - h, 0xd2);
-		_screen->drawClippedLine(moneyX[i] + 1, moneyY[i], moneyX[i] + 1, moneyY[i] - h, 0xd1);
-		_screen->drawClippedLine(moneyX[i] + 2, moneyY[i], moneyX[i] + 2, moneyY[i] - h, 0xd0);
-		_screen->drawClippedLine(moneyX[i] + 3, moneyY[i], moneyX[i] + 3, moneyY[i] - h, 0xd1);
-		_screen->drawClippedLine(moneyX[i] + 4, moneyY[i], moneyX[i] + 4, moneyY[i] - h, 0xd2);
+		_screen->drawClippedLine(moneyX[i], moneyY[i], moneyX[i], moneyY[i] - h, _flags.use16ColorMode ? 1 : 0xd2);
+		_screen->drawClippedLine(moneyX[i] + 1, moneyY[i], moneyX[i] + 1, moneyY[i] - h, _flags.use16ColorMode ? 2 : 0xd1);
+		_screen->drawClippedLine(moneyX[i] + 2, moneyY[i], moneyX[i] + 2, moneyY[i] - h, _flags.use16ColorMode ? 3 : 0xd0);
+		_screen->drawClippedLine(moneyX[i] + 3, moneyY[i], moneyX[i] + 3, moneyY[i] - h, _flags.use16ColorMode ? 2 : 0xd1);
+		_screen->drawClippedLine(moneyX[i] + 4, moneyY[i], moneyX[i] + 4, moneyY[i] - h, _flags.use16ColorMode ? 1 : 0xd2);
 	}
 
 	Screen::FontId backupFont = _screen->setFont(Screen::FID_6_FNT);
