@@ -1211,6 +1211,8 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 			timerCallback();
 		}
 
+		_vm->scummLoop_handleSound();
+
 		if (_warpNeeded) {
 			_vm->_system->warpMouse(_warpX, _warpY);
 			_warpNeeded = false;

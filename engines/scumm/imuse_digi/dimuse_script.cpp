@@ -203,6 +203,11 @@ void IMuseDigital::refreshScripts() {
 	debug(6, "refreshScripts()");
 
 	if (_stopingSequence) {
+		// prevent start new music, only fade out old one
+		if (_vm->isSmushActive()) {
+			fadeOutMusic(60);
+			return;
+		}
 		// small delay, it seems help for fix bug #1757010
 		if (_stopingSequence++ > 120) {
 			debug(5, "refreshScripts() Force restore music state");

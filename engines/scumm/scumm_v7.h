@@ -97,6 +97,7 @@ public:
 	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
 	void clearSubtitleQueue();
 	virtual void CHARSET_1();
+	bool isSmushActive() { return _smushActive; }
 
 protected:
 	virtual int runDialog(Dialog &dialog);
