@@ -1240,17 +1240,16 @@ if test -n "$_host"; then
 	case "$_host" in
 		linupy|arm-riscos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX"
+			DEFINES="$DEFINES -DUNIX -DLINUPY"
 			_endian=little
 			_need_memalign=yes
-			add_line_to_config_h "#define LINUPY"
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			_endian=little
 			_need_memalign=yes
@@ -1262,7 +1261,7 @@ if test -n "$_host"; then
 			;;
 		motoezx)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DMOTOEZX -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
+			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_endian=little
@@ -1279,7 +1278,7 @@ if test -n "$_host"; then
 			;;
 		motomagx)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DMOTOMAGX -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
+			DEFINES="$DEFINES -DUNIX -DMOTOMAGX"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_endian=little
@@ -1303,7 +1302,7 @@ if test -n "$_host"; then
 			;;
 		gp2xwiz)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			LDFLAGS="$LDFLAGS"
 			_endian=little
@@ -1322,7 +1321,7 @@ if test -n "$_host"; then
 			;;	
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM -DUSE_ARM_GFX_ASM -DUSE_ARM_SCALER_ASM -DUSE_ARM_COSTUME_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
@@ -1342,10 +1341,9 @@ if test -n "$_host"; then
 			;;
 		neuros)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX"
+			DEFINES="$DEFINES -DUNIX -DNEUROS"
 			_endian=little
 			_need_memalign=yes
-			add_line_to_config_h "#define NEUROS"
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
@@ -1385,7 +1383,7 @@ if test -n "$_host"; then
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DIPHONE -DUNIX"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
@@ -1471,7 +1469,7 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
-			DEFINES="$DEFINES -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
