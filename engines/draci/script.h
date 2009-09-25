@@ -43,8 +43,8 @@ enum {
 };
 
 typedef void (Script::* GPLHandler)(Common::Queue<int> &);
-typedef int  (Script::* GPLOperatorHandler)(int, int);
-typedef int  (Script::* GPLFunctionHandler)(int);
+typedef int  (Script::* GPLOperatorHandler)(int, int) const;
+typedef int  (Script::* GPLFunctionHandler)(int) const;
 
 /**
  *  Represents a single command in the GPL scripting language bytecode.
@@ -89,7 +89,7 @@ public:
 	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };	
 
 	int run(GPL2Program program, uint16 offset);
-	bool testExpression(GPL2Program, uint16 offset);
+	bool testExpression(GPL2Program, uint16 offset) const;
 	void endCurrentProgram();
 
 private:
@@ -132,41 +132,41 @@ private:
 	void blackPalette(Common::Queue<int> &params);
 	void loadPalette(Common::Queue<int> &params);
 
-	int operAnd(int op1, int op2);
-	int operOr(int op1, int op2);
-	int operXor(int op1, int op2);
-	int operSub(int op1, int op2);
-	int operAdd(int op1, int op2);
-	int operDiv(int op1, int op2);
-	int operMul(int op1, int op2);
-	int operEqual(int op1, int op2);
-	int operNotEqual(int op1, int op2);
-	int operGreater(int op1, int op2);
-	int operLess(int op1, int op2);
-	int operGreaterOrEqual(int op1, int op2);
-	int operLessOrEqual(int op1, int op2);
-	int operMod(int op1, int op2);
+	int operAnd(int op1, int op2) const;
+	int operOr(int op1, int op2) const;
+	int operXor(int op1, int op2) const;
+	int operSub(int op1, int op2) const;
+	int operAdd(int op1, int op2) const;
+	int operDiv(int op1, int op2) const;
+	int operMul(int op1, int op2) const;
+	int operEqual(int op1, int op2) const;
+	int operNotEqual(int op1, int op2) const;
+	int operGreater(int op1, int op2) const;
+	int operLess(int op1, int op2) const;
+	int operGreaterOrEqual(int op1, int op2) const;
+	int operLessOrEqual(int op1, int op2) const;
+	int operMod(int op1, int op2) const;
 
-	int funcRandom(int n);
-	int funcNot(int n);
-	int funcIsIcoOn(int iconID);
-	int funcIcoStat(int iconID);
-	int funcActIco(int iconID);
-	int funcIsIcoAct(int iconID);
-	int funcIsObjOn(int objID);
-	int funcIsObjOff(int objID);
-	int funcIsObjAway(int objID);
-	int funcActPhase(int objID);
-	int funcObjStat(int objID);
-	int funcLastBlock(int blockID);
-	int funcAtBegin(int yesno);
-	int funcBlockVar(int blockID);
-	int funcHasBeen(int blockID);
-	int funcMaxLine(int lines);
+	int funcRandom(int n) const;
+	int funcNot(int n) const;
+	int funcIsIcoOn(int iconID) const;
+	int funcIcoStat(int iconID) const;
+	int funcActIco(int iconID) const;
+	int funcIsIcoAct(int iconID) const;
+	int funcIsObjOn(int objID) const;
+	int funcIsObjOff(int objID) const;
+	int funcIsObjAway(int objID) const;
+	int funcActPhase(int objID) const;
+	int funcObjStat(int objID) const;
+	int funcLastBlock(int blockID) const;
+	int funcAtBegin(int yesno) const;
+	int funcBlockVar(int blockID) const;
+	int funcHasBeen(int blockID) const;
+	int funcMaxLine(int lines) const;
 
 	void setupCommandList();
-	const GPL2Command *findCommand(byte num, byte subnum);
-	int handleMathExpression(Common::MemoryReadStream &reader);
+	const GPL2Command *findCommand(byte num, byte subnum) const;
+	int handleMathExpression(Common::MemoryReadStream &reader) const;
 
 	DraciEngine *_vm;
 };

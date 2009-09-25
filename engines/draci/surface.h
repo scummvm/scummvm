@@ -37,17 +37,17 @@ public:
 	~Surface();
 
 	void markDirtyRect(Common::Rect r);
-	Common::List<Common::Rect> *getDirtyRects();
+	const Common::List<Common::Rect> *getDirtyRects() const;
 	void clearDirtyRects();
 	void markDirty();
 	void markClean();
-	bool needsFullUpdate();
-	uint getTransparentColour();
+	bool needsFullUpdate() const;
+	uint getTransparentColour() const;
 	void setTransparentColour(uint colour);
 	void fill(uint colour);
-	uint centerOnY(uint y, uint height);
-	uint centerOnX(uint x, uint width);
-	Common::Rect getRect();
+	uint centerOnY(uint y, uint height) const;
+	uint centerOnX(uint x, uint width) const;
+	Common::Rect getRect() const;
 
 private:
 	/** The current transparent colour of the surface. See getTransparentColour() and

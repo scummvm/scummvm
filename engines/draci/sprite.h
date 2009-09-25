@@ -94,9 +94,9 @@ protected:
 class Sprite : public Drawable {
 
 public:
-	Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
+	Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
 	
-	Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise); 
+	Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise); 
 
 	~Sprite();
 
@@ -114,7 +114,7 @@ public:
 	DrawableType getType() const { return kDrawableSprite; }
 
 private:
-	byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
+	const byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
 	bool _mirror;
 };
 
@@ -130,7 +130,7 @@ public:
 	void setSpacing(uint spacing);
 	void setFont(Font *font);
 
-	uint getLength();
+	uint getLength() const;
 
 	void draw(Surface *surface, bool markDirty = true) const;
 

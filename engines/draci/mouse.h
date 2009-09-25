@@ -48,18 +48,18 @@ public:
 	void handleEvent(Common::Event event);
 	void cursorOn();
 	void cursorOff();
-	bool isCursorOn();
+	bool isCursorOn() const;
 	void setPosition(uint16 x, uint16 y);
-	CursorType getCursorType() { return _cursorType; }
+	CursorType getCursorType() const { return _cursorType; }
 	void setCursorType(CursorType cur);
 	void loadItemCursor(int itemID, bool highlighted = false);
-	bool lButtonPressed() { return _lButton; }
-	bool rButtonPressed() { return _rButton; }
+	bool lButtonPressed() const { return _lButton; }
+	bool rButtonPressed() const { return _rButton; }
 	void lButtonSet(bool state) { _lButton = state; }
 	void rButtonSet(bool state) { _rButton = state; }
 
-	uint16 getPosX() { return _x; }
-	uint16 getPosY() { return _y; }
+	uint16 getPosX() const { return _x; }
+	uint16 getPosY() const { return _y; }
 
 private:
 	uint16 _x, _y;

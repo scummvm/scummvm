@@ -91,7 +91,7 @@ void Surface::markClean() {
 /**
  * @brief Checks whether the surface needs a full update
  */
-bool Surface::needsFullUpdate() {
+bool Surface::needsFullUpdate() const {
 	return _fullUpdate;
 }
 
@@ -99,14 +99,14 @@ bool Surface::needsFullUpdate() {
  * @brief Fetches the surface's dirty rectangles
  * @return A pointer a list of dirty rectangles
  */
-Common::List<Common::Rect> *Surface::getDirtyRects() {
+const Common::List<Common::Rect> *Surface::getDirtyRects() const {
 	return &_dirtyRects;
 }
 
 /**
  * @brief Returns the current transparent colour of the surface
  */
-uint Surface::getTransparentColour() {
+uint Surface::getTransparentColour() const {
 	return _transparentColour;
 }
 
@@ -134,7 +134,7 @@ void Surface::fill(uint colour) {
  *
  * @return The centered x coordinate
  */
-uint Surface::centerOnX(uint x, uint width) {
+uint Surface::centerOnX(uint x, uint width) const {
 
 	int newX = x - width / 2;
 
@@ -155,7 +155,7 @@ uint Surface::centerOnX(uint x, uint width) {
  *
  * @return The centered y coordinate
  */
-uint Surface::centerOnY(uint y, uint height) {
+uint Surface::centerOnY(uint y, uint height) const {
 	
 	int newY = y - height / 2;
 	
@@ -172,7 +172,7 @@ uint Surface::centerOnY(uint y, uint height) {
  * @brief Returns a Common::Rect corresponding to the surface.
  */
 
-Common::Rect Surface::getRect() {
+Common::Rect Surface::getRect() const {
 	return Common::Rect(w, h);
 }
 

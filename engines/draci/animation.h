@@ -65,11 +65,11 @@ public:
 	Animation(DraciEngine *v, int index);
 	~Animation();	
 	
-	uint getZ();
+	uint getZ() const;
 	void setZ(uint z);
 	
 	void setID(int id);
-	int getID();
+	int getID() const;
 
 	void nextFrame(bool force = false);
 	void drawFrame(Surface *surface);
@@ -77,31 +77,31 @@ public:
 	void addFrame(Drawable *frame);
 	Drawable *getFrame(int frameNum = kCurrentFrame);
 	void setCurrentFrame(uint frame);
-	uint currentFrameNum();
-	uint getFrameCount();
+	uint currentFrameNum() const;
+	uint getFrameCount() const;
 	void deleteFrames();
 
-	bool isPlaying();
+	bool isPlaying() const;
 	void setPlaying(bool playing);
 
-	bool isPaused();
+	bool isPaused() const;
 	void setPaused(bool paused);
 
-	bool isLooping();
+	bool isLooping() const;
 	void setLooping(bool looping);
 
 	void setRelative(int relx, int rely);
-	int getRelativeX();
-	int getRelativeY();
+	int getRelativeX() const;
+	int getRelativeY() const;
 
-	int getIndex();
+	int getIndex() const;
 	void setIndex(int index);
 
 	void setScaleFactors(double scaleX, double scaleY);
-	double getScaleX();
-	double getScaleY();
+	double getScaleX() const;
+	double getScaleY() const;
 
-	void markDirtyRect(Surface *surface);
+	void markDirtyRect(Surface *surface) const;
 
 	// Animation callbacks
 
@@ -113,7 +113,7 @@ public:
 
 private:
 	
-	uint nextFrameNum();
+	uint nextFrameNum() const;
 
 	/** Internal animation ID 
 	  *	(as specified in the data files and the bytecode)

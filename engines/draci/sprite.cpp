@@ -56,7 +56,7 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
 /**
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
-Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y, 
+Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, 
 	bool columnwise) : _data(NULL) {
 
 	 _width = width;
@@ -72,21 +72,22 @@ Sprite::Sprite(byte *raw_data, uint16 width, uint16 height, int x, int y,
 
 	_mirror = false;
 
-	_data = new byte[width * height];
+	byte *data = new byte[width * height];
 	
-	memcpy(_data, raw_data, width * height);
+	memcpy(data, raw_data, width * height);
 
 	// If the sprite is stored column-wise, transform it to row-wise
 	if (columnwise) {
-		transformToRows(_data, width, height);
+		transformToRows(data, width, height);
 	}	
+	_data = data;
 }
 
 /**
  *  Constructor for loading sprites from a sprite-formatted buffer, one byte per 
  *	pixel.
  */
-Sprite::Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise) 
+Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise) 
 	: _data(NULL) {
 
 	 _x = x;
@@ -104,14 +105,15 @@ Sprite::Sprite(byte *sprite_data, uint16 length, int x, int y, bool columnwise)
 	_scaledWidth = _width;
 	_scaledHeight = _height;
 
-	_data = new byte[_width * _height];
+	byte *data = new byte[_width * _height];
 
-	reader.read(_data, _width * _height);
+	reader.read(data, _width * _height);
 
 	// If the sprite is stored column-wise, transform it to row-wise
 	if (columnwise) {
-		transformToRows(_data, _width, _height);
+		transformToRows(data, _width, _height);
 	}		
+	_data = data;
 }
 
 Sprite::~Sprite() { 
@@ -171,7 +173,7 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
-	byte *src = _data;
+	const byte *src = _data;
 
 	const int transparent = surface->getTransparentColour();
 
@@ -262,7 +264,7 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 
 	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
-	byte *src = _data;
+	const byte *src = _data;
 
 	const int transparent = surface->getTransparentColour();
 
@@ -350,7 +352,7 @@ void Text::setSpacing(uint spacing) {
 	_spacing = spacing;
 }
 
-uint Text::getLength() {
+uint Text::getLength() const {
 	return _length;
 }
 

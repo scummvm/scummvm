@@ -1,3 +1,4 @@
+
 /* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
@@ -48,7 +49,7 @@ Animation::~Animation() {
 	deleteFrames();
 }
 
-bool Animation::isLooping() {
+bool Animation::isLooping() const {
 	return _looping;
 }
 
@@ -68,7 +69,7 @@ void Animation::setLooping(bool looping) {
 		looping, _id);
 }
 
-void Animation::markDirtyRect(Surface *surface) {
+void Animation::markDirtyRect(Surface *surface) const {
 	// Fetch the current frame's rectangle
 	Drawable *frame = _frames[_currentFrame];
 	Common::Rect frameRect = frame->getRect();			
@@ -77,8 +78,8 @@ void Animation::markDirtyRect(Surface *surface) {
 	frameRect.translate(_relX, _relY);
 	
 	// Take animation scaling into account
-	frameRect.setWidth(frameRect.width() * _scaleX);
-	frameRect.setHeight(frameRect.height() * _scaleY);
+	frameRect.setWidth((int) (frameRect.width() * _scaleX));
+	frameRect.setHeight((int) (frameRect.height() * _scaleY));
 
 	// Mark the rectangle dirty on the surface
 	surface->markDirtyRect(frameRect);
@@ -117,7 +118,7 @@ void Animation::nextFrame(bool force) {
 	_currentFrame, _frames.size(), frame->getX(), frame->getY());
 }
 
-uint Animation::nextFrameNum() {
+uint Animation::nextFrameNum() const {
 
 	if (_paused) 
 		return _currentFrame;
@@ -157,7 +158,9 @@ void Animation::drawFrame(Surface *surface) {
 
 		// Take into account per-animation scaling and adjust the current frames dimensions	
 		if (_scaleX != 1.0 || _scaleY != 1.0)
-			frame->setScaled(scaledWidth * _scaleX, scaledHeight * _scaleY);
+			frame->setScaled(
+				(int) (scaledWidth * _scaleX),
+				(int) (scaledHeight * _scaleY));
 
 		// Draw frame
 		frame->drawScaled(surface, false);
@@ -175,7 +178,7 @@ void Animation::setID(int id) {
 	_id = id;
 }
 
-int Animation::getID() {
+int Animation::getID() const {
 	return _id;
 }
 
@@ -183,19 +186,19 @@ void Animation::setZ(uint z) {
 	_z = z;
 }
 
-uint Animation::getZ() {
+uint Animation::getZ() const {
 	return _z;
 }
 
-int Animation::getRelativeX() {
+int Animation::getRelativeX() const {
 	return _relX;
 }
 
-int Animation::getRelativeY() {
+int Animation::getRelativeY() const {
 	return _relY;
 }
 
-bool Animation::isPlaying() {
+bool Animation::isPlaying() const {
 	return _playing;
 }
 
@@ -204,7 +207,7 @@ void Animation::setPlaying(bool playing) {
 	_playing = playing;
 }
 
-bool Animation::isPaused() {
+bool Animation::isPaused() const {
 	return _paused;
 }
 
@@ -224,11 +227,11 @@ void Animation::setScaleFactors(double scaleX, double scaleY) {
 	_scaleY = scaleY;
 }
 
-double Animation::getScaleX() {
+double Animation::getScaleX() const {
 	return _scaleX;
 }
 
-double Animation::getScaleY() {
+double Animation::getScaleY() const {
 	return _scaleY;
 }
 
@@ -236,7 +239,7 @@ void Animation::addFrame(Drawable *frame) {
 	_frames.push_back(frame);	
 }
 
-int Animation::getIndex() {
+int Animation::getIndex() const {
 	return _index;
 }
 
@@ -259,11 +262,11 @@ Drawable *Animation::getFrame(int frameNum) {
 	}
 }
 
-uint Animation::getFrameCount() {
+uint Animation::getFrameCount() const {
 	return _frames.size();
 }
 
-uint Animation::currentFrameNum() {
+uint Animation::currentFrameNum() const {
 	return _currentFrame;
 }
 
@@ -614,7 +617,9 @@ int AnimationManager::getTopAnimationID(int x, int y) {
 
 		// Take into account per-animation scaling and adjust the current frames dimensions	
 		if (anim->getScaleX() != 1.0 || anim->getScaleY() != 1.0)
-			frame->setScaled(scaledWidth * anim->getScaleX(), scaledHeight * anim->getScaleY());
+			frame->setScaled(
+				(int) (scaledWidth * anim->getScaleX()),
+				(int) (scaledHeight * anim->getScaleY()));
 
 		if (frame->getRect().contains(x, y)) {
 

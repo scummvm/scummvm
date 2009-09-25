@@ -60,7 +60,7 @@ void Screen::setPaletteEmpty(unsigned int numEntries) {
  *		  start Index of the colour where replacement should start
  *		  num Number of colours to replace 
  */
-void Screen::setPalette(byte *data, uint16 start, uint16 num) {
+void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 
 	Common::MemoryReadStream pal(data, 3 * kNumColours);
 	pal.seek(start * 4);
@@ -85,9 +85,9 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 /**
  * @brief Copies the current memory screen buffer to the real screen
  */
-void Screen::copyToScreen() const {
-	Common::List<Common::Rect> *dirtyRects = _surface->getDirtyRects();
-	Common::List<Common::Rect>::iterator it;
+void Screen::copyToScreen() {
+	const Common::List<Common::Rect> *dirtyRects = _surface->getDirtyRects();
+	Common::List<Common::Rect>::const_iterator it;
 	
 	// If a full update is needed, update the whole screen	
 	if (_surface->needsFullUpdate()) {
@@ -119,7 +119,7 @@ void Screen::copyToScreen() const {
  *
  * Clears the screen and marks the whole screen dirty.
  */
-void Screen::clearScreen() const {
+void Screen::clearScreen() {
 	byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
 	_surface->markDirty();
@@ -133,7 +133,7 @@ void Screen::clearScreen() const {
  *
  * Fills the screen with the specified colour and marks the whole screen dirty.
  */
-void Screen::fillScreen(uint8 colour) const {
+void Screen::fillScreen(uint8 colour) {
 	_surface->fill(colour);
 	_surface->markDirty();
 }

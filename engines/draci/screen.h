@@ -47,11 +47,11 @@ public:
 	~Screen();
 
 	void setPaletteEmpty(unsigned int numEntries = kNumColours);
-	void setPalette(byte *data, uint16 start, uint16 num);
+	void setPalette(const byte *data, uint16 start, uint16 num);
 	byte *getPalette() const;
-	void copyToScreen() const;
-	void clearScreen() const;
-	void fillScreen(uint8 colour) const;
+	void copyToScreen();
+	void clearScreen();
+	void fillScreen(uint8 colour);
 	Surface *getSurface();	
 	void drawRect(Common::Rect &r, uint8 colour);
 

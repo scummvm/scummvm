@@ -660,7 +660,7 @@ void Game::updateTitle() {
 	}
 }	
 
-int Game::getObjectWithAnimation(int animID) {
+int Game::getObjectWithAnimation(int animID) const {
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
 	
@@ -970,11 +970,11 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 	_vm->_anims->deleteAfterIndex(lastAnimIndex);
 }
 
-bool Game::isDialogueBegin() {
+bool Game::isDialogueBegin() const {
 	return _dialogueBegin;
 }
 
-bool Game::shouldExitDialogue() {
+bool Game::shouldExitDialogue() const {
 	return _dialogueExit;
 }
 
@@ -982,11 +982,11 @@ void Game::setDialogueExit(bool exit) {
 	_dialogueExit = exit;
 }
 
-int Game::getDialogueBlockNum() {
+int Game::getDialogueBlockNum() const {
 	return _blockNum;
 }
 
-int Game::getDialogueVar(int dialogueID) {
+int Game::getDialogueVar(int dialogueID) const {
 	return _dialogueVars[dialogueID];
 }
 
@@ -994,23 +994,23 @@ void Game::setDialogueVar(int dialogueID, int value) {
 	_dialogueVars[dialogueID] = value;
 }
 
-int Game::getCurrentDialogue() {
+int Game::getCurrentDialogue() const {
 	return _currentDialogue;
 }
 
-int Game::getDialogueLastBlock() {
+int Game::getDialogueLastBlock() const {
 	return _lastBlock;
 }
 
-int Game::getDialogueLinesNum() {
+int Game::getDialogueLinesNum() const {
 	return _dialogueLinesNum;	
 }
 
-int Game::getDialogueCurrentBlock() {
+int Game::getDialogueCurrentBlock() const {
 	return _currentBlock;	
 }
 
-int Game::getCurrentDialogueOffset() {
+int Game::getCurrentDialogueOffset() const {
 	return _dialogueOffsets[_currentDialogue];
 }
 
@@ -1322,7 +1322,7 @@ GameObject *Game::getObject(uint objNum) {
 	return _objects + objNum;
 }
 
-uint Game::getNumObjects() {
+uint Game::getNumObjects() const {
 	return _info._numObjects;
 }
 
@@ -1427,7 +1427,7 @@ void Game::runGateProgram(int gate) {
 	setExitLoop(false);
 }
 
-int Game::getRoomNum() {
+int Game::getRoomNum() const {
 	return _currentRoom._roomNum;
 }
 
@@ -1435,7 +1435,7 @@ void Game::setRoomNum(int room) {
 	_newRoom = room;
 }
 
-int Game::getGateNum() {
+int Game::getGateNum() const {
 	return _currentGate;
 }
 
@@ -1451,15 +1451,15 @@ void Game::setLoopSubstatus(LoopSubstatus status) {
 	_loopSubstatus = status;
 }
 
-LoopStatus Game::getLoopStatus() {
+LoopStatus Game::getLoopStatus() const {
 	return _loopStatus;
 }
 
-LoopSubstatus Game::getLoopSubstatus() {
+LoopSubstatus Game::getLoopSubstatus() const {
 	return _loopSubstatus;
 }
 
-int Game::getVariable(int numVar) {
+int Game::getVariable(int numVar) const {
 	return _variables[numVar];
 }
 
@@ -1467,7 +1467,7 @@ void Game::setVariable(int numVar, int value) {
 	_variables[numVar] = value;
 }
 
-int Game::getItemStatus(int itemID) {
+int Game::getItemStatus(int itemID) const {
 	return _itemStatus[itemID];
 }
 
@@ -1475,7 +1475,7 @@ void Game::setItemStatus(int itemID, int status) {
 	_itemStatus[itemID] = status;	
 }
 
-int Game::getCurrentItem() {
+int Game::getCurrentItem() const {
 	return _currentItem;
 }
 
@@ -1483,7 +1483,7 @@ void Game::setCurrentItem(int itemID) {
 	_currentItem = itemID;
 }
 
-Person *Game::getPerson(int personID) {
+const Person *Game::getPerson(int personID) const {
 	return &_persons[personID];
 }
 
@@ -1491,7 +1491,7 @@ void Game::setSpeechTick(uint tick) {
 	_speechTick = tick;
 }
 
-int Game::getEscRoom() {
+int Game::getEscRoom() const {
 	return _currentRoom._escRoom;
 }
 
@@ -1499,7 +1499,7 @@ void Game::schedulePalette(int paletteID) {
 	_scheduledPalette = paletteID;
 }
 
-int Game::getScheduledPalette() {
+int Game::getScheduledPalette() const {
 	return _scheduledPalette;
 }
 
@@ -1509,7 +1509,7 @@ int Game::getScheduledPalette() {
  * all animations that have an index greater than the one marked.
  */
 
-int Game::getMarkedAnimationIndex() {
+int Game::getMarkedAnimationIndex() const {
 	return _markedAnimationIndex;
 }
 
@@ -1530,7 +1530,7 @@ Game::~Game() {
 }
 
 
-bool WalkingMap::isWalkable(int x, int y) {
+bool WalkingMap::isWalkable(int x, int y) const {
 
 	// Convert to map pixels
 	x = x / _deltaX;
@@ -1555,7 +1555,7 @@ bool WalkingMap::isWalkable(int x, int y) {
  *	TODO: Study this algorithm in more detail so it can be documented properly and
  * 	possibly improved / simplified.
  */
-Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Rect searchRect) {
+Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Rect searchRect) const {
 
 	// If the starting point is walkable, just return that
 	if (searchRect.contains(startX, startY) && isWalkable(startX, startY)) {

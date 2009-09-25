@@ -120,8 +120,8 @@ public:
 		_data = data + mapReader.pos();
 	}
 
-	bool isWalkable(int x, int y);
-	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect);
+	bool isWalkable(int x, int y) const;
+	Common::Point findNearestWalkable(int x, int y, Common::Rect searchRect) const;
 
 private:
 	int _realWidth, _realHeight;
@@ -236,7 +236,7 @@ public:
 	void changeRoom(uint roomNum);
 
 	// HACK: this is only for testing
-	int nextRoomNum() { 
+	int nextRoomNum() const { 
 		int n = _currentRoom._roomNum;
 		n = n < 37 ? n+1 : n;
 
@@ -248,7 +248,7 @@ public:
 	}
 
 	// HACK: same as above
-	int prevRoomNum() { 
+	int prevRoomNum() const { 
 		int n = _currentRoom._roomNum;
 		n = n > 0 ? n-1 : n;
 
@@ -268,43 +268,43 @@ public:
 	void loadWalkingMap(int mapID = kDefaultRoomMap);
 	void loadItem(int itemID);
 
-	uint getNumObjects();
+	uint getNumObjects() const;
 	GameObject *getObject(uint objNum);
-	int getObjectWithAnimation(int animID);
+	int getObjectWithAnimation(int animID) const;
 
-	int getVariable(int varNum);
+	int getVariable(int varNum) const;
 	void setVariable(int varNum, int value);	
 
-	Person *getPerson(int personID);
+	const Person *getPerson(int personID) const;
 
-	int getRoomNum();
+	int getRoomNum() const;
 	void setRoomNum(int room);
 
-	int getGateNum();
+	int getGateNum() const;
 	void setGateNum(int gate);
 
-	int getItemStatus(int itemID);
+	int getItemStatus(int itemID) const;
 	void setItemStatus(int itemID, int status);
-	int getCurrentItem();
+	int getCurrentItem() const;
 	void setCurrentItem(int itemID);
 	void removeItem(int itemID);
 	void putItem(int itemID, int position);
 	void addItem(int itemID);
 
-	int getEscRoom();
+	int getEscRoom() const;
 
-	int getMarkedAnimationIndex();
+	int getMarkedAnimationIndex() const;
 	void setMarkedAnimationIndex(int index);
 
 	void setLoopStatus(LoopStatus status);
 	void setLoopSubstatus(LoopSubstatus status);
-	LoopStatus getLoopStatus();
-	LoopSubstatus getLoopSubstatus();
+	LoopStatus getLoopStatus() const;
+	LoopSubstatus getLoopSubstatus() const;
 
-	bool shouldQuit() { return _shouldQuit; }
+	bool shouldQuit() const { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
 
-	bool shouldExitLoop() { return _shouldExitLoop; }
+	bool shouldExitLoop() const { return _shouldExitLoop; }
 	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
 
 	void runGateProgram(int gate);
@@ -324,20 +324,20 @@ public:
 	void dialogueDone();
 	void runDialogueProg(GPL2Program, int offset);
 
-	bool isDialogueBegin();
-	bool shouldExitDialogue();
+	bool isDialogueBegin() const;
+	bool shouldExitDialogue() const;
 	void setDialogueExit(bool exit);
-	int getDialogueBlockNum();
-	int getDialogueVar(int dialogueID);
+	int getDialogueBlockNum() const;
+	int getDialogueVar(int dialogueID) const;
 	void setDialogueVar(int dialogueID, int value);
-	int getCurrentDialogue();
-	int getDialogueCurrentBlock();
-	int getDialogueLastBlock();
-	int getDialogueLinesNum();
-	int getCurrentDialogueOffset();
+	int getCurrentDialogue() const;
+	int getDialogueCurrentBlock() const;
+	int getDialogueLastBlock() const;
+	int getDialogueLinesNum() const;
+	int getCurrentDialogueOffset() const;
 
 	void schedulePalette(int paletteID);
-	int getScheduledPalette();
+	int getScheduledPalette() const;
 
 private:
 	DraciEngine *_vm;

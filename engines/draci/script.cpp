@@ -151,65 +151,65 @@ enum mathExpressionObject {
 
 /* GPL operators */
 
-int Script::operAnd(int op1, int op2) {
+int Script::operAnd(int op1, int op2) const {
 	return op1 & op2;
 }
 
-int Script::operOr(int op1, int op2) {
+int Script::operOr(int op1, int op2) const {
 	return op1 | op2;
 }
 
-int Script::operXor(int op1, int op2) {
+int Script::operXor(int op1, int op2) const {
 	return op1 ^ op2;
 }
 
-int Script::operEqual(int op1, int op2) {
+int Script::operEqual(int op1, int op2) const {
 	return op1 == op2;
 }
 
-int Script::operNotEqual(int op1, int op2) {
+int Script::operNotEqual(int op1, int op2) const {
 	return op1 != op2;
 }
 
-int Script::operLess(int op1, int op2) {
+int Script::operLess(int op1, int op2) const {
 	return op1 < op2;
 }
 
-int Script::operGreater(int op1, int op2) {
+int Script::operGreater(int op1, int op2) const {
 	return op1 > op2;
 }
 
-int Script::operGreaterOrEqual(int op1, int op2) {
+int Script::operGreaterOrEqual(int op1, int op2) const {
 	return op1 >= op2;
 }
 
-int Script::operLessOrEqual(int op1, int op2) {
+int Script::operLessOrEqual(int op1, int op2) const {
 	return op1 <= op2;
 }
 
-int Script::operMul(int op1, int op2) {
+int Script::operMul(int op1, int op2) const {
 	return op1 * op2;
 }
 
-int Script::operAdd(int op1, int op2) {
+int Script::operAdd(int op1, int op2) const {
 	return op1 + op2;
 }
 
-int Script::operSub(int op1, int op2) {
+int Script::operSub(int op1, int op2) const {
 	return op1 - op2;
 }
 
-int Script::operDiv(int op1, int op2) {
+int Script::operDiv(int op1, int op2) const {
 	return op1 / op2;
 }
 
-int Script::operMod(int op1, int op2) {
+int Script::operMod(int op1, int op2) const {
 	return op1 % op2;
 }
 
 /* GPL functions */
 
-int Script::funcRandom(int n) {
+int Script::funcRandom(int n) const {
 
 // The function needs to return numbers in the [0..n-1] range so we need to deduce 1
 // (RandomSource::getRandomNumber returns a number in the range [0..n])
@@ -218,58 +218,58 @@ int Script::funcRandom(int n) {
 	return _vm->_rnd.getRandomNumber(n);
 }
 
-int Script::funcAtBegin(int yesno) {
+int Script::funcAtBegin(int yesno) const {
 	return _vm->_game->isDialogueBegin() == (bool)yesno;
 }	
 
-int Script::funcLastBlock(int blockID) {
+int Script::funcLastBlock(int blockID) const {
 	blockID -= 1;
 
 	return _vm->_game->getDialogueLastBlock() == blockID;
 }
 
-int Script::funcBlockVar(int blockID) {
+int Script::funcBlockVar(int blockID) const {
 	blockID -= 1;
 	
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 	return _vm->_game->getDialogueVar(currentOffset + blockID);
 }
 
-int Script::funcHasBeen(int blockID) {
+int Script::funcHasBeen(int blockID) const {
 	blockID -= 1;
 
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 	return _vm->_game->getDialogueVar(currentOffset + blockID) > 0;
 }
 
-int Script::funcMaxLine(int lines) {
+int Script::funcMaxLine(int lines) const {
 	return _vm->_game->getDialogueLinesNum() < lines;
 }
 
-int Script::funcNot(int n) {
+int Script::funcNot(int n) const {
 	return !n;
 }
 
-int Script::funcIsIcoOn(int itemID) {
+int Script::funcIsIcoOn(int itemID) const {
 	itemID -= 1;
 
 	return _vm->_game->getItemStatus(itemID) == 1;
 } 
 
-int Script::funcIcoStat(int itemID) {
+int Script::funcIcoStat(int itemID) const {
 	itemID -= 1;
 
 	int status = _vm->_game->getItemStatus(itemID);
 	return (status == 1) ? 1 : 2;
 }
 
-int Script::funcIsIcoAct(int itemID) {
+int Script::funcIsIcoAct(int itemID) const {
 	itemID -= 1;
 
 	return _vm->_game->getCurrentItem() == itemID;
 }
 
-int Script::funcActIco(int itemID) {
+int Script::funcActIco(int itemID) const {
 	
 	// The parameter seems to be an omission in the original player since it's not
 	// used in the implementation of the function. It's possible that the functions were
@@ -279,7 +279,7 @@ int Script::funcActIco(int itemID) {
 	return _vm->_game->getCurrentItem();
 }
 
-int Script::funcIsObjOn(int objID) {
+int Script::funcIsObjOn(int objID) const {
 	objID -= 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
@@ -287,7 +287,7 @@ int Script::funcIsObjOn(int objID) {
 	return obj->_visible;
 }
 
-int Script::funcIsObjOff(int objID) {
+int Script::funcIsObjOff(int objID) const {
 	objID -= 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
@@ -297,7 +297,7 @@ int Script::funcIsObjOff(int objID) {
 	return !obj->_visible && obj->_location != -1;
 }
 
-int Script::funcObjStat(int objID) {
+int Script::funcObjStat(int objID) const {
 	objID -= 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
@@ -313,7 +313,7 @@ int Script::funcObjStat(int objID) {
 	}
 }
 
-int Script::funcIsObjAway(int objID) {
+int Script::funcIsObjAway(int objID) const {
 	objID -= 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
@@ -322,7 +322,7 @@ int Script::funcIsObjAway(int objID) {
 	return !obj->_visible && obj->_location == -1;
 }
 
-int Script::funcActPhase(int objID) {
+int Script::funcActPhase(int objID) const {
 
 	objID -= 1;	
 
@@ -673,7 +673,7 @@ void Script::talk(Common::Queue<int> &params) {
 	Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
 
 	// Fetch person info
-	Person *person = _vm->_game->getPerson(personID);
+	const Person *person = _vm->_game->getPerson(personID);
 
 	// Set the string and text colour
 	surface->markDirtyRect(speechFrame->getRect(true));
@@ -799,7 +799,7 @@ void Script::endCurrentProgram() {
  * @param reader Stream reader set to the beginning of the expression
  */
 
-int Script::handleMathExpression(Common::MemoryReadStream &reader) {
+int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
 	Common::Stack<int> stk;
 	mathExpressionObject obj;
 	GPL2Operator oper;
@@ -907,7 +907,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) {
  *
  * Reference: the function equivalent to this one is called "Can()" in the original engine.
  */
-bool Script::testExpression(GPL2Program program, uint16 offset) {
+bool Script::testExpression(GPL2Program program, uint16 offset) const {
 	
 	// Initialize program reader
 	Common::MemoryReadStream reader(program._bytecode, program._length);
@@ -935,7 +935,7 @@ bool Script::testExpression(GPL2Program program, uint16 offset) {
  * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
  *         struct representing the command.
  */
-const GPL2Command *Script::findCommand(byte num, byte subnum) {
+const GPL2Command *Script::findCommand(byte num, byte subnum) const {
 	unsigned int i = 0;
 	while (1) {
 

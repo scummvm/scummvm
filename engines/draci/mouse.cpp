@@ -80,7 +80,7 @@ void Mouse::cursorOff() {
 	CursorMan.showMouse(false);
 }
 
-bool Mouse::isCursorOn() {
+bool Mouse::isCursorOn() const {
 	return CursorMan.isVisible();
 }
 
