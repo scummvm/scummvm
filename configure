@@ -1268,7 +1268,7 @@ case $_host_os in
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
-		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__= -Wno-multichar"
+		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
 	# given this is a shell script assume some type of unix
 	*)
@@ -1463,7 +1463,7 @@ if test -n "$_host"; then
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
-			CXXFLAGS="$CXXFLAGS -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions"
+			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
