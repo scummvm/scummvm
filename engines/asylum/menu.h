@@ -108,7 +108,6 @@ private:
 	GraphicResource *_iconResource;
 	GraphicResource *_creditsResource;
 	GraphicResource *_creditsFadeResource;
-	Text *_text;
 
 	void updateEyesAnimation();
 	void updateMainMenu();

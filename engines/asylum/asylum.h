@@ -39,6 +39,8 @@
 
 namespace Asylum {
 
+#define SHOW_SCENE_LOADING
+
 // XXX
 // I'm not sure if system endian-ness would have any
 // effect byte order of the data files, but I guess
@@ -101,6 +103,9 @@ public:
 	Scene*  scene()  {
 		return _scene;
 	}
+	Text* text() {
+		return _text;
+	}
 
 	int ambientVolume() {
 		return _ambientVolume;
@@ -130,6 +135,7 @@ private:
 	Screen    *_screen;
 	Sound     *_sound;
 	Video     *_video;
+	Text      *_text;
 	Encounter *_encounter;
 
 	int _gameFlags[1512];
