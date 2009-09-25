@@ -51,7 +51,7 @@ const byte kFontColorMenuActive  = 255;
 
 class Widget {
 public:
-	Widget(ToltecsEngine *vm, int x, int y);
+	Widget(ToltecsEngine *vm, int16 x, int16 y);
 	virtual ~Widget();
 	virtual void redraw();
 	virtual Widget *getHoveredWidget(int mouseX, int mouseY);

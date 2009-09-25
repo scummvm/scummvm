@@ -41,7 +41,7 @@ namespace Toltecs {
 
 // This code is very experimental.
 
-Widget::Widget(ToltecsEngine *vm, int x, int y) : _vm(vm) {
+Widget::Widget(ToltecsEngine *vm, int16 x, int16 y) : _vm(vm) {
 	_rect.left = x;
 	_rect.top = y;
 }
