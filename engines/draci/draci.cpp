@@ -29,6 +29,7 @@
 #include "common/events.h"
 #include "common/file.h"
 #include "common/keyboard.h"
+#include "common/EventRecorder.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
@@ -77,7 +78,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	Common::addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
  
 	// Don't forget to register your random source
-	_eventMan->registerRandomSource(_rnd, "draci");
+	g_eventRec.registerRandomSource(_rnd, "draci");
 }
 
 int DraciEngine::init() {
