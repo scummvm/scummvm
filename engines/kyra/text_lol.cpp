@@ -105,7 +105,10 @@ void TextDisplayer_LoL::expandField() {
 		_vm->_timer->disable(11);
 		_screen->setScreenDim(clearDim(3));
 		_screen->copyRegionToBuffer(3, 0, 0, 320, 10, tmp);
-		_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);
+		if (_vm->gameFlags().use16ColorMode)
+			_screen->copyRegion(83, 139, 0, 0, 235, 4, 0, 2, Screen::CR_NO_P_CHECK);
+		else
+			_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);		
 
 		for (int i = 140; i < 177; i++) {
 			uint32 endTime = _vm->_system->getMillis() + _vm->_tickLength;
