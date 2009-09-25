@@ -2720,7 +2720,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 					run = *src++;
 				}
 				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] + _paletteMod : _roomPalette[color >> 4] + _paletteMod;
+					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[(color & 0xf) + _paletteMod] : _roomPalette[(color >> 4) + _paletteMod];
 
 					y++;
 					if (y >= height) {
@@ -2750,7 +2750,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 			}
 
 			for (z = 0; z < run; z++) {
-				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf] + _paletteMod;
+				*(dst + y * dstPitch + x) = _roomPalette[(color & 0xf) + _paletteMod];
 
 				y++;
 				if (y >= height) {
@@ -2874,7 +2874,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color] + _paletteMod;
+				*dst = _roomPalette[(color + _paletteMod) & 0xFF];
 			dst++;
 
 		againPos:
@@ -2901,7 +2901,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 								return;
 						}
 						if (!transpCheck || color != _transparentColor)
-							*dst = _roomPalette[color] + _paletteMod;
+							*dst = _roomPalette[(color + _paletteMod) & 0xFF];
 						dst++;
 					} while (--reps);
 					bits >>= 8;
@@ -2926,7 +2926,7 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color] + _paletteMod;
+				*dst = _roomPalette[(color + _paletteMod) & 0xFF];
 			dst++;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -2959,7 +2959,7 @@ void Gdi::drawStripBasicV(byte *dst, int dstPitch, const byte *src, int height, 
 		do {
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
-				*dst = _roomPalette[color] + _paletteMod;
+				*dst = _roomPalette[(color + _paletteMod) & 0xFF];
 			dst += dstPitch;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
@@ -3027,7 +3027,7 @@ void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, con
 			for (x = 0; x < 8; x ++) {
 				byte color = *src++;
 				if (!transpCheck || color != _transparentColor)
-					dst[x] = _roomPalette[color] + _paletteMod;
+					dst[x] = _roomPalette[(color + _paletteMod) & 0xFF];
 			}
 			dst += dstPitch;
 		} while (--height);
