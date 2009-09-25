@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<VisualStudioProject
+	ProjectType="Visual C++"
+	Version="9,00"
+	Name="draci"
+	ProjectGUID="{185A2D4E-217E-402A-BECC-497D9FE58411}"
+	RootNamespace="draci"
+	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
+	>
+	<Platforms>
+		<Platform Name="Win32" />
+	</Platforms>
+	<Configurations>
+		<Configuration Name="Debug|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Debug.vsprops" />
+		<Configuration Name="Release|Win32" ConfigurationType="4" InheritedPropertySheets=".\ScummVM_Release.vsprops" />
+	</Configurations>
+	<Files>
+		<File RelativePath="..\..\engines\draci\animation.cpp" />
+		<File RelativePath="..\..\engines\draci\animation.h" />
+		<File RelativePath="..\..\engines\draci\barchive.cpp" />
+		<File RelativePath="..\..\engines\draci\barchive.h" />
+		<File RelativePath="..\..\engines\draci\detection.cpp" />
+		<File RelativePath="..\..\engines\draci\draci.cpp" />
+		<File RelativePath="..\..\engines\draci\draci.h" />
+		<File RelativePath="..\..\engines\draci\font.cpp" />
+		<File RelativePath="..\..\engines\draci\font.h" />
+		<File RelativePath="..\..\engines\draci\game.cpp" />
+		<File RelativePath="..\..\engines\draci\game.h" />
+		<File RelativePath="..\..\engines\draci\mouse.cpp" />
+		<File RelativePath="..\..\engines\draci\mouse.h" />
+		<File RelativePath="..\..\engines\draci\screen.cpp" />
+		<File RelativePath="..\..\engines\draci\screen.h" />
+		<File RelativePath="..\..\engines\draci\script.cpp" />
+		<File RelativePath="..\..\engines\draci\script.h" />
+		<File RelativePath="..\..\engines\draci\sprite.cpp" />
+		<File RelativePath="..\..\engines\draci\sprite.h" />
+		<File RelativePath="..\..\engines\draci\surface.cpp" />
+		<File RelativePath="..\..\engines\draci\surface.h" />
+	</Files>
+</VisualStudioProject>
