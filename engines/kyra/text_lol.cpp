@@ -34,7 +34,7 @@ namespace Kyra {
 
 TextDisplayer_LoL::TextDisplayer_LoL(LoLEngine *vm, Screen_LoL *screen) : _vm(vm), _screen(screen),
 	_scriptTextParameter(0), _lineCount(0),	_printFlag(false), _lineWidth(0), _numCharsTotal(0),
-	_numCharsLeft(0), _numCharsPrinted(0) {
+	_numCharsLeft(0), _numCharsPrinted(0), _sjisLineBreakFlag(false) {
 
 	memset(_stringParameters, 0, 15 * sizeof(char *));
 	_buffer = new char[600];
@@ -180,8 +180,10 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 }
 
 void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
-	static uint8 textColors[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
+	static uint8 textColors256[] = { 0xfe, 0xa2, 0x84, 0x97, 0x9F };
+	static uint8 textColors16[] = { 0x33, 0xaa, 0x88, 0x55, 0x99 };
 	static uint8 soundEffect[] = { 0x0B, 0x00, 0x2B, 0x1B, 0x00 };
+	const uint8 *textColors = _vm->gameFlags().use16ColorMode ? textColors16 : textColors256;
 	if (type & 4)
 		type ^= 4;
 	else
@@ -196,8 +198,12 @@ void TextDisplayer_LoL::printMessage(uint16 type, const char *str, ...) {
 		_textDimData[4].color1 = col;
 	} else {
 		clearDim(3);
-		_screen->copyColor(192, col);
-		_textDimData[3].color1 = 192;
+		if (_vm->gameFlags().use16ColorMode) {
+			_textDimData[3].color1 = col;
+		} else {
+			_screen->copyColor(192, col);
+			_textDimData[3].color1 = 192;
+		}
 		_vm->enableTimer(11);
 	}
 
@@ -228,7 +234,7 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 	for (char *s = str; *s;) {
 		if (isPc98) {
 			uint8 c = *s;
-			if (c >= 0xE0 || (c > 0x80 && c <= 0xA0)) {
+			if (c >= 0xE0 || (c > 0x80 && c < 0xA0)) {
 				*dst++ = *s++;
 				*dst++ = *s++;
 				continue;
@@ -291,7 +297,6 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 				para = *++s;
 			break;
 		}
-
 		if (eos)
 			continue;
 
@@ -330,6 +335,8 @@ void TextDisplayer_LoL::preprocessString(char *str, EMCState *script, const uint
 }
 
 void TextDisplayer_LoL::displayText(char *str, ...) {
+	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
+	
 	_printFlag = false;
 
 	_lineWidth = 0;
@@ -351,6 +358,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
 
+	bool pc98PrintFlag = (isPc98 && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;	
 	uint16 charsPerLine = (sd->w << 3) / (_screen->getFontWidth() + _screen->_charWidth);
 
 	while (c) {
@@ -369,6 +377,20 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			_ctrl[0] = _ctrl[2];
 			_ctrl[2] = _ctrl[1] = 0;
 			c = parseCommand();
+		}
+
+		if (isPc98) {
+			uint8 cu = (uint8) c;
+			if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0)) {
+				_currentLine[_numCharsLeft++] = c;
+				_currentLine[_numCharsLeft++] = parseCommand();
+				_currentLine[_numCharsLeft] = '\0';
+				_lineWidth += 8;
+				if ((_textDimData[sdx].column + _lineWidth) > (sd->w << 3))
+					printLine(_currentLine);
+				c = parseCommand();
+				continue;
+			}
 		}
 
 		uint16 dv = _textDimData[sdx].column / (_screen->getFontWidth() + _screen->_charWidth);
@@ -404,7 +426,10 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			break;
 
 		case 12:
+			if (isPc98)
+				_sjisLineBreakFlag = true;
 			printLine(_currentLine);
+			_sjisLineBreakFlag = false;
 			_lineCount++;
 			_textDimData[sdx].column = 0;
 			_textDimData[sdx].line++;
@@ -431,7 +456,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			break;
 
 		default:
-			_lineWidth += _screen->getCharWidth(c);
+			_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth(c));
 			_currentLine[_numCharsLeft++] = c;
 			_currentLine[_numCharsLeft] = 0;
 
@@ -486,8 +511,10 @@ void TextDisplayer_LoL::readNextPara() {
 }
 
 void TextDisplayer_LoL::printLine(char *str) {
+	const bool isPc98 = (_vm->gameFlags().platform == Common::kPlatformPC98);
 	const ScreenDim *sd = _screen->_curDim;
 	int sdx = _screen->curDimIndex();
+	bool pc98PrintFlag = (isPc98 && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 
 	int fh = (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
@@ -511,44 +538,72 @@ void TextDisplayer_LoL::printLine(char *str) {
 	}
 
 	int x1 = (sd->sx << 3) + _textDimData[sdx].column;
-	int y = sd->sy + fh * _textDimData[sdx].line;
+	int y = sd->sy + (pc98PrintFlag ? (_textDimData[sdx].line << 3) : (fh * _textDimData[sdx].line));
 	int w = sd->w << 3;
 	int lw = _lineWidth;
 	int s = _numCharsLeft;
 	char c = 0;
 
-	if ((lw + _textDimData[sdx].column) > w) {
-		if ((lines - 1) <= _lineCount)
-			w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
+	if (pc98PrintFlag) {
+		bool ct = true;
 
-		w -= _textDimData[sdx].column;
-
-		int n2 = 0;
-		int n1 = s - 1;
-
-		while (n1 > 0) {
-			//cut off line after last space
-			c = str[n1];
-			lw -= _screen->getCharWidth(c);
-
-			if (!n2 && lw <= w)
-				n2 = n1;
-
-			if (n2 && c == ' ') {
-				s = n1;
-				_printFlag = false;
-				break;
-			}
-
-			n1--;
+		if ((lw + _textDimData[sdx].column) <= w) {
+			if (!_sjisLineBreakFlag || (_lineCount + 1 < lines - 1))
+				ct = false;
+			else
+				w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
 		}
 
-		if (!n1) {
-			if (_textDimData[sdx].column && !_printFlag) {
-				s = lw = 0;
-				_printFlag = true;
-			} else {
-				s = n2;
+		if (ct) {
+			w -= _textDimData[sdx].column;
+
+			int n2 = 0;
+			int n1 = (w / 4) - 1;			
+
+			do {
+				c = str[n2];
+				uint8 cu = (uint8) c;
+				if (cu >= 0xE0 || (cu > 0x80 && cu < 0xA0))
+					n2++;
+				n2++;
+			} while (n2 < n1 && n2 < s);
+			s = n2;
+		}
+	} else {
+		if ((lw + _textDimData[sdx].column) > w) {
+			if ((lines - 1) <= _lineCount)
+				w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
+
+			w -= _textDimData[sdx].column;
+
+			int n2 = 0;
+			int n1 = s - 1;
+			//bool ct = false;
+
+			while (n1 > 0) {
+				//cut off line after last space
+				c = str[n1];
+				
+				lw -= _screen->getCharWidth(c);
+
+				if (!n2 && lw <= w)
+					n2 = n1;
+
+				if (n2 && c == ' ') {
+					s = n1;
+					_printFlag = false;
+					break;
+				}
+				n1--;								
+			}
+
+			if (!n1) {
+				if (_textDimData[sdx].column && !_printFlag) {
+					s = lw = 0;
+					_printFlag = true;
+				} else {
+					s = n2;
+				}
 			}
 		}
 	}
@@ -556,7 +611,36 @@ void TextDisplayer_LoL::printLine(char *str) {
 	c = str[s];
 	str[s] = 0;
 
-	_screen->printText(str, x1, y, _textDimData[sdx].color1, _textDimData[sdx].color2);
+	uint8 col = _textDimData[sdx].color1;
+	if (isPc98 && (sdx == 2 || sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) {		
+		switch (_textDimData[sdx].color1) {
+		case 0x88:
+			col = 0x41;
+			break;
+		case 0x55:
+			col = 0x81;
+			break;
+		case 0xaa:
+			col = 0x21;
+			break;
+		case 0x99:
+			col = 0xa1;
+			break;
+		case 0x33:
+			col = 0xe1;
+			break;
+		case 0x18:
+			col = 0x61;
+			break;
+		default:
+			col = 1;
+			break;
+		}
+		_screen->printText(str, x1 & ~3, (y + 8) & ~7, col, 0);
+	} else {
+		_screen->printText(str, x1, y, col, _textDimData[sdx].color2);
+	}
+
 	_textDimData[sdx].column += lw;
 	_numCharsPrinted += strlen(str);
 
@@ -574,7 +658,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 	str[len] = 0;
 
 	_numCharsLeft = strlen(str);
-	_lineWidth = _screen->getTextWidth(str);
+	_lineWidth = pc98PrintFlag ? (_numCharsLeft << 2) : _screen->getTextWidth(str);
 
 	if (!_numCharsLeft && _textDimData[sdx].column < (sd->w << 3))
 		return;
@@ -626,7 +710,7 @@ void TextDisplayer_LoL::textPageBreak() {
 
 	_vm->gui_drawBox(x, y, 74, 9, 136, 251, -1);
 	char *txt = _vm->getLangString(0x4073);
-	_vm->_screen->printText(txt, x + 37 - (_vm->_screen->getTextWidth(txt) >> 1), y + 2, 144, 0);
+	_vm->_screen->printText(txt, x + 37 - (_vm->_screen->getTextWidth(txt) >> 1), y + 2, _vm->gameFlags().use16ColorMode ? dim->unk8 : 144, 0);
 
 	_vm->removeInputTop();
 

@@ -1173,9 +1173,16 @@ void TIMInterpreter_LoL::drawDialogueButtons() {
 	int x = _dialogueButtonPosX;
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
-		_vm->gui_drawBox(x, _dialogueButtonPosY, 74, 9, 136, 251, -1);
-		_screen->printText(_dialogueButtonString[i], x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2,
-			_dialogueButtonPosY + 2, _dialogueHighlightedButton == i ? 144 : 254, 0);
+		if (_vm->gameFlags().use16ColorMode) {
+			_vm->gui_drawBox(x, (_dialogueButtonPosY & ~7) - 1, 74, 10, 0xee, 0xcc, -1);
+			_screen->printText(_dialogueButtonString[i], (x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
+				(_dialogueButtonPosY & ~7) + 1, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
+		} else {
+			_vm->gui_drawBox(x, _dialogueButtonPosY, 74, 9, 136, 251, -1);
+			_screen->printText(_dialogueButtonString[i], x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2,
+				_dialogueButtonPosY + 2, _dialogueHighlightedButton == i ? 144 : 254, 0);
+		}
+
 		x += _dialogueButtonXoffs;
 	}
 	_screen->setFont(of);

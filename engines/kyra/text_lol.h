@@ -78,6 +78,7 @@ private:
 	uint32 _numCharsPrinted;
 
 	bool _printFlag;
+	bool _sjisLineBreakFlag;
 
 	LoLEngine *_vm;
 	Screen_LoL *_screen;
