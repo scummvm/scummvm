@@ -219,7 +219,7 @@ int Script::funcRandom(int n) {
 }
 
 int Script::funcAtBegin(int yesno) {
-	return _vm->_game->isDialogueBegin() == yesno;
+	return _vm->_game->isDialogueBegin() == (bool)yesno;
 }	
 
 int Script::funcLastBlock(int blockID) {

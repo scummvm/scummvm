@@ -66,7 +66,7 @@ void Screen::setPalette(byte *data, uint16 start, uint16 num) {
 	pal.seek(start * 4);
 
 	// Copy the palette	
-	for (unsigned int i = start; i < start + num; ++i) {
+	for (uint16 i = start; i < start + num; ++i) {
 		_palette[i * 4] = pal.readByte();
 		_palette[i * 4 + 1] = pal.readByte();
 		_palette[i * 4 + 2] = pal.readByte();
