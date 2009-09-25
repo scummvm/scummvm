@@ -226,6 +226,14 @@ motomagx-mpkg: $(EXECUTABLE)
 	$(CP) $(srcdir)/dists/motomagx/mpkg/* motomagx/scummvm/
 	tar -C motomagx -cvzf motomagx/ScummVM.mpkg scummvm
 
+motomagx-mgx: $(EXECUTABLE)
+	$(MKDIR) motomagx/scummvm
+	$(STRIP) $(EXECUTABLE) -o motomagx/scummvm/$(EXECUTABLE)
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) motomagx/scummvm/
+	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/scummvm/
+	$(CP) $(srcdir)/dists/motomagx/mgx/* motomagx/scummvm/
+	tar -C motomagx -cvzf motomagx/ScummVM.mgx scummvm
+
 motomagx-pep: $(EXECUTABLE)
 	$(MKDIR) motomagx/pep
 	$(CP) -r $(srcdir)/dists/motomagx/pep/* motomagx/pep
@@ -234,7 +242,7 @@ motomagx-pep: $(EXECUTABLE)
 	$(CP) $(srcdir)/backends/vkeybd/packs/vkeybd_default.zip motomagx/pep/app
 	tar -C motomagx/pep -czvf motomagx/ScummVM.pep app description.ini  scummvm_big_usr.png  scummvm_small_usr.png
 
-.PHONY: deb bundle osxsnap win32dist wiidist motoezx motomagx-mpkg motomagx-pep install uninstall
+.PHONY: deb bundle osxsnap win32dist wiidist motoezx motomagx-mpkg motomagx-mgx motomagx-pep install uninstall
 
 #
 # ARM specific

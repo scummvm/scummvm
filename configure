@@ -1275,6 +1275,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="linuxmoto"
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		motomagx)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1292,6 +1294,8 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="linuxmoto"
+			_build_hq_scalers="no"
+			_mt32emu="no"
 			;;
 		bfin*)
 			_need_memalign=yes
