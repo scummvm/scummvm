@@ -140,8 +140,8 @@ int Sprite::getPixel(int x, int y) const {
 	double scaleX = double(_scaledWidth) / _width;
 	double scaleY = double(_scaledHeight) / _height;
 
-	int sy = floor(dy * scaleY);
-	int sx = floor(dx * scaleX);
+	int sy = scummvm_lround(dy * scaleY);
+	int sx = scummvm_lround(dx * scaleX);
 
 	if (_mirror)
 		return _data[sy * _width + (_width - sx)];
@@ -190,11 +190,11 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 	// Precalculate pixel indexes
 	for (int i = 0; i < rows; ++i) {
-		rowIndices[i] = floor(i / scaleY);
+		rowIndices[i] = scummvm_lround(i / scaleY);
 	}
 
 	for (int j = 0; j < columns; ++j) {
-		columnIndices[j] = floor(j / scaleX);
+		columnIndices[j] = scummvm_lround(j / scaleX);
 	}
 
 	// Blit the sprite to the surface

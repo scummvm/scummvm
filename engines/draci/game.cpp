@@ -1045,8 +1045,8 @@ void Game::walkHero(int x, int y) {
 	uint height = frame->getHeight();
 	uint width = frame->getWidth();
 
-  	_persons[kDragonObject]._x = x + (floor(scaleX) * width) / 2;
-	_persons[kDragonObject]._y = y - floor(scaleY) * height;
+  	_persons[kDragonObject]._x = x + (scummvm_lround(scaleX) * width) / 2;
+	_persons[kDragonObject]._y = y - scummvm_lround(scaleY) * height;
 
 	// Set the per-animation scaling factor
 	anim->setScaleFactors(scaleX, scaleY);
