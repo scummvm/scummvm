@@ -401,7 +401,7 @@ reg_t kDoAvoider(EngineState *s, int, int argc, reg_t *argv) {
 	int dx, dy;
 	int destx, desty;
 
-	s->r_acc = make_reg(0, -1);
+	s->r_acc = make_reg(0, SIGNAL_OFFSET);
 
 	if (!s->segMan->isHeapObject(avoider)) {
 		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));

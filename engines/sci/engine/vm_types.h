@@ -67,9 +67,13 @@ typedef reg_t *StackPtr;
 typedef int Selector;
 #define NULL_SELECTOR -1
 
+// Offset sent to indicate an error, or that an operation has finished
+// (depending on the case)
+#define SIGNAL_OFFSET 0xffff
+
 #define PRINT_STK(v) (unsigned) (v - s->stack_base)
 
-static inline reg_t make_reg(SegmentId segment, int16 offset) {
+static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	reg_t r;
 	r.offset = offset;
 	r.segment = segment;

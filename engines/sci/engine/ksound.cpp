@@ -184,7 +184,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)\n",
 			          PRINT_REG(obj), cue);
 			/*			PUT_SEL32V(obj, loops, GET_SEL32V(obj, loop) - 1);*/
-			PUT_SEL32V(obj, signal, -1);
+			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_RELATIVE_CUE:
@@ -202,7 +202,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
-			PUT_SEL32V(obj, signal, -1);
+			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 			PUT_SEL32V(obj, state, _K_SOUND_STATUS_STOPPED);
 			break;
 
@@ -372,7 +372,7 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			PUT_SEL32V(obj, state, SOUND_STATUS_STOPPED);
-			PUT_SEL32V(obj, signal, -1);
+			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 		}
 		break;
 
@@ -560,7 +560,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_STOP_HANDLE : {
-		PUT_SEL32V(obj, signal, -1);
+		PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		}
@@ -581,7 +581,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		 * TODO: Figure out the exact semantics */
 
 		/* FIXME: The next couple of lines actually STOP the song right away */
-		PUT_SEL32V(obj, signal, -1);
+		PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		}
@@ -622,7 +622,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
-			PUT_SEL32V(obj, signal, -1);
+			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_LOOP:
@@ -842,7 +842,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 					warning("Could not open song number %d", number);
 					// Send a "stop handle" event so that the engine won't wait forever here
 					s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-					PUT_SEL32V(obj, signal, -1);
+					PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 					return s->r_acc;
 				}
 				debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
@@ -890,7 +890,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_STOP_HANDLE : {
-		PUT_SEL32V(obj, signal, -1);
+		PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		}
@@ -914,13 +914,13 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			/* FIXME: The next couple of lines actually STOP the handle, rather
 			** than fading it! */
 			if (argv[5].toUint16()) {
-				PUT_SEL32V(obj, signal, -1);
+				PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 				PUT_SEL32V(obj, nodePtr, 0);
 				PUT_SEL32V(obj, handle, 0);
 				s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			} else {
 				// FIXME: Support fade-and-continue. For now, send signal right away.
-				PUT_SEL32V(obj, signal, -1);
+				PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 			}
 		}
 		break;
@@ -976,7 +976,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			break;
 
 		case SI_FINISHED:
-			PUT_SEL32V(obj, signal, -1);
+			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_LOOP:
@@ -1106,7 +1106,7 @@ reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
 		} else {
 			warning("DoSync: failed to find resource %s", id.toString().c_str());
 			// Notify the scripts to stop sound sync
-			PUT_SEL32V(argv[1], syncCue, -1);
+			PUT_SEL32V(argv[1], syncCue, SIGNAL_OFFSET);
 		}
 		break;
 	}
