@@ -53,7 +53,7 @@ const byte kFontColorMenuActive  = 255;
 
 class Widget {
 public:
-	Widget(PictureEngine *vm, int x, int y);
+	Widget(PictureEngine *vm, int16 x, int16 y);
 	virtual ~Widget();
 	virtual void redraw();
 	virtual Widget *getHoveredWidget(int mouseX, int mouseY);

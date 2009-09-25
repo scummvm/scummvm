@@ -43,7 +43,7 @@ namespace Picture {
 
 // This code is very experimental.
 
-Widget::Widget(PictureEngine *vm, int x, int y) : _vm(vm) {
+Widget::Widget(PictureEngine *vm, int16 x, int16 y) : _vm(vm) {
 	_rect.left = x;
 	_rect.top = y;
 }

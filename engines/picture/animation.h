@@ -69,7 +69,7 @@ public:
 	// 262144
 	byte *_animBuffer;
 
-	uint _resIndex;
+	uint16 _resIndex;
 
 	uint16 _width, _height;
 	uint16 _frameNumber, _frameCount;
