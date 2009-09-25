@@ -1,0 +1,9 @@
+#!/bin/bash
+mypath=${0%/*}
+GAMES=/mmc/mmca1/games
+LIBDIR=$GAMES/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$LIBDIR
+export SDL_QT_MODIFICATOR=1
+export HOME=$GAMES
+cd $mypath
+exec $mypath/scummvm --gfx-mode=1x > $mypath/scummvm.log

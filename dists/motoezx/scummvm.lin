@@ -7,4 +7,4 @@ export LD_LIBRARY_PATH=/mmc/mmca1/games/lib:$LD_LIBRARY_PATH
 export SDL_QT_MODIFICATOR=1
 export HOME=/mmc/mmca1/games
 cd $mypath
-exec $mypath/scummvm --path=/mmc/mmca1/games/data --gfx-mode=1x > /mmc/mmca1/games/logs/scummvm.log 2>&1
+exec $mypath/scummvm --gfx-mode=1x > $mypath/scummvm.log
