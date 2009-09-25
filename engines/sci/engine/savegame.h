@@ -57,7 +57,7 @@ struct SavegameMetadata {
  * @param savename	The description of the savegame
  * @return 0 on success, 1 otherwise
  */
-int gamestate_save(EngineState *s, Common::WriteStream *save, const char *savename);
+int gamestate_save(EngineState *s, Common::WriteStream *save, const char *savename, const char *version);
 
 /**
  * Restores a game state from a directory.

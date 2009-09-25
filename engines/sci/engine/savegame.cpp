@@ -65,20 +65,6 @@ static void sync_reg_t(Common::Serializer &s, reg_t &obj) {
 	s.syncAsUint16LE(obj.offset);
 }
 
-// FIXME: Sync a C string, using malloc/free storage.
-// Much better to replace all of these by Common::String
-static void syncCStr(Common::Serializer &s, char **str) {
-	Common::String tmp;
-	if (s.isSaving() && *str)
-		tmp = *str;
-	s.syncString(tmp);
-	if (s.isLoading()) {
-		//free(*str);
-		*str = strdup(tmp.c_str());
-	}
-}
-
-
 static void sync_song_t(Common::Serializer &s, Song &obj) {
 	s.syncAsSint32LE(obj._handle);
 	s.syncAsSint32LE(obj._resourceNum);
@@ -295,7 +281,8 @@ static void sync_SavegameMetadata(Common::Serializer &s, SavegameMetadata &obj) 
 void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be savegame_version
 
-	syncCStr(s, &game_version);
+	Common::String tmp;
+	s.syncString(tmp);			// OBSOLETE: Used to be game_version
 	s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be version
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.
@@ -508,14 +495,14 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 #pragma mark -
 
 
-int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename) {
+int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
 	tm curTime;
 	g_system->getTimeAndDate(curTime);
 
 	SavegameMetadata meta;
 	meta.savegame_version = CURRENT_SAVEGAME_VERSION;
 	meta.savegame_name = savename;
-	meta.game_version = s->game_version;
+	meta.game_version = version;
 	meta.savegame_date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	meta.savegame_time = ((curTime.tm_hour & 0xFF) << 16) | (((curTime.tm_min) & 0xFF) << 8) | ((curTime.tm_sec) & 0xFF);
 

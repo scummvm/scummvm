@@ -579,7 +579,6 @@ reg_t kSaveGame(EngineState *s, int, int argc, reg_t *argv) {
 	char *version = argc > 3 ? strdup(s->segMan->derefString(argv[3])) : NULL;
 
 	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id, savedir_nr, game_description, version);
-	s->game_version = version;
 
 	Common::Array<SavegameDesc> saves;
 	listSavegames(saves);
@@ -624,7 +623,7 @@ reg_t kSaveGame(EngineState *s, int, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	if (gamestate_save(s, out, game_description)) {
+	if (gamestate_save(s, out, game_description, version)) {
 		warning("Saving the game failed.");
 		s->r_acc = NULL_REG;
 	} else {
@@ -638,8 +637,6 @@ reg_t kSaveGame(EngineState *s, int, int argc, reg_t *argv) {
 			s->r_acc = make_reg(0, 1);
 		}
 	}
-	free(s->game_version);
-	s->game_version = NULL;
 
 	return s->r_acc;
 }

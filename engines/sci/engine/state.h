@@ -171,7 +171,6 @@ public:
 	const uint32 _flags;			/**< Specific game flags */
 
 	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */
-	char *game_version;
 
 	/* Non-VM information */
 

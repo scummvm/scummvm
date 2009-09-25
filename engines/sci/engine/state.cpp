@@ -33,8 +33,6 @@ namespace Sci {
 EngineState::EngineState(ResourceManager *res, Kernel *kernel, uint32 flags)
 : resMan(res), _kernel(kernel), _flags(flags), _dirseeker(this) {
 
-	game_version = 0;
-
 	gfx_state = 0;
 	old_screen = 0;
 
