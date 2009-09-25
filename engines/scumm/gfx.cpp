@@ -3189,6 +3189,10 @@ void Gdi16Bit::writeRoomColor(byte *dst, byte color) const {
 }
 
 void Gdi::writeRoomColor(byte *dst, byte color) const {
+	// As described in bug #1294513 "FOA/Amiga: Palette problem (Regression)"
+	// the original AMIGA version of Indy4: The Fate of Atlantis allowed
+	// overflowing of the palette index. To have the same result in our code,
+	// we need to do an logical AND 0xFF here to keep the result in [0, 255].
 	*dst = _roomPalette[(color + _paletteMod) & 0xFF];
 }
 
