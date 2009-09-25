@@ -1066,6 +1066,7 @@ else
 					_cxx_major=7
 					_cxx_minor=4
 					add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MDupdate "$(*D)/$(DEPDIR)/$(*F).d"'
+					add_line_to_config_mk '-include Makedepend'
 					;;
 				*)
 					cxx_version="$cxx_version, bad"
