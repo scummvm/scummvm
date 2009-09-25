@@ -2754,7 +2754,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 					run = *src++;
 				}
 				for (z = 0; z < run; z++) {
-					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[color & 0xf] + _paletteMod : _roomPalette[color >> 4] + _paletteMod;
+					*(dst + y * dstPitch + x) = (z & 1) ? _roomPalette[(color & 0xf) + _paletteMod] : _roomPalette[(color >> 4) + _paletteMod];
 
 					y++;
 					if (y >= height) {
@@ -2784,7 +2784,7 @@ void Gdi::drawStripEGA(byte *dst, int dstPitch, const byte *src, int height) con
 			}
 
 			for (z = 0; z < run; z++) {
-				*(dst + y * dstPitch + x) = _roomPalette[color & 0xf] + _paletteMod;
+				*(dst + y * dstPitch + x) = _roomPalette[(color & 0xf) + _paletteMod];
 
 				y++;
 				if (y >= height) {
@@ -3189,7 +3189,7 @@ void Gdi16Bit::writeRoomColor(byte *dst, byte color) const {
 }
 
 void Gdi::writeRoomColor(byte *dst, byte color) const {
-	*dst = _roomPalette[color] + _paletteMod;
+	*dst = _roomPalette[color + _paletteMod];
 }
 
 
