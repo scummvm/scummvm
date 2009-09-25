@@ -56,7 +56,9 @@ void ScummEngine::loadCJKFont() {
 		_2byteWidth = 16;
 		_2byteHeight = 16;
 		// use FM-TOWNS font rom, since game files don't have kanji font resources
-		if (fp.open("fmt_fnt.rom")) {
+		if (!fp.open("fmt_fnt.rom")) {
+			error("SCUMM::Font: Couldn't open fmt_fnt.rom");
+		} else {
 			_useCJKMode = true;
 			debug(2, "Loading FM-TOWNS Kanji rom");
 			_2byteFontPtr = new byte[((_2byteWidth + 7) / 8) * _2byteHeight * numChar];
@@ -116,7 +118,10 @@ void ScummEngine::loadCJKFont() {
 			fp.read(_2byteFontPtr, ((_2byteWidth + 7) / 8) * _2byteHeight * numChar);
 			fp.close();
 		} else {
-			error("Couldn't load any font");
+			if (fontFile)
+				error("SCUMM::Font: Couldn't open %s",fontFile);
+			else
+				error("SCUMM::Font: Couldn't load any font");
 		}
 	}
 }
