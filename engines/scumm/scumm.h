@@ -963,7 +963,7 @@ public:
 	int _screenTop;
 
 	Common::RenderMode _renderMode;
-	uint8 _bitDepth;
+	uint8 _bytesPerPixel;
 
 protected:
 	ColorCycle _colorCycle[16];	// Palette cycles

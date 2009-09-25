@@ -95,7 +95,7 @@ public:
 class CharsetRendererCommon : public CharsetRenderer {
 protected:
 	const byte *_fontPtr;
-	int _bitDepth;
+	int _bytesPerPixel;
 	int _fontHeight;
 	int _numChars;
 

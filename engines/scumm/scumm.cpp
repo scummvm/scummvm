@@ -254,7 +254,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_switchRoomEffect2 = 0;
 	_switchRoomEffect = 0;
 
-	_bitDepth = 0;
+	_bytesPerPixel = 1;
 	_doEffect = false;
 	_snapScroll = false;
 	_currentLights = 0;
@@ -528,11 +528,11 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_screenHeight = 200;
 	}
 
-	_bitDepth = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
+	_bytesPerPixel = (_game.features & GF_16BIT_COLOR) ? 2 : 1;
 
 	// Allocate gfx compositing buffer (not needed for V7/V8 games).
 	if (_game.version < 7)
-		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bitDepth);
+		_compositeBuf = (byte *)malloc(_screenWidth * _screenHeight * _bytesPerPixel);
 	else
 		_compositeBuf = 0;
 
@@ -1225,7 +1225,7 @@ void ScummEngine::setupScumm() {
 	}
 
 	free(_compositeBuf);
-	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bitDepth);
+	_compositeBuf = (byte *)malloc(_screenWidth * _textSurfaceMultiplier * _screenHeight * _textSurfaceMultiplier * _bytesPerPixel);
 }
 
 #ifdef ENABLE_SCUMM_7_8

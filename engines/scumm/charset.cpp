@@ -284,7 +284,7 @@ CharsetRenderer::~CharsetRenderer() {
 }
 
 CharsetRendererCommon::CharsetRendererCommon(ScummEngine *vm)
-	: CharsetRenderer(vm), _bitDepth(0), _fontHeight(0), _numChars(0) {
+	: CharsetRenderer(vm), _bytesPerPixel(0), _fontHeight(0), _numChars(0) {
 	_shadowMode = kNoShadowMode;
 	_shadowColor = 0;
 }
@@ -306,7 +306,7 @@ void CharsetRendererCommon::setCurID(int32 id) {
 	else
 		_fontPtr += 29;
 
-	_bitDepth = _fontPtr[0];
+	_bytesPerPixel = _fontPtr[0];
 	_fontHeight = _fontPtr[1];
 	_numChars = READ_LE_UINT16(_fontPtr + 2);
 }
@@ -323,7 +323,7 @@ void CharsetRendererV3::setCurID(int32 id) {
 	if (_fontPtr == 0)
 		error("CharsetRendererCommon::setCurID: charset %d not found", id);
 
-	_bitDepth = 1;
+	_bytesPerPixel = 1;
 	_numChars = _fontPtr[4];
 	_fontHeight = _fontPtr[5];
 
@@ -802,7 +802,7 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 	byte *back = NULL;
 	int drawTop = _top - vs->topline;
 
-	if ((_vm->_game.heversion >= 71 && _bitDepth >= 8) || (_vm->_game.heversion >= 90 && _bitDepth == 0)) {
+	if ((_vm->_game.heversion >= 71 && _bytesPerPixel >= 8) || (_vm->_game.heversion >= 90 && _bytesPerPixel == 0)) {
 #ifdef ENABLE_HE
 		if (ignoreCharsetMask || !vs->hasTwoBuffers) {
 			dstPtr = vs->getPixels(0, 0);
@@ -815,13 +815,13 @@ void CharsetRendererClassic::printCharIntern(bool is2byte, const byte *charPtr, 
 		}
 
 		Common::Rect rScreen(vs->w, vs->h);
-		if (_bitDepth >= 8) {
+		if (_bytesPerPixel >= 8) {
 			byte imagePalette[256];
 			memset(imagePalette, 0, sizeof(imagePalette));
 			memcpy(imagePalette, _vm->_charsetColorMap, 4);
-			Wiz::copyWizImage(dstPtr, charPtr, vs->pitch, kDstScreen, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, imagePalette, NULL, _vm->_bitDepth);
+			Wiz::copyWizImage(dstPtr, charPtr, vs->pitch, kDstScreen, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, imagePalette, NULL, _vm->_bytesPerPixel);
 		} else {
-			Wiz::copyWizImage(dstPtr, charPtr, vs->pitch, kDstScreen, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, NULL, NULL, _vm->_bitDepth);
+			Wiz::copyWizImage(dstPtr, charPtr, vs->pitch, kDstScreen, vs->w, vs->h, _left, _top, origWidth, origHeight, &rScreen, 0, NULL, NULL, _vm->_bytesPerPixel);
 		}
 
 		if (_blitAlso && vs->hasTwoBuffers) {

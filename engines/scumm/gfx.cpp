@@ -619,7 +619,7 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 
 		vsPitch >>= 2;
 
-		if (_bitDepth == 2) {
+		if (_bytesPerPixel == 2) {
 			// Sprites always seem to be used for subtitles in 16Bit color HE games, and not
 			// the charset renderer, so charset masking isn't required.
 			for (int h = height * m; h > 0; --h) {
@@ -1975,12 +1975,12 @@ void Gdi::drawBMAPObject(const byte *ptr, VirtScreen *vs, int obj, int x, int y,
 	assert(bmap_ptr);
 
 	byte code = *bmap_ptr++;
-	int scrX = _vm->_screenStartStrip * 8 * _vm->_bitDepth;
+	int scrX = _vm->_screenStartStrip * 8 * _vm->_bytesPerPixel;
 
 	if (code == 8 || code == 9) {
 		Common::Rect rScreen(0, 0, vs->w, vs->h);
 		byte *dst = (byte *)_vm->_virtscr[kMainVirtScreen].backBuf + scrX;
-		Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bitDepth);
+		Wiz::copyWizImage(dst, bmap_ptr, vs->pitch, kDstScreen, vs->w, vs->h, x - scrX, y, w, h, &rScreen, 0, 0, 0, _vm->_bytesPerPixel);
 	}
 
 	Common::Rect rect1(x, y, x + w, y + h);
@@ -2820,11 +2820,11 @@ void Gdi::drawStripHE(byte *dst, int dstPitch, const byte *src, int width, int h
 	while (1) {
 		if (!transpCheck || color != _transparentColor)
 			writeRoomColor(dst, color);
-		dst += _vm->_bitDepth;
+		dst += _vm->_bytesPerPixel;
 		--x;
 		if (x == 0) {
 			x = width;
-			dst += dstPitch - width * _vm->_bitDepth;
+			dst += dstPitch - width * _vm->_bytesPerPixel;
 			--height;
 			if (height == 0)
 				return;
@@ -2909,7 +2909,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
 				writeRoomColor(dst, color);
-			dst += _vm->_bitDepth;
+			dst += _vm->_bytesPerPixel;
 
 		againPos:
 			if (!READ_BIT) {
@@ -2930,13 +2930,13 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 					do {
 						if (!--x) {
 							x = 8;
-							dst += dstPitch - 8 * _vm->_bitDepth;
+							dst += dstPitch - 8 * _vm->_bytesPerPixel;
 							if (!--height)
 								return;
 						}
 						if (!transpCheck || color != _transparentColor)
 							writeRoomColor(dst, color);
-						dst += _vm->_bitDepth;
+						dst += _vm->_bytesPerPixel;
 					} while (--reps);
 					bits >>= 8;
 					bits |= (*src++) << (cl - 8);
@@ -2944,7 +2944,7 @@ void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height,
 				}
 			}
 		} while (--x);
-		dst += dstPitch - 8 * _vm->_bitDepth;
+		dst += dstPitch - 8 * _vm->_bytesPerPixel;
 	} while (--height);
 }
 
@@ -2961,7 +2961,7 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 			FILL_BITS;
 			if (!transpCheck || color != _transparentColor)
 				writeRoomColor(dst, color);
-			dst += _vm->_bitDepth;
+			dst += _vm->_bytesPerPixel;
 			if (!READ_BIT) {
 			} else if (!READ_BIT) {
 				FILL_BITS;
@@ -2976,7 +2976,7 @@ void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, 
 				color += inc;
 			}
 		} while (--x);
-		dst += dstPitch - 8 * _vm->_bitDepth;
+		dst += dstPitch - 8 * _vm->_bytesPerPixel;
 	} while (--height);
 }
 
@@ -3061,7 +3061,7 @@ void Gdi::drawStripRaw(byte *dst, int dstPitch, const byte *src, int height, con
 			for (x = 0; x < 8; x ++) {
 				byte color = *src++;
 				if (!transpCheck || color != _transparentColor)
-					writeRoomColor(dst + x * _vm->_bitDepth, color);
+					writeRoomColor(dst + x * _vm->_bytesPerPixel, color);
 			}
 			dst += dstPitch;
 		} while (--height);

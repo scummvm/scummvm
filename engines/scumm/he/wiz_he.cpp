@@ -1498,10 +1498,10 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 	int32 dstPitch, dstType, cw, ch;
 	if (flags & kWIFBlitToMemBuffer) {
-		dst = (uint8 *)malloc(width * height * _vm->_bitDepth);
+		dst = (uint8 *)malloc(width * height * _vm->_bytesPerPixel);
 		int transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? (_vm->VAR(_vm->VAR_WIZ_TCOLOR)) : 5;
 
-		if (_vm->_bitDepth == 2) {
+		if (_vm->_bytesPerPixel == 2) {
 			uint8 *tmpPtr = dst;
 			for (uint i = 0; i < height; i++) {
 				for (uint j = 0; j < width; j++) {
@@ -1518,7 +1518,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		}
 		cw = width;
 		ch = height;
-		dstPitch = cw * _vm->_bitDepth;
+		dstPitch = cw * _vm->_bytesPerPixel;
 		dstType = kDstMemory;
 	} else {
 		if (dstResNum) {
@@ -1527,7 +1527,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 			dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
 			assert(dst);
 			getWizImageDim(dstResNum, 0, cw, ch);
-			dstPitch = cw * _vm->_bitDepth;
+			dstPitch = cw * _vm->_bytesPerPixel;
 			dstType = kDstResource;
 		} else {
 			VirtScreen *pvs = &_vm->_virtscr[kMainVirtScreen];
@@ -1559,7 +1559,7 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 		}
 	}
 
-	if (flags & kWIFRemapPalette && _vm->_bitDepth == 1) {
+	if (flags & kWIFRemapPalette && _vm->_bytesPerPixel == 1) {
 		palPtr = rmap + 4;
 	}
 
@@ -1571,19 +1571,19 @@ uint8 *Wiz::drawWizImage(int resNum, int state, int maskNum, int maskState, int 
 
 	switch (comp) {
 	case 0:
-		copyRawWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor, _vm->_bitDepth);
+		copyRawWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, transColor, _vm->_bytesPerPixel);
 		break;
 	case 1:
 		if (flags & 0x80) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
-			dstPitch /= _vm->_bitDepth;
+			dstPitch /= _vm->_bytesPerPixel;
 			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 2);
 		} else if (flags & 0x100) {
 			dst = _vm->getMaskBuffer(0, 0, 1);
-			dstPitch /= _vm->_bitDepth;
+			dstPitch /= _vm->_bytesPerPixel;
 			copyWizImageWithMask(dst, wizd, dstPitch, cw, ch, x1, y1, width, height, &rScreen, 0, 1);
 		} else {
-			copyWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr, _vm->_bitDepth);
+			copyWizImage(dst, wizd, dstPitch, dstType, cw, ch, x1, y1, width, height, &rScreen, flags, palPtr, xmapPtr, _vm->_bytesPerPixel);
 		}
 		break;
 #ifdef USE_RGB_COLOR
@@ -1747,12 +1747,12 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 
 	dstw = wp->bound.width();
 	dsth = wp->bound.height();
-	dstpitch = dstw * _vm->_bitDepth;
-	imageBuffer = (uint8 *)malloc(dstw * dsth * _vm->_bitDepth);
+	dstpitch = dstw * _vm->_bytesPerPixel;
+	imageBuffer = (uint8 *)malloc(dstw * dsth * _vm->_bytesPerPixel);
 	assert(imageBuffer);
 
 	const uint16 transColor = (_vm->VAR_WIZ_TCOLOR != 0xFF) ? _vm->VAR(_vm->VAR_WIZ_TCOLOR) : 5;
-	if (_vm->_bitDepth == 2) {
+	if (_vm->_bytesPerPixel == 2) {
 		uint8 *tmpPtr = imageBuffer;
 		for (i = 0; i < dsth; i++) {
 			for (j = 0; j < dstw; j++)
@@ -1764,7 +1764,7 @@ void Wiz::captureWizPolygon(int resNum, int maskNum, int maskState, int id1, int
 	}
 
 	Common::Rect bound;
-	drawWizPolygonImage(imageBuffer, src, NULL, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp->vert, _vm->_bitDepth);
+	drawWizPolygonImage(imageBuffer, src, NULL, dstpitch, kDstMemory, dstw, dsth, srcw, srch, bound, wp->vert, _vm->_bytesPerPixel);
 
 	captureImage(imageBuffer, dstpitch, dstw, dsth, resNum, wp->bound, compType);
 	free(imageBuffer);
@@ -1812,7 +1812,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 
 			srcWizBuf = drawWizImage(resNum, state, 0, 0, 0, 0, 0, shadow, 0, r, flags, 0, _vm->getHEPaletteSlot(palette));
 		} else {
-			assert(_vm->_bitDepth == 1);
+			assert(_vm->_bytesPerPixel == 1);
 			uint8 *dataPtr = _vm->getResourceAddress(rtImage, resNum);
 			assert(dataPtr);
 			srcWizBuf = _vm->findWrappedBlock(MKID_BE('WIZD'), dataPtr, state, 0);
@@ -1843,7 +1843,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 		dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
 		assert(dst);
 		getWizImageDim(dstResNum, 0, dstw, dsth);
-		dstpitch = dstw * _vm->_bitDepth;
+		dstpitch = dstw * _vm->_bytesPerPixel;
 		dstType = kDstResource;
 	} else {
 		if (flags & kWIFMarkBufferDirty) {
@@ -1859,7 +1859,7 @@ void Wiz::drawWizPolygonTransform(int resNum, int state, Common::Point *wp, int 
 
 	Common::Rect bound;
 	getWizImageDim(resNum, state, wizW, wizH);
-	drawWizPolygonImage(dst, srcWizBuf, 0, dstpitch, dstType, dstw, dsth, wizW, wizH, bound, wp, _vm->_bitDepth);
+	drawWizPolygonImage(dst, srcWizBuf, 0, dstpitch, dstType, dstw, dsth, wizW, wizH, bound, wp, _vm->_bytesPerPixel);
 
 	if (flags & kWIFMarkBufferDirty) {
 		_vm->markRectAsDirty(kMainVirtScreen, bound);
@@ -1942,7 +1942,7 @@ void Wiz::drawWizPolygonImage(uint8 *dst, const uint8 *src, const uint8 *mask, i
 				int16 width = ppa->xmax - ppa->xmin + 1;
 				pra->x_step = ((ppa->x2 - ppa->x1) << 16) / width;
 				pra->y_step = ((ppa->y2 - ppa->y1) << 16) / width;
-				pra->dst_offs = yoff + x1 * _vm->_bitDepth;
+				pra->dst_offs = yoff + x1 * _vm->_bytesPerPixel;
 				pra->w = w;
 				pra->x_s = ppa->x1 << 16;
 				pra->y_s = ppa->y1 << 16;
@@ -2024,7 +2024,7 @@ void Wiz::loadWizCursor(int resId, int palette) {
 	int32 cw, ch;
 	getWizImageDim(resId, 0, cw, ch);
 	_vm->setCursorHotspot(x, y);
-	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bitDepth);
+	_vm->setCursorFromBuffer(cursor, cw, ch, cw * _vm->_bytesPerPixel);
 
 	// Since we set up cursor palette for default cursor, disable it now
 	CursorMan.disableCursorPalette(true);

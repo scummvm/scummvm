@@ -602,7 +602,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 								pcolor = _shadow_table[pcolor];
 							}
 						}
-						if (_vm->_bitDepth == 2) {
+						if (_vm->_bytesPerPixel == 2) {
 							WRITE_UINT16(dst, pcolor);
 						} else {
 							*dst = pcolor;
@@ -626,7 +626,7 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 					if (v1.x < 0 || v1.x >= v1.boundsRect.right)
 						return;
 					maskbit = revBitMask(v1.x & 7);
-					v1.destptr += v1.scaleXstep * _vm->_bitDepth;
+					v1.destptr += v1.scaleXstep * _vm->_bytesPerPixel;
 					skip_column = false;
 				} else
 					skip_column = true;
@@ -996,7 +996,7 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	if (_draw_bottom < rect.bottom)
 		_draw_bottom = rect.bottom;
 
-	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x * _vm->_bitDepth;
+	v1.destptr = (byte *)_out.pixels + v1.y * _out.pitch + v1.x * _vm->_bytesPerPixel;
 
 	codec1_genericDecode(v1);
 
@@ -1190,7 +1190,7 @@ void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, in
 }
 
 byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
-	assert(_vm->_bitDepth == 1);
+	assert(_vm->_bytesPerPixel == 1);
 
 	Common::Rect clip;
 	int32 minx, miny, maxw, maxh;
@@ -1294,7 +1294,7 @@ byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
 	int32 numskip_before = skip_x + (skip_y * _width);
 	int32 numskip_after = _width - cur_x;
 
-	byte *dst = (byte *)_out.pixels + height_unk * _out.pitch + width_unk * _vm->_bitDepth;
+	byte *dst = (byte *)_out.pixels + height_unk * _out.pitch + width_unk * _vm->_bytesPerPixel;
 
 	akos16Decompress(dst, _out.pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, clip.left, clip.top, _zbuf);
 	return 0;
@@ -1364,14 +1364,14 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
 	}
 
-	byte *dstPtr = (byte *)_out.pixels + dst.top * _out.pitch + dst.left * _vm->_bitDepth;
+	byte *dstPtr = (byte *)_out.pixels + dst.top * _out.pitch + dst.left * _vm->_bytesPerPixel;
 	if (_shadow_mode == 3) {
-		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, xmap, _vm->_bitDepth);
+		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, xmap, _vm->_bytesPerPixel);
 	} else {
 		if (palPtr != NULL) {
-			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, NULL, _vm->_bitDepth);
+			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, NULL, _vm->_bytesPerPixel);
 		} else {
-			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, NULL, NULL, _vm->_bitDepth);
+			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, NULL, NULL, _vm->_bytesPerPixel);
 		}
 	}
 #endif

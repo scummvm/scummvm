@@ -115,7 +115,7 @@ void MoviePlayer::handleNextFrame() {
 		assert(dstPtr);
 		uint8 *dst = _vm->findWrappedBlock(MKID_BE('WIZD'), dstPtr, 0, 0);
 		assert(dst);
-		copyFrameToBuffer(dst, kDstResource, 0, 0, _vm->_screenWidth * _vm->_bitDepth);
+		copyFrameToBuffer(dst, kDstResource, 0, 0, _vm->_screenWidth * _vm->_bytesPerPixel);
 	} else if (_flags & 1) {
 		copyFrameToBuffer(pvs->getBackPixels(0, 0), kDstScreen, 0, 0, pvs->pitch);
 
