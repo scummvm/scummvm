@@ -113,14 +113,14 @@ reg_t kTimesSin(EngineState *s, int, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int factor = argv[1].toSint16();
 
-	return make_reg(0, (int)(factor * 1.0 * sin(angle * PI / 180.0)));
+	return make_reg(0, (int)(factor * sin(angle * PI / 180.0)));
 }
 
 reg_t kTimesCos(EngineState *s, int, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int factor = argv[1].toSint16();
 
-	return make_reg(0, (int)(factor * 1.0 * cos(angle * PI / 180.0)));
+	return make_reg(0, (int)(factor * cos(angle * PI / 180.0)));
 }
 
 reg_t kCosDiv(EngineState *s, int, int argc, reg_t *argv) {

@@ -72,7 +72,7 @@ enum kMemoryInfoFunc {
 };
 
 reg_t kMemoryInfo(EngineState *s, int, int argc, reg_t *argv) {
-	uint16 size = 0x7fff;  // Must not be 0xffff, or some memory calculations will overflow
+	const uint16 size = 0x7fff;  // Must not be 0xffff, or some memory calculations will overflow
 
 	switch (argv[0].offset) {
 	case K_MEMORYINFO_LARGEST_HEAP_BLOCK:
@@ -107,10 +107,10 @@ reg_t kSetDebug(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 enum {
-	_K_NEW_GETTIME_TICKS = 0,
-	_K_NEW_GETTIME_TIME_12HOUR = 1,
-	_K_NEW_GETTIME_TIME_24HOUR = 2,
-	_K_NEW_GETTIME_DATE = 3
+	K_NEW_GETTIME_TICKS = 0,
+	K_NEW_GETTIME_TIME_12HOUR = 1,
+	K_NEW_GETTIME_TIME_24HOUR = 2,
+	K_NEW_GETTIME_DATE = 3
 };
 
 reg_t kGetTime(EngineState *s, int, int argc, reg_t *argv) {
@@ -130,19 +130,19 @@ reg_t kGetTime(EngineState *s, int, int argc, reg_t *argv) {
 	int mode = (argc > 0) ? argv[0].toUint16() : 0;
 
 	switch (mode) {
-	case _K_NEW_GETTIME_TICKS :
+	case K_NEW_GETTIME_TICKS :
 		retval = start_time * 60 / 1000;
 		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
-	case _K_NEW_GETTIME_TIME_12HOUR :
+	case K_NEW_GETTIME_TIME_12HOUR :
 		retval = ((loc_time.tm_hour % 12) << 12) | (loc_time.tm_min << 6) | (loc_time.tm_sec);
 		debugC(2, kDebugLevelTime, "GetTime(12h) returns %d", retval);
 		break;
-	case _K_NEW_GETTIME_TIME_24HOUR :
+	case K_NEW_GETTIME_TIME_24HOUR :
 		retval = (loc_time.tm_hour << 11) | (loc_time.tm_min << 5) | (loc_time.tm_sec >> 1);
 		debugC(2, kDebugLevelTime, "GetTime(24h) returns %d", retval);
 		break;
-	case _K_NEW_GETTIME_DATE :
+	case K_NEW_GETTIME_DATE :
 		retval = loc_time.tm_mday | ((loc_time.tm_mon + 1) << 5) | (((loc_time.tm_year + 1900) & 0x7f) << 9);
 		debugC(2, kDebugLevelTime, "GetTime(date) returns %d", retval);
 		break;
