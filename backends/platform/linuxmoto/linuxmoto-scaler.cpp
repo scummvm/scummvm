@@ -23,46 +23,19 @@
  *
  */
 
+#include "graphics/scaler/intern.h"
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 
-void OSystem_LINUXMOTO::preprocessEvents(SDL_Event *event) {
-	if (event->type == SDL_ACTIVEEVENT) {
-		if (event->active.state == SDL_APPINPUTFOCUS && !event->active.gain) {
-			suspendAudio(); 
-			for (;;) {
-				if (!SDL_WaitEvent(event)) {
-					SDL_Delay(10);
-					continue;
-				}
-				if (event->type == SDL_QUIT)
-					return;
-				if (event->type != SDL_ACTIVEEVENT)
-					continue;
-				if (event->active.state == SDL_APPINPUTFOCUS && event->active.gain) {
-					resumeAudio();
-						return;
-				}
-			}
-		}
-	}
+SDL_PixelFormat *screenPixelFormat;
+
+extern "C" {
+	void PocketPCHalfARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask, int round);
+	// Rounding constants and masks used for different pixel formats
+	int roundingconstants[] = { 0x00200802, 0x00201002 };
+	int redbluegreenMasks[] = { 0x03E07C1F, 0x07E0F81F };
 }
 
-void OSystem_LINUXMOTO::suspendAudio() {
-	SDL_CloseAudio();
-	_audioSuspended = true;
-}
-
-int OSystem_LINUXMOTO::resumeAudio() {
-	if (!_audioSuspended)
-		return -2;
-	if (SDL_OpenAudio(&_obtainedRate, NULL) < 0){
-		return -1;
-	}
-	SDL_PauseAudio(0);
-	_audioSuspended = false;
-	return 0;
-} 
-
-void OSystem_LINUXMOTO::setupMixer() {
-	OSystem_SDL::setupMixer();
+void HalfScale(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
+	int maskUsed = (gBitFormat == 565);
+	PocketPCHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed],roundingconstants[maskUsed]);
 }

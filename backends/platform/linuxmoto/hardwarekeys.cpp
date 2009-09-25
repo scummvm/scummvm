@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "backends/keymapper/keymapper.h"
 #include "common/keyboard.h"

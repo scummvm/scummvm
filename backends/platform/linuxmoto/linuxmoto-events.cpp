@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 #include "backends/platform/sdl/sdl.h"
 
@@ -42,6 +41,28 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 		return 0;
 	}
 	return key;
+}
+
+void OSystem_LINUXMOTO::fillMouseEvent(Common::Event &event, int x, int y) {
+    if(_videoMode.mode == GFX_HALF && !_overlayVisible) {
+	    event.mouse.x = x*2;
+	    event.mouse.y = y*2;
+    } else {
+        event.mouse.x = x;
+	    event.mouse.y = y;
+    }
+
+	// Update the "keyboard mouse" coords
+	_km.x = x;
+	_km.y = y;
+
+	// Adjust for the screen scaling
+	if (!_overlayVisible) {
+		event.mouse.x /= _videoMode.scaleFactor;
+		event.mouse.y /= _videoMode.scaleFactor;
+		if (_videoMode.aspectRatioCorrection)
+			event.mouse.y = aspect2Real(event.mouse.y);
+	}
 }
 
 bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
@@ -93,40 +114,12 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 		ev.key.keysym.sym = SDLK_LEFTBRACKET;
 	}
 #endif
-	// Motorola Z6/V8 remapkey by Ant-On
+
 #ifdef MOTOMAGX
 	// Quit on cancel
-	if (ev.key.keysym.sym == SDLK_ESCAPE) {
+	if (ev.key.keysym.sym == SDLK_F12) {
 		event.type = Common::EVENT_QUIT;
 		return true;
-	}
-	// F5 Game Menu - Slide Select 
-	if (ev.key.keysym.sym == SDLK_SPACE) {
-		ev.key.keysym.sym = SDLK_F5;
-	}
-	// Escape - Dial key 
-	else if (ev.key.keysym.sym == SDLK_TAB) {
-		ev.key.keysym.sym = SDLK_ESCAPE;
-	}
-	// Space - Virtual keyboard 
-	else if (ev.key.keysym.sym == SDLK_PAUSE) {
-		ev.key.keysym.sym = SDLK_F7;
-	}
-	// 'y' - Left soft
-	else if (ev.key.keysym.sym == SDLK_F9) {	
-		ev.key.keysym.sym = SDLK_y;	
-	}
-	// 'n' - Rigth soft
-	else if (ev.key.keysym.sym == SDLK_F11) {	
-		ev.key.keysym.sym = SDLK_n;	
-	}
-	//  # -> volume'+' 
-	else if (ev.key.keysym.sym == SDLK_HASH) {	
-		ev.key.keysym.sym = SDLK_RIGHTBRACKET;
-	}
-	//  * -> volume'-' 
-	else if (ev.key.keysym.sym == SDLK_WORLD_55) {	
-		ev.key.keysym.sym = SDLK_LEFTBRACKET;
 	}
 #endif
 

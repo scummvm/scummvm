@@ -23,41 +23,20 @@
  *
  */
 
-#ifndef LINUXMOTO_SDL
-#define LINUXMOTO_SDL
+#ifndef LINUXMOTO_SCALER_H
+#define LINUXMOTO_SCALER_H
 
-#include "backends/platform/sdl/sdl.h"
-#include "backends/platform/linuxmoto/linuxmoto-scaler.h"
+#include "common/scummsys.h"
+#include "common/system.h"
+#include "graphics/scaler.h"
+#include "graphics/scaler/intern.h"
 
-#include <SDL.h>
-
-class OSystem_LINUXMOTO : public OSystem_SDL {
-private:
-	bool _audioSuspended;
-public:
-	/* Graphics */
-	void initSize(uint w, uint h);
-	void setGraphicsModeIntern();
-	bool setGraphicsMode(int mode);
-	void internUpdateScreen();
-	const OSystem::GraphicsMode *getSupportedGraphicsModes() const;
-	bool setGraphicsMode(const char *name);
-	int getDefaultGraphicsMode() const;
-	bool loadGFXMode();
-	void drawMouse();
-	void undrawMouse();
-	void showOverlay();
-	void hideOverlay();
-
-	/* Event Stuff */
-	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
-	virtual void preprocessEvents(SDL_Event *event);
-	virtual void setupMixer();
-	virtual Common::HardwareKeySet *getHardwareKeySet();
-	void fillMouseEvent(Common::Event&, int, int);
-	void suspendAudio();
-	int resumeAudio();
-	void warpMouse(int, int);
+// FIXME: For now keep hacks in this header to save polluting the SDL backend.
+enum {
+    GFX_HALF = 12
 };
+
+// TODO/FIXME: Move this platform specific scaler into /graphics/scaler and properly merge with the WinCE PocketPCHalf that it is based on.
+DECLARE_SCALER(HalfScale);
 
 #endif
