@@ -30,19 +30,6 @@
 
 int gBitFormat = 565;
 
-static const Graphics::PixelFormat gPixelFormat555(
-	2,
-	3, 3, 3, 8,
-	10, 5, 0, 0
-	);
-
-static const Graphics::PixelFormat gPixelFormat565(
-	2,
-	3, 2, 3, 8,
-	11, 5, 0, 0
-	);
-
-
 #ifndef DISABLE_HQ_SCALERS
 // RGB-to-YUV lookup table
 extern "C" {
