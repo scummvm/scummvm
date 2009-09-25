@@ -83,6 +83,7 @@ add_engine agos "AGOS" yes "agos2"
 add_engine agos2 "AGOS 2 games" yes
 add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" yes
+add_engine draci "Dragon History" no
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes "groovie2"

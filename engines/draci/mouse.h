@@ -1,0 +1,73 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#ifndef DRACI_MOUSE_H
+#define DRACI_MOUSE_H
+
+#include "common/events.h"
+#include "graphics/cursorman.h"
+
+namespace Draci {
+
+enum CursorType { 
+	kNormalCursor, kArrowCursor1, 
+	kArrowCursor2, kArrowCursor3, 
+	kArrowCursor4, kDialogueCursor,
+	kHighlightedCursor, kMainMenuCursor
+};
+
+class DraciEngine;
+
+class Mouse {
+public:
+	Mouse(DraciEngine *vm);
+	~Mouse() {};
+
+	void handleEvent(Common::Event event);
+	void cursorOn();
+	void cursorOff();
+	bool isCursorOn();
+	void setPosition(uint16 x, uint16 y);
+	CursorType getCursorType() { return _cursorType; }
+	void setCursorType(CursorType cur);
+	void loadItemCursor(int itemID, bool highlighted = false);
+	bool lButtonPressed() { return _lButton; }
+	bool rButtonPressed() { return _rButton; }
+	void lButtonSet(bool state) { _lButton = state; }
+	void rButtonSet(bool state) { _rButton = state; }
+
+	uint16 getPosX() { return _x; }
+	uint16 getPosY() { return _y; }
+
+private:
+	uint16 _x, _y;
+	bool _lButton, _rButton;
+	CursorType _cursorType;
+	DraciEngine *_vm;
+};
+
+}
+
+#endif // DRACI_MOUSE_H
