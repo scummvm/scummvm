@@ -74,6 +74,7 @@ add_engine agos "AGOS" yes "pn"
 add_engine pn "Personal Nightmare" no
 add_engine cine "Cinematique evo 1" yes
 add_engine cruise "Cinematique evo 2" no
+add_engine draci "Dragon History" no
 add_engine drascula "Drascula: The Vampire Strikes Back" yes
 add_engine gob "Gobli*ns" yes
 add_engine groovie "Groovie" yes
@@ -96,7 +97,6 @@ add_engine sword2 "Broken Sword 2" yes
 add_engine tinsel "Tinsel" no
 add_engine touche "Touche: The Adventures of the Fifth Musketeer" yes
 add_engine tucker "Bud Tucker in Double Trouble" yes
-add_engine draci "Dragon History" yes
 
 
 #
