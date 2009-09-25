@@ -1008,37 +1008,78 @@ fi
 #
 echocheck "compiler version"
 
+have_gcc=no
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
-	cxx_version="not found"
+	# TODO: Big scary warning about unsupported Compilers
+	cxx_version=`( $CXX -version ) 2>&1`
+	if test "$?" -eq 0; then
+		cxx_version="`echo "${cxx_version}" | sed -ne 's/^.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/gp'`"
+		if test -z "${cxx_version}"; then
+			cxx_version="not found"
+			cxx_verc_fail=yes
+		fi
+		echo non-gcc compiler version ${cxx_version}
+	else
+		cxx_version="not found"
+		cxx_verc_fail=yes
+		echo found non-gcc compiler version ${cxx_version}
+	fi
+else
+	add_line_to_config_mk 'HAVE_GCC = 1'
+	have_gcc=yes
 fi
 
-case $cxx_version in
-	2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
-		_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
-		_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
-		cxx_version="$cxx_version, ok"
-		cxx_verc_fail=no
-		;;
-	# whacky beos version strings
-	2.9-beos-991026*|2.9-beos-000224*)
-		_cxx_major=2
-		_cxx_minor=95
-		cxx_version="$cxx_version, ok"
-		cxx_verc_fail=no
-		;;
-	3_4)
-		_cxx_major=3
-		_cxx_minor=4
-		;;
-	'not found')
-		cxx_verc_fail=yes
-		;;
-	*)
-		cxx_version="$cxx_version, bad"
-		cxx_verc_fail=yes
-		;;
-esac
+if test "$have_gcc" = yes; then
+	case $cxx_version in
+		2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
+			_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
+			_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
+			cxx_version="$cxx_version, ok"
+			cxx_verc_fail=no
+			;;
+		# whacky beos version strings
+		2.9-beos-991026*|2.9-beos-000224*)
+			_cxx_major=2
+			_cxx_minor=95
+			cxx_version="$cxx_version, ok"
+			cxx_verc_fail=no
+			;;
+		3_4)
+			_cxx_major=3
+			_cxx_minor=4
+			;;
+		'not found')
+			cxx_verc_fail=yes
+			;;
+		*)
+			cxx_version="$cxx_version, bad"
+			cxx_verc_fail=yes
+			;;
+	esac
+else
+	case $_host_os in
+		irix*)
+			case $cxx_version in
+				7.4.4*)
+					# We just assume this is SGI MipsPRO
+					_cxx_major=7
+					_cxx_minor=4
+					add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MDupdate "$(*D)/$(DEPDIR)/$(*F).d"'
+					;;
+				*)
+					cxx_version="$cxx_version, bad"
+					cxx_verc_fail=yes
+					;;
+			esac
+			;;
+		*) 
+			cxx_version="$cxx_version, bad"
+			cxx_verc_fail=yes
+			;;
+	esac
+
+fi
 
 echo "$cxx_version"
 
@@ -1174,7 +1215,7 @@ case $_host_os in
 		;;
 	irix*)
 		DEFINES="$DEFINES -DUNIX -DIRIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
-		LIBS="$LIBS -lmd "
+		LIBS="$LIBS -lmd -lfastm -lm"
 		_ranlib=:
 		;;
 	darwin*)
@@ -2216,24 +2257,27 @@ MODULES="$MODULES backends/platform/$_backend"
 #
 # Do CXXFLAGS now we know the compiler version
 #
-if test "$_cxx_major" -ge "3" ; then
-	case $_host_os in
-	# newlib-based system include files suppress non-C89 function 
-	# declarations under __STRICT_ANSI__
-	mingw* | dreamcast | wii | gamecube | psp | wince | amigaos*)
-		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
-		;;
-	*)
-		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-		;;
-	esac
-	add_line_to_config_mk 'HAVE_GCC3 = 1'
-fi;
+if test "$have_gcc" = yes ; then
+	if test "$_cxx_major" -ge "3" ; then
+		case $_host_os in
+		# newlib-based system include files suppress non-C89 function 
+		# declarations under __STRICT_ANSI__
+		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos*)
+			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+			;;
+		*)
+			CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+			;;
+		esac
+		add_line_to_config_mk 'HAVE_GCC3 = 1'
+		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP'
+	fi;
 
-if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
-	CXXFLAGS="$CXXFLAGS -Wno-empty-body"
-else
-	CXXFLAGS="$CXXFLAGS -Wconversion"
+	if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+		CXXFLAGS="$CXXFLAGS -Wno-empty-body"
+	else
+		CXXFLAGS="$CXXFLAGS -Wconversion"
+	fi;
 fi;
 
 # Some platforms use certain GNU extensions in header files

@@ -89,33 +89,33 @@ clean:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(EXECUTABLE)
 
-# Old (dumb) compile & dependcy rules
-#INCS	= scumm/scumm.h common/scummsys.h
-#.cpp.o:
-#	$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-#$(OBJS): $(INCS)
 
-ifndef HAVE_GCC3
-# If you use GCC, disable the above and enable this for intelligent
+#
+# The build rules for object files.
+#
+
+ifdef CXX_UPDATE_DEP_FLAG
+
+# Build rule for C++ files. Makes use of CXX_UPDATE_DEP_FLAG for advanced
 # dependency tracking.
 %.o: %.cpp
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(QUIET)$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(QUIET)$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(QUIET)$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
-else
-# If you even have GCC 3.x, you can use this build rule, which is safer; the above
-# rule can get you into a bad state if you Ctrl-C at the wrong moment.
-# Also, with this GCC inserts additional dummy rules for the involved headers,
-# which ensures a smooth compilation even if said headers become obsolete.
-%.o: %.cpp
-	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+# Build rule for Objective-C files. Strictly speaking, this is for OS X only.
 %.o: %.m
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(OBJCFLAGS) -c $(<) -o $*.o
+
+else
+
+# Dumb compile rule, for C++ compilers that don't allow dependency tracking or
+# where it is broken (such as GCC 2.95).
+.cpp.o:
+	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
 endif
+
 
 %.o: %.s
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $*.o
