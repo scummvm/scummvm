@@ -49,6 +49,7 @@ public:
 	bool isActive() {
 		return _active;
 	}
+
 	void openMenu();
 	void closeMenu();
 
@@ -56,32 +57,32 @@ private:
 	AsylumEngine *_vm;
 
 	enum EyesAnimation {
-		kEyesFront		 = 0,
-		kEyesLeft		 = 1,
-		kEyesRight		 = 2,
-		kEyesTop		 = 3,
-		kEyesBottom		 = 4,
-		kEyesTopLeft	 = 5,
-		kEyesTopRight	 = 6,
-		kEyesBottomLeft	 = 7,
+		kEyesFront       = 0,
+		kEyesLeft        = 1,
+		kEyesRight       = 2,
+		kEyesTop         = 3,
+		kEyesBottom      = 4,
+		kEyesTopLeft     = 5,
+		kEyesTopRight    = 6,
+		kEyesBottomLeft  = 7,
 		kEyesBottomRight = 8,
-		kEyesCrossed	 = 9
+		kEyesCrossed     = 9
 	};
 
 	enum MenuScreen {
-		kNewGame		 = 0,
-		kLoadGame		 = 1,
-		kSaveGame		 = 2,
-		kDeleteGame		 = 3,
-		kViewCinematics	 = 4,
-		kQuitGame		 = 5,
-		kTextOptions	 = 6,
-		kAudioOptions	 = 7,
-		kSettings		 = 8,
-		kKeyboardConfig	 = 9,
-		kShowCredits	 = 10,
-		kReturnToGame	 = 11,
-		kMainMenu		 = 12
+		kNewGame         = 0,
+		kLoadGame        = 1,
+		kSaveGame        = 2,
+		kDeleteGame      = 3,
+		kViewCinematics  = 4,
+		kQuitGame        = 5,
+		kTextOptions     = 6,
+		kAudioOptions    = 7,
+		kSettings        = 8,
+		kKeyboardConfig  = 9,
+		kShowCredits     = 10,
+		kReturnToGame    = 11,
+		kMainMenu        = 12
 	};
 
 	Common::Event *_ev;
@@ -101,8 +102,8 @@ private:
 	uint32 _confGammaLevel;
 	uint32 _confGameQuality;
 
-	MenuScreen		_activeMenuScreen;
-	ResourcePack	*_resPack;
+	MenuScreen      _activeMenuScreen;
+	ResourcePack    *_resPack;
 	GraphicResource *_bgResource;
 	GraphicResource *_eyeResource;
 	GraphicResource *_iconResource;

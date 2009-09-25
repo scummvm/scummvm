@@ -78,6 +78,7 @@ Common::Error AsylumEngine::run() {
 	err = init();
 	if (err != Common::kNoError)
 		return err;
+
 	return go();
 }
 
@@ -85,13 +86,13 @@ Common::Error AsylumEngine::run() {
 Common::Error AsylumEngine::init() {
 	initGraphics(640, 480, true);
 
-	_screen		= new Screen(this);
-	_sound		= new Sound(_mixer);
-	_video		= new Video(_mixer);
-	_console	= new Console(this);
-	_text       = new Text(_screen);
-	_mainMenu	= 0;
-	_scene		= 0;
+	_screen   = new Screen(this);
+	_sound    = new Sound(_mixer);
+	_video    = new Video(_mixer);
+	_console  = new Console(this);
+	_text     = new Text(_screen);
+	_mainMenu = 0;
+	_scene    = 0;
 
 	_introPlaying = false;
 
@@ -104,16 +105,18 @@ Common::Error AsylumEngine::go() {
 	// TODO: init unknown game stuffs (address 0040F430)
 	// TODO: if savegame exists on folder, than start NewGame()
 
-	// Set up the game's main scene
+	// FIXME The scene shouldn't be created here, as we don't technically know
+	// how the scene is starting. This was put in for testing, but will eventually
+	// have to be removed once saveload is implemented
 	_scene = new Scene(5, this);
 
-	// XXX This is just here for testing purposes. It is also defined
+	// FIXME This is just here for testing purposes. It is also defined
 	// in the processActionList() method when the necessary action is fired.
 	// Once the blowup puzzle testing is removed from checkForEvent(), this
 	// can be removed as well.
 	_scene->setBlowUpPuzzle(new BlowUpPuzzleVCR(_scene));
 
-	// XXX This can probably also be rolled into the scene constructor.
+	// FIXME This can probably also be rolled into the scene constructor.
 	// Investigate if this will fuck up the execution sequence though :P
 	_scene->actions()->setScriptByIndex(_scene->worldstats()->actionListIdx);
 
