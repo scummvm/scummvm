@@ -302,7 +302,7 @@ Common::Rect Sprite::getRect(bool scaled) const {
 		return Common::Rect(_x, _y, _x + _width, _y + _height);
 }
 
-Text::Text(const Common::String &str, Font *font, byte fontColour, 
+Text::Text(const Common::String &str, const Font *font, byte fontColour, 
 				int x, int y, uint spacing) {
 	_x = x;
 	_y = y;
@@ -357,9 +357,7 @@ uint Text::getLength() const {
 }
 
 void Text::draw(Surface *surface, bool markDirty) const {
-	_font->setColour(_colour);
-
-	_font->drawString(surface, _text, _x, _y, _spacing);
+	_font->drawString(surface, _text, _x, _y, _colour, _spacing);
 }
 
 // TODO: Handle scaled parameter properly by implementing Text scaling
@@ -367,7 +365,7 @@ Common::Rect Text::getRect(bool scaled) const {
 	return Common::Rect(_x, _y, _x + _width, _y + _height);
 }
 
-void Text::setFont(Font *font) {
+void Text::setFont(const Font *font) {
 	_font = font;
 
 	_width = _font->getStringWidth(_text, _spacing);

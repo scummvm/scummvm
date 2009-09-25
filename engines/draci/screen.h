@@ -53,7 +53,7 @@ public:
 	void clearScreen();
 	void fillScreen(uint8 colour);
 	Surface *getSurface();	
-	void drawRect(Common::Rect &r, uint8 colour);
+	void drawRect(Common::Rect r, uint8 colour);
 
 private:
 	Surface *_surface;

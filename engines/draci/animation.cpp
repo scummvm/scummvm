@@ -553,7 +553,7 @@ void AnimationManager::deleteAll() {
 	_lastIndex = -1;
 }
 
-int AnimationManager::getLastIndex() {
+int AnimationManager::getLastIndex() const {
 	return _lastIndex;
 }
 

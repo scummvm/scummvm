@@ -143,7 +143,7 @@ void Screen::fillScreen(uint8 colour) {
  * @param r Which rectangle to draw
  *		  colour The colour of the rectangle
  */
-void Screen::drawRect(Common::Rect &r, uint8 colour) {
+void Screen::drawRect(Common::Rect r, uint8 colour) {
 
 	// Clip the rectangle to screen size
 	r.clip(_surface->w, _surface->h);

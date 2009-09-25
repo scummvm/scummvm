@@ -41,21 +41,10 @@ Font::Font(const Common::String &filename) {
 	_charData = NULL;
 
 	loadFont(filename);
-
-	_currentFontColour = kFontColour1;
 }
 
 Font::~Font() {
 	 freeFont(); 
-}
-
-/**
- * @brief Sets the varying font colour
- * @param colour The new font colour
- */
-
-void Font::setColour(uint8 colour) {
-	_currentFontColour = colour;
 }
 
 /**
@@ -132,7 +121,7 @@ uint8 Font::getCharWidth(uint8 chr) const {
  * @param ty  	Vertical offset on the surface
  */
 
-void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
+void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const {
 	assert(dst != NULL);
 	assert(tx >= 0);
 	assert(ty >= 0);
@@ -166,7 +155,7 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
 			switch (colour) {
 
 			case 254:
-				colour = _currentFontColour;
+				colour = with_colour;
 				break;
 
 			case 253:
@@ -203,8 +192,8 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty) const {
  */
 
 void Font::drawString(Surface *dst, const byte *str, uint len, 
-							int x, int y, int spacing, bool markDirty) const {
-	drawString(dst, Common::String((const char *)str, len), x, y, spacing, markDirty);
+		int x, int y, int with_colour, int spacing, bool markDirty) const {
+	drawString(dst, Common::String((const char *)str, len), x, y, with_colour, spacing, markDirty);
 }
 
 /**
@@ -218,7 +207,7 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
  */
 
 void Font::drawString(Surface *dst, const Common::String &str, 
-							int x, int y, int spacing, bool markDirty) const {
+		int x, int y, int with_colour, int spacing, bool markDirty) const {
 	assert(dst != NULL);
 	assert(x >= 0);
 	assert(y >= 0);
@@ -243,7 +232,7 @@ void Font::drawString(Surface *dst, const Common::String &str,
 			break;
 		}		
 		
-		drawChar(dst, str[i], curx, cury);
+		drawChar(dst, str[i], curx, cury, with_colour);
 		curx += getCharWidth(str[i]) + spacing;
 	}
 

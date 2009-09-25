@@ -170,7 +170,7 @@ public:
 
 	Animation *getAnimation(int id);
 
-	int getLastIndex();
+	int getLastIndex() const;
 	void deleteAfterIndex(int index);
 
 	int getTopAnimationID(int x, int y);

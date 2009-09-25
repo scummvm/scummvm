@@ -42,6 +42,7 @@ enum {
 	kNumCommands = 55
 };
 
+// TODO(spalek): shouldn't modify params passed by reference.  Either make it const or copy the parameter.
 typedef void (Script::* GPLHandler)(Common::Queue<int> &);
 typedef int  (Script::* GPLOperatorHandler)(int, int) const;
 typedef int  (Script::* GPLFunctionHandler)(int) const;
@@ -88,8 +89,8 @@ class Script {
 public:
 	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };	
 
-	int run(GPL2Program program, uint16 offset);
-	bool testExpression(GPL2Program, uint16 offset) const;
+	int run(const GPL2Program &program, uint16 offset);
+	bool testExpression(const GPL2Program &program, uint16 offset) const;
 	void endCurrentProgram();
 
 private:

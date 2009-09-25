@@ -121,14 +121,14 @@ private:
 class Text : public Drawable {
 	
 public:
-	Text(const Common::String &str, Font *font, byte fontColour, 
+	Text(const Common::String &str, const Font *font, byte fontColour, 
 		int x, int y, uint spacing = 0);
 	~Text() {};
 	
 	void setText(const Common::String &str);
 	void setColour(byte fontColour);
 	void setSpacing(uint spacing);
-	void setFont(Font *font);
+	void setFont(const Font *font);
 
 	uint getLength() const;
 
@@ -147,7 +147,7 @@ private:
 	uint _length;
 	uint8 _colour;
 	uint _spacing;
-	Font *_font;
+	const Font *_font;
 };
 	
 } // End of namespace Draci

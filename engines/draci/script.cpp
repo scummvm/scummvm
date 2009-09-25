@@ -907,7 +907,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
  *
  * Reference: the function equivalent to this one is called "Can()" in the original engine.
  */
-bool Script::testExpression(GPL2Program program, uint16 offset) const {
+bool Script::testExpression(const GPL2Program &program, uint16 offset) const {
 	
 	// Initialize program reader
 	Common::MemoryReadStream reader(program._bytecode, program._length);
@@ -987,7 +987,7 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) const {
  *	value comes from.
  */
 
-int Script::run(GPL2Program program, uint16 offset) {
+int Script::run(const GPL2Program &program, uint16 offset) {
 
 	int oldJump = _jump;
 

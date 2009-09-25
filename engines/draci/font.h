@@ -61,18 +61,16 @@ public:
 	uint8 getFontHeight() const { return _fontHeight; };
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;
-	void drawChar(Surface *dst, uint8 chr, int tx, int ty) const;
+	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const;
 	
-	void drawString(Surface *dst, const byte *str, uint len, int x, int y, 
+	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_colour, 
 					int spacing, bool markDirty = true) const;
 	void drawString(Surface *dst, const Common::String &str, 
-					int x, int y, int spacing, bool markDirty = true) const;
+					int x, int y, int with_colour, int spacing, bool markDirty = true) const;
 	
 	uint getStringWidth(const Common::String &str, int spacing = 0) const;
 	uint getStringHeight(const Common::String &str) const;
 	uint getLineWidth(const Common::String &str, uint startIndex, int spacing = 0) const;
-
-	void setColour(uint8 colour);
 
 private:
 	uint8 _fontHeight;
@@ -92,9 +90,6 @@ private:
 	 *  to get the index of a glyph
 	 */
 	static const unsigned int kCharIndexOffset = 32;
-
-	/** The varying font colour; initially set to kFontColour1 */
-	uint8 _currentFontColour;
 
 	/** Internal function for freeing fonts when destructing/loading another */
 	void freeFont();

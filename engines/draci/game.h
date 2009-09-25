@@ -105,7 +105,7 @@ public:
 		_data = NULL;
 	}	
 
-	void load(byte *data, uint length) {
+	void load(const byte *data, uint length) {
 		Common::MemoryReadStream mapReader(data, length);
 
 		_realWidth = mapReader.readUint16LE();
@@ -128,7 +128,7 @@ private:
 	int _deltaX, _deltaY;
 	int _mapWidth, _mapHeight;
 	int _byteWidth;
-	byte *_data;
+	const byte *_data;
 };
 
 struct GameObject {
