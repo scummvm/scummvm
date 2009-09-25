@@ -3189,7 +3189,7 @@ void Gdi16Bit::writeRoomColor(byte *dst, byte color) const {
 }
 
 void Gdi::writeRoomColor(byte *dst, byte color) const {
-	*dst = _roomPalette[color + _paletteMod];
+	*dst = _roomPalette[(color + _paletteMod) & 0xFF];
 }
 
 
