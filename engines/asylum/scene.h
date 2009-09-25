@@ -51,6 +51,29 @@ class BlowUpPuzzle;
 struct BarrierItem;
 class WorldStats;
 
+class SceneTitle {
+public:
+	SceneTitle(Scene *scene);
+	~SceneTitle();
+
+	void update(uint32 tick);
+	bool loadingComplete() { return _done; }
+
+private:
+	Scene           *_scene;
+	GraphicResource *_bg;
+	GraphicResource *_progress;
+
+
+	uint32 _start;
+	uint32 _ticks;
+	bool   _done;
+	uint32 _spinnerFrame;
+	uint32 _spinnerProgress;
+
+}; // end of class SceneTitle
+
+
 class Scene {
 public:
 	Scene(uint8 sceneIdx, AsylumEngine *vm);
@@ -114,6 +137,7 @@ private:
 	WorldStats   *_ws;
 	Polygons     *_polygons;
 	ActionList   *_actions;
+	SceneTitle   *_title;
 
 	Cursor			*_cursor;
 	ResourcePack	*_resPack;
@@ -121,10 +145,10 @@ private:
 	ResourcePack	*_musPack;
 	BlowUpPuzzle    *_blowUp;
 	Common::Event   *_ev;
-	Text			*_text;
 	GraphicResource *_bgResource;
 	GraphicFrame	*_background;
 
+	bool	_titleLoaded;
 	bool	_walking;
 	bool	_leftClick;
 	bool	_rightButton;
@@ -159,6 +183,8 @@ private:
 
 	// TODO: get rid of this
 	void OLD_UPDATE();
+
+	friend class SceneTitle;
 
 }; // end of class Scene
 

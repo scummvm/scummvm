@@ -70,6 +70,7 @@ AsylumEngine::~AsylumEngine() {
 	delete _sound;
 	delete _screen;
 	delete _encounter;
+	delete _text;
 }
 
 Common::Error AsylumEngine::run() {
@@ -88,6 +89,7 @@ Common::Error AsylumEngine::init() {
 	_sound		= new Sound(_mixer);
 	_video		= new Video(_mixer);
 	_console	= new Console(this);
+	_text       = new Text(_screen);
 	_mainMenu	= 0;
 	_scene		= 0;
 
