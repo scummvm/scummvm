@@ -233,7 +233,7 @@ reg_t kFClose(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void fwrite_wrapper(EngineState *s, int handle, char *data, int length) {
+void fwrite_wrapper(EngineState *s, int handle, const char *data, int length) {
 	debugC(2, kDebugLevelFile, "fwrite()'ing \"%s\" to handle %d\n", data, handle);
 
 	FileHandle *f = getFileFromHandle(s, handle);
@@ -808,15 +808,14 @@ reg_t kFileIO(EngineState *s, int, int argc, reg_t *argv) {
 	case K_FILEIO_WRITE_STRING : {
 		int handle = argv[1].toUint16();
 		int size = argv[3].toUint16();
-		char *buf = s->segMan->derefString(argv[2], size);
+		char *buf = s->segMan->derefString(argv[2]);
 		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
 
-		// FIXME: What is the difference between K_FILEIO_WRITE_STRING and
-		// K_FILEIO_WRITE_RAW? Normally, I would expect the difference to
-		// be that the former doesn't receive a 'size' parameter. But here
-		// it does. Are we missing something?
-		if (buf)
-			fwrite_wrapper(s, handle, buf, size);
+		// CHECKME: Is the size parameter used at all?
+		// In the LSL5 password protection it is zero, and we should
+		// then write a full string. (Not sure if it should write the
+		// terminating zero.)
+		fwrite_wrapper(s, handle, buf, strlen(buf));
 		break;
 	}
 	case K_FILEIO_SEEK : {
