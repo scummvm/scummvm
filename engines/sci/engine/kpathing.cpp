@@ -355,6 +355,7 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
+	SegManager *segMan = s->segMan;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
