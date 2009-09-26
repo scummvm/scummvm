@@ -1478,7 +1478,10 @@ void LoLEngine::prepareSpecialScene(int fieldType, int hasDialogue, int suspendG
 			initDialogueSequence(fieldType, 0);
 
 		if (fadeFlag) {
-			_screen->fadePalette(_screen->getPalette(3), 10);
+			if (_flags.use16ColorMode)
+				setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+			else
+				_screen->fadePalette(_screen->getPalette(3), 10);
 			_screen->_fadeFlag = 0;
 		}
 

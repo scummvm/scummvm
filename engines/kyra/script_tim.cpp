@@ -1176,7 +1176,7 @@ void TIMInterpreter_LoL::drawDialogueButtons() {
 		if (_vm->gameFlags().use16ColorMode) {
 			_vm->gui_drawBox(x, (_dialogueButtonPosY & ~7) - 1, 74, 10, 0xee, 0xcc, -1);
 			_screen->printText(_dialogueButtonString[i], (x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
-				(_dialogueButtonPosY & ~7) + 1, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
+				(_dialogueButtonPosY + 2) & ~7, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
 		} else {
 			_vm->gui_drawBox(x, _dialogueButtonPosY, 74, 9, 136, 251, -1);
 			_screen->printText(_dialogueButtonString[i], x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2,
@@ -1193,10 +1193,11 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 	int df = _dialogueHighlightedButton;
 	int res = 0;
 	int x = _dialogueButtonPosX;
+	int y = (_vm->gameFlags().use16ColorMode ? (_dialogueButtonPosY & ~7) - 1 : _dialogueButtonPosY);
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		Common::Point p = _vm->getMousePos();
-		if (_vm->posWithinRect(p.x, p.y, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+		if (_vm->posWithinRect(p.x, p.y, x, y, x + 74, y + 9)) {
 			_dialogueHighlightedButton = i;
 			break;
 		}
@@ -1257,7 +1258,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 
 			for (int i = 0; i < _dialogueNumButtons; i++) {
 				Common::Point p = _vm->getMousePos();
-				if (_vm->posWithinRect(p.x, p.y, x, _dialogueButtonPosY, x + 74, _dialogueButtonPosY + 9)) {
+				if (_vm->posWithinRect(p.x, p.y, x, y, x + 74, y + 9)) {
 					_dialogueHighlightedButton = i;
 					res = _dialogueHighlightedButton + 1;
 					break;

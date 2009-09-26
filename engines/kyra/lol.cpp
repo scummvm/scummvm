@@ -1568,9 +1568,15 @@ void LoLEngine::initDialogueSequence(int controlMode, int pageNum) {
 		_fadeText = false;
 		int cp = _screen->setCurPage(pageNum);
 
-		_screen->fillRect(0, 128, 319, 199, 1);
-		gui_drawBox(0, 129, 320, 71, 136, 251, -1);
-		gui_drawBox(1, 130, 318, 69, 136, 251, 252);
+		if (_flags.use16ColorMode) {
+			_screen->fillRect(0, 128, 319, 199, 0x44);
+			gui_drawBox(0, 129, 320, 71, 0xee, 0xcc, -1);
+			gui_drawBox(1, 130, 318, 69, 0xee, 0xcc, 0x11);
+		} else {
+			_screen->fillRect(0, 128, 319, 199, 1);
+			gui_drawBox(0, 129, 320, 71, 136, 251, -1);
+			gui_drawBox(1, 130, 318, 69, 136, 251, 252);
+		}
 
 		_screen->modifyScreenDim(5, 8, 131, 304, 66);
 		_screen->modifyScreenDim(4, 1, 133, 38, 60);

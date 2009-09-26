@@ -607,7 +607,10 @@ int LoLEngine::olol_fadeToBlack(EMCState *script) {
 
 int LoLEngine::olol_fadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_fadePalette(%p)", (const void *)script);
-	_screen->fadePalette(_screen->getPalette(3), 10);
+	if (_flags.use16ColorMode)
+		setPaletteBrightness(_screen->getPalette(0), _brightness, _lampEffect);
+	else
+		_screen->fadePalette(_screen->getPalette(3), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
 }
@@ -1337,8 +1340,13 @@ int LoLEngine::olol_drawExitButton(EMCState *script) {
 	char *str = getLangString(0x4033);
 	int w = _screen->getTextWidth(str);
 
-	gui_drawBox(x - offs - w, y - 9, w + offs, 9, 136, 251, 252);
-	_screen->printText(str, x - (offs >> 1) - w, y - 7, 144, 0);
+	if (_flags.use16ColorMode) {
+		gui_drawBox(x - offs - w, y - 9, w + offs, 9, 0xee, 0xcc, 0x11);
+		_screen->printText(str, x - (offs >> 1) - w, y - 7, 0xbb, 0);
+	} else {
+		gui_drawBox(x - offs - w, y - 9, w + offs, 9, 136, 251, 252);
+		_screen->printText(str, x - (offs >> 1) - w, y - 7, 144, 0);
+	}
 
 	if (stackPos(1))
 		_screen->drawGridBox(x - offs - w + 1, y - 8, w + offs - 2, 7, 1);
