@@ -344,7 +344,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(3, 0x5b);
 			displayMessage(0x55db);
 			SET_FLAG(0xdbdd, 3);
-			strcpy(scene->getObject(4)->name, "body");
+			scene->getObject(4)->setName("body");
 		} else {
 			if (Dialog::pop(scene, 0xdb5c) != 0x636b) //not 'im getting hungry'
 				return true;
@@ -1363,7 +1363,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x58a2:
 		Dialog::pop(scene, 0xdaba);
-		strcpy(scene->getObject(13)->name, (const char *)res->dseg.ptr(0x92e5));
+		scene->getObject(13)->setName((const char *)res->dseg.ptr(0x92e5));
 		return true;
 
 	case 0x58b7://Get comb from car
@@ -1532,7 +1532,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(55, 5);
 			playActorAnimation(527);
 			Dialog::show(scene, 0x2219);
-			strcpy(scene->getObject(2)->name, (const char *)res->dseg.ptr(0x9820));
+			scene->getObject(2)->setName((const char *)res->dseg.ptr(0x9820));
 		}
 		return true;
 
@@ -2415,6 +2415,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			setOns(3, 0);
 			setOns(4, 0);
 			scene->getWalkbox(0)->rect.clear();
+			scene->getWalkbox(0)->save();
 			playSound(62);
 			//patch lan, 1
 			displayMessage(0x3d3a);
@@ -2985,7 +2986,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 	case 0x6c83:
 		Dialog::pop(scene, 0xdb2e);
-		strcpy(scene->getObject(1)->name, (const char *)res->dseg.ptr(0xaa94));
+		scene->getObject(1)->setName((const char *)res->dseg.ptr(0xaa94));
 		SET_FLAG(0xDBD1, 1);
 		return true;
 

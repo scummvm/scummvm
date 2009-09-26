@@ -27,68 +27,88 @@
 #define TEENAGENT_OBJECTS_H
 
 #include "common/rect.h"
+#include "common/stream.h"
 #include "graphics/surface.h"
 
 namespace TeenAgent {
 
-//move into separate header:
-
-#include "common/pack-start.h"	// START STRUCT PACKING
-
 struct Rect {
 	uint16 left, top, right, bottom;
 
-	inline Rect() : left(0), top(0), right(0), bottom(0) {}
-	inline Rect(uint16 l, uint16 t, uint16 r, uint16 b) : left(l), top(t), right(r), bottom(b) {}
+	inline Rect() : left(0), top(0), right(0), bottom(0), _base(NULL) {}
+
+	inline Rect(uint16 l, uint16 t, uint16 r, uint16 b) : left(l), top(t), right(r), bottom(b), _base(NULL) {}
 
 	inline bool in(const Common::Point &point) const {
 		return point.x >= left && point.x <= right && point.y >= top && point.y <= bottom;
 	}
+
 	inline Common::Point center() const {
 		return Common::Point((right + left) / 2, (bottom + top) / 2);
 	}
+
 	inline bool valid() const {
 		return left < 320 && right < 320 && top < 200 && bottom < 200;
 	}
+
 	void render(Graphics::Surface *surface, uint8 color) const;
-	void dump() {
+
+	void dump() const {
 		debug(0, "rect[%u, %u, %u, %u]", left, top, right, bottom);
 	}
 
-	void clear() {
+	inline void clear() {
 		left = top = right = bottom = 0;
 	}
-} PACKED_STRUCT;
+	
+	void load(byte *src); //8 bytes
+	void save();
+
+protected:
+	byte * _base;
+};
 
 struct Object {
+	enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
+
 	byte id;
 	Rect rect;
 	Rect actor_rect;
 	byte actor_orientation;
-	byte enabled;
-	char name[1];
+	byte enabled; //19 bytes
+	Common::String name, description;
 
-	enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
-
+	Object(): _base(NULL) {}
 	void dump();
-	static Common::String description(const char *name);
-	Common::String description() const;
-} PACKED_STRUCT;
+	void setName(const Common::String &name);
+	void load(byte *addr);
+	
+	static Common::String parse_description(const char *name);
+
+protected:
+	byte * _base;
+};
 
 struct InventoryObject {
 	byte id;
 	byte animated;
-	char name[1];
-	Common::String description() const;
-} PACKED_STRUCT;
+	Common::String name, description;
+	
+	InventoryObject(): id(0), animated(0), _base(0) {}
+	void load(byte *addr);
 
-struct UseObject {
+protected:
+	byte * _base;
+};
+
+struct UseHotspot {
 	byte inventory_id;
 	byte object_id;
 	byte unk02;
 	uint16 x, y;
 	uint16 callback;
-} PACKED_STRUCT;
+	void load(byte *src);
+};
 
 struct Walkbox {
 	byte unk00;
@@ -98,10 +118,15 @@ struct Walkbox {
 	byte unk0b;
 	byte unk0c;
 	byte unk0d;
-	void dump();
-} PACKED_STRUCT;
 
-#include "common/pack-end.h"	// END STRUCT PACKING
+	Walkbox() : _base(NULL) {}
+	void dump();
+	void load(byte *src);
+	void save();
+
+protected:
+	byte * _base;
+};
 
 } // End of namespace TeenAgent
 

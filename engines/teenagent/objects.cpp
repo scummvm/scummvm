@@ -22,10 +22,30 @@
  * $Id$
  */
 
-#include "teenagent/objects.h"
 #include "common/debug.h"
+#include "common/stream.h"
+#include "teenagent/objects.h"
+#include "teenagent/resources.h"
 
 namespace TeenAgent {
+
+void Rect::load(byte * src) {
+	_base = src;
+	Common::MemoryReadStreamEndian ins(src, 8);
+	left = ins.readUint16();
+	top = ins.readUint16();
+	right = ins.readUint16();
+	bottom = ins.readUint16();
+}
+
+void Rect::save() {
+	assert(_base != NULL);
+	//Common::MemoryWriteStreamEndian out(_base, 8);  //FIXME: maybe add this class to common?
+	WRITE_LE_UINT16(_base + 0, left);
+	WRITE_LE_UINT16(_base + 2, top);
+	WRITE_LE_UINT16(_base + 4, right);
+	WRITE_LE_UINT16(_base + 6, bottom);
+}
 
 void Rect::render(Graphics::Surface *surface, uint8 color) const {
 	surface->hLine(left, bottom, right, color);
@@ -34,22 +54,38 @@ void Rect::render(Graphics::Surface *surface, uint8 color) const {
 	surface->vLine(right, bottom, top, color);
 }
 
-void Walkbox::dump() {
-	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ",
-	      unk00, orientation,
-	      rect.left, rect.right, rect.top, rect.bottom,
-	      unk0a, unk0b, unk0c, unk0d);
+
+void Object::load(byte * src) {
+	_base = src;
+
+	id = *src++;
+
+	rect.load(src); 
+	src += 8;
+	actor_rect.load(src); 
+	src += 8;
+
+	actor_orientation = *src++;
+	enabled = *src++;
+	name = (const char *)src;
+	description = parse_description((const char *)src);
+}
+
+void Object::setName(const Common::String &new_name) {
+	assert(_base != 0);
+	strcpy((char *)(_base + 19), new_name.c_str());
+	name = new_name;
 }
 
 void Object::dump() {
 	debug(0, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
 	      rect.left, rect.top, rect.right, rect.bottom,
 	      actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom,
-	      actor_orientation, name
+	      actor_orientation, name.c_str()
 	     );
 }
 
-Common::String Object::description(const char *name) {
+Common::String Object::parse_description(const char *name) {
 	const char *desc = name + strlen(name) + 1;
 	if (*desc == 0)
 		return Common::String();
@@ -77,13 +113,49 @@ Common::String Object::description(const char *name) {
 	return result;
 }
 
-
-Common::String Object::description() const {
-	return description(name);
+void InventoryObject::load(byte *src) {
+	_base = src;
+	id = *src++;
+	animated = *src++;
+	name = (const char *)src;
+	description = Object::parse_description((const char *)src);
 }
 
-Common::String InventoryObject::description() const {
-	return Object::description(name);
+void UseHotspot::load(byte *src) {
+	Common::MemoryReadStreamEndian in(src, 9);
+	inventory_id = in.readByte();
+	object_id = in.readByte();
+	unk02 = in.readByte();
+	x = in.readUint16();
+	y = in.readUint16();
+	callback = in.readUint16();
 }
+
+void Walkbox::dump() {
+	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ",
+	      unk00, orientation,
+	      rect.left, rect.right, rect.top, rect.bottom,
+	      unk0a, unk0b, unk0c, unk0d);
+}
+
+void Walkbox::load(byte *src) {
+	_base = src;
+
+	unk00 = *src++;
+	orientation = *src++;
+	rect.load(src);
+	src += 8;
+	unk0a = *src++;
+	unk0b = *src++;
+	unk0c = *src++;
+	unk0d = *src++;
+}
+
+void Walkbox::save() {
+	assert(_base != NULL);
+	_base[1] = orientation;
+	rect.save();
+}
+
 
 } // End of namespace TeenAgent

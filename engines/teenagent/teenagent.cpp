@@ -52,7 +52,7 @@ void TeenAgentEngine::processObject() {
 		dcall += 2 * dst_object->id - 2;
 		uint16 callback = READ_LE_UINT16(dcall);
 		if (callback == 0 || !processCallback(callback)) {
-			Common::String desc = dst_object->description();
+			Common::String desc = dst_object->description;
 			scene->displayMessage(desc);
 			//debug(0, "%s[%u]: description: %s", current_object->name, current_object->id, desc.c_str());
 		}
@@ -61,14 +61,14 @@ void TeenAgentEngine::processObject() {
 	case kActionUse: {
 		InventoryObject *inv = inventory->selectedObject();
 		if (inv != NULL) {
-			byte *dcall = res->dseg.ptr(0xbb87);
-			dcall = res->dseg.ptr(READ_LE_UINT16(dcall + scene->getId() * 2 - 2));
-			for (UseObject *obj = (UseObject *)dcall; obj->inventory_id != 0; ++obj) {
-				if (obj->inventory_id == inv->id && dst_object->id == obj->object_id) {
-					debug(0, "combine! %u,%u", obj->x, obj->y);
+			const Common::Array<UseHotspot> &hotspots = use_hotspots[scene->getId() - 1];
+			for (uint i = 0; i < hotspots.size(); ++i) {
+				const UseHotspot &spot = hotspots[i];
+				if (spot.inventory_id == inv->id && dst_object->id == spot.object_id) {
+					debug(0, "combine! pos?: %u,%u", spot.x, spot.y);
 					//moveTo(Common::Point(obj->x, obj->y), NULL, Examine);
 					inventory->resetSelectedObject();
-					if (!processCallback(TO_LE_16(obj->callback)))
+					if (!processCallback(TO_LE_16(spot.callback)))
 						debug(0, "fixme! display proper description");
 					return;
 				}
@@ -85,7 +85,7 @@ void TeenAgentEngine::processObject() {
 			dcall += 2 * dst_object->id - 2;
 			uint16 callback = READ_LE_UINT16(dcall);
 			if (!processCallback(callback))
-				scene->displayMessage(dst_object->description());
+				scene->displayMessage(dst_object->description);
 		}
 	}
 	break;
@@ -130,6 +130,24 @@ void TeenAgentEngine::examine(const Common::Point &point, Object *object) {
 	}
 }
 
+void TeenAgentEngine::init() {
+	Resources * res = Resources::instance();
+	use_hotspots.resize(42);
+	byte *scene_hotspots = res->dseg.ptr(0xbb87);
+	for(byte i = 0; i < 42; ++i) {
+		Common::Array<UseHotspot> & hotspots = use_hotspots[i];
+		byte * hotspots_ptr = res->dseg.ptr(READ_LE_UINT16(scene_hotspots + i * 2));
+		while(*hotspots_ptr) {
+			UseHotspot h;
+			h.load(hotspots_ptr);
+			hotspots_ptr += 9;
+			hotspots.push_back(h);
+		}
+	}
+}
+
+
+
 void TeenAgentEngine::deinit() {
 	_mixer->stopAll();
 	delete scene;
@@ -138,6 +156,7 @@ void TeenAgentEngine::deinit() {
 	inventory = NULL;
 	//delete music;
 	//music = NULL;
+	use_hotspots.clear();
 	Resources::instance()->deinit();
 }
 
@@ -207,6 +226,8 @@ Common::Error TeenAgentEngine::run() {
 
 	scene->init(this, _system);
 	inventory->init(this);
+	
+	init();
 
 	_system->setMouseCursor(res->dseg.ptr(0x00da), 8, 12, 0, 0, 1);
 
@@ -236,7 +257,7 @@ Common::Error TeenAgentEngine::run() {
 	do {
 		_system->showMouse(true);
 		uint32 t0 = _system->getMillis();
-		Object *current_object = findObject(scene->getId(), mouse);
+		Object *current_object = scene->findObject(mouse);
 
 		while (_event->pollEvent(event)) {
 			if (event.type == Common::EVENT_RTL) {
@@ -312,23 +333,6 @@ Common::Error TeenAgentEngine::run() {
 
 	deinit();
 	return Common::kNoError;
-}
-
-Object *TeenAgentEngine::findObject(int id, const Common::Point &point) {
-	Resources *res = Resources::instance();
-	uint16 addr = res->dseg.get_word(0x7254 + (id - 1) * 2);
-	//debug(0, "object base: %04x, x: %d, %d", addr, point.x, point.y);
-	uint16 object;
-	for (; (object = res->dseg.get_word(addr)) != 0; addr += 2) {
-		if (object == 0)
-			return NULL;
-
-		Object *obj = (Object *)res->dseg.ptr(object);
-		//obj->dump();
-		if (obj->enabled != 0 && obj->rect.in(point))
-			return obj;
-	}
-	return NULL;
 }
 
 void TeenAgentEngine::displayMessage(const Common::String &str, byte color) {

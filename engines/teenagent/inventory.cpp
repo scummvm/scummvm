@@ -49,7 +49,15 @@ void Inventory::init(TeenAgentEngine *engine) {
 	for (byte i = 0; i < offsets; ++i) {
 		offset[i] = items->readUint16LE();
 	}
-	objects = res->dseg.ptr(0xc4a4);
+
+	for(byte i = 0; i < 92; ++i) {
+		InventoryObject io;
+		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
+		if (obj_addr != 0) 
+			io.load(res->dseg.ptr(obj_addr));
+		objects.push_back(io);
+	}
+
 	inventory = res->dseg.ptr(0xc48d);
 
 	for (int y = 0; y < 4; ++y)
@@ -138,7 +146,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 			graphics[i].hovered = graphics[i].rect.in(mouse);
 			if (graphics[i].hovered)
-				hovered_obj = (InventoryObject *)res->dseg.ptr(READ_LE_UINT16(objects + item * 2));
+				hovered_obj = &objects[item];
 		}
 		return true;
 
@@ -149,7 +157,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		if (selected_obj == NULL) {
 			activate(false);
-			_engine->displayMessage(hovered_obj->description());
+			_engine->displayMessage(hovered_obj->description);
 			return true;
 		}
 
@@ -202,7 +210,7 @@ bool Inventory::processEvent(const Common::Event &event) {
 
 		selected_obj = hovered_obj;
 		if (selected_obj)
-			debug(0, "selected object %s", selected_obj->name);
+			debug(0, "selected object %s", selected_obj->name.c_str());
 		return true;
 
 	case Common::EVENT_KEYDOWN:
@@ -275,7 +283,6 @@ void Inventory::render(Graphics::Surface *surface) {
 		return;
 
 	background.render(surface);
-	Resources *res = Resources::instance();
 
 	for (int y = 0; y < 4; y++) {
 		for (int x = 0; x < 6; x++) {
@@ -286,7 +293,7 @@ void Inventory::render(Graphics::Surface *surface) {
 
 			//debug(0, "%d,%d -> %u", x0, y0, item);
 
-			InventoryObject *obj = (InventoryObject *)res->dseg.ptr(READ_LE_UINT16(objects + item * 2));
+			InventoryObject *obj = &objects[item];
 			graphics[idx].render(this, obj, surface);
 		}
 	}

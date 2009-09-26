@@ -53,10 +53,8 @@ public:
 	virtual bool canSaveGameStateCurrently() { return !scene_busy; }
 	virtual bool hasFeature(EngineFeature f) const;
 
-
+	void init();
 	void deinit();
-
-	Object *findObject(int id, const Common::Point &point);
 
 	void examine(const Common::Point &point, Object *object);
 	void use(Object *object);
@@ -111,6 +109,8 @@ private:
 	Audio::AudioStream *_musicStream;
 	Audio::SoundHandle _musicHandle, _soundHandle;
 	const ADGameDescription *_gameDescription;
+	
+	Common::Array<Common::Array<UseHotspot> > use_hotspots;
 };
 
 } // End of namespace TeenAgent

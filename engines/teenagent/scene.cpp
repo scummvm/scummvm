@@ -35,7 +35,7 @@ namespace TeenAgent {
 
 Scene::Scene() : intro(false), _engine(NULL),
 		_system(NULL),
-		_id(0), ons(0), walkboxes(0),
+		_id(0), ons(0),
 		orientation(Object::kActorRight),
 		current_event(SceneEvent::kNone), hide_actor(false) {}
 
@@ -52,23 +52,24 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	Common::Point point(_point);
 	debug(0, "moveTo(%d, %d, %u)", point.x, point.y, orient);
 	if (validate) {
-		for (byte i = 0; i < walkboxes; ++i) {
-			Walkbox *w = walkbox[i];
-			if (w->rect.in(point)) {
+		const Common::Array<Walkbox> &scene_walkboxes = walkboxes[_id - 1];
+		for (byte i = 0; i < scene_walkboxes.size(); ++i) {
+			const Walkbox &w = scene_walkboxes[i];
+			if (w.rect.in(point)) {
 				debug(0, "bumped into walkbox %u", i);
-				byte o = w->orientation;
+				byte o = w.orientation;
 				switch (o) {
 				case 1:
-					point.y = w->rect.top - 1;
+					point.y = w.rect.top - 1;
 					break;
 				case 2:
-					point.x = w->rect.right + 1;
+					point.x = w.rect.right + 1;
 					break;
 				case 3:
-					point.y = w->rect.bottom + 1;
+					point.y = w.rect.bottom + 1;
 					break;
 				case 4:
-					point.x = w->rect.left - 1;
+					point.x = w.rect.left - 1;
 					break;
 				default:
 					return;
@@ -110,7 +111,55 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	teenagent_idle.load(s, Animation::kTypeVaria);
 	if (teenagent_idle.empty())
 		error("invalid mark animation");
+		
+	//loading objects & walkboxes
+	objects.resize(42);
+	walkboxes.resize(42);
+	
+	for(byte i = 0; i < 42; ++i) {
+		Common::Array<Object> &scene_objects = objects[i];
+		scene_objects.clear();
+		
+		uint16 scene_table = res->dseg.get_word(0x7254 + i * 2);
+		uint16 object_addr;
+		while ((object_addr = res->dseg.get_word(scene_table)) != 0) {
+			Object obj;
+			obj.load(res->dseg.ptr(object_addr));
+			//obj.dump();
+			scene_objects.push_back(obj);
+			scene_table += 2;
+		}
+		debug(0, "scene[%u] has %u object(s)", i + 1, scene_objects.size());
+
+		byte *walkboxes_base = res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + i * 2)));
+		byte walkboxes_n = *walkboxes_base++;
+		debug(0, "scene[%u] has %u walkboxes", i + 1, walkboxes_n);
+
+		Common::Array<Walkbox> &scene_walkboxes = walkboxes[i];
+		for (byte j = 0; j < walkboxes_n; ++j) {
+			Walkbox w;
+			w.load(walkboxes_base + 14 * j);
+			//walkbox[i]->dump();
+			scene_walkboxes.push_back(w);
+		}
+	}
 }
+
+Object *Scene::findObject(const Common::Point &point) {
+	if (_id == 0)
+		return NULL;
+	
+	Common::Array<Object> &scene_objects = objects[_id - 1];
+	
+	for(uint i = 0; i < scene_objects.size(); ++i) {
+		Object &obj = scene_objects[i];
+		if (obj.enabled != 0 && obj.rect.in(point))
+			return &obj;
+	}
+	return NULL;
+}
+
+
 
 byte *Scene::getOns(int id) {
 	Resources *res = Resources::instance();
@@ -214,15 +263,6 @@ void Scene::init(int id, const Common::Point &pos) {
 
 	loadOns();
 	loadLans();
-
-	byte *walkboxes_base = res->dseg.ptr(READ_LE_UINT16(res->dseg.ptr(0x6746 + (id - 1) * 2)));
-	walkboxes = *walkboxes_base++;
-
-	debug(0, "found %d walkboxes", walkboxes);
-	for (byte i = 0; i < walkboxes; ++i) {
-		walkbox[i] = (Walkbox *)(walkboxes_base + 14 * i);
-		walkbox[i]->dump();
-	}
 
 	//check music
 	int now_playing = _engine->music->getId();
@@ -407,12 +447,13 @@ bool Scene::render(OSystem *system) {
 
 		//if (!current_event.empty())
 		//	current_event.dump();
-		/*
-		for (byte i = 0; i < walkboxes; ++i) {
-			Walkbox *w = walkbox[i];
-			w->rect.render(surface, 0xd0 + i);
+		{
+			const Common::Array<Walkbox> & scene_walkboxes = walkboxes[_id - 1];
+			for (uint i = 0; i < scene_walkboxes.size(); ++i) {
+				scene_walkboxes[i].rect.render(surface, 0xd0 + i);
+			}
 		}
-		*/
+		
 
 	} while (restart);
 
@@ -585,16 +626,15 @@ void Scene::setPalette(OSystem *system, const byte *buf, unsigned mul) {
 }
 
 Object *Scene::getObject(int id, int scene_id) {
+	assert(id > 0);
+	
 	if (scene_id == 0)
 		scene_id = _id;
 
-	Resources *res = Resources::instance();
-	uint16 addr = res->dseg.get_word(0x7254 + (scene_id - 1) * 2);
-	//debug(0, "object base: %04x, x: %d, %d", addr, point.x, point.y);
-	uint16 object = res->dseg.get_word(addr + 2 * id - 2);
+	if (scene_id == 0)
+		return NULL;
 
-	Object *obj = (Object *)res->dseg.ptr(object);
-	return obj;
+	return &objects[scene_id - 1][id - 1];
 }
 
 Common::Point Scene::messagePosition(const Common::String &str, Common::Point position) {

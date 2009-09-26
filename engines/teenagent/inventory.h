@@ -28,6 +28,7 @@
 #include "teenagent/surface.h"
 #include "teenagent/animation.h"
 #include "common/events.h"
+#include "common/array.h"
 #include "teenagent/objects.h"
 
 namespace TeenAgent {
@@ -59,7 +60,7 @@ private:
 	Common::SeekableReadStream *items;
 	uint16 offset[92];
 
-	byte *objects;
+	Common::Array<InventoryObject> objects;
 	byte *inventory;
 	struct Item {
 		Animation animation;

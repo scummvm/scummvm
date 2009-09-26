@@ -29,11 +29,9 @@
 #include "teenagent/actor.h"
 #include "common/system.h"
 #include "common/list.h"
+#include "teenagent/objects.h"
 
 namespace TeenAgent {
-
-struct Walkbox;
-struct Object;
 
 class TeenAgentEngine;
 class Dialog;
@@ -130,8 +128,9 @@ public:
 
 	bool eventRunning() const { return !current_event.empty(); }
 
-	Walkbox *getWalkbox(byte id) { return walkbox[id]; }
+	Walkbox *getWalkbox(byte id) { return &walkboxes[_id - 1][id]; }
 	Object *getObject(int id, int scene_id = 0);
+	Object *findObject(const Common::Point &point);
 
 private:
 	void loadOns();
@@ -166,8 +165,8 @@ private:
 	int progress, progress_total;
 	uint8 orientation;
 
-	byte walkboxes;
-	Walkbox *walkbox[255];
+	Common::Array<Common::Array<Object> > objects;
+	Common::Array<Common::Array<Walkbox> > walkboxes;
 
 	Common::String message;
 	Common::Point message_pos;
