@@ -1211,7 +1211,11 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 	int y = 0;
 
 	// Flag the given area as having been changed
-	gfxModuleData_addDirtyRect(Common::Rect(xs, ys, xs + width, ys + height));
+	Common::Point ps = Common::Point(MAX(MIN(xs, 320), 0), MAX(MIN(ys, 200), 0));
+	Common::Point pe = Common::Point(MAX(MIN(xs + width, 320), 0), MAX(MIN(ys + height, 200), 0));
+	if ((ps.x != pe.x) && (ps.y != pe.y))
+		// At least part of sprite is on-screen
+		gfxModuleData_addDirtyRect(Common::Rect(ps.x, ps.y, pe.x, pe.y));
 
 	cellStruct* plWork = currentObjPtr;
 	int workBufferSize = height * (width / 8);
