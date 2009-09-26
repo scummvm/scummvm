@@ -352,7 +352,7 @@ static int is_print_str(const char *str) {
 
 
 reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
-	char *dest = s->segMan->derefString(argv[0]);
+	byte *dest = (byte*)s->segMan->derefString(argv[0]);
 	reg_t *dest2;
 
 	if (!dest) {
@@ -370,7 +370,8 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 	if ((argc == 2) &&
 	        /* Our pathfinder already works around the issue we're trying to fix */
 	        (strcmp(s->segMan->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0) &&
-	        ((strlen(dest) < 2) || (!lsl5PasswordWorkaround && !is_print_str(dest)))) {
+	        ((strlen((const char*)dest) < 2) ||
+	         (!lsl5PasswordWorkaround && !is_print_str((const char*)dest)))) {
 		// SQ4 array handling detected
 #ifndef SCUMM_BIG_ENDIAN
 		int odd = argv[1].toUint16() & 1;
@@ -378,7 +379,7 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 		int odd = !(argv[1].toUint16() & 1);
 #endif
 		dest2 = ((reg_t *) dest) + (argv[1].toUint16() / 2);
-		dest = ((char *)(&dest2->offset)) + odd;
+		dest = ((byte *)(&dest2->offset)) + odd;
 	} else
 		dest += argv[1].toUint16();
 
