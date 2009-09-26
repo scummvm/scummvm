@@ -1936,6 +1936,7 @@ int LoLEngine::clickedStatusIcon(Button *button) {
 GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen) {
 	_scrollUpFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollUp);
 	_scrollDownFunctor = BUTTON_FUNCTOR(GUI_LoL, this, &GUI_LoL::scrollDown);
+
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI, this, &GUI::redrawShadedButtonCallback);
 
@@ -2279,7 +2280,7 @@ int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseW
 }
 
 int GUI_LoL::redrawButtonCallback(Button *button) {
-	if (!_displayMenu)
+	if (!_displayMenu || _vm->gameFlags().use16ColorMode)
 		return 0;
 
 	_screen->drawBox(button->x + 1, button->y + 1, button->x + button->width - 1, button->y + button->height - 1, 225);
@@ -2287,7 +2288,7 @@ int GUI_LoL::redrawButtonCallback(Button *button) {
 }
 
 int GUI_LoL::redrawShadedButtonCallback(Button *button) {
-	if (!_displayMenu)
+	if (!_displayMenu || _vm->gameFlags().use16ColorMode)
 		return 0;
 
 	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 223, 227, Screen::kShadeTypeLol);
@@ -2452,7 +2453,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 			_screen->updateScreen();
 		}
 
-		if (_currentMenu == &_mainMenu) {
+		if (_currentMenu == &_mainMenu && !_vm->gameFlags().use16ColorMode) {
 			Screen::FontId f = _screen->setFont(Screen::FID_6_FNT);
 			_screen->fprintString("%s", menu.x + 8, menu.y + menu.height - 12, 204, 0, 8, gScummVMVersion);
 			_screen->setFont(f);
@@ -2580,7 +2581,7 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font) {
-	_screen->fprintString("%s", x, y, c0, c1, flags, str);
+	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? flags & 3 : flags, str);
 }
 
 int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {
