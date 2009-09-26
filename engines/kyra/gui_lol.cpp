@@ -165,14 +165,17 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 	_screen->copyRegion(80, 143, 80, 143, 232, 35, 0, 2);
 	gui_drawAllCharPortraitsWithStats();
 
-	_screen->fprintString("%s", 157, 9, 254, 0, 5, l->name);
+	if (_flags.use16ColorMode)
+		_screen->fprintString("%s", 156, 8, 0xe1, 0, 1, l->name);
+	else
+		_screen->fprintString("%s", 157, 9, 254, 0, 5, l->name);
 
 	gui_printCharInventoryStats(charNum);
 
 	for (int i = 0; i < 11; i++)
 		gui_drawCharInventoryItem(i);
 
-	_screen->fprintString("%s", 182, 103, 172, 0, 5, getLangString(0x4033));
+	_screen->fprintString("%s", 182, 103, _flags.use16ColorMode ? 0xbb : 172, 0, 5, getLangString(0x4033));
 
 	static const uint16 statusFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
 
@@ -203,8 +206,11 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 			if (c && !b)
 				b = 1;
 		}
-
-		gui_drawBarGraph(154, 64 + i * 10, 34, 5, b, e, 132, 0);
+		
+		if (_flags.use16ColorMode)
+			gui_drawBarGraph(154, 66 + i * 8, 34, 5, b, e, 0x88, 0);
+		else
+			gui_drawBarGraph(154, 64 + i * 10, 34, 5, b, e, 132, 0);
 	}
 
 	_screen->drawClippedLine(14, 120, 194, 120, 1);
@@ -229,23 +235,38 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	if (index < 2) {
 		// might
 		// protection
-		y = index * 10 + 22;
-		col = 158;
-		if (redraw)
-			_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
+		if (_flags.use16ColorMode) {
+			y = (index + 2) << 3;
+			col = 0xa1;
+			if (redraw)
+				_screen->fprintString("%s", offs + 108, y, col, 0, 0, getLangString(0x4014 + index));
+		} else {
+			y = index * 10 + 22;
+			col = 158;
+			if (redraw)
+				_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
+		}		
 	} else {
 		//skills
 		int s = index - 2;
 		y = s * 10 + 62;
-		col = _characters[_selectedCharacter].flags & (0x200 << s) ? 254 : 180;
-		if (redraw)
-			_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
+		if (_flags.use16ColorMode) {
+			y = (s + 8) << 3;
+			col = _characters[_selectedCharacter].flags & (0x200 << s) ? 0xe1 : 0x81;
+			if (redraw)
+				_screen->fprintString("%s", offs + 108, y, col, 0, 0, getLangString(0x4014 + index));
+		} else {
+			y = s * 10 + 62;
+			col = _characters[_selectedCharacter].flags & (0x200 << s) ? 254 : 180;
+			if (redraw)
+				_screen->fprintString("%s", offs + 108, y, col, 0, 4, getLangString(0x4014 + index));
+		}
 	}
 
 	if (offs)
 		_screen->copyRegion(294, y, 182 + offs, y, 18, 8, 6, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-	_screen->fprintString("%d", 200 + offs, y, col, 0, 6, value);
+	_screen->fprintString("%d", 200 + offs, y, col, 0, _flags.use16ColorMode ? 2 : 6, value);
 }
 
 void LoLEngine::gui_changeCharacterStats(int charNum) {

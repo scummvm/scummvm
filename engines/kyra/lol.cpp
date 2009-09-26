@@ -1578,7 +1578,7 @@ void LoLEngine::initDialogueSequence(int controlMode, int pageNum) {
 			gui_drawBox(1, 130, 318, 69, 136, 251, 252);
 		}
 
-		_screen->modifyScreenDim(5, 8, 131, 304, 66);
+		_screen->modifyScreenDim(5, 8, 131, 306, 66);
 		_screen->modifyScreenDim(4, 1, 133, 38, 60);
 		_txt->clearDim(4);
 
@@ -1623,7 +1623,7 @@ void LoLEngine::restoreAfterDialogueSequence(int controlMode) {
 		_updateFlags &= 0xfffd;
 	} else {
 		const ScreenDim *d = _screen->getScreenDim(5);
-		_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 2, d->unkA);
+		_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_flags.use16ColorMode ? 3 : 2), d->sy + d->h - 2, d->unkA);
 		_txt->clearDim(4);
 		_txt->setupField(false);
 	}

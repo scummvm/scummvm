@@ -787,12 +787,11 @@ void TextDisplayer_LoL::textPageBreak() {
 
 void TextDisplayer_LoL::clearCurDim() {
 	int d = _screen->curDimIndex();
-	const ScreenDim *tmp = _screen->getScreenDim(_screen->curDimIndex());
+	const ScreenDim *tmp = _screen->getScreenDim(d);
 	if (_vm->gameFlags().use16ColorMode) {
 		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 2, (tmp->sy + tmp->h) - 2, _textDimData[d].color2);
-	} else {
+	} else
 		_screen->fillRect(tmp->sx << 3, tmp->sy, ((tmp->sx + tmp->w) << 3) - 1, (tmp->sy + tmp->h) - 1, _textDimData[d].color2);
-	}	
 	
 	_lineCount = 0;
 	_textDimData[d].column = _textDimData[d].line = 0;

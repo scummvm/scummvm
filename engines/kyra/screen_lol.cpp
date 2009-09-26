@@ -108,14 +108,21 @@ void Screen_LoL::fprintString(const char *format, int x, int y, uint8 col1, uint
 	if (flags & 2)
 		x -= getTextWidth(string);
 
-	if (flags & 4) {
-		printText(string, x - 1, y, 1, col2);
-		printText(string, x, y + 1, 1, col2);
-	}
+	if (_use16ColorMode) {
+		if (flags & 12) {
+			printText(string, x - 1, y, 0x44, col2);
+			printText(string, x, y + 1, 0x44, col2);
+		}
+	} else {
+		if (flags & 4) {
+			printText(string, x - 1, y, 1, col2);
+			printText(string, x, y + 1, 1, col2);
+		}
 
-	if (flags & 8) {
-		printText(string, x - 1, y, 227, col2);
-		printText(string, x, y + 1, 227, col2);
+		if (flags & 8) {
+			printText(string, x - 1, y, 227, col2);
+			printText(string, x, y + 1, 227, col2);
+		}
 	}
 
 	printText(string, x, y, col1, col2);
