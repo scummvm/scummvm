@@ -447,13 +447,14 @@ bool Scene::render(OSystem *system) {
 
 		//if (!current_event.empty())
 		//	current_event.dump();
+		/*
 		{
 			const Common::Array<Walkbox> & scene_walkboxes = walkboxes[_id - 1];
 			for (uint i = 0; i < scene_walkboxes.size(); ++i) {
 				scene_walkboxes[i].rect.render(surface, 0xd0 + i);
 			}
 		}
-		
+		*/
 
 	} while (restart);
 
