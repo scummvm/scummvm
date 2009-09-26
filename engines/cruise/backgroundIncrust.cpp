@@ -71,6 +71,8 @@ void restoreBackground(backgroundIncrustStruct *pIncrust) {
 	if (pBackground == NULL)
 		return;
 
+	backgroundChanged[pIncrust->backgroundIdx] = true;
+
 	int X = pIncrust->savedX;
 	int Y = pIncrust->savedY;
 	int width = pIncrust->saveWidth;
@@ -107,6 +109,8 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	}
 
 	backgroundPtr = backgroundScreens[backgroundIdx];
+
+	backgroundChanged[backgroundIdx] = true;
 
 	assert(backgroundPtr != NULL);
 
@@ -218,6 +222,8 @@ void regenerateBackgroundIncrust(backgroundIncrustStruct *pHead) {
 				// Poly
 				addBackgroundIncrustSub1(frame, pl->X, pl->Y, NULL, pl->scale, (char*)backgroundScreens[pl->backgroundIdx], (char *)filesDatabase[frame].subData.ptr);
 			}
+
+			backgroundChanged[pl->backgroundIdx] = true;
 		}
 
 		pl = pl2;

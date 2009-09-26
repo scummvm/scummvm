@@ -36,6 +36,7 @@ struct backgroundTableStruct {
 extern short int cvtPalette[0x20];
 extern int CVTLoaded;
 extern uint8 *backgroundScreens[8];
+extern bool backgroundChanged[8];
 extern backgroundTableStruct backgroundTable[8];
 
 int loadBackground(const char *name, int idx);

@@ -41,6 +41,10 @@ palEntry lpalette[256];
 int palDirtyMin = 256;
 int palDirtyMax = -1;
 
+typedef Common::List<Common::Rect> RectList;
+RectList _dirtyRects;
+RectList _priorFrameRects;
+
 gfxModuleDataStruct gfxModuleData = {
 	0,			// use Tandy
 	0,			// use EGA
@@ -229,7 +233,47 @@ void gfxModuleData_flipScreen(void) {
 	flip();
 }
 
+void gfxModuleData_addDirtyRect(const Common::Rect &r) {
+	_dirtyRects.push_back(Common::Rect(	MAX(r.left, (int16)0), MAX(r.top, (int16)0), 
+		MIN(r.right, (int16)320), MIN(r.bottom, (int16)200)));
+}
+
+/**
+ * Creates the union of two rectangles.
+ */
+static bool unionRectangle(Common::Rect &pDest, const Common::Rect &pSrc1, const Common::Rect &pSrc2) {
+	pDest.left   = MIN(pSrc1.left, pSrc2.left);
+	pDest.top    = MIN(pSrc1.top, pSrc2.top);
+	pDest.right  = MAX(pSrc1.right, pSrc2.right);
+	pDest.bottom = MAX(pSrc1.bottom, pSrc2.bottom);
+
+	return !pDest.isEmpty();
+}
+
+static void mergeClipRects() {
+	RectList::iterator rOuter, rInner;
+
+	for (rOuter = _dirtyRects.begin(); rOuter != _dirtyRects.end(); ++rOuter) {
+		rInner = rOuter;
+		while (++rInner != _dirtyRects.end()) {
+
+			if ((*rOuter).intersects(*rInner)) {
+				// these two rectangles overlap, so translate it to a bigger rectangle
+				// that contains both of them
+				unionRectangle(*rOuter, *rOuter, *rInner);
+
+				// remove the inner rect from the list
+				_dirtyRects.erase(rInner);
+
+				// move back to beginning of list
+				rInner = rOuter;
+			}
+		}
+	}
+}
+
 void flip() {
+	RectList::iterator dr;
 	int i;
 	byte paletteRGBA[256 * 4];
 
@@ -245,7 +289,29 @@ void flip() {
 		palDirtyMax = -1;
 	}
 
-	g_system->copyRectToScreen(globalScreen, 320, 0, 0, 320, 200);
+	// Make a copy of the prior frame's dirty rects, and then backup the current frame's rects
+	RectList tempList = _priorFrameRects;
+	_priorFrameRects = _dirtyRects;
+
+	// Merge the prior frame's dirty rects into the current frame's list
+	for (dr = tempList.begin(); dr != tempList.end(); ++dr) {
+		Common::Rect &r = *dr;
+		_dirtyRects.push_back(Common::Rect(r.left, r.top, r.right, r.bottom));
+	}
+
+	// Merge any overlapping rects to simplify the drawing process
+	mergeClipRects();
+
+	// Copy any modified areas
+	for (dr = _dirtyRects.begin(); dr != _dirtyRects.end(); ++dr) {
+		Common::Rect &r = *dr;
+		g_system->copyRectToScreen(globalScreen + 320 * r.top + r.left, 320, 
+			r.left, r.top, r.width(), r.height());
+	}
+
+	_dirtyRects.clear();
+
+	// Allow the screen to update
 	g_system->updateScreen();
 }
 
@@ -258,6 +324,48 @@ void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour) {
 
 void resetBitmap(uint8 *dataPtr, int32 dataSize) {
 	memset(dataPtr, 0, dataSize);
+}
+
+/**
+ * This method compares a new background being switched in against the current background,
+ * to figure out rectangles of changed areas for dirty rectangles
+ */
+void switchBackground(const byte *newBg) {
+	const byte *bg = gfxModuleData.pPage00;
+	int sliceXStart, sliceXEnd;
+
+	// If both the upper corners are different, presume it's a full screen change
+	if ((*newBg != *bg) && (*(newBg + 319) != *(bg + 319))) {
+		gfxModuleData_addDirtyRect(Common::Rect(0, 0, 320, 200));
+		return;
+	}
+
+	/* For an optimisation, any changes are stored as a series of slices than have a height of a single
+	 * line each. It is left up to the screen redraw code to automatically merge these together 
+	 */
+
+	for (int yp = 0; yp < 200; ++yp) {
+		sliceXStart = -1; sliceXEnd = -1;
+		for (int xp = 0; xp < 320; ++xp, ++bg, ++newBg) {
+			if (*bg != *newBg) {
+				if (sliceXStart == -1) {
+					// Start of a new slice
+					sliceXStart = xp;
+					sliceXEnd = MIN(xp + 7, 320);
+				} else
+					// Carry on of changed area
+					sliceXEnd = MAX(xp, sliceXEnd);
+
+			} else if ((sliceXEnd != -1) && (xp >= (sliceXEnd + 10))) {
+				// If more than 10 pixels have gone by without any changes, then end the slice
+				gfxModuleData_addDirtyRect(Common::Rect(sliceXStart, yp, sliceXEnd, MIN(yp + 2, 200)));
+				sliceXStart = sliceXEnd = -1;
+			}
+		}
+
+		if (sliceXStart != -1)
+			gfxModuleData_addDirtyRect(Common::Rect(sliceXStart, yp, 320, MIN(yp + 2, 200)));
+	}
 }
 
 } // End of namespace Cruise

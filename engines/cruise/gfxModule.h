@@ -62,9 +62,12 @@ void gfxModuleData_flipScreen(void);
 void gfxModuleData_convertOldPalColor(uint16 oldColor, uint8 *pOutput);
 void gfxModuleData_setPalEntries(const byte *ptr, int start, int num);
 void gfxModuleData_setPal256(const byte *ptr);
+void gfxModuleData_addDirtyRect(const Common::Rect &r);
 void flip(void);
 void drawSolidBox(int32 x1, int32 y1, int32 x2, int32 y2, uint8 colour);
 void resetBitmap(uint8 *dataPtr, int32 dataSize);
+
+void switchBackground(const byte *newBg);
 
 } // End of namespace Cruise
 

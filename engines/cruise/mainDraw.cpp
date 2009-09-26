@@ -1121,6 +1121,8 @@ void mainDrawPolygons(int fileIndex, cellStruct *plWork, int X, int scale, int Y
 	if (spriteY1 == spriteY2)
 		return;
 
+	gfxModuleData_addDirtyRect(Common::Rect(spriteX2, spriteY2, spriteX1, spriteY1));
+
 	var_8 = 0;
 
 	memset(polygonMask, 0xFF, (320*200) / 8);
@@ -1177,6 +1179,8 @@ void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int wi
 			globalY = 198 - pGfxPtr->height;
 		}
 
+		gfxModuleData_addDirtyRect(Common::Rect(globalX, globalY, globalX + width, globalY + height));
+
 		initialOuput = ouputPtr + (globalY * 320) + globalX;
 
 		for (yp = 0; yp < height; yp++) {
@@ -1205,6 +1209,13 @@ void drawMessage(const gfxEntryStruct *pGfxPtr, int globalX, int globalY, int wi
 void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *dataIn, int ys, int xs, uint8 *output, const uint8 *dataBuf) {
 	int x = 0;
 	int y = 0;
+
+	// Flag the given area as having been changed
+	Common::Point ps = Common::Point(MAX(MIN(xs, 320), 0), MAX(MIN(ys, 200), 0));
+	Common::Point pe = Common::Point(MAX(MIN(xs + width, 320), 0), MAX(MIN(ys + height, 200), 0));
+	if ((ps.x != pe.x) && (ps.y != pe.y))
+		// At least part of sprite is on-screen
+		gfxModuleData_addDirtyRect(Common::Rect(ps.x, ps.y, pe.x, pe.y));
 
 	cellStruct* plWork = currentObjPtr;
 	int workBufferSize = height * (width / 8);
@@ -1406,6 +1417,10 @@ void mainDraw(int16 param) {
 
 	if (bgPtr) {
 		gfxModuleData_gfxCopyScreen(bgPtr, gfxModuleData.pPage10);
+		if (backgroundChanged[masterScreen]) {
+			backgroundChanged[masterScreen] = false;
+			switchBackground(bgPtr);
+		}
 	}
 
 	autoCellHead.next = NULL;
