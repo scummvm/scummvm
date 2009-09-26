@@ -1236,7 +1236,10 @@ void ScummEngine_v7::setupScumm() {
 	else
 		_smushFrameRate = (_game.id == GID_FT) ? 10 : 12;
 
-	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, 10);
+	int dimuseTempo = CLIP(ConfMan.getInt("dimuse_tempo"), 10, 100);
+	ConfMan.setInt("dimuse_tempo", dimuseTempo);
+	ConfMan.flushToDisk();
+	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, dimuseTempo);
 
 	ScummEngine::setupScumm();
 

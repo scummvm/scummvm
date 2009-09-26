@@ -122,6 +122,10 @@ static const char HELP_STRING[] =
 #ifdef ENABLE_SCUMM
 	"  --tempo=NUM              Set music tempo (in percent, 50-200) for SCUMM games\n"
 	"                           (default: 100)\n"
+#ifdef ENABLE_SCUMM_7_8
+	"  --dimuse-tempo=NUM       Set internal Digital iMuse tempo (10 - 100) per second\n"
+	"                           (default: 10)\n"
+#endif
 #endif
 	"\n"
 	"The meaning of boolean long options can be inverted by prefixing them with\n"
@@ -198,6 +202,9 @@ void registerDefaults() {
 #endif
 #ifdef ENABLE_SCUMM
 	ConfMan.registerDefault("tempo", 0);
+#ifdef ENABLE_SCUMM_7_8
+	ConfMan.registerDefault("dimuse_tempo", 10);
+#endif
 #endif
 
 #if defined(ENABLE_SKY) || defined(ENABLE_QUEEN)
@@ -509,6 +516,10 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 #ifdef ENABLE_SCUMM
 			DO_LONG_OPTION_INT("tempo")
 			END_OPTION
+#ifdef ENABLE_SCUMM_7_8
+			DO_LONG_OPTION_INT("dimuse-tempo")
+			END_OPTION
+#endif
 #endif
 #if defined(ENABLE_SCUMM) || defined(ENABLE_GROOVIE)
 			DO_LONG_OPTION_BOOL("demo-mode")
