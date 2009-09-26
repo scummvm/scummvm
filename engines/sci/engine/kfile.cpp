@@ -241,7 +241,7 @@ void fwrite_wrapper(EngineState *s, int handle, char *data, int length) {
 		return;
 
 	if (!f->_out) {
-		error("fgets_wrapper: Trying to write to file '%s' opened for reading", f->_name.c_str());
+		error("fwrite_wrapper: Trying to write to file '%s' opened for reading", f->_name.c_str());
 		return;
 	}
 
