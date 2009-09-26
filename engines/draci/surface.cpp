@@ -144,6 +144,9 @@ uint Surface::centerOnX(uint x, uint width) const {
 	if (newX + width >= (uint)w - 1)
 		newX = (w - 1) - width;
 
+	if (newX < 0)
+		newX = 0;
+
 	return newX;
 }
 
@@ -164,6 +167,9 @@ uint Surface::centerOnY(uint y, uint height) const {
 
 	if (newY + height >= (uint)h - 1)
 		newY = (h - 1) - height;
+
+	if (newY < 0)
+		newY = 0;
 
 	return newY;
 }
