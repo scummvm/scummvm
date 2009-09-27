@@ -88,10 +88,10 @@ void Object::setName(const Common::String &new_name) {
 
 void Object::dump() {
 	debug(0, "object: %u %u [%u,%u,%u,%u], actor: [%u,%u,%u,%u], orientation: %u, name: %s", id, enabled,
-	      rect.left, rect.top, rect.right, rect.bottom,
-	      actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom,
-	      actor_orientation, name.c_str()
-	     );
+		rect.left, rect.top, rect.right, rect.bottom,
+		actor_rect.left, actor_rect.top, actor_rect.right, actor_rect.bottom,
+		actor_orientation, name.c_str()
+		);
 }
 
 Common::String Object::parse_description(const char *name) {
