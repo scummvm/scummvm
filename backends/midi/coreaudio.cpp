@@ -40,8 +40,8 @@
 #include "sound/musicplugin.h"
 #include "sound/mpu401.h"
 
+#include <CoreServices/CoreServices.h>
 #include <AudioToolbox/AUGraph.h>
-
 
 
 // Activating the following switch disables reverb support in the CoreAudio
