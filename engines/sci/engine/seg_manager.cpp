@@ -912,6 +912,10 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 	const SegmentRef src_r = dereference(src);
 	if (!src_r.isValid()) {
 		warning("Attempt to strncpy from invalid pointer %04x:%04x", PRINT_REG(src));
+
+		// Clear target string instead.
+		if (n > 0)
+			strcpy(dest, "");
 		return;
 	}
 
