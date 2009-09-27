@@ -1637,7 +1637,9 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		entries_nr = 0;
 
 		// NOTE: most types of pointer dereferencing don't like odd offsets
-		assert((entry_size & 1) == 0);
+		if (entry_size & 1) {
+			warning("List control with odd entry_size %d. This is not yet implemented for all types of segments", entry_size);
+		}
 
 		reg_t seeker = text_pos;
 		// Count string entries in NULL terminated string list
