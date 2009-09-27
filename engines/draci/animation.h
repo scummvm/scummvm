@@ -79,7 +79,6 @@ public:
 	void setCurrentFrame(uint frame);
 	uint currentFrameNum() const;
 	uint getFrameCount() const;
-	void deleteFrames();
 
 	bool isPlaying() const;
 	void setPlaying(bool playing);
@@ -114,6 +113,7 @@ public:
 private:
 	
 	uint nextFrameNum() const;
+	void deleteFrames();
 
 	/** Internal animation ID 
 	  *	(as specified in the data files and the bytecode)
@@ -138,6 +138,9 @@ private:
 	bool _playing;
 	bool _looping;
 	bool _paused;
+
+	/** Array of frames of the animation.  The animation object owns these pointers.
+	 */
 	Common::Array<Drawable*> _frames;
 
 	AnimationCallback _callback;
@@ -180,6 +183,10 @@ private:
 	void insertAnimation(Animation *anim);
 
 	DraciEngine *_vm;
+
+	/** List of animation objects, maintained sorted by decreasing Z-coordinates.
+	 * The animation manager owns the pointers.
+	 */
 	Common::List<Animation *> _animations;
 
 	/** The index of the most recently added animation. 

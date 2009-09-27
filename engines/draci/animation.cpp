@@ -501,11 +501,11 @@ void AnimationManager::deleteAnimation(int id) {
 	// Iterate for the first time to delete the animation
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == id) {
-			(*it)->deleteFrames();
-			_animations.erase(it);
-
 			// Remember index of the deleted animation
 			index = (*it)->getIndex();
+
+			delete *it;
+			_animations.erase(it);
 
 			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", id);
 
@@ -532,7 +532,7 @@ void AnimationManager::deleteOverlays() {
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == kOverlayImage) {
-			(*it)->deleteFrames();
+			delete *it;
 			_animations.erase(it);
 		}	
 	}
@@ -545,7 +545,7 @@ void AnimationManager::deleteAll() {
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		(*it)->deleteFrames();	
+		delete *it;
 	}
 
 	_animations.clear();
@@ -566,7 +566,7 @@ void AnimationManager::deleteAfterIndex(int index) {
 
 			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", (*it)->getID());
 
-			(*it)->deleteFrames();
+			delete *it;
 			_animations.erase(it);
 		}
 	}

@@ -799,7 +799,7 @@ void Script::endCurrentProgram() {
  * @param reader Stream reader set to the beginning of the expression
  */
 
-int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
+int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 	Common::Stack<int> stk;
 	mathExpressionObject obj;
 	GPL2Operator oper;
@@ -808,7 +808,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
 	debugC(4, kDraciBytecodeDebugLevel, "\t<MATHEXPR>");
 
 	// Read in initial math object
-	obj = (mathExpressionObject)reader.readSint16LE();
+	obj = (mathExpressionObject)reader->readSint16LE();
 
 	int value;
 	int arg1, arg2, res;
@@ -827,13 +827,13 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
 		// If the object type is not known, assume that it's a number
 		default:
 		case kMathNumber:
-			value = reader.readSint16LE();
+			value = reader->readSint16LE();
 			stk.push(value);
 			debugC(4, kDraciBytecodeDebugLevel, "\t\tnumber: %d", value);
 			break;
 
 		case kMathOperator:
-			value = reader.readSint16LE();
+			value = reader->readSint16LE();
 			arg2 = stk.pop();
 			arg1 = stk.pop();
 
@@ -851,7 +851,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
 			break;
 
 		case kMathVariable:
-			value = reader.readSint16LE() - 1;
+			value = reader->readSint16LE() - 1;
 
 			stk.push(_vm->_game->getVariable(value));
 
@@ -860,7 +860,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
 			break;
 
 		case kMathFunctionCall:
-			value = reader.readSint16LE();
+			value = reader->readSint16LE();
 
 			// Fetch function
 			func = _functionList[value-1];
@@ -890,7 +890,7 @@ int Script::handleMathExpression(Common::MemoryReadStream &reader) const {
 			break;
 		}
 
-		obj = (mathExpressionObject) reader.readSint16LE();
+		obj = (mathExpressionObject) reader->readSint16LE();
 	}
 
 	return stk.pop();
@@ -923,7 +923,7 @@ bool Script::testExpression(const GPL2Program &program, uint16 offset) const {
 	debugC(4, kDraciBytecodeDebugLevel, 
 		"Evaluating (standalone) GPL expression at offset %d:", offset);
 
-	return (bool)handleMathExpression(reader);
+	return (bool)handleMathExpression(&reader);
 }
 
 /**
@@ -1053,7 +1053,7 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 				if (cmd->_paramTypes[i] == 4) {
 					debugC(3, kDraciBytecodeDebugLevel, 
 						"Evaluating (in-script) GPL expression at offset %d: ", offset);
-					params.push(handleMathExpression(reader));
+					params.push(handleMathExpression(&reader));
 				}
 				else {
 					tmp = reader.readSint16LE();
