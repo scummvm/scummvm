@@ -1487,8 +1487,8 @@ if test -n "$_host"; then
 			_backend="wii"
 			_build_scalers="no"
 			_build_hq_scalers="no"
+			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
@@ -1507,8 +1507,8 @@ if test -n "$_host"; then
 			_build_scalers="no"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
 			add_line_to_config_h '#define GAMECUBE'
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"

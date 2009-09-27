@@ -1,7 +1,8 @@
-WII_EXE := scummvm$(EXEEXT)
 WII_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 
-$(WII_EXE_STRIPPED): $(WII_EXE)
+all: $(WII_EXE_STRIPPED)
+
+$(WII_EXE_STRIPPED): $(EXECUTABLE)
 	$(STRIP) $< -o $@
 
 clean: wiiclean
@@ -16,13 +17,13 @@ geckoupload: $(WII_EXE_STRIPPED)
 	$(DEVKITPPC)/bin/geckoupload $<
 
 wiigdb:
-	$(DEVKITPPC)/bin/powerpc-gekko-gdb -n $(WII_EXE)
+	$(DEVKITPPC)/bin/powerpc-gekko-gdb -n $(EXECUTABLE)
 
 wiidebug:
-	$(DEVKITPPC)/bin/powerpc-gekko-gdb -n $(WII_EXE) -x $(srcdir)/backends/platform/wii/gdb.txt
+	$(DEVKITPPC)/bin/powerpc-gekko-gdb -n $(EXECUTABLE) -x $(srcdir)/backends/platform/wii/gdb.txt
 
 # target to create a Wii snapshot
-wiidist: $(EXECUTABLE)
+wiidist: all
 	$(MKDIR) wiidist/scummvm
 ifeq ($(GAMECUBE),1)
 	$(DEVKITPPC)/bin/elf2dol $(EXECUTABLE) wiidist/scummvm/scummvm.dol
