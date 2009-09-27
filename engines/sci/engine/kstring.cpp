@@ -364,7 +364,7 @@ reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
 ** the supplied parameters and writes it to the targ_address.
 */
 reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
-	int *arguments;
+	uint16 *arguments;
 	reg_t dest = argv[0];
 	char targetbuf[512];
 	char *target = targetbuf;
@@ -392,9 +392,9 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelStrings, "Formatting \"%s\"\n", source);
 
 
-	arguments = (int*)malloc(sizeof(int) * argc);
+	arguments = (uint16 *)malloc(sizeof(uint16) * argc);
 #ifdef SATISFY_PURIFY
-	memset(arguments, 0, sizeof(int) * argc);
+	memset(arguments, 0, sizeof(uint16) * argc);
 #endif
 
 	for (i = startarg; i < argc; i++)
@@ -530,12 +530,11 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 				if (xfer == 'x')
 					format_string = "%x";
 
+				int val = arguments[paramindex];
 				if (!unsigned_var)
-					if (arguments[paramindex] & 0x8000)
-						/* sign extend */
-						arguments[paramindex] = (~0xffff) | arguments[paramindex];
+					val = (int16)arguments[paramindex];
 
-				target += sprintf(target, format_string, arguments[paramindex++]);
+				target += sprintf(target, format_string, val);
 				CHECK_OVERFLOW1(target, 0, NULL_REG);
 
 				unsigned_var = 0;
