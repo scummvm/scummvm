@@ -233,17 +233,13 @@ SegmentRef Script::dereference(reg_t pointer) {
 
 	SegmentRef ret;
 	ret.isRaw = true;
-	// FIXME: here we subtract pointer.offset from maxSize, elsewhere we don't -- huh?
-	// It's hard to say which is right, because it depends on how the various
-	// SegManager::deref*() methods are used. It's quite possible that this variant
-	// is "correct" and all the others aren't... we'll have to find out.
 	ret.maxSize = _bufSize - pointer.offset;
 	ret.raw = _buf + pointer.offset;
 	return ret;
 }
 
 bool LocalVariables::isValidOffset(uint16 offset) const {
-	return offset < _locals.size() * sizeof(reg_t);
+	return offset < _locals.size() * 2;
 }
 
 SegmentRef LocalVariables::dereference(reg_t pointer) {
@@ -263,19 +259,19 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
-	ret.maxSize = _locals.size() * sizeof(reg_t);
+	ret.maxSize = (_locals.size() - pointer.offset/2) * 2;
 	ret.raw = (byte *)&_locals[pointer.offset/2];
 	return ret;
 }
 
 bool DataStack::isValidOffset(uint16 offset) const {
-	return offset < _capacity * sizeof(reg_t);
+	return offset < _capacity * 2;
 }
 
 SegmentRef DataStack::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
-	ret.maxSize = _capacity * sizeof(reg_t);
+	ret.maxSize = (_capacity - pointer.offset/2) * 2;
 	// FIXME: Is this correct? See comment in LocalVariables::dereference
 	if (pointer.offset & 1)
 		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
@@ -290,7 +286,7 @@ bool DynMem::isValidOffset(uint16 offset) const {
 SegmentRef DynMem::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = true;
-	ret.maxSize = _size;
+	ret.maxSize = _size - pointer.offset;
 	ret.raw = _buf + pointer.offset;
 	return ret;
 }

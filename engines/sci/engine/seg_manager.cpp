@@ -864,7 +864,7 @@ reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
 		return NULL;
 	}
 
-	return (reg_t *)_kernel_dereference_pointer(this, pointer, entries, false);
+	return (reg_t *)_kernel_dereference_pointer(this, pointer, 2*entries, false);
 }
 
 char *SegManager::derefString(reg_t pointer, int entries) {
