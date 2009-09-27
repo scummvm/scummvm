@@ -105,7 +105,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 	_hardScaler = new GUI::CheckboxWidget(_tab, 5, 20, 270, 20, "Hardware scale (fast, but low quality)", 0x10000001, 'T');
 	_cpuScaler = new GUI::CheckboxWidget(_tab, 5, 35, 270, 20, "Software scale (good quality, but slower)", 0x10000002, 'S');
 	_unscaledCheckbox = new GUI::CheckboxWidget(_tab, 5, 50, 270, 20, "Unscaled (you must scroll left and right)", 0x10000003, 'S');
-	
+
 	new GUI::StaticTextWidget(_tab, 5, 125, 110, 15, "Brightness:", Graphics::kTextAlignLeft);
 	_gammaCorrection = new GUI::SliderWidget(_tab, 130, 120, 130, 12, 1);
 	_gammaCorrection->setMinValue(0);
@@ -182,7 +182,7 @@ DSOptionsDialog::DSOptionsDialog() : GUI::Dialog(0, 0, 320 - 10, 230 - 40) {
 		_gammaCorrection->setValue(ConfMan.getInt("gamma", "ds"));
 	} else {
 		_gammaCorrection->setValue(0);
-	} 	
+	}
 
 	_highQualityAudioCheckbox->setState(confGetBool("22khzaudio", false));
 	_disablePowerOff->setState(confGetBool("disablepoweroff", false));

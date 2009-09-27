@@ -174,10 +174,10 @@ CFLAGS	=	-Wno-multichar -Wall\
 		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
 
 
-# -ffast-math 
+# -ffast-math
 
 ifdef USE_DEBUGGER
-	DEFINES += -DUSE_DEBUGGER 
+	DEFINES += -DUSE_DEBUGGER
 	CFLAGS += -g
 endif
 
@@ -209,7 +209,7 @@ endif
 DEFINES += -DREDUCE_MEMORY_USAGE
 
 # Removed, as these are done in portdefs.h
-# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE 
+# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
 
@@ -268,7 +268,7 @@ endif
 
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
 
-COMPRESSOR_OBJS := 
+COMPRESSOR_OBJS :=
 #$(portdir)/source/compressor/lz.o
 
 FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o\
@@ -289,7 +289,7 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
 #			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
 
-LIBCARTRESET_OBJS := 
+LIBCARTRESET_OBJS :=
 #$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
@@ -320,7 +320,7 @@ ndsall:
 include $(srcdir)/Makefile.common
 
 semiclean:
-	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o $(portdir)/source/dsoptions.o 
+	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o $(portdir)/source/dsoptions.o
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
@@ -382,7 +382,7 @@ endef
 #	export OPTFLAG = ;
 #	echo !!!!!!!! $(OPTFLAG)
 	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 
 #---------------------------------------------------------------------------------

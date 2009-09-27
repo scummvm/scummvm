@@ -1,4 +1,4 @@
-	
+
 
 
                     The official port of ScummVM
@@ -14,7 +14,7 @@ Visit the main ScummVM website <http://www.scummvm.org>
      Contents
      ------------------------------------------------------------------------
 
-	 
+
 
     * What's New?
     * What is ScummVM DS?
@@ -62,7 +62,7 @@ ScummVM DS 0.12.0
  * New option which allows you to drag to hover, tap the touch screen to
    click, and double tap the screen to right click.
  * Reorganised DS Options screen into three tabs for clearer navigation
- * New top screen scaling options let you choose the scaling factor used 
+ * New top screen scaling options let you choose the scaling factor used
    on startup.
  * The usual round of bug fixes.
 
@@ -79,21 +79,21 @@ ScummVM DS 0.11.0
    screen (press select during the game). Thanks to Tramboi and Robin Watts for
    this feature!
  * Function keys added to virtual keyboard (used in AGI games)
- * Plenty of bug fixes 
+ * Plenty of bug fixes
 
       What is ScummVM DS?
       ------------------------------------------------------------------------
 
 ScummVM DS is a part of the ScummVM project.  The ScummVM project is an
-attempt to re-engineer many classic point and click adventure games of the 
-80s and 90s to run on modern computer hardware.  Technology has changed a 
-lot since these games were written, and so ScummVM attempts to replicate the 
+attempt to re-engineer many classic point and click adventure games of the
+80s and 90s to run on modern computer hardware.  Technology has changed a
+lot since these games were written, and so ScummVM attempts to replicate the
 gameplay of the original games in exacting details, without any of the original
 code that the game ran on.  ScummVM needs a copy of the original game, in order
 to take the graphics, sound, and scripts that made the game work.
 
 ScummVM is written in such a way that it can be 'ported' from one type of
-machine to another, and ScummVM DS is a port of ScummVM to the Nintendo DS 
+machine to another, and ScummVM DS is a port of ScummVM to the Nintendo DS
 handheld games console.
 
 
@@ -118,30 +118,30 @@ handheld games console.
 
 Nintendo don't want you to run ScummVM on your DS.  They control
 which companies can make games on the DS, and there is an expensive
-process to go through in order to be licenced.  Having to pay for 
-this would prevent me from giving away ScummVM for free.  
+process to go through in order to be licenced.  Having to pay for
+this would prevent me from giving away ScummVM for free.
 
 So, the result is that to run ScummVM on your DS you'll need an
-unofficial card reader.  There are many of these, and all are different.  
-Popular models at the time of writing are the R4DS and the M3DS Real, 
+unofficial card reader.  There are many of these, and all are different.
+Popular models at the time of writing are the R4DS and the M3DS Real,
 but many different models work.  You need to buy one of these, and at
 MicroSD card to go with it.
 
 There are also slot-2 card readers which fit into the bottom slot on
 your DS, usually used for Game Boy Advance games.  These are less common
-these days, and although they have certain advantages, the details of 
-these are beyond the scope of this website.  Information on these is 
+these days, and although they have certain advantages, the details of
+these are beyond the scope of this website.  Information on these is
 quite easy to find by searching.
 
 Once you have your card reader and a MicroSD card, you will also need
 a copy of the game you want to run.  ScummVM can run a large variety
 of games, but you must own a real boxed copy of the game.  These games
 are still under copyright, and it is illegal to copy them from a friend
-or download them from the Internet without paying.  The exception to 
+or download them from the Internet without paying.  The exception to
 this are the three Revolution Software games.  These are 'Beneath a
 Steel Sky', 'Lure of the Temptress' and 'Flight of the Amazon Queen'.
 Revolution have kindly allowed us to give these games away for free.
-You can download them from the main ScummVM site at 
+You can download them from the main ScummVM site at
 <http://www.scummvm.org/downloads.php>
 
 If you have a modern card reader, like an M3 Real or R4DS, getting
@@ -167,10 +167,10 @@ is no longer supported.
       SD card reader and a DLDI driver
       ------------------------------------------------------------------------
 
-ScummVM DS needs something called a DLDI driver to run on each make 
+ScummVM DS needs something called a DLDI driver to run on each make
 and model of card reader.  Many modern card readers (R4DS, M3 DS Real)
 handle this autmatically and for those, you don't have to do anything.
-Just running ScummVM on the card will handle this step for you.  
+Just running ScummVM on the card will handle this step for you.
 For others, you will need to follow the steps in this section before
 ScummVM DS will work.
 
@@ -221,7 +221,7 @@ Here is what you need to do:
     * Put your game data in any folder on the card. Do NOT use a zip file.
     * Boot up your DS and run ScummVM.
     * Click 'Add Game', browse to the folder with your game data, click
-      'Choose', then 'OK'. Click 'Start' to run the game. 
+      'Choose', then 'OK'. Click 'Start' to run the game.
 
 If your copy of ScummVM DS has been successfully patched, you will get a
 message on the top screen that looks like this:
@@ -300,7 +300,7 @@ CANNOT DO THIS.
     * *R4DS*: If you upgrade the firmware for your R4DS to version 1.10
       or later, the card will autmatically DLDI patch the game, meaning
       you don't have to use dlditool to patch the .NDS file. This makes
-      things a lot easier! 
+      things a lot easier!
     * *M3DS Real*: This card autmatically DLDI patches the game, meaning
       that you do not need to do this yourself.
 
@@ -313,9 +313,9 @@ I'm glad you asked. Here is a list of the compatible games in version
 1.0.0 RC1. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
-Temptress have generously been released as freeware by the original 
+Temptress have generously been released as freeware by the original
 authors, Revolution Software <http://www.revolution.co.uk/>. This is a
-great thing and we should support Revolution for being so kind to us. 
+great thing and we should support Revolution for being so kind to us.
 You can download the game data from the official ScummVM download page
 <http://www.scummvm.org/downloads.php>.
 
@@ -326,23 +326,23 @@ for a copy, as I am unable to send it to you.
 
 Game                                      Build   Notes
 
-Manic Mansion                             A	
+Manic Mansion                             A
 
-Zak McKracken and the Alien Mindbenders   A	
+Zak McKracken and the Alien Mindbenders   A
 
-Indiana Jones and the Last Crusade        A	
+Indiana Jones and the Last Crusade        A
 
-Loom                                      A	
+Loom                                      A
 
-Passport to Adventure                     A	
+Passport to Adventure                     A
 
-The Secret of Monkey Island               A	
+The Secret of Monkey Island               A
 
-Monkey Island 2: LeChuck's Revenge        A	
+Monkey Island 2: LeChuck's Revenge        A
 
-Indiana Jones and the Fate of Atlantis    A	
+Indiana Jones and the Fate of Atlantis    A
 
-Day of the Tentacle	                  A	
+Day of the Tentacle	                  A
 
 Sam & Max Hit the Road	                  A     Some slowdown in a few scenes
                                                 when MP3 audio is enabled
@@ -373,25 +373,25 @@ Elvira 2                                  C
 
 Waxworks (Amiga version)                  C
 
-Gobliiins                                 D	
+Gobliiins                                 D
 
-Gobliins 2                                D	
+Gobliins 2                                D
 
 Goblins 3                                 D
 
-Ween: The Prophecy                        D	
+Ween: The Prophecy                        D
 
-Bargon Attack                             D	
+Bargon Attack                             D
 
 Lost in Time                              D
 
-Future Wars                               D	
+Future Wars                               D
 
 All Sierra AGI games.
 For a complete list, see this page
-<http://wiki.scummvm.org/index.php/AGI>   D	
+<http://wiki.scummvm.org/index.php/AGI>   D
 
-Inherit the Earth                         E	
+Inherit the Earth                         E
 
 The Legend of Kyrandia                    F     Zoomed view does not follow the
                                                 speaking character
@@ -413,7 +413,7 @@ scaling these games down to 256x192, the resolution of the DS screens.
       How to Use ScummVM
       ------------------------------------------------------------------------
 
-Once you've booted up ScummVM, you'll see the start up screen. 
+Once you've booted up ScummVM, you'll see the start up screen.
 
  1. Tap the 'Add' button with the pen, then browse to the folder
     containing your game data. Once you have clicked on your folder, you will
@@ -423,7 +423,7 @@ Once you've booted up ScummVM, you'll see the start up screen.
  2. Click the 'Choose' button.
 
  3. You will get some options for the game. You can usually just click 'Ok' to
-    this. 
+    this.
 
  4. Now click on the name of the game you want to play from the list and
     click 'Start'. Your game will start!
@@ -562,11 +562,11 @@ of the screen.  Useful for Beneath a Steel Sky and Goblins 3.
 
 Touch X offset - if your screen doesn't perform properly, this setting
 allows you to adjust when the cursor appears left or right relative to
-the screen's measured touch position.  
+the screen's measured touch position.
 
 Touch Y offset - if your screen doesn't perform properly, this setting
 allows you to adjust when the cursor appears higher or lower relative to
-the screen's measured touch position.  
+the screen's measured touch position.
 
 Use Laptop Trackpad-style cursor control - In this mode, use the lower
 screen to drag the cursor around, a bit like using a trackpad on a laptop.
@@ -652,7 +652,7 @@ IMA-ADPCM 4-bit Mono. You may use any sample rate. All other formats
 will be rejected, including uncompressed WAV files.
 
 Since this sound format is a standard, you should be able to create it
-in a variety of software.  
+in a variety of software.
 Now I will to describe how to rip your CD tracks with Cdex, which can be
 found here: Cdex Homepage <http://sourceforge.net/projects/cdexos/>.
 If you're using MacOS or Linux, I suggest using Audacity
@@ -751,7 +751,7 @@ as described in the CD audio section.
 Opera Expansion Pack to support more games like The Dig and Full
 Throttle? DS Linux has done it, so why can't you?
 *A:* Yes!  The Dig and Full Throttle are playable with some limitations.
-See the forum thread here for a download: 
+See the forum thread here for a download:
 http://forums.scummvm.org/viewtopic.php?t=7044
 
 *Q:* ScummVM DS turns off my DS when I hit 'Quit' in the game or quit

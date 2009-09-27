@@ -130,7 +130,7 @@ void* operator new (size_t size)
 		consolePrintf("Failed alloc (new) %d (%x)\n", size, poo);
 		return NULL;
 	}
-	
+
 	return res;
 }
 

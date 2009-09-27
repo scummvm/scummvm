@@ -300,45 +300,45 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 			for (int dy = y; dy < y + h; dy++) {
 				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
 				u8* src = (u8 *) buf + (pitch * by);
-	
+
 				u32 dx;
-	
+
 				u32 pixelsLeft = w;
-	
+
 				if (MISALIGNED16(dest))	{
 					// Read modify write
-	
+
 					dest--;
 					u16 mix = *((u16 *) dest);
-	
+
 					mix = (mix & 0x00FF) | (*src++ << 8);
-	
+
 					*dest = mix;
-	
+
 					dest += 2;
 					pixelsLeft--;
 				}
-	
+
 				// We can now assume dest is aligned
 				u16* dest16 = (u16 *) dest;
-	
+
 				for (dx = 0; dx < pixelsLeft; dx+=2)	{
 					u16 mix;
-	
+
 					mix = *src + (*(src + 1) << 8);
 					*dest16++ = mix;
 					src += 2;
 				}
-	
+
 				pixelsLeft -= dx;
-	
+
 				// At the end we may have one pixel left over
-	
+
 				if (pixelsLeft != 0) {
 					u16 mix = *dest16;
-	
+
 					mix = (mix & 0x00FF) | ((*src++) << 8);
-	
+
 					*dest16 = mix;
 				}
 
@@ -352,49 +352,49 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
 				u8* destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
 				u8* src = (u8 *) buf + (pitch * by);
-	
+
 				u32 dx;
-	
+
 				u32 pixelsLeft = w;
-	
+
 				if (MISALIGNED16(dest))	{
 					// Read modify write
-	
+
 					dest--;
 					u16 mix = *((u16 *) dest);
-	
+
 					mix = (mix & 0x00FF) | (*src++ << 8);
-	
+
 					*dest = mix;
 					*destSub = mix;
-	
+
 					dest += 2;
 					destSub += 2;
 					pixelsLeft--;
 				}
-	
+
 				// We can now assume dest is aligned
 				u16* dest16 = (u16 *) dest;
 				u16* destSub16 = (u16 *) destSub;
-	
+
 				for (dx = 0; dx < pixelsLeft; dx+=2)	{
 					u16 mix;
-	
+
 					mix = *src + (*(src + 1) << 8);
 					*dest16++ = mix;
 					*destSub16++ = mix;
 					src += 2;
 				}
-	
+
 				pixelsLeft -= dx;
-	
+
 				// At the end we may have one pixel left over
-	
+
 				if (pixelsLeft != 0) {
 					u16 mix = *dest16;
-	
+
 					mix = (mix & 0x00FF) | ((*src++) << 8);
-	
+
 					*dest16 = mix;
 					*destSub16 = mix;
 				}
@@ -868,7 +868,7 @@ u16 OSystem_DS::applyGamma(u16 colour) {
 	if (g > 31) g = 31;
 
 	b = b + ((b * scale) >> 4);
-	if (b > 31) b = 31;	
+	if (b > 31) b = 31;
 
 	// Stick them back together into a 555 colour value
 	return 0x8000 | r | (g << 5) | (b << 10);
@@ -881,7 +881,7 @@ void OSystem_DS::engineDone() {
 #ifdef ENABLE_AGI
 	DS::clearAutoCompleteWordList();
 #endif
-	
+
 }
 
 
