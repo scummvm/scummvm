@@ -223,6 +223,7 @@ void CompressedSound::openFile() {
 				return;
 			}
 			warning("Unhandled version %d for compressed sound file '%s'", version, compressedSoundFilesTable[i].filename);
+			_fCompressedSound.close();
 		}
 	}
 }
