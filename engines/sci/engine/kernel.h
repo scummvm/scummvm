@@ -216,9 +216,9 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
  * @param s The current state
  * @param address The address to look up
  * @param index The relative index
- * @return The referenced text, or NULL on error.
+ * @return The referenced text, or empty string on error.
  */
-char *kernel_lookup_text(EngineState *s, reg_t address, int index);
+Common::String kernel_lookup_text(EngineState *s, reg_t address, int index);
 
 /******************** Priority macros/functions ********************/
 /**

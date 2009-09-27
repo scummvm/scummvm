@@ -39,12 +39,12 @@ namespace Sci {
 	}
 
 /* Returns the string the script intended to address */
-char *kernel_lookup_text(EngineState *s, reg_t address, int index) {
+Common::String kernel_lookup_text(EngineState *s, reg_t address, int index) {
 	char *seeker;
 	Resource *textres;
 
 	if (address.segment)
-		return s->segMan->derefString(address);
+		return s->segMan->getString(address);
 	else {
 		int textlen;
 		int _index = index;
@@ -189,7 +189,7 @@ reg_t kSetSynonyms(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t stringpos = argv[0];
-	char *string = s->segMan->derefString(stringpos);
+	Common::String string = s->segMan->getString(stringpos);
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
@@ -197,7 +197,7 @@ reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 
 	s->parser_event = event;
 
-	bool res = voc->tokenizeString(words, string, &error);
+	bool res = voc->tokenizeString(words, string.c_str(), &error);
 	s->parser_valid = 0; /* not valid */
 
 	if (res && !words.empty()) {
@@ -242,8 +242,7 @@ reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 		s->r_acc = make_reg(0, 0);
 		PUT_SEL32V(event, claimed, 1);
 		if (error) {
-			char *pbase_str = s->segMan->derefString(s->parser_base);
-			strcpy(pbase_str, error);
+			s->segMan->strcpy(s->parser_base, error);
 			debugC(2, kDebugLevelParser, "Word unknown: %s\n", error);
 			/* Issue warning: */
 
@@ -259,129 +258,66 @@ reg_t kParse(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kStrEnd(EngineState *s, int, int argc, reg_t *argv) {
 	reg_t address = argv[0];
-	char *seeker = s->segMan->derefString(address);
-
-	while (*seeker++)
-		++address.offset;
+	address.offset += s->segMan->strlen(address);
 
 	return address;
 }
 
 reg_t kStrCat(EngineState *s, int, int argc, reg_t *argv) {
-	char *s1 = s->segMan->derefString(argv[0]);
-	char *s2 = s->segMan->derefString(argv[1]);
+	Common::String s1 = s->segMan->getString(argv[0]);
+	Common::String s2 = s->segMan->getString(argv[1]);
 
-	strcat(s1, s2);
+	s1 += s2;
+	s->segMan->strcpy(argv[0], s1.c_str());
 	return argv[0];
 }
 
 reg_t kStrCmp(EngineState *s, int, int argc, reg_t *argv) {
-	char *s1 = s->segMan->derefString(argv[0]);
-	char *s2 = s->segMan->derefString(argv[1]);
+	Common::String s1 = s->segMan->getString(argv[0]);
+	Common::String s2 = s->segMan->getString(argv[1]);
 
 	if (argc > 2)
-		return make_reg(0, strncmp(s1, s2, argv[2].toUint16()));
+		return make_reg(0, strncmp(s1.c_str(), s2.c_str(), argv[2].toUint16()));
 	else
-		return make_reg(0, strcmp(s1, s2));
+		return make_reg(0, strcmp(s1.c_str(), s2.c_str()));
 }
 
 
 reg_t kStrCpy(EngineState *s, int, int argc, reg_t *argv) {
-	char *dest = s->segMan->derefString(argv[0]);
-	char *src = s->segMan->derefString(argv[1]);
-
-	if (!dest) {
-		warning("Attempt to strcpy TO invalid pointer %04x:%04x",
-		          PRINT_REG(argv[0]));
-		return NULL_REG;
-	}
-	if (!src) {
-		warning("Attempt to strcpy FROM invalid pointer %04x:%04x",
-		          PRINT_REG(argv[1]));
-		*dest = 0;
-		return argv[1];
-	}
-
 	if (argc > 2) {
 		int length = argv[2].toSint16();
 
 		if (length >= 0)
-			strncpy(dest, src, length);
-		else {
-			if (s->segMan->_heap[argv[0].segment]->getType() == SEG_TYPE_DYNMEM) {
-				reg_t *srcp = (reg_t *) src;
-
-				int i;
-				warning("Performing reg_t to raw conversion for AvoidPath");
-				for (i = 0; i < -length / 2; i++) {
-					dest[2 * i] = srcp->offset & 0xff;
-					dest[2 * i + 1] = srcp->offset >> 8;
-					srcp++;
-				}
-			} else
-				memcpy(dest, src, -length);
-		}
+			s->segMan->strncpy(argv[0], argv[1], length);
+		else
+			s->segMan->memcpy(argv[0], argv[1], -length);
 	} else
-		strcpy(dest, src);
+		s->segMan->strcpy(argv[0], argv[1]);
 
 	return argv[0];
 }
 
-/* Simple heuristic to work around array handling peculiarity in SQ4:
-It uses StrAt() to read the individual elements, so we must determine
-whether a string is really a string or an array. */
-static int is_print_str(const char *str) {
-	int printable = 0;
-	int len = strlen(str);
-
-	if (len == 0) return 1;
-
-	while (*str) {
-		// The parameter passed to isprint() needs to be in the range
-		// 0 to 0xFF or EOF, according to MSDN, therefore we cast it
-		// to an unsigned char. Values outside this range (in this
-		// case, negative values) yield unpredictable results. Refer to:
-		// http://msdn.microsoft.com/en-us/library/ewx8s4kw.aspx
-		if (isprint((byte)*str))
-			printable++;
-		str++;
-	}
-
-	return ((float)printable / (float)len >= 0.5);
-}
-
 
 reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
-	byte *dest = (byte*)s->segMan->derefString(argv[0]);
-	reg_t *dest2;
-
-	if (!dest) {
+	SegmentRef dest_r = s->segMan->dereference(argv[0]);
+	if (!dest_r.raw) {
 		warning("Attempt to StrAt at invalid pointer %04x:%04x", PRINT_REG(argv[0]));
 		return NULL_REG;
 	}
 
-	bool lsl5PasswordWorkaround = false;
-	// LSL5 stores the password at the beginning in memory.drv, using XOR encryption,
-	// which means that is_print_str() will fail. Therefore, do not use the heuristic to determine
-	// if we're handling a string or an array for LSL5's password screen (room 155)
-	if (s->_gameName.equalsIgnoreCase("lsl5") && s->currentRoomNumber() == 155)
-		lsl5PasswordWorkaround = true;
+	byte* dest;
 
-	if ((argc == 2) &&
-	        /* Our pathfinder already works around the issue we're trying to fix */
-	        (strcmp(s->segMan->getDescription(argv[0]), AVOIDPATH_DYNMEM_STRING) != 0) &&
-	        ((strlen((const char*)dest) < 2) ||
-	         (!lsl5PasswordWorkaround && !is_print_str((const char*)dest)))) {
-		// SQ4 array handling detected
+	if (dest_r.isRaw) {
+		dest = (byte*)dest_r.raw + argv[1].toUint16();
+	} else {
 #ifndef SCUMM_BIG_ENDIAN
 		int odd = argv[1].toUint16() & 1;
 #else
 		int odd = !(argv[1].toUint16() & 1);
 #endif
-		dest2 = ((reg_t *) dest) + (argv[1].toUint16() / 2);
-		dest = ((byte *)(&dest2->offset)) + odd;
-	} else
-		dest += argv[1].toUint16();
+		reg_t *tmp = dest_r.reg + (argv[1].toUint16() / 2);
+		dest = ((byte *)(&tmp->offset)) + odd;
+	}
 
 	s->r_acc = make_reg(0, *dest);
 
@@ -393,7 +329,8 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 
 
 reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
-	char *source = s->segMan->derefString(argv[0]);
+	Common::String source_str = s->segMan->getString(argv[0]);
+	const char *source = source_str.c_str();
 
 	while (isspace(*source))
 		source++; /* Skip whitespace */
@@ -419,10 +356,10 @@ reg_t kReadNumber(EngineState *s, int, int argc, reg_t *argv) {
 reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	int *arguments;
 	reg_t dest = argv[0];
-	char *target = s->segMan->derefString(dest);
+	char targetbuf[512];
+	char *target = targetbuf;
 	reg_t position = argv[1]; /* source */
 	int index = argv[2].toUint16();
-	char *source;
 	char *str_base = target;
 	int mode = 0;
 	int paramindex = 0; /* Next parameter to evaluate */
@@ -439,7 +376,8 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	else
 		startarg = 3; /* First parameter to use for formatting */
 
-	source = kernel_lookup_text(s, position, index);
+	Common::String source_str = kernel_lookup_text(s, position, index);
+	const char* source = source_str.c_str();
 
 	debugC(2, kDebugLevelStrings, "Formatting \"%s\"\n", source);
 
@@ -505,9 +443,9 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 			switch (xfer) {
 			case 's': { /* Copy string */
 				reg_t reg = argv[startarg + paramindex];
-				char *tempsource = kernel_lookup_text(s, reg,
-				                                      arguments[paramindex + 1]);
-				int slen = strlen(tempsource);
+				Common::String tempsource = kernel_lookup_text(s, reg,
+				                                  arguments[paramindex + 1]);
+				int slen = strlen(tempsource.c_str());
 				int extralen = str_leng - slen;
 				CHECK_OVERFLOW1(target, extralen, NULL_REG);
 				if (extralen < 0)
@@ -538,7 +476,7 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 
 				}
 
-				strcpy(target, tempsource);
+				strcpy(target, tempsource.c_str());
 				target += slen;
 
 				switch (align) {
@@ -627,19 +565,15 @@ reg_t kFormat(EngineState *s, int, int argc, reg_t *argv) {
 	free(arguments);
 
 	*target = 0; /* Terminate string */
+
+	s->segMan->strcpy(dest, targetbuf);	
+
 	return dest; /* Return target addr */
 }
 
 
 reg_t kStrLen(EngineState *s, int, int argc, reg_t *argv) {
-	char *str = s->segMan->derefString(argv[0]);
-
-	if (!str) {
-		warning("StrLen: invalid pointer %04x:%04x", PRINT_REG(argv[0]));
-		return NULL_REG;
-	}
-
-	return make_reg(0, strlen(str));
+	return make_reg(0, s->segMan->strlen(argv[0]));
 }
 
 
@@ -664,7 +598,7 @@ reg_t kGetFarText(EngineState *s, int, int argc, reg_t *argv) {
 	** resource.
 	*/
 
-	strcpy(s->segMan->derefString(argv[2]), seeker); /* Copy the string and get return value */
+	s->segMan->strcpy(argv[2], seeker); /* Copy the string and get return value */
 	return argv[2];
 }
 
@@ -710,7 +644,6 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 	case K_MESSAGE_GET:
 	case K_MESSAGE_NEXT: {
 		reg_t bufferReg;
-		char *buffer = NULL;
 		Common::String str;
 		reg_t retval;
 
@@ -739,18 +672,15 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 
 		if (!bufferReg.isNull()) {
 			int len = str.size() + 1;
-			buffer = s->segMan->derefString(bufferReg, len);
-
-			if (buffer) {
-				strcpy(buffer, str.c_str());
-			} else {
+			SegmentRef buffer_r = s->segMan->dereference(bufferReg);
+			if (buffer_r.maxSize < len) {
 				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str.c_str());
 
 				// Set buffer to empty string if possible
-				buffer = s->segMan->derefString(bufferReg, 1);
-				if (buffer)
-					*buffer = 0;
-			}
+				if (buffer_r.maxSize > 0)
+					s->segMan->strcpy(bufferReg, "");
+			} else
+				s->segMan->strcpy(bufferReg, str.c_str());
 
 			s->_msgState.gotoNext();
 		}
@@ -792,6 +722,8 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 		if (buffer) {
 			// FIXME: Is this correct? I.e., do we really write into a "raw" segment
 			// here? Or maybe we want to write 4 reg_t instead?
+			assert(s->segMan->dereference(argv[1]).isRaw);
+
 			WRITE_LE_UINT16(buffer, module);
 			WRITE_LE_UINT16(buffer + 2, msg.noun);
 			WRITE_LE_UINT16(buffer + 4, msg.verb);
@@ -811,26 +743,29 @@ reg_t kMessage(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 reg_t kSetQuitStr(EngineState *s, int, int argc, reg_t *argv) {
-        char *quitStr = s->segMan->derefString(argv[0]);
-        debug("Setting quit string to '%s'", quitStr);
-        return s->r_acc;
+	Common::String quitStr = s->segMan->getString(argv[0]);
+	debug("Setting quit string to '%s'", quitStr.c_str());
+	return s->r_acc;
 }
 
 reg_t kStrSplit(EngineState *s, int, int argc, reg_t *argv) {
-	const char *format = s->segMan->derefString(argv[1]);
-	const char *sep = !argv[2].isNull() ? s->segMan->derefString(argv[2]) : NULL;
-	Common::String str = s->strSplit(format, sep);
+	Common::String format = s->segMan->getString(argv[1]);
+	Common::String sep_str;
+	const char *sep = NULL;
+	if (!argv[2].isNull()) {
+		sep_str = s->segMan->getString(argv[2]);
+		sep = sep_str.c_str();
+	}
+	Common::String str = s->strSplit(format.c_str(), sep);
 
 	// Make sure target buffer is large enough
-	char *buf = s->segMan->derefString(argv[0], str.size() + 1);
-
-	if (buf) {
-		strcpy(buf, str.c_str());
-		return argv[0];
-	} else {
+	SegmentRef buf_r = s->segMan->dereference(argv[0]);
+	if (!buf_r.isValid() || buf_r.maxSize < (int)str.size() + 1) {
 		warning("StrSplit: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(argv[0]), str.size() + 1, str.c_str());
 		return NULL_REG;
 	}
+	s->segMan->strcpy(argv[0], str.c_str());
+	return argv[0];
 }
 
 } // End of namespace Sci

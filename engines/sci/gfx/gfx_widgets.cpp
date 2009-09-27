@@ -1581,7 +1581,6 @@ GfxPort::GfxPort(GfxVisual *visual_, rect_t area, gfx_color_t fgcolor, gfx_color
 	port_bg = NULL;
 	_parent = NULL;
 	_decorations = NULL;
-	title_text = NULL;
 	draw_pos = Common::Point(0, 0);
 	gray_text = 0;
 	_color = fgcolor;

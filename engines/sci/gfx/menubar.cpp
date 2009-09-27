@@ -122,7 +122,7 @@ int Menu::addMenuItem(GfxState *state, MenuType type, const char *left, const ch
 	return total_left_size + width;
 }
 
-void Menubar::addMenu(GfxState *state, const char *title, const char *entries, int font, reg_t entries_base) {
+void Menubar::addMenu(GfxState *state, const Common::String &title, const Common::String &entries, int font, reg_t entries_base) {
 	char tracker;
 	char *left = NULL;
 	reg_t left_origin = entries_base;
@@ -134,17 +134,19 @@ void Menubar::addMenu(GfxState *state, const char *title, const char *entries, i
 
 	menu._title = title;
 
-	gfxop_get_text_params(state, font, title, SIZE_INF, &(menu._titleWidth), &height, 0, NULL, NULL, NULL);
+	gfxop_get_text_params(state, font, title.c_str(), SIZE_INF, &(menu._titleWidth), &height, 0, NULL, NULL, NULL);
+
+	const char *entries_p = entries.c_str();
 
 	do {
-		tracker = *entries++;
+		tracker = *entries_p++;
 		entries_base.offset++;
 
 		if (!left) { // Left string not finished?
 			if (tracker == '=') { // Hit early-SCI tag assignment?
-				left = sci_strndup(entries - string_len - 1, string_len);
-				tag = atoi(entries++);
-				tracker =  *entries++;
+				left = sci_strndup(entries_p - string_len - 1, string_len);
+				tag = atoi(entries_p++);
+				tracker =  *entries_p++;
 			}
 			if ((tracker == 0 && string_len > 0) || (tracker == '=') || (tracker == ':')) { // End of entry
 				MenuType entrytype = MENU_TYPE_NORMAL;
@@ -152,7 +154,7 @@ void Menubar::addMenu(GfxState *state, const char *title, const char *entries, i
 				reg_t beginning;
 
 				if (!left)
-					left = sci_strndup(entries - string_len - 1, string_len);
+					left = sci_strndup(entries_p - string_len - 1, string_len);
 
 				inleft = left;
 				while (isspace(*inleft))
@@ -179,7 +181,7 @@ void Menubar::addMenu(GfxState *state, const char *title, const char *entries, i
 				if (!left) {
 					left_origin = entries_base;
 					left_origin.offset -= string_len + 1;
-					left = sci_strndup(entries - string_len - 1, string_len);
+					left = sci_strndup(entries_p - string_len - 1, string_len);
 				}
 				string_len = 0; // Continue with the right string
 			} else
@@ -189,7 +191,7 @@ void Menubar::addMenu(GfxState *state, const char *title, const char *entries, i
 			if ((tracker == ':') || (tracker == 0)) { // End of entry
 				int key, modifiers = 0;
 
-				char *right = sci_strndup(entries - string_len - 1, string_len);
+				char *right = sci_strndup(entries_p - string_len - 1, string_len);
 
 				if (right[0] == '#') {
 					right[0] = SCI_SPECIAL_CHAR_FUNCTION; // Function key
@@ -294,7 +296,7 @@ int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribut
 	case MENU_ATTRIBUTE_SAID:
 		if (value.segment) {
 			item->_saidPos = value;
-			memcpy(item->_said, s->segMan->derefBulkPtr(value, 0), MENU_SAID_SPEC_SIZE); // Copy Said spec
+			s->segMan->memcpy(item->_said, value, MENU_SAID_SPEC_SIZE); // Copy Said spec
 			item->_flags |= MENU_ATTRIBUTE_FLAGS_SAID;
 
 		} else
@@ -304,7 +306,7 @@ int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribut
 
 	case MENU_ATTRIBUTE_TEXT:
 		assert(value.segment);
-		item->_text = s->segMan->derefString(value);
+		item->_text = s->segMan->getString(value);
 		item->_textPos = value;
 		break;
 

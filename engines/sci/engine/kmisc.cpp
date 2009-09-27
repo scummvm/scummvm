@@ -180,53 +180,39 @@ reg_t kMemory(EngineState *s, int, int argc, reg_t *argv) {
 		break;
 	case K_MEMORY_MEMCPY : {
 		int size = argv[3].toUint16();
-		byte *dest = s->segMan->derefBulkPtr(argv[1], size);
-		byte *src = s->segMan->derefBulkPtr(argv[2], size);
-
-		if (dest && src)
-			memcpy(dest, src, size);
-		else {
-			warning("Could not execute kMemory:memcpy of %d bytes:", size);
-			if (!dest) {
-				warning("  dest ptr (%04x:%04x) invalid/memory region too small", PRINT_REG(argv[1]));
-			}
-			if (!src) {
-				warning("  src ptr (%04x:%04x) invalid/memory region too small", PRINT_REG(argv[2]));
-			}
-		}
+		s->segMan->memcpy(argv[1], argv[2], size);
 		break;
 	}
 	case K_MEMORY_PEEK : {
-		byte *ref = s->segMan->derefBulkPtr(argv[1], 2);
+		SegmentRef ref = s->segMan->dereference(argv[1]);
 
-		if (!ref) {
+		if (!ref.isValid() || ref.maxSize < 2) {
 			// This occurs in KQ5CD when interacting with certain objects
 			warning("Attempt to peek invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
-		if (s->segMan->getSegmentType(argv[1].segment) == SEG_TYPE_LOCALS)
-			return *((reg_t *) ref);
+		if (ref.isRaw)
+			return make_reg(0, (int16)READ_LE_UINT16(ref.raw));
 		else
-			return make_reg(0, (int16)READ_LE_UINT16(ref));
+			return *(ref.reg);
 		break;
 	}
 	case K_MEMORY_POKE : {
-		byte *ref = s->segMan->derefBulkPtr(argv[1], 2);
+		SegmentRef ref = s->segMan->dereference(argv[1]);
 
-		if (!ref) {
+		if (!ref.isValid() || ref.maxSize < 2) {
 			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));
 			return s->r_acc;
 		}
 
-		if (s->segMan->getSegmentType(argv[1].segment) == SEG_TYPE_LOCALS)
-			*((reg_t *) ref) = argv[2];
-		else {
+		if (ref.isRaw) {
 			if (argv[2].segment) {
 				error("Attempt to poke memory reference %04x:%04x to %04x:%04x", PRINT_REG(argv[2]), PRINT_REG(argv[1]));
 				return s->r_acc;
-				WRITE_LE_UINT16(ref, argv[2].offset); // ?
 			}
-		}
+			WRITE_LE_UINT16(ref.raw, argv[2].offset);
+		} else
+			*(ref.reg) = argv[2];
 		break;
 	}
 	}

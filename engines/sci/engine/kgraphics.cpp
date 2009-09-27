@@ -445,7 +445,7 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 
 	newport = sciw_new_window(s, port->zone, port->_font, port->_color, newbgcolor,
 	                          s->titlebar_port->_font, s->ega_colors[15], s->ega_colors[8],
-	                          port->title_text, port->port_flags & ~kWindowTransparent);
+	                          port->_title_text.c_str(), port->port_flags & ~kWindowTransparent);
 
 	if (s->dyn_views) {
 		int found = 0;
@@ -602,29 +602,32 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 
 reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
 	int width, height;
-	char *text = argv[1].segment ? s->segMan->derefString(argv[1]) : NULL;
-	const char *sep = NULL; 
+	Common::String text = s->segMan->getString(argv[1]);
 	reg_t *dest = s->segMan->derefRegPtr(argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
-	if ((argc > 4) && (argv[4].segment))
-		sep = s->segMan->derefString(argv[4]);
+	Common::String sep_str;
+	const char *sep = NULL; 
+	if ((argc > 4) && (argv[4].segment)) {
+		sep_str = s->segMan->getString(argv[4]);
+		sep = sep_str.c_str();
+	}
 
 	if (maxwidth < 0)
 		maxwidth = 0;
 
 	dest[0] = dest[1] = NULL_REG;
 
-	if (!text || !*text || !dest) { // Empty text
+	if (text.empty() || !dest) { // Empty text
 		dest[2] = dest[3] = make_reg(0, 0);
 		debugC(2, kDebugLevelStrings, "GetTextSize: Empty string\n");
 		return s->r_acc;
 	}
 
-	gfxop_get_text_params(s->gfx_state, font_nr, s->strSplit(text, sep).c_str(), maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
+	gfxop_get_text_params(s->gfx_state, font_nr, s->strSplit(text.c_str(), sep).c_str(), maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
 	                                 &width, &height, 0, NULL, NULL, NULL);
-	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text, width, height);
+	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text.c_str(), width, height);
 
 	dest[2] = make_reg(0, height);
 //	dest[3] = make_reg(0, maxwidth? maxwidth : width);
@@ -1303,7 +1306,9 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
 
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
-	char *text = text_pos.isNull() ? NULL : segMan->derefString(text_pos);
+	Common::String text;
+	if (!text_pos.isNull())
+		text = segMan->getString(text_pos);
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
 
@@ -1327,15 +1332,15 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
 	// NOTE: This _only_ works with the English version
-	if (type == K_CONTROL_BUTTON && text && (gameName == "sq4") &&
-			getSciVersion() < SCI_VERSION_1_1 && !strcmp(text, " Delete ")) {
+	if (type == K_CONTROL_BUTTON && (gameName == "sq4") &&
+			getSciVersion() < SCI_VERSION_1_1 && text == " Delete ") {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	// NOTE: This _only_ works with the English version
-	if (type == K_CONTROL_BUTTON && text && !strcmp(text, "Change\r\nDirectory")) {
+	if (type == K_CONTROL_BUTTON && text == "Change\r\nDirectory") {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
@@ -1369,13 +1374,13 @@ void update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
 
 #define _K_EDIT_DELETE \
 	if (cursor < textlen) { \
-		memmove(text + cursor, text + cursor + 1, textlen - cursor +1); \
+		text.deleteChar(cursor); \
 	}
 
 #define _K_EDIT_BACKSPACE \
 	if (cursor) { \
 		--cursor;    \
-		memmove(text + cursor, text + cursor + 1, textlen - cursor +1); \
+		text.deleteChar(cursor); \
 		--textlen; \
 	}
 
@@ -1401,15 +1406,17 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 				reg_t text_pos = GET_SEL32(obj, text);
 				int display_offset = 0;
 
-				char *text = s->segMan->derefString(text_pos);
+				Common::String text = s->segMan->getString(text_pos);
 				int textlen;
 
+#if 0
 				if (!text) {
 					warning("Could not draw control: %04x:%04x does not reference text", PRINT_REG(text_pos));
 					return s->r_acc;
 				}
+#endif
 
-				textlen = strlen(text);
+				textlen = text.size();
 
 				cursor += display_offset;
 
@@ -1432,7 +1439,7 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 						if (cursor > 0) --cursor;
 						break;
 					case 'k':
-						text[cursor] = 0;
+						text = Common::String(text.c_str(), cursor);
 						break; // Terminate string
 					case 'h':
 						_K_EDIT_BACKSPACE;
@@ -1503,20 +1510,20 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 
 					if (cursor == textlen) {
 						if (textlen < max) {
-							text[cursor++] = key;
-							text[cursor] = 0; // Terminate string
+							text += key;
+							cursor++;
 						}
 					} else if (inserting) {
 						if (textlen < max) {
 							int i;
 
 							for (i = textlen + 2; i >= cursor; i--)
-								text[i] = text[i - 1];
-							text[cursor++] = key;
+								text.setChar(text[i - 1], i);
+							text.setChar(key, cursor++);
 
 						}
 					} else { // Overwriting
-						text[cursor++] = key;
+						text.setChar(key, cursor++);
 					}
 
 					if (max_displayed < max)
@@ -1528,6 +1535,7 @@ reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
 				}
 
 				PUT_SEL32V(obj, cursor, cursor); // Write back cursor position
+				s->segMan->strcpy(text_pos, text.c_str()); // Write back string
 			}
 
 		case K_CONTROL_ICON:
@@ -1564,7 +1572,9 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
-	const char *text = text_pos.isNull() ? NULL : s->segMan->derefString(text_pos);
+	Common::String text;
+	if (!text_pos.isNull())
+		text = s->segMan->getString(text_pos);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -1578,7 +1588,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, s->strSplit(text, NULL).c_str(), font_nr,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, s->strSplit(text.c_str(), NULL).c_str(), font_nr,
 		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
 		break;
 
@@ -1587,7 +1597,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
 
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, s->strSplit(text).c_str(), font_nr, mode,
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, s->strSplit(text.c_str()).c_str(), font_nr, mode,
 									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
 		break;
 
@@ -1597,11 +1607,11 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		max = GET_SEL32V(obj, max);
 		cursor = GET_SEL32V(obj, cursor);
 
-		if (cursor > (signed)strlen(text))
-			cursor = strlen(text);
+		if (cursor > (signed)text.size())
+			cursor = text.size();
 
 //		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);	FIXME: get rid of this?
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text, font_nr, (unsigned)cursor, (int8)inverse));
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text.c_str(), font_nr, (unsigned)cursor, (int8)inverse));
 		break;
 
 	case K_CONTROL_ICON:
@@ -1614,8 +1624,6 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 
 	case K_CONTROL_CONTROL:
 	case K_CONTROL_CONTROL_ALIAS: {
-		const char **entries_list = NULL;
-		const char *seeker;
 		int entries_nr;
 		int lsTop = GET_SEL32V(obj, lsTop) - text_pos.offset;
 		int list_top = 0;
@@ -1627,29 +1635,41 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 		cursor = GET_SEL32V(obj, cursor) - text_pos.offset;
 
 		entries_nr = 0;
-		seeker = text;
-		while (seeker[0]) { // Count string entries in NULL terminated string list
+
+		// NOTE: most types of pointer dereferencing don't like odd offsets
+		assert((entry_size & 1) == 0);
+
+		reg_t seeker = text_pos;
+		// Count string entries in NULL terminated string list
+		while (s->segMan->strlen(seeker) > 0) {
 			++entries_nr;
-			seeker += entry_size;
+			seeker.offset += entry_size;
 		}
 
+		// TODO: This is rather convoluted... It would be a lot cleaner
+		// if sciw_new_list_control would take a list of Common::String
+		Common::String *strings = 0;
+		const char **entries_list = NULL;
+
 		if (entries_nr) { // determine list_top, selection, and the entries_list
-			seeker = text;
+			seeker = text_pos;
 			entries_list = (const char**)malloc(sizeof(char *) * entries_nr);
+			strings = new Common::String[entries_nr];
 			for (i = 0; i < entries_nr; i++) {
-				entries_list[i] = seeker;
-				seeker += entry_size	;
-				if ((seeker - text) == lsTop)
+				strings[i] = s->segMan->getString(seeker);
+				entries_list[i] = strings[i].c_str();
+				seeker.offset += entry_size;
+				if ((seeker.offset - text_pos.offset) == lsTop)
 					list_top = i + 1;
-				if ((seeker - text) == cursor)
+				if ((seeker.offset - text_pos.offset) == cursor)
 					selection = i + 1;
 			}
 		}
-
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
 		                          list_top, selection, (int8)inverse));
-		if (entries_nr)
-			free(entries_list);
+
+		free(entries_list);
+		delete[] strings;
 	}
 	break;
 
@@ -2511,10 +2531,14 @@ reg_t kNewWindow(EngineState *s, int, int argc, reg_t *argv) {
 	lWhite.alpha = 0;
 	lWhite.priority = -1;
 	lWhite.control = -1;
-	const char *title = argv[4 + argextra].segment ? s->segMan->derefString(argv[4 + argextra]) : NULL;
+	Common::String title;
+	if (argv[4 + argextra].segment) {
+		title = s->segMan->getString(argv[4 + argextra]);
+		title = s->strSplit(title.c_str(), NULL);
+	}
 
 	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
-							s->titlebar_port->_font, lWhite, black, title ? s->strSplit(title, NULL).c_str() : NULL, flags);
+							s->titlebar_port->_font, lWhite, black, title.c_str(), flags);
 
 	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
 	if (argextra)
@@ -3113,7 +3137,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 	int temp;
 	bool save_under = false;
 	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
-	char *text;
+	Common::String text;
 	GfxPort *port = (s->port) ? s->port : s->picture_port;
 	bool update_immediately = true;
 
@@ -3139,16 +3163,18 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	if (textp.segment) {
 		argpt = 1;
-		text = s->segMan->derefString(textp);
+		text = s->segMan->getString(textp);
 	} else {
 		argpt = 2;
 		text = kernel_lookup_text(s, textp, index);
 	}
 
+#if 0
 	if (!text) {
 		error("Display with invalid reference %04x:%04x", PRINT_REG(textp));
 		return NULL_REG;
 	}
+#endif
 
 	while (argpt < argc) {
 		switch (argv[argpt++].toUint16()) {
@@ -3251,7 +3277,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	if (halign == ALIGN_LEFT) {
 		// If the text does not fit on the screen, move it to the left and upwards until it does
-		gfxop_get_text_params(s->gfx_state, font_nr, text, area.width, &area.width, &area.height, 0, NULL, NULL, NULL);
+		gfxop_get_text_params(s->gfx_state, font_nr, text.c_str(), area.width, &area.width, &area.height, 0, NULL, NULL, NULL);
 
 		// Make the text fit on the screen
 		if (area.x + area.width > 320)
@@ -3275,7 +3301,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 
 	assert_primary_widget_lists(s);
 
-	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, s->strSplit(text).c_str(), halign, ALIGN_TOP, color0, *color1, bg_color, 0);
+	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, s->strSplit(text.c_str()).c_str(), halign, ALIGN_TOP, color0, *color1, bg_color, 0);
 
 	if (!text_handle) {
 		error("Display: Failed to create text widget");
@@ -3293,7 +3319,7 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelGraphics, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, PRINT_REG(s->r_acc));
 	}
 
-	debugC(2, kDebugLevelGraphics, "Display: Commiting text '%s'\n", text);
+	debugC(2, kDebugLevelGraphics, "Display: Commiting text '%s'\n", text.c_str());
 
 	//ADD_TO_CURRENT_PICTURE_PORT(text_handle);
 
@@ -3307,12 +3333,12 @@ reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = s->segMan->derefString(argv[1]);
+	Common::String filename = s->segMan->getString(argv[1]);
 	
 	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
 	
 	if (!player->open(filename)) {
-		warning("Failed to open movie file %s", filename);
+		warning("Failed to open movie file %s", filename.c_str());
 		return s->r_acc;
 	}
 	
@@ -3386,13 +3412,13 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
-	const char *filename = s->segMan->derefString(argv[0]);
+	Common::String filename = s->segMan->getString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
 	SeqDecoder seq;
 
 	if (!seq.loadFile(filename) && !seq.loadFile(Common::String("SEQ/") + filename)) {
-		warning("Failed to open movie file %s", filename);
+		warning("Failed to open movie file %s", filename.c_str());
 		return s->r_acc;
 	}
 

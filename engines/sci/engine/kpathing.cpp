@@ -257,27 +257,18 @@ struct PathfindingState {
 
 static Vertex *s_vertex_cur;	// FIXME: Avoid non-const global vars
 
-// FIXME: Temporary hack to deal with points in reg_ts
-static bool polygon_is_reg_t(const byte *list, int size) {
-	// Check the first three reg_ts
-	for (int i = 0; i < (size < 3 ? size : 3); i++)
-		if ((((reg_t *) list) + i)->segment)
-			// Non-zero segment, cannot be reg_ts
-			return false;
-
-	// First three segments were zero, assume reg_ts
-	return true;
-}
-
-static Common::Point read_point(const byte *list, int is_reg_t, int offset) {
+static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
+	SegmentRef list_r = segMan->dereference(list);
+	if (!list_r.isValid()) {
+		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
+	}
 	Common::Point point;
 
-	if (!is_reg_t) {
-		POLY_GET_POINT(list, offset, point);
+	if (list_r.isRaw) {
+		POLY_GET_POINT(list_r.raw, offset, point);
 	} else {
-		POLY_GET_POINT_REG_T((reg_t *)list, offset, point);
+		POLY_GET_POINT_REG_T(list_r.reg, offset, point);
 	}
-
 	return point;
 }
 
@@ -295,14 +286,12 @@ static bool polygons_equal(SegManager *segMan, reg_t p1, reg_t p2) {
 	if (size != GET_SEL32(p2, size).toUint16())
 		return false;
 
-	const byte *p1_points = segMan->derefBulkPtr(GET_SEL32(p1, points), size * POLY_POINT_SIZE);
-	const byte *p2_points = segMan->derefBulkPtr(GET_SEL32(p2, points), size * POLY_POINT_SIZE);
-	bool p1_is_reg_t = polygon_is_reg_t(p1_points, size);
-	bool p2_is_reg_t = polygon_is_reg_t(p2_points, size);
+	reg_t p1_points = GET_SEL32(p1, points);
+	reg_t p2_points = GET_SEL32(p2, points);
 
 	// Check for the same points
 	for (int i = 0; i < size; i++) {
-		if (read_point(p1_points, p1_is_reg_t, i) != read_point(p2_points, p2_is_reg_t, i))
+		if (read_point(segMan, p1_points, i) != read_point(segMan, p2_points, i))
 			return false;
 	}
 
@@ -360,14 +349,12 @@ static void draw_polygon(EngineState *s, reg_t polygon) {
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
 	Common::Point first, prev;
-	const byte *list = s->segMan->derefBulkPtr(points, size * POLY_POINT_SIZE);
-	int is_reg_t = polygon_is_reg_t(list, size);
 	int i;
 
-	prev = first = read_point(list, is_reg_t, 0);
+	prev = first = read_point(segMan, points, 0);
 
 	for (i = 1; i < size; i++) {
-		Common::Point point = read_point(list, is_reg_t, i);
+		Common::Point point = read_point(segMan, points, i);
 		draw_line(s, prev, point, type);
 		prev = point;
 	}
@@ -407,18 +394,16 @@ static void print_polygon(SegManager *segMan, reg_t polygon) {
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
 	int i;
-	const byte *point_array = segMan->derefBulkPtr(points, size * POLY_POINT_SIZE);
-	int is_reg_t = polygon_is_reg_t(point_array, size);
 	Common::Point point;
 
 	printf("%i:", type);
 
 	for (i = 0; i < size; i++) {
-		point = read_point(point_array, is_reg_t, i);
+		point = read_point(segMan, points, i);
 		printf(" (%i, %i)", point.x, point.y);
 	}
 
-	point = read_point(point_array, is_reg_t, 0);
+	point = read_point(segMan, points, 0);
 	printf(" (%i, %i);\n", point.x, point.y);
 }
 
@@ -1231,15 +1216,15 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
-	const byte *list = s->segMan->derefBulkPtr(points, size * POLY_POINT_SIZE);
 	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
-	int is_reg_t = polygon_is_reg_t(list, size);
+
+	int skip = 0;
 
 	// WORKAROUND: broken polygon in lsl1sci, room 350, after opening elevator
 	// Polygon has 17 points but size is set to 19
 	if ((size == 19) && (s->_gameName == "lsl1sci")) {
 		if ((s->currentRoomNumber() == 350)
-		&& (read_point(list, is_reg_t, 18) == Common::Point(108, 137))) {
+		&& (read_point(segMan, points, 18) == Common::Point(108, 137))) {
 			debug(1, "Applying fix for broken polygon in lsl1sci, room 350");
 			size = 17;
 		}
@@ -1248,33 +1233,31 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// WORKAROUND: self-intersecting polygons in ECO, rooms 221, 280 and 300
 	if ((size == 11) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 300)
-		&& (read_point(list, is_reg_t, 10) == Common::Point(221, 0))) {
+		&& (read_point(segMan, points, 10) == Common::Point(221, 0))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 300");
 			size = 10;
 		}
 	}
 	if ((size == 12) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 280)
-		&& (read_point(list, is_reg_t, 11) == Common::Point(238, 189))) {
+		&& (read_point(segMan, points, 11) == Common::Point(238, 189))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 280");
 			size = 10;
 		}
 	}
 	if ((size == 16) && (s->_gameName == "ecoquest")) {
 		if ((s->currentRoomNumber() == 221)
-		&& (read_point(list, is_reg_t, 1) == Common::Point(419, 175))) {
+		&& (read_point(segMan, points, 1) == Common::Point(419, 175))) {
 			debug(1, "Applying fix for self-intersecting polygon in ECO, room 221");
 			// Swap the first two points
-			poly->vertices.insertHead(new Vertex(read_point(list, is_reg_t, 1)));
-			poly->vertices.insertHead(new Vertex(read_point(list, is_reg_t, 0)));
-			size = 14;
-			assert(!is_reg_t);
-			list += 2 * POLY_POINT_SIZE;
+			poly->vertices.insertHead(new Vertex(read_point(segMan, points, 1)));
+			poly->vertices.insertHead(new Vertex(read_point(segMan, points, 0)));
+			skip = 2;
 		}
 	}
 
-	for (i = 0; i < size; i++) {
-		Vertex *vertex = new Vertex(read_point(list, is_reg_t, i));
+	for (i = skip; i < size; i++) {
+		Vertex *vertex = new Vertex(read_point(segMan, points, i));
 		poly->vertices.insertHead(vertex);
 	}
 

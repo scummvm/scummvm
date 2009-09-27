@@ -175,7 +175,7 @@ GfxPort *sciw_new_window(EngineState *s,
 	win = new GfxPort(visual, area, color, bgcolor);
 
 	win->_font = font;
-	win->title_text = title;
+	win->_title_text = title;
 	win->port_flags = flags;
 
 	win->_flags |= GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;

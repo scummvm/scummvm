@@ -382,7 +382,7 @@ struct GfxPort : public GfxContainer {
 	gfxw_snapshot_t *restore_snap; /**< Snapshot to be restored automagically,
 					  experimental feature used in the PQ3 interpreter */
 	int port_flags; /**< interpreter-dependant flags */
-	const char *title_text;
+	Common::String _title_text;
 	byte gray_text; /**< Whether text is 'grayed out' (dithered) */
 
 public:

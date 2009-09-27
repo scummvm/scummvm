@@ -34,8 +34,8 @@
 namespace Sci {
 
 reg_t kAddMenu(EngineState *s, int, int argc, reg_t *argv) {
-	char *name = s->segMan->derefString(argv[0]);
-	char *contents = s->segMan->derefString(argv[1]);
+	Common::String name = s->segMan->getString(argv[0]);
+	Common::String contents = s->segMan->getString(argv[1]);
 
 	s->_menubar->addMenu(s->gfx_state, name,
 	                 contents, s->titlebar_port->_font, argv[1]);
@@ -78,8 +78,7 @@ reg_t kDrawStatus(EngineState *s, int, int argc, reg_t *argv) {
 	s->status_bar_background = bgcolor;
 
 	if (text.segment) {
-		const char *tmp = s->segMan->derefString(text);
-		s->_statusBarText = tmp ? tmp : "";
+		s->_statusBarText = s->segMan->getString(text);
 	}
 
 	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, fgcolor, bgcolor);

@@ -171,7 +171,7 @@ public:
 	 * @param[in] font			The font which is to be used for drawing
 	 * @param[in] entries_base	Segmented VM address of the entries string
 	 */
-	void addMenu(GfxState *state, const char *title, const char *entries, int font, reg_t entries_base);
+	void addMenu(GfxState *state, const Common::String &title, const Common::String &entries, int font, reg_t entries_base);
 
 
 	/**
