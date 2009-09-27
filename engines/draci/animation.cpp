@@ -33,10 +33,7 @@ Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_id = kUnused;
 	_index = index;
 	_z = 0;
-	_relX = 0;
-	_relY = 0;
-	_scaleX = 1.0;
-	_scaleY = 1.0;
+	_displacement = kNoDisplacement;
 	_playing = false;
 	_looping = false;
 	_paused = false;
@@ -59,8 +56,8 @@ void Animation::setRelative(int relx, int rely) {
 	if (_frames.size() > 0)	
 		markDirtyRect(_vm->_screen->getSurface());
 
-	_relX = relx;
-	_relY = rely;
+	_displacement.relX = relx;
+	_displacement.relY = rely;
 }
 
 void Animation::setLooping(bool looping) {
@@ -72,14 +69,7 @@ void Animation::setLooping(bool looping) {
 void Animation::markDirtyRect(Surface *surface) const {
 	// Fetch the current frame's rectangle
 	Drawable *frame = _frames[_currentFrame];
-	Common::Rect frameRect = frame->getRect();			
-
-	// Translate rectangle to compensate for relative coordinates	
-	frameRect.translate(_relX, _relY);
-	
-	// Take animation scaling into account
-	frameRect.setWidth((int) (frameRect.width() * _scaleX));
-	frameRect.setHeight((int) (frameRect.height() * _scaleY));
+	Common::Rect frameRect = frame->getRect(_displacement);			
 
 	// Mark the rectangle dirty on the surface
 	surface->markDirtyRect(frameRect);
@@ -135,42 +125,13 @@ void Animation::drawFrame(Surface *surface) {
 	if (_frames.size() == 0 || !_playing)
 		return;
 
-	Drawable *frame = _frames[_currentFrame];
+	const Drawable *frame = _frames[_currentFrame];
 
 	if (_id == kOverlayImage) {			
 		frame->draw(surface, false);
 	} else {
-
-		int x = frame->getX();
-		int y = frame->getY();
-
-		// Take account relative coordinates
-		int newX = x + _relX;
-		int newY = y + _relY;
-
-		// Translate the frame to those relative coordinates
-		frame->setX(newX);
-		frame->setY(newY);
-
-		// Save scaled width and height
-		int scaledWidth = frame->getScaledWidth();
-		int scaledHeight = frame->getScaledHeight();
-
-		// Take into account per-animation scaling and adjust the current frames dimensions	
-		if (_scaleX != 1.0 || _scaleY != 1.0)
-			frame->setScaled(
-				(int) (scaledWidth * _scaleX),
-				(int) (scaledHeight * _scaleY));
-
 		// Draw frame
-		frame->drawScaled(surface, false);
-
-		// Revert back to old coordinates
-		frame->setX(x);
-		frame->setY(y);
-
-		// Revert back to old dimensions
-		frame->setScaled(scaledWidth, scaledHeight);
+		frame->drawReScaled(surface, false, _displacement);
 	}
 }
 
@@ -191,11 +152,11 @@ uint Animation::getZ() const {
 }
 
 int Animation::getRelativeX() const {
-	return _relX;
+	return _displacement.relX;
 }
 
 int Animation::getRelativeY() const {
-	return _relY;
+	return _displacement.relY;
 }
 
 bool Animation::isPlaying() const {
@@ -223,16 +184,16 @@ void Animation::setScaleFactors(double scaleX, double scaleY) {
 
 	markDirtyRect(_vm->_screen->getSurface());	
 	
-	_scaleX = scaleX;
-	_scaleY = scaleY;
+	_displacement.extraScaleX = scaleX;
+	_displacement.extraScaleY = scaleY;
 }
 
 double Animation::getScaleX() const {
-	return _scaleX;
+	return _displacement.extraScaleX;
 }
 
 double Animation::getScaleY() const {
-	return _scaleY;
+	return _displacement.extraScaleY;
 }
 
 void Animation::addFrame(Drawable *frame) {
@@ -574,9 +535,9 @@ void AnimationManager::deleteAfterIndex(int index) {
 	_lastIndex = index;
 }
 
-int AnimationManager::getTopAnimationID(int x, int y) {
+int AnimationManager::getTopAnimationID(int x, int y) const {
 
-	Common::List<Animation *>::iterator it;
+	Common::List<Animation *>::const_iterator it;
 
 	// The default return value if no animations were found on these coordinates (not even overlays)
 	// i.e. the black background shows through so treat it as an overlay
@@ -594,52 +555,24 @@ int AnimationManager::getTopAnimationID(int x, int y) {
 			continue;
 		}
 
-		Drawable *frame = anim->getFrame();
+		const Drawable *frame = anim->getFrame();
 
 		if (frame == NULL) {
 			continue;
 		}
 
-		int oldX = frame->getX();
-		int oldY = frame->getY();
-
-		// Take account relative coordinates
-		int newX = oldX + anim->getRelativeX();
-		int newY = oldY + anim->getRelativeY();
-
-		// Translate the frame to those relative coordinates
-		frame->setX(newX);
-		frame->setY(newY);
-
-		// Save scaled width and height
-		int scaledWidth = frame->getScaledWidth();
-		int scaledHeight = frame->getScaledHeight();
-
-		// Take into account per-animation scaling and adjust the current frames dimensions	
-		if (anim->getScaleX() != 1.0 || anim->getScaleY() != 1.0)
-			frame->setScaled(
-				(int) (scaledWidth * anim->getScaleX()),
-				(int) (scaledHeight * anim->getScaleY()));
-
-		if (frame->getRect().contains(x, y)) {
+		if (frame->getRect(anim->getDisplacement()).contains(x, y)) {
 
 			if (frame->getType() == kDrawableText) {
 
 				retval = anim->getID();
 
 			} else if (frame->getType() == kDrawableSprite && 
-					   reinterpret_cast<Sprite *>(frame)->getPixel(x, y) != transparent) {
+					   reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getDisplacement()) != transparent) {
 
 				retval = anim->getID();
 			}	
 		}
-
-		// Revert back to old coordinates
-		frame->setX(oldX);
-		frame->setY(oldY);
-
-		// Revert back to old dimensions
-		frame->setScaled(scaledWidth, scaledHeight);
 
 		// Found an animation
 		if (retval != kOverlayImage)

@@ -676,7 +676,7 @@ void Script::talk(Common::Queue<int> &params) {
 	const Person *person = _vm->_game->getPerson(personID);
 
 	// Set the string and text colour
-	surface->markDirtyRect(speechFrame->getRect(true));
+	surface->markDirtyRect(speechFrame->getRect());
 	speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
 	speechFrame->setColour(person->_fontColour);
 
@@ -712,7 +712,7 @@ void Script::talk(Common::Queue<int> &params) {
 	_vm->_game->loop();
 
 	// Delete the text
-	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect(true));
+	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect());
 	speechFrame->setText("");
 
 	// Revert to "normal" loop status

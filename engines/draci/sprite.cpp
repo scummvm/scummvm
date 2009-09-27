@@ -33,6 +33,8 @@
 
 namespace Draci {
 
+const Displacement kNoDisplacement = { 0, 0, 1.0, 1.0 };
+
 /**
  *  @brief Transforms an image from column-wise to row-wise
  *	@param img pointer to the buffer containing the image data
@@ -129,19 +131,19 @@ void Sprite::setMirrorOff() {
 }
 
 
-int Sprite::getPixel(int x, int y) const {
+int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 	
-	Common::Rect rect = getRect();
+	Common::Rect rect = getRect(displacement);
 
 	int dy = y - rect.top;
 	int dx = x - rect.left;
 	
 	// Calculate scaling factors
-	double scaleX = double(_scaledWidth) / _width;
-	double scaleY = double(_scaledHeight) / _height;
+	double scaleX = double(rect.width()) / _width;
+	double scaleY = double(rect.height()) / _height;
 
-	int sy = scummvm_lround(dy * scaleY);
-	int sx = scummvm_lround(dx * scaleX);
+	int sy = scummvm_lround(dy / scaleY);
+	int sx = scummvm_lround(dx / scaleX);
 
 	if (_mirror)
 		return _data[sy * _width + (_width - sx)];
@@ -150,10 +152,15 @@ int Sprite::getPixel(int x, int y) const {
 }
 
 
-void Sprite::drawScaled(Surface *surface, bool markDirty) const {
+void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const {
 
 	Common::Rect sourceRect(0, 0, _width, _height);
-	Common::Rect destRect(_x, _y, _x + _scaledWidth, _y + _scaledHeight);
+	Common::Rect destRect(getRect(displacement));
+
+	// Calculate scaling factors
+	double scaleX = double(destRect.width()) / _width;
+	double scaleY = double(destRect.height()) / _height;
+
 	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
 	Common::Rect clippedDestRect(destRect);
 
@@ -183,10 +190,6 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
 
 	int *rowIndices = new int[rows];
 	int *columnIndices = new int[columns];
-
-	// Calculate scaling factors
-	double scaleX = double(_scaledWidth) / _width;
-	double scaleY = double(_scaledHeight) / _height;
 
 	// Precalculate pixel indexes
 	for (int i = 0; i < rows; ++i) {
@@ -241,10 +244,10 @@ void Sprite::drawScaled(Surface *surface, bool markDirty) const {
  *  Draws the sprite to a Draci::Surface and marks its rectangle on the surface as dirty.
  *  It is safe to call it for sprites that would overflow the surface.
  */
-void Sprite::draw(Surface *surface, bool markDirty) const { 
+void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const { 
 
 	Common::Rect sourceRect(0, 0, _width, _height);
-	Common::Rect destRect(_x, _y, _x + _width, _y + _height);
+	Common::Rect destRect(_x + relX, _y + relY, _x + relX + _width, _y + relY + _height);
 	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
 	Common::Rect clippedDestRect(destRect);
 
@@ -295,11 +298,10 @@ void Sprite::draw(Surface *surface, bool markDirty) const {
 }
 	
 
-Common::Rect Sprite::getRect(bool scaled) const {
-	if (scaled) 
-		return Common::Rect(_x, _y, _x + _scaledWidth, _y + _scaledHeight);
-	else
-		return Common::Rect(_x, _y, _x + _width, _y + _height);
+Common::Rect Sprite::getRect(const Displacement &displacement) const {
+	return Common::Rect(_x + displacement.relX, _y + displacement.relY,
+		_x + displacement.relX + (int) (_scaledWidth * displacement.extraScaleX),
+		_y + displacement.relY + (int) (_scaledHeight * displacement.extraScaleY));
 }
 
 Text::Text(const Common::String &str, const Font *font, byte fontColour, 
@@ -356,13 +358,13 @@ uint Text::getLength() const {
 	return _length;
 }
 
-void Text::draw(Surface *surface, bool markDirty) const {
-	_font->drawString(surface, _text, _x, _y, _colour, _spacing);
+void Text::draw(Surface *surface, bool markDirty, int relX, int relY) const {
+	_font->drawString(surface, _text, _x + relX, _y + relY, _colour, _spacing);
 }
 
 // TODO: Handle scaled parameter properly by implementing Text scaling
-Common::Rect Text::getRect(bool scaled) const {
-	return Common::Rect(_x, _y, _x + _width, _y + _height);
+Common::Rect Text::getRect(const Displacement &displacement) const {
+	return Common::Rect(_x + displacement.relX, _y + displacement.relY, _x + displacement.relX + _width, _y + displacement.relY + _height);
 }
 
 void Text::setFont(const Font *font) {

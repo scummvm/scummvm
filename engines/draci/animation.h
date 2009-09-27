@@ -92,6 +92,7 @@ public:
 	void setRelative(int relx, int rely);
 	int getRelativeX() const;
 	int getRelativeY() const;
+	const Displacement &getDisplacement() const { return _displacement; }
 
 	int getIndex() const;
 	void setIndex(int index);
@@ -128,11 +129,7 @@ private:
 	uint _currentFrame;
 	uint _z;
 
-	int _relX;
-	int _relY;
-
-	double _scaleX;
-	double _scaleY;
+	Displacement _displacement;
 
 	uint _tick;
 	bool _playing;
@@ -176,7 +173,7 @@ public:
 	int getLastIndex() const;
 	void deleteAfterIndex(int index);
 
-	int getTopAnimationID(int x, int y);
+	int getTopAnimationID(int x, int y) const;
 
 private:
 	void sortAnimations();	
