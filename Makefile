@@ -78,4 +78,7 @@ else
 	$(error You need to run $(srcdir)/configure before you can run make. Check $(srcdir)/configure --help for a list of parameters)
 endif
 
-include $(srcdir)/ports.mk
+ifneq ($(origin port_mk), undefined)
+include $(srcdir)/$(port_mk)
+endif
+

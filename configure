@@ -165,6 +165,7 @@ _host_os=""
 _host_alias=""
 
 _srcdir=`dirname $0`
+_port_mk="ports.mk"
 
 # Determine a tmp file name, using mktemp(1) when available.
 if type mktemp > /dev/null 2>&1 ; then
@@ -2457,6 +2458,8 @@ DEFINES += $DEFINES
 LDFLAGS += $LDFLAGS
 
 $_mak_plugins
+
+port_mk = $_port_mk
 
 SAVED_CONFIGFLAGS  := $SAVED_CONFIGFLAGS
 SAVED_LDFLAGS      := $SAVED_LDFLAGS
