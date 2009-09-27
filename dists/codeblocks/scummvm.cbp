@@ -99,10 +99,6 @@
 			<Option compilerVar="CPP" />
 			<Option target="default" />
 		</Unit>
-		<Unit filename="..\..\backends\midi\quicktime.cpp">
-			<Option compilerVar="CPP" />
-			<Option target="default" />
-		</Unit>
 		<Unit filename="..\..\backends\midi\seq.cpp">
 			<Option compilerVar="CPP" />
 			<Option target="default" />

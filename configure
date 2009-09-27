@@ -1222,7 +1222,7 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX"
-		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
+		LIBS="$LIBS -framework AudioUnit -framework AudioToolbox -framework Carbon -framework CoreMIDI"
 		;;
 	mingw*)
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0"

@@ -1368,7 +1368,6 @@ operating system and configuration.
     core       - CoreAudio sound, for Mac OS X users.
     coremidi   - CoreMIDI sound, for Mac OS X users. Use only if you have
                  a hardware MIDI synthesizer.
-    qt         - Quicktime sound, for Macintosh users.
     seq        - Use /dev/sequencer for MIDI, *nix users. See below.
     timidity   - Connect to TiMidity++ MIDI server. See below.
     windows    - Windows MIDI. Uses built-in sequencer, for Windows users

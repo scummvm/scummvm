@@ -66,7 +66,6 @@ static const MidiDriverDescription s_musicDrivers[] = {
 	{"core", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
 //	{"coreaudio", "CoreAudio", MD_COREAUDIO, MDT_MIDI},
 	{"coremidi", "CoreMIDI", MD_COREMIDI, MDT_MIDI},
-	{"qt", "QuickTime", MD_QTMUSIC, MDT_MIDI},
 #endif
 
 #if defined(PALMOS_MODE)
@@ -272,7 +271,6 @@ MidiDriver *MidiDriver::createMidi(int midiDriver) {
 	case MD_DMEDIA:    return MidiDriver_DMEDIA_create(g_system->getMixer());
 #endif
 #if defined(MACOSX)
-	case MD_QTMUSIC:   return MidiDriver_QT_create(g_system->getMixer());
 	case MD_COREAUDIO: return MidiDriver_CORE_create(g_system->getMixer());
 	case MD_COREMIDI:  return MidiDriver_CoreMIDI_create(g_system->getMixer());
 #endif

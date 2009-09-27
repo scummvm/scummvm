@@ -23,7 +23,6 @@ MODULE_OBJS := \
 	midi/camd.o \
 	midi/coreaudio.o \
 	midi/coremidi.o \
-	midi/quicktime.o \
 	midi/seq.o \
 	midi/stmidi.o \
 	midi/timidity.o \

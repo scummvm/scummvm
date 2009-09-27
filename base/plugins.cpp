@@ -189,7 +189,6 @@ public:
 		#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
 		LINK_PLUGIN(COREMIDI)
-		LINK_PLUGIN(QUICKTIME)
 		#endif
 		#if defined(PALMOS_MODE)
 		#  if defined(COMPILE_CLIE)

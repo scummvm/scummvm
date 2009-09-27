@@ -3140,15 +3140,6 @@
 	"morphos.h"
 	"morphos_sound.h"
 
-1189858114 source:c:\documents and settings\usoquotidiano\desktop\base\scummvm\backends\midi\quicktime.cpp
-	"sound/mpu401.h"
-	"common/endian.h"
-	"common/util.h"
-	<QuickTime/QuickTimeComponents.h>
-	<QuickTime/QuickTimeMusic.h>
-	<QuickTimeComponents.h>
-	<QuickTimeMusic.h>
-
 1190151369 source:c:\documents and settings\usoquotidiano\desktop\base\scummvm\backends\midi\seq.cpp
 	"sound/mpu401.h"
 	"common/util.h"
