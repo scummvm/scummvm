@@ -859,9 +859,8 @@ byte *SegManager::derefBulkPtr(reg_t pointer, int entries) {
 }
 
 reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
-	const int align = sizeof(reg_t);
-	if (pointer.offset & (align - 1)) {
-		warning("Unaligned pointer read: %04x:%04x expected with %d alignment", PRINT_REG(pointer), align);
+	if (pointer.offset & 1) {
+		warning("Unaligned pointer read: %04x:%04x expected with word alignment", PRINT_REG(pointer));
 		return NULL;
 	}
 

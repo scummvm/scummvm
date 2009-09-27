@@ -264,7 +264,7 @@ SegmentRef LocalVariables::dereference(reg_t pointer) {
 	SegmentRef ret;
 	ret.isRaw = false;	// reg_t based data!
 	ret.maxSize = _locals.size() * sizeof(reg_t);
-	ret.raw = (byte *)&_locals[0] + pointer.offset;
+	ret.raw = (byte *)&_locals[pointer.offset/2];
 	return ret;
 }
 
@@ -279,7 +279,7 @@ SegmentRef DataStack::dereference(reg_t pointer) {
 	// FIXME: Is this correct? See comment in LocalVariables::dereference
 	if (pointer.offset & 1)
 		warning("LocalVariables::dereference: Odd offset in pointer  %04x:%04x", PRINT_REG(pointer));
-	ret.raw = (byte *)_entries + pointer.offset;
+	ret.raw = (byte *)&_entries[pointer.offset/2];
 	return ret;
 }
 

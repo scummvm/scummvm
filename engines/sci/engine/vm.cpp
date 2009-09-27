@@ -490,9 +490,6 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 	switch (mobj->getType()) {
 
 	case SEG_TYPE_LOCALS:
-		base.offset += 2 * offset;
-		return base;
-
 	case SEG_TYPE_SCRIPT:
 	case SEG_TYPE_STACK:
 	case SEG_TYPE_DYNMEM:
@@ -1112,7 +1109,7 @@ void run_vm(EngineState *s, int restoring) {
 				r_temp.offset += signed_validate_arithmetic(s->r_acc);
 
 			r_temp.offset += opparams[1];  // Add index
-			r_temp.offset *= sizeof(reg_t);
+			r_temp.offset *= 2; // variables are 16 bit
 			// That's the immediate address now
 			s->r_acc = r_temp;
 			break;
