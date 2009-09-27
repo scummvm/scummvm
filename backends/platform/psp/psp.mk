@@ -1,8 +1,3 @@
-all: pack_pbp
-clean: psp_clean
-
-
-PSP_EXE := scummvm$(EXEEXT)
 PSP_EXE_STRIPPED := scummvm_stripped$(EXEEXT)
 PSP_EBOOT = EBOOT.PBP
 PSP_EBOOT_SFO = param.sfo
@@ -12,10 +7,14 @@ DATE = $(shell date +%Y%m%d)
 MKSFO = mksfoex -d MEMSIZE=1
 PACK_PBP = pack-pbp
 
-$(PSP_EXE_STRIPPED): $(PSP_EXE)
+all: pack_pbp
+
+clean: psp_clean
+
+$(PSP_EXE_STRIPPED): $(EXECUTABLE)
 	$(STRIP) $< -o $@
 
-$(PSP_EBOOT_SFO): $(PSP_EXE)
+$(PSP_EBOOT_SFO): $(EXECUTABLE)
 	$(MKSFO) '$(PSP_EBOOT_TITLE) r$(VER_SVNREV) ($(DATE))' $@
 
 psp_clean:

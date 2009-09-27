@@ -1547,7 +1547,7 @@ if test -n "$_host"; then
 			_build_scalers="no"
 			_build_hq_scalers="no"
 			_mt32emu="no"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/psp/psp.mk'
+			_port_mk="backends/platform/psp/psp.mk"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
