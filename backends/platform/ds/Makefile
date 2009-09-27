@@ -12,47 +12,47 @@ export srcdir = $(CURDIR)/../../..
 SUBDIRS := arm7 arm9
 
 all:
-	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i; fi; done;
+	@for i in $(SUBDIRS); do if test -d $$i; then $(MAKE) -C $$i; fi; done;
 clean:
-	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i clean; fi; done;
+	@for i in $(SUBDIRS); do if test -d $$i; then $(MAKE) -C $$i clean; fi; done;
 semiclean:
-	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i semiclean; fi; done;
+	@for i in $(SUBDIRS); do if test -d $$i; then $(MAKE) -C $$i semiclean; fi; done;
 
 export:
-	@for i in $(SUBDIRS); do if test -d $$i; then make -C $$i export; fi; done;
+	@for i in $(SUBDIRS); do if test -d $$i; then $(MAKE) -C $$i export; fi; done;
 
 allbuilds:
-	make semiclean
-	make all       SCUMM_BUILD=a
-	make semiclean
-	make all       SCUMM_BUILD=b
-	make semiclean
-	make all       SCUMM_BUILD=c
-	make semiclean
-	make all       SCUMM_BUILD=d
-	make semiclean
-	make all       SCUMM_BUILD=e
-	make semiclean
-	make all       SCUMM_BUILD=f
-	make semiclean
-	make all       SCUMM_BUILD=g
-	make semiclean
-	make all       SCUMM_BUILD=h
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=a
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=b
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=c
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=d
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=e
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=f
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=g
+	$(MAKE) semiclean
+	$(MAKE) all       SCUMM_BUILD=h
 
 allbuildssafe:
-	make clean     SCUMM_BUILD=a
-	make all       SCUMM_BUILD=a
-	make clean     SCUMM_BUILD=b
-	make all       SCUMM_BUILD=b
-	make clean     SCUMM_BUILD=c
-	make all       SCUMM_BUILD=c
-	make clean     SCUMM_BUILD=d
-	make all       SCUMM_BUILD=d
-	make clean     SCUMM_BUILD=e
-	make all       SCUMM_BUILD=e
-	make clean     SCUMM_BUILD=f
-	make all       SCUMM_BUILD=f
-	make clean     SCUMM_BUILD=g
-	make all       SCUMM_BUILD=g
-	make clean     SCUMM_BUILD=h
-	make all       SCUMM_BUILD=h
+	$(MAKE) clean     SCUMM_BUILD=a
+	$(MAKE) all       SCUMM_BUILD=a
+	$(MAKE) clean     SCUMM_BUILD=b
+	$(MAKE) all       SCUMM_BUILD=b
+	$(MAKE) clean     SCUMM_BUILD=c
+	$(MAKE) all       SCUMM_BUILD=c
+	$(MAKE) clean     SCUMM_BUILD=d
+	$(MAKE) all       SCUMM_BUILD=d
+	$(MAKE) clean     SCUMM_BUILD=e
+	$(MAKE) all       SCUMM_BUILD=e
+	$(MAKE) clean     SCUMM_BUILD=f
+	$(MAKE) all       SCUMM_BUILD=f
+	$(MAKE) clean     SCUMM_BUILD=g
+	$(MAKE) all       SCUMM_BUILD=g
+	$(MAKE) clean     SCUMM_BUILD=h
+	$(MAKE) all       SCUMM_BUILD=h
