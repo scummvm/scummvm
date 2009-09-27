@@ -338,8 +338,8 @@ protected:
 	void updateSprites();
 	void updateSprite(int i);
 	void drawStringInteger(int num, int x, int y, int digits);
-	void drawStringAlt(int offset, int color, const uint8 *str, int strLen = -1);
-	void drawItemString(int offset, int num, const uint8 *str);
+	void drawStringAlt(int x, int y, int color, const uint8 *str, int strLen = -1);
+	void drawItemString(int x, int num, const uint8 *str);
 	void drawCreditsString(int x, int y, int num);
 	void updateCharSpeechSound(bool displayText);
 	void updateItemsGfxColors(int bit0, int bit7);
@@ -672,7 +672,7 @@ protected:
 	int _conversationOptionsCount;
 	bool _fadedPanel;
 	int _panelLockedFlag;
-	int _panelItemWidth;
+	int _conversationOptionLinesCount;
 	int _inventoryItemsState[50];
 	int _inventoryObjectsList[40];
 	int _inventoryObjectsOffset;
