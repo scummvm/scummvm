@@ -71,6 +71,15 @@ void Object::load(byte * src) {
 	description = parse_description((const char *)src);
 }
 
+void Object::save() {
+	assert(_base != NULL);
+
+	rect.save();
+	actor_rect.save();
+	_base[17] = actor_orientation;
+	_base[18] = enabled;
+}
+
 void Object::setName(const Common::String &new_name) {
 	assert(_base != 0);
 	strcpy((char *)(_base + 19), new_name.c_str());
@@ -133,9 +142,9 @@ void UseHotspot::load(byte *src) {
 
 void Walkbox::dump() {
 	debug(0, "walkbox %02x %02x [%d, %d, %d, %d] %02x %02x %02x %02x  ",
-	      unk00, orientation,
-	      rect.left, rect.right, rect.top, rect.bottom,
-	      unk0a, unk0b, unk0c, unk0d);
+		unk00, orientation,
+		rect.left, rect.right, rect.top, rect.bottom,
+		unk0a, unk0b, unk0c, unk0d);
 }
 
 void Walkbox::load(byte *src) {

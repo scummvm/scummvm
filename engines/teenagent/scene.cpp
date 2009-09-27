@@ -392,6 +392,7 @@ bool Scene::render(OSystem *system) {
 				obj->rect.top = s->y;
 				obj->rect.right = s->w + s->x;
 				obj->rect.bottom = s->h + s->y;
+				obj->rect.save();
 				//obj->dump();
 			}
 		}
@@ -585,6 +586,7 @@ bool Scene::processEventQueue() {
 			debug(0, "%s object #%u", current_event.color ? "enabling" : "disabling", current_event.object - 1);
 			Object *obj = getObject(current_event.object - 1, current_event.scene == 0 ? _id : current_event.scene);
 			obj->enabled = current_event.color;
+			obj->save();
 			current_event.clear();
 		}
 		break;

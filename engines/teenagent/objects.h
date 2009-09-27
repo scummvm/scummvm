@@ -71,17 +71,19 @@ protected:
 struct Object {
 	enum {kActorUp = 1, kActorRight = 2, kActorDown = 3, kActorLeft = 4 };
 
-	byte id;
-	Rect rect;
-	Rect actor_rect;
-	byte actor_orientation;
-	byte enabled; //19 bytes
+	byte id; //0
+	Rect rect; //1
+	Rect actor_rect; //9
+	byte actor_orientation; //17
+	byte enabled; //18
+	//19
 	Common::String name, description;
 
 	Object(): _base(NULL) {}
 	void dump();
 	void setName(const Common::String &name);
 	void load(byte *addr);
+	void save();
 	
 	static Common::String parse_description(const char *name);
 

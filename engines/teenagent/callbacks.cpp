@@ -1277,7 +1277,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0xDB98, f);
 		if (f >= 2) {
 			//disable object boat for scene 15!!
-			scene->getObject(1, 15)->enabled = 0;
+			disableObject(1, 15);
 		}
 	}
 	return true;
@@ -1297,7 +1297,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		SET_FLAG(0xDB98, f);
 		if (f >= 2) {
 			//disable object boat for scene 15!!
-			scene->getObject(1, 15)->enabled = 0;
+			disableObject(1, 15);
 		}
 	}
 	return true;
@@ -2392,14 +2392,17 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x3cfb);
 			playAnimation(507, 1);
 			setOns(0, 4);
-			Object * obj = scene->getObject(3);
-			obj->rect.top += 20;
-			obj->rect.bottom += 20;
+			{
+				Object *obj = scene->getObject(3);
+				obj->rect.top += 20;
+				obj->rect.bottom += 20;
+				obj->rect.save();
+			}
 			playSound(10);
 			playAnimation(503, 1);
 			setLan(1, 0, 22);
-			scene->getObject(1, 22)->enabled = 0;
-			scene->getObject(13, 20)->enabled = 0;
+			disableObject(1, 22);
+			disableObject(13, 20);
 			setLan(1, 0);
 			disableObject(1);
 			disableObject(2);
@@ -2419,10 +2422,18 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			playSound(62);
 			//patch lan, 1
 			displayMessage(0x3d3a);
-			scene->getObject(7)->actor_rect.left = 228;
-			scene->getObject(7)->actor_rect.top = 171;
-			scene->getObject(8)->actor_rect.left = 290;
-			scene->getObject(8)->actor_rect.top = 171;
+			{
+				Object *obj = scene->getObject(7);
+				obj->actor_rect.left = 228;
+				obj->actor_rect.top = 171;
+				obj->actor_rect.save();
+			}
+			{
+				Object *obj = scene->getObject(8);
+				obj->actor_rect.left = 290;
+				obj->actor_rect.top = 171;
+				obj->actor_rect.save();
+			}
 		}
 		return true;
 
@@ -3347,12 +3358,24 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		playAnimation(714, 1);
 		setLan(1, 0);
 		disableObject(1);
-		scene->getObject(2)->actor_rect = Rect(81, 160, 81, 160);
-		scene->getObject(2)->actor_orientation = 4;
-		scene->getObject(3)->actor_rect = Rect(63, 168, 63, 168);
-		scene->getObject(3)->actor_orientation = 4;
-		scene->getObject(10)->actor_rect = Rect(105, 160, 105, 160);
-		scene->getObject(10)->actor_orientation = 1;
+		{
+			Object *obj = scene->getObject(2);
+			obj->actor_rect = Rect(81, 160, 81, 160);
+			obj->actor_orientation = 4;
+			obj->save();
+		}
+		{
+			Object *obj = scene->getObject(3);
+			obj->actor_rect = Rect(63, 168, 63, 168);
+			obj->actor_orientation = 4;
+			obj->save();
+		}
+		{
+			Object *obj = scene->getObject(10);
+			obj->actor_rect = Rect(105, 160, 105, 160);
+			obj->actor_orientation = 1;
+			obj->save();
+		}
 		SET_FLAG(0xDBCC, 1);
 		return true;
 
@@ -3661,13 +3684,16 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 
 			Dialog::show(scene, 0x58a9);
 
-			Object * obj = scene->getObject(1);
+			Object *obj = scene->getObject(1);
 			obj->actor_rect = Rect(270, 193, 270, 193);
 			obj->actor_orientation = 2;
+			obj->save();
 
 			obj = scene->getObject(3);
 			obj->actor_rect = Rect(254, 193, 254, 193);
 			obj->actor_orientation = 1;
+			obj->save();
+			
 			SET_FLAG(0xDBD7, 1);
 		}
 		return true;
