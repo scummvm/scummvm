@@ -305,24 +305,34 @@ reg_t kStrAt(EngineState *s, int, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	byte* dest;
+	byte value;
+	byte newvalue = 0;
+	unsigned int offset = argv[1].toUint16();
+	if (argc > 2)
+		newvalue = argv[2].toSint16();
 
 	if (dest_r.isRaw) {
-		dest = (byte*)dest_r.raw + argv[1].toUint16();
+		value = dest_r.raw[offset];
+		if (argc > 2) /* Request to modify this char */
+			dest_r.raw[offset] = newvalue;
 	} else {
-#ifndef SCUMM_BIG_ENDIAN
-		int odd = argv[1].toUint16() & 1;
-#else
-		int odd = !(argv[1].toUint16() & 1);
-#endif
-		reg_t *tmp = dest_r.reg + (argv[1].toUint16() / 2);
-		dest = ((byte *)(&tmp->offset)) + odd;
+		reg_t &tmp = dest_r.reg[offset / 2];
+		if (!(offset & 1)) {
+			value = tmp.offset & 0x00ff;
+			if (argc > 2) { /* Request to modify this char */
+				tmp.offset &= 0xff00;
+				tmp.offset |= newvalue;
+			}
+		} else {
+			value = tmp.offset >> 8;
+			if (argc > 2)  { /* Request to modify this char */
+				tmp.offset &= 0x00ff;
+				tmp.offset |= newvalue << 8;
+			}
+		}
 	}
 
-	s->r_acc = make_reg(0, *dest);
-
-	if (argc > 2)
-		*dest = argv[2].toSint16(); /* Request to modify this char */
+	s->r_acc = make_reg(0, value);
 
 	return s->r_acc;
 }
