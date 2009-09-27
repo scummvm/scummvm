@@ -109,6 +109,10 @@ enum {
 
 
 void file_open(EngineState *s, const char *filename, int mode) {
+	// QfG3 character import prepends /\ to the filenames.
+	if (filename[0] == '/' && filename[1] == '\\')
+		filename += 2;
+
 	Common::String englishName = s->getLanguageString(filename, K_LANG_ENGLISH);
 	const Common::String wrappedName = ((Sci::SciEngine*)g_engine)->wrapFilename(englishName);
 	Common::SeekableReadStream *inFile = 0;
