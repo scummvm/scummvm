@@ -190,7 +190,7 @@ void TuckerEngine::restart() {
 	_conversationOptionsCount = 0;
 	_fadedPanel = false;
 	_panelLockedFlag = 0;
-	_panelItemWidth = 0;
+	_conversationOptionLinesCount = 0;
 	memset(_inventoryItemsState, 0, sizeof(_inventoryItemsState));
 	memset(_inventoryObjectsList, 0, sizeof(_inventoryObjectsList));
 	_inventoryObjectsOffset = 0;
@@ -1426,11 +1426,11 @@ void TuckerEngine::drawConversationTexts() {
 			color = 106;
 		}
 		drawSpeechText(x, y, _characterSpeechDataPtr, _instructionsActionsTable[i], color);
-		if (_mousePosY > y && _mousePosY < _panelItemWidth * 10 + y + 1) {
+		if (_mousePosY > y && _mousePosY < _conversationOptionLinesCount * 10 + y + 1) {
 			_nextTableToLoadIndex = i;
 			flag = 1;
 		}
-		y += _panelItemWidth * 10;
+		y += _conversationOptionLinesCount * 10;
 	}
 	if (flag == 0) {
 		_nextTableToLoadIndex = -1;
@@ -2823,47 +2823,45 @@ void TuckerEngine::updateSprite(int i) {
 }
 
 void TuckerEngine::drawStringInteger(int num, int x, int y, int digits) {
-	int offset = y * 640 + x + _scrollOffset;
 	char numStr[4];
 	assert(num < 1000);
 	sprintf(numStr, "%03d", num);
 	int i = (digits > 2) ? 0 : 1;
 	for (; i < 3; ++i) {
-		Graphics::drawStringChar(_locationBackgroundGfxBuf + offset, numStr[i], 640, 102, _charsetGfxBuf);
-		offset += 8;
+		Graphics::drawStringChar(_locationBackgroundGfxBuf, _scrollOffset + x, y, 640, numStr[i], 102, _charsetGfxBuf);
+		x += 8;
 	}
 	addDirtyRect(_scrollOffset + x, y, Graphics::_charset.charW * 3, Graphics::_charset.charH);
 }
 
-void TuckerEngine::drawStringAlt(int offset, int color, const uint8 *str, int strLen) {
-	int startOffset = offset;
+void TuckerEngine::drawStringAlt(int x, int y, int color, const uint8 *str, int strLen) {
+	const int xStart = x;
 	int pos = 0;
 	while (pos != strLen && str[pos] != '\n') {
 		const uint8 chr = str[pos];
-		Graphics::drawStringChar(_locationBackgroundGfxBuf + offset, chr, 640, color, _charsetGfxBuf);
-		offset += _charWidthTable[chr];
+		Graphics::drawStringChar(_locationBackgroundGfxBuf, x, y, 640, chr, color, _charsetGfxBuf);
+		x += _charWidthTable[chr];
 		++pos;
 	}
-	addDirtyRect(startOffset % 640, startOffset / 640, Graphics::_charset.charW * pos, Graphics::_charset.charH);
+	addDirtyRect(xStart, y, x - xStart, Graphics::_charset.charH);
 }
 
-void TuckerEngine::drawItemString(int offset, int num, const uint8 *str) {
-	int count = getPositionForLine(num, str);
-	while (str[count] != '\n') {
-		const uint8 chr = str[count];
-		Graphics::drawStringChar(_itemsGfxBuf + offset, chr, 320, 1, _charsetGfxBuf);
-		offset += _charWidthTable[chr];
-		++count;
+void TuckerEngine::drawItemString(int x, int num, const uint8 *str) {
+	int pos = getPositionForLine(num, str);
+	while (str[pos] != '\n') {
+		const uint8 chr = str[pos];
+		Graphics::drawStringChar(_itemsGfxBuf, x, 0, 320, chr, 1, _charsetGfxBuf);
+		x += _charWidthTable[chr];
+		++pos;
 	}
 }
 
 void TuckerEngine::drawCreditsString(int x, int y, int num) {
-	uint8 *dst = _locationBackgroundGfxBuf + y * 640 + x;
 	int pos = getPositionForLine(num, _ptTextBuf);
 	while (_ptTextBuf[pos] != '\n') {
 		const uint8 chr = _ptTextBuf[pos];
-		Graphics::drawStringChar(dst, chr, 640, 1, _charsetGfxBuf);
-		dst += _charWidthTable[chr];
+		Graphics::drawStringChar(_locationBackgroundGfxBuf, x, y, 640, chr, 1, _charsetGfxBuf);
+		x += _charWidthTable[chr];
 		++pos;
 	}
 }
@@ -3753,7 +3751,7 @@ void TuckerEngine::drawSpeechText(int xStart, int y, const uint8 *dataPtr, int n
 		if (_conversationOptionsCount != 0) {
 			xPos = xStart + _scrollOffset;
 			yPos = i * 10 + y;
-			_panelItemWidth = count;
+			_conversationOptionLinesCount = count;
 		} else {
 			yPos = y - (count - i) * 10;
 		}
@@ -3785,9 +3783,9 @@ int TuckerEngine::splitSpeechTextLines(const uint8 *dataPtr, int pos, int x, int
 }
 
 void TuckerEngine::drawSpeechTextLine(const uint8 *dataPtr, int pos, int count, int x, int y, uint8 color) {
-	int xStart = x;
+	const int xStart = x;
 	for (int i = 0; i < count && dataPtr[pos] != '\n'; ++i) {
-		Graphics::drawStringChar(_locationBackgroundGfxBuf + y * 640 + x, dataPtr[pos], 640, color, _charsetGfxBuf);
+		Graphics::drawStringChar(_locationBackgroundGfxBuf, x, y, 640, dataPtr[pos], color, _charsetGfxBuf);
 		x += _charWidthTable[dataPtr[pos]];
 		++pos;
 	}

@@ -57,7 +57,7 @@ public:
 
 	static void copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int w, int h);
 
-	static void drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src);
+	static void drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 chr, uint8 chrColor, const uint8 *src);
 
 	static void setCharset(CharsetType type);
 

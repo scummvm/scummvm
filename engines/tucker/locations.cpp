@@ -3033,17 +3033,17 @@ void TuckerEngine::execData3PreUpdate_locationNum70() {
 	_panelState = 1;
 	setCursorType(2);
 	int pos = getPositionForLine(22, _infoBarBuf);
-	int offset = (_flagsTable[143] == 0) ? 90 * 640 + 88 : 72 * 640 + 88;
-	drawStringAlt(offset, color, &_infoBarBuf[pos]);
-	Graphics::drawStringChar(_locationBackgroundGfxBuf + offset + 9 * 640, 62, 640, color, _charsetGfxBuf);
+	const int yPos = (_flagsTable[143] == 0) ? 90 : 72;
+	drawStringAlt(88, yPos, color, &_infoBarBuf[pos]);
+	Graphics::drawStringChar(_locationBackgroundGfxBuf, 88, yPos + 9, 640, 62, color, _charsetGfxBuf);
 	if (_flagsTable[143] != 0) {
 		pos = getPositionForLine(_flagsTable[143] * 2 + 23, _infoBarBuf);
-		drawStringAlt(offset + 18 * 640, color, &_infoBarBuf[pos]);
+		drawStringAlt(88, yPos + 18, color, &_infoBarBuf[pos]);
 		pos = getPositionForLine(_flagsTable[143] * 2 + 24, _infoBarBuf);
-		drawStringAlt(offset + 27 * 640, color, &_infoBarBuf[pos]);
+		drawStringAlt(88, yPos + 27, color, &_infoBarBuf[pos]);
 	}
 	execData3PreUpdate_locationNum70Helper();
-	drawStringAlt(offset + 9 * 640 + 8, color, _updateLocation70String, _updateLocation70StringLen);
+	drawStringAlt(88 + 8, yPos + 9, color, _updateLocation70String, _updateLocation70StringLen);
 }
 
 void TuckerEngine::execData3PreUpdate_locationNum70Helper() {

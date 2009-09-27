@@ -165,13 +165,16 @@ void Graphics::copyRect(uint8 *dst, int dstPitch, uint8 *src, int srcPitch, int 
 	}
 }
 
-void Graphics::drawStringChar(uint8 *dst, uint8 chr, int pitch, uint8 chrColor, const uint8 *src) {
+void Graphics::drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 chr, uint8 chrColor, const uint8 *src) {
 	if (chr < 32 || chr - 32 >= _charset.xCount * _charset.yCount) {
 		return;
 	}
+	const int h = MIN(_charset.charH, 200 - yDst);
+	const int w = MIN(_charset.charW, pitch - xDst);
+	dst += yDst * pitch + xDst;
 	int offset = (chr - 32) * _charset.charH * _charset.charW;
-	for (int y = 0; y < _charset.charH; ++y) {
-		for (int x = 0; x < _charset.charW; ++x) {
+	for (int y = 0; y < h; ++y) {
+		for (int x = 0; x < w; ++x) {
 			const int color = src[offset++];
 			if (color != 0) {
 				if (_charsetType == kCharsetTypeCredits) {
