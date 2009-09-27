@@ -1625,11 +1625,20 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	case K_CONTROL_CONTROL:
 	case K_CONTROL_CONTROL_ALIAS: {
 		int entries_nr;
-		int lsTop = GET_SEL32V(obj, lsTop) - text_pos.offset;
+		int lsTop;
 		int list_top = 0;
 		int selection = 0;
 		int entry_size = GET_SEL32V(obj, x);
 		int i;
+
+		if (s->_kernel->_selectorCache.topString != -1) {
+			// Games from early SCI1 onwards use topString
+			lsTop = GET_SEL32V(obj, topString);
+		} else {
+			// Earlier games use lsTop
+			lsTop = GET_SEL32V(obj, lsTop);
+		}
+		lsTop -= text_pos.offset;
 
 		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d\n", PRINT_REG(obj), x, y, SCI_MAX_SAVENAME_LENGTH);
 		cursor = GET_SEL32V(obj, cursor) - text_pos.offset;

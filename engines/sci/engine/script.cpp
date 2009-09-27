@@ -241,6 +241,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(parseLang);
 	FIND_SELECTOR(motionCue);
 	FIND_SELECTOR(setCursor);
+	FIND_SELECTOR(topString);
 }
 
 void Kernel::dumpScriptObject(char *data, int seeker, int objsize) {

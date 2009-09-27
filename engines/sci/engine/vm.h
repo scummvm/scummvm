@@ -157,6 +157,7 @@ struct SelectorCache {
 	Selector elements; /**< Used by SetSynonyms() */
 
 	Selector lsTop, lsBottom, lsRight, lsLeft; /**< Used by Animate() subfunctions and scroll list controls */
+	Selector topString; /**< SCI1 scroll lists use this instead of lsTop */
 
 	Selector looper, mover, isBlocked, heading; /**< Used in DoAvoider */
 
