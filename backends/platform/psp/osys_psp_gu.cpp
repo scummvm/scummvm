@@ -41,7 +41,7 @@
 
 #define	MAX_FPS	30
 
-unsigned int __attribute__((aligned(16))) list[262144];
+unsigned int __attribute__((aligned(16))) list[2048];
 unsigned short __attribute__((aligned(16))) clut256[256];
 unsigned short __attribute__((aligned(16))) mouseClut[256];
 unsigned short __attribute__((aligned(16))) cursorPalette[256];
