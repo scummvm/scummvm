@@ -162,7 +162,7 @@ bool OSystem_LINUXMOTO::loadGFXMode() {
 	_videoMode.hardwareHeight = effectiveScreenHeight();
     }
 
-	OSystem_SDL::loadGFXMode();
+	return OSystem_SDL::loadGFXMode();
 }
 
 void OSystem_LINUXMOTO::drawMouse() {
