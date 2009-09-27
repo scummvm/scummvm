@@ -308,7 +308,7 @@ MODULE_DIRS += .
 
 ndsall:
 	@[ -d $(BUILD) ] || mkdir -p $(BUILD)
-	make -C ./$(BUILD) -f ../makefile scummvm.nds
+	$(MAKE) -C ./$(BUILD) -f ../Makefile scummvm.nds
 
 include $(srcdir)/Makefile.common
 

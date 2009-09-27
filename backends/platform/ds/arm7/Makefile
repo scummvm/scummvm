@@ -121,7 +121,7 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@echo $(OFILES)
 	@echo $(CFILES)
-	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
