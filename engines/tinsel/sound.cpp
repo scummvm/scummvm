@@ -522,7 +522,7 @@ void SoundManager::openSampleFiles(void) {
 			_soundMode = kVorbisMode;
 			break;
 
-		case MKID_BE('CLAF'):
+		case MKID_BE('CALF'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFlacMode;
 			break;
