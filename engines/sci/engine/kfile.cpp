@@ -832,6 +832,9 @@ reg_t kFileIO(EngineState *s, int, int argc, reg_t *argv) {
 		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
 		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask.c_str(), attr);
 
+		// QfG3 uses this mask for the character import
+		if (mask == "/\\*.*")
+			mask = "*.*";
 #ifndef WIN32
 		if (mask == "*.*")
 			mask = "*"; // For UNIX
