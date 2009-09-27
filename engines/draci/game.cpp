@@ -1041,7 +1041,9 @@ void Game::walkHero(int x, int y) {
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
 	y -= (int)(scaleY * height);
-	//x -= (int)(scaleX * width) / 2;
+	x -= (int)(scaleX * width) / 2;
+	if (x < 0)
+		x = 0;
 	anim->setRelative(x, y);
 
 	// Play the animation

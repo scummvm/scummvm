@@ -138,9 +138,6 @@ uint Surface::centerOnX(uint x, uint width) const {
 
 	int newX = x - width / 2;
 
-	if (newX < 0)
-		newX = 0;
-
 	if (newX + width >= (uint)w - 1)
 		newX = (w - 1) - width;
 
@@ -162,9 +159,6 @@ uint Surface::centerOnY(uint y, uint height) const {
 	
 	int newY = y - height / 2;
 	
-	if (newY < 0)
-		newY = 0;
-
 	if (newY + height >= (uint)h - 1)
 		newY = (h - 1) - height;
 
