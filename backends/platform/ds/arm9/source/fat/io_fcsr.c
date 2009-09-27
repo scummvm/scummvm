@@ -106,7 +106,7 @@ bool FCSR_ReadSectors (u32 sector, u8 numSecs, void* buffer)
 	bool flagSramSector = false;
 	int numSectors = (numSecs > 0 ? numSecs : 256);
 	int readLength = numSectors * BYTE_PER_READ;
-	u8* src;;
+	u8* src;
 	u8* dst;
 
 	// Find which region this read is in

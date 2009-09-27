@@ -36,7 +36,7 @@ typedef unsigned int u32;
 typedef signed int s32;
 */
 
-#include "nds/jtypes.h"
+#include "nds/ndstypes.h"
 
 
 // Somebody removed these from scummsys.h, but they're still required, so I'm adding them here
@@ -66,7 +66,7 @@ typedef signed int s32;
 #ifdef __cplusplus
 extern "C" {
 #endif
-void consolePrintf(char * format, ...);
+void consolePrintf(const char *format, ...);
 #ifdef __cplusplus
 }
 #endif
@@ -85,7 +85,7 @@ void consolePrintf(char * format, ...);
 
 #define ITCM_DATA	__attribute__((section(".itcm")))
 
-// Since I can't change the engine at the moment (post lockdown) this define can go here.
+// FIXME: Since I can't change the engine at the moment (post lockdown) this define can go here.
 // This define changes the mouse-relative motion which doesn't make sense on a touch screen to
 // a more conventional form of input where the menus can be clicked on.
 #define LURE_CLICKABLE_MENUS

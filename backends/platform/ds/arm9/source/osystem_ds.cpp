@@ -181,7 +181,6 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
-
 			if (DS::getIsDisplayMode8Bit()) {
 				int col = applyGamma(paletteValue);
 				BG_PALETTE[r] = col;
@@ -404,8 +403,6 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 			}
 		}
-
-			
 
 //		consolePrintf("Slow method used!\n");
 

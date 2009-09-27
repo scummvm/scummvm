@@ -770,6 +770,7 @@ void std_clearerr(FILE* handle) {
 }
 
 void std_fprintf(FILE* handle, const char* fmt, ...) {
+	//FIXME: not implemented properly
 	consolePrintf("%s", fmt);
 }
 

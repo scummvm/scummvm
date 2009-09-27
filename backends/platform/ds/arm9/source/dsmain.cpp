@@ -105,8 +105,6 @@
 #include "backends/fs/ds/ds-fs.h"
 #include "engine.h"
 
-
-
 extern "C" void OurIntrMain(void);
 extern "C" u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState);
 
@@ -3278,10 +3276,10 @@ int cygprofile_getHBlanks() {
 #endif
 
 
-extern "C" void consolePrintf(char * format, ...) {
+extern "C" void consolePrintf(const char * format, ...) {
 	char buffer[256];
 	va_list args;
-	va_start (args, format);
+	va_start(args, format);
 	viprintf(format, args);
-	va_end (args);
+	va_end(args);
 }
