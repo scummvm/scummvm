@@ -92,7 +92,7 @@ protected:
 	uint32 *_sampleIndex;
 
 	/** Number of entries in the sample index */
-	long _sampleIndexLen;
+	int _sampleIndexLen;
 
 	/** Specifies if the sample-data is compressed and if yes, how */
 	SoundMode _soundMode;

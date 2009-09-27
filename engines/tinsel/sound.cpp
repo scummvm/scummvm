@@ -497,32 +497,32 @@ void SoundManager::openSampleFiles(void) {
 			// file must be corrupt if we get to here
 			error(FILE_IS_CORRUPT, _vm->getSampleFile(sampleLanguage));
 
-#ifdef SCUMM_BIG_ENDIAN
-		// Convert all ids from LE to native format
-		for (uint i = 0; i < _sampleIndexLen / sizeof(uint32); ++i) {
-			_sampleIndex[i] = READ_LE_UINT32(_sampleIndex + i);
-		}
-#endif
-
 		// close the file
 		f.close();
 
 		// convert file size to size in DWORDs
 		_sampleIndexLen /= sizeof(uint32);
 
+#ifdef SCUMM_BIG_ENDIAN
+		// Convert all ids from LE to native format
+		for (int i = 0; i < _sampleIndexLen; ++i) {
+			_sampleIndex[i] = SWAP_BYTES_32(_sampleIndex[i]);
+		}
+#endif
+
 		// Detect format of soundfile by looking at 1st sample-index
-		switch (_sampleIndex[0]) {
-		case MKID_BE(' 3PM'):
+		switch (TO_BE_32(_sampleIndex[0])) {
+		case MKID_BE('MP3 '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected MP3 sound-data");
 			_soundMode = kMP3Mode;
 			break;
 
-		case MKID_BE(' GGO'):
+		case MKID_BE('OGG '):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected OGG sound-data");
 			_soundMode = kVorbisMode;
 			break;
 
-		case MKID_BE('CALF'):
+		case MKID_BE('FLAC'):
 			debugC(DEBUG_DETAILED, kTinselDebugSound, "Detected FLAC sound-data");
 			_soundMode = kFlacMode;
 			break;
