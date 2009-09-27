@@ -1459,7 +1459,7 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
 			_backend="wince"
 			_mt32emu="no"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/wince/wince.mk'
+			_port_mk="backends/platform/wince/wince.mk"
 			;;
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
