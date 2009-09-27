@@ -124,7 +124,7 @@ int OSystem_DS::getGraphicsMode() const {
 	return -1;
 }
 
-void OSystem_DS::initSize(uint width, uint height) {
+void OSystem_DS::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	// For Lost in Time, the title screen is displayed in 640x400.
 	// In order to support this game, the screen mode is set, but
 	// all draw calls are ignored until the game switches to 320x200.
@@ -489,7 +489,7 @@ bool OSystem_DS::showMouse(bool visible) {
 void OSystem_DS::warpMouse(int x, int y) {
 }
 
-void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetCursorScale) {
+void OSystem_DS::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, u32 keycolor, int targetCursorScale, const Graphics::PixelFormat *format) {
 	if ((w > 0) && (w < 64) && (h > 0) && (h < 64)) {
 		memcpy(_cursorImage, buf, w * h);
 		_cursorW = w;
