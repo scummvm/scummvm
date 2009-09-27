@@ -312,6 +312,74 @@ public:
 	char *derefString(reg_t pointer, int entries = 0);
 
 	/**
+	 * Return the string referenced by pointer.
+	 * pointer can point to either a raw or non-raw segment.
+	 * @param pointer The pointer to dereference
+	 * @parm entries The number of values expected (for checking)
+	 * @return The string referenced, or an empty string if not enough
+	 * entries were available.
+	 */
+	Common::String getString(reg_t pointer, int entries = 0);
+
+
+	/**
+	 * Copies a string from src to dest.
+	 * src and dest can point to raw and non-raw segments.
+	 * Conversion is performed as required.
+	 */
+	void strcpy(reg_t dest, reg_t src);
+
+	/**
+	 * Copies a string from src to dest.
+	 * dest can point to a raw or non-raw segment.
+	 * Conversion is performed as required.
+	 */
+	void strcpy(reg_t dest, const char *src);
+
+	/**
+	 * Copies a string from src to dest.
+	 * src and dest can point to raw and non-raw segments.
+	 * Conversion is performed as required. At most n characters are copied.
+	 * TODO: determine if dest should always be null-terminated.
+	 */
+	void strncpy(reg_t dest, reg_t src, size_t n);
+
+	/**
+	 * Copies a string from src to dest.
+	 * dest can point to a raw or non-raw segment.
+	 * Conversion is performed as required. At most n characters are copied.
+	 * TODO: determine if dest should always be null-terminated.
+	 */
+	void strncpy(reg_t dest, const char *src, size_t n);
+
+	/**
+	 * Copies n bytes of data from src to dest.
+	 * src and dest can point to raw and non-raw segments.
+	 * Conversion is performed as required.
+	 */
+	void memcpy(reg_t dest, reg_t src, size_t n);
+
+	/**
+	 * Copies n bytes of data from src to dest.
+	 * dest can point to a raw or non-raw segment.
+	 * Conversion is performed as required.
+	 */
+	void memcpy(reg_t dest, const byte* src, size_t n);
+
+	/**
+	 * Copies n bytes of data from src to dest.
+	 * src can point to raw and non-raw segments.
+	 * Conversion is performed as required.
+	 */
+	void memcpy(byte *dest, reg_t src, size_t n);
+
+	/**
+	 * Determine length of string at str.
+	 * str can point to a raw or non-raw segment.
+	 */
+	size_t strlen(reg_t str);
+
+	/**
 	 * Finds a unique segment by type
 	 * @param type	The type of the segment to find
 	 * @return		The segment number, or -1 if the segment wasn't found

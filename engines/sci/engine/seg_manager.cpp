@@ -836,7 +836,7 @@ SegmentRef SegManager::dereference(reg_t pointer) {
 static void *_kernel_dereference_pointer(SegManager *segMan, reg_t pointer, int entries, bool wantRaw) {
 	SegmentRef ret = segMan->dereference(pointer);
 
-	if (!ret.raw)
+	if (!ret.isValid())
 		return NULL;
 
 	if (ret.isRaw != wantRaw) {
@@ -870,6 +870,269 @@ reg_t *SegManager::derefRegPtr(reg_t pointer, int entries) {
 
 char *SegManager::derefString(reg_t pointer, int entries) {
 	return (char *)_kernel_dereference_pointer(this, pointer, entries, true);
+}
+
+// TODO: memcpy, strcpy and strncpy could maybe be folded into a single function
+void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
+	SegmentRef dest_r = dereference(dest);
+	if (!dest_r.isValid()) {
+		warning("Attempt to strncpy to invalid pointer %04x:%04x", PRINT_REG(dest));
+		return;
+	}
+
+	if (dest_r.isRaw) {
+		// raw -> raw
+		if (n == 0xFFFFFFFFU)
+			::strcpy((char*)dest_r.raw, src);
+		else
+			::strncpy((char*)dest_r.raw, src, n);
+	} else {
+		// raw -> non-raw
+		reg_t* d = dest_r.reg;
+		while (n > 0) {
+			d->segment = 0; // STRINGFRAG_SEGMENT?
+			if (n > 1 && src[0]) {
+				d->offset = src[0] | (src[1] << 8);
+			} else {
+				d->offset &= 0xff00;
+				d->offset |= src[0];
+				break;
+			}
+
+			if (!src[1])
+				break;
+			src += 2;
+			n -= 2;
+			d++;
+		}
+	}
+}
+
+void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
+	SegmentRef dest_r = dereference(dest);
+	const SegmentRef src_r = dereference(src);
+	if (!src_r.isValid()) {
+		warning("Attempt to strncpy from invalid pointer %04x:%04x", PRINT_REG(src));
+		return;
+	}
+
+	if (!dest_r.isValid()) {
+		warning("Attempt to strncpy to invalid pointer %04x:%04x", PRINT_REG(dest));
+		return;
+	}
+
+
+	if (src_r.isRaw) {
+		// raw -> *
+		strncpy(dest, (const char*)src_r.raw, n);
+	} else if (dest_r.isRaw && !src_r.isRaw) {
+		// non-raw -> raw
+		const reg_t* s = src_r.reg;
+		char *d = (char*)dest_r.raw;
+		reg_t x;
+		while (n > 0) {
+			x = *s++;
+			*d++ = x.offset & 0x00ff;
+			if (n > 1 && x.offset & 0x00ff) {
+				*d++ = x.offset >> 8;
+			} else {
+				break;
+			}
+			if (!(x.offset >> 8))
+				break;
+			n -= 2;
+		}
+	} else {
+		// non-raw -> non-raw
+		const reg_t* s = src_r.reg;
+		reg_t* d = dest_r.reg;
+		reg_t x;
+		while (n > 0) {
+			x = *s++;
+			if (n > 1 && x.offset & 0x00ff) {
+				*d++ = x;
+			} else {
+				d->offset &= 0xff00;
+				d->offset |= x.offset & 0x00ff;
+				break;
+			}
+			if (!(x.offset & 0xff00))
+				break;
+			n -= 2;
+		}
+	}
+}
+
+void SegManager::strcpy(reg_t dest, const char* src) {
+	strncpy(dest, src, 0xFFFFFFFFU);
+}
+
+void SegManager::strcpy(reg_t dest, reg_t src) {
+	strncpy(dest, src, 0xFFFFFFFFU);
+}
+
+void SegManager::memcpy(reg_t dest, const byte* src, size_t n) {
+	SegmentRef dest_r = dereference(dest);
+	if (!dest_r.isValid()) {
+		warning("Attempt to memcpy to invalid pointer %04x:%04x", PRINT_REG(dest));
+		return;
+	}
+	if ((int)n > dest_r.maxSize) {
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(dest));
+		return;
+	}
+
+	if (dest_r.isRaw) {
+		// raw -> raw
+		::memcpy((char*)dest_r.raw, src, n);
+	} else {
+		// raw -> non-raw
+		reg_t* d = dest_r.reg;
+		while (n > 0) {
+			d->segment = 0; // STRINGFRAG_SEGMENT?
+			if (n > 1) {
+				d->offset = src[0] | (src[1] << 8);
+			} else {
+				d->offset &= 0xff00;
+				d->offset |= src[0];
+				break;
+			}
+			src += 2;
+			n -= 2;
+			d++;
+		}
+	}
+}
+
+void SegManager::memcpy(reg_t dest, reg_t src, size_t n) {
+	SegmentRef dest_r = dereference(dest);
+	const SegmentRef src_r = dereference(src);
+	if (!dest_r.isValid()) {
+		warning("Attempt to memcpy to invalid pointer %04x:%04x", PRINT_REG(dest));
+		return;
+	}
+	if ((int)n > dest_r.maxSize) {
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(dest));
+		return;
+	}
+	if (!src_r.isValid()) {
+		warning("Attempt to memcpy from invalid pointer %04x:%04x", PRINT_REG(src));
+		return;
+	}
+	if ((int)n > src_r.maxSize) {
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(src));
+		return;
+	}
+
+	if (src_r.isRaw) {
+		// raw -> *
+		memcpy(dest, src_r.raw, n);
+	} else if (dest_r.isRaw) {
+		// * -> raw
+		memcpy(dest_r.raw, src, n);
+	} else {
+		// non-raw -> non-raw
+		const reg_t* s = src_r.reg;
+		reg_t* d = dest_r.reg;
+		reg_t x;
+		while (n > 0) {
+			x = *s++;
+			if (n > 1) {
+				*d++ = x;
+			} else {
+				d->offset &= 0xff00;
+				d->offset |= x.offset & 0x00ff;
+				break;
+			}
+			n -= 2;
+		}
+	}
+}
+
+void SegManager::memcpy(byte *dest, reg_t src, size_t n) {
+	const SegmentRef src_r = dereference(src);
+	if (!src_r.isValid()) {
+		warning("Attempt to memcpy from invalid pointer %04x:%04x", PRINT_REG(src));
+		return;
+	}
+	if ((int)n > src_r.maxSize) {
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(src));
+		return;
+	}
+
+	if (src_r.isRaw) {
+		// raw -> raw
+		::memcpy(dest, src_r.raw, n);
+	} else {
+		// non-raw -> raw
+		const reg_t* s = src_r.reg;
+		reg_t x;
+		while (n > 0) {
+			x = *s++;
+			*dest++ = x.offset & 0x00ff;
+			if (n > 1) {
+				*dest++ = x.offset >> 8;
+			} else {
+				break;
+			}
+			n -= 2;
+		}
+	}
+}
+
+size_t SegManager::strlen(reg_t str) {
+	SegmentRef str_r = dereference(str);
+	if (!str_r.isValid()) {
+		warning("Attempt to call strlen on invalid pointer %04x:%04x", PRINT_REG(str));
+		return 0;
+	}
+
+	if (str_r.isRaw) {
+		return ::strlen((const char*)str_r.raw);
+	} else {
+		const reg_t* s = str_r.reg;
+		size_t n = 0;
+		while ((s->offset & 0x00ff) && (s->offset >> 8)) {
+			++s;
+			n += 2;
+		}
+		if (s->offset & 0x00ff)
+			n++;
+		return n;
+	}
+}
+
+
+Common::String SegManager::getString(reg_t pointer, int entries)
+{
+	Common::String ret;
+	SegmentRef src_r = dereference(pointer);
+	if (!src_r.isValid()) {
+		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		return ret;
+	}
+	if (entries > src_r.maxSize) {
+		warning("Trying to dereference pointer %04x:%04x beyond end of segment", PRINT_REG(pointer));
+		return ret;
+	}
+	if (src_r.isRaw)
+		ret = (char*)src_r.raw;
+	else {
+		const reg_t* s = src_r.reg;
+		char c;
+		do {
+			c = s->offset & 0x00ff;
+			if (c) {
+				ret += c;
+				c = s->offset >> 8;
+				if (c) {
+					ret += c;
+					s++;
+				}
+			}
+		} while (c);
+	}
+	return ret;
 }
 
 

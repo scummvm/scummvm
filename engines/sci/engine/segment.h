@@ -48,6 +48,8 @@ struct SegmentRef {
 	//SegmentType type;
 
 	SegmentRef() : isRaw(true), raw(0), maxSize(0) {}
+
+	bool isValid() const { return raw != 0; }
 };
 
 
