@@ -953,21 +953,7 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 	// Run the dialogue program
 	_vm->_script->run(prog, offset);
 	
-	// Delete all animations loaded after the marked one 
-	// (from objects and from the AnimationManager)
-	for (uint i = 0; i < getNumObjects(); ++i) {
-		GameObject *obj = &_objects[i];
-
-		for (uint j = 0; j < obj->_anims.size(); ++j) {
-			Animation *anim;
-
-			anim = _vm->_anims->getAnimation(obj->_anims[j]);
-			if (anim != NULL && anim->getIndex() > lastAnimIndex)
-				obj->_anims.remove_at(j);
-		}
-	}
-
-	_vm->_anims->deleteAfterIndex(lastAnimIndex);
+	deleteAnimationsAfterIndex(lastAnimIndex);
 }
 
 bool Game::isDialogueBegin() const {
@@ -1408,21 +1394,7 @@ void Game::runGateProgram(int gate) {
 	// Run gate program
 	_vm->_script->run(_currentRoom._program, _currentRoom._gates[gate]);
 	
-	// Delete all animations loaded after the marked one 
-	// (from objects and from the AnimationManager)
-	for (uint i = 0; i < getNumObjects(); ++i) {
-		GameObject *obj = &_objects[i];
-
-		for (uint j = 0; j < obj->_anims.size(); ++j) {
-			Animation *anim;
-
-			anim = _vm->_anims->getAnimation(obj->_anims[j]);
-			if (anim != NULL && anim->getIndex() > lastAnimIndex)
-				obj->_anims.remove_at(j);
-		}
-	}
-
-	_vm->_anims->deleteAfterIndex(lastAnimIndex);
+	deleteAnimationsAfterIndex(lastAnimIndex);
 
 	setExitLoop(false);
 }
@@ -1511,6 +1483,24 @@ int Game::getScheduledPalette() const {
 
 int Game::getMarkedAnimationIndex() const {
 	return _markedAnimationIndex;
+}
+
+void Game::deleteAnimationsAfterIndex(int lastAnimIndex) {
+	// Delete all animations loaded after the marked one 
+	// (from objects and from the AnimationManager)
+	for (uint i = 0; i < getNumObjects(); ++i) {
+		GameObject *obj = &_objects[i];
+
+		for (uint j = 0; j < obj->_anims.size(); ++j) {
+			Animation *anim;
+
+			anim = _vm->_anims->getAnimation(obj->_anims[j]);
+			if (anim != NULL && anim->getIndex() > lastAnimIndex)
+				obj->_anims.remove_at(j);
+		}
+	}
+
+	_vm->_anims->deleteAfterIndex(lastAnimIndex);
 }
 
 /**

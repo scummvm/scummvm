@@ -340,6 +340,8 @@ public:
 	int getScheduledPalette() const;
 
 private:
+	void deleteAnimationsAfterIndex(int lastAnimIndex);
+
 	DraciEngine *_vm;
 
 	GameInfo _info;
