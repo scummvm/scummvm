@@ -90,6 +90,7 @@ vpath %.s $(srcdir)
 ARM = 1
 USE_ARM_SOUND_ASM = 1
 USE_ARM_COSTUME_ASM = 1
+#WRAP_MALLOC = 1
 
 ifdef DS_BUILD_A
 	DEFINES = -DDS_SCUMM_BUILD -DDS_BUILD_A -DUSE_ARM_GFX_ASM -DUSE_ARM_COSTUME_ASM
@@ -173,10 +174,10 @@ CFLAGS	=	-Wno-multichar -Wall\
 		-mthumb-interwork -DUSE_ARM_COSTUME_ASM=1
 
 
-# -ffast-math 
+# -ffast-math
 
 ifdef USE_DEBUGGER
-	DEFINES += -DUSE_DEBUGGER 
+	DEFINES += -DUSE_DEBUGGER
 	CFLAGS += -g
 endif
 
@@ -200,7 +201,7 @@ CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
 
 
 ASFLAGS = -mcpu=arm9tdmi -mthumb-interwork
-DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
+DEFINES += -D__DS__ -DNDS -DARM9 -DNONSTANDARD_PORT -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555 -DDISABLE_DOSBOX_OPL -DDISABLE_DEFAULT_SAVEFILEMANAGER -DARM
 ifdef USE_MAD
 	DEFINES += -DUSE_MAD
 endif
@@ -208,9 +209,14 @@ endif
 DEFINES += -DREDUCE_MEMORY_USAGE
 
 # Removed, as these are done in portdefs.h
-# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE 
+# -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE
 
 LDFLAGS = -specs=ds_arm9.specs -mthumb-interwork -mno-fpu -Wl,-Map,map.txt -Wl,--gc-sections
+
+ifdef WRAP_MALLOC
+	LDFLAGS += -Wl,--wrap,malloc
+	DEFINES += -DWRAP_MALLOC
+endif
 
 INCLUDES= -I$(portdir)/$(BUILD) -I$(srcdir) -I$(srcdir)/engines \
 			-I$(portdir)/data -I$(portdir)/../commoninclude \
@@ -262,7 +268,7 @@ endif
 
 DATA_OBJS := $(portdir)/data/icons.o $(portdir)/data/keyboard.o $(portdir)/data/keyboard_pal.o $(portdir)/data/default_font.o $(portdir)/data/8x8font_tga.o
 
-COMPRESSOR_OBJS := 
+COMPRESSOR_OBJS :=
 #$(portdir)/source/compressor/lz.o
 
 FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o\
@@ -283,15 +289,16 @@ FAT_OBJS :=  $(portdir)/source/fat/disc_io.o $(portdir)/source/fat/gba_nds_fat.o
 #			$(portdir)/source/fat/io_sd_common.o $(portdir)/source/fat/io_scsd_s.o \
 #			$(portdir)/source/fat/io_sc_common.o $(portdir)/source/fat/io_sd_common.o
 
-LIBCARTRESET_OBJS := 
+LIBCARTRESET_OBJS :=
 #$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp fmopl.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
 OPT_SPEED := -O3
+#OPT_SPEED := -Os -mthumb
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
@@ -313,7 +320,7 @@ ndsall:
 include $(srcdir)/Makefile.common
 
 semiclean:
-	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o $(portdir)/source/dsoptions.o 
+	$(RM) $(portdir)/source/dsoptions.o $(portdir)/source/dsmain.o $(FAT_OBJS) $(DATA_OBJS) $(portdir)/source/wordcompletion.o $(portdir)/source/dsoptions.o
 
 clean:
 	$(RM) $(OBJS) $(EXECUTABLE)
@@ -375,7 +382,7 @@ endef
 #	export OPTFLAG = ;
 #	echo !!!!!!!! $(OPTFLAG)
 	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o 
+	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(if $(findstring $(notdir $<), $(OPTLIST)), $(OPT_SPEED), $(OPT_SIZE)) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
 
 
 #---------------------------------------------------------------------------------

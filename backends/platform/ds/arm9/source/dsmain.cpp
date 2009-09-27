@@ -61,6 +61,14 @@
 // - Make save/restore game screen use scaler buffer
 
 
+// 1.0.0!
+// - Fix text on tabs on config screen
+// - Remove ini file debug msg
+// - Memory size for ite
+// - Try discworld?
+
+
+
 
 //#define USE_LIBCARTRESET
 
@@ -103,22 +111,63 @@ extern "C" u32 getExceptionAddress( u32 opcodeAddress, u32 thumbState);
 extern const char __itcm_start[];
 static const char *registerNames[] =
 	{	"r0","r1","r2","r3","r4","r5","r6","r7",
-		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc " };
+		"r8 ","r9 ","r10","r11","r12","sp ","lr ","pc" };
 
-/*
+#ifdef WRAP_MALLOC
+
 extern "C" void* __real_malloc(size_t size);
 
+void* operator new (size_t size)
+{
+	register unsigned int reg asm("lr");
+	volatile unsigned int poo = reg;
+
+	void* res = __real_malloc(size);
+
+	if (!res)
+	{
+//		*((u8 *) NULL) = 0;
+		consolePrintf("Failed alloc (new) %d (%x)\n", size, poo);
+		return NULL;
+	}
+
+	return res;
+}
+
+
 extern "C" void* __wrap_malloc(size_t size) {
+/*	u32 addr;
+
+	asm("mov %0, lr"
+		: "=r" (addr)
+		:
+		: );*/
+
+	register unsigned int reg asm("lr");
+	volatile unsigned int poo = reg;
+
+
+	if (size == 0)
+	{
+		static int zeroSize = 0;
+		consolePrintf("0 size malloc (%d)", zeroSize++);
+	}
+
 	void* res = __real_malloc(size);
 	if (res) {
+		if (size > 100 * 1024) {
+			consolePrintf("Allocated %d (%d)\n", size, poo);
+		}
 		return res;
 	} else {
-		consolePrintf("Failed alloc %d\n", size);
+
+//		*((u8 *) NULL) = 0;
+		consolePrintf("Failed alloc %d (%x)\n", size, poo);
 		return NULL;
 	}
 }
-*/
 
+#endif
 
 namespace DS {
 
@@ -197,7 +246,7 @@ bool gameScreenSwap = false;
 bool isCpuScalerEnabled();
 //#define HEAVY_LOGGING
 
-MouseMode mouseMode;
+MouseMode mouseMode = MOUSE_LEFT;
 
 int storedMouseX = 0;
 int storedMouseY = 0;
@@ -355,6 +404,10 @@ void setSensitivity(int sensitivity) {
 	touchPadSensitivity = sensitivity;
 }
 
+void setGamma(int gamma) {
+	OSystem_DS::instance()->setGammaValue(gamma);
+}
+
 void setTopScreenZoom(int percentage) {
 		// 100    256
 		// 150	  192
@@ -426,18 +479,18 @@ int getGameHeight() {
 
 void initSprites() {
 	for (int i = 0; i < 128; i++) {
-	   sprites[i].attribute[0] = ATTR0_DISABLED;
-	   sprites[i].attribute[1] = 0;
-	   sprites[i].attribute[2] = 0;
-	   sprites[i].filler = 0;
-    }
+		sprites[i].attribute[0] = ATTR0_DISABLED;
+		sprites[i].attribute[1] = 0;
+		sprites[i].attribute[2] = 0;
+		sprites[i].filler = 0;
+	}
 
 	for (int i = 0; i < 128; i++) {
-	   spritesMain[i].attribute[0] = ATTR0_DISABLED;
-	   spritesMain[i].attribute[1] = 0;
-	   spritesMain[i].attribute[2] = 0;
-	   spritesMain[i].filler = 0;
-    }
+		spritesMain[i].attribute[0] = ATTR0_DISABLED;
+		spritesMain[i].attribute[1] = 0;
+		spritesMain[i].attribute[2] = 0;
+		spritesMain[i].filler = 0;
+	}
 
 	updateOAM();
 }
@@ -501,7 +554,6 @@ void initGame() {
 	#endif
 
 //	static bool firstTime = true;
-
 
 	setOptions();
 
@@ -592,9 +644,9 @@ void displayMode8Bit() {
 		BG3_CR = BG_BMP16_256x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = 256;
-	    BG3_XDY = 0;
-	    BG3_YDX = 0;
-	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		BG3_XDY = 0;
+		BG3_YDX = 0;
+		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 
 	} else {
 		videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
@@ -611,9 +663,9 @@ void displayMode8Bit() {
 		BG3_CR = BG_BMP8_512x256 | BG_BMP_BASE(8);
 
 		BG3_XDX = (int) (((float) (gameWidth) / 256.0f) * 256);
-	    BG3_XDY = 0;
-	    BG3_YDX = 0;
-	    BG3_YDY = (int) ((200.0f / 192.0f) * 256);
+		BG3_XDY = 0;
+		BG3_YDX = 0;
+		BG3_YDY = (int) ((200.0f / 192.0f) * 256);
 	}
 
 	SUB_BG3_CR = BG_BMP8_512x256;
@@ -625,11 +677,13 @@ void displayMode8Bit() {
 
 
 
-	if (consoleEnable) {
-		consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
-		// Move the cursor to the bottom of the screen using ANSI escape code
-		consolePrintf("\033[23;0f");
-	}
+	consoleInit(NULL, 0, BgType_Text4bpp, BgSize_T_256x256, 2, 0, true);
+
+	// Set this again because consoleinit resets it
+	videoSetMode(MODE_5_2D | (consoleEnable? DISPLAY_BG0_ACTIVE: 0) | DISPLAY_BG3_ACTIVE | DISPLAY_SPR_ACTIVE | DISPLAY_SPR_1D | DISPLAY_SPR_1D_BMP);
+
+	// Move the cursor to the bottom of the screen using ANSI escape code
+	consolePrintf("\033[23;0f");
 
 
 	for (int r = 0; r < 32 * 32; r++) {
@@ -638,7 +692,9 @@ void displayMode8Bit() {
 	}
 
 	// ConsoleInit destroys the hardware palette :-(
-	OSystem_DS::instance()->restoreHardwarePalette();
+	if (OSystem_DS::instance()) {
+		OSystem_DS::instance()->restoreHardwarePalette();
+	}
 
 //	BG_PALETTE_SUB[255] = RGB15(31,31,31);//by default font will be rendered with color 255
 
@@ -912,12 +968,12 @@ void displayMode16BitFlipBuffer() {
 			}
 		}
 	} else if (isCpuScalerEnabled()) {
-        //#define SCALER_PROFILE
+		//#define SCALER_PROFILE
 
-        #ifdef SCALER_PROFILE
-	    TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
-        u16 t0 = TIMER1_DATA;
-        #endif
+		#ifdef SCALER_PROFILE
+		TIMER1_CR = TIMER_ENABLE | TIMER_DIV_1024;
+		u16 t0 = TIMER1_DATA;
+		#endif
 		const u8* back = (const u8*)get8BitBackBuffer();
 		u16* base = BG_GFX + 0x10000;
 		Rescale_320x256xPAL8_To_256x256x1555(
@@ -928,19 +984,19 @@ void displayMode16BitFlipBuffer() {
 			BG_PALETTE,
 			getGameHeight() );
 
-        #ifdef SCALER_PROFILE
-        // 10 pixels : 1ms
-        u16 t1 = TIMER1_DATA;
-	    TIMER1_CR &= ~TIMER_ENABLE;
-        u32 dt = t1 - t0;
-        u32 dt_us = (dt * 10240) / 334;
-        u32 dt_10ms = dt_us / 100;
-        int i;
-        for(i=0; i<dt_10ms; ++i)
-            base[i] = ((i/10)&1) ? 0xFFFF : 0x801F;
-        for(; i<256; ++i)
-            base[i] = 0x8000;
-        #endif
+		#ifdef SCALER_PROFILE
+		// 10 pixels : 1ms
+		u16 t1 = TIMER1_DATA;
+		TIMER1_CR &= ~TIMER_ENABLE;
+		u32 dt = t1 - t0;
+		u32 dt_us = (dt * 10240) / 334;
+		u32 dt_10ms = dt_us / 100;
+		int i;
+		for(i=0; i<dt_10ms; ++i)
+			base[i] = ((i/10)&1) ? 0xFFFF : 0x801F;
+		for(; i<256; ++i)
+			base[i] = 0x8000;
+		#endif
 	}
 	#ifdef HEAVY_LOGGING
 	consolePrintf("done\n");
@@ -1209,9 +1265,9 @@ void setKeyboardEnable(bool en) {
 				}
 			}
 /*
-            for (int r = 0; r < (512 * 256) >> 1; r++)
-                BG_GFX_SUB[r] = buffer[r];
-  */
+			for (int r = 0; r < (512 * 256) >> 1; r++)
+				BG_GFX_SUB[r] = buffer[r];
+*/
 			SUB_DISPLAY_CR &= ~DISPLAY_BG1_ACTIVE;	// Turn off keyboard layer
 			SUB_DISPLAY_CR |= DISPLAY_BG3_ACTIVE;	// Turn on game layer
 		} else {
@@ -1597,7 +1653,7 @@ void addEventsToQueue() {
 				doButtonSelectMode(system);
 			}
 
-			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState))  && (displayModeIs8Bit)) {
+			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState)) && (displayModeIs8Bit)) {
 				// Controls specific to the control method
 
 
@@ -2031,9 +2087,9 @@ void VBlankHandler(void) {
 	SUB_BG3_CY = subScY + (shakePos << 8);*/
 
 	/*SUB_BG3_XDX = (int) (subScreenWidth / 256.0f * 256);
-    SUB_BG3_XDY = 0;
-    SUB_BG3_YDX = 0;
-    SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
+	SUB_BG3_XDY = 0;
+	SUB_BG3_YDX = 0;
+	SUB_BG3_YDY = (int) (subScreenHeight / 192.0f * 256);*/
 
 	static int ratio = (320 << 8) / SCUMM_GAME_WIDTH;
 
@@ -2886,7 +2942,6 @@ void powerOff() {
 void dsExceptionHandler() {
 	consolePrintf("Blue screen of death");
 	setExceptionHandler(NULL);
-	while(1);
 
 	u32	currentMode = getCPSR() & 0x1f;
 	u32 thumbState = ((*(u32*)0x027FFD90) & 0x20);
@@ -2918,7 +2973,7 @@ void dsExceptionHandler() {
 
 	int i;
 	for ( i=0; i < 8; i++ ) {
-		consolePrintf(	"  %s: %08X   %s: %08X\n",
+		consolePrintf("  %s: %08X   %s: %08X\n",
 					registerNames[i], exceptionRegisters[i],
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
@@ -3025,7 +3080,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 0.13.1 beta1 ");
+	consolePrintf("Version 1.0.0 RC1 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -3219,3 +3274,12 @@ int cygprofile_getHBlanks() {
 	return DS::hBlankCount;
 }
 #endif
+
+
+extern "C" void consolePrintf(const char * format, ...) {
+	char buffer[256];
+	va_list args;
+	va_start(args, format);
+	viprintf(format, args);
+	va_end(args);
+}

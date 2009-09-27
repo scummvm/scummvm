@@ -1,4 +1,4 @@
-	
+
 
 
                     The official port of ScummVM
@@ -14,7 +14,7 @@ Visit the main ScummVM website <http://www.scummvm.org>
      Contents
      ------------------------------------------------------------------------
 
-	 
+
 
     * What's New?
     * What is ScummVM DS?
@@ -23,8 +23,6 @@ Visit the main ScummVM website <http://www.scummvm.org>
     * How to Get ScummVM DS Onto Your DS - Simple Explanation
           o Using a CF/SD/Mini SD/Micro SD card reader and a DLDI driver
           o Instructions for specific card readers
-    * What to do if saving doesn't work or your card gets corruped -
-      force SRAM saves
     * How to use ScummVM DS
     * Game Specific Controls
     * DS Options Screen
@@ -43,6 +41,19 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
+ScummVM DS 1.0.0 RC1
+
+ * Gamma correction feature to improve brightness level of game on the
+   original DS.
+ * The usual round of bugfixes
+
+
+ScummVM DS 0.13.1
+
+ * Support for the ScummVM Global Main Menu (hold select during the game)
+ * The usual round of bugfixes
+
+
 ScummVM DS 0.12.0
 
  * New games supported: Lure of the Temptress, Nippon Safes, Lost in Time.
@@ -51,7 +62,7 @@ ScummVM DS 0.12.0
  * New option which allows you to drag to hover, tap the touch screen to
    click, and double tap the screen to right click.
  * Reorganised DS Options screen into three tabs for clearer navigation
- * New top screen scaling options let you choose the scaling factor used 
+ * New top screen scaling options let you choose the scaling factor used
    on startup.
  * The usual round of bug fixes.
 
@@ -68,21 +79,21 @@ ScummVM DS 0.11.0
    screen (press select during the game). Thanks to Tramboi and Robin Watts for
    this feature!
  * Function keys added to virtual keyboard (used in AGI games)
- * Plenty of bug fixes 
+ * Plenty of bug fixes
 
       What is ScummVM DS?
       ------------------------------------------------------------------------
 
 ScummVM DS is a part of the ScummVM project.  The ScummVM project is an
-attempt to re-engineer many classic point and click adventure games of the 
-80s and 90s to run on modern computer hardware.  Technology has changed a 
-lot since these games were written, and so ScummVM attempts to replicate the 
+attempt to re-engineer many classic point and click adventure games of the
+80s and 90s to run on modern computer hardware.  Technology has changed a
+lot since these games were written, and so ScummVM attempts to replicate the
 gameplay of the original games in exacting details, without any of the original
 code that the game ran on.  ScummVM needs a copy of the original game, in order
 to take the graphics, sound, and scripts that made the game work.
 
 ScummVM is written in such a way that it can be 'ported' from one type of
-machine to another, and ScummVM DS is a port of ScummVM to the Nintendo DS 
+machine to another, and ScummVM DS is a port of ScummVM to the Nintendo DS
 handheld games console.
 
 
@@ -107,45 +118,59 @@ handheld games console.
 
 Nintendo don't want you to run ScummVM on your DS.  They control
 which companies can make games on the DS, and there is an expensive
-process to go through in order to be licenced.  Having to pay for 
-this would prevent me from giving away ScummVM for free.  
+process to go through in order to be licenced.  Having to pay for
+this would prevent me from giving away ScummVM for free.
 
 So, the result is that to run ScummVM on your DS you'll need an
-unofficial card reader.  There are many of these, and all are different.  
-Popular models at the time of writing are the R4DS and the M3DS Real, 
+unofficial card reader.  There are many of these, and all are different.
+Popular models at the time of writing are the R4DS and the M3DS Real,
 but many different models work.  You need to buy one of these, and at
 MicroSD card to go with it.
 
 There are also slot-2 card readers which fit into the bottom slot on
 your DS, usually used for Game Boy Advance games.  These are less common
-these days, and although they have certain advantages, the details of 
-these are beyond the scope of this website.  Information on these is 
+these days, and although they have certain advantages, the details of
+these are beyond the scope of this website.  Information on these is
 quite easy to find by searching.
 
 Once you have your card reader and a MicroSD card, you will also need
 a copy of the game you want to run.  ScummVM can run a large variety
 of games, but you must own a real boxed copy of the game.  These games
 are still under copyright, and it is illegal to copy them from a friend
-or download them from the Internet without paying.  The exception to 
+or download them from the Internet without paying.  The exception to
 this are the three Revolution Software games.  These are 'Beneath a
 Steel Sky', 'Lure of the Temptress' and 'Flight of the Amazon Queen'.
 Revolution have kindly allowed us to give these games away for free.
-You can download them from the main ScummVM site at 
+You can download them from the main ScummVM site at
 <http://www.scummvm.org/downloads.php>
+
+If you have a modern card reader, like an M3 Real or R4DS, getting
+ScummVM to run on your card is as simple as:
+ 1) Copy the scummvm NDS files on your MicroSD card using your
+    PC card reader
+ 2) Copy the games you want to play onto your MicroSD card in any
+    location, one per folder
+ 3) Boot the DS with the MicroSD card and card reader inserted
+ 4) Run the relevent build for the game you want to play (see
+    'Which games are compatible with ScummVM DS' below.
+ 5) Click 'Add Game'.  Select the folder where your game is stored.
+    Click 'OK'.  Click 'OK' in the settings dialog.
+ 6) Click 'Start'.
 
 NOTE: Previous version of ScummVM DS supported a method which used a
 zip file to run games on unsupported flash card readers.  This method
 is no longer supported.
 
 
+
       How to Get ScummVM DS Onto Your DS - Using a CF/SD/Mini SD/Micro
       SD card reader and a DLDI driver
       ------------------------------------------------------------------------
 
-ScummVM DS needs something called a DLDI driver to run on each make 
+ScummVM DS needs something called a DLDI driver to run on each make
 and model of card reader.  Many modern card readers (R4DS, M3 DS Real)
 handle this autmatically and for those, you don't have to do anything.
-Just running ScummVM on the card will handle this step for you.  
+Just running ScummVM on the card will handle this step for you.
 For others, you will need to follow the steps in this section before
 ScummVM DS will work.
 
@@ -186,7 +211,7 @@ Here is what you need to do:
       Either way, you should see 'Patched Successfully'. If you don't,
       you're doing something wrong.
 
-      You need to patch one of the builds labeled A - F depending on
+      You need to patch one of the builds labeled A - H depending on
       which game you want to run. See the table on the ScummVM DS
       website to see which games are supported by which build.
 
@@ -196,7 +221,7 @@ Here is what you need to do:
     * Put your game data in any folder on the card. Do NOT use a zip file.
     * Boot up your DS and run ScummVM.
     * Click 'Add Game', browse to the folder with your game data, click
-      'Choose', then 'OK'. Click 'Start' to run the game. 
+      'Choose', then 'OK'. Click 'Start' to run the game.
 
 If your copy of ScummVM DS has been successfully patched, you will get a
 message on the top screen that looks like this:
@@ -272,13 +297,10 @@ CANNOT DO THIS.
       hold the 'select' button during boot to disable FlashMe, which
       will allow the NinjaDS to work. Due to this, it is not recommended
       to install FlashMe if you use a NinjaDS.
-    * *EZ-Flash*: This card reader uses .ds.gba files from the ScummVM
-      archive. Rename them to .nds before patching them with the DLDI
-      patcher.
     * *R4DS*: If you upgrade the firmware for your R4DS to version 1.10
       or later, the card will autmatically DLDI patch the game, meaning
       you don't have to use dlditool to patch the .NDS file. This makes
-      things a lot easier! 
+      things a lot easier!
     * *M3DS Real*: This card autmatically DLDI patches the game, meaning
       that you do not need to do this yourself.
 
@@ -288,12 +310,12 @@ CANNOT DO THIS.
       ------------------------------------------------------------------------
 
 I'm glad you asked. Here is a list of the compatible games in version
-0.12.0. Demo versions of the games listed should work too.
+1.0.0 RC1. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
-Temptress have generously been released as freeware by the original 
+Temptress have generously been released as freeware by the original
 authors, Revolution Software <http://www.revolution.co.uk/>. This is a
-great thing and we should support Revolution for being so kind to us. 
+great thing and we should support Revolution for being so kind to us.
 You can download the game data from the official ScummVM download page
 <http://www.scummvm.org/downloads.php>.
 
@@ -304,23 +326,23 @@ for a copy, as I am unable to send it to you.
 
 Game                                      Build   Notes
 
-Manic Mansion                             A	
+Manic Mansion                             A
 
-Zak McKracken and the Alien Mindbenders   A	
+Zak McKracken and the Alien Mindbenders   A
 
-Indiana Jones and the Last Crusade        A	
+Indiana Jones and the Last Crusade        A
 
-Loom                                      A	
+Loom                                      A
 
-Passport to Adventure                     A	
+Passport to Adventure                     A
 
-The Secret of Monkey Island               A	
+The Secret of Monkey Island               A
 
-Monkey Island 2: LeChuck's Revenge        A	
+Monkey Island 2: LeChuck's Revenge        A
 
-Indiana Jones and the Fate of Atlantis    A	
+Indiana Jones and the Fate of Atlantis    A
 
-Day of the Tentacle	                  A	
+Day of the Tentacle	                  A
 
 Sam & Max Hit the Road	                  A     Some slowdown in a few scenes
                                                 when MP3 audio is enabled
@@ -351,25 +373,25 @@ Elvira 2                                  C
 
 Waxworks (Amiga version)                  C
 
-Gobliiins                                 D	
+Gobliiins                                 D
 
-Gobliins 2                                D	
+Gobliins 2                                D
 
 Goblins 3                                 D
 
-Ween: The Prophecy                        D	
+Ween: The Prophecy                        D
 
-Bargon Attack                             D	
+Bargon Attack                             D
 
 Lost in Time                              D
 
-Future Wars                               D	
+Future Wars                               D
 
 All Sierra AGI games.
 For a complete list, see this page
-<http://wiki.scummvm.org/index.php/AGI>   D	
+<http://wiki.scummvm.org/index.php/AGI>   D
 
-Inherit the Earth                         E	
+Inherit the Earth                         E
 
 The Legend of Kyrandia                    F     Zoomed view does not follow the
                                                 speaking character
@@ -378,52 +400,20 @@ Lure of the Temptress                     G
 
 Nippon Safes                              G
 
-There is no support for Full Throttle, The Dig, or The Curse of Monkey
-Island because of memory issues. There simply is not enough RAM on the
-DS to run these games. Sorry. Also there is no support for Windows Humongous
-Entertainment games. The extra code required to make this work uses up
-too much RAM.
 
+Full Throttle and The Dig can run on the DS using an external RAM pack
+plugged into slot-2 (the GBA slot).  To do this, download the special
+build of ScummVM DS from here: http://forums.scummvm.org/viewtopic.php?t=7044
 
-      What to do when saving doesn't work or your card gets corrupted -
-      forcing SRAM Saves
-      ------------------------------------------------------------------------
-
-This method only works for cards which use the Game Boy Advance slot on the
-bottom of your DS.
-
-If ScummVM DS cannot save games to your SD card, or it causes corruption
-when it does, you can force it to use GBA SRAM to save the game. This
-uses your flash cart reader's GBA features to save the game to a .sav or
-.dat file (depending on the reader). Only slot-2 devices can use SRAM saves, 
-and only ones with support for GBA games.
-
-If you want to use SRAM save, just create a text file called scummvm.ini
-(or scummvmb.ini, scummvmc.ini for builds B or C) in the root of your
-card which contains the following:
-
-[ds]
-forcesramsave=true
-
-When you boot your game, ScummVM DS will not save games to your SD card
-directly, instead it will save to GBA SRAM. On most cards, you need to
-transfer the data to your SD card by rebooting and using your card
-reader's boot-up menu. Using this method, around four saves can me made.
-
-One disadvantage of forcing SRAM saves is that your settings won't be
-saved. You can add games manually to the ini file so that you don't have
-to select them on each boot. Just add a section like the following on
-for each game on your card.
-
-[monkey2]
-description=Monkey Island 2: LeChuck's Revenge (English/DOS)
-path=mp:/MONKEY2
+There is no support for Windows Humongous Entertainment games, Broken Sword,
+and all other games that run at 640x480 resolution.  The DS cannot cope with
+scaling these games down to 256x192, the resolution of the DS screens.
 
 
       How to Use ScummVM
       ------------------------------------------------------------------------
 
-Once you've booted up ScummVM, you'll see the start up screen. 
+Once you've booted up ScummVM, you'll see the start up screen.
 
  1. Tap the 'Add' button with the pen, then browse to the folder
     containing your game data. Once you have clicked on your folder, you will
@@ -433,7 +423,7 @@ Once you've booted up ScummVM, you'll see the start up screen.
  2. Click the 'Choose' button.
 
  3. You will get some options for the game. You can usually just click 'Ok' to
-    this. 
+    this.
 
  4. Now click on the name of the game you want to play from the list and
     click 'Start'. Your game will start!
@@ -572,11 +562,11 @@ of the screen.  Useful for Beneath a Steel Sky and Goblins 3.
 
 Touch X offset - if your screen doesn't perform properly, this setting
 allows you to adjust when the cursor appears left or right relative to
-the screen's measured touch position.  
+the screen's measured touch position.
 
 Touch Y offset - if your screen doesn't perform properly, this setting
 allows you to adjust when the cursor appears higher or lower relative to
-the screen's measured touch position.  
+the screen's measured touch position.
 
 Use Laptop Trackpad-style cursor control - In this mode, use the lower
 screen to drag the cursor around, a bit like using a trackpad on a laptop.
@@ -661,12 +651,14 @@ free to use your favourite program. The format you need to use is
 IMA-ADPCM 4-bit Mono. You may use any sample rate. All other formats
 will be rejected, including uncompressed WAV files.
 
+Since this sound format is a standard, you should be able to create it
+in a variety of software.
 Now I will to describe how to rip your CD tracks with Cdex, which can be
 found here: Cdex Homepage <http://sourceforge.net/projects/cdexos/>.
-Other software can be used to create IMA ADPCM files under Linux or
-MacOS.
+If you're using MacOS or Linux, I suggest using Audacity
+<http://audacity.sourceforge.net>.
 
-To set this up in Cdex, select Settings from the Options menu. On the
+To encode audio in Cdex, select Settings from the Options menu. On the
 Encoder tab, select 'WAV Output Encoder'. Under 'Encoder Options',
 choose the following:
 
@@ -733,6 +725,17 @@ Tentacle, Monkey Island 2, or a few other games! What do I do?
 *A:* Hold down the left shoulder button and use D-pad (or the touch
 screen) to scroll the screen around.
 
+*Q:* I don't get speech or sound effects in my Lucasarts games.  What's
+wrong?
+*A:* Do you have a monster.sog file?  If so, this is the wrong kind of
+speech file for ScummVM DS.  Copy the monster.sou file present on your
+original CD or floppies, and you will have speech.
+
+*Q:* Can ScummVM take advantage of the DSi?
+*A:* At the moment, no.  While some homebrew does run on the DSi, at
+the time of writing, it cannot access any of the DSi's new features.
+When it does, a version of ScummVM for the DSi may be possible.
+
 *Q:* I dont see a menu when I press Start in Flight of the Amazon Queen
 or Simon the Sorcerer. Is ScummVM broken?
 *A:* No. To save in Simon the Sorcerer, click 'use', then click on the
@@ -744,31 +747,17 @@ then click on the journal in your inventory.
 of ScummVM. Delete the MP3 tracks and reencode them to ADPCM WAV files
 as described in the CD audio section.
 
-*Q:* When will you support my Mini/Micro SD card reader? I want it!
-Pretty please?
-*A:* ScummVM uses DLDI drivers. If your card reader manufacturer doesn't
-provide a driver, there is nothing I can do about it. The people to ask
-are the card reader manufacturers themselves.
-
 *Q:* Can't you use the extra RAM in the M3/Supercard or the official
 Opera Expansion Pack to support more games like The Dig and Full
 Throttle? DS Linux has done it, so why can't you?
-*A:* Not at the moment. The extra RAM has certain differences to the
-build in RAM which makes it difficult to use for general programs. As
-ScummVM DS is an official port, the changes to the ScummVM code base
-must be minimal to avoid making the code difficult to read for other
-users. I do have plans to work on this some time in the future, but
-don't nag me about when it'll be done. If and when there's progress with
-this, I will post on the ScummVM forums about it.
-
+*A:* Yes!  The Dig and Full Throttle are playable with some limitations.
+See the forum thread here for a download:
+http://forums.scummvm.org/viewtopic.php?t=7044
 
 *Q:* ScummVM DS turns off my DS when I hit 'Quit' in the game or quit
 from the frontend. Why doesn't it return to the menu?
-*A:* Due to bugs in the ScummVM codebase, many of the ScummVM games
-cannot quit cleanly leaving the machine in the same state as when it
-started. You will notice that no other versions of ScummVM can quit back
-to the menu either. This will be fixed at some time in the future.
-
+*A:* To return to the game launcher, hold 'Select' during the game
+to access the main ScummVM menu, then click 'Return to Launcher'
 
 
 
@@ -835,6 +824,11 @@ make SCUMM_BUILD=a
 The executable nds file will build inside 'backends/platform/ds/arm9/SCUMMVM-A'.
 
 For other builds, substitute the letters b - g in the above line.
+
+To build everything, type:
+make allbuildssafe
+
+
 
 
 

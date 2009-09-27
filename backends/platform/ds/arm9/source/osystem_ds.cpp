@@ -38,14 +38,35 @@
 #include "touchkeyboard.h"
 #include "backends/fs/ds/ds-fs-factory.h"
 
+#ifdef ENABLE_AGI
+#include "wordcompletion.h"
+#endif
+
 #include <time.h>
 
+#if defined(DS_BUILD_A)
+#define DEFAULT_CONFIG_FILE "scummvm.ini"
+#elif defined(DS_BUILD_B)
+#define DEFAULT_CONFIG_FILE "scummvmb.ini"
+#elif defined(DS_BUILD_C)
+#define DEFAULT_CONFIG_FILE "scummvmc.ini"
+#elif defined(DS_BUILD_D)
+#define DEFAULT_CONFIG_FILE "scummvmd.ini"
+#elif defined(DS_BUILD_E)
+#define DEFAULT_CONFIG_FILE "scummvme.ini"
+#elif defined(DS_BUILD_F)
+#define DEFAULT_CONFIG_FILE "scummvmf.ini"
+#elif defined(DS_BUILD_G)
+#define DEFAULT_CONFIG_FILE "scummvmg.ini"
+#elif defined(DS_BUILD_H)
+#define DEFAULT_CONFIG_FILE "scummvmh.ini"
+#endif
 
 OSystem_DS* OSystem_DS::_instance = NULL;
 
 OSystem_DS::OSystem_DS()
 	: eventNum(0), lastPenFrame(0), queuePos(0), _mixer(NULL), _timer(NULL), _frameBufferExists(false),
-	_disableCursorPalette(true), _graphicsEnable(true)
+	_disableCursorPalette(true), _graphicsEnable(true), _gammaValue(0)
 {
 //	eventNum = 0;
 //	lastPenFrame = 0;
@@ -161,9 +182,11 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
 			if (DS::getIsDisplayMode8Bit()) {
-				BG_PALETTE[r] = paletteValue;
+				int col = applyGamma(paletteValue);
+				BG_PALETTE[r] = col;
+
 				if (!DS::getKeyboardEnable()) {
-					BG_PALETTE_SUB[r] = paletteValue;
+					BG_PALETTE_SUB[r] = col;
 				}
 			}
 
@@ -180,10 +203,10 @@ void OSystem_DS::restoreHardwarePalette()
 	// Set the hardware palette up based on the stored palette
 
 	for (int r = 0; r < 255; r++) {
-		BG_PALETTE[r] = _palette[r];
-
+		int col = applyGamma(_palette[r]);
+		BG_PALETTE[r] = col;
 		if (!DS::getKeyboardEnable()) {
-			BG_PALETTE_SUB[r] = _palette[r];
+			BG_PALETTE_SUB[r] = col;
 		}
 	}
 }
@@ -207,6 +230,7 @@ void OSystem_DS::setCursorPalette(const byte *colors, uint start, uint num) {
 	}
 
 	_disableCursorPalette = false;
+	refreshCursor();
 }
 
 bool OSystem_DS::grabRawScreen(Graphics::Surface* surf) {
@@ -271,65 +295,113 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 
 		if (DS::getKeyboardEnable()) {
 			// When they keyboard is on screen, we don't update the subscreen because
-			// the keyboard image uses the same VRAM addresses.  In order to do this,
-			// I'm going to update the main screen twice.  This avoids putting a compare
-			// in the loop and slowing down the common case.
-			bgSub = bg;
-		}
+			// the keyboard image uses the same VRAM addresses.
 
-		for (int dy = y; dy < y + h; dy++) {
-			u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
-			u8* destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
-			u8* src = (u8 *) buf + (pitch * by);
+			for (int dy = y; dy < y + h; dy++) {
+				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
+				u8* src = (u8 *) buf + (pitch * by);
 
-			u32 dx;
+				u32 dx;
 
-			u32 pixelsLeft = w;
+				u32 pixelsLeft = w;
 
-			if (MISALIGNED16(dest))	{
-				// Read modify write
+				if (MISALIGNED16(dest))	{
+					// Read modify write
 
-				dest--;
-				u16 mix = *((u16 *) dest);
+					dest--;
+					u16 mix = *((u16 *) dest);
 
-				mix = (mix & 0x00FF) | (*src++ << 8);
+					mix = (mix & 0x00FF) | (*src++ << 8);
 
-				*dest = mix;
-				*destSub = mix;
+					*dest = mix;
 
-				dest += 2;
-				destSub += 2;
-				pixelsLeft--;
+					dest += 2;
+					pixelsLeft--;
+				}
+
+				// We can now assume dest is aligned
+				u16* dest16 = (u16 *) dest;
+
+				for (dx = 0; dx < pixelsLeft; dx+=2)	{
+					u16 mix;
+
+					mix = *src + (*(src + 1) << 8);
+					*dest16++ = mix;
+					src += 2;
+				}
+
+				pixelsLeft -= dx;
+
+				// At the end we may have one pixel left over
+
+				if (pixelsLeft != 0) {
+					u16 mix = *dest16;
+
+					mix = (mix & 0x00FF) | ((*src++) << 8);
+
+					*dest16 = mix;
+				}
+
+				by++;
 			}
 
-			// We can now assume dest is aligned
-			u16* dest16 = (u16 *) dest;
-			u16* destSub16 = (u16 *) destSub;
+		} else {
+			// When they keyboard is not on screen, update both vram copies
 
-			for (dx = 0; dx < pixelsLeft; dx+=2)	{
-				u16 mix;
+			for (int dy = y; dy < y + h; dy++) {
+				u8* dest = ((u8 *) (bg)) + (dy * stride) + x;
+				u8* destSub = ((u8 *) (bgSub)) + (dy * 512) + x;
+				u8* src = (u8 *) buf + (pitch * by);
 
-				mix = *src + (*(src + 1) << 8);
-				*dest16++ = mix;
-				*destSub16++ = mix;
-				src += 2;
+				u32 dx;
+
+				u32 pixelsLeft = w;
+
+				if (MISALIGNED16(dest))	{
+					// Read modify write
+
+					dest--;
+					u16 mix = *((u16 *) dest);
+
+					mix = (mix & 0x00FF) | (*src++ << 8);
+
+					*dest = mix;
+					*destSub = mix;
+
+					dest += 2;
+					destSub += 2;
+					pixelsLeft--;
+				}
+
+				// We can now assume dest is aligned
+				u16* dest16 = (u16 *) dest;
+				u16* destSub16 = (u16 *) destSub;
+
+				for (dx = 0; dx < pixelsLeft; dx+=2)	{
+					u16 mix;
+
+					mix = *src + (*(src + 1) << 8);
+					*dest16++ = mix;
+					*destSub16++ = mix;
+					src += 2;
+				}
+
+				pixelsLeft -= dx;
+
+				// At the end we may have one pixel left over
+
+				if (pixelsLeft != 0) {
+					u16 mix = *dest16;
+
+					mix = (mix & 0x00FF) | ((*src++) << 8);
+
+					*dest16 = mix;
+					*destSub16 = mix;
+				}
+
+				by++;
+
 			}
-
-			pixelsLeft -= dx;
-
-			// At the end we may have one pixel left over
-
-			if (pixelsLeft != 0) {
-				u16 mix = *dest16;
-
-				mix = (mix & 0x00FF) | ((*src++) << 8);
-
-				*dest16 = mix;
-				*destSub16 = mix;
-			}
-
-			by++;
-
 		}
 
 //		consolePrintf("Slow method used!\n");
@@ -763,3 +835,53 @@ void OSystem_DS::clearAutoComplete() {
 void OSystem_DS::setCharactersEntered(int count) {
 	DS::setCharactersEntered(count);
 }
+
+Common::SeekableReadStream* OSystem_DS::createConfigReadStream() {
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
+//	consolePrintf("R %s", DEFAULT_CONFIG_FILE);
+	return file.createReadStream();
+}
+
+Common::WriteStream* OSystem_DS::createConfigWriteStream() {
+	Common::FSNode file(DEFAULT_CONFIG_FILE);
+//	consolePrintf("W %s", DEFAULT_CONFIG_FILE);
+	return file.createWriteStream();
+}
+
+u16 OSystem_DS::applyGamma(u16 colour) {
+	// Attempt to do gamma correction (or something like it) to palette entries
+	// to improve the contrast of the image on the original DS screen.
+
+	// Split the colour into it's component channels
+	int r = colour & 0x001F;
+	int g = (colour & 0x03E0) >> 5;
+	int b = (colour & 0x7C00) >> 10;
+
+	// Caluclate the scaling factor for this colour based on it's brightness
+	int scale = ((23 - ((r + g + b) >> 2)) * _gammaValue) >> 3;
+
+	// Scale the three components by the scaling factor, with clamping
+	r = r + ((r * scale) >> 4);
+	if (r > 31) r = 31;
+
+	g = g + ((g * scale) >> 4);
+	if (g > 31) g = 31;
+
+	b = b + ((b * scale) >> 4);
+	if (b > 31) b = 31;
+
+	// Stick them back together into a 555 colour value
+	return 0x8000 | r | (g << 5) | (b << 10);
+}
+
+void OSystem_DS::engineDone() {
+	// Scumm games appear not to stop their CD audio, so I stop the CD here.
+	stopCD();
+
+#ifdef ENABLE_AGI
+	DS::clearAutoCompleteWordList();
+#endif
+
+}
+
+

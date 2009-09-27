@@ -71,6 +71,8 @@ protected:
 	Graphics::Surface* createTempFrameBuffer();
 	bool _disableCursorPalette;
 
+	int _gammaValue;
+
 public:
 	typedef void (*SoundProc)(byte *buf, int len);
 	typedef int  (*TimerProc)(int interval);
@@ -171,6 +173,14 @@ public:
 	FilesystemFactory *getFilesystemFactory();
 
 	void refreshCursor();
+
+	Common::WriteStream* createConfigWriteStream();
+	Common::SeekableReadStream* createConfigReadStream();
+
+	u16 applyGamma(u16 colour);
+	void setGammaValue(int gamma) { _gammaValue = gamma; }
+
+	void engineDone();
 };
 
 static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
