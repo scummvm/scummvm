@@ -282,6 +282,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			Dialog::show(scene, 0x6117, 0, 813, 0xd1, 0xec, 0, 1);
 			loadScene(6, Common::Point(230, 184));
 			Dialog::show(scene, 0x626a, 0, 814, 0xd1, 0xec, 0, 1);
+			playSound(4, 14);
 			playAnimation(815, 0);
 			setOns(1, 0);
 
