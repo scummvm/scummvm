@@ -1501,6 +1501,7 @@ Game::~Game() {
 	delete[] _persons;
 	delete[] _variables;
 	delete[] _dialogueOffsets;
+	delete[] _dialogueVars;
 	delete[] _objects;
 	delete[] _itemStatus;
 	delete[] _items;
