@@ -531,7 +531,7 @@ void Script::icoStat(Common::Queue<int> &params) {
 
 		if (itemID != kNoItem) {
 			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID);
-			BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
+			const BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
 			Sprite *sp = new Sprite(f->_data, f->_length, 0, 0, true);
 			itemAnim->addFrame(sp);
 		}
@@ -666,7 +666,7 @@ void Script::talk(Common::Queue<int> &params) {
 	Surface *surface = _vm->_screen->getSurface();
 
 	// Fetch string
-	BAFile *f = _vm->_stringsArchive->getFile(sentenceID);
+	const BAFile *f = _vm->_stringsArchive->getFile(sentenceID);
 
 	// Fetch frame for the speech text
 	Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText);
@@ -784,7 +784,7 @@ void Script::setPalette(Common::Queue<int> &params) {
 	if (_vm->_game->getScheduledPalette() == -1) {
 		_vm->_screen->setPaletteEmpty();
 	} else {
-		BAFile *f;		
+		const BAFile *f;		
 		f = _vm->_paletteArchive->getFile(_vm->_game->getScheduledPalette());
 		_vm->_screen->setPalette(f->_data, 0, kNumColours);
 	}

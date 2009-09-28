@@ -43,10 +43,9 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	unsigned int i;
 	
 	BArchive *initArchive = _vm->_initArchive;
-	BAFile *file;
+	const BAFile *file;
 	
 	// Read in persons
-	
 	file = initArchive->getFile(5);
 	Common::MemoryReadStream personData(file->_data, file->_length);
 	
@@ -59,11 +58,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_persons[i]._fontColour = personData.readByte();
 	}
 
-	// Close persons file
-	file->close();
-	
 	// Read in dialogue offsets
-	
 	file = initArchive->getFile(4);
 	Common::MemoryReadStream dialogueData(file->_data, file->_length);
 	
@@ -79,11 +74,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	_dialogueVars = new int[curOffset];
 	memset(_dialogueVars, 0, sizeof (int) * curOffset);
 	
-	// Close dialogues file
-	file->close();	
-
 	// Read in game info
-	
 	file = initArchive->getFile(3);
 	Common::MemoryReadStream gameData(file->_data, file->_length);
 	
@@ -104,11 +95,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	_info._numDialogueBlocks = curOffset;
 
-	// Close game info file
-	file->close();
-
 	// Read in variables
-	
 	file = initArchive->getFile(2);
 	unsigned int numVariables = file->_length / sizeof (int16);
 
@@ -119,18 +106,14 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_variables[i] = variableData.readUint16LE();
 	}
 
-	// Close variables file
-	file->close();
-
 	// Read in item icon status
-	
 	file = initArchive->getFile(1);
-	_itemStatus = file->_data;
 	uint numItems = file->_length;
+	_itemStatus = new byte[numItems];
+	memcpy(_itemStatus, file->_data, numItems);
 	_items = new GameItem[numItems];
 	
 	// Read in object status
-	
 	file = initArchive->getFile(0);
 	unsigned int numObjects = file->_length;
 	
@@ -147,14 +130,14 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 		_objects[i]._location = (~(1 << 7) & tmp) - 1;
  	}
 	
-	// Close object status file
-	file->close();
-
 	assert(numDialogues == _info._numDialogues);
 	assert(numPersons == _info._numPersons);
 	assert(numVariables == _info._numVariables);
 	assert(numObjects == _info._numObjects);
 	assert(numItems == _info._numItems);	
+
+	// Deallocate all cached files, because we have copied them into our own data structures.
+	initArchive->clearCache();
 }
 
 void Game::start() {
@@ -240,7 +223,7 @@ void Game::init() {
 	speechAnim->addFrame(speech);
 
 	// Initialize inventory animation
-	BAFile *f = _vm->_iconsArchive->getFile(13);
+	const BAFile *f = _vm->_iconsArchive->getFile(13);
 	Animation *inventoryAnim = _vm->_anims->addAnimation(kInventorySprite, 255, false);
 	Sprite *inventorySprite = new Sprite(f->_data, f->_length, 0, 0, true);
 	inventoryAnim->addFrame(inventorySprite);
@@ -900,7 +883,7 @@ void Game::dialogueInit(int dialogID) {
 	_blockNum = _dialogueArchive->size() / 3;
 	_dialogueBlocks = new Dialogue[_blockNum];
 
-	BAFile *f;
+	const BAFile *f;
 
 	for (uint i = 0; i < kDialogueLines; ++i) {
 		_lines[i] = 0;
@@ -1052,7 +1035,7 @@ void Game::walkHero(int x, int y) {
 
 void Game::loadItem(int itemID) {
 	
-	BAFile *f = _vm->_itemsArchive->getFile(itemID * 3);
+	const BAFile *f = _vm->_itemsArchive->getFile(itemID * 3);
 	Common::MemoryReadStream itemReader(f->_data, f->_length);
 	
 	GameItem *item = _items + itemID;
@@ -1079,7 +1062,7 @@ void Game::loadItem(int itemID) {
 
 void Game::loadRoom(int roomNum) {
 
-	BAFile *f;
+	const BAFile *f;
 	f = _vm->_roomsArchive->getFile(roomNum * 4);
 	Common::MemoryReadStream roomReader(f->_data, f->_length);
 
@@ -1203,7 +1186,7 @@ void Game::loadRoom(int roomNum) {
 
 int Game::loadAnimation(uint animNum, uint z) {
 
-	BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
+	const BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
 	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);	
 
 	uint numFrames = animationReader.readByte();
@@ -1231,7 +1214,7 @@ int Game::loadAnimation(uint animNum, uint z) {
 		/* uint freq = */ animationReader.readUint16LE();
 		uint delay = animationReader.readUint16LE();
 
-		BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
+		const BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
 
 		Sprite *sp = new Sprite(spriteFile->_data, spriteFile->_length, x, y, true);
 
@@ -1260,7 +1243,7 @@ int Game::loadAnimation(uint animNum, uint z) {
 }
 
 void Game::loadObject(uint objNum) {
-	BAFile *file;
+	const BAFile *file;
 	
 	file = _vm->_objectsArchive->getFile(objNum * 3);
 	Common::MemoryReadStream objReader(file->_data, file->_length);
@@ -1301,7 +1284,7 @@ void Game::loadObject(uint objNum) {
 
 void Game::loadWalkingMap(int mapID) {
 
-	BAFile *f;
+	const BAFile *f;
 	f = _vm->_walkingMapsArchive->getFile(mapID);
 	_currentRoom._walkingMap.load(f->_data, f->_length);
 }
@@ -1317,11 +1300,10 @@ uint Game::getNumObjects() const {
 void Game::loadOverlays() {
  	uint x, y, z, num;
  
-	BAFile *overlayHeader;
+	const BAFile *overlayHeader;
 
 	overlayHeader = _vm->_roomsArchive->getFile(_currentRoom._roomNum * 4 + 2);
 	Common::MemoryReadStream overlayReader(overlayHeader->_data, overlayHeader->_length);
- 	BAFile *overlayFile;
  
  	for (int i = 0; i < _currentRoom._numOverlays; i++) {
  
@@ -1330,6 +1312,7 @@ void Game::loadOverlays() {
  		y = overlayReader.readUint16LE();
  		z = overlayReader.readByte();
  
+		const BAFile *overlayFile;
 		overlayFile = _vm->_overlaysArchive->getFile(num);
  		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, true);
  
@@ -1518,6 +1501,7 @@ Game::~Game() {
 	delete[] _variables;
 	delete[] _dialogueOffsets;
 	delete[] _objects;
+	delete[] _itemStatus;
 	delete[] _items;
 }
 

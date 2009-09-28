@@ -72,7 +72,7 @@ public:
 
 	void clearCache();
 
-	BAFile *getFile(unsigned int i) const;
+	const BAFile *getFile(unsigned int i) const;
 
 private:
 	// Archive header data

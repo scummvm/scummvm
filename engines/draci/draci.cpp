@@ -155,7 +155,7 @@ int DraciEngine::init() {
 	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
 	Common::String path("INIT.DFW");	
 	BArchive ar(path);
-	BAFile *f;
+	const BAFile *f;
 	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());	
 	
 	if(ar.isOpen()) {

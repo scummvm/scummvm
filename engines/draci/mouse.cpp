@@ -91,7 +91,7 @@ void Mouse::setPosition(uint16 x, uint16 y) {
 void Mouse::setCursorType(CursorType cur) {
 	_cursorType = cur;
 
-	BAFile *f;
+	const BAFile *f;
 	f = _vm->_iconsArchive->getFile(_cursorType);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
@@ -102,7 +102,7 @@ void Mouse::setCursorType(CursorType cur) {
 
 void Mouse::loadItemCursor(int itemID, bool highlighted) {
 	
-	BAFile *f;
+	const BAFile *f;
 	f = _vm->_itemImagesArchive->getFile(2 * itemID + highlighted);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);

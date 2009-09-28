@@ -393,7 +393,7 @@ void BArchive::clearCache() {
 }
 	
 
-BAFile *BArchive::getFile(unsigned int i) const {
+const BAFile *BArchive::getFile(unsigned int i) const {
 
 	// Check whether requested file exists
 	if (i >= _fileCount) {
