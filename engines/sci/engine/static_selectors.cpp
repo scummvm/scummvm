@@ -71,7 +71,7 @@ static const SelectorRemap sci0SelectorRemap[] = {
 
 // Taken from Leisure Suit Larry 1 VGA (Full Game)
 static const SelectorRemap sci1SelectorRemap[] = {
-	{      "nodePtr",  44 }, {   "cantBeHere",  57 },
+	{      "nodePtr",  44 }, {   "cantBeHere",  57 }, {    "topString", 101 },
 	{        "flags", 102 }, {         "init", 104 }, {      "dispose", 105 },
 	{       "caller", 134 }, {          "cue", 136 }, {        "owner", 150 },
 	{       "setVol", 156 }, {    "setCursor", 183 }, {    "completed", 210 },
@@ -81,7 +81,7 @@ static const SelectorRemap sci1SelectorRemap[] = {
 
 // Taken from KQ6 floppy (Full Game)
 static const SelectorRemap sci11SelectorRemap[] = {
-	{      "nodePtr",  41 }, {   "cantBeHere",  54 },
+	{      "nodePtr",  41 }, {   "cantBeHere",  54 }, {     "topString", 98 },
 	{        "flags",  99 }, {         "init", 110 }, {      "dispose", 111 },
 	{       "caller", 143 }, {          "cue", 145 }, {        "owner", 166 },
 	{       "setVol", 172 }, {    "setCursor", 197 }, {    "completed", 242 },
