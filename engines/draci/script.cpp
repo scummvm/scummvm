@@ -847,7 +847,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 			stk.push(res);
 
 			debugC(4, kDraciBytecodeDebugLevel, "\t\t%d %s %d (res: %d)",
-				arg1, oper._name.c_str(), arg2, res);
+				arg1, oper._name, arg2, res);
 			break;
 
 		case kMathVariable:
@@ -873,7 +873,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 				stk.push(0);
 
 				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s (not implemented)",
-					func._name.c_str());
+					func._name);
 			} else {
 				arg1 = stk.pop();
 
@@ -884,7 +884,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 				stk.push(res);
 			
 				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s(%d) (res: %d)",
-					func._name.c_str(), arg1, res);
+					func._name, arg1, res);
 			}
 
 			break;
@@ -1047,7 +1047,7 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 			int tmp;
 
 			// Print command name
-			debugC(1, kDraciBytecodeDebugLevel, "%s", cmd->_name.c_str());
+			debugC(1, kDraciBytecodeDebugLevel, "%s", cmd->_name);
 
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
@@ -1075,7 +1075,7 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_name != "gplend" && cmd->_name != "exit" && !_endProgram);
+	} while (cmd->_number != 0 && !_endProgram);	// 0 = gplend and exit
 
 	_endProgram = false;
 	_jump = oldJump;

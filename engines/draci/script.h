@@ -56,19 +56,19 @@ typedef int  (Script::* GPLFunctionHandler)(int) const;
 struct GPL2Command { 
 	byte _number; 
 	byte _subNumber; 
-	Common::String _name; 
+	const char *_name; 
 	uint16 _numParams;
 	int _paramTypes[kMaxParams];
 	GPLHandler _handler;
 };
 
 struct GPL2Operator {
-	Common::String _name;
+	const char *_name;
 	GPLOperatorHandler _handler;
 };
 
 struct GPL2Function {
-	Common::String _name;
+	const char *_name;
 	GPLFunctionHandler _handler;
 };
 
