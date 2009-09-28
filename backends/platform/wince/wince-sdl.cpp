@@ -1267,8 +1267,6 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	else
 		_newOrientation = _orientationLandscape = 0;
 
-	update_scalers();
-
 	if (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640) && mode)
 		_scaleFactorXm = -1;
 
