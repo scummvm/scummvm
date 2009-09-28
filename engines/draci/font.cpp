@@ -30,8 +30,8 @@
 
 namespace Draci {
 
-const Common::String kFontSmall("Small.fon");
-const Common::String kFontBig("Big.fon"); 
+const char *kFontSmall = "Small.fon";
+const char *kFontBig = "Big.fon"; 
 
 Font::Font(const Common::String &filename) { 
 

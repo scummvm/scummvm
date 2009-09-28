@@ -30,8 +30,8 @@
 
 namespace Draci {
 
-extern const Common::String kFontSmall;
-extern const Common::String kFontBig;
+extern const char *kFontSmall;
+extern const char *kFontBig;
 
 /** 
  *	Default font colours. They all seem to remain constant except for the
