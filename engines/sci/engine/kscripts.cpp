@@ -218,12 +218,6 @@ reg_t kDisposeScript(EngineState *s, int, int argc, reg_t *argv) {
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)
 			scr->setLockers(1);
-
-		// HACK for EcoQuest CD
-		if (s->_gameName == "ecoquest" && script == 821) {
-			warning("kDisposeScript hack for EcoQuest 1 CD: not disposing script 821");
-			scr->setLockers(2);
-		}
 	}
 
 	script_uninstantiate(s->segMan, script);

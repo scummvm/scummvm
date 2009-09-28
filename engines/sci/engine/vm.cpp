@@ -208,10 +208,8 @@ ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackP
 	int seg = s->segMan->getScriptSegment(script);
 	Script *scr = s->segMan->getScriptIfLoaded(seg);
 
-	if (!scr)  // Script not present yet?
+	if (!scr || scr->isMarkedAsDeleted()) // Script not present yet?
 		seg = script_instantiate(s->resMan, s->segMan, script);
-	else
-		scr->unmarkDeleted();
 
 	const int temp = s->segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {

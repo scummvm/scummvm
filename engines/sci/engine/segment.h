@@ -433,13 +433,6 @@ public:
 	}
 
 	/**
-	 * Marks the script as not deleted.
-	 */
-	void unmarkDeleted() {
-		_markedAsDeleted = false;
-	}
-
-	/**
 	 * Determines whether the script is marked as being deleted.
 	 */
 	bool isMarkedAsDeleted() const {
