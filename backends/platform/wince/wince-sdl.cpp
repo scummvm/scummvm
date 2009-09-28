@@ -1267,8 +1267,6 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 	else
 		_newOrientation = _orientationLandscape = 0;
 
-	update_scalers();
-
 	if (isOzone() && (getScreenWidth() >= 640 || getScreenHeight() >= 640) && mode)
 		_scaleFactorXm = -1;
 
@@ -1956,7 +1954,7 @@ void OSystem_WINCE3::setMousePos(int x, int y) {
 
 
 void OSystem_WINCE3::internDrawMouse() {
-	if (!_mouseNeedsRedraw || !_mouseVisible || !_mouseData)
+	if (!_mouseNeedsRedraw || !_mouseVisible || !_mouseData || !_mouseBackupOld)
 		return;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
