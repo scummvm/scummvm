@@ -91,7 +91,7 @@ public:
 
 
 	// Overloaded from SDL_Common (FIXME)
-	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend
+	void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format); // overloaded by CE backend
 	void undrawMouse();
 	void blitCursor();
 	bool showMouse(bool visible);

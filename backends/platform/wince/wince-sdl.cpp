@@ -1913,7 +1913,7 @@ void OSystem_WINCE3::copyRectToScreen(const byte *src, int pitch, int x, int y, 
 	SDL_UnlockSurface(_screen);
 }
 
-void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+void OSystem_WINCE3::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 
 	undrawMouse();
 	if (w == 0 || h == 0)
