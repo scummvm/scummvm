@@ -434,7 +434,7 @@ void AnimationManager::sortAnimations() {
 	bool hasChanged;	
 	
 	do {
-		hasChanged = true;
+		hasChanged = false;
 		cur = _animations.begin();
 		next = cur;
 
@@ -452,13 +452,13 @@ void AnimationManager::sortAnimations() {
 				_animations.erase(next);
 
 				insertAnimation(anim);
-				hasChanged = false;
+				hasChanged = true;
 			}
 
 			// Advance to next animation
 			cur = next;
 		}
-	} while (!hasChanged);
+	} while (hasChanged);
 }
 
 void AnimationManager::deleteAnimation(int id) {
