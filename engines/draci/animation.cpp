@@ -103,9 +103,9 @@ void Animation::nextFrame(bool force) {
 	}
 
 	debugC(6, kDraciAnimationDebugLevel, 
-	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d", 
+	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d z=%d", 
 	_id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(), 
-	_currentFrame, _frames.size(), frame->getX(), frame->getY());
+	_currentFrame, _frames.size(), frame->getX() + getRelativeX(), frame->getY() + getRelativeY(), _z);
 }
 
 uint Animation::nextFrameNum() const {
@@ -376,16 +376,16 @@ Animation *AnimationManager::getAnimation(int id) {
 	return NULL;
 }
 
-void AnimationManager::insertAnimation(Animation *animObj) {
+void AnimationManager::insertAnimation(Animation *anim) {
 	
 	Common::List<Animation *>::iterator it;	
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if (animObj->getZ() < (*it)->getZ()) 
+		if (anim->getZ() < (*it)->getZ()) 
 			break;
 	}
 
-	_animations.insert(it, animObj);
+	_animations.insert(it, anim);
 }
 
 void AnimationManager::addOverlay(Drawable *overlay, uint z) {
@@ -431,26 +431,34 @@ void AnimationManager::sortAnimations() {
 	if (cur == _animations.end())
 		return;	
 
-	while(1) {
+	bool hasChanged;	
+	
+	do {
+		hasChanged = true;
+		cur = _animations.begin();
 		next = cur;
-		next++;
 
-		// If we are at the last element, we're done
-		if (next == _animations.end())
-			break;
+		while (true) {
+			next++;
 
-		// If we find an animation out of order, reinsert it
-		if ((*next)->getZ() < (*cur)->getZ()) {
+			// If we are at the last element, we're done
+			if (next == _animations.end())
+				break;
 
-			Animation *anim = *next;
-			_animations.erase(next);
+			// If we find an animation out of order, reinsert it
+			if ((*next)->getZ() < (*cur)->getZ()) {
 
-			insertAnimation(anim);
+				Animation *anim = *next;
+				_animations.erase(next);
+
+				insertAnimation(anim);
+				hasChanged = false;
+			}
+
+			// Advance to next animation
+			cur = next;
 		}
-
-		// Advance to next animation
-		cur = next;
-	}
+	} while (!hasChanged);
 }
 
 void AnimationManager::deleteAnimation(int id) {
