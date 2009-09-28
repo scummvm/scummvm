@@ -132,6 +132,8 @@ const byte fragment8[] = {OP_IMM | OPSIZE16, 910 % 256, 910 / 256, OP_JUMP | OPS
 const int fragment8_size = 6;
 const byte fragment9[] = {OP_JUMP | OPSIZE8, 123};
 const int fragment9_size = 2;
+const byte fragment10[] = {OP_IMM | OPSIZE16, 160 % 256, 160 / 256, OP_JUMP | OPSIZE16, 136 % 256, 136 / 256};
+const int fragment10_size = 6;
 
 const WorkaroundEntry workaroundList[] = {
 	// DW1-SCN: Global 206 is whether Rincewind is trying to take the book back to the present.
@@ -167,6 +169,9 @@ const WorkaroundEntry workaroundList[] = {
 	// * Stealing the mallets from the wizards
 	// This fix ensures that the global is reset when the Garden scene is loaded (both entering and restoring a game)
 	{TINSEL_V2, true, 2888147476U, 0, fragment3_size, fragment3},
+
+	// DW1-GRA: Corrects text being drawn partially off-screen during the blackboard description of the Librarian
+	{TINSEL_V1,false, 293831402, 133, fragment10_size, fragment10},
 
 	{TINSEL_V0, false, 0, 0, 0, NULL}
 };
