@@ -1954,7 +1954,7 @@ void OSystem_WINCE3::setMousePos(int x, int y) {
 
 
 void OSystem_WINCE3::internDrawMouse() {
-	if (!_mouseNeedsRedraw || !_mouseVisible || !_mouseData || !_mouseBackupOld)
+	if (!_mouseNeedsRedraw || !_mouseVisible || !_mouseData)
 		return;
 
 	int x = _mouseCurState.x - _mouseHotspotX;
