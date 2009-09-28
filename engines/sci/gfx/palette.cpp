@@ -108,8 +108,9 @@ void Palette::unmerge() {
 
 	int count = 0;
 	for (uint i = 0; i < _size; ++i) {
-		if (_colors[i].refcount == PALENTRY_FREE)
-			continue;
+		if (_colors[i].refcount == PALENTRY_FREE) {
+			assert(_colors[i].parent_index == 0);
+		}
 
 		int pi = _colors[i].parent_index;
 		assert(pi >= 0);
@@ -243,8 +244,15 @@ bool Palette::mergeInto(Palette *parent) {
 
 	for (uint i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
-		if (entry.refcount == PALENTRY_FREE)
+		if (entry.refcount == PALENTRY_FREE) {
+			// Force all unused colours to index 0
+			entry.parent_index = 0;
+			if (_parent->_colors[0].refcount != PALENTRY_LOCKED)
+				_parent->_colors[0].refcount++;
+			if (_colors[i].r || _colors[i].g || _colors[i].b)
+				warning("Non-black unused colour in pic: index %d, %02X %02X %02X", i, _colors[i].r, _colors[i].g, _colors[i].b);
 			continue;
+		}
 
 		uint pi = _parent->findNearbyColor(entry.r, entry.g, entry.b);
 #ifdef DEBUG_MERGE
