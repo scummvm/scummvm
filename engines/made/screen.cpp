@@ -177,8 +177,8 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 	if (y + clipHeight > clipInfo.clipRect.bottom) {
 		clipHeight = clipInfo.clipRect.bottom - y;
 	}
-
-	source = (byte*)sourceSurface->getBasePtr(startX, startY);
+	
+	source = (byte*)sourceSurface->getBasePtr(0, startY);
 	dest = (byte*)clipInfo.destSurface->getBasePtr(x, y);
 	if (_vm->getGameID() != GID_RTZ)
 		maskp = (byte*)_maskDrawCtx.destSurface->getBasePtr(x, y);
@@ -188,10 +188,10 @@ void Screen::drawSurface(Graphics::Surface *sourceSurface, int x, int y, int16 f
 
 	if (flipX) {
 		linePtrAdd = -1;
-		sourceAdd = sourceSurface->w - 1;
+		sourceAdd = sourceSurface->w - startX - 1;
 	} else {
 		linePtrAdd = 1;
-		sourceAdd = 0;
+		sourceAdd = startX;
 	}
 
 	if (flipY) {
