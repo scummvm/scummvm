@@ -208,6 +208,12 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 	_brandonPosX = _currentCharacter->x2 = _currentCharacter->x1;
 	_brandonPosY = _currentCharacter->y2 = _currentCharacter->y1;
 
+	// We need to reset the "_noDrawShapesFlag" flag of Animator_LoK
+	// over here. Else in certain cases restoring an savegame might
+	// result in no shapes being drawn at all. See bug report
+	// #2868581 "KYRA1: Invisible Brandon" for an example of this.
+	_animator->_noDrawShapesFlag = 0;
+
 	enterNewScene(_currentCharacter->sceneId, _currentCharacter->facing, 0, 0, 1);
 
 	_animator->animRefreshNPC(0);
