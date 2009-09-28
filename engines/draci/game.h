@@ -260,6 +260,9 @@ public:
 	}
 
 	void walkHero(int x, int y);
+	int getHeroX();
+	int getHeroY();
+	void positionAnimAsHero(Animation *anim);
 
 	void loadRoom(int roomNum);
 	int loadAnimation(uint animNum, uint z);
@@ -282,6 +285,9 @@ public:
 
 	int getGateNum() const;
 	void setGateNum(int gate);
+
+	double getPers0();
+	double getPersStep();
 
 	int getItemStatus(int itemID) const;
 	void setItemStatus(int itemID, int status);
@@ -345,6 +351,8 @@ private:
 	DraciEngine *_vm;
 
 	GameInfo _info;
+
+	int _heroX, _heroY;
 
 	int *_variables;
 	Person *_persons;

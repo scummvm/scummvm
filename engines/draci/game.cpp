@@ -395,7 +395,7 @@ void Game::loop() {
 				// If we are in inventory mode, all the animations except game items'
 				// images will necessarily be paused so we can safely assume that any
 				// animation under the cursor (a value returned by 
-				// AnimationManager::getTopAnimationID()) will be an item animation or.
+				// AnimationManager::getTopAnimationID()) will be an item animation or
 				// an overlay, for which we check. Item animations have their IDs 
 				// calculated by offseting their itemID from the ID of the last "special" 
 				// animation ID. In this way, we obtain its itemID. 
@@ -429,10 +429,8 @@ void Game::loop() {
 				} else if (_vm->_mouse->rButtonPressed()) {
 					_vm->_mouse->rButtonSet(false);
 
-					Animation *inventoryAnim = _vm->_anims->getAnimation(kInventorySprite);
-					
 					// If we right-clicked outside the inventory, close it
-					if (!inventoryAnim->getFrame()->getRect().contains(x, y)) {
+					if (_animUnderCursor != kInventorySprite && _itemUnderCursor == kNoItem) {
 						inventoryDone();					
 
 					// If there is an inventory item under our cursor
@@ -992,17 +990,26 @@ void Game::walkHero(int x, int y) {
 	x = p.x;
 	y = p.y;
 
-	debugC(4, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
+	_heroX = p.x;
+	_heroY = p.y;
+
+	GameObject *dragon = getObject(kDragonObject); 
+
+	for (uint i = 0; i < dragon->_anims.size(); ++i) {
+		_vm->_anims->stop(dragon->_anims[i]);
+	}
+
+	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
 
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
-	int animID = getObject(kDragonObject)->_anims[0];
+	int animID = dragon->_anims[0];
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 
 	// Calculate scaling factors
-	double scaleX = _currentRoom._pers0 + _currentRoom._persStep * y;
-	double scaleY = scaleX;
+	const double scaleX = _vm->_game->getPers0() + _vm->_game->getPersStep() * y;
+	const double scaleY = scaleX;
 
 	// Set the Z coordinate for the dragon's animation
 	anim->setZ(y+1);
@@ -1384,6 +1391,58 @@ void Game::runGateProgram(int gate) {
 
 	setExitLoop(false);
 }
+
+void Game::positionAnimAsHero(Animation *anim) {
+
+	// Fetch dragon's coordinates
+	int x = _heroX;
+	int y = _heroY;
+
+	// Calculate scaling factors
+	const double scaleX = getPers0() + getPersStep() * y;
+	const double scaleY = scaleX;
+
+	// Set the Z coordinate for the dragon's animation
+	anim->setZ(y+1);
+
+	// Fetch current frame
+	Drawable *frame = anim->getFrame();
+
+	// Fetch base dimensions of the frame
+	uint height = frame->getHeight();
+	uint width = frame->getWidth();
+
+	// Set the per-animation scaling factor
+	anim->setScaleFactors(scaleX, scaleY);
+
+  	_persons[kDragonObject]._x = x + (lround(scaleX) * width) / 2;
+	_persons[kDragonObject]._y = y - lround(scaleY) * height;
+
+	// We naturally want the dragon to position its feet to the location of the
+	// click but sprites are drawn from their top-left corner so we subtract
+	// the current height of the dragon's sprite
+	y -= (int)(scaleY * height);
+	x -= (int)(scaleX * width) / 2;
+
+	anim->setRelative(x, y);
+}
+
+int Game::getHeroX() {
+	return _heroX;
+}
+
+int Game::getHeroY() {
+	return _heroY;
+}
+
+double Game::getPers0() {
+	return _currentRoom._pers0;
+}
+
+double Game::getPersStep() {
+	return _currentRoom._persStep;
+}
+
 
 int Game::getRoomNum() const {
 	return _currentRoom._roomNum;

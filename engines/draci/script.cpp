@@ -413,6 +413,10 @@ void Script::start(Common::Queue<int> &params) {
 	}
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
+
+	if (objID == kDragonObject)
+		_vm->_game->positionAnimAsHero(anim);
+
 	anim->registerCallback(&Animation::stopAnimation);	
 
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
@@ -439,6 +443,10 @@ void Script::startPlay(Common::Queue<int> &params) {
 	}
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
+
+	if (objID == kDragonObject)
+		_vm->_game->positionAnimAsHero(anim);
+
 	anim->registerCallback(&Animation::exitGameLoop);	
 
 	_vm->_game->setLoopSubstatus(kSubstatusStrange);
