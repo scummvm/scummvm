@@ -167,7 +167,7 @@ void Screen::drawRect(Common::Rect r, uint8 colour) {
  * @brief Fetches the current palette
  * @return A byte pointer to the current palette
  */
-byte *Screen::getPalette() const {
+const byte *Screen::getPalette() const {
 	return _palette;
 }
 

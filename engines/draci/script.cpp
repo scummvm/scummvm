@@ -282,7 +282,7 @@ int Script::funcActIco(int itemID) const {
 int Script::funcIsObjOn(int objID) const {
 	objID -= 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	return obj->_visible;
 }
@@ -290,7 +290,7 @@ int Script::funcIsObjOn(int objID) const {
 int Script::funcIsObjOff(int objID) const {
 	objID -= 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	// We index locations from 0 (as opposed to the original player where it was from 1)
 	// That's why the "away" location 0 from the data files is converted to -1
@@ -300,7 +300,7 @@ int Script::funcIsObjOff(int objID) const {
 int Script::funcObjStat(int objID) const {
 	objID -= 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	if (obj->_location == _vm->_game->getRoomNum()) {
 		if (obj->_visible) {
@@ -316,7 +316,7 @@ int Script::funcObjStat(int objID) const {
 int Script::funcIsObjAway(int objID) const {
 	objID -= 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	// see Script::funcIsObjOff
 	return !obj->_visible && obj->_location == -1;
@@ -333,7 +333,7 @@ int Script::funcActPhase(int objID) const {
 		return ret;
 	}
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
@@ -404,7 +404,7 @@ void Script::start(Common::Queue<int> &params) {
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;	
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	// Stop all animation that the object owns
 
@@ -430,7 +430,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 
 	// Stop all animation that the object owns
 
@@ -586,7 +586,7 @@ void Script::execInit(Common::Queue<int> &params) {
 
 	int objID = params.pop() - 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 	run(obj->_program, obj->_init);
 }
 
@@ -597,7 +597,7 @@ void Script::execLook(Common::Queue<int> &params) {
 
 	int objID = params.pop() - 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 	run(obj->_program, obj->_look);
 }
 
@@ -608,7 +608,7 @@ void Script::execUse(Common::Queue<int> &params) {
 
 	int objID = params.pop() - 1;
 
-	GameObject *obj = _vm->_game->getObject(objID);
+	const GameObject *obj = _vm->_game->getObject(objID);
 	run(obj->_program, obj->_use);
 }
 

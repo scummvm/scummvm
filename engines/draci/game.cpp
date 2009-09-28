@@ -249,7 +249,7 @@ void Game::init() {
 
 	loadObject(kDragonObject);
 	
-	GameObject *dragon = getObject(kDragonObject);
+	const GameObject *dragon = getObject(kDragonObject);
 	debugC(4, kDraciLogicDebugLevel, "Running init program for the dragon object...");
 	_vm->_script->run(dragon->_program, dragon->_init);
 
@@ -1148,9 +1148,10 @@ void Game::loadRoom(int roomNum) {
 	// other objects that may not yet be loaded
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		if (_objects[i]._location == roomNum) {
+			const GameObject *obj = getObject(i);
 			debugC(6, kDraciLogicDebugLevel, 
-				"Running init program for object %d (offset %d)", i, getObject(i)->_init);		
-			_vm->_script->run(getObject(i)->_program, getObject(i)->_init);
+				"Running init program for object %d (offset %d)", i, obj->_init);		
+			_vm->_script->run(obj->_program, obj->_init);
 		}
 	}
 
@@ -1345,7 +1346,7 @@ void Game::changeRoom(uint roomNum) {
 	int oldRoomNum = _currentRoom._roomNum;
 
 	// TODO: Make objects capable of stopping their own animations
-	GameObject *dragon = getObject(kDragonObject);
+	const GameObject *dragon = getObject(kDragonObject);
 	for (uint i = 0; i < dragon->_anims.size(); ++i) {
 		_vm->_anims->stop(dragon->_anims[i]);
 	}

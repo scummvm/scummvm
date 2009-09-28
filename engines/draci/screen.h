@@ -48,7 +48,7 @@ public:
 
 	void setPaletteEmpty(unsigned int numEntries = kNumColours);
 	void setPalette(const byte *data, uint16 start, uint16 num);
-	byte *getPalette() const;
+	const byte *getPalette() const;
 	void copyToScreen();
 	void clearScreen();
 	void fillScreen(uint8 colour);
