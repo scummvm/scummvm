@@ -142,7 +142,6 @@ reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t victim_addr = argv[0];
 	Clone *victim_obj = s->segMan->getObject(victim_addr);
-	uint16 underBits;
 
 	if (!victim_obj) {
 		error("Attempt to dispose non-class/object at %04x:%04x",
@@ -156,10 +155,10 @@ reg_t kDisposeClone(EngineState *s, int, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	underBits = GET_SEL32V(victim_addr, underBits);
-	if (underBits) {
-		warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
-	}
+	// QFG3 clears clones with underbits set
+	//if (GET_SEL32V(victim_addr, underBits))
+	//	warning("Clone %04x:%04x was cleared with underBits set", PRINT_REG(victim_addr));
+
 #if 0
 	if (s->dyn_views) {  // Free any widget associated with the clone
 		GfxWidget *widget = gfxw_set_id(gfxw_remove_ID(s->dyn_views, offset), GFXW_NO_ID);
