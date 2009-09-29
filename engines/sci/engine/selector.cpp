@@ -88,6 +88,9 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	ExecStack *xstack;
 	xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, k_argc, k_argp - 1, 0, NULL_REG,
 	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+	// FIXME: With this hack, selector was set to -42 - kfunct, which has been changed, as we
+	// no longer pass the function number to each function (commit #44461). Therefore, this no
+	// longer works. A better alternative needs to be done to restore the previous functionality
 	xstack->selector = -42 + 1; // Evil debugging hack to identify kernel function
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 
