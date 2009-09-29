@@ -26,6 +26,7 @@
 #include "asylum/blowuppuzzle.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
+#include "asylum/config.h"
 
 namespace Asylum {
 
@@ -112,8 +113,7 @@ void BlowUpPuzzleVCR::handleEvent(Common::Event *event, bool doUpdate) {
 }
 
 void BlowUpPuzzle::playSound(uint resourceId, bool loop) {
-	int volume = _scene->vm()->soundVolume();
-	_scene->vm()->sound()->playSound(_scene->getResourcePack(), resourceId, volume, loop, 0, true);
+	_scene->vm()->sound()->playSound(_scene->getResourcePack(), resourceId, Config.sfxVolume, loop, 0, true);
 }
 
 int BlowUpPuzzleVCR::inPolyRegion(int x, int y, int polyIdx) {
