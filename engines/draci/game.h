@@ -352,7 +352,7 @@ private:
 
 	GameInfo _info;
 
-	int _heroX, _heroY;
+	Common::Point _hero;
 
 	int *_variables;
 	Person *_persons;

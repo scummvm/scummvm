@@ -985,10 +985,7 @@ void Game::walkHero(int x, int y) {
 
 	Surface *surface = _vm->_screen->getSurface();
 	
-	Common::Point p = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
-
-	_heroX = p.x;
-	_heroY = p.y;
+	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
 
 	GameObject *dragon = getObject(kDragonObject); 
 
@@ -996,47 +993,14 @@ void Game::walkHero(int x, int y) {
 		_vm->_anims->stop(dragon->_anims[i]);
 	}
 
-	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _heroX, _heroY);
+	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
 
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
 	int animID = dragon->_anims[0];
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
-
-	// Calculate scaling factors
-	const double scale = _vm->_game->getPers0() + _vm->_game->getPersStep() * _heroY;
-
-	// Set the Z coordinate for the dragon's animation
-	anim->setZ(y+1);
-
-	// Fetch current frame
-	Drawable *frame = anim->getFrame();
-
-	// Fetch base dimensions of the frame
-	uint height = frame->getHeight();
-	uint width = frame->getWidth();
-
-	// We naturally want the dragon to position its feet to the location of the
-	// click but sprites are drawn from their top-left corner so we subtract
-	// the current height of the dragon's sprite
-	_heroY -= (int)(scale * height);
-	_heroX -= (int)(scale * width) / 2;
-
-	// TODO: Check if underflow is handled well everywhere and remove this once sure
-
-	if (_heroX < 0)
-		_heroX = 0;
-
-	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
-	// so the text remains centered over the dragon.
-  	_persons[kDragonObject]._x = p.x;
-	_persons[kDragonObject]._y = _heroY;
-
-	// Set the per-animation scaling factor
-	anim->setScaleFactors(scale, scale);
-
-	anim->setRelative(_heroX, _heroY);
+	positionAnimAsHero(anim);
 
 	// Play the animation
 	_vm->_anims->play(animID);
@@ -1396,16 +1360,11 @@ void Game::runGateProgram(int gate) {
 
 void Game::positionAnimAsHero(Animation *anim) {
 
-	// Fetch dragon's coordinates
-	int x = _heroX;
-	int y = _heroY;
-
 	// Calculate scaling factors
-	const double scaleX = getPers0() + getPersStep() * y;
-	const double scaleY = scaleX;
+	const double scale = getPers0() + getPersStep() * _hero.y;
 
 	// Set the Z coordinate for the dragon's animation
-	anim->setZ(y+1);
+	anim->setZ(_hero.y + 1);
 
 	// Fetch current frame
 	Drawable *frame = anim->getFrame();
@@ -1414,27 +1373,33 @@ void Game::positionAnimAsHero(Animation *anim) {
 	uint height = frame->getHeight();
 	uint width = frame->getWidth();
 
-	// Set the per-animation scaling factor
-	anim->setScaleFactors(scaleX, scaleY);
-
-  	_persons[kDragonObject]._x = x + (lround(scaleX) * width) / 2;
-	_persons[kDragonObject]._y = y - lround(scaleY) * height;
-
 	// We naturally want the dragon to position its feet to the location of the
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
-	y -= (int)(scaleY * height);
-	x -= (int)(scaleX * width) / 2;
+	Common::Point p = _hero;
+	p.x -= (int)(scale * width) / 2;
+	p.y -= (int)(scale * height);
+	// TODO: fix drawScaled() and remove this
+	if (p.x < 0)
+		p.x = 0;
 
-	anim->setRelative(x, y);
+	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
+	// so the text remains centered over the dragon.
+  	_persons[kDragonObject]._x = _hero.x;
+	_persons[kDragonObject]._y = p.y;
+
+	// Set the per-animation scaling factor
+	anim->setScaleFactors(scale, scale);
+
+	anim->setRelative(p.x, p.y);
 }
 
 int Game::getHeroX() const {
-	return _heroX;
+	return _hero.x;
 }
 
 int Game::getHeroY() const {
-	return _heroY;
+	return _hero.y;
 }
 
 double Game::getPers0() const {
