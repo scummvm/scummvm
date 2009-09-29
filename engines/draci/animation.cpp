@@ -449,7 +449,7 @@ void AnimationManager::sortAnimations() {
 			if ((*next)->getZ() < (*cur)->getZ()) {
 
 				Animation *anim = *next;
-				_animations.erase(next);
+				next = _animations.reverse_erase(next);
 
 				insertAnimation(anim);
 				hasChanged = true;
@@ -502,7 +502,7 @@ void AnimationManager::deleteOverlays() {
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if ((*it)->getID() == kOverlayImage) {
 			delete *it;
-			_animations.erase(it);
+			it = _animations.reverse_erase(it);
 		}	
 	}
 }
@@ -536,7 +536,7 @@ void AnimationManager::deleteAfterIndex(int index) {
 			debugC(3, kDraciAnimationDebugLevel, "Deleting animation %d...", (*it)->getID());
 
 			delete *it;
-			_animations.erase(it);
+			it = _animations.reverse_erase(it);
 		}
 	}
 	
