@@ -363,7 +363,7 @@ uint32 DataIO::getChunkPos(int16 handle) const {
 int32 DataIO::getChunkSize(const char *chunkName, int32 &packSize) {
 	packSize = -1;
 
-	for (int16 file = 0; file < MAX_DATA_FILES; file++) {
+	for (int file = 0; file < MAX_DATA_FILES; file++) {
 		if (_dataFiles[file] == 0)
 			return -1;
 

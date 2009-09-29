@@ -646,7 +646,6 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 			if (isValid(_currentKey, _currentId, _currentIndex))
 				enter(_currentIndex);
 		}
-
 		_vm->_draw->animateCursor(-1);
 	}
 
@@ -712,48 +711,59 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 
 			if (_vm->_game->_mouseButtons != kMouseButtonsNone) {
 				// Mouse button pressed
-
-				if (delay > 0) {
-					// If a delay was requested, wait the specified time
-
+				int i;
+				if (_vm->getGameType() == kGameTypeFascination)
+					i = _vm->_draw->handleCurWin();
+				else
+					i = 0;
+				if (!i) {
 					_vm->_draw->animateCursor(2);
-					_vm->_util->delay(delay);
-				} else if (handleMouse & 1)
-					_vm->_util->waitMouseRelease(1);
+					if (delay > 0) {
+						// If a delay was requested, wait the specified time
+						_vm->_util->delay(delay);
+					} else if (handleMouse & 1)
+						_vm->_util->waitMouseRelease(1);
 
-				_vm->_draw->animateCursor(-1);
+					_vm->_draw->animateCursor(-1);
 
-				// Which region was clicked?
-				key = checkMouse(kTypeClick, id, index);
+					// Which region was clicked?
+					key = checkMouse(kTypeClick, id, index);
 
-				if ((key != 0) || (id != 0)) {
-					// Got a valid region
+					if ((key != 0) || (id != 0)) {
+						// Got a valid region
 
-					if ( (handleMouse & 1) &&
-						  ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
-						_vm->_draw->blitCursor();
+						if ( (handleMouse & 1) &&
+							  ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
+							_vm->_draw->blitCursor();
 
-					// If the hotspot changed, leave the old one
-					if (key != _currentKey)
+						// If the hotspot changed, leave the old one
+						if (key != _currentKey)
+							leave(_currentIndex);
+
+						_currentKey = 0;
+						break;
+					}
+
+					if (handleMouse & 4)
+						// Nothing further than one simple check was requested => return
+						return 0;
+
+					// Leave the current area
+					if (_currentKey != 0)
 						leave(_currentIndex);
 
-					_currentKey = 0;
-					break;
+					// No click, but do we have a move event? If so, enter that hotspot
+					_currentKey = checkMouse(kTypeMove, _currentId, _currentIndex);
+					if (isValid(_currentKey, _currentId, _currentIndex))
+						enter(_currentIndex);
+				} else {
+					WRITE_VAR(16, (int32) i);
+					if (id) 
+						id=0;
+					if (index) 
+						index=0;
+					return(0);
 				}
-
-				if (handleMouse & 4)
-					// Nothing further than one simple check was requested => return
-					return 0;
-
-				// Leave the current area
-				if (_currentKey != 0)
-					leave(_currentIndex);
-
-				// No click, but do we have a move event? If so, enter that hotspot
-				_currentKey = checkMouse(kTypeMove, _currentId, _currentIndex);
-				if (isValid(_currentKey, _currentId, _currentIndex))
-					enter(_currentIndex);
-
 			} else
 				// No mouse button pressed, check whether the position changed at least
 				checkHotspotChanged();
@@ -1180,6 +1190,30 @@ void Hotspots::evaluateNew(uint16 i, uint16 *ids, InputDesc *inputs,
 		width   = _vm->_game->_script->readUint16();
 		height  = _vm->_game->_script->readUint16();
 	}
+	if (_vm->_draw->_renderFlags & 64) {
+		warning("_renderFlags check added for Fascination");
+		_vm->_draw->_invalidatedTops[0] = 0;
+		_vm->_draw->_invalidatedLefts[0] = 0;
+		_vm->_draw->_invalidatedRights[0] = 319;
+		_vm->_draw->_invalidatedBottoms[0] = 199;
+		_vm->_draw->_invalidatedCount = 1;
+		if (window == 0) {
+			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
+			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
+			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
+			_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
+		} else
+			if ((_vm->_draw->_fascinWin[window].id != -1) && (_vm->_draw->_fascinWin[window].id == _vm->_draw->_winCount - 1)) {
+				left += _vm->_draw->_fascinWin[window].left;
+				top  += _vm->_draw->_fascinWin[window].top;
+				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left + width - 1, top, left + width - 1, top + height - 1, 0);
+				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left, top + height - 1, 0);
+				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top, left + width - 1, top, 0);
+				_vm->_video->drawLine(*_vm->_draw->_spritesArray[_vm->_draw->_destSurface], left, top + height - 1, left + width - 1, top + height - 1, 0);
+				left -= _vm->_draw->_fascinWin[window].left;
+				top  -= _vm->_draw->_fascinWin[window].top;
+			}
+	}
 	type &= 0x7F;
 
 	// Apply global drawing offset
@@ -1569,7 +1603,7 @@ void Hotspots::oPlaytoons_F_1B(void) {
 	int16 shortId;
 	int16 longId;
 	int16 var2;
-	int16 var3;
+	int16 fontIndex;
 	int16 var4;
 
 	uint16 left;
@@ -1582,7 +1616,7 @@ void Hotspots::oPlaytoons_F_1B(void) {
 
 	_vm->_game->_script->evalExpr(0);
 
-	var3 = _vm->_game->_script->readValExpr();
+	fontIndex = _vm->_game->_script->readValExpr();
 	var4 = _vm->_game->_script->readValExpr();
 
 //  this variable is always set to 0 in Playtoons
@@ -1595,8 +1629,7 @@ void Hotspots::oPlaytoons_F_1B(void) {
 		if ((_hotspots[i].id == 0xD000 + shortId) || (_hotspots[i].id == 0xB000 + shortId) || 
 			(_hotspots[i].id == 0x4000 + shortId)) {
 			longId = _hotspots[i].id;
-			warning("oPlaytoons_F_1B not fully handled");
-			warning("shortId %d, var2 %d var3 %d var4 %d", shortId, var2, var3, var4);
+			warning("oPlaytoons_F_1B: shortId %d, var2 %d fontIndex %d var4 %d - longId %d", shortId, var2, fontIndex, var4, longId);
 			
 			left = _hotspots[i].left;
 			top = _hotspots[i].top;
@@ -1613,7 +1646,8 @@ void Hotspots::oPlaytoons_F_1B(void) {
 				right -= 2;
 				bottom -= 2;
 			}
-			oPlaytoons_sub_F_1B(0x8000 + var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), var3, var4, shortId);
+//			oPlaytoons_sub_F_1B(0x8000 + var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), var3, var4, shortId);
+			_vm->_draw->oPlaytoons_sub_F_1B(0x8000+ var2, left, top, right, bottom, _vm->_game->_script->getResultStr(), fontIndex, var4, shortId);
 			return;
 		}
 	}
@@ -2030,17 +2064,4 @@ void Hotspots::updateAllTexts(const InputDesc *inputs) const {
 		input++;
 	}
 }
-
-void Hotspots::oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId)
-{
-	char tmpStr[128];
-
-	strcpy( tmpStr, paramStr);
-	_vm->_draw->adjustCoords(1, &left, &right);
-	_vm->_draw->adjustCoords(1, &top,  &bottom);
-
-	warning("oPlaytoons_sub_F_1B display string %s", paramStr);
-	return;
-}
-
 } // End of namespace Gob

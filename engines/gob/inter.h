@@ -432,29 +432,29 @@ protected:
 
 	void oFascin_playProtracker(OpGobParams &params);
 
-	void oFascin_geUnknown0(OpGobParams &params);
-	void oFascin_geUnknown1(OpGobParams &params);
-	void oFascin_geUnknown2(OpGobParams &params);
-	void oFascin_geUnknown3(OpGobParams &params);
-	void oFascin_geUnknown4(OpGobParams &params);
-	void oFascin_geUnknown5(OpGobParams &params);
-	void oFascin_geUnknown6(OpGobParams &params);
-	void oFascin_geUnknown7(OpGobParams &params);
-	void oFascin_geUnknown8(OpGobParams &params);
-	void oFascin_geUnknown9(OpGobParams &params);
-	void oFascin_geUnknown10(OpGobParams &params);
-	void oFascin_geUnknown11(OpGobParams &params);
+	void oFascin_playTirb(OpGobParams &params);
+	void oFascin_playTira(OpGobParams &params);
+	void oFascin_loadExtasy(OpGobParams &params);
+	void oFascin_adlibPlay(OpGobParams &params);
+	void oFascin_adlibStop(OpGobParams &params);
+	void oFascin_adlibUnload(OpGobParams &params);
+	void oFascin_loadMus1(OpGobParams &params);
+	void oFascin_loadMus2(OpGobParams &params);
+	void oFascin_loadMus3(OpGobParams &params);
+	void oFascin_loadBatt1(OpGobParams &params);
+	void oFascin_loadBatt2(OpGobParams &params);
+	void oFascin_loadBatt3(OpGobParams &params);
 	void oFascin_geUnknown1000(OpGobParams &params);
 	void oFascin_geUnknown1001(OpGobParams &params);
 	void oFascin_geUnknown1002(OpGobParams &params);
 	bool oFascin_feUnknown4(OpFuncParams &params);
 	bool oFascin_feUnknown27(OpFuncParams &params);
-	void oFascin_cdUnknown3();
-	void oFascin_cdUnknown4();
-	void oFascin_cdUnknown5();
-	void oFascin_cdUnknown6();
+	void oFascin_setWinSize();
+	void oFascin_closeWin();
+	void oFascin_activeWin();
+	void oFascin_openWin();
 	void oFascin_setRenderFlags();
-	void oFascin_cdUnknown11();
+	void oFascin_setWinFlags();
 };
 
 class Inter_v3 : public Inter_v2 {

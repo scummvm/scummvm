@@ -55,6 +55,15 @@ public:
 		FontToSprite() : sprite(0), base(0), width(0), height(0) {}
 	};
 
+	struct fascinWin {
+		int16 id;
+		int16 left;
+		int16 top;
+		int16 width;
+		int16 height;
+		SurfaceDescPtr savedSurface;
+	};
+
 	int16 _renderFlags;
 
 	int16 _fontIndex;
@@ -73,6 +82,7 @@ public:
 
 	char _letterToPrint;
 	const char *_textToPrint;
+	char *_hotspotText;
 
 	int16 _backDeltaX;
 	int16 _backDeltaY;
@@ -86,8 +96,8 @@ public:
 	Common::Array<SurfaceDescPtr> _spritesArray;
 
 	int16 _invalidatedCount;
-	int16 _invalidatedTops[30];
 	int16 _invalidatedLefts[30];
+	int16 _invalidatedTops[30];
 	int16 _invalidatedRights[30];
 	int16 _invalidatedBottoms[30];
 
@@ -140,6 +150,19 @@ public:
 
 	int16 _pattern;
 
+	fascinWin _fascinWin[10];
+	int16 _winMaxWidth;
+	int16 _winMaxHeight;
+	int16 _winCount;
+	int16 _winVarArrayLeft;
+	int16 _winVarArrayTop;
+	int16 _winVarArrayWidth;
+	int16 _winVarArrayHeight;
+	int16 _winVarArrayStatus;
+	int16 _winVarArrayLimitsX;
+	int16 _winVarArrayLimitsY;	
+	
+
 	void invalidateRect(int16 left, int16 top, int16 right, int16 bottom);
 	void blitInvalidated();
 	void setPalette();
@@ -162,6 +185,21 @@ public:
 			int16 transp, SurfaceDesc &dest, const Font &font);
 	void printTextCentered(int16 id, int16 left, int16 top, int16 right,
 			int16 bottom, const char *str, int16 fontIndex, int16 color);
+	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *paramStr, int16 var3, int16 var4, int16 shortId);
+
+	int16 openWin(int16 id);
+	int16 handleCurWin();
+	bool winOverlap(int16 idWin1, int16 idWin2);
+	void winDecomp(int16 x, int16 y, SurfaceDescPtr bmp);
+	void activeWin(int16 id);
+	void closeWin(int16 id);
+	void restoreWin(int16 i);
+	void saveWin(int16 id);
+	void winMove(int16 id);
+	void handleWinBorder(int16 id);
+	void winDraw(int16 fct);
+	void winTrace(int16 left, int16 top, int16 width, int16 height);
+
 	int32 getSpriteRectSize(int16 index);
 	void forceBlit(bool backwards = false);
 
@@ -222,12 +260,11 @@ public:
 	virtual ~Draw_Bargon() {}
 };
 
-class Draw_Fascin: public Draw_v2 {
+class Draw_Fascination: public Draw_v1 {
 public:
-	virtual void initScreen();
-
-	Draw_Fascin(GobEngine *vm);
-	virtual ~Draw_Fascin() {}
+	Draw_Fascination(GobEngine *vm);
+	virtual ~Draw_Fascination() {}
+	virtual void spriteOperation(int16 operation);
 };
 
 class Draw_Playtoons: public Draw_v2 {

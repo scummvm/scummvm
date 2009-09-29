@@ -380,6 +380,7 @@ void Inter_Playtoons::oPlaytoons_getObjAnimSize() {
 		warning("oPlaytoons_getObjAnimSize case -2 not implemented");
 		return;
 	}
+
 	if ((objIndex < 0) || (objIndex >= _vm->_mult->_objCount)) {
 		warning("oPlaytoons_getObjAnimSize(): objIndex = %d (%d)", objIndex, _vm->_mult->_objCount);
 		_vm->_scenery->_toRedrawLeft   = 0;

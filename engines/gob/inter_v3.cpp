@@ -80,6 +80,11 @@ bool Inter_v3::o3_getTotTextItemPart(OpFuncParams &params) {
 	part = _vm->_game->_script->readValExpr();
 
 	stringVar = stringStartVar;
+	if (part == -1) {
+		warning("o3_getTotTextItemPart, part == -1");
+		_vm->_draw->_hotspotText = GET_VARO_STR(stringVar);
+	}
+
 	WRITE_VARO_UINT8(stringVar, 0);
 
 	TextItem *textItem = _vm->_game->_resources->getTextItem(totTextItem);

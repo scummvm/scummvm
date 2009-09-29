@@ -145,6 +145,8 @@ public:
 
 	bool _noCd;
 
+	int16 _curWinId;
+
 	Global(GobEngine *vm);
 	~Global();
 

@@ -113,6 +113,11 @@ void Init::initGame() {
 	_palDesc->unused2 = _vm->_draw->_unusedPalette2;
 	_vm->_video->setFullPalette(_palDesc);
 
+	for (int i = 0; i < 10; i++)
+		_vm->_draw->_fascinWin[i].id = -1;
+
+	_vm->_draw->_winCount = 0;
+
 	for (int i = 0; i < 8; i++)
 		_vm->_draw->_fonts[i] = 0;
 

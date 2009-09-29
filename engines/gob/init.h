@@ -90,6 +90,13 @@ public:
 	void initGame();
 };
 
+class Init_Fascination : public Init_v2 {
+public:
+	Init_Fascination(GobEngine *vm);
+	~Init_Fascination();
+
+	void initGame();
+};
 } // End of namespace Gob
 
 #endif // GOB_INIT_H

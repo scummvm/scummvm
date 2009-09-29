@@ -127,6 +127,8 @@ Global::Global(GobEngine *vm) : _vm(vm) {
 	_doSubtitles = false;
 
 	_noCd = false;
+
+	_curWinId = 0;
 }
 
 Global::~Global() {

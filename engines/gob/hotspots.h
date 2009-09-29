@@ -269,8 +269,6 @@ private:
 
 	/** Go through all inputs we manage and redraw their texts. */
 	void updateAllTexts(const InputDesc *inputs) const;
-
-	void oPlaytoons_sub_F_1B( uint16 id, int16 left, int16 top, int16 right, int16 bottom, char *str, int16 var3, int16 var4, int16 shortId);
 };
 
 } // End of namespace Gob

@@ -362,7 +362,7 @@ bool GobEngine::initGameParts() {
 		_video    = new Video_v2(this);
 		_inter    = new Inter_Fascination(this);
 		_mult     = new Mult_v2(this);
-		_draw     = new Draw_v2(this);
+		_draw     = new Draw_Fascination(this);
 		_map      = new Map_v2(this);
 		_goblin   = new Goblin_v2(this);
 		_scenery  = new Scenery_v2(this);
