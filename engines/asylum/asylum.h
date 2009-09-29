@@ -112,13 +112,6 @@ public:
 		return _text;
 	}
 
-	int ambientVolume() {
-		return _ambientVolume;
-	}
-	int soundVolume()   {
-		return _soundVolume;
-	}
-
 private:
 	void checkForEvent(bool doUpdate);
 	void waitForTimer(int msec_delay);
@@ -128,9 +121,6 @@ private:
 
 	Common::Language     _language;
 	Common::RandomSource _rnd;
-
-	int _ambientVolume;
-	int _soundVolume;
 
 	bool _introPlaying;
 

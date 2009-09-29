@@ -24,6 +24,7 @@
  */
 
 #include "asylum/actionlist.h"
+#include "asylum/config.h"
 
 namespace Asylum {
 
@@ -615,8 +616,7 @@ int kEnableBarriers(ActionCommand *cmd, Scene *scn) {
 		// but this is effectively trying to do a boolean AND operation on a boolean variable
 		// which is odd, and wrong. Changing it to (sndIdx & 5), for now
 		//scn->vm()->sound()->playSound(((sndIdx != 0) & 5) + 0x80120001,
-		scn->vm()->sound()->playSound((sndIdx & 5) + 0x80120001,
-		                              false, scn->vm()->soundVolume(), 0);
+		scn->vm()->sound()->playSound((sndIdx & 5) + 0x80120001, false, Config.sfxVolume, 0);
 	}
 
 	if (scn->actions()->getScript()->counter >= 3 * v59 - 1) {

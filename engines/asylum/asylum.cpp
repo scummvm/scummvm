@@ -31,6 +31,7 @@
 
 #include "asylum/asylum.h"
 #include "asylum/respack.h"
+#include "asylum/config.h"
 
 namespace Asylum {
 
@@ -54,10 +55,6 @@ AsylumEngine::AsylumEngine(OSystem *system, Common::Language language)
 	g_eventRec.registerRandomSource(_rnd, "asylum");
 
 	memset(_gameFlags, 0, 1512);
-
-	// initialize default configuration
-	_ambientVolume = 0;
-	_soundVolume   = 0;
 }
 
 AsylumEngine::~AsylumEngine() {
@@ -169,7 +166,7 @@ void AsylumEngine::playIntro() {
 
 	// Play the intro sound sample (the screen is blacked out, you hear
 	// an alarm sounding and men talking about.
-	_sound->playSound(0x8012007, false, _soundVolume, 0);
+	_sound->playSound(0x8012007, false, Config.sfxVolume, 0);
 }
 
 void AsylumEngine::checkForEvent(bool doUpdate) { // k_sub_40AE30 (0040AE30)

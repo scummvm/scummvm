@@ -25,6 +25,7 @@
 
 #include "asylum/scene.h"
 #include "asylum/actor.h"
+#include "asylum/config.h"
 
 namespace Asylum {
 
@@ -780,7 +781,7 @@ void Scene::updateAmbientSounds() {
 				if (LOBYTE(snd->flags) & 2) {
 					if (rand() % 10000 < 10) {
 						if (snd->field_0) {
-							_vm->sound()->playSound(_resPack, snd->resId, false, _vm->ambientVolume() + volume, panning);
+							_vm->sound()->playSound(_resPack, snd->resId, false, Config.sfxVolume + volume, panning);
 						} else {
 							v15 = rand() % 500;
 							v11 = v15 * ((((rand() % 100 >= 50) - 1) & 2) - 1) + volume;

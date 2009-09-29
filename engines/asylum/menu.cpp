@@ -26,6 +26,7 @@
 #include "asylum/menu.h"
 #include "asylum/respack.h"
 #include "asylum/graphics.h"
+#include "asylum/config.h"
 
 namespace Asylum {
 
@@ -291,7 +292,7 @@ void MainMenu::updateMainMenu() {
 
 			// Play creepy voice
 			if (_activeIcon != _previousActiveIcon) {
-				_vm->sound()->playSound(_resPack, iconNum + 44, _vm->soundVolume());
+				_vm->sound()->playSound(_resPack, iconNum + 44, Config.sfxVolume);
 				_previousActiveIcon = _activeIcon;
 			}
 
