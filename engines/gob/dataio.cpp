@@ -361,6 +361,8 @@ uint32 DataIO::getChunkPos(int16 handle) const {
 }
 
 int32 DataIO::getChunkSize(const char *chunkName, int32 &packSize) {
+	packSize = -1;
+
 	for (int16 file = 0; file < MAX_DATA_FILES; file++) {
 		if (_dataFiles[file] == 0)
 			return -1;
@@ -370,10 +372,8 @@ int32 DataIO::getChunkSize(const char *chunkName, int32 &packSize) {
 			if (scumm_stricmp(chunkName, dataDesc->chunkName) != 0)
 				continue;
 
-			if (dataDesc->packed == 0) {
-				packSize = -1;
+			if (dataDesc->packed == 0)
 				return dataDesc->size;
-			}
 
 			for (int16 slot = 0; slot < MAX_SLOT_COUNT; slot++)
 				_isCurrentSlot[slot] = false;
