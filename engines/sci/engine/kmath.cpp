@@ -28,18 +28,18 @@
 
 namespace Sci {
 
-reg_t kRandom(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, argv[0].toSint16() + (int)((argv[1].toSint16() + 1.0 - argv[0].toSint16()) * (rand() / (RAND_MAX + 1.0))));
 }
 
-reg_t kAbs(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
 	// This is a hack, but so is the code in Hoyle1 that needs it.
 	if (argv[0].segment)
 		return make_reg(0, 0x3e8); // Yes people, this is an object
 	return make_reg(0, abs(argv[0].toSint16()));
 }
 
-reg_t kSqrt(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSqrt(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, (int16) sqrt((float) abs(argv[0].toSint16())));
 }
 
@@ -63,7 +63,7 @@ int get_angle(int xrel, int yrel) {
 	}
 }
 
-reg_t kGetAngle(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kGetAngle(EngineState *s, int argc, reg_t *argv) {
 	// Based on behavior observed with a test program created with
 	// SCI Studio.
 	int x1 = argv[0].toSint16();
@@ -100,7 +100,7 @@ reg_t kGetAngle(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, angle);
 }
 
-reg_t kGetDistance(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kGetDistance(EngineState *s, int argc, reg_t *argv) {
 	int xdiff = (argc > 3) ? argv[3].toSint16() : 0;
 	int ydiff = (argc > 2) ? argv[2].toSint16() : 0;
 	int angle = (argc > 5) ? argv[5].toSint16() : 0;
@@ -109,21 +109,21 @@ reg_t kGetDistance(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, (int16)sqrt((float) xrel*xrel + yrel*yrel));
 }
 
-reg_t kTimesSin(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kTimesSin(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int factor = argv[1].toSint16();
 
 	return make_reg(0, (int)(factor * sin(angle * PI / 180.0)));
 }
 
-reg_t kTimesCos(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kTimesCos(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int factor = argv[1].toSint16();
 
 	return make_reg(0, (int)(factor * cos(angle * PI / 180.0)));
 }
 
-reg_t kCosDiv(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kCosDiv(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int value = argv[1].toSint16();
 	double cosval = cos(angle * PI / 180.0);
@@ -135,7 +135,7 @@ reg_t kCosDiv(EngineState *s, int, int argc, reg_t *argv) {
 		return make_reg(0, (int16)(value / cosval));
 }
 
-reg_t kSinDiv(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSinDiv(EngineState *s, int argc, reg_t *argv) {
 	int angle = argv[0].toSint16();
 	int value = argv[1].toSint16();
 	double sinval = sin(angle * PI / 180.0);
@@ -147,7 +147,7 @@ reg_t kSinDiv(EngineState *s, int, int argc, reg_t *argv) {
 		return make_reg(0, (int16)(value / sinval));
 }
 
-reg_t kTimesTan(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kTimesTan(EngineState *s, int argc, reg_t *argv) {
 	int param = argv[0].toSint16();
 	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 
@@ -159,7 +159,7 @@ reg_t kTimesTan(EngineState *s, int, int argc, reg_t *argv) {
 		return make_reg(0, (int16) - (tan(param * PI / 180.0) * scale));
 }
 
-reg_t kTimesCot(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kTimesCot(EngineState *s, int argc, reg_t *argv) {
 	int param = argv[0].toSint16();
 	int scale = (argc > 1) ? argv[1].toSint16() : 1;
 

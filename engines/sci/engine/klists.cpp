@@ -132,7 +132,7 @@ int sane_listp(EngineState *s, reg_t addr) {
 }
 #endif
 
-reg_t kNewList(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 	reg_t listbase;
 	List *l;
 	l = s->segMan->allocateList(&listbase);
@@ -142,7 +142,7 @@ reg_t kNewList(EngineState *s, int, int argc, reg_t *argv) {
 	return listbase; // Return list base address
 }
 
-reg_t kDisposeList(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (!l) {
@@ -185,7 +185,7 @@ reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	return nodebase;
 }
 
-reg_t kNewNode(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = _k_new_node(s, argv[0], argv[1]);
 
 	debugC(2, kDebugLevelNodes, "New nodebase at %04x:%04x\n", PRINT_REG(s->r_acc));
@@ -193,7 +193,7 @@ reg_t kNewNode(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kFirstNode(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
 	List *l = lookup_list(s, argv[0]);
@@ -207,7 +207,7 @@ reg_t kFirstNode(EngineState *s, int, int argc, reg_t *argv) {
 		return NULL_REG;
 }
 
-reg_t kLastNode(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
@@ -219,7 +219,7 @@ reg_t kLastNode(EngineState *s, int, int argc, reg_t *argv) {
 		return NULL_REG;
 }
 
-reg_t kEmptyList(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
@@ -276,7 +276,7 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	l->last = nodebase;
 }
 
-reg_t kNextNode(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		error("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
@@ -286,7 +286,7 @@ reg_t kNextNode(EngineState *s, int, int argc, reg_t *argv) {
 	return n->succ;
 }
 
-reg_t kPrevNode(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kPrevNode(EngineState *s, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0]))
 		error("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
@@ -294,7 +294,7 @@ reg_t kPrevNode(EngineState *s, int, int argc, reg_t *argv) {
 	return n->pred;
 }
 
-reg_t kNodeValue(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNodeValue(EngineState *s, int argc, reg_t *argv) {
 	Node *n = lookup_node(s, argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		error("List node at %04x:%04x is not sane", PRINT_REG(argv[0]));
@@ -304,12 +304,12 @@ reg_t kNodeValue(EngineState *s, int, int argc, reg_t *argv) {
 	return n->value;
 }
 
-reg_t kAddToFront(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAddToFront(EngineState *s, int argc, reg_t *argv) {
 	_k_add_to_front(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
-reg_t kAddAfter(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 	List *l = lookup_list(s, argv[0]);
 	Node *firstnode = argv[1].isNull() ? NULL : lookup_node(s, argv[1]);
 	Node *newnode = lookup_node(s, argv[2]);
@@ -348,12 +348,12 @@ reg_t kAddAfter(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kAddToEnd(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAddToEnd(EngineState *s, int argc, reg_t *argv) {
 	_k_add_to_end(s, argv[0], argv[1]);
 	return s->r_acc;
 }
 
-reg_t kFindKey(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 	reg_t node_pos;
 	reg_t key = argv[1];
 	reg_t list_pos = argv[0];
@@ -382,8 +382,8 @@ reg_t kFindKey(EngineState *s, int, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kDeleteKey(EngineState *s, int, int argc, reg_t *argv) {
-	reg_t node_pos = kFindKey(s, FAKE_FUNCT_NR, 2, argv);
+reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
+	reg_t node_pos = kFindKey(s, 2, argv);
 	Node *n;
 	List *l = lookup_list(s, argv[0]);
 
@@ -424,7 +424,7 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 	return 0;
 }
 
-reg_t kSort(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t source = argv[0];
 	reg_t dest = argv[1];

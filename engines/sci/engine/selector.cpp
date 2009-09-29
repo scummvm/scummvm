@@ -53,7 +53,7 @@ void write_selector(SegManager *segMan, reg_t object, Selector selector_id, reg_
 		*address.getPointer(segMan) = value;
 }
 
-int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, int kfunct,
+int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvocation noinvalid, 
 	StackPtr k_argp, int k_argc, const char *fname, int line, int argc, ...) {
 	va_list argp;
 	int i;
@@ -88,7 +88,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	ExecStack *xstack;
 	xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, k_argc, k_argp - 1, 0, NULL_REG,
 	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-	xstack->selector = -42 - kfunct; // Evil debugging hack to identify kernel function
+	xstack->selector = -42 + 1; // Evil debugging hack to identify kernel function
 	xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 	// Now commit the actual function:

@@ -33,7 +33,7 @@
 
 namespace Sci {
 
-reg_t kAddMenu(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAddMenu(EngineState *s, int argc, reg_t *argv) {
 	Common::String name = s->segMan->getString(argv[0]);
 	Common::String contents = s->segMan->getString(argv[1]);
 
@@ -45,7 +45,7 @@ reg_t kAddMenu(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 
-reg_t kSetMenu(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSetMenu(EngineState *s, int argc, reg_t *argv) {
 	int index = argv[0].toUint16();
 	int i = 2;
 
@@ -57,14 +57,14 @@ reg_t kSetMenu(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGetMenu(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 	int index = argv[0].toUint16();
 
 	return s->_menubar->getAttribute((index >> 8) - 1, (index & 0xff) - 1, argv[1].toUint16());
 }
 
 
-reg_t kDrawStatus(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	reg_t text = argv[0];
 	int fgcolor = (argc > 1) ? argv[1].toSint16() : s->status_bar_foreground;
 	int bgcolor = (argc > 2) ? argv[2].toSint16() : s->status_bar_background;
@@ -89,7 +89,7 @@ reg_t kDrawStatus(EngineState *s, int, int argc, reg_t *argv) {
 }
 
 
-reg_t kDrawMenuBar(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 
 	if (argv[0].toSint16())
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
@@ -122,7 +122,7 @@ static int _menu_go_down(Menubar *menubar, int menu_nr, int item_nr) {
 	gfxop_update(s->gfx_state);
 
 
-reg_t kMenuSelect(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t event = argv[0];
 	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */

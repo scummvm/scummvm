@@ -943,7 +943,24 @@ void run_vm(EngineState *s, int restoring) {
 						&& !kernel_matches_signature(s->segMan, kfun.signature, argc, scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
 				} else {
-					s->r_acc = kfun.fun(s, opparams[0], argc, scriptState.xs->sp + 1);
+					reg_t *argv = scriptState.xs->sp + 1;
+
+					if (!kfun.isDummy) {
+						s->r_acc = kfun.fun(s, argc, argv);
+					} else {
+						Common::String warningMsg = "Dummy function " + kfun.orig_name + "[";
+						warningMsg += warningMsg.printf("0x%x", opparams[0]);
+						warningMsg += "] invoked - ignoring. Params: ";
+						warningMsg += warningMsg.printf("%d", argc);
+						warningMsg += " (";
+
+						for (int i = 0; i < argc; i++) {
+							warningMsg += warningMsg.printf("%04x:%04x", PRINT_REG(argv[i]));
+							warningMsg += (i == argc - 1 ? ")" : ", ");
+						}
+
+						warning(warningMsg.c_str());
+					}
 				}
 				// Call kernel function
 

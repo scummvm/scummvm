@@ -282,7 +282,7 @@ static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int 
 	return retval;
 }
 
-static reg_t kSetCursorSci0(EngineState *s, int, int argc, reg_t *argv) {
+static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	int16 cursor = argv[0].toSint16();
 
 	if ((argc >= 2) && (argv[1].toSint16() == 0))
@@ -299,7 +299,7 @@ static reg_t kSetCursorSci0(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static reg_t kSetCursorSci11(EngineState *s, int, int argc, reg_t *argv) {
+static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	Common::Point *hotspot = NULL;
 
 	switch (argc) {
@@ -340,19 +340,19 @@ static reg_t kSetCursorSci11(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kSetCursor(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
 	switch (s->detectSetCursorType()) {
 	case SCI_VERSION_0_EARLY:
-		return kSetCursorSci0(s, FAKE_FUNCT_NR, argc, argv);
+		return kSetCursorSci0(s, argc, argv);
 	case SCI_VERSION_1_1:
-		return kSetCursorSci11(s, FAKE_FUNCT_NR, argc, argv);
+		return kSetCursorSci11(s, argc, argv);
 	default:
 		warning("Unknown SetCursor type");
 		return NULL_REG;
 	}
 }
 
-reg_t kMoveCursor(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 	Common::Point newPos;
 
 	newPos = s->gfx_state->pointer_pos;
@@ -377,7 +377,7 @@ reg_t kMoveCursor(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kShow(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 	int old_map = s->pic_visible_map;
 
 	s->pic_visible_map = (argc > 0) ? (gfx_map_mask_t) argv[0].toUint16() : GFX_MASK_VISUAL;
@@ -407,7 +407,7 @@ reg_t kShow(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPicNotValid(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	s->r_acc = make_reg(0, s->pic_not_valid);
 	if (argc)
 		s->pic_not_valid = (byte)argv[0].toUint16();
@@ -465,7 +465,7 @@ static bool activated_icon_bar = false;	// FIXME: Avoid non-const global vars
 static int port_origin_x = 0;	// FIXME: Avoid non-const global vars
 static int port_origin_y = 0;	// FIXME: Avoid non-const global vars
 
-reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	rect_t area;
 	GfxPort *port = s->port;
 	int redraw_port = 0;
@@ -600,7 +600,7 @@ reg_t kGraph(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	int width, height;
 	Common::String text = s->segMan->getString(argv[1]);
 	reg_t *dest = s->segMan->derefRegPtr(argv[0], 4);
@@ -636,7 +636,7 @@ reg_t kTextSize(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kWait(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	uint32 time;
 	int sleep_time = argv[0].toUint16();
 
@@ -654,13 +654,13 @@ reg_t kWait(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kCoordPri(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
 	int y = argv[0].toSint16();
 
 	return make_reg(0, _find_view_priority(s, y));
 }
 
-reg_t kPriCoord(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 	int priority = argv[0].toSint16();
 
 	return make_reg(0, _find_priority_band(s, priority));
@@ -710,7 +710,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) 
 	PUT_SEL32V(obj, loop, loop);
 }
 
-reg_t kDirLoop(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 	_k_dirloop(argv[0], argv[1].toUint16(), s, argc, argv);
 
 	return s->r_acc;
@@ -761,7 +761,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 	return 0;
 }
 
-reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = (argc > 1) ? argv[1] : NULL_REG;
@@ -855,15 +855,15 @@ reg_t kCanBeHere(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, retval);
 }  // CanBeHere
 
-reg_t kCantBeHere(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	// kCantBeHere does the same thing as kCanBeHere, except that
 	// it returns the opposite result.
-	reg_t result = kCanBeHere(s, FAKE_FUNCT_NR, argc, argv);
+	reg_t result = kCanBeHere(s, argc, argv);
 	result.offset = !result.offset;
 	return result;
 }
 
-reg_t kIsItSkip(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
 	int cel = argv[2].toSint16();
@@ -888,7 +888,7 @@ reg_t kIsItSkip(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, pxm->index_data[y * pxm->index_width + x] == pxm->color_key);
 }
 
-reg_t kCelHigh(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
 	int cel = argv[2].toSint16();
@@ -903,7 +903,7 @@ reg_t kCelHigh(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, height);
 }
 
-reg_t kCelWide(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
 	int cel = argv[2].toSint16();
@@ -918,7 +918,7 @@ reg_t kCelWide(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, width);
 }
 
-reg_t kNumLoops(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(obj, view);
@@ -934,7 +934,7 @@ reg_t kNumLoops(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, loops_nr);
 }
 
-reg_t kNumCels(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t obj = argv[0];
 	int loop = GET_SEL32V(obj, loop);
@@ -948,7 +948,7 @@ reg_t kNumCels(EngineState *s, int, int argc, reg_t *argv) {
 	return make_reg(0, cel + 1);
 }
 
-reg_t kOnControl(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 	int arg = 0;
 	gfx_map_mask_t map;
 	int xstart, ystart;
@@ -976,7 +976,7 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 
 #define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
 
-reg_t kDrawPic(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	drawn_pic_t dp;
 	bool add_to_pic = (argc > 2) ? !argv[2].toSint16() : false;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
@@ -1126,7 +1126,7 @@ void _k_base_setter(EngineState *s, reg_t object) {
 	PUT_SEL32V(object, brBottom, absrect.bottom);
 }
 
-reg_t kBaseSetter(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	_k_base_setter(s, object);
@@ -1221,7 +1221,7 @@ static void _k_set_now_seen(EngineState *s, reg_t object) {
 	PUT_SEL32V(object, nsBottom, absrect.bottom);
 }
 
-reg_t kSetNowSeen(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
 	_k_set_now_seen(s, object);
@@ -1229,7 +1229,7 @@ reg_t kSetNowSeen(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPalette(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case 1:
 		debug(5, "STUB: kPalette() effect 1, direct palette set");
@@ -1297,7 +1297,7 @@ reg_t kPalette(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPalVary(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	warning("STUB: kPalVary()");
 	return NULL_REG;
 }
@@ -1345,7 +1345,7 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	}
 }
 
-reg_t kDrawControl(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	disableCertainButtons(s->segMan, s->_gameName, obj);
@@ -1354,7 +1354,7 @@ reg_t kDrawControl(EngineState *s, int, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kHiliteControl(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	_k_draw_control(s, obj, 1);
@@ -1384,7 +1384,7 @@ void update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
 		--textlen; \
 	}
 
-reg_t kEditControl(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t obj = argv[0];
 	reg_t event = argv[1];
@@ -2290,7 +2290,7 @@ void _k_draw_view_list(EngineState *s, GfxList *list, int flags) {
 
 }
 
-reg_t kAddToPic(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	GfxList *pic_views;
 	reg_t list_ref = argv[0];
 
@@ -2349,11 +2349,11 @@ reg_t kAddToPic(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kGetPort(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kGetPort(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->port->_ID);
 }
 
-reg_t kSetPort(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 	if (activated_icon_bar && argc == 6) {
 		port_origin_x = port_origin_y = 0;
 		activated_icon_bar = false;
@@ -2422,7 +2422,7 @@ reg_t kSetPort(EngineState *s, int, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-reg_t kDrawCel(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
 	int cel = argv[2].toSint16();
@@ -2444,7 +2444,7 @@ reg_t kDrawCel(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kDisposeWindow(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 	unsigned int goner_nr = argv[0].toSint16();
 	GfxPort *goner;
 	GfxPort *pred;
@@ -2483,7 +2483,7 @@ reg_t kDisposeWindow(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kNewWindow(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 	GfxPort *window;
 	int x, y, xl, yl, flags;
 	gfx_color_t bgcolor;
@@ -2984,7 +2984,7 @@ static void animate_do_animation(EngineState *s, int argc, reg_t *argv) {
 	s->old_screen = NULL;
 }
 
-reg_t kAnimate(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// Animations are supposed to take a maximum of animation_delay milliseconds.
 	reg_t cast_list_ref = (argc > 0) ? argv[0] : NULL_REG;
 	int cycle = (argc > 1) ? argv[1].toUint16() : 0;
@@ -3027,7 +3027,7 @@ reg_t kAnimate(EngineState *s, int, int argc, reg_t *argv) {
 		// End of doit() recovery code
 
 		if (s->pic_is_new) { // Happens if DrawPic() is executed by a dynview (yes, that happens)
-			return kAnimate(s, FAKE_FUNCT_NR, argc, argv); /* Tail-recurse */
+			return kAnimate(s, argc, argv); /* Tail-recurse */
 		}
 
 		debugC(2, kDebugLevelGraphics, "Handling Dynviews (..step 9 inclusive):\n");
@@ -3093,7 +3093,7 @@ reg_t kAnimate(EngineState *s, int, int argc, reg_t *argv) {
 #define SHAKE_DOWN 1
 #define SHAKE_RIGHT 2
 
-reg_t kShakeScreen(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	int shakes = (argc > 0) ? argv[0].toSint16() : 1;
 	int directions = (argc > 1) ? argv[1].toSint16() : 1;
 	gfx_pixmap_t *screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 0, 320, 200));
@@ -3141,7 +3141,7 @@ reg_t kShakeScreen(EngineState *s, int, int argc, reg_t *argv) {
 #define K_DISPLAY_RESTORE_UNDER 108
 #define K_DONT_UPDATE_IMMEDIATELY 121
 
-reg_t kDisplay(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	int argpt;
 	reg_t textp = argv[0];
 	int index = (argc > 1) ? argv[1].toUint16() : 0;
@@ -3468,7 +3468,7 @@ static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kShowMovie(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// KQ6 Windows calls this with one argument. It doesn't seem
 	// to have a purpose...
 	if (argc == 1)
@@ -3482,7 +3482,7 @@ reg_t kShowMovie(EngineState *s, int, int argc, reg_t *argv) {
 	return kShowMovie_DOS(s, argc, argv);
 }
 
-reg_t kSetVideoMode(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 	// This call is used for KQ6's intro. It has one parameter, which is
 	// 1 when the intro begins, and 0 when it ends. It is suspected that
 	// this is actually a flag to enable video planar memory access, as

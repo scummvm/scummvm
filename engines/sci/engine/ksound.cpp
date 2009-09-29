@@ -1002,7 +1002,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 /**
  * Used for synthesized music playback
  */
-reg_t kDoSound(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
 	switch(s->detectDoSoundType()) {
 	case SCI_VERSION_0_EARLY:
 		return kDoSoundSci0(s, argc, argv);
@@ -1019,7 +1019,7 @@ reg_t kDoSound(EngineState *s, int, int argc, reg_t *argv) {
 /**
  * Used for speech playback and digital soundtracks in CD games
  */
-reg_t kDoAudio(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 	Audio::Mixer *mixer = g_system->getMixer();
 
 	switch (argv[0].toUint16()) {
@@ -1076,7 +1076,7 @@ reg_t kDoAudio(EngineState *s, int, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kDoSync(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {

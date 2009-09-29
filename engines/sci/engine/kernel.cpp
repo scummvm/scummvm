@@ -120,13 +120,13 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x51*/ "Platform",
 	/*0x52*/ "SetJump",
 	/*0x53*/ "SetDebug",
-	/*0x54*/ "InspectObj",
-	/*0x55*/ "ShowSends",
-	/*0x56*/ "ShowObjs",
-	/*0x57*/ "ShowFree",
+	/*0x54*/ "Dummy",    // InspectObj
+	/*0x55*/ "Dummy",    // ShowSends
+	/*0x56*/ "Dummy",    // ShowObjs
+	/*0x57*/ "Dummy",    // ShowFree
 	/*0x58*/ "MemoryInfo",
-	/*0x59*/ "StackUsage",
-	/*0x5a*/ "Profiler",
+	/*0x59*/ "Dummy",    // StackUsage
+	/*0x5a*/ "Dummy",    // Profiler
 	/*0x5b*/ "GetMenu",
 	/*0x5c*/ "SetMenu",
 	/*0x5d*/ "GetSaveFiles",
@@ -182,7 +182,6 @@ struct SciKernelFunction {
 };
 
 #define DEFUN(name, fun, sig) {name, fun, sig}
-#define NOFUN(name) {name, NULL, NULL}
 
 SciKernelFunction kfunct_mappers[] = {
 	/*00*/	DEFUN("Load", kLoad, "iii*"),
@@ -282,13 +281,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*55*/	DEFUN("DoAvoider", kDoAvoider, "o"),
 	/*56*/	DEFUN("SetJump", kSetJump, "oiii"),
 	/*57*/	DEFUN("SetDebug", kSetDebug, "i*"),
-	/*58*/	NOFUN("InspectObj"),
-	/*59*/	NOFUN("ShowSends"),
-	/*5a*/	NOFUN("ShowObjs"),
-	/*5b*/	NOFUN("ShowFree"),
 	/*5c*/	DEFUN("MemoryInfo", kMemoryInfo, "i"),
-	/*5d*/	NOFUN("StackUsage"),
-	/*5e*/	NOFUN("Profiler"),
 	/*5f*/	DEFUN("GetMenu", kGetMenu, "i."),
 	/*60*/	DEFUN("SetMenu", kSetMenu, "i.*"),
 	/*61*/	DEFUN("GetSaveFiles", kGetSaveFiles, "rrr"),
@@ -310,8 +303,6 @@ SciKernelFunction kfunct_mappers[] = {
 	/*6f*/	DEFUN("6f", kTimesCos, "ii"),
 	/*70*/	DEFUN("Graph", kGraph, ".*"),
 	/*71*/	DEFUN("Joystick", kJoystick, ".*"),
-	/*72*/	NOFUN("unknown72"),		// ShiftScreen, perhaps?
-	/*73*/	NOFUN("unknown73"),
 
 	// Experimental functions
 	/*74*/	DEFUN("FileIO", kFileIO, "i.*"),
@@ -343,28 +334,20 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("Platform", kPlatform, "i*"),
 	DEFUN("PalVary", kPalVary, "ii*"),
 
-	// Special and NOP stuff
-	DEFUN("Dummy", kStub, ".*"),
-	{NULL, kUnknown, NULL},
-
-	// FIXME: The stub functions below are ignored since the entry
-	// above ( {NULL, kUnknown, NULL} ) terminates this array effectively.
-	// Seems like a bug to me; maybe the line above should just be removed?
-	// If this is on purpose, then whoever knows the reason should replace
-	// this FIXME by a comment explaining it.
-
+#if 0
 	// Stub functions
-	DEFUN("ShiftScreen", kStub, ".*"),
-	DEFUN("MemorySegment", kStub, ".*"),
-	DEFUN("ListOps", kStub, ".*"),
-	DEFUN("ATan", kStub, ".*"),
-	DEFUN("MergePoly", kStub, ".*"),
-	DEFUN("AssertPalette", kStub, ".*"),
-	DEFUN("TextColors", kStub, ".*"),
-	DEFUN("TextFonts", kStub, ".*"),
-	DEFUN("Record", kStub, ".*"),
-	DEFUN("PlayBack", kStub, ".*"),
-	DEFUN("DbugStr", kStub, ".*"),
+	DEFUN("ShiftScreen", kShiftScreen, ".*"),
+	DEFUN("MemorySegment", kMemorySegment, ".*"),
+	DEFUN("ListOps", kListOps, ".*"),
+	DEFUN("ATan", kATan, ".*"),
+	DEFUN("MergePoly", kMergePoly, ".*"),
+	DEFUN("AssertPalette", kAssertPalette, ".*"),
+	DEFUN("TextColors", kTextColors, ".*"),
+	DEFUN("TextFonts", kTextFonts, ".*"),
+	DEFUN("Record", kRecord, ".*"),
+	DEFUN("PlayBack", kPlayBack, ".*"),
+	DEFUN("DbugStr", kDbugStr, ".*"),
+#endif
 
 	{NULL, NULL, NULL} // Terminator
 };
@@ -611,8 +594,14 @@ void Kernel::mapFunctions() {
 
 		if (sought_name.empty()) {
 			// No name was given -> must be an unknown opcode
-			warning("Flagging kernel function %x as unknown", functnr);
-			_kernelFuncs[functnr].fun = kUnknown;
+			warning("Kernel function %s[%x] unknown", sought_name.c_str(), functnr);
+			_kernelFuncs[functnr].isDummy = true;
+			continue;
+		}
+
+		// Don't map dummy functions - they will never be called
+		if (sought_name == "Dummy") {
+			_kernelFuncs[functnr].isDummy = true;
 			continue;
 		}
 
@@ -625,12 +614,13 @@ void Kernel::mapFunctions() {
 		if (found == -1) {
 			// No match but a name was given -> stub
 			warning("Kernel function %s[%x] unmapped", sought_name.c_str(), functnr);
-			_kernelFuncs[functnr].fun = kStub;
+			_kernelFuncs[functnr].isDummy = true;
 		} else {
 			// A match in kfunct_mappers was found
 			if (kfunct_mappers[found].fun) {
 				_kernelFuncs[functnr].fun = kfunct_mappers[found].fun;
 				_kernelFuncs[functnr].signature = kfunct_mappers[found].signature;
+				_kernelFuncs[functnr].isDummy = false;
 				kernel_compile_signature(&(_kernelFuncs[functnr].signature));
 				++mapped;
 			} else {

@@ -67,7 +67,7 @@ But the solution resulting from that is a lot more complicated, so we use the ab
 Still, what we compute in the end is of course not a real velocity anymore, but an integer approximation,
 used in an iterative stepping algorithm
 */
-reg_t kSetJump(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	// Input data
 	reg_t object = argv[0];
@@ -218,7 +218,7 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 	PUT_SEL32V(mover, b_i2, bdi * 2);
 }
 
-reg_t kInitBresen(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
@@ -284,7 +284,7 @@ static void bresenham_autodetect(EngineState *s) {
 	}
 }
 
-reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
@@ -393,7 +393,7 @@ reg_t kDoBresen(EngineState *s, int, int argc, reg_t *argv) {
 extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv);
 extern int get_angle(int xrel, int yrel);
 
-reg_t kDoAvoider(EngineState *s, int, int argc, reg_t *argv) {
+reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 	reg_t avoider = argv[0];
 	reg_t client, looper, mover;
