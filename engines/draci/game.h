@@ -260,8 +260,8 @@ public:
 	}
 
 	void walkHero(int x, int y);
-	int getHeroX();
-	int getHeroY();
+	int getHeroX() const;
+	int getHeroY() const;
 	void positionAnimAsHero(Animation *anim);
 
 	void loadRoom(int roomNum);
@@ -286,8 +286,8 @@ public:
 	int getGateNum() const;
 	void setGateNum(int gate);
 
-	double getPers0();
-	double getPersStep();
+	double getPers0() const;
+	double getPersStep() const;
 
 	int getItemStatus(int itemID) const;
 	void setItemStatus(int itemID, int status);

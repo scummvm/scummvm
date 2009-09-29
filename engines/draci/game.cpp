@@ -987,9 +987,6 @@ void Game::walkHero(int x, int y) {
 	
 	Common::Point p = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
 
-	x = p.x;
-	y = p.y;
-
 	_heroX = p.x;
 	_heroY = p.y;
 
@@ -999,7 +996,7 @@ void Game::walkHero(int x, int y) {
 		_vm->_anims->stop(dragon->_anims[i]);
 	}
 
-	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", x, y);
+	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _heroX, _heroY);
 
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
@@ -1008,8 +1005,7 @@ void Game::walkHero(int x, int y) {
 	Animation *anim = _vm->_anims->getAnimation(animID);
 
 	// Calculate scaling factors
-	const double scaleX = _vm->_game->getPers0() + _vm->_game->getPersStep() * y;
-	const double scaleY = scaleX;
+	const double scale = _vm->_game->getPers0() + _vm->_game->getPersStep() * _heroY;
 
 	// Set the Z coordinate for the dragon's animation
 	anim->setZ(y+1);
@@ -1021,20 +1017,26 @@ void Game::walkHero(int x, int y) {
 	uint height = frame->getHeight();
 	uint width = frame->getWidth();
 
-  	_persons[kDragonObject]._x = x + (scummvm_lround(scaleX) * width) / 2;
-	_persons[kDragonObject]._y = y - scummvm_lround(scaleY) * height;
-
-	// Set the per-animation scaling factor
-	anim->setScaleFactors(scaleX, scaleY);
-
 	// We naturally want the dragon to position its feet to the location of the
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
-	y -= (int)(scaleY * height);
-	x -= (int)(scaleX * width) / 2;
-	if (x < 0)
-		x = 0;
-	anim->setRelative(x, y);
+	_heroY -= (int)(scale * height);
+	_heroX -= (int)(scale * width) / 2;
+
+	// TODO: Check if underflow is handled well everywhere and remove this once sure
+
+	if (_heroX < 0)
+		_heroX = 0;
+
+	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
+	// so the text remains centered over the dragon.
+  	_persons[kDragonObject]._x = p.x;
+	_persons[kDragonObject]._y = _heroY;
+
+	// Set the per-animation scaling factor
+	anim->setScaleFactors(scale, scale);
+
+	anim->setRelative(_heroX, _heroY);
 
 	// Play the animation
 	_vm->_anims->play(animID);
@@ -1427,19 +1429,19 @@ void Game::positionAnimAsHero(Animation *anim) {
 	anim->setRelative(x, y);
 }
 
-int Game::getHeroX() {
+int Game::getHeroX() const {
 	return _heroX;
 }
 
-int Game::getHeroY() {
+int Game::getHeroY() const {
 	return _heroY;
 }
 
-double Game::getPers0() {
+double Game::getPers0() const {
 	return _currentRoom._pers0;
 }
 
-double Game::getPersStep() {
+double Game::getPersStep() const {
 	return _currentRoom._persStep;
 }
 
