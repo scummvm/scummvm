@@ -594,7 +594,7 @@ void Kernel::mapFunctions() {
 
 		if (sought_name.empty()) {
 			// No name was given -> must be an unknown opcode
-			warning("Kernel function %s[%x] unknown", sought_name.c_str(), functnr);
+			warning("Kernel function %x unknown", functnr);
 			_kernelFuncs[functnr].isDummy = true;
 			continue;
 		}
