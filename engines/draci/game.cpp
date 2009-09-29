@@ -1379,9 +1379,6 @@ void Game::positionAnimAsHero(Animation *anim) {
 	Common::Point p = _hero;
 	p.x -= (int)(scale * width) / 2;
 	p.y -= (int)(scale * height);
-	// TODO: fix drawScaled() and remove this
-	if (p.x < 0)
-		p.x = 0;
 
 	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
 	// so the text remains centered over the dragon.

@@ -154,33 +154,16 @@ int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 
 void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const {
 
-	Common::Rect sourceRect(0, 0, _width, _height);
-	Common::Rect destRect(getRect(displacement));
-
-	// Calculate scaling factors
-	double scaleX = double(destRect.width()) / _width;
-	double scaleY = double(destRect.height()) / _height;
-
-	Common::Rect surfaceRect(0, 0, surface->w, surface->h);
+	const Common::Rect destRect(getRect(displacement));
+	const Common::Rect surfaceRect(0, 0, surface->w, surface->h);
 	Common::Rect clippedDestRect(destRect);
-
 	clippedDestRect.clip(surfaceRect);
 
 	// Calculate by how much we need to adjust the source rectangle to account for cropping
-	const int adjustLeft = clippedDestRect.left - destRect.left;
-	const int adjustRight = clippedDestRect.right - destRect.right;
-	const int adjustTop = clippedDestRect.top - destRect.top;
-	const int adjustBottom = clippedDestRect.bottom - destRect.bottom;
-
-	// Resize source rectangle
-	sourceRect.left += adjustLeft;
-	sourceRect.right += adjustRight;
-	sourceRect.top += adjustTop;
-	sourceRect.bottom += adjustBottom;
+	const Common::Point croppedBy(clippedDestRect.left - destRect.left, clippedDestRect.top - destRect.top);
 
 	// Get pointers to source and destination buffers
 	byte *dst = (byte *)surface->getBasePtr(clippedDestRect.left, clippedDestRect.top);
-	const byte *src = _data;
 
 	const int transparent = surface->getTransparentColour();
 
@@ -188,38 +171,34 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 	const int rows = clippedDestRect.height();
 	const int columns = clippedDestRect.width();
 
-	int *rowIndices = new int[rows];
+	// Precalculate column indexes
 	int *columnIndices = new int[columns];
-
-	// Precalculate pixel indexes
-	for (int i = 0; i < rows; ++i) {
-		rowIndices[i] = scummvm_lround(i / scaleY);
-	}
-
-	for (int j = 0; j < columns; ++j) {
-		columnIndices[j] = scummvm_lround(j / scaleX);
+	if (!_mirror) {
+		for (int j = 0; j < columns; ++j) {
+		        columnIndices[j] = (j + croppedBy.x) * _width / destRect.width();
+		}
+	} else {
+		// Draw the sprite mirrored if the _mirror flag is set						
+		for (int j = 0; j < columns; ++j) {
+		        columnIndices[j] = _width - 1 - (j + croppedBy.x) * _width / destRect.width();
+		}
 	}
 
 	// Blit the sprite to the surface
 	for (int i = 0; i < rows; ++i) {
 
-		// Fetch index of current row to be drawn
-		int row = rowIndices[i];
+		// Compute the index of current row to be drawn
+		const int row = (i + croppedBy.y) * _height / destRect.height();
+		const byte *row_data = _data + row * _width;
 		
 		for (int j = 0; j < columns; ++j) {
 			
 			// Fetch index of current column to be drawn
-			int column = columnIndices[j];
+			const byte src = row_data[columnIndices[j]];
 
 			// Don't blit if the pixel is transparent on the target surface
-			if (src[row * _width + column] != transparent) {
-
-				// Draw the sprite mirrored if the _mirror flag is set						
-				if (_mirror) {
-					dst[sourceRect.left + columns - j - 1] = src[row * _width + column];
-				} else {
-					dst[sourceRect.left + j] = src[row * _width + column];
-				}
+			if (src != transparent) {
+				dst[j] = src;
 			}
 		}
 
@@ -232,7 +211,6 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 		surface->markDirtyRect(destRect);
 	}
 
-	delete[] rowIndices;
 	delete[] columnIndices;
 }
 	
@@ -245,6 +223,8 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
  *  It is safe to call it for sprites that would overflow the surface.
  */
 void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const { 
+
+	// TODO: refactor like drawReScaled()
 
 	Common::Rect sourceRect(0, 0, _width, _height);
 	Common::Rect destRect(_x + relX, _y + relY, _x + relX + _width, _y + relY + _height);
