@@ -139,7 +139,6 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
 	reg_t victim_addr = argv[0];
 	Clone *victim_obj = s->segMan->getObject(victim_addr);
 
