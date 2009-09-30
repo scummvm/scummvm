@@ -2049,6 +2049,7 @@ rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
 #
 echocheck "readline"
 if test "$_text_console" = yes ; then
+	_READLINE_LIBS="-lreadline"
 	if test "$_readline" = auto ; then
 		_readline=no
 		cat > $TMPC << EOF
@@ -2060,7 +2061,11 @@ int main(void) {
 	char *x = readline("");
 }
 EOF
-		cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS -lreadline && _readline=yes
+		cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		if test "$_readline" = no ; then
+			_READLINE_LIBS="-lreadline -ltermcap"
+			cc_check $LDFLAGS $CXXFLAGS $READLINE_CFLAGS $READLINE_LIBS $_READLINE_LIBS && _readline=yes
+		fi
 	fi
 	echo "$_readline"
 	rm -rf $TMPC $TMPO$HOSTEXEEXT $TMPO.dSYM
@@ -2071,7 +2076,7 @@ fi
 
 if test "$_readline" = yes ; then
 	_def_readline='#define USE_READLINE'
-	LIBS="$LIBS $READLINE_LIBS -lreadline"
+	LIBS="$LIBS $READLINE_LIBS $_READLINE_LIBS"
 	INCLUDES="$INCLUDES $READLINE_CFLAGS"
 else
 	_def_readline='#undef USE_READLINE'
