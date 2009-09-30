@@ -1136,7 +1136,7 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	if ((c & 0xFF00) && _sjisFont)
-		return _sjisFont->getFontWidth() >> 1;
+		return _sjisFont->getMaxFontWidth() >> 1;
 
 	return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
 }
@@ -3092,7 +3092,7 @@ void Screen::drawCharSJIS(uint16 c, int x, int y) {
 	}
 
 	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, _sjisFont->getFontWidth() >> 1, _sjisFont->getFontHeight() >> 1);
+		addDirtyRect(x, y, _sjisFont->getMaxFontWidth() >> 1, _sjisFont->getFontHeight() >> 1);
 
 	x <<= 1;
 	y <<= 1;

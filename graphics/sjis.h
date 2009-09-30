@@ -47,8 +47,6 @@ namespace Graphics {
 
 /**
  * A font that is able to draw SJIS encoded characters.
- *
- * The font is always monospaced.
  */
 class FontSJIS {
 public:
@@ -75,7 +73,7 @@ public:
 	/**
 	 * Enable outline drawing.
 	 *
-	 * After changing outline state, getFontHeight and getFontWidth might return
+	 * After changing outline state, getFontHeight and getMaxFontWidth / getCharWidth might return
 	 * different values!
 	 */
 	virtual void enableOutline(bool enable) {}
@@ -86,9 +84,14 @@ public:
 	virtual uint getFontHeight() const = 0;
 
 	/**
-	 * Returns the width of the font.
+	 * Returns the max. width of the font.
 	 */
-	virtual uint getFontWidth() const = 0;
+	virtual uint getMaxFontWidth() const = 0;
+
+	/**
+	 * Returns the width of a specific character.
+	 */
+	virtual uint getCharWidth(uint16 ch) const { return getMaxFontWidth(); }
 
 	/**
 	 * Draws a SJIS encoded character on the given surface.
@@ -104,12 +107,12 @@ public:
 	/**
 	 * Draws a SJIS char on the given raw buffer.
 	 *
-	 * @param dst	pointer to the destination
-	 * @param ch	character to draw (in little endian)
-	 * @param pitch	pitch of the destination buffer (size in *bytes*)
-	 * @param bpp	bytes per pixel of the destination buffer
-	 * @param c1	forground color
-	 * @param c2	outline color
+	 * @param dst   pointer to the destination
+	 * @param ch    character to draw (in little endian)
+	 * @param pitch pitch of the destination buffer (size in *bytes*)
+	 * @param bpp   bytes per pixel of the destination buffer
+	 * @param c1    forground color
+	 * @param c2    outline color
 	 */
 	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const = 0;
 };
@@ -124,9 +127,9 @@ public:
 	void enableOutline(bool enable) { _outlineEnabled = enable; }
 
 	uint getFontHeight() const { return _outlineEnabled ? 18 : 16; }
-	uint getFontWidth() const { return _outlineEnabled ? 18 : 16; }
+	uint getMaxFontWidth() const { return _outlineEnabled ? 18 : 16; }
 
-	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
+	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 
 private:
 	template<typename Color>
@@ -135,8 +138,8 @@ private:
 	template<typename Color>
 	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
 
-	bool _outlineEnabled;
 protected:
+	bool _outlineEnabled;
 
 	virtual const uint16 *getCharData(uint16 c) const = 0;
 };
@@ -145,6 +148,8 @@ protected:
  * FM-TOWNS ROM based SJIS compatible font.
  *
  * This is used in KYRA and SCI.
+ *
+ * TODO: This implementation does not support any 8x16 ASCII or half-width katakana chars.
  */
 class FontTowns : public FontSJIS16x16 {
 public:
@@ -168,19 +173,34 @@ private:
  */
 class FontSjisSVM : public FontSJIS16x16 {
 public:
-	FontSjisSVM() : _fontData16x16(0), _fontData16x16Size(0) {}
-	~FontSjisSVM() { delete[] _fontData16x16; }
+	FontSjisSVM() : _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0) {}
+	~FontSjisSVM() { delete[] _fontData16x16; delete[] _fontData8x16; }
 
 	/**
 	 * Load the font data from "SJIS.FNT".
 	 */
 	bool loadData();
 
+	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
+
+	uint getCharWidth(uint16 ch) const;
 private:
 	uint16 *_fontData16x16;
 	uint _fontData16x16Size;
 
+	uint8 *_fontData8x16;
+	uint _fontData8x16Size;
+
+	bool is8x16(uint16 ch) const;
+
 	const uint16 *getCharData(uint16 c) const;
+	const uint8 *getCharData8x16(uint16 c) const;
+
+	template<typename Color>
+	void drawCharInternOutline(const uint8 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
+
+	template<typename Color>
+	void drawCharIntern(const uint8 *glyph, uint8 *dst, int pitch, Color c1) const;
 };
 
 // TODO: Consider adding support for PC98 ROM

@@ -122,7 +122,7 @@ void FontSJIS16x16::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1
 		else
 			drawCharInternOutline<uint16>(glyphSource, (uint8 *)dst, pitch, c1, c2);
 	} else {
-		error("FontTowns::drawChar: unsupported bpp: %d", bpp);
+		error("FontSJIS16x16::drawChar: unsupported bpp: %d", bpp);
 	}
 }
 
@@ -250,18 +250,116 @@ bool FontSjisSVM::loadData() {
 		return false;
 	}
 	uint numChars16x16 = data->readUint16BE();
-	/*uint numChars8x16 = */data->readUint16BE();
+	uint numChars8x16 = data->readUint16BE();
 
-	_fontData16x16 = new uint16[numChars16x16 * 16];
-	assert(_fontData16x16);
 	_fontData16x16Size = numChars16x16 * 16;
+	_fontData16x16 = new uint16[_fontData16x16Size];
+	assert(_fontData16x16);
 
 	for (uint i = 0; i < _fontData16x16Size; ++i)
 		_fontData16x16[i] = data->readUint16BE();
 
+	_fontData8x16Size = numChars8x16 * 16;
+	_fontData8x16 = new uint8[numChars8x16 * 16];
+	assert(_fontData8x16);
+
+	data->read(_fontData8x16, _fontData8x16Size);
+
 	bool retValue = !data->err();
 	delete data;
 	return retValue;
+}
+ 
+void FontSjisSVM::drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const {
+	if (!is8x16(ch))
+		return FontSJIS16x16::drawChar(dst, ch, pitch, bpp, c1, c2);
+
+	const uint8 *glyphSource = getCharData8x16(ch);
+	if (!glyphSource)
+		return;
+
+	if (bpp == 1) {
+		if (!_outlineEnabled)
+			drawCharIntern<uint8>(glyphSource, (uint8 *)dst, pitch, c1);
+		else
+			drawCharInternOutline<uint8>(glyphSource, (uint8 *)dst, pitch, c1, c2);
+	} else if (bpp == 2) {
+		if (!_outlineEnabled)
+			drawCharIntern<uint16>(glyphSource, (uint8 *)dst, pitch, c1);
+		else
+			drawCharInternOutline<uint16>(glyphSource, (uint8 *)dst, pitch, c1, c2);
+	} else {
+		error("FontSjisSVM::drawChar: unsupported bpp: %d", bpp);
+	}
+}
+
+// TODO: Consider merging these with FontSjis16x16
+template<typename Color>
+void FontSjisSVM::drawCharInternOutline(const uint8 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const {
+	uint16 outlineGlyph[18];
+	memset(outlineGlyph, 0, sizeof(outlineGlyph));
+
+	// Create an outline map including the original character
+	const uint8 *src = glyph;
+	for (int i = 0; i < 16; ++i) {
+		uint16 line = *src++;
+		line = (line << 2) | (line << 1) | (line << 0);
+
+		outlineGlyph[i + 0] |= line;
+		outlineGlyph[i + 1] |= line;
+		outlineGlyph[i + 2] |= line;
+	}
+
+	uint8 *dstLine = dst;
+	for (int y = 0; y < 18; ++y) {
+		Color *lineBuf = (Color *)dstLine;
+		uint16 line = outlineGlyph[y];
+
+		for (int x = 0; x < 10; ++x) {
+			if (line & 0x200)
+				*lineBuf = c2;
+			line <<= 1;
+			++lineBuf;
+		}
+
+		dstLine += pitch;
+	}
+
+	// draw the original char
+	drawCharIntern<Color>(glyph, dst + pitch + 1, pitch, c1);
+}
+
+template<typename Color>
+void FontSjisSVM::drawCharIntern(const uint8 *glyph, uint8 *dst, int pitch, Color c1) const {
+	for (int y = 0; y < 16; ++y) {
+		Color *lineBuf = (Color *)dst;
+		uint8 line = *glyph++;
+
+		for (int x = 0; x < 8; ++x) {
+			if (line & 0x80)
+				*lineBuf = c1;
+			line <<= 1;
+			++lineBuf;
+		}
+
+		dst += pitch;
+	}
+}
+
+uint FontSjisSVM::getCharWidth(uint16 ch) const {
+	if (is8x16(ch))
+		return _outlineEnabled ? 10 : 8;
+	else
+		return FontSJIS16x16::getMaxFontWidth();
+}
+
+bool FontSjisSVM::is8x16(uint16 ch) const {
+	if (ch >= 0xFF)
+		return false;
+	else if (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))
+		return true;
+	else
+		return false;
 }
 
 const uint16 *FontSjisSVM::getCharData(uint16 c) const {
@@ -290,6 +388,24 @@ const uint16 *FontSjisSVM::getCharData(uint16 c) const {
 	const uint offset = (base * 0xBC + index) * 16;
 	assert(offset + 16 <= _fontData16x16Size);
 	return _fontData16x16 + offset;
+}
+
+const uint8 *FontSjisSVM::getCharData8x16(uint16 c) const {
+	const uint8 fB = c & 0xFF;
+	const uint8 sB = c >> 8;
+
+	if (!is8x16(c) || sB)
+		return 0;
+
+	int index = fB;
+
+	// half-width katakana
+	if (fB >= 0xA1 && fB <= 0xDF)
+		index -= 0x21;
+
+	const uint offset = index * 16;
+	assert(offset <= _fontData8x16Size);
+	return _fontData8x16 + offset;
 }
 
 } // end of namespace Graphics
