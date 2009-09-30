@@ -141,9 +141,9 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		// clone the file for that, etc., see also the long comment at the start
 		// of this file.
 		// We really need some examples on how this is used.
-		error("file_open(_K_FILE_MODE_OPEN_OR_CREATE) File creation currently not supported");
+		error("file_open(_K_FILE_MODE_OPEN_OR_CREATE) File creation currently not supported (filename '%s')", englishName.c_str());
 	} else {
-		error("file_open: unsupported mode %d", mode);
+		error("file_open: unsupported mode %d (filename '%s')", mode, englishName.c_str());
 	}
 
 	if (!inFile && !outFile) { // Failed
