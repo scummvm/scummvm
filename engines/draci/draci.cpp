@@ -215,6 +215,15 @@ bool DraciEngine::handleEvents() {
 					_script->endCurrentProgram();
 				}
 			}
+			else if (event.kbd.keycode == Common::KEYCODE_m) {
+				if (_game->getLoopStatus() == kStatusOrdinary) {
+					// TODO: record the current room number
+					// so that we can quickly exit there
+					// when Escape is pressed
+					_game->setRoomNum(_game->getMapRoom());
+					_game->setGateNum(0);
+				}
+			}
 			// Show walking map toggle
 			else if (event.kbd.keycode == Common::KEYCODE_w) { 
 				_showWalkingMap = !_showWalkingMap;

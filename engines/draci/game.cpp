@@ -982,6 +982,11 @@ int Game::getCurrentDialogueOffset() const {
 }
 
 void Game::walkHero(int x, int y) {
+	// Needed for the map room with empty walking map.  For some reason,
+	// findNearestWalkable() takes several seconds with 100% CPU to finish
+	// (correctly).
+	if (!_currentRoom._heroOn)
+		return;
 
 	Surface *surface = _vm->_screen->getSurface();
 	
@@ -1474,6 +1479,10 @@ void Game::setSpeechTick(uint tick) {
 
 int Game::getEscRoom() const {
 	return _currentRoom._escRoom;
+}
+
+int Game::getMapRoom() const {
+	return _info._mapRoom;
 }
 
 void Game::schedulePalette(int paletteID) {

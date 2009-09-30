@@ -298,6 +298,7 @@ public:
 	void addItem(int itemID);
 
 	int getEscRoom() const;
+	int getMapRoom() const;
 
 	int getMarkedAnimationIndex() const;
 	void setMarkedAnimationIndex(int index);
