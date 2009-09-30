@@ -45,7 +45,7 @@ public:
 		: r(0), g(0), b(0), _parentIndex(-1), refcount(FREE)
 	{ }
 	PaletteEntry(byte R, byte G, byte B)
-		: r(R), g(G), b(B), _parentIndex(-1), refcount(LOCKED)
+		: r(R), g(G), b(B), _parentIndex(-1), refcount(FREE)
 	{ }
 
 	/** @name Color data */
