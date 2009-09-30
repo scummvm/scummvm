@@ -206,8 +206,8 @@ void Game::init() {
 	_vm->_mouse->setCursorType(kNormalCursor);
 
 	_loopStatus = kStatusOrdinary;
-	_objUnderCursor = kOverlayImage;
-
+	_oldObjUnderCursor = _objUnderCursor = kOverlayImage;
+        
 	// Set the inventory to empty initially
 	memset(_inventory, kNoItem, kInventorySlots * sizeof(int));
 
@@ -1139,6 +1139,7 @@ void Game::loadRoom(int roomNum) {
 	}
 
 	Sprite *ov = new Sprite(wlk, kScreenWidth, kScreenHeight, 0, 0, false);
+        delete[] wlk;
 
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
 	map->addFrame(ov);
