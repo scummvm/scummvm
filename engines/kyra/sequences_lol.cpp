@@ -303,25 +303,13 @@ int LoLEngine::chooseCharacter() {
 		for (int i = 0; i < 4; ++i) {
 			_screen->printText((const char *)_charNamesPC98[i], _charPosXPC98[i], 168, 0xC1, 0x00);
 
-			// Since our SJIS font does not support ASCII digits currently, we have to use the
-			// digits from the SJIS range, which looks different to the original.
+			Screen::FontId old = _screen->setFont(Screen::FID_SJIS_FNT);
 			for (int j = 0; j < 3; ++j) {
-				uint8 buffer[5];
-				snprintf((char *)buffer, 5, "%2d", _charPreviews[i].attrib[j]);
-
-				buffer[3] = buffer[1] - '0' + 0x4F;
-				buffer[2] = 0x82;
-				if (buffer[0] != ' ') {
-					buffer[1] = buffer[0] - '0' + 0x4F;
-					buffer[0] = 0x82;
-				} else {
-					buffer[1] = 0x40;
-					buffer[0] = 0x81;
-				}
-				buffer[4] = 0x00;
-
-				_screen->printText((const char *)buffer, _charPosXPC98[i] + 16, 176 + j * 8, 0x81, 0x00);
+				char buffer[3];
+				snprintf(buffer, sizeof(buffer), "%2d", _charPreviews[i].attrib[j]);
+				_screen->printText(buffer, _charPosXPC98[i] + 16, 176 + j * 8, 0x81, 0x00);
 			}
+			_screen->setFont(old);
 		}
 
 		_screen->printText(_tim->getCTableEntry(51), 72, 176, 0x81, 0x00);
