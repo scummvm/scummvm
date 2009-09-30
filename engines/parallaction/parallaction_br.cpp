@@ -455,6 +455,11 @@ void Parallaction_br::changeCharacter(const char *name) {
 		_char.setName(name);
 		_char._ani->gfxobj = _gfx->loadCharacterAnim(name);
 		_char._talk = _disk->loadTalk(name);
+
+		/* TODO: adjust inventories as following
+		 * 1) if not on game load, then copy _inventory to the right slot of _charInventories
+		 * 2) copy the new inventory from the right slot of _charInventories
+		 */
 	}
 
 	_char._ani->_flags |= kFlagsActive;
