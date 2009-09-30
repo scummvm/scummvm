@@ -529,6 +529,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 					val = (int16)arguments[paramindex];
 
 				target += sprintf(target, format_string, val);
+				paramindex++;
 				CHECK_OVERFLOW1(target, 0, NULL_REG);
 
 				unsigned_var = 0;
