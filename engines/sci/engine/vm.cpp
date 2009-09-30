@@ -946,7 +946,21 @@ void run_vm(EngineState *s, int restoring) {
 					reg_t *argv = scriptState.xs->sp + 1;
 
 					if (!kfun.isDummy) {
+						// Add stack frame to indicate we're executing a callk.
+						// This is useful in debugger backtraces if this
+						// kernel function calls a script itself.
+						ExecStack *xstack;
+						xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
+	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
+						// Debugging hack to identify kernel function
+						xstack->selector = -42 - opparams[0];
+						xstack->type = EXEC_STACK_TYPE_KERNEL;
+
+						// Call kernel function
 						s->r_acc = kfun.fun(s, argc, argv);
+
+						// Remove callk stack frame again
+						s->_executionStack.pop_back();
 					} else {
 						Common::String warningMsg = "Dummy function " + kfun.orig_name + "[";
 						warningMsg += warningMsg.printf("0x%x", opparams[0]);
@@ -962,7 +976,6 @@ void run_vm(EngineState *s, int restoring) {
 						warning(warningMsg.c_str());
 					}
 				}
-				// Call kernel function
 
 				// Calculate xs again: The kernel function might
 				// have spawned a new VM
