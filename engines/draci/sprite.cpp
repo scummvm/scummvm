@@ -58,7 +58,7 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
 /**
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
-Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, 
+Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
     bool columnwise) : _data(NULL) {
 
 	 _width = width;
@@ -75,7 +75,7 @@ Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
 	_mirror = false;
 
 	byte *data = new byte[width * height];
-	
+
 	memcpy(data, raw_data, width * height);
 
 	// If the sprite is stored column-wise, transform it to row-wise
@@ -86,10 +86,10 @@ Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
 }
 
 /**
- *  Constructor for loading sprites from a sprite-formatted buffer, one byte per 
+ *  Constructor for loading sprites from a sprite-formatted buffer, one byte per
  *  pixel.
  */
-Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise) 
+Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise)
     : _data(NULL) {
 
 	 _x = x;
@@ -118,7 +118,7 @@ Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool column
 	_data = data;
 }
 
-Sprite::~Sprite() { 
+Sprite::~Sprite() {
 	delete[] _data;
 }
 
@@ -135,7 +135,7 @@ int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 
 	int dy = y - rect.top;
 	int dx = x - rect.left;
-	
+
 	// Calculate scaling factors
 	double scaleX = double(rect.width()) / _width;
 	double scaleY = double(rect.height()) / _height;
@@ -188,7 +188,7 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 		const byte *row_data = _data + row * _width;
 
 		for (int j = 0; j < columns; ++j) {
-			
+
 			// Fetch index of current column to be drawn
 			const byte src = row_data[columnIndices[j]];
 
@@ -217,7 +217,7 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
  *  Draws the sprite to a Draci::Surface and marks its rectangle on the surface as dirty.
  *  It is safe to call it for sprites that would overflow the surface.
  */
-void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const { 
+void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	// TODO: refactor like drawReScaled()
 
 	Common::Rect sourceRect(0, 0, _width, _height);
@@ -248,7 +248,7 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	// Blit the sprite to the surface
 	for (int i = sourceRect.top; i < sourceRect.bottom; ++i) {
 		for (int j = sourceRect.left; j < sourceRect.right; ++j) {
-			
+
 			// Don't blit if the pixel is transparent on the target surface
 			if (src[i * _width + j] != transparent) {
 
@@ -270,7 +270,7 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 		surface->markDirtyRect(destRect);
 	}
 }
-	
+
 
 Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	return Common::Rect(_x + displacement.relX, _y + displacement.relY,
@@ -278,7 +278,7 @@ Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	    _y + displacement.relY + (int) (_scaledHeight * displacement.extraScaleY));
 }
 
-Text::Text(const Common::String &str, const Font *font, byte fontColour, 
+Text::Text(const Common::String &str, const Font *font, byte fontColour,
                 int x, int y, uint spacing) {
 	_x = x;
 	_y = y;
@@ -295,7 +295,7 @@ Text::Text(const Common::String &str, const Font *font, byte fontColour,
 
 	_spacing = spacing;
 	_colour = fontColour;
-	
+
 	_font = font;
 
 	_width = _font->getStringWidth(str, _spacing);
@@ -303,7 +303,7 @@ Text::Text(const Common::String &str, const Font *font, byte fontColour,
 
 	_scaledWidth = _width;
 	_scaledHeight = _height;
-} 
+}
 
 void Text::setText(const Common::String &str) {
 	_width = _font->getStringWidth(str, _spacing);
@@ -348,4 +348,4 @@ void Text::setFont(const Font *font) {
 }
 
 } // End of namespace Draci
- 
+

@@ -25,7 +25,7 @@
 
 #ifndef DRACI_H
 #define DRACI_H
- 
+
 #include "common/system.h"
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
@@ -50,7 +50,7 @@ public:
 	Common::Error run();
 
 	bool hasFeature(Engine::EngineFeature f) const;
-	
+
 	bool handleEvents();
 
 	Screen *_screen;

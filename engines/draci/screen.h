@@ -52,7 +52,7 @@ public:
 	void copyToScreen();
 	void clearScreen();
 	void fillScreen(uint8 colour);
-	Surface *getSurface();	
+	Surface *getSurface();
 	void drawRect(Common::Rect r, uint8 colour);
 
 private:

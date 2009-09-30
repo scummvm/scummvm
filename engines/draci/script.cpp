@@ -253,7 +253,7 @@ int Script::funcIsIcoOn(int itemID) const {
 	itemID -= 1;
 
 	return _vm->_game->getItemStatus(itemID) == 1;
-} 
+}
 
 int Script::funcIcoStat(int itemID) const {
 	itemID -= 1;
@@ -351,9 +351,9 @@ void Script::play(Common::Queue<int> &params) {
 	}
 
 	_vm->_game->setLoopSubstatus(kSubstatusStrange);
-	_vm->_game->setExitLoop(true);    
+	_vm->_game->setExitLoop(true);
 	_vm->_game->loop();
-	_vm->_game->setExitLoop(false);    
+	_vm->_game->setExitLoop(false);
 	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 }
 
@@ -364,21 +364,21 @@ void Script::load(Common::Queue<int> &params) {
 
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
-	
+
 	uint i;
 	GameObject *obj = _vm->_game->getObject(objID);
 
 	// If the animation is already loaded, return
 	for(i = 0; i < obj->_anims.size(); ++i) {
 		if (obj->_anims[i] == animID) {
-			return; 
+			return;
 		}
 	}
 
 	// Load the animation into memory
 
 	_vm->_game->loadAnimation(animID, obj->_z);
-	
+
 	// We insert the ID of the loaded animation into the object's internal array
 	// of owned animation IDs.
 	// Care must be taken to store them sorted (increasing order) as some things
@@ -455,7 +455,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	}
 
 	_vm->_game->loop();
-	_vm->_game->setExitLoop(false);    
+	_vm->_game->setExitLoop(false);
 	_vm->_anims->stop(animID);
 	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 
@@ -576,10 +576,10 @@ void Script::objStat(Common::Queue<int> &params) {
 		obj->_visible = false;
 		obj->_location = -1;
 	}
-		
+
 	for (uint i = 0; i < obj->_anims.size(); ++i) {
 		_vm->_anims->stop(obj->_anims[i]);
-	}	
+	}
 }
 
 void Script::execInit(Common::Queue<int> &params) {
@@ -638,7 +638,7 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 
 	// HACK: This should be an onDest action when hero walking is properly implemented
 	_vm->_game->setExitLoop(true);
-	
+
 	_vm->_game->walkHero(x, y);
 
 	_vm->_game->setLoopSubstatus(kSubstatusStrange);
@@ -735,7 +735,7 @@ void Script::loadMap(Common::Queue<int> &params) {
 
 void Script::resetDialogue(Common::Queue<int> &params) {
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
-	
+
 	for (int i = 0; i < _vm->_game->getDialogueBlockNum(); ++i) {
 		_vm->_game->setDialogueVar(currentOffset + i, 0);
 	}
@@ -893,12 +893,12 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 }
 
 /**
- * @brief Evaluates a GPL mathematical expression on a given offset and returns 
+ * @brief Evaluates a GPL mathematical expression on a given offset and returns
  * the result (which is normally a boolean-like value)
- * 
+ *
  * @param program   A GPL2Program instance of the program containing the expression
  * @param offset    Offset of the expression inside the program (in multiples of 2 bytes)
- * 
+ *
  * @return The result of the expression converted to a bool.
  *
  * Reference: the function equivalent to this one is called "Can()" in the original engine.
@@ -908,14 +908,14 @@ bool Script::testExpression(const GPL2Program &program, uint16 offset) const {
 	Common::MemoryReadStream reader(program._bytecode, program._length);
 
 	// Offset is given as number of 16-bit integers so we need to convert
-	// it to a number of bytes  
+	// it to a number of bytes
 	offset -= 1;
 	offset *= 2;
 
 	// Seek to the expression
 	reader.seek(offset);
 
-	debugC(4, kDraciBytecodeDebugLevel, 
+	debugC(4, kDraciBytecodeDebugLevel,
 	       "Evaluating (standalone) GPL expression at offset %d:", offset);
 
 	return (bool)handleMathExpression(&reader);
@@ -991,19 +991,19 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 
 	// Stream reader for the whole program
 	Common::MemoryReadStream reader(program._bytecode, program._length);
-	
+
 	// Parameter queue that is passed to each command
 	Common::Queue<int> params;
 
 	// Offset is given as number of 16-bit integers so we need to convert
-	// it to a number of bytes  
+	// it to a number of bytes
 	offset -= 1;
 	offset *= 2;
 
 	// Seek to the requested part of the program
 	reader.seek(offset);
 
-	debugC(3, kDraciBytecodeDebugLevel, 
+	debugC(3, kDraciBytecodeDebugLevel,
 		"Starting GPL program at offset %d (program length: %d)", offset, program._length);
 
 	const GPL2Command *cmd;
@@ -1011,8 +1011,8 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 
 		// Account for GPL jump that some commands set
 		if (_jump != 0) {
-			debugC(3, kDraciBytecodeDebugLevel, 
-				"Jumping from offset %d to %d (%d bytes)", 
+			debugC(3, kDraciBytecodeDebugLevel,
+				"Jumping from offset %d to %d (%d bytes)",
 				reader.pos(), reader.pos() + _jump, _jump);
 			reader.seek(_jump, SEEK_CUR);
 		}
@@ -1045,7 +1045,7 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
-					debugC(3, kDraciBytecodeDebugLevel, 
+					debugC(3, kDraciBytecodeDebugLevel,
 					    "Evaluating (in-script) GPL expression at offset %d: ", offset);
 					params.push(handleMathExpression(&reader));
 				} else {

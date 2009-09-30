@@ -63,7 +63,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	Common::MemoryReadStream dialogueData(file->_data, file->_length);
 
 	uint numDialogues = file->_length / sizeof(uint16);
-	_dialogueOffsets = new uint[numDialogues];	
+	_dialogueOffsets = new uint[numDialogues];
 
 	uint curOffset;
 	for (i = 0, curOffset = 0; i < numDialogues; ++i) {
@@ -101,7 +101,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 	_variables = new int[numVariables];
 	Common::MemoryReadStream variableData(file->_data, file->_length);
-	
+
 	for (i = 0; i < numVariables; ++i) {
 		_variables[i] = variableData.readUint16LE();
 	}
@@ -118,7 +118,7 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 	uint numObjects = file->_length;
 
 	_objects = new GameObject[numObjects];
-	Common::MemoryReadStream objStatus(file->_data, file->_length); 
+	Common::MemoryReadStream objStatus(file->_data, file->_length);
 
 	for (i = 0; i < numObjects; ++i) {
 		byte tmp = objStatus.readByte();
@@ -150,7 +150,7 @@ void Game::start() {
 		if (_newRoom != _currentRoom._roomNum) {
 
 			// Set the first two variables to the new room / gate
-			// Before setting these variables we have to convert the values to 
+			// Before setting these variables we have to convert the values to
 			// 1-based indexing because this is how everything is stored in the data files
 			_variables[0] = _newGate + 1;
 			_variables[1] = _newRoom + 1;
@@ -163,10 +163,10 @@ void Game::start() {
 			}
 
 			setLoopSubstatus(kSubstatusOrdinary);
-	
+
 			// Do the actual change
 			changeRoom(_newRoom);
-			
+
 			// Set the current room / gate to the new value
 			_currentRoom._roomNum = _newRoom;
 			_currentGate = _newGate;
@@ -235,7 +235,7 @@ void Game::init() {
 		_dialogueAnims[i]->addFrame(dialogueLine);
 
 		_dialogueAnims[i]->setZ(254);
-		_dialogueAnims[i]->setRelative(1, 
+		_dialogueAnims[i]->setRelative(1,
 		                      kScreenHeight - (i + 1) * _vm->_smallFont->getFontHeight());
 
 		Text *text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
@@ -271,7 +271,7 @@ void Game::loop() {
 	Surface *surface = _vm->_screen->getSurface();
 
 	do {
-	debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d", 
+	debugC(4, kDraciLogicDebugLevel, "loopstatus: %d, loopsubstatus: %d",
 		_loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
@@ -284,7 +284,7 @@ void Game::loop() {
 			Text *text;
 			for (int i = 0; i < kDialogueLines; ++i) {
 				text = reinterpret_cast<Text *>(_dialogueAnims[i]->getFrame());
-				
+
 				if (_animUnderCursor == _dialogueAnims[i]->getID()) {
 					text->setColour(kLineActiveColour);
 				} else {
@@ -310,7 +310,7 @@ void Game::loop() {
 			if (_loopStatus == kStatusOrdinary && _loopSubstatus == kSubstatusOrdinary) {
 				if (_vm->_mouse->lButtonPressed()) {
 					_vm->_mouse->lButtonSet(false);
-					
+
 					if (_currentItem != kNoItem) {
 						putItem(_currentItem, 0);
 						_currentItem = kNoItem;
@@ -318,7 +318,7 @@ void Game::loop() {
 					} else {
 						if (_objUnderCursor != kObjectNotFound) {
 							GameObject *obj = &_objects[_objUnderCursor];
-		
+
 							_vm->_mouse->cursorOff();
 							titleAnim->markDirtyRect(surface);
 							title->setText("");
@@ -388,11 +388,11 @@ void Game::loop() {
 
 				// If we are in inventory mode, all the animations except game items'
 				// images will necessarily be paused so we can safely assume that any
-				// animation under the cursor (a value returned by 
+				// animation under the cursor (a value returned by
 				// AnimationManager::getTopAnimationID()) will be an item animation or
-				// an overlay, for which we check. Item animations have their IDs 
-				// calculated by offseting their itemID from the ID of the last "special" 
-				// animation ID. In this way, we obtain its itemID. 
+				// an overlay, for which we check. Item animations have their IDs
+				// calculated by offseting their itemID from the ID of the last "special"
+				// animation ID. In this way, we obtain its itemID.
 				if (_animUnderCursor != kOverlayImage && _animUnderCursor != kInventorySprite) {
 					_itemUnderCursor = kInventoryItemsID - _animUnderCursor;
 				} else {
@@ -456,21 +456,21 @@ void Game::loop() {
 			}
 		}
 
-		debugC(5, kDraciLogicDebugLevel, "Anim under cursor: %d", _animUnderCursor); 
+		debugC(5, kDraciLogicDebugLevel, "Anim under cursor: %d", _animUnderCursor);
 
 		// Handle character talking (if there is any)
 		if (_loopSubstatus == kSubstatusTalk) {
 			Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText);
 			Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
 
-			uint speechDuration = kBaseSpeechDuration + 
-			                      speechFrame->getLength() * kSpeechTimeUnit / 
+			uint speechDuration = kBaseSpeechDuration +
+			                      speechFrame->getLength() * kSpeechTimeUnit /
 			                      (128 / 16 + 1);
 
-			// If the current speech text has expired or the user clicked a mouse button, 
+			// If the current speech text has expired or the user clicked a mouse button,
 			// advance to the next line of text
-			if (_vm->_mouse->lButtonPressed() || 
-				_vm->_mouse->rButtonPressed() || 
+			if (_vm->_mouse->lButtonPressed() ||
+				_vm->_mouse->rButtonPressed() ||
 				(_vm->_system->getMillis() - _speechTick) >= speechDuration) {
 
 				_shouldExitLoop = true;
@@ -489,7 +489,7 @@ void Game::loop() {
 		_vm->_system->delayMillis(20);
 
 		// HACK: Won't be needed once the game loop is implemented properly
-		_shouldExitLoop = _shouldExitLoop || (_newRoom != _currentRoom._roomNum && 
+		_shouldExitLoop = _shouldExitLoop || (_newRoom != _currentRoom._roomNum &&
 		                  (_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate));
 
 	} while (!shouldExitLoop());
@@ -606,14 +606,14 @@ void Game::updateTitle() {
 	Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
 
 	// Mark dirty rectangle to delete the previous text
-	titleAnim->markDirtyRect(surface);	
-	
+	titleAnim->markDirtyRect(surface);
+
 	// If there is no object under the cursor, delete the title.
 	// Otherwise, show the object's title.
 	if (_objUnderCursor == kObjectNotFound) {
 		title->setText("");
 	} else {
-		GameObject *obj = &_objects[_objUnderCursor];	
+		GameObject *obj = &_objects[_objUnderCursor];
 		title->setText(obj->_title);
 	}
 
@@ -661,7 +661,7 @@ void Game::putItem(int itemID, int position) {
 
 	uint i = position;
 
-	if (position >= 0 && 
+	if (position >= 0 &&
 		position < kInventoryLines * kInventoryColumns &&
 		_inventory[position] == kNoItem) {
 		_inventory[position] = itemID;
@@ -680,16 +680,16 @@ void Game::putItem(int itemID, int position) {
 	Animation *anim = _vm->_anims->getAnimation(kInventoryItemsID - itemID);
 	Drawable *frame = anim->getFrame();
 
-	const int x = kInventoryX + 
+	const int x = kInventoryX +
 	              (column * kInventoryItemWidth) -
 	              (kInventoryItemWidth / 2) -
 	              (frame->getWidth() / 2);
 
-	const int y = kInventoryY + 
-	              (line * kInventoryItemHeight) - 
+	const int y = kInventoryY +
+	              (line * kInventoryItemHeight) -
 	              (kInventoryItemHeight / 2) -
 	              (frame->getHeight() / 2);
-	
+
 	debug(2, "itemID: %d position: %d line: %d column: %d x: %d y: %d", itemID, position, line, column, x, y);
 
 	anim->setRelative(x, y);
@@ -711,7 +711,7 @@ void Game::inventoryInit() {
 
 	// Turn cursor on if it is off
 	_vm->_mouse->cursorOn();
-	
+
 	// Set the appropriate loop status
 	_loopStatus = kStatusInventory;
 
@@ -758,19 +758,19 @@ void Game::dialogueMenu(int dialogueID) {
 	Common::String ext(tmp);
 	_dialogueArchive = new BArchive(dialoguePath + ext + ".dfw");
 
-	debugC(4, kDraciLogicDebugLevel, "Starting dialogue (ID: %d, Archive: %s)", 
+	debugC(4, kDraciLogicDebugLevel, "Starting dialogue (ID: %d, Archive: %s)",
 	    dialogueID, (dialoguePath + ext + ".dfw").c_str());
 
 	_currentDialogue = dialogueID;
 	oldLines = 255;
 	dialogueInit(dialogueID);
-	
+
 	do {
 		_dialogueExit = false;
 		hit = dialogueDraw();
 
-		debugC(7, kDraciLogicDebugLevel, 
-			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d", 
+		debugC(7, kDraciLogicDebugLevel,
+			"hit: %d, _lines[hit]: %d, lastblock: %d, dialogueLines: %d, dialogueExit: %d",
 			hit, _lines[hit], _lastBlock, _dialogueLinesNum, _dialogueExit);
 
 		if ((!_dialogueExit) && (hit != -1) && (_lines[hit] != -1)) {
@@ -797,7 +797,7 @@ int Game::dialogueDraw() {
 	_dialogueLinesNum = 0;
 	int i = 0;
 	int ret = 0;
-	
+
 	Animation *anim;
 	Text *dialogueLine;
 
@@ -882,7 +882,7 @@ void Game::dialogueInit(int dialogID) {
 		assert(f->_length - 1 == f->_data[0]);
 
 		_dialogueBlocks[i]._title = Common::String((char *)(f->_data+1), f->_length-1);
-	
+
 		f = _dialogueArchive->getFile(i * 3 + 2);
 		_dialogueBlocks[i]._program._bytecode = f->_data;
 		_dialogueBlocks[i]._program._length = f->_length;
@@ -916,7 +916,7 @@ void Game::runDialogueProg(GPL2Program prog, int offset) {
 
 	// Run the dialogue program
 	_vm->_script->run(prog, offset);
-	
+
 	deleteAnimationsAfterIndex(lastAnimIndex);
 }
 
@@ -972,10 +972,10 @@ void Game::walkHero(int x, int y) {
 		return;
 
 	Surface *surface = _vm->_screen->getSurface();
-	
+
 	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
 
-	GameObject *dragon = getObject(kDragonObject); 
+	GameObject *dragon = getObject(kDragonObject);
 
 	for (uint i = 0; i < dragon->_anims.size(); ++i) {
 		_vm->_anims->stop(dragon->_anims[i]);
@@ -997,7 +997,7 @@ void Game::walkHero(int x, int y) {
 void Game::loadItem(int itemID) {
 	const BAFile *f = _vm->_itemsArchive->getFile(itemID * 3);
 	Common::MemoryReadStream itemReader(f->_data, f->_length);
-	
+
 	GameItem *item = _items + itemID;
 
 	item->_init = itemReader.readSint16LE();
@@ -1092,7 +1092,7 @@ void Game::loadRoom(int roomNum) {
 
 	// Load the room's objects
 	for (uint i = 0; i < _info._numObjects; ++i) {
-		debugC(7, kDraciLogicDebugLevel, 
+		debugC(7, kDraciLogicDebugLevel,
 			"Checking if object %d (%d) is at the current location (%d)", i,
 			_objects[i]._location, roomNum);
 
@@ -1108,7 +1108,7 @@ void Game::loadRoom(int roomNum) {
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		if (_objects[i]._location == roomNum) {
 			const GameObject *obj = getObject(i);
-			debugC(6, kDraciLogicDebugLevel, 
+			debugC(6, kDraciLogicDebugLevel,
 				"Running init program for object %d (offset %d)", i, obj->_init);
 			_vm->_script->run(obj->_program, obj->_init);
 		}
@@ -1146,7 +1146,7 @@ void Game::loadRoom(int roomNum) {
 
 int Game::loadAnimation(uint animNum, uint z) {
 	const BAFile *animFile = _vm->_animationsArchive->getFile(animNum);
-	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);	
+	Common::MemoryReadStream animationReader(animFile->_data, animFile->_length);
 
 	uint numFrames = animationReader.readByte();
 
@@ -1190,7 +1190,7 @@ int Game::loadAnimation(uint animNum, uint z) {
 
 		sp->setScaled(scaledWidth, scaledHeight);
 
-		if (mirror) 
+		if (mirror)
 			sp->setMirrorOn();
 
 		sp->setDelay(delay * 10);
@@ -1206,7 +1206,7 @@ void Game::loadObject(uint objNum) {
 
 	file = _vm->_objectsArchive->getFile(objNum * 3);
 	Common::MemoryReadStream objReader(file->_data, file->_length);
-	
+
 	GameObject *obj = _objects + objNum;
 
 	obj->_init = objReader.readUint16LE();
@@ -1230,7 +1230,7 @@ void Game::loadObject(uint objNum) {
 	obj->_absNum = objNum;
 
 	file = _vm->_objectsArchive->getFile(objNum * 3 + 1);
-	
+
 	// The first byte of the file is the length of the string (without the length)
 	assert(file->_length - 1 == file->_data[0]);
 
@@ -1257,22 +1257,22 @@ uint Game::getNumObjects() const {
 
 void Game::loadOverlays() {
 	uint x, y, z, num;
- 
+
 	const BAFile *overlayHeader;
 
 	overlayHeader = _vm->_roomsArchive->getFile(_currentRoom._roomNum * 4 + 2);
 	Common::MemoryReadStream overlayReader(overlayHeader->_data, overlayHeader->_length);
- 
+
 	for (int i = 0; i < _currentRoom._numOverlays; i++) {
 		num = overlayReader.readUint16LE() - 1;
 		x = overlayReader.readUint16LE();
 		y = overlayReader.readUint16LE();
 		z = overlayReader.readByte();
- 
+
 		const BAFile *overlayFile;
 		overlayFile = _vm->_overlaysArchive->getFile(num);
 		Sprite *sp = new Sprite(overlayFile->_data, overlayFile->_length, x, y, true);
- 
+
 		_vm->_anims->addOverlay(sp, z);
 	}
 
@@ -1294,7 +1294,7 @@ void Game::changeRoom(uint roomNum) {
 	_vm->_screen->clearScreen();
 
 	_vm->_anims->deleteOverlays();
-	
+
 	// Delete walking map testing overlay
 	_vm->_anims->deleteAnimation(kWalkingMapOverlay);
 
@@ -1308,7 +1308,7 @@ void Game::changeRoom(uint roomNum) {
 
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
-		
+
 		if (i != 0 && (obj->_location == oldRoomNum)) {
 			for (uint j = 0; j < obj->_anims.size(); ++j) {
 					_vm->_anims->deleteAnimation(obj->_anims[j]);
@@ -1333,7 +1333,7 @@ void Game::runGateProgram(int gate) {
 
 	// Run gate program
 	_vm->_script->run(_currentRoom._program, _currentRoom._gates[gate]);
-	
+
 	deleteAnimationsAfterIndex(lastAnimIndex);
 
 	setExitLoop(false);
@@ -1469,7 +1469,7 @@ int Game::getScheduledPalette() const {
 }
 
 /**
- * The GPL command Mark sets the animation index (which specifies the order in which 
+ * The GPL command Mark sets the animation index (which specifies the order in which
  * animations were loaded in) which is then used by the Release command to delete
  * all animations that have an index greater than the one marked.
  */
@@ -1478,7 +1478,7 @@ int Game::getMarkedAnimationIndex() const {
 }
 
 void Game::deleteAnimationsAfterIndex(int lastAnimIndex) {
-	// Delete all animations loaded after the marked one 
+	// Delete all animations loaded after the marked one
 	// (from objects and from the AnimationManager)
 	for (uint i = 0; i < getNumObjects(); ++i) {
 		GameObject *obj = &_objects[i];
@@ -1526,7 +1526,7 @@ bool WalkingMap::isWalkable(int x, int y) const {
 	return mapByte & (1 << pixelIndex % 8);
 }
 
-/** 
+/**
  * @brief For a given point, find a nearest walkable point on the walking map
  *
  * @param startX    x coordinate of the point
@@ -1574,15 +1574,15 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 		prediction = 1 - radius;
 		dx = 3;
 		dy = 2 * radius - 2;
-		
+
 		do {
 			// The following two loops serve the purpose of checking the points on the two
 			// ellipses for walkability. The signs[] array is there to obliterate the need
 			// of writing out all combinations manually.
-	
+
 			for (uint i = 0; i < kSignsNum; ++i) {
 				finalY = startY + y * signs[i];
-	
+
 				for (uint j = 0; j < kSignsNum; ++j) {
 					finalX = startX + x * signs[j];
 
@@ -1626,16 +1626,16 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 			dx += 2 * _deltaX;
 			x += _deltaX;
 
-		// If the current ellipse has been reshaped into a circle, 
+		// If the current ellipse has been reshaped into a circle,
 		// end this loop and enlarge the radius
-		} while (x <= y); 
+		} while (x <= y);
 	}
 }
 
 static double real_to_double(byte real[6]) {
 	// Extract sign bit
 	int sign = real[0] & (1 << 7);
-	
+
 	// Extract exponent and adjust for bias
 	int exp = real[5] - 129;
 
@@ -1669,4 +1669,4 @@ static double real_to_double(byte real[6]) {
 	return ldexp(mantissa, exp);
 }
 
-} 
+}

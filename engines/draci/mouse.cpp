@@ -95,7 +95,7 @@ void Mouse::setCursorType(CursorType cur) {
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
-	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(), 
+	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
 	        sp.getWidth() / 2, sp.getHeight() / 2);
 }
 
@@ -105,7 +105,7 @@ void Mouse::loadItemCursor(int itemID, bool highlighted) {
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
-	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(), 
+	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(),
 	        sp.getWidth() / 2, sp.getHeight() / 2);
 }
 

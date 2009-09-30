@@ -51,7 +51,7 @@ enum {
 	kObjectNotFound = -1
 };
 
-// Used as the value of the _escRoom field of the current room if there is 
+// Used as the value of the _escRoom field of the current room if there is
 // no escape room defined
 enum {
 	kNoEscRoom = -1
@@ -196,15 +196,15 @@ struct Room {
 };
 
 enum LoopStatus {
-	kStatusOrdinary, 
-	kStatusGate, 
-	kStatusInventory, 
+	kStatusOrdinary,
+	kStatusGate,
+	kStatusInventory,
 	kStatusDialogue
 };
 
 enum LoopSubstatus {
-	kSubstatusOrdinary, 
-	kSubstatusTalk, 
+	kSubstatusOrdinary,
+	kSubstatusTalk,
 	kSubstatusFade,
 	kSubstatusStrange
 };
@@ -233,7 +233,7 @@ public:
 	void changeRoom(uint roomNum);
 
 	// HACK: this is only for testing
-	int nextRoomNum() const { 
+	int nextRoomNum() const {
 		int n = _currentRoom._roomNum;
 		n = n < 37 ? n+1 : n;
 
@@ -245,7 +245,7 @@ public:
 	}
 
 	// HACK: same as above
-	int prevRoomNum() const { 
+	int prevRoomNum() const {
 		int n = _currentRoom._roomNum;
 		n = n > 0 ? n-1 : n;
 
@@ -273,7 +273,7 @@ public:
 	int getObjectWithAnimation(int animID) const;
 
 	int getVariable(int varNum) const;
-	void setVariable(int varNum, int value);	
+	void setVariable(int varNum, int value);
 
 	const Person *getPerson(int personID) const;
 
@@ -365,7 +365,7 @@ private:
 	bool _inventoryExit;
 
 	Room _currentRoom;
-	int _currentGate;	
+	int _currentGate;
 	int _newRoom;
 	int _newGate;
 
@@ -382,7 +382,7 @@ private:
 	int _blockNum;
 	int _lines[kDialogueLines];
 	Animation *_dialogueAnims[kDialogueLines];
-	
+
 	LoopStatus _loopStatus;
 	LoopSubstatus _loopSubstatus;
 

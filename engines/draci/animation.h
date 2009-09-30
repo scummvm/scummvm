@@ -22,7 +22,7 @@
  * $Id$
  *
  */
- 
+
 #ifndef DRACI_ANIMATION_H
 #define DRACI_ANIMATION_H
 
@@ -35,9 +35,9 @@ namespace Draci {
   * specified in the data files.
   */
 enum {
-	kOverlayImage = -1, 
-	kWalkingMapOverlay = -2, 
-	kTitleText = -3, 
+	kOverlayImage = -1,
+	kWalkingMapOverlay = -2,
+	kTitleText = -3,
 	kSpeechText = -4,
 	kInventorySprite = -5,
 	kDialogueLinesID = -6,
@@ -46,13 +46,13 @@ enum {
 };
 
 /**
-  * Default argument to Animation::getFrame() that makes it return 
+  * Default argument to Animation::getFrame() that makes it return
   * the current frame instead of the user specifying it.
   */
 enum { kCurrentFrame = -1 };
 
-/** 
-  * Used by overlays as a neutral index that won't get 
+/**
+  * Used by overlays as a neutral index that won't get
   * released with the GPL Release command.
   */
 enum { kIgnoreIndex = -2 };
@@ -66,10 +66,10 @@ typedef void (Animation::* AnimationCallback)();
 public:
 	Animation(DraciEngine *v, int index);
 	~Animation();
-	
+
 	uint getZ() const;
 	void setZ(uint z);
-	
+
 	void setID(int id);
 	int getID() const;
 
@@ -117,11 +117,11 @@ private:
 	uint nextFrameNum() const;
 	void deleteFrames();
 
-	/** Internal animation ID 
+	/** Internal animation ID
 	  * (as specified in the data files and the bytecode)
 	  */
-	int _id; 
-	
+	int _id;
+
 	/** The recency index of an animation, i.e. the most recently added animation has
 	  * the highest index. Some script commands need this.
 	  */
@@ -157,7 +157,7 @@ public:
 	Animation *addText(int id, bool playing = false);
 	Animation *addItem(int id, bool playing = false);
 	void addOverlay(Drawable *overlay, uint z);
-	
+
 	void play(int id);
 	void stop(int id);
 	void pauseAnimations();
@@ -187,7 +187,7 @@ private:
 	 */
 	Common::List<Animation *> _animations;
 
-	/** The index of the most recently added animation. 
+	/** The index of the most recently added animation.
 	  * See Animation::_index for details.
 	  */
 	int _lastIndex;

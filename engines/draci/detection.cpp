@@ -105,7 +105,7 @@ public:
 	virtual const char *getOriginalCopyright() const {
 		return "Copyright (C) 1995 NoSense";
 	}
-	
+
 	virtual bool hasFeature(MetaEngineFeature f) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };

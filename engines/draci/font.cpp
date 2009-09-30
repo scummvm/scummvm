@@ -31,9 +31,9 @@
 namespace Draci {
 
 const char * const kFontSmall = "Small.fon";
-const char * const kFontBig = "Big.fon"; 
+const char * const kFontBig = "Big.fon";
 
-Font::Font(const Common::String &filename) { 
+Font::Font(const Common::String &filename) {
 	_fontHeight = 0;
 	_maxCharWidth = 0;
 	_charWidths = NULL;
@@ -43,7 +43,7 @@ Font::Font(const Common::String &filename) {
 }
 
 Font::~Font() {
-	 freeFont(); 
+	 freeFont();
 }
 
 /**
@@ -53,7 +53,7 @@ Font::~Font() {
  *
  * Loads fonts from a file into a Font instance. The original game uses two
  * fonts (located inside files "Small.fon" and "Big.fon"). The characters in the
- * font are indexed from the space character so an appropriate offset must be 
+ * font are indexed from the space character so an appropriate offset must be
  * added to convert them to equivalent char values, i.e. kDraciIndexOffset.
  * Characters in the higher range are non-ASCII and vary between different
  * language versions of the game.
@@ -61,7 +61,7 @@ Font::~Font() {
  * font format: [1 byte] maximum character width
  *              [1 byte] font height
  *              [138 bytes] character widths of all 138 characters in the font
- *              [138 * fontHeight * maxWidth bytes] character data, stored row-wise 
+ *              [138 * fontHeight * maxWidth bytes] character data, stored row-wise
  */
 
 bool Font::loadFont(const Common::String &filename) {
@@ -72,10 +72,10 @@ bool Font::loadFont(const Common::String &filename) {
 
 	f.open(filename);
 	if (f.isOpen()) {
-		debugC(6, kDraciGeneralDebugLevel, "Opened font file %s", 
+		debugC(6, kDraciGeneralDebugLevel, "Opened font file %s",
 			filename.c_str());
 	} else {
-		debugC(6, kDraciGeneralDebugLevel, "Error opening font file %s", 
+		debugC(6, kDraciGeneralDebugLevel, "Error opening font file %s",
 			filename.c_str());
 		return false;
 	}
@@ -96,7 +96,7 @@ bool Font::loadFont(const Common::String &filename) {
 	_charData = new byte[fontDataSize];
 	f.read(_charData, fontDataSize);
 
-	debugC(5, kDraciGeneralDebugLevel, "Font %s loaded", filename.c_str()); 
+	debugC(5, kDraciGeneralDebugLevel, "Font %s loaded", filename.c_str());
 
 	return true;
 }
@@ -185,9 +185,9 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
  * @param len       Length of the data
  * @param x         Horizontal offset on the surface
  * @param y         Vertical offset on the surface
- * @param spacing   Space to leave between individual characters. Defaults to 0. 
+ * @param spacing   Space to leave between individual characters. Defaults to 0.
  */
-void Font::drawString(Surface *dst, const byte *str, uint len, 
+void Font::drawString(Surface *dst, const byte *str, uint len,
 	                  int x, int y, int with_colour, int spacing, bool markDirty) const {
 	drawString(dst, Common::String((const char *)str, len), x, y, with_colour, spacing, markDirty);
 }
@@ -199,10 +199,10 @@ void Font::drawString(Surface *dst, const byte *str, uint len,
  * @param str       String to draw
  * @param x         Horizontal offset on the surface
  * @param y         Vertical offset on the surface
- * @param spacing   Space to leave between individual characters. Defaults to 0. 
+ * @param spacing   Space to leave between individual characters. Defaults to 0.
  */
 
-void Font::drawString(Surface *dst, const Common::String &str, 
+void Font::drawString(Surface *dst, const Common::String &str,
 	                  int x, int y, int with_colour, int spacing, bool markDirty) const {
 	assert(dst != NULL);
 	assert(x >= 0);
@@ -212,7 +212,7 @@ void Font::drawString(Surface *dst, const Common::String &str,
 
 	int curx = x + (widest - getLineWidth(str, 0, spacing)) / 2;
 	int cury = y;
-	
+
 	for (uint i = 0; i < str.size(); ++i) {
 
 		// If we encounter the '|' char (newline and end of string marker),
@@ -242,9 +242,9 @@ void Font::drawString(Surface *dst, const Common::String &str,
  * @brief Calculate the width of a string when drawn in the current font
  *
  * @param str       String to draw
- * @param spacing   Space to leave between individual characters. Defaults to 0. 
+ * @param spacing   Space to leave between individual characters. Defaults to 0.
  *
- * @return The calculated width of the string 
+ * @return The calculated width of the string
  */
 uint Font::getStringWidth(const Common::String &str, int spacing) const {
 	uint width = 0;
@@ -278,7 +278,7 @@ uint Font::getStringWidth(const Common::String &str, int spacing) const {
 uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing) const {
 	uint width = 0;
 
-	// If the index is greater or equal to the string size, 
+	// If the index is greater or equal to the string size,
 	// the width of the line is 0
 	if (startIndex >= str.size())
 		return 0;
@@ -303,9 +303,9 @@ uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing)
  *        are used as newline characters and end-of-string markers)
  *
  * @param str       String to draw
- * @param spacing   Space to leave between individual characters. Defaults to 0. 
+ * @param spacing   Space to leave between individual characters. Defaults to 0.
  *
- * @return The calculated height of the string 
+ * @return The calculated height of the string
  */
 uint Font::getStringHeight(const Common::String &str) const {
 	uint len = str.size();

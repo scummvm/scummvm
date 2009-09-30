@@ -48,14 +48,14 @@ public:
 	virtual void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const = 0;
 
 	virtual ~Drawable() {};
-	
+
 	uint getWidth() const { return _width; }
 	uint getHeight() const { return _height; }
 
 	uint getScaledWidth() const { return _scaledWidth; }
 	uint getScaledHeight() const { return _scaledHeight; }
 
-	void setScaled(uint width, uint height) { 
+	void setScaled(uint width, uint height) {
 		_scaledWidth = width;
 		_scaledHeight = height;
 	}
@@ -67,12 +67,12 @@ public:
 	void setY(int y) { _y = y; }
 
 	void setDelay(int delay) { _delay = delay; }
-	int getDelay() const { return _delay; }	
+	int getDelay() const { return _delay; }
 
 	virtual Common::Rect getRect(const Displacement &displacement = kNoDisplacement) const = 0;
 
 	virtual DrawableType getType() const = 0;
-	
+
 protected:
 	uint _width;        //!< Width of the sprite
 	uint _height;       //!< Height of the sprite
@@ -80,7 +80,7 @@ protected:
 	uint _scaledHeight; //!< Scaled height of the sprite
 	int _x, _y;         //!< Sprite coordinates
 
-	/** The time a drawable should stay on the screen 
+	/** The time a drawable should stay on the screen
 	 *  before being replaced by another or deleted
 	 */
 	int _delay;
@@ -90,9 +90,9 @@ protected:
  *  Represents a Draci Historie sprite. Supplies two constructors; one for
  *  loading a sprite from a raw data buffer and one for loading a sprite in
  *  the Draci sprite format. Supports loading the sprite from a column-wise
- *  format (transforming them to row-wise) since that is the way the sprites 
+ *  format (transforming them to row-wise) since that is the way the sprites
  *  are stored in the original game files.
- *  
+ *
  *  Sprite format:
  *  [uint16LE] sprite width
  *  [uint16LE] sprite height
@@ -102,13 +102,13 @@ protected:
 class Sprite : public Drawable {
 public:
 	Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
-	Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise); 
+	Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise);
 
 	~Sprite();
 
 	void draw(Surface *surface, bool markDirty, int relX=0, int relY=0) const;
 	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const;
-	
+
 	void setMirrorOn();
 	void setMirrorOff();
 
@@ -125,9 +125,9 @@ private:
 };
 
 class Text : public Drawable {
-	
+
 public:
-	Text(const Common::String &str, const Font *font, byte fontColour, 
+	Text(const Common::String &str, const Font *font, byte fontColour,
 	    int x, int y, uint spacing = 0);
 	~Text() {};
 
@@ -140,7 +140,7 @@ public:
 
 	void draw(Surface *surface, bool markDirty, int relX=0, int relY=0) const;
 
-	// TODO: drawReScaled just calls draw so Text can be accessed through a Drawable pointer. 
+	// TODO: drawReScaled just calls draw so Text can be accessed through a Drawable pointer.
 	// Handle scaling text sometimes (not essential).
 
 	void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const { draw(surface, markDirty, displacement.relX, displacement.relY); }

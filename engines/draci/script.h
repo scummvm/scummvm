@@ -33,7 +33,7 @@
 namespace Draci {
 
 /** The maximum number of parameters for a GPL command */
-const int kMaxParams = 3; 
+const int kMaxParams = 3;
 
 class DraciEngine;
 class Script;
@@ -49,14 +49,14 @@ typedef int  (Script::*GPLFunctionHandler)(int) const;
 
 /**
  *  Represents a single command in the GPL scripting language bytecode.
- *  Each command is represented in the bytecode by a command number and a 
+ *  Each command is represented in the bytecode by a command number and a
  *  subnumber.
  */
 
-struct GPL2Command { 
-	byte _number; 
-	byte _subNumber; 
-	const char *_name; 
+struct GPL2Command {
+	byte _number;
+	byte _subNumber;
+	const char *_name;
 	uint16 _numParams;
 	int _paramTypes[kMaxParams];
 	GPLHandler _handler;
@@ -72,7 +72,7 @@ struct GPL2Function {
 	GPLFunctionHandler _handler;
 };
 
-/** 
+/**
  *  A convenience data type that holds both the actual bytecode and the
  *  length of the bytecode. Passed to Script::run().
  */
@@ -100,7 +100,7 @@ private:
 	const GPL2Command *_commandList;
 	const GPL2Operator *_operatorList;
 	const GPL2Function *_functionList;
- 
+
 	void c_If(Common::Queue<int> &params);
 	void c_Goto(Common::Queue<int> &params);
 	void c_Let(Common::Queue<int> &params);

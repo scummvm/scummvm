@@ -33,17 +33,17 @@ namespace Draci {
 extern const char * const kFontSmall;
 extern const char * const kFontBig;
 
-/** 
+/**
  *  Default font colours. They all seem to remain constant except for the
  *  first one which varies depending on the character speaking.
  *  kOverFontColour is set to transparent.
  *  TODO: Find out what kFontColour1 should actually be when the game starts
  */
-enum { 
+enum {
 	kFontColour1 = 2,
 	kFontColour2 = 0,
 	kFontColour3 = 3,
-	kFontColour4 = 4, 
+	kFontColour4 = 4,
 	kOverFontColour = 255,
 	kTitleColour = 255,
 	kLineActiveColour = 254,
@@ -54,8 +54,8 @@ enum {
  *  Represents the game's fonts. See docs for setFont() for font format details.
  */
 class Font {
-	
-public: 
+
+public:
 	Font(const Common::String &filename);
 	~Font();
 
@@ -65,9 +65,9 @@ public:
 	uint8 getCharWidth(byte chr) const;
 	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const;
 
-	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_colour, 
+	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_colour,
 	                int spacing, bool markDirty = true) const;
-	void drawString(Surface *dst, const Common::String &str, 
+	void drawString(Surface *dst, const Common::String &str,
 	                int x, int y, int with_colour, int spacing, bool markDirty = true) const;
 
 	uint getStringWidth(const Common::String &str, int spacing = 0) const;
@@ -83,11 +83,11 @@ private:
 
 	/** Pointer to a raw byte array representing font pixels stored row-wise */
 	byte *_charData;
-	
+
 	/** Number of glyphs in the font */
 	static const uint kCharNum = 138;
 
-	/** 
+	/**
 	 *  Chars are indexed from the space character so this should be subtracted
 	 *  to get the index of a glyph
 	 */

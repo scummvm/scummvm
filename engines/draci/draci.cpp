@@ -24,7 +24,7 @@
  */
 
 #include "common/scummsys.h"
- 
+
 #include "common/config-manager.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -33,7 +33,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/font.h"
- 
+
 #include "draci/draci.h"
 #include "draci/barchive.h"
 #include "draci/script.h"
@@ -59,14 +59,14 @@ const Common::String itemImagesPath("OBR_IK.DFW");
 const Common::String initPath("INIT.DFW");
 const Common::String stringsPath("RETEZCE.DFW");
 
-DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc) 
+DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
- 
+
 	// Do not initialize graphics here
- 
+
 	// However this is the place to specify all default directories
 	//Common::File::addDefaultDirectory(_gameDataPath + "sound/");
 
@@ -76,7 +76,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	Common::addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
 	Common::addDebugChannel(kDraciLogicDebugLevel, "logic", "Game logic debug info");
 	Common::addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
- 
+
 	// Don't forget to register your random source
 	g_eventRec.registerRandomSource(_rnd, "draci");
 }
@@ -112,12 +112,12 @@ int DraciEngine::init() {
 	if (!_objectsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening objects archive failed");
 		return Common::kUnknownError;
-	}	
+	}
 
 	if (!_spritesArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening sprites archive failed");
 		return Common::kUnknownError;
-	}	
+	}
 
 	if (!_paletteArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening palette archive failed");
@@ -157,14 +157,14 @@ int DraciEngine::init() {
 	BArchive ar(path);
 	const BAFile *f;
 	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());
-	
+
 	if (ar.isOpen()) {
 		f = ar.getFile(0);
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
 		return Common::kUnknownError;
-	}	
-		
+	}
+
 	debugC(3, kDraciGeneralDebugLevel, "First 10 bytes of file %d: ", 0);
 	for (uint i = 0; i < 10; ++i) {
 		debugC(3, kDraciGeneralDebugLevel, "0x%02x%c", f->_data[i], (i < 9) ? ' ' : '\n');
@@ -175,7 +175,7 @@ int DraciEngine::init() {
 
 int DraciEngine::go() {
 	debugC(1, kDraciGeneralDebugLevel, "DraciEngine::go()");
- 
+
 	_game->init();
 	_game->start();
 
@@ -202,7 +202,7 @@ bool DraciEngine::handleEvents() {
 				int escRoom = _game->getEscRoom();
 
 				// Check if there is an escape room defined for the current room
-				if (escRoom != kNoEscRoom) {				
+				if (escRoom != kNoEscRoom) {
 
 					// Schedule room change
 					_game->setRoomNum(_game->getEscRoom());
@@ -220,7 +220,7 @@ bool DraciEngine::handleEvents() {
 					_game->setRoomNum(_game->getMapRoom());
 					_game->setGateNum(0);
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_w) { 
+			} else if (event.kbd.keycode == Common::KEYCODE_w) {
 				// Show walking map toggle
 				_showWalkingMap = !_showWalkingMap;
 			} else if (event.kbd.keycode == Common::KEYCODE_i) {
@@ -230,12 +230,12 @@ bool DraciEngine::handleEvents() {
 				} else if (_game->getLoopStatus() == kStatusOrdinary &&
 				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
 					_game->inventoryInit();
-				}		
+				}
 			}
-			break;					
+			break;
 		default:
 			_mouse->handleEvent(event);
-		}		
+		}
 	}
 
 	// Show walking map overlay
@@ -251,7 +251,7 @@ bool DraciEngine::handleEvents() {
 }
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
- 
+
  	// TODO: Investigate possibility of using sharedPtr or similar
 
 	delete _smallFont;
@@ -275,7 +275,7 @@ DraciEngine::~DraciEngine() {
 	delete _itemsArchive;
 	delete _itemImagesArchive;
 	delete _stringsArchive;
-	
+
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 }

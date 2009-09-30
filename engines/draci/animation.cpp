@@ -40,7 +40,7 @@ Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
 	_callback = &Animation::doNothing;
-}	
+}
 
 Animation::~Animation() {
 	deleteFrames();
@@ -52,7 +52,7 @@ bool Animation::isLooping() const {
 
 void Animation::setRelative(int relx, int rely) {
 	// Delete the previous frame if there is one
-	if (_frames.size() > 0)	
+	if (_frames.size() > 0)
 		markDirtyRect(_vm->_screen->getSurface());
 
 	_displacement.relX = relx;
@@ -61,18 +61,18 @@ void Animation::setRelative(int relx, int rely) {
 
 void Animation::setLooping(bool looping) {
 	_looping = looping;
-	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d", 
+	debugC(7, kDraciAnimationDebugLevel, "Setting looping to %d on animation %d",
 		looping, _id);
 }
 
 void Animation::markDirtyRect(Surface *surface) const {
 	// Fetch the current frame's rectangle
 	Drawable *frame = _frames[_currentFrame];
-	Common::Rect frameRect = frame->getRect(_displacement);			
+	Common::Rect frameRect = frame->getRect(_displacement);
 
 	// Mark the rectangle dirty on the surface
 	surface->markDirtyRect(frameRect);
-}	
+}
 
 void Animation::nextFrame(bool force) {
 	// If there are no frames or if the animation is not playing, return
@@ -81,7 +81,7 @@ void Animation::nextFrame(bool force) {
 
 	Drawable *frame = _frames[_currentFrame];
 	Surface *surface = _vm->_screen->getSurface();
-	
+
 	if (force || (_tick + frame->getDelay() <= _vm->_system->getMillis())) {
 		// If we are at the last frame and not looping, stop the animation
 		// The animation is also restarted to frame zero
@@ -100,14 +100,14 @@ void Animation::nextFrame(bool force) {
 		}
 	}
 
-	debugC(6, kDraciAnimationDebugLevel, 
-	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d z=%d", 
-	_id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(), 
+	debugC(6, kDraciAnimationDebugLevel,
+	"anim=%d tick=%d delay=%d tick+delay=%d currenttime=%d frame=%d framenum=%d x=%d y=%d z=%d",
+	_id, _tick, frame->getDelay(), _tick + frame->getDelay(), _vm->_system->getMillis(),
 	_currentFrame, _frames.size(), frame->getX() + getRelativeX(), frame->getY() + getRelativeY(), _z);
 }
 
 uint Animation::nextFrameNum() const {
-	if (_paused) 
+	if (_paused)
 		return _currentFrame;
 
 	if ((_currentFrame == getFrameCount() - 1) && _looping)
@@ -173,12 +173,12 @@ void Animation::setPaused(bool paused) {
 }
 
 void Animation::setScaleFactors(double scaleX, double scaleY) {
-	debugC(5, kDraciAnimationDebugLevel, 
-		"Setting scaling factors on anim %d (scaleX: %.3f scaleY: %.3f)", 
+	debugC(5, kDraciAnimationDebugLevel,
+		"Setting scaling factors on anim %d (scaleX: %.3f scaleY: %.3f)",
 		_id, scaleX, scaleY);
 
 	markDirtyRect(_vm->_screen->getSurface());
-	
+
 	_displacement.extraScaleX = scaleX;
 	_displacement.extraScaleY = scaleY;
 }
@@ -244,15 +244,15 @@ void Animation::deleteFrames() {
 
 	for (int i = getFrameCount() - 1; i >= 0; --i) {
 		delete _frames[i];
-		_frames.pop_back();	
+		_frames.pop_back();
 	}
 }
 
-void Animation::stopAnimation() { 
+void Animation::stopAnimation() {
 	_vm->_anims->stop(_id);
 }
 
-void Animation::exitGameLoop() { 
+void Animation::exitGameLoop() {
 	_vm->_game->setExitLoop(true);
 }
 
@@ -261,7 +261,7 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 	++_lastIndex;
 
 	Animation *anim = new Animation(_vm, _lastIndex);
-	
+
 	anim->setID(id);
 	anim->setZ(z);
 	anim->setPlaying(playing);
@@ -310,7 +310,7 @@ void AnimationManager::play(int id) {
 
 void AnimationManager::stop(int id) {
 	Animation *anim = getAnimation(id);
-	
+
 	if (anim) {
 		// Clean up the last frame that was drawn before stopping
 		anim->markDirtyRect(_vm->_screen->getSurface());
@@ -319,7 +319,7 @@ void AnimationManager::stop(int id) {
 
 		// Reset the animation to the beginning
 		anim->setCurrentFrame(0);
-	
+
 		debugC(3, kDraciAnimationDebugLevel, "Stopping animation %d...", id);
 	}
 }
@@ -366,7 +366,7 @@ void AnimationManager::insertAnimation(Animation *anim) {
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
-		if (anim->getZ() < (*it)->getZ()) 
+		if (anim->getZ() < (*it)->getZ())
 			break;
 	}
 
@@ -374,11 +374,11 @@ void AnimationManager::insertAnimation(Animation *anim) {
 }
 
 void AnimationManager::addOverlay(Drawable *overlay, uint z) {
-	// Since this is an overlay, we don't need it to be deleted 
+	// Since this is an overlay, we don't need it to be deleted
 	// when the GPL Release command is invoked so we pass the index
 	// as kIgnoreIndex
 	Animation *anim = new Animation(_vm, kIgnoreIndex);
-	
+
 	anim->setID(kOverlayImage);
 	anim->setZ(z);
 	anim->setPlaying(true);
@@ -398,8 +398,8 @@ void AnimationManager::drawScene(Surface *surf) {
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if (! ((*it)->isPlaying()) ) {
 			continue;
-		}	
-	
+		}
+
 		(*it)->nextFrame();
 		(*it)->drawFrame(surf);
 	}
@@ -413,10 +413,10 @@ void AnimationManager::sortAnimations() {
 
 	// If the list is empty, we're done
 	if (cur == _animations.end())
-		return;	
+		return;
 
-	bool hasChanged;	
-	
+	bool hasChanged;
+
 	do {
 		hasChanged = false;
 		cur = _animations.begin();
@@ -447,7 +447,7 @@ void AnimationManager::sortAnimations() {
 
 void AnimationManager::deleteAnimation(int id) {
 	Common::List<Animation *>::iterator it;
-  
+
 	int index = -1;
 
 	// Iterate for the first time to delete the animation
@@ -472,7 +472,7 @@ void AnimationManager::deleteAnimation(int id) {
 		}
 	}
 
-	// Decrement index of last animation 
+	// Decrement index of last animation
 	_lastIndex -= 1;
 }
 
@@ -519,7 +519,7 @@ void AnimationManager::deleteAfterIndex(int index) {
 			it = _animations.reverse_erase(it);
 		}
 	}
-	
+
 	_lastIndex = index;
 }
 
@@ -553,11 +553,11 @@ int AnimationManager::getTopAnimationID(int x, int y) const {
 
 				retval = anim->getID();
 
-			} else if (frame->getType() == kDrawableSprite && 
+			} else if (frame->getType() == kDrawableSprite &&
 					   reinterpret_cast<const Sprite *>(frame)->getPixel(x, y, anim->getDisplacement()) != transparent) {
 
 				retval = anim->getID();
-			}	
+			}
 		}
 
 		// Found an animation

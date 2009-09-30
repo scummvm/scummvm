@@ -42,7 +42,7 @@ struct BAFile {
 	byte _stopper;    //!< Not used in BAR files, needed for DFW
 
 	/** Releases the file data (for memory considerations) */
-	void close(void) {  
+	void close(void) {
 		delete[] _data;
 		_data = NULL;
 	}
@@ -53,8 +53,8 @@ public:
 	BArchive() : _files(NULL), _fileCount(0), _opened(false) {}
 
 	BArchive(const Common::String &path) :
-	_files(NULL), _fileCount(0), _opened(false) { 
-		openArchive(path); 
+	_files(NULL), _fileCount(0), _opened(false) {
+		openArchive(path);
 	}
 
 	~BArchive() { closeArchive(); }
@@ -63,7 +63,7 @@ public:
 	void closeArchive(void);
 	uint size() const { return _fileCount; }
 
-	/** 
+	/**
 	 * Checks whether there is an archive opened. Should be called before reading
 	 * from the archive to check whether openArchive() succeeded.
 	 */
@@ -78,7 +78,7 @@ private:
 	static const char _magicNumber[];
 	static const char _dfwMagicNumber[];
 	static const uint _archiveHeaderSize = 10;
-	
+
 	// File stream header data
 	static const uint _fileHeaderSize = 6;
 

@@ -50,7 +50,7 @@ void Surface::markDirtyRect(Common::Rect r) {
 	if (r.isEmpty())
 		return;
 
-	it = _dirtyRects.begin(); 
+	it = _dirtyRects.begin();
 	while (it != _dirtyRects.end()) {
 		if (it->contains(r))
 			return;
@@ -155,7 +155,7 @@ uint Surface::centerOnX(uint x, uint width) const {
  */
 uint Surface::centerOnY(uint y, uint height) const {
 	int newY = y - height / 2;
-	
+
 	if (newY + height >= (uint)h - 1)
 		newY = (h - 1) - height;
 

@@ -31,11 +31,11 @@
 
 namespace Draci {
 
-enum CursorType { 
+enum CursorType {
 	kNormalCursor,
-	kArrowCursor1, 
+	kArrowCursor1,
 	kArrowCursor2,
-	kArrowCursor3, 
+	kArrowCursor3,
 	kArrowCursor4,
 	kDialogueCursor,
 	kHighlightedCursor,

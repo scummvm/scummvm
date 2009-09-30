@@ -55,13 +55,13 @@ private:
 	 */
 	uint _transparentColour;
 
-	/** Set when the surface is scheduled for a full update. 
+	/** Set when the surface is scheduled for a full update.
 	 *  See markDirty(), markClean(). Accessed via needsFullUpdate().
 	 */
-	bool _fullUpdate; 
+	bool _fullUpdate;
 
 	Common::List<Common::Rect> _dirtyRects; //!< List of currently dirty rectangles
-	
+
 };
 
 } // End of namespace Draci

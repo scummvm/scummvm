@@ -58,7 +58,7 @@ void Screen::setPaletteEmpty(uint numEntries) {
  * @brief Sets a part of the palette
  * @param data Pointer to a buffer containing new palette data
  *        start Index of the colour where replacement should start
- *        num Number of colours to replace 
+ *        num Number of colours to replace
  */
 void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 	Common::MemoryReadStream pal(data, 3 * kNumColours);
@@ -92,21 +92,21 @@ void Screen::copyToScreen() {
 	if (_surface->needsFullUpdate()) {
 		byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
-		_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
+		_vm->_system->copyRectToScreen(ptr, kScreenWidth,
 			0, 0, kScreenWidth, kScreenHeight);
 	} else {
 		// Otherwise, update only the dirty rectangles
 
 		for (it = dirtyRects->begin(); it != dirtyRects->end(); ++it) {
-			
+
 			// Pointer to the upper left corner of the rectangle
 			byte *ptr = (byte *)_surface->getBasePtr(it->left, it->top);
 
-			_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
+			_vm->_system->copyRectToScreen(ptr, kScreenWidth,
 				it->left, it->top, it->width(), it->height());
 		}
 	}
-	
+
 	// Call the "real" updateScreen and mark the surface clean
 	_vm->_system->updateScreen();
 	_surface->markClean();
