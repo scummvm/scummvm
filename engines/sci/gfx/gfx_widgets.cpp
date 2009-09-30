@@ -192,28 +192,6 @@ static int verify_widget(GfxWidget *widget) {
 		return 1; \
 	}
 
-
-// TODO: Turn this into an operator==
-static int _color_equals(gfx_color_t a, gfx_color_t b) {
-	if (a.mask != b.mask)
-		return 0;
-
-	if (a.mask & GFX_MASK_VISUAL) {
-		if (a.visual.r != b.visual.r || a.visual.g != b.visual.g || a.visual.b != b.visual.b || a.alpha != b.alpha)
-			return 0;
-	}
-
-	if (a.mask & GFX_MASK_PRIORITY)
-		if (a.priority != b.priority)
-			return 0;
-
-	if (a.mask & GFX_MASK_CONTROL)
-		if (a.control != b.control)
-			return 0;
-
-	return 1;
-}
-
 int GfxWidget::setVisual(GfxVisual *visual) {
 	_visual = visual;
 
@@ -361,14 +339,14 @@ static int _gfxwop_box_equals(GfxWidget *widget, GfxWidget *other) {
 	if (!toCommonRect(wbox->_bounds).equals(toCommonRect(obox->_bounds)))
 		return 0;
 
-	if (!_color_equals(wbox->_color1, obox->_color1))
+	if (wbox->_color1 != obox->_color1)
 		return 0;
 
 	if (wbox->_shadeType != obox->_shadeType)
 		return 0;
 
 	if (wbox->_shadeType != GFX_BOX_SHADE_FLAT
-	        && _color_equals(wbox->_color2, obox->_color2))
+	        && wbox->_color2 == obox->_color2)
 		return 0;
 
 	return 1;
@@ -438,7 +416,7 @@ static int _gfxwop_primitive_equals(GfxWidget *widget, GfxWidget *other) {
 		wprim->_bounds.width != oprim->_bounds.width || wprim->_bounds.height != oprim->_bounds.height)
 		return 0;
 
-	if (!_color_equals(wprim->_color, oprim->_color))
+	if (wprim->_color != oprim->_color)
 		return 0;
 
 	if (wprim->_lineMode != oprim->_lineMode)
@@ -685,7 +663,7 @@ static int _gfxwop_dyn_view_equals(GfxWidget *widget, GfxWidget *other) {
 	if (wview->_view != oview->_view || wview->_loop != oview->_loop || wview->_cel != oview->_cel)
 		return 0;
 
-	if (!_color_equals(wview->_color, oview->_color))
+	if (wview->_color != oview->_color)
 		return 0;
 
 	if (wview->_flags != oview->_flags)
@@ -840,8 +818,8 @@ static int _gfxwop_text_equals(GfxWidget *widget, GfxWidget *other) {
 	if (wtext->_font != otext->_font)
 		return 0;
 
-	/* if (!(_color_equals(wtext->_color1, otext->_color1) && _color_equals(wtext->_color2, otext->_color2)
-			&& _color_equals(wtext->_bgcolor, otext->_bgcolor)))
+	/* if (!(wtext->_color1 == otext->_color1 && wtext->_color2 == otext->_color2
+			&& wtext->_bgcolor == otext->_bgcolor))
 		return 0; */
 
 	return 1;

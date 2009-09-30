@@ -66,16 +66,6 @@ struct gfx_mode_t {
 };
 
 
-
-/** Full color */
-struct gfx_color_t {
-	PaletteEntry visual;
-	uint8 alpha; /**< transparency = (1-opacity) */
-	int8 priority, control;
-	byte mask; /**< see mask values below */
-};
-
-
 // TODO: Replace rect_t by Common::Rect
 /** Rectangle description */
 struct rect_t {
@@ -258,6 +248,38 @@ enum gfx_rectangle_fill_t {
 };
 
 /** @} */
+
+/** Full color */
+struct gfx_color_t {
+	PaletteEntry visual;
+	uint8 alpha; /**< transparency = (1-opacity) */
+	int8 priority, control;
+	byte mask; /**< see mask values below */
+
+	bool operator==(const gfx_color_t &c) const {
+		if (mask != c.mask)
+			return false;
+
+		if (mask & GFX_MASK_VISUAL) {
+			if (visual.r != c.visual.r || visual.g != c.visual.g || visual.b != c.visual.b || alpha != c.alpha)
+				return false;
+		}
+
+		if (mask & GFX_MASK_PRIORITY)
+			if (priority != c.priority)
+				return false;
+
+		if (mask & GFX_MASK_CONTROL)
+			if (control != c.control)
+				return false;
+
+		return true;
+	}
+
+	bool operator!=(const gfx_color_t &c) const {
+		return !(*this == c);
+	}
+};
 
 } // End of namespace Sci
 
