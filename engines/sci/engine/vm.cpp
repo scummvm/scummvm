@@ -953,7 +953,7 @@ void run_vm(EngineState *s, int restoring) {
 						xstack = add_exec_stack_entry(s, NULL_REG, NULL, NULL_REG, argc, argv - 1, 0, NULL_REG,
 	                              s->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 						// Debugging hack to identify kernel function
-						xstack->selector = -42 - opparams[0];
+						xstack->selector = kMagicSelectorOffset - opparams[0];
 						xstack->type = EXEC_STACK_TYPE_KERNEL;
 
 						// Call kernel function
@@ -962,14 +962,11 @@ void run_vm(EngineState *s, int restoring) {
 						// Remove callk stack frame again
 						s->_executionStack.pop_back();
 					} else {
-						Common::String warningMsg = "Dummy function " + kfun.orig_name + "[";
-						warningMsg += warningMsg.printf("0x%x", opparams[0]);
-						warningMsg += "] invoked - ignoring. Params: ";
-						warningMsg += warningMsg.printf("%d", argc);
-						warningMsg += " (";
+						Common::String warningMsg = "Dummy function " + kfun.orig_name;
+						warningMsg += Common::String::printf("[0x%x] invoked - ignoring. Params: %d (", opparams[0], argc);
 
 						for (int i = 0; i < argc; i++) {
-							warningMsg += warningMsg.printf("%04x:%04x", PRINT_REG(argv[i]));
+							warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
 							warningMsg += (i == argc - 1 ? ")" : ", ");
 						}
 

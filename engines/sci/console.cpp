@@ -2003,7 +2003,7 @@ bool Console::cmdBacktrace(int argc, const char **argv) {
 		break;
 
 		case EXEC_STACK_TYPE_KERNEL: // Kernel function
-			printf(" %x:[%x]  k%s(", i, call.origin, _vm->getKernel()->getKernelName(-(call.selector) - 42).c_str());
+			printf(" %x:[%x]  k%s(", i, call.origin, _vm->getKernel()->getKernelName(kMagicSelectorOffset - call.selector).c_str());
 			break;
 
 		case EXEC_STACK_TYPE_VARSELECTOR:
