@@ -753,6 +753,10 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		Common::String name = s->segMan->getString(argv[1]);
 		int mode = argv[2].toUint16();
 
+		if (name.empty()) {
+			warning("Attempted to open a file with an empty filename");
+			return make_reg(0, SIGNAL_OFFSET);
+		}
 		file_open(s, name.c_str(), mode);
 		debug(3, "K_FILEIO_OPEN(%s,0x%x)", name.c_str(), mode);
 		break;
