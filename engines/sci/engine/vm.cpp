@@ -964,7 +964,10 @@ void run_vm(EngineState *s, int restoring) {
 						s->_executionStack.pop_back();
 					} else {
 						Common::String warningMsg = "Dummy function " + kfun.orig_name;
-						warningMsg += Common::String::printf("[0x%x] invoked - ignoring. Params: %d (", opparams[0], argc);
+						warningMsg += Common::String::printf("[0x%x]", opparams[0]);
+						warningMsg += " invoked - ignoring. Params: ";
+						warningMsg += Common::String::printf("%d", argc);
+						warningMsg += " (";
 
 						for (int i = 0; i < argc; i++) {
 							warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
