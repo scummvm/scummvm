@@ -345,10 +345,10 @@ int Menubar::setAttribute(EngineState *s, int menu_nr, int item_nr, int attribut
 
 reg_t Menubar::getAttribute(int menu_nr, int item_nr, int attribute) const {
 	if ((menu_nr < 0) || (item_nr < 0))
-		return make_reg(0, SIGNAL_OFFSET);
+		return SIGNAL_REG;
 
 	if ((menu_nr >= (int)_menus.size()) || (item_nr >= (int)_menus[menu_nr]._items.size()))
-		return make_reg(0, SIGNAL_OFFSET);
+		return SIGNAL_REG;
 
 	const MenuItem &item = _menus[menu_nr]._items[item_nr];
 
@@ -370,7 +370,7 @@ reg_t Menubar::getAttribute(int menu_nr, int item_nr, int attribute) const {
 
 	default:
 		warning("Attempt to read invalid attribute from menu %d, item %d: 0x%04x", menu_nr, item_nr, attribute);
-		return make_reg(0, SIGNAL_OFFSET);
+		return SIGNAL_REG;
 	}
 }
 

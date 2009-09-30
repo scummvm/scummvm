@@ -60,7 +60,7 @@ reg_t kGameIsRestarting(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kHaveMouse(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, SIGNAL_OFFSET);
+	return SIGNAL_REG;
 }
 
 enum kMemoryInfoFunc {

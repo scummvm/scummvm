@@ -876,7 +876,7 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 
 	if (!res) {
 		warning("[GFX] Attempt to get cel parameters for invalid view %d", view);
-		return make_reg(0, SIGNAL_OFFSET);
+		return SIGNAL_REG;
 	}
 
 	pxm = res->loops[loop].cels[cel];

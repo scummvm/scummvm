@@ -148,7 +148,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 
 	if (!inFile && !outFile) { // Failed
 		debug(3, "file_open() failed");
-		s->r_acc = make_reg(0, SIGNAL_OFFSET);
+		s->r_acc = SIGNAL_REG;
 		return;
 	}
 
@@ -755,7 +755,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 
 		if (name.empty()) {
 			warning("Attempted to open a file with an empty filename");
-			return make_reg(0, SIGNAL_OFFSET);
+			return SIGNAL_REG;
 		}
 		file_open(s, name.c_str(), mode);
 		debug(3, "K_FILEIO_OPEN(%s,0x%x)", name.c_str(), mode);

@@ -81,6 +81,7 @@ static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 }
 
 extern reg_t NULL_REG;
+extern reg_t SIGNAL_REG;
 
 } // End of namespace Sci
 
