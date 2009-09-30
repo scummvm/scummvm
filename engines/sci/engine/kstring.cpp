@@ -447,7 +447,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 			switch (xfer) {
 			case 's': { /* Copy string */
 				reg_t reg = argv[startarg + paramindex];
-				Common::String tempsource = kernel_lookup_text(s, reg,
+				Common::String tempsource = (reg == NULL_REG) ? "" : kernel_lookup_text(s, reg,
 				                                  arguments[paramindex + 1]);
 				int slen = strlen(tempsource.c_str());
 				int extralen = str_leng - slen;
