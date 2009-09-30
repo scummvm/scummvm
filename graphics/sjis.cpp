@@ -245,18 +245,20 @@ bool FontSjisSVM::loadData() {
 	}
 
 	uint32 version = data->readUint32BE();
-	if (version != 1) {
+	if (version != 2) {
 		delete data;
 		return false;
 	}
-	uint numChars = data->readUint16BE();
+	uint numChars16x16 = data->readUint16BE();
+	/*uint numChars8x16 = */data->readUint16BE();
 
-	_fontData = new uint16[numChars * 16];
-	assert(_fontData);
+	_fontData16x16 = new uint16[numChars16x16 * 16];
+	assert(_fontData16x16);
+	_fontData16x16Size = numChars16x16 * 16;
 
-	for (uint i = 0; i < numChars * 16; ++i)
-		_fontData[i] = data->readUint16BE();
-	
+	for (uint i = 0; i < _fontData16x16Size; ++i)
+		_fontData16x16[i] = data->readUint16BE();
+
 	bool retValue = !data->err();
 	delete data;
 	return retValue;
@@ -285,7 +287,9 @@ const uint16 *FontSjisSVM::getCharData(uint16 c) const {
 	if (index < 0 || index >= 0xBC || base < 0)
 		return 0;
 
-	return _fontData + (base * 0xBC + index) * 16;
+	const uint offset = (base * 0xBC + index) * 16;
+	assert(offset + 16 <= _fontData16x16Size);
+	return _fontData16x16 + offset;
 }
 
 } // end of namespace Graphics

@@ -168,8 +168,8 @@ private:
  */
 class FontSjisSVM : public FontSJIS16x16 {
 public:
-	FontSjisSVM() : _fontData(0) {}
-	~FontSjisSVM() { delete[] _fontData; }
+	FontSjisSVM() : _fontData16x16(0), _fontData16x16Size(0) {}
+	~FontSjisSVM() { delete[] _fontData16x16; }
 
 	/**
 	 * Load the font data from "SJIS.FNT".
@@ -177,7 +177,8 @@ public:
 	bool loadData();
 
 private:
-	uint16 *_fontData;
+	uint16 *_fontData16x16;
+	uint _fontData16x16Size;
 
 	const uint16 *getCharData(uint16 c) const;
 };
