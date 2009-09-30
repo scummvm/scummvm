@@ -1411,7 +1411,15 @@ bool Hotspots::evaluateFind(uint16 key, int16 timeVal, const uint16 *ids,
 		} else if (hotspotIndex2 != 0) {
 			findNthPlain(hotspotIndex2, endIndex, id, index);
 		} else {
-			findNthPlain(0, 0, id, index);
+			// Enter the first hotspot
+			for (int i = 0; (i < kHotspotCount) && !_hotspots[i].isEnd(); i++) {
+				Hotspot &spot = _hotspots[i];
+				if (spot.isFilledNew()) {
+					id    = spot.id;
+					index = i;
+					break;
+				}
+			}
 
 			// Leave the current hotspot
 			if ((_currentKey != 0) && (_hotspots[_currentIndex].funcLeave != 0))
