@@ -1754,10 +1754,22 @@ void LoLEngine::createGfxTables() {
 	if (_flags.isTalkie || _loadSuppFilesFlag)
 		return;
 
+	Palette tpal(256);
 	if (_flags.use16ColorMode) {
+		static const uint8 colTbl[] = { 0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F };
+		uint8 *p = _screen->getPalette(0).getData();
+	
+		tpal.fill(0, 256, 0xff);
+		uint8 *d = tpal.getData();
+		for (int i = 15; i >= 0; i--) {
+			d[colTbl[i] * 3 + 2] = p[i * 3 + 2];
+			d[colTbl[i] * 3 + 1] = p[i * 3 + 1];
+			d[colTbl[i] * 3] = p[i * 3];
+		}
+
+		_screen->generateTruelightTables(colTbl, 16, tpal, tpal,  _trueLightTable1, _trueLightTable2, 80);
 		_screen->loadPalette("lol.nol", _screen->getPalette(0));
 	} else {
-		Palette tpal(256);
 		_screen->loadPalette("fxpal.col", tpal);
 		_screen->loadBitmap("fxpal.shp", 3, 3, 0);
 		const uint8 *shpPal = _screen->getPtrToShape(_screen->getCPagePtr(2), 0) + 11;

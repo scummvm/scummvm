@@ -266,7 +266,14 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	if (offs)
 		_screen->copyRegion(294, y, 182 + offs, y, 18, 8, 6, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
+	Screen::FontId of;
+	if (_flags.use16ColorMode)
+		of = _screen->setFont(Screen::FID_SJIS_FNT);
+
 	_screen->fprintString("%d", 200 + offs, y, col, 0, _flags.use16ColorMode ? 2 : 6, value);
+
+	if (_flags.use16ColorMode)
+		_screen->setFont(of);
 }
 
 void LoLEngine::gui_changeCharacterStats(int charNum) {
@@ -2465,7 +2472,10 @@ int GUI_LoL::runMenu(Menu &menu) {
 			int my = d->sy - 1;
 			int mw = (d->w << 3) + 1;
 			int mh = d->h + 1;
-			_screen->drawShadedBox(mx, my, mx + mw, my + mh, 227, 223);
+			if (_vm->gameFlags().use16ColorMode)
+				_screen->drawShadedBox(mx, my, mx + mw, my + mh, 0xdd, 0xff);
+			else
+				_screen->drawShadedBox(mx, my, mx + mw, my + mh, 227, 223);
 			int pg = _screen->setCurPage(0);
 			_vm->_txt->clearDim(8);
 			textCursorTimer = 0;
@@ -2581,7 +2591,13 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font) {
-	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? flags & 3 : flags, str);
+	if (_vm->gameFlags().use16ColorMode) {
+		Screen::FontId of = _screen->setFont(Screen::FID_SJIS_FNT);
+		_screen->fprintString("%s", x, y, c0, c1, flags & 3, str);
+		_screen->setFont(of);
+	} else {
+		_screen->fprintString("%s", x, y, c0, c1, flags, str);
+	}	
 }
 
 int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {
