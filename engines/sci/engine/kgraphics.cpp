@@ -3163,14 +3163,6 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	bg_color = port->_bgcolor;
 	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
 	// SCI0 case should be checked
-	if (s->resMan->isVGA()) {
-		// This priority check fixes the colors in the menus in KQ5
-		// TODO/FIXME: Is this correct?
-		if (color0.priority >= 0)
-			color0.visual = get_pic_color(s, 0);
-		if (bg_color.priority >= 0)
-			bg_color.visual = get_pic_color(s, 0);
-	}
 
 	if (textp.segment) {
 		argpt = 1;
