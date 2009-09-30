@@ -52,7 +52,7 @@ Palette::Palette(const PaletteEntry *colors, uint s) {
 		_colors[i].g = colors[i].g;
 		_colors[i].b = colors[i].b;
 		_colors[i].refcount = 0;
-		_colors[i].parent_index = -1;
+		_colors[i]._parentIndex = -1;
 	}
 }
 
@@ -108,22 +108,22 @@ void Palette::unmerge() {
 
 	int count = 0;
 	for (uint i = 0; i < _size; ++i) {
-		if (_colors[i].refcount == PALENTRY_FREE) {
-			assert(_colors[i].parent_index == 0);
+		if (_colors[i].refcount == PaletteEntry::FREE) {
+			assert(_colors[i]._parentIndex == 0);
 		}
 
-		int pi = _colors[i].parent_index;
+		int pi = _colors[i]._parentIndex;
 		assert(pi >= 0);
 		assert(pi < (int)_parent->_size);
 		assert(_parent->_colors[pi].refcount != 0);
-		assert(_parent->_colors[pi].refcount != PALENTRY_FREE);
-		if (_parent->_colors[pi].refcount != PALENTRY_LOCKED)
+		assert(_parent->_colors[pi].refcount != PaletteEntry::FREE);
+		if (_parent->_colors[pi].refcount != PaletteEntry::LOCKED)
 			_parent->_colors[pi].refcount--;
 		if (_parent->_colors[pi].refcount == 0) {
-			_parent->_colors[pi].refcount = PALENTRY_FREE;
+			_parent->_colors[pi].refcount = PaletteEntry::FREE;
 			count++;
 		}
-		_colors[i].parent_index = -1;
+		_colors[i]._parentIndex = -1;
 	}
 #ifdef DEBUG_MERGE
 	fprintf(stderr, "Unmerge free %d colors\n", count);
@@ -142,12 +142,12 @@ void Palette::setColor(uint index, byte r, byte g, byte b, int parentIndex) {
 
 	PaletteEntry& entry = _colors[index];
 
-	assert(entry.refcount == PALENTRY_FREE || entry.refcount == 0);
+	assert(entry.refcount == PaletteEntry::FREE || entry.refcount == 0);
 	entry.refcount = 0;
 	entry.r = r;
 	entry.g = g;
 	entry.b = b;
-	entry.parent_index = parentIndex;
+	entry._parentIndex = parentIndex;
 
 	_dirty = true;
 }
@@ -158,7 +158,7 @@ void Palette::makeSystemColor(uint index, const PaletteEntry &color) {
 	entry.r = color.r;
 	entry.g = color.g;
 	entry.b = color.b;
-	entry.refcount = PALENTRY_LOCKED;
+	entry.refcount = PaletteEntry::LOCKED;
 }
 
 uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
@@ -171,7 +171,7 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 	for (uint i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
 
-		if (entry.refcount != PALENTRY_FREE) {
+		if (entry.refcount != PaletteEntry::FREE) {
 			int dr = abs(entry.r - r);
 			int dg = abs(entry.g - g);
 			int db = abs(entry.b - b);
@@ -179,7 +179,7 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 			if (dr == 0 && dg == 0 && db == 0) {
 				// Exact match
 				//exact = true;
-				if (lock && entry.refcount != PALENTRY_LOCKED)
+				if (lock && entry.refcount != PaletteEntry::LOCKED)
 					entry.refcount++;
 				return i;
 			}
@@ -205,7 +205,7 @@ uint Palette::findNearbyColor(byte r, byte g, byte b, bool lock) {
 	}
 
 	//exact = false;
-	if (lock && _colors[bestcolor].refcount != PALENTRY_LOCKED) {
+	if (lock && _colors[bestcolor].refcount != PaletteEntry::LOCKED) {
 #if 0
 			_colors[bestcolor].r = r;
 			_colors[bestcolor].g = g;
@@ -244,10 +244,10 @@ bool Palette::mergeInto(Palette *parent) {
 
 	for (uint i = 0; i < _size; ++i) {
 		PaletteEntry& entry = _colors[i];
-		if (entry.refcount == PALENTRY_FREE) {
+		if (entry.refcount == PaletteEntry::FREE) {
 			// Force all unused colours to index 0
-			entry.parent_index = 0;
-			if (_parent->_colors[0].refcount != PALENTRY_LOCKED)
+			entry._parentIndex = 0;
+			if (_parent->_colors[0].refcount != PaletteEntry::LOCKED)
 				_parent->_colors[0].refcount++;
 			if (_colors[i].r || _colors[i].g || _colors[i].b)
 				warning("Non-black unused colour in pic: index %d, %02X %02X %02X", i, _colors[i].r, _colors[i].g, _colors[i].b);
@@ -261,8 +261,8 @@ bool Palette::mergeInto(Palette *parent) {
 		if (pi > used_max) used_max = pi;
 		if (pi < used_min) used_min = pi;
 #endif
-		entry.parent_index = pi;
-		if (_parent->_colors[pi].refcount != PALENTRY_LOCKED)
+		entry._parentIndex = pi;
+		if (_parent->_colors[pi].refcount != PaletteEntry::LOCKED)
 			_parent->_colors[pi].refcount++;
 	}
 #ifdef DEBUG_MERGE
@@ -284,18 +284,18 @@ void Palette::forceInto(Palette *parent) {
 	_revision = parent->_revision;
 
 	for (unsigned int i = 0; i < _size; ++i) {
-		// FIXME: PALENTRY_LOCKED doesn't work well with forceInto...
-		if (_colors[i].refcount != PALENTRY_FREE) {
+		// FIXME: PaletteEntry::LOCKED doesn't work well with forceInto...
+		if (_colors[i].refcount != PaletteEntry::FREE) {
 			_parent->_colors[i] = _colors[i];
-			_parent->_colors[i].parent_index = -1;
-			_colors[i].parent_index = i;
-			if (_parent->_colors[i].refcount != PALENTRY_LOCKED)
+			_parent->_colors[i]._parentIndex = -1;
+			_colors[i]._parentIndex = i;
+			if (_parent->_colors[i].refcount != PaletteEntry::LOCKED)
 				_parent->_colors[i].refcount = 1;
 		} else {
 			_parent->_colors[i].refcount = 0;
 			// Force all unused colours to index 0
-			_colors[i].parent_index = 0;
-			if (_parent->_colors[0].refcount != PALENTRY_LOCKED) {
+			_colors[i]._parentIndex = 0;
+			if (_parent->_colors[0].refcount != PaletteEntry::LOCKED) {
 				if (i == 0)
 					_parent->_colors[0].refcount = 1;
 				else

@@ -31,15 +31,21 @@
 
 namespace Sci {
 
-const int PALENTRY_LOCKED = -42;
-const int PALENTRY_FREE = -41;
+class PaletteEntry {
 
-struct PaletteEntry {
+	friend class Palette;
+
+	enum {
+		LOCKED = -42,
+		FREE = -41
+	};
+
+public:
 	PaletteEntry()
-		: r(0), g(0), b(0), parent_index(-1), refcount(PALENTRY_FREE)
+		: r(0), g(0), b(0), _parentIndex(-1), refcount(FREE)
 	{ }
 	PaletteEntry(byte R, byte G, byte B)
-		: r(R), g(G), b(B), parent_index(-1), refcount(PALENTRY_FREE)
+		: r(R), g(G), b(B), _parentIndex(-1), refcount(LOCKED)
 	{ }
 
 	/** @name Color data */
@@ -47,9 +53,12 @@ struct PaletteEntry {
 	byte r, g, b;
 	/** @} */
 
-	/** Index in parent palette, or -1 */
-	int parent_index;
+	inline int getParentIndex() const { return _parentIndex; }
 
+	/** Index in parent palette, or -1 */
+	int _parentIndex;
+
+protected:
 	/**
 	 * Number of references from child palettes. (This includes palettes
 	 * of pixmaps.)
@@ -99,9 +108,14 @@ private:
 
 	Palette *_parent;
 
-	bool _dirty; /**< Palette has changed */
-	int _refcount; /**< Number of pixmaps (or other objects) using this palette */
-	int _revision; /**< When this is incremented, all child references are invalidated */
+	/** Palette has changed */
+	bool _dirty;
+
+	/** Number of pixmaps (or other objects) using this palette */
+	int _refcount;
+
+	/** When this is incremented, all child references are invalidated */
+	int _revision;
 };
 
 

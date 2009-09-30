@@ -58,7 +58,7 @@ static void _gfx_xlate_pixmap_unfiltered(gfx_mode_t *mode, gfx_pixmap_t *pxm, in
 
 	// Calculate all colors
 	for (i = 0; i < pxm->colors_nr(); i++)
-		result_colors[i] = pxm->palette->getColor(i).parent_index;
+		result_colors[i] = pxm->palette->getColor(i).getParentIndex();
 
 	if (!separate_alpha_map && pxm->color_key != GFX_PIXMAP_COLOR_KEY_NONE)
 		result_colors[pxm->color_key] = 0;

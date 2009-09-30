@@ -86,9 +86,9 @@ static void drawProc(int x, int y, int c, void *data) {
 	memcpy(p + (y * 320* drv->getMode()->scaleFactor + x), &col, 1);
 }
 
-void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color, 
+void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color,
 						gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
-	uint32 scolor = color.visual.parent_index;
+	uint32 scolor = color.visual.getParentIndex();
 	int scaleFactor = (line_mode == GFX_LINE_MODE_FINE)? 1: _mode->scaleFactor;
 	int xsize = _mode->xsize;
 	int ysize = _mode->ysize;
@@ -119,7 +119,7 @@ void GfxDriver::drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t colo
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.height; i++) {
 			memset(_visual[0] + (i * _mode->xsize + rect.x),
-			       color1.visual.parent_index, rect.width);
+			       color1.visual.getParentIndex(), rect.width);
 		}
 	}
 
@@ -228,7 +228,7 @@ void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 			// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
 			// Note that some cursors don't have a palette in SQ5
 			if (pointer->palette && color < pointer->palette->size())
-				color = pointer->palette->getColor(color).parent_index;
+				color = pointer->palette->getColor(color).getParentIndex();
 			memset(&linebase[xc], color, _mode->scaleFactor);
 		}
 
@@ -241,7 +241,7 @@ void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 	// Note that some cursors don't have a palette (e.g. in SQ5 and QFG3)
 	byte color_key = pointer->color_key;
 	if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (uint)pointer->color_key < pointer->palette->size()))
-		color_key = pointer->palette->getColor(pointer->color_key).parent_index;
+		color_key = pointer->palette->getColor(pointer->color_key).getParentIndex();
 
 	CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
 	CursorMan.showMouse(true);

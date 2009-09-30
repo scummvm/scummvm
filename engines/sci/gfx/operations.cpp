@@ -405,7 +405,7 @@ void gfxop_init(GfxState *state,
 	state->driver = new GfxDriver(xfact, yfact, mode);
 
 	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan);
-	
+
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 	state->pointerZone = Common::Rect(0, 0, 320, 200);
 
@@ -536,7 +536,7 @@ void gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b, i
 		color->alpha = a;
 
 		if (PALETTE_MODE) {
-			color->visual.parent_index = state->driver->getMode()->palette->findNearbyColor(r,g,b,true);
+			color->visual._parentIndex = PALETTE_MODE->findNearbyColor(r,g,b,true);
 		}
 	}
 }
@@ -556,11 +556,11 @@ void gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *co
 	if (!PALETTE_MODE)
 		return;
 
-	if (index >= state->driver->getMode()->palette->size()) {
-		error("Attempt to set invalid color index %02x as system color", color->visual.parent_index);
+	if (index >= PALETTE_MODE->size()) {
+		error("Attempt to set invalid color index %02x as system color", color->visual.getParentIndex());
 	}
 
-	state->driver->getMode()->palette->makeSystemColor(index, color->visual);
+	PALETTE_MODE->makeSystemColor(index, color->visual);
 }
 
 void gfxop_free_color(GfxState *state, gfx_color_t *color) {
@@ -776,7 +776,7 @@ void gfxop_draw_line(GfxState *state, Common::Point start, Common::Point end,
 		end.y += yfact >> 1;
 	}
 
-	if (color.visual.parent_index == -1)
+	if (color.visual.getParentIndex() == -1)
 		gfxop_set_color(state, &color, color);
 	_gfxop_draw_line_clipped(state, start, end, color, line_mode, line_style);
 }
@@ -894,7 +894,7 @@ void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t
 	if (shade_type == GFX_BOX_SHADE_FLAT) {
 		color1.priority = 0;
 		color1.control = 0;
-		if (color1.visual.parent_index == -1)
+		if (color1.visual.getParentIndex() == -1)
 			gfxop_set_color(state, &color1, color1);
 		drv->drawFilledRect(new_box, color1, color1, GFX_SHADE_FLAT);
 		return;
@@ -1052,9 +1052,9 @@ static void _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point
 	// may change when a new PIC is loaded. The cursor has to be regenerated
 	// from this pxm at that point. (An alternative might be to ensure the
 	// cursor only uses colours in the static part of the palette?)
-	if (pxm && state->driver->getMode()->palette) {
+	if (pxm && PALETTE_MODE) {
 		assert(pxm->palette);
-		pxm->palette->mergeInto(state->driver->getMode()->palette);
+		pxm->palette->mergeInto(PALETTE_MODE);
 	}
 	state->driver->setPointer(pxm, hotspot);
 }
@@ -1306,7 +1306,7 @@ static sci_event_t scummvm_get_event(GfxDriver *drv) {
 			input.character = ev.kbd.ascii;
 
 			// Debug console
-			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {	
+			if (ev.kbd.flags == Common::KBD_CTRL && ev.kbd.keycode == Common::KEYCODE_d) {
 				// Open debug console
 				Console *con = ((Sci::SciEngine*)g_engine)->getSciDebugger();
 				con->attach();
@@ -1625,8 +1625,8 @@ static void _gfxop_set_pic(GfxState *state) {
 	// FIXME: The _gfxop_install_pixmap call below updates the OSystem palette.
 	// This is too soon, since it causes brief palette corruption until the
 	// screen is updated too. (Possibly related: EngineState::pic_not_valid .)
-	if (state->pic->visual_map->palette && state->driver->getMode()->palette) {
-		state->pic->visual_map->palette->forceInto(state->driver->getMode()->palette);
+	if (state->pic->visual_map->palette && PALETTE_MODE) {
+		state->pic->visual_map->palette->forceInto(PALETTE_MODE);
 		_gfxop_install_pixmap(state->driver, state->pic->visual_map);
 	}
 
