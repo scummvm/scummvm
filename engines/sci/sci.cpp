@@ -138,7 +138,7 @@ Common::Error SciEngine::run() {
 	_kernel = new Kernel(_resMan);
 	_vocabulary = new Vocabulary(_resMan);
 
-	_gamestate = new EngineState(_resMan, _kernel, flags);
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, flags);
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;

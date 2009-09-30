@@ -90,6 +90,13 @@ Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 	_parserRules = NULL;
 	_vocabVersion = kVocabularySCI0;
 
+	memset(_parserNodes, 0, sizeof(_parserNodes));
+	// Mark parse tree as unused
+	_parserNodes[0].type = kParseTreeLeafNode;
+	_parserNodes[0].content.value = 0;
+
+	_synonyms.clear(); // No synonyms
+
 	debug(2, "Initializing vocabulary");
 
 	if (getSciVersion() <= SCI_VERSION_1_EGA && loadParserWords()) {
@@ -108,6 +115,7 @@ Vocabulary::~Vocabulary() {
 	_parserWords.clear();
 	_parserBranches.clear();
 	freeSuffixes();
+	_synonyms.clear();
 }
 
 bool Vocabulary::loadParserWords() {
@@ -543,14 +551,86 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes) {
 	printf("))\n");
 }
 
-void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms) {
-	if (synonyms.empty())
+void Vocabulary::dumpParseTree() {
+	//_vocab_recursive_ptree_dump_treelike(nodes, 0, 0);
+	printf("(setq parse-tree \n'(");
+	_vocab_recursive_ptree_dump(_parserNodes, 0, 0, 1);
+	printf("))\n");
+}
+
+void Vocabulary::synonymizeTokens(ResultWordList &words) {
+	if (_synonyms.empty())
 		return; // No synonyms: Nothing to check
 
 	for (ResultWordList::iterator i = words.begin(); i != words.end(); ++i)
-		for (SynonymList::const_iterator sync = synonyms.begin(); sync != synonyms.end(); ++sync)
+		for (SynonymList::const_iterator sync = _synonyms.begin(); sync != _synonyms.end(); ++sync)
 			if (i->_group == sync->replaceant)
 				i->_group = sync->replacement;
+}
+
+void Vocabulary::printParserNodes(int num) {
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+
+	for (int i = 0; i < num; i++) {
+		con->DebugPrintf(" Node %03x: ", i);
+		if (_parserNodes[i].type == kParseTreeLeafNode)
+			con->DebugPrintf("Leaf: %04x\n", _parserNodes[i].content.value);
+		else
+			con->DebugPrintf("Branch: ->%04x, ->%04x\n", _parserNodes[i].content.branches[0],
+			          _parserNodes[i].content.branches[1]);
+	}
+}
+
+int Vocabulary::parseNodes(int *i, int *pos, int type, int nr, int argc, const char **argv) {
+	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
+	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
+
+	if (type == kParseNil)
+		return 0;
+
+	if (type == kParseNumber) {
+		_parserNodes[*pos += 1].type = kParseTreeLeafNode;
+		_parserNodes[*pos].content.value = nr;
+		return *pos;
+	}
+	if (type == kParseEndOfInput) {
+		con->DebugPrintf("Unbalanced parentheses\n");
+		return -1;
+	}
+	if (type == kParseClosingParenthesis) {
+		con->DebugPrintf("Syntax error at token %d\n", *i);
+		return -1;
+	}
+
+	_parserNodes[oldPos = ++(*pos)].type = kParseTreeBranchNode;
+
+	for (int j = 0; j <= 1; j++) {
+		if (*i == argc) {
+			nextToken = kParseEndOfInput;
+		} else {
+			const char *token = argv[(*i)++];
+
+			if (!strcmp(token, "(")) {
+				nextToken = kParseOpeningParenthesis;
+			} else if (!strcmp(token, ")")) {
+				nextToken = kParseClosingParenthesis;
+			} else if (!strcmp(token, "nil")) {
+				nextToken = kParseNil;
+			} else {
+				nextValue = strtol(token, NULL, 0);
+				nextToken = kParseNumber;
+			}
+		}
+
+		if ((newPos = _parserNodes[oldPos].content.branches[j] = parseNodes(i, pos, nextToken, nextValue, argc, argv)) == -1)
+			return -1;
+	}
+
+	const char *token = argv[(*i)++];
+	if (strcmp(token, ")"))
+		con->DebugPrintf("Expected ')' at token %d\n", *i);
+
+	return oldPos;
 }
 
 } // End of namespace Sci

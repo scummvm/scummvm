@@ -96,7 +96,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 
 #ifdef DEBUG_PARSER
 		debugC(2, kDebugLevelParser, "Said block:", 0);
-		((SciEngine*)g_engine)->getVocabulary()->decipherSaidBlock(said_block);
+		s->_voc->decipherSaidBlock(said_block);
 #endif
 
 	if (s->parser_event.isNull() || (GET_SEL32V(s->parser_event, claimed))) {
@@ -134,8 +134,9 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 	List *list;
 	Node *node;
 	int script;
+	int numSynonyms = 0;
 
-	s->_synonyms.clear();
+	s->_voc->clearSynonyms();
 
 	list = lookup_list(s, GET_SEL32(object, elements));
 	node = lookup_node(s, list->first);
@@ -143,33 +144,31 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 	while (node) {
 		reg_t objpos = node->value;
 		int seg;
-		int _numSynonyms = 0;
 
 		script = GET_SEL32V(objpos, number);
 		seg = s->segMan->getScriptSegment(script);
 
 		if (seg > 0)
-			_numSynonyms = s->segMan->getScript(seg)->getSynonymsNr();
+			numSynonyms = s->segMan->getScript(seg)->getSynonymsNr();
 
-		if (_numSynonyms) {
-			byte *synonyms;
+		if (numSynonyms) {
+			byte *synonyms = s->segMan->getScript(seg)->getSynonyms();
 
-			synonyms = s->segMan->getScript(seg)->getSynonyms();
 			if (synonyms) {
 				debugC(2, kDebugLevelParser, "Setting %d synonyms for script.%d\n",
-				          _numSynonyms, script);
+				          numSynonyms, script);
 
-				if (_numSynonyms > 16384) {
+				if (numSynonyms > 16384) {
 					error("Segtable corruption: script.%03d has %d synonyms",
-					         script, _numSynonyms);
+					         script, numSynonyms);
 					/* We used to reset the corrupted value here. I really don't think it's appropriate.
 					 * Lars */
 				} else
-					for (int i = 0; i < _numSynonyms; i++) {
+					for (int i = 0; i < numSynonyms; i++) {
 						synonym_t tmp;
 						tmp.replaceant = (int16)READ_LE_UINT16(synonyms + i * 4);
 						tmp.replacement = (int16)READ_LE_UINT16(synonyms + i * 4 + 2);
-						s->_synonyms.push_back(tmp);
+						s->_voc->addSynonym(tmp);
 					}
 			} else
 				warning("Synonyms of script.%03d were requested, but script is not available", script);
@@ -179,7 +178,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 		node = lookup_node(s, node->succ);
 	}
 
-	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", s->_synonyms.size());
+	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", numSynonyms);
 
 	return s->r_acc;
 }
@@ -193,18 +192,15 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 	char *error;
 	ResultWordList words;
 	reg_t event = argv[1];
-	Vocabulary *voc = ((SciEngine*)g_engine)->getVocabulary();
+	Vocabulary *voc = s->_voc;
 
 	s->parser_event = event;
 
 	bool res = voc->tokenizeString(words, string.c_str(), &error);
-	s->parser_valid = 0; /* not valid */
+	s->parserIsValid = false; /* not valid */
 
 	if (res && !words.empty()) {
-
-		int syntax_fail = 0;
-
-		vocab_synonymize_tokens(words, s->_synonyms);
+		s->_voc->synonymizeTokens(words);
 
 		s->r_acc = make_reg(0, 1);
 
@@ -215,11 +211,9 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 				debugC(2, kDebugLevelParser, "   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 #endif
 
-		if (voc->parseGNF(s->parser_nodes, words))
-			syntax_fail = 1; /* Building a tree failed */
+		int syntax_fail = voc->parseGNF(words);
 
 		if (syntax_fail) {
-
 			s->r_acc = make_reg(0, 1);
 			PUT_SEL32V(event, claimed, 1);
 
@@ -229,11 +223,11 @@ reg_t kParse(EngineState *s, int argc, reg_t *argv) {
 			debugC(2, kDebugLevelParser, "Tree building failed\n");
 
 		} else {
-			s->parser_valid = 1;
+			s->parserIsValid = true;
 			PUT_SEL32V(event, claimed, 0);
 
 #ifdef DEBUG_PARSER
-			vocab_dump_parse_tree("Parse-tree", s->parser_nodes);
+			s->_voc->dumpParseTree();
 #endif
 		}
 

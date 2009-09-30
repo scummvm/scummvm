@@ -30,8 +30,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, Kernel *kernel, uint32 flags)
-: resMan(res), _kernel(kernel), _flags(flags), _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, uint32 flags)
+: resMan(res), _kernel(kernel), _voc(voc), _flags(flags), _dirseeker(this) {
 
 	gfx_state = 0;
 	old_screen = 0;
@@ -100,9 +100,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, uint32 flags)
 	sys_strings = 0;
 	string_frag_segment = 0;
 
-	memset(parser_nodes, 0, sizeof(parser_nodes));
-
-	parser_valid = 0;
+	parserIsValid = false;
 
 	game_obj = NULL_REG;
 

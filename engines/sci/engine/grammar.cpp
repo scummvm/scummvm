@@ -476,7 +476,7 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 	return rulepos;
 }
 
-int Vocabulary::parseGNF(parse_tree_node_t *nodes, const ResultWordList &words, bool verbose) {
+int Vocabulary::parseGNF(const ResultWordList &words, bool verbose) {
 	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 	// Get the start rules:
 	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(_parserRules, _parserBranches[0].data[1]);
@@ -554,22 +554,22 @@ int Vocabulary::parseGNF(parse_tree_node_t *nodes, const ResultWordList &words, 
 	{
 		int temp, pos;
 
-		nodes[0].type = kParseTreeBranchNode;
-		nodes[0].content.branches[0] = 1;
-		nodes[0].content.branches[1] = 2;
+		_parserNodes[0].type = kParseTreeBranchNode;
+		_parserNodes[0].content.branches[0] = 1;
+		_parserNodes[0].content.branches[1] = 2;
 
-		nodes[1].type = kParseTreeLeafNode;
-		nodes[1].content.value = 0x141;
+		_parserNodes[1].type = kParseTreeLeafNode;
+		_parserNodes[1].content.value = 0x141;
 
-		nodes[2].type = kParseTreeBranchNode;
-		nodes[2].content.branches[0] = 0;
-		nodes[2].content.branches[1] = 0;
+		_parserNodes[2].type = kParseTreeBranchNode;
+		_parserNodes[2].content.branches[0] = 0;
+		_parserNodes[2].content.branches[1] = 0;
 
 		pos = 2;
 
-		temp = _vbpt_append(nodes, &pos, 2, _parserBranches[0].id);
+		temp = _vbpt_append(_parserNodes, &pos, 2, _parserBranches[0].id);
 		//_vbpt_write_subexpression(nodes, &pos, results[_vocab_rule_list_length(results)].rule, 0, temp);
-		_vbpt_write_subexpression(nodes, &pos, results->rule, 0, temp);
+		_vbpt_write_subexpression(_parserNodes, &pos, results->rule, 0, temp);
 	}
 
 	freeRuleList(results);

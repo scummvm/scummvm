@@ -413,11 +413,8 @@ int game_init(EngineState *s) {
 		return 1;
 	}
 
-	s->parser_valid = 0; // Invalidate parser
+	s->parserIsValid = false; // Invalidate parser
 	s->parser_event = NULL_REG; // Invalidate parser event
-
-	s->_synonyms.clear(); // No synonyms
-
 	if (s->gfx_state && _reset_graphics_input(s))
 		return 1;
 
@@ -446,10 +443,6 @@ int game_init(EngineState *s) {
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->game_obj));
 
-	// Mark parse tree as unused
-	s->parser_nodes[0].type = kParseTreeLeafNode;
-	s->parser_nodes[0].content.value = 0;
-
 	s->_menubar = new Menubar(); // Create menu bar
 
 	if (s->sfx_init_flags & SFX_STATE_FLAG_NOSOUND)
@@ -473,8 +466,6 @@ int game_exit(EngineState *s) {
 	s->segMan->_classtable.clear();
 	delete s->segMan;
 	s->segMan = 0;
-
-	s->_synonyms.clear();
 
 	debug(2, "Freeing miscellaneous data...");
 

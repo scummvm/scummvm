@@ -158,7 +158,7 @@ private:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, uint32 flags);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, uint32 flags);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -167,6 +167,7 @@ public:
 public:
 	ResourceManager *resMan; /**< The resource manager */
 	Kernel *_kernel;
+	Vocabulary *_voc;
 
 	const uint32 _flags;			/**< Specific game flags */
 
@@ -227,6 +228,11 @@ public:
 
 	DirSeeker _dirseeker;
 
+	/* Parser data: */
+	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
+	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
+	bool parserIsValid; /**< If something has been correctly parsed */
+
 	/* VM Information */
 
 	Common::List<ExecStack> _executionStack; /**< The execution stack */
@@ -245,8 +251,6 @@ public:
 	StackPtr stack_base; /**< Pointer to the least stack element */
 	StackPtr stack_top; /**< First invalid stack element */
 
-	reg_t parser_base; /**< Base address for the parser error reporting mechanism */
-	reg_t parser_event; /**< The event passed to Parse() and later used by Said() */
 	Script *script_000;  /**< script 000, e.g. for globals */
 
 	uint16 currentRoomNumber() const;
@@ -288,13 +292,6 @@ public:
 	SystemStrings *sys_strings;
 
 	SegmentId string_frag_segment;
-
-	/* Parser data: */
-	parse_tree_node_t parser_nodes[VOCAB_TREE_NODES]; /**< The parse tree */
-
-	int parser_valid; /**< If something has been correctly parsed */
-
-	SynonymList _synonyms; /**< The list of synonyms */
 
 	reg_t game_obj; /**< Pointer to the game object */
 

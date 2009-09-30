@@ -67,6 +67,14 @@ enum {
 	VOCAB_CLASS_NUMBER = 0x001
 };
 
+enum {
+	kParseEndOfInput = 0,
+	kParseOpeningParenthesis = 1,
+	kParseClosingParenthesis = 2,
+	kParseNil = 3,
+	kParseNumber = 4
+};
+
 #define VOCAB_CLASS_ANYWORD 0xff
 /* Anywords are ignored by the parser */
 
@@ -207,17 +215,14 @@ public:
 	bool tokenizeString(ResultWordList &retval, const char *sentence, char **error);
 
 	/* Builds a parse tree from a list of words, using a set of Greibach Normal Form rules
-	** Parameters: (parse_tree_node_t *) nodes: A node list to store the tree in (must have
-	**                                          at least VOCAB_TREE_NODES entries)
+	** Parameters: 
 	**             (const ResultWordList &) words: The words to build the tree from
-	**             (parse_tree_branch_t *) branche0: The zeroeth original branch of the
-	**                                     original CNF parser grammar
 	**             bool verbose: Set to true for debugging
 	** Returns   : 0 on success, 1 if the tree couldn't be built in VOCAB_TREE_NODES nodes
 	**             or if the sentence structure in 'words' is not part of the language
 	**             described by the grammar passed in 'rules'.
 	*/
-	int parseGNF(parse_tree_node_t *nodes, const ResultWordList &words, bool verbose = false);
+	int parseGNF(const ResultWordList &words, bool verbose = false);
 
 	/* Constructs the Greibach Normal Form of the grammar supplied in 'branches'
 	**             bool verbose: Set to true for debugging.
@@ -250,6 +255,31 @@ public:
 
 	uint getParserBranchesSize() const { return _parserBranches.size(); }
 	const parse_tree_branch_t &getParseTreeBranch(int number) const { return _parserBranches[number]; }
+
+	/**
+	 * Adds a new synonym to the list
+	 */
+	void addSynonym(synonym_t syn) { _synonyms.push_back(syn); }
+	
+	/**
+	 * Clears the list of synonyms
+	 */
+	void clearSynonyms() { _synonyms.clear(); }
+	
+	/** 
+	 * Synonymizes a token list
+	 * Parameters: (ResultWordList &) words: The word list to synonymize
+	 */
+	void synonymizeTokens(ResultWordList &words);
+
+	void printParserNodes(int num);
+
+	void dumpParseTree();
+
+	int parseNodes(int *i, int *pos, int type, int nr, int argc, const char **argv);
+
+	// Accessed by said()
+	parse_tree_node_t _parserNodes[VOCAB_TREE_NODES]; /**< The parse tree */
 
 private:
 	/**
@@ -290,6 +320,7 @@ private:
 	parse_rule_list_t *_parserRules; /**< GNF rules used in the parser algorithm */
 	Common::Array<parse_tree_branch_t> _parserBranches;
 	WordMap _parserWords;
+	SynonymList _synonyms; /**< The list of synonyms */
 };
 
 /* Prints a parse tree
@@ -303,17 +334,10 @@ void vocab_dump_parse_tree(const char *tree_name, parse_tree_node_t *nodes);
 /* Builds a parse tree from a spec and compares it to a parse tree
 ** Parameters: (EngineState *) s: The affected state
 **             (byte *) spec: Pointer to the spec to build
-**             (int) verbose: Whether to display the parse tree after building it
+**             (bool) verbose: Whether to display the parse tree after building it
 ** Returns   : (int) 1 on a match, 0 otherwise
 */
-int said(EngineState *s, byte *spec, int verbose);
-
-
-/* Synonymizes a token list
-** Parameters: (ResultWordList &) words: The word list to synonymize
-**             (const SynonymList &) synonyms: Synonym list
-*/
-void vocab_synonymize_tokens(ResultWordList &words, const SynonymList &synonyms);
+int said(EngineState *s, byte *spec, bool verbose);
 
 int getAllocatedRulesCount();
 

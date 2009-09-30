@@ -362,7 +362,7 @@ static said_spec_t said_top_branch(tree_t first) {
 	return 0;
 }
 
-static int said_parse_spec(EngineState *s, byte *spec) {
+static int said_parse_spec(byte *spec) {
 	int nextitem;
 
 	said_parse_error = NULL;
@@ -797,15 +797,15 @@ static int augment_parse_nodes(parse_tree_node_t *parset, parse_tree_node_t *sai
 /**** Main code ****/
 /*******************/
 
-int said(EngineState *s, byte *spec, int verbose) {
+int said(EngineState *s, byte *spec, bool verbose) {
 	int retval;
 
-	parse_tree_node_t *parse_tree_ptr = s->parser_nodes;
+	parse_tree_node_t *parse_tree_ptr = s->_voc->_parser_nodes;
 
-	if (s->parser_valid) {
+	if (s->parserIsValid) {
 		if (said_parse_spec(s, spec)) {
 			warning("Offending spec was: ");
-			((SciEngine*)g_engine)->getVocabulary()->decypherSaidBlock(spec);
+			s->_voc->decipherSaidBlock(spec);
 			return SAID_NO_MATCH;
 		}
 

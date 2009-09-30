@@ -464,66 +464,6 @@ bool Console::cmdParserWords(int argc, const char **argv) {
 	return true;
 }
 
-enum {
-	kParseEndOfInput = 0,
-	kParseOpeningParenthesis = 1,
-	kParseClosingParenthesis = 2,
-	kParseNil = 3,
-	kParseNumber = 4
-};
-
-int parseNodes(EngineState *s, int *i, int *pos, int type, int nr, int argc, const char **argv) {
-	int nextToken = 0, nextValue = 0, newPos = 0, oldPos = 0;
-	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
-
-	if (type == kParseNil)
-		return 0;
-
-	if (type == kParseNumber) {
-		s->parser_nodes[*pos += 1].type = kParseTreeLeafNode;
-		s->parser_nodes[*pos].content.value = nr;
-		return *pos;
-	}
-	if (type == kParseEndOfInput) {
-		con->DebugPrintf("Unbalanced parentheses\n");
-		return -1;
-	}
-	if (type == kParseClosingParenthesis) {
-		con->DebugPrintf("Syntax error at token %d\n", *i);
-		return -1;
-	}
-
-	s->parser_nodes[oldPos = ++(*pos)].type = kParseTreeBranchNode;
-
-	for (int j = 0; j <= 1; j++) {
-		if (*i == argc) {
-			nextToken = kParseEndOfInput;
-		} else {
-			const char *token = argv[(*i)++];
-
-			if (!strcmp(token, "(")) {
-				nextToken = kParseOpeningParenthesis;
-			} else if (!strcmp(token, ")")) {
-				nextToken = kParseClosingParenthesis;
-			} else if (!strcmp(token, "nil")) {
-				nextToken = kParseNil;
-			} else {
-				nextValue = strtol(token, NULL, 0);
-				nextToken = kParseNumber;
-			}
-		}
-
-		if ((newPos = s->parser_nodes[oldPos].content.branches[j] = parseNodes(s, i, pos, nextToken, nextValue, argc, argv)) == -1)
-			return -1;
-	}
-
-	const char *token = argv[(*i)++];
-	if (strcmp(token, ")"))
-		con->DebugPrintf("Expected ')' at token %d\n", *i);
-
-	return oldPos;
-}
-
 bool Console::cmdSetParseNodes(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Sets the contents of all parse nodes.\n");
@@ -549,10 +489,10 @@ bool Console::cmdSetParseNodes(int argc, const char **argv) {
 		nextToken = kParseNumber;
 	}
 
-	if (parseNodes(_vm->_gamestate, &i, &pos, nextToken, nextValue, argc, argv) == -1)
+	if (_vm->getVocabulary()->parseNodes(&i, &pos, nextToken, nextValue, argc, argv) == -1)
 		return 1;
 
-	vocab_dump_parse_tree("debug-parse-tree", _vm->_gamestate->parser_nodes);
+	_vm->getVocabulary()->dumpParseTree();
 
 	return true;
 }
@@ -971,20 +911,20 @@ bool Console::cmdParse(int argc, const char **argv) {
 	if (res && !words.empty()) {
 		int syntax_fail = 0;
 
-		vocab_synonymize_tokens(words, _vm->_gamestate->_synonyms);
+		_vm->getVocabulary()->synonymizeTokens(words);
 
 		DebugPrintf("Parsed to the following blocks:\n");
 
 		for (ResultWordList::const_iterator i = words.begin(); i != words.end(); ++i)
 			DebugPrintf("   Type[%04x] Group[%04x]\n", i->_class, i->_group);
 
-		if (_vm->getVocabulary()->parseGNF(_vm->_gamestate->parser_nodes, words, true))
+		if (_vm->getVocabulary()->parseGNF(words, true))
 			syntax_fail = 1; // Building a tree failed
 
 		if (syntax_fail)
 			DebugPrintf("Building a tree failed.\n");
 		else
-			vocab_dump_parse_tree("debug-parse-tree", _vm->_gamestate->parser_nodes);
+			_vm->getVocabulary()->dumpParseTree();
 
 	} else {
 		DebugPrintf("Unknown word: '%s'\n", error);
@@ -1004,14 +944,7 @@ bool Console::cmdParserNodes(int argc, const char **argv) {
 
 	int end = MIN<int>(atoi(argv[1]), VOCAB_TREE_NODES);
 
-	for (int i = 0; i < end; i++) {
-		DebugPrintf(" Node %03x: ", i);
-		if (_vm->_gamestate->parser_nodes[i].type == kParseTreeLeafNode)
-			DebugPrintf("Leaf: %04x\n", _vm->_gamestate->parser_nodes[i].content.value);
-		else
-			DebugPrintf("Branch: ->%04x, ->%04x\n", _vm->_gamestate->parser_nodes[i].content.branches[0],
-			          _vm->_gamestate->parser_nodes[i].content.branches[1]);
-	}
+	_vm->getVocabulary()->printParserNodes(end);
 
 	return true;
 }
