@@ -364,13 +364,9 @@ public:
 	void copyPalette(const int dst, const int src);
 
 	// gui specific (processing on _curPage)
-	enum ShadeType {
-		kShadeTypeKyra,
-		kShadeTypeLol
-	};
 	void drawLine(bool vertical, int x, int y, int length, int color);
 	void drawClippedLine(int x1, int y1, int x2, int y2, int color);
-	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2, ShadeType shadeType = kShadeTypeKyra);
+	virtual void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
 	void drawBox(int x1, int y1, int x2, int y2, int color);
 
 	// font/text handling

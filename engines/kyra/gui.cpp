@@ -83,7 +83,7 @@ void GUI::initMenu(Menu &menu) {
 	int menu_y2 = menu.height + menu.y - 1;
 
 	_screen->fillRect(menu.x + 2, menu.y + 2, menu_x2 - 2, menu_y2 - 2, menu.bkgdColor);
-	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2, _vm->gameFlags().gameID == GI_LOL ? Screen::kShadeTypeLol : Screen::kShadeTypeKyra);
+	_screen->drawShadedBox(menu.x, menu.y, menu_x2, menu_y2, menu.color1, menu.color2);
 
 	if (menu.titleX != -1)
 		textX = menu.titleX;
@@ -127,7 +127,7 @@ void GUI::initMenu(Menu &menu) {
 		}
 
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bkgdColor);
-		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2, _vm->gameFlags().gameID == GI_LOL ? Screen::kShadeTypeLol : Screen::kShadeTypeKyra);
+		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
 
 		if (getMenuItemTitle(menu.item[i])) {
 			if (menu.item[i].titleX != -1)

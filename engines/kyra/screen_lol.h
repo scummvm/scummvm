@@ -49,6 +49,8 @@ public:
 	void fprintString(const char *format, int x, int y, uint8 col1, uint8 col2, uint16 flags, ...) GCC_PRINTF(2, 8);
 	void fprintStringIntro(const char *format, int x, int y, uint8 c1, uint8 c2, uint8 c3, uint16 flags, ...) GCC_PRINTF(2, 9);
 
+	void drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2);
+
 	void drawGridBox(int x, int y, int w, int h, int col);
 	void fadeClearSceneWindow(int delay);
 

@@ -2291,7 +2291,7 @@ int GUI_LoL::redrawShadedButtonCallback(Button *button) {
 	if (!_displayMenu || _vm->gameFlags().use16ColorMode)
 		return 0;
 
-	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 223, 227, Screen::kShadeTypeLol);
+	_screen->drawShadedBox(button->x, button->y, button->x + button->width, button->y + button->height, 223, 227);
 	return 0;
 }
 
@@ -2465,7 +2465,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 			int my = d->sy - 1;
 			int mw = (d->w << 3) + 1;
 			int mh = d->h + 1;
-			_screen->drawShadedBox(mx, my, mx + mw, my + mh, 227, 223, Screen::kShadeTypeLol);
+			_screen->drawShadedBox(mx, my, mx + mw, my + mh, 227, 223);
 			int pg = _screen->setCurPage(0);
 			_vm->_txt->clearDim(8);
 			textCursorTimer = 0;

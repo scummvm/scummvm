@@ -996,29 +996,17 @@ void Screen::drawBox(int x1, int y1, int x2, int y2, int color) {
 	drawClippedLine(x1, y2, x2, y2, color);
 }
 
-void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2, ShadeType shadeType) {
+void Screen::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int color2) {
 	assert(x1 >= 0 && y1 >= 0);
 	hideMouse();
 
 	fillRect(x1, y1, x2, y1 + 1, color1);
-	if (shadeType == kShadeTypeLol)
-		fillRect(x1, y1, x1 + 1, y2, color1);
-	else
-		fillRect(x2 - 1, y1, x2, y2, color1);
+	fillRect(x2 - 1, y1, x2, y2, color1);
 
-	if (shadeType == kShadeTypeLol) {
-		drawClippedLine(x2, y1, x2, y2, color2);
-		drawClippedLine(x2 - 1, y1 + 1, x2 - 1, y2 - 1, color2);
-		drawClippedLine(x1 + 1, y2 - 1, x2, y2 - 1, color2);
-	} else {
-		drawClippedLine(x1, y1, x1, y2, color2);
-		drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
-		drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
-	}
+	drawClippedLine(x1, y1, x1, y2, color2);
+	drawClippedLine(x1 + 1, y1 + 1, x1 + 1, y2 - 1, color2);
+	drawClippedLine(x1, y2 - 1, x2 - 1, y2 - 1, color2);
 	drawClippedLine(x1, y2, x2, y2, color2);
-
-	if (shadeType == kShadeTypeLol && _use16ColorMode)
-		drawBox(x1, y1, x2, y2, 0);
 
 	showMouse();
 }
