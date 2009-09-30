@@ -30,11 +30,10 @@
 
 namespace Draci {
 
-const char *kFontSmall = "Small.fon";
-const char *kFontBig = "Big.fon"; 
+const char * const kFontSmall = "Small.fon";
+const char * const kFontBig = "Big.fon"; 
 
 Font::Font(const Common::String &filename) { 
-
 	_fontHeight = 0;
 	_maxCharWidth = 0;
 	_charWidths = NULL;
@@ -60,13 +59,12 @@ Font::~Font() {
  * language versions of the game.
  *
  * font format: [1 byte] maximum character width
- *				[1 byte] font height
- *				[138 bytes] character widths of all 138 characters in the font
- *				[138 * fontHeight * maxWidth bytes] character data, stored row-wise 
+ *              [1 byte] font height
+ *              [138 bytes] character widths of all 138 characters in the font
+ *              [138 * fontHeight * maxWidth bytes] character data, stored row-wise 
  */
 
 bool Font::loadFont(const Common::String &filename) {
-	
 	// Free previously loaded font (if any)
 	freeFont();
 
@@ -85,14 +83,14 @@ bool Font::loadFont(const Common::String &filename) {
 	_maxCharWidth = f.readByte();
 	_fontHeight = f.readByte();
 
-	// Read in the widths of the glyphs	
+	// Read in the widths of the glyphs
 	_charWidths = new uint8[kCharNum];
-	for (unsigned int i = 0; i < kCharNum; ++i) {
+	for (uint i = 0; i < kCharNum; ++i) {
 		_charWidths[i] = f.readByte();
 	}
 
 	// Calculate size of font data
-	unsigned int fontDataSize = kCharNum * _maxCharWidth * _fontHeight;
+	uint fontDataSize = kCharNum * _maxCharWidth * _fontHeight;
 
 	// Read in all glyphs
 	_charData = new byte[fontDataSize];
@@ -115,10 +113,10 @@ uint8 Font::getCharWidth(uint8 chr) const {
 /**
  * @brief Draw a char to a Draci::Surface
  *
- * @param dst 	Pointer to the destination surface
- * @param chr 	Character to draw
- * @param tx  	Horizontal offset on the surface
- * @param ty  	Vertical offset on the surface
+ * @param dst   Pointer to the destination surface
+ * @param chr   Character to draw
+ * @param tx    Horizontal offset on the surface
+ * @param ty    Vertical offset on the surface
  */
 
 void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const {
@@ -132,11 +130,11 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
 	uint8 currentWidth = _charWidths[charIndex];
 
 	// Determine how many pixels to draw horizontally (to prevent overflow)
-	int xSpaceLeft = dst->w - tx - 1;	
+	int xSpaceLeft = dst->w - tx - 1;
 	int xPixelsToDraw = (currentWidth < xSpaceLeft) ? currentWidth : xSpaceLeft;
 
 	// Determine how many pixels to draw vertically
-	int ySpaceLeft = dst->h - ty - 1;	
+	int ySpaceLeft = dst->h - ty - 1;
 	int yPixelsToDraw = (_fontHeight < ySpaceLeft) ? _fontHeight : ySpaceLeft;
 
 	int _transparent = dst->getTransparentColour();
@@ -148,12 +146,11 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
 			int colour = _charData[charOffset + curr];
 
 			// If pixel is transparent, skip it
-			if (colour == _transparent)			
+			if (colour == _transparent)
 				continue;
 
 			// Replace colour with font colours
 			switch (colour) {
-
 			case 254:
 				colour = with_colour;
 				break;
@@ -176,38 +173,37 @@ void Font::drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) co
 		}
 
 		// Advance to next row
-		ptr += dst->pitch;	
+		ptr += dst->pitch;
 	}
 }
 
 /**
  * @brief Draw a string to a Draci::Surface
  *
- * @param dst 		Pointer to the destination surface
- * @param str 		Buffer containing string data
- * @param len		Length of the data
- * @param x  		Horizontal offset on the surface
- * @param y  		Vertical offset on the surface
- * @param spacing 	Space to leave between individual characters. Defaults to 0. 
+ * @param dst       Pointer to the destination surface
+ * @param str       Buffer containing string data
+ * @param len       Length of the data
+ * @param x         Horizontal offset on the surface
+ * @param y         Vertical offset on the surface
+ * @param spacing   Space to leave between individual characters. Defaults to 0. 
  */
-
 void Font::drawString(Surface *dst, const byte *str, uint len, 
-		int x, int y, int with_colour, int spacing, bool markDirty) const {
+	                  int x, int y, int with_colour, int spacing, bool markDirty) const {
 	drawString(dst, Common::String((const char *)str, len), x, y, with_colour, spacing, markDirty);
 }
 
 /**
  * @brief Draw a string to a Draci::Surface
  *
- * @param dst 		Pointer to the destination surface
- * @param str 		String to draw
- * @param x  		Horizontal offset on the surface
- * @param y  		Vertical offset on the surface
- * @param spacing 	Space to leave between individual characters. Defaults to 0. 
+ * @param dst       Pointer to the destination surface
+ * @param str       String to draw
+ * @param x         Horizontal offset on the surface
+ * @param y         Vertical offset on the surface
+ * @param spacing   Space to leave between individual characters. Defaults to 0. 
  */
 
 void Font::drawString(Surface *dst, const Common::String &str, 
-		int x, int y, int with_colour, int spacing, bool markDirty) const {
+	                  int x, int y, int with_colour, int spacing, bool markDirty) const {
 	assert(dst != NULL);
 	assert(x >= 0);
 	assert(y >= 0);
@@ -226,12 +222,12 @@ void Font::drawString(Surface *dst, const Common::String &str,
 			curx = x + (widest - getLineWidth(str, i+1, spacing) - 1) / 2;
 			continue;
 		}
-		
-		// Break early if there's no more space on the screen	
+
+		// Break early if there's no more space on the screen
 		if (curx >= dst->w - 1 || cury >= dst->h - 1) {
 			break;
-		}		
-		
+		}
+
 		drawChar(dst, str[i], curx, cury, with_colour);
 		curx += getCharWidth(str[i]) + spacing;
 	}
@@ -245,19 +241,18 @@ void Font::drawString(Surface *dst, const Common::String &str,
 /**
  * @brief Calculate the width of a string when drawn in the current font
  *
- * @param str 		String to draw
- * @param spacing	Space to leave between individual characters. Defaults to 0. 
+ * @param str       String to draw
+ * @param spacing   Space to leave between individual characters. Defaults to 0. 
  *
  * @return The calculated width of the string 
  */
-
 uint Font::getStringWidth(const Common::String &str, int spacing) const {
-	unsigned int width = 0;	
+	uint width = 0;
 
 	// Real length, including '|' separators
 	uint len = str.size();
 
-	for (unsigned int i = 0, tmp = 0; i < len; ++i) {
+	for (uint i = 0, tmp = 0; i < len; ++i) {
 
 		if (str[i] != '|') {
 			uint8 charIndex = str[i] - kCharIndexOffset;
@@ -281,7 +276,6 @@ uint Font::getStringWidth(const Common::String &str, int spacing) const {
 }
 
 uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing) const {
-
 	uint width = 0;
 
 	// If the index is greater or equal to the string size, 
@@ -291,7 +285,7 @@ uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing)
 
 	for (uint i = startIndex; i < str.size(); ++i) {
 
-		// EOL encountered		
+		// EOL encountered
 		if (str[i] == '|')
 			break;
 
@@ -306,28 +300,26 @@ uint Font::getLineWidth(const Common::String &str, uint startIndex, int spacing)
 
 /**
  * @brief Calculate the height of a string by counting the number of '|' chars (which
- * 		  are used as newline characters and end-of-string markers)
+ *        are used as newline characters and end-of-string markers)
  *
- * @param str 		String to draw
- * @param spacing	Space to leave between individual characters. Defaults to 0. 
+ * @param str       String to draw
+ * @param spacing   Space to leave between individual characters. Defaults to 0. 
  *
  * @return The calculated height of the string 
  */
-
-
 uint Font::getStringHeight(const Common::String &str) const {
 	uint len = str.size();
 	int separators = 0;
 
-	for (unsigned int i = 0; i < len; ++i) {
+	for (uint i = 0; i < len; ++i) {
 		// All strings in the data files should end with '|' but not all do.
 		// This is why we check whether we are at the last char too.
 		if (str[i] == '|' || i == len - 1) {
 			++separators;
 		}
 	}
-	
+
 	return separators * getFontHeight();
-}	
+}
 
 } // End of namespace Draci

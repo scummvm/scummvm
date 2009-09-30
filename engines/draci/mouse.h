@@ -32,10 +32,14 @@
 namespace Draci {
 
 enum CursorType { 
-	kNormalCursor, kArrowCursor1, 
-	kArrowCursor2, kArrowCursor3, 
-	kArrowCursor4, kDialogueCursor,
-	kHighlightedCursor, kMainMenuCursor
+	kNormalCursor,
+	kArrowCursor1, 
+	kArrowCursor2,
+	kArrowCursor3, 
+	kArrowCursor4,
+	kDialogueCursor,
+	kHighlightedCursor,
+	kMainMenuCursor
 };
 
 class DraciEngine;

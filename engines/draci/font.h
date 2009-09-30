@@ -30,30 +30,32 @@
 
 namespace Draci {
 
-extern const char *kFontSmall;
-extern const char *kFontBig;
+extern const char * const kFontSmall;
+extern const char * const kFontBig;
 
 /** 
- *	Default font colours. They all seem to remain constant except for the
+ *  Default font colours. They all seem to remain constant except for the
  *  first one which varies depending on the character speaking.
  *  kOverFontColour is set to transparent.
  *  TODO: Find out what kFontColour1 should actually be when the game starts
  */
 enum { 
-	kFontColour1 = 2, kFontColour2 = 0,
-	kFontColour3 = 3, kFontColour4 = 4, 
-	kOverFontColour = 255, kTitleColour = 255,
-	kLineActiveColour = 254, kLineInactiveColour = 255
+	kFontColour1 = 2,
+	kFontColour2 = 0,
+	kFontColour3 = 3,
+	kFontColour4 = 4, 
+	kOverFontColour = 255,
+	kTitleColour = 255,
+	kLineActiveColour = 254,
+	kLineInactiveColour = 255
 };
 
 /**
  *  Represents the game's fonts. See docs for setFont() for font format details.
  */
-
 class Font {
 	
 public: 
-	
 	Font(const Common::String &filename);
 	~Font();
 
@@ -62,12 +64,12 @@ public:
 	uint8 getMaxCharWidth() const { return _maxCharWidth; };
 	uint8 getCharWidth(byte chr) const;
 	void drawChar(Surface *dst, uint8 chr, int tx, int ty, int with_colour) const;
-	
+
 	void drawString(Surface *dst, const byte *str, uint len, int x, int y, int with_colour, 
-					int spacing, bool markDirty = true) const;
+	                int spacing, bool markDirty = true) const;
 	void drawString(Surface *dst, const Common::String &str, 
-					int x, int y, int with_colour, int spacing, bool markDirty = true) const;
-	
+	                int x, int y, int with_colour, int spacing, bool markDirty = true) const;
+
 	uint getStringWidth(const Common::String &str, int spacing = 0) const;
 	uint getStringHeight(const Common::String &str) const;
 	uint getLineWidth(const Common::String &str, uint startIndex, int spacing = 0) const;
@@ -75,21 +77,21 @@ public:
 private:
 	uint8 _fontHeight;
 	uint8 _maxCharWidth;
-	
-	/** Pointer to an array of individual char widths */	
+
+	/** Pointer to an array of individual char widths */
 	uint8 *_charWidths;
-	
+
 	/** Pointer to a raw byte array representing font pixels stored row-wise */
 	byte *_charData;
 	
 	/** Number of glyphs in the font */
-	static const unsigned int kCharNum = 138;
+	static const uint kCharNum = 138;
 
 	/** 
-	 *	Chars are indexed from the space character so this should be subtracted
+	 *  Chars are indexed from the space character so this should be subtracted
 	 *  to get the index of a glyph
 	 */
-	static const unsigned int kCharIndexOffset = 32;
+	static const uint kCharIndexOffset = 32;
 
 	/** Internal function for freeing fonts when destructing/loading another */
 	void freeFont();

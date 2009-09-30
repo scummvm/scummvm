@@ -43,14 +43,14 @@ enum {
 };
 
 // TODO(spalek): shouldn't modify params passed by reference.  Either make it const or copy the parameter.
-typedef void (Script::* GPLHandler)(Common::Queue<int> &);
-typedef int  (Script::* GPLOperatorHandler)(int, int) const;
-typedef int  (Script::* GPLFunctionHandler)(int) const;
+typedef void (Script::*GPLHandler)(Common::Queue<int> &);
+typedef int  (Script::*GPLOperatorHandler)(int, int) const;
+typedef int  (Script::*GPLFunctionHandler)(int) const;
 
 /**
  *  Represents a single command in the GPL scripting language bytecode.
- *	Each command is represented in the bytecode by a command number and a 
- *	subnumber.
+ *  Each command is represented in the bytecode by a command number and a 
+ *  subnumber.
  */
 
 struct GPL2Command { 
@@ -76,10 +76,9 @@ struct GPL2Function {
  *  A convenience data type that holds both the actual bytecode and the
  *  length of the bytecode. Passed to Script::run().
  */
-
 struct GPL2Program {
 	GPL2Program() : _bytecode(NULL), _length(0) {}
-	
+
 	byte *_bytecode;
 	uint16 _length;
 };
@@ -87,14 +86,13 @@ struct GPL2Program {
 class Script {
 
 public:
-	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };	
+	Script(DraciEngine *vm) : _vm(vm), _jump(0) { setupCommandList(); };
 
 	int run(const GPL2Program &program, uint16 offset);
 	bool testExpression(const GPL2Program &program, uint16 offset) const;
 	void endCurrentProgram();
 
 private:
-	
 	int _jump;
 	bool _endProgram;
 
@@ -110,7 +108,7 @@ private:
 	void start(Common::Queue<int> &params);
 	void mark(Common::Queue<int> &params);
 	void release(Common::Queue<int> &params);
-	void icoStat(Common::Queue<int> &params);	
+	void icoStat(Common::Queue<int> &params);
 	void objStat(Common::Queue<int> &params);
 	void objStatOn(Common::Queue<int> &params);
 	void execInit(Common::Queue<int> &params);
@@ -172,6 +170,6 @@ private:
 	DraciEngine *_vm;
 };
 
-}
+} // end of namespace Draci
 
 #endif // DRACI_SCRIPT_H

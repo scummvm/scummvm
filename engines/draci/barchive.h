@@ -33,14 +33,13 @@ namespace Draci {
 /**
  *  Represents individual files inside the archive.
  */
-
 struct BAFile {
-	uint _compLength;	//!< Compressed length (the same as _length if the file is uncompressed) 	
-	uint _length; 	//!< Uncompressed length
-	uint32 _offset; 	//!< Offset of file inside archive	
+	uint _compLength; //!< Compressed length (the same as _length if the file is uncompressed)
+	uint _length;     //!< Uncompressed length
+	uint32 _offset;   //!< Offset of file inside archive
 	byte *_data;
 	byte _crc;
-	byte _stopper;		//!< Not used in BAR files, needed for DFW
+	byte _stopper;    //!< Not used in BAR files, needed for DFW
 
 	/** Releases the file data (for memory considerations) */
 	void close(void) {  
@@ -67,31 +66,31 @@ public:
 	/** 
 	 * Checks whether there is an archive opened. Should be called before reading
 	 * from the archive to check whether openArchive() succeeded.
-	 */	
+	 */
 	bool isOpen() const { return _opened; }
 
 	void clearCache();
 
-	const BAFile *getFile(unsigned int i) const;
+	const BAFile *getFile(uint i) const;
 
 private:
 	// Archive header data
 	static const char _magicNumber[];
 	static const char _dfwMagicNumber[];
-	static const unsigned int _archiveHeaderSize = 10;
+	static const uint _archiveHeaderSize = 10;
 	
 	// File stream header data
-	static const unsigned int _fileHeaderSize = 6;
+	static const uint _fileHeaderSize = 6;
 
 	Common::String _path;    //!< Path to file
 	BAFile *_files;          //!< Internal array of files
-	uint _fileCount;       //!< Number of files in archive
-	bool _isDFW;			 //!< True if the archive is in DFW format, false otherwise
-	bool _opened;			 //!< True if the archive is opened, false otherwise
+	uint _fileCount;         //!< Number of files in archive
+	bool _isDFW;             //!< True if the archive is in DFW format, false otherwise
+	bool _opened;            //!< True if the archive is opened, false otherwise
 
 	void openDFW(const Common::String &path);
-	BAFile *loadFileDFW(unsigned int i) const;
-	BAFile *loadFileBAR(unsigned int i) const;
+	BAFile *loadFileDFW(uint i) const;
+	BAFile *loadFileBAR(uint i) const;
 };
 
 } // End of namespace Draci

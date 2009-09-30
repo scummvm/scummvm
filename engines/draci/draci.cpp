@@ -109,42 +109,42 @@ int DraciEngine::init() {
 	_script = new Script(this);
 	_game = new Game(this);
 
-	if(!_objectsArchive->isOpen()) {
+	if (!_objectsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening objects archive failed");
 		return Common::kUnknownError;
 	}	
 
-	if(!_spritesArchive->isOpen()) {
+	if (!_spritesArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening sprites archive failed");
 		return Common::kUnknownError;
 	}	
 
-	if(!_paletteArchive->isOpen()) {
+	if (!_paletteArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening palette archive failed");
 		return Common::kUnknownError;
 	}
 
-	if(!_roomsArchive->isOpen()) {
+	if (!_roomsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening rooms archive failed");
 		return Common::kUnknownError;
 	}
 
-	if(!_overlaysArchive->isOpen()) {
+	if (!_overlaysArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening overlays archive failed");
 		return Common::kUnknownError;
 	}
 
-	if(!_animationsArchive->isOpen()) {
+	if (!_animationsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening animations archive failed");
 		return Common::kUnknownError;
 	}
 
-	if(!_iconsArchive->isOpen()) {
+	if (!_iconsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening icons archive failed");
 		return Common::kUnknownError;
 	}
 
-	if(!_walkingMapsArchive->isOpen()) {
+	if (!_walkingMapsArchive->isOpen()) {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening walking maps archive failed");
 		return Common::kUnknownError;
 	}
@@ -152,21 +152,21 @@ int DraciEngine::init() {
 	_showWalkingMap = false;
 
 	// Basic archive test
-	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");	
-	Common::String path("INIT.DFW");	
+	debugC(2, kDraciGeneralDebugLevel, "Running archive tests...");
+	Common::String path("INIT.DFW");
 	BArchive ar(path);
 	const BAFile *f;
-	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());	
+	debugC(3, kDraciGeneralDebugLevel, "Number of file streams in archive: %d", ar.size());
 	
-	if(ar.isOpen()) {
-		f = ar.getFile(0);	
+	if (ar.isOpen()) {
+		f = ar.getFile(0);
 	} else {
 		debugC(2, kDraciGeneralDebugLevel, "ERROR - Archive not opened");
 		return Common::kUnknownError;
 	}	
 		
 	debugC(3, kDraciGeneralDebugLevel, "First 10 bytes of file %d: ", 0);
-	for (unsigned int i = 0; i < 10; ++i) {
+	for (uint i = 0; i < 10; ++i) {
 		debugC(3, kDraciGeneralDebugLevel, "0x%02x%c", f->_data[i], (i < 9) ? ' ' : '\n');
 	}
 
@@ -195,12 +195,10 @@ bool DraciEngine::handleEvents() {
 			if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
 				_game->setRoomNum(_game->nextRoomNum());
 				_game->setGateNum(0);
-			}
-			else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
+			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
 				_game->setRoomNum(_game->prevRoomNum());
 				_game->setGateNum(0);
-			}
-			else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
 				int escRoom = _game->getEscRoom();
 
 				// Check if there is an escape room defined for the current room
@@ -214,8 +212,7 @@ bool DraciEngine::handleEvents() {
 					// End any currently running GPL programs
 					_script->endCurrentProgram();
 				}
-			}
-			else if (event.kbd.keycode == Common::KEYCODE_m) {
+			} else if (event.kbd.keycode == Common::KEYCODE_m) {
 				if (_game->getLoopStatus() == kStatusOrdinary) {
 					// TODO: record the current room number
 					// so that we can quickly exit there
@@ -223,13 +220,11 @@ bool DraciEngine::handleEvents() {
 					_game->setRoomNum(_game->getMapRoom());
 					_game->setGateNum(0);
 				}
-			}
-			// Show walking map toggle
-			else if (event.kbd.keycode == Common::KEYCODE_w) { 
+			} else if (event.kbd.keycode == Common::KEYCODE_w) { 
+				// Show walking map toggle
 				_showWalkingMap = !_showWalkingMap;
-			}
-			else if (event.kbd.keycode == Common::KEYCODE_i) {
-				if(_game->getLoopStatus() == kStatusInventory &&
+			} else if (event.kbd.keycode == Common::KEYCODE_i) {
+				if (_game->getLoopStatus() == kStatusInventory &&
 				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
 					_game->inventoryDone();
 				} else if (_game->getLoopStatus() == kStatusOrdinary &&

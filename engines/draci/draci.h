@@ -81,11 +81,11 @@ public:
 };
 
 enum {
-	kDraciGeneralDebugLevel = 	1 << 0,
-	kDraciBytecodeDebugLevel = 	1 << 1,
-	kDraciArchiverDebugLevel = 	1 << 2,
-	kDraciLogicDebugLevel = 	1 << 3,
-	kDraciAnimationDebugLevel =	1 << 4
+	kDraciGeneralDebugLevel   = 1 << 0,
+	kDraciBytecodeDebugLevel  = 1 << 1,
+	kDraciArchiverDebugLevel  = 1 << 2,
+	kDraciLogicDebugLevel     = 1 << 3,
+	kDraciAnimationDebugLevel = 1 << 4
 };
 
 // Macro to simulate lround() for non-C99 compilers

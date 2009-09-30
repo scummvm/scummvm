@@ -51,13 +51,13 @@ public:
 
 private:
 	/** The current transparent colour of the surface. See getTransparentColour() and
-	 *	setTransparentColour().
+	 *  setTransparentColour().
 	 */
 	uint _transparentColour;
-	
+
 	/** Set when the surface is scheduled for a full update. 
-	 *	See markDirty(), markClean(). Accessed via needsFullUpdate().
-	 */	
+	 *  See markDirty(), markClean(). Accessed via needsFullUpdate().
+	 */
 	bool _fullUpdate; 
 
 	Common::List<Common::Rect> _dirtyRects; //!< List of currently dirty rectangles

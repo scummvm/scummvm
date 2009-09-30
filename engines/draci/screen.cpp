@@ -46,26 +46,25 @@ Screen::~Screen() {
  * @brief Sets the first numEntries of palette to zero
  * @param numEntries The number of entries to set to zero (from start)
  */
-void Screen::setPaletteEmpty(unsigned int numEntries) {
-	for (unsigned int i = 0; i < 4 * numEntries; ++i) {
+void Screen::setPaletteEmpty(uint numEntries) {
+	for (uint i = 0; i < 4 * numEntries; ++i) {
 		_palette[i] = 0;
 	}
 
 	_vm->_system->setPalette(_palette, 0, numEntries);
-}	
+}
 
 /**
  * @brief Sets a part of the palette
  * @param data Pointer to a buffer containing new palette data
- *		  start Index of the colour where replacement should start
- *		  num Number of colours to replace 
+ *        start Index of the colour where replacement should start
+ *        num Number of colours to replace 
  */
 void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
-
 	Common::MemoryReadStream pal(data, 3 * kNumColours);
 	pal.seek(start * 4);
 
-	// Copy the palette	
+	// Copy the palette
 	for (uint16 i = start; i < start + num; ++i) {
 		_palette[i * 4] = pal.readByte();
 		_palette[i * 4 + 1] = pal.readByte();
@@ -75,7 +74,7 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 
 	// TODO: Investigate why this is needed
 	// Shift the palette two bits to the left to make it brighter
-	for (unsigned int i = 0; i < 4 * kNumColours; ++i) {
+	for (uint i = 0; i < 4 * kNumColours; ++i) {
 		_palette[i] <<= 2;
 	}
 
@@ -88,17 +87,16 @@ void Screen::setPalette(const byte *data, uint16 start, uint16 num) {
 void Screen::copyToScreen() {
 	const Common::List<Common::Rect> *dirtyRects = _surface->getDirtyRects();
 	Common::List<Common::Rect>::const_iterator it;
-	
-	// If a full update is needed, update the whole screen	
+
+	// If a full update is needed, update the whole screen
 	if (_surface->needsFullUpdate()) {
 		byte *ptr = (byte *)_surface->getBasePtr(0, 0);
 
 		_vm->_system->copyRectToScreen(ptr, kScreenWidth, 
 			0, 0, kScreenWidth, kScreenHeight);
 	} else {
-	
 		// Otherwise, update only the dirty rectangles
-	
+
 		for (it = dirtyRects->begin(); it != dirtyRects->end(); ++it) {
 			
 			// Pointer to the upper left corner of the rectangle
@@ -141,10 +139,9 @@ void Screen::fillScreen(uint8 colour) {
 /**
  * @brief Draws a rectangle on the screen
  * @param r Which rectangle to draw
- *		  colour The colour of the rectangle
+ *        colour The colour of the rectangle
  */
 void Screen::drawRect(Common::Rect r, uint8 colour) {
-
 	// Clip the rectangle to screen size
 	r.clip(_surface->w, _surface->h);
 

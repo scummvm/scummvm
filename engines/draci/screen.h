@@ -46,7 +46,7 @@ public:
 	Screen(DraciEngine *vm);
 	~Screen();
 
-	void setPaletteEmpty(unsigned int numEntries = kNumColours);
+	void setPaletteEmpty(uint numEntries = kNumColours);
 	void setPalette(const byte *data, uint16 start, uint16 num);
 	const byte *getPalette() const;
 	void copyToScreen();

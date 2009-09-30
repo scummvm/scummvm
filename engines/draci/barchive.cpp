@@ -45,23 +45,23 @@ const char BArchive::_dfwMagicNumber[] = "BS";
  * and this file is compressed using a simple run-length scheme.
  *
  * archive format: header
- *				   index table
- *				   file0, file1, ...
+ *                 index table
+ *                 file0, file1, ...
  *
  * header format: [uint16LE] file count
- *				  [uint16LE] index table size
- *				  [2 bytes]  magic number "BS" 
+ *                [uint16LE] index table size
+ *                [2 bytes]  magic number "BS" 
  *
  * index table format: entry0, entry1, ...
  *
  * entry<N> format: [uint16LE] compressed size (not including the 2 bytes for the 
- *							   "uncompressed size" field)
- *				 	[uint32LE] fileN offset from start of file
+ *                             "uncompressed size" field)
+ *                  [uint32LE] fileN offset from start of file
  *
  * file<N> format: [uint16LE] uncompressed size
- *				   [uint16LE] compressed size (the same as in the index table entry)
- *				   [byte] stopper mark (for run-length compression)
- *				   [multiple bytes] compressed data
+ *                 [uint16LE] compressed size (the same as in the index table entry)
+ *                 [byte] stopper mark (for run-length compression)
+ *                 [multiple bytes] compressed data
  */
 
 void BArchive::openDFW(const Common::String &path) {
@@ -76,7 +76,7 @@ void BArchive::openDFW(const Common::String &path) {
 		debugC(2, kDraciArchiverDebugLevel, "Error opening file");
 		return;
 	}
-	
+
 	_fileCount = f.readUint16LE();
 	tableSize = f.readUint16LE();
 
@@ -94,16 +94,16 @@ void BArchive::openDFW(const Common::String &path) {
 
 	// Read in index table
 	table = new byte[tableSize];
-	f.read(table, tableSize);	
-	
+	f.read(table, tableSize);
+
 	// Read in file headers, but do not read the actual data yet
 	// The data will be read on demand to save memory
 	_files = new BAFile[_fileCount];
 	Common::MemoryReadStream tableReader(table, tableSize);
-	for (unsigned int i = 0; i < _fileCount; ++i) {
+	for (uint i = 0; i < _fileCount; ++i) {
 		_files[i]._compLength = tableReader.readUint16LE();
 		_files[i]._offset = tableReader.readUint32LE();
-	
+
 		// Seek to the current file
 		f.seek(_files[i]._offset);
 		
@@ -117,11 +117,11 @@ void BArchive::openDFW(const Common::String &path) {
 
 	// Indicate that the archive was successfully opened
 	_opened = true;
-		
+	
 	// Cleanup
 	delete[] table;
 	f.close();
-}		
+}
 
 /**
  * @brief BArchive open method
@@ -142,7 +142,7 @@ void BArchive::openDFW(const Common::String &path) {
  *                 [2 bytes] original length
  *                 [1 byte] compression type
  *                 [1 byte] CRC
- *				   [multiple bytes] actual data
+ *                 [multiple bytes] actual data
  *
  * footer format: [array of uint32LE] offsets of individual files from start of archive 
  *                (last entry is footer offset again)
@@ -177,7 +177,7 @@ void BArchive::openArchive(const Common::String &path) {
 	if (memcmp(buf, _magicNumber, 4) == 0) {
 		debugC(2, kDraciArchiverDebugLevel, "Success");
 			
-		// Indicate this archive is a BAR	
+		// Indicate this archive is a BAR
 		_isDFW = false;
 	} else {
 		debugC(2, kDraciArchiverDebugLevel, "Not a BAR archive");
@@ -197,8 +197,8 @@ void BArchive::openArchive(const Common::String &path) {
 	debugC(2, kDraciArchiverDebugLevel, "Archive info: %d files, %d data bytes",
 		_fileCount, footerOffset - _archiveHeaderSize);
 
-	// Read in footer	
-	footer = new byte[footerSize];	
+	// Read in footer
+	footer = new byte[footerSize];
 	f.seek(footerOffset);
 	f.read(footer, footerSize);
 	Common::MemoryReadStream reader(footer, footerSize);
@@ -207,8 +207,8 @@ void BArchive::openArchive(const Common::String &path) {
 	// The data will be read on demand to save memory
 	_files = new BAFile[_fileCount];
 
-	for (unsigned int i = 0; i < _fileCount; i++) {
-		uint32 fileOffset;			
+	for (uint i = 0; i < _fileCount; i++) {
+		uint32 fileOffset;
 		
 		fileOffset = reader.readUint32LE();
 		f.seek(fileOffset); 						// Seek to next file in archive
@@ -226,7 +226,7 @@ void BArchive::openArchive(const Common::String &path) {
 		_files[i]._crc = f.readByte(); 	// CRC checksum of the file
 		_files[i]._data = NULL; 		// File data will be read in on demand
 		_files[i]._stopper = 0; 		// Dummy value; not used in BAR files, needed in DFW
-	}	
+	}
 	
 	// Last footer item should be equal to footerOffset
 	assert(reader.readUint32LE() == footerOffset && "Footer offset mismatch");
@@ -249,7 +249,7 @@ void BArchive::closeArchive(void) {
 		return;
 	}
 
-	for (unsigned int i = 0; i < _fileCount; ++i) {
+	for (uint i = 0; i < _fileCount; ++i) {
 		if (_files[i]._data) {
 			delete[] _files[i]._data; 
 		}
@@ -271,7 +271,7 @@ void BArchive::closeArchive(void) {
  * Should not be called directly. Instead, one should access files 
  * through the operator[] interface.
  */
-BAFile *BArchive::loadFileBAR(unsigned int i) const {
+BAFile *BArchive::loadFileBAR(uint i) const {
 	Common::File f;
 
 	// Else open archive and read in requested file
@@ -290,7 +290,7 @@ BAFile *BArchive::loadFileBAR(unsigned int i) const {
 
 	// Calculate CRC
 	byte tmp = 0;
-	for (unsigned int j = 0; j < _files[i]._length; j++) {
+	for (uint j = 0; j < _files[i]._length; j++) {
 		tmp ^= _files[i]._data[j];
 	}
 	
@@ -310,7 +310,7 @@ BAFile *BArchive::loadFileBAR(unsigned int i) const {
  * Should not be called directly. Instead, one should access files 
  * through the operator[] interface.
  */
-BAFile *BArchive::loadFileDFW(unsigned int i) const {
+BAFile *BArchive::loadFileDFW(uint i) const {
 	Common::File f;
 	byte *buf;
 
@@ -343,7 +343,7 @@ BAFile *BArchive::loadFileDFW(unsigned int i) const {
 	f.read(buf, compressedLength);
 
 	// Allocate the space for the uncompressed file
-	byte *dst;	
+	byte *dst;
 	dst = _files[i]._data = new byte[uncompressedLength];
 
 	Common::MemoryReadStream data(buf, compressedLength);
@@ -351,21 +351,20 @@ BAFile *BArchive::loadFileDFW(unsigned int i) const {
 	// Uncompress file
 	byte current, what;
 	byte stopper = _files[i]._stopper;
-	unsigned int repeat;
-	unsigned int len = 0; // Sanity check (counts uncompressed bytes)	
+	uint repeat;
+	uint len = 0; // Sanity check (counts uncompressed bytes)
 	
 	current = data.readByte(); // Read initial byte
 	while (!data.eos()) {
-		
 		if (current != stopper) {
 			*dst++ = current;
 			++len;
 		} else {
-			// Inflate block			
+			// Inflate block
 			repeat = data.readByte();
 			what = data.readByte();
 			len += repeat;
-			for (unsigned int j = 0; j < repeat; ++j) {
+			for (uint j = 0; j < repeat; ++j) {
 				*dst++ = what;
 			}
 		}
@@ -385,16 +384,13 @@ BAFile *BArchive::loadFileDFW(unsigned int i) const {
  * If the files are subsequently accessed, they are read from the disk.
  */
 void BArchive::clearCache() {
-
 	// Delete all cached data
-	for (unsigned int i = 0; i < _fileCount; ++i) {
+	for (uint i = 0; i < _fileCount; ++i) {
 		_files[i].close();
 	}
 }
-	
 
-const BAFile *BArchive::getFile(unsigned int i) const {
-
+const BAFile *BArchive::getFile(uint i) const {
 	// Check whether requested file exists
 	if (i >= _fileCount) {
 		return NULL;
@@ -405,12 +401,12 @@ const BAFile *BArchive::getFile(unsigned int i) const {
 
 	// Check if file has already been opened and return that
 	if (_files[i]._data) {
-		debugC(2, kDraciArchiverDebugLevel, "Success");		
+		debugC(2, kDraciArchiverDebugLevel, "Success");
 		return _files + i;
 	}
-	
+
 	BAFile *file;
-	
+
 	// file will be NULL if something goes wrong
 	if (_isDFW) {
 		file = loadFileDFW(i);

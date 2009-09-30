@@ -51,7 +51,6 @@ bool Animation::isLooping() const {
 }
 
 void Animation::setRelative(int relx, int rely) {
-
 	// Delete the previous frame if there is one
 	if (_frames.size() > 0)	
 		markDirtyRect(_vm->_screen->getSurface());
@@ -76,7 +75,6 @@ void Animation::markDirtyRect(Surface *surface) const {
 }	
 
 void Animation::nextFrame(bool force) {
-
 	// If there are no frames or if the animation is not playing, return
 	if (getFrameCount() == 0 || !_playing)
 		return;
@@ -109,7 +107,6 @@ void Animation::nextFrame(bool force) {
 }
 
 uint Animation::nextFrameNum() const {
-
 	if (_paused) 
 		return _currentFrame;
 
@@ -120,14 +117,13 @@ uint Animation::nextFrameNum() const {
 }
 
 void Animation::drawFrame(Surface *surface) {
-	
 	// If there are no frames or the animation is not playing, return
 	if (_frames.size() == 0 || !_playing)
 		return;
 
 	const Drawable *frame = _frames[_currentFrame];
 
-	if (_id == kOverlayImage) {			
+	if (_id == kOverlayImage) {
 		frame->draw(surface, false);
 	} else {
 		// Draw frame
@@ -177,12 +173,11 @@ void Animation::setPaused(bool paused) {
 }
 
 void Animation::setScaleFactors(double scaleX, double scaleY) {
-	
 	debugC(5, kDraciAnimationDebugLevel, 
 		"Setting scaling factors on anim %d (scaleX: %.3f scaleY: %.3f)", 
 		_id, scaleX, scaleY);
 
-	markDirtyRect(_vm->_screen->getSurface());	
+	markDirtyRect(_vm->_screen->getSurface());
 	
 	_displacement.extraScaleX = scaleX;
 	_displacement.extraScaleY = scaleY;
@@ -197,7 +192,7 @@ double Animation::getScaleY() const {
 }
 
 void Animation::addFrame(Drawable *frame) {
-	_frames.push_back(frame);	
+	_frames.push_back(frame);
 }
 
 int Animation::getIndex() const {
@@ -209,7 +204,6 @@ void Animation::setIndex(int index) {
 }
 
 Drawable *Animation::getFrame(int frameNum) {
-
 	// If there are no frames stored, return NULL
 	if (_frames.size() == 0) {
 		return NULL;
@@ -232,7 +226,6 @@ uint Animation::currentFrameNum() const {
 }
 
 void Animation::setCurrentFrame(uint frame) {
-
 	// Check whether the value is sane
 	if (frame >= _frames.size()) {
 		return;
@@ -242,7 +235,6 @@ void Animation::setCurrentFrame(uint frame) {
 }
 
 void Animation::deleteFrames() {
-	
 	// If there are no frames to delete, return
 	if (_frames.size() == 0) {
 		return;
@@ -250,7 +242,7 @@ void Animation::deleteFrames() {
 
 	markDirtyRect(_vm->_screen->getSurface());
 
-	for (int i = getFrameCount() - 1; i >= 0; --i) {		
+	for (int i = getFrameCount() - 1; i >= 0; --i) {
 		delete _frames[i];
 		_frames.pop_back();	
 	}
@@ -265,7 +257,6 @@ void Animation::exitGameLoop() {
 }
 
 Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
-	
 	// Increment animation index
 	++_lastIndex;
 
@@ -281,7 +272,6 @@ Animation *AnimationManager::addAnimation(int id, uint z, bool playing) {
 }
 
 Animation *AnimationManager::addItem(int id, bool playing) {
-
 	Animation *anim = new Animation(_vm, kIgnoreIndex);
 
 	anim->setID(id);
@@ -294,7 +284,6 @@ Animation *AnimationManager::addItem(int id, bool playing) {
 }
 
 Animation *AnimationManager::addText(int id, bool playing) {
-
 	Animation *anim = new Animation(_vm, kIgnoreIndex);
 
 	anim->setID(id);
@@ -336,7 +325,6 @@ void AnimationManager::stop(int id) {
 }
 
 void AnimationManager::pauseAnimations() {
-
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -350,7 +338,6 @@ void AnimationManager::pauseAnimations() {
 }
 
 void AnimationManager::unpauseAnimations() {
-
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -364,7 +351,6 @@ void AnimationManager::unpauseAnimations() {
 }
 
 Animation *AnimationManager::getAnimation(int id) {
-	
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -377,8 +363,7 @@ Animation *AnimationManager::getAnimation(int id) {
 }
 
 void AnimationManager::insertAnimation(Animation *anim) {
-	
-	Common::List<Animation *>::iterator it;	
+	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
 		if (anim->getZ() < (*it)->getZ()) 
@@ -403,8 +388,7 @@ void AnimationManager::addOverlay(Drawable *overlay, uint z) {
 }
 
 void AnimationManager::drawScene(Surface *surf) {
-
-	// Fill the screen with colour zero since some rooms may rely on the screen being black	
+	// Fill the screen with colour zero since some rooms may rely on the screen being black
 	_vm->_screen->getSurface()->fill(0);
 
 	sortAnimations();
@@ -462,7 +446,6 @@ void AnimationManager::sortAnimations() {
 }
 
 void AnimationManager::deleteAnimation(int id) {
-	
 	Common::List<Animation *>::iterator it;
   
 	int index = -1;
@@ -494,7 +477,6 @@ void AnimationManager::deleteAnimation(int id) {
 }
 
 void AnimationManager::deleteOverlays() {
-	
 	debugC(3, kDraciAnimationDebugLevel, "Deleting overlays...");
 
 	Common::List<Animation *>::iterator it;
@@ -503,12 +485,11 @@ void AnimationManager::deleteOverlays() {
 		if ((*it)->getID() == kOverlayImage) {
 			delete *it;
 			it = _animations.reverse_erase(it);
-		}	
+		}
 	}
 }
 
 void AnimationManager::deleteAll() {
-
 	debugC(3, kDraciAnimationDebugLevel, "Deleting all animations...");
 
 	Common::List<Animation *>::iterator it;
@@ -527,7 +508,6 @@ int AnimationManager::getLastIndex() const {
 }
 
 void AnimationManager::deleteAfterIndex(int index) {
-
 	Common::List<Animation *>::iterator it;
 
 	for (it = _animations.begin(); it != _animations.end(); ++it) {
@@ -544,7 +524,6 @@ void AnimationManager::deleteAfterIndex(int index) {
 }
 
 int AnimationManager::getTopAnimationID(int x, int y) const {
-
 	Common::List<Animation *>::const_iterator it;
 
 	// The default return value if no animations were found on these coordinates (not even overlays)
@@ -570,7 +549,6 @@ int AnimationManager::getTopAnimationID(int x, int y) const {
 		}
 
 		if (frame->getRect(anim->getDisplacement()).contains(x, y)) {
-
 			if (frame->getType() == kDrawableText) {
 
 				retval = anim->getID();
@@ -589,5 +567,5 @@ int AnimationManager::getTopAnimationID(int x, int y) const {
 
 	return retval;
 }
-			
+
 }

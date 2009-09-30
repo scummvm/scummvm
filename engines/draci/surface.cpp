@@ -52,7 +52,6 @@ void Surface::markDirtyRect(Common::Rect r) {
 
 	it = _dirtyRects.begin(); 
 	while (it != _dirtyRects.end()) {
-
 		if (it->contains(r))
 			return;
 
@@ -129,13 +128,12 @@ void Surface::fill(uint colour) {
 /**
  * @brief Calculates horizontal center of an object
  *
- * @param x 	The x coordinate of the center
+ * @param x     The x coordinate of the center
  * @param width The width of the object to be centered (in pixels)
  *
  * @return The centered x coordinate
  */
 uint Surface::centerOnX(uint x, uint width) const {
-
 	int newX = x - width / 2;
 
 	if (newX + width >= (uint)w - 1)
@@ -150,13 +148,12 @@ uint Surface::centerOnX(uint x, uint width) const {
 /**
  * @brief Calculates vertical center of an object
  *
- * @param y 	The y coordinate of the center
+ * @param y      The y coordinate of the center
  * @param height The height of the object to be centered (in pixels)
  *
  * @return The centered y coordinate
  */
 uint Surface::centerOnY(uint y, uint height) const {
-	
 	int newY = y - height / 2;
 	
 	if (newY + height >= (uint)h - 1)
@@ -171,7 +168,6 @@ uint Surface::centerOnY(uint y, uint height) const {
 /**
  * @brief Returns a Common::Rect corresponding to the surface.
  */
-
 Common::Rect Surface::getRect() const {
 	return Common::Rect(w, h);
 }

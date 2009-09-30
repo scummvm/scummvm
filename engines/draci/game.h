@@ -70,7 +70,8 @@ enum {
 };
 
 enum {
-	kNoDialogue = -1, kDialogueLines = 4
+	kNoDialogue = -1,
+	kDialogueLines = 4
 };
 
 enum {
@@ -94,8 +95,7 @@ enum InventoryConstants {
 };
 
 class WalkingMap {
-
-public:	
+public:
 	WalkingMap() {
 		_realWidth = 0;
 		_realHeight = 0;
@@ -103,7 +103,7 @@ public:
 		_mapHeight = 0;
 		_byteWidth = 0;
 		_data = NULL;
-	}	
+	}
 
 	void load(const byte *data, uint length) {
 		Common::MemoryReadStream mapReader(data, length);
@@ -132,7 +132,6 @@ private:
 };
 
 struct GameObject {
-	
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	int _walkDir;
@@ -181,7 +180,7 @@ struct Dialogue {
 };
 
 struct Room {
-	int _roomNum;	
+	int _roomNum;
 	byte _music;
 	WalkingMap _walkingMap;
 	byte _palette;
@@ -213,9 +212,9 @@ enum LoopSubstatus {
 /**
   * Enumerates the animations for the dragon's movement.
   */
-
 enum Movement {
-	kMoveUndefined, kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
+	kMoveUndefined,
+	kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
 	kMoveRightDown, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
 	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
 	kMoveLeftRight, kMoveRightLeft, kMoveUpStopLeft, kMoveUpStopRight,
@@ -223,9 +222,7 @@ enum Movement {
 };
 
 class Game {
-
 public:
-
 	Game(DraciEngine *vm);
 	~Game();
 
@@ -395,7 +392,7 @@ private:
 	uint _speechTick;
 
 	int _objUnderCursor;
-	int _oldObjUnderCursor;	
+	int _oldObjUnderCursor;
 	int _animUnderCursor;
 
 	int _markedAnimationIndex; //!< Used by the Mark GPL command

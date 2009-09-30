@@ -31,7 +31,10 @@
 
 namespace Draci {
 
-enum DrawableType { kDrawableText, kDrawableSprite };
+enum DrawableType {
+	kDrawableText,
+	kDrawableSprite
+};
 
 struct Displacement {
   int relX, relY;
@@ -40,7 +43,6 @@ struct Displacement {
 extern const Displacement kNoDisplacement;
 
 class Drawable {
-
 public:
 	virtual void draw(Surface *surface, bool markDirty, int relX=0, int relY=0) const = 0;
 	virtual void drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement = kNoDisplacement) const = 0;
@@ -72,11 +74,11 @@ public:
 	virtual DrawableType getType() const = 0;
 	
 protected:
-	uint _width;		//!< Width of the sprite
-	uint _height;		//!< Height of the sprite
-	uint _scaledWidth; 	//!< Scaled width of the sprite
+	uint _width;        //!< Width of the sprite
+	uint _height;       //!< Height of the sprite
+	uint _scaledWidth;  //!< Scaled width of the sprite
 	uint _scaledHeight; //!< Scaled height of the sprite
-	int _x, _y;			//!< Sprite coordinates
+	int _x, _y;         //!< Sprite coordinates
 
 	/** The time a drawable should stay on the screen 
 	 *  before being replaced by another or deleted
@@ -91,17 +93,15 @@ protected:
  *  format (transforming them to row-wise) since that is the way the sprites 
  *  are stored in the original game files.
  *  
- *  Sprite format:	
- *	[uint16LE] sprite width
- * 	[uint16LE] sprite height
- *	[height * width bytes] image pixels stored column-wise, one byte per pixel
+ *  Sprite format:
+ *  [uint16LE] sprite width
+ *  [uint16LE] sprite height
+ *  [height * width bytes] image pixels stored column-wise, one byte per pixel
  */
 
 class Sprite : public Drawable {
-
 public:
 	Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, bool columnwise);
-	
 	Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise); 
 
 	~Sprite();
@@ -120,7 +120,7 @@ public:
 	DrawableType getType() const { return kDrawableSprite; }
 
 private:
-	const byte *_data;	//!< Pointer to a buffer containing raw sprite data (row-wise)
+	const byte *_data;  //!< Pointer to a buffer containing raw sprite data (row-wise)
 	bool _mirror;
 };
 
@@ -128,9 +128,9 @@ class Text : public Drawable {
 	
 public:
 	Text(const Common::String &str, const Font *font, byte fontColour, 
-		int x, int y, uint spacing = 0);
+	    int x, int y, uint spacing = 0);
 	~Text() {};
-	
+
 	void setText(const Common::String &str);
 	void setColour(byte fontColour);
 	void setSpacing(uint spacing);
@@ -147,7 +147,6 @@ public:
 	Common::Rect getRect(const Displacement &displacement = kNoDisplacement) const;
 
 	DrawableType getType() const { return kDrawableText; }
-
 private:
 	Common::String _text;
 	uint _length;
@@ -155,7 +154,7 @@ private:
 	uint _spacing;
 	const Font *_font;
 };
-	
+
 } // End of namespace Draci
 
 #endif // DRACI_SPRITE_H

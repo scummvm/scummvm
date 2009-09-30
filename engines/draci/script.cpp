@@ -210,7 +210,6 @@ int Script::operMod(int op1, int op2) const {
 /* GPL functions */
 
 int Script::funcRandom(int n) const {
-
 // The function needs to return numbers in the [0..n-1] range so we need to deduce 1
 // (RandomSource::getRandomNumber returns a number in the range [0..n])
 
@@ -220,7 +219,7 @@ int Script::funcRandom(int n) const {
 
 int Script::funcAtBegin(int yesno) const {
 	return _vm->_game->isDialogueBegin() == (bool)yesno;
-}	
+}
 
 int Script::funcLastBlock(int blockID) const {
 	blockID -= 1;
@@ -230,7 +229,7 @@ int Script::funcLastBlock(int blockID) const {
 
 int Script::funcBlockVar(int blockID) const {
 	blockID -= 1;
-	
+
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 	return _vm->_game->getDialogueVar(currentOffset + blockID);
 }
@@ -270,7 +269,6 @@ int Script::funcIsIcoAct(int itemID) const {
 }
 
 int Script::funcActIco(int itemID) const {
-	
 	// The parameter seems to be an omission in the original player since it's not
 	// used in the implementation of the function. It's possible that the functions were
 	// implemented in such a way that they had to have a single parameter so this is only
@@ -304,12 +302,12 @@ int Script::funcObjStat(int objID) const {
 
 	if (obj->_location == _vm->_game->getRoomNum()) {
 		if (obj->_visible) {
-			return 1; 	// object is ON (in the room and visible)
+			return 1;   // object is ON (in the room and visible)
 		} else {
-			return 2; 	// object is OFF (in the room, not visible)
+			return 2;   // object is OFF (in the room, not visible)
 		}
 	} else {
-		return 3; 		// object is AWAY (not in the room)
+		return 3;       // object is AWAY (not in the room)
 	}
 }
 
@@ -323,8 +321,7 @@ int Script::funcIsObjAway(int objID) const {
 }
 
 int Script::funcActPhase(int objID) const {
-
-	objID -= 1;	
+	objID -= 1;
 
 	// Default return value
 	int ret = 0;
@@ -388,7 +385,7 @@ void Script::load(Common::Queue<int> &params) {
 	// depend on this.
 
 	for(i = 0; i < obj->_anims.size(); ++i) {
-		if (obj->_anims[i] > animID) {		
+		if (obj->_anims[i] > animID) {
 			break;
 		}
 	}
@@ -402,7 +399,7 @@ void Script::start(Common::Queue<int> &params) {
 	}
 
 	int objID = params.pop() - 1;
-	int animID = params.pop() - 1;	
+	int animID = params.pop() - 1;
 
 	const GameObject *obj = _vm->_game->getObject(objID);
 
@@ -417,7 +414,7 @@ void Script::start(Common::Queue<int> &params) {
 	if (objID == kDragonObject)
 		_vm->_game->positionAnimAsHero(anim);
 
-	anim->registerCallback(&Animation::stopAnimation);	
+	anim->registerCallback(&Animation::stopAnimation);
 
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
@@ -447,7 +444,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	if (objID == kDragonObject)
 		_vm->_game->positionAnimAsHero(anim);
 
-	anim->registerCallback(&Animation::exitGameLoop);	
+	anim->registerCallback(&Animation::exitGameLoop);
 
 	_vm->_game->setLoopSubstatus(kSubstatusStrange);
 
@@ -455,7 +452,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 
 	if (objID == kDragonObject || visible) {
 		_vm->_anims->play(animID);
-	}	
+	}
 
 	_vm->_game->loop();
 	_vm->_game->setExitLoop(false);    
@@ -515,19 +512,18 @@ void Script::icoStat(Common::Queue<int> &params) {
 	int itemID = params.pop() - 1;
 
 	_vm->_game->setItemStatus(itemID, status == 1);
-	
-	if (_vm->_game->getItemStatus(itemID) == 0) {
 
+	if (_vm->_game->getItemStatus(itemID) == 0) {
 		if (itemID != kNoItem) {
 			_vm->_anims->deleteAnimation(kInventoryItemsID - itemID);
 		}
 
-		_vm->_game->removeItem(itemID);		
+		_vm->_game->removeItem(itemID);
 
 		if (_vm->_game->getCurrentItem() == itemID) {
 			_vm->_game->setCurrentItem(kNoItem);
 		}
-		
+
 		if (_vm->_mouse->getCursorType() == kNormalCursor) {
 			if (_vm->_game->getLoopStatus() == kStatusInventory) {
 				_vm->_mouse->cursorOff();
@@ -536,7 +532,6 @@ void Script::icoStat(Common::Queue<int> &params) {
 	}
 
 	if (_vm->_game->getItemStatus(itemID) == 1) {
-
 		if (itemID != kNoItem) {
 			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID);
 			const BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
@@ -654,7 +649,6 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 }
 
 void Script::newRoom(Common::Queue<int> &params) {
-
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
 	}
@@ -667,7 +661,6 @@ void Script::newRoom(Common::Queue<int> &params) {
 }
 
 void Script::talk(Common::Queue<int> &params) {
-
 	int personID = params.pop() - 1;
 	int sentenceID = params.pop() - 1;
 
@@ -693,7 +686,7 @@ void Script::talk(Common::Queue<int> &params) {
 	if (speechFrame->getWidth() >= kScreenWidth) {
 		speechFrame->setFont(_vm->_smallFont);
 	} else {
-		speechFrame->setFont(_vm->_bigFont);		
+		speechFrame->setFont(_vm->_bigFont);
 	}
 
 	// Set the loop substatus to an appropriate value
@@ -741,7 +734,6 @@ void Script::loadMap(Common::Queue<int> &params) {
 }
 
 void Script::resetDialogue(Common::Queue<int> &params) {
-
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 	
 	for (int i = 0; i < _vm->_game->getDialogueBlockNum(); ++i) {
@@ -750,7 +742,6 @@ void Script::resetDialogue(Common::Queue<int> &params) {
 }
 
 void Script::resetDialogueFrom(Common::Queue<int> &params) {
-
 	const int currentOffset = _vm->_game->getCurrentDialogueOffset();
 
 	for (int i = _vm->_game->getDialogueCurrentBlock(); i < _vm->_game->getDialogueBlockNum(); ++i) {
@@ -771,13 +762,12 @@ void Script::exitDialogue(Common::Queue<int> &params) {
 }
 
 void Script::roomMap(Common::Queue<int> &params) {
-
 	// Load the default walking map for the room
 	_vm->_game->loadWalkingMap();
 }
 
 void Script::loadPalette(Common::Queue<int> &params) {
-	int palette = params.pop() - 1;	
+	int palette = params.pop() - 1;
 
 	_vm->_game->schedulePalette(palette);
 }
@@ -788,11 +778,10 @@ void Script::blackPalette(Common::Queue<int> &params) {
 }
 
 void Script::setPalette(Common::Queue<int> &params) {
-
 	if (_vm->_game->getScheduledPalette() == -1) {
 		_vm->_screen->setPaletteEmpty();
 	} else {
-		const BAFile *f;		
+		const BAFile *f;
 		f = _vm->_paletteArchive->getFile(_vm->_game->getScheduledPalette());
 		_vm->_screen->setPalette(f->_data, 0, kNumColours);
 	}
@@ -806,7 +795,6 @@ void Script::endCurrentProgram() {
  * @brief Evaluates mathematical expressions
  * @param reader Stream reader set to the beginning of the expression
  */
-
 int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 	Common::Stack<int> stk;
 	mathExpressionObject obj;
@@ -826,7 +814,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 			// Check whether the expression was evaluated correctly
 			// The stack should contain only one value after the evaluation
 			// i.e. the result of the expression
-			assert(stk.size() == 1 && "Mathematical expression error");	
+			assert(stk.size() == 1 && "Mathematical expression error");
 			break;
 		}
 
@@ -850,7 +838,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 
 			// Calculate result
 			res = (this->*(oper._handler))(arg1, arg2);
-			
+
 			// Push result
 			stk.push(res);
 
@@ -872,8 +860,8 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 
 			// Fetch function
 			func = _functionList[value-1];
-					
-			// If not yet implemented	
+
+			// If not yet implemented
 			if (func._handler == NULL) {
 				stk.pop();
 
@@ -881,7 +869,7 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 				stk.push(0);
 
 				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s (not implemented)",
-					func._name);
+				       func._name);
 			} else {
 				arg1 = stk.pop();
 
@@ -890,9 +878,9 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
 
 				// Push the result on the evaluation stack
 				stk.push(res);
-			
+
 				debugC(4, kDraciBytecodeDebugLevel, "\t\tcall: %s(%d) (res: %d)",
-					func._name, arg1, res);
+				       func._name, arg1, res);
 			}
 
 			break;
@@ -908,15 +896,14 @@ int Script::handleMathExpression(Common::MemoryReadStream *reader) const {
  * @brief Evaluates a GPL mathematical expression on a given offset and returns 
  * the result (which is normally a boolean-like value)
  * 
- * @param program	A GPL2Program instance of the program containing the expression
- * @param offset	Offset of the expression inside the program (in multiples of 2 bytes)
+ * @param program   A GPL2Program instance of the program containing the expression
+ * @param offset    Offset of the expression inside the program (in multiples of 2 bytes)
  * 
  * @return The result of the expression converted to a bool.
  *
  * Reference: the function equivalent to this one is called "Can()" in the original engine.
  */
 bool Script::testExpression(const GPL2Program &program, uint16 offset) const {
-	
 	// Initialize program reader
 	Common::MemoryReadStream reader(program._bytecode, program._length);
 
@@ -929,7 +916,7 @@ bool Script::testExpression(const GPL2Program &program, uint16 offset) const {
 	reader.seek(offset);
 
 	debugC(4, kDraciBytecodeDebugLevel, 
-		"Evaluating (standalone) GPL expression at offset %d:", offset);
+	       "Evaluating (standalone) GPL expression at offset %d:", offset);
 
 	return (bool)handleMathExpression(&reader);
 }
@@ -937,14 +924,14 @@ bool Script::testExpression(const GPL2Program &program, uint16 offset) const {
 /**
  * @brief Find the current command in the internal table
  *
- * @param num 		Command number
- * @param subnum 	Command subnumer
+ * @param num       Command number
+ * @param subnum    Command subnumer
  *
  * @return NULL if command is not found. Otherwise, a pointer to a GPL2Command
  *         struct representing the command.
  */
 const GPL2Command *Script::findCommand(byte num, byte subnum) const {
-	unsigned int i = 0;
+	uint i = 0;
 	while (1) {
 
 		// Command not found
@@ -976,27 +963,26 @@ const GPL2Command *Script::findCommand(byte num, byte subnum) const {
  * and their parameters. The syntax is as follows:
  *
  * Syntax of a command:
- *	<name of the command> <number> <sub-number> <list of parameters...>
+ *  <name of the command> <number> <sub-number> <list of parameters...>
  *
- *	Syntax of a parameter:
- *	- 1: integer number literally passed to the program
- *	- 2-1: string stored in the reservouir of game strings (i.e. something to be
- *	  displayed) and stored as an index in this list
- *	- 2-2: string resolved by the compiler (i.e., a path to another file) and
- *	  replaced by an integer index of this entity in the appropriate namespace
- *	  (e.g., the index of the palette, location, ...)
- *	- 3-0: relative jump to a label defined in this code.  Each label must be
- *	  first declared in the beginning of the program.
- *	- 3-1 .. 3-9: index of an entity in several namespaces, defined in file ident
- *	- 4: mathematical expression compiled into a postfix format
+ * Syntax of a parameter:
+ *  - 1: integer number literally passed to the program
+ *  - 2-1: string stored in the reservouir of game strings (i.e. something to be
+ *    displayed) and stored as an index in this list
+ *  - 2-2: string resolved by the compiler (i.e., a path to another file) and
+ *    replaced by an integer index of this entity in the appropriate namespace
+ *    (e.g., the index of the palette, location, ...)
+ *  - 3-0: relative jump to a label defined in this code.  Each label must be
+ *    first declared in the beginning of the program.
+ *  - 3-1 .. 3-9: index of an entity in several namespaces, defined in file ident
+ *  - 4: mathematical expression compiled into a postfix format
  *
- * 	In the compiled program, parameters of type 1..3 are represented by a single
- *	16-bit integer.  The called command knows by its definition what namespace the
- *	value comes from.
+ *  In the compiled program, parameters of type 1..3 are represented by a single
+ *  16-bit integer.  The called command knows by its definition what namespace the
+ *  value comes from.
  */
 
 int Script::run(const GPL2Program &program, uint16 offset) {
-
 	int oldJump = _jump;
 
 	// Mark the last animation index before we do anything so a Release command
@@ -1016,7 +1002,7 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 
 	// Seek to the requested part of the program
 	reader.seek(offset);
-	
+
 	debugC(3, kDraciBytecodeDebugLevel, 
 		"Starting GPL program at offset %d (program length: %d)", offset, program._length);
 
@@ -1024,10 +1010,10 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 	do {
 
 		// Account for GPL jump that some commands set
-		if (_jump != 0)	{
+		if (_jump != 0) {
 			debugC(3, kDraciBytecodeDebugLevel, 
 				"Jumping from offset %d to %d (%d bytes)", 
-				reader.pos(), reader.pos() + _jump, _jump);	
+				reader.pos(), reader.pos() + _jump, _jump);
 			reader.seek(_jump, SEEK_CUR);
 		}
 
@@ -1060,19 +1046,17 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 			for (int i = 0; i < cmd->_numParams; ++i) {
 				if (cmd->_paramTypes[i] == 4) {
 					debugC(3, kDraciBytecodeDebugLevel, 
-						"Evaluating (in-script) GPL expression at offset %d: ", offset);
+					    "Evaluating (in-script) GPL expression at offset %d: ", offset);
 					params.push(handleMathExpression(&reader));
-				}
-				else {
+				} else {
 					tmp = reader.readSint16LE();
 					params.push(tmp);
 					debugC(2, kDraciBytecodeDebugLevel, "\t%d", tmp);
 				}
 			}
-		}
-		else {
+		} else {
 			debugC(1, kDraciBytecodeDebugLevel, "Unknown opcode %d, %d",
-				num, subnum);
+			    num, subnum);
 			abort();
 		}
 
@@ -1083,7 +1067,7 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 			(this->*(cmd->_handler))(params);
 		}
 
-	} while (cmd->_number != 0 && !_endProgram);	// 0 = gplend and exit
+	} while (cmd->_number != 0 && !_endProgram);    // 0 = gplend and exit
 
 	_endProgram = false;
 	_jump = oldJump;
@@ -1091,5 +1075,5 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 	return 0;
 }
 
-}
+} // end of namespace Draci
 

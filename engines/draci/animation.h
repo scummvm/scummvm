@@ -34,14 +34,16 @@ namespace Draci {
   * Animation IDs for those animations that don't have their IDs
   * specified in the data files.
   */
-enum { kOverlayImage = -1, 
-	   kWalkingMapOverlay = -2, 
-	   kTitleText = -3, 
-	   kSpeechText = -4,
-	   kInventorySprite = -5,
-	   kDialogueLinesID = -6,
-	   kUnused = -10,
-	   kInventoryItemsID = -11};
+enum {
+	kOverlayImage = -1, 
+	kWalkingMapOverlay = -2, 
+	kTitleText = -3, 
+	kSpeechText = -4,
+	kInventorySprite = -5,
+	kDialogueLinesID = -6,
+	kUnused = -10,
+	kInventoryItemsID = -11
+};
 
 /**
   * Default argument to Animation::getFrame() that makes it return 
@@ -63,7 +65,7 @@ typedef void (Animation::* AnimationCallback)();
 
 public:
 	Animation(DraciEngine *v, int index);
-	~Animation();	
+	~Animation();
 	
 	uint getZ() const;
 	void setZ(uint z);
@@ -112,12 +114,11 @@ public:
 	void exitGameLoop();
 
 private:
-	
 	uint nextFrameNum() const;
 	void deleteFrames();
 
 	/** Internal animation ID 
-	  *	(as specified in the data files and the bytecode)
+	  * (as specified in the data files and the bytecode)
 	  */
 	int _id; 
 	
@@ -138,7 +139,7 @@ private:
 
 	/** Array of frames of the animation.  The animation object owns these pointers.
 	 */
-	Common::Array<Drawable*> _frames;
+	Common::Array<Drawable *> _frames;
 
 	AnimationCallback _callback;
 
@@ -176,7 +177,7 @@ public:
 	int getTopAnimationID(int x, int y) const;
 
 private:
-	void sortAnimations();	
+	void sortAnimations();
 	void insertAnimation(Animation *anim);
 
 	DraciEngine *_vm;
@@ -187,7 +188,7 @@ private:
 	Common::List<Animation *> _animations;
 
 	/** The index of the most recently added animation. 
-	  *	See Animation::_index for details.
+	  * See Animation::_index for details.
 	  */
 	int _lastIndex;
 };

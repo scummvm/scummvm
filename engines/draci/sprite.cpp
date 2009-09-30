@@ -37,21 +37,21 @@ const Displacement kNoDisplacement = { 0, 0, 1.0, 1.0 };
 
 /**
  *  @brief Transforms an image from column-wise to row-wise
- *	@param img pointer to the buffer containing the image data
- *		   width width of the image in the buffer
- *		   height height of the image in the buffer
+ *  @param img pointer to the buffer containing the image data
+ *         width width of the image in the buffer
+ *         height height of the image in the buffer
  */
 static void transformToRows(byte *img, uint16 width, uint16 height) {
 	byte *buf = new byte[width * height];
 	byte *tmp = buf;
 	memcpy(buf, img, width * height);
-	
+
 	for (uint16 i = 0; i < width; ++i) {
 		for (uint16 j = 0; j < height; ++j) {
 			img[j * width + i] = *tmp++;
 		}
 	}
-	
+
 	delete[] buf;
 }
 
@@ -59,7 +59,7 @@ static void transformToRows(byte *img, uint16 width, uint16 height) {
  *  Constructor for loading sprites from a raw data buffer, one byte per pixel.
  */
 Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y, 
-	bool columnwise) : _data(NULL) {
+    bool columnwise) : _data(NULL) {
 
 	 _width = width;
 	 _height = height;
@@ -81,23 +81,23 @@ Sprite::Sprite(const byte *raw_data, uint16 width, uint16 height, int x, int y,
 	// If the sprite is stored column-wise, transform it to row-wise
 	if (columnwise) {
 		transformToRows(data, width, height);
-	}	
+	}
 	_data = data;
 }
 
 /**
  *  Constructor for loading sprites from a sprite-formatted buffer, one byte per 
- *	pixel.
+ *  pixel.
  */
 Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool columnwise) 
-	: _data(NULL) {
+    : _data(NULL) {
 
 	 _x = x;
 	 _y = y;
 
 	_delay = 0;
 
-	_mirror = false;	
+	_mirror = false;
 
 	Common::MemoryReadStream reader(sprite_data, length);
 
@@ -114,7 +114,7 @@ Sprite::Sprite(const byte *sprite_data, uint16 length, int x, int y, bool column
 	// If the sprite is stored column-wise, transform it to row-wise
 	if (columnwise) {
 		transformToRows(data, _width, _height);
-	}		
+	}
 	_data = data;
 }
 
@@ -130,9 +130,7 @@ void Sprite::setMirrorOff() {
 	_mirror = false;
 }
 
-
 int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
-	
 	Common::Rect rect = getRect(displacement);
 
 	int dy = y - rect.top;
@@ -153,7 +151,6 @@ int Sprite::getPixel(int x, int y, const Displacement &displacement) const {
 
 
 void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &displacement) const {
-
 	const Common::Rect destRect(getRect(displacement));
 	const Common::Rect surfaceRect(0, 0, surface->w, surface->h);
 	Common::Rect clippedDestRect(destRect);
@@ -178,7 +175,7 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 		        columnIndices[j] = (j + croppedBy.x) * _width / destRect.width();
 		}
 	} else {
-		// Draw the sprite mirrored if the _mirror flag is set						
+		// Draw the sprite mirrored if the _mirror flag is set
 		for (int j = 0; j < columns; ++j) {
 		        columnIndices[j] = _width - 1 - (j + croppedBy.x) * _width / destRect.width();
 		}
@@ -186,11 +183,10 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 
 	// Blit the sprite to the surface
 	for (int i = 0; i < rows; ++i) {
-
 		// Compute the index of current row to be drawn
 		const int row = (i + croppedBy.y) * _height / destRect.height();
 		const byte *row_data = _data + row * _width;
-		
+
 		for (int j = 0; j < columns; ++j) {
 			
 			// Fetch index of current column to be drawn
@@ -207,13 +203,12 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
 	}
 
 	// Mark the sprite's rectangle dirty
-	if (markDirty) {	
+	if (markDirty) {
 		surface->markDirtyRect(destRect);
 	}
 
 	delete[] columnIndices;
 }
-	
 
 /**
  *  @brief Draws the sprite to a Draci::Surface
@@ -223,7 +218,6 @@ void Sprite::drawReScaled(Surface *surface, bool markDirty, const Displacement &
  *  It is safe to call it for sprites that would overflow the surface.
  */
 void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const { 
-
 	// TODO: refactor like drawReScaled()
 
 	Common::Rect sourceRect(0, 0, _width, _height);
@@ -237,7 +231,7 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	const int adjustLeft = clippedDestRect.left - destRect.left;
 	const int adjustRight = clippedDestRect.right - destRect.right;
 	const int adjustTop = clippedDestRect.top - destRect.top;
- 	const int adjustBottom = clippedDestRect.bottom - destRect.bottom;
+	const int adjustBottom = clippedDestRect.bottom - destRect.bottom;
 
 	// Resize source rectangle
 	sourceRect.left += adjustLeft;
@@ -258,13 +252,13 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 			// Don't blit if the pixel is transparent on the target surface
 			if (src[i * _width + j] != transparent) {
 
-				// Draw the sprite mirrored if the _mirror flag is set						
+				// Draw the sprite mirrored if the _mirror flag is set
 				if (_mirror) {
 					dst[sourceRect.right - j - 1] = src[i * _width + j];
-				} else {	
+				} else {
 					dst[j] = src[i * _width + j];
 				}
-			}		
+			}
 		}
 
 		// Advance to next row
@@ -272,7 +266,7 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 	}
 
 	// Mark the sprite's rectangle dirty
-	if (markDirty) {	
+	if (markDirty) {
 		surface->markDirtyRect(destRect);
 	}
 }
@@ -280,16 +274,16 @@ void Sprite::draw(Surface *surface, bool markDirty, int relX, int relY) const {
 
 Common::Rect Sprite::getRect(const Displacement &displacement) const {
 	return Common::Rect(_x + displacement.relX, _y + displacement.relY,
-		_x + displacement.relX + (int) (_scaledWidth * displacement.extraScaleX),
-		_y + displacement.relY + (int) (_scaledHeight * displacement.extraScaleY));
+	    _x + displacement.relX + (int) (_scaledWidth * displacement.extraScaleX),
+	    _y + displacement.relY + (int) (_scaledHeight * displacement.extraScaleY));
 }
 
 Text::Text(const Common::String &str, const Font *font, byte fontColour, 
-				int x, int y, uint spacing) {
+                int x, int y, uint spacing) {
 	_x = x;
 	_y = y;
 	_delay = 0;
-	
+
 	_text = str;
 
 	_length = 0;
@@ -298,7 +292,7 @@ Text::Text(const Common::String &str, const Font *font, byte fontColour,
 			++_length;
 		}
 	}
-	
+
 	_spacing = spacing;
 	_colour = fontColour;
 	
@@ -312,7 +306,6 @@ Text::Text(const Common::String &str, const Font *font, byte fontColour,
 } 
 
 void Text::setText(const Common::String &str) {
-
 	_width = _font->getStringWidth(str, _spacing);
 	_height = _font->getStringHeight(str);
 
@@ -353,7 +346,6 @@ void Text::setFont(const Font *font) {
 	_width = _font->getStringWidth(_text, _spacing);
 	_height = _font->getStringHeight(_text);
 }
-			
-} // End of namespace Draci	
-		
+
+} // End of namespace Draci
  

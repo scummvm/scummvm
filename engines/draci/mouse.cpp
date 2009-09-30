@@ -39,7 +39,6 @@ Mouse::Mouse(DraciEngine *vm) {
 }
 
 void Mouse::handleEvent(Common::Event event) {
-	
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
 		debugC(6, kDraciGeneralDebugLevel, "Left button down (x: %u y: %u)", _x, _y);
@@ -65,7 +64,7 @@ void Mouse::handleEvent(Common::Event event) {
 		debugC(6, kDraciGeneralDebugLevel, "Mouse move (x: %u y: %u)", _x, _y);
 		_x = (uint16) event.mouse.x;
 		_y = (uint16) event.mouse.y;
-		break;	
+		break;
 
 	default:
 		break;
@@ -97,18 +96,17 @@ void Mouse::setCursorType(CursorType cur) {
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(), 
-			sp.getWidth() / 2, sp.getHeight() / 2);
+	        sp.getWidth() / 2, sp.getHeight() / 2);
 }
 
 void Mouse::loadItemCursor(int itemID, bool highlighted) {
-	
 	const BAFile *f;
 	f = _vm->_itemImagesArchive->getFile(2 * itemID + highlighted);
 
 	Sprite sp(f->_data, f->_length, 0, 0, true);
 	CursorMan.replaceCursorPalette(_vm->_screen->getPalette(), 0, kNumColours);
 	CursorMan.replaceCursor(sp.getBuffer(), sp.getWidth(), sp.getHeight(), 
-			sp.getWidth() / 2, sp.getHeight() / 2);
+	        sp.getWidth() / 2, sp.getHeight() / 2);
 }
 
 }

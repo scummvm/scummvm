@@ -38,7 +38,6 @@ namespace Draci {
 using Common::GUIO_NONE;
 
 const ADGameDescription gameDescriptions[] = {
-	
 	{
 		"draci",
 		0,
@@ -48,7 +47,7 @@ const ADGameDescription gameDescriptions[] = {
 		ADGF_NO_FLAGS,
 		GUIO_NONE
 	},
-	
+
 	{
 		"draci",
 		0,
@@ -98,7 +97,7 @@ const ADParams detectionParams = {
 class DraciMetaEngine : public AdvancedMetaEngine {
 public:
 	DraciMetaEngine() : AdvancedMetaEngine(detectionParams) {}
-	
+
 	virtual const char *getName() const {
 		return "Draci Historie Engine";
 	}
