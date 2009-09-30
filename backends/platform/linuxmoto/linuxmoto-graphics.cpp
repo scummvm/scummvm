@@ -58,13 +58,13 @@ bool OSystem_LINUXMOTO::setGraphicsMode(int mode) {
 
 	int newScaleFactor = 1;
 
-	switch(mode) {
+	switch (mode) {
 	case GFX_NORMAL:
-	    newScaleFactor = 1;
-	  break;
+		newScaleFactor = 1;
+		break;
 	case GFX_HALF:
-	    newScaleFactor = 1;
-	  break;
+		newScaleFactor = 1;
+		break;
 	default:
 		warning("unknown gfx mode %d", mode);
 		return false;
@@ -113,20 +113,20 @@ void OSystem_LINUXMOTO::setGraphicsModeIntern() {
 
 
 void OSystem_LINUXMOTO::initSize(uint w, uint h) {
-    assert(_transactionMode == kTransactionActive);
+	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
 
-    _videoMode.screenWidth = w;
-    _videoMode.screenHeight = h;
+	_videoMode.screenWidth = w;
+	_videoMode.screenHeight = h;
 
-    if	(w > 320 || h > 240) {
-        setGraphicsMode(GFX_HALF);
-        setGraphicsModeIntern();
-        toggleMouseGrab();
-    }
+	if	(w > 320 || h > 240) {
+		setGraphicsMode(GFX_HALF);
+		setGraphicsModeIntern();
+		toggleMouseGrab();
+	}
 
 	_cksumNum = (w * h / (8 * 8));
 
@@ -137,30 +137,30 @@ void OSystem_LINUXMOTO::initSize(uint w, uint h) {
 }
 
 bool OSystem_LINUXMOTO::loadGFXMode() {
-    printf("Game ScreenMode = %d*%d\n",_videoMode.screenWidth, _videoMode.screenHeight);
-    if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
-	  _videoMode.aspectRatioCorrection = false;
-	  setGraphicsMode(GFX_HALF);
-	  printf("GraphicsMode set to HALF\n");
+	printf("Game ScreenMode = %d*%d\n",_videoMode.screenWidth, _videoMode.screenHeight);
+	if (_videoMode.screenWidth > 320 || _videoMode.screenHeight > 240) {
+		_videoMode.aspectRatioCorrection = false;
+		setGraphicsMode(GFX_HALF);
+		printf("GraphicsMode set to HALF\n");
 	} else {
-	  setGraphicsMode(GFX_NORMAL);
-	  printf("GraphicsMode set to NORMAL\n");
-    }
-    if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-	_videoMode.overlayWidth = 320;
-	_videoMode.overlayHeight = 240;
-	_videoMode.fullscreen = true;
-    } else {
+		setGraphicsMode(GFX_NORMAL);
+		printf("GraphicsMode set to NORMAL\n");
+	}
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+		_videoMode.overlayWidth = 320;
+		_videoMode.overlayHeight = 240;
+		_videoMode.fullscreen = true;
+	} else {
 
-	_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-	_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
+		_videoMode.overlayWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.overlayHeight = _videoMode.screenHeight * _videoMode.scaleFactor;
 
-	if (_videoMode.aspectRatioCorrection)
-		_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
+		if (_videoMode.aspectRatioCorrection)
+			_videoMode.overlayHeight = real2Aspect(_videoMode.overlayHeight);
 
-	_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
-	_videoMode.hardwareHeight = effectiveScreenHeight();
-    }
+		_videoMode.hardwareWidth = _videoMode.screenWidth * _videoMode.scaleFactor;
+		_videoMode.hardwareHeight = effectiveScreenHeight();
+	}
 
 	return OSystem_SDL::loadGFXMode();
 }
@@ -176,13 +176,13 @@ void OSystem_LINUXMOTO::drawMouse() {
 	int width, height;
 	int hotX, hotY;
 
-    if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-	    dst.x = _mouseCurState.x/2;
-	    dst.y = _mouseCurState.y/2;
-    } else {
-	    dst.x = _mouseCurState.x;
-	    dst.y = _mouseCurState.y;
-    }
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+		dst.x = _mouseCurState.x/2;
+		dst.y = _mouseCurState.y/2;
+	} else {
+		dst.x = _mouseCurState.x;
+		dst.y = _mouseCurState.y;
+	}
 
 	if (!_overlayVisible) {
 		scale = _videoMode.scaleFactor;
@@ -192,7 +192,6 @@ void OSystem_LINUXMOTO::drawMouse() {
 		dst.h = _mouseCurState.vH;
 		hotX = _mouseCurState.vHotX;
 		hotY = _mouseCurState.vHotY;
-
 	} else {
 		scale = 1;
 		width = _videoMode.overlayWidth;
@@ -201,7 +200,6 @@ void OSystem_LINUXMOTO::drawMouse() {
 		dst.h = _mouseCurState.rH;
 		hotX = _mouseCurState.rHotX;
 		hotY = _mouseCurState.rHotY;
-
 	}
 
 	// The mouse is undrawn using virtual coordinates, i.e. they may be
@@ -235,7 +233,7 @@ void OSystem_LINUXMOTO::drawMouse() {
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
-    addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
+	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
 void OSystem_LINUXMOTO::undrawMouse() {
@@ -247,13 +245,13 @@ void OSystem_LINUXMOTO::undrawMouse() {
 	if (!_overlayVisible && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
 		return;
 
-	if (_mouseBackup.w != 0 && _mouseBackup.h != 0){
-        if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-		    addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
-        } else {
-            addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
-        }
-    }
+	if (_mouseBackup.w != 0 && _mouseBackup.h != 0) {
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+		} else {
+			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
+		}
+	}
 }
 
 void OSystem_LINUXMOTO::internUpdateScreen() {
@@ -388,43 +386,41 @@ void OSystem_LINUXMOTO::internUpdateScreen() {
 
 				assert(scalerProc != NULL);
 
-                if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale) {
+				if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale) {
 
-                    if (dst_x%2==1) {
-                        dst_x--;
-                        dst_w++;
-                    }
-                    if (dst_y%2==1) {
-                        dst_y--;
-                        dst_h++;
-                    }
+					if (dst_x%2==1) {
+						dst_x--;
+						dst_w++;
+					}
+					if (dst_y%2==1) {
+						dst_y--;
+						dst_h++;
+					}
 
-		    if (dst_w&1)
-			dst_w++;
-		    if (dst_h&1)
-			dst_h++;
+					if (dst_w&1)
+						dst_w++;
+					if (dst_h&1)
+						dst_h++;
 
-                    src_x = dst_x;
-                    src_y = dst_y;
-                    dst_x = dst_x / 2;
-                    dst_y = dst_y / 2;
-                }
-                scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
+					src_x = dst_x;
+					src_y = dst_y;
+					dst_x = dst_x / 2;
+					dst_y = dst_y / 2;
+				}
+				scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
 						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
 
-            if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale) {
+			if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale) {
+				r->w = r->w / 2;
+				r->h = dst_h / 2;
+			} else {
+				r->w = r->w;
+				r->h = dst_h;
+			}
 
-			    r->w = r->w / 2;
-			    r->h = dst_h / 2;
-            } else {
-			    r->w = r->w;
-			    r->h = dst_h;
-            }
-
-		    r->x = dst_x;
-		    r->y = dst_y;
-
+			r->x = dst_x;
+			r->y = dst_y;
 
 #ifndef DISABLE_SCALERS
 			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
@@ -458,27 +454,27 @@ void OSystem_LINUXMOTO::internUpdateScreen() {
 }
 
 void OSystem_LINUXMOTO::showOverlay() {
-    if (_videoMode.mode == GFX_HALF) {
-        _mouseCurState.x = _mouseCurState.x / 2;
-        _mouseCurState.y = _mouseCurState.y / 2;
-    }
+	if (_videoMode.mode == GFX_HALF) {
+		_mouseCurState.x = _mouseCurState.x / 2;
+		_mouseCurState.y = _mouseCurState.y / 2;
+	}
 	OSystem_SDL::showOverlay();
 }
 
 void OSystem_LINUXMOTO::hideOverlay() {
-    if (_videoMode.mode == GFX_HALF) {
-        _mouseCurState.x = _mouseCurState.x * 2;
-        _mouseCurState.y = _mouseCurState.y * 2;
-    }
+	if (_videoMode.mode == GFX_HALF) {
+		_mouseCurState.x = _mouseCurState.x * 2;
+		_mouseCurState.y = _mouseCurState.y * 2;
+	}
 	OSystem_SDL::hideOverlay();
 }
 
 void OSystem_LINUXMOTO::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
-            x = x / 2;
-            y = y / 2;
-        }
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+			x = x / 2;
+			y = y / 2;
+		}
 	}
 	OSystem_SDL::warpMouse(x, y);
 }

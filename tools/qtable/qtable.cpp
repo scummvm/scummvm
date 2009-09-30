@@ -147,7 +147,7 @@ static void createTableFile(TableFile *tf) {
 	writeUint32BE(out, CURRENT_VERSION);
 	/* write tables */
 	offset = 4 + 4;
-	for(i = 0; i < tf->dataFileEntriesTableCount; ++i) {
+	for (i = 0; i < tf->dataFileEntriesTableCount; ++i) {
 		const DataFileEntriesTable *dfet = &tf->dataFileEntriesTable[i];
 		/* write number of entries in table */
 		writeUint16BE(out, dfet->fileEntriesCount);

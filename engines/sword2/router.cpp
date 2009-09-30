@@ -945,11 +945,11 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 
 			// new frames for turn frames	29oct95jps
 			if (turnDir < 0) {
-				if ( lastDir < 0)
+				if (lastDir < 0)
 					lastDir += NO_DIRECTIONS;
 				module = _firstStandingTurnLeftFrame + lastDir;
 			} else {
-				if ( lastDir > 7)
+				if (lastDir > 7)
 					lastDir -= NO_DIRECTIONS;
 				module = _firstStandingTurnRightFrame + lastDir;
 			}
@@ -1208,7 +1208,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	} else if (_targetDir != lastRealDir) {
 		// rotate to target direction
 		turnDir = _targetDir - lastRealDir;
-		if ( turnDir < 0)
+		if (turnDir < 0)
 			turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)

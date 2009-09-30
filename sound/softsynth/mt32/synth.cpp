@@ -839,7 +839,7 @@ void Synth::readMemoryRegion(const MemoryRegion *region, Bit32u addr, Bit32u len
 
 	unsigned int m;
 
-	switch(region->type) {
+	switch (region->type) {
 	case MR_PatchTemp:
 		for (m = 0; m < len; m++)
 			data[m] = ((Bit8u *)&mt32ram.patchSettings[first])[off + m];

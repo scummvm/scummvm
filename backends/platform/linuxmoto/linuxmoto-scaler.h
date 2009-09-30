@@ -33,7 +33,7 @@
 
 // FIXME: For now keep hacks in this header to save polluting the SDL backend.
 enum {
-    GFX_HALF = 12
+	GFX_HALF = 12
 };
 
 // TODO/FIXME: Move this platform specific scaler into /graphics/scaler and properly merge with the WinCE PocketPCHalf that it is based on.

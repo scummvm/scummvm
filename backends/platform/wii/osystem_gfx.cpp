@@ -258,7 +258,7 @@ void OSystem_Wii::initSize(uint width, uint height,
 	}
 
 	if (update) {
-		if(_gamePixels)
+		if (_gamePixels)
 			free(_gamePixels);
 
 		tex_format = GFX_TF_PALETTE_RGB565;

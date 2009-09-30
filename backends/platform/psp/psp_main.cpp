@@ -23,7 +23,6 @@
  *
  */
 
-
 #define	USERSPACE_ONLY	//don't use kernel mode features
 
 #ifndef USERSPACE_ONLY
@@ -118,7 +117,7 @@ int CallbackThread(SceSize /*size*/, void *arg) {
 
 	cbid = sceKernelCreateCallback("Power Callback", (SceKernelCallbackFunction)power_callback, 0);
 	if (cbid >= 0) {
-		if(scePowerRegisterCallback(-1, cbid) < 0) {
+		if (scePowerRegisterCallback(-1, cbid) < 0) {
 			PSPDebugTrace("SetupCallbacks(): Couldn't register callback for power_callback\n");
 		}
 	} else {

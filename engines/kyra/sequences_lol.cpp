@@ -714,7 +714,7 @@ void LoLEngine::showStarcraftLogo() {
 
 	if (!(shouldQuit() || inputFlag)) {
 		_sound->voicePlay("star2", &_speechHandle);
-		while(_sound->voiceIsPlaying(&_speechHandle) && !(shouldQuit() || inputFlag)) {
+		while (_sound->voiceIsPlaying(&_speechHandle) && !(shouldQuit() || inputFlag)) {
 			inputFlag = checkInput(0) & 0xff;
 			delay(_tickLength);
 		}

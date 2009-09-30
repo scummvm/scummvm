@@ -186,7 +186,7 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 			displayMessage(0x57b2);
 			return true;
 		} else {
-			for(byte i = 11; i <= 27; i += 4)
+			for (byte i = 11; i <= 27; i += 4)
 				playSound(76, i);
 			
 			playSound(56, 35);

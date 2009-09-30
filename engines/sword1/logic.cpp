@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/util.h"
 #include "common/system.h"
@@ -114,7 +113,7 @@ void Logic::newScreen(uint32 screen) {
 	}
 
 	// work around, at screen 69 in psx version TOP menu gets stuck at disabled, fix it at next screen (71)
-	if( (screen == 71) && (SwordEngine::isPsx()))
+	if ((screen == 71) && (SwordEngine::isPsx()))
 		_scriptVars[TOP_MENU_DISABLED] = 0;
 
 	if (SwordEngine::_systemVars.justRestoredGame) { // if we've just restored a game - we want George to be exactly as saved

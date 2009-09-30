@@ -179,8 +179,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 			const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
-		}
-		else {
+		} else {
 			//_bIsDirectory = false;
 			_bIsValid = true;
 		}
@@ -231,15 +230,13 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			const char c = _sPath.lastChar();
 			if (c != '/' && c != ':')
 				_sPath += '/';
-		}
-		else {
+		} else {
 			//_bIsDirectory = false;
 			_bIsValid = true;
 		}
 
         IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
-	}
-	else {
+	} else {
 		debug(6, "ExamineObject() returned NULL");
     }
 
@@ -268,7 +265,7 @@ AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
 
 bool AmigaOSFilesystemNode::exists() const {
 	ENTER();
-	if(_sPath.empty())
+	if (_sPath.empty())
 		return false;
 
 	bool nodeExists = false;
@@ -352,16 +349,16 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		struct ExamineData * pExd = NULL; // NB: no need to free value after usage, all is dealt by the DirContext release
 
 		AmigaOSFilesystemNode *entry ;
-		while( (pExd = IDOS->ExamineDir(context)) ) {
-			if(     (EXD_IS_FILE(pExd) && ( Common::FSNode::kListFilesOnly == mode ))
+		while ( (pExd = IDOS->ExamineDir(context)) ) {
+			if (     (EXD_IS_FILE(pExd) && ( Common::FSNode::kListFilesOnly == mode ))
 				||  (EXD_IS_DIRECTORY(pExd) && ( Common::FSNode::kListDirectoriesOnly == mode ))
 				||  Common::FSNode::kListAll == mode
 				)
 			{
 				BPTR pLock = IDOS->Lock( pExd->Name, SHARED_LOCK );
-				if( pLock ) {
+				if (pLock) {
 					entry = new AmigaOSFilesystemNode( pLock, pExd->Name );
-					if( entry ) {
+					if (entry) {
 						myList.push_back(entry);
 					}
 
@@ -369,18 +366,17 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 				}
 			}
 		}
-		if( ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
+
+		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
 			debug(6, "An error occured during ExamineDir");
 			ret = false;
-		}
-		else {
+		} else {
 			ret = true;
 		}
 
 
 		IDOS->ReleaseDirContext(context);
-	}
-	else {
+	} else {
 		debug(6, "Unable to ObtainDirContext");
 		ret = false;
 	}
@@ -411,8 +407,7 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 	if (parentDir) {
 		node = new AmigaOSFilesystemNode(parentDir);
 		IDOS->UnLock(parentDir);
-	}
-	else
+	} else
 		node = new AmigaOSFilesystemNode();
 
 	LEAVE();

@@ -459,7 +459,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (stepNode->values.contains("orientation")) {
 				val = stepNode->values["orientation"];
 
-				if ( val == "top")
+				if (val == "top")
 					drawstep->extraData = Graphics::VectorRenderer::kTriangleUp;
 				else if (val == "bottom")
 					drawstep->extraData = Graphics::VectorRenderer::kTriangleDown;
@@ -622,7 +622,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
 
 		if (node->values.contains("textalign")) {
-			if((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
+			if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 				return parserError("Invalid value for text alignment.");
 		}
 
@@ -847,7 +847,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("textalign")) {
 		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
 
-		if((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
+		if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 			return parserError("Invalid value for text alignment.");
 
 		_theme->getEvaluator()->setVar(var + "Align", alignH);

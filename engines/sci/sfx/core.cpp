@@ -226,7 +226,7 @@ void SfxPlayer::player_timer_callback(void *refCon) {
 Common::Error SfxPlayer::init(ResourceManager *resMan, int expected_latency) {
 	MidiDriverType musicDriver = MidiDriver::detectMusicDriver(MDT_PCSPK | MDT_ADLIB);
 
-	switch(musicDriver) {
+	switch (musicDriver) {
 	case MD_ADLIB:
 		_mididrv = new MidiPlayer_Adlib();
 		break;

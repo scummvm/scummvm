@@ -151,7 +151,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 
 	case DRAW_PUTPIXEL:
-		switch(_pattern & 0xFF) {
+		switch (_pattern & 0xFF) {
 		case -1:
 			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIXEL, pattern -1");
 			break;
@@ -180,7 +180,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 								  _destSpriteY + (_pattern + 1) / 2);
 		break;
 	case DRAW_FILLRECT:
-		switch(_pattern & 0xFF) {
+		switch (_pattern & 0xFF) {
 		case 1:
 		case 2:
 		case 3:
@@ -217,7 +217,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 					_destSpriteX + 1, _destSpriteY + 1,
 					_spriteRight + 1, _spriteBottom + 1, _frontColor);
 		} else {
-			switch(_pattern & 0xFF) {
+			switch (_pattern & 0xFF) {
 			case 0: 
 				_vm->_video->drawLine(*_spritesArray[_destSurface],
 					_destSpriteX, _destSpriteY,

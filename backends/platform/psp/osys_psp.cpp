@@ -617,19 +617,19 @@ void OSystem_PSP::updateScreen() {
 		sceGuDisable(GU_ALPHA_TEST);
 		sceGuEnable(GU_BLEND);
 		sceGuBlendFunc(GU_ADD, GU_SRC_ALPHA, GU_ONE_MINUS_SRC_ALPHA, 0, 0);
-		switch(_keyboardMode) {
-			case 0:
-				sceGuTexImage(0, 512, 512, 480, keyboard_letters);
-				break;
-			case CAPS_LOCK:
-				sceGuTexImage(0, 512, 512, 480, keyboard_letters_shift);
-				break;
-			case SYMBOLS:
-				sceGuTexImage(0, 512, 512, 480, keyboard_symbols);
-				break;
-			case (CAPS_LOCK | SYMBOLS):
-				sceGuTexImage(0, 512, 512, 480, keyboard_symbols_shift);
-				break;
+		switch (_keyboardMode) {
+		case 0:
+			sceGuTexImage(0, 512, 512, 480, keyboard_letters);
+			break;
+		case CAPS_LOCK:
+			sceGuTexImage(0, 512, 512, 480, keyboard_letters_shift);
+			break;
+		case SYMBOLS:
+			sceGuTexImage(0, 512, 512, 480, keyboard_symbols);
+			break;
+		case (CAPS_LOCK | SYMBOLS):
+			sceGuTexImage(0, 512, 512, 480, keyboard_symbols_shift);
+			break;
 		}
 		sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGBA);
 
@@ -1006,50 +1006,50 @@ bool OSystem_PSP::pollEvent(Common::Event &event) {
 			event.type = (pad.Buttons & PSP_CTRL_CROSS) ? Common::EVENT_KEYDOWN : Common::EVENT_KEYUP;
 			if (_keySelected > 26) {
 				event.kbd.flags = 0;
-				switch(_keySelected) {
-					case 27:
-						event.kbd.ascii = ' ';
-						event.kbd.keycode = Common::KEYCODE_SPACE;
-					break;
-					case 28:
-						event.kbd.ascii = 127;
-						event.kbd.keycode = Common::KEYCODE_DELETE;
-					break;
-					case 29:
-						event.kbd.ascii = 8;
-						event.kbd.keycode = Common::KEYCODE_BACKSPACE;
-					break;
-					case 30:
-						event.kbd.ascii = 13;
-						event.kbd.keycode = Common::KEYCODE_RETURN;
-					break;
+				switch (_keySelected) {
+				case 27:
+					event.kbd.ascii = ' ';
+					event.kbd.keycode = Common::KEYCODE_SPACE;
+				break;
+				case 28:
+					event.kbd.ascii = 127;
+					event.kbd.keycode = Common::KEYCODE_DELETE;
+				break;
+				case 29:
+					event.kbd.ascii = 8;
+					event.kbd.keycode = Common::KEYCODE_BACKSPACE;
+				break;
+				case 30:
+					event.kbd.ascii = 13;
+					event.kbd.keycode = Common::KEYCODE_RETURN;
+				break;
 				}
 			} else {
-				switch( _keyboardMode) {
-					case 0:
+				switch ( _keyboardMode) {
+				case 0:
+					event.kbd.flags = 0;
+					event.kbd.ascii = 'a'+_keySelected-1;
+					event.kbd.keycode = (Common::KeyCode)(Common::KEYCODE_a + _keySelected-1);
+					break;
+				case CAPS_LOCK:
+					event.kbd.ascii = 'A'+_keySelected-1;
+					event.kbd.keycode = (Common::KeyCode)(Common::KEYCODE_a + _keySelected-1);
+					event.kbd.flags = Common::KBD_SHIFT;
+					break;
+				case SYMBOLS:
+					if (_keySelected < 21) {
 						event.kbd.flags = 0;
-						event.kbd.ascii = 'a'+_keySelected-1;
-						event.kbd.keycode = (Common::KeyCode)(Common::KEYCODE_a + _keySelected-1);
-						break;
-					case CAPS_LOCK:
-						event.kbd.ascii = 'A'+_keySelected-1;
-						event.kbd.keycode = (Common::KeyCode)(Common::KEYCODE_a + _keySelected-1);
-						event.kbd.flags = Common::KBD_SHIFT;
-						break;
-					case SYMBOLS:
-						if (_keySelected < 21) {
-							event.kbd.flags = 0;
-							event.kbd.ascii = kbd_ascii[_keySelected-1];
-							event.kbd.keycode = kbd_code[ _keySelected-1];
-						}
-						break;
-					case (SYMBOLS|CAPS_LOCK):
-						if (_keySelected < 21) {
-							event.kbd.flags = 0;
-							event.kbd.ascii = kbd_ascii_cl[_keySelected-1];
-							event.kbd.keycode = kbd_code_cl[ _keySelected-1];
-						}
-						break;
+						event.kbd.ascii = kbd_ascii[_keySelected-1];
+						event.kbd.keycode = kbd_code[ _keySelected-1];
+					}
+					break;
+				case (SYMBOLS|CAPS_LOCK):
+					if (_keySelected < 21) {
+						event.kbd.flags = 0;
+						event.kbd.ascii = kbd_ascii_cl[_keySelected-1];
+						event.kbd.keycode = kbd_code_cl[ _keySelected-1];
+					}
+					break;
 				}
 			}
 			_prevButtons = pad.Buttons;

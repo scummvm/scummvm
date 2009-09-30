@@ -125,7 +125,7 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &fil
 
 		Common::FSNode file(path);
 
-		if(!file.exists())
+		if (!file.exists())
 			return NULL;
 
 		sf = file.createReadStream();
@@ -133,7 +133,7 @@ Common::InSaveFile *Ps2SaveFileManager::openForLoading(const Common::String &fil
 	} else {
 		Common::FSNode file = savePath.getChild(filename);
 
-		if(!file.exists())
+		if (!file.exists())
 			return NULL;
 
 		sf = file.createReadStream();

@@ -286,7 +286,7 @@ static void PsxDrawTiles(DRAWOBJECT *pObj, uint8 *srcP, uint8 *destP, bool apply
 
 			p += boxBounds.top * (fourBitClut ? sizeof(uint16) : sizeof(uint32));
 			for (int yp = boxBounds.top; yp <= boxBounds.bottom; ++yp, p += (fourBitClut ? sizeof(uint16) : sizeof(uint32))) {
-				if(!fourBitClut) {
+				if (!fourBitClut) {
 					if (!transparency)
 						Common::copy(p + boxBounds.left, p + boxBounds.right + 1, tempDest + (SCREEN_WIDTH * (yp - boxBounds.top)));
 					else

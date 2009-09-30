@@ -295,7 +295,7 @@ void Mickey::getMouseMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow, i
 	int iWord;
 	int *sel = 0;
 
-	switch(iRow) {
+	switch (iRow) {
 	case 0:
 		if (y != IDI_MSA_ROW_MENU_0) return;
 		sel = sel0;
@@ -323,7 +323,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 	int x, y;
 	int goIndex = -1, northIndex = -1, southIndex = -1, eastIndex = -1, westIndex = -1;
 
-	switch(iRow) {
+	switch (iRow) {
 	case 0:
 		sel = sel0;
 		break;
@@ -361,7 +361,7 @@ bool Mickey::getMenuSelRow(MSA_MENU menu, int *sel0, int *sel1, int iRow) {
 
 	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch(event.type) {
+			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return 0;
@@ -679,7 +679,7 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 	uint8 *buffer = new uint8[1024];
 	int pBuf = 1;
 
-	switch(iSound) {
+	switch (iSound) {
 	case IDI_MSA_SND_XL30:
 		for (int iNote = 0; iNote < 6; iNote++) {
 			note.counter = _vm->rnd(59600) + 59;
@@ -701,7 +701,7 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 
 			if (iSound == IDI_MSA_SND_THEME) {
 				while (_vm->_system->getEventManager()->pollEvent(event)) {
-					switch(event.type) {
+					switch (event.type) {
 					case Common::EVENT_RTL:
 					case Common::EVENT_QUIT:
 					case Common::EVENT_LBUTTONUP:
@@ -769,7 +769,7 @@ void Mickey::drawRoomAnimation() {
 		0xF0, 1, 0xF9, 2, 43, 45, 0xFF
 	};
 
-	switch(_game.iRoom) {
+	switch (_game.iRoom) {
 	case IDI_MSA_PIC_EARTH_SHIP:
 	case IDI_MSA_PIC_VENUS_SHIP:
 	case IDI_MSA_PIC_NEPTUNE_SHIP:
@@ -835,7 +835,7 @@ void Mickey::drawRoomAnimation() {
 		// draw crystal
 		if (_game.iRoom == IDI_MSA_XTAL_ROOM_XY[_game.iPlanet][0]) {
 			if (!_game.fHasXtal) {
-				switch(_game.iPlanet) {
+				switch (_game.iPlanet) {
 				case IDI_MSA_PLANET_VENUS:
 					if (_game.iRmMenu[_game.iRoom] != 2)
 						break;
@@ -1488,7 +1488,7 @@ void Mickey::getXtal(int iStr) {
 }
 
 bool Mickey::parse(int cmd, int arg) {
-	switch(cmd) {
+	switch (cmd) {
 
 	// BASIC
 
@@ -2211,7 +2211,7 @@ void Mickey::waitAnyKey(bool anim) {
 
 	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch(event.type) {
+			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 			case Common::EVENT_KEYDOWN:

@@ -1032,7 +1032,7 @@ void Control::renderText(const uint8 *str, uint16 x, uint16 y, uint8 mode) {
 					dst[cntx] = sprData[cntx];
 			}
 
-			if(SwordEngine::isPsx()) { //On PSX version we need to double horizontal lines
+			if (SwordEngine::isPsx()) { //On PSX version we need to double horizontal lines
 				dst += SCREEN_WIDTH;
 				for (uint16 cntx = 0; cntx < _resMan->getUint16(chSpr->width); cntx++)
 					if (sprData[cntx])
@@ -1074,7 +1074,7 @@ void Control::renderVolumeBar(uint8 id, uint8 volL, uint8 volR) {
 		for (uint16 cnty = 0; cnty < barHeight; cnty++) {
 			memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
 
-			if(SwordEngine::isPsx()) { //linedoubling
+			if (SwordEngine::isPsx()) { //linedoubling
 				destMem += SCREEN_WIDTH;
 				memcpy(destMem, srcMem, _resMan->getUint16(frHead->width));
 			}

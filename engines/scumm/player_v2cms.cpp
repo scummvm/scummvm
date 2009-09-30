@@ -320,7 +320,7 @@ void CMSEmulator::update(int chip, int16 *buffer, int length) {
 			saa->noise[ch].counter -= saa->noise[ch].freq;
 			while (saa->noise[ch].counter < 0) {
 				saa->noise[ch].counter += _sampleRate;
-				if( ((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0) )
+				if (((saa->noise[ch].level & 0x4000) == 0) == ((saa->noise[ch].level & 0x0040) == 0) )
 					saa->noise[ch].level = (saa->noise[ch].level << 1) | 1;
 				else
 					saa->noise[ch].level <<= 1;

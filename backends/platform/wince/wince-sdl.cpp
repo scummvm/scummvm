@@ -935,46 +935,46 @@ bool OSystem_WINCE3::hasFeature(Feature f) {
 }
 
 void OSystem_WINCE3::setFeatureState(Feature f, bool enable) {
-	switch(f) {
-		case kFeatureFullscreenMode:
-			return;
+	switch (f) {
+	case kFeatureFullscreenMode:
+		return;
 
-		case kFeatureVirtualKeyboard:
-			if (_hasSmartphoneResolution)
-				return;
-			_toolbarHighDrawn = false;
-			if (enable) {
-				_panelStateForced = true;
-				if (!_toolbarHandler.visible()) swap_panel_visibility();
-				//_saveToolbarState = _toolbarHandler.visible();
-				_saveActiveToolbar = _toolbarHandler.activeName();
-				_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
-				_toolbarHandler.setVisible(true);
+	case kFeatureVirtualKeyboard:
+		if (_hasSmartphoneResolution)
+			return;
+		_toolbarHighDrawn = false;
+		if (enable) {
+			_panelStateForced = true;
+			if (!_toolbarHandler.visible()) swap_panel_visibility();
+			//_saveToolbarState = _toolbarHandler.visible();
+			_saveActiveToolbar = _toolbarHandler.activeName();
+			_toolbarHandler.setActive(NAME_PANEL_KEYBOARD);
+			_toolbarHandler.setVisible(true);
+		}
+		else
+			if (_panelStateForced) {
+				_panelStateForced = false;
+				_toolbarHandler.setActive(_saveActiveToolbar);
+				//_toolbarHandler.setVisible(_saveToolbarState);
 			}
-			else
-				if (_panelStateForced) {
-					_panelStateForced = false;
-					_toolbarHandler.setActive(_saveActiveToolbar);
-					//_toolbarHandler.setVisible(_saveToolbarState);
-				}
-			return;
+		return;
 
-		case kFeatureDisableKeyFiltering:
-			if (_hasSmartphoneResolution)
-				_unfilteredkeys = enable;
-			return;
+	case kFeatureDisableKeyFiltering:
+		if (_hasSmartphoneResolution)
+			_unfilteredkeys = enable;
+		return;
 
-		default:
-			OSystem_SDL::setFeatureState(f, enable);
+	default:
+		OSystem_SDL::setFeatureState(f, enable);
 	}
 }
 
 bool OSystem_WINCE3::getFeatureState(Feature f) {
-	switch(f) {
-		case kFeatureFullscreenMode:
-			return false;
-		case kFeatureVirtualKeyboard:
-			return (_panelStateForced);
+	switch (f) {
+	case kFeatureFullscreenMode:
+		return false;
+	case kFeatureVirtualKeyboard:
+		return (_panelStateForced);
 	}
 	return OSystem_SDL::getFeatureState(f);
 }
@@ -1277,7 +1277,7 @@ bool OSystem_WINCE3::setGraphicsMode(int mode) {
 
 	if (_scaleFactorXm < 0) {
 		/* Standard scalers, from the SDL backend */
-		switch(_videoMode.mode) {
+		switch (_videoMode.mode) {
 		case GFX_NORMAL:
 			_videoMode.scaleFactor = 1;
 			_scalerProc = Normal1x;
@@ -2308,7 +2308,7 @@ bool OSystem_WINCE3::pollEvent(Common::Event &event) {
 	currentTime = GetTickCount();
 
 	while (SDL_PollEvent(&ev)) {
-		switch(ev.type) {
+		switch (ev.type) {
 		case SDL_KEYDOWN:
 			debug(1, "Key down %X %s", ev.key.keysym.sym, SDL_GetKeyName((SDLKey)ev.key.keysym.sym));
 			// KMOD_RESERVED is used if the key has been injected by an external buffer

@@ -256,7 +256,7 @@ bool Parallaction_ns::processGameEvent(int event) {
 	bool c = true;
 	_input->stopHovering();
 
-	switch(event) {
+	switch (event) {
 	case kEvSaveGame:
 		_saveLoad->saveGame();
 		break;

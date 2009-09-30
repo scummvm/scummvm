@@ -199,7 +199,7 @@ protected:
 	bool o1_callSub(OpFuncParams &params);
 	bool o1_printTotText(OpFuncParams &params);
 	bool o1_loadCursor(OpFuncParams &params);
-	bool o1_switch(OpFuncParams &params);
+	bool o1_switch (OpFuncParams &params);
 	bool o1_repeatUntil(OpFuncParams &params);
 	bool o1_whileDo(OpFuncParams &params);
 	bool o1_if(OpFuncParams &params);

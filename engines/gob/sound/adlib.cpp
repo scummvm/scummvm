@@ -610,7 +610,7 @@ void MDYPlayer::interpret() {
 	do {
 		instr = *_playPos;
 //			printf("instr 0x%X\n", instr);
-		switch(instr) {
+		switch (instr) {
 		case 0xF8:
 			_wait = *(_playPos++);
 			break;
@@ -640,7 +640,7 @@ void MDYPlayer::interpret() {
 			}
 			channel = (int)(instr & 0x0f);
 
-			switch(instr & 0xf0) {
+			switch (instr & 0xf0) {
 			case 0x90:
 				note = *(_playPos++);
 				volume = *(_playPos++);

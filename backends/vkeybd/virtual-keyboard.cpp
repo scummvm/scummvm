@@ -337,7 +337,7 @@ void VirtualKeyboard::KeyPressQueue::deleteKey() {
 	List<VirtualKeyPress>::iterator it = _keyPos;
 	it--;
 	_strPos -= it->strLen;
-	while((it->strLen)-- > 0)
+	while ((it->strLen)-- > 0)
 		_keysStr.deleteChar(_strPos);
 	_keys.erase(it);
 	_strChanged = true;

@@ -58,13 +58,13 @@ bool OSystem_GP2XWIZ::setGraphicsMode(int mode) {
 
 	int newScaleFactor = 1;
 
-	switch(mode) {
+	switch (mode) {
 	case GFX_NORMAL:
 		newScaleFactor = 1;
 		break;
-    case GFX_HALF:
-        newScaleFactor = 1;
-        break;
+	case GFX_HALF:
+		newScaleFactor = 1;
+		break;
 	default:
 		warning("unknown gfx mode %d", mode);
 		return false;
@@ -90,9 +90,9 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 	case GFX_NORMAL:
 		newScalerProc = Normal1x;
 		break;
-    case GFX_HALF:
-        newScalerProc = HalfScale;
-        break;
+	case GFX_HALF:
+		newScalerProc = HalfScale;
+		break;
 
 	default:
 		error("Unknown gfx mode %d", _videoMode.mode);
@@ -113,19 +113,19 @@ void OSystem_GP2XWIZ::setGraphicsModeIntern() {
 
 
 void OSystem_GP2XWIZ::initSize(uint w, uint h) {
-    assert(_transactionMode == kTransactionActive);
+	assert(_transactionMode == kTransactionActive);
 
 	// Avoid redundant res changes
 	if ((int)w == _videoMode.screenWidth && (int)h == _videoMode.screenHeight)
 		return;
 
-    _videoMode.screenWidth = w;
+	_videoMode.screenWidth = w;
 	_videoMode.screenHeight = h;
-    if(w > 320 || h > 240){
-        setGraphicsMode(GFX_HALF);
-        setGraphicsModeIntern();
-        toggleMouseGrab();
-    }
+	if (w > 320 || h > 240){
+		setGraphicsMode(GFX_HALF);
+		setGraphicsModeIntern();
+		toggleMouseGrab();
+	}
 
 	_cksumNum = (w * h / (8 * 8));
 
@@ -157,13 +157,13 @@ void OSystem_GP2XWIZ::drawMouse() {
 	int width, height;
 	int hotX, hotY;
 
-    if(_videoMode.mode == GFX_HALF && !_overlayVisible){
-	    dst.x = _mouseCurState.x/2;
-	    dst.y = _mouseCurState.y/2;
-    } else {
-        dst.x = _mouseCurState.x;
-	    dst.y = _mouseCurState.y;
-    }
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible){
+		dst.x = _mouseCurState.x/2;
+		dst.y = _mouseCurState.y/2;
+	} else {
+		dst.x = _mouseCurState.x;
+		dst.y = _mouseCurState.y;
+	}
 
 	if (!_overlayVisible) {
 		scale = _videoMode.scaleFactor;
@@ -214,7 +214,7 @@ void OSystem_GP2XWIZ::drawMouse() {
 
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
-    addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
+	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
 }
 
 void OSystem_GP2XWIZ::undrawMouse() {
@@ -227,12 +227,12 @@ void OSystem_GP2XWIZ::undrawMouse() {
 		return;
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0){
-        if(_videoMode.mode == GFX_HALF && !_overlayVisible){
-		    addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
-        } else {
-            addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
-        }
-    }
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible){
+			addDirtyRect(x*2, y*2, _mouseBackup.w*2, _mouseBackup.h*2);
+		} else {
+			addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
+		}
+	}
 }
 
 void OSystem_GP2XWIZ::internUpdateScreen() {
@@ -348,11 +348,11 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 		for (r = _dirtyRectList; r != lastRect; ++r) {
 			register int dst_y = r->y + _currentShakePos;
 			register int dst_h = 0;
-            register int dst_w = r->w;
+			register int dst_w = r->w;
 			register int orig_dst_y = 0;
 			register int dst_x = r->x;
-            register int src_y;
-            register int src_x;
+			register int src_y;
+			register int src_x;
 
 			if (dst_y < height) {
 				dst_h = r->h;
@@ -360,42 +360,42 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 					dst_h = height - dst_y;
 
 				orig_dst_y = dst_y;
-                src_x = dst_x;
-                src_y = dst_y;
+				src_x = dst_x;
+				src_y = dst_y;
 
 				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
 					dst_y = real2Aspect(dst_y);
 
 				assert(scalerProc != NULL);
 
-                if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
-                    if(dst_x%2==1){
-                        dst_x--;
-                        dst_w++;
-                    }
-                    if(dst_y%2==1){
-                        dst_y--;
-                        dst_h++;
-                    }
-                    src_x = dst_x;
-                    src_y = dst_y;
-                    dst_x = dst_x / 2;
-                    dst_y = dst_y / 2;
-                }
-                scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
+				if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
+					if (dst_x%2==1){
+						dst_x--;
+						dst_w++;
+					}
+					if (dst_y%2==1){
+						dst_y--;
+						dst_h++;
+					}
+					src_x = dst_x;
+					src_y = dst_y;
+					dst_x = dst_x / 2;
+					dst_y = dst_y / 2;
+				}
+				scalerProc((byte *)srcSurf->pixels + (src_x * 2 + 2) + (src_y + 1) * srcPitch, srcPitch,
 						   (byte *)_hwscreen->pixels + dst_x * 2 + dst_y * dstPitch, dstPitch, dst_w, dst_h);
 			}
 
-            if(_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
-			    r->w = r->w / 2;
-			    r->h = dst_h / 2;
-            } else {
-			    r->w = r->w;
-			    r->h = dst_h;
-            }
+			if (_videoMode.mode == GFX_HALF && scalerProc == HalfScale){
+				r->w = r->w / 2;
+				r->h = dst_h / 2;
+			} else {
+				r->w = r->w;
+				r->h = dst_h;
+			}
 
-		    r->x = dst_x;
-		    r->y = dst_y;
+			r->x = dst_x;
+			r->y = dst_y;
 
 
 #ifndef DISABLE_SCALERS
@@ -430,27 +430,27 @@ void OSystem_GP2XWIZ::internUpdateScreen() {
 }
 
 void OSystem_GP2XWIZ::showOverlay() {
-    if(_videoMode.mode == GFX_HALF){
-        _mouseCurState.x = _mouseCurState.x / 2;
-        _mouseCurState.y = _mouseCurState.y / 2;
-    }
+	if (_videoMode.mode == GFX_HALF){
+		_mouseCurState.x = _mouseCurState.x / 2;
+		_mouseCurState.y = _mouseCurState.y / 2;
+	}
 	OSystem_SDL::showOverlay();
 }
 
 void OSystem_GP2XWIZ::hideOverlay() {
-    if(_videoMode.mode == GFX_HALF){
-        _mouseCurState.x = _mouseCurState.x * 2;
-        _mouseCurState.y = _mouseCurState.y * 2;
-    }
+	if (_videoMode.mode == GFX_HALF){
+		_mouseCurState.x = _mouseCurState.x * 2;
+		_mouseCurState.y = _mouseCurState.y * 2;
+	}
 	OSystem_SDL::hideOverlay();
 }
 
 void OSystem_GP2XWIZ::warpMouse(int x, int y) {
 	if (_mouseCurState.x != x || _mouseCurState.y != y) {
-        if(_videoMode.mode == GFX_HALF && !_overlayVisible){
-            x = x / 2;
-            y = y / 2;
-        }
+		if (_videoMode.mode == GFX_HALF && !_overlayVisible){
+			x = x / 2;
+			y = y / 2;
+		}
 	}
 	OSystem_SDL::warpMouse(x, y);
 }

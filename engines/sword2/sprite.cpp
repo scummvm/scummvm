@@ -279,7 +279,7 @@ uint32 Screen::decompressHIF(byte *src, byte *dst, uint32 *skipData) {
 				}
 
 				int32 repeat_count = (info_word >> 12) + 2; // How many time data needs to be refetched
-				while(repeat_count >= 0) {
+				while (repeat_count >= 0) {
 					uint16 refetchData = (info_word & 0xFFF) + 1;
 					if (refetchData > decompSize) return 0; // We have a problem here...
 					uint8 *old_data_src = dst - refetchData;
@@ -498,7 +498,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 	// Decompression and mirroring
 	// -----------------------------------------------------------------
 	if (s->type & RDSPR_NOCOMPRESSION) {
-		if(Sword2Engine::isPsx()) { // PSX Uncompressed sprites
+		if (Sword2Engine::isPsx()) { // PSX Uncompressed sprites
 			if (s->w > 254 && !s->isText) { // We need to recompose these frames
 				recomposePsxSprite(s);
 			}
@@ -528,7 +528,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 				decompData = decompressHIF(s->data, tempBuf);
 
 				// Check that we correctly decompressed data
-				if(!decompData)
+				if (!decompData)
 					return RDERR_DECOMPRESSION;
 
 				s->w = (decompData / (s->h / 2)) * 2;
@@ -568,7 +568,7 @@ int32 Screen::drawSprite(SpriteInfo *s) {
 					uint32 decompData = decompressHIF(s->data, tempBuf);
 
 					// Check that we correctly decompressed data
-					if(!decompData)
+					if (!decompData)
 						return RDERR_DECOMPRESSION;
 
 					s->w = (decompData / (s->h / 2));

@@ -43,7 +43,7 @@ namespace Sword2 {
 byte *Sword2Engine::fetchPalette(byte *screenFile) {
 	byte *palette;
 
-	if(isPsx()) { // PSX version doesn't have a "MultiScreenHeader", instead there's a ScreenHeader and a tag
+	if (isPsx()) { // PSX version doesn't have a "MultiScreenHeader", instead there's a ScreenHeader and a tag
 		palette = screenFile + ResHeader::size() + ScreenHeader::size() + 2;
 	} else {
 		MultiScreenHeader mscreenHeader;

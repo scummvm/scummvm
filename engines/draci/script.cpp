@@ -369,7 +369,7 @@ void Script::load(Common::Queue<int> &params) {
 	GameObject *obj = _vm->_game->getObject(objID);
 
 	// If the animation is already loaded, return
-	for(i = 0; i < obj->_anims.size(); ++i) {
+	for (i = 0; i < obj->_anims.size(); ++i) {
 		if (obj->_anims[i] == animID) {
 			return;
 		}
@@ -384,7 +384,7 @@ void Script::load(Common::Queue<int> &params) {
 	// Care must be taken to store them sorted (increasing order) as some things
 	// depend on this.
 
-	for(i = 0; i < obj->_anims.size(); ++i) {
+	for (i = 0; i < obj->_anims.size(); ++i) {
 		if (obj->_anims[i] > animID) {
 			break;
 		}

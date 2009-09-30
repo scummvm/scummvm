@@ -235,7 +235,7 @@ void ConversationView::selectEntry(int entryIndex) {
 }
 
 void ConversationView::updateState() {
-	switch(_conversationState) {
+	switch (_conversationState) {
 		case kConversationOptionsShown:
 			return;
 		case kEntryIsActive:
@@ -412,7 +412,7 @@ void Converse::loadConversation(const char *convName) {
 		if (convS->eos()) break;
 
 		if (debugFlag) printf("***** Pos: %i -> ", chunkPos);
-		switch(chunk) {
+		switch (chunk) {
 			case CHUNK_DECL:	// Declare
 				if (debugFlag) printf("DECL chunk\n");
 				data = convS->readUint32LE();

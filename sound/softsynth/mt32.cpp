@@ -189,7 +189,7 @@ static void MT32_PrintDebug(void *userData, const char *fmt, va_list list) {
 }
 
 static int MT32_Report(void *userData, MT32Emu::ReportType type, const void *reportData) {
-	switch(type) {
+	switch (type) {
 	case MT32Emu::ReportType_lcdMessage:
 		g_system->displayMessageOnOSD((const char *)reportData);
 		break;

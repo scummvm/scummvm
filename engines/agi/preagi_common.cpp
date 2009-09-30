@@ -124,7 +124,7 @@ int PreAgiEngine::getSelection(SelectionTypes type) {
 
 	while (!shouldQuit()) {
 		while (_eventMan->pollEvent(event)) {
-			switch(event.type) {
+			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return 0;

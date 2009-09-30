@@ -373,7 +373,7 @@ void Screen::draw(void) {
 		uint8 *src = _layerBlocks[0];
 		uint8 *dest = _screenBuf;
 
-		if(SwordEngine::isPsx()) {
+		if (SwordEngine::isPsx()) {
 			if (!_psxCache.decodedBackground)
 				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
 			memcpy(_screenBuf, _psxCache.decodedBackground, _scrnSizeX * _scrnSizeY);
@@ -398,7 +398,7 @@ void Screen::draw(void) {
 	} else if (!(SwordEngine::isPsx())) {
 		memcpy(_screenBuf, _layerBlocks[0], _scrnSizeX * _scrnSizeY);
 	} else { //We are using PSX version
-		if(_currentScreen == 45 || _currentScreen == 55 ||
+		if (_currentScreen == 45 || _currentScreen == 55 ||
 		   _currentScreen == 57 || _currentScreen == 63 || _currentScreen == 71) { // Width shrinked backgrounds
 			if (!_psxCache.decodedBackground)
 				_psxCache.decodedBackground = psxShrinkedBackgroundToIndexed(_layerBlocks[0], _scrnSizeX, _scrnSizeY);
@@ -426,7 +426,7 @@ void Screen::draw(void) {
 		renderParallax(_parallax[1]);
 
 	// PSX version has parallax layer for this room in an external file (TRAIN.PLX)
-	if(SwordEngine::isPsx() && _currentScreen == 63) {
+	if (SwordEngine::isPsx() && _currentScreen == 63) {
 		// FIXME: this should be handled in a cleaner way...
 		if (!_psxCache.extPlxCache) {
 			Common::File parallax;
@@ -493,7 +493,7 @@ void Screen::processImage(uint32 id) {
 	uint16 sprSizeX, sprSizeY;
 	if (compact->o_status & STAT_SHRINK) {
 		memset(_shrinkBuffer, 0, SHRINK_BUFFER_SIZE); //Clean shrink buffer to avoid corruption
-		if( SwordEngine::isPsx() && (compact->o_resource != GEORGE_MEGA)) { //PSX Height shrinked sprites
+		if (SwordEngine::isPsx() && (compact->o_resource != GEORGE_MEGA)) { //PSX Height shrinked sprites
 			sprSizeX = (scale * _resMan->readUint16(&frameHead->width)) / 256;
 			sprSizeY = (scale * (_resMan->readUint16(&frameHead->height))) / 256 / 2;
 			fastShrink(sprData, _resMan->readUint16(&frameHead->width), (_resMan->readUint16(&frameHead->height)) / 2, scale, _shrinkBuffer);
@@ -509,7 +509,7 @@ void Screen::processImage(uint32 id) {
 		sprData = _shrinkBuffer;
 	} else {
 		sprSizeX = _resMan->readUint16(&frameHead->width);
-		if(SwordEngine::isPsx()) { //PSX sprites are half height
+		if (SwordEngine::isPsx()) { //PSX sprites are half height
 			sprSizeY = _resMan->readUint16(&frameHead->height) / 2;
 		} else
 			sprSizeY = (_resMan->readUint16(&frameHead->height));
@@ -537,7 +537,7 @@ void Screen::processImage(uint32 id) {
 	spriteClipAndSet(&spriteX, &spriteY, &sprSizeX, &sprSizeY, &incr);
 
 	if ((sprSizeX > 0) && (sprSizeY > 0)) {
-		if( (!(SwordEngine::isPsx()) || (compact->o_type == TYPE_TEXT)
+		if ((!(SwordEngine::isPsx()) || (compact->o_type == TYPE_TEXT)
 		|| (compact->o_resource == LVSFLY) || (!(compact->o_resource == GEORGE_MEGA) && (sprSizeX < 260))))
 			drawSprite(sprData + incr, spriteX, spriteY, sprSizeX, sprSizeY, sprPitch);
 		else if (((sprSizeX >= 260) && (sprSizeX < 450)) || ((compact->o_resource == GMWRITH) && (sprSizeX < 515))  // a psx shrinked sprite (1/2 width)
@@ -666,7 +666,7 @@ void Screen::renderParallax(uint8 *data) {
 	} else
 		paraScrlY = 0;
 
-	if(SwordEngine::isPsx())
+	if (SwordEngine::isPsx())
 		drawPsxParallax(data, paraScrlX, scrnScrlX, scrnWidth);
 	else
 		for (uint16 cnty = 0; cnty < scrnHeight; cnty++) {
@@ -867,7 +867,7 @@ uint8* Screen::psxBackgroundToIndexed(uint8 *psxBackground, uint32 bakXres, uint
 	for (uint32 currentTile = 0; currentTile < totTiles; currentTile++) {
 		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile);
 
-		if(isCompressed)
+		if (isCompressed)
 			decompressHIF(psxBackground + tileOffset - 4, decomp_tile); //Decompress the tile into decomp_tile
 		else
 			memcpy(decomp_tile, psxBackground + tileOffset - 4, 16*16);
@@ -911,7 +911,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 	for (currentTile = 0; currentTile < totTiles; currentTile++) {
 		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile);
 
-		if(isCompressed)
+		if (isCompressed)
 			decompressHIF(psxBackground + tileOffset - 4, decomp_tile); //Decompress the tile into decomp_tile
 		else
 			memcpy(decomp_tile, psxBackground + tileOffset - 4, 16 * 16);
@@ -949,7 +949,7 @@ uint8* Screen::psxShrinkedBackgroundToIndexed(uint8 *psxBackground, uint32 bakXr
 	for (; currentTile < totTiles + remainingTiles; currentTile++) {
 		uint32 tileOffset = READ_LE_UINT32(psxBackground + 4 * currentTile);
 
-		if(isCompressed)
+		if (isCompressed)
 			decompressHIF(psxBackground + tileOffset - 4, decomp_tile); //Decompress the tile into decomp_tile
 		else
 			memcpy(decomp_tile, psxBackground + tileOffset - 4, 256);
@@ -1101,7 +1101,7 @@ void Screen::decompressHIF(uint8 *src, uint8 *dest) {
 				if (info_word == 0xFFFF) return; //Got 0xFFFF code, finished.
 
 				int32 repeat_count = (info_word >> 12) + 2; //How many time data needs to be refetched
-				while(repeat_count >= 0) {
+				while (repeat_count >= 0) {
 					uint8 *old_data_src = dest - ((info_word & 0xFFF) + 1);
 					*dest++ = *old_data_src;
 					repeat_count--;
@@ -1187,7 +1187,7 @@ void Screen::spriteClipAndSet(uint16 *pSprX, uint16 *pSprY, uint16 *pSprWidth, u
 		uint16 gridH = (*pSprHeight + (sprY & (SCRNGRID_Y - 1)) + (SCRNGRID_Y - 1)) / SCRNGRID_Y;
 		uint16 gridW = (*pSprWidth +  (sprX & (SCRNGRID_X - 1)) + (SCRNGRID_X - 1)) / SCRNGRID_X;
 
-		if(SwordEngine::isPsx()) {
+		if (SwordEngine::isPsx()) {
 			gridH *= 2; // This will correct the PSX sprite being cut at half height
 			gridW *= 2; // and masking problems when sprites are stretched in width
 
@@ -1225,7 +1225,7 @@ void Screen::showFrame(uint16 x, uint16 y, uint32 resId, uint32 frameNo, const b
 	uint8 frame[40 * 40];
 	int i, j;
 
-	if(SwordEngine::isPsx())
+	if (SwordEngine::isPsx())
 		memset(frame, 0, sizeof(frame)); // PSX top menu is black
 	else
 		memset(frame, 199, sizeof(frame)); // Dark gray background

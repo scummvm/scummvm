@@ -39,7 +39,7 @@ void readRecord(Common::InSaveFile *inFile, uint32 &diff, Common::Event &event) 
 
 	event.type = (Common::EventType)inFile->readUint32LE();
 
-	switch(event.type) {
+	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
 		event.kbd.keycode = (Common::KeyCode)inFile->readSint32LE();
@@ -66,7 +66,7 @@ void writeRecord(Common::OutSaveFile *outFile, uint32 diff, const Common::Event 
 
 	outFile->writeUint32LE((uint32)event.type);
 
-	switch(event.type) {
+	switch (event.type) {
 	case Common::EVENT_KEYDOWN:
 	case Common::EVENT_KEYUP:
 		outFile->writeSint32LE(event.kbd.keycode);
@@ -340,7 +340,7 @@ bool EventRecorder::pollEvent(Common::Event &ev) {
 
 	if (_hasPlaybackEvent) {
 		if (_playbackDiff <= (_eventCount - _lastEventCount)) {
-			switch(_playbackEvent.type) {
+			switch (_playbackEvent.type) {
 			case Common::EVENT_MOUSEMOVE:
 			case Common::EVENT_LBUTTONDOWN:
 			case Common::EVENT_LBUTTONUP:

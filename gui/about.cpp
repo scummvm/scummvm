@@ -100,7 +100,7 @@ AboutDialog::AboutDialog()
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
-		if ( _w < tmp && tmp <= maxW) {
+		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}
 	}
@@ -311,7 +311,7 @@ void AboutDialog::reflowLayout() {
 	_w = 0;
 	for (int i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
-		if ( _w < tmp && tmp <= maxW) {
+		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}
 	}

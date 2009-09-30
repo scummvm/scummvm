@@ -145,7 +145,7 @@ public:
 		if (&coroParam == &nullContext) assert(!nullContext);\
 		if (!x) {coroParam = x = new CoroContextTag();}\
 		CoroContextHolder tmpHolder(coroParam);\
-		switch(coroParam->_line) { case 0:;
+		switch (coroParam->_line) { case 0:;
 
 /**
  * End the code section of a coroutine.

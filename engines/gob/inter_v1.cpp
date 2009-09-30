@@ -722,7 +722,7 @@ bool Inter_v1::o1_loadCursor(OpFuncParams &params) {
 	return false;
 }
 
-bool Inter_v1::o1_switch(OpFuncParams &params) {
+bool Inter_v1::o1_switch (OpFuncParams &params) {
 	uint32 offset;
 
 	checkSwitchTable(offset);

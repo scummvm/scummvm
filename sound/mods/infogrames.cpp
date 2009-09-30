@@ -320,7 +320,7 @@ void Infogrames::getNextSample(Channel &chn) {
 						chn.volSlide.curDelay2 = 0;
 						break;
 					case 0xE0: // 111xxxxx - Extended
-						switch(cmd & 0x1F) {
+						switch (cmd & 0x1F) {
 						case 0: // Set period modifier
 							chn.periodMod = (int8) *chn.cmds++;
 							break;

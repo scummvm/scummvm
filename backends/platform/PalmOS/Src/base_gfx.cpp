@@ -53,7 +53,7 @@ int OSystem_PalmBase::getGraphicsMode() const {
 }
 
 bool OSystem_PalmBase::setGraphicsMode(int mode) {
-	switch(mode) {
+	switch (mode) {
 	case GFX_NORMAL:
 	case GFX_WIDE:
 		_setMode = mode;

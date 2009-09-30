@@ -324,7 +324,7 @@ bool OSystem_PalmBase::pollEvent(Common::Event &event) {
 			if (SysHandleEvent(&ev))
 				continue;
 
-		switch(ev.eType) {
+		switch (ev.eType) {
 		case penMoveEvent:
 			get_coordinates(&ev, x, y);
 

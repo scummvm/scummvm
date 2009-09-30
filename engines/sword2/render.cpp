@@ -618,7 +618,7 @@ int32 Screen::initialisePsxBackgroundLayer(byte *parallax) {
 		if (!(remLines && posY == _yBlocks[_layer] - 1))
 			remLines = 32;
 
-		for(j = 0; j < remLines; j++) {
+		for (j = 0; j < remLines; j++) {
 			memcpy(tileChunk + j * BLOCKWIDTH * 2, parallax + stripeOffset + j * BLOCKWIDTH, BLOCKWIDTH);
 			memcpy(tileChunk + j * BLOCKWIDTH * 2 + BLOCKWIDTH, parallax + stripeOffset + j * BLOCKWIDTH, BLOCKWIDTH);
 		}
@@ -728,7 +728,7 @@ int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
 			block_has_data = true;
 
 			// If one of the two grouped blocks is without data, then we also have transparency
-			if(!firstTilePresent || !secondTilePresent)
+			if (!firstTilePresent || !secondTilePresent)
 				block_is_transparent = true;
 		}
 
@@ -737,7 +737,7 @@ int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
 			byte *block = data;
 			if (firstTilePresent) {
 				for (k = 0; k < 0x400; k++) {
-					if ( *(block + k) == 0) {
+					if (*(block + k) == 0) {
 						block_is_transparent = true;
 						break;
 					}
@@ -749,7 +749,7 @@ int32 Screen::initialisePsxParallaxLayer(byte *parallax) {
 			// a second tile, check it
 			if (secondTilePresent && !block_is_transparent) {
 				for (k = 0; k < 0x400; k++) {
-					if ( *(block + k) == 0) {
+					if (*(block + k) == 0) {
 						block_is_transparent = true;
 						break;
 					}

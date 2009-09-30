@@ -325,7 +325,7 @@ uint16 FontRenderer::charWidth(byte ch, uint32 fontRes) {
 
 	frame_head.read(charBuf);
 
-	if(Sword2Engine::isPsx())
+	if (Sword2Engine::isPsx())
 		free(charBuf);
 
 	_vm->_resman->closeResource(fontRes);
@@ -353,7 +353,7 @@ uint16 FontRenderer::charHeight(uint32 fontRes) {
 
 	frame_head.read(charbuf);
 
-	if(Sword2Engine::isPsx())
+	if (Sword2Engine::isPsx())
 		free(charbuf);
 
 	_vm->_resman->closeResource(fontRes);

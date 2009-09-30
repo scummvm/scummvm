@@ -232,7 +232,7 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 	static bool keydialogrunning = false, quitdialog = false;
 
 	if (!pushed) {
-		switch(action) {
+		switch (action) {
 		case POCKET_ACTION_RIGHTCLICK:
 			_CESystem->add_right_click(false);
 			return true;
@@ -251,78 +251,78 @@ bool CEActionsPocket::perform(GUI::ActionType action, bool pushed) {
 	}
 
 	switch (action) {
-		case POCKET_ACTION_PAUSE:
-		case POCKET_ACTION_SAVE:
-		case POCKET_ACTION_SKIP:
-		case POCKET_ACTION_MULTI:
-			if (action == POCKET_ACTION_SAVE && ConfMan.get("gameid") == "parallaction") {
-				// FIXME: This is a temporary solution. The engine should handle its own menus.
-				// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
-				GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
-				if (alert.runModal() == GUI::kMessageOK)
-					_key_action[action].setKey(SDLK_l);
-				else
-					_key_action[action].setKey(SDLK_s);
-			}
-			EventsBuffer::simulateKey(&_key_action[action], true);
-			return true;
-		case POCKET_ACTION_KEYBOARD:
-			_CESystem->swap_panel();
-			return true;
-		case POCKET_ACTION_HIDE:
-			_CESystem->swap_panel_visibility();
-			return true;
-		case POCKET_ACTION_SOUND:
-			_CESystem->swap_sound_master();
-			return true;
-		case POCKET_ACTION_RIGHTCLICK:
-			_CESystem->add_right_click(true);
-			return true;
-		case POCKET_ACTION_CURSOR:
-			_CESystem->swap_mouse_visibility();
-			return true;
-		case POCKET_ACTION_FREELOOK:
-			_CESystem->swap_freeLook();
-			return true;
-		case POCKET_ACTION_ZOOM_UP:
-			_CESystem->swap_zoom_up();
-			return true;
-		case POCKET_ACTION_ZOOM_DOWN:
-			_CESystem->swap_zoom_down();
-			return true;
-		case POCKET_ACTION_LEFTCLICK:
-			_CESystem->add_left_click(true);
-			return true;
-		case POCKET_ACTION_UP:
-			_CESystem->move_cursor_up();
-			return true;
-		case POCKET_ACTION_DOWN:
-			_CESystem->move_cursor_down();
-			return true;
-		case POCKET_ACTION_LEFT:
-			_CESystem->move_cursor_left();
-			return true;
-		case POCKET_ACTION_RIGHT:
-			_CESystem->move_cursor_right();
-			return true;
-		case POCKET_ACTION_QUIT:
-			if (!quitdialog) {
-				quitdialog = true;
-				GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
-				if (alert.runModal() == GUI::kMessageOK)
-					_mainSystem->quit();
-				quitdialog = false;
-			}
-			return true;
-		case POCKET_ACTION_BINDKEYS:
-			if (!keydialogrunning) {
-				keydialogrunning = true;
-				GUI::KeysDialog *keysDialog = new GUI::KeysDialog();
-				keysDialog->runModal();
-				delete keysDialog;
-				keydialogrunning = false;
-			}
-			return true;
+	case POCKET_ACTION_PAUSE:
+	case POCKET_ACTION_SAVE:
+	case POCKET_ACTION_SKIP:
+	case POCKET_ACTION_MULTI:
+		if (action == POCKET_ACTION_SAVE && ConfMan.get("gameid") == "parallaction") {
+			// FIXME: This is a temporary solution. The engine should handle its own menus.
+			// Note that the user can accomplish this via the virtual keyboard as well, this is just for convenience
+			GUI::MessageDialog alert("Do you want to load or save the game?", "Load", "Save");
+			if (alert.runModal() == GUI::kMessageOK)
+				_key_action[action].setKey(SDLK_l);
+			else
+				_key_action[action].setKey(SDLK_s);
+		}
+		EventsBuffer::simulateKey(&_key_action[action], true);
+		return true;
+	case POCKET_ACTION_KEYBOARD:
+		_CESystem->swap_panel();
+		return true;
+	case POCKET_ACTION_HIDE:
+		_CESystem->swap_panel_visibility();
+		return true;
+	case POCKET_ACTION_SOUND:
+		_CESystem->swap_sound_master();
+		return true;
+	case POCKET_ACTION_RIGHTCLICK:
+		_CESystem->add_right_click(true);
+		return true;
+	case POCKET_ACTION_CURSOR:
+		_CESystem->swap_mouse_visibility();
+		return true;
+	case POCKET_ACTION_FREELOOK:
+		_CESystem->swap_freeLook();
+		return true;
+	case POCKET_ACTION_ZOOM_UP:
+		_CESystem->swap_zoom_up();
+		return true;
+	case POCKET_ACTION_ZOOM_DOWN:
+		_CESystem->swap_zoom_down();
+		return true;
+	case POCKET_ACTION_LEFTCLICK:
+		_CESystem->add_left_click(true);
+		return true;
+	case POCKET_ACTION_UP:
+		_CESystem->move_cursor_up();
+		return true;
+	case POCKET_ACTION_DOWN:
+		_CESystem->move_cursor_down();
+		return true;
+	case POCKET_ACTION_LEFT:
+		_CESystem->move_cursor_left();
+		return true;
+	case POCKET_ACTION_RIGHT:
+		_CESystem->move_cursor_right();
+		return true;
+	case POCKET_ACTION_QUIT:
+		if (!quitdialog) {
+			quitdialog = true;
+			GUI::MessageDialog alert("   Are you sure you want to quit ?   ", "Yes", "No");
+			if (alert.runModal() == GUI::kMessageOK)
+				_mainSystem->quit();
+			quitdialog = false;
+		}
+		return true;
+	case POCKET_ACTION_BINDKEYS:
+		if (!keydialogrunning) {
+			keydialogrunning = true;
+			GUI::KeysDialog *keysDialog = new GUI::KeysDialog();
+			keysDialog->runModal();
+			delete keysDialog;
+			keydialogrunning = false;
+		}
+		return true;
 	}
 	return false;
 }

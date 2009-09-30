@@ -299,7 +299,7 @@ void Game::loop() {
 			}
 		}
 
-		if(_vm->_mouse->isCursorOn()) {
+		if (_vm->_mouse->isCursorOn()) {
 			// Fetch the dedicated objects' title animation / current frame
 			Animation *titleAnim = _vm->_anims->getAnimation(kTitleText);
 			Text *title = reinterpret_cast<Text *>(titleAnim->getFrame());
@@ -787,7 +787,7 @@ void Game::dialogueMenu(int dialogueID) {
 		_dialogueBegin = false;
 		oldLines = _dialogueLinesNum;
 
-	} while(!_dialogueExit);
+	} while (!_dialogueExit);
 
 	dialogueDone();
 	_currentDialogue = kNoDialogue;
@@ -1562,7 +1562,7 @@ Common::Point WalkingMap::findNearestWalkable(int startX, int startY, Common::Re
 	// such resizing step, it checks some select points on the ellipse for walkability.
 	// It also does the same check for the ellipse perpendicular to it (rotated by 90 degrees).
 
-	while(1) {
+	while (1) {
 		// The default major radius
 		radius += _deltaX;
 

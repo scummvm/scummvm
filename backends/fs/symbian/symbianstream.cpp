@@ -71,7 +71,7 @@ TSymbianFileEntry*	CreateSymbianFileEntry(const char* name, const char* mode) {
 
 		fileMode = fileMode| EFileShareAny;
 
-		switch(mode[0]) {
+		switch (mode[0]) {
 		case 'a':
 			if (fileEntry->_fileHandle.Open(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
 				if (fileEntry->_fileHandle.Create(static_cast<OSystem_SDL_Symbian*>(g_system)->FsSession(), tempFileName, fileMode) != KErrNone) {
@@ -160,7 +160,7 @@ size_t ReadData(const void* ptr, size_t size, size_t numItems, TSymbianFileEntry
 		}
 	}
 
-	if((numItems * size) != pointer.Length() && entry->_lastError == KErrNone) {
+	if ((numItems * size) != pointer.Length() && entry->_lastError == KErrNone) {
 		entry->_eofReached = ETrue;
 	}
 

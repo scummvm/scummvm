@@ -44,13 +44,13 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 }
 
 void OSystem_LINUXMOTO::fillMouseEvent(Common::Event &event, int x, int y) {
-    if(_videoMode.mode == GFX_HALF && !_overlayVisible) {
-	    event.mouse.x = x*2;
-	    event.mouse.y = y*2;
-    } else {
-        event.mouse.x = x;
-	    event.mouse.y = y;
-    }
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible) {
+		event.mouse.x = x*2;
+		event.mouse.y = y*2;
+	} else {
+		event.mouse.x = x;
+		event.mouse.y = y;
+	}
 
 	// Update the "keyboard mouse" coords
 	_km.x = x;
@@ -82,7 +82,7 @@ bool OSystem_LINUXMOTO::remapKey(SDL_Event &ev, Common::Event &event) {
 		ev.key.keysym.sym = SDLK_F5;
 	}
 	// VirtualKeyboard - Camera key
- 	else if (ev.key.keysym.sym == SDLK_PAUSE) {
+	else if (ev.key.keysym.sym == SDLK_PAUSE) {
 		ev.key.keysym.sym = SDLK_F7;
 	}
 	// Enter - mod+fire key

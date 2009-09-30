@@ -134,10 +134,10 @@ void TeenAgentEngine::init() {
 	Resources * res = Resources::instance();
 	use_hotspots.resize(42);
 	byte *scene_hotspots = res->dseg.ptr(0xbb87);
-	for(byte i = 0; i < 42; ++i) {
+	for (byte i = 0; i < 42; ++i) {
 		Common::Array<UseHotspot> & hotspots = use_hotspots[i];
 		byte * hotspots_ptr = res->dseg.ptr(READ_LE_UINT16(scene_hotspots + i * 2));
-		while(*hotspots_ptr) {
+		while (*hotspots_ptr) {
 			UseHotspot h;
 			h.load(hotspots_ptr);
 			hotspots_ptr += 9;

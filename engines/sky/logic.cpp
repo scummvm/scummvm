@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/endian.h"
 #include "common/rect.h"
 #include "common/events.h"
@@ -1918,7 +1917,7 @@ bool Logic::fnStartMenu(uint32 firstObject, uint32 b, uint32 c) {
 
 	uint32 menuLength = 0;
 	for (i = firstObject; i < firstObject + ARRAYSIZE(_objectList); i++) {
-		if ( _scriptVariables[i] )
+		if (_scriptVariables[i])
 			_objectList[menuLength++] = _scriptVariables[i];
 	}
 	_scriptVariables[MENU_LENGTH] = menuLength;

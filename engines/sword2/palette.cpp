@@ -50,7 +50,7 @@ void Screen::startNewPalette() {
 
 	// Don't fetch palette match table while using PSX version,
 	// because it is not present.
-	if(!Sword2Engine::isPsx())
+	if (!Sword2Engine::isPsx())
 		memcpy(_paletteMatch, _vm->fetchPaletteMatchTable(screenFile), PALTABLESIZE);
 
 	setPalette(0, 256, _vm->fetchPalette(screenFile), RDPAL_FADE);

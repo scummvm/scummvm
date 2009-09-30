@@ -134,7 +134,7 @@ bool Parallaction_br::processGameEvent(int event) {
 	bool c = true;
 	_input->stopHovering();
 
-	switch(event) {
+	switch (event) {
 	case kEvIngameMenu:
 		startIngameMenu();
 		c = false;

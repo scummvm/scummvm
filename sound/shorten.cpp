@@ -116,13 +116,13 @@ ShortenGolombReader::ShortenGolombReader(Common::ReadStream *stream, int version
 int32 ShortenGolombReader::getURice(uint32 numBits) {
 	int32 result = 0;
 
-	if(!_nbitget) {
+	if (!_nbitget) {
 		_buf = _stream->readUint32BE();
 		_nbitget = 32;
 	}
 
 	for (result = 0; !(_buf & (1L << --_nbitget)); result++) {
-		if(!_nbitget) {
+		if (!_nbitget) {
 			_buf = _stream->readUint32BE();
 			_nbitget = 32;
 		}

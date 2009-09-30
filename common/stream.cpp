@@ -202,7 +202,7 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 	assert(_pos >= _begin);
 	assert(_pos <= _end);
 
-	switch(whence) {
+	switch (whence) {
 	case SEEK_END:
 		offset = size() + offset;
 		// fallthrough

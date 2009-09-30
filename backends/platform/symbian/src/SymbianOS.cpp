@@ -84,35 +84,35 @@ static const OSystem::GraphicsMode s_supportedGraphicsModes[] = {
 };
 
 bool OSystem_SDL_Symbian::hasFeature(Feature f) {
-	switch(f) {
-		case kFeatureFullscreenMode:
-		case kFeatureAspectRatioCorrection:
-		case kFeatureAutoComputeDirtyRects:
-		case kFeatureCursorHasPalette:
+	switch (f) {
+	case kFeatureFullscreenMode:
+	case kFeatureAspectRatioCorrection:
+	case kFeatureAutoComputeDirtyRects:
+	case kFeatureCursorHasPalette:
 #ifdef  USE_VIBRA_SE_PXXX
-		case kFeatureVibration:
+	case kFeatureVibration:
 #endif
-			return true;
+		return true;
 
-		default:
-			return false;
+	default:
+		return false;
 	}
 }
 
 void OSystem_SDL_Symbian::setFeatureState(Feature f, bool enable) {
-	switch(f) {
-		case kFeatureVirtualKeyboard:
-			if (enable) {
-			}
-			else {
+	switch (f) {
+	case kFeatureVirtualKeyboard:
+		if (enable) {
+		}
+		else {
 
-			}
-			break;
-		case kFeatureDisableKeyFiltering:
-			GUI::Actions::Instance()->beginMapping(enable);
-			break;
-		default:
-			OSystem_SDL::setFeatureState(f, enable);
+		}
+		break;
+	case kFeatureDisableKeyFiltering:
+		GUI::Actions::Instance()->beginMapping(enable);
+		break;
+	default:
+		OSystem_SDL::setFeatureState(f, enable);
 	}
 }
 
@@ -326,7 +326,7 @@ bool OSystem_SDL_Symbian::remapKey(SDL_Event &ev, Common::Event &event) {
 		if (GUI::Actions::Instance()->getMapping(loop) == ev.key.keysym.sym &&
 			GUI::Actions::Instance()->isEnabled(loop)) {
 			// Create proper event instead
-			switch(loop) {
+			switch (loop) {
 			case GUI::ACTION_UP:
 				if (ev.type == SDL_KEYDOWN) {
 					_km.y_vel = -1;

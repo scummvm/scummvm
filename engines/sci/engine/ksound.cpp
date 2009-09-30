@@ -1003,7 +1003,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
  * Used for synthesized music playback
  */
 reg_t kDoSound(EngineState *s, int argc, reg_t *argv) {
-	switch(s->detectDoSoundType()) {
+	switch (s->detectDoSoundType()) {
 	case SCI_VERSION_0_EARLY:
 		return kDoSoundSci0(s, argc, argv);
 	case SCI_VERSION_1_EARLY:

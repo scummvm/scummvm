@@ -65,8 +65,8 @@ void mixerMoveVolume(int direction) {
         if (direction == VOLUME_UP)   volumeLevel += VOLUME_CHANGE_RATE/2;
         if (direction == VOLUME_DOWN) volumeLevel -= VOLUME_CHANGE_RATE/2;
     } else {
-        if(direction == VOLUME_UP)   volumeLevel += VOLUME_CHANGE_RATE;
-        if(direction == VOLUME_DOWN) volumeLevel -= VOLUME_CHANGE_RATE;
+        if (direction == VOLUME_UP)   volumeLevel += VOLUME_CHANGE_RATE;
+        if (direction == VOLUME_DOWN) volumeLevel -= VOLUME_CHANGE_RATE;
     }
 
     if (volumeLevel < VOLUME_MIN) volumeLevel = VOLUME_MIN;
@@ -74,7 +74,7 @@ void mixerMoveVolume(int direction) {
 
     unsigned long soundDev = open("/dev/mixer", O_RDWR);
 
-    if(soundDev) {
+    if (soundDev) {
         int vol = ((volumeLevel << 8) | volumeLevel);
         ioctl(soundDev, SOUND_MIXER_WRITE_PCM, &vol);
         close(soundDev);

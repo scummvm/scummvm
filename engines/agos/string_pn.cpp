@@ -23,8 +23,6 @@
  *
  */
 
-
-
 #include "agos/agos.h"
 #include "agos/intern.h"
 
@@ -34,7 +32,7 @@ uint32 AGOSEngine_PN::ftext(uint32 base, int n) {
 	uint32 b = base;
 	int ct = n;
 	while (ct) {
-		while(_textBase[b++])
+		while (_textBase[b++])
 			;
 		ct--;
 	}

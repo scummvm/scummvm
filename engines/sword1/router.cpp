@@ -705,7 +705,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	if (lastDir != currentDir) {
 		// get the direction to turn
 		turnDir = currentDir - lastDir;
-		if ( turnDir < 0)
+		if (turnDir < 0)
 				turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)
@@ -716,7 +716,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
 		if ((megaId == GEORGE) || (megaId == NICO)) {
-			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
+			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
 				module =	turnFramesLeft + lastDir;
 			} else {
 				module =	turnFramesRight + lastDir;
@@ -732,12 +732,12 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate till were facing new dir then go back 45 degrees
 		while (lastDir != currentDir) {
 			lastDir += turnDir;
-			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
-				if ( lastDir < 0)
+			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
+				if (lastDir < 0)
 						lastDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastDir;
 			} else {
-				if ( lastDir > 7)
+				if (lastDir > 7)
 						lastDir -= NO_DIRECTIONS;
 				module =	turnFramesRight + lastDir;
 			}
@@ -926,7 +926,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	} else if (_targetDir != lastRealDir) { // rotate to _targetDir
 		// rotate to target direction
 		turnDir = _targetDir - lastRealDir;
-		if ( turnDir < 0)
+		if (turnDir < 0)
 			turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)
@@ -937,7 +937,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate to target direction
 		// for george and nico put in a head turn at the start
 		if ((megaId == GEORGE) || (megaId == NICO)) {
-			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
+			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
 				module =	turnFramesLeft + lastDir;
 			} else {
 				module =	turnFramesRight + lastDir;
@@ -953,12 +953,12 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		// rotate if we need to
 		while (lastRealDir != _targetDir) {
 			lastRealDir += turnDir;
-			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
-				if ( lastRealDir < 0)
+			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
+				if (lastRealDir < 0)
 						lastRealDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastRealDir;
 			} else {
-				if ( lastRealDir > 7)
+				if (lastRealDir > 7)
 						lastRealDir -= NO_DIRECTIONS;
 				module =	turnFramesRight + lastRealDir;
 			}
@@ -1123,7 +1123,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	if (lastDir != currentDir) {
 		// get the direction to turn
 		turnDir = currentDir - lastDir;
-		if ( turnDir < 0)
+		if (turnDir < 0)
 				turnDir += NO_DIRECTIONS;
 
 		if (turnDir > 4)
@@ -1134,7 +1134,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		// rotate to new walk direction
 		// for george and nico put in a head turn at the start
 		if ((megaId == GEORGE) || (megaId == NICO)) {
-			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
+			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
 				module =	turnFramesLeft + lastDir;
 			} else {
 				module =	turnFramesRight + lastDir;
@@ -1150,12 +1150,12 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		// rotate till were facing new dir then go back 45 degrees
 		while (lastDir != currentDir) {
 			lastDir += turnDir;
-			if ( turnDir < 0) {	// new frames for turn frames	29oct95jps
-				if ( lastDir < 0)
+			if (turnDir < 0) {	// new frames for turn frames	29oct95jps
+				if (lastDir < 0)
 					lastDir += NO_DIRECTIONS;
 				module =	turnFramesLeft + lastDir;
 			} else {
-				if ( lastDir > 7)
+				if (lastDir > 7)
 					lastDir -= NO_DIRECTIONS;
 				module =	turnFramesRight + lastDir;
 			}
@@ -2125,9 +2125,9 @@ int whatTarget(int32 startX, int32 startY, int32 destX, int32 destY) {
 	int signY = (deltaY > 0);
 	int	slope;
 
-	if ( (ABS(deltaY) * DIAGONALX ) < (ABS(deltaX) * DIAGONALY / 2))
+	if ((ABS(deltaY) * DIAGONALX ) < (ABS(deltaX) * DIAGONALY / 2))
 		slope = 0;// its flat
-	else if ( (ABS(deltaY) * DIAGONALX / 2) > (ABS(deltaX) * DIAGONALY ) )
+	else if ((ABS(deltaY) * DIAGONALX / 2) > (ABS(deltaX) * DIAGONALY ) )
 		slope = 2;// its vertical
 	else
 		slope = 1;// its diagonal

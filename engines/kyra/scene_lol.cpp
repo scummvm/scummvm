@@ -1405,7 +1405,7 @@ void LoLEngine::processGasExplosion(int soundId) {
 }
 
 int LoLEngine::smoothScrollDrawSpecialGuiShape(int pageNum) {
-	if(!_specialGuiShape)
+	if (!_specialGuiShape)
 		return 0;
 
 	_screen->clearGuiShapeMemory(pageNum);

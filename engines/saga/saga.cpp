@@ -169,7 +169,7 @@ Common::Error SagaEngine::run() {
 	if (_readingSpeed > 3)
 		_readingSpeed = 0;
 
-	switch(getGameId()) {
+	switch (getGameId()) {
 		case GID_ITE:
 			_resource = new Resource_RSC(this);
 			break;

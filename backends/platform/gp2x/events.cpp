@@ -282,7 +282,7 @@ bool OSystem_GP2X::pollEvent(Common::Event &event) {
 
 	while (SDL_PollEvent(&ev)) {
 
-		switch(ev.type) {
+		switch (ev.type) {
 		case SDL_KEYDOWN:{
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 

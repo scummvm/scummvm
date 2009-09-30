@@ -179,7 +179,7 @@ bool OSystem_GP2X::setGraphicsMode(int mode) {
 
 	int newScaleFactor = 1;
 
-	switch(mode) {
+	switch (mode) {
 	case GFX_NORMAL:
 		newScaleFactor = 1;
 		break;

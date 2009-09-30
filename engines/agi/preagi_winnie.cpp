@@ -266,7 +266,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		// extract text from block
 
 		opcode = *(buffer + pc);
-		switch(opcode) {
+		switch (opcode) {
 		case 0:
 		case IDO_WTP_OPTION_0:
 		case IDO_WTP_OPTION_1:
@@ -331,9 +331,9 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 			}
 
 			// process selection
-			switch(iSel) {
+			switch (iSel) {
 			case IDI_WTP_SEL_HOME:
-				switch(_room) {
+				switch (_room) {
 				case IDI_WTP_ROOM_HOME:
 				case IDI_WTP_ROOM_MIST:
 				case IDI_WTP_ROOM_TIGGER:
@@ -384,7 +384,7 @@ int Winnie::parser(int pc, int index, uint8 *buffer) {
 		// process script
 		do {
 			opcode = *(buffer + pc++);
-			switch(opcode) {
+			switch (opcode) {
 			case IDO_WTP_GOTO_ROOM:
 				opcode = *(buffer + pc++);
 				iNewRoom = opcode;
@@ -726,7 +726,7 @@ void Winnie::drawMenu(char *szMenu, int iSel, int fCanSel[]) {
 	if (fCanSel[IDI_WTP_SEL_DROP])
 		_vm->drawStr(IDI_WTP_ROW_OPTION_4, IDI_WTP_COL_DROP, IDA_DEFAULT, IDS_WTP_DROP);
 
-	switch(iSel) {
+	switch (iSel) {
 	case IDI_WTP_SEL_OPT_1:
 	case IDI_WTP_SEL_OPT_2:
 	case IDI_WTP_SEL_OPT_3:
@@ -778,7 +778,7 @@ void Winnie::decMenuSel(int *iSel, int fCanSel[]) {
 }
 
 void Winnie::getMenuMouseSel(int *iSel, int fCanSel[], int x, int y) {
-	switch(y) {
+	switch (y) {
 	case IDI_WTP_ROW_OPTION_1:
 	case IDI_WTP_ROW_OPTION_2:
 	case IDI_WTP_ROW_OPTION_3:
@@ -816,7 +816,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 
 	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch(event.type) {
+			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return;
@@ -865,7 +865,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					_vm->_gfx->setCursorPalette(false);
 				}
 
-				switch(*iSel) {
+				switch (*iSel) {
 					case IDI_WTP_SEL_OPT_1:
 					case IDI_WTP_SEL_OPT_2:
 					case IDI_WTP_SEL_OPT_3:
@@ -970,7 +970,7 @@ void Winnie::getMenuSel(char *szMenu, int *iSel, int fCanSel[]) {
 					makeSel();
 					break;
 				case Common::KEYCODE_RETURN:
-					switch(*iSel) {
+					switch (*iSel) {
 					case IDI_WTP_SEL_OPT_1:
 					case IDI_WTP_SEL_OPT_2:
 					case IDI_WTP_SEL_OPT_3:
@@ -1036,7 +1036,7 @@ phase2:
 
 	while (!_vm->shouldQuit()) {
 		for (iBlock = 0; iBlock < IDI_WTP_MAX_BLOCK; iBlock++) {
-			switch(parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
+			switch (parser(hdr.ofsBlock[iBlock] - _roomOffset, iBlock, roomdata)) {
 			case IDI_WTP_PAR_GOTO:
 				goto phase0;
 				break;

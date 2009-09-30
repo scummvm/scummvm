@@ -352,7 +352,7 @@ uint getSizeNextPOT(uint size) {
 
 - (void)addEvent:(NSDictionary*)event {
 
-	if(_events == nil)
+	if (_events == nil)
 		_events = [[NSMutableArray alloc] init];
 
 	[_events addObject: event];

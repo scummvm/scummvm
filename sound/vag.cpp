@@ -106,7 +106,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 			_samplesRemaining = 28 - i;
 	}
 
-	if(_loop && _stream->eos())
+	if (_loop && _stream->eos())
 		rewind();
 
 	return samplesDecoded;

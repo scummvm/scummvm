@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "common/system.h"
 
 #include "graphics/cursorman.h"
@@ -245,7 +244,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 						if (luggSrc[cntx])
 							dstData[cntx] = luggSrc[cntx];
 
-					if(SwordEngine::isPsx()) {
+					if (SwordEngine::isPsx()) {
 						dstData += resSizeX;
 						for (uint32 cntx = 0; cntx < luggSizeX; cntx++)
 							if (luggSrc[cntx])
@@ -267,7 +266,7 @@ void Mouse::createPointer(uint32 ptrId, uint32 luggageId) {
 					if (srcData[cntx])
 						dstData[cntx] = srcData[cntx];
 
-				if(SwordEngine::isPsx()) {
+				if (SwordEngine::isPsx()) {
 					dstData +=resSizeX;
 					for (uint32 cntx = 0; cntx < ptrSizeX; cntx++)
 						if (srcData[cntx])

@@ -50,7 +50,7 @@ void Inventory::init(TeenAgentEngine *engine) {
 		offset[i] = items->readUint16LE();
 	}
 
-	for(byte i = 0; i < 92; ++i) {
+	for (byte i = 0; i < 92; ++i) {
 		InventoryObject io;
 		uint16 obj_addr = res->dseg.get_word(0xc4a4 + i * 2);
 		if (obj_addr != 0) 

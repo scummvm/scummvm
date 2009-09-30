@@ -81,13 +81,13 @@ static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
 }
 
 void OSystem_GP2XWIZ::fillMouseEvent(Common::Event &event, int x, int y) {
-    if(_videoMode.mode == GFX_HALF && !_overlayVisible){
-	    event.mouse.x = x*2;
-	    event.mouse.y = y*2;
-    } else {
-        event.mouse.x = x;
-	    event.mouse.y = y;
-    }
+	if (_videoMode.mode == GFX_HALF && !_overlayVisible){
+		event.mouse.x = x*2;
+		event.mouse.y = y*2;
+	} else {
+		event.mouse.x = x;
+		event.mouse.y = y;
+	}
 
 	// Update the "keyboard mouse" coords
 	_km.x = x;
@@ -216,7 +216,7 @@ bool OSystem_GP2XWIZ::pollEvent(Common::Event &event) {
 
 	while (SDL_PollEvent(&ev)) {
 
-		switch(ev.type) {
+		switch (ev.type) {
 		case SDL_KEYDOWN:{
 			b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
 

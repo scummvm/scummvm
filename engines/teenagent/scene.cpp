@@ -116,7 +116,7 @@ void Scene::init(TeenAgentEngine *engine, OSystem *system) {
 	objects.resize(42);
 	walkboxes.resize(42);
 	
-	for(byte i = 0; i < 42; ++i) {
+	for (byte i = 0; i < 42; ++i) {
 		Common::Array<Object> &scene_objects = objects[i];
 		scene_objects.clear();
 		
@@ -151,7 +151,7 @@ Object *Scene::findObject(const Common::Point &point) {
 	
 	Common::Array<Object> &scene_objects = objects[_id - 1];
 	
-	for(uint i = 0; i < scene_objects.size(); ++i) {
+	for (uint i = 0; i < scene_objects.size(); ++i) {
 		Object &obj = scene_objects[i];
 		if (obj.enabled != 0 && obj.rect.in(point))
 			return &obj;

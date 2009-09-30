@@ -60,7 +60,7 @@ bool Troll::getMenuSel(const char *szMenu, int *iSel, int nSel) {
 
 	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch(event.type) {
+			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 				return 0;
@@ -207,7 +207,7 @@ void Troll::waitAnyKeyIntro() {
 
 	while (!_vm->shouldQuit()) {
 		while (_vm->_system->getEventManager()->pollEvent(event)) {
-			switch(event.type) {
+			switch (event.type) {
 			case Common::EVENT_RTL:
 			case Common::EVENT_QUIT:
 			case Common::EVENT_LBUTTONUP:
@@ -285,7 +285,7 @@ void Troll::tutorial() {
 		while (!done && !_vm->shouldQuit()) {
 			getMenuSel(IDS_TRO_TUTORIAL_1, &iSel, IDI_TRO_MAX_OPTION);
 
-			switch(iSel) {
+			switch (iSel) {
 			case IDI_TRO_SEL_OPTION_1:
 				_vm->clearScreen(0x22, false);
 				_vm->_gfx->doUpdate();
@@ -579,7 +579,7 @@ void Troll::gameLoop() {
 
 		roomParam = _roomDescs[_roomPicture - 1].roomDescIndex[currentOption];
 
-		switch(_roomDescs[_roomPicture - 1].optionTypes[currentOption]) {
+		switch (_roomDescs[_roomPicture - 1].optionTypes[currentOption]) {
 		case OT_FLASHLIGHT:
 			if (!haveFlashlight) {
 				printUserMessage(13);

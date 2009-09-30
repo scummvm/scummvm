@@ -403,7 +403,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			sendCalls.push(call);
 
 			break;
-		} // switch(lookup_selector())
+		} // switch (lookup_selector())
 
 		framesize -= (2 + argc);
 		argp += argc + 1;
@@ -1410,7 +1410,7 @@ void run_vm(EngineState *s, int restoring) {
 		default:
 			error("run_vm(): illegal opcode %x", opnumber);
 
-		} // switch(opcode >> 1)
+		} // switch (opcode >> 1)
 
 		if (s->_executionStackPosChanged) // Force initialization
 			scriptState.xs = xs_new;

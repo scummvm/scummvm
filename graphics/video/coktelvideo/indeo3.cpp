@@ -96,7 +96,7 @@ void Indeo3::setDither(DitherAlgorithm dither) {
 
 	_dither = dither;
 
-	switch(dither) {
+	switch (dither) {
 	case kDitherSierraLight:
 		_ditherSL = new Graphics::SierraLight(_width, _palLUT);
 		break;
@@ -538,7 +538,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 				correction_lp[0] = correction_lp[1] = correction + (lv << 8);
 			}
 
-			switch(k) {
+			switch (k) {
 				case 1:
 				case 0:                    /********** CASE 0 **********/
 					for ( ; blks_height > 0; blks_height -= 4) {
@@ -548,7 +548,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 								cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2];
 								ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2];
 
-								switch(correction_type_sp[0][k]) {
+								switch (correction_type_sp[0][k]) {
 									case 0:
 										*cur_lp = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										lp2++;
@@ -651,7 +651,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 								cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
 								ref_lp = ((uint32 *)cur_frm_pos) + width_tbl[(lp2 * 2) - 1];
 
-								switch(correction_type_sp[lp2 & 0x01][k]) {
+								switch (correction_type_sp[lp2 & 0x01][k]) {
 									case 0:
 										cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										if (lp2 > 0 || flag1 == 0 || strip->ypos != 0)
@@ -780,7 +780,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 #endif
 									}
 
-									switch(correction_type_sp[lp2 & 0x01][k]) {
+									switch (correction_type_sp[lp2 & 0x01][k]) {
 										case 0:
 											cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(lv1) >> 1) + correctionloworder_lp[lp2 & 0x01][k]) << 1);
 											cur_lp[width_tbl[1]+1] = FROM_LE_32(((FROM_LE_32(lv2) >> 1) + correctionhighorder_lp[lp2 & 0x01][k]) << 1);
@@ -935,7 +935,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 									cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
 									ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2 * 2];
 
-									switch(correction_type_sp[lp2 & 0x01][k]) {
+									switch (correction_type_sp[lp2 & 0x01][k]) {
 										case 0:
 											lv1 = correctionloworder_lp[lp2 & 0x01][k];
 											lv2 = correctionhighorder_lp[lp2 & 0x01][k];
@@ -1038,7 +1038,7 @@ void Indeo3::decodeChunk(byte *cur, byte *ref, int width, int height,
 								cur_lp = ((uint32 *)cur_frm_pos) + width_tbl[lp2 * 2];
 								ref_lp = ((uint32 *)ref_frm_pos) + width_tbl[lp2 * 2];
 
-								switch(correction_type_sp[lp2 & 0x01][k]) {
+								switch (correction_type_sp[lp2 & 0x01][k]) {
 									case 0:
 										cur_lp[0] = FROM_LE_32(((FROM_LE_32(*ref_lp) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);
 										cur_lp[width_tbl[1]] = FROM_LE_32(((FROM_LE_32(ref_lp[width_tbl[1]]) >> 1) + correction_lp[lp2 & 0x01][k]) << 1);

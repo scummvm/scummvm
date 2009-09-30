@@ -1067,7 +1067,7 @@ void IsoMap::testPossibleDirections(int16 u, int16 v, uint16 terraComp[8], int s
 	memset(terraComp, 0, 8 * sizeof(uint16));
 
 #define FILL_MASK(index, testMask)		\
-	if ( mask & testMask) {				\
+	if (mask & testMask) {				\
 		terraComp[index] |= fgdMask;	\
 	}									\
 	if (~mask & testMask) {				\
@@ -1370,7 +1370,7 @@ void IsoMap::findDragonTilePath(ActorData* actor,const Location &start, const Lo
 			tile = getTile(u1, v1, _platformHeight );
 			if (tile != NULL) {
 				mask = tile->terrainMask;
-				if ( ((mask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
+				if (((mask != 0) && (tile->GetFGDAttr() >= kTerrBlock)) ||
 					((mask != 0xFFFF) && (tile->GetBGDAttr() >= kTerrBlock)) ) {
 					pcell->visited = 1;
 				}

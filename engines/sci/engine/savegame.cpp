@@ -545,7 +545,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 		int seeker_size = READ_LE_UINT16(buf + 2);
 		assert(seeker_size > 0);
 		buf += seeker_size;
-	} while(1);
+	} while (1);
 
 	return NULL;
 }

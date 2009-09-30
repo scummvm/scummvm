@@ -151,7 +151,7 @@ void CScummVMUi::BringUpEmulatorL() {
 }
 
 void CScummVMUi::HandleCommandL(TInt aCommand) {
-	switch(aCommand) {
+	switch (aCommand) {
 	case EEikCmdExit:
 		{
 			RThread thread;

@@ -96,7 +96,7 @@ PSPFilesystemNode::PSPFilesystemNode(const Common::String &p, bool verify) {
 
 	if (verify) {
 		struct stat st;
-		if(PowerMan.beginCriticalSection()==PowerManager::Blocked)
+		if (PowerMan.beginCriticalSection()==PowerManager::Blocked)
 			PSPDebugSuspend("Suspended in PSPFilesystemNode::PSPFilesystemNode\n");
 		_isValid = (0 == stat(_path.c_str(), &st));
 		PowerMan.endCriticalSection();

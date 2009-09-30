@@ -271,7 +271,7 @@ SciVersion EngineState::detectDoSoundType() {
 		if (!parse_reg_t(this, "?Sound", &soundClass)) {
 			int sum = methodChecksum(soundClass, _kernel->_selectorCache.play, -6, 6);
 
-			switch(sum) {
+			switch (sum) {
 			case 0x1B2: // SCI0
 			case 0x1AE: // SCI01
 				_doSoundType = SCI_VERSION_0_EARLY;

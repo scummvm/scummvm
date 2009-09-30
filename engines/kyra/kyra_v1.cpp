@@ -279,7 +279,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 					quitGame();
 				}
 			} else {
-				switch(event.kbd.keycode) {
+				switch (event.kbd.keycode) {
 				case Common::KEYCODE_SPACE:
 					keys = 61;
 					break;

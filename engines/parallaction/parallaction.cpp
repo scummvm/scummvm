@@ -572,7 +572,7 @@ void Parallaction::runZone(ZonePtr z) {
 	uint16 actionType = ACTIONTYPE(z);
 
 	debugC(3, kDebugExec, "actionType = %x, itemType = %x", actionType, ITEMTYPE(z));
-	switch(actionType) {
+	switch (actionType) {
 
 	case kZoneExamine:
 		enterCommentMode(z);

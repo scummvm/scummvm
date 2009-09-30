@@ -66,9 +66,9 @@ public:
 		TPtrC8 ptr((const unsigned char*) _path.c_str(), _path.size());
 		fname.Copy(ptr);
 		TBool fileExists = BaflUtils::FileExists(static_cast<OSystem_SDL_Symbian*> (g_system)->FsSession(), fname);
-		if(!fileExists) {
+		if (!fileExists) {
 			TParsePtrC parser(fname);
-			if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
+			if (parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent()) {
 				fileExists = ETrue;
 			}
 		}
@@ -137,7 +137,7 @@ SymbianFilesystemNode::SymbianFilesystemNode(const Common::String &path) {
 		_isValid = ETrue;
 		_isDirectory = EFalse;
 		TParsePtrC parser(fname);
-		if(parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent())  {
+		if (parser.PathPresent() && parser.Path().Compare(_L("\\")) == KErrNone && !parser.NameOrExtPresent())  {
 			_isDirectory = ETrue;
 		}
 	}

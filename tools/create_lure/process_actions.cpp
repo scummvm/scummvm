@@ -221,7 +221,7 @@ uint16 process_action_sequence_entry(int supportIndex, byte *data, uint16 remain
 		for (int paramCtr = 0; paramCtr < numParams[actionNum]; ++paramCtr)
 			params[paramCtr] = lureExe.readWord();
 
-		switch(actionNum) {
+		switch (actionNum) {
 		case NPC_SET_ROOM_AND_BLOCKED_OFFSET:
 		case NPC_SET_SUPPORT_OFFSET:
 		case NPC_SUPPORT_OFFSET_COND:

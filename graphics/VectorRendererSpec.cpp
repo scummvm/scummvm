@@ -700,7 +700,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	int newW = w / 2;
 	if (newW % 2) newW++;
 
-	switch(orient) {
+	switch (orient) {
 		case kTriangleUp:
 		case kTriangleDown:
 			drawTriangleFast(x + (newW / 2), y + (h / 2) - (newW / 2), newW, (orient == kTriangleDown), color, Base::_fillMode);
@@ -1028,7 +1028,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		int dysub = ddy - (dx * 2);
 		int error_term = ddy - dx;
 
-		switch(fill_m) {
+		switch (fill_m) {
 		case kFillDisabled:
 			while (dx--) {
 				__TRIANGLE_MAINX();
@@ -1060,7 +1060,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		int dxsub = ddx - (dy * 2);
 		int error_term = ddx - dy;
 
-		switch(fill_m) {
+		switch (fill_m) {
 		case kFillDisabled:
 			while (dy--) {
 				__TRIANGLE_MAINY();
