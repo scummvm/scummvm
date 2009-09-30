@@ -240,8 +240,8 @@ void InventoryRenderer::getItemRect(ItemPosition pos, Common::Rect &r) {
 
 }
 
-Inventory::Inventory(InventoryProperties *props, InventoryItem *verbs) : _numItems(0), _props(props) {
-	_items = (InventoryItem*)calloc(_props->_maxItems, sizeof(InventoryItem));
+Inventory::Inventory(int maxItems, InventoryItem *verbs) : _numItems(0), _maxItems(maxItems) {
+	_items = (InventoryItem*)calloc(_maxItems, sizeof(InventoryItem));
 
 	int i = 0;
 	for ( ; verbs[i]._id; i++) {
@@ -258,7 +258,7 @@ Inventory::~Inventory() {
 ItemPosition Inventory::addItem(ItemName name, uint32 value) {
 	debugC(1, kDebugInventory, "addItem(%i, %i)", name, value);
 
-	if (_numItems == _props->_maxItems) {
+	if (_numItems == _maxItems) {
 		debugC(3, kDebugInventory, "addItem: inventory is full");
 		return -1;
 	}
@@ -329,7 +329,7 @@ void Inventory::clear(bool keepVerbs) {
 
 
 ItemName Inventory::getItemName(ItemPosition pos) const {
-	return (pos >= 0 && pos < _props->_maxItems) ? _items[pos]._index : 0;
+	return (pos >= 0 && pos < _maxItems) ? _items[pos]._index : 0;
 }
 
 const InventoryItem* Inventory::getItem(ItemPosition pos) const {
@@ -343,7 +343,7 @@ Inventory *Parallaction::getActiveInventory() {
 
 
 void Parallaction_ns::initInventory() {
-	_inventory = new Inventory(&_invProps_NS, _verbs_NS);
+	_inventory = new Inventory(_invProps_NS._maxItems, _verbs_NS);
 	assert(_inventory);
 	_inventoryRenderer = new InventoryRenderer(this, &_invProps_NS);
 	assert(_inventoryRenderer);
@@ -351,7 +351,7 @@ void Parallaction_ns::initInventory() {
 }
 
 void Parallaction_br::initInventory() {
-	_inventory = new Inventory(&_invProps_BR, _verbs_BR);
+	_inventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 	assert(_inventory);
 	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR);
 	assert(_inventoryRenderer);

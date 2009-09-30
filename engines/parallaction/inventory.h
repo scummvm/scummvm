@@ -64,10 +64,10 @@ protected:
 
 	InventoryItem	*_items;
 	uint16			_numItems;
-	InventoryProperties *_props;
+	int				_maxItems;
 
 public:
-	Inventory(InventoryProperties *props, InventoryItem *verbs);
+	Inventory(int maxItems, InventoryItem *verbs);
 	virtual ~Inventory();
 
 	ItemPosition addItem(ItemName name, uint32 value);
