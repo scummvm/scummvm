@@ -90,6 +90,7 @@ OBJS := powerman.o \
 	trace.o
 
 DEPDIR = .deps
+CXX_UPDATE_DEP_FLAG = "-Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP"
 
 include $(srcdir)/Makefile.common
 
