@@ -41,12 +41,10 @@ namespace Sci {
  *
  * @param[in] xfact		Horizontal scaling factors
  * @param[in] yfact		Vertical scaling factors
- * @param[in] format	Pixel format description
  * @param[in] palette	Number of palette colors, 0 if we're not in palette mode
- * @param[in] flags		GFX_MODE_FLAG_* values ORred together, or just 0
  * @return				A newly allocated gfx_mode_t structure
  */
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags);
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, Palette *palette);
 
 /**
  * Clips a rect_t

@@ -85,7 +85,7 @@ public:
 	 * 						not be set, or GFX_FATAL if the graphics target
 	 * 						is unuseable.
 	 */
-	GfxDriver(int xfact, int yfact, Graphics::PixelFormat mode);
+	GfxDriver(int xfact, int yfact);
 
 	/**
 	 * Uninitializes the current graphics mode.

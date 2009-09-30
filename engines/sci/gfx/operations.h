@@ -144,7 +144,7 @@ struct GfxState {
  */
 void gfxop_init(GfxState *state, 
 		gfx_options_t *options, ResourceManager *resMan,
-		Graphics::PixelFormat mode, int xfact = 1, int yfact = 1);
+		int xfact = 1, int yfact = 1);
 
 /**
  * Deinitializes a currently active driver.

@@ -43,7 +43,7 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 		box->height = maxy - box->y + 1;
 }
 
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, const Graphics::PixelFormat &format, Palette *palette, int flags) {
+gfx_mode_t *gfx_new_mode(int xfact, int yfact, Palette *palette) {
 	gfx_mode_t *mode = (gfx_mode_t *)malloc(sizeof(gfx_mode_t));
 
 	mode->scaleFactor = xfact;

@@ -36,10 +36,10 @@
 
 namespace Sci {
 
-GfxDriver::GfxDriver(int xfact, int yfact, Graphics::PixelFormat format) {
+GfxDriver::GfxDriver(int xfact, int yfact) {
 	int i;
 
-	_mode = gfx_new_mode(xfact, yfact, format, format.bytesPerPixel == 1 ? new Palette(256) : 0, 0);
+	_mode = gfx_new_mode(xfact, yfact, new Palette(256));
 	_mode->xsize = xfact * 320;
 	_mode->ysize = yfact * 200;
 
@@ -217,6 +217,8 @@ void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 		return;
 	}
 
+	pointer->palette->mergeInto(_mode->palette);
+
 	// Scale cursor and map its colors to the global palette
 	byte *cursorData = new byte[pointer->width * pointer->height];
 
@@ -225,9 +227,7 @@ void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 
 		for (int xc = 0; xc < pointer->index_width; xc++) {
 			byte color = pointer->index_data[yc * pointer->index_width + xc];
-			// FIXME: The palette size check is a workaround for cursors using non-palette colour GFX_CURSOR_TRANSPARENT
-			// Note that some cursors don't have a palette in SQ5
-			if (pointer->palette && color < pointer->palette->size())
+			if (color < pointer->palette->size())
 				color = pointer->palette->getColor(color).getParentIndex();
 			memset(&linebase[xc], color, _mode->scaleFactor);
 		}
@@ -237,10 +237,8 @@ void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 			memcpy(&linebase[pointer->width * scalectr], linebase, pointer->width);
 	}
 
-	// FIXME: The palette size check is a workaround for cursors using non-palette color GFX_CURSOR_TRANSPARENT
-	// Note that some cursors don't have a palette (e.g. in SQ5 and QFG3)
 	byte color_key = pointer->color_key;
-	if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && (pointer->palette && (uint)pointer->color_key < pointer->palette->size()))
+	if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && ((uint)pointer->color_key < pointer->palette->size()))
 		color_key = pointer->palette->getColor(pointer->color_key).getParentIndex();
 
 	CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);

@@ -98,13 +98,7 @@ SciEngine::~SciEngine() {
 }
 
 Common::Error SciEngine::run() {
-	Graphics::PixelFormat gfxmode;
-#if 0 && defined(USE_RGB_COLOR)
-	initGraphics(320, 200, false, NULL);
-#else
 	initGraphics(320, 200, false);
-#endif
-	gfxmode = _system->getScreenFormat();
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
@@ -177,7 +171,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	gfxop_init(&gfx_state, &gfx_options, _resMan, gfxmode, 1, 1);
+	gfxop_init(&gfx_state, &gfx_options, _resMan, 1, 1);
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");

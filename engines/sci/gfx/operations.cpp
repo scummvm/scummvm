@@ -63,7 +63,7 @@ PaletteEntry default_colors[DEFAULT_COLORS_NR] = {
 #define POINTER_VISIBLE_BUT_CLIPPED 2
 
 // How to determine whether colors have to be allocated
-#define PALETTE_MODE state->driver->getMode()->palette
+#define SCREEN_PALETTE state->driver->getMode()->palette
 
 //#define GFXOP_DEBUG_DIRTY
 
@@ -386,10 +386,7 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 
 void gfxop_init(GfxState *state,
 				gfx_options_t *options, ResourceManager *resMan,
-				Graphics::PixelFormat mode, int xfact, int yfact) {
-	//int color_depth = bpp ? bpp : 1;
-	//int initialized = 0;
-
+				int xfact, int yfact) {
 	state->options = options;
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -402,7 +399,7 @@ void gfxop_init(GfxState *state,
 	state->pic_port_bounds = gfx_rect(0, 10, 320, 190);
 	state->_dirtyRects.clear();
 
-	state->driver = new GfxDriver(xfact, yfact, mode);
+	state->driver = new GfxDriver(xfact, yfact);
 
 	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan);
 
@@ -521,7 +518,7 @@ void gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b, i
 	int mask = ((r >= 0 && g >= 0 && b >= 0) ? GFX_MASK_VISUAL : 0) | ((priority >= 0) ? GFX_MASK_PRIORITY : 0)
 	           | ((control >= 0) ? GFX_MASK_CONTROL : 0);
 
-	if (PALETTE_MODE && a >= GFXOP_ALPHA_THRESHOLD)
+	if (a >= GFXOP_ALPHA_THRESHOLD)
 		mask &= ~GFX_MASK_VISUAL;
 
 	color->mask = mask;
@@ -534,10 +531,7 @@ void gfxop_set_color(GfxState *state, gfx_color_t *color, int r, int g, int b, i
 		color->visual.g = g;
 		color->visual.b = b;
 		color->alpha = a;
-
-		if (PALETTE_MODE) {
-			color->visual._parentIndex = PALETTE_MODE->findNearbyColor(r,g,b,true);
-		}
+		color->visual._parentIndex = SCREEN_PALETTE->findNearbyColor(r,g,b,true);
 	}
 }
 
@@ -553,14 +547,11 @@ void gfxop_set_color(GfxState *state, gfx_color_t *colorOut, gfx_color_t &colorI
 }
 
 void gfxop_set_system_color(GfxState *state, unsigned int index, gfx_color_t *color) {
-	if (!PALETTE_MODE)
-		return;
-
-	if (index >= PALETTE_MODE->size()) {
+	if (index >= SCREEN_PALETTE->size()) {
 		error("Attempt to set invalid color index %02x as system color", color->visual.getParentIndex());
 	}
 
-	PALETTE_MODE->makeSystemColor(index, color->visual);
+	SCREEN_PALETTE->makeSystemColor(index, color->visual);
 }
 
 void gfxop_free_color(GfxState *state, gfx_color_t *color) {
@@ -822,8 +813,6 @@ void gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_l
 }
 
 
-#define COLOR_MIX(type, dist) ((color1.type * dist) + (color2.type * (1.0 - dist)))
-
 void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t color2, gfx_box_shade_t shade_type) {
 	GfxDriver *drv = state->driver;
 	int reverse = 0; // switch color1 and color2
@@ -898,40 +887,8 @@ void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t
 			gfxop_set_color(state, &color1, color1);
 		drv->drawFilledRect(new_box, color1, color1, GFX_SHADE_FLAT);
 		return;
-	} else {
-		if (PALETTE_MODE) {
-			warning("[GFX] Attempting to draw shaded box in palette mode");
-			return;	// not critical
-		}
-
-		gfx_color_t draw_color1; // CHECKME
-		gfx_color_t draw_color2;
-		gfxop_set_color(state, &draw_color1, 0, 0, 0, 0, 0, 0);
-		gfxop_set_color(state, &draw_color2, 0, 0, 0, 0, 0, 0);
-
-		draw_color1.mask = draw_color2.mask = color1.mask;
-		draw_color1.priority = draw_color2.priority = color1.priority;
-
-		if (draw_color1.mask & GFX_MASK_VISUAL) {
-			draw_color1.visual.r = (byte) COLOR_MIX(visual.r, mod_offset);
-			draw_color1.visual.g = (byte) COLOR_MIX(visual.g, mod_offset);
-			draw_color1.visual.b = (byte) COLOR_MIX(visual.b, mod_offset);
-			draw_color1.alpha = (byte) COLOR_MIX(alpha, mod_offset);
-
-			mod_offset += mod_breadth;
-
-			draw_color2.visual.r = (byte) COLOR_MIX(visual.r, mod_offset);
-			draw_color2.visual.g = (byte) COLOR_MIX(visual.g, mod_offset);
-			draw_color2.visual.b = (byte) COLOR_MIX(visual.b, mod_offset);
-			draw_color2.alpha = (byte) COLOR_MIX(alpha, mod_offset);
-		}
-		if (reverse)
-			return drv->drawFilledRect(new_box, draw_color2, draw_color1, driver_shade_type);
-		else
-			return drv->drawFilledRect(new_box, draw_color1, draw_color2, driver_shade_type);
 	}
 }
-#undef COLOR_MIX
 
 void gfxop_fill_box(GfxState *state, rect_t box, gfx_color_t color) {
 	gfxop_draw_box(state, box, color, color, GFX_BOX_SHADE_FLAT);
@@ -1047,21 +1004,9 @@ void gfxop_sleep(GfxState *state, uint32 msecs) {
 	}
 }
 
-static void _gfxop_set_pointer(GfxState *state, gfx_pixmap_t *pxm, Common::Point *hotspot) {
-	// FIXME: We may have to store this pxm somewhere, as the global palette
-	// may change when a new PIC is loaded. The cursor has to be regenerated
-	// from this pxm at that point. (An alternative might be to ensure the
-	// cursor only uses colours in the static part of the palette?)
-	if (pxm && PALETTE_MODE) {
-		assert(pxm->palette);
-		pxm->palette->mergeInto(PALETTE_MODE);
-	}
-	state->driver->setPointer(pxm, hotspot);
-}
-
 void gfxop_set_pointer_cursor(GfxState *state, int nr) {
 	if (nr == GFXOP_NO_POINTER) {
-		_gfxop_set_pointer(state, NULL, NULL);
+		state->driver->setPointer(NULL, NULL);
 		return;
 	}
 
@@ -1073,36 +1018,25 @@ void gfxop_set_pointer_cursor(GfxState *state, int nr) {
 	}
 
 	Common::Point p = Common::Point(new_pointer->xoffset, new_pointer->yoffset);
-	_gfxop_set_pointer(state, new_pointer, &p);
+	state->driver->setPointer(new_pointer, &p);
 }
 
 void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot) {
-	int real_loop = loop;
-	int real_cel = cel;
 	// FIXME: For now, don't palettize pointers
-	gfx_pixmap_t *new_pointer = _gfxr_get_cel(state, nr, &real_loop, &real_cel, 0);
-
-	if (!new_pointer) {
-		warning("[GFX] Attempt to set invalid pointer #%d", nr);
-		return;
-	}
-
-	if (real_loop != loop || real_cel != cel) {
-		debugC(2, kDebugLevelGraphics, "Changed loop/cel from %d/%d to %d/%d in view %d\n", loop, cel, real_loop, real_cel, nr);
-	}
+	gfx_pixmap_t *new_pointer = state->gfxResMan->getView(nr, &loop, &cel, 0)->loops[loop].cels[cel];
 
 	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this.
 	if (new_pointer->width < 2 || new_pointer->height < 2) {
-		_gfxop_set_pointer(state, NULL, NULL);
+		state->driver->setPointer(NULL, NULL);
 		return;
 	}
 
 	if (hotspot)
-		_gfxop_set_pointer(state, new_pointer, hotspot);
+		state->driver->setPointer(new_pointer, hotspot);
 	else {
 		// Compute hotspot from xoffset/yoffset
 		Common::Point p = Common::Point(new_pointer->xoffset + (new_pointer->width >> 1), new_pointer->yoffset + new_pointer->height - 1);
-		_gfxop_set_pointer(state, new_pointer, &p);
+		state->driver->setPointer(new_pointer, &p);
 	}
 }
 
@@ -1625,8 +1559,8 @@ static void _gfxop_set_pic(GfxState *state) {
 	// FIXME: The _gfxop_install_pixmap call below updates the OSystem palette.
 	// This is too soon, since it causes brief palette corruption until the
 	// screen is updated too. (Possibly related: EngineState::pic_not_valid .)
-	if (state->pic->visual_map->palette && PALETTE_MODE) {
-		state->pic->visual_map->palette->forceInto(PALETTE_MODE);
+	if (state->pic->visual_map->palette) {
+		state->pic->visual_map->palette->forceInto(SCREEN_PALETTE);
 		_gfxop_install_pixmap(state->driver, state->pic->visual_map);
 	}
 
