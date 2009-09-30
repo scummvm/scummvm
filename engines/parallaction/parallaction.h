@@ -298,6 +298,7 @@ public:
 	BalloonManager		*_balloonMan;
 	DialogueManager		*_dialogueMan;
 	InventoryRenderer	*_inventoryRenderer;
+	Inventory			*_inventory;			// inventory for the current character
 
 	// game data
 	Character		_char;
@@ -365,7 +366,6 @@ public:
 	void		cleanInventory(bool keepVerbs = true);
 	void		openInventory();
 	void		closeInventory();
-	Inventory 	*getActiveInventory();
 
 	virtual void parseLocation(const char* name) = 0;
 	virtual void changeLocation() = 0;
@@ -415,7 +415,6 @@ private:
 	bool				_inTestResult;
 	LocationParser_ns	*_locationParser;
 	ProgramParser_ns	*_programParser;
-	Inventory			*_inventory;
 
 private:
 	void	initFonts();
@@ -547,7 +546,6 @@ private:
 	LocationParser_br		*_locationParser;
 	ProgramParser_br		*_programParser;
 	SoundMan_br				*_soundManI;
-	Inventory				*_inventory;			// inventory for the current character
 	Inventory				*_charInventories[3];	// all the inventories
 
 	int32		_counters[32];

@@ -102,31 +102,31 @@ void Parallaction::highlightInventoryItem(ItemPosition pos) {
 }
 
 int Parallaction::addInventoryItem(ItemName item) {
-	return getActiveInventory()->addItem(item);
+	return _inventory->addItem(item);
 }
 
 int Parallaction::addInventoryItem(ItemName item, uint32 value) {
-	return getActiveInventory()->addItem(item, value);
+	return _inventory->addItem(item, value);
 }
 
 void Parallaction::dropItem(uint16 v) {
-	getActiveInventory()->removeItem(v);
+	_inventory->removeItem(v);
 }
 
 bool Parallaction::isItemInInventory(int32 v) {
-	return (getActiveInventory()->findItem(v) != -1);
+	return (_inventory->findItem(v) != -1);
 }
 
 const InventoryItem* Parallaction::getInventoryItem(int16 pos) {
-	return getActiveInventory()->getItem(pos);
+	return _inventory->getItem(pos);
 }
 
 int16 Parallaction::getInventoryItemIndex(int16 pos) {
-	return getActiveInventory()->getItemName(pos);
+	return _inventory->getItemName(pos);
 }
 
 void Parallaction::cleanInventory(bool keepVerbs) {
-	getActiveInventory()->clear(keepVerbs);
+	_inventory->clear(keepVerbs);
 }
 
 void Parallaction::openInventory() {
@@ -140,7 +140,7 @@ void Parallaction::closeInventory() {
 
 
 
-InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props) : _vm(vm), _props(props) {
+InventoryRenderer::InventoryRenderer(Parallaction *vm, InventoryProperties *props, Inventory *inv) : _vm(vm), _props(props), _inv(inv) {
 	_surf.create(_props->_width, _props->_height, 1);
 }
 
@@ -336,26 +336,20 @@ const InventoryItem* Inventory::getItem(ItemPosition pos) const {
 	return &_items[pos];
 }
 
-Inventory *Parallaction::getActiveInventory() {
-	return _inventoryRenderer->getBoundInventory();
-}
-
 
 
 void Parallaction_ns::initInventory() {
 	_inventory = new Inventory(_invProps_NS._maxItems, _verbs_NS);
 	assert(_inventory);
-	_inventoryRenderer = new InventoryRenderer(this, &_invProps_NS);
+	_inventoryRenderer = new InventoryRenderer(this, &_invProps_NS, _inventory);
 	assert(_inventoryRenderer);
-	_inventoryRenderer->bindInventory(_inventory);
 }
 
 void Parallaction_br::initInventory() {
 	_inventory = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 	assert(_inventory);
-	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR);
+	_inventoryRenderer = new InventoryRenderer(this, &_invProps_BR, _inventory);
 	assert(_inventoryRenderer);
-	_inventoryRenderer->bindInventory(_inventory);
 
 	_charInventories[0] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
 	_charInventories[1] = new Inventory(_invProps_BR._maxItems, _verbs_BR);
