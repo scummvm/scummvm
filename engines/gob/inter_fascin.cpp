@@ -109,7 +109,6 @@ void Inter_Fascination::setupOpcodesGob() {
 }
 
 void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 0");
 	warning("funcPlayImd with parameter : 'tirb.imd'");
 
 	if (_vm->_vidPlayer->primaryOpen("tirb.imd")) {
@@ -120,7 +119,6 @@ void Inter_Fascination::oFascin_playTirb(OpGobParams &params) {
 }
 
 void Inter_Fascination::oFascin_playTira(OpGobParams &params) {
-	warning("Fascination Unknown GE Function 1");
 	warning("funcPlayImd with parameter : 'tira.imd'");
 	if (_vm->_vidPlayer->primaryOpen("tira.imd")) {
 		_vm->_vidPlayer->primaryPlay();
@@ -208,17 +206,11 @@ void Inter_Fascination::oFascin_setWinSize() {
 	_vm->_draw->_winVarArrayStatus = _vm->_game->_script->readVarIndex();
 	_vm->_draw->_winVarArrayLimitsX = _vm->_game->_script->readVarIndex();
 	_vm->_draw->_winVarArrayLimitsY = _vm->_game->_script->readVarIndex();
-	warning("Inter_Fascination::oFascin_setWinSize lmax %d hmax %d x %d y %d l %d h %d stat %d limx %d limy %d",
-			 _vm->_draw->_winMaxWidth, _vm->_draw->_winMaxHeight,
-			 _vm->_draw->_winVarArrayLeft,  _vm->_draw->_winVarArrayTop,
-			 _vm->_draw->_winVarArrayWidth, _vm->_draw->_winVarArrayHeight, _vm->_draw->_winVarArrayStatus, 
-			 _vm->_draw->_winVarArrayLimitsX, _vm->_draw->_winVarArrayLimitsY);
 }
 
 void Inter_Fascination::oFascin_closeWin() {
 	int16 id;
 	_vm->_game->_script->evalExpr(&id);
-	warning("Inter_Fascination::closeWin id %d", id);
 	_vm->_draw->activeWin(id);
 	_vm->_draw->closeWin(id);	
 }
@@ -226,7 +218,6 @@ void Inter_Fascination::oFascin_closeWin() {
 void Inter_Fascination::oFascin_activeWin() {
 	int16 id;
 	_vm->_game->_script->evalExpr(&id);
-	warning("Inter_Fascination::activeWin id %d", id);
 	_vm->_draw->activeWin(id);
 }
 
@@ -234,7 +225,6 @@ void Inter_Fascination::oFascin_openWin() {
 	int16 retVal,id;
 	_vm->_game->_script->evalExpr(&id);
 	retVal = _vm->_game->_script->readVarIndex();
-	warning("Inter_Fascination::openWin index %d, id %d", retVal, id);
 	WRITE_VAR((retVal / 4), (int32) _vm->_draw->openWin(id));
 }
 
@@ -242,14 +232,12 @@ void Inter_Fascination::oFascin_setRenderFlags() {
 	int16 expr;
 	_vm->_game->_script->evalExpr(&expr);
 	_vm->_draw->_renderFlags = expr;
-	warning("Inter_Fascination::oFascin_setRenderFlags: _draw_renderFlags <- %d",expr);
 }
 
 void Inter_Fascination::oFascin_setWinFlags() {
 	int16 expr;
 	_vm->_game->_script->evalExpr(&expr);
 	_vm->_global->_curWinId = expr;
-	warning("Inter_Fascination::oFascin_setWinFlags: _global_DEVwnd <- %d",expr);
 }
 
 void Inter_Fascination::oFascin_playProtracker(OpGobParams &params) {
