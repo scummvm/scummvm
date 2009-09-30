@@ -455,10 +455,13 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	for (int i = 0; i < vmpLen; i++)
 		_vmpPtr[i] = READ_LE_UINT16(&v[i << 1]);
 
+	Palette tpal(256);
+	tpal.copy(_screen->getPalette(0));
+	tpal.fill(16, 240, 0xff);
 	for (int i = 0; i < 7; i++) {
 		weight = 100 - (i * _lastSpecialColorWeight);
 		weight = (weight > 0) ? (weight * 255) / 100 : 0;
-		_screen->generateLevelOverlay(_screen->getPalette(0), _screen->getLevelOverlay(i), _lastSpecialColor, weight);
+		_screen->generateLevelOverlay(tpal/*_screen->getPalette(0)*/, _screen->getLevelOverlay(i), _lastSpecialColor >> 4, weight);
 
 		int l = _flags.use16ColorMode ? 256 : 128;
 		uint8 *levelOverlay = _screen->getLevelOverlay(i);

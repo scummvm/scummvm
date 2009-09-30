@@ -2324,6 +2324,10 @@ int GUI_LoL::runMenu(Menu &menu) {
 	// a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
 
+	Screen::FontId of;
+	if (_vm->gameFlags().use16ColorMode)
+		of = _screen->setFont(Screen::FID_SJIS_FNT);
+
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
 
@@ -2481,6 +2485,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 			textCursorTimer = 0;
 			textCursorStatus = 0;
 
+			Screen::FontId f = _screen->setFont(Screen::FID_9_FNT);
 			fC = _screen->getTextWidth(_saveDescription);
 			while (fC >= fW) {
 				_saveDescription[strlen(_saveDescription) - 1] = 0;
@@ -2488,6 +2493,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 			}
 
 			_screen->fprintString("%s", (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0, _saveDescription);
+			f = _screen->setFont(f);
 			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, d->unk8, 0);
 			_screen->setCurPage(pg);
 		}
@@ -2497,11 +2503,13 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 			if (_currentMenu == &_savenameMenu) {
 				if (textCursorTimer <= _vm->_system->getMillis()) {
+					Screen::FontId f = _screen->setFont(Screen::FID_9_FNT);
 					fC = _screen->getTextWidth(_saveDescription);
 					textCursorStatus ^= 1;
 					textCursorTimer = _vm->_system->getMillis() + 20 * _vm->_tickLength;
 					_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - 1, textCursorStatus ? d->unk8 : d->unkA, 0);
 					_screen->updateScreen();
+					f = _screen->setFont(f);
 				}
 			}
 
@@ -2526,6 +2534,9 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 		_newMenu = 0;
 	}
+
+	if (_vm->gameFlags().use16ColorMode)
+		_screen->setFont(of);
 
 	return _menuResult;
 }
@@ -2591,13 +2602,7 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 }
 
 void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font) {
-	if (_vm->gameFlags().use16ColorMode) {
-		Screen::FontId of = _screen->setFont(Screen::FID_SJIS_FNT);
-		_screen->fprintString("%s", x, y, c0, c1, flags & 3, str);
-		_screen->setFont(of);
-	} else {
-		_screen->fprintString("%s", x, y, c0, c1, flags, str);
-	}	
+	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? (flags & 3) : flags , str);
 }
 
 int GUI_LoL::getMenuCenterStringX(const char *str, int x1, int x2) {

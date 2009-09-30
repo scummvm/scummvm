@@ -675,7 +675,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 
 void TextDisplayer_LoL::textPageBreak() {
 	int cp = _screen->setCurPage(0);
-	Screen::FontId cf = _screen->setFont(Screen::FID_6_FNT);
+	Screen::FontId cf = _screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
 	_vm->_timer->pauseSingleTimer(11, true);
 
