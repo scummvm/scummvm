@@ -69,6 +69,11 @@ public:
 	virtual bool load(Common::SeekableReadStream &file) = 0;
 
 	/**
+	 * Whether the font draws on the overlay.
+	 */
+	virtual bool usesOverlay() const { return false; }
+
+	/**
 	 * The font height.
 	 */
 	virtual int getHeight() const = 0;
@@ -82,7 +87,7 @@ public:
 	/**
 	 * Gets the width of a specific character.
 	 */
-	virtual int getCharWidth(uint8 c) const = 0;
+	virtual int getCharWidth(uint16 c) const = 0;
 
 	/**
 	 * Sets a text palette map. The map contains 16 entries.
@@ -97,7 +102,7 @@ public:
 	 * We use this API, since it's hard to assure dirty rect
 	 * handling from outside Screen.
 	 */
-	virtual void drawChar(uint8 c, byte *dst, int pitch) const = 0;
+	virtual void drawChar(uint16 c, byte *dst, int pitch) const = 0;
 };
 
 /**
@@ -114,9 +119,9 @@ public:
 	bool load(Common::SeekableReadStream &file);
 	int getHeight() const { return _height; }
 	int getWidth() const { return _width; }
-	int getCharWidth(uint8 c) const;
+	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src) { _colorMap = src; }
-	void drawChar(uint8 c, byte *dst, int pitch) const;
+	void drawChar(uint16 c, byte *dst, int pitch) const;
 
 private:
 	void unload();
@@ -145,9 +150,9 @@ public:
 	bool load(Common::SeekableReadStream &file);
 	int getHeight() const { return _height; }
 	int getWidth() const { return _width; }
-	int getCharWidth(uint8 c) const;
+	int getCharWidth(uint16 c) const;
 	void setColorMap(const uint8 *src) {}
-	void drawChar(uint8 c, byte *dst, int pitch) const;
+	void drawChar(uint16 c, byte *dst, int pitch) const;
 
 private:
 	void unload();
@@ -164,6 +169,32 @@ private:
 	};
 
 	Character _chars[255];
+};
+
+/**
+ * Implementation of the Font interface for FM-Towns/PC98 fonts
+ */
+class SJISFont : public Font {
+public:
+	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color);
+	~SJISFont() { unload(); }
+
+	bool usesOverlay() const { return true; }
+
+	bool load(Common::SeekableReadStream &) { return true; }
+	int getHeight() const;
+	int getWidth() const;
+	int getCharWidth(uint16 c) const;
+	void setColorMap(const uint8 *src);
+	void drawChar(uint16 c, byte *dst, int pitch) const;
+private:
+	void unload();
+
+	const uint8 *_colorMap;
+
+	Graphics::FontSJIS *_font;
+	const uint8 _invisColor;
+	const bool _is16Color;
 };
 
 /**
@@ -298,6 +329,7 @@ public:
 		FID_BOOKFONT_FNT,
 		FID_GOLDFONT_FNT,
 		FID_INTRO_FNT,
+		FID_SJIS_FNT,
 		FID_NUM
 	};
 
@@ -460,8 +492,10 @@ protected:
 	void copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
 	// font/text specific
-	void drawCharANSI(uint8 c, int x, int y);
-	void drawCharSJIS(uint16 c, int x, int y);
+	bool isSJISChar(uint16 ch) const;
+	bool requiresSJISFont(const char *s) const;
+	uint16 fetchChar(const char *&s) const;
+	void drawChar(uint16 c, int x, int y);
 
 	int16 encodeShapeAndCalculateSize(uint8 *from, uint8 *to, int size);
 
@@ -476,7 +510,6 @@ protected:
 	bool _use16ColorMode;
 	bool _isAmiga;
 
-	Graphics::FontSJIS *_sjisFont;
 	uint8 _sjisInvisibleColor;
 
 	Palette *_screenPalette;

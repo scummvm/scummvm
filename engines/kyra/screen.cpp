@@ -47,7 +47,6 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system)
 	_drawShapeVar4 = 0;
 	_drawShapeVar5 = 0;
 
-	_sjisFont = 0;
 	memset(_fonts, 0, sizeof(_fonts));
 
 	_currentFont = FID_8_FNT;
@@ -63,7 +62,6 @@ Screen::~Screen() {
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f)
 		delete _fonts[f];
 
-	delete _sjisFont;
 	delete _screenPalette;
 	delete _internFadePalette;
 	delete[] _decodeShapeBuffer;
@@ -83,6 +81,7 @@ bool Screen::init() {
 	_useSJIS = false;
 	_use16ColorMode = _vm->gameFlags().use16ColorMode;
 	_isAmiga = (_vm->gameFlags().platform == Common::kPlatformAmiga);
+	memset(_fonts, 0, sizeof(_fonts));
 
 	if (_vm->gameFlags().useHiResOverlay) {
 		_useOverlays = true;
@@ -98,11 +97,12 @@ bool Screen::init() {
 		}
 
 		if (_useSJIS) {
-			_sjisFont = Graphics::FontSJIS::createFont(_vm->gameFlags().platform);
+			Graphics::FontSJIS *font = Graphics::FontSJIS::createFont(_vm->gameFlags().platform);
 
-			if (!_sjisFont)
+			if (!font)
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
-			_sjisFont->enableOutline(!_use16ColorMode);
+
+			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode);
 		}
 	}
 
@@ -140,7 +140,7 @@ bool Screen::init() {
 
 		for (int i = 0; i < 8; ++i) {
 			palette[i * 4 + 0] = ((i >> 1) & 1) * 0xFF;
-			palette[i * 4 + 1] = ((i >> 2) & 1)	* 0xFF;
+			palette[i * 4 + 1] = ((i >> 2) & 1) * 0xFF;
 			palette[i * 4 + 2] = ((i >> 0) & 1) * 0xFF;
 			palette[i * 4 + 3] = 0;
 
@@ -151,7 +151,6 @@ bool Screen::init() {
 	_curDim = 0;
 	_charWidth = 0;
 	_charOffset = 0;
-	memset(_fonts, 0, sizeof(_fonts));
 	for (int i = 0; i < ARRAYSIZE(_textColorsMap); ++i)
 		_textColorsMap[i] = i;
 	_decodeShapeBuffer = NULL;
@@ -1081,9 +1080,21 @@ void Screen::setAnimBlockPtr(int size) {
 
 void Screen::setTextColor(const uint8 *cmap, int a, int b) {
 	memcpy(&_textColorsMap[a], cmap, b-a+1);
+
+	// We need to update the color tables of all fonts, we
+	// setup so far here.
+	for (int i = 0; i < FID_NUM; ++i) {
+		if (_fonts[i])
+			_fonts[i]->setColorMap(_textColorsMap);
+	}
 }
 
 bool Screen::loadFont(FontId fontId, const char *filename) {
+	if (fontId == FID_SJIS_FNT) {
+		warning("Trying to replace system SJIS font.");
+		return true;
+	}
+
 	Font *&fnt = _fonts[fontId];
 
 	if (!fnt) {
@@ -1110,7 +1121,6 @@ Screen::FontId Screen::setFont(FontId fontId) {
 	_currentFont = fontId;
 
 	assert(_fonts[_currentFont]);
-
 	return prev;
 }
 
@@ -1123,18 +1133,19 @@ int Screen::getFontWidth() const {
 }
 
 int Screen::getCharWidth(uint16 c) const {
-	if ((c & 0xFF00) && _sjisFont)
-		return _sjisFont->getMaxFontWidth() >> 1;
-
-	return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
+	if (isSJISChar(c))
+		return _fonts[FID_SJIS_FNT]->getCharWidth(c) + _charWidth;
+	else
+		return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
 }
 
 int Screen::getTextWidth(const char *str) const {
 	int curLineLen = 0;
 	int maxLineLen = 0;
+
 	while (1) {
-		uint c = *str++;
-		c &= 0xFF;
+		uint c = fetchChar(str);
+
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
@@ -1143,13 +1154,7 @@ int Screen::getTextWidth(const char *str) const {
 			else
 				curLineLen = 0;
 		} else {
-			if (c <= 0x7F || !_useSJIS) {
-				curLineLen += getCharWidth(c);
-			} else {
-				c = READ_LE_UINT16(str - 1);
-				++str;
-				curLineLen += getCharWidth(c);
-			}
+			curLineLen += getCharWidth(c);
 		}
 	}
 
@@ -1162,8 +1167,11 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	cmap[1] = color1;
 	setTextColor(cmap, 0, 1);
 
+	FontId oldFont = FID_NUM;
+	if (requiresSJISFont(str))
+		oldFont = setFont(FID_SJIS_FNT);
+
 	const uint8 charHeightFnt = getFontHeight();
-	uint8 charHeight = 0;
 
 	if (x < 0)
 		x = 0;
@@ -1177,51 +1185,73 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		return;
 
 	while (1) {
-		uint c = *str++;
-		c &= 0xFF;
+		uint c = fetchChar(str);
 
 		if (c == 0) {
 			break;
 		} else if (c == '\r') {
 			x = x_start;
-			y += charHeight + _charOffset;
+			y += charHeightFnt + _charOffset;
 		} else {
 			int charWidth = getCharWidth(c);
 			if (x + charWidth > SCREEN_W) {
 				x = x_start;
-				y += charHeight + _charOffset;
+				y += charHeightFnt + _charOffset;
 				if (y >= SCREEN_H)
 					break;
 			}
 
-			if (!_useSJIS) {
-				drawCharANSI(c, x, y);
-				charHeight = charHeightFnt;
-			} else {
-				if (c <= 0x7F) {
-					// draw ANSI chars through the setup font
-					drawCharANSI(c, x, y);
-					charHeight = charHeightFnt;
-				} else if (c >= 0xA1 && c <= 0xDF) {
-					warning("Use of unsupported half-width katakana %.2X", c);
-				} else {
-					c = READ_LE_UINT16(str - 1);
-					++str;
-					charWidth = getCharWidth(c);
-					charHeight = _sjisFont->getFontHeight() >> 1;
-					drawCharSJIS(c, x, y);
-				}
-			}
-
+			drawChar(c, x, y);
 			x += charWidth;
 		}
 	}
+
+	if (oldFont != FID_NUM)
+		setFont(oldFont);
 }
 
-void Screen::drawCharANSI(uint8 c, int x, int y) {
+bool Screen::isSJISChar(uint16 c) const {
+	if (!_useSJIS)
+		return false;
+
+	if (c & 0xFF00)
+		return true;
+	else if ((c & 0xFF) >= 0xA1 && (c & 0xFF) <= 0xDF)
+		return true;
+
+	return false;
+}
+
+bool Screen::requiresSJISFont(const char *s) const {
+	if (!_useSJIS)
+		return false;
+
+	while (*s) {
+		if (isSJISChar(fetchChar(s)))
+			return true;
+	}
+
+	return false;
+}
+
+uint16 Screen::fetchChar(const char *&s) const {
+	if (!_useSJIS)
+		return (uint8)*s++;
+
+	uint16 ch = (uint8)*s++;
+
+	if (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))
+		return ch;
+
+	ch |= (uint8)(*s++) << 8;
+	return ch;
+}
+
+void Screen::drawChar(uint16 c, int x, int y) {
 	Font *fnt = _fonts[_currentFont];
 	assert(fnt);
 
+	const bool useOverlay = fnt->usesOverlay();
 	const int charWidth = fnt->getCharWidth(c);
 	const int charHeight = fnt->getHeight();
 
@@ -1230,7 +1260,19 @@ void Screen::drawCharANSI(uint8 c, int x, int y) {
 	if (x + charWidth > SCREEN_W || y + charHeight > SCREEN_H)
 		return;
 
-	fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W + x, SCREEN_W);
+	if (useOverlay) {
+		uint8 *destPage = getOverlayPtr(_curPage);
+		if (!destPage) {
+			warning("trying to draw SJIS char on unsupported page %d", _curPage);
+			return;
+		}
+
+		destPage += (y * 2) * 640 + (x * 2);
+
+		fnt->drawChar(c, destPage, 640);
+	} else {
+		fnt->drawChar(c, getPagePtr(_curPage) + y * SCREEN_W + x, SCREEN_W);
+	}
 
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, charWidth, charHeight);
@@ -3063,41 +3105,6 @@ void Screen::copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int s
 	}
 }
 
-void Screen::drawCharSJIS(uint16 c, int x, int y) {
-	int color1, color2;
-
-	if (_use16ColorMode) {
-		// PC98 16 color games specify a color value which is for the
-		// PC98 text mode palette, thus we need to remap it.
-		color1 = ((_textColorsMap[1] >> 5) & 0x7) + 16; 
-		color2 = ((_textColorsMap[0] >> 5) & 0x7) + 16;
-	} else {
-		color1 = _textColorsMap[1];
-		color2 = _textColorsMap[0];
-
-		if (color2 == _sjisInvisibleColor)
-			_sjisFont->enableOutline(false);
-	}
-
-	if (_curPage == 0 || _curPage == 1)
-		addDirtyRect(x, y, _sjisFont->getMaxFontWidth() >> 1, _sjisFont->getFontHeight() >> 1);
-
-	x <<= 1;
-	y <<= 1;
-
-	uint8 *destPage = getOverlayPtr(_curPage);
-	if (!destPage) {
-		warning("trying to draw SJIS char on unsupported page %d", _curPage);
-		return;
-	}
-
-	destPage += y * 640 + x;
-
-	_sjisFont->drawChar(destPage, c, 640, 1, color1, color2);
-
-	_sjisFont->enableOutline(!_use16ColorMode);
-}
-
 #pragma mark -
 
 DOSFont::DOSFont() {
@@ -3140,13 +3147,13 @@ bool DOSFont::load(Common::SeekableReadStream &file) {
 	return true;
 }
 
-int DOSFont::getCharWidth(uint8 c) const {
+int DOSFont::getCharWidth(uint16 c) const {
 	if (c >= _numGlyphs)
 		return 0;
 	return _widthTable[c];
 }
 
-void DOSFont::drawChar(uint8 c, byte *dst, int pitch) const {
+void DOSFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	if (c >= _numGlyphs)
 		return;
 
@@ -3282,13 +3289,13 @@ bool AMIGAFont::load(Common::SeekableReadStream &file) {
 	return !file.err();
 }
 
-int AMIGAFont::getCharWidth(uint8 c) const {
+int AMIGAFont::getCharWidth(uint16 c) const {
 	if (c >= 255)
 		return 0;
 	return _chars[c].width;
 }
 
-void AMIGAFont::drawChar(uint8 c, byte *dst, int pitch) const {
+void AMIGAFont::drawChar(uint16 c, byte *dst, int pitch) const {
 	if (c >= 255)
 		return;
 
@@ -3320,6 +3327,56 @@ void AMIGAFont::unload() {
 	for (int i = 0; i < ARRAYSIZE(_chars); ++i)
 		delete[] _chars[i].graphics.bitmap;
 	memset(_chars, 0, sizeof(_chars));
+}
+
+SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color)
+    : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color) {
+	assert(_font);
+	_font->enableOutline(!is16Color);
+}
+
+void SJISFont::unload() {
+	delete _font;
+	_font = 0;
+}
+
+int SJISFont::getHeight() const {
+	return _font->getFontHeight() >> 1;
+}
+
+int SJISFont::getWidth() const {
+	return _font->getMaxFontWidth() >> 1;
+}
+
+int SJISFont::getCharWidth(uint16 c) const {
+	return _font->getCharWidth(c) >> 1;
+}
+
+void SJISFont::setColorMap(const uint8 *src) {
+	_colorMap = src;
+
+	if (!_is16Color) {
+		if (_colorMap[0] == _invisColor)
+			_font->enableOutline(false);
+		else
+			_font->enableOutline(true);
+	}
+}
+
+void SJISFont::drawChar(uint16 c, byte *dst, int pitch) const {
+	uint8 color1, color2;
+
+	if (_is16Color) {
+		// PC98 16 color games specify a color value which is for the
+		// PC98 text mode palette, thus we need to remap it.
+		color1 = ((_colorMap[1] >> 5) & 0x7) + 16; 
+		color2 = ((_colorMap[0] >> 5) & 0x7) + 16;
+	} else {
+		color1 = _colorMap[1];
+		color2 = _colorMap[0];
+	}
+
+	_font->drawChar(dst, c, 640, 1, color1, color2);
 }
 
 #pragma mark -
