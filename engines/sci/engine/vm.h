@@ -102,14 +102,6 @@ enum SelectorType {
 	kSelectorMethod
 };
 
-enum {
-	/**
-	 * Magic offset, used to compute fake selector values for use in ExecStack
-	 * when doing a callk. See the callk code in vm.cpp for details.
-	 */
-	kMagicSelectorOffset = -42
-};
-
 struct Class {
 	int script; /**< number of the script the class is in, -1 for non-existing */
 	reg_t reg; /**< offset; script-relative offset, segment: 0 if not instantiated */
