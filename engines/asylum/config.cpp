@@ -25,9 +25,9 @@
 
 #include "asylum/config.h"
 
-namespace Asylum {
-
 DECLARE_SINGLETON(Asylum::ConfigurationManager);
+
+namespace Asylum {
 
 static bool g_config_initialized = false;
 
