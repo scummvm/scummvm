@@ -142,53 +142,13 @@ Game::Game(DraciEngine *vm) : _vm(vm) {
 
 void Game::start() {
 	while (!shouldQuit()) {
+		debugC(1, kDraciGeneralDebugLevel, "Game::start()");
+
 		// Whenever the top-level loop is entered, it should not finish unless
 		// the exit is triggered by a script
 		_shouldExitLoop = false;
 
-		// If the scheduled room differs from the current one, do a room change
-		if (_newRoom != _currentRoom._roomNum) {
-
-			// Set the first two variables to the new room / gate
-			// Before setting these variables we have to convert the values to
-			// 1-based indexing because this is how everything is stored in the data files
-			_variables[0] = _newGate + 1;
-			_variables[1] = _newRoom + 1;
-
-			// If the new room is the map room, set the appropriate coordinates
-			// for the dragon in the persons array
-			if (_newRoom == _info._mapRoom) {
-				_persons[kDragonObject]._x = 160;
-				_persons[kDragonObject]._y = 0;
-			}
-
-			setLoopSubstatus(kSubstatusOrdinary);
-
-			// Do the actual change
-			changeRoom(_newRoom);
-
-			// Set the current room / gate to the new value
-			_currentRoom._roomNum = _newRoom;
-			_currentGate = _newGate;
-
-			// Run the program for the gate the dragon came through
-			runGateProgram(_newGate);
-
-			// Set cursor state
-			// Need to do this after we set the palette since the cursors use it
-			if (_currentRoom._mouseOn) {
-				debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
-				_vm->_mouse->cursorOn();
-			} else {
-				debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
-				_vm->_mouse->cursorOff();
-			}
-		}
-
-		// Mimic the original engine by setting the loop status to Ordinary before
-		// entering the main loop
-		setLoopStatus(kStatusOrdinary);
-
+		enterNewRoom();
 		loop();
 	}
 }
@@ -205,7 +165,6 @@ void Game::init() {
 
 	_vm->_mouse->setCursorType(kNormalCursor);
 
-	_loopStatus = kStatusOrdinary;
 	_oldObjUnderCursor = _objUnderCursor = kOverlayImage;
         
 	// Set the inventory to empty initially
@@ -252,19 +211,9 @@ void Game::init() {
 	debugC(4, kDraciLogicDebugLevel, "Running init program for the dragon object...");
 	_vm->_script->run(dragon->_program, dragon->_init);
 
-	_currentRoom._roomNum = _info._startRoom;
-	_currentGate = 0;
-
-	_newRoom = _currentRoom._roomNum;
-	_newGate = _currentGate;
-
-	// Before setting these variables we have to convert the values to 1-based indexing
-	// because this is how everything is stored in the data files
-	_variables[0] = _currentGate + 1;
-	_variables[1] = _currentRoom._roomNum + 1;
-
-	changeRoom(_currentRoom._roomNum);
-	runGateProgram(_currentGate);
+	// Make sure we enter the right room in start().
+	_previousRoom = _currentRoom._roomNum = kNoEscRoom;
+	scheduleEnteringRoomUsingGate(_info._startRoom, 0);
 }
 
 void Game::loop() {
@@ -489,7 +438,7 @@ void Game::loop() {
 		_vm->_system->delayMillis(20);
 
 		// HACK: Won't be needed once the game loop is implemented properly
-		_shouldExitLoop = _shouldExitLoop || (_newRoom != _currentRoom._roomNum &&
+		_shouldExitLoop = _shouldExitLoop || (_newRoom != getRoomNum() &&
 		                  (_loopStatus == kStatusOrdinary || _loopStatus == kStatusGate));
 
 	} while (!shouldExitLoop());
@@ -713,7 +662,7 @@ void Game::inventoryInit() {
 	_vm->_mouse->cursorOn();
 
 	// Set the appropriate loop status
-	_loopStatus = kStatusInventory;
+	setLoopStatus(kStatusInventory);
 
 	// TODO: This will be used for exiting the inventory automatically when the mouse
 	// is outside it for some time
@@ -722,7 +671,7 @@ void Game::inventoryInit() {
 
 void Game::inventoryDone() {
 	_vm->_mouse->cursorOn();
-	_loopStatus = kStatusOrdinary;
+	setLoopStatus(kStatusOrdinary);
 
 	_vm->_anims->unpauseAnimations();
 
@@ -892,7 +841,7 @@ void Game::dialogueInit(int dialogID) {
 		_vm->_anims->play(_dialogueAnims[i]->getID());
 	}
 
-	_loopStatus = kStatusDialogue;
+	setLoopStatus(kStatusDialogue);
 	_lastBlock = -1;
 	_dialogueBegin = true;
 }
@@ -906,7 +855,7 @@ void Game::dialogueDone() {
 
 	delete[] _dialogueBlocks;
 
-	_loopStatus = kStatusOrdinary;
+	setLoopStatus(kStatusOrdinary);
 	_vm->_mouse->setCursorType(kNormalCursor);
 }
 
@@ -1261,7 +1210,7 @@ void Game::loadOverlays() {
 
 	const BAFile *overlayHeader;
 
-	overlayHeader = _vm->_roomsArchive->getFile(_currentRoom._roomNum * 4 + 2);
+	overlayHeader = _vm->_roomsArchive->getFile(getRoomNum() * 4 + 2);
 	Common::MemoryReadStream overlayReader(overlayHeader->_data, overlayHeader->_length);
 
 	for (int i = 0; i < _currentRoom._numOverlays; i++) {
@@ -1282,8 +1231,11 @@ void Game::loadOverlays() {
 	_vm->_screen->getSurface()->markDirty();
 }
 
-void Game::changeRoom(uint roomNum) {
-	debugC(1, kDraciLogicDebugLevel, "Changing to room %d", roomNum);
+void Game::enterNewRoom() {
+	if (_newRoom == getRoomNum()) {
+		return;
+	}
+	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
 
 	// Clear archives
 	_vm->_roomsArchive->clearCache();
@@ -1299,18 +1251,19 @@ void Game::changeRoom(uint roomNum) {
 	// Delete walking map testing overlay
 	_vm->_anims->deleteAnimation(kWalkingMapOverlay);
 
-	int oldRoomNum = _currentRoom._roomNum;
-
 	// TODO: Make objects capable of stopping their own animations
 	const GameObject *dragon = getObject(kDragonObject);
 	for (uint i = 0; i < dragon->_anims.size(); ++i) {
 		_vm->_anims->stop(dragon->_anims[i]);
 	}
 
+	// Remember the previous room for returning back from the map.
+	_previousRoom = getRoomNum();
+
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
 
-		if (i != 0 && (obj->_location == oldRoomNum)) {
+		if (i != 0 && (obj->_location == _previousRoom)) {
 			for (uint j = 0; j < obj->_anims.size(); ++j) {
 					_vm->_anims->deleteAnimation(obj->_anims[j]);
 			}
@@ -1318,9 +1271,39 @@ void Game::changeRoom(uint roomNum) {
 		}
 	}
 
-	_currentRoom._roomNum = roomNum;
-	loadRoom(roomNum);
+	// Set the current room to the new value
+	_currentRoom._roomNum = _newRoom;
+
+	// Before setting these variables we have to convert the values to 1-based indexing
+	// because this is how everything is stored in the data files
+	_variables[0] = _newGate + 1;
+	_variables[1] = _newRoom + 1;
+
+	// If the new room is the map room, set the appropriate coordinates
+	// for the dragon in the persons array
+	if (_newRoom == _info._mapRoom) {
+		_persons[kDragonObject]._x = 160;
+	  	_persons[kDragonObject]._y = 0;
+	}
+
+	loadRoom(_newRoom);
 	loadOverlays();
+
+	// Run the program for the gate the dragon came through
+	runGateProgram(_newGate);
+
+	// Set cursor state
+	// Need to do this after we set the palette since the cursors use it
+	if (_currentRoom._mouseOn) {
+		debugC(6, kDraciLogicDebugLevel, "Mouse: ON");
+		_vm->_mouse->cursorOn();
+	} else {
+		debugC(6, kDraciLogicDebugLevel, "Mouse: OFF");
+		_vm->_mouse->cursorOff();
+	}
+
+	// Reset the loop status.
+	setLoopStatus(kStatusOrdinary);
 }
 
 void Game::runGateProgram(int gate) {
@@ -1328,6 +1311,7 @@ void Game::runGateProgram(int gate) {
 
 	// Set the appropriate loop statu before executing the gate program
 	setLoopStatus(kStatusGate);
+	setLoopSubstatus(kSubstatusOrdinary);
 
 	// Mark last animation
 	int lastAnimIndex = _vm->_anims->getLastIndex();
@@ -1388,20 +1372,16 @@ double Game::getPersStep() const {
 	return _currentRoom._persStep;
 }
 
-
 int Game::getRoomNum() const {
 	return _currentRoom._roomNum;
 }
 
-void Game::setRoomNum(int room) {
+int Game::getPreviousRoomNum() const {
+	return _previousRoom;
+}
+
+void Game::scheduleEnteringRoomUsingGate(int room, int gate) {
 	_newRoom = room;
-}
-
-int Game::getGateNum() const {
-	return _currentGate;
-}
-
-void Game::setGateNum(int gate) {
 	_newGate = gate;
 }
 

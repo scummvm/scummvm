@@ -656,8 +656,7 @@ void Script::newRoom(Common::Queue<int> &params) {
 	int room = params.pop() - 1;
 	int gate = params.pop() - 1;
 
-	_vm->_game->setRoomNum(room);
-	_vm->_game->setGateNum(gate);
+	_vm->_game->scheduleEnteringRoomUsingGate(room, gate);
 }
 
 void Script::talk(Common::Queue<int> &params) {

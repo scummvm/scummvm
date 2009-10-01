@@ -46,7 +46,6 @@ public:
 	~DraciEngine();
 
 	int init();
-	int go();
 	Common::Error run();
 
 	bool hasFeature(Engine::EngineFeature f) const;

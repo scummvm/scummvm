@@ -230,8 +230,6 @@ public:
 	void start();
 	void loop();
 
-	void changeRoom(uint roomNum);
-
 	// HACK: this is only for testing
 	int nextRoomNum() const {
 		int n = _currentRoom._roomNum;
@@ -261,7 +259,6 @@ public:
 	int getHeroY() const;
 	void positionAnimAsHero(Animation *anim);
 
-	void loadRoom(int roomNum);
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();
 	void loadObject(uint numObj);
@@ -278,10 +275,8 @@ public:
 	const Person *getPerson(int personID) const;
 
 	int getRoomNum() const;
-	void setRoomNum(int room);
-
-	int getGateNum() const;
-	void setGateNum(int gate);
+	int getPreviousRoomNum() const;
+	void scheduleEnteringRoomUsingGate(int room, int gate);
 
 	double getPers0() const;
 	double getPersStep() const;
@@ -310,8 +305,6 @@ public:
 
 	bool shouldExitLoop() const { return _shouldExitLoop; }
 	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
-
-	void runGateProgram(int gate);
 
 	void setSpeechTick(uint tick);
 
@@ -345,6 +338,9 @@ public:
 
 private:
 	void deleteAnimationsAfterIndex(int lastAnimIndex);
+	void enterNewRoom();
+	void loadRoom(int roomNum);
+	void runGateProgram(int gate);
 
 	DraciEngine *_vm;
 
@@ -365,9 +361,9 @@ private:
 	bool _inventoryExit;
 
 	Room _currentRoom;
-	int _currentGate;
 	int _newRoom;
 	int _newGate;
+	int _previousRoom;
 
 	uint *_dialogueOffsets;
 	int _currentDialogue;

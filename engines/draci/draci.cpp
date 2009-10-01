@@ -173,15 +173,6 @@ int DraciEngine::init() {
 	return Common::kNoError;
 }
 
-int DraciEngine::go() {
-	debugC(1, kDraciGeneralDebugLevel, "DraciEngine::go()");
-
-	_game->init();
-	_game->start();
-
-	return Common::kNoError;
-}
-
 bool DraciEngine::handleEvents() {
 	Common::Event event;
 	bool quit = false;
@@ -193,20 +184,19 @@ bool DraciEngine::handleEvents() {
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
-				_game->setRoomNum(_game->nextRoomNum());
-				_game->setGateNum(0);
+				_game->scheduleEnteringRoomUsingGate(_game->nextRoomNum(), 0);
 			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
-				_game->setRoomNum(_game->prevRoomNum());
-				_game->setGateNum(0);
+				_game->scheduleEnteringRoomUsingGate(_game->prevRoomNum(), 0);
 			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-				int escRoom = _game->getEscRoom();
+				const int escRoom = _game->getRoomNum() != _game->getMapRoom()
+					? _game->getEscRoom() : _game->getPreviousRoomNum();
 
 				// Check if there is an escape room defined for the current room
 				if (escRoom != kNoEscRoom) {
 
 					// Schedule room change
-					_game->setRoomNum(_game->getEscRoom());
-					_game->setGateNum(0);
+					// TODO: gate 0 is not always the best one for returning from the map
+					_game->scheduleEnteringRoomUsingGate(escRoom, 0);
 					_game->setExitLoop(true);
 
 					// End any currently running GPL programs
@@ -214,11 +204,9 @@ bool DraciEngine::handleEvents() {
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_m) {
 				if (_game->getLoopStatus() == kStatusOrdinary) {
-					// TODO: record the current room number
-					// so that we can quickly exit there
-					// when Escape is pressed
-					_game->setRoomNum(_game->getMapRoom());
-					_game->setGateNum(0);
+					const int new_room = _game->getRoomNum() != _game->getMapRoom()
+						? _game->getMapRoom() : _game->getPreviousRoomNum();
+					_game->scheduleEnteringRoomUsingGate(new_room, 0);
 				}
 			} else if (event.kbd.keycode == Common::KEYCODE_w) {
 				// Show walking map toggle
@@ -236,6 +224,12 @@ bool DraciEngine::handleEvents() {
 		default:
 			_mouse->handleEvent(event);
 		}
+
+		// TODO: I place the break here to make sure that each event is
+		// processed.  If I don't do that and allow more than 1 event,
+		// then a very quick succession of mouse button down and up
+		// (occuring on a touchpad) cancels each other.
+		break;
 	}
 
 	// Show walking map overlay
@@ -282,7 +276,8 @@ DraciEngine::~DraciEngine() {
 
 Common::Error DraciEngine::run() {
 	init();
-	go();
+	_game->init();
+	_game->start();
 	return Common::kNoError;
 }
 
