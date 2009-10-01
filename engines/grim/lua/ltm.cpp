@@ -240,7 +240,6 @@ void luaT_setfallback() {
 		lua_pushcfunction(replace);
 }
 
-} // end of namespace Grim
-
 #endif
 
+} // end of namespace Grim
