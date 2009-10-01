@@ -43,8 +43,6 @@ reg_t NULL_REG = {0, 0};
 reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 
 //#define VM_DEBUG_SEND
-#undef STRICT_SEND // Disallows variable sends with more than one parameter
-#undef STRICT_READ // Disallows reading from out-of-bounds parameters and locals
 
 ScriptState scriptState;
 
@@ -59,19 +57,15 @@ static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
 #ifndef DISABLE_VALIDATIONS
 
 static reg_t &validate_property(Object *obj, int index) {
-	static reg_t _dummy_register;
-
 	if (!obj) {
 		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!\n");
-		_dummy_register = NULL_REG;
-		return _dummy_register;
+		return NULL_REG;
 	}
 
 	if (index < 0 || (uint)index >= obj->_variables.size()) {
 		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n", 
 			index, obj->_variables.size());
-		_dummy_register = NULL_REG;
-		return _dummy_register;
+		return NULL_REG;
 	}
 
 	return obj->_variables[index];
@@ -101,7 +95,7 @@ static int signed_validate_arithmetic(reg_t reg) {
 		return 0;
 	}
 
-	if (reg.offset&0x8000)
+	if (reg.offset & 0x8000)
 		return (signed)(reg.offset) - 65536;
 	else
 		return reg.offset;
@@ -123,9 +117,6 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 
 		warning("%s", txt);
 
-#ifdef STRICT_READ
-		return 1;
-#else // !STRICT_READ
 		if (type == VAR_PARAM || type == VAR_TEMP) {
 			int total_offset = r - stack_base;
 			if (total_offset < 0 || total_offset >= VM_STACK_SIZE) {
@@ -136,7 +127,6 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 				return 0;
 			}
 		}
-#endif
 	}
 
 	return 0;
@@ -154,8 +144,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		r[index] = value;
 }
 
-#  define ASSERT_ARITHMETIC(v) validate_arithmetic(v)
-
 #else
 // Non-validating alternatives
 
@@ -166,7 +154,6 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #  define validate_read_var(r, sb, t, m, i, l) ((r)[i])
 #  define validate_write_var(r, sb, t, m, i, l, v) ((r)[i] = (v))
 #  define validate_property(o, p) ((o)->_variables[p])
-#  define ASSERT_ARITHMETIC(v) (v).offset
 
 #endif
 
@@ -332,40 +319,34 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				printf("Varselector: Read\n");
 #endif // VM_DEBUG_SEND
 
-			switch (argc) {
-			case 0:   // Read selector
-				if (print_send_action) {
-					printf("[read selector]\n");
-					print_send_action = 0;
-				}
-				// fallthrough
-			case 1:
-#ifndef STRICT_SEND
-			default:
-#endif
-				{ // Argument is supplied -> Selector should be set
-					if (print_send_action) {
-						reg_t oldReg = *varp.getPointer(s->segMan);
-						reg_t newReg = argp[1];
-
-						printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
-						print_send_action = 0;
-					}
-					CallsStruct call;
-					call.address.var = varp; // register the call
-					call.argp = argp;
-					call.argc = argc;
-					call.selector = selector;
-					call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
-					sendCalls.push(call);
-				}
-				break;
-#ifdef STRICT_SEND
-			default:
-				g_debugState.seeking = g_debugState.runningStep = 0;
-				error("Send error: Variable selector %04x in %04x:%04x called with %04x params", selector, PRINT_REG(send_obj), argc);
-#endif
+			// argc == 0: read selector
+			// argc == 1: write selector
+			// argc > 1: write selector?
+			if (print_send_action && argc ==  0) {	// read selector
+				printf("[read selector]\n");
+				print_send_action = 0;
 			}
+
+			if (print_send_action && argc > 0) {
+				reg_t oldReg = *varp.getPointer(s->segMan);
+				reg_t newReg = argp[1];
+				printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
+				print_send_action = 0;
+			}
+
+			if (argc > 1)
+				warning("send_selector(): more than 1 parameter (%d) while modifying a variable selector", argc);
+
+			{
+				CallsStruct call;
+				call.address.var = varp; // register the call
+				call.argp = argp;
+				call.argc = argc;
+				call.selector = selector;
+				call.type = EXEC_STACK_TYPE_VARSELECTOR; // Register as a varselector
+				sendCalls.push(call);
+			}
+			
 			break;
 
 		case kSelectorMethod:
@@ -384,15 +365,17 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 				print_send_action = 0;
 			}
 
-			CallsStruct call;
-			call.address.func = funcp; // register call
-			call.argp = argp;
-			call.argc = argc;
-			call.selector = selector;
-			call.type = EXEC_STACK_TYPE_CALL;
-			call.sp = sp;
-			sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
-			sendCalls.push(call);
+			{
+				CallsStruct call;
+				call.address.func = funcp; // register call
+				call.argp = argp;
+				call.argc = argc;
+				call.selector = selector;
+				call.type = EXEC_STACK_TYPE_CALL;
+				call.sp = sp;
+				sp = CALL_SP_CARRY; // Destroy sp, as it will be carried over
+				sendCalls.push(call);
+			}
 
 			break;
 		} // switch (lookup_selector())
@@ -926,7 +909,7 @@ void run_vm(EngineState *s, int restoring) {
 				error("Invalid kernel function 0x%x requested", opparams[0]);
 			} else {
 				const KernelFuncWithSignature &kfun = s->_kernel->_kernelFuncs[opparams[0]];
-				int argc = ASSERT_ARITHMETIC(scriptState.xs->sp[0]);
+				int argc = validate_arithmetic(scriptState.xs->sp[0]);
 
 				if (!oldScriptHeader)
 					argc += scriptState.restAdjust;
@@ -1169,13 +1152,13 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x37: // ipTos
-			ASSERT_ARITHMETIC(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
+			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
 			temp = ++OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
 
 		case 0x38: // dpTos
-			ASSERT_ARITHMETIC(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
+			validate_arithmetic(OBJ_PROPERTY(obj, (opparams[0] >> 1)));
 			temp = --OBJ_PROPERTY(obj, (opparams[0] >> 1)).offset;
 			PUSH(temp);
 			break;
