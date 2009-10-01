@@ -447,7 +447,21 @@ String String::printf(const char *fmt, ...) {
 	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
 	va_end(va);
 
-	if (len < (int)_builtinCapacity) {
+	if (len == -1) {
+		// MSVC doesn't return the size the full string would take up.
+		// Try increasing the size of the string until it fits.
+
+		// We assume MSVC failed to output the correct, null-terminated string
+		// if the return value is either -1 or size.
+		int size = _builtinCapacity;
+		do {
+			size *= 2;
+			output.ensureCapacity(size-1, false);
+			va_start(va, fmt);
+			len = vsnprintf(output._str, size, fmt, va);
+			va_end(va);
+		} while (len == -1 || len >= size);
+	} else if (len < (int)_builtinCapacity) {
 		// vsnprintf succeeded
 		output._size = len;
 	} else {
