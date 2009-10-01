@@ -565,6 +565,7 @@ static void ami_event(sfx_softseq_t *self, byte command, int argc, byte *argv) {
 void ami_poll(sfx_softseq_t *self, byte *dest, int len) {
 	int i, j;
 	int16 *buf = (int16 *) dest;
+	// FIXME: memleak
 	int16 *buffers = (int16*)malloc(len * 2 * CHANNELS_NR);
 
 	memset(buffers, 0, len * 2 * CHANNELS_NR);

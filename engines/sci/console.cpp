@@ -2719,7 +2719,9 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 	return true;
 }
 
-int parse_reg_t(EngineState *s, const char *str, reg_t *dest) { // Returns 0 on success
+// Returns 0 on success
+int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
+	// FIXME: Stop this function from changing str.
 	int rel_offsetting = 0;
 	const char *offsetting = NULL;
 	// Non-NULL: Parse end of string for relative offsets
