@@ -83,6 +83,11 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 	reg_t heap_said_block = argv[0];
 	byte *said_block;
 	int new_lastmatch;
+#ifdef DEBUG_PARSER
+	const int debug_parser = 1;
+#else
+	const int debug_parser = 0;
+#endif
 
 	if (!heap_said_block.segment)
 		return NULL_REG;
@@ -103,11 +108,7 @@ reg_t kSaid(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-#ifdef DEBUG_PARSER
-		new_lastmatch = said(s, said_block, 1);
-#else
-		new_lastmatch = said(s, said_block, 0);
-#endif
+	new_lastmatch = said(s, said_block, debug_parser);
 	if (new_lastmatch  != SAID_NO_MATCH) { /* Build and possibly display a parse tree */
 
 #ifdef DEBUG_PARSER

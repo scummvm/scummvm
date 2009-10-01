@@ -135,6 +135,12 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	int menu_mode = 0; /* Menu is active */
 	int mouse_down = 0;
 
+#ifdef DEBUG_PARSER
+	const int debug_parser = 1;
+#else
+	const int debug_parser = 0;
+#endif
+
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 
 	/* Check whether we can claim the event directly as a keyboard or said event */
@@ -157,20 +163,16 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 					          !item->_text.empty() ? item->_text.c_str() : "--bar--", item->_key, item->_modifiers,
 					          item->_type, item->_enabled ? "enabled" : "disabled");
 
-					if (((item->_type == MENU_TYPE_NORMAL)
-					        && (item->_enabled))
-					        && (((type == SCI_EVT_KEYBOARD) /* keyboard event */
-					             && item->matchKey(message, modifiers))
-					            || ((type == SCI_EVT_SAID) /* Said event */
-					                && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
-#ifdef DEBUG_PARSER
-					                && (said(s, item->_said, 1)
-#else
-					                && (said(s, item->_said, 0)
-#endif
-									!= SAID_NO_MATCH)
-					               )
-					           )
+					if ((item->_type == MENU_TYPE_NORMAL && item->_enabled)
+					    && ((type == SCI_EVT_KEYBOARD
+					           && item->matchKey(message, modifiers)
+					        )
+					      ||
+					        (type == SCI_EVT_SAID
+					           && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
+					           && said(s, item->_said, debug_parser) != SAID_NO_MATCH
+					        )
+					       )
 					   ) {
 						/* Claim the event */
 						debugC(2, kDebugLevelMenu, "Menu: Event CLAIMED for %d/%d\n", menuc, itemc);
