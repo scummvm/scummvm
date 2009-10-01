@@ -26,6 +26,8 @@
 		<File RelativePath="..\..\engines\asylum\barrier.h" />
 		<File RelativePath="..\..\engines\asylum\blowuppuzzle.cpp" />
 		<File RelativePath="..\..\engines\asylum\blowuppuzzle.h" />
+		<File RelativePath="..\..\engines\asylum\config.cpp" />
+		<File RelativePath="..\..\engines\asylum\config.h" />		
 		<File RelativePath="..\..\engines\asylum\console.cpp" />
 		<File RelativePath="..\..\engines\asylum\console.h" />
 		<File RelativePath="..\..\engines\asylum\cursor.cpp" />
