@@ -7,7 +7,6 @@
 	>
 	<Tool
 		Name="VCCLCompilerTool"
-		Optimization="1"
 		EnableIntrinsicFunctions="true"
 		WholeProgramOptimization="true"
 		PreprocessorDefinitions="WIN32"
