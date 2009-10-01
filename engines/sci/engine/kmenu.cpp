@@ -163,13 +163,12 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 					             && item->matchKey(message, modifiers))
 					            || ((type == SCI_EVT_SAID) /* Said event */
 					                && (item->_flags & MENU_ATTRIBUTE_FLAGS_SAID)
-					                && (said(s, item->_said, 
 #ifdef DEBUG_PARSER
-					                1
+					                && (said(s, item->_said, 1)
 #else
-									0
+					                && (said(s, item->_said, 0)
 #endif
-									) != SAID_NO_MATCH)
+									!= SAID_NO_MATCH)
 					               )
 					           )
 					   ) {
