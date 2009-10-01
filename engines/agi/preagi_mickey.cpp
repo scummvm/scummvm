@@ -210,8 +210,6 @@ void Mickey::printDatString(int iStr) {
 }
 
 void Mickey::printDesc(int iRoom) {
-	char *buffer = (char *)malloc(256);
-
 	MSA_DAT_HEADER hdr;
 	char szFile[256] = {0};
 
@@ -223,6 +221,7 @@ void Mickey::printDesc(int iRoom) {
 	if (!infile.open(szFile))
 		return;
 
+	char *buffer = (char *)malloc(256);
 	memset(buffer, 0, 256);
 
 	infile.seek(hdr.ofsDesc[iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
@@ -234,7 +233,6 @@ void Mickey::printDesc(int iRoom) {
 }
 
 bool Mickey::checkMenu() {
-	char *buffer = new char[sizeof(MSA_MENU)];
 	MSA_MENU menu;
 	int iSel0, iSel1;
 	MSA_DAT_HEADER hdr;
@@ -245,6 +243,8 @@ bool Mickey::checkMenu() {
 	readDatHdr(szFile, &hdr);
 	if (!infile.open(szFile))
 		return false;
+
+	char *buffer = new char[sizeof(MSA_MENU)];
 	infile.seek(hdr.ofsRoom[_game.iRoom - 1] + IDI_MSA_OFS_DAT, SEEK_SET);
 	infile.read((uint8 *)buffer, sizeof(MSA_MENU));
 	infile.close();
@@ -725,7 +725,6 @@ void Mickey::playSound(ENUM_MSA_SOUND iSound) {
 // Graphics
 
 void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
-	uint8* buffer = new uint8[4096];
 	char szFile[255] = {0};
 	sprintf(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
 
@@ -733,6 +732,7 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	if (!file.open(szFile))
 		return;
 
+	uint8* buffer = new uint8[4096];
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();
@@ -747,7 +747,6 @@ void Mickey::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 }
 
 void Mickey::drawPic(int iPic) {
-	uint8* buffer = new uint8[4096];
 	char szFile[255] = {0};
 	sprintf(szFile, IDS_MSA_PATH_PIC, iPic);
 
@@ -755,6 +754,7 @@ void Mickey::drawPic(int iPic) {
 	if (!file.open(szFile))
 		return;
 
+	uint8* buffer = new uint8[4096];
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();

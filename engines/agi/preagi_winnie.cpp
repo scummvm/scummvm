@@ -1053,7 +1053,6 @@ phase2:
 void Winnie::drawPic(const char *szName) {
 	char szFile[256] = {0};
 	Common::File file;
-	uint8 *buffer = (uint8 *)malloc(4096);
 
 	// construct filename
 	if (_vm->getPlatform() != Common::kPlatformAmiga)
@@ -1065,6 +1064,7 @@ void Winnie::drawPic(const char *szName) {
 		return;
 	}
 
+	uint8 *buffer = (uint8 *)malloc(4096);
 	uint32 size = file.size();
 	file.read(buffer, size);
 	file.close();
