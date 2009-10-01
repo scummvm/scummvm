@@ -152,7 +152,9 @@ void FileSystem::changeExtension(char *destName, const char *sourceName, const c
 	char *dot = strrchr(destName, '.');
 	if (dot != NULL)
 		*dot = 0;
-	sprintf(destName, "%s.%s", destName, extension);
+
+	strcat(destName, ".");
+	strcat(destName, extension);
 
 	str_upper(destName);
 }
