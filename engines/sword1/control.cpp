@@ -1268,7 +1268,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	if (!newSave) {
 		// Display a warning message and do nothing
 		warning("Unable to create file '%s'. (%s)", newFileName, _saveFileMan->popErrorDesc().c_str());
-		free(saveData);
+		delete[] saveData;
 		saveData = NULL;
 		return false;
 	}
@@ -1299,7 +1299,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	_saveFileMan->removeSavefile(oldFileName);
 
 	// Cleanup
-	free(saveData);
+	delete[] saveData;
 	saveData = NULL;
 	return true;
 }

@@ -179,7 +179,7 @@ bool ResourceManager::init() {
 			cdInf[i].cd = file.readByte();
 
 			if (file.eos() || file.err()) {
-				delete cdInf;
+				delete[] cdInf;
 				file.close();
 				GUIErrorMessage("Broken Sword 2: Cannot read cd.inf");
 				return false;
