@@ -1426,7 +1426,7 @@ CurrentActionEntry *CurrentActionEntry::loadFromStream(ReadStream *stream) {
 				paramList[index] = stream->readUint16LE();
 
 			result->_supportData->setDetails2(action, numParams, paramList);
-			delete paramList;
+			delete[] paramList;
 			result->_dynamicSupportData = true;
 		} else {
 			// Load action entry with an NPC schedule entry
