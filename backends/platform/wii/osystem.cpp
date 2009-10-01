@@ -159,7 +159,7 @@ OSystem::MutexRef OSystem_Wii::createMutex() {
 
 	if (res) {
 		printf("ERROR creating mutex\n");
-		delete mutex;
+		free(mutex);
 		return NULL;
 	}
 
@@ -185,6 +185,8 @@ void OSystem_Wii::deleteMutex(MutexRef mutex) {
 
 	if (res)
 		printf("ERROR destroying mutex %p (%d)\n", mutex, res);
+
+	free(mutex);
 }
 
 void OSystem_Wii::setWindowCaption(const char *caption) {
