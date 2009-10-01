@@ -264,11 +264,15 @@ uint8 Script::readScriptVar() {
 }
 
 uint16 Script::readScript16bits() {
-	return readScript8bits() | (readScript8bits() << 8);
+	uint8 lower = readScript8bits();
+	uint8 upper = readScript8bits();
+	return lower | (upper << 8);
 }
 
 uint32 Script::readScript32bits() {
-	return readScript16bits() | (readScript16bits() << 16);
+	uint16 lower = readScript16bits();
+	uint16 upper = readScript16bits();
+	return lower | (upper << 16);
 }
 
 uint16 Script::readScript8or16bits() {
