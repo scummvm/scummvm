@@ -224,12 +224,6 @@ bool DraciEngine::handleEvents() {
 		default:
 			_mouse->handleEvent(event);
 		}
-
-		// TODO: I place the break here to make sure that each event is
-		// processed.  If I don't do that and allow more than 1 event,
-		// then a very quick succession of mouse button down and up
-		// (occuring on a touchpad) cancels each other.
-		break;
 	}
 
 	// Show walking map overlay

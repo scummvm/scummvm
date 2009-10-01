@@ -157,6 +157,8 @@ void Game::init() {
 	_shouldQuit = false;
 	_shouldExitLoop = false;
 	_scheduledPalette = 0;
+	setLoopStatus(kStatusGate);
+	setLoopSubstatus(kSubstatusOrdinary);
 
 	_animUnderCursor = kOverlayImage;
 
@@ -851,8 +853,7 @@ void Game::dialogueDone() {
 		_vm->_anims->stop(_dialogueAnims[i]->getID());
 	}
 
-	_dialogueArchive->closeArchive();
-
+	delete _dialogueArchive;
 	delete[] _dialogueBlocks;
 
 	setLoopStatus(kStatusOrdinary);
@@ -1286,6 +1287,10 @@ void Game::enterNewRoom() {
 	  	_persons[kDragonObject]._y = 0;
 	}
 
+	// Set the appropriate loop statu before loading the room
+	setLoopStatus(kStatusGate);
+	setLoopSubstatus(kSubstatusOrdinary);
+
 	loadRoom(_newRoom);
 	loadOverlays();
 
@@ -1308,10 +1313,6 @@ void Game::enterNewRoom() {
 
 void Game::runGateProgram(int gate) {
 	debugC(6, kDraciLogicDebugLevel, "Running program for gate %d", gate);
-
-	// Set the appropriate loop statu before executing the gate program
-	setLoopStatus(kStatusGate);
-	setLoopSubstatus(kSubstatusOrdinary);
 
 	// Mark last animation
 	int lastAnimIndex = _vm->_anims->getLastIndex();

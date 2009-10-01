@@ -47,7 +47,10 @@ void Mouse::handleEvent(Common::Event event) {
 
 	case Common::EVENT_LBUTTONUP:
 		debugC(6, kDraciGeneralDebugLevel, "Left button up (x: %u y: %u)", _x, _y);
-		_lButton = false;
+                // Don't set _lButton to false, because some touchpads generate
+                // down and up at such a quick succession, that they will
+                // cancel each other in the same call of handleEvents().  Let
+                // the game clear this flag by calling lButtonSet() instead.
 		break;
 
 	case Common::EVENT_RBUTTONDOWN:
@@ -57,7 +60,6 @@ void Mouse::handleEvent(Common::Event event) {
 
 	case Common::EVENT_RBUTTONUP:
 		debugC(6, kDraciGeneralDebugLevel, "Right button up (x: %u y: %u)", _x, _y);
-		_rButton = false;
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
