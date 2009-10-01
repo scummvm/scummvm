@@ -260,7 +260,7 @@ public:
 	virtual ~Draw_Bargon() {}
 };
 
-class Draw_Fascination: public Draw_v1 {
+class Draw_Fascination: public Draw_v2 {
 public:
 	Draw_Fascination(GobEngine *vm);
 	virtual ~Draw_Fascination() {}
