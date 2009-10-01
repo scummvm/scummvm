@@ -41,7 +41,6 @@ namespace Sci {
 #define KSIG_SPEC_ARITHMETIC 'i'
 #define KSIG_SPEC_NULL 'z'
 #define KSIG_SPEC_ANY '.'
-#define KSIG_SPEC_ALLOW_INV '!' // Allow invalid pointers
 #define KSIG_SPEC_ELLIPSIS '*' // Arbitrarily more TYPED arguments
 
 #define KSIG_SPEC_SUM_DONE ('a' - 'A') // Use small letters to indicate end of sum type
@@ -61,8 +60,6 @@ namespace Sci {
 #define KSIG_NULL	0x40
 #define KSIG_ANY	0x5f
 #define KSIG_ELLIPSIS	0x80
-#define KSIG_ALLOW_INV  0x20
-#define KSIG_INVALID	KSIG_ALLOW_INV
 
 /**
  * Determines whether a list of registers matches a given signature.
@@ -81,12 +78,11 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
  * Determines the type of the object indicated by reg.
  * @param segMan			the Segment manager
  * @param reg				register to check
- * @param allow_invalid		determines whether invalid pointer (=offset) values are allowed
- * @return one of KSIG_* below KSIG_NULL.
+  * @return one of KSIG_* below KSIG_NULL.
  *	       KSIG_INVALID set if the type of reg can be determined, but is invalid.
  *	       0 on error.
  */
-int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid);
+int determine_reg_type(SegManager *segMan, reg_t reg);
 
 /**
  * Returns a textual description of the type of an object.

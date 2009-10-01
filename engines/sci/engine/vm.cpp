@@ -28,7 +28,7 @@
 
 #include "sci/sci.h"
 #include "sci/console.h"
-#include "sci/debug.h"	// for g_debug_weak_validations
+#include "sci/debug.h"	// for g_debugState
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -88,10 +88,7 @@ static StackPtr validate_stack_addr(EngineState *s, StackPtr sp) {
 
 static int validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		if (g_debug_weak_validations)
-			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		else
-			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
+		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		return 0;
 	}
 
@@ -100,10 +97,7 @@ static int validate_arithmetic(reg_t reg) {
 
 static int signed_validate_arithmetic(reg_t reg) {
 	if (reg.segment) {
-		if (g_debug_weak_validations)
-			warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
-		else
-			error("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
+		warning("[VM] Attempt to read arithmetic value from non-zero segment [%04x]", reg.segment);
 		return 0;
 	}
 
@@ -127,10 +121,7 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 			strcat(txt, tmp);
 		}
 
-		if (g_debug_weak_validations)
-			warning("%s", txt);
-		else
-			error("%s", txt);
+		warning("%s", txt);
 
 #ifdef STRICT_READ
 		return 1;

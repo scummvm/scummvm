@@ -49,7 +49,6 @@ namespace Sci {
 int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
-bool g_debug_weak_validations = true;
 
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -59,7 +58,6 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DVar_Register("gc_interval",		&script_gc_interval, DVAR_INT, 0);
 	DVar_Register("simulated_key",		&g_debug_simulated_key, DVAR_INT, 0);
 	DVar_Register("track_mouse_clicks",	&g_debug_track_mouse_clicks, DVAR_BOOL, 0);
-	DVar_Register("weak_validations",	&g_debug_weak_validations, DVAR_BOOL, 0);
 	DVar_Register("script_abort_flag",	&script_abort_flag, DVAR_INT, 0);
 
 	// General
@@ -1759,13 +1757,9 @@ bool Console::cmdValueType(int argc, const char **argv) {
 		return true;
 	}
 
-	int t = determine_reg_type(_vm->_gamestate->segMan, val, true);
-	int invalid = t & KSIG_INVALID;
+	int t = determine_reg_type(_vm->_gamestate->segMan, val);
 
-	switch (t & ~KSIG_INVALID) {
-	case 0:
-		DebugPrintf("Invalid");
-		break;
+	switch (t) {
 	case KSIG_LIST:
 		DebugPrintf("List");
 		break;
@@ -1781,8 +1775,6 @@ bool Console::cmdValueType(int argc, const char **argv) {
 	default:
 		DebugPrintf("Erroneous unknown type %02x(%d decimal)\n", t, t);
 	}
-
-	DebugPrintf("%s\n", invalid ? " (invalid)" : "");
 
 	return true;
 }
@@ -1834,13 +1826,11 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		}
 	}
 
-	int type_mask = determine_reg_type(_vm->_gamestate->segMan, reg, 1);
+	int type_mask = determine_reg_type(_vm->_gamestate->segMan, reg);
 	int filter;
 	int found = 0;
 
-	DebugPrintf("%04x:%04x is of type 0x%x%s: ", PRINT_REG(reg), type_mask & ~KSIG_INVALID, type_mask & KSIG_INVALID ? " (invalid)" : "");
-
-	type_mask &= ~KSIG_INVALID;
+	DebugPrintf("%04x:%04x is of type 0x%x: ", PRINT_REG(reg), type_mask);
 
 	if (reg.segment == 0 && reg.offset == 0) {
 		DebugPrintf("Null.\n");

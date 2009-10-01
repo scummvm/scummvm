@@ -55,7 +55,6 @@ struct DebugState {
 extern int g_debug_sleeptime_factor;
 extern int g_debug_simulated_key;
 extern bool g_debug_track_mouse_clicks;
-extern bool g_debug_weak_validations;
 extern DebugState g_debugState;
 
 } // End of namespace Sci

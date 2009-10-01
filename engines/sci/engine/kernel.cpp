@@ -246,9 +246,9 @@ SciKernelFunction kfunct_mappers[] = {
 	/*35*/	DEFUN("FirstNode", kFirstNode, "Zl"),
 	/*36*/	DEFUN("LastNode", kLastNode, "l"),
 	/*37*/	DEFUN("EmptyList", kEmptyList, "l"),
-	/*38*/	DEFUN("NextNode", kNextNode, "n!"),
+	/*38*/	DEFUN("NextNode", kNextNode, "n"),
 	/*39*/	DEFUN("PrevNode", kPrevNode, "n"),
-	/*3a*/	DEFUN("NodeValue", kNodeValue, "Zn!"),
+	/*3a*/	DEFUN("NodeValue", kNodeValue, "Zn"),
 	/*3b*/	DEFUN("AddAfter", kAddAfter, "lnn"),
 	/*3c*/	DEFUN("AddToFront", kAddToFront, "ln"),
 	/*3d*/	DEFUN("AddToEnd", kAddToEnd, "ln"),
@@ -550,10 +550,6 @@ static void kernel_compile_signature(const char **s) {
 				v |= KSIG_ANY;
 				break;
 
-			case KSIG_SPEC_ALLOW_INV:
-				v |= KSIG_ALLOW_INV;
-				break;
-
 			case KSIG_SPEC_ELLIPSIS:
 				v |= KSIG_ELLIPSIS;
 				ellipsis = 1;
@@ -564,7 +560,7 @@ static void kernel_compile_signature(const char **s) {
 				          " '%c')\n", *s, c, c);
 			}
 			}
-		} while (*src && (*src == KSIG_SPEC_ALLOW_INV || *src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
+		} while (*src && (*src == KSIG_SPEC_ELLIPSIS || (c < 'a' && c != KSIG_SPEC_ANY)));
 
 		// To handle sum types
 		result[index++] = v;
@@ -636,66 +632,41 @@ void Kernel::mapFunctions() {
 	return;
 }
 
-int determine_reg_type(SegManager *segMan, reg_t reg, bool allow_invalid) {
-	SegmentObj *mobj;
-	int type = 0;
+int determine_reg_type(SegManager *segMan, reg_t reg) {
+	// No segment? Must be arithmetic
+	if (!reg.segment)
+		return reg.offset ? KSIG_ARITHMETIC : KSIG_ARITHMETIC | KSIG_NULL;
 
-	if (!reg.segment) {
-		type = KSIG_ARITHMETIC;
-		if (!reg.offset)
-			type |= KSIG_NULL;
-
-		return type;
-	}
-
-	mobj = segMan->getSegmentObj(reg.segment);
+	// Otherwise it's an object
+	SegmentObj *mobj = segMan->getSegmentObj(reg.segment);
 	if (!mobj)
 		return 0; // Invalid
 
+	if (!mobj->isValidOffset(reg.offset))
+		warning("[KERN] ref %04x:%04x is invalid", PRINT_REG(reg));
+
 	switch (mobj->getType()) {
 	case SEG_TYPE_SCRIPT:
-		if (reg.offset <= (*(Script *)mobj)._bufSize && reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
-		        && RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
-			Object *obj = ((Script *)mobj)->getObject(reg.offset);
-			if (obj)
-				return KSIG_OBJECT;
-			else
-				return KSIG_REF;
+		if (reg.offset <= (*(Script *)mobj)._bufSize && 
+			reg.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET &&
+		    RAW_IS_OBJECT((*(Script *)mobj)._buf + reg.offset)) {
+			return ((Script *)mobj)->getObject(reg.offset) ? KSIG_OBJECT : KSIG_REF;
 		} else
 			return KSIG_REF;
-
 	case SEG_TYPE_CLONES:
-		type = KSIG_OBJECT;
-		break;
-
+		return KSIG_OBJECT;
 	case SEG_TYPE_LOCALS:
 	case SEG_TYPE_STACK:
 	case SEG_TYPE_SYS_STRINGS:
 	case SEG_TYPE_DYNMEM:
-		type = KSIG_REF;
-		break;
-
+		return KSIG_REF;
 	case SEG_TYPE_LISTS:
-		type = KSIG_LIST;
-		break;
-
+		return KSIG_LIST;
 	case SEG_TYPE_NODES:
-		type = KSIG_NODE;
-		break;
-
+		return KSIG_NODE;
 	default:
 		return 0;
 	}
-
-	if (!allow_invalid && !mobj->isValidOffset(reg.offset))
-		type |= KSIG_INVALID;
-	return type;
-}
-
-const char *kernel_argtype_description(int type) {
-	type &= ~KSIG_INVALID;
-
-	return argtype_description[sci_ffs(type)];
 }
 
 bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, const reg_t *argv) {
@@ -705,16 +676,10 @@ bool kernel_matches_signature(SegManager *segMan, const char *sig, int argc, con
 
 	while (*sig && argc) {
 		if ((*sig & KSIG_ANY) != KSIG_ANY) {
-			int type = determine_reg_type(segMan, *argv, *sig & KSIG_ALLOW_INV);
+			int type = determine_reg_type(segMan, *argv);
 
 			if (!type) {
 				warning("[KERN] Could not determine type of ref %04x:%04x; failing signature check", PRINT_REG(*argv));
-				return false;
-			}
-
-			if (type & KSIG_INVALID) {
-				warning("[KERN] ref %04x:%04x was determined to be a %s, but the reference itself is invalid",
-				          PRINT_REG(*argv), kernel_argtype_description(type));
 				return false;
 			}
 
