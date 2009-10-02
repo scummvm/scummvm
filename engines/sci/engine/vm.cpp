@@ -39,8 +39,8 @@
 
 namespace Sci {
 
-reg_t NULL_REG = {0, 0};
-reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
+const reg_t NULL_REG = {0, 0};
+const reg_t SIGNAL_REG = {0, SIGNAL_OFFSET};
 
 //#define VM_DEBUG_SEND
 
@@ -57,15 +57,20 @@ static bool breakpointFlag = false;	// FIXME: Avoid non-const global vars
 #ifndef DISABLE_VALIDATIONS
 
 static reg_t &validate_property(Object *obj, int index) {
+	// A static dummy reg_t, which we return if obj or index turn out to be
+	// invalid. Note that we cannot just return NULL_REG, because client code
+	// may modify the value of the return reg_t.
+	static reg_t dummyReg = NULL_REG;
+
 	if (!obj) {
 		debugC(2, kDebugLevelVM, "[VM] Sending to disposed object!\n");
-		return NULL_REG;
+		return dummyReg;
 	}
 
 	if (index < 0 || (uint)index >= obj->_variables.size()) {
 		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n", 
 			index, obj->_variables.size());
-		return NULL_REG;
+		return dummyReg;
 	}
 
 	return obj->_variables[index];
