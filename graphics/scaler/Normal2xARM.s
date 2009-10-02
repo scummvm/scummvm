@@ -20,24 +20,24 @@
 @
 @ @author Robin Watts (robin@wss.co.uk)
 
-        .text
+	.text
 
-        .global Normal2xARM
-        .global Normal2xAspectMask
+	.global Normal2xARM
+	.global Normal2xAspectMask
 
 
 	@ Assumes dst is aligned (so did the C)
 	@ Assumes 16bit (so did the C)
 Normal2xARM:
-        @ r0 = src
-        @ r1 = srcPitch
-        @ r2 = dst
-        @ r3 = dstPitch
-        @ r4 = w
-        @ r5 = h
-        STMFD   r13!,{r4-r11,r14}
-        LDR     r4, [r13,#4*9]		@ r4 = w
-        LDR     r5, [r13,#4*10]		@ r5 = h
+	@ r0 = src
+	@ r1 = srcPitch
+	@ r2 = dst
+	@ r3 = dstPitch
+	@ r4 = w
+	@ r5 = h
+	STMFD	r13!,{r4-r11,r14}
+	LDR	r4, [r13,#4*9]		@ r4 = w
+	LDR	r5, [r13,#4*10]		@ r5 = h
 	ADD	r12,r2, r3
 	SUB	r1, r1, r4, LSL #1
 	SUB	r6, r3, r4, LSL #2
@@ -66,7 +66,7 @@ xloop:
 	SUBS	r5, r5, #1
 	BGT	yloop
 
-        LDMFD   r13!,{r4-r11,PC}
+	LDMFD	r13!,{r4-r11,PC}
 thin:
 	LDRH	r6, [r0], #2
 	ORR	r6, r6, r6, LSL #16
@@ -80,7 +80,7 @@ thin:
 	SUBS	r5, r5, #1
 	BGT	yloop
 
-        LDMFD   r13!,{r4-r11,PC}
+	LDMFD	r13!,{r4-r11,PC}
 
 
 	@ Horrid filter calculations
@@ -92,16 +92,16 @@ thin:
 	@ Assumes dst is aligned (so did the C)
 	@ Assumes 16bit (so did the C)
 Normal2xAspectMask:
-        @ r0 = src
-        @ r1 = srcPitch
-        @ r2 = dst
-        @ r3 = dstPitch
-        @ r4 = w
-        @ r5 = h
+	@ r0 = src
+	@ r1 = srcPitch
+	@ r2 = dst
+	@ r3 = dstPitch
+	@ r4 = w
+	@ r5 = h
 	@ r12= mask
-        STMFD   r13!,{r4-r11,r14}
-        LDR     r4, [r13,#4*9]		@ r4 = w
-        LDR     r5, [r13,#4*10]		@ r5 = h
+	STMFD	r13!,{r4-r11,r14}
+	LDR	r4, [r13,#4*9]		@ r4 = w
+	LDR	r5, [r13,#4*10]		@ r5 = h
 	LDR	r12,[r13,#4*11]		@ r12= mask
 	MOV	r11,#2
 	SUB	r11,r11,r1, LSL #2	@ r11= 2-srcPitch*4
@@ -112,7 +112,7 @@ Normal2xAspectMask:
 yloop_aspect:
 xloop_aspect:
 	LDRH	r6, [r0], r1		@ r6 = A
-	LDRH	r7, [r0], r1            @ r7 = B
+	LDRH	r7, [r0], r1		@ r7 = B
 	LDRH	r8, [r0], r1		@ r8 = C
 	LDRH	r9, [r0], r1		@ r9 = D
 	LDRH	r10,[r0], r11		@ r10= E
@@ -158,7 +158,7 @@ xloop_aspect:
 	STR	r10,[r2], r14		@ output 11 (E)
 	SUBS	r4, r4, #1
 	BGT	xloop_aspect
-        LDR     r4, [r13,#4*9]		@ r4 = w
+	LDR	r4, [r13,#4*9]		@ r4 = w
 	ADD	r0, r0, r1, LSL #2
 	ADD	r0, r0, r1
 	SUB	r0, r0, r4, LSL #1
@@ -168,4 +168,4 @@ xloop_aspect:
 	SUBS	r5, r5, #5
 	BGT	yloop_aspect
 
-        LDMFD   r13!,{r4-r11,PC}
+	LDMFD	r13!,{r4-r11,PC}
