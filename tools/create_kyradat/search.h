@@ -65,8 +65,6 @@ private:
 
 	typedef std::map<uint32, uint32> SumMap;
 	SumMap _sums;
-	typedef std::map<uint32, uint> SumCount;
-	SumCount _sumCount;
 };
 
 class Search {

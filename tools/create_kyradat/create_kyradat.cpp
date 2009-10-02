@@ -1063,8 +1063,6 @@ bool process(PAKFile &out, const Game *g, const byte *data, const uint32 size) {
 
 bool setupSearch(const int *needList, Search &search, DataIdList &dataIdList) {
 	for (const int *entry = needList; *entry != -1; ++entry) {
-		bool found = false;
-
 		ExtractEntryList providers = getProvidersForId(*entry);
 
 		if (providers.empty()) {

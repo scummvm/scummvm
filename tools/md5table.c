@@ -214,7 +214,7 @@ int main(int argc, char *argv[])
 	int err;
 	int i;
 	time_t theTime;
-	const char *generationDate;
+	char *generationDate;
 
 	const int entrySize = 256;
 	int numEntries = 0, maxEntries = 1;
@@ -368,6 +368,7 @@ int main(int argc, char *argv[])
 	}
 
 	free(entriesBuffer);
+	free(generationDate);
 
 	return 0;
 }

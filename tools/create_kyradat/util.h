@@ -53,9 +53,10 @@ typedef signed short int16;
 typedef signed int int32;
 
 #if !defined(__cplusplus)
-typedef uint8 bool;
-#define false 0
-#define true 1
+enum bool {
+	false = 0,
+	true = 1
+};
 
 /* If your C compiler doesn't support 'inline', please add a check for it. */
 #if defined(_MSC_VER)

@@ -451,7 +451,7 @@ bool selectGame(char *&ret, char *&dir_ret, Common::Language &lang_ret, Common::
   if (selected >= 0)
     the_game = games[selected];
 
-  delete games;
+  delete[] games;
 
   if (selected>=0) {
 #if 0

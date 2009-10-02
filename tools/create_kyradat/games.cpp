@@ -880,7 +880,7 @@ const GameNeed gameNeedTable[] = {
 	{ kLol, kPlatformPC, kTalkieFile1, lolCDFile1Need },
 	{ kLol, kPlatformPC, kTalkieFile2, lolCDFile2Need },
 
-	{ -1, -1, 0 }
+	{ -1, -1, -1, 0 }
 };
 
 } // end of anonymous namespace

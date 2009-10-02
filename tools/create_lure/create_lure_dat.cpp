@@ -778,7 +778,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 	uint16 startOffset;
 	int ctr, dirCtr;
 	int movementSize = 0;
-	bool *includeAnim = (bool *) malloc(animIndex);
+	bool *includeAnim = (bool *)malloc(animIndex);
 
 	// Loop to figure out the total number of movement records there are
 	for (ctr = 0; ctr < animIndex; ++ctr) {
@@ -886,7 +886,7 @@ void read_anim_data(byte *&data, uint16 &totalSize) {
 	}
 
 	rec->animRecordId = TO_LE_16(0xffff);
-	delete includeAnim;
+	free(includeAnim);
 }
 
 void read_script_data(byte *&data, uint16 &totalSize) {

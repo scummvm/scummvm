@@ -344,8 +344,7 @@ struct RoomRandomActionSet {
 	RoomRandomActionEntry *entries;
 };
 
-void read_action_sequence(byte *&data, uint16 &totalSize)
-{
+void read_action_sequence(byte *&data, uint16 &totalSize) {
 	uint16 hotspotIndex;
 	HotspotHeaderEntry entryHeader;
 	CurrentActionInput action;
@@ -381,8 +380,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	}
 
 	// Next get the set of offsetes for the start of each sequence
-	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
-	{
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
 		if (randomActions[roomIndex].offset == 0)
 			continue;
 
@@ -393,8 +391,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 		// Loop through the entries
 		uint16 offset = randomActions[roomIndex].offset + 1;
-		for (uint8 entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr)
-		{
+		for (uint8 entryCtr = 0; entryCtr < randomActions[roomIndex].numEntries; ++entryCtr) {
 			randomActions[roomIndex].entries[entryCtr].repeatable = lureExe.readWord() == 1;
 			offset += 2;
 
@@ -485,12 +482,9 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	// Finally process each of the random room actions
 
-	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
-	{
-		for (index = 0; index < randomActions[roomIndex].numEntries; ++index)
-		{
-			if (randomActions[roomIndex].entries[index].offset != 0xfffe)
-			{
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
+		for (index = 0; index < randomActions[roomIndex].numEntries; ++index) {
+			if (randomActions[roomIndex].entries[index].offset != 0xfffe) {
 //printf("room=%d entry=%xh\n", roomIndex+1, randomActions[roomIndex].entries[index].offset);
 				process_entry(randomActions[roomIndex].entries[index].offset, data, totalSize);
 			}
@@ -509,8 +503,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 
 	// Output the data for the random room actions
 
-	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex)
-	{
+	for (roomIndex = 0; roomIndex < RANDOM_ROOM_NUM_ENTRIES; ++roomIndex) {
 		if (randomActions[roomIndex].numEntries == 0)
 			continue;
 
@@ -540,10 +533,9 @@ void read_action_sequence(byte *&data, uint16 &totalSize)
 	*pHeader++ = TO_LE_16(0xffff);
 
 	// Free up the random room action array
-	for (roomIndex = 0; roomIndex < 1; ++roomIndex)
-	{
+	for (roomIndex = 0; roomIndex < 1; ++roomIndex) {
 		if (randomActions[roomIndex].entries != NULL)
-			delete randomActions[roomIndex].entries;
+			delete[] randomActions[roomIndex].entries;
 	}
-	delete randomActions;
+	delete[] randomActions;
 }
