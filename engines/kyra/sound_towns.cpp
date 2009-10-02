@@ -704,23 +704,20 @@ void Towns_EuphonyDriver::send(byte chan, uint32 b) {
 }
 
 void Towns_EuphonyDriver::loadFmInstruments(const byte *instr) {
-	if (_fmInstruments)
-		delete[] _fmInstruments;
+	delete[] _fmInstruments;
 	_fmInstruments = new uint8[0x1800];
 	memcpy(_fmInstruments, instr, 0x1800);
 }
 
 void Towns_EuphonyDriver::loadWaveInstruments(const byte *instr) {
-	if (_waveInstruments)
-		delete[] _waveInstruments;
+	delete[] _waveInstruments;
 	_waveInstruments = new uint8[0x1000];
 	memcpy(_waveInstruments, instr, 0x1000);
 
 	const uint8 *pos = (const uint8 *)(instr + 0x1000);
 
 	for (uint8 i = 0; i < 10; i++) {
-		if (_waveSounds[i])
-			delete[] _waveSounds[i];
+		delete[] _waveSounds[i];
 		uint32 numsamples = READ_LE_UINT32(pos + 0x0C);
 		_waveSounds[i] = new int8[numsamples + 0x20];
         memcpy(_waveSounds[i], pos, 0x20);
@@ -986,7 +983,7 @@ Towns_EuphonyTrackQueue::Towns_EuphonyTrackQueue(Towns_EuphonyDriver * driver, T
 	_driver = driver;
 	_last = last;
 	_used = _fchan = _wchan = 0;
-	_playing = false;
+	_playing = _loop = false;
 }
 
 void Towns_EuphonyTrackQueue::setPlayBackStatus(bool playing) {
@@ -998,8 +995,7 @@ void Towns_EuphonyTrackQueue::setPlayBackStatus(bool playing) {
 }
 
 void Towns_EuphonyTrackQueue::loadDataToCurrentPosition(uint8 * trackdata, uint32 size, bool loop) {
-	if (_trackData)
-		delete[] _trackData;
+	delete[] _trackData;
 	_trackData = new uint8[0xC58A];
 	memset(_trackData, 0, 0xC58A);
 	Screen::decodeFrame4(trackdata, _trackData, size);
@@ -1043,24 +1039,18 @@ Towns_EuphonyTrackQueue *Towns_EuphonyTrackQueue::release() {
 	while (i) {
 		i->_playing = false;
 		i->_used = i->_fchan = i->_wchan = 0;
-		if (i->_trackData) {
-			delete[] i->_trackData;
-			i->_trackData = 0;
-		}
+		delete[] i->_trackData;
+		i->_trackData = 0;
 		i = i->_last;
 		if (i) {
 			res = i;
-			if (i->_next) {
-				delete i->_next;
-				i->_next = 0;
-			}
+			delete i->_next;
+			i->_next = 0;
 		}
 	}
 
-	if (res->_trackData) {
-		delete[] res->_trackData;
-		res->_trackData = 0;
-	}
+	delete[] res->_trackData;
+	res->_trackData = 0;
 
 	return res;
 }
@@ -1759,7 +1749,7 @@ protected:
 
 TownsPC98_OpnChannel::TownsPC98_OpnChannel(TownsPC98_OpnDriver *driver, uint8 regOffs, uint8 flgs, uint8 num,
 	uint8 key, uint8 prt, uint8 id) : _drv(driver), _regOffset(regOffs), _flags(flgs), _chanNum(num), _keyNum(key),
-	_part(prt), _idFlag(id) {
+	_part(prt), _idFlag(id), controlEvents(0) {
 
 	_ticksLeft = _algorithm = _instr = _totalLevel = _frqBlockMSB = _keyOffTime = 0;
 	_ssgStartLvl = _ssgTl = _ssgStep = _ssgTicksLeft = _ssgTargetLvl = _block = 0;
@@ -2171,7 +2161,7 @@ bool TownsPC98_OpnChannel::control_ff_endOfTrack(uint8 para) {
 
 TownsPC98_OpnChannelSSG::TownsPC98_OpnChannelSSG(TownsPC98_OpnDriver *driver, uint8 regOffs,
 		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
-		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id) {
+		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id), controlEvents(0) {
 }
 
 void TownsPC98_OpnChannelSSG::init() {
@@ -2468,7 +2458,7 @@ void TownsPC98_OpnSfxChannel::loadData(uint8 *data) {
 
 TownsPC98_OpnChannelPCM::TownsPC98_OpnChannelPCM(TownsPC98_OpnDriver *driver, uint8 regOffs,
 		uint8 flgs, uint8 num, uint8 key, uint8 prt, uint8 id) :
-		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id) {
+		TownsPC98_OpnChannel(driver, regOffs, flgs, num, key, prt, id), controlEvents(0) {
 }
 
 void TownsPC98_OpnChannelPCM::init() {
@@ -3403,6 +3393,7 @@ void TownsPC98_OpnCore::nextTick(int32 *buffer, uint32 bufferSize) {
 TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) : TownsPC98_OpnCore(mixer, type),
 	_channels(0), _ssgChannels(0), _sfxChannels(0), _rhythmChannel(0),
 	_trackPtr(0), _sfxData(0), _sfxOffs(0), _ssgPatches(0),
+	_patches(0), _sfxBuffer(0), _musicBuffer(0),
 
 	_opnCarrier(_drvTables + 76), _opnFreqTable(_drvTables + 108), _opnFreqTableSSG(_drvTables + 132),
 	_opnFxCmdLen(_drvTables + 36), _opnLvlPresets(_drvTables + (type == OD_TOWNS ? 52 : 84)),
@@ -3415,6 +3406,7 @@ TownsPC98_OpnDriver::TownsPC98_OpnDriver(Audio::Mixer *mixer, OpnType type) : To
 	_musicTickCounter(0),
 
 	_musicPlaying(false), _sfxPlaying(false), _fading(false), _looping(0), _ready(false) {
+	_sfxOffsets[0] = _sfxOffsets[1] = 0;
 }
 
 TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
@@ -3438,8 +3430,7 @@ TownsPC98_OpnDriver::~TownsPC98_OpnDriver() {
 		delete[] _sfxChannels;
 	}
 
-	if (_rhythmChannel)
-		delete _rhythmChannel;
+	delete _rhythmChannel;
 
 	delete[] _ssgPatches;
 }
@@ -4049,21 +4040,16 @@ SoundPC98::~SoundPC98() {
 
 bool SoundPC98::init() {
 	_driver = new TownsPC98_OpnDriver(_mixer, TownsPC98_OpnDriver::OD_TYPE26);
-
 	return _driver->init();
 }
 
 void SoundPC98::loadSoundFile(Common::String file) {
-	if (_sfxTrackData)
-		delete[] _sfxTrackData;
-	
+	delete[] _sfxTrackData;	
 	_sfxTrackData = _vm->resource()->fileData(file.c_str(), 0);
 }
 
 void SoundPC98::loadSoundFile(const uint8 *data, int len) {
-	if (_sfxTrackData)
-		delete[] _sfxTrackData;
-
+	delete[] _sfxTrackData;
 	_sfxTrackData = new uint8[len];
 	memcpy(_sfxTrackData, data, len);
 }

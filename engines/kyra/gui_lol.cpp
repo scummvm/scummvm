@@ -2794,12 +2794,10 @@ int GUI_LoL::clickedOptionsMenu(Button *button) {
 	case 0x4072:
 		char filename[13];
 		snprintf(filename, sizeof(filename), "LEVEL%02d.%s", _vm->_currentLevel, _vm->_languageExt[_vm->_lang]);
-		if (_vm->_levelLangFile)
-			delete[] _vm->_levelLangFile;
+		delete[] _vm->_levelLangFile;
 		_vm->_levelLangFile = _vm->resource()->fileData(filename, 0);
 		snprintf(filename, sizeof(filename), "LANDS.%s", _vm->_languageExt[_vm->_lang]);
-		if (_vm->_landsFile)
-			delete[] _vm->_landsFile;
+		delete[] _vm->_landsFile;
 		_vm->_landsFile = _vm->resource()->fileData(filename, 0);
 		_newMenu = _lastMenu;
 		break;

@@ -167,8 +167,7 @@ KyraEngine_HoF::~KyraEngine_HoF() {
 		_sequenceSoundList = NULL;
 	}
 
-	if (_dlgBuffer)
-		delete[] _dlgBuffer;
+	delete[] _dlgBuffer;
 	for (int i = 0; i < 19; i++)
 		delete[] _conversationState[i];
 	delete[] _conversationState;

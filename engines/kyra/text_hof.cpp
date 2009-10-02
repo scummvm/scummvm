@@ -447,9 +447,7 @@ void KyraEngine_HoF::updateDlgBuffer() {
 	if (_flags.platform != Common::kPlatformPC || _flags.isTalkie)
 		filename[11] = suffix[_lang];
 
-	if (_dlgBuffer)
-		delete[] _dlgBuffer;
-
+	delete[] _dlgBuffer;
 	_dlgBuffer = _res->fileData(filename, 0);
 }
 

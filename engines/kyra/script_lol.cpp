@@ -1182,8 +1182,7 @@ int LoLEngine::olol_loadLangFile(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_loadLangFile(%p) (%s)", (const void *)script, stackPosString(0));
 	char filename[13];
 	snprintf(filename, sizeof(filename), "%s.%s", stackPosString(0), _languageExt[_lang]);
-	if (_levelLangFile)
-		delete[] _levelLangFile;
+	delete[] _levelLangFile;
 	_levelLangFile = _res->fileData(filename, 0);
 	return 1;
 }

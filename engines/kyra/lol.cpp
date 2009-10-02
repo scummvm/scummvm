@@ -321,8 +321,7 @@ LoLEngine::~LoLEngine() {
 	delete[] _monsterPalettes;
 	delete[] _monsterShapesEx;
 
-	if (_automapShapes)
-		delete[] _automapShapes;
+	delete[] _automapShapes;
 
 	for (Common::Array<const TIMOpcode*>::iterator i = _timIntroOpcodes.begin(); i != _timIntroOpcodes.end(); ++i)
 		delete *i;
@@ -617,8 +616,7 @@ void LoLEngine::preInit() {
 	char filename[32];
 	snprintf(filename, sizeof(filename), "LANDS.%s", _languageExt[_lang]);
 	_res->exists(filename, true);
-	if (_landsFile)
-		delete[] _landsFile;
+	delete[] _landsFile;
 	_landsFile = _res->fileData(filename, 0);
 	loadItemIconShapes();
 }

@@ -379,8 +379,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		tlen = READ_LE_UINT16(v) << 5;
 		v += 2;
 
-		if (_vcfBlocks)
-			delete[] _vcfBlocks;
+		delete[] _vcfBlocks;
 		_vcfBlocks = new uint8[tlen];
 
 		memcpy(_vcfBlocks, v, tlen);
@@ -395,16 +394,14 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	if (vcnLen == -1)
 		vcnLen = tlen << 5;
 
-	if (_vcnBlocks)
-		delete[] _vcnBlocks;
+	delete[] _vcnBlocks;
 	_vcnBlocks = new uint8[vcnLen];
 
 	if (_flags.use16ColorMode) {
 		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
 	} else {
-		if (_vcnShift)
-			delete[] _vcnShift;
+		delete[] _vcnShift;
 		_vcnShift = new uint8[tlen];
 
 		memcpy(_vcnShift, v, tlen);
@@ -445,8 +442,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 		vmpLen = READ_LE_UINT16(v);
 	v += 2;
 
-	if (_vmpPtr)
-		delete[] _vmpPtr;
+	delete[] _vmpPtr;
 	_vmpPtr = new uint16[vmpLen];
 
 	for (int i = 0; i < vmpLen; i++)
