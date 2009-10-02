@@ -63,7 +63,7 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 
 	// Check if the file is valid
 	if (origin->id != MKID_BE('HRES')) {	// header
-		free(origin);
+		delete origin;
 		return false;
 	}
 
@@ -77,7 +77,7 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 	context->table = (ResourceData *) calloc(tableSize / resourceSize, sizeof(*context->table));
 
 	if (context->categories == NULL || context->table == NULL) {
-		free(origin);
+		delete origin;
 		return false;
 	}
 
@@ -99,7 +99,7 @@ bool Resource_HRS::loadResContext_v2(ResourceContext *context, uint32 contextSiz
 
 	context->count = tableSize / resourceSize;
 
-	free(origin);
+	delete origin;
 	return true;
 }
 
