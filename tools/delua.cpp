@@ -53,11 +53,13 @@ namespace Grim {
 class Actor;
 class Color;
 class ResourceLoader;
+class GrimEngine;
 
 // hacks below for shutup linker
 int g_flags = 0;
+GrimEngine *g_grim = NULL;
 ResourceLoader *g_resourceloader = NULL;
-LuaFile *ResourceLoader::openNewStreamLua(const char *filename) const { return NULL; }
+LuaFile *ResourceLoader::openNewStreamLuaFile(const char *filename) const { return NULL; }
 Actor *check_actor(int num) { return NULL; }
 Color *check_color(int num) { return NULL; }
 
