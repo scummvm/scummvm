@@ -26,8 +26,6 @@
 #include "graphics/scaler/intern.h"
 #include "backends/platform/linuxmoto/linuxmoto-sdl.h"
 
-SDL_PixelFormat *screenPixelFormat;
-
 extern "C" {
 	void PocketPCHalfARM(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height, int mask, int round);
 	// Rounding constants and masks used for different pixel formats
