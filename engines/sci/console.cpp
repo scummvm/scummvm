@@ -2721,95 +2721,99 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 
 // Returns 0 on success
 int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
-	// FIXME: Stop this function from changing str.
-	int rel_offsetting = 0;
-	const char *offsetting = NULL;
+	// Pointer to the part of str which contains a numeric offset (if any)
+	const char *offsetStr = NULL;
+
+	// Flag that tells whether the value stored in offsetStr is an absolute offset,
+	// or a relative offset against dest->offset.
+	bool relativeOffset = false;
+
 	// Non-NULL: Parse end of string for relative offsets
 	char *endptr;
 
-	if (*str == '$') { // Register
-		rel_offsetting = 1;
+	if (*str == '$') { // Register: "$FOO" or "$FOO+NUM" or "$FOO-NUM
+		relativeOffset = true;
 
 		if (!scumm_strnicmp(str + 1, "PC", 2)) {
 			*dest = s->_executionStack.back().addr.pc;
-			offsetting = str + 3;
+			offsetStr = str + 3;
 		} else if (!scumm_strnicmp(str + 1, "P", 1)) {
 			*dest = s->_executionStack.back().addr.pc;
-			offsetting = str + 2;
+			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "PREV", 4)) {
 			*dest = s->r_prev;
-			offsetting = str + 5;
+			offsetStr = str + 5;
 		} else if (!scumm_strnicmp(str + 1, "ACC", 3)) {
 			*dest = s->r_acc;
-			offsetting = str + 4;
+			offsetStr = str + 4;
 		} else if (!scumm_strnicmp(str + 1, "A", 1)) {
 			*dest = s->r_acc;
-			offsetting = str + 2;
+			offsetStr = str + 2;
 		} else if (!scumm_strnicmp(str + 1, "OBJ", 3)) {
 			*dest = s->_executionStack.back().objp;
-			offsetting = str + 4;
+			offsetStr = str + 4;
 		} else if (!scumm_strnicmp(str + 1, "O", 1)) {
 			*dest = s->_executionStack.back().objp;
-			offsetting = str + 2;
+			offsetStr = str + 2;
 		} else
 			return 1; // No matching register
 
-		if (!*offsetting)
-			offsetting = NULL;
-		else if (*offsetting != '+' && *offsetting != '-')
+		if (!*offsetStr)
+			offsetStr = NULL;
+		else if (*offsetStr != '+' && *offsetStr != '-')
 			return 1;
-	} else if (*str == '&') {
-		int script_nr;
-		// Look up by script ID
-		char *colon = (char *)strchr(str, ':');
-
+	} else if (*str == '&') { // Script relative: "&SCRIPT-ID:OFFSET"
+		// Look up by script ID. The text from start till just before the colon
+		// (resp. end of string, if there is no colon) contains the script ID.
+		const char *colon = strchr(str, ':');
 		if (!colon)
 			return 1;
-		*colon = 0;
-		offsetting = colon + 1;
 
-		script_nr = strtol(str + 1, &endptr, 10);
-
+		// Extract the script id and parse it
+		Common::String scriptStr(str, colon);
+		int script_nr = strtol(scriptStr.c_str() + 1, &endptr, 10);
 		if (*endptr)
 			return 1;
 
+		// Now lookup the script's segment
 		dest->segment = s->segMan->getScriptSegment(script_nr);
-
 		if (!dest->segment) {
 			return 1;
 		}
-	} else if (*str == '?') {
+
+		// Finally, after the colon comes the offset
+		offsetStr = colon + 1;
+	} else if (*str == '?') {	// Object by name: "?OBJ" or "?OBJ.INDEX" or "?OBJ.INDEX+OFFSET" or "?OBJ.INDEX-OFFSET"
+		// The (optional) index can be used to distinguish multiple object with the same name.
 		int index = -1;
-		int times_found = 0;
-		char *tmp;
-		const char *str_objname;
-		char *str_suffix;
-		char suffchar = 0;
-		uint i;
-		// Parse obj by name
 
-		tmp = (char *)strchr(str, '+');
-		str_suffix = (char *)strchr(str, '-');
-		if (tmp < str_suffix)
-			str_suffix = tmp;
-		if (str_suffix) {
-			suffchar = (*str_suffix);
-			*str_suffix = 0;
-		}
+		// Look for an offset. It starts with + or -
+		relativeOffset = true;
+		offsetStr = strchr(str, '+');
+		if (!offsetStr)	// No + found, look for -
+			offsetStr = strchr(str, '-');
 
-		tmp = (char *)strchr(str, '.');
+		// Strip away the offset and the leading '?'
+		Common::String str_objname;
+		if (offsetStr) {
+			str_objname = Common::String(str + 1, offsetStr);
+		} else
+			str_objname = str + 1;
 
+
+		// Scan for a period, after which (if present) we'll find an index
+		const char *tmp = Common::find(str_objname.begin(), str_objname.end(), '.');
 		if (tmp) {
-			*tmp = 0;
 			index = strtol(tmp + 1, &endptr, 16);
 			if (*endptr)
 				return -1;
+			// Chop of the index
+			str_objname = Common::String(str_objname.c_str(), tmp);
 		}
 
-		str_objname = str + 1;
-
 		// Now all values are available; iterate over all objects.
-		for (i = 0; i < s->segMan->_heap.size(); i++) {
+		int times_found = 0;
+		for (uint i = 0; i < s->segMan->_heap.size(); i++) {
 			SegmentObj *mobj = s->segMan->_heap[i];
 			int idx = 0;
 			int max_index = 0;
@@ -2828,6 +2832,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 				}
 			}
 
+			// It's a script or a clone table, scan all objects in it
 			for (; idx < max_index; ++idx) {
 				Object *obj = NULL;
 				reg_t objpos;
@@ -2846,15 +2851,15 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 				}
 
 				const char *objname = s->segMan->getObjectName(objpos);
-				if (!strcmp(objname, str_objname)) {
+				if (str_objname == objname) {
 					// Found a match!
 					if ((index < 0) && (times_found > 0)) {
 						if (times_found == 1) {
 							// First time we realized the ambiguity
 							printf("Ambiguous:\n");
-							printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname);
+							printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname.c_str());
 						}
-						printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname);
+						printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname.c_str());
 					}
 					if (index < 0 || times_found == index)
 						*dest = objpos;
@@ -2875,29 +2880,26 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 		if (times_found <= index)
 			return 1; // Not found
 
-		offsetting = str_suffix;
-		if (offsetting)
-			*str_suffix = suffchar;
-		rel_offsetting = 1;
-	} else {
-		char *colon = (char *)strchr(str, ':');
+	} else {	// Finally, check for "SEGMENT:OFFSET" or just "OFFSET"
+		const char *colon = strchr(str, ':');
 
 		if (!colon) {
-			offsetting = str;
+			// No segment specified
+			offsetStr = str;
 			dest->segment = 0;
 		} else {
-			*colon = 0;
-			offsetting = colon + 1;
+			offsetStr = colon + 1;
 
-			dest->segment = strtol(str, &endptr, 16);
+			Common::String segmentStr(str, colon);
+			dest->segment = strtol(segmentStr.c_str(), &endptr, 16);
 			if (*endptr)
 				return 1;
 		}
 	}
-	if (offsetting) {
-		int val = strtol(offsetting, &endptr, 16);
+	if (offsetStr) {
+		int val = strtol(offsetStr, &endptr, 16);
 
-		if (rel_offsetting)
+		if (relativeOffset)
 			dest->offset += val;
 		else
 			dest->offset = val;
