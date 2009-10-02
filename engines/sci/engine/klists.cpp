@@ -433,8 +433,6 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 	int input_size = (int16)GET_SEL32V(source, size);
 	int i;
 
-	sort_temp_t *temp_array = (sort_temp_t *)malloc(sizeof(sort_temp_t) * input_size);
-
 	reg_t input_data = GET_SEL32(source, elements);
 	reg_t output_data = GET_SEL32(dest, elements);
 
@@ -454,6 +452,8 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	list = lookup_list(s, input_data);
 	node = lookup_node(s, list->first);
+
+	sort_temp_t *temp_array = (sort_temp_t *)malloc(sizeof(sort_temp_t) * input_size);
 
 	i = 0;
 	while (node) {

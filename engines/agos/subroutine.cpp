@@ -339,9 +339,7 @@ bool AGOSEngine::loadTablesIntoMem(uint16 subrId) {
 
 bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 	byte *p;
-	int i;
 	uint min_num, max_num;
-	char filename[30];
 	File *in;
 
 	p = _tblList;
@@ -349,13 +347,13 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 		return 0;
 
 	while (*p) {
-		for (i = 0; *p; p++, i++)
-			filename[i] = *p;
-		filename[i] = 0;
+		Common::String filename;
+		while (*p)
+			filename += *p++;
 		p++;
 
 		if (getPlatform() == Common::kPlatformAcorn) {
-			sprintf(filename, "%s.DAT", filename);
+			filename += ".DAT";
 		}
 
 		for (;;) {
@@ -372,15 +370,20 @@ bool AGOSEngine_Waxworks::loadTablesIntoMem(uint16 subrId) {
 				_stringIdLocalMin = 1;
 				_stringIdLocalMax = 0;
 
-				in = openTablesFile(filename);
+				in = openTablesFile(filename.c_str());
 				readSubroutineBlock(in);
 				closeTablesFile(in);
 				if (getGameType() == GType_SIMON2) {
-					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename + 6) - 1 + _soundIndexBase]);
+					_sound->loadSfxTable(_gameFile, _gameOffsetsPtr[atoi(filename.c_str() + 6) - 1 + _soundIndexBase]);
 				} else if (getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) {
-					memcpy(filename, "SFXXXX", 6);
-					if (atoi(filename + 6) != 1 && atoi(filename + 6) != 30)
-						_sound->readSfxFile(filename);
+					filename.setChar(0, 'S');
+					filename.setChar(1, 'F');
+					filename.setChar(2, 'X');
+					filename.setChar(3, 'X');
+					filename.setChar(4, 'X');
+					filename.setChar(5, 'X');
+					if (atoi(filename.c_str() + 6) != 1 && atoi(filename.c_str() + 6) != 30)
+						_sound->readSfxFile(filename.c_str());
 				}
 
 				alignTableMem();

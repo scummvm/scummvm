@@ -297,8 +297,6 @@ uint AGOSEngine::loadTextFile_gme(const char *filename, byte *dst) {
 
 void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 	byte *p;
-	char filename[30];
-	int i;
 	uint16 baseMin = 0x8000, baseMax, size;
 
 	_tablesHeapPtr = _tablesheapPtrNew;
@@ -308,13 +306,13 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 
 	// get filename
 	while (*p) {
-		for (i = 0; *p; p++, i++)
-			filename[i] = *p;
-		filename[i] = 0;
+		Common::String filename;
+		while (*p)
+			filename += *p++;
 		p++;
 
 		if (getPlatform() == Common::kPlatformAcorn) {
-			sprintf(filename, "%s.DAT", filename);
+			filename += ".DAT";
 		}
 
 		baseMax = (p[0] * 256) | p[1];
@@ -330,7 +328,7 @@ void AGOSEngine::loadTextIntoMem(uint16 stringId) {
 			_tablesHeapPtr += size;
 			_tablesHeapCurPos += size;
 
-			size = loadTextFile(filename, _tablesHeapPtr);
+			size = loadTextFile(filename.c_str(), _tablesHeapPtr);
 
 			setupLocalStringTable(_tablesHeapPtr, baseMax - baseMin + 1);
 
