@@ -948,7 +948,7 @@ void run_vm(EngineState *s, int restoring) {
 							warningMsg += (i == argc - 1 ? ")" : ", ");
 						}
 
-						warning(warningMsg.c_str());
+						warning("%s", warningMsg.c_str());
 					}
 				}
 
