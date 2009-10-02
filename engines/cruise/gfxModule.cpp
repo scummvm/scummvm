@@ -276,13 +276,11 @@ static void mergeClipRects() {
 	}
 }
 
-void flip() {
-	RectList::iterator dr;
-	int i;
+void gfxModuleData_updatePalette() {
 	byte paletteRGBA[256 * 4];
 
 	if (palDirtyMax != -1) {
-		for (i = palDirtyMin; i <= palDirtyMax; i++) {
+		for (int i = palDirtyMin; i <= palDirtyMax; i++) {
 			paletteRGBA[i * 4 + 0] = lpalette[i].R;
 			paletteRGBA[i * 4 + 1] = lpalette[i].G;
 			paletteRGBA[i * 4 + 2] = lpalette[i].B;
@@ -292,6 +290,18 @@ void flip() {
 		palDirtyMin = 256;
 		palDirtyMax = -1;
 	}
+}
+
+void gfxModuleData_updateScreen() {
+	g_system->updateScreen();
+	g_system->delayMillis(20);
+}
+
+void flip() {
+	RectList::iterator dr;
+
+	// Update the palette
+	gfxModuleData_updatePalette();
 
 	// Make a copy of the prior frame's dirty rects, and then backup the current frame's rects
 	RectList tempList = _priorFrameRects;
