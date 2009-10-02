@@ -352,15 +352,6 @@ SciKernelFunction kfunct_mappers[] = {
 	{NULL, NULL, NULL} // Terminator
 };
 
-static const char *argtype_description[] = {
-	"Undetermined",
-	"List",
-	"Node",
-	"Object",
-	"Reference",
-	"Arithmetic"
-};
-
 Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
 	loadSelectorNames();
 	detectSciFeatures();
