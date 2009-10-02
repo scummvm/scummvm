@@ -3518,7 +3518,8 @@ void LoLEngine::checkForPartyDeath() {
 		_screen->fadeToPalette1(40);
 
 	} else {
-		_screen->fadeClearSceneWindow(10);
+		if (!_flags.use16ColorMode)
+			_screen->fadeClearSceneWindow(10);
 		restoreAfterSpecialScene(0, 1, 1, 0);
 
 		snd_playTrack(325);

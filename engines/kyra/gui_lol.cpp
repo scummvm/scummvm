@@ -519,15 +519,15 @@ void LoLEngine::gui_drawLiveMagicBar(int x, int y, int curPoints, int unk, int m
 	if (barHeight < 1 && curPoints > 0)
 		barHeight = 1;
 
-	_screen->drawClippedLine(x - 1, y - h, x - 1, y, 1);
+	_screen->drawClippedLine(x - 1, y - h, x - 1, y, _flags.use16ColorMode ? 0x44 : 1);
 
 	if (flag) {
 		t = maxPoints >> 1;
 		if (t > curPoints)
-			col1 = 144;
+			col1 = _flags.use16ColorMode ? 0xbb : 144;
 		t = maxPoints >> 2;
 		if (t > curPoints)
-			col1 = 132;
+			col1 = _flags.use16ColorMode ? 0x88 : 132;
 	}
 
 	if (barHeight > 0)
@@ -556,13 +556,26 @@ void LoLEngine::calcCharPortraitXpos() {
 }
 
 void LoLEngine::gui_drawMoneyBox(int pageNum) {
-	static const uint16 moneyX[] = { 0x128, 0x134, 0x12b, 0x131, 0x12e};
-	static const uint16 moneyY[] = { 0x73, 0x73, 0x74, 0x74, 0x75};
+	static const uint16 moneyX256[] = { 0x128, 0x134, 0x12b, 0x131, 0x12e};
+	static const uint16 moneyY256[] = { 0x73, 0x73, 0x74, 0x74, 0x75};
+	static const uint16 moneyX16[] = { 0x127, 0x133, 0x12a, 0x130, 0x12d};
+	static const uint16 moneyY16[] = { 0x74, 0x74, 0x75, 0x75, 0x76};
 
 	int backupPage = _screen->_curPage;
 	_screen->_curPage = pageNum;
 
-	_screen->fillRect(292, 97, 316, 118, 252, pageNum);
+	const uint16 *moneyX;
+	const uint16 *moneyY;
+
+	if (_flags.use16ColorMode) {
+		moneyX = moneyX16;
+		moneyY = moneyY16;
+		_screen->fillRect(291, 98, 315, 118, 0x11, pageNum);
+	} else {
+		moneyX = moneyX256;
+		moneyY = moneyY256;
+		_screen->fillRect(292, 97, 316, 118, 252, pageNum);
+	}
 
 	for (int i = 0; i < 5; i++) {
 		if (!_moneyColumnHeight[i])
@@ -577,15 +590,19 @@ void LoLEngine::gui_drawMoneyBox(int pageNum) {
 	}
 
 	Screen::FontId backupFont = _screen->setFont(Screen::FID_6_FNT);
-	_screen->fprintString("%d", 305, 98, 254, 0, 1, _credits);
+	if (_flags.use16ColorMode)
+		_screen->fprintString("%d", 304, 99, 0x33, 0, 1, _credits);
+	else
+		_screen->fprintString("%d", 305, 98, 254, 0, 1, _credits);
 
 	_screen->setFont(backupFont);
 	_screen->_curPage = backupPage;
 
 	if (pageNum == 6) {
-		_screen->hideMouse();
-		_screen->copyRegion(292, 97, 292, 97, 25, 22, 6, 0);
-		_screen->showMouse();
+		if (_flags.use16ColorMode)
+			_screen->copyRegion(291, 98, 291, 98, 24, 20, 6, 0);
+		else
+			_screen->copyRegion(292, 97, 292, 97, 25, 22, 6, 0);
 	}
 }
 
