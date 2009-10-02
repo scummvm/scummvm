@@ -58,21 +58,6 @@ struct reg_t {
 	}
 };
 
-#define PRINT_REG(r) (0xffff) & (unsigned) (r).segment, (unsigned) (r).offset
-
-// Stack pointer type
-typedef reg_t *StackPtr;
-
-// Selector ID
-typedef int Selector;
-#define NULL_SELECTOR -1
-
-// Offset sent to indicate an error, or that an operation has finished
-// (depending on the case)
-#define SIGNAL_OFFSET 0xffff
-
-#define PRINT_STK(v) (unsigned) (v - s->stack_base)
-
 static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	reg_t r;
 	r.offset = offset;
@@ -80,8 +65,31 @@ static inline reg_t make_reg(SegmentId segment, uint16 offset) {
 	return r;
 }
 
+#define PRINT_REG(r) (0xffff) & (unsigned) (r).segment, (unsigned) (r).offset
+
+// Stack pointer type
+typedef reg_t *StackPtr;
+
+enum {
+	/**
+	 * Special reg_t 'offset' used to indicate an error, or that an operation has
+	 * finished (depending on the case).
+	 * @see SIGNAL_REG
+	 */
+	SIGNAL_OFFSET = 0xffff
+};
+
 extern const reg_t NULL_REG;
 extern const reg_t SIGNAL_REG;
+
+// Selector ID
+typedef int Selector;
+
+enum {
+	/** Special 'selector' value, used when calling add_exec_stack_entry. */
+	NULL_SELECTOR = -1
+};
+
 
 } // End of namespace Sci
 

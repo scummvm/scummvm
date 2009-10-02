@@ -503,7 +503,7 @@ bool Console::cmdRegisters(int argc, const char **argv) {
 		EngineState *s = _vm->_gamestate;	// for PRINT_STK
 		DebugPrintf("pc=%04x:%04x obj=%04x:%04x fp=ST:%04x sp=ST:%04x\n",
 					PRINT_REG(scriptState.xs->addr.pc), PRINT_REG(scriptState.xs->objp),
-					PRINT_STK(scriptState.xs->fp), PRINT_STK(scriptState.xs->sp));
+					(unsigned)(scriptState.xs->fp - s->stack_base), (unsigned)(scriptState.xs->sp - s->stack_base));
 	} else
 		DebugPrintf("<no execution stack: pc,obj,fp omitted>\n");
 
