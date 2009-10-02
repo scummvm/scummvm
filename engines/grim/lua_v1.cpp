@@ -2950,8 +2950,10 @@ static void SetTextSpeed() {
 static void MakeTextObject() {
 	TextObject *textObject = new TextObject(false);
 	lua_Object textObj = lua_getparam(1);
-	if (!lua_isstring(textObj))
+	if (!lua_isstring(textObj)) {
+		delete textObject;
 		return;
+	}
 
 	const char *line = lua_getstring(textObj);
 	Common::String text = line;
@@ -3005,8 +3007,10 @@ static void GetTextCharPosition() {
 static void BlastText() {
 	TextObject *textObject = new TextObject(true);
 	lua_Object textObj = lua_getparam(1);
-	if (!lua_isstring(textObj))
+	if (!lua_isstring(textObj)) {
+		delete textObject;
 		return;
+	}
 
 	const char *line = lua_getstring(textObj);
 	Common::String text = line;
@@ -3520,6 +3524,7 @@ static void GetSaveGameImage() {
 	} else {
 		lua_pushnil();
 		warning("Could not restore screenshot from file");
+		delete savedState;
 		return;
 	}
 	savedState->endSection();
