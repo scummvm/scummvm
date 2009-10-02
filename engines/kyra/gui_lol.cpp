@@ -1706,7 +1706,7 @@ int LoLEngine::clickedRestParty(Button *button) {
 	removeInputTop();
 
 	if (needHealingFlags || needMagicGainFlags) {
-		_screen->fillRect(112, 0, 288, 120, 1);
+		_screen->fillRect(112, 0, 288, 120, _flags.use16ColorMode ? 0x44 : 1);
 		gui_drawAllCharPortraitsWithStats();
 
 		_txt->printMessage(0x8000, "%s", getLangString(0x4057));

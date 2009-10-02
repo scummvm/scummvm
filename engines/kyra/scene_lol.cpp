@@ -358,7 +358,9 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	}
 
 	if (_flags.use16ColorMode) {
-		if (_lastSpecialColor == 0x66)
+		if (_lastSpecialColor == 1)
+			_lastSpecialColor = 0x44;
+		else if (_lastSpecialColor == 0x66)
 			_lastSpecialColor = scumm_stricmp(file, "YVEL2") ? 0xcc : 0x44;
 		else if (_lastSpecialColor == 0x6b)
 			_lastSpecialColor = 0xcc;
@@ -399,11 +401,6 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 	if (_flags.use16ColorMode) {
 		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
-
-		/*static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
-		Palette &pl = _screen->getPalette(0);
-		for (int i = 15; i >= 0; i--)			
-			pl.copy(pl, i, 1, i);*/
 
 	} else {
 		if (_vcnShift)
@@ -457,11 +454,21 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 	Palette tpal(256);
 	tpal.copy(_screen->getPalette(0));
-	tpal.fill(16, 240, 0xff);
+	if (_flags.use16ColorMode) {
+		tpal.fill(16, 240, 0xff);	
+		uint8 *dst = tpal.getData();
+		for (int i = 1; i < 16; i++) {
+			int s = ((i << 4) | i) * 3;
+			SWAP(dst[s], dst[i * 3]);
+			SWAP(dst[s + 1], dst[i * 3 + 1]);
+			SWAP(dst[s + 2], dst[i * 3 + 2]);
+		}
+	}
+
 	for (int i = 0; i < 7; i++) {
 		weight = 100 - (i * _lastSpecialColorWeight);
 		weight = (weight > 0) ? (weight * 255) / 100 : 0;
-		_screen->generateLevelOverlay(tpal/*_screen->getPalette(0)*/, _screen->getLevelOverlay(i), _lastSpecialColor >> 4, weight);
+		_screen->generateLevelOverlay(tpal, _screen->getLevelOverlay(i), _lastSpecialColor, weight);
 
 		int l = _flags.use16ColorMode ? 256 : 128;
 		uint8 *levelOverlay = _screen->getLevelOverlay(i);
@@ -488,12 +495,10 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 
 		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
 
-		static const uint8 colTable[] = { 0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0xBB, 0xCC, 0xDD, 0xEE, 0xFF };
-		
 		for (int i = 0; i < 8; i++) {
 			uint8 *pl = _screen->getLevelOverlay(7 - i);
 			for (int ii = 0; ii < 16; ii++)
-				_vcnExpTable[(i << 4) + ii] = pl[colTable[ii]];
+				_vcnExpTable[(i << 4) + ii] = pl[(ii << 4) | ii];
 		}
 	}
 
@@ -2099,7 +2104,7 @@ void LoLEngine::drawDecorations(int index) {
 					uint8 bb = _blockBrightness >> 4;
 					if (ov > bb)
 						ov -= bb;
-						else
+					else
 						ov = 0;
 				}
 				ovl = _screen->getLevelOverlay(ov);
@@ -2110,7 +2115,7 @@ void LoLEngine::drawDecorations(int index) {
 					uint8 bb = _blockBrightness >> 4;
 					if (ov > bb)
 						ov -= bb;
-						else
+					else
 						ov = 0;
 				}
 				ovl = _screen->getLevelOverlay(ov);

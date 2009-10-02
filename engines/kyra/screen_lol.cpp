@@ -190,9 +190,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 	if (weight > 255)
 		weight = 255;
 
-	uint8 *srt = new uint8[768];
-	memset(srt, 0x3f, 768);
-	memcpy(srt, srcPal.getData(), srcPal.getNumColors() * 3);
+	const uint8 *srt = srcPal.getData();
 	
 	uint16 r = srt[opColor * 3];
 	uint16 g = srt[opColor * 3 + 1];
@@ -244,7 +242,6 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 		*d++ = l & 0xff;
 	}
 
-	delete []srt;
 	return ovl;
 }
 

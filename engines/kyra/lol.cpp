@@ -1329,10 +1329,13 @@ int LoLEngine::calculateProtection(int index) {
 }
 
 void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, int mode) {
-	static const uint16 barData[2][5] = {
+	static const uint16 barData[4][5] = {
 		// xPos, bar color, text color, flag, string id
 		{ 0x27, 0x9A, 0x98, 0x01, 0x4254 },
-		{ 0x21, 0xA2, 0xA0, 0x00, 0x4253 }
+		{ 0x21, 0xA2, 0xA0, 0x00, 0x4253 },
+		// 16 color mode
+		{ 0x27, 0x66, 0x55, 0x01, 0x4254 },
+		{ 0x21, 0xAA, 0x99, 0x00, 0x4253 }
 	};
 
 	if (charNum > 3)
@@ -1370,6 +1373,9 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 
 	int step = (newVal > pointsCur) ? 2 : -2;
 	newVal = CLIP(newVal + step, 0, pointsMax);
+
+	if (_flags.use16ColorMode)
+		type += 2;
 
 	if (newVal != pointsCur) {
 		step = (newVal >= pointsCur) ? 2 : -2;
@@ -1705,7 +1711,7 @@ void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int 
 	if (_flags.use16ColorMode) {
 		if (!brightness)
 			modifier = 0;
-		else if (modifier < 0 || modifier > 7 || (_flagsTable[31] & 0x08))
+		else if (modifier < 0 || modifier > 7 || !(_flagsTable[31] & 0x08))
 			modifier = 8;
 		
 		modifier >>= 1;
@@ -2139,7 +2145,21 @@ int LoLEngine::processMagicHealSelectTarget() {
 int LoLEngine::processMagicHeal(int charNum, int spellLevel) {
 	if (!_healOverlay) {
 		_healOverlay = new uint8[256];
-		_screen->generateGrayOverlay(_screen->getPalette(1), _healOverlay, 52, 22, 20, 0, 256, true);
+		Palette tpal(256);
+		tpal.copy(_screen->getPalette(1));
+
+		if (_flags.use16ColorMode) {
+			tpal.fill(16, 240, 0xff);
+			uint8 *dst = tpal.getData();
+			for (int i = 1; i < 16; i++) {
+				int s = ((i << 4) | i) * 3;
+				SWAP(dst[s], dst[i]);
+				SWAP(dst[s + 1], dst[i + 1]);
+				SWAP(dst[s + 2], dst[i + 2]);
+			}
+		}
+		
+		_screen->generateGrayOverlay(tpal, _healOverlay, 52, 22, 20, 0, 256, true);
 	}
 
 	const uint8 *healShpFrames = 0;

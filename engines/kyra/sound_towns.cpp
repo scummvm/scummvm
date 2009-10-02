@@ -42,7 +42,7 @@ enum EnvelopeState { s_ready, s_attacking, s_decaying, s_sustaining, s_releasing
 class Towns_EuphonyChannel : public MidiChannel {
 public:
 	Towns_EuphonyChannel() {}
-	~Towns_EuphonyChannel() {}
+	virtual ~Towns_EuphonyChannel() {}
 
 	virtual void nextTick(int32 *outbuf, int buflen) = 0;
 	virtual void rate(uint16 r) = 0;
