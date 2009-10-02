@@ -107,7 +107,9 @@ void fadeIn() {
 			calcRGB(&palScreen[masterScreen][3*j], &workpal[3*j], offsetTable);
 		}
 		gfxModuleData_setPal256(workpal);
-		gfxModuleData_flipScreen();
+
+		gfxModuleData_updatePalette();
+		gfxModuleData_updateScreen();
 	}
 
 	for (long int j = 0; j < 256; j++) {
