@@ -11,6 +11,8 @@ For a more comprehensive changelog for the latest experimental SVN code, see:
  General:
    - Added support for a custom SJIS font for FM-TOWNS and PC98 games.
    - Added support for 16bit graphics.
+   - Removed QuickTime MIDI backend on Mac OS X; it was buggy and did not
+     compile on modern systems.
 
  KYRA:
    - Added support for the Amiga version of The Legend of Kyrandia.
