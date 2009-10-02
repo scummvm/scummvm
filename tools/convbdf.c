@@ -141,8 +141,7 @@ void warning(const char *s, ...) {
 }
 
 void
-usage(void)
-{
+usage(void) {
 	char help[] = {
 	"Usage: convbdf [options] [input-files]\n"
 	"		convbdf [options] [-o output-file] [single-input-file]\n"
@@ -156,8 +155,7 @@ usage(void)
 }
 
 /* parse command line options*/
-void getopts(int *pac, char ***pav)
-{
+void getopts(int *pac, char ***pav) {
 	const char *p;
 	char **av;
 	int ac;
@@ -225,8 +223,7 @@ void getopts(int *pac, char ***pav)
 }
 
 /* remove directory prefix and file suffix from full path*/
-char *basename(char *path)
-{
+char *basename(char *path) {
 	char *p, *b;
 	static char base[256];
 
@@ -246,8 +243,7 @@ char *basename(char *path)
 	return base;
 }
 
-int convbdf(char *path)
-{
+int convbdf(char *path) {
 	struct font* pf;
 	int ret = 0;
 
@@ -265,8 +261,7 @@ int convbdf(char *path)
 	return ret;
 }
 
-int main(int ac, char *av[])
-{
+int main(int ac, char *av[]) {
 	int ret = 0;
 
 	++av; --ac;		/* skip av[0]*/
@@ -290,8 +285,7 @@ int main(int ac, char *av[])
 }
 
 /* free font structure*/
-void free_font(struct font* pf)
-{
+void free_font(struct font* pf) {
 	if (!pf)
 		return;
 	free(pf->name);
@@ -303,8 +297,7 @@ void free_font(struct font* pf)
 }
 
 /* build incore structure from .bdf file*/
-struct font* bdf_read_font(char *path)
-{
+struct font* bdf_read_font(char *path) {
 	FILE *fp;
 	struct font* pf;
 
@@ -340,8 +333,7 @@ struct font* bdf_read_font(char *path)
 }
 
 /* read bdf font header information, return 0 on error*/
-int bdf_read_header(FILE *fp, struct font* pf)
-{
+int bdf_read_header(FILE *fp, struct font* pf) {
 	int encoding;
 	int nchars, maxwidth;
 	int firstchar = 65535;
@@ -476,8 +468,7 @@ int bdf_read_header(FILE *fp, struct font* pf)
 }
 
 /* read bdf font bitmaps, return 0 on error*/
-int bdf_read_bitmaps(FILE *fp, struct font* pf)
-{
+int bdf_read_bitmaps(FILE *fp, struct font* pf) {
 	long ofs = 0;
 	int maxwidth = 0;
 	int i, k, encoding, width;
@@ -675,8 +666,7 @@ int bdf_read_bitmaps(FILE *fp, struct font* pf)
 }
 
 /* read the next non-comment line, returns buf or NULL if EOF*/
-char *bdf_getline(FILE *fp, char *buf, int len)
-{
+char *bdf_getline(FILE *fp, char *buf, int len) {
 	int c;
 	char *b;
 
@@ -722,8 +712,7 @@ bitmap_t bdf_hexval(unsigned char *buf) {
 }
 
 /* generate C source from in-core font*/
-int gen_c_source(struct font* pf, char *path)
-{
+int gen_c_source(struct font* pf, char *path) {
 	FILE *ofp;
 	int h, i;
 	int did_defaultchar = 0;
@@ -936,6 +925,7 @@ int gen_c_source(struct font* pf, char *path)
 	fprintf(ofp, "DEFINE_FONT(g_sysfont)\n");
 	fprintf(ofp, "#endif\n");
 	fprintf(ofp, "\n} // End of namespace Graphics\n");
+	fclose(ofp);
 
 	return 0;
 }

@@ -524,6 +524,7 @@ void doCompile(FILE *inf, FILE *debOutf, FILE *resOutf, TextFile *cptDef, FILE *
 			fwrite(diff, 2, 2 * diffPos, debOutf);
 			printf("diff v0.0%03d: 2 * 2 * %d\n", gameVers[cnt], diffPos);
 		}
+		free(buf288);
 	} else {
 		printf("Creating CPT file with Dummy reset data @ %ld\n", ftell(debOutf));
 		uint16 resetFields16 = 4;
