@@ -212,7 +212,7 @@ public:
 	 *
 	 * @see Common::matchString
 	 */
-	void addSubDirectoriesMatching(const FSNode &directory, String pattern, bool ignoreCase, int priority = 0);
+	void addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority = 0);
 
 	/**
 	 * Remove an archive from the searchable set.

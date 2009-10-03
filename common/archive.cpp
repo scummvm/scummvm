@@ -123,19 +123,22 @@ void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority
 	add(name, new FSDirectory(dir, depth, flat), priority);
 }
 
-void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String pattern, bool ignoreCase, int priority) {
+void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority) {
 	FSList subDirs;
 	if (!directory.getChildren(subDirs))
 		return;
 
-	String nextPattern;
-	String::const_iterator sep = Common::find(pattern.begin(), pattern.end(), '/');
-	if (sep != pattern.end()) {
-		pattern = String(pattern.begin(), sep);
+	String nextPattern, pattern;
+	String::const_iterator sep = Common::find(origPattern.begin(), origPattern.end(), '/');
+	if (sep != origPattern.end()) {
+		pattern = String(origPattern.begin(), sep);
 
 		++sep;
-		if (sep != pattern.end())
-			nextPattern = String(sep, pattern.end());
+		if (sep != origPattern.end())
+			nextPattern = String(sep, origPattern.end());
+	}
+	else {
+		pattern = origPattern;
 	}
 
 	// TODO: The code we have for displaying all matches, which vary only in case, might
