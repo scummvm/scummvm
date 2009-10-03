@@ -268,7 +268,7 @@ void Game::loop() {
 						updateCursor();
 					} else {
 						if (_objUnderCursor != kObjectNotFound) {
-							GameObject *obj = &_objects[_objUnderCursor];
+							const GameObject *obj = &_objects[_objUnderCursor];
 
 							_vm->_mouse->cursorOff();
 							titleAnim->markDirtyRect(surface);
@@ -295,7 +295,7 @@ void Game::loop() {
 					_vm->_mouse->rButtonSet(false);
 
 					if (_objUnderCursor != kObjectNotFound) {
-						GameObject *obj = &_objects[_objUnderCursor];
+						const GameObject *obj = &_objects[_objUnderCursor];
 
 						if (_vm->_script->testExpression(obj->_program, obj->_canUse)) {
 							_vm->_mouse->cursorOff();
@@ -357,10 +357,9 @@ void Game::loop() {
 					// If there is an inventory item under the cursor and we aren't
 					// holding any item, run its look GPL program
 					if (_itemUnderCursor != kNoItem && _currentItem == kNoItem) {
-						const GPL2Program &program = _items[_itemUnderCursor]._program;
-						const int lookOffset = _items[_itemUnderCursor]._look;
+						const GameItem *item = &_items[_itemUnderCursor];
 
-						_vm->_script->run(program, lookOffset);
+						_vm->_script->run(item->_program, item->_look);
 					// Otherwise, if we are holding an item, try to place it inside the
 					// inventory
 					} else if (_currentItem != kNoItem) {
@@ -393,12 +392,10 @@ void Game::loop() {
 						// which will check if the two items are combinable and, finally,
 						// run the use script for the item.
 						} else {
-							const GPL2Program &program = _items[_itemUnderCursor]._program;
-							const int canUseOffset = _items[_itemUnderCursor]._canUse;
-							const int useOffset = _items[_itemUnderCursor]._use;
+							const GameItem *item = &_items[_itemUnderCursor];
 
-							if (_vm->_script->testExpression(program, canUseOffset)) {
-								_vm->_script->run(program, useOffset);
+							if (_vm->_script->testExpression(item->_program, item->_canUse)) {
+								_vm->_script->run(item->_program, item->_use);
 							}
 						}
 						updateCursor();
@@ -472,10 +469,9 @@ void Game::updateCursor() {
 		}
 
 		if (_itemUnderCursor != kNoItem) {
-			const GPL2Program &program = _items[_itemUnderCursor]._program;
-			const int canUseOffset = _items[_itemUnderCursor]._canUse;
+			const GameItem *item = &_items[_itemUnderCursor];
 
-			if (_vm->_script->testExpression(program, canUseOffset)) {
+			if (_vm->_script->testExpression(item->_program, item->_canUse)) {
 				if (_currentItem == kNoItem) {
 					_vm->_mouse->setCursorType(kHighlightedCursor);
 				} else {
@@ -518,7 +514,7 @@ void Game::updateCursor() {
 		}
 	// If there *is* a game object under the cursor, update the cursor image
 	} else {
-		GameObject *obj = &_objects[_objUnderCursor];
+		const GameObject *obj = &_objects[_objUnderCursor];
 
 		// If there is no walking direction set on the object (i.e. the object
 		// is not a gate / exit), test whether it can be used and, if so,
@@ -559,18 +555,29 @@ void Game::updateTitle() {
 	// Mark dirty rectangle to delete the previous text
 	titleAnim->markDirtyRect(surface);
 
-	// If there is no object under the cursor, delete the title.
-	// Otherwise, show the object's title.
-	if (_objUnderCursor == kObjectNotFound) {
-		title->setText("");
+	if (_loopStatus == kStatusInventory) {
+		// If there is no item under the cursor, delete the title.
+		// Otherwise, show the item's title.
+		if (_itemUnderCursor == kNoItem) {
+			title->setText("");
+		} else {
+			const GameItem *item = &_items[_itemUnderCursor];
+			title->setText(item->_title);
+		}
 	} else {
-		GameObject *obj = &_objects[_objUnderCursor];
-		title->setText(obj->_title);
+		// If there is no object under the cursor, delete the title.
+		// Otherwise, show the object's title.
+		if (_objUnderCursor == kObjectNotFound) {
+			title->setText("");
+		} else {
+			const GameObject *obj = &_objects[_objUnderCursor];
+			title->setText(obj->_title);
+		}
 	}
 
 	// Move the title to the correct place (just above the cursor)
 	int newX = surface->centerOnX(x, title->getWidth());
-	int newY = surface->centerOnY(y - smallFontHeight / 2, title->getHeight() * 2);
+	int newY = surface->putAboveY(y - smallFontHeight / 2, title->getHeight());
 	titleAnim->setRelative(newX, newY);
 
 	// If we are currently playing the title, mark it dirty so it gets updated.

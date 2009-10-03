@@ -133,11 +133,11 @@ void Surface::fill(uint colour) {
  *
  * @return The centered x coordinate
  */
-uint Surface::centerOnX(uint x, uint width) const {
+uint Surface::centerOnX(int x, int width) const {
 	int newX = x - width / 2;
 
-	if (newX + width >= (uint)w - 1)
-		newX = (w - 1) - width;
+	if (newX + width > w)
+		newX = w - width;
 
 	if (newX < 0)
 		newX = 0;
@@ -153,11 +153,11 @@ uint Surface::centerOnX(uint x, uint width) const {
  *
  * @return The centered y coordinate
  */
-uint Surface::centerOnY(uint y, uint height) const {
-	int newY = y - height / 2;
+uint Surface::putAboveY(int y, int height) const {
+	int newY = y - height;
 
-	if (newY + height >= (uint)h - 1)
-		newY = (h - 1) - height;
+	if (newY + height > h)
+		newY = h - height;
 
 	if (newY < 0)
 		newY = 0;

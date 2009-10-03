@@ -45,8 +45,8 @@ public:
 	uint getTransparentColour() const;
 	void setTransparentColour(uint colour);
 	void fill(uint colour);
-	uint centerOnY(uint y, uint height) const;
-	uint centerOnX(uint x, uint width) const;
+	uint putAboveY(int y, int height) const;
+	uint centerOnX(int x, int width) const;
 	Common::Rect getRect() const;
 
 private:
