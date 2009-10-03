@@ -1399,16 +1399,14 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 				PUT_SEL32V(obj, cursor, cursor); // Write back cursor position
 				s->segMan->strcpy(text_pos, text.c_str()); // Write back string
 			}
+			if (event.segment) PUT_SEL32V(event, claimed, 1);
+			_k_draw_control(s, obj, false);
+			return NULL_REG;
 
 		case K_CONTROL_ICON:
 		case K_CONTROL_BOX:
 		case K_CONTROL_BUTTON:
-			// Control shall not be redrawn here, Original Sierra interpreter doesn't do it and it will mangle up
-			// menus in at least SQ5
-			//if (event.segment) PUT_SEL32V(event, claimed, 1);
-			//_k_draw_control(s, obj, false);
 			return NULL_REG;
-			break;
 
 		case K_CONTROL_TEXT: {
 			int state = GET_SEL32V(obj, state);
@@ -1460,12 +1458,12 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 
 	case K_CONTROL_TEXT:
 		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
-		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
+		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(obj), text.c_str(), x, y, mode);
 		s->gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, inverse);
 		return;
 
 	case K_CONTROL_EDIT:
-		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
+		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d\n", PRINT_REG(obj), PRINT_REG(text_pos), text.c_str(), x, y);
 
 		max = GET_SEL32V(obj, max);
 		cursor = GET_SEL32V(obj, cursor);
