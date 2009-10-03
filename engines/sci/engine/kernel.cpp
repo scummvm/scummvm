@@ -332,18 +332,18 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ShowMovie", kShowMovie, "..*"),
 	DEFUN("SetVideoMode", kSetVideoMode, "i"),
 	DEFUN("Platform", kPlatform, "i*"),
-	DEFUN("PalVary", kPalVary, "ii*"),
+	DEFUN("TextColors", kTextColors, ".*"),
+	DEFUN("TextFonts", kTextFonts, ".*"),
 
 #if 0
 	// Stub functions
+	DEFUN("PalVary", kPalVary, "ii*"),
 	DEFUN("ShiftScreen", kShiftScreen, ".*"),
 	DEFUN("MemorySegment", kMemorySegment, ".*"),
 	DEFUN("ListOps", kListOps, ".*"),
 	DEFUN("ATan", kATan, ".*"),
 	DEFUN("MergePoly", kMergePoly, ".*"),
 	DEFUN("AssertPalette", kAssertPalette, ".*"),
-	DEFUN("TextColors", kTextColors, ".*"),
-	DEFUN("TextFonts", kTextFonts, ".*"),
 	DEFUN("Record", kRecord, ".*"),
 	DEFUN("PlayBack", kPlayBack, ".*"),
 	DEFUN("DbugStr", kDbugStr, ".*"),

@@ -105,7 +105,8 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
-static void assert_primary_widget_lists(EngineState *s) {
+// was static
+void assert_primary_widget_lists(EngineState *s) {
 	if (!s->dyn_views) {
 		rect_t bounds = s->picture_port->_bounds;
 
@@ -123,7 +124,8 @@ static void assert_primary_widget_lists(EngineState *s) {
 	}
 }
 
-static void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport) {
+// static
+void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport) {
 	if (!newport)
 		newport = s->picture_port;
 
@@ -264,24 +266,6 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 	}
 }
 
-static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
-	gfx_color_t retval;
-
-	if (!s->resMan->isVGA()) {
-		retval = s->ega_colors[(color >=0 && color < 16)? color : 0];
-		gfxop_set_color(s->gfx_state, &retval, (color < 0) ? -1 : retval.visual.r, retval.visual.g, retval.visual.b,
-		                (color == -1) ? 255 : 0, priority, control);
-	} else {
-		retval.visual = get_pic_color(s, color);
-		retval.alpha = 0;
-		retval.priority = priority;
-		retval.control = control;
-		retval.mask = GFX_MASK_VISUAL | ((priority >= 0) ? GFX_MASK_PRIORITY : 0) | ((control >= 0) ? GFX_MASK_CONTROL : 0);
-	};
-
-	return retval;
-}
-
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	int16 cursor = argv[0].toSint16();
 
@@ -353,27 +337,8 @@ reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
-	Common::Point newPos;
-
-	newPos = s->gfx_state->pointer_pos;
-
-	if (argc == 1) {
-		// Case ignored on IBM PC
-	} else {
-		newPos.x = argv[0].toSint16() + s->port->zone.x;
-		newPos.y = argv[1].toSint16() + s->port->zone.y;
-
-		if (newPos.x > s->port->zone.x + s->port->zone.width)
-			newPos.x = s->port->zone.x + s->port->zone.width;
-		if (newPos.y > s->port->zone.y + s->port->zone.height)
-			newPos.y = s->port->zone.y + s->port->zone.height;
-
-		if (newPos.x < 0) newPos.x = 0;
-		if (newPos.y < 0) newPos.y = 0;
-	}
-
-	gfxop_set_pointer_position(s->gfx_state, newPos);
-
+	if (argc == 2)
+		s->gui->moveCursor(argv[0].toSint16(), argv[1].toSint16());
 	return s->r_acc;
 }
 
@@ -439,116 +404,73 @@ void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
 #endif
 }
 
-void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
-	GfxPort *port = s->port;
-	GfxPort *newport;
+reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
+	int rectLeft = 0, rectTop = 0, rectRight = 0, rectBottom = 0;
+	uint16 flags;
+	int16 priority, control, color, colorMask;
 
-	newport = sciw_new_window(s, port->zone, port->_font, port->_color, newbgcolor,
-	                          s->titlebar_port->_font, s->ega_colors[15], s->ega_colors[8],
-	                          port->_title_text.c_str(), port->port_flags & ~kWindowTransparent);
-
-	if (s->dyn_views) {
-		int found = 0;
-		GfxContainer *parent = s->dyn_views->_parent;
-
-		while (parent && !(found |= (parent == port)))
-			parent = parent->_parent;
-
-		s->dyn_views = NULL;
+	Common::Rect rect;
+	if (argc>=5) {
+		rectLeft = argv[2].toSint16(); rectTop = argv[1].toSint16();
+		rectRight = argv[4].toSint16(); rectBottom = argv[3].toSint16();
+		// Fixup data, so that a valid rectangle is formed
+		if (rectLeft > rectRight) {
+			rectRight = rectLeft; rectLeft = argv[4].toSint16();
+		}
+		if (rectTop > rectBottom) {
+			rectBottom = rectTop; rectTop = argv[3].toSint16();
+		}
+		rect = Common::Rect (rectLeft, rectTop, rectRight, rectBottom);
 	}
 
-	port->_parent->add((GfxContainer *)port->_parent, newport);
-	delete port;
-}
-
-static bool activated_icon_bar = false;	// FIXME: Avoid non-const global vars
-static int port_origin_x = 0;	// FIXME: Avoid non-const global vars
-static int port_origin_y = 0;	// FIXME: Avoid non-const global vars
-
-reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
-	rect_t area;
+	// old code, may be removed later after class migration
 	GfxPort *port = s->port;
 	int redraw_port = 0;
-
+	rect_t area;
 	area = gfx_rect(argv[2].toSint16(), argv[1].toSint16() , argv[4].toSint16(), argv[3].toSint16());
-
 	area.width = area.width - area.x; // Since the actual coordinates are absolute
 	area.height = area.height - area.y;
 
 	switch (argv[0].toSint16()) {
 
 	case K_GRAPH_GET_COLORS_NR:
-
 		return make_reg(0, !s->resMan->isVGA() ? 0x10 : 0x100);
 		break;
 
-	case K_GRAPH_DRAW_LINE: {
-		int16 priority = (argc > 6) ? argv[6].toSint16() : -1;
-		int16 control = (argc > 7) ? argv[7].toSint16() : -1;
-		gfx_color_t gfxcolor = graph_map_color(s, argv[5].toSint16(), priority, control);
+	case K_GRAPH_DRAW_LINE:
+		priority = (argc > 6) ? argv[6].toSint16() : -1;
+		control = (argc > 7) ? argv[7].toSint16() : -1;
+		color = argv[5].toSint16();
 
-		debugC(2, kDebugLevelGraphics, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[5].toSint16(), priority, control, gfxcolor.mask);
-
-		redraw_port = 1;
-
-		// Note: it's quite possible that the coordinates of the line will *not* form a valid rectangle (e.g. it might
-		// have negative width/height). The actual dirty rectangle is constructed in gfxdr_add_dirty().
-		// FIXME/TODO: We need to change the semantics of this call, so that no fake rectangles are used. As it is, it's
-		// not possible change rect_t to Common::Rect, as we assume that Common::Rect forms a *valid* rectangle.
-		ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_line(Common::Point(argv[2].toSint16(), argv[1].toSint16()), Common::Point(argv[4].toSint16(), argv[3].toSint16()),
-		                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
-
-	}
-	break;
+		// FIXME: rect must be changed to 2 Common::Point
+		s->gui->graphDrawLine(rect, color, priority, control);
+		break;
 
 	case K_GRAPH_SAVE_BOX:
-
-		area.x += s->port->zone.x + port_origin_x;
-		area.y += s->port->zone.y + port_origin_y;
-		area.width += -port_origin_x;
-		area.height += -port_origin_y;
-
-		return(graph_save_box(s, area));
+		flags = (argc > 5) ? argv[5].toUint16() : 0;
+		return s->gui->graphSaveBox(rect, flags);
 		break;
 
 	case K_GRAPH_RESTORE_BOX:
-
-		graph_restore_box(s, argv[1]);
+		s->gui->graphRestoreBox(argv[1]);
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
-
-		_k_graph_rebuild_port_with_color(s, port->_bgcolor);
-		port = s->port;
-
-		redraw_port = 1;
+		s->gui->graphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
-
-		_k_graph_rebuild_port_with_color(s, port->_color);
-		port = s->port;
-
-		redraw_port = 1;
+		s->gui->graphFillBoxForeground(rect);
 		break;
 
-	case K_GRAPH_FILL_BOX_ANY: {
-		int16 priority = (argc > 7) ? argv[7].toSint16() : -1;
-		int16 control = (argc > 8) ? argv[8].toSint16() : -1;
-		gfx_color_t color = graph_map_color(s, argv[6].toSint16(), priority, control);
+	case K_GRAPH_FILL_BOX_ANY:
+		priority = (argc > 7) ? argv[7].toSint16() : -1;
+		control = (argc > 8) ? argv[8].toSint16() : -1;
+		color = argv[6].toSint16();
+		colorMask = argv[5].toUint16();
 
-		color.mask = (byte)argv[5].toUint16();
-
-		debugC(2, kDebugLevelGraphics, "fill_box_any((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-		          argv[2].toSint16(), argv[1].toSint16(), argv[4].toSint16(), argv[3].toSint16(), argv[6].toSint16(), priority, control, argv[5].toUint16());
-
-		// FIXME/TODO: this is not right, as some of the dialogs are drawn *behind* some widgets. But at least it works for now
-		//ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));	// old code
-		s->picture_port->add((GfxContainer *)s->picture_port, gfxw_new_box(s->gfx_state, area, color, color, GFX_BOX_SHADE_FLAT));
-
-	}
-	break;
+		s->gui->graphFillBox(rect, colorMask, color, priority, control);
+		break;
 
 	case K_GRAPH_UPDATE_BOX: {
 
@@ -557,14 +479,12 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		area.x += s->port->zone.x;
 		area.y += s->port->zone.y;
 
-		gfxop_update_box(s->gfx_state, area);
-
+		// FIXME: Change to class calling
+		//gfxop_update_box(s->gfx_state, area);
 	}
 	break;
 
 	case K_GRAPH_REDRAW_BOX: {
-
-
 		debugC(2, kDebugLevelGraphics, "redraw_box(%d, %d, %d, %d)\n", argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argv[4].toSint16());
 
 		area.x += s->port->zone.x;
@@ -573,10 +493,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		if (s->dyn_views && s->dyn_views->_parent == (GfxContainer *)s->port)
 			s->dyn_views->draw(Common::Point(0, 0));
 
-		gfxop_update_box(s->gfx_state, area);
-
+		// FIXME: Change to class calling
+		//gfxop_update_box(s->gfx_state, area);
 	}
-
 	break;
 
 	case K_GRAPH_ADJUST_PRIORITY:
@@ -601,21 +520,18 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
-	int width, height;
+	int16 textWidth, textHeight;
 	Common::String text = s->segMan->getString(argv[1]);
 	reg_t *dest = s->segMan->derefRegPtr(argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	Common::String sep_str;
-	const char *sep = NULL; 
+	const char *sep = NULL;
 	if ((argc > 4) && (argv[4].segment)) {
 		sep_str = s->segMan->getString(argv[4]);
 		sep = sep_str.c_str();
 	}
-
-	if (maxwidth < 0)
-		maxwidth = 0;
 
 	dest[0] = dest[1] = NULL_REG;
 
@@ -625,20 +541,19 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	gfxop_get_text_params(s->gfx_state, font_nr, s->strSplit(text.c_str(), sep).c_str(), maxwidth ? maxwidth : MAX_TEXT_WIDTH_MAGIC_VALUE,
-	                                 &width, &height, 0, NULL, NULL, NULL);
-	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text.c_str(), width, height);
+	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
+	s->gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text.c_str(), textWidth, textHeight);
 
-	dest[2] = make_reg(0, height);
-//	dest[3] = make_reg(0, maxwidth? maxwidth : width);
-	dest[3] = make_reg(0, width);
-
+	dest[2] = make_reg(0, textHeight);
+	dest[3] = make_reg(0, textWidth);
 	return s->r_acc;
 }
 
 reg_t kWait(EngineState *s, int argc, reg_t *argv) {
-	uint32 time;
 	int sleep_time = argv[0].toUint16();
+#if 0
+	uint32 time;
 
 	time = g_system->getMillis();
 	s->r_acc = make_reg(0, ((long)time - (long)s->last_wait_time) * 60 / 1000);
@@ -650,6 +565,11 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	// Reset speed throttler: Game is playing along nicely anyway
 	if (sleep_time > 0)
 		s->speedThrottler->reset();
+#endif
+
+	// FIXME: we should not be asking from the GUI to wait. The kernel sounds
+	// like a better place
+	s->gui->wait(sleep_time);
 
 	return s->r_acc;
 }
@@ -977,72 +897,25 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 #define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
-	drawn_pic_t dp;
-	bool add_to_pic = (argc > 2) ? !argv[2].toSint16() : false;
-	gfx_color_t transparent = s->wm_port->_bgcolor;
-	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
+	sciResourceId pictureId = argv[0].toUint16();
+	uint16 flags = 0;
+	uint16 style = 1;
+	int16 EGApaletteNo = -1;
 
-	if (s->_kernel->usesOldGfxFunctions())
-		add_to_pic = (argc > 2) ? argv[2].toSint16() : false;
-
-	dp.nr = argv[0].toSint16();
-	dp.palette = (argc > 3) ? argv[3].toSint16() : 0;
-
-	if ((argc > 1) && (argv[1].toUint16() & K_DRAWPIC_FLAG_MIRRORED))
-		picFlags |= DRAWPIC1_FLAG_MIRRORED;
-
-	gfxop_disable_dirty_frames(s->gfx_state);
-
-	if (NULL != s->old_screen) {
-		gfxop_free_pixmap(s->gfx_state, s->old_screen);
+	if (argc >= 2)
+		style = argv[1].toUint16();
+	if (argc >= 3) {
+		if (!s->_kernel->usesOldGfxFunctions())
+			flags = !argv[2].toUint16();
+		else
+			flags = argv[2].toUint16();
 	}
+	if (argc >= 4)
+		EGApaletteNo = argv[3].toUint16();
 
-	s->old_screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 10, 320, 190));
-
-	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", argv[0].toSint16());
-
-	if (add_to_pic) {
-		gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
-	} else {
-		gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
-	}
-
-	delete s->wm_port;
-	delete s->picture_port;
-	delete s->iconbar_port;
-
-	s->wm_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
-	s->picture_port = new GfxPort(s->visual, s->gfx_state->pic_port_bounds, s->ega_colors[0], transparent);
-
-	s->iconbar_port = new GfxPort(s->visual, gfx_rect(0, 0, 320, 200), s->ega_colors[0], transparent);
-	s->iconbar_port->_flags |= GFXW_FLAG_NO_IMPLICIT_SWITCH;
-
-	s->visual->add((GfxContainer *)s->visual, s->picture_port);
-	s->visual->add((GfxContainer *)s->visual, s->wm_port);
-	s->visual->add((GfxContainer *)s->visual, s->iconbar_port);
-
-	s->port = s->picture_port;
-
-	s->pic_priority_table = gfxop_get_pic_metainfo(s->gfx_state);
-
-	if (argc > 1)
-		s->pic_animate = argv[1].toSint16() & 0xff; // The animation used during kAnimate() later on
-
-	s->dyn_views = NULL;
-	s->drop_views = NULL;
-
-	s->priority_first = 42;
-
-	if (s->_kernel->usesOldGfxFunctions())
-		s->priority_last = 200;
-	else
-		s->priority_last = 190;
-
-	s->pic_not_valid = 1;
-	s->pic_is_new = 1;
+	s->gui->drawPicture(pictureId, style, flags, EGApaletteNo);
 
 	return s->r_acc;
-
 }
 
 Common::Rect set_base(EngineState *s, reg_t object) {
@@ -1230,9 +1103,14 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
+//	warning("kPalette %d", argv[0].toUint16());
 	switch (argv[0].toUint16()) {
 	case 1:
-		debug(5, "STUB: kPalette() effect 1, direct palette set");
+		if (argc==3) {
+			int resourceNo = argv[1].toUint16();
+			int flags = argv[2].toUint16();
+			s->gui->paletteSet(resourceNo, flags);
+		}
 		break;
 	case 2:
 		debug(5, "STUB: kPalette() effect 2, set flag to colors");
@@ -1263,26 +1141,15 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		int g = argv[2].toUint16();
 		int b = argv[3].toUint16();
 
-		int i, delta, bestindex = -1, bestdelta = 200000;
-
-		for (i = 0; i < s->gfx_state->gfxResMan->getColorCount(); i++) {
-			int dr = abs(s->gfx_state->gfxResMan->getColor(i).r - r);
-			int dg = abs(s->gfx_state->gfxResMan->getColor(i).g - g);
-			int db = abs(s->gfx_state->gfxResMan->getColor(i).b - b);
-
-			delta = dr * dr + dg * dg + db * db;
-
-			if (delta < bestdelta) {
-				bestdelta = delta;
-				bestindex = i;
-			}
-		}
-		// Don't warn about inexact mappings -- it's actually the
-		// rule rather than the exception
-		return make_reg(0, bestindex);
+		return make_reg(0, s->gui->paletteFind(r, g, b));
 	}
 	case 6:
-		debug(5, "STUB: kPalette() effect 6, animate palette");
+		if (argc==4) {
+			int fromColor = argv[1].toUint16();
+			int toColor = argv[2].toUint16();
+			int speed = argv[3].toSint16();
+			s->gui->paletteAnimate(fromColor, toColor, speed);
+		}
 		break;
 	case 7:
 		debug(5, "STUB: kPalette() effect 7, save palette to heap");
@@ -1297,12 +1164,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
-	warning("STUB: kPalVary()");
-	return NULL_REG;
-}
-
-static void _k_draw_control(EngineState *s, reg_t obj, int inverse);
+static void _k_draw_control(EngineState *s, reg_t obj, bool inverse);
 
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
@@ -1349,15 +1211,15 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	disableCertainButtons(s->segMan, s->_gameName, obj);
-	_k_draw_control(s, obj, 0);
-	FULL_REDRAW();
+	_k_draw_control(s, obj, false);
+//	FULL_REDRAW();
 	return NULL_REG;
 }
 
 reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
-	_k_draw_control(s, obj, 1);
+	_k_draw_control(s, obj, true);
 
 	return s->r_acc;
 }
@@ -1541,15 +1403,17 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 		case K_CONTROL_ICON:
 		case K_CONTROL_BOX:
 		case K_CONTROL_BUTTON:
-			if (event.segment) PUT_SEL32V(event, claimed, 1);
-			_k_draw_control(s, obj, 0);
+			// Control shall not be redrawn here, Original Sierra interpreter doesn't do it and it will mangle up
+			// menus in at least SQ5
+			//if (event.segment) PUT_SEL32V(event, claimed, 1);
+			//_k_draw_control(s, obj, false);
 			return NULL_REG;
 			break;
 
 		case K_CONTROL_TEXT: {
 			int state = GET_SEL32V(obj, state);
 			PUT_SEL32V(obj, state, state | kControlStateDitherFramed);
-			_k_draw_control(s, obj, 0);
+			_k_draw_control(s, obj, false);
 			PUT_SEL32V(obj, state, state);
 		}
 		break;
@@ -1562,13 +1426,16 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
+static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 	SegManager *segMan = s->segMan;
 	int x = (int16)GET_SEL32V(obj, nsLeft);
 	int y = (int16)GET_SEL32V(obj, nsTop);
 	int xl = (int16)GET_SEL32V(obj, nsRight) - x;
 	int yl = (int16)GET_SEL32V(obj, nsBottom) - y;
 	rect_t area = gfx_rect(x, y, xl, yl);
+
+	Common::Rect rect;
+	rect = Common::Rect (x, y, (int16)GET_SEL32V(obj, nsRight), (int16)GET_SEL32V(obj, nsBottom));
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
@@ -1578,7 +1445,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
-	gfx_alignment_t mode;
+	int mode;
 
 	int type = GET_SEL32V(obj, type);
 	int state = GET_SEL32V(obj, state);
@@ -1588,18 +1455,14 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, s->strSplit(text.c_str(), NULL).c_str(), font_nr,
-		                          (int8)(state & kControlStateFramed), (int8)inverse, (int8)(state & kControlStateDisabled)));
-		break;
+		s->gui->drawControlButton(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, state, inverse);
+		return;
 
 	case K_CONTROL_TEXT:
 		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
-
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x to %d,%d, mode=%d\n", PRINT_REG(obj), x, y, mode);
-
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, s->strSplit(text.c_str()).c_str(), font_nr, mode,
-									(int8)(!!(state & kControlStateDitherFramed)), (int8)inverse));
-		break;
+		s->gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, inverse);
+		return;
 
 	case K_CONTROL_EDIT:
 		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
@@ -1676,9 +1539,9 @@ static void _k_draw_control(EngineState *s, reg_t obj, int inverse) {
 					selection = i + 1;
 			}
 		}
+
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
 		                          list_top, selection, (int8)inverse));
-
 		free(entries_list);
 		delete[] strings;
 	}
@@ -2350,75 +2213,34 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetPort(EngineState *s, int argc, reg_t *argv) {
-	return make_reg(0, s->port->_ID);
+	return s->gui->getPort();
 }
 
 reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
-	if (activated_icon_bar && argc == 6) {
-		port_origin_x = port_origin_y = 0;
-		activated_icon_bar = false;
-		return s->r_acc;
-	}
-
+	uint16 portPtr;
+	Common::Rect picRect;
+	int16 picTop, picLeft;
+	
 	switch (argc) {
-	case 1 : {
-		unsigned int port_nr = argv[0].toSint16();
-		GfxPort *new_port;
-
-		/* We depart from official semantics here, sorry!
-		   Reasoning: Sierra SCI does not clip ports while we do.
-		   Therefore a draw to the titlebar port (which is the
-		   official semantics) would cut off the lower part of the
-		   icons in an SCI1 icon bar. Instead we have an
-		   iconbar_port that does not exist in SSCI. */
-		if (port_nr == (unsigned int) - 1) port_nr = s->iconbar_port->_ID;
-
-		new_port = s->visual->getPort(port_nr);
-
-		if (!new_port) {
-			warning("Invalid port %04x requested", port_nr);
-			return NULL_REG;
-		}
-
-		s->port->draw(gfxw_point_zero); // Update the port we're leaving
-		s->port = new_port;
-		return s->r_acc;
-	}
-	case 6 : {
-		port_origin_y = argv[0].toSint16();
-		port_origin_x = argv[1].toSint16();
-
-		if (argv[0].toSint16() == -10) {
-			s->port->draw(gfxw_point_zero); // Update the port we're leaving
-			s->port = s->iconbar_port;
-			activated_icon_bar = true;
-			return s->r_acc;
-		}
-
-		// Notify the graphics resource manager that the pic port bounds changed
-		s->gfx_state->gfxResMan->changePortBounds(argv[5].toUint16(), argv[4].toUint16(), argv[3].toUint16() + argv[5].toUint16(), argv[2].toUint16() + argv[4].toUint16());
-
-		// LSL6 calls kSetPort to extend the screen to draw the GUI. If we free all resources
-		// here, the background picture is freed too, and this makes everything a big mess.
-		// FIXME/TODO: This code really needs to be rewritten to conform to the original behavior
-		if (s->_gameName != "lsl6") {
-			s->gfx_state->pic_port_bounds = gfx_rect(argv[5].toUint16(), argv[4].toUint16(), argv[3].toUint16(), argv[2].toUint16());
-
-			// FIXME: Should really only invalidate all loaded pic resources here;
-			// this is overkill
-			s->gfx_state->gfxResMan->freeAllResources();
-		} else {
-			// WORKAROUND for LSL6
-			printf("SetPort case 6 called in LSL6. Origin: %d, %d - Clip rect: %d, %d, %d, %d\n", argv[1].toSint16(), argv[0].toSint16(), argv[5].toUint16(), argv[4].toUint16(), argv[3].toUint16(), argv[2].toUint16());
-		}
-
+		case 1:
+		portPtr = argv[0].toSint16();
+		s->gui->setPort(portPtr);
 		break;
-	}
-	default :
+
+		case 6:
+		picRect.top = argv[0].toSint16();
+		picRect.left = argv[1].toSint16();
+		picRect.bottom = argv[2].toSint16();
+		picRect.right = argv[3].toSint16();
+		picTop = argv[4].toSint16();
+		picLeft = argv[5].toSint16();
+		s->gui->setPortPic(picRect, picTop, picLeft);
+		break;
+
+		default:
 		error("SetPort was called with %d parameters", argc);
 		break;
 	}
-
 	return NULL_REG;
 }
 
@@ -2428,142 +2250,43 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	int cel = argv[2].toSint16();
 	int x = argv[3].toSint16();
 	int y = argv[4].toSint16();
-	int priority = (argc > 5) ? argv[5].toSint16() : -1;
-	GfxView *new_view;
+	int priority = (argc > 5) ? argv[5].toUint16()  : -1;
+	int paletteNo = (argc > 6) ? argv[6].toSint16() : 0;
 
-	gfxop_check_cel(s->gfx_state, view, &loop, &cel);
-
-	debugC(2, kDebugLevelGraphics, "DrawCel((%d,%d), (view.%d, %d, %d), p=%d)\n", x, y, view, loop, cel, priority);
-
-	new_view = gfxw_new_view(s->gfx_state, Common::Point(x, y), view, loop, cel, 0, priority, -1,
-	                         ALIGN_LEFT, ALIGN_TOP, GFXW_VIEW_FLAG_DONT_MODIFY_OFFSET);
-
-	ADD_TO_CURRENT_PICTURE_PORT(new_view);
-	FULL_REDRAW();
+	s->gui->drawCell(view, loop, cel, x, y, priority, paletteNo);
 
 	return s->r_acc;
 }
 
 reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
-	unsigned int goner_nr = argv[0].toSint16();
-	GfxPort *goner;
-	GfxPort *pred;
+	int goner_nr = argv[0].toSint16();
+	int arg2 = (argc != 2 || argv[2].toUint16() == 0 ? 0 : 1);
 
-	goner = s->visual->getPort(goner_nr);
-	if ((goner_nr < 3) || (goner == NULL)) {
-		error("Removal of invalid window %04x requested", goner_nr);
-		return s->r_acc;
-	}
-
-	if (s->dyn_views && (GfxContainer *)s->dyn_views->_parent == (GfxContainer *)goner) {
-		reparentize_primary_widget_lists(s, (GfxPort *) goner->_parent);
-	}
-
-	if (s->drop_views && (GfxContainer *)s->drop_views->_parent == (GfxContainer *)goner)
-		s->drop_views = NULL; // Kill it
-
-	pred = gfxw_remove_port(s->visual, goner);
-
-	if (goner == s->port) // Did we kill the active port?
-		s->port = pred;
-
-	// Find the last port that exists and that isn't marked no-switch
-	int id = s->visual->_portRefs.size() - 1;
-	while (id > 0 && (!s->visual->_portRefs[id] || (s->visual->_portRefs[id]->_flags & GFXW_FLAG_NO_IMPLICIT_SWITCH)))
-		id--;
-
-	debugC(2, kDebugLevelGraphics, "Activating port %d after disposing window %d\n", id, goner_nr);
-	s->port = (id >= 0) ? s->visual->_portRefs[id] : 0;
-
-	if (!s->port)
-		s->port = gfxw_find_default_port(s->visual);
-
-	gfxop_update(s->gfx_state);
-
+	s->gui->disposeWindow(goner_nr, arg2);
 	return s->r_acc;
 }
 
 reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
-	GfxPort *window;
-	int x, y, xl, yl, flags;
-	gfx_color_t bgcolor;
-	gfx_color_t fgcolor;
-	gfx_color_t black;
-	gfx_color_t lWhite;
-	int priority;
+	Common::Rect rect1 (argv[1].toSint16(), argv[0].toSint16(), argv[3].toSint16(), argv[2].toSint16());
+	Common::Rect rect2;
 	int argextra = argc == 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games
+	int	style = argv[5 + argextra].toSint16();
+	int	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
+	int colorPen = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
+	int colorBack = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
 
-	y = argv[0].toSint16();
-	x = argv[1].toSint16();
-	yl = argv[2].toSint16() - y;
-	xl = argv[3].toSint16() - x;
-
-	y += s->wm_port->_bounds.y;
-
-	if (x + xl > 319)
-		x -= ((x + xl) - 319);
-
-	flags = argv[5 + argextra].toSint16();
-
-	priority = (argc > 6 + argextra) ? argv[6 + argextra].toSint16() : -1;
-	bgcolor.mask = 0;
-
-	int16 bgColor = (argc > 8 + argextra) ? argv[8 + argextra].toSint16() : 255;
-
-	if (bgColor >= 0) {
-		if (!s->resMan->isVGA())
-			bgcolor.visual = get_pic_color(s, MIN<int>(bgColor, 15));
-		else
-			bgcolor.visual = get_pic_color(s, bgColor);
-		bgcolor.mask = GFX_MASK_VISUAL;
-	} else {
-		bgcolor.visual = PaletteEntry(0,0,0);
+	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
+	if (argc==13) {
+		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
 	}
 
-	bgcolor.priority = priority;
-	bgcolor.mask |= priority >= 0 ? GFX_MASK_PRIORITY : 0;
-	bgcolor.alpha = 0;
-	bgcolor.control = -1;
-	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", argv[0].toSint16(), argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16());
-
-	int16 visualColor = (argc > 7 + argextra) ? argv[7 + argextra].toSint16() : 0;
-	fgcolor.visual = get_pic_color(s, visualColor);
-	fgcolor.mask = GFX_MASK_VISUAL;
-	fgcolor.control = -1;
-	fgcolor.priority = -1;
-	fgcolor.alpha = 0;
-	black.visual = get_pic_color(s, 0);
-	black.mask = GFX_MASK_VISUAL;
-	black.alpha = 0;
-	black.control = -1;
-	black.priority = -1;
-	lWhite.visual = get_pic_color(s, !s->resMan->isVGA() ? 15 : 255);
-	lWhite.mask = GFX_MASK_VISUAL;
-	lWhite.alpha = 0;
-	lWhite.priority = -1;
-	lWhite.control = -1;
 	Common::String title;
 	if (argv[4 + argextra].segment) {
 		title = s->segMan->getString(argv[4 + argextra]);
 		title = s->strSplit(title.c_str(), NULL);
 	}
 
-	window = sciw_new_window(s, gfx_rect(x, y, xl, yl), s->titlebar_port->_font, fgcolor, bgcolor,
-							s->titlebar_port->_font, lWhite, black, title.c_str(), flags);
-
-	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
-	if (argextra)
-		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(argv[5].toSint16(), argv[4].toSint16() + s->wm_port->_bounds.y, argv[7].toSint16() - argv[5].toSint16(), argv[6].toSint16() - argv[4].toSint16()));
-
-	ADD_TO_WINDOW_PORT(window);
-	FULL_REDRAW();
-
-	window->draw(gfxw_point_zero);
-	gfxop_update(s->gfx_state);
-
-	s->port = window; // Set active port
-
-	return make_reg(0, window->_ID);
+	return s->gui->newWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
 }
 
 #define K_ANIMATE_CENTER_OPEN_H  0 // horizontally open from center
@@ -3130,208 +2853,21 @@ reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-#define K_DISPLAY_SET_COORDS 100
-#define K_DISPLAY_SET_ALIGNMENT 101
-#define K_DISPLAY_SET_COLOR 102
-#define K_DISPLAY_SET_BGCOLOR 103
-#define K_DISPLAY_SET_GRAYTEXT 104
-#define K_DISPLAY_SET_FONT 105
-#define K_DISPLAY_WIDTH 106
-#define K_DISPLAY_SAVE_UNDER 107
-#define K_DISPLAY_RESTORE_UNDER 108
-#define K_DONT_UPDATE_IMMEDIATELY 121
-
 reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
-	int argpt;
 	reg_t textp = argv[0];
 	int index = (argc > 1) ? argv[1].toUint16() : 0;
-	int temp;
-	bool save_under = false;
-	gfx_color_t transparent = { PaletteEntry(), 0, -1, -1, 0 };
+
 	Common::String text;
-	GfxPort *port = (s->port) ? s->port : s->picture_port;
-	bool update_immediately = true;
-
-	gfx_color_t color0, *color1, bg_color;
-	gfx_alignment_t halign = ALIGN_LEFT;
-	rect_t area = gfx_rect(port->draw_pos.x, port->draw_pos.y, 320 - port->draw_pos.x, 200 - port->draw_pos.y);
-	int gray = port->gray_text;
-	int font_nr = port->_font;
-	GfxText *text_handle;
-
-	color0 = port->_color;
-	bg_color = port->_bgcolor;
-	// TODO: in SCI1VGA the default colors for text and background are #0 (black)
-	// SCI0 case should be checked
 
 	if (textp.segment) {
-		argpt = 1;
+		argc--; argv++;
 		text = s->segMan->getString(textp);
 	} else {
-		argpt = 2;
+		argc--; argc--; argv++; argv++;
 		text = kernel_lookup_text(s, textp, index);
 	}
 
-#if 0
-	if (!text) {
-		error("Display with invalid reference %04x:%04x", PRINT_REG(textp));
-		return NULL_REG;
-	}
-#endif
-
-	while (argpt < argc) {
-		switch (argv[argpt++].toUint16()) {
-
-		case K_DISPLAY_SET_COORDS:
-
-			area.x = argv[argpt++].toUint16();
-			area.y = argv[argpt++].toUint16();
-			debugC(2, kDebugLevelGraphics, "Display: set_coords(%d, %d)\n", area.x, area.y);
-			break;
-
-		case K_DISPLAY_SET_ALIGNMENT:
-
-			halign = (gfx_alignment_t)argv[argpt++].toSint16();
-			debugC(2, kDebugLevelGraphics, "Display: set_align(%d)\n", halign);
-			break;
-
-		case K_DISPLAY_SET_COLOR:
-
-			temp = argv[argpt++].toSint16();
-			debugC(2, kDebugLevelGraphics, "Display: set_color(%d)\n", temp);
-			if (!s->resMan->isVGA() && temp >= 0 && temp <= 15)
-				color0 = (s->ega_colors[temp]);
-			else
-				if (s->resMan->isVGA() && temp >= 0 && temp < 256) {
-					color0.visual = get_pic_color(s, temp);
-					color0.mask = GFX_MASK_VISUAL;
-				} else
-					if (temp == -1)
-						color0 = transparent;
-					else
-						warning("Display: Attempt to set invalid fg color %d", temp);
-			break;
-
-		case K_DISPLAY_SET_BGCOLOR:
-
-			temp = argv[argpt++].toSint16();
-			debugC(2, kDebugLevelGraphics, "Display: set_bg_color(%d)\n", temp);
-			if (!s->resMan->isVGA() && temp >= 0 && temp <= 15)
-				bg_color = s->ega_colors[temp];
-			else
-				if (s->resMan->isVGA() && temp >= 0 && temp <= 256) {
-					bg_color.visual = get_pic_color(s, temp);
-					bg_color.mask = GFX_MASK_VISUAL;
-				} else
-					if (temp == -1)
-						bg_color = transparent;
-					else
-						warning("Display: Attempt to set invalid fg color %d", temp);
-			break;
-
-		case K_DISPLAY_SET_GRAYTEXT:
-
-			gray = argv[argpt++].toSint16();
-			debugC(2, kDebugLevelGraphics, "Display: set_graytext(%d)\n", gray);
-			break;
-
-		case K_DISPLAY_SET_FONT:
-
-			font_nr = argv[argpt++].toUint16();
-
-			debugC(2, kDebugLevelGraphics, "Display: set_font(\"font.%03d\")\n", font_nr);
-			break;
-
-		case K_DISPLAY_WIDTH:
-
-			area.width = argv[argpt++].toUint16();
-			if (area.width == 0)
-				area.width = MAX_TEXT_WIDTH_MAGIC_VALUE;
-
-			debugC(2, kDebugLevelGraphics, "Display: set_width(%d)\n", area.width);
-			break;
-
-		case K_DISPLAY_SAVE_UNDER:
-
-			save_under = true;
-			debugC(2, kDebugLevelGraphics, "Display: set_save_under()\n");
-			break;
-
-		case K_DISPLAY_RESTORE_UNDER:
-
-			debugC(2, kDebugLevelGraphics, "Display: restore_under(%04x)\n", argv[argpt].toUint16());
-			graph_restore_box(s, argv[argpt++]);
-			update_immediately = true;
-			argpt++;
-			return s->r_acc;
-
-		case K_DONT_UPDATE_IMMEDIATELY:
-
-			update_immediately = false;
-			debugC(2, kDebugLevelGraphics, "Display: set_dont_update()\n");
-			argpt++;
-			break;
-
-		default:
-			debugC(2, kDebugLevelGraphics, "Unknown Display() command %x\n", argv[argpt - 1].toUint16());
-			return NULL_REG;
-		}
-	}
-
-	if (halign == ALIGN_LEFT) {
-		// If the text does not fit on the screen, move it to the left and upwards until it does
-		gfxop_get_text_params(s->gfx_state, font_nr, text.c_str(), area.width, &area.width, &area.height, 0, NULL, NULL, NULL);
-
-		// Make the text fit on the screen
-		if (area.x + area.width > 320)
-			area.x += 320 - area.x - area.width; // Plus negative number = subtraction
-
-		if (area.y + area.height > 200)
-			area.y += 200 - area.y - area.height; // Plus negative number = subtraction
-	} else {
-		// If the text does not fit on the screen, clip it till it does
-		if (area.x + area.width > s->gfx_state->pic_port_bounds.width)
-			area.width = s->gfx_state->pic_port_bounds.width - area.x;
-
-		if (area.y + area.height > s->gfx_state->pic_port_bounds.height)
-			area.height = s->gfx_state->pic_port_bounds.height - area.y;
-	}
-
-	if (gray)
-		color1 = &bg_color;
-	else
-		color1 = &color0;
-
-	assert_primary_widget_lists(s);
-
-	text_handle = gfxw_new_text(s->gfx_state, area, font_nr, s->strSplit(text.c_str()).c_str(), halign, ALIGN_TOP, color0, *color1, bg_color, 0);
-
-	if (!text_handle) {
-		error("Display: Failed to create text widget");
-		return NULL_REG;
-	}
-
-	if (save_under) {    // Backup
-		rect_t save_area = text_handle->_bounds;
-		save_area.x += port->_bounds.x;
-		save_area.y += port->_bounds.y;
-
-		s->r_acc = graph_save_box(s, save_area);
-		text_handle->_serial++; // This is evil!
-
-		debugC(2, kDebugLevelGraphics, "Saving (%d, %d) size (%d, %d) as %04x:%04x\n", save_area.x, save_area.y, save_area.width, save_area.height, PRINT_REG(s->r_acc));
-	}
-
-	debugC(2, kDebugLevelGraphics, "Display: Commiting text '%s'\n", text.c_str());
-
-	//ADD_TO_CURRENT_PICTURE_PORT(text_handle);
-
-	ADD_TO_CURRENT_PICTURE_PORT(text_handle);
-	if ((!s->pic_not_valid) && update_immediately) { // Refresh if drawn to valid picture
-		FULL_REDRAW();
-		debugC(2, kDebugLevelGraphics, "Refreshing display...\n");
-	}
-
+	s->gui->display(s->strSplit(text.c_str()).c_str(), argc, argv);
 	return s->r_acc;
 }
 
@@ -3485,6 +3021,18 @@ reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 
 	warning("STUB: SetVideoMode %d", argv[0].toUint16());
 
+	return s->r_acc;
+}
+
+// New calls for SCI11. Using those is only needed when using text-codes so that one is able to change
+//  font and/or color multiple times during kDisplay and kDrawControl
+reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
+	s->gui->textFonts(argc, argv);
+	return s->r_acc;
+}
+
+reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
+	s->gui->textColors(argc, argv);
 	return s->r_acc;
 }
 

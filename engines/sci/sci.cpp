@@ -35,6 +35,8 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
+#include "sci/gui32/gui32.h"
+
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
 #include "sci/gfx/operations.h"
@@ -44,7 +46,7 @@ namespace Sci {
 class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
-		: Engine(syst), _gameDescription(desc) {
+		: Engine(syst), _gameDescription(desc), _system(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
 	// need to do such things, do them from init().
@@ -152,6 +154,10 @@ Common::Error SciEngine::run() {
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
 
+	// GUI change
+	//_gamestate->gui = new SciGUI(_system, _gamestate);    // new
+	_gamestate->gui = new SciGUI32(_system, _gamestate);  // old
+
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("dither_mode", "0");
 
@@ -182,6 +188,8 @@ Common::Error SciEngine::run() {
 		warning("Game initialization failed: Error in sound subsystem. Aborting...");
 		return Common::kUnknownError;
 	}
+
+	_gamestate->gui->init(_kernel->usesOldGfxFunctions());
 
 	printf("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 

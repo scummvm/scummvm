@@ -132,6 +132,7 @@ private:
 	Kernel *_kernel;
 	Vocabulary *_vocabulary;
 	Console *_console;
+	OSystem *_system;
 };
 
 /**

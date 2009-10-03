@@ -206,11 +206,13 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 
 	if (obj.segment) {
-		int x = GET_SEL32V(obj, x);
-		int y = GET_SEL32V(obj, y);
+		int16 x = GET_SEL32V(obj, x);
+		int16 y = GET_SEL32V(obj, y);
 
-		PUT_SEL32V(obj, x, x - s->port->zone.x);
-		PUT_SEL32V(obj, y, y - s->port->zone.y);
+		s->gui->globalToLocal(&x, &y);
+
+		PUT_SEL32V(obj, x, x);
+		PUT_SEL32V(obj, y, y);
 	}
 
 	return s->r_acc;
@@ -222,11 +224,13 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->segMan;
 
 	if (obj.segment) {
-		int x = GET_SEL32V(obj, x);
-		int y = GET_SEL32V(obj, y);
+		int16 x = GET_SEL32V(obj, x);
+		int16 y = GET_SEL32V(obj, y);
 
-		PUT_SEL32V(obj, x, x + s->port->zone.x);
-		PUT_SEL32V(obj, y, y + s->port->zone.y);
+		s->gui->localToGlobal(&x, &y);
+
+		PUT_SEL32V(obj, x, x);
+		PUT_SEL32V(obj, y, y);
 	}
 
 	return s->r_acc;

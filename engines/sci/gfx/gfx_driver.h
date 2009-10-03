@@ -228,6 +228,11 @@ public:
 	gfx_mode_t *getMode() { return _mode; }
 	byte *getVisual0() { return _visual[0]; }
 
+	/**
+	 * Animates palette
+	 */
+	void animatePalette(int fromColor, int toColor, int stepCount);
+
 private:
 	gfx_pixmap_t *_priority[2];
 	byte *_visual[2];

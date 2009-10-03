@@ -44,6 +44,7 @@ namespace Common {
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/sfx/core.h"
+#include "sci/gui/gui.h"
 
 namespace Sci {
 
@@ -174,6 +175,8 @@ public:
 	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */
 
 	/* Non-VM information */
+
+	SciGUI *gui; /* Currently active GUI */
 
 	GfxState *gfx_state; /**< Graphics state and driver */
 	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */
@@ -318,6 +321,12 @@ private:
  * @return the requested color
  */
 PaletteEntry get_pic_color(EngineState *s, int color);
+
+/* Functions used in gui32\gui32.cpp */
+reg_t graph_save_box(EngineState *s, rect_t area);
+void graph_restore_box(EngineState *s, reg_t handle);
+void assert_primary_widget_lists(EngineState *s);
+void reparentize_primary_widget_lists(EngineState *s, GfxPort *newport);
 
 } // End of namespace Sci
 

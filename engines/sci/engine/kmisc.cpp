@@ -131,7 +131,8 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 
 	switch (mode) {
 	case K_NEW_GETTIME_TICKS :
-		retval = start_time * 60 / 1000;
+		retval = s->gui->getTimeTicks();	// FIXME
+		//retval = start_time * 60 / 1000;
 		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case K_NEW_GETTIME_TIME_12HOUR :

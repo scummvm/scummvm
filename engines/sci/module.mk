@@ -55,6 +55,16 @@ MODULE_OBJS = \
 	gfx/res_pic.o \
 	gfx/res_view.o \
 	gfx/seq_decoder.o \
+	gui/gui.o \
+	gui/gui_dbllist.o \
+	gui/gui_font.o \
+	gui/gui_gfx.o \
+	gui/gui_memmgr.o \
+	gui/gui_picture.o \
+	gui/gui_screen.o \
+	gui/gui_view.o \
+	gui/gui_windowmgr.o \
+	gui32/gui32.o \
 	sfx/core.o \
 	sfx/iterator.o \
 	sfx/songlib.o \

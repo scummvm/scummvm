@@ -365,6 +365,12 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	return retval;
 }
 
+// SCI1:
+// [LoopCount:WORD] [MirrorMask:WORD] [??:WORD] [PaletteOffset:WORD] [LoopOffset0:WORD] [LoopOffset1:WORD]...
+// Loop-data:
+// [CellCount:WORD] [Unknown:WORD] [CellOffset0:WORD] [CellOffset1:WORD]...
+// SCI11:
+// [HeaderSize:WORD] [LoopCount:BYTE] [Unknown:BYTE] [??:WORD] [??:WORD] [PaletteOffset:WORD]
 gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType) {
 	uint16 palOffset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET + ((viewType == kViewVga11) ? 2 : 0));
 	uint16 headerSize = (viewType == kViewVga11) ? READ_LE_UINT16(resource + V2_HEADER_SIZE) : 0;

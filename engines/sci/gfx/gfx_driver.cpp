@@ -248,4 +248,19 @@ void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
 	cursorData = 0;
 }
 
+void GfxDriver::animatePalette(int fromColor, int toColor, int stepCount) {
+	int i;
+	PaletteEntry firstColor = _mode->palette->getColor(fromColor);
+	PaletteEntry loopColor;
+	for (i=fromColor+1; i<=toColor; i++) {
+		loopColor = _mode->palette->getColor(i);
+		loopColor.r = 0;
+		loopColor.g = 0;
+		loopColor.b = 0;
+		_mode->palette->makeSystemColor(i-1, loopColor); // loopColor.r, loopColor.g, loopColor.b);
+	}
+//	_mode->palette->setColor(toColor, firstColor.r, firstColor.g, firstColor.b);
+	_mode->palette->makeSystemColor(toColor, firstColor);
+}
+
 } // End of namespace Sci

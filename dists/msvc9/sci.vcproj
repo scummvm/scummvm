@@ -93,6 +93,29 @@
 			<File RelativePath="..\..\engines\sci\gfx\seq_decoder.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\seq_decoder.h" />
 		</Filter>
+		<Filter	Name="gui">
+			<File RelativePath="..\..\engines\sci\gui\gui.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_dbllist.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_dbllist.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_font.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_font.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_gfx.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_gfx.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_helpers.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_memmgr.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_memmgr.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_picture.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_picture.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_screen.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_screen.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_view.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_view.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.h" />
+			<File RelativePath="..\..\engines\sci\gui32\gui32.h" />
+			<File RelativePath="..\..\engines\sci\gui32\gui32.cpp" />
+		</Filter>
 		<Filter	Name="sfx">
 			<File RelativePath="..\..\engines\sci\sfx\core.cpp" />
 			<File RelativePath="..\..\engines\sci\sfx\core.h" />

@@ -454,7 +454,8 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv);
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv);
 reg_t kStrSplit(EngineState *s, int argc, reg_t *argv);
 reg_t kPlatform(EngineState *s, int argc, reg_t *argv);
-reg_t kPalVary(EngineState *s, int argc, reg_t *argv);
+reg_t kTextColors(EngineState *s, int argc, reg_t *argv);
+reg_t kTextFonts(EngineState *s, int argc, reg_t *argv);
 
 } // End of namespace Sci
 
