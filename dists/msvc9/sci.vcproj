@@ -113,8 +113,10 @@
 			<File RelativePath="..\..\engines\sci\gui\gui_view.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.h" />
-			<File RelativePath="..\..\engines\sci\gui32\gui32.h" />
+		</Filter>
+		<Filter Name="gui32">
 			<File RelativePath="..\..\engines\sci\gui32\gui32.cpp" />
+			<File RelativePath="..\..\engines\sci\gui32\gui32.h" />
 		</Filter>
 		<Filter	Name="sfx">
 			<File RelativePath="..\..\engines\sci\sfx\core.cpp" />
