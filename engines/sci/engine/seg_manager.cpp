@@ -891,10 +891,10 @@ void SegManager::strncpy(reg_t dest, const char* src, size_t n) {
 		while (n > 0) {
 			d->segment = 0; // STRINGFRAG_SEGMENT?
 			if (n > 1 && src[0]) {
-				d->offset = src[0] | (src[1] << 8);
+				d->offset = (src[0] & 0x00ff)  | (src[1] << 8);
 			} else {
 				d->offset &= 0xff00;
-				d->offset |= src[0];
+				d->offset |= src[0] & 0x00ff;
 				break;
 			}
 
@@ -994,10 +994,10 @@ void SegManager::memcpy(reg_t dest, const byte* src, size_t n) {
 		while (n > 0) {
 			d->segment = 0; // STRINGFRAG_SEGMENT?
 			if (n > 1) {
-				d->offset = src[0] | (src[1] << 8);
+				d->offset = (src[0] & 0x00ff) | (src[1] << 8);
 			} else {
 				d->offset &= 0xff00;
-				d->offset |= src[0];
+				d->offset |= src[0] & 0x00ff;
 				break;
 			}
 			src += 2;
