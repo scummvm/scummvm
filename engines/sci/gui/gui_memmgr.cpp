@@ -299,7 +299,7 @@ void heapDump() {
 	debug("Total %db used, %db free\nEnd Dump", szUsed, szFree);
 }
 //----------------------------
-inline byte *heap2Ptr(HEAPHANDLE ptr) {
+byte *heap2Ptr(HEAPHANDLE ptr) {
 	return (ptr >= HEAP_START) ? (byte *)(_heap + ptr) : NULL;
 }
 //----------------------------
