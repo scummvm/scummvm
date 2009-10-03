@@ -152,8 +152,8 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("sg",					WRAP_METHOD(Console, cmdStepGlobal));	// alias
 	DCmd_Register("step_callk",			WRAP_METHOD(Console, cmdStepCallk));
 	DCmd_Register("snk",				WRAP_METHOD(Console, cmdStepCallk));	// alias
-	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDissassemble));
-	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDissassembleAddress));
+	DCmd_Register("disasm",				WRAP_METHOD(Console, cmdDisassemble));
+	DCmd_Register("disasm_addr",		WRAP_METHOD(Console, cmdDisassembleAddress));
 	DCmd_Register("send",				WRAP_METHOD(Console, cmdSend));
 	DCmd_Register("go",					WRAP_METHOD(Console, cmdGo));
 	// Breakpoints
@@ -2108,7 +2108,7 @@ bool Console::cmdStepCallk(int argc, const char **argv) {
 	return false;
 }
 
-bool Console::cmdDissassemble(int argc, const char **argv) {
+bool Console::cmdDisassemble(int argc, const char **argv) {
 	if (argc != 3) {
 		DebugPrintf("Disassembles a method by name.\n");
 		DebugPrintf("Usage: %s <object> <method>\n", argv[0]);
@@ -2149,7 +2149,7 @@ bool Console::cmdDissassemble(int argc, const char **argv) {
 	return true;
 }
 
-bool Console::cmdDissassembleAddress(int argc, const char **argv) {
+bool Console::cmdDisassembleAddress(int argc, const char **argv) {
 	if (argc < 2) {
 		DebugPrintf("Disassembles one or more commands.\n");
 		DebugPrintf("Usage: %s [startaddr] <options>\n", argv[0]);
