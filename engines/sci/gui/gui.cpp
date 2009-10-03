@@ -106,9 +106,9 @@ reg_t SciGUI::newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, in
 	sciWnd *wnd = NULL;
 
 	if (rect2.top != 0 && rect2.left != 0 && rect2.height() != 0 && rect2.width() != 0)
-		wnd = _windowMgr->NewWindow(&rect1, &rect2, "", style, priority, 0);
+		wnd = _windowMgr->NewWindow(&rect1, &rect2, title, style, priority, 0);
 	else
-		wnd = _windowMgr->NewWindow(&rect1, NULL, "", style, priority, 0);
+		wnd = _windowMgr->NewWindow(&rect1, NULL, title, style, priority, 0);
 	wnd->penClr = colorPen;
 	wnd->backClr = colorBack;
 	_windowMgr->DrawWindow(wnd);
