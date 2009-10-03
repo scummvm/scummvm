@@ -43,14 +43,16 @@ namespace Draci {
 class DraciEngine : public Engine {
 public:
 	DraciEngine(OSystem *syst, const ADGameDescription *gameDesc);
-	~DraciEngine();
+	virtual ~DraciEngine();
 
 	int init();
-	Common::Error run();
+	virtual Common::Error run();
 
-	bool hasFeature(Engine::EngineFeature f) const;
+	virtual bool hasFeature(Engine::EngineFeature f) const;
+	virtual void pauseEngineIntern(bool pause);
+	virtual void syncSoundSettings();
 
-	bool handleEvents();
+	void handleEvents();
 
 	Screen *_screen;
 	Mouse *_mouse;

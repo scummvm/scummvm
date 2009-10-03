@@ -115,7 +115,8 @@ bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {
 }
 
 bool Draci::DraciEngine::hasFeature(EngineFeature f) const {
-	return false;
+	return (f == kSupportsSubtitleOptions) ||
+		(f == kSupportsRTL);
 }
 
 bool DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {

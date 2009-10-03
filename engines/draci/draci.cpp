@@ -173,21 +173,24 @@ int DraciEngine::init() {
 	return Common::kNoError;
 }
 
-bool DraciEngine::handleEvents() {
+void DraciEngine::handleEvents() {
 	Common::Event event;
-	bool quit = false;
 
 	while (_eventMan->pollEvent(event)) {
 		switch (event.type) {
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RTL:
 			_game->setQuit(true);
 			break;
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_RIGHT) {
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_RIGHT:
 				_game->scheduleEnteringRoomUsingGate(_game->nextRoomNum(), 0);
-			} else if (event.kbd.keycode == Common::KEYCODE_LEFT) {
+				break;
+			case Common::KEYCODE_LEFT:
 				_game->scheduleEnteringRoomUsingGate(_game->prevRoomNum(), 0);
-			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
+				break;
+			case Common::KEYCODE_ESCAPE: {
 				const int escRoom = _game->getRoomNum() != _game->getMapRoom()
 					? _game->getEscRoom() : _game->getPreviousRoomNum();
 
@@ -202,16 +205,20 @@ bool DraciEngine::handleEvents() {
 					// End any currently running GPL programs
 					_script->endCurrentProgram();
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_m) {
+				break;
+			}
+			case Common::KEYCODE_m:
 				if (_game->getLoopStatus() == kStatusOrdinary) {
 					const int new_room = _game->getRoomNum() != _game->getMapRoom()
 						? _game->getMapRoom() : _game->getPreviousRoomNum();
 					_game->scheduleEnteringRoomUsingGate(new_room, 0);
 				}
-			} else if (event.kbd.keycode == Common::KEYCODE_w) {
+				break;
+			case Common::KEYCODE_w:
 				// Show walking map toggle
 				_showWalkingMap = !_showWalkingMap;
-			} else if (event.kbd.keycode == Common::KEYCODE_i) {
+				break;
+			case Common::KEYCODE_i:
 				if (_game->getLoopStatus() == kStatusInventory &&
 				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
 					_game->inventoryDone();
@@ -219,6 +226,31 @@ bool DraciEngine::handleEvents() {
 				   _game->getLoopSubstatus() == kSubstatusOrdinary) {
 					_game->inventoryInit();
 				}
+				break;
+			case Common::KEYCODE_LCTRL:
+				debugC(6, kDraciGeneralDebugLevel, "Left Ctrl down");
+				_mouse->downModifier(0);
+				break;
+			case Common::KEYCODE_RCTRL:
+				debugC(6, kDraciGeneralDebugLevel, "Right Ctrl down");
+				_mouse->downModifier(1);
+				break;
+			default:
+				break;
+			}
+			break;
+		case Common::EVENT_KEYUP:
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_LCTRL:
+				debugC(6, kDraciGeneralDebugLevel, "Left Ctrl up");
+				_mouse->upModifier(0);
+				break;
+			case Common::KEYCODE_RCTRL:
+				debugC(6, kDraciGeneralDebugLevel, "Right Ctrl up");
+				_mouse->upModifier(1);
+				break;
+			default:
+				break;
 			}
 			break;
 		default:
@@ -234,9 +266,8 @@ bool DraciEngine::handleEvents() {
 	} else if (!_showWalkingMap && _anims->getAnimation(kWalkingMapOverlay)->isPlaying()) {
 		_anims->stop(kWalkingMapOverlay);
 	}
-
-	return quit;
 }
+
 DraciEngine::~DraciEngine() {
 	// Dispose your resources here
 
@@ -273,6 +304,21 @@ Common::Error DraciEngine::run() {
 	_game->init();
 	_game->start();
 	return Common::kNoError;
+}
+
+void DraciEngine::pauseEngineIntern(bool pause) {
+	Engine::pauseEngineIntern(pause);
+	if (pause) {
+		_anims->pauseAnimations();
+	} else {
+		_anims->unpauseAnimations();
+	}
+}
+
+void DraciEngine::syncSoundSettings() {
+	Engine::syncSoundSettings();
+
+	// TODO: update our volumes
 }
 
 } // End of namespace Draci

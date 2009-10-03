@@ -62,12 +62,17 @@ public:
 	void lButtonSet(bool state) { _lButton = state; }
 	void rButtonSet(bool state) { _rButton = state; }
 
+	// Updates the current state of modifiers.  The indexes are: 0=left Ctrl, 1=right Ctrl.
+	void downModifier(int index) { _modifierState |= 1 << index; }
+	void upModifier(int index) { _modifierState &= ~(1 << index); }
+
 	uint16 getPosX() const { return _x; }
 	uint16 getPosY() const { return _y; }
 
 private:
 	uint16 _x, _y;
 	bool _lButton, _rButton;
+	int _modifierState;
 	CursorType _cursorType;
 	DraciEngine *_vm;
 };
