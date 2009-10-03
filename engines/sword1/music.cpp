@@ -213,27 +213,40 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 #ifdef USE_FLAC
 	if (!_audioSource) {
 		sprintf(fileName, "%s.flac", fileBase);
-		if (_file.open(fileName))
+		if (_file.open(fileName)) {
 			_audioSource = Audio::makeFlacStream(&_file, false, 0, 0, loop ? 0 : 1);
+			if (!_audioSource)
+				_file.close();
+		}
 	}
+
 	if (!_audioSource) {
 		sprintf(fileName, "%s.fla", fileBase);
-		if (_file.open(fileName))
+		if (_file.open(fileName)) {
 			_audioSource = Audio::makeFlacStream(&_file, false, 0, 0, loop ? 0 : 1);
+			if (!_audioSource)
+				_file.close();
+		}
 	}
 #endif
 #ifdef USE_VORBIS
 	if (!_audioSource) {
 		sprintf(fileName, "%s.ogg", fileBase);
-		if (_file.open(fileName))
+		if (_file.open(fileName)) {
 			_audioSource = Audio::makeVorbisStream(&_file, false, 0, 0, loop ? 0 : 1);
+			if (!_audioSource)
+				_file.close();
+		}
 	}
 #endif
 #ifdef USE_MAD
 	if (!_audioSource) {
 		sprintf(fileName, "%s.mp3", fileBase);
-		if (_file.open(fileName))
+		if (_file.open(fileName)) {
 			_audioSource = Audio::makeMP3Stream(&_file, false, 0, 0, loop ? 0 : 1);
+			if (!_audioSource)
+				_file.close();
+		}
 	}
 #endif
 	if (!_audioSource) {
