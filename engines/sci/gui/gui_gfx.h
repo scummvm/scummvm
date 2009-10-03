@@ -40,7 +40,7 @@ public:
 
 	void init(void);
 	void initPalette();
-	virtual void initTimer();
+	void initTimer();
 	static void timerHandler(void*ref);
 
 	sciPort *mallocPort ();

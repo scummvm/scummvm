@@ -35,7 +35,7 @@ class SciGUI {
 public:
 	SciGUI(OSystem *system, EngineState *s);
 	SciGUI();
-	~SciGUI();
+	virtual ~SciGUI();
 
 	virtual void init(bool oldGfxFunctions);
 
