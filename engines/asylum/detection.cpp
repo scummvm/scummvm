@@ -42,8 +42,27 @@ namespace Asylum {
 static const ADGameDescription gameDescriptions[] = {
 	{
 		"asylum",
-		0,
-		AD_ENTRY1s("SNTRM.DAT", "280b4a72f70f3073e9dbc9a9cfa25518", 8930),
+		"Unpatched",
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
+			{"SCN.006",   0, "71a5f49cbda597a11e877589075e27b5", 2918330},
+			{0,0,0,0}
+		},
+		Common::EN_ANY,
+		Common::kPlatformPC,
+		ADGF_NO_FLAGS,
+		Common::GUIO_NONE
+	},
+	{
+		"asylum",
+		"Patched", // Level 2 Lockout Bug patch was applied
+		{
+			{"SNTRM.DAT", 0, "7cfcc457c1f579fbf9878ac175d29374", 8930},
+			{"RES.000",   0, "4d13f1412f9e7dd3eaf0a58f0e00e662", 272057},
+			{"SCN.006",   0, "3a5b54da08198012dc0614114782d5fb", 2918330},
+			{0,0,0,0}
+		},
 		Common::EN_ANY,
 		Common::kPlatformPC,
 		ADGF_NO_FLAGS,
@@ -62,7 +81,7 @@ static const ADFileBasedFallback fileBasedFallback[] = {
 static const ADParams detectionParams = {
 	(const byte *)Asylum::gameDescriptions,
 	sizeof(ADGameDescription),
-	4096, // number of md5 bytes
+	0, // number of md5 bytes
 	asylumGames,
 	0, // no obsolete targets data
 	"asylum",
