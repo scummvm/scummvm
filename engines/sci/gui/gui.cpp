@@ -124,7 +124,7 @@ void SciGUI::display(const char *text, int argc, reg_t *argv) {
 	int displayArg;
 	sciPort oldPort;
 	int16 align = 0;
-	int16 bgcolor = -1, width = 0xFFFF, bRedraw = 1;
+	int16 bgcolor = -1, width = -1, bRedraw = 1;
 	byte bSaveUnder = false;
 	Common::Rect rect, *orect = &((sciWnd *)_gfx->GetPort())->rect0;
 
@@ -196,7 +196,7 @@ void SciGUI::display(const char *text, int argc, reg_t *argv) {
 //		_acc = _gfx->SaveBits(rect, 1);
 	if (bgcolor != -1)
 		_gfx->FillRect(rect, 1, bgcolor, 0, 0);
-	_gfx->TextBox(text, 0, rect, align, 0xFFFF);
+	_gfx->TextBox(text, 0, rect, align, -1);
 //	if (_picNotValid == 0 && bRedraw)
 //		_gfx->ShowBits(rect, 1);
 	// restoring port and cursor pos
