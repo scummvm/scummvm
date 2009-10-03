@@ -143,7 +143,6 @@ void Util::processInput(bool scroll) {
 		_vm->_util->setMousePos(x, y);
 
 		_vm->_game->wantScroll(x, y);
-		_vm->_game->evaluateScroll();
 	}
 }
 
