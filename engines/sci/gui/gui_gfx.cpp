@@ -196,7 +196,7 @@ bool SciGUIgfx::SetResPalette(int16 resourceNo, int16 flag) {
 	int palColorStart = 0;
 	int palColorCount = 0;
 	int colorNo = 0;
-	sciPalette palette = {0};
+	sciPalette palette;
 
 	if (palResource) {
 		CreatePaletteFromData(palResource->data, &palette);

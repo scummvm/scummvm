@@ -343,7 +343,7 @@ void heapDisposePtr(byte *ptr) {
 //
 //
 void setHeapInfo(HEAPHANDLE hnd, kDataType type, const char *szinfo) {
-	tagHeapInfo info = { kDataUnknown, 0 };
+	tagHeapInfo info = { kDataUnknown, { 0 } };
 	info.type = type;
 	if (szinfo)
 		strncpy(info.info, szinfo, 20);
