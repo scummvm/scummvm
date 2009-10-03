@@ -37,6 +37,9 @@ public:
 	SciGUI();
 	virtual ~SciGUI();
 
+	// FIXME: Don't store EngineState
+	virtual void resetEngineState(EngineState *s) { _s = s; }
+
 	virtual void init(bool oldGfxFunctions);
 
 	virtual int16 getTimeTicks();

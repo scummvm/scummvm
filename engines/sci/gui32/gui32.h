@@ -30,6 +30,9 @@ public:
 	SciGUI32(OSystem *system, EngineState *s);
 	~SciGUI32();
 
+	// FIXME: Don't store EngineState
+	virtual void resetEngineState(EngineState *s) { this->s = s; }
+
 	void init(bool oldGfxFunctions);
 
 	int16 getTimeTicks();
