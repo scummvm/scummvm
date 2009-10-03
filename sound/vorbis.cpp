@@ -319,7 +319,14 @@ AudioStream *makeVorbisStream(
 
 	uint32 endTime = duration ? (startTime + duration) : 0;
 
-	return new VorbisInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
+	VorbisInputStream *input = new VorbisInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
+
+	if (input->endOfData()) {
+		delete input;
+		return 0;
+	}
+
+	return input;
 }
 
 
