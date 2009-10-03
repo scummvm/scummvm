@@ -157,7 +157,7 @@ void Menubar::addMenu(GfxState *state, const Common::String &title, const Common
 					left = sci_strndup(entries_p - string_len - 1, string_len);
 
 				inleft = left;
-				while (isspace(*inleft))
+				while (isspace((unsigned char)*inleft))
 					inleft++; // Seek beginning of actual string
 
 				if (!strncmp(inleft, MENU_HBAR_STRING_1, strlen(MENU_HBAR_STRING_1))
