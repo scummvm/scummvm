@@ -202,6 +202,8 @@ Common::Error KyraEngine_v1::init() {
 			_gameToLoad = -1;
 	}
 
+	setupKeyMap();
+
 	// Prevent autosave on game startup
 	_lastAutosave = _system->getMillis();
 
@@ -212,6 +214,7 @@ KyraEngine_v1::~KyraEngine_v1() {
 	for (Common::Array<const Opcode*>::iterator i = _opcodes.begin(); i != _opcodes.end(); ++i)
 		delete *i;
 	_opcodes.clear();
+	_keyMap.clear();
 
 	delete _res;
 	delete _staticres;
@@ -278,62 +281,8 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				} else if (event.kbd.keycode == 'q') {
 					quitGame();
 				}
-			} else {
-				switch (event.kbd.keycode) {
-				case Common::KEYCODE_SPACE:
-					keys = 61;
-					break;
-				case Common::KEYCODE_RETURN:
-					keys = 43;
-					break;
-				case Common::KEYCODE_UP:
-				case Common::KEYCODE_KP8:
-					keys = 96;
-					break;
-				case Common::KEYCODE_RIGHT:
-				case Common::KEYCODE_KP6:
-					keys = 102;
-					break;
-				case Common::KEYCODE_DOWN:
-				case Common::KEYCODE_KP2:
-					keys = 97;
-					break;
-				case Common::KEYCODE_LEFT:
-				case Common::KEYCODE_KP4:
-					keys = 92;
-					break;
-				case Common::KEYCODE_HOME:
-				case Common::KEYCODE_KP7:
-					keys = 91;
-					break;
-				case Common::KEYCODE_PAGEUP:
-				case Common::KEYCODE_KP9:
-					keys = 101;
-					break;
-				case Common::KEYCODE_F1:
-					keys = 112;
-					break;
-				case Common::KEYCODE_F2:
-					keys = 113;
-					break;
-				case Common::KEYCODE_F3:
-					keys = 114;
-					break;
-				case Common::KEYCODE_o:
-					keys = 25;
-					break;
-				case Common::KEYCODE_r:
-					keys = 20;
-					break;
-				case Common::KEYCODE_SLASH:
-					keys = 55;
-					break;
-				case Common::KEYCODE_ESCAPE:
-					keys = 110;
-					break;
-				default:
-					keys = 0;
-				}
+			} else {				
+				keys = _keyMap[event.kbd.keycode];
 
 				// When we got an keypress, which we might need to handle,
 				// break the event loop and pass it to GUI code.
@@ -396,6 +345,26 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 	} else {
 		return keys;
 	}
+}
+
+void KyraEngine_v1::setupKeyMap() {
+	static const Common::KeyCode keyboardEvents[] = {
+		Common::KEYCODE_SPACE,	Common::KEYCODE_RETURN,	Common::KEYCODE_UP,		Common::KEYCODE_KP8,
+		Common::KEYCODE_RIGHT,	Common::KEYCODE_KP6,	Common::KEYCODE_DOWN,	Common::KEYCODE_KP2,
+		Common::KEYCODE_LEFT,	Common::KEYCODE_KP4,	Common::KEYCODE_HOME,	Common::KEYCODE_KP7,
+		Common::KEYCODE_PAGEUP,	Common::KEYCODE_KP9,	Common::KEYCODE_F1,		Common::KEYCODE_F2,
+		Common::KEYCODE_F3,		Common::KEYCODE_o,		Common::KEYCODE_r,		Common::KEYCODE_SLASH,
+		Common::KEYCODE_ESCAPE
+	};
+
+	static const int16 keyCodesDOS[] = { 61, 43, 96, 96, 102, 102, 97, 97, 92, 92, 91, 91, 101, 101, 112, 113, 114, 25, 20, 55, 110};
+	static const int16 keyCodesPC98[] = { 53, 29, 68, 68, 73, 73, 72, 72, 71, 71, 67, 67, 69, 69, 99, 100, 101, 25, 20, 55, 1 };
+	
+	const int16 *keyCodes = _flags.platform == Common::kPlatformPC98 ? keyCodesPC98 : keyCodesDOS;	
+	_keyMap.clear();
+
+	for (int i = 0; i < ARRAYSIZE(keyboardEvents); i++)
+		_keyMap[keyboardEvents[i]] = keyCodes[i];
 }
 
 void KyraEngine_v1::updateInput() {

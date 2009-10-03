@@ -4001,7 +4001,7 @@ void LoLEngine::displayAutomap() {
 			for (int i = 0; i < 1024; i++)
 				 _levelBlockProperties[i].flags |= 7;
 			_mapUpdateNeeded = true;
-		} else if (f == 0x6e) {
+		} else if (f == _keyMap[Common::KEYCODE_ESCAPE]) {
 			exitAutomap = true;
 		}
 
@@ -4239,23 +4239,28 @@ void LoLEngine::drawMapPage(int pageNum) {
 }
 
 bool LoLEngine::automapProcessButtons(int inputFlag) {
-	if (inputFlag != 199)
-		return false;
-
 	int r = -1;
-	if (posWithinRect(_mouseX, _mouseY, 252, 175, 273, 200))
+	if (inputFlag == _keyMap[Common::KEYCODE_RIGHT] || inputFlag == _keyMap[Common::KEYCODE_KP6]) {
 		r = 0;
-	else if (posWithinRect(_mouseX, _mouseY, 231, 175, 252, 200))
+	} else if (inputFlag == _keyMap[Common::KEYCODE_LEFT] || inputFlag == _keyMap[Common::KEYCODE_KP4]) {
 		r = 1;
-	else if (posWithinRect(_mouseX, _mouseY, 275, 175, 315, 197))
-		r = 2;
+	} else if (inputFlag == 199) {
+		if (posWithinRect(_mouseX, _mouseY, 252, 175, 273, 200))
+			r = 0;
+		else if (posWithinRect(_mouseX, _mouseY, 231, 175, 252, 200))
+			r = 1;
+		else if (posWithinRect(_mouseX, _mouseY, 275, 175, 315, 197))
+			r = 2;
 
-	printMapExitButtonText();
+		printMapExitButtonText();
 
-	while (inputFlag == 199 || inputFlag == 200) {
-		inputFlag = checkInput(0, false);
-		removeInputTop();
-		delay(_tickLength);
+		while (inputFlag == 199 || inputFlag == 200) {
+			inputFlag = checkInput(0, false);
+			removeInputTop();
+			delay(_tickLength);
+		}
+	} else {
+		return false;
 	}
 
 	if (r == 0) {

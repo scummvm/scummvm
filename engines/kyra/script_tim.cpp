@@ -1234,28 +1234,7 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 		if (e)
 			_vm->gui_notifyButtonListChanged();
 
-		switch (e) {
-		case 43:
-		case 61:
-			_vm->snd_stopSpeech(true);
-			//_dlgTimer = 0;
-			res = _dialogueHighlightedButton + 1;
-			break;
-
-		case 92:
-		case 97:
-			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton > 0)
-				_dialogueHighlightedButton--;
-			break;
-
-		case 96:
-		case 102:
-			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton < (_dialogueNumButtons - 1))
-				_dialogueHighlightedButton++;
-			break;
-
-		case 200:
-		case 202:
+		if (e == 200 || e == 202) {
 			x = _dialogueButtonPosX;
 
 			for (int i = 0; i < _dialogueNumButtons; i++) {
@@ -1267,10 +1246,15 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 				}
 				x += _dialogueButtonXoffs;
 			}
-			break;
-
-		default:
-			break;
+		} else if (e == _vm->_keyMap[Common::KEYCODE_SPACE] || e == _vm->_keyMap[Common::KEYCODE_RETURN]) {
+			_vm->snd_stopSpeech(true);
+			res = _dialogueHighlightedButton + 1;
+		} else if (e == _vm->_keyMap[Common::KEYCODE_LEFT] || e == _vm->_keyMap[Common::KEYCODE_DOWN]) {
+			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton > 0)
+				_dialogueHighlightedButton--;
+		} else if (e == _vm->_keyMap[Common::KEYCODE_RIGHT] || e == _vm->_keyMap[Common::KEYCODE_UP]) {
+			if (_dialogueNumButtons > 1 && _dialogueHighlightedButton < (_dialogueNumButtons - 1))
+				_dialogueHighlightedButton++;
 		}
 	}
 

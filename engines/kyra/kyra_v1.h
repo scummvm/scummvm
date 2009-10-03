@@ -205,6 +205,7 @@ protected:
 	Debugger *_debugger;
 
 	// input
+	void setupKeyMap();
 	void updateInput();
 	int checkInput(Button *buttonList, bool mainLoop = false, int eventFlag = 0x8000);
 	void removeInputTop();
@@ -222,6 +223,7 @@ protected:
 		operator Common::Event() const { return event; }
 	};
 	Common::List<Event> _eventList;
+	Common::HashMap<int, int16> _keyMap;
 
 	// config specific
 	virtual void registerDefaultSettings();

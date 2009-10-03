@@ -169,7 +169,7 @@ void TextDisplayer_LoL::printDialogueText(int dim, char *str, EMCState *script, 
 	}
 
 	int cp = _screen->setCurPage(0);
-	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
+	Screen::FontId of = _screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 	preprocessString(str, script, paramList, paramIndex);
 	_numCharsTotal = strlen(_dialogueBuffer);
@@ -581,7 +581,6 @@ void TextDisplayer_LoL::printLine(char *str) {
 
 			int n2 = 0;
 			int n1 = s - 1;
-			//bool ct = false;
 
 			while (n1 > 0) {
 				//cut off line after last space
@@ -741,26 +740,15 @@ void TextDisplayer_LoL::textPageBreak() {
 
 		_vm->gui_notifyButtonListChanged();
 
-		switch (inputFlag) {
-		case 43:
-		case 61:
+		if (inputFlag == _vm->_keyMap[Common::KEYCODE_SPACE] || inputFlag == _vm->_keyMap[Common::KEYCODE_RETURN]) {
 			loop = false;
-			break;
-
-		case 199:
-		case 201:
+		} else if (inputFlag == 199 || inputFlag == 201) {
 			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + 74, y + 9))
 				target = true;
-			break;
 
-		case 200:
-		case 202:
+		} else if (inputFlag == 199 || inputFlag == 201) {
 			if (target)
 				loop = false;
-			break;
-
-		default:
-			break;
 		}
 	} while (loop);
 

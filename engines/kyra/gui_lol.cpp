@@ -266,14 +266,9 @@ void LoLEngine::gui_printCharacterStats(int index, int redraw, int value) {
 	if (offs)
 		_screen->copyRegion(294, y, 182 + offs, y, 18, 8, 6, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
-	Screen::FontId of;
-	if (_flags.use16ColorMode)
-		of = _screen->setFont(Screen::FID_SJIS_FNT);
-
+	Screen::FontId of = _flags.use16ColorMode ? _screen->setFont(Screen::FID_SJIS_FNT) : _screen->_currentFont;
 	_screen->fprintString("%d", 200 + offs, y, col, 0, _flags.use16ColorMode ? 2 : 6, value);
-
-	if (_flags.use16ColorMode)
-		_screen->setFont(of);
+	_screen->setFont(of);
 }
 
 void LoLEngine::gui_changeCharacterStats(int charNum) {
@@ -815,13 +810,9 @@ void LoLEngine::gui_updateInput() {
 		inputFlag = 0;
 	}
 
-	switch (inputFlag) {
-	case 43:
-	case 61:
-		// space or enter
+	if (inputFlag == _keyMap[Common::KEYCODE_SPACE] || inputFlag == _keyMap[Common::KEYCODE_RETURN]) {
 		snd_stopSpeech(true);
-		break;
-	case 55:
+	} else if (inputFlag == _keyMap[Common::KEYCODE_SLASH]) {
 		if (_weaponsDisabled || _availableSpells[1] == -1)
 			return;
 
@@ -829,13 +820,7 @@ void LoLEngine::gui_updateInput() {
 		if (_availableSpells[++_selectedSpell] == -1)
 			_selectedSpell = 0;
 		gui_highlightSelectedSpell(true);
-
 		gui_drawAllCharPortraitsWithStats();
-			break;
-	case 0x71a:
-		break;
-	default:
-		break;
 	}
 }
 
@@ -852,55 +837,10 @@ void LoLEngine::gui_triggerEvent(int eventType) {
 	} else {
 		evt.type = Common::EVENT_KEYDOWN;
 
-		switch (eventType) {
-		case 96:
-			evt.kbd.keycode = Common::KEYCODE_UP;
-			break;
-		case 102:
-			evt.kbd.keycode = Common::KEYCODE_RIGHT;
-			break;
-		case 97:
-			evt.kbd.keycode = Common::KEYCODE_DOWN;
-			break;
-		case 92:
-			evt.kbd.keycode = Common::KEYCODE_LEFT;
-			break;
-		case 91:
-			evt.kbd.keycode = Common::KEYCODE_HOME;
-			break;
-		case 101:
-			evt.kbd.keycode = Common::KEYCODE_PAGEUP;
-			break;
-		case 112:
-			evt.kbd.keycode = Common::KEYCODE_F1;
-			break;
-		case 113:
-			evt.kbd.keycode = Common::KEYCODE_F2;
-			break;
-		case 114:
-			evt.kbd.keycode = Common::KEYCODE_F3;
-			break;
-		case 25:
-			evt.kbd.keycode = Common::KEYCODE_o;
-			break;
-		case 20:
-			evt.kbd.keycode = Common::KEYCODE_r;
-			break;
-		case 110:
-			evt.kbd.keycode = Common::KEYCODE_ESCAPE;
-			break;
-		case 43:
-			evt.kbd.keycode = Common::KEYCODE_SPACE;
-			break;
-		case 61:
-			evt.kbd.keycode = Common::KEYCODE_RETURN;
-			break;
-		case 55:
-			evt.kbd.keycode = Common::KEYCODE_SLASH;
-			break;
-		default:
-			break;
-		}
+		for (Common::HashMap<int, int16>::const_iterator c = _keyMap.begin(); c != _keyMap.end(); ++c) {
+			if (c->_value == eventType)
+				evt.kbd.keycode = (Common::KeyCode) c->_key;
+		}		
 	}
 
 	removeInputTop();
@@ -2343,9 +2283,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 	// a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
 
-	Screen::FontId of;
-	if (_vm->gameFlags().use16ColorMode)
-		of = _screen->setFont(Screen::FID_SJIS_FNT);
+	Screen::FontId of = _vm->gameFlags().use16ColorMode ? _screen->setFont(Screen::FID_SJIS_FNT) : _screen->_currentFont;
 
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
@@ -2554,8 +2492,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 		_newMenu = 0;
 	}
 
-	if (_vm->gameFlags().use16ColorMode)
-		_screen->setFont(of);
+	_screen->setFont(of);
 
 	return _menuResult;
 }
