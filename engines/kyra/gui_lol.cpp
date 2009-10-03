@@ -450,6 +450,8 @@ void LoLEngine::gui_drawCharPortraitWithStats(int charNum) {
 		_screen->fprintString("%d", 17, 28, _flags.use16ColorMode ? 0x33 : 254, 0, 1, _characters[charNum].damageSuffered);
 
 	uint8 col = (charNum != _selectedCharacter || countActiveCharacters() == 1) ? 1 : 212;
+	if (_flags.use16ColorMode)
+		col = (charNum != _selectedCharacter || countActiveCharacters() == 1) ? 0x44 : 0x22;
 	_screen->drawBox(0, 0, 65, 33, col);
 
 	_screen->copyRegion(0, 0, _activeCharsXpos[charNum], 143, 66, 34, _screen->_curPage, cp, Screen::CR_NO_P_CHECK);

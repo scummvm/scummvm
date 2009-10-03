@@ -230,7 +230,7 @@ uint8 *Screen_LoL::generateLevelOverlay(const Palette &srcPal, uint8 *ovl, int o
 				}
 
 				if (c <= m) {
-					if (!_use16ColorMode || (x != opColor && i != x)) {
+					if (!_use16ColorMode || (x == opColor || i != x)) {
 						m = c;
 						l = x;
 					}

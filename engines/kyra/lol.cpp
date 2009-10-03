@@ -3944,9 +3944,14 @@ void LoLEngine::displayAutomap() {
 	for (int i = 0; i < 109; i++)
 		_automapShapes[i] = _screen->getPtrToShape(shp, i + 11);
 
-	if (!_flags.use16ColorMode)
+	if (_flags.use16ColorMode) {
+		static const uint8 ovlSrc[] = { 0x00, 0xEE, 0xCC, 0x33, 0x44, 0x55, 0x66, 0x77, 0x88, 0x99, 0xAA, 0x22, 0x11, 0xDD, 0xEE, 0xCC };
+		memset(_mapOverlay, 0, 256);
+		for (int i = 0; i < 16; i++)
+			_mapOverlay[(i << 4) | i] = ovlSrc[i];		
+	} else
 		_screen->generateGrayOverlay(_screen->getPalette(3), _mapOverlay, 52, 0, 0, 0, 256, false);
-
+	
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9PN.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6PN.FNT");
 
@@ -4005,6 +4010,9 @@ void LoLEngine::displayAutomap() {
 
 	_screen->loadFont(Screen::FID_9_FNT, "FONT9P.FNT");
 	_screen->loadFont(Screen::FID_6_FNT, "FONT6P.FNT");
+
+	if (_flags.use16ColorMode)
+		_screen->clearPage(2);
 
 	_screen->fadeToBlack(10);
 	loadLevelWallData(_currentLevel, false);
@@ -4105,17 +4113,20 @@ void LoLEngine::loadMapLegendData(int level) {
 }
 
 void LoLEngine::drawMapPage(int pageNum) {
-	// WORKAROUND for French version. The Text does not always properly fit the screen there.
-	int8 textOffset = (_lang == 1) ? -2 : 0;
+	// WORKAROUND for French version. The text does not always properly fit the screen there.
+	const int8 xOffset = (_lang == 1) ? -2 : 0;
+
+	if (_flags.use16ColorMode)
+		_screen->clearPage(pageNum);
 
 	for (int i = 0; i < 2; i++) {
 		_screen->loadBitmap("parch.cps", pageNum, pageNum, &_screen->getPalette(3));
 		if (_lang == 1)
-			_screen->copyRegion(236, 16, 236 + textOffset, 16, -textOffset, 1, pageNum, pageNum, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(236, 16, 236 + xOffset, 16, -xOffset, 1, pageNum, pageNum, Screen::CR_NO_P_CHECK);
 
 		int cp = _screen->setCurPage(pageNum);
-		Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
-		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236 + textOffset, 8, 1, 0);
+		Screen::FontId of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
+		_screen->printText(getLangString(_autoMapStrings[_currentMapLevel]), 236 + xOffset, 8, 1, 0);
 		uint16 blX = mapGetStartPosX();
 		uint16 bl = (mapGetStartPosY() << 5) + blX;
 
@@ -4174,13 +4185,14 @@ void LoLEngine::drawMapPage(int pageNum) {
 		_screen->setFont(of);
 		_screen->setCurPage(cp);
 
-		of = _screen->setFont(Screen::FID_6_FNT);
+		of = _screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
 		int tY = 0;
 		sx = mapGetStartPosX();
 		sy = mapGetStartPosY();
 
 		uint16 *legendData = (uint16*)_tempBuffer5120;
+		uint8 yOffset = _flags.use16ColorMode ? 4 : 0;
 
 		for (int ii = 0; ii < 32; ii++)  {
 			uint16 *l = &legendData[ii * 6];
@@ -4194,7 +4206,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			if (l[2] == 0xffff)
 				continue;
 
-			printMapText(l[2], 244 + textOffset, (tY << 3) + 22);
+			printMapText(l[2], 244 + xOffset, (tY << 3) + 22 + yOffset);
 
 			if (l[5] == 0xffff) {
 				tY++;
@@ -4204,7 +4216,7 @@ void LoLEngine::drawMapPage(int pageNum) {
 			uint16 cbl2 = l[3] + (l[4] << 5);
 			_levelBlockProperties[cbl2].flags |= 7;
 			_screen->drawShape(2, _automapShapes[l[5] << 2], (l[3] - sx) * 7 + _automapTopLeftX - 3, (l[4] - sy) * 6 + _automapTopLeftY - 3, 0, 0);
-			_screen->drawShape(2, _automapShapes[l[5] << 2], 231 + textOffset, (tY << 3) + 19, 0, 0);
+			_screen->drawShape(2, _automapShapes[l[5] << 2], 231 + xOffset, (tY << 3) + 19 + yOffset, 0, 0);
 			tY++;
 		}
 
@@ -4213,9 +4225,9 @@ void LoLEngine::drawMapPage(int pageNum) {
 		for (int ii = 0; ii < 11; ii++) {
 			if (!_defaultLegendData[ii].enable)
 				continue;
-			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21, _screen->_curPage, 235 + textOffset, (tY << 3) + 21, 7, 6, 0, _mapOverlay);
-			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + textOffset, (tY << 3) + 18 + _defaultLegendData[ii].x, 0, 0);
-			printMapText(_defaultLegendData[ii].stringId, 244 + textOffset, (tY << 3) + 22);
+			_screen->copyBlockAndApplyOverlay(_screen->_curPage, 235, (tY << 3) + 21 + yOffset, _screen->_curPage, 235 + xOffset, (tY << 3) + 21 + yOffset, 7, 6, 0, _mapOverlay);
+			_screen->drawShape(_screen->_curPage, _automapShapes[_defaultLegendData[ii].shapeIndex << 2], 232 + xOffset, (tY << 3) + 18 + yOffset + _defaultLegendData[ii].x, 0, 0);
+			printMapText(_defaultLegendData[ii].stringId, 244 + xOffset, (tY << 3) + 22 + yOffset);
 			tY++;
 		}
 
@@ -4300,16 +4312,21 @@ void LoLEngine::redrawMapCursor() {
 	if (_currentLevel != _currentMapLevel)
 		return;
 
-	_screen->fillRect(0, 0, 16, 16, 0, 2);
-	_screen->drawShape(2, _automapShapes[48 + _currentDirection], 0, 0, 0, 0);
 	int cx = _automapTopLeftX + (((_currentBlock - sx) % 32) * 7);
 	int cy = _automapTopLeftY + (((_currentBlock - (sy << 5)) / 32) * 6);
-	_screen->copyRegion(cx, cy, cx, cy, 16, 16, 2, 0);
-	_screen->copyBlockAndApplyOverlay(2, 0, 0, 0, cx - 3, cy - 2, 16, 16, 0, _mapCursorOverlay);
 
-	_mapCursorOverlay[24] = _mapCursorOverlay[1];
-	for (int i = 1; i < 24; i++)
-		_mapCursorOverlay[i] = _mapCursorOverlay[i + 1];
+	if (_flags.use16ColorMode) {
+		_screen->drawShape(0, _automapShapes[48 + _currentDirection], cx - 3, cy - 2, 0, 0);
+	} else {
+		_screen->fillRect(0, 0, 16, 16, 0, 2);
+		_screen->drawShape(2, _automapShapes[48 + _currentDirection], 0, 0, 0, 0);
+		_screen->copyRegion(cx, cy, cx, cy, 16, 16, 2, 0);
+		_screen->copyBlockAndApplyOverlay(2, 0, 0, 0, cx - 3, cy - 2, 16, 16, 0, _mapCursorOverlay);
+
+		_mapCursorOverlay[24] = _mapCursorOverlay[1];
+		for (int i = 1; i < 24; i++)
+			_mapCursorOverlay[i] = _mapCursorOverlay[i + 1];
+	}
 
 	_screen->updateScreen();
 }
@@ -4403,13 +4420,16 @@ void LoLEngine::mapIncludeLegendData(int type) {
 
 void LoLEngine::printMapText(uint16 stringId, int x, int y) {
 	int cp = _screen->setCurPage(2);
-	_screen->printText(getLangString(stringId), x, y, 239, 0);
+	if (_flags.use16ColorMode)
+		_screen->printText(getLangString(stringId), x & ~3, y & ~7, 1, 0);
+	else
+		_screen->printText(getLangString(stringId), x, y, 239, 0);
 	_screen->setCurPage(cp);
 }
 
 void LoLEngine::printMapExitButtonText() {
 	int cp = _screen->setCurPage(2);
-	_screen->fprintString("%s", 295, 182, 172, 0, 5, getLangString(0x4033));
+	_screen->fprintString("%s", 295, 182, _flags.use16ColorMode ? 0xbb : 172, 0, 5, getLangString(0x4033));
 	_screen->setCurPage(cp);
 }
 
