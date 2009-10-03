@@ -99,7 +99,6 @@ void SciGUIpicture::draw11() {
 	// Create palette and set it
 	_gfx->CreatePaletteFromData(inbuffer + palette_data_ptr, &palette);
 	_gfx->SetPalette(&palette, 2);
-//	drawPalette11(inbuffer + palette_data_ptr);
 
 	// display Cel-data
 	if (has_view) {
@@ -114,37 +113,6 @@ void SciGUIpicture::draw11() {
 	// process vector data
 	// ?? if we process vector data first some things in sq4 dont seem right, but this way we wont get _priority set
 	drawVectorData(inbuffer + vector_data_ptr, vector_size);
-}
-
-void SciGUIpicture::drawPalette11(byte *data) {
-	int start_color = data[25];
-	int format = data[32];
-	byte *pal_data = &data[37];
-	int colors_nr = READ_LE_UINT16(data + 29);
-	int i;
-	sciPalette palette = {0};
-
-	switch (format) {
-	case SCI_PAL_FORMAT_VARIABLE_FLAGS:
-		for (i = start_color; i < start_color + colors_nr; i ++) {
-			palette.colors[i].used = pal_data[0];
-			palette.colors[i].r = pal_data[1];
-			palette.colors[i].g = pal_data[2];
-			palette.colors[i].b = pal_data[3];
-			pal_data += 4;
-		}
-		break;
-	case SCI_PAL_FORMAT_CONSTANT_FLAGS:
-		for (i = start_color; i < start_color + colors_nr; i ++) {
-			palette.colors[i].used = 1;
-			palette.colors[i].r = pal_data[0];
-			palette.colors[i].g = pal_data[1];
-			palette.colors[i].b = pal_data[2];
-			pal_data += 3;
-		}
-		break;
-	}
-	_gfx->SetPalette(&palette, 2);
 }
 
 void SciGUIpicture::decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size) {

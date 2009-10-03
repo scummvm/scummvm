@@ -43,7 +43,6 @@ private:
 	void reset();
 	void draw11();
 	void decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size);
-	void drawPalette11(byte *data);
 	void drawCel(int16 x, int16 y, byte *pdata, int size);
 	void drawCelAmiga(int16 x, int16 y, byte *pdata, int size);
 	void drawVectorData(byte *data, int size);
