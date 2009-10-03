@@ -37,7 +37,7 @@ struct sciViewCellInfo {
 
 struct sciViewLoopInfo {
 	bool mirrorFlag;
-	int16 cellCount;
+	uint16 cellCount;
 	sciViewCellInfo *cell;
 };
 
