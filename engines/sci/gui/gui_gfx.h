@@ -86,9 +86,6 @@ public:
 	void ClearChar(int16 chr);
 	void DrawChar(int16 chr);
 	void StdChar(int16 chr);
-	SCILanguage getSCILanguage();
-	char* StrSplit(char*buff, const char*msg, const char*fmt);
-	char* getIntlString(char*buff, const char*msg, const char*fmt, SCILanguage lang, SCILanguage prop);
 	int16 TextSize(Common::Rect &rect, const char *str, int16 fontId, int16 maxwidth);
 	int16 GetLongest(const char *str, int16 maxwidth);
 	void DrawText(const char *str, int16 from, int16 len);
