@@ -2803,7 +2803,7 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 
 		// Scan for a period, after which (if present) we'll find an index
 		const char *tmp = Common::find(str_objname.begin(), str_objname.end(), '.');
-		if (tmp) {
+		if (tmp != str_objname.end()) {
 			index = strtol(tmp + 1, &endptr, 16);
 			if (*endptr)
 				return -1;
