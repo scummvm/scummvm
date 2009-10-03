@@ -368,7 +368,7 @@ void switchBackground(const byte *newBg) {
 
 			} else if ((sliceXEnd != -1) && (xp >= (sliceXEnd + 10))) {
 				// If more than 10 pixels have gone by without any changes, then end the slice
-				gfxModuleData_addDirtyRect(Common::Rect(sliceXStart, yp, sliceXEnd, MIN(yp + 2, 200)));
+				gfxModuleData_addDirtyRect(Common::Rect(sliceXStart, yp, sliceXEnd + 1, MIN(yp + 2, 200)));
 				sliceXStart = sliceXEnd = -1;
 			}
 		}
