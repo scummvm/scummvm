@@ -457,6 +457,9 @@ String String::printf(const char *fmt, ...) {
 		do {
 			size *= 2;
 			output.ensureCapacity(size-1, false);
+			assert(!output.isStorageIntern());
+			size = output._extern._capacity;
+
 			va_start(va, fmt);
 			len = vsnprintf(output._str, size, fmt, va);
 			va_end(va);
