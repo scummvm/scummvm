@@ -26,6 +26,8 @@
 #ifndef SCI_GUI_GFX_H
 #define SCI_GUI_GFX_H
 
+#include "sci/gui/gui.h"
+
 namespace Sci {
 
 #define SCI_PATTERN_CODE_RECTANGLE 0x10

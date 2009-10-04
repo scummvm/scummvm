@@ -39,6 +39,7 @@
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
 #include "sci/engine/savegame.h"
+#include "sci/gui/gui.h"
 
 namespace Sci {
 

@@ -26,6 +26,8 @@
 #ifndef SCI_GUI_SCREEN_H
 #define SCI_GUI_SCREEN_H
 
+#include "sci/gui/gui.h"
+
 namespace Sci {
 
 #define SCI_SCREEN_MAXHEIGHT 400

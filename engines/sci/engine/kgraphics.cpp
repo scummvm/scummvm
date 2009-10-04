@@ -38,6 +38,7 @@
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gfx/seq_decoder.h"
+#include "sci/gui/gui.h"
 
 namespace Sci {
 

@@ -30,6 +30,7 @@
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
+#include "sci/gui/gui.h"
 
 namespace Sci {
 

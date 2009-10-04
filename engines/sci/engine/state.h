@@ -44,7 +44,6 @@ namespace Common {
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
 #include "sci/sfx/core.h"
-#include "sci/gui/gui.h"
 
 namespace Sci {
 

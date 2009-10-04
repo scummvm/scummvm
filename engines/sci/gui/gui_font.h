@@ -26,6 +26,8 @@
 #ifndef SCI_GUI_FONT_H
 #define SCI_GUI_FONT_H
 
+#include "sci/gui/gui.h"
+
 namespace Sci {
 
 class SciGUIfont {

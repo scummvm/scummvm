@@ -28,6 +28,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/tools.h"
+#include "sci/gui/gui.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
