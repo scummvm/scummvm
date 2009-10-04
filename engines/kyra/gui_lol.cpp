@@ -1211,6 +1211,10 @@ int LoLEngine::clickedPortraitLeft(Button *button) {
 
 	_selectedCharacter = button->arg;
 	_weaponsDisabled = true;
+
+	if (_flags.use16ColorMode)
+		_screen->fillRect(112, 0, 288, 120, 0, 2);
+
 	gui_displayCharInventory(_selectedCharacter);
 	gui_enableCharInventoryButtons(_selectedCharacter);
 

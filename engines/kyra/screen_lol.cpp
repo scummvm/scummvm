@@ -351,7 +351,7 @@ void Screen_LoL::fadeClearSceneWindow(int delay) {
 
 	if (_use16ColorMode) {
 		fadeToBlack(delay);
-		fillRect(112, 0, 288, 120, 68);
+		fillRect(112, 0, 288, 120, 0x44);
 	} else {
 		Palette tpal(getPalette(0).getNumColors());
 		tpal.copy(getPalette(0), 128);

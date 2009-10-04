@@ -459,7 +459,7 @@ void TextDisplayer_LoL::displayText(char *str, ...) {
 			break;
 
 		default:
-			_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth(c));
+			_lineWidth += (pc98PrintFlag ? 4 : _screen->getCharWidth((uint8)c));
 			_currentLine[_numCharsLeft++] = c;
 			_currentLine[_numCharsLeft] = 0;
 
@@ -586,7 +586,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 				//cut off line after last space
 				c = str[n1];
 				
-				lw -= _screen->getCharWidth(c);
+				lw -= _screen->getCharWidth((uint8)c);
 
 				if (!n2 && lw <= w)
 					n2 = n1;
@@ -729,7 +729,7 @@ void TextDisplayer_LoL::textPageBreak() {
 			if (_vm->speechEnabled()) {
 				if (((_vm->_system->getMillis() > speechPartTime) || (_vm->snd_updateCharacterSpeech() != 2)) && speechPartTime) {
 					loop = false;
-					inputFlag = 43;
+					inputFlag = _vm->_keyMap[Common::KEYCODE_RETURN];
 					break;
 				}
 			}
@@ -745,15 +745,14 @@ void TextDisplayer_LoL::textPageBreak() {
 		} else if (inputFlag == 199 || inputFlag == 201) {
 			if (_vm->posWithinRect(_vm->_mouseX, _vm->_mouseY, x, y, x + 74, y + 9))
 				target = true;
-
-		} else if (inputFlag == 199 || inputFlag == 201) {
+		} else if (inputFlag == 200 || inputFlag == 202) {
 			if (target)
 				loop = false;
 		}
 	} while (loop);
 
 
-	_screen->fillRect(x, y, x + 74, y + 9, _textDimData[_screen->curDimIndex()].color2);
+	_screen->fillRect(x, y, x + 73, y + 8, _textDimData[_screen->curDimIndex()].color2);
 	clearCurDim();
 
 	_vm->_timer->pauseSingleTimer(11, false);
