@@ -109,7 +109,7 @@ struct FrameHeader {
 	uint16 height;
 	int16 offsetX;
 	int16 offsetY;
-};
+} PACKED_STRUCT;
 
 struct ParallaxHeader {
 	char type[16];
