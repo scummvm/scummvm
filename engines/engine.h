@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
-
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
-
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -40,6 +40,15 @@ namespace Common {
 	class SaveFileManager;
 	class TimerManager;
 }
+namespace GUI {
+	class Debugger;
+	class Dialog;
+}
+/**
+ * Initializes graphics and shows error message.
+ */
+void GUIErrorMessage(const Common::String msg);
+
 
 class Engine {
 public:
@@ -50,6 +59,9 @@ protected:
 	Common::TimerManager *_timer;
 	Common::EventManager *_eventMan;
 	Common::SaveFileManager *_saveFileMan;
+
+	GUI::Dialog *_mainMenuDialog;
+	virtual int runDialog(GUI::Dialog &dialog);
 
 	const Common::String _targetName; // target name for saves
 
@@ -119,6 +131,17 @@ public:
 	 * @return returns kNoError on success, else an error code.
 	 */
 	virtual Common::Error run() = 0;
+
+	/**
+	 * Prepare an error string, which is printed by the error() function.
+	 */
+	virtual void errorString(const char *buf_input, char *buf_output, int buf_output_size);
+
+	/**
+	 * Return the engine's debugger instance, if any. Used by error() to
+	 * invoke the debugger when a severe error is reported.
+	 */
+	virtual GUI::Debugger *getDebugger() { return 0; }
 
 	/**
 	 * Determine whether the engine supports the specified feature.
@@ -207,6 +230,12 @@ public:
 	 * Return whether the engine is currently paused or not.
 	 */
 	bool isPaused() const { return _pauseLevel != 0; }
+
+	/**
+	 * Run the Global Main Menu Dialog
+	 */
+	void openMainMenuDialog();
+
 	inline Common::TimerManager *getTimerManager() { return _timer; }
 	inline Common::EventManager *getEventManager() { return _eventMan; }
 	inline Common::SaveFileManager *getSaveFileManager() { return _saveFileMan; }

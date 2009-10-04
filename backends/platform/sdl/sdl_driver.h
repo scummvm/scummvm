@@ -50,6 +50,9 @@ public:
 
 	virtual void initBackend();
 
+	// Set the size of the video bitmap.
+	virtual void launcherInitSize(uint w, uint h);
+
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
 
 	// Update the dirty areas of the screen
@@ -62,6 +65,9 @@ public:
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
 	virtual void warpMouse(int x, int y);
+
+	// Set the bitmap that's used when drawing the cursor.
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
 
 	// Get the number of milliseconds since the program was started.
 	uint32 getMillis();
@@ -147,6 +153,8 @@ private:
 	bool _overlayDirty;
 	int _overlayNumTex;
 	GLuint *_overlayTexIds;
+
+	void closeOverlay();
 
 	// Audio
 	int _samplesPerSec;

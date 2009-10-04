@@ -349,6 +349,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\stack.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\str.cpp"
 				>
 			</File>
@@ -381,11 +385,27 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\unzip.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\unzip.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\util.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\common\util.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\xmlparser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\xmlparser.h"
 				>
 			</File>
 		</Filter>
@@ -406,6 +426,14 @@
 			</File>
 			<File
 				RelativePath="..\..\engines\advancedDetector.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\dialogs.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\engines\dialogs.h"
 				>
 			</File>
 			<File
@@ -589,10 +617,154 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="keymapper"
+				>
+				<File
+					RelativePath="..\..\backends\keymapper\action.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\action.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\hardware-key.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymap.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymap.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymapper.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\keymapper.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\remap-dialog.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\remap-dialog.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\keymapper\types.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="vkeybd"
+				>
+				<File
+					RelativePath="..\..\backends\vkeybd\image-map.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\image-map.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\keycode-descriptions.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\polygon.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\polygon.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-gui.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard-parser.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\vkeybd\virtual-keyboard.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="plugins"
+				>
+				<File
+					RelativePath="..\..\backends\plugins\dynamic-plugin.h"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\plugins\win32\win32-provider.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\backends\plugins\win32\win32-provider.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="graphics"
 			>
+			<File
+				RelativePath="..\..\graphics\colormasks.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\cursorman.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\cursorman.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\font.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\font.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\fontman.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\fontman.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\imagedec.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\imagedec.h"
+				>
+			</File>
 			<File
 				RelativePath="..\..\graphics\matrix3.cpp"
 				>
@@ -610,7 +782,55 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\graphics\pixelformat.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\primitives.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\primitives.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\scaler.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\surface.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\surface.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\thumbnail.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\thumbnail.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\graphics\vector3d.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\VectorRenderer.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\VectorRenderer.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\VectorRendererSpec.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\graphics\VectorRendererSpec.h"
 				>
 			</File>
 			<Filter
@@ -733,6 +953,34 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="fonts"
+				>
+				<File
+					RelativePath="..\..\graphics\fonts\consolefont.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\fonts\newfont.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\fonts\newfont_big.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\..\graphics\fonts\scummfont.cpp"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="scaler"
+				>
+				<File
+					RelativePath="..\..\graphics\scaler\intern.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="base"
@@ -771,6 +1019,238 @@
 			</File>
 			<File
 				RelativePath="..\..\base\version.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="gui"
+			>
+			<File
+				RelativePath="..\..\gui\about.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\about.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\Actions.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\Actions.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\browser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\browser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\chooser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\chooser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\console.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\console.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\credits.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\debugger.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\debugger.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\dialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\dialog.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\editable.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\editable.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\EditTextWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\EditTextWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\GuiManager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\GuiManager.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\Key.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\Key.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\KeysDialog.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\KeysDialog.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\launcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\launcher.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ListWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ListWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\massadd.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\massadd.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\message.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\message.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\object.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\object.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\options.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\options.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\PopUpWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\PopUpWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\saveload.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\saveload.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ScrollBarWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ScrollBarWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\TabWidget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\TabWidget.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\themebrowser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\themebrowser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeEngine.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeEngine.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeEval.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeEval.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeLayout.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeLayout.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeParser.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\ThemeParser.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\widget.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\gui\widget.h"
 				>
 			</File>
 		</Filter>

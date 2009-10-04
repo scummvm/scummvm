@@ -14,8 +14,10 @@ MODULE_OBJS := \
 	mutex.o \
 	str.o \
 	stream.o \
+	util.o \
 	system.o \
-	util.o
+	unzip.o \
+	xmlparser.o
 
 # Include common rules
 include $(srcdir)/rules.mk

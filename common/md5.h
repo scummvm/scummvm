@@ -20,7 +20,6 @@
  *
  * $URL$
  * $Id$
- *
  */
 
 #ifndef COMMON_MD5_H

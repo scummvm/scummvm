@@ -17,6 +17,8 @@ install: all
 	$(INSTALL) -c -m 644 "$(srcdir)/icons/residual.xpm" "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 	$(INSTALL) -c -m 644 "$(srcdir)/AUTHORS" "$(srcdir)/COPYING.LGPL" "$(srcdir)/COPYING.GPL" "$(srcdir)/NEWS" "$(srcdir)/README" "$(srcdir)/TODO" "$(DESTDIR)$(PREFIX)/share/doc/residual/"
+	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/residual/"
+	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/residual/"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/residual/"
 	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/residual/"
@@ -27,6 +29,7 @@ uninstall:
 	#rm -f "$(DESTDIR)$(MANDIR)/man6/residual.6"
 	rm -f "$(DESTDIR)$(PREFIX)/share/pixmaps/residual.xpm"
 	rm -rf "$(DESTDIR)$(PREFIX)/share/doc/residual/"
+	rm -rf "$(DESTDIR)$(DATADIR)/residual/"
 ifdef DYNAMIC_MODULES
 	rm -rf "$(DESTDIR)$(LIBDIR)/residual/"
 endif
@@ -54,6 +57,7 @@ bundle: residual-static $(srcdir)/dists/macosx/Info.plist
 iphonebundle: $(srcdir)/dists/iphone/Info.plist
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
+	cp $(DIST_FILES_THEMES) $(bundle_name)/
 	cp $(srcdir)/AUTHORS $(bundle_name)/
 	cp $(srcdir)/COPYING $(bundle_name)/
 	cp $(srcdir)/COPYING.LGPL $(bundle_name)/
@@ -149,6 +153,7 @@ residualico.o: $(srcdir)/icons/residual.ico
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
+	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL $(WIN32PATH)/COPYING_GPL.txt
@@ -163,6 +168,7 @@ win32dist: $(EXECUTABLE)
 crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualWin32
 	$(STRIP) $(EXECUTABLE) -o ResidualWin32/$(EXECUTABLE)
+	cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
@@ -185,6 +191,7 @@ crosswin32dist: $(EXECUTABLE)
 aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
+	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
 	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt
@@ -213,6 +220,7 @@ endif
 	$(CP) $(srcdir)/COPYING.LGPL wiidist/residual/COPYING.LGPL.txt
 	$(CP) $(srcdir)/NEWS wiidist/residual/NEWS.txt
 	$(CP) $(srcdir)/README wiidist/residual/README.txt
+	$(CP) $(DIST_FILES_THEMES) wiidist/residual/
 	sed -i 's/$$/\r/' wiidist/residual/*.txt
 
-.PHONY: deb bundle osxsnap win32dist install uninstall
+.PHONY: deb bundle osxsnap win32dist crosswin32dist wiidist install uninstall

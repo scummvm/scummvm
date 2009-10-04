@@ -1,6 +1,20 @@
 MODULE := graphics
 
 MODULE_OBJS := \
+	cursorman.o \
+	font.o \
+	fontman.o \
+	fonts/consolefont.o \
+	fonts/newfont_big.o \
+	fonts/newfont.o \
+	fonts/scummfont.o \
+	imagedec.o \
+	primitives.o \
+	surface.o \
+	thumbnail.o \
+	VectorRenderer.o \
+	VectorRendererSpec.o \
+
 	matrix3.o \
 	matrix4.o \
 	tinygl/api.o \

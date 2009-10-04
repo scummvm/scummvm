@@ -77,6 +77,9 @@ _vorbis=auto
 _tremor=auto
 _flac=auto
 _mad=auto
+# Default vkeybd/keymapper options
+_vkeybd=no
+_keymapper=no
 # Default platform settings
 _backend=sdl
 _endian=unknown
@@ -490,7 +493,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, iphone, wii, psp, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wii, psp, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing Residual [/usr/local]
@@ -566,6 +569,10 @@ for ac_option in $@; do
 	--enable-plugins)         _dynamic_modules=yes ;;
 	--enable-verbose-build)   _verbose_build=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
+	--enable-vkeybd)          _vkeybd=yes     ;;
+	--disable-vkeybd)         _vkeybd=no      ;;
+	--enable-keymapper)       _keymapper=yes  ;;
+	--disable-keymapper)      _keymapper=no   ;;
 	--with-ogg-prefix=*)
 		arg=`echo $ac_option | cut -d '=' -f 2`
 		OGG_CFLAGS="-I$arg/include"
@@ -1040,6 +1047,10 @@ case $_host_os in
 		DEFINES="$DEFINES -DWIN32 -D__USE_MINGW_ANSI_STDIO=0 -DUSE_OPENGL"
 		LIBS="$LIBS -lmingw32 -lopengl32 -lglu32"
 		OBJS="$OBJS residualico.o"
+		;;
+	cygwin*)
+		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
+		exit 0
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1612,6 +1623,16 @@ echo "$_zlib"
 rm -rf $TMPC $TMPO$EXEEXT $TMPO.dSYM
 
 #
+# Enable vkeybd / keymapper
+#
+if test "$_vkeybd" = yes ; then
+	DEFINES="$DEFINES -DENABLE_VKEYBD"
+fi
+if test "$_keymapper" = yes ; then
+	DEFINES="$DEFINES -DENABLE_KEYMAPPER"
+fi
+
+#
 # Figure out installation directories
 #
 test -z "$_bindir" && _bindir="$_prefix/bin"
@@ -1626,6 +1647,15 @@ DEFINES="$DEFINES -DPLUGIN_DIRECTORY=\\\"$_libdir/residual\\\""
 echo_n "Backend... "
 echo_n "$_backend"
 echo
+if test "$_vkeybd" = yes ; then
+	echo_n ", virtual keyboard"
+fi
+
+if test "$_keymapper" = yes ; then
+	echo ", keymapper"
+else
+	echo
+fi
 
 #
 # Backend related stuff

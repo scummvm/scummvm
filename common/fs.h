@@ -20,7 +20,6 @@
  *
  * $URL$
  * $Id$
- *
  */
 
 #ifndef COMMON_FS_H

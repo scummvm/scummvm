@@ -198,6 +198,9 @@ dist-src: \
 	@#DEB-src?
 
 
+# Themes files
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
+
 # Plugin files
 DIST_FILES_PLUGINS:=$(addprefix $(srcdir)/,$(PLUGINS))
 

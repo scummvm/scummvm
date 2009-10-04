@@ -1,6 +1,7 @@
 MODULE := backends/platform/sdl
 
 MODULE_OBJS := \
+	hardwarekeys.o \
 	sdl_driver.o
 
 MODULE_DIRS += \

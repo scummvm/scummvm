@@ -24,7 +24,7 @@
 
 #include "common/util.h"
 #include "common/system.h"
-#include "common/str.h"
+#include "gui/debugger.h"
 #include "engines/engine.h"
 
 #include <stdarg.h>	// For va_list etc.
@@ -461,7 +461,13 @@ void NORETURN error(const char *s, ...) {
 	vsnprintf(buf_input, STRINGBUFLEN, s, va);
 	va_end(va);
 
-	strncpy(buf_output, buf_input, STRINGBUFLEN);
+
+	// Next, give the active engine (if any) a chance to augment the message
+	if (g_engine) {
+		g_engine->errorString(buf_input, buf_output, STRINGBUFLEN);
+	} else {
+		strncpy(buf_output, buf_input, STRINGBUFLEN);
+	}
 
 	buf_output[STRINGBUFLEN-3] = '\0';
 	buf_output[STRINGBUFLEN-2] = '\0';
@@ -471,6 +477,20 @@ void NORETURN error(const char *s, ...) {
 
 	// Print the error message to stderr
 	fputs(buf_output, stderr);
+
+	// Unless this error -originated- within the debugger itself, we
+	// now invoke the debugger, if available / supported.
+	if (g_engine) {
+		GUI::Debugger *debugger = g_engine->getDebugger();
+#ifdef _WIN32_WCE
+		if (isSmartphone())
+			debugger = 0;
+#endif
+		if (debugger && !debugger->isAttached()) {
+			debugger->attach(buf_output);
+			debugger->onFrame();
+		}
+	}
 
 
 #if defined( USE_WINDBG )

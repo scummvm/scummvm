@@ -44,7 +44,36 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+#include "gui/GuiManager.h"
+#include "gui/message.h"
 
+#include "backends/keymapper/keymapper.h"
+
+#if defined(_WIN32_WCE)
+#include "backends/platform/wince/CELauncherDialog.h"
+#elif defined(__DC__)
+#include "backends/platform/dc/DCLauncherDialog.h"
+#else
+#include "gui/launcher.h"
+#endif
+
+
+static bool launcherDialog() {
+
+	// Discard any command line options. Those that affect the graphics
+	// mode and the others (like bootparam etc.) should not
+	// blindly be passed to the first game launched from the launcher.
+	ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
+#if defined(_WIN32_WCE)
+	CELauncherDialog dlg;
+#elif defined(__DC__)
+	DCLauncherDialog dlg;
+#else
+	GUI::LauncherDialog dlg;
+#endif
+	return (dlg.runModal() != -1);
+}
 
 static const EnginePlugin *detectPlugin() {
 	const EnginePlugin *plugin = 0;
@@ -100,6 +129,10 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 
 	// Check for errors
 	if (!engine || err != Common::kNoError) {
+		// TODO: Show an error dialog or so?
+		// TODO: Also take 'err' into consideration...
+		//GUI::MessageDialog alert("ScummVM could not find any game in the specified directory!");
+		//alert.runModal();
 		const char *errMsg = 0;
 		switch (err) {
 		case Common::kInvalidPathError:
@@ -118,6 +151,17 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 			ConfMan.getActiveDomainName().c_str(),
 			dir.getPath().c_str()
 			);
+
+		// Autoadded is set only when no path was provided and
+		// the game is run from command line.
+		//
+		// Thus, we remove this garbage entry
+		//
+		// Fixes bug #1544799
+		if (ConfMan.hasKey("autoadded")) {
+			ConfMan.removeGameDomain(ConfMan.getActiveDomainName().c_str());
+		}
+
 		return err;
 	}
 
@@ -183,6 +227,60 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	return result;
 }
 
+static void setupGraphics(OSystem &system) {
+	system.launcherInitSize(320, 200);
+
+	// When starting up launcher for the first time, the user might have specified
+	// a --gui-theme option, to allow that option to be working, we need to initialize
+	// GUI here.
+	// FIXME: Find a nicer way to allow --gui-theme to be working
+	GUI::GuiManager::instance();
+
+	// Set initial window caption
+	system.setWindowCaption(gResidualFullVersion);
+}
+
+static void setupKeymapper(OSystem &system) {
+
+#ifdef ENABLE_KEYMAPPER
+	using namespace Common;
+
+	Keymapper *mapper = system.getEventManager()->getKeymapper();
+	Keymap *globalMap = new Keymap("global");
+	Action *act;
+	HardwareKeySet *keySet;
+
+	keySet = system.getHardwareKeySet();
+
+	// Query backend for hardware keys and register them
+	mapper->registerHardwareKeySet(keySet);
+
+	// Now create the global keymap
+	act = new Action(globalMap, "MENU", "Menu", kGenericActionType, kSelectKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_F5, ASCII_F5, 0));
+
+	act = new Action(globalMap, "SKCT", "Skip", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_ESCAPE, ASCII_ESCAPE, 0));
+
+	act = new Action(globalMap, "PAUS", "Pause", kGenericActionType, kStartKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_SPACE, ' ', 0));
+
+	act = new Action(globalMap, "SKLI", "Skip line", kGenericActionType, kActionKeyType);
+	act->addKeyEvent(KeyState(KEYCODE_PERIOD, '.', 0));
+
+	act = new Action(globalMap, "VIRT", "Display keyboard", kVirtualKeyboardActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F7, ASCII_F7, 0));
+
+	act = new Action(globalMap, "REMP", "Remap keys", kKeyRemapActionType);
+	act->addKeyEvent(KeyState(KEYCODE_F8, ASCII_F8, 0));
+
+	mapper->addGlobalKeymap(globalMap);
+
+	mapper->pushKeymap("global");
+#endif
+
+}
+
 extern "C" int residual_main(int argc, const char * const argv[]) {
 	Common::String specialDebug;
 	Common::String command;
@@ -237,49 +335,69 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// the command line params) was read.
 	system.initBackend();
 
-	// Init the event manager. As the virtual keyboard is loaded here, it must 
+	setupGraphics(system);
+
+	// Init the event manager. As the virtual keyboard is loaded here, it must
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
 
-	// Try to find a plugin which feels responsible for the specified game.
-	const EnginePlugin *plugin = detectPlugin();
-	if (plugin) {
-		// Unload all plugins not needed for this game,
-		// to save memory
-		PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
+	// Now as the event manager is created, setup the keymapper
+	setupKeymapper(system);
 
-		// Try to run the game
-		Common::Error result = runGame(plugin, system, specialDebug);
+	// Unless a game was specified, show the launcher dialog
+	if (0 == ConfMan.getActiveDomain())
+		launcherDialog();
 
-		// Did an error occur ?
-		if (result != Common::kNoError) {
-			// TODO: Show an informative error dialog if starting the selected game failed.
+	// FIXME: We're now looping the launcher. This, of course, doesn't
+	// work as well as it should. In theory everything should be destroyed
+	// cleanly, so this is now enabled to encourage people to fix bits :)
+	while (0 != ConfMan.getActiveDomain()) {
+		// Try to find a plugin which feels responsible for the specified game.
+		const EnginePlugin *plugin = detectPlugin();
+		if (plugin) {
+			// Unload all plugins not needed for this game,
+			// to save memory
+			PluginManager::instance().unloadPluginsExcept(PLUGIN_TYPE_ENGINE, plugin);
+
+			// Try to run the game
+			Common::Error result = runGame(plugin, system, specialDebug);
+
+			// Did an error occur ?
+			if (result != Common::kNoError) {
+				// TODO: Show an informative error dialog if starting the selected game failed.
+			}
+
+			// Quit unless an error occurred, or Return to launcher was requested
+			if (result == 0 && !g_system->getEventManager()->shouldRTL())
+				break;
+
+			// Reset RTL flag in case we want to load another engine
+			g_system->getEventManager()->resetRTL();
+
+			// Discard any command line options. It's unlikely that the user
+			// wanted to apply them to *all* games ever launched.
+			ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
+
+			// Clear the active config domain
+			ConfMan.setActiveDomain("");
+
+			// PluginManager::instance().unloadPlugins();
+			PluginManager::instance().loadPlugins();
+		} else {
+			// A dialog would be nicer, but we don't have any
+			// screen to draw on yet.
+			warning("Could not find any engine capable of running the selected game");
 		}
 
-		// Quit unless an error occurred
-		if (result == 0)
-			goto exit;
-
-		// Discard any command line options. It's unlikely that the user
-		// wanted to apply them to *all* games ever launched.
-		ConfMan.getDomain(Common::ConfigManager::kTransientDomain)->clear();
-
-		// Clear the active config domain
-		ConfMan.setActiveDomain("");
-
-		// PluginManager::instance().unloadPlugins();
-		PluginManager::instance().loadPlugins();
-	} else {
-		// A dialog would be nicer, but we don't have any
-		// screen to draw on yet.
-		warning("Could not find any engine capable of running the selected game");
+		// reset the graphics to default
+		setupGraphics(system);
+		launcherDialog();
 	}
-
-exit:
 	PluginManager::instance().unloadPlugins();
 	PluginManager::destroy();
 	Common::ConfigManager::destroy();
 	Common::SearchManager::destroy();
+	GUI::GuiManager::destroy();
 
 	return 0;
 }

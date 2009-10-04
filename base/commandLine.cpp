@@ -32,6 +32,8 @@
 #include "common/system.h"
 #include "common/fs.h"
 
+#include "gui/ThemeEngine.h"
+
 namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
@@ -61,17 +63,20 @@ static const char HELP_STRING[] =
 	"  -f, --fullscreen         Force full-screen mode\n"
 	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
 	"                           hb,ru,cz)\n"
+	"  --gui-theme=THEME        Select GUI theme\n"
+	"  --themepath=PATH         Path to where GUI themes are stored\n"
+	"  --list-themes            Display list of all usable GUI themes\n"
 	"  -m, --music-volume=NUM   Set the music volume, 0-127 (default: 127)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-127 (default: 127)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-127 (default: 127)\n"
-	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Voice Only, 3-Voice and Text\n"
-	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: TRUE/FALSE\n"
+	"  --speech-mode=NUM        Set the mode of speech 1-Text only, 2-Speech Only, 3-Speech and Text\n"
+	"  --soft-renderer=BOOL     Set the turn on/off software 3D renderer: true/false\n"
 	"  -d, --debuglevel=NUM     Set debug verbosity level\n"
 	"  --debugflags=FLAGS       Enables engine specific debug flags\n"
 	"  --savepath=PATH          Path to where savegames are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
 	"  --output-rate=RATE       Select output sample rate in Hz (e.g. 22050)\n"
-	"  --show-fps=BOOL          Set the turn on/off display FPS info: TRUE/FALSE\n"
+	"  --show-fps=BOOL          Set the turn on/off display FPS info: true/false\n"
 	"\n"
 ;
 #endif
@@ -104,14 +109,14 @@ void registerDefaults() {
 
 	ConfMan.registerDefault("music_volume", 127);
 	ConfMan.registerDefault("sfx_volume", 127);
-	ConfMan.registerDefault("voice_volume", 127);
+	ConfMan.registerDefault("speech_volume", 127);
 	ConfMan.registerDefault("speech_mode", "3");
 
 	ConfMan.registerDefault("path", ".");
 
-	ConfMan.registerDefault("soft_renderer", "TRUE");
-	ConfMan.registerDefault("fullscreen", "FALSE");
-	ConfMan.registerDefault("show_fps", "FALSE");
+	ConfMan.registerDefault("soft_renderer", "true");
+	ConfMan.registerDefault("fullscreen", "false");
+	ConfMan.registerDefault("show_fps", "false");
 
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
@@ -251,7 +256,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION('s', "sfx-volume")
 			END_OPTION
 
-			DO_OPTION('r', "voice-volume")
+			DO_OPTION('r', "speech-volume")
 			END_OPTION
 
 			DO_OPTION('q', "language")
@@ -304,6 +309,21 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				} else if (!path.isReadable()) {
 					usage("Non-readable extra path '%s'", option);
 				}
+			END_OPTION
+
+			DO_LONG_OPTION("gui-theme")
+			END_OPTION
+
+			DO_LONG_OPTION("themepath")
+				Common::FSNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent theme path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable theme path '%s'", option);
+				}
+			END_OPTION
+
+			DO_LONG_COMMAND("list-themes")
 			END_OPTION
 
 			DO_LONG_OPTION("text-speed")
@@ -381,6 +401,18 @@ static void listTargets() {
 	}
 }
 
+/** Lists all usable themes */
+static void listThemes() {
+	typedef Common::List<GUI::ThemeEngine::ThemeDescriptor> ThList;
+	ThList thList;
+	GUI::ThemeEngine::listUsableThemes(thList);
+
+	printf("Theme          Description\n");
+	printf("-------------- ------------------------------------------------\n");
+
+	for (ThList::const_iterator i = thList.begin(); i != thList.end(); ++i)
+		printf("%-14s %s\n", i->id.c_str(), i->name.c_str());
+}
 
 #else // DISABLE_COMMAND_LINE
 
@@ -406,6 +438,9 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 	} else if (command == "list-games") {
 		listGames();
 		return false;
+	} else if (command == "list-themes") {
+		listThemes();
+		return false;
 	} else if (command == "version") {
 		printf("%s\n", gResidualFullVersion);
 		printf("Features compiled in: %s\n", gResidualFeatures);
@@ -417,15 +452,13 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 
 #endif // DISABLE_COMMAND_LINE
 
-	Common::String gameId;
-	if (command.empty())
-		gameId = ConfMan.get("gameid", Common::ConfigManager::kApplicationDomain);
-	else
-		gameId = command;
 
-	if (!gameId.empty()) {
-		GameDescriptor gd = EngineMan.findGame(gameId);
-		if (ConfMan.hasGameDomain(gameId) || !gd.gameid().empty()) {
+	// If a target was specified, check whether there is either a game
+	// domain (i.e. a target) matching this argument, or alternatively
+	// whether there is a gameid matching that name.
+	if (!command.empty()) {
+		GameDescriptor gd = EngineMan.findGame(command);
+		if (ConfMan.hasGameDomain(command) || !gd.gameid().empty()) {
 			bool idCameFromCommandLine = false;
 
 			// WORKAROUND: Fix for bug #1719463: "DETECTOR: Launching
@@ -434,11 +467,11 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 			// We designate gameids which come strictly from command line
 			// so AdvancedDetector will not save config file with invalid
 			// gameid in case target autoupgrade was performed
-			if (!ConfMan.hasGameDomain(gameId)) {
+			if (!ConfMan.hasGameDomain(command)) {
 				idCameFromCommandLine = true;
 			}
 
-			ConfMan.setActiveDomain(gameId);
+			ConfMan.setActiveDomain(command);
 
 			if (idCameFromCommandLine)
 				ConfMan.set("id_came_from_command_line", "1");
@@ -446,15 +479,8 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		} else {
 #ifndef DISABLE_COMMAND_LINE
 			usage("Unrecognized game target '%s'", command.c_str());
-#else
-			return false;
 #endif // DISABLE_COMMAND_LINE
 		}
-	} else {
-#ifndef DISABLE_COMMAND_LINE
-			printf(HELP_STRING, s_appName);
-#endif // DISABLE_COMMAND_LINE
-			return false;
 	}
 
 

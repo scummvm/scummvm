@@ -8,18 +8,19 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
  * $URL$
  * $Id$
+ *
  */
 
 #if !defined(DISABLE_DEFAULT_EVENTMANAGER)
@@ -27,6 +28,12 @@
 #include "common/system.h"
 #include "common/config-manager.h"
 #include "backends/events/default/default-events.h"
+#include "backends/keymapper/keymapper.h"
+#include "backends/keymapper/remap-dialog.h"
+#include "backends/vkeybd/virtual-keyboard.h"
+
+#include "engines/engine.h"
+#include "gui/message.h"
 
 #define RECORD_SIGNATURE 0x54455354
 #define RECORD_VERSION 1
@@ -430,6 +437,66 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_currentKeyDown.flags = event.kbd.flags;
 			_keyRepeatTime = time + kKeyRepeatInitialDelay;
 #endif
+			// Global Main Menu
+			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_F5) {
+				if (g_engine && !g_engine->isPaused()) {
+					Common::Event menuEvent;
+					menuEvent.type = Common::EVENT_MAINMENU;
+
+					// FIXME: GSoC RTL branch passes the F6 key event to the
+					// engine, and also enqueues a EVENT_MAINMENU. For now,
+					// we just drop the key event and return an EVENT_MAINMENU
+					// instead. This way, we don't have to add special cases
+					// to engines (like it was the case for LURE in the RTL branch).
+					//
+					// However, this has other consequences, possibly negative ones.
+					// Like, what happens with key repeat for the trigger key?
+
+					//pushEvent(menuEvent);
+					event = menuEvent;
+
+					// FIXME: Since now we do not push another MAINMENU event onto
+					// our event stack, the GMM would never open, so we have to do
+					// that here. Of course when the engine would handle MAINMENU
+					// as an event now and open up the GMM itself it would open the
+					// menu twice.
+					if (g_engine && !g_engine->isPaused())
+						g_engine->openMainMenuDialog();
+
+					if (_shouldQuit)
+						event.type = Common::EVENT_QUIT;
+					else if (_shouldRTL)
+						event.type = Common::EVENT_RTL;
+				}
+			}
+#ifdef ENABLE_VKEYBD
+			else if (event.kbd.keycode == Common::KEYCODE_F7 && event.kbd.flags == 0) {
+				if (_vk->isDisplaying()) {
+					_vk->close(true);
+				} else {
+					if (g_engine)
+						g_engine->pauseEngine(true);
+					_vk->show();
+					if (g_engine)
+						g_engine->pauseEngine(false);
+					result = false;
+				}
+			}
+#endif
+#ifdef ENABLE_KEYMAPPER
+			else if (event.kbd.keycode == Common::KEYCODE_F8 && event.kbd.flags == 0) {
+				if (!_remap) {
+					_remap = true;
+					Common::RemapDialog _remapDialog;
+					if (g_engine)
+						g_engine->pauseEngine(true);
+					_remapDialog.runModal();
+					if (g_engine)
+						g_engine->pauseEngine(false);
+					_remap = false;
+				}
+			}
+#endif
 			break;
 
 		case Common::EVENT_KEYUP:
@@ -464,8 +531,50 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 			_buttonState &= ~RBUTTON;
 			break;
 
+		case Common::EVENT_MAINMENU:
+			if (g_engine && !g_engine->isPaused())
+				g_engine->openMainMenuDialog();
+
+			if (_shouldQuit)
+				event.type = Common::EVENT_QUIT;
+			else if (_shouldRTL)
+				event.type = Common::EVENT_RTL;
+			break;
+
+		case Common::EVENT_RTL:
+			if (ConfMan.getBool("confirm_exit")) {
+				if (g_engine)
+					g_engine->pauseEngine(true);
+				GUI::MessageDialog alert("Do you really want to return to the Launcher?", "Launcher", "Cancel");
+				result = _shouldRTL = (alert.runModal() == GUI::kMessageOK);
+				if (g_engine)
+					g_engine->pauseEngine(false);
+			} else
+				_shouldRTL = true;
+			break;
+
+		case Common::EVENT_MUTE:
+			if (g_engine)
+				g_engine->flipMute();
+			break;
+
 		case Common::EVENT_QUIT:
-			_shouldQuit = true;
+			if (ConfMan.getBool("confirm_exit")) {
+				if (_confirmExitDialogActive) {
+					result = false;
+					break;
+				}
+				_confirmExitDialogActive = true;
+				if (g_engine)
+					g_engine->pauseEngine(true);
+				GUI::MessageDialog alert("Do you really want to quit?", "Quit", "Cancel");
+				result = _shouldQuit = (alert.runModal() == GUI::kMessageOK);
+				if (g_engine)
+					g_engine->pauseEngine(false);
+				_confirmExitDialogActive = false;
+			} else
+				_shouldQuit = true;
+
 			break;
 
 		default:

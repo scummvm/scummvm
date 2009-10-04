@@ -25,6 +25,7 @@
 
 #include "engines/game.h"
 #include "base/plugins.h"
+#include "graphics/surface.h"
 
 
 const PlainGameDescriptor *findPlainGameDescriptor(const char *gameid, const PlainGameDescriptor *list) {
@@ -101,6 +102,13 @@ void GameDescriptor::updateDesc(const char *extra) {
 		descr += ")";
 		setVal("description", descr);
 	}
+}
+
+void SaveStateDescriptor::setThumbnail(Graphics::Surface *t) {
+	if (_thumbnail.get() == t)
+		return;
+
+	_thumbnail = Common::SharedPtr<Graphics::Surface>(t, Graphics::SharedPtrSurfaceDeleter());
 }
 
 bool SaveStateDescriptor::getBool(const Common::String &key) const {

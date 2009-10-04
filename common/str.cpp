@@ -20,7 +20,6 @@
  *
  * $URL$
  * $Id$
- *
  */
 
 #include "common/str.h"

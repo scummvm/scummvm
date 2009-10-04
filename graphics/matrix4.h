@@ -20,7 +20,6 @@
  *
  * $URL$
  * $Id$
- *
  */
 
 #ifndef GRAPHICS_MATRIX4_H

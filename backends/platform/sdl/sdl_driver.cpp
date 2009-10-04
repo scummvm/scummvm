@@ -217,6 +217,11 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	SDL_WarpMouse(x, y);
 }
 
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+	if (w == 0 || h == 0)
+		return;
+}
+
 bool OSystem_SDL::pollEvent(Common::Event &event) {
 	SDL_Event ev;
 	int axis;
@@ -537,19 +542,7 @@ OSystem_SDL::OSystem_SDL() {
 OSystem_SDL::~OSystem_SDL() {
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
-
-	if (_overlayscreen) {
-		SDL_FreeSurface(_overlayscreen);
-		_overlayscreen = NULL;
-#ifdef USE_OPENGL
-		if (_overlayNumTex > 0) {
-			glDeleteTextures(_overlayNumTex, _overlayTexIds);
-			delete[] _overlayTexIds;
-			_overlayNumTex = 0;
-		}
-#endif
-	}
-
+	closeOverlay();
 	delete _fsFactory;
 }
 
@@ -615,9 +608,30 @@ void OSystem_SDL::initBackend() {
 	}
 }
 
+void OSystem_SDL::closeOverlay() {
+	if (_overlayscreen) {
+		SDL_FreeSurface(_overlayscreen);
+		_overlayscreen = NULL;
+#ifdef USE_OPENGL
+		if (_overlayNumTex > 0) {
+			glDeleteTextures(_overlayNumTex, _overlayTexIds);
+			delete[] _overlayTexIds;
+			_overlayNumTex = 0;
+		}
+#endif
+	}
+}
+
+void OSystem_SDL::launcherInitSize(uint w, uint h) {
+	closeOverlay();
+	setupScreen(w, h, false, false);
+}
+
 byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
 	uint32 sdlflags;
 	int bpp;
+
+	closeOverlay();
 
 #ifdef USE_OPENGL
 	_opengl = accel3d;
@@ -1076,22 +1090,18 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 
 bool OSystem_SDL::hasFeature(Feature f) {
 	return
-		(f == kFeatureFullscreenMode) ||
 #ifdef USE_OPENGL
-		(f == kFeatureOpenGL) ||
+		(f == kFeatureOpenGL);
+#else
+	false;
 #endif
-		(f == kFeatureIconifyWindow);
 }
 
 void OSystem_SDL::setFeatureState(Feature f, bool enable) {
-	switch (f) {
-	case kFeatureIconifyWindow:
-		if (enable)
-			SDL_WM_IconifyWindow();
-		break;
+/*	switch (f) {
 	default:
 		break;
-	}
+	}*/
 }
 
 bool OSystem_SDL::getFeatureState(Feature f) {

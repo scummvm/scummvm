@@ -904,9 +904,9 @@ static void SetHardwareState() {
 	// changing only in config setup (software/hardware rendering)
 	bool accel = getbool(1);
 	if (accel)
-		g_registry->set("soft_renderer", "FALSE");
+		g_registry->set("soft_renderer", "false");
 	else
-		g_registry->set("soft_renderer", "TRUE");
+		g_registry->set("soft_renderer", "true");
 }
 
 static void SetVideoDevices() {

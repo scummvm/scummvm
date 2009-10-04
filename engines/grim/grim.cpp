@@ -239,8 +239,8 @@ GrimEngine::GrimEngine(OSystem *syst, int gameFlags) :
 	g_smush = NULL;
 	g_imuse = NULL;
 
-	_showFps = (tolower(g_registry->get("show_fps", "FALSE")[0]) == 't');
-	_softRenderer = (tolower(g_registry->get("soft_renderer", "FALSE")[0]) == 't');
+	_showFps = (tolower(g_registry->get("show_fps", "false")[0]) == 't');
+	_softRenderer = (tolower(g_registry->get("soft_renderer", "false")[0]) == 't');
 
 	_mixer->setVolumeForSoundType(Audio::Mixer::kPlainSoundType, 127);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, ConfMan.getInt("sfx_volume"));
@@ -337,7 +337,7 @@ Common::Error GrimEngine::run() {
 	g_smush = new Smush();
 	g_imuse = new Imuse(20);
 
-	bool fullscreen = (tolower(g_registry->get("fullscreen", "FALSE")[0]) == 't');
+	bool fullscreen = (tolower(g_registry->get("fullscreen", "false")[0]) == 't');
 
 	if (!_softRenderer && !g_system->hasFeature(OSystem::kFeatureOpenGL))
 		error("gfx backend doesn't support hardware rendering");

@@ -20,7 +20,6 @@
  *
  * $URL$
  * $Id$
- *
  */
 
 #include "graphics/matrix4.h"

@@ -31,6 +31,9 @@
 #include "common/hash-str.h"
 #include "common/ptr.h"
 
+namespace Graphics {
+	struct Surface;
+}
 
 /**
  * A simple structure used to map gameids (like "monkey", "sword1", ...) to
@@ -119,21 +122,22 @@ public:
  */
 class SaveStateDescriptor : public Common::StringMap {
 protected:
+	Common::SharedPtr<Graphics::Surface> _thumbnail; // can be 0
 
 public:
-	SaveStateDescriptor() {
+	SaveStateDescriptor() : _thumbnail() {
 		setVal("save_slot", "-1");	// FIXME: default to 0 (first slot) or to -1 (invalid slot) ?
 		setVal("description", "");
 	}
 
-	SaveStateDescriptor(int s, const Common::String &d) {
+	SaveStateDescriptor(int s, const Common::String &d) : _thumbnail() {
 		char buf[16];
 		sprintf(buf, "%d", s);
 		setVal("save_slot", buf);
 		setVal("description", d);
 	}
 
-	SaveStateDescriptor(const Common::String &s, const Common::String &d) {
+	SaveStateDescriptor(const Common::String &s, const Common::String &d) : _thumbnail() {
 		setVal("save_slot", s);
 		setVal("description", d);
 	}
@@ -172,6 +176,21 @@ public:
 	 * given savestate can be overwritten or not
 	 */
 	void setWriteProtectedFlag(bool state);
+
+	/**
+	 * Return a thumbnail graphics surface representing the savestate visually.
+	 * This is usually a scaled down version of the game graphics. The size
+	 * should be either 160x100 or 160x120 pixels, depending on the aspect
+	 * ratio of the game. If another ratio is required, contact the core team.
+	 */
+	const Graphics::Surface *getThumbnail() const { return _thumbnail.get(); }
+
+	/**
+	 * Set a thumbnail graphics surface representing the savestate visually.
+	 * Ownership of the surface is transferred to the SaveStateDescriptor.
+	 * Hence the caller must not delete the surface.
+	 */
+	void setThumbnail(Graphics::Surface *t);
 
 	/**
 	 * Sets the 'save_date' key properly, based on the given values.

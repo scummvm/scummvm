@@ -2,6 +2,7 @@ MODULE := engines
 
 MODULE_OBJS := \
 	advancedDetector.o \
+	dialogs.o \
 	engine.o \
 	game.o
 

@@ -58,7 +58,7 @@ Registry::Registry() : _dirty(true) {
 	_lastSet = ConfMan.get("last_set");
 	_musicVolume = ConfMan.get("music_volume");
 	_sfxVolume = ConfMan.get("sfx_volume");
-	_voiceVolume = ConfMan.get("voice_volume");
+	_voiceVolume = ConfMan.get("speech_volume");
 	_lastSavedGame = ConfMan.get("last_saved_game");
 	_gamma = ConfMan.get("gamma");
 	_voiceEffects = ConfMan.get("voice_effects");
@@ -191,10 +191,10 @@ void Registry::save() {
 	ConfMan.set("last_set", _lastSet);
 	ConfMan.set("music_volume", _musicVolume);
 	ConfMan.set("sfx_volume", _sfxVolume);
-	ConfMan.set("voice_volume", _voiceVolume);
+	ConfMan.set("speech_volume", _voiceVolume);
 	ConfMan.set("last_saved_game", _lastSavedGame);
 	ConfMan.set("gamma", _gamma);
-	ConfMan.set("voice_effects", _voiceEffects);
+	ConfMan.set("speech_effects", _voiceEffects);
 	ConfMan.set("text_speed", _textSpeed);
 	ConfMan.set("speech_mode", _speechMode);
 	ConfMan.set("movement", _movement);

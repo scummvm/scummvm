@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; either version 2
  * of the License, or (at your option) any later version.
- *
+
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- *
+
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
@@ -50,6 +50,7 @@ namespace Common {
 	class TimerManager;
 	class SeekableReadStream;
 	class WriteStream;
+	class HardwareKeySet;
 }
 
 class FilesystemFactory;
@@ -93,6 +94,8 @@ public:
 	 * A feature in this context means an ability of the backend which can be
 	 * either on or off. Examples include:
 	 *  - fullscreen mode
+	 *  - aspect ration correction
+	 *  - a virtual keyboard for text entry (on PDAs)
 	 */
 	enum Feature {
 		/**
@@ -100,9 +103,45 @@ public:
 		 * then this feature flag can be used to switch between the two.
 		 */
 		kFeatureFullscreenMode,
-		kFeatureFullscreenModeSwitch,
+
+		/**
+		 * Control aspect ratio correction. Aspect ratio correction is used to
+		 * correct games running at 320x200 (i.e with an aspect ratio of 8:5),
+		 * but which on their original hardware were displayed with the
+		 * standard 4:3 ratio (that is, the original graphics used non-square
+		 * pixels). When the backend support this, then games running at
+		 * 320x200 pixels should be scaled up to 320x240 pixels. For all other
+		 * resolutions, ignore this feature flag.
+		 * @note You can find utility functions in common/scaler.h which can
+		 *       be used to implement aspect ratio correction. In particular,
+		 *       stretch200To240() can stretch a rect, including (very fast)
+		 *       interpolation, and works in-place.
+		 */
+		kFeatureAspectRatioCorrection,
+
+		/**
+		 * Determine whether a virtual keyboard is too be shown or not.
+		 * This would mostly be implemented by backends for hand held devices,
+		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
+		 */
+		kFeatureVirtualKeyboard,
 		kFeatureIconifyWindow,
-		kFeatureOpenGL
+		kFeatureOpenGL,
+
+		/**
+		 * This feature, set to true, is a hint toward the backend to disable all
+		 * key filtering/mapping, in cases where it would be beneficial to do so.
+		 * As an example case, this is used in the agi engine's predictive dialog.
+		 * When the dialog is displayed this feature is set so that backends with
+		 * phone-like keypad temporarily unmap all user actions which leads to
+		 * comfortable word entry. Conversely, when the dialog exits the feature
+		 * is set to false.
+		 * TODO: Fingolfin suggests that the way the feature is used can be
+		 * generalized in this sense: Have a keyboard mapping feature, which the
+		 * engine queries for to assign keys to actions ("Here's my default key
+		 * map for these actions, what do you want them set to?").
+		 */
+		kFeatureDisableKeyFiltering
 	};
 
 	/**
@@ -139,13 +178,38 @@ public:
 	//@{
 
 	/**
+	 * Set the size of the launcher virtual screen.
+	 *
+	 * @param width		the new virtual screen width
+	 * @param height	the new virtual screen height
+	 */
+	virtual void launcherInitSize(uint width, uint height) = 0;
+
+	/**
 	 * Set the size of the screen.
+
 	 *
 	 * @param width			the new screen width
 	 * @param height		the new screen height
 	 * @param fullscreen	the new screen will be displayed in fullscreeen mode
 	 */
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) = 0;
+
+	int getScreenChangeID() const { return 0; }
+
+	/**
+	 * Returns the currently set virtual screen height.
+	 * @see initSize
+	 * @return the currently set virtual screen height
+	 */
+	virtual int16 getHeight() = 0;
+
+	/**
+	 * Returns the currently set virtual screen width.
+	 * @see initSize
+	 * @return the currently set virtual screen width
+	 */
+	virtual int16 getWidth() = 0;
 
 	/**
 	 * Flush the whole screen, that is render the current content of the screen
@@ -231,7 +295,11 @@ public:
 
 
 
-	/** @name Mouse */
+	/** @name Mouse
+	 * This is the lower level implementation as provided by the
+	 * backends. The engines should use the Graphics::CursorManager
+	 * class instead of using it directly.
+	 */
 	//@{
 
 	/** Show or hide the mouse cursor. */
@@ -245,6 +313,18 @@ public:
 	 */
 	virtual void warpMouse(int x, int y) = 0;
 
+	/**
+	 * Set the bitmap used for drawing the cursor.
+	 *
+	 * @param buf				the pixmap data to be used (8bit/pixel)
+	 * @param w					width of the mouse cursor
+	 * @param h					height of the mouse cursor
+	 * @param hotspotX			horizontal offset from the left side to the hotspot
+	 * @param hotspotY			vertical offset from the top side to the hotspot
+	 * @param keycolor			transparency color index
+	 * @param cursorTargetScale	scale factor which cursor is designed for
+	 */
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
 	//@}
 
 
@@ -276,6 +356,15 @@ public:
 	 * to the EventManager documentation.
 	 */
 	virtual Common::EventManager *getEventManager() = 0;
+
+	/**
+	 * Register hardware keys with keymapper
+	 *
+	 * @return HardwareKeySet with all keys and recommended mappings
+	 *
+	 * See keymapper documentation for further reference.
+	 */
+	virtual Common::HardwareKeySet *getHardwareKeySet() { return 0; }
 
 	//@}
 
