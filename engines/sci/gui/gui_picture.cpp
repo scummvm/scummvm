@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-SciGUIpicture::SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId)
+SciGUIpicture::SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId)
 	: _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
@@ -41,14 +41,14 @@ SciGUIpicture::SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *s
 SciGUIpicture::~SciGUIpicture() {
 }
 
-void SciGUIpicture::initData(sciResourceId resourceId) {
+void SciGUIpicture::initData(GUIResourceId resourceId) {
 	_resource = _s->resMan->findResource(ResourceId(kResourceTypePic, resourceId), false);
 	if (!_resource) {
 		error("picture resource %d not found", resourceId);
 	}
 }
 
-sciResourceId SciGUIpicture::getResourceId() {
+GUIResourceId SciGUIpicture::getResourceId() {
 	return _resourceId;
 }
 
@@ -94,7 +94,7 @@ void SciGUIpicture::draw11() {
 	int view_rle_ptr = READ_LE_UINT16(inbuffer + view_data_ptr + 24);
 	int view_pixel_ptr = READ_LE_UINT16(inbuffer + view_data_ptr + 28);
 	byte *view = NULL;
-	sciPalette palette;
+	GUIPalette palette;
 
 	// Create palette and set it
 	_gfx->CreatePaletteFromData(inbuffer + palette_data_ptr, &palette);
@@ -302,7 +302,7 @@ void SciGUIpicture::drawVectorData(byte *data, int dataSize) {
 	uint16 size;
 	byte byte;
 	int i;
-	sciPalette palette;
+	GUIPalette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 	bool sci1 = false;
 

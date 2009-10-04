@@ -32,14 +32,14 @@ namespace Sci {
 
 class SciGUIpicture {
 public:
-	SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId);
+	SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId);
 	~SciGUIpicture();
 
-	sciResourceId getResourceId();
+	GUIResourceId getResourceId();
 	void draw(uint16 style, bool addToFlag, int16 EGApaletteNo);
 
 private:
-	void initData(sciResourceId resourceId);
+	void initData(GUIResourceId resourceId);
 	void reset();
 	void draw11();
 	void decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size);
@@ -59,7 +59,7 @@ private:
 	int16 _resourceId;
 	Resource *_resource;
 
-	sciPort *_curPort;
+	GUIPort *_curPort;
 	uint16 _style;
 	bool _addToFlag;
 	int16 _EGApaletteNo;

@@ -32,7 +32,7 @@
 
 namespace Sci {
 
-SciGUIview::SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId)
+SciGUIview::SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId)
 	: _system(system), _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
@@ -41,7 +41,7 @@ SciGUIview::SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciG
 SciGUIview::~SciGUIview() {
 }
 
-void SciGUIview::initData(sciResourceId resourceId) {
+void SciGUIview::initData(GUIResourceId resourceId) {
 	Resource *viewResource = _s->resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
 	if (!viewResource) {
 		error("view resource %d not found", resourceId);
@@ -162,37 +162,37 @@ void SciGUIview::initData(sciResourceId resourceId) {
 	}
 }
 
-sciResourceId SciGUIview::getResourceId() {
+GUIResourceId SciGUIview::getResourceId() {
 	return _resourceId;
 }
 
-int16 SciGUIview::getWidth(uint16 loopNo, uint16 cellNo) {
+int16 SciGUIview::getWidth(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? _loop[loopNo].cell[cellNo].width : 0;
 }
 
-int16 SciGUIview::getHeight(uint16 loopNo, uint16 cellNo) {
+int16 SciGUIview::getHeight(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? _loop[loopNo].cell[cellNo].height : 0;
 }
 
-sciViewCellInfo *SciGUIview::getCellInfo(uint16 loopNo, uint16 cellNo) {
+sciViewCellInfo *SciGUIview::getCellInfo(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? &_loop[loopNo].cell[cellNo] : NULL;
 }
 
-sciViewLoopInfo *SciGUIview::getLoopInfo(uint16 loopNo) {
+sciViewLoopInfo *SciGUIview::getLoopInfo(GUIViewLoopNo loopNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loopCount ? &_loop[loopNo] : NULL;
 }
 
-void SciGUIview::getCellRect(uint16 loopNo, uint16 cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
+void SciGUIview::getCellRect(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
 	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
 	if (cellInfo) {
 		outRect->left = x + cellInfo->displaceX - (cellInfo->width >> 1);
@@ -202,7 +202,7 @@ void SciGUIview::getCellRect(uint16 loopNo, uint16 cellNo, int16 x, int16 y, int
 	}
 }
 
-void SciGUIview::unpackView(uint16 loopNo, uint16 cellNo, byte *outPtr, uint16 pixelCount) {
+void SciGUIview::unpackView(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount) {
 	byte *rlePtr = _resourceData + _loop[loopNo].cell[cellNo].offsetRLE;
 	byte *literalPtr = _resourceData + _loop[loopNo].cell[cellNo].offsetLiteral;
 	uint16 pixelNo = 0, brun;
@@ -247,7 +247,7 @@ void SciGUIview::unpackView(uint16 loopNo, uint16 cellNo, byte *outPtr, uint16 p
 	}
 }
 
-byte *SciGUIview::getBitmap(uint16 loopNo, uint16 cellNo) {
+byte *SciGUIview::getBitmap(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
 	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
@@ -277,8 +277,8 @@ byte *SciGUIview::getBitmap(uint16 loopNo, uint16 cellNo) {
 	return _loop[loopNo].cell[cellNo].rawBitmap;
 }
 
-void SciGUIview::draw(Common::Rect rect, Common::Rect clipRect, uint16 loopNo, uint16 cellNo, byte priority, uint16 paletteNo) {
-	sciPalette *palette = _embeddedPal ? &_palette : &_gfx->_sysPalette;
+void SciGUIview::draw(Common::Rect rect, Common::Rect clipRect, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte priority, uint16 paletteNo) {
+	GUIPalette *palette = _embeddedPal ? &_palette : &_gfx->_sysPalette;
 	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
 	byte *bitmap = getBitmap(loopNo, cellNo);
 	int16 cellHeight = cellInfo->height, cellWidth = cellInfo->width;

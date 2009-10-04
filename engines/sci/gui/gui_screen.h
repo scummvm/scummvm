@@ -54,7 +54,7 @@ public:
 	void BitsSave(Common::Rect rect, byte mask, byte *memoryPtr);
 	void BitsRestore(byte *memoryPtr);
 
-	sciPalette _sysPalette;
+	GUIPalette _sysPalette;
 
 	uint16 _width;
 	uint16 _height;

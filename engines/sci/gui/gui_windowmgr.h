@@ -32,20 +32,17 @@ public:
 	SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx);
 	~SciGUIwindowMgr();
 
-	int16 isFrontWindow(sciWnd *wnd);
+	int16 isFrontWindow(GUIWindow *wnd);
 	void SelectWindow(HEAPHANDLE hh);
-	void BeginUpdate(sciWnd *wnd);
-	void EndUpdate(sciWnd *wnd);
-	SCILanguage getSCILanguage();
-	char* StrSplit(char*buff, const char*msg, const char*fmt);
-	char* getIntlString(char*buff, const char*msg, const char*fmt, SCILanguage lang, SCILanguage prop);
-	sciWnd *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
-	void DrawWindow(sciWnd *wnd);
-	void DisposeWindow(sciWnd *pWnd, int16 arg2);
-	void UpdateWindow(sciWnd *wnd);
+	void BeginUpdate(GUIWindow *wnd);
+	void EndUpdate(GUIWindow *wnd);
+	GUIWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
+	void DrawWindow(GUIWindow *wnd);
+	void DisposeWindow(GUIWindow *pWnd, int16 arg2);
+	void UpdateWindow(GUIWindow *wnd);
 
-	sciPort *_wmgrPort;
-	sciWnd *_picWind;
+	GUIPort *_wmgrPort;
+	GUIWindow *_picWind;
 
 private:
 	EngineState *_s;

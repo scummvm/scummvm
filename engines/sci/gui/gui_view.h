@@ -43,36 +43,36 @@ struct sciViewLoopInfo {
 
 class SciGUIview {
 public:
-	SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId);
+	SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId);
 	~SciGUIview();
 
 	// TODO: Remove gfx reference after putting palette things into SciGUIscreen
 
-	sciResourceId getResourceId();
-	int16 getWidth(uint16 loopNo, uint16 cellNo);
-	int16 getHeight(uint16 loopNo, uint16 cellNo);
-	sciViewCellInfo *getCellInfo(uint16 loopNo, uint16 cellNo);
-	sciViewLoopInfo *getLoopInfo(uint16 loopNo);
-	void getCellRect(uint16 loopNo, uint16 cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
-	byte *getBitmap(uint16 loopNo, uint16 cellNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, uint16 loopNo, uint16 cellNo, byte priority, uint16 paletteNo);
+	GUIResourceId getResourceId();
+	int16 getWidth(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
+	int16 getHeight(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
+	sciViewCellInfo *getCellInfo(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
+	sciViewLoopInfo *getLoopInfo(GUIViewLoopNo loopNo);
+	void getCellRect(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
+	byte *getBitmap(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
+	void draw(Common::Rect rect, Common::Rect clipRect, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte priority, uint16 paletteNo);
 
 private:
-	void initData(sciResourceId resourceId);
-	void unpackView(uint16 loopNo, uint16 cellNo, byte *outPtr, uint16 pixelCount);
+	void initData(GUIResourceId resourceId);
+	void unpackView(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount);
 
 	OSystem *_system;
 	EngineState *_s;
 	SciGUIgfx *_gfx;
 	SciGUIscreen *_screen;
 
-	sciResourceId _resourceId;
+	GUIResourceId _resourceId;
 	byte *_resourceData;
 
 	uint16 _loopCount;
 	sciViewLoopInfo *_loop;
 	bool _embeddedPal;
-	sciPalette _palette;
+	GUIPalette _palette;
 };
 
 } // end of namespace Sci
