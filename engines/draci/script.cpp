@@ -357,6 +357,27 @@ void Script::play(Common::Queue<int> &params) {
 	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 }
 
+Animation *Script::loadObjectAnimation(GameObject *obj, int animID) {
+	// Load the animation into memory
+
+	_vm->_game->loadAnimation(animID, obj->_z);
+
+	// We insert the ID of the loaded animation into the object's internal array
+	// of owned animation IDs.
+	// Care must be taken to store them sorted (increasing order) as some things
+	// depend on this.
+
+	uint i;
+	for (i = 0; i < obj->_anims.size(); ++i) {
+		if (obj->_anims[i] > animID) {
+			break;
+		}
+	}
+
+	obj->_anims.insert_at(i, animID);
+	return _vm->_anims->getAnimation(animID);
+}
+
 void Script::load(Common::Queue<int> &params) {
 	if (_vm->_game->getLoopStatus() == kStatusInventory) {
 		return;
@@ -375,22 +396,7 @@ void Script::load(Common::Queue<int> &params) {
 		}
 	}
 
-	// Load the animation into memory
-
-	_vm->_game->loadAnimation(animID, obj->_z);
-
-	// We insert the ID of the loaded animation into the object's internal array
-	// of owned animation IDs.
-	// Care must be taken to store them sorted (increasing order) as some things
-	// depend on this.
-
-	for (i = 0; i < obj->_anims.size(); ++i) {
-		if (obj->_anims[i] > animID) {
-			break;
-		}
-	}
-
-	obj->_anims.insert_at(i, animID);
+	loadObjectAnimation(obj, animID);
 }
 
 void Script::start(Common::Queue<int> &params) {
@@ -401,7 +407,7 @@ void Script::start(Common::Queue<int> &params) {
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
 
-	const GameObject *obj = _vm->_game->getObject(objID);
+	GameObject *obj = _vm->_game->getObject(objID);
 
 	// Stop all animation that the object owns
 
@@ -410,6 +416,28 @@ void Script::start(Common::Queue<int> &params) {
 	}
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
+	if (!anim) {
+		// The original game files seem to contain errors, which I have
+		// verified by inspecting their source code.  They try to load
+		// each animation before starting it, but fail to anticipate
+		// all possible code paths when game loading comes into play.
+		//
+		// In particular, if I load the game at the stump location,
+		// apply a hedgehog on them, and then talk to them, one of the
+		// animations is not loaded.  This animation would have been
+		// loaded had I talked to them before applying the hedgehog
+		// (because a different dialog init code is run before the
+		// application).  Talking to the stumps is necessary to be able
+		// to apply the hedgehog, so normal game-play is safe.
+		// However, if I save the game after talking to them and load
+		// it later, then the game variables are set so as to allow me
+		// to apply the hedgehog, but there is no way that the game
+		// player would load the requested animation by itself.
+		// See objekty:5077 and parezy.txt:27.
+		anim = loadObjectAnimation(obj, animID);
+		debugC(1, kDraciBytecodeDebugLevel, "start(%d=%s) cannot find animation %d.  Loading.",
+			objID, obj->_title.c_str(), animID);
+	}
 
 	if (objID == kDragonObject)
 		_vm->_game->positionAnimAsHero(anim);
@@ -431,7 +459,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	int objID = params.pop() - 1;
 	int animID = params.pop() - 1;
 
-	const GameObject *obj = _vm->_game->getObject(objID);
+	GameObject *obj = _vm->_game->getObject(objID);
 
 	// Stop all animation that the object owns
 
@@ -440,6 +468,11 @@ void Script::startPlay(Common::Queue<int> &params) {
 	}
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
+	if (!anim) {
+		anim = loadObjectAnimation(obj, animID);
+		debugC(1, kDraciBytecodeDebugLevel, "startPlay(%d=%s) cannot find animation %d.  Loading.",
+			objID, obj->_title.c_str(), animID);
+	}
 
 	if (objID == kDragonObject)
 		_vm->_game->positionAnimAsHero(anim);
