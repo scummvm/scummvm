@@ -48,7 +48,7 @@ struct sciPort {
 	int16 top, left;
 	Common::Rect rect;
 	int16 curTop, curLeft;
-	int16 fontH;
+	int16 fontHeight;
 	sciResourceId fontId;
 	int16 textFace, penClr, backClr;
 	int16 penMode;
@@ -60,7 +60,7 @@ struct sciWnd {
 	int16 top, left;
 	Common::Rect rect;
 	int16 curTop, curLeft;
-	int16 fontH;
+	int16 fontHeight;
 	sciResourceId fontId;
 	int16 textFace, penClr, backClr;
 	int16 penMode;

@@ -60,14 +60,14 @@ public:
 	void SetOrigin(int16 left, int16 top);
 	void MoveTo(int16 left, int16 top);
 	void Move(int16 left, int16 top);
-	void SetFont(int16 fontId);
 	void OpenPort(sciPort *port);
 	void PenColor(int16 color);
 	void PenMode(int16 mode);
 	void TextFace(int16 textFace);
 	int16 GetPointSize(void);
-	int16 GetFontId();
+	sciResourceId GetFontId();
 	SciGUIfont *GetFont();
+	void SetFont(sciResourceId fontId);
 
 	void ClearScreen(byte color = 255);
 	void InvertRect(const Common::Rect &rect);
@@ -85,21 +85,14 @@ public:
 
 	void SetTextFonts(int argc, reg_t *argv);
 	void SetTextColors(int argc, reg_t *argv);
-	int16 TextWidth(const char*text, int16 from, int16 len);
-	int16 StringWidth(const char*str) {
-		return TextWidth(str, 0, (int16)strlen(str));
+	int16 TextSize(Common::Rect &rect, const char *str, sciResourceId fontId, int16 maxwidth);
+	void ShowString(const char *str, sciResourceId orgFontId, int16 orgPenColor) {
+		ShowText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
-	int16 TextSize(Common::Rect &rect, const char *str, int16 fontId, int16 maxwidth);
-	int16 GetLongest(const char *str, int16 maxwidth);
-	void DrawText(const char *str, int16 from, int16 len);
-	void ShowText(const char *str, int16 from, int16 len);
-	void ShowString(const char *str) {
-		ShowText(str, 0, (int16)strlen(str));
+	void DrawString(const char *str, sciResourceId orgFontId, int16 orgPenColor) {
+		DrawText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
-	void DrawString(const char *str) {
-		DrawText(str, 0, (int16)strlen(str));
-	}
-	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, int16 fontId);
+	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, sciResourceId fontId);
 	void ShowBits(const Common::Rect &r, uint16 flags);
 	sciMemoryHandle SaveBits(const Common::Rect &rect, byte screenFlags);
 	void RestoreBits(sciMemoryHandle memoryHandle);
@@ -129,6 +122,13 @@ public:
 	uint _resolutionPixels;
 
 private:
+	int16 TextCodeProcessing(const char *&text, sciResourceId orgFontId, int16 orgPenColor);
+	void TextWidth(const char*text, int16 from, int16 len, sciResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void StringWidth(const char*str, sciResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	int16 GetLongest(const char *str, int16 maxwidth, sciResourceId orgFontId);
+	void DrawText(const char *str, int16 from, int16 len, sciResourceId orgFontId, int16 orgPenColor);
+	void ShowText(const char *str, int16 from, int16 len, sciResourceId orgFontId, int16 orgPenColor);
+
 	OSystem *_system;
 	EngineState *_s;
 	SciGUIscreen *_screen;

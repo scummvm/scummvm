@@ -338,7 +338,7 @@ void SciGUIgfx::Move(int16 left, int16 top) {
 	_curPort->curLeft += left;
 }
 
-int16 SciGUIgfx::GetFontId() {
+sciResourceId SciGUIgfx::GetFontId() {
 	return _curPort->fontId;
 }
 
@@ -349,17 +349,17 @@ SciGUIfont *SciGUIgfx::GetFont() {
 	return _font;
 }
 
-void SciGUIgfx::SetFont(int16 fontId) {
+void SciGUIgfx::SetFont(sciResourceId fontId) {
 	if ((_font == NULL) || (_font->getResourceId() != fontId)) {
 		_font = new SciGUIfont(_system, _s, _screen, fontId);
 	}
 	_curPort->fontId = fontId;
-	_curPort->fontH = _font->getHeight();
+	_curPort->fontHeight = _font->getHeight();
 }
 
 void SciGUIgfx::OpenPort(sciPort *port) {
 	port->fontId = 0;
-	port->fontH = 8;
+	port->fontHeight = 8;
 
 	sciPort *tmp = _curPort;
 	_curPort = port;
@@ -388,7 +388,7 @@ void SciGUIgfx::TextFace(int16 textFace) {
 }
 
 int16 SciGUIgfx::GetPointSize(void) {
-	return _curPort->fontH;
+	return _curPort->fontHeight;
 }
 
 void SciGUIgfx::ClearScreen(byte color) {
@@ -509,19 +509,19 @@ void SciGUIgfx::ClearChar(int16 chr) {
 		return;
 	Common::Rect rect;
 	rect.top = _curPort->curTop;
-	rect.bottom = rect.top + _curPort->fontH;
+	rect.bottom = rect.top + _curPort->fontHeight;
 	rect.left = _curPort->curLeft;
 	rect.right = rect.left + CharWidth(chr);
 	EraseRect(rect);
 }
-//-----------------------------
+
 void SciGUIgfx::DrawChar(int16 chr) {
 	chr = chr & 0xFF;
 	ClearChar(chr);
 	StdChar(chr);
 	_curPort->curLeft += CharWidth(chr);
 }
-//-----------------------------
+
 void SciGUIgfx::StdChar(int16 chr) {
 #if 0
 	CResFont*res = getResFont();
@@ -558,165 +558,265 @@ void SciGUIgfx::SetTextColors(int argc, reg_t *argv) {
 	}
 }
 
-// TODO: implement codes
-int16 SciGUIgfx::TextWidth(const char *text, int16 from, int16 len) {
-	SciGUIfont *font = GetFont();
-	if (font) {
-		int16 width = 0;
-		for (int i = from; i < len; i++)
-			width += _font->getCharWidth(text[i]);
-		return width;
+// This internal function gets called as soon as a '|' is found in a text
+//  It will process the encountered code and set new font/set color
+//  We only support one-digit codes currently, don't know if multi-digit codes are possible
+//  Returns textcode character count
+int16 SciGUIgfx::TextCodeProcessing(const char *&text, sciResourceId orgFontId, int16 orgPenColor) {
+	const char *textCode = text;
+	int16 textCodeSize = 0;
+	char curCode;
+	unsigned char curCodeParm;
+
+	// Find the end of the textcode
+	while ((++textCodeSize) && (*text++ != 0x7C)) { }
+
+	// possible TextCodes:
+	//  c -> sets textColor to current port pen color
+	//  cX -> sets textColor to _textColors[X-1]
+	curCode = textCode[0];
+	curCodeParm = textCode[1];
+	if (isdigit(curCodeParm)) {
+		curCodeParm -= '0';
+	} else {
+		curCodeParm = 0;
 	}
-	return 0;
+	switch (curCode) {
+	case 'c': // set text color
+		if (curCodeParm == 0) {
+			_curPort->penClr = orgPenColor;
+		} else {
+			if (curCodeParm < _textColorsCount) {
+				_curPort->penClr = _textColors[curCodeParm];
+			}
+		}
+		break;
+	case 'f':
+		if (curCodeParm == 0) {
+			SetFont(orgFontId);
+		} else {
+			if (curCodeParm < _textFontsCount) {
+				SetFont(_textFonts[curCodeParm]);
+			}
+		}
+		break;
+	}
+	return textCodeSize;
 }
 
-// TODO: implement codes
-int16 SciGUIgfx::TextSize(Common::Rect &rect, const char *str, int16 fontId, int16 maxwidth) {
-	char buff[1000] = { 0 };
-	int16 oldfont = GetFontId();
+// return max # of chars to fit maxwidth with full words
+int16 SciGUIgfx::GetLongest(const char *text, int16 maxWidth, sciResourceId orgFontId) {
+	char curChar;
+	int16 maxChars = 0, curCharCount = 0;
+	uint16 width = 0;
+	sciResourceId oldFontId = GetFontId();
+	int16 oldPenColor = _curPort->penClr;
+
+	GetFont();
+	if (!_font)
+		return 0;
+
+	while (width <= maxWidth) {
+		curChar = *text++;
+		switch (curChar) {
+		case 0x7C:
+			curCharCount++;
+			curCharCount += TextCodeProcessing(text, orgFontId, oldPenColor);
+			continue;
+
+		case 0xD:
+			curCharCount++;
+			continue;
+
+		case 0xA:
+			curCharCount++;
+		case 0:
+			SetFont(oldFontId);
+			PenColor(oldPenColor);
+			return curCharCount;
+
+		case ' ':
+			maxChars = curCharCount + 1;
+			break;
+		}
+		width += _font->getCharWidth(curChar);
+		curCharCount++;
+	}
+	SetFont(oldFontId);
+	PenColor(oldPenColor);
+	return maxChars;
+}
+
+void SciGUIgfx::TextWidth(const char *text, int16 from, int16 len, sciResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+	unsigned char curChar;
+	sciResourceId oldFontId = GetFontId();
+	int16 oldPenColor = _curPort->penClr;
+
+	textWidth = 0; textHeight = 0;
+
+	GetFont();
+	if (_font) {
+		text += from;
+		while (len--) {
+			curChar = *text++;
+			switch (curChar) {
+			case 0x7C:
+				len -= TextCodeProcessing(text, orgFontId, 0);
+				break;
+			case 0x0A:
+			case 0x0D:
+				textHeight = MAX<int16> (textHeight, _curPort->fontHeight);
+				break;
+			default:
+				textHeight = MAX<int16> (textHeight, _curPort->fontHeight);
+				textWidth += _font->getCharWidth(curChar);
+			}
+		}
+	}
+	SetFont(oldFontId);
+	PenColor(oldPenColor);
+	return;
+}
+
+void SciGUIgfx::StringWidth(const char *str, sciResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+	TextWidth(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight);
+}
+
+int16 SciGUIgfx::TextSize(Common::Rect &rect, const char *str, sciResourceId fontId, int16 maxWidth) {
+	sciResourceId oldFontId = GetFontId();
+	int16 oldPenColor = _curPort->penClr;
+	int16 charCount;
+	int16 maxTextWidth = 0, textWidth;
+	int16 totalHeight = 0, textHeight;
+
 	if (fontId != -1)
 		SetFont(fontId);
 	rect.top = rect.left = 0;
 
-	if (maxwidth < 0) { // force output as single line
-		rect.bottom = GetPointSize();
-		rect.right = StringWidth(str);
+	if (maxWidth < 0) { // force output as single line
+		StringWidth(str, oldFontId, textWidth, textHeight);
+		rect.bottom = textHeight;
+		rect.right = textWidth;
 	} else {
 		// rect.right=found widest line with RTextWidth and GetLongest
 		// rect.bottom=num. lines * GetPointSize
-		rect.right = (maxwidth ? maxwidth : 192);
-		int16 height = 0, maxWidth = 0, width, nc;
+		rect.right = (maxWidth ? maxWidth : 192);
 		const char*p = str;
 		while (*p) {
-			if (*p == 0xD || *p == 0xA) {
-				p++;
-				continue;
-			}
-			nc = GetLongest(p, rect.right);
-			if (nc == 0)
+			//if (*p == 0xD || *p == 0xA) {
+			//	p++;
+			//	continue;
+			//}
+			charCount = GetLongest(p, rect.right, oldFontId);
+			if (charCount == 0)
 				break;
-			width = TextWidth(p, 0, nc);
-			maxWidth = MAX(width, maxWidth);
-			p += nc;
-			height++;
+			TextWidth(p, 0, charCount, oldFontId, textWidth, textHeight);
+			maxTextWidth = MAX(textWidth, maxTextWidth);
+			totalHeight += textHeight;
+			p += charCount;
 		}
-		rect.bottom = height * GetPointSize();
-		rect.right = maxwidth ? maxwidth : MIN(rect.right, maxWidth);
+		rect.bottom = totalHeight;
+		rect.right = maxWidth ? maxWidth : MIN(rect.right, maxTextWidth);
 	}
-	SetFont(oldfont);
+	SetFont(oldFontId);
+	PenColor(oldPenColor);
 	return rect.right;
 }
 
-// TODO: implement codes
-// return max # of chars to fit maxwidth with full words
-int16 SciGUIgfx::GetLongest(const char *str, int16 maxWidth) {
-	SciGUIfont *font = GetFont();
-	if (!font)
-		return 0;
-
-	int16 chars = 0, to = 0;
-	uint16 width = 0;
-	while (width <= maxWidth) {
-		switch (str[to]) {
-		case ' ':
-			chars = to + 1;
-			break;
-		case 0:
-		case 0xD:
-		case 0xA:
-			return to;
-		}
-		width += font->getCharWidth(str[to]);
-		to++;
-	}
-	return chars;
-}
-
-// TODO: implement codes
-void SciGUIgfx::DrawText(const char *text, int16 from, int16 len) {
-	int16 chr, width;
-	SciGUIfont *font = GetFont();
+// returns maximum font height used
+void SciGUIgfx::DrawText(const char *text, int16 from, int16 len, sciResourceId orgFontId, int16 orgPenColor) {
+	int16 curChar, charWidth;
 	Common::Rect rect;
 
-	if (!font)
+	GetFont();
+	if (!_font)
 		return;
 
-	text += from;
 	rect.top = _curPort->curTop;
-	rect.bottom = rect.top + _curPort->fontH;
+	rect.bottom = rect.top + _curPort->fontHeight;
+	text += from;
 	while (len--) {
-		chr = (*text++) & 0xFF;
-		switch (chr) {
+		curChar = (*text++);
+		switch (curChar) {
 		case 0x7C:
-			while ((len--) && (*text++ != 0x7C)) { }
+			len -= TextCodeProcessing(text, orgFontId, orgPenColor);
 			break;
-			
+
+		case 0x0A:
+		case 0x0D:
+		case 0:
+			break;
+
 		default:
-			width = font->getCharWidth(chr);
+			charWidth = _font->getCharWidth(curChar);
 			// clear char
 			if (_curPort->penMode == 1) {
 				rect.left = _curPort->curLeft;
-				rect.right = rect.left + width;
+				rect.right = rect.left + charWidth;
 				EraseRect(rect);
 			}
 			// CharStd
-			font->draw(chr, _curPort->top + _curPort->curTop, _curPort->left + _curPort->curLeft, _curPort->penClr, _curPort->textFace);
-			_curPort->curLeft += width;
+			_font->draw(curChar, _curPort->top + _curPort->curTop, _curPort->left + _curPort->curLeft, _curPort->penClr, _curPort->textFace);
+			_curPort->curLeft += charWidth;
 		}
 	}
 }
 
-void SciGUIgfx::ShowText(const char *text, int16 from, int16 len) {
+// returns maximum font height used
+void SciGUIgfx::ShowText(const char *text, int16 from, int16 len, sciResourceId orgFontId, int16 orgPenColor) {
 	Common::Rect rect;
 
 	rect.top = _curPort->curTop;
 	rect.bottom = rect.top + GetPointSize();
 	rect.left = _curPort->curLeft;
-	DrawText(text, from, len);
+	DrawText(text, from, len, orgFontId, orgPenColor);
 	rect.right = _curPort->curLeft;
 	ShowBits(rect, 1);
 }
 
 // Draws a text in rect.
-// align : -1-right , 0-left, 1-center
-void SciGUIgfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, int16 align, int16 fontId) {
-	int16 w, nc, offset;
+void SciGUIgfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, int16 align, sciResourceId fontId) {
+	int16 textWidth, textHeight, charCount, offset;
 	int16 hline = 0;
-	int16 oldfont = GetFontId();
+	sciResourceId orgFontId = GetFontId();
+	int16 orgPenColor = _curPort->penClr;
 	int16 rectWidth = rect.width();
 
 	if (fontId != -1)
 		SetFont(fontId);
 
 	while (*text) {
-		if (*text == 0xD || *text == 0xA) {
-			text++;
-			continue;
-		}
-		nc = GetLongest(text, rect.width());
-		if (nc == 0)
+//		if (*text == 0xD || *text == 0xA) {
+//			text++;
+//			continue;
+//		}
+		charCount = GetLongest(text, rect.width(), orgFontId);
+		if (charCount == 0)
 			break;
-		w = TextWidth(text, 0, nc);
+		TextWidth(text, 0, charCount, orgFontId, textWidth, textHeight);
 		switch (align) {
-		case -1:
-			offset = rect.width() - w;
+		case -1: // right-aligned
+			offset = rect.width() - textWidth;
 			break;
-		case 1:
-			offset = (rect.width() - w) / 2;
+		case 1: // center text
+			offset = (rect.width() - textWidth) / 2;
 			break;
-		default:
+		default: // left-aligned
 			offset = 0;
 		}
 		MoveTo(rect.left + offset, rect.top + hline);
 
-		if (bshow)
-			ShowText(text, 0, nc);
-		else
-			DrawText(text, 0, nc);
-		hline += GetPointSize();
-		text += nc;
+		if (bshow) {
+			ShowText(text, 0, charCount, orgFontId, orgPenColor);
+		} else {
+			DrawText(text, 0, charCount, orgFontId, orgPenColor);
+		}
+
+		hline += textHeight;
+		text += charCount;
 	}
-	SetFont(oldfont);
+	SetFont(orgFontId);
+	PenColor(orgPenColor);
 }
 
 // Update (part of) screen
