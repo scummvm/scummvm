@@ -23,23 +23,32 @@
  *
  */
 
-#ifndef BACKEND_DRIVER_SDL_H
-#define BACKEND_DRIVER_SDL_H
+#ifndef SDL_COMMON_H
+#define SDL_COMMON_H
 
-#include "backends/base-backend.h"
-
+#if defined(__SYMBIAN32__)
+#include <esdl\SDL.h>
+#else
 #include <SDL.h>
 #ifdef USE_OPENGL
 #include <SDL_opengl.h>
 #endif
+#endif
 
-#include <time.h>
+#include "backends/base-backend.h"
+#include "graphics/scaler.h"
+
 
 namespace Audio {
 	class MixerImpl;
 }
 
 #if defined(MACOSX)
+// On Mac OS X, we need to double buffer the audio buffer, else anything
+// which produces sampled data with high latency (like the MT-32 emulator)
+// will sound terribly.
+// This could be enabled for more / most ports in the future, but needs some
+// testing.
 #define MIXER_DOUBLE_BUFFERING 1
 #endif
 
@@ -51,6 +60,7 @@ public:
 	virtual void initBackend();
 
 	// Set the size of the video bitmap.
+	// Typically, 320x200
 	virtual void launcherInitSize(uint w, uint h);
 
 	virtual byte *setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d);
@@ -64,7 +74,7 @@ public:
 	// Warp the mouse cursor. Where set_mouse_pos() only informs the
 	// backend of the mouse cursor's current position, this function
 	// actually moves the cursor to the specified position.
-	virtual void warpMouse(int x, int y);
+	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
 	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
@@ -77,7 +87,7 @@ public:
 
 	// Get the next event.
 	// Returns true if an event was retrieved.
-	virtual bool pollEvent(Common::Event &event);
+	virtual bool pollEvent(Common::Event &event); // overloaded by CE backend
 
 	// Define all hardware keys for keymapper
 	virtual Common::HardwareKeySet *getHardwareKeySet();
@@ -104,7 +114,7 @@ public:
 	void updateCD();
 
 	// Quit
-	virtual void quit();
+	virtual void quit(); // overloaded by CE backend
 
 	virtual void getTimeAndDate(struct tm &t) const;
 	virtual Common::TimerManager *getTimerManager();
@@ -137,10 +147,13 @@ public:
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
+
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 
-private:
+protected:
+	bool _inited;
+
 
 #ifdef USE_OPENGL
 	bool _opengl;
@@ -167,6 +180,17 @@ private:
 	int _cdTrack, _cdNumLoops, _cdStartFrame, _cdDuration;
 	uint32 _cdEndTime, _cdStopTime;
 
+	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
+	// I am keeping the rest of the code in for now, since the joystick
+	// code (or rather, "hack") uses it, too.
+	struct KbdMouse {
+		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
+		uint32 last_time, delay_time, x_down_time, y_down_time;
+	};
+	// mouse
+	KbdMouse _km;
+	// joystick
+	SDL_Joystick *_joystick;
 #ifdef MIXER_DOUBLE_BUFFERING
 	SDL_mutex *_soundMutex;
 	SDL_cond *_soundCond;
@@ -191,24 +215,21 @@ private:
 	SDL_TimerID _timerID;
 	Common::TimerManager *_timer;
 
-	virtual void fillMouseEvent(Common::Event &event, int x, int y);
+protected:
 
-	// Keyboard mouse emulation.  Disabled by fingolfin 2004-12-18.
-	// I am keeping the rest of the code in for now, since the joystick
-	// code (or rather, "hack") uses it, too.
-	struct KbdMouse {
-		int16 x, y, x_vel, y_vel, x_max, y_max, x_down_count, y_down_count;
-		uint32 last_time, delay_time, x_down_time, y_down_time;
-	};
 
-	// mouse
-	KbdMouse _km;
+	/** Set the position of the virtual mouse cursor. */
+	void setMousePos(int x, int y);
+	virtual void fillMouseEvent(Common::Event &event, int x, int y); // overloaded by CE backend
+	void toggleMouseGrab();
+
 
 	void setupIcon();
-
 	void handleKbdMouse();
 
-	bool remapKey(SDL_Event &ev, Common::Event &event);
+	virtual bool remapKey(SDL_Event &ev, Common::Event &event);
+
+	void handleScalerHotkeys(const SDL_KeyboardEvent &key);
 };
 
 #endif

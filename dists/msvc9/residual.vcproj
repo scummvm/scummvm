@@ -592,15 +592,45 @@
 					Name="sdl"
 					>
 					<File
+						RelativePath="..\..\backends\platform\sdl\events.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\..\backends\platform\sdl\graphics.cpp"
+						>
+					</File>
+					<File
 						RelativePath="..\..\backends\platform\sdl\hardwarekeys.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\platform\sdl\sdl_driver.cpp"
+						RelativePath="..\..\backends\platform\sdl\main.cpp"
+						>
+						<FileConfiguration
+							Name="Debug|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+						<FileConfiguration
+							Name="Release|Win32"
+							>
+							<Tool
+								Name="VCCLCompilerTool"
+								ObjectFile="$(IntDir)\$(InputName)1.obj"
+								XMLDocumentationFileName="$(IntDir)\$(InputName)1.xdc"
+							/>
+						</FileConfiguration>
+					</File>
+					<File
+						RelativePath="..\..\backends\platform\sdl\sdl.cpp"
 						>
 					</File>
 					<File
-						RelativePath="..\..\backends\platform\sdl\sdl_driver.h"
+						RelativePath="..\..\backends\platform\sdl\sdl.h"
 						>
 					</File>
 				</Filter>

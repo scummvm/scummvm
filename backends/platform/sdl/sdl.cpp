@@ -23,35 +23,35 @@
  *
  */
 
+#if defined(WIN32)
+#include <windows.h>
+// winnt.h defines ARRAYSIZE, but we want our own one... - this is needed before including util.h
+#undef ARRAYSIZE
+#endif
+
+#include "backends/platform/sdl/sdl.h"
 #include "common/archive.h"
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
 #include "common/util.h"
 
-#include "base/main.h"
-
-#include "backends/platform/sdl/sdl.h"
-
 #ifdef UNIX
-	#include "backends/saves/posix/posix-saves.h"
+  #include "backends/saves/posix/posix-saves.h"
 #else
-	#include "backends/saves/default/default-saves.h"
+  #include "backends/saves/default/default-saves.h"
 #endif
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
 
-#include "backends/timer/default/default-timer.h"
-#include "backends/saves/default/default-saves.h"
-#include "backends/events/default/default-events.h"
-
-#ifdef _WIN32
-#include <windows.h>
-#endif
-
 #include "icons/residual.xpm"
 
+#include <time.h>	// for getTimeAndDate()
+
+//#define SAMPLES_PER_SEC 11025
 #define SAMPLES_PER_SEC 22050
+//#define SAMPLES_PER_SEC 44100
+
 
 /*
  * Include header files needed for the getFilesystemFactory() method.
@@ -79,474 +79,15 @@
 #include "CoreFoundation/CoreFoundation.h"
 #endif
 
-// FIXME move joystick defines out and replace with confile file options
-// we should really allow users to map any key to a joystick button
-#define JOY_DEADZONE 3200
-
-#ifndef __SYMBIAN32__ // Symbian wants dialog joystick i.e cursor for movement/selection
-	#define JOY_ANALOG
-#endif
-
-// #define JOY_INVERT_Y
-#define JOY_XAXIS 0
-#define JOY_YAXIS 1
-// buttons
-#define JOY_BUT_LMOUSE 0
-#define JOY_BUT_RMOUSE 2
-#define JOY_BUT_ESCAPE 3
-#define JOY_BUT_PERIOD 1
-#define JOY_BUT_SPACE 4
-#define JOY_BUT_F5 5
-
-
-
-
-static int mapKey(SDLKey key, SDLMod mod, Uint16 unicode) {
-	if (key >= SDLK_F1 && key <= SDLK_F9) {
-		return key - SDLK_F1 + Common::ASCII_F1;
-	} else if (key >= SDLK_KP0 && key <= SDLK_KP9) {
-		return key - SDLK_KP0 + '0';
-	} else if (key >= SDLK_UP && key <= SDLK_PAGEDOWN) {
-		return key;
-	} else if (unicode) {
-		return unicode;
-	} else if (key >= 'a' && key <= 'z' && (mod & KMOD_SHIFT)) {
-		return key & ~0x20;
-	} else if (key >= SDLK_NUMLOCK && key <= SDLK_EURO) {
-		return 0;
-	}
-	return key;
-}
-
-static byte SDLModToOSystemKeyFlags(SDLMod mod) {
-	byte b = 0;
-	if (mod & KMOD_SHIFT)
-		b |= Common::KBD_SHIFT;
-	if (mod & KMOD_ALT)
-		b |= Common::KBD_ALT;
-	if (mod & KMOD_CTRL)
-		b |= Common::KBD_CTRL;
-
-	return b;
-}
-
-void OSystem_SDL::fillMouseEvent(Common::Event &event, int x, int y) {
-	event.mouse.x = x;
-	event.mouse.y = y;
-
-	// Update the "keyboard mouse" coords
-	_km.x = x;
-	_km.y = y;
-}
-
-void OSystem_SDL::handleKbdMouse() {
-	uint32 curTime = getMillis();
-	if (curTime >= _km.last_time + _km.delay_time) {
-		_km.last_time = curTime;
-		if (_km.x_down_count == 1) {
-			_km.x_down_time = curTime;
-			_km.x_down_count = 2;
-		}
-		if (_km.y_down_count == 1) {
-			_km.y_down_time = curTime;
-			_km.y_down_count = 2;
-		}
-
-		if (_km.x_vel || _km.y_vel) {
-			if (_km.x_down_count) {
-				if (curTime > _km.x_down_time + _km.delay_time * 12) {
-					if (_km.x_vel > 0)
-						_km.x_vel++;
-					else
-						_km.x_vel--;
-				} else if (curTime > _km.x_down_time + _km.delay_time * 8) {
-					if (_km.x_vel > 0)
-						_km.x_vel = 5;
-					else
-						_km.x_vel = -5;
-				}
-			}
-			if (_km.y_down_count) {
-				if (curTime > _km.y_down_time + _km.delay_time * 12) {
-					if (_km.y_vel > 0)
-						_km.y_vel++;
-					else
-						_km.y_vel--;
-				} else if (curTime > _km.y_down_time + _km.delay_time * 8) {
-					if (_km.y_vel > 0)
-						_km.y_vel = 5;
-					else
-						_km.y_vel = -5;
-				}
-			}
-
-			_km.x += _km.x_vel;
-			_km.y += _km.y_vel;
-
-			if (_km.x < 0) {
-				_km.x = 0;
-				_km.x_vel = -1;
-				_km.x_down_count = 1;
-			} else if (_km.x > _km.x_max) {
-				_km.x = _km.x_max;
-				_km.x_vel = 1;
-				_km.x_down_count = 1;
-			}
-
-			if (_km.y < 0) {
-				_km.y = 0;
-				_km.y_vel = -1;
-				_km.y_down_count = 1;
-			} else if (_km.y > _km.y_max) {
-				_km.y = _km.y_max;
-				_km.y_vel = 1;
-				_km.y_down_count = 1;
-			}
-
-			// disable wrap mouse for now, it's really annoying
-			//SDL_WarpMouse((Uint16)_km.x, (Uint16)_km.y);
-		}
-	}
-}
-
-bool OSystem_SDL::showMouse(bool visible) {
-	return false;
-}
-
-void OSystem_SDL::warpMouse(int x, int y) {
-	SDL_WarpMouse(x, y);
-}
-
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
-	if (w == 0 || h == 0)
-		return;
-}
-
-bool OSystem_SDL::pollEvent(Common::Event &event) {
-	SDL_Event ev;
-	int axis;
-	byte b = 0;
-
-	handleKbdMouse();
-
-	while (SDL_PollEvent(&ev)) {
-		switch (ev.type) {
-		case SDL_KEYDOWN:
-			{
-				b = event.kbd.flags = SDLModToOSystemKeyFlags(SDL_GetModState());
-
-#if defined(MACOSX)
-				// On Macintosh', Cmd-Q quits
-				if ((ev.key.keysym.mod & KMOD_META) && ev.key.keysym.sym == 'q') {
-					event.type = Common::EVENT_QUIT;
-					return true;
-				}
-#elif defined(UNIX)
-				// On other unices, Control-Q quits
-				if ((ev.key.keysym.mod & KMOD_CTRL) && ev.key.keysym.sym == 'q') {
-					event.type = Common::EVENT_QUIT;
-					return true;
-				}
-#else
-				// Ctrl-z and Alt-X quit
-				if ((b == Common::KBD_CTRL && ev.key.keysym.sym == 'z') || (b == Common::KBD_ALT && ev.key.keysym.sym == 'x')) {
-					event.type = Common::EVENT_QUIT;
-					return true;
-				}
-#endif
-
-				const bool event_complete = remapKey(ev, event);
-
-				if (event_complete)
-					return true;
-
-				event.type = Common::EVENT_KEYDOWN;
-				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-				event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
-				return true;
-			}
-		case SDL_KEYUP:
-			{
-				const bool event_complete = remapKey(ev, event);
-
-				if (event_complete)
-					return true;
-
-				event.type = Common::EVENT_KEYUP;
-				event.kbd.keycode = (Common::KeyCode)ev.key.keysym.sym;
-				event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-
-				return true;
-			}
-		case SDL_MOUSEMOTION:
-			event.type = Common::EVENT_MOUSEMOVE;
-			fillMouseEvent(event, ev.motion.x, ev.motion.y);
-
-			return true;
-
-		case SDL_MOUSEBUTTONDOWN:
-			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = Common::EVENT_LBUTTONDOWN;
-			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = Common::EVENT_RBUTTONDOWN;
-#if defined(SDL_BUTTON_WHEELUP) && defined(SDL_BUTTON_WHEELDOWN)
-			else if (ev.button.button == SDL_BUTTON_WHEELUP)
-				event.type = Common::EVENT_WHEELUP;
-			else if (ev.button.button == SDL_BUTTON_WHEELDOWN)
-				event.type = Common::EVENT_WHEELDOWN;
-#endif
-#if defined(SDL_BUTTON_MIDDLE)
-			else if (ev.button.button == SDL_BUTTON_MIDDLE)
-				event.type = Common::EVENT_MBUTTONDOWN;
-#endif
-			else
-				break;
-
-			fillMouseEvent(event, ev.button.x, ev.button.y);
-
-			return true;
-
-		case SDL_MOUSEBUTTONUP:
-			if (ev.button.button == SDL_BUTTON_LEFT)
-				event.type = Common::EVENT_LBUTTONUP;
-			else if (ev.button.button == SDL_BUTTON_RIGHT)
-				event.type = Common::EVENT_RBUTTONUP;
-#if defined(SDL_BUTTON_MIDDLE)
-			else if (ev.button.button == SDL_BUTTON_MIDDLE)
-				event.type = Common::EVENT_MBUTTONUP;
-#endif
-			else
-				break;
-			fillMouseEvent(event, ev.button.x, ev.button.y);
-
-			return true;
-
-		case SDL_JOYBUTTONDOWN:
-			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event.type = Common::EVENT_LBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event.type = Common::EVENT_RBUTTONDOWN;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else {
-				event.type = Common::EVENT_KEYDOWN;
-				switch (ev.jbutton.button) {
-				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = Common::KEYCODE_ESCAPE;
-					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_PERIOD:
-					event.kbd.keycode = Common::KEYCODE_PERIOD;
-					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_SPACE:
-					event.kbd.keycode = Common::KEYCODE_SPACE;
-					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-					break;
-				}
-			}
-			return true;
-
-		case SDL_JOYBUTTONUP:
-			if (ev.jbutton.button == JOY_BUT_LMOUSE) {
-				event.type = Common::EVENT_LBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else if (ev.jbutton.button == JOY_BUT_RMOUSE) {
-				event.type = Common::EVENT_RBUTTONUP;
-				fillMouseEvent(event, _km.x, _km.y);
-			} else {
-				event.type = Common::EVENT_KEYUP;
-				switch (ev.jbutton.button) {
-				case JOY_BUT_ESCAPE:
-					event.kbd.keycode = Common::KEYCODE_ESCAPE;
-					event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_PERIOD:
-					event.kbd.keycode = Common::KEYCODE_PERIOD;
-					event.kbd.ascii = mapKey(SDLK_PERIOD, ev.key.keysym.mod, 0);
-					break;
-				case JOY_BUT_SPACE:
-					event.kbd.keycode = Common::KEYCODE_SPACE;
-					event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-					break;
-				}
-			}
-			return true;
-
-		case SDL_JOYAXISMOTION:
-			axis = ev.jaxis.value;
-			if ( axis > JOY_DEADZONE) {
-				axis -= JOY_DEADZONE;
-				event.type = Common::EVENT_MOUSEMOVE;
-			} else if ( axis < -JOY_DEADZONE ) {
-				axis += JOY_DEADZONE;
-				event.type = Common::EVENT_MOUSEMOVE;
-			} else
-				axis = 0;
-
-			if ( ev.jaxis.axis == JOY_XAXIS) {
-#ifdef JOY_ANALOG
-				_km.x_vel = axis / 2000;
-				_km.x_down_count = 0;
-#else
-				if (axis != 0) {
-					_km.x_vel = (axis > 0) ? 1 : -1;
-					_km.x_down_count = 1;
-				} else {
-					_km.x_vel = 0;
-					_km.x_down_count = 0;
-				}
-#endif
-
-			} else if (ev.jaxis.axis == JOY_YAXIS) {
-#ifndef JOY_INVERT_Y
-				axis = -axis;
-#endif
-#ifdef JOY_ANALOG
-				_km.y_vel = -axis / 2000;
-				_km.y_down_count = 0;
-#else
-				if (axis != 0) {
-					_km.y_vel = (-axis > 0) ? 1: -1;
-					_km.y_down_count = 1;
-				} else {
-					_km.y_vel = 0;
-					_km.y_down_count = 0;
-				}
-#endif
-			}
-
-			fillMouseEvent(event, _km.x, _km.y);
-
-			return true;
-
-		case SDL_VIDEOEXPOSE:
-			event.type = Common::EVENT_SCREEN_CHANGED;
-			return true;
-
-		case SDL_QUIT:
-			event.type = Common::EVENT_QUIT;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-bool OSystem_SDL::remapKey(SDL_Event &ev, Common::Event &event) {
-#ifdef LINUPY
-	// On Yopy map the End button to quit
-	if ((ev.key.keysym.sym == 293)) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-	// Map menu key to f5 (scumm menu)
-	if (ev.key.keysym.sym == 306) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-		return true;
-	}
-	// Map action key to action
-	if (ev.key.keysym.sym == 291) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_TAB;
-		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-		return true;
-	}
-	// Map OK key to skip cinematic
-	if (ev.key.keysym.sym == 292) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_ESCAPE;
-		event.kbd.ascii = mapKey(SDLK_ESCAPE, ev.key.keysym.mod, 0);
-		return true;
-	}
-#endif
-
-#ifdef QTOPIA
-	// Quit on fn+backspace on zaurus
-	if (ev.key.keysym.sym == 127) {
-		event.type = Common::EVENT_QUIT;
-		return true;
-	}
-
-	// Map menu key (f11) to f5 (scumm menu)
-	if (ev.key.keysym.sym == SDLK_F11) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_F5;
-		event.kbd.ascii = mapKey(SDLK_F5, ev.key.keysym.mod, 0);
-	}
-	// Nap center (space) to tab (default action )
-	// I wanted to map the calendar button but the calendar comes up
-	//
-	else if (ev.key.keysym.sym == SDLK_SPACE) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_TAB;
-		event.kbd.ascii = mapKey(SDLK_TAB, ev.key.keysym.mod, 0);
-	}
-	// Since we stole space (pause) above we'll rebind it to the tab key on the keyboard
-	else if (ev.key.keysym.sym == SDLK_TAB) {
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = Common::KEYCODE_SPACE;
-		event.kbd.ascii = mapKey(SDLK_SPACE, ev.key.keysym.mod, 0);
-	} else {
-	// Let the events fall through if we didn't change them, this may not be the best way to
-	// set it up, but i'm not sure how sdl would like it if we let if fall through then redid it though.
-	// and yes i have an huge terminal size so i dont wrap soon enough.
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = ev.key.keysym.sym;
-		event.kbd.ascii = mapKey(ev.key.keysym.sym, ev.key.keysym.mod, ev.key.keysym.unicode);
-	}
-#endif
-	return false;
-}
 
 static Uint32 timer_handler(Uint32 interval, void *param) {
 	((DefaultTimerManager *)param)->handler();
 	return interval;
 }
 
-OSystem_SDL::OSystem_SDL() {
-	_mixer = NULL;
-	_timer = NULL;
-	_savefile = NULL;
-	_timerID = 0;
-#ifdef MIXER_DOUBLE_BUFFERING
-	_soundMutex = NULL;
-	_soundCond = NULL;
-	_soundThread = NULL;
-	_soundThreadIsRunning = false;
-	_soundThreadShouldQuit = false;
-#endif
-	_samplesPerSec = 0;
-	_cdrom = 0;
-	_overlayVisible = false;
-	_overlayscreen = NULL;
-
-	memset(&_km, 0, sizeof(_km));
-
-	#if defined(__amigaos4__)
-		_fsFactory = new AmigaOSFilesystemFactory();
-	#elif defined(UNIX)
-		_fsFactory = new POSIXFilesystemFactory();
-	#elif defined(WIN32)
-		_fsFactory = new WindowsFilesystemFactory();
-	#elif defined(__SYMBIAN32__)
-		// Do nothing since its handled by the Symbian SDL inheritance
-	#else
-		#error Unknown and unsupported FS backend
-	#endif
-}
-
-OSystem_SDL::~OSystem_SDL() {
-	SDL_RemoveTimer(_timerID);
-	closeMixer();
-	closeOverlay();
-	delete _fsFactory;
-}
-
 void OSystem_SDL::initBackend() {
+	assert(!_inited);
+
 	int joystick_num = ConfMan.getInt("joystick_num");
 	uint32 sdlFlags = SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_TIMER;
 
@@ -567,23 +108,34 @@ void OSystem_SDL::initBackend() {
 		error("Could not initialize SDL: %s", SDL_GetError());
 	}
 
-	// disabled for now
+	// disabled for now in Residual
 	//SDL_ShowCursor(SDL_DISABLE);
 
 	// Enable unicode support if possible
 	SDL_EnableUNICODE(1);
 
-#if !defined(MACOSX)
+#if !defined(MACOSX) && !defined(__SYMBIAN32__)
+
+	// Setup a custom program icon.
+	// Don't set icon on OS X, as we use a nicer external icon there.
+	// Don't for Symbian: it uses the EScummVM.aif file for the icon.
 	setupIcon();
 #endif
 
+	// enable joystick
+	if (joystick_num > -1 && SDL_NumJoysticks() > 0) {
+		printf("Using joystick: %s\n", SDL_JoystickName(0));
+		_joystick = SDL_JoystickOpen(joystick_num);
+	}
+
+
 	// Create the savefile manager, if none exists yet (we check for this to
 	// allow subclasses to provide their own).
-	if (!_savefile) {
+	if (_savefile == 0) {
 #ifdef UNIX
-		_savefile = new POSIXSaveFileManager();
+	_savefile = new POSIXSaveFileManager();
 #else
-		_savefile = new DefaultSaveFileManager();
+	_savefile = new DefaultSaveFileManager();
 #endif
 	}
 
@@ -595,7 +147,7 @@ void OSystem_SDL::initBackend() {
 
 	// Create and hook up the timer manager, if none exists yet (we check for
 	// this to allow subclasses to provide their own).
-	if (_timer == NULL) {
+	if (_timer == 0) {
 		// Note: We could implement a custom SDLTimerManager by using
 		// SDL_AddTimer. That might yield better timer resolution, but it would
 		// also change the semantics of a timer: Right now, ScummVM timers
@@ -606,341 +158,59 @@ void OSystem_SDL::initBackend() {
 		_timer = new DefaultTimerManager();
 		_timerID = SDL_AddTimer(10, &timer_handler, _timer);
 	}
+
+	// Invoke parent implementation of this method
+	OSystem::initBackend();
+
+	_inited = true;
 }
 
-void OSystem_SDL::closeOverlay() {
-	if (_overlayscreen) {
-		SDL_FreeSurface(_overlayscreen);
-		_overlayscreen = NULL;
-#ifdef USE_OPENGL
-		if (_overlayNumTex > 0) {
-			glDeleteTextures(_overlayNumTex, _overlayTexIds);
-			delete[] _overlayTexIds;
-			_overlayNumTex = 0;
-		}
+OSystem_SDL::OSystem_SDL()
+	:
+	_screen(0),
+	_overlayVisible(false),
+	_overlayscreen(0),
+	_overlayWidth(0), _overlayHeight(0),
+	_overlayDirty(true), _overlayNumTex(0),
+	_overlayTexIds(0),
+	_samplesPerSec(0),
+	_cdrom(0),
+
+	_joystick(0),
+#ifdef MIXER_DOUBLE_BUFFERING
+	_soundMutex(0), _soundCond(0), _soundThread(0),
+	_soundThreadIsRunning(false), _soundThreadShouldQuit(false),
 #endif
-	}
+	_fsFactory(0),
+	_savefile(0),
+	_mixer(0),
+	_timer(0) {
+
+	// reset mouse state
+	memset(&_km, 0, sizeof(_km));
+
+	_inited = false;
+
+
+	#if defined(__amigaos4__)
+		_fsFactory = new AmigaOSFilesystemFactory();
+	#elif defined(UNIX)
+		_fsFactory = new POSIXFilesystemFactory();
+	#elif defined(WIN32)
+		_fsFactory = new WindowsFilesystemFactory();
+	#elif defined(__SYMBIAN32__)
+		// Do nothing since its handled by the Symbian SDL inheritance
+	#else
+		#error Unknown and unsupported FS backend
+	#endif
 }
 
-void OSystem_SDL::launcherInitSize(uint w, uint h) {
+OSystem_SDL::~OSystem_SDL() {
+	SDL_RemoveTimer(_timerID);
+	closeMixer();
 	closeOverlay();
-	setupScreen(w, h, false, false);
-}
-
-byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool accel3d) {
-	uint32 sdlflags;
-	int bpp;
-
-	closeOverlay();
-
-#ifdef USE_OPENGL
-	_opengl = accel3d;
-#endif
-	_fullscreen = fullscreen;
-
-#ifdef USE_OPENGL
-	if (_opengl) {
-		SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, 8);
-		SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
-		SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-		sdlflags = SDL_OPENGL;
-		bpp = 24;
-	} else
-#endif
-	{
-		bpp = 16;
-		sdlflags = SDL_HWSURFACE;
-	}
-
-	if (_fullscreen)
-		sdlflags |= SDL_FULLSCREEN;
-
-	_screen = SDL_SetVideoMode(screenW, screenH, bpp, sdlflags);
-	if (!_screen)
-		error("Could not initialize video");
-
-#ifdef USE_OPENGL
-	if (_opengl) {
-		int glflag;
-
-		// apply atribute again for sure based on SDL docs
-		SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
-
-		SDL_GL_GetAttribute(SDL_GL_RED_SIZE, &glflag);
-		warning("INFO: GL RED bits: %d", glflag);
-		SDL_GL_GetAttribute(SDL_GL_GREEN_SIZE, &glflag);
-		warning("INFO: GL GREEN bits: %d", glflag);
-		SDL_GL_GetAttribute(SDL_GL_BLUE_SIZE, &glflag);
-		warning("INFO: GL BLUE bits: %d", glflag);
-		SDL_GL_GetAttribute(SDL_GL_ALPHA_SIZE, &glflag);
-		warning("INFO: GL APLHA bits: %d", glflag);
-		SDL_GL_GetAttribute(SDL_GL_DEPTH_SIZE, &glflag);
-		warning("INFO: GL Z buffer depth bits: %d", glflag);
-		SDL_GL_GetAttribute(SDL_GL_DOUBLEBUFFER, &glflag);
-		warning("INFO: GL Double Buffer: %d", glflag);
-		SDL_GL_GetAttribute(SDL_GL_STENCIL_SIZE, &glflag);
-		warning("INFO: GL Stencil buffer bits: %d", glflag);
-	}
-#endif
-
-	_overlayWidth = screenW;
-	_overlayHeight = screenH;
-
-	Uint32 rmask, gmask, bmask, amask;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	rmask = 0x00001f00;
-	gmask = 0x000007e0;
-	bmask = 0x000000f8;
-	amask = 0x00000000;
-#else
-	rmask = 0x0000001f;
-	gmask = 0x000007e0;
-	bmask = 0x0000f800;
-	amask = 0x00000000;
-#endif
-	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
-						rmask, gmask, bmask, amask);
-
-	if (!_overlayscreen)
-		error("allocating _overlayscreen failed");
-
-	_overlayFormat.bytesPerPixel = _overlayscreen->format->BytesPerPixel;
-
-	_overlayFormat.rLoss = _overlayscreen->format->Rloss;
-	_overlayFormat.gLoss = _overlayscreen->format->Gloss;
-	_overlayFormat.bLoss = _overlayscreen->format->Bloss;
-	_overlayFormat.aLoss = _overlayscreen->format->Aloss;
-
-	_overlayFormat.rShift = _overlayscreen->format->Rshift;
-	_overlayFormat.gShift = _overlayscreen->format->Gshift;
-	_overlayFormat.bShift = _overlayscreen->format->Bshift;
-	_overlayFormat.aShift = _overlayscreen->format->Ashift;
-
-	return (byte *)_screen->pixels;
-}
-
-#define BITMAP_TEXTURE_SIZE 256
-
-void OSystem_SDL::updateScreen() {
-#ifdef USE_OPENGL
-	if (_opengl) {
-		if (_overlayVisible) {
-			if (_overlayDirty) {
-				// remove if already exist
-				if (_overlayNumTex > 0) {
-					glDeleteTextures(_overlayNumTex, _overlayTexIds);
-					delete[] _overlayTexIds;
-					_overlayNumTex = 0;
-				}
-
-				_overlayNumTex = ((_overlayWidth + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE) *
-								((_overlayHeight + (BITMAP_TEXTURE_SIZE - 1)) / BITMAP_TEXTURE_SIZE);
-				_overlayTexIds = new GLuint[_overlayNumTex];
-				glGenTextures(_overlayNumTex, _overlayTexIds);
-				for (int i = 0; i < _overlayNumTex; i++) {
-					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[i]);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-					glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-					glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, BITMAP_TEXTURE_SIZE, BITMAP_TEXTURE_SIZE, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, NULL);
-				}
-
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, _overlayWidth);
-
-				int curTexIdx = 0;
-				for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
-					for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-						int t_width = (x + BITMAP_TEXTURE_SIZE >= _overlayWidth) ? (_overlayWidth - x) : BITMAP_TEXTURE_SIZE;
-						int t_height = (y + BITMAP_TEXTURE_SIZE >= _overlayHeight) ? (_overlayHeight - y) : BITMAP_TEXTURE_SIZE;
-						glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-						glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, t_width, t_height, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, (byte *)_overlayscreen->pixels + (y * 2 * _overlayWidth) + (2 * x));
-						curTexIdx++;
-					}
-				}
-				glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-				glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
-			}
-
-			// prepare view
-			glMatrixMode(GL_PROJECTION);
-			glLoadIdentity();
-			glOrtho(0, _overlayWidth, _overlayHeight, 0, 0, 1);
-			glMatrixMode(GL_MODELVIEW);
-			glLoadIdentity();
-			glMatrixMode(GL_TEXTURE);
-			glLoadIdentity();
-			glDisable(GL_LIGHTING);
-			glEnable(GL_TEXTURE_2D);
-			glDisable(GL_DEPTH_TEST);
-			glDepthMask(GL_FALSE);
-			glEnable(GL_SCISSOR_TEST);
-
-			glScissor(0, 0, _overlayWidth, _overlayHeight);
-
-			int curTexIdx = 0;
-			for (int y = 0; y < _overlayHeight; y += BITMAP_TEXTURE_SIZE) {
-				for (int x = 0; x < _overlayWidth; x += BITMAP_TEXTURE_SIZE) {
-					glBindTexture(GL_TEXTURE_2D, _overlayTexIds[curTexIdx]);
-					glBegin(GL_QUADS);
-					glTexCoord2f(0, 0);
-					glVertex2i(x, y);
-					glTexCoord2f(1.0, 0.0);
-					glVertex2i(x + BITMAP_TEXTURE_SIZE, y);
-					glTexCoord2f(1.0, 1.0);
-					glVertex2i(x + BITMAP_TEXTURE_SIZE, y + BITMAP_TEXTURE_SIZE);
-					glTexCoord2f(0.0, 1.0);
-					glVertex2i(x, y + BITMAP_TEXTURE_SIZE);
-					glEnd();
-					curTexIdx++;
-				}
-			}
-
-			glDisable(GL_SCISSOR_TEST);
-			glDisable(GL_TEXTURE_2D);
-			glDepthMask(GL_TRUE);
-			glEnable(GL_DEPTH_TEST);
-			glEnable(GL_LIGHTING);
-		}
-		SDL_GL_SwapBuffers();
-	} else
-#endif
-	{
-		if (_overlayVisible) {
-			SDL_LockSurface(_screen);
-			SDL_LockSurface(_overlayscreen);
-			byte *src = (byte *)_overlayscreen->pixels;
-			byte *buf = (byte *)_screen->pixels;
-			int h = _overlayHeight;
-			do {
-				memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
-				src += _overlayscreen->pitch;
-				buf += _screen->pitch;
-			} while (--h);
-			SDL_UnlockSurface(_screen);
-			SDL_UnlockSurface(_overlayscreen);
-		}
-		SDL_Flip(_screen);
-	}
-}
-
-void OSystem_SDL::showOverlay() {
-	if (_overlayVisible)
-		return;
-
-	_overlayVisible = true;
-
-	clearOverlay();
-}
-
-void OSystem_SDL::hideOverlay() {
-	if (!_overlayVisible)
-		return;
-
-	_overlayVisible = false;
-
-	clearOverlay();
-}
-
-void OSystem_SDL::clearOverlay() {
-	if (!_overlayVisible)
-		return;
-
-#ifdef USE_OPENGL
-	if (_opengl) {
-		SDL_LockSurface(_overlayscreen);
-		glReadPixels(0, 0, _overlayWidth, _overlayWidth, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, _overlayscreen->pixels);
-		SDL_UnlockSurface(_overlayscreen);
-	} else
-#endif
-	{
-		SDL_LockSurface(_screen);
-		SDL_LockSurface(_overlayscreen);
-		byte *src = (byte *)_screen->pixels;
-		byte *buf = (byte *)_overlayscreen->pixels;
-		int h = _overlayHeight;
-		do {
-			memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
-			src += _screen->pitch;
-			buf += _overlayscreen->pitch;
-		} while (--h);
-		SDL_UnlockSurface(_screen);
-		SDL_UnlockSurface(_overlayscreen);
-	}
-	_overlayDirty = true;
-}
-
-void OSystem_SDL::grabOverlay(OverlayColor *buf, int pitch) {
-	if (_overlayscreen == NULL)
-		return;
-
-	if (SDL_LockSurface(_overlayscreen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	byte *src = (byte *)_overlayscreen->pixels;
-	int h = _overlayHeight;
-	do {
-		memcpy(buf, src, _overlayWidth * _overlayscreen->format->BytesPerPixel);
-		src += _overlayscreen->pitch;
-		buf += pitch;
-	} while (--h);
-
-	SDL_UnlockSurface(_overlayscreen);
-}
-
-void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	if (!_overlayscreen)
-		return;
-
-	// Clip the coordinates
-	if (x < 0) {
-		w += x;
-		buf -= x;
-		x = 0;
-	}
-
-	if (y < 0) {
-		h += y;
-		buf -= y * pitch;
-		y = 0;
-	}
-
-	if (w > _overlayWidth - x) {
-		w = _overlayWidth - x;
-	}
-
-	if (h > _overlayHeight - y) {
-		h = _overlayHeight - y;
-	}
-
-	if (w <= 0 || h <= 0)
-		return;
-
-	if (SDL_LockSurface(_overlayscreen) == -1)
-		error("SDL_LockSurface failed: %s", SDL_GetError());
-
-	byte *dst = (byte *)_overlayscreen->pixels + y * _overlayscreen->pitch + x * _overlayscreen->format->BytesPerPixel;
-	do {
-		memcpy(dst, buf, w * _overlayscreen->format->BytesPerPixel);
-		dst += _overlayscreen->pitch;
-		buf += pitch;
-	} while (--h);
-
-	SDL_UnlockSurface(_overlayscreen);
-}
-
-int16 OSystem_SDL::getHeight() {
-	return _screen->h;
-}
-
-int16 OSystem_SDL::getWidth() {
-	return _screen->w;
+	delete _savefile;
+	delete _timer;
 }
 
 uint32 OSystem_SDL::getMillis() {
@@ -1001,6 +271,7 @@ void OSystem_SDL::addSysArchivesToSearchSet(Common::SearchSet &s, int priority) 
 #endif
 
 }
+
 
 static Common::String getDefaultConfigFileName() {
 	char configFile[MAXPATHLEN];
@@ -1085,7 +356,7 @@ void OSystem_SDL::setWindowCaption(const char *caption) {
 	for (uint i = 0; i < cap.size(); ++i)
 		if ((byte)cap[i] > 0x7F)
 			cap.setChar('?', i);
-	SDL_WM_SetCaption(caption, caption);
+	SDL_WM_SetCaption(cap.c_str(), cap.c_str());
 }
 
 bool OSystem_SDL::hasFeature(Feature f) {
@@ -1114,34 +385,48 @@ bool OSystem_SDL::getFeatureState(Feature f) {
 }
 
 void OSystem_SDL::quit() {
+	if (_cdrom) {
+		SDL_CDStop(_cdrom);
+		SDL_CDClose(_cdrom);
+	}
+	if (_joystick)
+		SDL_JoystickClose(_joystick);
 	SDL_ShowCursor(SDL_ENABLE);
 
 	SDL_RemoveTimer(_timerID);
 	closeMixer();
 
-	delete _savefile;
+
 	delete _timer;
 
 	SDL_Quit();
 
+	// Even Manager requires save manager for storing
+	// recorded events
 	delete getEventManager();
+	delete _savefile;
 }
 
 void OSystem_SDL::setupIcon() {
-	int w, h, ncols, nbytes, i;
-	unsigned int rgba[256], icon[32 * 32];
-	unsigned char mask[32][4];
+	int x, y, w, h, ncols, nbytes, i;
+	unsigned int rgba[256];
+        unsigned int *icon;
 
 	sscanf(residual_icon[0], "%d %d %d %d", &w, &h, &ncols, &nbytes);
-	if ((w != 32) || (h != 32) || (ncols > 255) || (nbytes > 1)) {
-		warning("Could not load the icon (%d %d %d %d)", w, h, ncols, nbytes);
+	if ((w > 512) || (h > 512) || (ncols > 255) || (nbytes > 1)) {
+		warning("Could not load the built-in icon (%d %d %d %d)", w, h, ncols, nbytes);
 		return;
 	}
+	icon = (unsigned int*)malloc(w*h*sizeof(unsigned int));
+	if (!icon) {
+		warning("Could not allocate temp storage for the built-in icon");
+		return;
+	}
+
 	for (i = 0; i < ncols; i++) {
 		unsigned char code;
 		char color[32];
 		unsigned int col;
-
 		sscanf(residual_icon[1 + i], "%c c %s", &code, color);
 		if (!strcmp(color, "None"))
 			col = 0x00000000;
@@ -1151,44 +436,44 @@ void OSystem_SDL::setupIcon() {
 			sscanf(color + 1, "%06x", &col);
 			col |= 0xFF000000;
 		} else {
-			warning("Could not load the icon (%d %s - %s) ", code, color, residual_icon[1 + i]);
+			warning("Could not load the built-in icon (%d %s - %s) ", code, color, residual_icon[1 + i]);
+			free(icon);
 			return;
 		}
 
 		rgba[code] = col;
 	}
-	memset(mask, 0, sizeof(mask));
-	for (h = 0; h < 32; h++) {
-		const char *line = residual_icon[1 + ncols + h];
-		for (w = 0; w < 32; w++) {
-			icon[w + 32 * h] = rgba[(int)line[w]];
-			if (rgba[(int)line[w]] & 0xFF000000) {
-				mask[h][w >> 3] |= 1 << (7 - (w & 0x07));
-			}
+	for (y = 0; y < h; y++) {
+		const char *line = residual_icon[1 + ncols + y];
+		for (x = 0; x < w; x++) {
+			icon[x + w * y] = rgba[(int)line[x]];
 		}
 	}
 
-	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, 32, 32, 32, 32 * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
-	SDL_WM_SetIcon(sdl_surf, (unsigned char *)mask);
+	SDL_Surface *sdl_surf = SDL_CreateRGBSurfaceFrom(icon, w, h, 32, w * 4, 0xFF0000, 0x00FF00, 0x0000FF, 0xFF000000);
+	if (!sdl_surf) {
+		warning("SDL_CreateRGBSurfaceFrom(icon) failed");
+	}
+	SDL_WM_SetIcon(sdl_surf, NULL);
 	SDL_FreeSurface(sdl_surf);
+	free(icon);
 }
 
-OSystem::MutexRef OSystem_SDL::createMutex() {
-	return (MutexRef)SDL_CreateMutex();
+OSystem::MutexRef OSystem_SDL::createMutex(void) {
+	return (MutexRef) SDL_CreateMutex();
 }
 
 void OSystem_SDL::lockMutex(MutexRef mutex) {
-	SDL_mutexP((SDL_mutex *)mutex);
+	SDL_mutexP((SDL_mutex *) mutex);
 }
 
 void OSystem_SDL::unlockMutex(MutexRef mutex) {
-	SDL_mutexV((SDL_mutex *)mutex);
+	SDL_mutexV((SDL_mutex *) mutex);
 }
 
 void OSystem_SDL::deleteMutex(MutexRef mutex) {
-	SDL_DestroyMutex((SDL_mutex *)mutex);
+	SDL_DestroyMutex((SDL_mutex *) mutex);
 }
-
 
 #pragma mark -
 #pragma mark --- Audio ---
@@ -1223,6 +508,7 @@ int SDLCALL OSystem_SDL::mixerProducerThreadEntry(void *arg) {
 	this_->mixerProducerThread();
 	return 0;
 }
+
 
 void OSystem_SDL::initThreadedMixer(Audio::MixerImpl *mixer, uint bufSize) {
 	_soundThreadIsRunning = false;
@@ -1290,9 +576,9 @@ void OSystem_SDL::mixCallback(void *arg, byte *samples, int len) {
 void OSystem_SDL::mixCallback(void *sys, byte *samples, int len) {
 	OSystem_SDL *this_ = (OSystem_SDL *)sys;
 	assert(this_);
+	assert(this_->_mixer);
 
-	if (this_->_mixer)
-		this_->_mixer->mixCallback(samples, len);
+	this_->_mixer->mixCallback(samples, len);
 }
 
 #endif
@@ -1303,7 +589,6 @@ void OSystem_SDL::setupMixer() {
 
 	// Determine the desired output sampling frequency.
 	_samplesPerSec = 0;
-
 	if (ConfMan.hasKey("output_rate"))
 		_samplesPerSec = ConfMan.getInt("output_rate");
 	if (_samplesPerSec <= 0)
@@ -1373,6 +658,10 @@ Audio::Mixer *OSystem_SDL::getMixer() {
 	assert(_mixer);
 	return _mixer;
 }
+
+#pragma mark -
+#pragma mark --- CD Audio ---
+#pragma mark -
 
 bool OSystem_SDL::openCD(int drive) {
 	if (SDL_InitSubSystem(SDL_INIT_CDROM) == -1)
@@ -1459,78 +748,3 @@ void OSystem_SDL::updateCD() {
 		_cdEndTime = SDL_GetTicks() + _cdrom->track[_cdTrack].length * 1000 / CD_FPS;
 	}
 }
-
-#if defined(__SYMBIAN32__)
-#include "SymbianOs.h"
-#endif
-
-#if !defined(__MAEMO__) && !defined(_WIN32_WCE)
-
-#if defined (WIN32)
-int __stdcall WinMain(HINSTANCE /*hInst*/, HINSTANCE /*hPrevInst*/,  LPSTR /*lpCmdLine*/, int /*iShowCmd*/) {
-	SDL_SetModuleHandle(GetModuleHandle(NULL));
-	return main(__argc, __argv);
-}
-#endif
-
-int main(int argc, char *argv[]) {
-
-#if defined(__SYMBIAN32__)
-	//
-	// Set up redirects for stdout/stderr under Windows and Symbian.
-	// Code copied from SDL_main.
-	//
-
-	// Symbian does not like any output to the console through any *print* function
-	char STDOUT_FILE[256], STDERR_FILE[256]; // shhh, don't tell anybody :)
-	strcpy(STDOUT_FILE, Symbian::GetExecutablePath());
-	strcpy(STDERR_FILE, Symbian::GetExecutablePath());
-	strcat(STDOUT_FILE, "residual.stdout.txt");
-	strcat(STDERR_FILE, "residual.stderr.txt");
-
-	/* Flush the output in case anything is queued */
-	fclose(stdout);
-	fclose(stderr);
-
-	/* Redirect standard input and standard output */
-	FILE *newfp = freopen(STDOUT_FILE, "w", stdout);
-	if (newfp == NULL) {	/* This happens on NT */
-#if !defined(stdout)
-		stdout = fopen(STDOUT_FILE, "w");
-#else
-		newfp = fopen(STDOUT_FILE, "w");
-		if (newfp) {
-			*stdout = *newfp;
-		}
-#endif
-	}
-	newfp = freopen(STDERR_FILE, "w", stderr);
-	if (newfp == NULL) {	/* This happens on NT */
-#if !defined(stderr)
-		stderr = fopen(STDERR_FILE, "w");
-#else
-		newfp = fopen(STDERR_FILE, "w");
-		if (newfp) {
-			*stderr = *newfp;
-		}
-#endif
-	}
-	setbuf(stderr, NULL);			/* No buffering */
-
-#endif // defined(__SYMBIAN32__)
-
-	// Create our OSystem instance
-#if defined(__SYMBIAN32__)
-	g_system = new OSystem_SDL_Symbian();
-#else
-	g_system = new OSystem_SDL();
-#endif
-
-	assert(g_system);
-
-	int res = residual_main(argc, argv);
-
-	return res;
-}
-
-#endif
