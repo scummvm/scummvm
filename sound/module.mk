@@ -2,7 +2,10 @@ MODULE := sound
 
 MODULE_OBJS := \
 	audiostream.o \
-	mixer.o
+	mixer.o \
+	mp3.o \
+	rate.o \
+	vorbis.o
 
 ifndef USE_ARM_SOUND_ASM
 MODULE_OBJS += \

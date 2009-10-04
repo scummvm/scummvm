@@ -31,9 +31,9 @@
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
-//#include "sound/mp3.h"
-//#include "sound/vorbis.h"
-//#include "sound/flac.h"
+#include "sound/mp3.h"
+#include "sound/vorbis.h"
+#include "sound/flac.h"
 
 
 // This used to be an inline template function, but
@@ -61,6 +61,16 @@ struct StreamFileFormat {
 
 static const StreamFileFormat STREAM_FILEFORMATS[] = {
 	/* decoderName,		fileExt, openStreamFuntion */
+#ifdef USE_FLAC
+	{ "Flac",			".flac", makeFlacStream },
+	{ "Flac",			".fla",  makeFlacStream },
+#endif
+#ifdef USE_VORBIS
+	{ "Ogg Vorbis",		".ogg",  makeVorbisStream },
+#endif
+#ifdef USE_MAD
+	{ "MPEG Layer 3",	".mp3",  makeMP3Stream },
+#endif
 
 	{ NULL, NULL, NULL } // Terminator
 };
