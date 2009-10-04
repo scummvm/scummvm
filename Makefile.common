@@ -24,6 +24,7 @@ MODULES := tools base $(MODULES)
 MODULES += \
 	engines \
 	graphics \
+	gui \
 	sound \
 	backends \
 	common \
