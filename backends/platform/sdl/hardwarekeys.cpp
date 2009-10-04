@@ -23,7 +23,7 @@
  *
  */
 
-#include "backends/platform/sdl/sdl.h"
+#include "backends/platform/sdl/sdl_driver.h"
 #include "backends/keymapper/keymapper.h"
 #include "common/keyboard.h"
 

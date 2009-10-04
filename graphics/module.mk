@@ -14,7 +14,6 @@ MODULE_OBJS := \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
-
 	matrix3.o \
 	matrix4.o \
 	tinygl/api.o \
