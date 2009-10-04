@@ -149,6 +149,8 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	vm->_game->setRoomNum(oldRoomNum);
 	vm->_game->setExitLoop(true);
 
+	vm->_game->inventoryReload();
+
 	return Common::kNoError;
 }
 

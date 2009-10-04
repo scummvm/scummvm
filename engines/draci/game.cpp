@@ -619,25 +619,30 @@ void Game::putItem(int itemID, int position) {
 	if (itemID == kNoItem)
 		return;
 
-	uint i = position;
-
 	if (position >= 0 &&
 		position < kInventoryLines * kInventoryColumns &&
-		_inventory[position] == kNoItem) {
+		(_inventory[position] == kNoItem || _inventory[position] == itemID)) {
 		_inventory[position] = itemID;
 	} else {
-		for (i = 0; i < kInventorySlots; ++i) {
-			if (_inventory[i] == kNoItem) {
-				_inventory[i] = itemID;
+		for (position = 0; position < kInventorySlots; ++position) {
+			if (_inventory[position] == kNoItem) {
+				_inventory[position] = itemID;
 				break;
 			}
 		}
 	}
 
-	const int line = i / kInventoryColumns + 1;
-	const int column = i % kInventoryColumns + 1;
+	const int line = position / kInventoryColumns + 1;
+	const int column = position % kInventoryColumns + 1;
 
-	Animation *anim = _vm->_anims->getAnimation(kInventoryItemsID - itemID);
+	const int anim_id = kInventoryItemsID - itemID;
+	Animation *anim = _vm->_anims->getAnimation(anim_id);
+	if (!anim) {
+		anim = _vm->_anims->addItem(anim_id);
+		const BAFile *img = _vm->_itemImagesArchive->getFile(2 * itemID);
+		Sprite *sp = new Sprite(img->_data, img->_length, 0, 0, true);
+		anim->addFrame(sp);
+	}
 	Drawable *frame = anim->getFrame();
 
 	const int x = kInventoryX +
@@ -658,7 +663,7 @@ void Game::putItem(int itemID, int position) {
 	// upon returning it to its slot but *not* in other modes because it should be
 	// invisible then (along with the inventory)
 	if (_loopStatus == kStatusInventory && _loopSubstatus == kSubstatusOrdinary) {
-		_vm->_anims->play(kInventoryItemsID - itemID);
+		_vm->_anims->play(anim_id);
 	}
 }
 
@@ -707,6 +712,14 @@ void Game::inventoryDraw() {
 		if (_inventory[i] != kNoItem) {
 			_vm->_anims->play(kInventoryItemsID - _inventory[i]);
 		}
+	}
+}
+
+void Game::inventoryReload() {
+	// Make sure all items are loaded into memory (e.g., after loading a
+	// savegame) by re-putting them on the same spot in the inventory.
+	for (uint i = 0; i < kInventorySlots; ++i) {
+		putItem(_inventory[i], i);
 	}
 }
 

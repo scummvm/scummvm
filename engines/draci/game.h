@@ -316,6 +316,7 @@ public:
 	void inventoryInit();
 	void inventoryDraw();
 	void inventoryDone();
+	void inventoryReload();
 
 	void dialogueMenu(int dialogueID);
 	int dialogueDraw();
