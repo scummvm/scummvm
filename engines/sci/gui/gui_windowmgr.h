@@ -27,11 +27,9 @@
 #define SCI_GUI_WINDOWMGR_H
 
 #include "common/list.h"
+#include "common/array.h"
 
 namespace Sci {
-
-// TODO: remove HEAPHANDLE and make a list of GUIWindow pointers instead
-typedef uint16 HEAPHANDLE;
 
 class SciGUIwindowMgr {
 public:
@@ -39,7 +37,6 @@ public:
 	~SciGUIwindowMgr();
 
 	int16 isFrontWindow(GUIWindow *wnd);
-	void SelectWindow(HEAPHANDLE hh);
 	void BeginUpdate(GUIWindow *wnd);
 	void EndUpdate(GUIWindow *wnd);
 	GUIWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
@@ -47,14 +44,22 @@ public:
 	void DisposeWindow(GUIWindow *pWnd, int16 arg2);
 	void UpdateWindow(GUIWindow *wnd);
 
+	GUIPort *getPortById(uint16 id) const { return _windowsById[id]; }
+
 	GUIPort *_wmgrPort;
 	GUIWindow *_picWind;
 
 private:
+	typedef Common::List<GUIPort *> PortList;
+
 	EngineState *_s;
 	SciGUIgfx *_gfx;
 
-	Common::List<HEAPHANDLE> windowList;
+	/** The list of open 'windows' (and ports), in visual order. */
+	PortList _windowList;
+
+	/** The list of all open 'windows' (and ports), ordered by their id. */
+	Common::Array<GUIPort *> _windowsById;
 };
 
 } // End of namespace Sci

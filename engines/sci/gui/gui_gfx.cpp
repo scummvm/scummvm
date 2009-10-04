@@ -365,7 +365,7 @@ void SciGUIgfx::OpenPort(GUIPort *port) {
 	port->penClr = 0;
 	port->backClr = 0xFF;
 	port->penMode = 0;
-	memcpy(&port->rect, &_bounds, sizeof(_bounds));
+	port->rect = _bounds;
 }
 
 void SciGUIgfx::PenColor(int16 color) {

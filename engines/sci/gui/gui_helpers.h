@@ -39,6 +39,7 @@ typedef int16 GUIViewCellNo;
 typedef uint16 GUIHandle;
 
 struct GUIPort {
+	uint16 id;
 	int16 top, left;
 	Common::Rect rect;
 	int16 curTop, curLeft;
@@ -46,6 +47,12 @@ struct GUIPort {
 	GUIResourceId fontId;
 	int16 textFace, penClr, backClr;
 	int16 penMode;
+
+	GUIPort(uint16 theId) : id(theId), top(0), left(0),
+		curTop(0), curLeft(0),
+		fontHeight(0), fontId(0), textFace(0),
+		penClr(0), backClr(0xFF), penMode(0) {
+	}
 };
 
 struct GUIWindow : public GUIPort {
@@ -55,8 +62,14 @@ struct GUIWindow : public GUIPort {
 	uint16 uSaveFlag;
 	reg_t hSaved1;
 	reg_t hSaved2;
-	GUIHandle hTitle;
+	Common::String title;
 	bool bDrawn;
+
+	GUIWindow(uint16 theId) : GUIPort(theId),
+		wndStyle(0), uSaveFlag(0),
+		hSaved1(NULL_REG), hSaved2(NULL_REG),
+		bDrawn(false) {
+	}
 };
 
 struct GUICast {

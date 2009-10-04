@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/algorithm.h"	// for Common::find()
 #include "common/util.h"
 
 #include "sci/sci.h"
@@ -31,13 +30,8 @@
 #include "sci/tools.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
-#include "sci/gui/gui_memmgr.h"
 
 namespace Sci {
-
-namespace {
-const Common::Rect s_picRect(0, 10, 320, 200);
-} // end of anonymous namespace
 
 // window styles
 enum {
@@ -51,12 +45,10 @@ enum {
 SciGUIwindowMgr::SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx)
 	: _s(state), _gfx(gfx) {
 
-	// FIXME: remove memmgr
-	InitMem(0x320);
-
-	HEAPHANDLE wmgrPortH = heapNewPtr(sizeof(GUIPort), kDataPort, "wmgrPort");
-	heapClearPtr(wmgrPortH);
-	_wmgrPort = (GUIPort *)heap2Ptr(wmgrPortH);
+	_wmgrPort = new GUIPort(1);
+	_windowsById.resize(2);
+	_windowsById[0] = 0;
+	_windowsById[1] = _wmgrPort;
 
 	int16 offTop = 20;
 
@@ -69,75 +61,71 @@ SciGUIwindowMgr::SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx)
 	_wmgrPort->curTop = 0;
 	_wmgrPort->curLeft = 0;
 
-	windowList.push_front(wmgrPortH);
+	_windowList.push_front(_wmgrPort);
 
-	_picWind = NewWindow(s_picRect, 0, 0, kTransparent | kNoFrame, 0, 1);
+	_picWind = NewWindow(Common::Rect(0, 10, 320, 200), 0, 0, kTransparent | kNoFrame, 0, 1);
 }
 
 SciGUIwindowMgr::~SciGUIwindowMgr() {
+	// TODO: Clear _windowList and delete all stuff in it?
 }
 
 int16 SciGUIwindowMgr::isFrontWindow(GUIWindow *pWnd) {
-	if (heap2Ptr(windowList.back()) == (byte *)pWnd)
-		return 1;
-	return 0;
-}
-
-void SciGUIwindowMgr::SelectWindow(HEAPHANDLE hh) {
-	GUIPort *port = (GUIPort *)heap2Ptr(hh);
-	_gfx->SetPort(port);
-	if (hh != windowList.back()) { // selecting not topmost window
-		Common::List<HEAPHANDLE>::iterator curWindowIterator = Common::find(windowList.begin(), windowList.end(), hh);
-		Common::List<HEAPHANDLE>::iterator prevWindowIterator = --curWindowIterator;
-		curWindowIterator++; // restore iterator position
-		GUIWindow *prevwnd = (GUIWindow *)heap2Ptr(*prevWindowIterator);
-		BeginUpdate(prevwnd);
-		windowList.erase(curWindowIterator);
-		windowList.push_back(hh);
-		EndUpdate(prevwnd);
-	}
-	_gfx->SetPort(port);
+	return _windowList.back() == pWnd;
 }
 
 void SciGUIwindowMgr::BeginUpdate(GUIWindow *wnd) {
 	GUIPort *oldPort = _gfx->SetPort(_wmgrPort);
-	Common::List<HEAPHANDLE>::iterator curWindowIterator = windowList.end();
-	GUIWindow *node = (GUIWindow *)heap2Ptr(*curWindowIterator);
-	while (node != wnd) {
-		UpdateWindow(node);
-		curWindowIterator--;	// previous node
-		node = (GUIWindow *)heap2Ptr(*curWindowIterator);
+	PortList::iterator it = _windowList.reverse_begin();
+	const PortList::iterator end = Common::find(_windowList.begin(), _windowList.end(), wnd);
+	while (it != end) {
+		// FIXME: We also store GUIPort objects in the window list.
+		// We should add a check that we really only pass windows here...
+		UpdateWindow((GUIWindow *)*it);
+		--it;
 	}
 	_gfx->SetPort(oldPort);
 }
 
 void SciGUIwindowMgr::EndUpdate(GUIWindow *wnd) {
 	GUIPort *oldPort = _gfx->SetPort(_wmgrPort);
-	Common::List<HEAPHANDLE>::iterator curWindowIterator = windowList.end();
-	GUIWindow *last = (GUIWindow *)heap2Ptr(*curWindowIterator);
-	while (wnd != last) {
-		curWindowIterator++;	// next node
-		wnd = (GUIWindow *)heap2Ptr(*curWindowIterator);
-		UpdateWindow(wnd);
+	const PortList::iterator end = _windowList.end();
+	PortList::iterator it = Common::find(_windowList.begin(), end, wnd);
+	while (it != end) {
+		++it;
+		// FIXME: We also store GUIPort objects in the window list.
+		// We should add a check that we really only pass windows here...
+		UpdateWindow((GUIWindow *)*it);
 	}
+
 	_gfx->SetPort(oldPort);
 }
 
 GUIWindow *SciGUIwindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA) {
-	HEAPHANDLE hWnd = heapNewPtr(sizeof(GUIWindow), kDataWindow, title);
+	// Find an unused window/port id
+	uint id = 1;
+	while (id < _windowsById.size() && _windowsById[id]) {
+		++id;
+	}
+	if (id == _windowsById.size())
+		_windowsById.push_back(0);
+	assert(0 < id && id < 0xFFFF);
+
+
+	GUIWindow *pwnd = new GUIWindow(id);
 	Common::Rect r;
 
-	if (!hWnd) {
+	if (!pwnd) {
 		warning("Can't open window!");
 		return 0;
 	}
-	heapClearPtr(hWnd);
+
+	_windowsById[id] = pwnd;
 	if (style & kTopmost)
-		windowList.push_front(hWnd);
+		_windowList.push_front(pwnd);
 	else
-		windowList.push_back(hWnd);
-	GUIWindow *pwnd = (GUIWindow *)heap2Ptr(hWnd);
-	_gfx->OpenPort((GUIPort *)pwnd);
+		_windowList.push_back(pwnd);
+	_gfx->OpenPort(pwnd);
 	r = dims;
 	pwnd->rect = dims;
 	if (restoreRect)
@@ -150,13 +138,7 @@ GUIWindow *SciGUIwindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 		pwnd->uSaveFlag = (arg8 == 0xFFFF ? 1 : 3);
 	
 	if (title && (style & kTitle)) {
-		HEAPHANDLE hTitle = heapNewPtr((uint16)strlen(title) + 1, kDataString, title);
-		if (!hTitle) {
-			warning("Can't open window!");
-			return 0;
-		}
-		pwnd->hTitle = hTitle;
-		strcpy((char *)heap2Ptr(hTitle), title);
+		pwnd->title = title;
 	}
 	
 	r = dims;
@@ -229,10 +211,10 @@ void SciGUIwindowMgr::DrawWindow(GUIWindow *pWnd) {
 				_gfx->FrameRect(r);
 				r.grow(-1);
 				_gfx->FillRect(r, 1, 0);
-				if (pWnd->hTitle) {
+				if (!pWnd->title.empty()) {
 					int16 oldcolor = _gfx->GetPort()->penClr;
 					_gfx->PenColor(255);
-					_gfx->TextBox((char *)heap2Ptr(pWnd->hTitle), 1, r, 1, 0);
+					_gfx->TextBox(pWnd->title.c_str(), 1, r, 1, 0);
 					_gfx->PenColor(oldcolor);
 				}
 				
@@ -258,12 +240,10 @@ void SciGUIwindowMgr::DisposeWindow(GUIWindow *pWnd, int16 arg2) {
 		_gfx->ShowBits(pWnd->restoreRect, 1);
 //	else
 //		g_sci->ReAnimate(&pwnd->dims);
-	HEAPHANDLE hh = ptr2heap((byte *)pWnd);
-	windowList.remove(hh);
-	SelectWindow(windowList.back());
-	if (pWnd->hTitle)
-		heapDisposePtr(pWnd->hTitle);
-	heapDisposePtr(hh);
+	_windowList.remove(pWnd);
+	_gfx->SetPort(_windowList.back());
+	_windowsById[pWnd->id] = 0;
+	delete pWnd;
 }
 
 void SciGUIwindowMgr::UpdateWindow(GUIWindow *wnd) {
