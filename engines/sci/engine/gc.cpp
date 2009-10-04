@@ -71,7 +71,7 @@ void add_outgoing_refs(void *refcon, reg_t addr) {
 }
 
 reg_t_hash_map *find_all_used_references(EngineState *s) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t_hash_map *normal_map = NULL;
 	WorklistManager wm;
 	uint i;
@@ -102,7 +102,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 			wm.push(es.objp);
 			wm.push(es.sendp);
 			if (es.type == EXEC_STACK_TYPE_VARSELECTOR)
-				wm.push(*(es.getVarPointer(s->segMan)));
+				wm.push(*(es.getVarPointer(s->_segMan)));
 		}
 	}
 
@@ -174,7 +174,7 @@ void free_unless_used(void *refcon, reg_t addr) {
 void run_gc(EngineState *s) {
 	uint seg_nr;
 	deallocator_t deallocator;
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 
 #ifdef DEBUG_GC
 	debugC(2, kDebugLevelGC, "[GC] Running...\n");

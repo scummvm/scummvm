@@ -318,20 +318,20 @@ int game_init_sound(EngineState *s, int sound_flags) {
 
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
-	s->segMan = new SegManager(s->resMan);
+	s->_segMan = new SegManager(s->resMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
-	SegmentId script_000_segment = s->segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
+	SegmentId script_000_segment = s->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);
 
 	if (script_000_segment <= 0) {
 		debug(2, "Failed to instantiate script.000");
 		return 1;
 	}
 
-	s->script_000 = s->segMan->getScript(script_000_segment);
+	s->script_000 = s->_segMan->getScript(script_000_segment);
 
-	s->sys_strings = s->segMan->allocateSysStrings(&s->sys_strings_segment);
-	s->string_frag_segment = s->segMan->allocateStringFrags();
+	s->sys_strings = s->_segMan->allocateSysStrings(&s->sys_strings_segment);
+	s->string_frag_segment = s->_segMan->allocateStringFrags();
 
 	// Allocate static buffer for savegame and CWD directories
 	SystemString *str = &s->sys_strings->_strings[SYS_STRING_SAVEDIR];
@@ -352,9 +352,9 @@ int script_init_engine(EngineState *s) {
 	s->have_bp = 0;
 
 	if (s->detectLofsType() == SCI_VERSION_1_MIDDLE)
-		s->segMan->setExportAreWide(true);
+		s->_segMan->setExportAreWide(true);
 	else
-		s->segMan->setExportAreWide(false);
+		s->_segMan->setExportAreWide(false);
 
 	debug(2, "Engine initialized");
 
@@ -366,8 +366,8 @@ int script_init_engine(EngineState *s) {
 void script_free_vm_memory(EngineState *s) {
 	debug(2, "Freeing VM memory");
 
-	if (s->segMan)
-		s->segMan->_classtable.clear();
+	if (s->_segMan)
+		s->_segMan->_classtable.clear();
 
 	// Close all opened file handles
 	s->_fileHandles.clear();
@@ -404,11 +404,11 @@ int game_init(EngineState *s) {
 	// FIXME Use new VM instantiation code all over the place
 	DataStack *stack;
 
-	stack = s->segMan->allocateStack(VM_STACK_SIZE, &s->stack_segment);
+	stack = s->_segMan->allocateStack(VM_STACK_SIZE, &s->stack_segment);
 	s->stack_base = stack->_entries;
 	s->stack_top = stack->_entries + stack->_capacity;
 
-	if (!script_instantiate(s->resMan, s->segMan, 0)) {
+	if (!script_instantiate(s->resMan, s->_segMan, 0)) {
 		warning("game_init(): Could not instantiate script 0");
 		return 1;
 	}
@@ -437,9 +437,9 @@ int game_init(EngineState *s) {
 
 //	script_dissect(0, s->_selectorNames);
 	// The first entry in the export table of script 0 points to the game object
-	s->game_obj = s->segMan->lookupScriptExport(0, 0);
+	s->game_obj = s->_segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
-	s->_gameName = convertSierraGameId(s->segMan->getObjectName(s->game_obj), &gameFlags);
+	s->_gameName = convertSierraGameId(s->_segMan->getObjectName(s->game_obj), &gameFlags);
 
 	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->game_obj));
 
@@ -463,9 +463,9 @@ int game_exit(EngineState *s) {
 		game_init_sound(s, SFX_STATE_FLAG_NOSOUND);
 	}
 
-	s->segMan->_classtable.clear();
-	delete s->segMan;
-	s->segMan = 0;
+	s->_segMan->_classtable.clear();
+	delete s->_segMan;
+	s->_segMan = 0;
 
 	debug(2, "Freeing miscellaneous data...");
 

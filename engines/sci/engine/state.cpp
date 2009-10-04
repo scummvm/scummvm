@@ -103,7 +103,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	game_obj = NULL_REG;
 
-	segMan = 0;
+	_segMan = 0;
 	gc_countdown = 0;
 
 	successor = 0;
@@ -176,6 +176,7 @@ kLanguage EngineState::getLanguage() {
 	kLanguage lang = K_LANG_ENGLISH;
 
 	if (_kernel->_selectorCache.printLang != -1) {
+		SegManager *segMan = _segMan;
 		lang = (kLanguage)GET_SEL32V(this->game_obj, printLang);
 
 		if ((getSciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
@@ -222,8 +223,10 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	kLanguage lang = getLanguage();
 	kLanguage subLang = K_LANG_NONE;
 
-	if (_kernel->_selectorCache.subtitleLang != -1)
+	if (_kernel->_selectorCache.subtitleLang != -1) {
+		SegManager *segMan = _segMan;
 		subLang = (kLanguage)GET_SEL32V(this->game_obj, subtitleLang);
+	}
 
 	Common::String retval = getLanguageString(str, lang);
 
@@ -238,13 +241,13 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const {
 	reg_t fptr;
 
-	Object *obj = segMan->getObject(objAddress);
-	SelectorType selType = lookup_selector(segMan, objAddress, sel, NULL, &fptr);
+	Object *obj = _segMan->getObject(objAddress);
+	SelectorType selType = lookup_selector(_segMan, objAddress, sel, NULL, &fptr);
 
 	if (!obj || (selType != kSelectorMethod))
 		return -1;
 
-	Script *script = segMan->getScript(fptr.segment);
+	Script *script = _segMan->getScript(fptr.segment);
 
 	if (!script->_buf || (fptr.offset + offset < 0))
 		return -1;
@@ -265,7 +268,7 @@ int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint
 
 SciVersion EngineState::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_AUTODETECT) {
-		reg_t soundClass = segMan->findObjectByName("Sound");
+		reg_t soundClass = _segMan->findObjectByName("Sound");
 
 		if (!soundClass.isNull()) {
 			int sum = methodChecksum(soundClass, _kernel->_selectorCache.play, -6, 6);
@@ -337,10 +340,10 @@ SciVersion EngineState::detectLofsType() {
 		}
 
 		Object *obj = NULL;
-		reg_t gameClass = segMan->findObjectByName("Game");
+		reg_t gameClass = _segMan->findObjectByName("Game");
 
 		if (!gameClass.isNull())
-			obj = segMan->getObject(gameClass);
+			obj = _segMan->getObject(gameClass);
 
 		bool couldBeAbs = true;
 		bool couldBeRel = true;
@@ -350,7 +353,7 @@ SciVersion EngineState::detectLofsType() {
 			for (int m = 0; m < obj->methods_nr; m++) {
 				reg_t fptr = obj->getFunction(m);
 
-				Script *script = segMan->getScript(fptr.segment);
+				Script *script = _segMan->getScript(fptr.segment);
 
 				if ((script == NULL) || (script->_buf == NULL))
 					continue;

@@ -98,7 +98,7 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 
 // Disassembles one command from the heap, returns address of next command or 0 if a ret was encountered.
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode) {
-	SegmentObj *mobj = GET_SEGMENT(*s->segMan, pos.segment, SEG_TYPE_SCRIPT);
+	SegmentObj *mobj = GET_SEGMENT(*s->_segMan, pos.segment, SEG_TYPE_SCRIPT);
 	Script *script_entity = NULL;
 	byte *scr;
 	int scr_size;
@@ -256,7 +256,7 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 		if ((opcode == op_pTos) || (opcode == op_sTop) || (opcode == op_pToa) || (opcode == op_aTop) ||
 		        (opcode == op_dpToa) || (opcode == op_ipToa) || (opcode == op_dpTos) || (opcode == op_ipTos)) {
 			int prop_ofs = scr[pos.offset + 1];
-			int prop_id = propertyOffsetToId(s->segMan, prop_ofs, scriptState.xs->objp);
+			int prop_id = propertyOffsetToId(s->_segMan, prop_ofs, scriptState.xs->objp);
 
 			printf("	(%s)", selector_name(s, prop_id));
 		}
@@ -300,14 +300,14 @@ reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecod
 
 				selector = sb[- stackframe].offset;
 
-				name = s->segMan->getObjectName(called_obj_addr);
+				name = s->_segMan->getObjectName(called_obj_addr);
 
 				if (!name)
 					name = "<invalid>";
 
 				printf("  %s::%s[", name, (selector > kernel->getSelectorNamesSize()) ? "<invalid>" : selector_name(s, selector));
 
-				switch (lookup_selector(s->segMan, called_obj_addr, selector, 0, &fun_ref)) {
+				switch (lookup_selector(s->_segMan, called_obj_addr, selector, 0, &fun_ref)) {
 				case kSelectorMethod:
 					printf("FUNCT");
 					argc += restmod;
@@ -359,7 +359,7 @@ void script_debug(EngineState *s, bool bp) {
 #endif
 
 	if (g_debugState.seeking && !bp) { // Are we looking for something special?
-		SegmentObj *mobj = GET_SEGMENT(*s->segMan, scriptState.xs->addr.pc.segment, SEG_TYPE_SCRIPT);
+		SegmentObj *mobj = GET_SEGMENT(*s->_segMan, scriptState.xs->addr.pc.segment, SEG_TYPE_SCRIPT);
 
 		if (mobj) {
 			Script *scr = (Script *)mobj;

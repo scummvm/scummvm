@@ -32,7 +32,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 	if (!addr.offset && !addr.segment)
 		return NULL; // Non-error null
 
-	SegmentObj *mobj = GET_SEGMENT(*s->segMan, addr.segment, SEG_TYPE_NODES);
+	SegmentObj *mobj = GET_SEGMENT(*s->_segMan, addr.segment, SEG_TYPE_NODES);
 	if (!mobj) {
 		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
 		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
@@ -52,7 +52,7 @@ Node *lookup_node(EngineState *s, reg_t addr) {
 }
 
 List *lookup_list(EngineState *s, reg_t addr) {
-	SegmentObj *mobj = GET_SEGMENT(*s->segMan, addr.segment, SEG_TYPE_LISTS);
+	SegmentObj *mobj = GET_SEGMENT(*s->_segMan, addr.segment, SEG_TYPE_LISTS);
 
 	if (!mobj) {
 		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
@@ -135,7 +135,7 @@ int sane_listp(EngineState *s, reg_t addr) {
 reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 	reg_t listbase;
 	List *l;
-	l = s->segMan->allocateList(&listbase);
+	l = s->_segMan->allocateList(&listbase);
 	l->first = l->last = NULL_REG;
 	debugC(2, kDebugLevelNodes, "New listbase at %04x:%04x\n", PRINT_REG(listbase));
 
@@ -159,19 +159,19 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 
 		while (!n_addr.isNull()) { // Free all nodes
 			Node *n = lookup_node(s, n_addr);
-			s->segMan->free_Node(n_addr);
+			s->_segMan->free_Node(n_addr);
 			n_addr = n->succ;
 		}
 	}
 
-	s->segMan->free_list(argv[0]);
+	s->_segMan->free_list(argv[0]);
 */
 	return s->r_acc;
 }
 
 reg_t _k_new_node(EngineState *s, reg_t value, reg_t key) {
 	reg_t nodebase;
-	Node *n = s->segMan->allocateNode(&nodebase);
+	Node *n = s->_segMan->allocateNode(&nodebase);
 
 	if (!n) {
 		error("[Kernel] Out of memory while creating a node");
@@ -401,7 +401,7 @@ reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	if (!n->succ.isNull())
 		lookup_node(s, n->succ)->pred = n->pred;
 
-	//s->segMan->free_Node(node_pos);
+	//s->_segMan->free_Node(node_pos);
 
 	return make_reg(0, 1); // Signal success
 }
@@ -425,7 +425,7 @@ int sort_temp_cmp(const void *p1, const void *p2) {
 }
 
 reg_t kSort(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t source = argv[0];
 	reg_t dest = argv[1];
 	reg_t order_func = argv[2];
@@ -443,7 +443,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 
 	if (output_data.isNull()) {
-		list = s->segMan->allocateList(&output_data);
+		list = s->_segMan->allocateList(&output_data);
 		list->first = list->last = NULL_REG;
 		PUT_SEL32(dest, elements, output_data);
 	}

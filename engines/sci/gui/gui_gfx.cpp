@@ -838,18 +838,18 @@ GUIMemoryHandle SciGUIgfx::SaveBits(const Common::Rect &rect, byte screenMask) {
 	// now actually ask _screen how much space it will need for saving
 	size = _screen->BitsGetDataSize(r, screenMask);
 
-	memoryId = kalloc(_s->segMan, "SaveBits()", size);
-	memoryPtr = kmem(_s->segMan, memoryId);
+	memoryId = kalloc(_s->_segMan, "SaveBits()", size);
+	memoryPtr = kmem(_s->_segMan, memoryId);
 	_screen->BitsSave(r, screenMask, memoryPtr);
 	return memoryId;
 }
 
 void SciGUIgfx::RestoreBits(GUIMemoryHandle memoryHandle) {
-	byte *memoryPtr = kmem(_s->segMan, memoryHandle);;
+	byte *memoryPtr = kmem(_s->_segMan, memoryHandle);;
 
 	if (memoryPtr) {
 		_screen->BitsRestore(memoryPtr);
-		kfree(_s->segMan, memoryHandle);
+		kfree(_s->_segMan, memoryHandle);
 	}
 }
 
@@ -1331,7 +1331,7 @@ void SciGUIgfx::AnimateRestoreAndDelete() {
 }
 
 void SciGUIgfx::SetNowSeen(reg_t objectReference) {
-	SegManager *segMan = _s->segMan;
+	SegManager *segMan = _s->_segMan;
 	SciGUIview *view = NULL;
 	Common::Rect cellRect(0, 0);
 	GUIResourceId viewId = (GUIResourceId)GET_SEL32V(objectReference, view);
@@ -1349,7 +1349,7 @@ void SciGUIgfx::SetNowSeen(reg_t objectReference) {
 	view->getCellRect(loopNo, cellNo, x, y, z, &cellRect);
 
 	// TODO: sometimes loop is negative. Check what it means
-	if (lookup_selector(_s->segMan, objectReference, _s->_kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
+	if (lookup_selector(_s->_segMan, objectReference, _s->_kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
 		PUT_SEL32V(objectReference, nsLeft, cellRect.left);
 		PUT_SEL32V(objectReference, nsRight, cellRect.right);
 		PUT_SEL32V(objectReference, nsTop, cellRect.top);

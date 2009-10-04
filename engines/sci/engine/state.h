@@ -59,13 +59,13 @@ struct GfxList;
 
 class DirSeeker {
 protected:
-	EngineState *_vm;
+	EngineState *_state;
 	reg_t _outbuffer;
 	Common::StringList _savefiles;
 	Common::StringList::const_iterator _iter;
 
 public:
-	DirSeeker(EngineState *s) : _vm(s) {
+	DirSeeker(EngineState *s) : _state(s) {
 		_outbuffer = NULL_REG;
 		_iter = _savefiles.begin();
 	}
@@ -298,7 +298,7 @@ public:
 
 	reg_t game_obj; /**< Pointer to the game object */
 
-	SegManager *segMan;
+	SegManager *_segMan;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
 	MessageState _msgState;

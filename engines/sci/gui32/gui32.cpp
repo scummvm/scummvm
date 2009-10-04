@@ -796,7 +796,7 @@ static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int
 }
 
 Common::Rect get_nsrect32(EngineState *s, reg_t object, byte clip) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int x, y, z;
 	int view, loop, cel;
 	Common::Rect retval;
@@ -826,7 +826,7 @@ Common::Rect get_nsrect32(EngineState *s, reg_t object, byte clip) {
 }
 
 GfxDynView *SciGUI32::_k_make_dynview_obj(reg_t obj, int options, int nr, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	short oldloop, oldcel;
 	int cel, loop, view_nr = (int16)GET_SEL32V(obj, view);
 	int palette;
@@ -872,20 +872,20 @@ GfxDynView *SciGUI32::_k_make_dynview_obj(reg_t obj, int options, int nr, int ar
 	}
 
 	ObjVarRef under_bitsp;
-	if (lookup_selector(s->segMan, obj, s->_kernel->_selectorCache.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s->_segMan, obj, s->_kernel->_selectorCache.underBits, &(under_bitsp), NULL) != kSelectorVariable) {
 		under_bitsp.obj = NULL_REG;
 		under_bits = NULL_REG;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no underBits\n", PRINT_REG(obj));
 	} else
-		under_bits = *under_bitsp.getPointer(s->segMan);
+		under_bits = *under_bitsp.getPointer(s->_segMan);
 
 	ObjVarRef signalp;
-	if (lookup_selector(s->segMan, obj, s->_kernel->_selectorCache.signal, &(signalp), NULL) != kSelectorVariable) {
+	if (lookup_selector(s->_segMan, obj, s->_kernel->_selectorCache.signal, &(signalp), NULL) != kSelectorVariable) {
 		signalp.obj = NULL_REG;
 		signal = 0;
 		debugC(2, kDebugLevelGraphics, "Object at %04x:%04x has no signal selector\n", PRINT_REG(obj));
 	} else {
-		signal = signalp.getPointer(s->segMan)->offset;
+		signal = signalp.getPointer(s->_segMan)->offset;
 		debugC(2, kDebugLevelGraphics, "    with signal = %04x\n", signal);
 	}
 
@@ -908,7 +908,7 @@ void SciGUI32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 ** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
 ** argc, argv should be the same as in the calling kernel function.
 */
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	Node *node;
 	int sequence_nr = 0;
 	GfxDynView *widget;
@@ -961,7 +961,7 @@ void SciGUI32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 	widget = (GfxDynView *)(*widget_list)->_contents;
 
 	while (widget) { // Read back widget values
-		reg_t *sp = widget->signalp.getPointer(s->segMan);
+		reg_t *sp = widget->signalp.getPointer(s->_segMan);
 		if (sp)
 			widget->signal = sp->offset;
 
@@ -988,10 +988,10 @@ void SciGUI32::draw_rect_to_control_map(Common::Rect abs_zone) {
 void SciGUI32::draw_obj_to_control_map(GfxDynView *view) {
 	reg_t obj = make_reg(view->_ID, view->_subID);
 
-	if (!s->segMan->isObject(obj))
+	if (!s->_segMan->isObject(obj))
 		warning("View %d does not contain valid object reference %04x:%04x", view->_ID, PRINT_REG(obj));
 
-	reg_t* sp = view->signalp.getPointer(s->segMan);
+	reg_t* sp = view->signalp.getPointer(s->_segMan);
 	if (!(sp && (sp->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
 		Common::Rect abs_zone = get_nsrect32(s, make_reg(view->_ID, view->_subID), 1);
 		draw_rect_to_control_map(abs_zone);
@@ -1003,7 +1003,7 @@ int SciGUI32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 // returns non-zero IFF views were dropped
 	int signal;
 	int dropped = 0;
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 
 	_k_animate_ran = false;
 
@@ -1021,7 +1021,7 @@ int SciGUI32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 				reg_t obj = make_reg(widget->_ID, widget->_subID);
 				reg_t under_bits = NULL_REG;
 
-				if (!s->segMan->isObject(obj)) {
+				if (!s->_segMan->isObject(obj)) {
 					error("Non-object %04x:%04x present in view list during delete time", PRINT_REG(obj));
 					obj = NULL_REG;
 				} else {
@@ -1030,7 +1030,7 @@ int SciGUI32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 						reg_t mem_handle = *ubp;
 
 						if (mem_handle.segment) {
-							if (!kfree(s->segMan, mem_handle)) {
+							if (!kfree(s->_segMan, mem_handle)) {
 								*ubp = make_reg(0, widget->under_bits = 0);
 							} else {
 								warning("Treating viewobj %04x:%04x as no longer present", PRINT_REG(obj));
@@ -1086,10 +1086,10 @@ int SciGUI32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 }
 
 void SciGUI32::_k_set_now_seen(reg_t object) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	Common::Rect absrect = get_nsrect32(s, object, 0);
 
-	if (lookup_selector(s->segMan, object, s->_kernel->_selectorCache.nsTop, NULL, NULL) != kSelectorVariable) {
+	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.nsTop, NULL, NULL) != kSelectorVariable) {
 		return;
 	} // This isn't fatal
 
@@ -1100,12 +1100,12 @@ void SciGUI32::_k_set_now_seen(reg_t object) {
 }
 
 void SciGUI32::_k_prepare_view_list(GfxList *list, int options) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 		reg_t obj = make_reg(view->_ID, view->_subID);
 		int priority, _priority;
-		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s->segMan, obj, s->_kernel->_selectorCache.nsBottom, NULL, NULL) == kSelectorVariable;
+		int has_nsrect = (view->_ID <= 0) ? 0 : lookup_selector(s->_segMan, obj, s->_kernel->_selectorCache.nsBottom, NULL, NULL) == kSelectorVariable;
 		int oldsignal = view->signal;
 
 		_k_set_now_seen(obj);
@@ -1320,7 +1320,7 @@ void SciGUI32::_k_draw_view_list(GfxList *list, int flags) {
 			widget = gfxw_picviewize_dynview(widget);
 
 		if (GFXW_IS_DYN_VIEW(widget) && widget->_ID) {
-			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? widget->signalp.getPointer(s->segMan)->offset : 0;
+			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? widget->signalp.getPointer(s->_segMan)->offset : 0;
 
 			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
 				gfxw_hide_widget(widget);
@@ -1340,7 +1340,7 @@ void SciGUI32::_k_draw_view_list(GfxList *list, int flags) {
 					else
 						gfxw_show_widget(widget);
 
-					*widget->signalp.getPointer(s->segMan) = make_reg(0, signal); // Write the changes back
+					*widget->signalp.getPointer(s->_segMan) = make_reg(0, signal); // Write the changes back
 				};
 
 			} // ...if we're drawing disposeables and this one is disposeable, or if we're drawing non-
@@ -1352,7 +1352,7 @@ void SciGUI32::_k_draw_view_list(GfxList *list, int flags) {
 }
 
 void SciGUI32::_k_view_list_do_postdraw(GfxList *list) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	GfxDynView *widget = (GfxDynView *) list->_contents;
 
 	while (widget) {
@@ -1365,7 +1365,7 @@ void SciGUI32::_k_view_list_do_postdraw(GfxList *list) {
 		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
 		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
-			int has_nsrect = lookup_selector(s->segMan, obj, s->_kernel->_selectorCache.nsBottom, NULL, NULL) == kSelectorVariable;
+			int has_nsrect = lookup_selector(s->_segMan, obj, s->_kernel->_selectorCache.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
 				int temp;
@@ -1387,7 +1387,7 @@ void SciGUI32::_k_view_list_do_postdraw(GfxList *list) {
 			}
 #ifdef DEBUG_LSRECT
 			else
-				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s->segMan, obj, s->_kernel->_selectorCache.nsBottom, NULL, NULL));
+				fprintf(stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(s->_segMan, obj, s->_kernel->_selectorCache.nsBottom, NULL, NULL));
 #endif
 
 			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
@@ -1397,7 +1397,7 @@ void SciGUI32::_k_view_list_do_postdraw(GfxList *list) {
 		fprintf(stderr, "obj %04x:%04x has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
 #endif
 
-		reg_t* sp = widget->signalp.getPointer(s->segMan);
+		reg_t* sp = widget->signalp.getPointer(s->_segMan);
 		if (sp) {
 			*sp = make_reg(0, widget->signal & 0xffff); /* Write back signal */
 		}

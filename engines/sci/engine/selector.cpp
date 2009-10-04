@@ -65,7 +65,7 @@ int invoke_selector(EngineState *s, reg_t object, int selector_id, SelectorInvoc
 	stackframe[0] = make_reg(0, selector_id);  // The selector we want to call
 	stackframe[1] = make_reg(0, argc); // Argument count
 
-	slc_type = lookup_selector(s->segMan, object, selector_id, NULL, &address);
+	slc_type = lookup_selector(s->_segMan, object, selector_id, NULL, &address);
 
 	if (slc_type == kSelectorNone) {
 		warning("Selector '%s' of object at %04x:%04x could not be invoked (%s L%d)",

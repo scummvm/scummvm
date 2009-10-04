@@ -296,9 +296,9 @@ void EngineState::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(status_bar_foreground);
 	s.syncAsSint32LE(status_bar_background);
 
-	sync_SegManagerPtr(s, resMan, segMan);
+	sync_SegManagerPtr(s, resMan, _segMan);
 
-	syncArray<Class>(s, segMan->_classtable);
+	syncArray<Class>(s, _segMan->_classtable);
 
 	sync_sfx_state_t(s, _sound);
 }
@@ -552,8 +552,8 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 
 // FIXME: This should probably be turned into an EngineState method
 static void reconstruct_stack(EngineState *retval) {
-	SegmentId stack_seg = retval->segMan->findSegmentByType(SEG_TYPE_STACK);
-	DataStack *stack = (DataStack *)(retval->segMan->_heap[stack_seg]);
+	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
+	DataStack *stack = (DataStack *)(retval->_segMan->_heap[stack_seg]);
 
 	retval->stack_segment = stack_seg;
 	retval->stack_base = stack->_entries;
@@ -591,13 +591,13 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 
 				// FIXME: Unify this code with script_instantiate_*
 				load_script(s, scr);
-				scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(s->segMan->_heap[scr->_localsSegment]);
+				scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(s->_segMan->_heap[scr->_localsSegment]);
 				if (getSciVersion() >= SCI_VERSION_1_1) {
 					scr->_exportTable = 0;
 					scr->_synonyms = 0;
 					if (READ_LE_UINT16(scr->_buf + 6) > 0) {
 						scr->setExportTableOffset(6);
-						s->segMan->scriptRelocateExportsSci11(i);
+						s->_segMan->scriptRelocateExportsSci11(i);
 					}
 				} else {
 					scr->_exportTable = (uint16 *) find_unique_script_block(s, scr->_buf, SCI_OBJ_EXPORTS);
@@ -643,7 +643,7 @@ static void reconstruct_scripts(EngineState *s, SegManager *self) {
 						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
 						Object *base_obj;
 
-						base_obj = s->segMan->getObject(it->_value.getSpeciesSelector());
+						base_obj = s->_segMan->getObject(it->_value.getSpeciesSelector());
 
 						if (!base_obj) {
 							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
@@ -763,13 +763,13 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	_reset_graphics_input(retval);
 	reconstruct_stack(retval);
-	reconstruct_scripts(retval, retval->segMan);
-	retval->segMan->reconstructClones();
+	reconstruct_scripts(retval, retval->_segMan);
+	retval->_segMan->reconstructClones();
 	retval->game_obj = s->game_obj;
-	retval->script_000 = retval->segMan->getScript(retval->segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
+	retval->script_000 = retval->_segMan->getScript(retval->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
-	retval->sys_strings_segment = retval->segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
-	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
+	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
+	retval->sys_strings = (SystemStrings *)GET_SEGMENT(*retval->_segMan, retval->sys_strings_segment, SEG_TYPE_SYS_STRINGS);
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();

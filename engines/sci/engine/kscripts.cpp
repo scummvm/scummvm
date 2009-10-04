@@ -39,7 +39,7 @@ reg_t kLoad(EngineState *s, int argc, reg_t *argv) {
 
 	// Request to dynamically allocate hunk memory for later use
 	if (restype == kResourceTypeMemory)
-		return kalloc(s->segMan, "kLoad()", resnr);
+		return kalloc(s->_segMan, "kLoad()", resnr);
 
 	return make_reg(0, ((restype << 11) | resnr)); // Return the resource identifier as handle
 }
@@ -77,7 +77,7 @@ reg_t kUnLoad(EngineState *s, int argc, reg_t *argv) {
 	reg_t resnr = argv[1];
 
 	if (restype == kResourceTypeMemory)
-		kfree(s->segMan, resnr);
+		kfree(s->_segMan, resnr);
 
 	return s->r_acc;
 }
@@ -104,7 +104,7 @@ reg_t kResCheck(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	reg_t parent_addr = argv[0];
-	Object *parent_obj = s->segMan->getObject(parent_addr);
+	Object *parent_obj = s->_segMan->getObject(parent_addr);
 	reg_t clone_addr;
 	Clone *clone_obj; // same as Object*
 
@@ -115,7 +115,7 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 
 	debugC(2, kDebugLevelMemory, "Attempting to clone from %04x:%04x\n", PRINT_REG(parent_addr));
 
-	clone_obj = s->segMan->allocateClone(&clone_addr);
+	clone_obj = s->_segMan->allocateClone(&clone_addr);
 
 	if (!clone_obj) {
 		error("Cloning %04x:%04x failed-- internal error", PRINT_REG(parent_addr));
@@ -130,8 +130,8 @@ reg_t kClone(EngineState *s, int argc, reg_t *argv) {
 	clone_obj->setSpeciesSelector(clone_obj->_pos);
 	if (parent_obj->isClass())
 		clone_obj->setSuperClassSelector(parent_obj->_pos);
-	s->segMan->getScript(parent_obj->_pos.segment)->incrementLockers();
-	s->segMan->getScript(clone_obj->_pos.segment)->incrementLockers();
+	s->_segMan->getScript(parent_obj->_pos.segment)->incrementLockers();
+	s->_segMan->getScript(clone_obj->_pos.segment)->incrementLockers();
 
 	return clone_addr;
 }
@@ -140,7 +140,7 @@ extern void _k_view_list_mark_free(EngineState *s, reg_t off);
 
 reg_t kDisposeClone(EngineState *s, int argc, reg_t *argv) {
 	reg_t victim_addr = argv[0];
-	Clone *victim_obj = s->segMan->getObject(victim_addr);
+	Clone *victim_obj = s->_segMan->getObject(victim_addr);
 
 	if (!victim_obj) {
 		error("Attempt to dispose non-class/object at %04x:%04x",
@@ -182,13 +182,13 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return argv[0];
 
-	SegmentId scriptSeg = s->segMan->getScriptSegment(script, SCRIPT_GET_LOAD);
+	SegmentId scriptSeg = s->_segMan->getScriptSegment(script, SCRIPT_GET_LOAD);
 	Script *scr;
 
 	if (!scriptSeg)
 		return NULL_REG;
 
-	scr = s->segMan->getScript(scriptSeg);
+	scr = s->_segMan->getScript(scriptSeg);
 
 	if (!scr->_numExports) {
 		// FIXME: Is this fatal? This occurs in SQ4CD
@@ -201,7 +201,7 @@ reg_t kScriptID(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	return make_reg(scriptSeg, s->segMan->validateExportFunc(index, scriptSeg));
+	return make_reg(scriptSeg, s->_segMan->validateExportFunc(index, scriptSeg));
 }
 
 reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
@@ -211,14 +211,14 @@ reg_t kDisposeScript(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].segment)
 		return s->r_acc;
 
-	int id = s->segMan->getScriptSegment(script);
-	Script *scr = s->segMan->getScriptIfLoaded(id);
+	int id = s->_segMan->getScriptSegment(script);
+	Script *scr = s->_segMan->getScriptIfLoaded(id);
 	if (scr) {
 		if (s->_executionStack.back().addr.pc.segment != id)
 			scr->setLockers(1);
 	}
 
-	script_uninstantiate(s->segMan, script);
+	script_uninstantiate(s->_segMan, script);
 	s->_executionStackPosChanged = true;
 
 	if (argc != 2) {
@@ -234,14 +234,14 @@ reg_t kIsObject(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].offset == SIGNAL_OFFSET) // Treated specially
 		return NULL_REG;
 	else
-		return make_reg(0, s->segMan->isHeapObject(argv[0]));
+		return make_reg(0, s->_segMan->isHeapObject(argv[0]));
 }
 
 reg_t kRespondsTo(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	int selector = argv[1].toUint16();
 
-	return make_reg(0, s->segMan->isHeapObject(obj) && lookup_selector(s->segMan, obj, selector, NULL, NULL) != kSelectorNone);
+	return make_reg(0, s->_segMan->isHeapObject(obj) && lookup_selector(s->_segMan, obj, selector, NULL, NULL) != kSelectorNone);
 }
 
 } // End of namespace Sci

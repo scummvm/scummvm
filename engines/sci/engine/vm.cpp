@@ -185,13 +185,13 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #define GET_OP_SIGNED_FLEX() ((opcode & 1)? GET_OP_SIGNED_BYTE() : GET_OP_SIGNED_WORD())
 
 ExecStack *execute_method(EngineState *s, uint16 script, uint16 pubfunct, StackPtr sp, reg_t calling_obj, uint16 argc, StackPtr argp) {
-	int seg = s->segMan->getScriptSegment(script);
-	Script *scr = s->segMan->getScriptIfLoaded(seg);
+	int seg = s->_segMan->getScriptSegment(script);
+	Script *scr = s->_segMan->getScriptIfLoaded(seg);
 
 	if (!scr || scr->isMarkedAsDeleted()) // Script not present yet?
-		seg = script_instantiate(s->resMan, s->segMan, script);
+		seg = script_instantiate(s->resMan, s->_segMan, script);
 
-	const int temp = s->segMan->validateExportFunc(pubfunct, seg);
+	const int temp = s->_segMan->validateExportFunc(pubfunct, seg);
 	if (!temp) {
 		error("Request for invalid exported function 0x%x of script 0x%x", pubfunct, script);
 		return NULL;
@@ -225,7 +225,7 @@ static void _exec_varselectors(EngineState *s) {
 	// Executes all varselector read/write ops on the TOS
 	while (!s->_executionStack.empty() && s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
 		ExecStack &xs = s->_executionStack.back();
-		reg_t *var = xs.getVarPointer(s->segMan);
+		reg_t *var = xs.getVarPointer(s->_segMan);
 		// varselector access?
 		if (xs.argc) { // write?
 			*var = xs.variables_argp[1];
@@ -280,7 +280,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			Breakpoint *bp;
 			char method_name [256];
 
-			sprintf(method_name, "%s::%s", s->segMan->getObjectName(send_obj), s->_kernel->getSelectorName(selector).c_str());
+			sprintf(method_name, "%s::%s", s->_segMan->getObjectName(send_obj), s->_kernel->getSelectorName(selector).c_str());
 
 			bp = s->bp_list;
 			while (bp) {
@@ -305,7 +305,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
-		switch (lookup_selector(s->segMan, send_obj, selector, &varp, &funcp)) {
+		switch (lookup_selector(s->_segMan, send_obj, selector, &varp, &funcp)) {
 		case kSelectorNone:
 			error("Send to invalid selector 0x%x of object at %04x:%04x", 0xffff & selector, PRINT_REG(send_obj));
 
@@ -329,7 +329,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 			}
 
 			if (print_send_action && argc > 0) {
-				reg_t oldReg = *varp.getPointer(s->segMan);
+				reg_t oldReg = *varp.getPointer(s->_segMan);
 				reg_t newReg = argp[1];
 				printf("[write to selector: change %04x:%04x to %04x:%04x]\n", PRINT_REG(oldReg), PRINT_REG(newReg));
 				print_send_action = 0;
@@ -454,7 +454,7 @@ ExecStack *add_exec_stack_entry(EngineState *s, reg_t pc, StackPtr sp, reg_t obj
 #endif
 
 static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
-	SegmentObj *mobj = s->segMan->getSegmentObj(base.segment);
+	SegmentObj *mobj = s->_segMan->getSegmentObj(base.segment);
 
 	if (!mobj) {
 		error("[VM] Error: Attempt to add %d to invalid pointer %04x:%04x", offset, PRINT_REG(base));
@@ -504,8 +504,8 @@ void run_vm(EngineState *s, int restoring) {
 	// Current execution data:
 	scriptState.xs = &(s->_executionStack.back());
 	ExecStack *xs_new = NULL;
-	Object *obj = s->segMan->getObject(scriptState.xs->objp);
-	Script *local_script = s->segMan->getScriptIfLoaded(scriptState.xs->local_segment);
+	Object *obj = s->_segMan->getObject(scriptState.xs->objp);
+	Script *local_script = s->_segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 	int old_execution_stack_base = s->execution_stack_base;
 	// Used to detect the stack bottom, for "physical" returns
 	const byte *code_buf = NULL; // (Avoid spurious warning)
@@ -551,7 +551,7 @@ void run_vm(EngineState *s, int restoring) {
 			scriptState.xs = &(s->_executionStack.back());
 			s->_executionStackPosChanged = false;
 
-			scr = s->segMan->getScriptIfLoaded(scriptState.xs->addr.pc.segment);
+			scr = s->_segMan->getScriptIfLoaded(scriptState.xs->addr.pc.segment);
 			if (!scr) {
 				// No script? Implicit return via fake instruction buffer
 				warning("Running on non-existant script in segment %x", scriptState.xs->addr.pc.segment);
@@ -564,12 +564,12 @@ void run_vm(EngineState *s, int restoring) {
 				scr = NULL;
 				obj = NULL;
 			} else {
-				obj = s->segMan->getObject(scriptState.xs->objp);
+				obj = s->_segMan->getObject(scriptState.xs->objp);
 				code_buf = scr->_buf;
 #ifndef DISABLE_VALIDATIONS
 				code_buf_size = scr->_bufSize;
 #endif
-				local_script = s->segMan->getScriptIfLoaded(scriptState.xs->local_segment);
+				local_script = s->_segMan->getScriptIfLoaded(scriptState.xs->local_segment);
 				if (!local_script) {
 					warning("Could not find local script from segment %x", scriptState.xs->local_segment);
 					local_script = NULL;
@@ -916,7 +916,7 @@ void run_vm(EngineState *s, int restoring) {
 					argc += scriptState.restAdjust;
 
 				if (kfun.signature
-						&& !kernel_matches_signature(s->segMan, kfun.signature, argc, scriptState.xs->sp + 1)) {
+						&& !kernel_matches_signature(s->_segMan, kfun.signature, argc, scriptState.xs->sp + 1)) {
 					error("[VM] Invalid arguments to kernel call %x", opparams[0]);
 				} else {
 					reg_t *argv = scriptState.xs->sp + 1;
@@ -1009,7 +1009,7 @@ void run_vm(EngineState *s, int restoring) {
 
 				if (old_xs->type == EXEC_STACK_TYPE_VARSELECTOR) {
 					// varselector access?
-					reg_t *var = old_xs->getVarPointer(s->segMan);
+					reg_t *var = old_xs->getVarPointer(s->_segMan);
 					if (old_xs->argc) // write?
 						*var = old_xs->variables_argp[1];
 					else // No, read
@@ -1050,7 +1050,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x28: // class
-			s->r_acc = s->segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
+			s->r_acc = s->_segMan->getClassAddress((unsigned)opparams[0], SCRIPT_GET_LOCK,
 											scriptState.xs->addr.pc);
 			break;
 
@@ -1070,7 +1070,7 @@ void run_vm(EngineState *s, int restoring) {
 			break;
 
 		case 0x2b: // super
-			r_temp = s->segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
+			r_temp = s->_segMan->getClassAddress(opparams[0], SCRIPT_GET_LOAD, scriptState.xs->addr.pc);
 
 			if (!r_temp.segment)
 				error("[VM]: Invalid superclass in object");

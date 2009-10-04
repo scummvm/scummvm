@@ -201,7 +201,7 @@ void file_open(EngineState *s, const char *filename, int mode) {
 }
 
 reg_t kFOpen(EngineState *s, int argc, reg_t *argv) {
-	Common::String name = s->segMan->getString(argv[0]);
+	Common::String name = s->_segMan->getString(argv[0]);
 	int mode = argv[1].toUint16();
 
 	debug(3, "kFOpen(%s,0x%x)", name.c_str(), mode);
@@ -254,7 +254,7 @@ void fwrite_wrapper(EngineState *s, int handle, const char *data, int length) {
 
 reg_t kFPuts(EngineState *s, int argc, reg_t *argv) {
 	int handle = argv[0].toUint16();
-	Common::String data = s->segMan->getString(argv[1]);
+	Common::String data = s->_segMan->getString(argv[1]);
 
 	fwrite_wrapper(s, handle, data.c_str(), data.size());
 	return s->r_acc;
@@ -317,7 +317,7 @@ reg_t kFGets(EngineState *s, int argc, reg_t *argv) {
 
 	debug(3, "kFGets(%d,%d)", handle, maxsize);
 	fgets_wrapper(s, buf, maxsize, handle);
-	s->segMan->memcpy(argv[0], (const byte*)buf, maxsize);
+	s->_segMan->memcpy(argv[0], (const byte*)buf, maxsize);
 	return argv[0];
 }
 
@@ -328,7 +328,7 @@ reg_t kGetCWD(EngineState *s, int argc, reg_t *argv) {
 	// We do not let the scripts see the file system, instead pretending
 	// we are always in the same directory.
 	// TODO/FIXME: Is "/" a good value? Maybe "" or "." or "C:\" are better?
-	s->segMan->strcpy(argv[0], "/");
+	s->_segMan->strcpy(argv[0], "/");
 
 	debug(3, "kGetCWD() -> %s", "/");
 
@@ -358,20 +358,20 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 
 	switch (mode) {
 	case K_DEVICE_INFO_GET_DEVICE: {
-		Common::String input_str = s->segMan->getString(argv[1]);
+		Common::String input_str = s->_segMan->getString(argv[1]);
 
-		s->segMan->strcpy(argv[2], "/");
+		s->_segMan->strcpy(argv[2], "/");
 		debug(3, "K_DEVICE_INFO_GET_DEVICE(%s) -> %s", input_str.c_str(), "/");
 		break;
 	}
 	case K_DEVICE_INFO_GET_CURRENT_DEVICE:
-		s->segMan->strcpy(argv[1], "/");
+		s->_segMan->strcpy(argv[1], "/");
 		debug(3, "K_DEVICE_INFO_GET_CURRENT_DEVICE() -> %s", "/");
 		break;
 
 	case K_DEVICE_INFO_PATHS_EQUAL: {
-		Common::String path1_s = s->segMan->getString(argv[1]);
-		Common::String path2_s = s->segMan->getString(argv[2]);
+		Common::String path1_s = s->_segMan->getString(argv[1]);
+		Common::String path2_s = s->_segMan->getString(argv[2]);
 		debug(3, "K_DEVICE_INFO_PATHS_EQUAL(%s,%s)", path1_s.c_str(), path2_s.c_str());
 
 		return make_reg(0, Common::matchString(path2_s.c_str(), path1_s.c_str(), false, true));
@@ -379,7 +379,7 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_DEVICE_INFO_IS_FLOPPY: {
-		Common::String input_str = s->segMan->getString(argv[1]);
+		Common::String input_str = s->_segMan->getString(argv[1]);
 		debug(3, "K_DEVICE_INFO_IS_FLOPPY(%s)", input_str.c_str());
 		return NULL_REG; /* Never */
 	}
@@ -388,16 +388,16 @@ reg_t kDeviceInfo(EngineState *s, int argc, reg_t *argv) {
 	** for more information on our workaround for this.
 	*/
 	case K_DEVICE_INFO_GET_SAVECAT_NAME: {
-		Common::String game_prefix = s->segMan->getString(argv[2]);
-		s->segMan->strcpy(argv[1], "__throwaway");
+		Common::String game_prefix = s->_segMan->getString(argv[2]);
+		s->_segMan->strcpy(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVECAT_NAME(%s) -> %s", game_prefix.c_str(), "__throwaway");
 		}
 
 	break;
 	case K_DEVICE_INFO_GET_SAVEFILE_NAME: {
-		Common::String game_prefix = s->segMan->getString(argv[2]);
+		Common::String game_prefix = s->_segMan->getString(argv[2]);
 		int savegame_id = argv[3].toUint16();
-		s->segMan->strcpy(argv[1], "__throwaway");
+		s->_segMan->strcpy(argv[1], "__throwaway");
 		debug(3, "K_DEVICE_INFO_GET_SAVEFILE_NAME(%s,%d) -> %s", game_prefix.c_str(), savegame_id, "__throwaway");
 		delete_savegame(s, savegame_id);
 		}
@@ -423,7 +423,7 @@ reg_t kGetSaveDir(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCheckFreeSpace(EngineState *s, int argc, reg_t *argv) {
-	Common::String path = s->segMan->getString(argv[0]);
+	Common::String path = s->_segMan->getString(argv[0]);
 
 	debug(3, "kCheckFreeSpace(%s)", path.c_str());
 	// We simply always pretend that there is enough space.
@@ -481,7 +481,7 @@ void listSavegames(Common::Array<SavegameDesc> &saves) {
 }
 
 reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->segMan->getString(argv[0]);
+	Common::String game_id = s->_segMan->getString(argv[0]);
 	int savedir_nr = argv[1].toUint16();
 
 	debug(3, "kCheckSaveGame(%s, %d)", game_id.c_str(), savedir_nr);
@@ -517,9 +517,9 @@ reg_t kCheckSaveGame(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->segMan->getString(argv[0]);
+	Common::String game_id = s->_segMan->getString(argv[0]);
 	reg_t nametarget = argv[1];
-	reg_t *nameoffsets = s->segMan->derefRegPtr(argv[2], 0);
+	reg_t *nameoffsets = s->_segMan->derefRegPtr(argv[2], 0);
 
 	debug(3, "kGetSaveFiles(%s)", game_id.c_str());
 
@@ -553,7 +553,7 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 				Common::String name = meta.savegame_name;
 				if (name.size() > SCI_MAX_SAVENAME_LENGTH-1)
 					name = Common::String(meta.savegame_name.c_str(), SCI_MAX_SAVENAME_LENGTH-1);
-				s->segMan->strcpy(nametarget, name.c_str());
+				s->_segMan->strcpy(nametarget, name.c_str());
 
 				// Increase name offset pointer accordingly
 				nametarget.offset += SCI_MAX_SAVENAME_LENGTH;
@@ -563,19 +563,19 @@ reg_t kGetSaveFiles(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	//free(gfname);
-	s->segMan->strcpy(nametarget, ""); // Terminate list
+	s->_segMan->strcpy(nametarget, ""); // Terminate list
 
 	return s->r_acc;
 }
 
 reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->segMan->getString(argv[0]);
+	Common::String game_id = s->_segMan->getString(argv[0]);
 	int savedir_nr = argv[1].toUint16();
 	int savedir_id; // Savegame ID, derived from savedir_nr and the savegame ID list
-	Common::String game_description = s->segMan->getString(argv[2]);
+	Common::String game_description = s->_segMan->getString(argv[2]);
 	Common::String version;
 	if (argc > 3)
-		version = s->segMan->getString(argv[3]);
+		version = s->_segMan->getString(argv[3]);
 
 	debug(3, "kSaveGame(%s,%d,%s,%s)", game_id.c_str(), savedir_nr, game_description.c_str(), version.c_str());
 
@@ -641,7 +641,7 @@ reg_t kSaveGame(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
-	Common::String game_id = s->segMan->getString(argv[0]);
+	Common::String game_id = s->_segMan->getString(argv[0]);
 	int savedir_nr = argv[1].toUint16();
 
 	debug(3, "kRestoreGame(%s,%d)", game_id.c_str(), savedir_nr);
@@ -680,7 +680,7 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kValidPath(EngineState *s, int argc, reg_t *argv) {
-	Common::String path = s->segMan->getString(argv[0]);
+	Common::String path = s->_segMan->getString(argv[0]);
 
 	// FIXME: For now, we only accept the (fake) root dir "/" as a valid path.
 	s->r_acc = make_reg(0, path == "/");
@@ -710,7 +710,7 @@ void DirSeeker::firstFile(const char *mask, reg_t buffer) {
 	// Verify that we are given a valid buffer
 	if (!buffer.segment) {
 		error("DirSeeker::firstFile('%s') invoked with invalid buffer", mask);
-		_vm->r_acc = NULL_REG;
+		_state->r_acc = NULL_REG;
 		return;
 	}
 	_outbuffer = buffer;
@@ -727,7 +727,7 @@ void DirSeeker::firstFile(const char *mask, reg_t buffer) {
 
 void DirSeeker::nextFile() {
 	if (_iter == _savefiles.end()) {
-		_vm->r_acc = NULL_REG;
+		_state->r_acc = NULL_REG;
 		return;
 	}
 
@@ -736,10 +736,10 @@ void DirSeeker::nextFile() {
 	Common::String string = *_iter;
 	if (string.size() > 12)
 		string = Common::String(string.c_str(), 12);
-	_vm->segMan->strcpy(_outbuffer, string.c_str());
+	_state->_segMan->strcpy(_outbuffer, string.c_str());
 
 	// Return the result and advance the list iterator :)
-	_vm->r_acc = _outbuffer;
+	_state->r_acc = _outbuffer;
 	++_iter;
 }
 
@@ -750,7 +750,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 
 	switch (func_nr) {
 	case K_FILEIO_OPEN : {
-		Common::String name = s->segMan->getString(argv[1]);
+		Common::String name = s->_segMan->getString(argv[1]);
 		int mode = argv[2].toUint16();
 
 		if (name.empty()) {
@@ -775,7 +775,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		debug(3, "K_FILEIO_READ_RAW(%d,%d)", handle, size);
 
 		fread_wrapper(s, buf, size, handle);
-		s->segMan->memcpy(argv[2], (const byte*)buf, size);
+		s->_segMan->memcpy(argv[2], (const byte*)buf, size);
 		delete[] buf;
 		break;
 	}
@@ -783,7 +783,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		int handle = argv[1].toUint16();
 		int size = argv[3].toUint16();
 		char *buf = new char[size];
-		s->segMan->memcpy((byte*)buf, argv[2], size);
+		s->_segMan->memcpy((byte*)buf, argv[2], size);
 		debug(3, "K_FILEIO_WRITE_RAW(%d,%d)", handle, size);
 
 		fwrite_wrapper(s, handle, buf, size);
@@ -791,7 +791,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_FILEIO_UNLINK : {
-		Common::String name = s->segMan->getString(argv[1]);
+		Common::String name = s->_segMan->getString(argv[1]);
 		debug(3, "K_FILEIO_UNLINK(%s)", name.c_str());
 
 		Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
@@ -808,14 +808,14 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		debug(3, "K_FILEIO_READ_STRING(%d,%d)", handle, size);
 
 		fgets_wrapper(s, buf, size, handle);
-		s->segMan->memcpy(argv[1], (const byte*)buf, size);
+		s->_segMan->memcpy(argv[1], (const byte*)buf, size);
 		delete[] buf;
 		return argv[1];
 	}
 	case K_FILEIO_WRITE_STRING : {
 		int handle = argv[1].toUint16();
 		int size = argv[3].toUint16();
-		Common::String str = s->segMan->getString(argv[2]);
+		Common::String str = s->_segMan->getString(argv[2]);
 		debug(3, "K_FILEIO_WRITE_STRING(%d,%d)", handle, size);
 
 		// CHECKME: Is the size parameter used at all?
@@ -835,7 +835,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_FILEIO_FIND_FIRST : {
-		Common::String mask = s->segMan->getString(argv[1]);
+		Common::String mask = s->_segMan->getString(argv[1]);
 		reg_t buf = argv[2];
 		int attr = argv[3].toUint16(); // We won't use this, Win32 might, though...
 		debug(3, "K_FILEIO_FIND_FIRST(%s,0x%x)", mask.c_str(), attr);
@@ -857,7 +857,7 @@ reg_t kFileIO(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_FILEIO_FILE_EXISTS : {
-		Common::String name = s->segMan->getString(argv[1]);
+		Common::String name = s->_segMan->getString(argv[1]);
 
 		// Check for regular file
 		bool exists = Common::File::exists(name);

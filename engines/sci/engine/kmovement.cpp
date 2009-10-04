@@ -67,7 +67,7 @@ Still, what we compute in the end is of course not a real velocity anymore, but 
 used in an iterative stepping algorithm
 */
 reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	// Input data
 	reg_t object = argv[0];
 	int dx = argv[1].toSint16();
@@ -218,7 +218,7 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 }
 
 reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -226,7 +226,7 @@ reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 	int deltay = (int16)GET_SEL32V(mover, y) - (int16)GET_SEL32V(client, y);
 	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
 
-	initialize_bresen(s->segMan, argc, argv, mover, step_factor, deltax, deltay);
+	initialize_bresen(s->_segMan, argc, argv, mover, step_factor, deltax, deltay);
 
 	return s->r_acc;
 }
@@ -255,10 +255,10 @@ static int checksum_bytes(byte *data, int size) {
 }
 
 static void bresenham_autodetect(EngineState *s) {
-	reg_t motionClass = s->segMan->findObjectByName("Motion");
+	reg_t motionClass = s->_segMan->findObjectByName("Motion");
 
 	if (!motionClass.isNull()) {
-		Object *obj = s->segMan->getObject(motionClass);
+		Object *obj = s->_segMan->getObject(motionClass);
 		reg_t fptr;
 		byte *buf;
 
@@ -268,13 +268,13 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s->segMan, motionClass, s->_kernel->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
+		if (lookup_selector(s->_segMan, motionClass, s->_kernel->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;
 		}
 
-		buf = s->segMan->getScript(fptr.segment)->_buf + fptr.offset;
+		buf = s->_segMan->getScript(fptr.segment)->_buf + fptr.offset;
 		handle_movecnt = (getSciVersion() <= SCI_VERSION_01 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
 		printf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
 	} else {
@@ -284,7 +284,7 @@ static void bresenham_autodetect(EngineState *s) {
 }
 
 reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t mover = argv[0];
 	reg_t client = GET_SEL32(mover, client);
 
@@ -393,7 +393,7 @@ extern void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t 
 extern int get_angle(int xrel, int yrel);
 
 reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t avoider = argv[0];
 	reg_t client, looper, mover;
 	int angle;
@@ -402,14 +402,14 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 	s->r_acc = SIGNAL_REG;
 
-	if (!s->segMan->isHeapObject(avoider)) {
+	if (!s->_segMan->isHeapObject(avoider)) {
 		warning("DoAvoider() where avoider %04x:%04x is not an object", PRINT_REG(avoider));
 		return NULL_REG;
 	}
 
 	client = GET_SEL32(avoider, client);
 
-	if (!s->segMan->isHeapObject(client)) {
+	if (!s->_segMan->isHeapObject(client)) {
 		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
@@ -417,7 +417,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 	looper = GET_SEL32(client, looper);
 	mover = GET_SEL32(client, mover);
 
-	if (!s->segMan->isHeapObject(mover)) {
+	if (!s->_segMan->isHeapObject(mover)) {
 		if (mover.segment) {
 			warning("DoAvoider() where mover %04x:%04x is not an object", PRINT_REG(mover));
 		}

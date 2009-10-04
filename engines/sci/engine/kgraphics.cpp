@@ -186,8 +186,8 @@ int _find_priority_band(EngineState *s, int nr) {
 }
 
 reg_t graph_save_box(EngineState *s, rect_t area) {
-	reg_t handle = kalloc(s->segMan, "graph_save_box()", sizeof(gfxw_snapshot_t *));
-	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **)kmem(s->segMan, handle);
+	reg_t handle = kalloc(s->_segMan, "graph_save_box()", sizeof(gfxw_snapshot_t *));
+	gfxw_snapshot_t **ptr = (gfxw_snapshot_t **)kmem(s->_segMan, handle);
 
 	// FIXME: gfxw_make_snapshot returns a pointer. Now why do we store a
 	// pointer to real memory inside the SCI heap?
@@ -208,7 +208,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 		return;
 	}
 
-	ptr = (gfxw_snapshot_t **)kmem(s->segMan, handle);
+	ptr = (gfxw_snapshot_t **)kmem(s->_segMan, handle);
 
 	if (!ptr) {
 		warning("Attempt to restore invalid handle %04x:%04x", PRINT_REG(handle));
@@ -248,7 +248,7 @@ void graph_restore_box(EngineState *s, reg_t handle) {
 	free(*ptr);
 	*ptr = NULL;
 
-	kfree(s->segMan, handle);
+	kfree(s->_segMan, handle);
 }
 
 PaletteEntry get_pic_color(EngineState *s, int color) {
@@ -520,15 +520,15 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	int16 textWidth, textHeight;
-	Common::String text = s->segMan->getString(argv[1]);
-	reg_t *dest = s->segMan->derefRegPtr(argv[0], 4);
+	Common::String text = s->_segMan->getString(argv[1]);
+	reg_t *dest = s->_segMan->derefRegPtr(argv[0], 4);
 	int maxwidth = (argc > 3) ? argv[3].toUint16() : 0;
 	int font_nr = argv[2].toUint16();
 
 	Common::String sep_str;
 	const char *sep = NULL;
 	if ((argc > 4) && (argv[4].segment)) {
-		sep_str = s->segMan->getString(argv[4]);
+		sep_str = s->_segMan->getString(argv[4]);
 		sep = sep_str.c_str();
 	}
 
@@ -586,7 +586,7 @@ reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 }
 
 void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int view = GET_SEL32V(obj, view);
 	int signal = GET_SEL32V(obj, signal);
 	int loop;
@@ -641,7 +641,7 @@ reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority);
 
 static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int use_nsrect, int view_mask, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int other_signal = GET_SEL32V(other_obj, signal);
 	int other_priority = GET_SEL32V(other_obj, priority);
 	int y = (int16)GET_SEL32V(other_obj, y);
@@ -681,7 +681,7 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 }
 
 reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
 	reg_t cliplist_ref = (argc > 1) ? argv[1] : NULL_REG;
 	List *cliplist = NULL;
@@ -727,7 +727,7 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 		while (widget) {
 			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
 			        && ((widget->_ID != obj.segment) || (widget->_subID != obj.offset))
-			        && s->segMan->isObject(make_reg(widget->_ID, widget->_subID)))
+			        && s->_segMan->isObject(make_reg(widget->_ID, widget->_subID)))
 				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, argc, argv))
 					return NULL_REG;
 
@@ -753,7 +753,7 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 			reg_t other_obj = node->value;
 			debugC(2, kDebugLevelBresen, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
 
-			if (!s->segMan->isObject(other_obj)) {
+			if (!s->_segMan->isObject(other_obj)) {
 				warning("CanBeHere() cliplist contains non-object %04x:%04x", PRINT_REG(other_obj));
 			} else if (other_obj != obj) { // Clipping against yourself is not recommended
 
@@ -838,7 +838,7 @@ reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(obj, view);
 	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
@@ -854,7 +854,7 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
 	int loop = GET_SEL32V(obj, loop);
 	int view = GET_SEL32V(obj, view);
@@ -917,7 +917,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 }
 
 Common::Rect set_base(EngineState *s, reg_t object) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int x, y, original_y, z, ystep, xsize, ysize;
 	int xbase, ybase, xend, yend;
 	int view, loop, cel;
@@ -976,10 +976,10 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 }
 
 void _k_base_setter(EngineState *s, reg_t object) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	Common::Rect absrect = set_base(s, object);
 
-	if (lookup_selector(s->segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) != kSelectorVariable)
+	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) != kSelectorVariable)
 		return; // non-fatal
 
 	// Note: there was a check here for a very old version of SCI, which supposedly needed
@@ -1049,7 +1049,7 @@ static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int
 }
 
 Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int x, y, z;
 	int view, loop, cel;
 	Common::Rect retval;
@@ -1191,7 +1191,7 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
-	disableCertainButtons(s->segMan, s->_gameName, obj);
+	disableCertainButtons(s->_segMan, s->_gameName, obj);
 	_k_draw_control(s, obj, false);
 //	FULL_REDRAW();
 	return NULL_REG;
@@ -1228,7 +1228,7 @@ void update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
 	}
 
 reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
 	reg_t event = argv[1];
 
@@ -1249,7 +1249,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 				reg_t text_pos = GET_SEL32(obj, text);
 				int display_offset = 0;
 
-				Common::String text = s->segMan->getString(text_pos);
+				Common::String text = s->_segMan->getString(text_pos);
 				int textlen;
 
 #if 0
@@ -1378,7 +1378,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 				}
 
 				PUT_SEL32V(obj, cursor, cursor); // Write back cursor position
-				s->segMan->strcpy(text_pos, text.c_str()); // Write back string
+				s->_segMan->strcpy(text_pos, text.c_str()); // Write back string
 			}
 			if (event.segment) PUT_SEL32V(event, claimed, 1);
 			_k_draw_control(s, obj, false);
@@ -1406,7 +1406,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 }
 
 static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int x = (int16)GET_SEL32V(obj, nsLeft);
 	int y = (int16)GET_SEL32V(obj, nsTop);
 	int xl = (int16)GET_SEL32V(obj, nsRight) - x;
@@ -1420,7 +1420,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 	reg_t text_pos = GET_SEL32(obj, text);
 	Common::String text;
 	if (!text_pos.isNull())
-		text = s->segMan->getString(text_pos);
+		text = s->_segMan->getString(text_pos);
 	int view = GET_SEL32V(obj, view);
 	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
 	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
@@ -1494,7 +1494,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 
 		reg_t seeker = text_pos;
 		// Count string entries in NULL terminated string list
-		while (s->segMan->strlen(seeker) > 0) {
+		while (s->_segMan->strlen(seeker) > 0) {
 			++entries_nr;
 			seeker.offset += entry_size;
 		}
@@ -1509,7 +1509,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 			entries_list = (const char**)malloc(sizeof(char *) * entries_nr);
 			strings = new Common::String[entries_nr];
 			for (i = 0; i < entries_nr; i++) {
-				strings[i] = s->segMan->getString(seeker);
+				strings[i] = s->_segMan->getString(seeker);
 				entries_list[i] = strings[i].c_str();
 				seeker.offset += entry_size;
 				if ((seeker.offset - text_pos.offset) == lsTop)
@@ -1653,7 +1653,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 
 	Common::String title;
 	if (argv[4 + argextra].segment) {
-		title = s->segMan->getString(argv[4 + argextra]);
+		title = s->_segMan->getString(argv[4 + argextra]);
 		title = s->strSplit(title.c_str(), NULL);
 	}
 
@@ -1716,7 +1716,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 
 	if (textp.segment) {
 		argc--; argv++;
-		text = s->segMan->getString(textp);
+		text = s->_segMan->getString(textp);
 	} else {
 		argc--; argc--; argv++; argv++;
 		text = kernel_lookup_text(s, textp, index);
@@ -1727,7 +1727,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
-	Common::String filename = s->segMan->getString(argv[1]);
+	Common::String filename = s->_segMan->getString(argv[1]);
 	
 	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
 	
@@ -1806,7 +1806,7 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
-	Common::String filename = s->segMan->getString(argv[0]);
+	Common::String filename = s->_segMan->getString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	int frameNr = 0;
 	SeqDecoder seq;

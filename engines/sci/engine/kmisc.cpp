@@ -167,25 +167,25 @@ enum {
 reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 	switch (argv[0].toUint16()) {
 	case K_MEMORY_ALLOCATE_CRITICAL :
-		if (!s->segMan->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
+		if (!s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() critical", &s->r_acc)) {
 			error("Critical heap allocation failed");
 		}
 		break;
 	case K_MEMORY_ALLOCATE_NONCRITICAL :
-		s->segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
+		s->_segMan->allocDynmem(argv[1].toUint16(), "kMemory() non-critical", &s->r_acc);
 		break;
 	case K_MEMORY_FREE :
-		if (s->segMan->freeDynmem(argv[1])) {
+		if (s->_segMan->freeDynmem(argv[1])) {
 			error("Attempt to kMemory::free() non-dynmem pointer %04x:%04x", PRINT_REG(argv[1]));
 		}
 		break;
 	case K_MEMORY_MEMCPY : {
 		int size = argv[3].toUint16();
-		s->segMan->memcpy(argv[1], argv[2], size);
+		s->_segMan->memcpy(argv[1], argv[2], size);
 		break;
 	}
 	case K_MEMORY_PEEK : {
-		SegmentRef ref = s->segMan->dereference(argv[1]);
+		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
 			// This occurs in KQ5CD when interacting with certain objects
@@ -199,7 +199,7 @@ reg_t kMemory(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case K_MEMORY_POKE : {
-		SegmentRef ref = s->segMan->dereference(argv[1]);
+		SegmentRef ref = s->_segMan->dereference(argv[1]);
 
 		if (!ref.isValid() || ref.maxSize < 2) {
 			warning("Attempt to poke invalid memory at %04x:%04x", PRINT_REG(argv[1]));

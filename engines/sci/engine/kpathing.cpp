@@ -344,7 +344,7 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 }
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
 	int type = GET_SEL32(polygon, type).toUint16();
@@ -429,7 +429,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	node = lookup_node(s, list->first);
 
 	while (node) {
-		print_polygon(s->segMan, node->value);
+		print_polygon(s->_segMan, node->value);
 		node = lookup_node(s, node->succ);
 	}
 }
@@ -1212,7 +1212,7 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) polygon: The SCI polygon to convert
 	// Returns   : (Polygon *) The converted polygon
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
@@ -1347,7 +1347,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 	//             (int) opt: Optimization level (0, 1 or 2)
 	// Returns   : (PathfindingState *) On success a newly allocated pathfinding state,
 	//                            NULL otherwise
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	Polygon *polygon;
 	int err;
 	int count = 0;
@@ -1363,7 +1363,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 			// Workaround for game bugs that put a polygon in the list more than once
 			while (dup != node) {
-				if (polygons_equal(s->segMan, node->value, dup->value)) {
+				if (polygons_equal(s->_segMan, node->value, dup->value)) {
 					warning("[avoidpath] Ignoring duplicate polygon");
 					break;
 				}
@@ -1574,7 +1574,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 
 	if (unreachable) {
 		// If pathfinding failed we only return the path up to vertex_start
-		oref = s->segMan->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
+		oref = s->_segMan->allocDynmem(POLY_POINT_SIZE * 3, AVOIDPATH_DYNMEM_STRING, &output);
 
 		if (p->_prependPoint)
 			POLY_SET_POINT(oref, 0, *p->_prependPoint);
@@ -1594,7 +1594,7 @@ static reg_t output_path(PathfindingState *p, EngineState *s) {
 	}
 
 	// Allocate memory for path, plus 3 extra for appended point, prepended point and sentinel
-	oref = s->segMan->allocDynmem(POLY_POINT_SIZE * (path_len + 3), AVOIDPATH_DYNMEM_STRING, &output);
+	oref = s->_segMan->allocDynmem(POLY_POINT_SIZE * (path_len + 3), AVOIDPATH_DYNMEM_STRING, &output);
 
 	int offset = 0;
 
@@ -1686,7 +1686,7 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			printf("[avoidpath] Error: pathfinding failed for following input:\n");
 			print_input(s, poly_list, start, end, opt);
 			printf("[avoidpath] Returning direct path from start point to end point\n");
-			oref = s->segMan->allocDynmem(POLY_POINT_SIZE * 3,
+			oref = s->_segMan->allocDynmem(POLY_POINT_SIZE * 3,
 			                                   AVOIDPATH_DYNMEM_STRING, &output);
 
 			POLY_SET_POINT(oref, 0, start);

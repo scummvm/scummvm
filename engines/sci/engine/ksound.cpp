@@ -130,7 +130,7 @@ enum AudioSyncCommands {
 
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	int song_nr = GET_SEL32V(obj, number);
 	Resource *song = s->resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
 	int flags = GET_SEL32V(obj, flags);
@@ -165,7 +165,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 	int result;
 	SongHandle handle;
 	int cue;
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 
 	if (getSciVersion() > SCI_VERSION_01)
 		return;
@@ -173,7 +173,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 	while ((result = s->_sound.sfx_poll(&handle, &cue))) {
 		reg_t obj = DEFROBNICATE_HANDLE(handle);
-		if (!s->segMan->isObject(obj)) {
+		if (!s->_segMan->isObject(obj)) {
 			warning("Non-object %04x:%04x received sound signal (%d/%d)", PRINT_REG(obj), result, cue);
 			return;
 		}
@@ -215,7 +215,7 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 
 
 static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	uint16 command = argv[0].toUint16();
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -395,7 +395,7 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 
 
 static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -687,7 +687,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 }
 
 static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	uint16 command = argv[0].toUint16();
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
@@ -1077,7 +1077,7 @@ reg_t kDoAudio(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->segMan;
+	SegManager *segMan = s->_segMan;
 	switch (argv[0].toUint16()) {
 	case kSciAudioSyncStart: {
 		ResourceId id;
