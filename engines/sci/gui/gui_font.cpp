@@ -31,21 +31,11 @@
 
 namespace Sci {
 
-SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, GUIResourceId resourceId)
-	: _s(state), _screen(screen), _resourceId(resourceId) {
+SciGUIfont::SciGUIfont(ResourceManager *resMan, GUIResourceId resourceId)
+	: _resourceId(resourceId) {
 	assert(resourceId != -1);
-	if (_s->_gameName == "lsl1sci") {
-		// we remove upper bits for lsl1, because it wants to load font 2107 which is not available
-		_resourceId &= 0x7ff;
-	}
-	initData(_resourceId);
-}
 
-SciGUIfont::~SciGUIfont() {
-}
-
-void SciGUIfont::initData(GUIResourceId resourceId) {
-	Resource *fontResource = _s->resMan->findResource(ResourceId(kResourceTypeFont, resourceId), false);
+	Resource *fontResource = resMan->findResource(ResourceId(kResourceTypeFont, resourceId), false);
 	if (!fontResource) {
 		error("font resource %d not found", resourceId);
 	}
@@ -60,6 +50,9 @@ void SciGUIfont::initData(GUIResourceId resourceId) {
 		mChars[i].w = _resourceData[mChars[i].offset];
 		mChars[i].h = _resourceData[mChars[i].offset + 1];
 	}
+}
+
+SciGUIfont::~SciGUIfont() {
 }
 
 GUIResourceId SciGUIfont::getResourceId() {
@@ -79,8 +72,8 @@ byte *SciGUIfont::getCharData(byte chr) {
 	return chr < mCharMax ? _resourceData + mChars[chr].offset + 2 : 0;
 }
 
-void SciGUIfont::draw(int16 chr, int16 top, int16 left, byte color, byte textface) {
-	int charWidth = MIN<int>(getCharWidth(chr), _screen->_width - left);
+void SciGUIfont::draw(SciGUIscreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface) {
+	int charWidth = MIN<int>(getCharWidth(chr), screen->_width - left);
 	int charHeight = MIN<int>(getCharHeight(chr), 200 - top);
 	byte b = 0, mask = 0xFF;
 	int y = top;
@@ -93,7 +86,7 @@ void SciGUIfont::draw(int16 chr, int16 top, int16 left, byte color, byte textfac
 			if ((done & 7) == 0) // fetching next data byte
 				b = *(pIn++) & mask;
 			if (b & 0x80) // if MSB is set - paint it
-				_screen->Put_Pixel(left + done, y, 1, color, 0, 0);
+				screen->Put_Pixel(left + done, y, 1, color, 0, 0);
 			b = b << 1;
 		}
 	}

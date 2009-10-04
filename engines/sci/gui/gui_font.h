@@ -30,7 +30,7 @@ namespace Sci {
 
 class SciGUIfont {
 public:
-	SciGUIfont(EngineState *state, SciGUIscreen *screen, GUIResourceId resourceId);
+	SciGUIfont(ResourceManager *resMan, GUIResourceId resourceId);
 	~SciGUIfont();
 
 	GUIResourceId getResourceId();
@@ -38,14 +38,9 @@ public:
 	byte getCharWidth(byte chr);
 	byte getCharHeight(byte chr);
 	byte *getCharData(byte chr);
-	void draw(int16 chr, int16 top, int16 left, byte color, byte textface);
+	void draw(SciGUIscreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface);
 
 private:
-	void initData(GUIResourceId resourceId);
-
-	EngineState *_s;
-	SciGUIscreen *_screen;
-
 	GUIResourceId _resourceId;
 	byte *_resourceData;
 
