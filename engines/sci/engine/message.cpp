@@ -168,7 +168,7 @@ Common::String MessageState::getText() {
 			skippedSubstr += str[i];
 
 			// Hopefully these locale-dependant functions are good enough
-			if (islower(str[i]) || isdigit(str[i])) {
+			if (islower((unsigned char)str[i]) || isdigit((unsigned char)str[i])) {
 				// Lowercase or digit found, this is not a stage direction
 				strippedStr += skippedSubstr;
 				skipping = false;
