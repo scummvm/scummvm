@@ -54,17 +54,7 @@ struct sciPort {
 	int16 penMode;
 };
 
-struct sciWnd {
-	// begins like sciPort (needs to be binary identical!!)
-	sciNode node; // node struct for list operations
-	int16 top, left;
-	Common::Rect rect;
-	int16 curTop, curLeft;
-	int16 fontHeight;
-	sciResourceId fontId;
-	int16 textFace, penClr, backClr;
-	int16 penMode;
-	// window specific members
+struct sciWnd : public sciPort {
 	Common::Rect dims; // client area of window
 	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
