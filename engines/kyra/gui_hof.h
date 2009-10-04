@@ -82,7 +82,7 @@ private:
 	static const uint16 _menuStringsOther[];
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

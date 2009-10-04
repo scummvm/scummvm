@@ -542,5 +542,5 @@ int KyraEngine_MR::getItemCommandStringInv(uint16 item) {
 	return _itemStringInv[stringId];
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

@@ -99,4 +99,4 @@ void SciGUIfont::draw(int16 chr, int16 top, int16 left, byte color, byte textfac
 	}
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

@@ -117,6 +117,6 @@ enum LANGUAGE {
 #define CANNOT_FIND_FILE "Cannot find file %s"
 #define NO_MEM "Cannot allocate memory for %s!"
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_DW_H

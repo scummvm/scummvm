@@ -94,6 +94,6 @@ namespace Tinsel {
 byte *FindChunk(SCNHANDLE handle, uint32 chunk);
 int ExtractActor(SCNHANDLE hFilm);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_SCN_H */

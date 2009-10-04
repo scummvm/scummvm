@@ -279,6 +279,6 @@ const Sound::SpeechCodecs Sound::_supportedCodecs[] = {
 	{ 0, 0 }
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 

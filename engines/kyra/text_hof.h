@@ -50,7 +50,7 @@ private:
 	KyraEngine_HoF *_vm;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

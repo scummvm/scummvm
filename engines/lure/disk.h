@@ -65,6 +65,6 @@ public:
 	FileEntry *getIndex(uint8 entryIndex);
 };
 
-} // end of namespace Lure
+} // End of namespace Lure
 
 #endif

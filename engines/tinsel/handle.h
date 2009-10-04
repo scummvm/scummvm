@@ -62,6 +62,6 @@ void LoadExtraGraphData(
 
 int CdNumber(SCNHANDLE offset);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_HANDLE_H

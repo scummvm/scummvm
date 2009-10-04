@@ -1416,4 +1416,4 @@ void CopyProtectionDialog::chooseCharacters() {
 	screen.update();
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

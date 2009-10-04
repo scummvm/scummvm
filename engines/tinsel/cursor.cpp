@@ -693,4 +693,4 @@ bool isCursorShown() {
 	return !(bTempHide || bHiddenCursor);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

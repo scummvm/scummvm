@@ -108,6 +108,6 @@ bool IsCharImage(		// Is there an image for this character in this font?
 	SCNHANDLE hFont,	// which font to use
 	char c);		// character to test
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_TEXT_H

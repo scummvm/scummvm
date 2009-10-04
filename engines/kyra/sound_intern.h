@@ -38,7 +38,7 @@
 namespace Audio {
 class PCSpeaker;
 class MaxTrax;
-} // end of namespace Audio
+} // End of namespace Audio
 
 namespace Kyra {
 class MidiOutput;
@@ -327,6 +327,6 @@ protected:
 	int _tableSfxGame_Size;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif

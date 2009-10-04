@@ -99,4 +99,4 @@ void MemoryBlock::reallocate(uint32 size1) {
 	if (!_data) error ("Failed reallocating memory block");
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

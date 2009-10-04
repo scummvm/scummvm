@@ -2425,5 +2425,5 @@ void SoundAdlibPC::unk2() {
 	playSoundEffect(0);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

@@ -427,5 +427,5 @@ void KyraEngine_HoF::setMouseCursor(uint16 item) {
 	_screen->setMouseCursor(hotX, hotY, getShapePtr(shape));
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

@@ -59,6 +59,6 @@ void NoSoundReels(void);
 void SaveSoundReels(PSOUNDREELS psr);
 void RestoreSoundReels(PSOUNDREELS psr);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

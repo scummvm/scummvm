@@ -775,4 +775,4 @@ void Troll::run() {
 	}
 }
 
-} // end of namespace Agi
+} // End of namespace Agi

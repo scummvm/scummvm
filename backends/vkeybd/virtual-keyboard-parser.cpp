@@ -371,6 +371,6 @@ bool VirtualKeyboardParser::parseRectAsPolygon(Polygon &poly, const String& coor
 	return true;
 }
 
-} // end of namespace GUI
+} // End of namespace GUI
 
 #endif // #ifdef ENABLE_VKEYBD

@@ -684,4 +684,4 @@ void VQAMovie::play() {
 	// TODO: Wait for the sound to finish?
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

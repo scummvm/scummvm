@@ -125,6 +125,6 @@ public:
 	void closeSampleStream(void);
 };
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_SOUND_H

@@ -831,4 +831,4 @@ bool KyraEngine_MR::lineIsPassable(int x, int y) {
 	return true;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

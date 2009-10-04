@@ -87,6 +87,6 @@ void SetScrollParameters(int xTrigger, int xDistance, int xSpeed, int yTriggerTo
 
 bool IsScrolling(void);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_SCROLL_H */

@@ -172,6 +172,6 @@ void RestoreActorZ(byte *saveActorZ);
 
 /*----------------------------------------------------------------------*/
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_ACTOR_H */

@@ -1716,4 +1716,4 @@ bool ActorReelPlaying(int actor, int column) {
 	return false;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

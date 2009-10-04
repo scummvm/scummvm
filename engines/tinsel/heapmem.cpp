@@ -603,4 +603,4 @@ MEM_NODE *MemoryHandle(void *pMem) {
 	return NULL;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

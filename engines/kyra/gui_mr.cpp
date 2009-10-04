@@ -1624,5 +1624,5 @@ void GUI_MR::drawSliderBar(int slider, const uint8 *shape) {
 	_screen->drawShape(0, shape, x+position, y, 0, 0);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

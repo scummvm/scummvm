@@ -639,4 +639,4 @@ bail_out:
 	return selectedIndex;
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

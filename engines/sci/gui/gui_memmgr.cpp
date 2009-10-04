@@ -370,4 +370,4 @@ bool restoreMemState(Common::InSaveFile *pFile) {
 }
 
 //-------------------------------
-}// end of namespace SCI
+}// End of namespace SCI

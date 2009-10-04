@@ -114,6 +114,6 @@ void RequestRestoreGame(int num, SAVED_DATA *sd, int *ssCount, SAVED_DATA *ssDat
 void InitialiseSaveScenes(void);
 void FreeSaveScenes(void);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	/* TINSEL_SAVESCN_H */

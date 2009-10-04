@@ -367,7 +367,7 @@ void Resource::initializeLoaders() {
 	_loaders.push_back(LoaderList::value_type(new ResLoaderTlk()));
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 
 

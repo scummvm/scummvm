@@ -535,7 +535,7 @@ int LoLEngine::checkSceneForItems(uint16 *blockDrawObjects, int colour) {
 	return -1;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

@@ -447,5 +447,5 @@ void EMCInterpreter::op_setRetAndJmp(EMCState *script) {
 		script->ip = &script->dataPtr->data[temp];
 	}
 }
-} // end of namespace Kyra
+} // End of namespace Kyra
 

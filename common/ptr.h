@@ -216,6 +216,6 @@ private:
 	T *_pointer;
 };
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif

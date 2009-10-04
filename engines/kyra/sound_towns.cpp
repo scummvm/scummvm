@@ -4441,7 +4441,7 @@ const uint8 TownsPC98_OpnCore::_percussionData[] = {
 	58,145,244,145,43,35,9,171,16,110,25,8,28,74,162,128,26,27,82,45,136,153,18,8,136,8
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #undef EUPHONY_FADEOUT_TICKS
 

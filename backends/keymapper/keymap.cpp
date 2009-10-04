@@ -336,6 +336,6 @@ Action *Keymap::getParentMappedAction(KeyState key) {
 	}
 }
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER

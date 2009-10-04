@@ -1503,5 +1503,5 @@ void KyraEngine_MR::readSettings() {
 	_configHelium = ConfMan.getBool("helium_mode");
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

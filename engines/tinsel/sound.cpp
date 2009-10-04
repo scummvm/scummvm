@@ -567,4 +567,4 @@ void SoundManager::closeSampleStream(void) {
 	_sampleIndexLen = 0;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

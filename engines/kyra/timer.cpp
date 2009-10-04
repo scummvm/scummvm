@@ -302,4 +302,4 @@ void TimerManager::saveDataToFile(Common::WriteStream &file) const {
 	}
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

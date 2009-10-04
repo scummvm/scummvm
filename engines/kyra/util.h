@@ -46,7 +46,7 @@ private:
 	static const uint8 _charMapISOToDOS[128];
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

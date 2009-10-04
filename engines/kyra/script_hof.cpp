@@ -1735,5 +1735,5 @@ void KyraEngine_HoF::setupOpcodeTable() {
 	OpcodeTim(t2_playSoundEffect);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

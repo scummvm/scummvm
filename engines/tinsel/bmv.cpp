@@ -1268,4 +1268,4 @@ void SpeedMovieUp(void) {
 	}
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

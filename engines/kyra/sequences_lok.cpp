@@ -2086,5 +2086,5 @@ void KyraEngine_LoK::drawJewelsFadeOutEnd(int jewel) {
 	_screen->showMouse();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

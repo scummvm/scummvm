@@ -366,5 +366,5 @@ const uint8 MidiDriver_PCSpeaker::_noteTable2[] = {
 	0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

@@ -2001,5 +2001,5 @@ void KyraEngine_HoF::readSettings() {
 	KyraEngine_v1::readSettings();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

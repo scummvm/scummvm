@@ -104,7 +104,7 @@ private:
 	TimerManager &_timer;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

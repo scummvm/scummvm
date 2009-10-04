@@ -647,6 +647,6 @@ protected:
 	byte _cursorPalSize;
 };
 
-} // end of namespace GUI.
+} // End of namespace GUI.
 
 #endif

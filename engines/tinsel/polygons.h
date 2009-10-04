@@ -156,6 +156,6 @@ void MovePolygonTo(PTYPE ptype, int id, int x, int y);
 
 /*-------------------------------------------------------------------------*/
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		/* TINSEL_POLYGONS_H */

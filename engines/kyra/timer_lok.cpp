@@ -163,5 +163,5 @@ void KyraEngine_LoK::setWalkspeed(uint8 newSpeed) {
 	_timer->setDelay(5, speeds[newSpeed]);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

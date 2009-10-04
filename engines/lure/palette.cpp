@@ -215,4 +215,4 @@ Palette &PaletteCollection::getPalette(uint8 paletteNum) {
 	return *_palettes[paletteNum];
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

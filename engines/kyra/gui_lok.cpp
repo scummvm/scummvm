@@ -1123,5 +1123,5 @@ void KyraEngine_LoK::drawAmulet() {
 	_screen->showMouse();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

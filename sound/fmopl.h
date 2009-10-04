@@ -153,7 +153,7 @@ public:
 	virtual bool isStereo() const = 0;
 };
 
-} // end of namespace OPL
+} // End of namespace OPL
 
 // Legacy API
 // !You should not write any new code using the legacy API!

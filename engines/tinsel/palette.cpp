@@ -655,4 +655,4 @@ void SetTalkTextOffset(int offset) {
 	talkIndex = offset;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

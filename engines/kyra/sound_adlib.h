@@ -107,7 +107,7 @@ private:
 	static const int _kyra1SoundTriggers[];
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

@@ -75,6 +75,6 @@ namespace Tinsel {
 
 #define PID_GPROCESS	0x0120			// Global process base
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_PID_H

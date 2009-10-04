@@ -112,6 +112,6 @@ private:
 	static const uint8 _palette16[48];
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif

@@ -1537,4 +1537,4 @@ void CurrentActionStack::copyFrom(CurrentActionStack &stack) {
 	}
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

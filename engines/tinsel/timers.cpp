@@ -189,4 +189,4 @@ int Timer(int num) {
 		return pt->secs;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

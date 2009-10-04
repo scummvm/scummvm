@@ -808,4 +808,4 @@ void Room::reset() {
 	_statusLine[0] = '\0';
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

@@ -92,6 +92,6 @@ void EndScene(void);
 
 void SendSceneTinselProcess(TINSEL_EVENT event);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_SCENE_H

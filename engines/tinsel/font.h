@@ -53,6 +53,6 @@ void ResetFontHandles(void);
 
 void FettleFontPal(SCNHANDLE fontPal);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_FONT_H

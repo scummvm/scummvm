@@ -100,7 +100,7 @@ private:
 	Common::String _recordTimeFileName;
 };
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif
 

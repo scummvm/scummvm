@@ -116,6 +116,6 @@ int BgWidth(void);
 
 int BgHeight(void);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_BACKGND_H

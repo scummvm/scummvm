@@ -82,4 +82,4 @@ int ExtractActor(SCNHANDLE hFilm) {
 	return (int)FROM_LE_32(pmi->mulID);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

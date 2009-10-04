@@ -1391,4 +1391,4 @@ void KyraEngine_MR::setupOpcodeTable() {
 	Opcode(o3_dummy);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

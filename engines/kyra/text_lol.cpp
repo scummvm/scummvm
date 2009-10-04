@@ -793,7 +793,7 @@ void TextDisplayer_LoL::clearCurDim() {
 	_textDimData[d].column = _textDimData[d].line = 0;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

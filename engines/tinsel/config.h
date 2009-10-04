@@ -51,6 +51,6 @@ void ReadConfig(void);
 
 extern bool isJapanMode();
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

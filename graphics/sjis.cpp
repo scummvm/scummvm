@@ -408,7 +408,7 @@ const uint8 *FontSjisSVM::getCharData8x16(uint16 c) const {
 	return _fontData8x16 + offset;
 }
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif // defined(GRAPHICS_SJIS_H)
 

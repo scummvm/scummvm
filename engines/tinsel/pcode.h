@@ -175,6 +175,6 @@ void WaitInterpret(CORO_PARAM, PPROCESS pWaitProc, bool *result);
 #define ST_ON		0	//
 #define ST_OFF		1	// SubTitles()
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_PCODE_H

@@ -1074,5 +1074,5 @@ int Script::run(const GPL2Program &program, uint16 offset) {
 	return 0;
 }
 
-} // end of namespace Draci
+} // End of namespace Draci
 

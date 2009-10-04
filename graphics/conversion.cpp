@@ -148,4 +148,4 @@ bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 	return true;
 }
 
-} // end of namespace Graphics
+} // End of namespace Graphics

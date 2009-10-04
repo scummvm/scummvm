@@ -627,4 +627,4 @@ uint16 FightsManager::getFighterMove(FighterRecord &rec, uint16 baseOffset) {
 	return getByte(baseOffset + (rec.fwhits << 5) + actionIndex);
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

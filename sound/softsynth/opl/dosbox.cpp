@@ -164,7 +164,7 @@ struct Handler : public DOSBox::Handler {
 		adlib_init(rate);
 	}
 };
-} // end of namespace OPL2
+} // End of namespace OPL2
 
 namespace OPL3 {
 #define OPLTYPE_IS_OPL3
@@ -188,7 +188,7 @@ struct Handler : public DOSBox::Handler {
 		adlib_init(rate);
 	}
 };
-} // end of namespace OPL3
+} // End of namespace OPL3
 
 OPL::OPL(Config::OplType type) : _type(type), _rate(0), _handler(0) {
 }
@@ -356,7 +356,7 @@ void OPL::readBuffer(int16 *buffer, int length) {
 	_handler->generate(buffer, length);
 }
 
-} // end of namespace DOSBox
-} // end of namespace OPL
+} // End of namespace DOSBox
+} // End of namespace OPL
 
 #endif // !DISABLE_DOSBOX_ADLIB

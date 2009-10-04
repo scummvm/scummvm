@@ -45,6 +45,6 @@ struct FILM {
 
 #include "common/pack-end.h"	// END STRUCT PACKING
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

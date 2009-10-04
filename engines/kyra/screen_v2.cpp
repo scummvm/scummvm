@@ -355,5 +355,5 @@ void Screen_v2::checkedPageUpdate(int srcPage, int dstPage) {
 		addDirtyRect(0, 0, 320, 200);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

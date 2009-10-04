@@ -104,6 +104,6 @@ bool HeapCompact(		// Allocates the specified number of bytes from the specified
 	long size,		// number of bytes to free up
 	bool bDiscard);		// when set - will discard blocks to fullfill the request
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

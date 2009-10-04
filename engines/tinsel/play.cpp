@@ -1169,4 +1169,4 @@ void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
 	}
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

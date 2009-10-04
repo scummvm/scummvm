@@ -68,6 +68,6 @@ void DrawObject(DRAWOBJECT *pObj);
 // called to update a rectangle on the video screen from a video page
 void UpdateScreenRect(const Common::Rect &pClip);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

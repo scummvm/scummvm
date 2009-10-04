@@ -817,4 +817,4 @@ void Resources::loadFromStream(Common::ReadStream *stream) {
 	debugC(ERROR_DETAILED, kLureDebugScripts, "Finished loading");
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

@@ -205,7 +205,7 @@ private:
 
 // TODO: Consider adding support for PC98 ROM
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif
 

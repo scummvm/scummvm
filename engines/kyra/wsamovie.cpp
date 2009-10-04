@@ -463,6 +463,6 @@ int WSAMovie_v2::open(const char *filename, int unk1, Palette *palBuf) {
 	return _numFrames;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 

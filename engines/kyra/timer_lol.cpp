@@ -256,7 +256,7 @@ void LoLEngine::timerFadeMessageText(int timerNum) {
 	initTextFading(0, 0);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

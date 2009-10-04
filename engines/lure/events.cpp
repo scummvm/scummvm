@@ -226,4 +226,4 @@ bool Events::interruptableDelay(uint32 milliseconds) {
 	return false;
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

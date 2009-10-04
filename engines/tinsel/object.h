@@ -205,6 +205,6 @@ IMAGE *GetImageFromFilm(SCNHANDLE hFilm, int reel, const FREEL **ppfr = 0,
 					const MULTI_INIT **ppmi = 0, const FILM **ppfilm = 0);
 
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_OBJECT_H

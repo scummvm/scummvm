@@ -397,7 +397,7 @@ protected:
 	int o2_getVocHigh(EMCState *script);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

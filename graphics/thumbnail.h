@@ -63,7 +63,7 @@ bool saveThumbnail(Common::WriteStream &out);
  */
 bool saveThumbnail(Common::WriteStream &out, const Graphics::Surface &thumb);
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif
 

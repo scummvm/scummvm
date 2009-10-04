@@ -307,4 +307,4 @@ void SciGUIview::draw(Common::Rect rect, Common::Rect clipRect, GUIViewLoopNo lo
 	}
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

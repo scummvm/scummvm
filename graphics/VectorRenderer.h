@@ -494,6 +494,6 @@ protected:
 	int _gradientBytes[3]; /**< Color bytes of the active gradient, used to speed up calculation */
 };
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif

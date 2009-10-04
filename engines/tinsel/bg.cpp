@@ -279,4 +279,4 @@ SCNHANDLE GetBgroundHandle(void) {
 	return hBackground;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

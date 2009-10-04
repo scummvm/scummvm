@@ -583,4 +583,4 @@ int NewestSavedGame(void) {
 	return (numFiles == 0) ? -1 : 0;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

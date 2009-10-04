@@ -61,7 +61,7 @@ public:
 	 */
 	virtual Surface *decodeImage(Common::SeekableReadStream &stream, const PixelFormat &format) = 0;
 };
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif
 

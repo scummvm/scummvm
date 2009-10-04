@@ -54,6 +54,6 @@ private:
 	static const int _screenDimTableCount;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif

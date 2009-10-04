@@ -128,6 +128,6 @@ public:
 	static Common::Archive *load(Resource *owner, const Common::String &filename, const Common::String &extension, const uint8 offset);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif

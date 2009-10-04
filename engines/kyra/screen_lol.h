@@ -117,7 +117,7 @@ private:
 	void postProcessCursor(uint8 *data, int width, int height, int pitch);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

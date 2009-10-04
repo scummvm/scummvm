@@ -175,7 +175,7 @@ private:
 	Button::Callback _scrollDownFunctor;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

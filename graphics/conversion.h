@@ -71,6 +71,6 @@ inline static void RGB2YUV(byte r, byte g, byte b, byte &y, byte &u, byte &v) {
 bool crossBlit(byte *dst, const byte *src, int dstpitch, int srcpitch,
 						int w, int h, const Graphics::PixelFormat &dstFmt, const Graphics::PixelFormat &srcFmt);
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif // GRAPHICS_CONVERSION_H

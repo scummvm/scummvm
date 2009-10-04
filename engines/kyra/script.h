@@ -140,7 +140,7 @@ private:
 	void op_eval(EMCState *);
 	void op_setRetAndJmp(EMCState *);
 };
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

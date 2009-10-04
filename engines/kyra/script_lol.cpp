@@ -3044,7 +3044,7 @@ void LoLEngine::setupOpcodeTable() {
 	OpcodeTim(tlol_stopBackgroundAnimation);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

@@ -54,6 +54,6 @@ bool Polygon::contains(int16 x, int16 y) const {
 	return inside_flag;
 }
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif // #ifdef ENABLE_VKEYBD

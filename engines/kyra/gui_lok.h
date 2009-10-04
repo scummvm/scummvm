@@ -180,7 +180,7 @@ private:
 	const char *_onCDString;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

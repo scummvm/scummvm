@@ -965,4 +965,4 @@ void StopMover(PMOVER pMover) {
 	DoMoveActor(pMover);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

@@ -847,4 +847,4 @@ void setshowstring(void) {
 	bShowString = true;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

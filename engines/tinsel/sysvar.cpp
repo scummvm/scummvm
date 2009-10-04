@@ -215,4 +215,4 @@ void SetNoBlocking(bool flag) {
 	SetSysVar(ISV_NO_BLOCKING, flag);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

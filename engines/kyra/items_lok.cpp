@@ -967,5 +967,5 @@ int KyraEngine_LoK::getItemListIndex(uint16 item) {
 	return 81;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

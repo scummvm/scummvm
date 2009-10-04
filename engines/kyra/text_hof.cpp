@@ -681,4 +681,4 @@ void KyraEngine_HoF::setDlgIndex(int dlgIndex) {
 	_mainCharacter.dlgIndex = dlgIndex;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

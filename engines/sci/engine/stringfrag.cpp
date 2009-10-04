@@ -455,4 +455,4 @@ void stringfrag_strncmp(EngineState *s, reg_t s1, reg_t s2, int len) {
 	internal_stringfrag_strncmp(s, s1buf, s2buf, len);
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

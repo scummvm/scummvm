@@ -448,4 +448,4 @@ bool AboutToJumpOrEnd(PANIM pAnim) {
 
 
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

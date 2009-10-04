@@ -1100,4 +1100,4 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	return new CachedArchive(fileList);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

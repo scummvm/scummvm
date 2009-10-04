@@ -78,7 +78,7 @@ protected:
 	bool _talkMessagePrinted;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

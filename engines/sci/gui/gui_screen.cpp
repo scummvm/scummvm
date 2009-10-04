@@ -204,4 +204,4 @@ void SciGUIscreen::BitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *
 	}
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

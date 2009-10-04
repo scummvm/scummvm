@@ -140,7 +140,7 @@ OPL *Config::create(DriverId driver, OplType type) {
 
 bool OPL::_hasInstance = false;
 
-} // end of namespace OPL
+} // End of namespace OPL
 
 void OPLDestroy(FM_OPL *OPL) {
 	delete OPL;

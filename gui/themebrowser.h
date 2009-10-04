@@ -54,7 +54,7 @@ private:
 	void updateListing();
 };
 
-} // end of namespace GUI
+} // End of namespace GUI
 
 #endif
 

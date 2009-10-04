@@ -99,4 +99,4 @@ void KyraEngine_MR::setNextIdleAnimTimer() {
 	_nextIdleAnim = _system->getMillis() + _rnd.getRandomNumberRng(10, 15) * 1000;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

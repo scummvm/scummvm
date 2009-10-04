@@ -113,8 +113,8 @@ public:
 	bool isStereo() const { return _type != Config::kOpl2; }
 };
 
-} // end of namespace DOSBox
-} // end of namespace OPL
+} // End of namespace DOSBox
+} // End of namespace OPL
 
 #endif // !DISABLE_DOSBOX_OPL
 

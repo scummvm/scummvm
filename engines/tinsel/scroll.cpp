@@ -532,4 +532,4 @@ bool IsScrolling(void) {
 	return (LeftScroll || DownScroll);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

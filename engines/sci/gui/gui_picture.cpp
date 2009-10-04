@@ -558,4 +558,4 @@ void SciGUIpicture::vectorGetPatternTexture(byte *data, int &curPos, int16 patte
 	}
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

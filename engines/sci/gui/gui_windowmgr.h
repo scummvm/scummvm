@@ -57,6 +57,6 @@ private:
 	Common::List<HEAPHANDLE> windowList;
 };
 
-} // end of namespace Sci
+} // End of namespace Sci
 
 #endif

@@ -904,5 +904,5 @@ void KyraEngine_MR::runDialog(int dlgIndex, int funcNum) {
 	processDialog(vocHighIndex, vocHighBase, funcNum);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

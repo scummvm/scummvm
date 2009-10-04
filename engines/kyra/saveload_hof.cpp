@@ -332,5 +332,5 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	return Common::kNoError;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

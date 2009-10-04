@@ -241,4 +241,4 @@ void PokeInTagColour(void) {
 	}
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

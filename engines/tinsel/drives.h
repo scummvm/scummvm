@@ -70,6 +70,6 @@ public:
 };
 
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_DRIVES_H */

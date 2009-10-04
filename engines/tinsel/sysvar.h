@@ -144,6 +144,6 @@ bool GetNoBlocking(void);
 
 void SetNoBlocking(bool flag);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

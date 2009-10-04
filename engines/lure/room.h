@@ -132,6 +132,6 @@ public:
 	void reset();
 };
 
-} // end of namespace Lure
+} // End of namespace Lure
 
 #endif

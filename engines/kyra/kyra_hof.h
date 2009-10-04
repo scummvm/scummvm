@@ -919,7 +919,7 @@ protected:
 	Common::Error loadGameState(int slot);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

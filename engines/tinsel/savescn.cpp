@@ -474,4 +474,4 @@ void TinselSaveScene(CORO_PARAM) {
 	CORO_END_CODE;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

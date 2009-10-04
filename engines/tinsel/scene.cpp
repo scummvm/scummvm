@@ -494,4 +494,4 @@ void WrapScene(void) {
 	SendSceneTinselProcess(CLOSEDOWN);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

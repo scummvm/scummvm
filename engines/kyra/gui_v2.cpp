@@ -875,5 +875,5 @@ int GUI_v2::choiceNo(Button *caller) {
 	return 0;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

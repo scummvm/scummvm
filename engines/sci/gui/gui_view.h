@@ -78,6 +78,6 @@ private:
 	GUIPalette _palette;
 };
 
-} // end of namespace Sci
+} // End of namespace Sci
 
 #endif

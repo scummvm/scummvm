@@ -70,7 +70,7 @@ enum ActionType {
 	kActionTypeMax
 };
 
-} // end of namespace Common
+} // End of namespace Common
 
 #endif // #ifdef ENABLE_KEYMAPPER
 

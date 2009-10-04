@@ -97,4 +97,4 @@ uint32 KyraEngine_LoK::snd_getVoicePlayTime() {
 	return (_speechPlayTime != -1 ? _speechPlayTime : 0);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

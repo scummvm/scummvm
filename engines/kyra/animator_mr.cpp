@@ -461,5 +461,5 @@ void KyraEngine_MR::showIdleAnim() {
 	_nextIdleType = !_nextIdleType;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

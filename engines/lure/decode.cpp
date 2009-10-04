@@ -499,4 +499,4 @@ loc_1441:
 	return pDest - dest->data();
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

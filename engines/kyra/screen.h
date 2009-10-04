@@ -37,7 +37,7 @@ class OSystem;
 
 namespace Graphics {
 class FontSJIS;
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 namespace Kyra {
 

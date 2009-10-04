@@ -94,6 +94,6 @@ void SkipFrames(		// Skip the specified number of frames
 
 bool AboutToJumpOrEnd(PANIM pAnim);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_ANIM_H

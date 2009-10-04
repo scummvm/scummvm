@@ -88,6 +88,6 @@ private:
 	byte *_displayScreen;
 };
 
-} // end of namespace Sci
+} // End of namespace Sci
 
 #endif

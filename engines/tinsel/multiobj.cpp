@@ -562,4 +562,4 @@ void MultiForceRedraw(POBJECT pMultiObj) {
 	} while (pMultiObj != NULL);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

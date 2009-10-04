@@ -176,4 +176,4 @@ bool TinselFile::open(const Common::String &filename) {
 	return Common::File::open(newFilename);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

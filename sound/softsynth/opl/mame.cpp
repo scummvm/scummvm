@@ -1229,6 +1229,6 @@ FM_OPL *makeAdlibOPL(int rate) {
 	return OPLCreate(OPL_TYPE_YM3812, 3579545, rate);
 }
 
-} // end of namespace MAME
-} // end of namespace OPL
+} // End of namespace MAME
+} // End of namespace OPL
 

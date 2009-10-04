@@ -277,4 +277,4 @@ bool IsCharImage(SCNHANDLE hFont, char c) {
 	return pFont->fontDef[c2] != 0;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

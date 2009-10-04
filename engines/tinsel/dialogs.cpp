@@ -5738,4 +5738,4 @@ bool IsConvWindow(void) {
 	return (InventoryState == ACTIVE_INV && ino == INV_CONV);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

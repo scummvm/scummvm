@@ -388,4 +388,4 @@ void KyraEngine_LoK::updateTextFade() {
 	}
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

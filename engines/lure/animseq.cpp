@@ -281,4 +281,4 @@ bool AnimationSequence::step() {
 	return true;
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

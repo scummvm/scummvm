@@ -55,6 +55,6 @@ void RebootCursor(void);
 void StartCursorFollowed(void);
 void EndCursorFollowed(void);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_CURSOR_H

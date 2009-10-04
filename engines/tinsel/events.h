@@ -139,6 +139,6 @@ void ProcessedProvisional(void);
 void ProvNotProcessed(void);
 bool GetProvNotProcessed();
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_EVENTS_H */

@@ -535,4 +535,4 @@ OBJECT *TranslucentObject(int width, int height) {
 	return pRect;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

@@ -1309,5 +1309,5 @@ void KyraEngine_LoK::setupSceneResource(int sceneId) {
 		_res->loadPakFile(file);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

@@ -1642,4 +1642,4 @@ Common::String ThemeEngine::getThemeId(const Common::String &filename) {
 }
 
 
-} // end of namespace GUI.
+} // End of namespace GUI.

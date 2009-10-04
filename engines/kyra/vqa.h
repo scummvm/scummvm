@@ -34,11 +34,11 @@ class OSystem;
 
 namespace Audio {
 class AppendableAudioStream;
-} // end of namespace Audio
+} // End of namespace Audio
 
 namespace Common {
 class SeekableReadStream;
-} // end of namespace Common
+} // End of namespace Common
 
 namespace Kyra {
 
@@ -133,6 +133,6 @@ protected:
 	uint32 readTag();
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif

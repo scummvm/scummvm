@@ -582,5 +582,5 @@ int Sprites::getDrawLayer(int y) {
 
 	return returnValue;
 }
-} // end of namespace Kyra
+} // End of namespace Kyra
 

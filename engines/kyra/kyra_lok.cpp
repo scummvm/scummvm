@@ -980,4 +980,4 @@ void KyraEngine_LoK::writeSettings() {
 	KyraEngine_v1::writeSettings();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

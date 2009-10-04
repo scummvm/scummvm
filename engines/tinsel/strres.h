@@ -96,7 +96,7 @@ LANGUAGE PrevLanguage(LANGUAGE thisOne);
 SCNHANDLE LanguageDesc(LANGUAGE thisOne);
 SCNHANDLE LanguageFlag(LANGUAGE thisOne);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif
 

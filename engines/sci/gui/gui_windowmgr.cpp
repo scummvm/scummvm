@@ -281,4 +281,4 @@ void SciGUIwindowMgr::UpdateWindow(GUIWindow *wnd) {
 	}
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

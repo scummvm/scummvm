@@ -242,6 +242,6 @@ public:
 
 //@}
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_COROUTINE_H

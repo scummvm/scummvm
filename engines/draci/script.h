@@ -170,6 +170,6 @@ private:
 	DraciEngine *_vm;
 };
 
-} // end of namespace Draci
+} // End of namespace Draci
 
 #endif // DRACI_SCRIPT_H

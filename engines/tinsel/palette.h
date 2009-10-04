@@ -179,6 +179,6 @@ void SetTalkTextOffset(int offset);
 
 void SetTranslucencyOffset(int offset);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_PALETTE_H

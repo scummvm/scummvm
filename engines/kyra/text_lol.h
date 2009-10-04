@@ -93,7 +93,7 @@ private:
 	TextDimData _textDimData[14];
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

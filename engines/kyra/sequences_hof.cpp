@@ -2927,6 +2927,6 @@ void KyraEngine_HoF::seq_makeBookAppear() {
 	_screen->showMouse();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 

@@ -651,5 +651,5 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 	_screen->printText(string, x, y, col1, col2);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

@@ -322,5 +322,5 @@ Common::Error KyraEngine_LoK::saveGameState(int slot, const char *saveName, cons
 	delete out;
 	return Common::kNoError;
 }
-} // end of namespace Kyra
+} // End of namespace Kyra
 

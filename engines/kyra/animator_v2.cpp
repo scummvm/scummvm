@@ -190,5 +190,5 @@ void KyraEngine_v2::deleteItemAnimEntry(int item) {
 	_animList = deleteAnimListEntry(_animList, animObj);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

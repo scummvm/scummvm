@@ -261,5 +261,5 @@ void MassAddDialog::handleTickle() {
 }
 
 
-} // end of namespace GUI
+} // End of namespace GUI
 

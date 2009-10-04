@@ -73,7 +73,7 @@ protected:
 	uint8 *_wsaFrameAnimBuffer;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

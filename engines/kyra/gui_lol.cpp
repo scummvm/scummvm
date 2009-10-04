@@ -2950,7 +2950,7 @@ const char *GUI_LoL::getMenuItemLabel(const MenuItem &menuItem) {
 	return _vm->getLangString(menuItem.labelId);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

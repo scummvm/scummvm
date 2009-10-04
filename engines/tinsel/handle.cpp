@@ -554,4 +554,4 @@ int CdNumber(SCNHANDLE offset) {
 	return GetCD(pH->flags2 & fAllCds);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

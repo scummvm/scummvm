@@ -322,6 +322,6 @@ PixelFormat createPixelFormat() {
 }
 
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif

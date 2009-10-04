@@ -195,7 +195,7 @@ public:
 	bool isStereo() const { return false; }
 };
 
-} // end of namespace MAME
-} // end of namespace OPL
+} // End of namespace MAME
+} // End of namespace OPL
 
 #endif

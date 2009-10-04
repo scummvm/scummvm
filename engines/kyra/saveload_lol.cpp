@@ -474,7 +474,7 @@ Graphics::Surface *LoLEngine::generateSaveThumbnail() const {
 	return dst;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

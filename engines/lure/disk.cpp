@@ -225,4 +225,4 @@ FileEntry *Disk::getIndex(uint8 entryIndex) {
 	return &_entries[entryIndex];
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

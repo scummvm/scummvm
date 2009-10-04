@@ -196,6 +196,6 @@ void sort(T first, T last, StrictWeakOrdering comp) {
 	}
 }
 
-} // end of namespace Common
+} // End of namespace Common
 #endif
 

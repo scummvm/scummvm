@@ -165,6 +165,6 @@ void SetObjectFilm(int object, SCNHANDLE hFilm);
 
 void ObjectEvent(CORO_PARAM, int objId, TINSEL_EVENT event, bool bWait, int myEscape, bool *result = NULL);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_INVENTRY_H */

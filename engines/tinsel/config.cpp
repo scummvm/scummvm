@@ -175,4 +175,4 @@ bool isJapanMode() {
 #endif
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

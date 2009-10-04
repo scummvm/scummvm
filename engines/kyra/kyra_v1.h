@@ -39,7 +39,7 @@
 namespace Common {
 class SeekableReadStream;
 class WriteStream;
-} // end of namespace Common
+} // End of namespace Common
 
 class KyraMetaEngine;
 

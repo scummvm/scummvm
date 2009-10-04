@@ -1309,4 +1309,4 @@ bool HotspotScript::execute(Hotspot *h) {
 	return (opcode == S2_OPCODE_UNLOAD);
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

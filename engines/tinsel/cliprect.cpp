@@ -310,4 +310,4 @@ void UpdateClipRect(OBJECT *pObjList, Common::Point *pWin, Common::Rect *pClip) 
 	}
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

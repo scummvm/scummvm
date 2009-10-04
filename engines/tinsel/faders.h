@@ -52,6 +52,6 @@ void FadeInMedium(SCNHANDLE noFadeTable[]);
 void FadeInFast(SCNHANDLE noFadeTable[]);
 void PokeInTagColour(void);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_FADERS_H

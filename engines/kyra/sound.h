@@ -35,7 +35,7 @@
 
 namespace Audio {
 class AudioStream;
-} // end of namespace Audio
+} // End of namespace Audio
 
 namespace Kyra {
 
@@ -376,6 +376,6 @@ private:
 	static const AudioCodecs _supportedCodecs[];
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif

@@ -140,4 +140,4 @@ void Screen_MR::drawFilledBox(int x1, int y1, int x2, int y2, uint8 c1, uint8 c2
 	drawClippedLine(x1, y2-1, x2-1, y2-1, c3);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

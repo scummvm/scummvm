@@ -87,7 +87,7 @@ private:
 	Screen_MR *_screen;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

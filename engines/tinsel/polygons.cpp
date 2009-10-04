@@ -2376,4 +2376,4 @@ void DisableExit(int exitno) {
 	}
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

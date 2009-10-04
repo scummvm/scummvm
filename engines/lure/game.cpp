@@ -1071,4 +1071,4 @@ void Game::loadFromStream(ReadStream *stream) {
 }
 
 
-} // end of namespace Lure
+} // End of namespace Lure

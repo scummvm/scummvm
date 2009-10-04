@@ -69,6 +69,6 @@ private:
 	byte _priority;
 };
 
-} // end of namespace Sci
+} // End of namespace Sci
 
 #endif

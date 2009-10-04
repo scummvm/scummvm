@@ -50,6 +50,6 @@ void StartTimer(int num, int sval, bool up, bool frame);
 
 int Timer(int num);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

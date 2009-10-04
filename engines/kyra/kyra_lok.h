@@ -806,7 +806,7 @@ protected:
 	int o1_dummy(EMCState *script);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

@@ -741,4 +741,4 @@ void MidiMusic::stopMusic() {
 	close();
 }
 
-} // end of namespace Lure
+} // End of namespace Lure

@@ -1852,4 +1852,4 @@ void Player_V2CMS::mutex_up() {
 void Player_V2CMS::mutex_down() {
 	_mutex.unlock();
 }
-} // end of namespace Scumm
+} // End of namespace Scumm

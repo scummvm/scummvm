@@ -237,5 +237,5 @@ void KyraEngine_MR::uninitAnimationShapes(int count, uint8 *filedata) {
 	setNextIdleAnimTimer();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

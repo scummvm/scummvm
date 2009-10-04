@@ -64,6 +64,6 @@ void KeepOnScreen(OBJECT *pText, int *pTextX, int *pTextY);
 
 enum SPEECH_TYPE { IS_SAY, IS_SAYAT, IS_TALK, IS_TALKAT };
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_TINLIB_H

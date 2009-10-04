@@ -316,7 +316,7 @@ int LoLEngine::convertVolumeFromMixer(int value) {
 	return (value * 100) / Audio::Mixer::kMaxMixerVolume + 2;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

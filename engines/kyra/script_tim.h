@@ -288,7 +288,7 @@ private:
 };
 #endif // ENABLE_LOL
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

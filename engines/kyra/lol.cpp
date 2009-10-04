@@ -4482,7 +4482,7 @@ void LoLEngine::generateTempData() {
 	_hasTempDataFlags |= (1 << l);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

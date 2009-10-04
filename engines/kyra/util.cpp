@@ -148,5 +148,5 @@ const uint8 Util::_charMapISOToDOS[128] = {
 	151, 163, 150, 129, 236, 231, 152
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

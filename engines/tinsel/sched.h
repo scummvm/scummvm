@@ -143,6 +143,6 @@ void RestoreGlobalProcess(INT_CONTEXT *pic);
 void KillGlobalProcesses(void);
 void FreeGlobalProcesses();
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif		// TINSEL_SCHED_H

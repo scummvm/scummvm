@@ -1017,7 +1017,7 @@ void Screen_LoL::postProcessCursor(uint8 *data, int w, int h, int pitch) {
 	}
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif // ENABLE_LOL
 

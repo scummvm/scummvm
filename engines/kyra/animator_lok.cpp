@@ -654,5 +654,5 @@ void Animator_LoK::setCharactersHeight() {
 		_vm->characterList()[i].height = initHeightTable[i];
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

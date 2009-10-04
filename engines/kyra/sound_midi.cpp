@@ -772,5 +772,5 @@ Common::String SoundMidiPC::getFileName(const Common::String &str) {
 	return str + ".XMI";
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

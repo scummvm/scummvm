@@ -439,4 +439,4 @@ SCNHANDLE LanguageFlag(LANGUAGE thisOne) {
 	return languages[thisOne].hFlagFilm;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

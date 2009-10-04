@@ -168,6 +168,6 @@ inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Commo
 	return PixelFormat::createFormatCLUT8();
 }
 
-} // end of namespace Graphics
+} // End of namespace Graphics
 
 #endif

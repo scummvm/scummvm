@@ -219,5 +219,5 @@ void SoundAmiga::playSoundEffect(uint8 track) {
 	}
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

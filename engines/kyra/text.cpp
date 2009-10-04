@@ -340,4 +340,4 @@ void TextDisplayer::setTextColor(uint8 color) {
 	_screen->setPaletteIndex(0x10, r, g, b);
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

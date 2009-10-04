@@ -128,5 +128,5 @@ void KyraEngine_v2::processAnimationScript(int allowSkip, int resetChar) {
 	resetCharacterAnimDim();
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

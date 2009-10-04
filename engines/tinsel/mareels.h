@@ -51,6 +51,6 @@ void RebootScalingReels(void);
 
 void TouchMoverReels(void);
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif

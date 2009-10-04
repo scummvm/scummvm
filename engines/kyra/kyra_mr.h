@@ -669,7 +669,7 @@ private:
 	int loadLanguageFile(const char *file, uint8 *&buffer);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

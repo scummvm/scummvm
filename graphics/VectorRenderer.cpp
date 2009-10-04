@@ -147,4 +147,4 @@ void VectorRenderer::stepGetPositions(const DrawStep &step, const Common::Rect &
 	}
 }
 
-} // end of namespace Graphics
+} // End of namespace Graphics

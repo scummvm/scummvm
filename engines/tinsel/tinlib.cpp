@@ -5642,4 +5642,4 @@ int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONTEXT *pi
 	//error("Can't possibly get here");
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

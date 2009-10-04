@@ -190,4 +190,4 @@ void TouchMoverReels(void) {
 	} while ((pMover = NextMover(pMover)) != NULL);
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

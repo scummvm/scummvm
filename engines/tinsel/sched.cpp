@@ -759,4 +759,4 @@ void FreeGlobalProcesses() {
 	numGlobalProcess = 0;
 }
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel

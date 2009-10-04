@@ -316,5 +316,5 @@ void KyraEngine_HoF::resetCharacterAnimDim() {
 	_animObjects[0].height = _animObj0Height;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 

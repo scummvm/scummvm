@@ -460,7 +460,7 @@ private:
 	const FilenameTable *_filenameTable;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

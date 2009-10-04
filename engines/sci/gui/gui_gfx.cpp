@@ -1361,4 +1361,4 @@ void SciGUIgfx::SetNowSeen(reg_t objectReference) {
 	}
 }
 
-} // end of namespace Sci
+} // End of namespace Sci

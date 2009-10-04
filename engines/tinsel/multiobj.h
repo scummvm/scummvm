@@ -128,6 +128,6 @@ bool MultiHasShape(		// Returns TRUE if the object currently has an image
 void MultiForceRedraw(
 	POBJECT pMultiObj);	// multi-part object to be forced
 
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif	// TINSEL_MULTIOBJ_H

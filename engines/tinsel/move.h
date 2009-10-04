@@ -45,6 +45,6 @@ int GetLastLeadYdest(void);
 
 DIRECTION GetDirection(int fromx, int fromy, int tox, int toy, DIRECTION lastreel,
 							  HPOLYGON hPath, YBIAS yBias = YB_X2);
-} // end of namespace Tinsel
+} // End of namespace Tinsel
 
 #endif /* TINSEL_MOVE_H */

@@ -231,7 +231,7 @@ protected:
 	int choiceNo(Button *caller);
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 

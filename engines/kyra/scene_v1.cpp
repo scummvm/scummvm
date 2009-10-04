@@ -374,4 +374,4 @@ int KyraEngine_v1::getMoveTableSize(int *moveTable) {
 	return retValue;
 }
 
-} // end of namespace Kyra
+} // End of namespace Kyra

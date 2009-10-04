@@ -29,7 +29,7 @@
 namespace Audio {
 class AppendableAudioStream;
 class SoundHandle;
-} // end of namespace Audio
+} // End of namespace Audio
 
 namespace Kyra {
 class KyraEngine_v1;
@@ -136,7 +136,7 @@ protected:
 	int16 _yAdd;
 };
 
-} // end of namespace Kyra
+} // End of namespace Kyra
 
 #endif
 
