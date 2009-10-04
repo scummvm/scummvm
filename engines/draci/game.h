@@ -305,8 +305,8 @@ public:
 	bool shouldQuit() const { return _shouldQuit; }
 	void setQuit(bool quit) { _shouldQuit = quit; }
 
-	bool shouldExitLoop() const { return _shouldExitLoop; }
-	void setExitLoop(bool exit) { _shouldExitLoop = exit; }
+	int shouldExitLoop() const { return _shouldExitLoop; }
+	void setExitLoop(int exit) { _shouldExitLoop = exit; }
 
 	void setSpeechTick(uint tick);
 
@@ -388,7 +388,7 @@ private:
 	LoopSubstatus _loopSubstatus;
 
 	bool _shouldQuit;
-	bool _shouldExitLoop;
+	int _shouldExitLoop;	// 0=false and 1=true are normal, 2=immediate exit after loading
 
 	uint _speechTick;
 

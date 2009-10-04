@@ -147,7 +147,7 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	vm->_engineStartTime = vm->_system->getMillis() / 1000 - header.playtime;
 	vm->_game->scheduleEnteringRoomUsingGate(vm->_game->getRoomNum(), 0);
 	vm->_game->setRoomNum(oldRoomNum);
-	vm->_game->setExitLoop(true);
+	vm->_game->setExitLoop(2);	// 2 > true means immediate exit for the loop
 
 	vm->_game->inventoryReload();
 

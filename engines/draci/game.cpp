@@ -226,7 +226,7 @@ void Game::loop() {
 		_loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
-		if (shouldExitLoop())	// after loading
+		if (shouldExitLoop() > 1)	// after loading
 			break;
 
 		// Fetch mouse coordinates
