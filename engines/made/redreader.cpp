@@ -41,16 +41,19 @@ Common::MemoryReadStream *RedReader::load(const char *redFilename, const char *f
 
 	byte *fileBuf = (byte *)malloc(fileEntry.origSize);
 
-	LzhDecompressor lzhDec;
-	lzhDec.decompress(fd, fileBuf, fileEntry.compSize, fileEntry.origSize);
+	LzhDecompressor* lzhDec = new LzhDecompressor();
+	lzhDec->decompress(fd, fileBuf, fileEntry.compSize, fileEntry.origSize);
+	delete lzhDec;
 
 	return new Common::MemoryReadStream(fileBuf, fileEntry.origSize, true);
 
 }
 
 Common::MemoryReadStream *RedReader::loadFromRed(const char *redFilename, const char *filename) {
-	RedReader redReader;
-	return redReader.load(redFilename, filename);
+	RedReader* red = new RedReader();
+	Common::MemoryReadStream* stream = red->load(redFilename, filename);
+	delete red;
+	return stream;
 }
 
 bool RedReader::seekFile(Common::File &fd, FileEntry &fileEntry, const char *filename) {
@@ -82,7 +85,9 @@ LzhDecompressor::~LzhDecompressor() {
 int LzhDecompressor::decompress(Common::SeekableReadStream &source, byte *dest, uint32 sourceLen, uint32 destLen) {
 
 	int bufsize;
-	byte buffer[DICSIZ];
+	byte* buffer;
+
+	buffer = (byte *) malloc(DICSIZ);
 
 	_source = &source;
 	_compSize = sourceLen;
@@ -99,6 +104,8 @@ int LzhDecompressor::decompress(Common::SeekableReadStream &source, byte *dest, 
 		dest += bufsize;
 		destLen -= bufsize;
 	}
+
+	free(buffer);
 
 	return 0;
 }

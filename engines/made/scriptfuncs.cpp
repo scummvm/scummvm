@@ -187,7 +187,7 @@ int16 ScriptFunctions::sfClearScreen(int16 argc, int16 *argv) {
 	if (_vm->_screen->isScreenLocked())
 		return 0;
 	if (_vm->_autoStopSound) {
-		_vm->_mixer->stopHandle(_audioStreamHandle);
+		stopSound();
 		_vm->_autoStopSound = false;
 	}
 	_vm->_screen->clearScreen();
@@ -232,7 +232,7 @@ int16 ScriptFunctions::sfSetVisualEffect(int16 argc, int16 *argv) {
 int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 	int16 soundNum = argv[0];
 	_vm->_autoStopSound = false;
-	_vm->_mixer->stopHandle(_audioStreamHandle);
+	stopSound();
 	if (argc > 1) {
 		soundNum = argv[1];
 		_vm->_autoStopSound = (argv[0] == 1);
@@ -243,6 +243,8 @@ int16 ScriptFunctions::sfPlaySound(int16 argc, int16 *argv) {
 			soundRes->getAudioStream(_vm->_soundRate, false));
 		_vm->_soundEnergyArray = soundRes->getSoundEnergyArray();
 		_vm->_soundEnergyIndex = 0;
+		_soundStarted = true;
+		_soundResource = soundRes;
 	}
 	return 0;
 }
@@ -563,19 +565,31 @@ int16 ScriptFunctions::sfSoundPlaying(int16 argc, int16 *argv) {
 		return 0;
 }
 
-int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
+void ScriptFunctions::stopSound() {
 	_vm->_mixer->stopHandle(_audioStreamHandle);
+	if (_soundStarted) {
+		_vm->_res->freeResource(_soundResource);
+		_soundStarted = false;
+	}
+		
+}
+
+
+int16 ScriptFunctions::sfStopSound(int16 argc, int16 *argv) {
+	stopSound();
 	_vm->_autoStopSound = false;
 	return 0;
 }
 
 int16 ScriptFunctions::sfPlayVoice(int16 argc, int16 *argv) {
 	int16 soundNum = argv[0];
-	_vm->_mixer->stopHandle(_audioStreamHandle);
+	stopSound();
 	if (soundNum > 0) {
+		_soundResource = _vm->_res->getSound(soundNum);
 		_vm->_mixer->playInputStream(Audio::Mixer::kPlainSoundType, &_audioStreamHandle,
-			_vm->_res->getSound(soundNum)->getAudioStream(_vm->_soundRate, false));
+			_soundResource->getAudioStream(_vm->_soundRate, false));
 		_vm->_autoStopSound = true;
+		_soundStarted = true;
 	}
 	return 0;
 }
@@ -863,6 +877,7 @@ int16 ScriptFunctions::sfDrawMenu(int16 argc, int16 *argv) {
 		const char *text = menu->getString(textIndex);
 		if (text)
 			_vm->_screen->printText(text);
+
 		_vm->_res->freeResource(menu);
 	}
 	return 0;

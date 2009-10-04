@@ -41,7 +41,7 @@ typedef Common::Functor2<int16, int16*, int16> ExternalFunc;
 
 class ScriptFunctions {
 public:
-	ScriptFunctions(MadeEngine *vm) : _vm(vm) {}
+	ScriptFunctions(MadeEngine *vm) : _vm(vm), _soundStarted(false) {}
 	virtual ~ScriptFunctions() {
 		for (uint i = 0; i < _externalFuncs.size(); ++i)
 			delete _externalFuncs[i];
@@ -55,10 +55,14 @@ public:
 	void setupExternalsTable();
 	const char* getFuncName(int index) { return _externalFuncNames[index]; }
 	int getCount() const { return _externalFuncs.size(); }
+	void stopSound();
+
 protected:
 	MadeEngine *_vm;
 	Audio::SoundHandle _audioStreamHandle;
 	Audio::SoundHandle _voiceStreamHandle;
+	SoundResource* _soundResource;
+	bool _soundStarted;
 
 	Common::Array<const ExternalFunc*> _externalFuncs;
 	Common::Array<const char *> _externalFuncNames;
