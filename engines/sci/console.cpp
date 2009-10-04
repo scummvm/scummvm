@@ -50,6 +50,9 @@ int g_debug_sleeptime_factor = 1;
 int g_debug_simulated_key = 0;
 bool g_debug_track_mouse_clicks = false;
 
+// Refer to the "addresses" command on how to pass address parameters
+static int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
+
 Console::Console(SciEngine *vm) : GUI::Debugger() {
 	_vm = vm;
 
@@ -2720,7 +2723,7 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 }
 
 // Returns 0 on success
-int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
+static int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 	// Pointer to the part of str which contains a numeric offset (if any)
 	const char *offsetStr = NULL;
 
@@ -2787,6 +2790,9 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 		// The (optional) index can be used to distinguish multiple object with the same name.
 		int index = -1;
 
+		// Skip over the leading question mark '?'
+		str++;
+
 		// Look for an offset. It starts with + or -
 		relativeOffset = true;
 		offsetStr = strchr(str, '+');
@@ -2795,10 +2801,10 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 
 		// Strip away the offset and the leading '?'
 		Common::String str_objname;
-		if (offsetStr) {
-			str_objname = Common::String(str + 1, offsetStr);
-		} else
-			str_objname = str + 1;
+		if (offsetStr)
+			str_objname = Common::String(str, offsetStr);
+		else
+			str_objname = str;
 
 
 		// Scan for a period, after which (if present) we'll find an index
@@ -2812,73 +2818,10 @@ int parse_reg_t(EngineState *s, const char *str, reg_t *dest) {
 		}
 
 		// Now all values are available; iterate over all objects.
-		int times_found = 0;
-		for (uint i = 0; i < s->segMan->_heap.size(); i++) {
-			SegmentObj *mobj = s->segMan->_heap[i];
-			int idx = 0;
-			int max_index = 0;
-			ObjMap::iterator it;
-			Script *scr = 0;
-			CloneTable *ct = 0;
 
-			if (mobj) {
-				if (mobj->getType() == SEG_TYPE_SCRIPT) {
-					scr = (Script *)mobj;
-					max_index = scr->_objects.size();
-					it = scr->_objects.begin();
-				} else if (mobj->getType() == SEG_TYPE_CLONES) {
-					ct = (CloneTable *)mobj;
-					max_index = ct->_table.size();
-				}
-			}
-
-			// It's a script or a clone table, scan all objects in it
-			for (; idx < max_index; ++idx) {
-				Object *obj = NULL;
-				reg_t objpos;
-				objpos.offset = 0;
-				objpos.segment = i;
-
-				if (mobj->getType() == SEG_TYPE_SCRIPT) {
-					obj = &(it->_value);
-					objpos.offset = obj->_pos.offset;
-					++it;
-				} else if (mobj->getType() == SEG_TYPE_CLONES) {
-					if (!ct->isValidEntry(idx))
-						continue;
-					obj = &(ct->_table[idx]);
-					objpos.offset = idx;
-				}
-
-				const char *objname = s->segMan->getObjectName(objpos);
-				if (str_objname == objname) {
-					// Found a match!
-					if ((index < 0) && (times_found > 0)) {
-						if (times_found == 1) {
-							// First time we realized the ambiguity
-							printf("Ambiguous:\n");
-							printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(*dest), str_objname.c_str());
-						}
-						printf("  %3x: [%04x:%04x] %s\n", times_found, PRINT_REG(objpos), str_objname.c_str());
-					}
-					if (index < 0 || times_found == index)
-						*dest = objpos;
-					++times_found;
-				}
-			}
-
-		}
-
-		if (!times_found)
+		*dest = s->segMan->findObjectByName(str_objname, index);
+		if (dest->isNull())
 			return 1;
-
-		if (times_found > 1 && index < 0) {
-			printf("Ambiguous: Aborting.\n");
-			return 1; // Ambiguous
-		}
-
-		if (times_found <= index)
-			return 1; // Not found
 
 	} else {	// Finally, check for "SEGMENT:OFFSET" or just "OFFSET"
 		const char *colon = strchr(str, ':');

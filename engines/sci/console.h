@@ -36,8 +36,6 @@ namespace Sci {
 class SciEngine;
 struct List;
 
-// Refer to the "addresses" command on how to pass address parameters
-int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 reg_t disassemble(EngineState *s, reg_t pos, int print_bw_tag, int print_bytecode);
 
 class Console : public GUI::Debugger {

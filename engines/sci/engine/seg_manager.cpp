@@ -272,6 +272,81 @@ const char *SegManager::getObjectName(reg_t pos) {
 	return name;
 }
 
+reg_t SegManager::findObjectByName(const Common::String &name, int index) {
+	reg_t retVal = NULL_REG;
+
+	// Now all values are available; iterate over all objects.
+	int timesFound = 0;
+	for (uint i = 0; i < _heap.size(); i++) {
+		SegmentObj *mobj = _heap[i];
+		int idx = 0;
+		int max_index = 0;
+		ObjMap::iterator it;
+		Script *scr = 0;
+		CloneTable *ct = 0;
+
+		if (mobj) {
+			if (mobj->getType() == SEG_TYPE_SCRIPT) {
+				scr = (Script *)mobj;
+				max_index = scr->_objects.size();
+				it = scr->_objects.begin();
+			} else if (mobj->getType() == SEG_TYPE_CLONES) {
+				ct = (CloneTable *)mobj;
+				max_index = ct->_table.size();
+			}
+		}
+
+		// It's a script or a clone table, scan all objects in it
+		for (; idx < max_index; ++idx) {
+			Object *obj = NULL;
+			reg_t objpos;
+			objpos.offset = 0;
+			objpos.segment = i;
+
+			if (mobj->getType() == SEG_TYPE_SCRIPT) {
+				obj = &(it->_value);
+				objpos.offset = obj->_pos.offset;
+				++it;
+			} else if (mobj->getType() == SEG_TYPE_CLONES) {
+				if (!ct->isValidEntry(idx))
+					continue;
+				obj = &(ct->_table[idx]);
+				objpos.offset = idx;
+			}
+
+			const char *objname = getObjectName(objpos);
+			if (name == objname) {
+				// Found a match!
+				if ((index < 0) && (timesFound > 0)) {
+					if (timesFound == 1) {
+						// First time we realized the ambiguity
+						printf("Ambiguous:\n");
+						printf("  %3x: [%04x:%04x] %s\n", 0, PRINT_REG(retVal), name.c_str());
+					}
+					printf("  %3x: [%04x:%04x] %s\n", timesFound, PRINT_REG(objpos), name.c_str());
+				}
+				if (index < 0 || timesFound == index)
+					retVal = objpos;
+				++timesFound;
+			}
+		}
+
+	}
+
+	if (!timesFound)
+		return NULL_REG;
+
+	if (timesFound > 1 && index < 0) {
+		printf("Ambiguous: Aborting.\n");
+		return NULL_REG; // Ambiguous
+	}
+
+	if (timesFound <= index)
+		return NULL_REG; // Not found
+
+	return retVal;
+}
+
 // validate the seg
 // return:
 //	false - invalid seg
@@ -623,7 +698,7 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
 			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			base_obj = s->segMan->getObject(obj->_variables[5]);
+			base_obj = getObject(obj->_variables[5]);
 			obj->variable_names_nr = base_obj->variables_nr;
 			obj->base_obj = base_obj->base_obj;
 		}

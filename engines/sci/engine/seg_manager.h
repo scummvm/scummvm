@@ -419,6 +419,19 @@ public:
 	 */
 	const char *getObjectName(reg_t pos);
 
+	/**
+	 * Find the address of an object by its name. In case multiple objects
+	 * with the same name occur, the optional index parameter can be used
+	 * to distinguish between them. If index is -1, then if there is a
+	 * unique object with the specified name, its address is returned;
+	 * if there are multiple matches, or none, then NULL_REG is returned.
+	 *
+	 * @param name		the name of the object we are looking for
+	 * @param index		the index of the object in case there are multiple
+	 * @return the address of the object, or NULL_REG
+	 */
+	reg_t findObjectByName(const Common::String &name, int index = -1);
+
 	void scriptRelocateExportsSci11(SegmentId seg);
 	void scriptInitialiseObjectsSci11(SegmentId seg);
 

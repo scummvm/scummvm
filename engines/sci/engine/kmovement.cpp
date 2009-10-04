@@ -24,7 +24,6 @@
  */
 
 #include "sci/sci.h"
-#include "sci/console.h"	// for parse_reg_t
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
@@ -256,10 +255,10 @@ static int checksum_bytes(byte *data, int size) {
 }
 
 static void bresenham_autodetect(EngineState *s) {
-	reg_t motion_class;
+	reg_t motionClass = s->segMan->findObjectByName("Motion");
 
-	if (!parse_reg_t(s, "?Motion", &motion_class)) {
-		Object *obj = s->segMan->getObject(motion_class);
+	if (!motionClass.isNull()) {
+		Object *obj = s->segMan->getObject(motionClass);
 		reg_t fptr;
 		byte *buf;
 
@@ -269,7 +268,7 @@ static void bresenham_autodetect(EngineState *s) {
 			return;
 		}
 
-		if (lookup_selector(s->segMan, motion_class, s->_kernel->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
+		if (lookup_selector(s->segMan, motionClass, s->_kernel->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
 			warning("bresenham_autodetect failed");
 			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
 			return;

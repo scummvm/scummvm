@@ -26,7 +26,6 @@
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/script.h"
-#include "sci/console.h" // For parse_reg_t
 
 namespace Sci {
 
@@ -266,9 +265,9 @@ int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint
 
 SciVersion EngineState::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_AUTODETECT) {
-		reg_t soundClass;
+		reg_t soundClass = segMan->findObjectByName("Sound");
 
-		if (!parse_reg_t(this, "?Sound", &soundClass)) {
+		if (!soundClass.isNull()) {
 			int sum = methodChecksum(soundClass, _kernel->_selectorCache.play, -6, 6);
 
 			switch (sum) {
@@ -337,10 +336,10 @@ SciVersion EngineState::detectLofsType() {
 			return _lofsType;
 		}
 
-		reg_t gameClass;
 		Object *obj = NULL;
+		reg_t gameClass = segMan->findObjectByName("Game");
 
-		if (!parse_reg_t(this, "?Game", &gameClass))
+		if (!gameClass.isNull())
 			obj = segMan->getObject(gameClass);
 
 		bool couldBeAbs = true;
