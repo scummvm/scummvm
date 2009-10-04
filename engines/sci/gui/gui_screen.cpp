@@ -163,12 +163,11 @@ void SciGUIscreen::BitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 
 void SciGUIscreen::BitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
 	int width = rect.width();
-	int height = rect.height();
 	int y;
 
 	screen += (rect.top * _width) + rect.left;
 
-	for (y=rect.top; y<rect.bottom; y++) {
+	for (y = rect.top; y < rect.bottom; y++) {
 		memcpy(memoryPtr, (void*)screen, width); memoryPtr += width;
 		screen += _width;
 	}
@@ -195,12 +194,11 @@ void SciGUIscreen::BitsRestore(byte *memoryPtr) {
 
 void SciGUIscreen::BitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
 	int width = rect.width();
-	int height = rect.height();
 	int y;
 
 	screen += (rect.top * _width) + rect.left;
 
-	for (y=rect.top; y<rect.bottom; y++) {
+	for (y = rect.top; y < rect.bottom; y++) {
 		memcpy((void*) screen, memoryPtr, width); memoryPtr += width;
 		screen += _width;
 	}

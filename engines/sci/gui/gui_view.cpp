@@ -74,7 +74,7 @@ void SciGUIview::initData(sciResourceId resourceId) {
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
 		if (palOffset && palOffset != 0x100) {
-			_gfx->CreatePaletteFromData(_resourceData + palOffset, &_palette);
+			_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
 			_embeddedPal = true;
 		}
 
@@ -121,7 +121,7 @@ void SciGUIview::initData(sciResourceId resourceId) {
 		cellSize = _resourceData[13];
 
 		if (palOffset) {
-			_gfx->CreatePaletteFromData(_resourceData + palOffset, &_palette);
+			_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
 			_embeddedPal = true;
 		}
 
