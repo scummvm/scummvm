@@ -54,6 +54,8 @@ void SciGUIgfx::init() {
 	uint16 a = 0;
 
 	_font = NULL;
+	_textFonts = NULL; _textFontsCount = 0;
+	_textColors = NULL; _textColorsCount = 0;
 
 	_mainPort = mallocPort();
 	SetPort(_mainPort);
@@ -158,11 +160,16 @@ void SciGUIgfx::CreatePaletteFromData(byte *data, sciPalette *paletteOut) {
 	int colorNo = 0;
 
 	memset(paletteOut, 0, sizeof(sciPalette));
+	// Setup default mapping
+	for (colorNo = 0; colorNo < 256; colorNo++) {
+		paletteOut->mapping[colorNo] = colorNo;
+	}
 	if (data[0] == 0 && data[1] == 1) {
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
 		palOffset = 260;
 		palColorStart = 0; palColorCount = 256;
+		//memcpy(&paletteOut->mapping, data, 256);
 	} else {
 		// SCI1.1 palette
 		palFormat = data[32];
@@ -496,18 +503,7 @@ byte SciGUIgfx::CharWidth(int16 ch) {
 	SciGUIfont *font = GetFont();
 	return font ? font->getCharWidth(ch) : 0;
 }
-//-----------------------------
-int16 SciGUIgfx::TextWidth(const char *text, int16 from, int16 len) {
-	SciGUIfont *font = GetFont();
-	if (font) {
-		int16 width = 0;
-		for (int i = from; i < len; i++)
-			width += _font->getCharWidth(text[i]);
-		return width;
-	}
-	return 0;
-}
-//-----------------------------
+
 void SciGUIgfx::ClearChar(int16 chr) {
 	if (_curPort->penMode != 1)
 		return;
@@ -534,6 +530,44 @@ void SciGUIgfx::StdChar(int16 chr) {
 				+ _curPort->curLeft, _vSeg, 320, _curPort->penClr,
 				_curPort->textFace);
 #endif
+}
+
+void SciGUIgfx::SetTextFonts(int argc, reg_t *argv) {
+	int i;
+
+	if (_textFonts) {
+		delete _textFonts;
+	}
+	_textFontsCount = argc;
+	_textFonts = new sciResourceId[argc];
+	for (i = 0; i < argc; i++) {
+		_textFonts[i] = (sciResourceId)argv[i].toUint16();
+	}
+}
+
+void SciGUIgfx::SetTextColors(int argc, reg_t *argv) {
+	int i;
+
+	if (_textColors) {
+		delete _textColors;
+	}
+	_textColorsCount = argc;
+	_textColors = new uint16[argc];
+	for (i = 0; i < argc; i++) {
+		_textColors[i] = argv[i].toUint16();
+	}
+}
+
+// TODO: implement codes
+int16 SciGUIgfx::TextWidth(const char *text, int16 from, int16 len) {
+	SciGUIfont *font = GetFont();
+	if (font) {
+		int16 width = 0;
+		for (int i = from; i < len; i++)
+			width += _font->getCharWidth(text[i]);
+		return width;
+	}
+	return 0;
 }
 
 // TODO: implement codes
@@ -612,16 +646,23 @@ void SciGUIgfx::DrawText(const char *text, int16 from, int16 len) {
 	rect.bottom = rect.top + _curPort->fontH;
 	while (len--) {
 		chr = (*text++) & 0xFF;
-		width = font->getCharWidth(chr);
-		// clear char
-		if (_curPort->penMode == 1) {
-			rect.left = _curPort->curLeft;
-			rect.right = rect.left + width;
-			EraseRect(rect);
+		switch (chr) {
+		case 0x7C:
+			while ((len--) && (*text++ != 0x7C)) { }
+			break;
+			
+		default:
+			width = font->getCharWidth(chr);
+			// clear char
+			if (_curPort->penMode == 1) {
+				rect.left = _curPort->curLeft;
+				rect.right = rect.left + width;
+				EraseRect(rect);
+			}
+			// CharStd
+			font->draw(chr, _curPort->top + _curPort->curTop, _curPort->left + _curPort->curLeft, _curPort->penClr, _curPort->textFace);
+			_curPort->curLeft += width;
 		}
-		// CharStd
-		font->draw(chr, _curPort->top + _curPort->curTop, _curPort->left + _curPort->curLeft, _curPort->penClr, _curPort->textFace);
-		_curPort->curLeft += width;
 	}
 }
 

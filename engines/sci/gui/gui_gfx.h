@@ -79,13 +79,16 @@ public:
 
 	byte CharHeight(int16 ch);
 	byte CharWidth(int16 ch);
+	void ClearChar(int16 chr);
+	void DrawChar(int16 chr);
+	void StdChar(int16 chr);
+
+	void SetTextFonts(int argc, reg_t *argv);
+	void SetTextColors(int argc, reg_t *argv);
 	int16 TextWidth(const char*text, int16 from, int16 len);
 	int16 StringWidth(const char*str) {
 		return TextWidth(str, 0, (int16)strlen(str));
 	}
-	void ClearChar(int16 chr);
-	void DrawChar(int16 chr);
-	void StdChar(int16 chr);
 	int16 TextSize(Common::Rect &rect, const char *str, int16 fontId, int16 maxwidth);
 	int16 GetLongest(const char *str, int16 maxwidth);
 	void DrawText(const char *str, int16 from, int16 len);
@@ -133,13 +136,16 @@ private:
 	Common::Rect _bounds;
 	sciPort *_mainPort;
 	sciPort *_curPort;
-//	byte *_visualScreen;
-//	byte *_pcSeg;
 	uint16 _clrPowers[256];
 
 	byte bMapColors;
 	sciPalette *pPicPal;
 	Common::Array<sciPalSched> _palSchedules;
+
+	int _textFontsCount;
+	sciResourceId *_textFonts;
+	int _textColorsCount;
+	uint16 *_textColors;
 
 	SciGUIfont *_font;
 };

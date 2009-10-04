@@ -218,10 +218,12 @@ void SciGUI::textSize(const char *text, int16 font, int16 maxWidth, int16 *textW
 
 // Used SCI1+ for text codes
 void SciGUI::textFonts(int argc, reg_t *argv) {
+	_gfx->SetTextFonts(argc, argv);
 }
 
 // Used SCI1+ for text codes
 void SciGUI::textColors(int argc, reg_t *argv) {
+	_gfx->SetTextColors(argc, argv);
 }
 
 void SciGUI::drawPicture(sciResourceId pictureId, uint16 style, uint16 flags, int16 EGApaletteNo) {
