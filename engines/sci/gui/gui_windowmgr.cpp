@@ -34,7 +34,9 @@
 
 namespace Sci {
 
-Common::Rect _picRect(0,10,320, 200);
+namespace {
+const Common::Rect s_picRect(0, 10, 320, 200);
+} // end of anonymous namespace
 
 // window styles
 enum {
@@ -68,7 +70,7 @@ SciGUIwindowMgr::SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx)
 
 	windowList.AddToFront(wmgrPortH);
 
-	_picWind = NewWindow(_picRect, 0, 0, kTransparent | kNoFrame, 0, 1);
+	_picWind = NewWindow(s_picRect, 0, 0, kTransparent | kNoFrame, 0, 1);
 }
 
 SciGUIwindowMgr::~SciGUIwindowMgr() {
