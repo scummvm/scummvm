@@ -35,17 +35,7 @@ typedef int16 GUIViewCellNo;
 
 typedef uint16 GUIHandle;
 
-struct GUINode {
-	GUIHandle next; // heap handle to next node
-	GUIHandle prev; // heap handle to data
-	uint16 key; // maybe also a heap handle
-};
-struct GUINode1 : GUINode {
-	uint16 value;
-};
-
 struct GUIPort {
-	GUINode node; // node struct for list operations
 	int16 top, left;
 	Common::Rect rect;
 	int16 curTop, curLeft;
@@ -67,7 +57,6 @@ struct GUIWindow : public GUIPort {
 };
 
 struct GUICast {
-	GUINode node;
 	uint16 view;
 	uint16 loop;
 	uint16 cel;

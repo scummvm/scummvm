@@ -23,9 +23,12 @@
  *
  */
 
-#include "sci/gui/gui_dbllist.h"
+#include "common/list.h"
 
 namespace Sci {
+
+// TODO: remove HEAPHANDLE and make a list of GUIWindow pointers instead
+typedef uint16 HEAPHANDLE;
 
 class SciGUIwindowMgr {
 public:
@@ -48,7 +51,7 @@ private:
 	EngineState *_s;
 	SciGUIgfx *_gfx;
 
-	DblList windowList;
+	Common::List<HEAPHANDLE> windowList;
 };
 
 } // end of namespace Sci
