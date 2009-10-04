@@ -34,7 +34,6 @@ Mouse::Mouse(DraciEngine *vm) {
 	_y = 0;
 	_lButton = false;
 	_rButton = false;
-	_modifierState = 0;
 	_cursorType = kNormalCursor;
 	_vm = vm;
 }
@@ -42,14 +41,8 @@ Mouse::Mouse(DraciEngine *vm) {
 void Mouse::handleEvent(Common::Event event) {
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
-		// TODO: remove _modifierState, since right click can be achieved via Cmd
-		if (!(_modifierState & 3)) {
-			debugC(6, kDraciGeneralDebugLevel, "Left button down (x: %u y: %u)", _x, _y);
-			_lButton = true;
-		} else {	// any Ctrl pressed
-			debugC(6, kDraciGeneralDebugLevel, "Ctrl-Left button down (x: %u y: %u)", _x, _y);
-			_rButton = true;
-		}
+		debugC(6, kDraciGeneralDebugLevel, "Left button down (x: %u y: %u)", _x, _y);
+		_lButton = true;
 		break;
 
 	case Common::EVENT_LBUTTONUP:

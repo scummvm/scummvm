@@ -235,28 +235,6 @@ void DraciEngine::handleEvents() {
 					_game->inventoryInit();
 				}
 				break;
-			case Common::KEYCODE_LCTRL:
-				debugC(6, kDraciGeneralDebugLevel, "Left Ctrl down");
-				_mouse->downModifier(0);
-				break;
-			case Common::KEYCODE_RCTRL:
-				debugC(6, kDraciGeneralDebugLevel, "Right Ctrl down");
-				_mouse->downModifier(1);
-				break;
-			default:
-				break;
-			}
-			break;
-		case Common::EVENT_KEYUP:
-			switch (event.kbd.keycode) {
-			case Common::KEYCODE_LCTRL:
-				debugC(6, kDraciGeneralDebugLevel, "Left Ctrl up");
-				_mouse->upModifier(0);
-				break;
-			case Common::KEYCODE_RCTRL:
-				debugC(6, kDraciGeneralDebugLevel, "Right Ctrl up");
-				_mouse->upModifier(1);
-				break;
 			default:
 				break;
 			}
