@@ -241,29 +241,29 @@ public:
 	/**
 	 * Fill the given indexes with the given component value.
 	 *
-	 * @param firstCol	the first color, which should be overwritten.
-	 * @param numCols	number of colors, which schould be overwritten.
-	 * @param value		color component value, which should be stored.
+	 * @param firstCol  the first color, which should be overwritten.
+	 * @param numCols   number of colors, which schould be overwritten.
+	 * @param value     color component value, which should be stored.
 	 */
 	void fill(int firstCol, int numCols, uint8 value);
 
 	/**
 	 * Copy data from another palette.
 	 *
-	 * @param source	palette to copy data from.
-	 * @param firstCol	the first color of the source which should be copied.
-	 * @param numCols	number of colors, which should be copied. -1 all remaining colors.
-	 * @param dstStart	the first color, which should be ovewritten. If -1 firstCol will be used as start.
+	 * @param source    palette to copy data from.
+	 * @param firstCol  the first color of the source which should be copied.
+	 * @param numCols   number of colors, which should be copied. -1 all remaining colors.
+	 * @param dstStart  the first color, which should be ovewritten. If -1 firstCol will be used as start.
 	 */
 	void copy(const Palette &source, int firstCol = 0, int numCols = -1, int dstStart = -1);
 
 	/**
 	 * Copy data from a raw VGA palette.
 	 *
-	 * @param source	source buffer
-	 * @param firstCol	the first color of the source which should be copied.
-	 * @param numCols	number of colors, which should be copied.
-	 * @param dstStart	the first color, which should be ovewritten. If -1 firstCol will be used as start.
+	 * @param source    source buffer
+	 * @param firstCol  the first color of the source which should be copied.
+	 * @param numCols   number of colors, which should be copied.
+	 * @param dstStart  the first color, which should be ovewritten. If -1 firstCol will be used as start.
 	 */
 	void copy(const uint8 *source, int firstCol, int numCols, int dstStart = -1);
 
@@ -351,7 +351,7 @@ public:
 	void clearCurPage();
 
 	void copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc, const uint8 *src,
-					int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
+	                 int unk1, const uint8 *unkPtr1, const uint8 *unkPtr2);
 
 	// page 0 functions
 	void copyToPage0(int y, int h, uint8 page, uint8 *seqBuf);

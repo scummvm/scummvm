@@ -132,11 +132,11 @@ public:
 	uint32 getBaseTempo(void);
 
 	//Channel allocation functions
-	MidiChannel *allocateChannel()		{ return 0; }
-	MidiChannel *getPercussionChannel()	{ return 0; }
+	MidiChannel *allocateChannel()      { return 0; }
+	MidiChannel *getPercussionChannel() { return 0; }
 
 	static float calculatePhaseStep(int8 semiTone, int8 semiToneRootkey,
-		uint32 sampleRate, uint32 outputRate, int32 pitchWheel);
+	    uint32 sampleRate, uint32 outputRate, int32 pitchWheel);
 
 private:
 	bool loadInstruments();

@@ -123,8 +123,8 @@ protected:
 
 	int _brandonAnimSeqSizeWidth;
 	int _brandonAnimSeqSizeHeight;
-
 };
+
 } // end of namespace Kyra
 
 #endif

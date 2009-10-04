@@ -38,7 +38,7 @@
 
 namespace Kyra {
 
-enum kSequences {
+enum Sequences {
 	kSequenceVirgin = 0,
 	kSequenceWestwood,
 	kSequenceTitle,
@@ -60,7 +60,7 @@ enum kSequences {
 	kSequenceArraySize
 };
 
-enum kNestedSequences {
+enum NestedSequences {
 	kSequenceFiggle = 0,
 	kSequenceOver1,
 	kSequenceOver2,
@@ -78,7 +78,7 @@ enum kNestedSequences {
 	kSequenceHand4
 };
 
-enum kSequencesDemo {
+enum SequencesDemo {
 	kSequenceDemoVirgin = 0,
 	kSequenceDemoWestwood,
 	kSequenceDemoTitle,
@@ -89,7 +89,7 @@ enum kSequencesDemo {
 	kSequenceDemoFisher
 };
 
-enum kNestedSequencesDemo {
+enum NestedSequencesDemo {
 	kSequenceDemoWharf2 = 0,
 	kSequenceDemoDinob2,
 	kSequenceDemoWater,
@@ -98,7 +98,7 @@ enum kNestedSequencesDemo {
 };
 
 #ifdef ENABLE_LOL
-enum kSequencesLolDemo {
+enum SequencesLolDemo {
 	kSequenceLolDemoScene1 = 0,
 	kSequenceLolDemoText1,
 	kSequenceLolDemoScene2,
@@ -272,7 +272,7 @@ protected:
 	void seq_loadNestedSequence(int wsaNum, int seqNum);
 	void seq_nestedSequenceFrame(int command, int wsaNum);
 	void seq_animatedSubFrame(int srcPage, int dstPage, int delaytime,
-		int steps, int x, int y, int w, int h, int openClose, int directionFlags);
+	    int steps, int x, int y, int w, int h, int openClose, int directionFlags);
 	bool seq_processNextSubFrame(int wsaNum);
 	void seq_resetActiveWSA(int wsaNum);
 	void seq_unloadWSA(int wsaNum);
@@ -287,7 +287,7 @@ protected:
 	char *seq_preprocessString(const char *str, int width);
 	void seq_printCreditsString(uint16 strIndex, int x, int y, const uint8 *colorMap, uint8 textcolor);
 	void seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width,
-		WSAMovie_v2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
+	    WSAMovie_v2 * wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos);
 	void seq_finaleActorScreen();
 	void seq_displayScrollText(uint8 *data, const ScreenDim *d, int tempPage1, int tempPage2, int speed, int step, Screen::FontId fid1, Screen::FontId fid2, const uint8 *shapeData = 0, const char *const *specialData = 0);
 	void seq_scrollPage(int bottom, int top);
@@ -841,16 +841,16 @@ protected:
 	ActiveWSA *_activeWSA;
 	ActiveText *_activeText;
 
-	const char *const *_sequencePakList;
+	const char * const *_sequencePakList;
 	int _sequencePakListSize;
-	const char *const *_ingamePakList;
+	const char * const *_ingamePakList;
 	int _ingamePakListSize;
 
-	const char *const *_musicFileListIntro;
+	const char * const *_musicFileListIntro;
 	int _musicFileListIntroSize;
-	const char *const *_musicFileListFinale;
+	const char * const *_musicFileListFinale;
 	int _musicFileListFinaleSize;
-	const char *const *_musicFileListIngame;
+	const char * const *_musicFileListIngame;
 	int _musicFileListIngameSize;
 	const uint8 *_cdaTrackTableIntro;
 	int _cdaTrackTableIntroSize;
@@ -858,17 +858,17 @@ protected:
 	int _cdaTrackTableIngameSize;
 	const uint8 *_cdaTrackTableFinale;
 	int _cdaTrackTableFinaleSize;
-	const char *const *_sequenceSoundList;
+	const char * const *_sequenceSoundList;
 	int _sequenceSoundListSize;
-	const char *const *_ingameSoundList;
+	const char * const *_ingameSoundList;
 	int _ingameSoundListSize;
 	const uint16 *_ingameSoundIndex;
 	int _ingameSoundIndexSize;
-	const char *const *_sequenceStrings;
+	const char * const *_sequenceStrings;
 	int _sequenceStringsSize;
 	const uint16 *_ingameTalkObjIndex;
 	int _ingameTalkObjIndexSize;
-	const char *const *_ingameTimJpStr;
+	const char * const *_ingameTimJpStr;
 	int _ingameTimJpStrSize;
 	const HofSeqData *_sequences;
 	const ItemAnimData_v2 *_itemAnimData;

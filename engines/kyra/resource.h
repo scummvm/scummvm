@@ -99,7 +99,7 @@ protected:
 	KyraEngine_v1 *_vm;
 };
 
-enum kKyraResources {
+enum KyraResources {
 	kLoadAll = -1,
 
 	k1ForestSeq,
@@ -402,7 +402,7 @@ private:
 	const char *getFilename(const char *name);
 	Common::SeekableReadStream *getFile(const char *name);
 
-	enum kResTypes {
+	enum ResTypes {
 		kLanguageList,
 		kStringList,
 		kRoomList,

@@ -26,7 +26,6 @@
 #ifndef KYRA_WSAMOVIE_H
 #define KYRA_WSAMOVIE_H
 
-
 namespace Audio {
 class AppendableAudioStream;
 class SoundHandle;

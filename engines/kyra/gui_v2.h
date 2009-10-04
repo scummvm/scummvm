@@ -229,7 +229,6 @@ protected:
 	bool choiceDialog(int name, bool type);
 	int choiceYes(Button *caller);
 	int choiceNo(Button *caller);
-
 };
 
 } // end of namespace Kyra

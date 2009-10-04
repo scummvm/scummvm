@@ -867,8 +867,8 @@ private:
 	uint8 *_levelLangFile;
 
 	int _lastUsedStringBuffer;
-	char _stringBuffer[5][512];	// TODO: The original used a size of 512, it looks a bit large.
-								// Maybe we can someday reduce the size.
+	char _stringBuffer[5][512]; // TODO: The original used a size of 512, it looks a bit large.
+	                            // Maybe we can someday reduce the size.
 	char *getLangString(uint16 id);
 	uint8 *getTableEntry(uint8 *buffer, uint16 id);
 	void decodeSjis(const char *src, char *dst);

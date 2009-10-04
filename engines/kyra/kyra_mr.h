@@ -50,6 +50,7 @@ public:
 	KyraEngine_MR(OSystem *system, const GameFlags &flags);
 	~KyraEngine_MR();
 
+	// Regarding pausing of the engine:
 	// Idle animation time, item animations and album animations should be taken
 	// care of, but since those would just produce minor glitches it's not that
 	// important.
