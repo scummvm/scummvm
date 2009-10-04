@@ -241,7 +241,6 @@ byte *SciGUIview::getBitmap(uint16 loopNo, uint16 cellNo) {
 
 	uint16 width = _loop[loopNo].cell[cellNo].width;
 	uint16 height = _loop[loopNo].cell[cellNo].height;
-//	byte *ptr = _resourceData + _loop[loopNo].cell[cellNo].offset;
 	// allocating memory to store cel's bitmap
 	assert(width * height <= 64000);
 	uint16 pixelCount = width * height;

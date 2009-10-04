@@ -75,6 +75,11 @@ public:
 	virtual void paletteAnimate(int fromColor, int toColor, int speed);
 
 	virtual int16 onControl(byte screenMask, Common::Rect rect);
+	// FIXME: argc/argv because of gui32.cpp, should get removed sometime
+	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
+	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
+	virtual void addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	virtual void setNowSeen(reg_t objectReference);
 
 	virtual void moveCursor(int16 x, int16 y);
 

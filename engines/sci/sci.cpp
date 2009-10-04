@@ -35,6 +35,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 
+#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
 
 #include "sci/gfx/gfx_resource.h"

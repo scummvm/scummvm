@@ -68,6 +68,10 @@ public:
 	void paletteAnimate(int fromColor, int toColor, int speed);
 
 	int16 onControl(byte screenMask, Common::Rect rect);
+	void animate(reg_t castListReference, bool cycle, int argc, reg_t *argv);
+	void addToPicList(reg_t listReference, int argc, reg_t *argv);
+	void addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	void setNowSeen(reg_t objectReference);
 
 	void moveCursor(int16 x, int16 y);
 
@@ -75,6 +79,23 @@ private:
 	OSystem *_system;
 	EngineState *s;
 	bool _usesOldGfxFunctions;
+
+	GfxDynView *_k_make_dynview_obj(reg_t obj, int options, int nr, int argc, reg_t *argv);
+	void _k_make_view_list(GfxList **widget_list, List *list, int options, int argc, reg_t *argv);
+	void draw_obj_to_control_map(GfxDynView *view);
+	void draw_rect_to_control_map(Common::Rect abs_zone);
+	int _k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc, reg_t *argv);
+	void _k_set_now_seen(reg_t object);
+	void _k_prepare_view_list(GfxList *list, int options);
+	void _k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list);
+	void _k_view_list_kryptonize(GfxWidget *v);
+	void _k_raise_topmost_in_view_list(GfxList *list, GfxDynView *view);
+	void _k_redraw_view_list(GfxList *list);
+	void _k_draw_view_list(GfxList *list, int flags);
+	void _k_view_list_do_postdraw(GfxList *list);
+	void animate_do_animation(int argc, reg_t *argv);
+
+	bool _k_animate_ran;	// FIXME: Avoid non-const global vars
 
 	bool activated_icon_bar;	// FIXME: Avoid non-const global vars
 	int port_origin_x;	// FIXME: Avoid non-const global vars

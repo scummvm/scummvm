@@ -325,6 +325,22 @@ int16 SciGUI::onControl(byte screenMask, Common::Rect rect) {
 	return result;
 }
 
+void SciGUI::animate(reg_t castListReference, bool cycle, int argc, reg_t *argv) {
+	// FIXME: port over from gregs engine
+}
+
+void SciGUI::addToPicList(reg_t listReference, int argc, reg_t *argv) {
+	// FIXME: port over from gregs engine
+}
+
+void SciGUI::addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+	// FIXME: port over from gregs engine
+}
+
+void SciGUI::setNowSeen(reg_t objectReference) {
+	// FIXME: port over from gregs engine
+}
+
 void SciGUI::moveCursor(int16 x, int16 y) {
 	Common::Point newPos;
 	
