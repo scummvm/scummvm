@@ -327,12 +327,11 @@ int16 SciGUI::onControl(byte screenMask, Common::Rect rect) {
 
 void SciGUI::moveCursor(int16 x, int16 y) {
 	Common::Point newPos;
-	sciPort *curPort = _gfx->GetPort();
 	
 	x += _windowMgr->_picWind->rect.left;
 	y += _windowMgr->_picWind->rect.top;
-	newPos.x = CLIP<int16> (x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
-	newPos.y = CLIP<int16> (y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
+	newPos.x = CLIP<int16>(x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
+	newPos.y = CLIP<int16>(y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
 
 	gfxop_set_pointer_position(_s->gfx_state, newPos);
 }

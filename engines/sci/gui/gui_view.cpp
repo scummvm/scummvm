@@ -168,21 +168,21 @@ sciResourceId SciGUIview::getResourceId() {
 
 int16 SciGUIview::getWidth(uint16 loopNo, uint16 cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo < 0 || cellNo >= _loop[loopNo].cellCount)
+	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? _loop[loopNo].cell[cellNo].width : 0;
 }
 
 int16 SciGUIview::getHeight(uint16 loopNo, uint16 cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo < 0 || cellNo >= _loop[loopNo].cellCount)
+	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? _loop[loopNo].cell[cellNo].height : 0;
 }
 
 sciViewCellInfo *SciGUIview::getCellInfo(uint16 loopNo, uint16 cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo < 0 || cellNo >= _loop[loopNo].cellCount)
+	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? &_loop[loopNo].cell[cellNo] : NULL;
 }
@@ -234,7 +234,7 @@ void SciGUIview::unpackView(uint16 loopNo, uint16 cellNo, byte *outPtr, uint16 p
 
 byte *SciGUIview::getBitmap(uint16 loopNo, uint16 cellNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo < 0 || cellNo >= _loop[loopNo].cellCount)
+	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	if (_loop[loopNo].cell[cellNo].rawBitmap)
 		return _loop[loopNo].cell[cellNo].rawBitmap;

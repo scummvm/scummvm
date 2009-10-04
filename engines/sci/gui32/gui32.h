@@ -31,7 +31,7 @@ public:
 	~SciGUI32();
 
 	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *s) { this->s = s; }
+	virtual void resetEngineState(EngineState *newState) { s = newState; }
 
 	void init(bool oldGfxFunctions);
 

@@ -37,8 +37,6 @@
 
 namespace Sci {
 
-static uint32 _sysTicks;
-
 SciGUIgfx::SciGUIgfx(OSystem *system, EngineState *state, SciGUIscreen *screen)
 	: _system(system), _s(state), _screen(screen) {
 	init();
@@ -51,8 +49,6 @@ SciGUIgfx::~SciGUIgfx() {
 }
 
 void SciGUIgfx::init() {
-	uint16 a = 0;
-
 	_font = NULL;
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
@@ -81,7 +77,7 @@ void SciGUIgfx::initPalette() {
 		_sysPalette.colors[i].r = 0;
 		_sysPalette.colors[i].g = 0;
 		_sysPalette.colors[i].b = 0;
-		_sysPalette.intencity[i] = 100;
+		_sysPalette.intensity[i] = 100;
 		_sysPalette.mapping[i] = i;
 	}
 	_sysPalette.colors[0].used = 1;
@@ -100,7 +96,7 @@ void SciGUIgfx::initPalette() {
 	};
 
 	// Init _clrPowers used in MatchColor
-	for(int16 i = 0; i < 256; i++)
+	for(i = 0; i < 256; i++)
 	  _clrPowers[i] = i*i;
 }
 
@@ -115,7 +111,7 @@ void SciGUIgfx::timerHandler(void *ref) {
 	((SciGUIgfx *)ref)->_sysTicks++;
 }
 
-sciPort *SciGUIgfx::mallocPort () {
+sciPort *SciGUIgfx::mallocPort() {
 	sciPort *newPort = (sciPort *)malloc(sizeof(sciPort));
 	assert(newPort);
 	memset(newPort, 0, sizeof(sciPort));
@@ -198,11 +194,6 @@ void SciGUIgfx::CreatePaletteFromData(byte *data, sciPalette *paletteOut) {
 
 bool SciGUIgfx::SetResPalette(int16 resourceNo, int16 flag) {
 	Resource *palResource = _s->resMan->findResource(ResourceId(kResourceTypePalette, resourceNo), 0);
-	int palFormat = 0;
-	int palOffset = 0;
-	int palColorStart = 0;
-	int palColorCount = 0;
-	int colorNo = 0;
 	sciPalette palette;
 
 	if (palResource) {
@@ -299,9 +290,9 @@ void SciGUIgfx::SetCLUT(sciPalette*pal) {
 	for (int16 i = 0; i < 256; i++) {
 		if (!pal->colors[i].used)
 			continue;
-		bpal[i * 4] = pal->colors[i].r * pal->intencity[i] / 100;
-		bpal[i * 4 + 1] = pal->colors[i].g * pal->intencity[i] / 100;
-		bpal[i * 4 + 2] = pal->colors[i].b * pal->intencity[i] / 100;
+		bpal[i * 4] = pal->colors[i].r * pal->intensity[i] / 100;
+		bpal[i * 4 + 1] = pal->colors[i].g * pal->intensity[i] / 100;
+		bpal[i * 4 + 2] = pal->colors[i].b * pal->intensity[i] / 100;
 		bpal[i * 4 + 3] = 100;
 	}
 	_system->setPalette(bpal, 0, 256);
@@ -418,8 +409,6 @@ void SciGUIgfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen,
 
 	int16 oldPenMode = _curPort->penMode;
 	OffsetRect(r);
-	int16 w = r.width();
-	int16 h = r.height();
 	int16 x, y;
 	byte curVisual;
 
@@ -780,7 +769,6 @@ void SciGUIgfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 	int16 hline = 0;
 	sciResourceId orgFontId = GetFontId();
 	int16 orgPenColor = _curPort->penClr;
-	int16 rectWidth = rect.width();
 
 	if (fontId != -1)
 		SetFont(fontId);
@@ -827,11 +815,9 @@ void SciGUIgfx::ShowBits(const Common::Rect &r, uint16 flags) {
 		return;
 
 	OffsetRect(rect);
-	uint16 w = rect.width();
-	uint16 h = rect.height();
 	assert((flags&0x8000) == 0);
 	_screen->UpdateWhole();
-//	_system->copyRectToScreen(GetSegment(flags) + _baseTable[rect.top] + rect.left, 320, rect.left, rect.top, w, h);
+//	_system->copyRectToScreen(GetSegment(flags) + _baseTable[rect.top] + rect.left, 320, rect.left, rect.top, rect.width(), rect.height());
 //	_system->updateScreen();
 }
 

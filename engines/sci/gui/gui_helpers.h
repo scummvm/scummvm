@@ -95,7 +95,7 @@ struct sciPalette {
 	byte mapping[256];
 	uint32 timestamp;
 	sciColor colors[256];
-	byte intencity[256];
+	byte intensity[256];
 };
 
 struct sciPalSched {

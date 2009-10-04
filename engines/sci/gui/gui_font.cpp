@@ -83,7 +83,6 @@ void SciGUIfont::draw(int16 chr, int16 top, int16 left, byte color, byte textfac
 	int charWidth = MIN<int>(getCharWidth(chr), _screen->_width - left);
 	int charHeight = MIN<int>(getCharHeight(chr), 200 - top);
 	byte b = 0, mask = 0xFF;
-	int pitch = _screen->_width;
 	int y = top;
 
 	byte *pIn = getCharData(chr);

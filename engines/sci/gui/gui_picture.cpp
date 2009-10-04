@@ -159,7 +159,7 @@ void SciGUIpicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 
 	y += _curPort->top;
 
-	uint16 j = 0, lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
+	uint16 lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
 	byte b, brun;
 
 	while (y < lasty && ptr < pend) {
@@ -213,7 +213,7 @@ void SciGUIpicture::drawCelAmiga(int16 x, int16 y, byte *pdata, int size) {
 
 	y += _curPort->top;
 
-	uint16 j = 0, lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
+	uint16 lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
 	byte op, col, bytes;
 	while (y < lasty && ptr < pend) {
 		op = *ptr++;
@@ -283,7 +283,7 @@ enum {
 #define PIC_EGAPALETTE_SIZE  40
 #define PIC_EGAPALETTE_TOTALSIZE PIC_EGAPALETTE_COUNT*PIC_EGAPALETTE_SIZE
 
-const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
+static const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
 	0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
 	0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0x88,
 	0x88, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x88,
@@ -296,16 +296,17 @@ void SciGUIpicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_color = 0, pic_priority = 0x0F, pic_control = 0x0F;
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalette = 0;
-	byte EGAindex = 0;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
 	bool EGAmapping = false;
 	int curPos = 0;
 	uint16 size;
 	byte byte;
 	int i;
-	sciPalette palette = {0};
+	sciPalette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 	bool sci1 = false;
+
+	memset(&palette, 0, sizeof(palette));
 
 	if (_EGApaletteNo >= PIC_EGAPALETTE_COUNT)
 		_EGApaletteNo = 0;

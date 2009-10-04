@@ -424,7 +424,6 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	// old code, may be removed later after class migration
-	GfxPort *port = s->port;
 	int redraw_port = 0;
 	rect_t area;
 	area = gfx_rect(argv[2].toSint16(), argv[1].toSint16() , argv[4].toSint16(), argv[3].toSint16());
