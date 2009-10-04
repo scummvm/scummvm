@@ -38,11 +38,11 @@ Common::Rect _picRect(0,10,320, 200);
 
 // window styles
 enum {
-	TRANSPARENT = 1,
-	NOFRAME		= 2,
-	TITLE		= 4,
-	TOPMOST		= 8,
-	USER		= 0x80
+	kTransparent = (1 << 0),
+	kNoFrame     = (1 << 1),
+	kTitle       = (1 << 2),
+	kTopmost     = (1 << 3),
+	kUser        = (1 << 7)
 };
 
 SciGUIwindowMgr::SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx)
@@ -68,7 +68,7 @@ SciGUIwindowMgr::SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx)
 
 	windowList.AddToFront(wmgrPortH);
 
-	_picWind = NewWindow(_picRect, 0, 0, TRANSPARENT | NOFRAME, 0, 1);
+	_picWind = NewWindow(_picRect, 0, 0, kTransparent | kNoFrame, 0, 1);
 }
 
 SciGUIwindowMgr::~SciGUIwindowMgr() {
@@ -121,7 +121,7 @@ sciWnd *SciGUIwindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect 
 		return 0;
 	}
 	heapClearPtr(hWnd);
-	if (style & TOPMOST)
+	if (style & kTopmost)
 		windowList.AddToFront(hWnd);
 	else
 		windowList.AddToEnd(hWnd);
@@ -135,10 +135,10 @@ sciWnd *SciGUIwindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect 
 	pwnd->wndStyle = style;
 	pwnd->hSaved1 = pwnd->hSaved2 = NULL_REG;
 	pwnd->bDrawed = false;
-	if ((style & TRANSPARENT) == 0)
+	if ((style & kTransparent) == 0)
 		pwnd->uSaveFlag = (arg8 == 0xFFFF ? 1 : 3);
 	
-	if (title && (style & TITLE)) {
+	if (title && (style & kTitle)) {
 		HEAPHANDLE hTitle = heapNewPtr((uint16)strlen(title) + 1, kDataString, title);
 		if (!hTitle) {
 			warning("Can't open window!");
@@ -149,9 +149,9 @@ sciWnd *SciGUIwindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect 
 	}
 	
 	r = dims;
-	if (style == USER || (style & NOFRAME) == 0) {
+	if (style == kUser || (style & kNoFrame) == 0) {
 		r.grow(1);
-		if (style & TITLE) {
+		if (style & kTitle) {
 			r.top -= 10;
 			r.bottom++;
 		}
@@ -197,24 +197,24 @@ void SciGUIwindowMgr::DrawWindow(sciWnd *pWnd) {
 	pWnd->bDrawed = true;
 	sciPort *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
-	if ((wndStyle & TRANSPARENT) == 0) {
+	if ((wndStyle & kTransparent) == 0) {
 		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, 1);
 		if (pWnd->uSaveFlag & 2) {
 			pWnd->hSaved2 = _gfx->SaveBits(pWnd->restoreRect, 2);
-			if ((wndStyle & USER) == 0)
+			if ((wndStyle & kUser) == 0)
 				_gfx->FillRect(pWnd->restoreRect, 2, 0, 0xF);
 		}
 	}
 	
 	// drawing frame,shadow and title
-	if ((wndStyle & USER) == 0) {
+	if ((wndStyle & kUser) == 0) {
 		r = pWnd->dims;
-		if ((wndStyle & NOFRAME) == 0) {
+		if ((wndStyle & kNoFrame) == 0) {
 			r.translate(1, 1);
 			_gfx->FrameRect(r);// shadow
 			r.translate(-1, -1);
 			_gfx->FrameRect(r);// window frame
-			if (wndStyle & TITLE) {
+			if (wndStyle & kTitle) {
 				_gfx->FrameRect(r);
 				r.grow(-1);
 				_gfx->FillRect(r, 1, 0);
@@ -232,7 +232,7 @@ void SciGUIwindowMgr::DrawWindow(sciWnd *pWnd) {
 			r.grow(-1);
 		}
 		
-		if ((wndStyle & TRANSPARENT) == 0)
+		if ((wndStyle & kTransparent) == 0)
 			_gfx->FillRect(r, 1, pWnd->backClr);
 		_gfx->ShowBits(pWnd->dims, 1);
 	}
