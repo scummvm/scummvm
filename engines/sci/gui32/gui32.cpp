@@ -711,6 +711,33 @@ void SciGUI32::paletteAnimate(int fromColor, int toColor, int speed) {
 	warning("STUB");
 }
 
+int16 SciGUI32::onControl(byte screenMask, Common::Rect rect) {
+	gfx_map_mask_t map = (gfx_map_mask_t)screenMask;
+	rect_t gfxrect = gfx_rect(rect.left, rect.top + 10, rect.width(), rect.height());
+
+	return gfxop_scan_bitmask(s->gfx_state, gfxrect, map);
+// old code
+//	int xstart, ystart;
+//	int xlen = 1, ylen = 1;
+//
+//	if (argc == 2 || argc == 4)
+//		map = GFX_MASK_CONTROL;
+//	else {
+//		arg = 1;
+//		map = (gfx_map_mask_t) argv[0].toSint16();
+//	}
+//
+//	ystart = argv[arg + 1].toSint16();
+//	xstart = argv[arg].toSint16();
+//
+//	if (argc > 3) {
+//		ylen = argv[arg + 3].toSint16() - ystart;
+//		xlen = argv[arg + 2].toSint16() - xstart;
+//	}
+//
+//	return make_reg(0, gfxop_scan_bitmask(s->gfx_state, gfx_rect(xstart, ystart + 10, xlen, ylen), map));
+}
+
 void SciGUI32::moveCursor(int16 x, int16 y) {
 	Common::Point newPos;
 
