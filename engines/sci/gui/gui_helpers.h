@@ -99,8 +99,8 @@ struct GUIPalSchedule {
 
 #define GETFTR_WINDOWMGR(x) (x & 0x00000001)
 #define GETFTR_CANBEHERE(x) (x & 0x00000002)
-#define GETFTR_SOUND(x)		(x & 0x0000000C)
-#define GETFTR_SHOWPIC(x)	(x & 0x00000010)
+#define GETFTR_SOUND(x)     (x & 0x0000000C)
+#define GETFTR_SHOWPIC(x)   (x & 0x00000010)
 
 enum {
 	GFX_STOPUPDATE = 0x01,
