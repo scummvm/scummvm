@@ -63,7 +63,7 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 	bool IsEGA = false;
 
 	_embeddedPal = false;
-	_EGAMapping = (byte *)&EGAMappingDefault;
+	_EGAMapping = EGAMappingDefault;
 	_loopCount = 0;
 
 	switch (_s->resMan->getViewType()) {
