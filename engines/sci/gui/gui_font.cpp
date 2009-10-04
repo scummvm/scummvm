@@ -34,7 +34,11 @@ namespace Sci {
 SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
 	: _s(state), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
-	initData(resourceId);
+	if (_s->_gameName == "lsl1sci") {
+		// we remove upper bits for lsl1, because it wants to load font 2107 which is not available
+		_resourceId &= 0x7ff;
+	}
+	initData(_resourceId);
 }
 
 SciGUIfont::~SciGUIfont() {
