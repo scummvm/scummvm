@@ -57,15 +57,18 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 	uint16 headerSize = 0;
 	uint16 loopSize = 0, cellSize = 0;
 	int loopNo, cellNo;
-	int16 version;
 	byte seekEntry;
 
 	_embeddedPal = false;
 	_loopCount = 0;
 
-	version = READ_LE_UINT16(_resourceData + 4);
-	switch (version) {
-		case 0: // View-format SCI1
+
+	switch (_s->resMan->getViewType()) {
+	case kViewEga: // View-format SCI0/SCI0
+		// FIXME: seems to be almost the same as kViewVga
+		break;
+
+	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 		
 		// bit 0x8000 of _resourceData[1] means palette is set
@@ -109,7 +112,7 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 		}
 		break;
 
-		case 1: // View-format SCI1.1
+	case kViewVga11: // View-format SCI1.1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 		// HeaderSize:WORD LoopCount:WORD Version:WORD Unknown:WORD PaletteOffset:WORD
 		headerSize = READ_LE_UINT16(_resourceData + 0);
@@ -159,6 +162,13 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 			}
 		}
 		break;
+
+	case kViewAmiga: // View-format on amiga
+		// FIXME
+		break;
+
+	default:
+		error("ViewType was not detected, can't continue");
 	}
 }
 
