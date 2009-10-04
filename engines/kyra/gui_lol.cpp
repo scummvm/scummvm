@@ -2524,7 +2524,19 @@ int GUI_LoL::runMenu(Menu &menu) {
 void GUI_LoL::createScreenThumbnail(Graphics::Surface &dst) {
 	uint8 *screenPal = new uint8[768];
 	_screen->getRealPalette(1, screenPal);
-	::createThumbnail(&dst, _screen->getCPagePtr(7), Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+
+	if (_vm->gameFlags().platform == Common::kPlatformPC98) {
+		uint8 *screen = new uint8[Screen::SCREEN_W * Screen::SCREEN_H];
+		assert(screen);
+
+		_screen->copyRegionToBuffer(7, 0, 0, 320, 200, screen);
+		Screen_LoL::convertPC98Gfx(screen, Screen::SCREEN_W, Screen::SCREEN_H, Screen::SCREEN_W);
+		::createThumbnail(&dst, screen, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+		delete[] screen;
+	} else {
+		::createThumbnail(&dst, _screen->getCPagePtr(7), Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+	}
+
 	delete[] screenPal;
 }
 
