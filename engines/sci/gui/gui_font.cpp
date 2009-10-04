@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-SciGUIfont::SciGUIfont(OSystem *system, EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
+SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
 	: _s(state), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	if (_s->_gameName == "lsl1sci") {
