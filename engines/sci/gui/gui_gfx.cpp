@@ -916,7 +916,7 @@ void SciGUIgfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 void SciGUIgfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte color, byte prio, byte control) {
 	if (right < left)
 		SWAP(right, left);
-	for (int i = left; i < right; i++)
+	for (int i = left; i <= right; i++)
 		_screen->Put_Pixel(i, top, flag, color, prio, control);
 }
 
@@ -924,7 +924,7 @@ void SciGUIgfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte c
 void SciGUIgfx::Draw_Vert(int16 top, int16 bottom, int16 left, byte flag, byte color, byte prio, byte control) {
 	if (top > bottom)
 		SWAP(top, bottom);
-	for (int i = top; i < bottom; i++)
+	for (int i = top; i <= bottom; i++)
 		_screen->Put_Pixel(left, i, flag, color, prio, control);
 }
 
