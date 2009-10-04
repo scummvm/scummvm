@@ -710,9 +710,14 @@ void TextDisplayer_LoL::textPageBreak() {
 		y = dim->sy + dim->h - 10;
 	}
 
-	_vm->gui_drawBox(x, y, 74, 9, 136, 251, -1);
 	char *txt = _vm->getLangString(0x4073);
-	_vm->_screen->printText(txt, x + 37 - (_vm->_screen->getTextWidth(txt) >> 1), y + 2, _vm->gameFlags().use16ColorMode ? dim->unk8 : 144, 0);
+	if (_vm->gameFlags().use16ColorMode) {
+		_vm->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xee, 0xcc, -1);	
+		_vm->_screen->printText(txt, (x + 37 - (strlen(txt) << 1) + 4) & ~3, (y + 2) & ~7, 0xc1, 0);
+	} else {
+		_vm->gui_drawBox(x, y, 74, 9, 136, 251, -1);	
+		_vm->_screen->printText(txt, x + 37 - (_vm->_screen->getTextWidth(txt) >> 1), y + 2, 144, 0);
+	}	
 
 	_vm->removeInputTop();
 
@@ -752,7 +757,11 @@ void TextDisplayer_LoL::textPageBreak() {
 	} while (loop);
 
 
-	_screen->fillRect(x, y, x + 73, y + 8, _textDimData[_screen->curDimIndex()].color2);
+	if (_vm->gameFlags().use16ColorMode) 
+		_screen->fillRect(x + 8, y, x + 57, y + 9, _textDimData[_screen->curDimIndex()].color2);
+	else
+		_screen->fillRect(x, y, x + 73, y + 8, _textDimData[_screen->curDimIndex()].color2);
+
 	clearCurDim();
 
 	_vm->_timer->pauseSingleTimer(11, false);
