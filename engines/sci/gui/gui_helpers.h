@@ -44,8 +44,6 @@ struct GUINode1 : GUINode {
 	uint16 value;
 };
 
-// GUIPort and GUIWindow need to be binary identical, so if you change anything in one, you have to change it in the other one
-//  as well!
 struct GUIPort {
 	GUINode node; // node struct for list operations
 	int16 top, left;
