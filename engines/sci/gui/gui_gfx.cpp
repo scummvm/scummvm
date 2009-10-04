@@ -1268,4 +1268,30 @@ void SciGUIgfx::animatePalette(byte fromColor, byte toColor, int speed) {
 	_palSchedules.push_back(sched);
 }
 
+int16 SciGUIgfx::onControl(uint16 screenMask, Common::Rect rect) {
+	Common::Rect outRect(rect.left, rect.top, rect.right, rect.bottom);
+	int16 x, y;
+	int16 result = 0;
+
+	outRect.clip(_curPort->rect);
+	if (outRect.isEmpty()) // nothing to control
+		return 0;
+	OffsetRect(outRect);
+
+	if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
+		for (y = outRect.top; y < outRect.bottom; y++) {
+			for (x = outRect.left; x < outRect.right; x++) {
+				result |= 1 << _screen->Get_Priority(x, y);
+			}
+		}
+	} else {
+		for (y = outRect.top; y < outRect.bottom; y++) {
+			for (x = outRect.left; x < outRect.right; x++) {
+				result |= 1 << _screen->Get_Control(x, y);
+			}
+		}
+	}
+	return result;
+}
+
 } // end of namespace Sci

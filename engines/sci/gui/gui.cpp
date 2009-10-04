@@ -228,7 +228,6 @@ void SciGUI::textColors(int argc, reg_t *argv) {
 
 void SciGUI::drawPicture(sciResourceId pictureId, uint16 style, uint16 flags, int16 EGApaletteNo) {
 	bool addToFlag = flags ? true : false;
-
 	sciPort *oldPort = _gfx->SetPort((sciPort *)_windowMgr->_picWind);
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
@@ -315,6 +314,15 @@ int16 SciGUI::paletteFind(int r, int g, int b) {
 
 void SciGUI::paletteAnimate(int fromColor, int toColor, int speed) {
 	_gfx->animatePalette(fromColor, toColor, speed);
+}
+
+int16 SciGUI::onControl(byte screenMask, Common::Rect rect) {
+	sciPort *oldPort = _gfx->SetPort((sciPort *)_windowMgr->_picWind);
+	int16 result;
+
+	result = _gfx->onControl(screenMask, rect);
+	_gfx->SetPort(oldPort);
+	return result;
 }
 
 void SciGUI::moveCursor(int16 x, int16 y) {

@@ -74,6 +74,8 @@ public:
 	virtual int16 paletteFind(int r, int g, int b);
 	virtual void paletteAnimate(int fromColor, int toColor, int speed);
 
+	virtual int16 onControl(byte screenMask, Common::Rect rect);
+
 	virtual void moveCursor(int16 x, int16 y);
 
 private:

@@ -112,6 +112,8 @@ public:
 
 	void animatePalette(byte fromColor, byte toColor, int speed);
 
+	int16 onControl(uint16 screenMask, Common::Rect rect);
+
 	sciPort *_menuPort;
 	uint32 _sysTicks;
 	int32 _sysSpeed; // ticker timer in ms 
