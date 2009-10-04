@@ -3,6 +3,7 @@ MODULE := sound
 MODULE_OBJS := \
 	audiostream.o \
 	audiocd.o \
+	flac.o \
 	mixer.o \
 	mp3.o \
 	rate.o \
