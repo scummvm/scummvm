@@ -106,22 +106,6 @@ struct sciPalSched {
 #define STUB(str) debug("STUB: '%s' at file %s line %d",str,__FILE__,__LINE__)
 
 
-// FIXME: The following feature enums and macros should be reconsidered.
-// The way they are done right now is highly error prone.
-
-enum {
-	FTR_WINDOWMGR_SCI0	= (0<<0),	// SCI0 based window manager
-	FTR_WINDOWMGR_SCI1	= (1<<0),	// SCI1 based window manager  
-	FTR_CAN_BEHERE		= (0<<1),	// Kernel77 is kCanBeHere (SCI0)
-	FTR_CANT_BEHERE		= (1<<1),	// Kernel77 is kCantBeHere(SCI1)
-	FTR_SOUND_SCI0		= (0<<2),	// SCI0 Sound functions
-	FTR_SOUND_SCI01		= (1<<2),	// SCI0+ Sound functions
-	FTR_SOUND_SCI1		= (2<<2),	// SCI1 Sound functions
-	FTR_SHOWPIC_SCI0	= (0<<4),	// SCI0 ShowPic (44 effect codes)
-	FTR_SHOWPIC_SCI1	= (1<<4),	// SCI1 ShowPic (15 effect codes)
-	FTR_GL_ANIMATE		= (1<<5)	// Animate can be paused by global flag
-};
-
 #define GETFTR_WINDOWMGR(x) (x & 0x00000001)
 #define GETFTR_CANBEHERE(x) (x & 0x00000002)
 #define GETFTR_SOUND(x)		(x & 0x0000000C)
