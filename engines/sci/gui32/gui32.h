@@ -64,7 +64,8 @@ public:
 	void graphRestoreBox(reg_t handle);
 
 	void paletteSet(int resourceNo, int flags);
-	virtual int16 paletteFind(int r, int g, int b);
+	int16 paletteFind(int r, int g, int b);
+	void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	void paletteAnimate(int fromColor, int toColor, int speed);
 
 	int16 onControl(byte screenMask, Common::Rect rect);

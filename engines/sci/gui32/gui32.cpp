@@ -708,6 +708,12 @@ int16 SciGUI32::paletteFind(int r, int g, int b) {
 	return bestindex;
 }
 
+void SciGUI32::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
+#if 0
+	s->gfx_state->gfxResMan->setPaletteIntensity(fromColor, toColor, intensity);
+#endif
+}
+
 void SciGUI32::paletteAnimate(int fromColor, int toColor, int speed) {
 	warning("STUB");
 }

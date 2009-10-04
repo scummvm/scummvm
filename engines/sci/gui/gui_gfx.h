@@ -110,6 +110,7 @@ public:
 	void drawPicture(GUIResourceId pictureId, uint16 style, bool addToFlag, GUIResourceId paletteId);
 	void drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
+	void PaletteSetIntensity(int fromColor, int toColor, int intensity, GUIPalette *destPalette);
 	void PaletteAnimate(byte fromColor, byte toColor, int speed);
 
 	int16 onControl(uint16 screenMask, Common::Rect rect);

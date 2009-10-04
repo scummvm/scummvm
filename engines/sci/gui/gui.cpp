@@ -312,6 +312,13 @@ int16 SciGUI::paletteFind(int r, int g, int b) {
 	return _gfx->MatchColor(&_gfx->_sysPalette, r, g, b) & 0xFF;
 }
 
+void SciGUI::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
+	_gfx->PaletteSetIntensity(fromColor, toColor, intensity, &_gfx->_sysPalette);
+	if (setPalette) {
+		_gfx->SetCLUT(&_gfx->_sysPalette);
+	}
+}
+
 void SciGUI::paletteAnimate(int fromColor, int toColor, int speed) {
 	_gfx->PaletteAnimate(fromColor, toColor, speed);
 }

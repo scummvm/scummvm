@@ -1099,25 +1099,18 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	case 3:
 		debug(5, "STUB: kPalette() effect 3, clear flag to colors");
 		break;
-	case 4:	{	// Set palette intensity
-#if 0
-		// Colors 0 (black) and 255 (white) cannot be changed
-		int16 from = CLIP<int16>(1, 255, argv[2].toUint16());
-		int16 to = CLIP<int16>(1, 255, argv[3].toUint16());
-		int16 intensity = argv[4].toUint16();
+	case 4:	{ // Set palette intensity
+		if (argc >= 4) {
+			int fromColor = CLIP<int>(1, 255, argv[1].toUint16());
+			int toColor = CLIP<int>(1, 255, argv[2].toUint16());
+			int intensity = argv[3].toUint16();
+			bool setPalette = (argc < 5) ? true : (argv[5].isNull()) ? true : false;
 
-		if (argc < 5 || argv[5].toUint16() == 0) {
-			s->gfx_state->gfxResMan->setPaletteIntensity(from, to, intensity);
-		} else {
-			warning("kPalette: argv[5] != 0");
+			s->gui->paletteSetIntensity(fromColor, toColor, intensity, setPalette);
 		}
-
-		return s->r_acc;
-#endif
-		debug(5, "STUB: kPalette() effect 4, set color intensity");
 		break;
-		}
-	case 5: {	// Find closest color
+	}
+	case 5: { // Find closest color
 		int r = argv[1].toUint16();
 		int g = argv[2].toUint16();
 		int b = argv[3].toUint16();

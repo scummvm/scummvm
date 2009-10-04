@@ -1224,6 +1224,10 @@ void SciGUIgfx::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCell
 	}
 }
 
+void SciGUIgfx::PaletteSetIntensity(int fromColor, int toColor, int intensity, GUIPalette *destPalette) {
+	memset(destPalette->intensity + fromColor, intensity, toColor - fromColor);
+}
+
 void SciGUIgfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
 	GUIColor col;
 	int len = toColor - fromColor - 1;
