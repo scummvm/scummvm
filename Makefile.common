@@ -23,8 +23,8 @@ MODULES := tools base $(MODULES)
 # After the game specific modules follow the shared modules
 MODULES += \
 	engines \
-	graphics \
 	gui \
+	graphics \
 	sound \
 	backends \
 	common \
