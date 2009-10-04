@@ -244,7 +244,7 @@ void SciGUIwindowMgr::DisposeWindow(sciWnd *pWnd, int16 arg2) {
 	_gfx->RestoreBits(pWnd->hSaved1);
 	_gfx->RestoreBits(pWnd->hSaved2);
 	if (arg2)
-		_gfx->ShowBits(pWnd->rect0, 1);
+		_gfx->ShowBits(pWnd->rect1, 1);
 //	else
 //		g_sci->ReAnimate(&pwnd->rect0);
 	HEAPHANDLE hh = ptr2heap((byte *)pWnd);
@@ -259,11 +259,11 @@ void SciGUIwindowMgr::UpdateWindow(sciWnd *wnd) {
 	sciMemoryHandle handle;
 
 	if (wnd->uSaveFlag && wnd->bDrawed) {
-		handle = _gfx->SaveBits(wnd->rect0, 1);
+		handle = _gfx->SaveBits(wnd->rect1, 1);
 		_gfx->RestoreBits(wnd->hSaved1);
 		wnd->hSaved1 = handle;
 		if (wnd->uSaveFlag & 2) {
-			handle = _gfx->SaveBits(wnd->rect0, 2);
+			handle = _gfx->SaveBits(wnd->rect1, 2);
 			_gfx->RestoreBits(wnd->hSaved2);
 			wnd->hSaved2 = handle;
 		}
