@@ -6,6 +6,7 @@ MODULE_OBJS := \
 	barchive.o \
 	script.o \
 	font.o \
+	saveload.o \
 	sprite.o \
 	screen.o \
 	surface.o \

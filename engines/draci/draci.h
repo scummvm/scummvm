@@ -54,6 +54,12 @@ public:
 
 	void handleEvents();
 
+	static const char *getSavegameFile(int saveGameIdx);
+	virtual Common::Error loadGameState(int slot);
+	virtual bool canLoadGameStateCurrently();
+	virtual Common::Error saveGameState(int slot, const char *desc);
+	virtual bool canSaveGameStateCurrently();
+
 	Screen *_screen;
 	Mouse *_mouse;
 	Game *_game;
@@ -79,6 +85,9 @@ public:
 	bool _showWalkingMap;
 
 	Common::RandomSource _rnd;
+
+	int32 _engineStartTime;
+	int32 _pauseStartTime;
 };
 
 enum {

@@ -81,6 +81,13 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	g_eventRec.registerRandomSource(_rnd, "draci");
 }
 
+bool DraciEngine::hasFeature(EngineFeature f) const {
+	return (f == kSupportsSubtitleOptions) ||
+		(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime) ||
+		(f == kSupportsSavingDuringRuntime);
+}
+
 int DraciEngine::init() {
 	// Initialize graphics using following:
 	initGraphics(kScreenWidth, kScreenHeight, false);
@@ -301,7 +308,14 @@ DraciEngine::~DraciEngine() {
 
 Common::Error DraciEngine::run() {
 	init();
+	_engineStartTime = _system->getMillis() / 1000;
 	_game->init();
+
+	// Load game from specified slot, if any
+	if (ConfMan.hasKey("save_slot")) {
+		loadGameState(ConfMan.getInt("save_slot"));
+	}
+
 	_game->start();
 	return Common::kNoError;
 }
@@ -309,9 +323,17 @@ Common::Error DraciEngine::run() {
 void DraciEngine::pauseEngineIntern(bool pause) {
 	Engine::pauseEngineIntern(pause);
 	if (pause) {
+		// Record start of the pause, so that we can later
+		// adjust _engineStartTime accordingly.
+		_pauseStartTime = _system->getMillis();
+
 		_anims->pauseAnimations();
 	} else {
 		_anims->unpauseAnimations();
+
+		// Adjust engine start time
+		_engineStartTime += (_system->getMillis() - _pauseStartTime) / 1000;
+		_pauseStartTime = 0;
 	}
 }
 
@@ -319,6 +341,32 @@ void DraciEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	// TODO: update our volumes
+}
+
+const char *DraciEngine::getSavegameFile(int saveGameIdx) {
+	static char buffer[20];
+	sprintf(buffer, "draci.s%02d", saveGameIdx);
+	return buffer;
+}
+
+Common::Error DraciEngine::loadGameState(int slot) {
+	// TODO
+	return Common::kNoError;
+}
+
+bool DraciEngine::canLoadGameStateCurrently() {
+	return (_game->getLoopStatus() == kStatusOrdinary) &&
+		(_game->getLoopSubstatus() == kSubstatusOrdinary);
+}
+
+Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
+	// TODO
+	return Common::kNoError;
+}
+
+bool DraciEngine::canSaveGameStateCurrently() {
+	return (_game->getLoopStatus() == kStatusOrdinary) &&
+		(_game->getLoopSubstatus() == kSubstatusOrdinary);
 }
 
 } // End of namespace Draci

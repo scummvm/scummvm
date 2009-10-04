@@ -24,6 +24,7 @@
  */
 
 #include "draci/draci.h"
+#include "draci/saveload.h"
 
 #include "base/plugins.h"
 #include "engines/metaengine.h"
@@ -107,16 +108,86 @@ public:
 	}
 
 	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual int getMaximumSaveSlot() const { return 99; };
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
 };
 
 bool DraciMetaEngine::hasFeature(MetaEngineFeature f) const {
-	return false;
+	return
+		(f == kSupportsListSaves) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate) ||
+		(f == kSavesSupportPlayTime) ||
+		(f == kSupportsLoadingDuringStartup);
 }
 
-bool Draci::DraciEngine::hasFeature(EngineFeature f) const {
-	return (f == kSupportsSubtitleOptions) ||
-		(f == kSupportsRTL);
+SaveStateList DraciMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	Common::String pattern("draci.s??");
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 2 digits of the filename, since they correspond to the save slot
+		int slotNum = atoi(file->c_str() + file->size() - 2);
+
+		if (slotNum >= 0 && slotNum <= 99) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			if (in) {
+				Draci::DraciSavegameHeader header;
+				Draci::readSavegameHeader(in, header);
+				saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
+				if (header.thumbnail) delete header.thumbnail;
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+void DraciMetaEngine::removeSaveState(const char *target, int slot) const {
+	g_system->getSavefileManager()->removeSavefile(Draci::DraciEngine::getSavegameFile(slot));
+}
+
+SaveStateDescriptor DraciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(
+		Draci::DraciEngine::getSavegameFile(slot));
+	assert(f);
+
+	Draci::DraciSavegameHeader header;
+	Draci::readSavegameHeader(f, header);
+	delete f;
+
+	// Create the return descriptor
+	SaveStateDescriptor desc(slot, header.saveName);
+	desc.setDeletableFlag(true);
+	desc.setWriteProtectedFlag(false);
+	desc.setThumbnail(header.thumbnail);
+
+	int day = (header.date >> 24) & 0xFF;
+	int month = (header.date >> 16) & 0xFF;
+	int year = header.date & 0xFFFF;
+	desc.setSaveDate(year, month, day);
+
+	int hour = (header.time >> 8) & 0xFF;
+	int minutes = header.time & 0xFF;
+	desc.setSaveTime(hour, minutes);
+
+	minutes = header.playtime / 60;
+	hour = minutes / 60;
+	minutes %= 60;
+	desc.setPlayTime(hour, minutes);
+
+	return desc;
 }
 
 bool DraciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
