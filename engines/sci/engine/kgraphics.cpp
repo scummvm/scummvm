@@ -869,27 +869,27 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
-	int arg = 0;
-	gfx_map_mask_t map;
-	int xstart, ystart;
-	int xlen = 1, ylen = 1;
+	Common::Rect rect;
+	byte screenMask;
+	int16 y, x;
+	int argBase = 0;
 
-	if (argc == 2 || argc == 4)
-		map = GFX_MASK_CONTROL;
-	else {
-		arg = 1;
-		map = (gfx_map_mask_t) argv[0].toSint16();
+	if ((argc == 2) || (argc == 4)) {
+		screenMask = GFX_MASK_CONTROL;
+	} else {
+		screenMask = argv[0].toUint16();
+		argBase = 1;
 	}
-
-	ystart = argv[arg + 1].toSint16();
-	xstart = argv[arg].toSint16();
-
+	rect.left = argv[argBase].toSint16();
+	rect.top = argv[argBase + 1].toSint16();
 	if (argc > 3) {
-		ylen = argv[arg + 3].toSint16() - ystart;
-		xlen = argv[arg + 2].toSint16() - xstart;
+		rect.right = argv[argBase + 2].toSint16() + 1;
+		rect.bottom = argv[argBase + 3].toSint16() + 1;
+	} else {
+		rect.right = rect.left + 1;
+		rect.bottom = rect.top + 1;
 	}
-
-	return make_reg(0, gfxop_scan_bitmask(s->gfx_state, gfx_rect(xstart, ystart + 10, xlen, ylen), map));
+	return make_reg(0, s->gui->onControl(screenMask, rect));
 }
 
 void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
@@ -1433,7 +1433,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 	rect_t area = gfx_rect(x, y, xl, yl);
 
 	Common::Rect rect;
-	rect = Common::Rect (x, y, (int16)GET_SEL32V(obj, nsRight), (int16)GET_SEL32V(obj, nsBottom));
+	rect = Common::Rect (x, y, (int16)GET_SEL32V(obj, nsRight) + 1, (int16)GET_SEL32V(obj, nsBottom) + 1);
 
 	int font_nr = GET_SEL32V(obj, font);
 	reg_t text_pos = GET_SEL32(obj, text);
@@ -2228,8 +2228,8 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 		case 6:
 		picRect.top = argv[0].toSint16();
 		picRect.left = argv[1].toSint16();
-		picRect.bottom = argv[2].toSint16();
-		picRect.right = argv[3].toSint16();
+		picRect.bottom = argv[2].toSint16() + 1;
+		picRect.right = argv[3].toSint16() + 1;
 		picTop = argv[4].toSint16();
 		picLeft = argv[5].toSint16();
 		s->gui->setPortPic(picRect, picTop, picLeft);
@@ -2265,7 +2265,7 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
-	Common::Rect rect1 (argv[1].toSint16(), argv[0].toSint16(), argv[3].toSint16(), argv[2].toSint16());
+	Common::Rect rect1 (argv[1].toSint16(), argv[0].toSint16(), argv[3].toSint16() + 1, argv[2].toSint16() + 1);
 	Common::Rect rect2;
 	int argextra = argc == 13 ? 4 : 0; // Triggers in PQ3 and SCI1.1 games
 	int	style = argv[5 + argextra].toSint16();
@@ -2275,7 +2275,7 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 
 	//	const char *title = argv[4 + argextra].segment ? kernel_dereference_char_pointer(s, argv[4 + argextra], 0) : NULL;
 	if (argc==13) {
-		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16(), argv[6].toSint16());
+		rect2 = Common::Rect (argv[5].toSint16(), argv[4].toSint16(), argv[7].toSint16() + 1, argv[6].toSint16() + 1);
 	}
 
 	Common::String title;
