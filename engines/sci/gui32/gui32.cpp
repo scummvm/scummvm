@@ -487,7 +487,7 @@ void SciGUI32::textColors(int argc, reg_t *argv) {
 	// stub
 }
 
-void SciGUI32::drawPicture(sciResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo) {
+void SciGUI32::drawPicture(GUIResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo) {
 	drawn_pic_t dp;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
@@ -552,7 +552,7 @@ void SciGUI32::drawPicture(sciResourceId pictureId, uint16 showStyle, uint16 fla
 	s->pic_is_new = 1;
 }
 
-void SciGUI32::drawCell(sciResourceId viewId, uint16 loopNo, uint16 cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
+void SciGUI32::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	int loop = loopNo;
 	int cel = cellNo;
 	GfxView *new_view;
@@ -1957,7 +1957,7 @@ void SciGUI32::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	reparentize_primary_widget_lists(s, s->port);
 }
 
-void SciGUI32::addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void SciGUI32::addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	assert_primary_widget_lists(s);
 
 	GfxWidget *widget;

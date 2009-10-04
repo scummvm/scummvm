@@ -51,8 +51,8 @@ public:
 	void textFonts(int argc, reg_t *argv);
 	void textColors(int argc, reg_t *argv);
 
-	void drawPicture(sciResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
-	void drawCell(sciResourceId viewId, uint16 loopNo, uint16 cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
+	void drawPicture(GUIResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
+	void drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
 	void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse);
 	void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse);
 
@@ -70,7 +70,7 @@ public:
 	int16 onControl(byte screenMask, Common::Rect rect);
 	void animate(reg_t castListReference, bool cycle, int argc, reg_t *argv);
 	void addToPicList(reg_t listReference, int argc, reg_t *argv);
-	void addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	void addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	void setNowSeen(reg_t objectReference);
 
 	void moveCursor(int16 x, int16 y);
