@@ -51,8 +51,9 @@ public:
 	sciResourceId getResourceId();
 	int16 getWidth(uint16 loopNo, uint16 cellNo);
 	int16 getHeight(uint16 loopNo, uint16 cellNo);
-	sciViewCellInfo *getCellInfo(uint16 loop, uint16 cel);
-	sciViewLoopInfo *getLoopInfo(uint16 loop);
+	sciViewCellInfo *getCellInfo(uint16 loopNo, uint16 cellNo);
+	sciViewLoopInfo *getLoopInfo(uint16 loopNo);
+	void getCellRect(uint16 loopNo, uint16 cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
 	byte *getBitmap(uint16 loopNo, uint16 cellNo);
 	void draw(Common::Rect rect, Common::Rect clipRect, uint16 loopNo, uint16 cellNo, byte priority, uint16 paletteNo);
 

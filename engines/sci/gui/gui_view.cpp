@@ -181,10 +181,25 @@ int16 SciGUIview::getHeight(uint16 loopNo, uint16 cellNo) {
 }
 
 sciViewCellInfo *SciGUIview::getCellInfo(uint16 loopNo, uint16 cellNo) {
-	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
+	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	if (cellNo >= _loop[loopNo].cellCount)
 		cellNo = 0;
 	return _loopCount ? &_loop[loopNo].cell[cellNo] : NULL;
+}
+
+sciViewLoopInfo *SciGUIview::getLoopInfo(uint16 loopNo) {
+	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
+	return _loopCount ? &_loop[loopNo] : NULL;
+}
+
+void SciGUIview::getCellRect(uint16 loopNo, uint16 cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
+	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
+	if (cellInfo) {
+		outRect->left = x + cellInfo->displaceX - (cellInfo->width >> 1);
+		outRect->right = outRect->left + cellInfo->width;
+		outRect->bottom = y + cellInfo->displaceY - z + 1;
+		outRect->top = outRect->bottom - cellInfo->height;
+	}
 }
 
 void SciGUIview::unpackView(uint16 loopNo, uint16 cellNo, byte *outPtr, uint16 pixelCount) {
