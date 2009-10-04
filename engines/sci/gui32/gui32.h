@@ -42,7 +42,7 @@ public:
 	reg_t getPort();
 	void globalToLocal(int16 *x, int16 *y);
 	void localToGlobal(int16 *x, int16 *y);
-	reg_t newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
+	reg_t newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title);
 	void disposeWindow(uint16 windowPtr, int16 arg2);
 
 	void display(const char *text, int argc, reg_t *argv);

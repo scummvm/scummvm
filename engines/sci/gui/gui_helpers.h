@@ -65,8 +65,8 @@ struct sciWnd {
 	int16 textFace, penClr, backClr;
 	int16 penMode;
 	// window specific members
-	Common::Rect rect0; // client area of window
-	Common::Rect rect1; // total area of window including borders
+	Common::Rect dims; // client area of window
+	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
 	uint16 uSaveFlag;
 	reg_t hSaved1;

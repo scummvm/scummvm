@@ -68,7 +68,7 @@ SciGUIwindowMgr::SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx)
 
 	windowList.AddToFront(wmgrPortH);
 
-	_picWind = NewWindow(&_picRect, 0, 0, TRANSPARENT | NOFRAME, 0, 1);
+	_picWind = NewWindow(_picRect, 0, 0, TRANSPARENT | NOFRAME, 0, 1);
 }
 
 SciGUIwindowMgr::~SciGUIwindowMgr() {
@@ -112,7 +112,7 @@ void SciGUIwindowMgr::EndUpdate(sciWnd *wnd) {
 	_gfx->SetPort(oldPort);
 }
 
-sciWnd *SciGUIwindowMgr::NewWindow(Common::Rect *rect, Common::Rect *rect2, const char *title, uint16 style, uint16 arg8, uint16 argA) {
+sciWnd *SciGUIwindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA) {
 	HEAPHANDLE hWnd = heapNewPtr(sizeof(sciWnd), kDataWindow, title);
 	Common::Rect r;
 
@@ -127,10 +127,10 @@ sciWnd *SciGUIwindowMgr::NewWindow(Common::Rect *rect, Common::Rect *rect2, cons
 		windowList.AddToEnd(hWnd);
 	sciWnd *pwnd = (sciWnd *)heap2Ptr(hWnd);
 	_gfx->OpenPort((sciPort *)pwnd);
-	r = *rect;
-	pwnd->rect = *rect;
-	if (rect2)
-		pwnd->rect1 = *rect2;
+	r = dims;
+	pwnd->rect = dims;
+	if (restoreRect)
+		pwnd->restoreRect = *restoreRect;
 	
 	pwnd->wndStyle = style;
 	pwnd->hSaved1 = pwnd->hSaved2 = NULL_REG;
@@ -148,7 +148,7 @@ sciWnd *SciGUIwindowMgr::NewWindow(Common::Rect *rect, Common::Rect *rect2, cons
 		strcpy((char *)heap2Ptr(hTitle), title);
 	}
 	
-	r = *rect;
+	r = dims;
 	if (style == USER || (style & NOFRAME) == 0) {
 		r.grow(1);
 		if (style & TITLE) {
@@ -157,28 +157,28 @@ sciWnd *SciGUIwindowMgr::NewWindow(Common::Rect *rect, Common::Rect *rect2, cons
 		}
 	}
 	
-	pwnd->rect0 = r;
+	pwnd->dims = r;
 	const Common::Rect *wmprect = &_wmgrPort->rect;
-	int16 oldtop = pwnd->rect0.top;
-	int16 oldleft = pwnd->rect0.left;
-	if (wmprect->top > pwnd->rect0.top)
-		pwnd->rect0.moveTo(pwnd->rect0.left, wmprect->top);
+	int16 oldtop = pwnd->dims.top;
+	int16 oldleft = pwnd->dims.left;
+	if (wmprect->top > pwnd->dims.top)
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect->top);
 	
-	if (wmprect->bottom < pwnd->rect0.bottom)
-		pwnd->rect0.moveTo(pwnd->rect0.left, wmprect->bottom
-				- pwnd->rect0.bottom + pwnd->rect0.top);
+	if (wmprect->bottom < pwnd->dims.bottom)
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect->bottom
+				- pwnd->dims.bottom + pwnd->dims.top);
 	
-	if (wmprect->right < pwnd->rect0.right)
-		pwnd->rect0.moveTo(wmprect->right + pwnd->rect0.left
-				- pwnd->rect0.right, pwnd->rect0.top);
+	if (wmprect->right < pwnd->dims.right)
+		pwnd->dims.moveTo(wmprect->right + pwnd->dims.left
+				- pwnd->dims.right, pwnd->dims.top);
 	
-	if (wmprect->left > pwnd->rect0.left)
-		pwnd->rect0.moveTo(wmprect->left, pwnd->rect0.top);
+	if (wmprect->left > pwnd->dims.left)
+		pwnd->dims.moveTo(wmprect->left, pwnd->dims.top);
 	
-	pwnd->rect.moveTo(pwnd->rect.left + pwnd->rect0.left - oldleft,
-			pwnd->rect.top + pwnd->rect0.top - oldtop);
-	if (rect2 == 0)
-		pwnd->rect1 = pwnd->rect0;
+	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft,
+			pwnd->rect.top + pwnd->dims.top - oldtop);
+	if (restoreRect == 0)
+		pwnd->restoreRect = pwnd->dims;
 	
 	if (argA)
 		DrawWindow(pwnd);
@@ -198,17 +198,17 @@ void SciGUIwindowMgr::DrawWindow(sciWnd *pWnd) {
 	sciPort *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
 	if ((wndStyle & TRANSPARENT) == 0) {
-		pWnd->hSaved1 = _gfx->SaveBits(pWnd->rect1, 1);
+		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, 1);
 		if (pWnd->uSaveFlag & 2) {
-			pWnd->hSaved2 = _gfx->SaveBits(pWnd->rect1, 2);
+			pWnd->hSaved2 = _gfx->SaveBits(pWnd->restoreRect, 2);
 			if ((wndStyle & USER) == 0)
-				_gfx->FillRect(pWnd->rect1, 2, 0, 0xF);
+				_gfx->FillRect(pWnd->restoreRect, 2, 0, 0xF);
 		}
 	}
 	
 	// drawing frame,shadow and title
 	if ((wndStyle & USER) == 0) {
-		r = pWnd->rect0;
+		r = pWnd->dims;
 		if ((wndStyle & NOFRAME) == 0) {
 			r.translate(1, 1);
 			_gfx->FrameRect(r);// shadow
@@ -225,7 +225,7 @@ void SciGUIwindowMgr::DrawWindow(sciWnd *pWnd) {
 					_gfx->PenColor(oldcolor);
 				}
 				
-				r = pWnd->rect0;
+				r = pWnd->dims;
 				r.top += 9;
 			}
 			
@@ -234,7 +234,7 @@ void SciGUIwindowMgr::DrawWindow(sciWnd *pWnd) {
 		
 		if ((wndStyle & TRANSPARENT) == 0)
 			_gfx->FillRect(r, 1, pWnd->backClr);
-		_gfx->ShowBits(pWnd->rect0, 1);
+		_gfx->ShowBits(pWnd->dims, 1);
 	}
 	_gfx->SetPort(oldport);
 }
@@ -244,9 +244,9 @@ void SciGUIwindowMgr::DisposeWindow(sciWnd *pWnd, int16 arg2) {
 	_gfx->RestoreBits(pWnd->hSaved1);
 	_gfx->RestoreBits(pWnd->hSaved2);
 	if (arg2)
-		_gfx->ShowBits(pWnd->rect1, 1);
+		_gfx->ShowBits(pWnd->restoreRect, 1);
 //	else
-//		g_sci->ReAnimate(&pwnd->rect0);
+//		g_sci->ReAnimate(&pwnd->dims);
 	HEAPHANDLE hh = ptr2heap((byte *)pWnd);
 	windowList.DeleteNode(hh);
 	SelectWindow(windowList.getLast());
@@ -259,11 +259,11 @@ void SciGUIwindowMgr::UpdateWindow(sciWnd *wnd) {
 	sciMemoryHandle handle;
 
 	if (wnd->uSaveFlag && wnd->bDrawed) {
-		handle = _gfx->SaveBits(wnd->rect1, 1);
+		handle = _gfx->SaveBits(wnd->restoreRect, 1);
 		_gfx->RestoreBits(wnd->hSaved1);
 		wnd->hSaved1 = handle;
 		if (wnd->uSaveFlag & 2) {
-			handle = _gfx->SaveBits(wnd->rect1, 2);
+			handle = _gfx->SaveBits(wnd->restoreRect, 2);
 			_gfx->RestoreBits(wnd->hSaved2);
 			wnd->hSaved2 = handle;
 		}

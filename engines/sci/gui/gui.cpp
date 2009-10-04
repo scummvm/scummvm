@@ -102,13 +102,13 @@ void SciGUI::localToGlobal(int16 *x, int16 *y) {
 	*y = *y + curPort->top;
 }
 
-reg_t SciGUI::newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
+reg_t SciGUI::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	sciWnd *wnd = NULL;
 
-	if (rect2.top != 0 && rect2.left != 0 && rect2.height() != 0 && rect2.width() != 0)
-		wnd = _windowMgr->NewWindow(&rect1, &rect2, title, style, priority, 0);
+	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
+		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, 0);
 	else
-		wnd = _windowMgr->NewWindow(&rect1, NULL, title, style, priority, 0);
+		wnd = _windowMgr->NewWindow(dims, NULL, title, style, priority, 0);
 	wnd->penClr = colorPen;
 	wnd->backClr = colorBack;
 	_windowMgr->DrawWindow(wnd);
@@ -126,7 +126,7 @@ void SciGUI::display(const char *text, int argc, reg_t *argv) {
 	int16 align = 0;
 	int16 bgcolor = -1, width = -1, bRedraw = 1;
 	byte bSaveUnder = false;
-	Common::Rect rect, *orect = &((sciWnd *)_gfx->GetPort())->rect0;
+	Common::Rect rect, *orect = &((sciWnd *)_gfx->GetPort())->dims;
 
 	memcpy(&oldPort, _gfx->GetPort(), sizeof(sciPort));
 	// setting defaults

@@ -171,7 +171,7 @@ void SciGUI32::localToGlobal(int16 *x, int16 *y) {
 	*y = *y + s->port->zone.y;
 }
 
-reg_t SciGUI32::newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
+reg_t SciGUI32::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	GfxPort *window;
 	int x, y, xl, yl;
 	gfx_color_t bgcolor;
@@ -179,10 +179,10 @@ reg_t SciGUI32::newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, 
 	gfx_color_t black;
 	gfx_color_t lWhite;
 
-	y = rect1.top;
-	x = rect1.left;
-	yl = rect1.height();
-	xl = rect1.width();
+	y = dims.top;
+	x = dims.left;
+	yl = dims.height();
+	xl = dims.width();
 
 	y += s->wm_port->_bounds.y;
 
@@ -205,7 +205,7 @@ reg_t SciGUI32::newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, 
 	bgcolor.mask |= priority >= 0 ? GFX_MASK_PRIORITY : 0;
 	bgcolor.alpha = 0;
 	bgcolor.control = -1;
-	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", rect1.top, rect1.left, rect1.height(), rect1.width());
+	debugC(2, kDebugLevelGraphics, "New window with params %d, %d, %d, %d\n", dims.top, dims.left, dims.height(), dims.width());
 
 	fgcolor.visual = get_pic_color(s, colorPen);
 	fgcolor.mask = GFX_MASK_VISUAL;
@@ -227,8 +227,8 @@ reg_t SciGUI32::newWindow(Common::Rect rect1, Common::Rect rect2, uint16 style, 
 							s->titlebar_port->_font, lWhite, black, title ? s->strSplit(title, NULL).c_str() : NULL, style);
 
 	// PQ3 and SCI1.1 games have the interpreter store underBits implicitly
-	if (rect2.top != 0 && rect2.left != 0 && rect2.height() != 0 && rect2.width() != 0)
-		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(rect2.left, rect2.top + s->wm_port->_bounds.y, rect2.width(), rect2.height()));
+	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
+		gfxw_port_auto_restore_background(s->visual, window, gfx_rect(restoreRect.left, restoreRect.top + s->wm_port->_bounds.y, restoreRect.width(), restoreRect.height()));
 
 	ADD_TO_WINDOW_PORT(window);
 	FULL_REDRAW();

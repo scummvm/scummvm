@@ -39,7 +39,7 @@ public:
 	SCILanguage getSCILanguage();
 	char* StrSplit(char*buff, const char*msg, const char*fmt);
 	char* getIntlString(char*buff, const char*msg, const char*fmt, SCILanguage lang, SCILanguage prop);
-	sciWnd *NewWindow(Common::Rect *rect, Common::Rect *rect2, const char *title, uint16 style, uint16 arg8, uint16 argA);
+	sciWnd *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
 	void DrawWindow(sciWnd *wnd);
 	void DisposeWindow(sciWnd *pWnd, int16 arg2);
 	void UpdateWindow(sciWnd *wnd);
