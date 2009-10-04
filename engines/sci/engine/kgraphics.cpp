@@ -895,7 +895,7 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 #define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
-	sciResourceId pictureId = argv[0].toUint16();
+	GUIResourceId pictureId = argv[0].toUint16();
 	uint16 flags = 0;
 	uint16 style = 1;
 	int16 EGApaletteNo = -1;
@@ -1556,8 +1556,9 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 }
 
 reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
-	sciResourceId viewId;
-	uint16 loopNo, cellNo;
+	GUIResourceId viewId;
+	GUIViewLoopNo loopNo;
+	GUIViewCellNo cellNo;
 	int16 leftPos, topPos, priority, control;
 
 	switch (argc) {
@@ -1568,8 +1569,8 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 7:
 		viewId = argv[0].toUint16();
-		loopNo = argv[1].toUint16();
-		cellNo = argv[2].toUint16();
+		loopNo = argv[1].toSint16();
+		cellNo = argv[2].toSint16();
 		leftPos = argv[3].toSint16();
 		topPos = argv[4].toSint16();
 		priority = argv[5].toSint16();
@@ -1615,15 +1616,15 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
-	int view = argv[0].toSint16();
-	int loop = argv[1].toSint16();
-	int cel = argv[2].toSint16();
+	GUIResourceId viewId = argv[0].toSint16();
+	GUIViewLoopNo loopNo = argv[1].toSint16();
+	GUIViewCellNo cellNo = argv[2].toSint16();
 	int x = argv[3].toSint16();
 	int y = argv[4].toSint16();
 	int priority = (argc > 5) ? argv[5].toUint16()  : -1;
 	int paletteNo = (argc > 6) ? argv[6].toSint16() : 0;
 
-	s->gui->drawCell(view, loop, cel, x, y, priority, paletteNo);
+	s->gui->drawCell(viewId, loopNo, cellNo, x, y, priority, paletteNo);
 
 	return s->r_acc;
 }
