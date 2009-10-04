@@ -41,6 +41,8 @@ SciGUIview::SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciG
 SciGUIview::~SciGUIview() {
 }
 
+static const byte EGAMappingDefault[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
+
 void SciGUIview::initData(GUIResourceId resourceId) {
 	Resource *viewResource = _s->resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
 	if (!viewResource) {
@@ -61,8 +63,8 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 	bool IsEGA = false;
 
 	_embeddedPal = false;
+	_EGAMapping = (byte *)&EGAMappingDefault;
 	_loopCount = 0;
-
 
 	switch (_s->resMan->getViewType()) {
 	case kViewEga: // View-format SCI0
@@ -76,12 +78,12 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
 		if (palOffset && palOffset != 0x100) {
-			if (IsEGA) {
-				// translation map for 16 colors
+			if (IsEGA) { // simple mapping for 16 colors
+				_EGAMapping = _resourceData + palOffset;
 			} else {
 				_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+				_embeddedPal = true;
 			}
-			_embeddedPal = true;
 		}
 
 		_loop = new sciViewLoopInfo[_loopCount];
@@ -165,6 +167,7 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 				cell->displaceX = READ_LE_UINT16(cellData + 4);
 				cell->displaceY = READ_LE_UINT16(cellData + 6);
 				cell->clearKey = cellData[8];
+				cell->offsetEGA = 0;
 				cell->offsetRLE = READ_LE_UINT16(cellData + 24);
 				cell->offsetLiteral = READ_LE_UINT16(cellData + 28);
 				cell->rawBitmap = 0;

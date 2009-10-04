@@ -77,6 +77,7 @@ private:
 	sciViewLoopInfo *_loop;
 	bool _embeddedPal;
 	GUIPalette _palette;
+	byte *_EGAMapping; // simple translation map for all 16 colors
 };
 
 } // End of namespace Sci
