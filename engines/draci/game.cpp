@@ -144,11 +144,13 @@ void Game::start() {
 	while (!shouldQuit()) {
 		debugC(1, kDraciGeneralDebugLevel, "Game::start()");
 
+		const bool force_reload = shouldExitLoop() > 1;
+
 		// Whenever the top-level loop is entered, it should not finish unless
 		// the exit is triggered by a script
 		_shouldExitLoop = false;
 
-		enterNewRoom();
+		enterNewRoom(force_reload);
 		loop();
 	}
 }
@@ -214,7 +216,8 @@ void Game::init() {
 	_vm->_script->run(dragon->_program, dragon->_init);
 
 	// Make sure we enter the right room in start().
-	_previousRoom = _currentRoom._roomNum = kNoEscRoom;
+	setRoomNum(kNoEscRoom);
+	rememberRoomNumAsPrevious();
 	scheduleEnteringRoomUsingGate(_info._startRoom, 0);
 }
 
@@ -1254,8 +1257,21 @@ void Game::loadOverlays() {
 	_vm->_screen->getSurface()->markDirty();
 }
 
-void Game::enterNewRoom() {
-	if (_newRoom == getRoomNum()) {
+void Game::deleteObjectAnimations() {
+	for (uint i = 0; i < _info._numObjects; ++i) {
+		GameObject *obj = &_objects[i];
+
+		if (i != 0 && (obj->_location == getPreviousRoomNum())) {
+			for (uint j = 0; j < obj->_anims.size(); ++j) {
+					_vm->_anims->deleteAnimation(obj->_anims[j]);
+			}
+			obj->_anims.clear();
+		}
+	}
+}
+
+void Game::enterNewRoom(bool force_reload) {
+	if (_newRoom == getRoomNum() && !force_reload) {
 		return;
 	}
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
@@ -1281,18 +1297,8 @@ void Game::enterNewRoom() {
 	}
 
 	// Remember the previous room for returning back from the map.
-	_previousRoom = getRoomNum();
-
-	for (uint i = 0; i < _info._numObjects; ++i) {
-		GameObject *obj = &_objects[i];
-
-		if (i != 0 && (obj->_location == _previousRoom)) {
-			for (uint j = 0; j < obj->_anims.size(); ++j) {
-					_vm->_anims->deleteAnimation(obj->_anims[j]);
-			}
-			obj->_anims.clear();
-		}
-	}
+	rememberRoomNumAsPrevious();
+	deleteObjectAnimations();
 
 	// Set the current room to the new value
 	_currentRoom._roomNum = _newRoom;
@@ -1405,6 +1411,10 @@ void Game::setRoomNum(int num) {
 
 int Game::getPreviousRoomNum() const {
 	return _previousRoom;
+}
+
+void Game::rememberRoomNumAsPrevious() {
+	_previousRoom = getRoomNum();
 }
 
 void Game::scheduleEnteringRoomUsingGate(int room, int gate) {

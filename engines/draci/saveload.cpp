@@ -136,20 +136,23 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 	readSavegameHeader(f, header);
 	if (header.thumbnail) delete header.thumbnail;
 
+	// Pre-processing
+	vm->_game->rememberRoomNumAsPrevious();
+	vm->_game->deleteObjectAnimations();
+
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
-	int oldRoomNum = vm->_game->getRoomNum();
 	vm->_game->DoSync(s);
-
 	delete f;
 
-	// Post processing
-	vm->_engineStartTime = vm->_system->getMillis() / 1000 - header.playtime;
+	// Post-processing
 	vm->_game->scheduleEnteringRoomUsingGate(vm->_game->getRoomNum(), 0);
-	vm->_game->setRoomNum(oldRoomNum);
+	vm->_game->setRoomNum(vm->_game->getPreviousRoomNum());
 	vm->_game->setExitLoop(2);	// 2 > true means immediate exit for the loop
 
 	vm->_game->inventoryReload();
+
+	vm->_engineStartTime = vm->_system->getMillis() / 1000 - header.playtime;
 
 	return Common::kNoError;
 }

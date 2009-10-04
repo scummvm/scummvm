@@ -269,6 +269,7 @@ public:
 	uint getNumObjects() const;
 	GameObject *getObject(uint objNum);
 	int getObjectWithAnimation(int animID) const;
+	void deleteObjectAnimations();
 
 	int getVariable(int varNum) const;
 	void setVariable(int varNum, int value);
@@ -278,6 +279,7 @@ public:
 	int getRoomNum() const;
 	void setRoomNum(int num);
 	int getPreviousRoomNum() const;
+	void rememberRoomNumAsPrevious();
 	void scheduleEnteringRoomUsingGate(int room, int gate);
 
 	double getPers0() const;
@@ -343,7 +345,7 @@ public:
 
 private:
 	void deleteAnimationsAfterIndex(int lastAnimIndex);
-	void enterNewRoom();
+	void enterNewRoom(bool force_reload);
 	void loadRoom(int roomNum);
 	void runGateProgram(int gate);
 
