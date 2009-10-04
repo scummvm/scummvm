@@ -442,7 +442,7 @@ void AmigaDisk_br::init() {
 	_sset.add("base", _baseDir, 5, false);
 
 	const Common::String subDirNames[3] = { "fonts", "backs", "common" };
-	const Common::String subDirPrefixes[3] = { "fonts", "backs", Common::String::emptyString };
+	const Common::String subDirPrefixes[3] = { "fonts", "backs", "" };
 	// The common sub directory, doesn't exist in the Amiga demo
 	uint numDir = (_vm->getFeatures() & GF_DEMO) ? 2 : 3;
 	for (uint i = 0; i < numDir; i++)

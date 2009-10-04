@@ -224,8 +224,8 @@ protected:
 	uint16			_language;
 	Common::String		_currentPart;
 
-	Common::SeekableReadStream *tryOpenFile(const Common::String &name, const Common::String &ext = Common::String::emptyString);
-	Common::SeekableReadStream *openFile(const Common::String &name, const Common::String &ext = Common::String::emptyString);
+	Common::SeekableReadStream *tryOpenFile(const Common::String &name, const Common::String &ext = Common::String());
+	Common::SeekableReadStream *openFile(const Common::String &name, const Common::String &ext = Common::String());
 	void errorFileNotFound(const Common::String &filename);
 
 public:

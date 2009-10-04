@@ -249,7 +249,7 @@ SeekableReadStream *FSDirectory::createReadStreamForMember(const String &name) c
 }
 
 FSDirectory *FSDirectory::getSubDirectory(const String &name, int depth, bool flat) {
-	return getSubDirectory(String::emptyString, name, depth, flat);
+	return getSubDirectory(String(), name, depth, flat);
 }
 
 FSDirectory *FSDirectory::getSubDirectory(const String &prefix, const String &name, int depth, bool flat) {

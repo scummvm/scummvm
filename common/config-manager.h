@@ -132,10 +132,10 @@ public:
 	//
 	// Some additional convenience accessors.
 	//
-	int					getInt(const String &key, const String &domName = String::emptyString) const;
-	bool				getBool(const String &key, const String &domName = String::emptyString) const;
-	void				setInt(const String &key, int value, const String &domName = String::emptyString);
-	void				setBool(const String &key, bool value, const String &domName = String::emptyString);
+	int					getInt(const String &key, const String &domName = String()) const;
+	bool				getBool(const String &key, const String &domName = String()) const;
+	void				setInt(const String &key, int value, const String &domName = String());
+	void				setBool(const String &key, bool value, const String &domName = String());
 
 
 	void				registerDefault(const String &key, const String &value);
