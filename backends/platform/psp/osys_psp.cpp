@@ -109,7 +109,9 @@ const OSystem::GraphicsMode OSystem_PSP::s_supportedGraphicsModes[] = {
 };
 
 
-OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0), _offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _lastScreenUpdate(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
+OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0), _overlayHeight(0),
+	_offscreen(0), _overlayBuffer(0), _overlayVisible(false), _shakePos(0), _lastScreenUpdate(0), _mouseBuf(0), _prevButtons(0), _lastPadCheck(0), _padAccel(0), _mixer(0) {
+
 	memset(_palette, 0, sizeof(_palette));
 
 	_cursorPaletteDisabled = true;
@@ -251,17 +253,22 @@ int OSystem_PSP::getGraphicsMode() const {
 
 void OSystem_PSP::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	PSPDebugTrace("initSize\n");
+
 	_screenWidth = width;
 	_screenHeight = height;
+
+	const int scrBufSize = _screenWidth * _screenHeight * (format ? format->bytesPerPixel : 4);
 
 	_overlayWidth = PSP_SCREEN_WIDTH;	//width;
 	_overlayHeight = PSP_SCREEN_HEIGHT;	//height;
 
-//	_offscreen = (byte *)offscreen256;
-	_overlayBuffer = (OverlayColor *)0x44000000 + PSP_FRAME_SIZE;
+	free(_overlayBuffer);
+	_overlayBuffer = (OverlayColor *)memalign(16, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
 
-	_offscreen = (byte *)_overlayBuffer + _overlayWidth * _overlayHeight * sizeof(OverlayColor);
-	bzero(_offscreen, width * height);
+	free(_offscreen);
+	_offscreen = (byte *)memalign(16, scrBufSize);
+	bzero(_offscreen, scrBufSize);
+	
 	clearOverlay();
 	memset(_palette, 0xFFFF, 256 * sizeof(unsigned short));
 	_kbdClut[0] = 0xFFFF;
@@ -347,26 +354,18 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 
 
 	byte *dst = _offscreen + y * _screenWidth + x;
+	dst = (byte *)((unsigned int)dst | 0x40000000); // Make this an uncached write
 
-	if (_screenWidth == pitch && pitch == w)
-	{
+	if (_screenWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w);
-/*
-		sceGuStart(0, displayList);
-		sceGuCopyImage( 3, 0, 0, w/2, h, w/2, (void *)buf, x/2, y, _screenWidth /2, _offscreen);
-		sceGuFinish();
-		sceGuSync(0,0);
-*/
-	}
-	 else
-	{
-		do
-		{
+	} else {
+		do {
 			memcpy(dst, buf, w);
 			buf += pitch;
 			dst += _screenWidth;
 		} while (--h);
 	}
+
 }
 
 Graphics::Surface *OSystem_PSP::lockScreen() {
@@ -400,9 +399,9 @@ void OSystem_PSP::updateScreen() {
 	sceGuClutLoad(32, clut256); // upload 32*8 entries (256)
 	sceGuTexMode(GU_PSM_T8, 0, 0, 0); // 8-bit image
 	if (_screenWidth == 320)
-			sceGuTexImage(0, 512, 256, _screenWidth, _offscreen);
+		sceGuTexImage(0, 512, 256, _screenWidth, _offscreen);
 	else
-			sceGuTexImage(0, 512, 512, _screenWidth, _offscreen);
+		sceGuTexImage(0, 512, 512, _screenWidth, _offscreen);
 	sceGuTexFunc(GU_TFX_REPLACE, GU_TCC_RGB);
 	sceGuTexFilter(GU_LINEAR, GU_LINEAR);
 	sceGuTexOffset(0,0);
@@ -647,15 +646,12 @@ void OSystem_PSP::updateScreen() {
 		sceGuDrawArray(GU_SPRITES, GU_TEXTURE_32BITF|GU_VERTEX_32BITF|GU_TRANSFORM_2D, 2, 0, vertKB);
 		sceGuDisable(GU_BLEND);
 	}
-	//sceKernelDcacheWritebackAll();
 
 	sceGuFinish();
 	sceGuSync(0,0);
 
 	sceDisplayWaitVblankStart();
 	sceGuSwapBuffers();
-
-	//sceKernelDcacheWritebackAll();
 }
 
 void OSystem_PSP::setShakePos(int shakeOffset) {
@@ -716,6 +712,8 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 
 
 	OverlayColor *dst = _overlayBuffer + (y * _overlayWidth + x);
+	dst = (OverlayColor *)((unsigned int)dst | 0x40000000); // Make this an uncached write
+
 	if (_overlayWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
 	} else {
