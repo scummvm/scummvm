@@ -79,6 +79,9 @@ public:
 	// Returns true if an event was retrieved.
 	virtual bool pollEvent(Common::Event &event);
 
+	// Define all hardware keys for keymapper
+	virtual Common::HardwareKeySet *getHardwareKeySet();
+
 	// Set function that generates samples
 	virtual void setupMixer();
 	static void mixCallback(void *s, byte *samples, int len);
