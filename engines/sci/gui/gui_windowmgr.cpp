@@ -112,71 +112,6 @@ void SciGUIwindowMgr::EndUpdate(sciWnd *wnd) {
 	_gfx->SetPort(oldPort);
 }
 
-SCILanguage SciGUIwindowMgr::getSCILanguage() {
-	return kLangEnglish;
-}
-
-char *SciGUIwindowMgr::StrSplit(char *buff, const char *msg, const char *fmt) {
-	SCILanguage gameLang = getSCILanguage();
-	SCILanguage subtitleLang = kLangNone;
-	char *retval;
-//	if (_theGame.getHandle())
-		//subtitleLang = (SCILanguage)_theGame.getProperty(0x58); // subtitleLang property
-
-	if (buff == msg) {
-		char str[2000];
-		getIntlString(str, msg, fmt, gameLang, subtitleLang);
-		retval = strcpy(buff, str);
-	} else
-		retval = getIntlString(buff, msg, fmt, gameLang, subtitleLang);
-	return retval;
-}
-//--------------------------------
-// In multilanguage game the msg has format ___english_text__#I___italian_text___
-// The function should place in buff a translated part of msg or the 1st one if a translation
-// does not exist
-char *SciGUIwindowMgr::getIntlString(char *buff, const char *msg, const char *fmt,
-		SCILanguage gameLang, SCILanguage subtitleLang) {
-
-	// prefer subtitleLang if set
-	SCILanguage lang = subtitleLang != kLangNone ? subtitleLang : gameLang;
-	const char *ptr = msg, *szFrom;
-	char ch;
-	int nLen = 0;
-	// searching for language code in msg
-	while (*ptr) {
-		ch = *(ptr + 1);
-		if(*ptr == '#' && (ch == 'I' || ch == 'F' || ch == 'G' || ch == 'S')) {
-			ptr +=2;
-			break;
-		}
-	ptr++;
-	}
-	// if a language code was found...
-	if (*ptr) {
-		if ((lang == kLangItalian && ch == 'I') || (lang == kLangFrench && ch == 'F') ||
-				(lang == kLangGerman && ch == 'G') || (lang == kLangSpanish && ch == 'S')) {
-			nLen = (int)strlen(ptr);
-			szFrom = ptr;
-		} else {
-			nLen = ptr - msg - 2;
-			szFrom = msg;
-		}
-	} else {
-		nLen = ptr - msg;
-		szFrom = msg;
-	}
-	if (fmt && subtitleLang != kLangNone) {
-		strcpy(buff, fmt);
-		strncat(buff, szFrom, nLen);
-		buff[nLen + strlen(fmt)] = 0;
-	} else {
-		strncpy(buff, szFrom, nLen);
-		buff[nLen] = 0;
-	}
-	return buff;
-}
-
 sciWnd *SciGUIwindowMgr::NewWindow(Common::Rect *rect, Common::Rect *rect2, const char *title, uint16 style, uint16 arg8, uint16 argA) {
 	HEAPHANDLE hWnd = heapNewPtr(sizeof(sciWnd), kDataWindow, title);
 	Common::Rect r;
@@ -210,7 +145,7 @@ sciWnd *SciGUIwindowMgr::NewWindow(Common::Rect *rect, Common::Rect *rect2, cons
 			return 0;
 		}
 		pwnd->hTitle = hTitle;
-		StrSplit((char *)heap2Ptr(hTitle), title, NULL);
+		strcpy((char *)heap2Ptr(hTitle), title);
 	}
 	
 	r = *rect;
@@ -321,6 +256,18 @@ void SciGUIwindowMgr::DisposeWindow(sciWnd *pWnd, int16 arg2) {
 }
 
 void SciGUIwindowMgr::UpdateWindow(sciWnd *wnd) {
+	sciMemoryHandle handle;
+
+	if (wnd->uSaveFlag && wnd->bDrawed) {
+		handle = _gfx->SaveBits(wnd->rect0, 1);
+		_gfx->RestoreBits(wnd->hSaved1);
+		wnd->hSaved1 = handle;
+		if (wnd->uSaveFlag & 2) {
+			handle = _gfx->SaveBits(wnd->rect0, 2);
+			_gfx->RestoreBits(wnd->hSaved2);
+			wnd->hSaved2 = handle;
+		}
+	}
 }
 
 } // end of namespace Sci
