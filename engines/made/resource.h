@@ -37,7 +37,16 @@
 
 namespace Made {
 
-const int kMaxResourceCacheCount = 100;
+/// This value specifies the size of the resource cache
+/// which stores recently used resources.  On the DS,
+/// 400Kb is all we can spare, while 1Mb seems like a
+/// good value for larger systems.
+#ifndef __DS__
+const int kMaxResourceCacheSize = 1000 * 1024;
+#else
+const int kMaxResourceCacheSize = 400 * 1024;
+#endif
+
 
 enum ResourceType {
 	kResARCH = MKID_BE('ARCH'),
@@ -63,7 +72,7 @@ public:
 class PictureResource : public Resource {
 public:
 	PictureResource();
-	~PictureResource();
+	virtual ~PictureResource();
 	void load(byte *source, int size);
 	Graphics::Surface *getPicture() const { return _picture; }
 	byte *getPalette() const { return _picturePalette; }
@@ -81,7 +90,7 @@ protected:
 class AnimationResource : public Resource {
 public:
 	AnimationResource();
-	~AnimationResource();
+	virtual ~AnimationResource();
 	void load(byte *source, int size);
 	int getCount() const { return _frames.size(); }
 	Graphics::Surface *getFrame(int index) const {
@@ -117,14 +126,14 @@ protected:
 class SoundResourceV1 : public SoundResource {
 public:
 	SoundResourceV1() {}
-	~SoundResourceV1() {}
+	virtual ~SoundResourceV1() {}
 	void load(byte *source, int size);
 };
 
 class MenuResource : public Resource {
 public:
 	MenuResource();
-	~MenuResource();
+	virtual ~MenuResource();
 	void load(byte *source, int size);
 	int getCount() const { return _strings.size(); }
 	const char *getString(uint index) const;
@@ -135,7 +144,7 @@ protected:
 class FontResource : public Resource {
 public:
 	FontResource();
-	~FontResource();
+	virtual ~FontResource();
 	void load(byte *source, int size);
 	int getHeight() const;
 	int getCharWidth(uint c) const;
@@ -150,7 +159,7 @@ protected:
 class GenericResource : public Resource {
 public:
 	GenericResource();
-	~GenericResource();
+	virtual ~GenericResource();
 	void load(byte *source, int size);
 	byte *getData() const { return _data; }
 	int getSize() const { return _size; }
@@ -200,6 +209,7 @@ protected:
 
 	ResMap _resSlots;
 	int _cacheCount;
+	int _cacheDataSize;
 
 	void loadIndex(ResourceSlots *slots);
 

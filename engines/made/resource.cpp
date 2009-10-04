@@ -45,6 +45,7 @@ PictureResource::PictureResource() : _picture(NULL), _picturePalette(NULL) {
 
 PictureResource::~PictureResource() {
 	if (_picture) {
+		_picture->free();
 		delete _picture;
 		_picture = 0;
 	}
@@ -183,8 +184,10 @@ AnimationResource::AnimationResource() {
 }
 
 AnimationResource::~AnimationResource() {
-	for (uint i = 0; i < _frames.size(); i++)
+	for (uint i = 0; i < _frames.size(); i++) {
+		_frames[i]->free();
 		delete _frames[i];
+	}
 }
 
 void AnimationResource::load(byte *source, int size) {
@@ -373,6 +376,7 @@ void GenericResource::load(byte *source, int size) {
 
 ResourceReader::ResourceReader() {
 	_isV1 = false;
+	_cacheDataSize = 0;
 }
 
 ResourceReader::~ResourceReader() {
@@ -543,8 +547,12 @@ Resource *ResourceReader::getResourceFromCache(ResourceSlot *slot) {
 }
 
 void ResourceReader::addResourceToCache(ResourceSlot *slot, Resource *res) {
-	if (_cacheCount >= kMaxResourceCacheCount)
+	_cacheDataSize += slot->size;
+
+	if (_cacheDataSize >= kMaxResourceCacheSize) {
 		purgeCache();
+	}
+
 	slot->res = res;
 	slot->refCount = 1;
 	_cacheCount++;
@@ -562,11 +570,12 @@ void ResourceReader::purgeCache() {
 		for (ResourceSlots::iterator slotIter = slots->begin(); slotIter != slots->end(); ++slotIter) {
 			ResourceSlot *slot = &(*slotIter);
 			if (slot->refCount <= 0 && slot->res) {
+				_cacheDataSize -= slot->size;
 				delete slot->res;
 				slot->res = NULL;
 				slot->refCount = 0;
 				_cacheCount--;
-			}
+			}			
 		}
 	}
 }
