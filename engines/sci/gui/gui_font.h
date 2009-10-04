@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_FONT_H
+#define SCI_GUI_FONT_H
+
 namespace Sci {
 
 class SciGUIfont {
@@ -55,4 +58,6 @@ private:
 	charinfo* mChars;
 };
 
-} // end of namespace Sci
+} // End of namespace Sci
+
+#endif

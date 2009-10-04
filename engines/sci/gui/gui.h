@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_GUI_H
+#define SCI_GUI_GUI_H
+
 #include "sci/gui/gui_helpers.h"
 
 namespace Sci {
@@ -94,3 +97,5 @@ private:
 };
 
 } // End of namespace Sci
+
+#endif

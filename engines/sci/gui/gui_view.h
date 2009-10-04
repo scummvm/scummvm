@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_VIEW_H
+#define SCI_GUI_VIEW_H
+
 namespace Sci {
 
 struct sciViewCellInfo {
@@ -76,3 +79,5 @@ private:
 };
 
 } // end of namespace Sci
+
+#endif

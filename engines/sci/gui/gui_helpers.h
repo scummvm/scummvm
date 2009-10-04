@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_HELPERS_H
+#define SCI_GUI_HELPERS_H
+
 #include "common/rect.h"
 #include "sci/engine/vm_types.h"
 
@@ -102,4 +105,6 @@ enum {
 	GFX_REMOVEVIEW = 0x80
 };
 
-}
+} // End of namespace Sci
+
+#endif

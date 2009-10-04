@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_SCREEN_H
+#define SCI_GUI_SCREEN_H
+
 namespace Sci {
 
 #define SCI_SCREEN_MAXHEIGHT 400
@@ -86,3 +89,5 @@ private:
 };
 
 } // end of namespace Sci
+
+#endif

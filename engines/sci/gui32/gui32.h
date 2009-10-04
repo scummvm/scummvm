@@ -23,6 +23,11 @@
  *
  */
 
+#ifndef SCI_GUI32_GUI32_H
+#define SCI_GUI32_GUI32_H
+
+#include "sci/gui/gui.h"
+
 namespace Sci {
 
 class SciGUI32 : public SciGUI {
@@ -104,3 +109,5 @@ private:
 };
 
 } // End of namespace Sci
+
+#endif

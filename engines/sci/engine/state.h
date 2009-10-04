@@ -49,6 +49,7 @@ namespace Common {
 namespace Sci {
 
 class Menubar;
+class SciGUI;
 
 struct GfxState;
 struct GfxPort;

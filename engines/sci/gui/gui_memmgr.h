@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_MEMMGR_H
-#define SCI_MEMMGR_H
+#ifndef SCI_GUI_MEMMGR_H
+#define SCI_GUI_MEMMGR_H
 
 #include "common/savefile.h"
 #include "common/endian.h"
@@ -118,6 +118,6 @@ void heapSetBlockNext(HEAPHANDLE ptr, SCIHANDLE next);
 bool saveMemState(Common::OutSaveFile *pFile);
 bool restoreMemState(Common::InSaveFile *pFile);
 
-} // end of namespace SCI
+} // End of namespace SCI
 
 #endif

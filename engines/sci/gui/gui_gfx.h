@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_GFX_H
+#define SCI_GUI_GFX_H
+
 namespace Sci {
 
 #define SCI_PATTERN_CODE_RECTANGLE 0x10
@@ -162,4 +165,6 @@ private:
 	SciGUIfont *_font;
 };
 
-} // end of namespace Sci
+} // End of namespace Sci
+
+#endif

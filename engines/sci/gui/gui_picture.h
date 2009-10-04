@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_PICTURE_H
+#define SCI_GUI_PICTURE_H
+
 namespace Sci {
 
 #define SCI_PAL_FORMAT_VARIABLE_FLAGS 0
@@ -67,3 +70,5 @@ private:
 };
 
 } // end of namespace Sci
+
+#endif

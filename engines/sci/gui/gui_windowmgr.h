@@ -23,6 +23,9 @@
  *
  */
 
+#ifndef SCI_GUI_WINDOWMGR_H
+#define SCI_GUI_WINDOWMGR_H
+
 #include "common/list.h"
 
 namespace Sci {
@@ -55,3 +58,5 @@ private:
 };
 
 } // end of namespace Sci
+
+#endif
