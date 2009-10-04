@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
+SciGUIfont::SciGUIfont(OSystem *system, EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
 	: _s(state), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	if (_s->_gameName == "lsl1sci") {
@@ -98,7 +98,6 @@ void SciGUIfont::draw(int16 chr, int16 top, int16 left, byte color, byte textfac
 			b = b << 1;
 		}
 	}
-
 }
 
 } // end of namespace Sci
