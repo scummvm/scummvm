@@ -335,7 +335,7 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 	Common::String source_str = s->segMan->getString(argv[0]);
 	const char *source = source_str.c_str();
 
-	while (isspace(*source))
+	while (isspace((unsigned char)*source))
 		source++; /* Skip whitespace */
 
 	if (*source == '$') /* SCI uses this for hex numbers */
