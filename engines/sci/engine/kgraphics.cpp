@@ -871,7 +871,6 @@ reg_t kNumCels(EngineState *s, int argc, reg_t *argv) {
 reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 	Common::Rect rect;
 	byte screenMask;
-	int16 y, x;
 	int argBase = 0;
 
 	if ((argc == 2) || (argc == 4)) {
