@@ -110,9 +110,16 @@ public:
 	void drawPicture(GUIResourceId pictureId, uint16 style, bool addToFlag, GUIResourceId paletteId);
 	void drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
-	void animatePalette(byte fromColor, byte toColor, int speed);
+	void PaletteAnimate(byte fromColor, byte toColor, int speed);
 
 	int16 onControl(uint16 screenMask, Common::Rect rect);
+	void AnimateDisposeLastCast();
+	void AnimateInvoke(List *list, int argc, reg_t *argv);
+	void AnimateFill();
+	void AnimateSort();
+	void AnimateUpdate();
+	void AnimateDrawCells();
+	void AnimateRestoreAndDelete();
 	void SetNowSeen(reg_t objectReference);
 
 	GUIPort *_menuPort;
@@ -120,9 +127,7 @@ public:
 	int32 _sysSpeed; // ticker timer in ms 
 	GUIPalette _sysPalette;
 
-	uint16 _resolutionWidth;
-	uint16 _resolutionHeight;
-	uint _resolutionPixels;
+	bool _picNotValid;
 
 private:
 	int16 TextCodeProcessing(const char *&text, GUIResourceId orgFontId, int16 orgPenColor);
@@ -149,6 +154,9 @@ private:
 	GUIResourceId *_textFonts;
 	int _textColorsCount;
 	uint16 *_textColors;
+
+	// Animate* related variables
+	List *_lastCast;
 
 	SciGUIfont *_font;
 };

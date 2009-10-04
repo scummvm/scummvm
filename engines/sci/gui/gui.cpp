@@ -240,7 +240,7 @@ void SciGUI::drawPicture(GUIResourceId pictureId, uint16 style, uint16 flags, in
 	_screen->UpdateWhole();
 
 	_gfx->SetPort(oldPort);
-	_s->pic_not_valid = 1;
+	_gfx->_picNotValid = true;
 }
 
 void SciGUI::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
@@ -313,7 +313,7 @@ int16 SciGUI::paletteFind(int r, int g, int b) {
 }
 
 void SciGUI::paletteAnimate(int fromColor, int toColor, int speed) {
-	_gfx->animatePalette(fromColor, toColor, speed);
+	_gfx->PaletteAnimate(fromColor, toColor, speed);
 }
 
 int16 SciGUI::onControl(byte screenMask, Common::Rect rect) {
@@ -325,8 +325,49 @@ int16 SciGUI::onControl(byte screenMask, Common::Rect rect) {
 	return result;
 }
 
-void SciGUI::animate(reg_t castListReference, bool cycle, int argc, reg_t *argv) {
-	// FIXME: port over from gregs engine
+void SciGUI::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
+	bool old_picNotValid = _gfx->_picNotValid;
+
+	if (listReference.isNull()) {
+		_gfx->AnimateDisposeLastCast();
+		if (_gfx->_picNotValid) {
+			//(this->*ShowPic)(_showMap, _showStyle);
+			_gfx->_picNotValid = false;
+		}
+		return;
+	}
+
+	List *list = lookup_list(_s, listReference);
+	if (!list) {
+		error("kAnimate called with non-list as parameter");
+	}
+
+	if (cycle) {
+		_gfx->AnimateInvoke(list, argc, argv);
+	}
+
+	GUIPort *oldPort = _gfx->SetPort((GUIPort *)_windowMgr->_picWind);
+	_gfx->AnimateDisposeLastCast();
+
+	_gfx->AnimateFill();
+
+	_gfx->AnimateSort();
+	if (old_picNotValid) {
+		_gfx->AnimateUpdate();
+	}
+
+	_gfx->AnimateDrawCells();
+
+	if (_gfx->_picNotValid) {
+		//(this->*ShowPic)(_showMap, _showStyle);
+		_gfx->_picNotValid = false;
+	}
+
+	//_gfx->AnimateUpdateScreen();
+	_screen->UpdateWhole();
+	_gfx->AnimateRestoreAndDelete();
+
+	_gfx->SetPort(oldPort);
 }
 
 void SciGUI::addToPicList(reg_t listReference, int argc, reg_t *argv) {

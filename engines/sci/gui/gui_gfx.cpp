@@ -53,6 +53,8 @@ void SciGUIgfx::init() {
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
 
+	_picNotValid = false;
+
 	_mainPort = mallocPort();
 	SetPort(_mainPort);
 	OpenPort(_mainPort);
@@ -209,7 +211,7 @@ void SciGUIgfx::SetPalette(GUIPalette *sciPal, int16 flag) {
 	if (flag == 2 || sciPal->timestamp != systime) {
 		MergePalettes(sciPal, &_sysPalette, flag);
 		sciPal->timestamp = _sysPalette.timestamp;
-		if (_s->pic_not_valid == 0 && systime != _sysPalette.timestamp)
+		if (_picNotValid == 0 && systime != _sysPalette.timestamp)
 			SetCLUT(&_sysPalette);
 	}
 }
@@ -1222,7 +1224,7 @@ void SciGUIgfx::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCell
 	}
 }
 
-void SciGUIgfx::animatePalette(byte fromColor, byte toColor, int speed) {
+void SciGUIgfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
 	GUIColor col;
 	int len = toColor - fromColor - 1;
 	uint32 now = _sysTicks;
@@ -1285,6 +1287,47 @@ static inline int sign_extend_byte(int value) {
 		return value - 256;
 	else
 		return value;
+}
+
+void SciGUIgfx::AnimateDisposeLastCast() {
+	// FIXME
+	//if (!_lastCast->first.isNull())
+		//_lastCast->DeleteList();
+}
+
+void SciGUIgfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
+	reg_t curAddress = list->first;
+	Node *curNode = lookup_node(_s, curAddress);
+	reg_t curObject;
+	//uint16 mask;
+
+	while (curNode) {
+		curObject = curNode->value;
+//      FIXME: check what this code does and remove it or fix it, gregs engine had this check included
+//		mask = cobj[_objOfs[2]];
+//		if ((mask & 0x100) == 0) {
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
+			// Lookup node again, since the nodetable it was in may have been reallocated
+			curNode = lookup_node(_s, curAddress);
+//		}
+		curAddress = curNode->succ;
+		curNode = lookup_node(_s, curAddress);
+	}
+}
+
+void SciGUIgfx::AnimateFill() {
+}
+
+void SciGUIgfx::AnimateSort() {
+}
+
+void SciGUIgfx::AnimateUpdate() {
+}
+
+void SciGUIgfx::AnimateDrawCells() {
+}
+
+void SciGUIgfx::AnimateRestoreAndDelete() {
 }
 
 void SciGUIgfx::SetNowSeen(reg_t objectReference) {
