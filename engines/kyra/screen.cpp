@@ -688,7 +688,7 @@ void Screen::setPaletteIndex(uint8 index, uint8 red, uint8 green, uint8 blue) {
 }
 
 void Screen::getRealPalette(int num, uint8 *dst) {
-	const int colors = _isAmiga ? 32 : 256;
+	const int colors = _use16ColorMode ? 16 : (_isAmiga ? 32 : 256);
 	const uint8 *palData = getPalette(num).getData();
 
 	if (!palData) {

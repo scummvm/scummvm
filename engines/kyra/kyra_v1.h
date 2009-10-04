@@ -357,6 +357,9 @@ protected:
 
 	Common::SeekableReadStream *openSaveForReading(const char *filename, SaveHeader &header);
 	Common::WriteStream *openSaveForWriting(const char *filename, const char *saveName, const Graphics::Surface *thumbnail) const;
+
+	// TODO: Consider moving this to Screen
+	virtual Graphics::Surface *generateSaveThumbnail() const { return 0; }
 };
 
 } // End of namespace Kyra

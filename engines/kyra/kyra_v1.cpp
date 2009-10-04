@@ -281,7 +281,7 @@ int KyraEngine_v1::checkInput(Button *buttonList, bool mainLoop, int eventFlag) 
 				} else if (event.kbd.keycode == 'q') {
 					quitGame();
 				}
-			} else {				
+			} else {
 				keys = _keyMap[event.kbd.keycode];
 
 				// When we got an keypress, which we might need to handle,

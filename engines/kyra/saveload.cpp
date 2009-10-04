@@ -206,10 +206,19 @@ Common::WriteStream *KyraEngine_v1::openSaveForWriting(const char *filename, con
 		return 0;
 	}
 
+	Graphics::Surface *genThumbnail = 0;
+	if (!thumbnail)
+		thumbnail = genThumbnail = generateSaveThumbnail();
+
 	if (thumbnail)
 		Graphics::saveThumbnail(*out, *thumbnail);
 	else
 		Graphics::saveThumbnail(*out);
+
+	if (genThumbnail) {
+		genThumbnail->free();
+		delete genThumbnail;
+	}
 
 	return out;
 }

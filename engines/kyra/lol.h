@@ -1487,6 +1487,8 @@ private:
 	Common::Error loadGameState(int slot);
 	Common::Error saveGameState(int slot, const char *saveName, const Graphics::Surface *thumbnail);
 
+	Graphics::Surface *generateSaveThumbnail() const;
+
 	void generateTempData();
 	LevelTempData *_lvlTempData[29];
 };

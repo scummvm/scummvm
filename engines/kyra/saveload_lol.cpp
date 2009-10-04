@@ -25,13 +25,15 @@
 
 #ifdef ENABLE_LOL
 
+#include "kyra/lol.h"
+#include "kyra/screen_lol.h"
+#include "kyra/resource.h"
+
 #include "common/endian.h"
 #include "common/savefile.h"
 #include "common/system.h"
 
-#include "kyra/lol.h"
-#include "kyra/screen_lol.h"
-#include "kyra/resource.h"
+#include "graphics/scaler.h"
 
 namespace Kyra {
 
@@ -447,6 +449,29 @@ Common::Error LoLEngine::saveGameState(int slot, const char *saveName, const Gra
 
 	delete out;
 	return Common::kNoError;
+}
+
+Graphics::Surface *LoLEngine::generateSaveThumbnail() const {
+	if (_flags.platform != Common::kPlatformPC98)
+		return 0;
+
+	uint8 *screenPal = new uint8[16 * 3];
+	assert(screenPal);
+	_screen->getRealPalette(0, screenPal);
+
+	uint8 *screenBuf = new uint8[Screen::SCREEN_W * Screen::SCREEN_H];
+	assert(screenBuf);
+
+	Graphics::Surface *dst = new Graphics::Surface();
+	assert(dst);
+
+	_screen->copyRegionToBuffer(0, 0, 0, 320, 200, screenBuf);
+	Screen_LoL::convertPC98Gfx(screenBuf, Screen::SCREEN_W, Screen::SCREEN_H, Screen::SCREEN_W);
+	::createThumbnail(dst, screenBuf, Screen::SCREEN_W, Screen::SCREEN_H, screenPal);
+
+	delete[] screenBuf;
+	delete[] screenPal;
+	return dst;
 }
 
 } // end of namespace Kyra
