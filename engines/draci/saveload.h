@@ -46,8 +46,8 @@ struct DraciSavegameHeader {
 class DraciEngine;
 
 bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header);
-void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &header, const Graphics::Surface &thumb);
-Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, const DraciEngine &vm);
+void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &header);
+Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, DraciEngine &vm);
 Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm);
 
 } // End of namespace Draci

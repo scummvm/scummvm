@@ -41,6 +41,7 @@
 #include "draci/sprite.h"
 #include "draci/screen.h"
 #include "draci/mouse.h"
+#include "draci/saveload.h"
 
 namespace Draci {
 
@@ -350,8 +351,19 @@ const char *DraciEngine::getSavegameFile(int saveGameIdx) {
 }
 
 Common::Error DraciEngine::loadGameState(int slot) {
-	// TODO
-	return Common::kNoError;
+	// When called from run() using save_slot, the next operation is the
+	// call to start() calling enterNewRoom().
+	// When called from handleEvents() in the middle of the game, the next
+	// operation after handleEvents() exits from loop(), and returns to
+	// start() to the same place as above.
+	// In both cases, we are safe to override the data structures right
+	// here are now, without waiting for any other code to finish, thanks
+	// to our constraint in canLoadGameStateCurrently() and to having
+	// enterNewRoom() called right after we exit from here.
+	//
+	// TODO: Handle saving in the map room.  Verify inventory and fix
+	// dialogs.
+	return loadSavegameData(slot, this);
 }
 
 bool DraciEngine::canLoadGameStateCurrently() {
@@ -360,8 +372,7 @@ bool DraciEngine::canLoadGameStateCurrently() {
 }
 
 Common::Error DraciEngine::saveGameState(int slot, const char *desc) {
-	// TODO
-	return Common::kNoError;
+	return saveSavegameData(slot, desc, *this);
 }
 
 bool DraciEngine::canSaveGameStateCurrently() {

@@ -72,7 +72,7 @@ bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 	return true;
 }
 
-void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &header, const Graphics::Surface &thumb) {
+void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &header) {
 	// Write out a savegame header
 	out->write(draciIdentString, 6);
 	out->writeByte(DRACI_SAVEGAME_VERSION);
@@ -80,19 +80,15 @@ void writeSavegameHeader(Common::OutSaveFile *out, const DraciSavegameHeader &he
 	// Write savegame name
 	out->write(header.saveName.c_str(), header.saveName.size() + 1);
 
-	out->writeUint32BE(header.date);
-	out->writeUint16BE(header.time);
-	out->writeUint32BE(header.playtime);
+	out->writeUint32LE(header.date);
+	out->writeUint16LE(header.time);
+	out->writeUint32LE(header.playtime);
 
 	// Create a thumbnail and save it
-	Graphics::saveThumbnail(*out, thumb);
+	Graphics::saveThumbnail(*out);
 }
 
-static void DoSync(Common::Serializer &s) {
-}
-
-
-Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, const DraciEngine &vm) {
+Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, DraciEngine &vm) {
 	const char *filename = vm.getSavegameFile(saveGameIdx);
 	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
 	Common::OutSaveFile *f = saveMan->openForSaving(filename);
@@ -108,7 +104,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	header.date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);
 	header.time = ((curTime.tm_hour & 0xFF) << 8) | ((curTime.tm_min) & 0xFF);
 	header.playtime = vm._system->getMillis() / 1000 - vm._engineStartTime;
-	writeSavegameHeader(f, header, *vm._screen->getSurface());
+	writeSavegameHeader(f, header);
 
 	if (f->err()) {
 		delete f;
@@ -117,7 +113,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	} else {
 		// Create the remainder of the savegame
 		Common::Serializer s(NULL, f);
-		DoSync(s);
+		vm._game->DoSync(s);
 
 		f->finalize();
 		delete f;
@@ -142,12 +138,16 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	// Synchronise the remaining data of the savegame
 	Common::Serializer s(f, NULL);
-	DoSync(s);
+	int oldRoomNum = vm->_game->getRoomNum();
+	vm->_game->DoSync(s);
 
 	delete f;
 
 	// Post processing
 	vm->_engineStartTime = vm->_system->getMillis() / 1000 - header.playtime;
+	vm->_game->scheduleEnteringRoomUsingGate(vm->_game->getRoomNum(), 0);
+	vm->_game->setRoomNum(oldRoomNum);
+	vm->_game->setExitLoop(true);
 
 	return Common::kNoError;
 }

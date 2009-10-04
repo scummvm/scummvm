@@ -27,6 +27,7 @@
 #define DRACI_GAME_H
 
 #include "common/str.h"
+#include "common/serializer.h"
 #include "draci/barchive.h"
 #include "draci/script.h"
 #include "draci/animation.h"
@@ -275,6 +276,7 @@ public:
 	const Person *getPerson(int personID) const;
 
 	int getRoomNum() const;
+	void setRoomNum(int num);
 	int getPreviousRoomNum() const;
 	void scheduleEnteringRoomUsingGate(int room, int gate);
 
@@ -335,6 +337,8 @@ public:
 
 	void schedulePalette(int paletteID);
 	int getScheduledPalette() const;
+
+	void DoSync(Common::Serializer &s);
 
 private:
 	void deleteAnimationsAfterIndex(int lastAnimIndex);

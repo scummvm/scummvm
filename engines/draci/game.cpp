@@ -226,6 +226,8 @@ void Game::loop() {
 		_loopStatus, _loopSubstatus);
 
 		_vm->handleEvents();
+		if (shouldExitLoop())	// after loading
+			break;
 
 		// Fetch mouse coordinates
 		int x = _vm->_mouse->getPosX();
@@ -1384,6 +1386,10 @@ int Game::getRoomNum() const {
 	return _currentRoom._roomNum;
 }
 
+void Game::setRoomNum(int num) {
+	_currentRoom._roomNum = num;
+}
+
 int Game::getPreviousRoomNum() const {
 	return _previousRoom;
 }
@@ -1502,6 +1508,31 @@ Game::~Game() {
 	delete[] _items;
 }
 
+void Game::DoSync(Common::Serializer &s) {
+	s.syncAsUint16LE(_currentRoom._roomNum);
+
+	for (uint i = 0; i < _info._numObjects; ++i) {
+		GameObject& obj = _objects[i];
+		s.syncAsSint16LE(obj._location);
+		s.syncAsByte(obj._visible);
+	}
+
+	for (uint i = 0; i < _info._numItems; ++i) {
+		s.syncAsByte(_itemStatus[i]);
+	}
+
+	for (int i = 0; i < kInventorySlots; ++i) {
+		s.syncAsSint16LE(_inventory[i]);
+	}
+
+	for (int i = 0; i < _info._numVariables; ++i) {
+		s.syncAsSint16LE(_variables[i]);
+	}
+	for (uint i = 0; i < _info._numDialogueBlocks; ++i) {
+		s.syncAsSint16LE(_dialogueVars[i]);
+	}
+
+}
 
 bool WalkingMap::isWalkable(int x, int y) const {
 	// Convert to map pixels

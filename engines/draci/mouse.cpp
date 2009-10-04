@@ -42,6 +42,7 @@ Mouse::Mouse(DraciEngine *vm) {
 void Mouse::handleEvent(Common::Event event) {
 	switch (event.type) {
 	case Common::EVENT_LBUTTONDOWN:
+		// TODO: remove _modifierState, since right click can be achieved via Cmd
 		if (!(_modifierState & 3)) {
 			debugC(6, kDraciGeneralDebugLevel, "Left button down (x: %u y: %u)", _x, _y);
 			_lButton = true;
