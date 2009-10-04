@@ -43,31 +43,31 @@ public:
 	void initTimer();
 	static void timerHandler(void*ref);
 
-	sciPort *mallocPort ();
+	GUIPort *mallocPort ();
 	byte *GetSegment(byte seg);
 	void ResetScreen();
 	void SetEGApalette();
-	void CreatePaletteFromData(byte *paletteData, sciPalette *paletteOut);
+	void CreatePaletteFromData(byte *paletteData, GUIPalette *paletteOut);
 	bool SetResPalette(int16 resourceNo, int16 flag);
-	void SetPalette(sciPalette *sciPal, int16 flag);
-	void MergePalettes(sciPalette*pFrom, sciPalette*pTo, uint16 flag);
-	uint16 MatchColor(sciPalette*pPal, byte r, byte g, byte b);
-	void SetCLUT(sciPalette*pal);
-	void GetCLUT(sciPalette*pal);
+	void SetPalette(GUIPalette *sciPal, int16 flag);
+	void MergePalettes(GUIPalette* pFrom, GUIPalette* pTo, uint16 flag);
+	uint16 MatchColor(GUIPalette* pPal, byte r, byte g, byte b);
+	void SetCLUT(GUIPalette*pal);
+	void GetCLUT(GUIPalette*pal);
 
-	sciPort *SetPort(sciPort *port);
-	sciPort *GetPort();
+	GUIPort *SetPort(GUIPort *port);
+	GUIPort *GetPort();
 	void SetOrigin(int16 left, int16 top);
 	void MoveTo(int16 left, int16 top);
 	void Move(int16 left, int16 top);
-	void OpenPort(sciPort *port);
+	void OpenPort(GUIPort *port);
 	void PenColor(int16 color);
 	void PenMode(int16 mode);
 	void TextFace(int16 textFace);
 	int16 GetPointSize(void);
-	sciResourceId GetFontId();
+	GUIResourceId GetFontId();
 	SciGUIfont *GetFont();
-	void SetFont(sciResourceId fontId);
+	void SetFont(GUIResourceId fontId);
 
 	void ClearScreen(byte color = 255);
 	void InvertRect(const Common::Rect &rect);
@@ -85,17 +85,17 @@ public:
 
 	void SetTextFonts(int argc, reg_t *argv);
 	void SetTextColors(int argc, reg_t *argv);
-	int16 TextSize(Common::Rect &rect, const char *str, sciResourceId fontId, int16 maxwidth);
-	void ShowString(const char *str, sciResourceId orgFontId, int16 orgPenColor) {
+	int16 TextSize(Common::Rect &rect, const char *str, GUIResourceId fontId, int16 maxwidth);
+	void ShowString(const char *str, GUIResourceId orgFontId, int16 orgPenColor) {
 		ShowText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
-	void DrawString(const char *str, sciResourceId orgFontId, int16 orgPenColor) {
+	void DrawString(const char *str, GUIResourceId orgFontId, int16 orgPenColor) {
 		DrawText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
-	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, sciResourceId fontId);
+	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, GUIResourceId fontId);
 	void ShowBits(const Common::Rect &r, uint16 flags);
-	sciMemoryHandle SaveBits(const Common::Rect &rect, byte screenFlags);
-	void RestoreBits(sciMemoryHandle memoryHandle);
+	GUIMemoryHandle SaveBits(const Common::Rect &rect, byte screenFlags);
+	void RestoreBits(GUIMemoryHandle memoryHandle);
 
 	void Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
 	void Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte color, byte prio, byte control);
@@ -107,45 +107,46 @@ public:
 	void Draw_Pattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
 	void Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control);
 	
-	void drawPicture(sciResourceId pictureId, uint16 style, bool addToFlag, sciResourceId paletteId);
-	void drawCell(sciResourceId viewId, uint16 loopNo, uint16 cellNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
+	void drawPicture(GUIResourceId pictureId, uint16 style, bool addToFlag, GUIResourceId paletteId);
+	void drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
 	void animatePalette(byte fromColor, byte toColor, int speed);
 
 	int16 onControl(uint16 screenMask, Common::Rect rect);
+	void SetNowSeen(reg_t objectReference);
 
-	sciPort *_menuPort;
+	GUIPort *_menuPort;
 	uint32 _sysTicks;
 	int32 _sysSpeed; // ticker timer in ms 
-	sciPalette _sysPalette;
+	GUIPalette _sysPalette;
 
 	uint16 _resolutionWidth;
 	uint16 _resolutionHeight;
 	uint _resolutionPixels;
 
 private:
-	int16 TextCodeProcessing(const char *&text, sciResourceId orgFontId, int16 orgPenColor);
-	void TextWidth(const char*text, int16 from, int16 len, sciResourceId orgFontId, int16 &textWidth, int16 &textHeight);
-	void StringWidth(const char*str, sciResourceId orgFontId, int16 &textWidth, int16 &textHeight);
-	int16 GetLongest(const char *str, int16 maxwidth, sciResourceId orgFontId);
-	void DrawText(const char *str, int16 from, int16 len, sciResourceId orgFontId, int16 orgPenColor);
-	void ShowText(const char *str, int16 from, int16 len, sciResourceId orgFontId, int16 orgPenColor);
+	int16 TextCodeProcessing(const char *&text, GUIResourceId orgFontId, int16 orgPenColor);
+	void TextWidth(const char*text, int16 from, int16 len, GUIResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void StringWidth(const char*str, GUIResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	int16 GetLongest(const char *str, int16 maxwidth, GUIResourceId orgFontId);
+	void DrawText(const char *str, int16 from, int16 len, GUIResourceId orgFontId, int16 orgPenColor);
+	void ShowText(const char *str, int16 from, int16 len, GUIResourceId orgFontId, int16 orgPenColor);
 
 	OSystem *_system;
 	EngineState *_s;
 	SciGUIscreen *_screen;
 
 	Common::Rect _bounds;
-	sciPort *_mainPort;
-	sciPort *_curPort;
+	GUIPort *_mainPort;
+	GUIPort *_curPort;
 	uint16 _clrPowers[256];
 
 	byte bMapColors;
-	sciPalette *pPicPal;
-	Common::Array<sciPalSched> _palSchedules;
+	GUIPalette *pPicPal;
+	Common::Array<GUIPalSchedule> _palSchedules;
 
 	int _textFontsCount;
-	sciResourceId *_textFonts;
+	GUIResourceId *_textFonts;
 	int _textColorsCount;
 	uint16 *_textColors;
 

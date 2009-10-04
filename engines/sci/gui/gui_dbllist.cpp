@@ -52,7 +52,7 @@ void DblList::Dump(char*caption) {
 	debug("  First: %04X Last: %04X", _hFirst, _hLast);
 	HEAPHANDLE node = _hFirst;
 	while (node) {
-		sciNode *pNode = (sciNode *)heap2Ptr(node);
+		GUINode *pNode = (GUINode *)heap2Ptr(node);
 		debug("  %04X key=%04X prev=%04X next=%04X add.data=%db", node,
 				pNode->key, pNode->prev, pNode->next, heapGetDataSize(node) - 6);
 		node = pNode->next;
@@ -67,10 +67,10 @@ HEAPHANDLE DblList::AddToFront(HEAPHANDLE node, uint16 key) {
 				node);
 		return node;
 	}
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
 	pNode->key = key;
 	if (_hFirst) { // we already have  a 1st node
-		sciNode *pnext = (sciNode *)heap2Ptr(_hFirst);
+		GUINode *pnext = (GUINode *)heap2Ptr(_hFirst);
 		pnext->prev = node;
 		pNode->next = _hFirst;
 	} else { // list is empty, to passed node becames 1st one
@@ -89,9 +89,9 @@ HEAPHANDLE DblList::AddToEnd(HEAPHANDLE node, uint16 key) {
 		warning("Bad node handler (%04X) passed to DblList::AddToEnd !", node);
 		return node;
 	}
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
 	if (_hFirst) { // list is not empty
-		sciNode *plast = (sciNode *)heap2Ptr(_hLast);
+		GUINode *plast = (GUINode *)heap2Ptr(_hLast);
 		plast->next = node;
 		pNode->prev = _hLast;
 	} else { // list is empty, so the node becames 1st one
@@ -110,7 +110,7 @@ HEAPHANDLE DblList::AddToEnd(HEAPHANDLE node, uint16 key) {
 HEAPHANDLE DblList::FindKey(uint16 key) {
 	HEAPHANDLE node = _hFirst;
 	while (node) {
-		sciNode *pNode = (sciNode *)heap2Ptr(node);
+		GUINode *pNode = (GUINode *)heap2Ptr(node);
 		if (pNode->key == key)
 			break;
 		node = pNode->next;
@@ -133,13 +133,13 @@ byte DblList::DeleteNode(HEAPHANDLE node) {
 		return node;
 	}
 	// updating the links
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
 	if (pNode->prev) {
-		sciNode *pprev = (sciNode *)heap2Ptr(pNode->prev);
+		GUINode *pprev = (GUINode *)heap2Ptr(pNode->prev);
 		pprev->next = pNode->next;
 	}
 	if (pNode->next) {
-		sciNode *pnext = (sciNode *)heap2Ptr(pNode->next);
+		GUINode *pnext = (GUINode *)heap2Ptr(pNode->next);
 		pnext->prev = pNode->prev;
 	}
 	// updating list head if needed
@@ -158,7 +158,7 @@ HEAPHANDLE DblList::MoveToEnd(HEAPHANDLE node) {
 		warning("Bad node handler (%04X) passed to DblList::MoveToEnd !", node);
 		return node;
 	}
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
 	if (pNode->next) { // node is not the last one in list
 		DeleteNode(node);
 		AddToEnd(node, pNode->key);
@@ -173,7 +173,7 @@ HEAPHANDLE DblList::MoveToFront(HEAPHANDLE node) {
 				node);
 		return node;
 	}
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
 	if (pNode->prev) { // node is not 1st one in list
 		DeleteNode(node);
 		AddToFront(node, pNode->key);
@@ -186,14 +186,14 @@ HEAPHANDLE DblList::AddAfter(HEAPHANDLE ref, HEAPHANDLE node, uint16 key) {
 		warning("Bad node handler (%04X) passed to DblList::AddAfter !", node);
 		return node;
 	}
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
-	sciNode *pref = (sciNode *)heap2Ptr(ref);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
+	GUINode *pref = (GUINode *)heap2Ptr(ref);
 	pNode->key = key;
 	if (pref->next == 0) { // ref node is the last one
 		pNode->next = 0;
 		_hLast = node;
 	} else {
-		sciNode *pnext = (sciNode *)heap2Ptr(pref->next);
+		GUINode *pnext = (GUINode *)heap2Ptr(pref->next);
 		pNode->next = pref->next;
 		pnext->prev = node;
 	}
@@ -208,14 +208,14 @@ HEAPHANDLE DblList::AddBefore(HEAPHANDLE ref, HEAPHANDLE node, uint16 key) {
 		warning("Bad node handler (%04X) passed to DblList::AddBefore !", node);
 		return node;
 	}
-	sciNode *pNode = (sciNode *)heap2Ptr(node);
-	sciNode *pref = (sciNode *)heap2Ptr(ref);
+	GUINode *pNode = (GUINode *)heap2Ptr(node);
+	GUINode *pref = (GUINode *)heap2Ptr(ref);
 	pNode->key = key;
 	if (pref->prev == 0) { // ref node is the 1st one
 		pNode->prev = 0;
 		_hFirst = node;
 	} else {
-		sciNode*pprev = (sciNode *)heap2Ptr(pref->prev);
+		GUINode*pprev = (GUINode *)heap2Ptr(pref->prev);
 		pNode->prev = pref->prev;
 		pprev->next = node;
 	}
@@ -232,9 +232,9 @@ void DblList::toHeap(HEAPHANDLE heap) {
 //------------------------------------------------
 void DblList::DeleteList() {
 	HEAPHANDLE node = getFirst(), next;
-	sciNode *pNode;
+	GUINode *pNode;
 	while (node) {
-		pNode = (sciNode *)heap2Ptr(node);
+		pNode = (GUINode *)heap2Ptr(node);
 		next = pNode->next;
 		heapDisposePtr(node);
 		node = next;
@@ -245,9 +245,9 @@ void DblList::DeleteList() {
 uint16 DblList::getSize() {
 	uint16 cnt = 0;
 	HEAPHANDLE node = getFirst();
-	sciNode *pNode;
+	GUINode *pNode;
 	while (node) {
-		pNode = (sciNode *)heap2Ptr(node);
+		pNode = (GUINode *)heap2Ptr(node);
 		node = pNode->next;
 		cnt++;
 	}

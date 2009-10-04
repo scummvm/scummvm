@@ -58,8 +58,8 @@ public:
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
 
-	virtual void drawPicture(sciResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
-	virtual void drawCell(sciResourceId viewId, uint16 loopNo, uint16 cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
+	virtual void drawPicture(GUIResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
+	virtual void drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
 	virtual void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse);
 	virtual void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse);
 
@@ -78,7 +78,7 @@ public:
 	// FIXME: argc/argv because of gui32.cpp, should get removed sometime
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
-	virtual void addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	virtual void addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 
 	virtual void moveCursor(int16 x, int16 y);

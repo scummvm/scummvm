@@ -74,7 +74,7 @@ void SciGUI::setPort(uint16 portPtr) {
 		case 0: _gfx->SetPort(_windowMgr->_wmgrPort); break;
 		case 0xFFFF: _gfx->SetPort(_gfx->_menuPort); break;
 		default:
-			_gfx->SetPort((sciPort *)heap2Ptr(portPtr));
+			_gfx->SetPort((GUIPort *)heap2Ptr(portPtr));
 	};
 }
 
@@ -91,19 +91,19 @@ reg_t SciGUI::getPort() {
 }
 
 void SciGUI::globalToLocal(int16 *x, int16 *y) {
-	sciPort *curPort = _gfx->GetPort();
+	GUIPort *curPort = _gfx->GetPort();
 	*x = *x - curPort->left;
 	*y = *y - curPort->top;
 }
 
 void SciGUI::localToGlobal(int16 *x, int16 *y) {
-	sciPort *curPort = _gfx->GetPort();
+	GUIPort *curPort = _gfx->GetPort();
 	*x = *x + curPort->left;
 	*y = *y + curPort->top;
 }
 
 reg_t SciGUI::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
-	sciWnd *wnd = NULL;
+	GUIWindow *wnd = NULL;
 
 	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
 		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, 0);
@@ -116,19 +116,19 @@ reg_t SciGUI::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 styl
 }
 
 void SciGUI::disposeWindow(uint16 windowPtr, int16 arg2) {
-	sciWnd *wnd = (sciWnd *)heap2Ptr(windowPtr);
+	GUIWindow *wnd = (GUIWindow *)heap2Ptr(windowPtr);
 	_windowMgr->DisposeWindow(wnd, arg2);
 }
 
 void SciGUI::display(const char *text, int argc, reg_t *argv) {
 	int displayArg;
-	sciPort oldPort;
+	GUIPort oldPort;
 	int16 align = 0;
 	int16 bgcolor = -1, width = -1, bRedraw = 1;
 	byte bSaveUnder = false;
-	Common::Rect rect, *orect = &((sciWnd *)_gfx->GetPort())->dims;
+	Common::Rect rect, *orect = &((GUIWindow *)_gfx->GetPort())->dims;
 
-	memcpy(&oldPort, _gfx->GetPort(), sizeof(sciPort));
+	memcpy(&oldPort, _gfx->GetPort(), sizeof(GUIPort));
 	// setting defaults
 	_gfx->PenMode(0);
 	_gfx->PenColor(0);
@@ -200,10 +200,10 @@ void SciGUI::display(const char *text, int argc, reg_t *argv) {
 //	if (_picNotValid == 0 && bRedraw)
 //		_gfx->ShowBits(rect, 1);
 	// restoring port and cursor pos
-	sciPort *currport = _gfx->GetPort();
+	GUIPort *currport = _gfx->GetPort();
 	uint16 tTop = currport->curTop;
 	uint16 tLeft = currport->curLeft;
-	memcpy(currport, &oldPort, sizeof(sciPort));
+	memcpy(currport, &oldPort, sizeof(GUIPort));
 	currport->curTop = tTop;
 	currport->curLeft = tLeft;
 
@@ -226,9 +226,9 @@ void SciGUI::textColors(int argc, reg_t *argv) {
 	_gfx->SetTextColors(argc, argv);
 }
 
-void SciGUI::drawPicture(sciResourceId pictureId, uint16 style, uint16 flags, int16 EGApaletteNo) {
+void SciGUI::drawPicture(GUIResourceId pictureId, uint16 style, uint16 flags, int16 EGApaletteNo) {
 	bool addToFlag = flags ? true : false;
-	sciPort *oldPort = _gfx->SetPort((sciPort *)_windowMgr->_picWind);
+	GUIPort *oldPort = _gfx->SetPort((GUIPort *)_windowMgr->_picWind);
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
 		_gfx->drawPicture(pictureId, style, addToFlag, EGApaletteNo);
@@ -243,7 +243,7 @@ void SciGUI::drawPicture(sciResourceId pictureId, uint16 style, uint16 flags, in
 	_s->pic_not_valid = 1;
 }
 
-void SciGUI::drawCell(sciResourceId viewId, uint16 loopNo, uint16 cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
+void SciGUI::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	_gfx->drawCell(viewId, loopNo, cellNo, leftPos, topPos, priority, paletteNo);
 	_gfx->SetCLUT(&_gfx->_sysPalette);
 	_screen->UpdateWhole();
@@ -317,7 +317,7 @@ void SciGUI::paletteAnimate(int fromColor, int toColor, int speed) {
 }
 
 int16 SciGUI::onControl(byte screenMask, Common::Rect rect) {
-	sciPort *oldPort = _gfx->SetPort((sciPort *)_windowMgr->_picWind);
+	GUIPort *oldPort = _gfx->SetPort((GUIPort *)_windowMgr->_picWind);
 	int16 result;
 
 	result = _gfx->onControl(screenMask, rect);
@@ -333,12 +333,12 @@ void SciGUI::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	// FIXME: port over from gregs engine
 }
 
-void SciGUI::addToPicView(sciResourceId viewId, uint16 loopNo, uint16 cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void SciGUI::addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	// FIXME: port over from gregs engine
 }
 
 void SciGUI::setNowSeen(reg_t objectReference) {
-	// FIXME: port over from gregs engine
+	_gfx->SetNowSeen(objectReference);
 }
 
 void SciGUI::moveCursor(int16 x, int16 y) {

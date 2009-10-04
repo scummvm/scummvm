@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
+SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, GUIResourceId resourceId)
 	: _s(state), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	if (_s->_gameName == "lsl1sci") {
@@ -44,7 +44,7 @@ SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId r
 SciGUIfont::~SciGUIfont() {
 }
 
-void SciGUIfont::initData(sciResourceId resourceId) {
+void SciGUIfont::initData(GUIResourceId resourceId) {
 	Resource *fontResource = _s->resMan->findResource(ResourceId(kResourceTypeFont, resourceId), false);
 	if (!fontResource) {
 		error("font resource %d not found", resourceId);
@@ -62,7 +62,7 @@ void SciGUIfont::initData(sciResourceId resourceId) {
 	}
 }
 
-sciResourceId SciGUIfont::getResourceId() {
+GUIResourceId SciGUIfont::getResourceId() {
 	return _resourceId;
 }
 

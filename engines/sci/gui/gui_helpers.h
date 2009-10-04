@@ -28,67 +28,70 @@
 
 namespace Sci {
 
-typedef int sciResourceId; // is a resource-number and -1 means no parameter given
-typedef reg_t sciMemoryHandle;
-typedef uint16 SCIHANDLE;
+typedef int GUIResourceId; // is a resource-number and -1 means no parameter given
+typedef reg_t GUIMemoryHandle;
+typedef int16 GUIViewLoopNo;
+typedef int16 GUIViewCellNo;
 
-struct sciNode {
-	SCIHANDLE next; // heap handle to next node
-	SCIHANDLE prev; // heap handle to data
+typedef uint16 GUIHandle;
+
+struct GUINode {
+	GUIHandle next; // heap handle to next node
+	GUIHandle prev; // heap handle to data
 	uint16 key; // maybe also a heap handle
 };
-struct sciNode1 : sciNode {
+struct GUINode1 : GUINode {
 	uint16 value;
 };
 
-// sciPort and sciWnd need to be binary identical, so if you change anything in one, you have to change it in the other one
+// GUIPort and GUIWindow need to be binary identical, so if you change anything in one, you have to change it in the other one
 //  as well!
-struct sciPort {
-	sciNode node; // node struct for list operations
+struct GUIPort {
+	GUINode node; // node struct for list operations
 	int16 top, left;
 	Common::Rect rect;
 	int16 curTop, curLeft;
 	int16 fontHeight;
-	sciResourceId fontId;
+	GUIResourceId fontId;
 	int16 textFace, penClr, backClr;
 	int16 penMode;
 };
 
-struct sciWnd : public sciPort {
+struct GUIWindow : public GUIPort {
 	Common::Rect dims; // client area of window
 	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
 	uint16 uSaveFlag;
 	reg_t hSaved1;
 	reg_t hSaved2;
-	SCIHANDLE hTitle;
-	bool bDrawed;
+	GUIHandle hTitle;
+	bool bDrawn;
 };
 
-struct sciCast {
-	sciNode node;
+struct GUICast {
+	GUINode node;
 	uint16 view;
 	uint16 loop;
 	uint16 cel;
 	uint16 z;
 	uint16 pal;
-	SCIHANDLE hSaved;
+	GUIHandle hSaved;
 	Common::Rect rect;
 };
 
-struct sciColor {
+struct GUIColor {
 	byte used;
 	byte r, g, b;
 };
 
-struct sciPalette {
+struct GUIPalette {
 	byte mapping[256];
 	uint32 timestamp;
-	sciColor colors[256];
+	GUIColor colors[256];
 	byte intensity[256];
 };
 
-struct sciPalSched {
+struct GUIPalSchedule {
 	byte from;
 	uint32 schedule;
 };
@@ -110,15 +113,6 @@ enum {
 	GFX_ALWAYSUPDATE = 0x20,
 	GFX_FORCEUPDATE = 0x40,
 	GFX_REMOVEVIEW = 0x80
-};
-
-enum SCILanguage{
-	kLangNone = 0,
-	kLangEnglish = 1,
-	kLangFrench = 33,
-	kLangSpanish = 34,
-	kLangItalian = 39,
-	kLangGerman = 49
 };
 
 }
