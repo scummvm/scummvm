@@ -25,6 +25,10 @@
 #include "graphics/scaler/intern.h"
 #include "CEScaler.h"
 
+/**
+ * This filter (down)scales the source image horizontally by a factor of 3/4.
+ * For example, a 320x200 image is scaled to 240x200.
+ */
 template<int bitFormat>
 void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *work;
@@ -53,9 +57,14 @@ void PocketPCPortraitTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPt
 }
 MAKE_WRAPPER(PocketPCPortrait)
 
-// Our version of an aspect scaler. Main difference is the out-of-place
-// operation, omitting a straight blit step the sdl backend does. Also,
-// tests show unaligned access errors with the stock aspect scaler.
+/**
+ * This filter (up)scales the source image vertically by a factor of 6/5.
+ * For example, a 320x200 image is scaled to 320x240.
+ *
+ * The main difference to the code in graphics/scaler/aspect.cpp is the
+ * out-of-place operation, omitting a straight blit step the sdl backend
+ * does. Also, tests show unaligned access errors with the stock aspect scaler.
+ */
 void PocketPCLandscapeAspect(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 
 	const int redblueMasks[] = { 0x7C1F, 0xF81F };
@@ -150,10 +159,14 @@ void PocketPCHalfTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, u
 	}
 }
 
+/**
+ * This filter (down)scales the source image by a factor of 1/2.
+ * For example, a 320x200 image is scaled to 160x100.
+ */
 void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 #ifdef ARM
 	int maskUsed = (gBitFormat == 565);
-	PocketPCHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed],roundingconstants[maskUsed]);
+	PocketPCHalfARM(srcPtr, srcPitch, dstPtr, dstPitch, width, height, redbluegreenMasks[maskUsed], roundingconstants[maskUsed]);
 #else
 	if (gBitFormat == 565)
 		PocketPCHalfTemplate<565>(srcPtr, srcPitch, dstPtr, dstPitch, width, height);
@@ -162,6 +175,10 @@ void PocketPCHalf(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 ds
 #endif
 }
 
+/**
+ * This filter (down)scales the source image horizontally by a factor of 1/2.
+ * For example, a 320x200 image is scaled to 160x200.
+ */
 template<int bitFormat>
 void PocketPCHalfZoomTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 	uint16 *work;
@@ -215,6 +232,13 @@ void SmartphoneLandscapeTemplate(const uint8 *srcPtr, uint32 srcPitch, uint8 *ds
 	}
 }
 
+/**
+ * This filter (down)scales the source image horizontally by a factor of 2/3
+ * and vertically by 7/8. For example, a 320x200 image is scaled to 213x175.
+ *
+ * @note The ARM asm version seems to work differently ?!? It apparently scales
+ * horizontally by 11/16. Thus a 320x200 image is scaled to 220x175.
+ */
 void SmartphoneLandscape(const uint8 *srcPtr, uint32 srcPitch, uint8 *dstPtr, uint32 dstPitch, int width, int height) {
 #ifdef ARM
 	int maskUsed = (gBitFormat == 565);
