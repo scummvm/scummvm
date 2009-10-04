@@ -32,8 +32,8 @@
 
 namespace Sci {
 
-SciGUIpicture::SciGUIpicture(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId)
-	: _system(system), _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
+SciGUIpicture::SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId)
+	: _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }

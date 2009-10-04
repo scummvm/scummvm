@@ -27,7 +27,7 @@ namespace Sci {
 
 class SciGUIfont {
 public:
-	SciGUIfont(OSystem *system, EngineState *state, SciGUIscreen *screen, sciResourceId resourceId);
+	SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId resourceId);
 	~SciGUIfont();
 
 	sciResourceId getResourceId();
@@ -40,7 +40,6 @@ public:
 private:
 	void initData(sciResourceId resourceId);
 
-	OSystem *_system;
 	EngineState *_s;
 	SciGUIscreen *_screen;
 

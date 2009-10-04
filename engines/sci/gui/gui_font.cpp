@@ -31,8 +31,8 @@
 
 namespace Sci {
 
-SciGUIfont::SciGUIfont(OSystem *system, EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
-	: _system(system), _s(state), _screen(screen), _resourceId(resourceId) {
+SciGUIfont::SciGUIfont(EngineState *state, SciGUIscreen *screen, sciResourceId resourceId)
+	: _s(state), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }

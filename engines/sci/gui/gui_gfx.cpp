@@ -344,14 +344,14 @@ sciResourceId SciGUIgfx::GetFontId() {
 
 SciGUIfont *SciGUIgfx::GetFont() {
 	if ((_font == NULL) || (_font->getResourceId() != _curPort->fontId)) {
-		_font = new SciGUIfont(_system, _s, _screen, _curPort->fontId);
+		_font = new SciGUIfont(_s, _screen, _curPort->fontId);
 	}
 	return _font;
 }
 
 void SciGUIgfx::SetFont(sciResourceId fontId) {
 	if ((_font == NULL) || (_font->getResourceId() != fontId)) {
-		_font = new SciGUIfont(_system, _s, _screen, fontId);
+		_font = new SciGUIfont(_s, _screen, fontId);
 	}
 	_curPort->fontId = fontId;
 	_curPort->fontHeight = _font->getHeight();
@@ -1209,7 +1209,7 @@ void SciGUIgfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 void SciGUIgfx::drawPicture(sciResourceId pictureId, uint16 style, bool addToFlag, sciResourceId paletteId) {
 	SciGUIpicture *picture;
 
-	picture = new SciGUIpicture(_system, _s, this, _screen, pictureId);
+	picture = new SciGUIpicture(_s, this, _screen, pictureId);
 	// do we add to a picture? if not -> clear screen
 	if (!addToFlag) {
 		ClearScreen(0);

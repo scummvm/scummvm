@@ -32,7 +32,7 @@ namespace Sci {
 
 class SciGUIpicture {
 public:
-	SciGUIpicture(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId);
+	SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, sciResourceId resourceId);
 	~SciGUIpicture();
 
 	sciResourceId getResourceId();
@@ -52,7 +52,6 @@ private:
 	void vectorGetRelCoordsMed(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y);
 	void vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture);
 
-	OSystem *_system;
 	EngineState *_s;
 	SciGUIgfx *_gfx;
 	SciGUIscreen *_screen;
