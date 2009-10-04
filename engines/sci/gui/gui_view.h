@@ -33,6 +33,7 @@ struct sciViewCellInfo {
 	char displaceX;
 	byte displaceY;
 	byte clearKey;
+	uint16 offsetEGA;
 	uint16 offsetRLE;
 	uint16 offsetLiteral;
 	byte *rawBitmap;
@@ -62,7 +63,7 @@ public:
 
 private:
 	void initData(GUIResourceId resourceId);
-	void unpackView(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount);
+	void unpackCel(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount);
 
 	OSystem *_system;
 	EngineState *_s;

@@ -58,16 +58,15 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 	uint16 loopSize = 0, cellSize = 0;
 	int loopNo, cellNo;
 	byte seekEntry;
+	bool IsEGA = false;
 
 	_embeddedPal = false;
 	_loopCount = 0;
 
 
 	switch (_s->resMan->getViewType()) {
-	case kViewEga: // View-format SCI0/SCI0
-		// FIXME: seems to be almost the same as kViewVga
-		break;
-
+	case kViewEga: // View-format SCI0
+		IsEGA = true;
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 		
@@ -77,7 +76,11 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
 		if (palOffset && palOffset != 0x100) {
-			_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+			if (IsEGA) {
+				// translation map for 16 colors
+			} else {
+				_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+			}
 			_embeddedPal = true;
 		}
 
@@ -97,13 +100,23 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 				cellOffset = READ_LE_UINT16(loopData + 4 + cellNo * 2);
 				cellData = _resourceData + cellOffset;
 
+				// For VGA
+				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE Unknown:BYTE RLEData starts now directly
+				// For EGA
+				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE EGAData starts now directly
 				cell = &_loop[loopNo].cell[cellNo];
 				cell->width = READ_LE_UINT16(cellData);
 				cell->height = READ_LE_UINT16(cellData + 2);
 				cell->displaceX = cellData[4];
 				cell->displaceY = cellData[5];
 				cell->clearKey = cellData[6];
-				cell->offsetRLE = cellOffset + 8;
+				if (IsEGA) {
+					cell->offsetEGA = cellOffset + 7;
+					cell->offsetRLE = 0;
+				} else {
+					cell->offsetEGA = 0;
+					cell->offsetRLE = cellOffset + 8;
+				}
 				cell->offsetLiteral = 0;
 				cell->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
@@ -165,6 +178,7 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 
 	case kViewAmiga: // View-format on amiga
 		// FIXME
+		error("ViewType Amiga is currently unsupported");
 		break;
 
 	default:
@@ -212,13 +226,22 @@ void SciGUIview::getCellRect(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 x
 	}
 }
 
-void SciGUIview::unpackView(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount) {
-	byte *rlePtr = _resourceData + _loop[loopNo].cell[cellNo].offsetRLE;
-	byte *literalPtr = _resourceData + _loop[loopNo].cell[cellNo].offsetLiteral;
+void SciGUIview::unpackCel(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount) {
+	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
+	byte *rlePtr;
+	byte *literalPtr;
 	uint16 pixelNo = 0, brun;
 	byte b;
 
-	if (literalPtr == _resourceData) { // no extra literal data
+	if (cellInfo->offsetEGA) { // EGA data
+		literalPtr = _resourceData + _loop[loopNo].cell[cellNo].offsetEGA;
+		// FIXME: Implement EGA "decompression"
+		return;
+	}
+
+
+	rlePtr = _resourceData + cellInfo->offsetRLE;
+	if (!cellInfo->offsetLiteral) { // no extra literal data
 		while (pixelNo < pixelCount) {
 			b = *rlePtr++;
 			brun = b & 0x3F; // bytes run length on this step
@@ -237,6 +260,7 @@ void SciGUIview::unpackView(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *ou
 			}
 		}
 	} else {
+		literalPtr = _resourceData + cellInfo->offsetLiteral;
 		while (pixelNo < pixelCount) {
 			b = *rlePtr++;
 			brun = b & 0x3F; // bytes run length on this step
@@ -272,11 +296,10 @@ byte *SciGUIview::getBitmap(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
 	_loop[loopNo].cell[cellNo].rawBitmap = new byte[pixelCount];
 	byte *pOut = _loop[loopNo].cell[cellNo].rawBitmap;
 
+	// Some RLE compressed cels end with the last non-transparent pixel, thats why we fill it up here
+	//  FIXME: change this to fill the remaining bytes within unpackCel()
 	memset(pOut, _loop[loopNo].cell[cellNo].clearKey, pixelCount);
-	//if (g_sci->getPlatform() == Common::kPlatformAmiga)
-	//	unpackViewAmiga(ptr, pOut, pixelCount);
-	//else
-		unpackView(loopNo, cellNo, pOut, pixelCount);
+	unpackCel(loopNo, cellNo, pOut, pixelCount);
 
 	// mirroring the view if needed
 	if (_loop[loopNo].mirrorFlag) {
