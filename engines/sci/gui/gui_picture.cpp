@@ -260,23 +260,23 @@ enum {
 #define PIC_OP_FIRST PIC_OP_SET_COLOR
 
 enum {
-	PIC_OPX_SCI0_SET_PALETTE_ENTRIES = 0,
-	PIC_OPX_SCI0_SET_PALETTE = 1,
-	PIC_OPX_SCI0_MONO0 = 2,
-	PIC_OPX_SCI0_MONO1 = 3,
-	PIC_OPX_SCI0_MONO2 = 4,
-	PIC_OPX_SCI0_MONO3 = 5,
-	PIC_OPX_SCI0_MONO4 = 6,
-	PIC_OPX_SCI0_EMBEDDED_VIEW = 7,
-	PIC_OPX_SCI0_SET_PRIORITY_TABLE = 8
+	PIC_OPX_EGA_SET_PALETTE_ENTRIES = 0,
+	PIC_OPX_EGA_SET_PALETTE = 1,
+	PIC_OPX_EGA_MONO0 = 2,
+	PIC_OPX_EGA_MONO1 = 3,
+	PIC_OPX_EGA_MONO2 = 4,
+	PIC_OPX_EGA_MONO3 = 5,
+	PIC_OPX_EGA_MONO4 = 6,
+	PIC_OPX_EGA_EMBEDDED_VIEW = 7,
+	PIC_OPX_EGA_SET_PRIORITY_TABLE = 8
 };
 
 enum {
-	PIC_OPX_SCI1_SET_PALETTE_ENTRIES = 0,
-	PIC_OPX_SCI1_EMBEDDED_VIEW = 1,
-	PIC_OPX_SCI1_SET_PALETTE = 2,
-	PIC_OPX_SCI1_PRIORITY_TABLE_EQDIST = 3,
-	PIC_OPX_SCI1_PRIORITY_TABLE_EXPLICIT = 4
+	PIC_OPX_VGA_SET_PALETTE_ENTRIES = 0,
+	PIC_OPX_VGA_EMBEDDED_VIEW = 1,
+	PIC_OPX_VGA_SET_PALETTE = 2,
+	PIC_OPX_VGA_PRIORITY_TABLE_EQDIST = 3,
+	PIC_OPX_VGA_PRIORITY_TABLE_EXPLICIT = 4
 };
 
 #define PIC_EGAPALETTE_COUNT 4
@@ -417,7 +417,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_OPX: // Extended functions
 			if (isEGA) {
 				switch (pic_op = data[curPos++]) {
-				case PIC_OPX_SCI0_SET_PALETTE_ENTRIES:
+				case PIC_OPX_EGA_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
 						byte = data[curPos++];
 						if (byte >= PIC_EGAPALETTE_TOTALSIZE) {
@@ -426,7 +426,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 						EGApalettes[byte] = data[curPos++];
 					}
 					break;
-				case PIC_OPX_SCI0_SET_PALETTE:
+				case PIC_OPX_EGA_SET_PALETTE:
 					byte = data[curPos++];
 					if (byte >= PIC_EGAPALETTE_COUNT) {
 						error("picture trying to write to invalid palette %d", EGApalette);
@@ -436,23 +436,23 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 						EGApalettes[byte + i] = data[curPos++];
 					}
 					break;
-				case PIC_OPX_SCI0_MONO0:
+				case PIC_OPX_EGA_MONO0:
 					curPos += 41;
 					break;
-				case PIC_OPX_SCI0_MONO1:
-				case PIC_OPX_SCI0_MONO3:
+				case PIC_OPX_EGA_MONO1:
+				case PIC_OPX_EGA_MONO3:
 					curPos++;
 					break;
-				case PIC_OPX_SCI0_MONO2:
-				case PIC_OPX_SCI0_MONO4:
+				case PIC_OPX_EGA_MONO2:
+				case PIC_OPX_EGA_MONO4:
 					break;
-				case PIC_OPX_SCI0_EMBEDDED_VIEW:
+				case PIC_OPX_EGA_EMBEDDED_VIEW:
 					vectorGetAbsCoords(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					drawCel(x, y, data + curPos, size);
 					curPos += size;
 					break;
-				case PIC_OPX_SCI0_SET_PRIORITY_TABLE:
+				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
 					//FIXME
 					//g_sci->PriBands(ptr);
 					curPos += 14;
@@ -463,12 +463,12 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			} else {
 				//warning("OPX SCI1 %X at %d", data[curPos], curPos);
 				switch (pic_op = data[curPos++]) {
-				case PIC_OPX_SCI1_SET_PALETTE_ENTRIES:
+				case PIC_OPX_VGA_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
 						curPos++; // skip commands
 					}
 					break;
-				case PIC_OPX_SCI1_SET_PALETTE:
+				case PIC_OPX_VGA_SET_PALETTE:
 					curPos += 256 + 4; // Skip over mapping and timestamp
 					for (i = 0; i < 256; i++) {
 						palette.colors[i].used = data[curPos++];
@@ -476,20 +476,20 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					}
 					_gfx->SetPalette(&palette, 2);
 					break;
-				case PIC_OPX_SCI1_EMBEDDED_VIEW: // draw cel
+				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoords(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					drawCel(x, y, data + curPos, size);
 					curPos += size;
 					break;
-				case PIC_OPX_SCI1_PRIORITY_TABLE_EQDIST:
+				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
 					//FIXME
 					//g_sci->InitPri(READ_LE_UINT16(ptr), READ_LE_UINT16(ptr + 2));
 					debug(5, "DrawPic::InitPri %d %d", 
 						READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
 					curPos += 4;
 					break;
-				case PIC_OPX_SCI1_PRIORITY_TABLE_EXPLICIT:
+				case PIC_OPX_VGA_PRIORITY_TABLE_EXPLICIT:
 					//FIXME
 					//g_sci->PriBands(ptr);
 					curPos += 14;
