@@ -297,25 +297,21 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
 	byte *EGApalette = &EGApalettes[_EGApaletteNo];
-	bool EGAmapping = false;
+	bool isEGA = false;
 	int curPos = 0;
 	uint16 size;
 	byte byte;
 	int i;
 	GuiPalette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
-	bool sci1 = false;
 
 	memset(&palette, 0, sizeof(palette));
 
 	if (_EGApaletteNo >= PIC_EGAPALETTE_COUNT)
 		_EGApaletteNo = 0;
 
-	if (getSciVersion() >= SCI_VERSION_1_EGA)
-		sci1 = true;
-
 	if (!_s->resMan->isVGA())
-		EGAmapping = true;
+		isEGA = true;
 
 	for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
 		memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
@@ -326,7 +322,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
 			byte = data[curPos++];
-			pic_color = EGAmapping ? EGApalette[byte] : byte;
+			pic_color = isEGA ? EGApalette[byte] : byte;
 			break;
 		case PIC_OP_DISABLE_VISUAL:
 			pic_color = 0xFF;
@@ -419,44 +415,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			break;
 
 		case PIC_OP_OPX: // Extended functions
-			if (sci1) {
-				//warning("OPX SCI1 %X at %d", data[curPos], curPos);
-				switch (pic_op = data[curPos++]) {
-				case PIC_OPX_SCI1_SET_PALETTE_ENTRIES:
-					while (vectorIsNonOpcode(data[curPos])) {
-						curPos++; // skip commands
-					}
-					break;
-				case PIC_OPX_SCI1_SET_PALETTE:
-					curPos += 256 + 4; // Skip over mapping and timestamp
-					for (i = 0; i < 256; i++) {
-						palette.colors[i].used = data[curPos++];
-						palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
-					}
-					_gfx->SetPalette(&palette, 2);
-					break;
-				case PIC_OPX_SCI1_EMBEDDED_VIEW: // draw cel
-					vectorGetAbsCoords(data, curPos, x, y);
-					size = READ_LE_UINT16(data + curPos); curPos += 2;
-					drawCel(x, y, data + curPos, size);
-					curPos += size;
-					break;
-				case PIC_OPX_SCI1_PRIORITY_TABLE_EQDIST:
-					//FIXME
-					//g_sci->InitPri(READ_LE_UINT16(ptr), READ_LE_UINT16(ptr + 2));
-					debug(5, "DrawPic::InitPri %d %d", 
-						READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
-					curPos += 4;
-					break;
-				case PIC_OPX_SCI1_PRIORITY_TABLE_EXPLICIT:
-					//FIXME
-					//g_sci->PriBands(ptr);
-					curPos += 14;
-					break;
-				default:
-					error("Unsupported sci1 extended pic-operation %X", pic_op);
-				}
-			} else {
+			if (isEGA) {
 				switch (pic_op = data[curPos++]) {
 				case PIC_OPX_SCI0_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
@@ -494,6 +453,43 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					curPos += size;
 					break;
 				case PIC_OPX_SCI0_SET_PRIORITY_TABLE:
+					//FIXME
+					//g_sci->PriBands(ptr);
+					curPos += 14;
+					break;
+				default:
+					error("Unsupported sci1 extended pic-operation %X", pic_op);
+				}
+			} else {
+				//warning("OPX SCI1 %X at %d", data[curPos], curPos);
+				switch (pic_op = data[curPos++]) {
+				case PIC_OPX_SCI1_SET_PALETTE_ENTRIES:
+					while (vectorIsNonOpcode(data[curPos])) {
+						curPos++; // skip commands
+					}
+					break;
+				case PIC_OPX_SCI1_SET_PALETTE:
+					curPos += 256 + 4; // Skip over mapping and timestamp
+					for (i = 0; i < 256; i++) {
+						palette.colors[i].used = data[curPos++];
+						palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
+					}
+					_gfx->SetPalette(&palette, 2);
+					break;
+				case PIC_OPX_SCI1_EMBEDDED_VIEW: // draw cel
+					vectorGetAbsCoords(data, curPos, x, y);
+					size = READ_LE_UINT16(data + curPos); curPos += 2;
+					drawCel(x, y, data + curPos, size);
+					curPos += size;
+					break;
+				case PIC_OPX_SCI1_PRIORITY_TABLE_EQDIST:
+					//FIXME
+					//g_sci->InitPri(READ_LE_UINT16(ptr), READ_LE_UINT16(ptr + 2));
+					debug(5, "DrawPic::InitPri %d %d", 
+						READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
+					curPos += 4;
+					break;
+				case PIC_OPX_SCI1_PRIORITY_TABLE_EXPLICIT:
 					//FIXME
 					//g_sci->PriBands(ptr);
 					curPos += 14;
