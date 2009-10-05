@@ -39,7 +39,7 @@ public:
 	int16 isFrontWindow(GuiWindow *wnd);
 	void BeginUpdate(GuiWindow *wnd);
 	void EndUpdate(GuiWindow *wnd);
-	GuiWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
+	GuiWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, bool draw);
 	void DrawWindow(GuiWindow *wnd);
 	void DisposeWindow(GuiWindow *pWnd, int16 arg2);
 	void UpdateWindow(GuiWindow *wnd);

@@ -110,9 +110,9 @@ reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 styl
 	GuiWindow *wnd = NULL;
 
 	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
-		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, 0);
+		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, false);
 	else
-		wnd = _windowMgr->NewWindow(dims, NULL, title, style, priority, 0);
+		wnd = _windowMgr->NewWindow(dims, NULL, title, style, priority, false);
 	wnd->penClr = colorPen;
 	wnd->backClr = colorBack;
 	_windowMgr->DrawWindow(wnd);

@@ -63,7 +63,7 @@ SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiGfx *gfx)
 
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = NewWindow(Common::Rect(0, 10, 320, 200), 0, 0, kTransparent | kNoFrame, 0, 1);
+	_picWind = NewWindow(Common::Rect(0, 10, 320, 200), 0, 0, kTransparent | kNoFrame, 0, true);
 }
 
 SciGuiWindowMgr::~SciGuiWindowMgr() {
@@ -101,7 +101,7 @@ void SciGuiWindowMgr::EndUpdate(GuiWindow *wnd) {
 	_gfx->SetPort(oldPort);
 }
 
-GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA) {
+GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, bool draw) {
 	// Find an unused window/port id
 	uint id = 1;
 	while (id < _windowsById.size() && _windowsById[id]) {
@@ -173,7 +173,7 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
 	
-	if (argA)
+	if (draw)
 		DrawWindow(pwnd);
 	_gfx->SetPort((GuiPort *)pwnd);
 	_gfx->SetOrigin(pwnd->rect.left, pwnd->rect.top + _wmgrPort->top);
