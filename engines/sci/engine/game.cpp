@@ -211,8 +211,6 @@ int _reset_graphics_input(EngineState *s) {
 	gfxop_fill_box(s->gfx_state, gfx_rect(0, 0, 320, 200), s->ega_colors[0]); // Fill screen black
 	gfxop_update(s->gfx_state);
 
-	s->gui->moveCursor(160, 150);
-
 	s->pic_is_new = 0;
 	s->pic_visible_map = GFX_MASK_NONE; // Other values only make sense for debugging
 	s->dyn_views = NULL; // no DynViews
@@ -280,6 +278,8 @@ int _reset_graphics_input(EngineState *s) {
 	s->titlebar_port->_bgcolor.mask |= GFX_MASK_PRIORITY;
 	s->titlebar_port->_bgcolor.priority = 11; // Standard priority for the titlebar port
 #endif
+
+	s->gui->moveCursor(160, 150);
 
 	return 0;
 }
