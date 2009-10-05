@@ -300,7 +300,7 @@ void SciGuiGfx::setScreenPalette(GuiPalette*pal) {
 	_system->setPalette(bpal, 0, 256);
 }
 
-void SciGuiGfx::getScreenPalette(GuiPalette*pal) {
+void SciGuiGfx::getSysPalette(GuiPalette*pal) {
 	if (pal != &_sysPalette)
 		memcpy(pal, &_sysPalette,sizeof(GuiPalette));
 }
