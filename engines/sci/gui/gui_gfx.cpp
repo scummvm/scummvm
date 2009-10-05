@@ -298,7 +298,6 @@ void SciGuiGfx::SetCLUT(GuiPalette*pal) {
 		bpal[i * 4 + 3] = 100;
 	}
 	_system->setPalette(bpal, 0, 256);
-	_system->updateScreen();
 }
 
 void SciGuiGfx::GetCLUT(GuiPalette*pal) {
@@ -832,7 +831,7 @@ void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 flags) {
 
 	OffsetRect(rect);
 	assert((flags&0x8000) == 0);
-	_screen->updateScreen();
+	_screen->copyToScreen();
 //	_system->copyRectToScreen(GetSegment(flags) + _baseTable[rect.top] + rect.left, 320, rect.left, rect.top, rect.width(), rect.height());
 //	_system->updateScreen();
 }

@@ -71,9 +71,8 @@ byte *SciGuiScreen::initScreen(uint16 pixelCount) {
 	return screen;
 }
 
-void SciGuiScreen::updateScreen() {
+void SciGuiScreen::copyToScreen() {
 	_system->copyRectToScreen(_displayScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
-	_system->updateScreen();
 }
 
 byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {

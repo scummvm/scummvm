@@ -46,7 +46,7 @@ public:
 	void init(void);
 	byte *initScreen(uint16 pixelCount);
 
-	void updateScreen();
+	void copyToScreen();
 
 	byte getDrawingMask(byte color, byte prio, byte control);
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
