@@ -191,6 +191,12 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	GuiPort *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
 	if ((wndStyle & kTransparent) == 0) {
+		// Store the shadow, if it exists
+		if ((wndStyle & kUser) == 0) {
+			pWnd->restoreRect.bottom++;
+			pWnd->restoreRect.right++;
+		}
+
 		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, 1);
 		if (pWnd->uSaveFlag & 2) {
 			pWnd->hSaved2 = _gfx->SaveBits(pWnd->restoreRect, 2);
@@ -207,6 +213,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 			_gfx->FrameRect(r);// shadow
 			r.translate(-1, -1);
 			_gfx->FrameRect(r);// window frame
+
 			if (wndStyle & kTitle) {
 				_gfx->FrameRect(r);
 				r.grow(-1);
@@ -227,6 +234,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 		
 		if ((wndStyle & kTransparent) == 0)
 			_gfx->FillRect(r, 1, pWnd->backClr);
+
 		_gfx->ShowBits(pWnd->dims, 1);
 	}
 	_gfx->SetPort(oldport);
