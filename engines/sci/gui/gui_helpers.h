@@ -36,8 +36,6 @@ typedef reg_t GuiMemoryHandle;
 typedef int16 GuiViewLoopNo;
 typedef int16 GuiViewCelNo;
 
-typedef uint16 GuiHandle;
-
 struct GuiPort {
 	uint16 id;
 	int16 top, left;
@@ -78,7 +76,6 @@ struct GuiCast {
 	uint16 cel;
 	uint16 z;
 	uint16 pal;
-	GuiHandle hSaved;
 	Common::Rect rect;
 };
 
@@ -98,14 +95,6 @@ struct GuiPalSchedule {
 	byte from;
 	uint32 schedule;
 };
-
-#define STUB(str) debug("STUB: '%s' at file %s line %d",str,__FILE__,__LINE__)
-
-
-#define GETFTR_WINDOWMGR(x) (x & 0x00000001)
-#define GETFTR_CANBEHERE(x) (x & 0x00000002)
-#define GETFTR_SOUND(x)     (x & 0x0000000C)
-#define GETFTR_SHOWPIC(x)   (x & 0x00000010)
 
 enum {
 	GFX_STOPUPDATE = 0x01,
