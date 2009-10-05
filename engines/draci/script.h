@@ -84,7 +84,7 @@ struct GPL2Program {
 };
 
 class Animation;
-class GameObject;
+struct GameObject;
 
 class Script {
 
