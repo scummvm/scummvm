@@ -112,13 +112,6 @@ int BrowserDialog::runModal() {
 
 	NavDialogDispose(dialogRef);
 
-	// If we were in fullscreen mode, switch back
-	if (wasFullscreen) {
-		g_system->beginGFXTransaction();
-		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, true);
-		g_system->endGFXTransaction();
-	}
-
 	return choiceMade;
 }
 

@@ -35,7 +35,7 @@ ifeq "$(HAVE_GCC)" "1"
 	#CXXFLAGS+= -Wmissing-format-attribute
 
 	# Disable RTTI and exceptions, and enabled checking of pointers returned by "new"
-	CXXFLAGS+= -fno-rtti -fno-exceptions -fcheck-new
+	CXXFLAGS+= -fno-exceptions -fcheck-new
 
 	# There is a nice extra warning that flags variables that are potentially
 	# used before being initialized. Very handy to catch a certain kind of
