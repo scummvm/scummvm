@@ -455,16 +455,6 @@ int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop);
 void gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel);
 
 /**
- * Resets loop/cel values to zero if they have become invalid.
- *
- * @param[in] state	The state to use
- * @param[in] nr	Number of the view to use
- * @param[in] loop	Pointer to the variable storing the loop number to verify
- * @param[in] cel	Pointer to the variable storing the cel number to check
- */
-void gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel);
-
-/**
  * Retrieves the width and height of a cel.
  *
  * @param[in] state		The state to use

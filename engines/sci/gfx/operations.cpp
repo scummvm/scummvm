@@ -1468,23 +1468,6 @@ void gfxop_check_cel(GfxState *state, int nr, int *loop, int *cel) {
 		error("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
 }
 
-void gfxop_overflow_cel(GfxState *state, int nr, int *loop, int *cel) {
-	int loop_v = *loop;
-	int cel_v = *cel;
-
-	gfxr_view_t *testView = state->gfxResMan->getView(nr, &loop_v, &cel_v, 0);
-
-	if (!testView)
-		error("[GFX] Attempt to verify loop/cel values for invalid view %d", nr);
-
-	if (loop_v != *loop)
-		*loop = 0;
-
-	if (loop_v != *loop
-	        || cel_v != *cel)
-		*cel = 0;
-}
-
 void gfxop_get_cel_parameters(GfxState *state, int nr, int loop, int cel, int *width, int *height, Common::Point *offset) {
 	gfxr_view_t *view = NULL;
 	gfx_pixmap_t *pxm = NULL;
@@ -1625,9 +1608,7 @@ void gfxop_add_to_pic(GfxState *state, int nr, int flags, int default_palette) {
 // FIXME: only the resstate member of state is used -- inline the reference by:
 // replacing GfxState* state parameter with gfx_resstate_t* gfxResourceState and adjust callers accordingly
 int gfxop_get_font_height(GfxState *state, int font_nr) {
-	gfx_bitmap_font_t *font;
-
-	font = state->gfxResMan->getFont(font_nr);
+	gfx_bitmap_font_t *font = state->gfxResMan->getFont(font_nr);
 
 	if (!font)
 		error("gfxop_get_font_height(): Font number %d not found", font_nr);
