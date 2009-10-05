@@ -52,7 +52,6 @@
 #include "backends/platform/ps2/asyncfio.h"
 #include "eecodyvdfs.h"
 #include "graphics/surface.h"
-#include "graphics/scaler.h"
 #include "graphics/font.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
@@ -86,8 +85,6 @@ static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
 volatile uint32 msecCount = 0;
 
 OSystem_PS2 *g_systemPs2;
-
-int gBitFormat = 1555;
 
 #define FOREVER 2147483647
 
@@ -525,7 +522,7 @@ bool OSystem_PS2::netPresent(void) {
 	return _useNet;
 }
 
-void OSystem_PS2::initSize(uint width, uint height) {
+void OSystem_PS2::initSize(uint width, uint height, const Graphics::PixelFormat *format) {
 	printf("initializing new size: (%d/%d)...", width, height);
 	_screen->newScreenSize(width, height);
 	_screen->setMouseXy(width / 2, height / 2);
@@ -624,7 +621,7 @@ void OSystem_PS2::warpMouse(int x, int y) {
 	_screen->setMouseXy(x, y);
 }
 
-void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+void OSystem_PS2::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
 	_screen->setMouseOverlay(buf, w, h, hotspot_x, hotspot_y, keycolor);
 }
 

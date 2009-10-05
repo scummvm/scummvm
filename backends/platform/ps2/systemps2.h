@@ -58,7 +58,7 @@ class OSystem_PS2 : public BaseBackend {
 public:
 	OSystem_PS2(const char *elfPath);
 	virtual ~OSystem_PS2(void);
-	virtual void initSize(uint width, uint height);
+	virtual void initSize(uint width, uint height, const Graphics::PixelFormat *format);
 
 	void init(void);
 
@@ -88,7 +88,7 @@ public:
 	virtual bool showMouse(bool visible);
 
 	virtual void warpMouse(int x, int y);
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale = 1);
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale = 1, const Graphics::PixelFormat *format = 0);
 
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
