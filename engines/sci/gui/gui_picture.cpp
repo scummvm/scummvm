@@ -295,8 +295,8 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
 	byte pic_color = 0, pic_priority = 0x0F, pic_control = 0x0F;
 	int16 x = 0, y = 0, oldx, oldy;
-	byte EGApalette = 0;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
+	byte *EGApalette = &EGApalettes[_EGApaletteNo];
 	bool EGAmapping = false;
 	int curPos = 0;
 	uint16 size;
@@ -314,6 +314,9 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	if (getSciVersion() >= SCI_VERSION_1_EGA)
 		sci1 = true;
 
+	if (!_s->resMan->isVGA())
+		EGAmapping = true;
+
 	for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
 		memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
 
@@ -323,7 +326,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
 			byte = data[curPos++];
-			pic_color = EGAmapping ? EGApalettes[byte] : byte;
+			pic_color = EGAmapping ? EGApalette[byte] : byte;
 			break;
 		case PIC_OP_DISABLE_VISUAL:
 			pic_color = 0xFF;
@@ -466,7 +469,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					break;
 				case PIC_OPX_SCI0_SET_PALETTE:
 					byte = data[curPos++];
-					if (EGApalette >= PIC_EGAPALETTE_COUNT) {
+					if (byte >= PIC_EGAPALETTE_COUNT) {
 						error("picture trying to write to invalid palette %d", EGApalette);
 					}
 					byte *= PIC_EGAPALETTE_SIZE;
