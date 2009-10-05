@@ -63,6 +63,7 @@ void SciGuiGfx::init() {
 	OpenPort(_menuPort);
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
+	_menuRect = Common::Rect(0, 0, _screen->_width, 10);
 
 //	HEAPHANDLE theMenuBarH = heapNewPtr(34, kDataPort, "MenuBar");
 //	heapClearPtr(theMenuBarH);
@@ -1150,6 +1151,15 @@ void SciGuiGfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte c
 			Draw_Circle(rect, size, color, priority, control);
 		}
 	}
+}
+
+void SciGuiGfx::Draw_String(const char *text) {
+	GuiResourceId orgFontId = GetFontId();
+	int16 orgPenColor = _curPort->penClr;
+
+	DrawText(text, 0, strlen(text), orgFontId, orgPenColor);
+	SetFont(orgFontId);
+	PenColor(orgPenColor);
 }
 
 void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) {

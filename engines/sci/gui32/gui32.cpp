@@ -487,6 +487,21 @@ void SciGui32::textColors(int argc, reg_t *argv) {
 	// stub
 }
 
+void SciGui32::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
+	s->titlebar_port->_color.visual = get_pic_color(s, colorPen);
+	s->titlebar_port->_color.mask = GFX_MASK_VISUAL;
+	s->titlebar_port->_bgcolor.visual = get_pic_color(s, colorBack);
+	s->titlebar_port->_bgcolor.mask = GFX_MASK_VISUAL;
+
+	s->status_bar_foreground = colorPen;
+	s->status_bar_background = colorBack;
+	s->_statusBarText = text;
+
+	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, colorPen, colorBack);
+
+	gfxop_update(s->gfx_state);
+}
+
 void SciGui32::drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo) {
 	drawn_pic_t dp;
 	gfx_color_t transparent = s->wm_port->_bgcolor;

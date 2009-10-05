@@ -30,6 +30,7 @@
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
+#include "sci/gui/gui.h"
 
 namespace Sci {
 
@@ -65,32 +66,20 @@ reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 
 
 reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
-	reg_t text = argv[0];
-	int fgcolor = (argc > 1) ? argv[1].toSint16() : s->status_bar_foreground;
-	int bgcolor = (argc > 2) ? argv[2].toSint16() : s->status_bar_background;
+	reg_t textReference = argv[0];
+	Common::String text;
+	int16 colorPen = (argc > 1) ? argv[1].toSint16() : 0; // old code was: s->status_bar_foreground;
+	int16 colorBack = (argc > 2) ? argv[2].toSint16() : 255; // s->status_bar_background;
 
-	s->titlebar_port->_color.visual = get_pic_color(s, fgcolor);
-	s->titlebar_port->_color.mask = GFX_MASK_VISUAL;
-	s->titlebar_port->_bgcolor.visual = get_pic_color(s, bgcolor);
-	s->titlebar_port->_bgcolor.mask = GFX_MASK_VISUAL;
+	if (!textReference.isNull())
+		text = s->_segMan->getString(textReference);
 
-	s->status_bar_foreground = fgcolor;
-	s->status_bar_background = bgcolor;
-
-	if (text.segment) {
-		s->_statusBarText = s->_segMan->getString(text);
-	}
-
-	sciw_set_status_bar(s, s->titlebar_port, s->_statusBarText, fgcolor, bgcolor);
-
-	gfxop_update(s->gfx_state);
-
+	s->gui->drawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
 	return s->r_acc;
 }
 
 
 reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
-
 	if (argv[0].toSint16())
 		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
 	else

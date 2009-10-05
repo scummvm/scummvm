@@ -110,6 +110,7 @@ public:
 	void Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control);
 	void Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture);
 	void Draw_Pattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
+	void Draw_String(const char *text);
 	void Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control);
 	
 	void drawPicture(GuiResourceId pictureId, uint16 style, bool addToFlag, GuiResourceId paletteId);
@@ -129,6 +130,7 @@ public:
 	void SetNowSeen(reg_t objectReference);
 
 	GuiPort *_menuPort;
+	Common::Rect _menuRect;
 	uint32 _sysTicks;
 	int32 _sysSpeed; // ticker timer in ms 
 	GuiPalette _sysPalette;

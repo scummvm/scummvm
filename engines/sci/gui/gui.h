@@ -61,6 +61,7 @@ public:
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
 
+	virtual void drawStatus(const char *text, int16 colorPen, int16 colorBack);
 	virtual void drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
 	virtual void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
 	virtual void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse);

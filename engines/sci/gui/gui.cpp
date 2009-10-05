@@ -54,7 +54,7 @@ SciGui::~SciGui() {
 void SciGui::init(bool oldGfxFunctions) {
 	_usesOldGfxFunctions = oldGfxFunctions;
 
-	/* Set default SCI0 palette */
+	
 }
 
 int16 SciGui::getTimeTicks() {
@@ -230,6 +230,19 @@ void SciGui::textFonts(int argc, reg_t *argv) {
 // Used SCI1+ for text codes
 void SciGui::textColors(int argc, reg_t *argv) {
 	_gfx->SetTextColors(argc, argv);
+}
+
+void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
+	GuiPort *oldPort = _gfx->SetPort(_gfx->_menuPort);
+	if (text) {
+		_gfx->FillRect(_gfx->_menuRect, 1, colorBack);
+		_gfx->PenColor(colorPen);
+		_gfx->MoveTo(0, 1);
+		_gfx->Draw_String(text);
+		_gfx->SetPort(oldPort);
+		// _gfx->ShowBits(*_theMenuBar, 1);
+		_screen->copyToScreen();
+	}
 }
 
 void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, int16 EGApaletteNo) {
