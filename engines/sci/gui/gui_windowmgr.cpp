@@ -172,6 +172,15 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 			pwnd->rect.top + pwnd->dims.top - oldtop);
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
+
+	// CHECKME: Is this 'kTransparent' check necessary?
+	// The shadow is already drawn if !(wndStyle & (kUser | kNoFrame)).
+	if (!(pwnd->wndStyle & (kTransparent | kUser | kNoFrame))) {
+		// The shadow is drawn slightly outside the window.
+		// Enlarge restoreRect to cover that.
+		pwnd->restoreRect.bottom++;
+		pwnd->restoreRect.right++;
+	}
 	
 	if (draw)
 		DrawWindow(pwnd);
@@ -191,12 +200,6 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	GuiPort *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
 	if ((wndStyle & kTransparent) == 0) {
-		// Store the shadow, if it exists
-		if (!(wndStyle & kUser) && !(wndStyle & kNoFrame)) {
-			pWnd->restoreRect.bottom++;
-			pWnd->restoreRect.right++;
-		}
-
 		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, 1);
 		if (pWnd->uSaveFlag & 2) {
 			pWnd->hSaved2 = _gfx->SaveBits(pWnd->restoreRect, 2);
