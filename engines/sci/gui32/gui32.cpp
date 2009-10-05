@@ -584,6 +584,14 @@ void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, i
 	if (!s->pic_not_valid) FULL_REDRAW();
 }
 
+void SciGui32::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo cellNo, int16 style, bool inverse) {
+	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
+
+	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_icon_control(s->port, obj, area, viewId, loopNo, cellNo,
+								(int8)(style & kControlStateFramed), (int8)inverse));
+	if (!s->pic_not_valid) FULL_REDRAW();
+}
+
 static gfx_color_t graph_map_color(EngineState *s, int color, int priority, int control) {
 	gfx_color_t retval;
 

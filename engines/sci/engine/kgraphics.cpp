@@ -1451,12 +1451,9 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 		break;
 
 	case K_CONTROL_ICON:
-
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
-
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_icon_control(s->port, obj, area, view, loop, cel,
-		                          (int8)(state & kControlStateFramed), (int8)inverse));
-		break;
+		s->gui->drawControlIcon(rect, obj, view, loop, cel, state, inverse);
+		return;
 
 	case K_CONTROL_CONTROL:
 	case K_CONTROL_CONTROL_ALIAS: {

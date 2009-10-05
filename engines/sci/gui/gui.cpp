@@ -281,6 +281,13 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 	_screen->updateScreen();
 }
 
+void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool inverse) {
+	_gfx->drawCel(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
+	if (style & 0x20) {
+		_gfx->FrameRect(rect);
+	}
+}
+
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_gfx->PaintRect(rect);
 	_screen->updateScreen();
