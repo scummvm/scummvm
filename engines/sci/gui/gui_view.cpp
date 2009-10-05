@@ -150,12 +150,14 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			
 			seekEntry = loopData[2];
 			if (seekEntry != 255) {
+				_loop[loopNo].mirrorFlag = true;
 				loopData = _resourceData + headerSize + (seekEntry * loopNo);
+			} else {
+				_loop[loopNo].mirrorFlag = false;
 			}
 
 			celCount = loopData[4];
 			_loop[loopNo].celCount = celCount;
-			_loop[loopNo].mirrorFlag = false;
 
 			celData = _resourceData + READ_LE_UINT16(loopData + 14);
 
