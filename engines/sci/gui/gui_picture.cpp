@@ -319,7 +319,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 
 	// Drawing
 	while (curPos < dataSize) {
-		warning("%X at %d", data[curPos], curPos);
+		//warning("%X at %d", data[curPos], curPos);
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
 			byte = data[curPos++];
@@ -347,7 +347,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			vectorGetAbsCoords(data, curPos, oldx, oldy);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetRelCoords(data, curPos, oldx, oldy, x, y);
-				warning("line %d %d -> %d %d", oldy, oldx, y, x);
+				//warning("line %d %d -> %d %d", oldy, oldx, y, x);
 				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 				oldx = x; oldy = y;
 			}
@@ -356,7 +356,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			vectorGetAbsCoords(data, curPos, oldx, oldy);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetRelCoordsMed(data, curPos, oldx, oldy, x, y);
-				warning("line %d %d -> %d %d", oldy, oldx, y, x);
+				//warning("line %d %d -> %d %d", oldy, oldx, y, x);
 				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 				oldx = x; oldy = y;
 			}
@@ -365,7 +365,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			vectorGetAbsCoords(data, curPos, oldx, oldy);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetAbsCoords(data, curPos, x, y);
-				warning("line %d %d -> %d %d", oldy, oldx, y, x);
+				//warning("line %d %d -> %d %d", oldy, oldx, y, x);
 				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 				oldx = x; oldy = y;
 			}
@@ -374,7 +374,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_FILL: //fill
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetAbsCoords(data, curPos, x, y);
-				warning("fill %d %d", y, x);
+				//warning("fill %d %d", y, x);
 				_gfx->Pic_Fill(x, y, pic_color, pic_priority, pic_control);
 			}
 			break;
@@ -385,24 +385,24 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_SHORT_PATTERNS:
 			vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 			vectorGetAbsCoords(data, curPos, x, y);
-			warning("pattern %d %d", y, x);
+			//warning("pattern %d %d", y, x);
 			_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetRelCoords(data, curPos, x, y, x, y);
-				warning("pattern %d %d", y, x);
+				//warning("pattern %d %d", y, x);
 				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
 		case PIC_OP_MEDIUM_PATTERNS:
 			vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 			vectorGetAbsCoords(data, curPos, x, y);
-			warning("pattern %d %d", y, x);
+			//warning("pattern %d %d", y, x);
 			_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetRelCoordsMed(data, curPos, x, y, x, y);
-				warning("pattern %d %d", y, x);
+				//warning("pattern %d %d", y, x);
 				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
@@ -410,14 +410,14 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetAbsCoords(data, curPos, x, y);
-				warning("pattern %d %d", y, x);
+				//warning("pattern %d %d", y, x);
 				//_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
 
 		case PIC_OP_OPX: // Extended functions
 			if (sci1) {
-				warning("OPX SCI1 %X at %d", data[curPos], curPos);
+				//warning("OPX SCI1 %X at %d", data[curPos], curPos);
 				switch (pic_op = data[curPos++]) {
 				case PIC_OPX_SCI1_SET_PALETTE_ENTRIES:
 					while (vectorIsNonOpcode(data[curPos])) {
