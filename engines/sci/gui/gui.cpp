@@ -286,6 +286,7 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 	if (style & 0x20) {
 		_gfx->FrameRect(rect);
 	}
+	_screen->copyToScreen();
 }
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
