@@ -111,12 +111,11 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 				cel->height = READ_LE_UINT16(celData + 2);
 				cel->displaceX = celData[4];
 				cel->displaceY = celData[5];
+				cel->clearKey = celData[6];
 				if (IsEGA) {
-					cel->clearKey = celData[6] | celData[6] << 4;
 					cel->offsetEGA = celOffset + 7;
 					cel->offsetRLE = 0;
 				} else {
-					cel->clearKey = celData[6];
 					cel->offsetEGA = 0;
 					cel->offsetRLE = celOffset + 8;
 				}
@@ -245,7 +244,7 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 			byte = *literalPtr++;
 			runLength = byte >> 4;
 			byte = _EGAMapping[byte & 0x0F];
-			memset(outPtr + pixelNo, byte | byte << 4, MIN<uint16>(runLength, pixelCount - pixelNo));
+			memset(outPtr + pixelNo, byte, MIN<uint16>(runLength, pixelCount - pixelNo));
 			pixelNo += runLength;
 		}
 		return;

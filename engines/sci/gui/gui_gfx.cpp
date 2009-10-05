@@ -383,10 +383,7 @@ void SciGuiGfx::OpenPort(GuiPort *port) {
 }
 
 void SciGuiGfx::PenColor(int16 color) {
-	if (!_s->resMan->isVGA())
-		_curPort->penClr = color;
-	else
-		_curPort->penClr = color | (color << 4);
+	_curPort->penClr = color;
 }
 
 void SciGuiGfx::PenMode(int16 mode) {
@@ -1183,15 +1180,8 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	byte t_con = _screen->getControl(p.x, p.y);
 	int16 w, e, a_set, b_set;
 	// if in 1st point priority,control or color is already set to target, clear the flag
-	if (!_s->resMan->isVGA()) {
-		// EGA 16 colors
-		if (flag & 1 && ((t_col == (color & 0x0F)) || (t_col == (color >> 4))))
-			flag ^= 1;
-	} else {
-		// VGA 256 colors
-		if (flag & 1 && t_col == color)
-			flag ^= 1;
-	}
+	if (flag & 1 && t_col == color)
+		flag ^= 1;
 	if (flag & 2 && t_pri == prio)
 		flag ^= 2;
 	if (flag & 4 && t_con == control)

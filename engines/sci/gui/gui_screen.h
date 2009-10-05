@@ -59,6 +59,8 @@ public:
 	void saveBits(Common::Rect rect, byte mask, byte *memoryPtr);
 	void restoreBits(byte *memoryPtr);
 
+	void dither();
+
 	GuiPalette _sysPalette;
 
 	uint16 _width;

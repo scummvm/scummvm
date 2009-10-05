@@ -90,10 +90,6 @@ void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priori
 	int offset = _baseTable[y] + x;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
-		if (!_s->resMan->isVGA()) {
-			// EGA output (16 colors, dithered)
-			color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-		}
 		*(_visualScreen + offset) = color;
 		_displayScreen[_baseDisplayTable[y] + x] = color;
 	}
@@ -195,6 +191,22 @@ void SciGuiScreen::restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *
 	for (y = rect.top; y < rect.bottom; y++) {
 		memcpy((void*) screen, memoryPtr, width); memoryPtr += width;
 		screen += _width;
+	}
+}
+
+// Currently not really done, its supposed to be possible to only dither _visualScreen
+void SciGuiScreen::dither() {
+	int y, x;
+	byte color;
+	byte *screenPtr = _visualScreen;
+	byte *displayPtr = _displayScreen;
+
+	for (y = 0; y < _height; y++) {
+		for (x = 0; x < _width; x++) {
+			color = *screenPtr;
+			color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+			*screenPtr++ = color; *displayPtr++ = color;
+		}
 	}
 }
 

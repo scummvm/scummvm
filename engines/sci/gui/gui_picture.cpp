@@ -501,6 +501,10 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			break;
 		case PIC_OP_TERMINATE:
 			_priority = pic_priority;
+			// Dithering EGA pictures
+			if (isEGA) {
+				_screen->dither();
+			}
 			return;
 		default:
 			error("Unsupported pic-operation %X", pic_op);

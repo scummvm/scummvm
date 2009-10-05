@@ -69,7 +69,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	reg_t textReference = argv[0];
 	Common::String text;
 	int16 colorPen = (argc > 1) ? argv[1].toSint16() : 0; // old code was: s->status_bar_foreground;
-	int16 colorBack = (argc > 2) ? argv[2].toSint16() : 255; // s->status_bar_background;
+	int16 colorBack = (argc > 2) ? argv[2].toSint16() : s->resMan->isVGA() ? 255 : 15; // s->status_bar_background;
 
 	if (!textReference.isNull()) {
 		// Sometimes this is called without giving text, if thats the case dont process it
@@ -79,7 +79,6 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	}
 	return s->r_acc;
 }
-
 
 reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].toSint16())

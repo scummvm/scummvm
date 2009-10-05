@@ -107,11 +107,6 @@ void SciGui::localToGlobal(int16 *x, int16 *y) {
 reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	GuiWindow *wnd = NULL;
 
-	if (!_s->resMan->isVGA()) {
-		colorPen |= (colorPen << 4);
-		colorBack |= (colorBack << 4);
-	}
-
 	if (restoreRect.top != 0 && restoreRect.left != 0 && restoreRect.height() != 0 && restoreRect.width() != 0)
 		wnd = _windowMgr->NewWindow(dims, &restoreRect, title, style, priority, false);
 	else
@@ -197,8 +192,6 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			break;
 		}
 	}
-	if (!_s->resMan->isVGA())
-		bgcolor |= (bgcolor << 4);
 
 	// now drawing the text
 	_gfx->TextSize(rect, text, -1, width);
@@ -240,11 +233,6 @@ void SciGui::textColors(int argc, reg_t *argv) {
 
 void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	GuiPort *oldPort = _gfx->SetPort(_gfx->_menuPort);
-
-	if (!_s->resMan->isVGA()) {
-		colorPen |= colorPen << 4;
-		colorBack |= colorBack << 4;
-	}
 
 	_gfx->FillRect(_gfx->_menuRect, 1, colorBack);
 	_gfx->PenColor(colorPen);
@@ -323,15 +311,11 @@ void SciGui::graphFillBoxBackground(Common::Rect rect) {
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
-	if (!_s->resMan->isVGA())
-		color |= (color << 4);
 	_gfx->FillRect(rect, colorMask, color, priority, control);
 	_screen->copyToScreen();
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
-	if (!_s->resMan->isVGA())
-		color |= (color << 4);
 	_gfx->Draw_Line(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 	_screen->copyToScreen();
 }
