@@ -233,12 +233,18 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
-	uint16 pixelNo = 0, brun;
-	byte b;
+	uint16 pixelNo = 0, runLength;
+	byte byte;
 
 	if (celInfo->offsetEGA) { // EGA data
 		literalPtr = _resourceData + _loop[loopNo].cel[celNo].offsetEGA;
-		// FIXME: Implement EGA "decompression"
+		while (pixelNo < pixelCount) {
+			byte = *literalPtr++;
+			runLength = byte >> 4;
+			byte = _EGAMapping[byte & 0x0F];
+			memset(outPtr + pixelNo, byte, MIN<uint16>(runLength, pixelCount - pixelNo));
+			pixelNo += runLength;
+		}
 		return;
 	}
 
@@ -246,38 +252,38 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 	rlePtr = _resourceData + celInfo->offsetRLE;
 	if (!celInfo->offsetLiteral) { // no extra literal data
 		while (pixelNo < pixelCount) {
-			b = *rlePtr++;
-			brun = b & 0x3F; // bytes run length on this step
-			switch (b & 0xC0) {
+			byte = *rlePtr++;
+			runLength = byte & 0x3F;
+			switch (byte & 0xC0) {
 			case 0: // copy bytes as-is
-				while (brun-- && pixelNo < pixelCount)
+				while (runLength-- && pixelNo < pixelCount)
 					outPtr[pixelNo++] = *rlePtr++;
 				break;
 			case 0x80: // fill with color
-				memset(outPtr + pixelNo, *rlePtr++, MIN<uint16>(brun, pixelCount - pixelNo));
-				pixelNo += brun;
+				memset(outPtr + pixelNo, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
+				pixelNo += runLength;
 				break;
 			case 0xC0: // fill with transparent
-				pixelNo += brun;
+				pixelNo += runLength;
 				break;
 			}
 		}
 	} else {
 		literalPtr = _resourceData + celInfo->offsetLiteral;
 		while (pixelNo < pixelCount) {
-			b = *rlePtr++;
-			brun = b & 0x3F; // bytes run length on this step
-			switch (b & 0xC0) {
+			byte = *rlePtr++;
+			runLength = byte & 0x3F;
+			switch (byte & 0xC0) {
 			case 0: // copy bytes as-is
-				while (brun-- && pixelNo < pixelCount)
+				while (runLength-- && pixelNo < pixelCount)
 					outPtr[pixelNo++] = *literalPtr++;
 				break;
 			case 0x80: // fill with color
-				memset(outPtr + pixelNo, *literalPtr++, MIN<uint16>(brun, pixelCount - pixelNo));
-				pixelNo += brun;
+				memset(outPtr + pixelNo, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
+				pixelNo += runLength;
 				break;
 			case 0xC0: // fill with transparent
-				pixelNo += brun;
+				pixelNo += runLength;
 				break;
 			}
 		}
@@ -304,7 +310,7 @@ byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	memset(pOut, _loop[loopNo].cel[celNo].clearKey, pixelCount);
 	unpackCel(loopNo, celNo, pOut, pixelCount);
 
-	// mirroring the view if needed
+	// mirroring the cel if needed
 	if (_loop[loopNo].mirrorFlag) {
 		for (int i = 0; i < height; i++, pOut += width)
 			for (int j = 0; j < width / 2; j++)
