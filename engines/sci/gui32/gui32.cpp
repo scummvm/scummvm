@@ -734,7 +734,7 @@ void SciGui32::paletteSetIntensity(int fromColor, int toColor, int intensity, bo
 }
 
 void SciGui32::paletteAnimate(int fromColor, int toColor, int speed) {
-	warning("STUB");
+	//warning("STUB");
 }
 
 int16 SciGui32::onControl(byte screenMask, Common::Rect rect) {
