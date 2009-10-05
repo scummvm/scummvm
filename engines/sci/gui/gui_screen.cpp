@@ -127,10 +127,16 @@ byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t
 int SciGuiScreen::getBitsDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
-	byteCount += pixels;
-
-	if (mask & SCI_SCREEN_MASK_VISUAL)
-		byteCount += pixels;
+	if (mask & SCI_SCREEN_MASK_VISUAL) {
+		byteCount += pixels; // _visualScreen
+		byteCount += pixels; // _displayScreen
+	}
+	if (mask & SCI_SCREEN_MASK_PRIORITY) {
+		byteCount += pixels; // _priorityScreen
+	}
+	if (mask & SCI_SCREEN_MASK_CONTROL) {
+		byteCount += pixels; // _controlScreen
+	}
 
 	return byteCount;
 }
