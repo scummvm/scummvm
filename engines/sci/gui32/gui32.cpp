@@ -663,17 +663,13 @@ void SciGui32::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, in
 	s->picture_port->add((GfxContainer *)s->picture_port, gfxw_new_box(s->gfx_state, area, fillColor, fillColor, GFX_BOX_SHADE_FLAT));
 }
 
-void SciGui32::graphDrawLine(Common::Rect rect, int16 color, int16 priority, int16 control) {
+void SciGui32::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
 	gfx_color_t gfxcolor = graph_map_color(s, color, priority, control);
 
 	debugC(2, kDebugLevelGraphics, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
-	          rect.left, rect.top, rect.right, rect.bottom, color, priority, control, gfxcolor.mask);
+	          startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control, gfxcolor.mask);
 
-	// Note: it's quite possible that the coordinates of the line will *not* form a valid rectangle (e.g. it might
-	// have negative width/height). The actual dirty rectangle is constructed in gfxdr_add_dirty().
-	// FIXME/TODO: We need to change the semantics of this call, so that no fake rectangles are used. As it is, it's
-	// not possible change rect_t to Common::Rect, as we assume that Common::Rect forms a *valid* rectangle.
-	ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_line(Common::Point(rect.left, rect.top), Common::Point(rect.right, rect.bottom),
+	ADD_TO_CURRENT_PICTURE_PORT(gfxw_new_line(startPoint, endPoint,
 	                               gfxcolor, GFX_LINE_MODE_CORRECT, GFX_LINE_STYLE_NORMAL));
 	FULL_REDRAW();
 }

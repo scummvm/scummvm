@@ -70,7 +70,7 @@ public:
 	virtual void graphFillBoxForeground(Common::Rect rect);
 	virtual void graphFillBoxBackground(Common::Rect rect);
 	virtual void graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control);
-	virtual void graphDrawLine(Common::Rect rect, int16 color, int16 priority, int16 control);
+	virtual void graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
 	virtual reg_t graphSaveBox(Common::Rect rect, uint16 flags);
 	virtual void graphRestoreBox(reg_t handle);
 

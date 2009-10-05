@@ -65,7 +65,7 @@ public:
 	void graphFillBoxForeground(Common::Rect rect);
 	void graphFillBoxBackground(Common::Rect rect);	
 	void graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control);
-	void graphDrawLine(Common::Rect rect, int16 color, int16 priority, int16 control);
+	void graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
 	reg_t graphSaveBox(Common::Rect rect, uint16 flags);
 	void graphRestoreBox(reg_t handle);
 

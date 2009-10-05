@@ -406,22 +406,16 @@ void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
 }
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
-	int rectLeft = 0, rectTop = 0, rectRight = 0, rectBottom = 0;
+	int x = 0, y = 0, x1 = 0, y1 = 0;
 	uint16 flags;
 	int16 priority, control, color, colorMask;
-
 	Common::Rect rect;
-	if (argc>=5) {
-		rectLeft = argv[2].toSint16(); rectTop = argv[1].toSint16();
-		rectRight = argv[4].toSint16(); rectBottom = argv[3].toSint16();
-		// Fixup data, so that a valid rectangle is formed
-		if (rectLeft > rectRight) {
-			rectRight = rectLeft; rectLeft = argv[4].toSint16();
-		}
-		if (rectTop > rectBottom) {
-			rectBottom = rectTop; rectTop = argv[3].toSint16();
-		}
-		rect = Common::Rect (rectLeft, rectTop, rectRight, rectBottom);
+
+	if (argc >= 5) {
+		x = argv[2].toSint16();
+		y = argv[1].toSint16();
+		x1 = argv[4].toSint16();
+		y1 = argv[3].toSint16();
 	}
 
 	// old code, may be removed later after class migration
@@ -443,10 +437,11 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		color = argv[5].toSint16();
 
 		// FIXME: rect must be changed to 2 Common::Point
-		s->gui->graphDrawLine(rect, color, priority, control);
+		s->gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
 		break;
 
 	case K_GRAPH_SAVE_BOX:
+		rect = Common::Rect(x, y, x1, y1);
 		flags = (argc > 5) ? argv[5].toUint16() : 0;
 		return s->gui->graphSaveBox(rect, flags);
 		break;
@@ -456,10 +451,12 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
+		rect = Common::Rect(x, y, x1, y1);
 		s->gui->graphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
+		rect = Common::Rect(x, y, x1, y1);
 		s->gui->graphFillBoxForeground(rect);
 		break;
 
@@ -469,6 +466,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		color = argv[6].toSint16();
 		colorMask = argv[5].toUint16();
 
+		rect = Common::Rect(x, y, x1, y1);
 		s->gui->graphFillBox(rect, colorMask, color, priority, control);
 		break;
 
