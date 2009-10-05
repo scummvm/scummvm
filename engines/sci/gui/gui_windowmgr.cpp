@@ -142,7 +142,7 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	}
 	
 	r = dims;
-	if (style == kUser || (style & kNoFrame) == 0) {
+	if (style == kUser || !(style & kNoFrame)) {
 		r.grow(1);
 		if (style & kTitle) {
 			r.top -= 10;
@@ -192,7 +192,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	_gfx->PenColor(0);
 	if ((wndStyle & kTransparent) == 0) {
 		// Store the shadow, if it exists
-		if ((wndStyle & kUser) == 0) {
+		if (!(wndStyle & kUser) && !(wndStyle & kNoFrame)) {
 			pWnd->restoreRect.bottom++;
 			pWnd->restoreRect.right++;
 		}
@@ -206,9 +206,9 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	}
 	
 	// drawing frame,shadow and title
-	if ((wndStyle & kUser) == 0) {
+	if (!(wndStyle & kUser)) {
 		r = pWnd->dims;
-		if ((wndStyle & kNoFrame) == 0) {
+		if (!(wndStyle & kNoFrame)) {
 			r.translate(1, 1);
 			_gfx->FrameRect(r);// shadow
 			r.translate(-1, -1);
@@ -232,7 +232,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 			r.grow(-1);
 		}
 		
-		if ((wndStyle & kTransparent) == 0)
+		if (!(wndStyle & kTransparent))
 			_gfx->FillRect(r, 1, pWnd->backClr);
 
 		_gfx->ShowBits(pWnd->dims, 1);
