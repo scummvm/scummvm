@@ -433,18 +433,18 @@ void SciGuiGfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen,
 		if (oldPenMode == 2) { // invert mode
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					curVisual = _screen->Get_Visual(x, y);
+					curVisual = _screen->getVisual(x, y);
 					if (curVisual == clrPen) {
-						_screen->Put_Pixel(x, y, 1, clrBack, 0, 0);
+						_screen->putPixel(x, y, 1, clrBack, 0, 0);
 					} else if (curVisual == clrBack) {
-						_screen->Put_Pixel(x, y, 1, clrPen, 0, 0);
+						_screen->putPixel(x, y, 1, clrPen, 0, 0);
 					}
 				}
 			}
 		} else { // just fill rect with ClrPen
 			for (y = r.top; y < r.bottom; y++) {
 				for (x = r.left; x < r.right; x++) {
-					_screen->Put_Pixel(x, y, 1, clrPen, 0, 0);
+					_screen->putPixel(x, y, 1, clrPen, 0, 0);
 				}
 			}
 		}
@@ -457,13 +457,13 @@ void SciGuiGfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen,
 	if (oldPenMode != 2) {
 		for (y = r.top; y < r.bottom; y++) {
 			for (x = r.left; x < r.right; x++) {
-				_screen->Put_Pixel(x, y, drawFlags, 0, clrBack, bControl);
+				_screen->putPixel(x, y, drawFlags, 0, clrBack, bControl);
 			}
 		}
 	} else {
 		for (y = r.top; y < r.bottom; y++) {
 			for (x = r.left; x < r.right; x++) {
-				_screen->Put_Pixel(x, y, drawFlags, 0, !_screen->Get_Priority(x, y), !_screen->Get_Control(x, y));
+				_screen->putPixel(x, y, drawFlags, 0, !_screen->getPriority(x, y), !_screen->getControl(x, y));
 			}
 		}
 	}
@@ -832,7 +832,7 @@ void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 flags) {
 
 	OffsetRect(rect);
 	assert((flags&0x8000) == 0);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 //	_system->copyRectToScreen(GetSegment(flags) + _baseTable[rect.top] + rect.left, 320, rect.left, rect.top, rect.width(), rect.height());
 //	_system->updateScreen();
 }
@@ -850,11 +850,11 @@ GuiMemoryHandle SciGuiGfx::SaveBits(const Common::Rect &rect, byte screenMask) {
 	OffsetRect(r); //local port coords to screen coords
 
 	// now actually ask _screen how much space it will need for saving
-	size = _screen->BitsGetDataSize(r, screenMask);
+	size = _screen->getBitsDataSize(r, screenMask);
 
 	memoryId = kalloc(_s->_segMan, "SaveBits()", size);
 	memoryPtr = kmem(_s->_segMan, memoryId);
-	_screen->BitsSave(r, screenMask, memoryPtr);
+	_screen->saveBits(r, screenMask, memoryPtr);
 	return memoryId;
 }
 
@@ -862,14 +862,14 @@ void SciGuiGfx::RestoreBits(GuiMemoryHandle memoryHandle) {
 	byte *memoryPtr = kmem(_s->_segMan, memoryHandle);;
 
 	if (memoryPtr) {
-		_screen->BitsRestore(memoryPtr);
+		_screen->restoreBits(memoryPtr);
 		kfree(_s->_segMan, memoryHandle);
 	}
 }
 
 void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 	//set_drawing_flag
-	byte flag = _screen->GetDrawingMask(color, prio, control);
+	byte flag = _screen->getDrawingMask(color, prio, control);
 	prio &= 0xF0;
 	control &= 0x0F;
 
@@ -897,8 +897,8 @@ void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 	dx = ABS(dx) << 1;
 
 	// setting the 1st and last pixel
-	_screen->Put_Pixel(left, top, flag, color, prio, control);
-	_screen->Put_Pixel(right, bottom, flag, color, prio, control);
+	_screen->putPixel(left, top, flag, color, prio, control);
+	_screen->putPixel(right, bottom, flag, color, prio, control);
 	// drawing the line
 	if (dx > dy) // going horizontal
 	{
@@ -910,7 +910,7 @@ void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 			}
 			left += stepx;
 			fraction += dy;
-			_screen->Put_Pixel(left, top, flag, color, prio, control);
+			_screen->putPixel(left, top, flag, color, prio, control);
 		}
 	} else // going vertical
 	{
@@ -922,7 +922,7 @@ void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 			}
 			top += stepy;
 			fraction += dx;
-			_screen->Put_Pixel(left, top, flag, color, prio, control);
+			_screen->putPixel(left, top, flag, color, prio, control);
 		}
 	}
 	//g_sci->eventMgr->waitUntil(5);
@@ -933,7 +933,7 @@ void SciGuiGfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte c
 	if (right < left)
 		SWAP(right, left);
 	for (int i = left; i <= right; i++)
-		_screen->Put_Pixel(i, top, flag, color, prio, control);
+		_screen->putPixel(i, top, flag, color, prio, control);
 }
 
 //--------------------------------
@@ -941,7 +941,7 @@ void SciGuiGfx::Draw_Vert(int16 top, int16 bottom, int16 left, byte flag, byte c
 	if (top > bottom)
 		SWAP(top, bottom);
 	for (int i = top; i <= bottom; i++)
-		_screen->Put_Pixel(left, i, flag, color, prio, control);
+		_screen->putPixel(left, i, flag, color, prio, control);
 }
 
 // Bitmap for drawing sierra circles
@@ -1059,25 +1059,25 @@ const byte pattern_TextureOffset[128] = {
 };
 
 void SciGuiGfx::Draw_Box(Common::Rect box, byte color, byte prio, byte control) {
-	byte flag = _screen->GetDrawingMask(color, prio, control);
+	byte flag = _screen->getDrawingMask(color, prio, control);
 	int y, x;
 
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
-			_screen->Put_Pixel(x, y, flag, color, prio, control);
+			_screen->putPixel(x, y, flag, color, prio, control);
 		}
 	}
 }
 
 void SciGuiGfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
-	byte flag = _screen->GetDrawingMask(color, prio, control);
+	byte flag = _screen->getDrawingMask(color, prio, control);
 	const bool *textureData = &pattern_Textures[pattern_TextureOffset[texture]];
 	int y, x;
 
 	for (y = box.top; y < box.bottom; y++) {
 		for (x = box.left; x < box.right; x++) {
 			if (*textureData) {
-				_screen->Put_Pixel(x, y, flag, color, prio, control);
+				_screen->putPixel(x, y, flag, color, prio, control);
 			}
 			textureData++;
 		}
@@ -1085,7 +1085,7 @@ void SciGuiGfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte c
 }
 
 void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control) {
-	byte flag = _screen->GetDrawingMask(color, prio, control);
+	byte flag = _screen->getDrawingMask(color, prio, control);
 	byte *circle = (byte *)&pattern_Circles[size];
 	byte circleBitmap;
 	int y, x;
@@ -1094,7 +1094,7 @@ void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, 
 		circleBitmap = *circle;
 		for (x = box.left; x < box.right; x++) {
 			if (circleBitmap & 1) {
-				_screen->Put_Pixel(x, y, flag, color, prio, control);
+				_screen->putPixel(x, y, flag, color, prio, control);
 			}
 			circleBitmap = circleBitmap >> 1;
 		}
@@ -1103,7 +1103,7 @@ void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, 
 }
 
 void SciGuiGfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
-	byte flag = _screen->GetDrawingMask(color, prio, control);
+	byte flag = _screen->getDrawingMask(color, prio, control);
 	byte *circle = (byte *)&pattern_Circles[size];
 	byte circleBitmap;
 	const bool *textureData = &pattern_Textures[pattern_TextureOffset[texture]];
@@ -1114,7 +1114,7 @@ void SciGuiGfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byt
 		for (x = box.left; x < box.right; x++) {
 			if (circleBitmap & 1) {
 				if (*textureData) {
-					_screen->Put_Pixel(x, y, flag, color, prio, control);
+					_screen->putPixel(x, y, flag, color, prio, control);
 				}
 				textureData++;
 			}
@@ -1157,7 +1157,7 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 
-	byte flag = _screen->GetDrawingMask(color, prio, control), fmatch;
+	byte flag = _screen->getDrawingMask(color, prio, control), fmatch;
 	p.x = x + _curPort->left;
 	p.y = y + _curPort->top;
 	stack.push(p);
@@ -1166,9 +1166,9 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	if ((flag & 2 && prio == 0) || (flag & 3 && control == 0))
 		return;
 
-	byte t_col = _screen->Get_Visual(p.x, p.y);
-	byte t_pri = _screen->Get_Priority(p.x, p.y);
-	byte t_con = _screen->Get_Control(p.x, p.y);
+	byte t_col = _screen->getVisual(p.x, p.y);
+	byte t_pri = _screen->getPriority(p.x, p.y);
+	byte t_con = _screen->getControl(p.x, p.y);
 	int16 w, e, a_set, b_set;
 	// if in 1st point priority,control or color is already set to target, clear the flag
 	if (!_s->resMan->isVGA()) {
@@ -1194,20 +1194,20 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	int b = _curPort->rect.bottom + _curPort->top - 1;
 	while (stack.size()) {
 		p = stack.pop();
-		if ((fmatch = _screen->IsFillMatch(p.x, p.y, flag, t_col, t_pri, t_con)) == 0) // already filled
+		if ((fmatch = _screen->isFillMatch(p.x, p.y, flag, t_col, t_pri, t_con)) == 0) // already filled
 			continue;
-		_screen->Put_Pixel(p.x, p.y, flag, color, prio, control);
+		_screen->putPixel(p.x, p.y, flag, color, prio, control);
 		w = p.x;
 		e = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (w > l && (fmatch = _screen->IsFillMatch(w - 1, p.y, flag, t_col, t_pri, t_con)))
-			_screen->Put_Pixel(--w, p.y, fmatch, color, prio, control);
-		while (e < r && (fmatch = _screen->IsFillMatch(e + 1, p.y, flag, t_col, t_pri, t_con)))
-			_screen->Put_Pixel(++e, p.y, fmatch, color, prio, control);
+		while (w > l && (fmatch = _screen->isFillMatch(w - 1, p.y, flag, t_col, t_pri, t_con)))
+			_screen->putPixel(--w, p.y, fmatch, color, prio, control);
+		while (e < r && (fmatch = _screen->isFillMatch(e + 1, p.y, flag, t_col, t_pri, t_con)))
+			_screen->putPixel(++e, p.y, fmatch, color, prio, control);
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {
-			if (p.y > t && _screen->IsFillMatch(w, p.y - 1, flag, t_col, t_pri, t_con)) { // one line above
+			if (p.y > t && _screen->isFillMatch(w, p.y - 1, flag, t_col, t_pri, t_con)) { // one line above
 				if (a_set == 0) {
 					p1.x = w;
 					p1.y = p.y - 1;
@@ -1217,7 +1217,7 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 			} else
 				a_set = 0;
 
-			if (p.y < b && _screen->IsFillMatch(w, p.y + 1, flag, t_col, t_pri, t_con)) { // one line below
+			if (p.y < b && _screen->isFillMatch(w, p.y + 1, flag, t_col, t_pri, t_con)) { // one line below
 				if (b_set == 0) {
 					p1.x = w;
 					p1.y = p.y + 1;
@@ -1310,13 +1310,13 @@ int16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
 	if (screenMask & SCI_SCREEN_MASK_PRIORITY) {
 		for (y = outRect.top; y < outRect.bottom; y++) {
 			for (x = outRect.left; x < outRect.right; x++) {
-				result |= 1 << _screen->Get_Priority(x, y);
+				result |= 1 << _screen->getPriority(x, y);
 			}
 		}
 	} else {
 		for (y = outRect.top; y < outRect.bottom; y++) {
 			for (x = outRect.left; x < outRect.right; x++) {
-				result |= 1 << _screen->Get_Control(x, y);
+				result |= 1 << _screen->getControl(x, y);
 			}
 		}
 	}

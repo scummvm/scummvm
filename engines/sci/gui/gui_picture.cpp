@@ -77,7 +77,7 @@ void SciGuiPicture::reset() {
 	int16 x, y;
 	for (y = _curPort->top; y < _screen->_height; y++) {
 		for (x = 0; x < _screen->_width; x++) {
-			_screen->Put_Pixel(x, y, SCI_SCREEN_MASK_ALL, 255, 0, 0);
+			_screen->putPixel(x, y, SCI_SCREEN_MASK_ALL, 255, 0, 0);
 		}
 	}
 }
@@ -168,8 +168,8 @@ void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 		switch (b & 0xC0) {
 		case 0: // copy bytes as-is but skip transparent ones
 			while (brun-- && y < lasty && ptr < pend) {
-				if ((b = *ptr++) != clr && priority >= _screen->Get_Priority(x, y)) {
-					_screen->Put_Pixel(x, y, 3, b, priority, 0);
+				if ((b = *ptr++) != clr && priority >= _screen->getPriority(x, y)) {
+					_screen->putPixel(x, y, 3, b, priority, 0);
 				}
 				x++;
 				if (x >= _screen->_width) {
@@ -180,8 +180,8 @@ void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 		case 0x80: // fill with color
 			b = *ptr++;
 			while (brun-- && y < lasty) {
-				if (priority >= _screen->Get_Priority(x, y)) {
-					_screen->Put_Pixel(x, y, 3, b, priority, 0);
+				if (priority >= _screen->getPriority(x, y)) {
+					_screen->putPixel(x, y, 3, b, priority, 0);
 				}
 				x++;
 				if (x >= _screen->_width) {
@@ -221,8 +221,8 @@ void SciGuiPicture::drawCelAmiga(int16 x, int16 y, byte *pdata, int size) {
 			bytes = op & 0x07;
 			col = op >> 3;
 			while (bytes-- && y < lasty) {
-				if (priority >= _screen->Get_Priority(x, y)) {
-					_screen->Put_Pixel(x, y, 3, col, priority, 0);
+				if (priority >= _screen->getPriority(x, y)) {
+					_screen->putPixel(x, y, 3, col, priority, 0);
 				}
 				x++;
 				if (x >= _screen->_width) {

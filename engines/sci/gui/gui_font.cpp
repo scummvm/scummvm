@@ -86,7 +86,7 @@ void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, by
 			if ((done & 7) == 0) // fetching next data byte
 				b = *(pIn++) & mask;
 			if (b & 0x80) // if MSB is set - paint it
-				screen->Put_Pixel(left + done, y, 1, color, 0, 0);
+				screen->putPixel(left + done, y, 1, color, 0, 0);
 			b = b << 1;
 		}
 	}

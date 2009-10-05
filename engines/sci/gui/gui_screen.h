@@ -46,18 +46,18 @@ public:
 	void init(void);
 	byte *initScreen(uint16 pixelCount);
 
-	void UpdateWhole();
+	void updateScreen();
 
-	byte GetDrawingMask(byte color, byte prio, byte control);
-	void Put_Pixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
-	byte Get_Visual(int x, int y);
-	byte Get_Priority(int x, int y);
-	byte Get_Control(int x, int y);
-	byte IsFillMatch(int16 x, int16 y, byte drawMask, byte t_color, byte t_pri, byte t_con);
+	byte getDrawingMask(byte color, byte prio, byte control);
+	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
+	byte getVisual(int x, int y);
+	byte getPriority(int x, int y);
+	byte getControl(int x, int y);
+	byte isFillMatch(int16 x, int16 y, byte drawMask, byte t_color, byte t_pri, byte t_con);
 
-	int BitsGetDataSize(Common::Rect rect, byte mask);
-	void BitsSave(Common::Rect rect, byte mask, byte *memoryPtr);
-	void BitsRestore(byte *memoryPtr);
+	int getBitsDataSize(Common::Rect rect, byte mask);
+	void saveBits(Common::Rect rect, byte mask, byte *memoryPtr);
+	void restoreBits(byte *memoryPtr);
 
 	GuiPalette _sysPalette;
 
@@ -70,8 +70,8 @@ public:
 	byte _bytesPerDisplayPixel;
 
 private:
-	void BitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
-	void BitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
+	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
+	void saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
 
 	OSystem *_system;
 	EngineState *_s;

@@ -213,7 +213,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	currport->curTop = tTop;
 	currport->curLeft = tLeft;
 
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
@@ -243,7 +243,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, in
 		_gfx->drawPicture(pictureId, style, addToFlag, EGApaletteNo);
 		_windowMgr->EndUpdate(_windowMgr->_picWind);
 	}
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 
 	_gfx->SetPort(oldPort);
 	_gfx->_picNotValid = true;
@@ -252,7 +252,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, in
 void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	_gfx->SetCLUT(&_gfx->_sysPalette);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse) {
@@ -267,7 +267,7 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		rect.grow(1);
 		_gfx->FrameRect(rect);
 	}
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse) {
@@ -278,27 +278,27 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 	if (style & 8) { // selected
 		_gfx->FrameRect(rect);
 	}
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_gfx->PaintRect(rect);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::graphFillBoxBackground(Common::Rect rect) {
 	_gfx->EraseRect(rect);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	_gfx->FillRect(rect, colorMask, color, priority, control);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::graphDrawLine(Common::Rect rect, int16 color, int16 priority, int16 control) {
 	_gfx->Draw_Line(rect.left, rect.top, rect.right, rect.bottom, color, priority, control);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 flags) {
@@ -307,7 +307,7 @@ reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 flags) {
 
 void SciGui::graphRestoreBox(reg_t handle) {
 	_gfx->RestoreBits(handle);
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 }
 
 void SciGui::paletteSet(int resourceNo, int flags) {
@@ -377,7 +377,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	}
 
 	//_gfx->AnimateUpdateScreen();
-	_screen->UpdateWhole();
+	_screen->updateScreen();
 	_gfx->AnimateRestoreAndDelete();
 
 	_gfx->SetPort(oldPort);

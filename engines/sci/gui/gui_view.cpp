@@ -337,8 +337,8 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, GuiViewLoopNo lo
 	for (y = clipRect.top; y < clipRect.top + height; y++, bitmap += celWidth) {
 		for (x = 0; x < width; x++) {
 			color = bitmap[x];
-			if (color != clearKey && priority >= _screen->Get_Priority(clipRect.left + x, y))
-				_screen->Put_Pixel(clipRect.left + x, y, drawMask, palette->mapping[color], priority, 0);
+			if (color != clearKey && priority >= _screen->getPriority(clipRect.left + x, y))
+				_screen->putPixel(clipRect.left + x, y, drawMask, palette->mapping[color], priority, 0);
 		}
 	}
 }
