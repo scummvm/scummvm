@@ -1,7 +1,7 @@
 # $Header: Exp $
  include $(PS2SDK)/Defs.make
 
-PS2_EXTRA = /media/disk/nw8240/extras/scummvm/ports
+PS2_EXTRA = /works/devel/ps2/sdk-extra
 PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
 PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /tremor/tremor
 

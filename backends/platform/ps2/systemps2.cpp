@@ -52,7 +52,6 @@
 #include "backends/platform/ps2/asyncfio.h"
 #include "eecodyvdfs.h"
 #include "graphics/surface.h"
-#include "graphics/scaler.h"
 #include "graphics/font.h"
 #include "backends/timer/default/default-timer.h"
 #include "sound/mixer_intern.h"
@@ -86,8 +85,6 @@ static volatile int32 g_MainWakeUp = 0, g_TimerWakeUp = 0;
 volatile uint32 msecCount = 0;
 
 OSystem_PS2 *g_systemPs2;
-
-int gBitFormat = 1555;
 
 #define FOREVER 2147483647
 
