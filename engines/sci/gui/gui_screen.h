@@ -67,7 +67,6 @@ public:
 	uint16 _displayWidth;
 	uint16 _displayHeight;
 	uint _displayPixels;
-	byte _bytesPerDisplayPixel;
 
 private:
 	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);

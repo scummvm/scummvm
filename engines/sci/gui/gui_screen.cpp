@@ -53,7 +53,6 @@ void SciGuiScreen::init() {
 	_displayWidth = 320;
 	_displayHeight = 200;
 	_displayPixels = _displayWidth * _displayHeight;
-	_bytesPerDisplayPixel = 1;
 
 	_visualScreen = initScreen(_pixels);
 	_priorityScreen = initScreen(_pixels);
@@ -133,15 +132,11 @@ byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t
 int SciGuiScreen::getBitsDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
-	if (mask & SCI_SCREEN_MASK_VISUAL) {
-		byteCount += pixels + (pixels * _bytesPerDisplayPixel);
-	}
-	if (mask & SCI_SCREEN_MASK_PRIORITY) {
+	byteCount += pixels;
+
+	if (mask & SCI_SCREEN_MASK_VISUAL)
 		byteCount += pixels;
-	}
-	if (mask & SCI_SCREEN_MASK_CONTROL) {
-		byteCount += pixels;
-	}
+
 	return byteCount;
 }
 
