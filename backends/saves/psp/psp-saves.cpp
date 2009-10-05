@@ -26,6 +26,7 @@
 #ifdef __PSP__
 
 #include "backends/saves/psp/psp-saves.h"
+#include "backends/platform/psp/powerman.h"
 
 #include "common/config-manager.h"
 #include "common/savefile.h"
@@ -49,6 +50,8 @@ void PSPSaveFileManager::checkPath(const Common::FSNode &dir) {
 	const char *savePath = dir.getPath().c_str();
 	clearError();
 
+	PowerMan.beginCriticalSection();
+	
 	//check if the save directory exists
 	SceUID fd = sceIoDopen(savePath);
 	if (fd < 0) {
@@ -58,6 +61,8 @@ void PSPSaveFileManager::checkPath(const Common::FSNode &dir) {
 		//it exists, so close it again.
 		sceIoDclose(fd);
 	}
+	
+	PowerMan.endCriticalSection();
 }
 #endif
 

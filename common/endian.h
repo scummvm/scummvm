@@ -28,28 +28,115 @@
 
 #include "common/sys.h"
 
-//
-// Endian conversion functions, macros etc., follow from here!
-//
+/**
+ *  \file endian.h
+ *  Endian conversion and byteswap conversion functions or macros
+ *
+ *  SWAP_BYTES_??(a)      - inverse byte order
+ *  SWAP_CONSTANT_??(a)   - inverse byte order, implemented as macro.
+ *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
+ *                              Unlike most other functions these can be used for eg. switch-case labels
+ *
+ *  READ_UINT??(a)        - read native value from pointer a
+ *  READ_??_UINT??(a)     - read LE/BE value from pointer a and convert it to native
+ *  WRITE_??_UINT??(a, v) - write native value v to pointer a with LE/BE encoding
+ *  TO_??_??(a)           - convert native value v to LE/BE
+ *  FROM_??_??(a)         - convert LE/BE value v to native
+ *  CONSTANT_??_??(a)     - convert LE/BE value v to native, implemented as macro.
+ *                              Use with compiletime-constants only, the result will be a compiletime-constant aswell.
+ *                              Unlike most other functions these can be used for eg. switch-case labels 
+ */
+
+// Sanity check
+#if !defined(SYSTEM_LITTLE_ENDIAN) && !defined(SYSTEM_BIG_ENDIAN)
+#	error No endianness defined
+#endif
+
+#define SWAP_CONSTANT_32(a) \
+	((uint32)((((a) >> 24) & 0x00FF) | \
+	          (((a) >>  8) & 0xFF00) | \
+	          (((a) & 0xFF00) <<  8) | \
+	          (((a) & 0x00FF) << 24) ))
+
+#define SWAP_CONSTANT_16(a) \
+	((uint16)((((a) >>  8) & 0x00FF) | \
+	          (((a) <<  8) & 0xFF00) ))
 
 /**
  * Swap the bytes in a 32 bit word in order to convert LE encoded data to BE
  * and vice versa.
  */
-FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
-	return ((a >> 24) & 0x000000FF) |
-		   ((a >>  8) & 0x0000FF00) |
-		   ((a <<  8) & 0x00FF0000) |
-		   ((a << 24) & 0xFF000000);
-}
+
+// machine/compiler-specific variants come first, fallback last
+
+// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
+#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
+
+	FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
+		if (__builtin_constant_p(a)) {
+			return SWAP_CONSTANT_32(a);
+		} else {
+			uint32 result;
+#	if defined(__psp__)
+			// use special allegrex instruction
+			__asm__ ("wsbw %0,%1" : "=r" (result) : "r" (a));
+#	else
+			__asm__ ("wsbh %0,%1\n"
+			         "rotr %0,%0,16" : "=r" (result) : "r" (a));
+#	endif
+			return result;
+		}
+	}
+
+// Test for GCC >= 4.3.0 as this version added the bswap builtin
+#elif defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 3))
+
+	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
+		return __builtin_bswap32(a);
+	}
+
+// test for MSVC 7 or newer
+#elif defined(_MSC_VER) && _MSC_VER >= 1300
+
+	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
+		return _byteswap_ulong(a);
+	}
+
+// generic fallback
+#else 
+
+	inline uint32 SWAP_BYTES_32(uint32 a) {
+		const uint16 low = (uint16)a, high = (uint16)(a >> 16);
+		return ((uint32)(uint16)((low >> 8) | (low << 8)) << 16)
+			   | (uint16)((high >> 8) | (high << 8));
+	}
+#endif
 
 /**
  * Swap the bytes in a 16 bit word in order to convert LE encoded data to BE
  * and vice versa.
  */
-FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
-	return ((a >> 8) & 0x00FF) + ((a << 8) & 0xFF00);
-}
+
+// compilerspecific variants come first, fallback last
+
+// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
+#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
+
+	FORCEINLINE uint16 SWAP_BYTES_16(const uint16 a) {
+		if (__builtin_constant_p(a)) {
+			return SWAP_CONSTANT_16(a);
+		} else {
+			uint16 result;
+			__asm__ ("wsbh %0,%1" : "=r" (result) : "r" (a));
+			return result;
+		}
+	}
+#else
+
+	inline uint16 SWAP_BYTES_16(const uint16 a) {
+		return (a >> 8) | (a << 8);
+	}
+#endif
 
 
 /**
@@ -70,25 +157,119 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
  * For the latter systems we provide the INVERSE_MKID override.
  */
 #if defined(INVERSE_MKID)
-#define MKID_BE(a) ((uint32) \
-		(((a) >> 24) & 0x000000FF) | \
-		(((a) >>  8) & 0x0000FF00) | \
-		(((a) <<  8) & 0x00FF0000) | \
-		(((a) << 24) & 0xFF000000))
+#define MKID_BE(a) SWAP_CONSTANT_32(a)
 
 #else
 #  define MKID_BE(a) ((uint32)(a))
 #endif
 
+// Functions for reading/writing native Integers,
+// this transparently handles the need for alignment
+
+#if !defined(SYSTEM_NEED_ALIGNMENT)
+
+	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
+		return *(const uint16 *)(ptr);
+	}
+
+	FORCEINLINE uint32 READ_UINT32(const void *ptr) {
+		return *(const uint32 *)(ptr);
+	}
+
+	FORCEINLINE void WRITE_UINT16(void *ptr, uint16 value) {
+		*(uint16 *)(ptr) = value;
+	}
+
+	FORCEINLINE void WRITE_UINT32(void *ptr, uint32 value) {
+		*(uint32 *)(ptr) = value;
+	}
+
+// test for GCC >= 4.0. these implementations will automatically use CPU-specific 
+// instructions for unaligned data when they are available (eg. MIPS)
+#elif defined(__GNUC__) && (__GNUC__ >= 4)
+
+	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
+		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__));
+		return ((const Unaligned16 *)ptr)->val;
+	}
+
+	FORCEINLINE uint32 READ_UINT32(const void *ptr) {
+		struct Unaligned32 { uint32 val; } __attribute__ ((__packed__));
+		return ((const Unaligned32 *)ptr)->val;
+	}
+
+	FORCEINLINE void WRITE_UINT16(void *ptr, uint16 value) {
+		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__));
+		((Unaligned16 *)ptr)->val = value;
+	}
+
+	FORCEINLINE void WRITE_UINT32(void *ptr, uint32 value) {
+		struct Unaligned32 { uint32 val; } __attribute__ ((__packed__));
+		((Unaligned32 *)ptr)->val = value;
+	}
+
+// use software fallback by loading each byte explicitely
+#else
+
+#	if defined(SYSTEM_LITTLE_ENDIAN)
+
+		inline uint16 READ_UINT16(const void *ptr) {
+			const uint8 *b = (const uint8 *)ptr;
+			return (b[1] << 8) | b[0];
+		}
+		inline uint32 READ_UINT32(const void *ptr) {
+			const uint8 *b = (const uint8 *)ptr;
+			return (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | (b[0]);
+		}
+		inline void WRITE_UINT16(void *ptr, uint16 value) {
+			uint8 *b = (uint8 *)ptr;
+			b[0] = (uint8)(value >> 0);
+			b[1] = (uint8)(value >> 8);
+		}
+		inline void WRITE_UINT32(void *ptr, uint32 value) {
+			uint8 *b = (uint8 *)ptr;
+			b[0] = (uint8)(value >>  0);
+			b[1] = (uint8)(value >>  8);
+			b[2] = (uint8)(value >> 16);
+			b[3] = (uint8)(value >> 24);
+		}
+
+#	elif defined(SYSTEM_BIG_ENDIAN)
+
+		inline uint16 READ_UINT16(const void *ptr) {
+			const uint8 *b = (const uint8 *)ptr;
+			return (b[0] << 8) | b[1];
+		}
+		inline uint32 READ_UINT32(const void *ptr) {
+			const uint8 *b = (const uint8 *)ptr;
+			return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | (b[3]);
+		}
+		inline void WRITE_UINT16(void *ptr, uint16 value) {
+			uint8 *b = (uint8 *)ptr;
+			b[0] = (uint8)(value >> 8);
+			b[1] = (uint8)(value >> 0);
+		}
+		inline void WRITE_UINT32(void *ptr, uint32 value) {
+			uint8 *b = (uint8 *)ptr;
+			b[0] = (uint8)(value >> 24);
+			b[1] = (uint8)(value >> 16);
+			b[2] = (uint8)(value >>  8);
+			b[3] = (uint8)(value >>  0);
+		}
+
+#	endif
+
+#endif
 
 
+//  Map Funtions for reading/writing BE/LE integers depending on native endianess
 #if defined(SYSTEM_LITTLE_ENDIAN)
 
-	#define READ_UINT16(a) READ_LE_UINT16(a)
-	#define READ_UINT32(a) READ_LE_UINT32(a)
+	#define READ_LE_UINT16(a) READ_UINT16(a)
+	#define READ_LE_UINT32(a) READ_UINT32(a)
 
-	#define WRITE_UINT16(a, v) WRITE_LE_UINT16(a, v)
-	#define WRITE_UINT32(a, v) WRITE_LE_UINT32(a, v)
+	#define WRITE_LE_UINT16(a, v) WRITE_UINT16(a, v)
+	#define WRITE_LE_UINT32(a, v) WRITE_UINT32(a, v)
 
 	#define FROM_LE_32(a) ((uint32)(a))
 	#define FROM_LE_16(a) ((uint16)(a))
@@ -102,16 +283,61 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	#define TO_BE_32(a) SWAP_BYTES_32(a)
 	#define TO_BE_16(a) SWAP_BYTES_16(a)
 
+	#define CONSTANT_LE_32(a) ((uint32)(a))
+	#define CONSTANT_LE_16(a) ((uint16)(a))
+
+	#define CONSTANT_BE_32(a) SWAP_CONSTANT_32(a)
+	#define CONSTANT_BE_16(a) SWAP_CONSTANT_16(a)
+
+// if the unaligned load and the byteswap take alot instructions its better to directly read and invert
+#	if defined(SYSTEM_NEED_ALIGNMENT) && !defined(__mips__)
+
+		inline uint16 READ_BE_UINT16(const void *ptr) {
+			const uint8 *b = (const uint8 *)ptr;
+			return (b[0] << 8) | b[1];
+		}
+		inline uint32 READ_BE_UINT32(const void *ptr) {
+			const uint8 *b = (const uint8 *)ptr;
+			return (b[0] << 24) | (b[1] << 16) | (b[2] << 8) | (b[3]);
+		}
+		inline void WRITE_BE_UINT16(void *ptr, uint16 value) {
+			uint8 *b = (uint8 *)ptr;
+			b[0] = (uint8)(value >> 8);
+			b[1] = (uint8)(value >> 0);
+		}
+		inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
+			uint8 *b = (uint8 *)ptr;
+			b[0] = (uint8)(value >> 24);
+			b[1] = (uint8)(value >> 16);
+			b[2] = (uint8)(value >>  8);
+			b[3] = (uint8)(value >>  0);
+		}
+#	else
+
+		inline uint16 READ_BE_UINT16(const void *ptr) {
+			return SWAP_BYTES_16(READ_UINT16(ptr));
+		}
+		inline uint32 READ_BE_UINT32(const void *ptr) {
+			return SWAP_BYTES_32(READ_UINT32(ptr));
+		}
+		inline void WRITE_BE_UINT16(void *ptr, uint16 value) {
+			WRITE_UINT16(ptr, SWAP_BYTES_16(value));
+		}
+		inline void WRITE_BE_UINT32(void *ptr, uint32 value) {
+			WRITE_UINT32(ptr, SWAP_BYTES_32(value));
+		}
+	
+#	endif	// if defined(SYSTEM_NEED_ALIGNMENT)
+
 #elif defined(SYSTEM_BIG_ENDIAN)
 
-	#define MKID(a) ((uint32)(a))
 	#define MKID_BE(a) ((uint32)(a))
 
-	#define READ_UINT16(a) READ_BE_UINT16(a)
-	#define READ_UINT32(a) READ_BE_UINT32(a)
+	#define READ_BE_UINT16(a) READ_UINT16(a)
+	#define READ_BE_UINT32(a) READ_UINT32(a)
 
-	#define WRITE_UINT16(a, v) WRITE_BE_UINT16(a, v)
-	#define WRITE_UINT32(a, v) WRITE_BE_UINT32(a, v)
+	#define WRITE_BE_UINT16(a, v) WRITE_UINT16(a, v)
+	#define WRITE_BE_UINT32(a, v) WRITE_UINT32(a, v)
 
 	#define FROM_LE_32(a) SWAP_BYTES_32(a)
 	#define FROM_LE_16(a) SWAP_BYTES_16(a)
@@ -125,95 +351,62 @@ FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
 	#define TO_BE_32(a) ((uint32)(a))
 	#define TO_BE_16(a) ((uint16)(a))
 
-#else
+	#define CONSTANT_LE_32(a) SWAP_CONSTANT_32(a)
+	#define CONSTANT_LE_16(a) SWAP_CONSTANT_16(a)
 
-	#error No endianness defined
+	#define CONSTANT_BE_32(a) ((uint32)(a))
+	#define CONSTANT_BE_16(a) ((uint16)(a))
 
+// if the unaligned load and the byteswap take alot instructions its better to directly read and invert
+#	if defined(SYSTEM_NEED_ALIGNMENT) && !defined(__mips__)
 
-#endif
+	inline uint16 READ_LE_UINT16(const void *ptr) {
+		const uint8 *b = (const uint8 *)ptr;
+		return (b[1] << 8) | b[0];
+	}
+	inline uint32 READ_LE_UINT32(const void *ptr) {
+		const uint8 *b = (const uint8 *)ptr;
+		return (b[3] << 24) | (b[2] << 16) | (b[1] << 8) | (b[0]);
+	}
+	inline void WRITE_LE_UINT16(void *ptr, uint16 value) {
+		uint8 *b = (uint8 *)ptr;
+		b[0] = (uint8)(value >> 0);
+		b[1] = (uint8)(value >> 8);
+	}
+	inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
+		uint8 *b = (uint8 *)ptr;
+		b[0] = (uint8)(value >>  0);
+		b[1] = (uint8)(value >>  8);
+		b[2] = (uint8)(value >> 16);
+		b[3] = (uint8)(value >> 24);
+	}
+#	else
 
+	inline uint16 READ_LE_UINT16(const void *ptr) {
+		return SWAP_BYTES_16(READ_UINT16(ptr));
+	}
+	inline uint32 READ_LE_UINT32(const void *ptr) {
+		return SWAP_BYTES_32(READ_UINT32(ptr));
+	}
+	inline void WRITE_LE_UINT16(void *ptr, uint16 value) {
+		WRITE_UINT16(ptr, SWAP_BYTES_16(value));
+	}
+	inline void WRITE_LE_UINT32(void *ptr, uint32 value) {
+		WRITE_UINT32(ptr, SWAP_BYTES_32(value));
+	}
+	
+#	endif	// if defined(SYSTEM_NEED_ALIGNMENT)
 
-#if defined(SYSTEM_NEED_ALIGNMENT) || !defined(SYSTEM_LITTLE_ENDIAN)
-	FORCEINLINE uint16 READ_LE_UINT16(const void *ptr) {
-		const byte *b = (const byte *)ptr;
-		return (b[1] << 8) + b[0];
-	}
-	FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-		const byte *b = (const byte *)ptr;
-		return (b[3] << 24) + (b[2] << 16) + (b[1] << 8) + (b[0]);
-	}
-	FORCEINLINE void WRITE_LE_UINT16(void *ptr, uint16 value) {
-		byte *b = (byte *)ptr;
-		b[0] = (byte)(value >> 0);
-		b[1] = (byte)(value >> 8);
-	}
-	FORCEINLINE void WRITE_LE_UINT32(void *ptr, uint32 value) {
-		byte *b = (byte *)ptr;
-		b[0] = (byte)(value >>  0);
-		b[1] = (byte)(value >>  8);
-		b[2] = (byte)(value >> 16);
-		b[3] = (byte)(value >> 24);
-	}
-#else
-	FORCEINLINE uint16 READ_LE_UINT16(const void *ptr) {
-		return *(const uint16 *)(ptr);
-	}
-	FORCEINLINE uint32 READ_LE_UINT32(const void *ptr) {
-		return *(const uint32 *)(ptr);
-	}
-	FORCEINLINE void WRITE_LE_UINT16(void *ptr, uint16 value) {
-		*(uint16 *)(ptr) = value;
-	}
-	FORCEINLINE void WRITE_LE_UINT32(void *ptr, uint32 value) {
-		*(uint32 *)(ptr) = value;
-	}
-#endif
+#endif	// if defined(SYSTEM_LITTLE_ENDIAN)
 
-
-#if defined(SYSTEM_NEED_ALIGNMENT) || !defined(SYSTEM_BIG_ENDIAN)
-	FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
-		const byte *b = (const byte *)ptr;
-		return (b[0] << 8) + b[1];
-	}
-	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
-		const byte *b = (const byte*)ptr;
-		return (b[0] << 24) + (b[1] << 16) + (b[2] << 8) + (b[3]);
-	}
-	FORCEINLINE void WRITE_BE_UINT16(void *ptr, uint16 value) {
-		byte *b = (byte *)ptr;
-		b[0] = (byte)(value >> 8);
-		b[1] = (byte)(value >> 0);
-	}
-	FORCEINLINE void WRITE_BE_UINT32(void *ptr, uint32 value) {
-		byte *b = (byte *)ptr;
-		b[0] = (byte)(value >> 24);
-		b[1] = (byte)(value >> 16);
-		b[2] = (byte)(value >>  8);
-		b[3] = (byte)(value >>  0);
-	}
-#else
-	FORCEINLINE uint16 READ_BE_UINT16(const void *ptr) {
-		return *(const uint16 *)(ptr);
-	}
-	FORCEINLINE uint32 READ_BE_UINT32(const void *ptr) {
-		return *(const uint32 *)(ptr);
-	}
-	FORCEINLINE void WRITE_BE_UINT16(void *ptr, uint16 value) {
-		*(uint16 *)(ptr) = value;
-	}
-	FORCEINLINE void WRITE_BE_UINT32(void *ptr, uint32 value) {
-		*(uint32 *)(ptr) = value;
-	}
-#endif
-
-FORCEINLINE uint32 READ_LE_UINT24(const void *ptr) {
-	const byte *b = (const byte *)ptr;
-	return (b[2] << 16) + (b[1] << 8) + (b[0]);
+inline uint32 READ_LE_UINT24(const void *ptr) {
+	const uint8 *b = (const uint8 *)ptr;
+	return (b[2] << 16) | (b[1] << 8) | (b[0]);
 }
 
-FORCEINLINE uint32 READ_BE_UINT24(const void *ptr) {
-	const byte *b = (const byte*)ptr;
-	return (b[0] << 16) + (b[1] << 8) + (b[2]);
+inline uint32 READ_BE_UINT24(const void *ptr) {
+	const uint8 *b = (const uint8 *)ptr;
+	return (b[0] << 16) | (b[1] << 8) | (b[2]);
 }
 
 #if defined(SYSTEM_BIG_ENDIAN)

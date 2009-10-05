@@ -112,6 +112,7 @@ void ConsoleDialog::init() {
 
 	_w = _w - _w / 20;
 	_h = _h * kConsoleLineHeight + 2;
+	_x = _w / 40;
 
 	// Set scrollbar dimensions
 	int scrollBarWidth = g_gui.xmlEval()->getVar("Globals.Scrollbar.Width", 0);
@@ -149,8 +150,8 @@ void ConsoleDialog::open() {
 	if (_w != w || _h != h)
 		init();
 
-	_x = _w / 40;
 	_y = -_h;
+
 	_slideTime = g_system->getMillis();
 	_slideMode = kDownSlideMode;
 

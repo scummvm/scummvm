@@ -365,22 +365,24 @@ applyScreenShading(GUI::ThemeEngine::ShadingStyle shadingStyle) {
 	uint8 r, g, b;
 	uint lum;
 
-	const uint32 shiftMask = (uint32)~(
-		(1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) | (_format.aLoss == 8 ? 0 : (1 << _format.aShift))) >> 1;
+	// Mask to clear the last bit of every color component and all unused bits
+	const uint32 colorMask = ~((1 << _format.rShift) | (1 << _format.gShift) | (1 << _format.bShift) // R/G/B components
+			| (_format.aLoss == 8 ? 0 : (1 << _format.aShift)) // Alpha component
+			| ~(_alphaMask | _redMask | _greenMask | _blueMask)); // All unused bits
 
 	if (shadingStyle == GUI::ThemeEngine::kShadingDim) {
 
 		int n = (pixels + 7) >> 3;
 		switch (pixels % 8) {
 		case 0: do {
-					*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 7:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 6:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 5:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 4:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 3:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 2:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
-		case 1:		*ptr = (*ptr >> 1) & shiftMask; ++ptr;
+					*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 7:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 6:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 5:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 4:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 3:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 2:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
+		case 1:		*ptr = (*ptr & colorMask) >> 1; ++ptr;
 				} while (--n > 0);
 		}
 
@@ -420,10 +422,10 @@ calcGradient(uint32 pos, uint32 max) {
 	PixelType output = 0;
 	pos = (MIN(pos * Base::_gradientFactor, max) << 12) / max;
 
-	output |= ((_gradientStart&_redMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
-	output |= ((_gradientStart&_greenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
-	output |= ((_gradientStart&_blueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
-	output |= ~(_redMask | _greenMask | _blueMask);
+	output |= ((_gradientStart & _redMask) + ((Base::_gradientBytes[0] * pos) >> 12)) & _redMask;
+	output |= ((_gradientStart & _greenMask) + ((Base::_gradientBytes[1] * pos) >> 12)) & _greenMask;
+	output |= ((_gradientStart & _blueMask) + ((Base::_gradientBytes[2] * pos) >> 12)) & _blueMask;
+	output |= _alphaMask;
 
 	return output;
 }
@@ -599,12 +601,12 @@ drawRoundedSquare(int x, int y, int r, int w, int h) {
 		w <= 0 || h <= 0 || x < 0 || y < 0 || r <= 0)
 		return;
 
-	if ((r << 1) > w || (r << 1) > h)
-		r = MIN(w >> 1, h >> 1);
+	if ((r * 2) > w || (r * 2) > h)
+		r = MIN(w /2, h / 2);
 
 	if (Base::_fillMode != kFillDisabled && Base::_shadowOffset
-		&& x + w + Base::_shadowOffset < Base::_activeSurface->w
-		&& y + h + Base::_shadowOffset < Base::_activeSurface->h) {
+		&& x + w + Base::_shadowOffset + 1 < Base::_activeSurface->w
+		&& y + h + Base::_shadowOffset + 1 < Base::_activeSurface->h) {
 		drawRoundedSquareShadow(x, y, r, w, h, Base::_shadowOffset);
 	}
 
@@ -697,7 +699,7 @@ drawTriangle(int x, int y, int w, int h, TriangleOrientation orient) {
 	int newW = w / 2;
 	if (newW % 2) newW++;
 
-	switch(orient) {
+	switch (orient) {
 		case kTriangleUp:
 		case kTriangleDown:
 			drawTriangleFast(x + (newW / 2), y + (h / 2) - (newW / 2), newW, (orient == kTriangleDown), color, Base::_fillMode);
@@ -918,10 +920,12 @@ drawBevelSquareAlg(int x, int y, int w, int h, int bevel, PixelType top_color, P
 	}
 
 	int i, j;
+
 	x = MAX(x - bevel, 0);
 	y = MAX(y - bevel, 0);
-	h += bevel << 1;
-	w += bevel << 1;
+
+	w = MIN(w + (bevel * 2), (int)_activeSurface->w);
+	h = MIN(h + (bevel * 2), (int)_activeSurface->h);
 
 	PixelType *ptr_left = (PixelType *)_activeSurface->getBasePtr(x, y);
 
@@ -1023,7 +1027,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		int dysub = ddy - (dx * 2);
 		int error_term = ddy - dx;
 
-		switch(fill_m) {
+		switch (fill_m) {
 		case kFillDisabled:
 			while (dx--) {
 				__TRIANGLE_MAINX();
@@ -1055,7 +1059,7 @@ drawTriangleVertAlg(int x1, int y1, int w, int h, bool inverted, PixelType color
 		int dxsub = ddx - (dy * 2);
 		int error_term = ddx - dy;
 
-		switch(fill_m) {
+		switch (fill_m) {
 		case kFillDisabled:
 			while (dy--) {
 				__TRIANGLE_MAINY();

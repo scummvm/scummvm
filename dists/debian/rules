@@ -4,7 +4,7 @@ build: residual
 
 residual:
 	dh_testdir
-	./configure --enable-release --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games --mandir=/usr/share/man --disable-vorbis --disable-mad --disable-tremor --disable-flac
+	./configure --enable-release --prefix=/usr --bindir=/usr/games --datadir=/usr/share/games --mandir=/usr/share/man
 	$(MAKE)
 
 clean:

@@ -402,21 +402,23 @@ int FlacInputStream::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 inline ::FLAC__SeekableStreamDecoderReadStatus FlacInputStream::callbackRead(FLAC__byte buffer[], FLAC_size_t *bytes) {
-	if (*bytes == 0)
+	if (*bytes == 0) {
 #ifdef LEGACY_FLAC
 		return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR; /* abort to avoid a deadlock */
 #else
 		return FLAC__STREAM_DECODER_READ_STATUS_ABORT; /* abort to avoid a deadlock */
 #endif
+	}
 
 	const uint32 bytesRead = _inStream->read(buffer, *bytes);
 
-	if (bytesRead == 0 && _inStream->ioFailed())
+	if (bytesRead == 0) {
 #ifdef LEGACY_FLAC
-		return FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR;
+		return _inStream->eos() ? FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_OK : FLAC__SEEKABLE_STREAM_DECODER_READ_STATUS_ERROR;
 #else
-		return FLAC__STREAM_DECODER_READ_STATUS_ABORT;
+		return _inStream->eos() ? FLAC__STREAM_DECODER_READ_STATUS_END_OF_STREAM : FLAC__STREAM_DECODER_READ_STATUS_ABORT;
 #endif
+	}
 
 	*bytes = static_cast<uint>(bytesRead);
 #ifdef LEGACY_FLAC

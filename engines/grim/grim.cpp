@@ -24,6 +24,7 @@
  */
 
 #include "common/events.h"
+#include "common/file.h"
 #include "common/config-manager.h"
 
 #include "engines/engine.h"
@@ -351,9 +352,6 @@ Common::Error GrimEngine::run() {
 	else
 		error("gfx backend doesn't support hardware rendering");
 #endif
-
-	if (g_grim->getGameFlags() & GF_DEMO)
-		Common::File::addDefaultDirectory(_gameDataDir.getChild("Movies"));
 
 	g_driver->setupScreen(640, 480, fullscreen);
 

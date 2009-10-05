@@ -41,11 +41,15 @@
 #include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/events.h"
+#include "common/EventRecorder.h"
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/system.h"
+
 #include "gui/GuiManager.h"
 #include "gui/message.h"
+
+#include "sound/audiocd.h"
 
 #include "backends/keymapper/keymapper.h"
 
@@ -168,9 +172,9 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 	// Set the window caption to the game name
 	Common::String caption(ConfMan.get("description"));
 
-	Common::String desc = EngineMan.findGame(ConfMan.get("gameid")).description();
-	if (caption.empty() && !desc.empty())
-		caption = desc;
+	if (caption.empty()) {
+		caption = EngineMan.findGame(ConfMan.get("gameid")).description();
+	}
 	if (caption.empty())
 		caption = ConfMan.getActiveDomainName();	// Use the domain (=target) name
 	if (!caption.empty())	{
@@ -341,6 +345,14 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 	// take place after the backend is initiated and the screen has been setup
 	system.getEventManager()->init();
 
+	// Directly after initializing the event manager, we will initialize our
+	// event recorder.
+	//
+	// TODO: This is just to match the current behavior, when we further extend
+	// our event recorder, we might do this at another place. Or even change
+	// the whole API for that ;-).
+	g_eventRec.init();
+
 	// Now as the event manager is created, setup the keymapper
 	setupKeymapper(system);
 
@@ -368,11 +380,15 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 			}
 
 			// Quit unless an error occurred, or Return to launcher was requested
+			#ifndef FORCE_RTL
 			if (result == 0 && !g_system->getEventManager()->shouldRTL())
 				break;
-
+			#endif
 			// Reset RTL flag in case we want to load another engine
 			g_system->getEventManager()->resetRTL();
+			#ifdef FORCE_RTL
+			g_system->getEventManager()->resetQuit();
+			#endif
 
 			// Discard any command line options. It's unlikely that the user
 			// wanted to apply them to *all* games ever launched.
@@ -388,6 +404,15 @@ extern "C" int residual_main(int argc, const char * const argv[]) {
 			// screen to draw on yet.
 			warning("Could not find any engine capable of running the selected game");
 		}
+
+		// We will destroy the AudioCDManager singleton here to save some memory.
+		// This will not make the CD audio stop, one would have to enable this:
+		//AudioCD.stop();
+		// but the engine is responsible for stopping CD playback anyway and
+		// this way we catch engines not doing it properly. For some more
+		// information about why AudioCDManager::destroy does not stop the CD
+		// playback read the FIXME in sound/audiocd.h
+		Audio::AudioCDManager::destroy();
 
 		// reset the graphics to default
 		setupGraphics(system);

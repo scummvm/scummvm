@@ -241,6 +241,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\common\EventDispatcher.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\EventRecorder.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\common\EventRecorder.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\common\events.h"
 				>
 			</File>
@@ -461,11 +473,27 @@
 			Name="sound"
 			>
 			<File
+				RelativePath="..\..\sound\audiocd.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\audiocd.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\audiostream.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\sound\audiostream.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\flac.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\flac.h"
 				>
 			</File>
 			<File
@@ -481,11 +509,31 @@
 				>
 			</File>
 			<File
+				RelativePath="..\..\sound\module.mk"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\mp3.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\mp3.h"
+				>
+			</File>
+			<File
 				RelativePath="..\..\sound\rate.cpp"
 				>
 			</File>
 			<File
 				RelativePath="..\..\sound\rate.h"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\vorbis.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\..\sound\vorbis.h"
 				>
 			</File>
 		</Filter>

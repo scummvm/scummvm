@@ -36,6 +36,10 @@
 namespace Graphics {
 class VectorRenderer;
 
+
+typedef void (VectorRenderer::*DrawingFunctionCallback)(const Common::Rect &, const Graphics::DrawStep &);
+
+
 struct DrawStep {
 	struct Color {
 		uint8 r, g, b;
@@ -58,7 +62,10 @@ struct DrawStep {
 		kVectorAlignBottom,
 		kVectorAlignTop,
 		kVectorAlignCenter
-	} xAlign, yAlign;
+	};
+
+	VectorAlignment xAlign;
+	VectorAlignment yAlign;
 
 	uint8 shadow, stroke, factor, radius, bevel; /**< Misc options... */
 
@@ -67,7 +74,7 @@ struct DrawStep {
 
 	uint32 scale; /**< scale of all the coordinates in FIXED POINT with 16 bits mantissa */
 
-	void (VectorRenderer::*drawingCall)(const Common::Rect &, const DrawStep &); /** Pointer to drawing function */
+	DrawingFunctionCallback drawingCall; /**< Pointer to drawing function */
 	Graphics::Surface *blitSrc;
 };
 

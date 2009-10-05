@@ -29,6 +29,7 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/str.h"
+#include "graphics/pixelformat.h"
 
 class OSystem;
 

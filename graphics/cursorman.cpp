@@ -57,14 +57,14 @@ bool CursorManager::showMouse(bool visible) {
 	return g_system->showMouse(visible);
 }
 
-void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
-	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+void CursorManager::pushCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, const Graphics::PixelFormat *format) {
+	Cursor *cur = new Cursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 
 	cur->_visible = isVisible();
 	_cursorStack.push(cur);
 
 	if (buf) {
-		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+		g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 	}
 }
 
@@ -77,7 +77,7 @@ void CursorManager::popCursor() {
 
 	if (!_cursorStack.empty()) {
 		cur = _cursorStack.top();
-		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale);
+		g_system->setMouseCursor(cur->_data, cur->_width, cur->_height, cur->_hotspotX, cur->_hotspotY, cur->_keycolor, cur->_targetScale, &cur->_format);
 	}
 
 	g_system->showMouse(isVisible());
@@ -93,15 +93,24 @@ void CursorManager::popAllCursors() {
 	g_system->showMouse(isVisible());
 }
 
+void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor, int targetScale, const Graphics::PixelFormat *format) {
 
-void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor, int targetScale) {
 	if (_cursorStack.empty()) {
-		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale);
+		pushCursor(buf, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 		return;
 	}
 
 	Cursor *cur = _cursorStack.top();
+
+#ifdef USE_RGB_COLOR
+	uint size;
+	if (!format)
+		size = w * h;
+	else
+		size = w * h * format->bytesPerPixel;
+#else
 	uint size = w * h;
+#endif
 
 	if (cur->_size < size) {
 		delete[] cur->_data;
@@ -118,8 +127,14 @@ void CursorManager::replaceCursor(const byte *buf, uint w, uint h, int hotspotX,
 	cur->_hotspotY = hotspotY;
 	cur->_keycolor = keycolor;
 	cur->_targetScale = targetScale;
+#ifdef USE_RGB_COLOR
+	if (format)
+		cur->_format = *format;
+	else
+		cur->_format = Graphics::PixelFormat::createFormatCLUT8();
+#endif
 
-	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale);
+	g_system->setMouseCursor(cur->_data, w, h, hotspotX, hotspotY, keycolor, targetScale, format);
 }
 
 bool CursorManager::supportsCursorPalettes() {

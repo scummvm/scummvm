@@ -28,6 +28,8 @@
 
 #include "common/memorypool.h"
 
+#include <stdarg.h>
+
 #if !defined(__SYMBIAN32__)
 #include <new>
 #endif
@@ -350,12 +352,12 @@ bool String::contains(char x) const {
 	return strchr(c_str(), x) != NULL;
 }
 
-bool String::matchString(const char *pat, bool pathMode) const {
-	return Common::matchString(c_str(), pat, pathMode);
+bool String::matchString(const char *pat, bool ignoreCase, bool pathMode) const {
+	return Common::matchString(c_str(), pat, ignoreCase, pathMode);
 }
 
-bool String::matchString(const String &pat, bool pathMode) const {
-	return Common::matchString(c_str(), pat.c_str(), pathMode);
+bool String::matchString(const String &pat, bool ignoreCase, bool pathMode) const {
+	return Common::matchString(c_str(), pat.c_str(), ignoreCase, pathMode);
 }
 
 void String::deleteLastChar() {
@@ -434,6 +436,50 @@ void String::trim() {
 uint String::hash() const {
 	return hashit(c_str());
 }
+
+// static
+String String::printf(const char *fmt, ...) {
+	String output;
+	assert(output.isStorageIntern());
+
+	va_list va;
+	va_start(va, fmt);
+	int len = vsnprintf(output._str, _builtinCapacity, fmt, va);
+	va_end(va);
+
+	if (len == -1) {
+		// MSVC doesn't return the size the full string would take up.
+		// Try increasing the size of the string until it fits.
+
+		// We assume MSVC failed to output the correct, null-terminated string
+		// if the return value is either -1 or size.
+		int size = _builtinCapacity;
+		do {
+			size *= 2;
+			output.ensureCapacity(size-1, false);
+			assert(!output.isStorageIntern());
+			size = output._extern._capacity;
+
+			va_start(va, fmt);
+			len = vsnprintf(output._str, size, fmt, va);
+			va_end(va);
+		} while (len == -1 || len >= size);
+	} else if (len < (int)_builtinCapacity) {
+		// vsnprintf succeeded
+		output._size = len;
+	} else {
+		// vsnprintf didn't have enough space, so grow buffer
+		output.ensureCapacity(len, false);
+		va_start(va, fmt);
+		int len2 = vsnprintf(output._str, len+1, fmt, va);
+		va_end(va);
+		assert(len == len2);
+		output._size = len2;
+	}
+
+	return output;
+}
+
 
 #pragma mark -
 
@@ -635,7 +681,7 @@ Common::String normalizePath(const Common::String &path, const char sep) {
 	return result;
 }
 
-bool matchString(const char *str, const char *pat, bool pathMode) {
+bool matchString(const char *str, const char *pat, bool ignoreCase, bool pathMode) {
 	assert(str);
 	assert(pat);
 
@@ -652,7 +698,7 @@ bool matchString(const char *str, const char *pat, bool pathMode) {
 
 		switch (*pat) {
 		case '*':
-			// Record pattern / string possition for backtracking
+			// Record pattern / string position for backtracking
 			p = ++pat;
 			q = str;
 			// If pattern ended with * -> match
@@ -661,7 +707,8 @@ bool matchString(const char *str, const char *pat, bool pathMode) {
 			break;
 
 		default:
-			if (*pat != *str) {
+			if ((!ignoreCase && *pat != *str) ||
+				(ignoreCase && tolower(*pat) != tolower(*str))) {
 				if (p) {
 					// No match, oops -> try to backtrack
 					pat = p;

@@ -26,10 +26,8 @@
 #include "common/config-file.h"
 #include "common/file.h"
 #include "common/savefile.h"
-#include "common/util.h"
-#include "common/debug.h"
 #include "common/system.h"
-
+#include "common/util.h"
 
 #define MAXLINELEN 256
 

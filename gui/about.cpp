@@ -100,7 +100,7 @@ AboutDialog::AboutDialog()
 	_w = 0;
 	for (i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
-		if ( _w < tmp && tmp <= maxW) {
+		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}
 	}
@@ -247,7 +247,7 @@ void AboutDialog::drawDialog() {
 				str++;
 
 		if (*str && y > _y && y + g_gui.theme()->getFontHeight() < _y + _h)
-			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, false, 0, false);
+			g_gui.theme()->drawText(Common::Rect(_x + _xOff, y, _x + _w - _xOff, y + g_gui.theme()->getFontHeight()), str, state, align, ThemeEngine::kTextInversionNone, 0, false);
 		y += _lineHeight;
 	}
 }
@@ -311,7 +311,7 @@ void AboutDialog::reflowLayout() {
 	_w = 0;
 	for (int i = 0; i < ARRAYSIZE(credits); i++) {
 		int tmp = g_gui.getStringWidth(credits[i] + 5);
-		if ( _w < tmp && tmp <= maxW) {
+		if (_w < tmp && tmp <= maxW) {
 			_w = tmp;
 		}
 	}

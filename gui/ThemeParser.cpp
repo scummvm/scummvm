@@ -23,17 +23,11 @@
  *
  */
 
-#include "common/util.h"
-#include "common/system.h"
-#include "common/events.h"
-#include "common/hashmap.h"
-#include "common/hash-str.h"
-#include "common/xmlparser.h"
-
 #include "gui/ThemeEngine.h"
 #include "gui/ThemeEval.h"
 #include "gui/ThemeParser.h"
 #include "gui/GuiManager.h"
+
 #include "graphics/VectorRenderer.h"
 
 namespace GUI {
@@ -44,13 +38,9 @@ struct TextDataInfo {
 };
 
 static const TextDataInfo kTextDataDefaults[] = {
-	{kTextDataDefault,		"text_default"},
-	{kTextDataHover,		"text_hover"},
-	{kTextDataDisabled,		"text_disabled"},
-	{kTextDataInverted,		"text_inverted"},
-	{kTextDataButton,		"text_button"},
-	{kTextDataButtonHover,	"text_button_hover"},
-	{kTextDataNormalFont,	"text_normal"}
+	{ kTextDataDefault,			"text_default" },
+	{ kTextDataButton,			"text_button" },
+	{ kTextDataNormalFont,		"text_normal" }
 };
 
 
@@ -60,6 +50,33 @@ static TextData parseTextDataId(const Common::String &name) {
 			return kTextDataDefaults[i].id;
 
 	return kTextDataNone;
+}
+
+struct TextColorDataInfo {
+	TextColor id;
+	const char *name;
+};
+
+static const TextColorDataInfo kTextColorDefaults[] = {
+	{ kTextColorNormal,					"color_normal" },
+	{ kTextColorNormalInverted,			"color_normal_inverted" },
+	{ kTextColorNormalHover,			"color_normal_hover" },
+	{ kTextColorNormalDisabled,			"color_normal_disabled" },
+	{ kTextColorAlternative,			"color_alternative" },
+	{ kTextColorAlternativeInverted,	"color_alternative_inverted" },
+	{ kTextColorAlternativeHover,		"color_alternative_hover" },
+	{ kTextColorAlternativeDisabled,	"color_alternative_disabled" },
+	{ kTextColorButton,					"color_button" },
+	{ kTextColorButtonHover,			"color_button_hover" },
+	{ kTextColorButtonDisabled,			"color_button_disabled" }
+};
+
+static TextColor parseTextColorId(const Common::String &name) {
+	for (int i = 0; i < kTextColorMAX; ++i)
+		if (name.compareToIgnoreCase(kTextColorDefaults[i].name) == 0)
+			return kTextColorDefaults[i].id;
+
+	return kTextColorMAX;
 }
 
 static Graphics::TextAlign parseTextHAlign(const Common::String &val) {
@@ -86,19 +103,6 @@ static GUI::ThemeEngine::TextAlignVertical parseTextVAlign(const Common::String 
 
 
 ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
-
-	_drawFunctions["circle"]  = &Graphics::VectorRenderer::drawCallback_CIRCLE;
-	_drawFunctions["square"]  = &Graphics::VectorRenderer::drawCallback_SQUARE;
-	_drawFunctions["roundedsq"]  = &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
-	_drawFunctions["bevelsq"]  = &Graphics::VectorRenderer::drawCallback_BEVELSQ;
-	_drawFunctions["line"]  = &Graphics::VectorRenderer::drawCallback_LINE;
-	_drawFunctions["triangle"]  = &Graphics::VectorRenderer::drawCallback_TRIANGLE;
-	_drawFunctions["fill"]  = &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
-	_drawFunctions["tab"]  = &Graphics::VectorRenderer::drawCallback_TAB;
-	_drawFunctions["void"]  = &Graphics::VectorRenderer::drawCallback_VOID;
-	_drawFunctions["bitmap"] = &Graphics::VectorRenderer::drawCallback_BITMAP;
-	_drawFunctions["cross"] = &Graphics::VectorRenderer::drawCallback_CROSS;
-
 	_defaultStepGlobal = defaultDrawStep();
 	_defaultStepLocal = 0;
 	_theme = parent;
@@ -107,8 +111,6 @@ ThemeParser::ThemeParser(ThemeEngine *parent) : XMLParser() {
 ThemeParser::~ThemeParser() {
 	delete _defaultStepGlobal;
 	delete _defaultStepLocal;
-	_palette.clear();
-	_drawFunctions.clear();
 }
 
 void ThemeParser::cleanup() {
@@ -169,21 +171,32 @@ bool ThemeParser::parserCallback_defaults(ParserNode *node) {
 }
 
 bool ThemeParser::parserCallback_font(ParserNode *node) {
-	int red, green, blue;
-
 	if (resolutionCheck(node->values["resolution"]) == false) {
 		node->ignore = true;
 		return true;
 	}
 
+	TextData textDataId = parseTextDataId(node->values["id"]);
+	if (!_theme->addFont(textDataId, node->values["file"]))
+		return parserError("Error loading Font in theme engine.");
+
+	return true;
+}
+
+bool ThemeParser::parserCallback_text_color(ParserNode *node) {
+	int red, green, blue;
+
+	TextColor colorId = parseTextColorId(node->values["id"]);
+	if (colorId == kTextColorMAX)
+		return parserError("Error text color is not defined.");
+
 	if (_palette.contains(node->values["color"]))
 		getPaletteColor(node->values["color"], red, green, blue);
 	else if (!parseIntegerKey(node->values["color"].c_str(), 3, &red, &green, &blue))
-		return parserError("Error parsing color value for font definition.");
+		return parserError("Error parsing color value for text color definition.");
 
-	TextData textDataId = parseTextDataId(node->values["id"]);
-	if (!_theme->addFont(textDataId, node->values["file"], red, green, blue))
-		return parserError("Error loading Font in theme engine.");
+	if (!_theme->addTextColor(colorId, red, green, blue))
+		return parserError("Error while adding text color information.");
 
 	return true;
 }
@@ -236,8 +249,9 @@ bool ThemeParser::parserCallback_text(ParserNode *node) {
 
 	Common::String id = getParentNode(node)->values["id"];
 	TextData textDataId = parseTextDataId(node->values["font"]);
+	TextColor textColorId = parseTextColorId(node->values["text_color"]);
 
-	if (!_theme->addTextData(id, textDataId, alignH, alignV))
+	if (!_theme->addTextData(id, textDataId, textColorId, alignH, alignV))
 		return parserError("Error adding Text Data for '%s'.", id.c_str());
 
 	return true;
@@ -281,15 +295,44 @@ bool ThemeParser::parserCallback_color(ParserNode *node) {
 }
 
 
+static Graphics::DrawingFunctionCallback getDrawingFunctionCallback(const Common::String &name) {
+
+	if (name == "circle")
+		return &Graphics::VectorRenderer::drawCallback_CIRCLE;
+	if (name == "square")
+		return &Graphics::VectorRenderer::drawCallback_SQUARE;
+	if (name == "roundedsq")
+		return &Graphics::VectorRenderer::drawCallback_ROUNDSQ;
+	if (name == "bevelsq")
+		return &Graphics::VectorRenderer::drawCallback_BEVELSQ;
+	if (name == "line")
+		return &Graphics::VectorRenderer::drawCallback_LINE;
+	if (name == "triangle")
+		return &Graphics::VectorRenderer::drawCallback_TRIANGLE;
+	if (name == "fill")
+		return &Graphics::VectorRenderer::drawCallback_FILLSURFACE;
+	if (name == "tab")
+		return &Graphics::VectorRenderer::drawCallback_TAB;
+	if (name == "void")
+		return &Graphics::VectorRenderer::drawCallback_VOID;
+	if (name == "bitmap")
+		return &Graphics::VectorRenderer::drawCallback_BITMAP;
+	if (name == "cross")
+		return &Graphics::VectorRenderer::drawCallback_CROSS;
+
+	return 0;
+}
+
+
 bool ThemeParser::parserCallback_drawstep(ParserNode *node) {
 	Graphics::DrawStep *drawstep = newDrawStep();
 
 	Common::String functionName = node->values["func"];
 
-	if (_drawFunctions.contains(functionName) == false)
-		return parserError("%s is not a valid drawing function name", functionName.c_str());
+	drawstep->drawingCall = getDrawingFunctionCallback(functionName);
 
-	drawstep->drawingCall = _drawFunctions[functionName];
+	if (drawstep->drawingCall == 0)
+		return parserError("%s is not a valid drawing function name", functionName.c_str());
 
 	if (!parseDrawStep(node, drawstep, true))
 		return false;
@@ -416,7 +459,7 @@ bool ThemeParser::parseDrawStep(ParserNode *stepNode, Graphics::DrawStep *drawst
 			if (stepNode->values.contains("orientation")) {
 				val = stepNode->values["orientation"];
 
-				if ( val == "top")
+				if (val == "top")
 					drawstep->extraData = Graphics::VectorRenderer::kTriangleUp;
 				else if (val == "bottom")
 					drawstep->extraData = Graphics::VectorRenderer::kTriangleDown;
@@ -579,7 +622,7 @@ bool ThemeParser::parserCallback_widget(ParserNode *node) {
 		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
 
 		if (node->values.contains("textalign")) {
-			if((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
+			if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 				return parserError("Invalid value for text alignment.");
 		}
 
@@ -804,7 +847,7 @@ bool ThemeParser::parseCommonLayoutProps(ParserNode *node, const Common::String 
 	if (node->values.contains("textalign")) {
 		Graphics::TextAlign alignH = Graphics::kTextAlignLeft;
 
-		if((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
+		if ((alignH = parseTextHAlign(node->values["textalign"])) == Graphics::kTextAlignInvalid)
 			return parserError("Invalid value for text alignment.");
 
 		_theme->getEvaluator()->setVar(var + "Align", alignH);

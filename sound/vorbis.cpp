@@ -60,7 +60,7 @@ static size_t read_stream_wrap(void *ptr, size_t size, size_t nmemb, void *datas
 
 static int seek_stream_wrap(void *datasource, ogg_int64_t offset, int whence) {
 	Common::SeekableReadStream *stream = (Common::SeekableReadStream *)datasource;
-	stream->seek(offset, whence);
+	stream->seek((int32)offset, whence);
 	return stream->pos();
 }
 
@@ -132,7 +132,7 @@ public:
 	}
 
 protected:
-	void refill();
+	bool refill();
 };
 
 VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool dispose, uint startTime, uint endTime, uint numLoops) :
@@ -142,9 +142,12 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 	_totalNumLoops(numLoops),
 	_bufferEnd(_buffer + ARRAYSIZE(_buffer)) {
 
-	bool err = (ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap) < 0);
-	// FIXME: proper error handling!
-	assert(!err);
+	int res = ov_open_callbacks(inStream, &_ovFile, NULL, 0, g_stream_wrap);
+	if (res < 0) {
+		warning("Could not create Vorbis stream (%d)", res);
+		_pos = _bufferEnd;
+		return;
+	}
 
 #ifdef USE_TREMOR
 	/* TODO: Symbian may have to use scumm_fixdfdi here? To quote:
@@ -175,10 +178,16 @@ VorbisInputStream::VorbisInputStream(Common::SeekableReadStream *inStream, bool 
 	}
 
 	// Seek to the start position
-	ov_time_seek(&_ovFile, _startTime);
+	res = ov_time_seek(&_ovFile, _startTime);
+	if (res < 0) {
+		warning("Error seeking in Vorbis stream (%d)", res);
+		_pos = _bufferEnd;
+		return;
+	}
 
 	// Read in initial data
-	refill();
+	if (!refill())
+		return;
 
 	// Setup some header information
 	_isStereo = ov_info(&_ovFile, -1)->channels >= 2;
@@ -192,7 +201,7 @@ VorbisInputStream::~VorbisInputStream() {
 }
 
 int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
-	int samples = 0;
+	int res, samples = 0;
 	while (samples < numSamples && _pos < _bufferEnd) {
 		const int len = MIN(numSamples - samples, (int)(_bufferEnd - _pos));
 		memcpy(buffer, _pos, len * 2);
@@ -200,7 +209,9 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 		_pos += len;
 		samples += len;
 		if (_pos >= _bufferEnd) {
-			refill();
+			if (!refill())
+				break;
+
 			// If we are still out of data, and also past the end of specified
 			// time range, check whether looping is enabled...
 			if (_pos >= _bufferEnd && ov_time_tell(&_ovFile) >= _endTime) {
@@ -208,8 +219,16 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 					// If looping is on and there are loops left, rewind to the start
 					if (_numLoops != 0)
 						_numLoops--;
-					ov_time_seek(&_ovFile, _startTime);
-					refill();
+
+					res = ov_time_seek(&_ovFile, _startTime);
+					if (res < 0) {
+						warning("Error seeking in Vorbis stream (%d)", res);
+						_pos = _bufferEnd;
+						break;
+					}
+
+					if (!refill())
+						break;
 				}
 			}
 		}
@@ -217,8 +236,9 @@ int VorbisInputStream::readBuffer(int16 *buffer, const int numSamples) {
 	return samples;
 }
 
-void VorbisInputStream::refill() {
+bool VorbisInputStream::refill() {
 	// Read the samples
+	int res;
 	uint len_left = sizeof(_buffer);
 	char *read_pos = (char *)_buffer;
 
@@ -229,7 +249,12 @@ void VorbisInputStream::refill() {
 				break;	// Last loop, abort
 			if (_numLoops != 0)
 				_numLoops--;
-			ov_time_seek(&_ovFile, _startTime);
+			res = ov_time_seek(&_ovFile, _startTime);
+			if (res < 0) {
+				warning("Error seeking in Vorbis stream (%d)", res);
+				_pos = _bufferEnd;
+				return false;
+			}
 		}
 
 		long result;
@@ -257,13 +282,16 @@ void VorbisInputStream::refill() {
 		if (result == OV_HOLE) {
 			// Possibly recoverable, just warn about it
 			warning("Corrupted data in Vorbis file");
-		} else if (result <= 0) {
-			if (result < 0)
-				debug(1, "Decode error %ld in Vorbis file", result);
+		} else if (result == 0) {
+			warning("End of file while reading from Vorbis file");
+			_pos = _bufferEnd;
+			return false;
+		} else if (result < 0) {
+			warning("Error reading from Vorbis stream (%d)", int(result));
+			_pos = _bufferEnd;
 			// Don't delete it yet, that causes problems in
 			// the CD player emulation code.
-			memset(read_pos, 0, len_left);
-			break;
+			return false;
 		} else {
 			len_left -= result;
 			read_pos += result;
@@ -272,6 +300,8 @@ void VorbisInputStream::refill() {
 
 	_pos = _buffer;
 	_bufferEnd = (int16 *)read_pos;
+
+	return true;
 }
 
 
@@ -289,7 +319,14 @@ AudioStream *makeVorbisStream(
 
 	uint32 endTime = duration ? (startTime + duration) : 0;
 
-	return new VorbisInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
+	VorbisInputStream *input = new VorbisInputStream(stream, disposeAfterUse, startTime, endTime, numLoops);
+
+	if (input->endOfData()) {
+		delete input;
+		return 0;
+	}
+
+	return input;
 }
 
 

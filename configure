@@ -29,6 +29,8 @@ SAVED_LDFLAGS=$LDFLAGS
 SAVED_CXX=$CXX
 SAVED_CXXFLAGS=$CXXFLAGS
 SAVED_CPPFLAGS=$CPPFLAGS
+SAVED_ASFLAGS=$ASFLAGS
+SAVED_WINDRESFLAGS=$WINDRESFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
@@ -54,15 +56,22 @@ if test "$ac_emxsupport" != "no" -a "$ac_emxsupport" != "NO"; then
 	unset ac_TEMP_PATH
 fi
 
+set_var() {
+	eval ${1}='${2}'
+}
+
+get_var() {
+	eval echo \$${1}
+}
 
 # Add an engine: id name build subengines
 add_engine() {
 	_engines="${_engines} ${1}"
-	eval _engine_${1}_name='${2}'
-	eval _engine_${1}_build='${3}'
-	eval _engine_${1}_subengines='${4}'
+	set_var _engine_${1}_name "${2}"
+	set_var _engine_${1}_build "${3}"
+	set_var _engine_${1}_subengines "${4}"
 	for sub in ${4}; do
-		eval _engine_${sub}_sub=yes
+		set_var _engine_${sub}_sub "yes"
 	done
 }
 
@@ -92,6 +101,7 @@ _plugins_default=static
 _ranlib=ranlib
 _strip=strip
 _ar="ar cru"
+_as="as"
 _windres=windres
 _win32path="C:/residual"
 _aos4path="Games:Residual"
@@ -107,6 +117,7 @@ _host_os=""
 _host_alias=""
 
 _srcdir=`dirname $0`
+_port_mk="ports.mk"
 
 # Determine a tmp file name, using mktemp(1) when available.
 if type mktemp > /dev/null 2>&1 ; then
@@ -225,7 +236,7 @@ find_sdlconfig() {
 #
 get_system_exe_extension() {
 	case $1 in
-	mingw* | *os2-emx)
+	mingw* | *os2-emx | wince)
 		_exeext=".exe"
 		;;
 	arm-riscos)
@@ -237,7 +248,7 @@ get_system_exe_extension() {
 	gp2x-linux)
 		_exeext=".gp2x"
 		;;	
-	dreamcast | wii | gamecube | psp)
+	dreamcast | wii | gamecube | nds | psp)
 		_exeext=".elf"
 		;;
 	*)
@@ -252,7 +263,7 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
-        tmpopt=`echo $1 | sed 's/_/-/g'`
+	tmpopt=`echo $1 | sed 's/_/-/g'`
 	option=`echo "--${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
 	echo "  ${option}  ${2}"
 }
@@ -271,22 +282,22 @@ Try \`$0 --help' for more information." >&2
 
 # Get the name of the engine
 get_engine_name() {
-	eval echo \$_engine_$1_name
+	get_var _engine_$1_name
 }
 
 # Will this engine be built?
 get_engine_build() {
-	eval echo \$_engine_$1_build
+	get_var _engine_$1_build
 }
 
 # Get the subengines
 get_engine_subengines() {
-	eval echo \$_engine_$1_subengines
+	get_var _engine_$1_subengines
 }
 
 # Ask if this is a subengine
 get_engine_sub() {
-	sub=`eval echo \\$_engine_$1_sub`
+	sub=`get_var _engine_$1_sub`
 	if test -z "$sub" ; then
 		sub=no
 	fi
@@ -296,14 +307,14 @@ get_engine_sub() {
 # Enable *all* engines
 engine_enable_all() {
 	for engine in $_engines; do
-		eval _engine_${engine}_build=yes
+		set_var _engine_${engine}_build "yes"
 	done
 }
 
 # Disable *all* engines
 engine_disable_all() {
 	for engine in $_engines; do
-		eval _engine_${engine}_build=no
+		set_var _engine_${engine}_build "no"
 	done
 }
 
@@ -327,7 +338,7 @@ engine_enable() {
 
 	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
 		if test "`get_engine_name ${engine}`" != "" ; then
-			eval _engine_${engine}_build=$opt
+			set_var _engine_${engine}_build "$opt"
 		else
 			option_error
 		fi
@@ -346,7 +357,7 @@ engine_disable() {
 
 	engine=`echo $1 | sed 's/-/_/g'`
 	if test "`get_engine_name ${engine}`" != "" ; then
-		eval _engine_${engine}_build=no
+		set_var _engine_${engine}_build "no"
 	else
 		option_error
 	fi
@@ -493,7 +504,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, morphos, dc, gp2x, gp2xwiz, iphone, wii, psp, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, wii, wince, linuxmoto, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing Residual [/usr/local]
@@ -508,20 +519,23 @@ Special configuration feature:
                                           dreamcast for Sega Dreamcast
                                           wii for Nintendo Wii
                                           gamecube for Nintendo Gamecube
+                                          nds for Nintendo DS
                                           iphone for Apple iPhone
+                                          wince for Windows CE
                                           psp for PlayStation Portable 
 
-Optional Features:
-  --disable-debug          disable building with debugging symbols
-  --enable-Werror          treat warnings as errors
-  --enable-profiling       enable building with gprof profile information
-  --enable-release         set flags to build release binary
-  --enable-verbose-build   enable regular echoing of commands during build process
+Game engines:
   --enable-all-engines     enable all engines
   --disable-all-engines    disable all engines
 $engines_help
+Optional Features:
+  --disable-debug          disable building with debugging symbols
+  --enable-Werror          treat warnings as errors
   --enable-plugins         enable the support for dynamic plugins
   --default-dynamic        make plugins dynamic by default
+  --enable-profiling       enable building with gprof profile information
+  --enable-release         set flags to build release binary
+  --enable-verbose-build   enable regular echoing of commands during build process
 
 Optional Libraries:
   --with-ogg-prefix=DIR    Prefix where libogg is installed (optional)
@@ -542,12 +556,14 @@ Optional Libraries:
   --with-sdl-prefix=DIR    Prefix where the sdl-config script is installed (optional)
 
 Some influential environment variables:
-  LDFLAGS   linker flags, e.g. -L<lib dir> if you have libraries in a
-            nonstandard directory <lib dir>
-  CXX       C++ compiler command
-  CXXFLAGS  C++ compiler flags
-  CPPFLAGS  C++ preprocessor flags, e.g. -I<include dir> if you have
-            headers in a nonstandard directory <include dir>
+  LDFLAGS        linker flags, e.g. -L<lib dir> if you have libraries in a
+                 nonstandard directory <lib dir>
+  CXX            C++ compiler command
+  CXXFLAGS       C++ compiler flags
+  CPPFLAGS       C++ preprocessor flags, e.g. -I<include dir> if you have
+                 headers in a nonstandard directory <include dir>
+  ASFLAGS        assembler flags
+  WINDRESFLAGS   Windows resource compiler flags
 
 EOF
 		exit 0
@@ -566,8 +582,9 @@ for ac_option in $@; do
 	--disable-flac)           _flac=no        ;;
 	--enable-mad)             _mad=yes        ;;
 	--disable-mad)            _mad=no         ;;
-	--enable-plugins)         _dynamic_modules=yes ;;
+
 	--enable-verbose-build)   _verbose_build=yes ;;
+	--enable-plugins)         _dynamic_modules=yes ;;
 	--default-dynamic)        _plugins_default=dynamic ;;
 	--enable-vkeybd)          _vkeybd=yes     ;;
 	--disable-vkeybd)         _vkeybd=no      ;;
@@ -676,6 +693,16 @@ linupy)
 	_host_os=linux
 	_host_cpu=arm
 	;;
+motoezx)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnu
+	;;
+motomagx)
+	_host_os=linux
+	_host_cpu=arm
+	_host_alias=arm-linux-gnueabi
+	;;
 arm-riscos)
 	_host_os=riscos
 	_host_cpu=arm
@@ -703,6 +730,11 @@ iphone)
 	_host_cpu=arm
 	_host_alias=arm-apple-darwin9
 	;;
+wince)
+	_host_os=wince
+	_host_cpu=arm
+	_host_alias=arm-wince-mingw32ce
+	;;
 neuros)
 	_host_os=linux
 	_host_cpu=arm
@@ -719,16 +751,21 @@ wii)
 	_host_cpu=ppc
 	_host_alias=powerpc-gekko
 	;;
+gamecube)
+	_host_os=gamecube
+	_host_cpu=ppc
+	_host_alias=powerpc-gekko
+	;;
+nds)
+	_host_os=nds
+	_host_cpu=arm
+	_host_alias=arm-eabi
+	;;
 psp)
 	_host_os=psp
 	_host_cpu=mipsallegrexel
 	_host_alias=psp
 	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
-	;;
-gamecube)
-	_host_os=gamecube
-	_host_cpu=ppc
-	_host_alias=powerpc-gekko
 	;;
 *)
 	if test -n "$_host"; then
@@ -742,6 +779,13 @@ esac
 
 if test -z "$_host_alias"; then
 	_host_alias="$_host_cpu-$_host_os"
+else
+	# if _host_alias was set, default to the standard GNU tools
+	_ranlib=$_host_alias-ranlib
+	_strip=$_host_alias-strip
+	_ar="$_host_alias-ar cru"
+	_as="$_host_alias-as"
+	_windres=$_host_alias-windres
 fi
 
 #
@@ -766,7 +810,7 @@ esac
 # Platform specific sanity checks
 #
 case $_host_os in
-wii | gamecube)
+wii | gamecube | nds)
 	if test -z "$DEVKITPRO"; then
 		echo "Please set DEVKITPRO in your environment. export DEVKITPRO=<path to devkitPRO>"
 		exit 1
@@ -836,37 +880,79 @@ fi
 #
 echocheck "compiler version"
 
+have_gcc=no
 cxx_version=`( $CXX -dumpversion ) 2>&1`
 if test "$?" -gt 0; then
-	cxx_version="not found"
+	# TODO: Big scary warning about unsupported Compilers
+	cxx_version=`( $CXX -version ) 2>&1`
+	if test "$?" -eq 0; then
+		cxx_version="`echo "${cxx_version}" | sed -ne 's/^.*[^0-9]\([0-9][0-9]*\.[0-9][0-9]*\.[0-9][0-9]*\).*$/\1/gp'`"
+		if test -z "${cxx_version}"; then
+			cxx_version="not found"
+			cxx_verc_fail=yes
+		fi
+		echo non-gcc compiler version ${cxx_version}
+	else
+		cxx_version="not found"
+		cxx_verc_fail=yes
+		echo found non-gcc compiler version ${cxx_version}
+	fi
+else
+	add_line_to_config_mk 'HAVE_GCC = 1'
+	have_gcc=yes
 fi
 
-case $cxx_version in
-	2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
-		_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
-		_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
-		cxx_version="$cxx_version, ok"
-		cxx_verc_fail=no
-		;;
-	# whacky beos version strings
-	2.9-beos-991026*|2.9-beos-000224*)
-		_cxx_major=2
-		_cxx_minor=95
-		cxx_version="$cxx_version, ok"
-		cxx_verc_fail=no
-		;;
-	3_4)
-		_cxx_major=3
-		_cxx_minor=4
-		;;
-	'not found')
-		cxx_verc_fail=yes
-		;;
-	*)
-		cxx_version="$cxx_version, bad"
-		cxx_verc_fail=yes
-		;;
-esac
+if test "$have_gcc" = yes; then
+	case $cxx_version in
+		2.95.[2-9]|2.95.[2-9][-.]*|3.[0-9]|3.[0-9].[0-9]|3.[0-9].[0-9][-.]*|4.[0-9]|4.[0-9].[0-9]|4.[0-9].[0-9][-.]*)
+			_cxx_major=`echo $cxx_version | cut -d '.' -f 1`
+			_cxx_minor=`echo $cxx_version | cut -d '.' -f 2`
+			cxx_version="$cxx_version, ok"
+			cxx_verc_fail=no
+			;;
+		# whacky beos version strings
+		2.9-beos-991026*|2.9-beos-000224*)
+			_cxx_major=2
+			_cxx_minor=95
+			cxx_version="$cxx_version, ok"
+			cxx_verc_fail=no
+			;;
+		3_4)
+			_cxx_major=3
+			_cxx_minor=4
+			;;
+		'not found')
+			cxx_verc_fail=yes
+			;;
+		*)
+			cxx_version="$cxx_version, bad"
+			cxx_verc_fail=yes
+			;;
+	esac
+else
+	case $_host_os in
+		irix*)
+			case $cxx_version in
+				7.4.4*)
+					# We just assume this is SGI MipsPRO
+					_cxx_major=7
+					_cxx_minor=4
+					add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MDupdate "$(*D)/$(DEPDIR)/$(*F).d"'
+					add_line_to_config_mk '-include Makedepend'
+					;;
+				*)
+					cxx_version="$cxx_version, bad"
+					cxx_verc_fail=yes
+					;;
+			esac
+			;;
+		*) 
+			cxx_version="$cxx_version, bad"
+			cxx_verc_fail=yes
+			;;
+	esac
+
+fi
 
 echo "$cxx_version"
 
@@ -1040,7 +1126,7 @@ case $_host_os in
 		;;
 	darwin*)
 		DEFINES="$DEFINES -DUNIX -DMACOSX -DUSE_OPENGL"
-		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -Wl,-framework,OpenGL \
+		LIBS="$LIBS -framework QuickTime -framework AudioUnit -framework AudioToolbox -framework Carbon -framework OpenGL \
 		-dylib_file /System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib:/System/Library/Frameworks/OpenGL.framework/Versions/A/Libraries/libGL.dylib"
 		;;
 	mingw*)
@@ -1073,17 +1159,24 @@ case $_host_os in
 	wii)
 		CXXFLAGS="$CXXFLAGS -Os -mrvl -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
-		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/wii/include"
+		LDFLAGS="$LDFLAGS -mrvl -mcpu=750 -L$DEVKITPRO/libogc/lib/wii -L$DEVKITPRO/wii/lib"
 		;;
 	gamecube)
 		CXXFLAGS="$CXXFLAGS -Os -mogc -mcpu=750 -meabi -mhard-float"
 		CXXFLAGS="$CXXFLAGS -ffunction-sections -fdata-sections -fmodulo-sched"
-		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include"
-		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube"
+		CXXFLAGS="$CXXFLAGS -I$DEVKITPRO/libogc/include -I$DEVKITPRO/cube/include"
+		LDFLAGS="$LDFLAGS -mogc -mcpu=750 -L$DEVKITPRO/libogc/lib/cube -L$DEVKITPRO/cube/lib"
+		;;
+	nds)
+		# TODO nds
 		;;
 	psp)
-		CXXFLAGS="$CXXFLAGS -O2 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		;;
+	wince)
+		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
+		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__="
 		;;
 	# given this is a shell script assume some type of unix
 	*)
@@ -1098,16 +1191,6 @@ if test -n "$_host"; then
 		linupy|arm-riscos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX"
-			_endian=little
-			_need_memalign=yes
-			add_line_to_config_h "#define LINUPY"
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
-			;;
-		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DUSE_ARM_SOUND_ASM"
 			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			_endian=little
 			_need_memalign=yes
@@ -1115,6 +1198,44 @@ if test -n "$_host"; then
 			type_2_byte='short'
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			;;
+		motoezx)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_COSTUME_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SCALER_ASM = 1'
+			_backend="linuxmoto"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
+			;;
+		motomagx)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			DEFINES="$DEFINES -DUNIX -DMOTOMAGX"
+			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
+			ASFLAGS="$ASFLAGS -mfpu=vfp"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_backend="linuxmoto"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		bfin*)
 			_need_memalign=yes
@@ -1125,7 +1246,7 @@ if test -n "$_host"; then
 			;;
 		gp2xwiz)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			LDFLAGS="$LDFLAGS"
 			_endian=little
@@ -1133,8 +1254,6 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2xwiz"
@@ -1143,27 +1262,26 @@ if test -n "$_host"; then
 			;;	
 		gp2x)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG -DUSE_ARM_SMUSH_ASM"
+			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
+			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="gp2x"
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			;;
 		neuros)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DUNIX"
+			DEFINES="$DEFINES -DUNIX -DNEUROS"
 			_endian=little
 			_need_memalign=yes
-			add_line_to_config_h "#define NEUROS"
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
@@ -1198,34 +1316,46 @@ if test -n "$_host"; then
 			_windres=$_host-windres
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
-			_strip=$_host-strip
 			;;
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			DEFINES="$DEFINES -DIPHONE -DUNIX -DUSE_ARM_SOUND_ASM"
+			DEFINES="$DEFINES -DIPHONE -DUNIX"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
+			;;
+		wince)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			add_line_to_config_mk 'USE_TREMOLO = 1'
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
+			_backend="wince"
+			_mt32emu="no"
+			_port_mk="backends/platform/wince/wince.mk"
 			;;
 		dreamcast)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
-			CXXFLAGS="$CXXFLAGS -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions"
+			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
 			_endian=little
 			_need_memalign=yes
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
 			_backend="dc"
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
+			_mad="yes"
+			_zlib="yes"
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
 			;;
 		wii)
@@ -1235,16 +1365,14 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="wii"
+			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 0'
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
 			add_line_to_config_h "#define DEBUG_WII_USBGECKO"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			add_line_to_config_h "#define USE_WII_DI"
+			add_line_to_config_h "#define USE_WII_SMB"
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
 		gamecube)
@@ -1254,16 +1382,35 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
-			_strip=$_host_alias-strip
 			_backend="wii"
+			_port_mk="backends/platform/wii/wii.mk"
 			add_line_to_config_mk 'GAMECUBE = 1'
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/wii/wii.mk'
 			add_line_to_config_h '#define GAMECUBE'
 			add_line_to_config_h "/* #define DEBUG_WII_USBGECKO */"
 			add_line_to_config_h "/* #define DEBUG_WII_MEMSTATS */"
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
+			;;
+		nds)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			# TODO: complete this
+			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
+			DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
+			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
+			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
+			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend="nds"
+			_build_hq_scalers="no"
+			_mt32emu="no"
+			add_line_to_config_mk 'include $(srcdir)/backends/platform/ds/ds.mk'
+			# TODO: Enable more ARM optimizations -- requires testing!
+			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
+			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		psp)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
@@ -1272,10 +1419,8 @@ if test -n "$_host"; then
 			type_1_byte='char'
 			type_2_byte='short'
 			type_4_byte='int'
-			_ar="$_host_alias-ar cru"
-			_ranlib=$_host_alias-ranlib
 			_backend="psp"
-			add_line_to_config_mk 'include $(srcdir)/backends/platform/psp/psp.mk'
+			_port_mk="backends/platform/psp/psp.mk"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -1667,6 +1812,12 @@ case $_backend in
 		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
 		DEFINES="$DEFINES -DSDL_BACKEND"
 		;;
+	linuxmoto)
+		find_sdlconfig
+		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
+		LIBS="$LIBS `$_sdlconfig --prefix="$_sdlpath" --libs`"
+		DEFINES="$DEFINES -DSDL_BACKEND -DLINUXMOTO"
+		;;
 	gp2x)
 		find_sdlconfig
 		INCLUDES="$INCLUDES `$_sdlconfig --prefix="$_sdlpath" --cflags`"
@@ -1685,6 +1836,10 @@ case $_backend in
 		OBJCFLAGS="$OBJCFLAGS --std=c99"
 		LIBS="$LIBS -lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES -framework QuartzCore -framework GraphicsServices -framework CoreFoundation -framework Foundation -framework AudioToolbox -framework CoreAudio"
 		;;
+	wince)
+		INCLUDES="$INCLUDES "'-I$(srcdir) -I$(srcdir)/backends/platform/wince -I$(srcdir)/engines -I$(srcdir)/backends/platform/wince/missing/gcc -I$(srcdir)/backends/platform/wince/CEgui -I$(srcdir)/backends/platform/wince/CEkeys'
+		LIBS="$LIBS -static -lSDL"
+		;;
 	dc)
 		INCLUDES="$INCLUDES "'-I$(srcdir)/backends/platform/dc -isystem $(ronindir)/include'
 		LDFLAGS="$LDFLAGS -Wl,-Ttext,0x8c010000 -nostartfiles "'$(ronindir)/lib/crt0.o -L$(ronindir)/lib'
@@ -1694,15 +1849,18 @@ case $_backend in
 		DEFINES="$DEFINES -D__WII__ -DGEKKO"
 		case $_host_os in
 		gamecube)
-			LIBS="$LIBS -lfat -logc -ldb"
+			LIBS="$LIBS -lgxflux -lfat -logc -ldb"
 			;;
 		*)
-			LIBS="$LIBS -ldi -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
+			LIBS="$LIBS -lgxflux -ldi -ltinysmb -lfat -lwiiuse -lbte -logc -lwiikeyboard -ldb"
 			;;
 		esac
 		;;
+	nds)
+		# TODO nds
+		;;
 	psp)
-		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
+		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
 		LIBS="$LIBS -lSDL"
 		;;
@@ -1716,24 +1874,27 @@ MODULES="$MODULES backends/platform/$_backend"
 #
 # Do CXXFLAGS now we know the compiler version
 #
-if test "$_cxx_major" -ge "3" ; then
-	case $_host_os in
-	# newlib-based system include files suppress non-C89 function 
-	# declarations under __STRICT_ANSI__
-	mingw* | dreamcast | wii | gamecube | psp | amigaos*)
-		CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
-		;;
-	*)
-		CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
-		;;
-	esac
-	add_line_to_config_mk 'HAVE_GCC3 = 1'
-fi;
+if test "$have_gcc" = yes ; then
+	if test "$_cxx_major" -ge "3" ; then
+		case $_host_os in
+		# newlib-based system include files suppress non-C89 function 
+		# declarations under __STRICT_ANSI__
+		mingw* | dreamcast | wii | gamecube | psp | wince | amigaos*)
+			CXXFLAGS="$CXXFLAGS -W -Wno-unused-parameter"
+			;;
+		*)
+			CXXFLAGS="$CXXFLAGS -ansi -W -Wno-unused-parameter"
+			;;
+		esac
+		add_line_to_config_mk 'HAVE_GCC3 = 1'
+		add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP'
+	fi;
 
-if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
-	CXXFLAGS="$CXXFLAGS -Wno-empty-body"
-else
-	CXXFLAGS="$CXXFLAGS -Wconversion"
+	if test "$_cxx_major" -ge "4" && test "$_cxx_minor" -ge "3" ; then
+		CXXFLAGS="$CXXFLAGS -Wno-empty-body"
+	else
+		CXXFLAGS="$CXXFLAGS -Wconversion"
+	fi;
 fi;
 
 # Some platforms use certain GNU extensions in header files
@@ -1761,12 +1922,12 @@ for engine in $_engines; do
 			# If dynamic plugins aren't supported, mark
 			# all the engines as static
 			if test $_dynamic_modules = no ; then
-				eval _engine_${engine}_build=static
+				set_var _engine_${engine}_build "static"
 			else
 				# If it wasn't explicitly marked as static or
 				# dynamic, use the configured default
 				if test `get_engine_build $engine` = yes ; then
-					eval _engine_${engine}_build=${_plugins_default}
+					set_var _engine_${engine}_build "${_plugins_default}"
 				fi
 			fi
 
@@ -1774,7 +1935,7 @@ for engine in $_engines; do
 			if test `get_engine_build $engine` = dynamic ; then
 				isbuilt=DYNAMIC_PLUGIN
 			else
-				eval _engine_${engine}_build=static
+				set_var _engine_${engine}_build "static"
 				isbuilt=STATIC_PLUGIN
 			fi
 		fi
@@ -1871,7 +2032,10 @@ LIBS += $LIBS
 RANLIB := $_ranlib
 STRIP := $_strip
 AR := $_ar
+AS := $_as
+ASFLAGS := $ASFLAGS
 WINDRES := $_windres
+WINDRESFLAGS := $WINDRESFLAGS
 WIN32PATH=$_win32path
 AOS4PATH=$_aos4path
 STATICLIBPATH=$_staticlibpath
@@ -1896,11 +2060,15 @@ LDFLAGS += $LDFLAGS
 
 $_mak_plugins
 
-SAVED_CONFIGFLAGS := $SAVED_CONFIGFLAGS
-SAVED_LDFLAGS     := $SAVED_LDFLAGS
-SAVED_CXX         := $SAVED_CXX
-SAVED_CXXFLAGS    := $SAVED_CXXFLAGS
-SAVED_CPPFLAGS    := $SAVED_CPPFLAGS
+port_mk = $_port_mk
+
+SAVED_CONFIGFLAGS  := $SAVED_CONFIGFLAGS
+SAVED_LDFLAGS      := $SAVED_LDFLAGS
+SAVED_CXX          := $SAVED_CXX
+SAVED_CXXFLAGS     := $SAVED_CXXFLAGS
+SAVED_CPPFLAGS     := $SAVED_CPPFLAGS
+SAVED_ASFLAGS      := $SAVED_ASFLAGS
+SAVED_WINDRESFLAGS := $SAVED_WINDRESFLAGS
 EOF
 
 #

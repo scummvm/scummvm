@@ -26,7 +26,6 @@
 #define COMMON_UTIL_H
 
 #include "common/sys.h"
-#include "common/debug.h"
 #include "common/str.h"
 
 #if defined(WIN32)
@@ -183,6 +182,7 @@ enum Language {
 	RU_RUS,
 	ES_ESP,
 	SE_SWE,
+	HU_HUN,
 
 	UNK_LANG = -1	// Use default language (i.e. none specified)
 };
@@ -293,6 +293,13 @@ enum GameGUIOption {
 bool checkGameGUIOption(GameGUIOption option, const String &str);
 uint32 parseGameGUIOptions(const String &str);
 String getGameGUIOptionsDescription(uint32 options);
+
+/**
+ * Updates the GUI options of the current config manager
+ * domain, when they differ to the ones passed as
+ * parameter.
+ */
+void updateGameGUIOptions(const uint32 options);
 
 }	// End of namespace Common
 

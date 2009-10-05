@@ -168,6 +168,15 @@ void Keymapper::popKeymap() {
 		_activeMaps.pop();
 }
 
+bool Keymapper::notifyEvent(const Common::Event &ev) {
+	if (ev.type == Common::EVENT_KEYDOWN)
+		return mapKeyDown(ev.kbd);
+	else if (ev.type == Common::EVENT_KEYUP)
+		return mapKeyUp(ev.kbd);
+	else
+		return false;
+}
+
 bool Keymapper::mapKeyDown(const KeyState& key) {
 	return mapKey(key, true);
 }
@@ -255,7 +264,7 @@ void Keymapper::executeAction(const Action *action, bool keyDown) {
 		}
 
 		evt.mouse = _eventMan->getMousePos();
-		_eventMan->pushEvent(evt);
+		addEvent(evt);
 	}
 }
 

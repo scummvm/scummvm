@@ -35,242 +35,38 @@
 #include "engines/engine.h"
 #include "gui/message.h"
 
-#define RECORD_SIGNATURE 0x54455354
-#define RECORD_VERSION 1
-
-void readRecord(Common::InSaveFile *inFile, uint32 &diff, Common::Event &event) {
-	diff = inFile->readUint32LE();
-
-	event.type = (Common::EventType)inFile->readUint32LE();
-
-	switch(event.type) {
-	case Common::EVENT_KEYDOWN:
-	case Common::EVENT_KEYUP:
-		event.kbd.keycode = (Common::KeyCode)inFile->readSint32LE();
-		event.kbd.ascii = inFile->readUint16LE();
-		event.kbd.flags = inFile->readByte();
-		break;
-	case Common::EVENT_MOUSEMOVE:
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-		event.mouse.x = inFile->readSint16LE();
-		event.mouse.y = inFile->readSint16LE();
-		break;
-	default:
-		break;
-	}
-}
-
-void writeRecord(Common::OutSaveFile *outFile, uint32 diff, Common::Event &event) {
-	outFile->writeUint32LE(diff);
-
-	outFile->writeUint32LE((uint32)event.type);
-
-	switch(event.type) {
-	case Common::EVENT_KEYDOWN:
-	case Common::EVENT_KEYUP:
-		outFile->writeSint32LE(event.kbd.keycode);
-		outFile->writeUint16LE(event.kbd.ascii);
-		outFile->writeByte(event.kbd.flags);
-		break;
-	case Common::EVENT_MOUSEMOVE:
-	case Common::EVENT_LBUTTONDOWN:
-	case Common::EVENT_LBUTTONUP:
-	case Common::EVENT_RBUTTONDOWN:
-	case Common::EVENT_RBUTTONUP:
-	case Common::EVENT_WHEELUP:
-	case Common::EVENT_WHEELDOWN:
-		outFile->writeSint16LE(event.mouse.x);
-		outFile->writeSint16LE(event.mouse.y);
-		break;
-	default:
-		break;
-	}
-}
-
-DefaultEventManager::DefaultEventManager(EventProvider *boss) :
-	_boss(boss),
+DefaultEventManager::DefaultEventManager(Common::EventSource *boss) :
 	_buttonState(0),
 	_modifierState(0),
 	_shouldQuit(false),
 	_shouldRTL(false),
 	_confirmExitDialogActive(false) {
 
-	assert(_boss);
+	assert(boss);
 
-	_recordFile = NULL;
-	_recordTimeFile = NULL;
-	_playbackFile = NULL;
-	_playbackTimeFile = NULL;
-	_timeMutex = g_system->createMutex();
-	_recorderMutex = g_system->createMutex();
+	_dispatcher.registerSource(boss, false);
+	_dispatcher.registerSource(&_artificialEventSource, false);
 
-	_eventCount = 0;
-	_lastEventCount = 0;
-	_lastMillis = 0;
-
-	Common::String recordModeString = ConfMan.get("record_mode");
-	if (recordModeString.compareToIgnoreCase("record") == 0) {
-		_recordMode = kRecorderRecord;
-	} else {
-		if (recordModeString.compareToIgnoreCase("playback") == 0) {
-			_recordMode = kRecorderPlayback;
-		} else {
-			_recordMode = kPassthrough;
-		}
-	}
-
-	_recordFileName = ConfMan.get("record_file_name");
-	if (_recordFileName.empty()) {
-		_recordFileName = "record.bin";
-	}
-	_recordTempFileName = ConfMan.get("record_temp_file_name");
-	if (_recordTempFileName.empty()) {
-		_recordTempFileName = "record.tmp";
-	}
-	_recordTimeFileName = ConfMan.get("record_time_file_name");
-	if (_recordTimeFileName.empty()) {
-		_recordTimeFileName = "record.time";
-	}
+	_dispatcher.registerObserver(this, kEventManPriority, false);
 
 	// Reset key repeat
 	_currentKeyDown.keycode = 0;
-
-	// recorder stuff
-	if (_recordMode == kRecorderRecord) {
-		_recordCount = 0;
-		_recordTimeCount = 0;
-		_recordFile = g_system->getSavefileManager()->openForSaving(_recordTempFileName);
-		_recordTimeFile = g_system->getSavefileManager()->openForSaving(_recordTimeFileName);
-		_recordSubtitles = ConfMan.getBool("subtitles");
-	}
-
-	uint32 sign;
-	uint32 version;
-	uint32 randomSourceCount;
-	if (_recordMode == kRecorderPlayback) {
-		_playbackCount = 0;
-		_playbackTimeCount = 0;
-		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordFileName);
-		_playbackTimeFile = g_system->getSavefileManager()->openForLoading(_recordTimeFileName);
-
-		if (!_playbackFile) {
-			warning("Cannot open playback file %s. Playback was switched off", _recordFileName.c_str());
-			_recordMode = kPassthrough;
-		}
-
-		if (!_playbackTimeFile) {
-			warning("Cannot open playback time file %s. Playback was switched off", _recordTimeFileName.c_str());
-			_recordMode = kPassthrough;
-		}
-	}
-
-	if (_recordMode == kRecorderPlayback) {
-		sign = _playbackFile->readUint32LE();
-		if (sign != RECORD_SIGNATURE) {
-			error("Unknown record file signature");
-		}
-		version = _playbackFile->readUint32LE();
-
-		// conf vars
-		ConfMan.setBool("subtitles", _playbackFile->readByte() != 0);
-
-		_recordCount = _playbackFile->readUint32LE();
-		_recordTimeCount = _playbackFile->readUint32LE();
-		randomSourceCount = _playbackFile->readUint32LE();
-		for (uint i = 0; i < randomSourceCount; ++i) {
-			RandomSourceRecord rec;
-			rec.name = "";
-			uint32 sLen = _playbackFile->readUint32LE();
-			for (uint j = 0; j < sLen; ++j) {
-				char c = _playbackFile->readSByte();
-				rec.name += c;
-			}
-			rec.seed = _playbackFile->readUint32LE();
-			_randomSourceRecords.push_back(rec);
-		}
-
-		_hasPlaybackEvent = false;
-	}
 
 #ifdef ENABLE_VKEYBD
 	_vk = new Common::VirtualKeyboard();
 #endif
 #ifdef ENABLE_KEYMAPPER
 	_keymapper = new Common::Keymapper(this);
+	// EventDispatcher will automatically free the keymapper
+	_dispatcher.registerMapper(_keymapper);
 	_remap = false;
 #endif
 }
 
 DefaultEventManager::~DefaultEventManager() {
-#ifdef ENABLE_KEYMAPPER
-	delete _keymapper;
-#endif
 #ifdef ENABLE_VKEYBD
 	delete _vk;
 #endif
-	g_system->lockMutex(_timeMutex);
-	g_system->lockMutex(_recorderMutex);
-	_recordMode = kPassthrough;
-	g_system->unlockMutex(_timeMutex);
-	g_system->unlockMutex(_recorderMutex);
-
-	if (!artificialEventQueue.empty())
-		artificialEventQueue.clear();
-
-	if (_playbackFile != NULL) {
-		delete _playbackFile;
-	}
-	if (_playbackTimeFile != NULL) {
-		delete _playbackTimeFile;
-	}
-
-	if (_recordFile != NULL) {
-		_recordFile->finalize();
-		delete _recordFile;
-		_recordTimeFile->finalize();
-		delete _recordTimeFile;
-
-		_playbackFile = g_system->getSavefileManager()->openForLoading(_recordTempFileName);
-
-		assert(_playbackFile);
-
-		_recordFile = g_system->getSavefileManager()->openForSaving(_recordFileName);
-		_recordFile->writeUint32LE(RECORD_SIGNATURE);
-		_recordFile->writeUint32LE(RECORD_VERSION);
-
-		// conf vars
-		_recordFile->writeByte(_recordSubtitles ? 1 : 0);
-
-		_recordFile->writeUint32LE(_recordCount);
-		_recordFile->writeUint32LE(_recordTimeCount);
-
-		_recordFile->writeUint32LE(_randomSourceRecords.size());
-		for (uint i = 0; i < _randomSourceRecords.size(); ++i) {
-			_recordFile->writeUint32LE(_randomSourceRecords[i].name.size());
-			_recordFile->writeString(_randomSourceRecords[i].name);
-			_recordFile->writeUint32LE(_randomSourceRecords[i].seed);
-		}
-
-		for (uint i = 0; i < _recordCount; ++i) {
-			uint32 tempDiff;
-			Common::Event tempEvent;
-			readRecord(_playbackFile, tempDiff, tempEvent);
-			writeRecord(_recordFile, tempDiff, tempEvent);
-		}
-
-		_recordFile->finalize();
-		delete _recordFile;
-		delete _playbackFile;
-
-		//TODO: remove recordTempFileName'ed file
-	}
-	g_system->deleteMutex(_timeMutex);
-	g_system->deleteMutex(_recorderMutex);
 }
 
 void DefaultEventManager::init() {
@@ -283,145 +79,14 @@ void DefaultEventManager::init() {
 #endif
 }
 
-bool DefaultEventManager::playback(Common::Event &event) {
-
-	if (!_hasPlaybackEvent) {
-		if (_recordCount > _playbackCount) {
-			readRecord(_playbackFile, const_cast<uint32&>(_playbackDiff), _playbackEvent);
-			_playbackCount++;
-			_hasPlaybackEvent = true;
-		}
-	}
-
-	if (_hasPlaybackEvent) {
-		if (_playbackDiff <= (_eventCount - _lastEventCount)) {
-			switch(_playbackEvent.type) {
-			case Common::EVENT_MOUSEMOVE:
-			case Common::EVENT_LBUTTONDOWN:
-			case Common::EVENT_LBUTTONUP:
-			case Common::EVENT_RBUTTONDOWN:
-			case Common::EVENT_RBUTTONUP:
-			case Common::EVENT_WHEELUP:
-			case Common::EVENT_WHEELDOWN:
-				g_system->warpMouse(_playbackEvent.mouse.x, _playbackEvent.mouse.y);
-				break;
-			default:
-				break;
-			}
-			event = _playbackEvent;
-			_hasPlaybackEvent = false;
-			_lastEventCount = _eventCount;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void DefaultEventManager::record(Common::Event &event) {
-	writeRecord(_recordFile, _eventCount - _lastEventCount, event);
-
-	_recordCount++;
-	_lastEventCount = _eventCount;
-}
-
-void DefaultEventManager::registerRandomSource(Common::RandomSource &rnd, const char *name) {
-
-	if (_recordMode == kRecorderRecord) {
-		RandomSourceRecord rec;
-		rec.name = name;
-		rec.seed = rnd.getSeed();
-		_randomSourceRecords.push_back(rec);
-	}
-
-	if (_recordMode == kRecorderPlayback) {
-		for (uint i = 0; i < _randomSourceRecords.size(); ++i) {
-			if (_randomSourceRecords[i].name == name) {
-				rnd.setSeed(_randomSourceRecords[i].seed);
-				_randomSourceRecords.remove_at(i);
-				break;
-			}
-		}
-	}
-}
-
-void DefaultEventManager::processMillis(uint32 &millis) {
-	uint32 d;
-	if (_recordMode == kPassthrough) {
-		return;
-	}
-
-	g_system->lockMutex(_timeMutex);
-	if (_recordMode == kRecorderRecord) {
-		//Simple RLE compression
-		d = millis - _lastMillis;
-		if (d >= 0xff) {
-			_recordTimeFile->writeByte(0xff);
-			_recordTimeFile->writeUint32LE(d);
-		} else {
-			_recordTimeFile->writeByte(d);
-		}
-		_recordTimeCount++;
-	}
-
-	if (_recordMode == kRecorderPlayback) {
-		if (_recordTimeCount > _playbackTimeCount) {
-			d = _playbackTimeFile->readByte();
-			if (d == 0xff) {
-				d = _playbackTimeFile->readUint32LE();
-			}
-			millis = _lastMillis + d;
-			_playbackTimeCount++;
-		}
-	}
-
-	_lastMillis = millis;
-	g_system->unlockMutex(_timeMutex);
-}
-
 bool DefaultEventManager::pollEvent(Common::Event &event) {
 	uint32 time = g_system->getMillis();
-	bool result;
+	bool result = false;
 
-	if (!artificialEventQueue.empty()) {
-		event = artificialEventQueue.pop();
+	_dispatcher.dispatch();
+	if (!_eventQueue.empty()) {
+		event = _eventQueue.pop();
 		result = true;
-	} else {
-		result = _boss->pollEvent(event);
-
-#ifdef ENABLE_KEYMAPPER
-		if (result) {
-			// send key press events to keymapper
-			if (event.type == Common::EVENT_KEYDOWN) {
-				if (_keymapper->mapKeyDown(event.kbd)) {
-					result = false;
-				}
-			} else if (event.type == Common::EVENT_KEYUP) {
-				if (_keymapper->mapKeyUp(event.kbd)) {
-					result = false;
-				}
-			}
-		}
-#endif
-	}
-
-	if (_recordMode != kPassthrough)  {
-
-		g_system->lockMutex(_recorderMutex);
-		_eventCount++;
-
-		if (_recordMode == kRecorderPlayback)  {
-			if (event.type != Common::EVENT_QUIT) {
-				result = playback(event);
-			}
-		} else {
-			if (_recordMode == kRecorderRecord) {
-				if (result) {
-					record(event);
-				}
-			}
-		}
-		g_system->unlockMutex(_recorderMutex);
 	}
 
 	if (result) {
@@ -497,6 +162,16 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 				}
 			}
 #endif
+			else if (event.kbd.keycode == Common::KEYCODE_BACKSPACE) {
+				// WORKAROUND: Some engines incorrectly attempt to use the
+				// ascii value instead of the keycode to detect the backspace
+				// key (a non-portable behavior). This fails at least on
+				// Mac OS X, possibly also on other systems.
+				// As a workaround, we force the ascii value for backspace
+				// key pressed. A better fix would be for engines to stop
+				// making invalid assumptions about ascii values.
+				event.kbd.ascii = Common::KEYCODE_BACKSPACE;
+			}
 			break;
 
 		case Common::EVENT_KEYUP:
@@ -598,13 +273,12 @@ bool DefaultEventManager::pollEvent(Common::Event &event) {
 }
 
 void DefaultEventManager::pushEvent(const Common::Event &event) {
-
 	// If already received an EVENT_QUIT, don't add another one
 	if (event.type == Common::EVENT_QUIT) {
 		if (!_shouldQuit)
-			artificialEventQueue.push(event);
+			_artificialEventSource.addEvent(event);
 	} else
-		artificialEventQueue.push(event);
+		_artificialEventSource.addEvent(event);
 }
 
 #endif // !defined(DISABLE_DEFAULT_EVENTMANAGER)

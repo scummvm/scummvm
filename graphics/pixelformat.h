@@ -27,6 +27,7 @@
 #define GRAPHICS_PIXELFORMAT_H
 
 #include "common/sys.h"
+#include "common/list.h"
 
 namespace Graphics {
 
@@ -49,6 +50,24 @@ struct PixelFormat {
 
 	byte rLoss, gLoss, bLoss, aLoss; /**< Precision loss of each color component. */
 	byte rShift, gShift, bShift, aShift; /**< Binary left shift of each color component in the pixel value. */
+
+	inline PixelFormat() {
+		bytesPerPixel = 
+		rLoss = gLoss = bLoss = aLoss = 
+		rShift = gShift = bShift = aShift = 0;
+	}
+
+	inline PixelFormat(byte BytesPerPixel, 
+						byte RBits, byte GBits, byte BBits, byte ABits, 
+						byte RShift, byte GShift, byte BShift, byte AShift) {
+		bytesPerPixel = BytesPerPixel;
+		rLoss = 8 - RBits, gLoss = 8 - GBits, bLoss = 8 - BBits, aLoss = 8 - ABits;
+		rShift = RShift, gShift = GShift, bShift = BShift, aShift = AShift;
+	}
+
+	static inline PixelFormat createFormatCLUT8() {
+		return PixelFormat(1, 0, 0, 0, 0, 0, 0, 0, 0);
+	}
 
 	inline bool operator==(const PixelFormat &fmt) const {
 		// TODO: If aLoss==8, then the value of aShift is irrelevant, and should be ignored.
@@ -128,6 +147,26 @@ struct PixelFormat {
 		return (1 << aBits()) - 1;
 	}
 };
+
+/**
+ * Determines the first matching format between two lists.
+ *
+ * @param backend	The higher priority list, meant to be a list of formats supported by the backend
+ * @param frontend	The lower priority list, meant to be a list of formats supported by the engine
+ * @return			The first item on the backend list that also occurs on the frontend list
+ *					or PixelFormat::createFormatCLUT8() if no matching formats were found.
+ */
+inline PixelFormat findCompatibleFormat(Common::List<PixelFormat> backend, Common::List<PixelFormat> frontend) {
+#ifdef USE_RGB_COLOR
+	for (Common::List<PixelFormat>::iterator i = backend.begin(); i != backend.end(); ++i) {
+		for (Common::List<PixelFormat>::iterator j = frontend.begin(); j != frontend.end(); ++j) {
+			if (*i == *j)
+				return *i;
+		}
+	}
+#endif
+	return PixelFormat::createFormatCLUT8();
+}
 
 } // end of namespace Graphics
 

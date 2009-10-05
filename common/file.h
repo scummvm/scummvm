@@ -48,10 +48,6 @@ protected:
 	String _name;
 
 public:
-
-	static void addDefaultDirectory(const String &directory);
-	static void addDefaultDirectory(const FSNode &directory);
-
 	File();
 	virtual ~File();
 
@@ -125,19 +121,6 @@ public:
 	 * @return: the filename
 	 */
 	const char *getName() const { return _name.c_str(); }
-
-	/**
-	 * DEPRECATED: Use err() or eos() instead.
-	 * Returns true if any I/O failure occurred or the end of the
-	 * stream was reached while reading.
-	 */
-	bool ioFailed() const;
-
-	/**
-	 * DEPRECATED: Don't use this unless you are still using ioFailed().
-	 * Reset the I/O error status.
-	 */
-	void clearIOFailed();
 
 	bool err() const;	// implement abstract Stream method
 	void clearErr();	// implement abstract Stream method

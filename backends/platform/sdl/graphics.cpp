@@ -26,6 +26,13 @@
 #include "backends/platform/sdl/sdl.h"
 #include "common/mutex.h"
 #include "common/util.h"
+#ifdef USE_RGB_COLOR
+#include "common/list.h"
+#endif
+#include "graphics/font.h"
+#include "graphics/fontman.h"
+#include "graphics/scaler.h"
+#include "graphics/surface.h"
 
 
 
@@ -354,6 +361,11 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	SDL_UnlockSurface(_overlayscreen);
 }
 
+
+#pragma mark -
+#pragma mark --- Mouse ---
+#pragma mark -
+
 bool OSystem_SDL::showMouse(bool visible) {
 	return false;
 }
@@ -396,7 +408,17 @@ void OSystem_SDL::warpMouse(int x, int y) {
 	}*/
 }
 
-void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale) {
+void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format) {
+#ifdef USE_RGB_COLOR
+	if (!format)
+		_cursorFormat = Graphics::PixelFormat::createFormatCLUT8();
+	else if (format->bytesPerPixel <= _screenFormat.bytesPerPixel)
+		_cursorFormat = *format;
+	keycolor &= (1 << (_cursorFormat.bytesPerPixel << 3)) - 1;
+#else
+	keycolor &= 0xFF;
+#endif
+
 	if (w == 0 || h == 0)
 		return;
 /* Residual doesn't support this
@@ -430,9 +452,13 @@ void OSystem_SDL::setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x,
 	}
 
 	free(_mouseData);
-
+#ifdef USE_RGB_COLOR
+	_mouseData = (byte *)malloc(w * h * _cursorFormat.bytesPerPixel);
+	memcpy(_mouseData, buf, w * h * _cursorFormat.bytesPerPixel);
+#else
 	_mouseData = (byte *)malloc(w * h);
 	memcpy(_mouseData, buf, w * h);
+#endif
 	blitCursor();*/
 }
 

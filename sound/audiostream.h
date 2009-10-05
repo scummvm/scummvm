@@ -28,7 +28,7 @@
 
 #include "common/util.h"
 #include "common/sys.h"
-
+#include "common/stream.h"
 
 namespace Audio {
 
@@ -109,6 +109,7 @@ public:
 	virtual int32 getTotalPlayTime() const { return kUnknownPlayTime; }
 };
 
+
 /**
  * Factory function for a raw linear AudioStream, which will simply treat all data
  * in the buffer described by ptr and len as raw sample data in the specified
@@ -117,6 +118,23 @@ public:
  * Optionally supports (infinite) looping of a portion of the data.
  */
 AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd);
+
+
+/** Struct used to define the audio data to be played by a LinearDiskStream */
+
+struct LinearDiskStreamAudioBlock {
+	int32 pos;		///< Position in stream of the block
+	int32 len;		///< Length of the block (in samples)
+};
+
+
+/** Factory function for a Linear Disk Stream.  This can stream linear (PCM) audio from disk.  The
+ *  function takes an pointer to an array of LinearDiskStreamAudioBlock which defines the
+ *  start position and length of each block of uncompressed audio in the stream.
+ */
+
+AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int 
+		numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
 
 /**
  * An audio stream to which additional data can be appended on-the-fly.

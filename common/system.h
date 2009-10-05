@@ -125,7 +125,6 @@ public:
 		 * like PocketPC, Palms, Symbian phones like the P800, Zaurus, etc.
 		 */
 		kFeatureVirtualKeyboard,
-		kFeatureIconifyWindow,
 		kFeatureOpenGL,
 
 		/**
@@ -174,7 +173,6 @@ public:
 	 * rather complicated for backend authors to fully understand and
 	 * implement the semantics of the OSystem interface.
 	 */
-
 	//@{
 
 	/**
@@ -323,8 +321,10 @@ public:
 	 * @param hotspotY			vertical offset from the top side to the hotspot
 	 * @param keycolor			transparency color index
 	 * @param cursorTargetScale	scale factor which cursor is designed for
+	 * @param format			pointer to the pixel format which cursor graphic uses
 	 */
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, byte keycolor = 255, int cursorTargetScale = 1) = 0;
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, int hotspotY, uint32 keycolor = 0xFFFFFFFF, int cursorTargetScale = 1, const Graphics::PixelFormat *format = NULL) = 0;
+
 	//@}
 
 
@@ -490,13 +490,11 @@ public:
 
 	/**
 	 * Set a window caption or any other comparable status display to the
-	 * given value. The caption must be a pure ASCII string. Passing a
-	 * non-ASCII string may lead to unexpected behavior, even crashes.
+	 * given value. The caption must be a pure ISO LATIN 1 string. Passing a
+	 * string with a different encoding may lead to unexpected behavior,
+	 * even crashes.
 	 *
-	 * In a future revision of this API, this may be changed to allowing
-	 * UTF-8 or UTF-16 encoded data, or maybe ISO LATIN 1.
-	 *
-	 * @param caption	the window caption to use, as an ASCII string
+	 * @param caption	the window caption to use, as an ISO LATIN 1 string
 	 */
 	virtual void setWindowCaption(const char *caption) {}
 

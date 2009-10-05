@@ -154,7 +154,14 @@ static void debugHelper(const char *s, va_list va, bool caret = true) {
 	char buf[STRINGBUFLEN];
 	vsnprintf(in_buf, STRINGBUFLEN, s, va);
 
-	strncpy(buf, in_buf, STRINGBUFLEN);
+	// Next, give the active engine (if any) a chance to augment the message,
+	// but only if not used from debugN.
+	if (g_engine && caret) {
+		g_engine->errorString(in_buf, buf, STRINGBUFLEN);
+	} else {
+		strncpy(buf, in_buf, STRINGBUFLEN);
+	}
+	buf[STRINGBUFLEN-1] = '\0';
 
 	if (caret) {
 		buf[STRINGBUFLEN-2] = '\0';

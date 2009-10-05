@@ -638,6 +638,10 @@ void LauncherDialog::updateListing() {
 		// Select the last entry if the list has been reduced
 		_list->setSelected(_list->getList().size() - 1);
 	updateButtons();
+
+	// Update the filter settings, those are lost when "setList"
+	// is called.
+	_list->setFilter(_searchWidget->getEditString());
 }
 
 void LauncherDialog::addGame() {

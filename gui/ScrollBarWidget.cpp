@@ -63,9 +63,9 @@ void ScrollBarWidget::handleMouseDown(int x, int y, int button, int clickCount) 
 		_currentPos++;
 		_draggingPart = kDownArrowPart;
 	} else if (y < _sliderPos) {
-		_currentPos -= _entriesPerPage;
+		_currentPos -= _entriesPerPage - 1;
 	} else if (y >= _sliderPos + _sliderHeight) {
-		_currentPos += _entriesPerPage;
+		_currentPos += _entriesPerPage - 1;
 	} else {
 		_draggingPart = kSliderPart;
 		_sliderDeltaMouseDownPos = y - _sliderPos;

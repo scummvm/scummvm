@@ -276,126 +276,126 @@ bool XMLParser::parse() {
 			continue;
 
 		switch (_state) {
-			case kParserNeedHeader:
-			case kParserNeedKey:
-				if (_char != '<') {
-					parserError("Parser expecting key start.");
-					break;
-				}
-
-				if ((_char = _stream->readByte()) == 0) {
-					parserError("Unexpected end of file.");
-					break;
-				}
-
-				if (_state == kParserNeedHeader) {
-					if (_char != '?') {
-						parserError("Expecting XML header.");
-						break;
-					}
-
-					_char = _stream->readByte();
-					activeHeader = true;
-				} else if (_char == '/') {
-					_char = _stream->readByte();
-					activeClosure = true;
-				} else if (_char == '?') {
-					parserError("Unexpected header. There may only be one XML header per file.");
-					break;
-				}
-
-				_state = kParserNeedKeyName;
+		case kParserNeedHeader:
+		case kParserNeedKey:
+			if (_char != '<') {
+				parserError("Parser expecting key start.");
 				break;
+			}
 
-			case kParserNeedKeyName:
-				if (!parseToken()) {
-					parserError("Invalid key name.");
-					break;
-				}
-
-				if (activeClosure) {
-					if (_activeKey.empty() || _token != _activeKey.top()->name) {
-						parserError("Unexpected closure.");
-						break;
-					}
-				} else {
-					ParserNode *node = allocNode(); //new ParserNode;
-					node->name = _token;
-					node->ignore = false;
-					node->header = activeHeader;
-					node->depth = _activeKey.size();
-					node->layout = 0;
-					_activeKey.push(node);
-				}
-
-				_state = kParserNeedPropertyName;
+			if ((_char = _stream->readByte()) == 0) {
+				parserError("Unexpected end of file.");
 				break;
+			}
 
-			case kParserNeedPropertyName:
-				if (activeClosure) {
-					if (!closeKey()) {
-						parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str());
-						break;
-					}
-
-					activeClosure = false;
-
-					if (_char != '>')
-						parserError("Invalid syntax in key closure.");
-					else
-						_state = kParserNeedKey;
-
-					_char = _stream->readByte();
+			if (_state == kParserNeedHeader) {
+				if (_char != '?') {
+					parserError("Expecting XML header.");
 					break;
 				}
 
-				selfClosure = false;
+				_char = _stream->readByte();
+				activeHeader = true;
+			} else if (_char == '/') {
+				_char = _stream->readByte();
+				activeClosure = true;
+			} else if (_char == '?') {
+				parserError("Unexpected header. There may only be one XML header per file.");
+				break;
+			}
 
-				if (_char == '/' || (_char == '?' && activeHeader)) {
-					selfClosure = true;
-					_char = _stream->readByte();
+			_state = kParserNeedKeyName;
+			break;
+
+		case kParserNeedKeyName:
+			if (!parseToken()) {
+				parserError("Invalid key name.");
+				break;
+			}
+
+			if (activeClosure) {
+				if (_activeKey.empty() || _token != _activeKey.top()->name) {
+					parserError("Unexpected closure.");
+					break;
 				}
+			} else {
+				ParserNode *node = allocNode(); //new ParserNode;
+				node->name = _token;
+				node->ignore = false;
+				node->header = activeHeader;
+				node->depth = _activeKey.size();
+				node->layout = 0;
+				_activeKey.push(node);
+			}
 
-				if (_char == '>') {
-					if (activeHeader && !selfClosure) {
-						parserError("XML Header must be self-closed.");
-					} else if (parseActiveKey(selfClosure)) {
-						_char = _stream->readByte();
-						_state = kParserNeedKey;
-					}
+			_state = kParserNeedPropertyName;
+			break;
 
-					activeHeader = false;
+		case kParserNeedPropertyName:
+			if (activeClosure) {
+				if (!closeKey()) {
+					parserError("Missing data when closing key '%s'.", _activeKey.top()->name.c_str());
 					break;
 				}
 
-				if (selfClosure)
-					parserError("Expecting key closure after '/' symbol.");
-				else if (!parseToken())
-					parserError("Error when parsing key value.");
+				activeClosure = false;
+
+				if (_char != '>')
+					parserError("Invalid syntax in key closure.");
 				else
-					_state = kParserNeedPropertyOperator;
-
-				break;
-
-			case kParserNeedPropertyOperator:
-				if (_char != '=')
-					parserError("Syntax error after key name.");
-				else
-					_state = kParserNeedPropertyValue;
+					_state = kParserNeedKey;
 
 				_char = _stream->readByte();
 				break;
+			}
 
-			case kParserNeedPropertyValue:
-				if (!parseKeyValue(_token))
-					parserError("Invalid key value.");
-				else
-					_state = kParserNeedPropertyName;
+			selfClosure = false;
 
+			if (_char == '/' || (_char == '?' && activeHeader)) {
+				selfClosure = true;
+				_char = _stream->readByte();
+			}
+
+			if (_char == '>') {
+				if (activeHeader && !selfClosure) {
+					parserError("XML Header must be self-closed.");
+				} else if (parseActiveKey(selfClosure)) {
+					_char = _stream->readByte();
+					_state = kParserNeedKey;
+				}
+
+				activeHeader = false;
 				break;
+			}
 
-			default:
-				break;
+			if (selfClosure)
+				parserError("Expecting key closure after '/' symbol.");
+			else if (!parseToken())
+				parserError("Error when parsing key value.");
+			else
+				_state = kParserNeedPropertyOperator;
+
+			break;
+
+		case kParserNeedPropertyOperator:
+			if (_char != '=')
+				parserError("Syntax error after key name.");
+			else
+				_state = kParserNeedPropertyValue;
+
+			_char = _stream->readByte();
+			break;
+
+		case kParserNeedPropertyValue:
+			if (!parseKeyValue(_token))
+				parserError("Invalid key value.");
+			else
+				_state = kParserNeedPropertyName;
+
+			break;
+
+		default:
+			break;
 		}
 	}
 

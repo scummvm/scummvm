@@ -31,6 +31,9 @@
 #include "common/rect.h"
 #include "common/noncopyable.h"
 
+#include "common/list.h"
+#include "common/singleton.h"
+
 namespace Common {
 
 /**
@@ -126,6 +129,190 @@ struct Event {
 	Event() : type(EVENT_INVALID), synthetic(false) {}
 };
 
+/**
+ * A source of Events.
+ *
+ * An example for this is OSystem, it provides events created by the system
+ * and or user.
+ */
+class EventSource {
+public:
+	virtual ~EventSource() {}
+
+	/**
+	 * Queries a event from the source.
+	 *
+	 * @param	event 	a reference to the event struct, where the event should be stored.
+	 * @return	true if an event was polled, false otherwise.
+	 */
+	virtual bool pollEvent(Event &event) = 0;
+
+	/**
+	 * Checks whether events from this source are allowed to be mapped.
+	 *
+	 * Possible event sources not allowing mapping are: the event recorder/player and/or
+	 * the EventManager, which allows user events to be pushed.
+	 *
+	 * By default we allow mapping for every event source.
+	 */
+	virtual bool allowMapping() const { return true; }
+};
+
+/**
+ * An artificial event source. This is class is used as an event source, which is
+ * made up by client specific events.
+ *
+ * Example usage cases for this are the Keymapper or the DefaultEventManager.
+ */
+class ArtificialEventSource : public EventSource {
+protected:
+	Common::Queue<Common::Event> _artificialEventQueue;
+public:
+	void addEvent(const Common::Event &ev) {
+		_artificialEventQueue.push(ev);
+	}
+
+	bool pollEvent(Common::Event &ev) {
+	if (!_artificialEventQueue.empty()) {
+			ev = _artificialEventQueue.pop();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	/**
+	 * By default an artificial event source prevents its events
+	 * from being mapped.
+	 */
+	virtual bool allowMapping() const { return false; }
+};
+
+/**
+ * Object which catches and processes Events.
+ *
+ * An example for this is the Engine object, it is catching events and processing them.
+ */
+class EventObserver {
+public:
+	virtual ~EventObserver() {}
+
+	/**
+	 * Notifies the source of an incoming event.
+	 *
+	 * An obeser is supposed to eat the event, with returning true, when
+	 * it might want prevent other observers from preventing to receive
+	 * the event. An usage example here is the keymapper:
+	 * If it processes an Event, it should 'eat' it and create a new
+	 * event, which the EventDispatcher will then catch.
+	 *
+	 * @param	event	the event, which is incoming.
+	 * @return	true if this observer uses this event, false otherwise.
+	 */
+	virtual bool notifyEvent(const Event &event) = 0;
+};
+
+/**
+ * A event mapper, which will map events to others.
+ *
+ * An example for this is the Keymapper.
+ */
+class EventMapper : public EventSource, public EventObserver {
+public:
+	/** For event mappers resulting events should never be mapped */
+	bool allowMapping() const { return false; }
+};
+
+/**
+ * Dispatches events from various sources to various observers.
+ *
+ * EventDispatcher is using a priority based approach. Observers
+ * with higher priority will be notified before observers with
+ * lower priority. Because of the possibility that oberservers
+ * might 'eat' events, not all observers might be notified.
+ *
+ * Another speciality is the support for a event mapper, which
+ * will catch events and create new events out of them. This
+ * mapper will be processed before an event is sent to the
+ * observers.
+ */
+class EventDispatcher {
+public:
+	EventDispatcher();
+	~EventDispatcher();
+
+	/**
+	 * Tries to catch events from the registered event
+	 * sources and dispatch them to the observers.
+	 *
+	 * This dispatches *all* events the sources offer.
+	 */
+	void dispatch();
+
+	/**
+	 * Registers an event mapper with the dispatcher.
+	 *
+	 * The ownership of the "mapper" variable will pass
+	 * to the EventDispatcher, thus it will be deleted
+	 * with "delete", when EventDispatcher is destroyed.
+	 *
+	 * Note there is only one mapper per EventDispatcher
+	 * possible, thus when this method is called twice,
+	 * the former mapper will be destroied.
+	 */
+	void registerMapper(EventMapper *mapper);
+
+	/**
+	 * Queries the setup event mapper.
+	 */
+	EventMapper *queryMapper() const { return _mapper; }
+
+	/**
+	 * Registers a new EventSource with the Dispatcher.
+	 */
+	void registerSource(EventSource *source, bool autoFree);
+
+	/**
+	 * Unregisters a EventSource.
+	 *
+	 * This takes the "autoFree" flag passed to registerSource into account.
+	 */
+	void unregisterSource(EventSource *source);
+
+	/**
+	 * Registers a new EventObserver with the Dispatcher.
+	 */
+	void registerObserver(EventObserver *obs, uint priority, bool autoFree);
+
+	/**
+	 * Unregisters a EventObserver.
+	 *
+	 * This takes the "autoFree" flag passed to registerObserver into account.
+	 */
+	void unregisterObserver(EventObserver *obs);
+private:
+	EventMapper *_mapper;
+
+	struct Entry {
+		bool autoFree;
+	};
+
+	struct SourceEntry : public Entry {
+		EventSource *source;
+	};
+
+	Common::List<SourceEntry> _sources;
+
+	struct ObserverEntry : public Entry {
+		uint priority;
+		EventObserver *observer;
+	};
+
+	Common::List<ObserverEntry> _observers;
+
+	void dispatchEvent(const Event &event);
+};
+
 class Keymapper;
 
 /**
@@ -161,11 +348,6 @@ public:
 	 */
 	virtual void pushEvent(const Common::Event &event) = 0;
 
-	/** Register random source so it can be serialized in game test purposes **/
-	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name) = 0;
-
-	virtual void processMillis(uint32 &millis) = 0;
-
 	/** Return the current mouse position */
 	virtual Common::Point getMousePos() const = 0;
 
@@ -195,7 +377,9 @@ public:
 	 * Used when we have returned to the launcher.
 	 */
 	virtual void resetRTL() = 0;
-
+#ifdef FORCE_RTL
+	virtual void resetQuit() = 0;
+#endif
 	// Optional: check whether a given key is currently pressed ????
 	//virtual bool isKeyPressed(int keycode) = 0;
 
@@ -207,9 +391,21 @@ public:
 	virtual Common::Keymapper *getKeymapper() = 0;
 #endif
 
-protected:
+	enum {
+		/**
+		 * Priority of the event manager, for now it's lowest since it eats
+		 * *all* events, we might to change that in the future though.
+		 */
+		kEventManPriority = 0
+	};
 
-	Common::Queue<Common::Event> artificialEventQueue;
+	/**
+	 * Returns the underlying EventDispatcher.
+	 */
+	EventDispatcher *getEventDispatcher() { return &_dispatcher; }
+
+protected:
+	EventDispatcher _dispatcher;
 };
 
 } // End of namespace Common

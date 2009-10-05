@@ -32,16 +32,6 @@
 
 namespace Common {
 
-void File::addDefaultDirectory(const String &directory) {
-	FSNode dir(directory);
-	addDefaultDirectory(dir);
-}
-
-void File::addDefaultDirectory(const FSNode &dir) {
-	if (dir.exists() && dir.isDirectory())
-		SearchMan.addDirectory(dir.getPath(), dir);
-}
-
 File::File()
 	: _handle(0) {
 }
@@ -118,15 +108,6 @@ void File::close() {
 
 bool File::isOpen() const {
 	return _handle != NULL;
-}
-
-bool File::ioFailed() const {
-	return !_handle || (eos() || err());
-}
-
-void File::clearIOFailed() {
-	if (_handle)
-		_handle->clearErr();
 }
 
 bool File::err() const {

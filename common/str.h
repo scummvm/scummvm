@@ -170,12 +170,13 @@ public:
 	 *
 	 * @param str Text to be matched against the given pattern.
 	 * @param pat Glob pattern.
+	 * @param ignoreCase Whether to ignore the case when doing pattern match
 	 * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.
 	 *
 	 * @return true if str matches the pattern, false otherwise.
 	 */
-	bool matchString(const char *pat, bool pathMode = false) const;
-	bool matchString(const String &pat, bool pathMode = false) const;
+	bool matchString(const char *pat, bool ignoreCase = false, bool pathMode = false) const;
+	bool matchString(const String &pat, bool ignoreCase = false, bool pathMode = false) const;
 
 
 	inline const char *c_str() const		{ return _str; }
@@ -217,6 +218,11 @@ public:
 	void trim();
 
 	uint hash() const;
+
+	/**
+	 * Printf-like function. Returns a formatted String.
+	 */
+	static Common::String printf(const char *fmt, ...) GCC_PRINTF(1,2);
 
 public:
 	typedef char *        iterator;
@@ -311,11 +317,12 @@ Common::String normalizePath(const Common::String &path, const char sep);
  *
  * @param str Text to be matched against the given pattern.
  * @param pat Glob pattern.
+ * @param ignoreCase Whether to ignore the case when doing pattern match
  * @param pathMode Whether to use path mode, i.e., whether slashes must be matched explicitly.
  *
  * @return true if str matches the pattern, false otherwise.
  */
-bool matchString(const char *str, const char *pat, bool pathMode = false);
+bool matchString(const char *str, const char *pat, bool ignoreCase = false, bool pathMode = false);
 
 
 typedef Array<String> StringList;

@@ -27,8 +27,6 @@
 #define BACKEND_EVENTS_DEFAULT_H
 
 #include "common/events.h"
-#include "common/savefile.h"
-#include "common/mutex.h"
 #include "common/queue.h"
 
 namespace Common {
@@ -41,21 +39,7 @@ namespace Common {
 }
 
 
-class EventProvider {
-public:
-	virtual ~EventProvider() {}
-	/**
-	 * Get the next event in the event queue.
-	 * @param event	point to an Common::Event struct, which will be filled with the event data.
-	 * @return true if an event was retrieved.
-	 */
-	virtual bool pollEvent(Common::Event &event) = 0;
-};
-
-
-class DefaultEventManager : public Common::EventManager {
-	EventProvider *_boss;
-
+class DefaultEventManager : public Common::EventManager, Common::EventObserver {
 #ifdef ENABLE_VKEYBD
 	Common::VirtualKeyboard *_vk;
 #endif
@@ -65,7 +49,13 @@ class DefaultEventManager : public Common::EventManager {
 	bool _remap;
 #endif
 
-	Common::Queue<Common::Event> _artificialEventQueue;
+	Common::ArtificialEventSource _artificialEventSource;
+
+	Common::Queue<Common::Event> _eventQueue;
+	bool notifyEvent(const Common::Event &ev) {
+		_eventQueue.push(ev);
+		return true;
+	}
 
 	Common::Point _mousePos;
 	int _buttonState;
@@ -73,44 +63,6 @@ class DefaultEventManager : public Common::EventManager {
 	bool _shouldQuit;
 	bool _shouldRTL;
 	bool _confirmExitDialogActive;
-
-	class RandomSourceRecord {
-	public:
-		Common::String name;
-		uint32 seed;
-	};
-	Common::Array<RandomSourceRecord> _randomSourceRecords;
-
-	bool _recordSubtitles;
-	volatile uint32 _recordCount;
-	volatile uint32 _lastRecordEvent;
-	volatile uint32 _recordTimeCount;
-	Common::OutSaveFile *_recordFile;
-	Common::OutSaveFile *_recordTimeFile;
-	Common::MutexRef _timeMutex;
-	Common::MutexRef _recorderMutex;
-	volatile uint32 _lastMillis;
-
-	volatile uint32 _playbackCount;
-	volatile uint32 _playbackDiff;
-	volatile bool _hasPlaybackEvent;
-	volatile uint32 _playbackTimeCount;
-	Common::Event _playbackEvent;
-	Common::InSaveFile *_playbackFile;
-	Common::InSaveFile *_playbackTimeFile;
-
-	volatile uint32 _eventCount;
-	volatile uint32 _lastEventCount;
-
-	enum RecordMode {
-		kPassthrough = 0,
-		kRecorderRecord = 1,
-		kRecorderPlayback = 2
-	};
-	volatile RecordMode _recordMode;
-	Common::String _recordFileName;
-	Common::String _recordTempFileName;
-	Common::String _recordTimeFileName;
 
 	// for continuous events (keyDown)
 	enum {
@@ -124,18 +76,13 @@ class DefaultEventManager : public Common::EventManager {
 		int keycode;
 	} _currentKeyDown;
 	uint32 _keyRepeatTime;
-
-	void record(Common::Event &event);
-	bool playback(Common::Event &event);
 public:
-	DefaultEventManager(EventProvider *boss);
+	DefaultEventManager(Common::EventSource *boss);
 	~DefaultEventManager();
 
 	virtual void init();
 	virtual bool pollEvent(Common::Event &event);
 	virtual void pushEvent(const Common::Event &event);
-	virtual void registerRandomSource(Common::RandomSource &rnd, const char *name);
-	virtual void processMillis(uint32 &millis);
 
 	virtual Common::Point getMousePos() const { return _mousePos; }
 	virtual int getButtonState() const { return _buttonState; }
@@ -143,6 +90,9 @@ public:
 	virtual int shouldQuit() const { return _shouldQuit; }
 	virtual int shouldRTL() const { return _shouldRTL; }
 	virtual void resetRTL() { _shouldRTL = false; }
+#ifdef FORCE_RTL
+	virtual void resetQuit() { _shouldQuit = false; }
+#endif
 
 #ifdef ENABLE_KEYMAPPER
 	virtual Common::Keymapper *getKeymapper() { return _keymapper; }

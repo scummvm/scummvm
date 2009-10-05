@@ -77,7 +77,7 @@ public:
 	virtual void warpMouse(int x, int y); // overloaded by CE backend (FIXME)
 
 	// Set the bitmap that's used when drawing the cursor.
-	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, byte keycolor, int cursorTargetScale); // overloaded by CE backend (FIXME)
+	virtual void setMouseCursor(const byte *buf, uint w, uint h, int hotspot_x, int hotspot_y, uint32 keycolor, int cursorTargetScale, const Graphics::PixelFormat *format); // overloaded by CE backend (FIXME)
 
 	// Get the number of milliseconds since the program was started.
 	uint32 getMillis();
@@ -127,6 +127,7 @@ public:
 
 	// Overlay
 	virtual Graphics::PixelFormat getOverlayFormat() const { return _overlayFormat; }
+
 	virtual void showOverlay();
 	virtual void hideOverlay();
 	virtual void clearOverlay();
@@ -143,6 +144,7 @@ public:
 	virtual bool hasFeature(Feature f);
 	virtual void setFeatureState(Feature f, bool enable);
 	virtual bool getFeatureState(Feature f);
+	virtual void preprocessEvents(SDL_Event *event) {};
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual FilesystemFactory *getFilesystemFactory();
@@ -153,6 +155,7 @@ public:
 
 protected:
 	bool _inited;
+	SDL_AudioSpec _obtainedRate;
 
 
 #ifdef USE_OPENGL

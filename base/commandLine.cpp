@@ -34,6 +34,9 @@
 
 #include "gui/ThemeEngine.h"
 
+#define DETECTOR_TESTING_HACK
+#define UPGRADE_ALL_TARGETS_HACK
+
 namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
@@ -235,6 +238,18 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_COMMAND('z', "list-games")
 			END_OPTION
 
+#ifdef DETECTOR_TESTING_HACK
+			// HACK FIXME TODO: This command is intentionally *not* documented!
+			DO_LONG_COMMAND("test-detector")
+			END_OPTION
+#endif
+
+#ifdef UPGRADE_ALL_TARGETS_HACK
+			// HACK FIXME TODO: This command is intentionally *not* documented!
+			DO_LONG_COMMAND("upgrade-targets")
+			END_OPTION
+#endif
+
 			DO_OPTION('c', "config")
 			END_OPTION
 
@@ -253,15 +268,27 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_OPTION_INT('m', "music-volume")
 			END_OPTION
 
-			DO_OPTION('s', "sfx-volume")
-			END_OPTION
-
-			DO_OPTION('r', "speech-volume")
+			DO_OPTION('p', "path")
+				Common::FSNode path(option);
+				if (!path.exists()) {
+					usage("Non-existent game path '%s'", option);
+				} else if (!path.isReadable()) {
+					usage("Non-readable game path '%s'", option);
+				}
 			END_OPTION
 
 			DO_OPTION('q', "language")
 				if (Common::parseLanguage(option) == Common::UNK_LANG)
 					usage("Unrecognized language '%s'", option);
+			END_OPTION
+
+			DO_OPTION_INT('s', "sfx-volume")
+			END_OPTION
+
+			DO_OPTION_INT('r', "speech-volume")
+			END_OPTION
+
+			DO_LONG_OPTION_INT("cdrom")
 			END_OPTION
 
 			DO_LONG_OPTION_OPT("joystick", "0")
@@ -275,22 +302,13 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION("soft-renderer")
 			END_OPTION
 
+			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
+			END_OPTION
+
 			DO_LONG_OPTION("engine-speed")
 			END_OPTION
 
 			DO_LONG_OPTION("gamma")
-			END_OPTION
-
-			DO_OPTION('p', "path")
-				Common::FSNode path(option);
-				if (!path.exists()) {
-					usage("Non-existent game path '%s'", option);
-				} else if (!path.isReadable()) {
-					usage("Non-readable game path '%s'", option);
-				}
-			END_OPTION
-
-			DO_LONG_OPTION_BOOL("disable-sdl-parachute")
 			END_OPTION
 
 			DO_LONG_OPTION("savepath")
@@ -326,8 +344,15 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("list-themes")
 			END_OPTION
 
+			DO_LONG_OPTION("target-md5")
+			END_OPTION
+
 			DO_LONG_OPTION("text-speed")
 			END_OPTION
+#ifdef ENABLE_SCUMM
+			DO_LONG_OPTION_INT("dimuse-tempo")
+			END_OPTION
+#endif
 
 			DO_LONG_OPTION("speech-mode")
 			END_OPTION
@@ -414,6 +439,192 @@ static void listThemes() {
 		printf("%-14s %s\n", i->id.c_str(), i->name.c_str());
 }
 
+
+#ifdef DETECTOR_TESTING_HACK
+static void runDetectorTest() {
+	// HACK: The following code can be used to test the detection code of our
+	// engines. Basically, it loops over all targets, and calls the detector
+	// for the given path. It then prints out the result and also checks
+	// whether the result agrees with the settings of the target.
+
+	const Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::const_iterator iter = domains.begin();
+	int success = 0, failure = 0;
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		Common::String name(iter->_key);
+		Common::String gameid(iter->_value.get("gameid"));
+		Common::String path(iter->_value.get("path"));
+		printf("Looking at target '%s', gameid '%s', path '%s' ...\n",
+				name.c_str(), gameid.c_str(), path.c_str());
+		if (path.empty()) {
+			printf(" ... no path specified, skipping\n");
+			continue;
+		}
+		if (gameid.empty()) {
+			gameid = name;
+		}
+
+		Common::FSNode dir(path);
+		Common::FSList files;
+		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+			printf(" ... invalid path, skipping\n");
+			continue;
+		}
+
+		GameList candidates(EngineMan.detectGames(files));
+		bool gameidDiffers = false;
+		GameList::iterator x;
+		for (x = candidates.begin(); x != candidates.end(); ++x) {
+			gameidDiffers |= (strcasecmp(gameid.c_str(), x->gameid().c_str()) != 0);
+		}
+
+		if (candidates.empty()) {
+			printf(" FAILURE: No games detected\n");
+			failure++;
+		} else if (candidates.size() > 1) {
+			if (gameidDiffers) {
+				printf(" WARNING: Multiple games detected, some/all with wrong gameid\n");
+			} else {
+				printf(" WARNING: Multiple games detected, but all have matching gameid\n");
+			}
+			failure++;
+		} else if (gameidDiffers) {
+			printf(" FAILURE: Wrong gameid detected\n");
+			failure++;
+		} else {
+			printf(" SUCCESS: Game was detected correctly\n");
+			success++;
+		}
+
+		for (x = candidates.begin(); x != candidates.end(); ++x) {
+			printf("    gameid '%s', desc '%s', language '%s', platform '%s'\n",
+				   x->gameid().c_str(),
+				   x->description().c_str(),
+				   Common::getLanguageCode(x->language()),
+				   Common::getPlatformCode(x->platform()));
+		}
+	}
+	int total = domains.size();
+	printf("Detector test run: %d fail, %d success, %d skipped, out of %d\n",
+			failure, success, total - failure - success, total);
+}
+#endif
+
+#ifdef UPGRADE_ALL_TARGETS_HACK
+void upgradeTargets() {
+	// HACK: The following upgrades all your targets to the latest and
+	// greatest. Right now that means updating the guioptions and (optionally)
+	// also the game descriptions.
+	// Basically, it loops over all targets, and calls the detector for the
+	// given path. It then compares the result with the settings of the target.
+	// If the basics seem to match, it updates the guioptions.
+
+	printf("Upgrading all your existing targets\n");
+
+	Common::ConfigManager::DomainMap &domains = ConfMan.getGameDomains();
+	Common::ConfigManager::DomainMap::iterator iter = domains.begin();
+	for (iter = domains.begin(); iter != domains.end(); ++iter) {
+		Common::ConfigManager::Domain &dom = iter->_value;
+		Common::String name(iter->_key);
+		Common::String gameid(dom.get("gameid"));
+		Common::String path(dom.get("path"));
+		printf("Looking at target '%s', gameid '%s' ...\n",
+				name.c_str(), gameid.c_str());
+		if (path.empty()) {
+			printf(" ... no path specified, skipping\n");
+			continue;
+		}
+		if (gameid.empty()) {
+			gameid = name;
+		}
+		gameid.toLowercase();	// TODO: Is this paranoia? Maybe we should just assume all lowercase, always?
+
+		Common::FSNode dir(path);
+		Common::FSList files;
+		if (!dir.getChildren(files, Common::FSNode::kListAll)) {
+			printf(" ... invalid path, skipping\n");
+			continue;
+		}
+
+		Common::Language lang = Common::parseLanguage(dom.get("language"));
+		Common::Platform plat = Common::parsePlatform(dom.get("platform"));
+		Common::String desc(dom.get("description"));
+
+		GameList candidates(EngineMan.detectGames(files));
+		GameDescriptor *g = 0;
+
+		// We proceed as follows:
+		// * If detection failed to produce candidates, skip.
+		// * If there is a unique detector match, trust it.
+		// * If there are multiple match, run over them comparing gameid, language and platform.
+		//   If we end up with a unique match, use it. Otherwise, skip.
+		if (candidates.size() == 0) {
+			printf(" ... failed to detect game, skipping\n");
+			continue;
+		}
+		if (candidates.size() > 1) {
+			// Scan over all candidates, check if there is a unique match for gameid, language and platform
+			GameList::iterator x;
+			int matchesFound = 0;
+			for (x = candidates.begin(); x != candidates.end(); ++x) {
+				if (x->gameid() == gameid && x->language() == lang && x->platform() == plat) {
+					matchesFound++;
+					g = &(*x);
+				}
+			}
+			if (matchesFound != 1) {
+				printf(" ... detected multiple games, could not establish unique match, skipping\n");
+				continue;
+			}
+		} else {
+			// Unique match -> use it
+			g = &candidates[0];
+		}
+
+		// At this point, g points to a GameDescriptor which we can use to update
+		// the target referred to by dom. We update several things
+
+		// Always set the gameid explicitly (in case of legacy targets)
+		dom["gameid"] = g->gameid();
+
+		// Always set the GUI options. The user should not modify them, and engines might
+		// gain more features over time, so we want to keep this list up-to-date.
+		if (g->contains("guioptions")) {
+			printf("  -> update guioptions to '%s'\n", (*g)["guioptions"].c_str());
+			dom["guioptions"] = (*g)["guioptions"];
+		} else if (dom.contains("guioptions")) {
+			dom.erase("guioptions");
+		}
+
+		// Update the language setting but only if none has been set yet.
+		if (lang == Common::UNK_LANG && g->language() != Common::UNK_LANG) {
+			printf("  -> set language to '%s'\n", Common::getLanguageCode(g->language()));
+			dom["language"] = (*g)["language"];
+		}
+
+		// Update the platform setting but only if none has been set yet.
+		if (plat == Common::kPlatformUnknown && g->platform() != Common::kPlatformUnknown) {
+			printf("  -> set platform to '%s'\n", Common::getPlatformCode(g->platform()));
+			dom["platform"] = (*g)["platform"];
+		}
+
+		// TODO: We could also update the description. But not everybody will want that.
+		// Esp. because for some games (e.g. the combined Zak/Loom FM-TOWNS demo etc.)
+		// ScummVM still generates an incorrect description string. So, the description
+		// should only be updated if the user explicitly requests this.
+#if 0
+		if (desc != g->description()) {
+			printf("  -> update desc from '%s' to\n                      '%s' ?\n", desc.c_str(), g->description().c_str());
+			dom["description"] = (*g)["description"];
+		}
+#endif
+	}
+
+	// Finally, save our changes to disk
+	ConfMan.flushToDisk();
+}
+#endif
+
 #else // DISABLE_COMMAND_LINE
 
 
@@ -449,6 +660,18 @@ bool processSettings(Common::String &command, Common::StringMap &settings) {
 		printf(HELP_STRING, s_appName);
 		return false;
 	}
+#ifdef DETECTOR_TESTING_HACK
+	else if (command == "test-detector") {
+		runDetectorTest();
+		return false;
+	}
+#endif
+#ifdef UPGRADE_ALL_TARGETS_HACK
+	else if (command == "upgrade-targets") {
+		upgradeTargets();
+		return false;
+	}
+#endif
 
 #endif // DISABLE_COMMAND_LINE
 

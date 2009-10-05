@@ -56,7 +56,7 @@ int Archive::listMatchingMembers(ArchiveMemberList &list, const String &pattern)
 
 	ArchiveMemberList::iterator it = allNames.begin();
 	for ( ; it != allNames.end(); ++it) {
-		if ((*it)->getName().matchString(lowercasePattern, true)) {
+		if ((*it)->getName().matchString(lowercasePattern, false, true)) {
 			list.push_back(*it);
 			matches++;
 		}
@@ -123,6 +123,55 @@ void SearchSet::addDirectory(const String &name, const FSNode &dir, int priority
 	add(name, new FSDirectory(dir, depth, flat), priority);
 }
 
+void SearchSet::addSubDirectoriesMatching(const FSNode &directory, String origPattern, bool ignoreCase, int priority) {
+	FSList subDirs;
+	if (!directory.getChildren(subDirs))
+		return;
+
+	String nextPattern, pattern;
+	String::const_iterator sep = Common::find(origPattern.begin(), origPattern.end(), '/');
+	if (sep != origPattern.end()) {
+		pattern = String(origPattern.begin(), sep);
+
+		++sep;
+		if (sep != origPattern.end())
+			nextPattern = String(sep, origPattern.end());
+	}
+	else {
+		pattern = origPattern;
+	}
+
+	// TODO: The code we have for displaying all matches, which vary only in case, might
+	// be a bit overhead, but as long as we want to display all useful information to the
+	// user we will need to keep track of all directory names added so far. We might
+	// want to reconsider this though.
+	typedef HashMap<String, bool, IgnoreCase_Hash, IgnoreCase_EqualTo> MatchList;
+	MatchList multipleMatches;
+	MatchList::iterator matchIter;
+
+	for (FSList::const_iterator i = subDirs.begin(); i != subDirs.end(); ++i) {
+		String name = i->getName();
+
+		if (Common::matchString(name.c_str(), pattern.c_str(), ignoreCase)) {
+			matchIter = multipleMatches.find(name);
+			if (matchIter == multipleMatches.end()) {
+				multipleMatches[name] = true;
+			} else {
+				if (matchIter->_value) {
+					warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(), directory.getPath().c_str(), matchIter->_key.c_str());
+					matchIter->_value = false;
+				}
+
+				warning("Clash in case for match of pattern \"%s\" found in directory \"%s\": \"%s\"", pattern.c_str(), directory.getPath().c_str(), name.c_str());
+			}
+
+			if (nextPattern.empty())
+				addDirectory(name, *i, priority);
+			else
+				addSubDirectoriesMatching(*i, nextPattern, ignoreCase, priority);
+		}
+	}
+}
 
 void SearchSet::remove(const String &name) {
 	ArchiveNodeList::iterator it = find(name);

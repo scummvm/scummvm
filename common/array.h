@@ -222,7 +222,7 @@ public:
 
 		T *old_storage = _storage;
 		_capacity = newCapacity;
-		_storage = new T[newCapacity]();
+		_storage = new T[newCapacity];
 		assert(_storage);
 
 		if (old_storage) {
@@ -273,7 +273,7 @@ protected:
 				// If there is not enough space, allocate more and
 				// copy old elements over.
 				uint newCapacity = roundUpCapacity(_size + n);
-				newStorage = new T[newCapacity]();
+				newStorage = new T[newCapacity];
 				assert(newStorage);
 				copy(_storage, _storage + idx, newStorage);
 				pos = newStorage + idx;

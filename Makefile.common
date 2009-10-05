@@ -55,6 +55,8 @@ ifneq ($(findstring $(MAKEFLAGS),s),s)
 ifneq ($(VERBOSE_BUILD),1)
 ifneq ($(VERBOSE_BUILD),yes)
 QUIET_CXX    = @echo '   ' C++ '    ' $@;
+QUIET_AS     = @echo '   ' AS '     ' $@;
+QUIET_NASM   = @echo '   ' NASM '   ' $@;
 QUIET_AR     = @echo '   ' AR '     ' $@;
 QUIET_RANLIB = @echo '   ' RANLIB ' ' $@;
 QUIET_PLUGIN = @echo '   ' PLUGIN ' ' $@;
@@ -75,26 +77,40 @@ clean:
 	$(RM_REC) $(DEPDIRS)
 	$(RM) $(OBJS) $(EXECUTABLE)
 
-ifndef HAVE_GCC3
-# If you use GCC, disable the above and enable this for intelligent
+
+#
+# The build rules for object files.
+#
+
+ifdef CXX_UPDATE_DEP_FLAG
+
+# Build rule for C++ files. Makes use of CXX_UPDATE_DEP_FLAG for advanced
 # dependency tracking.
 %.o: %.cpp
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d2" $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
-	$(QUIET)$(ECHO) "$(*D)/" > $(*D)/$(DEPDIR)/$(*F).d
-	$(QUIET)$(CAT) "$(*D)/$(DEPDIR)/$(*F).d2" >> "$(*D)/$(DEPDIR)/$(*F).d"
-	$(QUIET)$(RM) "$(*D)/$(DEPDIR)/$(*F).d2"
-else
-# If you even have GCC 3.x, you can use this build rule, which is safer; the above
-# rule can get you into a bad state if you Ctrl-C at the wrong moment.
-# Also, with this GCC inserts additional dummy rules for the involved headers,
-# which ensures a smooth compilation even if said headers become obsolete.
-%.o: %.cpp
-	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+# Build rule for Objective-C files. Strictly speaking, this is for OS X only.
 %.o: %.m
 	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
-	$(QUIET_CXX)$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(OBJCFLAGS) -c $(<) -o $*.o
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(OBJCFLAGS) -c $(<) -o $*.o
+
+else
+
+# Dumb compile rule, for C++ compilers that don't allow dependency tracking or
+# where it is broken (such as GCC 2.95).
+.cpp.o:
+	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $*.o
+
+endif
+
+
+%.o: %.s
+	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $*.o
+
+ifdef HAVE_NASM
+%.o: %.asm
+	$(QUIET_NASM)$(NASM) -O1 $(NASMFLAGS) -g -o $*.o $(<)
 endif
 
 # Include the dependency tracking files.
@@ -132,25 +148,6 @@ endif
 ifneq ($(origin VER_SVNREV), undefined)
 CXXFLAGS+= -DRESIDUAL_SVN_REVISION=\"$(VER_SVNREV)\"
 endif
-
-
-######################################################################
-# Create the files that depend on the version
-######################################################################
-
-VERSION_FILES = \
-	$(srcdir)/dists/iphone/Info.plist \
-	$(srcdir)/dists/macosx/Info.plist
-
-$(VERSION_FILES): %: %.in
-	@echo "Creating $@"
-	@cat $< | sed \
-		-e "s/@VER_MAJOR@/$(VER_MAJOR)/g" \
-		-e "s/@VER_MINOR@/$(VER_MINOR)/g" \
-		-e "s/@VER_PATCH@/$(VER_PATCH)/g" \
-		-e "s/@VER_EXTRA@/$(VER_EXTRA)/g" \
-		-e "s/@VERSION@/$(VERSION)/g" \
-		> $@
 
 
 ######################################################################
@@ -198,9 +195,15 @@ dist-src: \
 	@#RPM-src?
 	@#DEB-src?
 
+# Common files
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL COPYRIGHT NEWS README)
 
 # Themes files
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
+
+# Engine data files
+DIST_FILES_ENGINEDATA=
+DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
 
 # Plugin files
 DIST_FILES_PLUGINS:=$(addprefix $(srcdir)/,$(PLUGINS))

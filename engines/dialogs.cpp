@@ -29,6 +29,8 @@
 #include "common/system.h"
 #include "common/events.h"
 
+#include "graphics/scaler.h"
+
 #include "gui/about.h"
 #include "gui/GuiManager.h"
 #include "gui/launcher.h"

@@ -46,6 +46,12 @@ MemoryPool::MemoryPool(size_t chunkSize) {
 }
 
 MemoryPool::~MemoryPool() {
+#if 0
+	freeUnusedPages();
+	if (!_pages.empty())
+		warning("Memory leak found in pool");
+#endif
+
 	for (size_t i = 0; i < _pages.size(); ++i)
 		::free(_pages[i].start);
 }
@@ -62,7 +68,7 @@ void MemoryPool::allocPage() {
 	_pages.push_back(page);
 
 
-	// Next time, we'll alocate a page twice as big as this one.
+	// Next time, we'll allocate a page twice as big as this one.
 	_chunksPerPage *= 2;
 
 	// Add the page to the pool of free chunk

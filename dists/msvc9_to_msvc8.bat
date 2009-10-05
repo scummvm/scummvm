@@ -11,15 +11,12 @@ if not exist rpl.exe goto no_rpl
 echo Creating MSVC8 project files from the MSVC9 ones
 copy /y msvc9\*.vcproj msvc8\
 copy /y msvc9\*.sln msvc8\
+copy /y msvc9\*.vsprops msvc8\
 rpl -e -q "Version=\"9.00\"" "Version=\"8.00\"" msvc8\*.vcproj
 rpl -e -q "Version=\"9,00\"" "Version=\"8,00\"" msvc8\*.vcproj
 rpl -e -q "\tTargetFrameworkVersion=\"131072\"\n" "" msvc8\*.vcproj
-rpl -e -q "\t\t\t\tRandomizedBaseAddress=\"1\"\n" "" msvc8\residual.vcproj
-rpl -e -q "\t\t\t\tDataExecutionPrevention=\"0\"\n" "" msvc8\residual.vcproj
-rpl -e -q "Format Version 10.00" "Format Version 9.00" msvc8\residual.sln
-rpl -e -q "Format Version 10,00" "Format Version 9,00" msvc8\residual.sln
-rpl -e -q "# Visual C++ Express 2008" "# Visual C++ Express 2005" msvc8\residual.sln
-rpl -e -q "# Visual Studio 2008" "# Visual Studio 2005" msvc8\residual.sln
+rpl -e -q "Format Version 10.00" "Format Version 9.00" msvc8\scummvm.sln
+rpl -e -q "Format Version 10,00" "Format Version 9,00" msvc8\scummvm.sln
 goto the_end
 
 :no_rpl

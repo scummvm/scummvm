@@ -42,15 +42,15 @@ enum {
 };
 
 SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("ScummSaveLoad"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
+	: Dialog("SaveLoadChooser"), _delSupport(0), _list(0), _chooseButton(0), _deleteButton(0), _gfxWidget(0)  {
 	_delSupport = _metaInfoSupport = _thumbnailSupport = _saveDateSupport = _playTimeSupport = false;
 
 	_backgroundType = ThemeEngine::kDialogBackgroundSpecial;
 
-	new StaticTextWidget(this, "ScummSaveLoad.Title", title);
+	new StaticTextWidget(this, "SaveLoadChooser.Title", title);
 
 	// Add choice list
-	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
+	_list = new GUI::ListWidget(this, "SaveLoadChooser.List");
 	_list->setNumberingMode(GUI::kListNumberingZero);
 	setSaveMode(false);
 
@@ -61,11 +61,11 @@ SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
 	_playtime = new StaticTextWidget(this, 0, 0, 10, 10, "No playtime saved", Graphics::kTextAlignCenter);
 
 	// Buttons
-	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
+	new GUI::ButtonWidget(this, "SaveLoadChooser.Cancel", "Cancel", kCloseCmd, 0);
+	_chooseButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Choose", buttonLabel, kChooseCmd, 0);
 	_chooseButton->setEnabled(false);
 
-	_deleteButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Delete", "Delete", kDelCmd, 0);
+	_deleteButton = new GUI::ButtonWidget(this, "SaveLoadChooser.Delete", "Delete", kDelCmd, 0);
 	_deleteButton->setEnabled(false);
 
 	_delSupport = _metaInfoSupport = _thumbnailSupport = false;
@@ -172,11 +172,11 @@ void SaveLoadChooser::handleCommand(CommandSender *sender, uint32 cmd, uint32 da
 }
 
 void SaveLoadChooser::reflowLayout() {
-	if (g_gui.xmlEval()->getVar("Globals.ScummSaveLoad.ExtInfo.Visible") == 1 && _thumbnailSupport) {
+	if (g_gui.xmlEval()->getVar("Globals.SaveLoadChooser.ExtInfo.Visible") == 1 && _thumbnailSupport) {
 		int16 x, y;
 		uint16 w, h;
 
-		if (!g_gui.xmlEval()->getWidgetData("ScummSaveLoad.Thumbnail", x, y, w, h))
+		if (!g_gui.xmlEval()->getWidgetData("SaveLoadChooser.Thumbnail", x, y, w, h))
 			error("Error when loading position data for Save/Load Thumbnails.");
 
 		int thumbW = kThumbnailWidth;
@@ -235,6 +235,11 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 	bool isWriteProtected = false;
 	bool startEditMode = _list->isEditable();
 
+	_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
+	_date->setLabel("No date saved");
+	_time->setLabel("No time saved");
+	_playtime->setLabel("No playtime saved");
+
 	if (selItem >= 0 && !_list->getSelectedString().empty() && _metaInfoSupport) {
 		SaveStateDescriptor desc = (*_plugin)->querySaveMetaInfos(_target.c_str(), atoi(_saveList[selItem].save_slot().c_str()));
 
@@ -250,36 +255,20 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 			if (thumb) {
 				_gfxWidget->setGfx(thumb);
 				_gfxWidget->useAlpha(256);
-			} else {
-				_gfxWidget->setGfx(-1, -1, _fillR, _fillG, _fillB);
 			}
 		}
 
 		if (_saveDateSupport) {
-			Common::String date = "Date: ";
 			if (desc.contains("save_date"))
-				date += desc.getVal("save_date");
-			else
-				date = "No date saved";
+				_date->setLabel("Date: " + desc.getVal("save_date"));
 
-			Common::String time = "Time: ";
 			if (desc.contains("save_time"))
-				time += desc.getVal("save_time");
-			else
-				time = "No time saved";
-
-			_date->setLabel(date);
-			_time->setLabel(time);
+				_time->setLabel("Time: " + desc.getVal("save_time"));
 		}
 
 		if (_playTimeSupport) {
-			Common::String time = "Playtime: ";
 			if (desc.contains("play_time"))
-				time += desc.getVal("play_time");
-			else
-				time = "No playtime saved";
-
-			_playtime->setLabel(time);
+				_playtime->setLabel("Playtime: " + desc.getVal("play_time"));
 		}
 	}
 
@@ -289,8 +278,15 @@ void SaveLoadChooser::updateSelection(bool redraw) {
 		// game is write protected
 		_chooseButton->setEnabled(selItem >= 0 && !isWriteProtected);
 
-		if (startEditMode)
+		if (startEditMode) {
 			_list->startEditMode();
+
+			if (_chooseButton->isEnabled() && _list->getSelectedString() == "Untitled savestate" &&
+					_list->getSelectionColor() == ThemeEngine::kFontColorAlternate) {
+				_list->setEditString("");
+				_list->setEditColor(ThemeEngine::kFontColorNormal);
+			}
+		}
 	} else {
 		// Disable the load button if nothing is selected, or if an empty
 		// list item is selected.
@@ -327,6 +323,7 @@ void SaveLoadChooser::updateSaveList() {
 	int curSlot = 0;
 	int saveSlot = 0;
 	StringList saveNames;
+	ListWidget::ColorList colors;
 	for (SaveStateList::const_iterator x = _saveList.begin(); x != _saveList.end(); ++x) {
 		// Handle gaps in the list of save games
 		saveSlot = atoi(x->save_slot().c_str());
@@ -335,6 +332,7 @@ void SaveLoadChooser::updateSaveList() {
 				SaveStateDescriptor dummySave(curSlot, "");
 				_saveList.insert_at(curSlot, dummySave);
 				saveNames.push_back(dummySave.description());
+				colors.push_back(ThemeEngine::kFontColorNormal);
 				curSlot++;
 			}
 
@@ -345,7 +343,18 @@ void SaveLoadChooser::updateSaveList() {
 			}
 		}
 
-		saveNames.push_back(x->description());
+		// Show "Untitled savestate" for empty/whitespace savegame descriptions
+		Common::String description = x->description();
+		Common::String trimmedDescription = description;
+		trimmedDescription.trim();
+		if (trimmedDescription.empty()) {
+			description = "Untitled savestate";
+			colors.push_back(ThemeEngine::kFontColorAlternate);
+		} else {
+			colors.push_back(ThemeEngine::kFontColorNormal);
+		}
+
+		saveNames.push_back(description);
 		curSlot++;
 	}
 
@@ -355,9 +364,10 @@ void SaveLoadChooser::updateSaveList() {
 		saveNames.push_back(emptyDesc);
 		SaveStateDescriptor dummySave(i, "");
 		_saveList.push_back(dummySave);
+		colors.push_back(ThemeEngine::kFontColorNormal);
 	}
 
-	_list->setList(saveNames);
+	_list->setList(saveNames, &colors);
 }
 
 } // End of namespace GUI

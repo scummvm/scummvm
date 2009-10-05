@@ -44,6 +44,7 @@ enum {
 	kMidiGainChanged		= 'mgch',
 	kMusicVolumeChanged		= 'muvc',
 	kSfxVolumeChanged		= 'sfvc',
+	kMuteAllChanged			= 'mute',
 	kSubtitleToggle			= 'sttg',
 	kSubtitleSpeedChanged	= 'stsc',
 	kSpeechVolumeChanged	= 'vcvc',
@@ -64,8 +65,8 @@ enum {
 
 static const char *savePeriodLabels[] = { "Never", "every 5 mins", "every 10 mins", "every 15 mins", "every 30 mins", 0 };
 static const int savePeriodValues[] = { 0, 5 * 60, 10 * 60, 15 * 60, 30 * 60, -1 };
-static const char *outputRateLabels[] = { "<default>", "22 kHz", "8 kHz", "11kHz", "44 kHz", "48 kHz", 0 };
-static const int outputRateValues[] = { 0, 22050, 8000, 11025, 44100, 48000, -1 };
+static const char *outputRateLabels[] = { "<default>", "8 kHz", "11kHz", "22 kHz", "44 kHz", "48 kHz", 0 };
+static const int outputRateValues[] = { 0, 8000, 11025, 22050, 44100, 48000, -1 };
 
 
 
@@ -325,7 +326,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 
 	_enableVolumeSettings = enabled;
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions & Common::GUIO_NOMUSIC)
 		ena = false;
 
@@ -333,7 +334,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeSlider->setEnabled(ena);
 	_musicVolumeLabel->setEnabled(ena);
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions & Common::GUIO_NOSFX)
 		ena = false;
 
@@ -341,7 +342,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeSlider->setEnabled(ena);
 	_sfxVolumeLabel->setEnabled(ena);
 
-	ena = enabled;
+	ena = enabled && !_muteCheckbox->getState();
 	if (_guioptions & Common::GUIO_NOSPEECH)
 		ena = false;
 
@@ -453,10 +454,10 @@ int OptionsDialog::getSubtitleMode(bool subtitles, bool speech_mute) {
 }
 
 void OptionsDialog::reflowLayout() {
-	Dialog::reflowLayout();
-
 	if (_graphicsTabId != -1 && _tabWidget)
 		_tabWidget->setTabTitle(_graphicsTabId, g_system->getOverlayWidth() > 320 ? "Graphics" : "GFX");
+
+	Dialog::reflowLayout();
 }
 
 #pragma mark -

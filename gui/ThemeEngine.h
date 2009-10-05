@@ -32,7 +32,7 @@
 #include "graphics/surface.h"
 #include "graphics/fontman.h"
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.5"
+#define RESIDUAL_THEME_VERSION_STR "RESIDUAL_STX0.8"
 
 namespace Graphics {
 	struct DrawStep;
@@ -45,6 +45,7 @@ struct WidgetDrawData;
 struct DrawDataInfo;
 struct TextDataInfo;
 struct TextDrawData;
+struct TextColorData;
 class Dialog;
 class GuiObject;
 class ThemeEval;
@@ -62,6 +63,7 @@ enum DrawData {
 	kDDPlainColorBackground,
 	kDDDefaultBackground,
 	kDDTextSelectionBackground,
+	kDDTextSelectionFocusBackground,
 
 	kDDWidgetBackgroundDefault,
 	kDDWidgetBackgroundSmall,
@@ -104,13 +106,24 @@ enum DrawData {
 enum TextData {
 	kTextDataNone = -1,
 	kTextDataDefault = 0,
-	kTextDataHover,
-	kTextDataDisabled,
-	kTextDataInverted,
 	kTextDataButton,
-	kTextDataButtonHover,
 	kTextDataNormalFont,
 	kTextDataMAX
+};
+
+enum TextColor {
+	kTextColorNormal = 0,
+	kTextColorNormalInverted,
+	kTextColorNormalHover,
+	kTextColorNormalDisabled,
+	kTextColorAlternative,
+	kTextColorAlternativeInverted,
+	kTextColorAlternativeHover,
+	kTextColorAlternativeDisabled,
+	kTextColorButton,
+	kTextColorButtonHover,
+	kTextColorButtonDisabled,
+	kTextColorMAX
 };
 
 class ThemeEngine {
@@ -156,6 +169,13 @@ public:
 
 	typedef State WidgetStateInfo;
 
+	//! Text inversion state of the text to be draw
+	enum TextInversionState {
+		kTextInversionNone,	//!< Indicates that the text should not be drawn inverted
+		kTextInversion,		//!< Indicates that the text should be drawn inverted, but not focused
+		kTextInversionFocus	//!< Indicates thte the test should be drawn inverted, and focused
+	};
+
 	enum ScrollbarState {
 		kScrollbarStateNo,
 		kScrollbarStateUp,
@@ -173,6 +193,13 @@ public:
 		kFontStyleFixedBold = 4,	//!< Fixed size bold font.
 		kFontStyleFixedItalic = 5,	//!< Fixed size italic font.
 		kFontStyleMax
+	};
+
+	//! Font color selector
+	enum FontColor {
+		kFontColorNormal = 0,		//!< The default color of the theme
+		kFontColorAlternate = 1,	//!< Alternative font color
+		kFontColorMax
 	};
 
 	//! Function used to process areas other than the current dialog
@@ -302,9 +329,9 @@ public:
 
 	void drawDialogBackground(const Common::Rect &r, DialogBackground type, WidgetStateInfo state = kStateEnabled);
 
-	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, bool inverted = false, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold);
+	void drawText(const Common::Rect &r, const Common::String &str, WidgetStateInfo state = kStateEnabled, Graphics::TextAlign align = Graphics::kTextAlignCenter, TextInversionState inverted = kTextInversionNone, int deltax = 0, bool useEllipsis = true, FontStyle font = kFontStyleBold, FontColor color = kFontColorNormal);
 
-	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled);
+	void drawChar(const Common::Rect &r, byte ch, const Graphics::Font *font, WidgetStateInfo state = kStateEnabled, FontColor color = kFontColorNormal);
 
 	//@}
 
@@ -332,6 +359,7 @@ public:
 	DrawData parseDrawDataId(const Common::String &name) const;
 
 	TextData getTextData(DrawData ddId) const;
+	TextColor getTextColor(DrawData ddId) const;
 
 
 	/**
@@ -346,7 +374,7 @@ public:
 	void addDrawStep(const Common::String &drawDataId, const Graphics::DrawStep &step);
 
 	/**
-	 *	Interfacefor the ThemeParser class: Parsed DrawData sets are added via this function.
+	 *	Interface for the ThemeParser class: Parsed DrawData sets are added via this function.
 	 *	The goal of the function is to initialize each DrawData set before their DrawSteps can
 	 *	be added, hence this must be called for each DD set before addDrawStep() can be called
 	 *	for that given set.
@@ -363,9 +391,16 @@ public:
 	 *
 	 *	@param fontName Identifier name for the font.
 	 *	@param file Name of the font file.
-	 *	@param r, g, b Color of the font.
 	 */
-	bool addFont(TextData textId, const Common::String &file, int r, int g, int b);
+	bool addFont(TextData textId, const Common::String &file);
+
+	/**
+	 * Interface for the ThemeParser class: adds a text color value.
+	 *
+	 * @param colorId Identifier for the color type.
+	 * @param r, g, b Color of the font.
+	 */
+	bool addTextColor(TextColor colorId, int r, int g, int b);
 
 
 	/**
@@ -380,7 +415,7 @@ public:
 	 *	Adds a new TextStep from the ThemeParser. This will be deprecated/removed once the
 	 *	new Font API is in place. FIXME: Is that so ???
 	 */
-	bool addTextData(const Common::String &drawDataId, TextData textId, Graphics::TextAlign alignH, TextAlignVertical alignV);
+	bool addTextData(const Common::String &drawDataId, TextData textId, TextColor id, Graphics::TextAlign alignH, TextAlignVertical alignV);
 
 protected:
 	/**
@@ -503,7 +538,7 @@ protected:
 	 *	This function is called from all the Widget Drawing methods.
 	 */
 	void queueDD(DrawData type,  const Common::Rect &r, uint32 dynamic = 0, bool restore = false);
-	void queueDDText(TextData type, const Common::Rect &r, const Common::String &text, bool restoreBg,
+	void queueDDText(TextData type, TextColor color, const Common::Rect &r, const Common::String &text, bool restoreBg,
 		bool elipsis, Graphics::TextAlign alignH = Graphics::kTextAlignLeft, TextAlignVertical alignV = kTextAlignVTop, int deltax = 0);
 	void queueBitmap(const Graphics::Surface *bitmap, const Common::Rect &r, bool alpha);
 
@@ -529,7 +564,7 @@ private:
 
 	static Common::String getThemeFile(const Common::String &id);
 	static Common::String getThemeId(const Common::String &filename);
-	static void listUsableThemes(Common::FSNode node, Common::List<ThemeDescriptor> &list, int depth=-1);
+	static void listUsableThemes(const Common::FSNode &node, Common::List<ThemeDescriptor> &list, int depth = -1);
 
 protected:
 	OSystem *_system; /** Global system object. */
@@ -572,8 +607,14 @@ protected:
 	/** Array of all the text fonts that can be drawn. */
 	TextDrawData *_texts[kTextDataMAX];
 
+	/** Array of all font colors available. */
+	TextColorData *_textColors[kTextColorMAX];
+
 	ImagesMap _bitmaps;
 	Graphics::PixelFormat _overlayFormat;
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat _cursorFormat;
+#endif
 
 	/** List of all the dirty screens that must be blitted to the overlay. */
 	Common::List<Common::Rect> _dirtyScreen;

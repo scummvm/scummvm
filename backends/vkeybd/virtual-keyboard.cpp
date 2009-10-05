@@ -1,7 +1,7 @@
-/* ScummVM - Graphic Adventure Engine
+/* Residual - A 3D game interpreter
  *
- * ScummVM is the legal property of its developers, whose names
- * are too numerous to list here. Please refer to the COPYRIGHT
+ * Residual is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the AUTHORS
  * file distributed with this source distribution.
  *
  * This program is free software; you can redistribute it and/or
@@ -31,7 +31,6 @@
 #include "backends/vkeybd/virtual-keyboard-parser.h"
 #include "backends/vkeybd/keycode-descriptions.h"
 #include "common/config-manager.h"
-#include "common/fs.h"
 #include "common/unzip.h"
 
 #define KEY_START_CHAR ('[')
@@ -77,50 +76,76 @@ void VirtualKeyboard::reset() {
 	_kbdGUI->reset();
 }
 
-bool VirtualKeyboard::loadKeyboardPack(String packName) {
+bool VirtualKeyboard::openPack(const String &packName, const FSNode &node) {
+	if (node.getChild(packName + ".xml").exists()) {
+		_fileArchive = new FSDirectory(node, 1);
+
+		// uncompressed keyboard pack
+		if (!_parser->loadFile(node.getChild(packName + ".xml"))) {
+			delete _fileArchive;
+			_fileArchive = 0;
+			return false;
+		}
+
+		return true;
+	}
+
+#ifdef USE_ZLIB
+	if (node.getChild(packName + ".zip").exists()) {
+		// compressed keyboard pack
+		_fileArchive = new ZipArchive(node.getChild(packName + ".zip"));
+		if (_fileArchive->hasFile(packName + ".xml")) {
+			if (!_parser->loadStream(_fileArchive->createReadStreamForMember(packName + ".xml"))) {
+				delete _fileArchive;
+				_fileArchive = 0;
+				return false;
+			}
+		} else {
+			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
+			delete _fileArchive;
+			_fileArchive = 0;
+			return false;
+		}
+
+		return true;
+	}
+#endif
+
+	return false;
+}
+
+bool VirtualKeyboard::loadKeyboardPack(const String &packName) {
 	_kbdGUI->initSize(_system->getOverlayWidth(), _system->getOverlayHeight());
 
 	delete _fileArchive;
 	_fileArchive = 0;
+	_loaded = false;
 
-	FSNode vkDir;
+	bool opened = false;
 	if (ConfMan.hasKey("vkeybdpath"))
-		vkDir = FSNode(ConfMan.get("vkeybdpath"));
+		opened = openPack(packName, FSNode(ConfMan.get("vkeybdpath")));
 	else if (ConfMan.hasKey("extrapath"))
-		vkDir = FSNode(ConfMan.get("extrapath"));
-	else // use current directory
-		vkDir = FSNode(".");
+		opened = openPack(packName, FSNode(ConfMan.get("extrapath")));
 
-	if (vkDir.getChild(packName + ".xml").exists()) {
-		_fileArchive = new FSDirectory(vkDir, 1);
+	// fallback to the current dir
+	if (!opened)
+		opened = openPack(packName, FSNode("."));
 
-		// uncompressed keyboard pack
-		if (!_parser->loadFile(vkDir.getChild(packName + ".xml")))
-			return false;
+	if (opened) {
+		_parser->setParseMode(VirtualKeyboardParser::kParseFull);
+		_loaded = _parser->parse();
 
-	} else if (vkDir.getChild(packName + ".zip").exists()) {
-		// compressed keyboard pack
-#ifdef USE_ZLIB
-		_fileArchive = new ZipArchive(vkDir.getChild(packName + ".zip"));
-		if (_fileArchive->hasFile(packName + ".xml")) {
-			if (!_parser->loadStream(_fileArchive->createReadStreamForMember(packName + ".xml")))
-				return false;
+		if (_loaded) {
+			printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
 		} else {
-			warning("Could not find %s.xml file in %s.zip keyboard pack", packName.c_str(), packName.c_str());
-			return false;
+			warning("Error parsing the keyboard pack '%s'", packName.c_str());
+
+			delete _fileArchive;
+			_fileArchive = 0;
 		}
-#else
-		return false;
-#endif
 	} else {
 		warning("Keyboard pack not found");
-		return false;
 	}
-
-	_parser->setParseMode(VirtualKeyboardParser::kParseFull);
-	_loaded = _parser->parse();
-	if (_loaded)
-		printf("Keyboard pack '%s' loaded successfully!\n", packName.c_str());
 
 	return _loaded;
 }
@@ -312,7 +337,7 @@ void VirtualKeyboard::KeyPressQueue::deleteKey() {
 	List<VirtualKeyPress>::iterator it = _keyPos;
 	it--;
 	_strPos -= it->strLen;
-	while((it->strLen)-- > 0)
+	while ((it->strLen)-- > 0)
 		_keysStr.deleteChar(_strPos);
 	_keys.erase(it);
 	_strChanged = true;

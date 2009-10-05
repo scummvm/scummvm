@@ -23,32 +23,53 @@
  *
  */
 
-#ifndef BACKENDS_FS_STDIOSTREAM_H
-#define BACKENDS_FS_STDIOSTREAM_H
+#ifndef PSPSTREAM_H_
+#define PSPSTREAM_H_
 
-#include "common/sys.h"
-#include "common/noncopyable.h"
-#include "common/stream.h"
-#include "common/str.h"
+#include "backends/fs/stdiostream.h"
+#include "backends/platform/psp/powerman.h"
+#include "common/list.h"
 
-class StdioStream : public Common::SeekableReadStream, public Common::WriteStream, public Common::NonCopyable {
+/*
+ *  Class to handle special suspend/resume needs of PSP IO Streams
+ */
+class PSPIoStream : public StdioStream, public Suspendable {
 protected:
-	/** File handle to the actual file. */
-	void *_handle;
+	Common::String _path;			/* Need to maintain for reopening after suspend */
+	bool _writeMode;				/* "" */
+	int _pos;						/* "" */
+	mutable int _ferror;			/* Save file ferror */
+	mutable bool _feof;						/* and eof */
+
+	enum {
+		SuspendError = 2,
+		ResumeError = 3
+	};
+
+	int _errorSuspend;
+	mutable int _errorSource;
+	
+#ifdef __PSP_DEBUG_SUSPEND__	
+	int _errorPos;
+	void * _errorHandle;			
+	int _suspendCount;
+#endif /* __PSP_DEBUG_SUSPEND__ */	
 
 public:
 	/**
-	 * Given a path, invokes fopen on that path and wrap the result in a
-	 * StdioStream instance.
+	 * Given a path, invoke fopen on that path and wrap the result in a
+	 * PSPIoStream instance.
 	 */
-	static StdioStream *makeFromPath(const Common::String &path, bool writeMode);
+	static PSPIoStream *makeFromPath(const Common::String &path, bool writeMode);
 
-	StdioStream(void *handle);
-	virtual ~StdioStream();
+	PSPIoStream(const Common::String &path, bool writeMode);
+	virtual ~PSPIoStream();
 
-	virtual bool err() const;
-	virtual void clearErr();
-	virtual bool eos() const;
+	void * open();		// open the file pointed to by the file path
+
+	bool err() const;
+	void clearErr();
+	bool eos() const;
 
 	virtual uint32 write(const void *dataPtr, uint32 dataSize);
 	virtual bool flush();
@@ -57,6 +78,9 @@ public:
 	virtual int32 size() const;
 	virtual bool seek(int32 offs, int whence = SEEK_SET);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
+
+	int suspend();		/* Suspendable interface (power manager) */
+	int resume();		/* " " */
 };
 
-#endif
+#endif /* PSPSTREAM_H_ */

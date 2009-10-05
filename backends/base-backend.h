@@ -27,10 +27,9 @@
 #define BACKENDS_BASE_BACKEND_H
 
 #include "common/system.h"
-#include "common/fs.h"
 #include "backends/events/default/default-events.h"
 
-class BaseBackend : public OSystem, EventProvider {
+class BaseBackend : public OSystem, Common::EventSource {
 public:
 	virtual Common::EventManager *getEventManager();
 	virtual void displayMessageOnOSD(const char *msg);

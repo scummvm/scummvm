@@ -291,15 +291,18 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 		}
 	}
 
-	if (agdDesc == 0) {
+	if (agdDesc == 0)
 		return Common::kNoGameDataFoundError;
-	}
+
+	// If the GUI options were updated, we catch this here and update them in the users config
+	// file transparently.
+	Common::updateGameGUIOptions(agdDesc->guioptions | params.guioptions);
 
 	debug(2, "Running %s", toGameDescriptor(*agdDesc, params.list).description().c_str());
-	if (!createInstance(syst, engine, agdDesc)) {
+	if (!createInstance(syst, engine, agdDesc))
 		return Common::kNoGameDataFoundError;
-	}
-	return Common::kNoError;
+	else
+		return Common::kNoError;
 }
 
 struct SizeMD5 {

@@ -28,6 +28,9 @@
 
 #include "common/sys.h"
 
+//
+// The residual main entry point, to be invoked by ports
+//
 extern "C" int residual_main(int argc, const char *const argv[]);
 
 #endif

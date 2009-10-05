@@ -154,7 +154,7 @@ public:
 	bool seek(int32 offset, int whence = SEEK_SET) {
 		int32 newPos = 0;
 		assert(whence != SEEK_END);	// SEEK_END not supported
-		switch(whence) {
+		switch (whence) {
 		case SEEK_SET:
 			newPos = offset;
 			break;
