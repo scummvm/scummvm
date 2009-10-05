@@ -429,7 +429,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_EGA_SET_PALETTE:
 					byte = data[curPos++];
 					if (byte >= PIC_EGAPALETTE_COUNT) {
-						error("picture trying to write to invalid palette %d", EGApalette);
+						error("picture trying to write to invalid palette %d", (int)byte);
 					}
 					byte *= PIC_EGAPALETTE_SIZE;
 					for (i = 0; i < PIC_EGAPALETTE_SIZE; i++) {
