@@ -377,13 +377,16 @@ void SciGuiGfx::OpenPort(GuiPort *port) {
 	port->left = 0;
 	port->textFace = 0;
 	port->penClr = 0;
-	port->backClr = 0xFF;
+	port->backClr = 255;
 	port->penMode = 0;
 	port->rect = _bounds;
 }
 
 void SciGuiGfx::PenColor(int16 color) {
-	_curPort->penClr = color;
+	if (!_s->resMan->isVGA())
+		_curPort->penClr = color;
+	else
+		_curPort->penClr = color | (color << 4);
 }
 
 void SciGuiGfx::PenMode(int16 mode) {
