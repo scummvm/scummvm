@@ -55,10 +55,10 @@ public:
 	void CreatePaletteFromData(byte *paletteData, GuiPalette *paletteOut);
 	bool SetResPalette(int16 resourceNo, int16 flag);
 	void SetPalette(GuiPalette *sciPal, int16 flag);
-	void MergePalettes(GuiPalette* pFrom, GuiPalette* pTo, uint16 flag);
-	uint16 MatchColor(GuiPalette* pPal, byte r, byte g, byte b);
-	void SetCLUT(GuiPalette*pal);
-	void GetCLUT(GuiPalette*pal);
+	void MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag);
+	uint16 MatchColor(GuiPalette *pPal, byte r, byte g, byte b);
+	void setPalette(GuiPalette *pal);
+	void getPalette(GuiPalette *pal);
 
 	GuiPort *SetPort(GuiPort *port);
 	GuiPort *GetPort();

@@ -147,7 +147,7 @@ void SciGuiGfx::SetEGApalette() {
 		_sysPalette.colors[i].r = 200;
 		_sysPalette.colors[i].used = 1;
 	}
-	SetCLUT(&_sysPalette);
+	setPalette(&_sysPalette);
 }
 
 void SciGuiGfx::CreatePaletteFromData(byte *data, GuiPalette *paletteOut) {
@@ -212,7 +212,7 @@ void SciGuiGfx::SetPalette(GuiPalette *sciPal, int16 flag) {
 		MergePalettes(sciPal, &_sysPalette, flag);
 		sciPal->timestamp = _sysPalette.timestamp;
 		if (_picNotValid == 0 && systime != _sysPalette.timestamp)
-			SetCLUT(&_sysPalette);
+			setPalette(&_sysPalette);
 	}
 }
 
@@ -282,7 +282,7 @@ uint16 SciGuiGfx::MatchColor(GuiPalette*pPal, byte r, byte g, byte b) {
 	return found;
 }
 
-void SciGuiGfx::SetCLUT(GuiPalette*pal) {
+void SciGuiGfx::setPalette(GuiPalette*pal) {
 	if (pal != &_sysPalette)
 		memcpy(&_sysPalette,pal,sizeof(GuiPalette));
 	// just copy palette to system
@@ -300,9 +300,9 @@ void SciGuiGfx::SetCLUT(GuiPalette*pal) {
 	_system->setPalette(bpal, 0, 256);
 }
 
-void SciGuiGfx::GetCLUT(GuiPalette*pal) {
+void SciGuiGfx::getPalette(GuiPalette*pal) {
 	if (pal != &_sysPalette)
-		memcpy(pal,&_sysPalette,sizeof(GuiPalette));
+		memcpy(pal, &_sysPalette,sizeof(GuiPalette));
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
@@ -1285,7 +1285,7 @@ void SciGuiGfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
 				// removing schedule
 				_palSchedules.remove_at(i);
 			}
-			SetCLUT(&_sysPalette);
+			setPalette(&_sysPalette);
 			return;
 		}
 	}
