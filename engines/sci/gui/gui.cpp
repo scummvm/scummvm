@@ -251,7 +251,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, in
 
 void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
-	_gfx->setPalette(&_gfx->_sysPalette);
+	_gfx->setScreenPalette(&_gfx->_sysPalette);
 	_screen->copyToScreen();
 }
 
@@ -329,7 +329,7 @@ int16 SciGui::paletteFind(int r, int g, int b) {
 void SciGui::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
 	_gfx->PaletteSetIntensity(fromColor, toColor, intensity, &_gfx->_sysPalette);
 	if (setPalette) {
-		_gfx->setPalette(&_gfx->_sysPalette);
+		_gfx->setScreenPalette(&_gfx->_sysPalette);
 	}
 }
 

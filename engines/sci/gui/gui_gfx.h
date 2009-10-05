@@ -57,8 +57,8 @@ public:
 	void SetPalette(GuiPalette *sciPal, int16 flag);
 	void MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag);
 	uint16 MatchColor(GuiPalette *pPal, byte r, byte g, byte b);
-	void setPalette(GuiPalette *pal);
-	void getPalette(GuiPalette *pal);
+	void setScreenPalette(GuiPalette *pal);
+	void getScreenPalette(GuiPalette *pal);
 
 	GuiPort *SetPort(GuiPort *port);
 	GuiPort *GetPort();
