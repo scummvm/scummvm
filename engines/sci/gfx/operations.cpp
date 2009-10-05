@@ -1040,21 +1040,6 @@ void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::
 	}
 }
 
-void gfxop_set_pointer_position(GfxState *state, Common::Point pos) {
-	state->pointer_pos = pos;
-
-	if (pos.x > 320 || pos.y > 200) {
-		debug("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)\n", pos.x, pos.y);
-		return; // Not fatal
-	}
-
-	g_system->warpMouse(pos.x * state->driver->getMode()->scaleFactor, pos.y * state->driver->getMode()->scaleFactor);
-
-	// Trigger event reading to make sure the mouse coordinates will
-	// actually have changed the next time we read them.
-	gfxop_get_event(state, SCI_EVT_PEEK);
-}
-
 void gfxop_set_pointer_zone(GfxState *state, Common::Rect rect) {
 	state->pointerZone = rect;
 }

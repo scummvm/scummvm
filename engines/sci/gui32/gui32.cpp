@@ -1994,7 +1994,7 @@ void SciGui32::setNowSeen(reg_t objectReference) {
 }
 
 
-void SciGui32::moveCursor(int16 x, int16 y) {
+void SciGui32::moveCursor(int16 x, int16 y, int16 scaleFactor) {
 	Common::Point newPos;
 
 	// newPos = s->gfx_state->pointer_pos;
@@ -2007,9 +2007,21 @@ void SciGui32::moveCursor(int16 x, int16 y) {
 	if (newPos.y > s->port->zone.y + s->port->zone.height)
 		newPos.y = s->port->zone.y + s->port->zone.height;
 
-	if (newPos.x < 0) newPos.x = 0;
-	if (newPos.y < 0) newPos.y = 0;
-	gfxop_set_pointer_position(s->gfx_state, newPos);
+	if (newPos.x < 0)
+		newPos.x = 0;
+	if (newPos.y < 0)
+		newPos.y = 0;
+
+	if (x > 320 || y > 200) {
+		debug("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)\n", x, y);
+		return; // Not fatal
+	}
+
+	g_system->warpMouse(x * scaleFactor, y * scaleFactor);
+
+	// Trigger event reading to make sure the mouse coordinates will
+	// actually have changed the next time we read them.
+	gfxop_get_event(s->gfx_state, SCI_EVT_PEEK);
 }
 
 } // End of namespace Sci

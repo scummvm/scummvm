@@ -276,10 +276,8 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	gfxop_set_pointer_cursor(s->gfx_state, cursor);
 
 	// Set pointer position, if requested
-	if (argc >= 4) {
-		Common::Point newPos = Common::Point(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
-		gfxop_set_pointer_position(s->gfx_state, newPos);
-	}
+	if (argc >= 4)
+		s->gui->moveCursor(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
 
 	return s->r_acc;
 }
@@ -292,8 +290,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		CursorMan.showMouse(argv[0].toSint16() != 0);
 		break;
 	case 2:
-		gfxop_set_pointer_position(s->gfx_state,
-				   Common::Point(argv[0].toUint16() + s->port->_bounds.x, argv[1].toUint16() + s->port->_bounds.y));
+		s->gui->moveCursor(argv[0].toUint16() + s->port->_bounds.x, argv[1].toUint16() + s->port->_bounds.y);
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();

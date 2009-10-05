@@ -80,7 +80,7 @@ public:
 	void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	void setNowSeen(reg_t objectReference);
 
-	void moveCursor(int16 x, int16 y);
+	void moveCursor(int16 x, int16 y, int16 scaleFactor = 1);
 
 private:
 	OSystem *_system;

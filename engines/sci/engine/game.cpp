@@ -31,6 +31,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
+#include "sci/gui/gui.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gfx/menubar.h"
@@ -210,7 +211,7 @@ int _reset_graphics_input(EngineState *s) {
 	gfxop_fill_box(s->gfx_state, gfx_rect(0, 0, 320, 200), s->ega_colors[0]); // Fill screen black
 	gfxop_update(s->gfx_state);
 
-	gfxop_set_pointer_position(s->gfx_state, Common::Point(160, 150));
+	s->gui->moveCursor(160, 150);
 
 	s->pic_is_new = 0;
 	s->pic_visible_map = GFX_MASK_NONE; // Other values only make sense for debugging

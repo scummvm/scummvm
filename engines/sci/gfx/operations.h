@@ -389,16 +389,6 @@ void gfxop_set_pointer_cursor(GfxState *state, int nr);
 void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot);
 
 /**
- * Teleports the mouse pointer to a specific position.
- *
- * Depending on the graphics driver, this operation may be without any effect
- *
- * @param[in] state	The state the pointer is in
- * @param[in] pos	The position to teleport it to
- */
-void gfxop_set_pointer_position(GfxState *state, Common::Point pos);
-
-/**
  * Limits the mouse movement to a given rectangle.
  *
  * @param[in] state	The affected state
