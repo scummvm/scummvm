@@ -67,17 +67,16 @@ reg_t kGetMenu(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 	reg_t textReference = argv[0];
-	Common::String textCommon;
-	const char *text = NULL;
+	Common::String text;
 	int16 colorPen = (argc > 1) ? argv[1].toSint16() : 0; // old code was: s->status_bar_foreground;
 	int16 colorBack = (argc > 2) ? argv[2].toSint16() : 255; // s->status_bar_background;
 
 	if (!textReference.isNull()) {
-		textCommon = s->strSplit(s->_segMan->getString(textReference).c_str(), NULL);
-		text = textCommon.c_str();
-	}
+		// Sometimes this is called without giving text, if thats the case dont process it
+		text = s->_segMan->getString(textReference);
 
-	s->gui->drawStatus(text, colorPen, colorBack);
+		s->gui->drawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
+	}
 	return s->r_acc;
 }
 
