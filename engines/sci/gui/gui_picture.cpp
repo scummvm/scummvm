@@ -321,8 +321,11 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		//warning("%X at %d", data[curPos], curPos);
 		switch (pic_op = data[curPos++]) {
 		case PIC_OP_SET_COLOR:
-			byte = data[curPos++];
-			pic_color = isEGA ? EGApalette[byte] : byte;
+			pic_color = data[curPos++];
+			if (isEGA) {
+				pic_color = EGApalette[pic_color];
+				pic_color ^= pic_color << 4;
+			}
 			break;
 		case PIC_OP_DISABLE_VISUAL:
 			pic_color = 0xFF;

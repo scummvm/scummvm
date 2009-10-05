@@ -204,8 +204,12 @@ void SciGuiScreen::dither() {
 	for (y = 0; y < _height; y++) {
 		for (x = 0; x < _width; x++) {
 			color = *screenPtr;
-			color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-			*screenPtr++ = color; *displayPtr++ = color;
+			if (color & 0xF0) {
+				color ^= color << 4;
+				color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+				*screenPtr = color; *displayPtr = color;
+			}
+			screenPtr++; displayPtr++;
 		}
 	}
 }
