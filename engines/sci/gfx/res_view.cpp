@@ -368,7 +368,7 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 // SCI1:
 // [LoopCount:WORD] [MirrorMask:WORD] [??:WORD] [PaletteOffset:WORD] [LoopOffset0:WORD] [LoopOffset1:WORD]...
 // Loop-data:
-// [CellCount:WORD] [Unknown:WORD] [CellOffset0:WORD] [CellOffset1:WORD]...
+// [CelCount:WORD] [Unknown:WORD] [CelOffset0:WORD] [CelOffset1:WORD]...
 // SCI11:
 // [HeaderSize:WORD] [LoopCount:BYTE] [Unknown:BYTE] [??:WORD] [??:WORD] [PaletteOffset:WORD]
 gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType) {
@@ -416,10 +416,10 @@ gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType) {
 			view->loops[i].cels_nr = buf[V2_CELS_NUM];
 			view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
 
-			byte* cellSeeker = resource + loopOffset;
+			byte* celSeeker = resource + loopOffset;
 			for (int j = 0; j < view->loops[i].cels_nr; j++) {
-				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, resource, cellSeeker, size, view, viewType);
-				cellSeeker += resource[V2_BYTES_PER_CEL];
+				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, resource, celSeeker, size, view, viewType);
+				celSeeker += resource[V2_BYTES_PER_CEL];
 			}
 
 			seeker += resource[V2_BYTES_PER_LOOP];

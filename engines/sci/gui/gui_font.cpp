@@ -31,7 +31,7 @@
 
 namespace Sci {
 
-SciGUIfont::SciGUIfont(ResourceManager *resMan, GUIResourceId resourceId)
+SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 	: _resourceId(resourceId) {
 	assert(resourceId != -1);
 
@@ -52,27 +52,27 @@ SciGUIfont::SciGUIfont(ResourceManager *resMan, GUIResourceId resourceId)
 	}
 }
 
-SciGUIfont::~SciGUIfont() {
+SciGuiFont::~SciGuiFont() {
 }
 
-GUIResourceId SciGUIfont::getResourceId() {
+GuiResourceId SciGuiFont::getResourceId() {
 	return _resourceId;
 }
 
-byte SciGUIfont::getHeight() {
+byte SciGuiFont::getHeight() {
 	return mFontH;
 }
-byte SciGUIfont::getCharWidth(byte chr) {
+byte SciGuiFont::getCharWidth(byte chr) {
 	return chr < mCharMax ? mChars[chr].w : 0;
 }
-byte SciGUIfont::getCharHeight(byte chr) {
+byte SciGuiFont::getCharHeight(byte chr) {
 	return chr < mCharMax ? mChars[chr].h : 0;
 }
-byte *SciGUIfont::getCharData(byte chr) {
+byte *SciGuiFont::getCharData(byte chr) {
 	return chr < mCharMax ? _resourceData + mChars[chr].offset + 2 : 0;
 }
 
-void SciGUIfont::draw(SciGUIscreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface) {
+void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface) {
 	int charWidth = MIN<int>(getCharWidth(chr), screen->_width - left);
 	int charHeight = MIN<int>(getCharHeight(chr), 200 - top);
 	byte b = 0, mask = 0xFF;

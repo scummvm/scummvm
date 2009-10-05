@@ -38,10 +38,10 @@ namespace Sci {
 #define SCI_SCREEN_MASK_ALL      SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_CONTROL
 #define SCI_SCREEN_MASK_DITHERED 128
 
-class SciGUIscreen {
+class SciGuiScreen {
 public:
-	SciGUIscreen(OSystem *system, EngineState *state);
-	~SciGUIscreen();
+	SciGuiScreen(OSystem *system, EngineState *state);
+	~SciGuiScreen();
 
 	void init(void);
 	byte *initScreen(uint16 pixelCount);
@@ -59,7 +59,7 @@ public:
 	void BitsSave(Common::Rect rect, byte mask, byte *memoryPtr);
 	void BitsRestore(byte *memoryPtr);
 
-	GUIPalette _sysPalette;
+	GuiPalette _sysPalette;
 
 	uint16 _width;
 	uint16 _height;

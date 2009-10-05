@@ -37,18 +37,18 @@
 
 namespace Sci {
 
-SciGUIgfx::SciGUIgfx(OSystem *system, EngineState *state, SciGUIscreen *screen)
+SciGuiGfx::SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen)
 	: _system(system), _s(state), _screen(screen) {
 	init();
 	initPalette();
 	initTimer();
 }
 
-SciGUIgfx::~SciGUIgfx() {
+SciGuiGfx::~SciGuiGfx() {
 	_system->getTimerManager()->removeTimerProc(&timerHandler);
 }
 
-void SciGUIgfx::init() {
+void SciGuiGfx::init() {
 	_font = NULL;
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
@@ -72,7 +72,7 @@ void SciGUIgfx::init() {
 	_sysTicks = 0;
 }
 
-void SciGUIgfx::initPalette() {
+void SciGuiGfx::initPalette() {
 	int16 i;
 	for (i = 0; i < 256; i++) {
 		_sysPalette.colors[i].used = 0;
@@ -102,28 +102,28 @@ void SciGUIgfx::initPalette() {
 	  _clrPowers[i] = i*i;
 }
 
-void SciGUIgfx::initTimer() {
+void SciGuiGfx::initTimer() {
 	_sysSpeed = 1000000 / 60;
 	Common::TimerManager *tm = _system->getTimerManager();
 	tm->removeTimerProc(&timerHandler);
 	tm->installTimerProc(&timerHandler, _sysSpeed, this);
 }
 
-void SciGUIgfx::timerHandler(void *ref) {
-	((SciGUIgfx *)ref)->_sysTicks++;
+void SciGuiGfx::timerHandler(void *ref) {
+	((SciGuiGfx *)ref)->_sysTicks++;
 }
 
-GUIPort *SciGUIgfx::mallocPort() {
-	GUIPort *newPort = (GUIPort *)malloc(sizeof(GUIPort));
+GuiPort *SciGuiGfx::mallocPort() {
+	GuiPort *newPort = (GuiPort *)malloc(sizeof(GuiPort));
 	assert(newPort);
-	memset(newPort, 0, sizeof(GUIPort));
+	memset(newPort, 0, sizeof(GuiPort));
 	return newPort;
 }
 
 #define SCI_PAL_FORMAT_CONSTANT 1
 #define SCI_PAL_FORMAT_VARIABLE 0
 
-void SciGUIgfx::SetEGApalette() {
+void SciGuiGfx::SetEGApalette() {
 	int i;
 	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
 	_sysPalette.colors[2].r  = 0x000; _sysPalette.colors[2].g  = 0x0AA; _sysPalette.colors[2].b  = 0x000;
@@ -150,14 +150,14 @@ void SciGUIgfx::SetEGApalette() {
 	SetCLUT(&_sysPalette);
 }
 
-void SciGUIgfx::CreatePaletteFromData(byte *data, GUIPalette *paletteOut) {
+void SciGuiGfx::CreatePaletteFromData(byte *data, GuiPalette *paletteOut) {
 	int palFormat = 0;
 	int palOffset = 0;
 	int palColorStart = 0;
 	int palColorCount = 0;
 	int colorNo = 0;
 
-	memset(paletteOut, 0, sizeof(GUIPalette));
+	memset(paletteOut, 0, sizeof(GuiPalette));
 	// Setup default mapping
 	for (colorNo = 0; colorNo < 256; colorNo++) {
 		paletteOut->mapping[colorNo] = colorNo;
@@ -194,9 +194,9 @@ void SciGUIgfx::CreatePaletteFromData(byte *data, GUIPalette *paletteOut) {
 	}
 }
 
-bool SciGUIgfx::SetResPalette(int16 resourceNo, int16 flag) {
+bool SciGuiGfx::SetResPalette(int16 resourceNo, int16 flag) {
 	Resource *palResource = _s->resMan->findResource(ResourceId(kResourceTypePalette, resourceNo), 0);
-	GUIPalette palette;
+	GuiPalette palette;
 
 	if (palResource) {
 		CreatePaletteFromData(palResource->data, &palette);
@@ -206,7 +206,7 @@ bool SciGUIgfx::SetResPalette(int16 resourceNo, int16 flag) {
 	return false;
 }
 
-void SciGUIgfx::SetPalette(GUIPalette *sciPal, int16 flag) {
+void SciGuiGfx::SetPalette(GuiPalette *sciPal, int16 flag) {
 	uint32 systime = _sysPalette.timestamp;
 	if (flag == 2 || sciPal->timestamp != systime) {
 		MergePalettes(sciPal, &_sysPalette, flag);
@@ -216,7 +216,7 @@ void SciGUIgfx::SetPalette(GUIPalette *sciPal, int16 flag) {
 	}
 }
 
-void SciGUIgfx::MergePalettes(GUIPalette *pFrom, GUIPalette *pTo, uint16 flag) {
+void SciGuiGfx::MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
 	uint16 res;
 	int i,j;
 	// colors 0 (black) and 255 (white) are not affected by merging
@@ -257,7 +257,7 @@ void SciGUIgfx::MergePalettes(GUIPalette *pFrom, GUIPalette *pTo, uint16 flag) {
 	pTo->timestamp = _sysTicks;
 }
 
-uint16 SciGUIgfx::MatchColor(GUIPalette*pPal, byte r, byte g, byte b) {
+uint16 SciGuiGfx::MatchColor(GuiPalette*pPal, byte r, byte g, byte b) {
 	byte found = 0xFF;
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
@@ -282,9 +282,9 @@ uint16 SciGUIgfx::MatchColor(GUIPalette*pPal, byte r, byte g, byte b) {
 	return found;
 }
 
-void SciGUIgfx::SetCLUT(GUIPalette*pal) {
+void SciGuiGfx::SetCLUT(GuiPalette*pal) {
 	if (pal != &_sysPalette)
-		memcpy(&_sysPalette,pal,sizeof(GUIPalette));
+		memcpy(&_sysPalette,pal,sizeof(GuiPalette));
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back
@@ -301,42 +301,42 @@ void SciGUIgfx::SetCLUT(GUIPalette*pal) {
 	_system->updateScreen();
 }
 
-void SciGUIgfx::GetCLUT(GUIPalette*pal) {
+void SciGuiGfx::GetCLUT(GuiPalette*pal) {
 	if (pal != &_sysPalette)
-		memcpy(pal,&_sysPalette,sizeof(GUIPalette));
+		memcpy(pal,&_sysPalette,sizeof(GuiPalette));
 }
 
-GUIPort *SciGUIgfx::SetPort(GUIPort *newPort) {
-	GUIPort *oldPort = _curPort;
+GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
+	GuiPort *oldPort = _curPort;
 	_curPort = newPort;
 	return oldPort;
 }
 
-GUIPort *SciGUIgfx::GetPort(void) {
+GuiPort *SciGuiGfx::GetPort(void) {
 	return _curPort;
 }
 
-void SciGUIgfx::SetOrigin(int16 left, int16 top) {
+void SciGuiGfx::SetOrigin(int16 left, int16 top) {
 	_curPort->left = left;
 	_curPort->top = top;
 }
 
-void SciGUIgfx::MoveTo(int16 left, int16 top) {
+void SciGuiGfx::MoveTo(int16 left, int16 top) {
 	_curPort->curTop = top;
 	_curPort->curLeft = left;
 }
 
-void SciGUIgfx::Move(int16 left, int16 top) {
+void SciGuiGfx::Move(int16 left, int16 top) {
 	_curPort->curTop += top;
 	_curPort->curLeft += left;
 }
 
-GUIResourceId SciGUIgfx::GetFontId() {
+GuiResourceId SciGuiGfx::GetFontId() {
 	return _curPort->fontId;
 }
 
-SciGUIfont *SciGUIgfx::GetFont() {
-	GUIResourceId fontId = _curPort->fontId;
+SciGuiFont *SciGuiGfx::GetFont() {
+	GuiResourceId fontId = _curPort->fontId;
 
 	// Workaround: lsl1sci mixes its own internal fonts with the global
 	// SCI ones, so we translate them here, by removing their extra bits
@@ -344,13 +344,13 @@ SciGUIfont *SciGUIgfx::GetFont() {
 		fontId &= 0x7ff;
 
 	if ((_font == NULL) || (_font->getResourceId() != _curPort->fontId))
-		_font = new SciGUIfont(_s->resMan, fontId);
+		_font = new SciGuiFont(_s->resMan, fontId);
 
 	return _font;
 }
 
-void SciGUIgfx::SetFont(GUIResourceId fontId) {
-	GUIResourceId actualFontId = fontId;
+void SciGuiGfx::SetFont(GuiResourceId fontId) {
+	GuiResourceId actualFontId = fontId;
 
 	// Workaround: lsl1sci mixes its own internal fonts with the global
 	// SCI ones, so we translate them here, by removing their extra bits
@@ -358,17 +358,17 @@ void SciGUIgfx::SetFont(GUIResourceId fontId) {
 		actualFontId &= 0x7ff;
 
 	if ((_font == NULL) || (_font->getResourceId() != fontId))
-		_font = new SciGUIfont(_s->resMan, actualFontId);
+		_font = new SciGuiFont(_s->resMan, actualFontId);
 
 	_curPort->fontId = fontId;
 	_curPort->fontHeight = _font->getHeight();
 }
 
-void SciGUIgfx::OpenPort(GUIPort *port) {
+void SciGuiGfx::OpenPort(GuiPort *port) {
 	port->fontId = 0;
 	port->fontHeight = 8;
 
-	GUIPort *tmp = _curPort;
+	GuiPort *tmp = _curPort;
 	_curPort = port;
 	SetFont(port->fontId);
 	_curPort = tmp;
@@ -382,42 +382,42 @@ void SciGUIgfx::OpenPort(GUIPort *port) {
 	port->rect = _bounds;
 }
 
-void SciGUIgfx::PenColor(int16 color) {
+void SciGuiGfx::PenColor(int16 color) {
 	_curPort->penClr = color;
 }
 
-void SciGUIgfx::PenMode(int16 mode) {
+void SciGuiGfx::PenMode(int16 mode) {
 	_curPort->penMode = mode;
 }
 
-void SciGUIgfx::TextFace(int16 textFace) {
+void SciGuiGfx::TextFace(int16 textFace) {
 	_curPort->textFace = textFace;
 }
 
-int16 SciGUIgfx::GetPointSize(void) {
+int16 SciGuiGfx::GetPointSize(void) {
 	return _curPort->fontHeight;
 }
 
-void SciGUIgfx::ClearScreen(byte color) {
+void SciGuiGfx::ClearScreen(byte color) {
 	FillRect(_curPort->rect, SCI_SCREEN_MASK_ALL, color, 0, 0);
 }
 
-void SciGUIgfx::InvertRect(const Common::Rect &rect) {
+void SciGuiGfx::InvertRect(const Common::Rect &rect) {
 	int16 oldpenmode = _curPort->penMode;
 	_curPort->penMode = 2;
 	FillRect(rect, 1, _curPort->penClr, _curPort->backClr);
 	_curPort->penMode = oldpenmode;
 }
 //-----------------------------
-void SciGUIgfx::EraseRect(const Common::Rect &rect) {
+void SciGuiGfx::EraseRect(const Common::Rect &rect) {
 	FillRect(rect, 1, _curPort->backClr);
 }
 //-----------------------------
-void SciGUIgfx::PaintRect(const Common::Rect &rect) {
+void SciGuiGfx::PaintRect(const Common::Rect &rect) {
 	FillRect(rect, 1, _curPort->penClr);
 }
 
-void SciGUIgfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
+void SciGuiGfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
 	Common::Rect r(rect.left, rect.top, rect.right, rect.bottom);
 	r.clip(_curPort->rect);
 	if (r.isEmpty()) // nothing to fill
@@ -469,7 +469,7 @@ void SciGUIgfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen,
 	}
 }
 
-void SciGUIgfx::FrameRect(const Common::Rect &rect) {
+void SciGuiGfx::FrameRect(const Common::Rect &rect) {
 	Common::Rect r;
 	// left
 	r = rect;
@@ -489,14 +489,14 @@ void SciGUIgfx::FrameRect(const Common::Rect &rect) {
 	PaintRect(r);
 }
 
-void SciGUIgfx::OffsetRect(Common::Rect &r) {
+void SciGuiGfx::OffsetRect(Common::Rect &r) {
 	r.top += _curPort->top;
 	r.bottom += _curPort->top;
 	r.left += _curPort->left;
 	r.right += _curPort->left;
 }
 
-byte SciGUIgfx::CharHeight(int16 ch) {
+byte SciGuiGfx::CharHeight(int16 ch) {
 #if 0
 	CResFont *res = getResFont();
 	return res ? res->getCharH(ch) : 0;
@@ -504,12 +504,12 @@ byte SciGUIgfx::CharHeight(int16 ch) {
 	return 0;
 }
 //-----------------------------
-byte SciGUIgfx::CharWidth(int16 ch) {
-	SciGUIfont *font = GetFont();
+byte SciGuiGfx::CharWidth(int16 ch) {
+	SciGuiFont *font = GetFont();
 	return font ? font->getCharWidth(ch) : 0;
 }
 
-void SciGUIgfx::ClearChar(int16 chr) {
+void SciGuiGfx::ClearChar(int16 chr) {
 	if (_curPort->penMode != 1)
 		return;
 	Common::Rect rect;
@@ -520,14 +520,14 @@ void SciGUIgfx::ClearChar(int16 chr) {
 	EraseRect(rect);
 }
 
-void SciGUIgfx::DrawChar(int16 chr) {
+void SciGuiGfx::DrawChar(int16 chr) {
 	chr = chr & 0xFF;
 	ClearChar(chr);
 	StdChar(chr);
 	_curPort->curLeft += CharWidth(chr);
 }
 
-void SciGUIgfx::StdChar(int16 chr) {
+void SciGuiGfx::StdChar(int16 chr) {
 #if 0
 	CResFont*res = getResFont();
 	if (res)
@@ -537,20 +537,20 @@ void SciGUIgfx::StdChar(int16 chr) {
 #endif
 }
 
-void SciGUIgfx::SetTextFonts(int argc, reg_t *argv) {
+void SciGuiGfx::SetTextFonts(int argc, reg_t *argv) {
 	int i;
 
 	if (_textFonts) {
 		delete _textFonts;
 	}
 	_textFontsCount = argc;
-	_textFonts = new GUIResourceId[argc];
+	_textFonts = new GuiResourceId[argc];
 	for (i = 0; i < argc; i++) {
-		_textFonts[i] = (GUIResourceId)argv[i].toUint16();
+		_textFonts[i] = (GuiResourceId)argv[i].toUint16();
 	}
 }
 
-void SciGUIgfx::SetTextColors(int argc, reg_t *argv) {
+void SciGuiGfx::SetTextColors(int argc, reg_t *argv) {
 	int i;
 
 	if (_textColors) {
@@ -567,7 +567,7 @@ void SciGUIgfx::SetTextColors(int argc, reg_t *argv) {
 //  It will process the encountered code and set new font/set color
 //  We only support one-digit codes currently, don't know if multi-digit codes are possible
 //  Returns textcode character count
-int16 SciGUIgfx::TextCodeProcessing(const char *&text, GUIResourceId orgFontId, int16 orgPenColor) {
+int16 SciGuiGfx::TextCodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor) {
 	const char *textCode = text;
 	int16 textCodeSize = 0;
 	char curCode;
@@ -610,11 +610,11 @@ int16 SciGUIgfx::TextCodeProcessing(const char *&text, GUIResourceId orgFontId, 
 }
 
 // return max # of chars to fit maxwidth with full words
-int16 SciGUIgfx::GetLongest(const char *text, int16 maxWidth, GUIResourceId orgFontId) {
+int16 SciGuiGfx::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgFontId) {
 	char curChar;
 	int16 maxChars = 0, curCharCount = 0;
 	uint16 width = 0;
-	GUIResourceId oldFontId = GetFontId();
+	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _curPort->penClr;
 
 	GetFont();
@@ -652,9 +652,9 @@ int16 SciGUIgfx::GetLongest(const char *text, int16 maxWidth, GUIResourceId orgF
 	return maxChars;
 }
 
-void SciGUIgfx::TextWidth(const char *text, int16 from, int16 len, GUIResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+void SciGuiGfx::TextWidth(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
 	unsigned char curChar;
-	GUIResourceId oldFontId = GetFontId();
+	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _curPort->penClr;
 
 	textWidth = 0; textHeight = 0;
@@ -683,12 +683,12 @@ void SciGUIgfx::TextWidth(const char *text, int16 from, int16 len, GUIResourceId
 	return;
 }
 
-void SciGUIgfx::StringWidth(const char *str, GUIResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
+void SciGuiGfx::StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight) {
 	TextWidth(str, 0, (int16)strlen(str), orgFontId, textWidth, textHeight);
 }
 
-int16 SciGUIgfx::TextSize(Common::Rect &rect, const char *str, GUIResourceId fontId, int16 maxWidth) {
-	GUIResourceId oldFontId = GetFontId();
+int16 SciGuiGfx::TextSize(Common::Rect &rect, const char *str, GuiResourceId fontId, int16 maxWidth) {
+	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _curPort->penClr;
 	int16 charCount;
 	int16 maxTextWidth = 0, textWidth;
@@ -729,7 +729,7 @@ int16 SciGUIgfx::TextSize(Common::Rect &rect, const char *str, GUIResourceId fon
 }
 
 // returns maximum font height used
-void SciGUIgfx::DrawText(const char *text, int16 from, int16 len, GUIResourceId orgFontId, int16 orgPenColor) {
+void SciGuiGfx::DrawText(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
 	int16 curChar, charWidth;
 	Common::Rect rect;
 
@@ -768,7 +768,7 @@ void SciGUIgfx::DrawText(const char *text, int16 from, int16 len, GUIResourceId 
 }
 
 // returns maximum font height used
-void SciGUIgfx::ShowText(const char *text, int16 from, int16 len, GUIResourceId orgFontId, int16 orgPenColor) {
+void SciGuiGfx::ShowText(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor) {
 	Common::Rect rect;
 
 	rect.top = _curPort->curTop;
@@ -780,10 +780,10 @@ void SciGUIgfx::ShowText(const char *text, int16 from, int16 len, GUIResourceId 
 }
 
 // Draws a text in rect.
-void SciGUIgfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, int16 align, GUIResourceId fontId) {
+void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, int16 align, GuiResourceId fontId) {
 	int16 textWidth, textHeight, charCount, offset;
 	int16 hline = 0;
-	GUIResourceId orgFontId = GetFontId();
+	GuiResourceId orgFontId = GetFontId();
 	int16 orgPenColor = _curPort->penClr;
 
 	if (fontId != -1)
@@ -824,7 +824,7 @@ void SciGUIgfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 }
 
 // Update (part of) screen
-void SciGUIgfx::ShowBits(const Common::Rect &r, uint16 flags) {
+void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 flags) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_curPort->rect);
 	if (rect.isEmpty()) // nothing to show
@@ -837,8 +837,8 @@ void SciGUIgfx::ShowBits(const Common::Rect &r, uint16 flags) {
 //	_system->updateScreen();
 }
 
-GUIMemoryHandle SciGUIgfx::SaveBits(const Common::Rect &rect, byte screenMask) {
-	GUIMemoryHandle memoryId;
+GuiMemoryHandle SciGuiGfx::SaveBits(const Common::Rect &rect, byte screenMask) {
+	GuiMemoryHandle memoryId;
 	byte *memoryPtr;
 	int size;
 	
@@ -858,7 +858,7 @@ GUIMemoryHandle SciGUIgfx::SaveBits(const Common::Rect &rect, byte screenMask) {
 	return memoryId;
 }
 
-void SciGUIgfx::RestoreBits(GUIMemoryHandle memoryHandle) {
+void SciGuiGfx::RestoreBits(GuiMemoryHandle memoryHandle) {
 	byte *memoryPtr = kmem(_s->_segMan, memoryHandle);;
 
 	if (memoryPtr) {
@@ -867,7 +867,7 @@ void SciGUIgfx::RestoreBits(GUIMemoryHandle memoryHandle) {
 	}
 }
 
-void SciGUIgfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
+void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 	//set_drawing_flag
 	byte flag = _screen->GetDrawingMask(color, prio, control);
 	prio &= 0xF0;
@@ -929,7 +929,7 @@ void SciGUIgfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 	//ShowBits(&_rThePort->rect,6);
 }
 
-void SciGUIgfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte color, byte prio, byte control) {
+void SciGuiGfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte color, byte prio, byte control) {
 	if (right < left)
 		SWAP(right, left);
 	for (int i = left; i <= right; i++)
@@ -937,7 +937,7 @@ void SciGUIgfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte c
 }
 
 //--------------------------------
-void SciGUIgfx::Draw_Vert(int16 top, int16 bottom, int16 left, byte flag, byte color, byte prio, byte control) {
+void SciGuiGfx::Draw_Vert(int16 top, int16 bottom, int16 left, byte flag, byte color, byte prio, byte control) {
 	if (top > bottom)
 		SWAP(top, bottom);
 	for (int i = top; i <= bottom; i++)
@@ -1058,7 +1058,7 @@ const byte pattern_TextureOffset[128] = {
 	0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1
 };
 
-void SciGUIgfx::Draw_Box(Common::Rect box, byte color, byte prio, byte control) {
+void SciGuiGfx::Draw_Box(Common::Rect box, byte color, byte prio, byte control) {
 	byte flag = _screen->GetDrawingMask(color, prio, control);
 	int y, x;
 
@@ -1069,7 +1069,7 @@ void SciGUIgfx::Draw_Box(Common::Rect box, byte color, byte prio, byte control) 
 	}
 }
 
-void SciGUIgfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
+void SciGuiGfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->GetDrawingMask(color, prio, control);
 	const bool *textureData = &pattern_Textures[pattern_TextureOffset[texture]];
 	int y, x;
@@ -1084,7 +1084,7 @@ void SciGUIgfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte c
 	}
 }
 
-void SciGUIgfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control) {
+void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->GetDrawingMask(color, prio, control);
 	byte *circle = (byte *)&pattern_Circles[size];
 	byte circleBitmap;
@@ -1102,7 +1102,7 @@ void SciGUIgfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, 
 	}
 }
 
-void SciGUIgfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
+void SciGuiGfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->GetDrawingMask(color, prio, control);
 	byte *circle = (byte *)&pattern_Circles[size];
 	byte circleBitmap;
@@ -1124,7 +1124,7 @@ void SciGUIgfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byt
 	}
 }
 
-void SciGUIgfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
+void SciGuiGfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
 	byte size = code & SCI_PATTERN_CODE_PENSIZE;
 	Common::Rect rect;
 
@@ -1153,7 +1153,7 @@ void SciGUIgfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte c
 	}
 }
 
-void SciGUIgfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) {
+void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) {
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 
@@ -1231,10 +1231,10 @@ void SciGUIgfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	}
 }
 
-void SciGUIgfx::drawPicture(GUIResourceId pictureId, uint16 style, bool addToFlag, GUIResourceId paletteId) {
-	SciGUIpicture *picture;
+void SciGuiGfx::drawPicture(GuiResourceId pictureId, uint16 style, bool addToFlag, GuiResourceId paletteId) {
+	SciGuiPicture *picture;
 
-	picture = new SciGUIpicture(_s, this, _screen, pictureId);
+	picture = new SciGuiPicture(_s, this, _screen, pictureId);
 	// do we add to a picture? if not -> clear screen
 	if (!addToFlag) {
 		ClearScreen(0);
@@ -1242,31 +1242,31 @@ void SciGUIgfx::drawPicture(GUIResourceId pictureId, uint16 style, bool addToFla
 	picture->draw(style, addToFlag, paletteId);
 }
 
-void SciGUIgfx::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
-	SciGUIview *view = new SciGUIview(_system, _s, this, _screen, viewId);
+void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
+	SciGuiView *view = new SciGuiView(_system, _s, this, _screen, viewId);
 	Common::Rect rect(0, 0);
 	Common::Rect clipRect(0, 0);
 	if (view) {
 		rect.left = leftPos;
 		rect.top = topPos;
-		rect.right = rect.left + view->getWidth(loopNo, cellNo);
-		rect.bottom = rect.top + view->getHeight(loopNo, cellNo);
+		rect.right = rect.left + view->getWidth(loopNo, celNo);
+		rect.bottom = rect.top + view->getHeight(loopNo, celNo);
 		clipRect = rect;
 		clipRect.clip(_curPort->rect);
 		if (clipRect.isEmpty()) // nothing to draw
 			return;
-		view->draw(rect, clipRect, loopNo, cellNo, priority, paletteNo);
+		view->draw(rect, clipRect, loopNo, celNo, priority, paletteNo);
 		//if (_picNotValid == 0)
 		//	_gfx->ShowBits(rect, 1);
 	}
 }
 
-void SciGUIgfx::PaletteSetIntensity(int fromColor, int toColor, int intensity, GUIPalette *destPalette) {
+void SciGuiGfx::PaletteSetIntensity(int fromColor, int toColor, int intensity, GuiPalette *destPalette) {
 	memset(destPalette->intensity + fromColor, intensity, toColor - fromColor);
 }
 
-void SciGUIgfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
-	GUIColor col;
+void SciGuiGfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
+	GuiColor col;
 	int len = toColor - fromColor - 1;
 	uint32 now = _sysTicks;
 	// search for sheduled animations with the same 'from' value
@@ -1276,11 +1276,11 @@ void SciGUIgfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
 			if (_palSchedules[i].schedule < now) {
 				if (speed > 0) {
 					col = _sysPalette.colors[fromColor];
-					memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], len * sizeof(GUIColor));
+					memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], len * sizeof(GuiColor));
 					_sysPalette.colors[toColor - 1] = col;
 				} else {
 					col = _sysPalette.colors[toColor - 1];
-					memmove(&_sysPalette.colors[fromColor+1], &_sysPalette.colors[fromColor], len * sizeof(GUIColor));
+					memmove(&_sysPalette.colors[fromColor+1], &_sysPalette.colors[fromColor], len * sizeof(GuiColor));
 					_sysPalette.colors[fromColor] = col;
 				}
 				// removing schedule
@@ -1291,13 +1291,13 @@ void SciGUIgfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
 		}
 	}
 	// adding a new schedule
-	GUIPalSchedule sched;
+	GuiPalSchedule sched;
 	sched.from = fromColor;
 	sched.schedule = now + ABS(speed);
 	_palSchedules.push_back(sched);
 }
 
-int16 SciGUIgfx::onControl(uint16 screenMask, Common::Rect rect) {
+int16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
 	Common::Rect outRect(rect.left, rect.top, rect.right, rect.bottom);
 	int16 x, y;
 	int16 result = 0;
@@ -1330,13 +1330,13 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
-void SciGUIgfx::AnimateDisposeLastCast() {
+void SciGuiGfx::AnimateDisposeLastCast() {
 	// FIXME
 	//if (!_lastCast->first.isNull())
 		//_lastCast->DeleteList();
 }
 
-void SciGUIgfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
+void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = lookup_node(_s, curAddress);
 	reg_t curObject;
@@ -1356,28 +1356,28 @@ void SciGUIgfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	}
 }
 
-void SciGUIgfx::AnimateFill() {
+void SciGuiGfx::AnimateFill() {
 }
 
-void SciGUIgfx::AnimateSort() {
+void SciGuiGfx::AnimateSort() {
 }
 
-void SciGUIgfx::AnimateUpdate() {
+void SciGuiGfx::AnimateUpdate() {
 }
 
-void SciGUIgfx::AnimateDrawCells() {
+void SciGuiGfx::AnimateDrawCels() {
 }
 
-void SciGUIgfx::AnimateRestoreAndDelete() {
+void SciGuiGfx::AnimateRestoreAndDelete() {
 }
 
-void SciGUIgfx::SetNowSeen(reg_t objectReference) {
+void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	SegManager *segMan = _s->_segMan;
-	SciGUIview *view = NULL;
-	Common::Rect cellRect(0, 0);
-	GUIResourceId viewId = (GUIResourceId)GET_SEL32V(objectReference, view);
-	GUIViewLoopNo loopNo = sign_extend_byte((GUIViewLoopNo)GET_SEL32V(objectReference, loop));
-	GUIViewCellNo cellNo = sign_extend_byte((GUIViewCellNo)GET_SEL32V(objectReference, cel));
+	SciGuiView *view = NULL;
+	Common::Rect celRect(0, 0);
+	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(objectReference, view);
+	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(objectReference, loop));
+	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(objectReference, cel));
 	int16 x = (int16)GET_SEL32V(objectReference, x);
 	int16 y = (int16)GET_SEL32V(objectReference, y);
 	int16 z = 0;
@@ -1385,16 +1385,16 @@ void SciGUIgfx::SetNowSeen(reg_t objectReference) {
 		z = (int16)GET_SEL32V(objectReference, z);
 	}
 
-	// now get cell rectangle
-	view = new SciGUIview(_system, _s, this, _screen, viewId);
-	view->getCellRect(loopNo, cellNo, x, y, z, &cellRect);
+	// now get cel rectangle
+	view = new SciGuiView(_system, _s, this, _screen, viewId);
+	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
 	// TODO: sometimes loop is negative. Check what it means
 	if (lookup_selector(_s->_segMan, objectReference, _s->_kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
-		PUT_SEL32V(objectReference, nsLeft, cellRect.left);
-		PUT_SEL32V(objectReference, nsRight, cellRect.right);
-		PUT_SEL32V(objectReference, nsTop, cellRect.top);
-		PUT_SEL32V(objectReference, nsBottom, cellRect.bottom);
+		PUT_SEL32V(objectReference, nsLeft, celRect.left);
+		PUT_SEL32V(objectReference, nsRight, celRect.right);
+		PUT_SEL32V(objectReference, nsTop, celRect.top);
+		PUT_SEL32V(objectReference, nsBottom, celRect.bottom);
 	}
 }
 

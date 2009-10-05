@@ -32,23 +32,23 @@
 
 namespace Sci {
 
-SciGUIpicture::SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId)
+SciGuiPicture::SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
 	: _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
-SciGUIpicture::~SciGUIpicture() {
+SciGuiPicture::~SciGuiPicture() {
 }
 
-void SciGUIpicture::initData(GUIResourceId resourceId) {
+void SciGuiPicture::initData(GuiResourceId resourceId) {
 	_resource = _s->resMan->findResource(ResourceId(kResourceTypePic, resourceId), false);
 	if (!_resource) {
 		error("picture resource %d not found", resourceId);
 	}
 }
 
-GUIResourceId SciGUIpicture::getResourceId() {
+GuiResourceId SciGuiPicture::getResourceId() {
 	return _resourceId;
 }
 
@@ -56,7 +56,7 @@ GUIResourceId SciGUIpicture::getResourceId() {
 #define CEL_HEADER_SIZE 7
 #define EXTRA_MAGIC_SIZE 15
 
-void SciGUIpicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
+void SciGuiPicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
 	_style = style;
 	_addToFlag = addToFlag;
 	_EGApaletteNo = EGApaletteNo;
@@ -73,7 +73,7 @@ void SciGUIpicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
 	}
 }
 
-void SciGUIpicture::reset() {
+void SciGuiPicture::reset() {
 	int16 x, y;
 	for (y = _curPort->top; y < _screen->_height; y++) {
 		for (x = 0; x < _screen->_width; x++) {
@@ -82,7 +82,7 @@ void SciGUIpicture::reset() {
 	}
 }
 
-void SciGUIpicture::draw11() {
+void SciGuiPicture::draw11() {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int has_view = READ_LE_UINT16(inbuffer + 4);
@@ -94,7 +94,7 @@ void SciGUIpicture::draw11() {
 	int view_rle_ptr = READ_LE_UINT16(inbuffer + view_data_ptr + 24);
 	int view_pixel_ptr = READ_LE_UINT16(inbuffer + view_data_ptr + 28);
 	byte *view = NULL;
-	GUIPalette palette;
+	GuiPalette palette;
 
 	// Create palette and set it
 	_gfx->CreatePaletteFromData(inbuffer + palette_data_ptr, &palette);
@@ -115,7 +115,7 @@ void SciGUIpicture::draw11() {
 	drawVectorData(inbuffer + vector_data_ptr, vector_size);
 }
 
-void SciGUIpicture::decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size) {
+void SciGuiPicture::decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size) {
 	int pos = 0;
 	byte nextbyte;
 	byte *rd = rledata;
@@ -145,7 +145,7 @@ void SciGUIpicture::decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, i
 	}
 }
 
-void SciGUIpicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
+void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 	byte* pend = pdata + size;
 	uint16 width = READ_LE_UINT16(pdata + 0);
 	uint16 height = READ_LE_UINT16(pdata + 2);
@@ -199,7 +199,7 @@ void SciGUIpicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 	}
 }
 
-void SciGUIpicture::drawCelAmiga(int16 x, int16 y, byte *pdata, int size) {
+void SciGuiPicture::drawCelAmiga(int16 x, int16 y, byte *pdata, int size) {
 	byte* pend = pdata + size;
 	uint16 width = READ_LE_UINT16(pdata + 0);
 	uint16 height = READ_LE_UINT16(pdata + 2);
@@ -291,7 +291,7 @@ static const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
 	0x08, 0x91, 0x2a, 0x3b, 0x4c, 0x5d, 0x6e, 0x88
 };
 
-void SciGUIpicture::drawVectorData(byte *data, int dataSize) {
+void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
 	byte pic_color = 0, pic_priority = 0x0F, pic_control = 0x0F;
 	int16 x = 0, y = 0, oldx, oldy;
@@ -302,7 +302,7 @@ void SciGUIpicture::drawVectorData(byte *data, int dataSize) {
 	uint16 size;
 	byte byte;
 	int i;
-	GUIPalette palette;
+	GuiPalette palette;
 	int16 pattern_Code = 0, pattern_Texture = 0;
 	bool sci1 = false;
 
@@ -510,20 +510,20 @@ void SciGUIpicture::drawVectorData(byte *data, int dataSize) {
 	error("picture vector data without terminator");
 }
 
-bool SciGUIpicture::vectorIsNonOpcode(byte byte) {
+bool SciGuiPicture::vectorIsNonOpcode(byte byte) {
 	if (byte >= PIC_OP_FIRST)
 		return false;
 	return true;
 }
 
-void SciGUIpicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y) {
+void SciGuiPicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte byte = data[curPos++];
 	x = data[curPos++] + ((byte & 0xF0) << 4);
 	y = data[curPos++] + ((byte & 0x0F) << 8);
 	if (_style & PIC_STYLE_MIRRORED) x = 319 - x;
 }
 
-void SciGUIpicture::vectorGetRelCoords(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y) {
+void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y) {
 	byte byte = data[curPos++];
 	if (byte & 0x80) {
 		x = oldx - ((byte >> 4) & 7) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
@@ -537,7 +537,7 @@ void SciGUIpicture::vectorGetRelCoords(byte *data, int &curPos, int16 oldx, int1
 	}
 }
 
-void SciGUIpicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y) {
+void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y) {
 	byte byte = data[curPos++];
 	if (byte & 0x80) {
 		y = oldy - (byte & 0x7F);
@@ -552,7 +552,7 @@ void SciGUIpicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 oldx, i
 	}
 }
 
-void SciGUIpicture::vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture) {
+void SciGuiPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture) {
 	if (pattern_Code & SCI_PATTERN_CODE_USE_TEXTURE) {
 		pattern_Texture = (data[curPos++] >> 1) & 0x7f;
 	}

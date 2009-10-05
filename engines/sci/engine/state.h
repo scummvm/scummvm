@@ -48,7 +48,7 @@ namespace Common {
 namespace Sci {
 
 class Menubar;
-class SciGUI;
+class SciGui;
 
 struct GfxState;
 struct GfxPort;
@@ -176,7 +176,7 @@ public:
 
 	/* Non-VM information */
 
-	SciGUI *gui; /* Currently active GUI */
+	SciGui *gui; /* Currently active Gui */
 
 	GfxState *gfx_state; /**< Graphics state and driver */
 	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */

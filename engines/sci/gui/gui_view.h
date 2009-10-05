@@ -28,7 +28,7 @@
 
 namespace Sci {
 
-struct sciViewCellInfo {
+struct sciViewCelInfo {
 	int16 width, height;
 	char displaceX;
 	byte displaceY;
@@ -41,42 +41,42 @@ struct sciViewCellInfo {
 
 struct sciViewLoopInfo {
 	bool mirrorFlag;
-	uint16 cellCount;
-	sciViewCellInfo *cell;
+	uint16 celCount;
+	sciViewCelInfo *cel;
 };
 
-class SciGUIview {
+class SciGuiView {
 public:
-	SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId);
-	~SciGUIview();
+	SciGuiView(OSystem *system, EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId);
+	~SciGuiView();
 
-	// TODO: Remove gfx reference after putting palette things into SciGUIscreen
+	// TODO: Remove gfx reference after putting palette things into SciGuiScreen
 
-	GUIResourceId getResourceId();
-	int16 getWidth(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
-	int16 getHeight(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
-	sciViewCellInfo *getCellInfo(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
-	sciViewLoopInfo *getLoopInfo(GUIViewLoopNo loopNo);
-	void getCellRect(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
-	byte *getBitmap(GUIViewLoopNo loopNo, GUIViewCellNo cellNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte priority, uint16 paletteNo);
+	GuiResourceId getResourceId();
+	int16 getWidth(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
+	int16 getHeight(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
+	sciViewCelInfo *getCelInfo(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
+	sciViewLoopInfo *getLoopInfo(GuiViewLoopNo loopNo);
+	void getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
+	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
+	void draw(Common::Rect rect, Common::Rect clipRect, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
 
 private:
-	void initData(GUIResourceId resourceId);
-	void unpackCel(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount);
+	void initData(GuiResourceId resourceId);
+	void unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount);
 
 	OSystem *_system;
 	EngineState *_s;
-	SciGUIgfx *_gfx;
-	SciGUIscreen *_screen;
+	SciGuiGfx *_gfx;
+	SciGuiScreen *_screen;
 
-	GUIResourceId _resourceId;
+	GuiResourceId _resourceId;
 	byte *_resourceData;
 
 	uint16 _loopCount;
 	sciViewLoopInfo *_loop;
 	bool _embeddedPal;
-	GUIPalette _palette;
+	GuiPalette _palette;
 	const byte *_EGAMapping; // simple translation map for all 16 colors
 };
 

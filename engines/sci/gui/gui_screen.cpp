@@ -33,15 +33,15 @@
 
 namespace Sci {
 
-SciGUIscreen::SciGUIscreen(OSystem *system, EngineState *state)
+SciGuiScreen::SciGuiScreen(OSystem *system, EngineState *state)
 	: _system(system), _s(state) {
 	init();
 }
 
-SciGUIscreen::~SciGUIscreen() {
+SciGuiScreen::~SciGuiScreen() {
 }
 
-void SciGUIscreen::init() {
+void SciGuiScreen::init() {
 	int i;
 	uint16 base = 0;
 
@@ -66,18 +66,18 @@ void SciGUIscreen::init() {
 	}
 }
 
-byte *SciGUIscreen::initScreen(uint16 pixelCount) {
+byte *SciGuiScreen::initScreen(uint16 pixelCount) {
 	byte *screen = (byte *)malloc(pixelCount);
 	memset(screen, 0, pixelCount);
 	return screen;
 }
 
-void SciGUIscreen::UpdateWhole() {
+void SciGuiScreen::UpdateWhole() {
 	_system->copyRectToScreen(_displayScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 	_system->updateScreen();
 }
 
-byte SciGUIscreen::GetDrawingMask(byte color, byte prio, byte control) {
+byte SciGuiScreen::GetDrawingMask(byte color, byte prio, byte control) {
 	byte flag = 0;
 	if (color != 255)
 		flag |= SCI_SCREEN_MASK_VISUAL;
@@ -88,7 +88,7 @@ byte SciGUIscreen::GetDrawingMask(byte color, byte prio, byte control) {
 	return flag;
 }
 
-void SciGUIscreen::Put_Pixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
+void SciGuiScreen::Put_Pixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
 	int offset = _baseTable[y] + x;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
@@ -105,19 +105,19 @@ void SciGUIscreen::Put_Pixel(int x, int y, byte drawMask, byte color, byte prior
 		*(_controlScreen + offset) = control;
 }
 
-byte SciGUIscreen::Get_Visual(int x, int y) {
+byte SciGuiScreen::Get_Visual(int x, int y) {
 	return _visualScreen[_baseTable[y] + x];
 }
 
-byte SciGUIscreen::Get_Priority(int x, int y) {
+byte SciGuiScreen::Get_Priority(int x, int y) {
 	return _priorityScreen[_baseTable[y] + x];
 }
 
-byte SciGUIscreen::Get_Control(int x, int y) {
+byte SciGuiScreen::Get_Control(int x, int y) {
 	return _controlScreen[_baseTable[y] + x];
 }
 
-byte SciGUIscreen::IsFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t_pri, byte t_con) {
+byte SciGuiScreen::IsFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t_pri, byte t_con) {
 	int offset = _baseTable[y] + x;
 	byte match = 0;
 
@@ -130,7 +130,7 @@ byte SciGUIscreen::IsFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t
 	return match;
 }
 
-int SciGUIscreen::BitsGetDataSize(Common::Rect rect, byte mask) {
+int SciGuiScreen::BitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
@@ -145,7 +145,7 @@ int SciGUIscreen::BitsGetDataSize(Common::Rect rect, byte mask) {
 	return byteCount;
 }
 
-void SciGUIscreen::BitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
+void SciGuiScreen::BitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&rect, sizeof(rect)); memoryPtr += sizeof(rect);
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
@@ -161,7 +161,7 @@ void SciGUIscreen::BitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	}
 }
 
-void SciGUIscreen::BitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
+void SciGuiScreen::BitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
 	int width = rect.width();
 	int y;
 
@@ -173,7 +173,7 @@ void SciGUIscreen::BitsSaveScreen(Common::Rect rect, byte *screen, byte *&memory
 	}
 }
 
-void SciGUIscreen::BitsRestore(byte *memoryPtr) {
+void SciGuiScreen::BitsRestore(byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
 
@@ -192,7 +192,7 @@ void SciGUIscreen::BitsRestore(byte *memoryPtr) {
 	}
 }
 
-void SciGUIscreen::BitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
+void SciGuiScreen::BitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
 	int width = rect.width();
 	int y;
 

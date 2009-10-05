@@ -33,16 +33,16 @@ namespace Sci {
 
 #define PIC_STYLE_MIRRORED 0x4000
 
-class SciGUIpicture {
+class SciGuiPicture {
 public:
-	SciGUIpicture(EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId);
-	~SciGUIpicture();
+	SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId);
+	~SciGuiPicture();
 
-	GUIResourceId getResourceId();
+	GuiResourceId getResourceId();
 	void draw(uint16 style, bool addToFlag, int16 EGApaletteNo);
 
 private:
-	void initData(GUIResourceId resourceId);
+	void initData(GuiResourceId resourceId);
 	void reset();
 	void draw11();
 	void decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size);
@@ -56,13 +56,13 @@ private:
 	void vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture);
 
 	EngineState *_s;
-	SciGUIgfx *_gfx;
-	SciGUIscreen *_screen;
+	SciGuiGfx *_gfx;
+	SciGuiScreen *_screen;
 
 	int16 _resourceId;
 	Resource *_resource;
 
-	GUIPort *_curPort;
+	GuiPort *_curPort;
 	uint16 _style;
 	bool _addToFlag;
 	int16 _EGApaletteNo;

@@ -155,9 +155,9 @@ Common::Error SciEngine::run() {
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
 
-	// GUI change
-	//_gamestate->gui = new SciGUI(_system, _gamestate);    // new
-	_gamestate->gui = new SciGUI32(_system, _gamestate);  // old
+	// Gui change
+	//_gamestate->gui = new SciGui(_system, _gamestate);    // new
+	_gamestate->gui = new SciGui32(_system, _gamestate);  // old
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("dither_mode", "0");

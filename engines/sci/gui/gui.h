@@ -23,22 +23,22 @@
  *
  */
 
-#ifndef SCI_GUI_GUI_H
-#define SCI_GUI_GUI_H
+#ifndef SCI_GUI_Gui_H
+#define SCI_GUI_Gui_H
 
 #include "sci/gui/gui_helpers.h"
 
 namespace Sci {
 
-class SciGUIscreen;
-class SciGUIgfx;
-class SciGUIresources;
-class SciGUIwindowMgr;
-class SciGUI {
+class SciGuiScreen;
+class SciGuiGfx;
+class SciGuiresources;
+class SciGuiWindowMgr;
+class SciGui {
 public:
-	SciGUI(OSystem *system, EngineState *s);
-	SciGUI();
-	virtual ~SciGUI();
+	SciGui(OSystem *system, EngineState *s);
+	SciGui();
+	virtual ~SciGui();
 
 	// FIXME: Don't store EngineState
 	virtual void resetEngineState(EngineState *s) { _s = s; }
@@ -61,8 +61,8 @@ public:
 	virtual void textFonts(int argc, reg_t *argv);
 	virtual void textColors(int argc, reg_t *argv);
 
-	virtual void drawPicture(GUIResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
-	virtual void drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
+	virtual void drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
+	virtual void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
 	virtual void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse);
 	virtual void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse);
 
@@ -81,7 +81,7 @@ public:
 	virtual int16 onControl(byte screenMask, Common::Rect rect);
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
-	virtual void addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
+	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 
 	virtual void moveCursor(int16 x, int16 y);
@@ -89,10 +89,10 @@ public:
 private:
 	OSystem *_system;
 	EngineState *_s;
-	SciGUIscreen *_screen;
-	SciGUIgfx *_gfx;
-	SciGUIresources *_resources;
-	SciGUIwindowMgr *_windowMgr;
+	SciGuiScreen *_screen;
+	SciGuiGfx *_gfx;
+	SciGuiresources *_resources;
+	SciGuiWindowMgr *_windowMgr;
 	bool _usesOldGfxFunctions;
 };
 

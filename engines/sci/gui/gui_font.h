@@ -30,20 +30,20 @@
 
 namespace Sci {
 
-class SciGUIfont {
+class SciGuiFont {
 public:
-	SciGUIfont(ResourceManager *resMan, GUIResourceId resourceId);
-	~SciGUIfont();
+	SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId);
+	~SciGuiFont();
 
-	GUIResourceId getResourceId();
+	GuiResourceId getResourceId();
 	byte getHeight();
 	byte getCharWidth(byte chr);
 	byte getCharHeight(byte chr);
 	byte *getCharData(byte chr);
-	void draw(SciGUIscreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface);
+	void draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface);
 
 private:
-	GUIResourceId _resourceId;
+	GuiResourceId _resourceId;
 	byte *_resourceData;
 
 	struct charinfo {

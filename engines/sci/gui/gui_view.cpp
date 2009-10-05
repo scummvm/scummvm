@@ -32,33 +32,33 @@
 
 namespace Sci {
 
-SciGUIview::SciGUIview(OSystem *system, EngineState *state, SciGUIgfx *gfx, SciGUIscreen *screen, GUIResourceId resourceId)
+SciGuiView::SciGuiView(OSystem *system, EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
 	: _system(system), _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
 
-SciGUIview::~SciGUIview() {
+SciGuiView::~SciGuiView() {
 }
 
 static const byte EGAMappingDefault[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
-void SciGUIview::initData(GUIResourceId resourceId) {
+void SciGuiView::initData(GuiResourceId resourceId) {
 	Resource *viewResource = _s->resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
 	if (!viewResource) {
 		error("view resource %d not found", resourceId);
 	}
 	_resourceData = viewResource->data;
 
-	byte *cellData, *loopData;
-	uint16 cellOffset;
-	sciViewCellInfo *cell;
-	uint16 cellCount = 0;
+	byte *celData, *loopData;
+	uint16 celOffset;
+	sciViewCelInfo *cel;
+	uint16 celCount = 0;
 	uint16 mirrorBits = 0;
 	uint16 palOffset = 0;
 	uint16 headerSize = 0;
-	uint16 loopSize = 0, cellSize = 0;
-	int loopNo, cellNo;
+	uint16 loopSize = 0, celSize = 0;
+	int loopNo, celNo;
 	byte seekEntry;
 	bool IsEGA = false;
 
@@ -89,40 +89,40 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 		_loop = new sciViewLoopInfo[_loopCount];
 		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
 			loopData = _resourceData + READ_LE_UINT16(_resourceData + 8 + loopNo * 2);
-			// CellCount:WORD Unknown:WORD CellOffset0:WORD CellOffset1:WORD...
+			// CelCount:WORD Unknown:WORD CelOffset0:WORD CelOffset1:WORD...
 
-			cellCount = READ_LE_UINT16(loopData);
-			_loop[loopNo].cellCount = cellCount;
+			celCount = READ_LE_UINT16(loopData);
+			_loop[loopNo].celCount = celCount;
 			_loop[loopNo].mirrorFlag = mirrorBits & 1 ? true : false;
 			mirrorBits >>= 1;
 
 			// read cel info
-			_loop[loopNo].cell = new sciViewCellInfo[cellCount];
-			for (cellNo = 0; cellNo < cellCount; cellNo++) {
-				cellOffset = READ_LE_UINT16(loopData + 4 + cellNo * 2);
-				cellData = _resourceData + cellOffset;
+			_loop[loopNo].cel = new sciViewCelInfo[celCount];
+			for (celNo = 0; celNo < celCount; celNo++) {
+				celOffset = READ_LE_UINT16(loopData + 4 + celNo * 2);
+				celData = _resourceData + celOffset;
 
 				// For VGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE Unknown:BYTE RLEData starts now directly
 				// For EGA
 				// Width:WORD Height:WORD DisplaceX:BYTE DisplaceY:BYTE ClearKey:BYTE EGAData starts now directly
-				cell = &_loop[loopNo].cell[cellNo];
-				cell->width = READ_LE_UINT16(cellData);
-				cell->height = READ_LE_UINT16(cellData + 2);
-				cell->displaceX = cellData[4];
-				cell->displaceY = cellData[5];
-				cell->clearKey = cellData[6];
+				cel = &_loop[loopNo].cel[celNo];
+				cel->width = READ_LE_UINT16(celData);
+				cel->height = READ_LE_UINT16(celData + 2);
+				cel->displaceX = celData[4];
+				cel->displaceY = celData[5];
+				cel->clearKey = celData[6];
 				if (IsEGA) {
-					cell->offsetEGA = cellOffset + 7;
-					cell->offsetRLE = 0;
+					cel->offsetEGA = celOffset + 7;
+					cel->offsetRLE = 0;
 				} else {
-					cell->offsetEGA = 0;
-					cell->offsetRLE = cellOffset + 8;
+					cel->offsetEGA = 0;
+					cel->offsetRLE = celOffset + 8;
 				}
-				cell->offsetLiteral = 0;
-				cell->rawBitmap = 0;
+				cel->offsetLiteral = 0;
+				cel->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
-					cell->displaceX = -cell->displaceX;
+					cel->displaceX = -cel->displaceX;
 			}
 		}
 		break;
@@ -136,7 +136,7 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 
 		loopData = _resourceData + headerSize;
 		loopSize = _resourceData[12];
-		cellSize = _resourceData[13];
+		celSize = _resourceData[13];
 
 		if (palOffset) {
 			_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
@@ -152,29 +152,29 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 				loopData = _resourceData + headerSize + (seekEntry * loopNo);
 			}
 
-			cellCount = loopData[4];
-			_loop[loopNo].cellCount = cellCount;
+			celCount = loopData[4];
+			_loop[loopNo].celCount = celCount;
 			_loop[loopNo].mirrorFlag = false;
 
-			cellData = _resourceData + READ_LE_UINT16(loopData + 14);
+			celData = _resourceData + READ_LE_UINT16(loopData + 14);
 
 			// read cel info
-			_loop[loopNo].cell = new sciViewCellInfo[cellCount];
-			for (cellNo = 0; cellNo < cellCount; cellNo++) {
-				cell = &_loop[loopNo].cell[cellNo];
-				cell->width = READ_LE_UINT16(cellData);
-				cell->height = READ_LE_UINT16(cellData + 2);
-				cell->displaceX = READ_LE_UINT16(cellData + 4);
-				cell->displaceY = READ_LE_UINT16(cellData + 6);
-				cell->clearKey = cellData[8];
-				cell->offsetEGA = 0;
-				cell->offsetRLE = READ_LE_UINT16(cellData + 24);
-				cell->offsetLiteral = READ_LE_UINT16(cellData + 28);
-				cell->rawBitmap = 0;
+			_loop[loopNo].cel = new sciViewCelInfo[celCount];
+			for (celNo = 0; celNo < celCount; celNo++) {
+				cel = &_loop[loopNo].cel[celNo];
+				cel->width = READ_LE_UINT16(celData);
+				cel->height = READ_LE_UINT16(celData + 2);
+				cel->displaceX = READ_LE_UINT16(celData + 4);
+				cel->displaceY = READ_LE_UINT16(celData + 6);
+				cel->clearKey = celData[8];
+				cel->offsetEGA = 0;
+				cel->offsetRLE = READ_LE_UINT16(celData + 24);
+				cel->offsetLiteral = READ_LE_UINT16(celData + 28);
+				cel->rawBitmap = 0;
 				if (_loop[loopNo].mirrorFlag)
-					cell->displaceX = -cell->displaceX;
+					cel->displaceX = -cel->displaceX;
 
-				cellData += cellSize;
+				celData += celSize;
 			}
 		}
 		break;
@@ -189,62 +189,62 @@ void SciGUIview::initData(GUIResourceId resourceId) {
 	}
 }
 
-GUIResourceId SciGUIview::getResourceId() {
+GuiResourceId SciGuiView::getResourceId() {
 	return _resourceId;
 }
 
-int16 SciGUIview::getWidth(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
+int16 SciGuiView::getWidth(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo >= _loop[loopNo].cellCount)
-		cellNo = 0;
-	return _loopCount ? _loop[loopNo].cell[cellNo].width : 0;
+	if (celNo >= _loop[loopNo].celCount)
+		celNo = 0;
+	return _loopCount ? _loop[loopNo].cel[celNo].width : 0;
 }
 
-int16 SciGUIview::getHeight(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
+int16 SciGuiView::getHeight(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo >= _loop[loopNo].cellCount)
-		cellNo = 0;
-	return _loopCount ? _loop[loopNo].cell[cellNo].height : 0;
+	if (celNo >= _loop[loopNo].celCount)
+		celNo = 0;
+	return _loopCount ? _loop[loopNo].cel[celNo].height : 0;
 }
 
-sciViewCellInfo *SciGUIview::getCellInfo(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
+sciViewCelInfo *SciGuiView::getCelInfo(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
-	if (cellNo >= _loop[loopNo].cellCount)
-		cellNo = 0;
-	return _loopCount ? &_loop[loopNo].cell[cellNo] : NULL;
+	if (celNo >= _loop[loopNo].celCount)
+		celNo = 0;
+	return _loopCount ? &_loop[loopNo].cel[celNo] : NULL;
 }
 
-sciViewLoopInfo *SciGUIview::getLoopInfo(GUIViewLoopNo loopNo) {
+sciViewLoopInfo *SciGuiView::getLoopInfo(GuiViewLoopNo loopNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount - 1);
 	return _loopCount ? &_loop[loopNo] : NULL;
 }
 
-void SciGUIview::getCellRect(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
-	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
-	if (cellInfo) {
-		outRect->left = x + cellInfo->displaceX - (cellInfo->width >> 1);
-		outRect->right = outRect->left + cellInfo->width;
-		outRect->bottom = y + cellInfo->displaceY - z + 1;
-		outRect->top = outRect->bottom - cellInfo->height;
+void SciGuiView::getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect) {
+	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
+	if (celInfo) {
+		outRect->left = x + celInfo->displaceX - (celInfo->width >> 1);
+		outRect->right = outRect->left + celInfo->width;
+		outRect->bottom = y + celInfo->displaceY - z + 1;
+		outRect->top = outRect->bottom - celInfo->height;
 	}
 }
 
-void SciGUIview::unpackCel(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *outPtr, uint16 pixelCount) {
-	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
+void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount) {
+	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *rlePtr;
 	byte *literalPtr;
 	uint16 pixelNo = 0, brun;
 	byte b;
 
-	if (cellInfo->offsetEGA) { // EGA data
-		literalPtr = _resourceData + _loop[loopNo].cell[cellNo].offsetEGA;
+	if (celInfo->offsetEGA) { // EGA data
+		literalPtr = _resourceData + _loop[loopNo].cel[celNo].offsetEGA;
 		// FIXME: Implement EGA "decompression"
 		return;
 	}
 
 
-	rlePtr = _resourceData + cellInfo->offsetRLE;
-	if (!cellInfo->offsetLiteral) { // no extra literal data
+	rlePtr = _resourceData + celInfo->offsetRLE;
+	if (!celInfo->offsetLiteral) { // no extra literal data
 		while (pixelNo < pixelCount) {
 			b = *rlePtr++;
 			brun = b & 0x3F; // bytes run length on this step
@@ -263,7 +263,7 @@ void SciGUIview::unpackCel(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *out
 			}
 		}
 	} else {
-		literalPtr = _resourceData + cellInfo->offsetLiteral;
+		literalPtr = _resourceData + celInfo->offsetLiteral;
 		while (pixelNo < pixelCount) {
 			b = *rlePtr++;
 			brun = b & 0x3F; // bytes run length on this step
@@ -284,25 +284,25 @@ void SciGUIview::unpackCel(GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte *out
 	}
 }
 
-byte *SciGUIview::getBitmap(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
+byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	loopNo = CLIP<int16>(loopNo, 0, _loopCount -1);
-	if (cellNo >= _loop[loopNo].cellCount)
-		cellNo = 0;
-	if (_loop[loopNo].cell[cellNo].rawBitmap)
-		return _loop[loopNo].cell[cellNo].rawBitmap;
+	if (celNo >= _loop[loopNo].celCount)
+		celNo = 0;
+	if (_loop[loopNo].cel[celNo].rawBitmap)
+		return _loop[loopNo].cel[celNo].rawBitmap;
 
-	uint16 width = _loop[loopNo].cell[cellNo].width;
-	uint16 height = _loop[loopNo].cell[cellNo].height;
+	uint16 width = _loop[loopNo].cel[celNo].width;
+	uint16 height = _loop[loopNo].cel[celNo].height;
 	// allocating memory to store cel's bitmap
 	assert(width * height <= 64000);
 	uint16 pixelCount = width * height;
-	_loop[loopNo].cell[cellNo].rawBitmap = new byte[pixelCount];
-	byte *pOut = _loop[loopNo].cell[cellNo].rawBitmap;
+	_loop[loopNo].cel[celNo].rawBitmap = new byte[pixelCount];
+	byte *pOut = _loop[loopNo].cel[celNo].rawBitmap;
 
 	// Some RLE compressed cels end with the last non-transparent pixel, thats why we fill it up here
 	//  FIXME: change this to fill the remaining bytes within unpackCel()
-	memset(pOut, _loop[loopNo].cell[cellNo].clearKey, pixelCount);
-	unpackCel(loopNo, cellNo, pOut, pixelCount);
+	memset(pOut, _loop[loopNo].cel[celNo].clearKey, pixelCount);
+	unpackCel(loopNo, celNo, pOut, pixelCount);
 
 	// mirroring the view if needed
 	if (_loop[loopNo].mirrorFlag) {
@@ -310,16 +310,16 @@ byte *SciGUIview::getBitmap(GUIViewLoopNo loopNo, GUIViewCellNo cellNo) {
 			for (int j = 0; j < width / 2; j++)
 				SWAP(pOut[j], pOut[width - j - 1]);
 	}
-	return _loop[loopNo].cell[cellNo].rawBitmap;
+	return _loop[loopNo].cel[celNo].rawBitmap;
 }
 
-void SciGUIview::draw(Common::Rect rect, Common::Rect clipRect, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, byte priority, uint16 paletteNo) {
-	GUIPalette *palette = _embeddedPal ? &_palette : &_gfx->_sysPalette;
-	sciViewCellInfo *cellInfo = getCellInfo(loopNo, cellNo);
-	byte *bitmap = getBitmap(loopNo, cellNo);
-	int16 cellHeight = cellInfo->height, cellWidth = cellInfo->width;
+void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo) {
+	GuiPalette *palette = _embeddedPal ? &_palette : &_gfx->_sysPalette;
+	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
+	byte *bitmap = getBitmap(loopNo, celNo);
+	int16 celHeight = celInfo->height, celWidth = celInfo->width;
 	int16 width, height;
-	byte clearKey = cellInfo->clearKey;
+	byte clearKey = celInfo->clearKey;
 	byte color;
 	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
 	int x, y;
@@ -328,13 +328,13 @@ void SciGUIview::draw(Common::Rect rect, Common::Rect clipRect, GUIViewLoopNo lo
 	if (_embeddedPal)
 		_gfx->SetPalette(&_palette, 1);
 
-	width = MIN(clipRect.width(), cellWidth);
-	height = MIN(clipRect.height(), cellHeight);
+	width = MIN(clipRect.width(), celWidth);
+	height = MIN(clipRect.height(), celHeight);
 
-	bitmap += (clipRect.top - rect.top) * cellWidth + (clipRect.left - rect.left);
+	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
 	_gfx->OffsetRect(clipRect);
 
-	for (y = clipRect.top; y < clipRect.top + height; y++, bitmap += cellWidth) {
+	for (y = clipRect.top; y < clipRect.top + height; y++, bitmap += celWidth) {
 		for (x = 0; x < width; x++) {
 			color = bitmap[x];
 			if (color != clearKey && priority >= _screen->Get_Priority(clipRect.left + x, y))

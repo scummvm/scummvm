@@ -31,35 +31,35 @@
 
 namespace Sci {
 
-class SciGUIwindowMgr {
+class SciGuiWindowMgr {
 public:
-	SciGUIwindowMgr(EngineState *state, SciGUIgfx *gfx);
-	~SciGUIwindowMgr();
+	SciGuiWindowMgr(EngineState *state, SciGuiGfx *gfx);
+	~SciGuiWindowMgr();
 
-	int16 isFrontWindow(GUIWindow *wnd);
-	void BeginUpdate(GUIWindow *wnd);
-	void EndUpdate(GUIWindow *wnd);
-	GUIWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
-	void DrawWindow(GUIWindow *wnd);
-	void DisposeWindow(GUIWindow *pWnd, int16 arg2);
-	void UpdateWindow(GUIWindow *wnd);
+	int16 isFrontWindow(GuiWindow *wnd);
+	void BeginUpdate(GuiWindow *wnd);
+	void EndUpdate(GuiWindow *wnd);
+	GuiWindow *NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, uint16 argA);
+	void DrawWindow(GuiWindow *wnd);
+	void DisposeWindow(GuiWindow *pWnd, int16 arg2);
+	void UpdateWindow(GuiWindow *wnd);
 
-	GUIPort *getPortById(uint16 id) const { return _windowsById[id]; }
+	GuiPort *getPortById(uint16 id) const { return _windowsById[id]; }
 
-	GUIPort *_wmgrPort;
-	GUIWindow *_picWind;
+	GuiPort *_wmgrPort;
+	GuiWindow *_picWind;
 
 private:
-	typedef Common::List<GUIPort *> PortList;
+	typedef Common::List<GuiPort *> PortList;
 
 	EngineState *_s;
-	SciGUIgfx *_gfx;
+	SciGuiGfx *_gfx;
 
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;
 
 	/** The list of all open 'windows' (and ports), ordered by their id. */
-	Common::Array<GUIPort *> _windowsById;
+	Common::Array<GuiPort *> _windowsById;
 };
 
 } // End of namespace Sci

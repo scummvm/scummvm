@@ -896,7 +896,7 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 #define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
-	GUIResourceId pictureId = argv[0].toUint16();
+	GuiResourceId pictureId = argv[0].toUint16();
 	uint16 flags = 0;
 	uint16 style = 1;
 	int16 EGApaletteNo = -1;
@@ -1550,9 +1550,9 @@ void _k_view_list_mark_free(EngineState *s, reg_t off) {
 }
 
 reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
-	GUIResourceId viewId;
-	GUIViewLoopNo loopNo;
-	GUIViewCellNo cellNo;
+	GuiResourceId viewId;
+	GuiViewLoopNo loopNo;
+	GuiViewCelNo celNo;
 	int16 leftPos, topPos, priority, control;
 
 	switch (argc) {
@@ -1564,12 +1564,12 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	case 7:
 		viewId = argv[0].toUint16();
 		loopNo = argv[1].toSint16();
-		cellNo = argv[2].toSint16();
+		celNo = argv[2].toSint16();
 		leftPos = argv[3].toSint16();
 		topPos = argv[4].toSint16();
 		priority = argv[5].toSint16();
 		control = argv[6].toSint16();
-		s->gui->addToPicView(viewId, loopNo, cellNo, leftPos, topPos, priority, control);
+		s->gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 		break;
 	default:
 		error("kAddToPic with unsupported parameter count %d", argc);		
@@ -1610,15 +1610,15 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
-	GUIResourceId viewId = argv[0].toSint16();
-	GUIViewLoopNo loopNo = argv[1].toSint16();
-	GUIViewCellNo cellNo = argv[2].toSint16();
+	GuiResourceId viewId = argv[0].toSint16();
+	GuiViewLoopNo loopNo = argv[1].toSint16();
+	GuiViewCelNo celNo = argv[2].toSint16();
 	int x = argv[3].toSint16();
 	int y = argv[4].toSint16();
 	int priority = (argc > 5) ? argv[5].toUint16()  : -1;
 	int paletteNo = (argc > 6) ? argv[6].toSint16() : 0;
 
-	s->gui->drawCell(viewId, loopNo, cellNo, x, y, priority, paletteNo);
+	s->gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
 
 	return s->r_acc;
 }

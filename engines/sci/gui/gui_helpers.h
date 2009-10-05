@@ -31,31 +31,31 @@
 
 namespace Sci {
 
-typedef int GUIResourceId; // is a resource-number and -1 means no parameter given
-typedef reg_t GUIMemoryHandle;
-typedef int16 GUIViewLoopNo;
-typedef int16 GUIViewCellNo;
+typedef int GuiResourceId; // is a resource-number and -1 means no parameter given
+typedef reg_t GuiMemoryHandle;
+typedef int16 GuiViewLoopNo;
+typedef int16 GuiViewCelNo;
 
-typedef uint16 GUIHandle;
+typedef uint16 GuiHandle;
 
-struct GUIPort {
+struct GuiPort {
 	uint16 id;
 	int16 top, left;
 	Common::Rect rect;
 	int16 curTop, curLeft;
 	int16 fontHeight;
-	GUIResourceId fontId;
+	GuiResourceId fontId;
 	int16 textFace, penClr, backClr;
 	int16 penMode;
 
-	GUIPort(uint16 theId) : id(theId), top(0), left(0),
+	GuiPort(uint16 theId) : id(theId), top(0), left(0),
 		curTop(0), curLeft(0),
 		fontHeight(0), fontId(0), textFace(0),
 		penClr(0), backClr(0xFF), penMode(0) {
 	}
 };
 
-struct GUIWindow : public GUIPort {
+struct GuiWindow : public GuiPort {
 	Common::Rect dims; // client area of window
 	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
@@ -65,36 +65,36 @@ struct GUIWindow : public GUIPort {
 	Common::String title;
 	bool bDrawn;
 
-	GUIWindow(uint16 theId) : GUIPort(theId),
+	GuiWindow(uint16 theId) : GuiPort(theId),
 		wndStyle(0), uSaveFlag(0),
 		hSaved1(NULL_REG), hSaved2(NULL_REG),
 		bDrawn(false) {
 	}
 };
 
-struct GUICast {
+struct GuiCast {
 	uint16 view;
 	uint16 loop;
 	uint16 cel;
 	uint16 z;
 	uint16 pal;
-	GUIHandle hSaved;
+	GuiHandle hSaved;
 	Common::Rect rect;
 };
 
-struct GUIColor {
+struct GuiColor {
 	byte used;
 	byte r, g, b;
 };
 
-struct GUIPalette {
+struct GuiPalette {
 	byte mapping[256];
 	uint32 timestamp;
-	GUIColor colors[256];
+	GuiColor colors[256];
 	byte intensity[256];
 };
 
-struct GUIPalSchedule {
+struct GuiPalSchedule {
 	byte from;
 	uint32 schedule;
 };

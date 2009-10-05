@@ -64,14 +64,14 @@
 
 namespace Sci {
 
-SciGUI32::SciGUI32(OSystem *system, EngineState *state)
+SciGui32::SciGui32(OSystem *system, EngineState *state)
 	: _system(system), s(state) {
 }
 
-SciGUI32::~SciGUI32() {
+SciGui32::~SciGui32() {
 }
 
-void SciGUI32::init(bool oldGfxFunctions) {
+void SciGui32::init(bool oldGfxFunctions) {
 	_usesOldGfxFunctions = oldGfxFunctions;
 	_k_animate_ran = false;
 	activated_icon_bar = false;
@@ -79,13 +79,13 @@ void SciGUI32::init(bool oldGfxFunctions) {
 	port_origin_y = 0;
 }
 
-int16 SciGUI32::getTimeTicks() {
+int16 SciGui32::getTimeTicks() {
 	uint32 start_time;
 	start_time = _system->getMillis() - s->game_start_time;
 	return start_time * 60 / 1000;
 }
 
-void SciGUI32::wait(int16 ticks) {
+void SciGui32::wait(int16 ticks) {
 	uint32 time;
 
 	time = g_system->getMillis();
@@ -101,7 +101,7 @@ void SciGUI32::wait(int16 ticks) {
 		s->speedThrottler->reset();
 }
 
-void SciGUI32::setPort(uint16 portPtr) {
+void SciGui32::setPort(uint16 portPtr) {
 	GfxPort *new_port;
 
 	/* We depart from official semantics here, sorry!
@@ -123,7 +123,7 @@ void SciGUI32::setPort(uint16 portPtr) {
 	s->port = new_port;
 }
 
-void SciGUI32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft) {
+void SciGui32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft) {
 	if (activated_icon_bar) {
 		port_origin_x = port_origin_y = 0;
 		activated_icon_bar = false;
@@ -142,7 +142,7 @@ void SciGUI32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft) {
 	// Notify the graphics resource manager that the pic port bounds changed
 	s->gfx_state->gfxResMan->changePortBounds(picLeft, picTop, rect.right + picLeft, rect.bottom + picTop);
 
-	// LSL6 calls kSetPort to extend the screen to draw the GUI. If we free all resources
+	// LSL6 calls kSetPort to extend the screen to draw the Gui. If we free all resources
 	// here, the background picture is freed too, and this makes everything a big mess.
 	// FIXME/TODO: This code really needs to be rewritten to conform to the original behavior
 	if (s->_gameName != "lsl6") {
@@ -157,21 +157,21 @@ void SciGUI32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft) {
 	}
 }
 
-reg_t SciGUI32::getPort() {
+reg_t SciGui32::getPort() {
 	return make_reg(0, s->port->_ID);
 }
 
-void SciGUI32::globalToLocal(int16 *x, int16 *y) {
+void SciGui32::globalToLocal(int16 *x, int16 *y) {
 	*x = *x - s->port->zone.x;
 	*y = *y - s->port->zone.y;
 }
 
-void SciGUI32::localToGlobal(int16 *x, int16 *y) {
+void SciGui32::localToGlobal(int16 *x, int16 *y) {
 	*x = *x + s->port->zone.x;
 	*y = *y + s->port->zone.y;
 }
 
-reg_t SciGUI32::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
+reg_t SciGui32::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	GfxPort *window;
 	int x, y, xl, yl;
 	gfx_color_t bgcolor;
@@ -241,7 +241,7 @@ reg_t SciGUI32::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 st
 	return make_reg(0, window->_ID);
 }
 
-void SciGUI32::disposeWindow(uint16 windowPtr, int16 arg2) {
+void SciGui32::disposeWindow(uint16 windowPtr, int16 arg2) {
 	GfxPort *goner;
 	GfxPort *pred;
 
@@ -288,7 +288,7 @@ void SciGUI32::disposeWindow(uint16 windowPtr, int16 arg2) {
 #define K_DISPLAY_RESTORE_UNDER 108
 #define K_DONT_UPDATE_IMMEDIATELY 121
 
-void SciGUI32::display(const char *text, int argc, reg_t *argv) {
+void SciGui32::display(const char *text, int argc, reg_t *argv) {
 	int argpt = 0;
 	int temp;
 	bool save_under = false;
@@ -470,7 +470,7 @@ void SciGUI32::display(const char *text, int argc, reg_t *argv) {
 	}
 }
 
-void SciGUI32::textSize(const char *text, int16 fontId, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
+void SciGui32::textSize(const char *text, int16 fontId, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
 	int width, height;
 	if (maxWidth < 0)
 		maxWidth = 0;
@@ -479,15 +479,15 @@ void SciGUI32::textSize(const char *text, int16 fontId, int16 maxWidth, int16 *t
 	*textWidth = width; *textHeight = height;
 }
 
-void SciGUI32::textFonts(int argc, reg_t *argv) {
+void SciGui32::textFonts(int argc, reg_t *argv) {
 	// stub
 }
 
-void SciGUI32::textColors(int argc, reg_t *argv) {
+void SciGui32::textColors(int argc, reg_t *argv) {
 	// stub
 }
 
-void SciGUI32::drawPicture(GUIResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo) {
+void SciGui32::drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo) {
 	drawn_pic_t dp;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
@@ -552,9 +552,9 @@ void SciGUI32::drawPicture(GUIResourceId pictureId, uint16 showStyle, uint16 fla
 	s->pic_is_new = 1;
 }
 
-void SciGUI32::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
+void SciGui32::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	int loop = loopNo;
-	int cel = cellNo;
+	int cel = celNo;
 	GfxView *new_view;
 
 	gfxop_check_cel(s->gfx_state, viewId, &loop, &cel);
@@ -568,7 +568,7 @@ void SciGUI32::drawCell(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellN
 	FULL_REDRAW();
 }
 
-void SciGUI32::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse) {
+void SciGui32::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, text, fontId,
@@ -576,7 +576,7 @@ void SciGUI32::drawControlButton(Common::Rect rect, reg_t obj, const char *text,
 	if (!s->pic_not_valid) FULL_REDRAW();
 }
 
-void SciGUI32::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse) {
+void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, text, fontId, (gfx_alignment_t) mode,
@@ -624,21 +624,21 @@ void _k_graph_rebuild_port_with_color(EngineState *s, gfx_color_t newbgcolor) {
 	delete port;
 }
 
-void SciGUI32::graphFillBoxForeground(Common::Rect rect) {
+void SciGui32::graphFillBoxForeground(Common::Rect rect) {
 	_k_graph_rebuild_port_with_color(s, s->port->_color);
 	//port = _s->port;
 
 	FULL_REDRAW();
 }
 
-void SciGUI32::graphFillBoxBackground(Common::Rect rect) {
+void SciGui32::graphFillBoxBackground(Common::Rect rect) {
 	_k_graph_rebuild_port_with_color(s, s->port->_bgcolor);
 	//port = _s->port;
 
 	FULL_REDRAW();
 }
 
-void SciGUI32::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
+void SciGui32::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	gfx_color_t fillColor = graph_map_color(s, color, priority, control);
 	fillColor.mask = (byte)colorMask;
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
@@ -655,7 +655,7 @@ void SciGUI32::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, in
 	s->picture_port->add((GfxContainer *)s->picture_port, gfxw_new_box(s->gfx_state, area, fillColor, fillColor, GFX_BOX_SHADE_FLAT));
 }
 
-void SciGUI32::graphDrawLine(Common::Rect rect, int16 color, int16 priority, int16 control) {
+void SciGui32::graphDrawLine(Common::Rect rect, int16 color, int16 priority, int16 control) {
 	gfx_color_t gfxcolor = graph_map_color(s, color, priority, control);
 
 	debugC(2, kDebugLevelGraphics, "draw_line((%d, %d), (%d, %d), col=%d, p=%d, c=%d, mask=%d)\n",
@@ -670,7 +670,7 @@ void SciGUI32::graphDrawLine(Common::Rect rect, int16 color, int16 priority, int
 	FULL_REDRAW();
 }
 
-reg_t SciGUI32::graphSaveBox(Common::Rect rect, uint16 flags) {
+reg_t SciGui32::graphSaveBox(Common::Rect rect, uint16 flags) {
 	rect_t area;
 	area.x = rect.left + s->port->zone.x + port_origin_x;
 	area.y = rect.top + s->port->zone.y + port_origin_y;
@@ -680,15 +680,15 @@ reg_t SciGUI32::graphSaveBox(Common::Rect rect, uint16 flags) {
 	return graph_save_box(s, area);
 }
 
-void SciGUI32::graphRestoreBox(reg_t handle) {
+void SciGui32::graphRestoreBox(reg_t handle) {
 	graph_restore_box(s, handle);
 }
 
-void SciGUI32::paletteSet(int resourceNo, int flags) {
+void SciGui32::paletteSet(int resourceNo, int flags) {
 	//warning("STUB");
 }
 
-int16 SciGUI32::paletteFind(int r, int g, int b) {
+int16 SciGui32::paletteFind(int r, int g, int b) {
 	int i, delta, bestindex = -1, bestdelta = 200000;
 
 	for (i = 0; i < s->gfx_state->gfxResMan->getColorCount(); i++) {
@@ -708,17 +708,17 @@ int16 SciGUI32::paletteFind(int r, int g, int b) {
 	return bestindex;
 }
 
-void SciGUI32::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
+void SciGui32::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
 #if 0
 	s->gfx_state->gfxResMan->setPaletteIntensity(fromColor, toColor, intensity);
 #endif
 }
 
-void SciGUI32::paletteAnimate(int fromColor, int toColor, int speed) {
+void SciGui32::paletteAnimate(int fromColor, int toColor, int speed) {
 	warning("STUB");
 }
 
-int16 SciGUI32::onControl(byte screenMask, Common::Rect rect) {
+int16 SciGui32::onControl(byte screenMask, Common::Rect rect) {
 	gfx_map_mask_t map = (gfx_map_mask_t)screenMask;
 	rect_t gfxrect = gfx_rect(rect.left, rect.top + 10, rect.width(), rect.height());
 
@@ -831,7 +831,7 @@ Common::Rect get_nsrect32(EngineState *s, reg_t object, byte clip) {
 	return retval;
 }
 
-GfxDynView *SciGUI32::_k_make_dynview_obj(reg_t obj, int options, int nr, int argc, reg_t *argv) {
+GfxDynView *SciGui32::_k_make_dynview_obj(reg_t obj, int options, int nr, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	short oldloop, oldcel;
 	int cel, loop, view_nr = (int16)GET_SEL32V(obj, view);
@@ -909,7 +909,7 @@ GfxDynView *SciGUI32::_k_make_dynview_obj(reg_t obj, int options, int nr, int ar
 	}
 }
 
-void SciGUI32::_k_make_view_list(GfxList **widget_list, List *list, int options, int argc, reg_t *argv) {
+void SciGui32::_k_make_view_list(GfxList **widget_list, List *list, int options, int argc, reg_t *argv) {
 /* Creates a view_list from a node list in heap space. Returns the list, stores the
 ** number of list entries in *list_nr. Calls doit for each entry if cycle is set.
 ** argc, argv should be the same as in the calling kernel function.
@@ -975,7 +975,7 @@ void SciGUI32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 	}
 }
 
-void SciGUI32::draw_rect_to_control_map(Common::Rect abs_zone) {
+void SciGui32::draw_rect_to_control_map(Common::Rect abs_zone) {
 	GfxBox *box;
 	gfx_color_t color;
 
@@ -991,7 +991,7 @@ void SciGUI32::draw_rect_to_control_map(Common::Rect abs_zone) {
 	ADD_TO_CURRENT_PICTURE_PORT(box);
 }
 
-void SciGUI32::draw_obj_to_control_map(GfxDynView *view) {
+void SciGui32::draw_obj_to_control_map(GfxDynView *view) {
 	reg_t obj = make_reg(view->_ID, view->_subID);
 
 	if (!s->_segMan->isObject(obj))
@@ -1004,7 +1004,7 @@ void SciGUI32::draw_obj_to_control_map(GfxDynView *view) {
 	}
 }
 
-int SciGUI32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc, reg_t *argv) {
+int SciGui32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc, reg_t *argv) {
 // disposes all list members flagged for disposal
 // returns non-zero IFF views were dropped
 	int signal;
@@ -1091,7 +1091,7 @@ int SciGUI32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 	return dropped;
 }
 
-void SciGUI32::_k_set_now_seen(reg_t object) {
+void SciGui32::_k_set_now_seen(reg_t object) {
 	SegManager *segMan = s->_segMan;
 	Common::Rect absrect = get_nsrect32(s, object, 0);
 
@@ -1105,7 +1105,7 @@ void SciGUI32::_k_set_now_seen(reg_t object) {
 	PUT_SEL32V(object, nsBottom, absrect.bottom);
 }
 
-void SciGUI32::_k_prepare_view_list(GfxList *list, int options) {
+void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
 	SegManager *segMan = s->_segMan;
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
@@ -1190,7 +1190,7 @@ void SciGUI32::_k_prepare_view_list(GfxList *list, int options) {
 	}
 }
 
-void SciGUI32::_k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list) {
+void SciGui32::_k_update_signals_in_view_list(GfxList *old_list, GfxList *new_list) {
 	// O(n^2)... a bit painful, but much faster than the redraws it helps prevent
 	GfxDynView *old_widget = (GfxDynView *)old_list->_contents;
 
@@ -1229,14 +1229,14 @@ void SciGUI32::_k_update_signals_in_view_list(GfxList *old_list, GfxList *new_li
 	}
 }
 
-void SciGUI32::_k_view_list_kryptonize(GfxWidget *v) {
+void SciGui32::_k_view_list_kryptonize(GfxWidget *v) {
 	if (v) {
 		v->_flags &= ~GFXW_FLAG_IMMUNE_TO_SNAPSHOTS;
 		_k_view_list_kryptonize(v->_next);
 	}
 }
 
-void SciGUI32::_k_raise_topmost_in_view_list(GfxList *list, GfxDynView *view) {
+void SciGui32::_k_raise_topmost_in_view_list(GfxList *list, GfxDynView *view) {
 	if (view) {
 		GfxDynView *next = (GfxDynView *)view->_next;
 
@@ -1263,7 +1263,7 @@ void SciGUI32::_k_raise_topmost_in_view_list(GfxList *list, GfxDynView *view) {
 	}
 }
 
-void SciGUI32::_k_redraw_view_list(GfxList *list) {
+void SciGui32::_k_redraw_view_list(GfxList *list) {
 	GfxDynView *view = (GfxDynView *) list->_contents;
 	while (view) {
 
@@ -1314,7 +1314,7 @@ void SciGUI32::_k_redraw_view_list(GfxList *list) {
 // Draw as picviews
 #define _K_DRAW_VIEW_LIST_PICVIEW 8
 
-void SciGUI32::_k_draw_view_list(GfxList *list, int flags) {
+void SciGui32::_k_draw_view_list(GfxList *list, int flags) {
 	// Draws list_nr members of list to s->pic.
 	GfxDynView *widget = (GfxDynView *) list->_contents;
 
@@ -1357,7 +1357,7 @@ void SciGUI32::_k_draw_view_list(GfxList *list, int flags) {
 	} // while (widget)
 }
 
-void SciGUI32::_k_view_list_do_postdraw(GfxList *list) {
+void SciGui32::_k_view_list_do_postdraw(GfxList *list) {
 	SegManager *segMan = s->_segMan;
 	GfxDynView *widget = (GfxDynView *) list->_contents;
 
@@ -1444,7 +1444,7 @@ void SciGUI32::_k_view_list_do_postdraw(GfxList *list) {
 #define GRAPH_UPDATE_BOX(s, x, y, xl, yl) gfxop_draw_pixmap(s->gfx_state, newscreen, \
 	gfx_rect(x, (((y) < 10)? 10 : (y)) - 10, xl, (((y) < 10)? ((y) - 10) : 0) + (yl)), Common::Point(x, ((y) < 10)? 10 : (y) ));
 
-void SciGUI32::animate_do_animation(int argc, reg_t *argv) {
+void SciGui32::animate_do_animation(int argc, reg_t *argv) {
 	long animation_delay = 5;
 	int i, remaining_checkers;
 	int update_counter;
@@ -1830,7 +1830,7 @@ void SciGUI32::animate_do_animation(int argc, reg_t *argv) {
 	s->old_screen = NULL;
 }
 
-void SciGUI32::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
+void SciGui32::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	// Animations are supposed to take a maximum of animation_delay milliseconds.
 	List *cast_list = NULL;
 	int open_animation = 0;
@@ -1934,7 +1934,7 @@ void SciGUI32::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	FULL_REDRAW();
 }
 
-void SciGUI32::addToPicList(reg_t listReference, int argc, reg_t *argv) {
+void SciGui32::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
 	GfxList *pic_views;
 
@@ -1963,21 +1963,21 @@ void SciGUI32::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	reparentize_primary_widget_lists(s, s->port);
 }
 
-void SciGUI32::addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewCellNo cellNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+void SciGui32::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	assert_primary_widget_lists(s);
 
 	GfxWidget *widget;
 
 	topPos++; // magic +1
 
-	widget = gfxw_new_dyn_view(s->gfx_state, Common::Point(leftPos, topPos), 0, viewId, loopNo, cellNo, 0, priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0);
+	widget = gfxw_new_dyn_view(s->gfx_state, Common::Point(leftPos, topPos), 0, viewId, loopNo, celNo, 0, priority, -1 /* No priority */ , ALIGN_CENTER, ALIGN_BOTTOM, 0);
 
 	if (!widget) {
-		error("Attempt to single-add invalid picview (%d/%d/%d)", viewId, loopNo, cellNo);
+		error("Attempt to single-add invalid picview (%d/%d/%d)", viewId, loopNo, celNo);
 	} else {
 		widget->_ID = -1;
 		if (control >= 0) {
-			Common::Rect abs_zone = nsrect_clip(s, topPos, calculate_nsrect(s, leftPos, topPos, viewId, loopNo, cellNo), priority);
+			Common::Rect abs_zone = nsrect_clip(s, topPos, calculate_nsrect(s, leftPos, topPos, viewId, loopNo, celNo), priority);
 			draw_rect_to_control_map(abs_zone);
 		}
 		ADD_TO_CURRENT_PICTURE_PORT(gfxw_picviewize_dynview((GfxDynView *) widget));
@@ -1985,12 +1985,12 @@ void SciGUI32::addToPicView(GUIResourceId viewId, GUIViewLoopNo loopNo, GUIViewC
 	return;
 }
 
-void SciGUI32::setNowSeen(reg_t objectReference) {
+void SciGui32::setNowSeen(reg_t objectReference) {
 	_k_set_now_seen(objectReference);
 }
 
 
-void SciGUI32::moveCursor(int16 x, int16 y) {
+void SciGui32::moveCursor(int16 x, int16 y) {
 	Common::Point newPos;
 
 	// newPos = s->gfx_state->pointer_pos;
