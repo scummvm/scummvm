@@ -859,8 +859,8 @@ void SciGuiGfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte c
 	Common::Rect rect;
 
 	// We need to adjust the given coordinates, because the ones given us do not define upper left but somewhat middle
-	y -= size;
-	x -= size;
+	y -= size; if (y < 0) y = 0;
+	x -= size; if (x < 0) x = 0;
 
 	rect.top = y + _curPort->top; rect.left = x + _curPort->left;
 	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
