@@ -36,7 +36,7 @@ class SciGuiresources;
 class SciGuiWindowMgr;
 class SciGui {
 public:
-	SciGui(OSystem *system, EngineState *s);
+	SciGui(OSystem *system, EngineState *s, SciGuiScreen *screen);
 	SciGui();
 	virtual ~SciGui();
 

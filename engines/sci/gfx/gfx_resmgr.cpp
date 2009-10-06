@@ -32,6 +32,7 @@
 #include "sci/sci.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
+#include "sci/gui/gui_screen.h"
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_resmgr.h"
 #include "sci/gfx/gfx_state_internal.h"

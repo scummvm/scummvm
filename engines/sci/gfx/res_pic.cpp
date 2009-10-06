@@ -1485,8 +1485,7 @@ void gfxr_draw_pic01(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 				view->index_height = CLIP<int>(view->index_height, 0, portBounds.height());
 
 				// Set up mode structure for resizing the view
-				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320,
-				           pic->visual_map->index_height / 200, view->palette);
+				gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320, view->palette);
 
 				gfx_xlate_pixmap(view, mode);
 				gfx_free_mode(mode);
@@ -1590,7 +1589,7 @@ void gfxr_draw_pic11(gfxr_pic_t *pic, int flags, int default_palette, int size, 
 		view->palette = pic->visual_map->palette->getref();
 
 		// Set up mode structure for resizing the view
-		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320, pic->visual_map->index_height / 200, view->palette);
+		gfx_mode_t *mode = gfx_new_mode(pic->visual_map->index_width / 320, view->palette);
 
 		gfx_xlate_pixmap(view, mode);
 		gfx_free_mode(mode);

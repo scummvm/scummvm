@@ -30,50 +30,23 @@
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
+#include "sci/gui/gui_screen.h"
 #include "sci/gfx/gfx_driver.h"
 #include "sci/gfx/gfx_tools.h"
 
+#include "sci/gui/gui_screen.h"
 
 namespace Sci {
 
-GfxDriver::GfxDriver(int xfact, int yfact) {
-	int i;
 
-	_mode = gfx_new_mode(xfact, yfact, new Palette(256));
-	_mode->xsize = xfact * 320;
-	_mode->ysize = yfact * 200;
-
-	for (i = 0; i < 2; i++) {
-		_priority[i] = gfx_pixmap_alloc_index_data(gfx_new_pixmap(_mode->xsize, _mode->ysize, GFX_RESID_NONE, -i, -777));
-		if (!_priority[i]) {
-			error("Out of memory: Could not allocate priority maps! (%dx%d)\n", _mode->xsize, _mode->ysize);
-		}
-	}
-	// create the visual buffers
-	for (i = 0; i < 2; i++) {
-		_visual[i] = NULL;
-		_visual[i] = new byte[_mode->xsize * _mode->ysize];
-		if (!_visual[i]) {
-			error("Out of memory: Could not allocate visual buffers! (%dx%d)\n", _mode->xsize, _mode->ysize);
-		}
-		memset(_visual[i], 0, _mode->xsize * _mode->ysize);
-	}
+GfxDriver::GfxDriver(SciGuiScreen *screen, int scaleFactor) : _screen(screen) {
+	_mode = gfx_new_mode(scaleFactor, new Palette(256));
 
 	if (_mode->palette)
 		_mode->palette->name = "global";
 }
 
 GfxDriver::~GfxDriver() {
-	int i;
-	for (i = 0; i < 2; i++) {
-		gfx_free_pixmap(_priority[i]);
-		_priority[i] = NULL;
-	}
-
-	for (i = 0; i < 2; i++) {
-		delete[] _visual[i];
-		_visual[i] = NULL;
-	}
 }
 
 
@@ -81,9 +54,16 @@ GfxDriver::~GfxDriver() {
 
 static void drawProc(int x, int y, int c, void *data) {
 	GfxDriver *drv = (GfxDriver *)data;
-	byte *p = drv->getVisual0();
+	byte *p = drv->_screen->_displayScreen;
 	uint8 col = c;
-	memcpy(p + (y * 320* drv->getMode()->scaleFactor + x), &col, 1);
+	memcpy(p + (y * drv->_screen->_width * drv->getMode()->scaleFactor + x), &col, 1);
+}
+
+static void drawProcPriority(int x, int y, int c, void *data) {
+	GfxDriver *drv = (GfxDriver *)data;
+	byte *p = drv->_screen->_priorityScreen;
+	uint8 col = c;
+	memcpy(p + (y * drv->_screen->_width + x), &col, 1);
 }
 
 void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color,
@@ -107,7 +87,7 @@ void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t col
 				Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, drawProc, this);
 
 				if (color.mask & GFX_MASK_PRIORITY) {
-					gfx_draw_line_pixmap_i(_priority[0], nstart, nend, color.priority);
+					Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, color.priority, drawProcPriority, this);
 				}
 			}
 		}
@@ -118,29 +98,31 @@ void GfxDriver::drawFilledRect(rect_t rect, gfx_color_t color1, gfx_color_t colo
 	gfx_rectangle_fill_t shade_mode) {
 	if (color1.mask & GFX_MASK_VISUAL) {
 		for (int i = rect.y; i < rect.y + rect.height; i++) {
-			memset(_visual[0] + (i * _mode->xsize + rect.x),
+			memset(_screen->_displayScreen + (i * _mode->xsize + rect.x),
 			       color1.visual.getParentIndex(), rect.width);
 		}
 	}
 
-	if (color1.mask & GFX_MASK_PRIORITY)
-		gfx_draw_box_pixmap_i(_priority[0], rect, color1.priority);
+	if (color1.mask & GFX_MASK_PRIORITY) {
+		gfx_clip_box_basic(&rect, _screen->_width - 1, _screen->_height - 1);
+		gfx_draw_box_buffer(_screen->_priorityScreen, _screen->_width, rect, color1.priority);
+	}
 }
 
 // Pixmap operations
 
 void GfxDriver::drawPixmap(gfx_pixmap_t *pxm, int priority, rect_t src, rect_t dest, gfx_buffer_t buffer) {
-	int bufnr = (buffer == GFX_BUFFER_STATIC) ? 1 : 0;
-
+	byte *destBuffer = (buffer == GFX_BUFFER_STATIC) ? _screen->_visualScreen : _screen->_displayScreen;
+	byte *destPriority = (buffer == GFX_BUFFER_STATIC) ? _screen->_controlScreen : _screen->_priorityScreen;
 	if (dest.width != src.width || dest.height != src.height) {
 		warning("Attempt to scale pixmap (%dx%d)->(%dx%d): Not supported\n", src.width, src.height, dest.width, dest.height);
 		return;
 	}
 
-	gfx_crossblit_pixmap(_mode, pxm, priority, src, dest, _visual[bufnr],
+	gfx_crossblit_pixmap(_mode, pxm, priority, src, dest, destBuffer,
 	                     _mode->xsize,
-	                     _priority[bufnr]->index_data,
-	                     _priority[bufnr]->index_width, 1, 0);
+	                     destPriority,
+	                     _screen->_width, 1, 0);
 }
 
 void GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
@@ -157,7 +139,7 @@ void GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
 		pxm->height = src.height;
 		for (int i = 0; i < src.height; i++) {
 			memcpy(pxm->data + i * src.width,
-			       _visual[0] + ((i + src.y) * _mode->xsize + src.x),
+			       _screen->_displayScreen + ((i + src.y) * _mode->xsize + src.x),
 			       src.width);
 		}
 		break;
@@ -174,28 +156,26 @@ void GfxDriver::grabPixmap(rect_t src, gfx_pixmap_t *pxm, gfx_map_mask_t map) {
 // Buffer operations
 
 void GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
-	//TODO
-
-	/*
-	if (src.x != dest.x || src.y != dest.y) {
-		printf("Updating %d (%d,%d)(%dx%d) to (%d,%d) on %d\n", buffer, src.x, src.y, src.width, src.height, dest.x, dest.y, data_dest);
-	} else {
-		printf("Updating %d (%d,%d)(%dx%d) to %d\n", buffer, src.x, src.y, src.width, src.height, data_dest);
-	}
-	*/
-
 	switch (buffer) {
 	case GFX_BUFFER_BACK:
 		for (int i = 0; i < src.height; i++) {
-			memcpy(_visual[0] + ( (dest.y + i) * _mode->xsize + dest.x),
-			       _visual[1] + ( (src.y + i) * _mode->xsize + src.x), src.width );
+			memcpy(_screen->_displayScreen + ( (dest.y + i) * _mode->xsize + dest.x),
+			       _screen->_visualScreen + ( (src.y + i) * _mode->xsize + src.x), src.width );
 		}
 
-		if ((src.x == dest.x) && (src.y == dest.y))
-			gfx_copy_pixmap_box_i(_priority[0], _priority[1], src);
+		if ((src.x == dest.x) && (src.y == dest.y)) {
+			int offset = src.x + (src.y * _screen->_width);
+
+			gfx_clip_box_basic(&src, _screen->_width, _screen->_height);
+
+			while (src.height--) {
+				memcpy(_screen->_priorityScreen + offset, _screen->_controlScreen + offset, _screen->_width);
+				offset += _screen->_width;
+			}
+		}
 		break;
 	case GFX_BUFFER_FRONT: {
-		g_system->copyRectToScreen(_visual[0] + (src.x + src.y * _mode->xsize), _mode->xsize, dest.x, dest.y, src.width, src.height);
+		g_system->copyRectToScreen(_screen->_displayScreen + (src.x + src.y * _mode->xsize), _mode->xsize, dest.x, dest.y, src.width, src.height);
 		g_system->updateScreen();
 		break;
 	}
@@ -205,8 +185,8 @@ void GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 }
 
 void GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
-	memcpy(_visual[1], pic->data, _mode->xsize * _mode->ysize);
-	gfx_copy_pixmap_box_i(_priority[1], priority, gfx_rect(0, 0, _mode->xsize, _mode->ysize));
+	memcpy(_screen->_visualScreen, pic->data, _mode->xsize * _mode->ysize);
+	memcpy(_screen->_controlScreen, priority->index_data, _mode->xsize * _mode->ysize);
 }
 
 // Mouse pointer operations

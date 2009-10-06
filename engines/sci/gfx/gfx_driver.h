@@ -29,8 +29,6 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/uinput.h"
 
-#include "graphics/pixelformat.h"
-
 namespace Sci {
 
 enum gfx_buffer_t {
@@ -85,7 +83,7 @@ public:
 	 * 						not be set, or GFX_FATAL if the graphics target
 	 * 						is unuseable.
 	 */
-	GfxDriver(int xfact, int yfact);
+	GfxDriver(SciGuiScreen *screen, int scaleFactor);
 
 	/**
 	 * Uninitializes the current graphics mode.
@@ -226,16 +224,15 @@ public:
 	/** @} */
 
 	gfx_mode_t *getMode() { return _mode; }
-	byte *getVisual0() { return _visual[0]; }
 
 	/**
 	 * Animates palette
 	 */
 	void animatePalette(int fromColor, int toColor, int stepCount);
 
+public:	// temporary hack
+	SciGuiScreen *_screen;
 private:
-	gfx_pixmap_t *_priority[2];
-	byte *_visual[2];
 	gfx_mode_t *_mode; /**< Currently active mode, NULL if no mode is active */
 };
 

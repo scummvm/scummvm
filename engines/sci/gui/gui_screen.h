@@ -26,7 +26,8 @@
 #ifndef SCI_GUI_SCREEN_H
 #define SCI_GUI_SCREEN_H
 
-#include "sci/gui/gui.h"
+#include "sci/sci.h"
+#include "sci/gui/gui_helpers.h"
 
 namespace Sci {
 
@@ -40,10 +41,9 @@ namespace Sci {
 
 class SciGuiScreen {
 public:
-	SciGuiScreen(OSystem *system, EngineState *state);
+	SciGuiScreen(OSystem *system, int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
 	~SciGuiScreen();
 
-	void init(void);
 	byte *initScreen(uint16 pixelCount);
 
 	void copyToScreen();
@@ -75,11 +75,11 @@ private:
 	void saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
 
 	OSystem *_system;
-	EngineState *_s;
 
 	uint16 _baseTable[SCI_SCREEN_MAXHEIGHT];
 	uint16 _baseDisplayTable[SCI_SCREEN_MAXHEIGHT];
 
+public:	// HACK. TODO: make private
 	// these screens have the real resolution of the game engine (320x200 for SCI0/SCI1/SCI11 games, 640x480 for SCI2 games)
 	//  SCI0 games will be dithered in here at any time
 	byte *_visualScreen;

@@ -136,15 +136,14 @@ struct GfxState {
  * Initializes a graphics mode.
  *
  * @param[in] state			The state to initialize
- * @param[in] xfact			Horizontal scale factor
- * @param[in] yfact			Vertical scale factors
+ * @param[in] scaleFactor	Scale factor
  * @param[in] mode			Graphics mode to use
  * @param[in] options		Rendering options
  * @param[in] resMan		Resource manager to use
  */
 void gfxop_init(GfxState *state, 
 		gfx_options_t *options, ResourceManager *resMan,
-		int xfact = 1, int yfact = 1);
+		SciGuiScreen *screen, int scaleFactor = 1);
 
 /**
  * Deinitializes a currently active driver.

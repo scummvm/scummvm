@@ -38,9 +38,8 @@
 
 namespace Sci {
 
-SciGui::SciGui(OSystem *system, EngineState *state)
-	: _system(system), _s(state) {
-	_screen = new SciGuiScreen(_system, _s);
+SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen)
+	: _system(system), _s(state), _screen(screen) {
 	_gfx = new SciGuiGfx(_system, _s, _screen);
 	_windowMgr = new SciGuiWindowMgr(_s, _gfx);
 }

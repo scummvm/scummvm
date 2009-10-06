@@ -43,11 +43,12 @@ void gfx_clip_box_basic(rect_t *box, int maxx, int maxy) {
 		box->height = maxy - box->y + 1;
 }
 
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, Palette *palette) {
+gfx_mode_t *gfx_new_mode(int scaleFactor, Palette *palette) {
 	gfx_mode_t *mode = (gfx_mode_t *)malloc(sizeof(gfx_mode_t));
 
-	mode->scaleFactor = xfact;
-	mode->scaleFactor = yfact;
+	mode->scaleFactor = scaleFactor;
+	mode->xsize = scaleFactor * 320;
+	mode->ysize = scaleFactor * 200;
 	mode->palette = palette;
 
 	return mode;

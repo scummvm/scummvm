@@ -33,25 +33,17 @@
 
 namespace Sci {
 
-SciGuiScreen::SciGuiScreen(OSystem *system, EngineState *state)
-	: _system(system), _s(state) {
-	init();
-}
+SciGuiScreen::SciGuiScreen(OSystem *system, int16 width, int16 height, int16 scaleFactor) : 
+	_system(system), _width(width), _height(height) {
 
-SciGuiScreen::~SciGuiScreen() {
-}
-
-void SciGuiScreen::init() {
 	int i;
 	uint16 base = 0;
 
-	_width  = 320;
-	_height = 200;
 	_pixels = _width * _height;
 
 	// if you want to do scaling, adjust putPixel() accordingly
-	_displayWidth = 320;
-	_displayHeight = 200;
+	_displayWidth = _width * scaleFactor;
+	_displayHeight = _height * scaleFactor;
 	_displayPixels = _displayWidth * _displayHeight;
 
 	_visualScreen = initScreen(_pixels);
@@ -63,6 +55,13 @@ void SciGuiScreen::init() {
 		_baseTable[i] = base; _baseDisplayTable[i] = base;
 		base += _width;
 	}
+}
+
+SciGuiScreen::~SciGuiScreen() {
+	free(_visualScreen);
+	free(_priorityScreen);
+	free(_controlScreen);
+	free(_displayScreen);
 }
 
 byte *SciGuiScreen::initScreen(uint16 pixelCount) {

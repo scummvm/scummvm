@@ -31,6 +31,7 @@
 #define SCI_GFX_GFX_RESOURCE_H
 
 #include "sci/gfx/gfx_system.h"
+#include "sci/gui/gui_screen.h"
 #include "sci/gfx/gfx_driver.h"
 
 #include "common/rect.h"

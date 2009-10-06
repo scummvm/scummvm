@@ -29,6 +29,7 @@
 #include "graphics/pixelformat.h"
 
 #include "sci/gfx/gfx_system.h"
+#include "sci/gui/gui_screen.h"
 #include "sci/gfx/gfx_driver.h"
 
 namespace Sci {
@@ -44,7 +45,7 @@ namespace Sci {
  * @param[in] palette	Number of palette colors, 0 if we're not in palette mode
  * @return				A newly allocated gfx_mode_t structure
  */
-gfx_mode_t *gfx_new_mode(int xfact, int yfact, Palette *palette);
+gfx_mode_t *gfx_new_mode(int scaleFactor, Palette *palette);
 
 /**
  * Clips a rect_t
@@ -153,6 +154,8 @@ void gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start,
  * @param[in] color	The color to use for drawing
  */
 void gfx_draw_box_pixmap_i(gfx_pixmap_t *pxm, rect_t box, int color);
+
+void gfx_draw_box_buffer(byte *buffer, int linewidth, rect_t zone, int color);
 
 /**
  * Copies part of a pixmap to another pixmap, with clipping
