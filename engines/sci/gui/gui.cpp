@@ -45,7 +45,7 @@ SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen)
 	_picNotValid = 0;
 	_sysTicks = 0;
 
-	_palette = new SciGuiPalette(_system, _s, this, _screen);
+	_palette = new SciGuiPalette(_s, this, _screen);
 	_gfx = new SciGuiGfx(_system, _s, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_s, _gfx);
 }

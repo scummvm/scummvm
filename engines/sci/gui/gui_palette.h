@@ -33,7 +33,7 @@ namespace Sci {
 class SciGuiScreen;
 class SciGuiPalette {
 public:
-	SciGuiPalette(OSystem *system, EngineState *state, SciGui *gui, SciGuiScreen *screen);
+	SciGuiPalette(EngineState *state, SciGui *gui, SciGuiScreen *screen);
 	~SciGuiPalette();
 
 	void init();
@@ -55,7 +55,6 @@ public:
 	GuiPalette _sysPalette;
 
 private:
-	OSystem *_system;
 	EngineState *_s;
 	SciGui *_gui;
 	SciGuiScreen *_screen;

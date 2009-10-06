@@ -34,8 +34,8 @@
 
 namespace Sci {
 
-SciGuiPalette::SciGuiPalette(OSystem *system, EngineState *state, SciGui *gui, SciGuiScreen *screen)
-	: _system(system), _s(state), _gui(gui), _screen(screen) {
+SciGuiPalette::SciGuiPalette(EngineState *state, SciGui *gui, SciGuiScreen *screen)
+	: _s(state), _gui(gui), _screen(screen) {
 	init();
 }
 
