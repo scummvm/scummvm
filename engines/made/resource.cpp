@@ -499,8 +499,9 @@ void ResourceReader::loadIndex(ResourceSlots *slots) {
 	_fd->readUint32LE(); // skip index size
 	_fd->readUint32LE(); // skip unknown
 	_fd->readUint32LE(); // skip res type
-	_fd->readUint16LE(); // skip unknown count
-	uint16 count = _fd->readUint16LE();
+	uint16 count1 = _fd->readUint16LE();
+	uint16 count2 = _fd->readUint16LE();
+	uint16 count = MAX(count1, count2);
 	_fd->readUint16LE(); // skip unknown count
 	for (uint16 i = 0; i < count; i++) {
 		uint32 offs = _fd->readUint32LE();
