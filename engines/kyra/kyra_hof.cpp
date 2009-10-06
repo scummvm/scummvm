@@ -246,7 +246,7 @@ Common::Error KyraEngine_HoF::init() {
 	}
 	_screen->loadFont(_screen->FID_GOLDFONT_FNT, "GOLDFONT.FNT");
 
-	_screen->setFont(_screen->FID_8_FNT);
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : _screen->FID_8_FNT);
 
 	_screen->setAnimBlockPtr(3504);
 	_screen->setScreenDim(0);

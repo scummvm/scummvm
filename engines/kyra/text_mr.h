@@ -40,7 +40,7 @@ public:
 	char *preprocessString(const char *str);
 	int dropCRIntoString(char *str, int minOffs, int maxOffs);
 
-	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
+	void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
 
 	void restoreScreen();
 

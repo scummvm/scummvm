@@ -143,13 +143,19 @@ void GUI::initMenu(Menu &menu) {
 				else
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 			} else {
+				Screen::FontId of = _screen->_currentFont;
+				if (_vm->_flags.gameID != GI_LOL && menu.item[i].saveSlot > 0)
+					_screen->setFont(Screen::FID_8_FNT);
+
 				if (_vm->gameFlags().platform != Common::kPlatformAmiga)
-					printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
+					printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0, Screen::FID_8_FNT);
 
 				if (i == menu.highlightedItem)
-					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
+					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0, Screen::FID_8_FNT);
 				else
-					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0, Screen::FID_8_FNT);
+
+				_screen->setFont(of);
 			}
 		}
 	}
@@ -258,9 +264,13 @@ void GUI::redrawText(const Menu &menu) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 	} else {
+		Screen::FontId of = _screen->_currentFont;
+		if (menu.item[i].saveSlot > 0)
+			_screen->setFont(Screen::FID_8_FNT);
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+		_screen->setFont(of);
 	}
 }
 
@@ -284,9 +294,13 @@ void GUI::redrawHighlight(const Menu &menu) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
 	} else {
+		Screen::FontId of = _screen->_currentFont;
+		if (menu.item[i].saveSlot > 0)
+			_screen->setFont(Screen::FID_8_FNT);
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
+		_screen->setFont(of);
 	}
 }
 
@@ -447,7 +461,7 @@ void GUI::checkTextfieldInput() {
 }
 
 void GUI::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
-	_text->printText(str, x, y, c0, c1, c2, font);
+	_text->printText(str, x, y, c0, c1, c2/*, font*/);
 }
 
 int GUI::getMenuCenterStringX(const char *str, int x1, int x2) {
@@ -551,6 +565,9 @@ int MainMenu::handle(int dim) {
 		_screen->showMouse();
 
 	int fh = _screen->getFontHeight();
+	if (_vm->gameFlags().lang == Common::JA_JPN)
+		fh++;
+
 	int textPos = ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3;
 
 	Common::Rect menuRect(x + 16, y + 4, x + width - 16, y + 4 + fh * _static.menuTable[3]);
@@ -599,9 +616,12 @@ int MainMenu::handle(int dim) {
 void MainMenu::draw(int select) {
 	int top = _screen->_curDim->sy;
 	top += _static.menuTable[1];
+	int fh = _screen->getFontHeight();
+	if (_vm->gameFlags().lang == Common::JA_JPN)
+		fh++;
 
 	for (int i = 0; i < _static.menuTable[3]; ++i) {
-		int curY = top + i * _screen->getFontHeight();
+		int curY = top + i * fh;
 		int color = (i == select) ? _static.menuTable[6] : _static.menuTable[5];
 		printString("%s", ((_screen->_curDim->w >> 1) + _screen->_curDim->sx) << 3, curY, color, 0, 5, _static.strings[i]);
 	}
@@ -637,6 +657,9 @@ void MainMenu::printString(const char *format, int x, int y, int col1, int col2,
 
 	if (flags & 2)
 		x -= _screen->getTextWidth(string);
+
+	if (_vm->gameFlags().use16ColorMode)
+		flags &= 3;
 
 	if (flags & 4) {
 		_screen->printText(string, x - 1, y, _static.altColor, col2);

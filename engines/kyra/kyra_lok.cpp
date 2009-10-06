@@ -297,6 +297,9 @@ Common::Error KyraEngine_LoK::go() {
 	if (_res->getFileSize("6.FNT"))
 		_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
+
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
+
 	_screen->setScreenDim(0);
 
 	_abortIntroFlag = false;
@@ -419,7 +422,7 @@ void KyraEngine_LoK::startup() {
 			saveGameState(0, "New game", 0);
 		}
 	} else {
-		_screen->setFont(Screen::FID_8_FNT);
+		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 		loadGameStateCheck(_gameToLoad);
 		_gameToLoad = -1;
 	}

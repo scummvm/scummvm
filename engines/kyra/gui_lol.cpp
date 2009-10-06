@@ -104,6 +104,7 @@ void LoLEngine::gui_drawInventoryItem(int index) {
 
 void LoLEngine::gui_drawScroll() {
 	_screen->copyRegion(112, 0, 12, 0, 87, 15, 2, 2, Screen::CR_NO_P_CHECK);
+	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 	int h = 0;
 
 	for (int i = 0; i < 7; i++) {
@@ -130,10 +131,12 @@ void LoLEngine::gui_drawScroll() {
 		_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[i]].spellNameCode));
 		y += 9;
 	}
+	_screen->setFont(of);
 }
 
 void LoLEngine::gui_highlightSelectedSpell(bool mode) {
 	int y = 15;
+	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 	for (int i = 0; i < 7; i++) {
 		if (_availableSpells[i] == -1)
 			continue;
@@ -141,6 +144,7 @@ void LoLEngine::gui_highlightSelectedSpell(bool mode) {
 		_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[i]].spellNameCode));
 		y += 9;
 	}
+	_screen->setFont(of);
 }
 
 void LoLEngine::gui_displayCharInventory(int charNum) {
@@ -175,7 +179,9 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 	for (int i = 0; i < 11; i++)
 		gui_drawCharInventoryItem(i);
 
+	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 	_screen->fprintString("%s", 182, 103, _flags.use16ColorMode ? 0xbb : 172, 0, 5, getLangString(0x4033));
+	_screen->setFont(of);
 
 	static const uint16 statusFlags[] = { 0x0080, 0x0000, 0x1000, 0x0002, 0x100, 0x0001, 0x0000, 0x0000 };
 
@@ -2277,7 +2283,10 @@ int GUI_LoL::runMenu(Menu &menu) {
 	const ScreenDim *d = _screen->getScreenDim(8);
 	uint32 textCursorTimer = 0;
 	uint8 textCursorStatus = 1;
+	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 	int wW = _screen->getCharWidth('W');
+	_screen->setFont(of);
+
 	int fW = (d->w << 3) - wW;
 	int fC = 0;
 
@@ -2286,8 +2295,6 @@ int GUI_LoL::runMenu(Menu &menu) {
 	// Instead, the respevtive struct entry is used to determine whether
 	// a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
-
-	Screen::FontId of = _vm->gameFlags().use16ColorMode ? _screen->setFont(Screen::FID_SJIS_FNT) : _screen->_currentFont;
 
 	while (_displayMenu) {
 		_vm->_mouseX = _vm->_mouseY = 0;
@@ -2516,8 +2523,6 @@ int GUI_LoL::runMenu(Menu &menu) {
 		_newMenu = 0;
 	}
 
-	_screen->setFont(of);
-
 	return _menuResult;
 }
 
@@ -2629,7 +2634,7 @@ int GUI_LoL::getInput() {
 		char inputKey = _keyPressed.ascii;
 		Util::convertISOToDOS(inputKey);
 
-		if ((uint8)inputKey > 31 && (uint8)inputKey < 226) {
+		if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 128 : 226)) {
 			_saveDescription[strlen(_saveDescription) + 1] = 0;
 			_saveDescription[strlen(_saveDescription)] = inputKey;
 			inputFlag |= 0x8000;

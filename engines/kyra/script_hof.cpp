@@ -152,7 +152,7 @@ int KyraEngine_HoF::o2_meanWhileScene(EMCState *script) {
 	_screen->setScreenPalette(_screen->getPalette(2));
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0);
 	if (!scumm_stricmp(cpsfile, "_MEANWIL.CPS") && _flags.lang == Common::JA_JPN) {
-		Screen::FontId o = _screen->setFont(Screen::FID_6_FNT);
+		Screen::FontId o = _screen->setFont(Screen::FID_SJIS_FNT);
 		_screen->printText((const char *)jpSubtitle, 140, 176, 255, 132);
 		_screen->setFont(o);
 	}

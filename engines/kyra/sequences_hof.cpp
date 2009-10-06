@@ -107,7 +107,7 @@ void KyraEngine_HoF::seq_playSequences(int startSeq, int endSeq) {
 
 		if (cseq.flags & 4) {
 			int cp = _screen->setCurPage(2);
-			Screen::FontId cf =	_screen->setFont(Screen::FID_GOLDFONT_FNT);
+			Screen::FontId cf =	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 			if (cseq.stringIndex1 != -1) {
 				int sX = (320 - _screen->getTextWidth(_sequenceStrings[cseq.stringIndex1])) / 2;
 				_screen->printText(_sequenceStrings[cseq.stringIndex1], sX, 100 - _screen->getFontHeight(), 1, 0);
@@ -1987,7 +1987,6 @@ void KyraEngine_HoF::seq_processWSAs() {
 }
 
 void KyraEngine_HoF::seq_processText() {
-	Screen::FontId curFont = _screen->setFont(Screen::FID_GOLDFONT_FNT);
 	int curPage = _screen->setCurPage(2);
 	char outputStr[70];
 
@@ -2019,7 +2018,6 @@ void KyraEngine_HoF::seq_processText() {
 	}
 
 	_screen->setCurPage(curPage);
-	_screen->setFont(curFont);
 }
 
 char *KyraEngine_HoF::seq_preprocessString(const char *srcStr, int width) {
@@ -2417,6 +2415,8 @@ void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const
 	if (skipFlag() || shouldQuit() || _abortIntroFlag || _menuChoice)
 		return;
 
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+
 	memset(&_screen->getPalette(0)[0x2fa], 0x3f, 6);
 	_screen->getPalette(0)[0x2f6] = 0x3f;
 	_screen->getPalette(0)[0x2f5] = 0x20;
@@ -2451,6 +2451,8 @@ void KyraEngine_HoF::seq_printCreditsString(uint16 strIndex, int x, int y, const
 	seq_resetAllTextEntries();
 
 	_seqTextColor[0] = seqTextColor0;
+
+	_screen->setFont(of);
 }
 
 void KyraEngine_HoF::seq_playWsaSyncDialogue(uint16 strIndex, uint16 vocIndex, int textColor, int x, int y, int width, WSAMovie_v2 *wsa, int firstframe, int lastframe, int wsaXpos, int wsaYpos) {
@@ -2774,6 +2776,8 @@ void KyraEngine_HoF::seq_init() {
 
 	int numShp = -1;
 
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
+
 	if (_flags.gameID == GI_LOL)
 		return;
 
@@ -2790,14 +2794,21 @@ void KyraEngine_HoF::seq_init() {
 			addShapeToPool(_screen->getPtrToShape(_animShapeFiledata, numShp), numShp);
 		} while (getShapePtr(numShp));
 	} else {
-		MainMenu::StaticData data = {
+		MainMenu::StaticData dataEN = {
 			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },
 			{ 0xd8, 0xda, 0xd9, 0xd8 },
 			Screen::FID_8_FNT, 240
 		};
+		
+		MainMenu::StaticData dataJPN = {
+			{ _sequenceStrings[97], _sequenceStrings[96], _sequenceStrings[95], _sequenceStrings[98], 0 },
+			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xd7, 0xd6 },
+			{ 0xd8, 0xda, 0xd9, 0xd8 },
+			Screen::FID_SJIS_FNT, 240
+		};
 		_menu = new MainMenu(this);
-		_menu->init(data, MainMenu::Animation());
+		_menu->init(_flags.lang == Common::JA_JPN ? dataJPN : dataEN, MainMenu::Animation());
 	}
 }
 
@@ -2822,6 +2833,7 @@ void KyraEngine_HoF::seq_uninit() {
 
 	delete _menu;
 	_menu = 0;
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 }
 
 #pragma mark -

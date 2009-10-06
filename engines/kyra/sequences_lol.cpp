@@ -64,7 +64,7 @@ int LoLEngine::processPrologue() {
 		// Original version: (260|193) "V CD1.02 D"
 		const int width = _screen->getTextWidth(gScummVMVersion);
 		_screen->fprintString("SVM %s", 300 - width, 193, 0x67, 0x00, 0x04, gScummVMVersion);
-		_screen->setFont(Screen::FID_9_FNT);
+		_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 
 		_screen->fadePalette(_screen->getPalette(0), 0x1E);
 		_screen->updateScreen();
@@ -216,7 +216,7 @@ void LoLEngine::showIntro() {
 
 	_screen->loadFont(Screen::FID_8_FNT, "NEW8P.FNT");
 	_screen->loadFont(Screen::FID_INTRO_FNT, "INTRO.FNT");
-	_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 
 	_tim->resetFinishedFlag();
 	_tim->setLangData("LOLINTRO.DIP");
@@ -286,7 +286,7 @@ int LoLEngine::chooseCharacter() {
 
 	_chargenWSA->displayFrame(0, 2, 113, 0, 0, 0, 0);
 
-	_screen->setFont(Screen::FID_9_FNT);
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 	_screen->_curPage = 2;
 
 	if (_flags.platform == Common::kPlatformPC98) {

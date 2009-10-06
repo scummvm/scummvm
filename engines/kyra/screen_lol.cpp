@@ -162,7 +162,7 @@ void Screen_LoL::drawShadedBox(int x1, int y1, int x2, int y2, int color1, int c
 	drawClippedLine(x1, y2, x2, y2, color2);
 
 	if (_use16ColorMode && color1 > color2)
-		drawBox(x1, y1, x2, y2, 0);
+		drawBox(x1, y1, x2, y2, 0x44);
 
 	showMouse();
 }

@@ -563,7 +563,7 @@ Common::Error LoLEngine::go() {
 	// the prologue code we need to setup them manually here.
 	if (_gameToLoad != -1 && action != 3) {
 		preInit();
-		_screen->setFont(Screen::FID_9_FNT);
+		_screen->setFont(_flags.use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_9_FNT);
 	}
 
 	// We have three sound.dat files, one for the intro, one for the
@@ -738,7 +738,7 @@ int LoLEngine::mainMenu() {
 			{ 0, 0, 0, 0, 0 },
 			{ 0x01, 0x04, 0x0C, 0x04, 0x00, 0xC1, 0xE1 },
 			{ 0xCC, 0xDD, 0xDD, 0xDD },
-			Screen::FID_9_FNT, 1
+			Screen::FID_SJIS_FNT, 1
 		}
 	};
 
@@ -4434,7 +4434,9 @@ void LoLEngine::printMapText(uint16 stringId, int x, int y) {
 
 void LoLEngine::printMapExitButtonText() {
 	int cp = _screen->setCurPage(2);
+	Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 	_screen->fprintString("%s", 295, 182, _flags.use16ColorMode ? 0xbb : 172, 0, 5, getLangString(0x4033));
+	_screen->setFont(of);
 	_screen->setCurPage(cp);
 }
 

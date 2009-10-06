@@ -50,9 +50,7 @@ void TextDisplayer::setTalkCoords(uint16 y) {
 
 int TextDisplayer::getCenterStringX(const char *str, int x1, int x2) {
 	_screen->_charWidth = -2;
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 	int strWidth = _screen->getTextWidth(str);
-	_screen->setFont(curFont);
 	_screen->_charWidth = 0;
 	int w = x2 - x1 + 1;
 	return x1 + (w - strWidth) / 2;
@@ -62,7 +60,6 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 	int charsCount = 0;
 	if (*str) {
 		_screen->_charWidth = -2;
-		Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 		int i = 0;
 		while (i <= len && *str) {
 			uint c = *str++;
@@ -74,7 +71,6 @@ int TextDisplayer::getCharLength(const char *str, int len) {
 			i += _screen->getCharWidth(c);
 			++charsCount;
 		}
-		_screen->setFont(curFont);
 		_screen->_charWidth = 0;
 	}
 	return charsCount;
@@ -214,15 +210,13 @@ void TextDisplayer::printTalkTextMessage(const char *text, int x, int y, uint8 c
 	_talkMessagePrinted = true;
 }
 
-void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
+void TextDisplayer::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
 	uint8 colorMap[] = { 0, 15, 12, 12 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-	Screen::FontId curFont = _screen->setFont(font);
 	_screen->_charWidth = -2;
 	_screen->printText(str, x, y, c0, c2);
 	_screen->_charWidth = 0;
-	_screen->setFont(curFont);
 }
 
 void TextDisplayer::printCharacterText(const char *text, int8 charNum, int charX) {

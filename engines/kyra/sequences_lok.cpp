@@ -109,7 +109,7 @@ void KyraEngine_LoK::seq_intro() {
 	}
 
 	_seq->setCopyViewOffs(true);
-	_screen->setFont(Screen::FID_8_FNT);
+	_screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
 	if (_flags.platform != Common::kPlatformFMTowns && _flags.platform != Common::kPlatformPC98 && _flags.platform != Common::kPlatformAmiga)
 		snd_playTheme(0, 2);
 	_text->setTalkCoords(144);
@@ -164,6 +164,7 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->clearPage(0);
 		return;
 	}
+
 	delay(60 * _tickLength);
 
 	if (_flags.platform == Common::kPlatformAmiga) {
@@ -171,11 +172,14 @@ void KyraEngine_LoK::seq_introLogos() {
 		_screen->setScreenPalette(_screen->getPalette(0));
 	}
 
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
+	
 	if ((_seq->playSequence(_seq_KyrandiaLogo, skipFlag()) && !seq_skipSequence()) || shouldQuit()) {
 		_screen->fadeToBlack();
 		_screen->clearPage(0);
 		return;
 	}
+	_screen->setFont(of);
 	_screen->fillRect(0, 179, 319, 199, 0);
 
 	if (shouldQuit())

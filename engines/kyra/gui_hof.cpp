@@ -552,7 +552,7 @@ void KyraEngine_HoF::bookPrintText(int dstPage, const uint8 *str, int x, int y, 
 	_screen->_curPage = dstPage;
 
 	_screen->setTextColor(_bookTextColorMap, 0, 3);
-	Screen::FontId oldFont = _screen->setFont(Screen::FID_BOOKFONT_FNT);
+	Screen::FontId oldFont = _screen->setFont(_flags.lang == Common::JA_JPN ? Screen::FID_SJIS_FNT : Screen::FID_BOOKFONT_FNT);
 	_screen->_charWidth = -2;
 
 	_screen->hideMouse();

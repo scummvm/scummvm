@@ -127,7 +127,7 @@ int TextDisplayer_MR::dropCRIntoString(char *str, int minOffs, int maxOffs) {
 	return 0;
 }
 
-void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
+void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
 	if (_vm->_albumChatActive) {
 		c0 = 0xEE;
 		c1 = 0xE3;
@@ -137,11 +137,9 @@ void TextDisplayer_MR::printText(const char *str, int x, int y, uint8 c0, uint8 
 	uint8 colorMap[] = { 0, 255, 240, 240 };
 	colorMap[3] = c1;
 	_screen->setTextColor(colorMap, 0, 3);
-	Screen::FontId curFont = _screen->setFont(font);
 	_screen->_charWidth = -2;
 	_screen->printText(str, x, y, c0, c2);
 	_screen->_charWidth = 0;
-	_screen->setFont(curFont);
 }
 
 void TextDisplayer_MR::restoreScreen() {

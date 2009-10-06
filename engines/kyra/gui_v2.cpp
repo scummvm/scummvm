@@ -746,17 +746,21 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 	int curPos = strlen(buffer);
 
 	int x2 = x, y2 = y;
+	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_text->printText(buffer, x, y, c1, c2, c2);
-
+	
 	for (int i = 0; i < curPos; ++i)
 		x2 += getCharWidth(buffer[i]);
 
 	drawTextfieldBlock(x2, y2, c3);
+	_screen->setFont(of);
 
 	_keyPressed.reset();
 	_cancelNameInput = _finishNameInput = false;
 	while (running && !_vm->shouldQuit()) {
+		of = _screen->setFont(Screen::FID_8_FNT);
 		checkTextfieldInput();
+		_screen->setFont(of);
 		processHighlights(_savenameMenu);
 
 		char inputKey = _keyPressed.ascii;
@@ -779,7 +783,8 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 			drawTextfieldBlock(x2, y2, c3);
 			_screen->updateScreen();
 			_lastScreenUpdate = _vm->_system->getMillis();
-		} else if ((uint8)inputKey > 31 && (uint8)inputKey < 226 && curPos < bufferSize) {
+		} else if ((uint8)inputKey > 31 && (uint8)inputKey < (_vm->gameFlags().lang == Common::JA_JPN ? 176 : 226) && curPos < bufferSize) {
+			of = _screen->setFont(Screen::FID_8_FNT);
 			if (x2 + getCharWidth(inputKey) + 7 < 0x11F) {
 				buffer[curPos] = inputKey;
 				const char text[2] = { buffer[curPos], 0 };
@@ -790,6 +795,7 @@ const char *GUI_v2::nameInputProcess(char *buffer, int x, int y, uint8 c1, uint8
 				_screen->updateScreen();
 				_lastScreenUpdate = _vm->_system->getMillis();
 			}
+			_screen->setFont(of);
 		}
 
 		_keyPressed.reset();

@@ -1134,7 +1134,8 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	if (isSJISChar(c))
-		return _fonts[FID_SJIS_FNT]->getCharWidth(c) + _charWidth;
+		// _charWidth does not apply to sjis (rom) fonts 
+		return _fonts[FID_SJIS_FNT]->getCharWidth(c);
 	else
 		return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
 }
@@ -1167,9 +1168,9 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	cmap[1] = color1;
 	setTextColor(cmap, 0, 1);
 
-	FontId oldFont = FID_NUM;
+	/*FontId oldFont = FID_NUM;
 	if (requiresSJISFont(str))
-		oldFont = setFont(FID_SJIS_FNT);
+		oldFont = setFont(FID_SJIS_FNT);*/
 
 	const uint8 charHeightFnt = getFontHeight();
 
@@ -1206,8 +1207,8 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 		}
 	}
 
-	if (oldFont != FID_NUM)
-		setFont(oldFont);
+	/*if (oldFont != FID_NUM)
+		setFont(oldFont);*/
 }
 
 bool Screen::isSJISChar(uint16 c) const {
@@ -1235,7 +1236,7 @@ bool Screen::requiresSJISFont(const char *s) const {
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (!_useSJIS)
+	if (_currentFont != FID_SJIS_FNT)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
@@ -3333,6 +3334,7 @@ SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Co
     : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color) {
 	assert(_font);
 	_font->enableOutline(!is16Color);
+	_font->toggleCharSize(is16Color);
 }
 
 void SJISFont::unload() {

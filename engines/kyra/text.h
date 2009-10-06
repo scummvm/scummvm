@@ -50,12 +50,13 @@ public:
 	virtual void calcWidestLineBounds(int &x1, int &x2, int w, int cx);
 	virtual void restoreTalkTextMessageBkgd(int srcPage, int dstPage);
 	void printTalkTextMessage(const char *text, int x, int y, uint8 color, int srcPage, int dstPage);
-	virtual void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
+	virtual void printText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2);
 	void printCharacterText(const char *text, int8 charNum, int charX);
 
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
 	bool printed() const { return _talkMessagePrinted; }
+
 protected:
 	Screen *_screen;
 	KyraEngine_v1 *_vm;
