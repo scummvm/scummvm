@@ -146,11 +146,11 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 		_loop = new sciViewLoopInfo[_loopCount];
 		for (loopNo = 0; loopNo < _loopCount; loopNo++) {
 			loopData = _resourceData + headerSize + (loopNo * loopSize);
-			
+
 			seekEntry = loopData[2];
 			if (seekEntry != 255) {
 				_loop[loopNo].mirrorFlag = true;
-				loopData = _resourceData + headerSize + (seekEntry * loopNo);
+				loopData = _resourceData + headerSize + (seekEntry * loopSize);
 			} else {
 				_loop[loopNo].mirrorFlag = false;
 			}
