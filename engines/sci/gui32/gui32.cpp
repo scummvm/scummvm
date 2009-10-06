@@ -583,27 +583,27 @@ void SciGui32::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo 
 	FULL_REDRAW();
 }
 
-void SciGui32::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse) {
+void SciGui32::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_button_control(s->port, obj, area, text, fontId,
-		(int8)(style & kControlStateFramed), (int8)inverse, (int8)(style & kControlStateDisabled)));
+		(int8)(style & kControlStateFramed), (int8)hilite, (int8)(style & kControlStateDisabled)));
 	if (!s->pic_not_valid) FULL_REDRAW();
 }
 
-void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse) {
+void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(s->port, obj, area, text, fontId, (gfx_alignment_t) mode,
-								(int8)(!!(style & kControlStateDitherFramed)), (int8)inverse));
+								(int8)(!!(style & kControlStateDitherFramed)), (int8)hilite));
 	if (!s->pic_not_valid) FULL_REDRAW();
 }
 
-void SciGui32::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo cellNo, int16 style, bool inverse) {
+void SciGui32::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo cellNo, int16 style, bool hilite) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_icon_control(s->port, obj, area, viewId, loopNo, cellNo,
-								(int8)(style & kControlStateFramed), (int8)inverse));
+								(int8)(style & kControlStateFramed), (int8)hilite));
 	if (!s->pic_not_valid) FULL_REDRAW();
 }
 

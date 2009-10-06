@@ -279,36 +279,48 @@ void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo ce
 	_screen->copyToScreen();
 }
 
-void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool inverse) {
-	rect.grow(1);
-	_gfx->EraseRect(rect);
-	_gfx->FrameRect(rect);
-	rect.grow(-2);
-	_gfx->TextFace(style & 1 ? 0 : 1);
-	_gfx->TextBox(text, 0, rect, 1, fontId);
-	_gfx->TextFace(0);
-	if (style & 8) { // selected
+void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
+	if (!hilite) {
 		rect.grow(1);
+		_gfx->EraseRect(rect);
 		_gfx->FrameRect(rect);
+		rect.grow(-2);
+		_gfx->TextFace(style & 1 ? 0 : 1);
+		_gfx->TextBox(text, 0, rect, 1, fontId);
+		_gfx->TextFace(0);
+		if (style & 8) { // selected
+			rect.grow(1);
+			_gfx->FrameRect(rect);
+		}
+	} else {
+		_gfx->InvertRect(rect);
 	}
 	_screen->copyToScreen();
 }
 
-void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool inverse) {
-	rect.grow(1);
-	_gfx->EraseRect(rect);
-	rect.grow(-1);
-	_gfx->TextBox(text, 0, rect, mode, fontId);
-	if (style & 8) { // selected
-		_gfx->FrameRect(rect);
+void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite) {
+	if (!hilite) {
+		rect.grow(1);
+		_gfx->EraseRect(rect);
+		rect.grow(-1);
+		_gfx->TextBox(text, 0, rect, mode, fontId);
+		if (style & 8) { // selected
+			_gfx->FrameRect(rect);
+		}
+	} else {
+		_gfx->InvertRect(rect);
 	}
 	_screen->copyToScreen();
 }
 
-void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool inverse) {
-	_gfx->drawCel(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
-	if (style & 0x20) {
-		_gfx->FrameRect(rect);
+void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool hilite) {
+	if (!hilite) {
+		_gfx->drawCel(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
+		if (style & 0x20) {
+			_gfx->FrameRect(rect);
+		}
+	} else {
+		_gfx->InvertRect(rect);
 	}
 	_screen->copyToScreen();
 }

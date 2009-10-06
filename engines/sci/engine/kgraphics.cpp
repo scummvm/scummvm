@@ -1394,7 +1394,7 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
+static void _k_draw_control(EngineState *s, reg_t obj, bool hilite) {
 	SegManager *segMan = s->_segMan;
 	int x = (int16)GET_SEL32V(obj, nsLeft);
 	int y = (int16)GET_SEL32V(obj, nsTop);
@@ -1423,13 +1423,13 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
-		s->gui->drawControlButton(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, state, inverse);
+		s->gui->drawControlButton(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, state, hilite);
 		return;
 
 	case K_CONTROL_TEXT:
 		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(obj), text.c_str(), x, y, mode);
-		s->gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, inverse);
+		s->gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, hilite);
 		return;
 
 	case K_CONTROL_EDIT:
@@ -1442,12 +1442,12 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 			cursor = text.size();
 
 //		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);	FIXME: get rid of this?
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text.c_str(), font_nr, (unsigned)cursor, (int8)inverse));
+		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text.c_str(), font_nr, (unsigned)cursor, (int8)hilite));
 		break;
 
 	case K_CONTROL_ICON:
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
-		s->gui->drawControlIcon(rect, obj, view, loop, cel, state, inverse);
+		s->gui->drawControlIcon(rect, obj, view, loop, cel, state, hilite);
 		return;
 
 	case K_CONTROL_CONTROL:
@@ -1506,7 +1506,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool inverse) {
 		}
 
 		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
-		                          list_top, selection, (int8)inverse));
+		                          list_top, selection, (int8)hilite));
 		free(entries_list);
 		delete[] strings;
 	}
