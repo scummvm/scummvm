@@ -92,7 +92,7 @@ public:
 	GuiMemoryHandle SaveBits(const Common::Rect &rect, byte screenFlags);
 	void RestoreBits(GuiMemoryHandle memoryHandle);
 
-	void Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
+	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
 	void Draw_Box(Common::Rect box, byte color, byte prio, byte control);
 	void Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture);
 	void Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control);

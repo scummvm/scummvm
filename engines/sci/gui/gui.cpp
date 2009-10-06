@@ -335,7 +335,7 @@ void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int1
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
-	_gfx->Draw_Line(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
+	_gfx->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
 	_screen->copyToScreen();
 }
 
