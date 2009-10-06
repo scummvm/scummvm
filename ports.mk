@@ -18,7 +18,7 @@ install: all
 	$(INSTALL) -d "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 	$(INSTALL) -c -m 644 $(DIST_FILES_DOCS) "$(DESTDIR)$(PREFIX)/share/doc/residual/"
 	$(INSTALL) -d "$(DESTDIR)$(DATADIR)/residual/"
-#	$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/residual/"
+	#$(INSTALL) -c -m 644 $(DIST_FILES_THEMES) $(DIST_FILES_ENGINEDATA) "$(DESTDIR)$(DATADIR)/residual/"
 ifdef DYNAMIC_MODULES
 	$(INSTALL) -d "$(DESTDIR)$(LIBDIR)/residual/"
 	$(INSTALL) -c -s -m 644 $(DIST_FILES_PLUGINS) "$(DESTDIR)$(LIBDIR)/residual/"
@@ -150,7 +150,7 @@ residualico.o: $(srcdir)/icons/residual.ico
 win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
-#	cp $(DIST_FILES_THEMES) $(WIN32PATH)
+	#cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING_LGPL.txt
@@ -165,7 +165,7 @@ win32dist: $(EXECUTABLE)
 crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualWin32
 	$(STRIP) $(EXECUTABLE) -o ResidualWin32/$(EXECUTABLE)
-	cp $(DIST_FILES_THEMES) $(WIN32PATH)
+	#cp $(DIST_FILES_THEMES) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
