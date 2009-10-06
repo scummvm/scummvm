@@ -40,7 +40,6 @@ public:
 
 	void init(bool oldGfxFunctions);
 
-	int16 getTimeTicks();
 	void wait(int16 ticks);
 	void setPort(uint16 portPtr);
 	void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft);

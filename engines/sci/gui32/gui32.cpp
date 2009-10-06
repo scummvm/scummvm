@@ -79,12 +79,6 @@ void SciGui32::init(bool oldGfxFunctions) {
 	port_origin_y = 0;
 }
 
-int16 SciGui32::getTimeTicks() {
-	uint32 start_time;
-	start_time = _system->getMillis() - s->game_start_time;
-	return start_time * 60 / 1000;
-}
-
 void SciGui32::wait(int16 ticks) {
 	uint32 time;
 

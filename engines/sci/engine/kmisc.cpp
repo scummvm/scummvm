@@ -116,11 +116,11 @@ enum {
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 	tm loc_time;
-	uint32 start_time;
+	uint32 elapsedTime;
 	int retval = 0; // Avoid spurious warning
 
 	g_system->getTimeAndDate(loc_time);
-	start_time = g_system->getMillis() - s->game_start_time;
+	elapsedTime = g_system->getMillis() - s->game_start_time;
 
 	if ((s->_flags & GF_SCI0_OLDGETTIME) && argc) { // Use old semantics
 		retval = (loc_time.tm_hour % 12) * 3600 + loc_time.tm_min * 60 + loc_time.tm_sec;
@@ -132,8 +132,7 @@ reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
 
 	switch (mode) {
 	case K_NEW_GETTIME_TICKS :
-		retval = s->gui->getTimeTicks();	// FIXME
-		//retval = start_time * 60 / 1000;
+		retval = elapsedTime * 60 / 1000;
 		debugC(2, kDebugLevelTime, "GetTime(elapsed) returns %d", retval);
 		break;
 	case K_NEW_GETTIME_TIME_12HOUR :

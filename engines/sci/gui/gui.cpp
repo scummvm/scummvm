@@ -27,6 +27,7 @@
 #include "common/util.h"
 
 #include "sci/sci.h"
+#include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/engine/state.h"
 #include "sci/tools.h"
 #include "sci/gui/gui.h"
@@ -43,7 +44,6 @@ namespace Sci {
 SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen)
 	: _system(system), _s(state), _screen(screen) {
 	_picNotValid = 0;
-	_sysTicks = 0;
 
 	_palette = new SciGuiPalette(_s, this, _screen);
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
@@ -54,30 +54,26 @@ SciGui::SciGui() {
 }
 
 SciGui::~SciGui() {
-	_system->getTimerManager()->removeTimerProc(&timerHandler);
 }
 
 void SciGui::init(bool usesOldGfxFunctions) {
-	_sysSpeed = 1000000 / 60;
-	Common::TimerManager *tm = _system->getTimerManager();
-	tm->removeTimerProc(&timerHandler);
-	tm->installTimerProc(&timerHandler, _sysSpeed, this);
 }
 
-void SciGui::timerHandler(void *ref) {
-	((SciGui *)ref)->_sysTicks++;
-}
-
-int16 SciGui::getTimeTicks() {
-	return _sysTicks;
-}
 
 void SciGui::wait(int16 ticks) {
-	uint32 waitto = _sysTicks + ticks;
-	do {
-		//eventMgr->pollEvents();
-		_system->delayMillis(_sysSpeed >> 11);
-	} while (_sysTicks < waitto);
+	uint32 time;
+
+	time = g_system->getMillis();
+	_s->r_acc = make_reg(0, ((long)time - (long)_s->last_wait_time) * 60 / 1000);
+	_s->last_wait_time = time;
+
+	ticks *= g_debug_sleeptime_factor;
+	gfxop_sleep(_s->gfx_state, ticks * 1000 / 60);
+
+
+	// Reset speed throttler: Game is playing along nicely anyway
+	if (ticks > 0)
+		_s->speedThrottler->reset();
 }
 
 void SciGui::setPort(uint16 portPtr) {

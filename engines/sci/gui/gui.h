@@ -46,7 +46,6 @@ public:
 
 	virtual void init(bool usesOldGfxFunctions);
 
-	virtual int16 getTimeTicks();
 	virtual void wait(int16 ticks);
 	virtual void setPort(uint16 portPtr);
 	virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft);
@@ -93,8 +92,6 @@ public:
 	int _picNotValid; // possible values 0, 1 and 2
 
 private:
-	static void timerHandler(void*ref);
-
 	OSystem *_system;
 	EngineState *_s;
 	SciGuiScreen *_screen;
@@ -102,8 +99,6 @@ private:
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
-	uint32 _sysTicks;
-	int32 _sysSpeed; // ticker timer in ms 
 };
 
 } // End of namespace Sci

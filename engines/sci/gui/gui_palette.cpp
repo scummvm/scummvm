@@ -229,10 +229,10 @@ void SciGuiPalette::merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
 			pTo->colors[res & 0xFF].used |= 0x10;
 		}
 	}
-	pTo->timestamp = _gui->getTimeTicks();
+	pTo->timestamp = (g_system->getMillis() - _s->game_start_time) * 60 / 1000;;
 }
 
-uint16 SciGuiPalette::matchColor(GuiPalette*pPal, byte r, byte g, byte b) {
+uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
 	byte found = 0xFF;
 	int diff = 0x2FFFF, cdiff;
 	int16 dr,dg,db;
@@ -275,7 +275,7 @@ void SciGuiPalette::setIntensity(int fromColor, int toColor, int intensity, GuiP
 void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	GuiColor col;
 	int len = toColor - fromColor - 1;
-	uint32 now = _gui->getTimeTicks();
+	uint32 now = (g_system->getMillis() - _s->game_start_time) * 60 / 1000;;
 	// search for sheduled animations with the same 'from' value
 	int sz = _palSchedules.size();
 	for (int i = 0; i < sz; i++) {
