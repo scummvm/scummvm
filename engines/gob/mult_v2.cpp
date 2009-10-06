@@ -651,7 +651,7 @@ void Mult_v2::drawAnims(bool &stop) {
 
 	for (int i = 0; i < 4; i++) {
 		int16 animKeysCount = _multData->animKeysCount[i];
-		if (_multData->animKeys[i][animKeysCount - 1].frame > _frame)
+		if ((animKeysCount > 0) && ((uint16) _multData->animKeys[i][animKeysCount - 1].frame > _frame))
 			stop = false;
 	}
 
