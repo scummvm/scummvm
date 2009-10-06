@@ -226,7 +226,7 @@ Common::Error KyraEngine_MR::init() {
 	_screen->loadFont(Screen::FID_6_FNT, "6.FNT");
 	_screen->loadFont(Screen::FID_8_FNT, "8FAT.FNT");
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setFont(Screen::FID_8_FNT);
 	_screen->setAnimBlockPtr(3500);
 	_screen->setScreenDim(0);
 
@@ -557,7 +557,7 @@ void KyraEngine_MR::startup() {
 	_interface = new uint8[17920];
 	_interfaceCommandLine = new uint8[3840];
 
-	_screen->setFont(Screen::FID_6_FNT);
+	_screen->setFont(Screen::FID_8_FNT);
 
 	_stringBuffer = new char[500];
 	musicUpdate(0);
