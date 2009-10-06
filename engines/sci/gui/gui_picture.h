@@ -47,8 +47,8 @@ private:
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte byte);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);
-	void vectorGetRelCoords(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y);
-	void vectorGetRelCoordsMed(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y);
+	void vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y);
+	void vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int16 &y);
 	void vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture);
 
 	EngineState *_s;

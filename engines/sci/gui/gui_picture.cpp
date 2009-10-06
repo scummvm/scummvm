@@ -348,27 +348,27 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			break;
 
 		case PIC_OP_SHORT_LINES: // short line
-			vectorGetAbsCoords(data, curPos, oldx, oldy);
+			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
-				vectorGetRelCoords(data, curPos, oldx, oldy, x, y);
-				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 				oldx = x; oldy = y;
+				vectorGetRelCoords(data, curPos, x, y);
+				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 			}
 			break;
 		case PIC_OP_MEDIUM_LINES: // medium line
-			vectorGetAbsCoords(data, curPos, oldx, oldy);
+			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
-				vectorGetRelCoordsMed(data, curPos, oldx, oldy, x, y);
-				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 				oldx = x; oldy = y;
+				vectorGetRelCoordsMed(data, curPos, x, y);
+				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
 			}
 			break;
 		case PIC_OP_LONG_LINES: // long line
-			vectorGetAbsCoords(data, curPos, oldx, oldy);
+			vectorGetAbsCoords(data, curPos, x, y);
 			while (vectorIsNonOpcode(data[curPos])) {
+				oldx = x; oldy = y;
 				vectorGetAbsCoords(data, curPos, x, y);
 				_gfx->Draw_Line(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
-				oldx = x; oldy = y;
 			}
 			break;
 
@@ -388,7 +388,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
-				vectorGetRelCoords(data, curPos, x, y, x, y);
+				vectorGetRelCoords(data, curPos, x, y);
 				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
@@ -398,7 +398,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
-				vectorGetRelCoordsMed(data, curPos, x, y, x, y);
+				vectorGetRelCoordsMed(data, curPos, x, y);
 				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
@@ -521,32 +521,32 @@ void SciGuiPicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 
 	if (_style & PIC_STYLE_MIRRORED) x = 319 - x;
 }
 
-void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y) {
+void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte byte = data[curPos++];
 	if (byte & 0x80) {
-		x = oldx - ((byte >> 4) & 7) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
+		x -= ((byte >> 4) & 7) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
 	} else {
-		x = oldx + (byte >> 4) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
+		x += (byte >> 4) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
 	}
 	if (byte & 0x08) {
-		y = oldy - (byte & 7);
+		y -= (byte & 7);
 	} else {
-		y = oldy + (byte & 7);
+		y += (byte & 7);
 	}
 }
 
-void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 oldx, int16 oldy, int16 &x, int16 &y) {
+void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int16 &y) {
 	byte byte = data[curPos++];
 	if (byte & 0x80) {
-		y = oldy - (byte & 0x7F);
+		y -= (byte & 0x7F);
 	} else {
-		y = oldy + byte;
+		y += byte;
 	}
 	byte = data[curPos++];
 	if (byte & 0x80) {
-		x = oldx - (128 - (byte & 0x7F)) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
+		x -= (128 - (byte & 0x7F)) * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
 	} else {
-		x = oldx + byte * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
+		x += byte * (_style & PIC_STYLE_MIRRORED ? -1 : 1);
 	}
 }
 
