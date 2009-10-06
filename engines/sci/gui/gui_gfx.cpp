@@ -648,11 +648,9 @@ static void drawProc(int x, int y, int c, void *data) {
 	lineData->screen->putPixel(x, y, lineData->drawMask, (byte)c, lineData->prio, lineData->control);
 }
 
-void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
+void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte priority, byte control) {
 	//set_drawing_flag
-	byte flag = _screen->getDrawingMask(color, prio, control);
-	prio &= 0xF0;
-	control &= 0x0F;
+	byte drawMask = _screen->getDrawingMask(color, priority, control);
 
 	// offseting the line
 	left += _curPort->left;
@@ -661,8 +659,8 @@ void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 	bottom += _curPort->top;
 
 	LineData lineData;
-	lineData.drawMask = flag;
-	lineData.prio = prio;
+	lineData.drawMask = drawMask;
+	lineData.prio = priority;
 	lineData.control = control;
 	lineData.screen = _screen;
 
