@@ -654,15 +654,25 @@ void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 }
 
 // Bitmap for drawing sierra circles
-const byte pattern_Circles[8][15] = {
+const byte pattern_Circles[8][30] = {
 	{ 0x01 },
-	{ 0x03, 0x03, 0x03 },
-	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
-	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
-	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
-	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
-	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
-	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
+	{ 0x4C, 0x02 },
+	{ 0xCE, 0xF7, 0x7D, 0x0E },
+	{ 0x1C, 0x3E, 0x7F, 0x7F, 0x7F, 0x3E, 0x1C, 0x00 },
+	{ 0x38, 0xF8, 0xF3, 0xDF, 0x7F, 0xFF, 0xFD, 0xF7, 0x9F, 0x3F, 0x38 },
+	{ 0x70, 0xC0, 0x1F, 0xFE, 0xE3, 0x3F, 0xFF, 0xF7, 0x7F, 0xFF, 0xE7, 0x3F, 0xFE, 0xC3, 0x1F, 0xF8, 0x00 },
+	{ 0xF0, 0x01, 0xFF, 0xE1, 0xFF, 0xF8, 0x3F, 0xFF, 0xDF, 0xFF, 0xF7, 0xFF, 0xFD, 0x7F, 0xFF, 0x9F, 0xFF,
+		0xE3, 0xFF, 0xF0, 0x1F, 0xF0, 0x01 },
+	{ 0xE0, 0x03, 0xF8, 0x0F, 0xFC, 0x1F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF,
+		0x7F, 0xFF, 0x7F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFC, 0x1F, 0xF8, 0x0F, 0xE0, 0x03 }
+//  { 0x01 };
+//	{ 0x03, 0x03, 0x03 },
+//	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
+//	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
+//	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
+//	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
+//	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
+//	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
 };
 
 // TODO: perhaps this is a better way to set the pattern_Textures array below?
@@ -682,6 +692,7 @@ const byte patternTextures[32 * 2] = {
 #endif
 
 // This table is bitwise upwards (from bit0 to bit7), sierras original table went down the bits (bit7 to bit0)
+//  this was done to simplify things, so we can just run through the table w/o worrying too much about clipping
 const bool pattern_Textures[32 * 8 * 2] = {
 	false, false,  true, false, false, false, false, false, // 0x04
 	 true, false, false,  true, false,  true, false, false, // 0x92
@@ -797,41 +808,49 @@ void SciGuiGfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte c
 
 void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	byte *circle = (byte *)&pattern_Circles[size];
-	byte circleBitmap;
+	byte *circleData = (byte *)&pattern_Circles[size];
+	byte bitmap = *circleData;
+	byte bitNo = 0;
 	int y, x;
 
 	for (y = box.top; y < box.bottom; y++) {
-		circleBitmap = *circle;
 		for (x = box.left; x < box.right; x++) {
-			if (circleBitmap & 1) {
+			if (bitmap & 1) {
 				_screen->putPixel(x, y, flag, color, prio, control);
 			}
-			circleBitmap = circleBitmap >> 1;
+			bitNo++;
+			if (bitNo == 8) {
+				circleData++; bitmap = *circleData; bitNo = 0;
+			} else {
+				bitmap = bitmap >> 1;
+			}
 		}
-		circle++;
 	}
 }
 
 void SciGuiGfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	byte *circle = (byte *)&pattern_Circles[size];
-	byte circleBitmap;
+	byte *circleData = (byte *)&pattern_Circles[size];
+	byte bitmap = *circleData;
+	byte bitNo = 0;
 	const bool *textureData = &pattern_Textures[pattern_TextureOffset[texture]];
 	int y, x;
 
 	for (y = box.top; y < box.bottom; y++) {
-		circleBitmap = *circle;
 		for (x = box.left; x < box.right; x++) {
-			if (circleBitmap & 1) {
+			if (bitmap & 1) {
 				if (*textureData) {
 					_screen->putPixel(x, y, flag, color, prio, control);
 				}
 				textureData++;
 			}
-			circleBitmap = circleBitmap >> 1;
+			bitNo++;
+			if (bitNo == 8) {
+				circleData++; bitmap = *circleData; bitNo = 0;
+			} else {
+				bitmap = bitmap >> 1;
+			}
 		}
-		circle++;
 	}
 }
 
@@ -841,10 +860,10 @@ void SciGuiGfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte c
 
 	// We need to adjust the given coordinates, because the ones given us do not define upper left but somewhat middle
 	y -= size;
-	x -= (size + 1) >> 1;
+	x -= size;
 
 	rect.top = y + _curPort->top; rect.left = x + _curPort->left;
-	rect.setHeight((size*2)+1); rect.setWidth(size+1);
+	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {
 		// Rectangle
