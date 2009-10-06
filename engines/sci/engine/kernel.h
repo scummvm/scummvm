@@ -37,8 +37,8 @@
 
 namespace Sci {
 
-struct Node;	// from vm.h
-struct List;	// from vm.h
+struct Node;	// from segment.h
+struct List;	// from segment.h
 
 #define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 //#define DEBUG_PARSER	// enable for parser debugging

@@ -172,7 +172,7 @@ void SciGuiGfx::PaintRect(const Common::Rect &rect) {
 }
 
 void SciGuiGfx::FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack, byte bControl) {
-	Common::Rect r(rect.left, rect.top, rect.right, rect.bottom);
+	Common::Rect r = rect;
 	r.clip(_curPort->rect);
 	if (r.isEmpty()) // nothing to fill
 		return;
