@@ -58,6 +58,7 @@ MODULE_OBJS = \
 	gui/gui.o \
 	gui/gui_font.o \
 	gui/gui_gfx.o \
+	gui/gui_palette.o \
 	gui/gui_picture.o \
 	gui/gui_screen.o \
 	gui/gui_view.o \
