@@ -59,7 +59,7 @@ void SciGuiGfx::init() {
 	OpenPort(_menuPort);
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
-	_menuRect = Common::Rect(0, 0, _screen->_width, 10);
+	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
 
 //	HEAPHANDLE theMenuBarH = heapNewPtr(34, kDataPort, "MenuBar");
 //	heapClearPtr(theMenuBarH);
