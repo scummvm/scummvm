@@ -59,13 +59,6 @@ static void drawProc(int x, int y, int c, void *data) {
 	memcpy(p + (y * drv->_screen->_width * drv->getMode()->scaleFactor + x), &col, 1);
 }
 
-static void drawProcPriority(int x, int y, int c, void *data) {
-	GfxDriver *drv = (GfxDriver *)data;
-	byte *p = drv->_screen->_priorityScreen;
-	uint8 col = c;
-	memcpy(p + (y * drv->_screen->_width + x), &col, 1);
-}
-
 void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t color,
 						gfx_line_mode_t line_mode, gfx_line_style_t line_style) {
 	uint32 scolor = color.visual.getParentIndex();
@@ -87,7 +80,7 @@ void GfxDriver::drawLine(Common::Point start, Common::Point end, gfx_color_t col
 				Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, scolor, drawProc, this);
 
 				if (color.mask & GFX_MASK_PRIORITY) {
-					Graphics::drawLine(nstart.x, nstart.y, nend.x, nend.y, color.priority, drawProcPriority, this);
+					gfx_draw_line_buffer(_screen->_priorityScreen, 1, 1, nstart, nend, color.priority);
 				}
 			}
 		}

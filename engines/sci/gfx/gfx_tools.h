@@ -144,6 +144,9 @@ void gfx_free_pixmap(gfx_pixmap_t *pxm);
 void gfx_draw_line_pixmap_i(gfx_pixmap_t *pxm, Common::Point start,
 	Common::Point end, int color);
 
+void gfx_draw_line_buffer(byte *buffer, int linewidth, int pixelwidth, 
+	Common::Point start, Common::Point end, unsigned int color);
+
 /**
  * Draws a filled rectangular area to a pixmap's index buffer
  *
