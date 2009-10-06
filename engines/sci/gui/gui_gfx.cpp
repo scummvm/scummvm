@@ -60,11 +60,6 @@ void SciGuiGfx::init() {
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
-
-//	HEAPHANDLE theMenuBarH = heapNewPtr(34, kDataPort, "MenuBar");
-//	heapClearPtr(theMenuBarH);
-//	_theMenuBar = (Common::Rect *)heap2Ptr(theMenuBarH);
-//	*_theMenuBar = Common::Rect(_gfx->RGetPort()->rect.right, 10);
 }
 
 GuiPort *SciGuiGfx::mallocPort() {
@@ -695,7 +690,7 @@ const byte patternTextures[32 * 2] = {
 //  this was done to simplify things, so we can just run through the table w/o worrying too much about clipping
 const bool pattern_Textures[32 * 8 * 2] = {
 	false, false,  true, false, false, false, false, false, // 0x04
-	 true, false, false,  true, false,  true, false, false, // 0x92
+	 true, false, false,  true, false,  true, false, false, // 0x29
 	false, false, false, false, false, false,  true, false, // 0x40
 	false, false,  true, false, false,  true, false, false, // 0x24
 	 true, false, false,  true, false, false, false, false, // 0x09
@@ -723,12 +718,12 @@ const bool pattern_Textures[32 * 8 * 2] = {
 	false, false, false,  true, false,  true, false, false, // 0x28
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false, false, false, false, false, false, false, // 0x00
-	false,  true, false,  true, false, false, false, false, // 0x06
+	false,  true, false,  true, false, false, false, false, // 0x0A
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 	// Now the table is actually duplicated, so we won't need to wrap around
 	false, false,  true, false, false, false, false, false, // 0x04
-	 true, false, false,  true, false,  true, false, false, // 0x92
+	 true, false, false,  true, false,  true, false, false, // 0x29
 	false, false, false, false, false, false,  true, false, // 0x40
 	false, false,  true, false, false,  true, false, false, // 0x24
 	 true, false, false,  true, false, false, false, false, // 0x09
@@ -756,7 +751,7 @@ const bool pattern_Textures[32 * 8 * 2] = {
 	false, false, false,  true, false,  true, false, false, // 0x28
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false, false, false, false, false, false, false, // 0x00
-	false,  true, false,  true, false, false, false, false, // 0x06
+	false,  true, false,  true, false, false, false, false, // 0x0A
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 };
