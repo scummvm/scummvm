@@ -47,7 +47,7 @@ struct sciViewLoopInfo {
 
 class SciGuiView {
 public:
-	SciGuiView(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId);
+	SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, GuiResourceId resourceId);
 	~SciGuiView();
 
 	// TODO: Remove gfx reference after putting palette things into SciGuiScreen
@@ -59,14 +59,17 @@ public:
 	sciViewLoopInfo *getLoopInfo(GuiViewLoopNo loopNo);
 	void getCelRect(GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 x, int16 y, int16 z, Common::Rect *outRect);
 	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
-	void draw(Common::Rect rect, Common::Rect clipRect, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
+	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
+
+	bool hasEmbeddedPal() const { return _embeddedPal; }
+
+	GuiPalette *getPalette() { return &_palette; }
 
 private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount);
 
 	ResourceManager *_resMan;
-	SciGuiGfx *_gfx;
 	SciGuiScreen *_screen;
 
 	GuiResourceId _resourceId;

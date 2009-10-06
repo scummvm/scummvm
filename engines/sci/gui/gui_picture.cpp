@@ -91,7 +91,7 @@ void SciGuiPicture::drawSci11Vga() {
 	GuiPalette palette;
 
 	// Create palette and set it
-	_gfx->CreatePaletteFromData(inbuffer + palette_data_ptr, &palette);
+	CreatePaletteFromData(inbuffer + palette_data_ptr, &palette);
 	_gfx->SetPalette(&palette, 2);
 
 	// display Cel-data

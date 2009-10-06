@@ -53,7 +53,6 @@ public:
 	void ResetScreen();
 	bool SetAmigaPalette();
 	void SetEGApalette();
-	void CreatePaletteFromData(byte *paletteData, GuiPalette *paletteOut);
 	bool SetResPalette(int16 resourceNo, int16 flag);
 	void SetPalette(GuiPalette *sciPal, int16 flag);
 	void MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag);
@@ -134,7 +133,6 @@ public:
 	Common::Rect _menuRect;
 	uint32 _sysTicks;
 	int32 _sysSpeed; // ticker timer in ms 
-	GuiPalette _sysPalette;
 
 	bool _picNotValid;
 

@@ -32,8 +32,8 @@
 
 namespace Sci {
 
-SciGuiView::SciGuiView(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
-	: _resMan(resMan), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
+SciGuiView::SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, GuiResourceId resourceId)
+	: _resMan(resMan), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -82,7 +82,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			if (IsEGA) { // simple mapping for 16 colors
 				_EGAMapping = _resourceData + palOffset;
 			} else {
-				_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+				CreatePaletteFromData(&_resourceData[palOffset], &_palette);
 				_embeddedPal = true;
 			}
 		}
@@ -141,7 +141,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 		celSize = _resourceData[13];
 
 		if (palOffset) {
-			_gfx->CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+			CreatePaletteFromData(&_resourceData[palOffset], &_palette);
 			_embeddedPal = true;
 		}
 
@@ -343,8 +343,8 @@ byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	return _loop[loopNo].cel[celNo].rawBitmap;
 }
 
-void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo) {
-	GuiPalette *palette = _embeddedPal ? &_palette : &_gfx->_sysPalette;
+void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo) {
+	GuiPalette *palette = _embeddedPal ? &_palette : &_screen->_sysPalette;
 	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
@@ -354,21 +354,16 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, GuiViewLoopNo lo
 	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
 	int x, y;
 
-	// Merge view palette in...
-	if (_embeddedPal)
-		_gfx->SetPalette(&_palette, 1);
-
 	width = MIN(clipRect.width(), celWidth);
 	height = MIN(clipRect.height(), celHeight);
 
 	bitmap += (clipRect.top - rect.top) * celWidth + (clipRect.left - rect.left);
-	_gfx->OffsetRect(clipRect);
 
-	for (y = clipRect.top; y < clipRect.top + height; y++, bitmap += celWidth) {
+	for (y = clipRectTranslated.top; y < clipRectTranslated.top + height; y++, bitmap += celWidth) {
 		for (x = 0; x < width; x++) {
 			color = bitmap[x];
-			if (color != clearKey && priority >= _screen->getPriority(clipRect.left + x, y))
-				_screen->putPixel(clipRect.left + x, y, drawMask, palette->mapping[color], priority, 0);
+			if (color != clearKey && priority >= _screen->getPriority(clipRectTranslated.left + x, y))
+				_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
 		}
 	}
 }

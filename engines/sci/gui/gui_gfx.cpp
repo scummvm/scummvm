@@ -76,18 +76,18 @@ void SciGuiGfx::init() {
 void SciGuiGfx::initPalette() {
 	int16 i;
 	for (i = 0; i < 256; i++) {
-		_sysPalette.colors[i].used = 0;
-		_sysPalette.colors[i].r = 0;
-		_sysPalette.colors[i].g = 0;
-		_sysPalette.colors[i].b = 0;
-		_sysPalette.intensity[i] = 100;
-		_sysPalette.mapping[i] = i;
+		_screen->_sysPalette.colors[i].used = 0;
+		_screen->_sysPalette.colors[i].r = 0;
+		_screen->_sysPalette.colors[i].g = 0;
+		_screen->_sysPalette.colors[i].b = 0;
+		_screen->_sysPalette.intensity[i] = 100;
+		_screen->_sysPalette.mapping[i] = i;
 	}
-	_sysPalette.colors[0].used = 1;
-	_sysPalette.colors[255].used = 1;
-	_sysPalette.colors[255].r = 255;
-	_sysPalette.colors[255].g = 255;
-	_sysPalette.colors[255].b = 255;
+	_screen->_sysPalette.colors[0].used = 1;
+	_screen->_sysPalette.colors[255].used = 1;
+	_screen->_sysPalette.colors[255].r = 255;
+	_screen->_sysPalette.colors[255].g = 255;
+	_screen->_sysPalette.colors[255].b = 255;
 
 	// Load default palette from resource 999
 	if (!SetResPalette(999, 2)) {
@@ -132,10 +132,10 @@ bool SciGuiGfx::SetAmigaPalette() {
 			byte2 = file.readByte();
 			if ((byte1 == EOF) || (byte2 == EOF))
 				error("Amiga palette file ends prematurely");
-			_sysPalette.colors[curColor].used = 1;
-			_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
-			_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
-			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+			_screen->_sysPalette.colors[curColor].used = 1;
+			_screen->_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
+			_screen->_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
+			_screen->_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 		}
 		file.close();
 		return true;
@@ -145,76 +145,29 @@ bool SciGuiGfx::SetAmigaPalette() {
 
 void SciGuiGfx::SetEGApalette() {
 	int i;
-	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
-	_sysPalette.colors[2].r  = 0x000; _sysPalette.colors[2].g  = 0x0AA; _sysPalette.colors[2].b  = 0x000;
-	_sysPalette.colors[3].r  = 0x000; _sysPalette.colors[3].g  = 0x0AA; _sysPalette.colors[3].b  = 0x0AA;
-	_sysPalette.colors[4].r  = 0x0AA; _sysPalette.colors[4].g  = 0x000; _sysPalette.colors[4].b  = 0x000;
-	_sysPalette.colors[5].r  = 0x0AA; _sysPalette.colors[5].g  = 0x000; _sysPalette.colors[5].b  = 0x0AA;
-	_sysPalette.colors[6].r  = 0x0AA; _sysPalette.colors[6].g  = 0x055; _sysPalette.colors[6].b  = 0x000;
-	_sysPalette.colors[7].r  = 0x0AA; _sysPalette.colors[7].g  = 0x0AA; _sysPalette.colors[7].b  = 0x0AA;
-	_sysPalette.colors[8].r  = 0x055; _sysPalette.colors[8].g  = 0x055; _sysPalette.colors[8].b  = 0x055;
-	_sysPalette.colors[9].r  = 0x055; _sysPalette.colors[9].g  = 0x055; _sysPalette.colors[9].b  = 0x0FF;
-	_sysPalette.colors[10].r = 0x055; _sysPalette.colors[10].g = 0x0FF; _sysPalette.colors[10].b = 0x055;
-	_sysPalette.colors[11].r = 0x055; _sysPalette.colors[11].g = 0x0FF; _sysPalette.colors[11].b = 0x0FF;
-	_sysPalette.colors[12].r = 0x0FF; _sysPalette.colors[12].g = 0x055; _sysPalette.colors[12].b = 0x055;
-	_sysPalette.colors[13].r = 0x0FF; _sysPalette.colors[13].g = 0x055; _sysPalette.colors[13].b = 0x0FF;
-	_sysPalette.colors[14].r = 0x0FF; _sysPalette.colors[14].g = 0x0FF; _sysPalette.colors[14].b = 0x055;
-	_sysPalette.colors[15].r = 0x0FF; _sysPalette.colors[15].g = 0x0FF; _sysPalette.colors[15].b = 0x0FF;
+	_screen->_sysPalette.colors[1].r  = 0x000; _screen->_sysPalette.colors[1].g  = 0x000; _screen->_sysPalette.colors[1].b  = 0x0AA;
+	_screen->_sysPalette.colors[2].r  = 0x000; _screen->_sysPalette.colors[2].g  = 0x0AA; _screen->_sysPalette.colors[2].b  = 0x000;
+	_screen->_sysPalette.colors[3].r  = 0x000; _screen->_sysPalette.colors[3].g  = 0x0AA; _screen->_sysPalette.colors[3].b  = 0x0AA;
+	_screen->_sysPalette.colors[4].r  = 0x0AA; _screen->_sysPalette.colors[4].g  = 0x000; _screen->_sysPalette.colors[4].b  = 0x000;
+	_screen->_sysPalette.colors[5].r  = 0x0AA; _screen->_sysPalette.colors[5].g  = 0x000; _screen->_sysPalette.colors[5].b  = 0x0AA;
+	_screen->_sysPalette.colors[6].r  = 0x0AA; _screen->_sysPalette.colors[6].g  = 0x055; _screen->_sysPalette.colors[6].b  = 0x000;
+	_screen->_sysPalette.colors[7].r  = 0x0AA; _screen->_sysPalette.colors[7].g  = 0x0AA; _screen->_sysPalette.colors[7].b  = 0x0AA;
+	_screen->_sysPalette.colors[8].r  = 0x055; _screen->_sysPalette.colors[8].g  = 0x055; _screen->_sysPalette.colors[8].b  = 0x055;
+	_screen->_sysPalette.colors[9].r  = 0x055; _screen->_sysPalette.colors[9].g  = 0x055; _screen->_sysPalette.colors[9].b  = 0x0FF;
+	_screen->_sysPalette.colors[10].r = 0x055; _screen->_sysPalette.colors[10].g = 0x0FF; _screen->_sysPalette.colors[10].b = 0x055;
+	_screen->_sysPalette.colors[11].r = 0x055; _screen->_sysPalette.colors[11].g = 0x0FF; _screen->_sysPalette.colors[11].b = 0x0FF;
+	_screen->_sysPalette.colors[12].r = 0x0FF; _screen->_sysPalette.colors[12].g = 0x055; _screen->_sysPalette.colors[12].b = 0x055;
+	_screen->_sysPalette.colors[13].r = 0x0FF; _screen->_sysPalette.colors[13].g = 0x055; _screen->_sysPalette.colors[13].b = 0x0FF;
+	_screen->_sysPalette.colors[14].r = 0x0FF; _screen->_sysPalette.colors[14].g = 0x0FF; _screen->_sysPalette.colors[14].b = 0x055;
+	_screen->_sysPalette.colors[15].r = 0x0FF; _screen->_sysPalette.colors[15].g = 0x0FF; _screen->_sysPalette.colors[15].b = 0x0FF;
 	for (i = 0; i <= 15; i++) {
-		_sysPalette.colors[i].used = 1;
+		_screen->_sysPalette.colors[i].used = 1;
 	}
 	for (i = 16; i <= 254; i++) {
-		_sysPalette.colors[i].r = 200;
-		_sysPalette.colors[i].used = 1;
+		_screen->_sysPalette.colors[i].r = 200;
+		_screen->_sysPalette.colors[i].used = 1;
 	}
-	setScreenPalette(&_sysPalette);
-}
-
-#define SCI_PAL_FORMAT_CONSTANT 1
-#define SCI_PAL_FORMAT_VARIABLE 0
-
-void SciGuiGfx::CreatePaletteFromData(byte *data, GuiPalette *paletteOut) {
-	int palFormat = 0;
-	int palOffset = 0;
-	int palColorStart = 0;
-	int palColorCount = 0;
-	int colorNo = 0;
-
-	memset(paletteOut, 0, sizeof(GuiPalette));
-	// Setup default mapping
-	for (colorNo = 0; colorNo < 256; colorNo++) {
-		paletteOut->mapping[colorNo] = colorNo;
-	}
-	if (data[0] == 0 && data[1] == 1) {
-		// SCI0/SCI1 palette
-		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
-		palOffset = 260;
-		palColorStart = 0; palColorCount = 256;
-		//memcpy(&paletteOut->mapping, data, 256);
-	} else {
-		// SCI1.1 palette
-		palFormat = data[32];
-		palOffset = 37;
-		palColorStart = READ_LE_UINT16(data + 25); palColorCount = READ_LE_UINT16(data + 29);
-	}
-	switch (palFormat) {
-		case SCI_PAL_FORMAT_CONSTANT:
-			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
-				paletteOut->colors[colorNo].used = 1;
-				paletteOut->colors[colorNo].r = data[palOffset++];
-				paletteOut->colors[colorNo].g = data[palOffset++];
-				paletteOut->colors[colorNo].b = data[palOffset++];
-			}
-			break;
-		case SCI_PAL_FORMAT_VARIABLE:
-			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
-				paletteOut->colors[colorNo].used = data[palOffset++];
-				paletteOut->colors[colorNo].r = data[palOffset++];
-				paletteOut->colors[colorNo].g = data[palOffset++];
-				paletteOut->colors[colorNo].b = data[palOffset++];
-			}
-			break;
-	}
+	setScreenPalette(&_screen->_sysPalette);
 }
 
 bool SciGuiGfx::SetResPalette(int16 resourceNo, int16 flag) {
@@ -230,12 +183,12 @@ bool SciGuiGfx::SetResPalette(int16 resourceNo, int16 flag) {
 }
 
 void SciGuiGfx::SetPalette(GuiPalette *sciPal, int16 flag) {
-	uint32 systime = _sysPalette.timestamp;
+	uint32 systime = _screen->_sysPalette.timestamp;
 	if (flag == 2 || sciPal->timestamp != systime) {
-		MergePalettes(sciPal, &_sysPalette, flag);
-		sciPal->timestamp = _sysPalette.timestamp;
-		if (_picNotValid == 0 && systime != _sysPalette.timestamp)
-			setScreenPalette(&_sysPalette);
+		MergePalettes(sciPal, &_screen->_sysPalette, flag);
+		sciPal->timestamp = _screen->_sysPalette.timestamp;
+		if (_picNotValid == 0 && systime != _screen->_sysPalette.timestamp)
+			setScreenPalette(&_screen->_sysPalette);
 	}
 }
 
@@ -306,8 +259,8 @@ uint16 SciGuiGfx::MatchColor(GuiPalette*pPal, byte r, byte g, byte b) {
 }
 
 void SciGuiGfx::setScreenPalette(GuiPalette*pal) {
-	if (pal != &_sysPalette)
-		memcpy(&_sysPalette,pal,sizeof(GuiPalette));
+	if (pal != &_screen->_sysPalette)
+		memcpy(&_screen->_sysPalette,pal,sizeof(GuiPalette));
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back
@@ -324,8 +277,8 @@ void SciGuiGfx::setScreenPalette(GuiPalette*pal) {
 }
 
 void SciGuiGfx::getSysPalette(GuiPalette*pal) {
-	if (pal != &_sysPalette)
-		memcpy(pal, &_sysPalette,sizeof(GuiPalette));
+	if (pal != &_screen->_sysPalette)
+		memcpy(pal, &_screen->_sysPalette,sizeof(GuiPalette));
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
@@ -1267,7 +1220,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, uint16 style, bool addToFla
 }
 
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
-	SciGuiView *view = new SciGuiView(_s->resMan, this, _screen, viewId);
+	SciGuiView *view = new SciGuiView(_s->resMan, _screen, viewId);
 	Common::Rect rect(0, 0);
 	Common::Rect clipRect(0, 0);
 	if (view) {
@@ -1279,7 +1232,16 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		clipRect.clip(_curPort->rect);
 		if (clipRect.isEmpty()) // nothing to draw
 			return;
-		view->draw(rect, clipRect, loopNo, celNo, priority, paletteNo);
+
+		if (view->hasEmbeddedPal()) {
+			// Merge view palette in...
+			SetPalette(view->getPalette(), 1);
+		}
+
+		Common::Rect clipRectTranslated = clipRect;
+		OffsetRect(clipRectTranslated);
+		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
+
 		//if (_picNotValid == 0)
 		//	_gfx->ShowBits(rect, 1);
 	}
@@ -1299,18 +1261,18 @@ void SciGuiGfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
 		if (_palSchedules[i].from == fromColor) {
 			if (_palSchedules[i].schedule < now) {
 				if (speed > 0) {
-					col = _sysPalette.colors[fromColor];
-					memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], len * sizeof(GuiColor));
-					_sysPalette.colors[toColor - 1] = col;
+					col = _screen->_sysPalette.colors[fromColor];
+					memmove(&_screen->_sysPalette.colors[fromColor], &_screen->_sysPalette.colors[fromColor + 1], len * sizeof(GuiColor));
+					_screen->_sysPalette.colors[toColor - 1] = col;
 				} else {
-					col = _sysPalette.colors[toColor - 1];
-					memmove(&_sysPalette.colors[fromColor+1], &_sysPalette.colors[fromColor], len * sizeof(GuiColor));
-					_sysPalette.colors[fromColor] = col;
+					col = _screen->_sysPalette.colors[toColor - 1];
+					memmove(&_screen->_sysPalette.colors[fromColor + 1], &_screen->_sysPalette.colors[fromColor], len * sizeof(GuiColor));
+					_screen->_sysPalette.colors[fromColor] = col;
 				}
 				// removing schedule
 				_palSchedules.remove_at(i);
 			}
-			setScreenPalette(&_sysPalette);
+			setScreenPalette(&_screen->_sysPalette);
 			return;
 		}
 	}
@@ -1410,7 +1372,7 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	}
 
 	// now get cel rectangle
-	view = new SciGuiView(_s->resMan, this, _screen, viewId);
+	view = new SciGuiView(_s->resMan, _screen, viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
 	// TODO: sometimes loop is negative. Check what it means

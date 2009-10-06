@@ -26,6 +26,7 @@
 #ifndef SCI_GUI_HELPERS_H
 #define SCI_GUI_HELPERS_H
 
+#include "common/endian.h"	// for READ_LE_UINT16
 #include "common/rect.h"
 #include "sci/engine/vm_types.h"
 
@@ -106,6 +107,53 @@ enum {
 	GFX_FORCEUPDATE = 0x40,
 	GFX_REMOVEVIEW = 0x80
 };
+
+#define SCI_PAL_FORMAT_CONSTANT 1
+#define SCI_PAL_FORMAT_VARIABLE 0
+
+static inline void CreatePaletteFromData(byte *data, GuiPalette *paletteOut) {
+	int palFormat = 0;
+	int palOffset = 0;
+	int palColorStart = 0;
+	int palColorCount = 0;
+	int colorNo = 0;
+
+	memset(paletteOut, 0, sizeof(GuiPalette));
+	// Setup default mapping
+	for (colorNo = 0; colorNo < 256; colorNo++) {
+		paletteOut->mapping[colorNo] = colorNo;
+	}
+	if (data[0] == 0 && data[1] == 1) {
+		// SCI0/SCI1 palette
+		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
+		palOffset = 260;
+		palColorStart = 0; palColorCount = 256;
+		//memcpy(&paletteOut->mapping, data, 256);
+	} else {
+		// SCI1.1 palette
+		palFormat = data[32];
+		palOffset = 37;
+		palColorStart = READ_LE_UINT16(data + 25); palColorCount = READ_LE_UINT16(data + 29);
+	}
+	switch (palFormat) {
+		case SCI_PAL_FORMAT_CONSTANT:
+			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+				paletteOut->colors[colorNo].used = 1;
+				paletteOut->colors[colorNo].r = data[palOffset++];
+				paletteOut->colors[colorNo].g = data[palOffset++];
+				paletteOut->colors[colorNo].b = data[palOffset++];
+			}
+			break;
+		case SCI_PAL_FORMAT_VARIABLE:
+			for (colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+				paletteOut->colors[colorNo].used = data[palOffset++];
+				paletteOut->colors[colorNo].r = data[palOffset++];
+				paletteOut->colors[colorNo].g = data[palOffset++];
+				paletteOut->colors[colorNo].b = data[palOffset++];
+			}
+			break;
+	}
+}
 
 } // End of namespace Sci
 
