@@ -199,6 +199,22 @@ void SciGuiScreen::restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *
 	}
 }
 
+void SciGuiScreen::setPalette(GuiPalette*pal) {
+	// just copy palette to system
+	byte bpal[4 * 256];
+	// Get current palette, update it and put back
+	_system->grabPalette(bpal, 0, 256);
+	for (int16 i = 0; i < 256; i++) {
+		if (!pal->colors[i].used)
+			continue;
+		bpal[i * 4] = pal->colors[i].r * pal->intensity[i] / 100;
+		bpal[i * 4 + 1] = pal->colors[i].g * pal->intensity[i] / 100;
+		bpal[i * 4 + 2] = pal->colors[i].b * pal->intensity[i] / 100;
+		bpal[i * 4 + 3] = 100;
+	}
+	_system->setPalette(bpal, 0, 256);
+}
+
 // Currently not really done, its supposed to be possible to only dither _visualScreen
 void SciGuiScreen::dither() {
 	int y, x;

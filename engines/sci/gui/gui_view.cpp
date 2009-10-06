@@ -28,12 +28,13 @@
 #include "sci/tools.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_view.h"
 
 namespace Sci {
 
-SciGuiView::SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, GuiResourceId resourceId)
-	: _resMan(resMan), _screen(screen), _resourceId(resourceId) {
+SciGuiView::SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId)
+	: _resMan(resMan), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -82,7 +83,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 			if (IsEGA) { // simple mapping for 16 colors
 				_EGAMapping = _resourceData + palOffset;
 			} else {
-				CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+				_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
 				_embeddedPal = true;
 			}
 		}
@@ -141,7 +142,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 		celSize = _resourceData[13];
 
 		if (palOffset) {
-			CreatePaletteFromData(&_resourceData[palOffset], &_palette);
+			_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
 			_embeddedPal = true;
 		}
 
@@ -344,7 +345,7 @@ byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 }
 
 void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo) {
-	GuiPalette *palette = _embeddedPal ? &_palette : &_screen->_sysPalette;
+	GuiPalette *palette = _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 	sciViewCelInfo *celInfo = getCelInfo(loopNo, celNo);
 	byte *bitmap = getBitmap(loopNo, celNo);
 	int16 celHeight = celInfo->height, celWidth = celInfo->width;
@@ -353,6 +354,11 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 	byte color;
 	byte drawMask = priority == 255 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY;
 	int x, y;
+
+	if (_embeddedPal) {
+		// Merge view palette in...
+		_palette->set(&_viewPalette, 1);
+	}
 
 	width = MIN(clipRect.width(), celWidth);
 	height = MIN(clipRect.height(), celHeight);

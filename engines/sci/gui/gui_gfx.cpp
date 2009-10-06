@@ -23,7 +23,6 @@
  *
  */
 
-#include "common/timer.h"
 #include "common/util.h"
 #include "graphics/primitives.h"
 
@@ -34,27 +33,23 @@
 #include "sci/gui/gui_picture.h"
 #include "sci/gui/gui_view.h"
 #include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_gfx.h"
 
 namespace Sci {
 
-SciGuiGfx::SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen)
-	: _system(system), _s(state), _screen(screen) {
+SciGuiGfx::SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
+	: _system(system), _s(state), _screen(screen), _palette(palette) {
 	init();
-	initPalette();
-	initTimer();
 }
 
 SciGuiGfx::~SciGuiGfx() {
-	_system->getTimerManager()->removeTimerProc(&timerHandler);
 }
 
 void SciGuiGfx::init() {
 	_font = NULL;
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
-
-	_picNotValid = false;
 
 	_mainPort = mallocPort();
 	SetPort(_mainPort);
@@ -70,49 +65,6 @@ void SciGuiGfx::init() {
 //	heapClearPtr(theMenuBarH);
 //	_theMenuBar = (Common::Rect *)heap2Ptr(theMenuBarH);
 //	*_theMenuBar = Common::Rect(_gfx->RGetPort()->rect.right, 10);
-
-	_sysTicks = 0;
-}
-
-void SciGuiGfx::initPalette() {
-	int16 i;
-	for (i = 0; i < 256; i++) {
-		_screen->_sysPalette.colors[i].used = 0;
-		_screen->_sysPalette.colors[i].r = 0;
-		_screen->_sysPalette.colors[i].g = 0;
-		_screen->_sysPalette.colors[i].b = 0;
-		_screen->_sysPalette.intensity[i] = 100;
-		_screen->_sysPalette.mapping[i] = i;
-	}
-	_screen->_sysPalette.colors[0].used = 1;
-	_screen->_sysPalette.colors[255].used = 1;
-	_screen->_sysPalette.colors[255].r = 255;
-	_screen->_sysPalette.colors[255].g = 255;
-	_screen->_sysPalette.colors[255].b = 255;
-
-	// Load default palette from resource 999
-	if (!SetResPalette(999, 2)) {
-		// if not found, we try to set amiga palette
-		if (!SetAmigaPalette()) {
-			// if that also doesnt work out, set EGA palette
-			SetEGApalette();
-		}
-	};
-
-	// Init _clrPowers used in MatchColor
-	for(i = 0; i < 256; i++)
-	  _clrPowers[i] = i*i;
-}
-
-void SciGuiGfx::initTimer() {
-	_sysSpeed = 1000000 / 60;
-	Common::TimerManager *tm = _system->getTimerManager();
-	tm->removeTimerProc(&timerHandler);
-	tm->installTimerProc(&timerHandler, _sysSpeed, this);
-}
-
-void SciGuiGfx::timerHandler(void *ref) {
-	((SciGuiGfx *)ref)->_sysTicks++;
 }
 
 GuiPort *SciGuiGfx::mallocPort() {
@@ -120,166 +72,6 @@ GuiPort *SciGuiGfx::mallocPort() {
 	assert(newPort);
 	memset(newPort, 0, sizeof(GuiPort));
 	return newPort;
-}
-
-// Will try to set amiga palette by using "spal" file. If not found, we return false
-bool SciGuiGfx::SetAmigaPalette() {
-	Common::File file;
-	int curColor, byte1, byte2;
-
-	if (file.open("spal")) {
-		for (curColor = 0; curColor < 32; curColor++) {
-			byte1 = file.readByte();
-			byte2 = file.readByte();
-			if ((byte1 == EOF) || (byte2 == EOF))
-				error("Amiga palette file ends prematurely");
-			_screen->_sysPalette.colors[curColor].used = 1;
-			_screen->_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
-			_screen->_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
-			_screen->_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
-		}
-		file.close();
-		return true;
-	}
-	return false;
-}
-
-void SciGuiGfx::SetEGApalette() {
-	int i;
-	_screen->_sysPalette.colors[1].r  = 0x000; _screen->_sysPalette.colors[1].g  = 0x000; _screen->_sysPalette.colors[1].b  = 0x0AA;
-	_screen->_sysPalette.colors[2].r  = 0x000; _screen->_sysPalette.colors[2].g  = 0x0AA; _screen->_sysPalette.colors[2].b  = 0x000;
-	_screen->_sysPalette.colors[3].r  = 0x000; _screen->_sysPalette.colors[3].g  = 0x0AA; _screen->_sysPalette.colors[3].b  = 0x0AA;
-	_screen->_sysPalette.colors[4].r  = 0x0AA; _screen->_sysPalette.colors[4].g  = 0x000; _screen->_sysPalette.colors[4].b  = 0x000;
-	_screen->_sysPalette.colors[5].r  = 0x0AA; _screen->_sysPalette.colors[5].g  = 0x000; _screen->_sysPalette.colors[5].b  = 0x0AA;
-	_screen->_sysPalette.colors[6].r  = 0x0AA; _screen->_sysPalette.colors[6].g  = 0x055; _screen->_sysPalette.colors[6].b  = 0x000;
-	_screen->_sysPalette.colors[7].r  = 0x0AA; _screen->_sysPalette.colors[7].g  = 0x0AA; _screen->_sysPalette.colors[7].b  = 0x0AA;
-	_screen->_sysPalette.colors[8].r  = 0x055; _screen->_sysPalette.colors[8].g  = 0x055; _screen->_sysPalette.colors[8].b  = 0x055;
-	_screen->_sysPalette.colors[9].r  = 0x055; _screen->_sysPalette.colors[9].g  = 0x055; _screen->_sysPalette.colors[9].b  = 0x0FF;
-	_screen->_sysPalette.colors[10].r = 0x055; _screen->_sysPalette.colors[10].g = 0x0FF; _screen->_sysPalette.colors[10].b = 0x055;
-	_screen->_sysPalette.colors[11].r = 0x055; _screen->_sysPalette.colors[11].g = 0x0FF; _screen->_sysPalette.colors[11].b = 0x0FF;
-	_screen->_sysPalette.colors[12].r = 0x0FF; _screen->_sysPalette.colors[12].g = 0x055; _screen->_sysPalette.colors[12].b = 0x055;
-	_screen->_sysPalette.colors[13].r = 0x0FF; _screen->_sysPalette.colors[13].g = 0x055; _screen->_sysPalette.colors[13].b = 0x0FF;
-	_screen->_sysPalette.colors[14].r = 0x0FF; _screen->_sysPalette.colors[14].g = 0x0FF; _screen->_sysPalette.colors[14].b = 0x055;
-	_screen->_sysPalette.colors[15].r = 0x0FF; _screen->_sysPalette.colors[15].g = 0x0FF; _screen->_sysPalette.colors[15].b = 0x0FF;
-	for (i = 0; i <= 15; i++) {
-		_screen->_sysPalette.colors[i].used = 1;
-	}
-	for (i = 16; i <= 254; i++) {
-		_screen->_sysPalette.colors[i].r = 200;
-		_screen->_sysPalette.colors[i].used = 1;
-	}
-	setScreenPalette(&_screen->_sysPalette);
-}
-
-bool SciGuiGfx::SetResPalette(int16 resourceNo, int16 flag) {
-	Resource *palResource = _s->resMan->findResource(ResourceId(kResourceTypePalette, resourceNo), 0);
-	GuiPalette palette;
-
-	if (palResource) {
-		CreatePaletteFromData(palResource->data, &palette);
-		SetPalette(&palette, 2);
-		return true;
-	}
-	return false;
-}
-
-void SciGuiGfx::SetPalette(GuiPalette *sciPal, int16 flag) {
-	uint32 systime = _screen->_sysPalette.timestamp;
-	if (flag == 2 || sciPal->timestamp != systime) {
-		MergePalettes(sciPal, &_screen->_sysPalette, flag);
-		sciPal->timestamp = _screen->_sysPalette.timestamp;
-		if (_picNotValid == 0 && systime != _screen->_sysPalette.timestamp)
-			setScreenPalette(&_screen->_sysPalette);
-	}
-}
-
-void SciGuiGfx::MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
-	uint16 res;
-	int i,j;
-	// colors 0 (black) and 255 (white) are not affected by merging
-	for (i = 1 ; i < 255; i++) {
-		if (!pFrom->colors[i].used)// color is not used - so skip it
-			continue;
-		// forced palette merging or dest color is not used yet
-		if (flag == 2 || (!pTo->colors[i].used)) {
-			pTo->colors[i].used = pFrom->colors[i].used;
-			pTo->colors[i].r = pFrom->colors[i].r;
-			pTo->colors[i].g = pFrom->colors[i].g;
-			pTo->colors[i].b = pFrom->colors[i].b;
-			pFrom->mapping[i] = i;
-			continue;
-		}
-		// check if exact color could be matched
-		res = MatchColor(pTo, pFrom->colors[i].r, pFrom->colors[i].g, pFrom->colors[i].b);
-		if (res & 0x8000) { // exact match was found
-			pFrom->mapping[i] = res & 0xFF;
-			continue;
-		}
-		// no exact match - see if there is an unused color
-		for (j = 1; j < 256; j++)
-			if (!pTo->colors[j].used) {
-				pTo->colors[j].used = pFrom->colors[i].used;
-				pTo->colors[j].r = pFrom->colors[i].r;
-				pTo->colors[j].g = pFrom->colors[i].g;
-				pTo->colors[j].b = pFrom->colors[i].b;
-				pFrom->mapping[i] = j;
-				break;
-			}
-		// if still no luck - set an approximate color
-		if (j == 256) {
-			pFrom->mapping[i] = res & 0xFF;
-			pTo->colors[res & 0xFF].used |= 0x10;
-		}
-	}
-	pTo->timestamp = _sysTicks;
-}
-
-uint16 SciGuiGfx::MatchColor(GuiPalette*pPal, byte r, byte g, byte b) {
-	byte found = 0xFF;
-	int diff = 0x2FFFF, cdiff;
-	int16 dr,dg,db;
-
-	for (int i = 0; i < 256; i++) {
-		if ((!pPal->colors[i].used))
-			continue;
-		dr = pPal->colors[i].r - r;
-		dg = pPal->colors[i].g - g;
-		db = pPal->colors[i].b - b;
-//		minimum squares match
-		cdiff = _clrPowers[ABS(dr)] + _clrPowers[ABS(dg)] + _clrPowers[ABS(db)];
-//		minimum sum match (Sierra's)
-//		cdiff = ABS(dr) + ABS(dg) + ABS(db);
-		if (cdiff < diff) {
-			if (cdiff == 0)
-				return i | 0x8000; // setting this flag to indicate exact match
-			found = i;
-			diff = cdiff;
-		}
-	}
-	return found;
-}
-
-void SciGuiGfx::setScreenPalette(GuiPalette*pal) {
-	if (pal != &_screen->_sysPalette)
-		memcpy(&_screen->_sysPalette,pal,sizeof(GuiPalette));
-	// just copy palette to system
-	byte bpal[4 * 256];
-	// Get current palette, update it and put back
-	_system->grabPalette(bpal, 0, 256);
-	for (int16 i = 0; i < 256; i++) {
-		if (!pal->colors[i].used)
-			continue;
-		bpal[i * 4] = pal->colors[i].r * pal->intensity[i] / 100;
-		bpal[i * 4 + 1] = pal->colors[i].g * pal->intensity[i] / 100;
-		bpal[i * 4 + 2] = pal->colors[i].b * pal->intensity[i] / 100;
-		bpal[i * 4 + 3] = 100;
-	}
-	_system->setPalette(bpal, 0, 256);
-}
-
-void SciGuiGfx::getSysPalette(GuiPalette*pal) {
-	if (pal != &_screen->_sysPalette)
-		memcpy(pal, &_screen->_sysPalette,sizeof(GuiPalette));
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
@@ -890,6 +682,7 @@ const byte pattern_Circles[8][15] = {
 };
 
 // TODO: perhaps this is a better way to set the pattern_Textures array below?
+//  in that case one would need to adjust bits of secondary table. Bit 256 is ignored by original interpreter
 #if 0
 const byte patternTextures[32 * 2] = {
 	0x04, 0x29, 0x40, 0x24, 0x09, 0x41, 0x25, 0x45,
@@ -1169,16 +962,19 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 void SciGuiGfx::drawPicture(GuiResourceId pictureId, uint16 style, bool addToFlag, GuiResourceId paletteId) {
 	SciGuiPicture *picture;
 
-	picture = new SciGuiPicture(_s, this, _screen, pictureId);
+	picture = new SciGuiPicture(_s, this, _screen, _palette, pictureId);
 	// do we add to a picture? if not -> clear screen
 	if (!addToFlag) {
-		ClearScreen(0);
+		if (_s->resMan->isVGA())
+			ClearScreen(0);
+		else
+			ClearScreen(15);
 	}
 	picture->draw(style, addToFlag, paletteId);
 }
 
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
-	SciGuiView *view = new SciGuiView(_s->resMan, _screen, viewId);
+	SciGuiView *view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
 	Common::Rect rect(0, 0);
 	Common::Rect clipRect(0, 0);
 	if (view) {
@@ -1191,11 +987,6 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		if (clipRect.isEmpty()) // nothing to draw
 			return;
 
-		if (view->hasEmbeddedPal()) {
-			// Merge view palette in...
-			SetPalette(view->getPalette(), 1);
-		}
-
 		Common::Rect clipRectTranslated = clipRect;
 		OffsetRect(clipRectTranslated);
 		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
@@ -1203,42 +994,6 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		//if (_picNotValid == 0)
 		//	_gfx->ShowBits(rect, 1);
 	}
-}
-
-void SciGuiGfx::PaletteSetIntensity(int fromColor, int toColor, int intensity, GuiPalette *destPalette) {
-	memset(destPalette->intensity + fromColor, intensity, toColor - fromColor);
-}
-
-void SciGuiGfx::PaletteAnimate(byte fromColor, byte toColor, int speed) {
-	GuiColor col;
-	int len = toColor - fromColor - 1;
-	uint32 now = _sysTicks;
-	// search for sheduled animations with the same 'from' value
-	int sz = _palSchedules.size();
-	for (int i = 0; i < sz; i++) {
-		if (_palSchedules[i].from == fromColor) {
-			if (_palSchedules[i].schedule < now) {
-				if (speed > 0) {
-					col = _screen->_sysPalette.colors[fromColor];
-					memmove(&_screen->_sysPalette.colors[fromColor], &_screen->_sysPalette.colors[fromColor + 1], len * sizeof(GuiColor));
-					_screen->_sysPalette.colors[toColor - 1] = col;
-				} else {
-					col = _screen->_sysPalette.colors[toColor - 1];
-					memmove(&_screen->_sysPalette.colors[fromColor + 1], &_screen->_sysPalette.colors[fromColor], len * sizeof(GuiColor));
-					_screen->_sysPalette.colors[fromColor] = col;
-				}
-				// removing schedule
-				_palSchedules.remove_at(i);
-			}
-			setScreenPalette(&_screen->_sysPalette);
-			return;
-		}
-	}
-	// adding a new schedule
-	GuiPalSchedule sched;
-	sched.from = fromColor;
-	sched.schedule = now + ABS(speed);
-	_palSchedules.push_back(sched);
 }
 
 int16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
@@ -1303,7 +1058,39 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 void SciGuiGfx::AnimateFill() {
 }
 
-void SciGuiGfx::AnimateSort() {
+Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
+	SegManager *segMan = _s->_segMan;
+	Common::List<GuiAnimateList> *sortedList = new Common::List<GuiAnimateList>;
+	GuiAnimateList listHelper;
+	reg_t curAddress = list->first;
+	Node *curNode = lookup_node(_s, curAddress);
+	reg_t curObject;
+
+	// First convert the given List to Common::List
+	while (curNode) {
+		curObject = curNode->value;
+		listHelper.address = curAddress;
+		listHelper.y = (int16)GET_SEL32V(curObject, y);
+		listHelper.z = (int16)GET_SEL32V(curObject, z);
+		sortedList->push_back(listHelper);
+
+		curAddress = curNode->succ;
+		curNode = lookup_node(_s, curAddress);
+	}
+
+	// Now do a bubble sort on this Common::List
+	if (sortedList->size() < 2)
+		return sortedList;
+
+	sortedList->begin();
+//	Common::List<ExecStack>::iterator iter;
+//	for (iter = s->_executionStack.begin();
+//	     iter != s->_executionStack.end(); ++iter) {
+//		ExecStack &es = *iter;
+
+	
+
+	return sortedList;
 }
 
 void SciGuiGfx::AnimateUpdate() {
@@ -1330,7 +1117,7 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	}
 
 	// now get cel rectangle
-	view = new SciGuiView(_s->resMan, _screen, viewId);
+	view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
 	// TODO: sometimes loop is negative. Check what it means

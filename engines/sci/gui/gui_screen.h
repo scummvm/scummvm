@@ -59,6 +59,8 @@ public:
 	void saveBits(Common::Rect rect, byte mask, byte *memoryPtr);
 	void restoreBits(byte *memoryPtr);
 
+	void setPalette(GuiPalette*pal);
+
 	void dither();
 
 	uint16 _width;
@@ -67,8 +69,6 @@ public:
 	uint16 _displayWidth;
 	uint16 _displayHeight;
 	uint _displayPixels;
-
-	GuiPalette _sysPalette;
 
 private:
 	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);

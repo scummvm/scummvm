@@ -35,30 +35,20 @@ namespace Sci {
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
 class SciGuiScreen;
+class SciGuiPalette;
 class SciGuiFont;
 class SciGuiPicture;
 class SciGuiView;
 class SciGuiGfx {
 public:
-	SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen);
+	SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette);
 	~SciGuiGfx();
 
 	void init(void);
-	void initPalette();
-	void initTimer();
-	static void timerHandler(void*ref);
 
 	GuiPort *mallocPort ();
 	byte *GetSegment(byte seg);
 	void ResetScreen();
-	bool SetAmigaPalette();
-	void SetEGApalette();
-	bool SetResPalette(int16 resourceNo, int16 flag);
-	void SetPalette(GuiPalette *sciPal, int16 flag);
-	void MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag);
-	uint16 MatchColor(GuiPalette *pPal, byte r, byte g, byte b);
-	void setScreenPalette(GuiPalette *pal);
-	void getSysPalette(GuiPalette *pal);
 
 	GuiPort *SetPort(GuiPort *port);
 	GuiPort *GetPort();
@@ -114,14 +104,11 @@ public:
 	void drawPicture(GuiResourceId pictureId, uint16 style, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
-	void PaletteSetIntensity(int fromColor, int toColor, int intensity, GuiPalette *destPalette);
-	void PaletteAnimate(byte fromColor, byte toColor, int speed);
-
 	int16 onControl(uint16 screenMask, Common::Rect rect);
 	void AnimateDisposeLastCast();
 	void AnimateInvoke(List *list, int argc, reg_t *argv);
 	void AnimateFill();
-	void AnimateSort();
+	Common::List<GuiAnimateList> *AnimateMakeSortedList(List *list);
 	void AnimateUpdate();
 	void AnimateDrawCels();
 	void AnimateRestoreAndDelete();
@@ -129,10 +116,6 @@ public:
 
 	GuiPort *_menuPort;
 	Common::Rect _menuRect;
-	uint32 _sysTicks;
-	int32 _sysSpeed; // ticker timer in ms 
-
-	bool _picNotValid;
 
 private:
 	int16 TextCodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor);
@@ -145,6 +128,7 @@ private:
 	OSystem *_system;
 	EngineState *_s;
 	SciGuiScreen *_screen;
+	SciGuiPalette *_palette;
 
 	Common::Rect _bounds;
 	GuiPort *_mainPort;

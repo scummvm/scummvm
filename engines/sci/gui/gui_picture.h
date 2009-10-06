@@ -32,7 +32,7 @@ namespace Sci {
 
 class SciGuiPicture {
 public:
-	SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId);
+	SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
@@ -54,6 +54,7 @@ private:
 	EngineState *_s;
 	SciGuiGfx *_gfx;
 	SciGuiScreen *_screen;
+	SciGuiPalette *_palette;
 
 	int16 _resourceId;
 	Resource *_resource;

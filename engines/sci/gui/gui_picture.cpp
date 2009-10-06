@@ -27,13 +27,14 @@
 #include "sci/engine/state.h"
 #include "sci/tools.h"
 #include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_picture.h"
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
-	: _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
+SciGuiPicture::SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId)
+	: _s(state), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -91,8 +92,8 @@ void SciGuiPicture::drawSci11Vga() {
 	GuiPalette palette;
 
 	// Create palette and set it
-	CreatePaletteFromData(inbuffer + palette_data_ptr, &palette);
-	_gfx->SetPalette(&palette, 2);
+	_palette->createFromData(inbuffer + palette_data_ptr, &palette);
+	_palette->set(&palette, 2);
 
 	// display Cel-data
 	if (has_view) {
@@ -468,7 +469,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 						palette.colors[i].used = data[curPos++];
 						palette.colors[i].r = data[curPos++]; palette.colors[i].g = data[curPos++]; palette.colors[i].b = data[curPos++];
 					}
-					_gfx->SetPalette(&palette, 2);
+					_palette->set(&palette, 2);
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoords(data, curPos, x, y);

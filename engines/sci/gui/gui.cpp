@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/timer.h"
 #include "common/util.h"
 
 #include "sci/sci.h"
@@ -30,6 +31,7 @@
 #include "sci/tools.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
 #include "sci/gui/gui_view.h"
@@ -40,7 +42,11 @@ namespace Sci {
 
 SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen)
 	: _system(system), _s(state), _screen(screen) {
-	_gfx = new SciGuiGfx(_system, _s, _screen);
+	_picNotValid = 0;
+	_sysTicks = 0;
+
+	_palette = new SciGuiPalette(_system, _s, this, _screen);
+	_gfx = new SciGuiGfx(_system, _s, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_s, _gfx);
 }
 
@@ -48,22 +54,30 @@ SciGui::SciGui() {
 }
 
 SciGui::~SciGui() {
+	_system->getTimerManager()->removeTimerProc(&timerHandler);
 }
 
-void SciGui::init(bool oldGfxFunctions) {
-	_usesOldGfxFunctions = oldGfxFunctions;
+void SciGui::init(bool usesOldGfxFunctions) {
+	_sysSpeed = 1000000 / 60;
+	Common::TimerManager *tm = _system->getTimerManager();
+	tm->removeTimerProc(&timerHandler);
+	tm->installTimerProc(&timerHandler, _sysSpeed, this);
+}
+
+void SciGui::timerHandler(void *ref) {
+	((SciGui *)ref)->_sysTicks++;
 }
 
 int16 SciGui::getTimeTicks() {
-	return _gfx->_sysTicks;
+	return _sysTicks;
 }
 
 void SciGui::wait(int16 ticks) {
-	uint32 waitto = _gfx->_sysTicks + ticks;
+	uint32 waitto = _sysTicks + ticks;
 	do {
 		//eventMgr->pollEvents();
-		_system->delayMillis(_gfx->_sysSpeed >> 11);
-	} while (_gfx->_sysTicks < waitto);
+		_system->delayMillis(_sysSpeed >> 11);
+	} while (_sysTicks < waitto);
 }
 
 void SciGui::setPort(uint16 portPtr) {
@@ -256,12 +270,12 @@ void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, in
 	_screen->copyToScreen();
 
 	_gfx->SetPort(oldPort);
-	_gfx->_picNotValid = true;
+	_picNotValid = true;
 }
 
 void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
-	_gfx->setScreenPalette(&_screen->_sysPalette);
+	_palette->setOnScreen();
 	_screen->copyToScreen();
 }
 
@@ -329,22 +343,22 @@ void SciGui::graphRestoreBox(reg_t handle) {
 }
 
 void SciGui::paletteSet(int resourceNo, int flags) {
-   _gfx->SetResPalette(resourceNo, flags);
+   _palette->setFromResource(resourceNo, flags);
 }
 
 int16 SciGui::paletteFind(int r, int g, int b) {
-	return _gfx->MatchColor(&_screen->_sysPalette, r, g, b) & 0xFF;
+	return _palette->matchColor(&_palette->_sysPalette, r, g, b) & 0xFF;
 }
 
 void SciGui::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
-	_gfx->PaletteSetIntensity(fromColor, toColor, intensity, &_screen->_sysPalette);
+	_palette->setIntensity(fromColor, toColor, intensity, &_palette->_sysPalette);
 	if (setPalette) {
-		_gfx->setScreenPalette(&_screen->_sysPalette);
+		_palette->setOnScreen();
 	}
 }
 
 void SciGui::paletteAnimate(int fromColor, int toColor, int speed) {
-	_gfx->PaletteAnimate(fromColor, toColor, speed);
+	_palette->animate(fromColor, toColor, speed);
 }
 
 int16 SciGui::onControl(byte screenMask, Common::Rect rect) {
@@ -357,41 +371,39 @@ int16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
-	bool old_picNotValid = _gfx->_picNotValid;
+	bool old_picNotValid = _picNotValid;
 
 	if (listReference.isNull()) {
 		_gfx->AnimateDisposeLastCast();
-		if (_gfx->_picNotValid) {
+		if (_picNotValid) {
 			//(this->*ShowPic)(_showMap, _showStyle);
-			_gfx->_picNotValid = false;
+			_picNotValid = 0;
 		}
 		return;
 	}
 
 	List *list = lookup_list(_s, listReference);
-	if (!list) {
+	if (!list)
 		error("kAnimate called with non-list as parameter");
-	}
 
-	if (cycle) {
+	if (cycle)
 		_gfx->AnimateInvoke(list, argc, argv);
-	}
 
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	_gfx->AnimateDisposeLastCast();
 
 	_gfx->AnimateFill();
 
-	_gfx->AnimateSort();
+	// _gfx->AnimateSort();
 	if (old_picNotValid) {
 		_gfx->AnimateUpdate();
 	}
 
 	_gfx->AnimateDrawCels();
 
-	if (_gfx->_picNotValid) {
+	if (_picNotValid) {
 		//(this->*ShowPic)(_showMap, _showStyle);
-		_gfx->_picNotValid = false;
+		_picNotValid = 0;
 	}
 
 	//_gfx->AnimateUpdateScreen();
@@ -402,7 +414,36 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 }
 
 void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
-	// FIXME: port over from gregs engine
+	List *list;
+	Common::List<GuiAnimateList> *sortedList;
+
+	_gfx->SetPort((GuiPort *)_windowMgr->_picWind);
+
+	list = lookup_list(_s, listReference);
+	if (!list)
+		error("kAddToPic called with non-list as parameter");
+
+	sortedList = _gfx->AnimateMakeSortedList(list);
+
+//	uint16 szList = list.getSize();
+//	HEAPHANDLE*arrObj = new HEAPHANDLE[szList];
+//	int16*arrY = new int16[szList];
+//	HEAPHANDLE hnode = list.getFirst();
+//	sciNode1*pnode;
+//
+//	for (int i = 0; i < szList; i++) {
+//		pnode = (sciNode1*)heap2Ptr(hnode);
+//		obj.set(pnode->value);
+//		arrY[i] = obj.getProperty(3);
+//arrZ[i] = obj.getProperty(
+//		arrObj[i] = pnode->value;
+//		hnode = pnode->next;
+//	}
+//	animSort(arrObj, arrY, szList);
+
+	_picNotValid = 2;
+
+	delete sortedList;
 }
 
 void SciGui::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {

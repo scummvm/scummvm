@@ -47,10 +47,8 @@ struct sciViewLoopInfo {
 
 class SciGuiView {
 public:
-	SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, GuiResourceId resourceId);
+	SciGuiView(ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
 	~SciGuiView();
-
-	// TODO: Remove gfx reference after putting palette things into SciGuiScreen
 
 	GuiResourceId getResourceId();
 	int16 getWidth(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
@@ -61,16 +59,13 @@ public:
 	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
 	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
 
-	bool hasEmbeddedPal() const { return _embeddedPal; }
-
-	GuiPalette *getPalette() { return &_palette; }
-
 private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount);
 
 	ResourceManager *_resMan;
 	SciGuiScreen *_screen;
+	SciGuiPalette *_palette;
 
 	GuiResourceId _resourceId;
 	byte *_resourceData;
@@ -78,7 +73,7 @@ private:
 	uint16 _loopCount;
 	sciViewLoopInfo *_loop;
 	bool _embeddedPal;
-	GuiPalette _palette;
+	GuiPalette _viewPalette;
 	const byte *_EGAMapping; // simple translation map for all 16 colors
 };
 

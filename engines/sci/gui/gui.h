@@ -31,6 +31,7 @@
 namespace Sci {
 
 class SciGuiScreen;
+class SciGuiPalette;
 class SciGuiGfx;
 class SciGuiresources;
 class SciGuiWindowMgr;
@@ -43,7 +44,7 @@ public:
 	// FIXME: Don't store EngineState
 	virtual void resetEngineState(EngineState *s) { _s = s; }
 
-	virtual void init(bool oldGfxFunctions);
+	virtual void init(bool usesOldGfxFunctions);
 
 	virtual int16 getTimeTicks();
 	virtual void wait(int16 ticks);
@@ -89,14 +90,20 @@ public:
 	virtual void moveCursor(int16 x, int16 y, int16 scaleFactor = 1);
 	void moveCursor(Common::Point p, int16 scaleFactor = 1) { moveCursor(p.x, p.y, scaleFactor); }
 
+	int _picNotValid; // possible values 0, 1 and 2
+
 private:
+	static void timerHandler(void*ref);
+
 	OSystem *_system;
 	EngineState *_s;
 	SciGuiScreen *_screen;
+	SciGuiPalette *_palette;
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
-	bool _usesOldGfxFunctions;
+	uint32 _sysTicks;
+	int32 _sysSpeed; // ticker timer in ms 
 };
 
 } // End of namespace Sci
