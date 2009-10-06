@@ -38,8 +38,8 @@
 
 namespace Sci {
 
-SciGuiGfx::SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
-	: _system(system), _s(state), _screen(screen), _palette(palette) {
+SciGuiGfx::SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
+	: _s(state), _screen(screen), _palette(palette) {
 	init();
 }
 

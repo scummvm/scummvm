@@ -41,7 +41,7 @@ class SciGuiPicture;
 class SciGuiView;
 class SciGuiGfx {
 public:
-	SciGuiGfx(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette);
 	~SciGuiGfx();
 
 	void init(void);
@@ -125,7 +125,6 @@ private:
 	void DrawText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void ShowText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 
-	OSystem *_system;
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
