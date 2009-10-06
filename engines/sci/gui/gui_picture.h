@@ -28,9 +28,6 @@
 
 namespace Sci {
 
-#define SCI_PAL_FORMAT_VARIABLE_FLAGS 0
-#define SCI_PAL_FORMAT_CONSTANT_FLAGS 1
-
 #define PIC_STYLE_MIRRORED 0x4000
 
 class SciGuiPicture {
@@ -44,10 +41,9 @@ public:
 private:
 	void initData(GuiResourceId resourceId);
 	void reset();
-	void draw11();
+	void drawSci11Vga();
 	void decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size);
 	void drawCel(int16 x, int16 y, byte *pdata, int size);
-	void drawCelAmiga(int16 x, int16 y, byte *pdata, int size);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte byte);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);

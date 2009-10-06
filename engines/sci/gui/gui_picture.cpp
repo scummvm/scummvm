@@ -52,10 +52,6 @@ GuiResourceId SciGuiPicture::getResourceId() {
 	return _resourceId;
 }
 
-#define PALETTE_SIZE 1284
-#define CEL_HEADER_SIZE 7
-#define EXTRA_MAGIC_SIZE 15
-
 void SciGuiPicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
 	_style = style;
 	_addToFlag = addToFlag;
@@ -64,11 +60,10 @@ void SciGuiPicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
 	_priority = 0;
 
 	if (READ_LE_UINT16(_resource->data) == 0x26) {
-		// SCI 1.1 picture
-		draw11();
+		// SCI 1.1 VGA picture
+		drawSci11Vga();
 	} else {
-		// Just directly draw the vector data
-		_gfx->SetEGApalette();
+		// EGA or Amiga vector data
 		drawVectorData(_resource->data, _resource->size);
 	}
 }
@@ -82,7 +77,7 @@ void SciGuiPicture::reset() {
 	}
 }
 
-void SciGuiPicture::draw11() {
+void SciGuiPicture::drawSci11Vga() {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
 	int has_view = READ_LE_UINT16(inbuffer + 4);
@@ -111,7 +106,6 @@ void SciGuiPicture::draw11() {
 	}
 
 	// process vector data
-	// ?? if we process vector data first some things in sq4 dont seem right, but this way we wont get _priority set
 	drawVectorData(inbuffer + vector_data_ptr, vector_size);
 }
 
@@ -152,90 +146,83 @@ void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 	signed char dx = *(pdata + 4);
 	signed char dy = *(pdata + 5);
 	byte priority = _addToFlag ? _priority : 0;
-	byte clr = *(pdata + 6);
+	byte clearColor = *(pdata + 6);
 	if (dx || dy || width != 320)
-		debug("Warning: embedded picture cel has width=%d dx=%d dy=%d", width, dx, dy);
+		warning("embedded picture cel has width=%d dx=%d dy=%d", width, dx, dy);
 	byte *ptr = pdata + 8; // offset to data
+	byte byte, runLength;
+	uint16 lasty;
 
 	y += _curPort->top;
 
-	uint16 lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
-	byte b, brun;
+	lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
 
-	while (y < lasty && ptr < pend) {
-		b = *ptr++;
-		brun = b & 0x3F; // bytes run length on this step
-		switch (b & 0xC0) {
-		case 0: // copy bytes as-is but skip transparent ones
-			while (brun-- && y < lasty && ptr < pend) {
-				if ((b = *ptr++) != clr && priority >= _screen->getPriority(x, y)) {
-					_screen->putPixel(x, y, 3, b, priority, 0);
+	switch (_s->resMan->getViewType()) {
+	case kViewVga:
+	case kViewVga11:
+		while (y < lasty && ptr < pend) {
+			byte = *ptr++;
+			runLength = byte & 0x3F; // bytes run length on this step
+			switch (byte & 0xC0) {
+			case 0: // copy bytes as-is but skip transparent ones
+				while (runLength-- && y < lasty && ptr < pend) {
+					if ((byte = *ptr++) != clearColor && priority >= _screen->getPriority(x, y))
+						_screen->putPixel(x, y, 3, byte, priority, 0);
+					x++;
+					if (x >= _screen->_width) {
+						x -= _screen->_width; y++;
+					}
 				}
-				x++;
+				break;
+			case 0x80: // fill with color
+				byte = *ptr++;
+				while (runLength-- && y < lasty) {
+					if (priority >= _screen->getPriority(x, y)) {
+						_screen->putPixel(x, y, 3, byte, priority, 0);
+					}
+					x++;
+					if (x >= _screen->_width) {
+						x -= _screen->_width; y++;
+					}
+				}
+				break;
+			case 0xC0: // fill with transparent - skip
+				x += runLength;
 				if (x >= _screen->_width) {
 					x -= _screen->_width; y++;
 				}
-			}
-			break;
-		case 0x80: // fill with color
-			b = *ptr++;
-			while (brun-- && y < lasty) {
-				if (priority >= _screen->getPriority(x, y)) {
-					_screen->putPixel(x, y, 3, b, priority, 0);
-				}
-				x++;
-				if (x >= _screen->_width) {
-					x -= _screen->_width; y++;
-				}
-			}
-			break;
-		case 0xC0: // fill with transparent - skip
-			x += brun;
-			if (x >= _screen->_width) {
-				x -= _screen->_width; y++;
-			}
-			break;
-		}
-	}
-}
-
-void SciGuiPicture::drawCelAmiga(int16 x, int16 y, byte *pdata, int size) {
-	byte* pend = pdata + size;
-	uint16 width = READ_LE_UINT16(pdata + 0);
-	uint16 height = READ_LE_UINT16(pdata + 2);
-	signed char dx = *(pdata + 4);
-	signed char dy = *(pdata + 5);
-	byte priority = _addToFlag ? _priority : 0;
-	//byte clr = *(pdata + 8);
-	if (dx || dy || width != 320)
-		debug("Warning : cel have w=%d dx=%d dy=%d", width, dx, dy);
-	byte *ptr = pdata + 8; // offset to data
-
-	y += _curPort->top;
-
-	uint16 lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
-	byte op, col, bytes;
-	while (y < lasty && ptr < pend) {
-		op = *ptr++;
-		if (op & 0x07) {
-			bytes = op & 0x07;
-			col = op >> 3;
-			while (bytes-- && y < lasty) {
-				if (priority >= _screen->getPriority(x, y)) {
-					_screen->putPixel(x, y, 3, col, priority, 0);
-				}
-				x++;
-				if (x >= _screen->_width) {
-					x -= _screen->_width; y++;
-				}
-			}
-		} else {
-			bytes = op >> 3;
-			x += bytes;
-			if (x >= _screen->_width) {
-				x -= _screen->_width; y++;
+				break;
 			}
 		}
+		break;
+
+	case kViewAmiga:
+		while (y < lasty && ptr < pend) {
+			byte = *ptr++;
+			if (byte & 0x07) {
+				runLength = byte & 0x07;
+				byte = byte >> 3;
+				while (runLength-- && y < lasty) {
+					if (priority >= _screen->getPriority(x, y)) {
+						_screen->putPixel(x, y, 3, byte, priority, 0);
+					}
+					x++;
+					if (x >= _screen->_width) {
+						x -= _screen->_width; y++;
+					}
+				}
+			} else {
+				runLength = byte >> 3;
+				x += runLength;
+				if (x >= _screen->_width) {
+					x -= _screen->_width; y++;
+				}
+			}
+		}
+		break;
+
+	default:
+		error("Unsupported picture viewtype");
 	}
 }
 
@@ -282,6 +269,7 @@ enum {
 #define PIC_EGAPALETTE_COUNT 4
 #define PIC_EGAPALETTE_SIZE  40
 #define PIC_EGAPALETTE_TOTALSIZE PIC_EGAPALETTE_COUNT*PIC_EGAPALETTE_SIZE
+#define PIC_EGAPRIORITY_SIZE PIC_EGAPALETTE_SIZE
 
 static const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
 	0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
@@ -291,12 +279,21 @@ static const byte vector_defaultEGApalette[PIC_EGAPALETTE_SIZE] = {
 	0x08, 0x91, 0x2a, 0x3b, 0x4c, 0x5d, 0x6e, 0x88
 };
 
+static const byte vector_defaultEGApriority[PIC_EGAPRIORITY_SIZE] = {
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+	0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
+	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07
+};
+
 void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
 	byte pic_color = 0, pic_priority = 0x0F, pic_control = 0x0F;
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
 	byte *EGApalette = &EGApalettes[_EGApaletteNo];
+	byte EGApriority[PIC_EGAPRIORITY_SIZE] = {0};
 	bool isEGA = false;
 	int curPos = 0;
 	uint16 size;
@@ -310,11 +307,13 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	if (_EGApaletteNo >= PIC_EGAPALETTE_COUNT)
 		_EGApaletteNo = 0;
 
-	if (!_s->resMan->isVGA())
+	if (_s->resMan->getViewType() == kViewEga) {
 		isEGA = true;
-
-	for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
-		memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
+		// setup default mapping tables
+		for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
+			memcpy(&EGApalettes[i], &vector_defaultEGApalette, sizeof(vector_defaultEGApalette));
+		memcpy(&EGApriority, &vector_defaultEGApriority, sizeof(vector_defaultEGApriority));
+	}
 
 	// Drawing
 	while (curPos < dataSize) {
@@ -333,6 +332,9 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 
 		case PIC_OP_SET_PRIORITY:
 			pic_priority = data[curPos++];
+			if (isEGA) {
+				pic_priority = EGApriority[pic_color];
+			}
 			break;
 		case PIC_OP_DISABLE_PRIORITY:
 			pic_priority = 255;
@@ -488,7 +490,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
 					//FIXME
 					//g_sci->InitPri(READ_LE_UINT16(ptr), READ_LE_UINT16(ptr + 2));
-					debug(5, "DrawPic::InitPri %d %d", 
+					debug(5, "DrawPic::InitPri %d %d",
 						READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
 					curPos += 4;
 					break;

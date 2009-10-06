@@ -88,14 +88,14 @@ void SciGuiGfx::initPalette() {
 	_sysPalette.colors[255].r = 255;
 	_sysPalette.colors[255].g = 255;
 	_sysPalette.colors[255].b = 255;
-	//if (g_sci->getPlatform() == Common::kPlatformAmiga)
-	//	setAmigaPalette();
-	//else 
 
 	// Load default palette from resource 999
 	if (!SetResPalette(999, 2)) {
-		// if not found, we set EGA palette
-		SetEGApalette();
+		// if not found, we try to set amiga palette
+		if (!SetAmigaPalette()) {
+			// if that also doesnt work out, set EGA palette
+			SetEGApalette();
+		}
 	};
 
 	// Init _clrPowers used in MatchColor
@@ -121,8 +121,27 @@ GuiPort *SciGuiGfx::mallocPort() {
 	return newPort;
 }
 
-#define SCI_PAL_FORMAT_CONSTANT 1
-#define SCI_PAL_FORMAT_VARIABLE 0
+// Will try to set amiga palette by using "spal" file. If not found, we return false
+bool SciGuiGfx::SetAmigaPalette() {
+	Common::File file;
+	int curColor, byte1, byte2;
+
+	if (file.open("spal")) {
+		for (curColor = 0; curColor < 32; curColor++) {
+			byte1 = file.readByte();
+			byte2 = file.readByte();
+			if ((byte1 == EOF) || (byte2 == EOF))
+				error("Amiga palette file ends prematurely");
+			_sysPalette.colors[curColor].used = 1;
+			_sysPalette.colors[curColor].r = (byte1 & 0x0F) * 0x11;
+			_sysPalette.colors[curColor].g = ((byte2 & 0xF0) >> 4) * 0x11;
+			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
+		}
+		file.close();
+		return true;
+	}
+	return false;
+}
 
 void SciGuiGfx::SetEGApalette() {
 	int i;
@@ -150,6 +169,9 @@ void SciGuiGfx::SetEGApalette() {
 	}
 	setScreenPalette(&_sysPalette);
 }
+
+#define SCI_PAL_FORMAT_CONSTANT 1
+#define SCI_PAL_FORMAT_VARIABLE 0
 
 void SciGuiGfx::CreatePaletteFromData(byte *data, GuiPalette *paletteOut) {
 	int palFormat = 0;
@@ -225,7 +247,7 @@ void SciGuiGfx::MergePalettes(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
 		if (!pFrom->colors[i].used)// color is not used - so skip it
 			continue;
 		// forced palette merging or dest color is not used yet
-		if (flag == 2 || (!pTo->colors[i].used)) { 
+		if (flag == 2 || (!pTo->colors[i].used)) {
 			pTo->colors[i].used = pFrom->colors[i].used;
 			pTo->colors[i].r = pFrom->colors[i].r;
 			pTo->colors[i].g = pFrom->colors[i].g;
@@ -841,7 +863,7 @@ GuiMemoryHandle SciGuiGfx::SaveBits(const Common::Rect &rect, byte screenMask) {
 	GuiMemoryHandle memoryId;
 	byte *memoryPtr;
 	int size;
-	
+
 	Common::Rect r(rect.left, rect.top, rect.right, rect.bottom);
 	r.clip(_curPort->rect);
 	if (r.isEmpty()) // nothing to save
@@ -1038,7 +1060,7 @@ const bool pattern_Textures[32 * 8 * 2] = {
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false,  true, false, false, false, false,        // 0x04 (last bit is not mentioned cause original interpreter also ignores that bit)
 };
-	
+
 // Bit offsets into pattern_textures
 const byte pattern_TextureOffset[128] = {
 	0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,

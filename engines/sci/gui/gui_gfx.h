@@ -51,6 +51,7 @@ public:
 	GuiPort *mallocPort ();
 	byte *GetSegment(byte seg);
 	void ResetScreen();
+	bool SetAmigaPalette();
 	void SetEGApalette();
 	void CreatePaletteFromData(byte *paletteData, GuiPalette *paletteOut);
 	bool SetResPalette(int16 resourceNo, int16 flag);
