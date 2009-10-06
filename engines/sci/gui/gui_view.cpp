@@ -32,8 +32,8 @@
 
 namespace Sci {
 
-SciGuiView::SciGuiView(OSystem *system, EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
-	: _system(system), _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
+SciGuiView::SciGuiView(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
+	: _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
