@@ -68,7 +68,7 @@ public:
 	void InvertRect(const Common::Rect &rect);
 	void EraseRect(const Common::Rect &rect);
 	void PaintRect(const Common::Rect &rect);
-	void FillRect(const Common::Rect &rect, int16 arg2, byte clrPen, byte clrBack = 0, byte bControl = 0);
+	void FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack = 0, byte bControl = 0);
 	void FrameRect(const Common::Rect &rect);
 	void OffsetRect(Common::Rect &r);
 
