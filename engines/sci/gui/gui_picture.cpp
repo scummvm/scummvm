@@ -56,7 +56,6 @@ void SciGuiPicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
 	_style = style;
 	_addToFlag = addToFlag;
 	_EGApaletteNo = EGApaletteNo;
-	_curPort = _gfx->GetPort();
 	_priority = 0;
 
 	if (READ_LE_UINT16(_resource->data) == 0x26) {
@@ -70,7 +69,7 @@ void SciGuiPicture::draw(uint16 style, bool addToFlag, int16 EGApaletteNo) {
 
 void SciGuiPicture::reset() {
 	int16 x, y;
-	for (y = _curPort->top; y < _screen->_height; y++) {
+	for (y = _gfx->GetPort()->top; y < _screen->_height; y++) {
 		for (x = 0; x < _screen->_width; x++) {
 			_screen->putPixel(x, y, SCI_SCREEN_MASK_ALL, 255, 0, 0);
 		}
@@ -153,9 +152,9 @@ void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 	byte byte, runLength;
 	uint16 lasty;
 
-	y += _curPort->top;
+	y += _gfx->GetPort()->top;
 
-	lasty = MIN<int16>(height + y, _curPort->rect.bottom) + _curPort->top;
+	lasty = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom) + _gfx->GetPort()->top;
 
 	switch (_s->resMan->getViewType()) {
 	case kViewVga:

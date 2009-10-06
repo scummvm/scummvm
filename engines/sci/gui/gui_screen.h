@@ -61,8 +61,6 @@ public:
 
 	void dither();
 
-	GuiPalette _sysPalette;
-
 	uint16 _width;
 	uint16 _height;
 	uint _pixels;

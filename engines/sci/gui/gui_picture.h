@@ -58,7 +58,6 @@ private:
 	int16 _resourceId;
 	Resource *_resource;
 
-	GuiPort *_curPort;
 	uint16 _style;
 	bool _addToFlag;
 	int16 _EGApaletteNo;
