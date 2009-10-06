@@ -129,10 +129,11 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 
 	case kViewVga11: // View-format SCI1.1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
-		// HeaderSize:WORD LoopCount:WORD Version:WORD Unknown:WORD PaletteOffset:WORD
+		// HeaderSize:WORD LoopCount:BYTE Unknown:BYTE Version:WORD Unknown:WORD PaletteOffset:WORD
 		headerSize = READ_LE_UINT16(_resourceData + 0);
-		_loopCount = READ_LE_UINT16(_resourceData + 2);
+		_loopCount = _resourceData[2];
 		palOffset = READ_LE_UINT16(_resourceData + 8);
+		// FIXME: After LoopCount there is another byte and its set for view 50 within Laura Bow 2 CD, check what it means
 
 		loopData = _resourceData + headerSize;
 		loopSize = _resourceData[12];
@@ -149,6 +150,8 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 
 			seekEntry = loopData[2];
 			if (seekEntry != 255) {
+				if (seekEntry >= _loopCount)
+					error("Bad loop-pointer in sci 1.1 view");
 				_loop[loopNo].mirrorFlag = true;
 				loopData = _resourceData + headerSize + (seekEntry * loopSize);
 			} else {
