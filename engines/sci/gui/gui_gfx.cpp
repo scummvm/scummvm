@@ -111,14 +111,10 @@ SciGuiFont *SciGuiGfx::GetFont() {
 }
 
 void SciGuiGfx::SetFont(GuiResourceId fontId) {
-	// Workaround: lsl1sci mixes its own internal fonts with the global
-	// SCI ones, so we translate them here, by removing their extra bits
-	GuiResourceId actualFontId = (_s->_gameName == "lsl1sci") ? fontId & 0x7ff : fontId;
-	
 	if ((_font == NULL) || (_font->getResourceId() != fontId))
-		_font = new SciGuiFont(_s->resMan, actualFontId);
+		_font = new SciGuiFont(_s->resMan, fontId);
 
-	_curPort->fontId = actualFontId;
+	_curPort->fontId = _font->getResourceId();
 	_curPort->fontHeight = _font->getHeight();
 }
 

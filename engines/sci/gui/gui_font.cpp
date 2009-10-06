@@ -35,6 +35,11 @@ SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 	: _resourceId(resourceId) {
 	assert(resourceId != -1);
 
+	// Workaround: lsl1sci mixes its own internal fonts with the global
+	// SCI ones, so we translate them here, by removing their extra bits
+	if (!resMan->testResource(ResourceId(kResourceTypeFont, resourceId)))
+		resourceId = resourceId & 0x7ff;
+
 	Resource *fontResource = resMan->findResource(ResourceId(kResourceTypeFont, resourceId), false);
 	if (!fontResource) {
 		error("font resource %d not found", resourceId);
