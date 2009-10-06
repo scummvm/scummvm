@@ -497,68 +497,56 @@ gfxr_pic_t *GfxResManager::addToPic(int old_nr, int new_nr, int flags, int old_d
 }
 
 gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
-
-	// Wrapper code for the new view decoder - still WIP
-#if 0
-
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_VIEW];
-	gfx_resource_t *res = NULL;
-	gfxr_view_t *result = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
-
-	result->ID = nr;
-	result->flags = 0;
-
-	SciGuiView *view = new SciGuiView(_resMan, _screen, _palette, nr);
-
-	result->loops_nr = view->getLoopCount();
-	result->palette = NULL;
-	result->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * ((result->loops_nr) ? result->loops_nr : 1)); /* Alloc 1 if no loop */
-
-	if (*loop >= result->loops_nr)
-		*loop = result->loops_nr - 1;
-
-	for (int i = 0; i < result->loops_nr; i++) {
-		result->loops[i].cels_nr = view->getLoopInfo(i)->celCount;
-		result->loops[i].cels = (gfx_pixmap_t**)calloc(result->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
-
-		if (*cel >= result->loops[i].cels_nr)
-			*cel = result->loops[i].cels_nr - 1;
-
-		for (int j = 0; j < result->loops[i].cels_nr; j++) {
-			sciViewCelInfo *celInfo = view->getCelInfo(i, j);
-			result->loops[i].cels[j] = gfx_pixmap_alloc_index_data(gfx_new_pixmap(celInfo->width, celInfo->height, nr, i, j));
-			gfx_pixmap_t *curCel = result->loops[i].cels[j];
-			curCel->alpha_map = 0;	// TODO
-			curCel->color_key = celInfo->clearKey;
-			curCel->index_data = view->getBitmap(i, j);
-			curCel->data = curCel->index_data;
-			curCel->flags = 0;
-			curCel->width = celInfo->width;
-			curCel->height = celInfo->height;
-			curCel->index_width = celInfo->width;
-			curCel->index_height = celInfo->height;
-			curCel->palette = 0;	// TODO
-			curCel->palette_revision = 0;
-			curCel->xoffset = celInfo->displaceX;
-			curCel->yoffset = celInfo->displaceY;
-		}
-	}
-
-	return result;
-
-#else
-
-	// Existing code
-	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_VIEW];
-	gfx_resource_t *res = NULL;
+	gfx_resource_t *res = resMap.contains(nr) ? resMap[nr] : NULL;
 	int hash = palette;
+
 	gfxr_view_t *view = NULL;
 	gfxr_loop_t *loop_data = NULL;
 	gfx_pixmap_t *cel_data = NULL;
 
-	res = resMap.contains(nr) ? resMap[nr] : NULL;
-
 	if (!res || res->mode != hash) {
+		// Wrapper code for the new view decoder - still WIP
+#if 0
+		view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
+
+		view->ID = nr;
+		view->flags = 0;
+
+		SciGuiView *guiView = new SciGuiView(_resMan, _screen, _palette, nr);
+
+		view->loops_nr = guiView->getLoopCount();
+		view->palette = _staticPalette->getref();	// TODO: this only works in non-VGA games
+		view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
+
+		for (int i = 0; i < view->loops_nr; i++) {
+			view->loops[i].cels_nr = guiView->getLoopInfo(i)->celCount;
+			view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
+
+			for (int j = 0; j < view->loops[i].cels_nr; j++) {
+				sciViewCelInfo *celInfo = guiView->getCelInfo(i, j);
+				view->loops[i].cels[j] = gfx_pixmap_alloc_index_data(gfx_new_pixmap(celInfo->width, celInfo->height, nr, i, j));
+				gfx_pixmap_t *curCel = view->loops[i].cels[j];
+				curCel->color_key = celInfo->clearKey;
+				curCel->index_data = guiView->getBitmap(i, j);
+				curCel->flags = 0;
+				curCel->width = celInfo->width;
+				curCel->height = celInfo->height;
+				curCel->index_width = celInfo->width;
+				curCel->index_height = celInfo->height;
+				curCel->palette = _staticPalette->getref();	// TODO: this only works in non-VGA games
+				curCel->palette_revision = 0;
+				curCel->xoffset = celInfo->displaceX;
+				curCel->yoffset = celInfo->displaceY;
+				curCel->alpha_map = 0;	// will be allocated by gfx_xlate_pixmap()
+				curCel->data = 0;		// will be allocated by gfx_xlate_pixmap()
+			}
+		}
+
+#else
+
+		// Existing code
+
 		Resource *viewRes = _resMan->findResource(ResourceId(kResourceTypeView, nr), 0);
 		if (!viewRes || !viewRes->data)
 			return NULL;
@@ -585,6 +573,8 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				view->palette = _staticPalette->getref();
 			}
 		}
+
+#endif
 
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
@@ -639,8 +629,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	}
 
 	return view;
-
-#endif
 }
 
 gfx_bitmap_font_t *GfxResManager::getFont(int num, bool scaled) {
