@@ -386,7 +386,7 @@ static void init_aux_pixmap(gfx_pixmap_t **pixmap) {
 
 void gfxop_init(GfxState *state,
 				gfx_options_t *options, ResourceManager *resMan,
-				SciGuiScreen *screen, int scaleFactor) {
+				SciGuiScreen *screen, SciGuiPalette *palette, int scaleFactor) {
 	state->options = options;
 	state->visible_map = GFX_MASK_VISUAL;
 	state->fullscreen_override = NULL; // No magical override
@@ -401,7 +401,7 @@ void gfxop_init(GfxState *state,
 
 	state->driver = new GfxDriver(screen, scaleFactor);
 
-	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan);
+	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan, screen, palette);
 
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
 	state->pointerZone = Common::Rect(0, 0, 320, 200);

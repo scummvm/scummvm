@@ -34,8 +34,8 @@
 
 namespace Sci {
 
-SciGuiPalette::SciGuiPalette(EngineState *state, SciGui *gui, SciGuiScreen *screen)
-	: _s(state), _gui(gui), _screen(screen) {
+SciGuiPalette::SciGuiPalette(EngineState *state, SciGuiScreen *screen)
+	: _s(state), _screen(screen) {
 	init();
 }
 
@@ -186,7 +186,7 @@ void SciGuiPalette::set(GuiPalette *sciPal, int16 flag) {
 	if (flag == 2 || sciPal->timestamp != systime) {
 		merge(sciPal, &_sysPalette, flag);
 		sciPal->timestamp = _sysPalette.timestamp;
-		if (_gui->_picNotValid == 0 && systime != _sysPalette.timestamp)
+		if (_screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
 			setOnScreen();
 	}
 }

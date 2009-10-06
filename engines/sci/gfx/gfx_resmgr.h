@@ -31,6 +31,7 @@
 // or something like that.
 
 #include "sci/gfx/gfx_resource.h"
+#include "sci/gui/gui_palette.h"
 #include "sci/resource.h"
 
 #include "common/hashmap.h"
@@ -90,7 +91,7 @@ typedef Common::HashMap<int, gfx_resource_t *> IntResMap;
 /** Graphics resource manager */
 class GfxResManager {
 public:
-	GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resMan);
+	GfxResManager(gfx_options_t *options, GfxDriver *driver, ResourceManager *resMan, SciGuiScreen *screen, SciGuiPalette *palette);
 	~GfxResManager();
 
 	/**
@@ -303,6 +304,8 @@ private:
 
 	IntResMap _resourceMaps[GFX_RESOURCE_TYPES_NR];
 	ResourceManager *_resMan;
+	SciGuiScreen *_screen;
+	SciGuiPalette *_palette;
 };
 
 } // End of namespace Sci

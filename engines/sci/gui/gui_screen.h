@@ -70,6 +70,8 @@ public:
 	uint16 _displayHeight;
 	uint _displayPixels;
 
+	int _picNotValid; // possible values 0, 1 and 2
+
 private:
 	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
 	void saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);

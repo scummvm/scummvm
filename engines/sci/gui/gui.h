@@ -37,7 +37,7 @@ class SciGuiresources;
 class SciGuiWindowMgr;
 class SciGui {
 public:
-	SciGui(OSystem *system, EngineState *s, SciGuiScreen *screen);
+	SciGui(OSystem *system, EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette);
 	SciGui();
 	virtual ~SciGui();
 
@@ -89,7 +89,7 @@ public:
 	virtual void moveCursor(int16 x, int16 y, int16 scaleFactor = 1);
 	void moveCursor(Common::Point p, int16 scaleFactor = 1) { moveCursor(p.x, p.y, scaleFactor); }
 
-	int _picNotValid; // possible values 0, 1 and 2
+	SciGuiPalette *getPalette() { return _palette; }
 
 private:
 	OSystem *_system;

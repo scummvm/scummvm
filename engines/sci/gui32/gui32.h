@@ -32,7 +32,7 @@ namespace Sci {
 
 class SciGui32 : public SciGui {
 public:
-	SciGui32(OSystem *system, EngineState *s, SciGuiScreen *screen);
+	SciGui32(OSystem *system, EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette);
 	~SciGui32();
 
 	// FIXME: Don't store EngineState

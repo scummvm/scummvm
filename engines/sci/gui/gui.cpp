@@ -41,11 +41,9 @@
 
 namespace Sci {
 
-SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen)
-	: _system(system), _s(state), _screen(screen) {
-	_picNotValid = 0;
+SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
+	: _system(system), _s(state), _screen(screen), _palette(palette) {
 
-	_palette = new SciGuiPalette(_s, this, _screen);
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_s, _gfx);
 }
@@ -266,7 +264,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, in
 	_screen->copyToScreen();
 
 	_gfx->SetPort(oldPort);
-	_picNotValid = true;
+	_screen->_picNotValid = true;
 }
 
 void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
@@ -379,13 +377,13 @@ int16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
-	bool old_picNotValid = _picNotValid;
+	bool old_picNotValid = _screen->_picNotValid;
 
 	if (listReference.isNull()) {
 		_gfx->AnimateDisposeLastCast();
-		if (_picNotValid) {
+		if (_screen->_picNotValid) {
 			//(this->*ShowPic)(_showMap, _showStyle);
-			_picNotValid = 0;
+			_screen->_picNotValid = false;
 		}
 		return;
 	}
@@ -409,9 +407,9 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 	_gfx->AnimateDrawCels();
 
-	if (_picNotValid) {
+	if (_screen->_picNotValid) {
 		//(this->*ShowPic)(_showMap, _showStyle);
-		_picNotValid = 0;
+		_screen->_picNotValid = false;
 	}
 
 	//_gfx->AnimateUpdateScreen();
@@ -449,7 +447,7 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 //	}
 //	animSort(arrObj, arrY, szList);
 
-	_picNotValid = 2;
+	_screen->_picNotValid = 2;	// FIXME: _picNotValid is a boolean!
 
 	delete sortedList;
 }

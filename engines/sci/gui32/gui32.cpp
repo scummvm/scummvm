@@ -64,7 +64,7 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(OSystem *system, EngineState *state, SciGuiScreen *screen)
+SciGui32::SciGui32(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
 	: _system(system), s(state) {
 }
 

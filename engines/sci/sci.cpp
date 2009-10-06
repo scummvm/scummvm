@@ -37,6 +37,7 @@
 
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
+#include "sci/gui/gui_palette.h"
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -156,10 +157,11 @@ Common::Error SciEngine::run() {
 	_gamestate->gfx_state = &gfx_state;
 
 	SciGuiScreen *screen = new SciGuiScreen(_system);
+	SciGuiPalette *palette = new SciGuiPalette(_gamestate, screen);
 
 	// Gui change
-	//_gamestate->gui = new SciGui(_system, _gamestate, screen);    // new
-	_gamestate->gui = new SciGui32(_system, _gamestate, screen);  // old
+	//_gamestate->gui = new SciGui(_system, _gamestate, screen, palette);    // new
+	_gamestate->gui = new SciGui32(_system, _gamestate, screen, palette);  // old
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("dither_mode", "0");
@@ -180,7 +182,7 @@ Common::Error SciEngine::run() {
 	// Default config ends
 #endif
 
-	gfxop_init(&gfx_state, &gfx_options, _resMan, screen, 1);
+	gfxop_init(&gfx_state, &gfx_options, _resMan, screen, palette, 1);
 
 	if (game_init_graphics(_gamestate)) { // Init interpreter graphics
 		warning("Game initialization failed: Error in GFX subsystem. Aborting...");
@@ -202,6 +204,7 @@ Common::Error SciEngine::run() {
 	script_free_engine(_gamestate); // Uninitialize game state
 	script_free_breakpoints(_gamestate);
 
+	delete palette;
 	delete screen;
 	delete _gamestate;
 

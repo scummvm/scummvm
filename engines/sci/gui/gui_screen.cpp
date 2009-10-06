@@ -55,6 +55,8 @@ SciGuiScreen::SciGuiScreen(OSystem *system, int16 width, int16 height, int16 sca
 		_baseTable[i] = base; _baseDisplayTable[i] = base;
 		base += _width;
 	}
+
+	_picNotValid = false;
 }
 
 SciGuiScreen::~SciGuiScreen() {

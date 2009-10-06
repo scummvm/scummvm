@@ -143,7 +143,7 @@ struct GfxState {
  */
 void gfxop_init(GfxState *state, 
 		gfx_options_t *options, ResourceManager *resMan,
-		SciGuiScreen *screen, int scaleFactor = 1);
+		SciGuiScreen *screen, SciGuiPalette *palette, int scaleFactor = 1);
 
 /**
  * Deinitializes a currently active driver.
