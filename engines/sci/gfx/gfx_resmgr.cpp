@@ -500,6 +500,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	IntResMap &resMap = _resourceMaps[GFX_RESOURCE_TYPE_VIEW];
 	gfx_resource_t *res = resMap.contains(nr) ? resMap[nr] : NULL;
 	int hash = palette;
+	ViewType viewType = _resMan->getViewType();
 
 	gfxr_view_t *view = NULL;
 	gfxr_loop_t *loop_data = NULL;
@@ -515,8 +516,19 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 
 		SciGuiView *guiView = new SciGuiView(_resMan, _screen, _palette, nr);
 
+		// Translate view palette
+		view->palette = NULL;
+
+		if (guiView->getPalette()) {
+			GuiPalette viewPalette = guiView->getPalette()->_sysPalette;
+			int colorCount = (viewType == kViewVga) ? 256 : 16;
+			view->palette = new Palette(colorCount);
+
+			for (int c = 0; c < colorCount; c++)
+				view->palette->setColor(c, viewPalette.colors[c].r, viewPalette.colors[c].g, viewPalette.colors[c].b);
+		}
+
 		view->loops_nr = guiView->getLoopCount();
-		view->palette = _staticPalette->getref();	// TODO: this only works in non-VGA games
 		view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
 
 		for (int i = 0; i < view->loops_nr; i++) {
@@ -534,12 +546,12 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				curCel->height = celInfo->height;
 				curCel->index_width = celInfo->width;
 				curCel->index_height = celInfo->height;
-				curCel->palette = _staticPalette->getref();	// TODO: this only works in non-VGA games
 				curCel->palette_revision = 0;
 				curCel->xoffset = celInfo->displaceX;
 				curCel->yoffset = celInfo->displaceY;
 				curCel->alpha_map = 0;	// will be allocated by gfx_xlate_pixmap()
 				curCel->data = 0;		// will be allocated by gfx_xlate_pixmap()
+				curCel->palette = view->palette->getref();
 			}
 		}
 
@@ -552,7 +564,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			return NULL;
 
 		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
-		ViewType viewType = _resMan->getViewType();
 
 		if (viewType == kViewEga) {
 			int pal = (getSciVersion() <= SCI_VERSION_01) ? -1 : palette;

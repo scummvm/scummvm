@@ -59,6 +59,7 @@ public:
 	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
 	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
 	uint16 getLoopCount() const { return _loopCount; }
+	SciGuiPalette *getPalette() const { return _palette; }
 
 private:
 	void initData(GuiResourceId resourceId);
