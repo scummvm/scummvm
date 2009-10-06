@@ -856,7 +856,7 @@ void SciGuiGfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte c
 	y -= size;
 	x -= (size + 1) >> 1;
 
-	rect.top = y; rect.left = x;
+	rect.top = y + _curPort->top; rect.left = x + _curPort->left;
 	rect.setHeight((size*2)+1); rect.setWidth(size+1);
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {
