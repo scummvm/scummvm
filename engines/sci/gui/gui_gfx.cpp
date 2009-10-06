@@ -681,72 +681,73 @@ const byte patternTextures[32 * 2] = {
 };
 #endif
 
+// This table is bitwise upwards (from bit0 to bit7), sierras original table went down the bits (bit7 to bit0)
 const bool pattern_Textures[32 * 8 * 2] = {
-	false, false, false, false, false,  true, false, false, // 0x20
-	false, false,  true, false, true,  false, false,  true, // 0x94
-	false,  true, false, false, false, false, false, false, // 0x02
+	false, false,  true, false, false, false, false, false, // 0x04
+	 true, false, false,  true, false,  true, false, false, // 0x92
+	false, false, false, false, false, false,  true, false, // 0x40
 	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false,  true, false, false,  true, // 0x90
-	false,  true, false, false, false, false, false,  true, // 0x82
-	false, false,  true, false, false,  true, false,  true, // 0xA4
-	false,  true, false, false, false,  true, false,  true, // 0xA2
-	false,  true, false, false, false, false, false,  true, // 0x82
 	 true, false, false,  true, false, false, false, false, // 0x09
-	false,  true, false,  true, false, false, false, false, // 0x0A
-	false,  true, false, false, false,  true, false, false, // 0x22
-	false,  true, false, false,  true, false, false, false, // 0x12
-	false, false, false, false,  true, false, false, false, // 0x10
-	false,  true, false, false, false, false,  true, false, // 0x42
-	false, false,  true, false,  true, false, false, false, // 0x14
-	 true, false, false, false,  true, false, false,  true, // 0x91
-	false,  true, false,  true, false, false,  true, false, // 0x4A
-	 true, false, false, false,  true, false, false,  true, // 0x91
-	 true, false, false, false,  true, false, false, false, // 0x11
-	false, false, false,  true, false, false, false, false, // 0x08
-	false,  true, false, false,  true, false, false, false, // 0x12
+	 true, false, false, false, false, false,  true, false, // 0x41
 	 true, false,  true, false, false,  true, false, false, // 0x25
+	 true, false,  true, false, false, false,  true, false, // 0x45
+	 true, false, false, false, false, false,  true, false, // 0x41
+	false, false, false, false,  true, false, false,  true, // 0x90
+	false, false, false, false,  true, false,  true, false, // 0x50
+	false, false,  true, false, false, false,  true, false, // 0x44
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false, false,  true, false, false, false, false, // 0x08
+	false,  true, false, false, false, false,  true, false, // 0x42
+	false, false, false,  true, false,  true, false, false, // 0x28
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false,  true, false, false,  true, false,  true, false, // 0x52
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false, false, false,  true, false, false, false,  true, // 0x88
 	false, false, false, false,  true, false, false, false, // 0x10
-	false,  true, false, false, false,  true, false, false, // 0x22
-	false, false, false,  true, false,  true, false,  true, // 0xA8
-	false, false,  true, false,  true, false, false, false, // 0x14
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false,  true, false, false,  true, false,  true, // 0xA4
+	false, false, false,  true, false, false, false, false, // 0x08
+	false, false,  true, false, false, false,  true, false, // 0x44
+	 true, false,  true, false,  true, false, false, false, // 0x15
+	false, false, false,  true, false,  true, false, false, // 0x28
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false, false, false, false, false, false, false, // 0x00
-	false, false, false, false,  true, false,  true, false, // 0x50
+	false,  true, false,  true, false, false, false, false, // 0x06
 	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false,  true, false, false, false, false,        // 0x04 (last bit is not mentioned cause original interpreter also ignores that bit)
+	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 	// Now the table is actually duplicated, so we won't need to wrap around
-	false, false, false, false, false,  true, false, false, // 0x20
-	false, false,  true, false, true,  false, false,  true, // 0x94
-	false,  true, false, false, false, false, false, false, // 0x02
+	false, false,  true, false, false, false, false, false, // 0x04
+	 true, false, false,  true, false,  true, false, false, // 0x92
+	false, false, false, false, false, false,  true, false, // 0x40
 	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false, false, false,  true, false, false,  true, // 0x90
-	false,  true, false, false, false, false, false,  true, // 0x82
-	false, false,  true, false, false,  true, false,  true, // 0xA4
-	false,  true, false, false, false,  true, false,  true, // 0xA2
-	false,  true, false, false, false, false, false,  true, // 0x82
 	 true, false, false,  true, false, false, false, false, // 0x09
-	false,  true, false,  true, false, false, false, false, // 0x0A
-	false,  true, false, false, false,  true, false, false, // 0x22
-	false,  true, false, false,  true, false, false, false, // 0x12
-	false, false, false, false,  true, false, false, false, // 0x10
-	false,  true, false, false, false, false,  true, false, // 0x42
-	false, false,  true, false,  true, false, false, false, // 0x14
-	 true, false, false, false,  true, false, false,  true, // 0x91
-	false,  true, false,  true, false, false,  true, false, // 0x4A
-	 true, false, false, false,  true, false, false,  true, // 0x91
-	 true, false, false, false,  true, false, false, false, // 0x11
-	false, false, false,  true, false, false, false, false, // 0x08
-	false,  true, false, false,  true, false, false, false, // 0x12
+	 true, false, false, false, false, false,  true, false, // 0x41
 	 true, false,  true, false, false,  true, false, false, // 0x25
+	 true, false,  true, false, false, false,  true, false, // 0x45
+	 true, false, false, false, false, false,  true, false, // 0x41
+	false, false, false, false,  true, false, false,  true, // 0x90
+	false, false, false, false,  true, false,  true, false, // 0x50
+	false, false,  true, false, false, false,  true, false, // 0x44
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false, false,  true, false, false, false, false, // 0x08
+	false,  true, false, false, false, false,  true, false, // 0x42
+	false, false, false,  true, false,  true, false, false, // 0x28
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false,  true, false, false,  true, false,  true, false, // 0x52
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false, false, false,  true, false, false, false,  true, // 0x88
 	false, false, false, false,  true, false, false, false, // 0x10
-	false,  true, false, false, false,  true, false, false, // 0x22
-	false, false, false,  true, false,  true, false,  true, // 0xA8
-	false, false,  true, false,  true, false, false, false, // 0x14
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false,  true, false, false,  true, false,  true, // 0xA4
+	false, false, false,  true, false, false, false, false, // 0x08
+	false, false,  true, false, false, false,  true, false, // 0x44
+	 true, false,  true, false,  true, false, false, false, // 0x15
+	false, false, false,  true, false,  true, false, false, // 0x28
 	false, false,  true, false, false,  true, false, false, // 0x24
 	false, false, false, false, false, false, false, false, // 0x00
-	false, false, false, false,  true, false,  true, false, // 0x50
+	false,  true, false,  true, false, false, false, false, // 0x06
 	false, false,  true, false, false,  true, false, false, // 0x24
-	false, false,  true, false, false, false, false,        // 0x04 (last bit is not mentioned cause original interpreter also ignores that bit)
+	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
 };
 
 // Bit offsets into pattern_textures
