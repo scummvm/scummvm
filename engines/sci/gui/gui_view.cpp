@@ -67,8 +67,9 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	_loopCount = 0;
 
 	switch (_s->resMan->getViewType()) {
-	case kViewEga: // View-format SCI0
+	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
 		IsEGA = true;
+	case kViewAmiga: // View-format Amiga (32 colors)
 	case kViewVga: // View-format SCI1
 		// LoopCount:WORD MirrorMask:WORD Version:WORD PaletteOffset:WORD LoopOffset0:WORD LoopOffset1:WORD...
 		
@@ -184,11 +185,6 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 		}
 		break;
 
-	case kViewAmiga: // View-format on amiga
-		// FIXME
-		error("ViewType Amiga is currently unsupported");
-		break;
-
 	default:
 		error("ViewType was not detected, can't continue");
 	}
@@ -241,7 +237,8 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 	uint16 pixelNo = 0, runLength;
 	byte byte;
 
-	if (celInfo->offsetEGA) { // EGA data
+	if (celInfo->offsetEGA) {
+		// decompression for EGA views
 		literalPtr = _resourceData + _loop[loopNo].cel[celNo].offsetEGA;
 		while (pixelNo < pixelCount) {
 			byte = *literalPtr++;
@@ -253,27 +250,47 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 		return;
 	}
 
-
 	rlePtr = _resourceData + celInfo->offsetRLE;
-	if (!celInfo->offsetLiteral) { // no extra literal data
-		while (pixelNo < pixelCount) {
-			byte = *rlePtr++;
-			runLength = byte & 0x3F;
-			switch (byte & 0xC0) {
-			case 0: // copy bytes as-is
-				while (runLength-- && pixelNo < pixelCount)
-					outPtr[pixelNo++] = *rlePtr++;
-				break;
-			case 0x80: // fill with color
-				memset(outPtr + pixelNo, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
-				pixelNo += runLength;
-				break;
-			case 0xC0: // fill with transparent
-				pixelNo += runLength;
-				break;
+	if (!celInfo->offsetLiteral) { // no additional literal data
+		if (_s->resMan->getViewType() == kViewAmiga) {
+			// decompression for amiga views
+			while (pixelNo < pixelCount) {
+				byte = *rlePtr++;
+				if (byte & 0x07) { // fill with color
+					runLength = byte & 0x07;
+					byte = byte >> 3;
+					while (runLength-- && pixelNo < pixelCount) {
+						outPtr[pixelNo++] = byte;
+					}
+				} else { // fill with transparent
+					runLength = byte >> 3;
+					pixelNo += runLength;
+				}
 			}
+			return;
+		} else {
+			// decompression for data that has just one combined stream
+			while (pixelNo < pixelCount) {
+				byte = *rlePtr++;
+				runLength = byte & 0x3F;
+				switch (byte & 0xC0) {
+				case 0: // copy bytes as-is
+					while (runLength-- && pixelNo < pixelCount)
+						outPtr[pixelNo++] = *rlePtr++;
+					break;
+				case 0x80: // fill with color
+					memset(outPtr + pixelNo, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNo));
+					pixelNo += runLength;
+					break;
+				case 0xC0: // fill with transparent
+					pixelNo += runLength;
+					break;
+				}
+			}
+			return;
 		}
 	} else {
+		// decompression for data that has separate rle and literal streams
 		literalPtr = _resourceData + celInfo->offsetLiteral;
 		while (pixelNo < pixelCount) {
 			byte = *rlePtr++;
@@ -292,7 +309,9 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 				break;
 			}
 		}
+		return;
 	}
+	error("Unable to decompress view");
 }
 
 byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
