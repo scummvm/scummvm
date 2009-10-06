@@ -47,7 +47,7 @@ struct sciViewLoopInfo {
 
 class SciGuiView {
 public:
-	SciGuiView(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId);
+	SciGuiView(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId);
 	~SciGuiView();
 
 	// TODO: Remove gfx reference after putting palette things into SciGuiScreen
@@ -65,7 +65,7 @@ private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount);
 
-	EngineState *_s;
+	ResourceManager *_resMan;
 	SciGuiGfx *_gfx;
 	SciGuiScreen *_screen;
 

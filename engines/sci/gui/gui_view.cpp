@@ -32,8 +32,8 @@
 
 namespace Sci {
 
-SciGuiView::SciGuiView(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
-	: _s(state), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
+SciGuiView::SciGuiView(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, GuiResourceId resourceId)
+	: _resMan(resMan), _gfx(gfx), _screen(screen), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -44,7 +44,7 @@ SciGuiView::~SciGuiView() {
 static const byte EGAMappingDefault[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
 
 void SciGuiView::initData(GuiResourceId resourceId) {
-	Resource *viewResource = _s->resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
+	Resource *viewResource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
 	if (!viewResource) {
 		error("view resource %d not found", resourceId);
 	}
@@ -66,7 +66,7 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	_EGAMapping = EGAMappingDefault;
 	_loopCount = 0;
 
-	switch (_s->resMan->getViewType()) {
+	switch (_resMan->getViewType()) {
 	case kViewEga: // View-format SCI0 (and Amiga 16 colors)
 		IsEGA = true;
 	case kViewAmiga: // View-format Amiga (32 colors)
@@ -252,7 +252,7 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 
 	rlePtr = _resourceData + celInfo->offsetRLE;
 	if (!celInfo->offsetLiteral) { // no additional literal data
-		if (_s->resMan->getViewType() == kViewAmiga) {
+		if (_resMan->getViewType() == kViewAmiga) {
 			// decompression for amiga views
 			while (pixelNo < pixelCount) {
 				byte = *rlePtr++;

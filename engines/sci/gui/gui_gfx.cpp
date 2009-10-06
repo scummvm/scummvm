@@ -1267,7 +1267,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, uint16 style, bool addToFla
 }
 
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
-	SciGuiView *view = new SciGuiView(_s, this, _screen, viewId);
+	SciGuiView *view = new SciGuiView(_s->resMan, this, _screen, viewId);
 	Common::Rect rect(0, 0);
 	Common::Rect clipRect(0, 0);
 	if (view) {
@@ -1410,7 +1410,7 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	}
 
 	// now get cel rectangle
-	view = new SciGuiView(_s, this, _screen, viewId);
+	view = new SciGuiView(_s->resMan, this, _screen, viewId);
 	view->getCelRect(loopNo, celNo, x, y, z, &celRect);
 
 	// TODO: sometimes loop is negative. Check what it means
