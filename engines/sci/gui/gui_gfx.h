@@ -103,8 +103,6 @@ public:
 	void RestoreBits(GuiMemoryHandle memoryHandle);
 
 	void Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
-	void Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte color, byte prio, byte control);
-	void Draw_Vert(int16 top, int16 bottom, int16 left, byte flag, byte color, byte prio, byte control);
 	void Draw_Box(Common::Rect box, byte color, byte prio, byte control);
 	void Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture);
 	void Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control);

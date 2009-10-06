@@ -25,6 +25,7 @@
 
 #include "common/timer.h"
 #include "common/util.h"
+#include "graphics/primitives.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
@@ -842,6 +843,19 @@ void SciGuiGfx::RestoreBits(GuiMemoryHandle memoryHandle) {
 	}
 }
 
+// Data passed to drawProc()
+struct LineData {
+	byte drawMask;
+	byte prio;
+	byte control;
+	SciGuiScreen *screen;
+};
+
+static void drawProc(int x, int y, int c, void *data) {
+	LineData *lineData = (LineData *)data;
+	lineData->screen->putPixel(x, y, lineData->drawMask, (byte)c, lineData->prio, lineData->control);
+}
+
 void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
 	//set_drawing_flag
 	byte flag = _screen->getDrawingMask(color, prio, control);
@@ -853,70 +867,14 @@ void SciGuiGfx::Draw_Line(int16 left, int16 top, int16 right, int16 bottom, byte
 	right += _curPort->left;
 	top += _curPort->top;
 	bottom += _curPort->top;
-	// horizontal line
-	if (top == bottom) {
-		Draw_Horiz(left, right, top, flag, color, prio, control);
-		return;
-	}
-	// vertical line
-	if (left == right) {
-		Draw_Vert(top, bottom, left, flag, color, prio, control);
-		return;
-	}
-	// sloped line - draw with Bresenham algorithm
-	int dy = bottom - top;
-	int dx = right - left;
-	int stepy = dy < 0 ? -1 : 1;
-	int stepx = dx < 0 ? -1 : 1;
-	dy = ABS(dy) << 1;
-	dx = ABS(dx) << 1;
 
-	// setting the 1st and last pixel
-	_screen->putPixel(left, top, flag, color, prio, control);
-	_screen->putPixel(right, bottom, flag, color, prio, control);
-	// drawing the line
-	if (dx > dy) // going horizontal
-	{
-		int fraction = dy - (dx >> 1);
-		while (left != right) {
-			if (fraction >= 0) {
-				top += stepy;
-				fraction -= dx;
-			}
-			left += stepx;
-			fraction += dy;
-			_screen->putPixel(left, top, flag, color, prio, control);
-		}
-	} else // going vertical
-	{
-		int fraction = dx - (dy >> 1);
-		while (top != bottom) {
-			if (fraction >= 0) {
-				left += stepx;
-				fraction -= dy;
-			}
-			top += stepy;
-			fraction += dx;
-			_screen->putPixel(left, top, flag, color, prio, control);
-		}
-	}
-	//g_sci->eventMgr->waitUntil(5);
-	//ShowBits(&_rThePort->rect,6);
-}
+	LineData lineData;
+	lineData.drawMask = flag;
+	lineData.prio = prio;
+	lineData.control = control;
+	lineData.screen = _screen;
 
-void SciGuiGfx::Draw_Horiz(int16 left, int16 right, int16 top, byte flag, byte color, byte prio, byte control) {
-	if (right < left)
-		SWAP(right, left);
-	for (int i = left; i <= right; i++)
-		_screen->putPixel(i, top, flag, color, prio, control);
-}
-
-//--------------------------------
-void SciGuiGfx::Draw_Vert(int16 top, int16 bottom, int16 left, byte flag, byte color, byte prio, byte control) {
-	if (top > bottom)
-		SWAP(top, bottom);
-	for (int i = top; i <= bottom; i++)
-		_screen->putPixel(left, i, flag, color, prio, control);
+	Graphics::drawLine(left, top, right, bottom, color, drawProc, &lineData);
 }
 
 // Bitmap for drawing sierra circles
