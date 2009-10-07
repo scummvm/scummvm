@@ -130,8 +130,6 @@ struct gfxr_view_t {
 
 	int loops_nr;
 	gfxr_loop_t *loops;
-
-	int translation[GFX_SCI0_IMAGE_COLORS_NR];
 };
 
 /**
@@ -252,17 +250,6 @@ void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
 void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode mode);
 
 /**
- * Calculates an EGA view.
- *
- * @param[in] id		Resource ID of the view
- * @param[in] resource	Pointer to the resource to read
- * @param[in] size		Size of the resource
- * @param[in] palette	The palette to use
- * @return				The resulting view
- */
-gfxr_view_t *getEGAView(int id, byte *resource, int size, int palette);
-
-/**
  * Calculates a SCI cursor.
  *
  * @param[in] id		The cursor's resource ID
@@ -308,18 +295,6 @@ Palette *gfxr_read_pal1_amiga(Common::File &file);
  * @return				Palette with the colors
  */
 Palette *gfxr_read_pal11(int id, byte *resource, int size);
-
-/**
- * Calculates a VGA view.
- *
- * @param[in] id			Resource ID of the view
- * @param[in] resource		Pointer to the resource to read
- * @param[in] size			Size of the resource
- * @param[in] static_pal	The static palette
- * @param[in] isSci11		true if SCI1.1, false otherwise
- * @return					The resulting view
- */
-gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType);
 
 gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *resource, byte *cel_base, int size, gfxr_view_t *view, ViewType viewType);
 /** @} */

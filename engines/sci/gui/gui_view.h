@@ -59,7 +59,7 @@ public:
 	byte *getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo);
 	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
 	uint16 getLoopCount() const { return _loopCount; }
-	GuiPalette *getPalette() { return &_viewPalette; }
+	GuiPalette *getPalette();
 	const byte *getEgaMapping() const { return _EGAMapping; }
 
 private:

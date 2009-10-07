@@ -81,7 +81,8 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 
 		if (palOffset && palOffset != 0x100) {
 			if (IsEGA) { // simple mapping for 16 colors
-				_EGAMapping = _resourceData + palOffset;
+				// FIXME: this messes up the colors in Codename: Iceman
+				//_EGAMapping = _resourceData + palOffset;
 			} else {
 				_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
 				_embeddedPal = true;
@@ -372,6 +373,10 @@ void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect cli
 				_screen->putPixel(clipRectTranslated.left + x, y, drawMask, palette->mapping[color], priority, 0);
 		}
 	}
+}
+
+GuiPalette *SciGuiView::getPalette() {
+	return _embeddedPal ? &_viewPalette : &_palette->_sysPalette;
 }
 
 } // End of namespace Sci

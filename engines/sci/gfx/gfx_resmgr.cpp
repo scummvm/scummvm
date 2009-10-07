@@ -507,8 +507,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	gfx_pixmap_t *cel_data = NULL;
 
 	if (!res || res->mode != hash) {
-		// Wrapper code for the new view decoder - still WIP
-#if 0
+		// Wrapper code for the new view decoder
 		view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
 
 		view->ID = nr;
@@ -526,14 +525,17 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				for (int c = 0; c < 256; c++)
 					view->palette->setColor(c, viewPalette->colors[c].r, viewPalette->colors[c].g, viewPalette->colors[c].b);
 			}
+
+			// Assign missing colors from the view's palette to the global palette ones
+			for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
+				const PaletteEntry& vc = view->palette->getColor(i);
+				if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
+					const PaletteEntry& sc = _staticPalette->getColor(i);
+					view->palette->setColor(i, sc.r, sc.g, sc.b);
+				}
+			}
 		} else {
 			view->palette = _staticPalette->getref();
-
-			const byte *paldata = guiView->getEgaMapping();
-			for (int p = 0; p < GFX_SCI0_IMAGE_COLORS_NR; p++)
-				view->translation[p] = *(paldata++);
-
-			view->flags |= GFX_PIXMAP_FLAG_PALETTIZED;
 		}
 
 		view->loops_nr = guiView->getLoopCount();
@@ -557,41 +559,9 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				curCel->palette_revision = -1;
 				curCel->xoffset = -celInfo->displaceX;
 				curCel->yoffset = -celInfo->displaceY;
+				curCel->palette = view->palette->getref();
 				curCel->alpha_map = 0;	// will be allocated by gfx_xlate_pixmap()
 				curCel->data = 0;		// will be allocated by gfx_xlate_pixmap()
-				curCel->palette = NULL;	// will be assigned to the view palette below
-			}
-		}
-
-		if (viewType == kViewVga || viewType == kViewVga11) {
-#else
-
-		// Existing code
-
-		Resource *viewRes = _resMan->findResource(ResourceId(kResourceTypeView, nr), 0);
-		if (!viewRes || !viewRes->data)
-			return NULL;
-
-		int resid = GFXR_RES_ID(GFX_RESOURCE_TYPE_VIEW, nr);
-
-		if (viewType == kViewEga) {
-			int pal = (getSciVersion() <= SCI_VERSION_01) ? -1 : palette;
-			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
-		} else {
-			view = getVGAView(resid, viewRes->data, viewRes->size, viewType);
-#endif
-
-			if (view->palette) {
-				// Palettize view
-				for (unsigned i = 0; i < MIN(view->palette->size(), _staticPalette->size()); i++) {
-					const PaletteEntry& vc = view->palette->getColor(i);
-					if (vc.r == 0 && vc.g == 0 && vc.b == 0) {
-						const PaletteEntry& sc = _staticPalette->getColor(i);
-						view->palette->setColor(i, sc.r, sc.g, sc.b);
-					}
-				}
-			} else {
-				view->palette = _staticPalette->getref();
 			}
 		}
 
@@ -620,8 +590,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	cel_data = loop_data->cels[*cel];
 
 	if (!cel_data->data) {
-		if (!cel_data->palette)
-			cel_data->palette = view->palette->getref();
 		gfx_get_res_config(_options->res_conf, cel_data);
 		gfx_xlate_pixmap(cel_data, _driver->getMode());
 	}

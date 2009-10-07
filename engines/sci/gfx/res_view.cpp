@@ -86,9 +86,6 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 			int count = op >> 4;
 			int color = op & 0xf;
 
-			if (view->flags & GFX_PIXMAP_FLAG_PALETTIZED)
-				color = view->translation[color];
-
 			if (color == color_key)
 				color = retval->color_key;
 
@@ -116,9 +113,6 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 			int count = op >> 4;
 			int color = op & 0xf;
 
-			if (view && (view->flags & GFX_PIXMAP_FLAG_PALETTIZED))
-				color = view->translation[color];
-
 			if (color == color_key)
 				color = retval->color_key;
 
@@ -133,65 +127,6 @@ gfx_pixmap_t *gfxr_draw_cel0(int id, int loop, int cel, byte *resource, int size
 	}
 
 	return retval;
-}
-
-gfxr_view_t *getEGAView(int id, byte *resource, int size, int palette) {
-	int i;
-	gfxr_view_t *view;
-	int mirror_bitpos = 1;
-	int mirror_bytepos = V0_MIRROR_LIST_OFFSET;
-	int palette_ofs = READ_LE_UINT16(resource + 6);
-
-	if (size < V0_FIRST_LOOP_OFFSET + 8) {
-		error("Attempt to draw empty view %04x", id);
-		return NULL;
-	}
-
-	view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
-	view->ID = id;
-
-	view->loops_nr = resource[V0_LOOPS_NR_OFFSET];
-
-	// Set palette
-	view->flags = 0;
-	view->palette = gfx_sci0_image_pal[sci0_palette]->getref();
-
-	if ((palette_ofs) && (palette >= 0)) {
-		byte *paldata = resource + palette_ofs + (palette * GFX_SCI0_IMAGE_COLORS_NR);
-
-		for (i = 0; i < GFX_SCI0_IMAGE_COLORS_NR; i++)
-			view->translation[i] = *(paldata++);
-
-		view->flags |= GFX_PIXMAP_FLAG_PALETTIZED;
-	}
-
-	if (view->loops_nr * 2 + V0_FIRST_LOOP_OFFSET > size) {
-		error("View %04x: Not enough space in resource to accomodate for the claimed %d loops", id, view->loops_nr);
-		free(view);
-		return NULL;
-	}
-
-	view->loops = (gfxr_loop_t*)malloc(sizeof(gfxr_loop_t) * ((view->loops_nr) ? view->loops_nr : 1)); /* Alloc 1 if no loop */
-
-	for (i = 0; i < view->loops_nr; i++) {
-		int loop_offset = READ_LE_UINT16(resource + V0_FIRST_LOOP_OFFSET + (i << 1));
-		int mirrored = resource[mirror_bytepos] & mirror_bitpos;
-
-		if ((mirror_bitpos <<= 1) == 0x100) {
-			mirror_bytepos++;
-			mirror_bitpos = 1;
-		}
-
-		view->loops[i].cels_nr = READ_LE_UINT16(resource + loop_offset);
-		view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
-
-		for (int j = 0; j < view->loops[i].cels_nr; j++) {
-			int cel_offset = READ_LE_UINT16(resource + loop_offset + 4 + (j << 1));
-			view->loops[i].cels[j] = gfxr_draw_cel0(id, i, j, resource + cel_offset, size - cel_offset, view, mirrored);
-		}
-	}
-
-	return view;
 }
 
 #define NEXT_LITERAL_BYTE(n) \
@@ -363,70 +298,6 @@ gfx_pixmap_t *gfxr_draw_cel1(int id, int loop, int cel, int mirrored, byte *reso
 	}
 
 	return retval;
-}
-
-// SCI1:
-// [LoopCount:WORD] [MirrorMask:WORD] [??:WORD] [PaletteOffset:WORD] [LoopOffset0:WORD] [LoopOffset1:WORD]...
-// Loop-data:
-// [CelCount:WORD] [Unknown:WORD] [CelOffset0:WORD] [CelOffset1:WORD]...
-// SCI11:
-// [HeaderSize:WORD] [LoopCount:BYTE] [Unknown:BYTE] [??:WORD] [??:WORD] [PaletteOffset:WORD]
-gfxr_view_t *getVGAView(int id, byte *resource, int size, ViewType viewType) {
-	uint16 palOffset = READ_LE_UINT16(resource + V1_PALETTE_OFFSET + ((viewType == kViewVga11) ? 2 : 0));
-	uint16 headerSize = (viewType == kViewVga11) ? READ_LE_UINT16(resource + V2_HEADER_SIZE) : 0;
-	byte* seeker = resource + headerSize;
-	uint16 loopOffset = 0;
-	gfxr_view_t *view = (gfxr_view_t *)malloc(sizeof(gfxr_view_t));
-
-	view->ID = id;
-	view->flags = 0;
-	view->loops_nr = READ_LE_UINT16(resource + V1_LOOPS_NR_OFFSET + ((viewType == kViewVga11) ? 2 : 0)) & 0xFF;
-
-	if (palOffset > 0) {
-		if (viewType == kViewVga11)
-			view->palette = gfxr_read_pal11(id, resource + palOffset, size - palOffset);
-		else
-			view->palette = gfxr_read_pal1(id, resource + palOffset, size - palOffset);
-	} else {
-		view->palette = NULL;
-	}
-
-	view->loops = (gfxr_loop_t *)calloc(view->loops_nr, sizeof(gfxr_loop_t));
-
-	for (int i = 0; i < view->loops_nr; i++) {
-		if (viewType != kViewVga11) {
-			bool mirrored = READ_LE_UINT16(resource + V1_MIRROR_MASK) & (1 << i);
-			loopOffset = READ_LE_UINT16(resource + V1_FIRST_LOOP_OFFSET + (i << 1));
-			view->loops[i].cels_nr = READ_LE_UINT16(resource + loopOffset);
-			view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
-
-			for (int j = 0; j < view->loops[i].cels_nr; j++) {
-				int cel_offset = READ_LE_UINT16(resource + loopOffset + 4 + (j << 1));
-				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, 
-														resource + cel_offset, 
-														resource + cel_offset, 
-														size - cel_offset, 
-														view, viewType);
-			}
-		} else {
-			byte copy_entry = seeker[V2_COPY_OF_LOOP];
-			bool mirrored = (copy_entry != 255);
-			byte *buf = !mirrored ? seeker : resource + headerSize + copy_entry * resource[V2_BYTES_PER_LOOP];
-			loopOffset = READ_LE_UINT16(buf + V2_LOOP_OFFSET);
-			view->loops[i].cels_nr = buf[V2_CELS_NUM];
-			view->loops[i].cels = (gfx_pixmap_t**)calloc(view->loops[i].cels_nr, sizeof(gfx_pixmap_t *));
-
-			byte* celSeeker = resource + loopOffset;
-			for (int j = 0; j < view->loops[i].cels_nr; j++) {
-				view->loops[i].cels[j] = gfxr_draw_cel1(id, i, j, mirrored, resource, celSeeker, size, view, viewType);
-				celSeeker += resource[V2_BYTES_PER_CEL];
-			}
-
-			seeker += resource[V2_BYTES_PER_LOOP];
-		}
-	}
-
-	return view;
 }
 
 } // End of namespace Sci
