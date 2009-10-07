@@ -46,10 +46,10 @@ SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) :
 	_displayHeight = _height * scaleFactor;
 	_displayPixels = _displayWidth * _displayHeight;
 
-	_visualScreen = initScreen(_pixels);
-	_priorityScreen = initScreen(_pixels);
-	_controlScreen = initScreen(_pixels);
-	_displayScreen = initScreen(_displayPixels);
+	_visualScreen = (byte *)calloc(_pixels, 1);
+	_priorityScreen = (byte *)calloc(_pixels, 1);
+	_controlScreen = (byte *)calloc(_pixels, 1);
+	_displayScreen = (byte *)calloc(_displayPixels, 1);
 
 	// Sets display screen to be actually displayed
 	_activeScreen = _displayScreen;
@@ -68,12 +68,6 @@ SciGuiScreen::~SciGuiScreen() {
 	free(_priorityScreen);
 	free(_controlScreen);
 	free(_displayScreen);
-}
-
-byte *SciGuiScreen::initScreen(uint16 pixelCount) {
-	byte *screen = (byte *)malloc(pixelCount);
-	memset(screen, 0, pixelCount);
-	return screen;
 }
 
 void SciGuiScreen::copyToScreen() {

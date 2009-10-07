@@ -44,8 +44,6 @@ public:
 	SciGuiScreen(int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
 	~SciGuiScreen();
 
-	byte *initScreen(uint16 pixelCount);
-
 	void copyToScreen();
 
 	byte getDrawingMask(byte color, byte prio, byte control);
