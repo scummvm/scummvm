@@ -36,8 +36,6 @@ public:
 	SciGuiPalette(EngineState *state, SciGuiScreen *screen);
 	~SciGuiPalette();
 
-	void init();
-
 	void createFromData(byte *data, GuiPalette *paletteOut);
 	bool setAmiga();
 	void setEGA();
@@ -55,6 +53,8 @@ public:
 	GuiPalette _sysPalette;
 
 private:
+	void init();
+
 	EngineState *_s;
 	SciGuiScreen *_screen;
 
