@@ -994,7 +994,7 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	}
 }
 
-void SciGuiGfx::drawPicture(GuiResourceId pictureId, uint16 style, bool addToFlag, GuiResourceId paletteId) {
+void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
 	SciGuiPicture *picture;
 
 	picture = new SciGuiPicture(_s, this, _screen, _palette, pictureId);
@@ -1005,7 +1005,7 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, uint16 style, bool addToFla
 		else
 			ClearScreen(15);
 	}
-	picture->draw(style, addToFlag, paletteId);
+	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 }
 
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {

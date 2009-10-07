@@ -28,15 +28,13 @@
 
 namespace Sci {
 
-#define PIC_STYLE_MIRRORED 0x4000
-
 class SciGuiPicture {
 public:
 	SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
-	void draw(uint16 style, bool addToFlag, int16 EGApaletteNo);
+	void draw(int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 
 private:
 	void initData(GuiResourceId resourceId);
@@ -59,7 +57,8 @@ private:
 	int16 _resourceId;
 	Resource *_resource;
 
-	uint16 _style;
+	int16 _animationNr;
+	bool _mirroredFlag;
 	bool _addToFlag;
 	int16 _EGApaletteNo;
 	byte _priority;

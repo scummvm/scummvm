@@ -497,11 +497,10 @@ void SciGui32::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	gfxop_update(s->gfx_state);
 }
 
-void SciGui32::drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo) {
+void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	drawn_pic_t dp;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
-	bool add_to_pic = flags;
 
 	dp.nr = pictureId;
 	if (EGApaletteNo != -1) {
@@ -510,7 +509,7 @@ void SciGui32::drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 fla
 		dp.palette = 0;
 	}
 
-	if (showStyle & K_DRAWPIC_FLAG_MIRRORED)
+	if (mirroredFlag)
 		picFlags |= DRAWPIC1_FLAG_MIRRORED;
 
 	gfxop_disable_dirty_frames(s->gfx_state);
@@ -522,7 +521,7 @@ void SciGui32::drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 fla
 	s->old_screen = gfxop_grab_pixmap(s->gfx_state, gfx_rect(0, 10, 320, 190));
 
 	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", pictureId);
-	if (add_to_pic) {
+	if (addToFlag) {
 		gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
 	} else {
 		gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
@@ -546,7 +545,7 @@ void SciGui32::drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 fla
 
 	s->pic_priority_table = gfxop_get_pic_metainfo(s->gfx_state);
 
-	s->pic_animate = showStyle & 0xff; // The animation used during kAnimate() later on
+	s->pic_animate = animationNr; // The animation used during kAnimate() later on
 
 	s->dyn_views = NULL;
 	s->drop_views = NULL;

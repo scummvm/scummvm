@@ -251,15 +251,14 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_screen->copyToScreen();
 }
 
-void SciGui::drawPicture(GuiResourceId pictureId, uint16 style, uint16 flags, int16 EGApaletteNo) {
-	bool addToFlag = flags ? true : false;
+void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
-		_gfx->drawPicture(pictureId, style, addToFlag, EGApaletteNo);
+		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 	} else {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
-		_gfx->drawPicture(pictureId, style, addToFlag, EGApaletteNo);
+		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 		_windowMgr->EndUpdate(_windowMgr->_picWind);
 	}
 	_screen->copyToScreen();

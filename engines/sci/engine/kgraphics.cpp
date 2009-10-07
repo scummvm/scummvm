@@ -906,22 +906,30 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId pictureId = argv[0].toUint16();
-	uint16 flags = 0;
-	uint16 style = 1;
+	int16 flags = 0;
+	int16 animationNr = -1;
+	bool mirroredFlag = false;
+	bool addToFlag = false;
 	int16 EGApaletteNo = 0; // default needs to be 0
 
-	if (argc >= 2)
-		style = argv[1].toUint16();
+	if (argc >= 2) {
+		flags = argv[1].toSint16();
+		animationNr = flags & 0xFF;
+		if (flags & K_DRAWPIC_FLAG_MIRRORED)
+			mirroredFlag = true;
+	}
 	if (argc >= 3) {
-		if (!s->_kernel->usesOldGfxFunctions())
-			flags = !argv[2].toUint16();
-		else
-			flags = argv[2].toUint16();
+		// FIXME: usesOldGfxFunctions() seems to be butchered, cause sq3 has it set, but uses bit 0 correctly
+		//if (!s->_kernel->usesOldGfxFunctions())
+		//	flags = !argv[2].toUint16();
+		//else
+		if (!argv[2].isNull())
+			addToFlag = true;
 	}
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
 
-	s->gui->drawPicture(pictureId, style, flags, EGApaletteNo);
+	s->gui->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 
 	return s->r_acc;
 }

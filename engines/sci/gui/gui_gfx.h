@@ -101,7 +101,7 @@ public:
 	void Draw_String(const char *text);
 	void Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control);
 	
-	void drawPicture(GuiResourceId pictureId, uint16 style, bool addToFlag, GuiResourceId paletteId);
+	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
 	int16 onControl(uint16 screenMask, Common::Rect rect);

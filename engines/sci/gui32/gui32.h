@@ -53,7 +53,7 @@ public:
 	void textColors(int argc, reg_t *argv);
 
 	void drawStatus(const char *text, int16 colorPen, int16 colorBack);
-	void drawPicture(GuiResourceId pictureId, uint16 showStyle, uint16 flags, int16 EGApaletteNo);
+	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo);
 	void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
 	void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite);
