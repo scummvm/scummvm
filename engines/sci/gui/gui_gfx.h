@@ -46,7 +46,6 @@ public:
 
 	void init(void);
 
-	GuiPort *mallocPort ();
 	byte *GetSegment(byte seg);
 	void ResetScreen();
 

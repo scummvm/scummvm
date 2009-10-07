@@ -51,22 +51,19 @@ void SciGuiGfx::init() {
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
 
-	_mainPort = mallocPort();
+	// FIXME: _mainPort is never freed
+	// FIXME: _mainPort has no id, and is not known to the WindowManager -- this could lead to problems
+	_mainPort = new GuiPort(0);
 	SetPort(_mainPort);
 	OpenPort(_mainPort);
 
-	_menuPort = mallocPort();
+	// FIXME: _menuPort is never freed
+	// FIXME: _menuPort has no id, and is not known to the WindowManager -- this could lead to problems
+	_menuPort = new GuiPort(0);
 	OpenPort(_menuPort);
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
-}
-
-GuiPort *SciGuiGfx::mallocPort() {
-	GuiPort *newPort = (GuiPort *)malloc(sizeof(GuiPort));
-	assert(newPort);
-	memset(newPort, 0, sizeof(GuiPort));
-	return newPort;
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
