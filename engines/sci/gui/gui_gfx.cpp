@@ -684,7 +684,7 @@ void SciGuiGfx::drawLine(int16 left, int16 top, int16 right, int16 bottom, byte 
 }
 
 // Bitmap for drawing sierra circles
-const byte pattern_Circles[8][30] = {
+static const byte s_patternCircles[8][30] = {
 	{ 0x01 },
 	{ 0x4C, 0x02 },
 	{ 0xCE, 0xF7, 0x7D, 0x0E },
@@ -705,10 +705,10 @@ const byte pattern_Circles[8][30] = {
 //	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
 };
 
-// TODO: perhaps this is a better way to set the pattern_Textures array below?
+// TODO: perhaps this is a better way to set the s_patternTextures array below?
 //  in that case one would need to adjust bits of secondary table. Bit 256 is ignored by original interpreter
 #if 0
-const byte patternTextures[32 * 2] = {
+static const byte patternTextures[32 * 2] = {
 	0x04, 0x29, 0x40, 0x24, 0x09, 0x41, 0x25, 0x45,
 	0x41, 0x90, 0x50, 0x44, 0x48, 0x08, 0x42, 0x28,
 	0x89, 0x52, 0x89, 0x88, 0x10, 0x48, 0xA4, 0x08,
@@ -723,7 +723,7 @@ const byte patternTextures[32 * 2] = {
 
 // This table is bitwise upwards (from bit0 to bit7), sierras original table went down the bits (bit7 to bit0)
 //  this was done to simplify things, so we can just run through the table w/o worrying too much about clipping
-const bool pattern_Textures[32 * 8 * 2] = {
+static const bool s_patternTextures[32 * 8 * 2] = {
 	false, false,  true, false, false, false, false, false, // 0x04
 	 true, false, false,  true, false,  true, false, false, // 0x29
 	false, false, false, false, false, false,  true, false, // 0x40
@@ -792,7 +792,7 @@ const bool pattern_Textures[32 * 8 * 2] = {
 };
 
 // Bit offsets into pattern_textures
-const byte pattern_TextureOffset[128] = {
+static const byte s_patternTextureOffset[128] = {
 	0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
 	0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
 	0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,
@@ -823,7 +823,7 @@ void SciGuiGfx::Draw_Box(Common::Rect box, byte color, byte prio, byte control) 
 
 void SciGuiGfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	const bool *textureData = &pattern_Textures[pattern_TextureOffset[texture]];
+	const bool *textureData = &s_patternTextures[s_patternTextureOffset[texture]];
 	int y, x;
 
 	for (y = box.top; y < box.bottom; y++) {
@@ -838,7 +838,7 @@ void SciGuiGfx::Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte c
 
 void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	byte *circleData = (byte *)&pattern_Circles[size];
+	byte *circleData = (byte *)&s_patternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
 	int y, x;
@@ -860,10 +860,10 @@ void SciGuiGfx::Draw_Circle(Common::Rect box, byte size, byte color, byte prio, 
 
 void SciGuiGfx::Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	byte *circleData = (byte *)&pattern_Circles[size];
+	byte *circleData = (byte *)&s_patternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
-	const bool *textureData = &pattern_Textures[pattern_TextureOffset[texture]];
+	const bool *textureData = &s_patternTextures[s_patternTextureOffset[texture]];
 	int y, x;
 
 	for (y = box.top; y < box.bottom; y++) {
