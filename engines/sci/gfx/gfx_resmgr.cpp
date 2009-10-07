@@ -554,7 +554,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				curCel->index_data = (byte *)malloc(celInfo->width * celInfo->height);
 				byte *tmpBuffer = guiView->getBitmap(i, j);
 				memcpy(curCel->index_data, tmpBuffer, celInfo->width * celInfo->height);
-				delete tmpBuffer;
 				curCel->flags = 0;
 				curCel->width = celInfo->width;
 				curCel->height = celInfo->height;
@@ -568,6 +567,8 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				curCel->data = 0;		// will be allocated by gfx_xlate_pixmap()
 			}
 		}
+
+		delete guiView;
 
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
