@@ -32,17 +32,15 @@ namespace Sci {
 
 class SciGuiScreen;
 class SciGuiPalette;
+class SciGuiCursor;
 class SciGuiGfx;
 class SciGuiresources;
 class SciGuiWindowMgr;
 class SciGui {
 public:
-	SciGui(OSystem *system, EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGui(EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor);
 	SciGui();
 	virtual ~SciGui();
-
-	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *s) { _s = s; }
 
 	virtual void init(bool usesOldGfxFunctions);
 
@@ -86,16 +84,14 @@ public:
 	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 
-	virtual void moveCursor(int16 x, int16 y, int16 scaleFactor = 1);
-	void moveCursor(Common::Point p, int16 scaleFactor = 1) { moveCursor(p.x, p.y, scaleFactor); }
-
-	SciGuiPalette *getPalette() { return _palette; }
+	virtual void setCursorPos(Common::Point pos);
+	virtual void moveCursor(Common::Point pos);
 
 private:
-	OSystem *_system;
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
+	SciGuiCursor *_cursor;
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;

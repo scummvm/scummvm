@@ -33,6 +33,7 @@
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_palette.h"
+#include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
 #include "sci/gui/gui_view.h"
@@ -41,8 +42,8 @@
 
 namespace Sci {
 
-SciGui::SciGui(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
-	: _system(system), _s(state), _screen(screen), _palette(palette) {
+SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor)
+	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_s, _gfx);
@@ -460,24 +461,28 @@ void SciGui::setNowSeen(reg_t objectReference) {
 	_gfx->SetNowSeen(objectReference);
 }
 
-void SciGui::moveCursor(int16 x, int16 y, int16 scaleFactor) {
-	Common::Point newPos;
-	
-	x += _windowMgr->_picWind->rect.left;
-	y += _windowMgr->_picWind->rect.top;
-	newPos.x = CLIP<int16>(x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
-	newPos.y = CLIP<int16>(y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
+void SciGui::setCursorPos(Common::Point pos) {
+	// FIXME: try to find out if we need to adjust position somehow, currently just forwarding to moveCursor()
+	moveCursor(pos);
+}
 
-	if (x > _screen->_width || y > _screen->_height) {
-		debug("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)\n", x, y);
+void SciGui::moveCursor(Common::Point pos) {
+	pos.y += _windowMgr->_picWind->rect.top;
+	pos.x += _windowMgr->_picWind->rect.left;
+	
+	pos.y = CLIP<int16>(pos.y, _windowMgr->_picWind->rect.top, _windowMgr->_picWind->rect.bottom - 1);
+	pos.x = CLIP<int16>(pos.x, _windowMgr->_picWind->rect.left, _windowMgr->_picWind->rect.right - 1);
+
+	if (pos.x > _screen->_width || pos.y > _screen->_height) {
+		warning("attempt to place cursor at invalid coordinates (%d, %d)", pos.y, pos.x);
 		return; // Not fatal
 	}
 
-	g_system->warpMouse(x * scaleFactor, y * scaleFactor);
-
+	_cursor->setPosition(pos);
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.
-	gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
+	//gfxop_get_event(_s->gfx_state, SCI_EVT_PEEK);
+	// FIXME!
 }
 
 } // End of namespace Sci

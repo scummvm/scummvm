@@ -38,6 +38,7 @@
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
 #include "sci/gui/gui_palette.h"
+#include "sci/gui/gui_cursor.h"
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
@@ -158,10 +159,11 @@ Common::Error SciEngine::run() {
 
 	SciGuiScreen *screen = new SciGuiScreen(_system);
 	SciGuiPalette *palette = new SciGuiPalette(_gamestate, screen);
+	SciGuiCursor *cursor = new SciGuiCursor(_gamestate, palette);
 
 	// Gui change
-	//_gamestate->gui = new SciGui(_system, _gamestate, screen, palette);    // new
-	_gamestate->gui = new SciGui32(_system, _gamestate, screen, palette);  // old
+	//_gamestate->gui = new SciGui(_gamestate, screen, palette, cursor);    // new
+	_gamestate->gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("dither_mode", "0");

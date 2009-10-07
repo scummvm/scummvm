@@ -279,7 +279,8 @@ int _reset_graphics_input(EngineState *s) {
 	s->titlebar_port->_bgcolor.priority = 11; // Standard priority for the titlebar port
 #endif
 
-	s->gui->moveCursor(160, 150);
+	Common::Point mousePos(160, 150);
+	s->gui->moveCursor(mousePos);
 
 	return 0;
 }

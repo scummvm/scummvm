@@ -64,8 +64,8 @@
 
 namespace Sci {
 
-SciGui32::SciGui32(OSystem *system, EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette)
-	: _system(system), s(state) {
+SciGui32::SciGui32( EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor)
+	: s(state) {
 }
 
 SciGui32::~SciGui32() {
@@ -2002,31 +2002,30 @@ void SciGui32::setNowSeen(reg_t objectReference) {
 	_k_set_now_seen(objectReference);
 }
 
+void SciGui32::setCursorPos(Common::Point pos) {
+	pos.y += s->port->_bounds.y;
+	pos.x += s->port->_bounds.x;
+	moveCursor(pos);
+}
 
-void SciGui32::moveCursor(int16 x, int16 y, int16 scaleFactor) {
-	Common::Point newPos;
+void SciGui32::moveCursor(Common::Point pos) {
+	pos.y += s->port->zone.y;
+	pos.x += s->port->zone.x;
 
-	// newPos = s->gfx_state->pointer_pos;
+	if (pos.x > s->port->zone.x + s->port->zone.width)
+		pos.x = s->port->zone.x + s->port->zone.width;
+	if (pos.y > s->port->zone.y + s->port->zone.height)
+		pos.y = s->port->zone.y + s->port->zone.height;
 
-	newPos.x = x + s->port->zone.x;
-	newPos.y = y + s->port->zone.y;
+	if (pos.x < 0) pos.x = 0;
+	if (pos.y < 0) pos.y = 0;
 
-	if (newPos.x > s->port->zone.x + s->port->zone.width)
-		newPos.x = s->port->zone.x + s->port->zone.width;
-	if (newPos.y > s->port->zone.y + s->port->zone.height)
-		newPos.y = s->port->zone.y + s->port->zone.height;
-
-	if (newPos.x < 0)
-		newPos.x = 0;
-	if (newPos.y < 0)
-		newPos.y = 0;
-
-	if (x > 320 || y > 200) {
-		debug("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)\n", x, y);
+	if (pos.x > 320 || pos.y > 200) {
+		debug("[GFX] Attempt to place pointer at invalid coordinates (%d, %d)\n", pos.x, pos.y);
 		return; // Not fatal
 	}
 
-	g_system->warpMouse(x * scaleFactor, y * scaleFactor);
+	g_system->warpMouse(pos.x, pos.y);
 
 	// Trigger event reading to make sure the mouse coordinates will
 	// actually have changed the next time we read them.

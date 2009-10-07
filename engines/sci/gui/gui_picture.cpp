@@ -556,4 +556,192 @@ void SciGuiPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 patte
 	}
 }
 
+#if 0
+void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) {
+
+void SciGuiPicture::vectorFloodFillRecursive(byte *data, int &curPos, int16 &x, int16 &y) {
+
+void FILL_FUNCTION_RECURSIVE(gfxr_pic_t *pic, int old_xl, int old_xr, int y, int dy, byte *bounds,
+	int legalcolor, int legalmask, int color, int priority, int drawenable, int sci_titlebar_size) {
+	int linewidth = pic->mode->scaleFactor * 320;
+	int miny = pic->mode->scaleFactor * sci_titlebar_size;
+	int maxy = pic->mode->scaleFactor * 200;
+	int xl, xr;
+	int oldytotal = y * linewidth;
+
+	do {
+		int ytotal = oldytotal + (linewidth * dy);
+		int xcont;
+		int state;
+
+		y += dy;
+
+		if (y < miny || y >= maxy) {
+			error("ABRT on failed initial assertion!");
+			return;
+		}
+#  define proj_xl_bound 0
+#  define proj_xr_bound 319
+
+		// Now we have the projected limits, get the real ones:
+
+		xl = (old_xl > proj_xl_bound) ? old_xl : proj_xl_bound;
+		if (!IS_BOUNDARY(xl, y + 1, bounds[ytotal + xl])) { // go left as far as possible
+			while (xl > proj_xl_bound && (!IS_BOUNDARY(xl - 1, y + 1, bounds[ytotal + xl - 1])))
+				--xl;
+		} else // go right until the fillable area starts
+			while (xl < proj_xr_bound && (IS_BOUNDARY(xl, y + 1, bounds[ytotal + xl])))
+				++xl;
+
+
+		if ((xl > proj_xr_bound)
+		        || (xl > old_xr)) {
+			error("ABRT because xl > xr_bound");
+			return;
+		}
+
+		xr = (xl > old_xl) ? xl : old_xl;
+		while (xr < proj_xr_bound && (!IS_BOUNDARY(xr + 1, y + 1, bounds[ytotal + xr + 1])))
+			++xr;
+
+		PRINT_DEBUG1("%d> -> ", xr);
+
+		if (IS_BOUNDARY(xl, y + 1,  bounds[ytotal + xl])) {
+			error("ABRT because xl illegal");
+			return;
+		}
+
+		if (drawenable & GFX_MASK_VISUAL)
+			memset(pic->visual_map->index_data + ytotal + xl, color, xr - xl + 1);
+
+		if (drawenable & GFX_MASK_PRIORITY)
+			memset(pic->priority_map->index_data + ytotal + xl, priority, xr - xl + 1);
+
+
+		// Check whether we need to recurse on branches in the same direction
+		state = 0;
+		xcont = xr + 1;
+		while (xcont <= old_xr) {
+			if (IS_BOUNDARY(xcont, y + 1, bounds[ytotal + xcont]))
+				state = xcont;
+			else if (state) { // recurse
+				vectorFloodFillRecursive(pic, state, xcont, y - dy, dy, bounds, legalcolor,
+				                        legalmask, color, priority, drawenable, sci_titlebar_size);
+				state = 0;
+			}
+			++xcont;
+		}
+
+		// Check whether we need to recurse on backward branches:
+		// left
+		if (xl < old_xl - 1) {
+			state = 0;
+			for (xcont = old_xl - 1; xcont >= xl; xcont--) {
+				if (IS_BOUNDARY(xcont, y, bounds[oldytotal + xcont]))
+					state = xcont;
+				else if (state) { // recurse
+					vectorFloodFillRecursive(pic, xcont, state, y, -dy, bounds,
+					                        legalcolor, legalmask, color, priority, drawenable,
+					                        sci_titlebar_size);
+					state = 0;
+				}
+			}
+		}
+
+		// right
+		if (xr > old_xr + 1) {
+			state = 0;
+			for (xcont = old_xr + 1; xcont <= xr; xcont++) {
+				if (IS_BOUNDARY(xcont, y, bounds[oldytotal + xcont]))
+					state = xcont;
+				else if (state) { // recurse
+					vectorFloodFillRecursive(pic, state, xcont, y, -dy, bounds,
+					                        legalcolor, legalmask, color, priority, drawenable,
+					                        sci_titlebar_size);
+					state = 0;
+				}
+			}
+		}
+
+		oldytotal = ytotal;
+		old_xl = xl;
+		old_xr = xr;
+
+	} while (1);
+}
+
+void SciGuiPicture::vectorFloodFillRecursive(gfxr_pic_t *pic, int x_320, int y_200, int color, int priority, int control, int drawenable,
+	int sci_titlebar_size) {
+	int linewidth = pic->mode->scaleFactor * 320;
+	int x, y;
+	int xl, xr;
+	int ytotal;
+	int bitmask;
+	byte *bounds = NULL;
+	int legalcolor, legalmask;
+	int original_drawenable = drawenable; // Backup, since we need the unmodified value
+					      // for filling the aux and control map
+
+	// Restrict drawenable not to restrict itself to zero
+	if (pic->control_map->index_data[y_200 * 320 + x_320] != 0)
+		drawenable &= ~GFX_MASK_CONTROL;
+
+	if (color == 0xff)
+		drawenable &= ~GFX_MASK_VISUAL;
+
+	if (priority == 0) {
+		drawenable &= ~GFX_MASK_PRIORITY;
+		original_drawenable &= ~GFX_MASK_PRIORITY;
+	}
+
+	AUXBUF_FILL(pic, x_320, y_200, original_drawenable, (drawenable & GFX_MASK_CONTROL) ? control : 0,
+	            sci_titlebar_size);
+
+	x = x_320;
+	y = y_200;
+
+	ytotal = y * linewidth;
+
+	if (!drawenable)
+		return;
+
+	if (drawenable & GFX_MASK_VISUAL) {
+		bounds = pic->visual_map->index_data;
+		legalmask = 0x0ff0;
+		legalcolor = 0xff;
+	} else if (drawenable & GFX_MASK_PRIORITY) {
+		bounds = pic->priority_map->index_data;
+		legalcolor = 0;
+		legalmask = 0x0f0f;
+	} else {
+		legalcolor = 0;
+		legalmask = 0x0f0f;
+	}
+
+	if (!bounds || IS_BOUNDARY(x, y, bounds[ytotal + x]))
+		return;
+
+	if (bounds) {
+		xl = x;
+		while (xl > proj_xl_bound && (!IS_BOUNDARY(xl - 1, y, bounds[ytotal + xl -1])))
+			--xl;
+
+		while (x < proj_xr_bound && (!IS_BOUNDARY(x + 1, y, bounds[ytotal + x + 1])))
+			++x;
+		xr = x;
+
+		if (drawenable & GFX_MASK_VISUAL)
+			memset(pic->visual_map->index_data + ytotal + xl, color, xr - xl + 1);
+
+		if (drawenable & GFX_MASK_PRIORITY)
+			memset(pic->priority_map->index_data + ytotal + xl, priority, xr - xl + 1);
+
+		vectorFloodFillRecursive(pic, xl, xr, y, -1, bounds, legalcolor, legalmask, color, priority, drawenable,
+		                        sci_titlebar_size);
+		vectorFloodFillRecursive(pic, xl, xr, y, + 1, bounds, legalcolor, legalmask, color, priority, drawenable,
+		                        sci_titlebar_size);
+	}
+}
+#endif
+
 } // End of namespace Sci

@@ -268,7 +268,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 }
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
-	
+	Common::Point pos;
 
 	int16 cursor = argv[0].toSint16();
 
@@ -278,13 +278,16 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	gfxop_set_pointer_cursor(s->gfx_state, cursor);
 
 	// Set pointer position, if requested
-	if (argc >= 4)
-		s->gui->moveCursor(argv[2].toSint16() + s->port->_bounds.x, argv[3].toSint16() + s->port->_bounds.y);
-
+	if (argc >= 4) {
+		pos.y = argv[3].toSint16();
+		pos.x = argv[2].toSint16();
+		s->gui->setCursorPos(pos);
+	}
 	return s->r_acc;
 }
 
 static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
+	Common::Point pos;
 	Common::Point *hotspot = NULL;
 
 	switch (argc) {
@@ -292,7 +295,9 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		CursorMan.showMouse(argv[0].toSint16() != 0);
 		break;
 	case 2:
-		s->gui->moveCursor(argv[0].toUint16() + s->port->_bounds.x, argv[1].toUint16() + s->port->_bounds.y);
+		pos.y = argv[1].toSint16();
+		pos.x = argv[0].toSint16();
+		s->gui->setCursorPos(pos);
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();
@@ -337,8 +342,12 @@ reg_t kSetCursor(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
-	if (argc == 2)
-		s->gui->moveCursor(argv[0].toSint16(), argv[1].toSint16());
+	Common::Point pos;
+	if (argc == 2) {
+		pos.y = argv[1].toSint16();
+		pos.x = argv[0].toSint16();
+		s->gui->moveCursor(pos);
+	}
 	return s->r_acc;
 }
 

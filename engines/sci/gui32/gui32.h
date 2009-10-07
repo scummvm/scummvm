@@ -32,11 +32,8 @@ namespace Sci {
 
 class SciGui32 : public SciGui {
 public:
-	SciGui32(OSystem *system, EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGui32(EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor);
 	~SciGui32();
-
-	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *newState) { s = newState; }
 
 	void init(bool oldGfxFunctions);
 
@@ -80,10 +77,10 @@ public:
 	void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	void setNowSeen(reg_t objectReference);
 
-	void moveCursor(int16 x, int16 y, int16 scaleFactor = 1);
+	void setCursorPos(Common::Point pos);
+	void moveCursor(Common::Point pos);
 
 private:
-	OSystem *_system;
 	EngineState *s;
 	bool _usesOldGfxFunctions;
 
