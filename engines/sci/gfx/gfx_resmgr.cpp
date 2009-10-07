@@ -550,7 +550,11 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				view->loops[i].cels[j] = gfx_pixmap_alloc_index_data(gfx_new_pixmap(celInfo->width, celInfo->height, nr, i, j));
 				gfx_pixmap_t *curCel = view->loops[i].cels[j];
 				curCel->color_key = celInfo->clearKey;
-				curCel->index_data = guiView->getBitmap(i, j);
+				// old code uses malloc() here, so we do so as well, as the buffer will be freed with free() in gfx_free_pixmap
+				curCel->index_data = (byte *)malloc(celInfo->width * celInfo->height);
+				byte *tmpBuffer = guiView->getBitmap(i, j);
+				memcpy(curCel->index_data, tmpBuffer, celInfo->width * celInfo->height);
+				delete tmpBuffer;
 				curCel->flags = 0;
 				curCel->width = celInfo->width;
 				curCel->height = celInfo->height;
