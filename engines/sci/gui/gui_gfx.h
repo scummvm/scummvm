@@ -118,8 +118,8 @@ public:
 
 private:
 	int16 TextCodeProcessing(const char *&text, GuiResourceId orgFontId, int16 orgPenColor);
-	void TextWidth(const char*text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
-	void StringWidth(const char*str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void TextWidth(const char *text, int16 from, int16 len, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
+	void StringWidth(const char *str, GuiResourceId orgFontId, int16 &textWidth, int16 &textHeight);
 	int16 GetLongest(const char *str, int16 maxwidth, GuiResourceId orgFontId);
 	void DrawText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void ShowText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);

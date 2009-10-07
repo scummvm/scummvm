@@ -46,13 +46,13 @@ private:
 	GuiResourceId _resourceId;
 	byte *_resourceData;
 
-	struct charinfo {
+	struct Charinfo {
 		byte w, h;
 		int16 offset;
 	};
-	byte mFontH;
-	uint16 mCharMax;
-	charinfo* mChars;
+	byte _fontHeight;
+	uint16 _numChars;
+	Charinfo *_chars;
 };
 
 } // End of namespace Sci

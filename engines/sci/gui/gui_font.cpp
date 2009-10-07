@@ -46,14 +46,14 @@ SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 	}
 	_resourceData = fontResource->data;
 
-	mCharMax = READ_LE_UINT16(_resourceData + 2);
-	mFontH = READ_LE_UINT16(_resourceData + 4);
-	mChars = new charinfo[mCharMax];
+	_numChars = READ_LE_UINT16(_resourceData + 2);
+	_fontHeight = READ_LE_UINT16(_resourceData + 4);
+	_chars = new Charinfo[_numChars];
 	// filling info for every char
-	for (int16 i = 0; i < mCharMax; i++) {
-		mChars[i].offset = READ_LE_UINT16(_resourceData + 6 + i * 2);
-		mChars[i].w = _resourceData[mChars[i].offset];
-		mChars[i].h = _resourceData[mChars[i].offset + 1];
+	for (int16 i = 0; i < _numChars; i++) {
+		_chars[i].offset = READ_LE_UINT16(_resourceData + 6 + i * 2);
+		_chars[i].w = _resourceData[_chars[i].offset];
+		_chars[i].h = _resourceData[_chars[i].offset + 1];
 	}
 }
 
@@ -65,16 +65,16 @@ GuiResourceId SciGuiFont::getResourceId() {
 }
 
 byte SciGuiFont::getHeight() {
-	return mFontH;
+	return _fontHeight;
 }
 byte SciGuiFont::getCharWidth(byte chr) {
-	return chr < mCharMax ? mChars[chr].w : 0;
+	return chr < _numChars ? _chars[chr].w : 0;
 }
 byte SciGuiFont::getCharHeight(byte chr) {
-	return chr < mCharMax ? mChars[chr].h : 0;
+	return chr < _numChars ? _chars[chr].h : 0;
 }
 byte *SciGuiFont::getCharData(byte chr) {
-	return chr < mCharMax ? _resourceData + mChars[chr].offset + 2 : 0;
+	return chr < _numChars ? _resourceData + _chars[chr].offset + 2 : 0;
 }
 
 void SciGuiFont::draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface) {

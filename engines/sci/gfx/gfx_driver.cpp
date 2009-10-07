@@ -226,7 +226,7 @@ void GfxDriver::animatePalette(int fromColor, int toColor, int stepCount) {
 	int i;
 	PaletteEntry firstColor = _mode->palette->getColor(fromColor);
 	PaletteEntry loopColor;
-	for (i=fromColor+1; i<=toColor; i++) {
+	for (i = fromColor + 1; i <= toColor; i++) {
 		loopColor = _mode->palette->getColor(i);
 		loopColor.r = 0;
 		loopColor.g = 0;

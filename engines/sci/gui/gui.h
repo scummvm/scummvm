@@ -23,8 +23,8 @@
  *
  */
 
-#ifndef SCI_GUI_Gui_H
-#define SCI_GUI_Gui_H
+#ifndef SCI_GUI_GUI_H
+#define SCI_GUI_GUI_H
 
 #include "sci/gui/gui_helpers.h"
 
@@ -36,6 +36,7 @@ class SciGuiCursor;
 class SciGuiGfx;
 class SciGuiresources;
 class SciGuiWindowMgr;
+
 class SciGui {
 public:
 	SciGui(EngineState *s, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor);
