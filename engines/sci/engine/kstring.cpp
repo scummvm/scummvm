@@ -359,7 +359,8 @@ reg_t kReadNumber(EngineState *s, int argc, reg_t *argv) {
 reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	uint16 *arguments;
 	reg_t dest = argv[0];
-	char targetbuf[512];
+	int maxsize = 4096; /* Arbitrary... */
+	char targetbuf[4096];
 	char *target = targetbuf;
 	reg_t position = argv[1]; /* source */
 	int index = argv[2].toUint16();
@@ -371,8 +372,6 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 	int startarg;
 	int str_leng = 0; /* Used for stuff like "%13s" */
 	int unsigned_var = 0;
-	int maxsize = 4096; /* Arbitrary... */
-
 
 	if (position.segment)
 		startarg = 2;
