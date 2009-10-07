@@ -44,7 +44,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
-	Common::Point mousePos = s->_cursor->getPosition();
+	const Common::Point mousePos = s->_cursor->getPosition();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -94,9 +94,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case SCI_EVT_MOUSE_RELEASE:
-	case SCI_EVT_MOUSE_PRESS: {
-		int extra_bits = 0;
-		Common::Point mousePos = s->_cursor->getPosition();
+	case SCI_EVT_MOUSE_PRESS:
 
 		// track left buttton clicks, if requested
 		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && g_debug_track_mouse_clicks) {
@@ -105,6 +103,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mask & e.type) {
+			int extra_bits = 0;
+
 			switch (e.data) {
 			case 2:
 				extra_bits = SCI_EVM_LSHIFT | SCI_EVM_RSHIFT;
@@ -121,7 +121,6 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			s->r_acc = make_reg(0, 1);
 		}
 		break;
-	}
 
 	default:
 		s->r_acc = NULL_REG; // Unknown or no event
