@@ -31,6 +31,7 @@
 #include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gui/gui.h"
+#include "sci/gui/gui_cursor.h"
 
 namespace Sci {
 
@@ -75,7 +76,7 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 		// Sometimes this is called without giving text, if thats the case dont process it
 		text = s->_segMan->getString(textReference);
 
-		s->gui->drawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
+		s->_gui->drawStatus(s->strSplit(text.c_str(), NULL).c_str(), colorPen, colorBack);
 	}
 	return s->r_acc;
 }
@@ -174,7 +175,9 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 		}
 	}
 
-	if ((type == SCI_EVT_MOUSE_PRESS) && (s->gfx_state->pointer_pos.y < 10)) {
+	Common::Point cursorPos = s->_cursor->getPosition();
+
+	if ((type == SCI_EVT_MOUSE_PRESS) && (cursorPos.y < 10)) {
 		menu_mode = 1;
 		mouse_down = 1;
 	}
@@ -188,7 +191,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 		/* Default to menu 0, unless the mouse was used to generate this effect */
 		if (mouse_down)
-			s->_menubar->mapPointer(s->gfx_state->pointer_pos, menu_nr, item_nr, port);
+			s->_menubar->mapPointer(cursorPos, menu_nr, item_nr, port);
 		else
 			menu_nr = 0;
 
@@ -261,9 +264,12 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 				break;
 
 			case SCI_EVT_MOUSE_RELEASE:
-				menu_mode = (s->gfx_state->pointer_pos.y < 10);
-				claimed = !menu_mode && !s->_menubar->mapPointer(s->gfx_state->pointer_pos, menu_nr, item_nr, port);
+				{
+				Common::Point curMousePos = s->_cursor->getPosition();
+				menu_mode = (curMousePos.y < 10);
+				claimed = !menu_mode && !s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, port);
 				mouse_down = 0;
+				}
 				break;
 
 			case SCI_EVT_MOUSE_PRESS:
@@ -276,7 +282,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			if (mouse_down)
-				s->_menubar->mapPointer(s->gfx_state->pointer_pos, menu_nr, item_nr, port);
+				s->_menubar->mapPointer(s->_cursor->getPosition(), menu_nr, item_nr, port);
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
 

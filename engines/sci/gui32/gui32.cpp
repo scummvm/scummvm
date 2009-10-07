@@ -2002,11 +2002,11 @@ void SciGui32::setNowSeen(reg_t objectReference) {
 	_k_set_now_seen(objectReference);
 }
 
-void SciGui32::setCursorHide() {
+void SciGui32::hideCursor() {
 	CursorMan.showMouse(false);
 }
 
-void SciGui32::setCursorShow() {
+void SciGui32::showCursor() {
 	CursorMan.showMouse(true);
 }
 

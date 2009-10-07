@@ -49,6 +49,7 @@ namespace Sci {
 
 class Menubar;
 class SciGui;
+class SciGuiCursor;
 
 struct GfxState;
 struct GfxPort;
@@ -159,7 +160,7 @@ private:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, uint32 flags);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor, uint32 flags);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -176,7 +177,8 @@ public:
 
 	/* Non-VM information */
 
-	SciGui *gui; /* Currently active Gui */
+	SciGui *_gui; /* Currently active Gui */
+	SciGuiCursor *_cursor;	/* Cursor functions */
 
 	GfxState *gfx_state; /**< Graphics state and driver */
 	gfx_pixmap_t *old_screen; /**< Old screen content: Stored during kDrawPic() for kAnimate() */

@@ -84,8 +84,8 @@ public:
 	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
 
-	virtual void setCursorHide();
-	virtual void setCursorShow();
+	virtual void hideCursor();
+	virtual void showCursor();
 	virtual void setCursorShape(GuiResourceId cursorId);
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);

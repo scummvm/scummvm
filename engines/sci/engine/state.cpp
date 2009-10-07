@@ -29,8 +29,8 @@
 
 namespace Sci {
 
-EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, uint32 flags)
-: resMan(res), _kernel(kernel), _voc(voc), _flags(flags), _dirseeker(this) {
+EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor, uint32 flags)
+: resMan(res), _kernel(kernel), _voc(voc), _gui(gui), _cursor(cursor), _flags(flags), _dirseeker(this) {
 
 	gfx_state = 0;
 	old_screen = 0;

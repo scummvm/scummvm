@@ -25,6 +25,7 @@
 
 #include "graphics/cursorman.h"
 #include "common/util.h"
+#include "common/events.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
@@ -35,16 +36,14 @@
 
 namespace Sci {
 
-SciGuiCursor::SciGuiCursor(EngineState *state, SciGuiPalette *palette)
-	: _s(state), _palette(palette) {
-	init();
+SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette)
+	: _resMan(resMan), _palette(palette) {
+	_rawBitmap = NULL;
+
+	setPosition(Common::Point(160, 150));		// TODO: how is that different in 640x400 games?
 }
 
 SciGuiCursor::~SciGuiCursor() {
-}
-
-void SciGuiCursor::init() {
-	_rawBitmap = NULL;
 }
 
 void SciGuiCursor::show() {
@@ -72,7 +71,7 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 	}
 	
 	// Load cursor resource...
-	resource = _s->resMan->findResource(ResourceId(kResourceTypeCursor, resourceId), false);
+	resource = _resMan->findResource(ResourceId(kResourceTypeCursor, resourceId), false);
 	if (!resource)
 		error("cursor resource %d not found", resourceId);
 	if (resource->size != SCI_CURSOR_SCI0_RESOURCESIZE)
@@ -115,6 +114,35 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 
 void SciGuiCursor::setPosition(Common::Point pos) {
 	g_system->warpMouse(pos.x, pos.y);
+}
+
+Common::Point SciGuiCursor::getPosition() {
+	return g_system->getEventManager()->getMousePos();
+}
+
+void SciGuiCursor::refreshPosition() {
+	bool clipped = false;
+	Common::Point mousePoint = getPosition();
+
+	if (mousePoint.x < _moveZone.left) {
+		mousePoint.x = _moveZone.left;
+		clipped = true;
+	} else if (mousePoint.x >= _moveZone.right) {
+		mousePoint.x = _moveZone.right - 1;
+		clipped = true;
+	}
+
+	if (mousePoint.y < _moveZone.top) {
+		mousePoint.y = _moveZone.top;
+		clipped = true;
+	} else if (mousePoint.y >= _moveZone.bottom) {
+		mousePoint.y = _moveZone.bottom - 1;
+		clipped = true;
+	}
+
+	// FIXME: Do this only when mouse is grabbed?
+	if (clipped)
+		g_system->warpMouse(mousePoint.x, mousePoint.y);
 }
 
 } // End of namespace Sci

@@ -168,6 +168,7 @@ void GfxDriver::update(rect_t src, Common::Point dest, gfx_buffer_t buffer) {
 		}
 		break;
 	case GFX_BUFFER_FRONT: {
+		// TODO: we need to call SciGuiCursor::refreshPosition() before each screen update to limit the mouse cursor position
 		g_system->copyRectToScreen(_screen->_displayScreen + (src.x + src.y * _mode->xsize), _mode->xsize, dest.x, dest.y, src.width, src.height);
 		g_system->updateScreen();
 		break;

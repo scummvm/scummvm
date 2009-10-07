@@ -31,6 +31,7 @@
 #include "sci/console.h"
 #include "sci/debug.h"	// for g_debug_simulated_key
 #include "sci/gui/gui.h"
+#include "sci/gui/gui_cursor.h"
 
 namespace Sci {
 
@@ -43,6 +44,7 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	int oldx, oldy;
 	int modifier_mask = getSciVersion() <= SCI_VERSION_01 ? SCI_EVM_ALL : SCI_EVM_NO_FOOLOCK;
 	SegManager *segMan = s->_segMan;
+	Common::Point mousePos = s->_cursor->getPosition();
 
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
@@ -50,22 +52,22 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 		PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 		PUT_SEL32V(obj, message, g_debug_simulated_key);
 		PUT_SEL32V(obj, modifiers, SCI_EVM_NUMLOCK); // Numlock on
-		PUT_SEL32V(obj, x, s->gfx_state->pointer_pos.x);
-		PUT_SEL32V(obj, y, s->gfx_state->pointer_pos.y);
+		PUT_SEL32V(obj, x, mousePos.x);
+		PUT_SEL32V(obj, y, mousePos.y);
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
 
-	oldx = s->gfx_state->pointer_pos.x;
-	oldy = s->gfx_state->pointer_pos.y;
+	oldx = mousePos.x;
+	oldy = mousePos.y;
 	e = gfxop_get_event(s->gfx_state, mask);
 
 	s->parser_event = NULL_REG; // Invalidate parser event
 
-	PUT_SEL32V(obj, x, s->gfx_state->pointer_pos.x);
-	PUT_SEL32V(obj, y, s->gfx_state->pointer_pos.y);
+	PUT_SEL32V(obj, x, mousePos.x);
+	PUT_SEL32V(obj, y, mousePos.y);
 
-	//s->gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
+	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
 	switch (e.type) {
 	case SCI_EVT_QUIT:
@@ -94,11 +96,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	case SCI_EVT_MOUSE_RELEASE:
 	case SCI_EVT_MOUSE_PRESS: {
 		int extra_bits = 0;
+		Common::Point mousePos = s->_cursor->getPosition();
 
 		// track left buttton clicks, if requested
 		if (e.type == SCI_EVT_MOUSE_PRESS && e.data == 1 && g_debug_track_mouse_clicks) {
 			((SciEngine *)g_engine)->getSciDebugger()->DebugPrintf("Mouse clicked at %d, %d\n", 
-						s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
+						mousePos.x, mousePos.y);
 		}
 
 		if (mask & e.type) {
@@ -210,7 +213,7 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 		int16 x = GET_SEL32V(obj, x);
 		int16 y = GET_SEL32V(obj, y);
 
-		s->gui->globalToLocal(&x, &y);
+		s->_gui->globalToLocal(&x, &y);
 
 		PUT_SEL32V(obj, x, x);
 		PUT_SEL32V(obj, y, y);
@@ -228,7 +231,7 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 		int16 x = GET_SEL32V(obj, x);
 		int16 y = GET_SEL32V(obj, y);
 
-		s->gui->localToGlobal(&x, &y);
+		s->_gui->localToGlobal(&x, &y);
 
 		PUT_SEL32V(obj, x, x);
 		PUT_SEL32V(obj, y, y);

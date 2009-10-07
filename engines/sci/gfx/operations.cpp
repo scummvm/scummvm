@@ -249,35 +249,6 @@ static void _gfxop_draw_pixmap(GfxDriver *driver, gfx_pixmap_t *pxm, int priorit
 	driver->drawPixmap(pxm, priority, src, clipped_dest, static_buf ? GFX_BUFFER_STATIC : GFX_BUFFER_BACK);
 }
 
-static void _gfxop_full_pointer_refresh(GfxState *state) {
-	bool clipped = false;
-	Common::Point mousePoint = g_system->getEventManager()->getMousePos();
-
-	state->pointer_pos.x = mousePoint.x / state->driver->getMode()->scaleFactor;
-	state->pointer_pos.y = mousePoint.y / state->driver->getMode()->scaleFactor;
-
-	if (state->pointer_pos.x < state->pointerZone.left) {
-		state->pointer_pos.x = state->pointerZone.left;
-		clipped = true;
-	} else if (state->pointer_pos.x >= state->pointerZone.right) {
-		state->pointer_pos.x = state->pointerZone.right - 1;
-		clipped = true;
-	}
-
-	if (state->pointer_pos.y < state->pointerZone.top) {
-		state->pointer_pos.y = state->pointerZone.top;
-		clipped = true;
-	} else if (state->pointer_pos.y >= state->pointerZone.bottom) {
-		state->pointer_pos.y = state->pointerZone.bottom - 1;
-		clipped = true;
-	}
-
-	// FIXME: Do this only when mouse is grabbed?
-	if (clipped)
-		g_system->warpMouse(state->pointer_pos.x * state->driver->getMode()->scaleFactor,
-							state->pointer_pos.y * state->driver->getMode()->scaleFactor);
-}
-
 static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_t buffer);
 
 gfx_pixmap_t *_gfxr_get_cel(GfxState *state, int nr, int *loop, int *cel, int palette) {
@@ -404,7 +375,6 @@ void gfxop_init(GfxState *state,
 	state->gfxResMan = new GfxResManager(state->options, state->driver, resMan, screen, palette);
 
 	gfxop_set_clip_zone(state, gfx_rect(0, 0, 320, 200));
-	state->pointerZone = Common::Rect(0, 0, 320, 200);
 
 	init_aux_pixmap(&(state->control_map));
 	init_aux_pixmap(&(state->priority_map));
@@ -720,8 +690,6 @@ static void _gfxop_draw_line_clipped(GfxState *state, Common::Point start, Commo
 	gfx_line_style_t line_style) {
 	int skipone = (start.x ^ end.y) & 1; // Used for simulated line stippling
 
-	_gfxop_full_pointer_refresh(state);
-
 	// First, make sure that the line is normalized
 	if (start.y > end.y) {
 		Common::Point swap = start;
@@ -778,8 +746,6 @@ void gfxop_draw_rectangle(GfxState *state, rect_t rect, gfx_color_t color, gfx_l
 	Common::Point upper_left_u, upper_right_u, lower_left_u, lower_right_u;
 	Common::Point upper_left, upper_right, lower_left, lower_right;
 
-	_gfxop_full_pointer_refresh(state);
-
 	xfact = state->driver->getMode()->scaleFactor;
 	yfact = state->driver->getMode()->scaleFactor;
 
@@ -820,10 +786,7 @@ void gfxop_draw_box(GfxState *state, rect_t box, gfx_color_t color1, gfx_color_t
 	gfx_rectangle_fill_t driver_shade_type;
 	rect_t new_box;
 
-	_gfxop_full_pointer_refresh(state);
-
 	shade_type = GFX_BOX_SHADE_FLAT;
-
 
 	_gfxop_add_dirty(state, box);
 
@@ -904,7 +867,6 @@ static void _gfxop_buffer_propagate_box(GfxState *state, rect_t box, gfx_buffer_
 extern int sci0_palette;
 
 void gfxop_clear_box(GfxState *state, rect_t box) {
-	_gfxop_full_pointer_refresh(state);
 	_gfxop_add_dirty(state, box);
 	DDIRTY(stderr, "[]  clearing box %d %d %d %d\n", GFX_PRINT_RECT(box));
 
@@ -991,6 +953,7 @@ void gfxop_sleep(GfxState *state, uint32 msecs) {
 	while (true) {
 		// let backend process events and update the screen
 		gfxop_get_event(state, SCI_EVT_PEEK);
+		// TODO: we need to call SciGuiCursor::refreshPosition() before each screen update to limit the mouse cursor position
 		g_system->updateScreen();
 		time = g_system->getMillis();
 		if (time + 10 < wakeup_time) {
@@ -1038,10 +1001,6 @@ void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::
 		Common::Point p = Common::Point(new_pointer->xoffset + (new_pointer->width >> 1), new_pointer->yoffset + new_pointer->height - 1);
 		state->driver->setPointer(new_pointer, &p);
 	}
-}
-
-void gfxop_set_pointer_zone(GfxState *state, Common::Rect rect) {
-	state->pointerZone = rect;
 }
 
 #define SCANCODE_ROWS_NR 3
@@ -1359,7 +1318,7 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask) {
 	//sci_event_t error_event = { SCI_EVT_ERROR, 0, 0, 0 };
 	sci_event_t event = { 0, 0, 0, 0 };
 
-	_gfxop_full_pointer_refresh(state);
+	// TODO: we need to call SciGuiCursor::refreshPosition() before each screen update to limit the mouse cursor position
 
 	// Update the screen here, since it's called very often
 	g_system->updateScreen();
@@ -1390,8 +1349,6 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask) {
 		// Because event.type is SCI_EVT_NONE already here,
 		// there is no need to change it.
 	}
-
-	_gfxop_full_pointer_refresh(state);
 
 	if (event.type == SCI_EVT_KEYBOARD) {
 		// Do we still have to translate the key?
@@ -1719,7 +1676,6 @@ TextHandle::~TextHandle() {
 void gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 	int line_height;
 	rect_t pos;
-	_gfxop_full_pointer_refresh(state);
 
 	if (!handle)
 		error("Attempt to draw text with NULL handle");
@@ -1795,7 +1751,6 @@ void gfxop_draw_text(GfxState *state, TextHandle *handle, rect_t zone) {
 gfx_pixmap_t *gfxop_grab_pixmap(GfxState *state, rect_t area) {
 	gfx_pixmap_t *pixmap = NULL;
 	rect_t resultzone; // Ignored for this application
-	_gfxop_full_pointer_refresh(state);
 
 	_gfxop_scale_rect(&area, state->driver->getMode());
 	_gfxop_grab_pixmap(state, &pixmap, area.x, area.y, area.width, area.height, 0, &resultzone);
@@ -1809,7 +1764,6 @@ void gfxop_draw_pixmap(GfxState *state, gfx_pixmap_t *pxm, rect_t zone, Common::
 	if (!pxm)
 		error("Attempt to draw NULL pixmap");
 
-	_gfxop_full_pointer_refresh(state);
 	_gfxop_add_dirty(state, target);
 
 	_gfxop_scale_rect(&zone, state->driver->getMode());

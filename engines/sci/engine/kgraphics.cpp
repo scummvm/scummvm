@@ -39,6 +39,7 @@
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gfx/seq_decoder.h"
 #include "sci/gui/gui.h"
+#include "sci/gui/gui_cursor.h"
 
 namespace Sci {
 
@@ -275,14 +276,14 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4) {
 		pos.y = argv[3].toSint16();
 		pos.x = argv[2].toSint16();
-		s->gui->setCursorPos(pos);
+		s->_gui->setCursorPos(pos);
 	}
 
 	if ((argc >= 2) && (argv[1].toSint16() == 0)) {
 		cursorId = -1;
 	}
 
-	s->gui->setCursorShape(cursorId);
+	s->_gui->setCursorShape(cursorId);
 	return s->r_acc;
 }
 
@@ -293,14 +294,14 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 	switch (argc) {
 	case 1:
 		if (argv[0].isNull())
-			s->gui->setCursorHide();
+			s->_gui->hideCursor();
 		else
-			s->gui->setCursorShow();
+			s->_gui->showCursor();
 		break;
 	case 2:
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
-		s->gui->setCursorPos(pos);
+		s->_gui->setCursorPos(pos);
 		break;
 	case 4: {
 		int16 top = argv[0].toSint16();
@@ -310,7 +311,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 		if ((right >= left) && (bottom >= top)) {
 			Common::Rect rect = Common::Rect(left, top, right, bottom);
-			gfxop_set_pointer_zone(s->gfx_state, rect);
+			s->_cursor->setMoveZone(rect);
 		} else {
 			warning("kSetCursor: Ignoring invalid mouse zone (%i, %i)-(%i, %i)", left, top, right, bottom);
 		}
@@ -349,7 +350,7 @@ reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 	if (argc == 2) {
 		pos.y = argv[1].toSint16();
 		pos.x = argv[0].toSint16();
-		s->gui->moveCursor(pos);
+		s->_gui->moveCursor(pos);
 	}
 	return s->r_acc;
 }
@@ -448,27 +449,27 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		color = argv[5].toSint16();
 
 		// FIXME: rect must be changed to 2 Common::Point
-		s->gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
+		s->_gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
 		break;
 
 	case K_GRAPH_SAVE_BOX:
 		rect = Common::Rect(x, y, x1, y1);
 		flags = (argc > 5) ? argv[5].toUint16() : 0;
-		return s->gui->graphSaveBox(rect, flags);
+		return s->_gui->graphSaveBox(rect, flags);
 		break;
 
 	case K_GRAPH_RESTORE_BOX:
-		s->gui->graphRestoreBox(argv[1]);
+		s->_gui->graphRestoreBox(argv[1]);
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
 		rect = Common::Rect(x, y, x1, y1);
-		s->gui->graphFillBoxBackground(rect);
+		s->_gui->graphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
 		rect = Common::Rect(x, y, x1, y1);
-		s->gui->graphFillBoxForeground(rect);
+		s->_gui->graphFillBoxForeground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_ANY:
@@ -478,7 +479,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		colorMask = argv[5].toUint16();
 
 		rect = Common::Rect(x, y, x1, y1);
-		s->gui->graphFillBox(rect, colorMask, color, priority, control);
+		s->_gui->graphFillBox(rect, colorMask, color, priority, control);
 		break;
 
 	case K_GRAPH_UPDATE_BOX: {
@@ -551,7 +552,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	textWidth = dest[3].toUint16(); textHeight = dest[2].toUint16();
-	s->gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
+	s->_gui->textSize(s->strSplit(text.c_str(), sep).c_str(), font_nr, maxwidth, &textWidth, &textHeight);
 	debugC(2, kDebugLevelStrings, "GetTextSize '%s' -> %dx%d\n", text.c_str(), textWidth, textHeight);
 
 	dest[2] = make_reg(0, textHeight);
@@ -578,7 +579,7 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 
 	// FIXME: we should not be asking from the GUI to wait. The kernel sounds
 	// like a better place
-	s->gui->wait(sleep_time);
+	s->_gui->wait(sleep_time);
 
 	return s->r_acc;
 }
@@ -897,7 +898,7 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 		rect.right = rect.left + 1;
 		rect.bottom = rect.top + 1;
 	}
-	return make_reg(0, s->gui->onControl(screenMask, rect));
+	return make_reg(0, s->_gui->onControl(screenMask, rect));
 }
 
 void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
@@ -928,7 +929,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
 
-	s->gui->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+	s->_gui->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 
 	return s->r_acc;
 }
@@ -1096,7 +1097,7 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 }
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
-	s->gui->setNowSeen(argv[0]);
+	s->_gui->setNowSeen(argv[0]);
 	return s->r_acc;
 }
 
@@ -1107,7 +1108,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		if (argc==3) {
 			int resourceNo = argv[1].toUint16();
 			int flags = argv[2].toUint16();
-			s->gui->paletteSet(resourceNo, flags);
+			s->_gui->paletteSet(resourceNo, flags);
 		}
 		break;
 	case 2:
@@ -1123,7 +1124,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			int intensity = argv[3].toUint16();
 			bool setPalette = (argc < 5) ? true : (argv[5].isNull()) ? true : false;
 
-			s->gui->paletteSetIntensity(fromColor, toColor, intensity, setPalette);
+			s->_gui->paletteSetIntensity(fromColor, toColor, intensity, setPalette);
 		}
 		break;
 	}
@@ -1132,14 +1133,14 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		int g = argv[2].toUint16();
 		int b = argv[3].toUint16();
 
-		return make_reg(0, s->gui->paletteFind(r, g, b));
+		return make_reg(0, s->_gui->paletteFind(r, g, b));
 	}
 	case 6:
 		if (argc==4) {
 			int fromColor = argv[1].toUint16();
 			int toColor = argv[2].toUint16();
 			int speed = argv[3].toSint16();
-			s->gui->paletteAnimate(fromColor, toColor, speed);
+			s->_gui->paletteAnimate(fromColor, toColor, speed);
 		}
 		break;
 	case 7:
@@ -1444,13 +1445,13 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool hilite) {
 	switch (type) {
 	case K_CONTROL_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
-		s->gui->drawControlButton(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, state, hilite);
+		s->_gui->drawControlButton(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, state, hilite);
 		return;
 
 	case K_CONTROL_TEXT:
 		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(obj), text.c_str(), x, y, mode);
-		s->gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, hilite);
+		s->_gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, hilite);
 		return;
 
 	case K_CONTROL_EDIT:
@@ -1468,7 +1469,7 @@ static void _k_draw_control(EngineState *s, reg_t obj, bool hilite) {
 
 	case K_CONTROL_ICON:
 		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
-		s->gui->drawControlIcon(rect, obj, view, loop, cel, state, hilite);
+		s->_gui->drawControlIcon(rect, obj, view, loop, cel, state, hilite);
 		return;
 
 	case K_CONTROL_CONTROL:
@@ -1572,7 +1573,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 	case 0:
 		break;
 	case 1:
-		s->gui->addToPicList(argv[0], argc, argv);
+		s->_gui->addToPicList(argv[0], argc, argv);
 		break;
 	case 7:
 		viewId = argv[0].toUint16();
@@ -1582,7 +1583,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 		topPos = argv[4].toSint16();
 		priority = argv[5].toSint16();
 		control = argv[6].toSint16();
-		s->gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+		s->_gui->addToPicView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 		break;
 	default:
 		error("kAddToPic with unsupported parameter count %d", argc);
@@ -1591,7 +1592,7 @@ reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kGetPort(EngineState *s, int argc, reg_t *argv) {
-	return s->gui->getPort();
+	return s->_gui->getPort();
 }
 
 reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
@@ -1602,7 +1603,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 	switch (argc) {
 		case 1:
 		portPtr = argv[0].toSint16();
-		s->gui->setPort(portPtr);
+		s->_gui->setPort(portPtr);
 		break;
 
 		case 6:
@@ -1612,7 +1613,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 		picRect.right = argv[3].toSint16();
 		picTop = argv[4].toSint16();
 		picLeft = argv[5].toSint16();
-		s->gui->setPortPic(picRect, picTop, picLeft);
+		s->_gui->setPortPic(picRect, picTop, picLeft);
 		break;
 
 		default:
@@ -1631,7 +1632,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	int priority = (argc > 5) ? argv[5].toUint16()  : -1;
 	int paletteNo = (argc > 6) ? argv[6].toSint16() : 0;
 
-	s->gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
+	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
 
 	return s->r_acc;
 }
@@ -1640,7 +1641,7 @@ reg_t kDisposeWindow(EngineState *s, int argc, reg_t *argv) {
 	int goner_nr = argv[0].toSint16();
 	int arg2 = (argc != 2 || argv[2].toUint16() == 0 ? 0 : 1);
 
-	s->gui->disposeWindow(goner_nr, arg2);
+	s->_gui->disposeWindow(goner_nr, arg2);
 	return s->r_acc;
 }
 
@@ -1664,14 +1665,14 @@ reg_t kNewWindow(EngineState *s, int argc, reg_t *argv) {
 		title = s->strSplit(title.c_str(), NULL);
 	}
 
-	return s->gui->newWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
+	return s->_gui->newWindow(rect1, rect2, style, priority, colorPen, colorBack, title.c_str());
 }
 
 reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	reg_t castListReference = (argc > 0) ? argv[0] : NULL_REG;
 	bool cycle = (argc > 1) ? ((argv[1].toUint16()) ? true : false) : false;
 
-	s->gui->animate(castListReference, cycle, argc, argv);
+	s->_gui->animate(castListReference, cycle, argc, argv);
 	return s->r_acc;
 }
 
@@ -1729,7 +1730,7 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 		text = kernel_lookup_text(s, textp, index);
 	}
 
-	s->gui->display(s->strSplit(text.c_str()).c_str(), argc, argv);
+	s->_gui->display(s->strSplit(text.c_str()).c_str(), argc, argv);
 	return s->r_acc;
 }
 
@@ -1889,12 +1890,12 @@ reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {
 // New calls for SCI11. Using those is only needed when using text-codes so that one is able to change
 //  font and/or color multiple times during kDisplay and kDrawControl
 reg_t kTextFonts(EngineState *s, int argc, reg_t *argv) {
-	s->gui->textFonts(argc, argv);
+	s->_gui->textFonts(argc, argv);
 	return s->r_acc;
 }
 
 reg_t kTextColors(EngineState *s, int argc, reg_t *argv) {
-	s->gui->textColors(argc, argv);
+	s->_gui->textColors(argc, argv);
 	return s->r_acc;
 }
 

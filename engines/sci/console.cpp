@@ -1498,7 +1498,7 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 	case 1:
 	case 2:
 	case 3:
-		return _vm->_gamestate->gui->debugShowMap(map);
+		return _vm->_gamestate->_gui->debugShowMap(map);
 		break;
 
 	default:

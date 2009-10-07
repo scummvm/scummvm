@@ -39,22 +39,30 @@ class SciGuiView;
 class SciGuiPalette;
 class SciGuiCursor {
 public:
-	SciGuiCursor(EngineState *state, SciGuiPalette *palette);
+	SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette);
 	~SciGuiCursor();
 
 	void show();
 	void hide();
 	void setShape(GuiResourceId resourceId);
 	void setPosition(Common::Point pos);
+	Common::Point getPosition();
+	void refreshPosition();
+
+	/**
+	 * Limits the mouse movement to a given rectangle.
+	 *
+	 * @param[in] rect	The rectangle
+	 */
+	void setMoveZone(Common::Rect zone) { _moveZone = zone; }
 
 private:
-	void init();
-
-	EngineState *_s;
+	ResourceManager *_resMan;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
 	byte *_rawBitmap;
+	Common::Rect _moveZone; // Rectangle in which the pointer can move
 };
 
 } // End of namespace Sci

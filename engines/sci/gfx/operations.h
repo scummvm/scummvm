@@ -93,9 +93,6 @@ typedef Common::List<rect_t> DirtyRectList;
 struct GfxState {
 	gfx_options_t *options;
 
-	Common::Point pointer_pos; /**< Mouse pointer coordinates */
-	Common::Rect pointerZone; /**< Rectangle in which the pointer can move */
-
 	rect_t clip_zone_unscaled; /**< The current UNSCALED clipping zone */
 	rect_t clip_zone; /**< The current SCALED clipping zone; a cached scaled version of clip_zone_unscaled */
 
@@ -386,14 +383,6 @@ void gfxop_set_pointer_cursor(GfxState *state, int nr);
  * @param[in] hotspot	Manually set hotspot to use, or NULL for default.
  */
 void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot);
-
-/**
- * Limits the mouse movement to a given rectangle.
- *
- * @param[in] state	The affected state
- * @param[in] rect	The rectangle
- */
-void gfxop_set_pointer_zone(GfxState *state, Common::Rect rect);
 
 /**
  * Retrieves the next input event from the driver.

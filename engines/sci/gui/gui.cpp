@@ -460,11 +460,11 @@ void SciGui::setNowSeen(reg_t objectReference) {
 	_gfx->SetNowSeen(objectReference);
 }
 
-void SciGui::setCursorHide() {
+void SciGui::hideCursor() {
 	_cursor->hide();
 }
 
-void SciGui::setCursorShow() {
+void SciGui::showCursor() {
 	_cursor->show();
 }
 
