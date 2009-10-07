@@ -497,4 +497,9 @@ void SciGui::moveCursor(Common::Point pos) {
 	// FIXME!
 }
 
+bool SciGui::debugShowMap(int mapNo) {
+	_screen->debugShowMap(mapNo);
+	return false;
+}
+
 } // End of namespace Sci

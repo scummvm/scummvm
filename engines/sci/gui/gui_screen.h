@@ -63,6 +63,8 @@ public:
 
 	void dither();
 
+	void debugShowMap(int mapNo);
+
 	uint16 _width;
 	uint16 _height;
 	uint _pixels;
@@ -89,6 +91,9 @@ public:	// HACK. TODO: make private
 	// this screen is the one that is actually displayed to the user. It may be 640x480 for japanese SCI1 games
 	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
+
+	// this is a pointer to the currently active screen (changing it only required for debug purposes)
+	byte *_activeScreen;
 };
 
 } // End of namespace Sci

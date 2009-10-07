@@ -83,6 +83,8 @@ public:
 	void setCursorPos(Common::Point pos);
 	void moveCursor(Common::Point pos);
 
+	bool debugShowMap(int mapNo);
+
 private:
 	EngineState *s;
 	bool _usesOldGfxFunctions;

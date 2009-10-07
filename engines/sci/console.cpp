@@ -1487,36 +1487,24 @@ bool Console::cmdShowMap(int argc, const char **argv) {
 		DebugPrintf("- 0: visual map (back buffer)\n");
 		DebugPrintf("- 1: priority map (back buffer)\n");
 		DebugPrintf("- 2: control map (static buffer)\n");
+		DebugPrintf("- 3: display screen (newgui only)\n");
 		return true;
 	}
-
-	gfxop_set_clip_zone(_vm->_gamestate->gfx_state, gfx_rect_fullscreen);
 
 	int map = atoi(argv[1]);
 
 	switch (map) {
 	case 0:
-		_vm->_gamestate->visual->add_dirty_abs((GfxContainer *)_vm->_gamestate->visual, gfx_rect(0, 0, 320, 200), 0);
-		_vm->_gamestate->visual->draw(Common::Point(0, 0));
-		break;
-
 	case 1:
-		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->pic->priority_map, _vm->_gamestate->gfx_state->driver->getMode());
-		gfxop_draw_pixmap(_vm->_gamestate->gfx_state, _vm->_gamestate->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
-		break;
-
 	case 2:
-		gfx_xlate_pixmap(_vm->_gamestate->gfx_state->control_map, _vm->_gamestate->gfx_state->driver->getMode());
-		gfxop_draw_pixmap(_vm->_gamestate->gfx_state, _vm->_gamestate->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+	case 3:
+		return _vm->_gamestate->gui->debugShowMap(map);
 		break;
 
 	default:
 		DebugPrintf("Map %d is not available.\n", map);
 		return true;
 	}
-
-	gfxop_update(_vm->_gamestate->gfx_state);
-
 	return false;
 }
 

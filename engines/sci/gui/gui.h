@@ -90,6 +90,8 @@ public:
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);
 
+	virtual bool debugShowMap(int mapNo);
+
 private:
 	EngineState *_s;
 	SciGuiScreen *_screen;

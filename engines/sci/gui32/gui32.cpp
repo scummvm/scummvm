@@ -2048,4 +2048,28 @@ void SciGui32::moveCursor(Common::Point pos) {
 	gfxop_get_event(s->gfx_state, SCI_EVT_PEEK);
 }
 
+bool SciGui32::debugShowMap(int mapNo) {
+	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
+
+	switch (mapNo) {
+	case 0:
+		s->visual->add_dirty_abs((GfxContainer *)s->visual, gfx_rect(0, 0, 320, 200), 0);
+		s->visual->draw(Common::Point(0, 0));
+		break;
+
+	case 1:
+		gfx_xlate_pixmap(s->gfx_state->pic->priority_map, s->gfx_state->driver->getMode());
+		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->pic->priority_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+		break;
+
+	case 2:
+		gfx_xlate_pixmap(s->gfx_state->control_map, s->gfx_state->driver->getMode());
+		gfxop_draw_pixmap(s->gfx_state, s->gfx_state->control_map, gfx_rect(0, 0, 320, 200), Common::Point(0, 0));
+		break;
+	}
+
+	gfxop_update(s->gfx_state);
+	return false;
+}
+
 } // End of namespace Sci
