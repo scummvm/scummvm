@@ -93,6 +93,7 @@ private:
 	bool cmdDrawRect(int argc, const char **argv);
 	bool cmdDrawCel(int argc, const char **argv);
 	bool cmdViewInfo(int argc, const char **argv);
+	bool cmdUndither(int argc, const char **argv);
 	// GUI
 	bool cmdCurrentPort(int argc, const char **argv);
 	bool cmdPrintPort(int argc, const char **argv);

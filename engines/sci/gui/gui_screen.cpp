@@ -60,6 +60,7 @@ SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) :
 	}
 
 	_picNotValid = false;
+	_unditherState = false;
 }
 
 SciGuiScreen::~SciGuiScreen() {
@@ -223,7 +224,7 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 // Currently not really done, its supposed to be possible to only dither _visualScreen
 void SciGuiScreen::dither() {
 	int y, x;
-	byte color;
+	byte color, ditheredColor;
 	byte *screenPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 
@@ -232,16 +233,20 @@ void SciGuiScreen::dither() {
 			color = *screenPtr;
 			if (color & 0xF0) {
 				color ^= color << 4;
-//              remove remark to enable undithering
-//				*displayPtr = color;
-				// do the actual dithering
-				color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-				*screenPtr = color;
-				*displayPtr = color; // put remark here to enable unditherung
+				ditheredColor = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+				*screenPtr = ditheredColor;
+				if (_unditherState)
+					*displayPtr = color;
+				else
+					*displayPtr = ditheredColor;
 			}
 			screenPtr++; displayPtr++;
 		}
 	}
+}
+
+void SciGuiScreen::unditherSetState(bool flag) {
+	_unditherState = flag;
 }
 
 void SciGuiScreen::debugShowMap(int mapNo) {

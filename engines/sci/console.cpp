@@ -108,6 +108,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("draw_rect",			WRAP_METHOD(Console, cmdDrawRect));
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
 	DCmd_Register("view_info",			WRAP_METHOD(Console, cmdViewInfo));
+	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
 	// GUI
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
 	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
@@ -280,6 +281,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	DebugPrintf(" draw_rect - Draws a rectangle to the screen with one of the EGA colors\n");
 	DebugPrintf(" draw_cel - Draws a single view cel to the center of the screen\n");
 	DebugPrintf(" view_info - Displays information for the specified view\n");
+	DebugPrintf(" undither - Enable/disable undithering\n");
 	DebugPrintf("\n");
 	DebugPrintf("GUI:\n");
 	DebugPrintf(" current_port - Shows the ID of the currently active port\n");
@@ -1057,6 +1059,18 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 	}
 
 	return true;
+}
+
+bool Console::cmdUndither(int argc, const char **argv) {
+	if (argc != 2) {
+		DebugPrintf("Enable/disable undithering.\n");
+		DebugPrintf("Usage: %s <0/1>\n", argv[0]);
+		return true;
+	}
+
+	bool flag = atoi(argv[1]) ? true : false;
+
+	return _vm->_gamestate->_gui->debugUndither(flag);
 }
 
 bool Console::cmdUpdateZone(int argc, const char **argv) {

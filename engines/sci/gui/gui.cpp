@@ -496,6 +496,11 @@ void SciGui::moveCursor(Common::Point pos) {
 	// FIXME!
 }
 
+bool SciGui::debugUndither(bool flag) {
+	_screen->unditherSetState(flag);
+	return false;
+}
+
 bool SciGui::debugShowMap(int mapNo) {
 	_screen->debugShowMap(mapNo);
 	return false;

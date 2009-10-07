@@ -90,6 +90,7 @@ public:
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);
 
+	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 
 private:

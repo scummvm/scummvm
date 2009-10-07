@@ -2047,6 +2047,10 @@ void SciGui32::moveCursor(Common::Point pos) {
 	gfxop_get_event(s->gfx_state, SCI_EVT_PEEK);
 }
 
+bool SciGui32::debugUndither(bool flag) {
+	return true;
+}
+
 bool SciGui32::debugShowMap(int mapNo) {
 	gfxop_set_clip_zone(s->gfx_state, gfx_rect_fullscreen);
 

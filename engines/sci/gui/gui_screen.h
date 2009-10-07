@@ -62,6 +62,7 @@ public:
 	void setPalette(GuiPalette*pal);
 
 	void dither();
+	void unditherSetState(bool flag);
 
 	void debugShowMap(int mapNo);
 
@@ -73,6 +74,8 @@ public:
 	uint _displayPixels;
 
 	int _picNotValid; // possible values 0, 1 and 2
+
+	bool _unditherState;
 
 private:
 	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);

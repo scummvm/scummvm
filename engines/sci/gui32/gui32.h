@@ -83,6 +83,7 @@ public:
 	void setCursorPos(Common::Point pos);
 	void moveCursor(Common::Point pos);
 
+	bool debugUndither(bool flag);
 	bool debugShowMap(int mapNo);
 
 private:
