@@ -23,6 +23,7 @@
  *
  */
 
+#include "graphics/cursorman.h"
 #include "common/util.h"
 
 #include "sci/sci.h"
@@ -2000,6 +2001,21 @@ void SciGui32::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewC
 
 void SciGui32::setNowSeen(reg_t objectReference) {
 	_k_set_now_seen(objectReference);
+}
+
+void SciGui32::setCursorHide() {
+	CursorMan.showMouse(false);
+}
+
+void SciGui32::setCursorShow() {
+	CursorMan.showMouse(true);
+}
+
+void SciGui32::setCursorShape(GuiResourceId cursorId) {
+	if (cursorId == -1)
+		gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
+	else
+		gfxop_set_pointer_cursor(s->gfx_state, cursorId);
 }
 
 void SciGui32::setCursorPos(Common::Point pos) {

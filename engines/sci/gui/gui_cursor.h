@@ -30,6 +30,11 @@
 
 namespace Sci {
 
+#define SCI_CURSOR_SCI0_HEIGHTWIDTH 16
+#define SCI_CURSOR_SCI0_RESOURCESIZE 68
+
+#define SCI_CURSOR_SCI0_TRANSPARENCYCOLOR 1
+
 class SciGuiView;
 class SciGuiPalette;
 class SciGuiCursor {
@@ -37,6 +42,9 @@ public:
 	SciGuiCursor(EngineState *state, SciGuiPalette *palette);
 	~SciGuiCursor();
 
+	void show();
+	void hide();
+	void setShape(GuiResourceId resourceId);
 	void setPosition(Common::Point pos);
 
 private:
@@ -45,6 +53,8 @@ private:
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
+
+	byte *_rawBitmap;
 };
 
 } // End of namespace Sci

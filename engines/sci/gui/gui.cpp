@@ -461,6 +461,18 @@ void SciGui::setNowSeen(reg_t objectReference) {
 	_gfx->SetNowSeen(objectReference);
 }
 
+void SciGui::setCursorHide() {
+	_cursor->hide();
+}
+
+void SciGui::setCursorShow() {
+	_cursor->show();
+}
+
+void SciGui::setCursorShape(GuiResourceId cursorId) {
+	_cursor->setShape(cursorId);
+}
+
 void SciGui::setCursorPos(Common::Point pos) {
 	// FIXME: try to find out if we need to adjust position somehow, currently just forwarding to moveCursor()
 	moveCursor(pos);

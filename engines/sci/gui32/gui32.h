@@ -77,6 +77,9 @@ public:
 	void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	void setNowSeen(reg_t objectReference);
 
+	void setCursorHide();
+	void setCursorShow();
+	void setCursorShape(GuiResourceId cursorId);
 	void setCursorPos(Common::Point pos);
 	void moveCursor(Common::Point pos);
 

@@ -269,13 +269,7 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	Common::Point pos;
-
-	int16 cursor = argv[0].toSint16();
-
-	if ((argc >= 2) && (argv[1].toSint16() == 0))
-		cursor = GFXOP_NO_POINTER;
-
-	gfxop_set_pointer_cursor(s->gfx_state, cursor);
+	GuiResourceId cursorId = argv[0].toSint16();
 
 	// Set pointer position, if requested
 	if (argc >= 4) {
@@ -283,6 +277,12 @@ static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 		pos.x = argv[2].toSint16();
 		s->gui->setCursorPos(pos);
 	}
+
+	if ((argc >= 2) && (argv[1].toSint16() == 0)) {
+		cursorId = -1;
+	}
+
+	s->gui->setCursorShape(cursorId);
 	return s->r_acc;
 }
 
@@ -292,7 +292,10 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 
 	switch (argc) {
 	case 1:
-		CursorMan.showMouse(argv[0].toSint16() != 0);
+		if (argv[0].isNull())
+			s->gui->setCursorHide();
+		else
+			s->gui->setCursorShow();
 		break;
 	case 2:
 		pos.y = argv[1].toSint16();
