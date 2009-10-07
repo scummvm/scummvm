@@ -96,6 +96,8 @@
 		<Filter	Name="gui">
 			<File RelativePath="..\..\engines\sci\gui\gui.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_cursor.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_cursor.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_font.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_font.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_gfx.cpp" />
