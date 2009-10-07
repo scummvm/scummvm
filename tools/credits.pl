@@ -610,6 +610,7 @@ begin_credits("Credits");
 		  add_person("Willem Jan Palenstijn", "wjp", "");
 		  add_person("Jordi Vilalta Prat", "jvprat", "");
 		  add_person("Lars Skovlund", "lskovlun", "");
+		  add_person("Martin Kiewitz", "m_kiewitz", "");
 	  end_section();
 
 	  begin_section("Tinsel");
