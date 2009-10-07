@@ -908,7 +908,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId pictureId = argv[0].toUint16();
 	uint16 flags = 0;
 	uint16 style = 1;
-	int16 EGApaletteNo = -1;
+	int16 EGApaletteNo = 0; // default needs to be 0
 
 	if (argc >= 2)
 		style = argv[1].toUint16();
