@@ -29,7 +29,6 @@
 #include "graphics/pixelformat.h"
 
 #include "sci/gfx/gfx_system.h"
-#include "sci/gui/gui_screen.h"
 #include "sci/gfx/gfx_driver.h"
 
 namespace Sci {

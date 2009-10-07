@@ -39,6 +39,7 @@
 #include "sci/gui32/gui32.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_cursor.h"
+#include "sci/gui/gui_screen.h"
 
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"

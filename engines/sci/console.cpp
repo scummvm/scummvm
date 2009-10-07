@@ -41,6 +41,7 @@
 #include "sci/sfx/iterator.h"	// for SCI_SONG_ITERATOR_TYPE_SCI0
 #include "sci/sfx/sci_midi.h"
 #include "sci/vocabulary.h"
+#include "sci/gui/gui.h"
 
 #include "common/savefile.h"
 

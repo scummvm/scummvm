@@ -23,24 +23,25 @@
  *
  */
 
-#ifndef SCI_GFX_GFX_resMan_H
-#define SCI_GFX_GFX_resMan_H
+#ifndef SCI_GFX_GFX_RESMAN_H
+#define SCI_GFX_GFX_RESMAN_H
+
+#include "common/hashmap.h"
+#include "common/rect.h"
 
 // FIXME/TODO: The name "(Graphics) resource manager", and the associated
 // filenames, are misleading. This should be renamed to "Graphics manager"
 // or something like that.
 
 #include "sci/gfx/gfx_resource.h"
-#include "sci/gui/gui_palette.h"
-#include "sci/resource.h"
 
-#include "common/hashmap.h"
-#include "common/rect.h"
+#include "sci/resource.h"
 
 namespace Sci {
 
 struct gfx_bitmap_font_t;
 class ResourceManager;
+class SciGuiPalette;
 
 enum gfx_resource_type_t {
 	GFX_RESOURCE_TYPE_VIEW = 0,
@@ -310,4 +311,4 @@ private:
 
 } // End of namespace Sci
 
-#endif // SCI_GFX_GFX_RSMGR_H
+#endif // SCI_GFX_GFX_RESMAN_H

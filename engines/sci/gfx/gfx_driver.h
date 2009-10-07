@@ -37,6 +37,8 @@ enum gfx_buffer_t {
 	GFX_BUFFER_STATIC = 2
 };
 
+class SciGuiScreen;
+
 
 /**
  * Graphics driver.
