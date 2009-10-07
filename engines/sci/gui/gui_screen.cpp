@@ -224,7 +224,7 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 // Currently not really done, its supposed to be possible to only dither _visualScreen
 void SciGuiScreen::dither() {
 	int y, x;
-	byte color, ditheredColor;
+	byte color;
 	byte *screenPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 
@@ -233,12 +233,10 @@ void SciGuiScreen::dither() {
 			color = *screenPtr;
 			if (color & 0xF0) {
 				color ^= color << 4;
-				ditheredColor = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-				*screenPtr = ditheredColor;
-				if (_unditherState)
+				color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+				*screenPtr = color;
+				if (!_unditherState)
 					*displayPtr = color;
-				else
-					*displayPtr = ditheredColor;
 			}
 			screenPtr++; displayPtr++;
 		}

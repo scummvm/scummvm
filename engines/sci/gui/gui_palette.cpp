@@ -144,7 +144,7 @@ bool SciGuiPalette::setAmiga() {
 
 void SciGuiPalette::setEGA() {
 	int i;
-	byte color1, color2;
+	byte color, color1, color2;
 	_sysPalette.colors[1].r  = 0x000; _sysPalette.colors[1].g  = 0x000; _sysPalette.colors[1].b  = 0x0AA;
 	_sysPalette.colors[2].r  = 0x000; _sysPalette.colors[2].g  = 0x0AA; _sysPalette.colors[2].b  = 0x000;
 	_sysPalette.colors[3].r  = 0x000; _sysPalette.colors[3].g  = 0x0AA; _sysPalette.colors[3].b  = 0x0AA;
@@ -165,12 +165,13 @@ void SciGuiPalette::setEGA() {
 	}
 	// Now setting colors 16-254 to the correct mix colors that occur when not doing a dithering run on
 	//  finished pictures
-	for (i = 16; i <= 254; i++) {
+	for (i = 0x10; i <= 0xFE; i++) {
 		_sysPalette.colors[i].used = 1;
+		color ^= i << 4;
 		color1 = i & 0x0F; color2 = i >> 4;
-		_sysPalette.colors[i].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
-		_sysPalette.colors[i].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
-		_sysPalette.colors[i].b = (_sysPalette.colors[color1].b >> 1) + (_sysPalette.colors[color2].b >> 1);
+		_sysPalette.colors[color].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
+		_sysPalette.colors[color].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);
+		_sysPalette.colors[color].b = (_sysPalette.colors[color1].b >> 1) + (_sysPalette.colors[color2].b >> 1);
 	}
 	setOnScreen();
 }
