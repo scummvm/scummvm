@@ -945,7 +945,7 @@ void SciGui32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 	}
 
 	reg_t next_node = list->first;
-	node = lookup_node(s, next_node);
+	node = s->_segMan->lookupNode(next_node);
 	while (node) {
 		reg_t obj = node->value; // The object we're using
 		GfxDynView *tempWidget;
@@ -961,7 +961,7 @@ void SciGui32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 
 				// Lookup node again, since the NodeTable it was in may
 				// have been re-allocated.
-				node = lookup_node(s, next_node);
+				node = s->_segMan->lookupNode(next_node);
 			}
 		}
 
@@ -974,7 +974,7 @@ void SciGui32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 		if (tempWidget)
 			(*widget_list)->add((GfxContainer *)(*widget_list), tempWidget);
 
-		node = lookup_node(s, next_node); // Next node
+		node = s->_segMan->lookupNode(next_node); // Next node
 	}
 
 	widget = (GfxDynView *)(*widget_list)->_contents;
@@ -1853,7 +1853,7 @@ void SciGui32::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 						// after all, damage the cast list
 
 	if (listReference.segment) {
-		cast_list = lookup_list(s, listReference);
+		cast_list = s->_segMan->lookupList(listReference);
 		if (!cast_list)
 			return;
 	}
@@ -1958,7 +1958,7 @@ void SciGui32::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 		return;
 	}
 
-	list = lookup_list(s, listReference);
+	list = s->_segMan->lookupList(listReference);
 
 	pic_views = gfxw_new_list(s->picture_port->_bounds, 1);
 

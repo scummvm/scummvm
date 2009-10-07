@@ -1860,7 +1860,7 @@ bool Console::cmdViewReference(int argc, const char **argv) {
 		case 0:
 			break;
 		case KSIG_LIST: {
-			List *l = lookup_list(_vm->_gamestate, reg);
+			List *l = _vm->_gamestate->_segMan->lookupList(reg);
 
 			DebugPrintf("list\n");
 

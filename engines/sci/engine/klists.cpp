@@ -28,47 +28,6 @@
 
 namespace Sci {
 
-Node *lookup_node(EngineState *s, reg_t addr) {
-	if (!addr.offset && !addr.segment)
-		return NULL; // Non-error null
-
-	SegmentObj *mobj = GET_SEGMENT(*s->_segMan, addr.segment, SEG_TYPE_NODES);
-	if (!mobj) {
-		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
-		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
-		//error("%s, L%d: Attempt to use non-node %04x:%04x as list node", __FILE__, __LINE__, PRINT_REG(addr));
-		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
-		return NULL;
-	}
-
-	NodeTable *nt = (NodeTable *)mobj;
-
-	if (!nt->isValidEntry(addr.offset)) {
-		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
-		return NULL;
-	}
-
-	return &(nt->_table[addr.offset]);
-}
-
-List *lookup_list(EngineState *s, reg_t addr) {
-	SegmentObj *mobj = GET_SEGMENT(*s->_segMan, addr.segment, SEG_TYPE_LISTS);
-
-	if (!mobj) {
-		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
-		return NULL;
-	}
-
-	ListTable *lt = (ListTable *)mobj;
-
-	if (!lt->isValidEntry(addr.offset)) {
-		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
-		return NULL;
-	}
-
-	return &(lt->_table[addr.offset]);
-}
-
 #ifdef DISABLE_VALIDATIONS
 
 #define sane_nodep(a, b) 1
@@ -81,7 +40,7 @@ static int sane_nodep(EngineState *s, reg_t addr) {
 	reg_t prev = addr;
 
 	do {
-		Node *node = lookup_node(s, addr);
+		Node *node = s->_segMan->lookupNode(addr);
 
 		if (!node)
 			return 0;
@@ -98,7 +57,7 @@ static int sane_nodep(EngineState *s, reg_t addr) {
 }
 
 int sane_listp(EngineState *s, reg_t addr) {
-	List *l = lookup_list(s, addr);
+	List *l = s->_segMan->lookupList(addr);
 	int empties = 0;
 
 	if (l->first.isNull())
@@ -113,8 +72,8 @@ int sane_listp(EngineState *s, reg_t addr) {
 	if (!empties) {
 		Node *node_a, *node_z;
 
-		node_a = lookup_node(s, l->first);
-		node_z = lookup_node(s, l->last);
+		node_a = s->_segMan->lookupNode(l->first);
+		node_z = s->_segMan->lookupNode(l->last);
 
 		if (!node_a || !node_z)
 			return 0;
@@ -143,7 +102,7 @@ reg_t kNewList(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
-	List *l = lookup_list(s, argv[0]);
+	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (!l) {
 		// FIXME: This should be an error, but it's turned to a warning for now
@@ -158,7 +117,7 @@ reg_t kDisposeList(EngineState *s, int argc, reg_t *argv) {
 		reg_t n_addr = l->first;
 
 		while (!n_addr.isNull()) { // Free all nodes
-			Node *n = lookup_node(s, n_addr);
+			Node *n = s->_segMan->lookupNode(n_addr);
 			s->_segMan->free_Node(n_addr);
 			n_addr = n->succ;
 		}
@@ -196,7 +155,7 @@ reg_t kNewNode(EngineState *s, int argc, reg_t *argv) {
 reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull())
 		return NULL_REG;
-	List *l = lookup_list(s, argv[0]);
+	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
 		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
@@ -208,7 +167,7 @@ reg_t kFirstNode(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
-	List *l = lookup_list(s, argv[0]);
+	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (l && !sane_listp(s, argv[0]))
 		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
@@ -220,7 +179,7 @@ reg_t kLastNode(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
-	List *l = lookup_list(s, argv[0]);
+	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (!l || !sane_listp(s, argv[0]))
 		warning("List at %04x:%04x is invalid or not sane anymore", PRINT_REG(argv[0]));
@@ -229,8 +188,8 @@ reg_t kEmptyList(EngineState *s, int argc, reg_t *argv) {
 }
 
 void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
-	List *l = lookup_list(s, listbase);
-	Node *new_n = lookup_node(s, nodebase);
+	List *l = s->_segMan->lookupList(listbase);
+	Node *new_n = s->_segMan->lookupNode(nodebase);
 
 	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
@@ -246,15 +205,15 @@ void _k_add_to_front(EngineState *s, reg_t listbase, reg_t nodebase) {
 	if (l->first.isNull())
 		l->last = nodebase;
 	else {
-		Node *old_n = lookup_node(s, l->first);
+		Node *old_n = s->_segMan->lookupNode(l->first);
 		old_n->pred = nodebase;
 	}
 	l->first = nodebase;
 }
 
 void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
-	List *l = lookup_list(s, listbase);
-	Node *new_n = lookup_node(s, nodebase);
+	List *l = s->_segMan->lookupList(listbase);
+	Node *new_n = s->_segMan->lookupNode(nodebase);
 
 	debugC(2, kDebugLevelNodes, "Adding node %04x:%04x to end of list %04x:%04x\n", PRINT_REG(nodebase), PRINT_REG(listbase));
 
@@ -270,14 +229,14 @@ void _k_add_to_end(EngineState *s, reg_t listbase, reg_t nodebase) {
 	if (l->last.isNull())
 		l->first = nodebase;
 	else {
-		Node *old_n = lookup_node(s, l->last);
+		Node *old_n = s->_segMan->lookupNode(l->last);
 		old_n->succ = nodebase;
 	}
 	l->last = nodebase;
 }
 
 reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
-	Node *n = lookup_node(s, argv[0]);
+	Node *n = s->_segMan->lookupNode(argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		warning("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 		return NULL_REG;
@@ -287,7 +246,7 @@ reg_t kNextNode(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPrevNode(EngineState *s, int argc, reg_t *argv) {
-	Node *n = lookup_node(s, argv[0]);
+	Node *n = s->_segMan->lookupNode(argv[0]);
 	if (!sane_nodep(s, argv[0]))
 		warning("List node at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
 
@@ -295,7 +254,7 @@ reg_t kPrevNode(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kNodeValue(EngineState *s, int argc, reg_t *argv) {
-	Node *n = lookup_node(s, argv[0]);
+	Node *n = s->_segMan->lookupNode(argv[0]);
 	if (!sane_nodep(s, argv[0])) {
 		warning("List node at %04x:%04x is not sane", PRINT_REG(argv[0]));
 		return NULL_REG;
@@ -310,9 +269,9 @@ reg_t kAddToFront(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
-	List *l = lookup_list(s, argv[0]);
-	Node *firstnode = argv[1].isNull() ? NULL : lookup_node(s, argv[1]);
-	Node *newnode = lookup_node(s, argv[2]);
+	List *l = s->_segMan->lookupList(argv[0]);
+	Node *firstnode = argv[1].isNull() ? NULL : s->_segMan->lookupNode(argv[1]);
+	Node *newnode = s->_segMan->lookupNode(argv[2]);
 
 	if (!l || !sane_listp(s, argv[0]))
 		warning("List at %04x:%04x is not sane anymore", PRINT_REG(argv[0]));
@@ -339,7 +298,7 @@ reg_t kAddAfter(EngineState *s, int argc, reg_t *argv) {
 			// Set new node as last list node
 			l->last = argv[2];
 		else
-			lookup_node(s, oldnext)->pred = argv[2];
+			s->_segMan->lookupNode(oldnext)->pred = argv[2];
 
 	} else { // !firstnode
 		_k_add_to_front(s, argv[0], argv[2]); // Set as initial list node
@@ -363,12 +322,12 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 	if (!sane_listp(s, list_pos))
 		warning("List at %04x:%04x is not sane anymore", PRINT_REG(list_pos));
 
-	node_pos = lookup_list(s, list_pos)->first;
+	node_pos = s->_segMan->lookupList(list_pos)->first;
 
 	debugC(2, kDebugLevelNodes, "First node at %04x:%04x\n", PRINT_REG(node_pos));
 
 	while (!node_pos.isNull()) {
-		Node *n = lookup_node(s, node_pos);
+		Node *n = s->_segMan->lookupNode(node_pos);
 		if (n->key == key) {
 			debugC(2, kDebugLevelNodes, " Found key at %04x:%04x\n", PRINT_REG(node_pos));
 			return node_pos;
@@ -385,21 +344,21 @@ reg_t kFindKey(EngineState *s, int argc, reg_t *argv) {
 reg_t kDeleteKey(EngineState *s, int argc, reg_t *argv) {
 	reg_t node_pos = kFindKey(s, 2, argv);
 	Node *n;
-	List *l = lookup_list(s, argv[0]);
+	List *l = s->_segMan->lookupList(argv[0]);
 
 	if (node_pos.isNull())
 		return NULL_REG; // Signal falure
 
-	n = lookup_node(s, node_pos);
+	n = s->_segMan->lookupNode(node_pos);
 	if (l->first == node_pos)
 		l->first = n->succ;
 	if (l->last == node_pos)
 		l->last = n->pred;
 
 	if (!n->pred.isNull())
-		lookup_node(s, n->pred)->succ = n->succ;
+		s->_segMan->lookupNode(n->pred)->succ = n->succ;
 	if (!n->succ.isNull())
-		lookup_node(s, n->succ)->pred = n->pred;
+		s->_segMan->lookupNode(n->succ)->pred = n->pred;
 
 	//s->_segMan->free_Node(node_pos);
 
@@ -450,8 +409,8 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 
 	PUT_SEL32V(dest, size, input_size);
 
-	list = lookup_list(s, input_data);
-	node = lookup_node(s, list->first);
+	list = s->_segMan->lookupList(input_data);
+	node = s->_segMan->lookupNode(list->first);
 
 	sort_temp_t *temp_array = (sort_temp_t *)malloc(sizeof(sort_temp_t) * input_size);
 
@@ -462,7 +421,7 @@ reg_t kSort(EngineState *s, int argc, reg_t *argv) {
 		temp_array[i].value = node->value;
 		temp_array[i].order = s->r_acc;
 		i++;
-		node = lookup_node(s, node->succ);
+		node = s->_segMan->lookupNode(node->succ);
 	}
 
 	qsort(temp_array, input_size, sizeof(sort_temp_t), sort_temp_cmp);

@@ -137,8 +137,8 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 
 	s->_voc->clearSynonyms();
 
-	list = lookup_list(s, GET_SEL32(object, elements));
-	node = lookup_node(s, list->first);
+	list = s->_segMan->lookupList(GET_SEL32(object, elements));
+	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
 		reg_t objpos = node->value;
@@ -174,7 +174,7 @@ reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv) {
 
 		}
 
-		node = lookup_node(s, node->succ);
+		node = s->_segMan->lookupNode(node->succ);
 	}
 
 	debugC(2, kDebugLevelParser, "A total of %d synonyms are active now.\n", numSynonyms);

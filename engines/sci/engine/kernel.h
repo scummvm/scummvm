@@ -274,22 +274,6 @@ extern Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip);
  */
 void process_sound_events(EngineState *s);
 
-/**
- * Resolves an address into a list node
- * @param s The state to operate on
- * @param addr The address to resolve
- * @return The list node referenced, or NULL on error
- */
-Node *lookup_node(EngineState *s, reg_t addr);
-
-/**
- * Resolves a list pointer to a list
- * @param s The state to operate on
- * @param addr The address to resolve
- * @return The list referenced, or NULL on error
- */
-List *lookup_list(EngineState *s, reg_t addr);
-
 
 /******************** Constants ********************/
 

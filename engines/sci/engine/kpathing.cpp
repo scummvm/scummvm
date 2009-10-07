@@ -372,18 +372,18 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 	if (!poly_list.segment)
 		return;
 
-	list = lookup_list(s, poly_list);
+	list = s->_segMan->lookupList(poly_list);
 
 	if (!list) {
 		warning("[avoidpath] Could not obtain polygon list");
 		return;
 	}
 
-	node = lookup_node(s, list->first);
+	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
 		draw_polygon(s, node->value);
-		node = lookup_node(s, node->succ);
+		node = s->_segMan->lookupNode(node->succ);
 	}
 }
 
@@ -418,7 +418,7 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	if (!poly_list.segment)
 		return;
 
-	list = lookup_list(s, poly_list);
+	list = s->_segMan->lookupList(poly_list);
 
 	if (!list) {
 		warning("[avoidpath] Could not obtain polygon list");
@@ -426,11 +426,11 @@ static void print_input(EngineState *s, reg_t poly_list, Common::Point start, Co
 	}
 
 	printf("Polygons:\n");
-	node = lookup_node(s, list->first);
+	node = s->_segMan->lookupNode(list->first);
 
 	while (node) {
 		print_polygon(s->_segMan, node->value);
-		node = lookup_node(s, node->succ);
+		node = s->_segMan->lookupNode(node->succ);
 	}
 }
 
@@ -1355,11 +1355,11 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 	// Convert all polygons
 	if (poly_list.segment) {
-		List *list = lookup_list(s, poly_list);
-		Node *node = lookup_node(s, list->first);
+		List *list = s->_segMan->lookupList(poly_list);
+		Node *node = s->_segMan->lookupNode(list->first);
 
 		while (node) {
-			Node *dup = lookup_node(s, list->first);
+			Node *dup = s->_segMan->lookupNode(list->first);
 
 			// Workaround for game bugs that put a polygon in the list more than once
 			while (dup != node) {
@@ -1367,7 +1367,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 					warning("[avoidpath] Ignoring duplicate polygon");
 					break;
 				}
-				dup = lookup_node(s, dup->succ);
+				dup = s->_segMan->lookupNode(dup->succ);
 			}
 
 			if (dup == node) {
@@ -1377,7 +1377,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 				count += GET_SEL32(node->value, size).toUint16();
 			}
 
-			node = lookup_node(s, node->succ);
+			node = s->_segMan->lookupNode(node->succ);
 		}
 	}
 

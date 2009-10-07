@@ -1069,7 +1069,7 @@ void SciGuiGfx::AnimateDisposeLastCast() {
 
 void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
-	Node *curNode = lookup_node(_s, curAddress);
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
 	//uint16 mask;
 
@@ -1080,10 +1080,10 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 //		if ((mask & 0x100) == 0) {
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
-			curNode = lookup_node(_s, curAddress);
+			curNode = _s->_segMan->lookupNode(curAddress);
 //		}
 		curAddress = curNode->succ;
-		curNode = lookup_node(_s, curAddress);
+		curNode = _s->_segMan->lookupNode(curAddress);
 	}
 }
 
@@ -1095,7 +1095,7 @@ Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
 	Common::List<GuiAnimateList> *sortedList = new Common::List<GuiAnimateList>;
 	GuiAnimateList listHelper;
 	reg_t curAddress = list->first;
-	Node *curNode = lookup_node(_s, curAddress);
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
 
 	// First convert the given List to Common::List
@@ -1107,7 +1107,7 @@ Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
 		sortedList->push_back(listHelper);
 
 		curAddress = curNode->succ;
-		curNode = lookup_node(_s, curAddress);
+		curNode = _s->_segMan->lookupNode(curAddress);
 	}
 
 	// Now do a bubble sort on this Common::List

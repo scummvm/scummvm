@@ -753,10 +753,10 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (cliplist_ref.segment)
-		cliplist = lookup_list(s, cliplist_ref);
+		cliplist = s->_segMan->lookupList(cliplist_ref);
 
 	if (cliplist) {
-		Node *node = lookup_node(s, cliplist->first);
+		Node *node = s->_segMan->lookupNode(cliplist->first);
 
 		retval = 0; // Assume that we Can'tBeHere...
 
@@ -774,7 +774,7 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 				}
 
 			} // if (other_obj != obj)
-			node = lookup_node(s, node->succ); // move on
+			node = s->_segMan->lookupNode(node->succ); // move on
 		}
 	}
 

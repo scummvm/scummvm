@@ -895,6 +895,44 @@ Hunk *SegManager::alloc_Hunk(reg_t *addr) {
 	return &(table->_table[offset]);
 }
 
+List *SegManager::lookupList(reg_t addr) {
+	if (getSegmentType(addr.segment) != SEG_TYPE_LISTS) {
+		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
+		return NULL;
+	}
+
+	ListTable *lt = (ListTable *)_heap[addr.segment];
+
+	if (!lt->isValidEntry(addr.offset)) {
+		warning("Attempt to use non-list %04x:%04x as list", PRINT_REG(addr));
+		return NULL;
+	}
+
+	return &(lt->_table[addr.offset]);
+}
+
+Node *SegManager::lookupNode(reg_t addr) {
+	if (!addr.offset && !addr.segment)
+		return NULL; // Non-error null
+
+	if (getSegmentType(addr.segment) != SEG_TYPE_NODES) {
+		// FIXME: This occurs right at the beginning of SQ4, when walking north from the first screen. It doesn't
+		// seem to have any apparent ill-effects, though, so it's been changed to non-fatal, for now
+		//error("%s, L%d: Attempt to use non-node %04x:%04x as list node", __FILE__, __LINE__, PRINT_REG(addr));
+		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
+		return NULL;
+	}
+
+	NodeTable *nt = (NodeTable *)_heap[addr.segment];
+
+	if (!nt->isValidEntry(addr.offset)) {
+		warning("Attempt to use non-node %04x:%04x as list node", PRINT_REG(addr));
+		return NULL;
+	}
+
+	return &(nt->_table[addr.offset]);
+}
+
 SegmentRef SegManager::dereference(reg_t pointer) {
 	SegmentRef ret;
 

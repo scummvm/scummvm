@@ -227,6 +227,20 @@ public:
 	 */
 	Node *allocateNode(reg_t *addr);
 
+	/**
+	 * Resolves a list pointer to a list.
+	 * @param addr The address to resolve
+	 * @return The list referenced, or NULL on error
+	 */
+	List *lookupList(reg_t addr);
+
+	/**
+	 * Resolves an address into a list node.
+	 * @param addr The address to resolve
+	 * @return The list node referenced, or NULL on error
+	 */
+	Node *lookupNode(reg_t addr);
+
 
 	// 8. Hunk Memory
 

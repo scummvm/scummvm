@@ -388,7 +388,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 		return;
 	}
 
-	List *list = lookup_list(_s, listReference);
+	List *list = _s->_segMan->lookupList(listReference);
 	if (!list)
 		error("kAnimate called with non-list as parameter");
 
@@ -425,7 +425,7 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 
 	_gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 
-	list = lookup_list(_s, listReference);
+	list = _s->_segMan->lookupList(listReference);
 	if (!list)
 		error("kAddToPic called with non-list as parameter");
 
