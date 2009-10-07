@@ -582,16 +582,14 @@ void Draw::activeWin (int16 id) {
 												 _fascinWin[t[j]].height - 1, _fascinWin[t[j]].left,
 												 _fascinWin[t[j]].top, 0);
 					else {
-// Strangerke not sure concerning the use of _sourceSurface
 // Shift skipped as always set to zero (?)
-						_vm->_video->drawSprite(*_spritesArray[_sourceSurface], *_spritesArray[_destSurface],
+						_vm->_video->drawSprite(*_spritesArray[_destSurface], *_spritesArray[_destSurface],
 												 _fascinWin[t[j]].left, _fascinWin[t[j]].top,
 												 _fascinWin[t[j]].left + _fascinWin[t[j]].width  - 1,
 												 _fascinWin[t[j]].top  + _fascinWin[t[j]].height - 1,
 												 _fascinWin[t[j]].left, _fascinWin[t[j]].top, 0);
 					}
-// Strangerke not sure concerning the use of _sourceSurface
-					dirtiedRect(_sourceSurface, _fascinWin[t[j]].left, _fascinWin[t[j]].top, 
+					dirtiedRect(_destSurface, _fascinWin[t[j]].left, _fascinWin[t[j]].top, 
 								_fascinWin[t[j]].left + _fascinWin[t[j]].width  - 1,
 								_fascinWin[t[j]].top  + _fascinWin[t[j]].height - 1);
 					nextId = t2[j];
