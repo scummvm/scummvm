@@ -89,10 +89,9 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 		palOffset = READ_LE_UINT16(_resourceData + 6);
 
 		if (palOffset && palOffset != 0x100) {
-			if (IsEGA) { // simple mapping for 16 colors
-				// FIXME: this messes up the colors in Codename: Iceman
-				//_EGAMapping = _resourceData + palOffset;
-			} else {
+			// Some games also have an offset set. It seems that it points to a 16-byte mapping table
+			//  cels also work by not using it, so we dont.
+			if (!IsEGA) {
 				_palette->createFromData(&_resourceData[palOffset], &_viewPalette);
 				_embeddedPal = true;
 			}
