@@ -157,7 +157,7 @@ Common::Error SciEngine::run() {
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
 
-	SciGuiScreen *screen = new SciGuiScreen(_system);
+	SciGuiScreen *screen = new SciGuiScreen();
 	SciGuiPalette *palette = new SciGuiPalette(_gamestate, screen);
 	SciGuiCursor *cursor = new SciGuiCursor(_gamestate, palette);
 

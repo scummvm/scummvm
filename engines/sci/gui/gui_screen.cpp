@@ -33,8 +33,8 @@
 
 namespace Sci {
 
-SciGuiScreen::SciGuiScreen(OSystem *system, int16 width, int16 height, int16 scaleFactor) : 
-	_system(system), _width(width), _height(height) {
+SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) : 
+	_width(width), _height(height) {
 
 	int i;
 	uint16 base = 0;
@@ -73,7 +73,7 @@ byte *SciGuiScreen::initScreen(uint16 pixelCount) {
 }
 
 void SciGuiScreen::copyToScreen() {
-	_system->copyRectToScreen(_displayScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
+	g_system->copyRectToScreen(_displayScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }
 
 byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
@@ -205,7 +205,7 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 	// just copy palette to system
 	byte bpal[4 * 256];
 	// Get current palette, update it and put back
-	_system->grabPalette(bpal, 0, 256);
+	g_system->grabPalette(bpal, 0, 256);
 	for (int16 i = 0; i < 256; i++) {
 		if (!pal->colors[i].used)
 			continue;
@@ -214,7 +214,7 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 		bpal[i * 4 + 2] = pal->colors[i].b * pal->intensity[i] / 100;
 		bpal[i * 4 + 3] = 100;
 	}
-	_system->setPalette(bpal, 0, 256);
+	g_system->setPalette(bpal, 0, 256);
 }
 
 // Currently not really done, its supposed to be possible to only dither _visualScreen

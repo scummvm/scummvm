@@ -41,7 +41,7 @@ namespace Sci {
 
 class SciGuiScreen {
 public:
-	SciGuiScreen(OSystem *system, int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
+	SciGuiScreen(int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
 	~SciGuiScreen();
 
 	byte *initScreen(uint16 pixelCount);
@@ -75,8 +75,6 @@ public:
 private:
 	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
 	void saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
-
-	OSystem *_system;
 
 	uint16 _baseTable[SCI_SCREEN_MAXHEIGHT];
 	uint16 _baseDisplayTable[SCI_SCREEN_MAXHEIGHT];
