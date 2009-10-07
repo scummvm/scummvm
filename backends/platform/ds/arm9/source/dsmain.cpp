@@ -545,6 +545,22 @@ int getSoundFrequency() {
 	return soundFrequency;
 }
 
+void setControls(char* gameName) {
+
+	for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
+		if (!stricmp(gameName, gameList[r].gameId)) {
+			currentGame = &gameList[r];
+			consolePrintf("Current game set to: %s\n", gameName);
+			return;
+		}
+	}
+
+	consolePrintf("Failed to set current game to: %s\n", gameName);
+}
+
+void exitGame() {
+	currentGame = NULL;
+}
 
 void initGame() {
 	// This is a good time to check for left handed mode since the mode change is done as the game starts.
@@ -558,15 +574,18 @@ void initGame() {
 	setOptions();
 
 	//strcpy(gameName, ConfMan.getActiveDomain().c_str());
-	strcpy(gameName, ConfMan.get("gameid").c_str());
-//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
-
-	currentGame = &gameList[0];		// Default game
-
-	for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
-		if (!stricmp(gameName, gameList[r].gameId)) {
-			currentGame = &gameList[r];
-//			consolePrintf("Game list num: %d\n", currentGame);
+	if (currentGame == NULL) {
+	
+		strcpy(gameName, ConfMan.get("gameid").c_str());
+	//	consolePrintf("\n\n\n\nCurrent game: '%s' %d\n", gameName, gameName[0]);
+	
+		currentGame = &gameList[0];		// Default game
+	
+		for (int r = 0; r < NUM_SUPPORTED_GAMES; r++) {
+			if (!stricmp(gameName, gameList[r].gameId)) {
+				currentGame = &gameList[r];
+	//			consolePrintf("Game list num: %d\n", currentGame);
+			}
 		}
 	}
 
@@ -878,6 +897,8 @@ void displayMode16Bit() {
 	u16 buffer[32 * 32 * 2];
 
 	releaseAllKeys();
+
+	setKeyboardEnable(false);
 
 	if (!displayModeIs8Bit) {
 		for (int r = 0; r < 32 * 32; r++) {
@@ -1326,32 +1347,34 @@ void doScreenTapMode(OSystem_DS* system)
 		right = true;
 	}
 
-
-	if (getKeysDown() & KEY_LEFT) {
-		event.type = Common::EVENT_LBUTTONDOWN;
-		event.mouse = Common::Point(getPenX(), getPenY());
-		system->addEvent(event);
+	if (!(getKeysHeld() & (KEY_L | KEY_R))) {
+	
+		if (getKeysDown() & KEY_LEFT) {
+			event.type = Common::EVENT_LBUTTONDOWN;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		}
+	
+		if (getKeysReleased() & KEY_LEFT) {
+			event.type = Common::EVENT_LBUTTONUP;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		}
+	
+	
+		if (getKeysDown() & KEY_RIGHT) {
+			event.type = Common::EVENT_RBUTTONDOWN;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		}
+	
+		if (getKeysReleased() & KEY_RIGHT) {
+			event.type = Common::EVENT_RBUTTONUP;
+			event.mouse = Common::Point(getPenX(), getPenY());
+			system->addEvent(event);
+		}
 	}
-
-	if (getKeysReleased() & KEY_LEFT) {
-		event.type = Common::EVENT_LBUTTONUP;
-		event.mouse = Common::Point(getPenX(), getPenY());
-		system->addEvent(event);
-	}
-
-
-	if (getKeysDown() & KEY_RIGHT) {
-		event.type = Common::EVENT_RBUTTONDOWN;
-		event.mouse = Common::Point(getPenX(), getPenY());
-		system->addEvent(event);
-	}
-
-	if (getKeysReleased() & KEY_RIGHT) {
-		event.type = Common::EVENT_RBUTTONUP;
-		event.mouse = Common::Point(getPenX(), getPenY());
-		system->addEvent(event);
-	}
-
+	
 	event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(getPenX(), getPenY());
 	system->addEvent(event);
@@ -1487,8 +1510,8 @@ void addEventsToQueue() {
 	OSystem_DS* system = OSystem_DS::instance();
 	Common::Event event;
 
-
 #ifdef USE_PROFILER
+/*
 	if (keysDown() & KEY_R) {
 		cygprofile_begin();
 		cygprofile_enable();
@@ -1497,7 +1520,9 @@ void addEventsToQueue() {
 		cygprofile_disable();
 		cygprofile_end();
 	}
+*/
 #endif
+
 
 
 	if (system->isEventQueueEmpty()) {
@@ -1645,16 +1670,25 @@ void addEventsToQueue() {
 		Common::Event event;
 
 
+		if ((tapScreenClicks) && (getIsDisplayMode8Bit())) {
+			if ((!keyboardEnable) || (!isInsideKeyboard(penDownX, penDownY))) {
+				doScreenTapMode(system);
+			}
+		} else {
+			if (!keyboardEnable) {
+				doButtonSelectMode(system);
+			} else if ((!keyboardEnable) || (!isInsideKeyboard(penDownX, penDownY))) {
+				doScreenTapMode(system);
+			}
+		}
+
+
 		if (!keyboardEnable) {
 
-			if ((tapScreenClicks) && (getIsDisplayMode8Bit())) {
-				doScreenTapMode(system);
-			} else {
-				doButtonSelectMode(system);
-			}
 
 			if (((!(getKeysHeld() & KEY_L)) && (!(getKeysHeld() & KEY_R)) || (indyFightState)) && (displayModeIs8Bit)) {
 				// Controls specific to the control method
+
 
 
 				if (currentGame->control == CONT_SKY) {
@@ -1664,6 +1698,26 @@ void addEventsToQueue() {
 						penX = 160;		// Show inventory by moving mouse onto top line
 					}
 				}
+
+				if (currentGame->control == CONT_AGI) {
+					// Extra controls for Leisure Suit Larry and KQ4
+
+					if ((getKeysHeld() & KEY_UP) && (getKeysHeld() & KEY_START)
+						/*&& (!strcmp(gameName, "LLLLL"))*/) {
+						consolePrintf("Cheat key!\n");
+						event.type = Common::EVENT_KEYDOWN;
+						event.kbd.keycode = (Common::KeyCode)'X';		// Skip age test in LSL
+						event.kbd.ascii = 'X';
+						event.kbd.flags = Common::KBD_ALT;
+						system->addEvent(event);
+
+						event.type = Common::EVENT_KEYUP;
+						system->addEvent(event);
+					}
+
+				}
+
+
 
 				if (currentGame->control == CONT_SIMON) {
 					// Extra controls for Simon the Sorcerer
@@ -2019,10 +2073,8 @@ void VBlankHandler(void) {
 	frameCount++;
 
 	if ((cursorEnable) && (mouseCursorVisible)) {
-		if (!keyboardEnable) {
-			storedMouseX = penX;
-			storedMouseY = penY;
-		}
+		storedMouseX = penX;
+		storedMouseY = penY;
 
 		if (gameScreenSwap) {
 			setIcon(3, storedMouseX - mouseHotspotX, storedMouseY - mouseHotspotY, 8, 0, true);
@@ -2177,20 +2229,20 @@ void VBlankHandler(void) {
 			int offsX = 0, offsY = 0;
 
 
-			if (getKeysHeld() & KEY_LEFT) {
-				offsX -= 1;
+			if ((getKeysHeld() & KEY_LEFT)) {
+				offsX -= 2;
 			}
 
-			if (getKeysHeld() & KEY_RIGHT) {
-				offsX += 1;
+			if ((getKeysHeld() & KEY_RIGHT)) {
+				offsX += 2;
 			}
 
-			if (getKeysHeld() & KEY_UP) {
-				offsY -= 1;
+			if ((getKeysHeld() & KEY_UP)) {
+				offsY -= 2;
 			}
 
-			if (getKeysHeld() & KEY_DOWN) {
-				offsY += 1;
+			if ((getKeysHeld() & KEY_DOWN)) {
+				offsY += 2;
 			}
 
 			if (((gameScreenSwap) && (getKeysHeld() & KEY_L)) || ((!gameScreenSwap) && (getKeysHeld() & KEY_R))) {
@@ -2491,7 +2543,8 @@ void penUpdate() {
 	bool penDownThisFrame = (IPC->touchZ1 > 0) && (IPC->touchXpx > 0) && (IPC->touchYpx > 0);
 	static bool moved = false;
 
-	if ((tapScreenClicks) && (!getKeyboardEnable()) && (getIsDisplayMode8Bit())) {
+	if (( (tapScreenClicks) || getKeyboardEnable() ) && (getIsDisplayMode8Bit())) {
+
 
 		if ((tapTimeout >= 0)) {
 			tapTimeout++;
@@ -2506,7 +2559,7 @@ void penUpdate() {
 
 
 		if ((penHeld) && (!penDownThisFrame)) {
-			if ((touchPadStyle) || (moved) || (tapCount == 1)) {
+			if ((touchPadStyle) || (getKeyboardEnable() && (!isInsideKeyboard(penDownX, penDownY))) || (moved) || (tapCount == 1)) {
 				if ((penDownFrames > 0) && (penDownFrames < 6) && ((tapTimeout == -1) || (tapTimeout > 2))) {
 					tapCount++;
 					tapTimeout = 0;
@@ -2518,40 +2571,56 @@ void penUpdate() {
 	}
 
 
+	if ( ((keyboardEnable) || (touchPadStyle)) && (getIsDisplayMode8Bit()) ) {
+		// Relative positioning mode
 
-	if ((touchPadStyle) && (getIsDisplayMode8Bit())) {
 
-		if ((penDownFrames > 0)) {
-
+		if ((penDownFrames > 0) ) {
 
 			if ((penHeld)) {
 
-				if (penDownThisFrame)
-				{
+				if (penDownThisFrame) {
 					if (penDownFrames >= 2) {
-						int diffX = IPC->touchXpx - penDownX;
-						int diffY = IPC->touchYpx - penDownY;
 
-						int speed = ABS(diffX) + ABS(diffY);
+						if ((!keyboardEnable) || (!isInsideKeyboard(IPC->touchXpx, IPC->touchYpx))) {
+							int diffX = IPC->touchXpx - penDownX;
+							int diffY = IPC->touchYpx - penDownY;
+	
+							int speed = ABS(diffX) + ABS(diffY);
+	
+							if ((ABS(diffX) < 35) && (ABS(diffY) < 35)) {
+	
+								if (speed >= 8)	{
+									diffX *= ((speed >> 3) * touchPadSensitivity) >> 3;
+									diffY *= ((speed >> 3) * touchPadSensitivity) >> 3;
+								}
+	
+								penX += diffX;
+								penY += diffY;
 
-						if ((ABS(diffX) < 35) && (ABS(diffY) < 35))
-						{
+								if (penX > 255) {
+									scX -= 255 - penX;
+									penX = 255;
+								}
 
-							if (speed >= 8)
-							{
-								diffX *= ((speed >> 3) * touchPadSensitivity) >> 3;
-								diffY *= ((speed >> 3) * touchPadSensitivity) >> 3;
+								if (penX < 0) {
+									scX -= -penX;
+									penX = 0;
+								}
+							
+								if (penY > 191) {
+									scY += penY - 191;
+									penY = 191;
+								}
+
+								if (penY < 0) {
+									scY -= -penY;
+									penY = 0;
+								}
 							}
-
-							penX += diffX;
-							penY += diffY;
-							if (penX > 255) penX = 255;
-							if (penX < 0) penX = 0;
-							if (penY > 191) penY = 191;
-							if (penY < 0) penY = 0;
+	
+	//						consolePrintf("x: %d y: %d\n", IPC->touchYpx - penDownY, IPC->touchYpx - penDownY);
 						}
-
-//						consolePrintf("x: %d y: %d\n", IPC->touchYpx - penDownY, IPC->touchYpx - penDownY);
 						penDownX = IPC->touchXpx;
 						penDownY = IPC->touchYpx;
 
@@ -2560,7 +2629,6 @@ void penUpdate() {
 				else
 				{
 				}
-
 
 			} else {
 				penDown = true;
@@ -2573,7 +2641,6 @@ void penUpdate() {
 					penDownY = IPC->touchYpx;
 				}
 			}
-
 		} else {
 			if (penHeld) {
 				penReleased = true;
@@ -2585,13 +2652,19 @@ void penUpdate() {
 			penDown = false;
 			penHeld = false;
 		}
-	} else {
+
+
+	} else {	// Absolute positioning mode
 		if ((penDownFrames > 1)) {			// Is this right?  Dunno, but it works for me.
 
 			if ((penHeld)) {
 				penHeld = true;
 				penDown = false;
 			} else {
+				if (penDownFrames == 2) {
+					penDownX = IPC->touchXpx;
+					penDownY = IPC->touchYpx;
+				}
 				penDown = true;
 				penHeld = true;
 				penDownSaved = true;
@@ -2604,7 +2677,6 @@ void penUpdate() {
 			}
 
 
-
 		} else {
 			if (penHeld) {
 				penReleased = true;
@@ -2616,8 +2688,6 @@ void penUpdate() {
 			penDown = false;
 			penHeld = false;
 		}
-
-
 	}
 
 
@@ -2971,6 +3041,8 @@ void dsExceptionHandler() {
 
 	consolePrintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
 
+	while(1);
+
 	int i;
 	for ( i=0; i < 8; i++ ) {
 		consolePrintf("  %s: %08X   %s: %08X\n",
@@ -2978,6 +3050,8 @@ void dsExceptionHandler() {
 					registerNames[i+8],exceptionRegisters[i+8]);
 	}
 	u32 *stack = (u32 *)exceptionRegisters[13];
+
+
 	for ( i=0; i<10; i++ ) {
 		consolePrintf("%08X %08X %08X\n", stack[i*3], stack[i*3+1], stack[(i*3)+2] );
 	}
@@ -3006,6 +3080,7 @@ int main(void) {
 		initDebugger();
 	}
 #endif
+
 
 	// Let arm9 read cartridge
 	*((u16 *) (0x04000204)) &= ~0x0080;
@@ -3080,7 +3155,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 1.0.0 RC1 ");
+	consolePrintf("Version 1.0.0 beta3 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
@@ -3249,12 +3324,18 @@ int main(void) {
 	const char *argv[] = {"/scummvmds", "--config=scummvmg.ini"};
 #elif defined(DS_BUILD_H)
 	const char *argv[] = {"/scummvmds", "--config=scummvmh.ini"};
+#elif defined(DS_BUILD_I)
+	const char *argv[] = {"/scummvmds", "--config=scummvmi.ini"};
+#elif defined(DS_BUILD_J)
+	const char *argv[] = {"/scummvmds", "--config=scummvmj.ini"};
 #endif
+
 
 	while (1) {
 		scummvm_main(ARRAYSIZE(argv), (char **) &argv);
 		powerOff();
 	}
+
 
 	return 0;
 }
@@ -3273,6 +3354,9 @@ int cygprofile_getHBlanks() __attribute__ ((no_instrument_function));
 int cygprofile_getHBlanks() {
 	return DS::hBlankCount;
 }
+
+
+extern "C" void consolePrintf(char * format, ...) __attribute__ ((no_instrument_function));
 #endif
 
 

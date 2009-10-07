@@ -60,6 +60,10 @@
 #define DEFAULT_CONFIG_FILE "scummvmg.ini"
 #elif defined(DS_BUILD_H)
 #define DEFAULT_CONFIG_FILE "scummvmh.ini"
+#elif defined(DS_BUILD_I)
+#define DEFAULT_CONFIG_FILE "scummvmi.ini"
+#elif defined(DS_BUILD_J)
+#define DEFAULT_CONFIG_FILE "scummvmj.ini"
 #endif
 
 OSystem_DS* OSystem_DS::_instance = NULL;
@@ -177,7 +181,7 @@ void OSystem_DS::setPalette(const byte *colors, uint start, uint num) {
 		green >>= 3;
 		blue >>= 3;
 
-		//if (r != 255)
+//		if (r != 255)
 		{
 			u16 paletteValue = red | (green << 5) | (blue << 10);
 
@@ -265,11 +269,12 @@ void OSystem_DS::grabPalette(unsigned char *colours, uint start, uint num) {
 #define MISALIGNED16(ptr) (((u32) (ptr) & 1) != 0)
 
 void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int w, int h) {
-	//consolePrintf("Copy rect %d, %d   %d, %d ", x, y, w, h);
 	if (!_graphicsEnable) return;
 	if (w <= 1) return;
 	if (h < 0) return;
 	if (!DS::getIsDisplayMode8Bit()) return;
+
+//	consolePrintf("CopyRectToScreen %d\n", w * h);
 
 	u16* bg;
 	s32 stride;
@@ -452,6 +457,8 @@ void OSystem_DS::copyRectToScreen(const byte *buf, int pitch, int x, int y, int 
 }
 
 void OSystem_DS::updateScreen() {
+	static int cnt = 0;
+//	consolePrintf("updatescr %d\n", cnt++);
 
 	if ((_frameBufferExists) && (DS::getIsDisplayMode8Bit())) {
 		_frameBufferExists = false;
@@ -877,6 +884,7 @@ u16 OSystem_DS::applyGamma(u16 colour) {
 void OSystem_DS::engineDone() {
 	// Scumm games appear not to stop their CD audio, so I stop the CD here.
 	stopCD();
+	DS::exitGame();
 
 #ifdef ENABLE_AGI
 	DS::clearAutoCompleteWordList();

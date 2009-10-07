@@ -68,6 +68,9 @@ int 	leftHandedSwap(int keys);
 void	setGameScreenSwap(bool enable);
 void	setSensitivity(int sensitivity);
 
+// Controls options
+void	setControls(char* gameName);
+
 // Video
 void 	displayMode8Bit();											// Switch to 8-bit mode5
 void 	displayMode16Bit();										// Switch to 16-bit mode5
@@ -151,7 +154,7 @@ int		getGameHeight();
 void	fastRamReset();
 void*	fastRamAlloc(int size);
 
-
+void 	exitGame();
 gameListType* getCurrentGame();
 
 
