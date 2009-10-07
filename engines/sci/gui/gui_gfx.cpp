@@ -932,8 +932,8 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	stack.push(p);
 
 	// parameters check
-	if ((flag & 2 && prio == 0) || (flag & 3 && control == 0))
-		return;
+	//if ((flag & 2 && prio == 0) || (flag & 3 && control == 0))
+	//	return;
 
 	byte t_col = _screen->getVisual(p.x, p.y);
 	byte t_pri = _screen->getPriority(p.x, p.y);
@@ -962,14 +962,14 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 		w = p.x;
 		e = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (w > l && (fmatch = _screen->isFillMatch(w - 1, p.y, flag, t_col, t_pri, t_con)))
+		while (w > l && (fmatch == _screen->isFillMatch(w - 1, p.y, flag, t_col, t_pri, t_con)))
 			_screen->putPixel(--w, p.y, fmatch, color, prio, control);
-		while (e < r && (fmatch = _screen->isFillMatch(e + 1, p.y, flag, t_col, t_pri, t_con)))
+		while (e < r && (fmatch == _screen->isFillMatch(e + 1, p.y, flag, t_col, t_pri, t_con)))
 			_screen->putPixel(++e, p.y, fmatch, color, prio, control);
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {
-			if (p.y > t && _screen->isFillMatch(w, p.y - 1, flag, t_col, t_pri, t_con)) { // one line above
+			if (p.y > t && (fmatch == _screen->isFillMatch(w, p.y - 1, flag, t_col, t_pri, t_con))) { // one line above
 				if (a_set == 0) {
 					p1.x = w;
 					p1.y = p.y - 1;
@@ -979,7 +979,7 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 			} else
 				a_set = 0;
 
-			if (p.y < b && _screen->isFillMatch(w, p.y + 1, flag, t_col, t_pri, t_con)) { // one line below
+			if (p.y < b && (fmatch == _screen->isFillMatch(w, p.y + 1, flag, t_col, t_pri, t_con))) { // one line below
 				if (b_set == 0) {
 					p1.x = w;
 					p1.y = p.y + 1;
