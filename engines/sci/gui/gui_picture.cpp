@@ -158,6 +158,10 @@ void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
 
 	lasty = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom) + _gfx->GetPort()->top;
 
+	// FIXME: ...seems we have to unpack the view and then mirror it on demand to screen
+	if (_mirroredFlag)
+		error("mirrored SCI1 picture views are currently not supported");
+
 	switch (_s->resMan->getViewType()) {
 	case kViewVga:
 	case kViewVga11:
