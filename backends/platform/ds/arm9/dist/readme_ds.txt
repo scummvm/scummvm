@@ -41,6 +41,14 @@ Visit the main ScummVM website <http://www.scummvm.org>
       What's New?
       ------------------------------------------------------------------------
 
+ScummVM DS 1.0.0
+
+ * A mouse pad area underneath the on-screen keybaord allows you to move
+   the mouse with the keyboard open.
+ * Using the laptop trackpad-style controls, moving the cursor to the edge
+   of the screen now scrolls the view
+ * The usual round of bugfixes.
+
 ScummVM DS 1.0.0 RC1
 
  * Gamma correction feature to improve brightness level of game on the
@@ -100,17 +108,12 @@ handheld games console.
       Features
       ------------------------------------------------------------------------
 
-    * Runs nearly all of Lucasarts' SCUMM games up to and including Sam
-      & Max Hit the Road
-    * Runs many non-Lucasarts point-and-click adventures too
-    * Supports sound
-    * Provides a GUI to change settings and choose games
-    * Supports using the DS touch screen for controls
-    * Suports saving games to compatible flash cards
-    * All games run at pretty much full speed
-
-
-
+ * Alows you to play many 80s and 90s era point and click adventure games on
+   your Nintendo DS!
+ * The games play with full sound and save/load facilities, and most run at
+   full speed, exactly as you remember them.
+ * Hugely customisable controls which made great use of the Nintendo DS touch
+   screen.
 
 
       How to Get ScummVM DS Onto Your DS - Simple Explanation
@@ -310,7 +313,7 @@ CANNOT DO THIS.
       ------------------------------------------------------------------------
 
 I'm glad you asked. Here is a list of the compatible games in version
-1.0.0 RC1. Demo versions of the games listed should work too.
+1.0.0. Demo versions of the games listed should work too.
 
 Flight of the Amazon Queen, Beneath a Steel Sky, and Lure of the
 Temptress have generously been released as freeware by the original
@@ -398,7 +401,7 @@ The Legend of Kyrandia                    F     Zoomed view does not follow the
 
 Lure of the Temptress                     G
 
-Nippon Safes                              G
+Nippon Safes                              H
 
 
 Full Throttle and The Dig can run on the DS using an external RAM pack
@@ -428,48 +431,69 @@ Once you've booted up ScummVM, you'll see the start up screen.
  4. Now click on the name of the game you want to play from the list and
     click 'Start'. Your game will start!
 
-You can use the B button to skip cutscenes, and the select button to
-show an options menu which will let you tweak the DS contols, including
-switch between scaled and unscaled video modes. The text is clearer in
-the unscaled mode, but the whole game doesn't fit on the screen. To
-scroll around, hold either shoulder button and use the D-pad or drag the
-screen around with the stylus. Even in scaled mode, a small amount is
-missing from the top and bottom of the screen. You can scroll around to
-see those areas. The top screen shows a zoomed-in view. This scrolls
-around to focus on the character who's speaking, and also follows where
-the pen touches the screen. You can change the zoom level by holding one
-of the shoulder buttons and pressing B to zoom in and A to zoom out.
+There are two ways of controlling ScummVM DS:
+ * You can tap on the screen where you want to click the mouse<
+ * You can use the bottom screen as a kind of laptop trackpad.  Dragging 
+   the bottom screen moves the mouse cursor around on the top screen.
 
-Press the start button for the in-game menu where you can load or save
-your game (this works in Lucasarts games, other games vary). Saves will
-write directly to your flash card. You can choose the folder where they
-are stored using the GUI that appears when you boot up. If you're using
-a GBA Flash Cartridge, or an unsupported flash card adaptor, you will be
-using GBA SRAM to save your game. Four or five save game will fit in
-save RAM. If you save more games than will fit, a warning will appear on
-the top screen. When you turn your DS off, the new save will be lost,
-and only the first ones you saved will be present.
+The first method is easier to understand, and this is the way that ScummVM DS
+operates when you first start it, but the second method can be more accurate 
+when you're trying to click on small items on screen.  To switch modes, press
+the 'Select' button in game, and tick 'Use laptop trackpad-style cursor 
+control' for the trackpad mode.
 
-Many of the games use both mouse buttons. Usually the right button often
-performs the default action on any object you click on. To simulate this
-with the DS pen, you can switch the input into one of three modes. Press
-left on the D-pad to enable the left mouse button. Press right on the
-D-pad to enable the right mouse button. Press up on the D-pad to enable
-hover mode. In this mode, you won't click on anything, just hover the
-mouse cursor over it. This lets you pick out active objects in the scene.
+The controls in each mode differ slightly.
+
+In the default mode (trackpad style cursor not ticked) the controls are:
+Key				Usage
+D-pad Left			Left mouse button mode
+D-pad Right			Right mouse button mode
+D-pad Up			Hover mouse (no mouse button)
+
+Pressing these keys changes the button that's clicked when you touch the 
+screen.  So, for example, after pressing D-pad right, touching the screen
+will right-click on that point on the screen. 
 
 An icon on the top screen will show you which mode you're in.
 
-In hover mode, there are some additional controls. While holding the pen
-on the screen, tapping D-pad left or D-pad right (or A/Y in left handed
-mode) will click the left or right mouse button.
+In hover mode, touching the screen does not click the mouse.  You will 
+just move the mouse cursor around.  Also, in hover mode, while holding the
+pen on the screen, tapping D-pad left or D-pad right (or A/Y in left
+handed mode) will click the left or right mouse button instead of changing 
+modes.
 
-There is an alternative method of control which doesn't require you to
-change modes with the D-pad.  Press 'Select' to bring up the DS options,
-and choose 'Tap for left click, double tap for right click'.  In this
-mode, you can quickly tap the screen to left click the mouse, and tap twice
-to right click the mouse.
+In laptop trackpad-style cursor mode, however, things work slightly 
+differently.  Dragging the pen on the screen will move the mouse cursor, 
+while a quick tap anywhere on the screen performs a left click, and a quick
+double tap will produce a right click.  In this mode, the D-pad works as
+follows:
 
+Key				Usage
+D-pad Left			Click left mouse button
+D-pad Right			Click right mouse button
+
+So, you can drag the mouse cursor around with the touch screen, and use
+the d-pad to click if you prefer.
+
+Also, there is an onscreen keyboard.  This allows you to type text into
+your game.  This is useful for naming your saved games, and also for 
+operating games like the Sierra AGI adventures, which are played mainly using 
+the keyboard.  To show the keyboard, press the X button.  To close the
+keyboard, press the X button again.
+
+Underneath the keyboard is a mouse area. Dragging inside this area moves
+the mouse, while tapping/double tapping performs a left/right click. This
+lets you use the mouse without closing the keyboard first.
+
+The top screen shows a close up view of the game.  In some games this scrolls
+around to follow whoever is speaking.  You can also scroll the view yourself
+by holding the right shoulder button and using the D-pad.  If you want to 
+select something small on screen, you can also swap the screens over and 
+interact with the close up view.  To swap screens, press A.
+
+In the DS Options Screen, left-handed mode can be selected.  This switches
+the D-pad and buttons over so that important features can be used by people
+holding the pen in their left hand.
 
 Here is a complete list of controls in right-handed mode (the default
 setting):
