@@ -232,8 +232,12 @@ void SciGuiScreen::dither() {
 			color = *screenPtr;
 			if (color & 0xF0) {
 				color ^= color << 4;
+//              remove remark to enable undithering
+//				*displayPtr = color;
+				// do the actual dithering
 				color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-				*screenPtr = color; *displayPtr = color;
+				*screenPtr = color;
+				*displayPtr = color; // put remark here to enable unditherung
 			}
 			screenPtr++; displayPtr++;
 		}
