@@ -922,6 +922,7 @@ void SciGuiGfx::Draw_String(const char *text) {
 	PenColor(orgPenColor);
 }
 
+// Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
 void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) {
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;

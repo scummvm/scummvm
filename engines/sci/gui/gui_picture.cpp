@@ -289,7 +289,7 @@ static const byte vector_defaultEGApriority[PIC_EGAPRIORITY_SIZE] = {
 
 void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	byte pic_op;
-	byte pic_color = 0, pic_priority = 0x0F, pic_control = 0x0F;
+	byte pic_color = 0, pic_priority = 255, pic_control = 255;
 	int16 x = 0, y = 0, oldx, oldy;
 	byte EGApalettes[PIC_EGAPALETTE_TOTALSIZE] = {0};
 	byte *EGApalette = &EGApalettes[_EGApaletteNo];
