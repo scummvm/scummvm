@@ -44,11 +44,11 @@ SciGuiView::~SciGuiView() {
 	for (uint16 loopNum = 0; loopNum < _loopCount; loopNum++) {
 		// and through the cells of each loop
 		for (uint16 celNum = 0; celNum < _loop[loopNum].celCount; celNum++) {
-			delete _loop[loopNum].cel[celNum].rawBitmap;
+			delete[] _loop[loopNum].cel[celNum].rawBitmap;
 		}
-		delete _loop[loopNum].cel;
+		delete[] _loop[loopNum].cel;
 	}
-	delete _loop;
+	delete[] _loop;
 }
 
 static const byte EGAMappingDefault[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
