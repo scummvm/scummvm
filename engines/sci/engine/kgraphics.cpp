@@ -919,12 +919,11 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 			mirroredFlag = true;
 	}
 	if (argc >= 3) {
-		// FIXME: usesOldGfxFunctions() seems to be butchered, cause sq3 has it set, but uses bit 0 correctly
-		//if (!s->_kernel->usesOldGfxFunctions())
-		//	flags = !argv[2].toUint16();
-		//else
 		if (!argv[2].isNull())
 			addToFlag = true;
+		// FIXME: usesOldGfxFunctions() seems to be broken, cause sq3 has it set, but uses bit 0 correctly
+		if (s->_kernel->usesOldGfxFunctions())
+			addToFlag = !addToFlag;
 	}
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
