@@ -519,13 +519,21 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 		// Translate view palette
 		view->palette = NULL;
 
-		if (guiView->getPalette()) {
-			GuiPalette viewPalette = guiView->getPalette()->_sysPalette;
-			int colorCount = (viewType == kViewVga) ? 256 : 16;
-			view->palette = new Palette(colorCount);
+		if (viewType == kViewVga || viewType == kViewVga11) {
+			GuiPalette *viewPalette = guiView->getPalette();
+			if (viewPalette) {
+				view->palette = new Palette(256);
+				for (int c = 0; c < 256; c++)
+					view->palette->setColor(c, viewPalette->colors[c].r, viewPalette->colors[c].g, viewPalette->colors[c].b);
+			}
+		} else {
+			view->palette = _staticPalette->getref();
 
-			for (int c = 0; c < colorCount; c++)
-				view->palette->setColor(c, viewPalette.colors[c].r, viewPalette.colors[c].g, viewPalette.colors[c].b);
+			const byte *paldata = guiView->getEgaMapping();
+			for (int p = 0; p < GFX_SCI0_IMAGE_COLORS_NR; p++)
+				view->translation[p] = *(paldata++);
+
+			view->flags |= GFX_PIXMAP_FLAG_PALETTIZED;
 		}
 
 		view->loops_nr = guiView->getLoopCount();
@@ -546,15 +554,16 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				curCel->height = celInfo->height;
 				curCel->index_width = celInfo->width;
 				curCel->index_height = celInfo->height;
-				curCel->palette_revision = 0;
-				curCel->xoffset = celInfo->displaceX;
-				curCel->yoffset = celInfo->displaceY;
+				curCel->palette_revision = -1;
+				curCel->xoffset = -celInfo->displaceX;
+				curCel->yoffset = -celInfo->displaceY;
 				curCel->alpha_map = 0;	// will be allocated by gfx_xlate_pixmap()
 				curCel->data = 0;		// will be allocated by gfx_xlate_pixmap()
-				curCel->palette = view->palette->getref();
+				curCel->palette = NULL;	// will be assigned to the view palette below
 			}
 		}
 
+		if (viewType == kViewVga || viewType == kViewVga11) {
 #else
 
 		// Existing code
@@ -570,6 +579,7 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 			view = getEGAView(resid, viewRes->data, viewRes->size, pal);
 		} else {
 			view = getVGAView(resid, viewRes->data, viewRes->size, viewType);
+#endif
 
 			if (view->palette) {
 				// Palettize view
@@ -584,8 +594,6 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 				view->palette = _staticPalette->getref();
 			}
 		}
-
-#endif
 
 		if (!res) {
 			res = (gfx_resource_t *)malloc(sizeof(gfx_resource_t));
@@ -607,30 +615,9 @@ gfxr_view_t *GfxResManager::getView(int nr, int *loop, int *cel, int palette) {
 	}
 
 	*loop = CLIP<int>(*loop, 0, view->loops_nr - 1);
-
-	if (*loop < 0) {
-		warning("[GFX] View %d has no loops", nr);
-		return NULL;
-	}
-
 	loop_data = view->loops + (*loop);
-	if (loop_data == NULL) {
-		warning("[GFX] Trying to load invalid loop %d of view %d", *loop, nr);
-		return NULL;
-	}
-
 	*cel = CLIP<int>(*cel, 0, loop_data->cels_nr - 1);
-
-	if (*cel < 0) {
-		warning("[GFX] View %d loop %d has no cels", nr, *loop);
-		return NULL;
-	}
-
 	cel_data = loop_data->cels[*cel];
-	if (loop_data == NULL) {
-		warning("[GFX] Trying to load invalid view/loop/cel %d/%d/%d", nr, *loop, *cel);
-		return NULL;
-	}
 
 	if (!cel_data->data) {
 		if (!cel_data->palette)
