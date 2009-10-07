@@ -914,7 +914,7 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 	Palette &p1 = getPalette(1);
 
 	bool res = false;
-	for (int i = 0; i < 768; i++) {
+	for (int i = 0; i < p1.getNumColors() * 3; i++) {
 		uint8 out = 0;
 
 		if (elapsedTime < targetTime) {

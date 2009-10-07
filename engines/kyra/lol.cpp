@@ -2288,19 +2288,45 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 		setCharacterUpdateEvent(charNum, 8, freezeTimes[spellLevel], 1);
 	}
 
-	_screen->loadPalette("SWAMPICE.COL", swampCol);
-	tpal.copy(_screen->getPalette(1), 128);
-	swampCol.copy(_screen->getPalette(1), 128);
+	Palette s(256);
+	s.copy(_screen->getPalette(1));
+	if (_flags.use16ColorMode) {
+		_screen->loadPalette("LOLICE.NOL", swampCol);
+		uint8 *s1 = s.getData();
+		for (int i = 0; i < 16; i++) {
+			s1[((i << 4) | i) * 3] = s1[i * 3];
+			s1[((i << 4) | i) * 3 + 1] = s1[i * 3 + 1];
+			s1[((i << 4) | i) * 3 + 2] = s1[i * 3 + 2];
+		}		
+		uint8 *d1 = tpal.getData();
+		uint8 *d2 = swampCol.getData();
+		for (int i = 48; i < 256; i++)
+			d1[i] = d2[i] = s1[i] & 0x3f;
 
-	Palette &s = _screen->getPalette(1);
-	for (int i = 1; i < 128; i++) {
-		tpal[i * 3] = 0;
-		uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
-		tpal[i * 3 + 1] = v;
-		tpal[i * 3 + 2] = v << 1;
+		for (int i = 1; i < 16; i++) {
+			uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
+			tpal[i * 3] = 0;			
+			tpal[i * 3 + 1] = v;
+			tpal[i * 3 + 2] = v << 1;
 
-		if (tpal[i * 3 + 2] > 0x3f)
-			tpal[i * 3 + 2] = 0x3f;
+			if (tpal[i * 3 + 2] > 0x3f)
+				tpal[i * 3 + 2] = 0x3f;
+		}
+
+	} else {	
+		_screen->loadPalette("SWAMPICE.COL", swampCol);
+		tpal.copy(s, 128);
+		swampCol.copy(s, 128);
+		
+		for (int i = 1; i < 128; i++) {
+			tpal[i * 3] = 0;
+			uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
+			tpal[i * 3 + 1] = v;
+			tpal[i * 3 + 2] = v << 1;
+
+			if (tpal[i * 3 + 2] > 0x3f)
+				tpal[i * 3 + 2] = 0x3f;
+		}
 	}
 
 	generateBrightnessPalette(tpal, tpal, _brightness, _lampEffect);
@@ -2404,10 +2430,6 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 
 	if (breakWall)
 		breakIceWall(tpal.getData(), swampCol.getData());
-
-	//static const uint8 freezeTime[] = { 20, 28, 40, 60 };
-	//if (spellLevel == 11)
-	//	setCharacterUpdateEvent(charNum, 8, freezeTime[spellLevel], 1);
 
 	_screen->setCurPage(cp);
 	return 1;
@@ -3168,7 +3190,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			(this->*callback)(mov, x, y);
 
 		if (mov)
-			mov->displayFrame(curFrame % mov->frames(), 2, x, y, 0x5000, _trueLightTable1, _trueLightTable2);
+			mov->displayFrame(curFrame % mov->frames(), 2, x, y, _flags.use16ColorMode ? 0x4000 : 0x5000, _trueLightTable1, _trueLightTable2);
 
 		if (mov || callback) {
 			_screen->copyRegion(x, y, x, y, w2, h2, 2, 0, Screen::CR_NO_P_CHECK);
