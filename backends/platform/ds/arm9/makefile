@@ -8,11 +8,14 @@ libndsdir = $(DEVKITPRO)/libnds
 # Select the build by setting SCUMM_BUILD to a,b,c,d,e,f or g.
 # Anything else gets build a.
 
-ifeq ($(SCUMM_BUILD),i)
-        DS_BUILD_I = 1
+ifeq ($(SCUMM_BUILD),j)
+	DS_BUILD_J = 1
 else
- ifeq ($(SCUMM_BUILD),h)
-         DS_BUILD_H = 1
+ ifeq ($(SCUMM_BUILD),i)
+        DS_BUILD_I = 1
+ else
+  ifeq ($(SCUMM_BUILD),h)
+          DS_BUILD_H = 1
   else
    ifeq ($(SCUMM_BUILD),g)
          DS_BUILD_G = 1
@@ -41,6 +44,7 @@ else
    endif
   endif
  endif
+endif
 # To do:
 # - FAT cache?
 
@@ -58,9 +62,14 @@ else
 	# TODO: Inherit the earth uses so much RAM that I have removed libmad in order to
 	# claw some back.
 
+	
 
 	else
-		USE_MAD = 1
+		ifdef DS_BUILD_I
+
+		else
+			USE_MAD = 1
+		endif
 	endif
 endif
 
@@ -150,16 +159,23 @@ endif
 
 ifdef DS_BUILD_H
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
-	LOGO = logog.bmp
+	LOGO = logoh.bmp
 	ENABLE_PARALLACTION = STATIC_PLUGIN
 	BUILD=scummvm-H
 endif
 
 ifdef DS_BUILD_I
-	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_H
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_I
 	LOGO = logog.bmp
-	ENABLE_TUCKER = STATIC_PLUGIN
-	BUILD=scummvm-H
+	ENABLE_MADE = STATIC_PLUGIN
+	BUILD=scummvm-I
+endif
+
+ifdef DS_BUILD_J
+	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_J
+	LOGO = logog.bmp
+	ENABLE_CRUISE = STATIC_PLUGIN
+	BUILD=scummvm-J
 endif
 
 ARM7BIN	:= -7 $(CURDIR)/../../arm7/arm7.bin
@@ -187,7 +203,7 @@ ifdef USE_PROFILER
 endif
 
 CXXFLAGS=	$(CFLAGS) -Wno-non-virtual-dtor -Wno-unknown-pragmas -Wno-reorder  \
-		-fno-exceptions -fno-rtti -mthumb-interwork -ffunction-sections -fdata-sections
+		-fno-exceptions -fno-rtti -mthumb-interwork -ffunction-sections -fdata-sections -fno-strict-aliasing
 
 #		-mthumb
 
@@ -293,7 +309,7 @@ LIBCARTRESET_OBJS :=
 #$(portdir)/source/libcartreset/cartreset.o
 
 # Files in this list will be optimisied for speed, otherwise they will be optimised for space
-OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp
+OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp isomap.cpp image.cpp gfx.cpp sprite.cpp actor_path.cpp actor_walk.cpp script.cpp
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
