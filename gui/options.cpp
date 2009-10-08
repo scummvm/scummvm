@@ -147,7 +147,6 @@ void OptionsDialog::open() {
 #ifdef SMALL_SCREEN_DEVICE
 		_fullscreenCheckbox->setState(true);
 		_fullscreenCheckbox->setEnabled(false);
-		_aspectCheckbox->setEnabled(false);
 #else // !SMALL_SCREEN_DEVICE
 		// Fullscreen setting
 		_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
@@ -278,23 +277,14 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 void OptionsDialog::setGraphicSettingsState(bool enabled) {
 	_enableGraphicSettings = enabled;
 
-	_gfxPopUpDesc->setEnabled(enabled);
-	_gfxPopUp->setEnabled(enabled);
-	_renderModePopUpDesc->setEnabled(enabled);
-	_renderModePopUp->setEnabled(enabled);
 #ifndef SMALL_SCREEN_DEVICE
 	_fullscreenCheckbox->setEnabled(enabled);
-	_aspectCheckbox->setEnabled(enabled);
 #endif
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
 	_enableAudioSettings = enabled;
 
-	_midiPopUpDesc->setEnabled(enabled);
-	_midiPopUp->setEnabled(enabled);
-	_oplPopUpDesc->setEnabled(enabled);
-	_oplPopUp->setEnabled(enabled);
 	_outputRatePopUpDesc->setEnabled(enabled);
 	_outputRatePopUp->setEnabled(enabled);
 }
@@ -600,11 +590,6 @@ void GlobalOptionsDialog::open() {
 		if (value == savePeriodValues[i])
 			_autosavePeriodPopUp->setSelected(i);
 	}
-
-	ThemeEngine::GraphicsMode mode = ThemeEngine::findMode(ConfMan.get("gui_renderer"));
-	if (mode == ThemeEngine::kGfxDisabled)
-		mode = ThemeEngine::_defaultRendererMode;
-	_rendererPopUp->setSelectedTag(mode);
 }
 
 void GlobalOptionsDialog::close() {
@@ -697,22 +682,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	}
 #endif
-	case kChooseSoundFontCmd: {
-		BrowserDialog browser("Select SoundFont", false);
-		if (browser.runModal() > 0) {
-			// User made his choice...
-			Common::FSNode file(browser.getResult());
-			_soundFont->setLabel(file.getPath());
-
-			if (!file.getPath().empty() && (file.getPath() != "None"))
-				_soundFontClearButton->setEnabled(true);
-			else
-				_soundFontClearButton->setEnabled(false);
-
-			draw();
-		}
-		break;
-	}
 	case kChooseThemeCmd: {
 		ThemeBrowser browser;
 		if (browser.runModal() > 0) {

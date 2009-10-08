@@ -210,7 +210,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	_globalAudioOverride = new CheckboxWidget(tab, "GameOptions_Audio.EnableTabCheckbox", "Override global audio settings", kCmdGlobalAudioOverride, 0);
 
 	addAudioControls(tab, "GameOptions_Audio.");
-	addSubtitleControls(tab, "GameOptions_Audio.");
 
 	//
 	// 5) The volume tab
@@ -370,13 +369,8 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 		break;
 	case kCmdGlobalAudioOverride:
 		setAudioSettingsState(data != 0);
-		setSubtitleSettingsState(data != 0);
 		if (_globalVolumeOverride == NULL)
 			setVolumeSettingsState(data != 0);
-		draw();
-		break;
-	case kCmdGlobalMIDIOverride:
-		setMIDISettingsState(data != 0);
 		draw();
 		break;
 	case kCmdGlobalVolumeOverride:
