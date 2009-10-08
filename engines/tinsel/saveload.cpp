@@ -95,7 +95,7 @@ struct SaveGameHeader {
 	uint32 size;
 	uint32 ver;
 	char desc[SG_DESC_LEN];
-	struct tm dateTime;
+	TimeDate dateTime;
 };
 
 enum {
@@ -124,18 +124,13 @@ static char *SaveSceneSsData = 0;	// points to 'SAVED_DATA ssdata[MAX_NEST]'
 
 void setNeedLoad() { NeedLoad = true; }
 
-static void syncTime(Common::Serializer &s, struct tm &t) {
+static void syncTime(Common::Serializer &s, TimeDate &t) {
 	s.syncAsUint16LE(t.tm_year);
 	s.syncAsByte(t.tm_mon);
 	s.syncAsByte(t.tm_mday);
 	s.syncAsByte(t.tm_hour);
 	s.syncAsByte(t.tm_min);
 	s.syncAsByte(t.tm_sec);
-	if (s.isLoading()) {
-		t.tm_wday = 0;
-		t.tm_yday = 0;
-		t.tm_isdst = 0;
-	}
 }
 
 static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
@@ -300,6 +295,28 @@ static char *NewName(void) {
 }
 
 /**
+ * Compare two TimeDate structs to see which one was earlier.
+ * Returns 0 if they are equal, a negative value if a is lower / first, and
+ * a positive value if b is lower / first.
+ */
+static int cmpTimeDate(const TimeDate &a, const TimeDate &b) {
+	int tmp;
+
+	#define CMP_ENTRY(x) tmp = a.x - b.x; if (tmp != 0) return tmp
+
+	CMP_ENTRY(tm_year);
+	CMP_ENTRY(tm_mon);
+	CMP_ENTRY(tm_mday);
+	CMP_ENTRY(tm_hour);
+	CMP_ENTRY(tm_min);
+	CMP_ENTRY(tm_sec);
+
+	#undef CMP_ENTRY
+
+	return 0;
+}
+
+/**
  * Interrogate the current DOS directory for saved game files.
  * Store the file details, ordered by time, in savedFiles[] and return
  * the number of files found).
@@ -341,7 +358,7 @@ int getList(Common::SaveFileManager *saveFileMan, const Common::String &target) 
 		i = numSfiles;
 #ifndef DISABLE_SAVEGAME_SORTING
 		for (i = 0; i < numSfiles; i++) {
-			if (difftime(mktime(&hdr.dateTime), mktime(&savedFiles[i].dateTime)) > 0) {
+			if (cmpTimeDate(hdr.dateTime, savedFiles[i].dateTime) > 0) {
 				Common::copy_backward(&savedFiles[i], &savedFiles[numSfiles], &savedFiles[numSfiles + 1]);
 				break;
 			}

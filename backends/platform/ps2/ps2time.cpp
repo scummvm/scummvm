@@ -106,7 +106,7 @@ void OSystem_PS2::readRtcTime(void) {
 		g_day, g_month, g_year + 2000);
 }
 
-void OSystem_PS2::getTimeAndDate(struct tm &t) const {
+void OSystem_PS2::getTimeAndDate(TimeDate &t) const {
 
 	uint32 currentSecs = g_timeSecs + (msecCount - g_lastTimeCheck) / 1000;
 	if (currentSecs >= SECONDS_PER_DAY) {
@@ -121,6 +121,4 @@ void OSystem_PS2::getTimeAndDate(struct tm &t) const {
 	t.tm_year = g_year + 100;
 	t.tm_mday = g_day;
 	t.tm_mon  = g_month - 1;
-	// tm_wday, tm_yday and tm_isdst are zero for now
-	t.tm_wday = t.tm_yday = t.tm_isdst = 0;
 }

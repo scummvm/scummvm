@@ -85,7 +85,7 @@ public:
 	void setupMixer();
 	// Overloaded from OSystem
 	void engineInit();
-	void getTimeAndDate(struct tm &t) const;
+	void getTimeAndDate(TimeDate &t) const;
 	virtual Common::SeekableReadStream *createConfigReadStream();
 	virtual Common::WriteStream *createConfigWriteStream();
 

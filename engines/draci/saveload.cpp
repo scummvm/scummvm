@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// for extended infos
-
 #include "draci/draci.h"
 #include "draci/saveload.h"
 
@@ -95,7 +93,7 @@ Common::Error saveSavegameData(int saveGameIdx, const Common::String &saveName, 
 	if (f == NULL)
 		return Common::kNoGameDataFoundError;
 
-	tm curTime;
+	TimeDate curTime;
 	vm._system->getTimeAndDate(curTime);
 
 	// Save the savegame header

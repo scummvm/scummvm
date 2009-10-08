@@ -138,7 +138,7 @@ public:
 	// Quit
 	void quit();
 
-	void getTimeAndDate(struct tm &t) const;
+	void getTimeAndDate(TimeDate &t) const;
 	virtual Common::TimerManager *getTimerManager();
 
 	// Mutex handling

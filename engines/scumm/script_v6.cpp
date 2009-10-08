@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// for ScummEngine_v6::o6_getDateTime()
-
 #include "common/config-manager.h"
 #include "common/system.h"
 
@@ -2940,7 +2938,7 @@ void ScummEngine_v6::o6_pickVarRandom() {
 }
 
 void ScummEngine_v6::o6_getDateTime() {
-	struct tm t;
+	TimeDate t;
 	_system->getTimeAndDate(t);
 
 	VAR(VAR_TIMEDATE_YEAR) = t.tm_year;

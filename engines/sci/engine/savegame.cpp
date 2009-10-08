@@ -28,9 +28,6 @@
 #include "common/func.h"
 #include "common/serializer.h"
 
-#include <time.h>	// FIXME: For struct tm
-
-
 #include "sci/sci.h"
 #include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
@@ -497,7 +494,7 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 
 
 int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename, const char *version) {
-	tm curTime;
+	TimeDate curTime;
 	g_system->getTimeAndDate(curTime);
 
 	SavegameMetadata meta;

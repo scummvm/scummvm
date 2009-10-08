@@ -193,10 +193,16 @@ bool OSystem_Dreamcast::getFeatureState(Feature f)
   }
 }
 
-void OSystem_Dreamcast::getTimeAndDate(struct tm &t) const {
+void OSystem_Dreamcast::getTimeAndDate(TimeDate &td) const {
   time_t curTime;
   time(&curTime);
-  t = *localtime(&curTime);
+  struct tm t = *localtime(&curTime);
+  td.tm_sec = t.tm_sec;
+  td.tm_min = t.tm_min;
+  td.tm_hour = t.tm_hour;
+  td.tm_mday = t.tm_mday;
+  td.tm_mon = t.tm_mon;
+  td.tm_year = t.tm_year;
 }
 
 void DCHardware::dc_init_hardware()

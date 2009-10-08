@@ -2523,13 +2523,12 @@ void OSystem_WINCE3::quit() {
 	OSystem_SDL::quit();
 }
 
-void OSystem_WINCE3::getTimeAndDate(struct tm &t) const {
+void OSystem_WINCE3::getTimeAndDate(TimeDate &t) const {
 	SYSTEMTIME systime;
 
 	GetLocalTime(&systime);
 	t.tm_year	= systime.wYear - 1900;
 	t.tm_mon	= systime.wMonth - 1;
-	t.tm_wday	= systime.wDayOfWeek;
 	t.tm_mday	= systime.wDay;
 	t.tm_hour	= systime.wHour;
 	t.tm_min	= systime.wMinute;

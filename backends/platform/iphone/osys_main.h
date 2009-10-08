@@ -169,7 +169,7 @@ public:
 
 	FilesystemFactory *getFilesystemFactory() { return _fsFactory; }
 	virtual void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0);
-	virtual void getTimeAndDate(struct tm &t) const;
+	virtual void getTimeAndDate(TimeDate &t) const;
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();

@@ -211,7 +211,7 @@ public:
 	virtual Audio::Mixer *getMixer();
 	virtual Common::TimerManager *getTimerManager();
 	virtual FilesystemFactory *getFilesystemFactory();
-	virtual void getTimeAndDate(struct tm &t) const;
+	virtual void getTimeAndDate(TimeDate &t) const;
 };
 
 #endif

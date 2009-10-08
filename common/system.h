@@ -54,6 +54,24 @@ namespace Common {
 class FilesystemFactory;
 
 /**
+ * A structure describing time and date. This is a clone of struct tm
+ * from time.h. We roll our own since not all systems provide time.h.
+ * We also do not imitate all files of struct tm, only those we
+ * actually need.
+ *
+ * @note For now, the members are named exactly as in struct tm to ease
+ * the transition.
+ */
+struct TimeDate {
+	int tm_sec;     ///< seconds (0 - 60)
+	int tm_min;     ///< minutes (0 - 59)
+	int tm_hour;    ///< hours (0 - 23)
+	int tm_mday;    ///< day of month (1 - 31)
+	int tm_mon;     ///< month of year (0 - 11)
+	int tm_year;    ///< year - 1900
+};
+
+/**
  * Interface for ScummVM backends. If you want to port ScummVM to a system
  * which is not currently covered by any of our backends, this is the place
  * to start. ScummVM will create an instance of a subclass of this interface
@@ -805,7 +823,7 @@ public:
 	 * Corresponds on many systems to the combination of time()
 	 * and localtime().
 	 */
-	virtual void getTimeAndDate(struct tm &t) const = 0;
+	virtual void getTimeAndDate(TimeDate &t) const = 0;
 
 	/**
 	 * Return the timer manager singleton. For more information, refer

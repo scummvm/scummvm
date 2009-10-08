@@ -655,14 +655,20 @@ void OSystem_DS::delayMillis(uint msecs) {
 }
 
 
-void OSystem_DS::getTimeAndDate(struct tm &t) const {
+void OSystem_DS::getTimeAndDate(TimeDate &td) const {
 	time_t curTime;
 #if 0
 	curTime = time(0);
 #else
 	curTime = 0xABCD1234 + DS::getMillis() / 1000;
 #endif
-	t = *localtime(&curTime);
+	struct tm t = *localtime(&curTime);
+	td.tm_sec = t.tm_sec;
+	td.tm_min = t.tm_min;
+	td.tm_hour = t.tm_hour;
+	td.tm_mday = t.tm_mday;
+	td.tm_mon = t.tm_mon;
+	td.tm_year = t.tm_year;
 }
 
 FilesystemFactory *OSystem_DS::getFilesystemFactory() {

@@ -123,7 +123,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   void delayMillis(uint msecs);
 
   // Get the current time and date. Correspond to time()+localtime().
-  void getTimeAndDate(struct tm &t) const;
+  void getTimeAndDate(TimeDate &t) const;
 
   // Get the next event.
   // Returns true if an event was retrieved.

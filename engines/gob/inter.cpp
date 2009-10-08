@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// FIXME: for Inter::renewTimeInVars()
-
 #include "common/endian.h"
 
 #include "gob/gob.h"
@@ -159,7 +157,7 @@ void Inter::initControlVars(char full) {
 }
 
 void Inter::renewTimeInVars() {
-	struct tm t;
+	TimeDate t;
 	_vm->_system->getTimeAndDate(t);
 
 	WRITE_VAR(5, 1900 + t.tm_year);

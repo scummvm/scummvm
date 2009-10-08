@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// for extended infos
-
 #include "common/file.h"
 #include "common/util.h"
 #include "common/savefile.h"
@@ -1112,7 +1110,7 @@ void Control::saveGameToFile(uint8 slot) {
 		Graphics::saveThumbnail(*outf);
 
 	// Date / time
-	tm curTime;
+	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
 
 	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | ((curTime.tm_year + 1900) & 0xFFFF);
@@ -1278,7 +1276,7 @@ bool Control::convertSaveGame(uint8 slot, char* desc) {
 	newSave->writeByte(SAVEGAME_VERSION);
 
 	// Date / time
-	tm curTime;
+	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
 
 	uint32 saveDate = (curTime.tm_mday & 0xFF) << 24 | ((curTime.tm_mon + 1) & 0xFF) << 16 | ((curTime.tm_year + 1900) & 0xFFFF);

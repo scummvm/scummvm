@@ -1155,9 +1155,15 @@ void OSystem_PSP::quit() {
 	sceKernelExitGame();
 }
 
-void OSystem_PSP::getTimeAndDate(struct tm &t) const {
+void OSystem_PSP::getTimeAndDate(TimeDate &td) const {
 	time_t curTime = time(0);
-	t = *localtime(&curTime);
+	struct tm t = *localtime(&curTime);
+	td.tm_sec = t.tm_sec;
+	td.tm_min = t.tm_min;
+	td.tm_hour = t.tm_hour;
+	td.tm_mday = t.tm_mday;
+	td.tm_mon = t.tm_mon;
+	td.tm_year = t.tm_year;
 }
 
 #define PSP_CONFIG_FILE "ms0:/scummvm.ini"

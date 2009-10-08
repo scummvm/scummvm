@@ -25,8 +25,6 @@
 
 #include "common/system.h"
 
-#include <time.h>	// FIXME: For struct tm
-
 #include "sci/sci.h"
 #include "sci/debug.h"
 #include "sci/engine/state.h"
@@ -115,7 +113,7 @@ enum {
 };
 
 reg_t kGetTime(EngineState *s, int argc, reg_t *argv) {
-	tm loc_time;
+	TimeDate loc_time;
 	uint32 elapsedTime;
 	int retval = 0; // Avoid spurious warning
 

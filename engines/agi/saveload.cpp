@@ -28,8 +28,6 @@
 // Multi-slots by Claudio Matsuoka <claudio@helllabs.org>
 //
 
-#include <time.h>	// for extended infos
-
 #include "common/file.h"
 #include "graphics/thumbnail.h"
 #include "common/config-manager.h"
@@ -79,7 +77,7 @@ int AgiEngine::saveGame(const char *fileName, const char *description) {
 	Graphics::saveThumbnail(*out);
 
 	// Creation date/time
-	tm curTime;
+	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
 
 	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);

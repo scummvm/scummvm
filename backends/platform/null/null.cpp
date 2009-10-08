@@ -115,7 +115,7 @@ public:
 
 	virtual Common::SaveFileManager *getSavefileManager();
 	virtual Audio::Mixer *getMixer();
-	virtual void getTimeAndDate(struct tm &t) const;
+	virtual void getTimeAndDate(TimeDate &t) const;
 	virtual Common::TimerManager *getTimerManager();
 	FilesystemFactory *getFilesystemFactory();
 
@@ -321,7 +321,7 @@ Common::TimerManager *OSystem_NULL::getTimerManager() {
 	return _timer;
 }
 
-void OSystem_NULL::getTimeAndDate(struct tm &t) const {
+void OSystem_NULL::getTimeAndDate(TimeDate &t) const {
 }
 
 FilesystemFactory *OSystem_NULL::getFilesystemFactory() {

@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// for extended infos
-
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -199,7 +197,7 @@ void SagaEngine::save(const char *fileName, const char *saveName) {
 	Graphics::saveThumbnail(*out);
 
 	// Date / time
-	tm curTime;
+	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
 
 	uint32 saveDate = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);

@@ -23,8 +23,6 @@
  *
  */
 
-#include <time.h>	// for ScummEngine::saveInfos / ScummEngine::loadInfos
-
 #include "common/config-manager.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -779,10 +777,10 @@ void ScummEngine::saveInfos(Common::WriteStream* file) {
 	section.size = SaveInfoSectionSize;
 
 	// still save old format for older versions
-	section.timeTValue = time(0);
+	section.timeTValue = 0;
 	section.playtime = _system->getMillis() / 1000 - _engineStartTime;
 
-	tm curTime;
+	TimeDate curTime;
 	_system->getTimeAndDate(curTime);
 
 	section.date = ((curTime.tm_mday & 0xFF) << 24) | (((curTime.tm_mon + 1) & 0xFF) << 16) | ((curTime.tm_year + 1900) & 0xFFFF);

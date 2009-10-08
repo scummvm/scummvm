@@ -27,8 +27,6 @@
 #ifndef TINSEL_SAVESCN_H
 #define TINSEL_SAVESCN_H
 
-#include <time.h>	// for time_t struct
-
 #include "tinsel/actors.h"	// SAVED_ACTOR
 #include "tinsel/dw.h"	// SCNHANDLE
 #include "tinsel/rince.h"	// SAVED_MOVER
@@ -52,7 +50,7 @@ enum {
 struct SFILES {
 	char	name[FNAMELEN];
 	char	desc[SG_DESC_LEN + 2];
-	struct tm dateTime;
+	TimeDate dateTime;
 };
 
 struct SAVED_DATA {

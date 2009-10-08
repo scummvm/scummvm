@@ -159,7 +159,7 @@ public:
 	Audio::Mixer *getMixer() { return _mixer; }
 	Common::TimerManager *getTimerManager() { return _timer; }
 	FilesystemFactory *getFilesystemFactory() { return &PSPFilesystemFactory::instance(); }
-	void getTimeAndDate(struct tm &t) const;
+	void getTimeAndDate(TimeDate &t) const;
 
 	virtual void quit();
 

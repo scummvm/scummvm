@@ -239,7 +239,7 @@ public:
 
 	bool pollEvent(Common::Event &event);
 
-	void getTimeAndDate(struct tm &t) const;
+	void getTimeAndDate(TimeDate &t) const;
 	virtual uint32 getMillis();
 	virtual void delayMillis(uint msecs);
 
