@@ -280,13 +280,6 @@ public:
 	 */
 	int freeDynmem(reg_t addr);
 
-	/**
-	 * Gets the description of a dynmem segment
-	 * @param[in] addr	Segment to describe
-	 * @return			Pointer to the descriptive string set in allocDynmem
-	 */
-	const char *getDescription(reg_t addr);
-
 
 	// Generic Operations on Segments and Addresses
 

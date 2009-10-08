@@ -1271,20 +1271,6 @@ byte *SegManager::allocDynmem(int size, const char *descr, reg_t *addr) {
 	return (byte *)(d._buf);
 }
 
-const char *SegManager::getDescription(reg_t addr) {
-	if (addr.segment < 1 || addr.segment >= _heap.size())
-		return "";
-
-	SegmentObj *mobj = _heap[addr.segment];
-
-	switch (mobj->getType()) {
-	case SEG_TYPE_DYNMEM:
-		return (*(DynMem *)mobj)._description.c_str();
-	default:
-		return "";
-	}
-}
-
 int SegManager::freeDynmem(reg_t addr) {
 	if (addr.segment < 1 || addr.segment >= _heap.size() || !_heap[addr.segment] || _heap[addr.segment]->getType() != SEG_TYPE_DYNMEM)
 		return 1; // error
