@@ -380,7 +380,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_FILL: //fill
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetAbsCoords(data, curPos, x, y);
-				_gfx->Pic_Fill(x, y, pic_color, pic_priority, pic_control);
+				_gfx->FloodFill(x, y, pic_color, pic_priority, pic_control);
 			}
 			break;
 

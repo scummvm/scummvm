@@ -890,8 +890,10 @@ void SciGuiGfx::Draw_Pattern(int16 x, int16 y, byte color, byte priority, byte c
 	y -= size; if (y < 0) y = 0;
 	x -= size; if (x < 0) x = 0;
 
-	rect.top = y + _curPort->top; rect.left = x + _curPort->left;
+	rect.top = y; rect.left = x;
 	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
+	OffsetRect(rect);
+	rect.clip(_screen->_width, _screen->_height);
 
 	if (code & SCI_PATTERN_CODE_RECTANGLE) {
 		// Rectangle
@@ -921,31 +923,27 @@ void SciGuiGfx::Draw_String(const char *text) {
 }
 
 // Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
-void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) {
+void SciGuiGfx::FloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
 	Common::Stack<Common::Point> stack;
 	Common::Point p, p1;
 
-	byte flag = _screen->getDrawingMask(color, prio, control), fmatch;
+	byte screenMask = _screen->getDrawingMask(color, priority, control), matchMask;
 	p.x = x + _curPort->left;
 	p.y = y + _curPort->top;
 	stack.push(p);
 
-	// parameters check
-	//if ((flag & 2 && prio == 0) || (flag & 3 && control == 0))
-	//	return;
-
-	byte t_col = _screen->getVisual(p.x, p.y);
-	byte t_pri = _screen->getPriority(p.x, p.y);
-	byte t_con = _screen->getControl(p.x, p.y);
+	byte searchColor = _screen->getVisual(p.x, p.y);
+	byte searchPriority = _screen->getPriority(p.x, p.y);
+	byte searchControl = _screen->getControl(p.x, p.y);
 	int16 w, e, a_set, b_set;
 	// if in 1st point priority,control or color is already set to target, clear the flag
-	if (flag & 1 && t_col == color)
-		flag ^= 1;
-	if (flag & 2 && t_pri == prio)
-		flag ^= 2;
-	if (flag & 4 && t_con == control)
-		flag ^= 4;
-	if (flag == 0)// nothing to fill
+	if (screenMask & SCI_SCREEN_MASK_VISUAL && searchColor == color)
+		screenMask ^= SCI_SCREEN_MASK_VISUAL;
+	if (screenMask & SCI_SCREEN_MASK_PRIORITY && searchPriority == priority)
+		screenMask ^= SCI_SCREEN_MASK_PRIORITY;
+	if (screenMask & SCI_SCREEN_MASK_CONTROL && searchControl == control)
+		screenMask ^= SCI_SCREEN_MASK_CONTROL;
+	if (screenMask == 0)// nothing to fill
 		return;
 
 	// hard borders for filling
@@ -955,20 +953,20 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 	int b = _curPort->rect.bottom + _curPort->top - 1;
 	while (stack.size()) {
 		p = stack.pop();
-		if ((fmatch = _screen->isFillMatch(p.x, p.y, flag, t_col, t_pri, t_con)) == 0) // already filled
+		if ((matchMask = _screen->isFillMatch(p.x, p.y, screenMask, searchColor, searchPriority, searchControl)) == 0) // already filled
 			continue;
-		_screen->putPixel(p.x, p.y, flag, color, prio, control);
+		_screen->putPixel(p.x, p.y, screenMask, color, priority, control);
 		w = p.x;
 		e = p.x;
 		// moving west and east pointers as long as there is a matching color to fill
-		while (w > l && (fmatch == _screen->isFillMatch(w - 1, p.y, flag, t_col, t_pri, t_con)))
-			_screen->putPixel(--w, p.y, fmatch, color, prio, control);
-		while (e < r && (fmatch == _screen->isFillMatch(e + 1, p.y, flag, t_col, t_pri, t_con)))
-			_screen->putPixel(++e, p.y, fmatch, color, prio, control);
+		while (w > l && (matchMask == _screen->isFillMatch(w - 1, p.y, screenMask, searchColor, searchPriority, searchControl)))
+			_screen->putPixel(--w, p.y, matchMask, color, priority, control);
+		while (e < r && (matchMask == _screen->isFillMatch(e + 1, p.y, screenMask, searchColor, searchPriority, searchControl)))
+			_screen->putPixel(++e, p.y, matchMask, color, priority, control);
 		// checking lines above and below for possible flood targets
 		a_set = b_set = 0;
 		while (w <= e) {
-			if (p.y > t && (fmatch == _screen->isFillMatch(w, p.y - 1, flag, t_col, t_pri, t_con))) { // one line above
+			if (p.y > t && (matchMask == _screen->isFillMatch(w, p.y - 1, screenMask, searchColor, searchPriority, searchControl))) { // one line above
 				if (a_set == 0) {
 					p1.x = w;
 					p1.y = p.y - 1;
@@ -978,7 +976,7 @@ void SciGuiGfx::Pic_Fill(int16 x, int16 y, byte color, byte prio, byte control) 
 			} else
 				a_set = 0;
 
-			if (p.y < b && (fmatch == _screen->isFillMatch(w, p.y + 1, flag, t_col, t_pri, t_con))) { // one line below
+			if (p.y < b && (matchMask == _screen->isFillMatch(w, p.y + 1, screenMask, searchColor, searchPriority, searchControl))) { // one line below
 				if (b_set == 0) {
 					p1.x = w;
 					p1.y = p.y + 1;
