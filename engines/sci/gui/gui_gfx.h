@@ -135,7 +135,6 @@ private:
 	uint16 _clrPowers[256];
 
 	byte bMapColors;
-	GuiPalette *pPicPal;
 	Common::Array<GuiPalSchedule> _palSchedules;
 
 	int _textFontsCount;

@@ -36,15 +36,18 @@ namespace Sci {
 
 SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen)
 	: _resMan(resMan), _screen(screen) {
-	int16 i;
-	for (i = 0; i < 256; i++) {
-		_sysPalette.colors[i].used = 0;
-		_sysPalette.colors[i].r = 0;
-		_sysPalette.colors[i].g = 0;
-		_sysPalette.colors[i].b = 0;
-		_sysPalette.intensity[i] = 100;
-		_sysPalette.mapping[i] = i;
+	int16 color;
+
+	_sysPalette.timestamp = 0;
+	for (color = 0; color < 256; color++) {
+		_sysPalette.colors[color].used = 0;
+		_sysPalette.colors[color].r = 0;
+		_sysPalette.colors[color].g = 0;
+		_sysPalette.colors[color].b = 0;
+		_sysPalette.intensity[color] = 100;
+		_sysPalette.mapping[color] = color;
 	}
+	// Black and white are hardcoded
 	_sysPalette.colors[0].used = 1;
 	_sysPalette.colors[255].used = 1;
 	_sysPalette.colors[255].r = 255;
@@ -61,8 +64,8 @@ SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen)
 	};
 
 	// Init _clrPowers used in MatchColor
-	for(i = 0; i < 256; i++)
-	  _clrPowers[i] = i*i;
+	for(color = 0; color < 256; color++)
+	  _clrPowers[color] = color*color;
 }
 
 SciGuiPalette::~SciGuiPalette() {
@@ -281,10 +284,10 @@ void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	int len = toColor - fromColor - 1;
 	uint32 now = g_system->getMillis() * 60 / 1000;;
 	// search for sheduled animations with the same 'from' value
-	int sz = _palSchedules.size();
+	int sz = _schedules.size();
 	for (int i = 0; i < sz; i++) {
-		if (_palSchedules[i].from == fromColor) {
-			if (_palSchedules[i].schedule < now) {
+		if (_schedules[i].from == fromColor) {
+			if (_schedules[i].schedule < now) {
 				if (speed > 0) {
 					col = _sysPalette.colors[fromColor];
 					memmove(&_sysPalette.colors[fromColor], &_sysPalette.colors[fromColor + 1], len * sizeof(GuiColor));
@@ -295,17 +298,17 @@ void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 					_sysPalette.colors[fromColor] = col;
 				}
 				// removing schedule
-				_palSchedules.remove_at(i);
+				_schedules.remove_at(i);
 			}
 			setOnScreen();
 			return;
 		}
 	}
 	// adding a new schedule
-	GuiPalSchedule sched;
-	sched.from = fromColor;
-	sched.schedule = now + ABS(speed);
-	_palSchedules.push_back(sched);
+	GuiPalSchedule newSchedule;
+	newSchedule.from = fromColor;
+	newSchedule.schedule = now + ABS(speed);
+	_schedules.push_back(newSchedule);
 }
 
 } // End of namespace Sci

@@ -58,8 +58,7 @@ private:
 
 	uint16 _clrPowers[256];
 
-	GuiPalette *pPicPal;
-	Common::Array<GuiPalSchedule> _palSchedules;
+	Common::Array<GuiPalSchedule> _schedules;
 };
 
 } // End of namespace Sci

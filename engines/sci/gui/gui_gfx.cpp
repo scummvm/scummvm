@@ -1067,17 +1067,17 @@ void SciGuiGfx::AnimateDisposeLastCast() {
 }
 
 enum {
-	SCI_ANIMATE_MASK_STOPUPDATE    = 0x0001,
-	SCI_ANIMATE_MASK_VIEWUPDATED   = 0x0002,
-	SCI_ANIMATE_MASK_NOUPDATE      = 0x0004,
-	SCI_ANIMATE_MASK_HIDDEN        = 0x0008,
-	SCI_ANIMATE_MASK_FIXEDPRIORITY = 0x0010,
-	SCI_ANIMATE_MASK_ALWAYSUPDATE  = 0x0020,
-	SCI_ANIMATE_MASK_FORCEUPDATE   = 0x0040,
-	SCI_ANIMATE_MASK_REMOVEVIEW    = 0x0080,
-	SCI_ANIMATE_MASK_FROZEN        = 0x0100,
-	SCI_ANIMATE_MASK_IGNOREACTOR   = 0x4000,
-	SCI_ANIMATE_MASK_DISPOSEME     = 0x8000
+	SCI_ANIMATE_SIGNAL_STOPUPDATE    = 0x0001,
+	SCI_ANIMATE_SIGNAL_VIEWUPDATED   = 0x0002,
+	SCI_ANIMATE_SIGNAL_NOUPDATE      = 0x0004,
+	SCI_ANIMATE_SIGNAL_HIDDEN        = 0x0008,
+	SCI_ANIMATE_SIGNAL_FIXEDPRIORITY = 0x0010,
+	SCI_ANIMATE_SIGNAL_ALWAYSUPDATE  = 0x0020,
+	SCI_ANIMATE_SIGNAL_FORCEUPDATE   = 0x0040,
+	SCI_ANIMATE_SIGNAL_REMOVEVIEW    = 0x0080,
+	SCI_ANIMATE_SIGNAL_FROZEN        = 0x0100,
+	SCI_ANIMATE_SIGNAL_IGNOREACTOR   = 0x4000,
+	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
 };
 
 void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
@@ -1090,7 +1090,7 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	while (curNode) {
 		curObject = curNode->value;
 		mask = GET_SEL32V(curObject, signal);
-		if (!(mask & SCI_ANIMATE_MASK_FROZEN)) {
+		if (!(mask & SCI_ANIMATE_SIGNAL_FROZEN)) {
 			// Call .doit method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
@@ -1146,20 +1146,20 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 		PUT_SEL32V(curObject, nsRight, celRect.right);
 		PUT_SEL32V(curObject, nsBottom, celRect.bottom);
 
-		if (!(signal & SCI_ANIMATE_MASK_FIXEDPRIORITY))
+		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY))
 			PUT_SEL32V(curObject, priority, 0); // CoordPri(y) FIXME
 		
-		if (signal & SCI_ANIMATE_MASK_NOUPDATE) {
-			if (signal & (SCI_ANIMATE_MASK_FORCEUPDATE | SCI_ANIMATE_MASK_VIEWUPDATED)
-				|| (signal & SCI_ANIMATE_MASK_HIDDEN && !(signal & SCI_ANIMATE_MASK_REMOVEVIEW))
-				|| (!(signal & SCI_ANIMATE_MASK_HIDDEN) && signal & SCI_ANIMATE_MASK_REMOVEVIEW)
-				|| (signal & SCI_ANIMATE_MASK_ALWAYSUPDATE))
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (signal & (SCI_ANIMATE_SIGNAL_FORCEUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED)
+				|| (signal & SCI_ANIMATE_SIGNAL_HIDDEN && !(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW))
+				|| (!(signal & SCI_ANIMATE_SIGNAL_HIDDEN) && signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)
+				|| (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))
 				old_picNotValid++;
-			signal &= 0xFFFF ^ SCI_ANIMATE_MASK_STOPUPDATE;
+			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE;
 		} else {
-			if (signal & SCI_ANIMATE_MASK_STOPUPDATE || signal & SCI_ANIMATE_MASK_ALWAYSUPDATE)
+			if (signal & SCI_ANIMATE_SIGNAL_STOPUPDATE || signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE)
 				old_picNotValid++;
-			signal &= 0xFFFF ^ SCI_ANIMATE_MASK_FORCEUPDATE;
+			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
 		}
 		PUT_SEL32V(curObject, signal, signal);
 
@@ -1249,8 +1249,8 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 	// Remove all previous cels from screen
 	for (listNr = listCount - 1; listNr >= 0; listNr--) {
 		curObject = object[listNr];
-		if (signal[listNr] & SCI_ANIMATE_MASK_NOUPDATE) {
-			if (!(signal[listNr] & SCI_ANIMATE_MASK_REMOVEVIEW)) {
+		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (!(signal[listNr] & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
 				bitsHandle = GET_SEL32(curObject, underBits);
 				if (_screen->_picNotValid != 1) {
 					RestoreBits(bitsHandle);
@@ -1260,22 +1260,22 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 				}
 				PUT_SEL32V(curObject, underBits, 0);
 			}
-			signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_MASK_FORCEUPDATE;
-			signal[listNr] &= signal[listNr] & SCI_ANIMATE_MASK_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_MASK_VIEWUPDATED | SCI_ANIMATE_MASK_NOUPDATE) : 0xFFFF;
-		} else if (signal[listNr] & SCI_ANIMATE_MASK_STOPUPDATE) {
-			signal[listNr] =  (signal[listNr] & (0xFFFF ^ SCI_ANIMATE_MASK_STOPUPDATE)) | SCI_ANIMATE_MASK_NOUPDATE;
+			signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
+			signal[listNr] &= signal[listNr] & SCI_ANIMATE_SIGNAL_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE) : 0xFFFF;
+		} else if (signal[listNr] & SCI_ANIMATE_SIGNAL_STOPUPDATE) {
+			signal[listNr] =  (signal[listNr] & (0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE)) | SCI_ANIMATE_SIGNAL_NOUPDATE;
 		}
 	}
 
 	for (listNr = 0; listNr < listCount; listNr++) {
-		if (signal[listNr] & SCI_ANIMATE_MASK_ALWAYSUPDATE) {
+		if (signal[listNr] & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
 			curObject = object[listNr];
 
 			// draw corresponding cel
 			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, z[listNr], paletteNo[listNr]);
 //			arr1[i] = 1;
-			signal[listNr] &= 0xFFFF ^ (SCI_ANIMATE_MASK_STOPUPDATE | SCI_ANIMATE_MASK_VIEWUPDATED | SCI_ANIMATE_MASK_NOUPDATE | SCI_ANIMATE_MASK_FORCEUPDATE);
-			if ((signal[listNr] & SCI_ANIMATE_MASK_IGNOREACTOR) == 0) {
+			signal[listNr] &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
+			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = celRect[listNr];
 				rect.top = rect.top; // CLIP<int16>(PriCoord(zs[i]) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -1284,13 +1284,13 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 	}
 
 	for (listNr = 0; listNr < listCount; listNr++) {
-		if (signal[listNr] & SCI_ANIMATE_MASK_NOUPDATE) {
-			if (signal[listNr] & SCI_ANIMATE_MASK_HIDDEN) {
-				signal[listNr] |= SCI_ANIMATE_MASK_REMOVEVIEW;
+		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (signal[listNr] & SCI_ANIMATE_SIGNAL_HIDDEN) {
+				signal[listNr] |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 			} else {
-				signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_MASK_REMOVEVIEW;
+				signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 				curObject = object[listNr];
-				if (signal[listNr] & SCI_ANIMATE_MASK_IGNOREACTOR)
+				if (signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
 					bitsHandle = SaveBits(celRect[listNr], SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = SaveBits(celRect[listNr], SCI_SCREEN_MASK_ALL);
@@ -1301,11 +1301,11 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 
 	for (listNr = 0; listNr < listCount; listNr++) {
 		curObject = object[listNr];
-		if (signal[listNr] & SCI_ANIMATE_MASK_NOUPDATE && !(signal[listNr] & SCI_ANIMATE_MASK_HIDDEN)) {
+		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal[listNr] & SCI_ANIMATE_SIGNAL_HIDDEN)) {
 			// draw corresponding cel
 			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, z[listNr], paletteNo[listNr]);
 			// arr1[i] = 1;
-			if ((signal[listNr] & SCI_ANIMATE_MASK_IGNOREACTOR) == 0) {
+			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = celRect[listNr];
 				//rect.top = CLIP<int16>(PriCoord(zs[i]) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -1332,7 +1332,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 		curObject = curNode->value;
 
 		signal = GET_SEL32V(curObject, signal);
-		if (!(signal & (SCI_ANIMATE_MASK_NOUPDATE | SCI_ANIMATE_MASK_HIDDEN | SCI_ANIMATE_MASK_ALWAYSUPDATE))) {
+		if (!(signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_HIDDEN | SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))) {
 			// Get animation data...
 			viewId = GET_SEL32V(curObject, view);
 			loopNo = GET_SEL32V(curObject, loop);
@@ -1355,7 +1355,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 			drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, z, paletteNo);
 
 			// arr1[inx] = 1;
-			if (signal & SCI_ANIMATE_MASK_REMOVEVIEW) {
+			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
 				signal &= 0xFFFF ^ GFX_REMOVEVIEW;
 				PUT_SEL32V(curObject, signal, signal);
 			}
@@ -1384,16 +1384,23 @@ void SciGuiGfx::AnimateRestoreAndDelete(List *list, int argc, reg_t *argv) {
 	reg_t curObject;
 	uint16 signal;
 
+	// FIXME: we are supposed to go through this table backwards
 	while (curNode) {
 		curObject = curNode->value;
 		signal = GET_SEL32V(curObject, signal);
 
-		if ((signal & (SCI_ANIMATE_MASK_NOUPDATE | SCI_ANIMATE_MASK_REMOVEVIEW)) == 0) {
+		// FIXME: this is supposed to go into the loop above (same method)
+		if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
+			signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			PUT_SEL32V(curObject, signal, signal);
+		}
+
+		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
 			RestoreBits(GET_SEL32(curObject, underBits));
 			PUT_SEL32V(curObject, underBits, 0);
 		}
 
-		if (signal & SCI_ANIMATE_MASK_DISPOSEME) {
+		if (signal & SCI_ANIMATE_SIGNAL_DISPOSEME) {
 			// Call .delete_ method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
