@@ -137,9 +137,16 @@ Common::Error SciEngine::run() {
 
 	_kernel = new Kernel(_resMan);
 	_vocabulary = new Vocabulary(_resMan);
+	SciGuiScreen *screen = new SciGuiScreen();
+	SciGuiPalette *palette = new SciGuiPalette(_resMan, screen);
+	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette);
 
-	// we'll set the gui and cursor below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, NULL, flags);
+	// We'll set the GUI below
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor, flags);
+
+	// Gui change
+	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
+	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 
 	if (script_init_engine(_gamestate))
 		return Common::kUnknownError;
@@ -158,17 +165,6 @@ Common::Error SciEngine::run() {
 
 	GfxState gfx_state;
 	_gamestate->gfx_state = &gfx_state;
-
-	SciGuiScreen *screen = new SciGuiScreen();
-	SciGuiPalette *palette = new SciGuiPalette(_gamestate, screen);
-	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette);
-
-	_gamestate->_cursor = cursor;
-	_gamestate->_cursor->setMoveZone(Common::Rect(0, 0, 320, 200));
-
-	// Gui change
-	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
-	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 
 	// Assign default values to the config manager, in case settings are missing
 	ConfMan.registerDefault("dither_mode", "0");

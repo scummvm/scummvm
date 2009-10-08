@@ -41,6 +41,7 @@ SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette)
 	_rawBitmap = NULL;
 
 	setPosition(Common::Point(160, 150));		// TODO: how is that different in 640x400 games?
+	setMoveZone(Common::Rect(0, 0, 320, 200));	// TODO: hires games
 }
 
 SciGuiCursor::~SciGuiCursor() {

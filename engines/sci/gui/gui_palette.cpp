@@ -34,15 +34,8 @@
 
 namespace Sci {
 
-SciGuiPalette::SciGuiPalette(EngineState *state, SciGuiScreen *screen)
-	: _s(state), _screen(screen) {
-	init();
-}
-
-SciGuiPalette::~SciGuiPalette() {
-}
-
-void SciGuiPalette::init() {
+SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen)
+	: _resMan(resMan), _screen(screen) {
 	int16 i;
 	for (i = 0; i < 256; i++) {
 		_sysPalette.colors[i].used = 0;
@@ -70,6 +63,9 @@ void SciGuiPalette::init() {
 	// Init _clrPowers used in MatchColor
 	for(i = 0; i < 256; i++)
 	  _clrPowers[i] = i*i;
+}
+
+SciGuiPalette::~SciGuiPalette() {
 }
 
 #define SCI_PAL_FORMAT_CONSTANT 1
@@ -177,7 +173,7 @@ void SciGuiPalette::setEGA() {
 }
 
 bool SciGuiPalette::setFromResource(int16 resourceNo, int16 flag) {
-	Resource *palResource = _s->resMan->findResource(ResourceId(kResourceTypePalette, resourceNo), 0);
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceNo), 0);
 	GuiPalette palette;
 
 	if (palResource) {
@@ -236,7 +232,7 @@ void SciGuiPalette::merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag) {
 			pTo->colors[res & 0xFF].used |= 0x10;
 		}
 	}
-	pTo->timestamp = (g_system->getMillis() - _s->game_start_time) * 60 / 1000;;
+	pTo->timestamp = g_system->getMillis() * 60 / 1000;;
 }
 
 uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
@@ -282,7 +278,7 @@ void SciGuiPalette::setIntensity(int fromColor, int toColor, int intensity, GuiP
 void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	GuiColor col;
 	int len = toColor - fromColor - 1;
-	uint32 now = (g_system->getMillis() - _s->game_start_time) * 60 / 1000;;
+	uint32 now = g_system->getMillis() * 60 / 1000;;
 	// search for sheduled animations with the same 'from' value
 	int sz = _palSchedules.size();
 	for (int i = 0; i < sz; i++) {
