@@ -86,6 +86,9 @@ public:
 	bool debugUndither(bool flag);
 	bool debugShowMap(int mapNo);
 
+	// FIXME: Don't store EngineState
+	virtual void resetEngineState(EngineState *newState) { s = newState; }
+
 private:
 	EngineState *s;
 	bool _usesOldGfxFunctions;

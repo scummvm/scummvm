@@ -794,6 +794,8 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	// Message state:
 	retval->_msgState = s->_msgState;
 
+	retval->_gui->resetEngineState(retval);
+
 	return retval;
 }
 

@@ -94,6 +94,9 @@ public:
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 
+	// FIXME: Don't store EngineState
+	virtual void resetEngineState(EngineState *s) { _s = s; }
+
 private:
 	EngineState *_s;
 	SciGuiScreen *_screen;
