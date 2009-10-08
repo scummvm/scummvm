@@ -1322,7 +1322,6 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	SciGuiView *view = NULL;
 	GuiResourceId viewId;
 	GuiViewLoopNo loopNo;
 	GuiViewCelNo celNo;
