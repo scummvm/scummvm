@@ -51,8 +51,6 @@ SciGuiView::~SciGuiView() {
 	delete[] _loop;
 }
 
-static const byte EGAMappingDefault[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 };
-
 void SciGuiView::initData(GuiResourceId resourceId) {
 	Resource *viewResource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
 	if (!viewResource) {
@@ -73,7 +71,6 @@ void SciGuiView::initData(GuiResourceId resourceId) {
 	bool IsEGA = false;
 
 	_embeddedPal = false;
-	_EGAMapping = EGAMappingDefault;
 	_loopCount = 0;
 
 	switch (_resMan->getViewType()) {
@@ -253,8 +250,7 @@ void SciGuiView::unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPt
 		while (pixelNo < pixelCount) {
 			byte = *literalPtr++;
 			runLength = byte >> 4;
-			byte = _EGAMapping[byte & 0x0F];
-			memset(outPtr + pixelNo, byte, MIN<uint16>(runLength, pixelCount - pixelNo));
+			memset(outPtr + pixelNo, byte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNo));
 			pixelNo += runLength;
 		}
 		return;

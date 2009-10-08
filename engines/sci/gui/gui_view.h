@@ -60,7 +60,6 @@ public:
 	void draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo);
 	uint16 getLoopCount() const { return _loopCount; }
 	GuiPalette *getPalette();
-	const byte *getEgaMapping() const { return _EGAMapping; }
 
 private:
 	void initData(GuiResourceId resourceId);
@@ -77,7 +76,6 @@ private:
 	sciViewLoopInfo *_loop;
 	bool _embeddedPal;
 	GuiPalette _viewPalette;
-	const byte *_EGAMapping; // simple translation map for all 16 colors
 };
 
 } // End of namespace Sci
