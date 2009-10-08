@@ -2947,7 +2947,15 @@ void LoLEngine::callbackProcessMagicLightning(WSAMovie_v2 *mov, int x, int y) {
 		Palette tpal(p1.getNumColors());
 		tpal.copy(p1);
 
-		for (int i = 6; i < 384; i++) {
+		int start = 6;
+		int end = 384;
+
+		if (_flags.use16ColorMode) {
+			start = 3;
+			end = 48;
+		}
+
+		for (int i = start; i < end; i++) {
 			uint16 v = (tpal[i] * 120) / 64;
 			tpal[i] = (v < 64) ? v : 63;
 		}
