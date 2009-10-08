@@ -108,7 +108,7 @@ public:
 	void AnimateInvoke(List *list, int argc, reg_t *argv);
 	void AnimateFill(List *list, byte &oldPicNotValid);
 	Common::List<GuiAnimateList> *AnimateMakeSortedList(List *list);
-	void AnimateUpdate();
+	void AnimateUpdate(List *list);
 	void AnimateDrawCels(List *list);
 	void AnimateRestoreAndDelete(List *list, int argc, reg_t *argv);
 	void SetNowSeen(reg_t objectReference);

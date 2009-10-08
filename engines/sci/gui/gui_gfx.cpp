@@ -1077,6 +1077,7 @@ enum {
 	SCI_ANIMATE_MASK_FORCEUPDATE   = 0x0040,
 	SCI_ANIMATE_MASK_REMOVEVIEW    = 0x0080,
 	SCI_ANIMATE_MASK_FROZEN        = 0x0100,
+	SCI_ANIMATE_MASK_IGNOREACTOR   = 0x4000,
 	SCI_ANIMATE_MASK_DISPOSEME     = 0x8000
 };
 
@@ -1203,7 +1204,116 @@ Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
 	return sortedList;
 }
 
-void SciGuiGfx::AnimateUpdate() {
+#define SCI_ANIMATE_MAXLIST 50
+
+void SciGuiGfx::AnimateUpdate(List *list) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	int16 listNr = 0, listCount = 0;
+	reg_t object[SCI_ANIMATE_MAXLIST];
+	GuiResourceId viewId[SCI_ANIMATE_MAXLIST];
+	GuiViewLoopNo loopNo[SCI_ANIMATE_MAXLIST];
+	GuiViewCelNo celNo[SCI_ANIMATE_MAXLIST];
+	int16 priority[SCI_ANIMATE_MAXLIST];
+	Common::Rect celRect[SCI_ANIMATE_MAXLIST];
+	uint16 paletteNo[SCI_ANIMATE_MAXLIST], signal[SCI_ANIMATE_MAXLIST];
+	reg_t bitsHandle;
+	Common::Rect rect;
+	uint16 tempHandle;
+
+	// first cache information about the list
+	// FIXME: perhaps make a list that is persistent in memory and resize it on demand...
+	while (curNode) {
+		curObject = curNode->value;
+
+		object[listNr] = curObject;
+		viewId[listNr] = GET_SEL32V(curObject, view);
+		loopNo[listNr] = GET_SEL32V(curObject, loop);
+		celNo[listNr] = GET_SEL32V(curObject, cel);
+		celRect[listNr].left = GET_SEL32V(curObject, nsLeft);
+		celRect[listNr].top = GET_SEL32V(curObject, nsTop);
+		celRect[listNr].right = GET_SEL32V(curObject, nsRight);
+		celRect[listNr].bottom = GET_SEL32V(curObject, nsBottom);
+		priority[listNr] = GET_SEL32V(curObject, priority);
+		paletteNo[listNr] = GET_SEL32V(curObject, palette);
+		signal[listNr] = GET_SEL32V(curObject, signal);
+		listNr++;
+
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+	listCount = listNr;
+
+	// Remove all previous cels from screen
+	for (listNr = listCount - 1; listNr >= 0; listNr--) {
+		curObject = object[listNr];
+		if (signal[listNr] & SCI_ANIMATE_MASK_NOUPDATE) {
+			if (!(signal[listNr] & SCI_ANIMATE_MASK_REMOVEVIEW)) {
+				tempHandle = GET_SEL32V(curObject, underBits);
+				bitsHandle = make_reg(tempHandle << 16, tempHandle & 0xFFFF);
+				if (_screen->_picNotValid != 1) {
+					RestoreBits(bitsHandle);
+					//arr1[i] = 1;
+				} else	{
+					//FreeBits(bits_gfx->UnloadBits(hBits);
+				}
+				PUT_SEL32V(curObject, underBits, 0);
+			}
+			signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_MASK_FORCEUPDATE;
+			signal[listNr] &= signal[listNr] & SCI_ANIMATE_MASK_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_MASK_VIEWUPDATED | SCI_ANIMATE_MASK_NOUPDATE) : 0xFFFF;
+		} else if (signal[listNr] & SCI_ANIMATE_MASK_STOPUPDATE) {
+			signal[listNr] =  (signal[listNr] & (0xFFFF ^ SCI_ANIMATE_MASK_STOPUPDATE)) | SCI_ANIMATE_MASK_NOUPDATE;
+		}
+	}
+
+	for (listNr = 0; listNr < listCount; listNr++) {
+		if (signal[listNr] & SCI_ANIMATE_MASK_ALWAYSUPDATE) {
+			curObject = object[listNr];
+
+			// draw corresponding cel
+			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, priority[listNr], paletteNo[listNr]);
+//			arr1[i] = 1;
+			signal[listNr] &= 0xFFFF ^ (SCI_ANIMATE_MASK_STOPUPDATE | SCI_ANIMATE_MASK_VIEWUPDATED | SCI_ANIMATE_MASK_NOUPDATE | SCI_ANIMATE_MASK_FORCEUPDATE);
+			if ((signal[listNr] & SCI_ANIMATE_MASK_IGNOREACTOR) == 0) {
+				rect = celRect[listNr];
+				rect.top = rect.top; // CLIP<int16>(PriCoord(zs[i]) - 1, rect.top, rect.bottom - 1);  
+				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+			}
+		}
+	}
+
+	for (listNr = 0; listNr < listCount; listNr++) {
+		if (signal[listNr] & SCI_ANIMATE_MASK_NOUPDATE) {
+			if (signal[listNr] & SCI_ANIMATE_MASK_HIDDEN) {
+				signal[listNr] |= SCI_ANIMATE_MASK_REMOVEVIEW;
+			} else {
+				signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_MASK_REMOVEVIEW;
+				curObject = object[listNr];
+				if (signal[listNr] & SCI_ANIMATE_MASK_IGNOREACTOR)
+					bitsHandle = SaveBits(celRect[listNr], SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
+				else
+					bitsHandle = SaveBits(celRect[listNr], SCI_SCREEN_MASK_ALL);
+				PUT_SEL32V(curObject, underBits, bitsHandle.toUint16());
+			}
+		}
+	}
+
+	for (listNr = 0; listNr < listCount; listNr++) {
+		curObject = object[listNr];
+		if (signal[listNr] & SCI_ANIMATE_MASK_NOUPDATE && !(signal[listNr] & SCI_ANIMATE_MASK_HIDDEN)) {
+			// draw corresponding cel
+			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, priority[listNr], paletteNo[listNr]);
+			// arr1[i] = 1;
+			if ((signal[listNr] & SCI_ANIMATE_MASK_IGNOREACTOR) == 0) {
+				rect = celRect[listNr];
+				//rect.top = CLIP<int16>(PriCoord(zs[i]) - 1, rect.top, rect.bottom - 1);  
+				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+			}
+		}
+		PUT_SEL32V(curObject, signal, signal[listNr]);
+	}
 }
 
 void SciGuiGfx::AnimateDrawCels(List *list) {
@@ -1218,7 +1328,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 	int16 x, y, priority;
 	Common::Rect celRect;
 	uint16 mask, paletteNo;
-	reg_t hSaved;
+	reg_t bitsHandle;
 
 	while (curNode) {
 		curObject = curNode->value;
@@ -1239,8 +1349,9 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 			celRect.right = GET_SEL32V(curObject, nsRight);
 			celRect.bottom = GET_SEL32V(curObject, nsBottom);
 
-			//hSaved = SaveBits(rect, SCI_SCREEN_MASK_ALL);
-			//PUT_SEL32V(curObject, 11, hSaved.toUint16());
+			// Save background
+			bitsHandle = SaveBits(celRect, SCI_SCREEN_MASK_ALL);
+			PUT_SEL32V(curObject, underBits, bitsHandle.toUint16());
 
 			// draw corresponding cel
 			drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, paletteNo);
