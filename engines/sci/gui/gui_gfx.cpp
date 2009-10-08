@@ -1139,16 +1139,12 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 			PUT_SEL32V(curObject, cel, celNo);
 		}
 
-		// Adjust given rect to cel
-		celRect.left = GET_SEL32V(curObject, lsLeft);
-		celRect.top = GET_SEL32V(curObject, lsTop);
-		celRect.right = GET_SEL32V(curObject, lsRight);
-		celRect.bottom = GET_SEL32V(curObject, lsBottom);
+		// Create rect according to coordinates and given cel
 		view->getCelRect(loopNo, celNo, x, y, priority, &celRect);
-		PUT_SEL32V(curObject, lsLeft, celRect.left);
-		PUT_SEL32V(curObject, lsTop, celRect.top);
-		PUT_SEL32V(curObject, lsRight, celRect.right);
-		PUT_SEL32V(curObject, lsBottom, celRect.bottom);
+		PUT_SEL32V(curObject, nsLeft, celRect.left);
+		PUT_SEL32V(curObject, nsTop, celRect.top);
+		PUT_SEL32V(curObject, nsRight, celRect.right);
+		PUT_SEL32V(curObject, nsBottom, celRect.bottom);
 
 		if (!(mask & SCI_ANIMATE_MASK_FIXEDPRIORITY))
 			PUT_SEL32V(curObject, priority, 0); // CoordPri(y) FIXME
@@ -1238,10 +1234,10 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 			priority = GET_SEL32V(curObject, priority);
 			paletteNo = GET_SEL32V(curObject, palette);
 
-			celRect.left = GET_SEL32V(curObject, lsLeft);
-			celRect.top = GET_SEL32V(curObject, lsTop);
-			celRect.right = GET_SEL32V(curObject, lsRight);
-			celRect.bottom = GET_SEL32V(curObject, lsBottom);
+			celRect.left = GET_SEL32V(curObject, nsLeft);
+			celRect.top = GET_SEL32V(curObject, nsTop);
+			celRect.right = GET_SEL32V(curObject, nsRight);
+			celRect.bottom = GET_SEL32V(curObject, nsBottom);
 
 			//hSaved = SaveBits(rect, SCI_SCREEN_MASK_ALL);
 			//PUT_SEL32V(curObject, 11, hSaved.toUint16());
