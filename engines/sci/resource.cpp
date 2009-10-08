@@ -854,7 +854,7 @@ ResourceManager::ResVersion ResourceManager::detectVolVersion() {
 			} else if (curVersion == kResVersionSci1Late) {
 				curVersion = kResVersionSci11;
 			} else if (curVersion == kResVersionSci11 && !sci11Align) {
-				// Later versions have resources word-aligned
+				// Later versions (e.g. QFG1VGA) have resources word-aligned
 				sci11Align = true;
 			} else if (curVersion == kResVersionSci11) {
 				curVersion = kResVersionSci32;
