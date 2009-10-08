@@ -1067,21 +1067,25 @@ void SciGuiGfx::AnimateDisposeLastCast() {
 		//_lastCast->DeleteList();
 }
 
+enum {
+	SCI_ANIMATE_SIGNAL_FROZEN       = 0x0100
+};
+
 void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
+	SegManager *segMan = _s->_segMan;
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	//uint16 mask;
+	uint16 signal;
 
 	while (curNode) {
 		curObject = curNode->value;
-//      FIXME: check what this code does and remove it or fix it, gregs engine had this check included
-//		mask = cobj[_objOfs[2]];
-//		if ((mask & 0x100) == 0) {
+		signal = GET_SEL32V(curObject, signal);
+		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
-//		}
+		}
 		curAddress = curNode->succ;
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
