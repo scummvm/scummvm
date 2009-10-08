@@ -80,6 +80,11 @@ public:
 	void deallocateScript(int script_nr);
 
 	/**
+	 * Reconstructs scripts. Used when restoring saved games
+	 */
+	void reconstructScripts(EngineState *s);
+
+	/**
 	 * Validate whether the specified public function is exported by 
 	 * the script in the specified segment.
 	 * @param pubfunct		Index of the function to validate
@@ -106,6 +111,7 @@ public:
 	 */
 	SegmentId getScriptSegment(int script_nr, ScriptLoadType load);
 
+	// TODO: document this
 	reg_t lookupScriptExport(int script_nr, int export_index) {
 		SegmentId seg = getScriptSegment(script_nr, SCRIPT_GET_DONT_LOAD);
 		return make_reg(seg, validateExportFunc(export_index, seg));
@@ -169,15 +175,10 @@ public:
 	 */
 	Clone *allocateClone(reg_t *addr);
 
-
 	/**
 	 * Reconstructs clones. Used when restoring saved games
 	 */
 	void reconstructClones();
-
-	// 3. Objects (static, from Scripts, and dynmic, from Clones)
-
-
 
 	// 4. Stack
 

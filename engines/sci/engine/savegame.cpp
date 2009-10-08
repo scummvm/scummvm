@@ -572,90 +572,78 @@ static void load_script(EngineState *s, Script *scr) {
 	}
 }
 
-// FIXME: The following should likely become a SegManager method
-static void reconstruct_scripts(EngineState *s, SegManager *self) {
+void SegManager::reconstructScripts(EngineState *s) {
 	uint i;
 	SegmentObj *mobj;
 
-	for (i = 0; i < self->_heap.size(); i++) {
-		if (self->_heap[i]) {
-			mobj = self->_heap[i];
-			switch (mobj->getType())  {
-			case SEG_TYPE_SCRIPT: {
-				Script *scr = (Script *)mobj;
+	for (i = 0; i < _heap.size(); i++) {
+		mobj = _heap[i];
+		if (!mobj ||  mobj->getType() != SEG_TYPE_SCRIPT)
+			continue;
 
-				// FIXME: Unify this code with script_instantiate_*
-				load_script(s, scr);
-				scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(s->_segMan->_heap[scr->_localsSegment]);
-				if (getSciVersion() >= SCI_VERSION_1_1) {
-					scr->_exportTable = 0;
-					scr->_synonyms = 0;
-					if (READ_LE_UINT16(scr->_buf + 6) > 0) {
-						scr->setExportTableOffset(6);
-						s->_segMan->scriptRelocateExportsSci11(i);
-					}
-				} else {
-					scr->_exportTable = (uint16 *) find_unique_script_block(s, scr->_buf, SCI_OBJ_EXPORTS);
-					scr->_synonyms = find_unique_script_block(s, scr->_buf, SCI_OBJ_SYNONYMS);
-					scr->_exportTable += 3;
-				}
-				scr->_codeBlocks.clear();
+		Script *scr = (Script *)mobj;
 
-				ObjMap::iterator it;
-				const ObjMap::iterator end = scr->_objects.end();
-				for (it = scr->_objects.begin(); it != end; ++it) {
-					byte *data = scr->_buf + it->_value._pos.offset;
-					it->_value.base = scr->_buf;
-					it->_value.base_obj = data;
-				}
-				break;
+		// FIXME: Unify this code with script_instantiate_* ?
+		load_script(s, scr);
+		scr->_localsBlock = (scr->_localsSegment == 0) ? NULL : (LocalVariables *)(_heap[scr->_localsSegment]);
+		if (getSciVersion() >= SCI_VERSION_1_1) {
+			scr->_exportTable = 0;
+			scr->_synonyms = 0;
+			if (READ_LE_UINT16(scr->_buf + 6) > 0) {
+				scr->setExportTableOffset(6);
+				s->_segMan->scriptRelocateExportsSci11(i);
 			}
-			default:
-				break;
-			}
+		} else {
+			scr->_exportTable = (uint16 *) find_unique_script_block(s, scr->_buf, SCI_OBJ_EXPORTS);
+			scr->_synonyms = find_unique_script_block(s, scr->_buf, SCI_OBJ_SYNONYMS);
+			scr->_exportTable += 3;
+		}
+		scr->_codeBlocks.clear();
+
+		ObjMap::iterator it;
+		const ObjMap::iterator end = scr->_objects.end();
+		for (it = scr->_objects.begin(); it != end; ++it) {
+			byte *data = scr->_buf + it->_value._pos.offset;
+			it->_value.base = scr->_buf;
+			it->_value.base_obj = data;
 		}
 	}
 
-	for (i = 0; i < self->_heap.size(); i++) {
-		if (self->_heap[i]) {
-			mobj = self->_heap[i];
-			switch (mobj->getType())  {
-			case SEG_TYPE_SCRIPT: {
-				Script *scr = (Script *)mobj;
+	for (i = 0; i < _heap.size(); i++) {
+		mobj = _heap[i];
+		if (!mobj ||  mobj->getType() != SEG_TYPE_SCRIPT)
+			continue;
 
-				ObjMap::iterator it;
-				const ObjMap::iterator end = scr->_objects.end();
-				for (it = scr->_objects.begin(); it != end; ++it) {
-					byte *data = scr->_buf + it->_value._pos.offset;
+		Script *scr = (Script *)mobj;
 
-					if (getSciVersion() >= SCI_VERSION_1_1) {
-						uint16 *funct_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 6 ));
-						uint16 *prop_area = (uint16 *) (scr->_buf + READ_LE_UINT16( data + 4 ));
+		// FIXME: Unify this code with Script::scriptObjInit ?
+		ObjMap::iterator it;
+		const ObjMap::iterator end = scr->_objects.end();
+		for (it = scr->_objects.begin(); it != end; ++it) {
+			byte *data = scr->_buf + it->_value._pos.offset;
 
-						it->_value.base_method = funct_area;
-						it->_value.base_vars = prop_area;
-					} else {
-						int funct_area = READ_LE_UINT16( data + SCRIPT_FUNCTAREAPTR_OFFSET );
-						Object *base_obj;
+			if (getSciVersion() >= SCI_VERSION_1_1) {
+				uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
+				uint16 *prop_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
 
-						base_obj = s->_segMan->getObject(it->_value.getSpeciesSelector());
+				it->_value.base_method = funct_area;
+				it->_value.base_vars = prop_area;
+			} else {
+				int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
+				Object *base_obj;
 
-						if (!base_obj) {
-							warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
-								  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
-							continue;
-						}
-						it->_value.variable_names_nr = base_obj->_variables.size();
-						it->_value.base_obj = base_obj->base_obj;
+				base_obj = s->_segMan->getObject(it->_value.getSpeciesSelector());
 
-						it->_value.base_method = (uint16 *)(data + funct_area);
-						it->_value.base_vars = (uint16 *)(data + it->_value.variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
-					}
+				if (!base_obj) {
+					warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
+						  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
+					continue;
 				}
-				break;
-			}
-			default:
-				break;
+				it->_value.variable_names_nr = base_obj->_variables.size();
+				it->_value.base_obj = base_obj->base_obj;
+
+				it->_value.base_method = (uint16 *)(data + funct_area);
+				it->_value.base_vars = (uint16 *)(data + it->_value.variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
 			}
 		}
 	}
@@ -756,7 +744,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	_reset_graphics_input(retval);
 	reconstruct_stack(retval);
-	reconstruct_scripts(retval, retval->_segMan);
+	retval->_segMan->reconstructScripts(retval);
 	retval->_segMan->reconstructClones();
 	retval->game_obj = s->game_obj;
 	retval->script_000 = retval->_segMan->getScript(retval->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
