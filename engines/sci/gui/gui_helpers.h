@@ -103,17 +103,6 @@ struct GuiPalSchedule {
 	uint32 schedule;
 };
 
-enum {
-	GFX_STOPUPDATE = 0x01,
-	GFX_VIEWUPDATED = 0x02,
-	GFX_NOUPDATE = 0x04,
-	GFX_HIDDEN = 0x08,
-	GFX_FIXEDPRIO=0x10,
-	GFX_ALWAYSUPDATE = 0x20,
-	GFX_FORCEUPDATE = 0x40,
-	GFX_REMOVEVIEW = 0x80
-};
-
 } // End of namespace Sci
 
 #endif

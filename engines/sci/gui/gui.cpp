@@ -46,7 +46,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
-	_windowMgr = new SciGuiWindowMgr(_s, _gfx);
+	_windowMgr = new SciGuiWindowMgr(_s, _screen, _gfx);
 }
 
 SciGui::SciGui() {

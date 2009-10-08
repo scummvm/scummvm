@@ -1356,7 +1356,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 
 			// arr1[inx] = 1;
 			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
-				signal &= 0xFFFF ^ GFX_REMOVEVIEW;
+				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 				PUT_SEL32V(curObject, signal, signal);
 			}
 			

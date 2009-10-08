@@ -28,6 +28,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/tools.h"
+#include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
 
@@ -42,8 +43,8 @@ enum {
 	kUser        = (1 << 7)
 };
 
-SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiGfx *gfx)
-	: _s(state), _gfx(gfx) {
+SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiScreen *screen, SciGuiGfx *gfx)
+	: _s(state), _screen(screen), _gfx(gfx) {
 
 	_wmgrPort = new GuiPort(1);
 	_windowsById.resize(2);
@@ -60,10 +61,9 @@ SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiGfx *gfx)
 	_wmgrPort->rect.moveTo(0, 0);
 	_wmgrPort->curTop = 0;
 	_wmgrPort->curLeft = 0;
-
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = NewWindow(Common::Rect(0, 10, 320, 200), 0, 0, kTransparent | kNoFrame, 0, true);
+	_picWind = NewWindow(Common::Rect(0, 10, _screen->_width, _screen->_height), 0, 0, kTransparent | kNoFrame, 0, true);
 }
 
 SciGuiWindowMgr::~SciGuiWindowMgr() {
@@ -110,7 +110,6 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	if (id == _windowsById.size())
 		_windowsById.push_back(0);
 	assert(0 < id && id < 0xFFFF);
-
 
 	GuiWindow *pwnd = new GuiWindow(id);
 	Common::Rect r;
