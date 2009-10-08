@@ -179,7 +179,7 @@ struct SelectorCache {
 	Selector nodePtr;
 	Selector flags;
 
-	Selector motionCue;	/**< Used to determine if a game is using old gfx functions or not */
+	Selector overlay;		/**< Used to determine if a game is using old gfx functions or not */
 
 	Selector points; /**< Used by AvoidPath() */
 

@@ -218,7 +218,7 @@ int _reset_graphics_input(EngineState *s) {
 
 	s->priority_first = 42; // Priority zone 0 ends here
 
-	if (s->_kernel->usesOldGfxFunctions())
+	if (s->usesOldGfxFunctions())
 		s->priority_last = 200;
 	else
 		s->priority_last = 190;

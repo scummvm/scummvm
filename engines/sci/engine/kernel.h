@@ -54,8 +54,7 @@ struct KernelFuncWithSignature {
 };
 
 enum AutoDetectedFeatures {
-	kFeatureOldScriptHeader = 1 << 0,
-	kFeatureOldGfxFunctions = 1 << 1
+	kFeatureOldScriptHeader = 1 << 0
 };
 
 class Kernel {
@@ -78,15 +77,6 @@ public:
 	 * @return The appropriate selector ID, or -1 on error
 	 */
 	int findSelector(const char *selectorName) const;
-
-	/**
-	 * Applies to all versions before 0.000.502
-	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
-	 * with the opposite default value (obviously).
-	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
-	 * zones from 42 to 190.
-	 */
-	bool usesOldGfxFunctions() const { return (features & kFeatureOldGfxFunctions); }
 
 	// Script dissection/dumping functions
 	void dissectScript(int scriptNumber, Vocabulary *vocab);
@@ -140,11 +130,6 @@ private:
 	 * Maps special selectors
 	 */
 	void mapSelectors();
-
-	/**
-	 * Detects SCI features based on the existence of certain selectors
-	 */
-	void detectSciFeatures();
 
 	/**
 	 * Maps kernel functions

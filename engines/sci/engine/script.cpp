@@ -239,7 +239,7 @@ void Kernel::mapSelectors() {
 	FIND_SELECTOR(printLang);
 	FIND_SELECTOR(subtitleLang);
 	FIND_SELECTOR(parseLang);
-	FIND_SELECTOR(motionCue);
+	FIND_SELECTOR(overlay);
 	FIND_SELECTOR(setCursor);
 	FIND_SELECTOR(topString);
 }

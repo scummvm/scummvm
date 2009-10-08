@@ -197,7 +197,7 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 	}
 
-	_gamestate->_gui->init(_kernel->usesOldGfxFunctions());
+	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
 
 	printf("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 

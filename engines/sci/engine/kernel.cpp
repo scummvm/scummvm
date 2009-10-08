@@ -354,9 +354,8 @@ SciKernelFunction kfunct_mappers[] = {
 
 Kernel::Kernel(ResourceManager *resMan) : _resMan(resMan) {
 	loadSelectorNames();
-	detectSciFeatures();
-
 	mapSelectors();      // Map a few special selectors for later use
+
 	loadKernelNames();
 	mapFunctions();      // Map the kernel functions
 }
@@ -382,30 +381,6 @@ const Common::String &Kernel::getKernelName(uint number) const {
 	if (number >= _kernelNames.size())
 		return invalid;
 	return _kernelNames[number];
-}
-
-void Kernel::detectSciFeatures() {
-	SciVersion version = getSciVersion();
-
-	features = 0;
-
-	// Initialize features based on SCI version
-
-	// Script header and graphics functions
-	if (version == SCI_VERSION_0_EARLY) {
-		features |= kFeatureOldScriptHeader | kFeatureOldGfxFunctions;
-	} else if (version == SCI_VERSION_0_LATE) {
-		if (_selectorCache.motionCue == -1)
-			features |= kFeatureOldGfxFunctions;
-	}
-
-	printf("Kernel auto-detected features:\n");
-
-	printf("Graphics functions: ");
-	if (features & kFeatureOldGfxFunctions)
-		printf("old\n");
-	else
-		printf("new\n");
 }
 
 int Kernel::findSelector(const char *selectorName) const {

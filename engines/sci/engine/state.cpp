@@ -111,6 +111,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_setCursorType = SCI_VERSION_AUTODETECT;
 	_doSoundType = SCI_VERSION_AUTODETECT;
 	_lofsType = SCI_VERSION_AUTODETECT;
+	_gfxFunctionsType = SCI_VERSION_AUTODETECT;
 }
 
 EngineState::~EngineState() {
@@ -448,6 +449,51 @@ SciVersion EngineState::detectLofsType() {
 	}
 
 	return _lofsType;
+}
+
+SciVersion EngineState::detectGfxFunctionsType() {
+	if (_gfxFunctionsType == SCI_VERSION_AUTODETECT) {
+		// This detection only works (and is only needed) for SCI0 games
+		if (getSciVersion() >= SCI_VERSION_01) {
+			_gfxFunctionsType = SCI_VERSION_0_LATE;
+			return _gfxFunctionsType;
+		}
+
+		if (getSciVersion() > SCI_VERSION_0_EARLY) {
+			if (_kernel->findSelector("shiftParser") != -1) {
+				// The shiftParser selector was introduced just a bit after the
+				// changes to the graphics functions, so if it exists, the game is
+				// definitely using newer graphics functions
+				_gfxFunctionsType = SCI_VERSION_0_LATE;
+			} else {
+				// No shiftparser selector, check if the game is using an overlay
+				if (_kernel->_selectorCache.overlay == -1) {
+					// No overlay selector found, therefore the game is definitely
+					// using old graphics functions
+					_gfxFunctionsType = SCI_VERSION_0_EARLY;
+				} else {
+					// An in-between case: The game does not have a shiftParser
+					// selector, but it does have an overlay selector. Therefore,
+					// check it to see how it calls kDisplay to determine the
+					// graphics functions type used
+
+					// TODO: Finish this!
+					// For now, we're using the old hack of detecting for the motionCue selector
+					if (_kernel->findSelector("motionCue") != -1)
+						_gfxFunctionsType = SCI_VERSION_0_LATE;
+					else
+						_gfxFunctionsType = SCI_VERSION_0_EARLY;
+				}
+			}
+		} else {	// (getSciVersion() == SCI_VERSION_0_EARLY)
+			// Old SCI0 games always used old graphics functions
+			_gfxFunctionsType = SCI_VERSION_0_EARLY;
+		}
+
+		debugC(1, kDebugLevelVM, "Detected graphics functions type: %s", getSciVersionDesc(_gfxFunctionsType).c_str());
+	}
+
+	return _gfxFunctionsType;
 }
 
 } // End of namespace Sci

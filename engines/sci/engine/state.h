@@ -286,6 +286,14 @@ public:
 	 */
 	SciVersion detectLofsType();
 
+	/**
+	 * Autodetects the graphics functions used
+	 * @return Lofs type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
+	 */
+	SciVersion detectGfxFunctionsType();
+
+	bool usesOldGfxFunctions() { return detectGfxFunctionsType() == SCI_VERSION_0_EARLY; }
+
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
 	int have_bp;  /**< Bit mask specifying which types of breakpoints are used in bp_list */
@@ -309,7 +317,7 @@ public:
 
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 private:
-	SciVersion _doSoundType, _setCursorType, _lofsType;
+	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	kLanguage charToLanguage(const char c) const;
 	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
 };

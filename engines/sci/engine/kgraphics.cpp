@@ -149,7 +149,7 @@ int _find_view_priority(EngineState *s, int y) {
 				return j;
 		return 14; // Maximum
 	} else {
-		if (!s->_kernel->usesOldGfxFunctions())
+		if (!s->usesOldGfxFunctions())
 			return SCI0_VIEW_PRIORITY_14_ZONES(y);
 		else
 			return SCI0_VIEW_PRIORITY(y) == 15 ? 14 : SCI0_VIEW_PRIORITY(y);
@@ -157,7 +157,7 @@ int _find_view_priority(EngineState *s, int y) {
 }
 
 int _find_priority_band(EngineState *s, int nr) {
-	if (!s->_kernel->usesOldGfxFunctions() && (nr < 0 || nr > 14)) {
+	if (!s->usesOldGfxFunctions() && (nr < 0 || nr > 14)) {
 		if (nr == 15)
 			return 0xffff;
 		else {
@@ -166,7 +166,7 @@ int _find_priority_band(EngineState *s, int nr) {
 		return 0;
 	}
 
-	if (s->_kernel->usesOldGfxFunctions() && (nr < 0 || nr > 15)) {
+	if (s->usesOldGfxFunctions() && (nr < 0 || nr > 15)) {
 		warning("Attempt to get priority band %d", nr);
 		return 0;
 	}
@@ -176,7 +176,7 @@ int _find_priority_band(EngineState *s, int nr) {
 	else {
 		int retval;
 
-		if (!s->_kernel->usesOldGfxFunctions())
+		if (!s->usesOldGfxFunctions())
 			retval = SCI0_PRIORITY_BAND_FIRST_14_ZONES(nr);
 		else
 			retval = SCI0_PRIORITY_BAND_FIRST(nr);
@@ -922,9 +922,8 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 3) {
 		if (!argv[2].isNull())
 			addToFlag = true;
-		// FIXME: usesOldGfxFunctions() seems to be broken, cause sq3 has it set, but uses bit 0 correctly
-		if (!s->_kernel->usesOldGfxFunctions())
-			addToFlag = !addToFlag; // later engines set the bit, but dont want to add to picture
+		if (!s->usesOldGfxFunctions())
+			addToFlag = !addToFlag;
 	}
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
