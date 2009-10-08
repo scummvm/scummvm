@@ -460,7 +460,8 @@ void DataIO::closeDataFile(bool itk) {
 }
 
 byte *DataIO::getUnpackedData(const char *name) {
-	int32 realSize, packSize;
+	int32 realSize;
+	int32 packSize = -1;
 
 	realSize = getChunkSize(name, packSize);
 
@@ -552,10 +553,10 @@ int32 DataIO::readData(int16 handle, byte *buf, uint16 size) {
 
 int32 DataIO::getDataSize(const char *name) {
 	char buf[128];
+	int32 chunkSize;
+	int32 packSize = -1;
 
 	strncpy0(buf, name, 127);
-
-	int32 chunkSize, packSize;
 
 	chunkSize = getChunkSize(buf, packSize);
 	if (chunkSize >= 0)
