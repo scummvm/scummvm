@@ -2280,7 +2280,7 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	if (_currentLevel == 11 && !(_flagsTable[52] & 0x04)) {
 		uint8 *sc = _screen->getPalette(0).getData();
 		uint8 *dc = _screen->getPalette(2).getData();
-		for (int i = 1; i < 768; i++)
+		for (int i = 1; i < (_screen->getPalette(0).getNumColors() * 3); i++)
 			SWAP(sc[i], dc[i]);
 
 		_flagsTable[52] |= 0x04;
@@ -2292,25 +2292,14 @@ int LoLEngine::processMagicIce(int charNum, int spellLevel) {
 	s.copy(_screen->getPalette(1));
 	if (_flags.use16ColorMode) {
 		_screen->loadPalette("LOLICE.NOL", swampCol);
-		uint8 *s1 = s.getData();
-		for (int i = 0; i < 16; i++) {
-			s1[((i << 4) | i) * 3] = s1[i * 3];
-			s1[((i << 4) | i) * 3 + 1] = s1[i * 3 + 1];
-			s1[((i << 4) | i) * 3 + 2] = s1[i * 3 + 2];
-		}		
-		uint8 *d1 = tpal.getData();
-		uint8 *d2 = swampCol.getData();
-		for (int i = 48; i < 256; i++)
-			d1[i] = d2[i] = s1[i] & 0x3f;
-
 		for (int i = 1; i < 16; i++) {
 			uint16 v = (s[i * 3] + s[i * 3 + 1] + s[i * 3 + 2]) / 3;
 			tpal[i * 3] = 0;			
 			tpal[i * 3 + 1] = v;
 			tpal[i * 3 + 2] = v << 1;
 
-			if (tpal[i * 3 + 2] > 0x3f)
-				tpal[i * 3 + 2] = 0x3f;
+			if (tpal[i * 3 + 2] > 29)
+				tpal[i * 3 + 2] = 29;
 		}
 
 	} else {	
@@ -3781,7 +3770,7 @@ void LoLEngine::restoreSwampPalette() {
 	uint8 *d = _screen->getPalette(0).getData();
 	uint8 *d2 = _screen->getPalette(1).getData();
 
-	for (int i = 1; i < 768; i++)
+	for (int i = 1; i < (_screen->getPalette(0).getNumColors() * 3); i++)
 		SWAP(s[i], d[i]);
 
 	generateBrightnessPalette(_screen->getPalette(0), _screen->getPalette(1), _brightness, _lampEffect);

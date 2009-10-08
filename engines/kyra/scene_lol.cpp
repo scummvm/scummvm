@@ -420,13 +420,18 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	}	
 
 	if (_currentLevel == 11) {
-		_screen->loadPalette("SWAMPICE.COL", _screen->getPalette(2));
-		_screen->getPalette(2).copy(_screen->getPalette(0), 128);
+		if (_flags.use16ColorMode) {
+			_screen->loadPalette("LOLICE.NOL", _screen->getPalette(2));
+
+		} else {
+			_screen->loadPalette("SWAMPICE.COL", _screen->getPalette(2));
+			_screen->getPalette(2).copy(_screen->getPalette(0), 128);
+		}
 
 		if (_flagsTable[52] & 0x04) {
 			uint8 *pal0 = _screen->getPalette(0).getData();
 			uint8 *pal2 = _screen->getPalette(2).getData();
-			for (int i = 1; i < 768; i++)
+			for (int i = 1; i < _screen->getPalette(0).getNumColors() * 3; i++)
 				SWAP(pal0[i], pal2[i]);
 		}
 	}
