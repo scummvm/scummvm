@@ -162,8 +162,9 @@ void SciGuiPalette::setEGA() {
 	// Now setting colors 16-254 to the correct mix colors that occur when not doing a dithering run on
 	//  finished pictures
 	for (i = 0x10; i <= 0xFE; i++) {
-		_sysPalette.colors[i].used = 1;
-		color ^= i << 4;
+		color = i;
+		_sysPalette.colors[color].used = 1;
+		color ^= color << 4;
 		color1 = i & 0x0F; color2 = i >> 4;
 		_sysPalette.colors[color].r = (_sysPalette.colors[color1].r >> 1) + (_sysPalette.colors[color2].r >> 1);
 		_sysPalette.colors[color].g = (_sysPalette.colors[color1].g >> 1) + (_sysPalette.colors[color2].g >> 1);

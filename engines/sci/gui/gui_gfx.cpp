@@ -44,6 +44,8 @@ SciGuiGfx::SciGuiGfx(EngineState *state, SciGuiScreen *screen, SciGuiPalette *pa
 }
 
 SciGuiGfx::~SciGuiGfx() {
+	delete _mainPort;
+	delete _menuPort;
 }
 
 void SciGuiGfx::init() {
@@ -51,14 +53,13 @@ void SciGuiGfx::init() {
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
 
-	// FIXME: _mainPort is never freed
-	// FIXME: _mainPort has no id, and is not known to the WindowManager -- this could lead to problems
+	// _mainPort is not known to windowmanager, that's okay according to sierra sci
+	//  its not even used currently in our engine
 	_mainPort = new GuiPort(0);
 	SetPort(_mainPort);
 	OpenPort(_mainPort);
 
-	// FIXME: _menuPort is never freed
-	// FIXME: _menuPort has no id, and is not known to the WindowManager -- this could lead to problems
+	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
 	_menuPort = new GuiPort(0);
 	OpenPort(_menuPort);
 	SetFont(0);
