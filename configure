@@ -296,7 +296,7 @@ get_system_exe_extension() {
 	gp2x-linux)
 		_exeext=".gp2x"
 		;;	
-	dreamcast | wii | gamecube | nds | psp)
+	dreamcast | wii | gamecube | nds | psp | ps2)
 		_exeext=".elf"
 		;;
 	*)
@@ -570,7 +570,7 @@ Usage: $0 [OPTIONS]...
 
 Configuration:
   -h, --help             display this help and exit
-  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, wii, wince, linuxmoto, null) [sdl]
+  --backend=BACKEND      backend to build (sdl, dc, gp2x, gp2xwiz, iphone, morphos, nds, psp, ps2, wii, wince, linuxmoto, null) [sdl]
 
 Installation directories:
   --prefix=DIR           use this prefix for installing ScummVM [/usr/local]
@@ -589,6 +589,7 @@ Special configuration feature:
                                           iphone for Apple iPhone
                                           wince for Windows CE
                                           psp for PlayStation Portable 
+                                          ps2 for PlayStation 2
 
 Game engines:
   --enable-all-engines     enable all engines
@@ -896,6 +897,12 @@ psp)
 	_host_alias=psp
 	LDFLAGS="$LDFLAGS -L$PSPDEV/psp/sdk/lib -specs=$_srcdir/backends/platform/psp/psp.spec"
 	;;
+ps2)
+	_host_os=ps2
+	# TODO: The following CPU name is gibberish, need to find out what the 'correct one is
+	_host_cpu=mips_emotion_engine
+	_host_alias=ee
+	;;
 *)
 	if test -n "$_host"; then
 		guessed_host=`$_srcdir/config.sub $_host`
@@ -948,6 +955,12 @@ wii | gamecube | nds)
 psp)
 	if test -z "$PSPDEV"; then
 		echo "Please set PSPDEV in your environment. export PSPDEV=<path to psp toolchain>"
+		exit 1
+	fi
+	;;
+ps2)
+	if test -z "$PS2DEV"; then
+		echo "Please set PS2DEV in your environment. export PS2DEV=<path to ps2 toolchain>"
 		exit 1
 	fi
 	;;
@@ -1267,6 +1280,9 @@ case $_host_os in
 	psp)
 		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
+	ps2)
+		# TODO ps2
+		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
 		CXXFLAGS="$CXXFLAGS -DWIN32 -Dcdecl= -D__cdecl__="
@@ -1548,6 +1564,18 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			_mt32emu="no"
 			_port_mk="backends/platform/psp/psp.mk"
+			;;
+		ps2)
+			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
+			# TODO: complete this
+			_endian=little
+			_need_memalign=yes
+			type_1_byte='char'
+			type_2_byte='short'
+			type_4_byte='int'
+			_backend="ps2"
+			_build_scalers="no"
+			_build_hq_scalers="no"
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -2257,6 +2285,11 @@ case $_backend in
 		DEFINES="$DEFINES -D__PSP__ -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 		INCLUDES="$INCLUDES -I$PSPDEV/psp/include/SDL"
 		LIBS="$LIBS -lSDL"
+		;;
+	ps2)
+		# TODO ps2
+		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
