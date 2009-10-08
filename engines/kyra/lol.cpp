@@ -3057,17 +3057,21 @@ void LoLEngine::transferSpellToScollAnimation(int charNum, int spell, int slot) 
 			_screen->copyRegion(201, 1, 17, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
 			_screen->copyRegion(208, 1, 89, 15, 6, h, 2, 2, Screen::CR_NO_P_CHECK);
 			int cp = _screen->setCurPage(2);
-			_screen->fillRect(21, 15, 89, h + 15, 206);
+			_screen->fillRect(21, 15, 89, h + 15, _flags.use16ColorMode ? 0xbb : 206);
 			_screen->copyRegion(112, 16, 12, h + 15, 87, 14, 2, 2, Screen::CR_NO_P_CHECK);
 
 			int y = 15;
+			Screen::FontId of = _screen->setFont(Screen::FID_9_FNT);
 			for (int ii = 0; ii < 7; ii++) {
 				if (_availableSpells[ii] == -1)
 					continue;
 				uint8 col = (ii == _selectedSpell) ? 132 : 1;
+				if (_flags.use16ColorMode)
+					col = (ii == _selectedSpell) ? 0x88 : 0x44;
 				_screen->fprintString("%s", 24, y, col, 0, 0, getLangString(_spellProperties[_availableSpells[ii]].spellNameCode));
 				y += 9;
 			}
+			_screen->setFont(of);
 
 			_screen->setCurPage(cp);
 			_screen->copyRegion(8, 0, 8, 0, 96, 120, 3, 0, Screen::CR_NO_P_CHECK);
