@@ -49,8 +49,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	status_bar_foreground = 0;
 	status_bar_background = 0;
 
-	game_time = 0;
-
 	port = 0;
 
 	memset(ega_colors, 0, sizeof(ega_colors));

@@ -521,9 +521,6 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 		}
 	}
 */
-	// Calculate the time spent with this game
-	s->game_time = (g_system->getMillis() - s->game_start_time) / 1000;
-
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
@@ -774,7 +771,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 
 	// Time state:
 	retval->last_wait_time = g_system->getMillis();
-	retval->game_start_time = g_system->getMillis() - retval->game_time * 1000;
+	retval->game_start_time = g_system->getMillis();
 
 	// static parser information:
 

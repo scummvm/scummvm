@@ -200,8 +200,6 @@ public:
 
 	int status_bar_foreground, status_bar_background;
 
-	long game_time; /**< Counted at 60 ticks per second, reset during start time */
-
 	GfxPort *port; /**< The currently active port */
 
 	gfx_color_t ega_colors[16]; /**< The 16 EGA colors- for SCI0(1) */
