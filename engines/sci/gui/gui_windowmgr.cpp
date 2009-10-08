@@ -91,8 +91,11 @@ void SciGuiWindowMgr::EndUpdate(GuiWindow *wnd) {
 	GuiPort *oldPort = _gfx->SetPort(_wmgrPort);
 	const PortList::iterator end = _windowList.end();
 	PortList::iterator it = Common::find(_windowList.begin(), end, wnd);
-	while (it != end) {
-		++it;
+
+	// wnd has to be in _windowList
+	assert(it != end);
+
+	while (++it != end) {
 		// FIXME: We also store GuiPort objects in the window list.
 		// We should add a check that we really only pass windows here...
 		UpdateWindow((GuiWindow *)*it);
