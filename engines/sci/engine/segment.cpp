@@ -294,7 +294,7 @@ bool SystemStrings::isValidOffset(uint16 offset) const {
 
 SegmentRef SystemStrings::dereference(reg_t pointer) {
 	SegmentRef ret;
-	ret.isRaw = true;	// FIXME: Raw or not raw? the sys strings code is totally incoherent in this regard
+	ret.isRaw = true;
 	ret.maxSize = _strings[pointer.offset]._maxSize;
 	if (isValidOffset(pointer.offset))
 		ret.raw = (byte *)(_strings[pointer.offset]._value);
