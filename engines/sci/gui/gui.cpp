@@ -402,9 +402,9 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 	// _gfx->AnimateSort();
 	if (old_picNotValid) {
-		_windowMgr->BeginUpdate(_windowMgr->_picWind);
+		//_windowMgr->BeginUpdate(_windowMgr->_picWind);
 		_gfx->AnimateUpdate(list);
-		_windowMgr->EndUpdate(_windowMgr->_picWind);
+		//_windowMgr->EndUpdate(_windowMgr->_picWind);
 	}
 
 	_gfx->AnimateDrawCels(list);
