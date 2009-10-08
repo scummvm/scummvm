@@ -606,11 +606,15 @@ GuiMemoryHandle SciGuiGfx::SaveBits(const Common::Rect &rect, byte screenMask) {
 }
 
 void SciGuiGfx::RestoreBits(GuiMemoryHandle memoryHandle) {
-	byte *memoryPtr = kmem(_s->_segMan, memoryHandle);;
+	byte *memoryPtr = NULL;
 
-	if (memoryPtr) {
-		_screen->restoreBits(memoryPtr);
-		kfree(_s->_segMan, memoryHandle);
+	if (!memoryHandle.isNull()) {
+		memoryPtr = kmem(_s->_segMan, memoryHandle);;
+
+		if (memoryPtr) {
+			_screen->restoreBits(memoryPtr);
+			kfree(_s->_segMan, memoryHandle);
+		}
 	}
 }
 
