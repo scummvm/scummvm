@@ -44,7 +44,7 @@ enum RESUME_STATE {
 };
 
 enum {
-	PCODE_STACK_SIZE	= 128	//!< interpeters stack size
+	PCODE_STACK_SIZE	= 128	///< interpeters stack size
 };
 
 enum GSORT {
@@ -68,25 +68,25 @@ struct WorkaroundEntry {
 struct INT_CONTEXT {
 
 	// Elements for interpret context management
-	PROCESS *pProc;			//!< processes owning this context
-	GSORT	GSort;			//!< sort of this context
+	PROCESS *pProc;			///< processes owning this context
+	GSORT	GSort;			///< sort of this context
 
 	// Previously parameters to Interpret()
-	SCNHANDLE	hCode;		//!< scene handle of the code to execute
-	byte		*code;		//!< pointer to the code to execute
-	TINSEL_EVENT	event;		//!< causal event
-	HPOLYGON	hPoly;		//!< associated polygon (if any)
-	int			idActor;	//!< associated actor (if any)
-	INV_OBJECT	*pinvo;		//!< associated inventory object
+	SCNHANDLE	hCode;		///< scene handle of the code to execute
+	byte		*code;		///< pointer to the code to execute
+	TINSEL_EVENT	event;		///< causal event
+	HPOLYGON	hPoly;		///< associated polygon (if any)
+	int			idActor;	///< associated actor (if any)
+	INV_OBJECT	*pinvo;		///< associated inventory object
 
 	// Previously local variables in Interpret()
-	int32 stack[PCODE_STACK_SIZE];	//!< interpeters run time stack
-	int sp;				//!< stack pointer
-	int bp;				//!< base pointer
-	int ip;				//!< instruction pointer
-	bool bHalt;			//!< set to exit interpeter
+	int32 stack[PCODE_STACK_SIZE];	///< interpeters run time stack
+	int sp;				///< stack pointer
+	int bp;				///< base pointer
+	int ip;				///< instruction pointer
+	bool bHalt;			///< set to exit interpeter
 	bool escOn;
-	int myEscape;		//!< only initialised to prevent compiler warning!
+	int myEscape;		///< only initialised to prevent compiler warning!
 
 	uint32 waitNumber1;		// The waiting numbert
 	uint32 waitNumber2;		// The wait for number

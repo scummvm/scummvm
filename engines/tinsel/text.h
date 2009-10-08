@@ -34,10 +34,10 @@ namespace Tinsel {
 
 /** text mode flags - defaults to left justify */
 enum {
-	TXT_CENTRE		= 0x0001,	//!< centre justify text
-	TXT_RIGHT		= 0x0002,	//!< right justify text
-	TXT_SHADOW		= 0x0004,	//!< shadow each character
-	TXT_ABSOLUTE	= 0x0008	//!< position of text is absolute (only for object text)
+	TXT_CENTRE		= 0x0001,	///< centre justify text
+	TXT_RIGHT		= 0x0002,	///< right justify text
+	TXT_SHADOW		= 0x0004,	///< shadow each character
+	TXT_ABSOLUTE	= 0x0008	///< position of text is absolute (only for object text)
 };
 
 /** maximum number of characters in a font */
@@ -56,13 +56,13 @@ enum {
  * It is currently set at 300 because it suited me for debugging.
  */
 struct FONT {
-	int xSpacing;			//!< x spacing between characters
-	int ySpacing;			//!< y spacing between characters
-	int xShadow;			//!< x shadow offset
-	int yShadow;			//!< y shadow offset
-	int spaceSize;			//!< x spacing to use for a space character
-	OBJ_INIT fontInit;		//!< structure used to init text objects
-	SCNHANDLE fontDef[300];	//!< image handle array for all characters in the font
+	int xSpacing;			///< x spacing between characters
+	int ySpacing;			///< y spacing between characters
+	int xShadow;			///< x shadow offset
+	int yShadow;			///< y shadow offset
+	int spaceSize;			///< x spacing to use for a space character
+	OBJ_INIT fontInit;		///< structure used to init text objects
+	SCNHANDLE fontDef[300];	///< image handle array for all characters in the font
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -70,14 +70,14 @@ struct FONT {
 
 /** structure for passing the correct parameters to ObjectTextOut */
 struct TEXTOUT {
-	OBJECT *pList;		//!< object list to add text to
-	char *szStr;		//!< string to output
-	int colour;			//!< colour for monochrome text
-	int xPos;			//!< x position of string
-	int yPos;			//!< y position of string
-	SCNHANDLE hFont;	//!< which font to use
-	int mode;			//!< mode flags for the string
-	int sleepTime;		//!< sleep time between each character (if non-zero)
+	OBJECT *pList;		///< object list to add text to
+	char *szStr;		///< string to output
+	int colour;			///< colour for monochrome text
+	int xPos;			///< x position of string
+	int yPos;			///< y position of string
+	SCNHANDLE hFont;	///< which font to use
+	int mode;			///< mode flags for the string
+	int sleepTime;		///< sleep time between each character (if non-zero)
 };
 
 

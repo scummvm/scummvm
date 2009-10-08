@@ -78,9 +78,9 @@ struct gfx_bitmap_font_t {
  * SCI0, SCI01 and SCI1 all use the same font format.
  */
 enum fontFlags {
-	kFontCountWhitespace = 1 << 0,    //!< In SQ3, whitespace is included in text size
-	kFontNoNewlines      = 1 << 1,    //!< Don't treat newline characters
-	kFontIgnoreLF        = 1 << 2     //!< Interpret CR LF sequences as a single newline, rather than two
+	kFontCountWhitespace = 1 << 0,    ///< In SQ3, whitespace is included in text size
+	kFontNoNewlines      = 1 << 1,    ///< Don't treat newline characters
+	kFontIgnoreLF        = 1 << 2     ///< Interpret CR LF sequences as a single newline, rather than two
 };
 
 /**

@@ -99,17 +99,17 @@ private:
 	 */
 	void copyRelocatedBytes(uint offset, uint numBytes);
 private:
-	uint32 _crc;      //!< Error-detecting code (This should be zero after successful unpacking)
-	uint32 _chunk32b; //!< The current internal 32-bit chunk of source data
-	byte *_dst;       //!< Pointer to the current position in the destination buffer
-	const byte *_src; //!< Pointer to the current position in the source buffer
+	uint32 _crc;      ///< Error-detecting code (This should be zero after successful unpacking)
+	uint32 _chunk32b; ///< The current internal 32-bit chunk of source data
+	byte *_dst;       ///< Pointer to the current position in the destination buffer
+	const byte *_src; ///< Pointer to the current position in the source buffer
 
 	// These are used for detecting errors (e.g. out of bounds issues) during unpacking
-	bool _error;           //!< Did an error occur during unpacking?
-	const byte *_srcBegin; //!< Source buffer's beginning
-	const byte *_srcEnd;   //!< Source buffer's end
-	byte *_dstBegin;       //!< Destination buffer's beginning
-	byte *_dstEnd;         //!< Destination buffer's end
+	bool _error;           ///< Did an error occur during unpacking?
+	const byte *_srcBegin; ///< Source buffer's beginning
+	const byte *_srcEnd;   ///< Source buffer's end
+	byte *_dstBegin;       ///< Destination buffer's beginning
+	byte *_dstEnd;         ///< Destination buffer's end
 };
 
 } // End of namespace Cine

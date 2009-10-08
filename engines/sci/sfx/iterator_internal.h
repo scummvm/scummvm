@@ -38,20 +38,20 @@ namespace Sci {
 
 enum {
 	SI_STATE_UNINITIALISED		= -1,
-	SI_STATE_DELTA_TIME			= 0,	//!< Now at a delta time
-	SI_STATE_COMMAND			= 1,	//!< Now at a MIDI operation
-	SI_STATE_PENDING			= 2,	//!< Pending for loop
-	SI_STATE_FINISHED			= 3,	//!< End of song
-	SI_STATE_PCM				= 4,	//!< Should report a PCM next (-> DELTA_TIME)
-	SI_STATE_PCM_MAGIC_DELTA	= 5		//!< Should report a ``magic'' one tick delta time next (goes on to FINISHED)
+	SI_STATE_DELTA_TIME			= 0,	///< Now at a delta time
+	SI_STATE_COMMAND			= 1,	///< Now at a MIDI operation
+	SI_STATE_PENDING			= 2,	///< Pending for loop
+	SI_STATE_FINISHED			= 3,	///< End of song
+	SI_STATE_PCM				= 4,	///< Should report a PCM next (-> DELTA_TIME)
+	SI_STATE_PCM_MAGIC_DELTA	= 5		///< Should report a ``magic'' one tick delta time next (goes on to FINISHED)
 };
 
 struct SongIteratorChannel {
 
-	int state;	//!< State of this song iterator channel
-	int offset;	//!< Offset into the data chunk */
-	int end;	//!< Last allowed byte in track */
-	int id;		//!< Some channel ID */
+	int state;	///< State of this song iterator channel
+	int offset;	///< Offset into the data chunk */
+	int end;	///< Last allowed byte in track */
+	int id;		///< Some channel ID */
 
 	/**
 	 * Number of ticks before the specified channel is next used, or
@@ -64,14 +64,14 @@ struct SongIteratorChannel {
 	int loop_offset;
 	int initial_offset;
 
-	int playmask;			//!< Active playmask (MIDI channels to play in here) */
-	int notes_played;		//!< #of notes played since the last loop start */
-	int loop_timepos;		//!< Total delay for this channel's loop marker */
-	int total_timepos;		//!< Number of ticks since the beginning, ignoring loops */
-	int timepos_increment;	//!< Number of ticks until the next command (to add) */
+	int playmask;			///< Active playmask (MIDI channels to play in here) */
+	int notes_played;		///< #of notes played since the last loop start */
+	int loop_timepos;		///< Total delay for this channel's loop marker */
+	int total_timepos;		///< Number of ticks since the beginning, ignoring loops */
+	int timepos_increment;	///< Number of ticks until the next command (to add) */
 
-	int saw_notes;			//!< Bitmask of channels we have currently played notes on */
-	byte last_cmd;			//!< Last operation executed, for running status */
+	int saw_notes;			///< Bitmask of channels we have currently played notes on */
+	byte last_cmd;			///< Last operation executed, for running status */
 
 public:
 	void init(int id, int offset, int end);
@@ -80,17 +80,17 @@ public:
 
 class BaseSongIterator : public SongIterator {
 public:
-	int _polyphony[MIDI_CHANNELS];	//!< # of simultaneous notes on each
-	int _importance[MIDI_CHANNELS];	//!< priority rating for each channel, 0 means unrated.
+	int _polyphony[MIDI_CHANNELS];	///< # of simultaneous notes on each
+	int _importance[MIDI_CHANNELS];	///< priority rating for each channel, 0 means unrated.
 
 
-	int _ccc;					//!< Cumulative cue counter, for those who need it
-	byte _resetflag;			//!< for 0x4C -- on DoSound StopSound, do we return to start?
-	int _deviceId;				//!< ID of the device we generating events for
-	int _numActiveChannels;		//!< Number of active channels
-	Common::Array<byte> _data;	//!< Song data
+	int _ccc;					///< Cumulative cue counter, for those who need it
+	byte _resetflag;			///< for 0x4C -- on DoSound StopSound, do we return to start?
+	int _deviceId;				///< ID of the device we generating events for
+	int _numActiveChannels;		///< Number of active channels
+	Common::Array<byte> _data;	///< Song data
 
-	int _loops; //!< Number of loops remaining
+	int _loops; ///< Number of loops remaining
 
 public:
 	BaseSongIterator(byte *data, uint size, songit_id_t id);

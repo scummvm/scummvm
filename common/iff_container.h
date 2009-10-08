@@ -217,8 +217,8 @@ class IFFParser {
 	};
 
 protected:
-	IFFChunkNav _formChunk;	//!< The root chunk of the file.
-	IFFChunkNav _chunk; 	//!< The current chunk.
+	IFFChunkNav _formChunk;	///< The root chunk of the file.
+	IFFChunkNav _chunk; 	///< The current chunk.
 
 	uint32 _formSize;
 	Common::IFF_ID _formType;

@@ -507,16 +507,16 @@ static bool bRemember;
 
 
 enum BTYPE {
-	RGROUP,		//!< Radio button group - 1 is selectable at a time. Action on double click
-	ARSBUT,		//!< Action if a radio button is selected
-	AABUT,		//!< Action always
-	AATBUT,		//!< Action always, text box
+	RGROUP,		///< Radio button group - 1 is selectable at a time. Action on double click
+	ARSBUT,		///< Action if a radio button is selected
+	AABUT,		///< Action always
+	AATBUT,		///< Action always, text box
 	ARSGBUT,
-	AAGBUT,		//!< Action always, graphic button
-	SLIDER,		//!< Not a button at all
-	TOGGLE,		//!< Discworld 1 toggle
-	TOGGLE1,	//!< Discworld 2 toggle type 1
-	TOGGLE2,	//!< Discworld 2 toggle type 2
+	AAGBUT,		///< Action always, graphic button
+	SLIDER,		///< Not a button at all
+	TOGGLE,		///< Discworld 1 toggle
+	TOGGLE1,	///< Discworld 2 toggle type 1
+	TOGGLE2,	///< Discworld 2 toggle type 2
 	DCTEST,
 	FLIP,
 	FRGROUP,

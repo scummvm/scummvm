@@ -87,41 +87,41 @@ private:
 	void animatePersonPrepare(const MovePersonData *mpd, int direction);
 	void animatePerson(const MovePersonData *mpd, uint16 image, uint16 bobNum, uint16 bankNum, int direction);
 
-	//! compute transition coordinate
+	/// compute transition coordinate
 	static int16 calcC(int16 c1, int16 c2, int16 c3, int16 c4, int16 lastc);
 
-	//! find area for position
+	/// find area for position
 	int16 findAreaPosition(int16 *x, int16 *y, bool recalibrate);
 
-	//! find an area not already struck
+	/// find an area not already struck
 	uint16 findFreeArea(uint16 area) const;
 
-	//! return true if the area is already on the walking path
+	/// return true if the area is already on the walking path
 	bool isAreaStruck(uint16 area) const;
 
-	//! calculates the path list from oldArea to newArea
+	/// calculates the path list from oldArea to newArea
 	bool calcPath(uint16 oldArea, uint16 newArea);
 
-	//! resets path computed in calcPath()
+	/// resets path computed in calcPath()
 	void initWalkData();
 
-	//! add an area to the path
+	/// add an area to the path
 	void incWalkData(int16 px, int16 py, int16 x, int16 y, uint16 area);
 
-	//! compute path (and populates _walkData) from current position to the new one
+	/// compute path (and populates _walkData) from current position to the new one
 	bool calc(uint16 oldPos, uint16 newPos, int16 oldx, int16 oldy, int16 x, int16 y);
 
 
-	//! areas for current room
+	/// areas for current room
 	const Area *_roomArea;
 
-	//! number of areas for current room
+	/// number of areas for current room
 	uint16 _roomAreaCount;
 
-	//! walking steps
+	/// walking steps
 	WalkData _walkData[MAX_WALK_DATA];
 
-	//! number of walking steps
+	/// number of walking steps
 	uint16 _walkDataCount;
 
 	uint16 _areaStrike[MAX_WALK_DATA];
@@ -130,15 +130,15 @@ private:
 	uint16 _areaList[MAX_WALK_DATA];
 	uint16 _areaListCount;
 
-	//! set if stopJoe() is called
+	/// set if stopJoe() is called
 	bool _joeInterrupted;
 
-	//! set if handleSpecialArea() is called
+	/// set if handleSpecialArea() is called
 	bool _joeMoveBlock;
 
 	QueenEngine *_vm;
 
-	//! persons walking animation data
+	/// persons walking animation data
 	static const MovePersonData _moveData[];
 };
 

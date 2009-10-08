@@ -44,26 +44,26 @@ namespace Common {
  *       kPathInvalid, kPathIsInvalid, kInvalidPathError
  */
 enum Error {
-	kNoError = 0,				//!< No error occured
-	kInvalidPathError,			//!< Engine initialization: Invalid game path was passed
-	kNoGameDataFoundError,		//!< Engine initialization: No game data was found in the specified location
-	kUnsupportedGameidError,	//!< Engine initialization: Gameid not supported by this (Meta)Engine
-	kUnsupportedColorMode,		//!< Engine initialization: Engine does not support backend's color mode
+	kNoError = 0,				///< No error occured
+	kInvalidPathError,			///< Engine initialization: Invalid game path was passed
+	kNoGameDataFoundError,		///< Engine initialization: No game data was found in the specified location
+	kUnsupportedGameidError,	///< Engine initialization: Gameid not supported by this (Meta)Engine
+	kUnsupportedColorMode,		///< Engine initialization: Engine does not support backend's color mode
 
 
-	kReadPermissionDenied,		//!< Unable to read data due to missing read permission
-	kWritePermissionDenied,		//!< Unable to write data due to missing write permission
+	kReadPermissionDenied,		///< Unable to read data due to missing read permission
+	kWritePermissionDenied,		///< Unable to write data due to missing write permission
 
 	// The following three overlap a bit with kInvalidPathError and each other. Which to keep?
-	kPathDoesNotExist,			//!< The specified path does not exist
-	kPathNotDirectory,			//!< The specified path does not point to a directory
-	kPathNotFile,				//!< The specified path does not point to a file
+	kPathDoesNotExist,			///< The specified path does not exist
+	kPathNotDirectory,			///< The specified path does not point to a directory
+	kPathNotFile,				///< The specified path does not point to a file
 
 	kCreatingFileFailed,
-	kReadingFailed,				//!< Failed creating a (savestate) file
-	kWritingFailed,				//!< Failure to write data -- disk full?
+	kReadingFailed,				///< Failed creating a (savestate) file
+	kWritingFailed,				///< Failure to write data -- disk full?
 
-	kUnknownError				//!< Catch-all error, used if no other error code matches
+	kUnknownError				///< Catch-all error, used if no other error code matches
 };
 
 } // End of namespace Common

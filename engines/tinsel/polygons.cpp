@@ -123,10 +123,10 @@ struct LINEINFO {
 	int32	b;
 	int32	c;
 
-	int32	a2;             //!< a squared
-	int32	b2;             //!< b squared
-	int32	a2pb2;          //!< a squared + b squared
-	int32	ra2pb2;         //!< root(a squared + b squared)
+	int32	a2;             ///< a squared
+	int32	b2;             ///< b squared
+	int32	a2pb2;          ///< a squared + b squared
+	int32	ra2pb2;         ///< root(a squared + b squared)
 
 	int32	ab;
 	int32	ac;
@@ -165,7 +165,7 @@ public:
 	LINEINFO *getLineinfo(int i) const { return ((LINEINFO *)(_pStart + (int)FROM_LE_32(plinelist))) + i; }
 
 protected:
-	POLY_TYPE type;		//!< type of polygon
+	POLY_TYPE type;		///< type of polygon
 public:
 	int32 x[4], y[4];	// Polygon definition
 	uint32 xoff, yoff;	// DW2 - polygon offset
@@ -174,9 +174,9 @@ public:
 	SCNHANDLE hTagtext;	// } i.e. EXIT, TAG, EFFECT
 
 	int32 nodex, nodey;	// EXIT, TAG, REFER
-	SCNHANDLE hFilm;	//!< film reel handle for EXIT, TAG
+	SCNHANDLE hFilm;	///< film reel handle for EXIT, TAG
 
-	int32 reftype;		//!< Type of REFER
+	int32 reftype;		///< Type of REFER
 
 	int32 id;			// } EXIT and TAG
 
@@ -187,15 +187,15 @@ public:
 	int32 zFactor;		// }
 
 protected:
-	int32 nodecount;		//!<The number of nodes in this polygon
-	int32 pnodelistx, pnodelisty;	//!<offset in chunk to this array if present
+	int32 nodecount;		///<The number of nodes in this polygon
+	int32 pnodelistx, pnodelisty;	///<offset in chunk to this array if present
 	int32 plinelist;
 
 	int32 *nlistx;
 	int32 *nlisty;
 
 public:
-	SCNHANDLE hScript;	//!< handle of code segment for polygon events
+	SCNHANDLE hScript;	///< handle of code segment for polygon events
 };
 
 Poly::Poly(const byte *pSrc) : _pStart(pSrc) {
@@ -610,10 +610,10 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 		// One bad thing: We use sqrt to compute a square root. Might not be a good idea,
 		// speed wise. Maybe we should take Vicent's fp_sqroot. But that's a problem for later.
 
-		int32	a2 = (int)FROM_LE_32(line->a2);             //!< a squared
-		int32	b2 = (int)FROM_LE_32(line->b2);             //!< b squared
-		int32	a2pb2 = (int)FROM_LE_32(line->a2pb2);          //!< a squared + b squared
-		int32	ra2pb2 = (int)FROM_LE_32(line->ra2pb2);         //!< root(a squared + b squared)
+		int32	a2 = (int)FROM_LE_32(line->a2);             ///< a squared
+		int32	b2 = (int)FROM_LE_32(line->b2);             ///< b squared
+		int32	a2pb2 = (int)FROM_LE_32(line->a2pb2);          ///< a squared + b squared
+		int32	ra2pb2 = (int)FROM_LE_32(line->ra2pb2);         ///< root(a squared + b squared)
 
 		int32	ab = (int)FROM_LE_32(line->ab);
 		int32	ac = (int)FROM_LE_32(line->ac);

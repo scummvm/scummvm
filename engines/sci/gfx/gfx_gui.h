@@ -38,8 +38,8 @@ class Menu;
  * Flags for windows in SCI0.
  */
 enum windowFlags {
-	kWindowTransparent  = 0x01,			//!< 0000 0001
-	kWindowNoFrame      = 0x02,			//!< 0000 0010 - a window without a frame
+	kWindowTransparent  = 0x01,			///< 0000 0001
+	kWindowNoFrame      = 0x02,			///< 0000 0010 - a window without a frame
 	kWindowTitle        = 0x04,			/**
 										 * 0000 0100 - Add title bar to
 										 * window (10 pixels high, framed,
@@ -47,17 +47,17 @@ enum windowFlags {
 										 * white on dark gray), bits 3-6
 										 * are unused
 										 */
-	kWindowDontDraw     = 0x80,			//!< 1000 0000 - don't draw anything
-	kWindowNoDropShadow = 0x1000000,	//!< 0001 0000 0000 0000 0000 0000 0000 (not in SCI)
+	kWindowDontDraw     = 0x80,			///< 1000 0000 - don't draw anything
+	kWindowNoDropShadow = 0x1000000,	///< 0001 0000 0000 0000 0000 0000 0000 (not in SCI)
 	kWindowAutoRestore  = 0x2000000
 };
 
 /** Button and frame control flags. */
 enum controlStateFlags {
-	kControlStateEnabled      = 0x0001,  //!< 0001 - enabled buttons (used by the interpreter)
-	kControlStateDisabled     = 0x0004,  //!< 0010 - grayed out buttons (used by the interpreter)
-	kControlStateFramed       = 0x0008,  //!< 1000 - widgets surrounded by a frame (used by the interpreter)
-	kControlStateDitherFramed = 0x1000   //!< 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
+	kControlStateEnabled      = 0x0001,  ///< 0001 - enabled buttons (used by the interpreter)
+	kControlStateDisabled     = 0x0004,  ///< 0010 - grayed out buttons (used by the interpreter)
+	kControlStateFramed       = 0x0008,  ///< 1000 - widgets surrounded by a frame (used by the interpreter)
+	kControlStateDitherFramed = 0x1000   ///< 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
 };
 
 /**

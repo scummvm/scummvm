@@ -79,8 +79,8 @@
 // the link complains about an unresolved external token Common.String.__dtor
 
 struct Rect {
-	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
-	int16 bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
+	int16 top, left;		///< The point at the top left of the rectangle (part of the rect).
+	int16 bottom, right;	///< The point at the bottom right of the rectangle (not part of the rect).
 };
 
 struct FileEntry {

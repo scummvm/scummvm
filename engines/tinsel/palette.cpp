@@ -40,12 +40,12 @@ namespace Tinsel {
 /** video DAC transfer Q structure */
 struct VIDEO_DAC_Q {
 	union {
-		SCNHANDLE hRGBarray;	//!< handle of palette or
-		COLORREF *pRGBarray;	//!< list of palette colours
+		SCNHANDLE hRGBarray;	///< handle of palette or
+		COLORREF *pRGBarray;	///< list of palette colours
 	} pal;
-	bool bHandle;		//!< when set - use handle of palette
-	int destDACindex;	//!< start index of palette in video DAC
-	int numColours;		//!< number of colours in "hRGBarray"
+	bool bHandle;		///< when set - use handle of palette
+	int destDACindex;	///< start index of palette in video DAC
+	int numColours;		///< number of colours in "hRGBarray"
 };
 
 

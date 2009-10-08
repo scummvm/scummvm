@@ -33,11 +33,11 @@
 namespace Tinsel {
 
 enum {
-	MAX_NODES		= 32,	//!< maximum nodes in a Node Path
-	MAX_NOSCROLL	= 16,	//!< maximum number of NoScroll commands in a scene
-	MAX_ENTRANCE	= 25,	//!< maximum number of entrances in a scene
-	MAX_POLY		= 256,	//!< maximum number of polygons in a scene
-	MAX_ACTOR		= 32	//!< maximum number of actors in a scene
+	MAX_NODES		= 32,	///< maximum nodes in a Node Path
+	MAX_NOSCROLL	= 16,	///< maximum number of NoScroll commands in a scene
+	MAX_ENTRANCE	= 25,	///< maximum number of entrances in a scene
+	MAX_POLY		= 256,	///< maximum number of polygons in a scene
+	MAX_ACTOR		= 32	///< maximum number of actors in a scene
 };
 
 // ENTRANCE_STRUC bitflags

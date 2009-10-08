@@ -39,8 +39,8 @@ class PaletteLUT {
 public:
 	/** Palette format. */
 	enum PaletteFormat {
-		kPaletteRGB, //!< Palette in RGB colorspace
-		kPaletteYUV  //!< Palette in YUV colorspace
+		kPaletteRGB, ///< Palette in RGB colorspace
+		kPaletteYUV  ///< Palette in YUV colorspace
 	};
 
 	/** Converting a color from YUV to RGB colorspace. */
@@ -114,23 +114,23 @@ public:
 private:
 	static const uint32 kVersion = 1;
 
-	byte _depth1; //!< The table's depth for one dimension.
-	byte _depth2; //!< The table's depth for two dimensions.
-	byte _shift;  //!< Amount to shift to adjust for the table's depth.
+	byte _depth1; ///< The table's depth for one dimension.
+	byte _depth2; ///< The table's depth for two dimensions.
+	byte _shift;  ///< Amount to shift to adjust for the table's depth.
 
-	uint32 _dim1; //!< The table's entry offset for one dimension.
-	uint32 _dim2; //!< The table's entry offset for two dimensions.
-	uint32 _dim3; //!< The table's entry offset for three dimensions.
+	uint32 _dim1; ///< The table's entry offset for one dimension.
+	uint32 _dim2; ///< The table's entry offset for two dimensions.
+	uint32 _dim3; ///< The table's entry offset for three dimensions.
 
-	int _transp;  //!< The transparent palette index.
+	int _transp;  ///< The transparent palette index.
 
-	PaletteFormat _format; //!< The table's palette format.
-	byte _lutPal[768];     //!< The palette used for looking up a color.
-	byte _realPal[768];    //!< The original palette.
+	PaletteFormat _format; ///< The table's palette format.
+	byte _lutPal[768];     ///< The palette used for looking up a color.
+	byte _realPal[768];    ///< The original palette.
 
-	uint32 _got; //!< Number of slices generated.
-	byte *_gots; //!< Map of generated slices.
-	byte *_lut;  //!< The lookup table.
+	uint32 _got; ///< Number of slices generated.
+	byte *_gots; ///< Map of generated slices.
+	byte *_lut;  ///< The lookup table.
 
 	/** Building a specified slice. */
 	void build(int d1);
@@ -175,13 +175,13 @@ public:
 	byte dither(byte c1, byte c2, byte c3, uint32 x);
 
 protected:
-	int16 _width; //!< The image's width.
+	int16 _width; ///< The image's width.
 
-	PaletteLUT *_palLUT; //!< The palette against which to dither.
+	PaletteLUT *_palLUT; ///< The palette against which to dither.
 
-	int32 *_errorBuf;  //!< Big buffer for all collected errors.
-	int32 *_errors[2]; //!< Pointers into the error buffer for two lines.
-	int _curLine;      //!< Which one is the current line?
+	int32 *_errorBuf;  ///< Big buffer for all collected errors.
+	int32 *_errors[2]; ///< Pointers into the error buffer for two lines.
+	int _curLine;      ///< Which one is the current line?
 
 	/** Querying a pixel's errors. */
 	inline void getErrors(uint32 x, int32 &eC1, int32 &eC2, int32 &eC3);

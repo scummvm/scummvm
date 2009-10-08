@@ -58,25 +58,25 @@ bool bLockedScene = 0;
 //----------------- LOCAL DEFINES --------------------
 
 struct MEMHANDLE {
-	char szName[12];	//!< 00 - file name of graphics file
-	int32 filesize;		//!< 12 - file size and flags
-	MEM_NODE *pNode;	//!< 16 - memory node for the graphics
+	char szName[12];	///< 00 - file name of graphics file
+	int32 filesize;		///< 12 - file size and flags
+	MEM_NODE *pNode;	///< 16 - memory node for the graphics
 	uint32 flags2;
 };
 
 
 /** memory allocation flags - stored in the top bits of the filesize field */
 enum {
-	fPreload	= 0x01000000L,	//!< preload memory
-	fDiscard	= 0x02000000L,	//!< discard memory
-	fSound		= 0x04000000L,	//!< sound data
-	fGraphic	= 0x08000000L,	//!< graphic data
-	fCompressed	= 0x10000000L,	//!< compressed data
-	fLoaded		= 0x20000000L	//!< set when file data has been loaded
+	fPreload	= 0x01000000L,	///< preload memory
+	fDiscard	= 0x02000000L,	///< discard memory
+	fSound		= 0x04000000L,	///< sound data
+	fGraphic	= 0x08000000L,	///< graphic data
+	fCompressed	= 0x10000000L,	///< compressed data
+	fLoaded		= 0x20000000L	///< set when file data has been loaded
 };
-#define	FSIZE_MASK	0x00FFFFFFL	//!< mask to isolate the filesize
-#define	MALLOC_MASK	0xFF000000L	//!< mask to isolate the memory allocation flags
-//#define	HANDLEMASK		0xFF800000L	//!< get handle of address
+#define	FSIZE_MASK	0x00FFFFFFL	///< mask to isolate the filesize
+#define	MALLOC_MASK	0xFF000000L	///< mask to isolate the memory allocation flags
+//#define	HANDLEMASK		0xFF800000L	///< get handle of address
 
 //----------------- LOCAL GLOBAL DATA --------------------
 

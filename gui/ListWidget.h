@@ -40,12 +40,12 @@ enum NumberingMode {
 	kListNumberingOne	= 1
 };
 
-// Some special commands
+/// Some special commands
 enum {
-	kListItemDoubleClickedCmd	= 'LIdb',	// double click on item - 'data' will be item index
-	kListItemActivatedCmd		= 'LIac',	// item activated by return/enter - 'data' will be item index
-	kListItemRemovalRequestCmd	= 'LIrm',	// request to remove the item with the delete/backspace keys - 'data' will be item index
-	kListSelectionChangedCmd	= 'Lsch'	// selection changed - 'data' will be item index
+	kListItemDoubleClickedCmd	= 'LIdb',	///< double click on item - 'data' will be item index
+	kListItemActivatedCmd		= 'LIac',	///< item activated by return/enter - 'data' will be item index
+	kListItemRemovalRequestCmd	= 'LIrm',	///< request to remove the item with the delete/backspace keys - 'data' will be item index
+	kListSelectionChangedCmd	= 'Lsch'	///< selection changed - 'data' will be item index
 };
 
 /* ListWidget */
@@ -137,7 +137,7 @@ public:
 protected:
 	void drawWidget();
 
-	//! Finds the item at position (x,y). Returns -1 if there is no item there.
+	/// Finds the item at position (x,y). Returns -1 if there is no item there.
 	int findItem(int x, int y) const;
 	void scrollBarRecalc();
 

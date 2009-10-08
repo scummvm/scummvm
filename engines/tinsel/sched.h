@@ -45,15 +45,15 @@ typedef void (*CORO_ADDR)(CoroContext &, const void *);
 
 /** process structure */
 struct PROCESS {
-	PROCESS *pNext;	//!< pointer to next process in active or free list
-	PROCESS *pPrevious;	//!< pointer to previous process in active or free list
+	PROCESS *pNext;	///< pointer to next process in active or free list
+	PROCESS *pPrevious;	///< pointer to previous process in active or free list
 
-	CoroContext state;		//!< the state of the coroutine
-	CORO_ADDR  coroAddr;	//!< the entry point of the coroutine
+	CoroContext state;		///< the state of the coroutine
+	CORO_ADDR  coroAddr;	///< the entry point of the coroutine
 
-	int sleepTime;		//!< number of scheduler cycles to sleep
-	int pid;		//!< process ID
-	char param[PARAM_SIZE];	//!< process specific info
+	int sleepTime;		///< number of scheduler cycles to sleep
+	int pid;		///< process ID
+	char param[PARAM_SIZE];	///< process specific info
 };
 typedef PROCESS *PPROCESS;
 

@@ -48,57 +48,57 @@ extern int CallLibraryRoutine(CORO_PARAM, int operand, int32 *pp, const INT_CONT
 
 /** list of all opcodes */
 enum OPCODE {
-	OP_HALT = 0,	//!< end of program
-	OP_IMM = 1,		//!< loads signed immediate onto stack
-	OP_ZERO = 2,	//!< loads zero onto stack
-	OP_ONE = 3,		//!< loads one onto stack
-	OP_MINUSONE = 4,	//!< loads minus one onto stack
-	OP_STR = 5,		//!< loads string offset onto stack
-	OP_FILM = 6,	//!< loads film offset onto stack
-	OP_FONT = 7,	//!< loads font offset onto stack
-	OP_PAL = 8,		//!< loads palette offset onto stack
-	OP_LOAD = 9,	//!< loads local variable onto stack
-	OP_GLOAD = 10,	//!< loads global variable onto stack - long offset to variable
-	OP_STORE = 11,	//!< pops stack and stores in local variable - long offset to variable
-	OP_GSTORE = 12,	//!< pops stack and stores in global variable - long offset to variable
-	OP_CALL = 13,	//!< procedure call
-	OP_LIBCALL = 14,	//!< library procedure call - long offset to procedure
-	OP_RET = 15,		//!< procedure return
-	OP_ALLOC = 16,	//!< allocate storage on stack
-	OP_JUMP = 17,	//!< unconditional jump	- signed word offset
-	OP_JMPFALSE = 18,	//!< conditional jump	- signed word offset
-	OP_JMPTRUE = 19,	//!< conditional jump	- signed word offset
-	OP_EQUAL = 20,	//!< tests top two items on stack for equality
-	OP_LESS,	//!< tests top two items on stack
-	OP_LEQUAL,	//!< tests top two items on stack
-	OP_NEQUAL,	//!< tests top two items on stack
-	OP_GEQUAL,	//!< tests top two items on stack
-	OP_GREAT = 25,	//!< tests top two items on stack
-	OP_PLUS,	//!< adds top two items on stack and replaces with result
-	OP_MINUS,	//!< subs top two items on stack and replaces with result
-	OP_LOR,		//!< logical or of top two items on stack and replaces with result
-	OP_MULT,	//!< multiplies top two items on stack and replaces with result
-	OP_DIV = 30,		//!< divides top two items on stack and replaces with result
-	OP_MOD,		//!< divides top two items on stack and replaces with modulus
-	OP_AND,		//!< bitwise ands top two items on stack and replaces with result
-	OP_OR,		//!< bitwise ors top two items on stack and replaces with result
-	OP_EOR,		//!< bitwise exclusive ors top two items on stack and replaces with result
-	OP_LAND = 35,	//!< logical ands top two items on stack and replaces with result
-	OP_NOT,		//!< logical nots top item on stack
-	OP_COMP,	//!< complements top item on stack
-	OP_NEG,		//!< negates top item on stack
-	OP_DUP,		//!< duplicates top item on stack
-	OP_ESCON = 40,	//!< start of escapable sequence
-	OP_ESCOFF = 41,	//!< end of escapable sequence
-	OP_CIMM,	//!< loads signed immediate onto stack (special to case statements)
-	OP_CDFILM	//!< loads film offset onto stack but not in current scene
+	OP_HALT = 0,	///< end of program
+	OP_IMM = 1,		///< loads signed immediate onto stack
+	OP_ZERO = 2,	///< loads zero onto stack
+	OP_ONE = 3,		///< loads one onto stack
+	OP_MINUSONE = 4,	///< loads minus one onto stack
+	OP_STR = 5,		///< loads string offset onto stack
+	OP_FILM = 6,	///< loads film offset onto stack
+	OP_FONT = 7,	///< loads font offset onto stack
+	OP_PAL = 8,		///< loads palette offset onto stack
+	OP_LOAD = 9,	///< loads local variable onto stack
+	OP_GLOAD = 10,	///< loads global variable onto stack - long offset to variable
+	OP_STORE = 11,	///< pops stack and stores in local variable - long offset to variable
+	OP_GSTORE = 12,	///< pops stack and stores in global variable - long offset to variable
+	OP_CALL = 13,	///< procedure call
+	OP_LIBCALL = 14,	///< library procedure call - long offset to procedure
+	OP_RET = 15,		///< procedure return
+	OP_ALLOC = 16,	///< allocate storage on stack
+	OP_JUMP = 17,	///< unconditional jump	- signed word offset
+	OP_JMPFALSE = 18,	///< conditional jump	- signed word offset
+	OP_JMPTRUE = 19,	///< conditional jump	- signed word offset
+	OP_EQUAL = 20,	///< tests top two items on stack for equality
+	OP_LESS,	///< tests top two items on stack
+	OP_LEQUAL,	///< tests top two items on stack
+	OP_NEQUAL,	///< tests top two items on stack
+	OP_GEQUAL,	///< tests top two items on stack
+	OP_GREAT = 25,	///< tests top two items on stack
+	OP_PLUS,	///< adds top two items on stack and replaces with result
+	OP_MINUS,	///< subs top two items on stack and replaces with result
+	OP_LOR,		///< logical or of top two items on stack and replaces with result
+	OP_MULT,	///< multiplies top two items on stack and replaces with result
+	OP_DIV = 30,		///< divides top two items on stack and replaces with result
+	OP_MOD,		///< divides top two items on stack and replaces with modulus
+	OP_AND,		///< bitwise ands top two items on stack and replaces with result
+	OP_OR,		///< bitwise ors top two items on stack and replaces with result
+	OP_EOR,		///< bitwise exclusive ors top two items on stack and replaces with result
+	OP_LAND = 35,	///< logical ands top two items on stack and replaces with result
+	OP_NOT,		///< logical nots top item on stack
+	OP_COMP,	///< complements top item on stack
+	OP_NEG,		///< negates top item on stack
+	OP_DUP,		///< duplicates top item on stack
+	OP_ESCON = 40,	///< start of escapable sequence
+	OP_ESCOFF = 41,	///< end of escapable sequence
+	OP_CIMM,	///< loads signed immediate onto stack (special to case statements)
+	OP_CDFILM	///< loads film offset onto stack but not in current scene
 };
 
 // modifiers for the above opcodes
-#define	OPSIZE8		0x40	//!< when this bit is set - the operand size is 8 bits
-#define	OPSIZE16	0x80	//!< when this bit is set - the operand size is 16 bits
+#define	OPSIZE8		0x40	///< when this bit is set - the operand size is 8 bits
+#define	OPSIZE16	0x80	///< when this bit is set - the operand size is 16 bits
 
-#define	OPMASK		0x3F	//!< mask to isolate the opcode
+#define	OPMASK		0x3F	///< mask to isolate the opcode
 
 bool bNoPause = false;
 

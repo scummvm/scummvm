@@ -79,15 +79,15 @@ public:
 	 * @note Uses space, horizontal tab, carriage return, newline, form feed and vertical tab as delimiters by default.
 	 */
 	StringTokenizer(const String &str, const String &delimiters = " \t\r\n\f\v");
-	void reset();       //!< Resets the tokenizer to its initial state
-	bool empty() const; //!< Returns true if there are no more tokens left in the string, false otherwise
-	String nextToken(); //!< Returns the next token from the string (Or an empty string if there are no more tokens)
+	void reset();       ///< Resets the tokenizer to its initial state
+	bool empty() const; ///< Returns true if there are no more tokens left in the string, false otherwise
+	String nextToken(); ///< Returns the next token from the string (Or an empty string if there are no more tokens)
 
 private:
-	const String _str;        //!< The string to be tokenized
-	const String _delimiters; //!< String containing all the delimiter characters
-	uint         _tokenBegin; //!< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
-	uint         _tokenEnd;   //!< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
+	const String _str;        ///< The string to be tokenized
+	const String _delimiters; ///< String containing all the delimiter characters
+	uint         _tokenBegin; ///< Latest found token's begin (Valid after a call to nextToken(), zero otherwise)
+	uint         _tokenEnd;   ///< Latest found token's end (Valid after a call to nextToken(), zero otherwise)
 };
 
 /**

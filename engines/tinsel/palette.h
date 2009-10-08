@@ -42,18 +42,18 @@ typedef	uint32	COLORREF;
 #define TINSEL_PSX_RGB(r,g,b) ((uint16)(((uint8)(r))|((uint16)(g)<<5)|(((uint16)(b))<<10)))
 
 enum {
-	MAX_COLOURS		= 256,	//!< maximum number of colours - for VGA 256
-	BITS_PER_PIXEL	= 8,	//!< number of bits per pixel for VGA 256
-	MAX_INTENSITY	= 255,	//!< the biggest value R, G or B can have
-	NUM_PALETTES	= 32,	//!< number of palettes
+	MAX_COLOURS		= 256,	///< maximum number of colours - for VGA 256
+	BITS_PER_PIXEL	= 8,	///< number of bits per pixel for VGA 256
+	MAX_INTENSITY	= 255,	///< the biggest value R, G or B can have
+	NUM_PALETTES	= 32,	///< number of palettes
 
 	// Discworld has some fixed apportioned bits in the palette.
-	BGND_DAC_INDEX	= 0,	//!< index of background colour in Video DAC
-	FGND_DAC_INDEX	= 1,	//!< index of first foreground colour in Video DAC
-	TBLUE1			= 228,	//!< Blue used in translucent rectangles
-	TBLUE2			= 229,	//!< Blue used in translucent rectangles
-	TBLUE3			= 230,	//!< Blue used in translucent rectangles
-	TBLUE4			= 231,	//!< Blue used in translucent rectangles
+	BGND_DAC_INDEX	= 0,	///< index of background colour in Video DAC
+	FGND_DAC_INDEX	= 1,	///< index of first foreground colour in Video DAC
+	TBLUE1			= 228,	///< Blue used in translucent rectangles
+	TBLUE2			= 229,	///< Blue used in translucent rectangles
+	TBLUE3			= 230,	///< Blue used in translucent rectangles
+	TBLUE4			= 231,	///< Blue used in translucent rectangles
 	TALKFONT_COL	= 233
 };
 
@@ -73,8 +73,8 @@ enum {
 
 /** hardware palette structure */
 struct PALETTE {
-	int32 numColours;		//!< number of colours in the palette
-	COLORREF palRGB[MAX_COLOURS];	//!< actual palette colours
+	int32 numColours;		///< number of colours in the palette
+	COLORREF palRGB[MAX_COLOURS];	///< actual palette colours
 } PACKED_STRUCT;
 
 #include "common/pack-end.h"	// END STRUCT PACKING
@@ -82,10 +82,10 @@ struct PALETTE {
 
 /** palette queue structure */
 struct PALQ {
-	SCNHANDLE hPal;		//!< handle to palette data struct
-	int objCount;		//!< number of objects using this palette
-	int posInDAC;		//!< palette position in the video DAC
-	int numColours;		//!< number of colours in the palette
+	SCNHANDLE hPal;		///< handle to palette data struct
+	int objCount;		///< number of objects using this palette
+	int posInDAC;		///< palette position in the video DAC
+	int numColours;		///< number of colours in the palette
 	// Discworld 2 fields
 	bool bFading;		// Whether or not fading
 	COLORREF palRGB[MAX_COLOURS];	// actual palette colours

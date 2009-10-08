@@ -38,10 +38,10 @@ class SaveLoad {
 public:
 	/** How to handle the specific save. */
 	enum SaveMode {
-		kSaveModeNone,   //!< Don't handle it
-		kSaveModeIgnore, //!< Ignore it
-		kSaveModeExists, //!< Just claim it exists
-		kSaveModeSave    //!< A normal save
+		kSaveModeNone,   ///< Don't handle it
+		kSaveModeIgnore, ///< Ignore it
+		kSaveModeExists, ///< Just claim it exists
+		kSaveModeSave    ///< A normal save
 	};
 
 	/** The constructor.
@@ -146,8 +146,8 @@ public:
 	static const uint32 kIndexSize = kSlotCount * kSlotNameLength;
 
 	enum ScreenshotType {
-		kScreenshotTypeGob3, //!< Goblins 3 type screenshot
-		kScreenshotTypeLost  //!< Lost in Time type screenshot
+		kScreenshotTypeGob3, ///< Goblins 3 type screenshot
+		kScreenshotTypeLost  ///< Lost in Time type screenshot
 	};
 
 	SaveLoad_v3(GobEngine *vm, const char *targetName, ScreenshotType sShotType);

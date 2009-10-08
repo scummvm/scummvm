@@ -35,11 +35,11 @@ struct OBJECT;
 
 /** animation structure */
 struct ANIM {
-	int aniRate;		//!< animation speed
-	int aniDelta;		//!< animation speed delta counter
-	OBJECT *pObject;	//!< object to animate (assumed to be multi-part)
-	uint32 hScript;		//!< animation script handle
-	int scriptIndex;	//!< current position in animation script
+	int aniRate;		///< animation speed
+	int aniDelta;		///< animation speed delta counter
+	OBJECT *pObject;	///< object to animate (assumed to be multi-part)
+	uint32 hScript;		///< animation script handle
+	int scriptIndex;	///< current position in animation script
 };
 typedef ANIM *PANIM;
 
@@ -47,25 +47,25 @@ typedef void (*PANI_ADDR)(struct ANIM *);
 
 /** Animation script commands */
 enum {
-	ANI_END			= 0,	//!< end of animation script
-	ANI_JUMP		= 1,	//!< animation script jump
-	ANI_HFLIP		= 2,	//!< flip animated object horizontally
-	ANI_VFLIP		= 3,	//!< flip animated object vertically
-	ANI_HVFLIP		= 4,	//!< flip animated object in both directions
-	ANI_ADJUSTX		= 5,	//!< adjust animated object x animation point
-	ANI_ADJUSTY		= 6,	//!< adjust animated object y animation point
-	ANI_ADJUSTXY	= 7,	//!< adjust animated object x & y animation points
-	ANI_NOSLEEP		= 8,	//!< do not sleep for this frame
-	ANI_CALL		= 9,	//!< call routine
-	ANI_HIDE		= 10,	//!< hide animated object
-	ANI_STOP		= 11	//!< stop sound
+	ANI_END			= 0,	///< end of animation script
+	ANI_JUMP		= 1,	///< animation script jump
+	ANI_HFLIP		= 2,	///< flip animated object horizontally
+	ANI_VFLIP		= 3,	///< flip animated object vertically
+	ANI_HVFLIP		= 4,	///< flip animated object in both directions
+	ANI_ADJUSTX		= 5,	///< adjust animated object x animation point
+	ANI_ADJUSTY		= 6,	///< adjust animated object y animation point
+	ANI_ADJUSTXY	= 7,	///< adjust animated object x & y animation points
+	ANI_NOSLEEP		= 8,	///< do not sleep for this frame
+	ANI_CALL		= 9,	///< call routine
+	ANI_HIDE		= 10,	///< hide animated object
+	ANI_STOP		= 11	///< stop sound
 };
 
 /** animation script command possibilities */
 union ANI_SCRIPT {
-	int32 op;			//!< treat as an opcode or operand
-	uint32 hFrame;		//!< treat as a animation frame handle
-//	PANI_ADDR pFunc;	//!< treat as a animation function call
+	int32 op;			///< treat as an opcode or operand
+	uint32 hFrame;		///< treat as a animation frame handle
+//	PANI_ADDR pFunc;	///< treat as a animation function call
 };
 
 

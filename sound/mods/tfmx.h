@@ -89,8 +89,8 @@ private:
 	enum { kNumVoices = 4, kNumChannels = 8, kNumSubsongs = 32, kMaxPatternOffsets = 128, kMaxMacroOffsets = 128 };
 
 	struct MdatResource {
-		const byte *mdatAlloc;	//!< allocated Block of Memory
-		const byte *mdatData;  	//!< Start of mdat-File, might point before mdatAlloc to correct Offset
+		const byte *mdatAlloc;	///< allocated Block of Memory
+		const byte *mdatData;  	///< Start of mdat-File, might point before mdatAlloc to correct Offset
 		uint32 mdatLen;
 
 		uint16 headerFlags;
@@ -98,16 +98,16 @@ private:
 //		char textField[6 * 40];
 
 		struct Subsong {
-			uint16 songstart;	//!< Index in Trackstep-Table
-			uint16 songend;		//!< Last index in Trackstep-Table
+			uint16 songstart;	///< Index in Trackstep-Table
+			uint16 songend;		///< Last index in Trackstep-Table
 			uint16 tempo;
 		} subsong[kNumSubsongs];
 
-		uint32 trackstepOffset;	//!< Offset in mdat
+		uint32 trackstepOffset;	///< Offset in mdat
 		uint32 sfxTableOffset;
 
-		uint32 patternOffset[kMaxPatternOffsets];	//!< Offset in mdat
-		uint32 macroOffset[kMaxMacroOffsets];	//!< Offset in mdat
+		uint32 patternOffset[kMaxPatternOffsets];	///< Offset in mdat
+		uint32 macroOffset[kMaxMacroOffsets];	///< Offset in mdat
 
 		void boundaryCheck(const void *address, size_t accessLen = 1) const {
 			assert(mdatAlloc <= address && (const byte *)address + accessLen <= (const byte *)mdatData + mdatLen);
@@ -115,7 +115,7 @@ private:
 	} const *_resource;
 
 	struct SampleResource {
-		const int8 *sampleData;	//!< The whole sample-File
+		const int8 *sampleData;	///< The whole sample-File
 		uint32 sampleLen;
 
 		void boundaryCheck(const void *address, size_t accessLen = 2) const {
@@ -140,7 +140,7 @@ private:
 		uint16	macroReturnStep;
 		uint8	macroLoopCount;
 		bool	macroRun;
-		int8	macroSfxRun;	//!< values are the folowing: -1 macro disabled, 0 macro init, 1 macro running
+		int8	macroSfxRun;	///< values are the folowing: -1 macro disabled, 0 macro init, 1 macro running
 
 		uint32	customMacro;
 		uint8	customMacroIndex;
@@ -193,7 +193,7 @@ private:
 		uint8	command;
 		int8	expose; 
 		uint8	loopCount;
-		uint8	wait;	//!< how many ticks to wait before next Command
+		uint8	wait;	///< how many ticks to wait before next Command
 	} _patternCtx[kNumChannels];
 
 	struct TrackStepContext {
@@ -204,12 +204,12 @@ private:
 	} _trackCtx;
 
 	struct PlayerContext {
-		int8	song;	//!< >= 0 if Song is running (means process Patterns)
+		int8	song;	///< >= 0 if Song is running (means process Patterns)
 
 		uint16	patternCount;
-		uint16	patternSkip;	//!< skip that amount of CIA-Interrupts
+		uint16	patternSkip;	///< skip that amount of CIA-Interrupts
 
-		int8	volume;	//!< Master Volume
+		int8	volume;	///< Master Volume
 
 		uint8	fadeSkip;
 		uint8	fadeCount;
@@ -221,7 +221,7 @@ private:
 		uint16	*signal;
 		uint16	numSignals;
 
-		bool	stopWithLastPattern; //!< hack to automatically stop the whole player if no Pattern is running
+		bool	stopWithLastPattern; ///< hack to automatically stop the whole player if no Pattern is running
 	} _playerCtx;
 
 	const byte *getSfxPtr(uint16 index = 0) const {

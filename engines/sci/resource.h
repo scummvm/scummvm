@@ -282,14 +282,14 @@ protected:
 
 	ViewType _viewType; // Used to determine if the game has EGA or VGA graphics
 	Common::List<ResourceSource *> _sources;
-	int _memoryLocked;	//!< Amount of resource bytes in locked memory
-	int _memoryLRU;		//!< Amount of resource bytes under LRU control
-	Common::List<Resource *> _LRU; //!< Last Resource Used list
+	int _memoryLocked;	///< Amount of resource bytes in locked memory
+	int _memoryLRU;		///< Amount of resource bytes under LRU control
+	Common::List<Resource *> _LRU; ///< Last Resource Used list
 	ResourceMap _resMap;
-	Common::List<Common::File *> _volumeFiles; //!< list of opened volume files
-	ResourceSource *_audioMapSCI1; //!< Currently loaded audio map for SCI1
-	ResVersion _volVersion; //!< RESOURCE.0xx version
-	ResVersion _mapVersion; //!< RESOURCE.MAP version
+	Common::List<Common::File *> _volumeFiles; ///< list of opened volume files
+	ResourceSource *_audioMapSCI1; ///< Currently loaded audio map for SCI1
+	ResVersion _volVersion; ///< RESOURCE.0xx version
+	ResVersion _mapVersion; ///< RESOURCE.MAP version
 
 	/**
 	 * Initializes the resource manager

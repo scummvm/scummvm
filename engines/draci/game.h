@@ -90,8 +90,8 @@ enum InventoryConstants {
   kInventoryItemHeight = 25,
   kInventoryColumns = 7,
   kInventoryLines = 5,
-  kInventoryX = 70, //!< Used for positioning of the inventory sprite on the X axis
-  kInventoryY = 30, //!< Used for positioning of the inventory sprite on the Y axis
+  kInventoryX = 70, ///< Used for positioning of the inventory sprite on the X axis
+  kInventoryY = 30, ///< Used for positioning of the inventory sprite on the Y axis
   kInventorySlots = kInventoryLines * kInventoryColumns
 };
 
@@ -398,7 +398,7 @@ private:
 	int _oldObjUnderCursor;
 	int _animUnderCursor;
 
-	int _markedAnimationIndex; //!< Used by the Mark GPL command
+	int _markedAnimationIndex; ///< Used by the Mark GPL command
 
 	int _scheduledPalette;
 };

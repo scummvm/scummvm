@@ -74,11 +74,11 @@ public:
 	virtual DrawableType getType() const = 0;
 
 protected:
-	uint _width;        //!< Width of the sprite
-	uint _height;       //!< Height of the sprite
-	uint _scaledWidth;  //!< Scaled width of the sprite
-	uint _scaledHeight; //!< Scaled height of the sprite
-	int _x, _y;         //!< Sprite coordinates
+	uint _width;        ///< Width of the sprite
+	uint _height;       ///< Height of the sprite
+	uint _scaledWidth;  ///< Scaled width of the sprite
+	uint _scaledHeight; ///< Scaled height of the sprite
+	int _x, _y;         ///< Sprite coordinates
 
 	/** The time a drawable should stay on the screen
 	 *  before being replaced by another or deleted
@@ -120,7 +120,7 @@ public:
 	DrawableType getType() const { return kDrawableSprite; }
 
 private:
-	const byte *_data;  //!< Pointer to a buffer containing raw sprite data (row-wise)
+	const byte *_data;  ///< Pointer to a buffer containing raw sprite data (row-wise)
 	bool _mirror;
 };
 

@@ -36,8 +36,8 @@ namespace Common {
  * Simple class for handling both 2D position and size.
  */
 struct Point {
-	int16 x;	//!< The horizontal part of the point
-	int16 y;	//!< The vertical part of the point
+	int16 x;	///< The horizontal part of the point
+	int16 y;	///< The vertical part of the point
 
 	Point() : x(0), y(0) {}
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
@@ -82,8 +82,8 @@ struct Point {
  * When writing code using our Rect class, always keep this principle in mind!
 */
 struct Rect {
-	int16 top, left;		//!< The point at the top left of the rectangle (part of the rect).
-	int16 bottom, right;	//!< The point at the bottom right of the rectangle (not part of the rect).
+	int16 top, left;		///< The point at the top left of the rectangle (part of the rect).
+	int16 bottom, right;	///< The point at the bottom right of the rectangle (not part of the rect).
 
 	Rect() : top(0), left(0), bottom(0), right(0) {}
 	Rect(int16 w, int16 h) : top(0), left(0), bottom(h), right(w) {}

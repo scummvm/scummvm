@@ -30,17 +30,15 @@
 #include "sci/engine/vm.h"
 #include "sci/engine/vm_types.h"	// for reg_t
 
-//#include "common/util.h"
-
 namespace Sci {
 
 struct SegmentRef {
-	bool isRaw;	///! true if data is raw, false if it is a reg_t sequence
+	bool isRaw;	///< true if data is raw, false if it is a reg_t sequence
 	union {
 		byte *raw;
 		reg_t *reg;
 	};
-	int maxSize;	///! number of available bytes
+	int maxSize;	///< number of available bytes
 	// TODO: Add this?
 	//reg_t pointer;	// Original pointer
 

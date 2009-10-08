@@ -40,13 +40,13 @@ struct OBJECT;
  * multi-object initialisation structure (parallels OBJ_INIT struct)
  */
 struct MULTI_INIT {
-	SCNHANDLE hMulFrame;	//!< multi-objects shape - NULL terminated list of IMAGE structures
-	int32 mulFlags;			//!< multi-objects flags
-	int32 mulID;			//!< multi-objects id
-	int32 mulX;				//!< multi-objects initial x ani position
-	int32 mulY;				//!< multi-objects initial y ani position
-	int32 mulZ;				//!< multi-objects initial z position
-	uint32 otherFlags;		//!< multi-objects Tinsel 2 - other flags
+	SCNHANDLE hMulFrame;	///< multi-objects shape - NULL terminated list of IMAGE structures
+	int32 mulFlags;			///< multi-objects flags
+	int32 mulID;			///< multi-objects id
+	int32 mulX;				///< multi-objects initial x ani position
+	int32 mulY;				///< multi-objects initial y ani position
+	int32 mulZ;				///< multi-objects initial z position
+	uint32 otherFlags;		///< multi-objects Tinsel 2 - other flags
 } PACKED_STRUCT;
 typedef MULTI_INIT *PMULTI_INIT;
 

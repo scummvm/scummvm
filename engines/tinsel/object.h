@@ -40,17 +40,17 @@ enum {
 	NUM_OBJECTS	= 256,
 
 	// object flags
-	DMA_WNZ		= 0x0001,	//!< write non-zero data
-	DMA_CNZ		= 0x0002,	//!< write constant on non-zero data
-	DMA_CONST	= 0x0004,	//!< write constant on both zero & non-zero data
-	DMA_WA		= 0x0008,	//!< write all data
-	DMA_FLIPH	= 0x0010,	//!< flip object horizontally
-	DMA_FLIPV	= 0x0020,	//!< flip object vertically
-	DMA_CLIP	= 0x0040,	//!< clip object
-	DMA_TRANS	= 0x0084,	//!< translucent rectangle object
-	DMA_ABS		= 0x0100,	//!< position of object is absolute
-	DMA_CHANGED	= 0x0200,	//!< object has changed in some way since the last frame
-	DMA_USERDEF	= 0x0400,	//!< user defined flags start here
+	DMA_WNZ		= 0x0001,	///< write non-zero data
+	DMA_CNZ		= 0x0002,	///< write constant on non-zero data
+	DMA_CONST	= 0x0004,	///< write constant on both zero & non-zero data
+	DMA_WA		= 0x0008,	///< write all data
+	DMA_FLIPH	= 0x0010,	///< flip object horizontally
+	DMA_FLIPV	= 0x0020,	///< flip object vertically
+	DMA_CLIP	= 0x0040,	///< clip object
+	DMA_TRANS	= 0x0084,	///< translucent rectangle object
+	DMA_ABS		= 0x0100,	///< position of object is absolute
+	DMA_CHANGED	= 0x0200,	///< object has changed in some way since the last frame
+	DMA_USERDEF	= 0x0400,	///< user defined flags start here
 	DMA_GHOST	= 0x0080,
 
 
@@ -61,12 +61,12 @@ enum {
 /** structure for image */
 #include "common/pack-start.h"	// START STRUCT PACKING
 struct IMAGE {
-	short imgWidth;		//!< image width
-	unsigned short imgHeight;	//!< image height
-	short anioffX;		//!< image x animation offset
-	short anioffY;		//!< image y animation offset
-	SCNHANDLE hImgBits;	//!< image bitmap handle
-	SCNHANDLE hImgPal;	//!< image palette handle
+	short imgWidth;		///< image width
+	unsigned short imgHeight;	///< image height
+	short anioffX;		///< image x animation offset
+	short anioffY;		///< image y animation offset
+	SCNHANDLE hImgBits;	///< image bitmap handle
+	SCNHANDLE hImgPal;	///< image palette handle
 } PACKED_STRUCT;
 #include "common/pack-end.h"	// END STRUCT PACKING
 
@@ -76,25 +76,25 @@ typedef uint32 FRAME;
 
 // object structure
 struct OBJECT {
-	OBJECT *pNext;	//!< pointer to next object in list
-	OBJECT *pSlave;	//!< pointer to slave object (multi-part objects)
-//	char *pOnDispList;	//!< pointer to display list byte for background objects
-//	frac_t xVel;		//!< x velocity of object
-//	frac_t yVel;		//!< y velocity of object
-	frac_t xPos;		//!< x position of object
-	frac_t yPos;		//!< y position of object
-	int zPos;			//!< z position of object
-	Common::Rect rcPrev;		//!< previous screen coordinates of object bounding rectangle
-	int flags;			//!< object flags - see above for list
-	PALQ *pPal;			//!< objects palette Q position
-	int constant;		//!< which colour in palette for monochrome objects
-	int width;			//!< width of object
-	int height;			//!< height of object
-	SCNHANDLE hBits;	//!< image bitmap handle
-	SCNHANDLE hImg;		//!< handle to object image definition
-	SCNHANDLE hShape;	//!< objects current animation frame
-	SCNHANDLE hMirror;	//!< objects previous animation frame
-	int oid;			//!< object identifier
+	OBJECT *pNext;	///< pointer to next object in list
+	OBJECT *pSlave;	///< pointer to slave object (multi-part objects)
+//	char *pOnDispList;	///< pointer to display list byte for background objects
+//	frac_t xVel;		///< x velocity of object
+//	frac_t yVel;		///< y velocity of object
+	frac_t xPos;		///< x position of object
+	frac_t yPos;		///< y position of object
+	int zPos;			///< z position of object
+	Common::Rect rcPrev;		///< previous screen coordinates of object bounding rectangle
+	int flags;			///< object flags - see above for list
+	PALQ *pPal;			///< objects palette Q position
+	int constant;		///< which colour in palette for monochrome objects
+	int width;			///< width of object
+	int height;			///< height of object
+	SCNHANDLE hBits;	///< image bitmap handle
+	SCNHANDLE hImg;		///< handle to object image definition
+	SCNHANDLE hShape;	///< objects current animation frame
+	SCNHANDLE hMirror;	///< objects previous animation frame
+	int oid;			///< object identifier
 };
 typedef OBJECT *POBJECT;
 

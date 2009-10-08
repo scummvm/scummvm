@@ -108,12 +108,12 @@ protected:
 		return (_dwWrote == _szUnpacked) && (_dwRead >= _szPacked);
 	}
 
-	uint32 _dwBits;		//!< bits buffer
-	byte _nBits;		//!< number of unread bits in _dwBits
-	uint32 _szPacked;	//!< size of the compressed data
-	uint32 _szUnpacked;	//!< size of the decompressed data
-	uint32 _dwRead;		//!< number of bytes read from _src
-	uint32 _dwWrote;	//!< number of bytes written to _dest
+	uint32 _dwBits;		///< bits buffer
+	byte _nBits;		///< number of unread bits in _dwBits
+	uint32 _szPacked;	///< size of the compressed data
+	uint32 _szUnpacked;	///< size of the decompressed data
+	uint32 _dwRead;		///< number of bytes read from _src
+	uint32 _dwWrote;	///< number of bytes written to _dest
 	Common::ReadStream *_src;
 	byte *_dest;
 };

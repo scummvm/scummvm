@@ -23,7 +23,7 @@
  *
  */
 
-//! \brief Declarations related to the MidiParser class
+/// \brief Declarations related to the MidiParser class
 
 #ifndef SOUND_MIDIPARSER_H
 #define SOUND_MIDIPARSER_H
@@ -53,16 +53,16 @@ class MidiDriver;
  * each Tracker location.
  */
 struct Tracker {
-	byte * _play_pos;        //!< A pointer to the next event to be parsed
-	uint32 _play_time;       //!< Current time in microseconds; may be in between event times
-	uint32 _play_tick;       //!< Current MIDI tick; may be in between event ticks
-	uint32 _last_event_time; //!< The time, in microseconds, of the last event that was parsed
-	uint32 _last_event_tick; //!< The tick at which the last parsed event occurs
-	byte   _running_status;  //!< Cached MIDI command, for MIDI streams that rely on implied event codes
+	byte * _play_pos;        ///< A pointer to the next event to be parsed
+	uint32 _play_time;       ///< Current time in microseconds; may be in between event times
+	uint32 _play_tick;       ///< Current MIDI tick; may be in between event ticks
+	uint32 _last_event_time; ///< The time, in microseconds, of the last event that was parsed
+	uint32 _last_event_tick; ///< The tick at which the last parsed event occurs
+	byte   _running_status;  ///< Cached MIDI command, for MIDI streams that rely on implied event codes
 
 	Tracker() { clear(); }
 
-	//! Copy constructor for each duplication of Tracker information.
+	/// Copy constructor for each duplication of Tracker information.
 	Tracker(const Tracker &copy) :
 	_play_pos(copy._play_pos),
 	_play_time(copy._play_time),
@@ -72,7 +72,7 @@ struct Tracker {
 	_running_status(copy._running_status)
 	{ }
 
-	//! Clears all data; used by the constructor for initialization.
+	/// Clears all data; used by the constructor for initialization.
 	void clear() {
 		_play_pos = 0;
 		_play_time = 0;
@@ -89,28 +89,28 @@ struct Tracker {
  * of MidiParser::parseNextEvent() each time another event is needed.
  */
 struct EventInfo {
-	byte * start; //!< Position in the MIDI stream where the event starts.
-	              //!< For delta-based MIDI streams (e.g. SMF and XMIDI), this points to the delta.
-	uint32 delta; //!< The number of ticks after the previous event that this event should occur.
-	byte   event; //!< Upper 4 bits are the command code, lower 4 bits are the MIDI channel.
-	              //!< For META, event == 0xFF. For SysEx, event == 0xF0.
+	byte * start; ///< Position in the MIDI stream where the event starts.
+	              ///< For delta-based MIDI streams (e.g. SMF and XMIDI), this points to the delta.
+	uint32 delta; ///< The number of ticks after the previous event that this event should occur.
+	byte   event; ///< Upper 4 bits are the command code, lower 4 bits are the MIDI channel.
+	              ///< For META, event == 0xFF. For SysEx, event == 0xF0.
 	union {
 		struct {
-			byte param1; //!< The first parameter in a simple MIDI message.
-			byte param2; //!< The second parameter in a simple MIDI message.
+			byte param1; ///< The first parameter in a simple MIDI message.
+			byte param2; ///< The second parameter in a simple MIDI message.
 		} basic;
 		struct {
-			byte   type; //!< For META events, this indicates the META type.
-			byte * data; //!< For META and SysEx events, this points to the start of the data.
+			byte   type; ///< For META events, this indicates the META type.
+			byte * data; ///< For META and SysEx events, this points to the start of the data.
 		} ext;
 	};
-	uint32 length; //!< For META and SysEx blocks, this indicates the length of the data.
-	               //!< For Note On events, a non-zero value indicates that no Note Off event
-	               //!< will occur, and the MidiParser will have to generate one itself.
-	               //!< For all other events, this value should always be zero.
+	uint32 length; ///< For META and SysEx blocks, this indicates the length of the data.
+	               ///< For Note On events, a non-zero value indicates that no Note Off event
+	               ///< will occur, and the MidiParser will have to generate one itself.
+	               ///< For all other events, this value should always be zero.
 
-	byte channel() { return event & 0x0F; } //!< Separates the MIDI channel from the event.
-	byte command() { return event >> 4; }   //!< Separates the command code from the event.
+	byte channel() { return event & 0x0F; } ///< Separates the MIDI channel from the event.
+	byte command() { return event >> 4; }   ///< Separates the command code from the event.
 };
 
 /**
@@ -121,9 +121,9 @@ struct EventInfo {
  * longer a note should remain active before being turned off.
  */
 struct NoteTimer {
-	byte channel;     //!< The MIDI channel on which the note was played
-	byte note;        //!< The note number for the active note
-	uint32 time_left; //!< The time, in microseconds, remaining before the note should be turned off
+	byte channel;     ///< The MIDI channel on which the note was played
+	byte note;        ///< The note number for the active note
+	uint32 time_left; ///< The time, in microseconds, remaining before the note should be turned off
 	NoteTimer() : channel(0), note(0), time_left(0) {}
 };
 
@@ -268,30 +268,30 @@ struct NoteTimer {
  */
 class MidiParser {
 private:
-	uint16    _active_notes[128];   //!< Each uint16 is a bit mask for channels that have that note on.
-	NoteTimer _hanging_notes[32];   //!< Maintains expiration info for up to 32 notes.
-	                                //!< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
-	byte      _hanging_notes_count; //!< Count of hanging notes, used to optimize expiration.
+	uint16    _active_notes[128];   ///< Each uint16 is a bit mask for channels that have that note on.
+	NoteTimer _hanging_notes[32];   ///< Maintains expiration info for up to 32 notes.
+	                                ///< Used for "Smart Jump" and MIDI formats that do not include explicit Note Off events.
+	byte      _hanging_notes_count; ///< Count of hanging notes, used to optimize expiration.
 
 protected:
-	MidiDriver *_driver;    //!< The device to which all events will be transmitted.
-	uint32 _timer_rate;     //!< The time in microseconds between onTimer() calls. Obtained from the MidiDriver.
-	uint32 _ppqn;           //!< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
-	uint32 _tempo;          //!< Microseconds per quarter note.
-	uint32 _psec_per_tick;  //!< Microseconds per tick (_tempo / _ppqn).
-	bool   _autoLoop;       //!< For lightweight clients that don't provide their own flow control.
-	bool   _smartJump;      //!< Support smart expiration of hanging notes when jumping
-	bool   _centerPitchWheelOnUnload;  //!< Center the pitch wheels when unloading a song
+	MidiDriver *_driver;    ///< The device to which all events will be transmitted.
+	uint32 _timer_rate;     ///< The time in microseconds between onTimer() calls. Obtained from the MidiDriver.
+	uint32 _ppqn;           ///< Pulses Per Quarter Note. (We refer to "pulses" as "ticks".)
+	uint32 _tempo;          ///< Microseconds per quarter note.
+	uint32 _psec_per_tick;  ///< Microseconds per tick (_tempo / _ppqn).
+	bool   _autoLoop;       ///< For lightweight clients that don't provide their own flow control.
+	bool   _smartJump;      ///< Support smart expiration of hanging notes when jumping
+	bool   _centerPitchWheelOnUnload;  ///< Center the pitch wheels when unloading a song
 
-	byte  *_tracks[120];    //!< Multi-track MIDI formats are supported, up to 120 tracks.
-	byte   _num_tracks;     //!< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
-	byte   _active_track;   //!< Keeps track of the currently active track, in multi-track formats.
+	byte  *_tracks[120];    ///< Multi-track MIDI formats are supported, up to 120 tracks.
+	byte   _num_tracks;     ///< Count of total tracks for multi-track MIDI formats. 1 for single-track formats.
+	byte   _active_track;   ///< Keeps track of the currently active track, in multi-track formats.
 
-	Tracker _position;      //!< The current time/position in the active track.
-	EventInfo _next_event;  //!< The next event to transmit. Events are preparsed
-	                        //!< so each event is parsed only once; this permits
-	                        //!< simulated events in certain formats.
-	bool   _abort_parse;    //!< If a jump or other operation interrupts parsing, flag to abort.
+	Tracker _position;      ///< The current time/position in the active track.
+	EventInfo _next_event;  ///< The next event to transmit. Events are preparsed
+	                        ///< so each event is parsed only once; this permits
+	                        ///< simulated events in certain formats.
+	bool   _abort_parse;    ///< If a jump or other operation interrupts parsing, flag to abort.
 
 protected:
 	static uint32 readVLQ(byte * &data);

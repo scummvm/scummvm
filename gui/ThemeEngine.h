@@ -134,7 +134,7 @@ protected:
 	friend class GUI::GuiObject;
 
 public:
-	//! Vertical alignment of the text.
+	/// Vertical alignment of the text.
 	enum TextAlignVertical {
 		kTextAlignVInvalid,
 		kTextAlignVBottom,
@@ -142,17 +142,17 @@ public:
 		kTextAlignVTop
 	};
 
-	//! Widget background type
+	/// Widget background type
 	enum WidgetBackground {
-		kWidgetBackgroundNo,			//!< No background at all
-		kWidgetBackgroundPlain,			//!< Simple background, this may not include borders
-		kWidgetBackgroundBorder,		//!< Same as kWidgetBackgroundPlain just with a border
-		kWidgetBackgroundBorderSmall,	//!< Same as kWidgetBackgroundPlain just with a small border
-		kWidgetBackgroundEditText,		//!< Background used for edit text fields
-		kWidgetBackgroundSlider			//!< Background used for sliders
+		kWidgetBackgroundNo,			///< No background at all
+		kWidgetBackgroundPlain,			///< Simple background, this may not include borders
+		kWidgetBackgroundBorder,		///< Same as kWidgetBackgroundPlain just with a border
+		kWidgetBackgroundBorderSmall,	///< Same as kWidgetBackgroundPlain just with a small border
+		kWidgetBackgroundEditText,		///< Background used for edit text fields
+		kWidgetBackgroundSlider			///< Background used for sliders
 	};
 
-	//! Dialog background type
+	/// Dialog background type
 	enum DialogBackground {
 		kDialogBackgroundMain,
 		kDialogBackgroundSpecial,
@@ -160,20 +160,20 @@ public:
 		kDialogBackgroundDefault
 	};
 
-	//! State of the widget to be drawn
+	/// State of the widget to be drawn
 	enum State {
-		kStateDisabled,		//!< Indicates that the widget is disabled, that does NOT include that it is invisible
-		kStateEnabled,		//!< Indicates that the widget is enabled
-		kStateHighlight		//!< Indicates that the widget is highlighted by the user
+		kStateDisabled,		///< Indicates that the widget is disabled, that does NOT include that it is invisible
+		kStateEnabled,		///< Indicates that the widget is enabled
+		kStateHighlight		///< Indicates that the widget is highlighted by the user
 	};
 
 	typedef State WidgetStateInfo;
 
-	//! Text inversion state of the text to be draw
+	/// Text inversion state of the text to be draw
 	enum TextInversionState {
-		kTextInversionNone,	//!< Indicates that the text should not be drawn inverted
-		kTextInversion,		//!< Indicates that the text should be drawn inverted, but not focused
-		kTextInversionFocus	//!< Indicates thte the test should be drawn inverted, and focused
+		kTextInversionNone,	///< Indicates that the text should not be drawn inverted
+		kTextInversion,		///< Indicates that the text should be drawn inverted, but not focused
+		kTextInversionFocus	///< Indicates thte the test should be drawn inverted, and focused
 	};
 
 	enum ScrollbarState {
@@ -184,35 +184,35 @@ public:
 		kScrollbarStateSinglePage
 	};
 
-	//! Font style selector
+	/// Font style selector
 	enum FontStyle {
-		kFontStyleBold = 0,			//!< A bold font. This is also the default font.
-		kFontStyleNormal = 1,		//!< A normal font.
-		kFontStyleItalic = 2,		//!< Italic styled font.
-		kFontStyleFixedNormal = 3,	//!< Fixed size font.
-		kFontStyleFixedBold = 4,	//!< Fixed size bold font.
-		kFontStyleFixedItalic = 5,	//!< Fixed size italic font.
+		kFontStyleBold = 0,			///< A bold font. This is also the default font.
+		kFontStyleNormal = 1,		///< A normal font.
+		kFontStyleItalic = 2,		///< Italic styled font.
+		kFontStyleFixedNormal = 3,	///< Fixed size font.
+		kFontStyleFixedBold = 4,	///< Fixed size bold font.
+		kFontStyleFixedItalic = 5,	///< Fixed size italic font.
 		kFontStyleMax
 	};
 
-	//! Font color selector
+	/// Font color selector
 	enum FontColor {
-		kFontColorNormal = 0,		//!< The default color of the theme
-		kFontColorAlternate = 1,	//!< Alternative font color
+		kFontColorNormal = 0,		///< The default color of the theme
+		kFontColorAlternate = 1,	///< Alternative font color
 		kFontColorMax
 	};
 
-	//! Function used to process areas other than the current dialog
+	/// Function used to process areas other than the current dialog
 	enum ShadingStyle {
-		kShadingNone,		//!< No special post processing
-		kShadingDim,		//!< Dimming unused areas
-		kShadingLuminance	//!< Converting colors to luminance for unused areas
+		kShadingNone,		///< No special post processing
+		kShadingDim,		///< Dimming unused areas
+		kShadingLuminance	///< Converting colors to luminance for unused areas
 	};
 
 	// Special image ids for images used in the GUI
-	static const char * const kImageLogo;		//!< ScummVM logo used in the launcher
-	static const char * const kImageLogoSmall;	//!< ScummVM logo used in the GMM
-	static const char * const kImageSearch;	//!< Search tool image used in the launcher
+	static const char * const kImageLogo;		///< ScummVM logo used in the launcher
+	static const char * const kImageLogoSmall;	///< ScummVM logo used in the GMM
+	static const char * const kImageSearch;	///< Search tool image used in the launcher
 
 	/**
 	 * Graphics mode enumeration.
@@ -220,9 +220,9 @@ public:
 	 * surface.
 	 */
 	enum GraphicsMode {
-		kGfxDisabled = 0,	//!< No GFX
-		kGfxStandard16bit,	//!< 2BPP with the standard (aliased) renderer.
-		kGfxAntialias16bit	//!< 2BPP with the optimized AA renderer.
+		kGfxDisabled = 0,	///< No GFX
+		kGfxStandard16bit,	///< 2BPP with the standard (aliased) renderer.
+		kGfxAntialias16bit	///< 2BPP with the optimized AA renderer.
 	};
 
 	/** Constant value to expand dirty rectangles, to make sure they are fully copied */
@@ -625,11 +625,11 @@ protected:
 	/** Queue with all the drawing that must be done to the screen */
 	Common::List<ThemeItem *> _screenQueue;
 
-	bool _initOk; //!< Class and renderer properly initialized
-	bool _themeOk; //!< Theme data successfully loaded.
-	bool _enabled; //!< Whether the Theme is currently shown on the overlay
+	bool _initOk; ///< Class and renderer properly initialized
+	bool _themeOk; ///< Theme data successfully loaded.
+	bool _enabled; ///< Whether the Theme is currently shown on the overlay
 
-	Common::String _themeName; //!< Name of the currently loaded theme
+	Common::String _themeName; ///< Name of the currently loaded theme
 	Common::String _themeId;
 	Common::String _themeFile;
 	Common::Archive *_themeArchive;

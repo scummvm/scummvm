@@ -94,8 +94,8 @@ struct SCENE_STRUC {
 
 /** entrance structure - one per entrance */
 struct ENTRANCE_STRUC {
-	int32 eNumber;		//!< entrance number
-	SCNHANDLE hScript;	//!< handle to entrance script
+	int32 eNumber;		///< entrance number
+	SCNHANDLE hScript;	///< handle to entrance script
 	// Tinsel 2 fields
 	SCNHANDLE hEntDesc;	// handle to entrance description
 	uint32 flags;

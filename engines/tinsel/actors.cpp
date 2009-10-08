@@ -56,9 +56,9 @@ namespace Tinsel {
 
 /** actor struct - one per actor */
 struct T1_ACTOR_STRUC {
-	int32 masking;			//!< type of actor masking
-	SCNHANDLE hActorId;		//!< handle actor ID string index
-	SCNHANDLE hActorCode;	//!< handle to actor script
+	int32 masking;			///< type of actor masking
+	SCNHANDLE hActorId;		///< handle actor ID string index
+	SCNHANDLE hActorCode;	///< handle to actor script
 } PACKED_STRUCT;
 
 struct T2_ACTOR_STRUC {

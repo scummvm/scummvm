@@ -36,13 +36,13 @@ namespace Scumm {
 
 class SmushChannel {
 protected:
-	int32 _track;				//!< the track number
-	byte *_tbuffer;	//!< data temporary buffer
-	int32 _tbufferSize;			//!< temporary buffer size
-	byte *_sbuffer;	//!< sound buffer
-	int32 _sbufferSize;			//!< sound buffer size
+	int32 _track;				///< the track number
+	byte *_tbuffer;	///< data temporary buffer
+	int32 _tbufferSize;			///< temporary buffer size
+	byte *_sbuffer;	///< sound buffer
+	int32 _sbufferSize;			///< sound buffer size
 
-	int32 _dataSize;			//!< remaining size of sound data in the iMUS buffer
+	int32 _dataSize;			///< remaining size of sound data in the iMUS buffer
 
 	bool _inData;
 
@@ -100,9 +100,9 @@ class ImuseChannel : public SmushChannel {
 private:
 	int32 _srbufferSize;
 
-	int32 _bitsize;			//!< the bitsize of the original data
-	int32 _rate;				//!< the sampling rate of the original data
-	int32 _channels;			//!< the number of channels of the original data
+	int32 _bitsize;			///< the bitsize of the original data
+	int32 _rate;				///< the sampling rate of the original data
+	int32 _channels;			///< the number of channels of the original data
 
 protected:
 	void decode();

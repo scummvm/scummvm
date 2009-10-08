@@ -60,7 +60,7 @@ private:
 	 */
 	bool _fullUpdate;
 
-	Common::List<Common::Rect> _dirtyRects; //!< List of currently dirty rectangles
+	Common::List<Common::Rect> _dirtyRects; ///< List of currently dirty rectangles
 
 };
 

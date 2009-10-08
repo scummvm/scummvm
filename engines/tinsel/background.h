@@ -49,26 +49,26 @@ enum {
 
 /** background playfield structure - a playfield is a container for modules */
 struct PLAYFIELD {
-	OBJECT *pDispList;	//!< object display list for this playfield
-	frac_t fieldX;		//!< current world x position of playfield
-	frac_t fieldY;		//!< current world y position of playfield
-	frac_t fieldXvel;	//!< current x velocity of playfield
-	frac_t fieldYvel;	//!< current y velocity of playfield
-	Common::Rect rcClip;	//!< clip rectangle for this playfield
-	bool bMoved;		//!< set when playfield has moved
+	OBJECT *pDispList;	///< object display list for this playfield
+	frac_t fieldX;		///< current world x position of playfield
+	frac_t fieldY;		///< current world y position of playfield
+	frac_t fieldXvel;	///< current x velocity of playfield
+	frac_t fieldYvel;	///< current y velocity of playfield
+	Common::Rect rcClip;	///< clip rectangle for this playfield
+	bool bMoved;		///< set when playfield has moved
 };
 
 /** multi-playfield background structure - a backgnd is a container of playfields */
 struct BACKGND {
-	COLORREF rgbSkyColour;	//!< background sky colour
-	Common::Point ptInitWorld;		//!< initial world position
-	Common::Rect rcScrollLimits;	//!< scroll limits
-	int refreshRate;		//!< background update process refresh rate
-	frac_t *pXscrollTable;	//!< pointer to x direction scroll table for this background
-	frac_t *pYscrollTable;	//!< pointer to y direction scroll table for this background
-	int numPlayfields;		//!< number of playfields for this background
-	PLAYFIELD *fieldArray;	//!< pointer to array of all playfields for this background
-	bool bAutoErase;		//!< when set - screen is cleared before anything is plotted (unused)
+	COLORREF rgbSkyColour;	///< background sky colour
+	Common::Point ptInitWorld;		///< initial world position
+	Common::Rect rcScrollLimits;	///< scroll limits
+	int refreshRate;		///< background update process refresh rate
+	frac_t *pXscrollTable;	///< pointer to x direction scroll table for this background
+	frac_t *pYscrollTable;	///< pointer to y direction scroll table for this background
+	int numPlayfields;		///< number of playfields for this background
+	PLAYFIELD *fieldArray;	///< pointer to array of all playfields for this background
+	bool bAutoErase;		///< when set - screen is cleared before anything is plotted (unused)
 };
 
 
