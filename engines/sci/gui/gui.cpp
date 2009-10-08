@@ -377,7 +377,7 @@ int16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
-	bool old_picNotValid = _screen->_picNotValid;
+	byte old_picNotValid = _screen->_picNotValid;
 
 	if (listReference.isNull()) {
 		_gfx->AnimateDisposeLastCast();
@@ -398,7 +398,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	_gfx->AnimateDisposeLastCast();
 
-	_gfx->AnimateFill();
+	_gfx->AnimateFill(list, old_picNotValid);
 
 	// _gfx->AnimateSort();
 	if (old_picNotValid) {

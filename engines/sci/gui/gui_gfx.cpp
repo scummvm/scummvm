@@ -1068,7 +1068,15 @@ void SciGuiGfx::AnimateDisposeLastCast() {
 }
 
 enum {
-	SCI_ANIMATE_SIGNAL_FROZEN       = 0x0100
+	SCI_ANIMATE_MASK_STOPUPDATE    = 0x0001,
+	SCI_ANIMATE_MASK_VIEWUPDATED   = 0x0002,
+	SCI_ANIMATE_MASK_NOUPDATE      = 0x0004,
+	SCI_ANIMATE_MASK_HIDDEN        = 0x0008,
+	SCI_ANIMATE_MASK_FIXEDPRIORITY = 0x0010,
+	SCI_ANIMATE_MASK_ALWAYSUPDATE  = 0x0020,
+	SCI_ANIMATE_MASK_FORCEUPDATE   = 0x0040,
+	SCI_ANIMATE_MASK_REMOVEVIEW    = 0x0080,
+	SCI_ANIMATE_MASK_FROZEN        = 0x0100
 };
 
 void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
@@ -1076,12 +1084,13 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	uint16 signal;
+	uint16 mask;
 
 	while (curNode) {
 		curObject = curNode->value;
-		signal = GET_SEL32V(curObject, signal);
-		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
+		mask = GET_SEL32V(curObject, signal);
+		if (!(mask & SCI_ANIMATE_MASK_FROZEN)) {
+			// Call .doit method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
 			curNode = _s->_segMan->lookupNode(curAddress);
@@ -1091,7 +1100,66 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	}
 }
 
-void SciGuiGfx::AnimateFill() {
+void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	SciGuiView *view = NULL;
+	GuiResourceId viewId;
+	GuiViewLoopNo loopNo;
+	GuiViewCelNo celNo;
+	int16 x, y, priority;
+	uint16 mask;
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		// Get cel data...
+		viewId = GET_SEL32V(curObject, view);
+		loopNo = GET_SEL32V(curObject, loop);
+		celNo = GET_SEL32V(curObject, cel);
+		x = GET_SEL32V(curObject, x);
+		y = GET_SEL32V(curObject, y);
+		priority = GET_SEL32V(curObject, priority);
+		mask = GET_SEL32V(curObject, signal);
+
+		// Get the corresponding view
+		view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+		
+		// adjust loop and cel, if any of those is invalid
+		if (loopNo >= view->getLoopCount()) {
+			loopNo = 0;
+			PUT_SEL32V(curObject, loop, loopNo);
+		}
+		if (celNo >= view->getCelCount(loopNo)) {
+			celNo = 0;
+			PUT_SEL32V(curObject, cel, celNo);
+		}
+
+		// FIXME: this code doesnt seem to do anything useful?!?!
+		// rect = (Common::Rect *)&cobj[_objOfs[8]];
+		// res->getCelRect(curLoop, curCel, x, y, z, rect);
+		if (!(mask & SCI_ANIMATE_MASK_FIXEDPRIORITY))
+			PUT_SEL32V(curObject, priority, 0); // CoordPri(y) FIXME
+		
+		if (mask & SCI_ANIMATE_MASK_NOUPDATE) {
+			if (mask & (SCI_ANIMATE_MASK_FORCEUPDATE | SCI_ANIMATE_MASK_VIEWUPDATED)
+				|| (mask & SCI_ANIMATE_MASK_HIDDEN && !(mask & SCI_ANIMATE_MASK_REMOVEVIEW))
+				|| (!(mask & SCI_ANIMATE_MASK_HIDDEN) && mask & SCI_ANIMATE_MASK_REMOVEVIEW)
+				|| (mask & SCI_ANIMATE_MASK_ALWAYSUPDATE))
+				old_picNotValid++;
+			mask &= 0xFFFF ^ SCI_ANIMATE_MASK_STOPUPDATE;
+		} else {
+			if (mask & SCI_ANIMATE_MASK_STOPUPDATE || mask & SCI_ANIMATE_MASK_ALWAYSUPDATE)
+				old_picNotValid++;
+			mask &= 0xFFFF ^ SCI_ANIMATE_MASK_FORCEUPDATE;
+		}
+		PUT_SEL32V(curObject, signal, mask);
+
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
 }
 
 Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {

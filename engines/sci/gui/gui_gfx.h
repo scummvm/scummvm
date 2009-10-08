@@ -106,7 +106,7 @@ public:
 	int16 onControl(uint16 screenMask, Common::Rect rect);
 	void AnimateDisposeLastCast();
 	void AnimateInvoke(List *list, int argc, reg_t *argv);
-	void AnimateFill();
+	void AnimateFill(List *list, byte &oldPicNotValid);
 	Common::List<GuiAnimateList> *AnimateMakeSortedList(List *list);
 	void AnimateUpdate();
 	void AnimateDrawCels();
