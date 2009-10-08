@@ -62,7 +62,7 @@ enum SegmentType {
 	SEG_TYPE_NODES = 7,
 	SEG_TYPE_HUNK = 8,
 	SEG_TYPE_DYNMEM = 9,
-	SEG_TYPE_STRING_FRAG = 10,
+	SEG_TYPE_STRING_FRAG = 10,	// obsolete, we keep it to be able to load old saves
 
 	SEG_TYPE_MAX // For sanity checking
 };
@@ -127,15 +127,6 @@ public:
 	virtual void listAllOutgoingReferences(reg_t object, void *param, NoteCallback note) {}
 };
 
-
-// TODO: Implement the following class
-struct StringFrag : public SegmentObj {
-	StringFrag() : SegmentObj(SEG_TYPE_STRING_FRAG) {}
-
-	virtual bool isValidOffset(uint16 offset) const { return false; }
-
-	virtual void saveLoadWithSerializer(Common::Serializer &ser);
-};
 
 struct IntMapper;
 

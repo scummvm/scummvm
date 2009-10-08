@@ -211,10 +211,14 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		SegmentType type = (s.isSaving() && mobj) ? mobj->getType() : SEG_TYPE_INVALID;
 		s.syncAsUint32LE(type);
 
+		// Handle the OBSOLETE type SEG_TYPE_STRING_FRAG -- just ignore it
+		if (s.isLoading() && type == SEG_TYPE_STRING_FRAG) {
+			continue;
+		}
+
 		// If we were saving and mobj == 0, or if we are loading and this is an
 		// entry marked as empty -> skip to next
 		if (type == SEG_TYPE_INVALID) {
-			mobj = 0;
 			continue;
 		}
 
@@ -461,10 +465,6 @@ void DataStack::saveLoadWithSerializer(Common::Serializer &s) {
 	}
 }
 
-void StringFrag::saveLoadWithSerializer(Common::Serializer &s) {
-	// TODO
-}
-
 #pragma mark -
 
 static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
@@ -696,8 +696,6 @@ static void reconstruct_sounds(EngineState *s) {
 		seeker = seeker->_next;
 	}
 }
-
-void internal_stringfrag_strncpy(EngineState *s, reg_t *dest, reg_t *src, int len);
 
 EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	EngineState *retval;

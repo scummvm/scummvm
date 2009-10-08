@@ -330,7 +330,6 @@ int script_init_engine(EngineState *s) {
 	s->script_000 = s->_segMan->getScript(script_000_segment);
 
 	s->sys_strings = s->_segMan->allocateSysStrings(&s->sys_strings_segment);
-	s->string_frag_segment = s->_segMan->allocateStringFrags();
 
 	// Allocate static buffer for savegame and CWD directories
 	SystemString *str = &s->sys_strings->_strings[SYS_STRING_SAVEDIR];

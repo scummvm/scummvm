@@ -95,7 +95,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	have_bp = 0;
 	sys_strings_segment = 0;
 	sys_strings = 0;
-	string_frag_segment = 0;
 
 	parserIsValid = false;
 

@@ -58,9 +58,6 @@ SegmentObj *SegmentObj::createSegmentObj(SegmentType type) {
 	case SEG_TYPE_HUNK:
 		mem = new HunkTable();
 		break;
-	case SEG_TYPE_STRING_FRAG:
-		mem = new StringFrag();
-		break;
 	case SEG_TYPE_LISTS:
 		mem = new ListTable();
 		break;

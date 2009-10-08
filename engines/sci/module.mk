@@ -33,7 +33,6 @@ MODULE_OBJS = \
 	engine/seg_manager.o \
 	engine/segment.o \
 	engine/static_selectors.o \
-	engine/stringfrag.o \
 	engine/state.o \
 	engine/vm.o \
 	gfx/font.o \

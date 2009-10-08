@@ -747,14 +747,6 @@ SystemStrings *SegManager::allocateSysStrings(SegmentId *segid) {
 	return (SystemStrings *)allocSegment(new SystemStrings(), segid);
 }
 
-SegmentId SegManager::allocateStringFrags() {
-	SegmentId segid;
-
-	allocSegment(new StringFrag(), &segid);
-
-	return segid;
-}
-
 uint16 SegManager::validateExportFunc(int pubfunct, SegmentId seg) {
 	Script *scr = getScript(seg);
 	if (scr->_numExports <= pubfunct) {

@@ -302,8 +302,6 @@ public:
 	SegmentId sys_strings_segment;
 	SystemStrings *sys_strings;
 
-	SegmentId string_frag_segment;
-
 	reg_t game_obj; /**< Pointer to the game object */
 
 	SegManager *_segMan;

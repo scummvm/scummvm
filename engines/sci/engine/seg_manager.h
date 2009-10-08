@@ -203,14 +203,6 @@ public:
 
 	// 5. System Strings
 
-	/**
-	 * Allocates a string fragments segment
-	 * See also stringfrag.h
-	 * @return	Segment ID to use for string fragments
-	 */
-	SegmentId allocateStringFrags();
-
-
 	// 6, 7. Lists and Nodes
 
 	/**

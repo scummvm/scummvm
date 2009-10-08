@@ -52,7 +52,6 @@
 			<File RelativePath="..\..\engines\sci\engine\state.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\state.h" />
 			<File RelativePath="..\..\engines\sci\engine\static_selectors.cpp" />
-			<File RelativePath="..\..\engines\sci\engine\stringfrag.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\vm.cpp" />
 			<File RelativePath="..\..\engines\sci\engine\vm.h" />
 			<File RelativePath="..\..\engines\sci\engine\vm_types.h" />
