@@ -110,7 +110,7 @@ public:
 	Common::List<GuiAnimateList> *AnimateMakeSortedList(List *list);
 	void AnimateUpdate();
 	void AnimateDrawCels(List *list);
-	void AnimateRestoreAndDelete();
+	void AnimateRestoreAndDelete(List *list, int argc, reg_t *argv);
 	void SetNowSeen(reg_t objectReference);
 
 	GuiPort *_menuPort;

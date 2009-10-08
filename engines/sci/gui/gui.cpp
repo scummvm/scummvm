@@ -414,7 +414,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 	//_gfx->AnimateUpdateScreen();
 	_screen->copyToScreen();
-	_gfx->AnimateRestoreAndDelete();
+	_gfx->AnimateRestoreAndDelete(list, argc, argv);
 
 	_gfx->SetPort(oldPort);
 }

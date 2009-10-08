@@ -1076,7 +1076,8 @@ enum {
 	SCI_ANIMATE_MASK_ALWAYSUPDATE  = 0x0020,
 	SCI_ANIMATE_MASK_FORCEUPDATE   = 0x0040,
 	SCI_ANIMATE_MASK_REMOVEVIEW    = 0x0080,
-	SCI_ANIMATE_MASK_FROZEN        = 0x0100
+	SCI_ANIMATE_MASK_FROZEN        = 0x0100,
+	SCI_ANIMATE_MASK_DISPOSEME     = 0x8000
 };
 
 void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
@@ -1259,7 +1260,25 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 	}
 }
 
-void SciGuiGfx::AnimateRestoreAndDelete() {
+void SciGuiGfx::AnimateRestoreAndDelete(List *list, int argc, reg_t *argv) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	uint16 mask;
+
+	while (curNode) {
+		curObject = curNode->value;
+		mask = GET_SEL32V(curObject, signal);
+		if (mask & SCI_ANIMATE_MASK_DISPOSEME) {
+			// Call .delete_ method of that object
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
+			// Lookup node again, since the nodetable it was in may have been reallocated
+			curNode = _s->_segMan->lookupNode(curAddress);
+		}
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
 }
 
 void SciGuiGfx::SetNowSeen(reg_t objectReference) {
