@@ -109,7 +109,7 @@ public:
 	void AnimateFill(List *list, byte &oldPicNotValid);
 	Common::List<GuiAnimateList> *AnimateMakeSortedList(List *list);
 	void AnimateUpdate();
-	void AnimateDrawCels();
+	void AnimateDrawCels(List *list);
 	void AnimateRestoreAndDelete();
 	void SetNowSeen(reg_t objectReference);
 

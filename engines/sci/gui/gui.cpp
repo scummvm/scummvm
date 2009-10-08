@@ -405,7 +405,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 		_gfx->AnimateUpdate();
 	}
 
-	_gfx->AnimateDrawCels();
+	_gfx->AnimateDrawCels(list);
 
 	if (_screen->_picNotValid) {
 		//(this->*ShowPic)(_showMap, _showStyle);

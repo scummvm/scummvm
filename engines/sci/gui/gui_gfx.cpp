@@ -1115,7 +1115,7 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 	while (curNode) {
 		curObject = curNode->value;
 
-		// Get cel data...
+		// Get animation data...
 		viewId = GET_SEL32V(curObject, view);
 		loopNo = GET_SEL32V(curObject, loop);
 		celNo = GET_SEL32V(curObject, cel);
@@ -1200,7 +1200,63 @@ Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
 void SciGuiGfx::AnimateUpdate() {
 }
 
-void SciGuiGfx::AnimateDrawCels() {
+void SciGuiGfx::AnimateDrawCels(List *list) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	SciGuiView *view = NULL;
+	GuiResourceId viewId;
+	GuiViewLoopNo loopNo;
+	GuiViewCelNo celNo;
+	int16 x, y, priority;
+	Common::Rect rect;
+	uint16 mask, paletteNo;
+	reg_t hSaved;
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		mask = GET_SEL32V(curObject, signal);
+		if (!(mask & (SCI_ANIMATE_MASK_NOUPDATE | SCI_ANIMATE_MASK_HIDDEN | SCI_ANIMATE_MASK_ALWAYSUPDATE))) {
+			// Get animation data...
+			viewId = GET_SEL32V(curObject, view);
+			loopNo = GET_SEL32V(curObject, loop);
+			celNo = GET_SEL32V(curObject, cel);
+			x = GET_SEL32V(curObject, x);
+			y = GET_SEL32V(curObject, y);
+			priority = GET_SEL32V(curObject, priority);
+			paletteNo = GET_SEL32V(curObject, palette);
+			
+			//rect = (Common::Rect *)&cobj[_objOfs[8]];
+
+			//hSaved = SaveBits(rect, SCI_SCREEN_MASK_ALL);
+			//PUT_SEL32V(curObject, 11, hSaved.toUint16());
+
+			// draw corresponding cel
+			drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
+
+			// arr1[inx] = 1;
+			if (mask & SCI_ANIMATE_MASK_REMOVEVIEW) {
+				mask &= 0xFFFF ^ GFX_REMOVEVIEW;
+				PUT_SEL32V(curObject, signal, mask);
+			}
+			
+//			HEAPHANDLE hNewCast = heapNewPtr(sizeof(sciCast), kDataCast);
+//			sciCast *pNewCast = (sciCast *)heap2Ptr(hNewCast);
+//			pNewCast->view = view;
+//			pNewCast->loop = loop;
+//			pNewCast->cel = cel;
+//			pNewCast->z = z;
+//			pNewCast->pal = pal;
+//			pNewCast->hSaved = 0;
+//			pNewCast->rect = *rect;
+//			_lastCast->AddToEnd(hNewCast);
+		}
+
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
 }
 
 void SciGuiGfx::AnimateRestoreAndDelete() {
