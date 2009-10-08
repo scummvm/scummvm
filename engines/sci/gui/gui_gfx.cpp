@@ -1111,6 +1111,7 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 	GuiViewLoopNo loopNo;
 	GuiViewCelNo celNo;
 	int16 x, y, priority;
+	Common::Rect celRect;
 	uint16 mask;
 
 	while (curNode) {
@@ -1138,9 +1139,17 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 			PUT_SEL32V(curObject, cel, celNo);
 		}
 
-		// FIXME: this code doesnt seem to do anything useful?!?!
-		// rect = (Common::Rect *)&cobj[_objOfs[8]];
-		// res->getCelRect(curLoop, curCel, x, y, z, rect);
+		// Adjust given rect to cel
+		celRect.left = GET_SEL32V(curObject, lsLeft);
+		celRect.top = GET_SEL32V(curObject, lsTop);
+		celRect.right = GET_SEL32V(curObject, lsRight);
+		celRect.bottom = GET_SEL32V(curObject, lsBottom);
+		view->getCelRect(loopNo, celNo, x, y, priority, &celRect);
+		PUT_SEL32V(curObject, lsLeft, celRect.left);
+		PUT_SEL32V(curObject, lsTop, celRect.top);
+		PUT_SEL32V(curObject, lsRight, celRect.right);
+		PUT_SEL32V(curObject, lsBottom, celRect.bottom);
+
 		if (!(mask & SCI_ANIMATE_MASK_FIXEDPRIORITY))
 			PUT_SEL32V(curObject, priority, 0); // CoordPri(y) FIXME
 		
@@ -1211,7 +1220,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 	GuiViewLoopNo loopNo;
 	GuiViewCelNo celNo;
 	int16 x, y, priority;
-	Common::Rect rect;
+	Common::Rect celRect;
 	uint16 mask, paletteNo;
 	reg_t hSaved;
 
@@ -1228,14 +1237,17 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 			y = GET_SEL32V(curObject, y);
 			priority = GET_SEL32V(curObject, priority);
 			paletteNo = GET_SEL32V(curObject, palette);
-			
-			//rect = (Common::Rect *)&cobj[_objOfs[8]];
+
+			celRect.left = GET_SEL32V(curObject, lsLeft);
+			celRect.top = GET_SEL32V(curObject, lsTop);
+			celRect.right = GET_SEL32V(curObject, lsRight);
+			celRect.bottom = GET_SEL32V(curObject, lsBottom);
 
 			//hSaved = SaveBits(rect, SCI_SCREEN_MASK_ALL);
 			//PUT_SEL32V(curObject, 11, hSaved.toUint16());
 
 			// draw corresponding cel
-			drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
+			drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, paletteNo);
 
 			// arr1[inx] = 1;
 			if (mask & SCI_ANIMATE_MASK_REMOVEVIEW) {
