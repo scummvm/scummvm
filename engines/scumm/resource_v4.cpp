@@ -199,14 +199,28 @@ void ScummEngine_v4::readGlobalObjects() {
 
 	uint32 bits;
 	byte tmp;
-	for (i = 0; i != num; i++) {
-		bits = _fileHandle->readByte();
-		bits |= _fileHandle->readByte() << 8;
-		bits |= _fileHandle->readByte() << 16;
-		_classData[i] = bits;
-		tmp = _fileHandle->readByte();
-		_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
-		_objectStateTable[i] = tmp >> OF_STATE_SHL;
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+		for (i = 0; i != num; i++) {
+			bits = _fileHandle->readByte();
+			bits |= _fileHandle->readByte() << 8;
+			bits |= _fileHandle->readByte() << 16;
+			_classData[i] = bits;
+		}
+		for (i = 0; i != num; i++) {
+			tmp = _fileHandle->readByte();
+			_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+			_objectStateTable[i] = tmp >> OF_STATE_SHL;
+		}
+	} else {
+		for (i = 0; i != num; i++) {
+			bits = _fileHandle->readByte();
+			bits |= _fileHandle->readByte() << 8;
+			bits |= _fileHandle->readByte() << 16;
+			_classData[i] = bits;
+			tmp = _fileHandle->readByte();
+			_objectOwnerTable[i] = tmp & OF_OWNER_MASK;
+			_objectStateTable[i] = tmp >> OF_STATE_SHL;
+		}
 	}
 
 	// FIXME: Indy3 FM-TOWNS has 32 extra bytes of unknown meaning
