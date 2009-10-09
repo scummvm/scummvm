@@ -780,7 +780,7 @@ void SciGuiPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte 
 
 void SciGuiPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	byte *circleData = (byte *)&vectorPatternCircles[size];
+	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
 	int y, x;
@@ -802,7 +802,7 @@ void SciGuiPicture::vectorPatternCircle(Common::Rect box, byte size, byte color,
 
 void SciGuiPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
 	byte flag = _screen->getDrawingMask(color, prio, control);
-	byte *circleData = (byte *)&vectorPatternCircles[size];
+	const byte *circleData = vectorPatternCircles[size];
 	byte bitmap = *circleData;
 	byte bitNo = 0;
 	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
