@@ -63,21 +63,7 @@ enum kDebugLevels {
 	kDebugLevelSci0Pic    = 1 << 21
 };
 
-struct SciGameDescription {
-	ADGameDescription desc;
-	uint32 flags;
-};
-
 extern const char *versionNames[];
-
-enum SciGameFlags {
-	// SCI0 flags
-
-	/* Applies to all versions before 0.000.629
-	 * Older SCI versions had simpler code for GetTime()
-	 */
-	GF_SCI0_OLDGETTIME		= (1 << 0)
-};
 
 /** SCI versions */
 enum SciVersion {
@@ -104,7 +90,7 @@ enum MoveCountType {
 class SciEngine : public Engine {
 	friend class Console;
 public:
-	SciEngine(OSystem *syst, const SciGameDescription *desc);
+	SciEngine(OSystem *syst, const ADGameDescription *desc);
 	~SciEngine();
 
 	// Engine APIs
@@ -132,7 +118,7 @@ public:
 	Common::String unwrapFilename(const Common::String &name) const;
 
 private:
-	const SciGameDescription *_gameDescription;
+	const ADGameDescription *_gameDescription;
 	ResourceManager *_resMan;
 	EngineState *_gamestate;
 	Kernel *_kernel;

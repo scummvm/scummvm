@@ -49,7 +49,7 @@ namespace Sci {
 
 class GfxDriver;
 
-SciEngine::SciEngine(OSystem *syst, const SciGameDescription *desc)
+SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 		: Engine(syst), _gameDescription(desc), _system(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
 	// in particular, do not load data from files; rather, if you
@@ -236,15 +236,15 @@ Console *SciEngine::getSciDebugger() {
 }
 
 const char* SciEngine::getGameID() const {
-	return _gameDescription->desc.gameid;
+	return _gameDescription->gameid;
 }
 
 Common::Language SciEngine::getLanguage() const {
-	return _gameDescription->desc.language;
+	return _gameDescription->language;
 }
 
 Common::Platform SciEngine::getPlatform() const {
-	return _gameDescription->desc.platform;
+	return _gameDescription->platform;
 }
 
 uint32 SciEngine::getFlags() const {

@@ -33,8 +33,6 @@
 
 namespace Sci {
 
-#define GF_FOR_SCI0_BEFORE_629 GF_SCI0_OLDGETTIME
-
 // Titles of the games
 static const PlainGameDescriptor SciGameTitles[] = {
 	{"sci",             "Sierra SCI Game"},
@@ -113,17 +111,14 @@ static const PlainGameDescriptor SciGameTitles[] = {
  * The fallback game descriptor used by the SCI engine's fallbackDetector.
  * Contents of this struct are to be overwritten by the fallbackDetector.
  */
-static SciGameDescription s_fallbackDesc = {
-	{
-		"",
-		"",
-		AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
-		Common::UNK_LANG,
-		Common::kPlatformPC,
-		ADGF_NO_FLAGS,
-		Common::GUIO_NONE
-	},
-	0
+static ADGameDescription s_fallbackDesc = {
+	"",
+	"",
+	AD_ENTRY1(0, 0), // This should always be AD_ENTRY1(0, 0) in the fallback descriptor
+	Common::UNK_LANG,
+	Common::kPlatformPC,
+	ADGF_NO_FLAGS,
+	Common::GUIO_NONE
 };
 
 
@@ -131,7 +126,7 @@ static const ADParams detectionParams = {
 	// Pointer to ADGameDescription or its superset structure
 	(const byte *)Sci::SciGameDescriptions,
 	// Size of that superset structure
-	sizeof(SciGameDescription),
+	sizeof(ADGameDescription),
 	// Number of bytes to compute MD5 sum for
 	5000,
 	// List of all engine targets
@@ -196,11 +191,11 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	bool smallResource000Size = false;
 
 	// Set some defaults
-	s_fallbackDesc.desc.extra = "";
-	s_fallbackDesc.desc.language = Common::EN_ANY;
-	s_fallbackDesc.desc.flags = ADGF_NO_FLAGS;
-	s_fallbackDesc.desc.platform = Common::kPlatformPC;	// default to PC platform
-	s_fallbackDesc.desc.gameid = "sci";
+	s_fallbackDesc.extra = "";
+	s_fallbackDesc.language = Common::EN_ANY;
+	s_fallbackDesc.flags = ADGF_NO_FLAGS;
+	s_fallbackDesc.platform = Common::kPlatformPC;	// default to PC platform
+	s_fallbackDesc.gameid = "sci";
 
 	// First grab all filenames
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
@@ -236,8 +231,8 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 			Common::SeekableReadStream *tmpStream = file->createReadStream();
 			if (tmpStream->size() > 10 * 1024 * 1024) {
 				// We got a CD version, so set the CD flag accordingly
-				s_fallbackDesc.desc.flags |= ADGF_CD;
-				s_fallbackDesc.desc.extra = "CD";
+				s_fallbackDesc.flags |= ADGF_CD;
+				s_fallbackDesc.extra = "CD";
 			}
 			delete tmpStream;
 		}
@@ -257,11 +252,11 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 		// The existence of any of these files indicates an Amiga game
 		if (filename.contains("9.pat") || filename.contains("spal") ||
 			filename.contains("patch.005") || filename.contains("bank.001"))
-				s_fallbackDesc.desc.platform = Common::kPlatformAmiga;
+				s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 		// The existence of 7.pat indicates a Mac game
 		if (filename.contains("7.pat"))
-			s_fallbackDesc.desc.platform = Common::kPlatformMacintosh;
+			s_fallbackDesc.platform = Common::kPlatformMacintosh;
 	
 		// The data files for Atari ST versions are the same as their DOS counterparts
 	}
@@ -293,12 +288,12 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 #endif
 
 	// EGA views
-	if (gameViews == kViewEga && s_fallbackDesc.desc.platform != Common::kPlatformAmiga)
-		s_fallbackDesc.desc.extra = "EGA";
+	if (gameViews == kViewEga && s_fallbackDesc.platform != Common::kPlatformAmiga)
+		s_fallbackDesc.extra = "EGA";
 
 	// Set the platform to Amiga if the game is using Amiga views
 	if (gameViews == kViewAmiga)
-		s_fallbackDesc.desc.platform = Common::kPlatformAmiga;
+		s_fallbackDesc.platform = Common::kPlatformAmiga;
 
 	// Determine the game id
 	SegManager *segMan = new SegManager(resMan);
@@ -312,7 +307,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	reg_t game_obj = segMan->lookupScriptExport(0, 0);
 	const char *gameName = segMan->getObjectName(game_obj);
 	debug(2, "Detected ID: \"%s\" at %04x:%04x", gameName, PRINT_REG(game_obj));
-	s_fallbackDesc.desc.gameid = convertSierraGameId(gameName, &s_fallbackDesc.desc.flags);
+	s_fallbackDesc.gameid = convertSierraGameId(gameName, &s_fallbackDesc.flags);
 	delete segMan;
 
 	// Try to determine the game language
@@ -329,7 +324,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	if (text) {
 		while (seeker < text->size) {
 			if (text->data[seeker] == '#') {
-				s_fallbackDesc.desc.language = charToScummVMLanguage(text->data[seeker + 1]);
+				s_fallbackDesc.language = charToScummVMLanguage(text->data[seeker + 1]);
 				break;
 			}
 			seeker++;
@@ -339,31 +334,31 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 	delete resMan;
 
 	// Distinguish demos from full versions
-	if (!strcmp(s_fallbackDesc.desc.gameid, "castlebrain") && !Common::File::exists("resource.002")) {
+	if (!strcmp(s_fallbackDesc.gameid, "castlebrain") && !Common::File::exists("resource.002")) {
 		// The Spanish full version doesn't have resource.002, but we can distinguish it from the
 		// demo from the size of resource.000
 		if (smallResource000Size)
-			s_fallbackDesc.desc.flags |= ADGF_DEMO;
+			s_fallbackDesc.flags |= ADGF_DEMO;
 	}
 
-	if (!strcmp(s_fallbackDesc.desc.gameid, "islandbrain") && smallResource000Size)
-		s_fallbackDesc.desc.flags |= ADGF_DEMO;
+	if (!strcmp(s_fallbackDesc.gameid, "islandbrain") && smallResource000Size)
+		s_fallbackDesc.flags |= ADGF_DEMO;
 
-	if (!strcmp(s_fallbackDesc.desc.gameid, "kq6") && smallResource000Size)
-		s_fallbackDesc.desc.flags |= ADGF_DEMO;
+	if (!strcmp(s_fallbackDesc.gameid, "kq6") && smallResource000Size)
+		s_fallbackDesc.flags |= ADGF_DEMO;
 
 	// Fill in extras field
-	if (!strcmp(s_fallbackDesc.desc.gameid, "lsl1sci") ||
-		!strcmp(s_fallbackDesc.desc.gameid, "pq1sci") ||
-		!strcmp(s_fallbackDesc.desc.gameid, "sq1sci"))
-		s_fallbackDesc.desc.extra = "VGA Remake";
+	if (!strcmp(s_fallbackDesc.gameid, "lsl1sci") ||
+		!strcmp(s_fallbackDesc.gameid, "pq1sci") ||
+		!strcmp(s_fallbackDesc.gameid, "sq1sci"))
+		s_fallbackDesc.extra = "VGA Remake";
 
-	if (!strcmp(s_fallbackDesc.desc.gameid, "qfg1") && !Common::File::exists("resource.001"))
-		s_fallbackDesc.desc.extra = "VGA Remake";
+	if (!strcmp(s_fallbackDesc.gameid, "qfg1") && !Common::File::exists("resource.001"))
+		s_fallbackDesc.extra = "VGA Remake";
 
 	// Add "demo" to the description for demos
-	if (s_fallbackDesc.desc.flags & ADGF_DEMO)
-		s_fallbackDesc.desc.extra = "demo";
+	if (s_fallbackDesc.flags & ADGF_DEMO)
+		s_fallbackDesc.extra = "demo";
 
 	SearchMan.remove("SCI_detection");
 
@@ -371,7 +366,7 @@ const ADGameDescription *SciMetaEngine::fallbackDetect(const Common::FSList &fsl
 }
 
 bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
-	const SciGameDescription *desc = (const SciGameDescription *)gd;
+	const ADGameDescription *desc = (const ADGameDescription *)gd;
 
 	*engine = new SciEngine(syst, desc);
 
