@@ -777,6 +777,13 @@ psp)
 	;;
 esac
 
+# special case for Snow Leopard is to force compile as 32 bit
+os=${_host_os%.*.*}
+if test "$os" = "darwin10"; then
+	CXXFLAGS="$CXXFLAGS -m32"
+	LDFLAGS="$LDFLAGS -m32"
+fi	
+
 if test -z "$_host_alias"; then
 	_host_alias="$_host_cpu-$_host_os"
 else
