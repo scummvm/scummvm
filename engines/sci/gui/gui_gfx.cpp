@@ -1204,7 +1204,7 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 		PUT_SEL32V(curObject, nsBottom, celRect.bottom);
 
 		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY))
-			PUT_SEL32V(curObject, priority, 0); // CoordPri(y) FIXME
+			PUT_SEL32V(curObject, priority, CoordinateToPriority(y));
 		
 		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
 			if (signal & (SCI_ANIMATE_SIGNAL_FORCEUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED)
@@ -1334,7 +1334,7 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 			signal[listNr] &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
 			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = celRect[listNr];
-				rect.top = rect.top; // CLIP<int16>(PriCoord(zs[i]) - 1, rect.top, rect.bottom - 1);  
+				rect.top = CLIP<int16>(PriorityToCoordinate(z[listNr]) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
