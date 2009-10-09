@@ -1579,7 +1579,7 @@ void LoLEngine::initDialogueSequence(int controlMode, int pageNum) {
 		} else {
 			_screen->fillRect(0, 128, 319, 199, 1);
 			gui_drawBox(0, 129, 320, 71, 136, 251, -1);
-			gui_drawBox(1, 130, 318, 69, 136, 251, 252);
+			gui_drawBox(1, 130, 318, 69, 136, 251, 252);			
 		}
 
 		_screen->modifyScreenDim(5, 8, 131, 306, 66);
@@ -2510,7 +2510,10 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 			int sH = ((fb->progress / 8 + shp[2] + fireBallWH) << 8) / shp[2];
 
 			if (fb->finalize) {
-				_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
+				if (_flags.use16ColorMode)
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 4, sW, sH);
+				else
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
 
 				if (finShpIndex2[fb->finProgress] != -1) {
 					shp = _fireballShapes[finShpIndex2[fb->finProgress]];
@@ -2522,7 +2525,10 @@ int LoLEngine::processMagicFireball(int charNum, int spellLevel) {
 				}
 
 			} else {
-				_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
+				if (_flags.use16ColorMode)
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 4, sW, sH);
+				else				
+					_screen->drawShape(_screen->_curPage, shp, fX, fY, 0, 0x1004, _trueLightTable1, _trueLightTable2, sW, sH);
 			}
 
 			if (fb->finalize) {

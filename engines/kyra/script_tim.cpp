@@ -1274,7 +1274,10 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 		_screen->fillRect(d->sx, d->sy + d->h - 9, d->sx + d->w - 1, d->sy + d->h - 1, d->unkA);
 	} else {
 		const ScreenDim *d = _screen->_curDim;
-		_screen->fillRect(d->sx, d->sy, d->sx + d->w - (_vm->gameFlags().use16ColorMode ? 3 : 2), d->sy + d->h - 1, d->unkA);
+		if (_vm->gameFlags().use16ColorMode)
+			_screen->fillRect(d->sx, d->sy, d->sx + d->w - 3, d->sy + d->h - 2, d->unkA);
+		else
+			_screen->fillRect(d->sx, d->sy, d->sx + d->w - 2, d->sy + d->h - 1, d->unkA);
 		_vm->_txt->clearDim(4);
 		_vm->_txt->resetDimTextPositions(4);
 	}

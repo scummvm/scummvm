@@ -63,9 +63,22 @@ TextDisplayer_LoL::~TextDisplayer_LoL() {
 
 void TextDisplayer_LoL::setupField(bool mode) {
 	if (_vm->textEnabled()) {
+
+		int y = 142;
+		int h = 37;
+		int stepY = 3;
+		int stepH = 1;
+
+		if (_vm->gameFlags().use16ColorMode) {
+			y = 140;
+			h = 39;
+			stepY = 4;
+			stepH = 2;
+		}
+
 		if (mode) {
 			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
-			_screen->copyRegion(80, 142, 0, 0, 240, 37, 0, 3, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(80, y, 0, 0, 240, h, 0, 3, Screen::CR_NO_P_CHECK);
 			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer2);
 			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 		} else {
@@ -73,11 +86,11 @@ void TextDisplayer_LoL::setupField(bool mode) {
 			int cp = _screen->setCurPage(2);
 			_screen->copyRegionToBuffer(3, 0, 0, 320, 40, _vm->_pageBuffer1);
 			_screen->copyBlockToPage(3, 0, 0, 320, 40, _vm->_pageBuffer2);
-			_screen->copyRegion(0, 0, 80, 142, 240, 37, 3, _screen->_curPage, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 0, 80, y, 240, h, 3, _screen->_curPage, Screen::CR_NO_P_CHECK);
 
 			for (int i = 177; i > 141; i--) {
 				uint32 endTime = _vm->_system->getMillis() + _vm->_tickLength;
-				_screen->copyRegion(83, i, 83, i - 1, 235, 3, 0, 0, Screen::CR_NO_P_CHECK);
+				_screen->copyRegion(83, i - stepH + 1, 83, i - stepH, 235, stepY, 0, 0, Screen::CR_NO_P_CHECK);
 				_screen->copyRegion(83, i + 1, 83, i + 1, 235, 1, 2, 0, Screen::CR_NO_P_CHECK);
 				_vm->updateInput();
 				_screen->updateScreen();
@@ -105,14 +118,22 @@ void TextDisplayer_LoL::expandField() {
 		_vm->_timer->disable(11);
 		_screen->setScreenDim(clearDim(3));
 		_screen->copyRegionToBuffer(3, 0, 0, 320, 10, tmp);
-		if (_vm->gameFlags().use16ColorMode)
-			_screen->copyRegion(83, 139, 0, 0, 235, 4, 0, 2, Screen::CR_NO_P_CHECK);
-		else
-			_screen->copyRegion(83, 140, 0, 0, 235, 3, 0, 2, Screen::CR_NO_P_CHECK);		
+
+		int y = 140;
+		int h = 3;
+		int stepH = 0;
+
+		if (_vm->gameFlags().use16ColorMode) {
+			y = 139;
+			h = 4;
+			stepH = 1;
+		}
+		
+		_screen->copyRegion(83, y, 0, 0, 235, h, 0, 2, Screen::CR_NO_P_CHECK);		
 
 		for (int i = 140; i < 177; i++) {
 			uint32 endTime = _vm->_system->getMillis() + _vm->_tickLength;
-			_screen->copyRegion(0, 0, 83, i, 235, 3, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->copyRegion(0, 0, 83, i - stepH, 235, h, 2, 0, Screen::CR_NO_P_CHECK);
 			_vm->updateInput();
 			_screen->updateScreen();
 			_vm->delayUntil(endTime);
