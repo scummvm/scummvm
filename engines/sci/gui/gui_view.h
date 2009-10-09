@@ -71,6 +71,7 @@ private:
 	SciGuiPalette *_palette;
 
 	GuiResourceId _resourceId;
+	Resource *_resource;
 	byte *_resourceData;
 
 	uint16 _loopCount;

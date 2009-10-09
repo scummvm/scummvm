@@ -49,14 +49,16 @@ SciGuiView::~SciGuiView() {
 		delete[] _loop[loopNum].cel;
 	}
 	delete[] _loop;
+
+	_resMan->unlockResource(_resource);
 }
 
 void SciGuiView::initData(GuiResourceId resourceId) {
-	Resource *viewResource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), false);
-	if (!viewResource) {
+	_resource = _resMan->findResource(ResourceId(kResourceTypeView, resourceId), true);
+	if (!_resource) {
 		error("view resource %d not found", resourceId);
 	}
-	_resourceData = viewResource->data;
+	_resourceData = _resource->data;
 
 	byte *celData, *loopData;
 	uint16 celOffset;
