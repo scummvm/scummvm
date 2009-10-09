@@ -268,6 +268,230 @@ PaletteEntry get_pic_color(EngineState *s, int color) {
 	}
 }
 
+void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
+	warning("_k_redraw_box(): Unimplemented");
+#if 0
+	int i;
+	ViewObject *list = s->dyn_views;
+
+	printf("Reanimating views\n", s->dyn_views_nr);
+
+	for (i = 0;i < s->dyn_views_nr;i++) {
+		*(list[i].underBitsp) = graph_save_box(s, list[i].nsLeft, list[i].nsTop, list[i].nsRight - list[i].nsLeft,
+												list[i].nsBottom - list[i].nsTop, SCI_MAP_VISUAL | SCI_MAP_PRIORITY);
+		draw_view0(s->pic, s->ports[0], list[i].nsLeft, list[i].nsTop, list[i].priority, list[i].loop,
+		           list[i].cel, 0, list[i].view);
+	}
+
+	graph_update_box(s, x1, y1, x2 - x1, y2 - y1);
+
+	for (i = 0;i < s->dyn_views_nr;i++)	{
+		graph_restore_box(s, *(list[i].underBitsp));
+		list[i].underBits = 0;
+	}
+#endif
+}
+
+void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) {
+	SegManager *segMan = s->_segMan;
+	int view = GET_SEL32V(obj, view);
+	int signal = GET_SEL32V(obj, signal);
+	int loop;
+	int maxloops;
+	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
+
+	if (signal & _K_VIEW_SIG_FLAG_DOESNT_TURN)
+		return;
+
+	angle %= 360;
+
+	if (!oldScriptHeader) {
+		if (angle < 45)
+			loop = 3;
+		else if (angle < 136)
+			loop = 0;
+		else if (angle < 225)
+			loop = 2;
+		else if (angle < 316)
+			loop = 1;
+		else
+			loop = 3;
+	} else {
+		if (angle >= 330 || angle <= 30)
+			loop = 3;
+		else if (angle <= 150)
+			loop = 0;
+		else if (angle <= 210)
+			loop = 2;
+		else if (angle < 330)
+			loop = 1;
+		else loop = 0xffff;
+	}
+
+	maxloops = gfxop_lookup_view_get_loops(s->gfx_state, view);
+
+	if ((loop > 1) && (maxloops < 4))
+		return;
+
+	PUT_SEL32V(obj, loop, loop);
+}
+
+Common::Rect set_base(EngineState *s, reg_t object) {
+	SegManager *segMan = s->_segMan;
+	int x, y, original_y, z, ystep, xsize, ysize;
+	int xbase, ybase, xend, yend;
+	int view, loop, cel;
+	int oldloop, oldcel;
+	int xmod = 0, ymod = 0;
+	Common::Rect retval;
+
+	x = (int16)GET_SEL32V(object, x);
+	original_y = y = (int16)GET_SEL32V(object, y);
+
+	if (s->_kernel->_selectorCache.z > -1)
+		z = (int16)GET_SEL32V(object, z);
+	else
+		z = 0;
+
+	y -= z; // Subtract z offset
+
+	ystep = (int16)GET_SEL32V(object, yStep);
+
+	view = (int16)GET_SEL32V(object, view);
+	oldloop = loop = sign_extend_byte(GET_SEL32V(object, loop));
+	oldcel = cel = sign_extend_byte(GET_SEL32V(object, cel));
+
+	Common::Point offset = Common::Point(0, 0);
+
+	if (loop != oldloop) {
+		loop = 0;
+		PUT_SEL32V(object, loop, 0);
+		debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
+	}
+
+	if (cel != oldcel) {
+		cel = 0;
+		PUT_SEL32V(object, cel, 0);
+	}
+
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
+
+	xmod = offset.x;
+	ymod = offset.y;
+
+	xbase = x - xmod - (xsize >> 1);
+	xend = xbase + xsize;
+	yend = y /* - ymod */ + 1;
+	ybase = yend - ystep;
+
+	debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
+	          x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
+
+	retval.left = xbase;
+	retval.top = ybase;
+	retval.right = xend;
+	retval.bottom = yend;
+
+	return retval;
+}
+
+void _k_base_setter(EngineState *s, reg_t object) {
+	SegManager *segMan = s->_segMan;
+	Common::Rect absrect = set_base(s, object);
+
+	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) != kSelectorVariable)
+		return; // non-fatal
+
+	// Note: there was a check here for a very old version of SCI, which supposedly needed
+	// to subtract 1 from absrect.top. The original check was for version 0.000.256, which
+	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
+	// for reference only
+#if 0
+	if (getSciVersion() <= SCI_VERSION_0)
+		--absrect.top; // Compensate for early SCI OB1 'bug'
+#endif
+
+	PUT_SEL32V(object, brLeft, absrect.left);
+	PUT_SEL32V(object, brRight, absrect.right);
+	PUT_SEL32V(object, brTop, absrect.top);
+	PUT_SEL32V(object, brBottom, absrect.bottom);
+}
+
+static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority) {
+	int pri_top;
+
+	if (priority == -1)
+		priority = _find_view_priority(s, y);
+
+	pri_top = _find_priority_band(s, priority) + 1;
+	// +1: Don't know why, but this seems to be happening
+
+	if (retval.top < pri_top)
+		retval.top = pri_top;
+
+	if (retval.bottom < retval.top)
+		retval.top = retval.bottom - 1;
+
+	return retval;
+}
+
+static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
+	int xbase, ybase, xend, yend, xsize, ysize;
+	int xmod = 0, ymod = 0;
+	Common::Rect retval(0, 0, 0, 0);
+
+	Common::Point offset = Common::Point(0, 0);
+
+	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
+
+	xmod = offset.x;
+	ymod = offset.y;
+
+	xbase = x - xmod - (xsize >> 1);
+	xend = xbase + xsize;
+	yend = y - ymod + 1; // +1: magic modifier
+	ybase = yend - ysize;
+
+	retval.left = xbase;
+	retval.top = ybase;
+	retval.right = xend;
+	retval.bottom = yend;
+
+	return retval;
+}
+
+Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
+	SegManager *segMan = s->_segMan;
+	int x, y, z;
+	int view, loop, cel;
+	Common::Rect retval;
+
+	x = (int16)GET_SEL32V(object, x);
+	y = (int16)GET_SEL32V(object, y);
+
+	if (s->_kernel->_selectorCache.z > -1)
+		z = (int16)GET_SEL32V(object, z);
+	else
+		z = 0;
+
+	y -= z; // Subtract z offset
+
+	view = (int16)GET_SEL32V(object, view);
+	loop = sign_extend_byte((int16)GET_SEL32V(object, loop));
+	cel = sign_extend_byte((int16)GET_SEL32V(object, cel));
+
+	retval = calculate_nsrect(s, x, y, view, loop, cel);
+
+	if (clip) {
+		int priority = (int16)GET_SEL32V(object, priority);
+		return nsrect_clip(s, y, retval, priority);
+	}
+
+	return retval;
+}
+
+
+// ======================================================================================================
 static reg_t kSetCursorSci0(EngineState *s, int argc, reg_t *argv) {
 	Common::Point pos;
 	GuiResourceId cursorId = argv[0].toSint16();
@@ -393,30 +617,6 @@ reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void _k_redraw_box(EngineState *s, int x1, int y1, int x2, int y2) {
-	warning("_k_redraw_box(): Unimplemented");
-#if 0
-	int i;
-	ViewObject *list = s->dyn_views;
-
-	printf("Reanimating views\n", s->dyn_views_nr);
-
-	for (i = 0;i < s->dyn_views_nr;i++) {
-		*(list[i].underBitsp) = graph_save_box(s, list[i].nsLeft, list[i].nsTop, list[i].nsRight - list[i].nsLeft,
-												list[i].nsBottom - list[i].nsTop, SCI_MAP_VISUAL | SCI_MAP_PRIORITY);
-		draw_view0(s->pic, s->ports[0], list[i].nsLeft, list[i].nsTop, list[i].priority, list[i].loop,
-		           list[i].cel, 0, list[i].view);
-	}
-
-	graph_update_box(s, x1, y1, x2 - x1, y2 - y1);
-
-	for (i = 0;i < s->dyn_views_nr;i++)	{
-		graph_restore_box(s, *(list[i].underBitsp));
-		list[i].underBits = 0;
-	}
-#endif
-}
-
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	int x = 0, y = 0, x1 = 0, y1 = 0;
 	uint16 flags;
@@ -448,7 +648,6 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		control = (argc > 7) ? argv[7].toSint16() : -1;
 		color = argv[5].toSint16();
 
-		// FIXME: rect must be changed to 2 Common::Point
 		s->_gui->graphDrawLine(Common::Point(x, y), Common::Point(x1, y1), color, priority, control);
 		break;
 
@@ -596,50 +795,6 @@ reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_gui->priorityToCoordinate(priority));
 }
 
-void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	int view = GET_SEL32V(obj, view);
-	int signal = GET_SEL32V(obj, signal);
-	int loop;
-	int maxloops;
-	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
-
-	if (signal & _K_VIEW_SIG_FLAG_DOESNT_TURN)
-		return;
-
-	angle %= 360;
-
-	if (!oldScriptHeader) {
-		if (angle < 45)
-			loop = 3;
-		else if (angle < 136)
-			loop = 0;
-		else if (angle < 225)
-			loop = 2;
-		else if (angle < 316)
-			loop = 1;
-		else
-			loop = 3;
-	} else {
-		if (angle >= 330 || angle <= 30)
-			loop = 3;
-		else if (angle <= 150)
-			loop = 0;
-		else if (angle <= 210)
-			loop = 2;
-		else if (angle < 330)
-			loop = 1;
-		else loop = 0xffff;
-	}
-
-	maxloops = gfxop_lookup_view_get_loops(s->gfx_state, view);
-
-	if ((loop > 1) && (maxloops < 4))
-		return;
-
-	PUT_SEL32V(obj, loop, loop);
-}
-
 reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 	_k_dirloop(argv[0], argv[1].toUint16(), s, argc, argv);
 
@@ -657,8 +812,7 @@ reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	return NULL_REG;
 }
 
-// kCantBeHere does the same thing as kCanBeHere, except that
-// it returns the opposite result.
+// kCantBeHere does the same thing as kCanBeHere, except that it returns the opposite result.
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t result = kCanBeHere(s, argc, argv);
 	result.offset = !result.offset;
@@ -805,87 +959,6 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-Common::Rect set_base(EngineState *s, reg_t object) {
-	SegManager *segMan = s->_segMan;
-	int x, y, original_y, z, ystep, xsize, ysize;
-	int xbase, ybase, xend, yend;
-	int view, loop, cel;
-	int oldloop, oldcel;
-	int xmod = 0, ymod = 0;
-	Common::Rect retval;
-
-	x = (int16)GET_SEL32V(object, x);
-	original_y = y = (int16)GET_SEL32V(object, y);
-
-	if (s->_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(object, z);
-	else
-		z = 0;
-
-	y -= z; // Subtract z offset
-
-	ystep = (int16)GET_SEL32V(object, yStep);
-
-	view = (int16)GET_SEL32V(object, view);
-	oldloop = loop = sign_extend_byte(GET_SEL32V(object, loop));
-	oldcel = cel = sign_extend_byte(GET_SEL32V(object, cel));
-
-	Common::Point offset = Common::Point(0, 0);
-
-	if (loop != oldloop) {
-		loop = 0;
-		PUT_SEL32V(object, loop, 0);
-		debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
-	}
-
-	if (cel != oldcel) {
-		cel = 0;
-		PUT_SEL32V(object, cel, 0);
-	}
-
-	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
-
-	xmod = offset.x;
-	ymod = offset.y;
-
-	xbase = x - xmod - (xsize >> 1);
-	xend = xbase + xsize;
-	yend = y /* - ymod */ + 1;
-	ybase = yend - ystep;
-
-	debugC(2, kDebugLevelBaseSetter, "(%d,%d)+/-(%d,%d), (%d x %d) -> (%d, %d) to (%d, %d)\n",
-	          x, y, xmod, ymod, xsize, ysize, xbase, ybase, xend, yend);
-
-	retval.left = xbase;
-	retval.top = ybase;
-	retval.right = xend;
-	retval.bottom = yend;
-
-	return retval;
-}
-
-void _k_base_setter(EngineState *s, reg_t object) {
-	SegManager *segMan = s->_segMan;
-	Common::Rect absrect = set_base(s, object);
-
-	if (lookup_selector(s->_segMan, object, s->_kernel->_selectorCache.brLeft, NULL, NULL) != kSelectorVariable)
-		return; // non-fatal
-
-	// Note: there was a check here for a very old version of SCI, which supposedly needed
-	// to subtract 1 from absrect.top. The original check was for version 0.000.256, which
-	// does not exist (earliest one was KQ4 SCI, version 0.000.274). This code is left here
-	// for reference only
-#if 0
-	if (getSciVersion() <= SCI_VERSION_0)
-		--absrect.top; // Compensate for early SCI OB1 'bug'
-#endif
-
-	PUT_SEL32V(object, brLeft, absrect.left);
-	PUT_SEL32V(object, brRight, absrect.right);
-	PUT_SEL32V(object, brTop, absrect.top);
-	PUT_SEL32V(object, brBottom, absrect.bottom);
-}
-
 reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 	reg_t object = argv[0];
 
@@ -893,79 +966,6 @@ reg_t kBaseSetter(EngineState *s, int argc, reg_t *argv) {
 
 	return s->r_acc;
 } // kBaseSetter
-
-static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority) {
-	int pri_top;
-
-	if (priority == -1)
-		priority = _find_view_priority(s, y);
-
-	pri_top = _find_priority_band(s, priority) + 1;
-	// +1: Don't know why, but this seems to be happening
-
-	if (retval.top < pri_top)
-		retval.top = pri_top;
-
-	if (retval.bottom < retval.top)
-		retval.top = retval.bottom - 1;
-
-	return retval;
-}
-
-static Common::Rect calculate_nsrect(EngineState *s, int x, int y, int view, int loop, int cel) {
-	int xbase, ybase, xend, yend, xsize, ysize;
-	int xmod = 0, ymod = 0;
-	Common::Rect retval(0, 0, 0, 0);
-
-	Common::Point offset = Common::Point(0, 0);
-
-	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
-
-	xmod = offset.x;
-	ymod = offset.y;
-
-	xbase = x - xmod - (xsize >> 1);
-	xend = xbase + xsize;
-	yend = y - ymod + 1; // +1: magic modifier
-	ybase = yend - ysize;
-
-	retval.left = xbase;
-	retval.top = ybase;
-	retval.right = xend;
-	retval.bottom = yend;
-
-	return retval;
-}
-
-Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
-	SegManager *segMan = s->_segMan;
-	int x, y, z;
-	int view, loop, cel;
-	Common::Rect retval;
-
-	x = (int16)GET_SEL32V(object, x);
-	y = (int16)GET_SEL32V(object, y);
-
-	if (s->_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(object, z);
-	else
-		z = 0;
-
-	y -= z; // Subtract z offset
-
-	view = (int16)GET_SEL32V(object, view);
-	loop = sign_extend_byte((int16)GET_SEL32V(object, loop));
-	cel = sign_extend_byte((int16)GET_SEL32V(object, cel));
-
-	retval = calculate_nsrect(s, x, y, view, loop, cel);
-
-	if (clip) {
-		int priority = (int16)GET_SEL32V(object, priority);
-		return nsrect_clip(s, y, retval, priority);
-	}
-
-	return retval;
-}
 
 reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 	s->_gui->setNowSeen(argv[0]);
