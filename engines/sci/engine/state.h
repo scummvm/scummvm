@@ -160,7 +160,7 @@ private:
 
 struct EngineState : public Common::Serializable {
 public:
-	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor, uint32 flags);
+	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor);
 	virtual ~EngineState();
 
 	virtual void saveLoadWithSerializer(Common::Serializer &ser);
@@ -170,8 +170,6 @@ public:
 	ResourceManager *resMan; /**< The resource manager */
 	Kernel *_kernel;
 	Vocabulary *_voc;
-
-	const uint32 _flags;			/**< Specific game flags */
 
 	Common::String _gameName; /**< Designation of the primary object (which inherits from Game) */
 

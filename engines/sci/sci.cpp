@@ -126,8 +126,6 @@ Common::Error SciEngine::run() {
 
 	// FIXME/TODO: Move some of the stuff below to init()
 
-	const uint32 flags = getFlags();
-
 	_resMan = new ResourceManager();
 
 	if (!_resMan) {
@@ -142,7 +140,7 @@ Common::Error SciEngine::run() {
 	SciGuiCursor *cursor = new SciGuiCursor(_resMan, palette);
 
 	// We'll set the GUI below
-	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor, flags);
+	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor);
 
 	// Gui change
 	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
