@@ -84,7 +84,7 @@ Engine::~Engine() {
 
 void GUIErrorMessage(const Common::String msg) {
 	g_system->setWindowCaption("Error");
-	g_system->launcherInitSize(320, 200);
+	g_system->launcherInitSize(640, 400);
 	GUI::MessageDialog dialog(msg);
 	dialog.runModal();
 	error("%s", msg.c_str());

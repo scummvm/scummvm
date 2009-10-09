@@ -444,7 +444,7 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 #pragma mark -
 
 LauncherDialog::LauncherDialog()
-	: Dialog(0, 0, 320, 200) {
+	: Dialog(0, 0, 640, 400) {
 	_backgroundType = GUI::ThemeEngine::kDialogBackgroundMain;
 
 	const int screenW = g_system->getOverlayWidth();

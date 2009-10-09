@@ -232,7 +232,7 @@ static Common::Error runGame(const EnginePlugin *plugin, OSystem &system, const 
 }
 
 static void setupGraphics(OSystem &system) {
-	system.launcherInitSize(320, 200);
+	system.launcherInitSize(640, 400);
 
 	// When starting up launcher for the first time, the user might have specified
 	// a --gui-theme option, to allow that option to be working, we need to initialize
