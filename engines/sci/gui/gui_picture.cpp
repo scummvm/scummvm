@@ -454,8 +454,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
-					//FIXME
-					//g_sci->PriBands(ptr);
+					_gfx->PriorityBandsInit(data + curPos);
 					curPos += 14;
 					break;
 				default:
