@@ -423,7 +423,6 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	List *list;
-	Common::List<GuiAnimateList> *sortedList;
 
 	_gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 
@@ -431,6 +430,7 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	if (!list)
 		error("kAddToPic called with non-list as parameter");
 
+//	Common::List<GuiAnimateList> *sortedList;
 //	sortedList = _gfx->AnimateMakeSortedList(list);
 
 //	uint16 szList = list.getSize();
