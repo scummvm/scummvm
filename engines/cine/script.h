@@ -47,7 +47,7 @@ class FWScript;
 typedef int (FWScript::*OpFunc)();
 
 struct Opcode {
-	const OpFunc proc;
+	OpFunc proc;
 	const char *args;
 };
 

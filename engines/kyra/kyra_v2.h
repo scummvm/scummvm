@@ -59,17 +59,17 @@ friend class GUI_v2;
 public:
 	struct EngineDesc {
 		// Generic shape related
-		const int itemShapeStart;
+		int itemShapeStart;
 		const uint8 *characterFrameTable;
 
 		// Scene script
-		const int firstAnimSceneScript;
+		int firstAnimSceneScript;
 
 		// Animation script specific
-		const int animScriptFrameAdd;
+		int animScriptFrameAdd;
 
 		// Item specific
-		const int maxItemId;
+		int maxItemId;
 	};
 
 	KyraEngine_v2(OSystem *system, const GameFlags &flags, const EngineDesc &desc);
