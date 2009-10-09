@@ -952,8 +952,9 @@ wii | gamecube | nds)
 	fi
 	;;
 psp)
-	if test -z "$PSPDEV"; then
-		echo "Please set PSPDEV in your environment. export PSPDEV=<path to psp toolchain>"
+	PSPSDK=$(psp-config --pspsdk-path)
+	if test -z "$PSPSDK"; then
+		echo "Please set the path to PSPSDK in your environment."
 		exit 1
 	fi
 	;;
@@ -1281,7 +1282,7 @@ case $_host_os in
 		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 		;;
 	psp)
-		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
+		CXXFLAGS="$CXXFLAGS -O3 -I$PSPSDK/include -D_PSP_FW_VERSION=150"
 		;;
 	ps2)
 		# TODO ps2
@@ -1792,6 +1793,23 @@ PLUGIN_SUFFIX		:= .plg
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE)
 CXXFLAGS			+= -DDYNAMIC_MODULES
 PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms -L$(ronindir)/lib
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
+	psp)
+_def_plugin='
+#define PLUGIN_PREFIX	""
+#define PLUGIN_SUFFIX	".plg"
+'
+_mak_plugins='
+DYNAMIC_MODULES		:= 1
+PLUGIN_PREFIX		:=
+PLUGIN_SUFFIX		:= .plg
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
+CXXFLAGS		+= -DDYNAMIC_MODULES
+LDFLAGS			+= -Wl,-T$(srcdir)/backends/platform/psp/main_prog.ld
+PLUGIN_LDFLAGS		= -nostartfiles -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/psp/plugin.syms,-T$(srcdir)/backends/platform/psp/plugin.ld -lstdc++ -lc -lm -Wl,-Map,mapfile.txt
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -2350,6 +2368,9 @@ esac
 _engines_built_static=""
 _engines_built_dynamic=""
 _engines_skipped=""
+
+echo "dynamic modules = $_dynamic_modules"
+echo "plugins default = $_plugins_default"
 
 for engine in $_engines; do
 	if test "`get_engine_sub $engine`" = "no" ; then

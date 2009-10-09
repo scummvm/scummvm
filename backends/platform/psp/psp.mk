@@ -21,7 +21,7 @@ psp_clean:
 	$(RM) $(PSP_EXE_STRIPPED) $(PSP_EBOOT) $(PSP_EBOOT_SFO)
 
 psp_fixup_elf: $(PSP_EXE_STRIPPED)
-	$(PSPDEV)/bin/psp-fixup-imports $<
+	psp-fixup-imports $<
 
 pack_pbp: psp_fixup_elf $(PSP_EBOOT_SFO)
 	$(PACK_PBP) $(PSP_EBOOT) \

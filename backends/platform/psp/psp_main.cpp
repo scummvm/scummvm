@@ -38,7 +38,7 @@
 #include <base/plugins.h>
 #include "backends/platform/psp/powerman.h"
 
-
+#include "backends/plugins/psp/psp-provider.h"
 #include "osys_psp.h"
 #include "./trace.h"
 
@@ -152,6 +152,10 @@ int main(void) {
 
 	g_system = new OSystem_PSP();
 	assert(g_system);
+
+#ifdef DYNAMIC_MODULES
+	PluginManager::instance().addPluginProvider(new PSPPluginProvider());
+#endif
 
 	int res = scummvm_main(argc, argv);
 

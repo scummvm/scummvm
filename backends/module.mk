@@ -32,6 +32,7 @@ MODULE_OBJS := \
 	plugins/posix/posix-provider.o \
 	plugins/sdl/sdl-provider.o \
 	plugins/win32/win32-provider.o \
+	plugins/psp/psp-provider.o \
 	saves/savefile.o \
 	saves/default/default-saves.o \
 	saves/posix/posix-saves.o \

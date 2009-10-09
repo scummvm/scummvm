@@ -8,7 +8,8 @@ MODULE_OBJS := \
 	kbd_s_c.o \
 	kbd_ls_c.o \
 	kbd_l_c.o \
-	trace.o
+	trace.o \
+	psploader.o
 
 MODULE_DIRS += \
 	backends/platform/psp/
