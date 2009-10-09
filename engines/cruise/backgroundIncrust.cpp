@@ -49,7 +49,7 @@ void backupBackground(backgroundIncrustStruct *pIncrust, int X, int Y, int width
 	pIncrust->savedX = X;
 	pIncrust->savedY = Y;
 
-	pIncrust->ptr = (uint8*)malloc(width * height);
+	pIncrust->ptr = (uint8*)MemAlloc(width * height);
 	for (int i = 0; i < height; i++) {
 		for (int j = 0; j < width; j++) {
 			int xp = j + X;
@@ -239,9 +239,9 @@ void freeBackgroundIncrustList(backgroundIncrustStruct *pHead) {
 		backgroundIncrustStruct *pNext = pCurrent->next;
 
 		if (pCurrent->ptr)
-			free(pCurrent->ptr);
+			MemFree(pCurrent->ptr);
 
-		free(pCurrent);
+		MemFree(pCurrent);
 
 		pCurrent = pNext;
 	}
@@ -292,10 +292,10 @@ void removeBackgroundIncrust(int overlay, int idx, backgroundIncrustStruct * pHe
 			bx->prev = pCurrent->next;
 
 			if (pCurrent->ptr) {
-				free(pCurrent->ptr);
+				MemFree(pCurrent->ptr);
 			}
 
-			free(pCurrent);
+			MemFree(pCurrent);
 
 			pCurrent = pNext;
 		} else {

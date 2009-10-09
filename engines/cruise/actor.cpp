@@ -599,7 +599,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 			return -1;
 		}
 
-		perso = persoTable[i] = (persoStruct *) malloc(sizeof(persoStruct));
+		perso = persoTable[i] = (persoStruct *) MemAlloc(sizeof(persoStruct));
 
 		ptr = perso->solution[0];
 
@@ -663,7 +663,7 @@ int16 computePathfinding(MovementEntry &moveInfo, int16 x, int16 y, int16 destX,
 		return (-1);
 	}
 
-	perso = persoTable[num] = (persoStruct *) malloc(sizeof(persoStruct));
+	perso = persoTable[num] = (persoStruct *) MemAlloc(sizeof(persoStruct));
 
 	perso->inc_jo1 = stepX;
 	perso->inc_jo2 = stepY;

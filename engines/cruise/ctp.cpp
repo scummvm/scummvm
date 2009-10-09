@@ -228,7 +228,7 @@ int initCt(const char *ctpName) {
 	}
 	uint8* ptr = NULL;
 	if (!loadFileSub1(&ptr, ctpName, 0)) {
-		free(ptr);
+		MemFree(ptr);
 		return (-18);
 	}
 
@@ -239,7 +239,7 @@ int initCt(const char *ctpName) {
 	dataPointer += 4;
 
 	if (strcmp(fileType, "CTP ")) {
-		free(ptr);
+		MemFree(ptr);
 		return (0);
 	}
 
@@ -312,7 +312,7 @@ int initCt(const char *ctpName) {
 		walkboxZoom[i] = (int16)READ_BE_UINT16(dataPointer);
 		dataPointer += 2;
 	}
-	free(ptr);
+	MemFree(ptr);
 
 	if (ctpName != currentCtpName)
 		strcpy(currentCtpName, ctpName);

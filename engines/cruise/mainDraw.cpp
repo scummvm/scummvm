@@ -1222,7 +1222,7 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 	cellStruct* plWork = currentObjPtr;
 	int workBufferSize = height * (width / 8);
 
-	unsigned char* workBuf = (unsigned char*)malloc(workBufferSize);
+	unsigned char* workBuf = (unsigned char*)MemAlloc(workBufferSize);
 	memcpy(workBuf, dataBuf, workBufferSize);
 
 	int numPasses = 0;
@@ -1261,7 +1261,7 @@ void drawSprite(int width, int height, cellStruct *currentObjPtr, const uint8 *d
 		}
 	}
 
-	free(workBuf);
+	MemFree(workBuf);
 }
 
 #ifdef _DEBUG

@@ -39,7 +39,7 @@ menuStruct *menuTable[8];
 menuStruct *createMenu(int X, int Y, const char *menuName) {
 	menuStruct *entry;
 
-	entry = (menuStruct *) malloc(sizeof(menuStruct));
+	entry = (menuStruct *) MemAlloc(sizeof(menuStruct));
 	ASSERT(entry);
 
 	entry->x = X - 160 / 2;
@@ -329,7 +329,7 @@ void freeMenu(menuStruct *pMenu) {
 
 			nextSub = pSub->pNext;
 
-			free(pSub);
+			MemFree(pSub);
 
 			pSub = nextSub;
 		}
@@ -338,13 +338,13 @@ void freeMenu(menuStruct *pMenu) {
 			freeGfx(pElement->gfx);
 		}
 
-		free(pElement);
+		MemFree(pElement);
 
 		pElement = next;
 	}
 
 	freeGfx(pMenu->gfx);
-	free(pMenu);
+	MemFree(pMenu);
 }
 
 } // End of namespace Cruise

@@ -470,7 +470,7 @@ static void syncIncrust(Common::Serializer &s) {
 
 		if (t->saveSize) {
 			if (s.isLoading())
-				t->ptr = (byte *)malloc(t->saveSize);
+				t->ptr = (byte *)MemAlloc(t->saveSize);
 
 			s.syncBytes(t->ptr, t->saveSize);
 		}
@@ -642,7 +642,7 @@ void resetPreload() {
 	for (unsigned long int i = 0; i < 64; i++) {
 		if (strlen(preloadData[i].name)) {
 			if (preloadData[i].ptr) {
-				free(preloadData[i].ptr);
+				MemFree(preloadData[i].ptr);
 				preloadData[i].ptr = NULL;
 			}
 			strcpy(preloadData[i].name, "");
@@ -850,7 +850,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 				if (ovlRestoreData[j]._sBssSize) {
 					if (ovlData->data4Ptr) {
-						free(ovlData->data4Ptr);
+						MemFree(ovlData->data4Ptr);
 					}
 
 					ovlData->data4Ptr = ovlRestoreData[j]._pBss;
@@ -861,7 +861,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 				if (ovlRestoreData[j]._sNumObj) {
 					if (ovlData->arrayObjVar) {
-						free(ovlData->arrayObjVar);
+						MemFree(ovlData->arrayObjVar);
 					}
 
 					ovlData->arrayObjVar = ovlRestoreData[j]._pObj;

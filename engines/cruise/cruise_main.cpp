@@ -42,6 +42,61 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
+Common::List<byte *> memList;
+
+void MemoryList() {
+	printf("Current list of un-freed memory blocks:\n");
+	Common::List<byte *>::iterator i;
+	for (i = memList.begin(); i != memList.end(); ++i) {
+		byte *v = *i;
+		printf("%s - %d\n", (const char *)(v - 68), *((int32 *)(v - 72)));
+	}
+}
+
+void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname) {
+	byte *result;
+
+	if (gDebugLevel > 0)
+		result = (byte *)malloc(size);
+	else {
+		// Find the point after the final slash
+		const char *fnameP = fname + strlen(fname);
+		while ((fnameP > fname) && (*(fnameP - 1) != '/') && (*(fnameP - 1) != '\\'))
+			--fnameP;
+
+		// Create the new memory block and add it to the memory list
+		byte *v = (byte *)malloc(size + 64 + 8);
+		*((int32 *) v) = lineNum;
+		strncpy((char *)v + 4, fnameP, 63);
+		*((char *)v + 4 + 63) = '\0';
+		*((uint32 *) (v + 68)) = 0x41424344;
+
+		// Add the block to the memory list
+		result = v + 64 + 8;
+		memList.push_back(result);
+	}
+
+	if (clearFlag)
+		memset(result, 0, size);
+
+	return result;
+}
+
+void MemoryFree(void *v) {
+	if (!v)
+		return;
+
+	if (gDebugLevel > 0)
+		free(v);
+	else {
+		byte *p = (byte *)v;
+		assert(*((uint32 *) (p - 4)) == 0x41424344);
+
+		memList.remove(p);
+		free(p - 8 - 64);
+	}
+}
+
 void drawBlackSolidBoxSmall() {
 //  gfxModuleData.drawSolidBox(64,100,256,117,0);
 	drawSolidBox(64, 100, 256, 117, 0);
@@ -139,7 +194,7 @@ void initBigVar3() {
 
 	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
-			free(filesDatabase[i].subData.ptr);
+			MemFree(filesDatabase[i].subData.ptr);
 		}
 
 		filesDatabase[i].subData.ptr = NULL;
@@ -337,7 +392,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 
 		delphineUnpack(unpackedBuffer, pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
-		free(pakedBuffer);
+		MemFree(pakedBuffer);
 	} else {
 		loadPackedFileToMem(fileIdx, unpackedBuffer);
 	}
@@ -354,7 +409,7 @@ void resetFileEntry(int32 entryNumber) {
 	if (!filesDatabase[entryNumber].subData.ptr)
 		return;
 
-	free(filesDatabase[entryNumber].subData.ptr);
+	MemFree(filesDatabase[entryNumber].subData.ptr);
 
 	filesDatabase[entryNumber].subData.ptr = NULL;
 	filesDatabase[entryNumber].subData.ptrMask = NULL;
@@ -531,10 +586,10 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 			oldPtr->nextScriptPtr = ptr->nextScriptPtr;
 
 			if (ptr->var6 && ptr->varA) {
-				//  free(ptr->var6);
+				//  MemFree(ptr->var6);
 			}
 
-			free(ptr);
+			MemFree(ptr);
 
 			ptr = oldPtr->nextScriptPtr;
 		} else {
@@ -701,7 +756,7 @@ void freeStuff2(void) {
 void *allocAndZero(int size) {
 	void *ptr;
 
-	ptr = malloc(size);
+	ptr = MemAlloc(size);
 	memset(ptr, 0, size);
 
 	return ptr;
@@ -1905,15 +1960,6 @@ void CruiseEngine::mainLoop(void) {
 		}
 
 	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
-}
-
-void *mallocAndZero(int32 size) {
-	void *ptr;
-
-	ptr = malloc(size);
-	assert(ptr);
-	memset(ptr, 0, size);
-	return ptr;
 }
 
 } // End of namespace Cruise

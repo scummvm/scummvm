@@ -237,7 +237,7 @@ byte *readBundleSoundFile(const char *name) {
 	if (fileIdx < 0) return NULL;
 
 	int unpackedSize = volumePtrToFileDescriptor[fileIdx].extSize + 2;
-	byte *data = (byte *)malloc(unpackedSize);
+	byte *data = (byte *)MemAlloc(unpackedSize);
 	assert(data);
 
 	if (volumePtrToFileDescriptor[fileIdx].size + 2 != unpackedSize) {
@@ -249,7 +249,7 @@ byte *readBundleSoundFile(const char *name) {
 
 		delphineUnpack(data, packedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
-		free(packedBuffer);
+		MemFree(packedBuffer);
 	} else {
 		loadPackedFileToMem(fileIdx, data);
 	}
@@ -747,10 +747,10 @@ void PCSoundFxPlayer::handlePattern(int channel, const byte *patternData) {
 
 void PCSoundFxPlayer::unload() {
 	for (int i = 0; i < NUM_INSTRUMENTS; ++i) {
-		free(_instrumentsData[i]);
+		MemFree(_instrumentsData[i]);
 		_instrumentsData[i] = NULL;
 	}
-	free(_sfxData);
+	MemFree(_sfxData);
 	_sfxData = NULL;
 	_songPlayed = true;
 }

@@ -58,7 +58,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 		error("Unkown gfx format %d", format);
 	}
 
-	uint8 *buffer = (uint8 *)malloc(spriteSize);
+	uint8 *buffer = (uint8 *)MemAlloc(spriteSize);
 
 	// Perform format specific decoding
 	switch (format) {
@@ -131,7 +131,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 	}
 	}
 
-	free(pCurrentFileEntry->subData.ptr);
+	MemFree(pCurrentFileEntry->subData.ptr);
 	pCurrentFileEntry->subData.ptr = buffer;
 }
 

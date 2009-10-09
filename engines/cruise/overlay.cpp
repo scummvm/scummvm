@@ -123,7 +123,7 @@ int loadOverlay(const char *scriptName) {
 
 		delphineUnpack((uint8 *)unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
-		free(pakedBuffer);
+		MemFree(pakedBuffer);
 	} else {
 		loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
 	}
@@ -504,7 +504,7 @@ int loadOverlay(const char *scriptName) {
 
 			delphineUnpack((uint8 *) unpackedBuffer, (const uint8 *)pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
-			free(pakedBuffer);
+			MemFree(pakedBuffer);
 		} else {
 			loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
 		}
@@ -631,12 +631,12 @@ int releaseOverlay(const char *name) {
 		return -4;
 	/*
 	  if (overlayTable[overlayIdx].var1E) {
-	    free(overlayTable[overlayIdx].var1E);
+	    MemFree(overlayTable[overlayIdx].var1E);
 	    overlayTable[overlayIdx].var1E = NULL;
 	  }
 
 	  if (overlayTable[overlayIdx].var16) {
-	    free(overlayTable[overlayIdx].var16);
+	    MemFree(overlayTable[overlayIdx].var16);
 	    overlayTable[overlayIdx].var16 = NULL;
 	  } */
 

@@ -69,11 +69,16 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	g_eventRec.registerRandomSource(_rnd, "cruise");
 }
 
+extern void listMemory();
+
 CruiseEngine::~CruiseEngine() {
 	delete _debugger;
 	delete _sound;
 
 	freeSystem();
+
+	if (gDebugLevel > 0)
+		MemoryList();
 }
 
 bool CruiseEngine::hasFeature(EngineFeature f) const {
@@ -135,7 +140,7 @@ void CruiseEngine::deinitialise() {
 	// Clear any backgrounds
 	for (int i = 0; i < 8; ++i) {
 		if (backgroundScreens[i]) {
-			free(backgroundScreens[i]);
+			MemFree(backgroundScreens[i]);
 			backgroundScreens[i] = NULL;
 		}
 	}
@@ -146,7 +151,7 @@ bool CruiseEngine::loadLanguageStrings() {
 
 	// Give preference to a language file
 	if (f.open("DELPHINE.LNG")) {
-		char *data = (char *)malloc(f.size());
+		char *data = (char *)MemAlloc(f.size());
 		f.read(data, f.size());
 		char *ptr = data;
 
