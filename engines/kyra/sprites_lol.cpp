@@ -1022,7 +1022,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		flg |= 2;
 
 	if (_flags.use16ColorMode) {
-		if (_currentLevel = 22)
+		if (_currentLevel != 22)
 			flg &= 0xdfff;
 		
 	} else {
