@@ -166,6 +166,14 @@ void SciGui32::localToGlobal(int16 *x, int16 *y) {
 	*y = *y + s->port->zone.y;
 }
 
+int16 SciGui32::coordinateToPriority(int16 y) {
+	return _find_view_priority(s, y);
+}
+
+int16 SciGui32::priorityToCoordinate(int16 priority) {
+	return _find_priority_band(s, priority);
+}
+
 reg_t SciGui32::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	GfxPort *window;
 	int x, y, xl, yl;

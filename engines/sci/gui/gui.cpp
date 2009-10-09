@@ -112,6 +112,14 @@ void SciGui::localToGlobal(int16 *x, int16 *y) {
 	*y = *y + curPort->top;
 }
 
+int16 SciGui::coordinateToPriority(int16 y) {
+	return _gfx->CoordinateToPriority(y);
+}
+
+int16 SciGui::priorityToCoordinate(int16 priority) {
+	return _gfx->PriorityToCoordinate(priority);
+}
+
 reg_t SciGui::newWindow(Common::Rect dims, Common::Rect restoreRect, uint16 style, int16 priority, int16 colorPen, int16 colorBack, const char *title) {
 	GuiWindow *wnd = NULL;
 

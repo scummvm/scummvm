@@ -100,6 +100,12 @@ public:
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
 	int16 onControl(uint16 screenMask, Common::Rect rect);
+
+	void PriorityBandsInit(int16 top, int16 bottom);
+	void PriorityBandsInit(byte *data);
+	byte CoordinateToPriority(int16 y);
+	int16 PriorityToCoordinate(byte priority);
+
 	void AnimateDisposeLastCast();
 	void AnimateInvoke(List *list, int argc, reg_t *argv);
 	void AnimateFill(List *list, byte &oldPicNotValid);
@@ -143,6 +149,10 @@ private:
 	GuiResourceId *_textFonts;
 	int _textColorsCount;
 	uint16 *_textColors;
+
+	// Priority Bands related variables
+	int16 _priorityTop, _priorityBottom, _priorityBandCount;
+	byte _priorityBands[200];
 
 	// Animate* related variables
 	List *_lastCast;

@@ -585,15 +585,15 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
-	int y = argv[0].toSint16();
+	int16 y = argv[0].toSint16();
 
-	return make_reg(0, _find_view_priority(s, y));
+	return make_reg(0, s->_gui->coordinateToPriority(y));
 }
 
 reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
-	int priority = argv[0].toSint16();
+	int16 priority = argv[0].toSint16();
 
-	return make_reg(0, _find_priority_band(s, priority));
+	return make_reg(0, s->_gui->priorityToCoordinate(priority));
 }
 
 void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) {

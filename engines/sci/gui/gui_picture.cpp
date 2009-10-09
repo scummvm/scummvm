@@ -483,15 +483,11 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
-					//FIXME
-					//g_sci->InitPri(READ_LE_UINT16(ptr), READ_LE_UINT16(ptr + 2));
-					debug(5, "DrawPic::InitPri %d %d",
-						READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
+					_gfx->PriorityBandsInit(READ_LE_UINT16(data + curPos), READ_LE_UINT16(data + curPos + 2));
 					curPos += 4;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EXPLICIT:
-					//FIXME
-					//g_sci->PriBands(ptr);
+					_gfx->PriorityBandsInit(data + curPos);
 					curPos += 14;
 					break;
 				default:

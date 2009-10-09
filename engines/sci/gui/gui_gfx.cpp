@@ -65,6 +65,15 @@ void SciGuiGfx::init() {
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
+
+	// Initialize priority bands
+	if (_s->usesOldGfxFunctions()) {
+		_priorityBandCount = 15;
+		PriorityBandsInit(42, 200);
+	} else {
+		_priorityBandCount = 14;
+		PriorityBandsInit(42, 190);
+	}
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
@@ -571,14 +580,14 @@ void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 }
 
 // Update (part of) screen
-void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 flags) {
+void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 screenMask) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_curPort->rect);
 	if (rect.isEmpty()) // nothing to show
 		return;
 
 	OffsetRect(rect);
-	assert((flags&0x8000) == 0);
+	assert((screenMask & 0x8000) == 0);
 	_screen->copyToScreen();
 //	_system->copyRectToScreen(GetSegment(flags) + _baseTable[rect.top] + rect.left, 320, rect.left, rect.top, rect.width(), rect.height());
 //	_system->updateScreen();
@@ -1064,6 +1073,50 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
+void SciGuiGfx::PriorityBandsInit(int16 top, int16 bottom) {
+	double bandSize;
+	int16 y;
+
+	_priorityTop = top;
+	_priorityBottom = bottom;
+	bandSize = (_priorityBottom - _priorityTop) / _priorityBandCount;
+
+	memset(_priorityBands, 0, _priorityTop);
+	for (y = _priorityTop; y < _priorityBottom; y++)
+		_priorityBands[y] = (byte)(1 + (y - _priorityTop) / bandSize);
+}
+
+void SciGuiGfx::PriorityBandsInit(byte *data) {
+	int i = 0, inx;
+	byte priority = 0;
+
+	for (inx = 0; inx < 14; inx++) {
+		priority = *data++;
+		while (i < priority)
+			_priorityBands[i++] = inx;
+	}
+	while (i < 200)
+		_priorityBands[i++] = inx;
+}
+
+byte SciGuiGfx::CoordinateToPriority(int16 y) {
+	if (y < _priorityTop) 
+		return _priorityBands[_priorityTop];
+	if (y > _priorityBottom)
+		return _priorityBands[_priorityBottom];
+	return _priorityBands[y];
+}
+
+int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
+	int16 y;
+	if (priority <= _priorityBandCount) {
+		for (y = 0; y <= _priorityBottom; y++)
+			if (_priorityBands[y] == priority)
+				return y;
+	}
+	return _priorityBottom;
+}
+
 void SciGuiGfx::AnimateDisposeLastCast() {
 	// FIXME
 	//if (!_lastCast->first.isNull())
@@ -1311,7 +1364,7 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 			// arr1[i] = 1;
 			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = celRect[listNr];
-				//rect.top = CLIP<int16>(PriCoord(zs[i]) - 1, rect.top, rect.bottom - 1);  
+				rect.top = CLIP<int16>(PriorityToCoordinate(z[listNr]) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
@@ -1425,7 +1478,7 @@ void SciGuiGfx::AddToPicDrawCels(List *list) {
 	GuiViewLoopNo loopNo;
 	GuiViewCelNo celNo;
 	int16 x, y, z, priority;
-	uint16 paletteNo;
+	uint16 paletteNo, signal;
 	Common::Rect celRect;
 
 	while (curNode) {
@@ -1440,22 +1493,22 @@ void SciGuiGfx::AddToPicDrawCels(List *list) {
 		z = GET_SEL32V(curObject, z);
 		priority = GET_SEL32V(curObject, priority);
 		if (priority == -1)
-			priority = 0; //CoordPri(y);
+			priority = CoordinateToPriority(y);
 		paletteNo = GET_SEL32V(curObject, palette);
+		signal = GET_SEL32V(curObject, signal);
 
 		// Get the corresponding view
 		view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(loopNo, celNo, x, y, z, &celRect);
+		view->getCelRect(loopNo, celNo, x, y, priority, &celRect);
 
 		// draw corresponding cel
 		drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, z, paletteNo);
-// FIXME find out what 17 is and implement this as well
-//		if ((obj.getProperty(17) & 0x4000) == 0) {
-//			rect.top = CLIP<int16>(PriCoord(prio) - 1, rect.top, rect.bottom - 1);
-//			_gfx->RFillRect(rect, 4, 0, 0, 0xF);
-//		}
+		if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+			celRect.top = CLIP<int16>(PriorityToCoordinate(priority) - 1, celRect.top, celRect.bottom - 1);
+			FillRect(celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+		}
 
 		curAddress = curNode->succ;
 		curNode = _s->_segMan->lookupNode(curAddress);
