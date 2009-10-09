@@ -49,8 +49,8 @@ bundle: residual-static
 	cp $(srcdir)/dists/macosx/Info.plist $(bundle_name)/Contents/
 	cp $(srcdir)/icons/residual.icns $(bundle_name)/Contents/Resources/
 	cp $(DIST_FILES_DOCS) $(bundle_name)/
-	cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
-	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
+	#cp $(DIST_FILES_THEMES) $(bundle_name)/Contents/Resources/
+	#cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/Contents/Resources/
 	$(srcdir)/tools/credits.pl --rtf > $(bundle_name)/Contents/Resources/Credits.rtf
 	chmod 644 $(bundle_name)/Contents/Resources/*
 	cp residual-static $(bundle_name)/Contents/MacOS/residual
@@ -60,8 +60,8 @@ bundle: residual-static
 iphonebundle: iphone
 	mkdir -p $(bundle_name)
 	cp $(srcdir)/dists/iphone/Info.plist $(bundle_name)/
-	cp $(DIST_FILES_THEMES) $(bundle_name)/
-	cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
+	#cp $(DIST_FILES_THEMES) $(bundle_name)/
+	#cp $(DIST_FILES_ENGINEDATA) $(bundle_name)/
 	cp residual $(bundle_name)/Residual
 	cp $(srcdir)/dists/iphone/icon.png $(bundle_name)/icon.png
 	cp $(srcdir)/dists/iphone/Default.png $(bundle_name)/Default.png
@@ -132,7 +132,7 @@ osxsnap: bundle
 	hdiutil create -ov -format UDZO -imagekey zlib-level=9 -fs HFS+ \
 					-srcfolder Residual-snapshot \
 					-volname "Residual" \
-					ScummVM-snapshot.dmg
+					Residual-snapshot.dmg
 	rm -rf Residual-snapshot
 
 #
@@ -147,7 +147,7 @@ win32dist: $(EXECUTABLE)
 	mkdir -p $(WIN32PATH)
 	$(STRIP) $(EXECUTABLE) -o $(WIN32PATH)/$(EXECUTABLE)
 	#cp $(DIST_FILES_THEMES) $(WIN32PATH)
-	cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
+	#cp $(DIST_FILES_ENGINEDATA) $(WIN32PATH)
 	cp $(srcdir)/AUTHORS $(WIN32PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(WIN32PATH)/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL $(WIN32PATH)/COPYING_GPL.txt
@@ -162,6 +162,7 @@ crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualWin32
 	$(STRIP) $(EXECUTABLE) -o ResidualWin32/$(EXECUTABLE)
 	#cp $(DIST_FILES_THEMES) $(WIN32PATH)
+	#cp $(DIST_FILES_ENGINEDATA) ResidualWin32
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
 	cp $(srcdir)/COPYING.GPL ResidualWin32/COPYING_GPL.txt
@@ -184,8 +185,8 @@ aos4dist: $(EXECUTABLE)
 	mkdir -p $(AOS4PATH)
 	$(STRIP) $(EXECUTABLE) -o $(AOS4PATH)/$(EXECUTABLE)_SVN
 	cp icons/residual.info $(AOS4PATH)/$(EXECUTABLE)_SVN.info
-	cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
-	cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
+	#cp $(DIST_FILES_THEMES) $(AOS4PATH)/themes/
+	#cp $(DIST_FILES_ENGINEDATA) $(AOS4PATH)/extras/
 	cp $(srcdir)/AUTHORS $(AOS4PATH)/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL $(AOS4PATH)/COPYING.LGPL.txt
 	cp $(srcdir)/COPYING.GPL $(AOS4PATH)/COPYING.GPL.txt
