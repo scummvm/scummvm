@@ -1543,6 +1543,9 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	reg_t castListReference = (argc > 0) ? argv[0] : NULL_REG;
 	bool cycle = (argc > 1) ? ((argv[1].toUint16()) ? true : false) : false;
 
+	// Take care of incoming events (kAnimate is called semi-regularly)
+	process_sound_events(s);
+
 	s->_gui->animate(castListReference, cycle, argc, argv);
 	return s->r_acc;
 }

@@ -891,6 +891,7 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 		PUT_SEL32V(curObject, nsRight, celRect.right);
 		PUT_SEL32V(curObject, nsBottom, celRect.bottom);
 
+		// Calculate current priority according to y-coordinate
 		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY))
 			PUT_SEL32V(curObject, priority, CoordinateToPriority(y));
 		

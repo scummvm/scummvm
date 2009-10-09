@@ -931,6 +931,8 @@ void run_vm(EngineState *s, int restoring) {
 						xstack->selector = opparams[0];
 						xstack->type = EXEC_STACK_TYPE_KERNEL;
 
+						//warning("callk %s", kfun.orig_name.c_str());
+
 						// Call kernel function
 						s->r_acc = kfun.fun(s, argc, argv);
 

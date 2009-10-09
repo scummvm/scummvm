@@ -1868,7 +1868,6 @@ void SciGui32::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	List *cast_list = NULL;
 	int open_animation = 0;
 
-	process_sound_events(s); // Take care of incoming events (kAnimate is called semi-regularly)
 	_k_animate_ran = true; // Used by some of the invoked functions to check for recursion, which may,
 						// after all, damage the cast list
 
