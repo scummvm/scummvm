@@ -95,10 +95,6 @@ ifdef USE_MPEG2
 OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libmpeg2.a
 endif
 
-ifdef USE_ZLIB
-OSX_STATIC_LIBS += $(STATICLIBPATH)/lib/libz.a
-endif
-
 # Special target to create a static linked binary for Mac OS X.
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
@@ -106,7 +102,7 @@ residual-static: $(OBJS)
 	$(CXX) $(LDFLAGS) -force_cpusubtype_ALL -o residual-static $(OBJS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
-		-lSystemStubs
+		-lSystemStubs -lz
 
 # Special target to create a static linked binary for the iPhone
 iphone: $(OBJS)
