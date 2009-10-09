@@ -543,6 +543,7 @@ SciVersion EngineState::detectGfxFunctionsType() {
 								int opsize = scr[offset++];
 								uint opcode = opsize >> 1;
 								int i = 0;
+								byte argc;
 
 								while (g_opcode_formats[opcode][i]) {
 									switch (g_opcode_formats[opcode][i++]) {
@@ -570,7 +571,7 @@ SciVersion EngineState::detectGfxFunctionsType() {
 											offset += 2;
 										}
 
-										byte argc = scr[offset++];
+										argc = scr[offset++];
 
 										if (opcode == op_callk) {
 											if (kFuncNum == 8) {	// kDrawPic
