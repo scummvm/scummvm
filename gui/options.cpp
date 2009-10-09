@@ -316,7 +316,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 
 	_enableVolumeSettings = enabled;
 
-	ena = enabled && !_muteCheckbox->getState();
+	ena = enabled;
 	if (_guioptions & Common::GUIO_NOMUSIC)
 		ena = false;
 
@@ -324,7 +324,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_musicVolumeSlider->setEnabled(ena);
 	_musicVolumeLabel->setEnabled(ena);
 
-	ena = enabled && !_muteCheckbox->getState();
+	ena = enabled;
 	if (_guioptions & Common::GUIO_NOSFX)
 		ena = false;
 
@@ -332,7 +332,7 @@ void OptionsDialog::setVolumeSettingsState(bool enabled) {
 	_sfxVolumeSlider->setEnabled(ena);
 	_sfxVolumeLabel->setEnabled(ena);
 
-	ena = enabled && !_muteCheckbox->getState();
+	ena = enabled;
 	if (_guioptions & Common::GUIO_NOSPEECH)
 		ena = false;
 
