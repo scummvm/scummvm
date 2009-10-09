@@ -2173,6 +2173,11 @@ void LoLEngine::drawBlockEffects(int index, int type) {
 		uint16 drawFlag = (type == 3) ? 0x80 : 0x20;
 		uint8 *ovl = (type == 3) ? _screen->_grayOverlay : 0;
 
+		if (_flags.use16ColorMode) {
+			ovl = 0;
+			drawFlag = (type == 0 || type == 3) ? 0 : 0x20;
+		}
+
 		calcCoordinatesAddDirectionOffset(x, y, _currentDirection);
 
 		x |= ((_visibleBlockIndex[index] & 0x1f) << 8);

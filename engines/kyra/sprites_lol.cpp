@@ -691,11 +691,11 @@ void LoLEngine::drawMonster(uint16 id) {
 
 	int bloodType = m->properties->flags & 0xc000;
 	if (bloodType == 0x4000)
-		bloodType = 63;
+		bloodType = _flags.use16ColorMode ? 0xbb : 63;
 	else if (bloodType == 0x8000)
-		bloodType = 15;
+		bloodType = _flags.use16ColorMode ? 0x55 : 15;
 	else if (bloodType == 0xc000)
-		bloodType = 74;
+		bloodType = _flags.use16ColorMode ? 0x33 : 74;
 	else
 		bloodType = 0;
 
@@ -1021,11 +1021,17 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 	if (flags & 0x40)
 		flg |= 2;
 
-	if (_currentLevel == 22) {
-		if (ovl)
-			ovl[255] = 0;
+	if (_flags.use16ColorMode) {
+		if (_currentLevel = 22)
+			flg &= 0xdfff;
+		
 	} else {
-		flg |= 0x2000;
+		if (_currentLevel == 22) {
+			if (ovl)
+				ovl[255] = 0;
+		} else {
+			flg |= 0x2000;
+		}
 	}
 
 	_shpDmX += ((_dmScaleW * fineX) >> 8);
