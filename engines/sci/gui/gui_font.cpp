@@ -32,7 +32,7 @@
 namespace Sci {
 
 SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
-	: _resourceId(resourceId) {
+	: _resourceId(resourceId), _resMan(resMan) {
 	assert(resourceId != -1);
 
 	// Workaround: lsl1sci mixes its own internal fonts with the global
@@ -40,11 +40,11 @@ SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 	if (!resMan->testResource(ResourceId(kResourceTypeFont, resourceId)))
 		resourceId = resourceId & 0x7ff;
 
-	Resource *fontResource = resMan->findResource(ResourceId(kResourceTypeFont, resourceId), false);
-	if (!fontResource) {
+	_resource = resMan->findResource(ResourceId(kResourceTypeFont, resourceId), true);
+	if (!_resource) {
 		error("font resource %d not found", resourceId);
 	}
-	_resourceData = fontResource->data;
+	_resourceData = _resource->data;
 
 	_numChars = READ_LE_UINT16(_resourceData + 2);
 	_fontHeight = READ_LE_UINT16(_resourceData + 4);
@@ -58,6 +58,7 @@ SciGuiFont::SciGuiFont(ResourceManager *resMan, GuiResourceId resourceId)
 }
 
 SciGuiFont::~SciGuiFont() {
+	_resMan->unlockResource(_resource);
 }
 
 GuiResourceId SciGuiFont::getResourceId() {

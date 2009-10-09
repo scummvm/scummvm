@@ -43,6 +43,9 @@ public:
 	void draw(SciGuiScreen *screen, int16 chr, int16 top, int16 left, byte color, byte textface);
 
 private:
+	ResourceManager *_resMan;
+
+	Resource *_resource;
 	GuiResourceId _resourceId;
 	byte *_resourceData;
 
