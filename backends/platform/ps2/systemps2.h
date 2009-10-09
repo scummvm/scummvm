@@ -126,9 +126,9 @@ public:
 
 	virtual void getTimeAndDate(TimeDate &t) const;
 
-	void timerThread(void);
-	void soundThread(void);
-	void msgPrintf(int millis, char *format, ...);
+	void timerThreadCallback(void);
+	void soundThreadCallback(void);
+	void msgPrintf(int millis, const char *format, ...) GCC_PRINTF(3, 4);
 	void makeConfigPath(void);
 	bool prepMC();
 

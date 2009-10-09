@@ -167,11 +167,11 @@ s32 timerInterruptHandler(s32 cause) {
 }
 
 void systemTimerThread(OSystem_PS2 *system) {
-	system->timerThread();
+	system->timerThreadCallback();
 }
 
 void systemSoundThread(OSystem_PS2 *system) {
-	system->soundThread();
+	system->soundThreadCallback();
 }
 
 void gluePowerOffCallback(void *system) {
@@ -417,7 +417,7 @@ void OSystem_PS2::initTimer(void) {
 	T0_MODE = TIMER_MODE( 2, 0, 0, 0, 1, 1, 1, 0, 1, 1);
 }
 
-void OSystem_PS2::timerThread(void) {
+void OSystem_PS2::timerThreadCallback(void) {
 	while (!_systemQuit) {
 		WaitSema(g_TimerThreadSema);
 		_scummTimerManager->handler();
@@ -425,7 +425,7 @@ void OSystem_PS2::timerThread(void) {
 	ExitThread();
 }
 
-void OSystem_PS2::soundThread(void) {
+void OSystem_PS2::soundThreadCallback(void) {
 	int16 *soundBufL = (int16*)memalign(64, SMP_PER_BLOCK * sizeof(int16) * 2);
 	int16 *soundBufR = soundBufL + SMP_PER_BLOCK;
 
@@ -659,7 +659,7 @@ void OSystem_PS2::grabOverlay(OverlayColor *buf, int pitch) {
 }
 
 void OSystem_PS2::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, int y, int w, int h) {
-	_screen->copyOverlayRect((uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
+	_screen->copyOverlayRect((const uint16*)buf, (uint16)pitch, (uint16)x, (uint16)y, (uint16)w, (uint16)h);
 }
 
 Graphics::PixelFormat OSystem_PS2::getOverlayFormat(void) const {
@@ -729,7 +729,7 @@ int16 OSystem_PS2::getWidth(void) {
 	return _screen->getWidth();
 }
 
-void OSystem_PS2::msgPrintf(int millis, char *format, ...) {
+void OSystem_PS2::msgPrintf(int millis, const char *format, ...) {
 	va_list ap;
 	char resStr[1024];
 	memset(resStr, 0, 1024);
@@ -912,14 +912,14 @@ bool OSystem_PS2::prepMC() {
 		fio.mkdir("mc0:ScummVM");
 		f = ps2_fopen("mc0:ScummVM/scummvm.icn", "w");
 
-		printf("f = %p\n", f);
+		printf("f = %p\n", (const void *)f);
 
 		ps2_fwrite(data, size, 2, f);
 		ps2_fclose(f);
 
 		f = ps2_fopen("mc0:ScummVM/icon.sys", "w");
 
-		printf("f = %p\n", f);
+		printf("f = %p\n", (const void *)f);
 
 		ps2_fwrite(&icon, sizeof(icon), 1, f);
 		ps2_fclose(f);
