@@ -109,7 +109,7 @@ public:
 
 	uint16 onControl(uint16 screenMask, Common::Rect rect);
 
-	void PriorityBandsInit(int16 top, int16 bottom);
+	void PriorityBandsInit(int16 bandCount, int16 top, int16 bottom);
 	void PriorityBandsInit(byte *data);
 	byte CoordinateToPriority(int16 y);
 	int16 PriorityToCoordinate(byte priority);

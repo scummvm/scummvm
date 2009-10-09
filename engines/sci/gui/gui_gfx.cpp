@@ -65,15 +65,6 @@ void SciGuiGfx::init() {
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
 	_menuRect = Common::Rect(0, 0, _screen->_width, 9);
-
-	// Initialize priority bands
-	if (_s->usesOldGfxFunctions()) {
-		_priorityBandCount = 15;
-		PriorityBandsInit(42, 200);
-	} else {
-		_priorityBandCount = 14;
-		PriorityBandsInit(42, 190);
-	}
 }
 
 GuiPort *SciGuiGfx::SetPort(GuiPort *newPort) {
@@ -773,9 +764,12 @@ static inline int sign_extend_byte(int value) {
 		return value;
 }
 
-void SciGuiGfx::PriorityBandsInit(int16 top, int16 bottom) {
+void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	double bandSize;
 	int16 y;
+
+	if (bandCount != -1)
+		_priorityBandCount = bandCount;
 
 	_priorityTop = top;
 	_priorityBottom = bottom;

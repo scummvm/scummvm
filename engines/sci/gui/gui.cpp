@@ -64,6 +64,12 @@ SciGui::~SciGui() {
 }
 
 void SciGui::init(bool usesOldGfxFunctions) {
+	// Initialize priority bands
+	if (usesOldGfxFunctions) {
+		_gfx->PriorityBandsInit(15, 42, 200);
+	} else {
+		_gfx->PriorityBandsInit(14, 42, 190);
+	}
 }
 
 
