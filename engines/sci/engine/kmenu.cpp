@@ -83,13 +83,9 @@ reg_t kDrawStatus(EngineState *s, int argc, reg_t *argv) {
 
 reg_t kDrawMenuBar(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].toSint16())
-		sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
+		s->_gui->drawMenuBar();
 	else
-		sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);
-
-	s->titlebar_port->draw(Common::Point(0, 0));
-	gfxop_update(s->gfx_state);
-
+		s->_gui->clearMenuBar();
 	return s->r_acc;
 }
 

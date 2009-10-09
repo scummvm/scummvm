@@ -259,6 +259,14 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_screen->copyToScreen();
 }
 
+void SciGui::drawMenuBar() {
+	// TODO: Implement menubar
+}
+
+void SciGui::clearMenuBar() {
+	// TODO: Implement menubar
+}
+
 void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 

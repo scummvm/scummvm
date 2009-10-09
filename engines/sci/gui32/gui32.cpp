@@ -505,6 +505,18 @@ void SciGui32::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	gfxop_update(s->gfx_state);
 }
 
+void SciGui32::drawMenuBar() {
+	sciw_set_menubar(s, s->titlebar_port, s->_menubar, -1);
+	s->titlebar_port->draw(Common::Point(0, 0));
+	gfxop_update(s->gfx_state);
+}
+
+void SciGui32::clearMenuBar() {
+	sciw_set_status_bar(s, s->titlebar_port, "", 0, 0);
+	s->titlebar_port->draw(Common::Point(0, 0));
+	gfxop_update(s->gfx_state);
+}
+
 void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	drawn_pic_t dp;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
