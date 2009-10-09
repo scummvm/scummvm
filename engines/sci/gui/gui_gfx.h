@@ -106,9 +106,7 @@ public:
 	void RestoreBits(GuiMemoryHandle memoryHandle);
 
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
-	void Draw_Pattern(int16 x, int16 y, byte pic_color, byte pic_priority, byte pic_control, byte code, byte texture);
 	void Draw_String(const char *text);
-	void FloodFill(int16 x, int16 y, byte color, byte prio, byte control);
 	
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
@@ -141,11 +139,6 @@ private:
 	int16 GetLongest(const char *str, int16 maxwidth, GuiResourceId orgFontId);
 	void DrawText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void ShowText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
-
-	void Draw_Box(Common::Rect box, byte color, byte prio, byte control);
-	void Draw_TexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture);
-	void Draw_Circle(Common::Rect box, byte size, byte color, byte prio, byte control);
-	void Draw_TexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture);
 
 	EngineState *_s;
 	SciGuiScreen *_screen;

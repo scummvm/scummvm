@@ -380,7 +380,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_FILL: //fill
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetAbsCoords(data, curPos, x, y);
-				_gfx->FloodFill(x, y, pic_color, pic_priority, pic_control);
+				vectorFloodFill(x, y, pic_color, pic_priority, pic_control);
 			}
 			break;
 
@@ -390,28 +390,28 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 		case PIC_OP_SHORT_PATTERNS:
 			vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 			vectorGetAbsCoords(data, curPos, x, y);
-			_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
+			vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetRelCoords(data, curPos, x, y);
-				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
+				vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
 		case PIC_OP_MEDIUM_PATTERNS:
 			vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 			vectorGetAbsCoords(data, curPos, x, y);
-			_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
+			vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetRelCoordsMed(data, curPos, x, y);
-				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
+				vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
 		case PIC_OP_ABSOLUTE_PATTERN:
 			while (vectorIsNonOpcode(data[curPos])) {
 				vectorGetPatternTexture(data, curPos, pattern_Code, pattern_Texture);
 				vectorGetAbsCoords(data, curPos, x, y);
-				_gfx->Draw_Pattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
+				vectorPattern(x, y, pic_color, pic_priority, pic_control, pattern_Code, pattern_Texture);
 			}
 			break;
 
@@ -553,6 +553,307 @@ void SciGuiPicture::vectorGetRelCoordsMed(byte *data, int &curPos, int16 &x, int
 void SciGuiPicture::vectorGetPatternTexture(byte *data, int &curPos, int16 pattern_Code, int16 &pattern_Texture) {
 	if (pattern_Code & SCI_PATTERN_CODE_USE_TEXTURE) {
 		pattern_Texture = (data[curPos++] >> 1) & 0x7f;
+	}
+}
+
+// Do not replace w/ some generic code. This algo really needs to behave exactly as the one from sierra
+void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority, byte control) {
+	GuiPort *curPort = _gfx->GetPort();
+	Common::Stack<Common::Point> stack;
+	Common::Point p, p1;
+
+	byte screenMask = _screen->getDrawingMask(color, priority, control), matchMask;
+	p.x = x + curPort->left;
+	p.y = y + curPort->top;
+	stack.push(p);
+
+	byte searchColor = _screen->getVisual(p.x, p.y);
+	byte searchPriority = _screen->getPriority(p.x, p.y);
+	byte searchControl = _screen->getControl(p.x, p.y);
+	int16 w, e, a_set, b_set;
+	// if in 1st point priority,control or color is already set to target, clear the flag
+	if (screenMask & SCI_SCREEN_MASK_VISUAL && searchColor == color)
+		screenMask ^= SCI_SCREEN_MASK_VISUAL;
+	if (screenMask & SCI_SCREEN_MASK_PRIORITY && searchPriority == priority)
+		screenMask ^= SCI_SCREEN_MASK_PRIORITY;
+	if (screenMask & SCI_SCREEN_MASK_CONTROL && searchControl == control)
+		screenMask ^= SCI_SCREEN_MASK_CONTROL;
+	if (screenMask == 0)// nothing to fill
+		return;
+
+	// hard borders for filling
+	int l = curPort->rect.left + curPort->left;
+	int t = curPort->rect.top + curPort->top;
+	int r = curPort->rect.right + curPort->left - 1;
+	int b = curPort->rect.bottom + curPort->top - 1;
+	while (stack.size()) {
+		p = stack.pop();
+		if ((matchMask = _screen->isFillMatch(p.x, p.y, screenMask, searchColor, searchPriority, searchControl)) == 0) // already filled
+			continue;
+		_screen->putPixel(p.x, p.y, screenMask, color, priority, control);
+		w = p.x;
+		e = p.x;
+		// moving west and east pointers as long as there is a matching color to fill
+		while (w > l && (matchMask == _screen->isFillMatch(w - 1, p.y, screenMask, searchColor, searchPriority, searchControl)))
+			_screen->putPixel(--w, p.y, matchMask, color, priority, control);
+		while (e < r && (matchMask == _screen->isFillMatch(e + 1, p.y, screenMask, searchColor, searchPriority, searchControl)))
+			_screen->putPixel(++e, p.y, matchMask, color, priority, control);
+		// checking lines above and below for possible flood targets
+		a_set = b_set = 0;
+		while (w <= e) {
+			if (p.y > t && (matchMask == _screen->isFillMatch(w, p.y - 1, screenMask, searchColor, searchPriority, searchControl))) { // one line above
+				if (a_set == 0) {
+					p1.x = w;
+					p1.y = p.y - 1;
+					stack.push(p1);
+					a_set = 1;
+				}
+			} else
+				a_set = 0;
+
+			if (p.y < b && (matchMask == _screen->isFillMatch(w, p.y + 1, screenMask, searchColor, searchPriority, searchControl))) { // one line below
+				if (b_set == 0) {
+					p1.x = w;
+					p1.y = p.y + 1;
+					stack.push(p1);
+					b_set = 1;
+				}
+			} else
+				b_set = 0;
+			w++;
+		}
+	}
+}
+
+// Bitmap for drawing sierra circles
+static const byte vectorPatternCircles[8][30] = {
+	{ 0x01 },
+	{ 0x4C, 0x02 },
+	{ 0xCE, 0xF7, 0x7D, 0x0E },
+	{ 0x1C, 0x3E, 0x7F, 0x7F, 0x7F, 0x3E, 0x1C, 0x00 },
+	{ 0x38, 0xF8, 0xF3, 0xDF, 0x7F, 0xFF, 0xFD, 0xF7, 0x9F, 0x3F, 0x38 },
+	{ 0x70, 0xC0, 0x1F, 0xFE, 0xE3, 0x3F, 0xFF, 0xF7, 0x7F, 0xFF, 0xE7, 0x3F, 0xFE, 0xC3, 0x1F, 0xF8, 0x00 },
+	{ 0xF0, 0x01, 0xFF, 0xE1, 0xFF, 0xF8, 0x3F, 0xFF, 0xDF, 0xFF, 0xF7, 0xFF, 0xFD, 0x7F, 0xFF, 0x9F, 0xFF,
+		0xE3, 0xFF, 0xF0, 0x1F, 0xF0, 0x01 },
+	{ 0xE0, 0x03, 0xF8, 0x0F, 0xFC, 0x1F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF, 0x7F, 0xFF,
+		0x7F, 0xFF, 0x7F, 0xFE, 0x3F, 0xFE, 0x3F, 0xFC, 0x1F, 0xF8, 0x0F, 0xE0, 0x03 }
+//  { 0x01 };
+//	{ 0x03, 0x03, 0x03 },
+//	{ 0x02, 0x07, 0x07, 0x07, 0x02 },
+//	{ 0x06, 0x06, 0x0F, 0x0F, 0x0F, 0x06, 0x06 },
+//	{ 0x04, 0x0E, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x0E, 0x04 },
+//	{ 0x0C, 0x1E, 0x1E, 0x1E, 0x3F, 0x3F, 0x3F, 0x1E, 0x1E, 0x1E, 0x0C },
+//	{ 0x1C, 0x3E, 0x3E, 0x3E, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x3E, 0x3E, 0x3E, 0x1C },
+//	{ 0x18, 0x3C, 0x7E, 0x7E, 0x7E, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7E, 0x7E, 0x7E, 0x3C, 0x18 }
+};
+
+// TODO: perhaps this is a better way to set the s_patternTextures array below?
+//  in that case one would need to adjust bits of secondary table. Bit 256 is ignored by original interpreter
+#if 0
+static const byte patternTextures[32 * 2] = {
+	0x04, 0x29, 0x40, 0x24, 0x09, 0x41, 0x25, 0x45,
+	0x41, 0x90, 0x50, 0x44, 0x48, 0x08, 0x42, 0x28,
+	0x89, 0x52, 0x89, 0x88, 0x10, 0x48, 0xA4, 0x08,
+	0x44, 0x15, 0x28, 0x24, 0x00, 0x0A, 0x24, 0x20,
+	// Now the table is actually duplicated, so we won't need to wrap around
+	0x04, 0x29, 0x40, 0x24, 0x09, 0x41, 0x25, 0x45,
+	0x41, 0x90, 0x50, 0x44, 0x48, 0x08, 0x42, 0x28,
+	0x89, 0x52, 0x89, 0x88, 0x10, 0x48, 0xA4, 0x08,
+	0x44, 0x15, 0x28, 0x24, 0x00, 0x0A, 0x24, 0x20,
+};
+#endif
+
+// This table is bitwise upwards (from bit0 to bit7), sierras original table went down the bits (bit7 to bit0)
+//  this was done to simplify things, so we can just run through the table w/o worrying too much about clipping
+static const bool vectorPatternTextures[32 * 8 * 2] = {
+	false, false,  true, false, false, false, false, false, // 0x04
+	 true, false, false,  true, false,  true, false, false, // 0x29
+	false, false, false, false, false, false,  true, false, // 0x40
+	false, false,  true, false, false,  true, false, false, // 0x24
+	 true, false, false,  true, false, false, false, false, // 0x09
+	 true, false, false, false, false, false,  true, false, // 0x41
+	 true, false,  true, false, false,  true, false, false, // 0x25
+	 true, false,  true, false, false, false,  true, false, // 0x45
+	 true, false, false, false, false, false,  true, false, // 0x41
+	false, false, false, false,  true, false, false,  true, // 0x90
+	false, false, false, false,  true, false,  true, false, // 0x50
+	false, false,  true, false, false, false,  true, false, // 0x44
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false, false,  true, false, false, false, false, // 0x08
+	false,  true, false, false, false, false,  true, false, // 0x42
+	false, false, false,  true, false,  true, false, false, // 0x28
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false,  true, false, false,  true, false,  true, false, // 0x52
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false, false, false,  true, false, false, false,  true, // 0x88
+	false, false, false, false,  true, false, false, false, // 0x10
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false,  true, false, false,  true, false,  true, // 0xA4
+	false, false, false,  true, false, false, false, false, // 0x08
+	false, false,  true, false, false, false,  true, false, // 0x44
+	 true, false,  true, false,  true, false, false, false, // 0x15
+	false, false, false,  true, false,  true, false, false, // 0x28
+	false, false,  true, false, false,  true, false, false, // 0x24
+	false, false, false, false, false, false, false, false, // 0x00
+	false,  true, false,  true, false, false, false, false, // 0x0A
+	false, false,  true, false, false,  true, false, false, // 0x24
+	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
+	// Now the table is actually duplicated, so we won't need to wrap around
+	false, false,  true, false, false, false, false, false, // 0x04
+	 true, false, false,  true, false,  true, false, false, // 0x29
+	false, false, false, false, false, false,  true, false, // 0x40
+	false, false,  true, false, false,  true, false, false, // 0x24
+	 true, false, false,  true, false, false, false, false, // 0x09
+	 true, false, false, false, false, false,  true, false, // 0x41
+	 true, false,  true, false, false,  true, false, false, // 0x25
+	 true, false,  true, false, false, false,  true, false, // 0x45
+	 true, false, false, false, false, false,  true, false, // 0x41
+	false, false, false, false,  true, false, false,  true, // 0x90
+	false, false, false, false,  true, false,  true, false, // 0x50
+	false, false,  true, false, false, false,  true, false, // 0x44
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false, false,  true, false, false, false, false, // 0x08
+	false,  true, false, false, false, false,  true, false, // 0x42
+	false, false, false,  true, false,  true, false, false, // 0x28
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false,  true, false, false,  true, false,  true, false, // 0x52
+	 true, false, false,  true, false, false, false,  true, // 0x89
+	false, false, false,  true, false, false, false,  true, // 0x88
+	false, false, false, false,  true, false, false, false, // 0x10
+	false, false, false,  true, false, false,  true, false, // 0x48
+	false, false,  true, false, false,  true, false,  true, // 0xA4
+	false, false, false,  true, false, false, false, false, // 0x08
+	false, false,  true, false, false, false,  true, false, // 0x44
+	 true, false,  true, false,  true, false, false, false, // 0x15
+	false, false, false,  true, false,  true, false, false, // 0x28
+	false, false,  true, false, false,  true, false, false, // 0x24
+	false, false, false, false, false, false, false, false, // 0x00
+	false,  true, false,  true, false, false, false, false, // 0x0A
+	false, false,  true, false, false,  true, false, false, // 0x24
+	false, false, false, false, false,  true, false,        // 0x20 (last bit is not mentioned cause original interpreter also ignores that bit)
+};
+
+// Bit offsets into pattern_textures
+static const byte vectorPatternTextureOffset[128] = {
+	0x00, 0x18, 0x30, 0xc4, 0xdc, 0x65, 0xeb, 0x48,
+	0x60, 0xbd, 0x89, 0x05, 0x0a, 0xf4, 0x7d, 0x7d,
+	0x85, 0xb0, 0x8e, 0x95, 0x1f, 0x22, 0x0d, 0xdf,
+	0x2a, 0x78, 0xd5, 0x73, 0x1c, 0xb4, 0x40, 0xa1,
+	0xb9, 0x3c, 0xca, 0x58, 0x92, 0x34, 0xcc, 0xce,
+	0xd7, 0x42, 0x90, 0x0f, 0x8b, 0x7f, 0x32, 0xed,
+	0x5c, 0x9d, 0xc8, 0x99, 0xad, 0x4e, 0x56, 0xa6,
+	0xf7, 0x68, 0xb7, 0x25, 0x82, 0x37, 0x3a, 0x51,
+	0x69, 0x26, 0x38, 0x52, 0x9e, 0x9a, 0x4f, 0xa7,
+	0x43, 0x10, 0x80, 0xee, 0x3d, 0x59, 0x35, 0xcf,
+	0x79, 0x74, 0xb5, 0xa2, 0xb1, 0x96, 0x23, 0xe0,
+	0xbe, 0x05, 0xf5, 0x6e, 0x19, 0xc5, 0x66, 0x49,
+	0xf0, 0xd1, 0x54, 0xa9, 0x70, 0x4b, 0xa4, 0xe2,
+	0xe6, 0xe5, 0xab, 0xe4, 0xd2, 0xaa, 0x4c, 0xe3,
+	0x06, 0x6f, 0xc6, 0x4a, 0xa4, 0x75, 0x97, 0xe1
+};
+
+void SciGuiPicture::vectorPatternBox(Common::Rect box, byte color, byte prio, byte control) {
+	byte flag = _screen->getDrawingMask(color, prio, control);
+	int y, x;
+
+	for (y = box.top; y < box.bottom; y++) {
+		for (x = box.left; x < box.right; x++) {
+			_screen->putPixel(x, y, flag, color, prio, control);
+		}
+	}
+}
+
+void SciGuiPicture::vectorPatternTexturedBox(Common::Rect box, byte color, byte prio, byte control, byte texture) {
+	byte flag = _screen->getDrawingMask(color, prio, control);
+	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
+	int y, x;
+
+	for (y = box.top; y < box.bottom; y++) {
+		for (x = box.left; x < box.right; x++) {
+			if (*textureData) {
+				_screen->putPixel(x, y, flag, color, prio, control);
+			}
+			textureData++;
+		}
+	}
+}
+
+void SciGuiPicture::vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control) {
+	byte flag = _screen->getDrawingMask(color, prio, control);
+	byte *circleData = (byte *)&vectorPatternCircles[size];
+	byte bitmap = *circleData;
+	byte bitNo = 0;
+	int y, x;
+
+	for (y = box.top; y < box.bottom; y++) {
+		for (x = box.left; x < box.right; x++) {
+			if (bitmap & 1) {
+				_screen->putPixel(x, y, flag, color, prio, control);
+			}
+			bitNo++;
+			if (bitNo == 8) {
+				circleData++; bitmap = *circleData; bitNo = 0;
+			} else {
+				bitmap = bitmap >> 1;
+			}
+		}
+	}
+}
+
+void SciGuiPicture::vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture) {
+	byte flag = _screen->getDrawingMask(color, prio, control);
+	byte *circleData = (byte *)&vectorPatternCircles[size];
+	byte bitmap = *circleData;
+	byte bitNo = 0;
+	const bool *textureData = &vectorPatternTextures[vectorPatternTextureOffset[texture]];
+	int y, x;
+
+	for (y = box.top; y < box.bottom; y++) {
+		for (x = box.left; x < box.right; x++) {
+			if (bitmap & 1) {
+				if (*textureData) {
+					_screen->putPixel(x, y, flag, color, prio, control);
+				}
+				textureData++;
+			}
+			bitNo++;
+			if (bitNo == 8) {
+				circleData++; bitmap = *circleData; bitNo = 0;
+			} else {
+				bitmap = bitmap >> 1;
+			}
+		}
+	}
+}
+
+void SciGuiPicture::vectorPattern(int16 x, int16 y, byte color, byte priority, byte control, byte code, byte texture) {
+	byte size = code & SCI_PATTERN_CODE_PENSIZE;
+	Common::Rect rect;
+
+	// We need to adjust the given coordinates, because the ones given us do not define upper left but somewhat middle
+	y -= size; if (y < 0) y = 0;
+	x -= size; if (x < 0) x = 0;
+
+	rect.top = y; rect.left = x;
+	rect.setHeight((size*2)+1); rect.setWidth((size*2)+2);
+	_gfx->OffsetRect(rect);
+	rect.clip(_screen->_width, _screen->_height);
+
+	if (code & SCI_PATTERN_CODE_RECTANGLE) {
+		// Rectangle
+		if (code & SCI_PATTERN_CODE_USE_TEXTURE) {
+			vectorPatternTexturedBox(rect, color, priority, control, texture);
+		} else {
+			vectorPatternBox(rect, color, priority, control);
+		}
+
+	} else {
+		// Circle
+		if (code & SCI_PATTERN_CODE_USE_TEXTURE) {
+			vectorPatternTexturedCircle(rect, size, color, priority, control, texture);
+		} else {
+			vectorPatternCircle(rect, size, color, priority, control);
+		}
 	}
 }
 
