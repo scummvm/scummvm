@@ -506,13 +506,6 @@ GlobalOptionsDialog::GlobalOptionsDialog()
 	new ButtonWidget(tab, "GlobalOptions_Misc.ThemeButton", "Theme:", kChooseThemeCmd, 0);
 	_curTheme = new StaticTextWidget(tab, "GlobalOptions_Misc.CurTheme", g_gui.theme()->getThemeName());
 
-
-	_rendererPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.RendererPopupDesc", "GUI Renderer:");
-	_rendererPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.RendererPopup");
-
-	for (uint i = 1; i < GUI::ThemeEngine::_rendererModesSize; ++i)
-		_rendererPopUp->appendEntry(GUI::ThemeEngine::_rendererModes[i].name, GUI::ThemeEngine::_rendererModes[i].mode);
-
 	_autosavePeriodPopUpDesc = new StaticTextWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopupDesc", "Autosave:");
 	_autosavePeriodPopUp = new PopUpWidget(tab, "GlobalOptions_Misc.AutosavePeriodPopup");
 
@@ -619,15 +612,6 @@ void GlobalOptionsDialog::close() {
 #endif
 
 		ConfMan.setInt("autosave_period", _autosavePeriodPopUp->getSelectedTag(), _domain);
-
-		GUI::ThemeEngine::GraphicsMode selected = (GUI::ThemeEngine::GraphicsMode)_rendererPopUp->getSelectedTag();
-		const char *cfg = GUI::ThemeEngine::findModeConfigName(selected);
-		if (!ConfMan.get("gui_renderer").equalsIgnoreCase(cfg)) {
-			// FIXME: Actually, any changes (including the theme change) should
-			// only become active *after* the options dialog has closed.
-			g_gui.loadNewTheme(g_gui.theme()->getThemeId(), selected);
-			ConfMan.set("gui_renderer", cfg, _domain);
-		}
 	}
 	OptionsDialog::close();
 }

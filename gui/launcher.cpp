@@ -221,18 +221,6 @@ EditGameDialog::EditGameDialog(const String &domain, const String &desc)
 	addVolumeControls(tab, "GameOptions_Volume.");
 
 	//
-	// 6) The MIDI tab
-	//
-	tab->addTab("MIDI");
-
-	_globalMIDIOverride = new CheckboxWidget(tab, "GameOptions_MIDI.EnableTabCheckbox", "Override global MIDI settings", kCmdGlobalMIDIOverride, 0);
-
-	if (_guioptions & Common::GUIO_NOMIDI)
-		_globalMIDIOverride->setEnabled(false);
-
-	addMIDIControls(tab, "GameOptions_MIDI.");
-
-	//
 	// 2) The 'Path' tab
 	//
 	tab->addTab("Paths");
@@ -296,13 +284,6 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("sfx_volume", _domain) ||
 		ConfMan.hasKey("speech_volume", _domain);
 	_globalVolumeOverride->setState(e);
-
-	e = ConfMan.hasKey("soundfont", _domain) ||
-		ConfMan.hasKey("multi_midi", _domain) ||
-		ConfMan.hasKey("native_mt32", _domain) ||
-		ConfMan.hasKey("enable_gs", _domain) ||
-		ConfMan.hasKey("midi_gain", _domain);
-	_globalMIDIOverride->setState(e);
 
 	// TODO: game path
 
