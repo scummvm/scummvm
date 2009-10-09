@@ -1192,7 +1192,7 @@ void SciGuiGfx::AddToPicDrawCels(List *list) {
 		view->getCelRect(loopNo, celNo, x, y, priority, &celRect);
 
 		// draw corresponding cel
-		drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, z, paletteNo);
+		drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, paletteNo);
 		if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 			celRect.top = CLIP<int16>(PriorityToCoordinate(priority) - 1, celRect.top, celRect.bottom - 1);
 			FillRect(celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
