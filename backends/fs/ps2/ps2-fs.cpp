@@ -35,7 +35,7 @@
 
 #include <fileXio_rpc.h>
 
-#include "ps2temp.h"
+#include "backends/platform/ps2/ps2temp.h"
 
 #define DEFAULT_MODE (FIO_S_IRUSR | FIO_S_IWUSR | FIO_S_IRGRP | FIO_S_IWGRP | FIO_S_IROTH | FIO_S_IWOTH)
 
@@ -60,7 +60,7 @@ protected:
 	bool _verified;
 
 private:
-	char *getDeviceDescription() const;
+	const char *getDeviceDescription() const;
 	void doverify();
 
 public:
@@ -488,7 +488,7 @@ AbstractFSNode *Ps2FilesystemNode::getParent() const {
 	return new Ps2FilesystemNode(str, true);
 }
 
-char *Ps2FilesystemNode::getDeviceDescription() const {
+const char *Ps2FilesystemNode::getDeviceDescription() const {
 	if (strncmp(_path.c_str(), "cdfs", 4) == 0)
 		return "DVD Drive";
 	else if (strncmp(_path.c_str(), "pfs0", 4) == 0)
