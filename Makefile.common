@@ -196,7 +196,7 @@ dist-src: \
 	@#DEB-src?
 
 # Common files
-DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING COPYING.LGPL COPYRIGHT NEWS README)
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING.GPL COPYING.LGPL NEWS README)
 
 # Themes files
 DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
