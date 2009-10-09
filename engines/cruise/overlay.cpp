@@ -91,7 +91,7 @@ int freeOverlay(int overlayIdx) {
 		MemFree(ovlDataPtr->stringTable);
 	}
 	if (ovlDataPtr->arrayProc) {
-		ovlData3Struct *tempPtr = tempPtr = ovlDataPtr->arrayProc;
+		ovlData3Struct *tempPtr = ovlDataPtr->arrayProc;
 		for (i = 0; i < ovlDataPtr->numProc; ++i, ++tempPtr)
 			MemFree(tempPtr->dataPtr);
 		MemFree(ovlDataPtr->arrayProc);
