@@ -36,6 +36,7 @@ class SciGuiCursor;
 class SciGuiGfx;
 class SciGuiresources;
 class SciGuiWindowMgr;
+class SciGui32; // for debug purposes
 
 class SciGui {
 public:
@@ -111,6 +112,8 @@ private:
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
+
+	// SciGui32 *_gui32; // for debug purposes
 };
 
 } // End of namespace Sci
