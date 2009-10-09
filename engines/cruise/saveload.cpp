@@ -332,7 +332,7 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 		s.syncAsSint16LE(ptr->ccr);
 		s.syncAsSint16LE(ptr->scriptOffset);
 		s.syncAsUint32LE(dummyLong);
-		s.syncAsSint16LE(ptr->varA);
+		s.syncAsSint16LE(ptr->dataSize);
 		s.syncAsSint16LE(ptr->scriptNumber);
 		s.syncAsSint16LE(ptr->overlayNumber);
 		s.syncAsSint16LE(ptr->sysKey);
@@ -342,12 +342,12 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 		s.syncAsSint16LE(ptr->var18);
 		s.syncAsSint16LE(ptr->var1A);
 
-		s.syncAsSint16LE(ptr->varA);
+		s.syncAsSint16LE(ptr->dataSize);
 
-		if (ptr->varA) {
+		if (ptr->dataSize) {
 			if (s.isLoading())
-				ptr->var6 = (byte *)mallocAndZero(ptr->varA);
-			s.syncBytes(ptr->var6, ptr->varA);
+				ptr->data = (byte *)mallocAndZero(ptr->dataSize);
+			s.syncBytes(ptr->data, ptr->dataSize);
 		}
 
 		if (s.isLoading()) {

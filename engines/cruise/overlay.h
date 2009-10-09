@@ -184,6 +184,8 @@ int loadOverlay(const char * scriptName);
 int32 findOverlayByName2(const char * name);
 int findOverlayByName(const char *overlayName);
 int releaseOverlay(const char *name);
+int freeOverlay(int overlayIdx);
+void freeOverlayTable();
 
 } // End of namespace Cruise
 

@@ -39,8 +39,8 @@ struct scriptInstanceStruct {
 	struct scriptInstanceStruct *nextScriptPtr;
 	int16 ccr;
 	int16 scriptOffset;
-	uint8 *var6;
-	int16 varA;
+	uint8 *data;
+	int16 dataSize;
 	int16 scriptNumber;
 	int16 overlayNumber;
 	int16 sysKey;

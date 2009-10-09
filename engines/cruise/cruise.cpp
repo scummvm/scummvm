@@ -169,6 +169,7 @@ bool CruiseEngine::loadLanguageStrings() {
 		}
 
 		f.close();
+		MemFree(data);
 
 	} else {
 		// Try and use one of the pre-defined language lists

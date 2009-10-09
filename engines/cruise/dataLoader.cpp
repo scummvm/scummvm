@@ -349,6 +349,8 @@ int loadFullBundle(const char *name, int startIdx) {
 		error("Unknown fileType in loadFullBundle");
 	}
 
+	MemFree(ptr);
+
 	return 0;
 }
 

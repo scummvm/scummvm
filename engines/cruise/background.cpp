@@ -208,6 +208,7 @@ int loadBackground(const char *name, int idx) {
 		loadCVT(&ptr2);
 	}
 
+	MemFree(ptrToFree);
 
 	if (name != backgroundTable[idx].name)
 		strcpy(backgroundTable[idx].name, name);
