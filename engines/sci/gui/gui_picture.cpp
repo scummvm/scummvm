@@ -498,7 +498,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			_priority = pic_priority;
 			// Dithering EGA pictures
 			if (isEGA) {
-				_screen->dither();
+				_screen->dither(_addToFlag);
 			}
 			return;
 		default:

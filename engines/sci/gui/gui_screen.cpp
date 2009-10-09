@@ -216,7 +216,7 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 }
 
 // Currently not really done, its supposed to be possible to only dither _visualScreen
-void SciGuiScreen::dither() {
+void SciGuiScreen::dither(bool addToFlag) {
 	int y, x;
 	byte color;
 	byte *screenPtr = _visualScreen;
@@ -236,12 +236,16 @@ void SciGuiScreen::dither() {
 			}
 		}
 	} else {
+		if (!addToFlag)
+			memset(&_unditherMemorial, 0, sizeof(_unditherMemorial));
 		// Do dithering on visual screen and put decoded but undithered byte onto display-screen
 		for (y = 0; y < _height; y++) {
 			for (x = 0; x < _width; x++) {
 				color = *screenPtr;
 				if (color & 0xF0) {
 					color ^= color << 4;
+					// remember dither combination for cel-undithering
+					_unditherMemorial[color]++;
 					// if decoded color wants do dither with black on left side, we turn it around
 					//  otherwise the normal ega color would get used for display
 					if (color & 0xF0) {
@@ -260,6 +264,13 @@ void SciGuiScreen::dither() {
 
 void SciGuiScreen::unditherSetState(bool flag) {
 	_unditherState = flag;
+}
+
+int16 *SciGuiScreen::unditherGetMemorial() {
+	if (_unditherState)
+		return (int16 *)&_unditherMemorial;
+	else
+		return NULL;
 }
 
 void SciGuiScreen::debugShowMap(int mapNo) {

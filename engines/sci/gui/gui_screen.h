@@ -39,6 +39,8 @@ namespace Sci {
 #define SCI_SCREEN_MASK_ALL      SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_CONTROL
 #define SCI_SCREEN_MASK_DITHERED 128
 
+#define SCI_SCREEN_UNDITHERMEMORIAL_SIZE 256
+
 class SciGuiScreen {
 public:
 	SciGuiScreen(int16 width = 320, int16 height = 200, int16 scaleFactor = 1);
@@ -59,8 +61,9 @@ public:
 
 	void setPalette(GuiPalette*pal);
 
-	void dither();
+	void dither(bool addToFlag);
 	void unditherSetState(bool flag);
+	int16 *unditherGetMemorial();
 
 	void debugShowMap(int mapNo);
 
@@ -73,14 +76,15 @@ public:
 
 	int _picNotValid; // possible values 0, 1 and 2
 
-	bool _unditherState;
-
 private:
 	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
 	void saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
 
 	uint16 _baseTable[SCI_SCREEN_MAXHEIGHT];
 	uint16 _baseDisplayTable[SCI_SCREEN_MAXHEIGHT];
+
+	bool _unditherState;
+	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
 
 public:	// HACK. TODO: make private
 	// these screens have the real resolution of the game engine (320x200 for SCI0/SCI1/SCI11 games, 640x480 for SCI2 games)
@@ -92,6 +96,7 @@ public:	// HACK. TODO: make private
 	// this screen is the one that is actually displayed to the user. It may be 640x480 for japanese SCI1 games
 	//  SCI0 games may be undithered in here. Only read from this buffer for Save/ShowBits usage.
 	byte *_displayScreen;
+private:
 
 	// this is a pointer to the currently active screen (changing it only required for debug purposes)
 	byte *_activeScreen;
