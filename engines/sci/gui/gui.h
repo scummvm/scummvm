@@ -82,11 +82,12 @@ public:
 	virtual void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	virtual void paletteAnimate(int fromColor, int toColor, int speed);
 
-	virtual int16 onControl(byte screenMask, Common::Rect rect);
+	virtual uint16 onControl(byte screenMask, Common::Rect rect);
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);
 	virtual void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	virtual void setNowSeen(reg_t objectReference);
+	virtual bool canBeHere(reg_t curObject, reg_t listReference);
 
 	virtual void hideCursor();
 	virtual void showCursor();

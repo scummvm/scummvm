@@ -34,6 +34,20 @@ namespace Sci {
 #define SCI_PATTERN_CODE_USE_TEXTURE 0x20
 #define SCI_PATTERN_CODE_PENSIZE 0x07
 
+enum {
+	SCI_ANIMATE_SIGNAL_STOPUPDATE    = 0x0001,
+	SCI_ANIMATE_SIGNAL_VIEWUPDATED   = 0x0002,
+	SCI_ANIMATE_SIGNAL_NOUPDATE      = 0x0004,
+	SCI_ANIMATE_SIGNAL_HIDDEN        = 0x0008,
+	SCI_ANIMATE_SIGNAL_FIXEDPRIORITY = 0x0010,
+	SCI_ANIMATE_SIGNAL_ALWAYSUPDATE  = 0x0020,
+	SCI_ANIMATE_SIGNAL_FORCEUPDATE   = 0x0040,
+	SCI_ANIMATE_SIGNAL_REMOVEVIEW    = 0x0080,
+	SCI_ANIMATE_SIGNAL_FROZEN        = 0x0100,
+	SCI_ANIMATE_SIGNAL_IGNOREACTOR   = 0x4000,
+	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
+};
+
 class SciGuiScreen;
 class SciGuiPalette;
 class SciGuiFont;
@@ -99,7 +113,7 @@ public:
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 
-	int16 onControl(uint16 screenMask, Common::Rect rect);
+	uint16 onControl(uint16 screenMask, Common::Rect rect);
 
 	void PriorityBandsInit(int16 top, int16 bottom);
 	void PriorityBandsInit(byte *data);

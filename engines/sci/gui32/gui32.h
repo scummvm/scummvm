@@ -74,11 +74,12 @@ public:
 	void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	void paletteAnimate(int fromColor, int toColor, int speed);
 
-	int16 onControl(byte screenMask, Common::Rect rect);
+	uint16 onControl(byte screenMask, Common::Rect rect);
 	void animate(reg_t castListReference, bool cycle, int argc, reg_t *argv);
 	void addToPicList(reg_t listReference, int argc, reg_t *argv);
 	void addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	void setNowSeen(reg_t objectReference);
+	bool canBeHere(reg_t curObject, reg_t listReference);
 
 	void hideCursor();
 	void showCursor();

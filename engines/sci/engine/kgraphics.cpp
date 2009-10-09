@@ -646,148 +646,20 @@ reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-#define GASEOUS_VIEW_MASK_ACTIVE (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
-#define GASEOUS_VIEW_MASK_PASSIVE (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
-
 static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority);
 
-static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int use_nsrect, int view_mask, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	int other_signal = GET_SEL32V(other_obj, signal);
-	int other_priority = GET_SEL32V(other_obj, priority);
-	int y = (int16)GET_SEL32V(other_obj, y);
-	Common::Rect other_area;
+reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
+	reg_t curObject = argv[0];
+	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
 
-	if (use_nsrect) {
-		other_area = get_nsrect(s, other_obj, 0);
-		other_area = nsrect_clip(s, y, other_area, other_priority);
-	} else {
-		other_area.left = GET_SEL32V(other_obj, brLeft);
-		other_area.right = GET_SEL32V(other_obj, brRight);
-		other_area.top = GET_SEL32V(other_obj, brTop);
-		other_area.bottom = GET_SEL32V(other_obj, brBottom);
-	}
-
-	if (other_area.right < 0 || other_area.bottom < 0 || area.right < 0 || area.bottom < 0)
-		return 0; // Out of scope
-
-	if (other_area.left >= 320 || other_area.top >= 190 || area.right >= 320 || area.bottom >= 190)
-		return 0; // Out of scope
-
-	debugC(2, kDebugLevelBresen, "OtherSignal=%04x, z=%04x obj=%04x:%04x\n", other_signal, (other_signal & view_mask), PRINT_REG(other_obj));
-
-	if ((other_signal & (view_mask)) == 0) {
-		// check whether the other object ignores actors
-
-		debugC(2, kDebugLevelBresen, "  against (%d,%d) to (%d,%d)\n", other_area.left, other_area.top, other_area.right, other_area.bottom);
-
-		if (area.intersects(other_area))
-			return 1;
-		/* CR (from :Bob Heitman:) Collision rects have Mac semantics, ((0,0),(1,1)) only
-		** covers the coordinate (0,0) */
-	}
-
-	debugC(2, kDebugLevelBresen, " (no)\n");
-	return 0;
+	if (s->_gui->canBeHere(curObject, listReference))
+		return make_reg(0, 1);
+	return NULL_REG;
 }
 
-reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	reg_t obj = argv[0];
-	reg_t cliplist_ref = (argc > 1) ? argv[1] : NULL_REG;
-	List *cliplist = NULL;
-	GfxPort *port = s->picture_port;
-	uint16 signal;
-	int retval;
-
-	Common::Rect abs_zone;
-	rect_t zone;
-	uint16 edgehit;
-	uint16 illegal_bits;
-
-	abs_zone.left = (int16)GET_SEL32V(obj, brLeft);
-	abs_zone.right = (int16)GET_SEL32V(obj, brRight);
-	abs_zone.top = (int16)GET_SEL32V(obj, brTop);
-	abs_zone.bottom = (int16)GET_SEL32V(obj, brBottom);
-
-	zone = gfx_rect(abs_zone.left + port->zone.x, abs_zone.top + port->zone.y, abs_zone.width(), abs_zone.height());
-
-	signal = GET_SEL32V(obj, signal);
-	debugC(2, kDebugLevelBresen, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj=%04x:%04x, sig=%04x, cliplist=%04x:%04x\n",
-	          GFX_PRINT_RECT(zone), abs_zone.left, abs_zone.right, abs_zone.top, abs_zone.bottom,
-	          PRINT_REG(obj), signal, PRINT_REG(cliplist_ref));
-
-	illegal_bits = GET_SEL32V(obj, illegalBits);
-
-	retval = !(illegal_bits & (edgehit = gfxop_scan_bitmask(s->gfx_state, zone, GFX_MASK_CONTROL)));
-
-	debugC(2, kDebugLevelBresen, "edgehit = %04x (illegalBits %04x)\n", edgehit, illegal_bits);
-	if (retval == 0) {
-		debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-		return NULL_REG; // Can't BeHere
-	}
-
-	retval = 0;
-
-	if ((illegal_bits & 0x8000) // If we are vulnerable to those views at all...
-	        && s->dyn_views) { // ...check against all stop-updated dynviews
-		GfxDynView *widget = (GfxDynView *)s->dyn_views->_contents;
-
-		debugC(2, kDebugLevelBresen, "Checking vs dynviews:\n");
-
-		while (widget) {
-			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
-			        && ((widget->_ID != obj.segment) || (widget->_subID != obj.offset))
-			        && s->_segMan->isObject(make_reg(widget->_ID, widget->_subID)))
-				if (collides_with(s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE, argc, argv))
-					return NULL_REG;
-
-			widget = (GfxDynView *)widget->_next;
-		}
-	}
-
-	if (signal & GASEOUS_VIEW_MASK_ACTIVE) {
-		retval = signal & GASEOUS_VIEW_MASK_ACTIVE; // CanBeHere- it's either being disposed, or it ignores actors anyway
-		debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-		return make_reg(0, retval); // CanBeHere
-	}
-
-	if (cliplist_ref.segment)
-		cliplist = s->_segMan->lookupList(cliplist_ref);
-
-	if (cliplist) {
-		Node *node = s->_segMan->lookupNode(cliplist->first);
-
-		retval = 0; // Assume that we Can'tBeHere...
-
-		while (node) { // Check each object in the list against our bounding rectangle
-			reg_t other_obj = node->value;
-			debugC(2, kDebugLevelBresen, "  comparing against %04x:%04x\n", PRINT_REG(other_obj));
-
-			if (!s->_segMan->isObject(other_obj)) {
-				warning("CanBeHere() cliplist contains non-object %04x:%04x", PRINT_REG(other_obj));
-			} else if (other_obj != obj) { // Clipping against yourself is not recommended
-
-				if (collides_with(s, abs_zone, other_obj, 0, GASEOUS_VIEW_MASK_PASSIVE, argc, argv)) {
-					debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-					return NULL_REG;
-				}
-
-			} // if (other_obj != obj)
-			node = s->_segMan->lookupNode(node->succ); // move on
-		}
-	}
-
-	if (!retval)
-		retval = 1;
-	debugC(2, kDebugLevelBresen, " -> %04x\n", retval);
-
-	return make_reg(0, retval);
-}  // CanBeHere
-
+// kCantBeHere does the same thing as kCanBeHere, except that
+// it returns the opposite result.
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
-	// kCantBeHere does the same thing as kCanBeHere, except that
-	// it returns the opposite result.
 	reg_t result = kCanBeHere(s, argc, argv);
 	result.offset = !result.offset;
 	return result;

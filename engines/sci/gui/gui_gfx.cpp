@@ -1040,10 +1040,10 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 	}
 }
 
-int16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
+uint16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
 	Common::Rect outRect(rect.left, rect.top, rect.right, rect.bottom);
 	int16 x, y;
-	int16 result = 0;
+	uint16 result = 0;
 
 	outRect.clip(_curPort->rect);
 	if (outRect.isEmpty()) // nothing to control
@@ -1122,20 +1122,6 @@ void SciGuiGfx::AnimateDisposeLastCast() {
 	//if (!_lastCast->first.isNull())
 		//_lastCast->DeleteList();
 }
-
-enum {
-	SCI_ANIMATE_SIGNAL_STOPUPDATE    = 0x0001,
-	SCI_ANIMATE_SIGNAL_VIEWUPDATED   = 0x0002,
-	SCI_ANIMATE_SIGNAL_NOUPDATE      = 0x0004,
-	SCI_ANIMATE_SIGNAL_HIDDEN        = 0x0008,
-	SCI_ANIMATE_SIGNAL_FIXEDPRIORITY = 0x0010,
-	SCI_ANIMATE_SIGNAL_ALWAYSUPDATE  = 0x0020,
-	SCI_ANIMATE_SIGNAL_FORCEUPDATE   = 0x0040,
-	SCI_ANIMATE_SIGNAL_REMOVEVIEW    = 0x0080,
-	SCI_ANIMATE_SIGNAL_FROZEN        = 0x0100,
-	SCI_ANIMATE_SIGNAL_IGNOREACTOR   = 0x4000,
-	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
-};
 
 void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	SegManager *segMan = _s->_segMan;

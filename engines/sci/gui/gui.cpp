@@ -375,9 +375,9 @@ void SciGui::paletteAnimate(int fromColor, int toColor, int speed) {
 	_palette->animate(fromColor, toColor, speed);
 }
 
-int16 SciGui::onControl(byte screenMask, Common::Rect rect) {
+uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
-	int16 result;
+	uint16 result;
 
 	result = _gfx->onControl(screenMask, rect);
 	_gfx->SetPort(oldPort);
@@ -469,6 +469,27 @@ void SciGui::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCel
 
 void SciGui::setNowSeen(reg_t objectReference) {
 	_gfx->SetNowSeen(objectReference);
+}
+
+bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
+	SegManager *segMan = _s->_segMan;
+	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
+	Common::Rect checkRect;
+	uint16 signal, controlMask;
+	bool result;
+
+	checkRect.left = GET_SEL32V(curObject, brLeft);
+	checkRect.top = GET_SEL32V(curObject, brTop);
+	checkRect.right = GET_SEL32V(curObject, brRight);
+	checkRect.bottom = GET_SEL32V(curObject, brBottom);
+	signal = GET_SEL32V(curObject, signal);
+	controlMask = GET_SEL32V(curObject, illegalBits);
+	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
+	if ((!result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW))) {
+		result = true;
+	}
+	_gfx->SetPort(oldPort);
+	return result;
 }
 
 void SciGui::hideCursor() {

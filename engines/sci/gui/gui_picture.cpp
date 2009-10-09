@@ -336,7 +336,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			break;
 
 		case PIC_OP_SET_PRIORITY:
-			pic_priority = data[curPos++];
+			pic_priority = data[curPos++] & 0x0F;
 			if (isEGA) {
 				pic_priority = EGApriority[pic_priority];
 			}
@@ -346,7 +346,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			break;
 
 		case PIC_OP_SET_CONTROL:
-			pic_control = data[curPos++];
+			pic_control = data[curPos++] & 0x0F;
 			break;
 		case PIC_OP_DISABLE_CONTROL:
 			pic_control = 255;
