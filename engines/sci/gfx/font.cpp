@@ -172,7 +172,7 @@ static void render_char(byte *dest, byte *src, int width, int line_width, int li
 }
 
 gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *stext, int characters, PaletteEntry *fg0, PaletteEntry *fg1, PaletteEntry *bg) {
-	unsigned char *text = (unsigned char *)stext;
+	const byte *text = (byte *)stext;
 	int height = font->height;
 	int width = 0;
 	gfx_pixmap_t *pxm;

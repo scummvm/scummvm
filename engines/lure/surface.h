@@ -150,8 +150,6 @@ public:
 	bool show();
 };
 
-extern int numFontChars;
-
 } // End of namespace Lure
 
 #endif

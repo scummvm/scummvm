@@ -56,7 +56,7 @@ class Memory {
 public:
 	static MemoryBlock *allocate(uint32 size);
 	static MemoryBlock *duplicate(MemoryBlock *src);
-	static uint8 *alloc(uint32 size);
+	static void *alloc(uint32 size);
 	static void dealloc(void *block);
 };
 

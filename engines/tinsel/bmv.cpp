@@ -391,8 +391,8 @@ void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr) {
 	uint16 dx1 = Au_Prev1;
 	uint16 dx2 = Au_Prev2;
 
-	uint16 *destP = (uint16 *) destPtr;
-	int8 *srcP = (int8 *) sourceData;
+	uint16 *destP = (uint16 *)destPtr;
+	const int8 *srcP = (const int8 *)sourceData;
 
 	// Blob Loop
 	while (blobCount-- > 0) {

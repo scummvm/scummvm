@@ -611,8 +611,8 @@ static int vertex_compare(const void *a, const void *b) {
 	// Returns   : (int) -1 if a is smaller than b, 1 if a is larger than b, and
 	//                   0 if a and b are equal
 	const Common::Point &p0 = s_vertex_cur->v;
-	const Common::Point &p1 = (*(Vertex **) a)->v;
-	const Common::Point &p2 = (*(Vertex **) b)->v;
+	const Common::Point &p1 = (*(const Vertex **) a)->v;
+	const Common::Point &p2 = (*(const Vertex **) b)->v;
 
 	if (p1 == p2)
 		return 0;

@@ -38,8 +38,8 @@ MemoryBlock *Memory::duplicate(MemoryBlock *src) {
 	return block;
 }
 
-uint8 *Memory::alloc(uint32 size) {
-	return (uint8 *) malloc(size);
+void *Memory::alloc(uint32 size) {
+	return malloc(size);
 }
 
 void Memory::dealloc(void *block) {

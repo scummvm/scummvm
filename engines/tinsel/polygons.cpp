@@ -162,7 +162,7 @@ public:
 	int getNodeY(int i) const { return (int)FROM_LE_32(nlisty[i]); }
 
 	// get Inter-node line structure
-	LINEINFO *getLineinfo(int i) const { return ((LINEINFO *)(_pStart + (int)FROM_LE_32(plinelist))) + i; }
+	const LINEINFO *getLineinfo(int i) const { return ((const LINEINFO *)(_pStart + (int)FROM_LE_32(plinelist))) + i; }
 
 protected:
 	POLY_TYPE type;		///< type of polygon
@@ -191,8 +191,8 @@ protected:
 	int32 pnodelistx, pnodelisty;	///<offset in chunk to this array if present
 	int32 plinelist;
 
-	int32 *nlistx;
-	int32 *nlisty;
+	const int32 *nlistx;
+	const int32 *nlisty;
 
 public:
 	SCNHANDLE hScript;	///< handle of code segment for polygon events
@@ -277,8 +277,8 @@ void Poly::nextPoly() {
 	pnodelisty = nextLong(_pData);
 	plinelist = nextLong(_pData);
 
-	nlistx = (int32 *)(_pStart + (int)FROM_LE_32(pnodelistx));
-	nlisty = (int32 *)(_pStart + (int)FROM_LE_32(pnodelisty));
+	nlistx = (const int32 *)(_pStart + (int)FROM_LE_32(pnodelistx));
+	nlisty = (const int32 *)(_pStart + (int)FROM_LE_32(pnodelisty));
 
 	if (TinselV0)
 		// Skip to the last 4 bytes of the record for the hScript value
@@ -591,7 +591,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 
 	// Look for fit of perpendicular to lines between nodes
 	for (int i = 0; i < ptp.getNodecount() - 1; i++) {
-		LINEINFO *line = ptp.getLineinfo(i);
+		const LINEINFO *line = ptp.getLineinfo(i);
 
 		const int32	a = (int)FROM_LE_32(line->a);
 		const int32	b = (int)FROM_LE_32(line->b);
@@ -677,7 +677,7 @@ void FindBestPoint(HPOLYGON hp, int *x, int *y, int *pline) {
 		assert(nearestL != -1);
 
 		// A point on a line is nearest
-		LINEINFO *line = ptp.getLineinfo(nearestL);
+		const LINEINFO *line = ptp.getLineinfo(nearestL);
 		const int32	a = (int)FROM_LE_32(line->a);
 		const int32	b = (int)FROM_LE_32(line->b);
 		const int32	c = (int)FROM_LE_32(line->c);

@@ -440,8 +440,8 @@ struct SavegameDesc {
 };
 
 static int _savegame_index_struct_compare(const void *a, const void *b) {
-	SavegameDesc *A = (SavegameDesc *)a;
-	SavegameDesc *B = (SavegameDesc *)b;
+	const SavegameDesc *A = (const SavegameDesc *)a;
+	const SavegameDesc *B = (const SavegameDesc *)b;
 
 	if (B->date != A->date)
 		return B->date - A->date;

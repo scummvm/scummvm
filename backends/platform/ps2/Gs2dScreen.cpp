@@ -298,7 +298,7 @@ void Gs2dScreen::createAnimTextures(void) {
 	for (int i = 0; i < 16; i++) {
 		uint32 *destPos = (uint32*)buf;
 		for (int ch = 15; ch >= 0; ch--) {
-			uint32 *src = (uint32*)(_binaryData + ((_binaryPattern[i] >> ch) & 1) * 4 * 14);
+			const uint32 *src = (const uint32*)(_binaryData + ((_binaryPattern[i] >> ch) & 1) * 4 * 14);
 			for (int line = 0; line < 14; line++)
 				destPos[line << 4] = src[line];
 			destPos++;
