@@ -357,8 +357,8 @@ protected:
 
 /** Apple IIGS MIDI program change to instrument number mapping. */
 struct MidiProgramChangeMapping {
-	const byte midiProgToInst[44]; ///< Lookup table for the MIDI program number to instrument number mapping
-	const byte undefinedInst; ///< The undefined instrument number
+	byte midiProgToInst[44]; ///< Lookup table for the MIDI program number to instrument number mapping
+	byte undefinedInst; ///< The undefined instrument number
 
 	// Maps the MIDI program number to an instrument number
 	byte map(uint midiProg) const {
@@ -387,6 +387,7 @@ struct IIgsExeInfo {
 
 class IIgsMidiChannel {
 public:
+	IIgsMidiChannel() : _instrument(0), _sample(0), _volume(0) {}
 	uint activeSounds() const; ///< How many active sounds are playing?
 	void setInstrument(const IIgsInstrumentHeader *instrument, const int8 *sample);
 	void setVolume(uint8 volume);
