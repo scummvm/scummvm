@@ -1581,6 +1581,12 @@ if test -n "$_host"; then
 			_build_scalers="no"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			# HACK to enable mad & zlib (they are not properly detected due to linker issues).
+			# The same does not currently for tremor, as the PS2 port the resulting library
+			# libtremor, while our code later on expects it to be called libvorbisidec.
+			# TODO: Enable tremor, e.g. by adding  -ltremor or by renaming the lib.
+			_mad="yes"
+			_zlib="yes"
 			# HACK to fix compilation of C source files for now.
 			add_line_to_config_mk 'CC = ee-gcc'
 			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
@@ -2318,7 +2324,7 @@ case $_backend in
 		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
 		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
 		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
-		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++ "
+		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	*)
 		echo "support for $_backend backend not implemented in configure script yet"
