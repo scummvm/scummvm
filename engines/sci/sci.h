@@ -95,6 +95,12 @@ enum SciVersion {
 	SCI_VERSION_3 // LSL7, RAMA, Lighthouse
 };
 
+enum MoveCountType {
+	kMoveCountUninitialized,
+	kIgnoreMoveCount,
+	kIncrementMoveCount
+};
+
 class SciEngine : public Engine {
 	friend class Console;
 public:

@@ -234,55 +234,6 @@ reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 #define MOVING_ON_X (((axis == _K_BRESEN_AXIS_X)&&bi1) || dx)
 #define MOVING_ON_Y (((axis == _K_BRESEN_AXIS_Y)&&bi1) || dy)
 
-enum Movecnt {
-	IGNORE_MOVECNT,
-	INCREMENT_MOVECNT,
-	UNINITIALIZED
-};
-
-static Movecnt handle_movecnt = UNINITIALIZED;	// FIXME: Avoid non-const global vars
-
-static int checksum_bytes(byte *data, int size) {
-	int result = 0;
-	int i;
-
-	for (i = 0; i < size; i++) {
-		result += *data;
-		data++;
-	}
-
-	return result;
-}
-
-static void bresenham_autodetect(EngineState *s) {
-	reg_t motionClass = s->_segMan->findObjectByName("Motion");
-
-	if (!motionClass.isNull()) {
-		Object *obj = s->_segMan->getObject(motionClass);
-		reg_t fptr;
-		byte *buf;
-
-		if (obj == NULL) {
-			warning("bresenham_autodetect failed");
-			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
-			return;
-		}
-
-		if (lookup_selector(s->_segMan, motionClass, s->_kernel->_selectorCache.doit, NULL, &fptr) != kSelectorMethod) {
-			warning("bresenham_autodetect failed");
-			handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
-			return;
-		}
-
-		buf = s->_segMan->getScript(fptr.segment)->_buf + fptr.offset;
-		handle_movecnt = (getSciVersion() <= SCI_VERSION_01 || checksum_bytes(buf, 8) == 0x216) ? INCREMENT_MOVECNT : IGNORE_MOVECNT;
-		printf("b-moveCnt action based on checksum: %s\n", handle_movecnt == IGNORE_MOVECNT ? "ignore" : "increment");
-	} else {
-		warning("bresenham_autodetect failed");
-		handle_movecnt = INCREMENT_MOVECNT; // Most games do this, so best guess
-	}
-}
-
 reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t mover = argv[0];
@@ -297,9 +248,6 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	if (getSciVersion() > SCI_VERSION_01)
 		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
-
-	if (handle_movecnt == UNINITIALIZED)
-		bresenham_autodetect(s);
 
 	PUT_SEL32(client, signal, make_reg(0, signal)); // This is a NOP for SCI0
 	oldx = x;
@@ -317,7 +265,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
-	if (handle_movecnt) {
+	if (s->handleMoveCount()) {
 		if (max_movcnt > movcnt) {
 			++movcnt;
 			PUT_SEL32V(mover, b_movCnt, movcnt); // Needed for HQ1/Ogre?

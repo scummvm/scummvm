@@ -111,6 +111,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 	_doSoundType = SCI_VERSION_AUTODETECT;
 	_lofsType = SCI_VERSION_AUTODETECT;
 	_gfxFunctionsType = SCI_VERSION_AUTODETECT;
+	_moveCountType = kMoveCountUninitialized;
 }
 
 EngineState::~EngineState() {
@@ -631,6 +632,42 @@ SciVersion EngineState::detectGfxFunctionsType() {
 	}
 
 	return _gfxFunctionsType;
+}
+
+MoveCountType EngineState::detectMoveCountType() {
+	if (_moveCountType == kMoveCountUninitialized) {
+		// SCI0/SCI01 games always increment move count
+		if (getSciVersion() <= SCI_VERSION_01) {
+			_moveCountType = kIncrementMoveCount;
+			return _moveCountType;
+		}
+
+		reg_t motionClass = _segMan->findObjectByName("Motion");
+		bool found = false;
+
+		if (!motionClass.isNull()) {
+			Object *obj = _segMan->getObject(motionClass);
+			reg_t fptr;
+
+			if (obj && lookup_selector(_segMan, motionClass, _kernel->_selectorCache.doit, NULL, &fptr) == kSelectorMethod) {
+				byte *buf = _segMan->getScript(fptr.segment)->_buf + fptr.offset;
+				int checksum = 0;
+				for (int i = 0; i < 8; i++)
+					checksum += *(buf++);
+				_moveCountType = (checksum == 0x216) ? kIncrementMoveCount : kIgnoreMoveCount;
+				found = true;
+			}
+		}
+
+		if (!found) {
+			warning("Move count autodetection failed");
+			_moveCountType = kIncrementMoveCount;	// Most games do this, so best guess
+		}
+
+		debugC(1, kDebugLevelVM, "Detected move count handling: %s", (_moveCountType == kIncrementMoveCount) ? "increment" : "ignore");
+	}
+
+	return _moveCountType;
 }
 
 } // End of namespace Sci

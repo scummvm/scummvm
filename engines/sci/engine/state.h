@@ -288,11 +288,26 @@ public:
 
 	/**
 	 * Autodetects the graphics functions used
-	 * @return Lofs type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
+	 * @return Graphics functions type, SCI_VERSION_0_EARLY / SCI_VERSION_0_LATE
 	 */
 	SciVersion detectGfxFunctionsType();
 
+	/**
+	 * Applies to all versions before 0.000.502
+	 * Old SCI versions used to interpret the third DrawPic() parameter inversely,
+	 * with the opposite default value (obviously).
+	 * Also, they used 15 priority zones from 42 to 200 instead of 14 priority
+	 * zones from 42 to 190.
+	 */
 	bool usesOldGfxFunctions() { return detectGfxFunctionsType() == SCI_VERSION_0_EARLY; }
+
+	/**
+	 * Autodetects the Bresenham routine used in the actor movement functions
+	 * @return Move count type, kIncrementMoveCnt / kIgnoreMoveCnt
+	 */
+	MoveCountType detectMoveCountType();
+
+	bool handleMoveCount() { return detectMoveCountType() == kIncrementMoveCount; }
 
 	/* Debugger data: */
 	Breakpoint *bp_list;   /**< List of breakpoints */
@@ -316,6 +331,7 @@ public:
 	Common::String getLanguageString(const char *str, kLanguage lang) const;
 private:
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
+	MoveCountType _moveCountType;
 	kLanguage charToLanguage(const char c) const;
 	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
 	uint16 firstRetOffset(reg_t objectAddress) const;
