@@ -36,11 +36,11 @@ namespace Sci {
 
 // window styles
 enum {
-	kTransparent = (1 << 0),
-	kNoFrame     = (1 << 1),
-	kTitle       = (1 << 2),
-	kTopmost     = (1 << 3),
-	kUser        = (1 << 7)
+	SCI_WINDOWMGR_STYLE_TRANSPARENT = (1 << 0),
+	SCI_WINDOWMGR_STYLE_NOFRAME     = (1 << 1),
+	SCI_WINDOWMGR_STYLE_TITLE       = (1 << 2),
+	SCI_WINDOWMGR_STYLE_TOPMOST     = (1 << 3),
+	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
 SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiScreen *screen, SciGuiGfx *gfx)
@@ -63,7 +63,7 @@ SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiScreen *screen, SciGu
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = NewWindow(Common::Rect(0, 10, _screen->_width, _screen->_height), 0, 0, kTransparent | kNoFrame, 0, true);
+	_picWind = NewWindow(Common::Rect(0, 10, _screen->_width, _screen->_height), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 }
 
 SciGuiWindowMgr::~SciGuiWindowMgr() {
@@ -104,7 +104,7 @@ void SciGuiWindowMgr::EndUpdate(GuiWindow *wnd) {
 	_gfx->SetPort(oldPort);
 }
 
-GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, uint16 arg8, bool draw) {
+GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Rect *restoreRect, const char *title, uint16 style, int16 priority, bool draw) {
 	// Find an unused window/port id
 	uint id = 1;
 	while (id < _windowsById.size() && _windowsById[id]) {
@@ -123,7 +123,7 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	}
 
 	_windowsById[id] = pwnd;
-	if (style & kTopmost)
+	if (style & SCI_WINDOWMGR_STYLE_TOPMOST)
 		_windowList.push_front(pwnd);
 	else
 		_windowList.push_back(pwnd);
@@ -136,17 +136,17 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	pwnd->wndStyle = style;
 	pwnd->hSaved1 = pwnd->hSaved2 = NULL_REG;
 	pwnd->bDrawn = false;
-	if ((style & kTransparent) == 0)
-		pwnd->uSaveFlag = (arg8 == 0xFFFF ? 1 : 3);
+	if ((style & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0)
+		pwnd->uSaveFlag = (priority == -1 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY);
 	
-	if (title && (style & kTitle)) {
+	if (title && (style & SCI_WINDOWMGR_STYLE_TITLE)) {
 		pwnd->title = title;
 	}
 	
 	r = dims;
-	if (style == kUser || !(style & kNoFrame)) {
+	if (style == SCI_WINDOWMGR_STYLE_USER || !(style & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 		r.grow(1);
-		if (style & kTitle) {
+		if (style & SCI_WINDOWMGR_STYLE_TITLE) {
 			r.top -= 10;
 			r.bottom++;
 		}
@@ -177,7 +177,7 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 
 	// CHECKME: Is this 'kTransparent' check necessary?
 	// The shadow is already drawn if !(wndStyle & (kUser | kNoFrame)).
-	if (!(pwnd->wndStyle & (kTransparent | kUser | kNoFrame))) {
+	if (!(pwnd->wndStyle & (SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_NOFRAME))) {
 		// The shadow is drawn slightly outside the window.
 		// Enlarge restoreRect to cover that.
 		pwnd->restoreRect.bottom++;
@@ -201,28 +201,28 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	pWnd->bDrawn = true;
 	GuiPort *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
-	if ((wndStyle & kTransparent) == 0) {
-		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, 1);
+	if ((wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0) {
+		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
 		if (pWnd->uSaveFlag & 2) {
 			pWnd->hSaved2 = _gfx->SaveBits(pWnd->restoreRect, 2);
-			if ((wndStyle & kUser) == 0)
-				_gfx->FillRect(pWnd->restoreRect, 2, 0, 0xF);
+			if ((wndStyle & SCI_WINDOWMGR_STYLE_USER) == 0)
+				_gfx->FillRect(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY, 0, 15);
 		}
 	}
 	
 	// drawing frame,shadow and title
-	if (!(wndStyle & kUser)) {
+	if (!(wndStyle & SCI_WINDOWMGR_STYLE_USER)) {
 		r = pWnd->dims;
-		if (!(wndStyle & kNoFrame)) {
+		if (!(wndStyle & SCI_WINDOWMGR_STYLE_NOFRAME)) {
 			r.translate(1, 1);
 			_gfx->FrameRect(r);// shadow
 			r.translate(-1, -1);
 			_gfx->FrameRect(r);// window frame
 
-			if (wndStyle & kTitle) {
+			if (wndStyle & SCI_WINDOWMGR_STYLE_TITLE) {
 				_gfx->FrameRect(r);
 				r.grow(-1);
-				_gfx->FillRect(r, 1, 0);
+				_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, 0);
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = _gfx->GetPort()->penClr;
 					_gfx->PenColor(255);
@@ -237,10 +237,10 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 			r.grow(-1);
 		}
 		
-		if (!(wndStyle & kTransparent))
-			_gfx->FillRect(r, 1, pWnd->backClr);
+		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
+			_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, pWnd->backClr);
 
-		_gfx->ShowBits(pWnd->dims, 1);
+		_gfx->ShowBits(pWnd->dims, SCI_SCREEN_MASK_VISUAL);
 	}
 	_gfx->SetPort(oldport);
 }
@@ -250,7 +250,7 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 	_gfx->RestoreBits(pWnd->hSaved1);
 	_gfx->RestoreBits(pWnd->hSaved2);
 	if (arg2)
-		_gfx->ShowBits(pWnd->restoreRect, 1);
+		_gfx->ShowBits(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
 //	else
 //		g_sci->ReAnimate(&pwnd->dims);
 	_windowList.remove(pWnd);
@@ -263,11 +263,11 @@ void SciGuiWindowMgr::UpdateWindow(GuiWindow *wnd) {
 	GuiMemoryHandle handle;
 
 	if (wnd->uSaveFlag && wnd->bDrawn) {
-		handle = _gfx->SaveBits(wnd->restoreRect, 1);
+		handle = _gfx->SaveBits(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
 		_gfx->RestoreBits(wnd->hSaved1);
 		wnd->hSaved1 = handle;
-		if (wnd->uSaveFlag & 2) {
-			handle = _gfx->SaveBits(wnd->restoreRect, 2);
+		if (wnd->uSaveFlag & SCI_SCREEN_MASK_PRIORITY) {
+			handle = _gfx->SaveBits(wnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
 			_gfx->RestoreBits(wnd->hSaved2);
 			wnd->hSaved2 = handle;
 		}
