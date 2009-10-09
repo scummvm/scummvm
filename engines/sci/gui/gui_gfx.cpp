@@ -928,7 +928,7 @@ Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
 		curObject = curNode->value;
 		listHelper.address = curAddress;
 		listHelper.y = (int16)GET_SEL32V(curObject, y);
-		listHelper.z = (int16)GET_SEL32V(curObject, z);
+		listHelper.z = (int16)GET_SEL32V(curObject, priority);
 		sortedList->push_back(listHelper);
 
 		curAddress = curNode->succ;
@@ -962,7 +962,7 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 	GuiResourceId viewId[SCI_ANIMATE_MAXLIST];
 	GuiViewLoopNo loopNo[SCI_ANIMATE_MAXLIST];
 	GuiViewCelNo celNo[SCI_ANIMATE_MAXLIST];
-	int16 z[SCI_ANIMATE_MAXLIST];
+	int16 priority[SCI_ANIMATE_MAXLIST];
 	Common::Rect celRect[SCI_ANIMATE_MAXLIST];
 	uint16 paletteNo[SCI_ANIMATE_MAXLIST], signal[SCI_ANIMATE_MAXLIST];
 	reg_t bitsHandle;
@@ -981,7 +981,7 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 		celRect[listNr].top = GET_SEL32V(curObject, nsTop);
 		celRect[listNr].right = GET_SEL32V(curObject, nsRight);
 		celRect[listNr].bottom = GET_SEL32V(curObject, nsBottom);
-		z[listNr] = GET_SEL32V(curObject, z);
+		priority[listNr] = GET_SEL32V(curObject, priority);
 		paletteNo[listNr] = GET_SEL32V(curObject, palette);
 		signal[listNr] = GET_SEL32V(curObject, signal);
 		listNr++;
@@ -1017,12 +1017,12 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 			curObject = object[listNr];
 
 			// draw corresponding cel
-			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, z[listNr], paletteNo[listNr]);
+			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, priority[listNr], paletteNo[listNr]);
 //			arr1[i] = 1;
 			signal[listNr] &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
 			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = celRect[listNr];
-				rect.top = CLIP<int16>(PriorityToCoordinate(z[listNr]) - 1, rect.top, rect.bottom - 1);  
+				rect.top = CLIP<int16>(PriorityToCoordinate(priority[listNr]) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
@@ -1048,11 +1048,11 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 		curObject = object[listNr];
 		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal[listNr] & SCI_ANIMATE_SIGNAL_HIDDEN)) {
 			// draw corresponding cel
-			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, z[listNr], paletteNo[listNr]);
+			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, priority[listNr], paletteNo[listNr]);
 			// arr1[i] = 1;
 			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = celRect[listNr];
-				rect.top = CLIP<int16>(PriorityToCoordinate(z[listNr]) - 1, rect.top, rect.bottom - 1);  
+				rect.top = CLIP<int16>(PriorityToCoordinate(priority[listNr]) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
@@ -1068,7 +1068,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 	GuiResourceId viewId;
 	GuiViewLoopNo loopNo;
 	GuiViewCelNo celNo;
-	int16 x, y, z;
+	int16 x, y, priority;
 	Common::Rect celRect;
 	uint16 signal, paletteNo;
 	reg_t bitsHandle;
@@ -1084,7 +1084,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 			celNo = GET_SEL32V(curObject, cel);
 			x = GET_SEL32V(curObject, x);
 			y = GET_SEL32V(curObject, y);
-			z = GET_SEL32V(curObject, z);
+			priority = GET_SEL32V(curObject, priority);
 			paletteNo = GET_SEL32V(curObject, palette);
 
 			celRect.left = GET_SEL32V(curObject, nsLeft);
@@ -1097,7 +1097,7 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 			PUT_SEL32(curObject, underBits, bitsHandle);
 
 			// draw corresponding cel
-			drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, z, paletteNo);
+			drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, paletteNo);
 
 			// arr1[inx] = 1;
 			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
