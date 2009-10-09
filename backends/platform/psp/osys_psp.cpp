@@ -45,7 +45,6 @@
 
 #define	SAMPLES_PER_SEC	44100
 
-
 #define PIXEL_SIZE (4)
 #define BUF_WIDTH (512)
 #define	PSP_SCREEN_WIDTH	480

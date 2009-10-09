@@ -210,3 +210,4 @@ unsigned char keyboard_symbols_shift_compressed[] __attribute__((aligned(16))) =
 };
 
 #endif
+

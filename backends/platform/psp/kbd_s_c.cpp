@@ -204,3 +204,4 @@ unsigned char keyboard_symbols_compressed[] __attribute__((aligned(16))) = {
 };
 
 #endif
+

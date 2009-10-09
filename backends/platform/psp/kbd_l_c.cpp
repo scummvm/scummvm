@@ -211,3 +211,4 @@ unsigned char keyboard_letters_compressed[] __attribute__((aligned(16))) = {
 };
 
 #endif
+
