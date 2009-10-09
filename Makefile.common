@@ -80,7 +80,7 @@ endif
 
 # The build rule for the ScummVM executable
 $(EXECUTABLE): $(OBJS)
-	$(QUIET_LINK)$(CXX) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+	$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
 
 distclean: clean
 	$(RM) config.h config.mk config.log

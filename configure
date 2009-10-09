@@ -899,8 +899,7 @@ psp)
 	;;
 ps2)
 	_host_os=ps2
-	# TODO: The following CPU name is gibberish, need to find out what the 'correct one is
-	_host_cpu=mips_emotion_engine
+	_host_cpu=mips64r5900el
 	_host_alias=ee
 	;;
 *)
@@ -959,8 +958,8 @@ psp)
 	fi
 	;;
 ps2)
-	if test -z "$PS2DEV"; then
-		echo "Please set PS2DEV in your environment. export PS2DEV=<path to ps2 toolchain>"
+	if test -z "$PS2SDK"; then
+		echo "Please set PS2SDK in your environment. export PS2SDK=<path to ps2 sdk>"
 		exit 1
 	fi
 	;;
@@ -984,7 +983,7 @@ EOF
 
 	if test -n "$_host"; then
 		# In cross-compiling mode, we cannot run the result
-		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
+		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT -c tmp_cxx_compiler.cpp" 2> /dev/null && rm -f tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp
 	else
 		eval "$1 $CXXFLAGS $LDFLAGS -o tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.cpp" 2> /dev/null && eval "./tmp_cxx_compiler$HOSTEXEEXT 2> /dev/null" && rm -rf tmp_cxx_compiler$HOSTEXEEXT tmp_cxx_compiler.dSYM tmp_cxx_compiler.cpp
 	fi
@@ -1016,6 +1015,9 @@ if test -z "$CXX"; then
 	echo "none found!"
 	exit 1
 fi
+
+# By default, use the C++ compiler as linker
+LD=$CXX
 
 #
 # Determine the compiler version
@@ -1276,12 +1278,14 @@ case $_host_os in
 		;;
 	nds)
 		# TODO nds
+		DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 		;;
 	psp)
 		CXXFLAGS="$CXXFLAGS -O3 -G0 -I$PSPDEV/psp/sdk/include -D_PSP_FW_VERSION=150"
 		;;
 	ps2)
 		# TODO ps2
+		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
 		;;
 	wince)
 		CXXFLAGS="$CXXFLAGS -O3 -march=armv4 -mtune=xscale -D_WIN32_WCE=300 -D__ARM__ -D_ARM_ -DUNICODE -DFPM_DEFAULT -DNONSTANDARD_PORT"
@@ -1534,7 +1538,6 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
-			DEFINES="$DEFINES -D__DS__ -DNDS -DARM9 -DARM -DNONSTANDARD_PORT"
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
@@ -1576,6 +1579,11 @@ if test -n "$_host"; then
 			_backend="ps2"
 			_build_scalers="no"
 			_build_hq_scalers="no"
+			_mt32emu="no"
+			# HACK to fix compilation of C source files for now.
+			add_line_to_config_mk 'CC = ee-gcc'
+			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
+			LD=ee-gcc
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
@@ -2288,7 +2296,10 @@ case $_backend in
 		;;
 	ps2)
 		# TODO ps2
-		DEFINES="$DEFINES -D_EE -D__PLAYSTATION2__"
+		DEFINES="$DEFINES -D_EE -DFORCE_RTL"
+		INCLUDES="$INCLUDES -I$PS2SDK/ee/include -I$PS2SDK/common/include -I$PS2SDK/ports/include"
+		LDFLAGS="$LDFLAGS -mno-crt0 $PS2SDK/ee/startup/crt0.o -T $PS2SDK/ee/startup/linkfile"
+		LDFLAGS="$LDFLAGS -L$PS2SDK/ee/lib -L$PS2SDK/ports/lib"
 		LIBS="$LIBS -lmc -lpad -lmouse -lhdd -lpoweroff -lsjpcm -lmad -ltremor -lz -lm -lc -lfileXio -lkernel -lstdc++ "
 		;;
 	*)
@@ -2463,6 +2474,7 @@ cat > config.mk << EOF
 
 CXX := $CXX
 CXXFLAGS := $CXXFLAGS
+LD := $LD
 LIBS += $LIBS
 RANLIB := $_ranlib
 STRIP := $_strip
