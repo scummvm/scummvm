@@ -1415,6 +1415,53 @@ void SciGuiGfx::AnimateRestoreAndDelete(List *list, int argc, reg_t *argv) {
 	}
 }
 
+void SciGuiGfx::AddToPicDrawCels(List *list) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	SciGuiView *view = NULL;
+	GuiResourceId viewId;
+	GuiViewLoopNo loopNo;
+	GuiViewCelNo celNo;
+	int16 x, y, z, priority;
+	uint16 paletteNo;
+	Common::Rect celRect;
+
+	while (curNode) {
+		curObject = curNode->value;
+
+		// Get cel data...
+		viewId = GET_SEL32V(curObject, view);
+		loopNo = GET_SEL32V(curObject, loop);
+		celNo = GET_SEL32V(curObject, cel);
+		x = GET_SEL32V(curObject, x);
+		y = GET_SEL32V(curObject, y);
+		z = GET_SEL32V(curObject, z);
+		priority = GET_SEL32V(curObject, priority);
+		if (priority == -1)
+			priority = 0; //CoordPri(y);
+		paletteNo = GET_SEL32V(curObject, palette);
+
+		// Get the corresponding view
+		view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+
+		// Create rect according to coordinates and given cel
+		view->getCelRect(loopNo, celNo, x, y, z, &celRect);
+
+		// draw corresponding cel
+		drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, z, paletteNo);
+// FIXME find out what 17 is and implement this as well
+//		if ((obj.getProperty(17) & 0x4000) == 0) {
+//			rect.top = CLIP<int16>(PriCoord(prio) - 1, rect.top, rect.bottom - 1);
+//			_gfx->RFillRect(rect, 4, 0, 0, 0xF);
+//		}
+
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+}
+
 void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	SegManager *segMan = _s->_segMan;
 	SciGuiView *view = NULL;

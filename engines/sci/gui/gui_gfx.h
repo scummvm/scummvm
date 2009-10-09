@@ -107,6 +107,8 @@ public:
 	void AnimateUpdate(List *list);
 	void AnimateDrawCels(List *list);
 	void AnimateRestoreAndDelete(List *list, int argc, reg_t *argv);
+	void AddToPicDrawCels(List *list);
+
 	void SetNowSeen(reg_t objectReference);
 
 	GuiPort *_menuPort;

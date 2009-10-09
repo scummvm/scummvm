@@ -431,7 +431,7 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	if (!list)
 		error("kAddToPic called with non-list as parameter");
 
-	sortedList = _gfx->AnimateMakeSortedList(list);
+//	sortedList = _gfx->AnimateMakeSortedList(list);
 
 //	uint16 szList = list.getSize();
 //	HEAPHANDLE*arrObj = new HEAPHANDLE[szList];
@@ -449,9 +449,10 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 //	}
 //	animSort(arrObj, arrY, szList);
 
-	_screen->_picNotValid = 2;	// FIXME: _picNotValid is a boolean!
+	_gfx->AddToPicDrawCels(list);
 
-	delete sortedList;
+	_screen->_picNotValid = 2;
+//	delete sortedList;
 }
 
 void SciGui::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
