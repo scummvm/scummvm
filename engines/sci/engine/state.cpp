@@ -264,6 +264,58 @@ int EngineState::methodChecksum(reg_t objAddress, Selector sel, int offset, uint
 	return sum;
 }
 
+uint16 EngineState::firstRetOffset(reg_t objectAddress) const {
+	Script *script = _segMan->getScript(objectAddress.segment);
+
+	if ((script == NULL) || (script->_buf == NULL))
+		return 0;
+
+	uint16 offset = objectAddress.offset;
+
+	while (offset < script->_bufSize) {
+		byte opcode = script->_buf[offset++];
+		byte opnumber = opcode >> 1;
+
+		if (opnumber == 0x24)	// ret
+			return offset - 1;
+
+		// Skip operands for non-ret opcodes
+		for (int i = 0; g_opcode_formats[opnumber][i]; i++) {
+			switch (g_opcode_formats[opnumber][i]) {
+			case Script_Byte:
+			case Script_SByte:
+				offset++;
+				break;
+			case Script_Word:
+			case Script_SWord:
+				offset += 2;
+				break;
+			case Script_Variable:
+			case Script_Property:
+			case Script_Local:
+			case Script_Temp:
+			case Script_Global:
+			case Script_Param:
+			case Script_SVariable:
+			case Script_SRelative:
+			case Script_Offset:
+				offset++;
+				if (!(opcode & 1))
+					offset++;
+				break;
+			case Script_End:
+				return offset;
+				break;
+			case Script_Invalid:
+			default:
+				warning("opcode %02x: Invalid", opcode);
+			}
+		}	// end for
+	}	// end while
+
+	return 0;
+}
+
 SciVersion EngineState::detectDoSoundType() {
 	if (_doSoundType == SCI_VERSION_AUTODETECT) {
 		reg_t soundClass = _segMan->findObjectByName("Sound");
@@ -472,16 +524,101 @@ SciVersion EngineState::detectGfxFunctionsType() {
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				} else {
 					// An in-between case: The game does not have a shiftParser
-					// selector, but it does have an overlay selector. Therefore,
-					// check it to see how it calls kDisplay to determine the
-					// graphics functions type used
+					// selector, but it does have an overlay selector, so it uses an
+					// overlay. Therefore, check it to see how it calls kDrawPic to
+					// determine the graphics functions type used
 
-					// TODO: Finish this!
-					// For now, we're using the old hack of detecting for the motionCue selector
-					if (_kernel->findSelector("motionCue") != -1)
-						_gfxFunctionsType = SCI_VERSION_0_LATE;
-					else
-						_gfxFunctionsType = SCI_VERSION_0_EARLY;
+					reg_t roomObjAddr = _segMan->findObjectByName("Rm");
+
+					bool found = false;
+
+					if (!roomObjAddr.isNull()) {
+						reg_t addr;
+
+						if (lookup_selector(_segMan, roomObjAddr, _kernel->_selectorCache.overlay, NULL, &addr) == kSelectorMethod) {
+							uint16 offset = addr.offset;
+							byte *scr = _segMan->getScript(addr.segment)->_buf;
+							do {
+								uint16 kFuncNum;
+								int opsize = scr[offset++];
+								uint opcode = opsize >> 1;
+								int i = 0;
+
+								while (g_opcode_formats[opcode][i]) {
+									switch (g_opcode_formats[opcode][i++]) {
+									case Script_Invalid:
+										break;
+									case Script_SByte:
+									case Script_Byte:
+										offset++;
+										break;
+									case Script_Word:
+									case Script_SWord:
+										offset += 2;
+										break;
+									case Script_SVariable:
+									case Script_Variable:
+									case Script_Property:
+									case Script_Global:
+									case Script_Local:
+									case Script_Temp:
+									case Script_Param:
+										if (opsize & 1)
+											kFuncNum = scr[offset++];
+										else {
+											kFuncNum = 0xffff & (scr[offset] | (scr[offset + 1] << 8));
+											offset += 2;
+										}
+
+										if (opcode == op_callk) {
+											if (kFuncNum == 8) {	// kDrawPic
+												// Now get the number of parameters
+												byte argc = scr[offset++];
+												// If kDrawPic is called with 6 parameters from the
+												// overlay selector, the game is using old graphics functions.
+												// Otherwise, if it's called with 8 parameters, it's using new
+												// graphics functions
+												if (argc == 6) {
+													_gfxFunctionsType = SCI_VERSION_0_EARLY;
+													found = true;
+												} else if (argc == 8) {
+													_gfxFunctionsType = SCI_VERSION_0_LATE;
+													found = true;
+												} else {
+													warning("overlay selector calling kDrawPic with %d parameters", argc);
+												}
+											}
+										}
+										break;
+
+									case Script_Offset:
+									case Script_SRelative:
+										offset++;
+										if (!opsize & 1)
+											offset++;
+										break;
+									case Script_End:
+										offset = 0;	// exit loop
+										break;
+									default:
+										warning("opcode %02x: Invalid", opcode);
+
+									}
+								}
+							} while (offset > 0 && !found);
+						}
+					}
+
+					if (!found) {
+						warning("Graphics functions detection failed, taking an educated guess");
+
+						// Try detecting the graphics function types from the existence of the motionCue
+						// selector (which is a bit of a hack)
+						if (_kernel->findSelector("motionCue") != -1)
+							_gfxFunctionsType = SCI_VERSION_0_LATE;
+						else
+							_gfxFunctionsType = SCI_VERSION_0_EARLY;
+					}
 				}
 			}
 		} else {	// (getSciVersion() == SCI_VERSION_0_EARLY)

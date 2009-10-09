@@ -318,6 +318,7 @@ private:
 	SciVersion _doSoundType, _setCursorType, _lofsType, _gfxFunctionsType;
 	kLanguage charToLanguage(const char c) const;
 	int methodChecksum(reg_t objAddress, Selector sel, int offset, uint size) const;
+	uint16 firstRetOffset(reg_t objectAddress) const;
 };
 
 /**
