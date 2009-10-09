@@ -58,7 +58,7 @@ GuiManager::GuiManager() : _redrawStatus(kRedrawDisabled),
 	// Clear the cursor
 	memset(_cursor, 0xFF, sizeof(_cursor));
 
-	ConfMan.registerDefault("gui_theme", "scummmodern");
+	ConfMan.registerDefault("gui_theme", "modern");
 	Common::String themefile(ConfMan.get("gui_theme"));
 
 	ConfMan.registerDefault("gui_renderer", ThemeEngine::findModeConfigName(ThemeEngine::_defaultRendererMode));
