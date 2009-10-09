@@ -28,6 +28,10 @@
 
 namespace Sci {
 
+#define SCI_PATTERN_CODE_RECTANGLE 0x10
+#define SCI_PATTERN_CODE_USE_TEXTURE 0x20
+#define SCI_PATTERN_CODE_PENSIZE 0x07
+
 class SciGuiPicture {
 public:
 	SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
