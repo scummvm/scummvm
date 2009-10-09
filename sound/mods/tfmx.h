@@ -265,7 +265,7 @@ private:
 	static inline void unlockMacroChannel(ChannelContext &channel);
 	static inline void initPattern(PatternContext &pattern, uint8 cmd, int8 expose, uint32 offset);
 	void stopSongImpl(bool stopAudio = true);
-	static void inline setNoteMacro(ChannelContext &channel, uint note, int fineTune);
+	static inline void setNoteMacro(ChannelContext &channel, uint note, int fineTune);
 	void initFadeCommand(const uint8 fadeTempo, const int8 endVol);
 	void setModuleData(const MdatResource *resource, const int8 *sampleData, uint32 sampleLen, bool autoDelete = true);
 	static const MdatResource *loadMdatFile(Common::SeekableReadStream &musicData);

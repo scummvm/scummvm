@@ -37,7 +37,6 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 	bool runLoop = true;
 	bool drawText = textEnabled();
 	uint8 currPage;
-	Common::Event event;
 
 	uint32 timeToEnd = strlen(chatStr) * 8 * _tickLength + _system->getMillis();
 

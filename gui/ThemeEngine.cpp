@@ -1204,7 +1204,7 @@ void ThemeEngine::renderDirtyScreen() {
 	if (_dirtyScreen.empty())
 		return;
 
-	Common::List<Common::Rect>::iterator i, j;
+	Common::List<Common::Rect>::iterator i;
 	for (i = _dirtyScreen.begin(); i != _dirtyScreen.end(); ++i) {
 		_vectorRenderer->copyFrame(_system, *i);
 	}

@@ -700,8 +700,6 @@ int BalloonManager_br::setLocationBalloon(const char *text, bool endGame) {
 
 int BalloonManager_br::hitTestDialogueBalloon(int x, int y) {
 
-	Common::Point p;
-
 	for (uint i = 0; i < _numBalloons; i++) {
 		if (_intBalloons[i].box.contains(x, y)) {
 			return i;

@@ -491,8 +491,6 @@ void KyraEngine_LoK::delayUntil(uint32 timestamp, bool updateTimers, bool update
 }
 
 void KyraEngine_LoK::delay(uint32 amount, bool update, bool isMainLoop) {
-	Common::Event event;
-
 	uint32 start = _system->getMillis();
 	do {
 		if (update) {

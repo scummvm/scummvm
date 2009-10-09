@@ -950,7 +950,6 @@ void Interface::drawOption() {
 	Rect rect2;
 	PanelButton *panelButton;
 	Point textPoint;
-	Point point;
 	Point sliderPoint;
 	int spritenum = 0;
 

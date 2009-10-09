@@ -549,7 +549,6 @@ void HotspotDataList::saveToStream(WriteStream *stream) {
 
 void HotspotDataList::loadFromStream(ReadStream *stream) {
 	Resources &res = Resources::getReference();
-	iterator i;
 	uint16 hotspotId = stream->readUint16LE();
 	while (hotspotId != 0) {
 		HotspotData *hotspot = res.getHotspot(hotspotId);

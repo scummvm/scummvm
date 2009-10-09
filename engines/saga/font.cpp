@@ -470,7 +470,6 @@ int Font::getHeight(FontId fontId, const char *text, int width, FontEffectFlags 
 	int w_total;
 	int len_total;
 	Common::Point textPoint;
-	Common::Point textPoint2;
 
 	textLength = strlen(text);
 
