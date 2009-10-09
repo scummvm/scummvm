@@ -222,17 +222,38 @@ void SciGuiScreen::dither() {
 	byte *screenPtr = _visualScreen;
 	byte *displayPtr = _displayScreen;
 
-	for (y = 0; y < _height; y++) {
-		for (x = 0; x < _width; x++) {
-			color = *screenPtr;
-			if (color & 0xF0) {
-				color ^= color << 4;
-				color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
-				*screenPtr = color;
-				if (!_unditherState)
-					*displayPtr = color;
+	if (!_unditherState) {
+		// Do dithering on visual and display-screen
+		for (y = 0; y < _height; y++) {
+			for (x = 0; x < _width; x++) {
+				color = *screenPtr;
+				if (color & 0xF0) {
+					color ^= color << 4;
+					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+					*screenPtr = color; *displayPtr = color;
+				}
+				screenPtr++; displayPtr++;
 			}
-			screenPtr++; displayPtr++;
+		}
+	} else {
+		// Do dithering on visual screen and put decoded but undithered byte onto display-screen
+		for (y = 0; y < _height; y++) {
+			for (x = 0; x < _width; x++) {
+				color = *screenPtr;
+				if (color & 0xF0) {
+					color ^= color << 4;
+					// if decoded color wants do dither with black on left side, we turn it around
+					//  otherwise the normal ega color would get used for display
+					if (color & 0xF0) {
+						*displayPtr = color;
+					}	else {
+						*displayPtr = color << 4;
+					}
+					color = ((x^y) & 1) ? color >> 4 : color & 0x0F;
+					*screenPtr = color;
+				}
+				screenPtr++; displayPtr++;
+			}
 		}
 	}
 }
