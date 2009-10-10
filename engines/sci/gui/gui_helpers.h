@@ -72,9 +72,13 @@ struct GuiWindow : public GuiPort {
 };
 
 struct GuiAnimateList {
-	reg_t address;
-	int16 y;
-	int16 z;
+	reg_t object;
+	GuiResourceId viewId;
+	GuiViewLoopNo loopNo;
+	GuiViewCelNo celNo;
+	int16 x, y, z;
+	uint16 priority, signal;
+	Common::Rect celRect;
 };
 
 struct GuiCast {

@@ -920,22 +920,22 @@ Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
 	return sortedList;
 
 	// First convert the given List to Common::List
-	while (curNode) {
-		curObject = curNode->value;
-		listHelper.address = curAddress;
-		listHelper.y = (int16)GET_SEL32V(curObject, y);
-		listHelper.z = (int16)GET_SEL32V(curObject, priority);
-		sortedList->push_back(listHelper);
+//	while (curNode) {
+//		curObject = curNode->value;
+//		listHelper.address = curAddress;
+//		listHelper.y = (int16)GET_SEL32V(curObject, y);
+//		listHelper.z = (int16)GET_SEL32V(curObject, priority);
+//		sortedList->push_back(listHelper);
 
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
-	}
+//		curAddress = curNode->succ;
+//		curNode = _s->_segMan->lookupNode(curAddress);
+//	}
 
 	// Now do a bubble sort on this Common::List
-	if (sortedList->size() < 2)
-		return sortedList;
+//	if (sortedList->size() < 2)
+//		return sortedList;
 
-	sortedList->begin();
+//	sortedList->begin();
 //	Common::List<ExecStack>::iterator iter;
 //	for (iter = s->_executionStack.begin();
 //	     iter != s->_executionStack.end(); ++iter) {
