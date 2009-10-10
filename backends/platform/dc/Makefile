@@ -18,6 +18,7 @@ INCLUDES= -I./ -I$(srcdir) -I$(ronindir)/include/ -I$(srcdir)/engines
 LIBS	= -L$(ronindir)/lib -lmad -lronin -lz -lm
 EXECUTABLE = scummvm.elf
 DEPDIR = .deps
+CXX_UPDATE_DEP_FLAG = -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP
 PLUGIN_PREFIX =
 PLUGIN_SUFFIX = .plg
 PLUGIN_EXTRA_DEPS = plugin.x plugin.syms scummvm.elf
