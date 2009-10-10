@@ -26,6 +26,7 @@
 #include "sci/engine/state.h"
 #include "sci/engine/vm.h"
 #include "sci/engine/script.h"
+#include "sci/engine/message.h"
 
 namespace Sci {
 
@@ -116,6 +117,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 EngineState::~EngineState() {
 	delete speedThrottler;
+	delete _msgState;
 }
 
 uint16 EngineState::currentRoomNumber() const {

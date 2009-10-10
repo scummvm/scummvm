@@ -39,7 +39,6 @@ namespace Common {
 #include "sci/vocabulary.h"
 #include "sci/resource.h"
 #include "sci/engine/kernel.h"	// for kfunct_sig_pair_t
-#include "sci/engine/message.h"		// for MessageState
 #include "sci/engine/script.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/gfx/gfx_system.h"
@@ -50,6 +49,7 @@ namespace Sci {
 class Menubar;
 class SciGui;
 class SciGuiCursor;
+class MessageState;
 
 struct GfxState;
 struct GfxPort;
@@ -320,7 +320,7 @@ public:
 	SegManager *_segMan;
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
-	MessageState _msgState;
+	MessageState *_msgState;
 
 	SpeedThrottler *speedThrottler;
 

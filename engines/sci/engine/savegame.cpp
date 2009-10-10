@@ -35,6 +35,7 @@
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 #include "sci/engine/state.h"
+#include "sci/engine/message.h"
 #include "sci/engine/savegame.h"
 #include "sci/gui/gui.h"
 
@@ -775,7 +776,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	reconstruct_sounds(retval);
 
 	// Message state:
-	retval->_msgState = s->_msgState;
+	retval->_msgState = new MessageState(retval->_segMan);
 
 	retval->_gui->resetEngineState(retval);
 

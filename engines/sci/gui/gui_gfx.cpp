@@ -24,6 +24,7 @@
  */
 
 #include "common/util.h"
+#include "common/stack.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"

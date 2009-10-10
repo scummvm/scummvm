@@ -24,264 +24,361 @@
  */
 
 #include "sci/engine/message.h"
+#include "sci/engine/kernel.h"
+#include "sci/engine/seg_manager.h"
 #include "sci/tools.h"
 
 namespace Sci {
 
-MessageTuple MessageState::getTuple() {
-	MessageTuple t;
+struct MessageRecord {
+	MessageTuple tuple;
+	MessageTuple refTuple;
+	const char *string;
+	byte talker;
+};
 
-	t.noun = _engineCursor.index_record[0];
-	t.verb = _engineCursor.index_record[1];
-	if (_offsetCondSeq == -1) {
-		t.cond = 0;
-		t.seq = 1;
-	} else {
-		t.cond = _engineCursor.index_record[_offsetCondSeq];
-		t.seq = _engineCursor.index_record[_offsetCondSeq + 1];
+class MessageReader {
+public:
+	bool init() {
+		if (_headerSize > _size)
+			return false;
+
+		// Read message count from last word in header
+		_messageCount = READ_LE_UINT16(_data + _headerSize - 2);
+
+		if (_messageCount * _recordSize + _headerSize > _size)
+			return false;
+
+		return true;
 	}
 
-	return t;
-}
+	virtual bool findRecord(const MessageTuple &tuple, MessageRecord &record) = 0;
 
-MessageTuple MessageState::getRefTuple() {
-	MessageTuple t;
+	virtual ~MessageReader() { };
 
-	if (_offsetRef == -1) {
-		t.noun = 0;
-		t.verb = 0;
-		t.cond = 0;
-	} else {
-		t.noun = _engineCursor.index_record[_offsetRef];
-		t.verb = _engineCursor.index_record[_offsetRef + 1];
-		t.cond = _engineCursor.index_record[_offsetRef + 2];
+protected:
+	MessageReader(const byte *data, uint size, uint headerSize, uint recordSize)
+		: _data(data), _size(size), _headerSize(headerSize), _recordSize(recordSize) { }
+
+	const byte *_data;
+	const uint _size;
+	const uint _headerSize;
+	const uint _recordSize;
+	uint _messageCount;
+};
+
+class MessageReaderV2 : public MessageReader {
+public:
+	MessageReaderV2(byte *data, uint size) : MessageReader(data, size, 6, 4) { }
+
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+		const byte *recordPtr = _data + _headerSize;
+
+		for (uint i = 0; i < _messageCount; i++) {
+			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)) {
+				record.tuple = tuple;
+				record.refTuple = MessageTuple();
+				record.talker = 0;
+				record.string = (const char *)_data + READ_LE_UINT16(recordPtr + 2);
+				return true;
+			}
+			recordPtr += _recordSize;
+		}
+
+		return false;
 	}
-	t.seq = 1;
+};
 
-	return t;
-}
+class MessageReaderV3 : public MessageReader {
+public:
+	MessageReaderV3(byte *data, uint size) : MessageReader(data, size, 8, 10) { }
 
-void MessageState::initCursor() {
-	_engineCursor.index_record = _indexRecords;
-	_engineCursor.index = 0;
-	_engineCursor.nextSeq = 0;
-}
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+		const byte *recordPtr = _data + _headerSize;
 
-void MessageState::advanceCursor(bool increaseSeq) {
-	_engineCursor.index_record += _recordSize;
-	_engineCursor.index++;
+		for (uint i = 0; i < _messageCount; i++) {
+			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
+				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
+				record.tuple = tuple;
+				record.refTuple = MessageTuple();
+				record.talker = recordPtr[4];
+				record.string = (const char *)_data + READ_LE_UINT16(recordPtr + 5);
+				return true;
+			}
+			recordPtr += _recordSize;
+		}
 
-	if (increaseSeq)
-		_engineCursor.nextSeq++;
-}
+		return false;
+	}
+};
 
-int MessageState::findTuple(MessageTuple &t) {
-	if (_module == -1)
-		return 0;
+class MessageReaderV4 : public MessageReader {
+public:
+	MessageReaderV4(byte *data, uint size) : MessageReader(data, size, 10, 11) { }
 
-	// Reset the cursor
-	initCursor();
-	_engineCursor.nextSeq = t.seq;
+	bool findRecord(const MessageTuple &tuple, MessageRecord &record) {
+		const byte *recordPtr = _data + _headerSize;
 
-	// Do a linear search for the message
+		for (uint i = 0; i < _messageCount; i++) {
+			if ((recordPtr[0] == tuple.noun) && (recordPtr[1] == tuple.verb)
+				&& (recordPtr[2] == tuple.cond) && (recordPtr[3] == tuple.seq)) {
+				record.tuple = tuple;
+				record.refTuple = MessageTuple(recordPtr[7], recordPtr[8], recordPtr[9]);
+				record.talker = recordPtr[4];
+				record.string = (const char *)_data + READ_LE_UINT16(recordPtr + 5);
+				return true;
+			}
+			recordPtr += _recordSize;
+		}
+
+		return false;
+	}
+};
+
+bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &record) {
+	Resource *res = ((SciEngine *)g_engine)->getResourceManager()->findResource(ResourceId(kResourceTypeMessage, stack.getModule()), 0);
+
+	if (!res) {
+		warning("Failed to open message resource %d", stack.getModule());
+		return NULL;
+	}
+
+	MessageReader *reader;
+	int version = READ_LE_UINT16(res->data) / 1000;
+
+	switch (version) {
+	case 2:
+		reader = new MessageReaderV2(res->data, res->size);
+		break;
+	case 3:
+		reader = new MessageReaderV3(res->data, res->size);
+		break;
+	case 4:
+		reader = new MessageReaderV4(res->data, res->size);
+		break;
+	default:
+		warning("Message: unsupported resource version");
+		return NULL;
+	}
+
+	if (!reader->init()) {
+		warning("Message: failed to read resource header");
+		return NULL;
+	}
+
 	while (1) {
-		MessageTuple looking_at = getTuple();
+		MessageTuple &t = stack.top();
 
-		if (t.noun == looking_at.noun &&
-			t.verb == looking_at.verb &&
-			t.cond == looking_at.cond &&
-			t.seq == looking_at.seq)
-			break;
+		if (!reader->findRecord(t, record)) {
+			// Tuple not found
+			if (recurse && (stack.size() > 1)) {
+				stack.pop();
+				continue;
+			}
 
-		advanceCursor(false);
+			return false;
+		}
 
-		// Message tuple is not present
-		if (_engineCursor.index == _recordCount)
+		if (recurse) {
+			MessageTuple &ref = record.refTuple;
+
+			if ((ref.noun != 0) && (ref.verb != 0) && (ref.cond != 0)) {
+				t.seq++;
+				stack.push(MessageTuple(ref.noun, ref.verb, ref.cond));
+				continue;
+			}
+		}
+
+		return true;
+	}
+}
+
+int MessageState::getMessage(int module, MessageTuple &t, reg_t buf) {
+	_cursorStack.init(module, t);
+	return nextMessage(buf);
+}
+
+int MessageState::nextMessage(reg_t buf) {
+	MessageRecord record;
+
+	if (!buf.isNull()) {
+		MessageTuple &t = _cursorStack.top();
+		Common::String finalStr;
+
+		if (getRecord(_cursorStack, true, record)) {
+			outputString(buf, processString(record.string));
+			_lastReturned = record.tuple;
+			_lastReturnedModule = _cursorStack.getModule();
+			t.seq++;
+			return record.talker;
+		} else {
+			outputString(buf, Common::String::printf("Msg %d: %d %d %d %d not found", _cursorStack.getModule(), t.noun, t.verb, t.cond, t.seq));
+			return 0;
+		}
+	} else {
+		CursorStack stack = _cursorStack;
+
+		if (getRecord(stack, true, record))
+			return record.talker;
+		else
 			return 0;
 	}
-
-	return 1;
 }
 
-int MessageState::getMessage() {
-	if (_module == -1)
+int MessageState::messageSize(int module, MessageTuple &t) {
+	CursorStack stack;
+	MessageRecord record;
+
+	stack.init(module, t);
+	if (getRecord(stack, true, record))
+		return strlen(record.string);
+	else
 		return 0;
+}
 
-	if (_engineCursor.index != _recordCount) {
-		MessageTuple mesg = getTuple();
-		MessageTuple ref = getRefTuple();
+bool MessageState::messageRef(int module, const MessageTuple &t, MessageTuple &ref) {
+	CursorStack stack;
+	MessageRecord record;
 
-		if (_engineCursor.nextSeq == mesg.seq) {
-			// We found the right sequence number, check for recursion
-
-			if (ref.noun != 0) {
-				// Recursion, advance the current cursor and load the reference
-				advanceCursor(true);
-
-				_cursorStack.push(_engineCursor);
-
-				if (findTuple(ref))
-					return getMessage();
-				else {
-					// Reference not found
-					return 0;
-				}
-			} else {
-				// No recursion, we are done
-				return 1;
-			}
-		}
+	stack.init(module, t);
+	if (getRecord(stack, false, record)) {
+		ref = record.refTuple;
+		return true;
 	}
 
-	// We either ran out of records, or found an incorrect sequence number. Go to previous stack frame.
-	if (!_cursorStack.empty()) {
-		_engineCursor = _cursorStack.pop();
-		return getMessage();
-	}
-
-	// Stack is empty, no message available
-	return 0;
+	return false;
 }
 
-int MessageState::getTalker() {
-	return (_offsetTalker == -1) ? -1 : _engineCursor.index_record[_offsetTalker];
+void MessageState::pushCursorStack() {
+	_cursorStackStack.push(_cursorStack);
 }
 
-MessageTuple &MessageState::getLastTuple() {
-	return _lastReturned;
+void MessageState::popCursorStack() {
+	if (!_cursorStackStack.empty())
+		_cursorStack = _cursorStackStack.pop();
+	else
+		warning("Message: attempt to pop from empty stack");
 }
 
-int MessageState::getLastModule() {
-	return _lastReturnedModule;
+int MessageState::hexDigitToInt(char h) {
+	if ((h >= 'A') && (h <= 'F'))
+		return h - 'A' + 10;
+
+	if ((h >= 'a') && (h <= 'f'))
+		return h - 'a' + 10;
+
+	if ((h >= '0') && (h <= '9'))
+		return h - '0';
+
+	return -1;
 }
 
-Common::String MessageState::getText() {
-	char *str = (char *)_currentResource->data + READ_LE_UINT16(_engineCursor.index_record + _offsetText);
+bool MessageState::stringHex(Common::String &outStr, const Common::String &inStr, uint &index) {
+	// Hex escape sequences of the form \nn, where n is a hex digit
+	if (inStr[index] != '\\')
+		return false;
 
-	Common::String strippedStr;
-	Common::String skippedSubstr;
-	bool skipping = false;
+	// Check for enough room for a hex escape sequence
+	if (index + 2 >= inStr.size())
+		return false;
 
-	for (uint i = 0; i < strlen(str); i++) {
-		if (skipping) {
-			// Skip stage direction
-			skippedSubstr += str[i];
+	int digit1 = hexDigitToInt(inStr[index + 1]);
+	int digit2 = hexDigitToInt(inStr[index + 2]);
 
-			// Hopefully these locale-dependant functions are good enough
-			if (islower((unsigned char)str[i]) || isdigit((unsigned char)str[i])) {
-				// Lowercase or digit found, this is not a stage direction
-				strippedStr += skippedSubstr;
-				skipping = false;
-			} else if (str[i] == ')') {
-				// End of stage direction, skip trailing white space
-				while ((i + 1 < strlen(str)) && isspace(str[i + 1]))
-					i++;
-				skipping = false;
-			}
-		} else {
-			if (str[i] == '(') {
-				// Start skipping stage direction
-				skippedSubstr = str[i];
-				skipping = true;
-			} else if (str[i] == '\\') {
-				// Escape sequence
-				if ((i + 2 < strlen(str)) && isdigit(str[i + 1]) && isdigit(str[i + 2])) {
-					// Hex escape sequence
-					char hexStr[3];
+	// Check for hex
+	if ((digit1 == -1) || (digit2 == -1))
+		return false;
 
-					hexStr[0] = str[++i];
-					hexStr[1] = str[++i];
-					hexStr[2] = 0;
+	outStr += digit1 * 16 + digit2;
+	index += 3;
 
-					char *endptr;
-					int hexNr = strtol(hexStr, &endptr, 16);
-					if (*endptr == 0)
-						strippedStr += hexNr;
-				} else if (i + 1 < strlen(str)) {
-					// Literal escape sequence
-					strippedStr += str[++i];
-				}
-			} else {
-				strippedStr += str[i];
-			}
-		}
-	}
-
-	return strippedStr;
+	return true;
 }
 
-void MessageState::gotoNext() {
-	_lastReturned = getTuple();
-	_lastReturnedModule = _module;
-	advanceCursor(true);
+bool MessageState::stringLit(Common::String &outStr, const Common::String &inStr, uint &index) {
+	// Literal escape sequences of the form \n
+	if (inStr[index] != '\\')
+		return false;
+
+	// Check for enough room for a literal escape sequence
+	if (index + 1 >= inStr.size())
+		return false;
+
+	outStr += inStr[index + 1];
+	index += 2;
+
+	return true;
 }
 
-int MessageState::getLength() {
-	int offset = READ_LE_UINT16(_engineCursor.index_record + _offsetText);
-	char *stringptr = (char *)_currentResource->data + offset;
-	return strlen(stringptr);
-}
+bool MessageState::stringStage(Common::String &outstr, const Common::String &inStr, uint &index) {
+	// Stage directions of the form (n*), where n is anything but a digit or a lowercase character
+	if (inStr[index] != '(')
+		return false;
 
-int MessageState::loadRes(ResourceManager *resMan, int module, bool lock) {
-	_cursorStack.clear();
+	for (uint i = index + 1; i < inStr.size(); i++) {
+		if (inStr[i] == ')') {
+			// Stage direction found, skip it
+			index = i + 1;
 
-	if (_locked) {
-		// We already have a locked resource
-		if (_module == module) {
-			// If it's the same resource, we are done
-			return 1;
+			// Skip trailing white space
+			while ((index < inStr.size()) && ((inStr[index] == '\n') || (inStr[index] == '\r') || (inStr[index] == ' ')))
+				index++;
+
+			return true;
 		}
 
-		// Otherwise, free the old resource
-		resMan->unlockResource(_currentResource);
-		_locked = false;
+		// If we find a lowercase character or a digit, it's not a stage direction
+		if (((inStr[i] >= 'a') && (inStr[i] <= 'z')) || ((inStr[i] >= '0') && (inStr[i] <= '9')))
+			return false;
 	}
 
-	_currentResource = resMan->findResource(ResourceId(kResourceTypeMessage, module), lock);
+	// We ran into the end of the string without finding a closing bracket
+	return false;
+}
 
-	if (_currentResource == NULL || _currentResource->data == NULL) {
-		warning("Message: failed to load %d.msg", module);
-		return 0;
+Common::String MessageState::processString(const char *s) {
+	Common::String outStr;
+	Common::String inStr = Common::String(s);
+
+	uint index = 0;
+
+	while (index < inStr.size()) {
+		// Check for hex escape sequence
+		if (stringHex(outStr, inStr, index))
+			continue;
+
+		// Check for literal escape sequence
+		if (stringLit(outStr, inStr, index))
+			continue;
+
+		// Check for stage direction
+		if (stringStage(outStr, inStr, index))
+			continue;
+
+		// None of the above, copy char
+		outStr += inStr[index++];
 	}
 
-	_module = module;
-	_locked = lock;
+	return outStr;
+}
 
-	int version = READ_LE_UINT16(_currentResource->data);
-	debug(5, "Message: reading resource %d.msg, version %d.%03d", _module, version / 1000, version % 1000);
+void MessageState::outputString(reg_t buf, const Common::String &str) {
+	SegmentRef buffer_r = _segMan->dereference(buf);
 
-	int offsetCount;
-
-	// FIXME: Correct/extend this data by examining more games
-	if (version < 3000) {
-		_offsetCondSeq = -1;
-		_offsetTalker = -1;
-		_offsetRef = -1;
-		_offsetText = 2;
-		_recordSize = 4;
-		offsetCount = 4;
-	} else if (version < 4000) {
-		_offsetCondSeq = 2;
-		_offsetTalker = 4;
-		_offsetRef = -1;
-		_offsetText = 5;
-		_recordSize = 10;
-		offsetCount = 6;
+	if ((unsigned)buffer_r.maxSize >= str.size()) {
+		_segMan->strcpy(buf, str.c_str());
 	} else {
-		_offsetCondSeq = 2;
-		_offsetTalker = 4;
-		_offsetRef = 7;
-		_offsetText = 5;
-		_recordSize = 11;
-		offsetCount = 8;
+		warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
+
+		// Set buffer to empty string if possible
+		if (buffer_r.maxSize > 0)
+			_segMan->strcpy(buf, "");
 	}
+}
 
-	_recordCount = READ_LE_UINT16(_currentResource->data + offsetCount);
-	_indexRecords = _currentResource->data + offsetCount + 2;
-
-	initCursor();
-
-	return 1;
+void MessageState::lastQuery(int &module, MessageTuple &tuple) {
+	module = _lastReturnedModule;
+	tuple = _lastReturned;
 }
 
 } // End of namespace Sci

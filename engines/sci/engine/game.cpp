@@ -32,6 +32,7 @@
 #include "sci/engine/kernel.h"
 #include "sci/engine/kernel_types.h"
 #include "sci/gui/gui.h"
+#include "sci/engine/message.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxVisual
 #include "sci/gfx/menubar.h"
@@ -318,6 +319,7 @@ int game_init_sound(EngineState *s, int sound_flags) {
 // Architectural stuff: Init/Unintialize engine
 int script_init_engine(EngineState *s) {
 	s->_segMan = new SegManager(s->resMan);
+	s->_msgState = new MessageState(s->_segMan);
 	s->gc_countdown = GC_INTERVAL - 1;
 
 	SegmentId script_000_segment = s->_segMan->getScriptSegment(0, SCRIPT_GET_LOCK);

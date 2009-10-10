@@ -618,92 +618,40 @@ enum kMessageFunc {
 	K_MESSAGE_LASTMESSAGE
 };
 
+reg_t kGetMessage(EngineState *s, int argc, reg_t *argv) {
+	MessageTuple tuple = MessageTuple(argv[0].toUint16(), argv[2].toUint16());
+
+	s->_msgState->getMessage(argv[1].toUint16(), tuple, argv[3]);
+
+	return argv[3];
+}
+
 reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
-	MessageTuple tuple;
-	int func;
-	// For earlier version of of this function (GetMessage)
-	bool isGetMessage = argc == 4;
+	uint func = argv[0].toUint16();
 
-	if (isGetMessage) {
-		func = K_MESSAGE_GET;
-
-		tuple.noun = argv[0].toUint16();
-		tuple.verb = argv[2].toUint16();
-		tuple.cond = 0;
-		tuple.seq = 1;
-	} else {
-		func = argv[0].toUint16();
-
-		if (argc >= 6) {
-			tuple.noun = argv[2].toUint16();
-			tuple.verb = argv[3].toUint16();
-			tuple.cond = argv[4].toUint16();
-			tuple.seq = argv[5].toUint16();
-		}
+	if ((func != K_MESSAGE_NEXT) && (argc < 2)) {
+		warning("Message: not enough arguments passed to subfunction %d", func);
+		return NULL_REG;
 	}
+
+	MessageTuple tuple;
+
+	if (argc >= 6)
+		tuple = MessageTuple(argv[2].toUint16(), argv[3].toUint16(), argv[4].toUint16(), argv[5].toUint16());
 
 	switch (func) {
 	case K_MESSAGE_GET:
-	case K_MESSAGE_NEXT: {
-		reg_t bufferReg;
-		Common::String str;
-		reg_t retval;
-
-		if (func == K_MESSAGE_GET) {
-			s->_msgState.loadRes(s->resMan, argv[1].toUint16(), true);
-			s->_msgState.findTuple(tuple);
-
-			if (isGetMessage)
-				bufferReg = (argc == 4 ? argv[3] : NULL_REG);
-			else
-				bufferReg = (argc == 7 ? argv[6] : NULL_REG);
-		} else {
-			bufferReg = (argc == 2 ? argv[1] : NULL_REG);
-		}
-
-		if (s->_msgState.getMessage()) {
-			str = s->_msgState.getText();
-			if (isGetMessage)
-				retval = bufferReg;
-			else
-				retval = make_reg(0, s->_msgState.getTalker());
-		} else {
-			str = Common::String(DUMMY_MESSAGE);
-			retval = NULL_REG;
-		}
-
-		if (!bufferReg.isNull()) {
-			int len = str.size() + 1;
-			SegmentRef buffer_r = s->_segMan->dereference(bufferReg);
-			if (buffer_r.maxSize < len) {
-				warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(bufferReg), len, str.c_str());
-
-				// Set buffer to empty string if possible
-				if (buffer_r.maxSize > 0)
-					s->_segMan->strcpy(bufferReg, "");
-			} else
-				s->_segMan->strcpy(bufferReg, str.c_str());
-
-			s->_msgState.gotoNext();
-		}
-
-		return retval;
-	}
-	case K_MESSAGE_SIZE: {
-		MessageState tempState;
-
-		if (tempState.loadRes(s->resMan, argv[1].toUint16(), false) && tempState.findTuple(tuple) && tempState.getMessage())
-			return make_reg(0, tempState.getText().size() + 1);
-		else
-			return NULL_REG;
-	}
+		return make_reg(0, s->_msgState->getMessage(argv[1].toUint16(), tuple, (argc == 7 ? argv[6] : NULL_REG)));
+	case K_MESSAGE_NEXT:
+		return make_reg(0, s->_msgState->nextMessage((argc == 2 ? argv[1] : NULL_REG)));
+	case K_MESSAGE_SIZE:
+		return make_reg(0, s->_msgState->messageSize(argv[1].toUint16(), tuple));
 	case K_MESSAGE_REFCOND:
 	case K_MESSAGE_REFVERB:
 	case K_MESSAGE_REFNOUN: {
-		MessageState tempState;
+		MessageTuple t;
 
-		if (tempState.loadRes(s->resMan, argv[1].toUint16(), false) && tempState.findTuple(tuple)) {
-			MessageTuple t = tempState.getRefTuple();
+		if (s->_msgState->messageRef(argv[1].toUint16(), tuple, t)) {
 			switch (func) {
 			case K_MESSAGE_REFCOND:
 				return make_reg(0, t.cond);
@@ -714,16 +662,17 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 			}
 		}
 
-		return NULL_REG;
+		return make_reg(0, -1);
 	}
 	case K_MESSAGE_LASTMESSAGE: {
-		MessageTuple msg = s->_msgState.getLastTuple();
-		int module = s->_msgState.getLastModule();
+		MessageTuple msg;
+		int module;
+
+		s->_msgState->lastQuery(module, msg);
+
 		byte *buffer = s->_segMan->derefBulkPtr(argv[1], 10);
 
 		if (buffer) {
-			// FIXME: Is this correct? I.e., do we really write into a "raw" segment
-			// here? Or maybe we want to write 4 reg_t instead?
 			assert(s->_segMan->dereference(argv[1]).isRaw);
 
 			WRITE_LE_UINT16(buffer, module);

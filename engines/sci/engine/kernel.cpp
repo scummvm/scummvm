@@ -160,7 +160,7 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x79*/ "ATan",
 	/*0x7a*/ "Lock",
 	/*0x7b*/ "StrSplit",
-	/*0x7c*/ "Message",
+	/*0x7c*/ "GetMessage",
 	/*0x7d*/ "IsItSkip",
 	/*0x7e*/ "MergePoly",
 	/*0x7f*/ "ResCheck",
@@ -325,6 +325,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*(?)*/	DEFUN("TimesCot", kTimesCot, "ii"),
 	/*(?)*/	DEFUN("TimesTan", kTimesTan, "ii"),
 	DEFUN("Message", kMessage, ".*"),
+	DEFUN("GetMessage", kGetMessage, "iiir"),
 	DEFUN("DoAudio", kDoAudio, ".*"),
 	DEFUN("DoSync", kDoSync, ".*"),
 	DEFUN("ResCheck", kResCheck, "iii*"),
@@ -700,6 +701,7 @@ void Kernel::setDefaultKernelNames() {
 		// KQ6CD calls unimplemented function 0x26
 		_kernelNames[0x26] = "Dummy";
 		_kernelNames[0x71] = "PalVary";
+		_kernelNames[0x7c] = "Message";
 		break;
 
 	default:
