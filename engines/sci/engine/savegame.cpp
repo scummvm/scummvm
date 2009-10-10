@@ -214,6 +214,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		// Handle the OBSOLETE type SEG_TYPE_STRING_FRAG -- just ignore it
 		if (s.isLoading() && type == SEG_TYPE_STRING_FRAG) {
+			s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
 			continue;
 		}
 
