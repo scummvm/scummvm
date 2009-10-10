@@ -1386,7 +1386,7 @@ void LoLEngine::setCharacterMagicOrHitPoints(int charNum, int type, int points, 
 
 			uint32 delayTimer = _system->getMillis() + _tickLength;
 
-			gui_drawLiveMagicBar(barData[type][0] + _activeCharsXpos[charNum], 175, i, 0, pointsMax, 5, 32, barData[type][1], 1, barData[type][3]);
+			gui_drawLiveMagicBar(barData[type][0] + _activeCharsXpos[charNum], 175, i, 0, pointsMax, 5, 32, barData[type][1], _flags.use16ColorMode ? 0x44 : 1, barData[type][3]);
 			_screen->printText(getLangString(barData[type][4]), barData[type][0] + _activeCharsXpos[charNum], 144, barData[type][2], 0);
 			_screen->updateScreen();
 
@@ -3013,7 +3013,7 @@ void LoLEngine::drinkBezelCup(int numUses, int charNum) {
 		uint32 etime = _system->getMillis() + 4 * _tickLength;
 
 		_screen->copyRegion(0, 0, x, y, w, h, 2, 2, Screen::CR_NO_P_CHECK);
-		mov->displayFrame(frm, 2, x, y, 0x5000, _trueLightTable1, _trueLightTable2);
+		mov->displayFrame(frm, 2, x, y, _flags.use16ColorMode ? 0x4000 : 0x5000, _trueLightTable1, _trueLightTable2);
 		_screen->copyRegion(x, y, x, y, w, h, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 

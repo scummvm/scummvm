@@ -475,7 +475,8 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 	if (_curPage == 0 || _curPage == 1)
 		addDirtyRect(x, y, w, h);
 
-	clearOverlayRect(_curPage, x, y, w, h);
+	if (!_use16ColorMode)
+		clearOverlayRect(_curPage, x, y, w, h);
 
 	temp = h;
 	int curY = y;
