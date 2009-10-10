@@ -67,7 +67,7 @@ void Actor::setRawResources(uint8 *data) {
 	byte *dataPtr = data;
 
 	for (uint32 i = 0; i < 60; i++) {
-		_resources[i] = READ_UINT32(dataPtr);
+		_resources[i] = READ_LE_UINT32(dataPtr);
 		dataPtr += 4;
 	}
 }
