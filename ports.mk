@@ -162,7 +162,7 @@ win32dist: $(EXECUTABLE)
 crosswin32dist: $(EXECUTABLE)
 	mkdir -p ResidualWin32
 	$(STRIP) $(EXECUTABLE) -o ResidualWin32/$(EXECUTABLE)
-	cp $(DIST_FILES_THEMES) $(WIN32PATH)
+	cp $(DIST_FILES_THEMES) ResidualWin32
 	#cp $(DIST_FILES_ENGINEDATA) ResidualWin32
 	cp $(srcdir)/AUTHORS ResidualWin32/AUTHORS.txt
 	cp $(srcdir)/COPYING.LGPL ResidualWin32/COPYING_LGPL.txt
