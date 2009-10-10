@@ -225,7 +225,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 
 	// now drawing the text
 	_gfx->TextSize(rect, text, -1, width);
-	_gfx->Move((orect->left <= 320 ? 0 : 320 - orect->left), (orect->top <= 200 ? 0 : 200 - orect->top)); // move port to (0,0)
+	_gfx->Move((orect->left <= _screen->_width ? 0 : _screen->_width - orect->left), (orect->top <= _screen->_height ? 0 : _screen->_height - orect->top)); // move port to (0,0)
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
 //	if (bSaveUnder)
 //		_acc = _gfx->SaveBits(rect, 1);
