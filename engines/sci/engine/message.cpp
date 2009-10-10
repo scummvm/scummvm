@@ -231,7 +231,7 @@ int MessageState::messageSize(int module, MessageTuple &t) {
 
 	stack.init(module, t);
 	if (getRecord(stack, true, record))
-		return strlen(record.string);
+		return strlen(record.string) + 1;
 	else
 		return 0;
 }
@@ -365,7 +365,7 @@ Common::String MessageState::processString(const char *s) {
 void MessageState::outputString(reg_t buf, const Common::String &str) {
 	SegmentRef buffer_r = _segMan->dereference(buf);
 
-	if ((unsigned)buffer_r.maxSize >= str.size()) {
+	if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
 		_segMan->strcpy(buf, str.c_str());
 	} else {
 		warning("Message: buffer %04x:%04x invalid or too small to hold the following text of %i bytes: '%s'", PRINT_REG(buf), str.size() + 1, str.c_str());
