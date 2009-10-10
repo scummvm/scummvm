@@ -202,7 +202,7 @@ Graphics::PixelFormat OSystem_Dreamcast::getScreenFormat() const
 Common::List<Graphics::PixelFormat> OSystem_Dreamcast::getSupportedFormats()
 {
   Common::List<Graphics::PixelFormat> list;
-  int i;
+  unsigned i;
   for (i=0; i<NUM_FORMATS; i++)
     list.push_front(screenFormats[i]);
   return list;
@@ -248,13 +248,13 @@ void OSystem_Dreamcast::initSize(uint w, uint h, const Graphics::PixelFormat *fo
     screen = new unsigned char[SCREEN_W*SCREEN_H*2];
   if (!overlay)
     overlay = new unsigned short[OVL_W*OVL_H];
-  for (int i=0; i<NUM_BUFFERS; i++)
+  for (i=0; i<NUM_BUFFERS; i++)
     if (!screen_tx[i])
       screen_tx[i] = ta_txalloc(SCREEN_W*SCREEN_H*2);
-  for (int i=0; i<NUM_BUFFERS; i++)
+  for (i=0; i<NUM_BUFFERS; i++)
     if (!mouse_tx[i])
       mouse_tx[i] = ta_txalloc(MOUSE_W*MOUSE_H*2);
-  for (int i=0; i<NUM_BUFFERS; i++)
+  for (i=0; i<NUM_BUFFERS; i++)
     if (!ovl_tx[i])
       ovl_tx[i] = ta_txalloc(OVL_TXSTRIDE*OVL_H*2);
   _screen_buffer = 0;
