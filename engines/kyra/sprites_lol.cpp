@@ -992,7 +992,7 @@ uint8 *LoLEngine::drawItemOrMonster(uint8 *shape, uint8 *table, int x, int y, in
 		ovl2 = table;
 		table = 0;
 	} else {
-		ovl2 = _screen->getLevelOverlay(4);
+		ovl2 = _screen->getLevelOverlay(_flags.use16ColorMode ? 5 : 4);
 	}
 
 	int r = calcDrawingLayerParameters(x, y, _shpDmX, _shpDmY, _dmScaleW, _dmScaleH, shape, vflip);
