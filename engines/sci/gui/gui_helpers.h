@@ -71,7 +71,7 @@ struct GuiWindow : public GuiPort {
 	}
 };
 
-struct GuiAnimateList {
+struct GuiAnimateEntry {
 	reg_t object;
 	GuiResourceId viewId;
 	GuiViewLoopNo loopNo;
@@ -82,6 +82,7 @@ struct GuiAnimateList {
 	Common::Rect celRect;
 	bool showBitsFlag;
 };
+typedef Common::List<GuiAnimateEntry *> GuiAnimateList;
 
 struct GuiCast {
 	uint16 view;

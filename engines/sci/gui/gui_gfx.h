@@ -154,11 +154,10 @@ private:
 	byte _priorityBands[200];
 
 	// Animate* related variables
-	uint16 _animateListCount;
-	uint16 _animateListTotal;
-	GuiAnimateList *_animateList;
-	GuiAnimateList *_animateListLast;
-	List *_lastCast;
+	uint16 _animateListSize;
+	GuiAnimateEntry *_animateListData;
+	GuiAnimateList _animateList;
+	//List *_lastCast;
 
 	SciGuiFont *_font;
 };

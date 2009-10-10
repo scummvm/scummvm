@@ -54,8 +54,8 @@ void SciGuiGfx::init() {
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
 
-	_animateList = NULL;
-	_animateListLast = NULL;
+	_animateListData = NULL;
+	_animateListSize = 0;
 
 	// _mainPort is not known to windowmanager, that's okay according to sierra sci
 	//  its not even used currently in our engine
@@ -849,42 +849,39 @@ void SciGuiGfx::AnimateMakeSortedList(List *list) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	GuiAnimateList *listEntry;
-	int16 listNr = 0;
+	GuiAnimateEntry *listEntry;
+	int16 listNr, listCount = 0;
 
 	// Count the list entries
 	while (curNode) {
-		listNr++;
+		listCount++;
 		curAddress = curNode->succ;
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
 
+	_animateList.clear();
+
 	// No entries -> exit immediately
-	if (listNr == 0) {
-		_animateListCount = 0;
+	if (listCount == 0)
 		return;
-	}
 
 	// Adjust list size, if needed
-	if ((_animateList == NULL) || (_animateListTotal < listNr)) {
-		if (_animateList)
-			free(_animateList);
-		_animateList = (GuiAnimateList *)malloc(listNr * sizeof(GuiAnimateList));
-		if (!_animateList)
+	if ((_animateListData == NULL) || (_animateListSize < listCount)) {
+		if (_animateListData)
+			free(_animateListData);
+		_animateListData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
+		if (!_animateListData)
 			error("Could not allocate memory for _animateList");
-		_animateListTotal = listNr;
+		_animateListSize = listCount;
 	}
-	_animateListCount = listNr;
 
 	// Fill the list
 	curAddress = list->first;
 	curNode = _s->_segMan->lookupNode(curAddress);
-	listEntry = _animateList;
-	for (listNr = 0; listNr < _animateListCount; listNr++) {
+	listEntry = _animateListData;
+	for (listNr = 0; listNr < listCount; listNr++) {
 		curObject = curNode->value;
 		listEntry->object = curObject;
-
-		_animateListLast = listEntry;
 
 		// Get data from current object
 		listEntry->viewId = GET_SEL32V(curObject, view);
@@ -899,6 +896,8 @@ void SciGuiGfx::AnimateMakeSortedList(List *list) {
 		// listEntry->celRect is filled in AnimateFill()
 		listEntry->showBitsFlag = false;
 
+		_animateList.push_back(listEntry);
+
 		listEntry++;
 		curAddress = curNode->succ;
 		curNode = _s->_segMan->lookupNode(curAddress);
@@ -910,13 +909,15 @@ void SciGuiGfx::AnimateMakeSortedList(List *list) {
 void SciGuiGfx::AnimateFill(byte &old_picNotValid) {
 	SegManager *segMan = _s->_segMan;
 	reg_t curObject;
-	GuiAnimateList *listEntry;
-	uint16 listNr;
+	GuiAnimateEntry *listEntry;
 	uint16 signal;
 	SciGuiView *view = NULL;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _animateList.end();
 
-	listEntry = _animateList;
-	for (listNr = 0; listNr < _animateListCount; listNr++) {
+	listIterator = _animateList.begin();
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 
 		// Get the corresponding view
@@ -961,21 +962,25 @@ void SciGuiGfx::AnimateFill(byte &old_picNotValid) {
 		}
 		listEntry->signal = signal;
 
-		listEntry++;
+		listIterator++;
 	}
 }
 
 void SciGuiGfx::AnimateUpdate() {
 	SegManager *segMan = _s->_segMan;
 	reg_t curObject;
-	GuiAnimateList *listEntry;
-	uint16 listNr, signal;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
 	reg_t bitsHandle;
 	Common::Rect rect;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listBegin = _animateList.begin();
+	GuiAnimateList::iterator listEnd = _animateList.end();
 
 	// Remove all previous cels from screen
-	listEntry = _animateListLast;
-	for (listNr = _animateListCount; listNr > 0; listNr--) {
+	listIterator = _animateList.reverse_begin();
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -996,11 +1001,12 @@ void SciGuiGfx::AnimateUpdate() {
 			signal =  (signal & (0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE)) | SCI_ANIMATE_SIGNAL_NOUPDATE;
 		}
 		listEntry->signal = signal;
-		listEntry--;
+		listIterator--;
 	}
 
-	listEntry = _animateList;
-	for (listNr = 0; listNr < _animateListCount; listNr++) {
+	listIterator = listBegin;
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1017,11 +1023,12 @@ void SciGuiGfx::AnimateUpdate() {
 			}
 			listEntry->signal = signal;
 		}
-		listEntry++;
+		listIterator++;
 	}
 
-	listEntry = _animateList;
-	for (listNr = 0; listNr < _animateListCount; listNr++) {
+	listIterator = listBegin;
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1038,11 +1045,12 @@ void SciGuiGfx::AnimateUpdate() {
 			}
 			listEntry->signal = signal;
 		}
-		listEntry++;
+		listIterator++;
 	}
 
-	listEntry = _animateList;
-	for (listNr = 0; listNr < _animateListCount; listNr++) {
+	listIterator = listBegin;
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1057,19 +1065,22 @@ void SciGuiGfx::AnimateUpdate() {
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
-		listEntry++;
+		listIterator++;
 	}
 }
 
 void SciGuiGfx::AnimateDrawCels() {
 	SegManager *segMan = _s->_segMan;
 	reg_t curObject;
-	GuiAnimateList *listEntry;
-	uint16 listNr, signal;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
 	reg_t bitsHandle;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _animateList.end();
 
-	listEntry = _animateList;
-	for (listNr = 0; listNr < _animateListCount; listNr++) {
+	listIterator = _animateList.begin();
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1098,18 +1109,21 @@ void SciGuiGfx::AnimateDrawCels() {
 //			pNewCast->rect = *rect;
 //			_lastCast->AddToEnd(hNewCast);
 		}
-		listEntry++;
+		listIterator++;
 	}
 }
 
 void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 	SegManager *segMan = _s->_segMan;
 	reg_t curObject;
-	GuiAnimateList *listEntry;
-	uint16 listNr, signal;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _animateList.end();
 
-	listEntry = _animateListLast;
-	for (listNr = _animateListCount; listNr > 0; listNr--) {
+	listIterator = _animateList.reverse_begin();
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1130,7 +1144,7 @@ void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 			// Call .delete_ method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 		}
-		listEntry--;
+		listIterator--;
 	}
 }
 
