@@ -60,6 +60,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		kGroovieT7G, 0
 	},
 
+#if 0
 	// The 7th Guest Mac English
 	{
 		{
@@ -69,6 +70,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 		},
 		kGroovieT7G, 0
 	},
+#endif
 
 	// The 7th Guest DOS Russian (Akella)
 	{
