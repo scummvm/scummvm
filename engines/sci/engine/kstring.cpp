@@ -662,7 +662,7 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 			}
 		}
 
-		return make_reg(0, -1);
+		return SIGNAL_REG;
 	}
 	case K_MESSAGE_LASTMESSAGE: {
 		MessageTuple msg;

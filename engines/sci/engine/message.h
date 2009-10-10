@@ -33,7 +33,7 @@
 namespace Sci {
 
 class SegManager;
-class MessageRecord;
+struct MessageRecord;
 
 struct MessageTuple {
 	byte noun;
