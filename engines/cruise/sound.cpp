@@ -601,9 +601,7 @@ PCSoundFxPlayer::PCSoundFxPlayer(PCSoundDriver *driver)
 
 PCSoundFxPlayer::~PCSoundFxPlayer() {
 	_driver->setUpdateCallback(NULL, NULL);
-	if (_playing) {
-		stop();
-	}
+	stop();
 }
 
 bool PCSoundFxPlayer::load(const char *song) {
@@ -674,8 +672,8 @@ void PCSoundFxPlayer::stop() {
 			_driver->stopChannel(i);
 		}
 		_driver->stopAll();
-		unload();
 	}
+	unload();
 }
 
 void PCSoundFxPlayer::fadeOut() {

@@ -307,6 +307,8 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 		error("Unknown fileType in loadFileRange");
 	}
 
+	MemFree(ptr);
+
 	return 0;
 }
 

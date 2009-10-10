@@ -211,6 +211,17 @@ void resetPtr2(scriptInstanceStruct *ptr) {
 }
 
 void resetActorPtr(actorStruct *ptr) {
+	actorStruct *p = ptr;
+
+	if (p->next) {
+		p = p->next;
+		do {
+			actorStruct *pNext = p->next;
+			MemFree(p);
+			p = pNext;
+		} while (p);
+	}
+
 	ptr->next = NULL;
 	ptr->prev = NULL;
 }
@@ -1983,6 +1994,7 @@ void CruiseEngine::mainLoop(void) {
 	// Free data
 	removeAllScripts(&relHead);
 	removeAllScripts(&procHead);
+	resetActorPtr(&actorHead);
 	freeOverlayTable();
 	closeCnf();
 	closeBase();

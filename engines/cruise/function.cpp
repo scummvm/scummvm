@@ -276,7 +276,8 @@ void freeObjectList(cellStruct *pListHead) {
 		cellStruct *pNext = pCurrent->next;
 
 		if (pCurrent->freeze == 0) {
-			MemFree(pCurrent->gfxPtr);
+			if (pCurrent->gfxPtr)
+				freeGfx(pCurrent->gfxPtr);
 			MemFree(pCurrent);
 		}
 
