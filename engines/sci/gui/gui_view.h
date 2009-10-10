@@ -65,6 +65,7 @@ public:
 private:
 	void initData(GuiResourceId resourceId);
 	void unpackCel(GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte *outPtr, uint16 pixelCount);
+	void unditherBitmap(byte *bitmap, int16 width, int16 height, byte clearKey);
 
 	ResourceManager *_resMan;
 	SciGuiScreen *_screen;

@@ -335,20 +335,95 @@ byte *SciGuiView::getBitmap(GuiViewLoopNo loopNo, GuiViewCelNo celNo) {
 	assert(width * height <= 64000);
 	uint16 pixelCount = width * height;
 	_loop[loopNo].cel[celNo].rawBitmap = new byte[pixelCount];
-	byte *pOut = _loop[loopNo].cel[celNo].rawBitmap;
+	byte *pBitmap = _loop[loopNo].cel[celNo].rawBitmap;
 
 	// Some RLE compressed cels end with the last non-transparent pixel, thats why we fill it up here
 	//  FIXME: change this to fill the remaining bytes within unpackCel()
-	memset(pOut, _loop[loopNo].cel[celNo].clearKey, pixelCount);
-	unpackCel(loopNo, celNo, pOut, pixelCount);
+	memset(pBitmap, _loop[loopNo].cel[celNo].clearKey, pixelCount);
+	unpackCel(loopNo, celNo, pBitmap, pixelCount);
+
+	if (!_resMan->isVGA()) {
+		unditherBitmap(pBitmap, width, height, _loop[loopNo].cel[celNo].clearKey);
+	}
 
 	// mirroring the cel if needed
 	if (_loop[loopNo].mirrorFlag) {
-		for (int i = 0; i < height; i++, pOut += width)
+		for (int i = 0; i < height; i++, pBitmap += width)
 			for (int j = 0; j < width / 2; j++)
-				SWAP(pOut[j], pOut[width - j - 1]);
+				SWAP(pBitmap[j], pBitmap[width - j - 1]);
 	}
 	return _loop[loopNo].cel[celNo].rawBitmap;
+}
+
+// Called after unpacking an EGA cel, this will try to undither (parts) of the cel if the dithering in here
+//  matches dithering used by the current picture
+void SciGuiView::unditherBitmap(byte *bitmapPtr, int16 width, int16 height, byte clearKey) {
+	int16 *unditherMemorial = _screen->unditherGetMemorial();
+
+	// It makes no sense to go further, if no memorial data from current picture is available
+	if (!unditherMemorial)
+		return;
+
+	// Makes no sense to process bitmaps that are 3 pixels wide or less
+	if (width <= 3) return;
+
+	// Walk through the bitmap and remember all combinations of colors
+	int16 bitmapMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	byte *curPtr;
+	byte color1, color2;
+	int16 y, x;
+
+	memset(&bitmapMemorial, 0, sizeof(bitmapMemorial));
+
+	// Count all seemingly dithered pixel-combinations as soon as at least 4 pixels are adjacent
+	curPtr = bitmapPtr;
+	for (y = 0; y < height; y++) {
+		color1 = (curPtr[0] << 8) | (curPtr[1] << 4); color2 = curPtr[2];
+		curPtr += 3;
+		for (x = 3; x < width; x++) {
+			color1 = (color1 << 4) | (color2 >> 4);
+			color2 = (color2 << 4) | *curPtr++;
+			if (color1 == color2)
+				bitmapMemorial[color1]++;
+		}
+	}
+
+	// Now compare both memorial tables to find out matching dithering-combinations
+	bool unditherTable[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];
+	byte color, unditherCount = 0;
+	memset(&unditherTable, false, sizeof(unditherTable));
+	for (color = 0; color < 255; color++) {
+		if ((bitmapMemorial[color] > 5) && (unditherMemorial[color] > 200)) {
+			// match found, check if colorKey is contained -> if so, we ignore of course
+			color1 = color & 0x0F; color2 = color >> 4;
+			if ((color1 != clearKey) && (color2 != clearKey) && (color1 != color2)) {
+				// so set this and the reversed color-combination for undithering
+				unditherTable[color] = true; unditherTable[(color1 << 4) | color2] = true;
+				unditherCount++;
+			}
+		}
+	}
+
+	// Nothing found to undither -> exit straight away
+	if (!unditherCount)
+		return;
+
+	// We now need to replace color-combinations
+	curPtr = bitmapPtr;
+	for (y = 0; y < height; y++) {
+		color = *curPtr;
+		for (x = 1; x < width; x++) {
+			color = (color << 4) | curPtr[1];
+			if (unditherTable[color]) {
+				// some color with black? turn colors around otherwise it wont be the right color at all
+				if ((color & 0xF0)==0)
+					color = (color << 4) | (color >> 4);
+				curPtr[0] = color; curPtr[1] = color;
+			}
+			curPtr++;
+		}
+		curPtr++;
+	}
 }
 
 void SciGuiView::draw(Common::Rect rect, Common::Rect clipRect, Common::Rect clipRectTranslated, GuiViewLoopNo loopNo, GuiViewCelNo celNo, byte priority, uint16 paletteNo) {
