@@ -51,17 +51,17 @@ void GraphicResource::init(byte *data, uint32 size) {
 
 	dataPtr += 4; // tag value
 
-	_flags = READ_UINT32(dataPtr);
+	_flags = READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
 
-	contentOffset = READ_UINT32(dataPtr);
+	contentOffset = READ_LE_UINT32(dataPtr);
 	dataPtr += 4;
 
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown
 	dataPtr += 4; // unknown
 
-	frameCount = READ_UINT16(dataPtr);
+	frameCount = READ_LE_UINT16(dataPtr);
 	dataPtr += 2;
 
 	dataPtr += 2; // max width
@@ -69,7 +69,7 @@ void GraphicResource::init(byte *data, uint32 size) {
 	_frames.resize(frameCount);
 
 	// Read frame offsets
-	uint32 prevOffset = READ_UINT32(dataPtr) + contentOffset;
+	uint32 prevOffset = READ_LE_UINT32(dataPtr) + contentOffset;
 	dataPtr += 4;
 	uint32 nextOffset = 0;
 
@@ -78,7 +78,7 @@ void GraphicResource::init(byte *data, uint32 size) {
 		frame.offset = prevOffset;
 
 		// Read the offset of the next entry to determine the size of this one
-		nextOffset = (i < frameCount - 1) ? READ_UINT32(dataPtr) + contentOffset : size;
+		nextOffset = (i < frameCount - 1) ? READ_LE_UINT32(dataPtr) + contentOffset : size;
 		dataPtr += 4; // offset
 		frame.size = (nextOffset > 0) ? nextOffset - prevOffset : size - prevOffset;
 
@@ -97,14 +97,14 @@ void GraphicResource::init(byte *data, uint32 size) {
 		dataPtr += 4; // size
 		dataPtr += 4; // flag
 
-		_frames[i].x  = READ_UINT16(dataPtr);
+		_frames[i].x  = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
-		_frames[i].y  = READ_UINT16(dataPtr);
+		_frames[i].y  = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
-		uint16 height = READ_UINT16(dataPtr);
+		uint16 height = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
-		uint16 width  = READ_UINT16(dataPtr);
+		uint16 width  = READ_LE_UINT16(dataPtr);
 		dataPtr += 2;
 
 		_frames[i].surface.create(width, height, 1);
