@@ -121,6 +121,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("fullscreen", "false");
 	ConfMan.registerDefault("show_fps", "false");
 
+	ConfMan.registerDefault("confirm_exit", false);
 	ConfMan.registerDefault("disable_sdl_parachute", false);
 
 	ConfMan.registerDefault("record_mode", "none");
