@@ -80,6 +80,7 @@ struct GuiAnimateList {
 	int16 x, y, z;
 	uint16 priority, signal;
 	Common::Rect celRect;
+	bool showBitsFlag;
 };
 
 struct GuiCast {

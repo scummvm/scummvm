@@ -897,6 +897,7 @@ void SciGuiGfx::AnimateMakeSortedList(List *list) {
 		listEntry->priority = GET_SEL32V(curObject, priority);
 		listEntry->signal = GET_SEL32V(curObject, signal);
 		// listEntry->celRect is filled in AnimateFill()
+		listEntry->showBitsFlag = false;
 
 		listEntry++;
 		curAddress = curNode->succ;
@@ -983,7 +984,7 @@ void SciGuiGfx::AnimateUpdate() {
 				bitsHandle = GET_SEL32(curObject, underBits);
 				if (_screen->_picNotValid != 1) {
 					RestoreBits(bitsHandle);
-					//arr1[i] = 1;
+					listEntry->showBitsFlag = true;
 				} else	{
 					//FreeBits(bits_gfx->UnloadBits(hBits);
 				}
@@ -1006,7 +1007,8 @@ void SciGuiGfx::AnimateUpdate() {
 		if (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
 			// draw corresponding cel
 			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
-//			arr1[i] = 1;
+			listEntry->showBitsFlag = true;
+
 			signal &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
 			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = listEntry->celRect;
@@ -1047,7 +1049,8 @@ void SciGuiGfx::AnimateUpdate() {
 		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal & SCI_ANIMATE_SIGNAL_HIDDEN)) {
 			// draw corresponding cel
 			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
-			// arr1[i] = 1;
+			listEntry->showBitsFlag = true;
+
 			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
@@ -1077,8 +1080,8 @@ void SciGuiGfx::AnimateDrawCels() {
 
 			// draw corresponding cel
 			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
+			listEntry->showBitsFlag = true;
 
-			// arr1[inx] = 1;
 			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
 				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 			}
