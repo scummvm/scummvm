@@ -517,8 +517,8 @@ void ResourceManager::init() {
 		_mapVersion = _volVersion;
 	}
 
-	debug("resMan: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
-	debug("resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
+	debugC(1, kDebugLevelResMan, "resMan: Detected resource map version %d: %s", _mapVersion, versionDescription(_mapVersion));
+	debugC(1, kDebugLevelResMan, "resMan: Detected volume version %d: %s", _volVersion, versionDescription(_volVersion));
 
 	scanNewSources();
 	addInternalSources();
@@ -526,20 +526,20 @@ void ResourceManager::init() {
 
 	detectSciVersion();
 
-	debug("resMan: Detected %s", getSciVersionDesc(getSciVersion()).c_str());
+	debugC(1, kDebugLevelResMan, "resMan: Detected %s", getSciVersionDesc(getSciVersion()).c_str());
 
 	switch (_viewType) {
 	case kViewEga:
-		debug("resMan: Detected EGA graphic resources");
+		debugC(1, kDebugLevelResMan, "resMan: Detected EGA graphic resources");
 		break;
 	case kViewVga:
-		debug("resMan: Detected VGA graphic resources");
+		debugC(1, kDebugLevelResMan, "resMan: Detected VGA graphic resources");
 		break;
 	case kViewVga11:
-		debug("resMan: Detected SCI1.1 VGA graphic resources");
+		debugC(1, kDebugLevelResMan, "resMan: Detected SCI1.1 VGA graphic resources");
 		break;
 	case kViewAmiga:
-		debug("resMan: Detected Amiga graphic resources");
+		debugC(1, kDebugLevelResMan, "resMan: Detected Amiga graphic resources");
 		break;
 	default:
 		warning("resMan: Couldn't determine view type");

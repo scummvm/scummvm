@@ -86,14 +86,9 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
 
 	_gamestate = 0;
-
-	printf("SciEngine::SciEngine\n");
 }
 
 SciEngine::~SciEngine() {
-	// Dispose your resources here
-	printf("SciEngine::~SciEngine\n");
-
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
 
@@ -108,9 +103,6 @@ Common::Error SciEngine::run() {
 
 	// Create debugger console. It requires GFX to be initialized
 	_console = new Console(this);
-
-	// Additional setup.
-	printf("SciEngine::init\n");
 
 	/* bool end = false;
 	Common::EventManager *em = _system->getEventManager();
@@ -129,7 +121,7 @@ Common::Error SciEngine::run() {
 	_resMan = new ResourceManager();
 
 	if (!_resMan) {
-		printf("No resources found, aborting...\n");
+		warning("No resources found, aborting");
 		return Common::kNoGameDataFoundError;
 	}
 
@@ -197,7 +189,7 @@ Common::Error SciEngine::run() {
 
 	_gamestate->_gui->init(_gamestate->usesOldGfxFunctions());
 
-	printf("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
+	debug("Emulating SCI version %s\n", getSciVersionDesc(getSciVersion()).c_str());
 
 	game_run(&_gamestate); // Run the game
 
