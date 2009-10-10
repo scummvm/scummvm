@@ -121,6 +121,10 @@ endif
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $*.o
 
+%.o: %.S
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_AS)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(ASFLAGS) -c $(<) -o $*.o
+
 ifdef HAVE_NASM
 %.o: %.asm
 	$(QUIET)$(MKDIR) $(*D)
