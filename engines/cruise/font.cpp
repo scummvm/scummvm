@@ -169,7 +169,7 @@ void initSystem(void) {
 }
 
 void freeSystem(void) {
-	free(_systemFNT);
+	MemFree(_systemFNT);
 }
 
 void bigEndianShortToNative(void *var) {
@@ -349,7 +349,7 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 	    (uint8 *) mallocAndZero(stringRenderBufferSize);
 	resetBitmap(currentStrRenderBuffer, stringRenderBufferSize);
 
-	generatedGfxEntry = (gfxEntryStruct *) malloc(sizeof(gfxEntryStruct));
+	generatedGfxEntry = (gfxEntryStruct *) MemAlloc(sizeof(gfxEntryStruct));
 	generatedGfxEntry->imagePtr = currentStrRenderBuffer;
 	generatedGfxEntry->imageSize = stringRenderBufferSize / 2;
 	generatedGfxEntry->fontIndex = fontFileIndex;
@@ -430,10 +430,10 @@ gfxEntryStruct *renderText(int inRightBorder_X, const char *string) {
 
 void freeGfx(gfxEntryStruct *pGfx) {
 	if (pGfx->imagePtr) {
-		free(pGfx->imagePtr);
+		MemFree(pGfx->imagePtr);
 	}
 
-	free(pGfx);
+	MemFree(pGfx);
 }
 
 

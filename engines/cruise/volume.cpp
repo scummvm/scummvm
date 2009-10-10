@@ -36,10 +36,9 @@ int16 fileData2;
 char currentBaseName[15] = "";
 
 void loadPal(volumeDataStruct *entry) {
+	// This code isn't currently being used
+#if 0
 	char name[20];
-
-	// This code isn't currently being used, so return
-	return;
 
 	if (PAL_file.isOpen())
 		PAL_file.close();
@@ -53,14 +52,15 @@ void loadPal(volumeDataStruct *entry) {
 	numLoadedPal = PAL_file.readSint16BE();
 	fileData2 = PAL_file.readSint16BE();
 
-	PAL_ptr = (uint8 *)malloc(numLoadedPal * fileData2);
+	PAL_ptr = (uint8 *)MemAlloc(numLoadedPal * fileData2);
+#endif
 }
 
 void closePal(void) {
 	if (PAL_file.isOpen()) {
 		PAL_file.close();
 
-		free(PAL_ptr);
+		MemFree(PAL_ptr);
 		PAL_ptr = NULL;
 
 		numLoadedPal = 0;
@@ -72,7 +72,7 @@ int closeBase(void) {
 	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
 
-		free(volumePtrToFileDescriptor);
+		MemFree(volumePtrToFileDescriptor);
 
 		strcpy(currentBaseName, "");
 	}
@@ -180,7 +180,7 @@ int32 findFileInDisksSub1(const char *fileName) {
 void freeDisk(void) {
 	if (currentVolumeFile.isOpen()) {
 		currentVolumeFile.close();
-		free(volumePtrToFileDescriptor);
+		MemFree(volumePtrToFileDescriptor);
 	}
 
 	/* TODO
@@ -316,7 +316,7 @@ int16 findFileInDisks(const char *name) {
 int closeCnf(void) {
 	for (long int i = 0; i < numOfDisks; i++) {
 		if (volumeData[i].ptr) {
-			free(volumeData[i].ptr);
+			MemFree(volumeData[i].ptr);
 			volumeData[i].ptr = NULL;
 		}
 	}
@@ -434,11 +434,11 @@ int16 readVolCnf(void) {
 				if (fout.isOpen())
 					fout.write(uncompBuffer, buffer[j].extSize);
 
-				//free(uncompBuffer);
+				//MemFree(uncompBuffer);
 
 			}
 
-			free(bufferLocal);
+			MemFree(bufferLocal);
 		}
 		fileHandle.close();
 	}

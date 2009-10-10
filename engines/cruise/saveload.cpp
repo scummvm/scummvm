@@ -332,7 +332,7 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 		s.syncAsSint16LE(ptr->ccr);
 		s.syncAsSint16LE(ptr->scriptOffset);
 		s.syncAsUint32LE(dummyLong);
-		s.syncAsSint16LE(ptr->varA);
+		s.syncAsSint16LE(ptr->dataSize);
 		s.syncAsSint16LE(ptr->scriptNumber);
 		s.syncAsSint16LE(ptr->overlayNumber);
 		s.syncAsSint16LE(ptr->sysKey);
@@ -342,12 +342,12 @@ void syncScript(Common::Serializer &s, scriptInstanceStruct *entry) {
 		s.syncAsSint16LE(ptr->var18);
 		s.syncAsSint16LE(ptr->var1A);
 
-		s.syncAsSint16LE(ptr->varA);
+		s.syncAsSint16LE(ptr->dataSize);
 
-		if (ptr->varA) {
+		if (ptr->dataSize) {
 			if (s.isLoading())
-				ptr->var6 = (byte *)mallocAndZero(ptr->varA);
-			s.syncBytes(ptr->var6, ptr->varA);
+				ptr->data = (byte *)mallocAndZero(ptr->dataSize);
+			s.syncBytes(ptr->data, ptr->dataSize);
 		}
 
 		if (s.isLoading()) {
@@ -470,7 +470,7 @@ static void syncIncrust(Common::Serializer &s) {
 
 		if (t->saveSize) {
 			if (s.isLoading())
-				t->ptr = (byte *)malloc(t->saveSize);
+				t->ptr = (byte *)MemAlloc(t->saveSize);
 
 			s.syncBytes(t->ptr, t->saveSize);
 		}
@@ -642,7 +642,7 @@ void resetPreload() {
 	for (unsigned long int i = 0; i < 64; i++) {
 		if (strlen(preloadData[i].name)) {
 			if (preloadData[i].ptr) {
-				free(preloadData[i].ptr);
+				MemFree(preloadData[i].ptr);
 				preloadData[i].ptr = NULL;
 			}
 			strcpy(preloadData[i].name, "");
@@ -665,6 +665,7 @@ void initVars(void) {
 
 	resetPreload();
 	freeCTP();
+	freeBackgroundIncrustList(&backgroundIncrustHead);
 
 	freezeCell(&cellHead, -1, -1, -1, -1, -1, 0);
 	// TODO: unfreeze anims
@@ -672,6 +673,8 @@ void initVars(void) {
 	freeObjectList(&cellHead);
 	removeAnimation(&actorHead, -1, -1, -1);
 
+	removeAllScripts(&relHead);
+	removeAllScripts(&procHead);
 	changeScriptParamInList(-1, -1, &procHead, -1, 0);
 	removeFinishedScripts(&procHead);
 
@@ -850,7 +853,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 				if (ovlRestoreData[j]._sBssSize) {
 					if (ovlData->data4Ptr) {
-						free(ovlData->data4Ptr);
+						MemFree(ovlData->data4Ptr);
 					}
 
 					ovlData->data4Ptr = ovlRestoreData[j]._pBss;
@@ -861,7 +864,7 @@ Common::Error loadSavegameData(int saveGameIdx) {
 
 				if (ovlRestoreData[j]._sNumObj) {
 					if (ovlData->arrayObjVar) {
-						free(ovlData->arrayObjVar);
+						MemFree(ovlData->arrayObjVar);
 					}
 
 					ovlData->arrayObjVar = ovlRestoreData[j]._pObj;

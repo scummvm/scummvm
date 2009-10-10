@@ -65,8 +65,10 @@ CruiseEngine::CruiseEngine(OSystem * syst, const CRUISEGameDescription *gameDesc
 	_debugger = new Debugger();
 	_sound = new PCSound(_mixer, this);
 
-	syst->getEventManager()->registerRandomSource(_rnd, "cruise");
+	g_system->getEventManager()->registerRandomSource(_rnd, "cruise");
 }
+
+extern void listMemory();
 
 CruiseEngine::~CruiseEngine() {
 	delete _debugger;
@@ -86,8 +88,10 @@ Common::Error CruiseEngine::run() {
 	// Initialize backend
 	initGraphics(320, 200, false);
 
-	if (!loadLanguageStrings())
-		return Common::kUnknownError;
+	if (!loadLanguageStrings()) {
+		error("Could not setup language data for your version");
+		return Common::kUnknownError;	// for compilers that don't support NORETURN
+	}
 
 	initialize();
 
@@ -132,7 +136,7 @@ void CruiseEngine::deinitialise() {
 	// Clear any backgrounds
 	for (int i = 0; i < 8; ++i) {
 		if (backgroundScreens[i]) {
-			free(backgroundScreens[i]);
+			MemFree(backgroundScreens[i]);
 			backgroundScreens[i] = NULL;
 		}
 	}
@@ -143,7 +147,7 @@ bool CruiseEngine::loadLanguageStrings() {
 
 	// Give preference to a language file
 	if (f.open("DELPHINE.LNG")) {
-		char *data = (char *)malloc(f.size());
+		char *data = (char *)MemAlloc(f.size());
 		f.read(data, f.size());
 		char *ptr = data;
 
@@ -161,19 +165,23 @@ bool CruiseEngine::loadLanguageStrings() {
 		}
 
 		f.close();
+		MemFree(data);
 
 	} else {
 		// Try and use one of the pre-defined language lists
 		const char **p = NULL;
 		switch (getLanguage()) {
-			case Common::EN_ANY:
-				p = englishLanguageStrings;
-				break;
-			case Common::FR_FRA:
-				p = frenchLanguageStrings;
-				break;
-			default:
-				return false;
+		case Common::EN_ANY:
+			p = englishLanguageStrings;
+			break;
+		case Common::FR_FRA:
+			p = frenchLanguageStrings;
+			break;
+		case Common::DE_DEU:
+			p = germanLanguageStrings;
+			break;
+		default:
+			return false;
 		}
 
 		// Load in the located language set

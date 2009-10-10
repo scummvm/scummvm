@@ -34,7 +34,7 @@ int16 numPoly;
 
 void freePerso(int persoIdx) {
 	if (persoTable[persoIdx]) {
-		free(persoTable[persoIdx]);
+		MemFree(persoTable[persoIdx]);
 		persoTable[persoIdx] = NULL;
 	}
 }

@@ -58,7 +58,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 		error("Unkown gfx format %d", format);
 	}
 
-	uint8 *buffer = (uint8 *)malloc(spriteSize);
+	uint8 *buffer = (uint8 *)MemAlloc(spriteSize);
 
 	// Perform format specific decoding
 	switch (format) {
@@ -131,7 +131,7 @@ void decodeGfxUnified(dataFileEntry *pCurrentFileEntry, int16 format) {
 	}
 	}
 
-	free(pCurrentFileEntry->subData.ptr);
+	MemFree(pCurrentFileEntry->subData.ptr);
 	pCurrentFileEntry->subData.ptr = buffer;
 }
 
@@ -167,11 +167,13 @@ int updateResFileEntry(int height, int width, int size, int entryNumber, int res
 }
 
 int createResFileEntry(int width, int height, int size, int resType) {
+	error("Executing untested createResFileEntry");
+	return 0;	// for compilers that don't support NORETURN
+
+#if 0
 	int i;
 	int entryNumber;
 	int div = 0;
-
-	error("Executing untested createResFileEntry");
 
 	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (!filesDatabase[i].subData.ptr)
@@ -206,6 +208,7 @@ int createResFileEntry(int width, int height, int size, int resType) {
 	filesDatabase[entryNumber].subData.index = -1;
 
 	return entryNumber;
+#endif
 }
 
 fileTypeEnum getFileType(const char *name) {
@@ -304,6 +307,8 @@ int loadFileRange(const char *name, int startIdx, int currentEntryIdx, int numId
 		error("Unknown fileType in loadFileRange");
 	}
 
+	MemFree(ptr);
+
 	return 0;
 }
 
@@ -345,6 +350,8 @@ int loadFullBundle(const char *name, int startIdx) {
 	default:
 		error("Unknown fileType in loadFullBundle");
 	}
+
+	MemFree(ptr);
 
 	return 0;
 }

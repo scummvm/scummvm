@@ -118,7 +118,6 @@ void setObjectPosition(int16 ovlIdx, int16 objIdx, int16 param3, int16 param4) {
 
 	if (!ptr) {
 		return;
-		ASSERT(0);
 	}
 	//overlayTable[param1].ovlData
 

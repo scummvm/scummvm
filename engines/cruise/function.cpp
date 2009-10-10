@@ -276,8 +276,9 @@ void freeObjectList(cellStruct *pListHead) {
 		cellStruct *pNext = pCurrent->next;
 
 		if (pCurrent->freeze == 0) {
-			free(pCurrent->gfxPtr);
-			free(pCurrent);
+			if (pCurrent->gfxPtr)
+				freeGfx(pCurrent->gfxPtr);
+			MemFree(pCurrent);
 		}
 
 		var_2 = 1;
@@ -938,7 +939,7 @@ int16 Op_RemoveBackground(void) {
 
 	if (backgroundIdx > 0 && backgroundIdx < 8) {
 		if (backgroundScreens[backgroundIdx])
-			free(backgroundScreens[backgroundIdx]);
+			MemFree(backgroundScreens[backgroundIdx]);
 
 		if (masterScreen == backgroundIdx) {
 			masterScreen = 0;
@@ -1106,7 +1107,7 @@ actorStruct *addAnimation(actorStruct * pHead, int overlay, int objIdx, int para
 		return NULL;
 	}
 
-	actorStruct *pNewElement = (actorStruct *) malloc(sizeof(actorStruct));
+	actorStruct *pNewElement = (actorStruct *) MemAlloc(sizeof(actorStruct));
 	if (!pNewElement)
 		return NULL;
 
@@ -1180,7 +1181,7 @@ int removeAnimation(actorStruct * pHead, int overlay, int objIdx, int objType) {
 			if (pl->pathId >= 0)
 				freePerso(pl->pathId);
 
-			free(pl);
+			MemFree(pl);
 			pl = pl4;
 		} else {
 			pl2 = pl;

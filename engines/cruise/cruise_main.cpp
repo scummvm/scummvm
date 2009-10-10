@@ -42,6 +42,14 @@ unsigned int timer = 0;
 
 gfxEntryStruct* linkedMsgList = NULL;
 
+void *MemoryAlloc(uint32 size, bool clearFlag) {
+	byte *result = (byte *)malloc(size);
+	if (clearFlag)
+		memset(result, 0, size);
+
+	return result;
+}
+
 void drawBlackSolidBoxSmall() {
 //  gfxModuleData.drawSolidBox(64,100,256,117,0);
 	drawSolidBox(64, 100, 256, 117, 0);
@@ -139,7 +147,7 @@ void initBigVar3() {
 
 	for (i = 0; i < NUM_FILE_ENTRIES; i++) {
 		if (filesDatabase[i].subData.ptr) {
-			free(filesDatabase[i].subData.ptr);
+			MemFree(filesDatabase[i].subData.ptr);
 		}
 
 		filesDatabase[i].subData.ptr = NULL;
@@ -156,6 +164,17 @@ void resetPtr2(scriptInstanceStruct *ptr) {
 }
 
 void resetActorPtr(actorStruct *ptr) {
+	actorStruct *p = ptr;
+
+	if (p->next) {
+		p = p->next;
+		do {
+			actorStruct *pNext = p->next;
+			MemFree(p);
+			p = pNext;
+		} while (p);
+	}
+
 	ptr->next = NULL;
 	ptr->prev = NULL;
 }
@@ -317,8 +336,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 
 	unpackedSize = loadFileVar1 = volumePtrToFileDescriptor[fileIdx].extSize + 2;
 
-	// TODO: here, can unpack in gfx module buffer
-	unpackedBuffer = (uint8 *) mallocAndZero(unpackedSize);
+	unpackedBuffer = (uint8 *)mallocAndZero(unpackedSize);
 
 	if (!unpackedBuffer) {
 		return (-2);
@@ -337,7 +355,7 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 
 		delphineUnpack(unpackedBuffer, pakedBuffer, volumePtrToFileDescriptor[fileIdx].size);
 
-		free(pakedBuffer);
+		MemFree(pakedBuffer);
 	} else {
 		loadPackedFileToMem(fileIdx, unpackedBuffer);
 	}
@@ -354,7 +372,9 @@ void resetFileEntry(int32 entryNumber) {
 	if (!filesDatabase[entryNumber].subData.ptr)
 		return;
 
-	free(filesDatabase[entryNumber].subData.ptr);
+	MemFree(filesDatabase[entryNumber].subData.ptr);
+	if (filesDatabase[entryNumber].subData.ptrMask)
+		MemFree(filesDatabase[entryNumber].subData.ptrMask);
 
 	filesDatabase[entryNumber].subData.ptr = NULL;
 	filesDatabase[entryNumber].subData.ptrMask = NULL;
@@ -366,7 +386,6 @@ void resetFileEntry(int32 entryNumber) {
 	filesDatabase[entryNumber].subData.resourceType = 0;
 	filesDatabase[entryNumber].subData.compression = 0;
 	filesDatabase[entryNumber].subData.name[0] = 0;
-
 }
 
 uint8 *mainProc14(uint16 overlay, uint16 idx) {
@@ -530,11 +549,10 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 		if (ptr->scriptNumber == -1) {
 			oldPtr->nextScriptPtr = ptr->nextScriptPtr;
 
-			if (ptr->var6 && ptr->varA) {
-				//  free(ptr->var6);
-			}
+			if (ptr->data)
+				MemFree(ptr->data);
 
-			free(ptr);
+			MemFree(ptr);
 
 			ptr = oldPtr->nextScriptPtr;
 		} else {
@@ -545,6 +563,26 @@ int removeFinishedScripts(scriptInstanceStruct *ptrHandle) {
 
 	return (0);
 }
+
+void removeAllScripts(scriptInstanceStruct *ptrHandle) {
+	scriptInstanceStruct *ptr = ptrHandle->nextScriptPtr;	// can't destruct the head
+	scriptInstanceStruct *oldPtr = ptrHandle;
+
+	if (!ptr)
+		return;
+
+	do {
+		oldPtr->nextScriptPtr = ptr->nextScriptPtr;
+
+		if (ptr->data)
+			MemFree(ptr->data);
+
+		MemFree(ptr);
+
+		ptr = oldPtr->nextScriptPtr;
+	} while (ptr);
+}
+
 
 bool testMask(int x, int y, unsigned char* pData, int stride) {
 	unsigned char* ptr = y * stride + x / 8 + pData;
@@ -701,7 +739,7 @@ void freeStuff2(void) {
 void *allocAndZero(int size) {
 	void *ptr;
 
-	ptr = malloc(size);
+	ptr = MemAlloc(size);
 	memset(ptr, 0, size);
 
 	return ptr;
@@ -1905,15 +1943,17 @@ void CruiseEngine::mainLoop(void) {
 		}
 
 	} while (!playerDontAskQuit && quitValue2 && quitValue != 7);
-}
 
-void *mallocAndZero(int32 size) {
-	void *ptr;
-
-	ptr = malloc(size);
-	assert(ptr);
-	memset(ptr, 0, size);
-	return ptr;
+	// Free data
+	removeAllScripts(&relHead);
+	removeAllScripts(&procHead);
+	resetActorPtr(&actorHead);
+	freeOverlayTable();
+	closeCnf();
+	closeBase();
+	resetFileEntryRange(0, NUM_FILE_ENTRIES);
+	freeObjectList(&cellHead);
+	freeBackgroundIncrustList(&backgroundIncrustHead);
 }
 
 } // End of namespace Cruise

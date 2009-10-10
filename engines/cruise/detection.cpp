@@ -26,7 +26,7 @@
 
 
 #include "base/plugins.h"
-
+#include "common/savefile.h"
 #include "engines/advancedDetector.h"
 
 #include "cruise/cruise.h"
@@ -40,6 +40,10 @@ struct CRUISEGameDescription {
 	int gameType;
 	uint32 features;
 };
+
+const char *CruiseEngine::getGameId() const {
+	return _gameDescription->desc.gameid;
+}
 
 int CruiseEngine::getGameType() const {
 	return _gameDescription->gameType;
@@ -139,6 +143,19 @@ static const CRUISEGameDescription gameDescriptions[] = {
 			AD_ENTRY1("D1", "f2a26522d49983c4ae32bcccbb801b02"),
 			Common::DE_DEU,
 			Common::kPlatformPC,
+			ADGF_NO_FLAGS,
+			GUIO_NONE
+		},
+		GType_CRUISE,
+		0,
+	},
+	{
+		{
+			"cruise",
+			0,
+			AD_ENTRY1("D1", "70f42a21cc257b01d58667853335f4f1"),
+			Common::DE_DEU,
+			Common::kPlatformAmiga,
 			ADGF_NO_FLAGS,
 			GUIO_NONE
 		},

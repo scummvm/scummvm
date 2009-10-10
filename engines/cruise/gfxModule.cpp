@@ -26,6 +26,8 @@
 
 #include "common/system.h"
 #include "common/endian.h"
+#include "common/list.h"
+#include "common/rect.h"
 
 #include "cruise/cruise.h"
 #include "cruise/cruise_main.h"
@@ -44,6 +46,8 @@ int palDirtyMax = -1;
 typedef Common::List<Common::Rect> RectList;
 RectList _dirtyRects;
 RectList _priorFrameRects;
+
+bool _dirtyRectScreen = false;
 
 gfxModuleDataStruct gfxModuleData = {
 	0,			// use Tandy

@@ -92,7 +92,6 @@ int findHighColor();
 ovlData3Struct *getOvlData3Entry(int32 scriptNumber, int32 param);
 ovlData3Struct *scriptFunc1Sub2(int32 scriptNumber, int32 param);
 void resetFileEntry(int32 entryNumber);
-void *mallocAndZero(int32 size);
 uint8 *mainProc14(uint16 overlay, uint16 idx);
 void printInfoBlackBox(const char *string);
 void waitForPlayerInput(void);
@@ -115,6 +114,15 @@ void closeAllMenu(void);
 int removeFinishedScripts(scriptInstanceStruct *ptrHandle);
 void initBigVar3(void);
 void resetActorPtr(actorStruct *ptr);
+void removeAllScripts(scriptInstanceStruct *ptrHandle);
+
+void MemoryList();
+void *MemoryAlloc(uint32 size, bool clearFlag);
+void MemoryFree(void *v);
+
+#define mallocAndZero(size) MemoryAlloc(size, true)
+#define MemAlloc(size) MemoryAlloc(size, false)
+#define MemFree(v) free(v)
 
 } // End of namespace Cruise
 

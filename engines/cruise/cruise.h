@@ -83,6 +83,7 @@ public:
 	virtual bool hasFeature(EngineFeature f) const;
 
 	int getGameType() const;
+	const char *getGameId() const;
 	uint32 getFeatures() const;
 	Common::Language getLanguage() const;
 	Common::Platform getPlatform() const;

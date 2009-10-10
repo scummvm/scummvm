@@ -39,9 +39,9 @@ void resetPtr(cellStruct *ptr) {
 void freeMessageList(cellStruct *objPtr) {
 	/*	if (objPtr) {
 			 if (objPtr->next)
-			 free(objPtr->next);
+			 MemFree(objPtr->next);
 
-			free(objPtr);
+			MemFree(objPtr);
 		} */
 }
 
@@ -143,7 +143,7 @@ void createTextObject(cellStruct *pObject, int overlayIdx, int messageIdx, int x
 
 	var_2 = si;
 
-	pNewElement = (cellStruct *) malloc(sizeof(cellStruct));
+	pNewElement = (cellStruct *) MemAlloc(sizeof(cellStruct));
 	memset(pNewElement, 0, sizeof(cellStruct));
 
 	pNewElement->next = pObject->next;
@@ -218,10 +218,10 @@ void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, i
 
 			dx->prev = si->prev;
 
-			// TODO: complelty wrong
-			//freeMessageList(si);
-
-			free(si);
+			// Free the entry
+			if (si->gfxPtr)
+				freeGfx(si->gfxPtr);
+			MemFree(si);
 
 			currentObj = dx;
 		} else {

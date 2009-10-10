@@ -107,7 +107,7 @@ int loadBackground(const char *name, int idx) {
 	ptrToFree = gfxModuleData.pPage10;
 	if (loadFileSub1(&ptrToFree, name, NULL) < 0) {
 		if (ptrToFree != gfxModuleData.pPage10)
-			free(ptrToFree);
+			MemFree(ptrToFree);
 
 		return (-18);
 	}
@@ -208,6 +208,7 @@ int loadBackground(const char *name, int idx) {
 		loadCVT(&ptr2);
 	}
 
+	MemFree(ptrToFree);
 
 	if (name != backgroundTable[idx].name)
 		strcpy(backgroundTable[idx].name, name);

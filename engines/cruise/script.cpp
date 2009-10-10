@@ -97,15 +97,13 @@ int32 opcodeType0(void) {
 		if (size == 1) {
 			address += index;
 			pushVar((int16)READ_BE_UINT16(address));
-			return (0);
+			return 0;
 		} else if (size == 2) {
 			pushVar(*address);
-			return (0);
+			return 0;
 		} else {
 			error("Unsupported code in opcodeType0 case 1");
 		}
-
-		return (0);
 	}
 	case 2: {
 		int16 var_16;
@@ -122,15 +120,11 @@ int32 opcodeType0(void) {
 		}
 
 		pushVar(var_16);
-		return (0);
-
-		break;
+		return 0;
 	}
 	default:
 		error("Unsupported type %d in opcodeType0", currentScriptOpcodeType);
 	}
-
-	return 0;
 }
 
 // save opcode
@@ -546,13 +540,13 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 	if (!tempPtr)
 		return (NULL);
 
-	tempPtr->var6 = NULL;
+	tempPtr->data = NULL;
 
 	if (var_C) {
-		tempPtr->var6 = (uint8 *) mallocAndZero(var_C);
+		tempPtr->data = (uint8 *) mallocAndZero(var_C);
 	}
 
-	tempPtr->varA = var_C;
+	tempPtr->dataSize = var_C;
 	tempPtr->nextScriptPtr = NULL;
 	tempPtr->scriptOffset = 0;
 
@@ -574,7 +568,7 @@ uint8 *attacheNewScriptToTail(scriptInstanceStruct *scriptHandlePtr, int16 overl
 
 	oldTail->nextScriptPtr = tempPtr;	// attache the new node to the list
 
-	return (tempPtr->var6);
+	return (tempPtr->data);
 }
 
 int executeScripts(scriptInstanceStruct *ptr) {
@@ -614,7 +608,7 @@ int executeScripts(scriptInstanceStruct *ptr) {
 
 	currentData3DataPtr = ptr2->dataPtr;
 
-	scriptDataPtrTable[1] = (uint8 *) ptr->var6;
+	scriptDataPtrTable[1] = (uint8 *) ptr->data;
 	scriptDataPtrTable[2] = getDataFromData3(ptr2, 1);
 	scriptDataPtrTable[5] = ovlData->data4Ptr;	// free strings
 	scriptDataPtrTable[6] = ovlData->ptr8;
