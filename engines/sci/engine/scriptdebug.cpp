@@ -75,7 +75,7 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 		return -1;
 	}
 
-	selectors = obj->_variables.size();
+	selectors = obj->getVarCount();
 
 	if (getSciVersion() < SCI_VERSION_1_1)
 		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;

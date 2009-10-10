@@ -403,7 +403,7 @@ SciVersion EngineState::detectLofsType() {
 
 		// Check methods of the Game class for lofs operations
 		if (obj) {
-			for (int m = 0; m < obj->methods_nr; m++) {
+			for (uint m = 0; m < obj->getMethodCount(); m++) {
 				reg_t fptr = obj->getFunction(m);
 
 				Script *script = _segMan->getScript(fptr.segment);

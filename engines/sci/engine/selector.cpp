@@ -104,7 +104,7 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 	uint varnum;
 
 	if (getSciVersion() < SCI_VERSION_1_1) {
-		varnum = obj->variable_names_nr;
+		varnum = obj->getVarCount();
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
 		buf = obj->base_obj + selector_name_offset;
 	} else {
@@ -112,7 +112,7 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 			obj = segMan->getObject(obj->getSuperClassSelector());
 
 		buf = (byte *)obj->base_vars;
-		varnum = obj->_variables[1].toUint16();
+		varnum = obj->getVariable(1).toUint16();
 	}
 
 	for (uint i = 0; i < varnum; i++)
@@ -122,46 +122,8 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 	return -1; // Failed
 }
 
-static int _class_locate_funcselector(Object *obj, Selector slc) {
-	// Determines if obj is a class and explicitly defines slc as a funcselector
-	// Does NOT say anything about obj's superclasses, i.e. failure may be
-	// returned even if one of the superclasses defines the funcselector.
-	int funcnum = obj->methods_nr;
-	int i;
-
-	for (i = 0; i < funcnum; i++)
-		if (obj->getFuncSelector(i) == slc) // Found it?
-			return i; // report success
-
-	return -1; // Failed
-}
-
-static SelectorType _lookup_selector_function(SegManager *segMan, int seg_id, Object *obj, Selector selector_id, reg_t *fptr) {
-	int index;
-
-	// "recursive" lookup
-
-	while (obj) {
-		index = _class_locate_funcselector(obj, selector_id);
-
-		if (index >= 0) {
-			if (fptr) {
-				*fptr = obj->getFunction(index);
-			}
-
-			return kSelectorMethod;
-		} else {
-			seg_id = obj->getSuperClassSelector().segment;
-			obj = segMan->getObject(obj->getSuperClassSelector());
-		}
-	}
-
-	return kSelectorNone;
-}
-
 SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector selector_id, ObjVarRef *varp, reg_t *fptr) {
 	Object *obj = segMan->getObject(obj_location);
-	Object *species;
 	int index;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
@@ -175,18 +137,6 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 				PRINT_REG(obj_location));
 	}
 
-	if (obj->isClass())
-		species = obj;
-	else
-		species = segMan->getObject(obj->getSpeciesSelector());
-
-
-	if (!obj) {
-		error("lookup_selector(): Error while looking up Species class.\nOriginal address was %04x:%04x. Species address was %04x:%04x", 
-			PRINT_REG(obj_location), PRINT_REG(obj->getSpeciesSelector()));
-		return kSelectorNone;
-	}
-
 	index = _obj_locate_varselector(segMan, obj, selector_id);
 
 	if (index >= 0) {
@@ -196,9 +146,25 @@ SelectorType lookup_selector(SegManager *segMan, reg_t obj_location, Selector se
 			varp->varindex = index;
 		}
 		return kSelectorVariable;
+	} else {
+		// Check if it's a method, with recursive lookup in superclasses
+		while (obj) {
+			index = obj->funcSelectorPosition(selector_id);
+			if (index >= 0) {
+				if (fptr)
+					*fptr = obj->getFunction(index);
+
+				return kSelectorMethod;
+			} else {
+				obj = segMan->getObject(obj->getSuperClassSelector());
+			}
+		}
+
+		return kSelectorNone;
 	}
 
-	return _lookup_selector_function(segMan, obj_location.segment, obj, selector_id, fptr);
+
+//	return _lookup_selector_function(segMan, obj, selector_id, fptr);
 }
 
 } // End of namespace Sci

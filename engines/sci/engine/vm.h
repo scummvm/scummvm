@@ -37,7 +37,7 @@ namespace Sci {
 
 class SegManager;
 struct EngineState;
-struct Object;
+class Object;
 class ResourceManager;
 
 /** Number of bytes to be allocated for the stack */

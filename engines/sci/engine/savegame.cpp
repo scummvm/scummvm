@@ -312,14 +312,21 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 	syncArray<reg_t>(s, _locals);
 }
 
-template <>
-void syncWithSerializer(Common::Serializer &s, Object &obj) {
-	s.syncAsSint32LE(obj._flags);
-	sync_reg_t(s, obj._pos);
-	s.syncAsSint32LE(obj.variable_names_nr);
-	s.syncAsSint32LE(obj.methods_nr);
 
-	syncArray<reg_t>(s, obj._variables);
+void Object::saveLoadWithSerializer(Common::Serializer &s) {
+	s.syncAsSint32LE(_flags);
+	sync_reg_t(s, _pos);
+	int varCount;
+	if (s.isLoading()) {
+		s.syncAsSint32LE(varCount);
+		_variables.resize(varCount);
+	} else {
+		varCount = _variables.size();
+		s.syncAsSint32LE(varCount);
+	}
+	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
+
+	syncArray<reg_t>(s, _variables);
 }
 
 template <>
@@ -411,7 +418,7 @@ void Script::saveLoadWithSerializer(Common::Serializer &s) {
 		Object tmp;
 		for (uint i = 0; i < numObjs; ++i) {
 			syncWithSerializer<Object>(s, tmp);
-			_objects[tmp._pos.offset] = tmp;
+			_objects[tmp.getPos().offset] = tmp;
 		}
 	} else {
 		ObjMap::iterator it;
@@ -605,8 +612,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 		ObjMap::iterator it;
 		const ObjMap::iterator end = scr->_objects.end();
 		for (it = scr->_objects.begin(); it != end; ++it) {
-			byte *data = scr->_buf + it->_value._pos.offset;
-			it->_value.base = scr->_buf;
+			byte *data = scr->_buf + it->_value.getPos().offset;
 			it->_value.base_obj = data;
 		}
 	}
@@ -622,7 +628,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 		ObjMap::iterator it;
 		const ObjMap::iterator end = scr->_objects.end();
 		for (it = scr->_objects.begin(); it != end; ++it) {
-			byte *data = scr->_buf + it->_value._pos.offset;
+			byte *data = scr->_buf + it->_value.getPos().offset;
 
 			if (getSciVersion() >= SCI_VERSION_1_1) {
 				uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
@@ -641,11 +647,11 @@ void SegManager::reconstructScripts(EngineState *s) {
 						  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
 					continue;
 				}
-				it->_value.variable_names_nr = base_obj->_variables.size();
+				it->_value.setVarCount(base_obj->getVarCount());
 				it->_value.base_obj = base_obj->base_obj;
 
 				it->_value.base_method = (uint16 *)(data + funct_area);
-				it->_value.base_vars = (uint16 *)(data + it->_value.variable_names_nr * 2 + SCRIPT_SELECTOR_OFFSET);
+				it->_value.base_vars = (uint16 *)(data + it->_value.getVarCount() * 2 + SCRIPT_SELECTOR_OFFSET);
 			}
 		}
 	}

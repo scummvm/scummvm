@@ -1353,11 +1353,11 @@ bool Console::segmentInfo(int nr) {
 		for (it = scr->_objects.begin(); it != end; ++it) {
 			DebugPrintf("    ");
 			// Object header
-			Object *obj = _vm->_gamestate->_segMan->getObject(it->_value._pos);
+			Object *obj = _vm->_gamestate->_segMan->getObject(it->_value.getPos());
 			if (obj)
-				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(it->_value._pos),
-							_vm->_gamestate->_segMan->getObjectName(it->_value._pos),
-							obj->_variables.size(), obj->methods_nr);
+				DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(it->_value.getPos()),
+							_vm->_gamestate->_segMan->getObjectName(it->_value.getPos()),
+							obj->getVarCount(), obj->getMethodCount());
 		}
 	}
 	break;
@@ -1400,11 +1400,11 @@ bool Console::segmentInfo(int nr) {
 				objpos.segment = nr;
 				DebugPrintf("  [%04x] %s; copy of ", i, _vm->_gamestate->_segMan->getObjectName(objpos));
 				// Object header
-				Object *obj = _vm->_gamestate->_segMan->getObject(ct->_table[i]._pos);
+				Object *obj = _vm->_gamestate->_segMan->getObject(ct->_table[i].getPos());
 				if (obj)
-					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i]._pos),
-								_vm->_gamestate->_segMan->getObjectName(ct->_table[i]._pos),
-								obj->_variables.size(), obj->methods_nr);
+					DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(ct->_table[i].getPos()),
+								_vm->_gamestate->_segMan->getObjectName(ct->_table[i].getPos()),
+								obj->getVarCount(), obj->getMethodCount());
 			}
 	}
 	break;
@@ -2935,7 +2935,7 @@ int Console::printObject(reg_t pos) {
 	EngineState *s = _vm->_gamestate;	// for the several defines in this function
 	Object *obj = s->_segMan->getObject(pos);
 	Object *var_container = obj;
-	int i;
+	uint i;
 
 	if (!obj) {
 		DebugPrintf("[%04x:%04x]: Not an object.", PRINT_REG(pos));
@@ -2944,20 +2944,20 @@ int Console::printObject(reg_t pos) {
 
 	// Object header
 	DebugPrintf("[%04x:%04x] %s : %3d vars, %3d methods\n", PRINT_REG(pos), s->_segMan->getObjectName(pos),
-				obj->_variables.size(), obj->methods_nr);
+				obj->getVarCount(), obj->getMethodCount());
 
 	if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
 		var_container = s->_segMan->getObject(obj->getSuperClassSelector());
 	DebugPrintf("  -- member variables:\n");
-	for (i = 0; (uint)i < obj->_variables.size(); i++) {
+	for (i = 0; (uint)i < obj->getVarCount(); i++) {
 		printf("    ");
-		if (i < var_container->variable_names_nr) {
+		if (i < var_container->getVarCount()) {
 			uint16 varSelector = var_container->getVarSelector(i);
 			DebugPrintf("[%03x] %s = ", varSelector, selector_name(s, varSelector));
 		} else
 			DebugPrintf("p#%x = ", i);
 
-		reg_t val = obj->_variables[i];
+		reg_t val = obj->getVariable(i);
 		DebugPrintf("%04x:%04x", PRINT_REG(val));
 
 		Object *ref = s->_segMan->getObject(val);
@@ -2967,7 +2967,7 @@ int Console::printObject(reg_t pos) {
 		DebugPrintf("\n");
 	}
 	DebugPrintf("  -- methods:\n");
-	for (i = 0; i < obj->methods_nr; i++) {
+	for (i = 0; i < obj->getMethodCount(); i++) {
 		reg_t fptr = obj->getFunction(i);
 		DebugPrintf("    [%03x] %s = %04x:%04x\n", obj->getFuncSelector(i), selector_name(s, obj->getFuncSelector(i)), PRINT_REG(fptr));
 	}

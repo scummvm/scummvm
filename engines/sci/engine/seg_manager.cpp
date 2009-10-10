@@ -184,9 +184,7 @@ int SegManager::deallocate(SegmentId seg, bool recursive) {
 
 bool SegManager::isHeapObject(reg_t pos) {
 	Object *obj = getObject(pos);
-	if (obj == NULL)
-		return false;
-	if (obj->_flags & OBJECT_FLAG_FREED)
+	if (obj == NULL || (obj && obj->isFreed()))
 		return false;
 	Script *scr = getScriptIfLoaded(pos.segment);
 	return !(scr && scr->_markedAsDeleted);
@@ -305,7 +303,7 @@ reg_t SegManager::findObjectByName(const Common::String &name, int index) {
 
 			if (mobj->getType() == SEG_TYPE_SCRIPT) {
 				obj = &(it->_value);
-				objpos.offset = obj->_pos.offset;
+				objpos.offset = obj->getPos().offset;
 				++it;
 			} else if (mobj->getType() == SEG_TYPE_CLONES) {
 				if (!ct->isValidEntry(idx))
@@ -396,7 +394,7 @@ int Script::relocateLocal(SegmentId segment, int location) {
 }
 
 int Script::relocateObject(Object &obj, SegmentId segment, int location) {
-	return relocateBlock(obj._variables, obj._pos.offset, segment, location);
+	return relocateBlock(obj._variables, obj.getPos().offset, segment, location);
 }
 
 void Script::scriptAddCodeBlock(reg_t location) {
@@ -442,7 +440,7 @@ void Script::scriptRelocate(reg_t block) {
 				else
 					printf("- No locals\n");
 				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value._pos.offset, it->_value._variables.size());
+					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
 				// SQ3 script 71 has broken relocation entries.
 				printf("Trying to continue anyway...\n");
 			}
@@ -481,7 +479,7 @@ void Script::heapRelocate(reg_t block) {
 				else
 					printf("- No locals\n");
 				for (it = _objects.begin(), k = 0; it != end; ++it, ++k)
-					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value._pos.offset, it->_value._variables.size());
+					printf("- obj#%d at %04x w/ %d vars\n", k, it->_value.getPos().offset, it->_value.getVarCount());
 				error("Breakpoint in %s, line %d", __FILE__, __LINE__);
 			}
 		}
@@ -545,45 +543,7 @@ Object *Script::scriptObjInit(reg_t obj_pos) {
 
 	VERIFY(obj_pos.offset + SCRIPT_FUNCTAREAPTR_OFFSET < (int)_bufSize, "Function area pointer stored beyond end of script\n");
 
-	byte *data = (byte *)(_buf + obj_pos.offset);
-	uint16 *funct_area = 0;
-	bool isClass;
-
-	if (getSciVersion() < SCI_VERSION_1_1) {
-		obj->variable_names_nr = READ_LE_UINT16(data + SCRIPT_SELECTORCTR_OFFSET);
-		obj->base_vars = 0;
-		funct_area = (uint16 *)(data + READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET));
-		obj->methods_nr = READ_LE_UINT16(funct_area - 1);
-		isClass = READ_LE_UINT16(data + 4) & SCRIPT_INFO_CLASS;	// SCRIPT_INFO_OFFSET
-	} else {
-		obj->variable_names_nr = READ_LE_UINT16(data + 2);
-		obj->base_vars = (uint16 *)(_buf + READ_LE_UINT16(data + 4));
-		funct_area = (uint16 *)(_buf + READ_LE_UINT16(data + 6));
-		obj->methods_nr = READ_LE_UINT16(funct_area);
-		isClass = READ_LE_UINT16(data + 14) & SCRIPT_INFO_CLASS;
-	}
-
-	obj->_flags = 0;
-	obj->_pos = obj_pos;
-	obj->base_method = funct_area;
-
-	VERIFY((byte *)funct_area < _buf + _bufSize, "Function area pointer references beyond end of script");
-
-	if (getSciVersion() < SCI_VERSION_1_1) {
-		VERIFY((byte *)funct_area + obj->methods_nr * 2
-		       // add again for classes, since those also store selectors
-		       + (isClass ? obj->methods_nr * 2 : 0) < _buf + _bufSize, "Function area extends beyond end of script");
-	} else {
-		VERIFY(((byte *)funct_area + obj->variable_names_nr) < _buf + _bufSize, "Function area extends beyond end of script");
-	}
-
-	obj->_variables.resize(obj->variable_names_nr);
-
-	obj->base = _buf;
-	obj->base_obj = data;
-
-	for (int i = 0; i < obj->variable_names_nr; i++)
-		obj->_variables[i] = make_reg(0, READ_LE_UINT16(data + (i * 2)));
+	obj->init(_buf, obj_pos);
 
 	return obj;
 }
@@ -829,12 +789,10 @@ void SegManager::reconstructClones() {
 					base_obj = getObject(seeker.getSpeciesSelector());
 					if (!base_obj) {
 						warning("Clone entry without a base class: %d", j);
-						seeker.base = NULL;
 						seeker.base_obj = NULL;
 						seeker.base_vars = NULL;
 						seeker.base_method = NULL;
 					} else {
-						seeker.base = base_obj->base;
 						seeker.base_obj = base_obj->base_obj;
 						seeker.base_vars = base_obj->base_vars;
 						seeker.base_method = base_obj->base_method;

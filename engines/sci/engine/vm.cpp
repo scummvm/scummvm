@@ -67,9 +67,9 @@ static reg_t &validate_property(Object *obj, int index) {
 		return dummyReg;
 	}
 
-	if (index < 0 || (uint)index >= obj->_variables.size()) {
+	if (index < 0 || (uint)index >= obj->getVarCount()) {
 		debugC(2, kDebugLevelVM, "[VM] Invalid property #%d (out of [0..%d]) requested!\n", 
-			index, obj->_variables.size());
+			index, obj->getVarCount());
 		return dummyReg;
 	}
 
@@ -1598,7 +1598,7 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			obj->setSpeciesSelector(INST_LOOKUP_CLASS(obj->getSpeciesSelector().offset));
 
 			base_obj = segMan->getObject(obj->getSpeciesSelector());
-			obj->variable_names_nr = base_obj->_variables.size();
+			obj->setVarCount(base_obj->getVarCount());
 			obj->base_obj = base_obj->base_obj;
 			// Copy base from species class, as we need its selector IDs
 

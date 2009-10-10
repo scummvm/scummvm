@@ -336,8 +336,8 @@ void Script::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback not
 			if (_localsSegment)
 				(*note)(param, make_reg(_localsSegment, 0));
 
-			for (uint i = 0; i < obj->_variables.size(); i++)
-				(*note)(param, obj->_variables[i]);
+			for (uint i = 0; i < obj->getVarCount(); i++)
+				(*note)(param, obj->getVariable(i));
 		} else {
 			warning("Request for outgoing script-object reference at %04x:%04x failed", PRINT_REG(addr));
 		}
@@ -362,11 +362,11 @@ void CloneTable::listAllOutgoingReferences(reg_t addr, void *param, NoteCallback
 	clone = &(_table[addr.offset]);
 
 	// Emit all member variables (including references to the 'super' delegate)
-	for (uint i = 0; i < clone->_variables.size(); i++)
-		(*note)(param, clone->_variables[i]);
+	for (uint i = 0; i < clone->getVarCount(); i++)
+		(*note)(param, clone->getVariable(i));
 
 	// Note that this also includes the 'base' object, which is part of the script and therefore also emits the locals.
-	(*note)(param, clone->_pos);
+	(*note)(param, clone->getPos());
 	//debugC(2, kDebugLevelGC, "[GC] Reporting clone-pos %04x:%04x\n", PRINT_REG(clone->pos));
 }
 

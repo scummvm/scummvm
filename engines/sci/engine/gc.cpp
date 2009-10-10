@@ -122,7 +122,7 @@ reg_t_hash_map *find_all_used_references(EngineState *s) {
 				ObjMap::iterator it;
 				const ObjMap::iterator end = script->_objects.end();
 				for (it = script->_objects.begin(); it != end; ++it) {
-					wm.push(it->_value._pos);
+					wm.push(it->_value.getPos());
 				}
 			}
 		}
