@@ -608,19 +608,26 @@ void MidiDriver_Adlib::playSwitch(bool play) {
 	renewNotes(-1, play);
 }
 
-void MidiDriver_Adlib::loadResource(Resource *res) {
-	for (int i = 0; i < 48; i++)
-		loadInstrument(res->data + (28 * i));
-
-	if (res->size == 2690) {
-		for (int i = 48; i < 96; i++)
-			loadInstrument(res->data + 2 + (28 * i));
-	} else if (res->size == 5382) {
-		for (int i = 48; i < 190; i++)
-			loadInstrument(res->data + (28 * i));
-		_rhythmKeyMap = new byte[kRhythmKeys];
-		memcpy(_rhythmKeyMap, res->data + 5320, kRhythmKeys);
+bool MidiDriver_Adlib::loadResource(const byte *data, uint size) {
+	if ((size != 1344) && (size != 2690) && (size != 5382)) {
+		warning("ADLIB: Unsupported patch format (%i bytes)", size);
+		return false;
 	}
+
+	for (int i = 0; i < 48; i++)
+		loadInstrument(data + (28 * i));
+
+	if (size == 2690) {
+		for (int i = 48; i < 96; i++)
+			loadInstrument(data + 2 + (28 * i));
+	} else if (size == 5382) {
+		for (int i = 48; i < 190; i++)
+			loadInstrument(data + (28 * i));
+		_rhythmKeyMap = new byte[kRhythmKeys];
+		memcpy(_rhythmKeyMap, data + 5320, kRhythmKeys);
+	}
+
+	return true;
 }
 
 int MidiPlayer_Adlib::open(ResourceManager *resMan) {
@@ -628,18 +635,34 @@ int MidiPlayer_Adlib::open(ResourceManager *resMan) {
 
 	// Load up the patch.003 file, parse out the instruments
 	Resource *res = resMan->findResource(ResourceId(kResourceTypePatch, 3), 0);
+	bool ok = false;
 
-	if (!res) {
+	if (res) {
+		ok = static_cast<MidiDriver_Adlib *>(_driver)->loadResource(res->data, res->size);
+	} else {
+		// Early SCI0 games have the sound bank embedded in the adlib driver
+
+		Common::File f;
+
+		if (f.open("ADL.DRV")) {
+			int size = f.size();
+			const uint patchSize = 1344;
+
+			if ((size == 5684) || (size == 5720) || (size == 5727)) {
+				byte *buf = new byte[patchSize];
+
+				if (f.seek(0x45a) && (f.read(buf, patchSize) == patchSize))
+					ok = static_cast<MidiDriver_Adlib *>(_driver)->loadResource(buf, patchSize);
+
+				delete[] buf;
+			}
+		}
+	}
+
+	if (!ok) {
 		warning("ADLIB: Failed to load patch.003");
 		return -1;
 	}
-
-	if ((res->size != 1344) && (res->size != 2690) && (res->size != 5382)) {
-		warning("ADLIB: Unsupported patch format (%i bytes)", res->size);
-		return -1;
-	}
-
-	static_cast<MidiDriver_Adlib *>(_driver)->loadResource(res);
 
 	return static_cast<MidiDriver_Adlib *>(_driver)->open(getSciVersion() <= SCI_VERSION_0_LATE);
 }
