@@ -114,6 +114,7 @@ void closeAllMenu(void);
 int removeFinishedScripts(scriptInstanceStruct *ptrHandle);
 void initBigVar3(void);
 void resetActorPtr(actorStruct *ptr);
+void removeAllScripts(scriptInstanceStruct *ptrHandle);
 
 void MemoryList();
 void *MemoryAlloc(uint32 size, bool clearFlag, int32 lineNum, const char *fname);

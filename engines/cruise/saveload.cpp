@@ -665,6 +665,7 @@ void initVars(void) {
 
 	resetPreload();
 	freeCTP();
+	freeBackgroundIncrustList(&backgroundIncrustHead);
 
 	freezeCell(&cellHead, -1, -1, -1, -1, -1, 0);
 	// TODO: unfreeze anims
@@ -672,6 +673,8 @@ void initVars(void) {
 	freeObjectList(&cellHead);
 	removeAnimation(&actorHead, -1, -1, -1);
 
+	removeAllScripts(&relHead);
+	removeAllScripts(&procHead);
 	changeScriptParamInList(-1, -1, &procHead, -1, 0);
 	removeFinishedScripts(&procHead);
 
