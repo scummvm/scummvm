@@ -12,7 +12,7 @@ CC      = sh-elf-gcc -ml -m4-single-only
 CXX     = sh-elf-g++ -ml -m4-single-only
 LD      = $(CXX)
 CXXFLAGS= -O3 -Wno-multichar -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks -fno-exceptions
-DEFINES = -D__DC__ -DNONSTANDARD_PORT -DUSE_MAD -DUSE_ZLIB -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE
+DEFINES = -D__DC__ -DNONSTANDARD_PORT -DUSE_MAD -DUSE_ZLIB -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DUSE_RGB_COLOR
 LDFLAGS = -Wl,-Ttext,0x8c010000 -nostartfiles $(ronindir)/lib/crt0.o
 INCLUDES= -I./ -I$(srcdir) -I$(ronindir)/include/ -I$(srcdir)/engines
 LIBS	= -L$(ronindir)/lib -lmad -lronin -lz -lm
@@ -29,6 +29,7 @@ AR = sh-elf-ar cru
 RANLIB = sh-elf-ranlib
 HAVE_GCC3 = true
 DISABLE_SCALERS = true
+USE_RGB_COLOR = true
 
 ifdef DYNAMIC_MODULES
 DEFINES += -DDYNAMIC_MODULES
