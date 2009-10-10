@@ -218,9 +218,9 @@ void removeCell(cellStruct *objPtr, int ovlNumber, int objectIdx, int objType, i
 
 			dx->prev = si->prev;
 
-			// TODO: complelty wrong
-			//freeMessageList(si);
-
+			// Free the entry
+			if (si->gfxPtr)
+				freeGfx(si->gfxPtr);
 			MemFree(si);
 
 			currentObj = dx;
