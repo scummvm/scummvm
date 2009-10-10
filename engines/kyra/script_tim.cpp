@@ -1168,18 +1168,16 @@ int TIMInterpreter_LoL::resetAnimationLastPart(int animIndex) {
 
 void TIMInterpreter_LoL::drawDialogueButtons() {
 	int cp = _screen->setCurPage(0);
-	Screen::FontId of;
+	Screen::FontId of = _screen->setFont(_vm->gameFlags().use16ColorMode ? Screen::FID_SJIS_FNT : Screen::FID_6_FNT);
 
 	int x = _dialogueButtonPosX;
 
 	for (int i = 0; i < _dialogueNumButtons; i++) {
 		if (_vm->gameFlags().use16ColorMode) {
-			of = _screen->setFont(Screen::FID_SJIS_FNT);
 			_vm->gui_drawBox(x, (_dialogueButtonPosY & ~7) - 1, 74, 10, 0xee, 0xcc, -1);
 			_screen->printText(_dialogueButtonString[i], (x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2) & ~3,
 				(_dialogueButtonPosY + 2) & ~7, _dialogueHighlightedButton == i ? 0xc1 : 0xe1, 0);
 		} else {
-			of = _screen->setFont(Screen::FID_6_FNT);
 			_vm->gui_drawBox(x, _dialogueButtonPosY, 74, 9, 136, 251, -1);
 			_screen->printText(_dialogueButtonString[i], x + 37 - (_screen->getTextWidth(_dialogueButtonString[i])) / 2,
 				_dialogueButtonPosY + 2, _dialogueHighlightedButton == i ? 144 : 254, 0);
@@ -1215,18 +1213,15 @@ uint16 TIMInterpreter_LoL::processDialogue() {
 
 			if (e == 43 || e == 61) {
 				_vm->snd_stopSpeech(true);
-				//_dlgTimer = 0;
 			}
 		}
 
 		if (_vm->snd_updateCharacterSpeech() != 2) {
-			//if (_dlgTimer < _system->getMillis()) {
 				res = 1;
 				if (!_vm->shouldQuit()) {
 					_vm->removeInputTop();
 					_vm->gui_notifyButtonListChanged();
 				}
-			//}
 		}
 	} else {
 		int e = _vm->checkInput(0, false) & 0xFF;

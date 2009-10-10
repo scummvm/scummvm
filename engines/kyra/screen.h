@@ -305,7 +305,7 @@ public:
 		SCREEN_PAGE_SIZE = 320 * 200 + 1024,
 		SCREEN_OVL_SJIS_SIZE = 640 * 400,
 		SCREEN_PAGE_NUM = 16,
-		SCREEN_OVLS_NUM = 5
+		SCREEN_OVLS_NUM = 6
 	};
 
 	enum CopyRegionFlags {

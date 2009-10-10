@@ -3048,7 +3048,7 @@ byte *Screen::getOverlayPtr(int page) {
 		if (page == 6 || page == 7)
 			return _sjisOverlayPtrs[4];
 		if (page == 12 || page == 13)
-			return _sjisOverlayPtrs[3];
+			return _sjisOverlayPtrs[5];
 	}
 
 	return 0;
