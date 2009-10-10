@@ -76,6 +76,7 @@ struct GuiAnimateList {
 	GuiResourceId viewId;
 	GuiViewLoopNo loopNo;
 	GuiViewCelNo celNo;
+	int16 paletteNo;
 	int16 x, y, z;
 	uint16 priority, signal;
 	Common::Rect celRect;

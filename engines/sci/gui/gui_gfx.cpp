@@ -54,6 +54,9 @@ void SciGuiGfx::init() {
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
 
+	_animateList = NULL;
+	_animateListLast = NULL;
+
 	// _mainPort is not known to windowmanager, that's okay according to sierra sci
 	//  its not even used currently in our engine
 	_mainPort = new GuiPort(0);
@@ -825,12 +828,12 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	uint16 mask;
+	uint16 signal;
 
 	while (curNode) {
 		curObject = curNode->value;
-		mask = GET_SEL32V(curObject, signal);
-		if (!(mask & SCI_ANIMATE_SIGNAL_FROZEN)) {
+		signal = GET_SEL32V(curObject, signal);
+		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
 			// Call .doit method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
@@ -841,54 +844,107 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	}
 }
 
-void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
+void SciGuiGfx::AnimateMakeSortedList(List *list) {
 	SegManager *segMan = _s->_segMan;
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	SciGuiView *view = NULL;
-	GuiResourceId viewId;
-	GuiViewLoopNo loopNo;
-	GuiViewCelNo celNo;
-	int16 x, y, z;
-	Common::Rect celRect;
-	uint16 signal;
+	GuiAnimateList *listEntry;
+	int16 listNr = 0;
 
+	// Count the list entries
 	while (curNode) {
-		curObject = curNode->value;
+		listNr++;
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
 
-		// Get animation data...
-		viewId = GET_SEL32V(curObject, view);
-		loopNo = GET_SEL32V(curObject, loop);
-		celNo = GET_SEL32V(curObject, cel);
-		x = GET_SEL32V(curObject, x);
-		y = GET_SEL32V(curObject, y);
-		z = GET_SEL32V(curObject, z);
-		signal = GET_SEL32V(curObject, signal);
+	// No entries -> exit immediately
+	if (listNr == 0) {
+		_animateListCount = 0;
+		return;
+	}
+
+	// Adjust list size, if needed
+	if ((_animateList == NULL) || (_animateListTotal < listNr)) {
+		if (_animateList)
+			free(_animateList);
+		_animateList = (GuiAnimateList *)malloc(listNr * sizeof(GuiAnimateList));
+		if (!_animateList)
+			error("Could not allocate memory for _animateList");
+		_animateListTotal = listNr;
+	}
+	_animateListCount = listNr;
+
+	// Fill the list
+	curAddress = list->first;
+	curNode = _s->_segMan->lookupNode(curAddress);
+	listEntry = _animateList;
+	for (listNr = 0; listNr < _animateListCount; listNr++) {
+		curObject = curNode->value;
+		listEntry->object = curObject;
+
+		_animateListLast = listEntry;
+
+		// Get data from current object
+		listEntry->viewId = GET_SEL32V(curObject, view);
+		listEntry->loopNo = GET_SEL32V(curObject, loop);
+		listEntry->celNo = GET_SEL32V(curObject, cel);
+		listEntry->paletteNo = GET_SEL32V(curObject, palette);
+		listEntry->x = GET_SEL32V(curObject, x);
+		listEntry->y = GET_SEL32V(curObject, y);
+		listEntry->z = GET_SEL32V(curObject, z);
+		listEntry->priority = GET_SEL32V(curObject, priority);
+		listEntry->signal = GET_SEL32V(curObject, signal);
+		// listEntry->celRect is filled in AnimateFill()
+
+		listEntry++;
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+
+	// TODO: Actually we need a sorted list here
+}
+
+void SciGuiGfx::AnimateFill(byte &old_picNotValid) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curObject;
+	GuiAnimateList *listEntry;
+	uint16 listNr;
+	uint16 signal;
+	SciGuiView *view = NULL;
+
+	listEntry = _animateList;
+	for (listNr = 0; listNr < _animateListCount; listNr++) {
+		curObject = listEntry->object;
 
 		// Get the corresponding view
-		view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
 		
 		// adjust loop and cel, if any of those is invalid
-		if (loopNo >= view->getLoopCount()) {
-			loopNo = 0;
-			PUT_SEL32V(curObject, loop, loopNo);
+		if (listEntry->loopNo >= view->getLoopCount()) {
+			listEntry->loopNo = 0;
+			PUT_SEL32V(curObject, loop, listEntry->loopNo);
 		}
-		if (celNo >= view->getCelCount(loopNo)) {
-			celNo = 0;
-			PUT_SEL32V(curObject, cel, celNo);
+		if (listEntry->celNo >= view->getCelCount(listEntry->loopNo)) {
+			listEntry->celNo = 0;
+			PUT_SEL32V(curObject, cel, listEntry->celNo);
 		}
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(loopNo, celNo, x, y, z, &celRect);
-		PUT_SEL32V(curObject, nsLeft, celRect.left);
-		PUT_SEL32V(curObject, nsTop, celRect.top);
-		PUT_SEL32V(curObject, nsRight, celRect.right);
-		PUT_SEL32V(curObject, nsBottom, celRect.bottom);
+		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+		PUT_SEL32V(curObject, nsLeft, listEntry->celRect.left);
+		PUT_SEL32V(curObject, nsTop, listEntry->celRect.top);
+		PUT_SEL32V(curObject, nsRight, listEntry->celRect.right);
+		PUT_SEL32V(curObject, nsBottom, listEntry->celRect.bottom);
+
+		signal = listEntry->signal;
 
 		// Calculate current priority according to y-coordinate
-		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY))
-			PUT_SEL32V(curObject, priority, CoordinateToPriority(y));
+		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY)) {
+			listEntry->priority = CoordinateToPriority(listEntry->y);
+			PUT_SEL32V(curObject, priority, listEntry->priority);
+		}
 		
 		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
 			if (signal & (SCI_ANIMATE_SIGNAL_FORCEUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED)
@@ -902,96 +958,28 @@ void SciGuiGfx::AnimateFill(List *list, byte &old_picNotValid) {
 				old_picNotValid++;
 			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
 		}
-		PUT_SEL32V(curObject, signal, signal);
+		listEntry->signal = signal;
 
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
+		listEntry++;
 	}
 }
 
-Common::List<GuiAnimateList> *SciGuiGfx::AnimateMakeSortedList(List *list) {
+void SciGuiGfx::AnimateUpdate() {
 	SegManager *segMan = _s->_segMan;
-	Common::List<GuiAnimateList> *sortedList = new Common::List<GuiAnimateList>;
-	GuiAnimateList listHelper;
-	reg_t curAddress = list->first;
-	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-
-	return sortedList;
-
-	// First convert the given List to Common::List
-//	while (curNode) {
-//		curObject = curNode->value;
-//		listHelper.address = curAddress;
-//		listHelper.y = (int16)GET_SEL32V(curObject, y);
-//		listHelper.z = (int16)GET_SEL32V(curObject, priority);
-//		sortedList->push_back(listHelper);
-
-//		curAddress = curNode->succ;
-//		curNode = _s->_segMan->lookupNode(curAddress);
-//	}
-
-	// Now do a bubble sort on this Common::List
-//	if (sortedList->size() < 2)
-//		return sortedList;
-
-//	sortedList->begin();
-//	Common::List<ExecStack>::iterator iter;
-//	for (iter = s->_executionStack.begin();
-//	     iter != s->_executionStack.end(); ++iter) {
-//		ExecStack &es = *iter;
-
-	
-
-	return sortedList;
-}
-
-#define SCI_ANIMATE_MAXLIST 50
-
-void SciGuiGfx::AnimateUpdate(List *list) {
-	SegManager *segMan = _s->_segMan;
-	reg_t curAddress = list->first;
-	Node *curNode = _s->_segMan->lookupNode(curAddress);
-	reg_t curObject;
-	int16 listNr = 0, listCount = 0;
-	reg_t object[SCI_ANIMATE_MAXLIST];
-	GuiResourceId viewId[SCI_ANIMATE_MAXLIST];
-	GuiViewLoopNo loopNo[SCI_ANIMATE_MAXLIST];
-	GuiViewCelNo celNo[SCI_ANIMATE_MAXLIST];
-	int16 priority[SCI_ANIMATE_MAXLIST];
-	Common::Rect celRect[SCI_ANIMATE_MAXLIST];
-	uint16 paletteNo[SCI_ANIMATE_MAXLIST], signal[SCI_ANIMATE_MAXLIST];
+	GuiAnimateList *listEntry;
+	uint16 listNr, signal;
 	reg_t bitsHandle;
 	Common::Rect rect;
 
-	// first cache information about the list
-	// FIXME: perhaps make a list that is persistent in memory and resize it on demand...
-	while (curNode) {
-		curObject = curNode->value;
-
-		object[listNr] = curObject;
-		viewId[listNr] = GET_SEL32V(curObject, view);
-		loopNo[listNr] = GET_SEL32V(curObject, loop);
-		celNo[listNr] = GET_SEL32V(curObject, cel);
-		celRect[listNr].left = GET_SEL32V(curObject, nsLeft);
-		celRect[listNr].top = GET_SEL32V(curObject, nsTop);
-		celRect[listNr].right = GET_SEL32V(curObject, nsRight);
-		celRect[listNr].bottom = GET_SEL32V(curObject, nsBottom);
-		priority[listNr] = GET_SEL32V(curObject, priority);
-		paletteNo[listNr] = GET_SEL32V(curObject, palette);
-		signal[listNr] = GET_SEL32V(curObject, signal);
-		listNr++;
-
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
-	}
-	listCount = listNr;
-
 	// Remove all previous cels from screen
-	for (listNr = listCount - 1; listNr >= 0; listNr--) {
-		curObject = object[listNr];
-		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE) {
-			if (!(signal[listNr] & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
+	listEntry = _animateListLast;
+	for (listNr = _animateListCount; listNr > 0; listNr--) {
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
 				bitsHandle = GET_SEL32(curObject, underBits);
 				if (_screen->_picNotValid != 1) {
 					RestoreBits(bitsHandle);
@@ -1001,105 +989,100 @@ void SciGuiGfx::AnimateUpdate(List *list) {
 				}
 				PUT_SEL32V(curObject, underBits, 0);
 			}
-			signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
-			signal[listNr] &= signal[listNr] & SCI_ANIMATE_SIGNAL_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE) : 0xFFFF;
-		} else if (signal[listNr] & SCI_ANIMATE_SIGNAL_STOPUPDATE) {
-			signal[listNr] =  (signal[listNr] & (0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE)) | SCI_ANIMATE_SIGNAL_NOUPDATE;
+			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
+			signal &= signal & SCI_ANIMATE_SIGNAL_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE) : 0xFFFF;
+		} else if (signal & SCI_ANIMATE_SIGNAL_STOPUPDATE) {
+			signal =  (signal & (0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE)) | SCI_ANIMATE_SIGNAL_NOUPDATE;
 		}
+		listEntry->signal = signal;
+		listEntry--;
 	}
 
-	for (listNr = 0; listNr < listCount; listNr++) {
-		if (signal[listNr] & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
-			curObject = object[listNr];
+	listEntry = _animateList;
+	for (listNr = 0; listNr < _animateListCount; listNr++) {
+		curObject = listEntry->object;
+		signal = listEntry->signal;
 
+		if (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
 			// draw corresponding cel
-			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, priority[listNr], paletteNo[listNr]);
+			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
 //			arr1[i] = 1;
-			signal[listNr] &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
-			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
-				rect = celRect[listNr];
-				rect.top = CLIP<int16>(PriorityToCoordinate(priority[listNr]) - 1, rect.top, rect.bottom - 1);  
+			signal &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
+			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+				rect = listEntry->celRect;
+				rect.top = CLIP<int16>(PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
+			listEntry->signal = signal;
 		}
+		listEntry++;
 	}
 
-	for (listNr = 0; listNr < listCount; listNr++) {
-		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE) {
-			if (signal[listNr] & SCI_ANIMATE_SIGNAL_HIDDEN) {
-				signal[listNr] |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+	listEntry = _animateList;
+	for (listNr = 0; listNr < _animateListCount; listNr++) {
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
+				signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 			} else {
-				signal[listNr] &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
-				curObject = object[listNr];
-				if (signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
-					bitsHandle = SaveBits(celRect[listNr], SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
+				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+				if (signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
+					bitsHandle = SaveBits(listEntry->celRect, SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
 				else
-					bitsHandle = SaveBits(celRect[listNr], SCI_SCREEN_MASK_ALL);
+					bitsHandle = SaveBits(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 				PUT_SEL32(curObject, underBits, bitsHandle);
 			}
+			listEntry->signal = signal;
 		}
+		listEntry++;
 	}
 
-	for (listNr = 0; listNr < listCount; listNr++) {
-		curObject = object[listNr];
-		if (signal[listNr] & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal[listNr] & SCI_ANIMATE_SIGNAL_HIDDEN)) {
+	listEntry = _animateList;
+	for (listNr = 0; listNr < _animateListCount; listNr++) {
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal & SCI_ANIMATE_SIGNAL_HIDDEN)) {
 			// draw corresponding cel
-			drawCel(viewId[listNr], loopNo[listNr], celNo[listNr], celRect[listNr].left, celRect[listNr].top, priority[listNr], paletteNo[listNr]);
+			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
 			// arr1[i] = 1;
-			if ((signal[listNr] & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
-				rect = celRect[listNr];
-				rect.top = CLIP<int16>(PriorityToCoordinate(priority[listNr]) - 1, rect.top, rect.bottom - 1);  
+			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+				rect = listEntry->celRect;
+				rect.top = CLIP<int16>(PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
 				FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 			}
 		}
-		PUT_SEL32V(curObject, signal, signal[listNr]);
+		listEntry++;
 	}
 }
 
-void SciGuiGfx::AnimateDrawCels(List *list) {
+void SciGuiGfx::AnimateDrawCels() {
 	SegManager *segMan = _s->_segMan;
-	reg_t curAddress = list->first;
-	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	GuiResourceId viewId;
-	GuiViewLoopNo loopNo;
-	GuiViewCelNo celNo;
-	int16 x, y, priority;
-	Common::Rect celRect;
-	uint16 signal, paletteNo;
+	GuiAnimateList *listEntry;
+	uint16 listNr, signal;
 	reg_t bitsHandle;
 
-	while (curNode) {
-		curObject = curNode->value;
+	listEntry = _animateList;
+	for (listNr = 0; listNr < _animateListCount; listNr++) {
+		curObject = listEntry->object;
+		signal = listEntry->signal;
 
-		signal = GET_SEL32V(curObject, signal);
 		if (!(signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_HIDDEN | SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))) {
-			// Get animation data...
-			viewId = GET_SEL32V(curObject, view);
-			loopNo = GET_SEL32V(curObject, loop);
-			celNo = GET_SEL32V(curObject, cel);
-			x = GET_SEL32V(curObject, x);
-			y = GET_SEL32V(curObject, y);
-			priority = GET_SEL32V(curObject, priority);
-			paletteNo = GET_SEL32V(curObject, palette);
-
-			celRect.left = GET_SEL32V(curObject, nsLeft);
-			celRect.top = GET_SEL32V(curObject, nsTop);
-			celRect.right = GET_SEL32V(curObject, nsRight);
-			celRect.bottom = GET_SEL32V(curObject, nsBottom);
-
 			// Save background
-			bitsHandle = SaveBits(celRect, SCI_SCREEN_MASK_ALL);
+			bitsHandle = SaveBits(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 			PUT_SEL32(curObject, underBits, bitsHandle);
 
 			// draw corresponding cel
-			drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, paletteNo);
+			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
 
 			// arr1[inx] = 1;
 			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
 				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
-				PUT_SEL32V(curObject, signal, signal);
 			}
+			listEntry->signal = signal;
 			
 //			HEAPHANDLE hNewCast = heapNewPtr(sizeof(sciCast), kDataCast);
 //			sciCast *pNewCast = (sciCast *)heap2Ptr(hNewCast);
@@ -1112,28 +1095,24 @@ void SciGuiGfx::AnimateDrawCels(List *list) {
 //			pNewCast->rect = *rect;
 //			_lastCast->AddToEnd(hNewCast);
 		}
-
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
+		listEntry++;
 	}
 }
 
-void SciGuiGfx::AnimateRestoreAndDelete(List *list, int argc, reg_t *argv) {
+void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 	SegManager *segMan = _s->_segMan;
-	reg_t curAddress = list->first;
-	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
-	uint16 signal;
+	GuiAnimateList *listEntry;
+	uint16 listNr, signal;
 
-	// FIXME: we are supposed to go through this table backwards
-	while (curNode) {
-		curObject = curNode->value;
-		signal = GET_SEL32V(curObject, signal);
+	listEntry = _animateListLast;
+	for (listNr = _animateListCount; listNr > 0; listNr--) {
+		curObject = listEntry->object;
+		signal = listEntry->signal;
 
 		// FIXME: this is supposed to go into the loop above (same method)
 		if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
 			signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
-			PUT_SEL32V(curObject, signal, signal);
 		}
 
 		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
@@ -1141,14 +1120,14 @@ void SciGuiGfx::AnimateRestoreAndDelete(List *list, int argc, reg_t *argv) {
 			PUT_SEL32V(curObject, underBits, 0);
 		}
 
+		// Finally update signal
+		PUT_SEL32V(curObject, signal, signal);
+
 		if (signal & SCI_ANIMATE_SIGNAL_DISPOSEME) {
 			// Call .delete_ method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
-			// Lookup node again, since the nodetable it was in may have been reallocated
-			curNode = _s->_segMan->lookupNode(curAddress);
 		}
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
+		listEntry--;
 	}
 }
 

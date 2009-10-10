@@ -428,16 +428,18 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	_gfx->AnimateDisposeLastCast();
 
-	_gfx->AnimateFill(list, old_picNotValid);
+	_gfx->AnimateMakeSortedList(list);
+
+	_gfx->AnimateFill(old_picNotValid);
 
 	// _gfx->AnimateSort();
 	if (old_picNotValid) {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
-		_gfx->AnimateUpdate(list);
+		_gfx->AnimateUpdate();
 		_windowMgr->EndUpdate(_windowMgr->_picWind);
 	}
 
-	_gfx->AnimateDrawCels(list);
+	_gfx->AnimateDrawCels();
 
 	if (_screen->_picNotValid) {
 		//(this->*ShowPic)(_showMap, _showStyle);
@@ -446,7 +448,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 	//_gfx->AnimateUpdateScreen();
 	_screen->copyToScreen();
-	_gfx->AnimateRestoreAndDelete(list, argc, argv);
+	_gfx->AnimateRestoreAndDelete(argc, argv);
 
 	_gfx->SetPort(oldPort);
 }

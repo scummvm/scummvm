@@ -116,11 +116,11 @@ public:
 
 	void AnimateDisposeLastCast();
 	void AnimateInvoke(List *list, int argc, reg_t *argv);
-	void AnimateFill(List *list, byte &oldPicNotValid);
-	Common::List<GuiAnimateList> *AnimateMakeSortedList(List *list);
-	void AnimateUpdate(List *list);
-	void AnimateDrawCels(List *list);
-	void AnimateRestoreAndDelete(List *list, int argc, reg_t *argv);
+	void AnimateMakeSortedList(List *list);
+	void AnimateFill(byte &oldPicNotValid);
+	void AnimateUpdate();
+	void AnimateDrawCels();
+	void AnimateRestoreAndDelete(int argc, reg_t *argv);
 	void AddToPicDrawCels(List *list);
 
 	void SetNowSeen(reg_t objectReference);
@@ -143,10 +143,6 @@ private:
 	Common::Rect _bounds;
 	GuiPort *_mainPort;
 	GuiPort *_curPort;
-	uint16 _clrPowers[256];
-
-	byte bMapColors;
-	Common::Array<GuiPalSchedule> _palSchedules;
 
 	int _textFontsCount;
 	GuiResourceId *_textFonts;
@@ -158,6 +154,10 @@ private:
 	byte _priorityBands[200];
 
 	// Animate* related variables
+	uint16 _animateListCount;
+	uint16 _animateListTotal;
+	GuiAnimateList *_animateList;
+	GuiAnimateList *_animateListLast;
 	List *_lastCast;
 
 	SciGuiFont *_font;
