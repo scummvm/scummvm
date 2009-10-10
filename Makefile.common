@@ -199,7 +199,7 @@ dist-src: \
 DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING.GPL COPYING.LGPL NEWS README)
 
 # Themes files
-DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,scummmodern.zip)
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,modern.zip)
 
 # Engine data files
 DIST_FILES_ENGINEDATA=
