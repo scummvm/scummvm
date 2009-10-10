@@ -140,7 +140,7 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 
 	if (!res) {
 		warning("Failed to open message resource %d", stack.getModule());
-		return NULL;
+		return false;
 	}
 
 	MessageReader *reader;
@@ -158,12 +158,12 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		break;
 	default:
 		warning("Message: unsupported resource version");
-		return NULL;
+		return false;
 	}
 
 	if (!reader->init()) {
 		warning("Message: failed to read resource header");
-		return NULL;
+		return false;
 	}
 
 	while (1) {
