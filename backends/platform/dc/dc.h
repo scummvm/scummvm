@@ -82,6 +82,12 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   void setPalette(const byte *colors, uint start, uint num);
   void grabPalette(byte *colors, uint start, uint num);
 
+  // Determine the pixel format currently in use for screen rendering.
+  Graphics::PixelFormat getScreenFormat() const;
+
+  // Returns a list of all pixel formats supported by the backend. 
+  Common::List<Graphics::PixelFormat> getSupportedFormats();
+
   // Set the size of the video bitmap.
   // Typically, 320x200
   void initSize(uint w, uint h, const Graphics::PixelFormat *format);
@@ -198,7 +204,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   int _current_shake_pos, _screen_w, _screen_h;
   int _overlay_x, _overlay_y;
   unsigned char *_ms_buf;
-  unsigned char _ms_keycolor;
+  uint32 _ms_keycolor;
   bool _overlay_visible, _overlay_dirty, _screen_dirty;
   int _screen_buffer, _overlay_buffer, _mouse_buffer;
   bool _aspect_stretch, _softkbd_on, _enable_cursor_palette;
@@ -214,6 +220,7 @@ class OSystem_Dreamcast : private DCHardware, public BaseBackend, public Filesys
   unsigned short palette[256], cursor_palette[256];
 
   Graphics::Surface _framebuffer;
+  int _screenFormat, _mouseFormat;
 
   int temp_sound_buffer[RING_BUFFER_SAMPLES>>SOUND_BUFFER_SHIFT];
 
