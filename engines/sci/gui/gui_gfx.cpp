@@ -844,6 +844,10 @@ void SciGuiGfx::AnimateInvoke(List *list, int argc, reg_t *argv) {
 	}
 }
 
+bool AnimateSortHelper(const GuiAnimateEntry* entry1, const GuiAnimateEntry* entry2) {
+	return (entry1->y == entry2->y) ? (entry1->z < entry2->z) : (entry1->y < entry2->y);
+}
+
 void SciGuiGfx::AnimateMakeSortedList(List *list) {
 	SegManager *segMan = _s->_segMan;
 	reg_t curAddress = list->first;
@@ -903,7 +907,11 @@ void SciGuiGfx::AnimateMakeSortedList(List *list) {
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
 
-	// TODO: Actually we need a sorted list here
+	// Now sort the list according y and z (descending)
+	GuiAnimateList::iterator listBegin = _animateList.begin();
+	GuiAnimateList::iterator listEnd = _animateList.end();
+
+	Common::sort(_animateList.begin(), _animateList.end(), AnimateSortHelper);
 }
 
 void SciGuiGfx::AnimateFill(byte &old_picNotValid) {
