@@ -7,6 +7,7 @@ MODULE_OBJS := \
 	script.o \
 	font.o \
 	saveload.o \
+	sound.o \
 	sprite.o \
 	screen.o \
 	surface.o \

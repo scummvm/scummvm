@@ -47,18 +47,20 @@ namespace Draci {
 
 // Data file paths
 
-const Common::String objectsPath("OBJEKTY.DFW");
-const Common::String palettePath("PALETY.DFW");
-const Common::String spritesPath("OBR_AN.DFW");
-const Common::String overlaysPath("OBR_MAS.DFW");
-const Common::String roomsPath("MIST.DFW");
-const Common::String animationsPath("ANIM.DFW");
-const Common::String iconsPath("HRA.DFW");
-const Common::String walkingMapsPath("MAPY.DFW");
-const Common::String itemsPath("IKONY.DFW");
-const Common::String itemImagesPath("OBR_IK.DFW");
-const Common::String initPath("INIT.DFW");
-const Common::String stringsPath("RETEZCE.DFW");
+const char *objectsPath = "OBJEKTY.DFW";
+const char *palettePath = "PALETY.DFW";
+const char *spritesPath = "OBR_AN.DFW";
+const char *overlaysPath = "OBR_MAS.DFW";
+const char *roomsPath = "MIST.DFW";
+const char *animationsPath = "ANIM.DFW";
+const char *iconsPath = "HRA.DFW";
+const char *walkingMapsPath = "MAPY.DFW";
+const char *itemsPath = "IKONY.DFW";
+const char *itemImagesPath = "OBR_IK.DFW";
+const char *initPath = "INIT.DFW";
+const char *stringsPath = "RETEZCE.DFW";
+const char *soundsPath = "CD2.SAM";
+const char *dubbingPath = "CD.SAM";
 
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst) {
@@ -106,6 +108,9 @@ int DraciEngine::init() {
 	_itemsArchive = new BArchive(itemsPath);
 	_itemImagesArchive = new BArchive(itemImagesPath);
 	_stringsArchive = new BArchive(stringsPath);
+
+	_soundsArchive = new SoundArchive(soundsPath);
+	_dubbingArchive = new SoundArchive(dubbingPath);
 
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);
@@ -280,6 +285,9 @@ DraciEngine::~DraciEngine() {
 	delete _itemsArchive;
 	delete _itemImagesArchive;
 	delete _stringsArchive;
+
+	delete _soundsArchive;
+	delete _dubbingArchive;
 
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();

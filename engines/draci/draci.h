@@ -37,6 +37,7 @@
 #include "draci/script.h"
 #include "draci/barchive.h"
 #include "draci/animation.h"
+#include "draci/sound.h"
 
 namespace Draci {
 
@@ -81,6 +82,9 @@ public:
 	BArchive *_itemImagesArchive;
 	BArchive *_initArchive;
 	BArchive *_stringsArchive;
+
+	SoundArchive *_soundsArchive;
+	SoundArchive *_dubbingArchive;
 
 	bool _showWalkingMap;
 

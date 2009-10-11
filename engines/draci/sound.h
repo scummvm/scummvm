@@ -18,50 +18,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
  *
- * $URL$
- * $Id$
+ * $URL: https://scummvm.svn.sourceforge.net/svnroot/scummvm/scummvm/trunk/engines/draci/barchive.h $
+ * $Id: barchive.h 44802 2009-10-08 21:28:57Z fingolfin $
  *
  */
 
-#ifndef DRACI_BARCHIVE_H
-#define DRACI_BARCHIVE_H
+#ifndef DRACI_SOUND_H
+#define DRACI_SOUND_H
 
 #include "common/str.h"
+#include "common/file.h"
 
 namespace Draci {
 
 /**
  *  Represents individual files inside the archive.
  */
-struct BAFile {
-	uint _compLength; ///< Compressed length (the same as _length if the file is uncompressed)
-	uint _length;     ///< Uncompressed length
-	uint32 _offset;   ///< Offset of file inside archive
-	byte *_data;
-	byte _crc;
-	byte _stopper;    ///< Not used in BAR files, needed for DFW
+struct SoundSample {
+	uint _offset;
+	uint _length;
+	byte* _data;
 
-	/** Releases the file data (for memory considerations) */
 	void close(void) {
 		delete[] _data;
 		_data = NULL;
 	}
 };
 
-class BArchive {
+class SoundArchive {
 public:
-	BArchive() : _files(NULL), _fileCount(0), _opened(false) {}
+	SoundArchive() : _path(), _samples(NULL), _sampleCount(0), _opened(false), _f(NULL) {}
 
-	BArchive(const Common::String &path) :
-	_files(NULL), _fileCount(0), _opened(false) {
+	SoundArchive(const Common::String &path) :
+	_path(), _samples(NULL), _sampleCount(0), _opened(false), _f(NULL) {
 		openArchive(path);
 	}
 
-	~BArchive() { closeArchive(); }
+	~SoundArchive() { closeArchive(); }
 
+	void closeArchive();
 	void openArchive(const Common::String &path);
-	void closeArchive(void);
-	uint size() const { return _fileCount; }
+	uint size() const { return _sampleCount; }
 
 	/**
 	 * Checks whether there is an archive opened. Should be called before reading
@@ -71,28 +68,16 @@ public:
 
 	void clearCache();
 
-	const BAFile *getFile(uint i);
+	const SoundSample *getSample(uint i);
 
 private:
-	// Archive header data
-	static const char _magicNumber[];
-	static const char _dfwMagicNumber[];
-	static const uint _archiveHeaderSize = 10;
-
-	// File stream header data
-	static const uint _fileHeaderSize = 6;
-
 	Common::String _path;    ///< Path to file
-	BAFile *_files;          ///< Internal array of files
-	uint _fileCount;         ///< Number of files in archive
-	bool _isDFW;             ///< True if the archive is in DFW format, false otherwise
+	SoundSample *_samples;          ///< Internal array of files
+	uint _sampleCount;         ///< Number of files in archive
 	bool _opened;            ///< True if the archive is opened, false otherwise
-
-	void openDFW(const Common::String &path);
-	BAFile *loadFileDFW(uint i);
-	BAFile *loadFileBAR(uint i);
+	Common::File *_f;	///< Opened file
 };
 
 } // End of namespace Draci
 
-#endif // DRACI_BARCHIVE_H
+#endif // DRACI_SOUND_H

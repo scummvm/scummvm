@@ -268,10 +268,8 @@ void BArchive::closeArchive(void) {
  * @return Pointer to a BAFile coresponding to the opened file or NULL (on failure)
  *
  * Loads individual BAR files from an archive to memory on demand.
- * Should not be called directly. Instead, one should access files
- * through the operator[] interface.
  */
-BAFile *BArchive::loadFileBAR(uint i) const {
+BAFile *BArchive::loadFileBAR(uint i) {
 	Common::File f;
 
 	// Else open archive and read in requested file
@@ -310,7 +308,7 @@ BAFile *BArchive::loadFileBAR(uint i) const {
  * Should not be called directly. Instead, one should access files
  * through the operator[] interface.
  */
-BAFile *BArchive::loadFileDFW(uint i) const {
+BAFile *BArchive::loadFileDFW(uint i) {
 	Common::File f;
 	byte *buf;
 
@@ -390,7 +388,7 @@ void BArchive::clearCache() {
 	}
 }
 
-const BAFile *BArchive::getFile(uint i) const {
+const BAFile *BArchive::getFile(uint i) {
 	// Check whether requested file exists
 	if (i >= _fileCount) {
 		return NULL;
