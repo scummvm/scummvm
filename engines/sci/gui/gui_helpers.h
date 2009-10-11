@@ -78,7 +78,8 @@ struct GuiAnimateEntry {
 	GuiViewCelNo celNo;
 	int16 paletteNo;
 	int16 x, y, z;
-	uint16 priority, signal;
+	int16 priority;
+	uint16 signal;
 	Common::Rect celRect;
 	bool showBitsFlag;
 };
