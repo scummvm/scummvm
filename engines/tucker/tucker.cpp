@@ -228,7 +228,7 @@ void TuckerEngine::restart() {
 	_actionObj1Type = _actionObj2Type = 0;
 	_actionObj1Num = _actionObj2Num = 0;
 	_actionRequiresTwoObjects = 0;
-	_skipPanelObjectUnderCursor = 0;
+	_actionVerbLocked = 0;
 	_actionPosX = 0;
 	_actionPosY = 0;
 	_selectedObjectLocationMask = 0;
@@ -687,7 +687,7 @@ void TuckerEngine::setupNewLocation() {
 	_mainLoopCounter2 = 0;
 	_mainLoopCounter1 = 0;
 	_characterFacingDirection = 0;
-	_skipPanelObjectUnderCursor = 0;
+	_actionVerbLocked = 0;
 	_locationMaskIgnore = 0;
 	_backgroundSprOffset = 0;
 	if (_backgroundSpriteCurrentAnimation > 0 && _backgroundSpriteCurrentFrame > 0) {
@@ -993,13 +993,13 @@ void TuckerEngine::updateCursor() {
 				_actionVerb = 0;
 			}
 			_updateCursorFlag = true;
-			_skipPanelObjectUnderCursor = 1;
+			_actionVerbLocked = 1;
 			_actionRequiresTwoObjects = false;
 		}
 	} else {
 		_updateCursorFlag = false;
 	}
-	if (_skipPanelObjectUnderCursor == 0) {
+	if (_actionVerbLocked == 0) {
 		setActionVerbUnderCursor();
 		if (_actionVerb == 0 && _locationNum == 63) {
 			_actionVerb = 8;
@@ -1027,7 +1027,7 @@ void TuckerEngine::updateCursor() {
 		_selectedObjectNum = 0;
 		_selectedObjectType = 0;
 	}
-	if (_skipPanelObjectUnderCursor == 0 && _selectedObjectType == 2 && _selectedObjectNum != 21) {
+	if (_actionVerbLocked == 0 && _selectedObjectType == 2 && _selectedObjectNum != 21) {
 		_actionVerb = 2;
 	}
 	if (!_actionRequiresTwoObjects) {
@@ -1055,7 +1055,7 @@ void TuckerEngine::updateCursor() {
 		if (_mousePosY >= 150 && _mousePosX < 212) {
 			if (_mousePosX < 200) {
 				setActionVerbUnderCursor();
-				_skipPanelObjectUnderCursor = 1;
+				_actionVerbLocked = 1;
 				_actionRequiresTwoObjects = false;
 			} else if (_mousePosY < 175) {
 				moveDownInventoryObjects();
@@ -1066,13 +1066,13 @@ void TuckerEngine::updateCursor() {
 			if (_selectedObjectType == 3) {
 				setActionForInventoryObject();
 			} else if (_actionVerb != 0) {
-				_skipPanelObjectUnderCursor = 0;
+				_actionVerbLocked = 0;
 				setActionState();
 			} else if (_actionObj1Num == 261 || (_actionObj1Num == 205 && _flagsTable[143] == 0)) {
-				_skipPanelObjectUnderCursor = 0;
+				_actionVerbLocked = 0;
 				setActionState();
 			} else {
-				_skipPanelObjectUnderCursor = 0;
+				_actionVerbLocked = 0;
 				_actionRequiresTwoObjects = false;
 				_currentActionVerb = 0;
 				setSelectedObjectKey();
@@ -3514,11 +3514,11 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 	_selectedObjectType = 3;
 	switch (_selectedObjectNum) {
 	case 30:
-		if (_skipPanelObjectUnderCursor == 1 && _leftMouseButtonPressed) {
+		if (_leftMouseButtonPressed) {
 			_selectedObjectType = 0;
 			_selectedObjectNum = 0;
 			_actionVerb = 0;
-			_skipPanelObjectUnderCursor = 0;
+			_actionVerbLocked = 0;
 			_forceRedrawPanelItems = true;
 			_panelState = 2;
 			setCursorType(1);
@@ -3543,7 +3543,7 @@ void TuckerEngine::handleMouseClickOnInventoryObject() {
 				_actionVerb = 0;
 				_selectedObjectType = 0;
 				_selectedObjectNum = 0;
-				_skipPanelObjectUnderCursor = 0;
+				_actionVerbLocked = 0;
 			}
 		}
 		break;
@@ -3612,14 +3612,14 @@ int TuckerEngine::setLocationAnimationUnderCursor() {
 void TuckerEngine::setActionForInventoryObject() {
 	if (_actionVerb == 0 || _actionVerb == 2 || _actionVerb == 6 || _actionVerb == 7) {
 		playSpeechForAction(_actionVerb);
-		_skipPanelObjectUnderCursor = 0;
+		_actionVerbLocked = 0;
 		_actionRequiresTwoObjects = false;
 		return;
 	}
 	if (_actionVerb == 3 || _actionVerb == 4) {
 		if (!(_partNum == 2 && _selectedObjectNum == 19) && !(_partNum == 3 && _selectedObjectNum == 42)) {
 			playSpeechForAction(_actionVerb);
-			_skipPanelObjectUnderCursor = 0;
+			_actionVerbLocked = 0;
 			_actionRequiresTwoObjects = false;
 			return;
 		}
@@ -3648,14 +3648,14 @@ void TuckerEngine::setActionForInventoryObject() {
 		_actionCharacterNum = 99;
 		setCursorType(2);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
-		_skipPanelObjectUnderCursor = 0;
+		_actionVerbLocked = 0;
 		_actionRequiresTwoObjects = false;
 		return;
 	}
 	if ((_partNum == 3 && (_actionObj1Num == 6 || _actionObj1Num == 3 || _actionObj1Num == 17)) ||
 		(_partNum == 2 && _actionObj1Num == 19) ||
 		(_partNum == 3 && (_actionObj1Num == 42 && _selectedObjectNum == 18)) ) {
-		_skipPanelObjectUnderCursor = 0;
+		_actionVerbLocked = 0;
 		_actionRequiresTwoObjects = false;
 		_locationMaskCounter = 1;
 		setActionState();
@@ -3664,7 +3664,7 @@ void TuckerEngine::setActionForInventoryObject() {
 	if (!_actionRequiresTwoObjects) {
 		_actionRequiresTwoObjects = true;
 	} else {
-		_skipPanelObjectUnderCursor = 0;
+		_actionVerbLocked = 0;
 		_actionRequiresTwoObjects = false;
 		_locationMaskCounter = 1;
 		setActionState();

@@ -729,7 +729,7 @@ protected:
 	int _actionObj1Type, _actionObj2Type;
 	int _actionObj1Num, _actionObj2Num;
 	bool _actionRequiresTwoObjects;
-	int _skipPanelObjectUnderCursor;
+	int _actionVerbLocked;
 	int _actionPosX;
 	int _actionPosY;
 	int _selectedObjectLocationMask;
