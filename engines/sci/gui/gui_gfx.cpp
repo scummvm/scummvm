@@ -531,7 +531,7 @@ void SciGuiGfx::ShowText(const char *text, int16 from, int16 len, GuiResourceId 
 	rect.left = _curPort->curLeft;
 	DrawText(text, from, len, orgFontId, orgPenColor);
 	rect.right = _curPort->curLeft;
-	BitsShow(rect, 1);
+	BitsShow(rect, SCI_SCREEN_MASK_VISUAL);
 }
 
 // Draws a text in rect.
@@ -587,9 +587,7 @@ void SciGuiGfx::BitsShow(const Common::Rect &r, uint16 screenMask) {
 
 	OffsetRect(rect);
 	assert((screenMask & 0x8000) == 0);
-	_screen->copyToScreen();
-//	_system->copyRectToScreen(GetSegment(flags) + _baseTable[rect.top] + rect.left, 320, rect.left, rect.top, rect.width(), rect.height());
-//	_system->updateScreen();
+	_screen->copyRectToScreen(rect);
 }
 
 GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
