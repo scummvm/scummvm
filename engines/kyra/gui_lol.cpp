@@ -2457,7 +2457,6 @@ int GUI_LoL::runMenu(Menu &menu) {
 			textCursorTimer = 0;
 			textCursorStatus = 0;
 
-			Screen::FontId f = _screen->setFont(Screen::FID_9_FNT);
 			fC = _screen->getTextWidth(_saveDescription);
 			while (fC >= fW) {
 				_saveDescription[strlen(_saveDescription) - 1] = 0;
@@ -2465,7 +2464,6 @@ int GUI_LoL::runMenu(Menu &menu) {
 			}
 
 			_screen->fprintString("%s", (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0, _saveDescription);
-			f = _screen->setFont(f);
 			_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - (_vm->gameFlags().use16ColorMode ? 2 : 1), d->unk8, 0);
 			_screen->setCurPage(pg);
 		}
@@ -2475,20 +2473,17 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 			if (_currentMenu == &_savenameMenu) {
 				if (textCursorTimer <= _vm->_system->getMillis()) {
-					Screen::FontId f = _screen->setFont(Screen::FID_9_FNT);
 					fC = _screen->getTextWidth(_saveDescription);
 					textCursorStatus ^= 1;
 					textCursorTimer = _vm->_system->getMillis() + 20 * _vm->_tickLength;
 					_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - (_vm->gameFlags().use16ColorMode ? 2 : 1), textCursorStatus ? d->unk8 : d->unkA, 0);
 					_screen->updateScreen();
-					f = _screen->setFont(f);
 				}
 			}
 
 			if (getInput()) {
 				if (!_newMenu) {
 					if (_currentMenu == &_savenameMenu) {
-						Screen::FontId f = _screen->setFont(Screen::FID_9_FNT);
 						_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - (_vm->gameFlags().use16ColorMode ? 2 : 1), d->unkA, 0);
 						fC = _screen->getTextWidth(_saveDescription);
 						while (fC >= fW) {
@@ -2497,7 +2492,6 @@ int GUI_LoL::runMenu(Menu &menu) {
 						}
 						_screen->fprintString("%s", (d->sx << 3), d->sy + 2, d->unk8, d->unkA, 0, _saveDescription);
 						_screen->fillRect((d->sx << 3) + fC, d->sy, (d->sx << 3) + fC + wW, d->sy + d->h - (_vm->gameFlags().use16ColorMode ? 2 : 1), textCursorStatus ? d->unk8 : d->unkA, 0);
-						f = _screen->setFont(f);
 						textCursorTimer = 0;
 						textCursorStatus = 0;
 					} else {
