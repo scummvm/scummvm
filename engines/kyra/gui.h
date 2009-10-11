@@ -176,7 +176,7 @@ protected:
 	bool _displaySubMenu;
 	bool _cancelSubMenu;
 
-	virtual void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font=Screen::FID_8_FNT);
+	virtual void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font = Screen::FID_8_FNT);
 	virtual int getMenuCenterStringX(const char *str, int x1, int x2);
 
 	Button::Callback _redrawShadedButtonFunctor;
