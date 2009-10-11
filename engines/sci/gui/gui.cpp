@@ -54,7 +54,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_s, _screen, _gfx);
-	// _gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
+// 	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
 SciGui::SciGui() {
@@ -429,10 +429,8 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	_gfx->AnimateDisposeLastCast();
 
 	_gfx->AnimateMakeSortedList(list);
-
 	_gfx->AnimateFill(old_picNotValid);
 
-	// _gfx->AnimateSort();
 	if (old_picNotValid) {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
 		_gfx->AnimateUpdate();
@@ -492,7 +490,11 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	controlMask = GET_SEL32V(curObject, illegalBits);
 	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
 	if ((!result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW))) {
-		result = true;
+		List *list = _s->_segMan->lookupList(listReference);
+		if (!list)
+			error("kCanBeHere called with non-list as parameter");
+
+		result = _gfx->CanBeHereCheckRectList(curObject, checkRect, list);
 	}
 	_gfx->SetPort(oldPort);
 	return result;

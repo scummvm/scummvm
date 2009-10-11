@@ -1200,6 +1200,35 @@ void SciGuiGfx::AddToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, Gui
 	drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, 0);
 }
 
+bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	uint16 signal;
+	Common::Rect curRect;
+
+	while (curNode) {
+		curObject = curNode->value;
+		if (curObject != checkObject) {
+			signal = GET_SEL32V(curObject, signal);
+			if ((signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE)) == 0) {
+				curRect.left = GET_SEL32V(curObject, brLeft);
+				curRect.top = GET_SEL32V(curObject, brTop);
+				curRect.right = GET_SEL32V(curObject, brRight);
+				curRect.bottom = GET_SEL32V(curObject, brBottom);
+				// Check if curRect is within checkRect
+				if (curRect.right > checkRect.left && curRect.left < checkRect.right && curRect.bottom > checkRect.top && curRect.top < checkRect.bottom) {
+					return false;
+				}
+			}
+		}
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+	return true;
+}
+
 void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	SegManager *segMan = _s->_segMan;
 	SciGuiView *view = NULL;

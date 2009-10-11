@@ -113,7 +113,7 @@ private:
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
 
-	// SciGui32 *_gui32; // for debug purposes
+// 	SciGui32 *_gui32; // for debug purposes
 };
 
 } // End of namespace Sci
