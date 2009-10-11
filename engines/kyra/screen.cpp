@@ -1135,7 +1135,7 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + (_currentFont != FID_SJIS_FNT) ? _charWidth : 0;
+	return width + ((_currentFont != FID_SJIS_FNT) ? _charWidth : 0);
 }
 
 int Screen::getTextWidth(const char *str) const {
@@ -3315,7 +3315,7 @@ SJISFont::SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, 
 
 	_sjisWidth = _font->getMaxFontWidth() >> 1;
 	_fontHeight = _font->getFontHeight() >> 1;
-	_asciiWidth = _font->getCharWidth('a');
+	_asciiWidth = _font->getCharWidth('a') >> 1;
 }
 
 void SJISFont::unload() {
@@ -3332,10 +3332,10 @@ int SJISFont::getWidth() const {
 }
 
 int SJISFont::getCharWidth(uint16 c) const {
-	if ((c & 0xFF) >= 0xA1 && (c & 0xFF) <= 0xDF)
-		return _sjisWidth;
-	else
+	if (c <= 0x7F || (c >= 0xA1 && c <= 0xDF))
 		return _asciiWidth;
+	else
+		return _sjisWidth;
 }
 
 void SJISFont::setColorMap(const uint8 *src) {
