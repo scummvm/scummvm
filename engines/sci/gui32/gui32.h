@@ -63,6 +63,7 @@ public:
 	void drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite);
 	void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite);
 	void drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo, int16 style, bool hilite);
+	void drawControl(reg_t controlObject, bool highlight);
 	void editControl(reg_t controlObject, reg_t eventObject);
 
 	void graphFillBoxForeground(Common::Rect rect);

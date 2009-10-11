@@ -1010,8 +1010,6 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static void _k_draw_control(EngineState *s, reg_t obj, bool inverse);
-
 // Control types and flags
 enum {
 	K_CONTROL_BUTTON = 1,
@@ -1068,7 +1066,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
 	disableCertainButtons(s->_segMan, s->_gameName, obj);
-	_k_draw_control(s, obj, false);
+	s->_gui->drawControl(obj, false);
 //	FULL_REDRAW();
 	return NULL_REG;
 }
@@ -1076,7 +1074,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 
-	_k_draw_control(s, obj, true);
+	s->_gui->drawControl(obj, true);
 
 	return s->r_acc;
 }
@@ -1088,137 +1086,6 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	if (!controlObject.isNull())
 		s->_gui->editControl(controlObject, eventObject);
 	return s->r_acc;
-}
-
-void _k_draw_control(EngineState *s, reg_t obj, bool hilite) {
-	SegManager *segMan = s->_segMan;
-	int x = (int16)GET_SEL32V(obj, nsLeft);
-	int y = (int16)GET_SEL32V(obj, nsTop);
-	int xl = (int16)GET_SEL32V(obj, nsRight) - x;
-	int yl = (int16)GET_SEL32V(obj, nsBottom) - y;
-	rect_t area = gfx_rect(x, y, xl, yl);
-
-	Common::Rect rect;
-	rect = Common::Rect (x, y, (int16)GET_SEL32V(obj, nsRight), (int16)GET_SEL32V(obj, nsBottom));
-
-	int font_nr = GET_SEL32V(obj, font);
-	reg_t text_pos = GET_SEL32(obj, text);
-	Common::String text;
-	if (!text_pos.isNull())
-		text = s->_segMan->getString(text_pos);
-	int view = GET_SEL32V(obj, view);
-	int cel = sign_extend_byte(GET_SEL32V(obj, cel));
-	int loop = sign_extend_byte(GET_SEL32V(obj, loop));
-	int mode;
-
-	int type = GET_SEL32V(obj, type);
-	int state = GET_SEL32V(obj, state);
-	int cursor;
-	int max;
-
-	switch (type) {
-	case K_CONTROL_BUTTON:
-		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y);
-		s->_gui->drawControlButton(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, state, hilite);
-		return;
-
-	case K_CONTROL_TEXT:
-		mode = (gfx_alignment_t) GET_SEL32V(obj, mode);
-		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(obj), text.c_str(), x, y, mode);
-		s->_gui->drawControlText(rect, obj, s->strSplit(text.c_str(), NULL).c_str(), font_nr, mode, state, hilite);
-		return;
-
-	case K_CONTROL_EDIT:
-		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d\n", PRINT_REG(obj), PRINT_REG(text_pos), text.c_str(), x, y);
-
-		max = GET_SEL32V(obj, max);
-		cursor = GET_SEL32V(obj, cursor);
-
-		if (cursor > (signed)text.size())
-			cursor = text.size();
-
-//		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);	FIXME: get rid of this?
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text.c_str(), font_nr, (unsigned)cursor, (int8)hilite));
-		break;
-
-	case K_CONTROL_ICON:
-		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(obj), x, y - 1);
-		s->_gui->drawControlIcon(rect, obj, view, loop, cel, state, hilite);
-		return;
-
-	case K_CONTROL_CONTROL:
-	case K_CONTROL_CONTROL_ALIAS: {
-		int entries_nr;
-		int lsTop;
-		int list_top = 0;
-		int selection = 0;
-		int entry_size = GET_SEL32V(obj, x);
-		int i;
-
-		if (s->_kernel->_selectorCache.topString != -1) {
-			// Games from early SCI1 onwards use topString
-			lsTop = GET_SEL32V(obj, topString);
-		} else {
-			// Earlier games use lsTop
-			lsTop = GET_SEL32V(obj, lsTop);
-		}
-		lsTop -= text_pos.offset;
-
-		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d\n", PRINT_REG(obj), x, y, SCI_MAX_SAVENAME_LENGTH);
-		cursor = GET_SEL32V(obj, cursor) - text_pos.offset;
-
-		entries_nr = 0;
-
-		// NOTE: most types of pointer dereferencing don't like odd offsets
-		if (entry_size & 1) {
-			warning("List control with odd entry_size %d. This is not yet implemented for all types of segments", entry_size);
-		}
-
-		reg_t seeker = text_pos;
-		// Count string entries in NULL terminated string list
-		while (s->_segMan->strlen(seeker) > 0) {
-			++entries_nr;
-			seeker.offset += entry_size;
-		}
-
-		// TODO: This is rather convoluted... It would be a lot cleaner
-		// if sciw_new_list_control would take a list of Common::String
-		Common::String *strings = 0;
-		const char **entries_list = NULL;
-
-		if (entries_nr) { // determine list_top, selection, and the entries_list
-			seeker = text_pos;
-			entries_list = (const char**)malloc(sizeof(char *) * entries_nr);
-			strings = new Common::String[entries_nr];
-			for (i = 0; i < entries_nr; i++) {
-				strings[i] = s->_segMan->getString(seeker);
-				entries_list[i] = strings[i].c_str();
-				seeker.offset += entry_size;
-				if ((seeker.offset - text_pos.offset) == lsTop)
-					list_top = i + 1;
-				if ((seeker.offset - text_pos.offset) == cursor)
-					selection = i + 1;
-			}
-		}
-
-		ADD_TO_CURRENT_PICTURE_PORT(sciw_new_list_control(s->port, obj, area, font_nr, entries_list, entries_nr,
-		                          list_top, selection, (int8)hilite));
-		free(entries_list);
-		delete[] strings;
-	}
-	break;
-
-	case K_CONTROL_BOX:
-		break;
-
-	default:
-		warning("Unknown control type: %d at %04x:%04x, at (%d, %d) size %d x %d",
-		         type, PRINT_REG(obj), x, y, xl, yl);
-	}
-
-	if (!s->pic_not_valid) {
-		FULL_REDRAW();
-	}
 }
 
 void _k_view_list_mark_free(EngineState *s, reg_t off) {

@@ -357,6 +357,9 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 	_screen->copyToScreen();
 }
 
+void SciGui::drawControl(reg_t controlObject, bool highlight) {
+}
+
 void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 }
 
