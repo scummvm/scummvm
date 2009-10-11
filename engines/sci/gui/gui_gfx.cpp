@@ -527,7 +527,7 @@ void SciGuiGfx::ShowText(const char *text, int16 from, int16 len, GuiResourceId 
 	rect.left = _curPort->curLeft;
 	DrawText(text, from, len, orgFontId, orgPenColor);
 	rect.right = _curPort->curLeft;
-	ShowBits(rect, 1);
+	BitsShow(rect, 1);
 }
 
 // Draws a text in rect.
@@ -575,7 +575,7 @@ void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 }
 
 // Update (part of) screen
-void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 screenMask) {
+void SciGuiGfx::BitsShow(const Common::Rect &r, uint16 screenMask) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_curPort->rect);
 	if (rect.isEmpty()) // nothing to show
@@ -588,7 +588,7 @@ void SciGuiGfx::ShowBits(const Common::Rect &r, uint16 screenMask) {
 //	_system->updateScreen();
 }
 
-GuiMemoryHandle SciGuiGfx::SaveBits(const Common::Rect &rect, byte screenMask) {
+GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	GuiMemoryHandle memoryId;
 	byte *memoryPtr;
 	int size;
@@ -609,7 +609,7 @@ GuiMemoryHandle SciGuiGfx::SaveBits(const Common::Rect &rect, byte screenMask) {
 	return memoryId;
 }
 
-void SciGuiGfx::RestoreBits(GuiMemoryHandle memoryHandle) {
+void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
 	byte *memoryPtr = NULL;
 
 	if (!memoryHandle.isNull()) {
@@ -619,6 +619,12 @@ void SciGuiGfx::RestoreBits(GuiMemoryHandle memoryHandle) {
 			_screen->restoreBits(memoryPtr);
 			kfree(_s->_segMan, memoryHandle);
 		}
+	}
+}
+
+void SciGuiGfx::BitsFree(GuiMemoryHandle memoryHandle) {
+	if (!memoryHandle.isNull()) {
+		kfree(_s->_segMan, memoryHandle);
 	}
 }
 
@@ -996,10 +1002,10 @@ void SciGuiGfx::AnimateUpdate() {
 			if (!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
 				bitsHandle = GET_SEL32(curObject, underBits);
 				if (_screen->_picNotValid != 1) {
-					RestoreBits(bitsHandle);
+					BitsRestore(bitsHandle);
 					listEntry->showBitsFlag = true;
 				} else	{
-					//FreeBits(bits_gfx->UnloadBits(hBits);
+					BitsFree(bitsHandle);
 				}
 				PUT_SEL32V(curObject, underBits, 0);
 			}
@@ -1046,9 +1052,9 @@ void SciGuiGfx::AnimateUpdate() {
 			} else {
 				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 				if (signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
-					bitsHandle = SaveBits(listEntry->celRect, SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
+					bitsHandle = BitsSave(listEntry->celRect, SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
 				else
-					bitsHandle = SaveBits(listEntry->celRect, SCI_SCREEN_MASK_ALL);
+					bitsHandle = BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 				PUT_SEL32(curObject, underBits, bitsHandle);
 			}
 			listEntry->signal = signal;
@@ -1094,7 +1100,7 @@ void SciGuiGfx::AnimateDrawCels() {
 
 		if (!(signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_HIDDEN | SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))) {
 			// Save background
-			bitsHandle = SaveBits(listEntry->celRect, SCI_SCREEN_MASK_ALL);
+			bitsHandle = BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 			PUT_SEL32(curObject, underBits, bitsHandle);
 
 			// draw corresponding cel
@@ -1141,7 +1147,7 @@ void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 		}
 
 		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
-			RestoreBits(GET_SEL32(curObject, underBits));
+			BitsRestore(GET_SEL32(curObject, underBits));
 			PUT_SEL32V(curObject, underBits, 0);
 		}
 

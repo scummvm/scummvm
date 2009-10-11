@@ -202,9 +202,9 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	GuiPort *oldport = _gfx->SetPort(_wmgrPort);
 	_gfx->PenColor(0);
 	if ((wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0) {
-		pWnd->hSaved1 = _gfx->SaveBits(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
+		pWnd->hSaved1 = _gfx->BitsSave(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
 		if (pWnd->uSaveFlag & 2) {
-			pWnd->hSaved2 = _gfx->SaveBits(pWnd->restoreRect, 2);
+			pWnd->hSaved2 = _gfx->BitsSave(pWnd->restoreRect, 2);
 			if ((wndStyle & SCI_WINDOWMGR_STYLE_USER) == 0)
 				_gfx->FillRect(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY, 0, 15);
 		}
@@ -240,17 +240,17 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
 			_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, pWnd->backClr);
 
-		_gfx->ShowBits(pWnd->dims, SCI_SCREEN_MASK_VISUAL);
+		_gfx->BitsShow(pWnd->dims, SCI_SCREEN_MASK_VISUAL);
 	}
 	_gfx->SetPort(oldport);
 }
 
 void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 	_gfx->SetPort(_wmgrPort);
-	_gfx->RestoreBits(pWnd->hSaved1);
-	_gfx->RestoreBits(pWnd->hSaved2);
+	_gfx->BitsRestore(pWnd->hSaved1);
+	_gfx->BitsRestore(pWnd->hSaved2);
 	if (arg2)
-		_gfx->ShowBits(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
+		_gfx->BitsShow(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
 //	else
 //		g_sci->ReAnimate(&pwnd->dims);
 	_windowList.remove(pWnd);
@@ -263,12 +263,12 @@ void SciGuiWindowMgr::UpdateWindow(GuiWindow *wnd) {
 	GuiMemoryHandle handle;
 
 	if (wnd->uSaveFlag && wnd->bDrawn) {
-		handle = _gfx->SaveBits(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
-		_gfx->RestoreBits(wnd->hSaved1);
+		handle = _gfx->BitsSave(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
+		_gfx->BitsRestore(wnd->hSaved1);
 		wnd->hSaved1 = handle;
 		if (wnd->uSaveFlag & SCI_SCREEN_MASK_PRIORITY) {
-			handle = _gfx->SaveBits(wnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
-			_gfx->RestoreBits(wnd->hSaved2);
+			handle = _gfx->BitsSave(wnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
+			_gfx->BitsRestore(wnd->hSaved2);
 			wnd->hSaved2 = handle;
 		}
 	}

@@ -97,9 +97,10 @@ public:
 		DrawText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
 	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, GuiResourceId fontId);
-	void ShowBits(const Common::Rect &r, uint16 flags);
-	GuiMemoryHandle SaveBits(const Common::Rect &rect, byte screenFlags);
-	void RestoreBits(GuiMemoryHandle memoryHandle);
+	void BitsShow(const Common::Rect &r, uint16 flags);
+	GuiMemoryHandle BitsSave(const Common::Rect &rect, byte screenFlags);
+	void BitsRestore(GuiMemoryHandle memoryHandle);
+	void BitsFree(GuiMemoryHandle memoryHandle);
 
 	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
 	void Draw_String(const char *text);
