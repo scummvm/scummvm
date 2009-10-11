@@ -223,7 +223,9 @@ Common::Error SagaEngine::run() {
 	_gfx = new Gfx(this, _system, getDisplayInfo().width, getDisplayInfo().height);
 
 	// Graphics driver should be initialized before console
+#ifndef __DS__
 	_console = new Console(this);
+#endif
 
 	// Graphics should be initialized before music
 	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
@@ -321,8 +323,10 @@ Common::Error SagaEngine::run() {
 	uint32 currentTicks;
 
 	while (!shouldQuit()) {
+#ifndef __DS__
 		if (_console->isAttached())
 			_console->onFrame();
+#endif
 
 		if (_render->getFlags() & RF_RENDERPAUSE) {
 			// Freeze time while paused
