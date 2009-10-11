@@ -133,6 +133,9 @@ private:
 	void setPalette(Common::Queue<int> &params);
 	void blackPalette(Common::Queue<int> &params);
 	void loadPalette(Common::Queue<int> &params);
+	void quitGame(Common::Queue<int> &params);
+	void pushNewRoom(Common::Queue<int> &params);
+	void popNewRoom(Common::Queue<int> &params);
 
 	int operAnd(int op1, int op2) const;
 	int operOr(int op1, int op2) const;

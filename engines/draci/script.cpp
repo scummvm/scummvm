@@ -70,9 +70,9 @@ void Script::setupCommandList() {
 		{ 15, 1, "ExecInit", 			1, { 3 }, &Script::execInit },
 		{ 15, 2, "ExecLook", 			1, { 3 }, &Script::execLook },
 		{ 15, 3, "ExecUse", 			1, { 3 }, &Script::execUse },
-		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },
-		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },
-		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },
+		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },	// not used in the original game files
+		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },	// not used in the original game files
+		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },	// not used in the original game files
 		{ 18, 1, "LoadMusic", 			1, { 2 }, NULL },
 		{ 18, 2, "StartMusic", 			0, { 0 }, NULL },
 		{ 18, 3, "StopMusic", 			0, { 0 }, NULL },
@@ -87,9 +87,12 @@ void Script::setupCommandList() {
 		{ 22, 2, "EnableQuickHero", 	0, { 0 }, NULL },
 		{ 23, 1, "DisableSpeedText", 	0, { 0 }, NULL },
 		{ 23, 2, "EnableSpeedText", 	0, { 0 }, NULL },
-		{ 24, 1, "QuitGame", 			0, { 0 }, NULL },
-		{ 25, 1, "PushNewRoom", 		0, { 0 }, NULL },
-		{ 25, 2, "PopNewRoom", 			0, { 0 }, NULL },
+		{ 24, 1, "QuitGame", 			0, { 0 }, &Script::quitGame },
+		{ 25, 1, "PushNewRoom", 		0, { 0 }, &Script::pushNewRoom },
+		{ 25, 2, "PopNewRoom", 			0, { 0 }, &Script::popNewRoom },
+		// The following commands are not even defined in the game
+		// sources, but their numbers are allocated for internal
+		// purposes of the old player.
 		{ 26, 1, "ShowCheat", 			0, { 0 }, NULL },
 		{ 26, 2, "HideCheat", 			0, { 0 }, NULL },
 		{ 26, 3, "ClearCheat", 			1, { 1 }, NULL },
@@ -821,6 +824,18 @@ void Script::setPalette(Common::Queue<int> &params) {
 
 void Script::endCurrentProgram() {
 	_endProgram = true;
+}
+
+void Script::quitGame(Common::Queue<int> &params) {
+	_vm->_game->setQuit(true);
+}
+
+void Script::pushNewRoom(Common::Queue<int> &params) {
+	_vm->_game->pushNewRoom();
+}
+
+void Script::popNewRoom(Common::Queue<int> &params) {
+	_vm->_game->popNewRoom();
 }
 
 /**

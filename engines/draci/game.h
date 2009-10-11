@@ -281,6 +281,8 @@ public:
 	int getPreviousRoomNum() const;
 	void rememberRoomNumAsPrevious();
 	void scheduleEnteringRoomUsingGate(int room, int gate);
+	void pushNewRoom();
+	void popNewRoom();
 
 	double getPers0() const;
 	double getPersStep() const;
@@ -371,6 +373,8 @@ private:
 	int _newRoom;
 	int _newGate;
 	int _previousRoom;
+	int _pushedNewRoom;	// used in GPL programs
+	int _pushedNewGate;
 
 	uint *_dialogueOffsets;
 	int _currentDialogue;

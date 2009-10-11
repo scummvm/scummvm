@@ -219,6 +219,7 @@ void Game::init() {
 	setRoomNum(kNoEscRoom);
 	rememberRoomNumAsPrevious();
 	scheduleEnteringRoomUsingGate(_info._startRoom, 0);
+	_pushedNewRoom = _pushedNewGate = -1;
 }
 
 void Game::loop() {
@@ -1424,6 +1425,18 @@ void Game::rememberRoomNumAsPrevious() {
 void Game::scheduleEnteringRoomUsingGate(int room, int gate) {
 	_newRoom = room;
 	_newGate = gate;
+}
+
+void Game::pushNewRoom() {
+	_pushedNewRoom = _newRoom;
+	_pushedNewGate = _newGate;
+}
+
+void Game::popNewRoom() {
+	if (_loopStatus != kStatusInventory && _pushedNewRoom >= 0) {
+		scheduleEnteringRoomUsingGate(_pushedNewRoom, _pushedNewGate);
+		_pushedNewRoom = _pushedNewGate = -1;
+	}
 }
 
 void Game::setLoopStatus(LoopStatus status) {
