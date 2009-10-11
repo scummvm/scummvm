@@ -164,6 +164,9 @@ ifdef DS_BUILD_H
 	BUILD=scummvm-H
 endif
 
+# Engines below here are in development and not provided
+# as part of the standard distribution of the DS port.
+
 ifdef DS_BUILD_I
 	DEFINES = -DDS_NON_SCUMM_BUILD -DDS_BUILD_I
 	LOGO = logog.bmp
@@ -313,8 +316,12 @@ OPTLIST := actor.cpp ds_main.cpp osystem_ds.cpp blitters.cpp mame.cpp rate.cpp i
 #OPTLIST :=
 
 # Compiler options for files which should be optimised for speed
+ifdef DS_BUILD_E
+# Another attempt to save some RAM in ITE
+OPT_SPEED := -O3 -mthumb
+else
 OPT_SPEED := -O3
-#OPT_SPEED := -Os -mthumb
+endif
 
 # Compiler options for files which should be optimised for space
 OPT_SIZE := -Os -mthumb
