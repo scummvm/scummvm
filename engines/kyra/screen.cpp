@@ -2919,12 +2919,22 @@ bool Screen::loadPalette(const char *filename, Palette &pal) {
 
 	debugC(3, kDebugLevelScreen, "Screen::loadPalette('%s', %p)", filename, (const void *)&pal);
 
-	if (_isAmiga)
-		pal.loadAmigaPalette(*stream, 0, stream->size() / Palette::kAmigaBytesPerColor);
-	else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode)
-		pal.loadPC98Palette(*stream, 0, stream->size() / Palette::kPC98BytesPerColor);
-	else
-		pal.loadVGAPalette(*stream, 0, stream->size() / Palette::kVGABytesPerColor);
+	const int maxCols = pal.getNumColors();
+	int numCols = 0;
+
+	if (_isAmiga) {
+		numCols = stream->size() / Palette::kAmigaBytesPerColor;
+		pal.loadAmigaPalette(*stream, 0, MIN(maxCols, numCols));
+	} else if (_vm->gameFlags().platform == Common::kPlatformPC98 && _use16ColorMode) {
+		numCols = stream->size() / Palette::kPC98BytesPerColor;
+		pal.loadPC98Palette(*stream, 0, MIN(maxCols, numCols));
+	} else {
+		numCols = stream->size() / Palette::kVGABytesPerColor;
+		pal.loadVGAPalette(*stream, 0, MIN(maxCols, numCols));
+	}
+
+	if (numCols > maxCols)
+		warning("Palette file '%s' includes %d colors, but the target palette only support %d colors", filename, numCols, maxCols);
 
 	delete stream;
 	return true;
