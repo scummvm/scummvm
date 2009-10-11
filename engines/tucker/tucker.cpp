@@ -1228,6 +1228,13 @@ void TuckerEngine::updateData3() {
 				a->animCurrentCounter = a->animInitCounter;
 				a->drawFlag = 0;
 			}
+			if (_locationNum == 24 && i == 0) {
+				// workaround bug #2872385: update fish animation sequence for correct
+				// position in aquarium.
+				if (a->animInitCounter == 505 && a->animCurrentCounter == 513) {
+					a->animCurrentCounter = 525;
+				}
+			}
 			a->graphicNum = _staticData3Table[a->animCurrentCounter];
 		}
 	}
@@ -1528,9 +1535,9 @@ void TuckerEngine::updateSoundsTypes3_4() {
 
 void TuckerEngine::drawData3() {
 	for (int i = 0; i < _locationAnimationsCount; ++i) {
-		int num = _locationAnimationsTable[i].graphicNum;
-		const Data *d = &_dataTable[num];
 		if (_locationAnimationsTable[i].drawFlag != 0) {
+			int num = _locationAnimationsTable[i].graphicNum;
+			const Data *d = &_dataTable[num];
 			Graphics::decodeRLE(_locationBackgroundGfxBuf + d->yDest * 640 + d->xDest, _data3GfxBuf + d->sourceOffset, d->xSize, d->ySize);
 			addDirtyRect(d->xDest, d->yDest, d->xSize, d->ySize);
 		}
