@@ -153,11 +153,22 @@ void SciGui::disposeWindow(uint16 windowPtr, int16 arg2) {
 	_windowMgr->DisposeWindow(wnd, arg2);
 }
 
+#define SCI_DISPLAY_MOVEPEN				100
+#define SCI_DISPLAY_SETALIGNMENT		101
+#define SCI_DISPLAY_SETPENCOLOR			102
+#define SCI_DISPLAY_SETBACKGROUNDCOLOR	103
+#define SCI_DISPLAY_SETTEXTFACE			104
+#define SCI_DISPLAY_SETFONT				105
+#define SCI_DISPLAY_WIDTH				106
+#define SCI_DISPLAY_SAVEUNDER			107
+#define SCI_DISPLAY_RESTOREUNDER		108
+#define SCI_DISPLAY_DONTSHOWBITS		121
+
 void SciGui::display(const char *text, int argc, reg_t *argv) {
 	int displayArg;
 	int16 align = 0;
 	int16 bgcolor = -1, width = -1, bRedraw = 1;
-	byte bSaveUnder = false;
+	bool doSaveUnder = false;
 	Common::Rect rect, *orect = &((GuiWindow *)_gfx->GetPort())->dims;
 
 	// Make a "backup" of the port settings
@@ -171,50 +182,47 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	while (argc > 0) {
 		displayArg = argv[0].toUint16();
 		argc--; argv++;
-		switch (displayArg - 100) {
-		case 0:
+		switch (displayArg) {
+		case SCI_DISPLAY_MOVEPEN:
 			_gfx->MoveTo(argv[0].toUint16(), argv[1].toUint16());
 			argc -= 2; argv += 2;
-			break;// move pen
-		case 1:
+			break;
+		case SCI_DISPLAY_SETALIGNMENT:
 			align = argv[0].toUint16();
 			argc--; argv++;
-			break;// set alignment
-		case 2:
+			break;
+		case SCI_DISPLAY_SETPENCOLOR:
 			_gfx->PenColor(argv[0].toUint16());
 			argc--; argv++;
-			break;// set pen color
-		case 3:
+			break;
+		case SCI_DISPLAY_SETBACKGROUNDCOLOR:
 			bgcolor = argv[0].toUint16();
 			argc--; argv++;
 			break;
-		case 4:
+		case SCI_DISPLAY_SETTEXTFACE:
 			_gfx->TextFace(argv[0].toUint16());
 			argc--; argv++;
-			break;// set text grayout flag
-		case 5:
+			break;
+		case SCI_DISPLAY_SETFONT:
 			_gfx->SetFont(argv[0].toUint16());
 			argc--; argv++;
-			break;// set font
-		case 6:
+			break;
+		case SCI_DISPLAY_WIDTH:
 			width = argv[0].toUint16();
 			argc--; argv++;
 			break;
-		case 7:
-			bSaveUnder = 1;
+		case SCI_DISPLAY_SAVEUNDER:
+			doSaveUnder = true;
 			break;
-		case 8: // restore under
-//			if (hunk2Ptr(*pArgs)) {
-//				memcpy(&rect, hunk2Ptr(*pArgs), sizeof(Common::Rect));
-//				// rect is now absolute. Have to move it to be port-relative
-//				rect.translate(-_gfx->RGetPort()->left, -_gfx->RGetPort()->top);
-//				_gfx->RestoreBits(*pArgs);
-//				ReAnimate(&rect);
-//			}
+		case SCI_DISPLAY_RESTOREUNDER:
+			// TODO: get rect from SciMemoryHandle (argv[0])
+			//rect.translate(-_gfx->GetPort()->left, -_gfx->GetPort()->top);
+			_gfx->RestoreBits(argv[0]);
+			// TODO: ReAnimate(pArgs)
 			// finishing loop
 			argc = 0;
 			break;
-		case 0x15:
+		case SCI_DISPLAY_DONTSHOWBITS:
 			bRedraw = 0;
 			break;
 		default:
@@ -227,10 +235,10 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	_gfx->TextSize(rect, text, -1, width);
 	_gfx->Move((orect->left <= _screen->_width ? 0 : _screen->_width - orect->left), (orect->top <= _screen->_height ? 0 : _screen->_height - orect->top)); // move port to (0,0)
 	rect.moveTo(_gfx->GetPort()->curLeft, _gfx->GetPort()->curTop);
-//	if (bSaveUnder)
-//		_acc = _gfx->SaveBits(rect, 1);
+	if (doSaveUnder)
+		_s->r_acc = _gfx->SaveBits(rect, SCI_SCREEN_MASK_VISUAL);
 	if (bgcolor != -1)
-		_gfx->FillRect(rect, 1, bgcolor, 0, 0);
+		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, bgcolor, 0, 0);
 	_gfx->TextBox(text, 0, rect, align, -1);
 //	if (_picNotValid == 0 && bRedraw)
 //		_gfx->ShowBits(rect, 1);
