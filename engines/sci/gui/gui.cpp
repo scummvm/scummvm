@@ -283,7 +283,9 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_gfx->Draw_String(text);
 	_gfx->SetPort(oldPort);
 	// _gfx->ShowBits(*_theMenuBar, 1);
-	_screen->copyToScreen();
+	Common::Rect screenRect = _gfx->_menuRect;
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::drawMenuBar() {
@@ -332,7 +334,11 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 	} else {
 		_gfx->InvertRect(rect);
 	}
-	_screen->copyToScreen();
+
+	Common::Rect screenRect = rect;
+	screenRect.grow(2);
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite) {
@@ -347,7 +353,11 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 	} else {
 		_gfx->InvertRect(rect);
 	}
-	_screen->copyToScreen();
+
+	Common::Rect screenRect = rect;
+	screenRect.grow(1);
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
@@ -362,7 +372,10 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 	} else {
 		_gfx->InvertRect(rect);
 	}
-	_screen->copyToScreen();
+
+	Common::Rect screenRect = rect;
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
@@ -372,7 +385,9 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 		if (isAlias && (style & 8)) {
 			_gfx->FrameRect(rect);
 		}
-		_screen->copyToScreen();
+		Common::Rect screenRect = rect;
+		_gfx->OffsetRect(screenRect);
+		_screen->copyRectToScreen(screenRect);
 	}
 }
 
@@ -381,17 +396,23 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_gfx->PaintRect(rect);
-	_screen->copyToScreen();
+	Common::Rect screenRect = rect;
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::graphFillBoxBackground(Common::Rect rect) {
 	_gfx->EraseRect(rect);
-	_screen->copyToScreen();
+	Common::Rect screenRect = rect;
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	_gfx->FillRect(rect, colorMask, color, priority, control);
-	_screen->copyToScreen();
+	Common::Rect screenRect = rect;
+	_gfx->OffsetRect(screenRect);
+	_screen->copyRectToScreen(screenRect);
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {

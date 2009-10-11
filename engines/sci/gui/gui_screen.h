@@ -46,6 +46,7 @@ public:
 	~SciGuiScreen();
 
 	void copyToScreen();
+	void copyRectToScreen(const Common::Rect &rect);
 
 	byte getDrawingMask(byte color, byte prio, byte control);
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);

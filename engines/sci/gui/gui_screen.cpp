@@ -74,6 +74,11 @@ void SciGuiScreen::copyToScreen() {
 	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }
 
+void SciGuiScreen::copyRectToScreen(const Common::Rect &rect) {
+	//g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
+	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+}
+
 byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 	byte flag = 0;
 	if (color != 255)
