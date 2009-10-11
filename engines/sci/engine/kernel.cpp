@@ -406,7 +406,9 @@ void Kernel::loadSelectorNames() {
 		
 		if (staticSelectorTable.empty())
 			error("Kernel: Could not retrieve selector names");
-		
+		else
+			warning("No selector vocabulary found, using a static one");
+
 		for (uint32 i = 0; i < staticSelectorTable.size(); i++) {
 			_selectorNames.push_back(staticSelectorTable[i]);
 			if (oldScriptHeader)
