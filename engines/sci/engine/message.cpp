@@ -182,9 +182,9 @@ bool MessageState::getRecord(CursorStack &stack, bool recurse, MessageRecord &re
 		if (recurse) {
 			MessageTuple &ref = record.refTuple;
 
-			if ((ref.noun != 0) && (ref.verb != 0) && (ref.cond != 0)) {
+			if (ref.noun || ref.verb || ref.cond) {
 				t.seq++;
-				stack.push(MessageTuple(ref.noun, ref.verb, ref.cond));
+				stack.push(ref);
 				continue;
 			}
 		}
@@ -202,16 +202,14 @@ int MessageState::nextMessage(reg_t buf) {
 	MessageRecord record;
 
 	if (!buf.isNull()) {
-		MessageTuple &t = _cursorStack.top();
-		Common::String finalStr;
-
 		if (getRecord(_cursorStack, true, record)) {
 			outputString(buf, processString(record.string));
 			_lastReturned = record.tuple;
 			_lastReturnedModule = _cursorStack.getModule();
-			t.seq++;
+			_cursorStack.top().seq++;
 			return record.talker;
 		} else {
+			MessageTuple &t = _cursorStack.top();
 			outputString(buf, Common::String::printf("Msg %d: %d %d %d %d not found", _cursorStack.getModule(), t.noun, t.verb, t.cond, t.seq));
 			return 0;
 		}
