@@ -51,7 +51,7 @@ SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiScreen *screen, SciGu
 	_windowsById[0] = 0;
 	_windowsById[1] = _wmgrPort;
 
-	int16 offTop = 20;
+	int16 offTop = 10;
 
 	_gfx->OpenPort(_wmgrPort);
 	_gfx->SetPort(_wmgrPort);
