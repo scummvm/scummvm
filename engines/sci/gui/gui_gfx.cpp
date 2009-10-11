@@ -833,7 +833,6 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 	SegManager *segMan = _s->_segMan;
 	uint16 cursorPos = GET_SEL32V(controlObject, cursor);
 	uint16 maxChars = GET_SEL32V(controlObject, max);
-	uint16 oldCursor = cursorPos;
 	reg_t textReference = GET_SEL32(controlObject, text);
 	Common::String text;
 	uint16 textSize, eventType, eventKey;
