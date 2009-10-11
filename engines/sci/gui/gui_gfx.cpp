@@ -1158,49 +1158,46 @@ void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 
 void SciGuiGfx::AddToPicDrawCels(List *list) {
 	SegManager *segMan = _s->_segMan;
-	reg_t curAddress = list->first;
-	Node *curNode = _s->_segMan->lookupNode(curAddress);
 	reg_t curObject;
+	GuiAnimateEntry *listEntry;
 	SciGuiView *view = NULL;
-	GuiResourceId viewId;
-	GuiViewLoopNo loopNo;
-	GuiViewCelNo celNo;
-	int16 x, y, z, priority;
-	uint16 paletteNo, signal;
-	Common::Rect celRect;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _animateList.end();
 
-	while (curNode) {
-		curObject = curNode->value;
+	listIterator = _animateList.begin();
+	while (listIterator != listEnd) {
+		listEntry = (GuiAnimateEntry *)*listIterator;
+		curObject = listEntry->object;
 
-		// Get cel data...
-		viewId = GET_SEL32V(curObject, view);
-		loopNo = GET_SEL32V(curObject, loop);
-		celNo = GET_SEL32V(curObject, cel);
-		x = GET_SEL32V(curObject, x);
-		y = GET_SEL32V(curObject, y);
-		z = GET_SEL32V(curObject, z);
-		priority = GET_SEL32V(curObject, priority);
-		if (priority == -1)
-			priority = CoordinateToPriority(y);
-		paletteNo = GET_SEL32V(curObject, palette);
-		signal = GET_SEL32V(curObject, signal);
+		if (listEntry->priority == -1)
+			listEntry->priority = CoordinateToPriority(listEntry->y);
 
 		// Get the corresponding view
-		view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(loopNo, celNo, x, y, priority, &celRect);
+		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->priority, &listEntry->celRect);
 
 		// draw corresponding cel
-		drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, paletteNo);
-		if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
-			celRect.top = CLIP<int16>(PriorityToCoordinate(priority) - 1, celRect.top, celRect.bottom - 1);
-			FillRect(celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+		drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
+		if ((listEntry->signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+			listEntry->celRect.top = CLIP<int16>(PriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
+			FillRect(listEntry->celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}
 
-		curAddress = curNode->succ;
-		curNode = _s->_segMan->lookupNode(curAddress);
+		listIterator++;
 	}
+}
+
+void SciGuiGfx::AddToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+	SciGuiView *view = NULL;
+	Common::Rect celRect;
+
+	view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+
+	// Create rect according to coordinates and given cel
+	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
+	drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, 0);
 }
 
 void SciGuiGfx::SetNowSeen(reg_t objectReference) {

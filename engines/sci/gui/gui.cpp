@@ -462,33 +462,15 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	if (!list)
 		error("kAddToPic called with non-list as parameter");
 
-//	Common::List<GuiAnimateList> *sortedList;
-//	sortedList = _gfx->AnimateMakeSortedList(list);
-
-//	uint16 szList = list.getSize();
-//	HEAPHANDLE*arrObj = new HEAPHANDLE[szList];
-//	int16*arrY = new int16[szList];
-//	HEAPHANDLE hnode = list.getFirst();
-//	sciNode1*pnode;
-//
-//	for (int i = 0; i < szList; i++) {
-//		pnode = (sciNode1*)heap2Ptr(hnode);
-//		obj.set(pnode->value);
-//		arrY[i] = obj.getProperty(3);
-//arrZ[i] = obj.getProperty(
-//		arrObj[i] = pnode->value;
-//		hnode = pnode->next;
-//	}
-//	animSort(arrObj, arrY, szList);
-
+	_gfx->AnimateMakeSortedList(list);
 	_gfx->AddToPicDrawCels(list);
 
 	_screen->_picNotValid = 2;
-//	delete sortedList;
 }
 
 void SciGui::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
-	// FIXME: port over from gregs engine
+	_gfx->SetPort((GuiPort *)_windowMgr->_picWind);
+	_gfx->AddToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 }
 
 void SciGui::setNowSeen(reg_t objectReference) {
