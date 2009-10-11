@@ -214,7 +214,7 @@ enum LoopSubstatus {
   * Enumerates the animations for the dragon's movement.
   */
 enum Movement {
-	kMoveUndefined,
+	kMoveUndefined = -1,
 	kMoveDown, kMoveUp, kMoveRight, kMoveLeft,
 	kMoveRightDown, kMoveRightUp, kMoveLeftDown, kMoveLeftUp,
 	kMoveDownRight, kMoveUpRight, kMoveDownLeft, kMoveUpLeft,
@@ -270,6 +270,7 @@ public:
 	GameObject *getObject(uint objNum);
 	int getObjectWithAnimation(int animID) const;
 	void deleteObjectAnimations();
+	void deleteAnimationsAfterIndex(int lastAnimIndex);
 
 	int getVariable(int varNum) const;
 	void setVariable(int varNum, int value);
@@ -346,7 +347,6 @@ public:
 	void DoSync(Common::Serializer &s);
 
 private:
-	void deleteAnimationsAfterIndex(int lastAnimIndex);
 	void enterNewRoom(bool force_reload);
 	void loadRoom(int roomNum);
 	void runGateProgram(int gate);

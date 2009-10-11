@@ -526,21 +526,7 @@ void Script::mark(Common::Queue<int> &params) {
 void Script::release(Common::Queue<int> &params) {
 	int markedIndex = _vm->_game->getMarkedAnimationIndex();
 
-	// Also delete those animations from the game's objects
-	for (uint i = 0; i < _vm->_game->getNumObjects(); ++i) {
-		GameObject *obj = _vm->_game->getObject(i);
-
-		for (uint j = 0; j < obj->_anims.size(); ++j) {
-			Animation *anim;
-
-			anim = _vm->_anims->getAnimation(obj->_anims[j]);
-			if (anim != NULL && anim->getIndex() > markedIndex)
-				obj->_anims.remove_at(j);
-		}
-	}
-
-	// Delete animations which have an index greater than the marked index
-	_vm->_anims->deleteAfterIndex(markedIndex);
+	_vm->_game->deleteAnimationsAfterIndex(markedIndex);
 }
 
 void Script::icoStat(Common::Queue<int> &params) {
