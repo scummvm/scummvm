@@ -711,7 +711,7 @@ void SciGuiGfx::Draw_String(const char *text) {
 void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId) {
 	SciGuiPicture *picture;
 
-	picture = new SciGuiPicture(_s, this, _screen, _palette, pictureId);
+	picture = new SciGuiPicture(_s->resMan, this, _screen, _palette, pictureId);
 	// do we add to a picture? if not -> clear screen
 	if (!addToFlag) {
 		if (_s->resMan->isVGA())

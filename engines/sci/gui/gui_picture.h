@@ -34,7 +34,7 @@ namespace Sci {
 
 class SciGuiPicture {
 public:
-	SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
+	SciGuiPicture(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId);
 	~SciGuiPicture();
 
 	GuiResourceId getResourceId();
@@ -58,7 +58,7 @@ private:
 	void vectorPatternCircle(Common::Rect box, byte size, byte color, byte prio, byte control);
 	void vectorPatternTexturedCircle(Common::Rect box, byte size, byte color, byte prio, byte control, byte texture);
 
-	EngineState *_s;
+	ResourceManager *_resMan;
 	SciGuiGfx *_gfx;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;

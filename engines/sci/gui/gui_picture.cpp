@@ -34,8 +34,8 @@
 
 namespace Sci {
 
-SciGuiPicture::SciGuiPicture(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId)
-	: _s(state), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId) {
+SciGuiPicture::SciGuiPicture(ResourceManager *resMan, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette, GuiResourceId resourceId)
+	: _resMan(resMan), _gfx(gfx), _screen(screen), _palette(palette), _resourceId(resourceId) {
 	assert(resourceId != -1);
 	initData(resourceId);
 }
@@ -44,7 +44,7 @@ SciGuiPicture::~SciGuiPicture() {
 }
 
 void SciGuiPicture::initData(GuiResourceId resourceId) {
-	_resource = _s->resMan->findResource(ResourceId(kResourceTypePic, resourceId), false);
+	_resource = _resMan->findResource(ResourceId(kResourceTypePic, resourceId), false);
 	if (!_resource) {
 		error("picture resource %d not found", resourceId);
 	}
@@ -135,7 +135,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	ptr = celBitmap;
 	if (literalPos == 0) {
 		// decompression for data that has only one stream (vecor embedded view data)
-		switch (_s->resMan->getViewType()) {
+		switch (_resMan->getViewType()) {
 		case kViewVga:
 		case kViewVga11:
 			while (pixelNr < pixelCount) {
@@ -312,7 +312,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 	if (_EGApaletteNo >= PIC_EGAPALETTE_COUNT)
 		_EGApaletteNo = 0;
 
-	if (_s->resMan->getViewType() == kViewEga) {
+	if (_resMan->getViewType() == kViewEga) {
 		isEGA = true;
 		// setup default mapping tables
 		for (i = 0; i < PIC_EGAPALETTE_TOTALSIZE; i += PIC_EGAPALETTE_SIZE)
