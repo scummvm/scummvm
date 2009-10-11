@@ -353,7 +353,7 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 
 	Common::Rect screenRect = rect;
 	screenRect.grow(1);
-	_gfx->BitsShow(_screenRect, SCI_SCREEN_MASK_VISUAL);
+	_gfx->BitsShow(screenRect, SCI_SCREEN_MASK_VISUAL);
 }
 
 void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
