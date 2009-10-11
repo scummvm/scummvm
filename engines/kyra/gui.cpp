@@ -143,6 +143,10 @@ void GUI::initMenu(Menu &menu) {
 				else
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 			} else {
+				Screen::FontId of = _screen->_currentFont;
+				if (menu.item[i].saveSlot > 0)
+					_screen->setFont(Screen::FID_8_FNT);
+
 				if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 					printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 
@@ -150,6 +154,8 @@ void GUI::initMenu(Menu &menu) {
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
 				else
 					printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+
+				_screen->setFont(of);
 			}
 		}
 	}
@@ -258,9 +264,13 @@ void GUI::redrawText(const Menu &menu) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 8);
 	} else {
+		Screen::FontId of = _screen->_currentFont;
+		if (menu.item[i].saveSlot > 0)
+			_screen->setFont(Screen::FID_8_FNT);
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].textColor, 0, 0);
+		_screen->setFont(of);
 	}
 }
 
@@ -284,9 +294,13 @@ void GUI::redrawHighlight(const Menu &menu) {
 		textY++;
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 8);
 	} else {
+		Screen::FontId of = _screen->_currentFont;
+		if (menu.item[i].saveSlot > 0)
+			_screen->setFont(Screen::FID_8_FNT);
 		if (_vm->gameFlags().platform != Common::kPlatformAmiga)
 			printMenuText(getMenuItemTitle(menu.item[i]), textX - 1, textY + 1, defaultColor1(), 0, 0);
 		printMenuText(getMenuItemTitle(menu.item[i]), textX, textY, menu.item[i].highlightColor, 0, 0);
+		_screen->setFont(of);
 	}
 }
 
