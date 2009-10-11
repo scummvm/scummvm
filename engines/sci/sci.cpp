@@ -134,12 +134,12 @@ Common::Error SciEngine::run() {
 	// We'll set the GUI below
 	_gamestate = new EngineState(_resMan, _kernel, _vocabulary, NULL, cursor);
 
+	if (script_init_engine(_gamestate))
+		return Common::kUnknownError;
+
 	// Gui change
 	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
 	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
-
-	if (script_init_engine(_gamestate))
-		return Common::kUnknownError;
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");

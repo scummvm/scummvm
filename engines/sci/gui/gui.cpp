@@ -63,6 +63,11 @@ SciGui::SciGui() {
 SciGui::~SciGui() {
 }
 
+void SciGui::resetEngineState(EngineState *s) {
+	_s = s;
+	_gfx->resetEngineState(s);
+}
+
 void SciGui::init(bool usesOldGfxFunctions) {
 	// Initialize priority bands
 	if (usesOldGfxFunctions) {

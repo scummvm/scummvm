@@ -56,6 +56,9 @@ public:
 
 	void init(void);
 
+	// FIXME: Don't store EngineState
+	void resetEngineState(EngineState *newState) { _s = newState; }
+
 	byte *GetSegment(byte seg);
 	void ResetScreen();
 

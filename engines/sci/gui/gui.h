@@ -107,7 +107,7 @@ public:
 	virtual bool debugShowMap(int mapNo);
 
 	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *s) { _s = s; }
+	virtual void resetEngineState(EngineState *s);
 
 private:
 	EngineState *_s;
