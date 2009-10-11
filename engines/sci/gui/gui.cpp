@@ -396,23 +396,17 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_gfx->PaintRect(rect);
-	Common::Rect screenRect = rect;
-	_gfx->OffsetRect(screenRect);
-	_screen->copyRectToScreen(screenRect);
+	_screen->copyRectToScreen(rect);
 }
 
 void SciGui::graphFillBoxBackground(Common::Rect rect) {
 	_gfx->EraseRect(rect);
-	Common::Rect screenRect = rect;
-	_gfx->OffsetRect(screenRect);
-	_screen->copyRectToScreen(screenRect);
+	_screen->copyRectToScreen(rect);
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	_gfx->FillRect(rect, colorMask, color, priority, control);
-	Common::Rect screenRect = rect;
-	_gfx->OffsetRect(screenRect);
-	_screen->copyRectToScreen(screenRect);
+	_screen->copyRectToScreen(rect);
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {

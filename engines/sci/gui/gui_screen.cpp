@@ -75,7 +75,6 @@ void SciGuiScreen::copyToScreen() {
 }
 
 void SciGuiScreen::copyRectToScreen(const Common::Rect &rect) {
-	//g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
 }
 
