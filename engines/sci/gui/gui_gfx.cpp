@@ -925,7 +925,7 @@ void SciGuiGfx::AnimateFill(byte &old_picNotValid) {
 
 	listIterator = _animateList.begin();
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 
 		// Get the corresponding view
@@ -988,7 +988,7 @@ void SciGuiGfx::AnimateUpdate() {
 	// Remove all previous cels from screen
 	listIterator = _animateList.reverse_begin();
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1014,7 +1014,7 @@ void SciGuiGfx::AnimateUpdate() {
 
 	listIterator = listBegin;
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1036,7 +1036,7 @@ void SciGuiGfx::AnimateUpdate() {
 
 	listIterator = listBegin;
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1058,7 +1058,7 @@ void SciGuiGfx::AnimateUpdate() {
 
 	listIterator = listBegin;
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1088,7 +1088,7 @@ void SciGuiGfx::AnimateDrawCels() {
 
 	listIterator = _animateList.begin();
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1131,7 +1131,7 @@ void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 
 	listIterator = _animateList.reverse_begin();
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
@@ -1157,7 +1157,6 @@ void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 }
 
 void SciGuiGfx::AddToPicDrawCels(List *list) {
-	SegManager *segMan = _s->_segMan;
 	reg_t curObject;
 	GuiAnimateEntry *listEntry;
 	SciGuiView *view = NULL;
@@ -1166,7 +1165,7 @@ void SciGuiGfx::AddToPicDrawCels(List *list) {
 
 	listIterator = _animateList.begin();
 	while (listIterator != listEnd) {
-		listEntry = (GuiAnimateEntry *)*listIterator;
+		listEntry = *listIterator;
 		curObject = listEntry->object;
 
 		if (listEntry->priority == -1)
