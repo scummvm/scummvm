@@ -33,7 +33,7 @@ namespace Sci {
 
 class SciGuiWindowMgr {
 public:
-	SciGuiWindowMgr(EngineState *state, SciGuiScreen *screen, SciGuiGfx *gfx);
+	SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx);
 	~SciGuiWindowMgr();
 
 	int16 isFrontWindow(GuiWindow *wnd);
@@ -52,7 +52,6 @@ public:
 private:
 	typedef Common::List<GuiPort *> PortList;
 
-	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiGfx *_gfx;
 

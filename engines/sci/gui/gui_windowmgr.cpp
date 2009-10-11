@@ -43,8 +43,8 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
-SciGuiWindowMgr::SciGuiWindowMgr(EngineState *state, SciGuiScreen *screen, SciGuiGfx *gfx)
-	: _s(state), _screen(screen), _gfx(gfx) {
+SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx)
+	: _screen(screen), _gfx(gfx) {
 
 	_wmgrPort = new GuiPort(1);
 	_windowsById.resize(2);
