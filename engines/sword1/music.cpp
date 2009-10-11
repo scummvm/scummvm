@@ -285,7 +285,9 @@ bool MusicHandle::playPSX(uint16 id, bool loop) {
 
 	tableFile.close();
 
-	if ((size != 0) && (size != 0xffffffff) && ((offset + size) <= _file.size())) {
+	// Because of broken tunes.dat/tab in psx demo, also check that tune offset is
+	// not over file size
+	if ((size != 0) && (size != 0xffffffff) && ((int32)(offset + size) <= _file.size())) {
 		_file.seek(offset, SEEK_SET);
 		_audioSource = new Audio::VagStream(_file.readStream(size), loop);
 		fadeUp();
