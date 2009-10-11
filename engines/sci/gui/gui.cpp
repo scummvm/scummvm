@@ -345,6 +345,9 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 	_screen->copyToScreen();
 }
 
+void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
+}
+
 void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool hilite) {
 	if (!hilite) {
 		_gfx->drawCel(viewId, loopNo, celNo, rect.left, rect.top, 255, 0);
@@ -357,7 +360,7 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 	_screen->copyToScreen();
 }
 
-void SciGui::drawControl(reg_t controlObject, bool highlight) {
+void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool hilite) {
 }
 
 void SciGui::editControl(reg_t controlObject, reg_t eventObject) {

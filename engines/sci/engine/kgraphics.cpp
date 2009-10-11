@@ -1014,10 +1014,10 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 enum {
 	K_CONTROL_BUTTON = 1,
 	K_CONTROL_TEXT = 2,
-	K_CONTROL_EDIT = 3,
+	K_CONTROL_TEXTEDIT = 3,
 	K_CONTROL_ICON = 4,
-	K_CONTROL_CONTROL = 6,
-	K_CONTROL_CONTROL_ALIAS = 7,
+	K_CONTROL_LIST = 6,
+	K_CONTROL_LIST_ALIAS = 7,
 	K_CONTROL_BOX = 10
 };
 
@@ -1062,20 +1062,122 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	}
 }
 
-reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
-	reg_t obj = argv[0];
+void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
+	SegManager *segMan = s->_segMan;
+	int16 type = GET_SEL32V(controlObject, type);
+	int16 state = GET_SEL32V(controlObject, state);
+	int16 x = GET_SEL32V(controlObject, nsLeft);
+	int16 y = GET_SEL32V(controlObject, nsTop);
+	GuiResourceId fontId = GET_SEL32V(controlObject, font);
+	reg_t textReference = GET_SEL32(controlObject, text);
+	Common::String text;
+	Common::Rect rect;
+	int16 mode, maxChars, cursorPos, upperPos, listCount, i;
+	int16 upperOffset, cursorOffset;
+	GuiResourceId viewId;
+	GuiViewLoopNo loopNo;
+	GuiViewCelNo celNo;
+	reg_t listSeeker;
+	Common::String *listStrings = NULL;
+	const char **listEntries = NULL;
 
-	disableCertainButtons(s->_segMan, s->_gameName, obj);
-	s->_gui->drawControl(obj, false);
-//	FULL_REDRAW();
+	rect = Common::Rect (x, y, (int16)GET_SEL32V(controlObject, nsRight), (int16)GET_SEL32V(controlObject, nsBottom));
+	if (!textReference.isNull())
+		text = segMan->getString(textReference);
+
+	switch (type) {
+	case K_CONTROL_BUTTON:
+		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y);
+		s->_gui->drawControlButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, state, hilite);
+		return;
+
+	case K_CONTROL_TEXT:
+		mode = GET_SEL32V(controlObject, mode);
+		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, mode);
+		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, state, hilite);
+		return;
+
+	case K_CONTROL_TEXTEDIT:
+		mode = GET_SEL32V(controlObject, mode);
+		maxChars = GET_SEL32V(controlObject, max);
+		cursorPos = GET_SEL32V(controlObject, cursor);
+		debugC(2, kDebugLevelGraphics, "drawing edit control %04x:%04x (text %04x:%04x, '%s') to %d,%d\n", PRINT_REG(controlObject), PRINT_REG(textReference), text.c_str(), x, y);
+		s->_gui->drawControlTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, state, cursorPos, maxChars, hilite);
+		return;
+
+	case K_CONTROL_ICON:
+		viewId = GET_SEL32V(controlObject, view);
+		loopNo = sign_extend_byte(GET_SEL32V(controlObject, loop));
+		celNo = sign_extend_byte(GET_SEL32V(controlObject, cel));
+		debugC(2, kDebugLevelGraphics, "drawing icon control %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y - 1);
+		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, state, hilite);
+		return;
+
+	case K_CONTROL_LIST:
+	case K_CONTROL_LIST_ALIAS:
+		maxChars = GET_SEL32V(controlObject, x); // max chars per entry
+		// NOTE: most types of pointer dereferencing don't like odd offsets
+		if (maxChars & 1) {
+			warning("List control with odd maxChars %d. This is not yet implemented for all types of segments", maxChars);
+		}
+		cursorOffset = GET_SEL32V(controlObject, cursor);
+		if (s->_kernel->_selectorCache.topString != -1) {
+			// Games from early SCI1 onwards use topString
+			upperOffset = GET_SEL32V(controlObject, topString);
+		} else {
+			// Earlier games use lsTop
+			upperOffset = GET_SEL32V(controlObject, lsTop);
+		}
+
+		// Count string entries in NULL terminated string list
+		listCount = 0; listSeeker = textReference;
+		while (s->_segMan->strlen(listSeeker) > 0) {
+			listCount++;
+			listSeeker.offset += maxChars;
+		}
+
+		// TODO: This is rather convoluted... It would be a lot cleaner
+		// if sciw_new_list_control would take a list of Common::String
+		cursorPos = 0; upperPos = 0;
+		if (listCount) {
+			// We create a pointer-list to the different strings, we also find out whats upper and cursor position
+			listSeeker = textReference;
+			listEntries = (const char**)malloc(sizeof(char *) * listCount);
+			listStrings = new Common::String[listCount];
+			for (i = 0; i < listCount; i++) {
+				listStrings[i] = s->_segMan->getString(listSeeker);
+				listEntries[i] = listStrings[i].c_str();
+				if (listSeeker.offset == upperOffset)
+					upperPos = i;
+				if (listSeeker.offset == cursorOffset)
+					cursorPos = i;
+				listSeeker.offset += maxChars;
+			}
+		}
+
+		debugC(2, kDebugLevelGraphics, "drawing list control %04x:%04x to %d,%d, diff %d\n", PRINT_REG(controlObject), x, y, SCI_MAX_SAVENAME_LENGTH);
+		s->_gui->drawControlList(rect, controlObject, listCount, listEntries, fontId, upperPos, cursorPos, hilite);
+		free(listEntries);
+		delete[] listStrings;
+		return;
+
+	default:
+		error("unsupported control type %d", type);
+	}
+}
+
+reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
+	reg_t controlObject = argv[0];
+
+	disableCertainButtons(s->_segMan, s->_gameName, controlObject);
+	_k_GenericDrawControl(s, controlObject, false);
 	return NULL_REG;
 }
 
 reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
-	reg_t obj = argv[0];
+	reg_t controlObject = argv[0];
 
-	s->_gui->drawControl(obj, true);
-
+	_k_GenericDrawControl(s, controlObject, true);
 	return s->r_acc;
 }
 
