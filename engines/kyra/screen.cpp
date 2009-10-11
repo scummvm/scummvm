@@ -1134,10 +1134,8 @@ int Screen::getFontWidth() const {
 }
 
 int Screen::getCharWidth(uint16 c) const {
-	if (isSJISChar(c))
-		return _fonts[FID_SJIS_FNT]->getCharWidth(c);
-	else
-		return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
+	const int width = _fonts[_currentFont]->getCharWidth(c);
+	return width + (_currentFont != FID_SJIS_FNT) ? _charWidth : 0;
 }
 
 int Screen::getTextWidth(const char *str) const {
@@ -1202,18 +1200,6 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			x += charWidth;
 		}
 	}
-}
-
-bool Screen::isSJISChar(uint16 c) const {
-	if (!_useSJIS)
-		return false;
-
-	if (c & 0xFF00)
-		return true;
-	else if ((c & 0xFF) >= 0xA1 && (c & 0xFF) <= 0xDF)
-		return true;
-
-	return false;
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
@@ -3346,7 +3332,7 @@ int SJISFont::getWidth() const {
 }
 
 int SJISFont::getCharWidth(uint16 c) const {
-	if (_screen->isSJISChar(c))
+	if ((c & 0xFF) >= 0xA1 && (c & 0xFF) <= 0xDF)
 		return _sjisWidth;
 	else
 		return _asciiWidth;

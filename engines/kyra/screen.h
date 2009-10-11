@@ -426,8 +426,6 @@ public:
 
 	const ScreenDim *_curDim;
 
-	bool isSJISChar(uint16 ch) const;
-
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 
