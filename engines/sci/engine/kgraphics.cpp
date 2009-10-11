@@ -62,17 +62,6 @@ enum {
 	K_GRAPH_ADJUST_PRIORITY = 14
 };
 
-// Control types and flags
-enum {
-	K_CONTROL_BUTTON = 1,
-	K_CONTROL_TEXT = 2,
-	K_CONTROL_EDIT = 3,
-	K_CONTROL_ICON = 4,
-	K_CONTROL_CONTROL = 6,
-	K_CONTROL_CONTROL_ALIAS = 7,
-	K_CONTROL_BOX = 10
-};
-
 #define ADD_TO_CURRENT_PORT(widget) \
 	{if (s->port)				   \
 		s->port->add((GfxContainer *)s->port, widget); \
@@ -1023,6 +1012,17 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 
 static void _k_draw_control(EngineState *s, reg_t obj, bool inverse);
 
+// Control types and flags
+enum {
+	K_CONTROL_BUTTON = 1,
+	K_CONTROL_TEXT = 2,
+	K_CONTROL_EDIT = 3,
+	K_CONTROL_ICON = 4,
+	K_CONTROL_CONTROL = 6,
+	K_CONTROL_CONTROL_ALIAS = 7,
+	K_CONTROL_BOX = 10
+};
+
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
 	Common::String text;
@@ -1081,207 +1081,16 @@ reg_t kHiliteControl(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-void update_cursor_limits(int *display_offset, int *cursor, int max_displayed) {
-	if (*cursor < *display_offset + 4) {
-		if (*cursor < 8)
-			*display_offset = 0;
-		else
-			*display_offset = *cursor - 8;
-	} else if (*cursor - *display_offset > max_displayed - 8)
-		*display_offset = 12 + *cursor - max_displayed;
-}
-
-#define _K_EDIT_DELETE \
-	if (cursor < textlen) { \
-		text.deleteChar(cursor); \
-	}
-
-#define _K_EDIT_BACKSPACE \
-	if (cursor) { \
-		--cursor;    \
-		text.deleteChar(cursor); \
-		--textlen; \
-	}
-
 reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
-	SegManager *segMan = s->_segMan;
-	reg_t obj = argv[0];
-	reg_t event = argv[1];
+	reg_t controlObject = argv[0];
+	reg_t eventObject = argv[1];
 
-	if (obj.segment) {
-		uint16 ct_type = GET_SEL32V(obj, type);
-		switch (ct_type) {
-
-		case 0:
-			break; // NOP
-
-		case K_CONTROL_EDIT:
-			if (event.segment && ((GET_SEL32V(event, type)) == SCI_EVT_KEYBOARD)) {
-				int max_displayed = GET_SEL32V(obj, max);
-				int max = max_displayed;
-				int cursor = GET_SEL32V(obj, cursor);
-				int modifiers = GET_SEL32V(event, modifiers);
-				int key = GET_SEL32V(event, message);
-				reg_t text_pos = GET_SEL32(obj, text);
-				int display_offset = 0;
-
-				Common::String text = s->_segMan->getString(text_pos);
-				int textlen;
-
-#if 0
-				if (!text) {
-					warning("Could not draw control: %04x:%04x does not reference text", PRINT_REG(text_pos));
-					return s->r_acc;
-				}
-#endif
-
-				textlen = text.size();
-
-				cursor += display_offset;
-
-				if (cursor > textlen)
-					cursor = textlen;
-
-				if (modifiers & SCI_EVM_CTRL) {
-
-					switch (tolower((char)key)) {
-					case 'a':
-						cursor = 0;
-						break;
-					case 'e':
-						cursor = textlen;
-						break;
-					case 'f':
-						if (cursor < textlen) ++cursor;
-						break;
-					case 'b':
-						if (cursor > 0) --cursor;
-						break;
-					case 'k':
-						text = Common::String(text.c_str(), cursor);
-						break; // Terminate string
-					case 'h':
-						_K_EDIT_BACKSPACE;
-						break;
-					case 'd':
-						_K_EDIT_DELETE;
-						break;
-					}
-					PUT_SEL32V(event, claimed, 1);
-
-				} else if (modifiers & SCI_EVM_ALT) { // Ctrl has precedence over Alt
-					switch (key) {
-					case 0x2100 /* A-f */:
-						while ((cursor < textlen) && (text[cursor++] != ' '))
-							;
-						break;
-					case 0x3000 /* A-b */:
-						while ((cursor > 0) && (text[--cursor - 1] != ' '))
-							;
-						break;
-					case 0x2000 /* A-d */: {
-						while ((cursor < textlen) && (text[cursor] == ' ')) {
-							_K_EDIT_DELETE;
-							textlen--;
-						}
-						while ((cursor < textlen) && (text[cursor] != ' ')) {
-							_K_EDIT_DELETE;
-							textlen--;
-						}
-						break;
-					}
-					}
-					PUT_SEL32V(event, claimed, 1);
-				} else if (key < 31) {
-					PUT_SEL32V(event, claimed, 1);
-					switch (key) {
-					case SCI_K_BACKSPACE:
-						_K_EDIT_BACKSPACE;
-						break;
-					default:
-						PUT_SEL32V(event, claimed, 0);
-					}
-				} else if (key & 0xff00) {
-					switch (key) {
-					case SCI_K_HOME:
-						cursor = 0;
-						break;
-					case SCI_K_END:
-						cursor = textlen;
-						break;
-					case SCI_K_RIGHT:
-						if (cursor + 1 <= textlen)
-							++cursor;
-						break;
-					case SCI_K_LEFT:
-						if (cursor > 0)
-							--cursor;
-						break;
-					case SCI_K_DELETE:
-						_K_EDIT_DELETE;
-						break;
-					}
-					PUT_SEL32V(event, claimed, 1);
-				} else if ((key > 31) && (key < 128)) {
-					int inserting = (modifiers & SCI_EVM_INSERT);
-
-					modifiers &= ~(SCI_EVM_RSHIFT | SCI_EVM_LSHIFT | SCI_EVM_CAPSLOCK);
-
-					if (cursor == textlen) {
-						if (textlen < max) {
-							text += key;
-							cursor++;
-						}
-					} else if (inserting) {
-						if (textlen < max) {
-							int i;
-
-							for (i = textlen + 2; i >= cursor; i--)
-								text.setChar(text[i - 1], i);
-							text.setChar(key, cursor++);
-
-						}
-					} else { // Overwriting
-						text.setChar(key, cursor++);
-					}
-
-					if (max_displayed < max)
-						update_cursor_limits(&display_offset, &cursor, max_displayed);
-
-					cursor -= display_offset;
-
-					PUT_SEL32V(event, claimed, 1);
-				}
-
-				PUT_SEL32V(obj, cursor, cursor); // Write back cursor position
-				s->_segMan->strcpy(text_pos, text.c_str()); // Write back string
-			}
-			if (event.segment) PUT_SEL32V(event, claimed, 1);
-			_k_draw_control(s, obj, false);
-			return NULL_REG;
-
-		case K_CONTROL_ICON:
-		case K_CONTROL_BOX:
-		case K_CONTROL_BUTTON:
-			return NULL_REG;
-
-		case K_CONTROL_TEXT: {
-			int state = GET_SEL32V(obj, state);
-			PUT_SEL32V(obj, state, state | kControlStateDitherFramed);
-			_k_draw_control(s, obj, false);
-			PUT_SEL32V(obj, state, state);
-		}
-		break;
-
-		default:
-			warning("Attempt to edit control type %d", ct_type);
-		}
-	}
-
+	if (!controlObject.isNull())
+		s->_gui->editControl(controlObject, eventObject);
 	return s->r_acc;
 }
 
-static void _k_draw_control(EngineState *s, reg_t obj, bool hilite) {
+void _k_draw_control(EngineState *s, reg_t obj, bool hilite) {
 	SegManager *segMan = s->_segMan;
 	int x = (int16)GET_SEL32V(obj, nsLeft);
 	int y = (int16)GET_SEL32V(obj, nsTop);

@@ -357,6 +357,9 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 	_screen->copyToScreen();
 }
 
+void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
+}
+
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_gfx->PaintRect(rect);
 	_screen->copyToScreen();
