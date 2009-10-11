@@ -508,7 +508,7 @@ Common::Error SciEngine::loadGameState(int slot) {
 		shrink_execution_stack(_gamestate, _gamestate->execution_stack_base + 1);
 		return Common::kNoError;
 	} else {
-		warning("Restoring gamestate '%s' failed.\n", fileName);
+		warning("Restoring gamestate '%s' failed.\n", fileName.c_str());
 		return Common::kUnknownError;
 	}
 }
