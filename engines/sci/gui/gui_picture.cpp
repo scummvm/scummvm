@@ -228,7 +228,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 			x--;
 		}
 	}
-	delete celBitmap;
+	delete[] celBitmap;
 }
 
 enum {
