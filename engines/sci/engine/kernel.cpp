@@ -257,7 +257,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*40*/	DEFUN("Random", kRandom, "i*"),
 	/*41*/	DEFUN("Abs", kAbs, "Oi"),
 	/*42*/	DEFUN("Sqrt", kSqrt, "i"),
-	/*43*/	DEFUN("GetAngle", kGetAngle, "iiii"),
+	/*43*/	DEFUN("GetAngle", kGetAngle, "iiiii*"), // occasionally KQ6 passes a 5th argument by mistake
 	/*44*/	DEFUN("GetDistance", kGetDistance, "iiiii*"),
 	/*45*/	DEFUN("Wait", kWait, "i"),
 	/*46*/	DEFUN("GetTime", kGetTime, "i*"),
