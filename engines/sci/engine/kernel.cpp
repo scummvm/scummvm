@@ -288,7 +288,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*62*/	DEFUN("GetCWD", kGetCWD, "r"),
 	/*63*/	DEFUN("CheckFreeSpace", kCheckFreeSpace, "r"),
 	/*64*/	DEFUN("ValidPath", kValidPath, "r"),
-	/*65*/	DEFUN("CoordPri", kCoordPri, "i"),
+	/*65*/	DEFUN("CoordPri", kCoordPri, "ii*"),
 	/*66*/	DEFUN("StrAt", kStrAt, "rii*"),
 	/*67*/	DEFUN("DeviceInfo", kDeviceInfo, "i.*"),
 	// FIXME: signature check removed (set to .*), as this function accepts a parameter in SCI32 games

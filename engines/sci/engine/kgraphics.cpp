@@ -753,7 +753,12 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 reg_t kCoordPri(EngineState *s, int argc, reg_t *argv) {
 	int16 y = argv[0].toSint16();
 
-	return make_reg(0, s->_gui->coordinateToPriority(y));
+	if ((argc < 2) || (y != 1)) {
+		return make_reg(0, s->_gui->coordinateToPriority(y));
+	} else {
+		int16 priority = argv[1].toSint16();
+		return make_reg(0, s->_gui->priorityToCoordinate(priority));
+	}
 }
 
 reg_t kPriCoord(EngineState *s, int argc, reg_t *argv) {
