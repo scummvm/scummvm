@@ -32,6 +32,9 @@
 
 namespace Sci {
 
+#define SCI_SHAKE_DIRECTION_VERTICAL 1
+#define SCI_SHAKE_DIRECTION_HORIZONTAL 2
+
 typedef int GuiResourceId; // is a resource-number and -1 means no parameter given
 typedef reg_t GuiMemoryHandle;
 typedef int16 GuiViewLoopNo;

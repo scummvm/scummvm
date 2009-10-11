@@ -397,6 +397,20 @@ void SciGui::paletteAnimate(int fromColor, int toColor, int speed) {
 	_palette->animate(fromColor, toColor, speed);
 }
 
+void SciGui::shakeScreen(uint16 shakeCount, uint16 directions) {
+	while (shakeCount--) {
+		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+			_screen->setVerticalShakePos(10);
+		// TODO: horizontal shakes
+		g_system->updateScreen();
+		wait(3);
+		if (directions & SCI_SHAKE_DIRECTION_VERTICAL)
+			_screen->setVerticalShakePos(0);
+		g_system->updateScreen();
+		wait(3);
+	}
+}
+
 uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	uint16 result;

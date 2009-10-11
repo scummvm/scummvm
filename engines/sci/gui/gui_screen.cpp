@@ -215,6 +215,10 @@ void SciGuiScreen::setPalette(GuiPalette*pal) {
 	g_system->setPalette(bpal, 0, 256);
 }
 
+void SciGuiScreen::setVerticalShakePos(uint16 shakePos) {
+	g_system->setShakePos(shakePos);
+}
+
 // Currently not really done, its supposed to be possible to only dither _visualScreen
 void SciGuiScreen::dither(bool addToFlag) {
 	int y, x;

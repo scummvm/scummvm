@@ -76,6 +76,8 @@ public:
 	void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	void paletteAnimate(int fromColor, int toColor, int speed);
 
+	void shakeScreen(uint16 shakeCount, uint16 directions);
+
 	uint16 onControl(byte screenMask, Common::Rect rect);
 	void animate(reg_t castListReference, bool cycle, int argc, reg_t *argv);
 	void addToPicList(reg_t listReference, int argc, reg_t *argv);

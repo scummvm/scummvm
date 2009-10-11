@@ -85,6 +85,8 @@ public:
 	virtual void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	virtual void paletteAnimate(int fromColor, int toColor, int speed);
 
+	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
+
 	virtual uint16 onControl(byte screenMask, Common::Rect rect);
 	virtual void animate(reg_t listReference, bool cycle, int argc, reg_t *argv);
 	virtual void addToPicList(reg_t listReference, int argc, reg_t *argv);

@@ -60,6 +60,8 @@ public:
 
 	void setPalette(GuiPalette*pal);
 
+	void setVerticalShakePos(uint16 shakePos);
+
 	void dither(bool addToFlag);
 	void unditherSetState(bool flag);
 	int16 *unditherGetMemorial();
