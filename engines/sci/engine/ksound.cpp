@@ -944,6 +944,15 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_SET_HANDLE_LOOP : {
+		if (!GET_SEL32(obj, nodePtr).isNull()) {
+			uint16 looping = argv[2].toUint16();
+
+			if (looping < 65535)
+				looping = 1;
+
+			s->_sound.sfx_song_set_loops(handle, looping);
+			PUT_SEL32V(obj, loop, looping);
+		}
 		break;
 	}
 	case _K_SCI1_SOUND_UPDATE_CUES : {
