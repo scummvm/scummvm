@@ -54,6 +54,8 @@ void SciGuiGfx::init() {
 	_textFonts = NULL; _textFontsCount = 0;
 	_textColors = NULL; _textColorsCount = 0;
 
+	_texteditCursorVisible = false;
+
 	_animateListData = NULL;
 	_animateListSize = 0;
 
@@ -693,8 +695,6 @@ void SciGuiGfx::drawLine(int16 left, int16 top, int16 right, int16 bottom, byte 
 			_screen->putPixel(left, top, drawMask, color, priority, control);
 		}
 	}
-	//g_sci->eventMgr->waitUntil(5);
-	//ShowBits(&_rThePort->rect,6);
 }
 
 void SciGuiGfx::Draw_String(const char *text) {
@@ -747,6 +747,7 @@ const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
 void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
+	SegManager *segMan = _s->_segMan;
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _curPort->penClr;
@@ -757,7 +758,10 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 
 	// draw basic window
 	EraseRect(workerRect);
-	workerRect.grow(1); FrameRect(workerRect);
+	workerRect.grow(1);
+	FrameRect(workerRect);
+	PUT_SEL32V(obj, nsLeft, workerRect.left); PUT_SEL32V(obj, nsTop, workerRect.top);
+	PUT_SEL32V(obj, nsRight, workerRect.right); PUT_SEL32V(obj, nsBottom, workerRect.bottom);
 	// draw UP/DOWN arrows
 	workerRect = rect;
 	TextBox(controlListUpArrow, 0, workerRect, 1, 0);
@@ -792,6 +796,126 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 	}
 
 	SetFont(oldFontId);
+}
+
+void SciGuiGfx::TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos) {
+	int16 textWidth, i;
+	if (!_texteditCursorVisible) {
+		textWidth = 0;
+		for (i = 0; i < curPos; i++) {
+			textWidth += _font->getCharWidth(text[i]);
+		}
+		_texteditCursorRect.left = rect.left + textWidth;
+		_texteditCursorRect.top = rect.top;
+		_texteditCursorRect.bottom = _texteditCursorRect.top + _font->getHeight();
+		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : CharWidth(text[curPos]));
+		InvertRect(_texteditCursorRect);
+		BitsShow(_texteditCursorRect, SCI_SCREEN_MASK_VISUAL);
+		_texteditCursorVisible = true;
+		TexteditSetBlinkTime();
+	}
+}
+
+void SciGuiGfx::TexteditCursorErase() {
+	if (_texteditCursorVisible) {
+		InvertRect(_texteditCursorRect);
+		BitsShow(_texteditCursorRect, SCI_SCREEN_MASK_VISUAL);
+		_texteditCursorVisible = false;
+	}
+	TexteditSetBlinkTime();
+}
+
+void SciGuiGfx::TexteditSetBlinkTime() {
+	_texteditBlinkTime = g_system->getMillis() + (30 * 1000 / 60);
+}
+
+void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
+	SegManager *segMan = _s->_segMan;
+	uint16 cursorPos = GET_SEL32V(controlObject, cursor);
+	uint16 maxChars = GET_SEL32V(controlObject, max);
+	uint16 oldCursor = cursorPos;
+	reg_t textReference = GET_SEL32(controlObject, text);
+	Common::String text;
+	uint16 textSize, eventType, eventKey;
+	bool textChanged = false;
+
+	if (textReference.isNull())
+		error("kEditControl called on object that doesnt have a text reference");
+	text = segMan->getString(textReference);
+
+	if (!eventObject.isNull()) {
+		textSize = text.size();
+		eventType = GET_SEL32V(eventObject, type);
+
+		switch (eventType) {
+		case SCI_EVT_MOUSE_PRESS:
+			// TODO: Implement mouse support for cursor change
+			break;
+		case SCI_EVT_KEYBOARD:
+			eventKey = GET_SEL32V(eventObject, message);
+			switch (eventKey) {
+			case SCI_K_BACKSPACE:
+				cursorPos--; text.deleteChar(cursorPos);
+				textChanged = true;
+				break;
+			case SCI_K_DELETE:
+				text.deleteChar(cursorPos);
+				textChanged = true;
+				break;
+			case SCI_K_HOME: // HOME
+				cursorPos = 0; textChanged = true;
+				break;
+			case SCI_K_END: // END
+				cursorPos = textSize; textChanged = true;
+				break;
+			case SCI_K_LEFT: // LEFT
+				if (cursorPos > 0) {
+					cursorPos--; textChanged = true;
+				}
+			case SCI_K_RIGHT: // RIGHT
+				if (cursorPos + 1 <= textSize) {
+					cursorPos++; textChanged = true;
+				}
+				break;
+			default:
+				if (eventKey > 31 && eventKey < 256 && textSize < maxChars) {
+					// insert pressed character
+					text.insertChar(eventKey, cursorPos++);
+					textChanged = true;
+				}
+				break;
+			}
+			break;
+		}
+	}
+
+	if (textChanged) {
+		GuiResourceId oldFontId = GetFontId();
+		GuiResourceId fontId = GET_SEL32V(controlObject, font);
+		Common::Rect rect;
+		rect = Common::Rect (GET_SEL32V(controlObject, nsLeft), GET_SEL32V(controlObject, nsTop),
+							  GET_SEL32V(controlObject, nsRight), GET_SEL32V(controlObject, nsBottom));
+		rect.top++;
+		TexteditCursorErase();
+		EraseRect(rect);
+		TextBox(text.c_str(), 0, rect, 0, fontId);
+		BitsShow(rect, SCI_SCREEN_MASK_VISUAL);
+		SetFont(fontId);
+		rect.top--;
+		TexteditCursorDraw(rect, text.c_str(), cursorPos);
+		SetFont(oldFontId);
+		// Write back string
+		segMan->strcpy(textReference, text.c_str());
+	} else {
+		if (g_system->getMillis() >= _texteditBlinkTime) {
+			InvertRect(_texteditCursorRect);
+			BitsShow(_texteditCursorRect, SCI_SCREEN_MASK_VISUAL);
+			_texteditCursorVisible = !_texteditCursorVisible;
+			TexteditSetBlinkTime();
+		}
+	}
+
+	PUT_SEL32V(controlObject, cursor, cursorPos);
 }
 
 uint16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {

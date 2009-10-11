@@ -112,6 +112,9 @@ public:
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
 	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
+	void TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos);
+	void TexteditCursorErase();
+	void TexteditChange(reg_t controlObject, reg_t eventObject);
 
 	uint16 onControl(uint16 screenMask, Common::Rect rect);
 
@@ -144,6 +147,8 @@ private:
 	void DrawText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 	void ShowText(const char *str, int16 from, int16 len, GuiResourceId orgFontId, int16 orgPenColor);
 
+	void TexteditSetBlinkTime();
+
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
@@ -160,6 +165,11 @@ private:
 	// Priority Bands related variables
 	int16 _priorityTop, _priorityBottom, _priorityBandCount;
 	byte _priorityBands[200];
+
+	// Textedit-Control related
+	Common::Rect _texteditCursorRect;
+	bool _texteditCursorVisible;
+	uint32 _texteditBlinkTime;
 
 	// Animate* related variables
 	uint16 _animateListSize;

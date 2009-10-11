@@ -357,6 +357,21 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 }
 
 void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
+	Common::Rect textRect = rect;
+	uint16 oldFontId = _gfx->GetFontId();
+
+	textRect.translate(0, 1);
+	rect.grow(1);
+	_gfx->TexteditCursorErase();
+	_gfx->EraseRect(rect);
+	_gfx->TextBox(text, 0, textRect, 0, fontId);
+	_gfx->FrameRect(rect);
+	if (style & 8) {
+		_gfx->SetFont(fontId);
+		rect.grow(-1);
+		_gfx->TexteditCursorDraw(rect, text, cursorPos);
+		_gfx->SetFont(oldFontId);
+	}
 }
 
 void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool hilite) {
@@ -384,6 +399,13 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 }
 
 void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
+	SegManager *segMan = _s->_segMan;
+	int16 controlType = GET_SEL32V(controlObject, type);
+
+	if (controlType == 3) {
+		// Only process textedit controls in here
+		_gfx->TexteditChange(controlObject, eventObject);
+	}
 }
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
