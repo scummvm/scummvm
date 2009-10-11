@@ -25,10 +25,14 @@
 
 #include "engines/advancedDetector.h"
 #include "base/plugins.h"
+#include "common/savefile.h"
+#include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
 #include "sci/engine/kernel.h"
+#include "sci/engine/savegame.h"
 #include "sci/engine/seg_manager.h"
+#include "sci/engine/state.h"
 #include "sci/engine/vm.h"		// for convertSierraGameId
 
 namespace Sci {
@@ -161,6 +165,11 @@ public:
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const;
 	const ADGameDescription *fallbackDetect(const Common::FSList &fslist) const;
+	virtual bool hasFeature(MetaEngineFeature f) const;
+	virtual SaveStateList listSaves(const char *target) const;
+	virtual int getMaximumSaveSlot() const;
+	virtual void removeSaveState(const char *target, int slot) const;
+	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const;
 };
 
 Common::Language charToScummVMLanguage(const char c) {
@@ -371,6 +380,165 @@ bool SciMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameD
 	*engine = new SciEngine(syst, desc);
 
 	return true;
+}
+
+bool SciMetaEngine::hasFeature(MetaEngineFeature f) const {
+	return
+		(f == kSupportsListSaves) ||
+		//(f == kSupportsLoadingDuringStartup) ||
+		(f == kSupportsDeleteSave) ||
+		(f == kSavesSupportMetaInfo) ||
+		(f == kSavesSupportThumbnail) ||
+		(f == kSavesSupportCreationDate);
+}
+
+bool SciEngine::hasFeature(EngineFeature f) const {
+	return
+		//(f == kSupportsRTL) ||
+		(f == kSupportsLoadingDuringRuntime);
+		//(f == kSupportsSavingDuringRuntime);
+}
+
+SaveStateList SciMetaEngine::listSaves(const char *target) const {
+	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
+	Common::StringList filenames;
+	Common::String pattern = target;
+	pattern += ".???";
+
+	filenames = saveFileMan->listSavefiles(pattern);
+	sort(filenames.begin(), filenames.end());	// Sort (hopefully ensuring we are sorted numerically..)
+
+	SaveStateList saveList;
+	int slotNum = 0;
+	for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
+		// Obtain the last 3 digits of the filename, since they correspond to the save slot
+		slotNum = atoi(file->c_str() + file->size() - 3);
+
+		if (slotNum >= 0 && slotNum < 999) {
+			Common::InSaveFile *in = saveFileMan->openForLoading(*file);
+			if (in) {
+				SavegameMetadata meta;
+				if (!get_savegame_metadata(in, &meta)) {
+					// invalid
+					delete in;
+					continue;
+				}
+				saveList.push_back(SaveStateDescriptor(slotNum, meta.savegame_name));
+				delete in;
+			}
+		}
+	}
+
+	return saveList;
+}
+
+SaveStateDescriptor SciMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
+	Common::String fileName = Common::String::printf("%s.%03d", target, slot);
+	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
+
+	if (in) {
+		SavegameMetadata meta;
+		if (!get_savegame_metadata(in, &meta)) {
+			// invalid
+			delete in;
+
+			SaveStateDescriptor desc(slot, "Invalid");
+			return desc;
+		}
+
+		SaveStateDescriptor desc(slot, meta.savegame_name);
+
+		Graphics::Surface *thumbnail = new Graphics::Surface();
+		assert(thumbnail);
+		if (!Graphics::loadThumbnail(*in, *thumbnail)) {
+			delete thumbnail;
+			thumbnail = 0;
+		}
+
+		desc.setThumbnail(thumbnail);
+
+		desc.setDeletableFlag(true);
+		desc.setWriteProtectedFlag(false);
+
+		int day = (meta.savegame_date >> 24) & 0xFF;
+		int month = (meta.savegame_date >> 16) & 0xFF;
+		int year = meta.savegame_date & 0xFFFF;
+
+		desc.setSaveDate(year, month, day);
+
+		int hour = (meta.savegame_time >> 16) & 0xFF;
+		int minutes = (meta.savegame_time >> 8) & 0xFF;
+
+		desc.setSaveTime(hour, minutes);
+
+		// TODO: played time
+
+		delete in;
+
+		return desc;
+	}
+
+	return SaveStateDescriptor();
+}
+
+int SciMetaEngine::getMaximumSaveSlot() const { return 999; }
+
+void SciMetaEngine::removeSaveState(const char *target, int slot) const {
+	Common::String fileName = Common::String::printf("%s.%03d", target, slot);
+	g_system->getSavefileManager()->removeSavefile(fileName);
+}
+
+Common::Error SciEngine::loadGameState(int slot) {
+	EngineState *newstate = NULL;
+	Common::String fileName = Common::String::printf("%s.%03d", _targetName.c_str(), slot);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::SeekableReadStream *in = saveFileMan->openForLoading(fileName);
+
+	if (in) {
+		// found a savegame file
+		newstate = gamestate_restore(_gamestate, in);
+		delete in;
+	}
+
+	if (newstate) {
+		_gamestate->successor = newstate; // Set successor
+
+		script_abort_flag = 2; // Abort current game with replay
+
+		shrink_execution_stack(_gamestate, _gamestate->execution_stack_base + 1);
+		return Common::kNoError;
+	} else {
+		warning("Restoring gamestate '%s' failed.\n", fileName);
+		return Common::kUnknownError;
+	}
+}
+
+Common::Error SciEngine::saveGameState(int slot, const char *desc) {
+	// TODO: Savegames created from the GMM are still problematic
+#if 0
+	Common::String fileName = Common::String::printf("%s.%03d", _targetName.c_str(), slot);
+	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
+	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);
+	const char *version = "";
+	if (!out) {
+		warning("Error opening savegame \"%s\" for writing\n", fileName);
+		return Common::kWritingFailed;
+	}
+
+	if (gamestate_save(_gamestate, out, desc, version)) {
+		warning("Saving the game state to '%s' failed\n", fileName);
+		return Common::kUnknownError;
+	}
+#endif
+	return Common::kNoError;	// TODO: return success/failure
+}
+
+bool SciEngine::canLoadGameStateCurrently() {
+	return !_gamestate->execution_stack_base;
+}
+
+bool SciEngine::canSaveGameStateCurrently() {
+	return !_gamestate->execution_stack_base;
 }
 
 } // End of namespace Sci

@@ -96,9 +96,14 @@ public:
 
 	// Engine APIs
 	virtual Common::Error run();
+	bool hasFeature(EngineFeature f) const;
 	void pauseEngineIntern(bool pause);
 	virtual GUI::Debugger *getDebugger();
 	Console *getSciDebugger();
+	Common::Error loadGameState(int slot);
+	Common::Error saveGameState(int slot, const char *desc);
+	bool canLoadGameStateCurrently();
+	bool canSaveGameStateCurrently();
 
 	const char* getGameID() const;
 	int getResourceVersion() const;

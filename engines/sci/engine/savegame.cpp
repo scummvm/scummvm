@@ -27,6 +27,7 @@
 #include "common/system.h"
 #include "common/func.h"
 #include "common/serializer.h"
+#include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
 #include "sci/gfx/operations.h"
@@ -529,6 +530,7 @@ int gamestate_save(EngineState *s, Common::WriteStream *fh, const char* savename
 */
 	Common::Serializer ser(0, fh);
 	sync_SavegameMetadata(ser, meta);
+	Graphics::saveThumbnail(*fh);
 	s->saveLoadWithSerializer(ser);		// FIXME: Error handling?
 
 	return 0;
@@ -722,6 +724,15 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 			warning("Savegame version is %d- maximum supported is %0d", meta.savegame_version, CURRENT_SAVEGAME_VERSION);
 
 		return NULL;
+	}
+
+	if (meta.savegame_version >= 12) {
+		// We don't need the thumbnail here, so just read it and discard it
+		Graphics::Surface *thumbnail = new Graphics::Surface();
+		assert(thumbnail);
+		Graphics::loadThumbnail(*fh, *thumbnail);
+		delete thumbnail;
+		thumbnail = 0;
 	}
 
 	// FIXME: Do in-place loading at some point, instead of creating a new EngineState instance from scratch.

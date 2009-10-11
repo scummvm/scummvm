@@ -768,14 +768,15 @@ bool Console::cmdSaveGame(int argc, const char **argv) {
 		DebugPrintf("Note: Game state has %d open file handles.\n", result);
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::OutSaveFile *out;
-	if (!(out = saveFileMan->openForSaving(argv[1]))) {
+	Common::OutSaveFile *out = saveFileMan->openForSaving(argv[1]);
+	const char *version = "";
+	if (!out) {
 		DebugPrintf("Error opening savegame \"%s\" for writing\n", argv[1]);
 		return true;
 	}
 
 	// TODO: enable custom descriptions? force filename into a specific format?
-	if (gamestate_save(_vm->_gamestate, out, "debugging", 0)) {
+	if (gamestate_save(_vm->_gamestate, out, "debugging", version)) {
 		DebugPrintf("Saving the game state to '%s' failed\n", argv[1]);
 	}
 
@@ -792,8 +793,8 @@ bool Console::cmdRestoreGame(int argc, const char **argv) {
 	EngineState *newstate = NULL;
 
 	Common::SaveFileManager *saveFileMan = g_engine->getSaveFileManager();
-	Common::SeekableReadStream *in;
-	if (!(in = saveFileMan->openForLoading(argv[1]))) {
+	Common::SeekableReadStream *in = saveFileMan->openForLoading(argv[1]);
+	if (in) {
 		// found a savegame file
 		newstate = gamestate_restore(_vm->_gamestate, in);
 		delete in;
