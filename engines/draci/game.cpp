@@ -177,25 +177,25 @@ void Game::init() {
 	// Initialize animation for object / room titles
 	Animation *titleAnim = _vm->_anims->addText(kTitleText, true);
 	Text *title = new Text("", _vm->_smallFont, kTitleColour, 0, 0);
-	titleAnim->addFrame(title);
+	titleAnim->addFrame(title, NULL);
 
 	// Initialize animation for speech text
 	Animation *speechAnim = _vm->_anims->addText(kSpeechText, true);
 	Text *speech = new Text("", _vm->_bigFont, kFontColour1, 0, 0);
-	speechAnim->addFrame(speech);
+	speechAnim->addFrame(speech, NULL);
 
 	// Initialize inventory animation
 	const BAFile *f = _vm->_iconsArchive->getFile(13);
 	Animation *inventoryAnim = _vm->_anims->addAnimation(kInventorySprite, 255, false);
 	Sprite *inventorySprite = new Sprite(f->_data, f->_length, 0, 0, true);
-	inventoryAnim->addFrame(inventorySprite);
+	inventoryAnim->addFrame(inventorySprite, NULL);
 	inventoryAnim->setRelative((kScreenWidth - inventorySprite->getWidth()) / 2,
 	                           (kScreenHeight - inventorySprite->getHeight()) / 2);
 
 	for (uint i = 0; i < kDialogueLines; ++i) {
 		_dialogueAnims[i] = _vm->_anims->addText(kDialogueLinesID - i, true);
 		Text *dialogueLine = new Text("", _vm->_smallFont, kLineInactiveColour, 0, 0);
-		_dialogueAnims[i]->addFrame(dialogueLine);
+		_dialogueAnims[i]->addFrame(dialogueLine, NULL);
 
 		_dialogueAnims[i]->setZ(254);
 		_dialogueAnims[i]->setRelative(1,
@@ -644,7 +644,7 @@ void Game::putItem(int itemID, int position) {
 		anim = _vm->_anims->addItem(anim_id);
 		const BAFile *img = _vm->_itemImagesArchive->getFile(2 * itemID);
 		Sprite *sp = new Sprite(img->_data, img->_length, 0, 0, true);
-		anim->addFrame(sp);
+		anim->addFrame(sp, NULL);
 	}
 	Drawable *frame = anim->getFrame();
 
@@ -1117,7 +1117,7 @@ void Game::loadRoom(int roomNum) {
         delete[] wlk;
 
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
-	map->addFrame(ov);
+	map->addFrame(ov, NULL);
 }
 
 int Game::loadAnimation(uint animNum, uint z) {
@@ -1145,8 +1145,8 @@ int Game::loadAnimation(uint animNum, uint z) {
 		uint scaledWidth = animationReader.readUint16LE();
 		uint scaledHeight = animationReader.readUint16LE();
 		byte mirror = animationReader.readByte();
-		/* uint sample = */ animationReader.readUint16LE();
-		/* uint freq = */ animationReader.readUint16LE();
+		uint sample = animationReader.readUint16LE();
+		uint freq = animationReader.readUint16LE();
 		uint delay = animationReader.readUint16LE();
 
 		const BAFile *spriteFile = _vm->_spritesArchive->getFile(spriteNum);
@@ -1171,7 +1171,9 @@ int Game::loadAnimation(uint animNum, uint z) {
 
 		sp->setDelay(delay * 10);
 
-		anim->addFrame(sp);
+		const SoundSample *sam = _vm->_soundsArchive->getSample(sample, freq);
+
+		anim->addFrame(sp, sam);
 	}
 
 	return animNum;
@@ -1282,6 +1284,8 @@ void Game::enterNewRoom(bool force_reload) {
 	_vm->_paletteArchive->clearCache();
 	_vm->_animationsArchive->clearCache();
 	_vm->_walkingMapsArchive->clearCache();
+	_vm->_soundsArchive->clearCache();
+	_vm->_dubbingArchive->clearCache();
 
 	_vm->_screen->clearScreen();
 

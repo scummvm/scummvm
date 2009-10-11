@@ -268,6 +268,7 @@ void BArchive::closeArchive(void) {
  * @return Pointer to a BAFile coresponding to the opened file or NULL (on failure)
  *
  * Loads individual BAR files from an archive to memory on demand.
+ * Should not be called directly.
  */
 BAFile *BArchive::loadFileBAR(uint i) {
 	Common::File f;
@@ -305,8 +306,7 @@ BAFile *BArchive::loadFileBAR(uint i) {
  * @return Pointer to a BAFile coresponding to the opened file or NULL (on failure)
  *
  * Loads individual DFW files from an archive to memory on demand.
- * Should not be called directly. Instead, one should access files
- * through the operator[] interface.
+ * Should not be called directly.
  */
 BAFile *BArchive::loadFileDFW(uint i) {
 	Common::File f;

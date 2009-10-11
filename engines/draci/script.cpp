@@ -569,7 +569,7 @@ void Script::icoStat(Common::Queue<int> &params) {
 			Animation *itemAnim = _vm->_anims->addItem(kInventoryItemsID - itemID);
 			const BAFile *f = _vm->_itemImagesArchive->getFile(2 * itemID);
 			Sprite *sp = new Sprite(f->_data, f->_length, 0, 0, true);
-			itemAnim->addFrame(sp);
+			itemAnim->addFrame(sp, NULL);
 		}
 
 		_vm->_game->setCurrentItem(itemID);

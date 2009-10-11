@@ -162,6 +162,16 @@ int DraciEngine::init() {
 		return Common::kUnknownError;
 	}
 
+	if (!_soundsArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening sounds archive failed");
+		return Common::kUnknownError;
+	}
+
+	if (!_dubbingArchive->isOpen()) {
+		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening dubbing archive failed");
+		return Common::kUnknownError;
+	}
+
 	_showWalkingMap = false;
 
 	// Basic archive test

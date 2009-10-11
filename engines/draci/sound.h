@@ -37,6 +37,7 @@ namespace Draci {
 struct SoundSample {
 	uint _offset;
 	uint _length;
+	uint _frequency;
 	byte* _data;
 
 	void close(void) {
@@ -68,7 +69,7 @@ public:
 
 	void clearCache();
 
-	const SoundSample *getSample(uint i);
+	const SoundSample *getSample(uint i, uint freq);
 
 private:
 	Common::String _path;    ///< Path to file

@@ -191,8 +191,9 @@ double Animation::getScaleY() const {
 	return _displacement.extraScaleY;
 }
 
-void Animation::addFrame(Drawable *frame) {
+void Animation::addFrame(Drawable *frame, const SoundSample *sample) {
 	_frames.push_back(frame);
+	_samples.push_back(sample);
 }
 
 int Animation::getIndex() const {
@@ -246,6 +247,7 @@ void Animation::deleteFrames() {
 		delete _frames[i];
 		_frames.pop_back();
 	}
+	_samples.clear();
 }
 
 void Animation::stopAnimation() {
@@ -382,7 +384,7 @@ void AnimationManager::addOverlay(Drawable *overlay, uint z) {
 	anim->setID(kOverlayImage);
 	anim->setZ(z);
 	anim->setPlaying(true);
-	anim->addFrame(overlay);
+	anim->addFrame(overlay, NULL);
 
 	insertAnimation(anim);
 }

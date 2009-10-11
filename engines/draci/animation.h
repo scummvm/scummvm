@@ -27,6 +27,7 @@
 #define DRACI_ANIMATION_H
 
 #include "draci/sprite.h"
+#include "draci/sound.h"
 
 namespace Draci {
 
@@ -76,7 +77,7 @@ public:
 	void nextFrame(bool force = false);
 	void drawFrame(Surface *surface);
 
-	void addFrame(Drawable *frame);
+	void addFrame(Drawable *frame, const SoundSample *sample);
 	Drawable *getFrame(int frameNum = kCurrentFrame);
 	void setCurrentFrame(uint frame);
 	uint currentFrameNum() const;
@@ -140,6 +141,11 @@ private:
 	/** Array of frames of the animation.  The animation object owns these pointers.
 	 */
 	Common::Array<Drawable *> _frames;
+	/** Array of samples played during the animation.  The animation
+	 * object doesn't own these pointers, but they are stored in the
+	 * cache.
+	 */
+	Common::List<const SoundSample *> _samples;
 
 	AnimationCallback _callback;
 

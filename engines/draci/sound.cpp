@@ -74,6 +74,7 @@ void SoundArchive::openArchive(const Common::String &path) {
 		for (uint i = 0; i < _sampleCount; ++i) {
 			_samples[i]._offset = sampleStarts[i];
 			_samples[i]._length = sampleStarts[i+1] - sampleStarts[i];
+			_samples[i]._frequency = 0;	// set in getSample()
 			_samples[i]._data = NULL;
 		}
 		if (_samples[_sampleCount-1]._offset + _samples[_sampleCount-1]._length != totalLength &&
@@ -128,7 +129,7 @@ void SoundArchive::clearCache() {
  *
  * Loads individual samples from an archive to memory on demand.
  */
-const SoundSample *SoundArchive::getSample(uint i) {
+const SoundSample *SoundArchive::getSample(uint i, uint freq) {
 	// Check whether requested file exists
 	if (i >= _sampleCount) {
 		return NULL;
@@ -140,16 +141,16 @@ const SoundSample *SoundArchive::getSample(uint i) {
 	// Check if file has already been opened and return that
 	if (_samples[i]._data) {
 		debugC(2, kDraciArchiverDebugLevel, "Success");
-		return _samples + i;
+	} else {
+		// Read in the file (without the file header)
+		_f->seek(_samples[i]._offset);
+		_samples[i]._data = new byte[_samples[i]._length];
+		_f->read(_samples[i]._data, _samples[i]._length);
+
+		debugC(3, kDraciArchiverDebugLevel, "Cached sample %d from archive %s",
+			i, _path.c_str());
 	}
-
-	// Read in the file (without the file header)
-	_f->seek(_samples[i]._offset);
-	_samples[i]._data = new byte[_samples[i]._length];
-	_f->read(_samples[i]._data, _samples[i]._length);
-
-	debugC(3, kDraciArchiverDebugLevel, "Cached sample %d from archive %s",
-		i, _path.c_str());
+	_samples[i]._frequency = freq;
 
 	return _samples + i;
 }
