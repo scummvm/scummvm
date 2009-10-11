@@ -446,7 +446,7 @@ void GUI::checkTextfieldInput() {
 	_vm->_system->delayMillis(3);
 }
 
-void GUI::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2, Screen::FontId font) {
+void GUI::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 c2) {
 	_text->printText(str, x, y, c0, c1, c2);
 }
 

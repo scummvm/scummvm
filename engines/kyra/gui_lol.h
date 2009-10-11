@@ -116,7 +116,7 @@ private:
 
 	void setupSavegameNames(Menu &menu, int num);
 
-	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font=Screen::FID_9_FNT);
+	void printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags);
 	int getMenuCenterStringX(const char *str, int x1, int x2);
 
 	int getInput();

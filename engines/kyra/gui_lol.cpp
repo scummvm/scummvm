@@ -2598,7 +2598,7 @@ void GUI_LoL::setupSavegameNames(Menu &menu, int num) {
 	}
 }
 
-void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags, Screen::FontId font) {
+void GUI_LoL::printMenuText(const char *str, int x, int y, uint8 c0, uint8 c1, uint8 flags) {
 	_screen->fprintString("%s", x, y, c0, c1, _vm->gameFlags().use16ColorMode ? (flags & 3) : flags , str);
 }
 
