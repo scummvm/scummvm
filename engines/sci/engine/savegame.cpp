@@ -317,14 +317,7 @@ void LocalVariables::saveLoadWithSerializer(Common::Serializer &s) {
 void Object::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(_flags);
 	sync_reg_t(s, _pos);
-	int varCount;
-	if (s.isLoading()) {
-		s.syncAsSint32LE(varCount);
-		_variables.resize(varCount);
-	} else {
-		varCount = _variables.size();
-		s.syncAsSint32LE(varCount);
-	}
+	s.skip(4, VER(9), VER(12));			// OBSOLETE: Used to be variable_names_nr
 	s.syncAsSint32LE(_methodCount);		// that's actually a uint16
 
 	syncArray<reg_t>(s, _variables);
