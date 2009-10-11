@@ -89,7 +89,6 @@ void SciGuiPicture::drawSci11Vga() {
 	int cel_headerPos = READ_LE_UINT16(inbuffer + 32);
 	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
 	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
-	byte *view = NULL;
 	GuiPalette palette;
 
 	// Create palette and set it
