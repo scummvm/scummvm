@@ -149,7 +149,6 @@ int TextDisplayer::buildMessageSubstrings(const char *str) {
 
 int TextDisplayer::getWidestLineWidth(int linesCount) {
 	int maxWidth = 0;
-	Screen::FontId curFont = _screen->setFont(Screen::FID_8_FNT);
 	_screen->_charWidth = -2;
 	for (int l = 0; l < linesCount; ++l) {
 		int w = _screen->getTextWidth(&_talkSubstrings[l * TALK_SUBSTRING_LEN]);
@@ -157,7 +156,6 @@ int TextDisplayer::getWidestLineWidth(int linesCount) {
 			maxWidth = w;
 		}
 	}
-	_screen->setFont(curFont);
 	_screen->_charWidth = 0;
 	return maxWidth;
 }

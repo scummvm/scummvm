@@ -682,7 +682,6 @@ int GUI_LoK::loadGameMenu(Button *button) {
 }
 
 void GUI_LoK::redrawTextfield() {
-	Screen::FontId of = _screen->setFont(Screen::FID_8_FNT);
 	_screen->fillRect(38, 91, 287, 102, _vm->gameFlags().platform == Common::kPlatformAmiga ? 18 : 250);
 	_text->printText(_savegameName, 38, 92, 253, 0, 0);
 	
@@ -692,7 +691,6 @@ void GUI_LoK::redrawTextfield() {
 	_screen->_charWidth = 0;
 
 	_screen->updateScreen();
-	_screen->setFont(of);
 }
 
 void GUI_LoK::updateSavegameString() {
