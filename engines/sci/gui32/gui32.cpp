@@ -615,10 +615,10 @@ void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, i
 
 void SciGui32::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
-	int16 textSize = strlen(text);
+	int16 textLength = strlen(text);
 
-	if (cursorPos > textSize)
-		cursorPos = textSize;
+	if (cursorPos > textLength)
+		cursorPos = textLength;
 
 //		update_cursor_limits(&s->save_dir_edit_offset, &cursor, max);	FIXME: get rid of this?
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_edit_control(s->port, obj, area, text, fontId, (unsigned)cursorPos, (int8)hilite));
