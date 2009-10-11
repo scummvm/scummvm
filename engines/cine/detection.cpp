@@ -288,6 +288,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		0,
 	},
 
+#if 0
 	{
 		{
 			"os",
@@ -545,6 +546,7 @@ static const CINEGameDescription gameDescriptions[] = {
 		GType_OS,
 		0,
 	},
+#endif
 
 	{ AD_TABLE_END_MARKER, 0, 0 }
 };
@@ -581,7 +583,11 @@ public:
 	}
 
 	virtual const char *getOriginalCopyright() const {
+#if 0
 		return "Future Wars & Operation Stealth (C) Delphine Software";
+#else
+		return "Future Wars (C) Delphine Software";
+#endif
 	}
 
 	virtual bool createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const;
