@@ -2217,34 +2217,14 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 	Palette **tpal3 = &fadeTab[2];
 	Palette **tpal4 = 0;
 
-	if (_flags.use16ColorMode) {		
-		const uint8 *s = _res->fileData("LITEPAL1.COL", 0);
-		(*tpal1)->copy(s, 0, 16);
-		delete[] s;
-	} else {
-		_screen->loadPalette("LITEPAL1.COL", **tpal1);
-	}
-
+	int len = _flags.use16ColorMode ? 48 : 768;
+	_res->loadFileToBuf("LITEPAL1.COL", (*tpal1)->getData(), len);
 	tpal2 = _screen->generateFadeTable(tpal3, 0, *tpal1, 21);
 
-	if (_flags.use16ColorMode) {	
-		const uint8 *s = _res->fileData("LITEPAL2.COL", 0);
-		(*tpal2)->copy(s, 0, 16);
-		delete[] s;
-	} else {
-		_screen->loadPalette("LITEPAL2.COL", **tpal2);
-	}
-
+	_res->loadFileToBuf("LITEPAL2.COL", (*tpal2)->getData(), len);
 	tpal4 = tpal2++;
 
-	if (_flags.use16ColorMode) {		
-		const uint8 *s = _res->fileData("LITEPAL3.COL", 0);
-		(*tpal1)->copy(s, 0, 16);
-		delete[] s;
-	} else {
-		_screen->loadPalette("LITEPAL3.COL", **tpal1);
-	}
-
+	_res->loadFileToBuf("LITEPAL3.COL", (*tpal1)->getData(), len);
 	_screen->generateFadeTable(tpal2, *tpal4, *tpal1, 4);
 
 	for (int i = 0; i < 21; i++) {
