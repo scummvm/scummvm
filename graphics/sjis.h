@@ -91,7 +91,7 @@ public:
 	/**
 	 * Returns the width of a specific character.
 	 */
-	virtual uint getCharWidth(uint16 ch) const { return getMaxFontWidth(); }
+	virtual uint getCharWidth(uint16 ch) const = 0;
 
 	/**
 	 * Draws a SJIS encoded character on the given surface.
@@ -118,19 +118,20 @@ public:
 };
 
 /**
- * A base class to render 16x16 monochrome SJIS fonts.
+ * A base class to render 16x16 (2 byte chars), 8x16 (1 byte chars) monochrome SJIS fonts.
  */
-class FontSJIS16x16 : public FontSJIS {
+class FontSJISBase : public FontSJIS {
 public:
-	FontSJIS16x16() : _outlineEnabled(false) {}
+	FontSJISBase() : _outlineEnabled(false) {}
 
 	void enableOutline(bool enable) { _outlineEnabled = enable; }
 
 	uint getFontHeight() const { return _outlineEnabled ? 18 : 16; }
 	uint getMaxFontWidth() const { return _outlineEnabled ? 18 : 16; }
 
-	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
+	uint getCharWidth(uint16 ch) const;
 
+	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 private:
 	template<typename Color>
 	void drawCharInternOutline(const uint16 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
@@ -138,40 +139,48 @@ private:
 	template<typename Color>
 	void drawCharIntern(const uint16 *glyph, uint8 *dst, int pitch, Color c1) const;
 
+	template<typename Color>
+	void drawCharInternOutline(const uint8 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
+
+	template<typename Color>
+	void drawCharIntern(const uint8 *glyph, uint8 *dst, int pitch, Color c1) const;
 protected:
 	bool _outlineEnabled;
 
+	bool is8x16(uint16 ch) const;
+
 	virtual const uint16 *getCharData(uint16 c) const = 0;
+	virtual const uint8 *getCharData8x16(uint16 c) const = 0;
 };
 
 /**
  * FM-TOWNS ROM based SJIS compatible font.
  *
  * This is used in KYRA and SCI.
- *
- * TODO: This implementation does not support any 8x16 ASCII or half-width katakana chars.
  */
-class FontTowns : public FontSJIS16x16 {
+class FontTowns : public FontSJISBase {
 public:
 	/**
 	 * Loads the ROM data from "FMT_FNT.ROM".
 	 */
 	bool loadData();
-
 private:
 	enum {
-		kFontRomSize = 262144
+		kFont16x16Chars = 7808,
+		kFont8x16Chars = 256
 	};
 
-	uint16 _fontData[kFontRomSize / 2];
+	uint16 _fontData16x16[kFont16x16Chars * 16];
+	uint8 _fontData8x16[kFont8x16Chars * 16];
 
 	const uint16 *getCharData(uint16 c) const;
+	const uint8 *getCharData8x16(uint16 c) const;
 };
 
 /**
  * Our custom SJIS FNT.
  */
-class FontSjisSVM : public FontSJIS16x16 {
+class FontSjisSVM : public FontSJISBase {
 public:
 	FontSjisSVM() : _fontData16x16(0), _fontData16x16Size(0), _fontData8x16(0), _fontData8x16Size(0) {}
 	~FontSjisSVM() { delete[] _fontData16x16; delete[] _fontData8x16; }
@@ -180,10 +189,6 @@ public:
 	 * Load the font data from "SJIS.FNT".
 	 */
 	bool loadData();
-
-	void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
-
-	uint getCharWidth(uint16 ch) const;
 private:
 	uint16 *_fontData16x16;
 	uint _fontData16x16Size;
@@ -191,16 +196,8 @@ private:
 	uint8 *_fontData8x16;
 	uint _fontData8x16Size;
 
-	bool is8x16(uint16 ch) const;
-
 	const uint16 *getCharData(uint16 c) const;
 	const uint8 *getCharData8x16(uint16 c) const;
-
-	template<typename Color>
-	void drawCharInternOutline(const uint8 *glyph, uint8 *dst, int pitch, Color c1, Color c2) const;
-
-	template<typename Color>
-	void drawCharIntern(const uint8 *glyph, uint8 *dst, int pitch, Color c1) const;
 };
 
 // TODO: Consider adding support for PC98 ROM
