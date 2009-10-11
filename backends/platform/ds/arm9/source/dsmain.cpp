@@ -3041,7 +3041,7 @@ void dsExceptionHandler() {
 
 	consolePrintf("  pc: %08X addr: %08X\n\n",codeAddress,exceptionAddress);
 
-	while(1);
+//	while(1);
 
 	int i;
 	for ( i=0; i < 8; i++ ) {
@@ -3155,7 +3155,7 @@ int main(void) {
 	consolePrintf("-------------------------------\n");
 	consolePrintf("ScummVM DS\n");
 	consolePrintf("Ported by Neil Millstone\n");
-	consolePrintf("Version 1.0.0 beta3 ");
+	consolePrintf("Version 1.0.0 ");
 #if defined(DS_BUILD_A)
 	consolePrintf("build A\n");
 	consolePrintf("Lucasarts SCUMM games (SCUMM)\n");
