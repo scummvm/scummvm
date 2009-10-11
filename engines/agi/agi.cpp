@@ -23,6 +23,10 @@
  *
  */
 
+#ifdef __DS__
+#include "dsmain.h"
+#endif
+
 #include "common/md5.h"
 #include "common/events.h"
 #include "common/file.h"
@@ -44,6 +48,7 @@
 #include "agi/keyboard.h"
 #include "agi/menu.h"
 #include "agi/sound.h"
+
 
 namespace Agi {
 
@@ -408,6 +413,8 @@ int AgiEngine::agiInit() {
 	// Normally, the engine loads the predictive text dictionary when the predictive dialog
 	// is shown.  On the DS version, the word completion feature needs the dictionary too.
 	loadDict();
+
+	DS::setControls("agi");
 #endif
 
 	_egoHoldKey = false;
