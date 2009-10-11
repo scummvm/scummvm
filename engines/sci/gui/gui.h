@@ -73,7 +73,7 @@ public:
 	virtual void drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite);
 	virtual void drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite);
 	virtual void drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool hilite);
-	virtual void drawControlList(Common::Rect rect, reg_t obj, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool hilite);
+	virtual void drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite);
 	virtual void editControl(reg_t controlObject, reg_t eventObject);
 
 	virtual void graphFillBoxForeground(Common::Rect rect);

@@ -66,6 +66,7 @@ public:
 	void Move(int16 left, int16 top);
 	void OpenPort(GuiPort *port);
 	void PenColor(int16 color);
+	void BackColor(int16 color);
 	void PenMode(int16 mode);
 	void TextFace(int16 textFace);
 	int16 GetPointSize(void);
@@ -107,6 +108,7 @@ public:
 	
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
+	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
 
 	uint16 onControl(uint16 screenMask, Common::Rect rect);
 

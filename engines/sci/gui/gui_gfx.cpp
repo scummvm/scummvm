@@ -137,6 +137,10 @@ void SciGuiGfx::PenColor(int16 color) {
 	_curPort->penClr = color;
 }
 
+void SciGuiGfx::BackColor(int16 color) {
+	_curPort->backClr = color;
+}
+
 void SciGuiGfx::PenMode(int16 mode) {
 	_curPort->penMode = mode;
 }
@@ -739,6 +743,57 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		//if (_picNotValid == 0)
 		//	_gfx->ShowBits(rect, 1);
 	}
+}
+
+const char controlListUpArrow[2]	= { 0x18, 0 };
+const char controlListDownArrow[2]	= { 0x19, 0 };
+
+void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
+	Common::Rect workerRect = rect;
+	GuiResourceId oldFontId = GetFontId();
+	int16 oldPenColor = _curPort->penClr;
+	uint16 fontSize = 0;
+	int16 i;
+	const char *listEntry;
+	int16 listEntryLen;
+
+	// draw basic window
+	EraseRect(workerRect);
+	workerRect.grow(1); FrameRect(workerRect);
+	// draw UP/DOWN arrows
+	workerRect = rect;
+	TextBox(controlListUpArrow, 0, workerRect, 1, 0);
+	workerRect.top = workerRect.bottom - 10;
+	TextBox(controlListDownArrow, 0, workerRect, 1, 0);
+
+	// Draw inner lines
+	workerRect = rect;
+	workerRect.top = rect.top + 10;
+	workerRect.bottom = rect.bottom - 10;
+	FrameRect(workerRect);
+	workerRect.grow(-1);
+	
+	SetFont(fontId);
+	fontSize = _curPort->fontHeight;
+	PenColor(_curPort->penClr); BackColor(_curPort->backClr);
+	workerRect.bottom = workerRect.top + fontSize;
+
+	// Write actual text
+	for (i = 0; i < count; i++) {
+		EraseRect(workerRect);
+		listEntry = entries[i];
+		if (listEntry[0]) {
+			MoveTo(workerRect.left, workerRect.top + 1);
+			listEntryLen = strlen(listEntry);
+			DrawText(listEntry, 0, MIN(maxChars, listEntryLen), oldFontId, oldPenColor);
+			if ((!isAlias) && (i == cursorPos)) {
+				InvertRect(workerRect);
+			}
+		}
+		workerRect.translate(0, fontSize);
+	}
+
+	SetFont(oldFontId);
 }
 
 uint16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {

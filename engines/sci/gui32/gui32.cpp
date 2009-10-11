@@ -634,7 +634,7 @@ void SciGui32::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewI
 	if (!s->pic_not_valid) FULL_REDRAW();
 }
 
-void SciGui32::drawControlList(Common::Rect rect, reg_t obj, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool hilite) {
+void SciGui32::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
 	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_list_control(s->port, obj, area, fontId, entries, count, upperPos, cursorPos, (int8)hilite));

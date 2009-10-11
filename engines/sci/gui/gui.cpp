@@ -360,7 +360,15 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 	_screen->copyToScreen();
 }
 
-void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool hilite) {
+void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
+	if (!hilite) {
+		rect.grow(1);
+		_gfx->drawListControl(rect, obj, maxChars, count, entries, fontId, upperPos, cursorPos, isAlias);
+		if (isAlias && (style & 8)) {
+			_gfx->FrameRect(rect);
+		}
+		_screen->copyToScreen();
+	}
 }
 
 void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
