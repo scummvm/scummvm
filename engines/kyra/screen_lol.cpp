@@ -939,16 +939,17 @@ bool Screen_LoL::fadePaletteStep(uint8 *pal1, uint8 *pal2, uint32 elapsedTime, u
 }
 
 Palette **Screen_LoL::generateFadeTable(Palette **dst, Palette *src1, Palette *src2, int numTabs) {
-	if (!src1)
+	int len = _use16ColorMode ? 48 : 768;
+	if (!src1) 
 		src1 = _screenPalette;
-
+	
 	uint8 *p1 = (*dst++)->getData();
 	uint8 *p2 = src1->getData();
 	uint8 *p3 = src2->getData();
 	uint8 *p4 = p1;
 	uint8 *p5 = p2;
 
-	for (int i = 0; i < 768; i++) {
+	for (int i = 0; i < len; i++) {
 		int8 val = (int8)*p3++ - (int8)*p2++;
 		*p4++ = (uint8)val;
 	}
@@ -962,13 +963,13 @@ Palette **Screen_LoL::generateFadeTable(Palette **dst, Palette *src1, Palette *s
 		t += d;
 		p4 = (*dst++)->getData();
 
-		for (int ii = 0; ii < 768; ii++) {
+		for (int ii = 0; ii < len; ii++) {
 			int16 val = (((int8)*p3++ * t) >> 8) + (int8)*p2++;
 			*p4++ = (uint8)val;
 		}
 	}
 
-	memcpy(p1, p5, 768);
+	memcpy(p1, p5, len);
 	(*dst)->copy(*src2);
 
 	return ++dst;

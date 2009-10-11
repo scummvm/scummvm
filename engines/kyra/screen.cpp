@@ -1361,7 +1361,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		&Screen::drawShapePlotType13,		// used by Kyra 1
 		&Screen::drawShapePlotType14,		// used by Kyra 1 (invisibility)
 		&Screen::drawShapePlotType11_15,	// used by Kyra 1 (invisibility)
-		&Screen::drawShapePlotType16,	// used by LoL PC-98/16 Colors (teleporters),
+		&Screen::drawShapePlotType16,		// used by LoL PC-98/16 Colors (teleporters),
 		0, 0, 0,
 		&Screen::drawShapePlotType20,		// used by LoL (heal spell effect)
 		&Screen::drawShapePlotType21,		// used by LoL (white tower spirits)

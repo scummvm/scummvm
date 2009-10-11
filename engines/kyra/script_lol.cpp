@@ -2027,7 +2027,7 @@ int LoLEngine::olol_findInventoryItem(EMCState *script) {
 
 int LoLEngine::olol_restoreFadePalette(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_restoreFadePalette(%p)", (const void *)script);
-	_screen->getPalette(0).copy(_screen->getPalette(1), 0, 128);
+	_screen->getPalette(0).copy(_screen->getPalette(1), 0, _flags.use16ColorMode ? 16 : 128);
 	_screen->fadePalette(_screen->getPalette(0), 10);
 	_screen->_fadeFlag = 0;
 	return 1;
@@ -2210,17 +2210,41 @@ int LoLEngine::olol_restoreMagicShroud(EMCState *script) {
 
 	Palette *fadeTab[28];
 	for (int i = 0; i < 28; i++)
-		fadeTab[i] = new Palette(256);
+		fadeTab[i] = new Palette(_flags.use16ColorMode ? 16 : 256);
 
 	Palette **tpal1 = &fadeTab[0];
 	Palette **tpal2 = &fadeTab[1];
 	Palette **tpal3 = &fadeTab[2];
 	Palette **tpal4 = 0;
-	_screen->loadPalette("LITEPAL1.COL", **tpal1);
+
+	if (_flags.use16ColorMode) {		
+		const uint8 *s = _res->fileData("LITEPAL1.COL", 0);
+		(*tpal1)->copy(s, 0, 16);
+		delete[] s;
+	} else {
+		_screen->loadPalette("LITEPAL1.COL", **tpal1);
+	}
+
 	tpal2 = _screen->generateFadeTable(tpal3, 0, *tpal1, 21);
-	_screen->loadPalette("LITEPAL2.COL", **tpal2);
+
+	if (_flags.use16ColorMode) {	
+		const uint8 *s = _res->fileData("LITEPAL2.COL", 0);
+		(*tpal2)->copy(s, 0, 16);
+		delete[] s;
+	} else {
+		_screen->loadPalette("LITEPAL2.COL", **tpal2);
+	}
+
 	tpal4 = tpal2++;
-	_screen->loadPalette("LITEPAL3.COL", **tpal1);
+
+	if (_flags.use16ColorMode) {		
+		const uint8 *s = _res->fileData("LITEPAL3.COL", 0);
+		(*tpal1)->copy(s, 0, 16);
+		delete[] s;
+	} else {
+		_screen->loadPalette("LITEPAL3.COL", **tpal1);
+	}
+
 	_screen->generateFadeTable(tpal2, *tpal4, *tpal1, 4);
 
 	for (int i = 0; i < 21; i++) {
