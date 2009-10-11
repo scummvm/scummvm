@@ -102,7 +102,7 @@ bool Screen::init() {
 			if (!font)
 				error("Could not load any SJIS font, neither the original nor ScummVM's 'SJIS.FNT'");
 
-			_fonts[FID_SJIS_FNT] = new SJISFont(font, _sjisInvisibleColor, _use16ColorMode);
+			_fonts[FID_SJIS_FNT] = new SJISFont(this, font, _sjisInvisibleColor, _use16ColorMode, !_use16ColorMode);
 		}
 	}
 
@@ -1135,7 +1135,6 @@ int Screen::getFontWidth() const {
 
 int Screen::getCharWidth(uint16 c) const {
 	if (isSJISChar(c))
-		// _charWidth does not apply to sjis (rom) fonts 
 		return _fonts[FID_SJIS_FNT]->getCharWidth(c);
 	else
 		return _fonts[_currentFont]->getCharWidth(c) + _charWidth;
@@ -1168,10 +1167,6 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 	cmap[0] = color2;
 	cmap[1] = color1;
 	setTextColor(cmap, 0, 1);
-
-	/*FontId oldFont = FID_NUM;
-	if (requiresSJISFont(str))
-		oldFont = setFont(FID_SJIS_FNT);*/
 
 	const uint8 charHeightFnt = getFontHeight();
 
@@ -1207,9 +1202,6 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 			x += charWidth;
 		}
 	}
-
-	/*if (oldFont != FID_NUM)
-		setFont(oldFont);*/
 }
 
 bool Screen::isSJISChar(uint16 c) const {
@@ -1220,18 +1212,6 @@ bool Screen::isSJISChar(uint16 c) const {
 		return true;
 	else if ((c & 0xFF) >= 0xA1 && (c & 0xFF) <= 0xDF)
 		return true;
-
-	return false;
-}
-
-bool Screen::requiresSJISFont(const char *s) const {
-	if (!_useSJIS)
-		return false;
-
-	while (*s) {
-		if (isSJISChar(fetchChar(s)))
-			return true;
-	}
 
 	return false;
 }
@@ -3341,11 +3321,15 @@ void AMIGAFont::unload() {
 	memset(_chars, 0, sizeof(_chars));
 }
 
-SJISFont::SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color)
-    : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color) {
+SJISFont::SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize)
+    : _colorMap(0), _font(font), _invisColor(invisColor), _is16Color(is16Color), _screen(s) {
 	assert(_font);
-	_font->enableOutline(!is16Color);
-	_font->toggleCharSize(is16Color);
+
+	_font->enableOutline(outlineSize);
+
+	_sjisWidth = _font->getMaxFontWidth() >> 1;
+	_fontHeight = _font->getFontHeight() >> 1;
+	_asciiWidth = _font->getCharWidth('a');
 }
 
 void SJISFont::unload() {
@@ -3354,15 +3338,18 @@ void SJISFont::unload() {
 }
 
 int SJISFont::getHeight() const {
-	return _font->getFontHeight() >> 1;
+	return _fontHeight;
 }
 
 int SJISFont::getWidth() const {
-	return _font->getMaxFontWidth() >> 1;
+	return _sjisWidth;
 }
 
 int SJISFont::getCharWidth(uint16 c) const {
-	return _font->getCharWidth(c) >> 1;
+	if (_screen->isSJISChar(c))
+		return _sjisWidth;
+	else
+		return _asciiWidth;
 }
 
 void SJISFont::setColorMap(const uint8 *src) {

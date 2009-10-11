@@ -72,18 +72,11 @@ public:
 
 	/**
 	 * Enable outline drawing.
+	 *
+	 * After changing outline state, getFontHeight and getMaxFontWidth / getCharWidth might return
+	 * different values!
 	 */
 	virtual void enableOutline(bool enable) {}
-
-	/**
-	 * Toggle values returned by getFontHeight and getMaxFontWidth / getCharWidth.
-	 * These methods have to return different values when emulating	PC-98 text mode.
-	 * We cannot simply match this with enableOutline(), since there are situations
-	 * where outlines get disabled in graphic mode, too. In these admittedly rare
-	 * cases (Kyra 1: Brynn's note, Kyra 2: spell book) the values returned by
-	 * getFontHeight and getMaxFontWidth / getCharWidth have to remain the same.
-	 */
-	virtual void toggleCharSize(bool textMode) {}
 
 	/**
 	 * Returns the height of the font.
@@ -129,13 +122,12 @@ public:
  */
 class FontSJIS16x16 : public FontSJIS {
 public:
-	FontSJIS16x16() : _outlineEnabled(false), _pc98TextModeCharSize(false) {}
+	FontSJIS16x16() : _outlineEnabled(false) {}
 
 	void enableOutline(bool enable) { _outlineEnabled = enable; }
-	void toggleCharSize(bool textMode) { _pc98TextModeCharSize = textMode; }
 
-	uint getFontHeight() const { return _pc98TextModeCharSize ? 16 : 18; }
-	uint getMaxFontWidth() const { return _pc98TextModeCharSize ? 16 : 18; }
+	uint getFontHeight() const { return _outlineEnabled ? 18 : 16; }
+	uint getMaxFontWidth() const { return _outlineEnabled ? 18 : 16; }
 
 	virtual void drawChar(void *dst, uint16 ch, int pitch, int bpp, uint32 c1, uint32 c2) const;
 
@@ -148,7 +140,6 @@ private:
 
 protected:
 	bool _outlineEnabled;
-	bool _pc98TextModeCharSize;
 
 	virtual const uint16 *getCharData(uint16 c) const = 0;
 };

@@ -44,6 +44,7 @@ namespace Kyra {
 typedef Common::Functor0<void> UpdateFunctor;
 
 class KyraEngine_v1;
+class Screen;
 
 struct ScreenDim {
 	uint16 sx;
@@ -176,7 +177,7 @@ private:
  */
 class SJISFont : public Font {
 public:
-	SJISFont(Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color);
+	SJISFont(Screen *s, Graphics::FontSJIS *font, const uint8 invisColor, bool is16Color, bool outlineSize);
 	~SJISFont() { unload(); }
 
 	bool usesOverlay() const { return true; }
@@ -195,6 +196,10 @@ private:
 	Graphics::FontSJIS *_font;
 	const uint8 _invisColor;
 	const bool _is16Color;
+
+	const Screen *_screen;
+	int _sjisWidth, _asciiWidth;
+	int _fontHeight;
 };
 
 /**
@@ -421,6 +426,8 @@ public:
 
 	const ScreenDim *_curDim;
 
+	bool isSJISChar(uint16 ch) const;
+
 	// shape handling
 	uint8 *encodeShape(int x, int y, int w, int h, int flags);
 
@@ -492,8 +499,6 @@ protected:
 	void copyOverlayRegion(int x, int y, int x2, int y2, int w, int h, int srcPage, int dstPage);
 
 	// font/text specific
-	bool isSJISChar(uint16 ch) const;
-	bool requiresSJISFont(const char *s) const;
 	uint16 fetchChar(const char *&s) const;
 	void drawChar(uint16 c, int x, int y);
 
