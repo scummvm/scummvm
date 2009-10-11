@@ -535,7 +535,7 @@ void SciGui::setCursorShape(GuiResourceId cursorId) {
 }
 
 void SciGui::setCursorPos(Common::Point pos) {
-	// FIXME: try to find out if we need to adjust position somehow, currently just forwarding to moveCursor()
+	// No adjustment of position needed, directly forwarding to SciGui::moveCursor()
 	moveCursor(pos);
 }
 
