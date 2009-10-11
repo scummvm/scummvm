@@ -242,6 +242,8 @@ Object *SegManager::getObject(reg_t pos) {
 			CloneTable *ct = (CloneTable *)mobj;
 			if (ct->isValidEntry(pos.offset))
 				obj = &(ct->_table[pos.offset]);
+			else
+				warning("getObject(): Trying to get an invalid object");
 		} else if (mobj->getType() == SEG_TYPE_SCRIPT) {
 			Script *scr = (Script *)mobj;
 			if (pos.offset <= scr->_bufSize && pos.offset >= -SCRIPT_OBJECT_MAGIC_OFFSET
@@ -658,9 +660,9 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
 			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			base_obj = getObject(obj->_variables[5]);
-			obj->variable_names_nr = base_obj->variables_nr;
-			obj->base_obj = base_obj->base_obj;
+			_baseObj = getObject(obj->_variables[5]);
+			obj->variable_names_nr = _baseObj->variables_nr;
+			obj->_baseObj = _baseObj->_baseObj;
 		}
 #endif
 
@@ -769,8 +771,6 @@ void SegManager::reconstructClones() {
 				CloneTable *ct = (CloneTable *)mobj;
 
 				for (uint j = 0; j < ct->_table.size(); j++) {
-					Object *base_obj;
-
 					// Check if the clone entry is used
 					uint entryNum = (uint)ct->first_free;
 					bool isUsed = true;
@@ -786,17 +786,10 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					base_obj = getObject(seeker.getSpeciesSelector());
-					if (!base_obj) {
+					Object *_baseObj = getObject(seeker.getSpeciesSelector());
+					seeker.cloneFromObject(_baseObj);
+					if (!_baseObj)
 						warning("Clone entry without a base class: %d", j);
-						seeker.base_obj = NULL;
-						seeker.base_vars = NULL;
-						seeker.base_method = NULL;
-					} else {
-						seeker.base_obj = base_obj->base_obj;
-						seeker.base_vars = base_obj->base_vars;
-						seeker.base_method = base_obj->base_method;
-					}
 				}	// end for
 			}	// end if
 		}	// end if

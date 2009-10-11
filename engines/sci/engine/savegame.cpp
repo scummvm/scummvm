@@ -613,7 +613,7 @@ void SegManager::reconstructScripts(EngineState *s) {
 		const ObjMap::iterator end = scr->_objects.end();
 		for (it = scr->_objects.begin(); it != end; ++it) {
 			byte *data = scr->_buf + it->_value.getPos().offset;
-			it->_value.base_obj = data;
+			it->_value._baseObj = data;
 		}
 	}
 
@@ -634,24 +634,24 @@ void SegManager::reconstructScripts(EngineState *s) {
 				uint16 *funct_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 6 ));
 				uint16 *prop_area = (uint16 *)(scr->_buf + READ_LE_UINT16( data + 4 ));
 
-				it->_value.base_method = funct_area;
-				it->_value.base_vars = prop_area;
+				it->_value._baseMethod = funct_area;
+				it->_value._baseVars = prop_area;
 			} else {
 				int funct_area = READ_LE_UINT16(data + SCRIPT_FUNCTAREAPTR_OFFSET);
-				Object *base_obj;
+				Object *_baseObj;
 
-				base_obj = s->_segMan->getObject(it->_value.getSpeciesSelector());
+				_baseObj = s->_segMan->getObject(it->_value.getSpeciesSelector());
 
-				if (!base_obj) {
+				if (!_baseObj) {
 					warning("Object without a base class: Script %d, index %d (reg address %04x:%04x",
 						  scr->_nr, i, PRINT_REG(it->_value.getSpeciesSelector()));
 					continue;
 				}
-				it->_value.setVarCount(base_obj->getVarCount());
-				it->_value.base_obj = base_obj->base_obj;
+				it->_value.setVarCount(_baseObj->getVarCount());
+				it->_value._baseObj = _baseObj->_baseObj;
 
-				it->_value.base_method = (uint16 *)(data + funct_area);
-				it->_value.base_vars = (uint16 *)(data + it->_value.getVarCount() * 2 + SCRIPT_SELECTOR_OFFSET);
+				it->_value._baseMethod = (uint16 *)(data + funct_area);
+				it->_value._baseVars = (uint16 *)(data + it->_value.getVarCount() * 2 + SCRIPT_SELECTOR_OFFSET);
 			}
 		}
 	}

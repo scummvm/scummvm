@@ -78,13 +78,13 @@ int propertyOffsetToId(SegManager *segMan, int prop_ofs, reg_t objp) {
 	selectors = obj->getVarCount();
 
 	if (getSciVersion() < SCI_VERSION_1_1)
-		selectoroffset = ((byte *)(obj->base_obj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
+		selectoroffset = ((byte *)(obj->_baseObj)) + SCRIPT_SELECTOR_OFFSET + selectors * 2;
 	else {
 		if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS)) {
 			obj = segMan->getObject(obj->getSuperClassSelector());
-			selectoroffset = (byte *)obj->base_vars;
+			selectoroffset = (byte *)obj->_baseVars;
 		} else
-			selectoroffset = (byte *)obj->base_vars;
+			selectoroffset = (byte *)obj->_baseVars;
 	}
 
 	if (prop_ofs < 0 || (prop_ofs >> 1) >= selectors) {

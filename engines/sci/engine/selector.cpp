@@ -106,12 +106,12 @@ static int _obj_locate_varselector(SegManager *segMan, Object *obj, Selector slc
 	if (getSciVersion() < SCI_VERSION_1_1) {
 		varnum = obj->getVarCount();
 		int selector_name_offset = varnum * 2 + SCRIPT_SELECTOR_OFFSET;
-		buf = obj->base_obj + selector_name_offset;
+		buf = obj->_baseObj + selector_name_offset;
 	} else {
 		if (!(obj->getInfoSelector().offset & SCRIPT_INFO_CLASS))
 			obj = segMan->getObject(obj->getSuperClassSelector());
 
-		buf = (byte *)obj->base_vars;
+		buf = (byte *)obj->_baseVars;
 		varnum = obj->getVariable(1).toUint16();
 	}
 
