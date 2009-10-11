@@ -398,8 +398,7 @@ void LoLEngine::loadLevelGraphics(const char *file, int specialColor, int weight
 	_vcnBlocks = new uint8[vcnLen];
 
 	if (_flags.use16ColorMode) {
-		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
-
+		_res->loadFileToBuf("LOL.NOL", _screen->getPalette(0).getData(), 48);
 	} else {
 		delete[] _vcnShift;
 		_vcnShift = new uint8[tlen];
