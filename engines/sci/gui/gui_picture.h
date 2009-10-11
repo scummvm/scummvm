@@ -44,8 +44,7 @@ private:
 	void initData(GuiResourceId resourceId);
 	void reset();
 	void drawSci11Vga();
-	void decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size);
-	void drawCel(int16 x, int16 y, byte *pdata, int size);
+	void drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY);
 	void drawVectorData(byte *data, int size);
 	bool vectorIsNonOpcode(byte byte);
 	void vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 &y);

@@ -82,14 +82,13 @@ void SciGuiPicture::reset() {
 void SciGuiPicture::drawSci11Vga() {
 	byte *inbuffer = _resource->data;
 	int size = _resource->size;
-	int has_view = READ_LE_UINT16(inbuffer + 4);
-	int vector_data_ptr = READ_LE_UINT16(inbuffer + 16);
-	int vector_size = size - vector_data_ptr;
+	int has_cel = READ_LE_UINT16(inbuffer + 4);
+	int vector_dataPos = READ_LE_UINT16(inbuffer + 16);
+	int vector_size = size - vector_dataPos;
 	int palette_data_ptr = READ_LE_UINT16(inbuffer + 28);
-	int view_data_ptr = READ_LE_UINT16(inbuffer + 32);
-	int view_size = palette_data_ptr - view_data_ptr;
-	int view_rle_ptr = READ_LE_UINT16(inbuffer + view_data_ptr + 24);
-	int view_pixel_ptr = READ_LE_UINT16(inbuffer + view_data_ptr + 28);
+	int cel_headerPos = READ_LE_UINT16(inbuffer + 32);
+	int cel_RlePos = READ_LE_UINT16(inbuffer + cel_headerPos + 24);
+	int cel_LiteralPos = READ_LE_UINT16(inbuffer + cel_headerPos + 28);
 	byte *view = NULL;
 	GuiPalette palette;
 
@@ -98,138 +97,139 @@ void SciGuiPicture::drawSci11Vga() {
 	_palette->set(&palette, 2);
 
 	// display Cel-data
-	if (has_view) {
-		view = (byte *)malloc(size*2); // is there a way to know how much decoded view-data there will be?
-		if (!view) return;
-		memcpy(view, inbuffer + view_data_ptr, 8);
-		decodeRLE(inbuffer + view_rle_ptr, inbuffer + view_pixel_ptr, view + 8, view_size - 8);
-		drawCel(0, 0, view, size * 2);
-		free(view);
+	if (has_cel) {
+		drawCelData(inbuffer, size, cel_headerPos, cel_RlePos, cel_LiteralPos, 0, 0);
 	}
 
 	// process vector data
-	drawVectorData(inbuffer + vector_data_ptr, vector_size);
+	drawVectorData(inbuffer + vector_dataPos, vector_size);
 }
 
-void SciGuiPicture::decodeRLE(byte *rledata, byte *pixeldata, byte *outbuffer, int size) {
-	int pos = 0;
-	byte nextbyte;
-	byte *rd = rledata;
-	byte *ob = outbuffer;
-	byte *pd = pixeldata;
-
-	while (pos < size) {
-		nextbyte = *(rd++);
-		*(ob++) = nextbyte;
-		pos ++;
-		switch (nextbyte&0xC0) {
-		case 0x40 :
-		case 0x00 :
-			memcpy(ob, pd, nextbyte);
-			pd += nextbyte;
-			ob += nextbyte;
-			pos += nextbyte;
-			break;
-		case 0xC0 :
-			break;
-		case 0x80 :
-			nextbyte = *(pd++);
-			*(ob++) = nextbyte;
-			pos ++;
-			break;
-		}
-	}
-}
-
-void SciGuiPicture::drawCel(int16 x, int16 y, byte *pdata, int size) {
-	byte* pend = pdata + size;
-	uint16 width = READ_LE_UINT16(pdata + 0);
-	uint16 height = READ_LE_UINT16(pdata + 2);
-	signed char dx = *(pdata + 4);
-	signed char dy = *(pdata + 5);
+void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rlePos, int literalPos, int16 callerX, int16 callerY) {
+	byte *celBitmap = NULL;
+	byte *ptr = NULL;
+	byte *headerPtr = inbuffer + headerPos;
+	byte *rlePtr = inbuffer + rlePos;
+	byte *literalPtr = inbuffer + literalPos;
+	uint16 width = READ_LE_UINT16(headerPtr + 0);
+	uint16 height = READ_LE_UINT16(headerPtr + 2);
+	int16 displaceX = (signed char)headerPtr[4];
+	int16 displaceY = (unsigned char)headerPtr[5];
 	byte priority = _addToFlag ? _priority : 0;
-	byte clearColor = *(pdata + 6);
-	if (dx || dy || width != 320)
-		warning("embedded picture cel has width=%d dx=%d dy=%d", width, dx, dy);
-	byte *ptr = pdata + 8; // offset to data
-	byte byte, runLength;
-	uint16 lasty;
+	byte clearColor = headerPtr[6];
+	byte curByte, runLength;
+	int16 y, x, lastY;
+	uint16 pixelNr, pixelCount;
 
-	y += _gfx->GetPort()->top;
+	if (displaceX || displaceY || width != 320)
+		error("unsupported embedded cel-data in picture");
 
-	lasty = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom) + _gfx->GetPort()->top;
+	pixelCount = width * height;
+	celBitmap = new byte[pixelCount];
+	if (!celBitmap)
+		error("Unable to allocate temporary memory for picture drawing");
 
-	// FIXME: ...seems we have to unpack the view and then mirror it on demand to screen
-	if (_mirroredFlag)
-		error("mirrored SCI1 picture views are currently not supported");
-
-	switch (_s->resMan->getViewType()) {
-	case kViewVga:
-	case kViewVga11:
-		while (y < lasty && ptr < pend) {
-			byte = *ptr++;
-			runLength = byte & 0x3F; // bytes run length on this step
-			switch (byte & 0xC0) {
-			case 0: // copy bytes as-is but skip transparent ones
-				while (runLength-- && y < lasty && ptr < pend) {
-					if ((byte = *ptr++) != clearColor && priority >= _screen->getPriority(x, y))
-						_screen->putPixel(x, y, 3, byte, priority, 0);
-					x++;
-					if (x >= _screen->_width) {
-						x -= _screen->_width; y++;
-					}
+	// We will unpack cel-data into a temporary buffer and then plot it to screen
+	//  That needs to be done cause a mirrored picture may be requested
+	memset(celBitmap, clearColor, pixelCount);
+	pixelNr = 0;
+	ptr = celBitmap;
+	if (literalPos == 0) {
+		// decompression for data that has only one stream (vecor embedded view data)
+		switch (_s->resMan->getViewType()) {
+		case kViewVga:
+		case kViewVga11:
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte & 0x3F;
+				switch (curByte & 0xC0) {
+				case 0: // copy bytes as-is
+					while (runLength-- && pixelNr < pixelCount)
+						ptr[pixelNr++] = *rlePtr++;
+					break;
+				case 0x80: // fill with color
+					memset(ptr + pixelNr, *rlePtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+					pixelNr += runLength;
+					break;
+				case 0xC0: // fill with transparent
+					pixelNr += runLength;
+					break;
 				}
+			}
+			break;
+		case kViewAmiga:
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				if (curByte & 0x07) { // fill with color
+					runLength = curByte & 0x07;
+					curByte = curByte >> 3;
+					while (runLength-- && pixelNr < pixelCount) {
+						ptr[pixelNr++] = curByte;
+					}
+				} else { // fill with transparent
+					runLength = curByte >> 3;
+					pixelNr += runLength;
+				}
+			}
+			break;
+
+		default:
+			error("Unsupported picture viewtype");
+		}
+	} else {
+		// decompression for data that has two separate streams (probably SCI 1.1 picture)
+		while (pixelNr < pixelCount) {
+			curByte = *rlePtr++;
+			runLength = curByte & 0x3F;
+			switch (curByte & 0xC0) {
+			case 0: // copy bytes as-is
+				while (runLength-- && pixelNr < pixelCount)
+					ptr[pixelNr++] = *literalPtr++;
 				break;
 			case 0x80: // fill with color
-				byte = *ptr++;
-				while (runLength-- && y < lasty) {
-					if (priority >= _screen->getPriority(x, y)) {
-						_screen->putPixel(x, y, 3, byte, priority, 0);
-					}
-					x++;
-					if (x >= _screen->_width) {
-						x -= _screen->_width; y++;
-					}
-				}
+				memset(ptr + pixelNr, *literalPtr++, MIN<uint16>(runLength, pixelCount - pixelNr));
+				pixelNr += runLength;
 				break;
-			case 0xC0: // fill with transparent - skip
-				x += runLength;
-				if (x >= _screen->_width) {
-					x -= _screen->_width; y++;
-				}
+			case 0xC0: // fill with transparent
+				pixelNr += runLength;
 				break;
 			}
 		}
-		break;
-
-	case kViewAmiga:
-		while (y < lasty && ptr < pend) {
-			byte = *ptr++;
-			if (byte & 0x07) {
-				runLength = byte & 0x07;
-				byte = byte >> 3;
-				while (runLength-- && y < lasty) {
-					if (priority >= _screen->getPriority(x, y)) {
-						_screen->putPixel(x, y, 3, byte, priority, 0);
-					}
-					x++;
-					if (x >= _screen->_width) {
-						x -= _screen->_width; y++;
-					}
-				}
-			} else {
-				runLength = byte >> 3;
-				x += runLength;
-				if (x >= _screen->_width) {
-					x -= _screen->_width; y++;
-				}
-			}
-		}
-		break;
-
-	default:
-		error("Unsupported picture viewtype");
 	}
+
+	// Set initial vertical coordinate by using current port
+	y = callerY + _gfx->GetPort()->top;
+	lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom) + _gfx->GetPort()->top;
+	if (callerX != 0)
+		error("drawCelData() called with callerX != 0");
+
+	ptr = celBitmap;
+	if (!_mirroredFlag) {
+		// Draw bitmap to screen
+		x = 0;
+		while (y < lastY) {
+			curByte = *ptr++;
+			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
+				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+			x++;
+			if (x >= _screen->_width) {
+				x -= _screen->_width; y++;
+			}
+		}
+	} else {
+		// Draw bitmap to screen (mirrored)
+		x = _screen->_width - 1;
+		while (y < lastY) {
+			curByte = *ptr++;
+			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
+				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+			if (x == 0) {
+				x = _screen->_width; y++;
+			}
+			x--;
+		}
+	}
+	delete celBitmap;
 }
 
 enum {
@@ -451,7 +451,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_EGA_EMBEDDED_VIEW:
 					vectorGetAbsCoords(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
-					drawCel(x, y, data + curPos, size);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
 				case PIC_OPX_EGA_SET_PRIORITY_TABLE:
@@ -479,7 +479,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoords(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
-					drawCel(x, y, data + curPos, size);
+					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
 				case PIC_OPX_VGA_PRIORITY_TABLE_EQDIST:
