@@ -1731,8 +1731,7 @@ void script_uninstantiate(SegManager *segMan, int script_nr) {
 
 	if (getSciVersion() < SCI_VERSION_1_1)
 		script_uninstantiate_sci0(segMan, script_nr, segment);
-	else
-		warning("FIXME: Add proper script uninstantiation for SCI 1.1");
+	// FIXME: Add proper script uninstantiation for SCI 1.1
 
 	if (scr->getLockers())
 		return; // if xxx.lockers > 0
