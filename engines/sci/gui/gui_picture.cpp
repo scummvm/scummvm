@@ -357,7 +357,10 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			while (vectorIsNonOpcode(data[curPos])) {
 				oldx = x; oldy = y;
 				vectorGetRelCoords(data, curPos, x, y);
-				_gfx->drawLine(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
+				Common::Point startPoint(oldx, oldy);
+				Common::Point endPoint(x, y);
+				_gfx->OffsetLine(startPoint, endPoint);
+				_screen->drawLine(startPoint, endPoint, pic_color, pic_priority, pic_control);
 			}
 			break;
 		case PIC_OP_MEDIUM_LINES: // medium line
@@ -365,7 +368,10 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			while (vectorIsNonOpcode(data[curPos])) {
 				oldx = x; oldy = y;
 				vectorGetRelCoordsMed(data, curPos, x, y);
-				_gfx->drawLine(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
+				Common::Point startPoint(oldx, oldy);
+				Common::Point endPoint(x, y);
+				_gfx->OffsetLine(startPoint, endPoint);
+				_screen->drawLine(startPoint, endPoint, pic_color, pic_priority, pic_control);
 			}
 			break;
 		case PIC_OP_LONG_LINES: // long line
@@ -373,7 +379,10 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 			while (vectorIsNonOpcode(data[curPos])) {
 				oldx = x; oldy = y;
 				vectorGetAbsCoords(data, curPos, x, y);
-				_gfx->drawLine(oldx, oldy, x, y, pic_color, pic_priority, pic_control);
+				Common::Point startPoint(oldx, oldy);
+				Common::Point endPoint(x, y);
+				_gfx->OffsetLine(startPoint, endPoint);
+				_screen->drawLine(startPoint, endPoint, pic_color, pic_priority, pic_control);
 			}
 			break;
 

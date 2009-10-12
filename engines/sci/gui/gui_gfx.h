@@ -84,6 +84,7 @@ public:
 	void FillRect(const Common::Rect &rect, int16 drawFlags, byte clrPen, byte clrBack = 0, byte bControl = 0);
 	void FrameRect(const Common::Rect &rect);
 	void OffsetRect(Common::Rect &r);
+	void OffsetLine(Common::Point &start, Common::Point &end);
 
 	byte CharHeight(int16 ch);
 	byte CharWidth(int16 ch);
@@ -106,7 +107,6 @@ public:
 	void BitsRestore(GuiMemoryHandle memoryHandle);
 	void BitsFree(GuiMemoryHandle memoryHandle);
 
-	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control);
 	void Draw_String(const char *text);
 	
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);

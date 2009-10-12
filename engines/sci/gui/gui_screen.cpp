@@ -102,6 +102,70 @@ void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priori
 		*(_controlScreen + offset) = control;
 }
 
+// Sierra's Bresenham line drawing
+// WARNING: Do not just blindly replace this with Graphics::drawLine(), as it seems to create issues with flood fill
+void SciGuiScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte priority, byte control) {
+	int16 left = startPoint.x;
+	int16 top = startPoint.y;
+	int16 right = endPoint.x;
+	int16 bottom = endPoint.y;
+
+	//set_drawing_flag
+	byte drawMask = getDrawingMask(color, priority, control);
+
+	// horizontal line
+	if (top == bottom) {
+		if (right < left)
+			SWAP(right, left);
+		for (int i = left; i <= right; i++)
+			putPixel(i, top, drawMask, color, priority, control);
+		return;
+	}
+	// vertical line
+	if (left == right) {
+		if (top > bottom)
+			SWAP(top, bottom);
+		for (int i = top; i <= bottom; i++)
+			putPixel(left, i, drawMask, color, priority, control);
+		return;
+	}
+	// sloped line - draw with Bresenham algorithm
+	int dy = bottom - top;
+	int dx = right - left;
+	int stepy = dy < 0 ? -1 : 1;
+	int stepx = dx < 0 ? -1 : 1;
+	dy = ABS(dy) << 1;
+	dx = ABS(dx) << 1;
+
+	// setting the 1st and last pixel
+	putPixel(left, top, drawMask, color, priority, control);
+	putPixel(right, bottom, drawMask, color, priority, control);
+	// drawing the line
+	if (dx > dy) { // going horizontal
+		int fraction = dy - (dx >> 1);
+		while (left != right) {
+			if (fraction >= 0) {
+				top += stepy;
+				fraction -= dx;
+			}
+			left += stepx;
+			fraction += dy;
+			putPixel(left, top, drawMask, color, priority, control);
+		}
+	} else { // going vertical
+		int fraction = dx - (dy >> 1);
+		while (top != bottom) {
+			if (fraction >= 0) {
+				left += stepx;
+				fraction -= dy;
+			}
+			top += stepy;
+			fraction += dx;
+			putPixel(left, top, drawMask, color, priority, control);
+		}
+	}
+}
+
 byte SciGuiScreen::getVisual(int x, int y) {
 	return _visualScreen[_baseTable[y] + x];
 }

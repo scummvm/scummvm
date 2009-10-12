@@ -50,6 +50,10 @@ public:
 
 	byte getDrawingMask(byte color, byte prio, byte control);
 	void putPixel(int x, int y, byte drawMask, byte color, byte prio, byte control);
+	void drawLine(Common::Point startPoint, Common::Point endPoint, byte color, byte prio, byte control);
+	void drawLine(int16 left, int16 top, int16 right, int16 bottom, byte color, byte prio, byte control) {
+		drawLine(Common::Point(left, top), Common::Point(right, bottom), color, prio, control);
+	}
 	byte getVisual(int x, int y);
 	byte getPriority(int x, int y);
 	byte getControl(int x, int y);
