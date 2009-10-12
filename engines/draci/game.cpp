@@ -952,10 +952,7 @@ void Game::walkHero(int x, int y) {
 	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
 
 	GameObject *dragon = getObject(kDragonObject);
-
-	for (uint i = 0; i < dragon->_anim.size(); ++i) {
-		_vm->_anims->stop(dragon->_anim[i]);
-	}
+	stopObjectAnimations(dragon);
 
 	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
 
@@ -1297,9 +1294,7 @@ void Game::enterNewRoom(bool force_reload) {
 
 	// TODO: Make objects capable of stopping their own animations
 	const GameObject *dragon = getObject(kDragonObject);
-	for (uint i = 0; i < dragon->_anim.size(); ++i) {
-		_vm->_anims->stop(dragon->_anim[i]);
-	}
+	stopObjectAnimations(dragon);
 
 	// Remember the previous room for returning back from the map.
 	rememberRoomNumAsPrevious();
@@ -1528,6 +1523,12 @@ void Game::deleteAnimationsAfterIndex(int lastAnimIndex) {
 	}
 
 	_vm->_anims->deleteAfterIndex(lastAnimIndex);
+}
+
+void Game::stopObjectAnimations(const GameObject *obj) {
+	for (uint i = 0; i < obj->_anim.size(); ++i) {
+		_vm->_anims->stop(obj->_anim[i]);
+	}
 }
 
 /**

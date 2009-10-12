@@ -411,12 +411,7 @@ void Script::start(Common::Queue<int> &params) {
 	int animID = params.pop() - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
-
-	// Stop all animation that the object owns
-
-	for (uint i = 0; i < obj->_anim.size(); ++i) {
-		_vm->_anims->stop(obj->_anim[i]);
-	}
+	_vm->_game->stopObjectAnimations(obj);
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	if (!anim) {
@@ -463,12 +458,7 @@ void Script::startPlay(Common::Queue<int> &params) {
 	int animID = params.pop() - 1;
 
 	GameObject *obj = _vm->_game->getObject(objID);
-
-	// Stop all animation that the object owns
-
-	for (uint i = 0; i < obj->_anim.size(); ++i) {
-		_vm->_anims->stop(obj->_anim[i]);
-	}
+	_vm->_game->stopObjectAnimations(obj);
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	if (!anim) {
@@ -599,9 +589,7 @@ void Script::objStat(Common::Queue<int> &params) {
 		obj->_location = -1;
 	}
 
-	for (uint i = 0; i < obj->_anim.size(); ++i) {
-		_vm->_anims->stop(obj->_anim[i]);
-	}
+	_vm->_game->stopObjectAnimations(obj);
 }
 
 void Script::execInit(Common::Queue<int> &params) {

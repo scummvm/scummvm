@@ -271,6 +271,7 @@ public:
 	int getObjectWithAnimation(int animID) const;
 	void deleteObjectAnimations();
 	void deleteAnimationsAfterIndex(int lastAnimIndex);
+	void stopObjectAnimations(const GameObject *obj);
 
 	int getVariable(int varNum) const;
 	void setVariable(int varNum, int value);
