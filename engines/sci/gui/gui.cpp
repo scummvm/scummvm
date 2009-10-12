@@ -377,6 +377,8 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 		if (style & 0x20) {
 			_gfx->FrameRect(rect);
 		}
+		if (!_screen->_picNotValid)
+			_gfx->BitsShow(rect);
 	} else {
 		_gfx->InvertRect(rect);
 		_gfx->BitsShow(rect);
