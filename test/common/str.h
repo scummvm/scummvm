@@ -290,7 +290,11 @@ class StringTestSuite : public CxxTest::TestSuite
 		TS_ASSERT( Common::String::printf("") == "" );
 		TS_ASSERT( Common::String::printf("%s", "test") == "test" );
 		TS_ASSERT( Common::String::printf("%s.s%.02d", "monkey", 1) == "monkey.s01" );
-		TS_ASSERT( Common::String::printf("%s%X", "test", 1234) == "test4D2" );
 		TS_ASSERT( Common::String::printf("Some %s to make this string longer than the default built-in %s %d", "text", "capacity", 123456) == "Some text to make this string longer than the default built-in capacity 123456" );
+
+		Common::String s = Common::String::printf("%s%X", "test", 1234);
+		TS_ASSERT(s == "test4D2");
+		TS_ASSERT(s.size() == 7);
+
 	}
 };
