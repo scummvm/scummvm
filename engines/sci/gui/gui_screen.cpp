@@ -54,11 +54,6 @@ SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) :
 	// Sets display screen to be actually displayed
 	_activeScreen = _displayScreen;
 
-	for (i = 0; i < _height; i++) {
-		_baseTable[i] = base; _baseDisplayTable[i] = base;
-		base += _width;
-	}
-
 	_picNotValid = false;
 	_unditherState = false;
 }
@@ -90,16 +85,16 @@ byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 }
 
 void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
-	int offset = _baseTable[y] + x;
+	int offset = y * _displayWidth + x;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
-		*(_visualScreen + offset) = color;
-		_displayScreen[_baseDisplayTable[y] + x] = color;
+		_visualScreen[offset] = color;
+		_displayScreen[offset] = color;
 	}
 	if (drawMask & SCI_SCREEN_MASK_PRIORITY)
-		*(_priorityScreen + offset) = priority;
+		_priorityScreen[offset] = priority;
 	if (drawMask & SCI_SCREEN_MASK_CONTROL)
-		*(_controlScreen + offset) = control;
+		_controlScreen[offset] = control;
 }
 
 // Sierra's Bresenham line drawing
@@ -167,19 +162,19 @@ void SciGuiScreen::drawLine(Common::Point startPoint, Common::Point endPoint, by
 }
 
 byte SciGuiScreen::getVisual(int x, int y) {
-	return _visualScreen[_baseTable[y] + x];
+	return _visualScreen[y * _displayWidth + x];
 }
 
 byte SciGuiScreen::getPriority(int x, int y) {
-	return _priorityScreen[_baseTable[y] + x];
+	return _priorityScreen[y * _displayWidth + x];
 }
 
 byte SciGuiScreen::getControl(int x, int y) {
-	return _controlScreen[_baseTable[y] + x];
+	return _controlScreen[y * _displayWidth + x];
 }
 
 byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t_pri, byte t_con) {
-	int offset = _baseTable[y] + x;
+	int offset = y * _displayWidth + x;
 	byte match = 0;
 
 	if (flag & SCI_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
