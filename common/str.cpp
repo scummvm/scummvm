@@ -464,6 +464,7 @@ String String::printf(const char *fmt, ...) {
 			len = vsnprintf(output._str, size, fmt, va);
 			va_end(va);
 		} while (len == -1 || len >= size);
+		output._size = len;
 	} else if (len < (int)_builtinCapacity) {
 		// vsnprintf succeeded
 		output._size = len;
