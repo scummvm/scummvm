@@ -961,6 +961,15 @@ void SciGui32::graphUpdateBox(Common::Rect rect) {
 	gfxop_update_box(s->gfx_state, area);
 }
 
+int16 SciGui32::picNotValid(int16 newPicNotValid) {
+	int16 oldPicNotValid = s->pic_not_valid;
+
+	if (newPicNotValid != -1)
+		s->pic_not_valid = newPicNotValid;
+
+	return oldPicNotValid;
+}
+
 void SciGui32::paletteSet(int resourceNo, int flags) {
 	//warning("STUB");
 }

@@ -580,11 +580,9 @@ reg_t kShow(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
-	s->r_acc = make_reg(0, s->pic_not_valid);
-	if (argc)
-		s->pic_not_valid = (byte)argv[0].toUint16();
+	int16 newPicNotValid = (argc > 0) ? argv[0].toUint16() : -1;
 
-	return s->r_acc;
+	return make_reg(0, s->_gui->picNotValid(newPicNotValid));
 }
 
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {

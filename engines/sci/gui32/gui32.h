@@ -75,6 +75,8 @@ public:
 	void graphRestoreBox(reg_t handle);
 	void graphUpdateBox(Common::Rect);
 
+	int16 picNotValid(int16 newPicNotValid);
+
 	void paletteSet(int resourceNo, int flags);
 	int16 paletteFind(int r, int g, int b);
 	void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);

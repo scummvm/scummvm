@@ -84,6 +84,8 @@ public:
 	virtual void graphRestoreBox(reg_t handle);
 	virtual void graphUpdateBox(Common::Rect rect);
 
+	virtual int16 picNotValid(int16 newPicNotValid);
+
 	virtual void paletteSet(int resourceNo, int flags);
 	virtual int16 paletteFind(int r, int g, int b);
 	virtual void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);

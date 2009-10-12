@@ -433,6 +433,15 @@ void SciGui::graphUpdateBox(Common::Rect rect) {
 	_gfx->BitsShow(rect);
 }
 
+int16 SciGui::picNotValid(int16 newPicNotValid) {
+	int16 oldPicNotValid = _screen->_picNotValid;
+
+	if (newPicNotValid != -1)
+		_screen->_picNotValid = newPicNotValid;
+
+	return oldPicNotValid;
+}
+
 
 void SciGui::paletteSet(int resourceNo, int flags) {
    _palette->setFromResource(resourceNo, flags);
