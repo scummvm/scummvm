@@ -62,6 +62,9 @@ const char *stringsPath = "RETEZCE.DFW";
 const char *soundsPath = "CD2.SAM";
 const char *dubbingPath = "CD.SAM";
 
+const uint kSoundsFrequency = 13000;
+const uint kDubbingFrequency = 22000;
+
 DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
  : Engine(syst) {
 	// Put your engine in a sane state, but do nothing big yet;
@@ -79,6 +82,7 @@ DraciEngine::DraciEngine(OSystem *syst, const ADGameDescription *gameDesc)
 	Common::addDebugChannel(kDraciArchiverDebugLevel, "archiver", "BAR archiver debug info");
 	Common::addDebugChannel(kDraciLogicDebugLevel, "logic", "Game logic debug info");
 	Common::addDebugChannel(kDraciAnimationDebugLevel, "animation", "Animation debug info");
+	Common::addDebugChannel(kDraciSoundDebugLevel, "sound", "Sound debug info");
 
 	// Don't forget to register your random source
 	g_eventRec.registerRandomSource(_rnd, "draci");
@@ -109,8 +113,9 @@ int DraciEngine::init() {
 	_itemImagesArchive = new BArchive(itemImagesPath);
 	_stringsArchive = new BArchive(stringsPath);
 
-	_soundsArchive = new SoundArchive(soundsPath);
-	_dubbingArchive = new SoundArchive(dubbingPath);
+	_soundsArchive = new SoundArchive(soundsPath, kSoundsFrequency);
+	_dubbingArchive = new SoundArchive(dubbingPath, kDubbingFrequency);
+	_sound = new Sound(_mixer);
 
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);
@@ -298,6 +303,7 @@ DraciEngine::~DraciEngine() {
 
 	delete _soundsArchive;
 	delete _dubbingArchive;
+	delete _sound;
 
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
@@ -337,7 +343,7 @@ void DraciEngine::pauseEngineIntern(bool pause) {
 void DraciEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	// TODO: update our volumes
+	_sound->setVolume();
 }
 
 const char *DraciEngine::getSavegameFile(int saveGameIdx) {

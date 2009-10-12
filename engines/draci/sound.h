@@ -28,6 +28,7 @@
 
 #include "common/str.h"
 #include "common/file.h"
+#include "sound/mixer.h"
 
 namespace Draci {
 
@@ -48,10 +49,8 @@ struct SoundSample {
 
 class SoundArchive {
 public:
-	SoundArchive() : _path(), _samples(NULL), _sampleCount(0), _opened(false), _f(NULL) {}
-
-	SoundArchive(const Common::String &path) :
-	_path(), _samples(NULL), _sampleCount(0), _opened(false), _f(NULL) {
+	SoundArchive(const Common::String &path, uint defaultFreq) :
+	_path(), _samples(NULL), _sampleCount(0), _defaultFreq(defaultFreq), _opened(false), _f(NULL) {
 		openArchive(path);
 	}
 
@@ -69,14 +68,62 @@ public:
 
 	void clearCache();
 
-	const SoundSample *getSample(uint i, uint freq);
+	const SoundSample *getSample(int i, uint freq);
 
 private:
 	Common::String _path;    ///< Path to file
 	SoundSample *_samples;          ///< Internal array of files
 	uint _sampleCount;         ///< Number of files in archive
+	uint _defaultFreq;	///< The default sampling frequency of the archived samples
 	bool _opened;            ///< True if the archive is opened, false otherwise
 	Common::File *_f;	///< Opened file
+};
+
+#define SOUND_HANDLES 10
+
+enum sndHandleType {
+	kFreeHandle,
+	kEffectHandle,
+	kVoiceHandle
+};
+
+struct SndHandle {
+	Audio::SoundHandle handle;
+	sndHandleType type;
+};
+
+// Taken from engines/saga/sound.h and simplified (in particular, removed
+// decompression until we support compressed files too).
+class Sound {
+public:
+
+	Sound(Audio::Mixer *mixer);
+	~Sound() {}
+
+	void playSound(const SoundSample *buffer, int volume, bool loop);
+	void pauseSound();
+	void resumeSound();
+	void stopSound();
+
+	void playVoice(const SoundSample *buffer);
+	void pauseVoice();
+	void resumeVoice();
+	void stopVoice();
+
+	void stopAll();
+
+	void setVolume();
+
+ private:
+
+	void playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
+				sndHandleType handleType, bool loop);
+
+	SndHandle *getHandle();
+
+	Audio::Mixer *_mixer;
+
+	SndHandle _handles[SOUND_HANDLES];
 };
 
 } // End of namespace Draci

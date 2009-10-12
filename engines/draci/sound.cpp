@@ -23,6 +23,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/debug.h"
 #include "common/file.h"
 #include "common/str.h"
@@ -30,6 +31,9 @@
 
 #include "draci/sound.h"
 #include "draci/draci.h"
+
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
 
 namespace Draci {
 
@@ -129,9 +133,9 @@ void SoundArchive::clearCache() {
  *
  * Loads individual samples from an archive to memory on demand.
  */
-const SoundSample *SoundArchive::getSample(uint i, uint freq) {
+const SoundSample *SoundArchive::getSample(int i, uint freq) {
 	// Check whether requested file exists
-	if (i >= _sampleCount) {
+	if (i < 0 || i >= (int) _sampleCount) {
 		return NULL;
 	}
 
@@ -150,12 +154,122 @@ const SoundSample *SoundArchive::getSample(uint i, uint freq) {
 		debugC(3, kDraciArchiverDebugLevel, "Cached sample %d from archive %s",
 			i, _path.c_str());
 	}
-	_samples[i]._frequency = freq;
+	_samples[i]._frequency = freq ? freq : _defaultFreq;
 
 	return _samples + i;
 }
 
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		_handles[i].type = kFreeHandle;
+
+	setVolume();
+}
+
+SndHandle *Sound::getHandle() {
+	for (int i = 0; i < SOUND_HANDLES; i++) {
+		if (_handles[i].type != kFreeHandle && !_mixer->isSoundHandleActive(_handles[i].handle)) {
+			debugC(5, kDraciSoundDebugLevel, "Handle %d has finished playing", i);
+			_handles[i].type = kFreeHandle;
+		}
+	}
+
+	for (int i = 0; i < SOUND_HANDLES; i++) {
+		if (_handles[i].type == kFreeHandle)
+			return &_handles[i];
+	}
+
+	error("Sound::getHandle(): Too many sound handles");
+
+	return NULL;	// for compilers that don't support NORETURN
+}
+
+void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffer, int volume,
+				sndHandleType handleType, bool loop) {
+
+	// Don't use FLAG_AUTOFREE, because our caching system deletes samples by itself.
+	byte flags = Audio::Mixer::FLAG_UNSIGNED;
+
+	if (loop)
+		flags |= Audio::Mixer::FLAG_LOOP;
+
+	const Audio::Mixer::SoundType soundType = (handleType == kVoiceHandle) ? 
+				Audio::Mixer::kSpeechSoundType : Audio::Mixer::kSFXSoundType;
+
+	_mixer->playRaw(soundType, handle, buffer._data,
+			buffer._length, buffer._frequency, flags, -1, volume);
+}
+
+void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {
+	if (!buffer)
+		return;
+	SndHandle *handle = getHandle();
+
+	handle->type = kEffectHandle;
+	playSoundBuffer(&handle->handle, *buffer, 2 * volume, handle->type, loop);
+}
+
+void Sound::pauseSound() {
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle)
+			_mixer->pauseHandle(_handles[i].handle, true);
+}
+
+void Sound::resumeSound() {
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle)
+			_mixer->pauseHandle(_handles[i].handle, false);
+}
+
+void Sound::stopSound() {
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kEffectHandle) {
+			_mixer->stopHandle(_handles[i].handle);
+			_handles[i].type = kFreeHandle;
+		}
+}
+
+void Sound::playVoice(const SoundSample *buffer) {
+	if (!buffer)
+		return;
+	SndHandle *handle = getHandle();
+
+	handle->type = kVoiceHandle;
+	playSoundBuffer(&handle->handle, *buffer, Audio::Mixer::kMaxChannelVolume, handle->type, false);
+}
+
+void Sound::pauseVoice() {
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kVoiceHandle)
+			_mixer->pauseHandle(_handles[i].handle, true);
+}
+
+void Sound::resumeVoice() {
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kVoiceHandle)
+			_mixer->pauseHandle(_handles[i].handle, false);
+}
+
+void Sound::stopVoice() {
+	for (int i = 0; i < SOUND_HANDLES; i++)
+		if (_handles[i].type == kVoiceHandle) {
+			_mixer->stopHandle(_handles[i].handle);
+			_handles[i].type = kFreeHandle;
+		}
+}
+
+void Sound::stopAll() {
+	stopVoice();
+	stopSound();
+}
+
+void Sound::setVolume() {
+	const int soundVolume = ConfMan.getInt("sfx_volume");
+	const int speechVolume = ConfMan.getInt("speech_volume");
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolume);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
+	// TODO: make sure this sound settings works
+}
+
 } // End of namespace Draci
-
-
-

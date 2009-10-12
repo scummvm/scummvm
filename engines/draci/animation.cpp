@@ -39,6 +39,7 @@ Animation::Animation(DraciEngine *vm, int index) : _vm(vm) {
 	_paused = false;
 	_tick = _vm->_system->getMillis();
 	_currentFrame = 0;
+	_hasChangedFrame = true;
 	_callback = &Animation::doNothing;
 }
 
@@ -97,6 +98,8 @@ void Animation::nextFrame(bool force) {
 
 			// Fetch new frame and mark it dirty
 			markDirtyRect(surface);
+
+			_hasChangedFrame = true;
 		}
 	}
 
@@ -129,6 +132,15 @@ void Animation::drawFrame(Surface *surface) {
 		// Draw frame
 		frame->drawReScaled(surface, false, _displacement);
 	}
+
+	const SoundSample *sample = _samples[_currentFrame];
+	if (_hasChangedFrame && sample) {
+		debugC(3, kDraciSoundDebugLevel,
+			"Playing sample on animation %d, frame %d: %d+%d at %dHz",
+			_id, _currentFrame, sample->_offset, sample->_length, sample->_frequency);
+		_vm->_sound->playSound(sample, Audio::Mixer::kMaxChannelVolume, false);
+	}
+	_hasChangedFrame = false;
 }
 
 void Animation::setID(int id) {
@@ -162,6 +174,9 @@ bool Animation::isPlaying() const {
 void Animation::setPlaying(bool playing) {
 	_tick = _vm->_system->getMillis();
 	_playing = playing;
+
+	// When restarting an animation, allow playing sounds.
+	_hasChangedFrame |= playing;
 }
 
 bool Animation::isPaused() const {

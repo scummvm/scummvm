@@ -130,6 +130,7 @@ private:
 
 	uint _currentFrame;
 	uint _z;
+	bool _hasChangedFrame;
 
 	Displacement _displacement;
 
@@ -145,7 +146,7 @@ private:
 	 * object doesn't own these pointers, but they are stored in the
 	 * cache.
 	 */
-	Common::List<const SoundSample *> _samples;
+	Common::Array<const SoundSample *> _samples;
 
 	AnimationCallback _callback;
 

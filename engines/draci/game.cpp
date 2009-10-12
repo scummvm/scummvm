@@ -1157,7 +1157,7 @@ int Game::loadAnimation(uint animNum, uint z) {
 		uint scaledWidth = animationReader.readUint16LE();
 		uint scaledHeight = animationReader.readUint16LE();
 		byte mirror = animationReader.readByte();
-		uint sample = animationReader.readUint16LE();
+		int sample = animationReader.readUint16LE() - 1;
 		uint freq = animationReader.readUint16LE();
 		uint delay = animationReader.readUint16LE();
 
@@ -1300,6 +1300,11 @@ void Game::enterNewRoom(bool force_reload) {
 		return;
 	}
 	debugC(1, kDraciLogicDebugLevel, "Entering room %d using gate %d", _newRoom, _newGate);
+
+	// TODO: maybe wait till all sounds end instead of stopping them.
+	// In any case, make sure all sounds are stopped before we deallocate
+	// their memory by clearing the cache.
+	_vm->_sound->stopAll();
 
 	// Clear archives
 	_vm->_roomsArchive->clearCache();

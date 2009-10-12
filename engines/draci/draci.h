@@ -66,6 +66,7 @@ public:
 	Game *_game;
 	Script *_script;
 	AnimationManager *_anims;
+	Sound *_sound;
 
 	Font *_smallFont;
 	Font *_bigFont;
@@ -99,7 +100,8 @@ enum {
 	kDraciBytecodeDebugLevel  = 1 << 1,
 	kDraciArchiverDebugLevel  = 1 << 2,
 	kDraciLogicDebugLevel     = 1 << 3,
-	kDraciAnimationDebugLevel = 1 << 4
+	kDraciAnimationDebugLevel = 1 << 4,
+	kDraciSoundDebugLevel     = 1 << 5
 };
 
 // Macro to simulate lround() for non-C99 compilers
