@@ -173,7 +173,7 @@ void MidiDriver_Adlib::send(uint32 b) {
 					voiceOff(i);
 			break;
 		default:
-			warning("ADLIB: ignoring MIDI command %02x %02x %02x", command | channel, op1, op2);
+			//warning("ADLIB: ignoring MIDI command %02x %02x %02x", command | channel, op1, op2);
 			break;
 		}
 		break;

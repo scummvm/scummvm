@@ -1356,8 +1356,8 @@ TeeSongIterator::TeeSongIterator(SongIterator *left, SongIterator *right) {
 
 			if (firstfree == MIDI_CHANNELS) {
 				incomplete_map = 1;
-				warning("[songit-tee <%08lx,%08lx>] Could not remap right channel #%d: Out of channels",
-				        left->ID, right->ID, i);
+				//warning("[songit-tee <%08lx,%08lx>] Could not remap right channel #%d: Out of channels",
+				//        left->ID, right->ID, i);
 			} else {
 				_children[TEE_RIGHT].channel_remap[i] = firstfree;
 
