@@ -931,7 +931,7 @@ void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 
 	_priorityTop = top;
 	_priorityBottom = bottom;
-	bandSize = (_priorityBottom - _priorityTop) / (_priorityBandCount - 1);
+	bandSize = (_priorityBottom - _priorityTop) / (_priorityBandCount);
 
 	memset(_priorityBands, 0, _priorityTop);
 	for (y = _priorityTop; y < _priorityBottom; y++)
