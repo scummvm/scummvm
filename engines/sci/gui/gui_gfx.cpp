@@ -923,19 +923,22 @@ static inline int sign_extend_byte(int value) {
 }
 
 void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
-	double bandSize;
 	int16 y;
+	int32 bandSize;
 
 	if (bandCount != -1)
 		_priorityBandCount = bandCount;
 
 	_priorityTop = top;
 	_priorityBottom = bottom;
-	bandSize = (_priorityBottom - _priorityTop) / (_priorityBandCount);
 
-	memset(_priorityBands, 0, _priorityTop);
+	// Do NOT modify this algo or optimize it anyhow, sierra sci used int32 for calculating the
+	//  priority bands and by using double or anything rounding may destroy the result
+	bandSize = ((_priorityBottom - _priorityTop) * 2000) / 14;
+
+	memset(_priorityBands, 0, sizeof(byte) * _priorityTop);
 	for (y = _priorityTop; y < _priorityBottom; y++)
-		_priorityBands[y] = (byte)(1 + (y - _priorityTop) / bandSize);
+		_priorityBands[y] = 1 + (((y - _priorityTop) * 2000) / bandSize);
 	for (y = _priorityBottom; y < _screen->_height; y++)
 		_priorityBands[y] = _priorityBandCount;
 }
