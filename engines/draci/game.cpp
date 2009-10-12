@@ -1270,6 +1270,17 @@ void Game::deleteObjectAnimations() {
 	}
 }
 
+int Game::playingObjectAnimation(const GameObject *obj) const {
+	for (uint i = 0; i < obj->_anim.size(); ++i) {
+		const int animID = obj->_anim[i];
+		const Animation *anim = _vm->_anims->getAnimation(animID);
+		if (anim && anim->isPlaying()) {
+			return i;
+		}
+	}
+	return -1;
+}
+
 void Game::enterNewRoom(bool force_reload) {
 	if (_newRoom == getRoomNum() && !force_reload) {
 		return;

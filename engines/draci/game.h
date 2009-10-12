@@ -272,6 +272,7 @@ public:
 	void deleteObjectAnimations();
 	void deleteAnimationsAfterIndex(int lastAnimIndex);
 	void stopObjectAnimations(const GameObject *obj);
+	int playingObjectAnimation(const GameObject *obj) const;
 
 	int getVariable(int varNum) const;
 	void setVariable(int varNum, int value);

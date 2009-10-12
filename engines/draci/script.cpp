@@ -47,8 +47,8 @@ void Script::setupCommandList() {
 		{ 4,  1, "Start", 				2, { 3, 2 }, &Script::start },
 		{ 5,  1, "Load", 				2, { 3, 2 }, &Script::load },
 		{ 5,  2, "StartPlay", 			2, { 3, 2 }, &Script::startPlay },
-		{ 5,  3, "JustTalk", 			0, { 0 }, NULL },
-		{ 5,  4, "JustStay", 			0, { 0 }, NULL },
+		{ 5,  3, "JustTalk", 			0, { 0 }, &Script::justTalk },
+		{ 5,  4, "JustStay", 			0, { 0 }, &Script::justStay },
 		{ 6,  1, "Talk", 				2, { 3, 2 }, &Script::talk },
 		{ 7,  1, "ObjStat", 			2, { 3, 3 }, &Script::objStat },
 		{ 7,  2, "ObjStat_On", 			2, { 3, 3 }, &Script::objStatOn },
@@ -338,12 +338,11 @@ int Script::funcActPhase(int objID) const {
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
 	if (objID == kDragonObject || visible) {
-		for (uint i = 0; i < obj->_anim.size(); ++i) {
+		const int i = _vm->_game->playingObjectAnimation(obj);
+		if (i >= 0) {
 			int animID = obj->_anim[i];
 			Animation *anim = _vm->_anims->getAnimation(animID);
-			if (anim && anim->isPlaying()) {
-				ret = anim->currentFrameNum();
-			}
+			ret = anim->currentFrameNum();
 		}
 	}
 
@@ -475,6 +474,48 @@ void Script::startPlay(Common::Queue<int> &params) {
 	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);
 
 	anim->registerCallback(&Animation::doNothing);
+}
+
+void Script::justTalk(Common::Queue<int> &params) {
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	if (last_anim >= 0) {
+		_vm->_game->stopObjectAnimations(dragon);
+	}
+	int new_anim;
+	if (last_anim == kSpeakRight || last_anim == kStopRight) {
+		new_anim = kSpeakRight;
+	} else {
+		new_anim = kSpeakLeft;
+	}
+
+	const int animID = dragon->_anim[new_anim];
+
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	_vm->_game->positionAnimAsHero(anim);
+
+	_vm->_anims->play(animID);
+}
+
+void Script::justStay(Common::Queue<int> &params) {
+	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
+	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
+	if (last_anim >= 0) {
+		_vm->_game->stopObjectAnimations(dragon);
+	}
+	int new_anim;
+	if (last_anim == kSpeakRight || last_anim == kStopRight) {
+		new_anim = kStopRight;
+	} else {
+		new_anim = kStopLeft;
+	}
+
+	const int animID = dragon->_anim[new_anim];
+
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	_vm->_game->positionAnimAsHero(anim);
+
+	_vm->_anims->play(animID);
 }
 
 void Script::c_If(Common::Queue<int> &params) {
