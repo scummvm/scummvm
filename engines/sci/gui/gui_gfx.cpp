@@ -933,8 +933,8 @@ void SciGuiGfx::PriorityBandsInit(int16 bandCount, int16 top, int16 bottom) {
 	_priorityBottom = bottom;
 
 	// Do NOT modify this algo or optimize it anyhow, sierra sci used int32 for calculating the
-	//  priority bands and by using double or anything rounding may destroy the result
-	bandSize = ((_priorityBottom - _priorityTop) * 2000) / 14;
+	//  priority bands and by using double or anything rounding WILL destroy the result
+	bandSize = ((_priorityBottom - _priorityTop) * 2000) / _priorityBandCount;
 
 	memset(_priorityBands, 0, sizeof(byte) * _priorityTop);
 	for (y = _priorityTop; y < _priorityBottom; y++)
