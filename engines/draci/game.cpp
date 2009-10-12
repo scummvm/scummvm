@@ -599,8 +599,8 @@ int Game::getObjectWithAnimation(int animID) const {
 	for (uint i = 0; i < _info._numObjects; ++i) {
 		GameObject *obj = &_objects[i];
 
-		for (uint j = 0; j < obj->_anims.size(); ++j) {
-			if (obj->_anims[j] == animID) {
+		for (uint j = 0; j < obj->_anim.size(); ++j) {
+			if (obj->_anim[j] == animID) {
 				return i;
 			}
 		}
@@ -953,15 +953,15 @@ void Game::walkHero(int x, int y) {
 
 	GameObject *dragon = getObject(kDragonObject);
 
-	for (uint i = 0; i < dragon->_anims.size(); ++i) {
-		_vm->_anims->stop(dragon->_anims[i]);
+	for (uint i = 0; i < dragon->_anim.size(); ++i) {
+		_vm->_anims->stop(dragon->_anim[i]);
 	}
 
 	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
 
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
-	int animID = dragon->_anims[0];
+	int animID = dragon->_anim[0];
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	positionAnimAsHero(anim);
@@ -1265,10 +1265,10 @@ void Game::deleteObjectAnimations() {
 		GameObject *obj = &_objects[i];
 
 		if (i != 0 && (obj->_location == getPreviousRoomNum())) {
-			for (uint j = 0; j < obj->_anims.size(); ++j) {
-					_vm->_anims->deleteAnimation(obj->_anims[j]);
+			for (uint j = 0; j < obj->_anim.size(); ++j) {
+					_vm->_anims->deleteAnimation(obj->_anim[j]);
 			}
-			obj->_anims.clear();
+			obj->_anim.clear();
 		}
 	}
 }
@@ -1297,8 +1297,8 @@ void Game::enterNewRoom(bool force_reload) {
 
 	// TODO: Make objects capable of stopping their own animations
 	const GameObject *dragon = getObject(kDragonObject);
-	for (uint i = 0; i < dragon->_anims.size(); ++i) {
-		_vm->_anims->stop(dragon->_anims[i]);
+	for (uint i = 0; i < dragon->_anim.size(); ++i) {
+		_vm->_anims->stop(dragon->_anim[i]);
 	}
 
 	// Remember the previous room for returning back from the map.
@@ -1518,12 +1518,12 @@ void Game::deleteAnimationsAfterIndex(int lastAnimIndex) {
 	for (uint i = 0; i < getNumObjects(); ++i) {
 		GameObject *obj = &_objects[i];
 
-		for (uint j = 0; j < obj->_anims.size(); ++j) {
+		for (uint j = 0; j < obj->_anim.size(); ++j) {
 			Animation *anim;
 
-			anim = _vm->_anims->getAnimation(obj->_anims[j]);
+			anim = _vm->_anims->getAnimation(obj->_anim[j]);
 			if (anim != NULL && anim->getIndex() > lastAnimIndex)
-				obj->_anims.remove_at(j);
+				obj->_anim.remove_at(j--);
 		}
 	}
 

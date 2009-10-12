@@ -140,7 +140,7 @@ struct GameObject {
 	uint _lookX, _lookY, _useX, _useY;
 	int _lookDir, _useDir;
 	uint _absNum;
-	Common::Array<int> _anims;
+	Common::Array<int> _anim;
 	GPL2Program _program;
 	Common::String _title;
 	int _location;

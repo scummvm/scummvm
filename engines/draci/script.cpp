@@ -338,7 +338,7 @@ int Script::funcActPhase(int objID) const {
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
 	if (objID == kDragonObject || visible) {
-		int animID = obj->_anims[0];
+		int animID = obj->_anim[0];
 		Animation *anim = _vm->_anims->getAnimation(animID);
 		ret = anim->currentFrameNum();
 	}
@@ -371,13 +371,13 @@ Animation *Script::loadObjectAnimation(GameObject *obj, int animID) {
 	// depend on this.
 
 	uint i;
-	for (i = 0; i < obj->_anims.size(); ++i) {
-		if (obj->_anims[i] > animID) {
+	for (i = 0; i < obj->_anim.size(); ++i) {
+		if (obj->_anim[i] > animID) {
 			break;
 		}
 	}
 
-	obj->_anims.insert_at(i, animID);
+	obj->_anim.insert_at(i, animID);
 	return _vm->_anims->getAnimation(animID);
 }
 
@@ -393,8 +393,8 @@ void Script::load(Common::Queue<int> &params) {
 	GameObject *obj = _vm->_game->getObject(objID);
 
 	// If the animation is already loaded, return
-	for (i = 0; i < obj->_anims.size(); ++i) {
-		if (obj->_anims[i] == animID) {
+	for (i = 0; i < obj->_anim.size(); ++i) {
+		if (obj->_anim[i] == animID) {
 			return;
 		}
 	}
@@ -414,8 +414,8 @@ void Script::start(Common::Queue<int> &params) {
 
 	// Stop all animation that the object owns
 
-	for (uint i = 0; i < obj->_anims.size(); ++i) {
-		_vm->_anims->stop(obj->_anims[i]);
+	for (uint i = 0; i < obj->_anim.size(); ++i) {
+		_vm->_anims->stop(obj->_anim[i]);
 	}
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
@@ -466,8 +466,8 @@ void Script::startPlay(Common::Queue<int> &params) {
 
 	// Stop all animation that the object owns
 
-	for (uint i = 0; i < obj->_anims.size(); ++i) {
-		_vm->_anims->stop(obj->_anims[i]);
+	for (uint i = 0; i < obj->_anim.size(); ++i) {
+		_vm->_anims->stop(obj->_anim[i]);
 	}
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
@@ -599,8 +599,8 @@ void Script::objStat(Common::Queue<int> &params) {
 		obj->_location = -1;
 	}
 
-	for (uint i = 0; i < obj->_anims.size(); ++i) {
-		_vm->_anims->stop(obj->_anims[i]);
+	for (uint i = 0; i < obj->_anim.size(); ++i) {
+		_vm->_anims->stop(obj->_anim[i]);
 	}
 }
 
