@@ -99,11 +99,6 @@ enum kLanguage {
 	K_LANG_PORTUGUESE = 351
 };
 
-struct drawn_pic_t {
-	int nr;
-	int palette;
-};
-
 class FileHandle {
 public:
 	Common::String _name;

@@ -518,16 +518,9 @@ void SciGui32::clearMenuBar() {
 }
 
 void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
-	drawn_pic_t dp;
 	gfx_color_t transparent = s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
-
-	dp.nr = pictureId;
-	if (EGApaletteNo != -1) {
-		dp.palette = EGApaletteNo;
-	} else {
-		dp.palette = 0;
-	}
+	int palNo = (EGApaletteNo != -1) ? EGApaletteNo : 0;
 
 	if (mirroredFlag)
 		picFlags |= DRAWPIC1_FLAG_MIRRORED;
@@ -542,9 +535,9 @@ void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirr
 
 	debugC(2, kDebugLevelGraphics, "Drawing pic.%03d\n", pictureId);
 	if (addToFlag) {
-		gfxop_add_to_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
+		gfxop_add_to_pic(s->gfx_state, pictureId, picFlags, palNo);
 	} else {
-		gfxop_new_pic(s->gfx_state, dp.nr, picFlags, dp.palette);
+		gfxop_new_pic(s->gfx_state, pictureId, picFlags, palNo);
 	}
 
 	delete s->wm_port;
