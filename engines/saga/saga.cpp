@@ -223,6 +223,7 @@ Common::Error SagaEngine::run() {
 	_gfx = new Gfx(this, _system, getDisplayInfo().width, getDisplayInfo().height);
 
 	// Graphics driver should be initialized before console
+	// Disabled for the DS to save off 80kb of RAM, so that ITE can run on the DS
 #ifndef __DS__
 	_console = new Console(this);
 #endif
