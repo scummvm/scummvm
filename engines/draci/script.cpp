@@ -338,6 +338,10 @@ int Script::funcActPhase(int objID) const {
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
 	if (objID == kDragonObject || visible) {
+		// FIXME: we should check which animation is active and return
+		// the phase of it, instead of the first one.  this function
+		// is only used at 3 places of the game, hence possible
+		// breakage may not show easily.
 		int animID = obj->_anim[0];
 		Animation *anim = _vm->_anims->getAnimation(animID);
 		ret = anim->currentFrameNum();
@@ -361,23 +365,8 @@ void Script::play(Common::Queue<int> &params) {
 }
 
 Animation *Script::loadObjectAnimation(GameObject *obj, int animID) {
-	// Load the animation into memory
-
 	_vm->_game->loadAnimation(animID, obj->_z);
-
-	// We insert the ID of the loaded animation into the object's internal array
-	// of owned animation IDs.
-	// Care must be taken to store them sorted (increasing order) as some things
-	// depend on this.
-
-	uint i;
-	for (i = 0; i < obj->_anim.size(); ++i) {
-		if (obj->_anim[i] > animID) {
-			break;
-		}
-	}
-
-	obj->_anim.insert_at(i, animID);
+	obj->_anim.push_back(animID);
 	return _vm->_anims->getAnimation(animID);
 }
 

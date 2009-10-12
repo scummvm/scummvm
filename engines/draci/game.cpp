@@ -958,7 +958,7 @@ void Game::walkHero(int x, int y) {
 
 	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
-	int animID = dragon->_anim[0];
+	int animID = dragon->_anim[kStopRight];
 
 	Animation *anim = _vm->_anims->getAnimation(animID);
 	positionAnimAsHero(anim);
