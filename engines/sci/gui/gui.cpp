@@ -436,6 +436,10 @@ void SciGui::graphUpdateBox(Common::Rect rect) {
 	_gfx->BitsShow(rect);
 }
 
+void SciGui::graphRedrawBox(Common::Rect rect) {
+	_gfx->ReAnimate(rect);
+}
+
 int16 SciGui::picNotValid(int16 newPicNotValid) {
 	int16 oldPicNotValid = _screen->_picNotValid;
 

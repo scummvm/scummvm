@@ -74,6 +74,7 @@ public:
 	reg_t graphSaveBox(Common::Rect rect, uint16 flags);
 	void graphRestoreBox(reg_t handle);
 	void graphUpdateBox(Common::Rect);
+	void graphRedrawBox(Common::Rect);
 
 	int16 picNotValid(int16 newPicNotValid);
 

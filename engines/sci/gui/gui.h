@@ -83,6 +83,7 @@ public:
 	virtual reg_t graphSaveBox(Common::Rect rect, uint16 flags);
 	virtual void graphRestoreBox(reg_t handle);
 	virtual void graphUpdateBox(Common::Rect rect);
+	virtual void graphRedrawBox(Common::Rect rect);
 
 	virtual int16 picNotValid(int16 newPicNotValid);
 

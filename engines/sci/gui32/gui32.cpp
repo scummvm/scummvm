@@ -961,6 +961,18 @@ void SciGui32::graphUpdateBox(Common::Rect rect) {
 	gfxop_update_box(s->gfx_state, area);
 }
 
+void SciGui32::graphRedrawBox(Common::Rect rect) {
+	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
+
+	area.x += s->port->zone.x;
+	area.y += s->port->zone.y;
+
+	if (s->dyn_views && s->dyn_views->_parent == (GfxContainer *)s->port)
+		s->dyn_views->draw(Common::Point(0, 0));
+
+	//gfxop_update_box(s->gfx_state, area);
+}
+
 int16 SciGui32::picNotValid(int16 newPicNotValid) {
 	int16 oldPicNotValid = s->pic_not_valid;
 

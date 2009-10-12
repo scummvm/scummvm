@@ -250,7 +250,7 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 	if (arg2)
 		_gfx->BitsShow(pWnd->restoreRect);
 	else
-		_gfx->BitsShow(pWnd->restoreRect); // FIXME: dummy, should be ReAnimate(&pwnd->dims);
+		_gfx->ReAnimate(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	_gfx->SetPort(_windowList.back());
 	_windowsById[pWnd->id] = 0;

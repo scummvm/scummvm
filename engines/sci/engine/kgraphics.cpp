@@ -657,16 +657,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 	break;
 
 	case K_GRAPH_REDRAW_BOX: {
-		debugC(2, kDebugLevelGraphics, "redraw_box(%d, %d, %d, %d)\n", argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argv[4].toSint16());
-
-		area.x += s->port->zone.x;
-		area.y += s->port->zone.y;
-
-		if (s->dyn_views && s->dyn_views->_parent == (GfxContainer *)s->port)
-			s->dyn_views->draw(Common::Point(0, 0));
-
-		// FIXME: Change to class calling
-		//gfxop_update_box(s->gfx_state, area);
+		rect = Common::Rect(x, y, x1, y1);
+		s->_gui->graphRedrawBox(rect);
+		break;
 	}
 	break;
 

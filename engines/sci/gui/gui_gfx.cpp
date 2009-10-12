@@ -1358,6 +1358,11 @@ void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
 	}
 }
 
+void SciGuiGfx::ReAnimate(Common::Rect rect) {
+	// TODO: implement ReAnimate
+	BitsShow(rect);
+}
+
 void SciGuiGfx::AddToPicDrawCels(List *list) {
 	reg_t curObject;
 	GuiAnimateEntry *listEntry;
