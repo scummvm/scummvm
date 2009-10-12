@@ -110,7 +110,8 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
-		Common::String txt = Common::String::printf("[VM] validate_variable(): Attempt to use invalid %s variable %04x ", names[type], index);
+		Common::String txt = "[VM] Attempt to use invalid " + 
+							Common::String::printf("%s variable %04x ", names[type], index);
 		if (max == 0)
 			txt += "(variable type invalid)";
 		else
