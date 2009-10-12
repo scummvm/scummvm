@@ -199,8 +199,8 @@ SciKernelFunction kfunct_mappers[] = {
 	/*0c*/	DEFUN("SetNowSeen", kSetNowSeen, "oi*"), // The second parameter is ignored
 	/*0d*/	DEFUN("NumLoops", kNumLoops, "o"),
 	/*0e*/	DEFUN("NumCels", kNumCels, "o"),
-	/*0f*/	DEFUN("CelWide", kCelWide, "iOiOi"),
-	/*10*/	DEFUN("CelHigh", kCelHigh, "iOiOi"),
+	/*0f*/	DEFUN("CelWide", kCelWide, "iOi*"),
+	/*10*/	DEFUN("CelHigh", kCelHigh, "iOi*"),
 	/*11*/	DEFUN("DrawCel", kDrawCel, "iiiiii*"),
 	/*12*/	DEFUN("AddToPic", kAddToPic, "Il*"),
 	// FIXME: signature check removed (set to .*) as kNewWindow is different in Mac versions
