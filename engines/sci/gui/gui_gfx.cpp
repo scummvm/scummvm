@@ -1284,7 +1284,6 @@ void SciGuiGfx::AnimateDrawCels() {
 }
 
 void SciGuiGfx::AnimateUpdateScreen(byte oldPicNotValid) {
-	SegManager *segMan = _s->_segMan;
 	GuiAnimateEntry *listEntry;
 	uint16 signal;
 	GuiAnimateList::iterator listIterator;

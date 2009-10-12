@@ -36,9 +36,6 @@ namespace Sci {
 SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) : 
 	_width(width), _height(height) {
 
-	int i;
-	uint16 base = 0;
-
 	_pixels = _width * _height;
 
 	// if you want to do scaling, adjust putPixel() accordingly

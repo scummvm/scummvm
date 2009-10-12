@@ -855,7 +855,7 @@ List *SegManager::lookupList(reg_t addr) {
 }
 
 Node *SegManager::lookupNode(reg_t addr) {
-	if (!addr.offset && !addr.segment)
+	if (addr.isNull())
 		return NULL; // Non-error null
 
 	if (getSegmentType(addr.segment) != SEG_TYPE_NODES) {
