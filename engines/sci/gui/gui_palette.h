@@ -26,7 +26,7 @@
 #ifndef SCI_GUI_PALETTE_H
 #define SCI_GUI_PALETTE_H
 
-#include "sci/gui/gui.h"
+#include "sci/gui/gui_helpers.h"
 
 namespace Sci {
 

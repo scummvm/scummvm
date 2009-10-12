@@ -26,8 +26,6 @@
 #ifndef SCI_GUI_CURSOR_H
 #define SCI_GUI_CURSOR_H
 
-#include "sci/gui/gui.h"
-
 namespace Sci {
 
 #define SCI_CURSOR_SCI0_HEIGHTWIDTH 16
