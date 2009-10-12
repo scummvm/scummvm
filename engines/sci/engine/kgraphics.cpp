@@ -585,8 +585,14 @@ reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv) {
 	return make_reg(0, s->_gui->picNotValid(newPicNotValid));
 }
 
+void kGraphCreateRect(int16 x, int16 y, int16 x1, int16 y1, Common::Rect *destRect) {
+	if (x > x1) SWAP(x, x1);
+	if (y > y1) SWAP(y, y1);
+	*destRect = Common::Rect(x, y, x1, y1);
+}
+
 reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
-	int x = 0, y = 0, x1 = 0, y1 = 0;
+	int16 x = 0, y = 0, x1 = 0, y1 = 0;
 	uint16 flags;
 	int16 priority, control, color, colorMask;
 	Common::Rect rect;
@@ -620,7 +626,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_SAVE_BOX:
-		rect = Common::Rect(x, y, x1, y1);
+		kGraphCreateRect(x, y, x1, y1, &rect);
 		flags = (argc > 5) ? argv[5].toUint16() : 0;
 		return s->_gui->graphSaveBox(rect, flags);
 		break;
@@ -630,12 +636,12 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_FILL_BOX_BACKGROUND:
-		rect = Common::Rect(x, y, x1, y1);
+		kGraphCreateRect(x, y, x1, y1, &rect);
 		s->_gui->graphFillBoxBackground(rect);
 		break;
 
 	case K_GRAPH_FILL_BOX_FOREGROUND:
-		rect = Common::Rect(x, y, x1, y1);
+		kGraphCreateRect(x, y, x1, y1, &rect);
 		s->_gui->graphFillBoxForeground(rect);
 		break;
 
@@ -650,14 +656,14 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_UPDATE_BOX: {
-		rect = Common::Rect(x, y, x1, y1);
+		kGraphCreateRect(x, y, x1, y1, &rect);
 		s->_gui->graphUpdateBox(rect);
 		break;
 	}
 	break;
 
 	case K_GRAPH_REDRAW_BOX: {
-		rect = Common::Rect(x, y, x1, y1);
+		kGraphCreateRect(x, y, x1, y1, &rect);
 		s->_gui->graphRedrawBox(rect);
 		break;
 	}
