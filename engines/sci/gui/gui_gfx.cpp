@@ -1384,7 +1384,7 @@ void SciGuiGfx::AddToPicDrawCels(List *list) {
 		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
 
 		// Create rect according to coordinates and given cel
-		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->priority, &listEntry->celRect);
+		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
 
 		// draw corresponding cel
 		drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
