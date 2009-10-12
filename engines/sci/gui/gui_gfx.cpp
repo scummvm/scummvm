@@ -1147,7 +1147,7 @@ void SciGuiGfx::AnimateUpdate() {
 	GuiAnimateList::iterator listBegin = _animateList.begin();
 	GuiAnimateList::iterator listEnd = _animateList.end();
 
-	// Remove all previous cels from screen
+	// Remove all no-update cels, if requested
 	listIterator = _animateList.reverse_begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
@@ -1174,6 +1174,7 @@ void SciGuiGfx::AnimateUpdate() {
 		listIterator--;
 	}
 
+	// Draw always-update cels
 	listIterator = listBegin;
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
@@ -1196,6 +1197,7 @@ void SciGuiGfx::AnimateUpdate() {
 		listIterator++;
 	}
 
+	// Saving background for all NoUpdate-cels
 	listIterator = listBegin;
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
@@ -1208,7 +1210,7 @@ void SciGuiGfx::AnimateUpdate() {
 			} else {
 				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 				if (signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
-					bitsHandle = BitsSave(listEntry->celRect, SCI_SCREEN_MASK_PRIORITY|SCI_SCREEN_MASK_PRIORITY);
+					bitsHandle = BitsSave(listEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 				PUT_SEL32(curObject, underBits, bitsHandle);
@@ -1218,6 +1220,7 @@ void SciGuiGfx::AnimateUpdate() {
 		listIterator++;
 	}
 
+	// Draw NoUpdate cels
 	listIterator = listBegin;
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
