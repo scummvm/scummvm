@@ -338,13 +338,13 @@ int Script::funcActPhase(int objID) const {
 	bool visible = (obj->_location == _vm->_game->getRoomNum() && obj->_visible);
 
 	if (objID == kDragonObject || visible) {
-		// FIXME: we should check which animation is active and return
-		// the phase of it, instead of the first one.  this function
-		// is only used at 3 places of the game, hence possible
-		// breakage may not show easily.
-		int animID = obj->_anim[0];
-		Animation *anim = _vm->_anims->getAnimation(animID);
-		ret = anim->currentFrameNum();
+		for (uint i = 0; i < obj->_anim.size(); ++i) {
+			int animID = obj->_anim[i];
+			Animation *anim = _vm->_anims->getAnimation(animID);
+			if (anim && anim->isPlaying()) {
+				ret = anim->currentFrameNum();
+			}
+		}
 	}
 
 	return ret;
