@@ -970,7 +970,7 @@ void SciGui32::graphRedrawBox(Common::Rect rect) {
 	if (s->dyn_views && s->dyn_views->_parent == (GfxContainer *)s->port)
 		s->dyn_views->draw(Common::Point(0, 0));
 
-	//gfxop_update_box(s->gfx_state, area);
+	gfxop_update_box(s->gfx_state, area);
 }
 
 int16 SciGui32::picNotValid(int16 newPicNotValid) {
