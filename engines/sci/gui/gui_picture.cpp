@@ -198,7 +198,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 
 	// Set initial vertical coordinate by using current port
 	y = callerY + _gfx->GetPort()->top;
-	lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom) + _gfx->GetPort()->top;
+	lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom + _gfx->GetPort()->top);
 	if (callerX != 0)
 		error("drawCelData() called with callerX != 0");
 
