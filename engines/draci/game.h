@@ -132,13 +132,21 @@ private:
 	const byte *_data;
 };
 
+/*
+ * Enumerates the directions the dragon can look into when arrived.
+ */
+enum SightDirection {
+	kDirectionLast, kDirectionMouse, kDirectionUnknown,
+	kDirectionRight, kDirectionLeft, kDirectionIntelligent
+};
+
 struct GameObject {
 	uint _init, _look, _use, _canUse;
 	bool _imInit, _imLook, _imUse;
 	int _walkDir;
 	byte _z;
 	uint _lookX, _lookY, _useX, _useY;
-	int _lookDir, _useDir;
+	SightDirection _lookDir, _useDir;
 	uint _absNum;
 	Common::Array<int> _anim;
 	GPL2Program _program;
@@ -255,10 +263,11 @@ public:
 		return n;
 	}
 
-	void walkHero(int x, int y);
+	void walkHero(int x, int y, SightDirection dir);
 	int getHeroX() const;
 	int getHeroY() const;
 	void positionAnimAsHero(Animation *anim);
+	void playHeroAnimation(int anim_index);
 
 	int loadAnimation(uint animNum, uint z);
 	void loadOverlays();

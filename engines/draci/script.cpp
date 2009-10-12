@@ -479,43 +479,25 @@ void Script::startPlay(Common::Queue<int> &params) {
 void Script::justTalk(Common::Queue<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
-	if (last_anim >= 0) {
-		_vm->_game->stopObjectAnimations(dragon);
-	}
 	int new_anim;
 	if (last_anim == kSpeakRight || last_anim == kStopRight) {
 		new_anim = kSpeakRight;
 	} else {
 		new_anim = kSpeakLeft;
 	}
-
-	const int animID = dragon->_anim[new_anim];
-
-	Animation *anim = _vm->_anims->getAnimation(animID);
-	_vm->_game->positionAnimAsHero(anim);
-
-	_vm->_anims->play(animID);
+	_vm->_game->playHeroAnimation(new_anim);
 }
 
 void Script::justStay(Common::Queue<int> &params) {
 	const GameObject *dragon = _vm->_game->getObject(kDragonObject);
 	const int last_anim = static_cast<Movement> (_vm->_game->playingObjectAnimation(dragon));
-	if (last_anim >= 0) {
-		_vm->_game->stopObjectAnimations(dragon);
-	}
 	int new_anim;
 	if (last_anim == kSpeakRight || last_anim == kStopRight) {
 		new_anim = kStopRight;
 	} else {
 		new_anim = kStopLeft;
 	}
-
-	const int animID = dragon->_anim[new_anim];
-
-	Animation *anim = _vm->_anims->getAnimation(animID);
-	_vm->_game->positionAnimAsHero(anim);
-
-	_vm->_anims->play(animID);
+	_vm->_game->playHeroAnimation(new_anim);
 }
 
 void Script::c_If(Common::Queue<int> &params) {
@@ -662,9 +644,9 @@ void Script::walkOn(Common::Queue<int> &params) {
 
 	int x = params.pop();
 	int y = params.pop();
-	params.pop(); // facing direction, not used yet
+	SightDirection dir = static_cast<SightDirection> (params.pop());
 
-	_vm->_game->walkHero(x, y);
+	_vm->_game->walkHero(x, y, dir);
 }
 
 void Script::walkOnPlay(Common::Queue<int> &params) {
@@ -674,12 +656,12 @@ void Script::walkOnPlay(Common::Queue<int> &params) {
 
 	int x = params.pop();
 	int y = params.pop();
-	params.pop(); // facing direction, not used yet
+	SightDirection dir = static_cast<SightDirection> (params.pop());
 
 	// HACK: This should be an onDest action when hero walking is properly implemented
 	_vm->_game->setExitLoop(true);
 
-	_vm->_game->walkHero(x, y);
+	_vm->_game->walkHero(x, y, dir);
 
 	_vm->_game->setLoopSubstatus(kSubstatusStrange);
 	_vm->_game->loop();

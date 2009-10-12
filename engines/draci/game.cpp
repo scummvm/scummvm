@@ -282,17 +282,17 @@ void Game::loop() {
 							_objUnderCursor = kObjectNotFound;
 
 							if (!obj->_imLook) {
-								if (obj->_lookDir == -1) {
-									walkHero(x, y);
+								if (obj->_lookDir == kDirectionLast) {
+									walkHero(x, y, obj->_lookDir);
 								} else {
-									walkHero(obj->_lookX, obj->_lookY);
+									walkHero(obj->_lookX, obj->_lookY, obj->_lookDir);
 								}
 							}
 
 							_vm->_script->run(obj->_program, obj->_look);
 							_vm->_mouse->cursorOn();
 						} else {
-							walkHero(x, y);
+							walkHero(x, y, kDirectionLast);
 						}
 					}
 				}
@@ -310,17 +310,17 @@ void Game::loop() {
 							_objUnderCursor = kObjectNotFound;
 
 							if (!obj->_imUse) {
-								if (obj->_useDir == -1) {
-									walkHero(x, y);
+								if (obj->_useDir == kDirectionLast) {
+									walkHero(x, y, obj->_useDir);
 								} else {
-									walkHero(obj->_useX, obj->_useY);
+									walkHero(obj->_useX, obj->_useY, obj->_useDir);
 								}
 							}
 
 							_vm->_script->run(obj->_program, obj->_use);
 							_vm->_mouse->cursorOn();
 						} else {
-							walkHero(x, y);
+							walkHero(x, y, kDirectionLast);
 						}
 					} else {
 						if (_vm->_script->testExpression(_currentRoom._program, _currentRoom._canUse)) {
@@ -332,7 +332,7 @@ void Game::loop() {
 							_vm->_script->run(_currentRoom._program, _currentRoom._use);
 							_vm->_mouse->cursorOn();
 						} else {
-							walkHero(x, y);
+							walkHero(x, y, kDirectionLast);
 						}
 					}
 				}
@@ -940,7 +940,16 @@ int Game::getCurrentDialogueOffset() const {
 	return _dialogueOffsets[_currentDialogue];
 }
 
-void Game::walkHero(int x, int y) {
+void Game::playHeroAnimation(int anim_index) {
+	const GameObject *dragon = getObject(kDragonObject);
+	const int animID = dragon->_anim[anim_index];
+	Animation *anim = _vm->_anims->getAnimation(animID);
+	stopObjectAnimations(dragon);
+	positionAnimAsHero(anim);
+	_vm->_anims->play(animID);
+}
+
+void Game::walkHero(int x, int y, SightDirection dir) {
 	// Needed for the map room with empty walking map.  For some reason,
 	// findNearestWalkable() takes several seconds with 100% CPU to finish
 	// (correctly).
@@ -948,23 +957,28 @@ void Game::walkHero(int x, int y) {
 		return;
 
 	Surface *surface = _vm->_screen->getSurface();
-
 	_hero = _currentRoom._walkingMap.findNearestWalkable(x, y, surface->getRect());
-
-	GameObject *dragon = getObject(kDragonObject);
-	stopObjectAnimations(dragon);
-
 	debugC(3, kDraciLogicDebugLevel, "Walk to x: %d y: %d", _hero.x, _hero.y);
-
-	// Fetch dragon's animation ID
 	// FIXME: Need to add proper walking (this only warps the dragon to position)
-	int animID = dragon->_anim[kStopRight];
 
-	Animation *anim = _vm->_anims->getAnimation(animID);
-	positionAnimAsHero(anim);
-
-	// Play the animation
-	_vm->_anims->play(animID);
+	Movement movement = kStopRight;
+	switch (dir) {
+	case kDirectionLeft:
+		movement = kStopLeft;
+		break;
+	case kDirectionRight:
+		movement = kStopRight;
+		break;
+	default: {
+		const GameObject *dragon = getObject(kDragonObject);
+		const int anim_index = playingObjectAnimation(dragon);
+		if (anim_index >= 0) {
+			movement = static_cast<Movement> (anim_index);
+		}
+		break;
+	}
+	}
+	playHeroAnimation(movement);
 }
 
 void Game::loadItem(int itemID) {
@@ -1200,8 +1214,8 @@ void Game::loadObject(uint objNum) {
 	obj->_lookY = objReader.readUint16LE();
 	obj->_useX = objReader.readUint16LE();
 	obj->_useY = objReader.readUint16LE();
-	obj->_lookDir = objReader.readByte() - 1;
-	obj->_useDir = objReader.readByte() - 1;
+	obj->_lookDir = static_cast<SightDirection> (objReader.readByte());
+	obj->_useDir = static_cast<SightDirection> (objReader.readByte());
 
 	obj->_absNum = objNum;
 
