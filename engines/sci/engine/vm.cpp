@@ -110,8 +110,9 @@ static int validate_variable(reg_t *r, reg_t *stack_base, int type, int max, int
 	const char *names[4] = {"global", "local", "temp", "param"};
 
 	if (index < 0 || index >= max) {
-		Common::String txt = "[VM] Attempt to use invalid " + 
-							Common::String::printf("%s variable %04x ", names[type], index);
+		Common::String txt = Common::String::printf(
+							"[VM] Attempt to use invalid %s variable %04x ", 
+							names[type], index);
 		if (max == 0)
 			txt += "(variable type invalid)";
 		else
@@ -940,11 +941,10 @@ void run_vm(EngineState *s, int restoring) {
 						// Remove callk stack frame again
 						s->_executionStack.pop_back();
 					} else {
-						Common::String warningMsg = "Dummy function " + kfun.orig_name;
-						warningMsg += Common::String::printf("[0x%x]", opparams[0]);
-						warningMsg += " invoked - ignoring. Params: ";
-						warningMsg += Common::String::printf("%d", argc);
-						warningMsg += " (";
+						Common::String warningMsg = "Dummy function " + kfun.orig_name + 
+													Common::String::printf("[0x%x]", opparams[0]) +
+													" invoked - ignoring. Params: " + 
+													Common::String::printf("%d", argc) + " (";
 
 						for (int i = 0; i < argc; i++) {
 							warningMsg +=  Common::String::printf("%04x:%04x", PRINT_REG(argv[i]));
