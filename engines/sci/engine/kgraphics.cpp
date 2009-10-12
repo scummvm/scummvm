@@ -794,11 +794,11 @@ reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
 reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
-	int cel = (argc > 3) ? argv[2].toSint16() : 0;
+	int cel = (argc >= 3) ? argv[2].toSint16() : 0;
 	int height, width;
 	Common::Point offset;
 
-	if (argc > 4)
+	if (argc > 3)
 		error("celHigh called with more than 3 parameters");
 
 	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset);
@@ -808,11 +808,11 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
-	int cel = (argc > 3) ? argv[2].toSint16() : 0;
+	int cel = (argc >= 3) ? argv[2].toSint16() : 0;
 	int height, width;
 	Common::Point offset;
 
-	if (argc > 4)
+	if (argc > 3)
 		error("celWide called with more than 3 parameters");
 
 	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset);
