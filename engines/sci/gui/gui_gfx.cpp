@@ -1298,7 +1298,7 @@ void SciGuiGfx::AnimateUpdateScreen(byte oldPicNotValid) {
 		signal = listEntry->signal;
 
 		if (listEntry->showBitsFlag || !(signal & (SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE) ||
-										!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && signal & SCI_ANIMATE_SIGNAL_NOUPDATE && oldPicNotValid)) {
+										(!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) && oldPicNotValid))) {
 // TODO: code finish
 //			rect = (Common::Rect *)&cobj[_objOfs[7]];
 //			rect1 = (Common::Rect *)&cobj[_objOfs[8]];
