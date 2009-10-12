@@ -51,7 +51,10 @@ namespace Sci {
 // Graph subfunctions
 enum {
 	K_GRAPH_GET_COLORS_NR = 2,
+	// 3 - SET PALETTE VIA RESOURCE
 	K_GRAPH_DRAW_LINE = 4,
+	// 5 - NOP
+	// 6 - DRAW PATTERN
 	K_GRAPH_SAVE_BOX = 7,
 	K_GRAPH_RESTORE_BOX = 8,
 	K_GRAPH_FILL_BOX_BACKGROUND = 9,
@@ -649,14 +652,9 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case K_GRAPH_UPDATE_BOX: {
-
-		debugC(2, kDebugLevelGraphics, "update_box(%d, %d, %d, %d)\n", argv[1].toSint16(), argv[2].toSint16(), argv[3].toSint16(), argv[4].toSint16());
-
-		area.x += s->port->zone.x;
-		area.y += s->port->zone.y;
-
-		// FIXME: Change to class calling
-		//gfxop_update_box(s->gfx_state, area);
+		rect = Common::Rect(x, y, x1, y1);
+		s->_gui->graphUpdateBox(rect);
+		break;
 	}
 	break;
 

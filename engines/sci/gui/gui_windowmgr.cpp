@@ -151,6 +151,9 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 			r.bottom++;
 		}
 	}
+
+	// FIXME: it seems as if shadows may result in the window getting moved one upwards
+	//         so that the shadow is visible (lsl5)
 	
 	pwnd->dims = r;
 	const Common::Rect *wmprect = &_wmgrPort->rect;
@@ -160,24 +163,19 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 		pwnd->dims.moveTo(pwnd->dims.left, wmprect->top);
 	
 	if (wmprect->bottom < pwnd->dims.bottom)
-		pwnd->dims.moveTo(pwnd->dims.left, wmprect->bottom
-				- pwnd->dims.bottom + pwnd->dims.top);
+		pwnd->dims.moveTo(pwnd->dims.left, wmprect->bottom - pwnd->dims.bottom + pwnd->dims.top);
 	
 	if (wmprect->right < pwnd->dims.right)
-		pwnd->dims.moveTo(wmprect->right + pwnd->dims.left
-				- pwnd->dims.right, pwnd->dims.top);
+		pwnd->dims.moveTo(wmprect->right + pwnd->dims.left - pwnd->dims.right, pwnd->dims.top);
 	
 	if (wmprect->left > pwnd->dims.left)
 		pwnd->dims.moveTo(wmprect->left, pwnd->dims.top);
 	
-	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft,
-			pwnd->rect.top + pwnd->dims.top - oldtop);
+	pwnd->rect.moveTo(pwnd->rect.left + pwnd->dims.left - oldleft, pwnd->rect.top + pwnd->dims.top - oldtop);
 	if (restoreRect == 0)
 		pwnd->restoreRect = pwnd->dims;
 
-	// CHECKME: Is this 'kTransparent' check necessary?
-	// The shadow is already drawn if !(wndStyle & (kUser | kNoFrame)).
-	if (!(pwnd->wndStyle & (SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_NOFRAME))) {
+	if (!(pwnd->wndStyle & (SCI_WINDOWMGR_STYLE_USER | SCI_WINDOWMGR_STYLE_NOFRAME))) {
 		// The shadow is drawn slightly outside the window.
 		// Enlarge restoreRect to cover that.
 		pwnd->restoreRect.bottom++;
@@ -240,7 +238,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 		if (!(wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT))
 			_gfx->FillRect(r, SCI_SCREEN_MASK_VISUAL, pWnd->backClr);
 
-		_gfx->BitsShow(pWnd->dims, SCI_SCREEN_MASK_VISUAL);
+		_gfx->BitsShow(pWnd->restoreRect);
 	}
 	_gfx->SetPort(oldport);
 }
@@ -250,7 +248,7 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 	_gfx->BitsRestore(pWnd->hSaved1);
 	_gfx->BitsRestore(pWnd->hSaved2);
 	if (arg2)
-		_gfx->BitsShow(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
+		_gfx->BitsShow(pWnd->restoreRect);
 //	else
 //		g_sci->ReAnimate(&pwnd->dims);
 	_windowList.remove(pWnd);

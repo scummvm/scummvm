@@ -952,6 +952,15 @@ void SciGui32::graphRestoreBox(reg_t handle) {
 	graph_restore_box(s, handle);
 }
 
+void SciGui32::graphUpdateBox(Common::Rect rect) {
+	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
+
+	area.x += s->port->zone.x;
+	area.y += s->port->zone.y;
+
+	gfxop_update_box(s->gfx_state, area);
+}
+
 void SciGui32::paletteSet(int resourceNo, int flags) {
 	//warning("STUB");
 }

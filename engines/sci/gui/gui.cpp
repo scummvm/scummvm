@@ -245,8 +245,8 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	if (bgcolor != -1)
 		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, bgcolor, 0, 0);
 	_gfx->TextBox(text, 0, rect, align, -1);
-//	if (_picNotValid == 0 && bRedraw)
-//		_gfx->ShowBits(rect, 1);
+	if (!_screen->_picNotValid && bRedraw)
+		_gfx->BitsShow(rect);
 	// restoring port and cursor pos
 	GuiPort *currport = _gfx->GetPort();
 	uint16 tTop = currport->curTop;
@@ -254,8 +254,6 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	*currport = oldPort;
 	currport->curTop = tTop;
 	currport->curLeft = tLeft;
-
-	_screen->copyToScreen();
 }
 
 void SciGui::textSize(const char *text, int16 font, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
@@ -282,8 +280,7 @@ void SciGui::drawStatus(const char *text, int16 colorPen, int16 colorBack) {
 	_gfx->MoveTo(0, 1);
 	_gfx->Draw_String(text);
 	_gfx->SetPort(oldPort);
-	// _gfx->ShowBits(*_theMenuBar, 1);
-	_gfx->BitsShow(_gfx->_menuRect, SCI_SCREEN_MASK_VISUAL);
+	_gfx->BitsShow(_gfx->_menuRect);
 }
 
 void SciGui::drawMenuBar() {
@@ -299,21 +296,18 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirror
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		_screen->_picNotValid = 1;
 	} else {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 		_windowMgr->EndUpdate(_windowMgr->_picWind);
 	}
-	_screen->copyToScreen();
-
 	_gfx->SetPort(oldPort);
-	_screen->_picNotValid = true;
 }
 
 void SciGui::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, int16 priority, uint16 paletteNo) {
 	_gfx->drawCel(viewId, loopNo, celNo, leftPos, topPos, priority, paletteNo);
 	_palette->setOnScreen();
-	_screen->copyToScreen();
 }
 
 void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 style, bool hilite) {
@@ -325,17 +319,17 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		_gfx->TextFace(style & 1 ? 0 : 1);
 		_gfx->TextBox(text, 0, rect, 1, fontId);
 		_gfx->TextFace(0);
-		if (style & 8) { // selected
-			rect.grow(1);
+		rect.grow(1);
+		if (style & 8) // selected
 			_gfx->FrameRect(rect);
+		if (!_screen->_picNotValid) {
+			rect.grow(1);
+			_gfx->BitsShow(rect);
 		}
 	} else {
 		_gfx->InvertRect(rect);
+		_gfx->BitsShow(rect);
 	}
-
-	Common::Rect screenRect = rect;
-	screenRect.grow(2);
-	_gfx->BitsShow(screenRect, SCI_SCREEN_MASK_VISUAL);
 }
 
 void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite) {
@@ -347,13 +341,13 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 		if (style & 8) { // selected
 			_gfx->FrameRect(rect);
 		}
+		rect.grow(1);
+		if (!_screen->_picNotValid)
+			_gfx->BitsShow(rect);
 	} else {
 		_gfx->InvertRect(rect);
+		_gfx->BitsShow(rect);
 	}
-
-	Common::Rect screenRect = rect;
-	screenRect.grow(1);
-	_gfx->BitsShow(screenRect, SCI_SCREEN_MASK_VISUAL);
 }
 
 void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, int16 cursorPos, int16 maxChars, bool hilite) {
@@ -371,7 +365,10 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 		rect.grow(-1);
 		_gfx->TexteditCursorDraw(rect, text, cursorPos);
 		_gfx->SetFont(oldFontId);
+		rect.grow(1);
 	}
+	if (!_screen->_picNotValid)
+		_gfx->BitsShow(rect);
 }
 
 void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 style, bool hilite) {
@@ -382,9 +379,8 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 		}
 	} else {
 		_gfx->InvertRect(rect);
+		_gfx->BitsShow(rect);
 	}
-
-	_gfx->BitsShow(rect, SCI_SCREEN_MASK_VISUAL);
 }
 
 void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 style, int16 upperPos, int16 cursorPos, bool isAlias, bool hilite) {
@@ -394,7 +390,8 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 		if (isAlias && (style & 8)) {
 			_gfx->FrameRect(rect);
 		}
-		_gfx->BitsShow(rect, SCI_SCREEN_MASK_VISUAL);
+		if (!_screen->_picNotValid)
+			_gfx->BitsShow(rect);
 	}
 }
 
@@ -410,22 +407,18 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 
 void SciGui::graphFillBoxForeground(Common::Rect rect) {
 	_gfx->PaintRect(rect);
-	_screen->copyRectToScreen(rect);
 }
 
 void SciGui::graphFillBoxBackground(Common::Rect rect) {
 	_gfx->EraseRect(rect);
-	_screen->copyRectToScreen(rect);
 }
 
 void SciGui::graphFillBox(Common::Rect rect, uint16 colorMask, int16 color, int16 priority, int16 control) {
 	_gfx->FillRect(rect, colorMask, color, priority, control);
-	_screen->copyRectToScreen(rect);
 }
 
 void SciGui::graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control) {
 	_gfx->drawLine(startPoint.x, startPoint.y, endPoint.x, endPoint.y, color, priority, control);
-	_screen->copyToScreen();
 }
 
 reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 flags) {
@@ -434,8 +427,12 @@ reg_t SciGui::graphSaveBox(Common::Rect rect, uint16 flags) {
 
 void SciGui::graphRestoreBox(reg_t handle) {
 	_gfx->BitsRestore(handle);
-	_screen->copyToScreen();
 }
+
+void SciGui::graphUpdateBox(Common::Rect rect) {
+	_gfx->BitsShow(rect);
+}
+
 
 void SciGui::paletteSet(int resourceNo, int flags) {
    _palette->setFromResource(resourceNo, flags);
@@ -484,10 +481,8 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 	if (listReference.isNull()) {
 		_gfx->AnimateDisposeLastCast();
-		if (_screen->_picNotValid) {
-			//(this->*ShowPic)(_showMap, _showStyle);
-			_screen->_picNotValid = false;
-		}
+		if (_screen->_picNotValid)
+			_gfx->ShowPic();
 		return;
 	}
 
@@ -513,12 +508,10 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	_gfx->AnimateDrawCels();
 
 	if (_screen->_picNotValid) {
-		//(this->*ShowPic)(_showMap, _showStyle);
-		_screen->_picNotValid = false;
+		_gfx->ShowPic();
 	}
 
-	//_gfx->AnimateUpdateScreen();
-	_screen->copyToScreen();
+	_gfx->AnimateUpdateScreen(old_picNotValid);
 	_gfx->AnimateRestoreAndDelete(argc, argv);
 
 	_gfx->SetPort(oldPort);
@@ -586,7 +579,8 @@ void SciGui::setCursorShape(GuiResourceId cursorId) {
 }
 
 void SciGui::setCursorPos(Common::Point pos) {
-	// No adjustment of position needed, directly forwarding to SciGui::moveCursor()
+	pos.y += _gfx->GetPort()->top;
+	pos.x += _gfx->GetPort()->left;
 	moveCursor(pos);
 }
 

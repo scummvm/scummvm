@@ -533,7 +533,7 @@ void SciGuiGfx::ShowText(const char *text, int16 from, int16 len, GuiResourceId 
 	rect.left = _curPort->curLeft;
 	DrawText(text, from, len, orgFontId, orgPenColor);
 	rect.right = _curPort->curLeft;
-	BitsShow(rect, SCI_SCREEN_MASK_VISUAL);
+	BitsShow(rect);
 }
 
 // Draws a text in rect.
@@ -581,14 +581,13 @@ void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 }
 
 // Update (part of) screen
-void SciGuiGfx::BitsShow(const Common::Rect &r, uint16 screenMask) {
+void SciGuiGfx::BitsShow(const Common::Rect &r) {
 	Common::Rect rect(r.left, r.top, r.right, r.bottom);
 	rect.clip(_curPort->rect);
 	if (rect.isEmpty()) // nothing to show
 		return;
 
 	OffsetRect(rect);
-	assert((screenMask & 0x8000) == 0);
 	_screen->copyRectToScreen(rect);
 }
 
@@ -720,10 +719,11 @@ void SciGuiGfx::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mir
 	picture->draw(animationNr, mirroredFlag, addToFlag, paletteId);
 }
 
+// This one is the only one that updates screen!
 void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo) {
 	SciGuiView *view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
-	Common::Rect rect(0, 0);
-	Common::Rect clipRect(0, 0);
+	Common::Rect rect;
+	Common::Rect clipRect;
 	if (view) {
 		rect.left = leftPos;
 		rect.top = topPos;
@@ -737,10 +737,38 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		Common::Rect clipRectTranslated = clipRect;
 		OffsetRect(clipRectTranslated);
 		view->draw(rect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
-
-		//if (_picNotValid == 0)
-		//	_gfx->ShowBits(rect, 1);
+		if (!_screen->_picNotValid)
+			BitsShow(rect);
 	}
+}
+
+// This version of drawCel is not supposed to call BitsShow()!
+void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
+	SciGuiView *view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+	Common::Rect clipRect;
+	if (view) {
+		clipRect = celRect;
+		clipRect.clip(_curPort->rect);
+		if (clipRect.isEmpty()) // nothing to draw
+			return;
+
+		Common::Rect clipRectTranslated = clipRect;
+		OffsetRect(clipRectTranslated);
+		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
+	}
+}
+
+// This version of drawCel is not supposed to call BitsShow()!
+void SciGuiGfx::drawCel(SciGuiView *view, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo) {
+	Common::Rect clipRect;
+	clipRect = celRect;
+	clipRect.clip(_curPort->rect);
+	if (clipRect.isEmpty()) // nothing to draw
+		return;
+
+	Common::Rect clipRectTranslated = clipRect;
+	OffsetRect(clipRectTranslated);
+	view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
 }
 
 const char controlListUpArrow[2]	= { 0x18, 0 };
@@ -810,7 +838,7 @@ void SciGuiGfx::TexteditCursorDraw (Common::Rect rect, const char *text, uint16 
 		_texteditCursorRect.bottom = _texteditCursorRect.top + _font->getHeight();
 		_texteditCursorRect.right = _texteditCursorRect.left + (text[curPos] == 0 ? 1 : CharWidth(text[curPos]));
 		InvertRect(_texteditCursorRect);
-		BitsShow(_texteditCursorRect, SCI_SCREEN_MASK_VISUAL);
+		BitsShow(_texteditCursorRect);
 		_texteditCursorVisible = true;
 		TexteditSetBlinkTime();
 	}
@@ -819,7 +847,7 @@ void SciGuiGfx::TexteditCursorDraw (Common::Rect rect, const char *text, uint16 
 void SciGuiGfx::TexteditCursorErase() {
 	if (_texteditCursorVisible) {
 		InvertRect(_texteditCursorRect);
-		BitsShow(_texteditCursorRect, SCI_SCREEN_MASK_VISUAL);
+		BitsShow(_texteditCursorRect);
 		_texteditCursorVisible = false;
 	}
 	TexteditSetBlinkTime();
@@ -854,8 +882,10 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 			eventKey = GET_SEL32V(eventObject, message);
 			switch (eventKey) {
 			case SCI_K_BACKSPACE:
-				cursorPos--; text.deleteChar(cursorPos);
-				textChanged = true;
+				if (cursorPos > 0) {
+					cursorPos--; text.deleteChar(cursorPos);
+					textChanged = true;
+				}
 				break;
 			case SCI_K_DELETE:
 				text.deleteChar(cursorPos);
@@ -898,7 +928,7 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		TexteditCursorErase();
 		EraseRect(rect);
 		TextBox(text.c_str(), 0, rect, 0, fontId);
-		BitsShow(rect, SCI_SCREEN_MASK_VISUAL);
+		BitsShow(rect);
 		SetFont(fontId);
 		rect.top--;
 		TexteditCursorDraw(rect, text.c_str(), cursorPos);
@@ -908,7 +938,7 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 	} else {
 		if (g_system->getMillis() >= _texteditBlinkTime) {
 			InvertRect(_texteditCursorRect);
-			BitsShow(_texteditCursorRect, SCI_SCREEN_MASK_VISUAL);
+			BitsShow(_texteditCursorRect);
 			_texteditCursorVisible = !_texteditCursorVisible;
 			TexteditSetBlinkTime();
 		}
@@ -997,6 +1027,14 @@ int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
 				return y;
 	}
 	return _priorityBottom;
+}
+
+void SciGuiGfx::ShowPic() {
+	// TODO: Implement animations
+	warning("ShowPic animation not implemented");
+	_palette->setOnScreen();
+	_screen->copyToScreen();
+	_screen->_picNotValid = 0;
 }
 
 void SciGuiGfx::AnimateDisposeLastCast() {
@@ -1202,7 +1240,7 @@ void SciGuiGfx::AnimateUpdate() {
 
 		if (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
 			// draw corresponding cel
-			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
+			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 			listEntry->showBitsFlag = true;
 
 			signal &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
@@ -1246,7 +1284,7 @@ void SciGuiGfx::AnimateUpdate() {
 
 		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal & SCI_ANIMATE_SIGNAL_HIDDEN)) {
 			// draw corresponding cel
-			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
+			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 			listEntry->showBitsFlag = true;
 
 			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
@@ -1280,7 +1318,7 @@ void SciGuiGfx::AnimateDrawCels() {
 			PUT_SEL32(curObject, underBits, bitsHandle);
 
 			// draw corresponding cel
-			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
+			drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 			listEntry->showBitsFlag = true;
 
 			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
@@ -1301,6 +1339,46 @@ void SciGuiGfx::AnimateDrawCels() {
 		}
 		listIterator++;
 	}
+}
+
+void SciGuiGfx::AnimateUpdateScreen(byte oldPicNotValid) {
+	SegManager *segMan = _s->_segMan;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _animateList.end();
+
+	listIterator = _animateList.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		signal = listEntry->signal;
+
+		if (listEntry->showBitsFlag || !(signal & (SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE) ||
+										!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && signal & SCI_ANIMATE_SIGNAL_NOUPDATE && oldPicNotValid)) {
+// TODO: code finish
+//			rect = (Common::Rect *)&cobj[_objOfs[7]];
+//			rect1 = (Common::Rect *)&cobj[_objOfs[8]];
+//
+//			Common::Rect ro(rect->left, rect->top, rect->right, rect->bottom);
+//			ro.clip(*rect1);
+//
+//			if (!ro.isEmpty()) {
+//				ro = *rect; 
+//				ro.extend(*rect1);
+//			} else {
+//				_gfx->ShowBits(*rect, _showMap);
+//			//	ro = *rect1;
+//			//}
+//			//*rect  = *rect1;
+//			_gfx->ShowBits(ro, _showMap);
+			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
+				listEntry->signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			}
+		}
+
+		listIterator++;
+	}
+	_screen->copyToScreen();
 }
 
 void SciGuiGfx::AnimateRestoreAndDelete(int argc, reg_t *argv) {
@@ -1360,7 +1438,7 @@ void SciGuiGfx::AddToPicDrawCels(List *list) {
 		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->priority, &listEntry->celRect);
 
 		// draw corresponding cel
-		drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect.left, listEntry->celRect.top, listEntry->priority, listEntry->paletteNo);
+		drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 		if ((listEntry->signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
 			listEntry->celRect.top = CLIP<int16>(PriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
 			FillRect(listEntry->celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -1378,7 +1456,7 @@ void SciGuiGfx::AddToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, Gui
 
 	// Create rect according to coordinates and given cel
 	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
-	drawCel(viewId, loopNo, celNo, celRect.left, celRect.top, priority, 0);
+	drawCel(view, loopNo, celNo, celRect, priority, 0);
 }
 
 bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {

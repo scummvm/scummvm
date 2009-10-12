@@ -82,6 +82,7 @@ public:
 	virtual void graphDrawLine(Common::Point startPoint, Common::Point endPoint, int16 color, int16 priority, int16 control);
 	virtual reg_t graphSaveBox(Common::Rect rect, uint16 flags);
 	virtual void graphRestoreBox(reg_t handle);
+	virtual void graphUpdateBox(Common::Rect rect);
 
 	virtual void paletteSet(int resourceNo, int flags);
 	virtual int16 paletteFind(int r, int g, int b);

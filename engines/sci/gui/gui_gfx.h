@@ -101,7 +101,7 @@ public:
 		DrawText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
 	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, GuiResourceId fontId);
-	void BitsShow(const Common::Rect &r, uint16 flags);
+	void BitsShow(const Common::Rect &r);
 	GuiMemoryHandle BitsSave(const Common::Rect &rect, byte screenFlags);
 	void BitsRestore(GuiMemoryHandle memoryHandle);
 	void BitsFree(GuiMemoryHandle memoryHandle);
@@ -111,6 +111,8 @@ public:
 	
 	void drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, GuiResourceId paletteId);
 	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, uint16 leftPos, uint16 topPos, byte priority, uint16 paletteNo);
+	void drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
+	void drawCel(SciGuiView *view, GuiViewLoopNo loopNo, GuiViewCelNo celNo, Common::Rect celRect, byte priority, uint16 paletteNo);
 	void drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias);
 	void TexteditCursorDraw (Common::Rect rect, const char *text, uint16 curPos);
 	void TexteditCursorErase();
@@ -123,12 +125,15 @@ public:
 	byte CoordinateToPriority(int16 y);
 	int16 PriorityToCoordinate(byte priority);
 
+	void ShowPic();
+
 	void AnimateDisposeLastCast();
 	void AnimateInvoke(List *list, int argc, reg_t *argv);
 	void AnimateMakeSortedList(List *list);
 	void AnimateFill(byte &oldPicNotValid);
 	void AnimateUpdate();
 	void AnimateDrawCels();
+	void AnimateUpdateScreen(byte oldPicNotValid);
 	void AnimateRestoreAndDelete(int argc, reg_t *argv);
 	void AddToPicDrawCels(List *list);
 	void AddToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
