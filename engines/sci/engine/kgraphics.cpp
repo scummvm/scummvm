@@ -604,15 +604,7 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		y1 = argv[3].toSint16();
 	}
 
-	// old code, may be removed later after class migration
-	int redraw_port = 0;
-	rect_t area;
-	area = gfx_rect(argv[2].toSint16(), argv[1].toSint16() , argv[4].toSint16(), argv[3].toSint16());
-	area.width = area.width - area.x; // Since the actual coordinates are absolute
-	area.height = area.height - area.y;
-
 	switch (argv[0].toSint16()) {
-
 	case K_GRAPH_GET_COLORS_NR:
 		return make_reg(0, !s->resMan->isVGA() ? 0x10 : 0x100);
 		break;
@@ -629,7 +621,6 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		kGraphCreateRect(x, y, x1, y1, &rect);
 		flags = (argc > 5) ? argv[5].toUint16() : 0;
 		return s->_gui->graphSaveBox(rect, flags);
-		break;
 
 	case K_GRAPH_RESTORE_BOX:
 		s->_gui->graphRestoreBox(argv[1]);
@@ -655,38 +646,27 @@ reg_t kGraph(EngineState *s, int argc, reg_t *argv) {
 		s->_gui->graphFillBox(rect, colorMask, color, priority, control);
 		break;
 
-	case K_GRAPH_UPDATE_BOX: {
+	case K_GRAPH_UPDATE_BOX:
 		kGraphCreateRect(x, y, x1, y1, &rect);
 		s->_gui->graphUpdateBox(rect);
 		break;
-	}
-	break;
 
-	case K_GRAPH_REDRAW_BOX: {
+	case K_GRAPH_REDRAW_BOX:
 		kGraphCreateRect(x, y, x1, y1, &rect);
 		s->_gui->graphRedrawBox(rect);
 		break;
-	}
-	break;
 
 	case K_GRAPH_ADJUST_PRIORITY:
-
 		debugC(2, kDebugLevelGraphics, "adjust_priority(%d, %d)\n", argv[1].toSint16(), argv[2].toSint16());
 		s->priority_first = argv[1].toSint16() - 10;
 		s->priority_last = argv[2].toSint16() - 10;
 		break;
 
 	default:
-
-		warning("Unhandled Graph() operation %04x", argv[0].toSint16());
-
+		error("Unsupported kGraph() operation %04x", argv[0].toSint16());
 	}
 
-	if (redraw_port)
-		FULL_REDRAW();
-
 	gfxop_update(s->gfx_state);
-
 	return s->r_acc;
 }
 
