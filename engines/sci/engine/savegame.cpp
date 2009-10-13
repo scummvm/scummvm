@@ -221,8 +221,8 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 
 		s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
 
-		// Don't load HunkTable segments
-		if (s.isLoading() && type == SEG_TYPE_HUNK) {
+		// Don't save or load HunkTable segments
+		if (type == SEG_TYPE_HUNK) {
 			continue;
 		}
 
