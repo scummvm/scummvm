@@ -55,6 +55,7 @@ MODULE_OBJS = \
 	gfx/res_view.o \
 	gfx/seq_decoder.o \
 	gui/gui.o \
+	gui/gui_animate.o \
 	gui/gui_cursor.o \
 	gui/gui_font.o \
 	gui/gui_gfx.o \
