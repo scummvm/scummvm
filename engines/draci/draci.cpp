@@ -173,8 +173,7 @@ int DraciEngine::init() {
 	}
 
 	if (!_dubbingArchive->isOpen()) {
-		debugC(2, kDraciGeneralDebugLevel, "ERROR - Opening dubbing archive failed");
-		return Common::kUnknownError;
+		debugC(2, kDraciGeneralDebugLevel, "WARNING - Opening dubbing archive failed");
 	}
 
 	_showWalkingMap = false;
@@ -331,11 +330,17 @@ void DraciEngine::pauseEngineIntern(bool pause) {
 		_pauseStartTime = _system->getMillis();
 
 		_anims->pauseAnimations();
+		_sound->pauseSound();
+		_sound->pauseVoice();
 	} else {
 		_anims->unpauseAnimations();
+		_sound->resumeSound();
+		_sound->resumeVoice();
 
 		// Adjust engine start time
-		_engineStartTime += (_system->getMillis() - _pauseStartTime) / 1000;
+		const int delta = _system->getMillis() - _pauseStartTime;
+		_engineStartTime += delta / 1000;
+		_game->shiftSpeechTick(delta);
 		_pauseStartTime = 0;
 	}
 }

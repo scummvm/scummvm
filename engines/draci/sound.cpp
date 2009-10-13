@@ -49,6 +49,8 @@ void SoundArchive::openArchive(const Common::String &path) {
 		debugC(2, kDraciArchiverDebugLevel, "Success");
 	} else {
 		debugC(2, kDraciArchiverDebugLevel, "Error");
+		delete _f;
+		_f = NULL;
 		return;
 	}
 
@@ -159,7 +161,8 @@ SoundSample *SoundArchive::getSample(int i, uint freq) {
 	return _samples + i;
 }
 
-Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer) {
+Sound::Sound(Audio::Mixer *mixer) : _mixer(mixer), _muteSound(false), _muteVoice(false),
+	_showSubtitles(true), _talkSpeed(60) {
 
 	for (int i = 0; i < SOUND_HANDLES; i++)
 		_handles[i].type = kFreeHandle;
@@ -202,7 +205,7 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, const SoundSample &buffe
 }
 
 void Sound::playSound(const SoundSample *buffer, int volume, bool loop) {
-	if (!buffer)
+	if (!buffer || _muteSound)
 		return;
 	SndHandle *handle = getHandle();
 
@@ -231,7 +234,7 @@ void Sound::stopSound() {
 }
 
 void Sound::playVoice(const SoundSample *buffer) {
-	if (!buffer)
+	if (!buffer || _muteVoice)
 		return;
 	SndHandle *handle = getHandle();
 
@@ -265,11 +268,15 @@ void Sound::stopAll() {
 }
 
 void Sound::setVolume() {
+	// TODO: how to retrieve "Mute All" ?
+	_muteSound = ConfMan.getBool("sfx_mute");
+	_muteVoice = ConfMan.getBool("speech_mute");
+	_showSubtitles = ConfMan.getBool("subtitles");
+	_talkSpeed = ConfMan.getInt("talkspeed");
 	const int soundVolume = ConfMan.getInt("sfx_volume");
 	const int speechVolume = ConfMan.getInt("speech_volume");
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSFXSoundType, soundVolume);
 	_mixer->setVolumeForSoundType(Audio::Mixer::kSpeechSoundType, speechVolume);
-	// TODO: make sure this sound settings works
 }
 
 } // End of namespace Draci

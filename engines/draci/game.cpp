@@ -1506,6 +1506,10 @@ void Game::setSpeechTiming(uint tick, uint duration) {
 	_speechDuration = duration;
 }
 
+void Game::shiftSpeechTick(int delta) {
+	_speechTick += delta;
+}
+
 int Game::getEscRoom() const {
 	return _currentRoom._escRoom;
 }

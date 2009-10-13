@@ -79,9 +79,12 @@ enum {
 	kBlackPalette = -1
 };
 
+// Constants tuned such that with ScummVM's default talkspeed 60, the speed
+// computed by equation (kBaseSpeechDuration + kSpeechTimeUnit * #characters) /
+// talkspeed is equal to the original game.
 enum SpeechConstants {
-	kBaseSpeechDuration = 200,
-	kSpeechTimeUnit = 400
+	kBaseSpeechDuration = 12000,
+	kSpeechTimeUnit = 2640
 };
 
 /** Inventory related magical constants */
@@ -325,6 +328,7 @@ public:
 	void setExitLoop(int exit) { _shouldExitLoop = exit; }
 
 	void setSpeechTiming(uint tick, uint duration);
+	void shiftSpeechTick(int delta);
 
 	void updateTitle();
 	void updateCursor();

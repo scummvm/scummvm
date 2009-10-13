@@ -697,9 +697,17 @@ void Script::talk(Common::Queue<int> &params) {
 	// Fetch person info
 	const Person *person = _vm->_game->getPerson(personID);
 
+	// Fetch the dubbing
+	SoundSample *sample = _vm->_sound->isMutedVoice()
+		? NULL : _vm->_dubbingArchive->getSample(sentenceID, 0);
+
 	// Set the string and text colour
 	surface->markDirtyRect(speechFrame->getRect());
-	speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
+	if (_vm->_sound->showSubtitles() || !sample) {
+		speechFrame->setText(Common::String((const char *)f->_data+1, f->_length-1));
+	} else {
+		speechFrame->setText("");
+	}
 	speechFrame->setColour(person->_fontColour);
 
 	// HACK: Some strings in the English data files are too long to fit the screen
@@ -714,7 +722,6 @@ void Script::talk(Common::Queue<int> &params) {
 	_vm->_game->setLoopSubstatus(kSubstatusTalk);
 
 	// Speak the dubbing if possible
-	SoundSample *sample = _vm->_dubbingArchive->getSample(sentenceID, 0);
 	uint dubbingDuration = 0;
 	if (sample) {
 		dubbingDuration = (uint) (1000.0 * sample->_length / sample->_frequency + 500.0);
@@ -724,11 +731,9 @@ void Script::talk(Common::Queue<int> &params) {
 	}
 
 	// Record time
-	const uint subtitleDuration = kBaseSpeechDuration +
-		speechFrame->getLength() * kSpeechTimeUnit /
-	  	(128 / 16 + 1);
-	const uint duration = subtitleDuration >= dubbingDuration ?
-		subtitleDuration : dubbingDuration;
+	uint subtitleDuration = (kBaseSpeechDuration + speechFrame->getLength() * kSpeechTimeUnit)
+		/ _vm->_sound->talkSpeed();
+	const uint duration = MAX(subtitleDuration, dubbingDuration);
 	_vm->_game->setSpeechTiming(_vm->_system->getMillis(), duration);
 
 	// TODO: Implement inventory part

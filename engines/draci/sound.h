@@ -104,15 +104,20 @@ public:
 	void pauseSound();
 	void resumeSound();
 	void stopSound();
+	bool isMutedSound() const { return _muteSound; }
 
 	void playVoice(const SoundSample *buffer);
 	void pauseVoice();
 	void resumeVoice();
 	void stopVoice();
+	bool isMutedVoice() const { return _muteVoice; }
 
 	void stopAll();
 
 	void setVolume();
+
+	bool showSubtitles() const { return _showSubtitles; }
+	int talkSpeed() const { return _talkSpeed; }
 
  private:
 
@@ -122,6 +127,11 @@ public:
 	SndHandle *getHandle();
 
 	Audio::Mixer *_mixer;
+
+	bool _muteSound;
+	bool _muteVoice;
+	bool _showSubtitles;
+	int _talkSpeed;
 
 	SndHandle _handles[SOUND_HANDLES];
 };
