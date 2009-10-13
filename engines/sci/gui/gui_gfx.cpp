@@ -972,14 +972,6 @@ int16 SciGuiGfx::PriorityToCoordinate(byte priority) {
 	return _priorityBottom;
 }
 
-void SciGuiGfx::ShowPic() {
-	// TODO: Implement animations
-	warning("ShowPic animation not implemented");
-	_palette->setOnScreen();
-	_screen->copyToScreen();
-	_screen->_picNotValid = 0;
-}
-
 bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list) {
 	SegManager *segMan = _s->_segMan;
 	reg_t curAddress = list->first;

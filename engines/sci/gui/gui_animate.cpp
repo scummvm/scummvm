@@ -33,6 +33,7 @@
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_view.h"
 #include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_transitions.h"
 #include "sci/gui/gui_animate.h"
 
 namespace Sci {

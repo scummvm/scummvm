@@ -61,6 +61,7 @@ MODULE_OBJS = \
 	gui/gui_palette.o \
 	gui/gui_picture.o \
 	gui/gui_screen.o \
+	gui/gui_transitions.o \
 	gui/gui_view.o \
 	gui/gui_windowmgr.o \
 	gui32/gui32.o \

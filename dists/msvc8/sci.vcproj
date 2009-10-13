@@ -108,6 +108,8 @@
 			<File RelativePath="..\..\engines\sci\gui\gui_picture.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_screen.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_screen.h" />
+			<File RelativePath="..\..\engines\sci\gui\gui_transitions.cpp" />
+			<File RelativePath="..\..\engines\sci\gui\gui_transitions.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_view.cpp" />
 			<File RelativePath="..\..\engines\sci\gui\gui_view.h" />
 			<File RelativePath="..\..\engines\sci\gui\gui_windowmgr.cpp" />

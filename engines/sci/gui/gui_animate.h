@@ -44,8 +44,10 @@ enum {
 	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
 };
 
+class SciGuiGfx;
 class SciGuiScreen;
-class SciGuiView;
+class SciGuiPalette;
+class SciGuiTransitions;
 class SciGuiAnimate {
 public:
 	SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette);

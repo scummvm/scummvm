@@ -37,6 +37,7 @@
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
 #include "sci/gui/gui_animate.h"
+#include "sci/gui/gui_transitions.h"
 #include "sci/gui/gui_view.h"
 
 #include "sci/gfx/operations.h"
@@ -54,6 +55,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
+	_transitions = new SciGuiTransitions(_screen, _palette);
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
@@ -303,6 +305,7 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirror
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+		_transitions->setup(animationNr);
 		_screen->_picNotValid = 1;
 	} else {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
@@ -507,7 +510,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	if (listReference.isNull()) {
 		_animate->disposeLastCast();
 		if (_screen->_picNotValid)
-			_gfx->ShowPic();
+			_transitions->doit();
 		return;
 	}
 
@@ -532,9 +535,8 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 
 	_animate->drawCels();
 
-	if (_screen->_picNotValid) {
-		_gfx->ShowPic();
-	}
+	if (_screen->_picNotValid)
+		_transitions->doit();
 
 	_animate->updateScreen(old_picNotValid);
 	_animate->restoreAndDelete(argc, argv);

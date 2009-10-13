@@ -47,6 +47,7 @@ class SciGuiCursor;
 class SciGuiGfx;
 class SciGuiresources;
 class SciGuiWindowMgr;
+class SciGuiTransitions;
 class SciGuiAnimate;
 class SciGui32; // for debug purposes
 
@@ -138,6 +139,7 @@ private:
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
+	SciGuiTransitions *_transitions;
 	SciGuiAnimate *_animate;
 // 	SciGui32 *_gui32; // for debug purposes
 

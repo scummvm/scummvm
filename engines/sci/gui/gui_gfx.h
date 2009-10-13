@@ -111,8 +111,6 @@ public:
 	byte CoordinateToPriority(int16 y);
 	int16 PriorityToCoordinate(byte priority);
 
-	void ShowPic();
-
 	bool CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list);
 
 	void SetNowSeen(reg_t objectReference);
