@@ -663,6 +663,20 @@ static const GOBGameDescription gameDescriptions[] = {
 		kFeaturesAdlib,
 		0, 0, 0
 	},
+	{
+		{
+			"gob1",
+			"gob CD-i",
+			AD_ENTRY1s("intro.stk", "0e022d3f2481b39e9175d37b2c6ad4c6", 2390121),
+			FR_FRA,
+			kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO_NOSUBTITLES | GUIO_NOSPEECH
+		},
+		kGameTypeGob1,
+		kFeaturesAdlib,
+		0, "AVT003.TOT", 0
+	},
 	{ // Supplied by fac76 in bug report #1883808
 		{
 			"gob2",
@@ -898,7 +912,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			EN_ANY,
 			kPlatformPC,
@@ -912,7 +926,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			DE_DEU,
 			kPlatformPC,
@@ -926,7 +940,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			FR_FRA,
 			kPlatformPC,
@@ -940,7 +954,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			IT_ITA,
 			kPlatformPC,
@@ -954,7 +968,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			ES_ESP,
 			kPlatformPC,
