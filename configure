@@ -125,6 +125,8 @@ _fluidsynth=auto
 _16bit=auto
 _readline=auto
 # Default option behaviour yes/no
+_debug_build=auto
+_release_build=auto
 _text_console=no
 _mt32emu=yes
 _build_hq_scalers=yes
@@ -658,8 +660,6 @@ EOF
 	fi
 done # for parm in ...
 
-DEBFLAGS="-g"
-
 for ac_option in $@; do
 	case "$ac_option" in
 	--disable-16bit)          _16bit=no       ;;
@@ -750,16 +750,19 @@ for ac_option in $@; do
 		_backend=`echo $ac_option | cut -d '=' -f 2`
 		;;
 	--enable-debug)
-		# debug is enabled by default
+		_debug_build=yes
 		;;
 	--disable-debug)
-		DEBFLAGS=""
+		_debug_build=no
 		;;
 	--enable-Werror)
 		CXXFLAGS="$CXXFLAGS -Werror"
 		;;
 	--enable-release)
-		DEBFLAGS="-O2 -Wuninitialized"
+		_release_build=yes
+		;;
+	--disable-release)
+		_release_build=no
 		;;
 	--enable-profiling)
 		CXXFLAGS="$CXXFLAGS -pg"
@@ -811,8 +814,6 @@ for ac_option in $@; do
 		;;
 	esac;
 done;
-
-CXXFLAGS="$CXXFLAGS $DEBFLAGS"
 
 guessed_host=`$_srcdir/config.guess`
 get_system_exe_extension $guessed_host
@@ -922,6 +923,22 @@ else
 	_as="$_host_alias-as"
 	_windres=$_host_alias-windres
 fi
+
+#
+# Determine extra build flags for debug and/or release builds
+#
+
+if test "$_debug_build" != no; then
+	# debug mode not explicitly disabled -> compile with -g
+	CXXFLAGS="$CXXFLAGS -g"
+fi
+
+if test "$_release_build" = yes; then
+	# Release mode enabled: enable optimizations. This also
+	# makes it possible to use -Wuninitialized, so let's do that.
+	CXXFLAGS="$CXXFLAGS -O2 -Wuninitialized"
+fi
+
 
 #
 # Determine extension used for executables
