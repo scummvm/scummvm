@@ -1134,7 +1134,7 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-	if (maxDifficulty)
+	if (maxDifficulty && !_flags.use16ColorMode)
 		_tim->displayText(0x8000, 0, 0xDC);
 	_screen->updateScreen();
 	_screen->fadePalette(_screen->getPalette(0), 30, 0);
@@ -1153,8 +1153,13 @@ void LoLEngine::showOutro(int character, bool maxDifficulty) {
 void LoLEngine::showCredits() {
 	for (int i = 0; i < 255; ++i)
 		_outroShapeTable[i] = i;
-	_outroShapeTable[255] = 0;
 
+	if (_flags.use16ColorMode)
+		for (int i = 1; i < 16; ++i)
+			_outroShapeTable[i] = (i << 4) | i;
+	else
+		_outroShapeTable[255] = 0;
+	
 	_sound->haltTrack();
 	_sound->loadSoundFile("LOREFINL");
 	_sound->playTrack(4);
@@ -1162,11 +1167,15 @@ void LoLEngine::showCredits() {
 	_screen->hideMouse();
 
 	static const uint8 colorMap[] = { 0x00, 0x00, 0x0C, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x72, 0x6F, 0x6F, 0x6D };
-	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = 0;
 
 	_screen->loadBitmap("ROOM.CPS", 2, 2, &_screen->getPalette(0));
-	_screen->getPalette(0).fill(255, 1, 0);
+
+	if (!_flags.use16ColorMode) {
+		_screen->setTextColorMap(colorMap);
+		_screen->getPalette(0).fill(_screen->getPalette(0).getNumColors() - 1, 1, 0);
+	}
+
 	_screen->fadeToBlack(30);
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
@@ -1212,10 +1221,16 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 	memset(shapes, 0, sizeof(shapes));
 
 	loadOutroShapes(curShapeFile++, shapes);
-	uint8 *monsterPal = _res->fileData("MONSTERS.PAL", 0);
-	assert(monsterPal);
+	uint8 *monsterPal = 0;
 
-	_screen->getPalette(0).copy(monsterPal, 0, 40, 88);
+	if (_flags.use16ColorMode) {
+		_screen->loadPalette("LOL.NOL", _screen->getPalette(0));
+	} else {
+		monsterPal = _res->fileData("MONSTERS.PAL", 0);
+		assert(monsterPal);
+		_screen->getPalette(0).copy(monsterPal, 0, 40, 88);
+	}
+
 	_screen->fadePalette(_screen->getPalette(0), 30);
 
 	uint32 waitTimer = _system->getMillis();
@@ -1413,7 +1428,12 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 			if (y < _screen->_curDim->h) {
 				_screen->_curPage = page;
 				_screen->setFont(Screen::FID_6_FNT);
-				_screen->printText(s.str, (_screen->_curDim->sx << 3) + x, _screen->_curDim->sy + y, 0xDC, 0x00);
+				if (_flags.use16ColorMode) {
+					_screen->printText(s.str, (_screen->_curDim->sx << 3) + x + 1, _screen->_curDim->sy + y + 1, 0x44, 0x00);
+					_screen->printText(s.str, (_screen->_curDim->sx << 3) + x, _screen->_curDim->sy + y, 0x33, 0x00);
+				} else {
+					_screen->printText(s.str, (_screen->_curDim->sx << 3) + x, _screen->_curDim->sy + y, 0xDC, 0x00);
+				}
 				_screen->_curPage = 0;
 			}
 
@@ -1438,8 +1458,11 @@ void LoLEngine::processCredits(char *t, int dimState, int page, int delayTime) {
 			curShapeFile = curShapeFile % 28;
 
 			loadOutroShapes(curShapeFile, shapes);
-			_screen->getPalette(0).copy(monsterPal, curShapeFile * 40, 40, 88);
-			_screen->setScreenPalette(_screen->getPalette(0));
+			
+			if (!_flags.use16ColorMode) {
+				_screen->getPalette(0).copy(monsterPal, curShapeFile * 40, 40, 88);
+				_screen->setScreenPalette(_screen->getPalette(0));
+			}
 
 			needNewShape = false;
 		}

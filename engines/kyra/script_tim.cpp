@@ -392,7 +392,8 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	static const uint8 colorMap[] = { 0x00, 0xA0, 0xA1, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	_screen->setTextColorMap(colorMap);
 	_screen->_charWidth = 0;
-	_screen->_charOffset = -4;
+	if (!_vm->gameFlags().use16ColorMode)
+		_screen->_charOffset = -4;
 
 	if (!flags)
 		_screen->copyRegionToBuffer(0, 0, 0, 320, 40, _textAreaBuffer);
@@ -400,6 +401,17 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 	char backupChar = 0;
 	char *str = text;
 	int y = 0;
+
+	if (_vm->gameFlags().use16ColorMode) {
+		if (color == 0xda)
+			color = 0xa1;
+		else if (color == 0xf2)
+			color = 0xe1;
+		else if (flags < 0)
+			color = 0xe1;
+		else
+			color = 0xc1;
+	}
 
 	while (str[0]) {
 		char *nextLine = strchr(str, '\r');
@@ -417,7 +429,7 @@ void TIMInterpreter::displayText(uint16 textId, int16 flags, uint8 color) {
 		else
 			_screen->printText(str, 0, y, color, 0x00);
 
-		y += _screen->getFontHeight() - 4;
+		y += (_vm->gameFlags().use16ColorMode ? 16 : (_screen->getFontHeight() - 4));
 		str += strlen(str);
 
 		if (backupChar) {

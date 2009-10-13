@@ -2599,27 +2599,35 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 
 	_screen->loadBitmap(filename, 7, 5, &_screen->getPalette(0));
 
-	filename[0] = 0;
+	uint8 *overlay = 0;
+	if (!_flags.use16ColorMode) {
+		filename[0] = 0;
 
-	if (_flags.isTalkie) {
-		strcpy(filename, _languageExt[_lang]);
-		strcat(filename, "/");
-	}
+		if (_flags.isTalkie) {
+			strcpy(filename, _languageExt[_lang]);
+			strcat(filename, "/");
+		}
 
-	strcat(filename, overlayFile);
-	uint8 *overlay = _res->fileData(filename, 0);
+		strcat(filename, overlayFile);
+		overlay = _res->fileData(filename, 0);
 
-	for (int i = 0; i < 3; ++i) {
-		uint32 endTime = _system->getMillis() + 10 * _tickLength;
-		_screen->copyBlockAndApplyOverlayOutro(4, 2, overlay);
-		_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->updateScreen();
-		delayUntil(endTime);
+		for (int i = 0; i < 3; ++i) {
+			uint32 endTime = _system->getMillis() + 10 * _tickLength;
+			_screen->copyBlockAndApplyOverlayOutro(4, 2, overlay);
+			_screen->copyRegion(0, 0, 0, 0, 320, 200, 2, 0, Screen::CR_NO_P_CHECK);
+			_screen->updateScreen();
+			delayUntil(endTime);
+		}
 	}
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 4, 0, Screen::CR_NO_P_CHECK);
-	_screen->updateScreen();
-	delete[] overlay;
+
+	if (_flags.use16ColorMode) {
+		_screen->fadePalette(_screen->getPalette(0), 5);
+	} else {
+		_screen->updateScreen();
+		delete[] overlay;
+	}
 
 	return 1;
 }
@@ -2636,7 +2644,14 @@ int LoLEngine::tlol_fadeInPalette(const TIM *tim, const uint16 *param) {
 
 	Palette pal(_screen->getPalette(0).getNumColors());
 	_screen->loadBitmap(bitmap, 3, 3, &pal);
-	_screen->fadePalette(pal, param[1]);
+
+	if (_flags.use16ColorMode) {
+		_screen->getPalette(0).clear();
+		_screen->setScreenPalette(_screen->getPalette(0));
+		_screen->copyPage(2, 0);
+	}
+	
+	_screen->fadePalette(pal, param[1]);	
 
 	return 1;
 }
