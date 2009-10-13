@@ -42,6 +42,7 @@
 #include "sci/sfx/sci_midi.h"
 #include "sci/vocabulary.h"
 #include "sci/gui/gui.h"
+#include "sci/gui/gui_cursor.h"
 
 #include "common/savefile.h"
 
@@ -1196,7 +1197,7 @@ bool Console::cmdVisualState(int argc, const char **argv) {
 }
 
 bool Console::cmdFlushPorts(int argc, const char **argv) {
-	gfxop_set_pointer_cursor(_vm->_gamestate->gfx_state, GFXOP_NO_POINTER);
+	_vm->_gamestate->_cursor->setShape(GFXOP_NO_POINTER);
 	DebugPrintf("Flushing dynamically allocated ports (for memory profiling)...\n");
 	delete _vm->_gamestate->visual;
 	_vm->_gamestate->gfx_state->gfxResMan->freeAllResources();

@@ -114,13 +114,15 @@ public:
 	// FIXME: Don't store EngineState
 	virtual void resetEngineState(EngineState *s);
 
+protected:
+	SciGuiCursor *_cursor;
+
 private:
 	virtual void initPriorityBands();
 
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
-	SciGuiCursor *_cursor;
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;

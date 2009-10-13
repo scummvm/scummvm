@@ -37,6 +37,7 @@
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
+#include "sci/gui/gui_cursor.h"
 
 // This is the real width of a text with a specified width of 0
 #define MAX_TEXT_WIDTH_MAGIC_VALUE 192
@@ -67,6 +68,7 @@ namespace Sci {
 
 SciGui32::SciGui32( EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette, SciGuiCursor *cursor)
 	: s(state) {
+	_cursor = cursor;
 }
 
 SciGui32::~SciGui32() {
@@ -2444,18 +2446,15 @@ bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 }
 
 void SciGui32::hideCursor() {
-	CursorMan.showMouse(false);
+	_cursor->hide();
 }
 
 void SciGui32::showCursor() {
-	CursorMan.showMouse(true);
+	_cursor->show();
 }
 
 void SciGui32::setCursorShape(GuiResourceId cursorId) {
-	if (cursorId == -1)
-		gfxop_set_pointer_cursor(s->gfx_state, GFXOP_NO_POINTER);
-	else
-		gfxop_set_pointer_cursor(s->gfx_state, cursorId);
+	_cursor->setShape(cursorId);
 }
 
 void SciGui32::setCursorPos(Common::Point pos) {

@@ -967,23 +967,6 @@ void gfxop_sleep(GfxState *state, uint32 msecs) {
 	}
 }
 
-void gfxop_set_pointer_cursor(GfxState *state, int nr) {
-	if (nr == GFXOP_NO_POINTER) {
-		state->driver->setPointer(NULL, NULL);
-		return;
-	}
-
-	gfx_pixmap_t *new_pointer = state->gfxResMan->getCursor(nr);
-
-	if (!new_pointer) {
-		warning("[GFX] Attempt to set invalid pointer #%d\n", nr);
-		return;
-	}
-
-	Common::Point p = Common::Point(new_pointer->xoffset, new_pointer->yoffset);
-	state->driver->setPointer(new_pointer, &p);
-}
-
 void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot) {
 	// FIXME: For now, don't palettize pointers
 	gfx_pixmap_t *new_pointer = state->gfxResMan->getView(nr, &loop, &cel, 0)->loops[loop].cels[cel];

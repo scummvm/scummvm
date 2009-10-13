@@ -197,6 +197,7 @@ Common::Error SciEngine::run() {
 	script_free_engine(_gamestate); // Uninitialize game state
 	script_free_breakpoints(_gamestate);
 
+	delete cursor;
 	delete palette;
 	delete screen;
 	delete _gamestate;
