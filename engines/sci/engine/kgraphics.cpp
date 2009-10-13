@@ -988,13 +988,13 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 
 // Control types and flags
 enum {
-	K_CONTROL_BUTTON = 1,
-	K_CONTROL_TEXT = 2,
-	K_CONTROL_TEXTEDIT = 3,
-	K_CONTROL_ICON = 4,
-	K_CONTROL_LIST = 6,
-	K_CONTROL_LIST_ALIAS = 7,
-	K_CONTROL_BOX = 10
+	K_CONTROL_BUTTON		= 1,
+	K_CONTROL_TEXT			= 2,
+	K_CONTROL_TEXTEDIT		= 3,
+	K_CONTROL_ICON			= 4,
+	K_CONTROL_LIST			= 6,
+	K_CONTROL_LIST_ALIAS	= 7,
+	K_CONTROL_PERCENTAGE	= 10
 };
 
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
@@ -1139,6 +1139,10 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		s->_gui->drawControlList(rect, controlObject, maxChars, listCount, listEntries, fontId, style, upperPos, cursorPos, isAlias, hilite);
 		free(listEntries);
 		delete[] listStrings;
+		return;
+
+	case K_CONTROL_PERCENTAGE:
+		// TODO: Implement this
 		return;
 
 	default:
