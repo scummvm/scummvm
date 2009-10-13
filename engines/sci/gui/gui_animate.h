@@ -30,7 +30,6 @@
 
 namespace Sci {
 
-#if 0
 enum {
 	SCI_ANIMATE_SIGNAL_STOPUPDATE    = 0x0001,
 	SCI_ANIMATE_SIGNAL_VIEWUPDATED   = 0x0002,
@@ -44,7 +43,6 @@ enum {
 	SCI_ANIMATE_SIGNAL_IGNOREACTOR   = 0x4000,
 	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
 };
-#endif
 
 class SciGuiScreen;
 class SciGuiView;
