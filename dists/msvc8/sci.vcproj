@@ -83,7 +83,6 @@
 			<File RelativePath="..\..\engines\sci\gfx\operations.h" />
 			<File RelativePath="..\..\engines\sci\gfx\palette.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\palette.h" />
-			<File RelativePath="..\..\engines\sci\gfx\res_cursor.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\res_font.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\res_pal.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\res_pic.cpp" />

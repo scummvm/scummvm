@@ -48,7 +48,6 @@ MODULE_OBJS = \
 	gfx/menubar.o \
 	gfx/operations.o \
 	gfx/palette.o \
-	gfx/res_cursor.o \
 	gfx/res_font.o \
 	gfx/res_pal.o \
 	gfx/res_pic.o \
