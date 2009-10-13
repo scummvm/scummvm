@@ -82,7 +82,7 @@ byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {
 }
 
 void SciGuiScreen::putPixel(int x, int y, byte drawMask, byte color, byte priority, byte control) {
-	int offset = y * _displayWidth + x;
+	int offset = y * _width + x;
 
 	if (drawMask & SCI_SCREEN_MASK_VISUAL) {
 		_visualScreen[offset] = color;
@@ -159,26 +159,26 @@ void SciGuiScreen::drawLine(Common::Point startPoint, Common::Point endPoint, by
 }
 
 byte SciGuiScreen::getVisual(int x, int y) {
-	return _visualScreen[y * _displayWidth + x];
+	return _visualScreen[y * _width + x];
 }
 
 byte SciGuiScreen::getPriority(int x, int y) {
-	return _priorityScreen[y * _displayWidth + x];
+	return _priorityScreen[y * _width + x];
 }
 
 byte SciGuiScreen::getControl(int x, int y) {
-	return _controlScreen[y * _displayWidth + x];
+	return _controlScreen[y * _width + x];
 }
 
-byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte flag, byte t_color, byte t_pri, byte t_con) {
-	int offset = y * _displayWidth + x;
+byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, byte t_pri, byte t_con) {
+	int offset = y * _width + x;
 	byte match = 0;
 
-	if (flag & SCI_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
+	if (screenMask & SCI_SCREEN_MASK_VISUAL && *(_visualScreen + offset) == t_color)
 		match |= SCI_SCREEN_MASK_VISUAL;
-	if (flag & SCI_SCREEN_MASK_PRIORITY && *(_priorityScreen + offset) == t_pri)
+	if (screenMask & SCI_SCREEN_MASK_PRIORITY && *(_priorityScreen + offset) == t_pri)
 		match |= SCI_SCREEN_MASK_PRIORITY;
-	if (flag & SCI_SCREEN_MASK_CONTROL && *(_controlScreen + offset) == t_con)
+	if (screenMask & SCI_SCREEN_MASK_CONTROL && *(_controlScreen + offset) == t_con)
 		match |= SCI_SCREEN_MASK_CONTROL;
 	return match;
 }
