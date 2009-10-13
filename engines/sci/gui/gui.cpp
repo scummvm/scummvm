@@ -56,7 +56,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate);
-// 	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
+//  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
 SciGui::SciGui() {
@@ -578,7 +578,7 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	signal = GET_SEL32V(curObject, signal);
 	controlMask = GET_SEL32V(curObject, illegalBits);
 	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
-	if ((!result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW))) {
+	if ((result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW))) {
 		List *list = _s->_segMan->lookupList(listReference);
 		if (!list)
 			error("kCanBeHere called with non-list as parameter");
