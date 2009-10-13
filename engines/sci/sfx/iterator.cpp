@@ -29,7 +29,8 @@
 
 #include "sci/sci.h"
 #include "sci/sfx/iterator_internal.h"
-#include "sci/sfx/misc.h"	// for sfx_player_tell_synth
+#include "sci/engine/state.h"	// for sfx_player_tell_synth :/
+#include "sci/sfx/core.h"	// for sfx_player_tell_synth
 #include "sci/tools.h"
 
 #include "sound/audiostream.h"
@@ -130,17 +131,20 @@ void SongIteratorChannel::init(int id_, int offset_, int end_) {
 void SongIteratorChannel::resetSynthChannels() {
 	byte buf[5];
 
+	// FIXME: Evil hack
+	SfxState &sound = ((SciEngine*)g_engine)->getEngineState()->_sound;
+
 	for (int i = 0; i < MIDI_CHANNELS; i++) {
 		if (playmask & (1 << i)) {
 			buf[0] = 0xe0 | i; /* Pitch bend */
 			buf[1] = 0x80; /* Wheel center */
 			buf[2] = 0x40;
-			sfx_player_tell_synth(3, buf);
+			sound.sfx_player_tell_synth(3, buf);
 
 			buf[0] = 0xb0 | i; // Set control
 			buf[1] = 0x40; // Hold pedal
 			buf[2] = 0x00; // Off
-			sfx_player_tell_synth(3, buf);
+			sound.sfx_player_tell_synth(3, buf);
 			/* TODO: Reset other controls? */
 		}
 	}

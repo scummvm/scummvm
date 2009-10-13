@@ -30,22 +30,6 @@ namespace Sci {
 
 class SongIterator;
 
-int sfx_get_player_polyphony();
-/* Determines the polyphony of the player in use
-** Returns   : (int) Number of voices the active player can emit
-*/
-
-void sfx_reset_player();
-/* Tells the player to stop its internal iterator
-** Parameters: None.
-** Returns: Nothing.
- */
- 
-void sfx_player_tell_synth(int buf_nr, byte *buf);
-/* Pass a raw MIDI event to the synth of the player
-Parameters: (int) argc: Length of buffer holding the midi event
-		   (byte *) argv: The buffer itself
-*/
 
 
 SongIterator *sfx_iterator_combine(SongIterator *it1, SongIterator *it2);

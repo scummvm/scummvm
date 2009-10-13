@@ -33,6 +33,7 @@
 
 namespace Sci {
 
+class SfxPlayer;
 class SongIterator;
 struct fade_params_t;
 
@@ -44,6 +45,9 @@ struct fade_params_t;
 #define SFX_STATE_FLAG_NOSOUND	 (1 << 1) /* Completely disable sound playing */
 
 class SfxState {
+private:
+	SfxPlayer *_player;
+
 public:	// FIXME, make private
 	SongIterator *_it; /**< The song iterator at the heart of things */
 	uint _flags; /**< SFX_STATE_FLAG_* */
@@ -173,6 +177,26 @@ public:
 	void stopAudio() { g_system->getMixer()->stopHandle(_audioHandle); }
 	void pauseAudio() { g_system->getMixer()->pauseHandle(_audioHandle, true); }
 	void resumeAudio() { g_system->getMixer()->pauseHandle(_audioHandle, false); }
+
+	// misc
+
+	/**
+	 * Determines the polyphony of the player in use.
+	 * @return Number of voices the active player can emit
+	 */
+	int sfx_get_player_polyphony();
+
+	/**
+	 * Tells the player to stop its internal iterator.
+	 */
+	void sfx_reset_player();
+
+	/**
+	 * Pass a raw MIDI event to the synth of the player.
+	 * @param	argc	Length of buffer holding the midi event
+	 * @param	argv	The buffer itself
+	 */
+	void sfx_player_tell_synth(int buf_nr, byte *buf);
 
 protected:
 	void freezeTime();

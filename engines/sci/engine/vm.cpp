@@ -1765,7 +1765,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			script_free_engine(s);
 			script_init_engine(s);
 			game_init(s);
-			sfx_reset_player();
+			s->_sound.sfx_reset_player();
 			_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play);
 
 			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);

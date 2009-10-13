@@ -377,7 +377,7 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 		break;
 
 	case _K_SCI0_SOUND_GET_POLYPHONY:
-		s->r_acc = make_reg(0, sfx_get_player_polyphony());
+		s->r_acc = make_reg(0, s->_sound.sfx_get_player_polyphony());
 		break;
 
 	case _K_SCI0_SOUND_PLAY_NEXT:
@@ -495,7 +495,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_GET_POLYPHONY : {
-		s->r_acc = make_reg(0, sfx_get_player_polyphony());
+		s->r_acc = make_reg(0, s->_sound.sfx_get_player_polyphony());
 		break;
 	}
 	case _K_SCI01_SOUND_PLAY_HANDLE : {

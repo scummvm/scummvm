@@ -112,6 +112,7 @@ public:
 	uint32 getFlags() const;
 	ResourceManager *getResourceManager() const { return _resMan; }
 	Kernel *getKernel() const { return _kernel; }
+	EngineState *getEngineState() const { return _gamestate; }
 	Vocabulary *getVocabulary() const { return _vocabulary; }
 
 	Common::String getSavegameName(int nr) const;
