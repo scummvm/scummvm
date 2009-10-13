@@ -574,9 +574,9 @@ SciVersion EngineState::detectGfxFunctionsType() {
 											offset += 2;
 										}
 
-										argc = scr[offset++];
-
 										if (opcode == op_callk) {
+											argc = scr[offset++];
+
 											if (kFuncNum == 8) {	// kDrawPic
 												// If kDrawPic is called with 6 parameters from the
 												// overlay selector, the game is using old graphics functions.

@@ -65,7 +65,7 @@ static const char * const sci1Selectors[] = {
 static const SelectorRemap sci0SelectorRemap[] = {
     {       "caller", 119 }, {          "cue", 121 }, {        "owner", 130 },
 	{    "completed", 159 }, {       "cycler", 164 }, {     "moveDone", 170 },
-	{     "distance", 173 }, {    "setCursor", 254 }, {      "overlay", 302 },
+	{     "distance", 173 }, {    "setCursor", 254 }, {      "overlay", 270 },
 	{      "points",  316 }, {        "flags", 368 }, {              0,   0 }
 };
 
