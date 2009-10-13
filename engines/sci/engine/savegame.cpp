@@ -213,24 +213,29 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 		SegmentType type = (s.isSaving() && mobj) ? mobj->getType() : SEG_TYPE_INVALID;
 		s.syncAsUint32LE(type);
 
-		// Handle the OBSOLETE type SEG_TYPE_STRING_FRAG -- just ignore it
-		if (s.isLoading() && type == SEG_TYPE_STRING_FRAG) {
-			s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
-			continue;
-		}
-
 		// If we were saving and mobj == 0, or if we are loading and this is an
 		// entry marked as empty -> skip to next
 		if (type == SEG_TYPE_INVALID) {
 			continue;
 		}
 
+		s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
+
+		// Don't load HunkTable segments
+		if (s.isLoading() && type == SEG_TYPE_HUNK) {
+			continue;
+		}
+
+		// Handle the OBSOLETE type SEG_TYPE_STRING_FRAG -- just ignore it
+		if (s.isLoading() && type == SEG_TYPE_STRING_FRAG) {
+			continue;
+		}
+
+
 		if (s.isLoading()) {
 			mobj = SegmentObj::createSegmentObj(type);
 		}
 		assert(mobj);
-
-		s.skip(4, VER(9), VER(9));	// OBSOLETE: Used to be _segManagerId
 
 		// Let the object sync custom data
 		mobj->saveLoadWithSerializer(s);
@@ -244,6 +249,7 @@ void SegManager::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint32LE(Clones_seg_id);
 	s.syncAsSint32LE(Lists_seg_id);
 	s.syncAsSint32LE(Nodes_seg_id);
+// FIXME: Hunks_seg_id ?
 }
 
 static void sync_SegManagerPtr(Common::Serializer &s, ResourceManager *&resMan, SegManager *&obj) {
@@ -369,9 +375,7 @@ void ListTable::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void HunkTable::saveLoadWithSerializer(Common::Serializer &s) {
-	if (s.isLoading()) {
-		initTable();
-	}
+	// Do nothing, hunk tables are not actually saved nor loaded.
 }
 
 void Script::saveLoadWithSerializer(Common::Serializer &s) {
@@ -550,6 +554,7 @@ static byte *find_unique_script_block(EngineState *s, byte *buf, int type) {
 }
 
 // FIXME: This should probably be turned into an EngineState method
+// FIXME: Or maybe into a DataStack method...
 static void reconstruct_stack(EngineState *retval) {
 	SegmentId stack_seg = retval->_segMan->findSegmentByType(SEG_TYPE_STACK);
 	DataStack *stack = (DataStack *)(retval->_segMan->_heap[stack_seg]);
