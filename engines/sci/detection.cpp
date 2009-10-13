@@ -508,7 +508,7 @@ Common::Error SciEngine::loadGameState(int slot) {
 		shrink_execution_stack(_gamestate, _gamestate->execution_stack_base + 1);
 		return Common::kNoError;
 	} else {
-		warning("Restoring gamestate '%s' failed.\n", fileName.c_str());
+		warning("Restoring gamestate '%s' failed", fileName.c_str());
 		return Common::kUnknownError;
 	}
 }
@@ -521,12 +521,12 @@ Common::Error SciEngine::saveGameState(int slot, const char *desc) {
 	Common::OutSaveFile *out = saveFileMan->openForSaving(fileName);
 	const char *version = "";
 	if (!out) {
-		warning("Error opening savegame \"%s\" for writing\n", fileName);
+		warning("Opening savegame \"%s\" for writing failed", fileName);
 		return Common::kWritingFailed;
 	}
 
 	if (gamestate_save(_gamestate, out, desc, version)) {
-		warning("Saving the game state to '%s' failed\n", fileName);
+		warning("Saving the game state to '%s' failed", fileName);
 		return Common::kUnknownError;
 	}
 #endif
