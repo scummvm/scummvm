@@ -36,6 +36,7 @@
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_windowmgr.h"
+#include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_view.h"
 
 #include "sci/gfx/operations.h"
@@ -53,7 +54,8 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
-	_windowMgr = new SciGuiWindowMgr(_screen, _gfx);
+	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
+	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate);
 // 	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes
 }
 
@@ -437,7 +439,7 @@ void SciGui::graphUpdateBox(Common::Rect rect) {
 }
 
 void SciGui::graphRedrawBox(Common::Rect rect) {
-	_gfx->ReAnimate(rect);
+	_animate->reAnimate(rect);
 }
 
 int16 SciGui::picNotValid(int16 newPicNotValid) {
@@ -496,7 +498,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	byte old_picNotValid = _screen->_picNotValid;
 
 	if (listReference.isNull()) {
-		_gfx->AnimateDisposeLastCast();
+		_animate->disposeLastCast();
 		if (_screen->_picNotValid)
 			_gfx->ShowPic();
 		return;
@@ -507,28 +509,28 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 		error("kAnimate called with non-list as parameter");
 
 	if (cycle)
-		_gfx->AnimateInvoke(list, argc, argv);
+		_animate->invoke(list, argc, argv);
 
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
-	_gfx->AnimateDisposeLastCast();
+	_animate->disposeLastCast();
 
-	_gfx->AnimateMakeSortedList(list);
-	_gfx->AnimateFill(old_picNotValid);
+	_animate->makeSortedList(list);
+	_animate->fill(old_picNotValid);
 
 	if (old_picNotValid) {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
-		_gfx->AnimateUpdate();
+		_animate->update();
 		_windowMgr->EndUpdate(_windowMgr->_picWind);
 	}
 
-	_gfx->AnimateDrawCels();
+	_animate->drawCels();
 
 	if (_screen->_picNotValid) {
 		_gfx->ShowPic();
 	}
 
-	_gfx->AnimateUpdateScreen(old_picNotValid);
-	_gfx->AnimateRestoreAndDelete(argc, argv);
+	_animate->updateScreen(old_picNotValid);
+	_animate->restoreAndDelete(argc, argv);
 
 	_gfx->SetPort(oldPort);
 }
@@ -542,15 +544,15 @@ void SciGui::addToPicList(reg_t listReference, int argc, reg_t *argv) {
 	if (!list)
 		error("kAddToPic called with non-list as parameter");
 
-	_gfx->AnimateMakeSortedList(list);
-	_gfx->AddToPicDrawCels(list);
+	_animate->makeSortedList(list);
+	_animate->addToPicDrawCels(list);
 
 	_screen->_picNotValid = 2;
 }
 
 void SciGui::addToPicView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
 	_gfx->SetPort((GuiPort *)_windowMgr->_picWind);
-	_gfx->AddToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
+	_animate->addToPicDrawView(viewId, loopNo, celNo, leftPos, topPos, priority, control);
 }
 
 void SciGui::setNowSeen(reg_t objectReference) {

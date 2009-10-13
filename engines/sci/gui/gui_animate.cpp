@@ -1,0 +1,482 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+ *
+ * $URL$
+ * $Id$
+ *
+ */
+
+#include "common/util.h"
+#include "common/stack.h"
+#include "graphics/primitives.h"
+
+#include "sci/sci.h"
+#include "sci/engine/state.h"
+#include "sci/tools.h"
+#include "sci/gui/gui_gfx.h"
+#include "sci/gui/gui_view.h"
+#include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_animate.h"
+
+namespace Sci {
+
+SciGuiAnimate::SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette)
+	: _s(state), _gfx(gfx), _screen(screen), _palette(palette) {
+	init();
+}
+
+SciGuiAnimate::~SciGuiAnimate() {
+}
+
+void SciGuiAnimate::init() {
+	_listData = NULL;
+	_listSize = 0;
+}
+
+void SciGuiAnimate::disposeLastCast() {
+	// FIXME
+	//if (!_lastCast->first.isNull())
+		//_lastCast->DeleteList();
+}
+
+void SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	uint16 signal;
+
+	while (curNode) {
+		curObject = curNode->value;
+		signal = GET_SEL32V(curObject, signal);
+		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
+			// Call .doit method of that object
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
+			// Lookup node again, since the nodetable it was in may have been reallocated
+			curNode = _s->_segMan->lookupNode(curAddress);
+		}
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+}
+
+bool sortHelper(const GuiAnimateEntry* entry1, const GuiAnimateEntry* entry2) {
+	return (entry1->y == entry2->y) ? (entry1->z < entry2->z) : (entry1->y < entry2->y);
+}
+
+void SciGuiAnimate::makeSortedList(List *list) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curAddress = list->first;
+	Node *curNode = _s->_segMan->lookupNode(curAddress);
+	reg_t curObject;
+	GuiAnimateEntry *listEntry;
+	int16 listNr, listCount = 0;
+
+	// Count the list entries
+	while (curNode) {
+		listCount++;
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+
+	_list.clear();
+
+	// No entries -> exit immediately
+	if (listCount == 0)
+		return;
+
+	// Adjust list size, if needed
+	if ((_listData == NULL) || (_listSize < listCount)) {
+		if (_listData)
+			free(_listData);
+		_listData = (GuiAnimateEntry *)malloc(listCount * sizeof(GuiAnimateEntry));
+		if (!_listData)
+			error("Could not allocate memory for _animateList");
+		_listSize = listCount;
+	}
+
+	// Fill the list
+	curAddress = list->first;
+	curNode = _s->_segMan->lookupNode(curAddress);
+	listEntry = _listData;
+	for (listNr = 0; listNr < listCount; listNr++) {
+		curObject = curNode->value;
+		listEntry->object = curObject;
+
+		// Get data from current object
+		listEntry->viewId = GET_SEL32V(curObject, view);
+		listEntry->loopNo = GET_SEL32V(curObject, loop);
+		listEntry->celNo = GET_SEL32V(curObject, cel);
+		listEntry->paletteNo = GET_SEL32V(curObject, palette);
+		listEntry->x = GET_SEL32V(curObject, x);
+		listEntry->y = GET_SEL32V(curObject, y);
+		listEntry->z = GET_SEL32V(curObject, z);
+		listEntry->priority = GET_SEL32V(curObject, priority);
+		listEntry->signal = GET_SEL32V(curObject, signal);
+		// listEntry->celRect is filled in AnimateFill()
+		listEntry->showBitsFlag = false;
+
+		_list.push_back(listEntry);
+
+		listEntry++;
+		curAddress = curNode->succ;
+		curNode = _s->_segMan->lookupNode(curAddress);
+	}
+
+	// Now sort the list according y and z (descending)
+	GuiAnimateList::iterator listBegin = _list.begin();
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	Common::sort(_list.begin(), _list.end(), sortHelper);
+}
+
+void SciGuiAnimate::fill(byte &old_picNotValid) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curObject;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	SciGuiView *view = NULL;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+
+		// Get the corresponding view
+		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
+		
+		// adjust loop and cel, if any of those is invalid
+		if (listEntry->loopNo >= view->getLoopCount()) {
+			listEntry->loopNo = 0;
+			PUT_SEL32V(curObject, loop, listEntry->loopNo);
+		}
+		if (listEntry->celNo >= view->getCelCount(listEntry->loopNo)) {
+			listEntry->celNo = 0;
+			PUT_SEL32V(curObject, cel, listEntry->celNo);
+		}
+
+		// Create rect according to coordinates and given cel
+		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+		PUT_SEL32V(curObject, nsLeft, listEntry->celRect.left);
+		PUT_SEL32V(curObject, nsTop, listEntry->celRect.top);
+		PUT_SEL32V(curObject, nsRight, listEntry->celRect.right);
+		PUT_SEL32V(curObject, nsBottom, listEntry->celRect.bottom);
+
+		signal = listEntry->signal;
+
+		// Calculate current priority according to y-coordinate
+		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY)) {
+			listEntry->priority = _gfx->CoordinateToPriority(listEntry->y);
+			PUT_SEL32V(curObject, priority, listEntry->priority);
+		}
+		
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (signal & (SCI_ANIMATE_SIGNAL_FORCEUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED)
+				|| (signal & SCI_ANIMATE_SIGNAL_HIDDEN && !(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW))
+				|| (!(signal & SCI_ANIMATE_SIGNAL_HIDDEN) && signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)
+				|| (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))
+				old_picNotValid++;
+			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE;
+		} else {
+			if (signal & SCI_ANIMATE_SIGNAL_STOPUPDATE || signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE)
+				old_picNotValid++;
+			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
+		}
+		listEntry->signal = signal;
+
+		listIterator++;
+	}
+}
+
+void SciGuiAnimate::update() {
+	SegManager *segMan = _s->_segMan;
+	reg_t curObject;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	reg_t bitsHandle;
+	Common::Rect rect;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listBegin = _list.begin();
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	// Remove all no-update cels, if requested
+	listIterator = _list.reverse_begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
+				bitsHandle = GET_SEL32(curObject, underBits);
+				if (_screen->_picNotValid != 1) {
+					_gfx->BitsRestore(bitsHandle);
+					listEntry->showBitsFlag = true;
+				} else	{
+					_gfx->BitsFree(bitsHandle);
+				}
+				PUT_SEL32V(curObject, underBits, 0);
+			}
+			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
+			signal &= signal & SCI_ANIMATE_SIGNAL_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE) : 0xFFFF;
+		} else if (signal & SCI_ANIMATE_SIGNAL_STOPUPDATE) {
+			signal =  (signal & (0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE)) | SCI_ANIMATE_SIGNAL_NOUPDATE;
+		}
+		listEntry->signal = signal;
+		listIterator--;
+	}
+
+	// Draw always-update cels
+	listIterator = listBegin;
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
+			// draw corresponding cel
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+			listEntry->showBitsFlag = true;
+
+			signal &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
+			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+				rect = listEntry->celRect;
+				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
+				_gfx->FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+			}
+			listEntry->signal = signal;
+		}
+		listIterator++;
+	}
+
+	// Saving background for all NoUpdate-cels
+	listIterator = listBegin;
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
+			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
+				signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			} else {
+				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+				if (signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
+					bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
+				else
+					bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
+				PUT_SEL32(curObject, underBits, bitsHandle);
+			}
+			listEntry->signal = signal;
+		}
+		listIterator++;
+	}
+
+	// Draw NoUpdate cels
+	listIterator = listBegin;
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal & SCI_ANIMATE_SIGNAL_HIDDEN)) {
+			// draw corresponding cel
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+			listEntry->showBitsFlag = true;
+
+			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+				rect = listEntry->celRect;
+				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
+				_gfx->FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+			}
+		}
+		listIterator++;
+	}
+}
+
+void SciGuiAnimate::drawCels() {
+	SegManager *segMan = _s->_segMan;
+	reg_t curObject;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	reg_t bitsHandle;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		if (!(signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_HIDDEN | SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))) {
+			// Save background
+			bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
+			PUT_SEL32(curObject, underBits, bitsHandle);
+
+			// draw corresponding cel
+			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+			listEntry->showBitsFlag = true;
+
+			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
+				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			}
+			listEntry->signal = signal;
+			
+//			HEAPHANDLE hNewCast = heapNewPtr(sizeof(sciCast), kDataCast);
+//			sciCast *pNewCast = (sciCast *)heap2Ptr(hNewCast);
+//			pNewCast->view = view;
+//			pNewCast->loop = loop;
+//			pNewCast->cel = cel;
+//			pNewCast->z = z;
+//			pNewCast->pal = pal;
+//			pNewCast->hSaved = 0;
+//			pNewCast->rect = *rect;
+//			_lastCast->AddToEnd(hNewCast);
+		}
+		listIterator++;
+	}
+}
+
+void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		signal = listEntry->signal;
+
+		if (listEntry->showBitsFlag || !(signal & (SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE) ||
+										(!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) && oldPicNotValid))) {
+// TODO: code finish
+//			rect = (Common::Rect *)&cobj[_objOfs[7]];
+//			rect1 = (Common::Rect *)&cobj[_objOfs[8]];
+//
+//			Common::Rect ro(rect->left, rect->top, rect->right, rect->bottom);
+//			ro.clip(*rect1);
+//
+//			if (!ro.isEmpty()) {
+//				ro = *rect; 
+//				ro.extend(*rect1);
+//			} else {
+//				_gfx->ShowBits(*rect, _showMap);
+//			//	ro = *rect1;
+//			//}
+//			//*rect  = *rect1;
+//			_gfx->ShowBits(ro, _showMap);
+			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
+				listEntry->signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			}
+		}
+
+		listIterator++;
+	}
+	_screen->copyToScreen();
+}
+
+void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curObject;
+	GuiAnimateEntry *listEntry;
+	uint16 signal;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	listIterator = _list.reverse_begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		// FIXME: this is supposed to go into the loop above (same method)
+		if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
+			signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+		}
+
+		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
+			_gfx->BitsRestore(GET_SEL32(curObject, underBits));
+			PUT_SEL32V(curObject, underBits, 0);
+		}
+
+		// Finally update signal
+		PUT_SEL32V(curObject, signal, signal);
+
+		if (signal & SCI_ANIMATE_SIGNAL_DISPOSEME) {
+			// Call .delete_ method of that object
+			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
+		}
+		listIterator--;
+	}
+}
+
+void SciGuiAnimate::reAnimate(Common::Rect rect) {
+	// TODO: implement ReAnimate
+	_gfx->BitsShow(rect);
+}
+
+void SciGuiAnimate::addToPicDrawCels(List *list) {
+	reg_t curObject;
+	GuiAnimateEntry *listEntry;
+	SciGuiView *view = NULL;
+	GuiAnimateList::iterator listIterator;
+	GuiAnimateList::iterator listEnd = _list.end();
+
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+
+		if (listEntry->priority == -1)
+			listEntry->priority = _gfx->CoordinateToPriority(listEntry->y);
+
+		// Get the corresponding view
+		view = new SciGuiView(_s->resMan, _screen, _palette, listEntry->viewId);
+
+		// Create rect according to coordinates and given cel
+		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
+
+		// draw corresponding cel
+		_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
+		if ((listEntry->signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+			listEntry->celRect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
+			_gfx->FillRect(listEntry->celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
+		}
+
+		listIterator++;
+	}
+}
+
+void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control) {
+	SciGuiView *view = NULL;
+	Common::Rect celRect;
+
+	view = new SciGuiView(_s->resMan, _screen, _palette, viewId);
+
+	// Create rect according to coordinates and given cel
+	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
+	_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0);
+}
+
+} // End of namespace Sci

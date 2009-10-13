@@ -30,6 +30,7 @@
 #include "sci/tools.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_gfx.h"
+#include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_windowmgr.h"
 
 namespace Sci {
@@ -43,8 +44,8 @@ enum {
 	SCI_WINDOWMGR_STYLE_USER        = (1 << 7)
 };
 
-SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx)
-	: _screen(screen), _gfx(gfx) {
+SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate)
+	: _screen(screen), _gfx(gfx), _animate(animate) {
 
 	_wmgrPort = new GuiPort(1);
 	_windowsById.resize(2);
@@ -250,7 +251,7 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 	if (arg2)
 		_gfx->BitsShow(pWnd->restoreRect);
 	else
-		_gfx->ReAnimate(pWnd->restoreRect);
+		_animate->reAnimate(pWnd->restoreRect);
 	_windowList.remove(pWnd);
 	_gfx->SetPort(_windowList.back());
 	_windowsById[pWnd->id] = 0;

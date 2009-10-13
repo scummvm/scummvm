@@ -33,7 +33,7 @@ namespace Sci {
 
 class SciGuiWindowMgr {
 public:
-	SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx);
+	SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate);
 	~SciGuiWindowMgr();
 
 	int16 isFrontWindow(GuiWindow *wnd);
@@ -54,6 +54,7 @@ private:
 
 	SciGuiScreen *_screen;
 	SciGuiGfx *_gfx;
+	SciGuiAnimate *_animate;
 
 	/** The list of open 'windows' (and ports), in visual order. */
 	PortList _windowList;

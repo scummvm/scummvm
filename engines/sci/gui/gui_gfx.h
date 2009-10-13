@@ -127,17 +127,6 @@ public:
 
 	void ShowPic();
 
-	void AnimateDisposeLastCast();
-	void AnimateInvoke(List *list, int argc, reg_t *argv);
-	void AnimateMakeSortedList(List *list);
-	void AnimateFill(byte &oldPicNotValid);
-	void AnimateUpdate();
-	void AnimateDrawCels();
-	void AnimateUpdateScreen(byte oldPicNotValid);
-	void AnimateRestoreAndDelete(int argc, reg_t *argv);
-	void ReAnimate(Common::Rect rect);
-	void AddToPicDrawCels(List *list);
-	void AddToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo celNo, int16 leftPos, int16 topPos, int16 priority, int16 control);
 	bool CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect, List *list);
 
 	void SetNowSeen(reg_t objectReference);
@@ -176,12 +165,6 @@ private:
 	Common::Rect _texteditCursorRect;
 	bool _texteditCursorVisible;
 	uint32 _texteditBlinkTime;
-
-	// Animate* related variables
-	uint16 _animateListSize;
-	GuiAnimateEntry *_animateListData;
-	GuiAnimateList _animateList;
-	//List *_lastCast;
 
 	SciGuiFont *_font;
 };
