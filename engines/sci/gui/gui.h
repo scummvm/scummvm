@@ -105,6 +105,7 @@ public:
 	virtual void hideCursor();
 	virtual void showCursor();
 	virtual void setCursorShape(GuiResourceId cursorId);
+	virtual void setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot);
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);
 

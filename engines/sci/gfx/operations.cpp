@@ -967,25 +967,6 @@ void gfxop_sleep(GfxState *state, uint32 msecs) {
 	}
 }
 
-void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot) {
-	// FIXME: For now, don't palettize pointers
-	gfx_pixmap_t *new_pointer = state->gfxResMan->getView(nr, &loop, &cel, 0)->loops[loop].cels[cel];
-
-	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this.
-	if (new_pointer->width < 2 || new_pointer->height < 2) {
-		state->driver->setPointer(NULL, NULL);
-		return;
-	}
-
-	if (hotspot)
-		state->driver->setPointer(new_pointer, hotspot);
-	else {
-		// Compute hotspot from xoffset/yoffset
-		Common::Point p = Common::Point(new_pointer->xoffset + (new_pointer->width >> 1), new_pointer->yoffset + new_pointer->height - 1);
-		state->driver->setPointer(new_pointer, &p);
-	}
-}
-
 #define SCANCODE_ROWS_NR 3
 
 struct scancode_row {

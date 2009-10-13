@@ -1197,7 +1197,7 @@ bool Console::cmdVisualState(int argc, const char **argv) {
 }
 
 bool Console::cmdFlushPorts(int argc, const char **argv) {
-	_vm->_gamestate->_cursor->setShape(GFXOP_NO_POINTER);
+	_vm->_gamestate->_gui->hideCursor();
 	DebugPrintf("Flushing dynamically allocated ports (for memory profiling)...\n");
 	delete _vm->_gamestate->visual;
 	_vm->_gamestate->gfx_state->gfxResMan->freeAllResources();

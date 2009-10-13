@@ -38,7 +38,6 @@ namespace Sci {
 
 SciGuiCursor::SciGuiCursor(ResourceManager *resMan, SciGuiPalette *palette)
 	: _resMan(resMan), _palette(palette) {
-	_rawBitmap = NULL;
 
 	setPosition(Common::Point(160, 150));		// TODO: how is that different in 640x400 games?
 	setMoveZone(Common::Rect(0, 0, 320, 200));	// TODO: hires games
@@ -64,10 +63,12 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 	byte color;
 	int16 maskA, maskB;
 	byte *pOut;
+	byte *rawBitmap = new byte[SCI_CURSOR_SCI0_HEIGHTWIDTH * SCI_CURSOR_SCI0_HEIGHTWIDTH];
 
 	if (resourceId == -1) {
 		// no resourceId given, so we actually hide the cursor
 		hide();
+		delete rawBitmap;
 		return;
 	}
 	
@@ -95,10 +96,7 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 	// Seek to actual data
 	resourceData += 4;
 
-	if (!_rawBitmap)
-		_rawBitmap = new byte[SCI_CURSOR_SCI0_HEIGHTWIDTH*SCI_CURSOR_SCI0_HEIGHTWIDTH];
-
-	pOut = _rawBitmap;
+	pOut = rawBitmap;
 	for (y = 0; y < SCI_CURSOR_SCI0_HEIGHTWIDTH; y++) {
 		maskA = READ_LE_UINT16(resourceData + (y << 1));
 		maskB = READ_LE_UINT16(resourceData + 32 + (y << 1));
@@ -109,8 +107,39 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 		}
 	}
 
-	CursorMan.replaceCursor(_rawBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
+	CursorMan.replaceCursor(rawBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 	CursorMan.showMouse(true);
+
+	delete rawBitmap;
+}
+
+void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {
+	SciGuiView *cursorView = new SciGuiView(_resMan, _screen, _palette, viewNum);
+
+	sciViewCelInfo *celInfo = cursorView->getCelInfo(loopNum, celNum);
+	int16 width = celInfo->width;
+	int16 height = celInfo->height;
+	byte clearKey = celInfo->clearKey;
+	Common::Point *cursorHotspot = hotspot;
+	if (!cursorHotspot)
+		// Compute hotspot from xoffset/yoffset
+		cursorHotspot = new Common::Point((celInfo->width >> 1) - celInfo->displaceX, celInfo->height - celInfo->displaceY - 1);
+
+	// Eco Quest 1 uses a 1x1 transparent cursor to hide the cursor from the user. Some scalers don't seem to support this
+	if (width < 2 || height < 2) {
+		hide();
+		delete cursorHotspot;
+		delete cursorView;
+		return;
+	}
+
+	cursorView->getBitmap(loopNum, celNum);
+
+	CursorMan.replaceCursor(celInfo->rawBitmap, width, height, cursorHotspot->x, cursorHotspot->y, clearKey);
+	show();
+
+	delete cursorHotspot;
+	delete cursorView;
 }
 
 void SciGuiCursor::setPosition(Common::Point pos) {

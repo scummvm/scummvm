@@ -206,25 +206,6 @@ public:
 	void setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority);
 	/** @} */
 
-	/** @name Mouse pointer operations */
-	/** @{ */
-
-	/**
-	 * Sets a new mouse pointer.
-	 *
-	 * If pointer is not NULL, it will have been scaled to the appropriate
-	 * size and registered as a pixmap (if neccessary) beforehand. If this
-	 * function is called for a target that supports only two-color
-	 * pointers, the image is a color index image, where only color index
-	 * values 0, 1, and GFX_COLOR_INDEX_TRANSPARENT are used.
-	 *
-	 * @param[in] pointer	The pointer to set, or NULL to set no pointer.
-	 * @param[in] hotspot	The coordinates of the hotspot, or NULL to set
-	 * 						no pointer.
-	 */
-	void setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot);
-	/** @} */
-
 	gfx_mode_t *getMode() { return _mode; }
 
 	/**

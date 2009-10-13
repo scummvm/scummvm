@@ -183,45 +183,6 @@ void GfxDriver::setStaticBuffer(gfx_pixmap_t *pic, gfx_pixmap_t *priority) {
 	memcpy(_screen->_controlScreen, priority->index_data, _mode->xsize * _mode->ysize);
 }
 
-// Mouse pointer operations
-
-void GfxDriver::setPointer(gfx_pixmap_t *pointer, Common::Point *hotspot) {
-	if (!pointer || !hotspot) {
-		CursorMan.showMouse(false);
-		return;
-	}
-
-	pointer->palette->mergeInto(_mode->palette);
-
-	// Scale cursor and map its colors to the global palette
-	byte *cursorData = new byte[pointer->width * pointer->height];
-
-	for (int yc = 0; yc < pointer->index_height; yc++) {
-		byte *linebase = &cursorData[yc * (pointer->width * _mode->scaleFactor)];
-
-		for (int xc = 0; xc < pointer->index_width; xc++) {
-			byte color = pointer->index_data[yc * pointer->index_width + xc];
-			if (color < pointer->palette->size())
-				color = pointer->palette->getColor(color).getParentIndex();
-			memset(&linebase[xc], color, _mode->scaleFactor);
-		}
-
-		// Scale vertically
-		for (int scalectr = 1; scalectr < _mode->scaleFactor; scalectr++)
-			memcpy(&linebase[pointer->width * scalectr], linebase, pointer->width);
-	}
-
-	byte color_key = pointer->color_key;
-	if ((pointer->color_key != GFX_PIXMAP_COLOR_KEY_NONE) && ((uint)pointer->color_key < pointer->palette->size()))
-		color_key = pointer->palette->getColor(pointer->color_key).getParentIndex();
-
-	CursorMan.replaceCursor(cursorData, pointer->width, pointer->height, hotspot->x, hotspot->y, color_key);
-	CursorMan.showMouse(true);
-
-	delete[] cursorData;
-	cursorData = 0;
-}
-
 void GfxDriver::animatePalette(int fromColor, int toColor, int stepCount) {
 	int i;
 	PaletteEntry firstColor = _mode->palette->getColor(fromColor);

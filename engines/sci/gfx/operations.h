@@ -40,8 +40,6 @@ namespace Sci {
 
 struct TextFragment;
 
-#define GFXOP_NO_POINTER -1
-
 /* Threshold in color index mode to differentiate between visible and non-visible stuff.
 ** GFXOP_ALPHA_THRESHOLD itself should be treated as non-visible.
 */
@@ -362,19 +360,6 @@ void gfxop_free_color(GfxState *state, gfx_color_t *color);
  * @param[in] msecs	The amount of milliseconds to wait
  */
 void gfxop_sleep(GfxState *state, uint32 msecs);
-
-/**
- * Sets the mouse pointer to a view resource.
- *
- * Use gfxop_set_pointer_cursor(state, GFXOP_NO_POINTER) to disable the pointer.
- *
- * @param[in] state		The affected state
- * @param[in] nr		Number of the view resource to use
- * @param[in] loop		View loop to use
- * @param[in] cel		View cel to use
- * @param[in] hotspot	Manually set hotspot to use, or NULL for default.
- */
-void gfxop_set_pointer_view(GfxState *state, int nr, int loop, int cel, Common::Point *hotspot);
 
 /**
  * Retrieves the next input event from the driver.

@@ -2457,6 +2457,10 @@ void SciGui32::setCursorShape(GuiResourceId cursorId) {
 	_cursor->setShape(cursorId);
 }
 
+void SciGui32::setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot) {
+	_cursor->setView(viewNum, loopNum, cellNum, hotspot);
+}
+
 void SciGui32::setCursorPos(Common::Point pos) {
 	pos.y += s->port->_bounds.y;
 	pos.x += s->port->_bounds.x;

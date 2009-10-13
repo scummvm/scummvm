@@ -516,7 +516,7 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		hotspot = new Common::Point(argv[3].toSint16(), argv[4].toSint16());
 		// Fallthrough
 	case 3:
-		gfxop_set_pointer_view(s->gfx_state, argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
+		s->_gui->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
 		if (hotspot)
 			delete hotspot;
 		break;

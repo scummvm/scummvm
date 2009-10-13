@@ -601,6 +601,10 @@ void SciGui::setCursorShape(GuiResourceId cursorId) {
 	_cursor->setShape(cursorId);
 }
 
+void SciGui::setCursorView(GuiResourceId viewNum, int loopNum, int cellNum, Common::Point *hotspot) {
+	_cursor->setView(viewNum, loopNum, cellNum, hotspot);
+}
+
 void SciGui::setCursorPos(Common::Point pos) {
 	pos.y += _gfx->GetPort()->top;
 	pos.x += _gfx->GetPort()->left;
