@@ -1130,8 +1130,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		delete[] listStrings;
 		return;
 
-	case SCI_CONTROLS_TYPE_PERCENTAGE:
-		// TODO: Implement this
+	case SCI_CONTROLS_TYPE_DUMMY:
+		// Actually this here does nothing at all, its required by at least QfG1/EGA that we accept this type
 		return;
 
 	default:
