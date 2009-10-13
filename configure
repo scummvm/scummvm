@@ -1230,8 +1230,7 @@ case $_host_os in
 		CFLAGS="-I/boot/home/config/include"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
 		LIBS="$LIBS -lbind -lsocket"
-		type_1_byte='char'
-		type_2_byte='short'
+		# FIXME: Please document why 'long' has to be used instead of int
 		type_4_byte='long'
 		;;
 	haiku*)
@@ -1239,8 +1238,7 @@ case $_host_os in
 		# Needs -lnetwork for the timidity MIDI driver
 		LIBS="$LIBS -lnetwork"
 		CXXFLAGS="$CXXFLAGS -fhuge-objects"
-		type_1_byte='char'
-		type_2_byte='short'
+		# FIXME: Please document why 'long' has to be used instead of int
 		type_4_byte='long'
 		;;
 	solaris*)
@@ -1275,8 +1273,7 @@ case $_host_os in
 	amigaos*)
 		CXXFLAGS="$CXXFLAGS -mcrt=newlib -mstrict-align -mcpu=750 -mtune=7400"
 		LDFLAGS="$LDFLAGS -mcrt=newlib -use-dynld -Lsobjs:"
-		type_1_byte='char'
-		type_2_byte='short'
+		# FIXME: Please document why 'long' has to be used instead of int
 		type_4_byte='long'
 		;;
 	dreamcast)
@@ -1322,34 +1319,20 @@ if test -n "$_host"; then
 		linupy|arm-riscos)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DLINUPY"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX"
-			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		motoezx)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
-			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1363,13 +1346,8 @@ if test -n "$_host"; then
 		motomagx)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOMAGX"
-			#not true for all ARM systems, but the interesting ones are all LE. Most (if not all) BE arm devices don't have a screen
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1392,11 +1370,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			LDFLAGS="$LDFLAGS"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1412,11 +1386,7 @@ if test -n "$_host"; then
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
 			LDFLAGS="$LDFLAGS -static"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_GFX_ASM = 1'
@@ -1429,11 +1399,7 @@ if test -n "$_host"; then
 		neuros)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend='null'
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1442,8 +1408,7 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
+			# FIXME: Please document why 'long' has to be used instead of int
 			type_4_byte='long'
 			;;
 		m68k-atari-mint)
@@ -1451,18 +1416,13 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
+			# FIXME: Please document why 'long' has to be used instead of int
 			type_4_byte='long'
 			_ranlib=m68k-atari-mint-ranlib
 			_ar="m68k-atari-mint-ar cru"
 			;;
 		*mingw32*)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			_endian=little
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
 			_ar="$_host-ar cru"
@@ -1471,11 +1431,7 @@ if test -n "$_host"; then
 		iphone)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DIPHONE -DUNIX"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			_backend="iphone"
@@ -1484,11 +1440,7 @@ if test -n "$_host"; then
 		wince)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			add_line_to_config_mk 'USE_TREMOLO = 1'
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
@@ -1503,11 +1455,7 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="dc"
 			_build_scalers="no"
 			_build_hq_scalers="no"
@@ -1519,9 +1467,6 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="wii"
 			_build_scalers="no"
 			_build_hq_scalers="no"
@@ -1538,9 +1483,6 @@ if test -n "$_host"; then
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="wii"
 			_build_scalers="no"
 			_build_hq_scalers="no"
@@ -1560,11 +1502,7 @@ if test -n "$_host"; then
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER"
 			DEFINES="$DEFINES -DREDUCE_MEMORY_USAGE"
 			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="nds"
 			_build_hq_scalers="no"
 			_mt32emu="no"
@@ -1575,11 +1513,7 @@ if test -n "$_host"; then
 			;;
 		psp)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="psp"
 			_build_scalers="no"
 			_build_hq_scalers="no"
@@ -1589,11 +1523,7 @@ if test -n "$_host"; then
 		ps2)
 			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
-			_endian=little
 			_need_memalign=yes
-			type_1_byte='char'
-			type_2_byte='short'
-			type_4_byte='int'
 			_backend="ps2"
 			_build_scalers="no"
 			_build_hq_scalers="no"
