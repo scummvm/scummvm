@@ -82,54 +82,57 @@ public:
 	SfxPlayer();
 	~SfxPlayer();
 
-	/* Initializes the player
-	** Parameters: (ResourceManager *) resMan: A resource manager for driver initialization
-	**             (int) expected_latency: Expected delay in between calls to 'maintenance'
-	**                   (in microseconds)
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	*/
+	/**
+	 * Initializes the player.
+	 * @param resMan	a resource manager for driver initialization
+	 * @param expected_latency	expected delay in between calls to 'maintenance' (in microseconds)
+	 * @return	Common::kNoError on success, Common::kUnknownError on failure
+	 */
 	Common::Error init(ResourceManager *resMan, int expected_latency);
 
-	/* Adds an iterator to the song player
-	** Parameters: (songx_iterator_t *) it: The iterator to play
-	**             (uint32) start_time: The time to assume as the
-	**                        time the first MIDI command executes at
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	** The iterator should not be cloned (to avoid memory leaks) and
-	** may be modified according to the needs of the player.
-	** Implementors may use the 'sfx_iterator_combine()' function
-	** to add iterators onto their already existing iterators
-	*/
+	/**
+	 * Adds an iterator to the song player
+	 * @param it		The iterator to play
+	 * @param start_time	The time to assume as the time the first MIDI command executes at
+	 * @return	Common::kNoError on success, Common::kUnknownError on failure
+	 *
+	 * The iterator should not be cloned (to avoid memory leaks) and
+	 * may be modified according to the needs of the player.
+	 * Implementors may use the 'sfx_iterator_combine()' function
+	 * to add iterators onto their already existing iterators.
+	 */
 	Common::Error add_iterator(SongIterator *it, uint32 start_time);
 
-	/* Stops the currently playing song and deletes the associated iterator
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	*/
+	/**
+	 * Stops the currently playing song and deletes the associated iterator.
+	 * @return	Common::kNoError on success, Common::kUnknownError on failure
+	 */
 	Common::Error stop();
 
-	/* Transmits a song iterator message to the active song
-	** Parameters: (SongIterator::Message) msg: The message to transmit
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	** OPTIONAL -- may be NULL
-	** If this method is not present, sending messages will stop
-	** and re-start playing, so it is preferred that it is present
-	*/
+	/**
+	 * Transmits a song iterator message to the active song.
+	 * @param msg	the message to transmit
+	 * @return	Common::kNoError on success, Common::kUnknownError on failure
+	 */
 	Common::Error iterator_message(const SongIterator::Message &msg);
 
-	/* Pauses song playing
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	*/
+	/**
+	 * Pauses song playing.
+	 * @return	Common::kNoError on success, Common::kUnknownError on failure
+	 */
 	Common::Error pause();
 
-	/* Resumes song playing after a pause
-	** Returns   : (int) Common::kNoError on success, Common::kUnknownError on failure
-	*/
+	/**
+	 * Resumes song playing after a pause.
+	 * @return	Common::kNoError on success, Common::kUnknownError on failure
+	 */
 	Common::Error resume();
 
-	/* Pass a raw MIDI event to the synth
-	Parameters: (int) argc: Length of buffer holding the midi event
-	           (byte *) argv: The buffer itself
-	*/
+	/**
+	 * Pass a raw MIDI event to the synth.
+	 * @param argc	length of buffer holding the midi event
+	 * @param argv	the buffer itself
+	 */
 	void tell_synth(int buf_nr, byte *buf);
 };
 
