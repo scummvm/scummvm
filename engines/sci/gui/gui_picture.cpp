@@ -580,6 +580,10 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	byte searchPriority = _screen->getPriority(p.x, p.y);
 	byte searchControl = _screen->getControl(p.x, p.y);
 	int16 w, e, a_set, b_set;
+	// It seems as if fills on visual screen, where color is not "initial" will not get done at all
+	//  this fixes pictures in qfg1(ega)
+	if (screenMask & SCI_SCREEN_MASK_VISUAL && searchColor != 15)
+		screenMask ^= SCI_SCREEN_MASK_VISUAL;
 	// if in 1st point priority,control or color is already set to target, clear the flag
 	if (screenMask & SCI_SCREEN_MASK_VISUAL && searchColor == color)
 		screenMask ^= SCI_SCREEN_MASK_VISUAL;
