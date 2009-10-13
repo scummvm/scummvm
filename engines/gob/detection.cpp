@@ -898,7 +898,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			EN_ANY,
 			kPlatformPC,
@@ -912,7 +912,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			DE_DEU,
 			kPlatformPC,
@@ -926,7 +926,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			FR_FRA,
 			kPlatformPC,
@@ -940,7 +940,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			IT_ITA,
 			kPlatformPC,
@@ -954,7 +954,7 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob2cd",
-			"v1.02",
+			"v2.01",
 			AD_ENTRY1("intro.stk", "24a6b32757752ccb1917ce92fd7c2a04"),
 			ES_ESP,
 			kPlatformPC,
