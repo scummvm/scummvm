@@ -39,7 +39,7 @@ public:
 
 	void wait(int16 ticks);
 	void setPort(uint16 portPtr);
-	void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft);
+	void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag);
 	reg_t getPort();
 	void globalToLocal(int16 *x, int16 *y);
 	void localToGlobal(int16 *x, int16 *y);

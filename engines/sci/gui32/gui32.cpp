@@ -118,7 +118,7 @@ void SciGui32::setPort(uint16 portPtr) {
 	s->port = new_port;
 }
 
-void SciGui32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft) {
+void SciGui32::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag) {
 	if (activated_icon_bar) {
 		port_origin_x = port_origin_y = 0;
 		activated_icon_bar = false;

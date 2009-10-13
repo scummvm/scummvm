@@ -1224,6 +1224,7 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 	uint16 portPtr;
 	Common::Rect picRect;
 	int16 picTop, picLeft;
+	bool initPriorityBandsFlag = false;
 
 	switch (argc) {
 	case 1:
@@ -1231,15 +1232,17 @@ reg_t kSetPort(EngineState *s, int argc, reg_t *argv) {
 		s->_gui->setPort(portPtr);
 		break;
 
+	case 7:
+		initPriorityBandsFlag = true;
 	case 4:
 	case 6:
 		picRect.top = argv[0].toSint16();
 		picRect.left = argv[1].toSint16();
 		picRect.bottom = argv[2].toSint16();
 		picRect.right = argv[3].toSint16();
-		picTop = (argc == 6) ? argv[4].toSint16() : 0;
-		picLeft = (argc == 6) ? argv[5].toSint16() : 0;
-		s->_gui->setPortPic(picRect, picTop, picLeft);
+		picTop = (argc >= 6) ? argv[4].toSint16() : 0;
+		picLeft = (argc >= 6) ? argv[5].toSint16() : 0;
+		s->_gui->setPortPic(picRect, picTop, picLeft, initPriorityBandsFlag);
 		break;
 
 	default:

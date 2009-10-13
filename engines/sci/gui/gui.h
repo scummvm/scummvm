@@ -49,7 +49,7 @@ public:
 
 	virtual void wait(int16 ticks);
 	virtual void setPort(uint16 portPtr);
-	virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft);
+	virtual void setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag);
 	virtual reg_t getPort();
 	virtual void globalToLocal(int16 *x, int16 *y);
 	virtual void localToGlobal(int16 *x, int16 *y);
@@ -115,6 +115,8 @@ public:
 	virtual void resetEngineState(EngineState *s);
 
 private:
+	virtual void initPriorityBands();
+
 	EngineState *_s;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
@@ -123,8 +125,9 @@ private:
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;
 	SciGuiAnimate *_animate;
-
 // 	SciGui32 *_gui32; // for debug purposes
+
+	bool _usesOldGfxFunctions;
 };
 
 } // End of namespace Sci

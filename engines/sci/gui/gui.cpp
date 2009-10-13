@@ -72,14 +72,18 @@ void SciGui::resetEngineState(EngineState *s) {
 }
 
 void SciGui::init(bool usesOldGfxFunctions) {
-	// Initialize priority bands
-	if (usesOldGfxFunctions) {
+	_usesOldGfxFunctions = usesOldGfxFunctions;
+
+	initPriorityBands();
+}
+
+void SciGui::initPriorityBands() {
+	if (_usesOldGfxFunctions) {
 		_gfx->PriorityBandsInit(15, 42, 200);
 	} else {
 		_gfx->PriorityBandsInit(14, 42, 190);
 	}
 }
-
 
 void SciGui::wait(int16 ticks) {
 	uint32 time;
@@ -110,12 +114,12 @@ void SciGui::setPort(uint16 portPtr) {
 	};
 }
 
-void SciGui::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft) {
+void SciGui::setPortPic(Common::Rect rect, int16 picTop, int16 picLeft, bool initPriorityBandsFlag) {
 	_windowMgr->_picWind->rect = rect;
 	_windowMgr->_picWind->top = picTop;
 	_windowMgr->_picWind->left = picLeft;
-	//if (argc >= 7)
-		//InitPri(42,190);
+	if (initPriorityBandsFlag)
+		initPriorityBands();
 }
 
 reg_t SciGui::getPort() {
