@@ -408,7 +408,7 @@ void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
 	SegManager *segMan = _s->_segMan;
 	int16 controlType = GET_SEL32V(controlObject, type);
 
-	if (controlType == 3) {
+	if (controlType == SCI_CONTROLS_TYPE_TEXTEDIT) {
 		// Only process textedit controls in here
 		_gfx->TexteditChange(controlObject, eventObject);
 	}

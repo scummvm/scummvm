@@ -986,17 +986,6 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-// Control types and flags
-enum {
-	K_CONTROL_BUTTON		= 1,
-	K_CONTROL_TEXT			= 2,
-	K_CONTROL_TEXTEDIT		= 3,
-	K_CONTROL_ICON			= 4,
-	K_CONTROL_LIST			= 6,
-	K_CONTROL_LIST_ALIAS	= 7,
-	K_CONTROL_PERCENTAGE	= 10
-};
-
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
 	Common::String text;
@@ -1025,7 +1014,7 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	 * that game - bringing the save/load dialog on a par with SCI0.
 	 */
 	// NOTE: This _only_ works with the English version
-	if (type == K_CONTROL_BUTTON && (gameName == "sq4") &&
+	if (type == SCI_CONTROLS_TYPE_BUTTON && (gameName == "sq4") &&
 			getSciVersion() < SCI_VERSION_1_1 && text == " Delete ") {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
@@ -1033,7 +1022,7 @@ static void disableCertainButtons(SegManager *segMan, Common::String gameName, r
 	// Disable the "Change Directory" button, as we don't allow the game engine to
 	// change the directory where saved games are placed
 	// NOTE: This _only_ works with the English version
-	if (type == K_CONTROL_BUTTON && text == "Change\r\nDirectory") {
+	if (type == SCI_CONTROLS_TYPE_BUTTON && text == "Change\r\nDirectory") {
 		PUT_SEL32V(obj, state, (state | kControlStateDisabled) & ~kControlStateEnabled);
 	}
 }
@@ -1063,18 +1052,18 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		text = segMan->getString(textReference);
 
 	switch (type) {
-	case K_CONTROL_BUTTON:
+	case SCI_CONTROLS_TYPE_BUTTON:
 		debugC(2, kDebugLevelGraphics, "drawing button %04x:%04x to %d,%d\n", PRINT_REG(controlObject), x, y);
 		s->_gui->drawControlButton(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, style, hilite);
 		return;
 
-	case K_CONTROL_TEXT:
+	case SCI_CONTROLS_TYPE_TEXT:
 		mode = GET_SEL32V(controlObject, mode);
 		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, mode);
 		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, hilite);
 		return;
 
-	case K_CONTROL_TEXTEDIT:
+	case SCI_CONTROLS_TYPE_TEXTEDIT:
 		mode = GET_SEL32V(controlObject, mode);
 		maxChars = GET_SEL32V(controlObject, max);
 		cursorPos = GET_SEL32V(controlObject, cursor);
@@ -1082,7 +1071,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		s->_gui->drawControlTextEdit(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, cursorPos, maxChars, hilite);
 		return;
 
-	case K_CONTROL_ICON:
+	case SCI_CONTROLS_TYPE_ICON:
 		viewId = GET_SEL32V(controlObject, view);
 		loopNo = sign_extend_byte(GET_SEL32V(controlObject, loop));
 		celNo = sign_extend_byte(GET_SEL32V(controlObject, cel));
@@ -1090,9 +1079,9 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		s->_gui->drawControlIcon(rect, controlObject, viewId, loopNo, celNo, style, hilite);
 		return;
 
-	case K_CONTROL_LIST:
-	case K_CONTROL_LIST_ALIAS:
-		if (type == K_CONTROL_LIST_ALIAS)
+	case SCI_CONTROLS_TYPE_LIST:
+	case SCI_CONTROLS_TYPE_LIST_ALIAS:
+		if (type == SCI_CONTROLS_TYPE_LIST_ALIAS)
 			isAlias = true;
 
 		maxChars = GET_SEL32V(controlObject, x); // max chars per entry
@@ -1141,7 +1130,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		delete[] listStrings;
 		return;
 
-	case K_CONTROL_PERCENTAGE:
+	case SCI_CONTROLS_TYPE_PERCENTAGE:
 		// TODO: Implement this
 		return;
 

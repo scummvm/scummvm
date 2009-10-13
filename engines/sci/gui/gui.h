@@ -30,6 +30,17 @@
 
 namespace Sci {
 
+// Control types and flags
+enum {
+	SCI_CONTROLS_TYPE_BUTTON		= 1,
+	SCI_CONTROLS_TYPE_TEXT			= 2,
+	SCI_CONTROLS_TYPE_TEXTEDIT		= 3,
+	SCI_CONTROLS_TYPE_ICON			= 4,
+	SCI_CONTROLS_TYPE_LIST			= 6,
+	SCI_CONTROLS_TYPE_LIST_ALIAS	= 7,
+	SCI_CONTROLS_TYPE_PERCENTAGE	= 10
+};
+
 class SciGuiScreen;
 class SciGuiPalette;
 class SciGuiCursor;
