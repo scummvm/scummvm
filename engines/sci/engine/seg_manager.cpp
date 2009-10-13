@@ -735,8 +735,18 @@ void SegManager::freeHunkEntry(reg_t addr) {
 	ht->freeEntry(addr.offset);
 }
 
-Hunk *SegManager::allocateHunkEntry(const char *hunk_type, int size, reg_t *reg) {
-	Hunk *h = alloc_Hunk(reg);
+Hunk *SegManager::allocateHunkEntry(const char *hunk_type, int size, reg_t *addr) {
+	HunkTable *table;
+	int offset;
+
+	if (!Hunks_seg_id)
+		allocSegment(new HunkTable(), &(Hunks_seg_id));
+	table = (HunkTable *)_heap[Hunks_seg_id];
+
+	offset = table->allocEntry();
+
+	*addr = make_reg(Hunks_seg_id, offset);
+	Hunk *h = &(table->_table[offset]);
 
 	if (!h)
 		return NULL;
@@ -752,9 +762,9 @@ Clone *SegManager::allocateClone(reg_t *addr) {
 	CloneTable *table;
 	int offset;
 
-	if (!Clones_seg_id) {
+	if (!Clones_seg_id)
 		table = (CloneTable *)allocSegment(new CloneTable(), &(Clones_seg_id));
-	} else
+	else
 		table = (CloneTable *)_heap[Clones_seg_id];
 
 	offset = table->allocEntry();
@@ -821,20 +831,6 @@ Node *SegManager::allocateNode(reg_t *addr) {
 	offset = table->allocEntry();
 
 	*addr = make_reg(Nodes_seg_id, offset);
-	return &(table->_table[offset]);
-}
-
-Hunk *SegManager::alloc_Hunk(reg_t *addr) {
-	HunkTable *table;
-	int offset;
-
-	if (!Hunks_seg_id)
-		allocSegment(new HunkTable(), &(Hunks_seg_id));
-	table = (HunkTable *)_heap[Hunks_seg_id];
-
-	offset = table->allocEntry();
-
-	*addr = make_reg(Hunks_seg_id, offset);
 	return &(table->_table[offset]);
 }
 

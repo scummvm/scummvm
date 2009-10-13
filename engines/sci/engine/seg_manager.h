@@ -458,8 +458,6 @@ private:
 	int deallocate(SegmentId seg, bool recursive);
 	int createClassTable();
 
-	Hunk *alloc_Hunk(reg_t *);
-
 	SegmentId findFreeSegment() const;
 
 	/**
