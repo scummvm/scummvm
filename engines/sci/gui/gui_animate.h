@@ -53,6 +53,9 @@ public:
 	SciGuiAnimate(EngineState *state, SciGuiGfx *gfx, SciGuiScreen *screen, SciGuiPalette *palette);
 	~SciGuiAnimate();
 
+	// FIXME: Don't store EngineState
+	void resetEngineState(EngineState *newState) { _s = newState; }
+
 	void disposeLastCast();
 	void invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
