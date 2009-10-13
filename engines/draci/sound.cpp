@@ -133,7 +133,7 @@ void SoundArchive::clearCache() {
  *
  * Loads individual samples from an archive to memory on demand.
  */
-const SoundSample *SoundArchive::getSample(int i, uint freq) {
+SoundSample *SoundArchive::getSample(int i, uint freq) {
 	// Check whether requested file exists
 	if (i < 0 || i >= (int) _sampleCount) {
 		return NULL;

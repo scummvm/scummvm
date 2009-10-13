@@ -713,8 +713,23 @@ void Script::talk(Common::Queue<int> &params) {
 	// Set the loop substatus to an appropriate value
 	_vm->_game->setLoopSubstatus(kSubstatusTalk);
 
+	// Speak the dubbing if possible
+	SoundSample *sample = _vm->_dubbingArchive->getSample(sentenceID, 0);
+	uint dubbingDuration = 0;
+	if (sample) {
+		dubbingDuration = (uint) (1000.0 * sample->_length / sample->_frequency + 500.0);
+		debugC(3, kDraciSoundDebugLevel, "Playing sentence %d: %d+%d with duration %dms",
+			sentenceID, sample->_offset, sample->_length, dubbingDuration);
+		_vm->_sound->playVoice(sample);
+	}
+
 	// Record time
-	_vm->_game->setSpeechTick(_vm->_system->getMillis());
+	const uint subtitleDuration = kBaseSpeechDuration +
+		speechFrame->getLength() * kSpeechTimeUnit /
+	  	(128 / 16 + 1);
+	const uint duration = subtitleDuration >= dubbingDuration ?
+		subtitleDuration : dubbingDuration;
+	_vm->_game->setSpeechTiming(_vm->_system->getMillis(), duration);
 
 	// TODO: Implement inventory part
 
@@ -736,6 +751,13 @@ void Script::talk(Common::Queue<int> &params) {
 	// Delete the text
 	_vm->_screen->getSurface()->markDirtyRect(speechFrame->getRect());
 	speechFrame->setText("");
+
+	// Stop the playing sample and deallocate it.  Stopping should only be
+	// necessary if the user interrupts the playback.
+	if (sample) {
+		_vm->_sound->stopVoice();
+		sample->close();
+	}
 
 	// Revert to "normal" loop status
 	_vm->_game->setLoopSubstatus(kSubstatusOrdinary);

@@ -414,18 +414,11 @@ void Game::loop() {
 
 		// Handle character talking (if there is any)
 		if (_loopSubstatus == kSubstatusTalk) {
-			Animation *speechAnim = _vm->_anims->getAnimation(kSpeechText);
-			Text *speechFrame = reinterpret_cast<Text *>(speechAnim->getFrame());
-
-			uint speechDuration = kBaseSpeechDuration +
-			                      speechFrame->getLength() * kSpeechTimeUnit /
-			                      (128 / 16 + 1);
-
 			// If the current speech text has expired or the user clicked a mouse button,
 			// advance to the next line of text
 			if (_vm->_mouse->lButtonPressed() ||
 				_vm->_mouse->rButtonPressed() ||
-				(_vm->_system->getMillis() - _speechTick) >= speechDuration) {
+				(_vm->_system->getMillis() - _speechTick) >= _speechDuration) {
 
 				_shouldExitLoop = true;
 				_vm->_mouse->lButtonSet(false);
@@ -1508,8 +1501,9 @@ const Person *Game::getPerson(int personID) const {
 	return &_persons[personID];
 }
 
-void Game::setSpeechTick(uint tick) {
+void Game::setSpeechTiming(uint tick, uint duration) {
 	_speechTick = tick;
+	_speechDuration = duration;
 }
 
 int Game::getEscRoom() const {

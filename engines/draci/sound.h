@@ -68,7 +68,7 @@ public:
 
 	void clearCache();
 
-	const SoundSample *getSample(int i, uint freq);
+	SoundSample *getSample(int i, uint freq);
 
 private:
 	Common::String _path;    ///< Path to file

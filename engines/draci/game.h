@@ -324,7 +324,7 @@ public:
 	int shouldExitLoop() const { return _shouldExitLoop; }
 	void setExitLoop(int exit) { _shouldExitLoop = exit; }
 
-	void setSpeechTick(uint tick);
+	void setSpeechTiming(uint tick, uint duration);
 
 	void updateTitle();
 	void updateCursor();
@@ -408,6 +408,7 @@ private:
 	int _shouldExitLoop;	// 0=false and 1=true are normal, 2=immediate exit after loading
 
 	uint _speechTick;
+	uint _speechDuration;
 
 	int _objUnderCursor;
 	int _oldObjUnderCursor;
