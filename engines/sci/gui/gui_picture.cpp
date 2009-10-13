@@ -599,6 +599,14 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 			return;
 	}
 
+	// Now remove screens, that already got the right color/priority/control
+	if ((screenMask & SCI_SCREEN_MASK_VISUAL) && (searchColor == color))
+		screenMask ^= SCI_SCREEN_MASK_VISUAL;
+	if ((screenMask & SCI_SCREEN_MASK_PRIORITY) && (searchPriority == priority))
+		screenMask ^= SCI_SCREEN_MASK_PRIORITY;
+	if ((screenMask & SCI_SCREEN_MASK_CONTROL) && (searchControl == control))
+		screenMask ^= SCI_SCREEN_MASK_CONTROL;
+
 	// hard borders for filling
 	int l = curPort->rect.left + curPort->left;
 	int t = curPort->rect.top + curPort->top;
