@@ -31,6 +31,7 @@
 #include "sci/engine/state.h"
 #include "sci/tools.h"
 #include "sci/gui/gui_gfx.h"
+#include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_font.h"
 #include "sci/gui/gui_picture.h"
 #include "sci/gui/gui_view.h"
