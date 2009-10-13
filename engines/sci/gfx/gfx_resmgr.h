@@ -124,15 +124,6 @@ public:
 
 
 	/**
-	 * Retrieves an SCI0/SCI01 mouse cursor.
-	 *
-	 * @param[in] num	The cursor number
-	 * @return			The approprate cursor as a pixmap, or NULL on error
-	 */
-	gfx_pixmap_t *getCursor(int num);
-
-
-	/**
 	 * Retrieves a font.
 	 *
 	 * @param[in] num		The font number

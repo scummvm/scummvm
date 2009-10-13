@@ -248,17 +248,6 @@ void gfxr_remove_artifacts_pic0(gfxr_pic_t *dest, gfxr_pic_t *src);
  */
 void gfxr_dither_pic0(gfxr_pic_t *pic, DitherMode mode);
 
-/**
- * Calculates a SCI cursor.
- *
- * @param[in] id		The cursor's resource ID
- * @param[in] resource	Pointer to the resource data
- * @param[in] size		Resource size
- * @param[in] isSci01	Set to true to load a SCI1 cursor
- * @return				A newly allocated pixmap containing an index color
- * 						representation of the cursor
- */
-gfx_pixmap_t *gfxr_draw_cursor(int id, byte *resource, int size, bool isSci01);
 /** @} */
 
 
