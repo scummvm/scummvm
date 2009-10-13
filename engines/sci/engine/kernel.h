@@ -40,7 +40,6 @@ namespace Sci {
 struct Node;	// from segment.h
 struct List;	// from segment.h
 
-#define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
 //#define DEBUG_PARSER	// enable for parser debugging
 
 /* Generic description: */
@@ -162,7 +161,7 @@ enum SelectorInvocation {
 */
 
 #define PUT_SEL32(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, make_reg(0, _val_), __FILE__, __LINE__)
+#define PUT_SEL32V(_o_, _slc_, _val_) PUT_SEL32(_o_, _slc_, make_reg(0, _val_))
 /* Writes a selector value to an object
 ** Parameters: (reg_t) object: The address of the object which the selector should be written to
 **             (selector_name) selector: The selector to read

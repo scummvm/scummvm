@@ -33,6 +33,9 @@
 
 namespace Sci {
 
+// FIXME: Is AVOIDPATH_DYNMEM_STRING still needed?
+#define AVOIDPATH_DYNMEM_STRING "AvoidPath polyline"
+
 #define POLY_LAST_POINT 0x7777
 #define POLY_POINT_SIZE 4
 //#define DEBUG_AVOIDPATH	//enable for avoidpath debugging
@@ -254,8 +257,6 @@ struct PathfindingState {
 	}
 };
 
-
-static Vertex *s_vertex_cur;	// FIXME: Avoid non-const global vars
 
 static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	SegmentRef list_r = segMan->dereference(list);
@@ -603,6 +604,8 @@ static void fix_vertex_order(Polygon *polygon) {
 	}
 }
 
+static Vertex *s_vertex_cur = 0;	// FIXME: Avoid non-const global vars
+
 static int vertex_compare(const void *a, const void *b) {
 	// Compares two vertices by angle (first) and distance (second) in relation
 	// to s_vertex_cur. The angle is relative to the horizontal line extending
@@ -815,6 +818,7 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 		Vertex *v1;
 
 		// Compute visibility of vertex_index[i]
+		assert(vertex_cur == s_vertex_cur);	// FIXME: We should be able to replace s_vertex_cur by vertex_cur
 		is_visible = visible(s_vertex_cur, s->vertex_index[i], s->vertex_index[i - 1], is_visible, intersected);
 
 		// Update visibility matrix
@@ -844,6 +848,8 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 			}
 		}
 	}
+
+	s_vertex_cur = 0;
 
 	return visVerts;
 }
