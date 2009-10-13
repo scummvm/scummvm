@@ -517,8 +517,6 @@ static reg_t kSetCursorSci11(EngineState *s, int argc, reg_t *argv) {
 		// Fallthrough
 	case 3:
 		s->_gui->setCursorView(argv[0].toUint16(), argv[1].toUint16(), argv[2].toUint16(), hotspot);
-		if (hotspot)
-			delete hotspot;
 		break;
 	default :
 		warning("kSetCursor: Unhandled case: %d arguments given", argc);
