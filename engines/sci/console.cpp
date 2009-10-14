@@ -2231,6 +2231,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	ExecStack *xstack;
 	Object *o;
 	reg_t fptr;
+	ObjVarRef varp;
 
 	selector_id = _vm->getKernel()->findSelector(selector_name);
 
@@ -2245,7 +2246,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 		return true;
 	}
 
-	SelectorType selector_type = lookup_selector(_vm->_gamestate->_segMan, object, selector_id, 0, &fptr);
+	SelectorType selector_type = lookup_selector(_vm->_gamestate->_segMan, object, selector_id, &varp, &fptr);
 
 	if (selector_type == kSelectorNone) {
 		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
@@ -2256,7 +2257,7 @@ bool Console::cmdSend(int argc, const char **argv) {
 	stackframe[1] = make_reg(0, argc - 3);	// -object -selector name -command name
 
 	for (i = 3; i < argc; i++) {
-		if (parse_reg_t(_vm->_gamestate, argv[i], &stackframe[i])) {
+		if (parse_reg_t(_vm->_gamestate, argv[i], &stackframe[i-1])) {
 			DebugPrintf("Invalid address passed for parameter %d.\n", i);
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
@@ -2264,12 +2265,18 @@ bool Console::cmdSend(int argc, const char **argv) {
 	}
 
 	xstack = add_exec_stack_entry(_vm->_gamestate, fptr,
-	                 _vm->_gamestate->_executionStack.front().sp + argc,
+	                 stackframe + argc,
 	                 object, argc - 3,
-	                 _vm->_gamestate->_executionStack.front().sp - 1, 0, object,
+	                 stackframe - 1, 0, object,
 	                 _vm->_gamestate->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
 	xstack->selector = selector_id;
-	xstack->type = selector_type == kSelectorVariable ? EXEC_STACK_TYPE_VARSELECTOR : EXEC_STACK_TYPE_CALL;
+	if (selector_type == kSelectorVariable) {
+		xstack->addr.varp = varp;
+		xstack->type = EXEC_STACK_TYPE_VARSELECTOR;
+	} else {
+		xstack->addr.pc = fptr;
+		xstack->type = EXEC_STACK_TYPE_CALL;
+	}
 
 	// Now commit the actual function:
 	xstack = send_selector(_vm->_gamestate, object, object, stackframe, argc - 3, stackframe);

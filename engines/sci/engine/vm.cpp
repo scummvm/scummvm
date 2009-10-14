@@ -228,13 +228,16 @@ static void _exec_varselectors(EngineState *s) {
 	while (!s->_executionStack.empty() && s->_executionStack.back().type == EXEC_STACK_TYPE_VARSELECTOR) {
 		ExecStack &xs = s->_executionStack.back();
 		reg_t *var = xs.getVarPointer(s->_segMan);
-		// varselector access?
-		if (xs.argc) { // write?
-			*var = xs.variables_argp[1];
+		if (!var) {
+			warning("Invalid varselector exec stack entry");
+		} else {
+			// varselector access?
+			if (xs.argc) { // write?
+				*var = xs.variables_argp[1];
 
-		} else // No, read
-			s->r_acc = *var;
-
+			} else // No, read
+				s->r_acc = *var;
+		}
 		s->_executionStack.pop_back();
 	}
 }
