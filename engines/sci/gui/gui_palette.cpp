@@ -275,8 +275,9 @@ void SciGuiPalette::setOnScreen() {
 	_screen->setPalette(&_sysPalette);
 }
 
-void SciGuiPalette::setIntensity(int fromColor, int toColor, int intensity, GuiPalette *destPalette) {
-	memset(destPalette->intensity + fromColor, intensity, toColor - fromColor);
+void SciGuiPalette::setIntensity(int fromColor, int toColor, int intensity) {
+	memset(&_sysPalette.intensity + fromColor, intensity, toColor - fromColor);
+	setOnScreen();
 }
 
 void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {

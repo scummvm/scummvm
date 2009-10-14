@@ -470,11 +470,8 @@ int16 SciGui::paletteFind(int r, int g, int b) {
 	return _palette->matchColor(&_palette->_sysPalette, r, g, b) & 0xFF;
 }
 
-void SciGui::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
-	_palette->setIntensity(fromColor, toColor, intensity, &_palette->_sysPalette);
-	if (setPalette) {
-		_palette->setOnScreen();
-	}
+void SciGui::paletteSetIntensity(int fromColor, int toColor, int intensity) {
+	_palette->setIntensity(fromColor, toColor, intensity);
 }
 
 void SciGui::paletteAnimate(int fromColor, int toColor, int speed) {

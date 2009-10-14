@@ -80,7 +80,7 @@ public:
 
 	void paletteSet(int resourceNo, int flags);
 	int16 paletteFind(int r, int g, int b);
-	void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
+	void paletteSetIntensity(int fromColor, int toColor, int intensity);
 	void paletteAnimate(int fromColor, int toColor, int speed);
 
 	void shakeScreen(uint16 shakeCount, uint16 directions);

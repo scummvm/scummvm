@@ -1372,7 +1372,7 @@ int16 SciGui32::paletteFind(int r, int g, int b) {
 	return bestindex;
 }
 
-void SciGui32::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
+void SciGui32::paletteSetIntensity(int fromColor, int toColor, int intensity) {
 #if 0
 	_s->gfx_state->gfxResMan->setPaletteIntensity(fromColor, toColor, intensity);
 #endif
