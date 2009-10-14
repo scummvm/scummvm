@@ -303,7 +303,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		}
 
 #ifdef VM_DEBUG_SEND
-		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, s->_selectorNames[selector].c_str());
+		printf("Send to %04x:%04x, selector %04x (%s):", PRINT_REG(send_obj), selector, ((SciEngine*)g_engine)->getKernel()->getSelectorName(selector).c_str());
 #endif // VM_DEBUG_SEND
 
 		ObjVarRef varp;
@@ -357,7 +357,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 #ifdef VM_DEBUG_SEND
 			printf("Funcselector(");
 			for (int i = 0; i < argc; i++) {
-				printf(PREG, PRINT_REG(argp[i+1]));
+				printf("%04x:%04x", PRINT_REG(argp[i+1]));
 				if (i + 1 < argc)
 					printf(", ");
 			}
