@@ -37,7 +37,7 @@ public:
 	~SciGuiTransitions();
 
 	void setup(int16 number);
-	void doit();
+	void doit(Common::Rect picRect);
 
 private:
 	void init(void);

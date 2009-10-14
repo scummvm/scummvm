@@ -504,13 +504,20 @@ uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 	return result;
 }
 
+void SciGui::animateShowPic() {
+	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
+
+	_transitions->doit(_gfx->GetPort()->rect);
+	_gfx->SetPort(oldPort);	
+}
+
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	byte old_picNotValid = _screen->_picNotValid;
 
 	if (listReference.isNull()) {
 		_animate->disposeLastCast();
 		if (_screen->_picNotValid)
-			_transitions->doit();
+			animateShowPic();
 		return;
 	}
 
@@ -536,7 +543,7 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	_animate->drawCels();
 
 	if (_screen->_picNotValid)
-		_transitions->doit();
+		animateShowPic();
 
 	_animate->updateScreen(old_picNotValid);
 	_animate->restoreAndDelete(argc, argv);

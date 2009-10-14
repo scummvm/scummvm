@@ -138,6 +138,7 @@ protected:
 
 private:
 	virtual void initPriorityBands();
+	virtual void animateShowPic();
 
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;

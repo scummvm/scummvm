@@ -51,7 +51,7 @@ void SciGuiTransitions::setup(int16 number) {
 	_number = number;
 }
 
-void SciGuiTransitions::doit() {
+void SciGuiTransitions::doit(Common::Rect picRect) {
 	// TODO: Implement animations
 	warning("SciGuiTransitions: animation %d not implemented", _number);
 	_palette->setOnScreen();
