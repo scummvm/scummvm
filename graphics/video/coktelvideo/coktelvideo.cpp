@@ -431,6 +431,11 @@ void Imd::seekFrame(int32 frame, int16 whence, bool restart) {
 		for (int i = ((frame > _curFrame) ? _curFrame : 0); i <= frame; i++)
 			processFrame(i);
 		return;
+//FIXME: This workaround is needed for Bargon Attack intro, which was broken by a fix concerning Ween in r42995.
+	} else if (_soundStage == 0) {
+		warning("Imd::seekFrame(): Avoiding \"Frame %d is not directly accessible\"", frame);
+		_curFrame = frame;
+//End of fixme
 	} else
 		error("Imd::seekFrame(): Frame %d is not directly accessible", frame);
 
