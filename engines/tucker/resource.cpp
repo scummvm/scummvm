@@ -943,21 +943,11 @@ void TuckerEngine::loadSound(Audio::Mixer::SoundType type, int num, int volume, 
 		}
 		char fileName[64];
 		snprintf(fileName, sizeof(fileName), fmt, num);
-		Common::File f;
-		if (f.open(fileName)) {
-			int size, rate;
-			uint8 flags = 0;
-			if (Audio::loadWAVFromStream(f, size, rate, flags)) {
-				uint8 *data = (uint8 *)malloc(size);
-				if (data) {
-					f.read(data, size);
-					flags |= Audio::Mixer::FLAG_AUTOFREE;
-					if (loop) {
-						flags |= Audio::Mixer::FLAG_LOOP;
-					}
-					stream = Audio::makeLinearInputStream(data, size, rate, flags, 0, 0);
-				}
-			}
+		Common::File *f = new Common::File;
+		if (f->open(fileName)) {
+			stream = Audio::makeWAVStream(f, true, loop);
+		} else {
+			delete f;
 		}
 	}
 	if (stream) {
