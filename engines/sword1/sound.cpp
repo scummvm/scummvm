@@ -416,16 +416,9 @@ int16 *Sound::uncompressSpeech(uint32 index, uint32 cSize, uint32 *size) {
 	_cowFile.read(fBuf, cSize);
 	uint32 headerPos = 0;
 
-	// TODO: use loadWAVFromStream to load the WAVE data!
-	/*
-	int rate, size;
-	bye flags;
-	Common::MemoryReadStream stream(fBuf, cSize);
-	isValidWAV = loadWAVFromStream(stream, size, rate, flags);
-	*/
-
 	while ((READ_BE_UINT32(fBuf + headerPos) != 'data') && (headerPos < 100))
 		headerPos++;
+
 	if (headerPos < 100) {
 		int32 resSize;
 		int16 *srcData;
