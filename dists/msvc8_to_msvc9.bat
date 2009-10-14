@@ -15,8 +15,8 @@ copy /y msvc8\*.vsprops msvc9\
 rpl -e -q "Version=\"8.00\"" "Version=\"9.00\"" msvc9\*.vcproj
 rpl -e -q "Version=\"8,00\"" "Version=\"9,00\"" msvc9\*.vcproj
 rpl -e -q "Keyword=\"Win32Proj\"" "Keyword=\"Win32Proj\"\n\tTargetFrameworkVersion=\"131072\"" msvc9\*.vcproj
-rpl -e -q "Format Version 9.00" "Format Version 10.00" msvc9\scummvm.sln
-rpl -e -q "Format Version 9,00" "Format Version 10,00" msvc9\scummvm.sln
+rpl -e -q "Format Version 9.00" "Format Version 10.00" msvc9\residual.sln
+rpl -e -q "Format Version 9,00" "Format Version 10,00" msvc9\residual.sln
 goto the_end
 
 :no_rpl

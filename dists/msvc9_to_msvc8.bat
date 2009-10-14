@@ -15,8 +15,8 @@ copy /y msvc9\*.vsprops msvc8\
 rpl -e -q "Version=\"9.00\"" "Version=\"8.00\"" msvc8\*.vcproj
 rpl -e -q "Version=\"9,00\"" "Version=\"8,00\"" msvc8\*.vcproj
 rpl -e -q "\tTargetFrameworkVersion=\"131072\"\n" "" msvc8\*.vcproj
-rpl -e -q "Format Version 10.00" "Format Version 9.00" msvc8\scummvm.sln
-rpl -e -q "Format Version 10,00" "Format Version 9,00" msvc8\scummvm.sln
+rpl -e -q "Format Version 10.00" "Format Version 9.00" msvc8\residual.sln
+rpl -e -q "Format Version 10,00" "Format Version 9,00" msvc8\residual.sln
 goto the_end
 
 :no_rpl

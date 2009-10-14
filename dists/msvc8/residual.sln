@@ -1,5 +1,5 @@
 Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual C++ Express 2005
+# Visual C++ Express 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "residual", "residual.vcproj", "{44D38F29-303D-4E3D-AF45-B96523BF1F9F}"
 	ProjectSection(ProjectDependencies) = postProject
 		{676DB4C5-9A3E-4EE1-8483-EBB79DC0700E} = {676DB4C5-9A3E-4EE1-8483-EBB79DC0700E}
