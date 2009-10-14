@@ -39,7 +39,13 @@ enum {
 enum {
 	SCI_TRANSITIONS_VGA_BLOCKS			= 8,
 	SCI_TRANSITIONS_VGA_PIXELATION		= 9,
-	SCI_TRANSITIONS_VGA_FADEPALETTE		= 10
+	SCI_TRANSITIONS_VGA_FADEPALETTE		= 10,
+	SCI_TRANSITIONS_VGA_SCROLLUP		= 13,
+	SCI_TRANSITIONS_VGA_SCROLLDOWN		= 14
+};
+
+enum {
+	SCI_TRANSITIONS_SCROLL_UP			= 1
 };
 
 class SciGuiScreen;
@@ -59,6 +65,7 @@ private:
 	void fadeIn();
 	void pixelation();
 	void blocks();
+	void scroll(int16 direction);
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
@@ -67,6 +74,7 @@ private:
 	bool _isVGA;
 	int16 _number;
 	Common::Rect _picRect;
+	byte *_oldScreen; // buffer for saving current active screen data to, has dimenions of _screen->_displayScreen
 };
 
 } // End of namespace Sci

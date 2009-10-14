@@ -43,9 +43,11 @@ SciGuiTransitions::SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPa
 }
 
 SciGuiTransitions::~SciGuiTransitions() {
+	delete[] _oldScreen;
 }
 
 void SciGuiTransitions::init() {
+	_oldScreen = new byte[_screen->_displayHeight * _screen->_displayWidth];
 }
 
 void SciGuiTransitions::setup(int16 number) {
@@ -68,6 +70,10 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 
 		case SCI_TRANSITIONS_VGA_FADEPALETTE:
 			fadeOut(); setNewScreen(); fadeIn();
+			break;
+
+		case SCI_TRANSITIONS_VGA_SCROLLUP:
+			scroll(SCI_TRANSITIONS_SCROLL_UP);
 			break;
 
 		default:
@@ -142,7 +148,7 @@ void SciGuiTransitions::fadeIn() {
 	}
 }
 
-// pixelates the new picture over the old one
+// pixelates the new picture over the old one - works against the whole screen
 void SciGuiTransitions::pixelation () {
 	uint16 mask = 0x40, stepNr = 0;
 	Common::Rect pixelRect;
@@ -162,7 +168,7 @@ void SciGuiTransitions::pixelation () {
 	} while (mask != 0x40);
 }
 
-// like pixelation but uses 8x8 blocks
+// like pixelation but uses 8x8 blocks - works against the whole screen
 void SciGuiTransitions::blocks() {
 	uint16 mask = 0x40, stepNr = 0;
 	Common::Rect blockRect;
@@ -180,6 +186,41 @@ void SciGuiTransitions::blocks() {
 		}
 		stepNr++;
 	} while (mask != 0x40);
+}
+
+// scroll old screen (up/down/left/right) and insert new screen that way - works on _picRect area
+void SciGuiTransitions::scroll(int16 direction) {
+	int16 screenWidth, screenHeight;
+	int16 oldWidth, oldHeight;
+	int16 newWidth, newHeight;
+	byte *oldScreenPtr;
+	int16 x, y;
+	Common::Rect newScreenRect = _picRect;
+
+	_screen->copyFromScreen(_oldScreen);
+	screenWidth = _screen->_displayWidth; screenHeight = _screen->_displayHeight;
+
+	x = _picRect.left; y = _picRect.top;
+	oldWidth = _picRect.width(); oldHeight = _picRect.height();
+	newWidth = 0; newHeight = 0;
+
+	oldScreenPtr = _oldScreen + _picRect.left + _picRect.top * screenWidth;
+
+	switch (direction) {
+	case SCI_TRANSITIONS_SCROLL_UP:
+		newScreenRect.bottom = newScreenRect.top;
+		y += oldHeight;
+		while (oldHeight > 0) {
+			oldScreenPtr += screenWidth; oldHeight--;
+			if (oldHeight)
+				g_system->copyRectToScreen(oldScreenPtr, _screen->_displayWidth, _picRect.left, _picRect.top, oldWidth, oldHeight);
+			newScreenRect.bottom++;	y--;
+			_screen->copyRectToScreen(newScreenRect, x, y);
+			g_system->updateScreen();
+			g_system->delayMillis(3);
+		}
+		break;
+	}
 }
 
 } // End of namespace Sci

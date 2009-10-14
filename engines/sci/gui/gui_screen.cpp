@@ -25,6 +25,7 @@
 
 #include "common/timer.h"
 #include "common/util.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
@@ -66,8 +67,19 @@ void SciGuiScreen::copyToScreen() {
 	g_system->copyRectToScreen(_activeScreen, _displayWidth, 0, 0, _displayWidth, _displayHeight);
 }
 
+void SciGuiScreen::copyFromScreen(byte *buffer) {
+	Graphics::Surface *screen;
+	screen = g_system->lockScreen();
+	memcpy(buffer, screen->pixels, _displayWidth * _displayHeight);
+	g_system->unlockScreen();
+}
+
 void SciGuiScreen::copyRectToScreen(const Common::Rect &rect) {
 	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, rect.left, rect.top, rect.width(), rect.height());
+}
+
+void SciGuiScreen::copyRectToScreen(const Common::Rect &rect, int16 x, int16 y) {
+	g_system->copyRectToScreen(_activeScreen + rect.top * _displayWidth + rect.left, _displayWidth, x, y, rect.width(), rect.height());
 }
 
 byte SciGuiScreen::getDrawingMask(byte color, byte prio, byte control) {

@@ -509,8 +509,9 @@ void SciGui::animateShowPic() {
 	Common::Rect picRect = picPort->rect;
 
 	// Adjust picRect to become relative to screen
-	picRect.top += picPort->top; picRect.bottom += picPort->top;
-	picRect.left += picPort->left; picRect.right += picPort->left;
+	picRect.translate(picPort->left, picPort->top);
+	//picRect.top += picPort->top; picRect.bottom += picPort->top;
+	//picRect.left += picPort->left; picRect.right += picPort->left;
 	_transitions->doit(picRect);
 }
 
