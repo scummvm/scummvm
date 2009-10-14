@@ -635,19 +635,19 @@ void SciGui::moveCursor(Common::Point pos) {
 }
 
 int16 SciGui::getCelWidth(int view, int loop, int cel) {
-	SciGuiView *cursorView = new SciGuiView(_s->resMan, _screen, _palette, view);
-	sciViewCelInfo *celInfo = cursorView->getCelInfo(loop, cel);
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
 	int16 width = celInfo->width;
-	delete cursorView;
+	delete tmpView;
 
 	return width;
 }
 
 int16 SciGui::getCelHeight(int view, int loop, int cel) {
-	SciGuiView *cursorView = new SciGuiView(_s->resMan, _screen, _palette, view);
-	sciViewCelInfo *celInfo = cursorView->getCelInfo(loop, cel);
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
+	sciViewCelInfo *celInfo = tmpView->getCelInfo(loop, cel);
 	int16 height = celInfo->height;
-	delete cursorView;
+	delete tmpView;
 
 	return height;
 }
