@@ -30,6 +30,10 @@
 
 namespace Sci {
 
+enum {
+	SCI_TRANSITIONS_FADEPALETTE		= 10
+};
+
 class SciGuiScreen;
 class SciGuiTransitions {
 public:
@@ -41,12 +45,17 @@ public:
 
 private:
 	void init(void);
+	void SciGuiTransitions::setNewPalette();
+	void SciGuiTransitions::setNewScreen();
+	void SciGuiTransitions::fadeOut();
+	void SciGuiTransitions::fadeIn();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
 	int16 _number;
+	Common::Rect _picRect;
 };
 
 } // End of namespace Sci

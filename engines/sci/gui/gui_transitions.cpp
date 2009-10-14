@@ -30,6 +30,7 @@
 #include "sci/sci.h"
 #include "sci/engine/state.h"
 #include "sci/tools.h"
+#include "sci/gui/gui.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_palette.h"
 #include "sci/gui/gui_transitions.h"
@@ -52,11 +53,64 @@ void SciGuiTransitions::setup(int16 number) {
 }
 
 void SciGuiTransitions::doit(Common::Rect picRect) {
-	// TODO: Implement animations
-	warning("SciGuiTransitions: animation %d not implemented", _number);
-	_palette->setOnScreen();
-	_screen->copyToScreen();
+	_picRect = picRect;
+
+	switch (_number) {
+	case SCI_TRANSITIONS_FADEPALETTE:
+		fadeOut();
+		setNewScreen();
+		fadeIn();
+		break;
+
+	default:
+		warning("SciGuiTransitions: %d not implemented", _number);
+		setNewPalette();
+		setNewScreen();
+	}
 	_screen->_picNotValid = 0;
+}
+
+void SciGuiTransitions::setNewPalette() {
+	_palette->setOnScreen();
+}
+
+void SciGuiTransitions::setNewScreen() {
+	_screen->copyRectToScreen(_picRect);
+	g_system->updateScreen();
+}
+
+void SciGuiTransitions::fadeOut() {
+	byte oldPalette[4 * 256], workPalette[4 * 256];
+	int16 stepNr, colorNr;
+
+	g_system->grabPalette(oldPalette, 0, 256);
+
+	for (stepNr = 100; stepNr >= 0; stepNr -= 5) {
+		for (colorNr = 0; colorNr < 256; colorNr++){
+			workPalette[colorNr * 4 + 0] = oldPalette[colorNr * 4] * stepNr / 100;
+			workPalette[colorNr * 4 + 1] = oldPalette[colorNr * 4 + 1] * stepNr / 100;
+			workPalette[colorNr * 4 + 2] = oldPalette[colorNr * 4 + 2] * stepNr / 100;
+		}
+		g_system->setPalette(workPalette, 0, 256);
+		_gui->wait(1);
+	}
+}
+
+void SciGuiTransitions::fadeIn() {
+	byte workPalette[4 * 256];
+	GuiPalette *newPalette = &_palette->_sysPalette;
+	int16 stepNr, colorNr;
+
+	for (stepNr = 0; stepNr <= 100; stepNr += 5) {
+		for (colorNr = 0; colorNr < 256; colorNr++){
+			workPalette[colorNr * 4 + 0] = newPalette->colors[colorNr].r * stepNr / 100;
+			workPalette[colorNr * 4 + 1] = newPalette->colors[colorNr].g * stepNr / 100;
+			workPalette[colorNr * 4 + 2] = newPalette->colors[colorNr].b * stepNr / 100;
+			workPalette[colorNr * 4 + 3] = 100;
+		}
+		g_system->setPalette(workPalette, 0, 256);
+		_gui->wait(1);
+	}
 }
 
 } // End of namespace Sci

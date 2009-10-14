@@ -254,7 +254,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 	if (bgcolor != -1)
 		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, bgcolor, 0, 0);
 	_gfx->TextBox(text, 0, rect, align, -1);
-	if (!_screen->_picNotValid && bRedraw)
+	if (_screen->_picNotValid == 0 && bRedraw)
 		_gfx->BitsShow(rect);
 	// restoring port and cursor pos
 	GuiPort *currport = _gfx->GetPort();
@@ -304,9 +304,9 @@ void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirror
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
+		_screen->_picNotValid = 1;
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
 		_transitions->setup(animationNr);
-		_screen->_picNotValid = 1;
 	} else {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
@@ -332,7 +332,7 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		rect.grow(1);
 		if (style & 8) // selected
 			_gfx->FrameRect(rect);
-		if (!_screen->_picNotValid) {
+		if (_screen->_picNotValid == 0) {
 			rect.grow(1);
 			_gfx->BitsShow(rect);
 		}
@@ -352,7 +352,7 @@ void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int
 			_gfx->FrameRect(rect);
 		}
 		rect.grow(1);
-		if (!_screen->_picNotValid)
+		if (_screen->_picNotValid == 0)
 			_gfx->BitsShow(rect);
 	} else {
 		_gfx->InvertRect(rect);
@@ -377,7 +377,7 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 		_gfx->SetFont(oldFontId);
 		rect.grow(1);
 	}
-	if (!_screen->_picNotValid)
+	if (_screen->_picNotValid == 0)
 		_gfx->BitsShow(rect);
 }
 
@@ -387,7 +387,7 @@ void SciGui::drawControlIcon(Common::Rect rect, reg_t obj, GuiResourceId viewId,
 		if (style & 0x20) {
 			_gfx->FrameRect(rect);
 		}
-		if (!_screen->_picNotValid)
+		if (_screen->_picNotValid == 0)
 			_gfx->BitsShow(rect);
 	} else {
 		_gfx->InvertRect(rect);
@@ -402,7 +402,7 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 		if (isAlias && (style & 8)) {
 			_gfx->FrameRect(rect);
 		}
-		if (!_screen->_picNotValid)
+		if (_screen->_picNotValid == 0)
 			_gfx->BitsShow(rect);
 	}
 }
@@ -505,10 +505,13 @@ uint16 SciGui::onControl(byte screenMask, Common::Rect rect) {
 }
 
 void SciGui::animateShowPic() {
-	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
+	GuiPort *picPort = _windowMgr->_picWind;
+	Common::Rect picRect = picPort->rect;
 
-	_transitions->doit(_gfx->GetPort()->rect);
-	_gfx->SetPort(oldPort);	
+	// Adjust picRect to become relative to screen
+	picRect.top += picPort->top; picRect.bottom += picPort->top;
+	picRect.left += picPort->left; picRect.right += picPort->left;
+	_transitions->doit(picRect);
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {

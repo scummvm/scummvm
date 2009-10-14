@@ -191,7 +191,7 @@ void SciGuiPalette::set(GuiPalette *sciPal, int16 flag) {
 	if (flag == 2 || sciPal->timestamp != systime) {
 		merge(sciPal, &_sysPalette, flag);
 		sciPal->timestamp = _sysPalette.timestamp;
-		if (!_screen->_picNotValid && systime != _sysPalette.timestamp)
+		if (_screen->_picNotValid == 0 && systime != _sysPalette.timestamp)
 			setOnScreen();
 	}
 }
