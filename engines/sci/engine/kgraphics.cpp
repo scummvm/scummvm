@@ -581,11 +581,12 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		break;
 	case 4:	{ // Set palette intensity
 		if (argc >= 4) {
-			int fromColor = CLIP<int>(argv[1].toUint16(), 1, 255);
-			int toColor = CLIP<int>(argv[2].toUint16(), 1, 255);
-			int intensity = argv[3].toUint16();
+			int16 fromColor = CLIP<int>(argv[1].toUint16(), 1, 255);
+			int16 toColor = CLIP<int>(argv[2].toUint16(), 1, 255);
+			int16 intensity = argv[3].toUint16();
+			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
 
-			s->_gui->paletteSetIntensity(fromColor, toColor, intensity);
+			s->_gui->paletteSetIntensity(fromColor, toColor, intensity, setPalette);
 		}
 		break;
 	}

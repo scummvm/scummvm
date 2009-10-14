@@ -47,7 +47,7 @@ public:
 
 	void setOnScreen();
 
-	void setIntensity(int fromColor, int toColor, int intensity);
+	void setIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	void animate(byte fromColor, byte toColor, int speed);
 
 	GuiPalette _sysPalette;

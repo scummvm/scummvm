@@ -102,7 +102,7 @@ public:
 
 	virtual void paletteSet(int resourceNo, int flags);
 	virtual int16 paletteFind(int r, int g, int b);
-	virtual void paletteSetIntensity(int fromColor, int toColor, int intensity);
+	virtual void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
 	virtual void paletteAnimate(int fromColor, int toColor, int speed);
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
