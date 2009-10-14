@@ -103,10 +103,9 @@ public:
 	bool debugShowMap(int mapNo);
 
 	// FIXME: Don't store EngineState
-	virtual void resetEngineState(EngineState *newState) { s = newState; }
+	virtual void resetEngineState(EngineState *newState) { _s = newState; }
 
 private:
-	EngineState *s;
 	bool _usesOldGfxFunctions;
 
 	GfxDynView *_k_make_dynview_obj(reg_t obj, int options, int nr, int argc, reg_t *argv);

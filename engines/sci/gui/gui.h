@@ -121,6 +121,9 @@ public:
 	virtual void setCursorPos(Common::Point pos);
 	virtual void moveCursor(Common::Point pos);
 
+	int16 getCelWidth(int view, int loop, int cel);
+	int16 getCelHeight(int view, int loop, int cel);
+
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 
@@ -129,13 +132,13 @@ public:
 
 protected:
 	SciGuiCursor *_cursor;
+	EngineState *_s;
+	SciGuiScreen *_screen;
+	SciGuiPalette *_palette;
 
 private:
 	virtual void initPriorityBands();
 
-	EngineState *_s;
-	SciGuiScreen *_screen;
-	SciGuiPalette *_palette;
 	SciGuiGfx *_gfx;
 	SciGuiresources *_resources;
 	SciGuiWindowMgr *_windowMgr;

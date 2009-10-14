@@ -388,8 +388,6 @@ reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static Common::Rect nsrect_clip(EngineState *s, int y, Common::Rect retval, int priority);
-
 reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
@@ -435,28 +433,16 @@ reg_t kCelHigh(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
 	int cel = (argc >= 3) ? argv[2].toSint16() : 0;
-	int height, width;
-	Common::Point offset;
 
-	if (argc > 3)
-		error("celHigh called with more than 3 parameters");
-
-	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset);
-	return make_reg(0, height);
+	return make_reg(0, s->_gui->getCelHeight(view, loop, cel));
 }
 
 reg_t kCelWide(EngineState *s, int argc, reg_t *argv) {
 	int view = argv[0].toSint16();
 	int loop = argv[1].toSint16();
 	int cel = (argc >= 3) ? argv[2].toSint16() : 0;
-	int height, width;
-	Common::Point offset;
 
-	if (argc > 3)
-		error("celWide called with more than 3 parameters");
-
-	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &width, &height, &offset);
-	return make_reg(0, width);
+	return make_reg(0, s->_gui->getCelWidth(view, loop, cel));
 }
 
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
