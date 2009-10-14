@@ -674,7 +674,8 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	const char **listEntries = NULL;
 	bool isAlias = false;
 
-	rect = Common::Rect (x, y, (int16)GET_SEL32V(controlObject, nsRight), (int16)GET_SEL32V(controlObject, nsBottom));
+	kGraphCreateRect(x, y, GET_SEL32V(controlObject, nsRight), GET_SEL32V(controlObject, nsBottom), &rect);
+
 	if (!textReference.isNull())
 		text = segMan->getString(textReference);
 
