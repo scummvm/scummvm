@@ -778,8 +778,8 @@ void GfxOpenGL::drawEmergString(int x, int y, const char *text, const Color &fgC
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_LIGHTING);
 
-	glColor3f(fgColor.red(), fgColor.green(), fgColor.blue());
 	glRasterPos2i(x, y);
+	glColor3f(1.0f, 1.0f, 1.0f);
 
 	glListBase(_emergFont);
 	glCallLists(strlen(text), GL_UNSIGNED_BYTE, (GLubyte *)text);
