@@ -117,10 +117,10 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	byte priority = _addToFlag ? _priority : 0;
 	byte clearColor = headerPtr[6];
 	byte curByte, runLength;
-	int16 y, x, lastY;
+	int16 y, lastY, x, leftX, rightX;
 	uint16 pixelNr, pixelCount;
 
-	if (displaceX || displaceY || width != 320)
+	if (displaceX || displaceY)
 		error("unsupported embedded cel-data in picture");
 
 	pixelCount = width * height;
@@ -199,31 +199,31 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	// Set initial vertical coordinate by using current port
 	y = callerY + _gfx->GetPort()->top;
 	lastY = MIN<int16>(height + y, _gfx->GetPort()->rect.bottom + _gfx->GetPort()->top);
-	if (callerX != 0)
-		error("drawCelData() called with callerX != 0");
+	leftX = callerX + _gfx->GetPort()->left;
+	rightX = MIN<int16>(width + leftX, _gfx->GetPort()->rect.right + _gfx->GetPort()->left);
 
 	ptr = celBitmap;
 	if (!_mirroredFlag) {
 		// Draw bitmap to screen
-		x = 0;
+		x = leftX;
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(callerX + x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
 			x++;
-			if (x >= _screen->_width) {
-				x -= _screen->_width; y++;
+			if (x >= rightX) {
+				x = leftX; y++;
 			}
 		}
 	} else {
 		// Draw bitmap to screen (mirrored)
-		x = _screen->_width - 1;
+		x = rightX - 1;
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
-			if (x == 0) {
-				x = _screen->_width; y++;
+				_screen->putPixel(callerX + x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+			if (x == leftX) {
+				x = rightX; y++;
 			}
 			x--;
 		}
