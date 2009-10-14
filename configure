@@ -902,6 +902,16 @@ ps2)
 	_host_os=ps2
 	_host_cpu=mips64r5900el
 	_host_alias=ee
+	if test "$_debug_build" = auto; then
+		# Disable debug mode by default. The resulting binaries are far too big in general,
+		# and one has to disable multiple engines to make it usable.
+		_debug_build=no
+	fi
+
+	if test "$_release_build" = auto; then
+		# Enable release build by default.
+		_release_build=yes
+	fi
 	;;
 *)
 	if test -n "$_host"; then
@@ -1538,6 +1548,17 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'CC = ee-gcc'
 			# HACK to fix linking for now. It seems ee-g++ does not handle linking correctly.
 			LD=ee-gcc
+
+			if test "$_debug_build" = yes; then
+				# TODO: Setup debug build properly
+				DEFINES="$DEFINES -D__PS2_DEBUG__"
+				#INCLUDES="$INCLUDES -I$(PS2GDB)/ee"
+				#LDFLAGS="$LDFLAGS -L$(PS2GDB)/lib"
+				LDFLAGS="$LDFLAGS -lps2gdbStub -lps2ip -ldebug"
+			else
+				# If not building for debug mode, strip binaries.
+				CXXFLAGS="$CXXFLAGS -s"
+			fi
 			;;
 		*)
 			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
