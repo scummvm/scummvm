@@ -585,7 +585,7 @@ void SciGuiPicture::vectorFloodFill(int16 x, int16 y, byte color, byte priority,
 	// This logic was taken directly from sierra sci, floodfill will get aborted on various occations
 	if (screenMask & SCI_SCREEN_MASK_VISUAL) {
 		if (_resMan->isVGA()) {
-			if ((color == 255) || (searchColor != 255))
+			if ((color == 255) || (searchColor != 0))
 				return;
 		} else {
 			if ((color == 15) || (searchColor != 15))
