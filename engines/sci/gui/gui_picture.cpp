@@ -209,7 +209,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(callerX + x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
 			x++;
 			if (x >= rightX) {
 				x = leftX; y++;
@@ -221,7 +221,7 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 		while (y < lastY) {
 			curByte = *ptr++;
 			if ((curByte != clearColor) && (priority >= _screen->getPriority(x, y)))
-				_screen->putPixel(callerX + x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
+				_screen->putPixel(x, y, SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY, curByte, priority, 0);
 			if (x == leftX) {
 				x = rightX; y++;
 			}
