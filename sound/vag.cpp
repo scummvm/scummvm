@@ -40,11 +40,14 @@ VagStream::~VagStream() {
 	delete _stream;
 }
 
-double f[5][2] = { { 0.0, 0.0 },
-                    {  60.0 / 64.0,  0.0 },
-                    {  115.0 / 64.0, -52.0 / 64.0 },
-                    {  98.0 / 64.0, -55.0 / 64.0 },
-                    {  122.0 / 64.0, -60.0 / 64.0 } };
+static const double s_vagDataTable[5][2] =
+	{
+		{  0.0, 0.0 },
+		{  60.0 / 64.0,  0.0 },
+		{  115.0 / 64.0, -52.0 / 64.0 },
+		{  98.0 / 64.0, -55.0 / 64.0 },
+		{  122.0 / 64.0, -60.0 / 64.0 }
+	};
 
 int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 	int32 samplesDecoded = 0;
@@ -53,7 +56,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 		byte i = 0;
 
 		for (i = 28 - _samplesRemaining; i < 28 && samplesDecoded < numSamples; i++) {
-			_samples[i] = _samples[i] + _s1 * f[_predictor][0] + _s2 * f[_predictor][1];
+			_samples[i] = _samples[i] + _s1 * s_vagDataTable[_predictor][0] + _s2 * s_vagDataTable[_predictor][1];
 			_s2 = _s1;
 			_s1 = _samples[i];
 			int16 d = (int) (_samples[i] + 0.5);
@@ -94,7 +97,7 @@ int VagStream::readBuffer(int16 *buffer, const int numSamples) {
 		}
 
 		for (i = 0; i < 28 && samplesDecoded < numSamples; i++) {
-			_samples[i] = _samples[i] + _s1 * f[_predictor][0] + _s2 * f[_predictor][1];
+			_samples[i] = _samples[i] + _s1 * s_vagDataTable[_predictor][0] + _s2 * s_vagDataTable[_predictor][1];
 			_s2 = _s1;
 			_s1 = _samples[i];
 			int16 d = (int) (_samples[i] + 0.5);
