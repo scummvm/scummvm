@@ -90,29 +90,31 @@ void SciGuiTransitions::setNewScreen() {
 	g_system->updateScreen();
 }
 
+// Note: dont do too many steps in here, otherwise cpu will crap out because of the load
 void SciGuiTransitions::fadeOut() {
 	byte oldPalette[4 * 256], workPalette[4 * 256];
 	int16 stepNr, colorNr;
 
 	g_system->grabPalette(oldPalette, 0, 256);
 
-	for (stepNr = 100; stepNr >= 0; stepNr -= 5) {
+	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
 		for (colorNr = 0; colorNr < 256; colorNr++){
 			workPalette[colorNr * 4 + 0] = oldPalette[colorNr * 4] * stepNr / 100;
 			workPalette[colorNr * 4 + 1] = oldPalette[colorNr * 4 + 1] * stepNr / 100;
 			workPalette[colorNr * 4 + 2] = oldPalette[colorNr * 4 + 2] * stepNr / 100;
 		}
 		g_system->setPalette(workPalette, 0, 256);
-		_gui->wait(1);
+		_gui->wait(2);
 	}
 }
 
+// Note: dont do too many steps in here, otherwise cpu will crap out because of the load
 void SciGuiTransitions::fadeIn() {
 	byte workPalette[4 * 256];
 	GuiPalette *newPalette = &_palette->_sysPalette;
 	int16 stepNr, colorNr;
 
-	for (stepNr = 0; stepNr <= 100; stepNr += 5) {
+	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
 		for (colorNr = 0; colorNr < 256; colorNr++){
 			workPalette[colorNr * 4 + 0] = newPalette->colors[colorNr].r * stepNr / 100;
 			workPalette[colorNr * 4 + 1] = newPalette->colors[colorNr].g * stepNr / 100;
@@ -120,7 +122,7 @@ void SciGuiTransitions::fadeIn() {
 			workPalette[colorNr * 4 + 3] = 100;
 		}
 		g_system->setPalette(workPalette, 0, 256);
-		_gui->wait(1);
+		_gui->wait(2);
 	}
 }
 
