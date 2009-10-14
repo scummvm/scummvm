@@ -391,17 +391,16 @@ reg_t kDirLoop(EngineState *s, int argc, reg_t *argv) {
 reg_t kCanBeHere(EngineState *s, int argc, reg_t *argv) {
 	reg_t curObject = argv[0];
 	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
-
-	if (s->_gui->canBeHere(curObject, listReference))
-		return make_reg(0, 1);
-	return NULL_REG;
+	bool canBeHere = s->_gui->canBeHere(curObject, listReference);
+	return make_reg(0, canBeHere);
 }
 
 // kCantBeHere does the same thing as kCanBeHere, except that it returns the opposite result.
 reg_t kCantBeHere(EngineState *s, int argc, reg_t *argv) {
-	reg_t result = kCanBeHere(s, argc, argv);
-	result.offset = !result.offset;
-	return result;
+	reg_t curObject = argv[0];
+	reg_t listReference = (argc > 1) ? argv[1] : NULL_REG;
+	bool canBeHere = s->_gui->canBeHere(curObject, listReference);
+	return make_reg(0, !canBeHere);
 }
 
 reg_t kIsItSkip(EngineState *s, int argc, reg_t *argv) {
