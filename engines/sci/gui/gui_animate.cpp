@@ -205,6 +205,8 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 		listEntry->signal = signal;
 
 		listIterator++;
+
+		delete view;
 	}
 }
 
@@ -466,6 +468,8 @@ void SciGuiAnimate::addToPicDrawCels(List *list) {
 		}
 
 		listIterator++;
+
+		delete view;
 	}
 }
 
@@ -478,6 +482,8 @@ void SciGuiAnimate::addToPicDrawView(GuiResourceId viewId, GuiViewLoopNo loopNo,
 	// Create rect according to coordinates and given cel
 	view->getCelRect(loopNo, celNo, leftPos, topPos, priority, &celRect);
 	_gfx->drawCel(view, loopNo, celNo, celRect, priority, 0);
+
+	delete view;
 }
 
 } // End of namespace Sci

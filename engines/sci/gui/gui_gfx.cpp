@@ -671,8 +671,10 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		rect.bottom = rect.top + view->getHeight(loopNo, celNo);
 		clipRect = rect;
 		clipRect.clip(_curPort->rect);
-		if (clipRect.isEmpty()) // nothing to draw
+		if (clipRect.isEmpty()) {	// nothing to draw
+			delete view;
 			return;
+		}
 
 		Common::Rect clipRectTranslated = clipRect;
 		OffsetRect(clipRectTranslated);
@@ -680,6 +682,8 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 		if (!_screen->_picNotValid)
 			BitsShow(rect);
 	}
+
+	delete view;
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
@@ -689,13 +693,17 @@ void SciGuiGfx::drawCel(GuiResourceId viewId, GuiViewLoopNo loopNo, GuiViewCelNo
 	if (view) {
 		clipRect = celRect;
 		clipRect.clip(_curPort->rect);
-		if (clipRect.isEmpty()) // nothing to draw
+		if (clipRect.isEmpty()) { // nothing to draw
+			delete view;
 			return;
+		}
 
 		Common::Rect clipRectTranslated = clipRect;
 		OffsetRect(clipRectTranslated);
 		view->draw(celRect, clipRect, clipRectTranslated, loopNo, celNo, priority, paletteNo);
 	}
+
+	delete view;
 }
 
 // This version of drawCel is not supposed to call BitsShow()!
@@ -1026,6 +1034,8 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 		PUT_SEL32V(objectReference, nsTop, celRect.top);
 		PUT_SEL32V(objectReference, nsBottom, celRect.bottom);
 	}
+
+	delete view;
 }
 
 } // End of namespace Sci
