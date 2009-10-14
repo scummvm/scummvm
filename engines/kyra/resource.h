@@ -298,6 +298,8 @@ enum KyraResources {
 	kLolLightningDefs,
 	kLolFireballCoords,
 
+	kLolCredits,
+
 	kLolHistory,
 #endif // ENABLE_LOL
 

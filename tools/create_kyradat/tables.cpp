@@ -1656,6 +1656,12 @@ const ExtractEntrySearchData kLolFireballCoordsProvider[] = {
 	EXTRACT_END_ENTRY
 };
 
+const ExtractEntrySearchData kLolCreditsProvider[] = {
+	{ JA_JPN , kPlatformPC98, { 0x000005E7, 0x0001A1B0, { { 0x2A, 0xD0, 0x38, 0x84, 0x0C, 0x38, 0xCB, 0x52, 0x5D, 0x82, 0xBE, 0x03, 0x76, 0xFA, 0x0A, 0x4A } } } },
+
+	EXTRACT_END_ENTRY
+};
+
 const ExtractEntrySearchData kLolHistoryProvider[] = {
 	{ UNK_LANG, kPlatformPC, { 0x000001D1, 0x00007F9B, { { 0x25, 0x10, 0x86, 0x40, 0xAC, 0x53, 0xFE, 0x11, 0x4D, 0xE2, 0xD9, 0x35, 0xD6, 0x89, 0xBB, 0x09 } } } },
 
@@ -1866,6 +1872,7 @@ const ExtractEntry extractProviders[] = {
 	{ kLolHealShapeFrames, kLolHealShapeFramesProvider },
 	{ kLolLightningDefs, kLolLightningDefsProvider },
 	{ kLolFireballCoords, kLolFireballCoordsProvider },
+	{ kLolCredits, kLolCreditsProvider },
 	{ kLolHistory, kLolHistoryProvider },
 	{ -1, NULL }
 };

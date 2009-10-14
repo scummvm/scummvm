@@ -1182,7 +1182,22 @@ void LoLEngine::showCredits() {
 
 	_screen->_charOffset = 0;
 
-	char *credits = (char *)_res->fileData("CREDITS.TXT", 0);
+	char *credits = 0;
+
+	if (_flags.platform == Common::kPlatformPC98) {
+		int size = 0;
+		const uint8 *internCredits = _staticres->loadRawData(kLolCredits, size);
+		assert(size > 0);
+
+		credits = new char[size];
+		assert(credits);
+
+		memcpy(credits, internCredits, size);
+		_staticres->unloadId(kLolCredits);
+	} else {
+		credits = (char *)_res->fileData("CREDITS.TXT", 0);
+	}
+
 	processCredits(credits, 21, 4, 5);
 	delete[] credits;
 

@@ -270,6 +270,8 @@ enum kExtractID {
 	kLolLightningDefs,
 	kLolFireballCoords,
 
+	kLolCredits,
+
 	kLolHistory,
 
 	kMaxResIDs

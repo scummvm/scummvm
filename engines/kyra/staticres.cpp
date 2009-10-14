@@ -45,7 +45,7 @@
 
 namespace Kyra {
 
-#define RESFILE_VERSION 58
+#define RESFILE_VERSION 59
 
 namespace {
 bool checkKyraDat(Common::SeekableReadStream *file) {
@@ -469,6 +469,8 @@ bool StaticResource::init() {
 		{ kLolLightningDefs, kRawData, "MLGHTNG.DEF" },
 		{ kLolFireballCoords, kLolRawDataBe16, "MFIREBLL.DEF" },
 
+		{ kLolCredits, kRawData, "LOLCREDITS" },
+
 		{ kLolHistory, kRawData, "HISTORY.FLS" },
 
 		{ 0, 0, 0 }
@@ -501,10 +503,10 @@ void StaticResource::deinit() {
 }
 
 const char * const *StaticResource::loadStrings(int id, int &strings) {
-	const char * const*temp = (const char* const *)getData(id, kStringList, strings);
+	const char * const *temp = (const char * const *)getData(id, kStringList, strings);
 	if (temp)
 		return temp;
-	return (const char* const *)getData(id, kLanguageList, strings);
+	return (const char * const *)getData(id, kLanguageList, strings);
 }
 
 const uint8 *StaticResource::loadRawData(int id, int &size) {

@@ -105,7 +105,8 @@ const Game lolGames[] = {
 	{ kLol, DE_DEU, kPlatformPC, -1, "6b843869772c1b779e1386be868c15dd" },
 
 	// PC98 (no language specifc strings)
-	{ kLol, JA_JPN, kPlatformPC98, -1, "6d5bd4a2f5ce433365734ca6b7a8d984" },
+	{ kLol, JA_JPN, kPlatformPC98, kFile1, "6d5bd4a2f5ce433365734ca6b7a8d984" },
+	{ kLol, JA_JPN, kPlatformPC98, kFile2, "1b0a457c48ae6908da301b656fe0aab4" },
 
 	// DOS CD (multi language version, with no language specific strings)
 	{ kLol, UNK_LANG, kPlatformPC, kTalkieFile1, "9d1778314de80598c0b0d032e2a1a1cf" },
@@ -660,7 +661,7 @@ const int lolFloppyNeed[] = {
 	-1
 };
 
-const int lolPC98Need[] = {
+const int lolPC98File1Need[] = {
 	kLolIngamePakFiles,
 
 	kLolCharacterDefs,
@@ -735,6 +736,12 @@ const int lolPC98Need[] = {
 	kLolHealShapeFrames,
 	kLolLightningDefs,
 	kLolFireballCoords,
+
+	-1
+};
+
+const int lolPC98File2Need[] = {
+	kLolCredits,
 
 	-1
 };
@@ -875,7 +882,8 @@ const GameNeed gameNeedTable[] = {
 	{ kKyra3, kPlatformPC, -1, kyra3Need },
 
 	{ kLol, kPlatformPC, -1, lolFloppyNeed },
-	{ kLol, kPlatformPC98, -1, lolPC98Need },
+	{ kLol, kPlatformPC98, kFile1, lolPC98File1Need },
+	{ kLol, kPlatformPC98, kFile2, lolPC98File2Need },
 
 	{ kLol, kPlatformPC, kTalkieFile1, lolCDFile1Need },
 	{ kLol, kPlatformPC, kTalkieFile2, lolCDFile2Need },

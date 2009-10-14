@@ -37,7 +37,7 @@
 #include "md5.h"
 
 enum {
-	kKyraDatVersion = 58,
+	kKyraDatVersion = 59,
 	kIndexSize = 12
 };
 
@@ -148,6 +148,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kPaletteList31, kTypeRawData, "PALTABLE31.PAL" },
 	{ kPaletteList32, kTypeRawData, "PALTABLE32.PAL" },
 	{ kPaletteList33, kTypeRawData, "PALTABLE33.PAL" },
+
+	// CREDITS (used in FM-TOWNS and AMIGA)
 	{ kCreditsStrings, kTypeRawData, "CREDITS" },
 
 	// FM-TOWNS specific
@@ -285,6 +287,8 @@ const ExtractFilename extractFilenames[] = {
 	{ kLolHealShapeFrames, kTypeRawData, "MHEAL.SHP" },
 	{ kLolLightningDefs, kTypeRawData, "MLGHTNG.DEF" },
 	{ kLolFireballCoords, kLolTypeRaw16, "MFIREBLL.DEF" },
+
+	{ kLolCredits, kTypeRawData, "LOLCREDITS" },
 
 	{ kLolHistory, kTypeRawData, "HISTORY.FLS" },
 
