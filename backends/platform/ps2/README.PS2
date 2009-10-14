@@ -1,0 +1,106 @@
+Dear PS2 ScummVM enthusiast user,
+
+here you will find the latest and the greatest PS2 backend ever!
+
+
+                       *** Changelog (1.0.0) ***
+
+Enabled groovie, tucker & tinsel engines by default.
+
+
+                         *** Installation ***
+
+Some media drivers require all capitalized letter, so to be on the
+safe side store the files (SCUMMVM.ELF and *.IRX) in upper case.
+
+Here comes a full list of the required *.IRX (don't worry they are all
+provided pre-compiled in the binary release ;-)
+
+ IOMANX.IRX
+ FILEXIO.IRX
+ CODYVDFS.IRX
+ SJPCM.IRX
+ USBD.IRX
+ USB_MASS.IRX
+ PS2MOUSE.IRX
+ RPCKBD.IRX
+ POWEROFF.IRX
+ PS2DEV9.IRX
+ PS2ATAD.IRX
+ PS2HDD.IRX
+ PS2FS.IRX
+ PS2IP.IRX
+ PS2SMAP.IRX
+ PS2HOST.IRX
+
+Make sure they are all stored in the folder that contains your SCUMMVM.ELF!
+
+If you are starting ScummVM from CD/DVD then it will look for ScummVM.ini
+on the first MC and then on CD itself. In any other case it will look for
+a ScummVM.ini on the media folder from where you started SCUMMVM.ELF.
+
+Notes:
+
+ - depending on the media you install Scummvm/PS2 onto, it might be
+   picky about files cases, so I'd leave those *.IRX uppercase and
+   scummmodern.zip lower ;0)
+
+
+                             *** Remote ***
+
+You will need "PS2IP.IRX", "PS2SMAP.IRX" and "PS2HOST.IRX" drivers too
+in the folder where you are starting SCUMMVM.ELF if you want to use
+the remote capability.
+
+The IP 192.168.0.10 (ps2link default) is hardcoded in the source as
+"netArg" in irxboot.cpp, feel free to modify it to match your network
+configuration.
+
+If you are starting SCUMMVM.ELF over the net using ps2client then you
+are already set. If you are starting it in any other way, then you
+will have to "export" the folder where you are storing ScummVM games
+and data by starting ps2client from inside that folder. Eg. from a
+terminal:
+
+> ./ps2client -h [your ps2 ip] listen
+
+Do this -after- ScummVM is up and running otherwise it will fail to
+establish a connection.
+
+
+                           *** Gamepad ***
+
+The mapping is:
+
+Start Button         -   GMM
+R1                   -   'y'
+L1                   -   'n'
+R2                   -   '.'
+L2                   -   Numpad 0
+Triangle             -   Escape
+Square               -   Enter
+Cross                -   Left mouse button
+Circle               -   Right mouse button
+
+
+                            *** Bugs ***
+
+Though we made our best to make this release as bug free as possible
+there are still a few bugs left:
+
+ - file handling speed : (not really a bug, but a nuisance) : there
+   is probably space for some more optimization in the current file
+   management. The only case when it really bogs me it's when you
+   try to select a saved game and there is some lag.
+
+   Some game could start faster too when this is optimized.
+
+ - feel free to add your bug, suggestion, secret wish to this list!
+
+
+Now enough reading, rush to your PlayStation2 and start playing!
+
+Are you still reading?
+
+Have a lot of fun,
+  -Max Lingua

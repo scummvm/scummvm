@@ -5,7 +5,7 @@ PS2_EXTRA = /works/devel/ps2/sdk-extra
 PS2_EXTRA_INCS = /zlib/include /libmad/ee/include /SjPcm/ee/src /tremor
 PS2_EXTRA_LIBS = /zlib/lib /libmad/ee/lib /SjPcm/ee/lib /tremor/tremor
 
-ENABLED=STATIC_PLUGIN
+ENABLED = STATIC_PLUGIN
 
 #control build
 DISABLE_SCALERS = true
@@ -20,6 +20,7 @@ ENABLE_CINE = $(ENABLED)
 ENABLE_CRUISE = $(ENABLED)
 ENABLE_DRASCULA = $(ENABLED)
 ENABLE_GOB = $(ENABLED)
+ENABLE_GROOVIE = $(ENABLED)
 ENABLE_IGOR = $(ENABLED)
 ENABLE_KYRA = $(ENABLED)
 ENABLE_LURE = $(ENABLED)
@@ -30,15 +31,17 @@ ENABLE_QUEEN = $(ENABLED)
 ENABLE_SAGA = $(ENABLED)
 ENABLE_SAGA2 = $(ENABLED)
 ENABLE_IHNM = $(ENABLED)
+# ENABLE_SCI = $(ENABLED)
 ENABLE_SKY = $(ENABLED)
 ENABLE_SWORD1 = $(ENABLED)
 ENABLE_SWORD2 = $(ENABLED)
-# ENABLE_TINSEL = $(ENABLED)
+ENABLE_TINSEL = $(ENABLED)
 ENABLE_TOUCHE = $(ENABLED)
+ENABLE_TUCKER = $(ENABLED)
 
 HAVE_GCC3 = true
 
-CC		= ee-gcc
+CC      = ee-gcc
 CXX     = ee-g++
 AS      = ee-gcc
 LD      = ee-gcc
@@ -53,7 +56,7 @@ VPATH = $(srcdir)
 INCDIR = ../../../
 # DEPDIR = .deps
 
-DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -D_EE -D__PLAYSTATION2__ -O2 -Wall -Wno-multichar
+DEFINES  = -DUSE_VORBIS -DUSE_TREMOR -DUSE_MAD -DUSE_ZLIB -DFORCE_RTL -DDISABLE_SAVEGAME_SORTING -D_EE -D__PLAYSTATION2__ -G2 -O2 -Wall -Wno-multichar -fno-rtti -fno-exceptions
 
 
 INCLUDES  = $(addprefix -I$(PS2_EXTRA),$(PS2_EXTRA_INCS)) 
@@ -62,20 +65,20 @@ INCLUDES += -I $(PS2SDK)/ee/include -I $(PS2SDK)/common/include -I ./common -I .
 TARGET = elf/scummvm.elf
 
 OBJS := backends/platform/ps2/DmaPipe.o \
-    backends/platform/ps2/Gs2dScreen.o \
-    backends/platform/ps2/irxboot.o \
+	backends/platform/ps2/Gs2dScreen.o \
+	backends/platform/ps2/irxboot.o \
 	backends/platform/ps2/ps2input.o \
 	backends/platform/ps2/ps2pad.o \
 	backends/platform/ps2/savefilemgr.o \
-    backends/platform/ps2/fileio.o \
-    backends/platform/ps2/asyncfio.o \
+	backends/platform/ps2/fileio.o \
+	backends/platform/ps2/asyncfio.o \
 	backends/platform/ps2/icon.o \
-    backends/platform/ps2/cd.o \
-    backends/platform/ps2/eecodyvdfs.o \
-    backends/platform/ps2/rpckbd.o \
-    backends/platform/ps2/systemps2.o \
-    backends/platform/ps2/ps2mutex.o \
-    backends/platform/ps2/ps2time.o \
+	backends/platform/ps2/cd.o \
+	backends/platform/ps2/eecodyvdfs.o \
+	backends/platform/ps2/rpckbd.o \
+	backends/platform/ps2/systemps2.o \
+	backends/platform/ps2/ps2mutex.o \
+	backends/platform/ps2/ps2time.o \
 	backends/platform/ps2/ps2debug.o
     
 MODULE_DIRS += .
@@ -92,4 +95,3 @@ all: $(TARGET)
 
 $(TARGET): $(OBJS)
 	$(LD) $^ $(LDFLAGS) -o $@
-
