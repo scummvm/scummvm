@@ -503,14 +503,14 @@ void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId pictureId = argv[0].toUint16();
-	int16 flags = 0;
+	uint16 flags = 0;
 	int16 animationNr = -1;
 	bool mirroredFlag = false;
 	bool addToFlag = false;
 	int16 EGApaletteNo = 0; // default needs to be 0
 
 	if (argc >= 2) {
-		flags = argv[1].toSint16();
+		flags = argv[1].toUint16();
 		animationNr = flags & 0xFF;
 		if (flags & K_DRAWPIC_FLAG_MIRRORED)
 			mirroredFlag = true;
