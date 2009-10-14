@@ -93,6 +93,7 @@ protected:
 	BalloonPositions	_ballonPos;
 	struct VisibleAnswer {
 		Answer	*_a;
+		int		_index;		// index into Question::_answers[]
 		int		_balloon;
 	} _visAnswers[5];
 	int			_numVisAnswers;
@@ -197,11 +198,11 @@ bool DialogueManager::displayAnswers() {
 
 int16 DialogueManager::selectAnswer1() {
 	if (!_visAnswers[0]._a->_text.compareToIgnoreCase("null")) {
-		return 0;
+		return _visAnswers[0]._index;
 	}
 
 	if (_mouseButtons == kMouseLeftUp) {
-		return 0;
+		return _visAnswers[0]._index;
 	}
 
 	return -1;
@@ -225,7 +226,7 @@ int16 DialogueManager::selectAnswerN() {
 	_oldSelection = _selection;
 
 	if ((_mouseButtons == kMouseLeftUp) && (_selection != -1)) {
-		return _selection;
+		return _visAnswers[_selection]._index;
 	}
 
 	return -1;
@@ -273,7 +274,6 @@ void DialogueManager::runAnswer() {
 	debugC(9, kDebugDialogue, "runAnswer\n");
 
 	_answerId = selectAnswer();
-
 	if (_answerId != -1) {
 		_cmdList = &_q->_answers[_answerId]->_commands;
 		_vm->_gfx->freeDialogueObjects();
@@ -400,6 +400,7 @@ public:
 			}
 
 			_visAnswers[_numVisAnswers]._a = a;
+			_visAnswers[_numVisAnswers]._index = i;
 			_numVisAnswers++;
 		}
 
