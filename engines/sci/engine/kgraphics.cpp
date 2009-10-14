@@ -1041,16 +1041,12 @@ static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 	Common::String filename = s->_segMan->getString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 	SeqDecoder seq;
-	SciGuiScreen *videoScreen = new SciGuiScreen(320, 200, 1);
 
-	if (!seq.loadFile(filename, s->resMan, videoScreen) && 
-		!seq.loadFile(Common::String("SEQ/") + filename, s->resMan, videoScreen)) {
+	if (!seq.loadFile(filename, s->resMan) && 
+		!seq.loadFile(Common::String("SEQ/") + filename, s->resMan)) {
 		warning("Failed to open movie file %s", filename.c_str());
-		delete videoScreen;
 		return s->r_acc;
 	}
-
-	delete videoScreen;
 
 	bool play = true;
 	while (play) {
@@ -1058,7 +1054,16 @@ static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 		SeqFrame *frame = seq.getFrame(play);
 		Common::Rect frameRect = frame->frameRect;
 
-		g_system->copyRectToScreen(frame->data, frameRect.width(), frameRect.left, frameRect.top, frameRect.width(), frameRect.height());
+		byte *scr = (byte *)g_system->lockScreen()->pixels;
+		int cur = 0;
+		for (int y = frameRect.top; y < frameRect.bottom; y++) {
+			for (int x = frameRect.left; x < frameRect.right; x++) {
+				if (frame->data[cur] != frame->colorKey)
+					scr[y * 320 + x] = frame->data[cur];
+				cur++;
+			}
+		}
+		g_system->unlockScreen();
 		g_system->updateScreen();
 
 		delete frame->data;

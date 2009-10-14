@@ -33,7 +33,7 @@ namespace Sci {
 class SciGuiScreen;
 class SciGuiPalette {
 public:
-	SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen);
+	SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool autoSetPalette = true);
 	~SciGuiPalette();
 
 	void createFromData(byte *data, GuiPalette *paletteOut);

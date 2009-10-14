@@ -34,7 +34,7 @@
 
 namespace Sci {
 
-SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen)
+SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool autoSetPalette)
 	: _resMan(resMan), _screen(screen) {
 	int16 color;
 
@@ -54,14 +54,16 @@ SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen)
 	_sysPalette.colors[255].g = 255;
 	_sysPalette.colors[255].b = 255;
 
-	// Load default palette from resource 999
-	if (!setFromResource(999, 2)) {
-		// if not found, we try to set amiga palette
-		if (!setAmiga()) {
-			// if that also doesnt work out, set EGA palette
-			setEGA();
-		}
-	};
+	if (autoSetPalette) {
+		// Load default palette from resource 999
+		if (!setFromResource(999, 2)) {
+			// if not found, we try to set amiga palette
+			if (!setAmiga()) {
+				// if that also doesnt work out, set EGA palette
+				setEGA();
+			}
+		};
+	}
 
 	// Init _clrPowers used in MatchColor
 	for(color = 0; color < 256; color++)

@@ -44,7 +44,7 @@ class SeqDecoder {
 public:
 	SeqDecoder() : _fileStream(0) { }
 	~SeqDecoder();
-	bool loadFile(Common::String fileName, ResourceManager *resMan, SciGuiScreen *screen);
+	bool loadFile(Common::String fileName, ResourceManager *resMan);
 	void closeFile();
 	SeqFrame *getFrame(bool &hasNext);
 

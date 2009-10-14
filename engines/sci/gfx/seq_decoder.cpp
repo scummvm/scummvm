@@ -35,7 +35,7 @@ SeqDecoder::~SeqDecoder() {
 	closeFile();
 }
 
-bool SeqDecoder::loadFile(Common::String fileName, ResourceManager *resMan, SciGuiScreen *screen) {
+bool SeqDecoder::loadFile(Common::String fileName, ResourceManager *resMan) {
 	closeFile();
 
 	_fileStream = SearchMan.createReadStreamForMember(fileName);
@@ -48,11 +48,13 @@ bool SeqDecoder::loadFile(Common::String fileName, ResourceManager *resMan, SciG
 	byte *paletteData = new byte[paletteSize];
 	_fileStream->read(paletteData, paletteSize);
 	GuiPalette seqPalette;
-	SciGuiPalette *pal = new SciGuiPalette(resMan, screen);
+	SciGuiScreen *videoScreen = new SciGuiScreen(320, 200, 1);
+	SciGuiPalette *pal = new SciGuiPalette(resMan, videoScreen, false);
 	pal->createFromData(paletteData, &seqPalette);
 	pal->set(&seqPalette, 2);
 	delete pal;
 	delete[] paletteData;
+	delete videoScreen;
 
 	_currentFrame = 0;
 
