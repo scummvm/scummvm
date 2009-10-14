@@ -58,6 +58,9 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 	if (_isVGA) {
 		// === VGA transitions
 		switch (_number) {
+		case SCI_TRANSITIONS_VGA_PIXELATION:
+			setNewPalette(); pixelation();
+			break;
 		case SCI_TRANSITIONS_VGA_FADEPALETTE:
 			fadeOut(); setNewScreen(); fadeIn();
 			break;
@@ -74,7 +77,7 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 			break;
 
 		default:
-			warning("SciGuiTransitions: VGA-%d not implemented", _number);
+			warning("SciGuiTransitions: EGA-%d not implemented", _number);
 			setNewPalette(); setNewScreen();
 		}
 	}
@@ -124,6 +127,26 @@ void SciGuiTransitions::fadeIn() {
 		g_system->setPalette(workPalette, 0, 256);
 		_gui->wait(2);
 	}
+}
+
+// pixelates the new picture over the old one
+void SciGuiTransitions::pixelation () {
+	uint16 mask = 0x40, stepNr = 0;
+	Common::Rect pixelRect;
+
+	do {
+		mask = (mask & 1) ? (mask >> 1) ^ 0xB400 : mask >> 1;
+		if (mask >= 320 * 200)
+			continue;
+		pixelRect.left = mask % 320; pixelRect.right = pixelRect.left + 1;
+		pixelRect.top = mask / 320;	pixelRect.bottom = pixelRect.top + 1;
+		_screen->copyRectToScreen(pixelRect);
+		if ((stepNr & 0x3FF) == 0) {
+			g_system->updateScreen();
+			g_system->delayMillis(5);
+		}
+		stepNr++;
+	} while (mask != 0x40);
 }
 
 } // End of namespace Sci

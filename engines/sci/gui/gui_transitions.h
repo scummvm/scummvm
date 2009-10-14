@@ -35,6 +35,7 @@ enum {
 };
 
 enum {
+	SCI_TRANSITIONS_VGA_PIXELATION		= 9,
 	SCI_TRANSITIONS_VGA_FADEPALETTE		= 10
 };
 
@@ -53,6 +54,7 @@ private:
 	void setNewScreen();
 	void fadeOut();
 	void fadeIn();
+	void pixelation();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
