@@ -1404,8 +1404,6 @@ void run_vm(EngineState *s, int restoring) {
 		}
 //#endif
 		++script_step_counter;
-
-		s->speedThrottler->postInstruction();
 	}
 }
 

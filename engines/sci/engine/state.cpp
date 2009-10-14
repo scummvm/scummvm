@@ -106,7 +106,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	successor = 0;
 
-	speedThrottler = new SpeedThrottler(getSciVersion());
+	_lastAnimateTime = 0;
 
 	_setCursorType = SCI_VERSION_AUTODETECT;
 	_doSoundType = SCI_VERSION_AUTODETECT;
@@ -116,7 +116,6 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 }
 
 EngineState::~EngineState() {
-	delete speedThrottler;
 	delete _msgState;
 }
 

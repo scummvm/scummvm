@@ -96,11 +96,6 @@ void SciGui::wait(int16 ticks) {
 
 	ticks *= g_debug_sleeptime_factor;
 	gfxop_sleep(_s->gfx_state, ticks * 1000 / 60);
-
-
-	// Reset speed throttler: Game is playing along nicely anyway
-	if (ticks > 0)
-		_s->speedThrottler->reset();
 }
 
 void SciGui::setPort(uint16 portPtr) {

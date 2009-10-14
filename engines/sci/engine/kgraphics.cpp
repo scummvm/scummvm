@@ -354,9 +354,6 @@ reg_t kWait(EngineState *s, int argc, reg_t *argv) {
 	sleep_time *= g_debug_sleeptime_factor;
 	gfxop_sleep(s->gfx_state, sleep_time * 1000 / 60);
 
-	// Reset speed throttler: Game is playing along nicely anyway
-	if (sleep_time > 0)
-		s->speedThrottler->reset();
 #endif
 
 	// FIXME: we should not be asking from the GUI to wait. The kernel sounds

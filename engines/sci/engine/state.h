@@ -113,46 +113,6 @@ public:
 	bool isOpen() const;
 };
 
-
-class SpeedThrottler {
-public:
-	enum {
-		kSegmentLength = 20 /**< Time segment length in ms */
-	};
-
-	SpeedThrottler(SciVersion version) {
-		if (version >= SCI_VERSION_1_1)
-			_maxInstructions = 3300;
-		else if (version >= SCI_VERSION_1_EARLY)
-			_maxInstructions = 2200;
-		else
-			_maxInstructions = 1100;
-		reset();
-	}
-
-	void postInstruction() {
-		if (++_curInstructions >= _maxInstructions) {
-			uint32 time = g_system->getMillis();
-			uint32 elapsed = time - _timestamp;
-
-			if (elapsed < kSegmentLength)
-				g_system->delayMillis(kSegmentLength - elapsed);
-
-			reset();
-		}
-	}
-
-	void reset() {
-		_timestamp = g_system->getMillis();
-		_curInstructions = 0;
-	}
-
-private:
-	uint32 _timestamp; /**< Timestamp of current time segment */
-	uint32 _maxInstructions; /**< Maximum amount of instructions per time segment */
-	uint32 _curInstructions; /**< Amount of instructions executed in current time segment */
-};
-
 struct EngineState : public Common::Serializable {
 public:
 	EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, SciGui *gui, SciGuiCursor *cursor);
@@ -318,8 +278,6 @@ public:
 	int gc_countdown; /**< Number of kernel calls until next gc */
 
 	MessageState *_msgState;
-
-	SpeedThrottler *speedThrottler;
 
 	EngineState *successor; /**< Successor of this state: Used for restoring */
 
