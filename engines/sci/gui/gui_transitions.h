@@ -49,10 +49,10 @@ public:
 
 private:
 	void init(void);
-	void SciGuiTransitions::setNewPalette();
-	void SciGuiTransitions::setNewScreen();
-	void SciGuiTransitions::fadeOut();
-	void SciGuiTransitions::fadeIn();
+	void setNewPalette();
+	void setNewScreen();
+	void fadeOut();
+	void fadeIn();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
