@@ -933,6 +933,16 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	process_sound_events(s);
 
 	s->_gui->animate(castListReference, cycle, argc, argv);
+
+	// Do some speed throttling to calm down games that rely on counting cycles
+	uint32 curTime = g_system->getMillis();
+	uint32 duration = curTime - s->_lastAnimateTime;
+
+	if (duration < 50) {
+		g_system->delayMillis(50-duration);
+	}
+	s->_lastAnimateTime = curTime;
+
 	return s->r_acc;
 }
 
