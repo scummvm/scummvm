@@ -660,9 +660,9 @@ void SegManager::scriptInitialiseObjectsSci11(SegmentId seg) {
 #if 0
 		if (obj->_variables[5].offset != 0xffff) {
 			obj->_variables[5] = INST_LOOKUP_CLASS(obj->_variables[5].offset);
-			_baseObj = getObject(obj->_variables[5]);
-			obj->variable_names_nr = _baseObj->variables_nr;
-			obj->_baseObj = _baseObj->_baseObj;
+			baseObj = getObject(obj->_variables[5]);
+			obj->variable_names_nr = baseObj->variables_nr;
+			obj->_baseObj = baseObj->_baseObj;
 		}
 #endif
 
@@ -796,9 +796,9 @@ void SegManager::reconstructClones() {
 						continue;
 
 					CloneTable::Entry &seeker = ct->_table[j];
-					Object *_baseObj = getObject(seeker.getSpeciesSelector());
-					seeker.cloneFromObject(_baseObj);
-					if (!_baseObj)
+					Object *baseObj = getObject(seeker.getSpeciesSelector());
+					seeker.cloneFromObject(baseObj);
+					if (!baseObj)
 						warning("Clone entry without a base class: %d", j);
 				}	// end for
 			}	// end if

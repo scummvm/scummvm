@@ -1597,9 +1597,9 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			// Instantiate the superclass, if neccessary
 			obj->setSpeciesSelector(INST_LOOKUP_CLASS(obj->getSpeciesSelector().offset));
 
-			Object *_baseObj = segMan->getObject(obj->getSpeciesSelector());
-			obj->setVarCount(_baseObj->getVarCount());
-			obj->_baseObj = _baseObj->_baseObj;
+			Object *baseObj = segMan->getObject(obj->getSpeciesSelector());
+			obj->setVarCount(baseObj->getVarCount());
+			obj->_baseObj = baseObj->_baseObj;
 			// Copy base from species class, as we need its selector IDs
 
 			obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector().offset));
