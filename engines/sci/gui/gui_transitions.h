@@ -31,13 +31,17 @@
 namespace Sci {
 
 enum {
-	SCI_TRANSITIONS_FADEPALETTE		= 10
+	SCI_TRANSITIONS_EGA_FADEPALETTE		= 30
+};
+
+enum {
+	SCI_TRANSITIONS_VGA_FADEPALETTE		= 10
 };
 
 class SciGuiScreen;
 class SciGuiTransitions {
 public:
-	SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette, bool isVGA);
 	~SciGuiTransitions();
 
 	void setup(int16 number);
@@ -54,6 +58,7 @@ private:
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
+	bool _isVGA;
 	int16 _number;
 	Common::Rect _picRect;
 };

@@ -37,8 +37,8 @@
 
 namespace Sci {
 
-SciGuiTransitions::SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette)
-	: _gui(gui), _screen(screen), _palette(palette) {
+SciGuiTransitions::SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette, bool isVGA)
+	: _gui(gui), _screen(screen), _palette(palette), _isVGA(isVGA) {
 	init();
 }
 
@@ -55,17 +55,28 @@ void SciGuiTransitions::setup(int16 number) {
 void SciGuiTransitions::doit(Common::Rect picRect) {
 	_picRect = picRect;
 
-	switch (_number) {
-	case SCI_TRANSITIONS_FADEPALETTE:
-		fadeOut();
-		setNewScreen();
-		fadeIn();
-		break;
+	if (_isVGA) {
+		// === VGA transitions
+		switch (_number) {
+		case SCI_TRANSITIONS_VGA_FADEPALETTE:
+			fadeOut(); setNewScreen(); fadeIn();
+			break;
 
-	default:
-		warning("SciGuiTransitions: %d not implemented", _number);
-		setNewPalette();
-		setNewScreen();
+		default:
+			warning("SciGuiTransitions: VGA-%d not implemented", _number);
+			setNewPalette(); setNewScreen();
+		}
+	} else {
+		// === EGA transitions
+		switch (_number) {
+		case SCI_TRANSITIONS_EGA_FADEPALETTE:
+			fadeOut(); setNewScreen(); fadeIn();
+			break;
+
+		default:
+			warning("SciGuiTransitions: VGA-%d not implemented", _number);
+			setNewPalette(); setNewScreen();
+		}
 	}
 	_screen->_picNotValid = 0;
 }
