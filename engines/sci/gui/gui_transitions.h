@@ -31,10 +31,13 @@
 namespace Sci {
 
 enum {
+	SCI_TRANSITIONS_EGA_BLOCKS			= 8,
+	SCI_TRANSITIONS_EGA_PIXELATION		= 18,
 	SCI_TRANSITIONS_EGA_FADEPALETTE		= 30
 };
 
 enum {
+	SCI_TRANSITIONS_VGA_BLOCKS			= 8,
 	SCI_TRANSITIONS_VGA_PIXELATION		= 9,
 	SCI_TRANSITIONS_VGA_FADEPALETTE		= 10
 };
@@ -55,6 +58,7 @@ private:
 	void fadeOut();
 	void fadeIn();
 	void pixelation();
+	void blocks();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;

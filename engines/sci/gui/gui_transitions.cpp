@@ -61,6 +61,11 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		case SCI_TRANSITIONS_VGA_PIXELATION:
 			setNewPalette(); pixelation();
 			break;
+
+		case SCI_TRANSITIONS_VGA_BLOCKS:
+			setNewPalette(); blocks();
+			break;
+
 		case SCI_TRANSITIONS_VGA_FADEPALETTE:
 			fadeOut(); setNewScreen(); fadeIn();
 			break;
@@ -72,13 +77,21 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 	} else {
 		// === EGA transitions
 		switch (_number) {
+		case SCI_TRANSITIONS_EGA_PIXELATION:
+			pixelation();
+			break;
+
+		case SCI_TRANSITIONS_EGA_BLOCKS:
+			blocks();
+			break;
+
 		case SCI_TRANSITIONS_EGA_FADEPALETTE:
 			fadeOut(); setNewScreen(); fadeIn();
 			break;
 
 		default:
 			warning("SciGuiTransitions: EGA-%d not implemented", _number);
-			setNewPalette(); setNewScreen();
+			setNewScreen();
 		}
 	}
 	_screen->_picNotValid = 0;
@@ -144,6 +157,26 @@ void SciGuiTransitions::pixelation () {
 		if ((stepNr & 0x3FF) == 0) {
 			g_system->updateScreen();
 			g_system->delayMillis(5);
+		}
+		stepNr++;
+	} while (mask != 0x40);
+}
+
+// like pixelation but uses 8x8 blocks
+void SciGuiTransitions::blocks() {
+	uint16 mask = 0x40, stepNr = 0;
+	Common::Rect blockRect;
+
+	do {
+		mask = (mask & 1) ? (mask >> 1) ^ 0x240 : mask >> 1;
+		if (mask >= 40 * 25)
+			continue;
+		blockRect.left = (mask % 40) << 3; blockRect.right = blockRect.left + 8;
+		blockRect.top = (mask / 40) << 3; blockRect.bottom = blockRect.top + 8;
+		_screen->copyRectToScreen(blockRect);
+		if ((stepNr & 7) == 0) {
+			g_system->updateScreen();
+			g_system->delayMillis(4);
 		}
 		stepNr++;
 	} while (mask != 0x40);
