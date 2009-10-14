@@ -331,25 +331,17 @@ int32 Sound::playFx(Audio::SoundHandle *handle, byte *data, uint32 len, uint8 vo
 		return RDERR_FXALREADYOPEN;
 
 	Common::MemoryReadStream *stream = new Common::MemoryReadStream(data, len);
-	int rate, size;
-	byte flags;
+	Audio::AudioStream *input = 0;
 
 	if (Sword2Engine::isPsx()) {
-		_vm->_mixer->playInputStream(soundType, handle, new Audio::VagStream(stream, loop), -1, vol, pan, true, false, isReverseStereo());
+		input = new Audio::VagStream(stream, loop);
 	} else {
-		if (!Audio::loadWAVFromStream(*stream, size, rate, flags)) {
-			warning("playFX: Not a valid WAV file");
-			return RDERR_INVALIDWAV;
-		}
-
-		if (isReverseStereo())
-			flags |= Audio::Mixer::FLAG_REVERSE_STEREO;
-
-		if (loop)
-			flags |= Audio::Mixer::FLAG_LOOP;
-
-		_vm->_mixer->playRaw(soundType, handle, data + stream->pos(), size, rate, flags, -1, vol, pan, 0, 0);
+		input = Audio::makeWAVStream(stream, true, loop);
 	}
+
+	assert(input);
+
+	_vm->_mixer->playInputStream(soundType, handle, input, -1, vol, pan, true, false, isReverseStereo());
 
 	return RD_OK;
 }
