@@ -601,27 +601,24 @@ Audio::AudioStream *AnimationSequencePlayer::loadSound(int index, AnimationSound
 		case kAnimationSoundType16BitsRAW:
 			size = f.size();
 			rate = 22050;
-			flags = Audio::Mixer::FLAG_UNSIGNED;
-			if (type == kAnimationSoundType16BitsRAW) {
+			flags = Audio::Mixer::FLAG_UNSIGNED|Audio::Mixer::FLAG_AUTOFREE;
+			if (type == kAnimationSoundType16BitsRAW) 
 				flags = Audio::Mixer::FLAG_LITTLE_ENDIAN | Audio::Mixer::FLAG_16BITS;
+			
+			if (size != 0) {
+				uint8 *sampleData = (uint8 *)malloc(size);
+				if (sampleData) {
+					f.read(sampleData, size);
+					stream = Audio::makeLinearInputStream(sampleData, size, rate, flags, 0, 0);
+				}
 			}
 			break;
 		case kAnimationSoundTypeWAV:
 		case kAnimationSoundTypeLoopingWAV:
-			Audio::loadWAVFromStream(f, size, rate, flags);
-			if (type == kAnimationSoundTypeLoopingWAV) {
-				flags |= Audio::Mixer::FLAG_LOOP;
-			}
+			stream = Audio::makeWAVStream(&f, true, type == kAnimationSoundTypeLoopingWAV);
 			break;
 		}
-		if (size != 0) {
-			uint8 *sampleData = (uint8 *)malloc(size);
-			if (sampleData) {
-				f.read(sampleData, size);
-				flags |= Audio::Mixer::FLAG_AUTOFREE;
-				stream = Audio::makeLinearInputStream(sampleData, size, rate, flags, 0, 0);
-			}
-		}
+		
 	}
 	return stream;
 }

@@ -69,11 +69,13 @@ extern bool loadWAVFromStream(
  *
  * @param stream			the SeekableReadStream from which to read the WAVE data
  * @param disposeAfterUse	whether to delete the stream after use
+ * @param loop				whether to loop the sound (infinitely)
  * @return	a new AudioStream, or NULL, if an error occured
  */
 AudioStream *makeWAVStream(
 	Common::SeekableReadStream *stream,
-	bool disposeAfterUse = false);
+	bool disposeAfterUse = false,
+	bool loop = false);
 
 } // End of namespace Audio
 

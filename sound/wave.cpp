@@ -121,10 +121,8 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		flags |= Audio::Mixer::FLAG_UNSIGNED;
 	else if (bitsPerSample == 16)	// 16 bit data is signed little endian
 		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
-	else if (bitsPerSample == 4 && type == 17)	// MS IMA ADPCM compressed. We decompress it
-		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
-	else if (bitsPerSample == 4 && type == 2)	// MS ADPCM compressed. We decompress it
-		flags |= (Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_LITTLE_ENDIAN);
+	else if (bitsPerSample == 4 && (type == 2 || type == 17))
+		flags |= Audio::Mixer::FLAG_16BITS;
 	else {
 		warning("getWavInfo: unsupported bitsPerSample %d", bitsPerSample);
 		return false;
@@ -163,9 +161,9 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	return true;
 }
 
-AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfterUse) {
+AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfterUse, bool loop) {
 	int size, rate;
-	byte *data, flags;
+	byte flags;
 	uint16 type;
 	int blockAlign;
 
@@ -175,33 +173,25 @@ AudioStream *makeWAVStream(Common::SeekableReadStream *stream, bool disposeAfter
 		return 0;
 	}
 
-	if (type == 17) { // MS IMA ADPCM
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(stream, false, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-		data = (byte *)malloc(size * 4);
-		assert(data);
-		size = sndStream->readBuffer((int16*)data, size * 2);
-		size *= 2; // 16bits.
-		delete sndStream;
-	} else if (type == 2) { // MS ADPCM
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-		data = (byte *)malloc(size * 4);
-		assert(data);
-		size = sndStream->readBuffer((int16*)data, size * 2);
-		size *= 2; // 16bits.
-		delete sndStream;
-	} else {
-		// Plain data. Just read everything at once.
-		// TODO: More elegant would be to wrap the stream.
-		data = (byte *)malloc(size);
-		assert(data);
-		stream->read(data, size);
-	}
+	if (type == 17) // MS IMA ADPCM
+		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMSIma, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign, loop ? 0 : 1);
+	else if (type == 2) // MS ADPCM
+		return makeADPCMStream(stream, disposeAfterUse, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign, loop ? 0 : 1);
+	
+	// Raw PCM. Just read everything at once.
+	// TODO: More elegant would be to wrap the stream.
+	byte *data = (byte *)malloc(size);
+	assert(data);
+	stream->read(data, size);
 
 	if (disposeAfterUse)
 		delete stream;
 
 	// Since we allocated our own buffer for the data, we must set the autofree flag.
 	flags |= Audio::Mixer::FLAG_AUTOFREE;
+	
+	if (loop)
+		flags |= Audio::Mixer::FLAG_LOOP;
 
 	return makeLinearInputStream(data, size, rate, flags, 0, 0);
 }

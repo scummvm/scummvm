@@ -282,7 +282,6 @@ void MoviePlayerDXA::stopVideo() {
 }
 
 void MoviePlayerDXA::startSound() {
-	byte *buffer;
 	uint32 offset, size;
 
 	if (getSoundTag() == MKID_BE('WAVE')) {
@@ -302,18 +301,12 @@ void MoviePlayerDXA::startSound() {
 			offset = in.readUint32LE();
 			size = in.readUint32LE();
 
-			buffer = (byte *)malloc(size);
 			in.seek(offset, SEEK_SET);
-			in.read(buffer, size);
+			_bgSoundStream = Audio::makeWAVStream(in.readStream(size), true);
 			in.close();
 		} else {
-			buffer = (byte *)malloc(size);
-			_fileStream->read(buffer, size);
+			_bgSoundStream = Audio::makeWAVStream(_fileStream->readStream(size), true);
 		}
-
-		Common::MemoryReadStream stream(buffer, size);
-		_bgSoundStream = Audio::makeWAVStream(&stream, false);
-		free(buffer);
 	} else {
 		_bgSoundStream = Audio::AudioStream::openStreamFile(baseName);
 	}

@@ -120,43 +120,6 @@ int BaseAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 	return retVal;
 }
 
-class WaveAudioStream : public BaseAudioStream {
-public:
-	WaveAudioStream(Common::SeekableReadStream *source, bool loop);
-	virtual int readBuffer(int16 *buffer, const int numSamples);
-private:
-	virtual void rewind();
-};
-
-WaveAudioStream::WaveAudioStream(Common::SeekableReadStream *source, bool loop) : BaseAudioStream(source, loop) {
-	rewind();
-
-	if (_samplesLeft == 0)
-		_loop = false;
-}
-
-void WaveAudioStream::rewind() {
-	int rate, size;
-	byte flags;
-
-	_sourceStream->seek(0);
-
-	if (Audio::loadWAVFromStream(*_sourceStream, size, rate, flags)) {
-		reinit(size, rate, flags);
-	}
-}
-
-int WaveAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	int retVal = BaseAudioStream::readBuffer(buffer, numSamples);
-
-	if (_bitsPerSample == 16) {
-		for (int i = 0; i < retVal; i++) {
-			buffer[i] = (int16)READ_LE_UINT16(buffer + i);
-		}
-	}
-
-	return retVal;
-}
 
 class AiffAudioStream : public BaseAudioStream {
 public:
@@ -252,7 +215,7 @@ bool MusicHandle::play(const char *fileBase, bool loop) {
 	if (!_audioSource) {
 		sprintf(fileName, "%s.wav", fileBase);
 		if (_file.open(fileName))
-			_audioSource = new WaveAudioStream(&_file, loop);
+			_audioSource = Audio::makeWAVStream(&_file, false, loop ? 0 : 1);
 	}
 
 	if (!_audioSource) {

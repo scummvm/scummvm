@@ -204,8 +204,8 @@ int ADPCMInputStream::readBufferOKI(int16 *buffer, const int numSamples) {
 
 	for (samples = 0; samples < numSamples && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 		data = _stream->readByte();
-		buffer[samples] = TO_LE_16(decodeOKI((data >> 4) & 0x0f));
-		buffer[samples + 1] = TO_LE_16(decodeOKI(data & 0x0f));
+		buffer[samples] = decodeOKI((data >> 4) & 0x0f);
+		buffer[samples + 1] = decodeOKI(data & 0x0f);
 	}
 	return samples;
 }
@@ -241,8 +241,8 @@ int ADPCMInputStream::readBufferMSIMA1(int16 *buffer, const int numSamples) {
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
 			_blockPos++;
-			buffer[samples] = TO_LE_16(decodeIMA(data & 0x0f));
-			buffer[samples + 1] = TO_LE_16(decodeIMA((data >> 4) & 0x0f));
+			buffer[samples] = decodeIMA(data & 0x0f);
+			buffer[samples + 1] = decodeIMA((data >> 4) & 0x0f);
 		}
 	}
 	return samples;
@@ -263,7 +263,7 @@ int ADPCMInputStream::readBufferMSIMA2(int16 *buffer, const int numSamples) {
 
 			for (nibble = 0; nibble < 8; nibble++) {
 				k = ((data & 0xf0000000) >> 28);
-				buffer[samples + channel + nibble * 2] = TO_LE_16(decodeIMA(k));
+				buffer[samples + channel + nibble * 2] = decodeIMA(k);
 				data <<= 4;
 			}
 		}
@@ -302,13 +302,11 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 			for (i = 0; i < channels; i++)
 				_status.ch[i].sample1 = _stream->readSint16LE();
 
-			for (i = 0; i < channels; i++) {
-				_status.ch[i].sample2 = _stream->readSint16LE();
-				buffer[samples++] = TO_LE_16(_status.ch[i].sample2);
-			}
+			for (i = 0; i < channels; i++)
+				buffer[samples++] = _status.ch[i].sample2 = _stream->readSint16LE();
 
 			for (i = 0; i < channels; i++)
-				buffer[samples++] = TO_LE_16(_status.ch[i].sample1);
+				buffer[samples++] = _status.ch[i].sample1;
 
 			_blockPos = channels * 7;
 		}
@@ -316,8 +314,8 @@ int ADPCMInputStream::readBufferMS(int channels, int16 *buffer, const int numSam
 		for (; samples < numSamples && _blockPos < _blockAlign && !_stream->eos() && _stream->pos() < _endpos; samples += 2) {
 			data = _stream->readByte();
 			_blockPos++;
-			buffer[samples] = TO_LE_16(decodeMS(&_status.ch[0], (data >> 4) & 0x0f));
-			buffer[samples + 1] = TO_LE_16(decodeMS(&_status.ch[channels - 1], data & 0x0f));
+			buffer[samples] = decodeMS(&_status.ch[0], (data >> 4) & 0x0f);
+			buffer[samples + 1] = decodeMS(&_status.ch[channels - 1], data & 0x0f);
 		}
 	}
 

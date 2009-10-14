@@ -31,7 +31,6 @@
 #include "agos/agos.h"
 #include "agos/sound.h"
 
-#include "sound/adpcm.h"
 #include "sound/audiostream.h"
 #include "sound/flac.h"
 #include "sound/mixer.h"
@@ -782,34 +781,14 @@ void Sound::playVoiceData(byte *soundData, uint sound) {
 }
 
 void Sound::playSoundData(Audio::SoundHandle *handle, byte *soundData, uint sound, int pan, int vol, bool loop) {
-	byte *buffer, flags;
-	uint16 compType;
-	int blockAlign, rate;
-
-	// TODO: Use makeWAVStream() in future, when makeADPCMStream() allows sound looping
 	int size = READ_LE_UINT32(soundData + 4);
 	Common::MemoryReadStream stream(soundData, size);
-	if (!Audio::loadWAVFromStream(stream, size, rate, flags, &compType, &blockAlign))
-		error("playSoundData: Not a valid WAV data");
+	Audio::AudioStream *sndStream = Audio::makeWAVStream(&stream, true, loop);
 
 	convertVolume(vol);
 	convertPan(pan);
 
-	if (loop == true)
-		flags |= Audio::Mixer::FLAG_LOOP;
-
-	if (compType == 2) {
-		Audio::AudioStream *sndStream = Audio::makeADPCMStream(&stream, false, size, Audio::kADPCMMS, rate, (flags & Audio::Mixer::FLAG_STEREO) ? 2 : 1, blockAlign);
-		buffer = (byte *)malloc(size * 4);
-		size = sndStream->readBuffer((int16*)buffer, size * 2);
-		size *= 2; // 16bits.
-		delete sndStream;
-	} else {
-		buffer = (byte *)malloc(size);
-		memcpy(buffer, soundData + stream.pos(), size);
-	}
-
-	_mixer->playRaw(Audio::Mixer::kSFXSoundType, handle, buffer, size, rate, flags | Audio::Mixer::FLAG_AUTOFREE, -1, vol, pan);
+	_mixer->playInputStream(Audio::Mixer::kSFXSoundType, handle, sndStream, -1, vol, pan);
 }
 
 void Sound::stopSfx5() {
