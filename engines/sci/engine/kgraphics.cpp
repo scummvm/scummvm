@@ -500,20 +500,24 @@ reg_t kOnControl(EngineState *s, int argc, reg_t *argv) {
 
 void _k_view_list_free_backgrounds(EngineState *s, ViewObject *list, int list_nr);
 
-#define K_DRAWPIC_FLAG_MIRRORED (1 << 14)
+#define K_DRAWPIC_FLAGS_MIRRORED				(1 << 14)
+#define K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT	(1 << 15)
 
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	GuiResourceId pictureId = argv[0].toUint16();
 	uint16 flags = 0;
 	int16 animationNr = -1;
+	bool animationBlackoutFlag = false;
 	bool mirroredFlag = false;
 	bool addToFlag = false;
 	int16 EGApaletteNo = 0; // default needs to be 0
 
 	if (argc >= 2) {
 		flags = argv[1].toUint16();
+		if (flags & K_DRAWPIC_FLAGS_ANIMATIONBLACKOUT)
+			animationBlackoutFlag = true;
 		animationNr = flags & 0xFF;
-		if (flags & K_DRAWPIC_FLAG_MIRRORED)
+		if (flags & K_DRAWPIC_FLAGS_MIRRORED)
 			mirroredFlag = true;
 	}
 	if (argc >= 3) {
@@ -525,7 +529,7 @@ reg_t kDrawPic(EngineState *s, int argc, reg_t *argv) {
 	if (argc >= 4)
 		EGApaletteNo = argv[3].toUint16();
 
-	s->_gui->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
+	s->_gui->drawPicture(pictureId, animationNr, animationBlackoutFlag, mirroredFlag, addToFlag, EGApaletteNo);
 
 	return s->r_acc;
 }

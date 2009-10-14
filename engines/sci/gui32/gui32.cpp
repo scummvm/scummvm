@@ -890,7 +890,7 @@ void SciGui32::clearMenuBar() {
 	gfxop_update(_s->gfx_state);
 }
 
-void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
+void SciGui32::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	gfx_color_t transparent = _s->wm_port->_bgcolor;
 	int picFlags = DRAWPIC01_FLAG_FILL_NORMALLY;
 	int palNo = (EGApaletteNo != -1) ? EGApaletteNo : 0;

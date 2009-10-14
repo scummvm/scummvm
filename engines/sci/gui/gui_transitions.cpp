@@ -50,8 +50,9 @@ void SciGuiTransitions::init() {
 	_oldScreen = new byte[_screen->_displayHeight * _screen->_displayWidth];
 }
 
-void SciGuiTransitions::setup(int16 number) {
+void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
 	_number = number;
+	_blackoutFlag = blackoutFlag;
 }
 
 void SciGuiTransitions::doit(Common::Rect picRect) {

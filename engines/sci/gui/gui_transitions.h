@@ -62,7 +62,7 @@ public:
 	SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette, bool isVGA);
 	~SciGuiTransitions();
 
-	void setup(int16 number);
+	void setup(int16 number, bool blackoutFlag);
 	void doit(Common::Rect picRect);
 
 private:
@@ -81,6 +81,7 @@ private:
 
 	bool _isVGA;
 	int16 _number;
+	bool _blackoutFlag;
 	Common::Rect _picRect;
 	byte *_oldScreen; // buffer for saving current active screen data to, has dimenions of _screen->_displayScreen
 };

@@ -300,13 +300,13 @@ void SciGui::clearMenuBar() {
 	// TODO: Implement menubar
 }
 
-void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
+void SciGui::drawPicture(GuiResourceId pictureId, int16 animationNr, bool animationBlackoutFlag, bool mirroredFlag, bool addToFlag, int16 EGApaletteNo) {
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 
 	if (_windowMgr->isFrontWindow(_windowMgr->_picWind)) {
 		_screen->_picNotValid = 1;
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
-		_transitions->setup(animationNr);
+		_transitions->setup(animationNr, animationBlackoutFlag);
 	} else {
 		_windowMgr->BeginUpdate(_windowMgr->_picWind);
 		_gfx->drawPicture(pictureId, animationNr, mirroredFlag, addToFlag, EGApaletteNo);
