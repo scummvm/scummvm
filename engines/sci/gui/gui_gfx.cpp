@@ -336,7 +336,7 @@ int16 SciGuiGfx::TextCodeProcessing(const char *&text, GuiResourceId orgFontId, 
 	unsigned char curCodeParm;
 
 	// Find the end of the textcode
-	while ((++textCodeSize) && (*text++ != 0x7C)) { }
+	while ((++textCodeSize) && (*text != 0) && (*text++ != 0x7C)) { }
 
 	// possible TextCodes:
 	//  c -> sets textColor to current port pen color
