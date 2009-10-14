@@ -36,8 +36,8 @@
 
 namespace Sci {
 
-SciGuiTransitions::SciGuiTransitions(SciGuiScreen *screen, SciGuiPalette *palette)
-	: _screen(screen), _palette(palette) {
+SciGuiTransitions::SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette)
+	: _gui(gui), _screen(screen), _palette(palette) {
 	init();
 }
 

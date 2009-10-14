@@ -55,7 +55,7 @@ SciGui::SciGui(EngineState *state, SciGuiScreen *screen, SciGuiPalette *palette,
 	: _s(state), _screen(screen), _palette(palette), _cursor(cursor) {
 
 	_gfx = new SciGuiGfx(_s, _screen, _palette);
-	_transitions = new SciGuiTransitions(_screen, _palette);
+	_transitions = new SciGuiTransitions(this, _screen, _palette);
 	_animate = new SciGuiAnimate(_s, _gfx, _screen, _palette);
 	_windowMgr = new SciGuiWindowMgr(_screen, _gfx, _animate);
 //  	_gui32 = new SciGui32(_s, _screen, _palette, _cursor); // for debug purposes

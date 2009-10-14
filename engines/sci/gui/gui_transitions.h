@@ -33,7 +33,7 @@ namespace Sci {
 class SciGuiScreen;
 class SciGuiTransitions {
 public:
-	SciGuiTransitions(SciGuiScreen *screen, SciGuiPalette *palette);
+	SciGuiTransitions(SciGui *gui, SciGuiScreen *screen, SciGuiPalette *palette);
 	~SciGuiTransitions();
 
 	void setup(int16 number);
@@ -42,6 +42,7 @@ public:
 private:
 	void init(void);
 
+	SciGui *_gui;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
