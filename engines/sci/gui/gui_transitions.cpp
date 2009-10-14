@@ -73,7 +73,7 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 			break;
 
 		case SCI_TRANSITIONS_VGA_SCROLLUP:
-			scroll(SCI_TRANSITIONS_SCROLL_UP);
+			setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_UP);
 			break;
 
 		default:
