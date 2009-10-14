@@ -24,20 +24,29 @@
  */
 
 #include "common/file.h"
-#include "sci/gfx/gfx_system.h"
+#include "common/rect.h"
 
 namespace Sci {
+
+struct SeqFrame {
+	Common::Rect frameRect;
+	byte colorKey;
+	byte *data;
+};
+
+class ResourceManager;
+class SciGuiScreen;
 
 /**
  * Decoder for image sequences
  */
 class SeqDecoder {
 public:
-	SeqDecoder() : _fileStream(0), _palette(0) { }
+	SeqDecoder() : _fileStream(0) { }
 	~SeqDecoder();
-	bool loadFile(Common::String fileName);
+	bool loadFile(Common::String fileName, ResourceManager *resMan, SciGuiScreen *screen);
 	void closeFile();
-	gfx_pixmap_t *getFrame(bool &hasNext);
+	SeqFrame *getFrame(bool &hasNext);
 
 private:
 	bool decodeFrame(byte *runlength_data, int runlength_size,
@@ -45,7 +54,6 @@ private:
 		int color_key);
 
 	Common::SeekableReadStream *_fileStream;
-	Palette *_palette;
 	int _frameCount;
 	int _currentFrame;
 };

@@ -40,6 +40,7 @@
 #include "sci/gfx/seq_decoder.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"
+#include "sci/gui/gui_screen.h"
 
 namespace Sci {
 
@@ -1039,27 +1040,29 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 	Common::String filename = s->_segMan->getString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
-	int frameNr = 0;
 	SeqDecoder seq;
+	SciGuiScreen *videoScreen = new SciGuiScreen(320, 200, 1);
 
-	if (!seq.loadFile(filename) && !seq.loadFile(Common::String("SEQ/") + filename)) {
+	if (!seq.loadFile(filename, s->resMan, videoScreen) && 
+		!seq.loadFile(Common::String("SEQ/") + filename, s->resMan, videoScreen)) {
 		warning("Failed to open movie file %s", filename.c_str());
+		delete videoScreen;
 		return s->r_acc;
 	}
+
+	delete videoScreen;
 
 	bool play = true;
 	while (play) {
 		uint32 startTime = g_system->getMillis();
+		SeqFrame *frame = seq.getFrame(play);
+		Common::Rect frameRect = frame->frameRect;
 
-		gfx_pixmap_t *pixmap = seq.getFrame(play);
+		g_system->copyRectToScreen(frame->data, frameRect.width(), frameRect.left, frameRect.top, frameRect.width(), frameRect.height());
+		g_system->updateScreen();
 
-		if (frameNr++ == 0)
-			pixmap->palette->forceInto(s->gfx_state->driver->getMode()->palette);
-
-		gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode());
-		gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset));
-		gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
-		gfx_free_pixmap(pixmap);
+		delete frame->data;
+		delete frame;
 
 		// Wait before showing the next frame
 		while (play && (g_system->getMillis() < startTime + (delay * 1000 / 60))) {

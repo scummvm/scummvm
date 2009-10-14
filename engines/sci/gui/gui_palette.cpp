@@ -262,7 +262,7 @@ uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
 	return found;
 }
 
-void SciGuiPalette::getSys(GuiPalette*pal) {
+void SciGuiPalette::getSys(GuiPalette *pal) {
 	if (pal != &_sysPalette)
 		memcpy(pal, &_sysPalette,sizeof(GuiPalette));
 }

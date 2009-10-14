@@ -25,8 +25,9 @@
 
 #include "common/archive.h"
 #include "sci/gfx/seq_decoder.h"
-#include "sci/gfx/gfx_resource.h"
-#include "sci/gfx/gfx_tools.h"
+#include "sci/resource.h"
+#include "sci/gui/gui_screen.h"
+#include "sci/gui/gui_palette.h"
 
 namespace Sci {
 
@@ -34,7 +35,7 @@ SeqDecoder::~SeqDecoder() {
 	closeFile();
 }
 
-bool SeqDecoder::loadFile(Common::String fileName) {
+bool SeqDecoder::loadFile(Common::String fileName, ResourceManager *resMan, SciGuiScreen *screen) {
 	closeFile();
 
 	_fileStream = SearchMan.createReadStreamForMember(fileName);
@@ -46,7 +47,11 @@ bool SeqDecoder::loadFile(Common::String fileName) {
 
 	byte *paletteData = new byte[paletteSize];
 	_fileStream->read(paletteData, paletteSize);
-	_palette = gfxr_read_pal11(-1, paletteData, paletteSize);
+	GuiPalette seqPalette;
+	SciGuiPalette *pal = new SciGuiPalette(resMan, screen);
+	pal->createFromData(paletteData, &seqPalette);
+	pal->set(&seqPalette, 2);
+	delete pal;
 	delete[] paletteData;
 
 	_currentFrame = 0;
@@ -60,9 +65,6 @@ void SeqDecoder::closeFile() {
 
 	delete _fileStream;
 	_fileStream = 0;
-
-	delete _palette;
-	_palette = 0;
 }
 
 #define WRITE_TO_BUFFER(n) \
@@ -155,43 +157,37 @@ bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litS
 	return true;
 }
 
-gfx_pixmap_t *SeqDecoder::getFrame(bool &hasNext) {
-	int frameWidth = _fileStream->readUint16LE();
-	int frameHeight = _fileStream->readUint16LE();
-	int frameLeft = _fileStream->readUint16LE();
-	int frameTop = _fileStream->readUint16LE();
-	int colorKey = _fileStream->readByte();
-	int type = _fileStream->readByte();
-	_fileStream->seek(2, SEEK_CUR);
+SeqFrame *SeqDecoder::getFrame(bool &hasNext) {
+	int16 frameWidth = _fileStream->readUint16LE();
+	int16 frameHeight = _fileStream->readUint16LE();
+	int16 frameLeft = _fileStream->readUint16LE();
+	int16 frameTop = _fileStream->readUint16LE();
+	byte colorKey = _fileStream->readByte();
+	byte type = _fileStream->readByte();
+	_fileStream->skip(2);
 	uint16 bytes = _fileStream->readUint16LE();
-	_fileStream->seek(2, SEEK_CUR);
+	_fileStream->skip(2);
 	uint16 rle_bytes = _fileStream->readUint16LE();
-	_fileStream->seek(6, SEEK_CUR);
+	_fileStream->skip(6);
 	uint32 offset = _fileStream->readUint32LE();
 
 	_fileStream->seek(offset);
-	gfx_pixmap_t *pixmap = gfx_new_pixmap(frameWidth, frameHeight, 0, 0, 0);
-
-	assert(pixmap);
-
-	gfx_pixmap_alloc_index_data(pixmap);
+	SeqFrame *frame = new SeqFrame();
+	frame->frameRect = Common::Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
+	frame->data = new byte[frameWidth * frameHeight];
+	frame->colorKey = colorKey;
 
 	if (type == 0)
-		_fileStream->read(pixmap->index_data, bytes);
+		_fileStream->read(frame->data, bytes);
 	else {
 		byte *buf = new byte[bytes];
 		_fileStream->read(buf, bytes);
-		decodeFrame(buf, rle_bytes, buf + rle_bytes, bytes - rle_bytes, pixmap->index_data, frameWidth, frameHeight, colorKey);
+		decodeFrame(buf, rle_bytes, buf + rle_bytes, bytes - rle_bytes, frame->data, frameWidth, frameHeight, colorKey);
 	}
-
-	pixmap->xoffset = frameLeft;
-	pixmap->yoffset = frameTop;
-	pixmap->color_key = colorKey;
-	pixmap->palette = _palette->getref();
 
 	hasNext = ++_currentFrame < _frameCount;
 
-	return pixmap;
+	return frame;
 }
 
 } // End of namespace Sci
