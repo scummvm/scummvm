@@ -51,10 +51,13 @@ Debugger::Debugger(Parallaction *vm)
 
 
 void Debugger::preEnter() {
+	_mouseState = _vm->_input->getMouseState();
 }
 
 
 void Debugger::postEnter() {
+	_vm->_input->setMouseState(_mouseState);
+	_vm->_input->setArrowCursor();	// unselects the active item, if any
 }
 
 bool Debugger::Cmd_Location(int argc, const char **argv) {

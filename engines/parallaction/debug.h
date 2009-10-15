@@ -3,6 +3,7 @@
 #define PARALLACTION_DEBUGGER_H
 
 #include "gui/debugger.h"
+#include "parallaction/input.h"
 
 namespace Parallaction {
 
@@ -15,6 +16,7 @@ public:
 
 protected:
 	Parallaction *_vm;
+	MouseTriState _mouseState;
 
 	virtual void preEnter();
 	virtual void postEnter();
