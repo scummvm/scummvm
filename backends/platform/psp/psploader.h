@@ -66,7 +66,7 @@ public:
 			return (Elf32_Addr)(_startAddress - _origAddress);
 		}
 		bool inSegment(char *addr) {
-			return ((char *)addr >= _startAddress && (char *)addr < _startAddress + _size);
+			return ((char *)addr >= _startAddress && (char *)addr <= _startAddress + _size);
 		}
 	};
 
