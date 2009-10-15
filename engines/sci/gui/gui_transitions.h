@@ -40,12 +40,6 @@ enum {
 	SCI_TRANSITIONS_SCROLLDOWN		= 14
 };
 
-enum {
-	SCI_TRANSITIONS_SCROLL_RIGHT		= 1,
-	SCI_TRANSITIONS_SCROLL_LEFT			= 2,
-	SCI_TRANSITIONS_SCROLL_UP			= 3
-};
-
 class SciGuiScreen;
 class SciGuiTransitions {
 public:
@@ -63,7 +57,7 @@ private:
 	void fadeIn();
 	void pixelation();
 	void blocks();
-	void scroll(int16 direction);
+	void scroll();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;

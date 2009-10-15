@@ -48,7 +48,7 @@ SciGuiTransitions::~SciGuiTransitions() {
 
 // This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
 byte oldTransitionIDs[256][2] = {
-	{ 8, SCI_TRANSITIONS_BLOCKS },
+	{  8, SCI_TRANSITIONS_BLOCKS },
 	{ 18, SCI_TRANSITIONS_PIXELATION },
 	{ 30, SCI_TRANSITIONS_FADEPALETTE },
 	{ 40, SCI_TRANSITIONS_SCROLLRIGHT },
@@ -105,13 +105,10 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		break;
 
 	case SCI_TRANSITIONS_SCROLLRIGHT:
-		setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_RIGHT);
-		break;
 	case SCI_TRANSITIONS_SCROLLLEFT:
-		setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_LEFT);
-		break;
 	case SCI_TRANSITIONS_SCROLLUP:
-		setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_UP);
+	case SCI_TRANSITIONS_SCROLLDOWN:
+		setNewPalette(); scroll();
 		break;
 
 	default:
@@ -202,7 +199,7 @@ void SciGuiTransitions::blocks() {
 }
 
 // scroll old screen (up/down/left/right) and insert new screen that way - works on _picRect area
-void SciGuiTransitions::scroll(int16 direction) {
+void SciGuiTransitions::scroll() {
 	int16 screenWidth, screenHeight;
 	byte *oldScreenPtr;
 	int16 stepNr = 0;
@@ -215,8 +212,8 @@ void SciGuiTransitions::scroll(int16 direction) {
 
 	oldScreenPtr = _oldScreen + _picRect.left + _picRect.top * screenWidth;
 
-	switch (direction) {
-	case SCI_TRANSITIONS_SCROLL_LEFT:
+	switch (_number) {
+	case SCI_TRANSITIONS_SCROLLLEFT:
 		newScreenRect.right = newScreenRect.left;
 		newMoveRect.left = newMoveRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
@@ -235,7 +232,7 @@ void SciGuiTransitions::scroll(int16 direction) {
 			g_system->updateScreen();
 		break;
 
-	case SCI_TRANSITIONS_SCROLL_RIGHT:
+	case SCI_TRANSITIONS_SCROLLRIGHT:
 		newScreenRect.left = newScreenRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
 			oldMoveRect.left++;
@@ -253,7 +250,7 @@ void SciGuiTransitions::scroll(int16 direction) {
 			g_system->updateScreen();
 		break;
 
-	case SCI_TRANSITIONS_SCROLL_UP:
+	case SCI_TRANSITIONS_SCROLLUP:
 		newScreenRect.bottom = newScreenRect.top;
 		newMoveRect.top = newMoveRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
@@ -262,6 +259,19 @@ void SciGuiTransitions::scroll(int16 direction) {
 				g_system->copyRectToScreen(oldScreenPtr, screenWidth, _picRect.left, _picRect.top, oldMoveRect.width(), oldMoveRect.height());
 			newScreenRect.bottom++;	newMoveRect.top--;
 			_screen->copyRectToScreen(newScreenRect, newMoveRect.left, newMoveRect.top);
+			g_system->updateScreen();
+			g_system->delayMillis(3);
+		}
+		break;
+
+	case SCI_TRANSITIONS_SCROLLDOWN:
+		newScreenRect.top = newScreenRect.bottom;
+		while (oldMoveRect.top < oldMoveRect.bottom) {
+			oldMoveRect.top++;
+			if (oldMoveRect.top < oldMoveRect.bottom)
+				g_system->copyRectToScreen(oldScreenPtr, screenWidth, oldMoveRect.left, oldMoveRect.top, oldMoveRect.width(), oldMoveRect.height());
+			newScreenRect.top--;
+			_screen->copyRectToScreen(newScreenRect, _picRect.left, _picRect.top);
 			g_system->updateScreen();
 			g_system->delayMillis(3);
 		}
