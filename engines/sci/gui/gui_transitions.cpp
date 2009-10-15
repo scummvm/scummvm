@@ -137,12 +137,12 @@ void SciGuiTransitions::fadeOut() {
 	g_system->grabPalette(oldPalette, 0, 256);
 
 	for (stepNr = 100; stepNr >= 0; stepNr -= 10) {
-		for (colorNr = 0; colorNr < 256; colorNr++){
+		for (colorNr = 1; colorNr < 255; colorNr++){
 			workPalette[colorNr * 4 + 0] = oldPalette[colorNr * 4] * stepNr / 100;
 			workPalette[colorNr * 4 + 1] = oldPalette[colorNr * 4 + 1] * stepNr / 100;
 			workPalette[colorNr * 4 + 2] = oldPalette[colorNr * 4 + 2] * stepNr / 100;
 		}
-		g_system->setPalette(workPalette, 0, 256);
+		g_system->setPalette(workPalette + 4, 1, 254);
 		_gui->wait(2);
 	}
 }
@@ -154,13 +154,13 @@ void SciGuiTransitions::fadeIn() {
 	int16 stepNr, colorNr;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		for (colorNr = 0; colorNr < 256; colorNr++){
+		for (colorNr = 1; colorNr < 255; colorNr++){
 			workPalette[colorNr * 4 + 0] = newPalette->colors[colorNr].r * stepNr / 100;
 			workPalette[colorNr * 4 + 1] = newPalette->colors[colorNr].g * stepNr / 100;
 			workPalette[colorNr * 4 + 2] = newPalette->colors[colorNr].b * stepNr / 100;
 			workPalette[colorNr * 4 + 3] = 100;
 		}
-		g_system->setPalette(workPalette, 0, 256);
+		g_system->setPalette(workPalette + 4, 1, 254);
 		_gui->wait(2);
 	}
 }
