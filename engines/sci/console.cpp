@@ -2261,6 +2261,8 @@ bool Console::cmdSend(int argc, const char **argv) {
 		}
 	}
 
+	reg_t old_acc = _vm->_gamestate->r_acc;
+
 	// Now commit the actual function:
 	ExecStack *old_xstack, *xstack;
 	old_xstack = &_vm->_gamestate->_executionStack.back();
@@ -2271,6 +2273,24 @@ bool Console::cmdSend(int argc, const char **argv) {
 	if (old_xstack != xstack) {
 		_vm->_gamestate->_executionStackPosChanged = true;
 		DebugPrintf("Message scheduled for execution\n");
+
+		// TODO (maybe): Executing this function will leave most of the
+		// state of the current function intact, but will likely destroy
+		// r_acc. We may want to save/restore this to avoid disturbing
+		// the current function as much as possible.
+		//
+		// To do this, we may want to call run_vm() here to run until
+		// returning from this function, and restore r_acc afterwards.
+	} else {
+		if (argc == 3) {
+			// varselector read
+
+			DebugPrintf("Value returned: %04x:%04x\n", PRINT_REG(_vm->_gamestate->r_acc));
+			DebugPrintf("(Previous value of acc was: %04x:%04x )\n", PRINT_REG(old_acc));
+
+			// Maybe we want to leave the value of r_acc unchanged instead,
+			// and only report the read value?
+		}
 	}
 
 	return true;
