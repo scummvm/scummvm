@@ -87,8 +87,12 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 			}
 			translationPtr += 2;
 		}
-		if (*translationPtr == 255)
-			_number = 255;
+		if (*translationPtr == 255) {
+			warning("SciGuiTransitions: old ID %d not supported", _number);
+			setNewPalette(); setNewScreen();
+			_screen->_picNotValid = 0;
+			return;
+		}
 	}
 
 	switch (_number) {
