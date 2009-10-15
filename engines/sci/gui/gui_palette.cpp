@@ -55,14 +55,12 @@ SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool
 	_sysPalette.colors[255].b = 255;
 
 	if (autoSetPalette) {
-		// Load default palette from resource 999
-		if (!setFromResource(999, 2)) {
-			// if not found, we try to set amiga palette
-			if (!setAmiga()) {
-				// if that also doesnt work out, set EGA palette
-				setEGA();
-			}
-		};
+		if (_resMan->getViewType() == kViewEga)
+			setEGA();
+		else if (_resMan->getViewType() == kViewAmiga)
+			setAmiga();
+		else
+			setFromResource(999, 2);
 	}
 }
 
