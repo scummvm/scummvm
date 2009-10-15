@@ -477,17 +477,21 @@ void Parallaction::exitDialogueMode() {
 	debugC(1, kDebugDialogue, "Parallaction::exitDialogueMode()");
 	_input->_inputMode = Input::kInputModeGame;
 
-	if (_dialogueMan->_cmdList) {
-		_cmdExec->run(*_dialogueMan->_cmdList);
-	}
-
-	// The current instance of _dialogueMan must be destroyed before the zone commands
-	// are executed, because they may create another instance of _dialogueMan that
-	// overwrite the current one. This would cause headaches (and it did, actually).
+	/* Since the current instance of _dialogueMan must be destroyed before the
+	   zone commands are executed, as they may create a new instance of _dialogueMan that
+	   would overwrite the current, we need to save the references to the command lists.
+    */ 
+	CommandList *_cmdList = _dialogueMan->_cmdList;
 	ZonePtr z = _dialogueMan->_z;
+
+	// destroy the _dialogueMan here
 	delete _dialogueMan;
 	_dialogueMan = 0;
 
+	// run the lists saved
+	if (_cmdList) {
+		_cmdExec->run(*_cmdList);
+	}
 	_cmdExec->run(z->_commands, z);
 }
 
