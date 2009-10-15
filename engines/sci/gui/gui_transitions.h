@@ -45,6 +45,7 @@ enum {
 	SCI_TRANSITIONS_SCROLLLEFT					= 12,
 	SCI_TRANSITIONS_SCROLLUP					= 13,
 	SCI_TRANSITIONS_SCROLLDOWN					= 14,
+	SCI_TRANSITIONS_NONE						= 100,
 	// here are transitions that are used by the old tableset, but are not included anymore in the new tableset
 	SCI_TRANSITIONS_HORIZONTALROLLTOCENTER		= 300
 };

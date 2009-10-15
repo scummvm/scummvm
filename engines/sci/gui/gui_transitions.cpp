@@ -48,18 +48,19 @@ SciGuiTransitions::~SciGuiTransitions() {
 
 // This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
 static const GuiTransitionTranslateEntry oldTransitionIDs[] = {
-	{  1, SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER,	false },
-	{  8, SCI_TRANSITIONS_BLOCKS,					false },
-	{ 10, SCI_TRANSITIONS_HORIZONTALROLLTOCENTER,	false },
-	{ 17, SCI_TRANSITIONS_BLOCKS,					true },
-	{ 18, SCI_TRANSITIONS_PIXELATION,				false },
-	{ 27, SCI_TRANSITIONS_PIXELATION,				true },
-	{ 30, SCI_TRANSITIONS_FADEPALETTE,				false },
-	{ 40, SCI_TRANSITIONS_SCROLLRIGHT,				false },
-	{ 41, SCI_TRANSITIONS_SCROLLLEFT,				false },
-	{ 42, SCI_TRANSITIONS_SCROLLUP,					false },
-	{ 43, SCI_TRANSITIONS_SCROLLDOWN,				false },
-	{ 255, 255,										false }
+	{   1, SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER,	false },
+	{   8, SCI_TRANSITIONS_BLOCKS,						false },
+	{  10, SCI_TRANSITIONS_HORIZONTALROLLTOCENTER,		false },
+	{  17, SCI_TRANSITIONS_BLOCKS,						true },
+	{  18, SCI_TRANSITIONS_PIXELATION,					false },
+	{  27, SCI_TRANSITIONS_PIXELATION	,				true },
+	{  30, SCI_TRANSITIONS_FADEPALETTE,					false },
+	{  40, SCI_TRANSITIONS_SCROLLRIGHT,					false },
+	{  41, SCI_TRANSITIONS_SCROLLLEFT,					false },
+	{  42, SCI_TRANSITIONS_SCROLLUP,					false },
+	{  43, SCI_TRANSITIONS_SCROLLDOWN,					false },
+	{ 100, SCI_TRANSITIONS_NONE,						false },
+	{ 255, 255,											false }
 };
 
 void SciGuiTransitions::init() {
@@ -129,6 +130,9 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		setNewPalette(); scroll();
 		break;
 
+	case SCI_TRANSITIONS_NONE:
+		setNewPalette(); setNewScreen();
+		break;
 	default:
 		warning("SciGuiTransitions: ID %d not implemented", _number);
 		setNewPalette(); setNewScreen();
