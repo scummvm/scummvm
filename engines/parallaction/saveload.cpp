@@ -361,8 +361,6 @@ bool SaveLoad::loadGame() {
 	GUI::TimedMessageDialog dialog("Loading game...", 1500);
 	dialog.runModal();
 
-	_vm->_input->setArrowCursor();
-
 	return true;
 }
 

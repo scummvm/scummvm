@@ -267,6 +267,7 @@ bool Parallaction_ns::processGameEvent(int event) {
 	}
 
 	_input->setArrowCursor();
+	_input->setMouseState(MOUSE_ENABLED_SHOW);
 
 	return c;
 }
