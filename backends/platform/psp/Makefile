@@ -11,33 +11,41 @@ ENABLE_SCUMM_7_8 = $(ENABLED)
 ENABLE_HE = $(ENABLED)
 ENABLE_AGI = $(ENABLED)
 ENABLE_AGOS = $(ENABLED)
+ENABLE_AGOS2 = $(ENABLED)
 ENABLE_CINE = $(ENABLED)
 ENABLE_CRUISE = $(ENABLED)
+ENABLE_DRACI = $(ENABLED)
 ENABLE_DRASCULA = $(ENABLED)
 ENABLE_GOB = $(ENABLED)
+ENABLE_GROOVIE = $(ENABLED)
+ENABLE_GROOVIE2 = $(ENABLED)
 ENABLE_IGOR = $(ENABLED)
+ENABLE_IHNM = $(ENABLED)
 ENABLE_KYRA = $(ENABLED)
+ENABLE_LOL = $(ENABLED)
 ENABLE_LURE = $(ENABLED)
 ENABLE_M4 = $(ENABLED)
 ENABLE_MADE = $(ENABLED)
 ENABLE_PARALLACTION = $(ENABLED)
 ENABLE_QUEEN = $(ENABLED)
 ENABLE_SAGA = $(ENABLED)
+ENABLE_SAGA2 = $(ENABLED)
+ENABLE_SCI = $(ENABLED)
+ENABLE_SCI32 = $(ENABLED)
 ENABLE_SKY = $(ENABLED)
 ENABLE_SWORD1 = $(ENABLED)
 ENABLE_SWORD2 = $(ENABLED)
+ENABLE_TEENAGENT = $(ENABLED)
 ENABLE_TINSEL = $(ENABLED)
 ENABLE_TOUCHE = $(ENABLED)
-ENABLE_SCI = $(ENABLED)
-ENABLE_IHNM = $(ENABLED)
+ENABLE_TUCKER = $(ENABLED)
+
 
 #Set to 1 to enable, 0 to disable dynamic modules
 DYNAMIC_MODULES = 1
 #Set to 1 to enable, 0 to disable libmad and libogg
 USE_LIBMAD = 1
 USE_LIBOGG = 1
-#Set to 1 to enable, 0 to disable gcc optimizations
-GCC_OPTIMIZE = 0
 # --------------------------------------------------------------------
 
 
@@ -118,8 +126,8 @@ ENABLED = STATIC_PLUGIN
 endif
 
 # SDL Libs and Flags
-SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags)
-SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
+SDLFLAGS := $(shell sdl-config --cflags)
+SDLLIBS  := $(shell sdl-config --libs)
 # PSP LIBS
 PSPLIBS = -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet \
  	-lpspnet_inet -lpsputility -lpspuser -lpsppower 
@@ -152,14 +160,10 @@ PSP_EBOOT_PIC1 = pic1.png
 PSP_EBOOT_SND0 = NULL
 PSP_EBOOT_PSAR = NULL
 
-SCOBJS := $(filter %.o, $(OBJS))
-SCARCS := $(filter %.a, $(OBJS))
-SCBE := $(filter %backends.a, $(SCARCS))
 LDFLAGS += -Wl,-Tmain_prog.ld
 
 all: $(PSP_EBOOT)
 
-# --start-group $^ --end-group
 $(TARGET).elf: $(OBJS)
 	$(LD) $(PRE_OBJS_FLAGS) $(OBJS) $(POST_OBJS_FLAGS) $(LDFLAGS) $(LIBS) -o $@
 	cp $(TARGET).elf $(TARGET).org.elf
