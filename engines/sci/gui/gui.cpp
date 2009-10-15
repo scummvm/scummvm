@@ -500,11 +500,11 @@ void SciGui::animateShowPic() {
 	GuiPort *picPort = _windowMgr->_picWind;
 	Common::Rect picRect = picPort->rect;
 
+	_cursor->hide();
 	// Adjust picRect to become relative to screen
 	picRect.translate(picPort->left, picPort->top);
-	//picRect.top += picPort->top; picRect.bottom += picPort->top;
-	//picRect.left += picPort->left; picRect.right += picPort->left;
 	_transitions->doit(picRect);
+	_cursor->show();
 }
 
 void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
