@@ -24,8 +24,10 @@
  */
 
 #include "common/savefile.h"
+#include "common/config-manager.h"
 
 #include "gui/dialog.h"
+#include "gui/saveload.h"
 #include "gui/widget.h"
 #include "gui/ListWidget.h"
 #include "gui/message.h"
@@ -45,27 +47,6 @@
 
 namespace Parallaction {
 
-
-
-class SaveLoadChooser : public GUI::Dialog {
-	typedef Common::String String;
-	typedef Common::StringList StringList;
-protected:
-	GUI::ListWidget		*_list;
-	GUI::ButtonWidget	*_chooseButton;
-	GUI::ContainerWidget	*_container;
-
-public:
-	SaveLoadChooser(const String &title, const String &buttonLabel);
-	~SaveLoadChooser();
-
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
-	const String &getResultString() const;
-	void setList(const StringList& list);
-	int runModal();
-
-	virtual void reflowLayout();
-};
 
 Common::String SaveLoad::genSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
@@ -210,89 +191,6 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	return;
 }
 
-enum {
-	kSaveCmd = 'SAVE',
-	kLoadCmd = 'LOAD',
-	kPlayCmd = 'PLAY',
-	kOptionsCmd = 'OPTN',
-	kHelpCmd = 'HELP',
-	kAboutCmd = 'ABOU',
-	kQuitCmd = 'QUIT',
-	kChooseCmd = 'CHOS'
-};
-
-
-
-SaveLoadChooser::SaveLoadChooser(const String &title, const String &buttonLabel)
-	: Dialog("ScummSaveLoad"), _list(0), _chooseButton(0) {
-
-//	_drawingHints |= GUI::THEME_HINT_SPECIAL_COLOR;
-	_backgroundType = GUI::ThemeEngine::kDialogBackgroundSpecial;
-
-	new GUI::StaticTextWidget(this, "ScummSaveLoad.Title", title);
-
-	// Add choice list
-	_list = new GUI::ListWidget(this, "ScummSaveLoad.List");
-	_list->setEditable(true);
-	_list->setNumberingMode(GUI::kListNumberingOne);
-
-	// Buttons
-	new GUI::ButtonWidget(this, "ScummSaveLoad.Cancel", "Cancel", GUI::kCloseCmd, 0);
-	_chooseButton = new GUI::ButtonWidget(this, "ScummSaveLoad.Choose", buttonLabel, kChooseCmd, 0);
-	_chooseButton->setEnabled(false);
-}
-
-SaveLoadChooser::~SaveLoadChooser() {
-}
-
-const Common::String &SaveLoadChooser::getResultString() const {
-	return _list->getSelectedString();
-}
-
-void SaveLoadChooser::setList(const StringList& list) {
-	_list->setList(list);
-}
-
-int SaveLoadChooser::runModal() {
-	return GUI::Dialog::runModal();
-}
-
-void SaveLoadChooser::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
-	int selItem = _list->getSelected();
-	switch (cmd) {
-	case GUI::kListItemActivatedCmd:
-	case GUI::kListItemDoubleClickedCmd:
-		if (selItem >= 0) {
-			if (!getResultString().empty()) {
-				_list->endEditMode();
-				setResult(selItem);
-				close();
-			}
-		}
-		break;
-	case kChooseCmd:
-		_list->endEditMode();
-		setResult(selItem);
-		close();
-		break;
-	case GUI::kListSelectionChangedCmd: {
-		_list->startEditMode();
-		// Disable button if nothing is selected, or (in load mode) if an empty
-		// list item is selected. We allow choosing an empty item in save mode
-		// because we then just assign a default name.
-		_chooseButton->setEnabled(selItem >= 0 && (!getResultString().empty()));
-		_chooseButton->draw();
-	} break;
-	case GUI::kCloseCmd:
-		setResult(-1);
-	default:
-		Dialog::handleCommand(sender, cmd, data);
-	}
-}
-
-void SaveLoadChooser::reflowLayout() {
-	Dialog::reflowLayout();
-}
 
 
 int SaveLoad::buildSaveFileList(Common::StringList& l) {
@@ -320,28 +218,34 @@ int SaveLoad::buildSaveFileList(Common::StringList& l) {
 }
 
 
-int SaveLoad::selectSaveFile(Common::String &selectedName, const Common::String &caption, const Common::String &button) {
+int SaveLoad::selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button) {
 	Common::StringList list;
 	buildSaveFileList(list);
 
-	SaveLoadChooser slc(caption, button);
-	slc.setList(list);
+	GUI::SaveLoadChooser slc(caption, button);
+	slc.setSaveMode(saveMode);
 
 	selectedName.clear();
 
-	int slot = slc.runModal();
-	if (slot >= 0) {
+	Common::String gameId = ConfMan.get("gameid");
+
+	const EnginePlugin *plugin = 0;
+	EngineMan.findGame(gameId, &plugin);
+
+	int idx = slc.runModal(plugin, ConfMan.getActiveDomainName());
+	if (idx >= 0) {
 		selectedName = slc.getResultString();
+		slc.close();
 	}
 
-	return slot;
+	return idx;
 }
 
 
 
 bool SaveLoad::loadGame() {
 	Common::String null;
-	int _di = selectSaveFile(null, "Load file", "Load");
+	int _di = selectSaveFile(null, false, "Load file", "Load");
 	if (_di == -1) {
 		return false;
 	}
@@ -359,7 +263,7 @@ bool SaveLoad::loadGame() {
 
 bool SaveLoad::saveGame() {
 	Common::String saveName;
-	int slot = selectSaveFile(saveName, "Save file", "Save");
+	int slot = selectSaveFile(saveName, true, "Save file", "Save");
 	if (slot == -1) {
 		return false;
 	}

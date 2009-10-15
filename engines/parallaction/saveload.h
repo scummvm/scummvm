@@ -41,7 +41,7 @@ protected:
 	Common::String genSaveFileName(uint slot);
 	Common::InSaveFile *getInSaveFile(uint slot);
 	Common::OutSaveFile *getOutSaveFile(uint slot);
-	int selectSaveFile(Common::String &selectedName, const Common::String &caption, const Common::String &button);
+	int selectSaveFile(Common::String &selectedName, bool saveMode, const Common::String &caption, const Common::String &button);
 	int buildSaveFileList(Common::StringList& l);
 	virtual void doLoadGame(uint16 slot) = 0;
 	virtual void doSaveGame(uint16 slot, const char* name) = 0;
