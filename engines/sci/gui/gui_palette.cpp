@@ -64,10 +64,6 @@ SciGuiPalette::SciGuiPalette(ResourceManager *resMan, SciGuiScreen *screen, bool
 			}
 		};
 	}
-
-	// Init _clrPowers used in MatchColor
-	for(color = 0; color < 256; color++)
-	  _clrPowers[color] = color*color;
 }
 
 SciGuiPalette::~SciGuiPalette() {
@@ -251,7 +247,7 @@ uint16 SciGuiPalette::matchColor(GuiPalette *pPal, byte r, byte g, byte b) {
 		dg = pPal->colors[i].g - g;
 		db = pPal->colors[i].b - b;
 //		minimum squares match
-		cdiff = _clrPowers[ABS(dr)] + _clrPowers[ABS(dg)] + _clrPowers[ABS(db)];
+		cdiff = (dr*dr) + (dg*dg) + (db*db);
 //		minimum sum match (Sierra's)
 //		cdiff = ABS(dr) + ABS(dg) + ABS(db);
 		if (cdiff < diff) {

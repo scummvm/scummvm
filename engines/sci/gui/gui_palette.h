@@ -56,8 +56,6 @@ private:
 	SciGuiScreen *_screen;
 	ResourceManager *_resMan;
 
-	uint16 _clrPowers[256];
-
 	Common::Array<GuiPalSchedule> _schedules;
 };
 
