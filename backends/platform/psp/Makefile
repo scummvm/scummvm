@@ -126,8 +126,8 @@ ENABLED = STATIC_PLUGIN
 endif
 
 # SDL Libs and Flags
-SDLFLAGS := $(shell sdl-config --cflags)
-SDLLIBS  := $(shell sdl-config --libs)
+SDLFLAGS := $(shell $(PSPBIN)/sdl-config --cflags) 
+SDLLIBS  := $(shell $(PSPBIN)/sdl-config --libs)
 # PSP LIBS
 PSPLIBS = -lpspdisplay -lpspgu -lpspctrl -lpspsdk -lpspnet \
  	-lpspnet_inet -lpsputility -lpspuser -lpsppower 
