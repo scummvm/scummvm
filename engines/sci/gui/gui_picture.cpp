@@ -136,6 +136,14 @@ void SciGuiPicture::drawCelData(byte *inbuffer, int size, int headerPos, int rle
 	if (literalPos == 0) {
 		// decompression for data that has only one stream (vecor embedded view data)
 		switch (_resMan->getViewType()) {
+		case kViewEga:
+			while (pixelNr < pixelCount) {
+				curByte = *rlePtr++;
+				runLength = curByte >> 4;
+				memset(ptr + pixelNr, curByte & 0x0F, MIN<uint16>(runLength, pixelCount - pixelNr));
+				pixelNr += runLength;
+			}
+			break;
 		case kViewVga:
 		case kViewVga11:
 			while (pixelNr < pixelCount) {
