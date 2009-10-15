@@ -2219,75 +2219,61 @@ bool Console::cmdSend(int argc, const char **argv) {
 	reg_t object;
 	
 	if (parse_reg_t(_vm->_gamestate, argv[1], &object)) {
-		DebugPrintf("Invalid address passed for parameter 1.\n");
+		DebugPrintf("Invalid address \"%s\" passed.\n", argv[1]);
 		DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 		return true;
 	}
 	
 	const char *selector_name = argv[2];
-	StackPtr stackframe = _vm->_gamestate->_executionStack.front().sp;
-	int selector_id;
-	int i;
-	ExecStack *xstack;
-	Object *o;
-	reg_t fptr;
-	ObjVarRef varp;
-
-	selector_id = _vm->getKernel()->findSelector(selector_name);
+	int selector_id = _vm->getKernel()->findSelector(selector_name);
 
 	if (selector_id < 0) {
 		DebugPrintf("Unknown selector: \"%s\"\n", selector_name);
 		return true;
 	}
 
-	o = _vm->_gamestate->_segMan->getObject(object);
+	Object *o = _vm->_gamestate->_segMan->getObject(object);
 	if (o == NULL) {
 		DebugPrintf("Address \"%04x:%04x\" is not an object\n", PRINT_REG(object));
 		return true;
 	}
 
-	SelectorType selector_type = lookup_selector(_vm->_gamestate->_segMan, object, selector_id, &varp, &fptr);
+	SelectorType selector_type = lookup_selector(_vm->_gamestate->_segMan, object, selector_id, 0, 0);
 
 	if (selector_type == kSelectorNone) {
 		DebugPrintf("Object does not support selector: \"%s\"\n", selector_name);
 		return true;
 	}
 
-	stackframe[0] = make_reg(0, selector_id);
-	stackframe[1] = make_reg(0, argc - 3);	// -object -selector name -command name
+	// everything after the selector name is passed as an argument to the send
+	int send_argc = argc - 3;
 
-	for (i = 3; i < argc; i++) {
-		if (parse_reg_t(_vm->_gamestate, argv[i], &stackframe[i-1])) {
-			DebugPrintf("Invalid address passed for parameter %d.\n", i);
+	// Create the data block for send_selecor() at the top of the stack:
+	// [selector_number][argument_counter][arguments...]
+	StackPtr stackframe = _vm->_gamestate->_executionStack.back().sp;
+	stackframe[0] = make_reg(0, selector_id);
+	stackframe[1] = make_reg(0, send_argc);
+	for (int i = 0; i < send_argc; i++) {
+		if (parse_reg_t(_vm->_gamestate, argv[3+i], &stackframe[2+i])) {
+			DebugPrintf("Invalid address \"%s\" passed.\n", argv[3+i]);
 			DebugPrintf("Check the \"addresses\" command on how to use addresses\n");
 			return true;
 		}
 	}
 
-	xstack = add_exec_stack_entry(_vm->_gamestate, fptr,
-	                 stackframe + argc,
-	                 object, argc - 3,
-	                 stackframe - 1, 0, object,
-	                 _vm->_gamestate->_executionStack.size()-1, SCI_XS_CALLEE_LOCALS);
-	xstack->selector = selector_id;
-	if (selector_type == kSelectorVariable) {
-		xstack->addr.varp = varp;
-		xstack->type = EXEC_STACK_TYPE_VARSELECTOR;
-	} else {
-		xstack->addr.pc = fptr;
-		xstack->type = EXEC_STACK_TYPE_CALL;
+	// Now commit the actual function:
+	ExecStack *old_xstack, *xstack;
+	old_xstack = &_vm->_gamestate->_executionStack.back();
+	xstack = send_selector(_vm->_gamestate, object, object,
+	                       stackframe + 2 + send_argc,
+	                       2 + send_argc, stackframe);
+
+	if (old_xstack != xstack) {
+		_vm->_gamestate->_executionStackPosChanged = true;
+		DebugPrintf("Message scheduled for execution\n");
 	}
 
-	// Now commit the actual function:
-	xstack = send_selector(_vm->_gamestate, object, object, stackframe, argc - 3, stackframe);
-
-	xstack->sp += argc;
-	xstack->fp += argc;
-
-	_vm->_gamestate->_executionStackPosChanged = true;
-	g_debugState.debugging = true;
-
-	return false;
+	return true;
 }
 
 bool Console::cmdGo(int argc, const char **argv) {
