@@ -666,10 +666,10 @@ static const GOBGameDescription gameDescriptions[] = {
 	{
 		{
 			"gob1",
-			"gob CD-i",
+			"",
 			AD_ENTRY1s("intro.stk", "0e022d3f2481b39e9175d37b2c6ad4c6", 2390121),
 			FR_FRA,
-			kPlatformWindows,
+			kPlatformCDi,
 			ADGF_NO_FLAGS,
 			GUIO_NOSUBTITLES | GUIO_NOSPEECH
 		},

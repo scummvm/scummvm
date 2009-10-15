@@ -212,11 +212,11 @@ enum Platform {
 	kPlatformSegaCD,
 	kPlatform3DO,
 	kPlatformPCEngine,
-
 	kPlatformApple2GS,
 	kPlatformPC98,
 	kPlatformWii,
 	kPlatformPSX,
+	kPlatformCDi,
 
 	kPlatformUnknown = -1
 };
