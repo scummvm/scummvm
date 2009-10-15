@@ -153,7 +153,6 @@ void SciGuiTransitions::fadeOut() {
 
 // Note: dont do too many steps in here, otherwise cpu will crap out because of the load
 void SciGuiTransitions::fadeIn() {
-	GuiPalette *newPalette = &_palette->_sysPalette;
 	int16 stepNr;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
