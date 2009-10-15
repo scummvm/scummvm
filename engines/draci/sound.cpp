@@ -269,8 +269,12 @@ void Sound::stopAll() {
 
 void Sound::setVolume() {
 	// TODO: how to retrieve "Mute All" ?
-	_muteSound = ConfMan.getBool("sfx_mute");
-	_muteVoice = ConfMan.getBool("speech_mute");
+        if (_mixer->isReady()) {
+                _muteSound = ConfMan.getBool("sfx_mute");
+                _muteVoice = ConfMan.getBool("speech_mute");
+        } else {
+                _muteSound = _muteVoice = true;
+        }
 	_showSubtitles = ConfMan.getBool("subtitles");
 	_talkSpeed = ConfMan.getInt("talkspeed");
 	const int soundVolume = ConfMan.getInt("sfx_volume");
