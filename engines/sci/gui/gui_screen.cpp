@@ -53,7 +53,7 @@ SciGuiScreen::SciGuiScreen(int16 width, int16 height, int16 scaleFactor) :
 	_activeScreen = _displayScreen;
 
 	_picNotValid = false;
-	_unditherState = false;
+	_unditherState = true;
 }
 
 SciGuiScreen::~SciGuiScreen() {
