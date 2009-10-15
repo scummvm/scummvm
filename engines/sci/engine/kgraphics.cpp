@@ -941,10 +941,12 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	uint32 curTime = g_system->getMillis();
 	uint32 duration = curTime - s->_lastAnimateTime;
 
-	if (duration < 50) {
-		gfxop_sleep(s->gfx_state, 50-duration);
+	if (duration < 40) {
+		gfxop_sleep(s->gfx_state, 40-duration);
+		s->_lastAnimateTime = g_system->getMillis();
+	} else {
+		s->_lastAnimateTime = curTime;
 	}
-	s->_lastAnimateTime = curTime;
 
 	return s->r_acc;
 }
