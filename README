@@ -54,13 +54,7 @@ By default, the configuration file is saved in, and loaded from:
         Others:
         residual.ini in the current directory
 
-An example config file looks as follows:
-	[residual]
-
-	[grim]
-	path=[path to all the .lab files]
-
-It runs really slow when using -zbuffer!
+It runs really slow !
 ----------------------------------------
 A large portion of gfx cards do not have a fast glDrawPixels access to zbuffer 
 implementation in the driver.
