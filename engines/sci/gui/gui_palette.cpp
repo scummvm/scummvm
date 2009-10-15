@@ -84,7 +84,7 @@ void SciGuiPalette::createFromData(byte *data, GuiPalette *paletteOut) {
 	for (colorNo = 0; colorNo < 256; colorNo++) {
 		paletteOut->mapping[colorNo] = colorNo;
 	}
-	if (data[0] == 0 && data[1] == 1) {
+	if ((data[0] == 0 && data[1] == 1) || (data[0] == 0 && data[1] == 0 && READ_LE_UINT16(data + 29) == 0)) {
 		// SCI0/SCI1 palette
 		palFormat = SCI_PAL_FORMAT_VARIABLE; // CONSTANT;
 		palOffset = 260;
