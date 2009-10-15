@@ -670,19 +670,34 @@ reg_t kMessage(EngineState *s, int argc, reg_t *argv) {
 
 		s->_msgState->lastQuery(module, msg);
 
-		byte *buffer = s->_segMan->derefBulkPtr(argv[1], 10);
+		bool ok = false;
 
-		if (buffer) {
-			assert(s->_segMan->dereference(argv[1]).isRaw);
+		if (s->_segMan->dereference(argv[1]).isRaw) {
+			byte *buffer = s->_segMan->derefBulkPtr(argv[1], 10);
 
-			WRITE_LE_UINT16(buffer, module);
-			WRITE_LE_UINT16(buffer + 2, msg.noun);
-			WRITE_LE_UINT16(buffer + 4, msg.verb);
-			WRITE_LE_UINT16(buffer + 6, msg.cond);
-			WRITE_LE_UINT16(buffer + 8, msg.seq);
+			if (buffer) {
+				ok = true;
+				WRITE_LE_UINT16(buffer, module);
+				WRITE_LE_UINT16(buffer + 2, msg.noun);
+				WRITE_LE_UINT16(buffer + 4, msg.verb);
+				WRITE_LE_UINT16(buffer + 6, msg.cond);
+				WRITE_LE_UINT16(buffer + 8, msg.seq);
+			}
 		} else {
-			warning("Message: buffer %04x:%04x invalid or too small to hold the tuple", PRINT_REG(argv[1]));
+			reg_t *buffer = s->_segMan->derefRegPtr(argv[1], 5);
+
+			if (buffer) {
+				ok = true;
+				buffer[0] = make_reg(0, module);
+				buffer[1] = make_reg(0, msg.noun);
+				buffer[2] = make_reg(0, msg.verb);
+				buffer[3] = make_reg(0, msg.cond);
+				buffer[4] = make_reg(0, msg.seq);
+			}
 		}
+
+		if (!ok)
+			warning("Message: buffer %04x:%04x invalid or too small to hold the tuple", PRINT_REG(argv[1]));
 
 		return NULL_REG;
 	}
