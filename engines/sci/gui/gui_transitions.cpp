@@ -151,16 +151,10 @@ void SciGuiTransitions::fadeOut() {
 void SciGuiTransitions::fadeIn() {
 	byte workPalette[4 * 256];
 	GuiPalette *newPalette = &_palette->_sysPalette;
-	int16 stepNr, colorNr;
+	int16 stepNr;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		for (colorNr = 1; colorNr < 255; colorNr++){
-			workPalette[colorNr * 4 + 0] = newPalette->colors[colorNr].r * stepNr / 100;
-			workPalette[colorNr * 4 + 1] = newPalette->colors[colorNr].g * stepNr / 100;
-			workPalette[colorNr * 4 + 2] = newPalette->colors[colorNr].b * stepNr / 100;
-			workPalette[colorNr * 4 + 3] = 100;
-		}
-		g_system->setPalette(workPalette + 4, 1, 254);
+		_palette->setIntensity(1, 254, 100, true);
 		_gui->wait(2);
 	}
 }
