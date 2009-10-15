@@ -336,9 +336,11 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("TextColors", kTextColors, ".*"),
 	DEFUN("TextFonts", kTextFonts, ".*"),
 
+	// its a stub, but its needed for Pharkas to work
+	DEFUN("PalVary", kPalVary, "ii*"),
+
 #if 0
 	// Stub functions
-	DEFUN("PalVary", kPalVary, "ii*"),
 	DEFUN("ShiftScreen", kShiftScreen, ".*"),
 	DEFUN("MemorySegment", kMemorySegment, ".*"),
 	DEFUN("ListOps", kListOps, ".*"),

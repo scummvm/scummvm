@@ -615,6 +615,12 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
+// This here is needed to make Pharkas work
+reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
+	warning("kPalVary() called parameters = %d", argc);
+	return NULL_REG;
+}
+
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {
 	reg_t text_pos = GET_SEL32(obj, text);
 	Common::String text;

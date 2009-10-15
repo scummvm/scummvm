@@ -298,6 +298,7 @@ reg_t kStrCmp(EngineState *s, int argc, reg_t *argv);
 reg_t kSetSynonyms(EngineState *s, int argc, reg_t *argv);
 reg_t kLock(EngineState *s, int argc, reg_t *argv);
 reg_t kPalette(EngineState *s, int argc, reg_t *argv);
+reg_t kPalVary(EngineState *s, int argc, reg_t *argv);
 reg_t kNumCels(EngineState *s, int argc, reg_t *argv);
 reg_t kNumLoops(EngineState *s, int argc, reg_t *argv);
 reg_t kDrawCel(EngineState *s, int argc, reg_t *argv);
