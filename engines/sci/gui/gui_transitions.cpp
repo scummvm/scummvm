@@ -46,8 +46,25 @@ SciGuiTransitions::~SciGuiTransitions() {
 	delete[] _oldScreen;
 }
 
+// This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
+byte oldTransitionIDs[256][2] = {
+	{ 8, SCI_TRANSITIONS_BLOCKS },
+	{ 18, SCI_TRANSITIONS_PIXELATION },
+	{ 30, SCI_TRANSITIONS_FADEPALETTE },
+	{ 40, SCI_TRANSITIONS_SCROLLRIGHT },
+	{ 41, SCI_TRANSITIONS_SCROLLLEFT },
+	{ 42, SCI_TRANSITIONS_SCROLLUP },
+	{ 43, SCI_TRANSITIONS_SCROLLDOWN },
+	{ 255, 255 }
+};
+
 void SciGuiTransitions::init() {
 	_oldScreen = new byte[_screen->_displayHeight * _screen->_displayWidth];
+
+	if (getSciVersion() >= SCI_VERSION_1_LATE)
+		_translationTable = NULL;
+	else
+		_translationTable = (byte *)&oldTransitionIDs;
 }
 
 void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
@@ -56,72 +73,58 @@ void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
 }
 
 void SciGuiTransitions::doit(Common::Rect picRect) {
+	byte *translationPtr;
+
 	_picRect = picRect;
 
-	if (_isVGA) {
-		// === VGA transitions
-		switch (_number) {
-		case SCI_TRANSITIONS_VGA_PIXELATION:
-			setNewPalette(); pixelation();
-			break;
-
-		case SCI_TRANSITIONS_VGA_BLOCKS:
-			setNewPalette(); blocks();
-			break;
-
-		case SCI_TRANSITIONS_VGA_FADEPALETTE:
-			fadeOut(); setNewScreen(); fadeIn();
-			break;
-
-		case SCI_TRANSITIONS_VGA_SCROLLRIGHT:
-			setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_RIGHT);
-			break;
-		case SCI_TRANSITIONS_VGA_SCROLLLEFT:
-			setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_LEFT);
-			break;
-		case SCI_TRANSITIONS_VGA_SCROLLUP:
-			setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_UP);
-			break;
-
-		default:
-			warning("SciGuiTransitions: VGA-%d not implemented", _number);
-			setNewPalette(); setNewScreen();
+	if (_translationTable) {
+		// We need to translate the ID
+		translationPtr = _translationTable;
+		while (*translationPtr != 255) {
+			if (*translationPtr == _number) {
+				translationPtr++; _number = *translationPtr;
+				break;
+			}
+			translationPtr += 2;
 		}
-	} else {
-		// === EGA transitions
-		switch (_number) {
-		case SCI_TRANSITIONS_EGA_PIXELATION:
-			pixelation();
-			break;
-
-		case SCI_TRANSITIONS_EGA_BLOCKS:
-			blocks();
-			break;
-
-		case SCI_TRANSITIONS_EGA_FADEPALETTE:
-			fadeOut(); setNewScreen(); fadeIn();
-			break;
-
-		case SCI_TRANSITIONS_EGA_SCROLLRIGHT:
-			scroll(SCI_TRANSITIONS_SCROLL_RIGHT);
-			break;
-		case SCI_TRANSITIONS_EGA_SCROLLLEFT:
-			scroll(SCI_TRANSITIONS_SCROLL_LEFT);
-			break;
-		case SCI_TRANSITIONS_EGA_SCROLLUP:
-			scroll(SCI_TRANSITIONS_SCROLL_UP);
-			break;
-
-		default:
-			warning("SciGuiTransitions: EGA-%d not implemented", _number);
-			setNewScreen();
-		}
+		if (*translationPtr == 255)
+			_number = 255;
 	}
+
+	switch (_number) {
+	case SCI_TRANSITIONS_PIXELATION:
+		setNewPalette(); pixelation();
+		break;
+
+	case SCI_TRANSITIONS_BLOCKS:
+		setNewPalette(); blocks();
+		break;
+
+	case SCI_TRANSITIONS_FADEPALETTE:
+		fadeOut(); setNewScreen(); fadeIn();
+		break;
+
+	case SCI_TRANSITIONS_SCROLLRIGHT:
+		setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_RIGHT);
+		break;
+	case SCI_TRANSITIONS_SCROLLLEFT:
+		setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_LEFT);
+		break;
+	case SCI_TRANSITIONS_SCROLLUP:
+		setNewPalette(); scroll(SCI_TRANSITIONS_SCROLL_UP);
+		break;
+
+	default:
+		warning("SciGuiTransitions: ID %d not implemented", _number);
+		setNewPalette(); setNewScreen();
+	}
+
 	_screen->_picNotValid = 0;
 }
 
 void SciGuiTransitions::setNewPalette() {
-	_palette->setOnScreen();
+	if (_isVGA)
+		_palette->setOnScreen();
 }
 
 void SciGuiTransitions::setNewScreen() {
@@ -149,7 +152,6 @@ void SciGuiTransitions::fadeOut() {
 
 // Note: dont do too many steps in here, otherwise cpu will crap out because of the load
 void SciGuiTransitions::fadeIn() {
-	byte workPalette[4 * 256];
 	GuiPalette *newPalette = &_palette->_sysPalette;
 	int16 stepNr;
 
