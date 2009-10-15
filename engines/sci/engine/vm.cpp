@@ -477,7 +477,8 @@ static reg_t pointer_add(EngineState *s, reg_t base, int offset) {
 		break;
 
 	default:
-		error("[VM] Error: Attempt to add %d to pointer %04x:%04x: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base));
+		// Changed this to warning, because iceman does this during dancing with girl
+		warning("[VM] Error: Attempt to add %d to pointer %04x:%04x: Pointer arithmetics of this type unsupported", offset, PRINT_REG(base));
 		return NULL_REG;
 
 	}
