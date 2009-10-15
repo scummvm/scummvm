@@ -387,8 +387,10 @@ int16 SciGuiGfx::GetLongest(const char *text, int16 maxWidth, GuiResourceId orgF
 		curChar = *text++;
 		switch (curChar) {
 		case 0x7C:
-			curCharCount++;
-			curCharCount += TextCodeProcessing(text, orgFontId, oldPenColor);
+			if (getSciVersion() >= SCI_VERSION_1_1) {
+				curCharCount++;
+				curCharCount += TextCodeProcessing(text, orgFontId, oldPenColor);
+			}
 			continue;
 
 		case 0xD:
@@ -427,13 +429,15 @@ void SciGuiGfx::TextWidth(const char *text, int16 from, int16 len, GuiResourceId
 		while (len--) {
 			curChar = *text++;
 			switch (curChar) {
-			case 0x7C:
-				len -= TextCodeProcessing(text, orgFontId, 0);
-				break;
 			case 0x0A:
 			case 0x0D:
 				textHeight = MAX<int16> (textHeight, _curPort->fontHeight);
 				break;
+			case 0x7C:
+				if (getSciVersion() >= SCI_VERSION_1_1) {
+					len -= TextCodeProcessing(text, orgFontId, 0);
+					break;
+				}
 			default:
 				textHeight = MAX<int16> (textHeight, _curPort->fontHeight);
 				textWidth += _font->getCharWidth(curChar);
@@ -505,15 +509,15 @@ void SciGuiGfx::DrawText(const char *text, int16 from, int16 len, GuiResourceId 
 	while (len--) {
 		curChar = (*text++);
 		switch (curChar) {
-		case 0x7C:
-			len -= TextCodeProcessing(text, orgFontId, orgPenColor);
-			break;
-
 		case 0x0A:
 		case 0x0D:
 		case 0:
 			break;
-
+		case 0x7C:
+			if (getSciVersion() >= SCI_VERSION_1_1) {
+				len -= TextCodeProcessing(text, orgFontId, orgPenColor);
+				break;
+			}
 		default:
 			charWidth = _font->getCharWidth(curChar);
 			// clear char
