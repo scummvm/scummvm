@@ -47,15 +47,19 @@ SciGuiTransitions::~SciGuiTransitions() {
 }
 
 // This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
-byte oldTransitionIDs[256][2] = {
-	{  8, SCI_TRANSITIONS_BLOCKS },
-	{ 18, SCI_TRANSITIONS_PIXELATION },
-	{ 30, SCI_TRANSITIONS_FADEPALETTE },
-	{ 40, SCI_TRANSITIONS_SCROLLRIGHT },
-	{ 41, SCI_TRANSITIONS_SCROLLLEFT },
-	{ 42, SCI_TRANSITIONS_SCROLLUP },
-	{ 43, SCI_TRANSITIONS_SCROLLDOWN },
-	{ 255, 255 }
+static const GuiTransitionTranslateEntry oldTransitionIDs[] = {
+	{  1, SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER,	false },
+	{  8, SCI_TRANSITIONS_BLOCKS,					false },
+	{ 10, SCI_TRANSITIONS_HORIZONTALROLLTOCENTER,	false },
+	{ 17, SCI_TRANSITIONS_BLOCKS,					true },
+	{ 18, SCI_TRANSITIONS_PIXELATION,				false },
+	{ 27, SCI_TRANSITIONS_PIXELATION,				true },
+	{ 30, SCI_TRANSITIONS_FADEPALETTE,				false },
+	{ 40, SCI_TRANSITIONS_SCROLLRIGHT,				false },
+	{ 41, SCI_TRANSITIONS_SCROLLLEFT,				false },
+	{ 42, SCI_TRANSITIONS_SCROLLUP,					false },
+	{ 43, SCI_TRANSITIONS_SCROLLDOWN,				false },
+	{ 255, 255,										false }
 };
 
 void SciGuiTransitions::init() {
@@ -64,7 +68,7 @@ void SciGuiTransitions::init() {
 	if (getSciVersion() >= SCI_VERSION_1_LATE)
 		_translationTable = NULL;
 	else
-		_translationTable = (byte *)&oldTransitionIDs;
+		_translationTable = oldTransitionIDs;
 }
 
 void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
@@ -73,29 +77,39 @@ void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
 }
 
 void SciGuiTransitions::doit(Common::Rect picRect) {
-	byte *translationPtr;
+	const GuiTransitionTranslateEntry *translationEntry = _translationTable;
 
 	_picRect = picRect;
 
-	if (_translationTable) {
+	if (translationEntry) {
 		// We need to translate the ID
-		translationPtr = _translationTable;
-		while (*translationPtr != 255) {
-			if (*translationPtr == _number) {
-				translationPtr++; _number = *translationPtr;
+		while (1) {
+			if (translationEntry->oldId == 255) {
+				warning("SciGuiTransitions: old ID %d not supported", _number);
+				setNewPalette(); setNewScreen();
+				_screen->_picNotValid = 0;
+				return;
+			}
+			if (translationEntry->oldId == _number) {
+				_number = translationEntry->realId;
+				_blackoutFlag = translationEntry->blackoutFlag;
 				break;
 			}
-			translationPtr += 2;
-		}
-		if (*translationPtr == 255) {
-			warning("SciGuiTransitions: old ID %d not supported", _number);
-			setNewPalette(); setNewScreen();
-			_screen->_picNotValid = 0;
-			return;
+			translationEntry++;
 		}
 	}
 
+	if (_blackoutFlag)
+		warning("SciGuiTransitions: blackout flag currently not supported");
+
 	switch (_number) {
+	case SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER:
+		setNewPalette(); horizontalRollFromCenter();
+		break;
+	case SCI_TRANSITIONS_HORIZONTALROLLTOCENTER:
+		setNewPalette(); horizontalRollToCenter();
+		break;
+
 	case SCI_TRANSITIONS_PIXELATION:
 		setNewPalette(); pixelation();
 		break;
@@ -201,7 +215,7 @@ void SciGuiTransitions::blocks() {
 	} while (mask != 0x40);
 }
 
-// scroll old screen (up/down/left/right) and insert new screen that way - works on _picRect area
+// scroll old screen (up/down/left/right) and insert new screen that way - works on _picRect area only
 void SciGuiTransitions::scroll() {
 	int16 screenWidth, screenHeight;
 	byte *oldScreenPtr;
@@ -279,6 +293,36 @@ void SciGuiTransitions::scroll() {
 			g_system->delayMillis(3);
 		}
 		break;
+	}
+}
+
+// horizontally displays new screen starting from center - works on _picRect area only
+void SciGuiTransitions::horizontalRollFromCenter() {
+	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top + (_picRect.height() / 2) - 1, _picRect.right, _picRect.top + (_picRect.height() / 2));
+	Common::Rect lowerRect = Common::Rect(upperRect.left, upperRect.bottom, upperRect.right, upperRect.bottom + 1);
+
+	while ((upperRect.top > _picRect.top) && (lowerRect.bottom < _picRect.bottom)) {
+		if (upperRect.top < _picRect.top)
+			upperRect.translate(0, 1);
+		if (lowerRect.bottom > _picRect.bottom)
+			lowerRect.translate(0, -1);
+		_screen->copyRectToScreen(upperRect); upperRect.translate(0, -1);
+		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, 1);
+		g_system->updateScreen();
+		g_system->delayMillis(3);
+	}
+}
+
+// horizontally displays new screen starting from upper and lower edge - works on _picRect area only
+void SciGuiTransitions::horizontalRollToCenter() {
+	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top, _picRect.right, _picRect.top + 1);
+	Common::Rect lowerRect = Common::Rect(upperRect.left, _picRect.bottom - 1, upperRect.right, _picRect.bottom);
+
+	while (upperRect.top < lowerRect.bottom) {
+		_screen->copyRectToScreen(upperRect); upperRect.translate(0, 1);
+		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, -1);
+		g_system->updateScreen();
+		g_system->delayMillis(3);
 	}
 }
 

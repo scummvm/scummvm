@@ -30,14 +30,23 @@
 
 namespace Sci {
 
+struct GuiTransitionTranslateEntry {
+	int16 oldId;
+	int16 realId;
+	bool blackoutFlag;
+};
+
 enum {
-	SCI_TRANSITIONS_BLOCKS			= 8,
-	SCI_TRANSITIONS_PIXELATION		= 9,
-	SCI_TRANSITIONS_FADEPALETTE		= 10,
-	SCI_TRANSITIONS_SCROLLRIGHT		= 11,
-	SCI_TRANSITIONS_SCROLLLEFT		= 12,
-	SCI_TRANSITIONS_SCROLLUP		= 13,
-	SCI_TRANSITIONS_SCROLLDOWN		= 14
+	SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER	= 1,
+	SCI_TRANSITIONS_BLOCKS						= 8,
+	SCI_TRANSITIONS_PIXELATION					= 9,
+	SCI_TRANSITIONS_FADEPALETTE					= 10,
+	SCI_TRANSITIONS_SCROLLRIGHT					= 11,
+	SCI_TRANSITIONS_SCROLLLEFT					= 12,
+	SCI_TRANSITIONS_SCROLLUP					= 13,
+	SCI_TRANSITIONS_SCROLLDOWN					= 14,
+	// here are transitions that are used by the old tableset, but are not included anymore in the new tableset
+	SCI_TRANSITIONS_HORIZONTALROLLTOCENTER		= 300
 };
 
 class SciGuiScreen;
@@ -58,13 +67,15 @@ private:
 	void pixelation();
 	void blocks();
 	void scroll();
+	void horizontalRollFromCenter();
+	void horizontalRollToCenter();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
 	SciGuiPalette *_palette;
 
 	bool _isVGA;
-	byte *_translationTable;
+	const GuiTransitionTranslateEntry *_translationTable;
 	int16 _number;
 	bool _blackoutFlag;
 	Common::Rect _picRect;
