@@ -51,14 +51,6 @@ class GfxDriver;
 
 SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 		: Engine(syst), _gameDescription(desc), _system(syst) {
-	// Put your engine in a sane state, but do nothing big yet;
-	// in particular, do not load data from files; rather, if you
-	// need to do such things, do them from init().
-
-	// However this is the place to specify all default directories
-	//File::addDefaultDirectory(_gameDataPath + "sound/");
-	//printf("%s\n", _gameDataPath.c_str());
-
 	_console = NULL;
 
 	// Set up the engine specific debug levels
@@ -86,6 +78,8 @@ SciEngine::SciEngine(OSystem *syst, const ADGameDescription *desc)
 	Common::addDebugChannel(kDebugLevelSci0Pic, "Sci0Pic", "SCI0 pic drawing debugging");
 
 	_gamestate = 0;
+
+	SearchMan.addSubDirectoryMatching(_gameDataDir, "seq");	// KQ6 SEQ directory
 }
 
 SciEngine::~SciEngine() {

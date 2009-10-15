@@ -23,40 +23,77 @@
  *
  */
 
+#include "common/debug.h"
+#include "common/endian.h"
 #include "common/archive.h"
-#include "sci/gfx/seq_decoder.h"
-#include "sci/resource.h"
-#include "sci/gui/gui_screen.h"
-#include "sci/gui/gui_palette.h"
+#include "common/system.h"
+#include "common/util.h"
 
-namespace Sci {
+#include "graphics/surface.h"
+
+#include "sci/gfx/seq_decoder.h"
+
+namespace Graphics {
+
+enum seqPalTypes {
+	kSeqPalVariable = 0,
+	kSeqPalConstant = 1
+};
+
+enum seqFrameTypes {
+	kSeqFrameFull = 0,
+	kSeqFrameDiff = 1
+};
 
 SeqDecoder::~SeqDecoder() {
 	closeFile();
 }
 
-bool SeqDecoder::loadFile(Common::String fileName, ResourceManager *resMan) {
+bool SeqDecoder::loadFile(const char *fileName, int frameDelay) {
 	closeFile();
 
 	_fileStream = SearchMan.createReadStreamForMember(fileName);
 	if (!_fileStream)
 		return false;
 
-	_frameCount = _fileStream->readUint16LE();
+	// Seek to the first frame
+	_videoInfo.currentFrame = 0;
+
+	_videoInfo.width = 320;
+	_videoInfo.height = 200;
+	_videoInfo.frameCount = _fileStream->readUint16LE();
+	// Our frameDelay is calculated in 1/100 ms, so we convert it here
+	_videoInfo.frameDelay = 100 * frameDelay * 1000 / 60;
+	_videoFrameBuffer = new byte[_videoInfo.width * _videoInfo.height];
+
+	// Set palette
 	int paletteSize = _fileStream->readUint32LE();
 
 	byte *paletteData = new byte[paletteSize];
 	_fileStream->read(paletteData, paletteSize);
-	GuiPalette seqPalette;
-	SciGuiScreen *videoScreen = new SciGuiScreen(320, 200, 1);
-	SciGuiPalette *pal = new SciGuiPalette(resMan, videoScreen, false);
-	pal->createFromData(paletteData, &seqPalette);
-	pal->set(&seqPalette, 2);
-	delete pal;
-	delete[] paletteData;
-	delete videoScreen;
 
-	_currentFrame = 0;
+	// SCI1.1 palette
+	byte palFormat = paletteData[32];
+	uint16 palColorStart = READ_LE_UINT16(paletteData + 25);
+	uint16 palColorCount = READ_LE_UINT16(paletteData + 29);
+
+	byte palette[256 * 4];
+	int palOffset = 37;
+
+	for (uint16 colorNo = palColorStart; colorNo < palColorStart + palColorCount; colorNo++) {
+		if (palFormat == kSeqPalVariable)
+			palOffset++;
+		palette[colorNo * 4 + 0] = paletteData[palOffset++];
+		palette[colorNo * 4 + 1] = paletteData[palOffset++];
+		palette[colorNo * 4 + 2] = paletteData[palOffset++];
+		palette[colorNo * 4 + 3] = 0;
+	}
+
+	g_system->setPalette(palette, 0, 256);
+
+	delete paletteData;
+
+	_videoInfo.firstframeOffset = _fileStream->pos();
 
 	return true;
 }
@@ -67,25 +104,59 @@ void SeqDecoder::closeFile() {
 
 	delete _fileStream;
 	_fileStream = 0;
+
+	delete[] _videoFrameBuffer;
+	_videoFrameBuffer = 0;
+}
+
+bool SeqDecoder::decodeNextFrame() {
+	int16 frameWidth = _fileStream->readUint16LE();
+	int16 frameHeight = _fileStream->readUint16LE();
+	int16 frameLeft = _fileStream->readUint16LE();
+	int16 frameTop = _fileStream->readUint16LE();
+	byte colorKey = _fileStream->readByte();
+	byte frameType = _fileStream->readByte();
+	_fileStream->skip(2);
+	uint16 frameSize = _fileStream->readUint16LE();
+	_fileStream->skip(2);
+	uint16 rleSize = _fileStream->readUint16LE();
+	_fileStream->skip(6);
+	uint32 offset = _fileStream->readUint32LE();
+
+	_fileStream->seek(offset);
+
+	if (_videoInfo.currentFrame == 0)
+		_videoInfo.startTime = g_system->getMillis();
+
+	if (frameType == kSeqFrameFull) {
+		assert (frameLeft == 0);
+		assert (frameWidth == 320);
+		_fileStream->read(_videoFrameBuffer + 320 * frameTop, frameSize);
+	} else {
+		byte *buf = new byte[frameSize];
+		_fileStream->read(buf, frameSize);
+		decodeFrame(buf, rleSize, buf + rleSize, frameSize - rleSize, _videoFrameBuffer + 320 * frameTop, frameLeft, frameWidth, frameHeight, colorKey);
+		delete buf;
+	}
+
+	return ++_videoInfo.currentFrame < _videoInfo.frameCount;
 }
 
 #define WRITE_TO_BUFFER(n) \
-	if (writeRow * width + writeCol + (n) > width * height) { \
+	if (writeRow * 320 + writeCol + (n) > 320 * height) { \
 		warning("SEQ player: writing out of bounds, aborting"); \
 		return false; \
 	} \
 	if (litPos + (n) > litSize) { \
 		warning("SEQ player: reading out of bounds, aborting"); \
 	} \
-	memcpy(dest + writeRow * width + writeCol, litData + litPos, n);
+	memcpy(dest + writeRow * 320 + writeCol, litData + litPos, n);
 
-bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int width, int height, int colorKey) {
+bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey) {
 	int writeRow = 0;
-	int writeCol = 0;
+	int writeCol = left;
 	int litPos = 0;
 	int rlePos = 0;
-
-	memset(dest, colorKey, width * height);
 
 	while (rlePos < rleSize) {
 		int op = rleData[rlePos++];
@@ -95,7 +166,7 @@ bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litS
 			if (op == 0) {
 				// Go to next line in target buffer
 				writeRow++;
-				writeCol = 0;
+				writeCol = left;
 			} else {
 				// Skip bytes on current line
 				writeCol += op;
@@ -104,11 +175,11 @@ bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litS
 			op &= 0x3f;
 			if (op == 0) {
 				// Copy remainder of current line
-				int rem = width - writeCol;
+				int rem = width - (writeCol - left);
 
 				WRITE_TO_BUFFER(rem);
 				writeRow++;
-				writeCol = 0;
+				writeCol = left;
 				litPos += rem;
 			} else {
 				// Copy bytes
@@ -159,37 +230,4 @@ bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litS
 	return true;
 }
 
-SeqFrame *SeqDecoder::getFrame(bool &hasNext) {
-	int16 frameWidth = _fileStream->readUint16LE();
-	int16 frameHeight = _fileStream->readUint16LE();
-	int16 frameLeft = _fileStream->readUint16LE();
-	int16 frameTop = _fileStream->readUint16LE();
-	byte colorKey = _fileStream->readByte();
-	byte type = _fileStream->readByte();
-	_fileStream->skip(2);
-	uint16 bytes = _fileStream->readUint16LE();
-	_fileStream->skip(2);
-	uint16 rle_bytes = _fileStream->readUint16LE();
-	_fileStream->skip(6);
-	uint32 offset = _fileStream->readUint32LE();
-
-	_fileStream->seek(offset);
-	SeqFrame *frame = new SeqFrame();
-	frame->frameRect = Common::Rect(frameLeft, frameTop, frameLeft + frameWidth, frameTop + frameHeight);
-	frame->data = new byte[frameWidth * frameHeight];
-	frame->colorKey = colorKey;
-
-	if (type == 0)
-		_fileStream->read(frame->data, bytes);
-	else {
-		byte *buf = new byte[bytes];
-		_fileStream->read(buf, bytes);
-		decodeFrame(buf, rle_bytes, buf + rle_bytes, bytes - rle_bytes, frame->data, frameWidth, frameHeight, colorKey);
-	}
-
-	hasNext = ++_currentFrame < _frameCount;
-
-	return frame;
-}
-
-} // End of namespace Sci
+} // End of namespace Graphics

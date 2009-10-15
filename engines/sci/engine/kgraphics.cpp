@@ -1059,52 +1059,23 @@ static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
 static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 	Common::String filename = s->_segMan->getString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
-	SeqDecoder seq;
 
-	if (!seq.loadFile(filename, s->resMan) && 
-		!seq.loadFile(Common::String("SEQ/") + filename, s->resMan)) {
+	Common::Event stopEvent;
+	Common::List<Common::Event> stopEvents;
+	stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	stopEvents.push_back(stopEvent);
+
+	Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
+	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
+	if (seqDecoder->loadFile(filename.c_str(), delay))
+		player->playVideo(stopEvents);
+	else
 		warning("Failed to open movie file %s", filename.c_str());
-		return s->r_acc;
-	}
-
-	bool play = true;
-	while (play) {
-		uint32 startTime = g_system->getMillis();
-		SeqFrame *frame = seq.getFrame(play);
-		Common::Rect frameRect = frame->frameRect;
-
-		byte *scr = (byte *)g_system->lockScreen()->pixels;
-		int cur = 0;
-		for (int y = frameRect.top; y < frameRect.bottom; y++) {
-			for (int x = frameRect.left; x < frameRect.right; x++) {
-				if (frame->data[cur] != frame->colorKey)
-					scr[y * 320 + x] = frame->data[cur];
-				cur++;
-			}
-		}
-		g_system->unlockScreen();
-		g_system->updateScreen();
-
-		delete frame->data;
-		delete frame;
-
-		// Wait before showing the next frame
-		while (play && (g_system->getMillis() < startTime + (delay * 1000 / 60))) {
-			// FIXME: we should probably make a function that handles quitting in these kinds of situations
-			Common::Event curEvent;
-			Common::EventManager *eventMan = g_system->getEventManager();
-
-			// Process quit events
-			while (eventMan->pollEvent(curEvent)) {
-				if (curEvent.type == Common::EVENT_QUIT) {
-					play = false;
-					quit_vm();
-				}
-			}
-
-			g_system->delayMillis(10);
-		}
-	}
+	seqDecoder->closeFile();
+	delete player;
+	delete seqDecoder;
 
 	return s->r_acc;
 }

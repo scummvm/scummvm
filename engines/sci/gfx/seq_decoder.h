@@ -23,39 +23,46 @@
  *
  */
 
-#include "common/file.h"
-#include "common/rect.h"
+#ifndef SEQ_DECODER_H
+#define SEQ_DECODER_H
 
-namespace Sci {
+#include "graphics/video/video_player.h"
 
-struct SeqFrame {
-	Common::Rect frameRect;
-	byte colorKey;
-	byte *data;
-};
-
-class ResourceManager;
-class SciGuiScreen;
+namespace Graphics {
 
 /**
- * Decoder for image sequences
+ * Implementation of the KQ6 floppy SEQ decoder
  */
-class SeqDecoder {
+class SeqDecoder : public VideoDecoder {
 public:
-	SeqDecoder() : _fileStream(0) { }
-	~SeqDecoder();
-	bool loadFile(Common::String fileName, ResourceManager *resMan);
+	SeqDecoder() {}
+	virtual ~SeqDecoder();
+
+	/**
+	 * Load a SEQ encoded video file
+	 * @param filename	the filename to load
+	 * @param frameDelay the delay between frames, in ms
+	 */
+	bool loadFile(const char *fileName) { return loadFile(fileName, 10); }
+
+	/**
+	 * Load a SEQ encoded video file
+	 * @param filename	the filename to load
+	 * @param frameDelay the delay between frames, in ms
+	 */
+	bool loadFile(const char *fileName, int frameDelay);
+
+	/**
+	 * Close a SEQ encoded video file
+	 */
 	void closeFile();
-	SeqFrame *getFrame(bool &hasNext);
+
+	bool decodeNextFrame();
 
 private:
-	bool decodeFrame(byte *runlength_data, int runlength_size,
-		byte *literal_data, int literal_size, byte *dest, int xl, int yl,
-		int color_key);
-
-	Common::SeekableReadStream *_fileStream;
-	int _frameCount;
-	int _currentFrame;
+	bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
 };
 
-} // End of namespace Sci
+} // End of namespace Graphics
+
+#endif
