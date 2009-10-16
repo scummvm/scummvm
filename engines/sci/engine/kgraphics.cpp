@@ -23,8 +23,6 @@
  *
  */
 
-#include "common/system.h"
-#include "common/events.h"
 #include "graphics/cursorman.h"
 #include "graphics/video/avi_player.h"
 #include "graphics/surface.h"
@@ -1060,17 +1058,10 @@ static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
 	Common::String filename = s->_segMan->getString(argv[0]);
 	int delay = argv[1].toUint16(); // Time between frames in ticks
 
-	Common::Event stopEvent;
-	Common::List<Common::Event> stopEvents;
-	stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
-	stopEvents.push_back(stopEvent);
-
 	Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
 	if (seqDecoder->loadFile(filename.c_str(), delay))
-		player->playVideo(stopEvents);
+		player->playVideo();
 	else
 		warning("Failed to open movie file %s", filename.c_str());
 	seqDecoder->closeFile();

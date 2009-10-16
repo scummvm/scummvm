@@ -33,9 +33,7 @@
 #include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/str.h"
-#include "common/events.h"
 #include "common/system.h"
-#include "common/list.h"
 #include "graphics/surface.h"
 
 #include "gui/message.h"
@@ -153,17 +151,10 @@ void MoviePlayer::play(void) {
 	}
 	bool terminated = false;
 
-	Common::List<Common::Event> stopEvents;
-	Common::Event stopEvent;
-	stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
-	stopEvents.push_back(stopEvent);
-
 	_textX = 0;
 	_textY = 0;
 
-	terminated = !playVideo(stopEvents);
+	terminated = !playVideo();
 
 	if (terminated)
 		_snd->stopHandle(*_bgSoundHandle);

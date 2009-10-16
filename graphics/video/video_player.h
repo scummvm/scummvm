@@ -192,6 +192,12 @@ public:
 	 */
 	bool playVideo(Common::List<Common::Event> &stopEvents);
 
+	/**
+	 * Provides the same functionality as the video player, and it adds the
+	 * event of skipping the video with the escape key by default
+	 */
+	bool playVideo();
+
 protected:
 	/**
 	 * Perform postprocessing once the frame data is copied to the screen,

@@ -107,14 +107,7 @@ void MoviePlayer::play(MovieText *movieTexts, uint32 numMovieTexts, uint32 leadI
 
 	bool terminated = false;
 
-	Common::List<Common::Event> stopEvents;
-	Common::Event stopEvent;
-	stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
-	stopEvents.push_back(stopEvent);
-
-	terminated = !playVideo(stopEvents);
+	terminated = !playVideo();
 
 	closeTextObject(_currentMovieText, NULL);
 

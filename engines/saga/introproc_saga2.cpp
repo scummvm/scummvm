@@ -35,27 +35,15 @@
 #include "graphics/surface.h"
 #include "graphics/video/smk_decoder.h"
 
-#include "common/events.h"
-#include "common/system.h"
-#include "common/list.h"
-
 namespace Saga {
-
-Common::List<Common::Event> stopEvents;
 
 int Scene::DinoStartProc() {
 	_vm->_gfx->showCursor(false);
 
-	Common::Event stopEvent;
-	stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
-	stopEvents.push_back(stopEvent);
-
 	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
 	if (smkDecoder->loadFile("testvid.smk"))
-		player->playVideo(stopEvents);        // Play introduction
+		player->playVideo();        // Play introduction
 	smkDecoder->closeFile();
 	delete player;
 	delete smkDecoder;
@@ -69,19 +57,13 @@ int Scene::DinoStartProc() {
 int Scene::FTA2StartProc() {
 	_vm->_gfx->showCursor(false);
 
-	Common::Event stopEvent;
-	stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
-	stopEvents.push_back(stopEvent);
-
 	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
 	if (smkDecoder->loadFile("trimark.smk"))
-		player->playVideo(stopEvents);      // Show Ignite logo
+		player->playVideo();      // Show Ignite logo
 	smkDecoder->closeFile();
 	if (smkDecoder->loadFile("intro.smk"))
-		player->playVideo(stopEvents);        // Play introduction
+		player->playVideo();        // Play introduction
 	smkDecoder->closeFile();
 	delete player;
 	delete smkDecoder;
@@ -117,18 +99,11 @@ int Scene::FTA2EndProc(FTA2Endings whichEnding) {
 
 	_vm->_gfx->showCursor(false);
 
-
-	Common::Event stopEvent;
-	stopEvents.clear();
-	stopEvent.type = Common::EVENT_KEYDOWN;
-	stopEvent.kbd = Common::KEYCODE_ESCAPE;
-	stopEvents.push_back(stopEvent);
-
 	// Play ending
 	Graphics::SmackerDecoder *smkDecoder = new Graphics::SmackerDecoder(_vm->_mixer);
 	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(smkDecoder);
 	if (smkDecoder->loadFile(videoName)) {
-		player->playVideo(stopEvents);
+		player->playVideo();
 		smkDecoder->closeFile();
 	}
 	delete player;

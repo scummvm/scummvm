@@ -225,6 +225,17 @@ bool VideoPlayer::playVideo(Common::List<Common::Event> &stopEvents) {
 	return !_skipVideo;
 }
 
+bool VideoPlayer::playVideo() {
+	Common::Event stopEvent;
+	Common::List<Common::Event> stopEvents;
+	stopEvents.clear();
+	stopEvent.type = Common::EVENT_KEYDOWN;
+	stopEvent.kbd = Common::KEYCODE_ESCAPE;
+	stopEvents.push_back(stopEvent);
+
+	return playVideo(stopEvents);
+}
+
 void VideoPlayer::performPostProcessing(byte *screen) {
 }
 
