@@ -332,7 +332,6 @@ void SciGuiTransitions::verticalRollFromCenter() {
 		g_system->updateScreen();
 		g_system->delayMillis(2);
 	}
-	g_system->delayMillis(5000);
 }
 
 // vertically displays new screen starting from edges - works on _picRect area only
