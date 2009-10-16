@@ -39,6 +39,8 @@ struct GuiTransitionTranslateEntry {
 enum {
 	SCI_TRANSITIONS_VERTICALROLLFROMCENTER		= 0,
 	SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER	= 1,
+	SCI_TRANSITIONS_DIAGONALROLLFROMCENTER		= 6,
+	SCI_TRANSITIONS_DIAGONALROLLTOCENTER		= 7,
 	SCI_TRANSITIONS_BLOCKS						= 8,
 	SCI_TRANSITIONS_PIXELATION					= 9,
 	SCI_TRANSITIONS_FADEPALETTE					= 10,
@@ -75,6 +77,8 @@ private:
 	void verticalRollToCenter();
 	void horizontalRollFromCenter();
 	void horizontalRollToCenter();
+	void diagonalRollFromCenter();
+	void diagonalRollToCenter();
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;

@@ -50,9 +50,13 @@ SciGuiTransitions::~SciGuiTransitions() {
 static const GuiTransitionTranslateEntry oldTransitionIDs[] = {
 	{   0, SCI_TRANSITIONS_VERTICALROLLFROMCENTER,		false },
 	{   1, SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER,	false },
+	{   6, SCI_TRANSITIONS_DIAGONALROLLFROMCENTER,		false },
+	{   7, SCI_TRANSITIONS_DIAGONALROLLTOCENTER,		false },
 	{   8, SCI_TRANSITIONS_BLOCKS,						false },
 	{   9, SCI_TRANSITIONS_VERTICALROLLTOCENTER,		false },
 	{  10, SCI_TRANSITIONS_HORIZONTALROLLTOCENTER,		false },
+	{  15, SCI_TRANSITIONS_DIAGONALROLLFROMCENTER,		true },
+	{  16, SCI_TRANSITIONS_DIAGONALROLLTOCENTER,		true },
 	{  17, SCI_TRANSITIONS_BLOCKS,						true },
 	{  18, SCI_TRANSITIONS_PIXELATION,					false },
 	{  27, SCI_TRANSITIONS_PIXELATION	,				true },
@@ -118,6 +122,10 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 	case SCI_TRANSITIONS_HORIZONTALROLLTOCENTER:
 		setNewPalette(); horizontalRollToCenter();
 		break;
+	case SCI_TRANSITIONS_DIAGONALROLLTOCENTER:
+		setNewPalette(); diagonalRollToCenter();
+	case SCI_TRANSITIONS_DIAGONALROLLFROMCENTER:
+		setNewPalette(); diagonalRollFromCenter();
 
 	case SCI_TRANSITIONS_PIXELATION:
 		setNewPalette(); pixelation();
@@ -314,7 +322,7 @@ void SciGuiTransitions::verticalRollFromCenter() {
 	Common::Rect leftRect = Common::Rect(_picRect.left + (_picRect.width() / 2) -1, _picRect.top, _picRect.left + (_picRect.width() / 2), _picRect.bottom);
 	Common::Rect rightRect = Common::Rect(leftRect.right, _picRect.top, leftRect.right + 1, _picRect.bottom);
 
-	while ((leftRect.left > _picRect.left) && (rightRect.right < _picRect.right)) {
+	while ((leftRect.left >= _picRect.left) || (rightRect.right <= _picRect.right)) {
 		if (leftRect.left < _picRect.left)
 			leftRect.translate(1, 0);
 		if (rightRect.right > _picRect.right)
@@ -324,6 +332,7 @@ void SciGuiTransitions::verticalRollFromCenter() {
 		g_system->updateScreen();
 		g_system->delayMillis(2);
 	}
+	g_system->delayMillis(5000);
 }
 
 // vertically displays new screen starting from edges - works on _picRect area only
@@ -344,7 +353,7 @@ void SciGuiTransitions::horizontalRollFromCenter() {
 	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top + (_picRect.height() / 2) - 1, _picRect.right, _picRect.top + (_picRect.height() / 2));
 	Common::Rect lowerRect = Common::Rect(upperRect.left, upperRect.bottom, upperRect.right, upperRect.bottom + 1);
 
-	while ((upperRect.top > _picRect.top) && (lowerRect.bottom < _picRect.bottom)) {
+	while ((upperRect.top >= _picRect.top) || (lowerRect.bottom <= _picRect.bottom)) {
 		if (upperRect.top < _picRect.top)
 			upperRect.translate(0, 1);
 		if (lowerRect.bottom > _picRect.bottom)
@@ -364,6 +373,55 @@ void SciGuiTransitions::horizontalRollToCenter() {
 	while (upperRect.top < lowerRect.bottom) {
 		_screen->copyRectToScreen(upperRect); upperRect.translate(0, 1);
 		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, -1);
+		g_system->updateScreen();
+		g_system->delayMillis(3);
+	}
+}
+
+// diagonally displays new screen starting from center - works on _picRect area only
+//  assumes that height of rect is larger than width, is also currently not optimized (TODO)
+void SciGuiTransitions::diagonalRollFromCenter() {
+	int16 halfHeight = _picRect.height() / 2;
+	Common::Rect upperRect(_picRect.left + halfHeight - 2, _picRect.top + halfHeight, _picRect.right - halfHeight + 1, _picRect.top + halfHeight + 1);
+	Common::Rect lowerRect(upperRect.left, upperRect.top, upperRect.right, upperRect.bottom);
+	Common::Rect leftRect(upperRect.left, upperRect.top, upperRect.left + 1, lowerRect.bottom);
+	Common::Rect rightRect(upperRect.right, upperRect.top, upperRect.right + 1, lowerRect.bottom);
+
+	while ((upperRect.top >= _picRect.top) || (lowerRect.bottom <= _picRect.bottom)) {
+		if (upperRect.top < _picRect.top) {
+			upperRect.translate(0, 1); leftRect.top++; rightRect.top++;
+		}
+		if (lowerRect.bottom > _picRect.bottom) {
+			lowerRect.translate(0, -1); leftRect.bottom--; rightRect.bottom--;
+		}
+		if (leftRect.left < _picRect.left) {
+			leftRect.translate(1, 0); upperRect.left++; lowerRect.left++;
+		}
+		if (rightRect.right > _picRect.right) {
+			rightRect.translate(-1, 0); upperRect.right--; lowerRect.right--;
+		}
+		_screen->copyRectToScreen(upperRect); upperRect.translate(0, -1); upperRect.left--; upperRect.right++;
+		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, 1); lowerRect.left--; lowerRect.right++;
+		_screen->copyRectToScreen(leftRect); leftRect.translate(-1, 0);	leftRect.top--; leftRect.bottom++;
+		_screen->copyRectToScreen(rightRect); rightRect.translate(1, 0); rightRect.top--; rightRect.bottom++;
+		g_system->updateScreen();
+		g_system->delayMillis(3);
+	}
+}
+
+// diagonally displays new screen starting from edges - works on _picRect area only
+//  assumes that height of rect is larger than width
+void SciGuiTransitions::diagonalRollToCenter() {
+	Common::Rect upperRect(_picRect.left, _picRect.top, _picRect.right, _picRect.top + 1);
+	Common::Rect lowerRect(_picRect.left, _picRect.bottom - 1, _picRect.right, _picRect.bottom);
+	Common::Rect leftRect(_picRect.left, _picRect.top, _picRect.left + 1, _picRect.bottom);
+	Common::Rect rightRect(_picRect.right - 1, _picRect.top, _picRect.right, _picRect.bottom);
+
+	while (upperRect.top < lowerRect.bottom) {
+		_screen->copyRectToScreen(upperRect); upperRect.translate(0, 1); upperRect.left++; upperRect.right--;
+		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, -1); lowerRect.left++; lowerRect.right--;
+		_screen->copyRectToScreen(leftRect); leftRect.translate(1, 0);
+		_screen->copyRectToScreen(rightRect); rightRect.translate(-1, 0);
 		g_system->updateScreen();
 		g_system->delayMillis(3);
 	}
