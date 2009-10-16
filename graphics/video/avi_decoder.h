@@ -188,8 +188,9 @@ public:
 	void closeFile();
 
 	bool decodeNextFrame();
-
+	int32 getAudioLag();
 	int32 getFrameRate() { return _vidsHeader.rate / _vidsHeader.scale; }
+
 private:
 	Audio::Mixer *_mixer;
 	BITMAPINFOHEADER _bmInfo;

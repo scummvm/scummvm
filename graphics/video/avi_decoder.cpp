@@ -361,6 +361,27 @@ bool AviDecoder::decodeNextFrame() {
 	return _videoInfo.currentFrame < _videoInfo.frameCount;
 }
 
+int32 AviDecoder::getAudioLag() {
+	if (!_fileStream)
+		return 0;
+
+	int32 frameDelay = getFrameDelay();
+	int32 videoTime = _videoInfo.currentFrame * frameDelay;
+	int32 audioTime;
+
+	if (!_audStream) {
+		/* No audio.
+		   Calculate the lag by how much time has gone by since the first frame
+		   and how much time *should* have passed.
+		*/
+
+		audioTime = (g_system->getMillis() - _videoInfo.startTime) * 100;
+	} else
+		audioTime = (((int32)_mixer->getSoundElapsedTime(*_audHandle)) * 100);
+
+	return videoTime - audioTime;
+}
+
 Codec *AviDecoder::createCodec() {
 	switch (_vidsHeader.streamHandler) {
 		case ID_CRAM:
