@@ -935,6 +935,9 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 
 	s->_gui->animate(castListReference, cycle, argc, argv);
 
+	// FIXME? currenty this speed throttling causes flickering in kq6 (when looking at the box)
+	//  this will get possibly fixed when reanimate and real cel updates within kAnimate are implemented
+
 	// Do some speed throttling to calm down games that rely on counting cycles
 	uint32 curTime = g_system->getMillis();
 	uint32 duration = curTime - s->_lastAnimateTime;
