@@ -48,8 +48,10 @@ SciGuiTransitions::~SciGuiTransitions() {
 
 // This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
 static const GuiTransitionTranslateEntry oldTransitionIDs[] = {
+	{   0, SCI_TRANSITIONS_VERTICALROLLFROMCENTER,		false },
 	{   1, SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER,	false },
 	{   8, SCI_TRANSITIONS_BLOCKS,						false },
+	{   9, SCI_TRANSITIONS_VERTICALROLLTOCENTER,		false },
 	{  10, SCI_TRANSITIONS_HORIZONTALROLLTOCENTER,		false },
 	{  17, SCI_TRANSITIONS_BLOCKS,						true },
 	{  18, SCI_TRANSITIONS_PIXELATION,					false },
@@ -104,6 +106,12 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		warning("SciGuiTransitions: blackout flag currently not supported");
 
 	switch (_number) {
+	case SCI_TRANSITIONS_VERTICALROLLFROMCENTER:
+		setNewPalette(); verticalRollFromCenter();
+		break;
+	case SCI_TRANSITIONS_VERTICALROLLTOCENTER:
+		setNewPalette(); verticalRollFromCenter();
+		break;
 	case SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER:
 		setNewPalette(); horizontalRollFromCenter();
 		break;
@@ -297,6 +305,36 @@ void SciGuiTransitions::scroll() {
 			g_system->delayMillis(3);
 		}
 		break;
+	}
+}
+
+// vertically displays new screen starting from center - works on _picRect area only
+void SciGuiTransitions::verticalRollFromCenter() {
+	Common::Rect leftRect = Common::Rect(_picRect.left + (_picRect.width() / 2) -1, _picRect.top, _picRect.left + (_picRect.width() / 2), _picRect.bottom);
+	Common::Rect rightRect = Common::Rect(leftRect.right, _picRect.top, leftRect.right + 1, _picRect.bottom);
+
+	while ((leftRect.left > _picRect.left) && (rightRect.right < _picRect.right)) {
+		if (leftRect.left < _picRect.left)
+			leftRect.translate(1, 0);
+		if (rightRect.right > _picRect.right)
+			rightRect.translate(-1, 0);
+		_screen->copyRectToScreen(leftRect); leftRect.translate(-1, 0);
+		_screen->copyRectToScreen(rightRect); rightRect.translate(1, 0);
+		g_system->updateScreen();
+		g_system->delayMillis(2);
+	}
+}
+
+// vertically displays new screen starting from edges - works on _picRect area only
+void SciGuiTransitions::verticalRollToCenter() {
+	Common::Rect leftRect = Common::Rect(_picRect.left, _picRect.top, _picRect.left + 1, _picRect.bottom);
+	Common::Rect rightRect = Common::Rect(leftRect.right - 1, _picRect.top, leftRect.right, _picRect.bottom);
+
+	while (leftRect.left < rightRect.right) {
+		_screen->copyRectToScreen(leftRect); leftRect.translate(1, 0);
+		_screen->copyRectToScreen(rightRect); rightRect.translate(-1, 0);
+		g_system->updateScreen();
+		g_system->delayMillis(2);
 	}
 }
 

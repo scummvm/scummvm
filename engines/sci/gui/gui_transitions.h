@@ -37,6 +37,7 @@ struct GuiTransitionTranslateEntry {
 };
 
 enum {
+	SCI_TRANSITIONS_VERTICALROLLFROMCENTER		= 0,
 	SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER	= 1,
 	SCI_TRANSITIONS_BLOCKS						= 8,
 	SCI_TRANSITIONS_PIXELATION					= 9,
@@ -47,7 +48,8 @@ enum {
 	SCI_TRANSITIONS_SCROLLDOWN					= 14,
 	SCI_TRANSITIONS_NONE						= 100,
 	// here are transitions that are used by the old tableset, but are not included anymore in the new tableset
-	SCI_TRANSITIONS_HORIZONTALROLLTOCENTER		= 300
+	SCI_TRANSITIONS_VERTICALROLLTOCENTER		= 300,
+	SCI_TRANSITIONS_HORIZONTALROLLTOCENTER		= 301
 };
 
 class SciGuiScreen;
@@ -68,6 +70,8 @@ private:
 	void pixelation();
 	void blocks();
 	void scroll();
+	void verticalRollFromCenter();
+	void verticalRollToCenter();
 	void horizontalRollFromCenter();
 	void horizontalRollToCenter();
 
