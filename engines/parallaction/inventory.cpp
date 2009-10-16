@@ -319,7 +319,7 @@ void Inventory::clear(bool keepVerbs) {
 
 	uint first = (keepVerbs ? _numVerbs : 0);
 
-	for (uint16 slot = first; slot < _numVerbs; slot++) {
+	for (uint16 slot = first; slot < _numItems; slot++) {
 		_items[slot]._id = 0;
 		_items[slot]._index = 0;
 	}
