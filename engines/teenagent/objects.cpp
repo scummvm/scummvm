@@ -31,20 +31,20 @@ namespace TeenAgent {
 
 void Rect::load(byte * src) {
 	_base = src;
-	Common::MemoryReadStreamEndian ins(src, 8);
-	left = ins.readUint16();
-	top = ins.readUint16();
-	right = ins.readUint16();
-	bottom = ins.readUint16();
+	Common::MemoryReadStream ins(src, 8);
+	left = ins.readUint16LE();
+	top = ins.readUint16LE();
+	right = ins.readUint16LE();
+	bottom = ins.readUint16LE();
 }
 
 void Rect::save() {
 	assert(_base != NULL);
-	//Common::MemoryWriteStreamEndian out(_base, 8);  //FIXME: maybe add this class to common?
-	WRITE_LE_UINT16(_base + 0, left);
-	WRITE_LE_UINT16(_base + 2, top);
-	WRITE_LE_UINT16(_base + 4, right);
-	WRITE_LE_UINT16(_base + 6, bottom);
+	Common::MemoryWriteStream outs(_base, 8);
+	outs.writeUint16LE(left);
+	outs.writeUint16LE(top);
+	outs.writeUint16LE(right);
+	outs.writeUint16LE(bottom);
 }
 
 void Rect::render(Graphics::Surface *surface, uint8 color) const {
@@ -131,13 +131,13 @@ void InventoryObject::load(byte *src) {
 }
 
 void UseHotspot::load(byte *src) {
-	Common::MemoryReadStreamEndian in(src, 9);
+	Common::MemoryReadStream in(src, 9);
 	inventory_id = in.readByte();
 	object_id = in.readByte();
 	unk02 = in.readByte();
-	x = in.readUint16();
-	y = in.readUint16();
-	callback = in.readUint16();
+	x = in.readUint16LE();
+	y = in.readUint16LE();
+	callback = in.readUint16LE();
 }
 
 void Walkbox::dump() {

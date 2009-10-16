@@ -27,7 +27,6 @@
 #define TEENAGENT_OBJECTS_H
 
 #include "common/rect.h"
-#include "common/stream.h"
 #include "graphics/surface.h"
 
 namespace TeenAgent {
