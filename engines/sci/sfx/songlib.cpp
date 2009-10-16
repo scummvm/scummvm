@@ -23,7 +23,6 @@
  *
  */
 
-#include "sci/tools.h"
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"
 

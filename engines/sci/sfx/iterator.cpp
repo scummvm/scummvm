@@ -31,7 +31,6 @@
 #include "sci/sfx/iterator_internal.h"
 #include "sci/engine/state.h"	// for sfx_player_tell_synth :/
 #include "sci/sfx/core.h"	// for sfx_player_tell_synth
-#include "sci/tools.h"
 
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
@@ -45,6 +44,21 @@ static const int MIDI_cmdlen[16] = {0, 0, 0, 0, 0, 0, 0, 0,
 
 /*#define DEBUG_DECODING*/
 /*#define DEBUG_VERBOSE*/
+
+/** Find first set bit in bits and return its index. Returns 0 if bits is 0. */
+static int sci_ffs(int bits) {
+	if (!bits)
+		return 0;
+
+	int retval = 1;
+
+	while (!(bits & 1)) {
+		retval++;
+		bits >>= 1;
+	}
+
+	return retval;
+}
 
 static void print_tabs_id(int nr, songit_id_t id) {
 	while (nr-- > 0)

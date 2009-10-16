@@ -28,7 +28,6 @@
 #ifndef SCI_SFX_SEQ_INSTRUMENT_MAP_H
 #define SCI_SFX_SEQ_INSTRUMENT_MAP_H
 
-#include "sci/tools.h"
 #include "sci/sfx/device.h"
 
 namespace Sci {

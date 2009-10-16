@@ -28,7 +28,6 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/tools.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
 #include "sci/engine/state.h"

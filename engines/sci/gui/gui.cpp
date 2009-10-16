@@ -29,7 +29,6 @@
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/engine/state.h"
-#include "sci/tools.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_palette.h"

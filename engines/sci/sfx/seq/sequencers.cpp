@@ -24,7 +24,6 @@
  */
 
 #include "../sequencer.h"
-#include "sci/tools.h"
 
 namespace Sci {
 

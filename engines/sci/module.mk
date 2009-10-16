@@ -7,7 +7,6 @@ MODULE_OBJS = \
 	resource.o \
 	sci.o \
 	seq_decoder.o \
-	tools.o \
 	vocabulary.o \
 	engine/game.o \
 	engine/gc.o \

@@ -24,6 +24,9 @@
  */
 
 #include <time.h>	// for time() to seed rand() via srand()
+
+#include "common/endian.h"
+
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
 #include "sci/sci.h"	// for kDebugLevelSci0Pic

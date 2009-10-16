@@ -25,7 +25,6 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
-#include "sci/tools.h"
 #include "sci/gui/gui_screen.h"
 #include "sci/gui/gui_font.h"
 

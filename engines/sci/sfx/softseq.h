@@ -29,7 +29,6 @@
 #include "common/error.h"
 #include "sci/sfx/sfx_pcm.h"
 #include "sci/sfx/sequencer.h"
-#include "sci/tools.h"
 
 namespace Sci {
 

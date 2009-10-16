@@ -28,7 +28,6 @@
 
 #include "common/scummsys.h"
 #include "common/rect.h"
-#include "sci/tools.h"
 #include "sci/gfx/palette.h"
 
 namespace Sci {

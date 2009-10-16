@@ -25,7 +25,6 @@
 
 /* Sound subsystem core: Event handler, sound player dispatching */
 
-#include "sci/tools.h"
 #include "sci/sci.h"
 #include "sci/sfx/core.h"
 #include "sci/sfx/iterator.h"

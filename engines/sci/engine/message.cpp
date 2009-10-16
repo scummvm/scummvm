@@ -26,7 +26,6 @@
 #include "sci/engine/message.h"
 #include "sci/engine/kernel.h"
 #include "sci/engine/seg_manager.h"
-#include "sci/tools.h"
 
 namespace Sci {
 

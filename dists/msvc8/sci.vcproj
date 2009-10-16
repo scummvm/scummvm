@@ -161,8 +161,6 @@
 		<File RelativePath="..\..\engines\sci\seq_decoder.cpp" />
 		<File RelativePath="..\..\engines\sci\seq_decoder.h" />
 		<File RelativePath="..\..\engines\sci\engine\script.cpp" />
-		<File RelativePath="..\..\engines\sci\tools.cpp" />
-		<File RelativePath="..\..\engines\sci\tools.h" />
 		<File RelativePath="..\..\engines\sci\uinput.h" />
 		<File RelativePath="..\..\engines\sci\vocabulary.cpp" />
 		<File RelativePath="..\..\engines\sci\vocabulary.h" />

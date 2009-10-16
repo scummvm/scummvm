@@ -29,7 +29,6 @@
 #include "sci/engine/segment.h"
 #include "sci/engine/seg_manager.h"
 #include "sci/engine/state.h"
-#include "sci/tools.h"
 
 namespace Sci {
 
