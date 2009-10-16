@@ -146,10 +146,10 @@ SaveStateList DraciMetaEngine::listSaves(const char *target) const {
 				if (Draci::readSavegameHeader(in, header)) {
 					saveList.push_back(SaveStateDescriptor(slotNum, header.saveName));
 					if (header.thumbnail) {
-                                                header.thumbnail->free();
-                                                delete header.thumbnail;
-                                        }
-                                }
+						header.thumbnail->free();
+						delete header.thumbnail;
+					}
+				}
 				delete in;
 			}
 		}

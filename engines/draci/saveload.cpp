@@ -62,6 +62,7 @@ bool readSavegameHeader(Common::InSaveFile *in, DraciSavegameHeader &header) {
 	// Get the thumbnail
 	header.thumbnail = new Graphics::Surface();
 	if (!Graphics::loadThumbnail(*in, *header.thumbnail)) {
+		header.thumbnail->free();
 		delete header.thumbnail;
 		header.thumbnail = NULL;
 		return false;
@@ -131,8 +132,13 @@ Common::Error loadSavegameData(int saveGameIdx, DraciEngine *vm) {
 
 	// Skip over the savegame header
 	DraciSavegameHeader header;
-	readSavegameHeader(f, header);
-	if (header.thumbnail) delete header.thumbnail;
+	if (!readSavegameHeader(f, header)) {
+		return Common::kNoGameDataFoundError;
+	}
+	if (header.thumbnail) {
+		header.thumbnail->free();
+		delete header.thumbnail;
+	}
 
 	// Pre-processing
 	vm->_game->rememberRoomNumAsPrevious();
