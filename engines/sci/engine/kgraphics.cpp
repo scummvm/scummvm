@@ -941,9 +941,17 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// Do some speed throttling to calm down games that rely on counting cycles
 	uint32 curTime = g_system->getMillis();
 	uint32 duration = curTime - s->_lastAnimateTime;
+	uint32 neededSleep = 40;
 
-	if (duration < 40) {
-		gfxop_sleep(s->gfx_state, 40-duration);
+	// We are doing this, so that games like sq3 dont think we are running too slow and will remove details (like
+	//  animated sierra logo at the beginning). Hopefully this wont cause regressions with pullups in lsl3 (FIXME?)
+	if (s->_lastAnimateCounter < 10) {
+		s->_lastAnimateCounter++;
+		neededSleep = 8;
+	}
+
+	if (duration < neededSleep) {
+		gfxop_sleep(s->gfx_state, neededSleep - duration);
 		s->_lastAnimateTime = g_system->getMillis();
 	} else {
 		s->_lastAnimateTime = curTime;

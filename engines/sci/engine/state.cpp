@@ -106,6 +106,7 @@ EngineState::EngineState(ResourceManager *res, Kernel *kernel, Vocabulary *voc, 
 
 	successor = 0;
 
+	_lastAnimateCounter = 0;
 	_lastAnimateTime = 0;
 
 	_setCursorType = SCI_VERSION_AUTODETECT;
