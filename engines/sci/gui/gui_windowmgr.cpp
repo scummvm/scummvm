@@ -47,10 +47,9 @@ enum {
 SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAnimate *animate)
 	: _screen(screen), _gfx(gfx), _animate(animate) {
 
-	_wmgrPort = new GuiPort(1);
-	_windowsById.resize(2);
-	_windowsById[0] = 0;
-	_windowsById[1] = _wmgrPort;
+	_wmgrPort = new GuiPort(0);
+	_windowsById.resize(1);
+	_windowsById[0] = _wmgrPort;
 
 	int16 offTop = 10;
 
@@ -64,7 +63,7 @@ SciGuiWindowMgr::SciGuiWindowMgr(SciGuiScreen *screen, SciGuiGfx *gfx, SciGuiAni
 	_wmgrPort->curLeft = 0;
 	_windowList.push_front(_wmgrPort);
 
-	_picWind = NewWindow(Common::Rect(0, 10, _screen->_width, _screen->_height), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
+	_picWind = NewWindow(Common::Rect(0, offTop, _screen->_width, _screen->_height), 0, 0, SCI_WINDOWMGR_STYLE_TRANSPARENT | SCI_WINDOWMGR_STYLE_NOFRAME, 0, true);
 }
 
 SciGuiWindowMgr::~SciGuiWindowMgr() {
