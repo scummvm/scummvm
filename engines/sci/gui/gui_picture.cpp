@@ -61,7 +61,7 @@ void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, i
 	_EGApaletteNo = EGApaletteNo;
 	_priority = 0;
 
-	if (READ_LE_UINT16(_resource->data) == 0x26) {
+ 	if (READ_LE_UINT16(_resource->data) == 0x26) {
 		// SCI 1.1 VGA picture
 		drawSci11Vga();
 	} else {
@@ -467,6 +467,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_EGA_EMBEDDED_VIEW:
 					vectorGetAbsCoords(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
+					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
@@ -495,6 +496,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
 					vectorGetAbsCoords(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
+					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
 					curPos += size;
 					break;
