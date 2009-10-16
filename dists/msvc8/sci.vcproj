@@ -87,8 +87,6 @@
 			<File RelativePath="..\..\engines\sci\gfx\res_pal.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\res_pic.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\res_view.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\seq_decoder.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\seq_decoder.h" />
 		</Filter>
 		<Filter	Name="gui">
 			<File RelativePath="..\..\engines\sci\gui\gui.cpp" />
@@ -160,6 +158,8 @@
 		<File RelativePath="..\..\engines\sci\resource.h" />
 		<File RelativePath="..\..\engines\sci\sci.cpp" />
 		<File RelativePath="..\..\engines\sci\sci.h" />
+		<File RelativePath="..\..\engines\sci\seq_decoder.cpp" />
+		<File RelativePath="..\..\engines\sci\seq_decoder.h" />
 		<File RelativePath="..\..\engines\sci\engine\script.cpp" />
 		<File RelativePath="..\..\engines\sci\tools.cpp" />
 		<File RelativePath="..\..\engines\sci\tools.h" />

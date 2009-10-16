@@ -30,12 +30,12 @@
 #include "sci/sci.h"
 #include "sci/debug.h"	// for g_debug_sleeptime_factor
 #include "sci/resource.h"
+#include "sci/seq_decoder.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
-#include "sci/gfx/seq_decoder.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_screen.h"

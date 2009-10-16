@@ -6,6 +6,7 @@ MODULE_OBJS = \
 	detection.o \
 	resource.o \
 	sci.o \
+	seq_decoder.o \
 	tools.o \
 	vocabulary.o \
 	engine/game.o \
@@ -52,7 +53,6 @@ MODULE_OBJS = \
 	gfx/res_pal.o \
 	gfx/res_pic.o \
 	gfx/res_view.o \
-	gfx/seq_decoder.o \
 	gui/gui.o \
 	gui/gui_animate.o \
 	gui/gui_cursor.o \

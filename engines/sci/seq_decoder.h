@@ -41,7 +41,6 @@ public:
 	/**
 	 * Load a SEQ encoded video file
 	 * @param filename	the filename to load
-	 * @param frameDelay the delay between frames, in ms
 	 */
 	bool loadFile(const char *fileName) { return loadFile(fileName, 10); }
 

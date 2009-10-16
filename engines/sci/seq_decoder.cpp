@@ -31,7 +31,7 @@
 
 #include "graphics/surface.h"
 
-#include "sci/gfx/seq_decoder.h"
+#include "sci/seq_decoder.h"
 
 namespace Graphics {
 
