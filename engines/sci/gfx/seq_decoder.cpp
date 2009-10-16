@@ -129,9 +129,13 @@ bool SeqDecoder::decodeNextFrame() {
 		_videoInfo.startTime = g_system->getMillis();
 
 	if (frameType == kSeqFrameFull) {
-		assert (frameLeft == 0);
-		assert (frameWidth == 320);
-		_fileStream->read(_videoFrameBuffer + 320 * frameTop, frameSize);
+		if (frameLeft != 0 && frameWidth != 320) {
+			// This case should never happen, but apparently it does in the
+			// seagulls video in KQ6 CD (most likely due to bad/incomplete data)
+			_fileStream->skip(frameSize);
+		} else {
+			_fileStream->read(_videoFrameBuffer + 320 * frameTop, frameSize);
+		}
 	} else {
 		byte *buf = new byte[frameSize];
 		_fileStream->read(buf, frameSize);

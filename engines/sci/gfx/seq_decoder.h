@@ -31,7 +31,7 @@
 namespace Graphics {
 
 /**
- * Implementation of the KQ6 floppy SEQ decoder
+ * Implementation of the KQ6 DOS floppy/CD SEQ decoder
  */
 class SeqDecoder : public VideoDecoder {
 public:
