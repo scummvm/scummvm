@@ -125,6 +125,20 @@ void file_open(EngineState *s, const char *filename, int mode) {
 		// If no matching savestate exists: fall back to reading from a regular file
 		if (!inFile)
 			inFile = SearchMan.createReadStreamForMember(englishName);
+
+		// Special case for LSL3: It tries to create a new dummy file, LARRY3.DRV
+		// Apparently, if the file doesn't exist here, it should be created. The game
+		// scripts then go ahead and fill its contents with data. It seems to be a similar
+		// case as the dummy MEMORY.DRV file in LSL5, but LSL5 creates the file if it can't
+		// find it with a separate call to file_open()
+		if (!inFile && englishName == "LARRY3.DRV") {
+			outFile = saveFileMan->openForSaving(wrappedName);
+			outFile->finalize();
+			delete outFile;
+			outFile = 0;
+			inFile = SearchMan.createReadStreamForMember(wrappedName);
+		}
+
 		if (!inFile)
 			warning("file_open(_K_FILE_MODE_OPEN_OR_FAIL) failed to open file '%s'", englishName.c_str());
 	} else if (mode == _K_FILE_MODE_CREATE) {
@@ -233,7 +247,8 @@ void file_close(EngineState *s, int handle) {
 
 reg_t kFClose(EngineState *s, int argc, reg_t *argv) {
 	debug(3, "kFClose(%d)", argv[0].toUint16());
-	file_close(s, argv[0].toUint16());
+	if (argv[0] != SIGNAL_REG)
+		file_close(s, argv[0].toUint16());
 	return s->r_acc;
 }
 
