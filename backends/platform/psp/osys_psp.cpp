@@ -60,8 +60,6 @@ unsigned short __attribute__((aligned(16))) clut256[256];
 unsigned short __attribute__((aligned(16))) mouseClut[256];
 unsigned short __attribute__((aligned(16))) cursorPalette[256];
 unsigned short __attribute__((aligned(16))) kbClut[256];
-//unsigned int __attribute__((aligned(16))) offscreen256[640*480];
-//unsigned int __attribute__((aligned(16))) overlayBuffer256[640*480*2];
 unsigned int __attribute__((aligned(16))) mouseBuf256[MOUSE_SIZE*MOUSE_SIZE];
 
 extern unsigned int  size_keyboard_symbols_compressed;
@@ -144,7 +142,7 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 		error("OSystem_PSP: uncompressing keyboard_symbols_shift failed");
 
 	_keyboardVisible = false;
-	_clut = (unsigned short *)(((unsigned int)clut256) | 0x40000000);
+	_clut = clut256;	// Mustn't use uncached as it'll cause cache coherency issues
 	_kbdClut = (unsigned short *)(((unsigned int)kbClut) | 0x40000000);
 	_mouseBuf = (byte *)mouseBuf256;
 	_graphicMode = STRETCHED_480X272;
@@ -154,9 +152,8 @@ OSystem_PSP::OSystem_PSP() : _screenWidth(0), _screenHeight(0), _overlayWidth(0)
 	_mouseY = PSP_SCREEN_HEIGHT >> 1;
 
 
-	//sceKernelDcacheWritebackAll();
 
-	// setup
+	// Init GU
 	sceGuInit();
 	sceGuStart(0, displayList);
 	sceGuDrawBuffer(GU_PSM_8888, (void *)0, BUF_WIDTH);
@@ -353,7 +350,6 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 
 
 	byte *dst = _offscreen + y * _screenWidth + x;
-	dst = (byte *)((unsigned int)dst | 0x40000000); // Make this an uncached write
 
 	if (_screenWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w);
@@ -364,6 +360,7 @@ void OSystem_PSP::copyRectToScreen(const byte *buf, int pitch, int x, int y, int
 			dst += _screenWidth;
 		} while (--h);
 	}
+	sceKernelDcacheWritebackAll();
 
 }
 
@@ -387,7 +384,6 @@ void OSystem_PSP::updateScreen() {
 		return;
 
 	_lastScreenUpdate = now;
-
 
 	sceGuStart(0, displayList);
 
@@ -668,7 +664,10 @@ void OSystem_PSP::hideOverlay() {
 
 void OSystem_PSP::clearOverlay() {
 	PSPDebugTrace("clearOverlay\n");
+
 	bzero(_overlayBuffer, _overlayWidth * _overlayHeight * sizeof(OverlayColor));
+	
+	sceKernelDcacheWritebackAll();
 }
 
 void OSystem_PSP::grabOverlay(OverlayColor *buf, int pitch) {
@@ -711,7 +710,6 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 
 
 	OverlayColor *dst = _overlayBuffer + (y * _overlayWidth + x);
-	dst = (OverlayColor *)((unsigned int)dst | 0x40000000); // Make this an uncached write
 
 	if (_overlayWidth == pitch && pitch == w) {
 		memcpy(dst, buf, h * w * sizeof(OverlayColor));
@@ -722,6 +720,7 @@ void OSystem_PSP::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 			dst += _overlayWidth;
 		} while (--h);
 	}
+	sceKernelDcacheWritebackAll();
 }
 
 int16 OSystem_PSP::getOverlayWidth() {
@@ -771,10 +770,11 @@ void OSystem_PSP::setMouseCursor(const byte *buf, uint w, uint h, int hotspotX, 
 
 	memcpy(mouseClut, _palette, 256 * sizeof(unsigned short));
 	mouseClut[_mouseKeyColour] = 0;
-	sceKernelDcacheWritebackAll();
 
 	for (unsigned int i = 0; i < h; i++)
 		memcpy(_mouseBuf + i * MOUSE_SIZE, buf + i * w, w);
+
+	sceKernelDcacheWritebackAll();		
 }
 
 #define PAD_CHECK_TIME	40
