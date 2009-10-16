@@ -279,11 +279,11 @@ DECLARE_COMMAND_OPCODE(give) {
 	/* NOTE: the following code is disabled until I deal with _inventory and 
 	 * _charInventories not being public
 	 */
-    int item = ctxt._cmd->_object;
+/*  int item = ctxt._cmd->_object;
 	int recipient = ctxt._cmd->_characterId;
-//	_vm->_charInventories[recipient]->addItem(item);
-	_vm->dropItem(item);
-
+	_vm->_charInventories[recipient]->addItem(item);
+	_vm->_inventory->removeItem(item);
+*/
 }
 
 
