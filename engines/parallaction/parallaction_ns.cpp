@@ -351,18 +351,7 @@ void Parallaction_ns::changeLocation() {
 	LocationName locname;
 	locname.bind(location);
 
-	bool fullCleanup = false;
-	if (locname.hasCharacter()) {
-		CharacterName newName(locname.character());
-		fullCleanup = (strcmp(newName.getBaseName(), _char.getBaseName()));
-	}
-
-	if (fullCleanup) {
-		cleanupGame();
-	} else {
-		freeLocation(false);
-	}
-
+	freeLocation(false);
 
 	if (locname.hasSlide()) {
 		showSlide(locname.slide());
