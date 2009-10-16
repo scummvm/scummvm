@@ -40,6 +40,11 @@ enum {
 	SCI_ANIMATE_SIGNAL_FORCEUPDATE   = 0x0040,
 	SCI_ANIMATE_SIGNAL_REMOVEVIEW    = 0x0080,
 	SCI_ANIMATE_SIGNAL_FROZEN        = 0x0100,
+	SCI_ANIMATE_SIGNAL_EXTRAACTOR	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed to slow
+	SCI_ANIMATE_SIGNAL_BLOCKED		 = 0x0400, // unused by us, defines an actor that tried to move but was blocked
+	SCI_ANIMATE_SIGNAL_FIXEDLOOP	 = 0x0800, // unused by us
+	SCI_ANIMATE_SIGNAL_FIXEDCEL		 = 0x1000, // unused by us
+	SCI_ANIMATE_SIGNAL_IGNOREHORIZON = 0x2000, // unused by us, defines actor that can ignore horizon
 	SCI_ANIMATE_SIGNAL_IGNOREACTOR   = 0x4000,
 	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
 };
