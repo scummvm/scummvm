@@ -138,6 +138,7 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		setNewPalette(); scroll();
 		break;
 
+	case SCI_TRANSITIONS_NONE_LONGBOW:
 	case SCI_TRANSITIONS_NONE:
 		setNewPalette(); setNewScreen();
 		break;
