@@ -319,7 +319,7 @@ void DosSoundMan_ns::playLocationMusic(const char *location) {
 	}
 
 	if (!scumm_stricmp(location, "night") || !scumm_stricmp(location, "intsushi")) {
-		setMusicFile("nuts");
+		setMusicFile("soft");
 		playMusic();
 
 		debugC(2, kDebugExec, "changeLocation: started music 'soft'");
