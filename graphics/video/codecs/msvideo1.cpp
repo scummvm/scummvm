@@ -25,7 +25,7 @@
  
  // Based off ffmpeg's msvideo.cpp
  
-#include "graphics/video/msvideo1.h"
+#include "graphics/video/codecs/msvideo1.h"
 
 namespace Graphics {
 

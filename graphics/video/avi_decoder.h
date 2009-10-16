@@ -26,11 +26,8 @@
 #ifndef GRAPHICS_AVI_PLAYER_H
 #define GRAPHICS_AVI_PLAYER_H
 
-#include "common/file.h"
-#include "common/system.h"
-#include "common/rect.h"
-#include "common/util.h"
-
+#include "graphics/video/video_player.h"
+#include "graphics/video/codecs/codec.h"
 #include "sound/audiostream.h"
 #include "sound/mixer.h"
 
@@ -39,7 +36,7 @@ namespace Graphics {
 #define UNKNOWN_HEADER(a) error("Unknown header found -- \'%s\'", tag2str(a))
 #define AUDIO_RATE (_audsHeader.rate / _audsHeader.scale)
 	
-// ID's That are used throughout the AVI files
+// IDs used throughout the AVI files
 // that will be handled by this player
 #define ID_RIFF MKID_BE('RIFF')
 #define ID_AVI  MKID_BE('AVI ')
@@ -173,48 +170,37 @@ struct AVIStreamHeader {
 	uint32 sampleSize;
 	Common::Rect frame;
 };
-	
-class Codec {
-public:
-	Codec() {}
-	virtual ~Codec() {}
-	virtual Graphics::Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
-};
 
-class AVIPlayer {
-public:	
-	AVIPlayer(OSystem* syst);
-	~AVIPlayer();
-	
-	// Open/Load an AVI video from "filename"
-	bool open(Common::String filename);
-	
-	// Open/Load an AVI video from a stream
-	void open(Common::SeekableReadStream *stream);
-	
-	// Close the current AVI video and release any data
-	void close();
-	
-	uint32 getFrameRate() { return _vidsHeader.rate / _vidsHeader.scale; }
-	byte *getPalette() { _dirtyPalette = false; return _palette; }
-	Surface *getNextFrame();
-	bool dirtyPalette() { return _dirtyPalette; }
-	uint32 getCurFrame() { return _curFrame; }
-	uint32 getFrameCount() { return _header.totalFrames; }
+class AviDecoder : public VideoDecoder {
+public:
+	AviDecoder(Audio::Mixer *mixer);
+	virtual ~AviDecoder();
+
+	/**
+	 * Load an AVI video file
+	 * @param filename	the filename to load
+	 */
+	bool loadFile(const char *fileName);
+
+	/**
+	 * Close an AVI video file
+	 */
+	void closeFile();
+
+	bool decodeNextFrame();
+
+	int32 getFrameRate() { return _vidsHeader.rate / _vidsHeader.scale; }
 private:
-	OSystem *_system;
-	Common::SeekableReadStream *_stream;
+	Audio::Mixer *_mixer;
 	BITMAPINFOHEADER _bmInfo;
 	PCMWAVEFORMAT _wvInfo;
 	AVIOLDINDEX _ixInfo;
 	AVIHeader _header;
 	AVIStreamHeader _vidsHeader;
 	AVIStreamHeader _audsHeader;
-	byte *_palette;
+	byte _palette[3 * 256];
 	
 	bool _decodedHeader;
-	uint32 _curFrame;
-	bool _dirtyPalette;
 	
 	Codec *_videoCodec;
 	Codec *createCodec();
@@ -228,14 +214,14 @@ private:
 	Audio::AppendableAudioStream *_audStream;
 	Audio::AppendableAudioStream *createAudioStream();
 
-	uint32 _filesize;
-	
 	// Helper functions
 	static byte char2num(char c);
 	static byte getStreamNum(uint32 tag);
 	static uint16 getStreamType(uint32 tag);
+
+	Surface *getNextFrame();
 };
 
-} // End of namespace JMP
+} // End of namespace Graphics
 
 #endif

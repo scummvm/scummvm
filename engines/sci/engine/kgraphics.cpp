@@ -24,7 +24,7 @@
  */
 
 #include "graphics/cursorman.h"
-#include "graphics/video/avi_player.h"
+#include "graphics/video/avi_decoder.h"
 #include "graphics/surface.h"
 
 #include "sci/sci.h"
@@ -978,102 +978,6 @@ reg_t kDisplay(EngineState *s, int argc, reg_t *argv) {
 	return s->r_acc;
 }
 
-static reg_t kShowMovie_Windows(EngineState *s, int argc, reg_t *argv) {
-	Common::String filename = s->_segMan->getString(argv[1]);
-
-	Graphics::AVIPlayer *player = new Graphics::AVIPlayer(g_system);
-
-	if (!player->open(filename)) {
-		warning("Failed to open movie file %s", filename.c_str());
-		return s->r_acc;
-	}
-
-	uint32 startTime = g_system->getMillis();
-	bool play = true;
-
-	while (play && player->getCurFrame() < player->getFrameCount()) {
-		uint32 elapsed = g_system->getMillis() - startTime;
-
-		if (elapsed >= player->getCurFrame() * 1000 / player->getFrameRate()) {
-			Graphics::Surface *surface = player->getNextFrame();
-
-			Palette *palette = NULL;
-
-			if (player->dirtyPalette()) {
-				byte *rawPalette = player->getPalette();
-				Palette *colors = new Palette(256);
-
-				byte r, g, b;
-
-				for (uint16 i = 0; i < 256; i++) {
-					r = rawPalette[i * 4];
-					g = rawPalette[i * 4 + 1];
-					b = rawPalette[i * 4 + 2];
-					colors->setColor(i, r, g, b);
-				}
-
-				palette->forceInto(s->gfx_state->driver->getMode()->palette);
-			}
-
-			if (surface) {
-				// Allocate a pixmap
-				gfx_pixmap_t *pixmap = gfx_new_pixmap(surface->w, surface->h, 0, 0, 0);
-				assert(pixmap);
-				gfx_pixmap_alloc_index_data(pixmap);
-
-				// Copy data from the surface
-				memcpy(pixmap->index_data, surface->pixels, surface->w * surface->h);
-				pixmap->xoffset = (g_system->getWidth() - surface->w) / 2;
-				pixmap->yoffset = (g_system->getHeight() - surface->h) / 2;
-				pixmap->palette = palette;
-
-				// Copy the frame to the screen
-				gfx_xlate_pixmap(pixmap, s->gfx_state->driver->getMode());
-				gfxop_draw_pixmap(s->gfx_state, pixmap, gfx_rect(0, 0, 320, 200), Common::Point(pixmap->xoffset, pixmap->yoffset));
-				gfxop_update_box(s->gfx_state, gfx_rect(0, 0, 320, 200));
-				gfx_free_pixmap(pixmap);
-
-				// Surface is freed when the codec in the video is deleted
-			}
-		}
-
-		Common::Event event;
-		while (g_system->getEventManager()->pollEvent(event)) {
-			switch (event.type) {
-				case Common::EVENT_QUIT:
-					play = false;
-					quit_vm();
-					break;
-				default:
-					break;
-			}
-		}
-
-		g_system->delayMillis(10);
-	}
-
-	delete player;
-
-	return s->r_acc;
-}
-
-static reg_t kShowMovie_DOS(EngineState *s, int argc, reg_t *argv) {
-	Common::String filename = s->_segMan->getString(argv[0]);
-	int delay = argv[1].toUint16(); // Time between frames in ticks
-
-	Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
-	Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
-	if (seqDecoder->loadFile(filename.c_str(), delay))
-		player->playVideo();
-	else
-		warning("Failed to open movie file %s", filename.c_str());
-	seqDecoder->closeFile();
-	delete player;
-	delete seqDecoder;
-
-	return s->r_acc;
-}
-
 reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 	// KQ6 Windows calls this with one argument. It doesn't seem
 	// to have a purpose...
@@ -1082,10 +986,38 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 
 	// The Windows and DOS versions use different video format as well
 	// as a different argument set.
-	if (argv[0].toUint16() == 0)
-		return kShowMovie_Windows(s, argc, argv);
+	if (argv[0].toUint16() == 0) {
+		// Windows
 
-	return kShowMovie_DOS(s, argc, argv);
+		Common::String filename = s->_segMan->getString(argv[1]);
+
+		Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
+		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
+		if (aviDecoder->loadFile(filename.c_str()))
+			player->playVideo();
+		else
+			warning("Failed to open movie file %s", filename.c_str());
+		aviDecoder->closeFile();
+		delete player;
+		delete aviDecoder;
+	} else {
+		// DOS
+
+		Common::String filename = s->_segMan->getString(argv[0]);
+		int delay = argv[1].toUint16(); // Time between frames in ticks
+
+		Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
+		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
+		if (seqDecoder->loadFile(filename.c_str(), delay))
+			player->playVideo();
+		else
+			warning("Failed to open movie file %s", filename.c_str());
+		seqDecoder->closeFile();
+		delete player;
+		delete seqDecoder;
+	}
+
+	return s->r_acc;
 }
 
 reg_t kSetVideoMode(EngineState *s, int argc, reg_t *argv) {

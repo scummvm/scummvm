@@ -22,31 +22,22 @@
  * $Id$
  *
  */
- 
-#ifndef GRAPHICS_MSVIDEO1_H
-#define GRAPHICS_MSVIDEO1_H
- 
-#include "graphics/video/avi_player.h"
+
+#ifndef GRAPHICS_CODEC_H
+#define GRAPHICS_CODEC_H
+
+#include "common/stream.h"
 #include "graphics/surface.h"
- 
+
 namespace Graphics {
- 
-class MSVideo1Decoder : public Codec {
+	
+class Codec {
 public:
-	MSVideo1Decoder(uint16 width, uint16 height, byte bitsPerPixel);
-	~MSVideo1Decoder();
-
-	Surface *decodeImage(Common::SeekableReadStream *stream);
-
-private:
-	byte _bitsPerPixel;
-	
-	Surface *_surface;
-	
-	void decode8(Common::SeekableReadStream *stream);
-	//void decode16(Common::SeekableReadStream *stream);
+	Codec() {}
+	virtual ~Codec() {}
+	virtual Surface *decodeImage(Common::SeekableReadStream *stream) = 0;
 };
 
-}
+} // End of namespace Graphics
 
 #endif

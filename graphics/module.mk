@@ -21,13 +21,13 @@ MODULE_OBJS := \
 	thumbnail.o \
 	VectorRenderer.o \
 	VectorRendererSpec.o \
-	video/avi_player.o \
+	video/avi_decoder.o \
 	video/dxa_decoder.o \
 	video/flic_decoder.o \
 	video/mpeg_player.o \
-	video/msvideo1.o \
 	video/smk_decoder.o \
 	video/video_player.o \
+	video/codecs/msvideo1.o \
 	video/coktelvideo/indeo3.o \
 	video/coktelvideo/coktelvideo.o
 
