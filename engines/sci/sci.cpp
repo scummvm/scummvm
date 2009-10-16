@@ -132,8 +132,8 @@ Common::Error SciEngine::run() {
 		return Common::kUnknownError;
 
 	// Gui change
-	_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
-	//_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
+	//_gamestate->_gui = new SciGui(_gamestate, screen, palette, cursor);    // new
+	_gamestate->_gui = new SciGui32(_gamestate, screen, palette, cursor);  // old
 
 	if (game_init(_gamestate)) { /* Initialize */
 		warning("Game initialization failed: Aborting...");
