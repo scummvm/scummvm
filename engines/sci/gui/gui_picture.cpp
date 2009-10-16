@@ -65,7 +65,7 @@ void SciGuiPicture::draw(int16 animationNr, bool mirroredFlag, bool addToFlag, i
 		// SCI 1.1 VGA picture
 		drawSci11Vga();
 	} else {
-		// EGA or Amiga vector data
+		// VGA, EGA or Amiga vector data
 		drawVectorData(_resource->data, _resource->size);
 	}
 }
