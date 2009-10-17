@@ -3206,24 +3206,30 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			_screen->updateScreen();
 		}
 
-		int del = (int)(delayTimer - _system->getMillis());
+		uint32 tm = _system->getMillis();
+		uint32 del = (delayTimer > tm) ? (delayTimer - tm) : 0;
+
 		do {
-			int step = del > _tickLength ? _tickLength : del;
+			uint32 step = del > _tickLength ? _tickLength : del;
 
 			if (!pal1 || !pal2) {
-				if (del > 0)
+				if (del) {
 					delay(step);
-				del -= step;
+					del -= step;
+				}
 				continue;
 			}
 
-			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
+			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov) {
+				updateInput();
 				return;
+			}
 
-			if (del > 0)
+			if (del) {
 				delay(step);
-			del -= step;
-		} while (del > 0);
+				del -= step;
+			}
+		} while (del);
 
 		if (!mov)
 			continue;
