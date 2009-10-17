@@ -1631,13 +1631,22 @@ private:
 	void generateOutput(int32 &leftSample, int32 &rightSample, int32 *del, int32 *feed);
 
 	struct ChanInternal {
+		ChanInternal() {
+			memset(this, 0, sizeof(ChanInternal));
+		}
+
+		~ChanInternal() {
+			for (uint i = 0; i < ARRAYSIZE(opr); ++i)
+				delete opr[i];
+		}
+
 		uint16 frqTemp;
 		bool enableLeft;
 		bool enableRight;
 		bool updateEnvelopeParameters;
 		int32 feedbuf[3];
 		uint8 algorithm;
-		TownsPC98_OpnOperator **opr;
+		TownsPC98_OpnOperator *opr[4];
 	};
 
 	TownsPC98_OpnSquareSineSource *_ssg;
@@ -2929,7 +2938,7 @@ TownsPC98_OpnCore::TownsPC98_OpnCore(Audio::Mixer *mixer, OpnType type) :
 	_mixer(mixer),
 	_chanInternal(0), _ssg(0), _prc(0),
 	_numChan(type == OD_TYPE26 ? 3 : 6), _numSSG(type == OD_TOWNS ? 0 : 3), _hasPercussion(type == OD_TYPE86 ? true : false),
-	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0),	_oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
+	_oprRates(0), _oprRateshift(0), _oprAttackDecay(0), _oprFrq(0), _oprSinTbl(0), _oprLevelOut(0), _oprDetune(0),
 	_baserate(55125.0f / (float)mixer->getOutputRate()),
 	_regProtectionFlag(false), _ready(false) {
 
@@ -2963,14 +2972,11 @@ bool TownsPC98_OpnCore::init() {
 
 	generateTables();
 
-	TownsPC98_OpnOperator **opr = new TownsPC98_OpnOperator*[_numChan << 2];
-	for (int i = 0; i < (_numChan << 2); i++)
-		opr[i] = new TownsPC98_OpnOperator(_timerbase, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
-
 	_chanInternal = new ChanInternal[_numChan];
 	for (int i = 0; i < _numChan; i++) {
 		memset(&_chanInternal[i], 0, sizeof(ChanInternal));
-		_chanInternal[i].opr = &opr[i << 2];
+		for (int j = 0; j < 4; ++j)
+			_chanInternal[i].opr[j] = new TownsPC98_OpnOperator(_timerbase, _oprRates, _oprRateshift, _oprAttackDecay, _oprFrq, _oprSinTbl, _oprLevelOut, _oprDetune);
 	}
 
 	if (_numSSG) {
