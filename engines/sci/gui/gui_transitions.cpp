@@ -25,7 +25,7 @@
 
 #include "common/util.h"
 #include "common/stack.h"
-#include "graphics/primitives.h"
+#include "graphics/surface.h"
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
@@ -76,6 +76,29 @@ static const GuiTransitionTranslateEntry oldTransitionIDs[] = {
 	{ 255, 255,											false }
 };
 
+// this table defines the blackout-transition that needs to be done prior doing the actual transition
+static const GuiTransitionTranslateEntry blackoutTransitionIDs[] = {
+	{ SCI_TRANSITIONS_VERTICALROLL_FROMCENTER,			SCI_TRANSITIONS_VERTICALROLL_TOCENTER },
+	{ SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER,		SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,				SCI_TRANSITIONS_STRAIGHT_FROM_LEFT },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,				SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,				SCI_TRANSITIONS_STRAIGHT_FROM_TOP },
+	{ SCI_TRANSITIONS_STRAIGHT_FROM_TOP,				SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM },
+	{ SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,			SCI_TRANSITIONS_DIAGONALROLL_TOCENTER },
+	{ SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,			SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER },
+	{ SCI_TRANSITIONS_BLOCKS,							SCI_TRANSITIONS_BLOCKS },
+	{ SCI_TRANSITIONS_PIXELATION,						SCI_TRANSITIONS_PIXELATION },
+	{ SCI_TRANSITIONS_FADEPALETTE,						SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_SCROLL_RIGHT,						SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_SCROLL_LEFT,						SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_SCROLL_UP,						SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_SCROLL_DOWN,						SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_NONE_LONGBOW,						SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_NONE,								SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_VERTICALROLL_TOCENTER,			SCI_TRANSITIONS_NONE },
+	{ SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,			SCI_TRANSITIONS_NONE }
+};
+
 void SciGuiTransitions::init() {
 	_oldScreen = new byte[_screen->_displayHeight * _screen->_displayWidth];
 
@@ -90,95 +113,135 @@ void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
 	_blackoutFlag = blackoutFlag;
 }
 
+// will translate a number and return corresponding translationEntry
+const GuiTransitionTranslateEntry *SciGuiTransitions::translateNumber (int16 number, const GuiTransitionTranslateEntry *tablePtr) {
+	while (1) {
+		if (tablePtr->orgId == 255)
+			return NULL;
+		if (tablePtr->orgId == number)
+			return tablePtr;
+		tablePtr++;
+	}
+}
+
 void SciGuiTransitions::doit(Common::Rect picRect) {
 	const GuiTransitionTranslateEntry *translationEntry = _translationTable;
 
 	_picRect = picRect;
 
-	if (translationEntry) {
+	if (_translationTable) {
 		// We need to translate the ID
-		while (1) {
-			if (translationEntry->oldId == 255) {
-				warning("SciGuiTransitions: old ID %d not supported", _number);
-				setNewPalette(); setNewScreen();
-				_screen->_picNotValid = 0;
-				return;
-			}
-			if (translationEntry->oldId == _number) {
-				_number = translationEntry->realId;
-				_blackoutFlag = translationEntry->blackoutFlag;
-				break;
-			}
-			translationEntry++;
+		translationEntry = translateNumber(_number, _translationTable);
+		if (translationEntry) {
+			_number = translationEntry->newId;
+			_blackoutFlag = translationEntry->blackoutFlag;
+		} else {
+			warning("SciGuiTransitions: old ID %d not supported", _number);
+			_number = SCI_TRANSITIONS_NONE;
+			_blackoutFlag = false;
 		}
 	}
 
-	if (_blackoutFlag)
-		warning("SciGuiTransitions: blackout flag currently not supported");
+	if (_blackoutFlag) {
+		// We need to find out what transition we are supposed to use for blackout
+		translationEntry = translateNumber(_number, blackoutTransitionIDs);
 
-	switch (_number) {
+		doTransition(translationEntry->newId, true);
+	}
+
+	// Now we do the actual transition to the new screen
+	doTransition(_number, false);
+
+	_screen->_picNotValid = 0;
+}
+
+// This may get called twice, if blackoutFlag is set. It will get once called with blackoutFlag set and another time
+//  with no blackoutFlag.
+void SciGuiTransitions::doTransition(int16 number, bool blackoutFlag) {
+	if (number != SCI_TRANSITIONS_FADEPALETTE) {
+		setNewPalette(blackoutFlag);
+	}
+
+	switch (number) {
 	case SCI_TRANSITIONS_VERTICALROLL_FROMCENTER:
-		setNewPalette(); verticalRollFromCenter();
+		verticalRollFromCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_VERTICALROLL_TOCENTER:
-		setNewPalette(); verticalRollFromCenter();
+		verticalRollFromCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER:
-		setNewPalette(); horizontalRollFromCenter();
+		horizontalRollFromCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER:
-		setNewPalette(); horizontalRollToCenter();
+		horizontalRollToCenter(blackoutFlag);
 		break;
 	case SCI_TRANSITIONS_DIAGONALROLL_TOCENTER:
-		setNewPalette(); diagonalRollToCenter();
+		diagonalRollToCenter(blackoutFlag);
+		break;
 	case SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER:
-		setNewPalette(); diagonalRollFromCenter();
+		diagonalRollFromCenter(blackoutFlag);
+		break;
 
 	case SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT:
 	case SCI_TRANSITIONS_STRAIGHT_FROM_LEFT:
 	case SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM:
 	case SCI_TRANSITIONS_STRAIGHT_FROM_TOP:
-		setNewPalette(); straight(_number);
+		straight(number, blackoutFlag);
+		break;
 
 	case SCI_TRANSITIONS_PIXELATION:
-		setNewPalette(); pixelation();
+		pixelation(blackoutFlag);
 		break;
 
 	case SCI_TRANSITIONS_BLOCKS:
-		setNewPalette(); blocks();
+		blocks(blackoutFlag);
 		break;
 
 	case SCI_TRANSITIONS_FADEPALETTE:
-		fadeOut(); setNewScreen(); fadeIn();
+		if (!blackoutFlag) {
+			fadeOut(); setNewScreen(blackoutFlag); fadeIn();
+		}
 		break;
 
 	case SCI_TRANSITIONS_SCROLL_RIGHT:
 	case SCI_TRANSITIONS_SCROLL_LEFT:
 	case SCI_TRANSITIONS_SCROLL_UP:
 	case SCI_TRANSITIONS_SCROLL_DOWN:
-		setNewPalette(); scroll(_number);
+		scroll(number);
 		break;
 
 	case SCI_TRANSITIONS_NONE_LONGBOW:
 	case SCI_TRANSITIONS_NONE:
-		setNewPalette(); setNewScreen();
+		setNewScreen(blackoutFlag);
 		break;
+
 	default:
-		warning("SciGuiTransitions: ID %d not implemented", _number);
-		setNewPalette(); setNewScreen();
+		warning("SciGuiTransitions: ID %d not implemented", number);
+		setNewScreen(blackoutFlag);
 	}
-
-	_screen->_picNotValid = 0;
 }
 
-void SciGuiTransitions::setNewPalette() {
-	if (_isVGA)
-		_palette->setOnScreen();
+void SciGuiTransitions::setNewPalette(bool blackoutFlag) {
+	if (!blackoutFlag)
+		if (_isVGA)
+			_palette->setOnScreen();
 }
 
-void SciGuiTransitions::setNewScreen() {
-	_screen->copyRectToScreen(_picRect);
-	g_system->updateScreen();
+void SciGuiTransitions::setNewScreen(bool blackoutFlag) {
+	if (!blackoutFlag) {
+		_screen->copyRectToScreen(_picRect);
+		g_system->updateScreen();
+	}
+}
+
+void SciGuiTransitions::copyRectToScreen(const Common::Rect rect, bool blackoutFlag) {
+	if (!blackoutFlag) {
+		_screen->copyRectToScreen(rect);
+	} else {
+		Graphics::Surface *surface = g_system->lockScreen();
+		surface->fillRect(rect, 0);
+		g_system->unlockScreen();
+	}
 }
 
 // Note: dont do too many steps in here, otherwise cpu will crap out because of the load
@@ -210,7 +273,8 @@ void SciGuiTransitions::fadeIn() {
 }
 
 // pixelates the new picture over the old one - works against the whole screen
-void SciGuiTransitions::pixelation () {
+// TODO: it seems this needs to get applied on _picRect only if possible
+void SciGuiTransitions::pixelation (bool blackoutFlag) {
 	uint16 mask = 0x40, stepNr = 0;
 	Common::Rect pixelRect;
 
@@ -220,7 +284,7 @@ void SciGuiTransitions::pixelation () {
 			continue;
 		pixelRect.left = mask % 320; pixelRect.right = pixelRect.left + 1;
 		pixelRect.top = mask / 320;	pixelRect.bottom = pixelRect.top + 1;
-		_screen->copyRectToScreen(pixelRect);
+		copyRectToScreen(pixelRect, blackoutFlag);
 		if ((stepNr & 0x3FF) == 0) {
 			g_system->updateScreen();
 			g_system->delayMillis(5);
@@ -230,7 +294,8 @@ void SciGuiTransitions::pixelation () {
 }
 
 // like pixelation but uses 8x8 blocks - works against the whole screen
-void SciGuiTransitions::blocks() {
+// TODO: it seems this needs to get applied on _picRect only if possible
+void SciGuiTransitions::blocks(bool blackoutFlag) {
 	uint16 mask = 0x40, stepNr = 0;
 	Common::Rect blockRect;
 
@@ -240,7 +305,7 @@ void SciGuiTransitions::blocks() {
 			continue;
 		blockRect.left = (mask % 40) << 3; blockRect.right = blockRect.left + 8;
 		blockRect.top = (mask / 40) << 3; blockRect.bottom = blockRect.top + 8;
-		_screen->copyRectToScreen(blockRect);
+		copyRectToScreen(blockRect, blackoutFlag);
 		if ((stepNr & 7) == 0) {
 			g_system->updateScreen();
 			g_system->delayMillis(4);
@@ -250,7 +315,7 @@ void SciGuiTransitions::blocks() {
 }
 
 // directly shows new screen starting up/down/left/right and going to the opposite direction - works on _picRect area only
-void SciGuiTransitions::straight(int16 number) {
+void SciGuiTransitions::straight(int16 number, bool blackoutFlag) {
 	int16 stepNr = 0;
 	Common::Rect newScreenRect = _picRect;
 
@@ -258,7 +323,7 @@ void SciGuiTransitions::straight(int16 number) {
 	case SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT:
 		newScreenRect.left = newScreenRect.right - 1;
 		while (newScreenRect.left >= _picRect.left) {
-			_screen->copyRectToScreen(newScreenRect);
+			copyRectToScreen(newScreenRect, blackoutFlag);
 			if ((stepNr & 1) == 0) {
 				g_system->updateScreen();
 				g_system->delayMillis(1);
@@ -271,7 +336,7 @@ void SciGuiTransitions::straight(int16 number) {
 	case SCI_TRANSITIONS_STRAIGHT_FROM_LEFT:
 		newScreenRect.right = newScreenRect.left + 1;
 		while (newScreenRect.right <= _picRect.right) {
-			_screen->copyRectToScreen(newScreenRect);
+			copyRectToScreen(newScreenRect, blackoutFlag);
 			if ((stepNr & 1) == 0) {
 				g_system->updateScreen();
 				g_system->delayMillis(1);
@@ -284,7 +349,7 @@ void SciGuiTransitions::straight(int16 number) {
 	case SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM:
 		newScreenRect.top = newScreenRect.bottom - 1;
 		while (newScreenRect.top >= _picRect.top) {
-			_screen->copyRectToScreen(newScreenRect);
+			copyRectToScreen(newScreenRect, blackoutFlag);
 			g_system->updateScreen();
 			g_system->delayMillis(3);
 			stepNr++;
@@ -295,7 +360,7 @@ void SciGuiTransitions::straight(int16 number) {
 	case SCI_TRANSITIONS_STRAIGHT_FROM_TOP:
 		newScreenRect.bottom = newScreenRect.top + 1;
 		while (newScreenRect.bottom <= _picRect.bottom) {
-			_screen->copyRectToScreen(newScreenRect);
+			copyRectToScreen(newScreenRect, blackoutFlag);
 			g_system->updateScreen();
 			g_system->delayMillis(3);
 			stepNr++;
@@ -387,7 +452,7 @@ void SciGuiTransitions::scroll(int16 number) {
 }
 
 // vertically displays new screen starting from center - works on _picRect area only
-void SciGuiTransitions::verticalRollFromCenter() {
+void SciGuiTransitions::verticalRollFromCenter(bool blackoutFlag) {
 	Common::Rect leftRect = Common::Rect(_picRect.left + (_picRect.width() / 2) -1, _picRect.top, _picRect.left + (_picRect.width() / 2), _picRect.bottom);
 	Common::Rect rightRect = Common::Rect(leftRect.right, _picRect.top, leftRect.right + 1, _picRect.bottom);
 
@@ -396,28 +461,28 @@ void SciGuiTransitions::verticalRollFromCenter() {
 			leftRect.translate(1, 0);
 		if (rightRect.right > _picRect.right)
 			rightRect.translate(-1, 0);
-		_screen->copyRectToScreen(leftRect); leftRect.translate(-1, 0);
-		_screen->copyRectToScreen(rightRect); rightRect.translate(1, 0);
+		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);
+		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0);
 		g_system->updateScreen();
 		g_system->delayMillis(2);
 	}
 }
 
 // vertically displays new screen starting from edges - works on _picRect area only
-void SciGuiTransitions::verticalRollToCenter() {
+void SciGuiTransitions::verticalRollToCenter(bool blackoutFlag) {
 	Common::Rect leftRect = Common::Rect(_picRect.left, _picRect.top, _picRect.left + 1, _picRect.bottom);
 	Common::Rect rightRect = Common::Rect(leftRect.right - 1, _picRect.top, leftRect.right, _picRect.bottom);
 
 	while (leftRect.left < rightRect.right) {
-		_screen->copyRectToScreen(leftRect); leftRect.translate(1, 0);
-		_screen->copyRectToScreen(rightRect); rightRect.translate(-1, 0);
+		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
+		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
 		g_system->updateScreen();
 		g_system->delayMillis(2);
 	}
 }
 
 // horizontally displays new screen starting from center - works on _picRect area only
-void SciGuiTransitions::horizontalRollFromCenter() {
+void SciGuiTransitions::horizontalRollFromCenter(bool blackoutFlag) {
 	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top + (_picRect.height() / 2) - 1, _picRect.right, _picRect.top + (_picRect.height() / 2));
 	Common::Rect lowerRect = Common::Rect(upperRect.left, upperRect.bottom, upperRect.right, upperRect.bottom + 1);
 
@@ -426,21 +491,21 @@ void SciGuiTransitions::horizontalRollFromCenter() {
 			upperRect.translate(0, 1);
 		if (lowerRect.bottom > _picRect.bottom)
 			lowerRect.translate(0, -1);
-		_screen->copyRectToScreen(upperRect); upperRect.translate(0, -1);
-		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, 1);
+		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, -1);
+		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1);
 		g_system->updateScreen();
 		g_system->delayMillis(3);
 	}
 }
 
 // horizontally displays new screen starting from upper and lower edge - works on _picRect area only
-void SciGuiTransitions::horizontalRollToCenter() {
+void SciGuiTransitions::horizontalRollToCenter(bool blackoutFlag) {
 	Common::Rect upperRect = Common::Rect(_picRect.left, _picRect.top, _picRect.right, _picRect.top + 1);
 	Common::Rect lowerRect = Common::Rect(upperRect.left, _picRect.bottom - 1, upperRect.right, _picRect.bottom);
 
 	while (upperRect.top < lowerRect.bottom) {
-		_screen->copyRectToScreen(upperRect); upperRect.translate(0, 1);
-		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, -1);
+		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, 1);
+		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1);
 		g_system->updateScreen();
 		g_system->delayMillis(3);
 	}
@@ -448,7 +513,7 @@ void SciGuiTransitions::horizontalRollToCenter() {
 
 // diagonally displays new screen starting from center - works on _picRect area only
 //  assumes that height of rect is larger than width, is also currently not optimized (TODO)
-void SciGuiTransitions::diagonalRollFromCenter() {
+void SciGuiTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 	int16 halfHeight = _picRect.height() / 2;
 	Common::Rect upperRect(_picRect.left + halfHeight - 2, _picRect.top + halfHeight, _picRect.right - halfHeight + 1, _picRect.top + halfHeight + 1);
 	Common::Rect lowerRect(upperRect.left, upperRect.top, upperRect.right, upperRect.bottom);
@@ -468,10 +533,10 @@ void SciGuiTransitions::diagonalRollFromCenter() {
 		if (rightRect.right > _picRect.right) {
 			rightRect.translate(-1, 0); upperRect.right--; lowerRect.right--;
 		}
-		_screen->copyRectToScreen(upperRect); upperRect.translate(0, -1); upperRect.left--; upperRect.right++;
-		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, 1); lowerRect.left--; lowerRect.right++;
-		_screen->copyRectToScreen(leftRect); leftRect.translate(-1, 0);	leftRect.top--; leftRect.bottom++;
-		_screen->copyRectToScreen(rightRect); rightRect.translate(1, 0); rightRect.top--; rightRect.bottom++;
+		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, -1); upperRect.left--; upperRect.right++;
+		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, 1); lowerRect.left--; lowerRect.right++;
+		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(-1, 0);	leftRect.top--; leftRect.bottom++;
+		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(1, 0); rightRect.top--; rightRect.bottom++;
 		g_system->updateScreen();
 		g_system->delayMillis(3);
 	}
@@ -479,17 +544,17 @@ void SciGuiTransitions::diagonalRollFromCenter() {
 
 // diagonally displays new screen starting from edges - works on _picRect area only
 //  assumes that height of rect is larger than width
-void SciGuiTransitions::diagonalRollToCenter() {
+void SciGuiTransitions::diagonalRollToCenter(bool blackoutFlag) {
 	Common::Rect upperRect(_picRect.left, _picRect.top, _picRect.right, _picRect.top + 1);
 	Common::Rect lowerRect(_picRect.left, _picRect.bottom - 1, _picRect.right, _picRect.bottom);
 	Common::Rect leftRect(_picRect.left, _picRect.top, _picRect.left + 1, _picRect.bottom);
 	Common::Rect rightRect(_picRect.right - 1, _picRect.top, _picRect.right, _picRect.bottom);
 
 	while (upperRect.top < lowerRect.bottom) {
-		_screen->copyRectToScreen(upperRect); upperRect.translate(0, 1); upperRect.left++; upperRect.right--;
-		_screen->copyRectToScreen(lowerRect); lowerRect.translate(0, -1); lowerRect.left++; lowerRect.right--;
-		_screen->copyRectToScreen(leftRect); leftRect.translate(1, 0);
-		_screen->copyRectToScreen(rightRect); rightRect.translate(-1, 0);
+		copyRectToScreen(upperRect, blackoutFlag); upperRect.translate(0, 1); upperRect.left++; upperRect.right--;
+		copyRectToScreen(lowerRect, blackoutFlag); lowerRect.translate(0, -1); lowerRect.left++; lowerRect.right--;
+		copyRectToScreen(leftRect, blackoutFlag); leftRect.translate(1, 0);
+		copyRectToScreen(rightRect, blackoutFlag); rightRect.translate(-1, 0);
 		g_system->updateScreen();
 		g_system->delayMillis(3);
 	}

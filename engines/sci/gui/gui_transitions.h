@@ -31,8 +31,8 @@
 namespace Sci {
 
 struct GuiTransitionTranslateEntry {
-	int16 oldId;
-	int16 realId;
+	int16 orgId;
+	int16 newId;
 	bool blackoutFlag;
 };
 
@@ -70,20 +70,23 @@ public:
 
 private:
 	void init(void);
-	void setNewPalette();
-	void setNewScreen();
+	const GuiTransitionTranslateEntry *translateNumber(int16 number, const GuiTransitionTranslateEntry *tablePtr);
+	void doTransition(int16 number, bool blackout);
+	void setNewPalette(bool blackoutFlag);
+	void setNewScreen(bool blackoutFlag);
+	void copyRectToScreen(const Common::Rect rect, bool blackoutFlag);
 	void fadeOut();
 	void fadeIn();
-	void pixelation();
-	void blocks();
-	void straight(int16 number);
+	void pixelation(bool blackoutFlag);
+	void blocks(bool blackoutFlag);
+	void straight(int16 number, bool blackoutFlag);
 	void scroll(int16 number);
-	void verticalRollFromCenter();
-	void verticalRollToCenter();
-	void horizontalRollFromCenter();
-	void horizontalRollToCenter();
-	void diagonalRollFromCenter();
-	void diagonalRollToCenter();
+	void verticalRollFromCenter(bool blackoutFlag);
+	void verticalRollToCenter(bool blackoutFlag);
+	void horizontalRollFromCenter(bool blackoutFlag);
+	void horizontalRollToCenter(bool blackoutFlag);
+	void diagonalRollFromCenter(bool blackoutFlag);
+	void diagonalRollToCenter(bool blackoutFlag);
 
 	SciGui *_gui;
 	SciGuiScreen *_screen;
