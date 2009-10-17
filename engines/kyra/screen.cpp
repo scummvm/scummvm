@@ -3438,13 +3438,10 @@ void Palette::copy(const Palette &source, int firstCol, int numCols, int dstStar
 	assert(firstCol >= 0 && firstCol <= source.getNumColors());
 	assert(dstStart >= 0 && dstStart + numCols <= _numColors);
 
-	memcpy(_palData + dstStart * 3, source._palData + firstCol * 3, numCols * 3);
+	memmove(_palData + dstStart * 3, source._palData + firstCol * 3, numCols * 3);
 }
 
 void Palette::copy(const uint8 *source, int firstCol, int numCols, int dstStart) {
-	if (source == _palData)
-		return;
-
 	if (dstStart == -1)
 		dstStart = firstCol;
 
@@ -3452,7 +3449,7 @@ void Palette::copy(const uint8 *source, int firstCol, int numCols, int dstStart)
 	assert(firstCol >= 0);
 	assert(dstStart >= 0 && dstStart + numCols <= _numColors);
 
-	memcpy(_palData + dstStart * 3, source + firstCol * 3, numCols * 3);
+	memmove(_palData + dstStart * 3, source + firstCol * 3, numCols * 3);
 }
 
 uint8 *Palette::fetchRealPalette() const {
