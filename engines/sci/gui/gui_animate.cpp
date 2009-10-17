@@ -360,34 +360,44 @@ void SciGuiAnimate::drawCels() {
 }
 
 void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
+	SegManager *segMan = _s->_segMan;
+	reg_t curObject;
 	GuiAnimateEntry *listEntry;
 	uint16 signal;
 	GuiAnimateList::iterator listIterator;
 	GuiAnimateList::iterator listEnd = _list.end();
+	Common::Rect lsRect;
+	Common::Rect workerRect;
 
 	listIterator = _list.begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
+		curObject = listEntry->object;
 		signal = listEntry->signal;
 
 		if (listEntry->showBitsFlag || !(signal & (SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE) ||
 										(!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) && oldPicNotValid))) {
-// TODO: code finish
-//			rect = (Common::Rect *)&cobj[_objOfs[7]];
-//			rect1 = (Common::Rect *)&cobj[_objOfs[8]];
-//
-//			Common::Rect ro(rect->left, rect->top, rect->right, rect->bottom);
-//			ro.clip(*rect1);
-//
-//			if (!ro.isEmpty()) {
-//				ro = *rect; 
-//				ro.extend(*rect1);
-//			} else {
-//				_gfx->ShowBits(*rect, _showMap);
-//			//	ro = *rect1;
-//			//}
-//			//*rect  = *rect1;
-//			_gfx->ShowBits(ro, _showMap);
+			lsRect.left = GET_SEL32V(curObject, lsLeft);
+			lsRect.top = GET_SEL32V(curObject, lsTop);
+			lsRect.right = GET_SEL32V(curObject, lsRight);
+			lsRect.bottom = GET_SEL32V(curObject, lsBottom);
+
+			workerRect = lsRect;
+			workerRect.clip(listEntry->celRect);
+
+			if (!workerRect.isEmpty()) {
+				workerRect = lsRect;
+				workerRect.extend(listEntry->celRect);
+			} else {
+				_gfx->BitsShow(lsRect);
+				workerRect = listEntry->celRect;
+			}
+			PUT_SEL32V(curObject, lsLeft, workerRect.left);
+			PUT_SEL32V(curObject, lsTop, workerRect.top);
+			PUT_SEL32V(curObject, lsRight, workerRect.right);
+			PUT_SEL32V(curObject, lsBottom, workerRect.bottom);
+			_gfx->BitsShow(workerRect);
+
 			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
 				listEntry->signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
 			}
@@ -395,7 +405,8 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 
 		listIterator++;
 	}
-	_screen->copyToScreen();
+	// use this for debug purposes
+	// _screen->copyToScreen();
 }
 
 void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
@@ -411,11 +422,6 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 		listEntry = *listIterator;
 		curObject = listEntry->object;
 		signal = listEntry->signal;
-
-		// FIXME: this is supposed to go into the loop above (same method)
-		if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
-			signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
-		}
 
 		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
 			_gfx->BitsRestore(GET_SEL32(curObject, underBits));
