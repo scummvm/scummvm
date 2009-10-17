@@ -67,7 +67,7 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 	if (resourceId == -1) {
 		// no resourceId given, so we actually hide the cursor
 		hide();
-		delete rawBitmap;
+		delete[] rawBitmap;
 		return;
 	}
 	
