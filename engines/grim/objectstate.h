@@ -48,7 +48,7 @@ public:
 
 	int setupID() const { return _setupID; }
 	Position pos() const { return _pos; }
-	void setPos(Position pos) { _pos = pos; }
+	void setPos(Position position) { _pos = position; }
 
 	const char *bitmapFilename() const {
 		return _bitmap->filename();

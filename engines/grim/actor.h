@@ -60,7 +60,7 @@ public:
 
 	void setTalkColor(const Color& c) { _talkColor = c; }
 	Color talkColor() const { return _talkColor; }
-	void setPos(Graphics::Vector3d pos) { _pos = pos; }
+	void setPos(Graphics::Vector3d position) { _pos = position; }
 	// When the actor is walking report where the actor is going to and
 	// not the actual current position, this fixes some scene change
 	// change issues with the Bone Wagon (along with other fixes)
@@ -83,7 +83,7 @@ public:
 	bool visible() const { return _visible; }
 	// The set should change immediately, otherwise a very rapid set change
 	// for an actor will be recognized incorrectly and the actor will be lost.
-	void putInSet(const char *name) { _setName = name; }
+	void putInSet(const char *setName) { _setName = setName; }
 	void setTurnRate(float rate) { _turnRate = rate; }
 	float turnRate() const { return _turnRate; }
 	void setWalkRate(float rate) { _walkRate = rate; }
@@ -93,8 +93,8 @@ public:
 	float angleTo(const Actor &a) const;
 	float yawTo(Graphics::Vector3d p) const;
 
-	bool inSet(const char *name) const {
-		return _setName == name;
+	bool inSet(const char *setName) const {
+		return _setName == setName;
 	}
 	void walkForward();
 	void setReflection(float angle) { _reflectionAngle = angle; }

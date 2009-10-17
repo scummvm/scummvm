@@ -33,7 +33,7 @@ namespace Grim {
 
 void Sector::load(TextSplitter &ts) {
 	char buf[256];
-	int id = 0, i = 0;
+	int ident = 0, i = 0;
 	Graphics::Vector3d tempVert;
 
 	// Sector NAMES can be null, but ts isn't flexible enough
@@ -44,10 +44,10 @@ void Sector::load(TextSplitter &ts) {
 		strcpy(buf, "");
 	}
 
-	ts.scanString(" id %d", 1, &id);
+	ts.scanString(" id %d", 1, &ident);
 
 	_name = buf;
-	_id = id;
+	_id = ident;
 	ts.scanString(" type %256s", 1, buf);
 
 	if (strstr(buf, "walk"))
@@ -88,8 +88,8 @@ void Sector::load(TextSplitter &ts) {
 		_normal /= length;
 }
 
-void Sector::setVisible(bool visible) {
-	_visible = visible;
+void Sector::setVisible(bool vis) {
+	_visible = vis;
 }
 
 bool Sector::isPointInSector(Graphics::Vector3d point) const {

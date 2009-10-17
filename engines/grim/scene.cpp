@@ -33,8 +33,8 @@
 
 namespace Grim {
 
-Scene::Scene(const char *name, const char *buf, int len) :
-		_locked(false), _name(name), _enableLights(false) {
+Scene::Scene(const char *sceneName, const char *buf, int len) :
+		_locked(false), _name(sceneName), _enableLights(false) {
 	TextSplitter ts(buf, len);
 	char tempBuf[256];
 
@@ -255,7 +255,7 @@ Sector *Scene::findPointSector(Graphics::Vector3d p, int flags) {
 	return NULL;
 }
 
-void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vector3d *closestPt) {
+void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vector3d *closestPoint) {
 	Sector *resultSect = NULL;
 	Graphics::Vector3d resultPt = p;
 	float minDist = 0.0;
@@ -268,7 +268,7 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 		float thisDist = (closestPt - p).magnitude();
 		if (!resultSect || thisDist < minDist) {
 			resultSect = sector;
-			resultPt = closestPt;
+			resultPt = *closestPoint;
 			minDist = thisDist;
 		}
 	}
@@ -276,8 +276,8 @@ void Scene::findClosestSector(Graphics::Vector3d p, Sector **sect, Graphics::Vec
 	if (sect)
 		*sect = resultSect;
 
-	if (closestPt)
-		*closestPt = resultPt;
+	if (closestPoint)
+		*closestPoint = resultPt;
 }
 
 ObjectState *Scene::findState(const char *filename) {

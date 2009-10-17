@@ -58,7 +58,7 @@ void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoint *p1, ZBuf
 	register unsigned short *pz;					\
 	register unsigned int *pz_2;					\
 	register PIXEL *pp;								\
-	register unsigned int tmp, z, zz, rgb, drgbdx;	\
+	register unsigned int z, zz, rgb, drgbdx;	\
 	register int n;									\
 	n = (x2 >> 16) - x1;							\
 	pp = pp1 + x1;									\
@@ -126,8 +126,8 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
 #define NB_INTERP 8
 
-	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
-	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
+	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
+	float fdx1, fdx2, fdy1, fdy2, fz0, d1, d2;
 	unsigned short *pz1;
 	unsigned int *pz2;
 	PIXEL *pp1;
@@ -151,19 +151,19 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
 	// we sort the vertex with increasing y
 	if (p1->y < p0->y) {
-		t = p0;
+		tp = p0;
 		p0 = p1;
-		p1 = t;
+		p1 = tp;
 	}
 	if (p2->y < p0->y) {
-		t = p2;
+		tp = p2;
 		p2 = p1;
 		p1 = p0;
-		p0 = t;
+		p0 = tp;
 	} else if (p2->y < p1->y) {
-		t = p1;
+		tp = p1;
 		p1 = p2;
-		p2 = t;
+		p2 = tp;
 	}
 
 	// we compute dXdx and dXdy for all interpolated values
@@ -174,15 +174,15 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 	fdx2 = (float)(p2->x - p0->x);
 	fdy2 = (float)(p2->y - p0->y);
 
-	fz = fdx1 * fdy2 - fdx2 * fdy1;
-	if (fz == 0)
+	fz0 = fdx1 * fdy2 - fdx2 * fdy1;
+	if (fz0 == 0)
 		return;
-	fz = (float)(1.0 / fz);
+	fz0 = (float)(1.0 / fz0);
 
-	fdx1 *= fz;
-	fdy1 *= fz;
-	fdx2 *= fz;
-	fdy2 *= fz;
+	fdx1 *= fz0;
+	fdy1 *= fz0;
+	fdx2 *= fz0;
+	fdy2 *= fz0;
 
 	d1 = (float)(p1->z - p0->z);
 	d2 = (float)(p2->z - p0->z);
@@ -244,7 +244,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 
 	for (part = 0; part < 2; part++) {
 		if (part == 0) {
-			if (fz > 0) {
+			if (fz0 > 0) {
 				update_left = 1;
 				update_right = 1;
 				l1 = p0;
@@ -262,7 +262,7 @@ void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0, ZBufferPoi
 			nb_lines = p1->y - p0->y;
 		} else {
 			// second part
-			if (fz > 0) {
+			if (fz0 > 0) {
 				update_left = 0;
 				update_right = 1;
 				pr1 = p1;

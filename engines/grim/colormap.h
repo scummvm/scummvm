@@ -35,8 +35,8 @@ namespace Grim {
 class CMap {
 public:
 	// Load a colormap from the given data.
-	CMap(const char *filename, const char *data, int len) {
-		_fname = filename;
+	CMap(const char *fileName, const char *data, int len) {
+		_fname = fileName;
 		if (len < 4 || READ_BE_UINT32(data) != MKID_BE('CMP '))
 			error("Invalid magic loading colormap");
 		memcpy(_colors, data + 64, sizeof(_colors));

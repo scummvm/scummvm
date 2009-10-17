@@ -75,7 +75,7 @@ void ImuseSndMgr::countElements(byte *ptr, int &numRegions, int &numJumps) {
 void ImuseSndMgr::parseSoundHeader(byte *ptr, SoundDesc *sound, int &headerSize) {
 	if (READ_BE_UINT32(ptr) == MKID_BE('RIFF')) {
 		sound->region = new Region[1];
-		sound->jump = new Jump[0];
+		sound->jump = new Jump[1];
 		sound->numJumps = 0;
 		sound->numRegions = 1;
 		sound->region[0].offset = 0;

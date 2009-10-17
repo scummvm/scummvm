@@ -2043,7 +2043,7 @@ loop:
 }
 
 static void PrintLine() {
-	int vol = 127, buffer = 64, paramId = 1, x = -1, y = -1;
+	int vol = 127, buffer = 64, /*paramId = 1, */x = -1, y = -1;
 	bool background = true;
 	char msgId[50];
 	Common::String msg;

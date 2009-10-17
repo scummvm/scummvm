@@ -277,7 +277,7 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 			else
 				tempString = luaS_createudata((void *)makePointerFromId(ptr), tag);
 			if (restoreCallbackPtr) {
-				PointerId ptr = makeIdFromPointer(tempString->globalval.value.ts);
+				ptr = makeIdFromPointer(tempString->globalval.value.ts);
 				ptr = restoreCallbackPtr(tempString->globalval.ttype, ptr, restoreSint32);
 				tempString->globalval.value.ts = (TaggedString *)makePointerFromId(ptr);
 			}
@@ -358,7 +358,6 @@ void lua_Restore(RestoreStream restoreStream, RestoreSint32 restoreSint32, Resto
 		}
 
 		for (l = 0; l < countVariables; l++) {
-			PointerId ptr;
 			ptr.low = restoreSint32();
 			ptr.hi = restoreSint32();
 			tempProtoFunc->locvars[l].varname = (TaggedString *)makePointerFromId(ptr);

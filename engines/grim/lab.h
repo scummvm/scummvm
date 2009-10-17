@@ -38,7 +38,7 @@ class LuaFile;
 
 class Block {
 public:
-	Block(const char *data, int len) : _data(data), _len(len) {}
+	Block(const char *dataPtr, int length) : _data(dataPtr), _len(length) {}
 	const char *data() const { return _data; }
 	int len() const { return _len; }
 

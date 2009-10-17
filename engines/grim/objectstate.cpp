@@ -29,8 +29,8 @@
 
 namespace Grim {
 
-ObjectState::ObjectState(int setupID, ObjectState::Position pos, const char *bitmap, const char *zbitmap, bool transparency) :
-		_setupID(setupID), _pos(pos), _visibility(false) {
+ObjectState::ObjectState(int setup, ObjectState::Position position, const char *bitmap, const char *zbitmap, bool transparency) :
+		_setupID(setup), _pos(position), _visibility(false) {
 	_bitmap = g_resourceloader->loadBitmap(bitmap);
 	if (zbitmap)
 		_zbitmap = g_resourceloader->loadBitmap(zbitmap);

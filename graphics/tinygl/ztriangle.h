@@ -2,7 +2,7 @@
 // We draw a triangle with various interpolations
 
 {
-	ZBufferPoint *t, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
+	ZBufferPoint *tp, *pr1 = 0, *pr2 = 0, *l1 = 0, *l2 = 0;
 	float fdx1, fdx2, fdy1, fdy2, fz, d1, d2;
 	unsigned short *pz1;
 	unsigned int *pz2;
@@ -35,19 +35,19 @@
 
 	// we sort the vertex with increasing y
 	if (p1->y < p0->y) {
-		t = p0;
+		tp = p0;
 		p0 = p1;
-		p1 = t;
+		p1 = tp;
 	}
 	if (p2->y < p0->y) {
-		t = p2;
+		tp = p2;
 		p2 = p1;
 		p1 = p0;
-		p0 = t;
+		p0 = tp;
 	} else if (p2->y < p1->y) {
-		t = p1;
+		tp = p1;
 		p1 = p2;
-		p2 = t;
+		p2 = tp;
 	}
 
 	// we compute dXdx and dXdy for all interpolated values

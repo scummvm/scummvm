@@ -172,8 +172,8 @@ private:
 	Graphics::Matrix4 _matrix;
 };
 
-BitmapComponent::BitmapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
-		Costume::Component(parent, parentID, tag), _filename(filename) {
+BitmapComponent::BitmapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
+		Costume::Component(p, parentID, t), _filename(filename) {
 }
 
 void BitmapComponent::setKey(int val) {
@@ -205,8 +205,8 @@ void BitmapComponent::setKey(int val) {
 */
 }
 
-ModelComponent::ModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag) :
-		Costume::Component(parent, parentID, tag), _filename(filename),
+ModelComponent::ModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
+		Costume::Component(p, parentID, t), _filename(filename),
 		_obj(NULL), _hier(NULL) {
 	const char *comma = strchr(filename, ',');
 
@@ -233,17 +233,17 @@ void ModelComponent::init() {
 	// by the sharing MainModelComponent
 	// constructor before
 	if (!_obj) {
-		CMap *cmap = this->cmap();
+		CMap *cm = this->cmap();
 
 		// Get the default colormap if we haven't found
 		// a valid colormap
-		if (!cmap) {
+		if (!cm) {
 			if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 				warning("No colormap specified for %s, using %s", _filename.c_str(), DEFAULT_COLORMAP);
 
-			cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
+			cm = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 		}
-		_obj = g_resourceloader->loadModel(_filename.c_str(), cmap);
+		_obj = g_resourceloader->loadModel(_filename.c_str(), cm);
 		_hier = _obj->copyHierarchy();
 		// Use parent availablity to decide whether to default the
 		// component to being visible
@@ -289,11 +289,11 @@ void ModelComponent::update() {
 }
 
 void ModelComponent::resetColormap() {
-	CMap *cmap;
+	CMap *cm;
 
-	cmap = this->cmap();
-	if (_obj && cmap)
-		_obj->reload(cmap);
+	cm = this->cmap();
+	if (_obj && cm)
+		_obj->reload(cm);
 }
 
 ModelComponent::~ModelComponent() {
@@ -328,8 +328,8 @@ void ModelComponent::draw() {
 		translateObject(_hier->_parent, true);
 }
 
-MainModelComponent::MainModelComponent(Costume::Component *parent, int parentID, const char *filename, Costume::Component *prevComponent, tag32 tag) :
-		ModelComponent(parent, parentID, filename, prevComponent, tag), _hierShared(false) {
+MainModelComponent::MainModelComponent(Costume::Component *p, int parentID, const char *filename, Costume::Component *prevComponent, tag32 t) :
+		ModelComponent(p, parentID, filename, prevComponent, t), _hierShared(false) {
 	if (parentID == -2 && prevComponent) {
 		MainModelComponent *mmc = dynamic_cast<MainModelComponent *>(prevComponent);
 
@@ -381,12 +381,12 @@ private:
 	int _num;
 };
 
-ColormapComponent::ColormapComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
-		Costume::Component(parent, parentID, tag) {
+ColormapComponent::ColormapComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
+		Costume::Component(p, parentID, t) {
 	_cmap = g_resourceloader->loadColormap(filename);
 
-	if (parent)
-		parent->setColormap(_cmap);
+	if (p)
+		p->setColormap(_cmap);
 	else
 		warning("No parent to apply colormap object on.");
 }
@@ -413,8 +413,8 @@ private:
 	Common::String _fname;
 };
 
-KeyframeComponent::KeyframeComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
-		Costume::Component(parent, parentID, tag), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
+KeyframeComponent::KeyframeComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
+		Costume::Component(p, parentID, t), _priority1(1), _priority2(5), _hier(NULL), _active(false) {
 	_fname = filename;
 	const char *comma = strchr(filename, ',');
 	if (comma) {
@@ -494,8 +494,8 @@ void KeyframeComponent::init() {
 	}
 }
 
-MeshComponent::MeshComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag) :
-		Costume::Component(parent, parentID, tag), _name(name), _node(NULL) {
+MeshComponent::MeshComponent(Costume::Component *p, int parentID, const char *name, tag32 t) :
+		Costume::Component(p, parentID, t), _name(name), _node(NULL) {
 	if (sscanf(name, "mesh %d", &_num) < 1)
 		error("Couldn't parse mesh name %s", name);
 
@@ -525,8 +525,8 @@ void MeshComponent::update() {
 	_node->update();
 }
 
-MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
-		Costume::Component(parent, parentID, tag), _filename(filename),
+MaterialComponent::MaterialComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
+		Costume::Component(p, parentID, t), _filename(filename),
 		_num(0) {
 
 	if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
@@ -534,16 +534,16 @@ MaterialComponent::MaterialComponent(Costume::Component *parent, int parentID, c
 }
 
 void MaterialComponent::init() {
-	CMap *cmap = this->cmap();
+	CMap *cm = this->cmap();
 
-	if (!cmap) {
+	if (!cm) {
 		// Use the default colormap if we're still drawing a blank
 		if (gDebugLevel == DEBUG_MODEL || gDebugLevel == DEBUG_WARN || gDebugLevel == DEBUG_ALL)
 			warning("MaterialComponent::init on %s", _filename.c_str());
 
-		cmap = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
+		cm = g_resourceloader->loadColormap(DEFAULT_COLORMAP);
 	}
-	_mat = g_resourceloader->loadMaterial(_filename.c_str(), cmap);
+	_mat = g_resourceloader->loadMaterial(_filename.c_str(), cm);
 }
 
 void MaterialComponent::setKey(int val) {
@@ -568,8 +568,8 @@ private:
 	Common::String _name;
 };
 
-LuaVarComponent::LuaVarComponent(Costume::Component *parent, int parentID, const char *name, tag32 tag) :
-		Costume::Component(parent, parentID, tag), _name(name) {
+LuaVarComponent::LuaVarComponent(Costume::Component *p, int parentID, const char *name, tag32 t) :
+		Costume::Component(p, parentID, t), _name(name) {
 }
 
 void LuaVarComponent::setKey(int val) {
@@ -591,8 +591,8 @@ private:
 	Common::String _soundName;
 };
 
-SoundComponent::SoundComponent(Costume::Component *parent, int parentID, const char *filename, tag32 tag) :
-		Costume::Component(parent, parentID, tag) {
+SoundComponent::SoundComponent(Costume::Component *p, int parentID, const char *filename, tag32 t) :
+		Costume::Component(p, parentID, t) {
 	const char *comma = strchr(filename, ',');
 	if (comma) {
 		_soundName = Common::String(filename, comma);
@@ -630,8 +630,8 @@ void SoundComponent::reset() {
 		g_imuse->stopSound(_soundName.c_str());
 }
 
-Costume::Costume(const char *filename, const char *data, int len, Costume *prevCost) :
-	_fname(filename), _cmap(NULL) {
+Costume::Costume(const char *fname, const char *data, int len, Costume *prevCost) :
+	_fname(fname), _cmap(NULL) {
 	TextSplitter ts(data, len);
 
 	ts.expectString("costume v0.1");
@@ -727,15 +727,15 @@ Costume::~Costume() {
 	delete[] _chores;
 }
 
-Costume::Component::Component(Component *parent, int parentID, tag32 tag) {
+Costume::Component::Component(Component *p, int parentID, tag32 t) {
 	_visible = true;
 	_previousCmap = NULL;
 	_cmap = NULL;
 	_cost = NULL;
 	_parent = NULL;
 	_parentID = parentID;
-	setParent(parent);
-	_tag = tag;
+	setParent(p);
+	_tag = t;
 }
 
 void Costume::Component::setColormap(CMap *c) {

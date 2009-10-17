@@ -106,7 +106,7 @@ public:
 
 	bool play(const char *filename, bool looping, int x, int y);
 	void stop();
-	void pause(bool pause) { _videoPause = pause; }
+	void pause(bool p) { _videoPause = p; }
 	bool isPlaying() { return !_videoFinished; }
 	bool isUpdateNeeded() { return _updateNeeded; }
 	byte *getDstPtr() { return _externalBuffer; }

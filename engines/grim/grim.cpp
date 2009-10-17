@@ -970,7 +970,7 @@ void GrimEngine::savegameRestore() {
 	printf("GrimEngine::savegameRestore() finished.\n");
 }
 
-void GrimEngine::storeSaveGameImage(SaveGame *savedState) {
+void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
@@ -981,16 +981,16 @@ void GrimEngine::storeSaveGameImage(SaveGame *savedState) {
 	g_grim->updateDisplayScene();
 	screenshot = g_driver->getScreenshot(width, height);
 	g_grim->setMode(mode);
-	savedState->beginSection('SIMG');
+	state->beginSection('SIMG');
 	if (screenshot) {
 		int size = screenshot->width() * screenshot->height() * sizeof(uint16);
 		screenshot->setNumber(0);
 		char *data = screenshot->getData();
-		savedState->write(data, size);
+		state->write(data, size);
 	} else {
 		error("Unable to store screenshot");
 	}
-	savedState->endSection();
+	state->endSection();
 	g_grim->killBitmap(screenshot);
 	printf("GrimEngine::StoreSaveGameImage() finished.\n");
 }
@@ -1040,95 +1040,95 @@ void GrimEngine::savegameSave() {
 	printf("GrimEngine::savegameSave() finished.\n");
 }
 
-void GrimEngine::saveActors(SaveGame *savedState) {
-	savedState->beginSection('ACTR');
+void GrimEngine::saveActors(SaveGame *state) {
+	state->beginSection('ACTR');
 
-	savedState->writeLESint32(_actors.size());
+	state->writeLESint32(_actors.size());
 	for (ActorListType::iterator i = _actors.begin(); i != _actors.end(); i++) {
 		Actor *a = *i;
 		PointerId ptr = makeIdFromPointer(a);
-		savedState->writeLEUint32(ptr.low);
-		savedState->writeLEUint32(ptr.hi);
-		a->saveState(savedState);
+		state->writeLEUint32(ptr.low);
+		state->writeLEUint32(ptr.hi);
+		a->saveState(state);
 	}
 
-	savedState->endSection();
+	state->endSection();
 }
 
-void GrimEngine::saveFonts(SaveGame *savedState) {
-	savedState->beginSection('FONT');
+void GrimEngine::saveFonts(SaveGame *state) {
+	state->beginSection('FONT');
 
-	savedState->writeLESint32(_fonts.size());
+	state->writeLESint32(_fonts.size());
 	for (Common::List<Font *>::iterator i = _fonts.begin(); i != _fonts.end(); i++) {
 		Font *f = *i;
 		PointerId ptr = makeIdFromPointer(f);
-		savedState->writeLEUint32(ptr.low);
-		savedState->writeLEUint32(ptr.hi);
+		state->writeLEUint32(ptr.low);
+		state->writeLEUint32(ptr.hi);
 		Common::String filename = f->getFilename();
-		savedState->writeLESint32(filename.size());
-		savedState->write(filename.c_str(), filename.size());
+		state->writeLESint32(filename.size());
+		state->write(filename.c_str(), filename.size());
 	}
 
-	savedState->endSection();
+	state->endSection();
 }
 
-void GrimEngine::saveTextObjects(SaveGame *savedState) {
+void GrimEngine::saveTextObjects(SaveGame *state) {
 	PointerId ptr;
 
-	savedState->beginSection('TEXT');
+	state->beginSection('TEXT');
 
-	savedState->writeLESint32(sayLineDefaults.disabled);
-	savedState->writeByte(sayLineDefaults.fgColor.red());
-	savedState->writeByte(sayLineDefaults.fgColor.green());
-	savedState->writeByte(sayLineDefaults.fgColor.blue());
+	state->writeLESint32(sayLineDefaults.disabled);
+	state->writeByte(sayLineDefaults.fgColor.red());
+	state->writeByte(sayLineDefaults.fgColor.green());
+	state->writeByte(sayLineDefaults.fgColor.blue());
 	ptr = makeIdFromPointer(sayLineDefaults.font);
-	savedState->writeLEUint32(ptr.low);
-	savedState->writeLEUint32(ptr.hi);
-	savedState->writeLESint32(sayLineDefaults.height);
-	savedState->writeLESint32(sayLineDefaults.justify);
-	savedState->writeLESint32(sayLineDefaults.width);
-	savedState->writeLESint32(sayLineDefaults.x);
-	savedState->writeLESint32(sayLineDefaults.y);
+	state->writeLEUint32(ptr.low);
+	state->writeLEUint32(ptr.hi);
+	state->writeLESint32(sayLineDefaults.height);
+	state->writeLESint32(sayLineDefaults.justify);
+	state->writeLESint32(sayLineDefaults.width);
+	state->writeLESint32(sayLineDefaults.x);
+	state->writeLESint32(sayLineDefaults.y);
 
-	savedState->writeLESint32(_textObjects.size());
+	state->writeLESint32(_textObjects.size());
 	for (TextListType::iterator i = _textObjects.begin(); i != _textObjects.end(); i++) {
 		TextObject *t = *i;
 		ptr = makeIdFromPointer(t);
-		savedState->writeLEUint32(ptr.low);
-		savedState->writeLEUint32(ptr.hi);
-		t->saveState(savedState);
+		state->writeLEUint32(ptr.low);
+		state->writeLEUint32(ptr.hi);
+		t->saveState(state);
 	}
 
-	savedState->endSection();
+	state->endSection();
 }
 
-void GrimEngine::saveScenes(SaveGame *savedState) {
-	savedState->beginSection('SET ');
+void GrimEngine::saveScenes(SaveGame *state) {
+	state->beginSection('SET ');
 
-	savedState->writeLESint32(_scenes.size());
+	state->writeLESint32(_scenes.size());
 	for (SceneListType::iterator i = _scenes.begin(); i != _scenes.end(); i++) {
 		Scene *s = *i;
-		s->saveState(savedState);
+		s->saveState(state);
 	}
 
-	savedState->endSection();
+	state->endSection();
 }
 
-void GrimEngine::savePrimitives(SaveGame *savedState) {
+void GrimEngine::savePrimitives(SaveGame *state) {
 	PointerId ptr;
 
-	savedState->beginSection('PRIM');
+	state->beginSection('PRIM');
 
-	savedState->writeLESint32(_primitiveObjects.size());
+	state->writeLESint32(_primitiveObjects.size());
 	for (PrimitiveListType::iterator i = _primitiveObjects.begin(); i != _primitiveObjects.end(); i++) {
 		PrimitiveObject *p = *i;
 		ptr = makeIdFromPointer(p);
-		savedState->writeLEUint32(ptr.low);
-		savedState->writeLEUint32(ptr.hi);
-		p->saveState(savedState);
+		state->writeLEUint32(ptr.low);
+		state->writeLEUint32(ptr.hi);
+		p->saveState(state);
 	}
 
-	savedState->endSection();
+	state->endSection();
 }
 
 void GrimEngine::savegameCallback() {

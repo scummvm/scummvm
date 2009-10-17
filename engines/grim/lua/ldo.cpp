@@ -129,8 +129,8 @@ static StkId callC(lua_CFunction f, StkId base) {
 	CS->lua2C = base;
 	CS->base = base + numarg;  // == top - stack
 	if (lua_callhook) {
-		TObject *f = lua_state->stack.stack + base - 1;
-		(*lua_callhook)(Ref(f), "(C)", -1);
+		TObject *r = lua_state->stack.stack + base - 1;
+		(*lua_callhook)(Ref(r), "(C)", -1);
 	}
 	lua_state->state_counter2++;
 	(*f)();  // do the actual call

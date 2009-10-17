@@ -35,8 +35,8 @@ namespace Grim {
 
 int g_winX1, g_winY1, g_winX2, g_winY2;
 
-Actor::Actor(const char *name) :
-		_name(name), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
+Actor::Actor(const char *actorName) :
+		_name(actorName), _setName(""), _talkColor(255, 255, 255), _pos(0, 0, 0),
 		// Some actors don't set walk and turn rates, so we default the
 		// _turnRate so Doug at the cat races can turn and we set the
 		// _walkRate so Glottis at the demon beaver entrance can walk
@@ -84,30 +84,30 @@ void Actor::saveState(SaveGame *savedState) {
 
 }
 
-void Actor::setYaw(float yaw) {
+void Actor::setYaw(float yawParam) {
 	// While the program correctly handle yaw angles outside
 	// of the range [0, 360), proper convention is to roll
 	// these values over correctly
-	if (yaw >= 360.0)
-		_yaw = yaw - 360;
-	else if (yaw < 0.0)
-		_yaw = yaw + 360;
+	if (yawParam >= 360.0)
+		_yaw = yawParam - 360;
+	else if (yawParam < 0.0)
+		_yaw = yawParam + 360;
 	else
-		_yaw = yaw;
+		_yaw = yawParam;
 }
 
-void Actor::setRot(float pitch, float yaw, float roll) {
-	_pitch = pitch;
-	setYaw(yaw);
-	_roll = roll;
+void Actor::setRot(float pitchParam, float yawParam, float rollParam) {
+	_pitch = pitchParam;
+	setYaw(yawParam);
+	_roll = rollParam;
 }
 
-void Actor::turnTo(float pitch, float yaw, float roll) {
-	_pitch = pitch;
-	_roll = roll;
-	if (_yaw != yaw) {
+void Actor::turnTo(float pitchParam, float yawParam, float rollParam) {
+	_pitch = pitchParam;
+	_roll = rollParam;
+	if (_yaw != yawParam) {
 		_turning = true;
-		_destYaw = yaw;
+		_destYaw = yawParam;
 	} else
 		_turning = false;
 }
@@ -172,12 +172,12 @@ void Actor::walkForward() {
 
 	while (currSector) {
 		prevSector = currSector;
-		Graphics::Vector3d puckVector = currSector->projectToPuckVector(forwardVec);
-		puckVector /= puckVector.magnitude();
-		currSector->getExitInfo(_pos, puckVector, &ei);
+		Graphics::Vector3d puckVec = currSector->projectToPuckVector(forwardVec);
+		puckVec /= puckVec.magnitude();
+		currSector->getExitInfo(_pos, puckVec, &ei);
 		float exitDist = (ei.exitPoint - _pos).magnitude();
 		if (dist < exitDist) {
-			_pos += puckVector * dist;
+			_pos += puckVec * dist;
 			_walkedCur = true;
 			return;
 		}
@@ -188,7 +188,7 @@ void Actor::walkForward() {
 
 		// Check for an adjacent sector which can continue
 		// the path
-		currSector = g_grim->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVector, 0x1000);
+		currSector = g_grim->currScene()->findPointSector(ei.exitPoint + (float)0.0001 * puckVec, 0x1000);
 		if (currSector == prevSector)
 			break;
 	}
@@ -422,8 +422,8 @@ void Actor::shutUp() {
 	}
 }
 
-void Actor::pushCostume(const char *name) {
-	Costume *newCost = g_resourceloader->loadCostume(name, currentCostume());
+void Actor::pushCostume(const char *n) {
+	Costume *newCost = g_resourceloader->loadCostume(n, currentCostume());
 
 	newCost->setColormap(NULL);
 	_costumeStack.push_back(newCost);
@@ -438,11 +438,11 @@ void Actor::setColormap(const char *map) {
 	}
 }
 
-void Actor::setCostume(const char *name) {
+void Actor::setCostume(const char *n) {
 	if (!_costumeStack.empty())
 		popCostume();
 
-	pushCostume(name);
+	pushCostume(n);
 }
 
 void Actor::popCostume() {
@@ -488,9 +488,9 @@ void Actor::setHead(int joint1, int joint2, int joint3, float maxRoll, float max
 	}
 }
 
-Costume *Actor::findCostume(const char *name) {
+Costume *Actor::findCostume(const char *n) {
 	for (Common::List<Costume *>::iterator i = _costumeStack.begin(); i != _costumeStack.end(); i++)
-		if (strcasecmp((*i)->filename(), name) == 0)
+		if (strcasecmp((*i)->filename(), n) == 0)
 			return *i;
 
 	return NULL;
@@ -681,20 +681,20 @@ void Actor::undraw(bool /*visible*/) {
 
 #define strmatch(src, dst)     (strlen(src) == strlen(dst) && strcmp(src, dst) == 0)
 
-void Actor::setShadowPlane(const char *name) {
+void Actor::setShadowPlane(const char *n) {
 	assert(_activeShadowSlot != -1);
 
-	_shadowArray[_activeShadowSlot].name = name;
+	_shadowArray[_activeShadowSlot].name = n;
 }
 
-void Actor::addShadowPlane(const char *name) {
+void Actor::addShadowPlane(const char *n) {
 	assert(_activeShadowSlot != -1);
 
 	int numSectors = g_grim->currScene()->getSectorCount();
 
 	for (int i = 0; i < numSectors; i++) {
 		Sector *sector = g_grim->currScene()->getSectorBase(i);
-		if (strmatch(sector->name(), name)) {
+		if (strmatch(sector->name(), n)) {
 			_shadowArray[_activeShadowSlot].planeList.push_back(sector);
 			g_grim->flagRefreshShadowMask(true);
 			return;
@@ -722,10 +722,10 @@ void Actor::setActivateShadow(int shadowId, bool state) {
 	_shadowArray[shadowId].active = state;
 }
 
-void Actor::setShadowPoint(Graphics::Vector3d pos) {
+void Actor::setShadowPoint(Graphics::Vector3d p) {
 	assert(_activeShadowSlot != -1);
 
-	_shadowArray[_activeShadowSlot].pos = pos;
+	_shadowArray[_activeShadowSlot].pos = p;
 }
 
 void Actor::clearShadowPlanes() {

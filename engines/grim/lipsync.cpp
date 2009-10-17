@@ -56,7 +56,7 @@ LipSync::LipSync(const char *filename, const char *data, int len) {
 				readPhoneme = READ_LE_UINT16(data + 2);
 
 				// Look for the animation corresponding to the phoneme
-				for (j = 0; j < _animTableSize && readPhoneme != _animTable[j].phoneme; j++);
+				for (j = 0; (j < _animTableSize) && (readPhoneme != _animTable[j].phoneme); j++) { ; }
 
 				if (readPhoneme != _animTable[j].phoneme) {
 					warning("Unknown phoneme: 0x%X in file %s", readPhoneme, filename);

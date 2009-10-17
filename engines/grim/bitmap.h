@@ -50,8 +50,8 @@ public:
 	int height() const { return _height; }
 	int x() const { return _x; }
 	int y() const { return _y; }
-	void setX(int x) { _x = x; }
-	void setY(int y) { _y = y; }
+	void setX(int xPos) { _x = xPos; }
+	void setY(int yPos) { _y = yPos; }
 
 	char *getData() { return _data[_currImage]; }
 

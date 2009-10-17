@@ -156,16 +156,16 @@ void TextObject::createBitmap() {
 	_numberLines = (stringWidth / maxWidth) + 1;
 	int numberCharsPerLine = (msg.size() / _numberLines) + 1;
 
-	int line = 1;
+	int cline = 1;
 	int lineWidth = 0;
 	int maxLineWidth = 0;
 	for (int i = 0; i < (int)msg.size(); i++) {
 		lineWidth += MAX(_font->getCharWidth(msg[i]), _font->getCharDataWidth(msg[i]));
-		if (i + 1 == numberCharsPerLine * line) {
+		if (i + 1 == numberCharsPerLine * cline) {
 			if (lineWidth > maxLineWidth)
 				maxLineWidth = lineWidth;
 
-			++line;
+			++cline;
 			lineWidth = 0;
 
 			if (message.contains(' ')) {
@@ -224,8 +224,8 @@ void TextObject::createBitmap() {
 
 		// Fill bitmap
 		int startOffset = 0;
-		for (unsigned int c = 0; c < currentLine.size(); c++) {
-			int ch = currentLine[c];
+		for (unsigned int d = 0; d < currentLine.size(); d++) {
+			int ch = currentLine[d];
 			int8 startingLine = _font->getCharStartingLine(ch) + _font->getBaseOffsetY();
 			int32 charDataWidth = _font->getCharDataWidth(ch);
 			int32 charWidth = _font->getCharWidth(ch);

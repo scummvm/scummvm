@@ -115,7 +115,7 @@ static const GrimGameDescription gameDescriptions[] = {
 };
 
 static const GrimGameDescription fallbackGameDescriptions[] = {
-	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE}}
+	{{"grim", 0, {{0, 0, 0, 0}}, Common::UNK_LANG, Common::kPlatformPC, ADGF_NO_FLAGS, GUIO_NONE}, 0}
 };
 
 static const ADFileBasedFallback grimFallback[] = {
