@@ -131,6 +131,7 @@ bool SciGuiPalette::setAmiga() {
 			_sysPalette.colors[curColor].b = (byte2 & 0x0F) * 0x11;
 		}
 		file.close();
+		setOnScreen();
 		return true;
 	}
 	return false;
@@ -278,6 +279,7 @@ void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	GuiColor col;
 	int len = toColor - fromColor - 1;
 	uint32 now = g_system->getMillis() * 60 / 1000;;
+
 	// search for sheduled animations with the same 'from' value
 	int sz = _schedules.size();
 	for (int i = 0; i < sz; i++) {

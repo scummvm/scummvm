@@ -469,6 +469,10 @@ void SciGui::paletteSetIntensity(int fromColor, int toColor, int intensity, bool
 }
 
 void SciGui::paletteAnimate(int fromColor, int toColor, int speed) {
+	// kAnimate gets called for Amiga as well, but for colors above 32, so it doesnt make sense
+	if (!_s->resMan->isVGA())
+		return;
+
 	_palette->animate(fromColor, toColor, speed);
 }
 
