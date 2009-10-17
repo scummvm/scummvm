@@ -271,7 +271,7 @@ void SciGuiTransitions::fadeIn() {
 	int16 stepNr;
 
 	for (stepNr = 0; stepNr <= 100; stepNr += 10) {
-		_palette->setIntensity(1, 254, 100, true);
+		_palette->setIntensity(1, 255, stepNr, true);
 		_gui->wait(2);
 	}
 }
