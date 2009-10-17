@@ -338,6 +338,15 @@ int BaseSongIterator::parseMidiCommand(byte *buf, int *result, SongIteratorChann
 
 				self1->_numLoopedChannels = self1->_numActiveChannels - 1;
 
+				// FIXME:
+				// This implementation of hold breaks getting out of the
+				// limo when visiting the airport near the start of LSL5.
+				// It seems like all channels should be reset here somehow,
+				// but not sure how.
+				// Forcing all channel offsets to 0 seems to fix the hang,
+				// but somehow slows the exit sequence down to take 20 seconds
+				// instead of about 3.
+
 				return SI_LOOP;
 			}
 
