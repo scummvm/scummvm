@@ -305,6 +305,8 @@ reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
 		newvalue = argv[2].toSint16();
 
 	if (dest_r.isRaw) {
+		// FIXME: in kq5 this here gets called with offset = 0xFFFF, we should implement maxSize check in here
+		//  i dont know the exact behaviour, so i dont know how to do this correctly
 		value = dest_r.raw[offset];
 		if (argc > 2) /* Request to modify this char */
 			dest_r.raw[offset] = newvalue;
