@@ -588,7 +588,7 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	signal = GET_SEL32V(curObject, signal);
 	controlMask = GET_SEL32V(curObject, illegalBits);
 	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
-	if ((result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW))) {
+	if ((result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
 		// FIXME: this seems to be causing problems when roger wilco falls down from time portal in the intro sequence
 		//  There must be a bug somewhere in here
 		List *list = _s->_segMan->lookupList(listReference);
