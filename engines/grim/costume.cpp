@@ -947,7 +947,7 @@ void Costume::playChore(int num) {
 	_chores[num].play();
 }
 
-void Costume::setColormap(char *map) {
+void Costume::setColormap(const char *map) {
 	// Sometimes setColormap is called on a null costume,
 	// see where raoul is gone in hh.set
 	if (!map)

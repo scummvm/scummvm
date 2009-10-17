@@ -156,7 +156,7 @@ void TextSplitter::processLine() {
 }
 
 void TextSplitter::TextLines::setData(char *data, int length) {
-	int _lineLength = length;
+	_lineLength = length;
 
 	_lineData = new char[_lineLength];
 	memcpy(_lineData, data, _lineLength);

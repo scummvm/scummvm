@@ -47,7 +47,7 @@ public:
 	void setChoreLooping(int num, bool val) { _chores[num].setLooping(val); }
 	void stopChore(int num) { _chores[num].stop(); }
 	Model::HierNode *getModelNodes();
-	void setColormap(char *map);
+	void setColormap(const char *map);
 	void stopChores();
 	int isChoring(const char *name, bool excludeLooping);
 	int isChoring(int num, bool excludeLooping);

@@ -55,7 +55,7 @@ public:
 	void createBitmap();
 	void destroyBitmap();
 	void setDefaults(TextObjectDefaults *defaults);
-	void setText(char *text);
+	void setText(const char *text);
 	void setX(int x) { _x = x; }
 	void setY(int y) { _y = y; }
 	void subBaseOffsetY() {

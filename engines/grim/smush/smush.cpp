@@ -254,7 +254,7 @@ void Smush::handleDeltaPalette(byte *src, int32 size) {
 
 void Smush::handleIACT(const byte *src, int32 size) {
 	int32 bsize = size - 18;
-	byte *d_src = (byte *)src + 18;
+	const byte *d_src = src + 18;
 
 	while (bsize > 0) {
 		if (_IACTpos >= 2) {

@@ -2186,7 +2186,7 @@ static void IsActorInSector() {
 		if (strmatch(sector->name(), name)) {
 			if (sector->isPointInSector(actor->pos())) {
 				lua_pushnumber(sector->id());
-				lua_pushstring((char *)sector->name());
+				lua_pushstring(sector->name());
 				lua_pushnumber(sector->type());
 				return;
 			}
@@ -2917,7 +2917,7 @@ static void ChangeTextObject() {
 				setTextObjectParams(textObject, paramObj);
 			} else {
 				line = lua_getstring(paramObj);
-				textObject->setText((char *)line);
+				textObject->setText(line);
 				lua_getstring(paramObj);
 
 			}
@@ -2963,7 +2963,7 @@ static void MakeTextObject() {
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	textObject->setText((char *)text.c_str());
+	textObject->setText(text.c_str());
 	if (!(g_grim->getGameFlags() & GF_DEMO))
 		textObject->createBitmap();
 	g_grim->registerTextObject(textObject);
@@ -3020,7 +3020,7 @@ static void BlastText() {
 	if (lua_istable(tableObj))
 		setTextObjectParams(textObject, tableObj);
 
-	textObject->setText((char *)text.c_str());
+	textObject->setText(text.c_str());
 	textObject->createBitmap();
 	textObject->draw();
 	delete textObject;

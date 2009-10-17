@@ -47,7 +47,7 @@ TextObject::TextObject(bool blastDraw) :
 	_blastDraw = blastDraw;
 }
 
-void TextObject::setText(char *text) {
+void TextObject::setText(const char *text) {
 	if (strlen(text) < sizeof(_textID))
 		strcpy(_textID, text);
 	else {
@@ -131,7 +131,7 @@ void TextObject::createBitmap() {
 
 	Common::String msg = parseMsgText(_textID, NULL);
 	Common::String message;
-	char *c = (char *)msg.c_str();
+	const char *c = msg.c_str();
 
 	// remove spaces (NULL_TEXT) from the end of the string,
 	// while this helps make the string unique it screws up

@@ -373,7 +373,7 @@ void Actor::sayLine(const char *msg, const char *msgId) {
 
 	_sayLineText = new TextObject(false);
 	_sayLineText->setDefaults(&sayLineDefaults);
-	_sayLineText->setText((char *)msg);
+	_sayLineText->setText(msg);
 	_sayLineText->setFGColor(&_talkColor);
 	if (g_grim->getMode() == ENGINE_MODE_SMUSH) {
 		_sayLineText->setX(640 / 2);
@@ -432,7 +432,7 @@ void Actor::pushCostume(const char *n) {
 void Actor::setColormap(const char *map) {
 	if (!_costumeStack.empty()) {
 		Costume *cost = _costumeStack.back();
-		cost->setColormap((char *) map);
+		cost->setColormap(map);
 	} else {
 		warning("Actor::setColormap: No costumes");
 	}

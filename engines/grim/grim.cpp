@@ -1162,7 +1162,7 @@ void GrimEngine::savegameCallback() {
 Scene *GrimEngine::findScene(const char *name) {
 	// Find scene object
 	for (SceneListType::const_iterator i = scenesBegin(); i != scenesEnd(); i++) {
-		if (!strcmp((char *) (*i)->name(), (char *) name))
+		if (!strcmp((*i)->name(), name))
 			return *i;
 	}
 	return NULL;

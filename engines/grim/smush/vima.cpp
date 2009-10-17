@@ -125,7 +125,7 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 	byte sBytes[2];
 	int16 sWords[2];
 
-	sBytes[0] = *(uint8 *)(src++);
+	sBytes[0] = *src++;
 	if (sBytes[0] & 0x80) {
 		sBytes[0] = ~sBytes[0];
 		numChannels = 2;
@@ -133,7 +133,7 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 	sWords[0] = READ_BE_UINT16(src);
 	src += 2;
 	if (numChannels > 1) {
-		sBytes[1] = *(uint8 *)(src++);
+		sBytes[1] = *src++;
 		sWords[1] = READ_BE_UINT16(src);
 		src += 2;
 	}
@@ -156,7 +156,7 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 			int val = (bits >> (16 - bitPtr)) & (highBit | lowBits);
 
 			if (bitPtr > 7) {
-				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
+				bits = ((bits & 0xff) << 8) | *src++;
 				bitPtr -= 8;
 			}
 
@@ -167,9 +167,9 @@ void decompressVima(const byte *src, int16 *dest, int destLen, uint16 *destTable
 
 			if (val == lowBits) {
 				outputWord = ((int16)(bits << bitPtr) & 0xffffff00);
-				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
+				bits = ((bits & 0xff) << 8) | *src++;
 				outputWord |= ((bits >> (8 - bitPtr)) & 0xff);
-				bits = ((bits & 0xff) << 8) | *(uint8 *)(src++);
+				bits = ((bits & 0xff) << 8) | *src++;
 			} else {
 				int index = (val << (7 - numBits)) | (currTablePos << 6);
 				int delta = destTable[index];
