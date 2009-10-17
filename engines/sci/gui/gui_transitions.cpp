@@ -47,23 +47,31 @@ SciGuiTransitions::~SciGuiTransitions() {
 
 // This table contains a mapping between oldIDs (prior SCI1LATE) and newIDs
 static const GuiTransitionTranslateEntry oldTransitionIDs[] = {
-	{   0, SCI_TRANSITIONS_VERTICALROLLFROMCENTER,		false },
-	{   1, SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER,	false },
-	{   6, SCI_TRANSITIONS_DIAGONALROLLFROMCENTER,		false },
-	{   7, SCI_TRANSITIONS_DIAGONALROLLTOCENTER,		false },
+	{   0, SCI_TRANSITIONS_VERTICALROLL_FROMCENTER,		false },
+	{   1, SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER,	false },
+	{   2, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,			false },
+	{   3, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,			false },
+	{   4, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,		false },
+	{   5, SCI_TRANSITIONS_STRAIGHT_FROM_TOP,			false },
+	{   6, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,		false },
+	{   7, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		false },
 	{   8, SCI_TRANSITIONS_BLOCKS,						false },
-	{   9, SCI_TRANSITIONS_VERTICALROLLTOCENTER,		false },
-	{  10, SCI_TRANSITIONS_HORIZONTALROLLTOCENTER,		false },
-	{  15, SCI_TRANSITIONS_DIAGONALROLLFROMCENTER,		true },
-	{  16, SCI_TRANSITIONS_DIAGONALROLLTOCENTER,		true },
+	{   9, SCI_TRANSITIONS_VERTICALROLL_TOCENTER,		false },
+	{  10, SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,		false },
+	{  11, SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT,			true },
+	{  12, SCI_TRANSITIONS_STRAIGHT_FROM_LEFT,			true },
+	{  13, SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM,		true },
+	{  14, SCI_TRANSITIONS_STRAIGHT_FROM_TOP,			true },
+	{  15, SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER,		true },
+	{  16, SCI_TRANSITIONS_DIAGONALROLL_TOCENTER,		true },
 	{  17, SCI_TRANSITIONS_BLOCKS,						true },
 	{  18, SCI_TRANSITIONS_PIXELATION,					false },
 	{  27, SCI_TRANSITIONS_PIXELATION	,				true },
 	{  30, SCI_TRANSITIONS_FADEPALETTE,					false },
-	{  40, SCI_TRANSITIONS_SCROLLRIGHT,					false },
-	{  41, SCI_TRANSITIONS_SCROLLLEFT,					false },
-	{  42, SCI_TRANSITIONS_SCROLLUP,					false },
-	{  43, SCI_TRANSITIONS_SCROLLDOWN,					false },
+	{  40, SCI_TRANSITIONS_SCROLL_RIGHT,				false },
+	{  41, SCI_TRANSITIONS_SCROLL_LEFT,					false },
+	{  42, SCI_TRANSITIONS_SCROLL_UP,					false },
+	{  43, SCI_TRANSITIONS_SCROLL_DOWN,					false },
 	{ 100, SCI_TRANSITIONS_NONE,						false },
 	{ 255, 255,											false }
 };
@@ -109,22 +117,28 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		warning("SciGuiTransitions: blackout flag currently not supported");
 
 	switch (_number) {
-	case SCI_TRANSITIONS_VERTICALROLLFROMCENTER:
+	case SCI_TRANSITIONS_VERTICALROLL_FROMCENTER:
 		setNewPalette(); verticalRollFromCenter();
 		break;
-	case SCI_TRANSITIONS_VERTICALROLLTOCENTER:
+	case SCI_TRANSITIONS_VERTICALROLL_TOCENTER:
 		setNewPalette(); verticalRollFromCenter();
 		break;
-	case SCI_TRANSITIONS_HORIZONTALROLLFROMCENTER:
+	case SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER:
 		setNewPalette(); horizontalRollFromCenter();
 		break;
-	case SCI_TRANSITIONS_HORIZONTALROLLTOCENTER:
+	case SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER:
 		setNewPalette(); horizontalRollToCenter();
 		break;
-	case SCI_TRANSITIONS_DIAGONALROLLTOCENTER:
+	case SCI_TRANSITIONS_DIAGONALROLL_TOCENTER:
 		setNewPalette(); diagonalRollToCenter();
-	case SCI_TRANSITIONS_DIAGONALROLLFROMCENTER:
+	case SCI_TRANSITIONS_DIAGONALROLL_FROMCENTER:
 		setNewPalette(); diagonalRollFromCenter();
+
+	case SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT:
+	case SCI_TRANSITIONS_STRAIGHT_FROM_LEFT:
+	case SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM:
+	case SCI_TRANSITIONS_STRAIGHT_FROM_TOP:
+		setNewPalette(); straight(_number);
 
 	case SCI_TRANSITIONS_PIXELATION:
 		setNewPalette(); pixelation();
@@ -138,11 +152,11 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 		fadeOut(); setNewScreen(); fadeIn();
 		break;
 
-	case SCI_TRANSITIONS_SCROLLRIGHT:
-	case SCI_TRANSITIONS_SCROLLLEFT:
-	case SCI_TRANSITIONS_SCROLLUP:
-	case SCI_TRANSITIONS_SCROLLDOWN:
-		setNewPalette(); scroll();
+	case SCI_TRANSITIONS_SCROLL_RIGHT:
+	case SCI_TRANSITIONS_SCROLL_LEFT:
+	case SCI_TRANSITIONS_SCROLL_UP:
+	case SCI_TRANSITIONS_SCROLL_DOWN:
+		setNewPalette(); scroll(_number);
 		break;
 
 	case SCI_TRANSITIONS_NONE_LONGBOW:
@@ -235,8 +249,64 @@ void SciGuiTransitions::blocks() {
 	} while (mask != 0x40);
 }
 
+// directly shows new screen starting up/down/left/right and going to the opposite direction - works on _picRect area only
+void SciGuiTransitions::straight(int16 number) {
+	int16 stepNr = 0;
+	Common::Rect newScreenRect = _picRect;
+
+	switch (number) {
+	case SCI_TRANSITIONS_STRAIGHT_FROM_RIGHT:
+		newScreenRect.left = newScreenRect.right - 1;
+		while (newScreenRect.left >= _picRect.left) {
+			_screen->copyRectToScreen(newScreenRect);
+			if ((stepNr & 1) == 0) {
+				g_system->updateScreen();
+				g_system->delayMillis(1);
+			}
+			stepNr++;
+			newScreenRect.translate(-1, 0);
+		}
+		break;
+
+	case SCI_TRANSITIONS_STRAIGHT_FROM_LEFT:
+		newScreenRect.right = newScreenRect.left + 1;
+		while (newScreenRect.right <= _picRect.right) {
+			_screen->copyRectToScreen(newScreenRect);
+			if ((stepNr & 1) == 0) {
+				g_system->updateScreen();
+				g_system->delayMillis(1);
+			}
+			stepNr++;
+			newScreenRect.translate(1, 0);
+		}
+		break;
+
+	case SCI_TRANSITIONS_STRAIGHT_FROM_BOTTOM:
+		newScreenRect.top = newScreenRect.bottom - 1;
+		while (newScreenRect.top >= _picRect.top) {
+			_screen->copyRectToScreen(newScreenRect);
+			g_system->updateScreen();
+			g_system->delayMillis(3);
+			stepNr++;
+			newScreenRect.translate(0, -1);
+		}
+		break;
+
+	case SCI_TRANSITIONS_STRAIGHT_FROM_TOP:
+		newScreenRect.bottom = newScreenRect.top + 1;
+		while (newScreenRect.bottom <= _picRect.bottom) {
+			_screen->copyRectToScreen(newScreenRect);
+			g_system->updateScreen();
+			g_system->delayMillis(3);
+			stepNr++;
+			newScreenRect.translate(0, 1);
+		}
+		break;
+	}
+}
+
 // scroll old screen (up/down/left/right) and insert new screen that way - works on _picRect area only
-void SciGuiTransitions::scroll() {
+void SciGuiTransitions::scroll(int16 number) {
 	int16 screenWidth, screenHeight;
 	byte *oldScreenPtr;
 	int16 stepNr = 0;
@@ -249,8 +319,8 @@ void SciGuiTransitions::scroll() {
 
 	oldScreenPtr = _oldScreen + _picRect.left + _picRect.top * screenWidth;
 
-	switch (_number) {
-	case SCI_TRANSITIONS_SCROLLLEFT:
+	switch (number) {
+	case SCI_TRANSITIONS_SCROLL_LEFT:
 		newScreenRect.right = newScreenRect.left;
 		newMoveRect.left = newMoveRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
@@ -269,7 +339,7 @@ void SciGuiTransitions::scroll() {
 			g_system->updateScreen();
 		break;
 
-	case SCI_TRANSITIONS_SCROLLRIGHT:
+	case SCI_TRANSITIONS_SCROLL_RIGHT:
 		newScreenRect.left = newScreenRect.right;
 		while (oldMoveRect.left < oldMoveRect.right) {
 			oldMoveRect.left++;
@@ -287,7 +357,7 @@ void SciGuiTransitions::scroll() {
 			g_system->updateScreen();
 		break;
 
-	case SCI_TRANSITIONS_SCROLLUP:
+	case SCI_TRANSITIONS_SCROLL_UP:
 		newScreenRect.bottom = newScreenRect.top;
 		newMoveRect.top = newMoveRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
@@ -301,7 +371,7 @@ void SciGuiTransitions::scroll() {
 		}
 		break;
 
-	case SCI_TRANSITIONS_SCROLLDOWN:
+	case SCI_TRANSITIONS_SCROLL_DOWN:
 		newScreenRect.top = newScreenRect.bottom;
 		while (oldMoveRect.top < oldMoveRect.bottom) {
 			oldMoveRect.top++;
