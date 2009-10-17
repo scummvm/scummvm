@@ -107,11 +107,17 @@ void SciGuiTransitions::init() {
 		_translationTable = NULL;
 	else
 		_translationTable = oldTransitionIDs;
+
+	// setup default transition
+	_number = SCI_TRANSITIONS_HORIZONTALROLL_FROMCENTER;
+	_blackoutFlag = false;
 }
 
 void SciGuiTransitions::setup(int16 number, bool blackoutFlag) {
-	_number = number;
-	_blackoutFlag = blackoutFlag;
+	if (number != -1) {
+		_number = number;
+		_blackoutFlag = blackoutFlag;
+	}
 }
 
 // will translate a number and return corresponding translationEntry
