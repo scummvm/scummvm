@@ -189,6 +189,7 @@ void Graphics::drawStringChar(uint8 *dst, int xDst, int yDst, int pitch, uint8 c
 }
 
 void Graphics::setCharset(CharsetType type) {
+	_charsetType = type;
 	switch (type) {
 	case kCharsetTypeDefault:
 		_charset.charW = 10;

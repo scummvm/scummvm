@@ -207,9 +207,6 @@ void TuckerEngine::restart() {
 	_speechVolume = kMaxSoundVolume;
 	memset(_miscSoundFxNum, 0, sizeof(_miscSoundFxNum));
 	memset(_speechHistoryTable, 0, sizeof(_speechHistoryTable));
-	for (int i = 0; i < kMaxCharacters; ++i) {
-		_charSpeechSoundVolumeTable[i] = kMaxSoundVolume;
-	}
 	_charSpeechSoundCounter = 0;
 	memset(_miscSoundFxDelayCounter, 0, sizeof(_miscSoundFxDelayCounter));
 	_characterSoundFxDelayCounter = 0;
@@ -2368,6 +2365,14 @@ void TuckerEngine::handleMap() {
 	}
 }
 
+void TuckerEngine::clearSprites() {
+	memset(_spritesTable, 0, sizeof(_spritesTable));
+	for (int i = 0; i < kMaxCharacters; ++i) {
+		_spritesTable[i].state = -1;
+		_spritesTable[i].stateIndex = -1;
+	}
+}
+
 void TuckerEngine::updateSprites() {
 	const int count = (_locationNum == 9) ? 3 : _spritesCount;
 	for (int i = 0; i < count; ++i) {
@@ -3164,7 +3169,7 @@ int TuckerEngine::executeTableInstruction() {
 	case kCode_c0s:
 		_speechSoundNum = readTableInstructionParam(3) - 1;
 		rememberSpeechSound();
-		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, _charSpeechSoundVolumeTable[index]);
+		startSpeechSound(_partNum * 3000 + _ptTextOffset + _speechSoundNum - 3000, kMaxSoundVolume);
 		_charSpeechSoundCounter = kDefaultCharSpeechSoundCounter;
 		_actionTextColor = 181 + index;
 		if (_tableInstructionFlag == 0) {

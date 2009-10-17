@@ -2284,7 +2284,6 @@ void TuckerEngine::updateSprite_locationNum50(int i) {
 		_updateSpriteFlag1 = 1;
 		state = i + 1;
 	}
-	state = i + 1; // FIXME: bug ?
 	_spritesTable[i].state = state;
 }
 

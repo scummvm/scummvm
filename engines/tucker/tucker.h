@@ -335,6 +335,7 @@ protected:
 	void addObjectToInventory(int num);
 	void removeObjectFromInventory(int num);
 	void handleMap();
+	void clearSprites();
 	void updateSprites();
 	void updateSprite(int i);
 	void drawStringInteger(int num, int x, int y, int digits);
@@ -705,12 +706,11 @@ protected:
 	int _currentFxIndex;
 	int _speechSoundNum;
 	int _speechVolume;
-	Audio::SoundHandle _sfxHandles[6];
-	Audio::SoundHandle _musicHandles[2];
+	Audio::SoundHandle _sfxHandles[kLocationSoundsTableSize];
+	Audio::SoundHandle _musicHandles[kLocationMusicsTableSize];
 	Audio::SoundHandle _speechHandle;
 	int _miscSoundFxNum[2];
 	int _speechHistoryTable[kSpeechHistoryTableSize];
-	int _charSpeechSoundVolumeTable[kMaxCharacters];
 	int _charSpeechSoundCounter;
 	int _miscSoundFxDelayCounter[2];
 	int _characterSoundFxDelayCounter;

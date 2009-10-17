@@ -547,6 +547,7 @@ void TuckerEngine::loadObj() {
 	sprintf(filename, "pt%dtext.c", _partNum);
 	free(_ptTextBuf);
 	_ptTextBuf = loadFile(filename, 0);
+	_characterSpeechDataPtr = _ptTextBuf;
 	loadData();
 	loadPanObj();
 }

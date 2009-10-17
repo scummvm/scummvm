@@ -57,12 +57,8 @@ void TuckerEngine::handleCreditsSequence() {
 	_flagsTable[236] = 74;
 	uint8 *imgBuf = (uint8 *)malloc(16 * 64000);
 	loadSprC02_01();
+	clearSprites();
 	_spritesCount = _creditsSequenceSpriteCounts[num];
-	for (int i = 0; i < _spritesCount; ++i) {
-		memset(&_spritesTable[i], 0, sizeof(Sprite));
-		_spritesTable[i].state = -1;
-		_spritesTable[i].stateIndex = -1;
-	}
 	loadFile("credits.txt", _ptTextBuf);
 	loadImage("loc74.pcx", _quadBackgroundGfxBuf, 1);
 	startSpeechSound(9001, 120);
@@ -84,7 +80,7 @@ void TuckerEngine::handleCreditsSequence() {
 			Graphics::copyRect(_locationBackgroundGfxBuf, 640, _quadBackgroundGfxBuf, 320, 320, 200);
 		} else {
 			Graphics::copyRect(_locationBackgroundGfxBuf, 640, imgBuf + imgNum * 64000, 320, 320, 200);
-			static const int yPosTable[] = { 48, 60, 80, 92, 140, 116 };
+			static const int yPosTable[] = { 48, 60, 80, 92, 104, 116 };
 			for (int i = 0; i < 6; ++i) {
 				drawCreditsString(5, yPosTable[i], counter2 * 6 + i);
 			}
@@ -96,10 +92,10 @@ void TuckerEngine::handleCreditsSequence() {
 			}
 			if (counter1 > 116) {
 				counter1 = 0;
-			}
-			++counter2;
-			if (counter2 > 17) {
-				counter2 = 0;
+				++counter2;
+				if (counter2 > 17) {
+					counter2 = 0;
+				}
 			}
 		}
 		_fullRedraw = true;
@@ -117,17 +113,12 @@ void TuckerEngine::handleCreditsSequence() {
 		counter4 = _timerCounter2 / 3;
 		if (counter4 == _creditsSequenceTimecounts[num]) {
 			_fadePaletteCounter = 0;
-			_spritesCount = _creditsSequenceSpriteCounts[num];
-			for (int i = 0; i < _spritesCount; ++i) {
-				memset(&_spritesTable[i], 0, sizeof(Sprite));
-				_spritesTable[i].state = -1;
-				_spritesTable[i].stateIndex = -1;
-			}
+			clearSprites();
 			++num;
 			char filename[40];
 			if (num == 6) {
 				for (int i = 0; i < 16; ++i) {
-					sprintf(filename, "cogs%04d.pcx", i);
+					sprintf(filename, "cogs%04d.pcx", i + 1);
 					loadImage(filename, imgBuf + i * 64000, 2);
 				}
 			} else {
@@ -215,9 +206,7 @@ void TuckerEngine::handleNewPartSequence() {
 	}
 	loadImage(filename, _quadBackgroundGfxBuf, 1);
 	_spritesCount = 1;
-	memset(&_spritesTable[0], 0, sizeof(Sprite));
-	_spritesTable[0].state = -1;
-	_spritesTable[0].stateIndex = -1;
+	clearSprites();
 	int currentLocation = _locationNum;
 	_locationNum = 98;
 	unloadSprA02_01();
