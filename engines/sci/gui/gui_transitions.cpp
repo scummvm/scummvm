@@ -146,8 +146,11 @@ void SciGuiTransitions::doit(Common::Rect picRect) {
 	if (_blackoutFlag) {
 		// We need to find out what transition we are supposed to use for blackout
 		translationEntry = translateNumber(_number, blackoutTransitionIDs);
-
-		doTransition(translationEntry->newId, true);
+		if (translationEntry) {
+			doTransition(translationEntry->newId, true);
+		} else {
+			warning("SciGuiTransitions: ID %d not listed in blackoutTransitionIDs", _number);
+		}
 	}
 
 	// Now we do the actual transition to the new screen
