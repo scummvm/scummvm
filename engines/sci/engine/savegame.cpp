@@ -483,7 +483,7 @@ static void sync_songlib_t(Common::Serializer &s, SongLibrary &obj) {
 	if (s.isLoading()) {
 		obj._lib = 0;
 		while (songcount--) {
-			Song *newsong = (Song *)calloc(1, sizeof(Song));
+			Song *newsong = new Song;
 			sync_song_t(s, *newsong);
 			obj.addSong(newsong);
 		}

@@ -109,7 +109,7 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 	CursorMan.replaceCursor(rawBitmap, SCI_CURSOR_SCI0_HEIGHTWIDTH, SCI_CURSOR_SCI0_HEIGHTWIDTH, hotspot.x, hotspot.y, SCI_CURSOR_SCI0_TRANSPARENCYCOLOR);
 	CursorMan.showMouse(true);
 
-	delete rawBitmap;
+	delete[] rawBitmap;
 }
 
 void SciGuiCursor::setView(GuiResourceId viewNum, int loopNum, int celNum, Common::Point *hotspot) {

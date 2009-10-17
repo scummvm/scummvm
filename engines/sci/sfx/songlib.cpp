@@ -32,6 +32,7 @@ namespace Sci {
 
 Song::Song() {
 	_handle = 0;
+	_resourceNum = 0;
 	_priority = 0;
 	_status = SOUND_STATUS_STOPPED;
 
@@ -51,6 +52,7 @@ Song::Song() {
 
 Song::Song(SongHandle handle, SongIterator *it, int priority) {
 	_handle = handle;
+	_resourceNum = 0;
 	_priority = priority;
 	_status = SOUND_STATUS_STOPPED;
 
