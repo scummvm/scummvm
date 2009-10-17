@@ -96,7 +96,8 @@ static const GuiTransitionTranslateEntry blackoutTransitionIDs[] = {
 	{ SCI_TRANSITIONS_NONE_LONGBOW,						SCI_TRANSITIONS_NONE,						true },
 	{ SCI_TRANSITIONS_NONE,								SCI_TRANSITIONS_NONE,						true },
 	{ SCI_TRANSITIONS_VERTICALROLL_TOCENTER,			SCI_TRANSITIONS_NONE,						true },
-	{ SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,			SCI_TRANSITIONS_NONE,						true }
+	{ SCI_TRANSITIONS_HORIZONTALROLL_TOCENTER,			SCI_TRANSITIONS_NONE,						true },
+	{ 255,												255,										true }
 };
 
 void SciGuiTransitions::init() {
@@ -512,7 +513,7 @@ void SciGuiTransitions::horizontalRollToCenter(bool blackoutFlag) {
 }
 
 // diagonally displays new screen starting from center - works on _picRect area only
-//  assumes that height of rect is larger than width, is also currently not optimized (TODO)
+//  assumes that height of rect is larger than width
 void SciGuiTransitions::diagonalRollFromCenter(bool blackoutFlag) {
 	int16 halfHeight = _picRect.height() / 2;
 	Common::Rect upperRect(_picRect.left + halfHeight - 2, _picRect.top + halfHeight, _picRect.right - halfHeight + 1, _picRect.top + halfHeight + 1);
