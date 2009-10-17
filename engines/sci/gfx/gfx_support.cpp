@@ -30,6 +30,7 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_tools.h"
 
+#include "common/endian.h"
 #include "graphics/primitives.h"
 
 namespace Sci {
