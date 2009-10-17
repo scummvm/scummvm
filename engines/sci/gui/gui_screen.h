@@ -61,9 +61,10 @@ public:
 	byte getControl(int x, int y);
 	byte isFillMatch(int16 x, int16 y, byte drawMask, byte t_color, byte t_pri, byte t_con);
 
-	int getBitsDataSize(Common::Rect rect, byte mask);
-	void saveBits(Common::Rect rect, byte mask, byte *memoryPtr);
-	void restoreBits(byte *memoryPtr);
+	int bitsGetDataSize(Common::Rect rect, byte mask);
+	void bitsSave(Common::Rect rect, byte mask, byte *memoryPtr);
+	void bitsGetRect(byte *memoryPtr, Common::Rect *destRect);
+	void bitsRestore(byte *memoryPtr);
 
 	void setPalette(GuiPalette*pal);
 
@@ -85,8 +86,8 @@ public:
 	int _picNotValid; // possible values 0, 1 and 2
 
 private:
-	void restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
-	void saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
+	void bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen);
+	void bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr);
 
 	bool _unditherState;
 	int16 _unditherMemorial[SCI_SCREEN_UNDITHERMEMORIAL_SIZE];

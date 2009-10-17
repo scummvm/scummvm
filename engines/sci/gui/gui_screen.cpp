@@ -194,7 +194,7 @@ byte SciGuiScreen::isFillMatch(int16 x, int16 y, byte screenMask, byte t_color, 
 	return match;
 }
 
-int SciGuiScreen::getBitsDataSize(Common::Rect rect, byte mask) {
+int SciGuiScreen::bitsGetDataSize(Common::Rect rect, byte mask) {
 	int byteCount = sizeof(rect) + sizeof(mask);
 	int pixels = rect.width() * rect.height();
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
@@ -211,23 +211,23 @@ int SciGuiScreen::getBitsDataSize(Common::Rect rect, byte mask) {
 	return byteCount;
 }
 
-void SciGuiScreen::saveBits(Common::Rect rect, byte mask, byte *memoryPtr) {
+void SciGuiScreen::bitsSave(Common::Rect rect, byte mask, byte *memoryPtr) {
 	memcpy(memoryPtr, (void *)&rect, sizeof(rect)); memoryPtr += sizeof(rect);
 	memcpy(memoryPtr, (void *)&mask, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
-		saveBitsScreen(rect, _visualScreen, memoryPtr);
-		saveBitsScreen(rect, _displayScreen, memoryPtr);
+		bitsSaveScreen(rect, _visualScreen, memoryPtr);
+		bitsSaveScreen(rect, _displayScreen, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
-		saveBitsScreen(rect, _priorityScreen, memoryPtr);
+		bitsSaveScreen(rect, _priorityScreen, memoryPtr);
 	}
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
-		saveBitsScreen(rect, _controlScreen, memoryPtr);
+		bitsSaveScreen(rect, _controlScreen, memoryPtr);
 	}
 }
 
-void SciGuiScreen::saveBitsScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
+void SciGuiScreen::bitsSaveScreen(Common::Rect rect, byte *screen, byte *&memoryPtr) {
 	int width = rect.width();
 	int y;
 
@@ -239,7 +239,11 @@ void SciGuiScreen::saveBitsScreen(Common::Rect rect, byte *screen, byte *&memory
 	}
 }
 
-void SciGuiScreen::restoreBits(byte *memoryPtr) {
+void SciGuiScreen::bitsGetRect(byte *memoryPtr, Common::Rect *destRect) {
+	memcpy((void *)destRect, memoryPtr, sizeof(Common::Rect));
+}
+
+void SciGuiScreen::bitsRestore(byte *memoryPtr) {
 	Common::Rect rect;
 	byte mask;
 
@@ -247,18 +251,18 @@ void SciGuiScreen::restoreBits(byte *memoryPtr) {
 	memcpy((void *)&mask, memoryPtr, sizeof(mask)); memoryPtr += sizeof(mask);
 
 	if (mask & SCI_SCREEN_MASK_VISUAL) {
-		restoreBitsScreen(rect, memoryPtr, _visualScreen);
-		restoreBitsScreen(rect, memoryPtr, _displayScreen);
+		bitsRestoreScreen(rect, memoryPtr, _visualScreen);
+		bitsRestoreScreen(rect, memoryPtr, _displayScreen);
 	}
 	if (mask & SCI_SCREEN_MASK_PRIORITY) {
-		restoreBitsScreen(rect, memoryPtr, _priorityScreen);
+		bitsRestoreScreen(rect, memoryPtr, _priorityScreen);
 	}
 	if (mask & SCI_SCREEN_MASK_CONTROL) {
-		restoreBitsScreen(rect, memoryPtr, _controlScreen);
+		bitsRestoreScreen(rect, memoryPtr, _controlScreen);
 	}
 }
 
-void SciGuiScreen::restoreBitsScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
+void SciGuiScreen::bitsRestoreScreen(Common::Rect rect, byte *&memoryPtr, byte *screen) {
 	int width = rect.width();
 	int y;
 

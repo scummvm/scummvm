@@ -90,6 +90,7 @@ public:
 	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, GuiResourceId fontId);
 	void BitsShow(const Common::Rect &r);
 	GuiMemoryHandle BitsSave(const Common::Rect &rect, byte screenFlags);
+	void BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect);
 	void BitsRestore(GuiMemoryHandle memoryHandle);
 	void BitsFree(GuiMemoryHandle memoryHandle);
 

@@ -588,15 +588,14 @@ void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 	PenColor(orgPenColor);
 }
 
-// Update (part of) screen
-void SciGuiGfx::BitsShow(const Common::Rect &r) {
-	Common::Rect rect(r.left, r.top, r.right, r.bottom);
-	rect.clip(_curPort->rect);
-	if (rect.isEmpty()) // nothing to show
+void SciGuiGfx::BitsShow(const Common::Rect &rect) {
+	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
+	workerRect.clip(_curPort->rect);
+	if (workerRect.isEmpty()) // nothing to show
 		return;
 
-	OffsetRect(rect);
-	_screen->copyRectToScreen(rect);
+	OffsetRect(workerRect);
+	_screen->copyRectToScreen(workerRect);
 }
 
 GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
@@ -604,20 +603,32 @@ GuiMemoryHandle SciGuiGfx::BitsSave(const Common::Rect &rect, byte screenMask) {
 	byte *memoryPtr;
 	int size;
 
-	Common::Rect r(rect.left, rect.top, rect.right, rect.bottom);
-	r.clip(_curPort->rect);
-	if (r.isEmpty()) // nothing to save
+	Common::Rect workerRect(rect.left, rect.top, rect.right, rect.bottom);
+	workerRect.clip(_curPort->rect);
+	if (workerRect.isEmpty()) // nothing to save
 		return NULL_REG;
 
-	OffsetRect(r); //local port coords to screen coords
+	OffsetRect(workerRect);
 
 	// now actually ask _screen how much space it will need for saving
-	size = _screen->getBitsDataSize(r, screenMask);
+	size = _screen->bitsGetDataSize(workerRect, screenMask);
 
 	memoryId = kalloc(_s->_segMan, "SaveBits()", size);
 	memoryPtr = kmem(_s->_segMan, memoryId);
-	_screen->saveBits(r, screenMask, memoryPtr);
+	_screen->bitsSave(workerRect, screenMask, memoryPtr);
 	return memoryId;
+}
+
+void SciGuiGfx::BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect) {
+	byte *memoryPtr = NULL;
+
+	if (!memoryHandle.isNull()) {
+		memoryPtr = kmem(_s->_segMan, memoryHandle);;
+
+		if (memoryPtr) {
+			_screen->bitsGetRect(memoryPtr, destRect);
+		}
+	}
 }
 
 void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
@@ -627,7 +638,7 @@ void SciGuiGfx::BitsRestore(GuiMemoryHandle memoryHandle) {
 		memoryPtr = kmem(_s->_segMan, memoryHandle);;
 
 		if (memoryPtr) {
-			_screen->restoreBits(memoryPtr);
+			_screen->bitsRestore(memoryPtr);
 			kfree(_s->_segMan, memoryHandle);
 		}
 	}

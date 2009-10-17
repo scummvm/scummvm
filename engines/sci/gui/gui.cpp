@@ -223,10 +223,10 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			doSaveUnder = true;
 			break;
 		case SCI_DISPLAY_RESTOREUNDER:
-			// TODO: get rect from SciMemoryHandle (argv[0])
-			//rect.translate(-_gfx->GetPort()->left, -_gfx->GetPort()->top);
+			_gfx->BitsGetRect(argv[0], &rect);
+			rect.translate(-_gfx->GetPort()->left, -_gfx->GetPort()->top);
 			_gfx->BitsRestore(argv[0]);
-			// TODO: ReAnimate(pArgs)
+			_animate->reAnimate(rect);
 			// finishing loop
 			argc = 0;
 			break;
