@@ -120,14 +120,21 @@ void Icon::draw(float x1, float y1, float x2, float y2, int pal,
   ta_commit_list(&myvertex);
 }
 
-int Icon::find_unused_pixel()
+int Icon::find_unused_pixel(const unsigned char *mask)
 {
   int use[16];
   memset(use, 0, sizeof(use));
-  for (int n=0; n<32*32/2; n++) {
-    unsigned char pix = bitmap[n];
-    use[pix&0xf]++;
-    use[pix>>4]++;
+  unsigned char *p = bitmap;
+  for (int n=0; n<32*32/2/4; n++) {
+    unsigned char mbits = ~*mask++;
+    for (int i=0; i<4; i++) {
+      unsigned char pix = *p++;
+      if(mbits & 64)
+	use[pix&0xf]++;
+      if(mbits & 128)
+	use[pix>>4]++;
+      mbits <<= 2;
+    }
   }
   for (int i=0; i<16; i++)
     if (!use[i])
@@ -165,10 +172,10 @@ bool Icon::load_image2(const void *data, int len)
     palette[i] |= 0xff000000;
   for (int i=hdr.used; i<16; i++)
     palette[i] = 0;
-  int unused = find_unused_pixel();
+  const unsigned char *mask =
+    ((const unsigned char *)data)+hdr.size+(hdr.used<<2)+32*32/2;
+  int unused = find_unused_pixel(mask);
   if (unused >= 0) {
-    const unsigned char *mask =
-      ((const unsigned char *)data)+hdr.size+(hdr.used<<2)+32*32/2;
     unsigned char *pix = bitmap;
     for (int y=0; y<32; y++)
       for (int x=0; x<32/8; x++) {
