@@ -938,6 +938,9 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// FIXME? currenty this speed throttling causes flickering in kq6 (when looking at the box)
 	//  this will get possibly fixed when reanimate and real cel updates within kAnimate are implemented
 
+	// FIXME: qfg3 gets broken by this, BUT even changing neededSleep to 2 still makes it somewhat broken (palette animation
+	//  isnt working)
+
 	// Do some speed throttling to calm down games that rely on counting cycles
 	uint32 curTime = g_system->getMillis();
 	uint32 duration = curTime - s->_lastAnimateTime;
