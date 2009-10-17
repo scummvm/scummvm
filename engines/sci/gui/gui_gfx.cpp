@@ -63,7 +63,7 @@ void SciGuiGfx::init() {
 	OpenPort(_mainPort);
 
 	// _menuPort has actually hardcoded id 0xFFFF. Its not meant to be known to windowmanager according to sierra sci
-	_menuPort = new GuiPort(0);
+	_menuPort = new GuiPort(0xFFFF);
 	OpenPort(_menuPort);
 	SetFont(0);
 	_menuPort->rect = Common::Rect(0, 0, _screen->_width, _screen->_height);
