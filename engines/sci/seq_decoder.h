@@ -31,7 +31,7 @@
 namespace Graphics {
 
 /**
- * Implementation of the KQ6 DOS floppy/CD SEQ decoder
+ * Implementation of the Sierra SEQ decoder, used in KQ6 DOS floppy/CD and GK1 DOS
  */
 class SeqDecoder : public VideoDecoder {
 public:
@@ -47,7 +47,7 @@ public:
 	/**
 	 * Load a SEQ encoded video file
 	 * @param filename	the filename to load
-	 * @param frameDelay the delay between frames, in ms
+	 * @param frameDelay the delay between frames, in ticks
 	 */
 	bool loadFile(const char *fileName, int frameDelay);
 

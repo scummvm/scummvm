@@ -94,6 +94,7 @@ private:
 	bool cmdDrawCel(int argc, const char **argv);
 	bool cmdViewInfo(int argc, const char **argv);
 	bool cmdUndither(int argc, const char **argv);
+	bool cmdPlayVideo(int argc, const char **argv);
 	// GUI
 	bool cmdCurrentPort(int argc, const char **argv);
 	bool cmdPrintPort(int argc, const char **argv);
@@ -158,6 +159,8 @@ private:
 private:
 	SciEngine *_vm;
 	bool _mouseVisible;
+	Common::String _videoFile;
+	int _videoFrameDelay;
 };
 
 } // End of namespace Sci

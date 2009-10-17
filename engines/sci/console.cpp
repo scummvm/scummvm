@@ -44,6 +44,9 @@
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_cursor.h"
 
+#include "graphics/video/avi_decoder.h"
+#include "sci/seq_decoder.h"
+
 #include "common/savefile.h"
 
 namespace Sci {
@@ -111,6 +114,7 @@ Console::Console(SciEngine *vm) : GUI::Debugger() {
 	DCmd_Register("draw_cel",			WRAP_METHOD(Console, cmdDrawCel));
 	DCmd_Register("view_info",			WRAP_METHOD(Console, cmdViewInfo));
 	DCmd_Register("undither",           WRAP_METHOD(Console, cmdUndither));
+	DCmd_Register("play_video",         WRAP_METHOD(Console, cmdPlayVideo));
 	// GUI
 	DCmd_Register("current_port",		WRAP_METHOD(Console, cmdCurrentPort));
 	DCmd_Register("print_port",			WRAP_METHOD(Console, cmdPrintPort));
@@ -207,6 +211,37 @@ void Console::postEnter() {
 	if (_vm->_gamestate)
 		_vm->_gamestate->_sound.sfx_suspend(false);
 	_vm->_mixer->pauseAll(false);
+
+	if (!_videoFile.empty()) {
+		_vm->_gamestate->_gui->hideCursor();
+
+		if (_videoFile.hasSuffix(".seq")) {
+			Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
+			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
+			if (seqDecoder->loadFile(_videoFile.c_str(), _videoFrameDelay))
+				player->playVideo();
+			else
+				DebugPrintf("Failed to open movie file %s\n", _videoFile.c_str());
+			seqDecoder->closeFile();
+			delete player;
+			delete seqDecoder;
+		} else if (_videoFile.hasSuffix(".avi")) {
+			Graphics::AviDecoder *aviDecoder = new Graphics::AviDecoder(g_system->getMixer());
+			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(aviDecoder);
+			if (aviDecoder->loadFile(_videoFile.c_str()))
+				player->playVideo();
+			else
+				DebugPrintf("Failed to open movie file %s\n", _videoFile.c_str());
+			aviDecoder->closeFile();
+			delete player;
+			delete aviDecoder;
+		}
+
+		_vm->_gamestate->_gui->showCursor();
+
+		_videoFile.clear();
+		_videoFrameDelay = 0;
+	}
 }
 
 
@@ -1074,6 +1109,28 @@ bool Console::cmdUndither(int argc, const char **argv) {
 	bool flag = atoi(argv[1]) ? true : false;
 
 	return _vm->_gamestate->_gui->debugUndither(flag);
+}
+
+bool Console::cmdPlayVideo(int argc, const char **argv) {
+	if (argc < 2) {
+		DebugPrintf("Plays a SEQ or AVI video.\n");
+		DebugPrintf("Usage: %s <video file name> <delay>\n", argv[0]);
+		DebugPrintf("The video file name should include the extension\n");
+		DebugPrintf("Delay is only used in SEQ videos and is measured in ticks (default: 10)\n");
+		return true;
+	}
+
+	Common::String filename = argv[1];
+	filename.toLowercase();
+
+	if (filename.hasSuffix(".seq") || filename.hasSuffix(".avi")) {
+		_videoFile = filename;
+		_videoFrameDelay = (argc == 2) ? 10 : atoi(argv[2]);
+		return false;
+	} else {
+		DebugPrintf("Unknown video file type\n");
+		return true;
+	}
 }
 
 bool Console::cmdUpdateZone(int argc, const char **argv) {
