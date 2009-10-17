@@ -56,8 +56,6 @@
 			<File RelativePath="..\..\engines\sci\engine\vm_types.h" />
 		</Filter>
 		<Filter	Name="gfx">
-			<File RelativePath="..\..\engines\sci\gfx\font.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\font.h" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_driver.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_driver.h" />
 			<File RelativePath="..\..\engines\sci\gfx\gfx_gui.cpp" />
@@ -83,10 +81,6 @@
 			<File RelativePath="..\..\engines\sci\gfx\operations.h" />
 			<File RelativePath="..\..\engines\sci\gfx\palette.cpp" />
 			<File RelativePath="..\..\engines\sci\gfx\palette.h" />
-			<File RelativePath="..\..\engines\sci\gfx\res_font.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\res_pal.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\res_pic.cpp" />
-			<File RelativePath="..\..\engines\sci\gfx\res_view.cpp" />
 		</Filter>
 		<Filter	Name="gui">
 			<File RelativePath="..\..\engines\sci\gui\gui.cpp" />
@@ -116,6 +110,12 @@
 		<Filter Name="gui32">
 			<File RelativePath="..\..\engines\sci\gui32\gui32.cpp" />
 			<File RelativePath="..\..\engines\sci\gui32\gui32.h" />
+			<File RelativePath="..\..\engines\sci\gui32\font.cpp" />
+			<File RelativePath="..\..\engines\sci\gui32\font.h" />
+			<File RelativePath="..\..\engines\sci\gui32\res_font.cpp" />
+			<File RelativePath="..\..\engines\sci\gui32\res_pal.cpp" />
+			<File RelativePath="..\..\engines\sci\gui32\res_pic.cpp" />
+			<File RelativePath="..\..\engines\sci\gui32\res_view.cpp" />
 		</Filter>
 		<Filter	Name="sfx">
 			<File RelativePath="..\..\engines\sci\sfx\core.cpp" />

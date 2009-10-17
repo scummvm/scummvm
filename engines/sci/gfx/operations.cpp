@@ -27,7 +27,7 @@
 
 #include "sci/sci.h"
 #include "sci/gfx/operations.h"
-#include "sci/gfx/font.h"
+#include "sci/gui32/font.h"
 #include "sci/console.h"
 
 #include "common/system.h"

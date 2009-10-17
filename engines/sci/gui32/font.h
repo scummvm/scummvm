@@ -143,6 +143,7 @@ bool gfxr_font_calculate_size(Common::Array<TextFragment> &fragments,
 gfx_pixmap_t *gfxr_draw_font(gfx_bitmap_font_t *font, const char *text,
 		int characters, PaletteEntry *fg0, PaletteEntry *fg1,
 		PaletteEntry *bg);
+
 /** @} */
 
 } // End of namespace Sci

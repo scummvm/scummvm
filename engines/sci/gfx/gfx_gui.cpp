@@ -30,7 +30,7 @@
 #include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_state_internal.h"
-#include "sci/gfx/font.h"
+#include "sci/gui32/font.h"
 
 #include "common/system.h"
 

@@ -27,7 +27,7 @@
 #include "sci/gfx/gfx_system.h"
 #include "sci/gfx/gfx_resource.h"
 #include "sci/gfx/gfx_tools.h"
-#include "sci/gfx/font.h"
+#include "sci/gui32/font.h"
 
 namespace Sci {
 
