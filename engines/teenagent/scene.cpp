@@ -655,7 +655,8 @@ Common::Point Scene::messagePosition(const Common::String &str, Common::Point po
 }
 
 void Scene::displayMessage(const Common::String &str, byte color) {
-	debug(0, "displayMessage: %s", str.c_str());
+	//assert(!str.empty());
+	//debug(0, "displayMessage: %s", str.c_str());
 	message = str;
 	message_pos = messagePosition(str, position);
 	message_color = color;

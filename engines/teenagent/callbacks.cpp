@@ -618,10 +618,9 @@ bool TeenAgentEngine::processCallback(uint16 addr) {
 		if (CHECK_FLAG(0xdbda, 1)) { //papers are shown
 			loadScene(5, 124, 199);
 		} else {
-			playAnimation(809, 1, true);
-			Dialog::show(scene, 0x5FE9);
+			Dialog::show(scene, 0x5FE9, 0, 809, 0xd1, 0xd0, 0, 1);
 			moveTo(269, 175, 4);
-			Dialog::pop(scene, 0xDB56);
+			Dialog::pop(scene, 0xDB56, 0, 809, 0xd1, 0xd0, 0, 1);
 		}
 		return true;
 

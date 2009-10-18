@@ -61,13 +61,12 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 			switch (n) {
 			case 1:
 				//debug(0, "new line\n");
-				message += '\n';
+				if (!message.empty())
+					message += '\n';
 				break;
 			case 2:
-				//debug(0, "displaymessage\n");
-
+				//debug(0, "displaymessage %s", message.c_str());
 				if (color == color2) {
-					
 					//pause animation in other slot
 					if (animation1 != 0) {
 						SceneEvent e(SceneEvent::kPauseAnimation);
@@ -96,6 +95,9 @@ void Dialog::show(Scene *scene, uint16 addr, uint16 animation1, uint16 animation
 				}
 
 				{
+					message.trim();
+					if (message.empty())
+						break;
 					SceneEvent e(SceneEvent::kMessage);
 					e.message = message;
 					e.color = color;
