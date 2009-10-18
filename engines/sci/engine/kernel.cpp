@@ -27,7 +27,6 @@
 #include "sci/engine/kernel.h"
 #include "sci/resource.h"
 #include "sci/engine/state.h"
-#include "sci/gfx/operations.h"
 #include "sci/engine/kernel_types.h"
 
 namespace Sci {

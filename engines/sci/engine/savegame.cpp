@@ -30,7 +30,6 @@
 #include "graphics/thumbnail.h"
 
 #include "sci/sci.h"
-#include "sci/gfx/operations.h"
 #include "sci/gfx/menubar.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxPort, GfxContainer
 #include "sci/sfx/core.h"
