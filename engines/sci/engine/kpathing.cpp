@@ -1217,11 +1217,17 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Converts an SCI polygon into a Polygon
 	// Parameters: (EngineState *) s: The game state
 	//             (reg_t) polygon: The SCI polygon to convert
-	// Returns   : (Polygon *) The converted polygon
+	// Returns   : (Polygon *) The converted polygon, or NULL on error
 	SegManager *segMan = s->_segMan;
 	int i;
 	reg_t points = GET_SEL32(polygon, points);
 	int size = GET_SEL32(polygon, size).toUint16();
+
+	if (size == 0) {
+		// If the polygon has no vertices, we skip it
+		return NULL;
+	}
+
 	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
 
 	int skip = 0;
@@ -1379,8 +1385,11 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 			if (dup == node) {
 				// Polygon is not a duplicate, so convert it
 				polygon = convert_polygon(s, node->value);
-				pf_s->polygons.push_back(polygon);
-				count += GET_SEL32(node->value, size).toUint16();
+
+				if (polygon) {
+					pf_s->polygons.push_back(polygon);
+					count += GET_SEL32(node->value, size).toUint16();
+				}
 			}
 
 			node = s->_segMan->lookupNode(node->succ);
@@ -1652,6 +1661,10 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 	case 3 : {
 		reg_t retval;
 		Polygon *polygon = convert_polygon(s, argv[2]);
+
+		if (!polygon)
+			return NULL_REG;
+
 		// Override polygon type to prevent inverted result for contained access polygons
 		polygon->type = POLY_BARRED_ACCESS;
 
