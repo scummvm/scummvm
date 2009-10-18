@@ -150,7 +150,7 @@ Common::Error KyraEngine_MR::loadGameState(int slot) {
 
 	int curShapes = _characterShapeFile;
 
-	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, true);
+	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, Common::DisposeAfterUse::YES);
 
 	_screen->hideMouse();
 

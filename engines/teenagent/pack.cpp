@@ -78,7 +78,7 @@ Common::SeekableReadStream *Pack::getStream(uint32 id) const {
 	if (id < 1 || id > count)
 		return 0;
 	debug(0, "stream: %04x-%04x", offsets[id - 1], offsets[id]);
-	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id], false);
+	return new Common::SeekableSubReadStream(&file, offsets[id - 1], offsets[id], Common::DisposeAfterUse::NO);
 }
 
 } // End of namespace TeenAgent

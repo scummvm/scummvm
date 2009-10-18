@@ -133,7 +133,7 @@ Common::SeekableReadStream *NSArchive::createReadStreamForMember(const Common::S
 
 	int offset = _archiveOffsets[index];
 	int endOffset = _archiveOffsets[index] + _archiveLenghts[index];
-	return new Common::SeekableSubReadStream(_stream, offset, endOffset, false);
+	return new Common::SeekableSubReadStream(_stream, offset, endOffset, Common::DisposeAfterUse::NO);
 }
 
 bool NSArchive::hasFile(const Common::String &name) {
@@ -670,7 +670,7 @@ public:
 		ppDecrunchBuffer(src, dest, crlen-8, decrlen);
 
 		free(src);
-		_stream = new Common::MemoryReadStream(dest, decrlen, true);
+		_stream = new Common::MemoryReadStream(dest, decrlen, Common::DisposeAfterUse::YES);
 		_dispose = true;
 	}
 

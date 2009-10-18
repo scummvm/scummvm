@@ -396,6 +396,11 @@ public:
 	virtual String readLine();
 };
 
+
+namespace DisposeAfterUse {
+	enum Flag { NO, YES };
+}
+
 /**
  * SubReadStream provides access to a ReadStream restricted to the range
  * [currentPosition, currentPosition+end).
@@ -407,12 +412,12 @@ public:
 class SubReadStream : virtual public ReadStream {
 protected:
 	ReadStream *_parentStream;
-	bool _disposeParentStream;
+	DisposeAfterUse::Flag _disposeParentStream;
 	uint32 _pos;
 	uint32 _end;
 	bool _eos;
 public:
-	SubReadStream(ReadStream *parentStream, uint32 end, bool disposeParentStream = false)
+	SubReadStream(ReadStream *parentStream, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
 		: _parentStream(parentStream),
 		  _disposeParentStream(disposeParentStream),
 		  _pos(0),
@@ -421,7 +426,8 @@ public:
 		assert(parentStream);
 	}
 	~SubReadStream() {
-		if (_disposeParentStream) delete _parentStream;
+		if (_disposeParentStream)
+			delete _parentStream;
 	}
 
 	virtual bool eos() const { return _eos; }
@@ -443,7 +449,7 @@ protected:
 	SeekableReadStream *_parentStream;
 	uint32 _begin;
 public:
-	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream = false);
+	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
 	virtual int32 pos() const { return _pos - _begin; }
 	virtual int32 size() const { return _end - _begin; }
@@ -463,7 +469,7 @@ private:
 	const bool _bigEndian;
 
 public:
-	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian = false, bool disposeParentStream = false)
+	SeekableSubReadStreamEndian(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool bigEndian = false, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO)
 		: SeekableSubReadStream(parentStream, begin, end, disposeParentStream), _bigEndian(bigEndian) {
 	}
 
@@ -496,14 +502,14 @@ public:
 class BufferedReadStream : virtual public ReadStream {
 protected:
 	ReadStream *_parentStream;
-	bool _disposeParentStream;
+	DisposeAfterUse::Flag _disposeParentStream;
 	byte *_buf;
 	uint32 _pos;
 	uint32 _bufSize;
 	uint32 _realBufSize;
 
 public:
-	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+	BufferedReadStream(ReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 	~BufferedReadStream();
 
 	virtual bool eos() const { return (_pos == _bufSize) && _parentStream->eos(); }
@@ -521,7 +527,7 @@ class BufferedSeekableReadStream : public BufferedReadStream, public SeekableRea
 protected:
 	SeekableReadStream *_parentStream;
 public:
-	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, bool disposeParentStream = false);
+	BufferedSeekableReadStream(SeekableReadStream *parentStream, uint32 bufSize, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
 
 	virtual int32 pos() const { return _parentStream->pos() - (_bufSize - _pos); }
 	virtual int32 size() const { return _parentStream->size(); }
@@ -542,7 +548,7 @@ private:
 	const uint32 _size;
 	uint32 _pos;
 	byte _encbyte;
-	bool _disposeMemory;
+	DisposeAfterUse::Flag _disposeMemory;
 	bool _eos;
 
 public:
@@ -552,7 +558,7 @@ public:
 	 * wraps it. If disposeMemory is true, the MemoryReadStream takes ownership
 	 * of the buffer and hence free's it when destructed.
 	 */
-	MemoryReadStream(const byte *dataPtr, uint32 dataSize, bool disposeMemory = false) :
+	MemoryReadStream(const byte *dataPtr, uint32 dataSize, DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) :
 		_ptrOrig(dataPtr),
 		_ptr(dataPtr),
 		_size(dataSize),
@@ -649,7 +655,7 @@ private:
 	byte *_ptr;
 	byte *_data;
 	uint32 _pos;
-	bool _disposeMemory;
+	DisposeAfterUse::Flag _disposeMemory;
 
 	void ensureCapacity(uint32 new_len) {
 		if (new_len <= _capacity)
@@ -670,7 +676,7 @@ private:
 		_size = new_len;
 	}
 public:
-	MemoryWriteStreamDynamic(bool disposeMemory = false) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
+	MemoryWriteStreamDynamic(DisposeAfterUse::Flag disposeMemory = DisposeAfterUse::NO) : _capacity(0), _size(0), _ptr(0), _data(0), _pos(0), _disposeMemory(disposeMemory) {}
 
 	~MemoryWriteStreamDynamic() {
 		if (_disposeMemory)

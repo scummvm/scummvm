@@ -696,7 +696,7 @@ bool ThemeEngine::loadDefaultXML() {
 #include "themes/default.inc"
 	;
 
-	if (!_parser->loadBuffer((const byte*)defaultXML, strlen(defaultXML), false))
+	if (!_parser->loadBuffer((const byte*)defaultXML, strlen(defaultXML)))
 		return false;
 
 	_themeName = "ScummVM Classic Theme (Builtin Version)";

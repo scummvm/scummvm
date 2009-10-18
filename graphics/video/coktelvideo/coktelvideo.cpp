@@ -2311,7 +2311,7 @@ Common::MemoryReadStream *Vmd::getExtraData(const char *fileName) {
 	}
 
 	Common::MemoryReadStream *stream =
-		new Common::MemoryReadStream(data, _extraData[i].realSize, true);
+		new Common::MemoryReadStream(data, _extraData[i].realSize, Common::DisposeAfterUse::YES);
 
 	return stream;
 }

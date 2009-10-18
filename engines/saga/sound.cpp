@@ -83,17 +83,17 @@ void Sound::playSoundBuffer(Audio::SoundHandle *handle, SoundBuffer &buffer, int
 		switch (buffer.soundType) {
 #ifdef USE_MAD
 			case kSoundMP3:
-				stream = Audio::makeMP3Stream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
+				stream = Audio::makeMP3Stream(new Common::MemoryReadStream(buffer.buffer, buffer.size, Common::DisposeAfterUse::YES), true);
 				break;
 #endif
 #ifdef USE_VORBIS
 			case kSoundOGG:
-				stream = Audio::makeVorbisStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
+				stream = Audio::makeVorbisStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, Common::DisposeAfterUse::YES), true);
 				break;
 #endif
 #ifdef USE_FLAC
 			case kSoundFLAC:
-				stream = Audio::makeFlacStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, true), true);
+				stream = Audio::makeFlacStream(new Common::MemoryReadStream(buffer.buffer, buffer.size, Common::DisposeAfterUse::YES), true);
 				break;
 #endif
 			default:

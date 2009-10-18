@@ -223,7 +223,7 @@ void ScummEngine_v4::prepareSavegame() {
 		if (!writeStream->err()) {
 			// wrap uncompressing MemoryReadStream around the savegame data
 			_savePreparedSavegame = Common::wrapCompressedReadStream(
-				new Common::MemoryReadStream(memStream->getData(), memStream->size(), true));
+				new Common::MemoryReadStream(memStream->getData(), memStream->size(), Common::DisposeAfterUse::YES));
 		}
 	}
 	// free the CompressedWriteStream and MemoryWriteStreamDynamic

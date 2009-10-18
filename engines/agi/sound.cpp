@@ -89,7 +89,7 @@ const uint8 *PCjrSound::getVoicePointer(uint voiceNum) {
 }
 
 IIgsSample::IIgsSample(uint8 *data, uint32 len, int resnum, SoundMgr &manager) : AgiSound(manager) {
-	Common::MemoryReadStream stream(data, len, true);
+	Common::MemoryReadStream stream(data, len, Common::DisposeAfterUse::YES);
 
 	// Check that the header was read ok and that it's of the correct type
 	if (_header.read(stream) && _header.type == AGI_SOUND_SAMPLE) { // An Apple IIGS AGI sample resource

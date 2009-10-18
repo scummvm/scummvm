@@ -379,7 +379,7 @@ bool ArjFile::open(const Common::String &filename) {
 		// If reading from archiveFile directly is too slow to be usable,
 		// maybe the filesystem code should instead wrap its files
 		// in a BufferedReadStream.
-		decoder->_compressed = new BufferedReadStream(&archiveFile, 4096, false);
+		decoder->_compressed = new BufferedReadStream(&archiveFile, 4096);
 		decoder->_outstream = new MemoryWriteStream(uncompressedData, hdr->origSize);
 
 		if (hdr->method == 1 || hdr->method == 2 || hdr->method == 3)
@@ -391,7 +391,7 @@ bool ArjFile::open(const Common::String &filename) {
 	}
 
 
-	_uncompressed = new MemoryReadStream(uncompressedData, hdr->origSize, true);
+	_uncompressed = new MemoryReadStream(uncompressedData, hdr->origSize, DisposeAfterUse::YES);
 	assert(_uncompressed);
 
 	return true;

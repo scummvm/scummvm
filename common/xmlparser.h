@@ -198,7 +198,7 @@ public:
 	 *                   i.e. if it can be freed safely after it's
 	 *                   no longer needed by the parser.
 	 */
-	bool loadBuffer(const byte *buffer, uint32 size, bool disposable = false);
+	bool loadBuffer(const byte *buffer, uint32 size, DisposeAfterUse::Flag disposable = DisposeAfterUse::NO);
 
 	bool loadStream(Common::SeekableReadStream *stream);
 

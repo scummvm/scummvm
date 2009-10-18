@@ -50,22 +50,23 @@
 
 namespace Sword2 {
 
-// This class behaves like SeekableSubReadStream, except it remembers where the
-// previous read() or seek() took it, so that it can continue from that point
-// the next time. This is because we're frequently streaming two pieces of
-// music from the same file.
-
+/**
+ * This class behaves like SeekableSubReadStream, except it remembers where the
+ * previous read() or seek() took it, so that it can continue from that point
+ * the next time. This is because we're frequently streaming two pieces of
+ * music from the same file.
+ */
 class SafeSubReadStream : public Common::SeekableSubReadStream {
 protected:
 	uint32 _previousPos;
 public:
-	SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream);
+	SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end);
 	virtual uint32 read(void *dataPtr, uint32 dataSize);
 	virtual bool seek(int32 offset, int whence = SEEK_SET);
 };
 
-SafeSubReadStream::SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, bool disposeParentStream)
-	: SeekableSubReadStream(parentStream, begin, end, disposeParentStream) {
+SafeSubReadStream::SafeSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end)
+	: SeekableSubReadStream(parentStream, begin, end, Common::DisposeAfterUse::NO) {
 	_previousPos = 0;
 }
 
@@ -197,17 +198,17 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 			return makeCLUStream(&fh->file, enc_len);
 #ifdef USE_MAD
 	case kMP3Mode:
-		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len, false);
+		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeMP3Stream(tmp, true);
 #endif
 #ifdef USE_VORBIS
 	case kVorbisMode:
-		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len, false);
+		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeVorbisStream(tmp, true);
 #endif
 #ifdef USE_FLAC
 	case kFlacMode:
-		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len, false);
+		tmp = new SafeSubReadStream(&fh->file, pos, pos + enc_len);
 		return Audio::makeFlacStream(tmp, true);
 #endif
 	default:
@@ -301,7 +302,7 @@ Audio::AudioStream *makePSXCLUStream(Common::File *file, int size) {
 
 	byte *buffer = (byte *)malloc(size);
 	file->read(buffer, size);
-	return new Audio::VagStream(new Common::MemoryReadStream(buffer, size, true));
+	return new Audio::VagStream(new Common::MemoryReadStream(buffer, size, Common::DisposeAfterUse::YES));
 }
 
 // ----------------------------------------------------------------------------

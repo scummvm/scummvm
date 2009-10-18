@@ -209,7 +209,7 @@ int loadOverlay(const char *scriptName) {
 
 	debug(1, "OVL loading done...");
 
-	Common::MemoryReadStream s(unpackedBuffer, unpackedSize, true);
+	Common::MemoryReadStream s(unpackedBuffer, unpackedSize, Common::DisposeAfterUse::YES);
 	unpackedBuffer = NULL;
 
 	ovlData = overlayTable[scriptIdx].ovlData;
@@ -590,7 +590,7 @@ int loadOverlay(const char *scriptName) {
 			loadPackedFileToMem(fileIdx, (uint8 *) unpackedBuffer);
 		}
 
-		Common::MemoryReadStream s2(unpackedBuffer, unpackedSize, true);
+		Common::MemoryReadStream s2(unpackedBuffer, unpackedSize, Common::DisposeAfterUse::YES);
 		unpackedBuffer = NULL;
 
 		ovlData->specialString1Length = s2.readUint16BE();

@@ -65,7 +65,7 @@ Common::SeekableReadStream *ResMan::open(uint32 fileRef) {
 	}
 
 	// Returning the resource substream
-	return new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, true);
+	return new Common::SeekableSubReadStream(gjdFile, resInfo.offset, resInfo.offset + resInfo.size, Common::DisposeAfterUse::YES);
 }
 
 

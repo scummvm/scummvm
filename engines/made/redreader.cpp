@@ -45,7 +45,7 @@ Common::MemoryReadStream *RedReader::load(const char *redFilename, const char *f
 	lzhDec->decompress(fd, fileBuf, fileEntry.compSize, fileEntry.origSize);
 	delete lzhDec;
 
-	return new Common::MemoryReadStream(fileBuf, fileEntry.origSize, true);
+	return new Common::MemoryReadStream(fileBuf, fileEntry.origSize, Common::DisposeAfterUse::YES);
 
 }
 

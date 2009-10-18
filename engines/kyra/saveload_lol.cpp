@@ -54,7 +54,7 @@ Common::Error LoLEngine::loadGameState(int slot) {
 	_screen->fillRect(112, 0, 287, 119, 0, 0);
 	_screen->updateScreen();
 
-	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, true);
+	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, Common::DisposeAfterUse::YES);
 
 	for (int i = 0; i < 4; i++) {
 		LoLCharacter *c = &_characters[i];

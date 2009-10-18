@@ -1156,10 +1156,10 @@ Audio::AudioStream* SfxState::getAudioStream(uint32 number, uint32 volume, int *
 
 	if (audioRes->headerSize > 0) {
 		// SCI1.1
-		Common::MemoryReadStream headerStream(audioRes->header, audioRes->headerSize, false);
+		Common::MemoryReadStream headerStream(audioRes->header, audioRes->headerSize, Common::DisposeAfterUse::NO);
 
 		if (readSOLHeader(&headerStream, audioRes->headerSize, size, _audioRate, audioFlags)) {
-			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, false);
+			Common::MemoryReadStream dataStream(audioRes->data, audioRes->size, Common::DisposeAfterUse::NO);
 			data = readSOLAudio(&dataStream, size, audioFlags, flags);
 		}
 	} else {

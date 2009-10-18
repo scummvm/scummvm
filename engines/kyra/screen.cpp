@@ -2969,7 +2969,7 @@ bool Screen::loadPaletteTable(const char *filename, int firstPalette) {
 }
 
 void Screen::loadPalette(const byte *data, Palette &pal, int bytes) {
-	Common::MemoryReadStream stream(data, bytes, false);
+	Common::MemoryReadStream stream(data, bytes, Common::DisposeAfterUse::NO);
 
 	if (_isAmiga)
 		pal.loadAmigaPalette(stream, 0, stream.size() / Palette::kAmigaBytesPerColor);
