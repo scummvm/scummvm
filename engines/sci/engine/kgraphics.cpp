@@ -888,7 +888,7 @@ reg_t kDrawCel(EngineState *s, int argc, reg_t *argv) {
 	GuiViewCelNo celNo = argv[2].toSint16();
 	int x = argv[3].toSint16();
 	int y = argv[4].toSint16();
-	int priority = (argc > 5) ? argv[5].toUint16()  : -1;
+	int priority = (argc > 5) ? argv[5].toSint16()  : -1;
 	int paletteNo = (argc > 6) ? argv[6].toSint16() : 0;
 
 	s->_gui->drawCel(viewId, loopNo, celNo, x, y, priority, paletteNo);
