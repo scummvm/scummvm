@@ -174,7 +174,7 @@ void SciGui::disposeWindow(uint16 windowPtr, int16 arg2) {
 
 void SciGui::display(const char *text, int argc, reg_t *argv) {
 	int displayArg;
-	int16 align = 0;
+	GuiTextAlignment alignment = SCI_TEXT_ALIGNMENT_LEFT;
 	int16 bgcolor = -1, width = -1, bRedraw = 1;
 	bool doSaveUnder = false;
 	Common::Rect rect, *orect = &((GuiWindow *)_gfx->GetPort())->dims;
@@ -196,7 +196,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 			argc -= 2; argv += 2;
 			break;
 		case SCI_DISPLAY_SETALIGNMENT:
-			align = argv[0].toUint16();
+			alignment = argv[0].toSint16();
 			argc--; argv++;
 			break;
 		case SCI_DISPLAY_SETPENCOLOR:
@@ -247,7 +247,7 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 		_s->r_acc = _gfx->BitsSave(rect, SCI_SCREEN_MASK_VISUAL);
 	if (bgcolor != -1)
 		_gfx->FillRect(rect, SCI_SCREEN_MASK_VISUAL, bgcolor, 0, 0);
-	_gfx->TextBox(text, 0, rect, align, -1);
+	_gfx->TextBox(text, 0, rect, alignment, -1);
 	if (_screen->_picNotValid == 0 && bRedraw)
 		_gfx->BitsShow(rect);
 	// restoring port and cursor pos
@@ -321,7 +321,7 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 		_gfx->FrameRect(rect);
 		rect.grow(-2);
 		_gfx->TextFace(style & 1 ? 0 : 1);
-		_gfx->TextBox(text, 0, rect, 1, fontId);
+		_gfx->TextBox(text, 0, rect, SCI_TEXT_ALIGNMENT_CENTER, fontId);
 		_gfx->TextFace(0);
 		rect.grow(1);
 		if (style & 8) // selected
@@ -336,12 +336,12 @@ void SciGui::drawControlButton(Common::Rect rect, reg_t obj, const char *text, i
 	}
 }
 
-void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite) {
+void SciGui::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, GuiTextAlignment alignment, int16 style, bool hilite) {
 	if (!hilite) {
 		rect.grow(1);
 		_gfx->EraseRect(rect);
 		rect.grow(-1);
-		_gfx->TextBox(text, 0, rect, mode, fontId);
+		_gfx->TextBox(text, 0, rect, alignment, fontId);
 		if (style & 8) { // selected
 			_gfx->FrameRect(rect);
 		}
@@ -362,7 +362,7 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 	rect.grow(1);
 	_gfx->TexteditCursorErase();
 	_gfx->EraseRect(rect);
-	_gfx->TextBox(text, 0, textRect, 0, fontId);
+	_gfx->TextBox(text, 0, textRect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
 	_gfx->FrameRect(rect);
 	if (style & 8) {
 		_gfx->SetFont(fontId);

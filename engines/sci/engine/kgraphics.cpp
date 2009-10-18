@@ -670,6 +670,7 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 	reg_t textReference = GET_SEL32(controlObject, text);
 	Common::String text;
 	Common::Rect rect;
+	GuiTextAlignment alignment;
 	int16 mode, maxChars, cursorPos, upperPos, listCount, i;
 	int16 upperOffset, cursorOffset;
 	GuiResourceId viewId;
@@ -692,9 +693,9 @@ void _k_GenericDrawControl(EngineState *s, reg_t controlObject, bool hilite) {
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXT:
-		mode = GET_SEL32V(controlObject, mode);
-		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, mode);
-		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, mode, style, hilite);
+		alignment = GET_SEL32V(controlObject, mode);
+		debugC(2, kDebugLevelGraphics, "drawing text %04x:%04x ('%s') to %d,%d, mode=%d\n", PRINT_REG(controlObject), text.c_str(), x, y, alignment);
+		s->_gui->drawControlText(rect, controlObject, s->strSplit(text.c_str(), NULL).c_str(), fontId, alignment, style, hilite);
 		return;
 
 	case SCI_CONTROLS_TYPE_TEXTEDIT:

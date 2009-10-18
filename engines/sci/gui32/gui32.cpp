@@ -965,10 +965,10 @@ void SciGui32::drawControlButton(Common::Rect rect, reg_t obj, const char *text,
 	if (!_s->pic_not_valid) FULL_REDRAW();
 }
 
-void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 mode, int16 style, bool hilite) {
+void SciGui32::drawControlText(Common::Rect rect, reg_t obj, const char *text, int16 fontId, int16 alignment, int16 style, bool hilite) {
 	rect_t area = gfx_rect(rect.left, rect.top, rect.width(), rect.height());
 
-	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(_s->port, obj, area, text, fontId, (gfx_alignment_t) mode,
+	ADD_TO_CURRENT_PICTURE_PORT(sciw_new_text_control(_s->port, obj, area, text, fontId, (gfx_alignment_t) alignment,
 								(int8)(!!(style & kControlStateDitherFramed)), (int8)hilite));
 	if (!_s->pic_not_valid) FULL_REDRAW();
 }

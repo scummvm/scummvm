@@ -545,7 +545,7 @@ void SciGuiGfx::ShowText(const char *text, int16 from, int16 len, GuiResourceId 
 }
 
 // Draws a text in rect.
-void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, int16 align, GuiResourceId fontId) {
+void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId) {
 	int16 textWidth, textHeight, charCount, offset;
 	int16 hline = 0;
 	GuiResourceId orgFontId = GetFontId();
@@ -563,15 +563,19 @@ void SciGuiGfx::TextBox(const char *text, int16 bshow, const Common::Rect &rect,
 		if (charCount == 0)
 			break;
 		TextWidth(text, 0, charCount, orgFontId, textWidth, textHeight);
-		switch (align) {
-		case -1: // right-aligned
+		switch (alignment) {
+		case SCI_TEXT_ALIGNMENT_RIGHT:
 			offset = rect.width() - textWidth;
 			break;
-		case 1: // center text
+		case SCI_TEXT_ALIGNMENT_CENTER:
 			offset = (rect.width() - textWidth) / 2;
 			break;
-		default: // left-aligned
+		case SCI_TEXT_ALIGNMENT_LEFT:
 			offset = 0;
+			break;
+
+		default: // left-aligned
+			warning("Invalid alignment %d used in TextBox()", alignment);
 		}
 		MoveTo(rect.left + offset, rect.top + hline);
 
@@ -754,9 +758,9 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 
 	// draw UP/DOWN arrows
 	workerRect.top++;
-	TextBox(controlListUpArrow, 0, workerRect, 1, 0);
+	TextBox(controlListUpArrow, 0, workerRect, SCI_TEXT_ALIGNMENT_CENTER, 0);
 	workerRect.top = workerRect.bottom - 10;
-	TextBox(controlListDownArrow, 0, workerRect, 1, 0);
+	TextBox(controlListDownArrow, 0, workerRect, SCI_TEXT_ALIGNMENT_CENTER, 0);
 
 	// Draw inner lines
 	workerRect.top = rect.top + 9;
@@ -891,7 +895,7 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		rect.top++;
 		TexteditCursorErase();
 		EraseRect(rect);
-		TextBox(text.c_str(), 0, rect, 0, fontId);
+		TextBox(text.c_str(), 0, rect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
 		BitsShow(rect);
 		SetFont(fontId);
 		rect.top--;

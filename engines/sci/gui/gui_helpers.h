@@ -40,6 +40,8 @@ typedef reg_t GuiMemoryHandle;
 typedef int16 GuiViewLoopNo;
 typedef int16 GuiViewCelNo;
 
+typedef int16 GuiTextAlignment;
+
 struct GuiPort {
 	uint16 id;
 	int16 top, left;

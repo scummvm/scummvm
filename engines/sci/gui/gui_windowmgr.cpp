@@ -223,7 +223,7 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 				if (!pWnd->title.empty()) {
 					int16 oldcolor = _gfx->GetPort()->penClr;
 					_gfx->PenColor(255);
-					_gfx->TextBox(pWnd->title.c_str(), 1, r, 1, 0);
+					_gfx->TextBox(pWnd->title.c_str(), 1, r, SCI_TEXT_ALIGNMENT_CENTER, 0);
 					_gfx->PenColor(oldcolor);
 				}
 				

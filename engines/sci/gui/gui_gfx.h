@@ -30,6 +30,10 @@
 
 namespace Sci {
 
+#define SCI_TEXT_ALIGNMENT_RIGHT -1
+#define SCI_TEXT_ALIGNMENT_CENTER 1
+#define SCI_TEXT_ALIGNMENT_LEFT	0
+
 class SciGuiScreen;
 class SciGuiPalette;
 class SciGuiFont;
@@ -87,7 +91,7 @@ public:
 	void DrawString(const char *str, GuiResourceId orgFontId, int16 orgPenColor) {
 		DrawText(str, 0, (int16)strlen(str), orgFontId, orgPenColor);
 	}
-	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, int16 align, GuiResourceId fontId);
+	void TextBox(const char *str, int16 bshow, const Common::Rect &rect, GuiTextAlignment alignment, GuiResourceId fontId);
 	void BitsShow(const Common::Rect &r);
 	GuiMemoryHandle BitsSave(const Common::Rect &rect, byte screenFlags);
 	void BitsGetRect(GuiMemoryHandle memoryHandle, Common::Rect *destRect);
