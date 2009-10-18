@@ -914,9 +914,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			/* FIXME: The next couple of lines actually STOP the handle, rather
 			** than fading it! */
 			if (argv[5].toUint16()) {
-				PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
-				PUT_SEL32V(segMan, obj, nodePtr, 0);
-				PUT_SEL32V(segMan, obj, handle, 0);
+				PUT_SEL32V(segman, obj, signal, SIGNAL_OFFSET);
 				s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			} else {
 				// FIXME: Support fade-and-continue. For now, send signal right away.
