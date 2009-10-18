@@ -61,14 +61,14 @@ struct GuiWindow : public GuiPort {
 	Common::Rect dims; // client area of window
 	Common::Rect restoreRect; // total area of window including borders
 	uint16 wndStyle;
-	uint16 uSaveFlag;
+	uint16 saveScreenMask;
 	reg_t hSaved1;
 	reg_t hSaved2;
 	Common::String title;
 	bool bDrawn;
 
 	GuiWindow(uint16 theId) : GuiPort(theId),
-		wndStyle(0), uSaveFlag(0),
+		wndStyle(0), saveScreenMask(0),
 		hSaved1(NULL_REG), hSaved2(NULL_REG),
 		bDrawn(false) {
 	}

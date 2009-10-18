@@ -136,7 +136,7 @@ GuiWindow *SciGuiWindowMgr::NewWindow(const Common::Rect &dims, const Common::Re
 	pwnd->hSaved1 = pwnd->hSaved2 = NULL_REG;
 	pwnd->bDrawn = false;
 	if ((style & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0)
-		pwnd->uSaveFlag = (priority == -1 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY);
+		pwnd->saveScreenMask = (priority == -1 ? SCI_SCREEN_MASK_VISUAL : SCI_SCREEN_MASK_VISUAL | SCI_SCREEN_MASK_PRIORITY);
 	
 	if (title && (style & SCI_WINDOWMGR_STYLE_TITLE)) {
 		pwnd->title = title;
@@ -200,8 +200,8 @@ void SciGuiWindowMgr::DrawWindow(GuiWindow *pWnd) {
 	_gfx->PenColor(0);
 	if ((wndStyle & SCI_WINDOWMGR_STYLE_TRANSPARENT) == 0) {
 		pWnd->hSaved1 = _gfx->BitsSave(pWnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
-		if (pWnd->uSaveFlag & 2) {
-			pWnd->hSaved2 = _gfx->BitsSave(pWnd->restoreRect, 2);
+		if (pWnd->saveScreenMask & SCI_SCREEN_MASK_PRIORITY) {
+			pWnd->hSaved2 = _gfx->BitsSave(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
 			if ((wndStyle & SCI_WINDOWMGR_STYLE_USER) == 0)
 				_gfx->FillRect(pWnd->restoreRect, SCI_SCREEN_MASK_PRIORITY, 0, 15);
 		}
@@ -259,11 +259,11 @@ void SciGuiWindowMgr::DisposeWindow(GuiWindow *pWnd, int16 arg2) {
 void SciGuiWindowMgr::UpdateWindow(GuiWindow *wnd) {
 	GuiMemoryHandle handle;
 
-	if (wnd->uSaveFlag && wnd->bDrawn) {
+	if (wnd->saveScreenMask && wnd->bDrawn) {
 		handle = _gfx->BitsSave(wnd->restoreRect, SCI_SCREEN_MASK_VISUAL);
 		_gfx->BitsRestore(wnd->hSaved1);
 		wnd->hSaved1 = handle;
-		if (wnd->uSaveFlag & SCI_SCREEN_MASK_PRIORITY) {
+		if (wnd->saveScreenMask & SCI_SCREEN_MASK_PRIORITY) {
 			handle = _gfx->BitsSave(wnd->restoreRect, SCI_SCREEN_MASK_PRIORITY);
 			_gfx->BitsRestore(wnd->hSaved2);
 			wnd->hSaved2 = handle;
