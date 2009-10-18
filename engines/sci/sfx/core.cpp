@@ -553,6 +553,8 @@ void SfxState::updateMultiSong() {
 	/*	_dump_playing_list(this, "before");*/
 	freezeTime(); /* Store song delay time */
 
+	// WORKAROUND: sometimes, newsong can be NULL (e.g. in SQ4).
+	// Handle this here, so that we avoid a crash
 	if (!newsong)
 		return;
 
