@@ -292,6 +292,11 @@ reg_t kStrCpy(EngineState *s, int argc, reg_t *argv) {
 
 
 reg_t kStrAt(EngineState *s, int argc, reg_t *argv) {
+	if (argv[0] == SIGNAL_REG) {
+		warning("Attempt to perform kStrAt() on a signal reg");
+		return NULL_REG;
+	}
+
 	SegmentRef dest_r = s->_segMan->dereference(argv[0]);
 	if (!dest_r.raw) {
 		warning("Attempt to StrAt at invalid pointer %04x:%04x", PRINT_REG(argv[0]));
