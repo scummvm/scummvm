@@ -372,7 +372,8 @@ bool Scene::render(OSystem *system) {
 			if (s != NULL) {
 				animation_position[i] = s->render(surface);
 				busy = true;
-				got_any_animation = true;
+				if (!a->paused && !a->loop)
+					got_any_animation = true;
 				continue;
 			}
 
@@ -406,7 +407,7 @@ bool Scene::render(OSystem *system) {
 			} else if (!hide_actor) {
 				actor_animation.free();
 
-				if (destination != position) {
+				if (progress < progress_total) {
 					Common::Point dp(destination.x - position0.x, destination.y - position0.y);
 					int o;
 					if (ABS(dp.x) > ABS(dp.y))

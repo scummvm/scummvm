@@ -94,8 +94,8 @@ struct SceneEvent {
 
 	void dump() const {
 		debug(0, "event[%d]: \"%s\"[%02x], animation: %u, dst: (%d, %d) [%u], scene: %u, ons: %u, lan: %u, object: %u, music: %u, sound: %u",
-		      (int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
-		     );
+			(int)type, message.c_str(), color, animation, dst.x, dst.y, orientation, scene, ons, lan, object, music, sound
+		);
 	}
 };
 
