@@ -49,11 +49,11 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 	// If there's a simkey pending, and the game wants a keyboard event, use the
 	// simkey instead of a normal event
 	if (g_debug_simulated_key && (mask & SCI_EVT_KEYBOARD)) {
-		PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
-		PUT_SEL32V(obj, message, g_debug_simulated_key);
-		PUT_SEL32V(obj, modifiers, SCI_EVM_NUMLOCK); // Numlock on
-		PUT_SEL32V(obj, x, mousePos.x);
-		PUT_SEL32V(obj, y, mousePos.y);
+		PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
+		PUT_SEL32V(segMan, obj, message, g_debug_simulated_key);
+		PUT_SEL32V(segMan, obj, modifiers, SCI_EVM_NUMLOCK); // Numlock on
+		PUT_SEL32V(segMan, obj, x, mousePos.x);
+		PUT_SEL32V(segMan, obj, y, mousePos.y);
 		g_debug_simulated_key = 0;
 		return make_reg(0, 1);
 	}
@@ -64,8 +64,8 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 
 	s->parser_event = NULL_REG; // Invalidate parser event
 
-	PUT_SEL32V(obj, x, mousePos.x);
-	PUT_SEL32V(obj, y, mousePos.y);
+	PUT_SEL32V(segMan, obj, x, mousePos.x);
+	PUT_SEL32V(segMan, obj, y, mousePos.y);
 
 	//s->_gui->moveCursor(s->gfx_state->pointer_pos.x, s->gfx_state->pointer_pos.y);
 
@@ -84,12 +84,12 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 			g_debugState.seeking = kDebugSeekNothing;
 			g_debugState.runningStep = 0;
 		} else {
-			PUT_SEL32V(obj, type, SCI_EVT_KEYBOARD); // Keyboard event
+			PUT_SEL32V(segMan, obj, type, SCI_EVT_KEYBOARD); // Keyboard event
 			s->r_acc = make_reg(0, 1);
-			PUT_SEL32V(obj, message, e.character);
+			PUT_SEL32V(segMan, obj, message, e.character);
 			// We only care about the translated
 			// character
-			PUT_SEL32V(obj, modifiers, e.buckybits&modifier_mask);
+			PUT_SEL32V(segMan, obj, modifiers, e.buckybits&modifier_mask);
 		}
 		break;
 
@@ -115,9 +115,9 @@ reg_t kGetEvent(EngineState *s, int argc, reg_t *argv) {
 				break;
 			}
 
-			PUT_SEL32V(obj, type, e.type);
-			PUT_SEL32V(obj, message, 0);
-			PUT_SEL32V(obj, modifiers, (e.buckybits | extra_bits)&modifier_mask);
+			PUT_SEL32V(segMan, obj, type, e.type);
+			PUT_SEL32V(segMan, obj, message, 0);
+			PUT_SEL32V(segMan, obj, modifiers, (e.buckybits | extra_bits)&modifier_mask);
 			s->r_acc = make_reg(0, 1);
 		}
 		break;
@@ -158,9 +158,9 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = argv[0];
 	SegManager *segMan = s->_segMan;
 
-	if (GET_SEL32V(obj, type) == SCI_EVT_KEYBOARD) { // Keyboard
+	if (GET_SEL32V(segMan, obj, type) == SCI_EVT_KEYBOARD) { // Keyboard
 		int mover = -1;
-		switch (GET_SEL32V(obj, message)) {
+		switch (GET_SEL32V(segMan, obj, message)) {
 		case SCI_K_HOME:
 			mover = 8;
 			break;
@@ -194,8 +194,8 @@ reg_t kMapKeyToDir(EngineState *s, int argc, reg_t *argv) {
 		}
 
 		if (mover >= 0) {
-			PUT_SEL32V(obj, type, SCI_EVT_JOYSTICK);
-			PUT_SEL32V(obj, message, mover);
+			PUT_SEL32V(segMan, obj, type, SCI_EVT_JOYSTICK);
+			PUT_SEL32V(segMan, obj, message, mover);
 			return make_reg(0, 1);
 		} else
 			return NULL_REG;
@@ -209,13 +209,13 @@ reg_t kGlobalToLocal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 
 	if (obj.segment) {
-		int16 x = GET_SEL32V(obj, x);
-		int16 y = GET_SEL32V(obj, y);
+		int16 x = GET_SEL32V(segMan, obj, x);
+		int16 y = GET_SEL32V(segMan, obj, y);
 
 		s->_gui->globalToLocal(&x, &y);
 
-		PUT_SEL32V(obj, x, x);
-		PUT_SEL32V(obj, y, y);
+		PUT_SEL32V(segMan, obj, x, x);
+		PUT_SEL32V(segMan, obj, y, y);
 	}
 
 	return s->r_acc;
@@ -227,13 +227,13 @@ reg_t kLocalToGlobal(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 
 	if (obj.segment) {
-		int16 x = GET_SEL32V(obj, x);
-		int16 y = GET_SEL32V(obj, y);
+		int16 x = GET_SEL32V(segMan, obj, x);
+		int16 y = GET_SEL32V(segMan, obj, y);
 
 		s->_gui->localToGlobal(&x, &y);
 
-		PUT_SEL32V(obj, x, x);
-		PUT_SEL32V(obj, y, y);
+		PUT_SEL32V(segMan, obj, x, x);
+		PUT_SEL32V(segMan, obj, y, y);
 	}
 
 	return s->r_acc;

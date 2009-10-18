@@ -150,33 +150,37 @@ enum SelectorInvocation {
 	kContinueOnInvalidSelector = 1
 };
 
-#define GET_SEL32(_o_, _slc_) read_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, __FILE__, __LINE__)
-#define GET_SEL32V(_o_, _slc_) (GET_SEL32(_o_, _slc_).offset)
-/* Retrieves a selector from an object
-** Parameters: (reg_t) object: The address of the object which the selector should be read from
-**             (selector_name) selector: The selector to read
-** Returns   : (int16/uint16/reg_t) The selector value
-** This macro halts on error. 'selector' must be a selector name registered in vm.h's
-** SelectorCache and mapped in script.cpp.
-*/
+/**
+ * Retrieves a selector from an object.
+ * @param segMan	the segment mananger
+ * @param _obj_		the address of the object which the selector should be read from
+ * @param _slc_		the selector to read
+ * @return			the selector value as a reg_t
+ * This macro halts on error. 'selector' must be a selector name registered in vm.h's
+ * SelectorCache and mapped in script.cpp.
+ */
+#define GET_SEL32(segMan, _obj_, _slc_) read_selector(segMan, _obj_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, __FILE__, __LINE__)
+#define GET_SEL32V(segMan, _obj_, _slc_) (GET_SEL32(segMan, _obj_, _slc_).offset)
 
-#define PUT_SEL32(_o_, _slc_, _val_) write_selector(segMan, _o_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, _val_, __FILE__, __LINE__)
-#define PUT_SEL32V(_o_, _slc_, _val_) PUT_SEL32(_o_, _slc_, make_reg(0, _val_))
-/* Writes a selector value to an object
-** Parameters: (reg_t) object: The address of the object which the selector should be written to
-**             (selector_name) selector: The selector to read
-**             (int16) value: The value to write
-** Returns   : (void)
-** This macro halts on error. 'selector' must be a selector name registered in vm.h's
-** SelectorCache and mapped in script.cpp.
-*/
+/**
+ * Writes a selector value to an object.
+ * @param segMan	the segment mananger
+ * @param _obj_		the address of the object which the selector should be written to
+ * @param _slc_		the selector to read
+ * @param _val_		the value to write
+ * This macro halts on error. 'selector' must be a selector name registered in vm.h's
+ * SelectorCache and mapped in script.cpp.
+ */
+#define PUT_SEL32(segMan, _obj_, _slc_, _val_) write_selector(segMan, _obj_, ((SciEngine*)g_engine)->getKernel()->_selectorCache._slc_, _val_, __FILE__, __LINE__)
+#define PUT_SEL32V(segMan, _obj_, _slc_, _val_) PUT_SEL32(segMan, _obj_, _slc_, make_reg(0, _val_))
 
 
+/**
+ * Kludge for use with invoke_selector(). Used for compatibility with compilers
+ * that cannot handle vararg macros.
+ */
 #define INV_SEL(_object_, _selector_, _noinvalid_) \
 	s, _object_,  s->_kernel->_selectorCache._selector_, _noinvalid_, argv, argc, __FILE__, __LINE__
-/* Kludge for use with invoke_selector(). Used for compatibility with compilers that can't
-** handle vararg macros.
-*/
 
 
 reg_t read_selector(SegManager *segMan, reg_t object, Selector selector_id, const char *fname, int line);

@@ -827,9 +827,9 @@ void SciGuiGfx::TexteditSetBlinkTime() {
 
 void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 	SegManager *segMan = _s->_segMan;
-	uint16 cursorPos = GET_SEL32V(controlObject, cursor);
-	uint16 maxChars = GET_SEL32V(controlObject, max);
-	reg_t textReference = GET_SEL32(controlObject, text);
+	uint16 cursorPos = GET_SEL32V(segMan, controlObject, cursor);
+	uint16 maxChars = GET_SEL32V(segMan, controlObject, max);
+	reg_t textReference = GET_SEL32(segMan, controlObject, text);
 	Common::String text;
 	uint16 textSize, eventType, eventKey;
 	bool textChanged = false;
@@ -840,14 +840,14 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (!eventObject.isNull()) {
 		textSize = text.size();
-		eventType = GET_SEL32V(eventObject, type);
+		eventType = GET_SEL32V(segMan, eventObject, type);
 
 		switch (eventType) {
 		case SCI_EVT_MOUSE_PRESS:
 			// TODO: Implement mouse support for cursor change
 			break;
 		case SCI_EVT_KEYBOARD:
-			eventKey = GET_SEL32V(eventObject, message);
+			eventKey = GET_SEL32V(segMan, eventObject, message);
 			switch (eventKey) {
 			case SCI_K_BACKSPACE:
 				if (cursorPos > 0) {
@@ -888,10 +888,10 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 
 	if (textChanged) {
 		GuiResourceId oldFontId = GetFontId();
-		GuiResourceId fontId = GET_SEL32V(controlObject, font);
+		GuiResourceId fontId = GET_SEL32V(segMan, controlObject, font);
 		Common::Rect rect;
-		rect = Common::Rect (GET_SEL32V(controlObject, nsLeft), GET_SEL32V(controlObject, nsTop),
-							  GET_SEL32V(controlObject, nsRight), GET_SEL32V(controlObject, nsBottom));
+		rect = Common::Rect(GET_SEL32V(segMan, controlObject, nsLeft), GET_SEL32V(segMan, controlObject, nsTop),
+							  GET_SEL32V(segMan, controlObject, nsRight), GET_SEL32V(segMan, controlObject, nsBottom));
 		rect.top++;
 		TexteditCursorErase();
 		EraseRect(rect);
@@ -912,7 +912,7 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		}
 	}
 
-	PUT_SEL32V(controlObject, cursor, cursorPos);
+	PUT_SEL32V(segMan, controlObject, cursor, cursorPos);
 }
 
 uint16 SciGuiGfx::onControl(uint16 screenMask, Common::Rect rect) {
@@ -1011,12 +1011,12 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 	while (curNode) {
 		curObject = curNode->value;
 		if (curObject != checkObject) {
-			signal = GET_SEL32V(curObject, signal);
+			signal = GET_SEL32V(segMan, curObject, signal);
 			if ((signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE)) == 0) {
-				curRect.left = GET_SEL32V(curObject, brLeft);
-				curRect.top = GET_SEL32V(curObject, brTop);
-				curRect.right = GET_SEL32V(curObject, brRight);
-				curRect.bottom = GET_SEL32V(curObject, brBottom);
+				curRect.left = GET_SEL32V(segMan, curObject, brLeft);
+				curRect.top = GET_SEL32V(segMan, curObject, brTop);
+				curRect.right = GET_SEL32V(segMan, curObject, brRight);
+				curRect.bottom = GET_SEL32V(segMan, curObject, brBottom);
 				// Check if curRect is within checkRect
 				if (curRect.right > checkRect.left && curRect.left < checkRect.right && curRect.bottom > checkRect.top && curRect.top < checkRect.bottom) {
 					return false;
@@ -1033,14 +1033,14 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 	SegManager *segMan = _s->_segMan;
 	SciGuiView *view = NULL;
 	Common::Rect celRect(0, 0);
-	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(objectReference, view);
-	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(objectReference, loop));
-	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(objectReference, cel));
-	int16 x = (int16)GET_SEL32V(objectReference, x);
-	int16 y = (int16)GET_SEL32V(objectReference, y);
+	GuiResourceId viewId = (GuiResourceId)GET_SEL32V(segMan, objectReference, view);
+	GuiViewLoopNo loopNo = sign_extend_byte((GuiViewLoopNo)GET_SEL32V(segMan, objectReference, loop));
+	GuiViewCelNo celNo = sign_extend_byte((GuiViewCelNo)GET_SEL32V(segMan, objectReference, cel));
+	int16 x = (int16)GET_SEL32V(segMan, objectReference, x);
+	int16 y = (int16)GET_SEL32V(segMan, objectReference, y);
 	int16 z = 0;
 	if (_s->_kernel->_selectorCache.z > -1) {
-		z = (int16)GET_SEL32V(objectReference, z);
+		z = (int16)GET_SEL32V(segMan, objectReference, z);
 	}
 
 	// now get cel rectangle
@@ -1049,10 +1049,10 @@ void SciGuiGfx::SetNowSeen(reg_t objectReference) {
 
 	// TODO: sometimes loop is negative. Check what it means
 	if (lookup_selector(_s->_segMan, objectReference, _s->_kernel->_selectorCache.nsTop, NULL, NULL) == kSelectorVariable) {
-		PUT_SEL32V(objectReference, nsLeft, celRect.left);
-		PUT_SEL32V(objectReference, nsRight, celRect.right);
-		PUT_SEL32V(objectReference, nsTop, celRect.top);
-		PUT_SEL32V(objectReference, nsBottom, celRect.bottom);
+		PUT_SEL32V(segMan, objectReference, nsLeft, celRect.left);
+		PUT_SEL32V(segMan, objectReference, nsRight, celRect.right);
+		PUT_SEL32V(segMan, objectReference, nsTop, celRect.top);
+		PUT_SEL32V(segMan, objectReference, nsBottom, celRect.bottom);
 	}
 
 	delete view;

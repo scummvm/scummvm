@@ -278,17 +278,17 @@ static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
  */
 static bool polygons_equal(SegManager *segMan, reg_t p1, reg_t p2) {
 	// Check for same type
-	if (GET_SEL32(p1, type).toUint16() != GET_SEL32(p2, type).toUint16())
+	if (GET_SEL32(segMan, p1, type).toUint16() != GET_SEL32(segMan, p2, type).toUint16())
 		return false;
 
-	int size = GET_SEL32(p1, size).toUint16();
+	int size = GET_SEL32(segMan, p1, size).toUint16();
 
 	// Check for same number of points
-	if (size != GET_SEL32(p2, size).toUint16())
+	if (size != GET_SEL32(segMan, p2, size).toUint16())
 		return false;
 
-	reg_t p1_points = GET_SEL32(p1, points);
-	reg_t p2_points = GET_SEL32(p2, points);
+	reg_t p1_points = GET_SEL32(segMan, p1, points);
+	reg_t p2_points = GET_SEL32(segMan, p2, points);
 
 	// Check for the same points
 	for (int i = 0; i < size; i++) {
@@ -346,9 +346,9 @@ static void draw_point(EngineState *s, Common::Point p, int start) {
 
 static void draw_polygon(EngineState *s, reg_t polygon) {
 	SegManager *segMan = s->_segMan;
-	reg_t points = GET_SEL32(polygon, points);
-	int size = GET_SEL32(polygon, size).toUint16();
-	int type = GET_SEL32(polygon, type).toUint16();
+	reg_t points = GET_SEL32(segMan, polygon, points);
+	int size = GET_SEL32(segMan, polygon, size).toUint16();
+	int type = GET_SEL32(segMan, polygon, type).toUint16();
 	Common::Point first, prev;
 	int i;
 
@@ -391,9 +391,9 @@ static void draw_input(EngineState *s, reg_t poly_list, Common::Point start, Com
 #endif	// DEBUG_AVOIDPATH
 
 static void print_polygon(SegManager *segMan, reg_t polygon) {
-	reg_t points = GET_SEL32(polygon, points);
-	int size = GET_SEL32(polygon, size).toUint16();
-	int type = GET_SEL32(polygon, type).toUint16();
+	reg_t points = GET_SEL32(segMan, polygon, points);
+	int size = GET_SEL32(segMan, polygon, size).toUint16();
+	int type = GET_SEL32(segMan, polygon, type).toUint16();
 	int i;
 	Common::Point point;
 
@@ -1220,15 +1220,15 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	// Returns   : (Polygon *) The converted polygon, or NULL on error
 	SegManager *segMan = s->_segMan;
 	int i;
-	reg_t points = GET_SEL32(polygon, points);
-	int size = GET_SEL32(polygon, size).toUint16();
+	reg_t points = GET_SEL32(segMan, polygon, points);
+	int size = GET_SEL32(segMan, polygon, size).toUint16();
 
 	if (size == 0) {
 		// If the polygon has no vertices, we skip it
 		return NULL;
 	}
 
-	Polygon *poly = new Polygon(GET_SEL32(polygon, type).toUint16());
+	Polygon *poly = new Polygon(GET_SEL32(segMan, polygon, type).toUint16());
 
 	int skip = 0;
 
@@ -1388,7 +1388,7 @@ static PathfindingState *convert_polygon_set(EngineState *s, reg_t poly_list, Co
 
 				if (polygon) {
 					pf_s->polygons.push_back(polygon);
-					count += GET_SEL32(node->value, size).toUint16();
+					count += GET_SEL32(segMan, node->value, size).toUint16();
 				}
 			}
 

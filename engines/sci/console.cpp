@@ -2746,14 +2746,14 @@ bool Console::cmdStopSfx(int argc, const char **argv) {
 	}
 
 	int handle = id.segment << 16 | id.offset;	// frobnicate handle
-	SegManager *segMan = _vm->_gamestate->_segMan;	// for PUT_SEL32V
 
 	if (id.segment) {
+		SegManager *segMan = _vm->_gamestate->_segMan;	// for PUT_SEL32V
 		_vm->_gamestate->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		_vm->_gamestate->_sound.sfx_remove_song(handle);
-		PUT_SEL32V(id, signal, SIGNAL_OFFSET);
-		PUT_SEL32V(id, nodePtr, 0);
-		PUT_SEL32V(id, handle, 0);
+		PUT_SEL32V(segMan, id, signal, SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, id, nodePtr, 0);
+		PUT_SEL32V(segMan, id, handle, 0);
 	}
 
 	return true;

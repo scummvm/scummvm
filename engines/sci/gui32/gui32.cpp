@@ -272,35 +272,35 @@ Common::Rect set_base(EngineState *s, reg_t object) {
 	int xmod = 0, ymod = 0;
 	Common::Rect retval;
 
-	x = (int16)GET_SEL32V(object, x);
-	original_y = y = (int16)GET_SEL32V(object, y);
+	x = (int16)GET_SEL32V(segMan, object, x);
+	original_y = y = (int16)GET_SEL32V(segMan, object, y);
 
 	if (s->_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(object, z);
+		z = (int16)GET_SEL32V(segMan, object, z);
 	else
 		z = 0;
 
 	y -= z; // Subtract z offset
 
-	ystep = (int16)GET_SEL32V(object, yStep);
+	ystep = (int16)GET_SEL32V(segMan, object, yStep);
 
-	view = (int16)GET_SEL32V(object, view);
-	int l = GET_SEL32V(object, loop);
+	view = (int16)GET_SEL32V(segMan, object, view);
+	int l = GET_SEL32V(segMan, object, loop);
 	oldloop = loop = (l & 0x80) ? l - 256 : l;
-	int c = GET_SEL32V(object, cel);
+	int c = GET_SEL32V(segMan, object, cel);
 	oldcel = cel = (c & 0x80) ? c - 256 : c;
 
 	Common::Point offset = Common::Point(0, 0);
 
 	if (loop != oldloop) {
 		loop = 0;
-		PUT_SEL32V(object, loop, 0);
+		PUT_SEL32V(segMan, object, loop, 0);
 		debugC(2, kDebugLevelGraphics, "Resetting loop for %04x:%04x!\n", PRINT_REG(object));
 	}
 
 	if (cel != oldcel) {
 		cel = 0;
-		PUT_SEL32V(object, cel, 0);
+		PUT_SEL32V(segMan, object, cel, 0);
 	}
 
 	gfxop_get_cel_parameters(s->gfx_state, view, loop, cel, &xsize, &ysize, &offset);
@@ -373,26 +373,26 @@ Common::Rect get_nsrect(EngineState *s, reg_t object, byte clip) {
 	int view, loop, cel;
 	Common::Rect retval;
 
-	x = (int16)GET_SEL32V(object, x);
-	y = (int16)GET_SEL32V(object, y);
+	x = (int16)GET_SEL32V(segMan, object, x);
+	y = (int16)GET_SEL32V(segMan, object, y);
 
 	if (s->_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(object, z);
+		z = (int16)GET_SEL32V(segMan, object, z);
 	else
 		z = 0;
 
 	y -= z; // Subtract z offset
 
-	view = (int16)GET_SEL32V(object, view);
-	int l = (int16)GET_SEL32V(object, loop);
+	view = (int16)GET_SEL32V(segMan, object, view);
+	int l = (int16)GET_SEL32V(segMan, object, loop);
 	loop = (l & 0x80) ? l - 256 : l;
-	int c = (int16)GET_SEL32V(object, cel);
+	int c = (int16)GET_SEL32V(segMan, object, cel);
 	cel = (c & 0x80) ? c - 256 : c;
 
 	retval = calculate_nsrect(s, x, y, view, loop, cel);
 
 	if (clip) {
-		int priority = (int16)GET_SEL32V(object, priority);
+		int priority = (int16)GET_SEL32V(segMan, object, priority);
 		return nsrect_clip(s, y, retval, priority);
 	}
 
@@ -405,26 +405,26 @@ Common::Rect get_nsrect32(EngineState *s, reg_t object, byte clip) {
 	int view, loop, cel;
 	Common::Rect retval;
 
-	x = (int16)GET_SEL32V(object, x);
-	y = (int16)GET_SEL32V(object, y);
+	x = (int16)GET_SEL32V(segMan, object, x);
+	y = (int16)GET_SEL32V(segMan, object, y);
 
 	if (s->_kernel->_selectorCache.z > -1)
-		z = (int16)GET_SEL32V(object, z);
+		z = (int16)GET_SEL32V(segMan, object, z);
 	else
 		z = 0;
 
 	y -= z; // Subtract z offset
 
-	view = (int16)GET_SEL32V(object, view);
-	int l = (int16)GET_SEL32V(object, loop);
+	view = (int16)GET_SEL32V(segMan, object, view);
+	int l = (int16)GET_SEL32V(segMan, object, loop);
 	loop = (l & 0x80) ? l - 256 : l;
-	int c = (int16)GET_SEL32V(object, cel);
+	int c = (int16)GET_SEL32V(segMan, object, cel);
 	cel = (c & 0x80) ? c - 256 : c;
 
 	retval = calculate_nsrect(s, x, y, view, loop, cel);
 
 	if (clip) {
-		int priority = (int16)GET_SEL32V(object, priority);
+		int priority = (int16)GET_SEL32V(segMan, object, priority);
 		return nsrect_clip(s, y, retval, priority);
 	}
 
@@ -1046,7 +1046,7 @@ static inline int sign_extend_byte(int value) {
 
 void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 	SegManager *segMan = _s->_segMan;
-	uint16 ct_type = GET_SEL32V(controlObject, type);
+	uint16 ct_type = GET_SEL32V(segMan, controlObject, type);
 
 	switch (ct_type) {
 
@@ -1054,13 +1054,13 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 		break; // NOP
 
 	case K_CONTROL_EDIT:
-		if (eventObject.segment && ((GET_SEL32V(eventObject, type)) == SCI_EVT_KEYBOARD)) {
-			int max_displayed = GET_SEL32V(controlObject, max);
+		if (eventObject.segment && ((GET_SEL32V(segMan, eventObject, type)) == SCI_EVT_KEYBOARD)) {
+			int max_displayed = GET_SEL32V(segMan, controlObject, max);
 			int max = max_displayed;
-			int cursor = GET_SEL32V(controlObject, cursor);
-			int modifiers = GET_SEL32V(eventObject, modifiers);
-			int key = GET_SEL32V(eventObject, message);
-			reg_t text_pos = GET_SEL32(controlObject, text);
+			int cursor = GET_SEL32V(segMan, controlObject, cursor);
+			int modifiers = GET_SEL32V(segMan, eventObject, modifiers);
+			int key = GET_SEL32V(segMan, eventObject, message);
+			reg_t text_pos = GET_SEL32(segMan, controlObject, text);
 			int display_offset = 0;
 
 			Common::String text = _s->_segMan->getString(text_pos);
@@ -1105,7 +1105,7 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 					_K_EDIT_DELETE;
 					break;
 				}
-				PUT_SEL32V(eventObject, claimed, 1);
+				PUT_SEL32V(segMan, eventObject, claimed, 1);
 
 			} else if (modifiers & SCI_EVM_ALT) { // Ctrl has precedence over Alt
 				switch (key) {
@@ -1129,15 +1129,15 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 					break;
 				}
 				}
-				PUT_SEL32V(eventObject, claimed, 1);
+				PUT_SEL32V(segMan, eventObject, claimed, 1);
 			} else if (key < 31) {
-				PUT_SEL32V(eventObject, claimed, 1);
+				PUT_SEL32V(segMan, eventObject, claimed, 1);
 				switch (key) {
 				case SCI_K_BACKSPACE:
 					_K_EDIT_BACKSPACE;
 					break;
 				default:
-					PUT_SEL32V(eventObject, claimed, 0);
+					PUT_SEL32V(segMan, eventObject, claimed, 0);
 				}
 			} else if (key & 0xff00) {
 				switch (key) {
@@ -1159,7 +1159,7 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 					_K_EDIT_DELETE;
 					break;
 				}
-				PUT_SEL32V(eventObject, claimed, 1);
+				PUT_SEL32V(segMan, eventObject, claimed, 1);
 			} else if ((key > 31) && (key < 128)) {
 				int inserting = (modifiers & SCI_EVM_INSERT);
 
@@ -1188,13 +1188,13 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 
 				cursor -= display_offset;
 
-				PUT_SEL32V(eventObject, claimed, 1);
+				PUT_SEL32V(segMan, eventObject, claimed, 1);
 			}
 
-			PUT_SEL32V(controlObject, cursor, cursor); // Write back cursor position
+			PUT_SEL32V(segMan, controlObject, cursor, cursor); // Write back cursor position
 			_s->_segMan->strcpy(text_pos, text.c_str()); // Write back string
 		}
-		if (eventObject.segment) PUT_SEL32V(eventObject, claimed, 1);
+		if (eventObject.segment) PUT_SEL32V(segMan, eventObject, claimed, 1);
 		_k_GenericDrawControl(_s, controlObject, false);
 		return;
 
@@ -1204,10 +1204,10 @@ void SciGui32::editControl(reg_t controlObject, reg_t eventObject) {
 		return;
 
 	case K_CONTROL_TEXT: {
-		int state = GET_SEL32V(controlObject, state);
-		PUT_SEL32V(controlObject, state, state | kControlStateDitherFramed);
+		int state = GET_SEL32V(segMan, controlObject, state);
+		PUT_SEL32V(segMan, controlObject, state, state | kControlStateDitherFramed);
 		_k_GenericDrawControl(_s, controlObject, false);
-		PUT_SEL32V(controlObject, state, state);
+		PUT_SEL32V(segMan, controlObject, state, state);
 	}
 	break;
 
@@ -1449,7 +1449,7 @@ enum {
 GfxDynView *SciGui32::_k_make_dynview_obj(reg_t obj, int options, int nr, int argc, reg_t *argv) {
 	SegManager *segMan = _s->_segMan;
 	short oldloop, oldcel;
-	int cel, loop, view_nr = (int16)GET_SEL32V(obj, view);
+	int cel, loop, view_nr = (int16)GET_SEL32V(segMan, obj, view);
 	int palette;
 	int signal;
 	reg_t under_bits;
@@ -1461,19 +1461,19 @@ GfxDynView *SciGui32::_k_make_dynview_obj(reg_t obj, int options, int nr, int ar
 
 	obj = obj;
 
-	pos.x = (int16)GET_SEL32V(obj, x);
-	pos.y = (int16)GET_SEL32V(obj, y);
+	pos.x = (int16)GET_SEL32V(segMan, obj, x);
+	pos.y = (int16)GET_SEL32V(segMan, obj, y);
 
 	pos.y++; // magic: Sierra appears to do something like this
 
-	z = (int16)GET_SEL32V(obj, z);
+	z = (int16)GET_SEL32V(segMan, obj, z);
 
 	// !-- nsRect used to be checked here!
-	loop = oldloop = sign_extend_byte(GET_SEL32V(obj, loop));
-	cel = oldcel = sign_extend_byte(GET_SEL32V(obj, cel));
+	loop = oldloop = sign_extend_byte(GET_SEL32V(segMan, obj, loop));
+	cel = oldcel = sign_extend_byte(GET_SEL32V(segMan, obj, cel));
 
 	if (_s->_kernel->_selectorCache.palette)
-		palette = GET_SEL32V(obj, palette);
+		palette = GET_SEL32V(segMan, obj, palette);
 	else
 		palette = 0;
 
@@ -1486,10 +1486,10 @@ GfxDynView *SciGui32::_k_make_dynview_obj(reg_t obj, int options, int nr, int ar
 		cel = 0;
 
 	if (oldloop != loop)
-		PUT_SEL32V(obj, loop, loop);
+		PUT_SEL32V(segMan, obj, loop, loop);
 
 	if (oldcel != cel) {
-		PUT_SEL32V(obj, cel, cel);
+		PUT_SEL32V(segMan, obj, cel, cel);
 	}
 
 	ObjVarRef under_bitsp;
@@ -1554,7 +1554,7 @@ void SciGui32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 		GfxDynView *tempWidget;
 
 		if (options & _K_MAKE_VIEW_LIST_CYCLE) {
-			unsigned int signal = GET_SEL32V(obj, signal);
+			unsigned int signal = GET_SEL32V(segMan, obj, signal);
 
 			if (!(signal & _K_VIEW_SIG_FLAG_FROZEN)) {
 
@@ -1716,10 +1716,10 @@ void SciGui32::_k_set_now_seen(reg_t object) {
 		return;
 	} // This isn't fatal
 
-	PUT_SEL32V(object, nsLeft, absrect.left);
-	PUT_SEL32V(object, nsRight, absrect.right);
-	PUT_SEL32V(object, nsTop, absrect.top);
-	PUT_SEL32V(object, nsBottom, absrect.bottom);
+	PUT_SEL32V(segMan, object, nsLeft, absrect.left);
+	PUT_SEL32V(segMan, object, nsRight, absrect.right);
+	PUT_SEL32V(segMan, object, nsTop, absrect.top);
+	PUT_SEL32V(segMan, object, nsBottom, absrect.bottom);
 }
 
 void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
@@ -1736,18 +1736,18 @@ void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
 		_priority = _find_view_priority(_s, _priority - 1);
 
 		if (options & _K_MAKE_VIEW_LIST_DRAW_TO_CONTROL_MAP) { // Picview
-			priority = (int16)GET_SEL32V(obj, priority);
+			priority = (int16)GET_SEL32V(segMan, obj, priority);
 			if (priority < 0)
 				priority = _priority; // Always for picviews
 		} else { // Dynview
 			if (has_nsrect && !(view->signal & _K_VIEW_SIG_FLAG_FIX_PRI_ON)) { // Calculate priority
 				if (options & _K_MAKE_VIEW_LIST_CALC_PRIORITY)
-					PUT_SEL32V(obj, priority, _priority);
+					PUT_SEL32V(segMan, obj, priority, _priority);
 
 				priority = _priority;
 
 			} else // DON'T calculate the priority
-				priority = (int16)GET_SEL32V(obj, priority);
+				priority = (int16)GET_SEL32V(segMan, obj, priority);
 		}
 
 		view->_color.priority = priority;
@@ -1993,17 +1993,17 @@ void SciGui32::_k_view_list_do_postdraw(GfxList *list) {
 			if (has_nsrect) {
 				int temp;
 
-				temp = GET_SEL32V(obj, nsLeft);
-				PUT_SEL32V(obj, lsLeft, temp);
+				temp = GET_SEL32V(segMan, obj, nsLeft);
+				PUT_SEL32V(segMan, obj, lsLeft, temp);
 
-				temp = GET_SEL32V(obj, nsRight);
-				PUT_SEL32V(obj, lsRight, temp);
+				temp = GET_SEL32V(segMan, obj, nsRight);
+				PUT_SEL32V(segMan, obj, lsRight, temp);
 
-				temp = GET_SEL32V(obj, nsTop);
-				PUT_SEL32V(obj, lsTop, temp);
+				temp = GET_SEL32V(segMan, obj, nsTop);
+				PUT_SEL32V(segMan, obj, lsTop, temp);
 
-				temp = GET_SEL32V(obj, nsBottom);
-				PUT_SEL32V(obj, lsBottom, temp);
+				temp = GET_SEL32V(segMan, obj, nsBottom);
+				PUT_SEL32V(segMan, obj, lsBottom, temp);
 #ifdef DEBUG_LSRECT
 				fprintf(_stderr, "lsRected %04x:%04x\n", PRINT_REG(obj));
 #endif
@@ -2607,19 +2607,19 @@ void SciGui32::setNowSeen(reg_t objectReference) {
 
 static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int use_nsrect, int view_mask) {
 	SegManager *segMan = s->_segMan;
-	int other_signal = GET_SEL32V(other_obj, signal);
-	int other_priority = GET_SEL32V(other_obj, priority);
-	int y = (int16)GET_SEL32V(other_obj, y);
+	int other_signal = GET_SEL32V(segMan, other_obj, signal);
+	int other_priority = GET_SEL32V(segMan, other_obj, priority);
+	int y = (int16)GET_SEL32V(segMan, other_obj, y);
 	Common::Rect other_area;
 
 	if (use_nsrect) {
 		other_area = get_nsrect(s, other_obj, 0);
 		other_area = nsrect_clip(s, y, other_area, other_priority);
 	} else {
-		other_area.left = GET_SEL32V(other_obj, brLeft);
-		other_area.right = GET_SEL32V(other_obj, brRight);
-		other_area.top = GET_SEL32V(other_obj, brTop);
-		other_area.bottom = GET_SEL32V(other_obj, brBottom);
+		other_area.left = GET_SEL32V(segMan, other_obj, brLeft);
+		other_area.right = GET_SEL32V(segMan, other_obj, brRight);
+		other_area.top = GET_SEL32V(segMan, other_obj, brTop);
+		other_area.bottom = GET_SEL32V(segMan, other_obj, brBottom);
 	}
 
 	if (other_area.right < 0 || other_area.bottom < 0 || area.right < 0 || area.bottom < 0)
@@ -2660,19 +2660,19 @@ bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 	uint16 edgehit;
 	uint16 illegal_bits;
 
-	abs_zone.left = (int16)GET_SEL32V(curObject, brLeft);
-	abs_zone.right = (int16)GET_SEL32V(curObject, brRight);
-	abs_zone.top = (int16)GET_SEL32V(curObject, brTop);
-	abs_zone.bottom = (int16)GET_SEL32V(curObject, brBottom);
+	abs_zone.left = (int16)GET_SEL32V(segMan, curObject, brLeft);
+	abs_zone.right = (int16)GET_SEL32V(segMan, curObject, brRight);
+	abs_zone.top = (int16)GET_SEL32V(segMan, curObject, brTop);
+	abs_zone.bottom = (int16)GET_SEL32V(segMan, curObject, brBottom);
 
 	zone = gfx_rect(abs_zone.left + port->zone.x, abs_zone.top + port->zone.y, abs_zone.width(), abs_zone.height());
 
-	signal = GET_SEL32V(curObject, signal);
+	signal = GET_SEL32V(segMan, curObject, signal);
 	debugC(2, kDebugLevelBresen, "Checking collision: (%d,%d) to (%d,%d) ([%d..%d]x[%d..%d]), obj=%04x:%04x, sig=%04x, cliplist=%04x:%04x\n",
 	          GFX_PRINT_RECT(zone), abs_zone.left, abs_zone.right, abs_zone.top, abs_zone.bottom,
 	          PRINT_REG(curObject), signal, PRINT_REG(listReference));
 
-	illegal_bits = GET_SEL32V(curObject, illegalBits);
+	illegal_bits = GET_SEL32V(segMan, curObject, illegalBits);
 
 	retval = !(illegal_bits & (edgehit = gfxop_scan_bitmask(_s->gfx_state, zone, GFX_MASK_CONTROL)));
 

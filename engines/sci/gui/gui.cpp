@@ -407,8 +407,7 @@ void SciGui::drawControlList(Common::Rect rect, reg_t obj, int16 maxChars, int16
 }
 
 void SciGui::editControl(reg_t controlObject, reg_t eventObject) {
-	SegManager *segMan = _s->_segMan;
-	int16 controlType = GET_SEL32V(controlObject, type);
+	int16 controlType = GET_SEL32V(_s->_segMan, controlObject, type);
 
 	switch (controlType) {
 	case SCI_CONTROLS_TYPE_TEXTEDIT:
@@ -586,12 +585,12 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	uint16 signal, controlMask;
 	bool result;
 
-	checkRect.left = GET_SEL32V(curObject, brLeft);
-	checkRect.top = GET_SEL32V(curObject, brTop);
-	checkRect.right = GET_SEL32V(curObject, brRight);
-	checkRect.bottom = GET_SEL32V(curObject, brBottom);
-	signal = GET_SEL32V(curObject, signal);
-	controlMask = GET_SEL32V(curObject, illegalBits);
+	checkRect.left = GET_SEL32V(segMan, curObject, brLeft);
+	checkRect.top = GET_SEL32V(segMan, curObject, brTop);
+	checkRect.right = GET_SEL32V(segMan, curObject, brRight);
+	checkRect.bottom = GET_SEL32V(segMan, curObject, brBottom);
+	signal = GET_SEL32V(segMan, curObject, signal);
+	controlMask = GET_SEL32V(segMan, curObject, illegalBits);
 	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
 	if ((result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
 		List *list = _s->_segMan->lookupList(listReference);

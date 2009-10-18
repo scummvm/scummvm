@@ -114,9 +114,9 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	reg_t event = argv[0];
 	/*int pause_sound = (argc > 1) ? argv[1].toUint16() : 1;*/ /* FIXME: Do this eventually */
 	bool claimed = false;
-	int type = GET_SEL32V(event, type);
-	int message = GET_SEL32V(event, message);
-	int modifiers = GET_SEL32V(event, modifiers);
+	int type = GET_SEL32V(segMan, event, type);
+	int message = GET_SEL32V(segMan, event, message);
+	int modifiers = GET_SEL32V(segMan, event, modifiers);
 	int menu_nr = -1, item_nr = 0;
 	MenuItem *item;
 	int menu_mode = 0; /* Menu is active */
@@ -320,7 +320,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (claimed) {
-		PUT_SEL32(event, claimed, make_reg(0, 1));
+		PUT_SEL32(segMan, event, claimed, make_reg(0, 1));
 
 		if (menu_nr > -1) {
 			s->r_acc = make_reg(0, ((menu_nr + 1) << 8) | (item_nr + 1));

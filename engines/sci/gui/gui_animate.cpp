@@ -65,7 +65,7 @@ void SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 
 	while (curNode) {
 		curObject = curNode->value;
-		signal = GET_SEL32V(curObject, signal);
+		signal = GET_SEL32V(segMan, curObject, signal);
 		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
 			// Call .doit method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
@@ -121,15 +121,15 @@ void SciGuiAnimate::makeSortedList(List *list) {
 		listEntry->object = curObject;
 
 		// Get data from current object
-		listEntry->viewId = GET_SEL32V(curObject, view);
-		listEntry->loopNo = GET_SEL32V(curObject, loop);
-		listEntry->celNo = GET_SEL32V(curObject, cel);
-		listEntry->paletteNo = GET_SEL32V(curObject, palette);
-		listEntry->x = GET_SEL32V(curObject, x);
-		listEntry->y = GET_SEL32V(curObject, y);
-		listEntry->z = GET_SEL32V(curObject, z);
-		listEntry->priority = GET_SEL32V(curObject, priority);
-		listEntry->signal = GET_SEL32V(curObject, signal);
+		listEntry->viewId = GET_SEL32V(segMan, curObject, view);
+		listEntry->loopNo = GET_SEL32V(segMan, curObject, loop);
+		listEntry->celNo = GET_SEL32V(segMan, curObject, cel);
+		listEntry->paletteNo = GET_SEL32V(segMan, curObject, palette);
+		listEntry->x = GET_SEL32V(segMan, curObject, x);
+		listEntry->y = GET_SEL32V(segMan, curObject, y);
+		listEntry->z = GET_SEL32V(segMan, curObject, z);
+		listEntry->priority = GET_SEL32V(segMan, curObject, priority);
+		listEntry->signal = GET_SEL32V(segMan, curObject, signal);
 		// listEntry->celRect is filled in AnimateFill()
 		listEntry->showBitsFlag = false;
 
@@ -167,26 +167,26 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 		// adjust loop and cel, if any of those is invalid
 		if (listEntry->loopNo >= view->getLoopCount()) {
 			listEntry->loopNo = 0;
-			PUT_SEL32V(curObject, loop, listEntry->loopNo);
+			PUT_SEL32V(segMan, curObject, loop, listEntry->loopNo);
 		}
 		if (listEntry->celNo >= view->getCelCount(listEntry->loopNo)) {
 			listEntry->celNo = 0;
-			PUT_SEL32V(curObject, cel, listEntry->celNo);
+			PUT_SEL32V(segMan, curObject, cel, listEntry->celNo);
 		}
 
 		// Create rect according to coordinates and given cel
 		view->getCelRect(listEntry->loopNo, listEntry->celNo, listEntry->x, listEntry->y, listEntry->z, &listEntry->celRect);
-		PUT_SEL32V(curObject, nsLeft, listEntry->celRect.left);
-		PUT_SEL32V(curObject, nsTop, listEntry->celRect.top);
-		PUT_SEL32V(curObject, nsRight, listEntry->celRect.right);
-		PUT_SEL32V(curObject, nsBottom, listEntry->celRect.bottom);
+		PUT_SEL32V(segMan, curObject, nsLeft, listEntry->celRect.left);
+		PUT_SEL32V(segMan, curObject, nsTop, listEntry->celRect.top);
+		PUT_SEL32V(segMan, curObject, nsRight, listEntry->celRect.right);
+		PUT_SEL32V(segMan, curObject, nsBottom, listEntry->celRect.bottom);
 
 		signal = listEntry->signal;
 
 		// Calculate current priority according to y-coordinate
 		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY)) {
 			listEntry->priority = _gfx->CoordinateToPriority(listEntry->y);
-			PUT_SEL32V(curObject, priority, listEntry->priority);
+			PUT_SEL32V(segMan, curObject, priority, listEntry->priority);
 		}
 		
 		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
@@ -229,14 +229,14 @@ void SciGuiAnimate::update() {
 
 		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
 			if (!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
-				bitsHandle = GET_SEL32(curObject, underBits);
+				bitsHandle = GET_SEL32(segMan, curObject, underBits);
 				if (_screen->_picNotValid != 1) {
 					_gfx->BitsRestore(bitsHandle);
 					listEntry->showBitsFlag = true;
 				} else	{
 					_gfx->BitsFree(bitsHandle);
 				}
-				PUT_SEL32V(curObject, underBits, 0);
+				PUT_SEL32V(segMan, curObject, underBits, 0);
 			}
 			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
 			signal &= signal & SCI_ANIMATE_SIGNAL_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE) : 0xFFFF;
@@ -286,7 +286,7 @@ void SciGuiAnimate::update() {
 					bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
-				PUT_SEL32(curObject, underBits, bitsHandle);
+				PUT_SEL32(segMan, curObject, underBits, bitsHandle);
 			}
 			listEntry->signal = signal;
 		}
@@ -333,7 +333,7 @@ void SciGuiAnimate::drawCels() {
 		if (!(signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_HIDDEN | SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))) {
 			// Save background
 			bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
-			PUT_SEL32(curObject, underBits, bitsHandle);
+			PUT_SEL32(segMan, curObject, underBits, bitsHandle);
 
 			// draw corresponding cel
 			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
@@ -377,10 +377,10 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 
 		if (listEntry->showBitsFlag || !(signal & (SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE) ||
 										(!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) && oldPicNotValid))) {
-			lsRect.left = GET_SEL32V(curObject, lsLeft);
-			lsRect.top = GET_SEL32V(curObject, lsTop);
-			lsRect.right = GET_SEL32V(curObject, lsRight);
-			lsRect.bottom = GET_SEL32V(curObject, lsBottom);
+			lsRect.left = GET_SEL32V(segMan, curObject, lsLeft);
+			lsRect.top = GET_SEL32V(segMan, curObject, lsTop);
+			lsRect.right = GET_SEL32V(segMan, curObject, lsRight);
+			lsRect.bottom = GET_SEL32V(segMan, curObject, lsBottom);
 
 			workerRect = lsRect;
 			workerRect.clip(listEntry->celRect);
@@ -392,10 +392,10 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 				_gfx->BitsShow(lsRect);
 				workerRect = listEntry->celRect;
 			}
-			PUT_SEL32V(curObject, lsLeft, workerRect.left);
-			PUT_SEL32V(curObject, lsTop, workerRect.top);
-			PUT_SEL32V(curObject, lsRight, workerRect.right);
-			PUT_SEL32V(curObject, lsBottom, workerRect.bottom);
+			PUT_SEL32V(segMan, curObject, lsLeft, workerRect.left);
+			PUT_SEL32V(segMan, curObject, lsTop, workerRect.top);
+			PUT_SEL32V(segMan, curObject, lsRight, workerRect.right);
+			PUT_SEL32V(segMan, curObject, lsBottom, workerRect.bottom);
 			_gfx->BitsShow(workerRect);
 
 			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
@@ -424,12 +424,12 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 		signal = listEntry->signal;
 
 		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
-			_gfx->BitsRestore(GET_SEL32(curObject, underBits));
-			PUT_SEL32V(curObject, underBits, 0);
+			_gfx->BitsRestore(GET_SEL32(segMan, curObject, underBits));
+			PUT_SEL32V(segMan, curObject, underBits, 0);
 		}
 
 		// Finally update signal
-		PUT_SEL32V(curObject, signal, signal);
+		PUT_SEL32V(segMan, curObject, signal, signal);
 
 		if (signal & SCI_ANIMATE_SIGNAL_DISPOSEME) {
 			// Call .delete_ method of that object

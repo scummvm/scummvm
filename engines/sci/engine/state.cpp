@@ -177,8 +177,7 @@ kLanguage EngineState::getLanguage() {
 	kLanguage lang = K_LANG_ENGLISH;
 
 	if (_kernel->_selectorCache.printLang != -1) {
-		SegManager *segMan = _segMan;
-		lang = (kLanguage)GET_SEL32V(this->game_obj, printLang);
+		lang = (kLanguage)GET_SEL32V(_segMan, this->game_obj, printLang);
 
 		if ((getSciVersion() == SCI_VERSION_1_1) || (lang == K_LANG_NONE)) {
 			// If language is set to none, we use the language from the game detector.
@@ -213,7 +212,7 @@ kLanguage EngineState::getLanguage() {
 			}
 
 			// Store language in printLang selector
-			PUT_SEL32V(this->game_obj, printLang, lang);
+			PUT_SEL32V(_segMan, this->game_obj, printLang, lang);
 		}
 	}
 
@@ -225,8 +224,7 @@ Common::String EngineState::strSplit(const char *str, const char *sep) {
 	kLanguage subLang = K_LANG_NONE;
 
 	if (_kernel->_selectorCache.subtitleLang != -1) {
-		SegManager *segMan = _segMan;
-		subLang = (kLanguage)GET_SEL32V(this->game_obj, subtitleLang);
+		subLang = (kLanguage)GET_SEL32V(_segMan, this->game_obj, subtitleLang);
 	}
 
 	Common::String retval = getLanguageString(str, lang);

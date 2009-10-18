@@ -155,8 +155,8 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 	debugC(2, kDebugLevelBresen, "SetJump for object at %04x:%04x\n", PRINT_REG(object));
 	debugC(2, kDebugLevelBresen, "xStep: %d, yStep: %d\n", vx, vy);
 
-	PUT_SEL32V(object, xStep, vx);
-	PUT_SEL32V(object, yStep, vy);
+	PUT_SEL32V(segMan, object, xStep, vx);
+	PUT_SEL32V(segMan, object, yStep, vy);
 
 	return s->r_acc;
 }
@@ -165,9 +165,9 @@ reg_t kSetJump(EngineState *s, int argc, reg_t *argv) {
 #define _K_BRESEN_AXIS_Y 1
 
 static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t mover, int step_factor, int deltax, int deltay) {
-	reg_t client = GET_SEL32(mover, client);
-	int stepx = (int16)GET_SEL32V(client, xStep) * step_factor;
-	int stepy = (int16)GET_SEL32V(client, yStep) * step_factor;
+	reg_t client = GET_SEL32(segMan, mover, client);
+	int stepx = (int16)GET_SEL32V(segMan, client, xStep) * step_factor;
+	int stepy = (int16)GET_SEL32V(segMan, client, yStep) * step_factor;
 	int numsteps_x = stepx ? (abs(deltax) + stepx - 1) / stepx : 0;
 	int numsteps_y = stepy ? (abs(deltay) + stepy - 1) / stepy : 0;
 	int bdi, i1;
@@ -188,15 +188,15 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 /*	if (abs(deltax) > abs(deltay)) {*/ // Bresenham on y
 	if (numsteps_y < numsteps_x) {
 
-		PUT_SEL32V(mover, b_xAxis, _K_BRESEN_AXIS_Y);
-		PUT_SEL32V(mover, b_incr, (deltay < 0) ? -1 : 1);
+		PUT_SEL32V(segMan, mover, b_xAxis, _K_BRESEN_AXIS_Y);
+		PUT_SEL32V(segMan, mover, b_incr, (deltay < 0) ? -1 : 1);
 		//i1 = 2 * (abs(deltay) - abs(deltay_step * numsteps)) * abs(deltax_step);
 		//bdi = -abs(deltax);
 		i1 = 2 * (abs(deltay) - abs(deltay_step * (numsteps - 1))) * abs(deltax_step);
 		bdi = -abs(deltax);
 	} else { // Bresenham on x
-		PUT_SEL32V(mover, b_xAxis, _K_BRESEN_AXIS_X);
-		PUT_SEL32V(mover, b_incr, (deltax < 0) ? -1 : 1);
+		PUT_SEL32V(segMan, mover, b_xAxis, _K_BRESEN_AXIS_X);
+		PUT_SEL32V(segMan, mover, b_incr, (deltax < 0) ? -1 : 1);
 		//i1= 2 * (abs(deltax) - abs(deltax_step * numsteps)) * abs(deltay_step);
 		//bdi = -abs(deltay);
 		i1 = 2 * (abs(deltax) - abs(deltax_step * (numsteps - 1))) * abs(deltay_step);
@@ -204,26 +204,26 @@ static void initialize_bresen(SegManager *segMan, int argc, reg_t *argv, reg_t m
 
 	}
 
-	PUT_SEL32V(mover, dx, deltax_step);
-	PUT_SEL32V(mover, dy, deltay_step);
+	PUT_SEL32V(segMan, mover, dx, deltax_step);
+	PUT_SEL32V(segMan, mover, dy, deltay_step);
 
 	debugC(2, kDebugLevelBresen, "Init bresen for mover %04x:%04x: d=(%d,%d)\n", PRINT_REG(mover), deltax, deltay);
 	debugC(2, kDebugLevelBresen, "    steps=%d, mv=(%d, %d), i1= %d, i2=%d\n",
 	          numsteps, deltax_step, deltay_step, i1, bdi*2);
 
-	//PUT_SEL32V(mover, b_movCnt, numsteps); // Needed for HQ1/Ogre?
-	PUT_SEL32V(mover, b_di, bdi);
-	PUT_SEL32V(mover, b_i1, i1);
-	PUT_SEL32V(mover, b_i2, bdi * 2);
+	//PUT_SEL32V(segMan, mover, b_movCnt, numsteps); // Needed for HQ1/Ogre?
+	PUT_SEL32V(segMan, mover, b_di, bdi);
+	PUT_SEL32V(segMan, mover, b_i1, i1);
+	PUT_SEL32V(segMan, mover, b_i2, bdi * 2);
 }
 
 reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t mover = argv[0];
-	reg_t client = GET_SEL32(mover, client);
+	reg_t client = GET_SEL32(segMan, mover, client);
 
-	int deltax = (int16)GET_SEL32V(mover, x) - (int16)GET_SEL32V(client, x);
-	int deltay = (int16)GET_SEL32V(mover, y) - (int16)GET_SEL32V(client, y);
+	int deltax = (int16)GET_SEL32V(segMan, mover, x) - (int16)GET_SEL32V(segMan, client, x);
+	int deltay = (int16)GET_SEL32V(segMan, mover, y) - (int16)GET_SEL32V(segMan, client, y);
 	int step_factor = (argc < 1) ? argv[1].toUint16() : 1;
 
 	initialize_bresen(s->_segMan, argc, argv, mover, step_factor, deltax, deltay);
@@ -237,42 +237,42 @@ reg_t kInitBresen(EngineState *s, int argc, reg_t *argv) {
 reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t mover = argv[0];
-	reg_t client = GET_SEL32(mover, client);
+	reg_t client = GET_SEL32(segMan, mover, client);
 
-	int x = (int16)GET_SEL32V(client, x);
-	int y = (int16)GET_SEL32V(client, y);
+	int x = (int16)GET_SEL32V(segMan, client, x);
+	int y = (int16)GET_SEL32V(segMan, client, y);
 	int oldx, oldy, destx, desty, dx, dy, bdi, bi1, bi2, movcnt, bdelta, axis;
-	uint16 signal = GET_SEL32V(client, signal);
+	uint16 signal = GET_SEL32V(segMan, client, signal);
 	int completed = 0;
-	int max_movcnt = GET_SEL32V(client, moveSpeed);
+	int max_movcnt = GET_SEL32V(segMan, client, moveSpeed);
 
 	if (getSciVersion() > SCI_VERSION_01)
 		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
 
-	PUT_SEL32(client, signal, make_reg(0, signal)); // This is a NOP for SCI0
+	PUT_SEL32(segMan, client, signal, make_reg(0, signal)); // This is a NOP for SCI0
 	oldx = x;
 	oldy = y;
-	destx = (int16)GET_SEL32V(mover, x);
-	desty = (int16)GET_SEL32V(mover, y);
-	dx = (int16)GET_SEL32V(mover, dx);
-	dy = (int16)GET_SEL32V(mover, dy);
-	bdi = (int16)GET_SEL32V(mover, b_di);
-	bi1 = (int16)GET_SEL32V(mover, b_i1);
-	bi2 = (int16)GET_SEL32V(mover, b_i2);
-	movcnt = GET_SEL32V(mover, b_movCnt);
-	bdelta = (int16)GET_SEL32V(mover, b_incr);
-	axis = (int16)GET_SEL32V(mover, b_xAxis);
+	destx = (int16)GET_SEL32V(segMan, mover, x);
+	desty = (int16)GET_SEL32V(segMan, mover, y);
+	dx = (int16)GET_SEL32V(segMan, mover, dx);
+	dy = (int16)GET_SEL32V(segMan, mover, dy);
+	bdi = (int16)GET_SEL32V(segMan, mover, b_di);
+	bi1 = (int16)GET_SEL32V(segMan, mover, b_i1);
+	bi2 = (int16)GET_SEL32V(segMan, mover, b_i2);
+	movcnt = GET_SEL32V(segMan, mover, b_movCnt);
+	bdelta = (int16)GET_SEL32V(segMan, mover, b_incr);
+	axis = (int16)GET_SEL32V(segMan, mover, b_xAxis);
 
 	//printf("movecnt %d, move speed %d\n", movcnt, max_movcnt);
 
 	if (s->handleMoveCount()) {
 		if (max_movcnt > movcnt) {
 			++movcnt;
-			PUT_SEL32V(mover, b_movCnt, movcnt); // Needed for HQ1/Ogre?
+			PUT_SEL32V(segMan, mover, b_movCnt, movcnt); // Needed for HQ1/Ogre?
 			return NULL_REG;
 		} else {
 			movcnt = 0;
-			PUT_SEL32V(mover, b_movCnt, movcnt); // Needed for HQ1/Ogre?
+			PUT_SEL32V(segMan, mover, b_movCnt, movcnt); // Needed for HQ1/Ogre?
 		}
 	}
 
@@ -285,7 +285,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 			dy += bdelta;
 	}
 
-	PUT_SEL32V(mover, b_di, bdi);
+	PUT_SEL32V(segMan, mover, b_di, bdi);
 
 	x += dx;
 	y += dy;
@@ -307,8 +307,8 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x\n", PRINT_REG(mover));
 	}
 
-	PUT_SEL32V(client, x, x);
-	PUT_SEL32V(client, y, y);
+	PUT_SEL32V(segMan, client, x, x);
+	PUT_SEL32V(segMan, client, y, y);
 
 	debugC(2, kDebugLevelBresen, "New data: (x,y)=(%d,%d), di=%d\n", x, y, bdi);
 
@@ -320,11 +320,11 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	if (!s->r_acc.offset) { // Contains the return value
-		signal = GET_SEL32V(client, signal);
+		signal = GET_SEL32V(segMan, client, signal);
 
-		PUT_SEL32V(client, x, oldx);
-		PUT_SEL32V(client, y, oldy);
-		PUT_SEL32V(client, signal, (signal | _K_VIEW_SIG_FLAG_HIT_OBSTACLE));
+		PUT_SEL32V(segMan, client, x, oldx);
+		PUT_SEL32V(segMan, client, y, oldy);
+		PUT_SEL32V(segMan, client, signal, (signal | _K_VIEW_SIG_FLAG_HIT_OBSTACLE));
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision\n", PRINT_REG(mover));
 		completed = 1;
@@ -356,15 +356,15 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	client = GET_SEL32(avoider, client);
+	client = GET_SEL32(segMan, avoider, client);
 
 	if (!s->_segMan->isHeapObject(client)) {
 		warning("DoAvoider() where client %04x:%04x is not an object", PRINT_REG(client));
 		return NULL_REG;
 	}
 
-	looper = GET_SEL32(client, looper);
-	mover = GET_SEL32(client, mover);
+	looper = GET_SEL32(segMan, client, looper);
+	mover = GET_SEL32(segMan, client, mover);
 
 	if (!s->_segMan->isHeapObject(mover)) {
 		if (mover.segment) {
@@ -373,8 +373,8 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		return s->r_acc;
 	}
 
-	destx = GET_SEL32V(mover, x);
-	desty = GET_SEL32V(mover, y);
+	destx = GET_SEL32V(segMan, mover, x);
+	desty = GET_SEL32V(segMan, mover, y);
 
 	debugC(2, kDebugLevelBresen, "Doing avoider %04x:%04x (dest=%d,%d)\n", PRINT_REG(avoider), destx, desty);
 
@@ -383,7 +383,7 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	mover = GET_SEL32(client, mover);
+	mover = GET_SEL32(segMan, client, mover);
 	if (!mover.segment) // Mover has been disposed?
 		return s->r_acc; // Return gracefully.
 
@@ -393,18 +393,18 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 		return NULL_REG;
 	}
 
-	dx = destx - GET_SEL32V(client, x);
-	dy = desty - GET_SEL32V(client, y);
+	dx = destx - GET_SEL32V(segMan, client, x);
+	dy = desty - GET_SEL32V(segMan, client, y);
 	angle = get_angle(dx, dy);
 
 	debugC(2, kDebugLevelBresen, "Movement (%d,%d), angle %d is %sblocked\n", dx, dy, angle, (s->r_acc.offset) ? " " : "not ");
 
 	if (s->r_acc.offset) { // isBlocked() returned non-zero
 		int rotation = (rand() & 1) ? 45 : (360 - 45); // Clockwise/counterclockwise
-		int oldx = GET_SEL32V(client, x);
-		int oldy = GET_SEL32V(client, y);
-		int xstep = GET_SEL32V(client, xStep);
-		int ystep = GET_SEL32V(client, yStep);
+		int oldx = GET_SEL32V(segMan, client, x);
+		int oldy = GET_SEL32V(segMan, client, y);
+		int xstep = GET_SEL32V(segMan, client, xStep);
+		int ystep = GET_SEL32V(segMan, client, yStep);
 		int moves;
 
 		debugC(2, kDebugLevelBresen, " avoider %04x:%04x\n", PRINT_REG(avoider));
@@ -413,8 +413,8 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 			int move_x = (int)(sin(angle * PI / 180.0) * (xstep));
 			int move_y = (int)(-cos(angle * PI / 180.0) * (ystep));
 
-			PUT_SEL32V(client, x, oldx + move_x);
-			PUT_SEL32V(client, y, oldy + move_y);
+			PUT_SEL32V(segMan, client, x, oldx + move_x);
+			PUT_SEL32V(segMan, client, y, oldy + move_y);
 
 			debugC(2, kDebugLevelBresen, "Pos (%d,%d): Trying angle %d; delta=(%d,%d)\n", oldx, oldy, angle, move_x, move_y);
 
@@ -424,12 +424,12 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 				return NULL_REG;
 			}
 
-			PUT_SEL32V(client, x, oldx);
-			PUT_SEL32V(client, y, oldy);
+			PUT_SEL32V(segMan, client, x, oldx);
+			PUT_SEL32V(segMan, client, y, oldy);
 
 			if (s->r_acc.offset) { // We can be here
 				debugC(2, kDebugLevelBresen, "Success\n");
-				PUT_SEL32V(client, heading, angle);
+				PUT_SEL32V(segMan, client, heading, angle);
 
 				return make_reg(0, angle);
 			}
@@ -442,12 +442,12 @@ reg_t kDoAvoider(EngineState *s, int argc, reg_t *argv) {
 
 		warning("DoAvoider failed for avoider %04x:%04x", PRINT_REG(avoider));
 	} else {
-		int heading = GET_SEL32V(client, heading);
+		int heading = GET_SEL32V(segMan, client, heading);
 
 		if (heading == -1)
 			return s->r_acc; // No change
 
-		PUT_SEL32V(client, heading, angle);
+		PUT_SEL32V(segMan, client, heading, angle);
 
 		s->r_acc = make_reg(0, angle);
 

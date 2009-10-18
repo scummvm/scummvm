@@ -131,9 +131,9 @@ enum AudioSyncCommands {
 
 static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	SegManager *segMan = s->_segMan;
-	int song_nr = GET_SEL32V(obj, number);
+	int song_nr = GET_SEL32V(segMan, obj, number);
 	Resource *song = s->resMan->findResource(ResourceId(kResourceTypeSound, song_nr), 0);
-	int flags = GET_SEL32V(obj, flags);
+	int flags = GET_SEL32V(segMan, obj, flags);
 
 	if (priority == -1) {
 		if (song->data[0] == 0xf0)
@@ -145,7 +145,7 @@ static void script_set_priority(EngineState *s, reg_t obj, int priority) {
 	} else flags |= SCI1_SOUND_FLAG_SCRIPTED_PRI;
 
 	s->_sound.sfx_song_renice(FROBNICATE_HANDLE(obj), priority);
-	PUT_SEL32V(obj, flags, flags);
+	PUT_SEL32V(segMan, obj, flags, flags);
 }
 
 SongIterator *build_iterator(EngineState *s, int song_nr, SongIteratorType type, songit_id_t id) {
@@ -183,27 +183,27 @@ void process_sound_events(EngineState *s) { /* Get all sound events, apply their
 		case SI_LOOP:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x looped (to %d)\n",
 			          PRINT_REG(obj), cue);
-			/*			PUT_SEL32V(obj, loops, GET_SEL32V(obj, loop) - 1);*/
-			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+			/*			PUT_SEL32V(segMan, obj, loops, GET_SEL32V(segMan, obj, loop) - 1);*/
+			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_RELATIVE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received relative cue %d\n",
 			          PRINT_REG(obj), cue);
-			PUT_SEL32V(obj, signal, cue + 0x7f);
+			PUT_SEL32V(segMan, obj, signal, cue + 0x7f);
 			break;
 
 		case SI_ABSOLUTE_CUE:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x received absolute cue %d\n",
 			          PRINT_REG(obj), cue);
-			PUT_SEL32V(obj, signal, cue);
+			PUT_SEL32V(segMan, obj, signal, cue);
 			break;
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "[process-sound] Song %04x:%04x finished\n",
 			          PRINT_REG(obj));
-			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
-			PUT_SEL32V(obj, state, _K_SOUND_STATUS_STOPPED);
+			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
+			PUT_SEL32V(segMan, obj, state, _K_SOUND_STATUS_STOPPED);
 			break;
 
 		default:
@@ -220,7 +220,7 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 	uint16 command = argv[0].toUint16();
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
-	             GET_SEL32V(obj, number) :
+	             GET_SEL32V(segMan, obj, number) :
 	             -1; /* We were not going to use it anyway */
 
 #ifdef DEBUG_SOUND
@@ -285,20 +285,20 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 	switch (command) {
 	case _K_SCI0_SOUND_INIT_HANDLE:
 		if (obj.segment) {
-			debugC(2, kDebugLevelSound, "Initializing song number %d\n", GET_SEL32V(obj, number));
+			debugC(2, kDebugLevelSound, "Initializing song number %d\n", GET_SEL32V(segMan, obj, number));
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI0,
 			                                               handle), 0, handle, number);
 
-			PUT_SEL32V(obj, state, _K_SOUND_STATUS_INITIALIZED);
-			PUT_SEL32(obj, handle, obj); /* ``sound handle'': we use the object address */
+			PUT_SEL32V(segMan, obj, state, _K_SOUND_STATUS_INITIALIZED);
+			PUT_SEL32(segMan, obj, handle, obj); /* ``sound handle'': we use the object address */
 		}
 		break;
 
 	case _K_SCI0_SOUND_PLAY_HANDLE:
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-			s->_sound.sfx_song_set_loops(handle, GET_SEL32V(obj, loop));
-			PUT_SEL32V(obj, state, _K_SOUND_STATUS_PLAYING);
+			s->_sound.sfx_song_set_loops(handle, GET_SEL32V(segMan, obj, loop));
+			PUT_SEL32V(segMan, obj, state, _K_SOUND_STATUS_PLAYING);
 		}
 		break;
 
@@ -309,27 +309,27 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 		if (obj.segment) {
 			s->_sound.sfx_remove_song(handle);
 		}
-		PUT_SEL32V(obj, handle, 0x0000);
+		PUT_SEL32V(segMan, obj, handle, 0x0000);
 		break;
 
 	case _K_SCI0_SOUND_STOP_HANDLE:
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-			PUT_SEL32V(obj, state, SOUND_STATUS_STOPPED);
+			PUT_SEL32V(segMan, obj, state, SOUND_STATUS_STOPPED);
 		}
 		break;
 
 	case _K_SCI0_SOUND_SUSPEND_HANDLE:
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_SUSPENDED);
-			PUT_SEL32V(obj, state, SOUND_STATUS_SUSPENDED);
+			PUT_SEL32V(segMan, obj, state, SOUND_STATUS_SUSPENDED);
 		}
 		break;
 
 	case _K_SCI0_SOUND_RESUME_HANDLE:
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
-			PUT_SEL32V(obj, state, SOUND_STATUS_PLAYING);
+			PUT_SEL32V(segMan, obj, state, SOUND_STATUS_PLAYING);
 		}
 		break;
 
@@ -360,8 +360,8 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 
 	case _K_SCI0_SOUND_UPDATE_VOL_PRI:
 		if (obj.segment) {
-			s->_sound.sfx_song_set_loops(handle, GET_SEL32V(obj, loop));
-			script_set_priority(s, obj, GET_SEL32V(obj, pri));
+			s->_sound.sfx_song_set_loops(handle, GET_SEL32V(segMan, obj, loop));
+			script_set_priority(s, obj, GET_SEL32V(segMan, obj, pri));
 		}
 		break;
 
@@ -371,8 +371,8 @@ static reg_t kDoSoundSci0(EngineState *s, int argc, reg_t *argv) {
 		** than fading it! */
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-			PUT_SEL32V(obj, state, SOUND_STATUS_STOPPED);
-			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+			PUT_SEL32V(segMan, obj, state, SOUND_STATUS_STOPPED);
+			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 		}
 		break;
 
@@ -400,7 +400,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
-	             GET_SEL32V(obj, number) :
+	             GET_SEL32V(segMan, obj, number) :
 	             -1; /* We were not going to use it anyway */
 
 #ifdef DEBUG_SOUND
@@ -499,9 +499,9 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI01_SOUND_PLAY_HANDLE : {
-		int looping = GET_SEL32V(obj, loop);
-		//int vol = GET_SEL32V(obj, vol);
-		int pri = GET_SEL32V(obj, pri);
+		int looping = GET_SEL32V(segMan, obj, loop);
+		//int vol = GET_SEL32V(segMan, obj, vol);
+		int pri = GET_SEL32V(segMan, obj, pri);
 		RESTORE_BEHAVIOR rb = (RESTORE_BEHAVIOR) argv[2].toUint16();		/* Too lazy to look up a default value for this */
 
 		if (obj.segment) {
@@ -509,22 +509,22 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 			s->_sound.sfx_song_set_loops(handle, looping);
 			s->_sound.sfx_song_renice(handle, pri);
 			s->_sound._songlib.setSongRestoreBehavior(handle, rb);
-			PUT_SEL32V(obj, signal, 0);
+			PUT_SEL32V(segMan, obj, signal, 0);
 		}
 
 		break;
 	}
 	case _K_SCI01_SOUND_INIT_HANDLE : {
-		//int looping = GET_SEL32V(obj, loop);
-		//int vol = GET_SEL32V(obj, vol);
-		//int pri = GET_SEL32V(obj, pri);
+		//int looping = GET_SEL32V(segMan, obj, loop);
+		//int vol = GET_SEL32V(segMan, obj, vol);
+		//int pri = GET_SEL32V(segMan, obj, pri);
 
 		if (obj.segment && (s->resMan->testResource(ResourceId(kResourceTypeSound, number)))) {
 			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                      handle), 0, handle, number);
-			PUT_SEL32(obj, nodePtr, obj);
-			PUT_SEL32(obj, handle, obj);
+			PUT_SEL32(segMan, obj, nodePtr, obj);
+			PUT_SEL32(segMan, obj, handle, obj);
 		}
 		break;
 	}
@@ -543,24 +543,24 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		int frame = 0;
 
 		/* FIXME: Update the sound server state with 'vol' */
-		int looping = GET_SEL32V(obj, loop);
-		//int vol = GET_SEL32V(obj, vol);
-		int pri = GET_SEL32V(obj, pri);
+		int looping = GET_SEL32V(segMan, obj, loop);
+		//int vol = GET_SEL32V(segMan, obj, vol);
+		int pri = GET_SEL32V(segMan, obj, pri);
 
 		s->_sound.sfx_song_set_loops(handle, looping);
 		s->_sound.sfx_song_renice(handle, pri);
 
 		debugC(2, kDebugLevelSound, "[sound01-update-handle] -- CUE %04x:%04x", PRINT_REG(obj));
 
-		PUT_SEL32V(obj, signal, signal);
-		PUT_SEL32V(obj, min, min);
-		PUT_SEL32V(obj, sec, sec);
-		PUT_SEL32V(obj, frame, frame);
+		PUT_SEL32V(segMan, obj, signal, signal);
+		PUT_SEL32V(segMan, obj, min, min);
+		PUT_SEL32V(segMan, obj, sec, sec);
+		PUT_SEL32V(segMan, obj, frame, frame);
 
 		break;
 	}
 	case _K_SCI01_SOUND_STOP_HANDLE : {
-		PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		}
@@ -581,7 +581,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		 * TODO: Figure out the exact semantics */
 
 		/* FIXME: The next couple of lines actually STOP the song right away */
-		PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		}
@@ -605,7 +605,7 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 			debugC(2, kDebugLevelSound, "---    [CUE] %04x:%04x Absolute Cue: %d\n",
 			          PRINT_REG(obj), signal);
 
-			PUT_SEL32V(obj, signal, signal);
+			PUT_SEL32V(segMan, obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
@@ -616,13 +616,13 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 			/* FIXME to match commented-out semantics
 			 * below, with proper storage of dataInc and
 			 * signal in the iterator code. */
-			PUT_SEL32V(obj, dataInc, signal);
-			PUT_SEL32V(obj, signal, signal);
+			PUT_SEL32V(segMan, obj, dataInc, signal);
+			PUT_SEL32V(segMan, obj, signal, signal);
 			break;
 
 		case SI_FINISHED:
 			debugC(2, kDebugLevelSound, "---    [FINISHED] %04x:%04x\n", PRINT_REG(obj));
-			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_LOOP:
@@ -632,13 +632,13 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		/*		switch (signal) */
 		/*		{ */
 		/*		case 0x00: */
-		/*			if (dataInc!=GET_SEL32V(obj, dataInc)) */
+		/*			if (dataInc!=GET_SEL32V(segMan, obj, dataInc)) */
 		/*			{ */
-		/*				PUT_SEL32V(obj, dataInc, dataInc); */
-		/*				PUT_SEL32V(obj, signal, dataInc+0x7f); */
+		/*				PUT_SEL32V(segMan, obj, dataInc, dataInc); */
+		/*				PUT_SEL32V(segMan, obj, signal, dataInc+0x7f); */
 		/*			} else */
 		/*			{ */
-		/*				PUT_SEL32V(obj, signal, signal); */
+		/*				PUT_SEL32V(segMan, obj, signal, signal); */
 		/*			} */
 		/*			break; */
 		/*		case 0xFF: /\* May be unnecessary *\/ */
@@ -646,20 +646,20 @@ static reg_t kDoSoundSci1Early(EngineState *s, int argc, reg_t *argv) {
 		/*					    handle, SOUND_STATUS_STOPPED); */
 		/*			break; */
 		/*		default : */
-		/*			if (dataInc!=GET_SEL32V(obj, dataInc)) */
+		/*			if (dataInc!=GET_SEL32V(segMan, obj, dataInc)) */
 		/*			{ */
-		/*				PUT_SEL32V(obj, dataInc, dataInc); */
-		/*				PUT_SEL32V(obj, signal, dataInc+0x7f); */
+		/*				PUT_SEL32V(segMan, obj, dataInc, dataInc); */
+		/*				PUT_SEL32V(segMan, obj, signal, dataInc+0x7f); */
 		/*			} else */
 		/*			{ */
-		/*				PUT_SEL32V(obj, signal, signal); */
+		/*				PUT_SEL32V(segMan, obj, signal, signal); */
 		/*			} */
 		/*			break; */
 		/*		} */
 
-		PUT_SEL32V(obj, min, min);
-		PUT_SEL32V(obj, sec, sec);
-		PUT_SEL32V(obj, frame, frame);
+		PUT_SEL32V(segMan, obj, min, min);
+		PUT_SEL32V(segMan, obj, sec, sec);
+		PUT_SEL32V(segMan, obj, frame, frame);
 		break;
 	}
 	case _K_SCI01_SOUND_MIDI_SEND : {
@@ -692,7 +692,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 	reg_t obj = (argc > 1) ? argv[1] : NULL_REG;
 	SongHandle handle = FROBNICATE_HANDLE(obj);
 	int number = obj.segment ?
-	             GET_SEL32V(obj, number) :
+	             GET_SEL32V(segMan, obj, number) :
 	             -1; /* We were not going to use it anyway */
 
 #ifdef DEBUG_SOUND
@@ -812,19 +812,19 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, 1);
 	}
 	case _K_SCI1_SOUND_PLAY_HANDLE : {
-		int looping = GET_SEL32V(obj, loop);
-		//int vol = GET_SEL32V(obj, vol);
-		int pri = GET_SEL32V(obj, pri);
+		int looping = GET_SEL32V(segMan, obj, loop);
+		//int vol = GET_SEL32V(segMan, obj, vol);
+		int pri = GET_SEL32V(segMan, obj, pri);
 		int sampleLen = 0;
 		Song *song = s->_sound._songlib.findSong(handle);
 
-		if (GET_SEL32V(obj, nodePtr) && (song && number != song->_resourceNum)) {
+		if (GET_SEL32V(segMan, obj, nodePtr) && (song && number != song->_resourceNum)) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			s->_sound.sfx_remove_song(handle);
-			PUT_SEL32(obj, nodePtr, NULL_REG);
+			PUT_SEL32(segMan, obj, nodePtr, NULL_REG);
 		}
 
-		if (!GET_SEL32V(obj, nodePtr) && obj.segment) {
+		if (!GET_SEL32V(segMan, obj, nodePtr) && obj.segment) {
 			// In SCI1.1 games, sound effects are started from here. If we can find
 			// a relevant audio resource, play it, otherwise switch to synthesized
 			// effects. If the resource exists, play it using map 65535 (sound
@@ -842,7 +842,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 					warning("Could not open song number %d", number);
 					// Send a "stop handle" event so that the engine won't wait forever here
 					s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
-					PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+					PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 					return s->r_acc;
 				}
 				debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
@@ -850,25 +850,25 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 				                          handle), 0, handle, number);
 			}
 
-			PUT_SEL32(obj, nodePtr, obj);
-			PUT_SEL32(obj, handle, obj);
+			PUT_SEL32(segMan, obj, nodePtr, obj);
+			PUT_SEL32(segMan, obj, handle, obj);
 		}
 
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_PLAYING);
 			s->_sound.sfx_song_set_loops(handle, looping);
 			s->_sound.sfx_song_renice(handle, pri);
-			PUT_SEL32V(obj, signal, 0);
+			PUT_SEL32V(segMan, obj, signal, 0);
 		}
 
 		break;
 	}
 	case _K_SCI1_SOUND_INIT_HANDLE : {
-		//int looping = GET_SEL32V(obj, loop);
-		//int vol = GET_SEL32V(obj, vol);
-		//int pri = GET_SEL32V(obj, pri);
+		//int looping = GET_SEL32V(segMan, obj, loop);
+		//int vol = GET_SEL32V(segMan, obj, vol);
+		//int pri = GET_SEL32V(segMan, obj, pri);
 
-		if (GET_SEL32V(obj, nodePtr)) {
+		if (GET_SEL32V(segMan, obj, nodePtr)) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			s->_sound.sfx_remove_song(handle);
 		}
@@ -877,8 +877,8 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			debugC(2, kDebugLevelSound, "Initializing song number %d\n", number);
 			s->_sound.sfx_add_song(build_iterator(s, number, SCI_SONG_ITERATOR_TYPE_SCI1,
 			                                    handle), 0, handle, number);
-			PUT_SEL32(obj, nodePtr, obj);
-			PUT_SEL32(obj, handle, obj);
+			PUT_SEL32(segMan, obj, nodePtr, obj);
+			PUT_SEL32(segMan, obj, handle, obj);
 		}
 		break;
 	}
@@ -890,7 +890,7 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_STOP_HANDLE : {
-		PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+		PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 		if (obj.segment) {
 			s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 		}
@@ -914,13 +914,13 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			/* FIXME: The next couple of lines actually STOP the handle, rather
 			** than fading it! */
 			if (argv[5].toUint16()) {
-				PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
-				PUT_SEL32V(obj, nodePtr, 0);
-				PUT_SEL32V(obj, handle, 0);
+				PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
+				PUT_SEL32V(segMan, obj, nodePtr, 0);
+				PUT_SEL32V(segMan, obj, handle, 0);
 				s->_sound.sfx_song_set_status(handle, SOUND_STATUS_STOPPED);
 			} else {
 				// FIXME: Support fade-and-continue. For now, send signal right away.
-				PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+				PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			}
 		}
 		break;
@@ -944,14 +944,14 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 		break;
 	}
 	case _K_SCI1_SOUND_SET_HANDLE_LOOP : {
-		if (!GET_SEL32(obj, nodePtr).isNull()) {
+		if (!GET_SEL32(segMan, obj, nodePtr).isNull()) {
 			uint16 looping = argv[2].toUint16();
 
 			if (looping < 65535)
 				looping = 1;
 
 			s->_sound.sfx_song_set_loops(handle, looping);
-			PUT_SEL32V(obj, loop, looping);
+			PUT_SEL32V(segMan, obj, loop, looping);
 		}
 		break;
 	}
@@ -973,19 +973,19 @@ static reg_t kDoSoundSci1Late(EngineState *s, int argc, reg_t *argv) {
 			debugC(2, kDebugLevelSound, "[CUE] %04x:%04x Absolute Cue: %d\n",
 			        PRINT_REG(obj), signal);
 
-			PUT_SEL32V(obj, signal, signal);
+			PUT_SEL32V(segMan, obj, signal, signal);
 			break;
 
 		case SI_RELATIVE_CUE:
 			debugC(2, kDebugLevelSound, "[CUE] %04x:%04x Relative Cue: %d\n",
 			        PRINT_REG(obj), cue);
 
-			PUT_SEL32V(obj, dataInc, cue);
-			PUT_SEL32V(obj, signal, cue + 127);
+			PUT_SEL32V(segMan, obj, dataInc, cue);
+			PUT_SEL32V(segMan, obj, signal, cue + 127);
 			break;
 
 		case SI_FINISHED:
-			PUT_SEL32V(obj, signal, SIGNAL_OFFSET);
+			PUT_SEL32V(segMan, obj, signal, SIGNAL_OFFSET);
 			break;
 
 		case SI_LOOP:
@@ -1110,12 +1110,12 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 		s->_sound._syncResource = s->resMan->findResource(id, 1);
 
 		if (s->_sound._syncResource) {
-			PUT_SEL32V(argv[1], syncCue, 0);
+			PUT_SEL32V(segMan, argv[1], syncCue, 0);
 			s->_sound._syncOffset = 0;
 		} else {
 			warning("DoSync: failed to find resource %s", id.toString().c_str());
 			// Notify the scripts to stop sound sync
-			PUT_SEL32V(argv[1], syncCue, SIGNAL_OFFSET);
+			PUT_SEL32V(segMan, argv[1], syncCue, SIGNAL_OFFSET);
 		}
 		break;
 	}
@@ -1132,8 +1132,8 @@ reg_t kDoSync(EngineState *s, int argc, reg_t *argv) {
 				s->_sound._syncOffset += 2;
 			}
 
-			PUT_SEL32V(argv[1], syncTime, syncTime);
-			PUT_SEL32V(argv[1], syncCue, syncCue);
+			PUT_SEL32V(segMan, argv[1], syncTime, syncTime);
+			PUT_SEL32V(segMan, argv[1], syncCue, syncCue);
 		}
 		break;
 	}
