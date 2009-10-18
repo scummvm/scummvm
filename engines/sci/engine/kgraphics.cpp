@@ -941,27 +941,30 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// FIXME: qfg3 gets broken by this, BUT even changing neededSleep to 2 still makes it somewhat broken (palette animation
 	//  isnt working)
 
-	// This speed throttler seems to cause issues in SCI1.1 games (e.g. the Sierra logo in QFG3, it stays there for ages).
-	// No observable side effects have been noted in SCI1.1 when this is disabled, so it has been limited to SCI0-SCI1
-	if (getSciVersion() < SCI_VERSION_1_1) {
-		// Do some speed throttling to calm down games that rely on counting cycles
-		uint32 curTime = g_system->getMillis();
-		uint32 duration = curTime - s->_lastAnimateTime;
-		uint32 neededSleep = 40;
+	if (s->_gameName == "qfg3" && s->currentRoomNumber() == 130) {
+		// Disable the speed throttler for QFG3, room 130 (the Sierra logo).
+		// kAnimate is called loads of times in that room, and adding any delay here
+		// will make that scene seem like it's stuck (the player needs to wait 5 mins or so)
+		return s->r_acc;
+	}
 
-		// We are doing this, so that games like sq3 dont think we are running too slow and will remove details (like
-		//  animated sierra logo at the beginning). Hopefully this wont cause regressions with pullups in lsl3 (FIXME?)
-		if (s->_lastAnimateCounter < 10) {
-			s->_lastAnimateCounter++;
-			neededSleep = 8;
-		}
+	// Do some speed throttling to calm down games that rely on counting cycles
+	uint32 curTime = g_system->getMillis();
+	uint32 duration = curTime - s->_lastAnimateTime;
+	uint32 neededSleep = 40;
 
-		if (duration < neededSleep) {
-			gfxop_sleep(s->gfx_state, neededSleep - duration);
-			s->_lastAnimateTime = g_system->getMillis();
-		} else {
-			s->_lastAnimateTime = curTime;
-		}
+	// We are doing this, so that games like sq3 dont think we are running too slow and will remove details (like
+	//  animated sierra logo at the beginning). Hopefully this wont cause regressions with pullups in lsl3 (FIXME?)
+	if (s->_lastAnimateCounter < 10) {
+		s->_lastAnimateCounter++;
+		neededSleep = 8;
+	}
+
+	if (duration < neededSleep) {
+		gfxop_sleep(s->gfx_state, neededSleep - duration);
+		s->_lastAnimateTime = g_system->getMillis();
+	} else {
+		s->_lastAnimateTime = curTime;
 	}
 
 	return s->r_acc;
