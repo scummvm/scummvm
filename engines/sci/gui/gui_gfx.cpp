@@ -745,33 +745,33 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 	int16 i;
 	const char *listEntry;
 	int16 listEntryLen;
+	int16 lastYpos;
 
 	// draw basic window
 	EraseRect(workerRect);
 	workerRect.grow(1);
 	FrameRect(workerRect);
-	PUT_SEL32V(obj, nsLeft, workerRect.left); PUT_SEL32V(obj, nsTop, workerRect.top);
-	PUT_SEL32V(obj, nsRight, workerRect.right); PUT_SEL32V(obj, nsBottom, workerRect.bottom);
+
 	// draw UP/DOWN arrows
-	workerRect = rect;
+	workerRect.top++;
 	TextBox(controlListUpArrow, 0, workerRect, 1, 0);
 	workerRect.top = workerRect.bottom - 10;
 	TextBox(controlListDownArrow, 0, workerRect, 1, 0);
 
 	// Draw inner lines
-	workerRect = rect;
-	workerRect.top = rect.top + 10;
-	workerRect.bottom = rect.bottom - 10;
+	workerRect.top = rect.top + 9;
+	workerRect.bottom -= 10;
 	FrameRect(workerRect);
 	workerRect.grow(-1);
-	
+
 	SetFont(fontId);
 	fontSize = _curPort->fontHeight;
 	PenColor(_curPort->penClr); BackColor(_curPort->backClr);
-	workerRect.bottom = workerRect.top + fontSize;
+	workerRect.bottom = workerRect.top + 9;
+	lastYpos = rect.bottom - fontSize;
 
 	// Write actual text
-	for (i = 0; i < count; i++) {
+	for (i = upperPos; i < count; i++) {
 		EraseRect(workerRect);
 		listEntry = entries[i];
 		if (listEntry[0]) {
@@ -783,6 +783,8 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 			}
 		}
 		workerRect.translate(0, fontSize);
+		if (workerRect.bottom > lastYpos)
+			break;
 	}
 
 	SetFont(oldFontId);
