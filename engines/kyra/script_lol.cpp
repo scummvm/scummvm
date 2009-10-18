@@ -64,11 +64,11 @@ void LoLEngine::runInfScript(const char *filename) {
 	runLevelScript(0x400, -1);
 }
 
-void LoLEngine::runLevelScript(int block, int sub) {
-	runLevelScriptCustom(block, sub, -1, 0, 0, 0);
+void LoLEngine::runLevelScript(int block, int flags) {
+	runLevelScriptCustom(block, flags, -1, 0, 0, 0);
 }
 
-void LoLEngine::runLevelScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4) {
+void LoLEngine::runLevelScriptCustom(int block, int flags, int charNum, int item, int reg3, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
@@ -76,7 +76,7 @@ void LoLEngine::runLevelScriptCustom(int block, int sub, int charNum, int item, 
 		_emc->init(&scriptState, &_scriptData);
 		_emc->start(&scriptState, block);
 
-		scriptState.regs[0] = sub;
+		scriptState.regs[0] = flags;
 		scriptState.regs[1] = charNum;
 		scriptState.regs[2] = item;
 		scriptState.regs[3] = reg3;
@@ -85,7 +85,7 @@ void LoLEngine::runLevelScriptCustom(int block, int sub, int charNum, int item, 
 		scriptState.regs[6] = _scriptDirection;
 
 		if (_emc->isValid(&scriptState)) {
-			if (*(scriptState.ip - 1) & sub) {
+			if (*(scriptState.ip - 1) & flags) {
 				while (_emc->isValid(&scriptState))
 					_emc->run(&scriptState);
 			}

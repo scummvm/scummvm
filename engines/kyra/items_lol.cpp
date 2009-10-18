@@ -245,7 +245,7 @@ ItemInPlay *LoLEngine::findObject(uint16 index) {
 		return &_itemsInPlay[index];
 }
 
-void LoLEngine::runItemScript(int charNum, int item, int sub, int next, int reg4) {
+void LoLEngine::runItemScript(int charNum, int item, int flags, int next, int reg4) {
 	EMCState scriptState;
 	memset(&scriptState, 0, sizeof(EMCState));
 
@@ -256,14 +256,14 @@ void LoLEngine::runItemScript(int charNum, int item, int sub, int next, int reg4
 	_emc->init(&scriptState, &_itemScript);
 	_emc->start(&scriptState, func);
 
-	scriptState.regs[0] = sub;
+	scriptState.regs[0] = flags;
 	scriptState.regs[1] = charNum;
 	scriptState.regs[2] = item;
 	scriptState.regs[3] = next;
 	scriptState.regs[4] = reg4;
 
 	if (_emc->isValid(&scriptState)) {
-		if (*(scriptState.ip - 1) & sub) {
+		if (*(scriptState.ip - 1) & flags) {
 			while (_emc->isValid(&scriptState))
 				_emc->run(&scriptState);
 		}

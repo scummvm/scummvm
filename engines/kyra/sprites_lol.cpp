@@ -71,16 +71,15 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	}
 	_monsterAnimType[monsterIndex] = animType & 0xff;
 
-	uint8 *tsh = _screen->makeShapeCopy(p, 16);
+	uint8 *palShape = _screen->makeShapeCopy(p, 16);
 
 	_screen->clearPage(3);
-	_screen->drawShape(2, tsh, 0, 0, 0, 0);
+	_screen->drawShape(2, palShape, 0, 0, 0, 0);
 
 	uint8 *tmpPal1 = new uint8[64];
 	uint8 *tmpPal2 = new uint8[256];
 	uint16 *tmpPal3 = new uint16[256];
 	memset(tmpPal1, 0, 64);
-	memset(tmpPal2, 0, 256);
 
 	for (int i = 0; i < 64; i++) {
 		tmpPal1[i] = *p;
@@ -91,8 +90,10 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 
 	for (int i = 0; i < 16; i++) {
 		int pos = (monsterIndex << 4) + i;
-		memcpy(tmpPal2, _monsterShapes[pos] + 10, 256);
-		memset(tmpPal3, 0xff, 512);
+		uint16 sz = MIN(_screen->getShapeSize(_monsterShapes[pos]) - 10, 256);
+		memset(tmpPal2, 0, 256);
+		memcpy(tmpPal2, _monsterShapes[pos] + 10, sz);
+		memset(tmpPal3, 0xff, 256 * sizeof(uint16));
 		uint8 numCol = *tmpPal2;
 
 		for (int ii = 0; ii < numCol; ii++) {
@@ -103,7 +104,8 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 		}
 
 		for (int ii = 0; ii < 8; ii++) {
-			memcpy(tmpPal2, _monsterShapes[pos] + 10, 256);
+			memset(tmpPal2, 0, 256);
+			memcpy(tmpPal2, _monsterShapes[pos] + 10, sz);
 			for (int iii = 0; iii < numCol; iii++) {
 				if (tmpPal3[iii] == 0xffff)
 					continue;
@@ -117,7 +119,7 @@ void LoLEngine::loadMonsterShapes(const char *file, int monsterIndex, int animTy
 	delete[] tmpPal1;
 	delete[] tmpPal2;
 	delete[] tmpPal3;
-	delete[] tsh;
+	delete[] palShape;
 }
 
 void LoLEngine::releaseMonsterShapes(int monsterIndex) {

@@ -633,8 +633,8 @@ private:
 	// emc scripts
 	void runInitScript(const char *filename, int optionalFunc);
 	void runInfScript(const char *filename);
-	void runLevelScript(int block, int sub);
-	void runLevelScriptCustom(int block, int sub, int charNum, int item, int reg3, int reg4);
+	void runLevelScript(int block, int flags);
+	void runLevelScriptCustom(int block, int flags, int charNum, int item, int reg3, int reg4);
 	bool checkSceneUpdateNeed(int func);
 
 	EMCData _scriptData;
@@ -1204,7 +1204,7 @@ private:
 	bool testUnkItemFlags(int itemIndex);
 	void deleteItem(int itemIndex);
 	ItemInPlay *findObject(uint16 index);
-	void runItemScript(int charNum, int item, int sub, int next, int reg4);
+	void runItemScript(int charNum, int item, int flags, int next, int reg4);
 	void setHandItem(uint16 itemIndex);
 	bool itemEquipped(int charNum, uint16 itemType);
 
