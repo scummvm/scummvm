@@ -171,7 +171,11 @@ bool VideoPlayer::findFile(char *fileName, Type &which) {
 	if (extStart == (fileName + strlen(fileName) - 1)) {
 		*extStart = 0;
 		extStart = 0;
-	}
+	} else
+		if (!_vm->_dataIO->existData(fileName)) {
+			*extStart = 0;
+			extStart = 0;
+		}
 
 	if (extStart) {
 		// The requested file already has an extension. Verifying.
