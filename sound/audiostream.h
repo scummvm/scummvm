@@ -41,18 +41,17 @@ public:
 	virtual ~AudioStream() {}
 
 	/**
-	 * Fill the given buffer with up to numSamples samples.
-	 * Returns the actual number of samples read, or -1 if
-	 * a critical error occured (note: you *must* check if
-	 * this value is less than what you requested, this can
+	 * Fill the given buffer with up to numSamples samples. Returns the actual
+	 * number of samples read, or -1 if a critical error occured (note: you
+	 * *must* check if this value is less than what you requested, this can
 	 * happen when the stream is fully used up).
 	 *
-	 * Data has to be in native endianess, 16 bit per sample, signed.
-	 * For stereo stream, buffer will be filled with interleaved
-	 * left and right channel samples, starting with a left sample.
-	 * Furthermore, the samples in the left and right are summed up.
-	 * So if you request 4 samples from a stereo stream, you will get
-	 * a total of two left channel and two right channel samples.
+	 * Data has to be in native endianess, 16 bit per sample, signed. For stereo
+	 * stream, buffer will be filled with interleaved left and right channel
+	 * samples, starting with a left sample. Furthermore, the samples in the
+	 * left and right are summed up. So if you request 4 samples from a stereo
+	 * stream, you will get a total of two left channel and two right channel
+	 * samples.
 	 */
 	virtual int readBuffer(int16 *buffer, const int numSamples) = 0;
 
@@ -86,13 +85,18 @@ public:
 	 * In case of an error, the file handle will be closed, but deleting
 	 * it is still the responsibilty of the caller.
 	 * @param basename	a filename without an extension
-	 * @param startTime	the (optional) time offset in milliseconds from which to start playback
-	 * @param duration	the (optional) time in milliseconds specifying how long to play
+	 * @param startTime	the (optional) time offset in milliseconds from which
+	 *					to start playback
+	 * @param duration	the (optional) time in milliseconds specifying how long
+						to play
 	 * @param numLoops	how often the data shall be looped (0 = infinite)
 	 * @return	an Audiostream ready to use in case of success;
 	 *			NULL in case of an error (e.g. invalid/nonexisting file)
 	 */
-	static AudioStream* openStreamFile(const Common::String &basename, uint32 startTime = 0, uint32 duration = 0, uint numLoops = 1);
+	static AudioStream* openStreamFile(const Common::String &basename,
+										uint32 startTime = 0,
+										uint32 duration = 0,
+										uint numLoops = 1);
 
 	enum {
 		kUnknownPlayTime = -1
@@ -111,30 +115,35 @@ public:
 
 
 /**
- * Factory function for a raw linear AudioStream, which will simply treat all data
- * in the buffer described by ptr and len as raw sample data in the specified
- * format. It will then simply pass this data directly to the mixer, after converting
- * it to the sample format used by the mixer (i.e. 16 bit signed native endian).
- * Optionally supports (infinite) looping of a portion of the data.
+ * Factory function for a raw linear AudioStream, which will simply treat all
+ * data in the buffer described by ptr and len as raw sample data in the
+ * specified format. It will then simply pass this data directly to the mixer,
+ * after converting it to the sample format used by the mixer (i.e. 16 bit
+ * signed native endian). Optionally supports (infinite) looping of a portion
+ * of the data.
  */
-AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate, byte flags, uint loopStart, uint loopEnd);
+AudioStream *makeLinearInputStream(const byte *ptr, uint32 len, int rate,
+		byte flags, uint loopStart, uint loopEnd);
 
 
-/** Struct used to define the audio data to be played by a LinearDiskStream */
-
+/**
+ * Struct used to define the audio data to be played by a LinearDiskStream.
+ */
 struct LinearDiskStreamAudioBlock {
 	int32 pos;		///< Position in stream of the block
 	int32 len;		///< Length of the block (in samples)
 };
 
 
-/** Factory function for a Linear Disk Stream.  This can stream linear (PCM) audio from disk.  The
- *  function takes an pointer to an array of LinearDiskStreamAudioBlock which defines the
- *  start position and length of each block of uncompressed audio in the stream.
+/**
+ * Factory function for a Linear Disk Stream.  This can stream linear (PCM)
+ * audio from disk. The function takes an pointer to an array of
+ * LinearDiskStreamAudioBlock which defines the start position and length of
+ * each block of uncompressed audio in the stream.
  */
 
-AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block, int 
-		numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
+AudioStream *makeLinearDiskStream(Common::SeekableReadStream *stream, LinearDiskStreamAudioBlock *block,
+		int numBlocks, int rate, byte flags, bool disposeStream, uint loopStart, uint loopEnd);
 
 /**
  * An audio stream to which additional data can be appended on-the-fly.
