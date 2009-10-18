@@ -105,8 +105,28 @@ byte *OSystem_SDL::setupScreen(int screenW, int screenH, bool fullscreen, bool a
 	_overlayWidth = screenW;
 	_overlayHeight = screenH;
 
-	_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
+#ifdef USE_OPENGL
+	if (_opengl) {
+		uint32 rmask, gmask, bmask, amask;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		rmask = 0x00001f00;
+		gmask = 0x000007e0;
+		bmask = 0x000000f8;
+		amask = 0x00000000;
+#else
+		rmask = 0x0000f800;
+		gmask = 0x000007e0;
+		bmask = 0x0000001f;
+		amask = 0x00000000;
+#endif
+		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
+						rmask, gmask, bmask, amask);
+	} else
+#endif
+	{
+		_overlayscreen = SDL_CreateRGBSurface(SDL_SWSURFACE, _overlayWidth, _overlayHeight, 16,
 					_screen->format->Rmask, _screen->format->Gmask, _screen->format->Bmask, _screen->format->Amask);
+	}
 
 	if (!_overlayscreen)
 		error("allocating _overlayscreen failed");
@@ -321,7 +341,8 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 	}
 
 	if (y < 0) {
-		h += y; buf -= y * pitch;
+		h += y; 
+		buf -= y * pitch;
 		y = 0;
 	}
 
@@ -357,6 +378,7 @@ void OSystem_SDL::copyRectToOverlay(const OverlayColor *buf, int pitch, int x, i
 bool OSystem_SDL::showMouse(bool visible) {
 	return false;
 }
+
 void OSystem_SDL::closeOverlay() {
 	if (_overlayscreen) {
 		SDL_FreeSurface(_overlayscreen);
