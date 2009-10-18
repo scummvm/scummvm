@@ -239,6 +239,11 @@ void SciGui::display(const char *text, int argc, reg_t *argv) {
 		}
 	}
 
+	// FIXME: this code seems to be broken somewhat. KQ5 sets coordinates to 90, 80 and sets width to 320
+	//         our code can not handle this currently, so the text wont get centered as it should
+	//         clipping coordinates to 0, 0 isnt working either, because kq5 writes to coordinates 90, 80 AND 89, 80
+	//         to create a shadow of the font. Investigation into disassembly needed
+
 	// now drawing the text
 	_gfx->TextSize(rect, text, -1, width);
 	_gfx->Move((orect->left <= _screen->_width ? 0 : _screen->_width - orect->left), (orect->top <= _screen->_height ? 0 : _screen->_height - orect->top)); // move port to (0,0)
