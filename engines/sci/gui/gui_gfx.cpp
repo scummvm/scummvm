@@ -741,7 +741,7 @@ const char controlListUpArrow[2]	= { 0x18, 0 };
 const char controlListDownArrow[2]	= { 0x19, 0 };
 
 void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, int16 count, const char **entries, GuiResourceId fontId, int16 upperPos, int16 cursorPos, bool isAlias) {
-	SegManager *segMan = _s->_segMan;
+	//SegManager *segMan = _s->_segMan;
 	Common::Rect workerRect = rect;
 	GuiResourceId oldFontId = GetFontId();
 	int16 oldPenColor = _curPort->penClr;
