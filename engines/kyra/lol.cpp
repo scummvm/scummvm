@@ -3216,18 +3216,20 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 				if (del) {
 					delay(step);
 					del -= step;
+				} else {
+					updateInput();
 				}
 				continue;
 			}
 
-			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov) {
-				updateInput();
+			if (!_screen->fadePaletteStep(pal1, pal2, _system->getMillis() - startTime, _tickLength * fadeDelay) && !mov)
 				return;
-			}
 
 			if (del) {
 				delay(step);
 				del -= step;
+			} else {
+				updateInput();
 			}
 		} while (del);
 

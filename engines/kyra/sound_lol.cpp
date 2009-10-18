@@ -167,15 +167,11 @@ void LoLEngine::snd_playSoundEffect(int track, int volume) {
 	if (track == -1)
 		return;
 
+	volume &= 0xff;
 	int16 volIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2 + 1]);
 
-	if (volIndex > 0)
-		volume = (volIndex * volume) >> 8;
-	else if (volIndex < 0)
-		volume = -volIndex;
-
-	// volume TODO
-	volume = 254 - volume;
+	volume = (volIndex > 0) ? (volIndex * volume) >> 8 : -volIndex;
+	volume = CLIP(volume >> 4, 2, 13) * 7 + 164;
 
 	int16 vocIndex = (int16)READ_LE_UINT16(&_ingameSoundIndex[track * 2]);
 
