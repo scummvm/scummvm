@@ -33,7 +33,7 @@
 
 #include "sci/seq_decoder.h"
 
-namespace Graphics {
+namespace Sci {
 
 enum seqPalTypes {
 	kSeqPalVariable = 0,
@@ -238,4 +238,4 @@ bool SeqDecoder::decodeFrame(byte *rleData, int rleSize, byte *litData, int litS
 	return true;
 }
 
-} // End of namespace Graphics
+} // End of namespace Sci

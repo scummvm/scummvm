@@ -28,12 +28,12 @@
 
 #include "graphics/video/video_player.h"
 
-namespace Graphics {
+namespace Sci {
 
 /**
  * Implementation of the Sierra SEQ decoder, used in KQ6 DOS floppy/CD and GK1 DOS
  */
-class SeqDecoder : public VideoDecoder {
+class SeqDecoder : public Graphics::VideoDecoder {
 public:
 	SeqDecoder() {}
 	virtual ~SeqDecoder();
@@ -62,6 +62,6 @@ private:
 	bool decodeFrame(byte *rleData, int rleSize, byte *litData, int litSize, byte *dest, int left, int width, int height, int colorKey);
 };
 
-} // End of namespace Graphics
+} // End of namespace Sci
 
 #endif

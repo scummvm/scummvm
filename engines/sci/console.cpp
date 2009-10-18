@@ -216,7 +216,7 @@ void Console::postEnter() {
 		_vm->_gamestate->_gui->hideCursor();
 
 		if (_videoFile.hasSuffix(".seq")) {
-			Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
+			SeqDecoder *seqDecoder = new SeqDecoder();
 			Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
 			if (seqDecoder->loadFile(_videoFile.c_str(), _videoFrameDelay))
 				player->playVideo();

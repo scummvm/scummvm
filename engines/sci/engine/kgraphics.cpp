@@ -1027,7 +1027,7 @@ reg_t kShowMovie(EngineState *s, int argc, reg_t *argv) {
 		Common::String filename = s->_segMan->getString(argv[0]);
 		int delay = argv[1].toUint16(); // Time between frames in ticks
 
-		Graphics::SeqDecoder *seqDecoder = new Graphics::SeqDecoder();
+		SeqDecoder *seqDecoder = new SeqDecoder();
 		Graphics::VideoPlayer *player = new Graphics::VideoPlayer(seqDecoder);
 		if (seqDecoder->loadFile(filename.c_str(), delay))
 			player->playVideo();
