@@ -33,6 +33,7 @@
 #include "teenagent/scene.h"
 #include "teenagent/objects.h"
 #include "teenagent/music.h"
+#include "graphics/thumbnail.h"
 
 namespace TeenAgent {
 
@@ -162,9 +163,10 @@ void TeenAgentEngine::deinit() {
 
 Common::Error TeenAgentEngine::loadGameState(int slot) {
 	debug(0, "loading from slot %d", slot);
-	char slotStr[16];
-	snprintf(slotStr, sizeof(slotStr), "teenagent.%d", slot);
-	Common::InSaveFile *in = _saveFileMan->openForLoading(slotStr);
+	Common::InSaveFile *in = _saveFileMan->openForLoading(Common::String::printf("teenagent.%02d", slot));
+	if (in == NULL)
+		in = _saveFileMan->openForLoading(Common::String::printf("teenagent.%d", slot));
+
 	if (in == NULL)
 		return Common::kReadPermissionDenied;
 
@@ -172,6 +174,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 	assert(res->dseg.size() >= 0x6478 + 0x777a);
 	char data[0x777a];
+	in->seek(0);
 	if (in->read(data, 0x777a) != 0x777a) {
 		delete in;
 		return Common::kReadingFailed;
@@ -193,9 +196,7 @@ Common::Error TeenAgentEngine::loadGameState(int slot) {
 
 Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	debug(0, "saving to slot %d", slot);
-	char slotStr[16];
-	snprintf(slotStr, sizeof(slotStr), "teenagent.%d", slot);
-	Common::OutSaveFile *out = _saveFileMan->openForSaving(slotStr);
+	Common::OutSaveFile *out = _saveFileMan->openForSaving(Common::String::printf("teenagent.%02d", slot));
 	if (out == NULL)
 		return Common::kWritePermissionDenied;
 
@@ -208,7 +209,10 @@ Common::Error TeenAgentEngine::saveGameState(int slot, const char *desc) {
 	assert(res->dseg.size() >= 0x6478 + 0x777a);
 	strncpy((char *)res->dseg.ptr(0x6478), desc, 0x16);
 	out->write(res->dseg.ptr(0x6478), 0x777a);
+	if (!Graphics::saveThumbnail(*out))
+		warning("saveThumbnail failed");
 	delete out;
+
 	return Common::kNoError;
 }
 

@@ -86,7 +86,7 @@ void Scene::moveTo(const Common::Point &_point, byte orient, bool validate) {
 	destination = point;
 	orientation = orient;
 	position0 = position;
-	progress_total = 1 + (int)(sqrt((float)position.sqrDist(destination)) / 10);
+	progress_total = 1 + (int)(0.5f + sqrt((float)position.sqrDist(destination)) / 10);
 	progress = 0;
 }
 

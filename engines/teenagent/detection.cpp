@@ -24,11 +24,13 @@
 
 #include "common/system.h"
 #include "common/savefile.h"
+#include "common/algorithm.h"
 
 #include "base/plugins.h"
 
 #include "engines/advancedDetector.h"
 #include "teenagent/teenagent.h"
+#include "graphics/thumbnail.h"
 
 static const PlainGameDescriptor teenAgentGames[] = {
 	{ "teenagent", "Teen Agent" },
@@ -91,7 +93,8 @@ public:
 		case kSupportsListSaves:
 		case kSupportsDeleteSave:
 		case kSupportsLoadingDuringStartup:
-			//case kSavesSupportThumbnail:
+		case kSavesSupportMetaInfo:
+		case kSavesSupportThumbnail:
 			return true;
 		default:
 			return false;
@@ -110,9 +113,7 @@ public:
 //	}
 
 	static Common::String generateGameStateFileName(const char *target, int slot) {
-		char slotStr[16];
-		snprintf(slotStr, sizeof(slotStr), ".%d", slot);
-		return slotStr;
+		return Common::String::printf("%s.%02d", target, slot);
 	}
 
 	virtual SaveStateList listSaves(const char *target) const {
@@ -120,8 +121,8 @@ public:
 		pattern += ".*";
 
 		Common::StringList filenames = g_system->getSavefileManager()->listSavefiles(pattern);
-		bool slotsTable[MAX_SAVES];
-		memset(slotsTable, 0, sizeof(slotsTable));
+		Common::sort(filenames.begin(), filenames.end());
+
 		SaveStateList saveList;
 		for (Common::StringList::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
 			int slot;
@@ -129,16 +130,15 @@ public:
 			if (ext && (slot = atoi(ext + 1)) >= 0 && slot < MAX_SAVES) {
 				Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
 				if (in) {
-					slotsTable[slot] = true;
+					char buf[25];
+					in->seek(0);
+					in->read(buf, 24);
+					buf[24] = 0;
+					Common::String description = buf;
+					saveList.push_back(SaveStateDescriptor(slot, description));
+					
 					delete in;
 				}
-			}
-		}
-		for (int slot = 0; slot < MAX_SAVES; ++slot) {
-			if (slotsTable[slot]) {
-				char description[64];
-				snprintf(description, sizeof(description), "teenagent.%02d", slot);
-				saveList.push_back(SaveStateDescriptor(slot, description));
 			}
 		}
 		return saveList;
@@ -151,6 +151,35 @@ public:
 	virtual void removeSaveState(const char *target, int slot) const {
 		Common::String filename = generateGameStateFileName(target, slot);
 		g_system->getSavefileManager()->removeSavefile(filename);
+	}
+
+	virtual SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const {
+		Common::String filename = generateGameStateFileName(target, slot);
+		Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(filename);
+		if (in == NULL)
+			return SaveStateDescriptor();
+
+		char buf[25];
+		in->seek(0);
+		in->read(buf, 24);
+		buf[24] = 0;
+
+		Common::String desc = buf;
+
+		in->seek(0x777a);
+		if (!Graphics::checkThumbnailHeader(*in))
+			return SaveStateDescriptor(slot, desc);
+
+		Graphics::Surface *thumb = new Graphics::Surface;
+		if (!Graphics::loadThumbnail(*in, *thumb)) {
+			delete thumb;
+			return SaveStateDescriptor(slot, desc);
+		}
+
+		SaveStateDescriptor ssd(slot, desc);
+		ssd.setThumbnail(thumb);
+
+		return ssd;
 	}
 };
 
