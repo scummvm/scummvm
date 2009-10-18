@@ -1770,7 +1770,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 			s->_sound.sfx_reset_player();
 			_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play);
 
-			send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
+			send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 
 			script_abort_flag = 0;
 			s->restarting_flags = SCI_GAME_WAS_RESTARTED | SCI_GAME_WAS_RESTARTED_AT_LEAST_ONCE;
@@ -1789,7 +1789,7 @@ static EngineState *_game_run(EngineState *&s, int restoring) {
 
 					_init_stack_base_with_selector(s, s->_kernel->_selectorCache.replay);
 
-					send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base);
+					send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base);
 				}
 
 				script_abort_flag = 0;
@@ -1809,9 +1809,9 @@ int game_run(EngineState **_s) {
 	_init_stack_base_with_selector(s, s->_kernel->_selectorCache.play); // Call the play selector
 
 	// Now: Register the first element on the execution stack-
-	if (!send_selector(s, s->game_obj, s->game_obj, s->stack_base, 2, s->stack_base)) {
+	if (!send_selector(s, s->_gameObj, s->_gameObj, s->stack_base, 2, s->stack_base)) {
 		Console *con = ((SciEngine *)g_engine)->getSciDebugger();
-		con->printObject(s->game_obj);
+		con->printObject(s->_gameObj);
 		warning("Failed to run the game! Aborting...");
 		return 1;
 	}

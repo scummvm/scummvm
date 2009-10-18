@@ -437,11 +437,11 @@ int game_init(EngineState *s) {
 
 //	script_dissect(0, s->_selectorNames);
 	// The first entry in the export table of script 0 points to the game object
-	s->game_obj = s->_segMan->lookupScriptExport(0, 0);
+	s->_gameObj = s->_segMan->lookupScriptExport(0, 0);
 	uint32 gameFlags = 0;	// unused
-	s->_gameName = convertSierraGameId(s->_segMan->getObjectName(s->game_obj), &gameFlags);
+	s->_gameName = convertSierraGameId(s->_segMan->getObjectName(s->_gameObj), &gameFlags);
 
-	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->game_obj));
+	debug(2, " \"%s\" at %04x:%04x", s->_gameName.c_str(), PRINT_REG(s->_gameObj));
 
 	s->_menubar = new Menubar(); // Create menu bar
 

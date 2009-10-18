@@ -273,7 +273,7 @@ public:
 	SegmentId sys_strings_segment;
 	SystemStrings *sys_strings;
 
-	reg_t game_obj; /**< Pointer to the game object */
+	reg_t _gameObj; /**< Pointer to the game object */
 
 	SegManager *_segMan;
 	int gc_countdown; /**< Number of kernel calls until next gc */

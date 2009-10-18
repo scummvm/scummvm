@@ -762,7 +762,7 @@ EngineState *gamestate_restore(EngineState *s, Common::SeekableReadStream *fh) {
 	reconstruct_stack(retval);
 	retval->_segMan->reconstructScripts(retval);
 	retval->_segMan->reconstructClones();
-	retval->game_obj = s->game_obj;
+	retval->_gameObj = s->_gameObj;
 	retval->script_000 = retval->_segMan->getScript(retval->_segMan->getScriptSegment(0, SCRIPT_GET_DONT_LOAD));
 	retval->gc_countdown = GC_INTERVAL - 1;
 	retval->sys_strings_segment = retval->_segMan->findSegmentByType(SEG_TYPE_SYS_STRINGS);
