@@ -62,7 +62,7 @@ public:
 	void resetEngineState(EngineState *newState) { _s = newState; }
 
 	void disposeLastCast();
-	void invoke(List *list, int argc, reg_t *argv);
+	bool invoke(List *list, int argc, reg_t *argv);
 	void makeSortedList(List *list);
 	void fill(byte &oldPicNotValid);
 	void update();

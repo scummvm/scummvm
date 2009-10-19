@@ -29,6 +29,7 @@
 
 #include "sci/sci.h"
 #include "sci/engine/state.h"
+#include "sci/engine/vm.h"
 #include "sci/gui/gui_gfx.h"
 #include "sci/gui/gui_view.h"
 #include "sci/gui/gui_screen.h"
@@ -56,7 +57,7 @@ void SciGuiAnimate::disposeLastCast() {
 		//_lastCast->DeleteList();
 }
 
-void SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
+bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 	SegManager *segMan = _s->_segMan;
 	reg_t curAddress = list->first;
 	Node *curNode = _s->_segMan->lookupNode(curAddress);
@@ -65,6 +66,13 @@ void SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 
 	while (curNode) {
 		curObject = curNode->value;
+		if (_s->_gameName == "kq5") {
+			// This is special to King's Quest 5, globalVar 84 aborts kAnimate completely. If we dont do this
+			//  sometimes animation cels will appear within talking boxes
+			if (_s->script_000->_localsBlock->_locals[84].toUint16()) {
+				return false;
+			}
+		}
 		signal = GET_SEL32V(segMan, curObject, signal);
 		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
 			// Call .doit method of that object
@@ -75,6 +83,7 @@ void SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 		curAddress = curNode->succ;
 		curNode = _s->_segMan->lookupNode(curAddress);
 	}
+	return true;
 }
 
 bool sortHelper(const GuiAnimateEntry* entry1, const GuiAnimateEntry* entry2) {

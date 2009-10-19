@@ -528,8 +528,10 @@ void SciGui::animate(reg_t listReference, bool cycle, int argc, reg_t *argv) {
 	if (!list)
 		error("kAnimate called with non-list as parameter");
 
-	if (cycle)
-		_animate->invoke(list, argc, argv);
+	if (cycle) {
+		if (!_animate->invoke(list, argc, argv))
+			return;
+	}
 
 	GuiPort *oldPort = _gfx->SetPort((GuiPort *)_windowMgr->_picWind);
 	_animate->disposeLastCast();
