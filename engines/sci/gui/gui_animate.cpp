@@ -66,13 +66,14 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 
 	while (curNode) {
 		curObject = curNode->value;
-		if (_s->_gameName == "kq5") {
-			// This is special to King's Quest 5, globalVar 84 aborts kAnimate completely. If we dont do this
-			//  sometimes animation cels will appear within talking boxes
-			if (_s->script_000->_localsBlock->_locals[84].toUint16()) {
+		// Check if the game has a fastCast object
+		// This check is needed so that animation cels won't appear within speech boxes
+		reg_t global84 = _s->script_000->_localsBlock->_locals[84];
+
+		if (!global84.isNull())
+			if (!strcmp(_s->_segMan->getObjectName(global84), "fastCast"))
 				return false;
-			}
-		}
+
 		signal = GET_SEL32V(segMan, curObject, signal);
 		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
 			// Call .doit method of that object
