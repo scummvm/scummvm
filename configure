@@ -1272,7 +1272,7 @@ case $_host_os in
 		;;
 	cygwin*)
 		echo ERROR: Cygwin building is not supported by ScummVM anymore. Consider using MinGW.
-		exit 0
+		exit 1
 		;;
 	os2-emx*)
 		DEFINES="$DEFINES -DUNIX"
@@ -1325,21 +1325,19 @@ esac
 
 if test -n "$_host"; then
 	# Cross-compiling mode - add your target here if needed
+	echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 	case "$_host" in
 		linupy|arm-riscos)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DLINUPY"
 			_need_memalign=yes
 			;;
 		arm-linux|arm*-linux-gnueabi|arm-*-linux|*-angstrom-linux)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		motoezx)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOEZX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_need_memalign=yes
@@ -1354,7 +1352,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		motomagx)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DMOTOMAGX"
 			ASFLAGS="$ASFLAGS -mfpu=vfp"
 			_need_memalign=yes
@@ -1376,7 +1373,6 @@ if test -n "$_host"; then
 			_strip=$_host-strip
 			;;
 		gp2xwiz)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2XWIZ -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -mcpu=arm926ej-s -mtune=arm926ej-s"
 			LDFLAGS="$LDFLAGS"
@@ -1391,7 +1387,6 @@ if test -n "$_host"; then
 			_mt32emu="no"
 			;;	
 		gp2x)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DGP2X -DNDEBUG"
 			CXXFLAGS="$CXXFLAGS -march=armv4t"
 			ASFLAGS="$ASFLAGS -mfloat-abi=soft"
@@ -1407,7 +1402,6 @@ if test -n "$_host"; then
 			_mt32emu="no"
 			;;
 		neuros)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DNEUROS"
 			_need_memalign=yes
 			_backend='null'
@@ -1415,14 +1409,12 @@ if test -n "$_host"; then
 			_mt32emu="no"
 			;;
 		ppc-amigaos)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
 			# FIXME: Please document why 'long' has to be used instead of int
 			type_4_byte='long'
 			;;
 		m68k-atari-mint)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DUNIX -DSYSTEM_NOT_SUPPORTING_D_TYPE"
 			_endian=big
 			_need_memalign=yes
@@ -1432,14 +1424,12 @@ if test -n "$_host"; then
 			_ar="m68k-atari-mint-ar cru"
 			;;
 		*mingw32*)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_sdlconfig=$_host-sdl-config
 			_windres=$_host-windres
 			_ar="$_host-ar cru"
 			_ranlib=$_host-ranlib
 			;;
 		iphone)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DIPHONE -DUNIX"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_ARM_SOUND_ASM = 1'
@@ -1448,7 +1438,6 @@ if test -n "$_host"; then
 			_build_hq_scalers="no"
 			;;
 		wince)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			LDFLAGS="$LDFLAGS -Wl,-Map,scummvm.exe.map -Wl,--stack,65536"
 			_need_memalign=yes
 			add_line_to_config_mk 'USE_TREMOLO = 1'
@@ -1462,7 +1451,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/wince/wince.mk"
 			;;
 		dreamcast)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			DEFINES="$DEFINES -DDISABLE_DEFAULT_SAVEFILEMANAGER -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE"
 			CXXFLAGS="$CXXFLAGS -O3 -funroll-loops -fschedule-insns2 -fomit-frame-pointer -fdelete-null-pointer-checks"
 			_need_memalign=yes
@@ -1474,7 +1462,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'include $(srcdir)/backends/platform/dc/dreamcast.mk'
 			;;
 		wii)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
@@ -1490,7 +1477,6 @@ if test -n "$_host"; then
 			add_line_to_config_h "#define USE_WII_KBD"
 			;;
 		gamecube)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_endian=big
 			_need_memalign=yes
 			_backend="wii"
@@ -1505,7 +1491,6 @@ if test -n "$_host"; then
 			add_line_to_config_h "/* #define DEBUG_WII_GDB */"
 			;;
 		nds)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
 			# TODO: Maybe rename nds -> ds (would be more consistent with other backends)
 			DEFINES="$DEFINES -DDISABLE_FANCY_THEMES -DVECTOR_RENDERER_FORMAT=1555"
@@ -1522,7 +1507,6 @@ if test -n "$_host"; then
 			add_line_to_config_mk 'USE_ARM_SMUSH_ASM = 1'
 			;;
 		psp)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			_need_memalign=yes
 			_backend="psp"
 			_build_scalers="no"
@@ -1531,7 +1515,6 @@ if test -n "$_host"; then
 			_port_mk="backends/platform/psp/psp.mk"
 			;;
 		ps2)
-			echo "Cross-compiling to $_host, forcing endianness, alignment and type sizes"
 			# TODO: complete this
 			_need_memalign=yes
 			_backend="ps2"
@@ -1561,7 +1544,7 @@ if test -n "$_host"; then
 			fi
 			;;
 		*)
-			echo "Continuing with auto-detected values ... if you have problems, please add your target to configure."
+			echo "WARNING: Unknown target, continuing with auto-detected values"
 			;;
 	esac
 
