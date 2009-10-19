@@ -187,7 +187,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 
 		/* Default to menu 0, unless the mouse was used to generate this effect */
 		if (mouse_down)
-			s->_menubar->mapPointer(cursorPos, menu_nr, item_nr, port);
+			s->_menubar->mapPointer(cursorPos, menu_nr, item_nr, toCommonRect(port->_bounds));
 		else
 			menu_nr = 0;
 
@@ -263,7 +263,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 				{
 				Common::Point curMousePos = s->_cursor->getPosition();
 				menu_mode = (curMousePos.y < 10);
-				claimed = !menu_mode && !s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, port);
+				claimed = !menu_mode && !s->_menubar->mapPointer(curMousePos, menu_nr, item_nr, toCommonRect(port->_bounds));
 				mouse_down = 0;
 				}
 				break;
@@ -278,7 +278,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 			}
 
 			if (mouse_down)
-				s->_menubar->mapPointer(s->_cursor->getPosition(), menu_nr, item_nr, port);
+				s->_menubar->mapPointer(s->_cursor->getPosition(), menu_nr, item_nr, toCommonRect(port->_bounds));
 
 			if ((item_nr > -1 && old_item == -1) || (menu_nr != old_menu)) { /* Update menu */
 

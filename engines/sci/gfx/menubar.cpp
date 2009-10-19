@@ -32,7 +32,6 @@
 #include "sci/engine/state.h"
 #include "sci/gfx/menubar.h"
 #include "sci/engine/kernel.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxPort
 
 namespace Sci {
 
@@ -389,7 +388,7 @@ bool Menubar::itemValid(int menu_nr, int item_nr) const {
 	return false; // May not be selected
 }
 
-bool Menubar::mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, GfxPort *port) const {
+bool Menubar::mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, Common::Rect portBounds) const {
 
 	if (pointerPos.y <= 10) { // Re-evaulate menu
 		int x = MENU_LEFT_BORDER;
@@ -418,7 +417,7 @@ bool Menubar::mapPointer(const Common::Point &pointerPos, int &menu_nr, int &ite
 		if ((int)menu._items.size() <= row)
 			return true;
 
-		if ((pointerPos.x < port->_bounds.x) || (pointerPos.x > port->_bounds.x + port->_bounds.width))
+		if ((pointerPos.x < portBounds.left) || (pointerPos.x > portBounds.right))
 			return true;
 
 		if (itemValid(menu_nr, row))

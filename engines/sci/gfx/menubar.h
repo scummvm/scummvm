@@ -30,9 +30,9 @@
 
 #include "sci/engine/vm_types.h"
 #include "sci/gfx/operations.h"
-#include "sci/gfx/gfx_widgets.h"
 
 #include "common/array.h"
+#include "common/rect.h"
 
 namespace Sci {
 
@@ -214,11 +214,11 @@ public:
 	 * 							necessary)
 	 * @param[in] item_nr		the current menu item (updated by this function
 	 * 							if necessary)
-	 * @param[in] port			the port of the currently active menu (if any)
+	 * @param[in] portBounds	the port bounds of the currently active menu (if any)
 	 * @return 					true if the pointer is outside a valid port,
 	 * 							false otherwise.
 	 */
-	bool mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, GfxPort *port) const;
+	bool mapPointer(const Common::Point &pointerPos, int &menu_nr, int &item_nr, Common::Rect portBounds) const;
 
 };
 
