@@ -88,7 +88,7 @@ void SciGuiCursor::setShape(GuiResourceId resourceId) {
 
 	// Now find out what colors we are supposed to use
 	colorMapping[0] = 0; // Black is hardcoded
-	colorMapping[1] = _palette->matchColor(&_palette->_sysPalette, 255, 255, 255); // White
+	colorMapping[1] = _resMan->isVGA() ? 255 : 15; // White is also hardcoded
 	colorMapping[2] = SCI_CURSOR_SCI0_TRANSPARENCYCOLOR;
 	colorMapping[3] = _palette->matchColor(&_palette->_sysPalette, 170, 170, 170); // Grey
 	
