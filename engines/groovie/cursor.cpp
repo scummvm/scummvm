@@ -234,6 +234,7 @@ byte *GrvCursorMan_t7g::loadPalette(Common::File &file) {
 class Cursor_v2 : public Cursor {
 public:
 	Cursor_v2(Common::File &file);
+	~Cursor_v2();
 
 	void enable();
 	void showFrame(uint16 frame);
@@ -287,6 +288,10 @@ Cursor_v2::Cursor_v2(Common::File &file) {
 	}
 
 	delete[] pal;
+}
+
+Cursor_v2::~Cursor_v2() {
+	delete[] _img;
 }
 
 void Cursor_v2::decodeFrame(byte *pal, byte *data, byte *dest) {
