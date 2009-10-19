@@ -2842,21 +2842,33 @@ int LoLEngine::processMagicSwarm(int charNum, int damage) {
 }
 
 int LoLEngine::processMagicVaelansCube() {
-	uint8 *tmpPal1 = new uint8[768];
-	uint8 *tmpPal2 = new uint8[768];
 	uint8 *sp1 = _screen->getPalette(1).getData();
+	int len = _screen->getPalette(1).getNumColors() * 3;
 
-	memcpy(tmpPal1, sp1, 768);
-	memcpy(tmpPal2, sp1, 768);
+	uint8 *tmpPal1 = new uint8[len];
+	uint8 *tmpPal2 = new uint8[len];
 
-	for (int i = 0; i < 128; i++) {
-		uint16 a = sp1[i * 3] + 16;
-		tmpPal2[i * 3] = (a > 60) ? 60 : a;
-		tmpPal2[i * 3 + 1] = sp1[i * 3 + 1];
-		a = sp1[i * 3 + 2] + 19;
-		tmpPal2[i * 3 + 2] = (a > 60) ? 60 : a;
+	memcpy(tmpPal1, sp1, len);
+	memcpy(tmpPal2, sp1, len);
+
+	if (_flags.use16ColorMode) {
+		for (int i = 0; i < 16; i++) {
+			uint16 a = sp1[i * 3 + 1] + 16;
+			tmpPal2[i * 3 + 1] = (a > 58) ? 58 : a;
+			tmpPal2[i * 3] = sp1[i * 3];
+			a =	sp1[i * 3 + 2] + 16;
+			tmpPal2[i * 3 + 2] = (a > 63) ? 63 : a;
+		}
+	} else {
+		for (int i = 0; i < 128; i++) {
+			uint16 a = sp1[i * 3] + 16;
+			tmpPal2[i * 3] = (a > 60) ? 60 : a;
+			tmpPal2[i * 3 + 1] = sp1[i * 3 + 1];
+			a =	sp1[i * 3 + 2] + 19;
+			tmpPal2[i * 3 + 2] = (a > 60) ? 60 : a;
+		}
 	}
-
+	
 	snd_playSoundEffect(146, -1);
 
 	uint32 ctime = _system->getMillis();
