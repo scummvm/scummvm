@@ -24,9 +24,9 @@
  */
 
 /* Functionality to transform the context-free SCI grammar rules into
-** strict Greibach normal form (strict GNF), and to test SCI input against
-** that grammar, writing an appropriate node tree if successful.
-*/
+ * strict Greibach normal form (strict GNF), and to test SCI input against
+ * that grammar, writing an appropriate node tree if successful.
+ */
 
 #include "sci/vocabulary.h"
 #include "sci/console.h"
@@ -43,10 +43,23 @@ namespace Sci {
 
 static int _allocd_rules = 0;	// FIXME: Avoid non-const global vars
 
-int getAllocatedRulesCount() { return _allocd_rules; }
+struct ParseRule {
+	int _id; /**< non-terminal ID */
+	uint _firstSpecial; /**< first terminal or non-terminal */
+	uint _numSpecials; /**< number of terminals and non-terminals */
+	uint _length;
+	int _data[1]; /**< actual data (size 1 to avoid compiler warnings) */
+};
 
-static void vocab_print_rule(parse_rule_t *rule) {
-	int i;
+
+struct ParseRuleList {
+	int terminal; /**< Terminal character this rule matches against or 0 for a non-terminal rule */
+	ParseRule *rule;
+	ParseRuleList *next;
+};
+
+
+static void vocab_print_rule(ParseRule *rule) {
 	int wspace = 0;
 
 	if (!rule) {
@@ -54,22 +67,22 @@ static void vocab_print_rule(parse_rule_t *rule) {
 		return;
 	}
 
-	printf("[%03x] -> ", rule->id);
+	printf("[%03x] -> ", rule->_id);
 
-	if (!rule->length)
+	if (!rule->_length)
 		printf("e");
 
-	for (i = 0; i < rule->length; i++) {
-		uint token = rule->data[i];
+	for (uint i = 0; i < rule->_length; i++) {
+		uint token = rule->_data[i];
 
 		if (token == TOKEN_OPAREN) {
-			if (i == rule->first_special)
+			if (i == rule->_firstSpecial)
 				printf("_");
 
 			printf("(");
 			wspace = 0;
 		} else if (token == TOKEN_CPAREN) {
-			if (i == rule->first_special)
+			if (i == rule->_firstSpecial)
 				printf("_");
 
 			printf(")");
@@ -78,7 +91,7 @@ static void vocab_print_rule(parse_rule_t *rule) {
 			if (wspace)
 				printf(" ");
 
-			if (i == rule->first_special)
+			if (i == rule->_firstSpecial)
 				printf("_");
 			if (token & TOKEN_TERMINAL_CLASS)
 				printf("C(%04x)", token & 0xffff);
@@ -91,61 +104,61 @@ static void vocab_print_rule(parse_rule_t *rule) {
 			wspace = 1;
 		}
 
-		if (i == rule->first_special)
+		if (i == rule->_firstSpecial)
 			printf("_");
 	}
-	printf(" [%d specials]", rule->specials_nr);
+	printf(" [%d specials]", rule->_numSpecials);
 }
 
-static void _vfree(parse_rule_t *rule) {
+static void _vfree(ParseRule *rule) {
 	free(rule);
 	--_allocd_rules;
 	rule = NULL;
 }
 
-static parse_rule_t *_vdup(parse_rule_t *a) {
-	parse_rule_t *rule = (parse_rule_t*)malloc(sizeof(int) * (a->length + 4));
+static ParseRule *_vdup(ParseRule *a) {
+	ParseRule *rule = (ParseRule*)malloc(sizeof(int) * (a->_length + 4));
 
-	rule->id = a->id;
-	rule->length = a->length;
-	rule->specials_nr = a->specials_nr;
-	rule->first_special = a->first_special;
+	rule->_id = a->_id;
+	rule->_length = a->_length;
+	rule->_numSpecials = a->_numSpecials;
+	rule->_firstSpecial = a->_firstSpecial;
 	++_allocd_rules;
 
-	memcpy(rule->data, a->data, sizeof(int) * a->length);
+	memcpy(rule->_data, a->_data, sizeof(int) * a->_length);
 
 	return rule;
 }
 
-static parse_rule_t *_vinsert(parse_rule_t *turkey, parse_rule_t *stuffing) {
-	int firstnt = turkey->first_special;
-	parse_rule_t *rule;
+static ParseRule *_vinsert(ParseRule *turkey, ParseRule *stuffing) {
+	uint firstnt = turkey->_firstSpecial;
+	ParseRule *rule;
 
-	while ((firstnt < turkey->length) && (turkey->data[firstnt] & TOKEN_NON_NT))
+	while ((firstnt < turkey->_length) && (turkey->_data[firstnt] & TOKEN_NON_NT))
 		firstnt++;
 
-	if ((firstnt == turkey->length) || (turkey->data[firstnt] != stuffing->id))
+	if ((firstnt == turkey->_length) || (turkey->_data[firstnt] != stuffing->_id))
 		return NULL;
 
-	rule = (parse_rule_t*)malloc(sizeof(int) * (turkey->length - 1 + stuffing->length + 4));
-	rule->id = turkey->id;
-	rule->specials_nr = turkey->specials_nr + stuffing->specials_nr - 1;
-	rule->first_special = firstnt + stuffing->first_special;
-	rule->length = turkey->length - 1 + stuffing->length;
+	rule = (ParseRule*)malloc(sizeof(int) * (turkey->_length - 1 + stuffing->_length + 4));
+	rule->_id = turkey->_id;
+	rule->_numSpecials = turkey->_numSpecials + stuffing->_numSpecials - 1;
+	rule->_firstSpecial = firstnt + stuffing->_firstSpecial;
+	rule->_length = turkey->_length - 1 + stuffing->_length;
 	++_allocd_rules;
 
 	if (firstnt > 0)
-		memcpy(rule->data, turkey->data, sizeof(int) * firstnt);
+		memcpy(rule->_data, turkey->_data, sizeof(int) * firstnt);
 
-	memcpy(&(rule->data[firstnt]), stuffing->data, sizeof(int) * stuffing->length);
-	if (firstnt < turkey->length - 1)
-		memcpy(&(rule->data[firstnt + stuffing->length]), &(turkey->data[firstnt + 1]), sizeof(int) * (turkey->length - firstnt - 1));
+	memcpy(&(rule->_data[firstnt]), stuffing->_data, sizeof(int) * stuffing->_length);
+	if (firstnt < turkey->_length - 1)
+		memcpy(&(rule->_data[firstnt + stuffing->_length]), &(turkey->_data[firstnt + 1]), sizeof(int) * (turkey->_length - firstnt - 1));
 
 	return rule;
 }
 
-static parse_rule_t *_vbuild_rule(const parse_tree_branch_t *branch) {
-	parse_rule_t *rule;
+static ParseRule *_vbuild_rule(const parse_tree_branch_t *branch) {
+	ParseRule *rule;
 	int tokens = 0, tokenpos = 0, i;
 
 	while (tokenpos < 10 && branch->data[tokenpos]) {
@@ -160,13 +173,13 @@ static parse_rule_t *_vbuild_rule(const parse_tree_branch_t *branch) {
 			return NULL; // invalid
 	}
 
-	rule = (parse_rule_t*)malloc(sizeof(int) * (4 + tokens));
+	rule = (ParseRule*)malloc(sizeof(int) * (4 + tokens));
 
 	++_allocd_rules;
-	rule->id = branch->id;
-	rule->specials_nr = tokenpos >> 1;
-	rule->length = tokens;
-	rule->first_special = 0;
+	rule->_id = branch->id;
+	rule->_numSpecials = tokenpos >> 1;
+	rule->_length = tokens;
+	rule->_firstSpecial = 0;
 
 	tokens = 0;
 	for (i = 0; i < tokenpos; i += 2) {
@@ -174,54 +187,55 @@ static parse_rule_t *_vbuild_rule(const parse_tree_branch_t *branch) {
 		int value = branch->data[i + 1];
 
 		if (type == VOCAB_TREE_NODE_COMPARE_TYPE)
-			rule->data[tokens++] = value | TOKEN_TERMINAL_CLASS;
+			rule->_data[tokens++] = value | TOKEN_TERMINAL_CLASS;
 		else if (type == VOCAB_TREE_NODE_COMPARE_GROUP)
-			rule->data[tokens++] = value | TOKEN_TERMINAL_GROUP;
+			rule->_data[tokens++] = value | TOKEN_TERMINAL_GROUP;
 		else if (type == VOCAB_TREE_NODE_FORCE_STORAGE)
-			rule->data[tokens++] = value | TOKEN_STUFFING_WORD;
+			rule->_data[tokens++] = value | TOKEN_STUFFING_WORD;
 		else { // normal inductive rule
-			rule->data[tokens++] = TOKEN_OPAREN;
-			rule->data[tokens++] = type | TOKEN_STUFFING_WORD;
-			rule->data[tokens++] = value | TOKEN_STUFFING_WORD;
+			rule->_data[tokens++] = TOKEN_OPAREN;
+			rule->_data[tokens++] = type | TOKEN_STUFFING_WORD;
+			rule->_data[tokens++] = value | TOKEN_STUFFING_WORD;
 
 			if (i == 0)
-				rule->first_special = tokens;
+				rule->_firstSpecial = tokens;
 
-			rule->data[tokens++] = value; // The non-terminal
-			rule->data[tokens++] = TOKEN_CPAREN;
+			rule->_data[tokens++] = value; // The non-terminal
+			rule->_data[tokens++] = TOKEN_CPAREN;
 		}
 	}
 
 	return rule;
 }
 
-static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, const ResultWord &input) {
+static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWord &input) {
 	int dep;
 
-	if (!rule->specials_nr)
+	if (!rule->_numSpecials)
 		return NULL;
 
-	dep = rule->data[rule->first_special];
+	dep = rule->_data[rule->_firstSpecial];
 
 	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input._class)) ||
 			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input._group))) {
-		parse_rule_t *retval = (parse_rule_t*)malloc(sizeof(int) * (4 + rule->length));
+		ParseRule *retval = (ParseRule*)malloc(sizeof(int) * (4 + rule->_length));
 		++_allocd_rules;
-		retval->id = rule->id;
-		retval->specials_nr = rule->specials_nr - 1;
-		retval->length = rule->length;
-		memcpy(retval->data, rule->data, sizeof(int) * retval->length);
-		retval->data[rule->first_special] = TOKEN_STUFFING_WORD | input._group;
-		retval->first_special = 0;
+		retval->_id = rule->_id;
+		retval->_numSpecials = rule->_numSpecials - 1;
+		retval->_length = rule->_length;
+		memcpy(retval->_data, rule->_data, sizeof(int) * retval->_length);
+		retval->_data[rule->_firstSpecial] = TOKEN_STUFFING_WORD | input._group;
+		retval->_firstSpecial = 0;
 
-		if (retval->specials_nr) { // find first special, if it exists
-			int tmp, i = rule->first_special;
+		if (retval->_numSpecials) { // find first special, if it exists
+			int tmp;
+			uint i = rule->_firstSpecial;
 
-			while ((i < rule->length)&& ((tmp = retval->data[i]) & TOKEN_NON_NT) && !(tmp & TOKEN_TERMINAL))
+			while ((i < rule->_length)&& ((tmp = retval->_data[i]) & TOKEN_NON_NT) && !(tmp & TOKEN_TERMINAL))
 				++i;
 
-			if (i < rule->length)
-				retval->first_special = i;
+			if (i < rule->_length)
+				retval->_firstSpecial = i;
 		}
 
 		return retval;
@@ -229,7 +243,7 @@ static parse_rule_t *_vsatisfy_rule(parse_rule_t *rule, const ResultWord &input)
 		return NULL;
 }
 
-void Vocabulary::freeRuleList(parse_rule_list_t *list) {
+void Vocabulary::freeRuleList(ParseRuleList *list) {
 	if (list) {
 		_vfree(list->rule);
 		freeRuleList(list->next); // Yep, this is slow and memory-intensive.
@@ -237,22 +251,22 @@ void Vocabulary::freeRuleList(parse_rule_list_t *list) {
 	}
 }
 
-static int _rules_equal_p(parse_rule_t *r1, parse_rule_t *r2) {
-	if ((r1->id != r2->id) || (r1->length != r2->length) || (r1->first_special != r2->first_special))
+static int _rules_equal_p(ParseRule *r1, ParseRule *r2) {
+	if ((r1->_id != r2->_id) || (r1->_length != r2->_length) || (r1->_firstSpecial != r2->_firstSpecial))
 		return 0;
 
-	return !(memcmp(r1->data, r2->data, sizeof(int) * r1->length));
+	return !(memcmp(r1->_data, r2->_data, sizeof(int) * r1->_length));
 }
 
-static parse_rule_list_t *_vocab_add_rule(parse_rule_list_t *list, parse_rule_t *rule) {
-	parse_rule_list_t *new_elem;
+static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
+	ParseRuleList *new_elem;
 	int term;
 
 	if (!rule)
 		return list;
 
-	new_elem = (parse_rule_list_t*)malloc(sizeof(parse_rule_list_t));
-	term = rule->data[rule->first_special];
+	new_elem = (ParseRuleList*)malloc(sizeof(ParseRuleList));
+	term = rule->_data[rule->_firstSpecial];
 
 	new_elem->rule = rule;
 	new_elem->next = NULL;
@@ -265,7 +279,7 @@ static parse_rule_list_t *_vocab_add_rule(parse_rule_list_t *list, parse_rule_t 
 			new_elem->next = list;
 			return new_elem;
 		} else {*/
-		parse_rule_list_t *seeker = list;
+		ParseRuleList *seeker = list;
 
 		while (seeker->next/* && seeker->next->terminal <= term*/) {
 			if (seeker->next->terminal == term) {
@@ -284,7 +298,7 @@ static parse_rule_list_t *_vocab_add_rule(parse_rule_list_t *list, parse_rule_t 
 	}
 }
 
-static void _vprl(parse_rule_list_t *list, int pos) {
+static void _vprl(ParseRuleList *list, int pos) {
 	if (list) {
 		printf("R%03d: ", pos);
 		vocab_print_rule(list->rule);
@@ -295,28 +309,28 @@ static void _vprl(parse_rule_list_t *list, int pos) {
 	}
 }
 
-void vocab_print_rule_list(parse_rule_list_t *list) {
+void vocab_print_rule_list(ParseRuleList *list) {
 	_vprl(list, 0);
 }
 
-static parse_rule_list_t *_vocab_split_rule_list(parse_rule_list_t *list) {
+static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
 	if (!list->next || (list->next->terminal)) {
-		parse_rule_list_t *tmp = list->next;
+		ParseRuleList *tmp = list->next;
 		list->next = NULL;
 		return tmp;
 	} else
 		return _vocab_split_rule_list(list->next);
 }
 
-static void _vocab_free_empty_rule_list(parse_rule_list_t *list) {
+static void _vocab_free_empty_rule_list(ParseRuleList *list) {
 	if (list->next)
 		_vocab_free_empty_rule_list(list->next);
 
 	free(list);
 }
 
-static parse_rule_list_t *_vocab_merge_rule_lists(parse_rule_list_t *l1, parse_rule_list_t *l2) {
-	parse_rule_list_t *retval = l1, *seeker = l2;
+static ParseRuleList *_vocab_merge_rule_lists(ParseRuleList *l1, ParseRuleList *l2) {
+	ParseRuleList *retval = l1, *seeker = l2;
 	while (seeker) {
 		retval = _vocab_add_rule(retval, seeker->rule);
 		seeker = seeker->next;
@@ -326,16 +340,16 @@ static parse_rule_list_t *_vocab_merge_rule_lists(parse_rule_list_t *l1, parse_r
 	return retval;
 }
 
-static int _vocab_rule_list_length(parse_rule_list_t *list) {
+static int _vocab_rule_list_length(ParseRuleList *list) {
 	return ((list) ? _vocab_rule_list_length(list->next) + 1 : 0);
 }
 
-static parse_rule_list_t *_vocab_clone_rule_list_by_id(parse_rule_list_t *list, int id) {
-	parse_rule_list_t *result = NULL;
-	parse_rule_list_t *seeker = list;
+static ParseRuleList *_vocab_clone_rule_list_by_id(ParseRuleList *list, int id) {
+	ParseRuleList *result = NULL;
+	ParseRuleList *seeker = list;
 
 	while (seeker) {
-		if (seeker->rule->id == id) {
+		if (seeker->rule->_id == id) {
 			result = _vocab_add_rule(result, _vdup(seeker->rule));
 		}
 		seeker = seeker->next;
@@ -344,16 +358,16 @@ static parse_rule_list_t *_vocab_clone_rule_list_by_id(parse_rule_list_t *list, 
 	return result;
 }
 
-parse_rule_list_t *Vocabulary::buildGNF(bool verbose) {
+ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 	int iterations = 0;
 	int last_termrules, termrules = 0;
 	int ntrules_nr;
-	parse_rule_list_t *ntlist = NULL;
-	parse_rule_list_t *tlist, *new_tlist;
+	ParseRuleList *ntlist = NULL;
+	ParseRuleList *tlist, *new_tlist;
 	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 
 	for (uint i = 1; i < _parserBranches.size(); i++) { // branch rule 0 is treated specially
-		parse_rule_t *rule = _vbuild_rule(&_parserBranches[i]);
+		ParseRule *rule = _vbuild_rule(&_parserBranches[i]);
 		if (!rule)
 			return NULL;
 		ntlist = _vocab_add_rule(ntlist, rule);
@@ -369,8 +383,8 @@ parse_rule_list_t *Vocabulary::buildGNF(bool verbose) {
 	tlist = NULL;
 
 	do {
-		parse_rule_list_t *new_new_tlist = NULL;
-		parse_rule_list_t *ntseeker, *tseeker;
+		ParseRuleList *new_new_tlist = NULL;
+		ParseRuleList *ntseeker, *tseeker;
 		last_termrules = termrules;
 
 		ntseeker = ntlist;
@@ -378,7 +392,7 @@ parse_rule_list_t *Vocabulary::buildGNF(bool verbose) {
 			tseeker = new_tlist;
 
 			while (tseeker) {
-				parse_rule_t *newrule = _vinsert(ntseeker->rule, tseeker->rule);
+				ParseRule *newrule = _vinsert(ntseeker->rule, tseeker->rule);
 				if (newrule)
 					new_new_tlist = _vocab_add_rule(new_new_tlist, newrule);
 				tseeker = tseeker->next;
@@ -401,7 +415,7 @@ parse_rule_list_t *Vocabulary::buildGNF(bool verbose) {
 	if (verbose) {
 		con->DebugPrintf("\nGNF rules:\n");
 		vocab_print_rule_list(tlist);
-		con->DebugPrintf("%d allocd rules\n", getAllocatedRulesCount());
+		con->DebugPrintf("%d allocd rules\n", _allocd_rules);
 		con->DebugPrintf("Freeing rule list...\n");
 		freeRuleList(tlist);
 		return NULL;
@@ -447,18 +461,17 @@ static int _vbpt_terminate(parse_tree_node_t *nodes, int *pos, int base, int val
 	return *pos;
 }
 
-static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_rule_t *rule, int rulepos, int writepos) {
+static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, ParseRule *rule, uint rulepos, int writepos) {
 	uint token;
 
-	while ((token = ((rulepos < rule->length) ? rule->data[rulepos++] : TOKEN_CPAREN)) != TOKEN_CPAREN) {
-		uint nexttoken = (rulepos < rule->length) ? rule->data[rulepos] : TOKEN_CPAREN;
+	while ((token = ((rulepos < rule->_length) ? rule->_data[rulepos++] : TOKEN_CPAREN)) != TOKEN_CPAREN) {
+		uint nexttoken = (rulepos < rule->_length) ? rule->_data[rulepos] : TOKEN_CPAREN;
 		if (token == TOKEN_OPAREN) {
-			int wpold;
-			int writepos2 = _vbpt_pareno(nodes, pos, wpold = writepos);
+			int writepos2 = _vbpt_pareno(nodes, pos, writepos);
 			rulepos = _vbpt_write_subexpression(nodes, pos, rule, rulepos, writepos2);
-			nexttoken = (rulepos < rule->length) ? rule->data[rulepos] : TOKEN_CPAREN;
+			nexttoken = (rulepos < rule->_length) ? rule->_data[rulepos] : TOKEN_CPAREN;
 			if (nexttoken != TOKEN_CPAREN)
-				writepos = _vbpt_parenc(nodes, pos, wpold);
+				writepos = _vbpt_parenc(nodes, pos, writepos);
 		} else if (token & TOKEN_STUFFING_WORD) {
 			if (nexttoken == TOKEN_CPAREN)
 				writepos = _vbpt_terminate(nodes, pos, writepos, token & 0xffff);
@@ -478,23 +491,23 @@ static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, parse_r
 int Vocabulary::parseGNF(const ResultWordList &words, bool verbose) {
 	Console *con = ((SciEngine *)g_engine)->getSciDebugger();
 	// Get the start rules:
-	parse_rule_list_t *work = _vocab_clone_rule_list_by_id(_parserRules, _parserBranches[0].data[1]);
-	parse_rule_list_t *results = NULL;
-	int word = 0;
-	const int words_nr = words.size();
+	ParseRuleList *work = _vocab_clone_rule_list_by_id(_parserRules, _parserBranches[0].data[1]);
+	ParseRuleList *results = NULL;
+	uint word = 0;
+	const uint words_nr = words.size();
 	ResultWordList::const_iterator word_iter = words.begin();
 
 	for (word_iter = words.begin(); word_iter != words.end(); ++word_iter, ++word) {
-		parse_rule_list_t *new_work = NULL;
-		parse_rule_list_t *reduced_rules = NULL;
-		parse_rule_list_t *seeker, *subseeker;
+		ParseRuleList *new_work = NULL;
+		ParseRuleList *reduced_rules = NULL;
+		ParseRuleList *seeker, *subseeker;
 
 		if (verbose)
 			con->DebugPrintf("Adding word %d...\n", word);
 
 		seeker = work;
 		while (seeker) {
-			if (seeker->rule->specials_nr <= (words_nr - word))
+			if (seeker->rule->_numSpecials <= (words_nr - word))
 				reduced_rules = _vocab_add_rule(reduced_rules, _vsatisfy_rule(seeker->rule, *word_iter));
 
 			seeker = seeker->next;
@@ -513,12 +526,12 @@ int Vocabulary::parseGNF(const ResultWordList &words, bool verbose) {
 			seeker = reduced_rules;
 
 			while (seeker) {
-				if (seeker->rule->specials_nr) {
-					int my_id = seeker->rule->data[seeker->rule->first_special];
+				if (seeker->rule->_numSpecials) {
+					int my_id = seeker->rule->_data[seeker->rule->_firstSpecial];
 
 					subseeker = _parserRules;
 					while (subseeker) {
-						if (subseeker->rule->id == my_id)
+						if (subseeker->rule->_id == my_id)
 							new_work = _vocab_add_rule(new_work, _vinsert(seeker->rule, subseeker->rule));
 
 						subseeker = subseeker->next;

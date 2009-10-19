@@ -112,10 +112,7 @@ Vocabulary::Vocabulary(ResourceManager *resMan) : _resMan(resMan) {
 
 Vocabulary::~Vocabulary() {
 	freeRuleList(_parserRules);
-	_parserWords.clear();
-	_parserBranches.clear();
 	freeSuffixes();
-	_synonyms.clear();
 }
 
 bool Vocabulary::loadParserWords() {
