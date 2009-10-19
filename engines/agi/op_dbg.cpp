@@ -28,11 +28,8 @@
 
 namespace Agi {
 
-static AgiEngine *g_agi;
-#define game g_agi->_game
-
-#define ip	(game.logics[lognum].cIP)
-#define code	(game.logics[lognum].data)
+#define ip	(_game.logics[lognum].cIP)
+#define code	(_game.logics[lognum].data)
 
 #ifdef _L
 #undef _L
@@ -274,7 +271,6 @@ struct AgiLogicnames logicNamesCmd[] = {
 };
 
 void AgiEngine::debugConsole(int lognum, int mode, const char *str) {
-	g_agi = this;
 	AgiLogicnames *x;
 	uint8 a, c, z;
 

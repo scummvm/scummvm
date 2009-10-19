@@ -23,7 +23,6 @@
  *
  */
 
-
 #include "base/version.h"
 
 #include "agi/agi.h"
@@ -46,7 +45,6 @@ namespace Agi {
 #define game g_agi->_game
 #define g_sprites g_agi->_sprites
 #define g_sound g_agi->_sound
-#define g_text g_agi->_text
 #define g_gfx g_agi->_gfx
 #define g_picture g_agi->_picture
 
@@ -55,12 +53,11 @@ namespace Agi {
 #define vt_v game.viewTable[game.vars[p0]]
 
 static struct AgiLogic *curLogic;
-static AgiEngine *g_agi;
 
 int timerHack;			// Workaround for timer loop in MH1
 
 #define _v game.vars
-#define cmd(x) static void cmd_##x (uint8 *p)
+#define cmd(x) static void cmd_##x (AgiEngine *g_agi, uint8 *p)
 
 cmd(increment) {
 	if (_v[p0] != 0xff)
@@ -622,7 +619,7 @@ cmd(set_simple) {
 
 		// Show the picture. Similar to cmd(show_pic).
 		g_agi->setflag(fOutputMode, false);
-		cmd_close_window(NULL);
+		cmd_close_window(g_agi, NULL);
 		g_picture->showPic();
 		game.pictureShown = 1;
 
@@ -747,7 +744,7 @@ cmd(call) {
 }
 
 cmd(call_f) {
-	cmd_call(&_v[p0]);
+	cmd_call(g_agi, &_v[p0]);
 }
 
 cmd(draw_pic) {
@@ -781,7 +778,7 @@ cmd(show_pic) {
 	debugC(6, kDebugLevelScripts, "=== show pic ===");
 
 	g_agi->setflag(fOutputMode, false);
-	cmd_close_window(NULL);
+	cmd_close_window(g_agi, NULL);
 	g_picture->showPic();
 	game.pictureShown = 1;
 
@@ -1586,7 +1583,7 @@ cmd(shake_screen) {
 	game.inputEnabled = originalValue;
 }
 
-static void (*agiCommand[183])(uint8 *) = {
+static void (*agiCommand[183])(AgiEngine *, uint8 *) = {
 	NULL,			// 0x00
 	cmd_increment,
 	cmd_decrement,
@@ -1780,7 +1777,6 @@ int AgiEngine::runLogic(int n) {
 	uint8 op = 0;
 	uint8 p[CMD_BSIZE] = { 0 };
 	uint8 *code = NULL;
-	g_agi = this;
 	int num = 0;
 	ScriptPos sp;
 
@@ -1795,7 +1791,7 @@ int AgiEngine::runLogic(int n) {
 	}
 
 	_game.lognum = n;
-	curLogic = &_game.logics[game.lognum];
+	curLogic = &_game.logics[_game.lognum];
 
 	code = curLogic->data;
 	curLogic->cIP = curLogic->sIP;
@@ -1844,7 +1840,7 @@ int AgiEngine::runLogic(int n) {
 			memset(p + num, 0, CMD_BSIZE - num);
 
 			debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
-			agiCommand[op](p);
+			agiCommand[op](this, p);
 			ip += num;
 		}
 
@@ -1859,9 +1855,8 @@ int AgiEngine::runLogic(int n) {
 
 void AgiEngine::executeAgiCommand(uint8 op, uint8 *p) {
 	debugC(2, kDebugLevelScripts, "%s(%d %d %d)", logicNamesCmd[op].name, p[0], p[1], p[2]);
-	g_agi = this;
 
-	agiCommand[op] (p);
+	agiCommand[op] (this, p);
 }
 
 } // End of namespace Agi
