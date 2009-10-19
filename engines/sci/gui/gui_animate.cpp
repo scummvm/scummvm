@@ -66,8 +66,8 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 
 	while (curNode) {
 		curObject = curNode->value;
-		// Check if the game has a fastCast object
-		// This check is needed so that animation cels won't appear within speech boxes
+		// Check if the game has a fastCast object set
+		//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
 		reg_t global84 = _s->script_000->_localsBlock->_locals[84];
 
 		if (!global84.isNull())
