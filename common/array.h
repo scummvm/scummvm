@@ -199,6 +199,21 @@ public:
 		return (_size == 0);
 	}
 
+	bool operator==(const Array<T> &other) const {
+		if (this == &other)
+			return true;
+		if (_size != other._size)
+			return false;
+		for (uint i = 0; i < _size; ++i) {
+			if (_storage[i] != other._storage[i])
+				return false;
+		}
+		return true;
+	}
+	bool operator!=(const Array<T> &other) const {
+		return !(*this == other);
+	}
+
 
 	iterator		begin() {
 		return _storage;

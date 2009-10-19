@@ -164,6 +164,23 @@ class ArrayTestSuite : public CxxTest::TestSuite
 		TS_ASSERT_EQUALS(array2.size(), (unsigned int)3);
 	}
 
+	void test_equals() {
+		Common::Array<int> array1;
+
+		// Some data for both
+		array1.push_back(-3);
+		array1.push_back(5);
+		array1.push_back(9);
+
+		Common::Array<int> array2(array1);
+
+		TS_ASSERT(array1 == array2);
+		array1.push_back(42);
+		TS_ASSERT(array1 != array2);
+		array2.push_back(42);
+		TS_ASSERT(array1 == array2);
+	}
+
 	void test_array_constructor() {
 		const int array1[] = { -3, 5, 9 };
 
