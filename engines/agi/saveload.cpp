@@ -874,10 +874,7 @@ int AgiEngine::saveGameDialog() {
 }
 
 int AgiEngine::saveGameSimple() {
-	char fileName[MAXPATHLEN];
-
-	sprintf(fileName, "%s", getSavegameFilename(0));
-	int result = saveGame(fileName, "Default savegame");
+	int result = saveGame(getSavegameFilename(0), "Default savegame");
 	if (result != errOK)
 		messageBox("Error saving game.");
 	return result;
@@ -989,7 +986,7 @@ void AgiEngine::checkQuickLoad() {
 	if (ConfMan.hasKey("save_slot")) {
 		char saveNameBuffer[256];
 
-		snprintf (saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
+		snprintf(saveNameBuffer, 256, "%s.%03d", _targetName.c_str(), ConfMan.getInt("save_slot"));
 
 		_sprites->eraseBoth();
 		_sound->stopSound();
@@ -1002,7 +999,7 @@ void AgiEngine::checkQuickLoad() {
 }
 
 Common::Error AgiEngine::loadGameState(int slot) {
-	static char saveLoadSlot[12];
+	char saveLoadSlot[12];
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
 
 	_sprites->eraseBoth();
@@ -1018,7 +1015,7 @@ Common::Error AgiEngine::loadGameState(int slot) {
 }
 
 Common::Error AgiEngine::saveGameState(int slot, const char *desc) {
-	static char saveLoadSlot[12];
+	char saveLoadSlot[12];
 	sprintf(saveLoadSlot, "%s.%.3d", _targetName.c_str(), slot);
 	if (saveGame(saveLoadSlot, desc) == errOK)
 		return Common::kNoError;
