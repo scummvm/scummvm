@@ -464,7 +464,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 				case PIC_OPX_EGA_MONO4:
 					break;
 				case PIC_OPX_EGA_EMBEDDED_VIEW:
-					vectorGetAbsCoords(data, curPos, x, y);
+					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
@@ -493,7 +493,7 @@ void SciGuiPicture::drawVectorData(byte *data, int dataSize) {
 					_palette->set(&palette, 2);
 					break;
 				case PIC_OPX_VGA_EMBEDDED_VIEW: // draw cel
-					vectorGetAbsCoords(data, curPos, x, y);
+					vectorGetAbsCoordsNoMirror(data, curPos, x, y);
 					size = READ_LE_UINT16(data + curPos); curPos += 2;
 					_priority = pic_priority; // set global priority so the cel gets drawn using current priority as well
 					drawCelData(data, _resource->size, curPos, curPos + 8, 0, x, y);
@@ -537,6 +537,12 @@ void SciGuiPicture::vectorGetAbsCoords(byte *data, int &curPos, int16 &x, int16 
 	x = data[curPos++] + ((byte & 0xF0) << 4);
 	y = data[curPos++] + ((byte & 0x0F) << 8);
 	if (_mirroredFlag) x = 319 - x;
+}
+
+void SciGuiPicture::vectorGetAbsCoordsNoMirror(byte *data, int &curPos, int16 &x, int16 &y) {
+	byte byte = data[curPos++];
+	x = data[curPos++] + ((byte & 0xF0) << 4);
+	y = data[curPos++] + ((byte & 0x0F) << 8);
 }
 
 void SciGuiPicture::vectorGetRelCoords(byte *data, int &curPos, int16 &x, int16 &y) {
