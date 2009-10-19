@@ -30,6 +30,7 @@
 
 #include "sci/vocabulary.h"
 #include "sci/console.h"
+#include "common/array.h"
 
 namespace Sci {
 
@@ -47,8 +48,19 @@ struct ParseRule {
 	int _id; /**< non-terminal ID */
 	uint _firstSpecial; /**< first terminal or non-terminal */
 	uint _numSpecials; /**< number of terminals and non-terminals */
-	uint _length;
-	int _data[1]; /**< actual data (size 1 to avoid compiler warnings) */
+	Common::Array<int> _data;	/**< actual data */
+
+	~ParseRule() {
+		--_allocd_rules;
+	}
+
+	// FIXME remove this one again?
+	bool operator==(const ParseRule &other) const {
+		return _id == other._id &&
+			_firstSpecial == other._firstSpecial &&
+			_numSpecials == other._numSpecials &&
+			_data == other._data;
+	}
 };
 
 
@@ -56,6 +68,18 @@ struct ParseRuleList {
 	int terminal; /**< Terminal character this rule matches against or 0 for a non-terminal rule */
 	ParseRule *rule;
 	ParseRuleList *next;
+
+	void print() const;
+
+	ParseRuleList(ParseRule *r) : rule(r), next(0) {
+		int term = rule->_data[rule->_firstSpecial];
+		terminal = ((term & TOKEN_TERMINAL) ? term : 0);
+	}
+
+	~ParseRuleList() {
+		delete rule;
+		delete next;
+	}
 };
 
 
@@ -69,10 +93,10 @@ static void vocab_print_rule(ParseRule *rule) {
 
 	printf("[%03x] -> ", rule->_id);
 
-	if (!rule->_length)
+	if (rule->_data.empty())
 		printf("e");
 
-	for (uint i = 0; i < rule->_length; i++) {
+	for (uint i = 0; i < rule->_data.size(); i++) {
 		uint token = rule->_data[i];
 
 		if (token == TOKEN_OPAREN) {
@@ -110,55 +134,42 @@ static void vocab_print_rule(ParseRule *rule) {
 	printf(" [%d specials]", rule->_numSpecials);
 }
 
-static void _vfree(ParseRule *rule) {
-	free(rule);
-	--_allocd_rules;
-	rule = NULL;
-}
-
 static ParseRule *_vdup(ParseRule *a) {
-	ParseRule *rule = (ParseRule*)malloc(sizeof(int) * (a->_length + 4));
-
-	rule->_id = a->_id;
-	rule->_length = a->_length;
-	rule->_numSpecials = a->_numSpecials;
-	rule->_firstSpecial = a->_firstSpecial;
 	++_allocd_rules;
-
-	memcpy(rule->_data, a->_data, sizeof(int) * a->_length);
-
-	return rule;
+	return new ParseRule(*a);
 }
 
 static ParseRule *_vinsert(ParseRule *turkey, ParseRule *stuffing) {
 	uint firstnt = turkey->_firstSpecial;
-	ParseRule *rule;
 
-	while ((firstnt < turkey->_length) && (turkey->_data[firstnt] & TOKEN_NON_NT))
+	// Search for first TOKEN_NON_NT in 'turkey'
+	while ((firstnt < turkey->_data.size()) && (turkey->_data[firstnt] & TOKEN_NON_NT))
 		firstnt++;
 
-	if ((firstnt == turkey->_length) || (turkey->_data[firstnt] != stuffing->_id))
+	// If no TOKEN_NON_NT found, or if it doesn't match the id of 'stuffing', abort.
+	if ((firstnt == turkey->_data.size()) || (turkey->_data[firstnt] != stuffing->_id))
 		return NULL;
 
-	rule = (ParseRule*)malloc(sizeof(int) * (turkey->_length - 1 + stuffing->_length + 4));
-	rule->_id = turkey->_id;
-	rule->_numSpecials = turkey->_numSpecials + stuffing->_numSpecials - 1;
-	rule->_firstSpecial = firstnt + stuffing->_firstSpecial;
-	rule->_length = turkey->_length - 1 + stuffing->_length;
+	// Create a new rule as a copy of 'turkey', where the token firstnt has been substituted
+	// by the rule 'stuffing'.
 	++_allocd_rules;
 
-	if (firstnt > 0)
-		memcpy(rule->_data, turkey->_data, sizeof(int) * firstnt);
+	ParseRule *rule = new ParseRule(*turkey);
+	rule->_numSpecials += stuffing->_numSpecials - 1;
+	rule->_firstSpecial = firstnt + stuffing->_firstSpecial;
+	rule->_data.resize(turkey->_data.size() - 1 + stuffing->_data.size());
 
-	memcpy(&(rule->_data[firstnt]), stuffing->_data, sizeof(int) * stuffing->_length);
-	if (firstnt < turkey->_length - 1)
-		memcpy(&(rule->_data[firstnt + stuffing->_length]), &(turkey->_data[firstnt + 1]), sizeof(int) * (turkey->_length - firstnt - 1));
+	// Replace rule->_data[firstnt] by all of stuffing->_data
+	Common::copy(stuffing->_data.begin(), stuffing->_data.end(), rule->_data.begin() + firstnt);
+
+	if (firstnt < turkey->_data.size() - 1)
+		Common::copy(turkey->_data.begin() + firstnt + 1, turkey->_data.end(),
+				rule->_data.begin() + firstnt + stuffing->_data.size());
 
 	return rule;
 }
 
 static ParseRule *_vbuild_rule(const parse_tree_branch_t *branch) {
-	ParseRule *rule;
 	int tokens = 0, tokenpos = 0, i;
 
 	while (tokenpos < 10 && branch->data[tokenpos]) {
@@ -173,12 +184,12 @@ static ParseRule *_vbuild_rule(const parse_tree_branch_t *branch) {
 			return NULL; // invalid
 	}
 
-	rule = (ParseRule*)malloc(sizeof(int) * (4 + tokens));
+	ParseRule *rule = new ParseRule();
 
 	++_allocd_rules;
 	rule->_id = branch->id;
 	rule->_numSpecials = tokenpos >> 1;
-	rule->_length = tokens;
+	rule->_data.resize(tokens);
 	rule->_firstSpecial = 0;
 
 	tokens = 0;
@@ -218,24 +229,20 @@ static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWord &input) {
 
 	if (((dep & TOKEN_TERMINAL_CLASS) && ((dep & 0xffff) & input._class)) ||
 			((dep & TOKEN_TERMINAL_GROUP) && ((dep & 0xffff) & input._group))) {
-		ParseRule *retval = (ParseRule*)malloc(sizeof(int) * (4 + rule->_length));
+		ParseRule *retval = new ParseRule(*rule);
 		++_allocd_rules;
-		retval->_id = rule->_id;
-		retval->_numSpecials = rule->_numSpecials - 1;
-		retval->_length = rule->_length;
-		memcpy(retval->_data, rule->_data, sizeof(int) * retval->_length);
 		retval->_data[rule->_firstSpecial] = TOKEN_STUFFING_WORD | input._group;
+		retval->_numSpecials--;
 		retval->_firstSpecial = 0;
 
 		if (retval->_numSpecials) { // find first special, if it exists
-			int tmp;
-			uint i = rule->_firstSpecial;
-
-			while ((i < rule->_length)&& ((tmp = retval->_data[i]) & TOKEN_NON_NT) && !(tmp & TOKEN_TERMINAL))
-				++i;
-
-			if (i < rule->_length)
-				retval->_firstSpecial = i;
+			for (uint i = rule->_firstSpecial; i < retval->_data.size(); ++i) {
+				int tmp = retval->_data[i];
+				if (!(tmp & TOKEN_NON_NT) || (tmp & TOKEN_TERMINAL)) {
+					retval->_firstSpecial = i;
+					break;
+				}
+			}
 		}
 
 		return retval;
@@ -244,38 +251,20 @@ static ParseRule *_vsatisfy_rule(ParseRule *rule, const ResultWord &input) {
 }
 
 void Vocabulary::freeRuleList(ParseRuleList *list) {
-	if (list) {
-		_vfree(list->rule);
-		freeRuleList(list->next); // Yep, this is slow and memory-intensive.
-		free(list);
-	}
-}
-
-static int _rules_equal_p(ParseRule *r1, ParseRule *r2) {
-	if ((r1->_id != r2->_id) || (r1->_length != r2->_length) || (r1->_firstSpecial != r2->_firstSpecial))
-		return 0;
-
-	return !(memcmp(r1->_data, r2->_data, sizeof(int) * r1->_length));
+	delete list;
 }
 
 static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
-	ParseRuleList *new_elem;
 	int term;
 
 	if (!rule)
 		return list;
 
-	new_elem = (ParseRuleList*)malloc(sizeof(ParseRuleList));
-	term = rule->_data[rule->_firstSpecial];
+	ParseRuleList *new_elem = new ParseRuleList(rule);
 
-	new_elem->rule = rule;
-	new_elem->next = NULL;
-	new_elem->terminal = term = ((term & TOKEN_TERMINAL) ? term : 0);
-
-	if (!list)
-		return new_elem;
-	else {
-/*		if (term < list->terminal) {
+	if (list) {
+/*		int term = new_elem->terminal;
+		if (term < list->terminal) {
 			new_elem->next = list;
 			return new_elem;
 		} else {*/
@@ -283,9 +272,9 @@ static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
 
 		while (seeker->next/* && seeker->next->terminal <= term*/) {
 			if (seeker->next->terminal == term) {
-				if (_rules_equal_p(seeker->next->rule, rule)) {
-					_vfree(rule);
-					free(new_elem);
+				if (*(seeker->next->rule) == *rule) {
+					delete rule;
+					delete new_elem;
 					return list; // No duplicate rules
 				}
 			}
@@ -295,22 +284,22 @@ static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
 		new_elem->next = seeker->next;
 		seeker->next = new_elem;
 		return list;
+	} else {
+		return new_elem;
 	}
 }
 
-static void _vprl(ParseRuleList *list, int pos) {
-	if (list) {
+void ParseRuleList::print() const {
+	const ParseRuleList *list = this;
+	int pos = 0;
+	while (list) {
 		printf("R%03d: ", pos);
 		vocab_print_rule(list->rule);
 		printf("\n");
-		_vprl(list->next, pos + 1);
-	} else {
-		printf("%d rules total.\n", pos);
+		list = list->next;
+		pos++;
 	}
-}
-
-void vocab_print_rule_list(ParseRuleList *list) {
-	_vprl(list, 0);
+	printf("%d rules total.\n", pos);
 }
 
 static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
@@ -325,8 +314,8 @@ static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
 static void _vocab_free_empty_rule_list(ParseRuleList *list) {
 	if (list->next)
 		_vocab_free_empty_rule_list(list->next);
-
-	free(list);
+	list->next = 0;
+	delete list;
 }
 
 static ParseRuleList *_vocab_merge_rule_lists(ParseRuleList *l1, ParseRuleList *l2) {
@@ -414,7 +403,7 @@ ParseRuleList *Vocabulary::buildGNF(bool verbose) {
 
 	if (verbose) {
 		con->DebugPrintf("\nGNF rules:\n");
-		vocab_print_rule_list(tlist);
+		tlist->print();
 		con->DebugPrintf("%d allocd rules\n", _allocd_rules);
 		con->DebugPrintf("Freeing rule list...\n");
 		freeRuleList(tlist);
@@ -464,12 +453,12 @@ static int _vbpt_terminate(parse_tree_node_t *nodes, int *pos, int base, int val
 static int _vbpt_write_subexpression(parse_tree_node_t *nodes, int *pos, ParseRule *rule, uint rulepos, int writepos) {
 	uint token;
 
-	while ((token = ((rulepos < rule->_length) ? rule->_data[rulepos++] : TOKEN_CPAREN)) != TOKEN_CPAREN) {
-		uint nexttoken = (rulepos < rule->_length) ? rule->_data[rulepos] : TOKEN_CPAREN;
+	while ((token = ((rulepos < rule->_data.size()) ? rule->_data[rulepos++] : TOKEN_CPAREN)) != TOKEN_CPAREN) {
+		uint nexttoken = (rulepos < rule->_data.size()) ? rule->_data[rulepos] : TOKEN_CPAREN;
 		if (token == TOKEN_OPAREN) {
 			int writepos2 = _vbpt_pareno(nodes, pos, writepos);
 			rulepos = _vbpt_write_subexpression(nodes, pos, rule, rulepos, writepos2);
-			nexttoken = (rulepos < rule->_length) ? rule->_data[rulepos] : TOKEN_CPAREN;
+			nexttoken = (rulepos < rule->_data.size()) ? rule->_data[rulepos] : TOKEN_CPAREN;
 			if (nexttoken != TOKEN_CPAREN)
 				writepos = _vbpt_parenc(nodes, pos, writepos);
 		} else if (token & TOKEN_STUFFING_WORD) {
@@ -558,7 +547,7 @@ int Vocabulary::parseGNF(const ResultWordList &words, bool verbose) {
 
 	if (verbose) {
 		con->DebugPrintf("All results (excluding the surrounding '(141 %03x' and ')'):\n", _parserBranches[0].id);
-		vocab_print_rule_list(results);
+		results->print();
 		con->DebugPrintf("\n");
 	}
 
