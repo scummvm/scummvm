@@ -68,10 +68,10 @@ endif
 ifdef ENABLE_KYRA
 DEFINES += -DENABLE_KYRA=$(ENABLE_KYRA)
 MODULES += engines/kyra
-endif
 
 ifdef ENABLE_LOL
 DEFINES += -DENABLE_LOL
+endif
 endif
 
 ifdef ENABLE_LURE
