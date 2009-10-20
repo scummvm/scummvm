@@ -462,17 +462,15 @@ int32 Router::smoothestPath() {
 
 		assert(options);
 
-		i = 0;
-		steps = 0;
-
-		do {
+		for (i = 0; i < 4; ++i) {
 			int32 opt = 1 << turns[i];
-			if (options & opt)
-				steps = smoothCheck(turns[i], p, dirS, dirD);
-			i++;
-		} while (steps == 0 && i < 4);
+			if (options & opt) {
+				smoothCheck(steps, turns[i], p, dirS, dirD);
+				break;
+			}
+		}
 
-		assert(steps);
+		assert(i < 4);
 
 		// route.X route.Y route.dir and bestTurns start at far end
 	}
@@ -485,7 +483,7 @@ int32 Router::smoothestPath() {
 	return 1;
 }
 
-int32 Router::smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
+void Router::smoothCheck(int32 &k, int32 best, int32 p, int32 dirS, int32 dirD) {
 	/*********************************************************************
 	 * Slip sliding away
 	 * This path checker checks to see if a walk that exactly follows the
@@ -494,9 +492,6 @@ int32 Router::smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
 	 * No longer checks the data it only creates the smoothPath array JPS
 	 *********************************************************************/
 
-	// FIXME: Using 'static' vars in a method is evil -- they should almost
-	// always be turned into member variables instead.
-	static int32 k;
 	int32 dsx, dsy;
 	int32 ddx, ddy;
 	int32 ss0, ss1, ss2;
@@ -628,8 +623,6 @@ int32 Router::smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD) {
 
 		break;
 	}
-
-	return k;
 }
 
 void Router::slidyPath() {
@@ -1364,7 +1357,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	 * returns 0 if solid route not found
 	 *********************************************************************/
 
-	bool leftLeg;
+	int32 left;
 	int32 turnDir;
 	int32 scale;
 	int32 step;

@@ -182,7 +182,7 @@ private:
 	int32 smoothestPath();
 	void slidyPath();
 
-	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
+	void smoothCheck(int32 &steps, int32 best, int32 p, int32 dirS, int32 dirD);
 
 	bool addSlowInFrames(WalkData *walkAnim);
 	void addSlowOutFrames(WalkData *walkAnim);
