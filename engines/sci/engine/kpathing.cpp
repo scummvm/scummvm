@@ -1496,12 +1496,15 @@ static int intersecting_polygons(PathfindingState *s) {
 	return 0;
 }
 
+/**
+ * Computes a shortest path from vertex_start to vertex_end. The caller can
+ * construct the resulting path by following the path_prev links from
+ * vertex_end back to vertex_start. If no path exists vertex_end->path_prev
+ * will be NULL
+ * Parameters: (PathfindingState *) s: The pathfinding state
+ *             (bool) avoidScreenEdge: Avoid screen edges (default behavior)
+ */
 static void dijkstra(PathfindingState *s, bool avoidScreenEdge) {
-	// Computes a shortest path from vertex_start to vertex_end. The caller can
-	// construct the resulting path by following the path_prev links from
-	// vertex_end back to vertex_start. If no path exists vertex_end->path_prev
-	// will be NULL
-	// Parameters: (PathfindingState *) s: The pathfinding state
 	Polygon *polygon;
 
 	// Vertices of which the shortest path is known
@@ -1712,16 +1715,8 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			return output;
 		}
 
-		// Early pathfinding-enabled games exclude edges on screen borders.
-		// FIXME: Enable this selectively for those games that need it.
-		bool avoidScreenEdge = false;
-
-		// This is certainly needed for LSL5 room 640, otherwise Patti walks off-screen
-		// and reenters through the wall
-		if (s->_gameName == "lsl5" && s->currentRoomNumber() == 640)
-			avoidScreenEdge = true;
-
-		dijkstra(p, avoidScreenEdge);
+		// Apply Dijkstra, avoiding screen edges
+		dijkstra(p, true);
 
 		output = output_path(p, s);
 		delete p;
