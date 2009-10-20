@@ -516,11 +516,9 @@ void AgiEngine::printStatus(const char *message, ...) {
 	printText(x, 0, 0, _game.lineStatus, 40, STATUS_FG, STATUS_BG);
 }
 
-char *AgiEngine::safeStrcat(char *s, const char *t) {
+static void safeStrcat(Common::String p, const char *t) {
 	if (t != NULL)
-		strcat(s, t);
-
-	return s;
+		p += t;
 }
 
 /**
@@ -530,20 +528,15 @@ char *AgiEngine::safeStrcat(char *s, const char *t) {
  * @param s  string containing the format specifier
  * @param n  logic number
  */
-#define MAX_LEN 768
 char *AgiEngine::agiSprintf(const char *s) {
-	static char y[MAX_LEN];
-	char x[MAX_LEN];
-	char z[16], *p;
+	static char agiSprintf_buf[768];
+	Common::String p;
+	char z[16];
 
 	debugC(3, kDebugLevelText, "logic %d, '%s'", _game.lognum, s);
-	p = x;
 
-	for (*p = 0; *s;) {
+	while (*s) {
 		switch (*s) {
-		case '\\':
-			s++;
-			goto literal;
 		case '%':
 			s++;
 			switch (*s++) {
@@ -591,27 +584,27 @@ char *AgiEngine::agiSprintf(const char *s) {
 			case 'm':
 				i = strtoul(s, NULL, 10) - 1;
 				if (_game.logics[_game.lognum].numTexts > i)
-					safeStrcat(p, agiSprintf(_game. logics[_game.lognum].texts[i]));
+					safeStrcat(p, agiSprintf(_game.logics[_game.lognum].texts[i]));
 				break;
 			}
 
 			while (*s >= '0' && *s <= '9')
 				s++;
-			while (*p)
-				p++;
 			break;
 
+		case '\\':
+			s++;
+			// FALL THROUGH
+
 		default:
-literal:
-			assert(p < x + MAX_LEN);
-			*p++ = *s++;
-			*p = 0;
+			p += *s++;
 			break;
 		}
 	}
 
-	strcpy(y, x);
-	return y;
+	assert(sizeof(agiSprintf_buf) < p.size());
+	strcpy(agiSprintf_buf, p.c_str());
+	return agiSprintf_buf;
 }
 
 /**

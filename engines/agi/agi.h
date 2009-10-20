@@ -1000,7 +1000,6 @@ private:
 	void printText2(int l, const char *msg, int foff, int xoff, int yoff, int len, int fg, int bg, bool checkerboard = false);
 	void blitTextbox(const char *p, int y, int x, int len);
 	void eraseTextbox();
-	char *safeStrcat(char *s, const char *t);
 	void loadDict(void);
 	bool matchWord(void);
 
