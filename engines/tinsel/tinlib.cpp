@@ -33,6 +33,7 @@
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
+#include "tinsel/bmv.h"
 #include "tinsel/config.h"
 #include "tinsel/coroutine.h"
 #include "tinsel/cursor.h"
@@ -89,11 +90,6 @@ int clRunMode = 0;
 
 // in BG.CPP
 extern void ChangePalette(SCNHANDLE hPal);
-
-// in BMV.CPP
-void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape);
-bool MoviePlaying(void);
-void AbortMovie(void);
 
 // in PDISPLAY.CPP
 extern void EnableTags(void);

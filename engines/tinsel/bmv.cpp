@@ -201,8 +201,6 @@ static int movieTick;
 static int startTick;
 static uint32 nextMovieTime = 0;
 
-static int nowTick;
-
 static uint16 Au_Prev1 = 0;
 static uint16 Au_Prev2 = 0;
 static byte *ScreenBeg;
@@ -497,7 +495,7 @@ static void MovieAudio(int audioOffset, int blobs) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-void FettleMovieText(void) {
+static void FettleMovieText(void) {
 	int i;
 
 	bIsText = false;
@@ -519,7 +517,7 @@ void FettleMovieText(void) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-void BmvDrawText(bool bDraw) {
+static void BmvDrawText(bool bDraw) {
 	int	w, h, x, y;
 
 	for (int i = 0; i < 2; i++) {
@@ -555,7 +553,7 @@ void BmvDrawText(bool bDraw) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration) {
+static void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration) {
 	SCNHANDLE hFont;
 	int	index;
 
@@ -1251,21 +1249,6 @@ uint32 NextMovieTime(void) {
 
 void AbortMovie(void) {
 	bAbort = true;
-}
-
-void SlowMovieDown(void) {
-	bigProblemCount = 0;
-
-	if (currentFrame < (nowTick-startTick)/2 && bMovieOn) {
-		startTick = nowTick - 2*currentFrame;
-	} else
-		startTick += 2;
-}
-
-void SpeedMovieUp(void) {
-	if (!bigProblemCount) {
-		startTick -= 2;
-	}
 }
 
 } // End of namespace Tinsel

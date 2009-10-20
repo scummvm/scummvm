@@ -45,6 +45,7 @@
 
 #include "tinsel/actors.h"
 #include "tinsel/background.h"
+#include "tinsel/bmv.h"
 #include "tinsel/config.h"
 #include "tinsel/cursor.h"
 #include "tinsel/drives.h"
@@ -75,14 +76,6 @@ namespace Tinsel {
 // In BG.CPP
 extern void SetDoFadeIn(bool tf);
 extern void DropBackground(void);
-
-// In BMV.CPP
-extern void FettleBMV(void);
-extern bool MoviePlaying(void);
-extern void CopyMovieToScreen(void);
-extern void FinishBMV();
-extern int32 MovieAudioLag();
-extern uint32 NextMovieTime();
 
 // In CURSOR.CPP
 extern void CursorProcess(CORO_PARAM, const void *);
