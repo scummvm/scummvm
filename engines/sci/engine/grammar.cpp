@@ -51,6 +51,7 @@ struct ParseRule {
 	Common::Array<int> _data;	/**< actual data */
 
 	~ParseRule() {
+		assert(_allocd_rules > 0);
 		--_allocd_rules;
 	}
 
@@ -315,6 +316,7 @@ static void _vocab_free_empty_rule_list(ParseRuleList *list) {
 	if (list->next)
 		_vocab_free_empty_rule_list(list->next);
 	list->next = 0;
+	list->rule = 0;
 	delete list;
 }
 
