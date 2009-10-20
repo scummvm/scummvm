@@ -857,9 +857,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	 * produce a module list from the line data
 	 *********************************************************************/
 
-	// FIXME: Using 'static' vars in a method is evil -- they should almost
-	// always be turned into member variables instead.
-	static int32 left = 0;
+	int32 left;
 	int32 p;
 	int32 lastDir;
 	int32 lastRealDir;
@@ -991,7 +989,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	} else {
 		// start the walk on the right leg (ie. at beginning of the
 		// second step of the walk cycle)
-		left = _framesPerStep;
+		left = 1;
 	}
 
 	_lastCount = _stepCount;
@@ -1018,12 +1016,9 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		_currentDir = _modularPath[p].dir;
 
 		if (_currentDir < NO_DIRECTIONS) {
-			module = _currentDir * _framesPerStep * 2 + left;
+			module = _currentDir * _framesPerStep * 2 + left * _framesPerStep;
 
-			if (left == 0)
-				left = _framesPerStep;
-			else
-				left = 0;
+			left = !left;
 
 			moduleEnd = module + _framesPerStep;
 			step = 0;
@@ -1070,20 +1065,14 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 							// the last stop was
 							// closest
 							_stepCount -= _framesPerStep;
-							if (left == 0)
-								left = _framesPerStep;
-							else
-								left = 0;
+							left = !left;
 						}
 					} else {
 						if (3 * ABS(lastErrorX) < ABS(errorX)) {
 							//the last stop was
 							// closest
 							_stepCount -= _framesPerStep;
-							if (left == 0)
-								left = _framesPerStep;
-							else
-								left = 0;
+							left = !left;
 						}
 					}
 				}
@@ -1375,7 +1364,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	 * returns 0 if solid route not found
 	 *********************************************************************/
 
-	int32 left;
+	bool leftLeg;
 	int32 turnDir;
 	int32 scale;
 	int32 step;
@@ -1493,7 +1482,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	} else {
 		// start the walk on the right leg (ie. at beginning of the
 		// second step of the walk cycle)
-		left = _framesPerStep;
+		left = 1;
 	}
 
 	_lastCount = _stepCount;
@@ -1510,12 +1499,9 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 		while (_modularPath[p].num > 0) {
 			_currentDir = _modularPath[p].dir;
 			if (_currentDir < NO_DIRECTIONS) {
-				module = _currentDir * _framesPerStep * 2 + left;
+				module = _currentDir * _framesPerStep * 2 + left * _framesPerStep;
 
-				if (left == 0)
-					left = _framesPerStep;
-				else
-					left = 0;
+				left = !left;
 
 				moduleEnd = module + _framesPerStep;
 				step = 0;
@@ -1545,10 +1531,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 					_modularPath[p].num = 0;
 					_stepCount -= _framesPerStep;
 
-					if (left == 0)
-						left = _framesPerStep;
-					else
-						left = 0;
+					left = !left;
 
 					// Okay this is the end of a section
 
