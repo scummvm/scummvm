@@ -602,7 +602,7 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		case 4: {
 			uint16 fromColor = argv[1].toUint16();
 			uint16 toColor = argv[2].toUint16();
-			uint16 speed = argv[3].toSint16();
+			int16 speed = argv[3].toSint16();
 			s->_gui->paletteAnimate(fromColor, toColor, speed);
 			break;
 		}
