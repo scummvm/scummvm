@@ -255,16 +255,13 @@ void Vocabulary::freeRuleList(ParseRuleList *list) {
 }
 
 static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
-	int term;
-
-	if (!rule)
 		return list;
 
 	ParseRuleList *new_elem = new ParseRuleList(rule);
 
 	if (list) {
-/*		int term = new_elem->terminal;
-		if (term < list->terminal) {
+		const int term = new_elem->terminal;
+/*		if (term < list->terminal) {
 			new_elem->next = list;
 			return new_elem;
 		} else {*/
