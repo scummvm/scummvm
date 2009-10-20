@@ -118,14 +118,10 @@ private:
 
 	int32 megaId;
 
-	/*RouteData _route[O_ROUTE_SIZE];
-	//int32 _routeLength;
-	PathData  _smoothPath[O_ROUTE_SIZE];
-	PathData  _modularPath[O_ROUTE_SIZE];*/
-	RouteData			_route[O_ROUTE_SIZE];
-	PathData			_smoothPath[O_ROUTE_SIZE];
-	PathData			_modularPath[O_ROUTE_SIZE];
-	int32				_routeLength;
+	RouteData	_route[O_ROUTE_SIZE];
+	PathData	_smoothPath[O_ROUTE_SIZE];
+	PathData	_modularPath[O_ROUTE_SIZE];
+	int32		_routeLength;
 
 	int32		_framesPerStep, _framesPerChar;
 	uint8		_nWalkFrames, _nTurnFrames;
@@ -157,7 +153,7 @@ private:
 	void slidyWalkAnimator(WalkData *walkAnim);
 
 	int32 smoothestPath();
-	int32 smoothCheck(int32 best, int32 p, int32 dirS, int32 dirD);
+	void smoothCheck(int32 &steps, int32 best, int32 p, int32 dirS, int32 dirD);
 
 	void solidPath();
 	int32 solidWalkAnimator(WalkData *walkAnim);
