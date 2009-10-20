@@ -269,7 +269,21 @@ void SciGuiPalette::setOnScreen() {
 	_screen->setPalette(&_sysPalette);
 }
 
-void SciGuiPalette::setIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
+void SciGuiPalette::setFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+	uint16 colorNr;
+	for (colorNr = fromColor; colorNr < toColor; colorNr++) {
+		_sysPalette.colors[colorNr].used |= flag;
+	}
+}
+
+void SciGuiPalette::unsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+	uint16 colorNr;
+	for (colorNr = fromColor; colorNr < toColor; colorNr++) {
+		_sysPalette.colors[colorNr].used &= ~flag;
+	}
+}
+
+void SciGuiPalette::setIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
 	memset(&_sysPalette.intensity[0] + fromColor, intensity, toColor - fromColor);
 	if (setPalette)
 		setOnScreen();

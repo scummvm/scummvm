@@ -567,18 +567,26 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 			s->_gui->paletteSet(resourceId, flags);
 		}
 		break;
-	case 2: // Set flag to colors
-		warning("kPalette(2), set flag to colors");
+	case 2: { // Set palette-flag(s)
+		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
+		uint16 flags = argv[3].toUint16();
+		s->_gui->paletteSetFlag(fromColor, toColor, flags);
 		break;
-	case 3:	// Clear flag to colors
-		warning("kPalette(3), clear flag to colors");
+	}
+	case 3:	{ // Remove palette-flag(s)
+		uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+		uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
+		uint16 flags = argv[3].toUint16();
+		s->_gui->paletteUnsetFlag(fromColor, toColor, flags);
 		break;
+	}
 	case 4:	{ // Set palette intensity
 		switch (argc) {
 		case 4:
 		case 5: {
-			uint16 fromColor = CLIP<int>(argv[1].toUint16(), 1, 255);
-			uint16 toColor = CLIP<int>(argv[2].toUint16(), 1, 255);
+			uint16 fromColor = CLIP<uint16>(argv[1].toUint16(), 1, 255);
+			uint16 toColor = CLIP<uint16>(argv[2].toUint16(), 1, 255);
 			uint16 intensity = argv[3].toUint16();
 			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
 
@@ -598,18 +606,12 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 		return make_reg(0, s->_gui->paletteFind(r, g, b));
 	}
 	case 6: { // Animate
-		switch (argc) {
-		case 4: {
-			uint16 fromColor = argv[1].toUint16();
-			uint16 toColor = argv[2].toUint16();
-			int16 speed = argv[3].toSint16();
+		int16 argNr;
+		for (argNr = 1; argNr < argc; argNr += 3) {
+			uint16 fromColor = argv[argNr].toUint16();
+			uint16 toColor = argv[argNr + 1].toUint16();
+			int16 speed = argv[argNr + 2].toSint16();
 			s->_gui->paletteAnimate(fromColor, toColor, speed);
-			break;
-		}
-		case 22:
-
-		default:
-			warning("kPalette(6) called with %d parameters", argc);
 		}
 		break;
 	}

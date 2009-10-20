@@ -1346,6 +1346,12 @@ void SciGui32::paletteSet(GuiResourceId resourceNo, uint16 flags) {
 	//warning("STUB");
 }
 
+void SciGui32::paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+}
+
+void SciGui32::paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+}
+
 int16 SciGui32::paletteFind(uint16 r, uint16 g, uint16 b) {
 	int i, delta, bestindex = -1, bestdelta = 200000;
 

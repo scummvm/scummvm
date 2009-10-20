@@ -101,6 +101,8 @@ public:
 	virtual int16 picNotValid(int16 newPicNotValid);
 
 	virtual void paletteSet(GuiResourceId resourceNo, uint16 flags);
+	virtual void paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
+	virtual void paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	virtual int16 paletteFind(uint16 r, uint16 g, uint16 b);
 	virtual void paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
 	virtual void paletteAnimate(uint16 fromColor, uint16 toColor, int16 speed);

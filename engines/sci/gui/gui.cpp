@@ -461,6 +461,14 @@ void SciGui::paletteSet(GuiResourceId resourceId, uint16 flags) {
    _palette->setFromResource(resourceId, flags);
 }
 
+void SciGui::paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+	_palette->setFlag(fromColor, toColor, flag);
+}
+
+void SciGui::paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag) {
+	_palette->unsetFlag(fromColor, toColor, flag);
+}
+
 int16 SciGui::paletteFind(uint16 r, uint16 g, uint16 b) {
 	return _palette->matchColor(&_palette->_sysPalette, r, g, b) & 0xFF;
 }

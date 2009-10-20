@@ -79,6 +79,8 @@ public:
 	int16 picNotValid(int16 newPicNotValid);
 
 	void paletteSet(GuiResourceId resourceNo, uint16 flags);
+	void paletteSetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
+	void paletteUnsetFlag(uint16 fromColor, uint16 toColor, uint16 flag);
 	int16 paletteFind(uint16 r, uint16 g, uint16 b);
 	void paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity);
 	void paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed);
