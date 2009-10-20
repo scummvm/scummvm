@@ -1516,6 +1516,7 @@ if test -n "$_host"; then
 			;;
 		ps2)
 			# TODO: complete this
+			DEFINES="$DEFINES -DDISABLE_TEXT_CONSOLE -DDISABLE_COMMAND_LINE -DDISABLE_DOSBOX_OPL"
 			_need_memalign=yes
 			_backend="ps2"
 			_build_scalers="no"
