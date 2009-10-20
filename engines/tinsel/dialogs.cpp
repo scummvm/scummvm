@@ -3972,8 +3972,8 @@ void OpenMenu(CONFTYPE menuType) {
 			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox4Flags);
 		} else if (_vm->getFeatures() & GF_USE_5FLAGS) {
 			ciSubtitles.v = 6;
-			ciSubtitles.Box = subtitlesBox4Flags;
-			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox4Flags);
+			ciSubtitles.Box = subtitlesBox5Flags;
+			ciSubtitles.NumBoxes = ARRAYSIZE(subtitlesBox5Flags);
 		} else {
 			ciSubtitles.v = 3;
 			ciSubtitles.Box = subtitlesBox;
