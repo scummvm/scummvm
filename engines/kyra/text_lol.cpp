@@ -540,7 +540,7 @@ void TextDisplayer_LoL::printLine(char *str) {
 	int sdx = _screen->curDimIndex();
 	bool pc98PrintFlag = (isPc98 && (sdx == 3 || sdx == 4 || sdx == 5 || sdx == 15)) ? true : false;
 
-	int fh = (_screen->getFontHeight() + _screen->_charOffset);
+	int fh = (_screen->_currentFont == Screen::FID_SJIS_FNT) ? 9 : (_screen->getFontHeight() + _screen->_charOffset);
 	int lines = (sd->h - _screen->_charOffset) / fh;
 
 	while (_textDimData[sdx].line >= lines) {
@@ -571,11 +571,14 @@ void TextDisplayer_LoL::printLine(char *str) {
 	if (pc98PrintFlag) {
 		bool ct = true;
 
-		if ((lw + _textDimData[sdx].column) <= w) {
+		if ((lw + _textDimData[sdx].column) > w) {
+			if ((lines - 1) <= _lineCount)
+				w -= 80;
+		} else {
 			if (!_sjisLineBreakFlag || (_lineCount + 1 < lines - 1))
 				ct = false;
 			else
-				w -= (10 * (_screen->getFontWidth() + _screen->_charWidth));
+				w -= 80;
 		}
 
 		if (ct) {
