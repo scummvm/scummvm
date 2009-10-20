@@ -93,7 +93,7 @@ public:
 #define KEY_SCAN(k)	(k >> 8)
 #define KEY_ASCII(k)	(k & 0xff)
 
-extern uint8 scancodeTable[];
+extern const uint8 scancodeTable[];
 
 } // End of namespace Agi
 

@@ -38,7 +38,7 @@ namespace Agi {
 //
 // IBM-PC keyboard scancodes
 //
-uint8 scancodeTable[26] = {
+const uint8 scancodeTable[26] = {
 	30,			// A
 	48,			// B
 	46,			// C
