@@ -322,4 +322,30 @@ void SciGuiPalette::animate(byte fromColor, byte toColor, int speed) {
 	_schedules.push_back(newSchedule);
 }
 
+// palVary
+//  init - only does, if palVaryOn == false
+//         target, start, new palette allocation
+//         palVaryOn = true
+//         palDirection = 1
+//         palStop = 64
+//         palTime = from caller
+//         copy resource palette to target
+//         init target palette (used = 1 on all colors, color 0 = RGB 0, 0, 0 color 255 = RGB 0xFF, 0xFF, 0xFF
+//         copy sysPalette to startPalette
+//         init new palette like target palette
+//         palPercent = 1
+//         do various things
+//         return 1
+//  deinit - unloads target palette, kills timer hook, disables palVaryOn
+//  pause - counts up or down, if counter != 0 -> signal wont get counted up by timer
+//           will only count down to 0
+//
+// Restarting game
+//         palVary = false
+//         palPercent = 0
+//         call palVary deinit
+//
+// Saving/restoring
+//         need to save start and target-palette, when palVaryOn = true
+
 } // End of namespace Sci
