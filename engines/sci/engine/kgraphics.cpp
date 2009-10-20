@@ -632,7 +632,32 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 
 // This here is needed to make Pharkas work
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
-	warning("kPalVary() called parameters = %d", argc);
+	uint16 operation = argv[0].toUint16();
+
+	switch (operation) {
+	case 0: { // Init
+		GuiResourceId paletteId;
+		uint16 time;
+		if (argc == 3) {
+			paletteId = argv[1].toUint16();
+			time = argv[2].toUint16();
+			// forward call to SciGui
+		} else {
+			warning("kPalVary(init) called with unsupported argc %d", argc);
+		}
+		break;
+	}
+	case 3: { // DeInit
+		if (argc == 1) {
+			// forward call to SciGui
+		} else {
+			warning("kPalVary(deinit) called with unsupported argc %d", argc);
+		}
+		break;
+	}
+	default:
+		warning("kPalVary(%d), not implemented (argc = %d)", operation, argc);
+	}
 	return NULL_REG;
 }
 
