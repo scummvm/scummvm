@@ -183,6 +183,13 @@ public:
 	BMVPlayer *_bmv;
 
 	KEYFPTR _keyHandler;
+
+	// Stack of pending mouse button events
+	Common::List<Common::EventType> _mouseButtons;
+
+	// Stack of pending keypresses
+	Common::List<Common::Event> _keypresses;
+
 private:
 	//MidiMusicPlayer *_midiMusic;
 	int _musicVolume;

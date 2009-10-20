@@ -123,12 +123,6 @@ static PROCESS *pKeyboardProcess = 0;
 
 static SCNHANDLE hCdChangeScene;
 
-// Stack of pending mouse button events
-Common::List<Common::EventType> mouseButtons;
-
-// Stack of pending keypresses
-Common::List<Common::Event> keypresses;
-
 //----------------- LOCAL PROCEDURES --------------------
 
 /**
@@ -141,15 +135,15 @@ void KeyboardProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 	while (true) {
-		if (keypresses.empty()) {
+		if (_vm->_keypresses.empty()) {
 			// allow scheduling
 			CORO_SLEEP(1);
 			continue;
 		}
 
 		// Get the next keyboard event off the stack
-		Common::Event evt = *keypresses.begin();
-		keypresses.erase(keypresses.begin());
+		Common::Event evt = _vm->_keypresses.front();
+		_vm->_keypresses.pop_front();
 		const Common::Point mousePos = _vm->getMousePosition();
 
 		// Switch for special keys
@@ -312,15 +306,15 @@ static void MouseProcess(CORO_PARAM, const void *) {
 
 	while (true) {
 
-		if (mouseButtons.empty()) {
+		if (_vm->_mouseButtons.empty()) {
 			// allow scheduling
 			CORO_SLEEP(1);
 			continue;
 		}
 
 		// get next mouse button event
-		Common::EventType type = *mouseButtons.begin();
-		mouseButtons.erase(mouseButtons.begin());
+		Common::EventType type = _vm->_mouseButtons.front();
+		_vm->_mouseButtons.pop_front();
 
 		int xp, yp;
 		GetCursorXYNoWait(&xp, &yp, true);
@@ -1077,7 +1071,7 @@ bool TinselEngine::pollEvent() {
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_RBUTTONUP:
 		// Add button to queue for the mouse process
-		mouseButtons.push_back(event.type);
+		_mouseButtons.push_back(event.type);
 		break;
 
 	case Common::EVENT_MOUSEMOVE:
@@ -1243,7 +1237,7 @@ void TinselEngine::ProcessKeyEvent(const Common::Event &event) {
 	}
 
 	// All other keypresses add to the queue for processing in KeyboardProcess
-	keypresses.push_back(event);
+	_keypresses.push_back(event);
 }
 
 const char *TinselEngine::getSampleIndex(LANGUAGE lang) {
