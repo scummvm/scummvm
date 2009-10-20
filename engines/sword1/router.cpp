@@ -78,6 +78,7 @@ Router::Router(ObjectMan *pObjMan, ResMan *pResMan) {
 	_nNodes = _nBars = 0;
 	_playerTargetX = _playerTargetY = _playerTargetDir = _playerTargetStance = 0;
 	_diagonalx = _diagonaly = 0;
+	_slidyWalkAnimatorState = false;
 }
 
 /*
@@ -634,9 +635,6 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	 * produce a module list from the line data
 	 *********************************************************************/
 
-	// FIXME: Using 'static' vars in a method is evil -- they should almost
-	// always be turned into member variables instead.
-	static int32 left = 0;
 	int32 p;
 	int32	lastDir;
 	int32	lastRealDir;
@@ -751,10 +749,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	// THE WALK
 	//****************************************************************************
 
-	if (left == 0)
-		left = _framesPerStep;
-	else
-		left = 0;
+	_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 
 	lastCount = stepCount;
 	lastDir = 99;// this ensures that we don't put in turn frames for the start
@@ -770,11 +765,8 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 		//calculate	average amount to lose in each step on the way to the next _node
 		currentDir = _modularPath[p].dir;
 		if (currentDir < NO_DIRECTIONS) {
-			module =	currentDir * _framesPerStep * 2 + left;
-			if (left == 0)
-				left = _framesPerStep;
-			else
-				left = 0;
+			module =	currentDir * _framesPerStep * 2 + _slidyWalkAnimatorState * _framesPerStep;
+			_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 			moduleEnd = module + _framesPerStep;
 			step = 0;
 			scale = (_scaleA * moduleY + _scaleB);
@@ -811,18 +803,12 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 					if (stepX==0) {
 						if (3*ABS(lastErrorY) < ABS(errorY)) { //the last stop was closest
 							stepCount -= _framesPerStep;
-							if (left == 0)
-								left = _framesPerStep;
-							else
-								left = 0;
+							_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 						}
 					} else {
 						if (3*ABS(lastErrorX) < ABS(errorX)) { //the last stop was closest
 							stepCount -= _framesPerStep;
-							if (left == 0)
-								left = _framesPerStep;
-							else
-								left = 0;
+							_slidyWalkAnimatorState = !_slidyWalkAnimatorState;
 						}
 					}
 				}
@@ -1066,9 +1052,9 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	 *********************************************************************/
 
 	int32 left;
-	int32	lastDir;
-	int32	currentDir;
-	int32	turnDir;
+	int32 lastDir;
+	int32 currentDir;
+	int32 turnDir;
 	int32 scale;
 	int32 step;
 	int32 module;
@@ -1219,7 +1205,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	//****************************************************************************
 
 	if (currentDir > 4)
-		left = _framesPerStep;
+		left = 1;
 	else
 		left = 0;
 
@@ -1234,11 +1220,8 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 			currentDir = _modularPath[p].dir;
 			if (currentDir < NO_DIRECTIONS) {
 
-				module =	currentDir * _framesPerStep * 2 + left;
-				if (left == 0)
-					left = _framesPerStep;
-				else
-					left = 0;
+				module =	currentDir * _framesPerStep * 2 + left * _framesPerStep;
+				left = !left;
 				moduleEnd = module + _framesPerStep;
 				step = 0;
 				scale = (_scaleA * moduleY + _scaleB);
@@ -1263,10 +1246,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 				if ((errorX < 0) || (errorY < 0)) {
 					_modularPath[p].num = 0;
 					stepCount -= _framesPerStep;
-					if (left == 0)
-						left = _framesPerStep;
-					else
-						left = 0;
+					left = !left;
 					// Okay this is the end of a section
 					moduleX = walkAnim[stepCount-1].x;
 					moduleY =	walkAnim[stepCount-1].y;

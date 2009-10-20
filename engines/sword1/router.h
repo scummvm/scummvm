@@ -135,6 +135,7 @@ private:
 	int32		walkFramesLeft, walkFramesRight; // left/right walking turn
 	int32		slowInFrames, slowOutFrames;
 
+	bool		_slidyWalkAnimatorState;
 
 	int32 LoadWalkResources(Object *mega, int32 x, int32 y, int32 dir);
 	int32 getRoute(void);
