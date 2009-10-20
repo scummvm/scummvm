@@ -416,10 +416,9 @@ uint8 Control::runPanel(void) {
 	_system->copyRectToScreen(_screenBuf, 640, 0, 0, 640, 480);
 	free(_screenBuf);
 	_mouse->controlPanel(false);
-	if (retVal == CONTROL_NOTHING_DONE) {
-		_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
-		_sound->newScreen(Logic::_scriptVars[SCREEN]);
-	}
+	// Can also be used to end the control panel music.
+	_music->startMusic(Logic::_scriptVars[CURRENT_MUSIC], 1);
+	_sound->newScreen(Logic::_scriptVars[SCREEN]);
 	_panelShown = false;
 	return retVal;
 }
