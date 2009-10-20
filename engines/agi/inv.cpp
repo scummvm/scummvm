@@ -74,8 +74,8 @@ void AgiEngine::printItem(int n, int fg, int bg) {
 int AgiEngine::findItem() {
 	int r, c;
 
-	r = g_mouse.y / CHAR_LINES;
-	c = g_mouse.x / CHAR_COLS;
+	r = _mouse.y / CHAR_LINES;
+	c = _mouse.x / CHAR_COLS;
 
 	debugC(6, kDebugLevelInventory, "r = %d, c = %d", r, c);
 

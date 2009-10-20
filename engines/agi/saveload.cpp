@@ -689,16 +689,16 @@ int AgiEngine::selectSlot() {
 				rc = -1;
 				goto getout;
 			}
-			slotClicked = ((int)g_mouse.y - 1) / CHAR_COLS - (vm + 4);
+			slotClicked = ((int)_mouse.y - 1) / CHAR_COLS - (vm + 4);
 			xmin = (hm + 1) * CHAR_COLS;
 			xmax = xmin + CHAR_COLS * 34;
-			if ((int)g_mouse.x >= xmin && (int)g_mouse.x <= xmax) {
+			if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
 				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS)
 					active = slotClicked;
 			}
 			xmin = (hm + 36) * CHAR_COLS;
 			xmax = xmin + CHAR_COLS;
-			if ((int)g_mouse.x >= xmin && (int)g_mouse.x <= xmax) {
+			if ((int)_mouse.x >= xmin && (int)_mouse.x <= xmax) {
 				if (slotClicked >= 0 && slotClicked < NUM_VISIBLE_SLOTS) {
 					if (slotClicked == 0)
 						keyEnqueue(KEY_UP);

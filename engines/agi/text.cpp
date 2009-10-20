@@ -623,8 +623,8 @@ void AgiEngine::writeStatus() {
 	if (_debug.statusline) {
 		printStatus("%3d(%03d) %3d,%3d(%3d,%3d)               ",
 				getvar(0), getvar(1), _game.viewTable[0].xPos,
-				_game.viewTable[0].yPos, WIN_TO_PIC_X(g_mouse.x),
-				WIN_TO_PIC_Y(g_mouse.y));
+				_game.viewTable[0].yPos, WIN_TO_PIC_X(_mouse.x),
+				WIN_TO_PIC_Y(_mouse.y));
 		return;
 	}
 

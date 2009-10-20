@@ -776,7 +776,7 @@ int GfxMgr::testButton(int x, int y, const char *s) {
 	x2 = x + CHAR_COLS * len + 2;
 	y2 = y + CHAR_LINES + 2;
 
-	if ((int)g_mouse.x >= x1 && (int)g_mouse.y >= y1 && (int)g_mouse.x <= x2 && (int)g_mouse.y <= y2)
+	if ((int)_vm->_mouse.x >= x1 && (int)_vm->_mouse.y >= y1 && (int)_vm->_mouse.x < x2 && (int)_vm->_mouse.y <= y2)
 		return true;
 
 	return false;

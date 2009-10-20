@@ -1519,9 +1519,9 @@ cmd(print_at_v) {
 cmd(push_script) {
 	// We run AGIMOUSE always as a side effect
 	if (g_agi->getFeatures() & GF_AGIMOUSE || 1) {
-		game.vars[27] = g_mouse.button;
-		game.vars[28] = g_mouse.x / 2;
-		game.vars[29] = g_mouse.y;
+		game.vars[27] = g_agi->_mouse.button;
+		game.vars[28] = g_agi->_mouse.x / 2;
+		game.vars[29] = g_agi->_mouse.y;
 	} else {
 		if (g_agi->getVersion() >= 0x2915) {
 			report("push.script\n");
@@ -1546,8 +1546,8 @@ cmd(set_pri_base) {
 }
 
 cmd(mouse_posn) {
-	_v[p0] = WIN_TO_PIC_X(g_mouse.x);
-	_v[p1] = WIN_TO_PIC_Y(g_mouse.y);
+	_v[p0] = WIN_TO_PIC_X(g_agi->_mouse.x);
+	_v[p1] = WIN_TO_PIC_Y(g_agi->_mouse.y);
 }
 
 cmd(shake_screen) {

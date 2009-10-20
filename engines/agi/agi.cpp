@@ -48,9 +48,6 @@
 
 namespace Agi {
 
-static uint32 g_tickTimer;
-struct Mouse g_mouse;
-
 void AgiEngine::allowSynthetic(bool allow) {
 	_allowSynthetic = allow;
 }
@@ -81,17 +78,17 @@ void AgiEngine::processEvents() {
 			break;
 		case Common::EVENT_LBUTTONDOWN:
 			key = BUTTON_LEFT;
-			g_mouse.button = kAgiMouseButtonLeft;
+			_mouse.button = kAgiMouseButtonLeft;
 			keyEnqueue(key);
-			g_mouse.x = event.mouse.x;
-			g_mouse.y = event.mouse.y;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_RBUTTONDOWN:
 			key = BUTTON_RIGHT;
-			g_mouse.button = kAgiMouseButtonRight;
+			_mouse.button = kAgiMouseButtonRight;
 			keyEnqueue(key);
-			g_mouse.x = event.mouse.x;
-			g_mouse.y = event.mouse.y;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_WHEELUP:
 			key = WHEEL_UP;
@@ -102,28 +99,28 @@ void AgiEngine::processEvents() {
 			keyEnqueue(key);
 			break;
 		case Common::EVENT_MOUSEMOVE:
-			g_mouse.x = event.mouse.x;
-			g_mouse.y = event.mouse.y;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 
 			if (!_game.mouseFence.isEmpty()) {
-				if (g_mouse.x < _game.mouseFence.left)
-					g_mouse.x = _game.mouseFence.left;
-				if (g_mouse.x > _game.mouseFence.right)
-					g_mouse.x = _game.mouseFence.right;
-				if (g_mouse.y < _game.mouseFence.top)
-					g_mouse.y = _game.mouseFence.top;
-				if (g_mouse.y > _game.mouseFence.bottom)
-					g_mouse.y = _game.mouseFence.bottom;
+				if (_mouse.x < _game.mouseFence.left)
+					_mouse.x = _game.mouseFence.left;
+				if (_mouse.x > _game.mouseFence.right)
+					_mouse.x = _game.mouseFence.right;
+				if (_mouse.y < _game.mouseFence.top)
+					_mouse.y = _game.mouseFence.top;
+				if (_mouse.y > _game.mouseFence.bottom)
+					_mouse.y = _game.mouseFence.bottom;
 
-				g_system->warpMouse(g_mouse.x, g_mouse.y);
+				g_system->warpMouse(_mouse.x, _mouse.y);
 			}
 
 			break;
 		case Common::EVENT_LBUTTONUP:
 		case Common::EVENT_RBUTTONUP:
-			g_mouse.button = kAgiMouseButtonUp;
-			g_mouse.x = event.mouse.x;
-			g_mouse.y = event.mouse.y;
+			_mouse.button = kAgiMouseButtonUp;
+			_mouse.x = event.mouse.x;
+			_mouse.y = event.mouse.y;
 			break;
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.flags == Common::KBD_CTRL && event.kbd.keycode == Common::KEYCODE_d) {
@@ -276,21 +273,22 @@ void AgiEngine::pollTimer(void) {
 	static uint32 m = 0;
 	uint32 dm;
 
-	if (g_tickTimer < m)
+	if (_tickTimer < m)
 		m = 0;
 
-	while ((dm = g_tickTimer - m) < 5) {
+	while ((dm = _tickTimer - m) < 5) {
 		processEvents();
 		if (_console->isAttached())
 			_console->onFrame();
 		_system->delayMillis(10);
 		_system->updateScreen();
 	}
-	m = g_tickTimer;
+	m = _tickTimer;
 }
 
 void AgiEngine::agiTimerFunctionLow(void *refCon) {
-	g_tickTimer++;
+	AgiEngine *self = (AgiEngine *)refCon;
+	self->_tickTimer++;
 }
 
 void AgiEngine::pause(uint32 msec) {
@@ -532,7 +530,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	memset(&_game, 0, sizeof(struct AgiGame));
 	memset(&_debug, 0, sizeof(struct AgiDebug));
-	memset(&g_mouse, 0, sizeof(struct Mouse));
+	memset(&_mouse, 0, sizeof(struct Mouse));
 
 	_game.clockEnabled = false;
 	_game.state = STATE_INIT;
@@ -542,7 +540,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 
 	_allowSynthetic = false;
 
-	g_tickTimer = 0;
+	_tickTimer = 0;
 
 	_intobj = NULL;
 
@@ -636,7 +634,7 @@ void AgiEngine::initialize() {
 
 	_lastSaveTime = 0;
 
-	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, NULL);
+	_timer->installTimerProc(agiTimerFunctionLow, 10 * 1000, this);
 
 	debugC(2, kDebugLevelMain, "Detect game");
 

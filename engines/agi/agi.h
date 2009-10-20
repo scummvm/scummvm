@@ -666,8 +666,6 @@ class SpritesMgr;
 class Menu;
 class SearchTree;
 
-extern struct Mouse g_mouse;
-
 // Image stack support
 struct ImageStackElement {
 	uint8 type;
@@ -718,6 +716,8 @@ public:
 	AgiDebug _debug;
 	AgiGame _game;
 	Common::RandomSource *_rnd;
+
+	Mouse _mouse;
 
 	bool _noSaveLoadAllowed;
 
@@ -787,6 +787,8 @@ public:
 	Common::Error saveGameState(int slot, const char *desc);
 
 private:
+
+	uint32 _tickTimer;
 
 	int _keyQueue[KEY_QUEUE_SIZE];
 	int _keyQueueStart;

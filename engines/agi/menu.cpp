@@ -132,16 +132,16 @@ void Menu::newMenuSelected(int i) {
 }
 
 bool Menu::mouseOverText(int line, int col, char *s) {
-	if (g_mouse.x < col * CHAR_COLS)
+	if (_vm->_mouse.x < col * CHAR_COLS)
 		return false;
 
-	if (g_mouse.x > (int)(col + strlen(s)) * CHAR_COLS)
+	if (_vm->_mouse.x > (int)(col + strlen(s)) * CHAR_COLS)
 		return false;
 
-	if (g_mouse.y < line * CHAR_LINES)
+	if (_vm->_mouse.y < line * CHAR_LINES)
 		return false;
 
-	if (g_mouse.y >= (line + 1) * CHAR_LINES)
+	if (_vm->_mouse.y >= (line + 1) * CHAR_LINES)
 		return false;
 
 	return true;
@@ -296,12 +296,12 @@ bool Menu::keyhandler(int key) {
 	//
 	// Mouse handling
 	//
-	if (g_mouse.button) {
+	if (_vm->_mouse.button) {
 		int hmenu, vmenu;
 
 		buttonUsed = 1;	// Button has been used at least once
 
-		if (g_mouse.y <= CHAR_LINES) {
+		if (_vm->_mouse.y <= CHAR_LINES) {
 			// on the menubar
 			hmenu = 0;
 
@@ -361,7 +361,7 @@ bool Menu::keyhandler(int key) {
 
 		drawMenuOptionHilite(_hCurMenu, _vCurMenu);
 
-		if (g_mouse.y <= CHAR_LINES) {
+		if (_vm->_mouse.y <= CHAR_LINES) {
 			// on the menubar
 		} else {
 			// see which option we selected

@@ -201,8 +201,8 @@ int AgiEngine::mainCycle() {
 	//
 	// We run AGIMOUSE always as a side effect
 	if (getFeatures() & GF_AGIMOUSE || 1) {
-		_game.vars[28] = g_mouse.x / 2;
-		_game.vars[29] = g_mouse.y;
+		_game.vars[28] = _mouse.x / 2;
+		_game.vars[29] = _mouse.y;
 	}
 	if (key == KEY_PRIORITY) {
 		_sprites->eraseBoth();

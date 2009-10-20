@@ -130,7 +130,7 @@ int AgiEngine::handleController(int key) {
 	}
 
 	if (key == BUTTON_LEFT) {
-		if ((getflag(fMenusWork) || (getFeatures() & GF_MENUS)) && g_mouse.y <= CHAR_LINES) {
+		if ((getflag(fMenusWork) || (getFeatures() & GF_MENUS)) && _mouse.y <= CHAR_LINES) {
 			newInputMode(INPUT_MENU);
 			return true;
 		}
@@ -138,8 +138,8 @@ int AgiEngine::handleController(int key) {
 
 	// Show predictive dialog if the user clicks on input area
 	if (key == BUTTON_LEFT &&
-			(int)g_mouse.y >= _game.lineUserInput * CHAR_LINES &&
-			(int)g_mouse.y <= (_game.lineUserInput + 1) * CHAR_LINES) {
+			(int)_mouse.y >= _game.lineUserInput * CHAR_LINES &&
+			(int)_mouse.y <= (_game.lineUserInput + 1) * CHAR_LINES) {
 		if (predictiveDialog()) {
 			if (_game.inputMode == INPUT_NONE) {
 				for (int n = 0; _predictiveResult[n]; n++)
@@ -188,8 +188,8 @@ int AgiEngine::handleController(int key) {
 			// Handle mouse button events
 			if (key == BUTTON_LEFT) {
 				v->flags |= ADJ_EGO_XY;
-				v->parm1 = WIN_TO_PIC_X(g_mouse.x);
-				v->parm2 = WIN_TO_PIC_Y(g_mouse.y);
+				v->parm1 = WIN_TO_PIC_X(_mouse.x);
+				v->parm2 = WIN_TO_PIC_Y(_mouse.y);
 				return true;
 			}
 		}
@@ -216,8 +216,8 @@ void AgiEngine::handleGetstring(int key) {
 
 	switch (key) {
 	case BUTTON_LEFT:
-		if ((int)g_mouse.y >= _stringdata.y * CHAR_LINES &&
-				(int)g_mouse.y <= (_stringdata.y + 1) * CHAR_LINES) {
+		if ((int)_mouse.y >= _stringdata.y * CHAR_LINES &&
+				(int)_mouse.y <= (_stringdata.y + 1) * CHAR_LINES) {
 			if (predictiveDialog()) {
 				strcpy(_game.strings[_stringdata.str], _predictiveResult);
 				newInputMode(INPUT_NORMAL);
