@@ -261,7 +261,7 @@ struct PathfindingState {
 static Common::Point read_point(SegManager *segMan, reg_t list, int offset) {
 	SegmentRef list_r = segMan->dereference(list);
 	if (!list_r.isValid()) {
-		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
+		warning("read_point(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(list));
 	}
 	Common::Point point;
 
@@ -854,7 +854,6 @@ static VertexList *visible_vertices(PathfindingState *s, Vertex *vertex_cur) {
 	return visVerts;
 }
 
-#if 0
 static bool point_on_screen_border(const Common::Point &p) {
 	// Determines if a point lies on the screen border
 	// Parameters: (const Common::Point &) p: The point
@@ -862,7 +861,6 @@ static bool point_on_screen_border(const Common::Point &p) {
 	// FIXME get dimensions from somewhere?
 	return (p.x == 0) || (p.x == 319) || (p.y == 0) || (p.y == 189);
 }
-#endif
 
 static bool edge_on_screen_border(const Common::Point &p, const Common::Point &q) {
 	// Determines if an edge lies on the screen border
@@ -1498,7 +1496,7 @@ static int intersecting_polygons(PathfindingState *s) {
 	return 0;
 }
 
-static void dijkstra(PathfindingState *s) {
+static void dijkstra(PathfindingState *s, bool avoidScreenEdge) {
 	// Computes a shortest path from vertex_start to vertex_end. The caller can
 	// construct the resulting path by following the path_prev links from
 	// vertex_end back to vertex_start. If no path exists vertex_end->path_prev
@@ -1558,13 +1556,12 @@ static void dijkstra(PathfindingState *s) {
 			uint32 new_dist;
 			Vertex *vertex = *it;
 
-			// Early pathfinding-enabled games exclude edges on screen borders.
-// FIXME: Enable this selectively for those games that need it.
-#if 0
-			// Avoid plotting path along screen edge
-			if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
-				continue;
-#endif
+			if (avoidScreenEdge) {
+				// Avoid plotting path along screen edge
+				if ((vertex != s->vertex_end) && point_on_screen_border(vertex->v))
+					continue;
+			}
+
 			new_dist = vertex_min->dist + (uint32)sqrt((float)vertex_min->v.sqrDist(vertex->v));
 			if (new_dist < vertex->dist) {
 				vertex->dist = new_dist;
@@ -1715,7 +1712,16 @@ reg_t kAvoidPath(EngineState *s, int argc, reg_t *argv) {
 			return output;
 		}
 
-		dijkstra(p);
+		// Early pathfinding-enabled games exclude edges on screen borders.
+		// FIXME: Enable this selectively for those games that need it.
+		bool avoidScreenEdge = false;
+
+		// This is certainly needed for LSL5 room 640, otherwise Patti walks off-screen
+		// and reenters through the wall
+		if (s->_gameName == "lsl5" && s->currentRoomNumber() == 640)
+			avoidScreenEdge = true;
+
+		dijkstra(p, avoidScreenEdge);
 
 		output = output_path(p, s);
 		delete p;

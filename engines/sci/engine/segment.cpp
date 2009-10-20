@@ -222,7 +222,7 @@ bool Script::isValidOffset(uint16 offset) const {
 
 SegmentRef Script::dereference(reg_t pointer) {
 	if (pointer.offset > _bufSize) {
-		warning("Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
+		warning("Script::dereference(): Attempt to dereference invalid pointer %04x:%04x into script segment (script size=%d)",
 				  PRINT_REG(pointer), (uint)_bufSize);
 		return SegmentRef();
 	}
@@ -299,7 +299,7 @@ SegmentRef SystemStrings::dereference(reg_t pointer) {
 		ret.raw = (byte *)(_strings[pointer.offset]._value);
 	else {
 		// This occurs in KQ5CD when interacting with certain objects
-		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		warning("SystemStrings::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 	}
 
 	return ret;

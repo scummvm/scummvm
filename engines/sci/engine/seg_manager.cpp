@@ -877,7 +877,7 @@ SegmentRef SegManager::dereference(reg_t pointer) {
 
 	if (!pointer.segment || (pointer.segment >= _heap.size()) || !_heap[pointer.segment]) {
 		// This occurs in KQ5CD when interacting with certain objects
-		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		warning("SegManager::dereference(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 		return ret; /* Invalid */
 	}
 
@@ -1158,12 +1158,11 @@ size_t SegManager::strlen(reg_t str) {
 }
 
 
-Common::String SegManager::getString(reg_t pointer, int entries)
-{
+Common::String SegManager::getString(reg_t pointer, int entries) {
 	Common::String ret;
 	SegmentRef src_r = dereference(pointer);
 	if (!src_r.isValid()) {
-		warning("Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
+		warning("SegManager::getString(): Attempt to dereference invalid pointer %04x:%04x", PRINT_REG(pointer));
 		return ret;
 	}
 	if (entries > src_r.maxSize) {
