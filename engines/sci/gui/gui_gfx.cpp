@@ -757,6 +757,8 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 	FrameRect(workerRect);
 
 	// draw UP/DOWN arrows
+	//  we draw UP arrow one pixel lower than sierra did, because it looks nicer. Also the DOWN arrow has one pixel
+	//  line inbetween as well
 	workerRect.top++;
 	TextBox(controlListUpArrow, 0, workerRect, SCI_TEXT_ALIGNMENT_CENTER, 0);
 	workerRect.top = workerRect.bottom - 10;
@@ -779,7 +781,7 @@ void SciGuiGfx::drawListControl(Common::Rect rect, reg_t obj, int16 maxChars, in
 		EraseRect(workerRect);
 		listEntry = entries[i];
 		if (listEntry[0]) {
-			MoveTo(workerRect.left, workerRect.top + 1);
+			MoveTo(workerRect.left, workerRect.top);
 			listEntryLen = strlen(listEntry);
 			DrawText(listEntry, 0, MIN(maxChars, listEntryLen), oldFontId, oldPenColor);
 			if ((!isAlias) && (i == cursorPos)) {
