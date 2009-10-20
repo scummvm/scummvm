@@ -255,6 +255,7 @@ void Vocabulary::freeRuleList(ParseRuleList *list) {
 }
 
 static ParseRuleList *_vocab_add_rule(ParseRuleList *list, ParseRule *rule) {
+	if (!rule)
 		return list;
 
 	ParseRuleList *new_elem = new ParseRuleList(rule);
@@ -300,6 +301,7 @@ void ParseRuleList::print() const {
 }
 
 static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
+	assert(list);
 	if (!list->next || (list->next->terminal)) {
 		ParseRuleList *tmp = list->next;
 		list->next = NULL;
@@ -309,6 +311,7 @@ static ParseRuleList *_vocab_split_rule_list(ParseRuleList *list) {
 }
 
 static void _vocab_free_empty_rule_list(ParseRuleList *list) {
+	assert(list);
 	if (list->next)
 		_vocab_free_empty_rule_list(list->next);
 	list->next = 0;
