@@ -93,9 +93,9 @@ enum SSFN {
 
 /** attribute values - may become bit field if further attributes are added */
 enum {
- IO_ONLYINV1	= 0x01,
- IO_ONLYINV2	= 0x02,
- IO_DROPCODE	= 0x04
+	IO_ONLYINV1	= 0x01,
+	IO_ONLYINV2	= 0x02,
+	IO_DROPCODE	= 0x04
 };
 
 //-----------------------
@@ -631,7 +631,7 @@ struct CONFINIT {
 #define T2_BOX_V_SEP	12
 #define T2_BOX_V2_SEP	6
 
-CONFBOX t1OptionBox[] = {
+static CONFBOX t1OptionBox[] = {
 
  { AATBUT, OPENLOAD, TM_NONE, NULL, SIX_LOAD_OPTION,	FBX, FBY,			EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
  { AATBUT, OPENSAVE, TM_NONE, NULL, SIX_SAVE_OPTION,	FBX, FBY + (BOX_HEIGHT + 2),	EDIT_BOX1_WIDTH, BOX_HEIGHT, NULL, 0 },
@@ -650,9 +650,9 @@ CONFBOX t1OptionBox[] = {
 
 };
 
-CONFINIT t1ciOption	= { 6, 5, 72, 23, false, t1OptionBox,	ARRAYSIZE(t1OptionBox),	NO_HEADING };
+static CONFINIT t1ciOption	= { 6, 5, 72, 23, false, t1OptionBox,	ARRAYSIZE(t1OptionBox),	NO_HEADING };
 
-CONFBOX t2OptionBox[] = {
+static CONFBOX t2OptionBox[] = {
 
  { AATBUT, OPENLOAD, TM_INDEX, NULL, SS_LOAD_OPTION,	T2_OPTX, T2_OPTY,									T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
  { AATBUT, OPENSAVE, TM_INDEX, NULL, SS_SAVE_OPTION,	T2_OPTX, T2_OPTY + (T2_BOX_HEIGHT + T2_BOX_V_SEP),	T2_EDIT_BOX1_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
@@ -662,7 +662,7 @@ CONFBOX t2OptionBox[] = {
 
 };
 
-CONFINIT t2ciOption = { 6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox)/sizeof(CONFBOX), NO_HEADING };
+static CONFINIT t2ciOption = { 6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox)/sizeof(CONFBOX), NO_HEADING };
 
 #define ciOption (TinselV2 ? t2ciOption : t1ciOption)
 #define optionBox (TinselV2 ? t2OptionBox : t1OptionBox)
@@ -681,7 +681,7 @@ CONFINIT t2ciOption = { 6, 4, 144, 60, false, t2OptionBox, sizeof(t2OptionBox)/s
 #define SY		31	// y-position of first slot
 #endif
 
-CONFBOX t1LoadBox[NUM_RGROUP_BOXES+2] = {
+static CONFBOX t1LoadBox[NUM_RGROUP_BOXES+2] = {
 	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY,				EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + (BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, LOADGAME, TM_NONE, NULL, USE_POINTER, 28, SY + 2*(BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
@@ -697,7 +697,7 @@ CONFBOX t1LoadBox[NUM_RGROUP_BOXES+2] = {
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 230, 44+47,	23, 19, NULL, IX1_CROSS1 }
 };
 
-CONFBOX t2LoadBox[] = {
+static CONFBOX t2LoadBox[] = {
 	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY,				T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, LOADGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
@@ -712,11 +712,11 @@ CONFBOX t2LoadBox[] = {
 	{ AAGBUT, CLOSEWIN,  TM_NONE, NULL, 0, 460, 100+100,	BW, BH, NULL, IX2_CROSS1 }
 };
 
-CONFINIT t1ciLoad	= { 10, 6, 20, 16, true, t1LoadBox,	ARRAYSIZE(t1LoadBox), SIX_LOAD_HEADING };
-CONFINIT t2ciLoad	= { 10, 6, 40, 16, true, t2LoadBox, sizeof(t2LoadBox)/sizeof(CONFBOX), SS_LOAD_HEADING };
+static CONFINIT t1ciLoad	= { 10, 6, 20, 16, true, t1LoadBox,	ARRAYSIZE(t1LoadBox), SIX_LOAD_HEADING };
+static CONFINIT t2ciLoad	= { 10, 6, 40, 16, true, t2LoadBox, sizeof(t2LoadBox)/sizeof(CONFBOX), SS_LOAD_HEADING };
 
 
-CONFBOX t1SaveBox[NUM_RGROUP_BOXES+2] = {
+static CONFBOX t1SaveBox[NUM_RGROUP_BOXES+2] = {
 	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY,			EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + (BOX_HEIGHT + 2),	EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, SAVEGAME, TM_NONE, NULL, USE_POINTER, 28,	SY + 2*(BOX_HEIGHT + 2),EDIT_BOX2_WIDTH, BOX_HEIGHT, NULL, 0 },
@@ -732,7 +732,7 @@ CONFBOX t1SaveBox[NUM_RGROUP_BOXES+2] = {
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 230, 44+47,	23, 19, NULL, IX1_CROSS1 }
 };
 
-CONFBOX t2SaveBox[] = {
+static CONFBOX t2SaveBox[] = {
  { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY,				T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
  { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
  { RGROUP, SAVEGAME, TM_POINTER, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP),	T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
@@ -747,8 +747,8 @@ CONFBOX t2SaveBox[] = {
  { AAGBUT, CLOSEWIN,  TM_NONE, NULL, 0, 460, 100+100,	BW, BH, NULL, IX2_CROSS1 }
 };
 
-CONFINIT t1ciSave	= { 10, 6, 20, 16, true, t1SaveBox,	ARRAYSIZE(t1SaveBox),	SIX_SAVE_HEADING };
-CONFINIT t2ciSave	= { 10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox)/sizeof(CONFBOX), SS_SAVE_HEADING };
+static CONFINIT t1ciSave	= { 10, 6, 20, 16, true, t1SaveBox,	ARRAYSIZE(t1SaveBox),	SIX_SAVE_HEADING };
+static CONFINIT t2ciSave	= { 10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox)/sizeof(CONFBOX), SS_SAVE_HEADING };
 
 #define ciLoad (TinselV2 ? t2ciLoad : t1ciLoad)
 #define loadBox (TinselV2 ? t2LoadBox : t1LoadBox)
@@ -759,7 +759,7 @@ CONFINIT t2ciSave	= { 10, 6, 40, 16, true, t2SaveBox, sizeof(t2SaveBox)/sizeof(C
 | This is the restart confirmation 'menu'.			|
 \*-------------------------------------------------------------*/
 
-CONFBOX t1RestartBox[] = {
+static CONFBOX t1RestartBox[] = {
 #ifdef JAPAN
 	{ AAGBUT, INITGAME, TM_NONE, NULL, USE_POINTER, 96, 44,	23, 19, NULL, IX_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER, 56, 44,	23, 19, NULL, IX_CROSS1 }
@@ -769,17 +769,17 @@ CONFBOX t1RestartBox[] = {
 #endif
 };
 
-CONFBOX t2RestartBox[] = {
+static CONFBOX t2RestartBox[] = {
 	{ AAGBUT, INITGAME, TM_NONE, NULL, 0, 140, 78, BW, BH, NULL, IX2_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78,  BW, BH, NULL, IX2_CROSS1 }
 };
 
 #ifdef JAPAN
-CONFINIT t1ciRestart	= { 6, 2, 72, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
+static CONFINIT t1ciRestart	= { 6, 2, 72, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
 #else
-CONFINIT t1ciRestart	= { 4, 2, 98, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
+static CONFINIT t1ciRestart	= { 4, 2, 98, 53, false, t1RestartBox,	ARRAYSIZE(t1RestartBox),	SIX_RESTART_HEADING };
 #endif
-CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox)/sizeof(CONFBOX), SS_RESTART_HEADING };
+static CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox)/sizeof(CONFBOX), SS_RESTART_HEADING };
 
 #define ciRestart (TinselV2 ? t2ciRestart : t1ciRestart)
 #define restartBox (TinselV2 ? t2RestartBox : t1RestartBox)
@@ -789,13 +789,13 @@ CONFINIT t2ciRestart	= { 4, 2, 196, 53, false, t2RestartBox, sizeof(t2RestartBox
 | contains the subtitles and language selection.				|
 \*-------------------------------------------------------------*/
 
-CONFBOX t1SoundBox[] = {
+static CONFBOX t1SoundBox[] = {
 	{ SLIDER, MUSICVOL, TM_NONE, NULL, SIX_MVOL_SLIDER,	142, 25,	Audio::Mixer::kMaxChannelVolume, 2, &volMusic, 0 },
 	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_SVOL_SLIDER,	142, 25+40,	Audio::Mixer::kMaxChannelVolume, 2, &volSound, 0 },
 	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_VVOL_SLIDER,	142, 25+2*40,	Audio::Mixer::kMaxChannelVolume, 2, &volVoice, 0 }
 };
 
-CONFBOX t2SoundBox[] = {
+static CONFBOX t2SoundBox[] = {
 	{ SLIDER, MUSICVOL, TM_INDEX, NULL, SS_MVOL_SLIDER, 280, 50,      Audio::Mixer::kMaxChannelVolume, 2, &volMusic, 0 },
 	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_SVOL_SLIDER,   280, 50+30,   Audio::Mixer::kMaxChannelVolume, 2, &volSound, 0 },
 	{ SLIDER, NOFUNC, TM_INDEX, NULL, SS_VVOL_SLIDER,   280, 50+2*30, Audio::Mixer::kMaxChannelVolume, 2, &volVoice, 0 },
@@ -805,8 +805,8 @@ CONFBOX t2SoundBox[] = {
 	{ ROTATE, NOFUNC, TM_INDEX, NULL, SS_LANGUAGE_SELECT, 320,220, BW, BH, NULL, 0 }
 };
 
-CONFINIT t1ciSound	= { 10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING };
-CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox)/sizeof(CONFBOX), SS_SOUND_HEADING };
+static CONFINIT t1ciSound	= { 10, 5, 20, 16, false, t1SoundBox, ARRAYSIZE(t1SoundBox), NO_HEADING };
+static CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox)/sizeof(CONFBOX), SS_SOUND_HEADING };
 
 #define ciSound (TinselV2 ? t2ciSound : t1ciSound)
 #define soundBox (TinselV2 ? t2SoundBox : t1SoundBox)
@@ -815,9 +815,9 @@ CONFINIT t2ciSound = { 10, 5, 40, 16, false, t2SoundBox, sizeof(t2SoundBox)/size
 | This is the (mouse) control 'menu'.				|
 \*-------------------------------------------------------------*/
 
-int bFlipped;	// looks like this is just so the code has something to alter!
+static int bFlipped;	// looks like this is just so the code has something to alter!
 
-CONFBOX controlBox[] = {
+static CONFBOX controlBox[] = {
 	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_DCLICK_SLIDER,	142, 25,	3*DOUBLE_CLICK_TIME, 1, &dclickSpeed, 0 },
 	{ FLIP, NOFUNC, TM_NONE, NULL, SIX_DCLICK_TEST,		142, 25+30,	23, 19, &bFlipped, IX1_CIRCLE1 },
 #ifdef JAPAN
@@ -827,18 +827,18 @@ CONFBOX controlBox[] = {
 #endif
 };
 
-CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	ARRAYSIZE(controlBox),	NO_HEADING };
+static CONFINIT ciControl	= { 10, 5, 20, 16, false, controlBox,	ARRAYSIZE(controlBox),	NO_HEADING };
 
 /*-------------------------------------------------------------*\
 | This is the subtitles 'menu'.					|
 \*-------------------------------------------------------------*/
 
-CONFBOX subtitlesBox[] = {
+static CONFBOX subtitlesBox[] = {
 	{ SLIDER, NOFUNC, TM_NONE, NULL, SIX_TSPEED_SLIDER,	142, 20,	100, 2, &speedText, 0 },
 	{ TOGGLE, NOFUNC, TM_NONE, NULL, SIX_STITLE_TOGGLE,	142, 20+40,	23, 19, &bSubtitles, 0 },
 };
 
-CONFBOX subtitlesBox3Flags[] = {
+static CONFBOX subtitlesBox3Flags[] = {
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	15, 118,	56, 32, NULL, FIX_FR },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	85, 118,	56, 32, NULL, FIX_GR },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	155, 118,	56, 32, NULL, FIX_SP },
@@ -850,7 +850,7 @@ CONFBOX subtitlesBox3Flags[] = {
 	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
 };
 
-CONFBOX subtitlesBox4Flags[] = {
+static CONFBOX subtitlesBox4Flags[] = {
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	20, 100,	56, 32, NULL, FIX_FR },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	108, 100,	56, 32, NULL, FIX_GR },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	64, 137,	56, 32, NULL, FIX_IT },
@@ -863,7 +863,8 @@ CONFBOX subtitlesBox4Flags[] = {
 	{ AAGBUT, RLANG, TM_NONE, NULL, USE_POINTER,	230, 140,	23, 19, NULL, IX1_CROSS1 }
 };
 
-CONFBOX subtitlesBox5Flags[] =	{
+
+static CONFBOX subtitlesBox5Flags[] =	{
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	15, 100,	56, 32, NULL, FIX_UK },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	85, 100,	56, 32, NULL, FIX_FR },
 	{ FRGROUP, NOFUNC, TM_NONE, NULL, USE_POINTER,	155, 100,	56, 32, NULL, FIX_GR },
@@ -882,7 +883,7 @@ CONFBOX subtitlesBox5Flags[] =	{
 | This is the quit confirmation 'menu'.				|
 \*-------------------------------------------------------------*/
 
-CONFBOX t1QuitBox[] = {
+static CONFBOX t1QuitBox[] = {
 #ifdef JAPAN
  { AAGBUT, IQUITGAME, TM_NONE, NULL, USE_POINTER,70, 44,	23, 19, NULL, IX_TICK1 },
  { AAGBUT, CLOSEWIN, TM_NONE, NULL, USE_POINTER,	30, 44,	23, 19, NULL, IX_CROSS1 }
@@ -892,13 +893,13 @@ CONFBOX t1QuitBox[] = {
 #endif
 };
 
-CONFBOX t2QuitBox[] = {
+static CONFBOX t2QuitBox[] = {
 	{ AAGBUT, IQUITGAME, TM_NONE, NULL, 0,140, 78, BW, BH, NULL, IX2_TICK1 },
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 60, 78,  BW, BH, NULL, IX2_CROSS1 }
 };
 
-CONFINIT t1ciQuit	= { 4, 2, 98, 53, false, t1QuitBox,	ARRAYSIZE(t1QuitBox),	SIX_QUIT_HEADING };
-CONFINIT t2ciQuit	= { 4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox)/sizeof(CONFBOX), SS_QUIT_HEADING };
+static CONFINIT t1ciQuit	= { 4, 2, 98, 53, false, t1QuitBox,	ARRAYSIZE(t1QuitBox),	SIX_QUIT_HEADING };
+static CONFINIT t2ciQuit	= { 4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox)/sizeof(CONFBOX), SS_QUIT_HEADING };
 
 #define quitBox (TinselV2 ? t2QuitBox : t1QuitBox)
 #define ciQuit (TinselV2 ? t2ciQuit : t1ciQuit)
@@ -907,7 +908,7 @@ CONFINIT t2ciQuit	= { 4, 2, 196, 53, false, t2QuitBox, sizeof(t2QuitBox)/sizeof(
 |************************    Startup and shutdown    ***********************|
 \***************************************************************************/
 
-CONFBOX hopperBox1[] = {
+static CONFBOX hopperBox1[] = {
 	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY,									 T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	 T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, HOPPER2, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
@@ -922,9 +923,9 @@ CONFBOX hopperBox1[] = {
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 100 + 100, BW, BH, NULL, IX2_CROSS1 }
 };
 
-CONFINIT ciHopper1 = { 10, 6, 40, 16, true, hopperBox1, sizeof(hopperBox1) / sizeof(CONFBOX), SS_HOPPER1 };
+static CONFINIT ciHopper1 = { 10, 6, 40, 16, true, hopperBox1, sizeof(hopperBox1) / sizeof(CONFBOX), SS_HOPPER1 };
 
-CONFBOX hopperBox2[] = {
+static CONFBOX hopperBox2[] = {
 	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY,				T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + (T2_BOX_HEIGHT + T2_BOX_V2_SEP),	 T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
 	{ RGROUP, BF_CHANGESCENE, TM_STRINGNUM, NULL, 0, BOXX, BOXY + 2*(T2_BOX_HEIGHT + T2_BOX_V2_SEP), T2_EDIT_BOX2_WIDTH, T2_BOX_HEIGHT, NULL, 0 },
@@ -939,20 +940,20 @@ CONFBOX hopperBox2[] = {
 	{ AAGBUT, CLOSEWIN, TM_NONE, NULL, 0, 460, 200, BW, BH, NULL, IX2_CROSS1 }
 };
 
-CONFINIT ciHopper2 = { 10, 6, 40, 16, true, hopperBox2, sizeof(hopperBox2)/sizeof(CONFBOX), NO_HEADING };
+static CONFINIT ciHopper2 = { 10, 6, 40, 16, true, hopperBox2, sizeof(hopperBox2)/sizeof(CONFBOX), NO_HEADING };
 
 
 /***************************************************************************\
 |****************************    Top Window    *****************************|
 \***************************************************************************/
-CONFBOX topwinBox[] = {
+static CONFBOX topwinBox[] = {
  { NOTHING, NOFUNC, TM_NONE, NULL, USE_POINTER, 0, 0, 0, 0, NULL, 0 }
 };
 
 
-CONFINIT ciSubtitles	= { 10, 3, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
+static CONFINIT ciSubtitles	= { 10, 3, 20, 16, false, subtitlesBox,	ARRAYSIZE(subtitlesBox),	NO_HEADING };
 
-CONFINIT ciTopWin	= { 6, 5, 72, 23, false, topwinBox,	0,					NO_HEADING };
+static CONFINIT ciTopWin	= { 6, 5, 72, 23, false, topwinBox,	0,					NO_HEADING };
 
 #define NOBOX (-1)
 
@@ -975,7 +976,7 @@ static struct {
 };
 
 // For editing save game names
-char sedit[SG_DESC_LEN+2];
+static char sedit[SG_DESC_LEN+2];
 
 #define HL1	0	// Hilight that moves with the cursor
 #define HL2	1	// Hilight on selected RGROUP box
