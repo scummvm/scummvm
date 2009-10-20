@@ -360,7 +360,6 @@ void SciGui::drawControlTextEdit(Common::Rect rect, reg_t obj, const char *text,
 	Common::Rect textRect = rect;
 	uint16 oldFontId = _gfx->GetFontId();
 
-	textRect.translate(0, 1);
 	rect.grow(1);
 	_gfx->TexteditCursorErase();
 	_gfx->EraseRect(rect);

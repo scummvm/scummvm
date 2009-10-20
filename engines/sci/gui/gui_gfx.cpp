@@ -894,13 +894,11 @@ void SciGuiGfx::TexteditChange(reg_t controlObject, reg_t eventObject) {
 		Common::Rect rect;
 		rect = Common::Rect(GET_SEL32V(segMan, controlObject, nsLeft), GET_SEL32V(segMan, controlObject, nsTop),
 							  GET_SEL32V(segMan, controlObject, nsRight), GET_SEL32V(segMan, controlObject, nsBottom));
-		rect.top++;
 		TexteditCursorErase();
 		EraseRect(rect);
 		TextBox(text.c_str(), 0, rect, SCI_TEXT_ALIGNMENT_LEFT, fontId);
 		BitsShow(rect);
 		SetFont(fontId);
-		rect.top--;
 		TexteditCursorDraw(rect, text.c_str(), cursorPos);
 		SetFont(oldFontId);
 		// Write back string
