@@ -39,8 +39,8 @@ public:
 	void createFromData(byte *data, GuiPalette *paletteOut);
 	bool setAmiga();
 	void setEGA();
-	bool setFromResource(int16 resourceNo, int16 flag);
-	void set(GuiPalette *sciPal, int16 flag);
+	bool setFromResource(GuiResourceId resourceId, uint16 flag);
+	void set(GuiPalette *sciPal, uint16 flag);
 	void merge(GuiPalette *pFrom, GuiPalette *pTo, uint16 flag);
 	uint16 matchColor(GuiPalette *pPal, byte r, byte g, byte b);
 	void getSys(GuiPalette *pal);

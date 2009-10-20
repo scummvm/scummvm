@@ -1342,11 +1342,11 @@ int16 SciGui32::picNotValid(int16 newPicNotValid) {
 	return oldPicNotValid;
 }
 
-void SciGui32::paletteSet(int resourceNo, int flags) {
+void SciGui32::paletteSet(GuiResourceId resourceNo, uint16 flags) {
 	//warning("STUB");
 }
 
-int16 SciGui32::paletteFind(int r, int g, int b) {
+int16 SciGui32::paletteFind(uint16 r, uint16 g, uint16 b) {
 	int i, delta, bestindex = -1, bestdelta = 200000;
 
 	for (i = 0; i < _s->gfx_state->gfxResMan->getColorCount(); i++) {
@@ -1366,13 +1366,13 @@ int16 SciGui32::paletteFind(int r, int g, int b) {
 	return bestindex;
 }
 
-void SciGui32::paletteSetIntensity(int fromColor, int toColor, int intensity) {
+void SciGui32::paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity) {
 #if 0
 	_s->gfx_state->gfxResMan->setPaletteIntensity(fromColor, toColor, intensity);
 #endif
 }
 
-void SciGui32::paletteAnimate(int fromColor, int toColor, int speed) {
+void SciGui32::paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed) {
 	//warning("STUB");
 }
 

@@ -170,8 +170,8 @@ void SciGuiPalette::setEGA() {
 	setOnScreen();
 }
 
-bool SciGuiPalette::setFromResource(int16 resourceNo, int16 flag) {
-	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceNo), 0);
+bool SciGuiPalette::setFromResource(GuiResourceId resourceId, uint16 flag) {
+	Resource *palResource = _resMan->findResource(ResourceId(kResourceTypePalette, resourceId), 0);
 	GuiPalette palette;
 
 	if (palResource) {
@@ -182,7 +182,7 @@ bool SciGuiPalette::setFromResource(int16 resourceNo, int16 flag) {
 	return false;
 }
 
-void SciGuiPalette::set(GuiPalette *sciPal, int16 flag) {
+void SciGuiPalette::set(GuiPalette *sciPal, uint16 flag) {
 	uint32 systime = _sysPalette.timestamp;
 	if (flag == 2 || sciPal->timestamp != systime) {
 		merge(sciPal, &_sysPalette, flag);

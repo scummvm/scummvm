@@ -78,10 +78,10 @@ public:
 
 	int16 picNotValid(int16 newPicNotValid);
 
-	void paletteSet(int resourceNo, int flags);
-	int16 paletteFind(int r, int g, int b);
-	void paletteSetIntensity(int fromColor, int toColor, int intensity);
-	void paletteAnimate(int fromColor, int toColor, int speed);
+	void paletteSet(GuiResourceId resourceNo, uint16 flags);
+	int16 paletteFind(uint16 r, uint16 g, uint16 b);
+	void paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity);
+	void paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed);
 
 	void shakeScreen(uint16 shakeCount, uint16 directions);
 

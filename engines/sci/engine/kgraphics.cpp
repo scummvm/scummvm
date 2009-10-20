@@ -559,55 +559,70 @@ reg_t kSetNowSeen(EngineState *s, int argc, reg_t *argv) {
 }
 
 reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
-//	warning("kPalette %d", argv[0].toUint16());
 	switch (argv[0].toUint16()) {
-	case 1:
+	case 1: // Set resource palette
 		if (argc==3) {
-			int resourceNo = argv[1].toUint16();
-			int flags = argv[2].toUint16();
-			s->_gui->paletteSet(resourceNo, flags);
+			GuiResourceId resourceId = argv[1].toUint16();
+			uint16 flags = argv[2].toUint16();
+			s->_gui->paletteSet(resourceId, flags);
 		}
 		break;
-	case 2:
-		debug(5, "STUB: kPalette() effect 2, set flag to colors");
+	case 2: // Set flag to colors
+		warning("kPalette(2), set flag to colors");
 		break;
-	case 3:
-		debug(5, "STUB: kPalette() effect 3, clear flag to colors");
+	case 3:	// Clear flag to colors
+		warning("kPalette(3), clear flag to colors");
 		break;
 	case 4:	{ // Set palette intensity
-		if (argc >= 4) {
-			int16 fromColor = CLIP<int>(argv[1].toUint16(), 1, 255);
-			int16 toColor = CLIP<int>(argv[2].toUint16(), 1, 255);
-			int16 intensity = argv[3].toUint16();
+		switch (argc) {
+		case 4:
+		case 5: {
+			uint16 fromColor = CLIP<int>(argv[1].toUint16(), 1, 255);
+			uint16 toColor = CLIP<int>(argv[2].toUint16(), 1, 255);
+			uint16 intensity = argv[3].toUint16();
 			bool setPalette = (argc < 5) ? true : (argv[4].isNull()) ? true : false;
 
 			s->_gui->paletteSetIntensity(fromColor, toColor, intensity, setPalette);
+			break;
+		}
+		default:
+			warning("kPalette(4) called with %d parameters", argc);
 		}
 		break;
 	}
 	case 5: { // Find closest color
-		int r = argv[1].toUint16();
-		int g = argv[2].toUint16();
-		int b = argv[3].toUint16();
+		uint16 r = argv[1].toUint16();
+		uint16 g = argv[2].toUint16();
+		uint16 b = argv[3].toUint16();
 
 		return make_reg(0, s->_gui->paletteFind(r, g, b));
 	}
-	case 6:
-		if (argc==4) {
-			int fromColor = argv[1].toUint16();
-			int toColor = argv[2].toUint16();
-			int speed = argv[3].toSint16();
+	case 6: { // Animate
+		switch (argc) {
+		case 4: {
+			uint16 fromColor = argv[1].toUint16();
+			uint16 toColor = argv[2].toUint16();
+			uint16 speed = argv[3].toSint16();
 			s->_gui->paletteAnimate(fromColor, toColor, speed);
+			break;
+		}
+		case 22:
+
+		default:
+			warning("kPalette(6) called with %d parameters", argc);
 		}
 		break;
-	case 7:
-		debug(5, "STUB: kPalette() effect 7, save palette to heap");
+	}
+	case 7: { // Save palette to heap
+		warning("kPalette(7), save palette to heap STUB");
 		break;
-	case 8:
-		debug(5, "STUB: kPalette() effect 8, set stored palette");
+	}
+	case 8: { // Restore palette from heap
+		warning("kPalette(8), set stored palette STUB");
 		break;
+	}
 	default:
-		warning("kPalette(): Unimplemented subfunction: %d", argv[0].toUint16());
+		warning("kPalette(%d), not implemented", argv[0].toUint16());
 	}
 
 	return s->r_acc;
@@ -617,6 +632,12 @@ reg_t kPalette(EngineState *s, int argc, reg_t *argv) {
 reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 	warning("kPalVary() called parameters = %d", argc);
 	return NULL_REG;
+}
+
+reg_t kAssertPalette(EngineState *s, int argc, reg_t *argv) {
+	GuiResourceId viewId = argv[1].toUint16();
+	warning("kAssertPalette() called with viewId = %d", viewId);
+	return s->r_acc;
 }
 
 static void disableCertainButtons(SegManager *segMan, Common::String gameName, reg_t obj) {

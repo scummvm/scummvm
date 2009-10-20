@@ -100,10 +100,10 @@ public:
 
 	virtual int16 picNotValid(int16 newPicNotValid);
 
-	virtual void paletteSet(int resourceNo, int flags);
-	virtual int16 paletteFind(int r, int g, int b);
-	virtual void paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette);
-	virtual void paletteAnimate(int fromColor, int toColor, int speed);
+	virtual void paletteSet(GuiResourceId resourceNo, uint16 flags);
+	virtual int16 paletteFind(uint16 r, uint16 g, uint16 b);
+	virtual void paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette);
+	virtual void paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed);
 
 	virtual void shakeScreen(uint16 shakeCount, uint16 directions);
 

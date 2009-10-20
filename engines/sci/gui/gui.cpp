@@ -457,20 +457,20 @@ int16 SciGui::picNotValid(int16 newPicNotValid) {
 }
 
 
-void SciGui::paletteSet(int resourceNo, int flags) {
-   _palette->setFromResource(resourceNo, flags);
+void SciGui::paletteSet(GuiResourceId resourceId, uint16 flags) {
+   _palette->setFromResource(resourceId, flags);
 }
 
-int16 SciGui::paletteFind(int r, int g, int b) {
+int16 SciGui::paletteFind(uint16 r, uint16 g, uint16 b) {
 	return _palette->matchColor(&_palette->_sysPalette, r, g, b) & 0xFF;
 }
 
-void SciGui::paletteSetIntensity(int fromColor, int toColor, int intensity, bool setPalette) {
+void SciGui::paletteSetIntensity(uint16 fromColor, uint16 toColor, uint16 intensity, bool setPalette) {
 	_palette->setIntensity(fromColor, toColor, intensity, setPalette);
 }
 
-void SciGui::paletteAnimate(int fromColor, int toColor, int speed) {
-	// kAnimate gets called for Amiga as well, but for colors above 32, so it doesnt make sense
+void SciGui::paletteAnimate(uint16 fromColor, uint16 toColor, uint16 speed) {
+	// we are also called on Amiga as well, but for colors above 32, so it doesnt make sense
 	if (!_s->resMan->isVGA())
 		return;
 

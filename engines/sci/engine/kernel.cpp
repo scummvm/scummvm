@@ -337,6 +337,7 @@ SciKernelFunction kfunct_mappers[] = {
 
 	// its a stub, but its needed for Pharkas to work
 	DEFUN("PalVary", kPalVary, "ii*"),
+	DEFUN("AssertPalette", kAssertPalette, "i"),
 
 #if 0
 	// Stub functions
@@ -345,7 +346,6 @@ SciKernelFunction kfunct_mappers[] = {
 	DEFUN("ListOps", kListOps, ".*"),
 	DEFUN("ATan", kATan, ".*"),
 	DEFUN("MergePoly", kMergePoly, ".*"),
-	DEFUN("AssertPalette", kAssertPalette, ".*"),
 	DEFUN("Record", kRecord, ".*"),
 	DEFUN("PlayBack", kPlayBack, ".*"),
 	DEFUN("DbugStr", kDbugStr, ".*"),
