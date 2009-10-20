@@ -31,8 +31,8 @@ namespace Sci {
 reg_t kRandom(EngineState *s, int argc, reg_t *argv) {
 	int fromNumber = argv[0].toUint16();
 	int toNumber = argv[1].toUint16();
-	int randomNumber = fromNumber + ((toNumber + 1.0 - fromNumber) * (rand() / (RAND_MAX + 1.0)));
-	return make_reg(0, randomNumber);
+	double randomNumber = fromNumber + ((toNumber + 1.0 - fromNumber) * (rand() / (RAND_MAX + 1.0)));
+	return make_reg(0, (int)randomNumber);
 }
 
 reg_t kAbs(EngineState *s, int argc, reg_t *argv) {
