@@ -40,18 +40,36 @@
 
 namespace Agi {
 
-#define MAXBITS		12
-#define TABLE_SIZE	18041	// strange number
-#define START_BITS	9
 
-static int32 BITS, MAX_VALUE, MAX_CODE;
-static uint32 *prefixCode;
-static uint8 *appendCharacter;
-static uint8 *decodeStack;
-static int32 inputBitCount = 0;	// Number of bits in input bit buffer
-static uint32 inputBitBuffer = 0L;
+class LZWDecoder {
+private:
 
-static void initLZW() {
+	enum {
+		MAXBITS		= 12,
+		TABLE_SIZE	= 18041,	// strange number
+		START_BITS	= 9
+	};
+
+	int32 BITS, MAX_VALUE, MAX_CODE;
+	uint32 *prefixCode;
+	uint8 *appendCharacter;
+	uint8 *decodeStack;
+	int32 inputBitCount;	// Number of bits in input bit buffer
+	uint32 inputBitBuffer;
+
+public:
+	LZWDecoder();
+	~LZWDecoder();
+
+	void lzwExpand(uint8 *in, uint8 *out, int32 len);
+
+private:
+	int setBits(int32 value);
+	uint8 *decodeString(uint8 *buffer, uint32 code);
+	uint32 inputCode(uint8 **input);
+};
+
+LZWDecoder::LZWDecoder() {
 	decodeStack = (uint8 *)calloc(1, 8192);
 	prefixCode = (uint32 *)malloc(TABLE_SIZE * sizeof(uint32));
 	appendCharacter = (uint8 *)malloc(TABLE_SIZE * sizeof(uint8));
@@ -59,19 +77,16 @@ static void initLZW() {
 	inputBitBuffer = 0L;
 }
 
-static void closeLZW() {
+LZWDecoder::~LZWDecoder() {
 	free(decodeStack);
 	free(prefixCode);
 	free(appendCharacter);
 }
 
-/***************************************************************************
-** setBits
-**
-** Purpose: To adjust the number of bits used to store codes to the value
-** passed in.
-***************************************************************************/
-int setBits(int32 value) {
+/**
+ * Adjust the number of bits used to store codes to the value passed in.
+ */
+int LZWDecoder::setBits(int32 value) {
 	if (value == MAXBITS)
 		return true;
 
@@ -82,14 +97,12 @@ int setBits(int32 value) {
 	return false;
 }
 
-/***************************************************************************
-** decode_string
-**
-** Purpose: To return the string that the code taken from the input buffer
-** represents. The string is returned as a stack, i.e. the characters are
-** in reverse order.
-***************************************************************************/
-static uint8 *decodeString(uint8 *buffer, uint32 code) {
+/**
+ * Return the string that the code taken from the input buffer
+ * represents. The string is returned as a stack, i.e. the characters are
+ * in reverse order.
+ */
+uint8 *LZWDecoder::decodeString(uint8 *buffer, uint32 code) {
 	uint32 i;
 
 	for (i = 0; code > 255;) {
@@ -104,12 +117,10 @@ static uint8 *decodeString(uint8 *buffer, uint32 code) {
 	return buffer;
 }
 
-/***************************************************************************
-** input_code
-**
-** Purpose: To return the next code from the input buffer.
-***************************************************************************/
-static uint32 inputCode(uint8 **input) {
+/**
+ * Return the next code from the input buffer.
+ */
+uint32 LZWDecoder::inputCode(uint8 **input) {
 	uint32 r;
 
 	while (inputBitCount <= 24) {
@@ -123,23 +134,21 @@ static uint32 inputCode(uint8 **input) {
 	return r;
 }
 
-/***************************************************************************
-** expand
-**
-** Purpose: To uncompress the data contained in the input buffer and store
-** the result in the output buffer. The fileLength parameter says how
-** many bytes to uncompress. The compression itself is a form of LZW that
-** adjusts the number of bits that it represents its codes in as it fills
-** up the available codes. Two codes have special meaning:
-**
-**  code 256 = start over
-**  code 257 = end of data
-***************************************************************************/
-void lzwExpand(uint8 *in, uint8 *out, int32 len) {
+/**
+ * Uncompress the data contained in the input buffer and store
+ * the result in the output buffer. The fileLength parameter says how
+ * many bytes to uncompress. The compression itself is a form of LZW that
+ * adjusts the number of bits that it represents its codes in as it fills
+ * up the available codes. Two codes have special meaning:
+ *
+ *  code 256 = start over
+ *  code 257 = end of data
+ */
+void LZWDecoder::lzwExpand(uint8 *in, uint8 *out, int32 len) {
 	int32 c, lzwnext, lzwnew, lzwold;
 	uint8 *s, *end;
 
-	initLZW();
+	LZWDecoder d;
 
 	setBits(START_BITS);	// Starts at 9-bits
 	lzwnext = 257;		// Next available code to define
@@ -184,7 +193,11 @@ void lzwExpand(uint8 *in, uint8 *out, int32 len) {
 			lzwnew = inputCode(&in);
 		}
 	}
-	closeLZW();
+}
+
+void lzwExpand(uint8 *in, uint8 *out, int32 len) {
+	LZWDecoder d;
+	d.lzwExpand(in, out, len);
 }
 
 } // End of namespace Agi
