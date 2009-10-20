@@ -113,6 +113,10 @@ private:
 	// Set by fnPassMega()
 	byte _engineMega[56];
 
+
+	bool _cycleSkip;
+	bool _speechRunning;
+
 public:
 	Logic(Sword2Engine *vm);
 	~Logic();

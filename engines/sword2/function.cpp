@@ -778,9 +778,6 @@ int32 Logic::fnISpeak(int32 *params) {
 	//		8 animation mode	0 lip synced,
 	//					1 just straight animation
 
-	static bool cycle_skip = false;
-	static bool speechRunning;
-
 	// Set up the pointers which we know we'll always need
 
 	ObjectLogic obLogic(decodePtr(params[S_OB_LOGIC]));
@@ -806,12 +803,12 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Drop out for 1st cycle to allow walks/anims to end and
 		// display last frame before system locks while speech loaded
 
-		if (!cycle_skip) {
-			cycle_skip = true;
+		if (!_cycleSkip) {
+			_cycleSkip = true;
 			return IR_REPEAT;
 		}
 
-		cycle_skip = false;
+		_cycleSkip = false;
 
 		_vm->_debugger->_textNumber = params[S_TEXT];
 
@@ -934,7 +931,7 @@ int32 Logic::fnISpeak(int32 *params) {
 		// Is it to be speech or subtitles or both?
 
 		// Assume not running until know otherwise
-		speechRunning = false;
+		_speechRunning = false;
 
 		// New fudge for 'fx' subtitles: If speech is selected, and
 		// this line is allowed speech (not if it's an fx subtitle!)
@@ -962,14 +959,14 @@ int32 Logic::fnISpeak(int32 *params) {
 				// playing now. (We might want to do this the
 				// next cycle, don't know yet.)
 
-				speechRunning = true;
+				_speechRunning = true;
 				_vm->_sound->unpauseSpeech();
 			} else {
 				debug(5, "ERROR: PlayCompSpeech(wav=%d (res=%d pos=%d)) returned %.8x", params[S_WAV], text_res, local_text, rv);
 			}
 		}
 
-		if (_vm->getSubtitles() || !speechRunning) {
+		if (_vm->getSubtitles() || !_speechRunning) {
 			// We want subtitles, or the speech failed to load.
 			// Either way, we're going to show the text so create
 			// the text sprite.
@@ -995,7 +992,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			if (obGraph.getAnimPc() == (int32)anim_head.noAnimFrames) {
 				// End of animation - restart from frame 0
 				obGraph.setAnimPc(0);
-			} else if (speechRunning && _vm->_sound->amISpeaking() == RDSE_QUIET) {
+			} else if (_speechRunning && _vm->_sound->amISpeaking() == RDSE_QUIET) {
 				// The speech is running, but we're at a quiet
 				// bit. Restart from frame 0 (closed mouth).
 				obGraph.setAnimPc(0);
@@ -1024,11 +1021,11 @@ int32 Logic::fnISpeak(int32 *params) {
 
 	// If playing a sample
 
-	if (speechRunning) {
+	if (_speechRunning) {
 		// Has it finished?
 		if (_vm->_sound->getSpeechStatus() == RDSE_SAMPLEFINISHED)
 			speechFinished = true;
-	} else if (!speechRunning && _speechTime) {
+	} else if (!_speechRunning && _speechTime) {
 		// Counting down text time because there is no sample - this
 		// ends the speech
 
@@ -1075,7 +1072,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			speechFinished = true;
 
 			// if speech sample playing, halt it prematurely
-			if (speechRunning)
+			if (_speechRunning)
 				_vm->_sound->stopSpeech();
 		}
 	}
@@ -1100,7 +1097,7 @@ int32 Logic::fnISpeak(int32 *params) {
 			obGraph.setAnimPc(0);
 		}
 
-		speechRunning = false;
+		_speechRunning = false;
 
 		// no longer in a script function loop
 		obLogic.setLooping(0);
