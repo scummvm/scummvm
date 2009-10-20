@@ -769,17 +769,8 @@ void GfxMgr::rawDrawButton(int x, int y, const char *s, int fgcolor, int bgcolor
 
 int GfxMgr::testButton(int x, int y, const char *s) {
 	int len = strlen(s);
-	int x1, y1, x2, y2;
-
-	x1 = x - 3;
-	y1 = y - 3;
-	x2 = x + CHAR_COLS * len + 2;
-	y2 = y + CHAR_LINES + 2;
-
-	if ((int)_vm->_mouse.x >= x1 && (int)_vm->_mouse.y >= y1 && (int)_vm->_mouse.x < x2 && (int)_vm->_mouse.y <= y2)
-		return true;
-
-	return false;
+	Common::Rect rect(x - 3, y - 3, x + CHAR_COLS * len + 3, y + CHAR_LINES + 3);
+	return rect.contains(x, y);
 }
 
 void GfxMgr::putBlock(int x1, int y1, int x2, int y2) {
