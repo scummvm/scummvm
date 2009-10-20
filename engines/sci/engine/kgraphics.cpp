@@ -655,6 +655,18 @@ reg_t kPalVary(EngineState *s, int argc, reg_t *argv) {
 		}
 		break;
 	}
+	case 6: { // Pause
+		bool pauseState;
+		if (argc == 2) {
+			pauseState = argv[1].isNull() ? false : true;
+			// this call is actually counting states, so calling this 3 times with true will require calling it later
+			//  3 times with false to actually remove pause
+			// forward call to SciGui
+		} else {
+			warning("kPalVary(pause) called with unsupported argc %d", argc);
+		}
+		break;
+	}
 	default:
 		warning("kPalVary(%d), not implemented (argc = %d)", operation, argc);
 	}
