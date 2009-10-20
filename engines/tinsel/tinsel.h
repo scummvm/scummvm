@@ -44,6 +44,7 @@
 
 namespace Tinsel {
 
+class BMVPlayer;
 class MidiMusicPlayer;
 class PCMMusicPlayer;
 class Scheduler;
@@ -179,6 +180,7 @@ public:
 	SoundManager *_sound;
 	MidiMusicPlayer *_midiMusic;
 	PCMMusicPlayer *_pcmMusic;
+	BMVPlayer *_bmv;
 
 	KEYFPTR _keyHandler;
 private:

@@ -27,23 +27,132 @@
 #ifndef TINSEL_BMV_H
 #define TINSEL_BMV_H
 
+#include "common/file.h"
+
+#include "sound/audiostream.h"
+#include "sound/mixer.h"
+
 #include "tinsel/coroutine.h"
+#include "tinsel/object.h"
+#include "tinsel/palette.h"
 
 namespace Tinsel {
 
 
-void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape);
-void FinishBMV();
-void CopyMovieToScreen(void);
-void FettleBMV(void);
+class BMVPlayer {
 
-bool MoviePlaying(void);
+	bool bOldAudio;
 
-int32 MovieAudioLag(void);
+	/// Set when a movie is on
+	bool bMovieOn;
 
-uint32 NextMovieTime(void);
+	/// Set to kill one off
+	bool bAbort;
 
-void AbortMovie(void);
+	/// For escaping out of movies
+	int bmvEscape;
+
+	/// Movie file pointer
+	Common::File stream;
+
+	/// Movie file name
+	char szMovieFile[14];
+
+	/// Pointers to buffers
+	byte *bigBuffer;
+
+	/// Next data to use to extract a frame
+	int nextUseOffset;
+
+	/// Next data to use to extract sound data
+	int nextSoundOffset;
+
+	/// When above offset gets to what this is set at, rewind
+	int wrapUseOffset;
+
+	/// The offset of the most future packet
+	int mostFutureOffset;
+
+	/// The current frame
+	int currentFrame;
+	int currentSoundFrame;
+
+	/// Number of packets currently in RAM
+	int numAdvancePackets;
+
+	/// Next slot that will be read from disc
+	int nextReadSlot;
+
+	/// Set when the whole file has been read
+	bool bFileEnd;
+
+	/// Palette
+	COLORREF moviePal[256];
+
+	int blobsInBuffer;
+
+	struct {
+		POBJECT	pText;
+		int	dieFrame;
+	} texts[2];
+
+	COLORREF talkColour;
+
+	int bigProblemCount;
+
+	bool bIsText;
+
+	int movieTick;
+	int startTick;
+	uint32 nextMovieTime;
+
+	uint16 Au_Prev1;
+	uint16 Au_Prev2;
+	byte *ScreenBeg;
+	byte *screenBuffer;
+
+	bool audioStarted;
+
+	Audio::AppendableAudioStream *audioStream;
+	Audio::SoundHandle audioHandle;
+
+	int nextMaintain;
+public:
+	BMVPlayer();
+
+	void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape);
+	void FinishBMV();
+	void CopyMovieToScreen(void);
+	void FettleBMV(void);
+
+	bool MoviePlaying(void);
+
+	int32 MovieAudioLag(void);
+
+	uint32 NextMovieTime(void);
+
+	void AbortMovie(void);
+
+private:
+	void InitBMV(byte *memoryBuffer);
+	void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr);
+	void MoviePalette(int paletteOffset);
+	void InitialiseMovieSound();
+	void StartMovieSound();
+	void FinishMovieSound();
+	void MovieAudio(int audioOffset, int blobs);
+	void FettleMovieText(void);
+	void BmvDrawText(bool bDraw);
+	void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration);
+	int MovieCommand(char cmd, int commandOffset);
+	int FollowingPacket(int thisPacket, bool bReallyImportant);
+	void LoadSlots(int number);
+	void InitialiseBMV(void);
+	bool MaintainBuffer(void);
+	bool DoBMVFrame(void);
+	bool DoSoundFrame(void);
+	void LookAtBuffers(void);
+};
 
 
 } // End of namespace Tinsel

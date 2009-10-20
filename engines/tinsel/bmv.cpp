@@ -24,13 +24,10 @@
  * The movie player.
  */
 
-#include "common/file.h"
-#include "sound/mixer.h"
-#include "sound/audiostream.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/background.h"
+#include "tinsel/bmv.h"
 #include "tinsel/cliprect.h"
-#include "tinsel/coroutine.h"
 #include "tinsel/config.h"
 #include "tinsel/dw.h"
 #include "tinsel/events.h"
@@ -39,8 +36,6 @@
 #include "tinsel/handle.h"
 #include "tinsel/heapmem.h"
 #include "tinsel/multiobj.h"
-#include "tinsel/object.h"
-#include "tinsel/palette.h"
 #include "tinsel/sched.h"
 #include "tinsel/strres.h"
 #include "tinsel/text.h"
@@ -49,14 +44,6 @@
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
-
-//----------------- GLOBAL GLOBAL DATA ------------------------
-
-bool bOldAudio;
-
-//----------------- LOCAL GLOBAL DATA ------------------------
-
-//static READREQ rr;
 
 //----------------- LOCAL DEFINES ----------------------------
 
@@ -111,8 +98,7 @@ bool bOldAudio;
 #define sz_AUDIO_pkt		3675
 
 
-typedef struct {
-
+struct TALK_CMD {
 	short	x;
 	short	y;
 	short	stringId;
@@ -120,98 +106,20 @@ typedef struct {
 	char	r;			// may be b!
 	char	g;
 	char	b;			// may be r!
+};
 
-} TALK_CMD, *PTALK_CMD;
-
-typedef struct {
-
+struct PRINT_CMD {
 	int16	x;
 	int16	y;
 	int16	stringId;
 	unsigned char	duration;
 	unsigned char	fontId;
-
-} PRINT_CMD, *PPRINT_CMD;
+};
 
 
 //----------------- LOCAL GLOBAL DATA ------------------------
 
-// Set when a movie is on
-static bool bMovieOn;
-
-// Set to kill one off
-static bool bAbort;
-
-// For escaping out of movies
-static int bmvEscape;
-
-// Movie file pointer
-static Common::File stream;
-
-// Movie file name
-static char szMovieFile[14];
-
-// Pointers to buffers
-static byte *bigBuffer; //, *screenBuffer;
-
-// Next data to use to extract a frame
-static int nextUseOffset;
-
-// Next data to use to extract sound data
-static int nextSoundOffset;
-
-// When above offset gets to what this is set at, rewind
-static int wrapUseOffset;
-
-// The offset of the most future packet
-static int mostFutureOffset;
-
-// The current frame
-static int currentFrame;
-static int currentSoundFrame;
-
-// Number of packets currently in RAM
-static int numAdvancePackets;
-
-// Next slot that will be read from disc
-static int nextReadSlot;
-
-// Set when the whole file has been read
-static bool bFileEnd;
-
-// Palette
-static COLORREF moviePal[256];
-
-static int blobsInBuffer;
-
-static struct {
-
-	POBJECT	pText;
-	int	dieFrame;
-
-} texts[2];
-
-static COLORREF talkColour;
-
-static int bigProblemCount;
-
-static bool bIsText;
-
-static int movieTick;
-static int startTick;
-static uint32 nextMovieTime = 0;
-
-static uint16 Au_Prev1 = 0;
-static uint16 Au_Prev2 = 0;
-static byte *ScreenBeg;
-static byte *screenBuffer;
-
-static bool audioStarted;
-
-static Audio::AppendableAudioStream *audioStream = 0;
-static Audio::SoundHandle audioHandle;
-
-const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 192,
+static const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 192,
 		129, 88, 64, 56, 48, 40, 36, 32};
 
 //---------------- DECOMPRESSOR FUNCTIONS --------------------
@@ -224,7 +132,7 @@ const uint16 Au_DecTable[16] = {16512, 8256, 4128, 2064, 1032, 516, 258, 192,
 #define ROL(x,v) x = ((x << (v%32)) | (x >> (32 - (v%32))));
 #define NEXT_BYTE(v) v = forwardDirection ? v + 1 : v - 1;
 
-static void PrepBMV(const byte *sourceData, int length, short deltaFetchDisp) {
+static void PrepBMV(byte *ScreenBeg, const byte *sourceData, int length, short deltaFetchDisp) {
 	uint8 NibbleHi = 0;
 	const byte *saved_esi;
 	uint32 eax = 0;
@@ -368,7 +276,7 @@ static void PrepBMV(const byte *sourceData, int length, short deltaFetchDisp) {
 	}
 }
 
-static void InitBMV(byte *memoryBuffer) {
+void BMVPlayer::InitBMV(byte *memoryBuffer) {
 	// Clear the two extra 'off-screen' rows
 	memset(memoryBuffer, 0, SCREEN_WIDE);
 	memset(memoryBuffer + SCREEN_WIDE * (SCREEN_HIGH + 1), 0, SCREEN_WIDE);
@@ -385,7 +293,7 @@ static void InitBMV(byte *memoryBuffer) {
 	Au_Prev1 = Au_Prev2 = 0;
 }
 
-void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr) {
+void BMVPlayer::PrepAudio(const byte *sourceData, int blobCount, byte *destPtr) {
 	uint16 dx1 = Au_Prev1;
 	uint16 dx2 = Au_Prev2;
 
@@ -423,14 +331,51 @@ void PrepAudio(const byte *sourceData, int blobCount, byte *destPtr) {
 
 //----------------- BMV FUNCTIONS ----------------------------
 
-static bool MaintainBuffer(void);
+BMVPlayer::BMVPlayer() {
+	bOldAudio = 0;
+	bMovieOn = 0;
+	bAbort = 0;
+	bmvEscape = 0;
 
+	memset(szMovieFile, 0, sizeof(szMovieFile));
+
+	bigBuffer = 0;
+	nextUseOffset = 0;
+	nextSoundOffset = 0;
+	wrapUseOffset = 0;
+	mostFutureOffset = 0;
+	currentFrame = 0;
+	currentSoundFrame = 0;
+	numAdvancePackets = 0;
+	nextReadSlot = 0;
+	bFileEnd = 0;
+
+	memset(moviePal, 0, sizeof(moviePal));
+
+	blobsInBuffer = 0;
+
+	memset(texts, 0, sizeof(texts));
+
+	talkColour = 0;
+	bigProblemCount = 0;
+	bIsText = 0;
+	movieTick = 0;
+	startTick = 0;
+	nextMovieTime = 0;
+	Au_Prev1 = 0;
+	Au_Prev2 = 0;
+	ScreenBeg = 0;
+	screenBuffer = 0;
+	audioStarted = 0;
+	audioStream = 0;
+	nextMaintain = 0;
+}
 
 /**
  * Called when a packet contains a palette field.
  * Build a COLORREF array and queue it to the DAC.
  */
-static void MoviePalette(int paletteOffset) {
+void BMVPlayer::MoviePalette(int paletteOffset) {
 	int	i;
 	byte *r;
 
@@ -447,17 +392,17 @@ static void MoviePalette(int paletteOffset) {
 		SetTextPal(talkColour);
 }
 
-static void InitialiseMovieSound() {
+void BMVPlayer::InitialiseMovieSound() {
 	audioStream =
 		Audio::makeAppendableAudioStream(22050,
 				Audio::Mixer::FLAG_16BITS | Audio::Mixer::FLAG_STEREO);
 	audioStarted = false;
 }
 
-static void StartMovieSound() {
+void BMVPlayer::StartMovieSound() {
 }
 
-static void FinishMovieSound() {
+void BMVPlayer::FinishMovieSound() {
 	if (audioStream) {
 		_vm->_mixer->stopHandle(audioHandle);
 
@@ -469,7 +414,7 @@ static void FinishMovieSound() {
 /**
  * Called when a packet contains an audio field.
  */
-static void MovieAudio(int audioOffset, int blobs) {
+void BMVPlayer::MovieAudio(int audioOffset, int blobs) {
 	if (audioOffset == 0 && blobs == 0)
 		blobs = 57;
 
@@ -495,7 +440,7 @@ static void MovieAudio(int audioOffset, int blobs) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-static void FettleMovieText(void) {
+void BMVPlayer::FettleMovieText(void) {
 	int i;
 
 	bIsText = false;
@@ -517,7 +462,7 @@ static void FettleMovieText(void) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-static void BmvDrawText(bool bDraw) {
+void BMVPlayer::BmvDrawText(bool bDraw) {
 	int	w, h, x, y;
 
 	for (int i = 0; i < 2; i++) {
@@ -553,7 +498,7 @@ static void BmvDrawText(bool bDraw) {
 |-------------------------------------------------------|
 \*-----------------------------------------------------*/
 
-static void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration) {
+void BMVPlayer::MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORREF *pTalkColour, int duration) {
 	SCNHANDLE hFont;
 	int	index;
 
@@ -589,11 +534,9 @@ static void MovieText(CORO_PARAM, int stringId, int x, int y, int fontId, COLORR
 /**
  * Called when a packet contains a command field.
  */
-static int MovieCommand(char cmd, int commandOffset) {
+int BMVPlayer::MovieCommand(char cmd, int commandOffset) {
 	if (cmd & CD_PRINT) {
-		PPRINT_CMD pCmd;
-
-		pCmd = (PPRINT_CMD)(bigBuffer + commandOffset);
+		PRINT_CMD *pCmd = (PRINT_CMD *)(bigBuffer + commandOffset);
 
 		MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
 				(int16)READ_LE_UINT16(&pCmd->x),
@@ -605,9 +548,7 @@ static int MovieCommand(char cmd, int commandOffset) {
 		return sz_CMD_PRINT_pkt;
 	} else {
 		if (bSubtitles) {
-			PTALK_CMD pCmd;
-
-			pCmd = (PTALK_CMD)(bigBuffer + commandOffset);
+			TALK_CMD *pCmd = (TALK_CMD *)(bigBuffer + commandOffset);
 			talkColour = TINSEL_RGB(pCmd->r, pCmd->g, pCmd->b);
 
 			MovieText(nullContext, (int16)READ_LE_UINT16(&pCmd->stringId),
@@ -626,7 +567,7 @@ static int MovieCommand(char cmd, int commandOffset) {
  * Kicks off the playback of a movie, and waits around
  * until it's finished.
  */
-void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
+void BMVPlayer::PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
@@ -655,7 +596,7 @@ void PlayBMV(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
  * next packet. The packet may not yet exist, and the
  *return value may be off the end of bigBuffer.
  */
-static int FollowingPacket(int thisPacket, bool bReallyImportant) {
+int BMVPlayer::FollowingPacket(int thisPacket, bool bReallyImportant) {
 	unsigned char *data;
 	int	nextSlot, length;
 
@@ -699,7 +640,7 @@ static int FollowingPacket(int thisPacket, bool bReallyImportant) {
 /**
  * Called from the foreground when starting playback of a movie.
  */
-static void LoadSlots(int number) {
+void BMVPlayer::LoadSlots(int number) {
 	int nextOffset;
 
 	assert(number + nextReadSlot < NUM_SLOTS);
@@ -731,7 +672,7 @@ static void LoadSlots(int number) {
 /**
  * Called from the foreground when starting playback of a movie.
  */
-static void InitialiseBMV(void) {
+void BMVPlayer::InitialiseBMV(void) {
 	if (!stream.open(szMovieFile))
 		error(CANNOT_FIND_FILE, szMovieFile);
 
@@ -767,8 +708,6 @@ static void InitialiseBMV(void) {
 
 	bIsText = false;
 
-//	memset(&rr, 0, sizeof(rr));
-
 	// Prefetch data
 	LoadSlots(PREFETCH);
 
@@ -782,7 +721,7 @@ static void InitialiseBMV(void) {
 /**
  * Called from the foreground when ending playback of a movie.
  */
-void FinishBMV(void) {
+void BMVPlayer::FinishBMV(void) {
 	int	i;
 
 	// Notify the sound channel
@@ -822,7 +761,7 @@ void FinishBMV(void) {
 /**
  * MaintainBuffer()
  */
-static bool MaintainBuffer(void) {
+bool BMVPlayer::MaintainBuffer(void) {
 	int nextOffset;
 
 	// No action if the file is all read
@@ -911,7 +850,7 @@ static bool MaintainBuffer(void) {
 /**
  * DoBMVFrame
  */
-static bool DoBMVFrame(void) {
+bool BMVPlayer::DoBMVFrame(void) {
 	unsigned char *data;
 	int	graphOffset, length;
 	signed short	xscr;
@@ -1004,7 +943,7 @@ static bool DoBMVFrame(void) {
 		else
 			xscr = 0;
 
-		PrepBMV(bigBuffer + graphOffset, length, xscr);
+		PrepBMV(ScreenBeg, bigBuffer + graphOffset, length, xscr);
 
 		currentFrame++;
 		numAdvancePackets--;
@@ -1021,7 +960,7 @@ static bool DoBMVFrame(void) {
 /**
  * DoSoundFrame
  */
-static bool DoSoundFrame(void) {
+bool BMVPlayer::DoSoundFrame(void) {
 	unsigned char *data;
 	int	graphOffset;
 
@@ -1095,7 +1034,7 @@ static bool DoSoundFrame(void) {
 /**
  * CopyMovieToScreen
  */
-void CopyMovieToScreen(void) {
+void BMVPlayer::CopyMovieToScreen(void) {
 	// Not if not up and running yet!
 	if (!screenBuffer || (currentFrame == 0)) {
 		ForceEntireRedraw();
@@ -1121,7 +1060,8 @@ void CopyMovieToScreen(void) {
 /**
  * LookAtBuffers
  */
-static void LookAtBuffers(void) {
+void BMVPlayer::LookAtBuffers(void) {
+	// FIXME: What's the point of this function???
 	static int junk;
 	int i;
 
@@ -1134,8 +1074,7 @@ static void LookAtBuffers(void) {
 /**
  * Handles playback of any active movie. Called from the foreground 24 times a second.
  */
-void FettleBMV(void) {
-	static int nextMaintain = 0;
+void BMVPlayer::FettleBMV(void) {
 
 	int refFrame;
 	// Tick counter needs to be incrementing at a 24Hz rate
@@ -1227,14 +1166,14 @@ void FettleBMV(void) {
 /**
  * Returns true if a movie is playing.
  */
-bool MoviePlaying(void) {
+bool BMVPlayer::MoviePlaying(void) {
 	return bMovieOn;
 }
 
 /**
  * Returns the audio lag in ms
  */
-int32 MovieAudioLag(void) {
+int32 BMVPlayer::MovieAudioLag(void) {
 	if (!bMovieOn || !audioStream)
 		return 0;
 
@@ -1243,11 +1182,11 @@ int32 MovieAudioLag(void) {
 	return (playLength - (((int32) _vm->_mixer->getSoundElapsedTime(audioHandle)) << 10)) >> 10;
 }
 
-uint32 NextMovieTime(void) {
+uint32 BMVPlayer::NextMovieTime(void) {
 	return nextMovieTime;
 }
 
-void AbortMovie(void) {
+void BMVPlayer::AbortMovie(void) {
 	bAbort = true;
 }
 

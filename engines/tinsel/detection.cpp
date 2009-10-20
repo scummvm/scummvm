@@ -30,6 +30,7 @@
 #include "common/md5.h"
 #include "common/savefile.h"
 
+#include "tinsel/bmv.h"
 #include "tinsel/cursor.h"
 #include "tinsel/tinsel.h"
 #include "tinsel/savescn.h"	// needed by TinselMetaEngine::listSaves
@@ -633,7 +634,6 @@ bool Tinsel::TinselEngine::hasFeature(EngineFeature f) const {
 
 namespace Tinsel {
 extern int getList(Common::SaveFileManager *saveFileMan, const Common::String &target);
-extern bool MoviePlaying();
 }
 
 SaveStateList TinselMetaEngine::listSaves(const char *target) const {
@@ -906,7 +906,7 @@ Common::Error TinselEngine::saveGameState(int slot, const char *desc) {
 }
 #endif
 
-bool TinselEngine::canLoadGameStateCurrently() { return !MoviePlaying(); }
+bool TinselEngine::canLoadGameStateCurrently() { return !_bmv->MoviePlaying(); }
 
 #if 0
 bool TinselEngine::canSaveGameStateCurrently() { return isCursorShown(); }

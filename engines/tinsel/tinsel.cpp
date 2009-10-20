@@ -871,6 +871,8 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 
 	_sound = new SoundManager(this);
 
+	_bmv = new BMVPlayer();
+
 	_mousePos.x = 0;
 	_mousePos.y = 0;
 	_keyHandler = NULL;
@@ -878,10 +880,11 @@ TinselEngine::TinselEngine(OSystem *syst, const TinselGameDescription *gameDesc)
 }
 
 TinselEngine::~TinselEngine() {
-	if (MoviePlaying())
-		FinishBMV();
+	if (_bmv->MoviePlaying())
+		_bmv->FinishBMV();
 
 	AudioCD.stop();
+	delete _bmv;
 	delete _sound;
 	delete _midiMusic;
 	delete _pcmMusic;
@@ -1012,7 +1015,7 @@ Common::Error TinselEngine::run() {
 		ProcessSRQueue();
 
 		// Handle any playing movie
-		FettleBMV();
+		_bmv->FettleBMV();
 
 #ifdef DEBUG
 		if (bFast)
@@ -1024,8 +1027,8 @@ Common::Error TinselEngine::run() {
 
 		DoCdChange();
 
-		if (MoviePlaying() && NextMovieTime())
-			g_system->delayMillis(MAX<int>(NextMovieTime() - g_system->getMillis() + MovieAudioLag(), 0));
+		if (_bmv->MoviePlaying() && _bmv->NextMovieTime())
+			g_system->delayMillis(MAX<int>(_bmv->NextMovieTime() - g_system->getMillis() + _bmv->MovieAudioLag(), 0));
 		else
 			g_system->delayMillis(10);
 	}
@@ -1050,8 +1053,8 @@ void TinselEngine::NextGameCycle(void) {
 	// schedule process
 	_scheduler->schedule();
 
-	if (MoviePlaying())
-		CopyMovieToScreen();
+	if (_bmv->MoviePlaying())
+		_bmv->CopyMovieToScreen();
 	else
 		// redraw background
 		DrawBackgnd();

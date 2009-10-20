@@ -1416,8 +1416,8 @@ void NewScene(CORO_PARAM, SCNHANDLE scene, int entrance, int transition) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (TinselV2) {
-		if (MoviePlaying()) {
-			AbortMovie();
+		if (_vm->_bmv->MoviePlaying()) {
+			_vm->_bmv->AbortMovie();
 			CORO_SLEEP(2);
 		}
 	}
@@ -1646,11 +1646,11 @@ static void PlayMovie(CORO_PARAM, SCNHANDLE hFileStem, int myEscape) {
 	}
 
 	// They claim to be getting "Can't play two movies at once!" error
-	while (MoviePlaying())
+	while (_vm->_bmv->MoviePlaying())
 		CORO_SLEEP(1);
 
 	// Play the movie
-	CORO_INVOKE_2(PlayBMV, hFileStem, myEscape);
+	CORO_INVOKE_2(_vm->_bmv->PlayBMV, hFileStem, myEscape);
 
 	CORO_END_CODE;
 }
@@ -2427,8 +2427,8 @@ static void RestoreScene(CORO_PARAM, TRANSITS transition) {
 	CORO_BEGIN_CODE(_ctx);
 
 	if (TinselV2) {
-		if (MoviePlaying()) {
-			AbortMovie();
+		if (_vm->_bmv->MoviePlaying()) {
+			_vm->_bmv->AbortMovie();
 			CORO_SLEEP(2);
 		}
 
