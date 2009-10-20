@@ -35,7 +35,6 @@
 namespace Agi {
 
 #define USE_INTERPOLATION
-static bool g_useChorus = true;
 
 //
 // TODO: add support for variable sampling rate in the output device
@@ -504,7 +503,7 @@ void SoundMgr::deinitSound() {
 void SoundMgr::stopNote(int i) {
 	_chn[i].adsr = AGI_SOUND_ENV_RELEASE;
 
-	if (g_useChorus) {
+	if (_useChorus) {
 		// Stop chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
 			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
@@ -525,7 +524,7 @@ void SoundMgr::playNote(int i, int freq, int vol) {
 	_chn[i].env = 0x10000;
 	_chn[i].adsr = AGI_SOUND_ENV_ATTACK;
 
-	if (g_useChorus) {
+	if (_useChorus) {
 		// Add chorus ;)
 		if (_chn[i].type == AGI_SOUND_4CHN &&
 			_vm->_soundemu == SOUND_EMU_NONE && i < 3) {
@@ -880,7 +879,7 @@ void SoundMgr::playAgiSound() {
 				_chn[i].vol = 0;
 				_chn[i].env = 0;
 
-				if (g_useChorus) {
+				if (_useChorus) {
 					// chorus
 					if (_chn[i].type == AGI_SOUND_4CHN && _vm->_soundemu == SOUND_EMU_NONE && i < 3) {
 						_chn[i + 4].vol = 0;
@@ -1305,6 +1304,7 @@ SoundMgr::SoundMgr(AgiBase *agi, Audio::Mixer *pMixer) : _chn() {
 	_sndBuffer = (int16 *)calloc(2, BUFFER_SIZE);
 	_waveform = 0;
 	_disabledMidi = false;
+	_useChorus = true;	// FIXME: Currently always true?
 }
 
 void SoundMgr::premixerCall(int16 *data, uint len) {

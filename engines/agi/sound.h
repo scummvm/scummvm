@@ -489,6 +489,8 @@ private:
 	int16 *_sndBuffer;
 	const int16 *_waveform;
 
+	bool _useChorus;
+
 	void premixerCall(int16 *buf, uint len);
 	void fillAudio(void *udata, int16 *stream, uint len);
 
