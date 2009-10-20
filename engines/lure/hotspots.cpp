@@ -76,7 +76,7 @@ Hotspot::Hotspot(HotspotData *res): _pathFinder(this) {
 
 	_override = resources.getHotspotOverride(res->hotspotId);
 	setAnimation(_data->animRecordId);
-	_tickHandler = HotspotTickHandlers::getHandler(_data->tickProcId);
+	_tickHandler = _tickHandlers.getHandler(_data->tickProcId);
 	_nameBuffer[0] = '\0';
 
 	_skipFlag = false;
@@ -128,7 +128,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 		_frameCtr = 0;
 		_voiceCtr = 40;
 
-		_tickHandler = HotspotTickHandlers::getHandler(VOICE_TICK_PROC_ID);
+		_tickHandler = _tickHandlers.getHandler(VOICE_TICK_PROC_ID);
 		setAnimationIndex(VOICE_ANIM_INDEX);
 		break;
 
@@ -148,7 +148,7 @@ Hotspot::Hotspot(Hotspot *character, uint16 objType): _pathFinder(this) {
 		_voiceCtr = CONVERSE_COUNTDOWN_SIZE;
 
 		_destHotspotId = character->hotspotId();
-		_tickHandler = HotspotTickHandlers::getHandler(PUZZLED_TICK_PROC_ID);
+		_tickHandler = _tickHandlers.getHandler(PUZZLED_TICK_PROC_ID);
 		setAnimationIndex(VOICE_ANIM_INDEX);
 		setFrameNumber(objType == PUZZLED_ANIM_IDX ? 1 : 2);
 
@@ -471,7 +471,7 @@ bool Hotspot::executeScript() {
 void Hotspot::tick() {
 	uint16 id = _hotspotId;
 	debugC(ERROR_BASIC, kLureDebugAnimations, "Hotspot %xh tick begin", id);
-	_tickHandler(*this);
+	(_tickHandlers.*_tickHandler)(*this);
 	debugC(ERROR_BASIC, kLureDebugAnimations, "Hotspot %xh tick end", id);
 }
 
@@ -479,7 +479,7 @@ void Hotspot::setTickProc(uint16 newVal) {
 	if (_data)
 		_data->tickProcId = newVal;
 
-	_tickHandler = HotspotTickHandlers::getHandler(newVal);
+	_tickHandler = _tickHandlers.getHandler(newVal);
 }
 
 void Hotspot::walkTo(int16 endPosX, int16 endPosY, uint16 destHotspot) {
@@ -2364,79 +2364,84 @@ void Hotspot::loadFromStream(Common::ReadStream *stream) {
 
 /*------------------------------------------------------------------------*/
 
+HotspotTickHandlers::HotspotTickHandlers() {
+	countdownCtr = 0;
+	ewanXOffset = false;
+}
+
 HandlerMethodPtr HotspotTickHandlers::getHandler(uint16 procIndex) {
 	switch (procIndex) {
 	case 1:
-		return defaultHandler;
+		return &HotspotTickHandlers::defaultHandler;
 	case STANDARD_CHARACTER_TICK_PROC:
-		return standardCharacterAnimHandler;
+		return &HotspotTickHandlers::standardCharacterAnimHandler;
 	case PLAYER_TICK_PROC_ID:
-		return playerAnimHandler;
+		return &HotspotTickHandlers::playerAnimHandler;
 	case VOICE_TICK_PROC_ID:
-		return voiceBubbleAnimHandler;
+		return &HotspotTickHandlers::voiceBubbleAnimHandler;
 	case PUZZLED_TICK_PROC_ID:
-		return puzzledAnimHandler;
+		return &HotspotTickHandlers::puzzledAnimHandler;
 	case 6:
-		return roomExitAnimHandler;
+		return &HotspotTickHandlers::roomExitAnimHandler;
 	case 7:
 	case FOLLOWER_TICK_PROC_2:
-		return followerAnimHandler;
+		return &HotspotTickHandlers::followerAnimHandler;
 	case JAILOR_TICK_PROC_ID:
 	case 10:
-		return jailorAnimHandler;
+		return &HotspotTickHandlers::jailorAnimHandler;
 	case STANDARD_ANIM_2_TICK_PROC:
-		return standardAnimHandler2;
+		return &HotspotTickHandlers::standardAnimHandler2;
 	case STANDARD_ANIM_TICK_PROC:
-		return standardAnimHandler;
+		return &HotspotTickHandlers::standardAnimHandler;
 	case 13:
-		return sonicRatAnimHandler;
+		return &HotspotTickHandlers::sonicRatAnimHandler;
 	case 14:
-		return droppingTorchAnimHandler;
+		return &HotspotTickHandlers::droppingTorchAnimHandler;
 	case 15:
-		return playerSewerExitAnimHandler;
+		return &HotspotTickHandlers::playerSewerExitAnimHandler;
 	case 16:
-		return fireAnimHandler;
+		return &HotspotTickHandlers::fireAnimHandler;
 	case 17:
-		return sparkleAnimHandler;
+		return &HotspotTickHandlers::sparkleAnimHandler;
 	case 18:
-		return teaAnimHandler;
+		return &HotspotTickHandlers::teaAnimHandler;
 	case 19:
-		return goewinCaptiveAnimHandler;
+		return &HotspotTickHandlers::goewinCaptiveAnimHandler;
 	case 20:
-		return prisonerAnimHandler;
+		return &HotspotTickHandlers::prisonerAnimHandler;
 	case 21:
-		return catrionaAnimHandler;
+		return &HotspotTickHandlers::catrionaAnimHandler;
 	case 22:
-		return morkusAnimHandler;
+		return &HotspotTickHandlers::morkusAnimHandler;
 	case 23:
-		return grubAnimHandler;
+		return &HotspotTickHandlers::grubAnimHandler;
 	case 24:
-		return barmanAnimHandler;
+		return &HotspotTickHandlers::barmanAnimHandler;
 	case 25:
-		return skorlAnimHandler;
+		return &HotspotTickHandlers::skorlAnimHandler;
 	case 26:
-		return gargoyleAnimHandler;
+		return &HotspotTickHandlers::gargoyleAnimHandler;
 	case GOEWIN_SHOP_TICK_PROC:
-		return goewinShopAnimHandler;
+		return &HotspotTickHandlers::goewinShopAnimHandler;
 	case 28:
 	case 29:
 	case 30:
 	case 31:
 	case 32:
 	case 33:
-		return skullAnimHandler;
+		return &HotspotTickHandlers::skullAnimHandler;
 	case 34:
-		return dragonFireAnimHandler;
+		return &HotspotTickHandlers::dragonFireAnimHandler;
 	case 35:
-		return castleSkorlAnimHandler;
+		return &HotspotTickHandlers::castleSkorlAnimHandler;
 	case 36:
-		return rackSerfAnimHandler;
+		return &HotspotTickHandlers::rackSerfAnimHandler;
 	case TALK_TICK_PROC_ID:
-		return talkAnimHandler;
+		return &HotspotTickHandlers::talkAnimHandler;
 	case 38:
-		return fighterAnimHandler;
+		return &HotspotTickHandlers::fighterAnimHandler;
 	case PLAYER_FIGHT_TICK_PROC_ID:
-		return playerFightAnimHandler;
+		return &HotspotTickHandlers::playerFightAnimHandler;
 	default:
 		error("Unknown tick proc Id %xh for hotspot", procIndex);
 	}
@@ -3101,7 +3106,6 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 }
 
 void HotspotTickHandlers::followerAnimHandler(Hotspot &h) {
-	static int countdownCtr = 0;
 	Resources &res = Resources::getReference();
 	ValueTableData &fields = res.fieldList();
 	Hotspot *player = res.getActiveHotspot(PLAYER_ID);
@@ -3380,10 +3384,6 @@ void HotspotTickHandlers::morkusAnimHandler(Hotspot &h) {
 		h.setFrameCtr(20 + rnd.getRandomNumber(63));
 	}
 }
-
-// Special variables used across multiple calls to talkAnimHandler
-static TalkEntryData *_talkResponse;
-static uint16 talkDestCharacter;
 
 void HotspotTickHandlers::talkAnimHandler(Hotspot &h) {
 	// Talk handler
@@ -3672,7 +3672,6 @@ void HotspotTickHandlers::barmanAnimHandler(Hotspot &h) {
 	Room &room = Room::getReference();
 	BarEntry &barEntry = res.barmanLists().getDetails(h.roomNumber());
 	Common::RandomSource &rnd = LureEngine::getReference().rnd();
-	static bool ewanXOffset = false;
 
 	h.handleTalkDialog();
 	if (h.delayCtr() > 0) {

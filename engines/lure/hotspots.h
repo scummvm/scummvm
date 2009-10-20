@@ -36,6 +36,7 @@ namespace Lure {
 #define MAX_NUM_IMPINGING 10
 
 class Hotspot;
+class HotspotTickHandlers;
 
 class Support {
 private:
@@ -50,49 +51,61 @@ public:
 	static bool isCharacterInList(uint16 *lst, int numEntries, uint16 charId);
 };
 
-typedef void(*HandlerMethodPtr)(Hotspot &h);
+typedef void (HotspotTickHandlers::*HandlerMethodPtr)(Hotspot &h);
 
 class HotspotTickHandlers {
 private:
+	// Special variable used across multiple calls to followerAnimHandler
+	int countdownCtr;
+
+	// Special variables used across multiple calls to talkAnimHandler
+	TalkEntryData *_talkResponse;
+	uint16 talkDestCharacter;
+
+	// Special variable used across multiple calls to barmanAnimHandler
+	bool ewanXOffset;
+
 	// Support methods
-	static void npcRoomChange(Hotspot &h);
-	static void talkEndConversation();
+	void npcRoomChange(Hotspot &h);
+	void talkEndConversation();
 
 	// Handler methods
-	static void defaultHandler(Hotspot &h);
-	static void voiceBubbleAnimHandler(Hotspot &h);
-	static void standardAnimHandler(Hotspot &h);
-	static void standardAnimHandler2(Hotspot &h);
-	static void standardCharacterAnimHandler(Hotspot &h);
-	static void puzzledAnimHandler(Hotspot &h);
-	static void roomExitAnimHandler(Hotspot &h);
-	static void playerAnimHandler(Hotspot &h);
-	static void followerAnimHandler(Hotspot &h);
-	static void jailorAnimHandler(Hotspot &h);
-	static void sonicRatAnimHandler(Hotspot &h);
-	static void droppingTorchAnimHandler(Hotspot &h);
-	static void playerSewerExitAnimHandler(Hotspot &h);
-	static void fireAnimHandler(Hotspot &h);
-	static void sparkleAnimHandler(Hotspot &h);
-	static void teaAnimHandler(Hotspot &h);
-	static void goewinCaptiveAnimHandler(Hotspot &h);
-	static void prisonerAnimHandler(Hotspot &h);
-	static void catrionaAnimHandler(Hotspot &h);
-	static void morkusAnimHandler(Hotspot &h);
-	static void talkAnimHandler(Hotspot &h);
-	static void grubAnimHandler(Hotspot &h);
-	static void barmanAnimHandler(Hotspot &h);
-	static void skorlAnimHandler(Hotspot &h);
-	static void gargoyleAnimHandler(Hotspot &h);
-	static void goewinShopAnimHandler(Hotspot &h);
-	static void skullAnimHandler(Hotspot &h);
-	static void dragonFireAnimHandler(Hotspot &h);
-	static void castleSkorlAnimHandler(Hotspot &h);
-	static void rackSerfAnimHandler(Hotspot &h);
-	static void fighterAnimHandler(Hotspot &h);
-	static void playerFightAnimHandler(Hotspot &h);
+	void defaultHandler(Hotspot &h);
+	void voiceBubbleAnimHandler(Hotspot &h);
+	void standardAnimHandler(Hotspot &h);
+	void standardAnimHandler2(Hotspot &h);
+	void standardCharacterAnimHandler(Hotspot &h);
+	void puzzledAnimHandler(Hotspot &h);
+	void roomExitAnimHandler(Hotspot &h);
+	void playerAnimHandler(Hotspot &h);
+	void followerAnimHandler(Hotspot &h);
+	void jailorAnimHandler(Hotspot &h);
+	void sonicRatAnimHandler(Hotspot &h);
+	void droppingTorchAnimHandler(Hotspot &h);
+	void playerSewerExitAnimHandler(Hotspot &h);
+	void fireAnimHandler(Hotspot &h);
+	void sparkleAnimHandler(Hotspot &h);
+	void teaAnimHandler(Hotspot &h);
+	void goewinCaptiveAnimHandler(Hotspot &h);
+	void prisonerAnimHandler(Hotspot &h);
+	void catrionaAnimHandler(Hotspot &h);
+	void morkusAnimHandler(Hotspot &h);
+	void talkAnimHandler(Hotspot &h);
+	void grubAnimHandler(Hotspot &h);
+	void barmanAnimHandler(Hotspot &h);
+	void skorlAnimHandler(Hotspot &h);
+	void gargoyleAnimHandler(Hotspot &h);
+	void goewinShopAnimHandler(Hotspot &h);
+	void skullAnimHandler(Hotspot &h);
+	void dragonFireAnimHandler(Hotspot &h);
+	void castleSkorlAnimHandler(Hotspot &h);
+	void rackSerfAnimHandler(Hotspot &h);
+	void fighterAnimHandler(Hotspot &h);
+	void playerFightAnimHandler(Hotspot &h);
 public:
-	static HandlerMethodPtr getHandler(uint16 procIndex);
+	HotspotTickHandlers();
+
+	HandlerMethodPtr getHandler(uint16 procIndex);
 };
 
 class WalkingActionEntry {
@@ -171,6 +184,7 @@ struct DestStructure {
 
 class Hotspot {
 private:
+	HotspotTickHandlers _tickHandlers;
 	HotspotData *_data;
 	uint16 _animId;
 	HotspotAnimData *_anim;
