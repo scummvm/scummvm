@@ -26,6 +26,7 @@
 		<File RelativePath="..\..\engines\tinsel\background.h" />
 		<File RelativePath="..\..\engines\tinsel\bg.cpp" />
 		<File RelativePath="..\..\engines\tinsel\bmv.cpp" />
+		<File RelativePath="..\..\engines\tinsel\bmv.h" />
 		<File RelativePath="..\..\engines\tinsel\cliprect.cpp" />
 		<File RelativePath="..\..\engines\tinsel\cliprect.h" />
 		<File RelativePath="..\..\engines\tinsel\config.cpp" />
