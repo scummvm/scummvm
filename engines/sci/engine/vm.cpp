@@ -1608,7 +1608,6 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 
 	objlength = 0;
 	reg.offset = magic_pos_adder; // Reset counter
-	reg_t egoClass = segMan->findObjectByName("Ego");
 
 	do {
 		reg_t addr;
@@ -1639,25 +1638,6 @@ int script_instantiate_sci0(ResourceManager *resMan, SegManager *segMan, int scr
 			obj->_baseObj = baseObj->_baseObj;
 
 			obj->setSuperClassSelector(INST_LOOKUP_CLASS(obj->getSuperClassSelector().offset));
-
-			// Check if the game is trying to change an object that has Ego as its superclass
-			if (!egoClass.isNull() && obj->getSuperClassSelector() == egoClass) {
-				reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
-				debugC(2, "ego changed, updating stopGroop");
-
-				// Notify the stopGroop object that Ego changed
-				if (!stopGroopPos.isNull()) {
-					Object *stopGroopObj = segMan->getObject(stopGroopPos);
-
-					// Find the client member variable, and update it
-					ObjVarRef varp;
-					if (lookup_selector(segMan, stopGroopPos, ((SciEngine*)g_engine)->getKernel()->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
-						reg_t *clientVar = varp.getPointer(segMan);
-						*clientVar = addr;
-					}
-				}
-					
-			}
 		} // if object or class
 		break;
 		case SCI_OBJ_POINTERS: // A relocation table
