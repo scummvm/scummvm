@@ -516,7 +516,7 @@ void AgiEngine::printStatus(const char *message, ...) {
 	printText(x, 0, 0, _game.lineStatus, 40, STATUS_FG, STATUS_BG);
 }
 
-static void safeStrcat(Common::String p, const char *t) {
+static void safeStrcat(Common::String &p, const char *t) {
 	if (t != NULL)
 		p += t;
 }
