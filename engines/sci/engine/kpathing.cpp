@@ -1267,6 +1267,21 @@ static Polygon *convert_polygon(EngineState *s, reg_t polygon) {
 	}
 
 	for (i = skip; i < size; i++) {
+		if (size == 35 && (i == 20 || i == 21) && s->_gameName == "sq1sci" &&
+			s->currentRoomNumber() == 66) {
+			if (i == 20 && read_point(segMan, points, 20) == Common::Point(0, 104)) {
+				debug(1, "Applying fix for self-intersecting polygon in SQ1, room 66");
+				Vertex *vertex = new Vertex(Common::Point(1, 104));
+				poly->vertices.insertHead(vertex);
+				continue;
+			} else if (i == 21 && read_point(segMan, points, 21) == Common::Point(0, 110)) {
+				debug(1, "Applying fix for self-intersecting polygon in SQ1, room 66");
+				Vertex *vertex = new Vertex(Common::Point(1, 110));
+				poly->vertices.insertHead(vertex);
+				continue;
+			}
+		}
+
 		Vertex *vertex = new Vertex(read_point(segMan, points, i));
 		poly->vertices.insertHead(vertex);
 	}
