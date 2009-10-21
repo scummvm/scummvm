@@ -2821,8 +2821,6 @@ void GdiPCEngine::decodePCEngineTileData(const byte *ptr) {
 	free(tileOffsets);
 }
 
-// 52, 1: 2 532
-
 void GdiPCEngine::drawStripPCEngine(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height) {
 	uint16 tileIdx;
 	byte *tile;

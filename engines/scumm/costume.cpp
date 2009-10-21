@@ -738,6 +738,7 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 }
 
 byte PCEngineCostumeRenderer::drawLimb(const Actor *a, int limb) {
+	// TODO
 	return 0;
 }
 
