@@ -427,6 +427,20 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	GuiAnimateList::iterator listIterator;
 	GuiAnimateList::iterator listEnd = _list.end();
 
+
+	// This has to be done in a separate loop. At least in sq1 some .dispose modifies FIXEDLOOP flag in signal for
+	//  another object. In that case we would overwrite the new signal with our version of the old signal
+	listIterator = _list.begin();
+	while (listIterator != listEnd) {
+		listEntry = *listIterator;
+		curObject = listEntry->object;
+		signal = listEntry->signal;
+
+		// Finally update signal
+		PUT_SEL32V(segMan, curObject, signal, signal);
+		listIterator++;
+	}
+
 	listIterator = _list.reverse_begin();
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
@@ -437,9 +451,6 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 			_gfx->BitsRestore(GET_SEL32(segMan, curObject, underBits));
 			PUT_SEL32V(segMan, curObject, underBits, 0);
 		}
-
-		// Finally update signal
-		PUT_SEL32V(segMan, curObject, signal, signal);
 
 		if (signal & SCI_ANIMATE_SIGNAL_DISPOSEME) {
 			// Call .delete_ method of that object
