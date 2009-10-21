@@ -1472,6 +1472,8 @@ uint16 newTag2Old(uint32 newTag) {
 		return (0x4343);	// CC
 	case (MKID_BE('EPAL')):
 		return (0x5053);	// SP
+	case (MKID_BE('TILE')):
+		return (0x4C54);	// TL
 	default:
 		return (0);
 	}

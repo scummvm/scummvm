@@ -923,7 +923,7 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) co
 		*engine = new ScummEngine_v2(syst, res);
 		break;
 	case 3:
-		if ((res.game.features & GF_OLD256) || res.game.platform == Common::kPlatformPCEngine)
+		if (res.game.features & GF_OLD256)
 			*engine = new ScummEngine_v3(syst, res);
 		else
 			*engine = new ScummEngine_v3old(syst, res);

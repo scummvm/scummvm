@@ -301,6 +301,47 @@ public:
 	virtual void roomChanged(byte *roomptr);
 };
 
+class GdiPCEngine : public Gdi {
+protected:
+	struct {
+		uint16 nametable[4096], nametableObj[512];
+		byte colortable[4096], colortableObj[512];
+		byte attributes[64], attributesObj[64];
+		uint16 masktable[4096], masktableObj[512];
+		int  objX;
+		bool hasmask;
+		int numTiles;
+		byte* tiles;
+	} _PCE;
+
+protected:
+	void decodePCEngineGfx(const byte *room);
+	void decodeStrip(const byte *ptr, uint16 *tiles, byte *colors, uint16 *masks, int dataWidth, int numRows, bool isObject);
+	void decodePCEngineTileData(const byte *ptr);
+	void decodePCEngineObject(const byte *ptr, int xpos, int ypos, int width, int height);
+
+	void drawStripPCEngine(byte *dst, byte *mask, int dstPitch, int stripnr, int top, int height);
+	void drawStripPCEngineMask(byte *dst, int stripnr, int top, int height) const;
+
+	virtual bool drawStrip(byte *dstPtr, VirtScreen *vs,
+					int x, int y, const int width, const int height,
+					int stripnr, const byte *smap_ptr);
+
+	virtual void decodeMask(int x, int y, const int width, const int height,
+	                int stripnr, int numzbuf, const byte *zplane_list[9],
+	                bool transpStrip, byte flag, const byte *tmsk_ptr);
+
+	virtual void prepareDrawBitmap(const byte *ptr, VirtScreen *vs,
+					const int x, const int y, const int width, const int height,
+	                int stripnr, int numstrip);
+
+public:
+	GdiPCEngine(ScummEngine *vm);
+	~GdiPCEngine();
+
+	virtual void roomChanged(byte *roomptr);
+};
+
 class GdiV1 : public Gdi {
 protected:
 	/** Render settings which are specific to the C64 graphic decoders. */

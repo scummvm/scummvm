@@ -737,6 +737,10 @@ byte NESCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	return 0;
 }
 
+byte PCEngineCostumeRenderer::drawLimb(const Actor *a, int limb) {
+	return 0;
+}
+
 byte ClassicCostumeRenderer::drawLimb(const Actor *a, int limb) {
 	int i;
 	int code;
@@ -801,6 +805,19 @@ void NESCostumeRenderer::setFacing(const Actor *a) {
 }
 
 void NESCostumeRenderer::setCostume(int costume, int shadow) {
+	_loaded.loadCostume(costume);
+}
+
+void PCEngineCostumeRenderer::setPalette(uint16 *palette) {
+	// TODO
+}
+
+void PCEngineCostumeRenderer::setFacing(const Actor *a) {
+	// TODO
+	//_mirror = newDirToOldDir(a->getFacing()) != 0 || _loaded._mirror;
+}
+
+void PCEngineCostumeRenderer::setCostume(int costume, int shadow) {
 	_loaded.loadCostume(costume);
 }
 
@@ -1018,6 +1035,48 @@ byte NESCostumeLoader::increaseAnims(Actor *a) {
 }
 
 byte NESCostumeLoader::increaseAnim(Actor *a, int slot) {
+	int oldframe = a->_cost.curpos[slot]++;
+	if (a->_cost.curpos[slot] >= a->_cost.end[slot])
+		a->_cost.curpos[slot] = a->_cost.start[slot];
+	return (a->_cost.curpos[slot] != oldframe);
+}
+
+void PCEngineCostumeLoader::loadCostume(int id) {
+	_id = id;
+	_baseptr = _vm->getResourceAddress(rtCostume, id);
+	_dataOffsets = _baseptr + 2;
+	_numAnim = 0x17;
+}
+
+void PCEngineCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
+	int anim;
+
+	loadCostume(a->_costume);
+
+	anim = 4 * frame + newDirToOldDir(a->getFacing());
+
+	if (anim > _numAnim) {
+		return;
+	}
+
+	a->_cost.curpos[0] = 0;
+	a->_cost.start[0] = 0;
+	a->_cost.end[0] = _dataOffsets[2 * anim + 1];
+	a->_cost.frame[0] = frame;
+}
+
+byte PCEngineCostumeLoader::increaseAnims(Actor *a) {
+	int i;
+	byte r = 0;
+
+	for (i = 0; i != 16; i++) {
+		if (a->_cost.curpos[i] != 0xFFFF)
+			r += increaseAnim(a, i);
+	}
+	return r;
+}
+
+byte PCEngineCostumeLoader::increaseAnim(Actor *a, int slot) {
 	int oldframe = a->_cost.curpos[slot]++;
 	if (a->_cost.curpos[slot] >= a->_cost.end[slot])
 		a->_cost.curpos[slot] = a->_cost.start[slot];

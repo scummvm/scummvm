@@ -827,6 +827,7 @@ begin_credits("Credits");
 	  begin_persons();
 		  add_person("Ori Avtalion", "salty-horse", "Subtitle control options in the GUI; BASS GUI fixes");
 		  add_person("Stuart Caie", "", "Decoders for Amiga and AtariST data files (AGOS engine)");
+		  add_person("Tobias Gunkel", "hennymcc", "Graphic support for PCE version of Loom");
 		  add_person("Paolo Costabel", "", "PSP port contributions");
 		  add_person("Thierry Crozat", "criezy", "Support for Broken Sword 1 Macintosh version");
 		  add_person("Martin Doucha", "next_ghost", "CinE engine objectification");

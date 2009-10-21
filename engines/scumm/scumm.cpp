@@ -115,6 +115,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_gdi = new Gdi16Bit(this);
 	} else if (_game.platform == Common::kPlatformNES) {
 		_gdi = new GdiNES(this);
+	} else if (_game.platform == Common::kPlatformPCEngine) {
+		_gdi = new GdiPCEngine(this);
 	} else if (_game.version <= 1) {
 		_gdi = new GdiV1(this);
 	} else if (_game.version == 2) {
@@ -613,7 +615,7 @@ ScummEngine_v5::ScummEngine_v5(OSystem *syst, const DetectorResult &dr)
 	// All "classic" games (V5 and older) encrypted their data files
 	// with exception of the GF_OLD256 games and the PC-Engine version
 	// of Loom.
-	if (!(_game.features & GF_OLD256) && _game.platform != Common::kPlatformPCEngine)
+	if (!(_game.features & GF_OLD256))
 		_game.features |= GF_USE_KEY;
 
 	resetCursors();
@@ -1280,6 +1282,9 @@ void ScummEngine::setupCostumeRenderer() {
 	} else if (_game.platform == Common::kPlatformNES) {
 		_costumeRenderer = new NESCostumeRenderer(this);
 		_costumeLoader = new NESCostumeLoader(this);
+	} else if (_game.platform == Common::kPlatformPCEngine) {
+		_costumeRenderer = new PCEngineCostumeRenderer(this);
+		_costumeLoader = new PCEngineCostumeLoader(this);
 	} else {
 		_costumeRenderer = new ClassicCostumeRenderer(this);
 		_costumeLoader = new ClassicCostumeLoader(this);

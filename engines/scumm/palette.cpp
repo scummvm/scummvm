@@ -202,6 +202,67 @@ void ScummEngine::setPaletteFromTable(const byte *ptr, int numcolor, int index) 
 		setPalColor( index, ptr[0], ptr[1], ptr[2]);
 }
 
+void colorPCEToRGB(uint16 color, byte *r, byte *g, byte *b) {
+	// 3 bits for each color component: 0xgggrrrbbb
+	*b = ((color)      & 0x7) << 5;
+	*r = ((color >> 3) & 0x7) << 5;
+	*g = ((color >> 6) & 0x7) << 5;
+}
+
+void readPalette(const byte **ptr, byte **dest, int numEntries) {
+	byte r, g, b;
+	byte msbs = 0;
+
+	for (int i = 0; i < numEntries; ++i) {
+		if (i % 8 == 0) {
+			// byte contains MSBs (bit 8) for the next 8 bytes
+			msbs = *(*ptr)++;
+		}
+		uint16 msb = (msbs & 0x1) << 8;
+		uint16 paletteEntry = msb | *(*ptr)++;
+		colorPCEToRGB(paletteEntry, &r, &g, &b);
+		*(*dest)++ = r;
+		*(*dest)++ = g;
+		*(*dest)++ = b;
+		msbs >>= 1;
+	}
+}
+
+void ScummEngine::setPCEPaletteFromPtr(const byte *ptr) {
+	byte *dest;
+	byte bgSpriteR, bgSpriteG, bgSpriteB;
+
+	int paletteOffset = *ptr++;
+	int numPalettes = *ptr++;	
+
+	int firstIndex = paletteOffset * 16;
+	int numcolor = numPalettes * 16;
+
+	// the only color over which a background sprite 
+	// (bit 7 of the sprite attributes) will be visible
+	colorPCEToRGB(READ_LE_UINT16(ptr), &bgSpriteR, &bgSpriteG, &bgSpriteB);
+	ptr += 2;
+
+	dest = _currentPalette + firstIndex * 3;
+
+	for (int i = 0; i < numPalettes; ++i) {
+		// entry 0
+		*dest++ = bgSpriteR;
+		*dest++ = bgSpriteG;
+		*dest++ = bgSpriteB;
+
+		// entry 1 - 14
+		readPalette(&ptr, &dest, 14);
+
+		// entry 15: DEFAULT_PALETTE[var3AE3];
+		*dest++ = 6 << 5;
+		*dest++ = 6 << 5;
+		*dest++ = 6 << 5;
+	}
+
+	setDirtyColors(firstIndex, firstIndex + numcolor - 1);
+}
+
 void ScummEngine::setPaletteFromPtr(const byte *ptr, int numcolor) {
 	int firstIndex = 0;
 	int i;
@@ -870,7 +931,11 @@ void ScummEngine::setCurrentPalette(int palindex) {
 
 	_curPalIndex = palindex;
 	pals = getPalettePtr(_curPalIndex, _roomResource);
-	setPaletteFromPtr(pals);
+	if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+		setPCEPaletteFromPtr(pals);
+	} else {
+		setPaletteFromPtr(pals);
+	}
 }
 
 void ScummEngine::setRoomPalette(int palindex, int room) {

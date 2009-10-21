@@ -1034,6 +1034,7 @@ protected:
 
 	void setCurrentPalette(int pal);
 	void setRoomPalette(int pal, int room);
+	void setPCEPaletteFromPtr(const byte *ptr);
 	virtual void setPaletteFromPtr(const byte *ptr, int numcolor = -1);
 	virtual void setPalColor(int index, int r, int g, int b);
 	void setDirtyColors(int min, int max);
