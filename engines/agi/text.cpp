@@ -602,7 +602,7 @@ char *AgiEngine::agiSprintf(const char *s) {
 		}
 	}
 
-	assert(sizeof(agiSprintf_buf) < p.size());
+	assert(p.size() < sizeof(agiSprintf_buf));
 	strcpy(agiSprintf_buf, p.c_str());
 	return agiSprintf_buf;
 }
