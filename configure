@@ -1349,6 +1349,7 @@ if test -n "$_host"; then
 			_backend="linuxmoto"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		motomagx)
@@ -1363,6 +1364,8 @@ if test -n "$_host"; then
 			_backend="linuxmoto"
 			_build_hq_scalers="no"
 			_mt32emu="no"
+			_vkeybd="yes"
+			_keymapper="yes"
 			_port_mk="backends/platform/linuxmoto/linuxmoto.mk"
 			;;
 		bfin*)
