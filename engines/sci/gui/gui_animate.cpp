@@ -51,12 +51,13 @@ void SciGuiAnimate::init() {
 	_listSize = 0;
 
 	_ignoreFastCast = false;
+	// fastCast object is not found in any SCI games prior SCI1
 	if (getSciVersion() <= SCI_VERSION_01)
 		_ignoreFastCast = true;
+	// Also if fastCast object exists at gamestartup, we can assume that the interpreter doesnt do kAnimate aborts
+	//  (found in larry 1)
 	if (!_s->_segMan->findObjectByName("fastCast").isNull())
 		_ignoreFastCast = true;
-	if (_ignoreFastCast)
-		warning("Ignoring fast cast");
 }
 
 void SciGuiAnimate::disposeLastCast() {
