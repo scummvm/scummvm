@@ -445,7 +445,8 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 	while (listIterator != listEnd) {
 		listEntry = *listIterator;
 		curObject = listEntry->object;
-		signal = listEntry->signal;
+		// We read out signal here again, this is not by accident but to ensure that we got an up-to-date signal
+		signal = GET_SEL32V(segMan, curObject, signal);
 
 		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
 			_gfx->BitsRestore(GET_SEL32(segMan, curObject, underBits));
