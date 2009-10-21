@@ -29,6 +29,8 @@
 		<File RelativePath="..\..\engines\draci\game.h" />
 		<File RelativePath="..\..\engines\draci\mouse.cpp" />
 		<File RelativePath="..\..\engines\draci\mouse.h" />
+		<File RelativePath="..\..\engines\draci\music.cpp" />
+		<File RelativePath="..\..\engines\draci\music.h" />
 		<File RelativePath="..\..\engines\draci\screen.cpp" />
 		<File RelativePath="..\..\engines\draci\screen.h" />
 		<File RelativePath="..\..\engines\draci\script.cpp" />
