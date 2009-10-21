@@ -1948,41 +1948,39 @@ void ScummEngine_v90he::getArrayDim(int array, int *dim2start, int *dim2end, int
 	}
 }
 
-static int sortArrayOffset;
-
 static int compareByteArray(const void *a, const void *b) {
-	int va = *((const uint8 *)a + sortArrayOffset);
-	int vb = *((const uint8 *)a + sortArrayOffset);
+	int va = *((const uint8 *)a);
+	int vb = *((const uint8 *)a);
 	return va - vb;
 }
 
 static int compareByteArrayReverse(const void *a, const void *b) {
-	int va = *((const uint8 *)a + sortArrayOffset);
-	int vb = *((const uint8 *)a + sortArrayOffset);
+	int va = *((const uint8 *)a);
+	int vb = *((const uint8 *)a);
 	return vb - va;
 }
 
 static int compareIntArray(const void *a, const void *b) {
-	int va = (int16)READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
-	int vb = (int16)READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
+	int va = (int16)READ_LE_UINT16((const uint8 *)a);
+	int vb = (int16)READ_LE_UINT16((const uint8 *)b);
 	return va - vb;
 }
 
 static int compareIntArrayReverse(const void *a, const void *b) {
-	int va = (int16)READ_LE_UINT16((const uint8 *)a + sortArrayOffset * 2);
-	int vb = (int16)READ_LE_UINT16((const uint8 *)b + sortArrayOffset * 2);
+	int va = (int16)READ_LE_UINT16((const uint8 *)a);
+	int vb = (int16)READ_LE_UINT16((const uint8 *)b);
 	return vb - va;
 }
 
 static int compareDwordArray(const void *a, const void *b) {
-	int va = (int32)READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
-	int vb = (int32)READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
+	int va = (int32)READ_LE_UINT32((const uint8 *)a);
+	int vb = (int32)READ_LE_UINT32((const uint8 *)b);
 	return va - vb;
 }
 
 static int compareDwordArrayReverse(const void *a, const void *b) {
-	int va = (int32)READ_LE_UINT32((const uint8 *)a + sortArrayOffset * 4);
-	int vb = (int32)READ_LE_UINT32((const uint8 *)b + sortArrayOffset * 4);
+	int va = (int32)READ_LE_UINT32((const uint8 *)a);
+	int vb = (int32)READ_LE_UINT32((const uint8 *)b);
 	return vb - va;
 }
 
@@ -1996,8 +1994,8 @@ void ScummEngine_v90he::sortArray(int array, int dim2start, int dim2end, int dim
 
 	const int num = dim2end - dim2start + 1;
 	const int pitch = FROM_LE_32(ah->dim1end) - FROM_LE_32(ah->dim1start) + 1;
-	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start));
-	sortArrayOffset = dim1start - FROM_LE_32(ah->dim1start);
+	const int offset = pitch * (dim2start - FROM_LE_32(ah->dim2start))
+						+ dim1start - FROM_LE_32(ah->dim1start);
 
 	switch (FROM_LE_32(ah->type)) {
 	case kByteArray:
