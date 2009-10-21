@@ -1123,6 +1123,12 @@ void Game::loadRoom(int roomNum) {
 
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
 	map->addFrame(ov, NULL);
+
+	if (_currentRoom._music) {
+		_vm->_music->playSMF(_currentRoom._music, true);
+	} else {
+		_vm->_music->stop();
+	}
 }
 
 int Game::loadAnimation(uint animNum, uint z) {

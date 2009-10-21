@@ -29,6 +29,7 @@
 #include "common/system.h"
 #include "engines/engine.h"
 #include "engines/advancedDetector.h"
+#include "sound/mididrv.h"
 
 #include "draci/game.h"
 #include "draci/mouse.h"
@@ -38,6 +39,7 @@
 #include "draci/barchive.h"
 #include "draci/animation.h"
 #include "draci/sound.h"
+#include "draci/music.h"
 
 namespace Draci {
 
@@ -67,6 +69,8 @@ public:
 	Script *_script;
 	AnimationManager *_anims;
 	Sound *_sound;
+	MusicPlayer *_music;
+	MidiDriver *_midiDriver;
 
 	Font *_smallFont;
 	Font *_bigFont;

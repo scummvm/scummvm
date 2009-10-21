@@ -8,6 +8,7 @@ MODULE_OBJS := \
 	font.o \
 	saveload.o \
 	sound.o \
+	music.o \
 	sprite.o \
 	screen.o \
 	surface.o \

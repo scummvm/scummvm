@@ -61,6 +61,7 @@ const char *initPath = "INIT.DFW";
 const char *stringsPath = "RETEZCE.DFW";
 const char *soundsPath = "CD2.SAM";
 const char *dubbingPath = "CD.SAM";
+const char *musicPathMask = "HUDBA%d.MID";
 
 const uint kSoundsFrequency = 13000;
 const uint kDubbingFrequency = 22000;
@@ -116,6 +117,18 @@ int DraciEngine::init() {
 	_soundsArchive = new SoundArchive(soundsPath, kSoundsFrequency);
 	_dubbingArchive = new SoundArchive(dubbingPath, kDubbingFrequency);
 	_sound = new Sound(_mixer);
+
+	int midiDriver = MidiDriver::detectMusicDriver(MDT_MIDI | MDT_ADLIB | MDT_PREFER_MIDI);
+	bool native_mt32 = ((midiDriver == MD_MT32) || ConfMan.getBool("native_mt32"));
+	//bool adlib = (midiDriver == MD_ADLIB);
+
+	_midiDriver = MidiDriver::createMidi(midiDriver);
+	if (native_mt32)
+		_midiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
+
+	_music = new MusicPlayer(_midiDriver, musicPathMask);
+	_music->setNativeMT32(native_mt32);
+	//_music->setAdlib(adlib);
 
 	// Load the game's fonts
 	_smallFont = new Font(kFontSmall);
@@ -303,6 +316,8 @@ DraciEngine::~DraciEngine() {
 	delete _soundsArchive;
 	delete _dubbingArchive;
 	delete _sound;
+	delete _music;
+	delete _midiDriver;
 
 	// Remove all of our debug levels here
 	Common::clearAllDebugChannels();
@@ -332,10 +347,12 @@ void DraciEngine::pauseEngineIntern(bool pause) {
 		_anims->pauseAnimations();
 		_sound->pauseSound();
 		_sound->pauseVoice();
+		_music->pause();
 	} else {
 		_anims->unpauseAnimations();
 		_sound->resumeSound();
 		_sound->resumeVoice();
+		_music->resume();
 
 		// Adjust engine start time
 		const int delta = _system->getMillis() - _pauseStartTime;
@@ -349,6 +366,7 @@ void DraciEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
 	_sound->setVolume();
+	_music->setVolume(ConfMan.getInt("music_volume"));
 }
 
 const char *DraciEngine::getSavegameFile(int saveGameIdx) {
