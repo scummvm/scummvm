@@ -41,8 +41,8 @@ struct Point {
 
 	Point() : x(0), y(0) {}
 	Point(int16 x1, int16 y1) : x(x1), y(y1) {}
-	bool operator==(const Point & p) const { return x == p.x && y == p.y; };
-	bool operator!=(const Point & p) const { return x != p.x || y != p.y; };
+	bool operator==(const Point &p) const { return x == p.x && y == p.y; };
+	bool operator!=(const Point &p) const { return x != p.x || y != p.y; };
 
 	/**
 	 * Return the square of the distance between this point and the point p.
@@ -50,7 +50,7 @@ struct Point {
 	 * @param p		the other point
 	 * @return the distance between this and p
 	 */
-	uint sqrDist(const Point & p) const {
+	uint sqrDist(const Point &p) const {
 		int diffx = ABS(p.x - x);
 		if (diffx >= 0x1000)
 			return 0xFFFFFF;
@@ -59,7 +59,7 @@ struct Point {
 		if (diffy >= 0x1000)
 			return 0xFFFFFF;
 
-		return uint(diffx*diffx + diffy*diffy);
+		return uint(diffx * diffx + diffy * diffy);
 	}
 };
 
