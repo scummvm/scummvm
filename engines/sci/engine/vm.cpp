@@ -142,9 +142,39 @@ static reg_t validate_read_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		return default_value;
 }
 
-static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value) {
-	if (!validate_variable(r, stack_base, type, max, index, line))
+static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, int index, int line, reg_t value, SegManager *segMan, Kernel *kernel) {
+	if (!validate_variable(r, stack_base, type, max, index, line)) {
+
+		// This code is needed to work around a probable script bug, or a limitation of the
+		// original SCI engine, which can be observed in LSL5.
+		// In some games, ego walks via the "Grooper" object, in particular its "stopGroop" child.
+		// In LSL5, during the game, ego is swapped from Larry to Patti. When this happens in the
+		// original interpreter, the new actor is loaded in the same memory location as the old
+		// one, therefore the client variable in the stopGroop object points to the new actor.
+		// This is probably why the reference of the stopGroop object is never updated (which
+		// is why I mentioned that this is either a script bug or some kind of limitation).
+		// In our implementation, each new object is loaded in a different memory location, and
+		// we can't overwrite the old one. This means that in our implementation, whenever ego is
+		// changed, we need to update the "client" variable of the stopGroop object, which points
+		// to ego, to the new ego object. If this is not done, ego's movement will not be updated
+		// properly, so the result is unpredictable (for example in LSL5, Patti spins around instead
+		// of walking)
+		if (index == 0 && type == VAR_GLOBAL) {	// global 0 is ego
+			reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
+			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
+				// Notify the stopGroop object that Ego changed
+				Object *stopGroopObj = segMan->getObject(stopGroopPos);
+				// Find the "client" member variable, and update it
+				ObjVarRef varp;
+				if (lookup_selector(segMan, stopGroopPos, kernel->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
+					reg_t *clientVar = varp.getPointer(segMan);
+					*clientVar = value;
+				}
+			}
+		}
+
 		r[index] = value;
+	}
 }
 
 #else
@@ -155,13 +185,13 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 #  define signed_validate_arithmetic(r) ((int) ((r).offset) & 0x8000 ? (signed) ((r).offset) - 65536 : ((r).offset))
 #  define validate_variable(r, sb, t, m, i, l)
 #  define validate_read_var(r, sb, t, m, i, l) ((r)[i])
-#  define validate_write_var(r, sb, t, m, i, l, v) ((r)[i] = (v))
+#  define validate_write_var(r, sb, t, m, i, l, v, sm, k) ((r)[i] = (v))
 #  define validate_property(o, p) ((o)->_variables[p])
 
 #endif
 
 #define READ_VAR(type, index, def) validate_read_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, def)
-#define WRITE_VAR(type, index, value) validate_write_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, value)
+#define WRITE_VAR(type, index, value) validate_write_var(scriptState.variables[type], s->stack_base, type, scriptState.variables_max[type], index, __LINE__, value, s->_segMan, s->_kernel)
 #define WRITE_VAR16(type, index, value) WRITE_VAR(type, index, make_reg(0, value));
 
 #define ACC_ARITHMETIC_L(op) make_reg(0, (op validate_arithmetic(s->r_acc)))
