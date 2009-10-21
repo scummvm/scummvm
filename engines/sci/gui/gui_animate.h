@@ -88,6 +88,8 @@ private:
 	GuiAnimateEntry *_listData;
 	GuiAnimateList _list;
 	//List *_lastCast;
+
+	bool _ignoreFastCast;
 };
 
 } // End of namespace Sci

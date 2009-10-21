@@ -49,6 +49,14 @@ SciGuiAnimate::~SciGuiAnimate() {
 void SciGuiAnimate::init() {
 	_listData = NULL;
 	_listSize = 0;
+
+	_ignoreFastCast = false;
+	if (getSciVersion() <= SCI_VERSION_01)
+		_ignoreFastCast = true;
+	if (!_s->_segMan->findObjectByName("fastCast").isNull())
+		_ignoreFastCast = true;
+	if (_ignoreFastCast)
+		warning("Ignoring fast cast");
 }
 
 void SciGuiAnimate::disposeLastCast() {
@@ -64,18 +72,19 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 	reg_t curObject;
 	uint16 signal;
 
-	// LSL1VGA does use global variable 84, and it does point to the fastCast object. But
-	// it should not abort. Hooray for another game-specific workaround...
-	reg_t fastCastObj = (_s->_gameName != "lsl1sci") ? _s->_segMan->findObjectByName("fastCast") : NULL_REG;
-
 	while (curNode) {
 		curObject = curNode->value;
-		// Check if the game has a fastCast object set
-		//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
-		reg_t global84 = _s->script_000->_localsBlock->_locals[84];
 
-		if (!fastCastObj.isNull() && global84 == fastCastObj)
-			return false;
+		if (!_ignoreFastCast) {
+			// Check if the game has a fastCast object set
+			//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
+			reg_t global84 = _s->script_000->_localsBlock->_locals[84];
+
+			if (!global84.isNull()) {
+				if (!strcmp(_s->_segMan->getObjectName(global84), "fastCast"))
+					return false;
+			}
+		}
 
 		signal = GET_SEL32V(segMan, curObject, signal);
 		if (!(signal & kSignalFrozen)) {
