@@ -70,9 +70,15 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 		//  if we don't abort kAnimate processing, at least in kq5 there will be animation cels drawn into speech boxes.
 		reg_t global84 = _s->script_000->_localsBlock->_locals[84];
 
-		if (!global84.isNull())
-			if (!strcmp(_s->_segMan->getObjectName(global84), "fastCast"))
-				return false;
+		if (!global84.isNull()) {
+			if (!strcmp(_s->_segMan->getObjectName(global84), "fastCast")) {
+				// Now at this point, we could safely assume that the we should abort... right? Wrong!
+				// LSL1VGA does use global variable 84, and it does point to the fastCast object. But
+				// it should not abort. Hooray for another game-specific workaround...
+				if (_s->_gameName != "lsl1sci")
+					return false;
+			}
+		}
 
 		signal = GET_SEL32V(segMan, curObject, signal);
 		if (!(signal & kSignalFrozen)) {
