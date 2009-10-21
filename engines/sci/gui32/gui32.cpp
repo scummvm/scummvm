@@ -36,6 +36,7 @@
 #include "sci/gfx/gfx_widgets.h"
 #include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui32/gui32.h"
+#include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
 
 // This is the real width of a text with a specified width of 0
@@ -1562,7 +1563,7 @@ void SciGui32::_k_make_view_list(GfxList **widget_list, List *list, int options,
 		if (options & _K_MAKE_VIEW_LIST_CYCLE) {
 			unsigned int signal = GET_SEL32V(segMan, obj, signal);
 
-			if (!(signal & _K_VIEW_SIG_FLAG_FROZEN)) {
+			if (!(signal & kSignalFrozen)) {
 
 				debugC(2, kDebugLevelGraphics, "  invoking %04x:%04x::doit()\n", PRINT_REG(obj));
 				invoke_selector(INV_SEL(obj, doit, kContinueOnInvalidSelector), 0); // Call obj::doit() if neccessary
@@ -1620,7 +1621,7 @@ void SciGui32::draw_obj_to_control_map(GfxDynView *view) {
 		warning("View %d does not contain valid object reference %04x:%04x", view->_ID, PRINT_REG(obj));
 
 	reg_t* sp = view->signalp.getPointer(_s->_segMan);
-	if (!(sp && (sp->offset & _K_VIEW_SIG_FLAG_IGNORE_ACTOR))) {
+	if (!(sp && (sp->offset & kSignalIgnoreActor))) {
 		Common::Rect abs_zone = get_nsrect32(_s, make_reg(view->_ID, view->_subID), 1);
 		draw_rect_to_control_map(abs_zone);
 	}
@@ -1646,7 +1647,7 @@ int SciGui32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 
 		if (GFXW_IS_DYN_VIEW(widget) && (widget->_ID != GFXW_NO_ID)) {
 			signal = widget->signalp.getPointer(segMan)->offset;
-			if (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME) {
+			if (signal & kSignalDisposeMe) {
 				reg_t obj = make_reg(widget->_ID, widget->_subID);
 				reg_t under_bits = NULL_REG;
 
@@ -1687,7 +1688,7 @@ int SciGui32::_k_view_list_dispose_loop(List *list, GfxDynView *widget, int argc
 
 					debugC(2, kDebugLevelGraphics, "Freeing %04x:%04x with signal=%04x\n", PRINT_REG(obj), signal);
 
-					if (!(signal & _K_VIEW_SIG_FLAG_HIDDEN)) {
+					if (!(signal & kSignalHidden)) {
 						debugC(2, kDebugLevelGraphics, "Adding view at %04x:%04x to background\n", PRINT_REG(obj));
 						if (!(gfxw_remove_id(widget->_parent, widget->_ID, widget->_subID) == widget)) {
 							error("Attempt to remove view with ID %x:%x from list failed", widget->_ID, widget->_subID);
@@ -1746,7 +1747,7 @@ void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
 			if (priority < 0)
 				priority = _priority; // Always for picviews
 		} else { // Dynview
-			if (has_nsrect && !(view->signal & _K_VIEW_SIG_FLAG_FIX_PRI_ON)) { // Calculate priority
+			if (has_nsrect && !(view->signal & kSignalFixedPriority)) { // Calculate priority
 				if (options & _K_MAKE_VIEW_LIST_CALC_PRIORITY)
 					PUT_SEL32V(segMan, obj, priority, _priority);
 
@@ -1765,8 +1766,8 @@ void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
 
 		// CR (from :Bob Heitman:) stopupdated views (like pic views) have
 		// their clipped nsRect drawn to the control map
-		if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
-			view->signal |= _K_VIEW_SIG_FLAG_STOPUPD;
+		if (view->signal & kSignalStopUpdate) {
+			view->signal |= kSignalStopUpdHack;
 			debugC(2, kDebugLevelGraphics, "Setting magic STOP_UPD for %04x:%04x\n", PRINT_REG(obj));
 		}
 
@@ -1774,30 +1775,30 @@ void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
 			draw_obj_to_control_map(view);
 
 		// Extreme Pattern Matching ugliness ahead...
-		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
-			if (((view->signal & (_K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_FORCE_UPDATE))) // 9.1.1.1
-			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE)) == _K_VIEW_SIG_FLAG_HIDDEN)
-			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE)) == _K_VIEW_SIG_FLAG_REMOVE) // 9.1.1.2
-			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == _K_VIEW_SIG_FLAG_ALWAYS_UPDATE) // 9.1.1.3
-			        || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE))) { // 9.1.1.4
+		if (view->signal & kSignalNoUpdate) {
+			if (((view->signal & (kSignalViewUpdated | kSignalForceUpdate))) // 9.1.1.1
+			        || ((view->signal & (kSignalHidden | kSignalRemoveView)) == kSignalHidden)
+			        || ((view->signal & (kSignalHidden | kSignalRemoveView)) == kSignalRemoveView) // 9.1.1.2
+			        || ((view->signal & (kSignalHidden | kSignalRemoveView | kSignalAlwaysUpdate)) == kSignalAlwaysUpdate) // 9.1.1.3
+			        || ((view->signal & (kSignalHidden | kSignalAlwaysUpdate)) == (kSignalHidden | kSignalAlwaysUpdate))) { // 9.1.1.4
 				_s->pic_not_valid++;
-				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
+				view->signal &= ~kSignalStopUpdate;
 			}
 
-			else if (((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0)
-			         || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_REMOVE))
-			         || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE))
-			         || ((view->signal & (_K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == _K_VIEW_SIG_FLAG_HIDDEN)) {
-				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
+			else if (((view->signal & (kSignalHidden | kSignalRemoveView | kSignalAlwaysUpdate)) == 0)
+			         || ((view->signal & (kSignalHidden | kSignalRemoveView | kSignalAlwaysUpdate)) == (kSignalHidden | kSignalRemoveView))
+			         || ((view->signal & (kSignalHidden | kSignalAlwaysUpdate)) == (kSignalHidden | kSignalAlwaysUpdate))
+			         || ((view->signal & (kSignalHidden | kSignalAlwaysUpdate)) == kSignalHidden)) {
+				view->signal &= ~kSignalStopUpdate;
 			}
 		} else {
-			if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
+			if (view->signal & kSignalStopUpdate) {
 				_s->pic_not_valid++;
-				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
+				view->signal &= ~kSignalForceUpdate;
 			} else { // if not STOP_UPDATE
-				if (view->signal & _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)
+				if (view->signal & kSignalAlwaysUpdate)
 					_s->pic_not_valid++;
-				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
+				view->signal &= ~kSignalForceUpdate;
 			}
 		}
 
@@ -1805,7 +1806,7 @@ void SciGui32::_k_prepare_view_list(GfxList *list, int options) {
 
 		// Never happens
 /*		if (view->signal & 0) {
-			view->signal &= ~_K_VIEW_SIG_FLAG_STOPUPD;
+			view->signal &= ~kSignalStopUpdHack;
 			fprintf(_stderr, "Unsetting magic StopUpd for view %04x:%04x\n", PRINT_REG(obj));
 		} */
 
@@ -1832,7 +1833,7 @@ void SciGui32::_k_update_signals_in_view_list(GfxList *old_list, GfxList *new_li
 			new_widget = (GfxDynView *)new_widget->_next;
 
 		if (new_widget) {
-			int carry = old_widget->signal & _K_VIEW_SIG_FLAG_STOPUPD;
+			int carry = old_widget->signal & kSignalStopUpdHack;
 			// Transfer 'stopupd' flag
 
 			if ((new_widget->_pos.x != old_widget->_pos.x)
@@ -1864,18 +1865,18 @@ void SciGui32::_k_raise_topmost_in_view_list(GfxList *list, GfxDynView *view) {
 		GfxDynView *next = (GfxDynView *)view->_next;
 
 		// step 11
-		if ((view->signal & (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_HIDDEN | _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)) == 0) {
+		if ((view->signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate)) == 0) {
 			debugC(2, kDebugLevelGraphics, "Forcing precedence 2 at [%04x:%04x] with %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
 			view->force_precedence = 2;
 
-			if ((view->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_HIDDEN)) == _K_VIEW_SIG_FLAG_REMOVE) {
-				view->signal &= ~_K_VIEW_SIG_FLAG_REMOVE;
+			if ((view->signal & (kSignalRemoveView | kSignalHidden)) == kSignalRemoveView) {
+				view->signal &= ~kSignalRemoveView;
 			}
 		}
 
 		gfxw_remove_widget_from_container(view->_parent, view);
 
-		if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
+		if (view->signal & kSignalHidden)
 			gfxw_hide_widget(view);
 		else
 			gfxw_show_widget(view);
@@ -1893,32 +1894,32 @@ void SciGui32::_k_redraw_view_list(GfxList *list) {
 		debugC(2, kDebugLevelGraphics, "  dv[%04x:%04x]: signal %04x\n", PRINT_REG(make_reg(view->_ID, view->_subID)), view->signal);
 
 		// step 1 of subalgorithm
-		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
-			if (view->signal & _K_VIEW_SIG_FLAG_FORCE_UPDATE)
-				view->signal &= ~_K_VIEW_SIG_FLAG_FORCE_UPDATE;
+		if (view->signal & kSignalNoUpdate) {
+			if (view->signal & kSignalForceUpdate)
+				view->signal &= ~kSignalForceUpdate;
 
-			if (view->signal & _K_VIEW_SIG_FLAG_UPDATED)
-				view->signal &= ~(_K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_NO_UPDATE);
+			if (view->signal & kSignalViewUpdated)
+				view->signal &= ~(kSignalViewUpdated | kSignalNoUpdate);
 		} else { // NO_UPD is not set
-			if (view->signal & _K_VIEW_SIG_FLAG_STOP_UPDATE) {
-				view->signal &= ~_K_VIEW_SIG_FLAG_STOP_UPDATE;
-				view->signal |= _K_VIEW_SIG_FLAG_NO_UPDATE;
+			if (view->signal & kSignalStopUpdate) {
+				view->signal &= ~kSignalStopUpdate;
+				view->signal |= kSignalNoUpdate;
 			}
 		}
 
 		debugC(2, kDebugLevelGraphics, "    at substep 6: signal %04x\n", view->signal);
 
-		if (view->signal & _K_VIEW_SIG_FLAG_ALWAYS_UPDATE)
-			view->signal &= ~(_K_VIEW_SIG_FLAG_STOP_UPDATE | _K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
+		if (view->signal & kSignalAlwaysUpdate)
+			view->signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
 
 		debugC(2, kDebugLevelGraphics, "    at substep 11/14: signal %04x\n", view->signal);
 
-		if (view->signal & _K_VIEW_SIG_FLAG_NO_UPDATE) {
-			if (view->signal & _K_VIEW_SIG_FLAG_HIDDEN)
-				view->signal |= _K_VIEW_SIG_FLAG_REMOVE;
+		if (view->signal & kSignalNoUpdate) {
+			if (view->signal & kSignalHidden)
+				view->signal |= kSignalRemoveView;
 			else
-				view->signal &= ~_K_VIEW_SIG_FLAG_REMOVE;
-		} else if (!(view->signal & _K_VIEW_SIG_FLAG_HIDDEN))
+				view->signal &= ~kSignalRemoveView;
+		} else if (!(view->signal & kSignalHidden))
 			view->force_precedence = 1;
 
 		debugC(2, kDebugLevelGraphics, "    -> signal %04x\n", view->signal);
@@ -1951,20 +1952,20 @@ void SciGui32::_k_draw_view_list(GfxList *list, int flags) {
 		if (GFXW_IS_DYN_VIEW(widget) && widget->_ID) {
 			uint16 signal = (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) ? widget->signalp.getPointer(_s->_segMan)->offset : 0;
 
-			if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
+			if (signal & kSignalHidden)
 				gfxw_hide_widget(widget);
 			else
 				gfxw_show_widget(widget);
 
 			if (!(flags & _K_DRAW_VIEW_LIST_USE_SIGNAL)
-			        || ((flags & _K_DRAW_VIEW_LIST_DISPOSEABLE) && (signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))
-			        || ((flags & _K_DRAW_VIEW_LIST_NONDISPOSEABLE) && !(signal & _K_VIEW_SIG_FLAG_DISPOSE_ME))) {
+			        || ((flags & _K_DRAW_VIEW_LIST_DISPOSEABLE) && (signal & kSignalDisposeMe))
+			        || ((flags & _K_DRAW_VIEW_LIST_NONDISPOSEABLE) && !(signal & kSignalDisposeMe))) {
 
 				if (flags & _K_DRAW_VIEW_LIST_USE_SIGNAL) {
-					signal &= ~(_K_VIEW_SIG_FLAG_STOP_UPDATE | _K_VIEW_SIG_FLAG_UPDATED | _K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_FORCE_UPDATE);
+					signal &= ~(kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
 					// Clear all of those flags
 
-					if (signal & _K_VIEW_SIG_FLAG_HIDDEN)
+					if (signal & kSignalHidden)
 						gfxw_hide_widget(widget);
 					else
 						gfxw_show_widget(widget);
@@ -1991,9 +1992,9 @@ void SciGui32::_k_view_list_do_postdraw(GfxList *list) {
 		 * this fixes a few problems, but doesn't match SSCI's logic.
 		 * The semantics of the private flag need to be verified before this can be uncommented.
 		 * Fixes bug #326 (CB1, ego falls down stairs)
-		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == _K_VIEW_SIG_FLAG_PRIVATE) {
+		 * if ((widget->signal & (_K_VIEW_SIG_FLAG_PRIVATE | kSignalRemoveView | kSignalNoUpdate)) == _K_VIEW_SIG_FLAG_PRIVATE) {
 		 */
-		if ((widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)) == 0) {
+		if ((widget->signal & (kSignalRemoveView | kSignalNoUpdate)) == 0) {
 			int has_nsrect = lookup_selector(_s->_segMan, obj, _s->_kernel->_selectorCache.nsBottom, NULL, NULL) == kSelectorVariable;
 
 			if (has_nsrect) {
@@ -2019,11 +2020,11 @@ void SciGui32::_k_view_list_do_postdraw(GfxList *list) {
 				fprintf(_stderr, "Not lsRecting %04x:%04x because %d\n", PRINT_REG(obj), lookup_selector(_s->_segMan, obj, _s->_kernel->_selectorCache.nsBottom, NULL, NULL));
 #endif
 
-			if (widget->signal & _K_VIEW_SIG_FLAG_HIDDEN)
-				widget->signal |= _K_VIEW_SIG_FLAG_REMOVE;
+			if (widget->signal & kSignalHidden)
+				widget->signal |= kSignalRemoveView;
 		}
 #ifdef DEBUG_LSRECT
-		fprintf(_stderr, "obj %04x:%04x has pflags %x\n", PRINT_REG(obj), (widget->signal & (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_NO_UPDATE)));
+		fprintf(_stderr, "obj %04x:%04x has pflags %x\n", PRINT_REG(obj), (widget->signal & (kSignalRemoveView | kSignalNoUpdate)));
 #endif
 
 		reg_t* sp = widget->signalp.getPointer(_s->_segMan);
@@ -2651,8 +2652,8 @@ static int collides_with(EngineState *s, Common::Rect area, reg_t other_obj, int
 	return 0;
 }
 
-#define GASEOUS_VIEW_MASK_ACTIVE (_K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
-#define GASEOUS_VIEW_MASK_PASSIVE (_K_VIEW_SIG_FLAG_NO_UPDATE | _K_VIEW_SIG_FLAG_REMOVE | _K_VIEW_SIG_FLAG_IGNORE_ACTOR)
+#define GASEOUS_VIEW_MASK_ACTIVE (kSignalRemoveView | kSignalIgnoreActor)
+#define GASEOUS_VIEW_MASK_PASSIVE (kSignalNoUpdate | kSignalRemoveView | kSignalIgnoreActor)
 
 bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 	SegManager *segMan = _s->_segMan;
@@ -2697,7 +2698,7 @@ bool SciGui32::canBeHere(reg_t curObject, reg_t listReference) {
 		debugC(2, kDebugLevelBresen, "Checking vs dynviews:\n");
 
 		while (widget) {
-			if (widget->_ID && (widget->signal & _K_VIEW_SIG_FLAG_STOPUPD)
+			if (widget->_ID && (widget->signal & kSignalStopUpdHack)
 			        && ((widget->_ID != curObject.segment) || (widget->_subID != curObject.offset))
 			        && _s->_segMan->isObject(make_reg(widget->_ID, widget->_subID)))
 				if (collides_with(_s, abs_zone, make_reg(widget->_ID, widget->_subID), 1, GASEOUS_VIEW_MASK_ACTIVE))

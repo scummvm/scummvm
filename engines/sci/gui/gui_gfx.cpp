@@ -1012,7 +1012,7 @@ bool SciGuiGfx::CanBeHereCheckRectList(reg_t checkObject, Common::Rect checkRect
 		curObject = curNode->value;
 		if (curObject != checkObject) {
 			signal = GET_SEL32V(segMan, curObject, signal);
-			if ((signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE)) == 0) {
+			if ((signal & (kSignalIgnoreActor | kSignalRemoveView | kSignalNoUpdate)) == 0) {
 				curRect.left = GET_SEL32V(segMan, curObject, brLeft);
 				curRect.top = GET_SEL32V(segMan, curObject, brTop);
 				curRect.right = GET_SEL32V(segMan, curObject, brRight);

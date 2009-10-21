@@ -114,8 +114,6 @@ struct GfxState {
 
 	Common::List<sci_event_t> _events;
 
-	gfx_pixmap_t *fullscreen_override; /**< An optional override picture which must have unscaled full-screen size, which overrides all other visibility, and which is generally slow */
-
 	gfxr_pic_t *pic, *pic_unscaled; /**< The background picture and its unscaled equivalent */
 	rect_t pic_port_bounds;  /**< Picture port bounds */
 
@@ -162,21 +160,6 @@ void gfxop_exit(GfxState *state);
  * 					version: This is an implementation of "on_control()").
  */
 int gfxop_scan_bitmask(GfxState *state, rect_t area, gfx_map_mask_t map);
-
-/**
- * Sets the currently visible map.
- *
- * 'visible_map' can be any of GFX_MASK_VISUAL, GFX_MASK_PRIORITY and
- * GFX_MASK_CONTROL; the appropriate map (as far as its contents are known to
- * the graphics subsystem) is then subsequently drawn to the screen at each
- * update. If this is set to anything other than GFX_MASK_VISUAL, slow
- * full-screen updates are performed. Mostly useful for debugging. The screen
- * needs to be updated for the changes to take effect.
- *
- * @param[in] state	The state to modify
- * @param[in] map	The GFX_MASK to set
- */
-void gfxop_set_visible_map(GfxState *state, gfx_map_mask_t map);
 
 /**
  * Sets a new clipping zone.

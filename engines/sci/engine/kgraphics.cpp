@@ -33,10 +33,10 @@
 #include "sci/seq_decoder.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_widgets.h"
-#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
+//#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
 #include "sci/gui/gui.h"
+#include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
 #include "sci/gui/gui_screen.h"
 
@@ -67,7 +67,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) 
 	int maxloops;
 	bool oldScriptHeader = (getSciVersion() == SCI_VERSION_0_EARLY);
 
-	if (signal & _K_VIEW_SIG_FLAG_DOESNT_TURN)
+	if (signal & kSignalDoesntTurn)
 		return;
 
 	angle %= 360;
@@ -185,36 +185,6 @@ reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv) {
 		pos.x = argv[0].toSint16();
 		s->_gui->setCursorPos(pos);
 	}
-	return s->r_acc;
-}
-
-reg_t kShow(EngineState *s, int argc, reg_t *argv) {
-	int old_map = s->pic_visible_map;
-
-	s->pic_visible_map = (argc > 0) ? (gfx_map_mask_t) argv[0].toUint16() : GFX_MASK_VISUAL;
-
-	switch (s->pic_visible_map) {
-
-	case GFX_MASK_VISUAL:
-	case GFX_MASK_PRIORITY:
-	case GFX_MASK_CONTROL:
-		gfxop_set_visible_map(s->gfx_state, s->pic_visible_map);
-		if (old_map != s->pic_visible_map) {
-
-			if (s->pic_visible_map == GFX_MASK_VISUAL) // Full widget redraw
-				s->visual->draw(Common::Point(0, 0));
-
-			gfxop_update(s->gfx_state);
-			debugC(2, kDebugLevelGraphics, "Switching visible map to %x\n", s->pic_visible_map);
-		}
-		break;
-
-	default:
-		warning("Show(%x) selects unknown map", s->pic_visible_map);
-
-	}
-
-	s->pic_not_valid = 2;
 	return s->r_acc;
 }
 
@@ -860,22 +830,6 @@ reg_t kEditControl(EngineState *s, int argc, reg_t *argv) {
 	if (!controlObject.isNull())
 		s->_gui->editControl(controlObject, eventObject);
 	return s->r_acc;
-}
-
-void _k_view_list_mark_free(EngineState *s, reg_t off) {
-	if (s->dyn_views) {
-
-		GfxDynView *w = (GfxDynView *)s->dyn_views->_contents;
-
-		while (w) {
-			if (w->_ID == off.segment
-			        && w->_subID == off.offset) {
-				w->under_bitsp.obj = NULL_REG;
-			}
-
-			w = (GfxDynView *)w->_next;
-		}
-	}
 }
 
 reg_t kAddToPic(EngineState *s, int argc, reg_t *argv) {

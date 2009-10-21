@@ -75,7 +75,7 @@ bool SciGuiAnimate::invoke(List *list, int argc, reg_t *argv) {
 				return false;
 
 		signal = GET_SEL32V(segMan, curObject, signal);
-		if (!(signal & SCI_ANIMATE_SIGNAL_FROZEN)) {
+		if (!(signal & kSignalFrozen)) {
 			// Call .doit method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.doit, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 			// Lookup node again, since the nodetable it was in may have been reallocated
@@ -194,22 +194,22 @@ void SciGuiAnimate::fill(byte &old_picNotValid) {
 		signal = listEntry->signal;
 
 		// Calculate current priority according to y-coordinate
-		if (!(signal & SCI_ANIMATE_SIGNAL_FIXEDPRIORITY)) {
+		if (!(signal & kSignalFixedPriority)) {
 			listEntry->priority = _gfx->CoordinateToPriority(listEntry->y);
 			PUT_SEL32V(segMan, curObject, priority, listEntry->priority);
 		}
 		
-		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
-			if (signal & (SCI_ANIMATE_SIGNAL_FORCEUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED)
-				|| (signal & SCI_ANIMATE_SIGNAL_HIDDEN && !(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW))
-				|| (!(signal & SCI_ANIMATE_SIGNAL_HIDDEN) && signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)
-				|| (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))
+		if (signal & kSignalNoUpdate) {
+			if (signal & (kSignalForceUpdate | kSignalViewUpdated)
+				|| (signal & kSignalHidden && !(signal & kSignalRemoveView))
+				|| (!(signal & kSignalHidden) && signal & kSignalRemoveView)
+				|| (signal & kSignalAlwaysUpdate))
 				old_picNotValid++;
-			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE;
+			signal &= 0xFFFF ^ kSignalStopUpdate;
 		} else {
-			if (signal & SCI_ANIMATE_SIGNAL_STOPUPDATE || signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE)
+			if (signal & kSignalStopUpdate || signal & kSignalAlwaysUpdate)
 				old_picNotValid++;
-			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
+			signal &= 0xFFFF ^ kSignalForceUpdate;
 		}
 		listEntry->signal = signal;
 
@@ -237,8 +237,8 @@ void SciGuiAnimate::update() {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
-		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
-			if (!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW)) {
+		if (signal & kSignalNoUpdate) {
+			if (!(signal & kSignalRemoveView)) {
 				bitsHandle = GET_SEL32(segMan, curObject, underBits);
 				if (_screen->_picNotValid != 1) {
 					_gfx->BitsRestore(bitsHandle);
@@ -248,10 +248,10 @@ void SciGuiAnimate::update() {
 				}
 				PUT_SEL32V(segMan, curObject, underBits, 0);
 			}
-			signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_FORCEUPDATE;
-			signal &= signal & SCI_ANIMATE_SIGNAL_VIEWUPDATED ? 0xFFFF ^ (SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE) : 0xFFFF;
-		} else if (signal & SCI_ANIMATE_SIGNAL_STOPUPDATE) {
-			signal =  (signal & (0xFFFF ^ SCI_ANIMATE_SIGNAL_STOPUPDATE)) | SCI_ANIMATE_SIGNAL_NOUPDATE;
+			signal &= 0xFFFF ^ kSignalForceUpdate;
+			signal &= signal & kSignalViewUpdated ? 0xFFFF ^ (kSignalViewUpdated | kSignalNoUpdate) : 0xFFFF;
+		} else if (signal & kSignalStopUpdate) {
+			signal =  (signal & (0xFFFF ^ kSignalStopUpdate)) | kSignalNoUpdate;
 		}
 		listEntry->signal = signal;
 		listIterator--;
@@ -264,13 +264,13 @@ void SciGuiAnimate::update() {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
-		if (signal & SCI_ANIMATE_SIGNAL_ALWAYSUPDATE) {
+		if (signal & kSignalAlwaysUpdate) {
 			// draw corresponding cel
 			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 			listEntry->showBitsFlag = true;
 
-			signal &= 0xFFFF ^ (SCI_ANIMATE_SIGNAL_STOPUPDATE | SCI_ANIMATE_SIGNAL_VIEWUPDATED | SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_FORCEUPDATE);
-			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+			signal &= 0xFFFF ^ (kSignalStopUpdate | kSignalViewUpdated | kSignalNoUpdate | kSignalForceUpdate);
+			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
 				_gfx->FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -287,12 +287,12 @@ void SciGuiAnimate::update() {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
-		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) {
-			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
-				signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+		if (signal & kSignalNoUpdate) {
+			if (signal & kSignalHidden) {
+				signal |= kSignalRemoveView;
 			} else {
-				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
-				if (signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR)
+				signal &= 0xFFFF ^ kSignalRemoveView;
+				if (signal & kSignalIgnoreActor)
 					bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_VISUAL|SCI_SCREEN_MASK_PRIORITY);
 				else
 					bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
@@ -310,12 +310,12 @@ void SciGuiAnimate::update() {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
-		if (signal & SCI_ANIMATE_SIGNAL_NOUPDATE && !(signal & SCI_ANIMATE_SIGNAL_HIDDEN)) {
+		if (signal & kSignalNoUpdate && !(signal & kSignalHidden)) {
 			// draw corresponding cel
 			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 			listEntry->showBitsFlag = true;
 
-			if ((signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+			if ((signal & kSignalIgnoreActor) == 0) {
 				rect = listEntry->celRect;
 				rect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, rect.top, rect.bottom - 1);  
 				_gfx->FillRect(rect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
@@ -340,7 +340,7 @@ void SciGuiAnimate::drawCels() {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
-		if (!(signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_HIDDEN | SCI_ANIMATE_SIGNAL_ALWAYSUPDATE))) {
+		if (!(signal & (kSignalNoUpdate | kSignalHidden | kSignalAlwaysUpdate))) {
 			// Save background
 			bitsHandle = _gfx->BitsSave(listEntry->celRect, SCI_SCREEN_MASK_ALL);
 			PUT_SEL32(segMan, curObject, underBits, bitsHandle);
@@ -349,8 +349,8 @@ void SciGuiAnimate::drawCels() {
 			_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
 			listEntry->showBitsFlag = true;
 
-			if (signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) {
-				signal &= 0xFFFF ^ SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			if (signal & kSignalRemoveView) {
+				signal &= 0xFFFF ^ kSignalRemoveView;
 			}
 			listEntry->signal = signal;
 			
@@ -385,8 +385,8 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 		curObject = listEntry->object;
 		signal = listEntry->signal;
 
-		if (listEntry->showBitsFlag || !(signal & (SCI_ANIMATE_SIGNAL_REMOVEVIEW | SCI_ANIMATE_SIGNAL_NOUPDATE) ||
-										(!(signal & SCI_ANIMATE_SIGNAL_REMOVEVIEW) && (signal & SCI_ANIMATE_SIGNAL_NOUPDATE) && oldPicNotValid))) {
+		if (listEntry->showBitsFlag || !(signal & (kSignalRemoveView | kSignalNoUpdate) ||
+										(!(signal & kSignalRemoveView) && (signal & kSignalNoUpdate) && oldPicNotValid))) {
 			lsRect.left = GET_SEL32V(segMan, curObject, lsLeft);
 			lsRect.top = GET_SEL32V(segMan, curObject, lsTop);
 			lsRect.right = GET_SEL32V(segMan, curObject, lsRight);
@@ -408,8 +408,8 @@ void SciGuiAnimate::updateScreen(byte oldPicNotValid) {
 			PUT_SEL32V(segMan, curObject, lsBottom, workerRect.bottom);
 			_gfx->BitsShow(workerRect);
 
-			if (signal & SCI_ANIMATE_SIGNAL_HIDDEN) {
-				listEntry->signal |= SCI_ANIMATE_SIGNAL_REMOVEVIEW;
+			if (signal & kSignalHidden) {
+				listEntry->signal |= kSignalRemoveView;
 			}
 		}
 
@@ -448,12 +448,12 @@ void SciGuiAnimate::restoreAndDelete(int argc, reg_t *argv) {
 		// We read out signal here again, this is not by accident but to ensure that we got an up-to-date signal
 		signal = GET_SEL32V(segMan, curObject, signal);
 
-		if ((signal & (SCI_ANIMATE_SIGNAL_NOUPDATE | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
+		if ((signal & (kSignalNoUpdate | kSignalRemoveView)) == 0) {
 			_gfx->BitsRestore(GET_SEL32(segMan, curObject, underBits));
 			PUT_SEL32V(segMan, curObject, underBits, 0);
 		}
 
-		if (signal & SCI_ANIMATE_SIGNAL_DISPOSEME) {
+		if (signal & kSignalDisposeMe) {
 			// Call .delete_ method of that object
 			invoke_selector(_s, curObject, _s->_kernel->_selectorCache.delete_, kContinueOnInvalidSelector, argv, argc, __FILE__, __LINE__, 0);
 		}
@@ -489,7 +489,7 @@ void SciGuiAnimate::addToPicDrawCels(List *list) {
 
 		// draw corresponding cel
 		_gfx->drawCel(listEntry->viewId, listEntry->loopNo, listEntry->celNo, listEntry->celRect, listEntry->priority, listEntry->paletteNo);
-		if ((listEntry->signal & SCI_ANIMATE_SIGNAL_IGNOREACTOR) == 0) {
+		if ((listEntry->signal & kSignalIgnoreActor) == 0) {
 			listEntry->celRect.top = CLIP<int16>(_gfx->PriorityToCoordinate(listEntry->priority) - 1, listEntry->celRect.top, listEntry->celRect.bottom - 1);
 			_gfx->FillRect(listEntry->celRect, SCI_SCREEN_MASK_CONTROL, 0, 0, 15);
 		}

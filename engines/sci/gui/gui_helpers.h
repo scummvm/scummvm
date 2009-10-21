@@ -116,6 +116,14 @@ struct GuiPalSchedule {
 	uint32 schedule;
 };
 
+/** Button and frame control flags. */
+enum controlStateFlags {
+	kControlStateEnabled      = 0x0001,  ///< 0001 - enabled buttons (used by the interpreter)
+	kControlStateDisabled     = 0x0004,  ///< 0010 - grayed out buttons (used by the interpreter)
+	kControlStateFramed       = 0x0008,  ///< 1000 - widgets surrounded by a frame (used by the interpreter)
+	kControlStateDitherFramed = 0x1000   ///< 0001 0000 0000 0000 - widgets surrounded by a dithered frame (used in kgraphics)
+};
+
 } // End of namespace Sci
 
 #endif

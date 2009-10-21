@@ -268,29 +268,6 @@ void process_sound_events(EngineState *s);
 /* Maximum length of a savegame name (including terminator character) */
 #define SCI_MAX_SAVENAME_LENGTH 0x24
 
-/* Flags for the signal selector */
-enum {
-	_K_VIEW_SIG_FLAG_STOP_UPDATE    = 0x0001,
-	_K_VIEW_SIG_FLAG_UPDATED        = 0x0002,
-	_K_VIEW_SIG_FLAG_NO_UPDATE      = 0x0004,
-	_K_VIEW_SIG_FLAG_HIDDEN         = 0x0008,
-	_K_VIEW_SIG_FLAG_FIX_PRI_ON     = 0x0010,
-	_K_VIEW_SIG_FLAG_ALWAYS_UPDATE  = 0x0020,
-	_K_VIEW_SIG_FLAG_FORCE_UPDATE   = 0x0040,
-	_K_VIEW_SIG_FLAG_REMOVE         = 0x0080,
-	_K_VIEW_SIG_FLAG_FROZEN         = 0x0100,
-	_K_VIEW_SIG_FLAG_IS_EXTRA       = 0x0200,
-	_K_VIEW_SIG_FLAG_HIT_OBSTACLE   = 0x0400,
-	_K_VIEW_SIG_FLAG_DOESNT_TURN    = 0x0800,
-	_K_VIEW_SIG_FLAG_NO_CYCLER      = 0x1000,
-	_K_VIEW_SIG_FLAG_IGNORE_HORIZON = 0x2000,
-	_K_VIEW_SIG_FLAG_IGNORE_ACTOR   = 0x4000,
-	_K_VIEW_SIG_FLAG_DISPOSE_ME     = 0x8000,
-
-	_K_VIEW_SIG_FLAG_STOPUPD        = 0x20000000 /* View has been stop-updated */
-};
-
-
 /******************** Kernel functions ********************/
 
 // New kernel functions
@@ -312,7 +289,6 @@ reg_t kPriCoord(EngineState *s, int argc, reg_t *argv);
 reg_t kShakeScreen(EngineState *s, int argc, reg_t *argv);
 reg_t kSetCursor(EngineState *s, int argc, reg_t *argv);
 reg_t kMoveCursor(EngineState *s, int argc, reg_t *argv);
-reg_t kShow(EngineState *s, int argc, reg_t *argv);
 reg_t kPicNotValid(EngineState *s, int argc, reg_t *argv);
 reg_t kOnControl(EngineState *s, int argc, reg_t *argv);
 reg_t kDrawPic(EngineState *s, int argc, reg_t *argv);

@@ -27,6 +27,7 @@
 #include "sci/resource.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
+#include "sci/gui/gui_animate.h"
 
 namespace Sci {
 
@@ -247,7 +248,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 	int max_movcnt = GET_SEL32V(segMan, client, moveSpeed);
 
 	if (getSciVersion() > SCI_VERSION_01)
-		signal &= ~_K_VIEW_SIG_FLAG_HIT_OBSTACLE;
+		signal &= ~kSignalHitObstacle;
 
 	PUT_SEL32(segMan, client, signal, make_reg(0, signal)); // This is a NOP for SCI0
 	oldx = x;
@@ -324,7 +325,7 @@ reg_t kDoBresen(EngineState *s, int argc, reg_t *argv) {
 
 		PUT_SEL32V(segMan, client, x, oldx);
 		PUT_SEL32V(segMan, client, y, oldy);
-		PUT_SEL32V(segMan, client, signal, (signal | _K_VIEW_SIG_FLAG_HIT_OBSTACLE));
+		PUT_SEL32V(segMan, client, signal, (signal | kSignalHitObstacle));
 
 		debugC(2, kDebugLevelBresen, "Finished mover %04x:%04x by collision\n", PRINT_REG(mover));
 		completed = 1;

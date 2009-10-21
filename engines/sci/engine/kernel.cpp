@@ -44,7 +44,7 @@ static const char *sci_default_knames[SCI_KNAMES_DEFAULT_ENTRIES_NR] = {
 	/*0x06*/ "IsObject",
 	/*0x07*/ "RespondsTo",
 	/*0x08*/ "DrawPic",
-	/*0x09*/ "Show",
+	/*0x09*/ "Dummy",	// Show
 	/*0x0a*/ "PicNotValid",
 	/*0x0b*/ "Animate",
 	/*0x0c*/ "SetNowSeen",
@@ -192,7 +192,7 @@ SciKernelFunction kfunct_mappers[] = {
 	/*06*/	DEFUN("IsObject", kIsObject, "."),
 	/*07*/	DEFUN("RespondsTo", kRespondsTo, ".i"),
 	/*08*/	DEFUN("DrawPic", kDrawPic, "i*"),
-	/*09*/	DEFUN("Show", kShow, "i"),
+
 	/*0a*/	DEFUN("PicNotValid", kPicNotValid, "i*"),
 	/*0b*/	DEFUN("Animate", kAnimate, "LI*"), // More like (li?)?
 	/*0c*/	DEFUN("SetNowSeen", kSetNowSeen, "oi*"), // The second parameter is ignored
@@ -341,6 +341,7 @@ SciKernelFunction kfunct_mappers[] = {
 
 #if 0
 	// Stub functions
+	/*09*/	DEFUN("Show", kShow, "i"),
 	DEFUN("ShiftScreen", kShiftScreen, ".*"),
 	DEFUN("MemorySegment", kMemorySegment, ".*"),
 	DEFUN("ListOps", kListOps, ".*"),

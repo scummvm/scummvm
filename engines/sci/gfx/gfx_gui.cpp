@@ -31,6 +31,7 @@
 #include "sci/gfx/gfx_gui.h"
 #include "sci/gfx/gfx_state_internal.h"
 #include "sci/gui32/font.h"
+#include "sci/gui/gui_animate.h"
 
 #include "common/system.h"
 
@@ -640,6 +641,22 @@ GfxPort *sciw_toggle_item(GfxPort *menu_port, Menu *menu, int selection, bool se
 		                                      menu_port, fgColor, bgColor, selection + MAGIC_ID_OFFSET));
 
 	return menu_port;
+}
+
+void _k_view_list_mark_free(EngineState *s, reg_t off) {
+	if (s->dyn_views) {
+
+		GfxDynView *w = (GfxDynView *)s->dyn_views->_contents;
+
+		while (w) {
+			if (w->_ID == off.segment
+			        && w->_subID == off.offset) {
+				w->under_bitsp.obj = NULL_REG;
+			}
+
+			w = (GfxDynView *)w->_next;
+		}
+	}
 }
 
 } // End of namespace Sci

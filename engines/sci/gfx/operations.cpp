@@ -340,8 +340,7 @@ static void _gfxop_clear_dirty_rec(GfxState *state, DirtyRectList &dirtyRects) {
 	#ifdef GFXOP_DEBUG_DIRTY
 		fprintf(stderr, "\tClearing dirty (%d %d %d %d)\n", GFX_PRINT_RECT(*dirty));
 	#endif
-		if (!state->fullscreen_override)
-			_gfxop_update_box(state, *dirty);
+		_gfxop_update_box(state, *dirty);
 		++dirty;
 	}
 	dirtyRects.clear();
@@ -360,7 +359,6 @@ void gfxop_init(GfxState *state,
 				SciGuiScreen *screen, SciGuiPalette *palette, int scaleFactor) {
 	state->options = options;
 	state->visible_map = GFX_MASK_VISUAL;
-	state->fullscreen_override = NULL; // No magical override
 	state->options = options;
 	state->disable_dirty = 0;
 	state->_events.clear();
@@ -881,44 +879,8 @@ void gfxop_clear_box(GfxState *state, rect_t box) {
 	_gfxop_buffer_propagate_box(state, box, GFX_BUFFER_BACK);
 }
 
-void gfxop_set_visible_map(GfxState *state, gfx_map_mask_t visible_map) {
-	switch (visible_map) {
-
-	case GFX_MASK_VISUAL:
-		state->fullscreen_override = NULL;
-		if (visible_map != state->visible_map) {
-			rect_t rect = gfx_rect(0, 0, 320, 200);
-			gfxop_clear_box(state, rect);
-			gfxop_update_box(state, rect);
-		}
-		break;
-
-	case GFX_MASK_PRIORITY:
-		state->fullscreen_override = state->priority_map;
-		break;
-
-	case GFX_MASK_CONTROL:
-		state->fullscreen_override = state->control_map;
-		break;
-
-	default:
-		warning("Invalid display map %d selected", visible_map);
-		return;
-	}
-
-	state->visible_map = visible_map;
-}
-
 void gfxop_update(GfxState *state) {
 	_gfxop_clear_dirty_rec(state, state->_dirtyRects);
-
-	if (state->fullscreen_override) {
-		// We've been asked to re-draw the active full-screen image, essentially.
-		rect_t rect = gfx_rect(0, 0, 320, 200);
-		gfx_xlate_pixmap(state->fullscreen_override, state->driver->getMode());
-		gfxop_draw_pixmap(state, state->fullscreen_override, rect, Common::Point(0, 0));
-		_gfxop_update_box(state, rect);
-	}
 
 	if (state->tag_mode) {
 		// This usually happens after a pic and all resources have been drawn

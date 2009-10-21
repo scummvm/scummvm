@@ -598,7 +598,7 @@ bool SciGui::canBeHere(reg_t curObject, reg_t listReference) {
 	signal = GET_SEL32V(segMan, curObject, signal);
 	controlMask = GET_SEL32V(segMan, curObject, illegalBits);
 	result = (_gfx->onControl(SCI_SCREEN_MASK_CONTROL, checkRect) & controlMask) ? false : true;
-	if ((result) && (signal & (SCI_ANIMATE_SIGNAL_IGNOREACTOR | SCI_ANIMATE_SIGNAL_REMOVEVIEW)) == 0) {
+	if ((result) && (signal & (kSignalIgnoreActor | kSignalRemoveView)) == 0) {
 		List *list = _s->_segMan->lookupList(listReference);
 		if (!list)
 			error("kCanBeHere called with non-list as parameter");

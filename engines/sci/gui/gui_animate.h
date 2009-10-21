@@ -30,23 +30,26 @@
 
 namespace Sci {
 
-enum {
-	SCI_ANIMATE_SIGNAL_STOPUPDATE    = 0x0001,
-	SCI_ANIMATE_SIGNAL_VIEWUPDATED   = 0x0002,
-	SCI_ANIMATE_SIGNAL_NOUPDATE      = 0x0004,
-	SCI_ANIMATE_SIGNAL_HIDDEN        = 0x0008,
-	SCI_ANIMATE_SIGNAL_FIXEDPRIORITY = 0x0010,
-	SCI_ANIMATE_SIGNAL_ALWAYSUPDATE  = 0x0020,
-	SCI_ANIMATE_SIGNAL_FORCEUPDATE   = 0x0040,
-	SCI_ANIMATE_SIGNAL_REMOVEVIEW    = 0x0080,
-	SCI_ANIMATE_SIGNAL_FROZEN        = 0x0100,
-	SCI_ANIMATE_SIGNAL_EXTRAACTOR	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed to slow
-	SCI_ANIMATE_SIGNAL_BLOCKED		 = 0x0400, // unused by us, defines an actor that tried to move but was blocked
-	SCI_ANIMATE_SIGNAL_FIXEDLOOP	 = 0x0800, // unused by us
-	SCI_ANIMATE_SIGNAL_FIXEDCEL		 = 0x1000, // unused by us
-	SCI_ANIMATE_SIGNAL_IGNOREHORIZON = 0x2000, // unused by us, defines actor that can ignore horizon
-	SCI_ANIMATE_SIGNAL_IGNOREACTOR   = 0x4000,
-	SCI_ANIMATE_SIGNAL_DISPOSEME     = 0x8000
+// Flags for the signal selector
+enum ViewSignals {
+	kSignalStopUpdate    = 0x0001,
+	kSignalViewUpdated   = 0x0002,
+	kSignalNoUpdate      = 0x0004,
+	kSignalHidden        = 0x0008,
+	kSignalFixedPriority = 0x0010,
+	kSignalAlwaysUpdate  = 0x0020,
+	kSignalForceUpdate   = 0x0040,
+	kSignalRemoveView    = 0x0080,
+	kSignalFrozen        = 0x0100,
+	kSignalExtraActor	 = 0x0200, // unused by us, defines all actors that may be included into the background if speed to slow
+	kSignalHitObstacle	 = 0x0400, // used in the actor movement code by kDoBresen()
+	kSignalDoesntTurn	 = 0x0800, // used by _k_dirloop() to determine if an actor can turn or not
+	kSignalNoCycler		 = 0x1000, // unused by us
+	kSignalIgnoreHorizon = 0x2000, // unused by us, defines actor that can ignore horizon
+	kSignalIgnoreActor   = 0x4000,
+	kSignalDisposeMe     = 0x8000,
+
+	kSignalStopUpdHack	 = 0x20000000 // View has been stop-updated (again???) - a hack used by the old GUI code only, for dynamic views
 };
 
 class SciGuiGfx;
