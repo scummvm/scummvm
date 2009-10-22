@@ -46,8 +46,6 @@ unsigned short __attribute__((aligned(16))) clut256[256];
 unsigned short __attribute__((aligned(16))) mouseClut[256];
 unsigned short __attribute__((aligned(16))) cursorPalette[256];
 unsigned short __attribute__((aligned(16))) kbClut[256];
-//unsigned int __attribute__((aligned(16))) offscreen256[640*480];
-//unsigned int __attribute__((aligned(16))) overlayBuffer256[640*480*2];
 unsigned int __attribute__((aligned(16))) mouseBuf256[MOUSE_SIZE*MOUSE_SIZE];
 
 extern unsigned long RGBToColour(unsigned long r, unsigned long g, unsigned long b);
@@ -120,7 +118,7 @@ OSystem_PSP_GU::OSystem_PSP_GU() {
 		error("OSystem_PSP_GU: uncompressing keyboard_symbols_shift failed");
 
 	_keyboardVisible = false;
-	_clut = (unsigned short*)(((unsigned int)clut256)|0x40000000);
+	_clut = clut256;	// Not uncached to prevent cache coherency issues
 	_kbdClut = (unsigned short*)(((unsigned int)kbClut)|0x40000000);
 	_mouseBuf = (byte *)mouseBuf256;
 	_graphicMode = STRETCHED_480X272;
@@ -150,7 +148,6 @@ void OSystem_PSP_GU::initSize(uint width, uint height) {
 	_overlayWidth = PSP_SCREEN_WIDTH;	//width;
 	_overlayHeight = PSP_SCREEN_HEIGHT;	//height;
 
-//	_offscreen = (byte *)offscreen256;
 	_overlayBuffer = (OverlayColor *)0x44000000 + PSP_FRAME_SIZE;
 
 	_offscreen = (byte *)_overlayBuffer + _overlayWidth * _overlayHeight * sizeof(OverlayColor);
@@ -205,10 +202,11 @@ void OSystem_PSP_GU::setMouseCursor(const byte *buf, uint w, uint h, int hotspot
 
 	memcpy(mouseClut, _palette, 256*sizeof(unsigned short));
 	mouseClut[_mouseKeyColour] = 0;
-	sceKernelDcacheWritebackAll();
 
 	for (unsigned int i=0;i<h;i++)
 		memcpy(_mouseBuf+i*MOUSE_SIZE, buf+i*w, w);
+		
+	sceKernelDcacheWritebackAll();		
 }
 
 void OSystem_PSP_GU::setPalette(const byte *colors, uint start, uint num) {
