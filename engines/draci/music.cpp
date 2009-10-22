@@ -38,6 +38,7 @@ namespace Draci {
 
 MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0), _driver(driver), _pathMask(pathMask), _looping(false), _isPlaying(false), _passThrough(false), _isGM(false), _track(0) {
 	memset(_channel, 0, sizeof(_channel));
+	memset(_channelVolume, 255, sizeof(_channelVolume));
 	_masterVolume = 0;
 	this->open();
 	_smfParser = MidiParser::createParser_SMF();
@@ -230,7 +231,7 @@ void MusicPlayer::syncVolume() {
 // - bindings to GPL2 scripting
 // - load cmf.ins
 // - enable Adlib
-// - resuming after configuration
+// + resuming after configuration
 // + error handling
 
 } // End of namespace Draci
