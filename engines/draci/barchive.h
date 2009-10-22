@@ -27,6 +27,7 @@
 #define DRACI_BARCHIVE_H
 
 #include "common/str.h"
+#include "common/file.h"
 
 namespace Draci {
 
@@ -87,6 +88,7 @@ private:
 	uint _fileCount;         ///< Number of files in archive
 	bool _isDFW;             ///< True if the archive is in DFW format, false otherwise
 	bool _opened;            ///< True if the archive is opened, false otherwise
+	Common::File _f;         ///< Opened file handle
 
 	void openDFW(const Common::String &path);
 	BAFile *loadFileDFW(uint i);
