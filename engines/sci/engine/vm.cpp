@@ -165,9 +165,7 @@ static void validate_write_var(reg_t *r, reg_t *stack_base, int type, int max, i
 		if (index == 0 && type == VAR_GLOBAL) {	// global 0 is ego
 			reg_t stopGroopPos = segMan->findObjectByName("stopGroop");
 			if (!stopGroopPos.isNull()) {	// does the game have a stopGroop object?
-				// Notify the stopGroop object that Ego changed
-				//Object *stopGroopObj = segMan->getObject(stopGroopPos);
-				// Find the "client" member variable, and update it
+				// Find the "client" member variable of the stopGroop object, and update it
 				ObjVarRef varp;
 				if (lookup_selector(segMan, stopGroopPos, kernel->_selectorCache.client, &varp, NULL) == kSelectorVariable) {
 					reg_t *clientVar = varp.getPointer(segMan);
