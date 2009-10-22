@@ -1361,8 +1361,13 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	} else if (_game.features & GF_SMALL_HEADER) {
 		size = READ_LE_UINT32(obim);
 
-		imgw = (*(obim + size + 11));
-		imgh = (*(obim + size + 17)) / 8;
+		if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
+			imgw = (*(obim + size + 10));
+			imgh = (*(obim + size + 15)) / 8;
+		} else {
+			imgw = (*(obim + size + 11));
+			imgh = (*(obim + size + 17)) / 8;
+		}
 		imptr = getObjectImage(obim, 1);
 	} else {
 		const ImageHeader *imhd = (const ImageHeader *)findResourceData(MKID_BE('IMHD'), obim);
