@@ -86,7 +86,7 @@ public:
 	}
 
 	virtual int getVolume() {
-		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, -1) : 0;
+		return _driver ? _driver->property(MIDI_PROP_MASTER_VOLUME, 0xffff) : 0;
  	}
 
 	virtual void playSwitch(bool play) {

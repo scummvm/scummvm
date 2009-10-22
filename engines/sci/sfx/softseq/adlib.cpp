@@ -629,16 +629,16 @@ bool MidiDriver_Adlib::loadResource(const byte *data, uint size) {
 	return true;
 }
 
-int32 MidiDriver_Adlib::property(int prop, int32 param) {
+uint32 MidiDriver_Adlib::property(int prop, uint32 param) {
 	switch(prop) {
 	case MIDI_PROP_MASTER_VOLUME:
-		if(param != -1)
+		if (param != 0xffff)
 			_masterVolume = param;
 		return _masterVolume;
 	default:
 		break;
 	}
-	return -1;
+	return 0;
 }
 
 

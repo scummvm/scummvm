@@ -55,7 +55,7 @@ public:
 	void setVolume(byte volume);
 	void playSwitch(bool play);
 	bool loadResource(const byte *data, uint size);
-	virtual int32 property(int prop, int32 param);
+	uint32 property(int prop, uint32 param);
 
 private:
 	enum ChannelID {
