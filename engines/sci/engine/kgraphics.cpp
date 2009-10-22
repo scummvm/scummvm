@@ -952,6 +952,11 @@ reg_t kAnimate(EngineState *s, int argc, reg_t *argv) {
 	// FIXME? currenty this speed throttling causes flickering in kq6 (when looking at the box)
 	//  this will get possibly fixed when reanimate and real cel updates within kAnimate are implemented
 
+	// At least kq1 gets broken by the throttler (actually "just" some animations are missing cause the game thinks we are
+	//  too slow, so also disable us for SCI0 and SCI01 games
+	if (getSciVersion() <= SCI_VERSION_01)
+		return s->r_acc;
+
 	// FIXME: qfg3 gets broken by this, BUT even changing neededSleep to 2 still makes it somewhat broken (palette animation
 	//  isnt working)
 
