@@ -1009,7 +1009,8 @@ void Game::loadRoom(int roomNum) {
 	roomReader.readUint16LE(); // Program length, not used
 	roomReader.readUint32LE(); // Pointer to room title, not used
 
-	_currentRoom._music = roomReader.readByte();
+	// Music will be played by the GPL2 command startMusic when needed.
+	setMusicTrack(roomReader.readByte());
 
 	int mapID = roomReader.readByte() - 1;
 	loadWalkingMap(mapID);
@@ -1044,7 +1045,7 @@ void Game::loadRoom(int roomNum) {
 	_currentRoom._escRoom = roomReader.readByte() - 1;
 	_currentRoom._numGates = roomReader.readByte();
 
-	debugC(4, kDraciLogicDebugLevel, "Music: %d", _currentRoom._music);
+	debugC(4, kDraciLogicDebugLevel, "Music: %d", getMusicTrack());
 	debugC(4, kDraciLogicDebugLevel, "Map: %d", mapID);
 	debugC(4, kDraciLogicDebugLevel, "Palette: %d", _currentRoom._palette);
 	debugC(4, kDraciLogicDebugLevel, "Overlays: %d", _currentRoom._numOverlays);
@@ -1123,12 +1124,6 @@ void Game::loadRoom(int roomNum) {
 
 	Animation *map = _vm->_anims->addAnimation(kWalkingMapOverlay, 255, false);
 	map->addFrame(ov, NULL);
-
-	if (_currentRoom._music) {
-		_vm->_music->playSMF(_currentRoom._music, true);
-	} else {
-		_vm->_music->stop();
-	}
 }
 
 int Game::loadAnimation(uint animNum, uint z) {
@@ -1428,6 +1423,14 @@ double Game::getPers0() const {
 
 double Game::getPersStep() const {
 	return _currentRoom._persStep;
+}
+
+int Game::getMusicTrack() const {
+	return _currentRoom._music;
+}
+
+void Game::setMusicTrack(int num) {
+	_currentRoom._music = num;
 }
 
 int Game::getRoomNum() const {

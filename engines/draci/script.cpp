@@ -73,9 +73,9 @@ void Script::setupCommandList() {
 		{ 16, 1, "RepaintInventory", 	0, { 0 }, NULL },	// not used in the original game files
 		{ 16, 2, "ExitInventory", 		0, { 0 }, NULL },	// not used in the original game files
 		{ 17, 1, "ExitMap", 			0, { 0 }, NULL },	// not used in the original game files
-		{ 18, 1, "LoadMusic", 			1, { 2 }, NULL },
-		{ 18, 2, "StartMusic", 			0, { 0 }, NULL },
-		{ 18, 3, "StopMusic", 			0, { 0 }, NULL },
+		{ 18, 1, "LoadMusic", 			1, { 2 }, &Script::loadMusic },
+		{ 18, 2, "StartMusic", 			0, { 0 }, &Script::startMusic },
+		{ 18, 3, "StopMusic", 			0, { 0 }, &Script::stopMusic },
 		{ 18, 4, "FadeOutMusic",		1, { 1 }, NULL },
 		{ 18, 5, "FadeInMusic", 		1, { 1 }, NULL },
 		{ 19, 1, "Mark", 				0, { 0 }, &Script::mark },
@@ -519,6 +519,21 @@ void Script::c_Let(Common::Queue<int> &params) {
 	int value = params.pop();
 
 	_vm->_game->setVariable(var, value);
+}
+
+void Script::loadMusic(Common::Queue<int> &params) {
+	int track = params.pop();
+	_vm->_game->setMusicTrack(track);
+}
+
+void Script::startMusic(Common::Queue<int> &params) {
+	// If already playing this track, nothing happens.
+	_vm->_music->playSMF(_vm->_game->getMusicTrack(), true);
+}
+
+void Script::stopMusic(Common::Queue<int> &params) {
+	_vm->_music->stop();
+	_vm->_game->setMusicTrack(0);
 }
 
 void Script::mark(Common::Queue<int> &params) {

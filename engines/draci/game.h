@@ -301,6 +301,8 @@ public:
 
 	double getPers0() const;
 	double getPersStep() const;
+	int getMusicTrack() const;
+	void setMusicTrack(int num);
 
 	int getItemStatus(int itemID) const;
 	void setItemStatus(int itemID, int status);

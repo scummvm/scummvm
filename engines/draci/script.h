@@ -109,6 +109,9 @@ private:
 	void c_Let(Common::Queue<int> &params);
 	void load(Common::Queue<int> &params);
 	void start(Common::Queue<int> &params);
+	void loadMusic(Common::Queue<int> &params);
+	void startMusic(Common::Queue<int> &params);
+	void stopMusic(Common::Queue<int> &params);
 	void mark(Common::Queue<int> &params);
 	void release(Common::Queue<int> &params);
 	void icoStat(Common::Queue<int> &params);

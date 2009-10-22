@@ -43,6 +43,10 @@ MusicPlayer::MusicPlayer(MidiDriver *driver, const char *pathMask) : _parser(0),
 	this->open();
 	_smfParser = MidiParser::createParser_SMF();
 	_midiMusicData = NULL;
+
+	// TODO: Load cmf.ins with the instrument table.  It seems that an
+	// interface for such an operation is supported for Adlib.  Maybe for
+	// this card, setting instruments is necessary.
 }
 
 MusicPlayer::~MusicPlayer() {
@@ -224,14 +228,12 @@ void MusicPlayer::syncVolume() {
 	int volume = ConfMan.getInt("music_volume");
 	debugC(2, kDraciSoundDebugLevel, "Syncing music volume to %d", volume);
 	setVolume(volume);
-}
 
-// TODO:
-// + volume support
-// - bindings to GPL2 scripting
-// - load cmf.ins
-// - enable Adlib
-// + resuming after configuration
-// + error handling
+	// TODO: doesn't work in the beginning when no music is playing yet.
+	// It goes through all active channels (= none) and stops.  Only after
+	// actual instruments have played in the channels, this has an effect.
+	// As a consequence, music is very loud in the beginning until Ctrl-F5
+	// is pressed for the first time.
+}
 
 } // End of namespace Draci
