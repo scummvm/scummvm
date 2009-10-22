@@ -595,7 +595,7 @@ static bool testGame(const GameSettings *g, const DescMap &fileMD5Map, const Com
 				return false;
 
 			// All versions of Indy3 and ZakTOWNS have 98.LFL, but no other game
-			if (g->id == GID_LOOM && fileMD5Map.contains("98.LFL"))
+			if (g->id == GID_LOOM && g->platform != Common::kPlatformPCEngine && fileMD5Map.contains("98.LFL"))
 				return false;
 
 
