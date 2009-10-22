@@ -181,7 +181,7 @@ reg_t kMenuSelect(EngineState *s, int argc, reg_t *argv) {
 	if (menu_mode) {
 		int old_item;
 		int old_menu;
-		GfxPort *port = NULL;
+		GfxPort *port = sciw_new_menu(s, s->titlebar_port, s->_menubar, 0);
 
 		item_nr = -1;
 
