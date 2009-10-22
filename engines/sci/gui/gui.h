@@ -126,6 +126,8 @@ public:
 	int16 getCelWidth(int view, int loop, int cel);
 	int16 getCelHeight(int view, int loop, int cel);
 
+	int16 getLoopCount(int view);
+
 	virtual bool debugUndither(bool flag);
 	virtual bool debugShowMap(int mapNo);
 

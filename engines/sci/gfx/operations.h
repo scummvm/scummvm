@@ -359,15 +359,6 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask);
 /** @{ */
 
 /**
- * Determines the number of loops associated with a view.
- *
- * @param[in] state	The state to use
- * @param[in] nr	Number of the view to investigate
- * @return			The number of loops, or GFX_ERROR if the view didn't exist
- */
-int gfxop_lookup_view_get_loops(GfxState *state, int nr);
-
-/**
  * Determines the number of cels associated stored in a loop.
  *
  * @param[in] state	The state to look up in

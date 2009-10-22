@@ -33,8 +33,7 @@
 #include "sci/seq_decoder.h"
 #include "sci/engine/state.h"
 #include "sci/engine/kernel.h"
-#include "sci/gfx/gfx_widgets.h"
-//#include "sci/gfx/gfx_state_internal.h"	// required for GfxContainer, GfxPort, GfxVisual
+#include "sci/gfx/operations.h"
 #include "sci/gui/gui.h"
 #include "sci/gui/gui_animate.h"
 #include "sci/gui/gui_cursor.h"
@@ -95,7 +94,7 @@ void _k_dirloop(reg_t obj, uint16 angle, EngineState *s, int argc, reg_t *argv) 
 		else loop = 0xffff;
 	}
 
-	maxloops = gfxop_lookup_view_get_loops(s->gfx_state, view);
+	maxloops = s->_gui->getLoopCount(view);
 
 	if ((loop > 1) && (maxloops < 4))
 		return;
@@ -414,7 +413,7 @@ reg_t kNumLoops(EngineState *s, int argc, reg_t *argv) {
 	SegManager *segMan = s->_segMan;
 	reg_t obj = argv[0];
 	int view = GET_SEL32V(segMan, obj, view);
-	int loops_nr = gfxop_lookup_view_get_loops(s->gfx_state, view);
+	int loops_nr = s->_gui->getLoopCount(view);
 
 	if (loops_nr < 0) {
 		error("view.%d (0x%x) not found", view, view);

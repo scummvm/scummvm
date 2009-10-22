@@ -668,6 +668,17 @@ int16 SciGui::getCelHeight(int view, int loop, int cel) {
 	return height;
 }
 
+int16 SciGui::getLoopCount(int view) {
+	SciGuiView *tmpView = new SciGuiView(_s->resMan, _screen, _palette, view);
+	if (!tmpView)
+		return -1;
+
+	uint16 loopCount = tmpView->getLoopCount();
+	delete tmpView;
+
+	return loopCount;
+}
+
 bool SciGui::debugUndither(bool flag) {
 	_screen->unditherSetState(flag);
 	return false;

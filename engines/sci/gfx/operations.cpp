@@ -1300,19 +1300,6 @@ sci_event_t gfxop_get_event(GfxState *state, unsigned int mask) {
 
 // View operations
 
-int gfxop_lookup_view_get_loops(GfxState *state, int nr) {
-	int loop = 0, cel = 0;
-	gfxr_view_t *view = NULL;
-
-	view = state->gfxResMan->getView(nr, &loop, &cel, 0);
-
-	if (!view) {
-		error("[GFX] Attempt to retrieve number of loops from invalid view %d", nr);
-	}
-
-	return view->loops_nr;
-}
-
 int gfxop_lookup_view_get_cels(GfxState *state, int nr, int loop) {
 	int real_loop = loop, cel = 0;
 	gfxr_view_t *view = NULL;

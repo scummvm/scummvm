@@ -1069,7 +1069,7 @@ bool Console::cmdViewInfo(int argc, const char **argv) {
 
 	DebugPrintf("Resource view.%d ", view);
 
-	loops = gfxop_lookup_view_get_loops(_vm->_gamestate->gfx_state, view);
+	loops = _vm->_gamestate->_gui->getLoopCount(view);
 
 	if (loops < 0)
 		DebugPrintf("does not exist.\n");
