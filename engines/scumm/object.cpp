@@ -936,12 +936,13 @@ void ScummEngine_v4::resetRoomObject(ObjectData *od, const byte *room, const byt
 		od->x_pos = *(ptr + 8) * 8;
 		od->y_pos = ((*(ptr + 9)) & 0x7F) * 8;
 
-		od->parentstate = (*(ptr + 11) & 0x80) ? 1 : 0;
+		od->parentstate = (*(ptr + 9) & 0x80) ? 1 : 0;
 		od->width = *(ptr + 10) * 8;
 
-		od->parent = *(ptr + 11);
-		od->walk_x = *(ptr + 13) * 8;
-		od->walk_y = (*(ptr + 14) & 0x1f) * 8;
+		// TODO: Where is parent data?
+		od->parent = 0;
+		od->walk_x = READ_LE_UINT16(ptr + 11);
+		od->walk_y = READ_LE_UINT16(ptr + 13);
 		od->actordir = (*(ptr + 15)) & 7;
 		od->height = *(ptr + 15) & 0xf8;
 	} else {
